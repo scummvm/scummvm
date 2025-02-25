@@ -35,7 +35,7 @@ class CBagVariableObject : public CBagObject {
 private:
 	CBofSize _xSize;
 	int _nPointSize;
-	RGBCOLOR _nFGColor;
+	COLORREF _nFGColor;
 
 public:
 	CBagVariableObject();

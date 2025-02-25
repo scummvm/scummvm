@@ -24,6 +24,7 @@
 
 #include "bagel/bagel.h"
 #include "bagel/hodjnpodj/libs/types.h"
+#include "bagel/mfc/afx.h"
 
 namespace Bagel {
 namespace HodjNPodj {

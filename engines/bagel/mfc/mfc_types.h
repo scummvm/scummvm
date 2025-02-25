@@ -35,7 +35,16 @@ namespace MFC {
 
 #define DECLARE_MESSAGE_MAP()
 #define DECLARE_DYNCREATE(KLASS)
+#define IMPLEMENT_DYNCREATE(KLASS, PARENT)
 #define afx_msg
+#define BEGIN_MESSAGE_MAP(KLASS, PARENT)
+#define ON_WM_ERASEBKGND()
+#define ON_WM_DRAWITEM()
+#define END_MESSAGE_MAP()
+#define ON_MESSAGE(TAG, METHOD)
+#define BM_SETCHECK 0
+#define BM_GETCHECK 1
+
 
 typedef bool BOOL;
 typedef uint16 WPARAM;
@@ -47,36 +56,24 @@ typedef uint32 DWORD;
 #define FALSE false
 
 typedef void *HANDLE;
-typedef Graphics::ManagedSurface CBitmap;
 typedef Graphics::ManagedSurface *HDIB;
-typedef Common::Rect RECT;
-typedef Common::Rect *LPRECT;
-typedef Common::Rect CRect;
-typedef Common::Point CPoint;
-typedef Common::Point CSize;
-typedef Common::File CFile;
 typedef Common::Serializer CDumpContext;
 typedef Graphics::Palette *HPALETTE;
-typedef Common::String CString;
 typedef uint32 COLORREF;
+typedef Common::File CFile;
 
 typedef char *LPSTR;
-typedef char *LPCSTR;
+typedef const char *LPCSTR;
 typedef void *HBITMAP;
 typedef void *LPBITMAPINFO;
 typedef void *LPBITMAPINFOHEADER;
-typedef void *HWND;
+typedef Graphics::ManagedSurface *HWND;
 
-
-class CBmpButton {
-};
 class CSprite {
 };
 class CText {
 };
 class CSound {
-};
-class CWnd {
 };
 class CDibDoc {
 };

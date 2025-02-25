@@ -1,0 +1,186 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef BAGEL_MFC_WND_H
+#define BAGEL_MFC_WND_H
+
+#include "graphics/managed_surface.h"
+#include "bagel/mfc/mfc_types.h"
+#include "bagel/mfc/dc.h"
+#include "bagel/mfc/rect.h"
+#include "bagel/mfc/str.h"
+
+namespace Bagel {
+namespace MFC {
+
+#define ODS_SELECTED    0x0001  // Item is selected (highlighted).
+#define ODS_GRAYED      0x0002  // Item is grayed (disabled).
+#define ODS_DISABLED    0x0004  // Item is disabled (similar to grayed but distinct in behavior).
+#define ODS_CHECKED     0x0008  // Item is checked (for checkable menu items).
+#define ODS_FOCUS       0x0010  // Item has keyboard focus.
+#define ODS_DEFAULT     0x0020  // Item is the default action.
+#define ODS_COMBOBOXEDIT 0x1000 // Item is in a combo box's edit control.
+#define ODS_HOTLIGHT    0x0040  // Item is being hovered over (hot-tracked).
+#define ODS_INACTIVE    0x0080  // Item is inactive.
+#define ODS_NOACCEL     0x0100  // Draw without underlining keyboard accelerators.
+#define ODS_NOFOCUSRECT 0x0200  // Do not draw a focus rectangle.
+
+enum {
+	CS_BYTEALIGNWINDOW,
+	CS_OWNDC
+};
+enum {
+	WS_POPUP,
+	SW_SHOWNORMAL
+};
+
+class CWnd {
+protected:
+	HWND m_hWnd;
+	CWnd *_parent = nullptr;
+	Common::Rect _bounds;
+	CString _text;
+	uint _tag = 0;
+	bool _visible = true;
+
+	virtual bool OnCommand(uint16 wParam, int32 lParam) {
+		return false;
+	}
+
+	//{{AFX_MSG( CMainWindow )
+	virtual void OnPaint() {
+	}
+	virtual void OnChar(uint nChar, uint nRepCnt, uint nFlags) {
+	}
+	virtual void OnSysChar(uint nChar, uint nRepCnt, uint nFlags) {
+	}
+	virtual void OnSysKeyDown(uint nChar, uint nRepCnt, uint nFlags) {
+	}
+	virtual void OnKeyDown(uint nChar, uint nRepCnt, uint nFlags) {
+	}
+	virtual void OnTimer(uint nIDEvent) {
+	}
+	virtual void OnLButtonDown(uint nFlags, CPoint point) {
+	}
+	virtual void OnRButtonDown(uint nFlags, CPoint point) {
+	}
+	virtual void OnLButtonUp(uint nFlags, CPoint point) {
+	}
+	virtual void OnMouseMove(uint nFlags, CPoint point) {
+	}
+	virtual void OnClose() {
+	}
+	virtual long OnMCINotify(uint16, int32) {
+		return 0;
+	}
+	virtual long OnMMIONotify(uint16, int32) {
+		return 0;
+	}
+
+	// Dummy functions
+	void BeginWaitCursor() {
+	}
+	void EndWaitCursor() {
+	}
+
+	CString AfxRegisterWndClass(int flags, void *, void *, void *) const {
+		return CString();
+	}
+
+public:
+	static CWnd *FromHandlePermanent(HWND hWnd);
+
+public:
+	virtual ~CWnd() {
+	}
+
+	bool Create(const CString &label, uint flags, const CRect &bounds,
+		CWnd *parent, uint tag) {
+		_text = label;
+		_bounds = bounds;
+		_tag = tag;
+		return true;
+	}
+
+	CDC *GetDC();
+	static void ReleaseDC(CDC *dc);
+
+	void GetClientRect(CRect &r) const {
+		r = _bounds;
+	}
+	void GetWindowRect(LPRECT lpRect) const {
+		*lpRect = _bounds;
+	}
+	void InvalidateRect(const CRect *r, bool bErase = true);
+
+	bool PaintDIB(HDC, CRect *lpDestRect, HDIB hSrc,
+		CRect *lpSrcRect, CPalette *hPal);
+
+	virtual void SetRect(int x1, int y1, int x2, int y2) {
+		_bounds = Common::Rect(x1, y1, x2, y2);
+	}
+
+#ifdef _DEBUG
+	virtual void AssertValid() const {
+	}
+	virtual void Dump(CDumpContext &dc) const {
+	}
+#endif //_DEBUG
+
+	CWnd *GetParent() const {
+		return _parent;
+	}
+	bool IsWindowVisible() const {
+		return _visible;
+	}
+	void GetWindowText(CString &text) const {
+		text = _text;
+	}
+	int GetWindowText(char *text, int max) const {
+		Common::strcpy_s(text, max, _text.c_str());
+		return strlen(text);
+	}
+
+	BOOL SubclassDlgItem(UINT nID, CWnd *pParent);
+	void ShowWindow(int);
+	void UpdateWindow();
+	void SetActiveWindow();
+	CWnd *GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious) const;
+
+	long SendMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
+};
+
+class CFrameWnd : public CWnd {
+public:
+	~CFrameWnd() override {
+	}
+
+	bool Create(const CString &wndClass, const CString &label, uint flags,
+			const CRect &bounds, CWnd *, void *) {
+		return CWnd::Create(label, flags, bounds, nullptr, 0);
+	}
+
+};
+
+} // namespace MFC
+} // namespace Bagel
+
+#endif

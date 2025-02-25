@@ -65,11 +65,11 @@ CMainWindow::CMainWindow() {
 
 	ShowWindow(SW_SHOWNORMAL);
 	SplashScreen();
-#ifdef TODO
+
 	// Build Scroll Command button
 	m_pScrollButton = new CBmpButton;
 	assert(m_pScrollButton != nullptr);
-	tmpRect.setRect(SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
+	tmpRect.SetRect(SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
 		SCROLL_BUTTON_X + SCROLL_BUTTON_DX - 1,
 		SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1);
 	bSuccess = (*m_pScrollButton).Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_SCROLL);
@@ -77,7 +77,7 @@ CMainWindow::CMainWindow() {
 	bSuccess = (*m_pScrollButton).LoadBitmaps(SCROLLUP, SCROLLDOWN, nullptr, nullptr);
 	assert(bSuccess);
 	m_bIgnoreScrollClick = false;
-
+#ifdef TODO
 	pMazeBitmap = new CBitmap();
 	pMazeDC = new CDC();
 
@@ -264,7 +264,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 		case IDC_RULES:
 			KillTimer(GAME_TIMER);
-			CSound::WaitWaveSounds();
+			CBofSound::WaitWaveSounds();
 			m_bIgnoreScrollClick = TRUE;
 			(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
 
@@ -286,7 +286,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
 			SendDlgItemMessage(IDC_SCROLL, BM_SETSTATE, TRUE, 0L);
 
-			CSound::WaitWaveSounds();
+			CBofSound::WaitWaveSounds();
 
 			switch (COptionsWind.DoModal()) {
 
@@ -646,7 +646,7 @@ void CMainWindow::OnTimer(UINT nIDEvent) {
 			while (PeekMessage(&lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE));
 
 			CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Game over.", "Time ran out!");
-			CSound::WaitWaveSounds();
+			CBofSound::WaitWaveSounds();
 			if (pGameInfo->bPlayingMetagame) {
 				pGameInfo->lScore = 0;
 				PostMessage(WM_CLOSE, 0, 0);            // and post a program exit
@@ -911,7 +911,7 @@ void CMainWindow::MovePlayer(CPoint point) {
 				MSG lpmsg;
 				while (PeekMessage(&lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE));
 				CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Game over.", "He's free!");
-				CSound::WaitWaveSounds();
+				CBofSound::WaitWaveSounds();
 				if (pGameInfo->bPlayingMetagame) {
 					pGameInfo->lScore = 1;                  // A victorious maze solving
 					PostMessage(WM_CLOSE, 0, 0);            // and post a program exit
@@ -1015,7 +1015,7 @@ void CMainWindow::OnClose() {
 		pGameSound = nullptr;
 	}
 
-	CSound::ClearSounds();                              // Clean up sounds before returning
+	CBofSound::ClearSounds();                              // Clean up sounds before returning
 
 	if (m_pScrollButton != nullptr)
 		delete m_pScrollButton;
@@ -1101,7 +1101,7 @@ long CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 #ifdef TODO
 	CSound *pSound;
 
-	pSound = CSound::OnMCIStopped(wParam, lParam);
+	pSound = CBofSound::OnMCIStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 #endif
@@ -1113,7 +1113,7 @@ long CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 #ifdef TODO
 	CSound *pSound;
 
-	pSound = CSound::OnMMIOStopped(wParam, lParam);
+	pSound = CBofSound::OnMMIOStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 #endif

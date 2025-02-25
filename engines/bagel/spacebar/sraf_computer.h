@@ -298,9 +298,9 @@ protected:
 	} _eCurScreen;
 	
 	CBofBmpButton *_pButtons[NUM_SRAFCOMPBUTT];
-	RGBCOLOR _cTextColor;
-	RGBCOLOR _cTextHiliteColor;
-	RGBCOLOR _cTextLineColor;
+	COLORREF _cTextColor;
+	COLORREF _cTextHiliteColor;
+	COLORREF _cTextLineColor;
 
 	CBofListBox *_pLBox;               // Main screen list
 	CBofList<SrafCompItem> *_pMainList;

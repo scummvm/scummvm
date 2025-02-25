@@ -19,42 +19,58 @@
  *
  */
 
-#include "bagel/mfc/frame_wnd.h"
-#include "bagel/mfc/afx.h"
-#include "bagel/bagel.h"
+#ifndef BAGEL_MFC_RECT_H
+#define BAGEL_MFC_RECT_H
+
+#include "common/rect.h"
+#include "bagel/mfc/mfc_types.h"
 
 namespace Bagel {
 namespace MFC {
 
-void CFrameWnd::ShowWindow(int) {
-}
+struct CRect : public Common::Rect {
+public:
+	CRect() : Common::Rect() {
+	}
+	CRect(const Common::Rect &src) : Common::Rect(src) {
+	}
 
-void CFrameWnd::UpdateWindow() {
-}
+	void SetRect(int x1, int y1, int x2, int y2) {
+		top = x1;
+		left = y1;
+		right = x2;
+		bottom = y2;
+	}
+	void InflateRect(int dx, int dy) {
+		left -= dx;
+		right += dx;
+		top -= dy;
+		bottom += dy;
+	}
+};
 
-void CFrameWnd::SetActiveWindow() {
-}
+struct CSize : public Common::Point {
+public:
+	int16 &cx = Common::Point::x;
+	int16 &cy = Common::Point::y;
 
-CDC *CFrameWnd::GetDC() {
-	return new CDC();
-}
+	CSize() : Common::Point() {}
+	CSize(int16 x1, int16 y1) : Common::Point(x1, y1) {}
+	CSize(const CSize &src) : Common::Point(src.cx, src.cy) {}
 
-void CFrameWnd::ReleaseDC(CDC *dc) {
-	delete dc;
-}
+	CSize &operator=(const CSize &rhs) {
+		cx = rhs.cx;
+		cy = rhs.cy;
+		return *this;
+	}
+};
 
-void CFrameWnd::GetClientRect(CRect &r) {
-	r.left = r.top = 0;
-	r.right = GAME_WIDTH;
-	r.bottom = GAME_HEIGHT;
-}
+typedef CRect RECT;
+typedef CRect *LPRECT;
+typedef const CRect *LPCRECT;
+typedef Common::Point CPoint;
 
-bool CFrameWnd::PaintDIB(HDC, CRect *lpDestRect, HDIB hSrc,
-		CRect *lpSrcRect, CPalette *hPal) {
-	Graphics::Screen &screen = *g_engine->_screen;
-	screen.blitFrom(*hSrc, *lpSrcRect, *lpDestRect);
-	return true;
-}
-
-} // namespace HodjNPodj
+} // namespace MFC
 } // namespace Bagel
+
+#endif

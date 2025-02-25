@@ -738,7 +738,7 @@ bool CBofSound::soundsPlayingNotOver() {
 	bool bPlaying = false;
 
 	// Walk through sound list, and check for sounds that need attention
-	CSound *pSound = _pSoundChain;
+	CBofSound *pSound = _pSoundChain;
 	while (pSound != nullptr) {
 		if (pSound->playing() &&
 			(pSound->_wFlags & SOUND_WAVE || pSound->_wFlags & SOUND_MIX) &&
@@ -759,7 +759,7 @@ bool CBofSound::waveSoundPlaying() {
 	bool bPlaying = false;
 
 	// Walk through sound list, and check for sounds that need attention
-	CSound *pSound = _pSoundChain;
+	CBofSound *pSound = _pSoundChain;
 	while (pSound != nullptr) {
 		if (pSound->playing() && (pSound->_wFlags & SOUND_WAVE || pSound->_wFlags & SOUND_MIX)) {
 			bPlaying = true;
@@ -778,7 +778,7 @@ bool CBofSound::midiSoundPlaying() {
 	bool bPlaying = false;
 
 	// Walk through sound list, and check for sounds that need attention
-	CSound *pSound = _pSoundChain;
+	CBofSound *pSound = _pSoundChain;
 	while (pSound != nullptr) {
 		if (pSound->playing() && (pSound->_wFlags & SOUND_MIDI)) {
 			bPlaying = true;

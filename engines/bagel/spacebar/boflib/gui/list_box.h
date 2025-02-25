@@ -44,7 +44,7 @@ public:
 
 
 	CBofString *_pTextStr;
-	RGBCOLOR _nTextLineColor;
+	COLORREF _nTextLineColor;
 };
 
 class CBofListBox : public CBofWindow {
@@ -69,7 +69,7 @@ public:
 	CBofString getText(int nIndex);
 	void setText(int nIndex, const CBofString &cStr);
 
-	void setTextLineColor(int nIndex, RGBCOLOR rgbColor);
+	void setTextLineColor(int nIndex, COLORREF rgbColor);
 
 	ErrorCode lineUp() {
 		return scrollUp(1);
@@ -96,17 +96,17 @@ public:
 	ErrorCode saveBackground();
 	void killBackground();
 
-	void setHighlightColor(RGBCOLOR cHighColor) {
+	void setHighlightColor(COLORREF cHighColor) {
 		_cHighColor = cHighColor;
 	}
-	RGBCOLOR getHighlightColor() {
+	COLORREF getHighlightColor() {
 		return _cHighColor;
 	}
 
-	void setTextColor(RGBCOLOR cColor) {
+	void setTextColor(COLORREF cColor) {
 		_cTextColor = cColor;
 	}
-	RGBCOLOR getTextColor() {
+	COLORREF getTextColor() {
 		return _cTextColor;
 	}
 
@@ -165,8 +165,8 @@ protected:
 
 	int _nTextSize;
 	int _nTextWeight;
-	RGBCOLOR _cTextColor;
-	RGBCOLOR _cHighColor;
+	COLORREF _cTextColor;
+	COLORREF _cHighColor;
 	int _nSelectedItem;
 	int _nItemHeight;
 	int _nTextFont;

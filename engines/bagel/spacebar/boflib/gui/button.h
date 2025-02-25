@@ -43,12 +43,12 @@ namespace SpaceBar {
 #define BUTTON_UNCHECKED BUTTON_OFF
 
 struct ST_COLORSCHEME {
-	RGBCOLOR _cFace;
-	RGBCOLOR _cHighlight;
-	RGBCOLOR _cShadow;
-	RGBCOLOR _cText;
-	RGBCOLOR _cTextDisabled;
-	RGBCOLOR _cOutline;
+	COLORREF _cFace;
+	COLORREF _cHighlight;
+	COLORREF _cShadow;
+	COLORREF _cText;
+	COLORREF _cTextDisabled;
+	COLORREF _cOutline;
 };
 
 class CBofButton : public CBofWindow {
@@ -74,12 +74,12 @@ protected:
 	void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 	void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 
-	RGBCOLOR _cFaceColor;
-	RGBCOLOR _cHighlightColor;
-	RGBCOLOR _cShadowColor;
-	RGBCOLOR _cTextColor;
-	RGBCOLOR _cTextDisabledColor;
-	RGBCOLOR _cOutlineColor;
+	COLORREF _cFaceColor;
+	COLORREF _cHighlightColor;
+	COLORREF _cShadowColor;
+	COLORREF _cTextColor;
+	COLORREF _cTextDisabledColor;
+	COLORREF _cOutlineColor;
 
 	int _nState;
 };

@@ -39,7 +39,7 @@ class CBagTextObject : public CBagObject {
 private:
 	CBofString *_psInitInfo; // Aux info
 
-	RGBCOLOR _nFGColor;
+	COLORREF _nFGColor;
 
 	int16 _nDX;
 	int16 _nDY;

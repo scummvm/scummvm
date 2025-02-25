@@ -137,7 +137,7 @@ void CBofTextBox::setDisplay(CBofBitmap *pBitmap) {
 }
 
 
-void CBofTextBox::setTextAttribs(const int nSize, const int nWeight, const RGBCOLOR cColor, const int nFont) {
+void CBofTextBox::setTextAttribs(const int nSize, const int nWeight, const COLORREF cColor, const int nFont) {
 	assert(isValidObject(this));
 
 	_nPointSize = nSize;

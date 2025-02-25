@@ -131,7 +131,7 @@ ErrorCode CBofButton::paint(CBofRect *) {
 		CBofText cText(&cTempRect);
 
 		// Print text into button
-		RGBCOLOR cTextColor = _cTextColor;
+		COLORREF cTextColor = _cTextColor;
 		if (_nState == BUTTON_DISABLED)
 			cTextColor = _cTextDisabledColor;
 
@@ -279,7 +279,7 @@ ErrorCode CBofRadioButton::paint(CBofRect *) {
 		// Fill in the background color
 		cBmp.fillRect(&_cRect, pPalette->getNearestIndex(_cFaceColor));
 
-		RGBCOLOR cTextColor = _cTextColor;
+		COLORREF cTextColor = _cTextColor;
 		if (_nState == BUTTON_DISABLED)
 			cTextColor = _cTextDisabledColor;
 
@@ -375,7 +375,7 @@ ErrorCode CBofCheckButton::paint(CBofRect *) {
 		cBmp.fillRect(&_cRect, pPalette->getNearestIndex(_cFaceColor));
 
 		// Show text disabled if button is disabled
-		RGBCOLOR cTextColor = _cTextColor;
+		COLORREF cTextColor = _cTextColor;
 		if (_nState == BUTTON_DISABLED)
 			cTextColor = _cTextDisabledColor;
 

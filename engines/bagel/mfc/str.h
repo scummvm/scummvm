@@ -19,26 +19,37 @@
  *
  */
 
-#ifndef BAGEL_MFC_AFX_H
-#define BAGEL_MFC_AFX_H
+#ifndef BAGEL_HODJNPODJ_MFC_STR_H
+#define BAGEL_HODJNPODJ_MFC_STR_H
 
-#include "bagel/mfc/mfc_types.h"
-#include "bagel/mfc/bitmap.h"
-#include "bagel/mfc/button.h"
-#include "bagel/mfc/dc.h"
-#include "bagel/mfc/document.h"
-#include "bagel/mfc/font.h"
-#include "bagel/mfc/palette.h"
-#include "bagel/mfc/rect.h"
-#include "bagel/mfc/str.h"
-#include "bagel/mfc/wnd.h"
+#include "common/str.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
-using namespace Bagel::MFC;
+class CString : public Common::String {
+public:
+	constexpr CString() : Common::String() {}
+	CString(const char *str) : Common::String(str) {}
+	CString(const char *str, uint32 len) : Common::String(str, len) {}
+	CString(const char *beginP, const char *endP) : Common::String(beginP, endP) {}
+	CString(const Common::String &str) : Common::String(str) {}
+	explicit constexpr CString(value_type c) : Common::String(c) {}
 
-} // namespace HodjNPodj
+	bool IsEmpty() const {
+		return empty();
+	}
+	operator LPCSTR() const {
+		return c_str();
+	}
+
+	CString operator+(const char *str) const {
+		Common::String temp = Common::String(c_str()) + str;
+		return CString(temp);
+	}
+};
+
+} // namespace MFC
 } // namespace Bagel
 
 #endif

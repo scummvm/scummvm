@@ -19,26 +19,11 @@
  *
  */
 
-#ifndef BAGEL_MFC_AFX_H
-#define BAGEL_MFC_AFX_H
-
-#include "bagel/mfc/mfc_types.h"
-#include "bagel/mfc/bitmap.h"
-#include "bagel/mfc/button.h"
-#include "bagel/mfc/dc.h"
-#include "bagel/mfc/document.h"
-#include "bagel/mfc/font.h"
-#include "bagel/mfc/palette.h"
-#include "bagel/mfc/rect.h"
-#include "bagel/mfc/str.h"
-#include "bagel/mfc/wnd.h"
+#include "bagel/hodjnpodj/boflib/sound.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-using namespace Bagel::MFC;
 
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif

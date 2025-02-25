@@ -115,15 +115,15 @@ CBofPalette *CBofPalette::copyPalette() {
 	return nullptr;
 }
 
-byte CBofPalette::getNearestIndex(RGBCOLOR stRGB) {
+byte CBofPalette::getNearestIndex(COLORREF stRGB) {
 	Graphics::PaletteLookup lookup(_palette._data, Graphics::PALETTE_COUNT);
 	return lookup.findBestColor(GetRed(stRGB), GetGreen(stRGB), GetBlue(stRGB));
 }
 
-RGBCOLOR CBofPalette::getColor(byte nIndex) {
+COLORREF CBofPalette::getColor(byte nIndex) {
 	const byte *rgb = &_palette._data[nIndex * 3];
 
-	RGBCOLOR cColor = RGB(rgb[0], rgb[1], rgb[2]);
+	COLORREF cColor = RGB(rgb[0], rgb[1], rgb[2]);
 	return cColor;
 }
 

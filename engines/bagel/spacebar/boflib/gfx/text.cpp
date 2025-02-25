@@ -173,7 +173,7 @@ ErrorCode CBofText::erase(CBofBitmap *pBmp) {
 	return _errCode;
 }
 
-ErrorCode CBofText::display(CBofWindow *pWnd, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor, int nFont) {
+ErrorCode CBofText::display(CBofWindow *pWnd, const char *pszText, const int nSize, const int nWeight, const COLORREF cColor, int nFont) {
 	assert(isValidObject(this));
 
 	// Can't access null pointers
@@ -198,7 +198,7 @@ ErrorCode CBofText::display(CBofBitmap *pBmp) {
 	return display(pBmp, _cCurString, _nCurSize, _nCurWeight, _cTextColor);
 }
 
-ErrorCode CBofText::display(CBofBitmap *pBmp, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor, int nFont) {
+ErrorCode CBofText::display(CBofBitmap *pBmp, const char *pszText, const int nSize, const int nWeight, const COLORREF cColor, int nFont) {
 	// Can't access null pointers
 	assert(pBmp != nullptr);
 
@@ -207,7 +207,7 @@ ErrorCode CBofText::display(CBofBitmap *pBmp, const char *pszText, const int nSi
 	return displayText(pBmp, pszText, &_cRect, nSize, nWeight, false, nFont);
 }
 
-ErrorCode CBofText::displayShadowed(CBofWindow *pWnd, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor, const RGBCOLOR cShadow, const int nDX, const int nDY, int nFont) {
+ErrorCode CBofText::displayShadowed(CBofWindow *pWnd, const char *pszText, const int nSize, const int nWeight, const COLORREF cColor, const COLORREF cShadow, const int nDX, const int nDY, int nFont) {
 	// Can't access null pointers
 	assert(pWnd != nullptr);
 
@@ -418,7 +418,7 @@ void CBofText::displayLine(Graphics::Font *font, Graphics::ManagedSurface &surfa
 	}
 }
 
-ErrorCode paintText(CBofWindow *pWnd, CBofRect *pRect, const char *pszString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormatFlags, int nFont) {
+ErrorCode paintText(CBofWindow *pWnd, CBofRect *pRect, const char *pszString, const int nSize, const int nWeight, const COLORREF cColor, int nJustify, uint32 nFormatFlags, int nFont) {
 	assert(pWnd != nullptr);
 	assert(pRect != nullptr);
 
@@ -426,7 +426,7 @@ ErrorCode paintText(CBofWindow *pWnd, CBofRect *pRect, const char *pszString, co
 	return cText.display(pWnd, pszString, nSize, nWeight, cColor, nFont);
 }
 
-ErrorCode paintText(CBofBitmap *pBmp, CBofRect *pRect, const char *pszString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormatFlags, int nFont) {
+ErrorCode paintText(CBofBitmap *pBmp, CBofRect *pRect, const char *pszString, const int nSize, const int nWeight, const COLORREF cColor, int nJustify, uint32 nFormatFlags, int nFont) {
 	assert(pBmp != nullptr);
 	assert(pRect != nullptr);
 
@@ -438,7 +438,7 @@ ErrorCode paintText(CBofBitmap *pBmp, CBofRect *pRect, const char *pszString, co
 	return cText.displayTextEx(pBmp, pszString, pRect, nSize, nWeight, false, nFont);
 }
 
-ErrorCode paintShadowedText(CBofBitmap *pBmp, CBofRect *pRect, const char *pszString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormatFlags, int nFont) {
+ErrorCode paintShadowedText(CBofBitmap *pBmp, CBofRect *pRect, const char *pszString, const int nSize, const int nWeight, const COLORREF cColor, int nJustify, uint32 nFormatFlags, int nFont) {
 	assert(pBmp != nullptr);
 	assert(pRect != nullptr);
 

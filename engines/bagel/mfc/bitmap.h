@@ -19,26 +19,43 @@
  *
  */
 
-#ifndef BAGEL_MFC_AFX_H
-#define BAGEL_MFC_AFX_H
+#ifndef BAGEL_MFC_BITMAP_H
+#define BAGEL_MFC_BITMAP_H
 
+#include "graphics/managed_surface.h"
 #include "bagel/mfc/mfc_types.h"
-#include "bagel/mfc/bitmap.h"
-#include "bagel/mfc/button.h"
-#include "bagel/mfc/dc.h"
-#include "bagel/mfc/document.h"
-#include "bagel/mfc/font.h"
-#include "bagel/mfc/palette.h"
-#include "bagel/mfc/rect.h"
-#include "bagel/mfc/str.h"
-#include "bagel/mfc/wnd.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
-using namespace Bagel::MFC;
+class CGdiObject {
+private:
+	HBITMAP _bitmap = nullptr;
 
-} // namespace HodjNPodj
+public:
+	~CGdiObject() {}
+
+	void Attach(HBITMAP bitmap) {
+		_bitmap = bitmap;
+	}
+	HBITMAP Detach() {
+		HBITMAP result = _bitmap;
+		_bitmap = nullptr;
+		return result;
+	}
+
+	void DeleteObject() {
+		delete _bitmap;
+		_bitmap = nullptr;
+	}
+};
+
+class CBitmap : public CGdiObject {
+public:
+
+};
+
+} // namespace MFC
 } // namespace Bagel
 
 #endif

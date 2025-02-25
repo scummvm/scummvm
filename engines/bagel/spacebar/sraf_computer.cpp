@@ -2644,7 +2644,7 @@ void SrafComputer::onListBuyerBids() {
 		if (g_stBuyerBids[index]._bAccept) {
 			_pLBox->setTextLineColor(_nSelection, _cTextLineColor);
 		} else {
-			_pLBox->setTextLineColor(_nSelection, (RGBCOLOR) - 1); // Restore default
+			_pLBox->setTextLineColor(_nSelection, (COLORREF) - 1); // Restore default
 		}
 
 		_pLBox->repaintItem(_nSelection);

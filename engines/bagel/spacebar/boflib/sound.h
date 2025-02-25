@@ -211,9 +211,6 @@ private:
 bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0);
 bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0, bool bWait = false);
 
-// Support legacy code
-#define CSound CBofSound
-
 } // namespace SpaceBar
 } // namespace Bagel
 

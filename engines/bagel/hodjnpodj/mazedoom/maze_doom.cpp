@@ -25,12 +25,7 @@
 #include "bagel/hodjnpodj/mazedoom/main_window.h"
 #include "bagel/hodjnpodj/mazedoom/globals.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
-#include "bagel/spacebar/boflib/sound.h"
-#include "bagel/spacebar/boflib/gui/button.h"
-#include "bagel/spacebar/boflib/gfx/bitmap.h"
-#include "bagel/spacebar/boflib/gfx/sprite.h"
-#include "bagel/spacebar/boflib/gfx/palette.h"
-#include "bagel/spacebar/boflib/gfx/text.h"
+#include "bagel/mfc/afx.h"
 
 namespace Bagel {
 namespace HodjNPodj {

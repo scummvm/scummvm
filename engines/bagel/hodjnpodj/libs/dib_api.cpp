@@ -23,6 +23,12 @@
 
 namespace Bagel {
 namespace HodjNPodj {
+
+CPalette *DuplicatePalette(CPalette *pOrigPal) {
+	error("TODO: DuplicatePalette");
+	return nullptr;
+}
+
 #if 0
 /*************************************************************************
  *

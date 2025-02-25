@@ -518,7 +518,7 @@ bool CBagPDA::isMovieWaiting() {
 	// If our sounds are paused, and our movie is done playing,
 	// then start up our sounds again.
 	if (_soundsPausedFl == true && isMoviePlaying() == false) {
-		CSound::resumeSounds();
+		CBofSound::resumeSounds();
 		_soundsPausedFl = false;
 	}
 
@@ -536,7 +536,7 @@ void CBagPDA::runWaitingMovie() {
 		if (pMObj->asynchPDAMovieCanPlay()) {
 			_soundsPausedFl = true;
 			// pause all sounds
-			CSound::pauseSounds();
+			CBofSound::pauseSounds();
 			pMObj->runObject();
 			removeFromMovieQueue(pMObj);
 		}

@@ -23,15 +23,32 @@
 #define BAGEL_MFC_BUTTON_H
 
 #include "bagel/mfc/mfc_types.h"
-#include "bagel/mfc/palette.h"
+#include "bagel/mfc/wnd.h"
+#include "bagel/mfc/bitmap.h"
 
 namespace Bagel {
 namespace MFC {
 
-class CButton {
+enum {
+	BS_OWNERDRAW,
+	WS_CHILD,
+	WS_VISIBLE
 };
 
-class CBitmapButton {
+class CButton : public CWnd {
+public:
+	void SetButtonStyle(UINT nStyle, BOOL bRedraw = TRUE);
+};
+
+class CBitmapButton : public CButton {
+protected:
+	CBitmap m_bitmapDisabled;
+	CBitmap m_bitmapSel;
+	CBitmap m_bitmapFocus;
+	CBitmap m_bitmap;
+
+public:
+	void SizeToContent();
 };
 
 } // namespace MFC

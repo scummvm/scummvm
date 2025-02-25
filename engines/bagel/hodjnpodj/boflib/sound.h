@@ -19,24 +19,16 @@
  *
  */
 
-#ifndef BAGEL_MFC_AFX_H
-#define BAGEL_MFC_AFX_H
+#ifndef BAGEL_HODJNPODJ_BOFLIB_SOUND_H
+#define BAGEL_HODJNPODJ_BOFLIB_SOUND_H
 
 #include "bagel/mfc/mfc_types.h"
-#include "bagel/mfc/bitmap.h"
-#include "bagel/mfc/button.h"
-#include "bagel/mfc/dc.h"
-#include "bagel/mfc/document.h"
-#include "bagel/mfc/font.h"
-#include "bagel/mfc/palette.h"
-#include "bagel/mfc/rect.h"
-#include "bagel/mfc/str.h"
-#include "bagel/mfc/wnd.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-using namespace Bagel::MFC;
+class CSound {
+};
 
 } // namespace HodjNPodj
 } // namespace Bagel

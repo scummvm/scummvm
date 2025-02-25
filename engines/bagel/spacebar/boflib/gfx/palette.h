@@ -27,15 +27,17 @@
 #include "bagel/spacebar/boflib/error.h"
 #include "bagel/spacebar/boflib/object.h"
 #include "bagel/spacebar/boflib/stdinc.h"
+#include "bagel/mfc/palette.h"
 
 namespace Bagel {
 namespace SpaceBar {
+
+using MFC::COLORREF;
 
 #define PAL_DEFAULT 0x0000
 #define PAL_ANIMATED 0x0001
 #define PAL_EXPLICIT 0x0002
 
-typedef uint32 RGBCOLOR;
 struct HPALETTE {
 	byte _data[Graphics::PALETTE_SIZE];
 	int16 _numColors;
@@ -53,8 +55,6 @@ struct LOGPALETTE {
 	int16 palVersion;
 	PALETTEENTRY palPalEntry[1];
 };
-
-#define RGB(r, g, b) ((RGBCOLOR)(((byte)(r) | ((uint16)((byte)(g)) << 8)) | (((uint32)(byte)(b)) << 16)))
 
 struct BOFRGBQUAD {
 	byte rgbBlue;
@@ -106,9 +106,9 @@ public:
 
 	ErrorCode createDefault(uint16 nFlags = PAL_DEFAULT);
 
-	byte getNearestIndex(RGBCOLOR cColor);
+	byte getNearestIndex(COLORREF cColor);
 
-	RGBCOLOR getColor(byte nIndex);
+	COLORREF getColor(byte nIndex);
 
 	/**
 	 * Assigns specified palette to this CBofPalette

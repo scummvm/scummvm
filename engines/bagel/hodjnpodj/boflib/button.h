@@ -64,11 +64,8 @@ class CBmpButton : public CBitmapButton {
 	DECLARE_DYNCREATE(CBmpButton)
 
 public:
-	// Constructors
-	CBmpButton();	// use "new" operator to create buttons, then LoadButton
-
-	// Destructors
-	~CBmpButton();
+	CBmpButton() {}
+	~CBmpButton() override;
 
 public:
 	// Implementation
@@ -81,24 +78,19 @@ public:
 	BOOL LoadBmpBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected = NULL, LPCSTR lpszFocus = NULL, LPCSTR lpszDisabled = NULL);
 
 private:
-	CPalette *m_pPalette;
-	BOOL		m_bSharedPalette;
+	CPalette *m_pPalette = nullptr;
+	BOOL m_bSharedPalette = false;
 
 private:
 
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
-	//{{AFX_MSG( CBmpButton )
+	/**
+	 * Do not let Windows automatically erase our window to white.
+	 */
 	afx_msg	BOOL OnEraseBkgnd(CDC *pDC);
-	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
-
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext &dc) const;
-#endif
-
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -131,12 +123,6 @@ private:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
-
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext &dc) const;
-#endif
-
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -177,12 +163,6 @@ private:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
-
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext &dc) const;
-#endif
-
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -225,12 +205,6 @@ private:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
-
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext &dc) const;
-#endif
-
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -272,11 +246,6 @@ private:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
-
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext &dc) const;
-#endif
 };
 
 } // namespace HodjNPodj

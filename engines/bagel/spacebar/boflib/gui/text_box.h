@@ -44,7 +44,7 @@ public:
 	void setDisplay(CBofWindow *pWindow);
 	void setDisplay(CBofBitmap *pBitmap);
 
-	void setTextAttribs(int nSize, int nWeight, RGBCOLOR cColor = CTEXT_COLOR, int nFont = FONT_DEFAULT);
+	void setTextAttribs(int nSize, int nWeight, COLORREF cColor = CTEXT_COLOR, int nFont = FONT_DEFAULT);
 
 	void setPointSize(const int nSize) {
 		_nPointSize = nSize;
@@ -67,10 +67,10 @@ public:
 		return _nPageSize;
 	}
 
-	void setColor(const RGBCOLOR cColor) {
+	void setColor(const COLORREF cColor) {
 		_cTextColor = cColor;
 	}
-	RGBCOLOR getColor() const {
+	COLORREF getColor() const {
 		return _cTextColor;
 	}
 
@@ -128,7 +128,7 @@ protected:
 	int _nNumLines;
 	int _nPageSize;
 
-	RGBCOLOR _cTextColor;
+	COLORREF _cTextColor;
 	int _nPointSize;
 	int _nWeight;
 	int _nTextFont;

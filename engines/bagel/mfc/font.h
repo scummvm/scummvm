@@ -19,26 +19,17 @@
  *
  */
 
-#ifndef BAGEL_MFC_AFX_H
-#define BAGEL_MFC_AFX_H
-
-#include "bagel/mfc/mfc_types.h"
-#include "bagel/mfc/bitmap.h"
-#include "bagel/mfc/button.h"
-#include "bagel/mfc/dc.h"
-#include "bagel/mfc/document.h"
-#include "bagel/mfc/font.h"
-#include "bagel/mfc/palette.h"
-#include "bagel/mfc/rect.h"
-#include "bagel/mfc/str.h"
-#include "bagel/mfc/wnd.h"
+#ifndef BAGEL_MFC_FONT_H
+#define BAGEL_MFC_FONT_H
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
-using namespace Bagel::MFC;
+struct TEXTMETRIC {
+};
+typedef TEXTMETRIC *LPTEXTMETRIC;
 
-} // namespace HodjNPodj
+} // namespace MFC
 } // namespace Bagel
 
 #endif

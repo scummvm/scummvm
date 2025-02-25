@@ -19,11 +19,19 @@
  *
  */
 
+#include "common/textconsole.h"
 #include "bagel/mfc/button.h"
 
 namespace Bagel {
 namespace MFC {
 
+void CButton::SetButtonStyle(UINT nStyle, BOOL bRedraw) {
+	error("TODO: CButton::SetButtonStyle");
+}
+
+void CBitmapButton::SizeToContent() {
+	error("TODO: CBitmapButton::SizeToContent");
+}
 
 } // namespace MFC
 } // namespace Bagel

@@ -404,7 +404,7 @@ ErrorCode CBofListBox::repaintAll() {
 					} else {
 						// Display text
 						// Allow list items of different colors.
-						RGBCOLOR rgbTextColor = _cTextColor;
+						COLORREF rgbTextColor = _cTextColor;
 						if (_cTextItems.getNodeItem(i + _n1stVisible)._nTextLineColor != COLOR_USE_DEFAULT) {
 							rgbTextColor = _cTextItems.getNodeItem(i + _n1stVisible)._nTextLineColor;
 						}
@@ -480,7 +480,7 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 			} else {
 				// Display text
 				// Allow list items of different colors.
-				RGBCOLOR rgbTextColor = _cTextColor;
+				COLORREF rgbTextColor = _cTextColor;
 				if (_cTextItems.getNodeItem(i + _n1stVisible)._nTextLineColor != COLOR_USE_DEFAULT) {
 					rgbTextColor = _cTextItems.getNodeItem(i + _n1stVisible)._nTextLineColor;
 				}
@@ -537,7 +537,7 @@ void CBofListBox::setText(int nIndex, const CBofString &cStr) {
 }
 
 
-void CBofListBox::setTextLineColor(int nIndex, RGBCOLOR rgbColor) {
+void CBofListBox::setTextLineColor(int nIndex, COLORREF rgbColor) {
 
 	ListBoxItem lbi = _cTextItems.getNodeItem(nIndex);
 	lbi._nTextLineColor = rgbColor;

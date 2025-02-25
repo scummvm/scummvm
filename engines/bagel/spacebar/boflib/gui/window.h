@@ -292,17 +292,17 @@ public:
 		return _nID;
 	}
 
-	void setBkColor(RGBCOLOR cColor) {
+	void setBkColor(COLORREF cColor) {
 		_cBkColor = cColor;
 	}
-	RGBCOLOR getBkColor() const {
+	COLORREF getBkColor() const {
 		return _cBkColor;
 	}
 
-	void setFgColor(RGBCOLOR cColor) {
+	void setFgColor(COLORREF cColor) {
 		_cFgColor = cColor;
 	}
-	RGBCOLOR getFgColor() const {
+	COLORREF getFgColor() const {
 		return _cFgColor;
 	}
 
@@ -409,7 +409,7 @@ public:
 	void fillWindow(byte iColor);
 	void fillRect(CBofRect *pRect, byte iColor);
 
-	ErrorCode paintBeveledText(CBofRect *rect, const CBofString &string, int size, int weight, RGBCOLOR color, int justify, uint32 format);
+	ErrorCode paintBeveledText(CBofRect *rect, const CBofString &string, int size, int weight, COLORREF color, int justify, uint32 format);
 
 
 protected:
@@ -441,8 +441,8 @@ protected:
 	CBofBitmap *_pBackdrop = nullptr;  // Backdrop bitmap
 	uint32 _nID = 0;						// ID of this window
 
-	RGBCOLOR _cBkColor = RGB(255, 255, 255);
-	RGBCOLOR _cFgColor = RGB(0, 0, 0);
+	COLORREF _cBkColor = RGB(255, 255, 255);
+	COLORREF _cFgColor = RGB(0, 0, 0);
 
 	bool _bCaptured = false;
 	Graphics::ManagedSurface *_surface = nullptr;

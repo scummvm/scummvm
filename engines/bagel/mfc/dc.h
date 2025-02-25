@@ -23,7 +23,10 @@
 #define BAGEL_MFC_DC_H
 
 #include "bagel/mfc/mfc_types.h"
+#include "bagel/mfc/font.h"
 #include "bagel/mfc/palette.h"
+#include "bagel/mfc/rect.h"
+#include "bagel/mfc/str.h"
 
 namespace Bagel {
 namespace MFC {
@@ -33,6 +36,49 @@ enum DeviceCaps {
 };
 enum {
 	SRCCOPY
+};
+enum {
+	PS_INSIDEFRAME,
+	PS_SOLID
+};
+enum {
+	OPAQUE,
+	TRANSPARENT
+};
+enum {
+	WHITE_BRUSH         =  0,
+	LTGRAY_BRUSH        =  1,
+	GRAY_BRUSH          =  2,
+	DKGRAY_BRUSH        =  3,
+	BLACK_BRUSH         =  4,
+	NULL_BRUSH          =  5,
+	HOLLOW_BRUSH        =  NULL_BRUSH,
+	WHITE_PEN           =  6,
+	BLACK_PEN           =  7,
+	NULL_PEN            =  8,
+	OEM_FIXED_FONT      = 10,
+	ANSI_FIXED_FONT     = 11,
+	ANSI_VAR_FONT       = 12,
+	SYSTEM_FONT         = 13,
+	DEVICE_DEFAULT_FONT = 14,
+	DEFAULT_PALETTE     = 15,
+	SYSTEM_FIXED_FONT   = 16
+};
+enum {
+	ODA_DRAWENTIRE = 0x0001,
+	ODA_SELECT     = 0x0002,
+	ODA_FOCUS      = 0x0004
+};
+
+class CPen {
+public:
+	BOOL CreatePen(int nPenStyle, int nWidth, COLORREF crColor);
+};
+
+class CBrush {
+public:
+	void CreateSolidBrush(COLORREF color);
+	void CreateStockObject(int brush);
 };
 
 class CDC;
@@ -55,16 +101,25 @@ typedef DRAWITEMSTRUCT *LPDRAWITEMSTRUCT;
 class CDC {
 private:
 	CPalette _palette;
+	CPen *_pen = nullptr;
+	CBrush *_brush = nullptr;
 
 public:
 	HDC m_hDC;
 
 public:
 	CDC() : m_hDC(this), _palette(PALETTE_COUNT) {}
+	~CDC();
 
 	int GetDeviceCaps(int field) const;
 	CPalette *SelectPalette(CPalette *pPalette, bool bForceBackground);
 	void RealizePalette();
+
+	void Attach(HDC dc);
+	void Detach();
+
+	CPen *SelectObject(CPen *pen);
+	CBrush *SelectObject(CBrush *brush);
 
 	/**
 	 * Performs a bit-block transfer of bitmaps
@@ -80,6 +135,23 @@ public:
 	 */
 	bool BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 		int xSrc, int ySrc, uint32 dwRop);
+
+	void Rectangle(int x1, int y1, int x2, int y2);
+	void Rectangle(const LPRECT rect);
+	void MoveTo(int x, int y);
+	void LineTo(int x, int y);
+	int FrameRect(LPCRECT lpRect, CBrush *pBrush);
+	void Ellipse(LPCRECT lpRect);
+	int SetBkMode(int nBkMode);
+
+	BOOL GetTextMetrics(LPTEXTMETRIC lptm);
+	CSize GetTextExtent(const char *lpszString) const;
+	CSize GetTextExtent(const char *lpszString, int nCount) const;
+	CSize GetTextExtent(const CString &str) const;
+	CSize GetTextExtent(const wchar_t *lpszString, int nCount) const;
+	int SetTextColor(int nTextColor);
+	BOOL TextOut(int x, int y, const char *lpszString);
+	BOOL TextOut(int x, int y, const char *lpszString, int nCount);
 };
 
 } // namespace MFC

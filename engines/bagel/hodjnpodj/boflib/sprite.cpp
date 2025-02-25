@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/mfc/mfc_types.h"
+#include "bagel/hodjnpodj/boflib/sprite.h"
 
 namespace Bagel {
 namespace HodjNPodj {

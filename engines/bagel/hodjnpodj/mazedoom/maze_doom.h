@@ -23,10 +23,9 @@
 #define HODJNPODJ_MAZEDOOM_MAZE_DOOM_H
 
 #include "bagel/bagel.h"
-#include "bagel/hodjnpodj/libs/types.h"
 #include "bagel/mfc/afx.h"
-#include "bagel/spacebar/boflib/gui/button.h"
-#include "bagel/spacebar/boflib/gfx/sprite.h"
+#include "bagel/hodjnpodj/libs/types.h"
+#include "bagel/hodjnpodj/boflib/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {

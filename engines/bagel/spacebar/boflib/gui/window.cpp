@@ -750,7 +750,7 @@ void CBofWindow::fillRect(CBofRect *pRect, byte iColor) {
 	cBmp.paint(this, 0, 0);
 }
 
-ErrorCode CBofWindow::paintBeveledText(CBofRect *rect, const CBofString &cString, const int size, const int weight, const RGBCOLOR color, int justify, uint32 format) {
+ErrorCode CBofWindow::paintBeveledText(CBofRect *rect, const CBofString &cString, const int size, const int weight, const COLORREF color, int justify, uint32 format) {
 	assert(rect != nullptr);
 
 	CBofBitmap bmp(rect->width(), rect->height(), nullptr, false);

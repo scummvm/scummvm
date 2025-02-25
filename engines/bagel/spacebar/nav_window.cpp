@@ -293,7 +293,7 @@ ErrorCode CNavWindow::attach() {
 	setTimer(777, 200, nullptr);
 
 	BofPlaySound(makeDir(WELCOME_SND), SOUND_WAVE);
-	CSound::waitWaveSounds();
+	CBofSound::waitWaveSounds();
 
 	CBagCursor::showSystemCursor();
 
