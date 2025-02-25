@@ -185,6 +185,9 @@ void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 	Common::Rect stepBackgroundRect = Common::Rect(69, 177, 98, 185);
 	surface->fillRect(stepBackgroundRect, back);
 
+	Common::Rect positionBackgroundRect = Common::Rect(199, 135, 232, 160);
+	surface->fillRect(positionBackgroundRect, back);
+
 	int score = _gameStateVars[k8bitVariableScore];
 	int ecds = _gameStateVars[kVariableActiveECDs];
 	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 199, 137, front, back, surface);
