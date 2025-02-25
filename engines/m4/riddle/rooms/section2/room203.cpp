@@ -2056,7 +2056,7 @@ void Room203::daemon() {
 					triggerMachineByHashCallback, "rip in conv");
 				sendWSMessage_10000(1, _ripley, _ripKneeling, 1, 31, 150, _ripKneeling, 31, 31, 0);
 				_ripleyShould = 1112;
-				_oldLadyMode = 5568;
+				_oldLadyMode = 5668;
 				_oldLadyShould = 5301;
 				kernel_trigger_dispatchx(kernel_trigger_create(130));
 				break;
@@ -2244,8 +2244,13 @@ void Room203::daemon() {
 			_ripleyShould = 1040;
 			break;
 		case 1002:
-			_ripleyShould = (_unkShould == 1121) ? 1121 : 5303;
+			if (_unkShould == 1121)
+				// It never happens
+				_ripleyShould = 1121;
+			else
+				_oldLadyShould = 5303;
 			break;
+			
 		case 1003:
 			_ripleyShould = 1240;
 			break;
