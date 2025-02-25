@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-24 23:38+0000\n"
-"PO-Revision-Date: 2025-02-23 12:30+0000\n"
+"PO-Revision-Date: 2025-02-25 13:39+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -10775,7 +10775,7 @@ msgstr "Aclara los gráficos para simular un monitor de Macintosh."
 
 #: engines/scumm/dialogs.cpp:1195
 msgid "Simulate Sega colors"
-msgstr ""
+msgstr "Simular colores de Sega"
 
 #: engines/scumm/dialogs.cpp:1196
 msgid ""
@@ -10783,6 +10783,9 @@ msgid ""
 "actual Sega hardware. These are significantly darker, though it's unclear if "
 "that was intended or not."
 msgstr ""
+"En vez de utilizar los colores que están definidos por el juego, simular los "
+"que utilizaría el hardware real de Sega. Dichos colores son bastante más "
+"oscuros, aunque no está claro si eran intencionados."
 
 #: engines/scumm/dialogs.cpp:1312
 msgid "Overture Timing:"
