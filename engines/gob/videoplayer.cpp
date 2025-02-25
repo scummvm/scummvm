@@ -304,7 +304,7 @@ bool VideoPlayer::closeVideo(int slot) {
 	return true;
 }
 
-void VideoPlayer::closeLiveSound() {
+void VideoPlayer::closeLiveVideos() {
 	for (int i = 1; i < kVideoSlotCount; i++) {
 		Video *video = getVideoBySlot(i);
 		if (!video)
