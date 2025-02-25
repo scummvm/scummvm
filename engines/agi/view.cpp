@@ -184,25 +184,29 @@ int AgiEngine::decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr)
 			error("unexpected end of view data for view %d", viewNr);
 
 		// loop-header:
-		//  celCount:BYTE
+		//  celCount:BYTE [ upper nibble used as mirror data in 2.230 ]
 		//  relativeCelOffset[0]:WORD
 		//  relativeCelOffset[1]:WORD
 		//  etc.
-		byte loopHeaderCelCount = resourceData[loopOffset];
-
-		loopData->celCount = loopHeaderCelCount;
+		byte loopHeaderCelCountByte = resourceData[loopOffset];
+		const bool isMirrorDataInLoopHeader = (getVersion() == 0x2230);
+		if (isMirrorDataInLoopHeader) {
+			loopData->celCount = loopHeaderCelCountByte & 0x0f;
+		} else {
+			loopData->celCount = loopHeaderCelCountByte;
+		}
 		loopData->cel = nullptr;
 
 		// Check, if at least the cel-offsets for current loop are available
-		if (resourceSize < (loopOffset + 1 + (loopHeaderCelCount * 2)))
+		if (resourceSize < (loopOffset + 1 + (loopData->celCount * 2)))
 			error("unexpected end of view data for view %d", viewNr);
 
-		if (loopHeaderCelCount) {
+		if (loopData->celCount) {
 			// Allocate space for cel-information of current loop
-			AgiViewCel *celData = new AgiViewCel[loopHeaderCelCount];
+			AgiViewCel *celData = new AgiViewCel[loopData->celCount];
 			loopData->cel = celData;
 
-			for (int16 celNr = 0; celNr < loopHeaderCelCount; celNr++) {
+			for (int16 celNr = 0; celNr < loopData->celCount; celNr++) {
 				uint16 celOffset = READ_LE_UINT16(resourceData + loopOffset + 1 + (celNr * 2));
 				celOffset += loopOffset; // cel offset is relative to loop offset, so adjust accordingly
 
@@ -237,12 +241,27 @@ int AgiEngine::decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr)
 						celHeaderClearKey = apple2ViewColorMap[celHeaderClearKey];
 					}
 
-					if (celHeaderTransparencyMirror & 0x80) {
-						// mirror bit is set
-						byte celHeaderMirrorLoop = (celHeaderTransparencyMirror >> 4) & 0x07;
-						if (celHeaderMirrorLoop != loopNr) {
-							// only set to mirrored in case we are not the original loop
-							celHeaderMirrored = true;
+					if (isMirrorDataInLoopHeader) {
+						// 2.230 (early version of xmascard): mirror data is in loop header.
+						if (loopHeaderCelCountByte & 0x80) {
+							// mirror bit is set
+							// there is a second mirror bit whose purpose is currently unknown;
+							// both bits are set in every xmascard loop with mirror data.
+							byte celHeaderMirrorLoop = (loopHeaderCelCountByte >> 4) & 0x03;
+							if (celHeaderMirrorLoop != loopNr) {
+								// only set to mirrored in case we are not the original loop
+								celHeaderMirrored = true;
+							}
+						}
+					} else {
+						// 2.272+: mirror data is in cel header
+						if (celHeaderTransparencyMirror & 0x80) {
+							// mirror bit is set
+							byte celHeaderMirrorLoop = (celHeaderTransparencyMirror >> 4) & 0x07;
+							if (celHeaderMirrorLoop != loopNr) {
+								// only set to mirrored in case we are not the original loop
+								celHeaderMirrored = true;
+							}
 						}
 					}
 				} else {
