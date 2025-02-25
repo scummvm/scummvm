@@ -874,8 +874,14 @@ static const AGIGameDescription gameDescriptions[] = {
 		"wintitle.pic", "cc8d2ae52e18700843f466a23d62c773", 6144,
 		"room62",		"813de04fd57063a402272c603be1188a", 1338, 0x0000, GID_WINNIE, Common::kPlatformCoCo),
 
+	// Xmas Card 1986 (PC) [AGI 2.230]
+	// Includes a scene of Tandy presents being unwrapped.
+	// Does not include demo scenes for AGI games.
+	// Only known game with this interpreter, uses a unique view format.
+	GAME("xmascard", "1986-10-13 [version 1]", "b77b968a84e8cb70a6c9972879f485f4", 0x2230, GID_XMASCARD),
+
 	// Xmas Card 1986 (PC) [AGI 2.272]
-	GAME("xmascard", "1986-11-13 [version 1]", "3067b8d5957e2861e069c3c0011bd43d", 0x2272, GID_XMASCARD),
+	GAME("xmascard", "1986-11-13 [version 2]", "3067b8d5957e2861e069c3c0011bd43d", 0x2272, GID_XMASCARD),
 
 	// Xmas Card 1986 (CoCo3 360k) [AGI 2.072]
 	// Appears to be an unofficial port
