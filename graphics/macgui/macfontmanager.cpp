@@ -504,17 +504,47 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 		}
 
 		if (!_fontRegistry.contains(macFont->getName())) {
-			// Let's try to generate name
-			if (macFont->getSlant() != kMacFontRegular) {
-				name = getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant(), true);
-				macFont->setName(name);
-			}
+			int id = macFont->getId();
 
-			if (!_fontRegistry.contains(macFont->getName()))
-				generateFontSubstitute(*macFont);
+			if (_fontInfo.contains(id) && _winFontRegistry.contains(_fontInfo.getVal(id)->name)) {
+				font = _winFontRegistry.getVal(_fontInfo.getVal(id)->name);
+				const Graphics::WinFont *winfont = (const Graphics::WinFont *)font;
+
+				if (winfont->getFontHeight() != macFont->getSize()) {
+					Common::String fullFontName = Common::String::format("%s-%d-%d", winfont->getName().c_str(), winfont->getStyle(), macFont->getSize());
+
+					if (_winFontRegistry.contains(fullFontName)) {
+						font = _winFontRegistry.getVal(fullFontName);
+					} else {
+						// Generate a scaledFont
+						Graphics::WinFont *scaledWinFont = WinFont::scaleFont(winfont, macFont->getSize());
+						if (scaledWinFont) {
+							debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont(): Generated scaled winFont %s", fullFontName.c_str());
+
+							// register font generated for reuse
+							_winFontRegistry.setVal(fullFontName, scaledWinFont);
+
+							font = scaledWinFont;
+						}
+					}
+				}
+			}
 		}
 
-		font = FontMan.getFontByName(macFont->getName());
+		if (!font) {
+			if (!_fontRegistry.contains(macFont->getName())) {
+				// Let's try to generate name
+				if (macFont->getSlant() != kMacFontRegular) {
+					name = getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant(), true);
+					macFont->setName(name);
+				}
+
+				if (!_fontRegistry.contains(macFont->getName()))
+					generateFontSubstitute(*macFont);
+			}
+
+			font = FontMan.getFontByName(macFont->getName());
+		}
 
 		if (!font) {
 			debugC(1, kDebugLevelMacGUI, "Cannot load font '%s'", macFont->getName().c_str());
@@ -554,37 +584,6 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 		}
 	}
 #endif
-
-	if (!font) {
-		int id = macFont->getId();
-
-		if (_fontInfo.contains(id) && _winFontRegistry.contains(_fontInfo.getVal(id)->name)) {
-			font = _winFontRegistry.getVal(_fontInfo.getVal(id)->name);
-			const Graphics::WinFont *winfont = (const Graphics::WinFont *)font;
-
-			if (winfont->getFontHeight() != macFont->getSize()) {
-				debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont(): For font '%s' windows font '%s' is used of a different size %d", macFont->getName().c_str(), winfont->getName().c_str(), winfont->getFontHeight());
-
-				Common::String fullFontName = Common::String::format("%s-%d-%d", winfont->getName().c_str(), winfont->getStyle(), macFont->getSize());
-
-				if (_winFontRegistry.contains(fullFontName)) {
-					// Check if we have generated this earlier, in that case reuse it.
-					font = _winFontRegistry.getVal(fullFontName);
-				} else {
-					// Generate a scaledFont
-					Graphics::WinFont *scaledWinFont = WinFont::scaleFont(winfont, macFont->getSize());
-					if (scaledWinFont) {
-						debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont(): Generated scaled winFont %s", fullFontName.c_str());
-
-						// register font generated for reuse
-						_winFontRegistry.setVal(fullFontName, scaledWinFont);
-
-						font = scaledWinFont;
-					}
-				}
-			}
-		}
-	}
 
 	if (!font) {
 		font = macFont->getFallback();
