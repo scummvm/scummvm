@@ -462,6 +462,9 @@ Game::Game(GobEngine *vm) : _vm(vm), _environments(_vm), _totFunctions(_vm) {
 
 	_handleMouse = 0;
 	_forceHandleMouse = 0;
+	_hasForwardedEventsFromVideo = false;
+	_forwardedMouseButtonsFromVideo = kMouseButtonsNone;
+	_forwardedKeyFromVideo = 0;
 	_noScroll = true;
 	_preventScroll = false;
 
@@ -840,7 +843,15 @@ int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
 			*pButtons = kMouseButtonsNone;
 	}
 
-	return _vm->_util->checkKey();
+	int16 key = _vm->_util->checkKey();
+	if (_vm->_game->_hasForwardedEventsFromVideo) {
+		if (pButtons)
+			*pButtons = _vm->_game->_forwardedMouseButtonsFromVideo;
+		key = _vm->_game->_forwardedKeyFromVideo;
+		_vm->_game->_hasForwardedEventsFromVideo = false;
+	}
+
+	return key;
 }
 
 void Game::start() {
