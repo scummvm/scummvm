@@ -177,7 +177,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 	}
 
 	if (props.hasSound)
-		_vm->_vidPlayer->closeLiveSound();
+		_vm->_vidPlayer->closeLiveVideos();
 
 	if (props.startFrame >= 0)
 		_vm->_vidPlayer->play(slot, props);

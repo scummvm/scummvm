@@ -117,7 +117,7 @@ public:
 	int  openVideo(bool primary, const Common::String &file, Properties &properties);
 	bool closeVideo(int slot = 0);
 
-	void closeLiveSound();
+	void closeLiveVideos();
 	void closeAll();
 
 	bool reopenVideo(int slot = 0);

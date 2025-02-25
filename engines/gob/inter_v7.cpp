@@ -610,7 +610,7 @@ void Inter_v7::o7_playVmdOrMusic() {
 			props.palCmd, props.palStart, props.palEnd, props.flags);
 
 	if (file == "RIEN") {
-		_vm->_vidPlayer->closeLiveSound();
+		_vm->_vidPlayer->closeLiveVideos();
 		return;
 	}
 
@@ -734,15 +734,13 @@ void Inter_v7::o7_playVmdOrMusic() {
 	if (props.startFrame == -2 || props.startFrame == -3) {
 		props.startFrame = 0;
 		props.lastFrame  = 0;
+		close = false;
 	}
-
-	if (props.hasSound)
-		_vm->_vidPlayer->closeLiveSound();
 
 	if (props.startFrame >= 0)
 		_vm->_vidPlayer->play(slot, props);
 
-	if (close && !props.noBlock) {
+	if (close) {
 		if (!props.canceled)
 			_vm->_vidPlayer->waitSoundEnd(slot);
 		_vm->_vidPlayer->closeVideo(slot);
