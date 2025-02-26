@@ -24,8 +24,8 @@
 #define BAGEL_BOFLIB_RES_H
 
 #include "bagel/spacebar/boflib/file.h"
-#include "bagel/spacebar/boflib/llist.h"
-#include "bagel/spacebar/boflib/object.h"
+#include "bagel/boflib/llist.h"
+#include "bagel/boflib/object.h"
 
 namespace Bagel {
 namespace SpaceBar {

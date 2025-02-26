@@ -23,7 +23,7 @@
 #define BAGEL_BOFLIB_GFX_SPRITE_H
 
 #include "bagel/spacebar/boflib/gfx/bitmap.h"
-#include "bagel/spacebar/boflib/object.h"
+#include "bagel/boflib/object.h"
 #include "bagel/spacebar/boflib/gfx/palette.h"
 #include "bagel/spacebar/boflib/gui/window.h"
 

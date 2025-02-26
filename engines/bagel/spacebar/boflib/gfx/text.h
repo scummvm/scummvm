@@ -23,10 +23,10 @@
 #define BAGEL_BOFLIB_GFX_TEXT_H
 
 #include "graphics/font.h"
-#include "bagel/spacebar/boflib/object.h"
+#include "bagel/boflib/object.h"
 #include "bagel/spacebar/boflib/gfx/bitmap.h"
-#include "bagel/spacebar/boflib/error.h"
-#include "bagel/spacebar/boflib/string.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/string.h"
 
 namespace Bagel {
 namespace SpaceBar {

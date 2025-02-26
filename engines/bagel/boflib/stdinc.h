@@ -26,7 +26,6 @@
 #include "common/scummsys.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 /*
  * Normal types
@@ -91,7 +90,6 @@ struct WindowPos {
 
 #define MAX_DIRPATH 256
 
-} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

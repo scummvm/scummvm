@@ -20,11 +20,11 @@
  */
 
 #include "common/file.h"
-#include "bagel/spacebar/boflib/event_loop.h"
+#include "bagel/boflib/event_loop.h"
 #include "bagel/spacebar/baglib/sound_object.h"
 #include "bagel/bagel.h"
-#include "bagel/spacebar/boflib/file_functions.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 namespace SpaceBar {

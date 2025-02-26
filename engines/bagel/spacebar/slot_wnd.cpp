@@ -21,9 +21,10 @@
 
 #include "bagel/spacebar/slot_wnd.h"
 #include "bagel/spacebar/baglib/bagel.h"
-#include "bagel/spacebar/boflib/sound.h"
 #include "bagel/bagel.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 namespace SpaceBar {

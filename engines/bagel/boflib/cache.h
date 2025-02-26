@@ -23,11 +23,10 @@
 #ifndef BAGEL_BOFLIB_CACHE_H
 #define BAGEL_BOFLIB_CACHE_H
 
-#include "bagel/spacebar/boflib/llist.h"
-#include "bagel/spacebar/boflib/stdinc.h"
+#include "bagel/boflib/llist.h"
+#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 class CCache : private CLList {
 private:
@@ -97,7 +96,6 @@ public:
 	static bool optimize(uint32 lRequestedFreeSpace);
 };
 
-} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

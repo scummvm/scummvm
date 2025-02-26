@@ -29,7 +29,7 @@
 #include "bagel/spacebar/boflib/app.h"
 #include "bagel/spacebar/boflib/timer.h"
 #include "bagel/spacebar/boflib/gfx/text.h"
-#include "bagel/spacebar/boflib/sound.h"
+#include "bagel/boflib/sound.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {

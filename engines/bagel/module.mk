@@ -3,6 +3,18 @@ MODULE := engines/bagel
 MODULE_OBJS = \
 	bagel.o \
 	metaengine.o \
+	music.o \
+	boflib/cache.o \
+	boflib/error.o \
+	boflib/event_loop.o \
+	boflib/file_functions.o \
+	boflib/llist.o \
+	boflib/log.o \
+	boflib/misc.o \
+	boflib/queue.o \
+	boflib/sound.o \
+	boflib/string.o \
+	boflib/string_functions.o \
 	mfc/bitmap.o \
 	mfc/button.o \
 	mfc/dc.o \
@@ -55,23 +67,12 @@ MODULE_OBJS = \
 	spacebar/baglib/wield.o \
 	spacebar/baglib/zoom_pda.o \
 	spacebar/boflib/app.o \
-	spacebar/boflib/cache.o \
 	spacebar/boflib/crc.o \
 	spacebar/boflib/dat_file.o \
 	spacebar/boflib/debug.o \
-	spacebar/boflib/error.o \
-	spacebar/boflib/event_loop.o \
 	spacebar/boflib/file.o \
-	spacebar/boflib/file_functions.o \
-	spacebar/boflib/llist.o \
-	spacebar/boflib/log.o \
-	spacebar/boflib/misc.o \
 	spacebar/boflib/options.o \
-	spacebar/boflib/queue.o \
-	spacebar/boflib/string_functions.o \
 	spacebar/boflib/res.o \
-	spacebar/boflib/sound.o \
-	spacebar/boflib/string.o \
 	spacebar/boflib/timer.o \
 	spacebar/boflib/vector.o \
 	spacebar/boflib/gfx/bitmap.o \
@@ -105,7 +106,6 @@ MODULE_OBJS = \
 	spacebar/main_link_object.o \
 	spacebar/main_window.o \
 	spacebar/master_win.o \
-	spacebar/music.o \
 	spacebar/nav_window.o \
 	spacebar/slot_wnd.o \
 	spacebar/sraf_computer.o \
@@ -116,7 +116,6 @@ MODULE_OBJS = \
 	hodjnpodj/libs/dib_doc.o \
 	hodjnpodj/boflib/bitmaps.o \
 	hodjnpodj/boflib/button.o \
-	hodjnpodj/boflib/sound.o \
 	hodjnpodj/boflib/sprite.o \
 	hodjnpodj/boflib/text.o \
 	hodjnpodj/mazedoom/main_window.o \

@@ -24,14 +24,14 @@
 #include "engines/engine.h"
 
 #include "bagel/spacebar/baglib/bagel.h"
-#include "bagel/spacebar/boflib/sound.h"
+#include "bagel/boflib/sound.h"
 #include "bagel/spacebar/dialogs/next_cd_dialog.h"
 #include "bagel/spacebar/dialogs/opt_window.h"
 #include "bagel/spacebar/baglib/paint_table.h"
 #include "bagel/spacebar/baglib/master_win.h"
 #include "bagel/spacebar/boflib/debug.h"
-#include "bagel/spacebar/boflib/file_functions.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 namespace SpaceBar {
@@ -215,19 +215,6 @@ ErrorCode CBagel::verifyCDInDrive(int diskId, const char *waveFile) {
 
 	return _errCode;
 }
-
-void fixPathName(CBofString &s) {
-	// Remove any homedir prefix. In ScummVM, all paths are relative
-	// to the game folder automatically
-	char *p = strstr(s.getBuffer(), HOMEDIR_TOKEN);
-	if (p != nullptr)
-		s = p + strlen(HOMEDIR_TOKEN) + 1;
-
-	// Replace any backslashes with forward slashes
-	while ((p = strchr(s.getBuffer(), '\\')) != nullptr)
-		*p = '/';
-}
-
 
 void CBagel::showNextCDDialog(CBofWindow *parentWin, int diskId) {
 	CBagNextCDDialog cNextCDDialog;

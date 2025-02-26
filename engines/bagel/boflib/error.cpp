@@ -21,11 +21,10 @@
 
 #include "common/str.h"
 #include "gui/debugger.h"
-#include "bagel/spacebar/boflib/error.h"
+#include "bagel/boflib/error.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 const char *const g_errList[] = {
 	"No Error",
@@ -101,5 +100,4 @@ void CBofError::fatalError(ErrorCode errCode, const char *format, ...) {
 	error("%s - %s", g_errList[errCode], buf.c_str());
 }
 
-} // namespace SpaceBar
 } // namespace Bagel

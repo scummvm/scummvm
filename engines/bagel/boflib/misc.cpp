@@ -20,13 +20,12 @@
  */
 
 #include "common/file.h"
-#include "bagel/spacebar/boflib/misc.h"
-#include "bagel/spacebar/boflib/cache.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/boflib/cache.h"
 #include "bagel/bagel.h"
-#include "bagel/spacebar/boflib/string_functions.h"
+#include "bagel/boflib/string_functions.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 #define MAX_LINE_LEN 100
 
@@ -178,5 +177,4 @@ int mapWindowsPointSize(int pointSize) {
 	return pointSize;
 }
 
-} // namespace SpaceBar
 } // namespace Bagel

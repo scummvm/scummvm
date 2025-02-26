@@ -26,22 +26,23 @@
 #include "common/list.h"
 #include "common/events.h"
 #include "bagel/spacebar/boflib/array.h"
-#include "bagel/spacebar/boflib/stdinc.h"
-#include "bagel/spacebar/boflib/error.h"
-#include "bagel/spacebar/boflib/object.h"
+#include "bagel/boflib/stdinc.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/object.h"
 #include "bagel/spacebar/boflib/point.h"
 #include "bagel/spacebar/boflib/rect.h"
 #include "bagel/spacebar/boflib/size.h"
 #include "bagel/spacebar/boflib/timer.h"
-#include "bagel/spacebar/boflib/llist.h"
+#include "bagel/boflib/llist.h"
 #include "bagel/spacebar/boflib/gfx/bitmap.h"
 #include "bagel/spacebar/boflib/gfx/palette.h"
 #include "bagel/spacebar/boflib/gfx/text.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 class CBofString;
+
+namespace SpaceBar {
 
 #define MAX_TITLE 64
 #define USE_DEFAULT (-1)

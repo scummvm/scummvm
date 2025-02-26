@@ -25,7 +25,7 @@
 
 #include "bagel/spacebar/baglib/object.h"
 #include "bagel/spacebar/baglib/bagel.h"
-#include "bagel/spacebar/boflib/sound.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 namespace SpaceBar {

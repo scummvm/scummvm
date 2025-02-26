@@ -25,10 +25,10 @@
 
 #include "bagel/spacebar/boflib/gfx/text.h"
 #include "bagel/spacebar/baglib/cursor.h"
-#include "bagel/spacebar/boflib/string.h"
+#include "bagel/boflib/string.h"
 #include "bagel/spacebar/baglib/bagel.h"
 #include "bagel/spacebar/boflib/gui/window.h"
-#include "bagel/spacebar/boflib/sound.h"
+#include "bagel/boflib/sound.h"
 #include "bagel/spacebar/baglib/object.h"
 #include "bagel/spacebar/baglib/save_game_file.h"
 #include "bagel/spacebar/baglib/var.h"

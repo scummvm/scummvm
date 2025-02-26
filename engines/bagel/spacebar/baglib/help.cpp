@@ -23,8 +23,8 @@
 #include "bagel/spacebar/boflib/file.h"
 #include "bagel/spacebar/baglib/bagel.h"
 #include "bagel/spacebar/baglib/master_win.h"
-#include "bagel/spacebar/boflib/file_functions.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {

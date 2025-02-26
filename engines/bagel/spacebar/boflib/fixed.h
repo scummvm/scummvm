@@ -23,8 +23,8 @@
 #ifndef BAGEL_BOFLIB_FIXED_H
 #define BAGEL_BOFLIB_FIXED_H
 
-#include "bagel/spacebar/boflib/object.h"
-#include "bagel/spacebar/boflib/misc.h"
+#include "bagel/boflib/object.h"
+#include "bagel/boflib/misc.h"
 
 namespace Bagel {
 namespace SpaceBar {

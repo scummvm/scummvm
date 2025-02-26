@@ -25,7 +25,7 @@
 #include "bagel/spacebar/baglib/log_msg.h"
 #include "bagel/spacebar/baglib/pda.h"
 #include "bagel/spacebar/baglib/zoom_pda.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 namespace SpaceBar {

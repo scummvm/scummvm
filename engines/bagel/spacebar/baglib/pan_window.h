@@ -27,7 +27,7 @@
 #include "bagel/spacebar/baglib/storage_dev_win.h"
 #include "bagel/spacebar/baglib/wield.h"
 #include "bagel/spacebar/baglib/pan_bitmap.h"
-#include "bagel/spacebar/boflib/stdinc.h"
+#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 namespace SpaceBar {

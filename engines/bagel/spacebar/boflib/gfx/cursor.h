@@ -23,8 +23,8 @@
 #ifndef BAGEL_BOFLIB_GFX_CURSOR_H
 #define BAGEL_BOFLIB_GFX_CURSOR_H
 
-#include "bagel/spacebar/boflib/error.h"
-#include "bagel/spacebar/boflib/object.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/object.h"
 
 namespace Bagel {
 namespace SpaceBar {

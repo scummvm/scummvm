@@ -22,7 +22,7 @@
 #include "bagel/spacebar/boflib/gui/window.h"
 #include "bagel/spacebar/boflib/app.h"
 #include "bagel/spacebar/boflib/events.h"
-#include "bagel/spacebar/boflib/sound.h"
+#include "bagel/boflib/sound.h"
 #include "bagel/spacebar/boflib/std_keys.h"
 #include "bagel/metaengine.h"
 #include "bagel/bagel.h"

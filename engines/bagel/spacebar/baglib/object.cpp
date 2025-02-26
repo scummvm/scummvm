@@ -22,6 +22,7 @@
 #include "bagel/spacebar/baglib/object.h"
 #include "bagel/spacebar/baglib/menu_dlg.h"
 #include "bagel/spacebar/baglib/master_win.h"
+#include "bagel/boflib/file_functions.h"
 
 namespace Bagel {
 namespace SpaceBar {

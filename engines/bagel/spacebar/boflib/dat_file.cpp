@@ -22,10 +22,10 @@
 #include "bagel/spacebar/boflib/dat_file.h"
 #include "bagel/spacebar/boflib/crc.h"
 #include "bagel/spacebar/boflib/debug.h"
-#include "bagel/spacebar/boflib/log.h"
-#include "bagel/spacebar/boflib/misc.h"
-#include "bagel/spacebar/boflib/stdinc.h"
-#include "bagel/spacebar/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/boflib/stdinc.h"
+#include "bagel/boflib/file_functions.h"
 
 namespace Bagel {
 namespace SpaceBar {

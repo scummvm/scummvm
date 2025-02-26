@@ -26,7 +26,7 @@
 #include "bagel/spacebar/baglib/expression.h"
 #include "bagel/spacebar/baglib/res.h"
 #include "bagel/spacebar/boflib/gfx/bitmap.h"
-#include "bagel/spacebar/boflib/string.h"
+#include "bagel/boflib/string.h"
 #include "bagel/spacebar/baglib/parse_object.h"
 
 namespace Bagel {

@@ -34,6 +34,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 
 BagelEngine::~BagelEngine() {
 	delete _screen;
+	delete _midi;
 }
 
 uint32 BagelEngine::getFeatures() const {

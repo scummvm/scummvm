@@ -22,12 +22,13 @@
 #include "bagel/spacebar/baglib/log_msg.h"
 #include "bagel/spacebar/baglib/button_object.h"
 #include "bagel/spacebar/baglib/menu_dlg.h"
-#include "bagel/spacebar/boflib/sound.h"
 #include "bagel/spacebar/boflib/gui/movie.h"
 #include "bagel/spacebar/baglib/master_win.h"
 #include "bagel/spacebar/baglib/pda.h"
 #include "bagel/spacebar/boflib/gfx/text.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 namespace SpaceBar {

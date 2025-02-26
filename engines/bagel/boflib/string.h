@@ -24,10 +24,9 @@
 #define BAGEL_BOFLIB_STRING_H
 
 #include "common/system.h"
-#include "bagel/spacebar/boflib/object.h"
+#include "bagel/boflib/object.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 // The buffer size and string len members are shorts, and use the high byte
 // of the buffer size to tell us if it is stack memory being used.
@@ -270,7 +269,6 @@ inline bool operator>=(const char *s1, const CBofString &s2) {
 	return s2.compare(s1) <= 0;
 }
 
-} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

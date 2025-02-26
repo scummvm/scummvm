@@ -23,8 +23,8 @@
 #ifndef BAGEL_BAGLIB_IFSTREAM_H
 #define BAGEL_BAGLIB_IFSTREAM_H
 
-#include "bagel/spacebar/boflib/object.h"
-#include "bagel/spacebar/boflib/string.h"
+#include "bagel/boflib/object.h"
+#include "bagel/boflib/string.h"
 
 namespace Bagel {
 namespace SpaceBar {

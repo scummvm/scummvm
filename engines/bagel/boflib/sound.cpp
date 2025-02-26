@@ -26,22 +26,22 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 
-#include "bagel/spacebar/spacebar.h"
-#include "bagel/spacebar/boflib/app.h"
-#include "bagel/spacebar/boflib/event_loop.h"
-#include "bagel/spacebar/boflib/sound.h"
-#include "bagel/spacebar/boflib/file_functions.h"
-#include "bagel/spacebar/boflib/string_functions.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "bagel/bagel.h"
+#include "bagel/boflib/sound.h"
+#include "bagel/boflib/string_functions.h"
+#include "bagel/boflib/event_loop.h"
+#include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
+#include "bagel/music.h"
+//#include "bagel/spacebar/boflib/app.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 #define MEMORY_THRESHOLD    20000L
 #define MEMORY_MARGIN       100000L
 
 char    CBofSound::_szDrivePath[MAX_DIRPATH];
-CBofSound *CBofSound::_pSoundChain = nullptr;  // Pointer to chain of linked Sounds
+CBofSound *CBofSound::_pSoundChain = nullptr;   // Pointer to chain of linked Sounds
 int     CBofSound::_nCount = 0;                 // Count of currently active Sounds
 int     CBofSound::_nWavCount = 0;              // Available wave sound devices
 int     CBofSound::_nMidiCount = 0;             // Available midi sound devices
@@ -49,7 +49,7 @@ bool    CBofSound::_bSoundAvailable = false;    // Whether wave sound is availab
 bool    CBofSound::_bMidiAvailable = false;     // Whether midi sound is available
 bool    CBofSound::_bWaveVolume = false;        // Whether wave volume can be set
 bool    CBofSound::_bMidiVolume = false;        // Whether midi volume can be set
-CBofWindow *CBofSound::_pMainWnd = nullptr;   // Window for message processing
+void   *CBofSound::_pMainWnd = nullptr;         // Window for message processing
 
 bool    CBofSound::_bInit = false;
 
@@ -57,7 +57,7 @@ CQueue *CBofSound::_cQueue[NUM_QUEUES];
 int CBofSound::_nSlotVol[NUM_QUEUES];
 
 
-CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, const int nLoops) {
+CBofSound::CBofSound(void *pWnd, const char *pszPathName, uint16 wFlags, const int nLoops) {
 	// Validate input
 	assert(pszPathName != nullptr);
 	assert(strlen(pszPathName) < MAX_FNAME);
@@ -637,13 +637,13 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 			return false;
 		}
 
-		CBofWindow *pWnd = CBofApp::getApp()->getMainWindow();
+		//CBofWindow *pWnd = CBofApp::getApp()->getMainWindow();
 
 		// Take care of any last minute cleanup before we start this new sound
 		CBofSound::audioTask();
 		CBofSound::stopWaveSounds();
 
-		CBofSound *pSound = new CBofSound(pWnd, pszSoundFile, (uint16)nFlags);
+		CBofSound *pSound = new CBofSound(/*pWnd*/nullptr, pszSoundFile, (uint16)nFlags);
 		if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
 			pSound->setQSlot(iQSlot);
 		}
@@ -675,12 +675,12 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bW
 			return false;
 		}
 
-		CBofWindow *pWnd = CBofApp::getApp()->getMainWindow();
+		//CBofWindow *pWnd = CBofApp::getApp()->getMainWindow();
 
 		// Take care of any last minute cleanup before we start this new sound
 		CBofSound::audioTask();
 
-		CBofSound *pSound = new CBofSound(pWnd, pszSoundFile, (uint16)nFlags);
+		CBofSound *pSound = new CBofSound(/*pWnd*/nullptr, pszSoundFile, (uint16)nFlags);
 		if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
 			pSound->setQSlot(iQSlot);
 		}
@@ -916,5 +916,4 @@ void CBofSound::setQVol(int nSlot, int nVol) {
 	}
 }
 
-} // namespace SpaceBar
 } // namespace Bagel

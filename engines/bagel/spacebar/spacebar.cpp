@@ -22,18 +22,18 @@
 #include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "engines/util.h"
+#include "bagel/music.h"
 #include "bagel/spacebar/console.h"
-#include "bagel/spacebar/music.h"
 #include "bagel/spacebar/spacebar.h"
 #include "bagel/spacebar/master_win.h"
 #include "bagel/spacebar/bib_odds_wnd.h"
 #include "bagel/spacebar/main_window.h"
 #include "bagel/spacebar/boflib/app.h"
 #include "bagel/spacebar/baglib/button_object.h"
-#include "bagel/spacebar/boflib/file_functions.h"
+#include "bagel/boflib/file_functions.h"
 #include "bagel/spacebar/boflib/gui/movie.h"
 
-#include "bagel/spacebar/music.h"
+#include "bagel/music.h"
 #include "bagel/spacebar/baglib/bagel.h"
 #include "bagel/spacebar/baglib/character_object.h"
 #include "bagel/spacebar/baglib/cursor.h"
@@ -57,10 +57,10 @@
 #include "bagel/spacebar/baglib/wield.h"
 #include "bagel/spacebar/baglib/zoom_pda.h"
 
-#include "bagel/spacebar/boflib/cache.h"
+#include "bagel/boflib/cache.h"
 #include "bagel/spacebar/boflib/gfx/cursor.h"
-#include "bagel/spacebar/boflib/error.h"
-#include "bagel/spacebar/boflib/sound.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/sound.h"
 #include "bagel/spacebar/boflib/gfx/palette.h"
 #include "bagel/spacebar/boflib/gfx/sprite.h"
 #include "bagel/spacebar/boflib/gui/window.h"
@@ -141,7 +141,6 @@ SpaceBarEngine::~SpaceBarEngine() {
 	CMainWindow::shutdown();
 
 	g_engine = nullptr;
-	delete _midi;
 }
 
 void SpaceBarEngine::initializePath(const Common::FSNode &gamePath) {

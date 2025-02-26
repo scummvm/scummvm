@@ -21,7 +21,7 @@
 
 #include "bagel/spacebar/baglib/pda.h"
 #include "bagel/spacebar/baglib/pan_window.h"
-#include "bagel/spacebar/boflib/sound.h"
+#include "bagel/boflib/sound.h"
 #include "bagel/spacebar/baglib/master_win.h"
 #include "bagel/spacebar/baglib/button_object.h"
 #include "bagel/spacebar/baglib/character_object.h"

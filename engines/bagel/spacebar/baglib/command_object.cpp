@@ -28,9 +28,9 @@
 #include "bagel/spacebar/boflib/gui/movie.h"
 #include "bagel/spacebar/baglib/dev_dlg.h"
 #include "bagel/spacebar/baglib/pan_window.h"
-#include "bagel/spacebar/boflib/sound.h"
+#include "bagel/boflib/sound.h"
 #include "bagel/bagel.h"
-#include "bagel/spacebar/boflib/file_functions.h"
+#include "bagel/boflib/file_functions.h"
 
 namespace Bagel {
 namespace SpaceBar {

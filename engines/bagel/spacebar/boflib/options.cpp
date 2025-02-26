@@ -22,9 +22,9 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "bagel/spacebar/boflib/options.h"
-#include "bagel/spacebar/boflib/misc.h"
-#include "bagel/spacebar/boflib/string_functions.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/boflib/log.h"
+#include "bagel/boflib/string_functions.h"
 
 namespace Bagel {
 namespace SpaceBar {

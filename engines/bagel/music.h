@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,23 +19,25 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_LOG_H
-#define BAGEL_BOFLIB_LOG_H
+#ifndef BAGEL_MUSIC_H
+#define BAGEL_MUSIC_H
+
+#include "audio/midiplayer.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
-/**
- * Builds a string like sprintf()
- * @return      Pointer to new (temporary) buffer.
- */
-const char *buildString(const char *pszFormat, ...);
+class MusicPlayer : public Audio::MidiPlayer {
+private:
+	CBofSound *_sound = nullptr;
 
-extern void logInfo(const char *msg);
-extern void logWarning(const char *msg);
-extern void logError(const char *msg);
+public:
+	MusicPlayer();
 
-} // namespace SpaceBar
+	void play(CBofSound *sound);
+	void stop() override;
+};
+
 } // namespace Bagel
 
 #endif

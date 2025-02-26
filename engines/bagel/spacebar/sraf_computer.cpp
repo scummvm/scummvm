@@ -24,10 +24,10 @@
 #include "bagel/spacebar/sraf_file.h"
 #include "bagel/spacebar/boflib/app.h"
 #include "bagel/spacebar/baglib/bagel.h"
-#include "bagel/spacebar/boflib/sound.h"
+#include "bagel/boflib/sound.h"
 #include "bagel/spacebar/baglib/link_object.h"
 #include "bagel/bagel.h"
-#include "bagel/spacebar/boflib/file_functions.h"
+#include "bagel/boflib/file_functions.h"
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {

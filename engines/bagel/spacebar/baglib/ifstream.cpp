@@ -22,7 +22,7 @@
 #include "common/util.h"
 
 #include "bagel/spacebar/baglib/ifstream.h"
-#include "bagel/spacebar/boflib/stdinc.h"
+#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 namespace SpaceBar {

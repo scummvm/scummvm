@@ -24,8 +24,8 @@
 #define BAGEL_BOFLIB_GUI_TEXT_BOX_H
 
 #include "bagel/spacebar/boflib/gfx/bitmap.h"
-#include "bagel/spacebar/boflib/error.h"
-#include "bagel/spacebar/boflib/string.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/string.h"
 #include "bagel/spacebar/boflib/gfx/text.h"
 #include "bagel/spacebar/boflib/gui/window.h"
 

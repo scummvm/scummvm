@@ -34,14 +34,14 @@
 #include "bagel/spacebar/baglib/storage_dev_win.h"
 #include "bagel/spacebar/baglib/wield.h"
 #include "bagel/spacebar/boflib/app.h"
-#include "bagel/spacebar/boflib/event_loop.h"
+#include "bagel/boflib/event_loop.h"
 #include "bagel/spacebar/boflib/file.h"
 #include "bagel/spacebar/boflib/gfx/palette.h"
 #include "bagel/spacebar/baglib/pan_window.h"
 #include "bagel/spacebar/boflib/rect.h"
 #include "bagel/bagel.h"
-#include "bagel/spacebar/boflib/file_functions.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
 #include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {

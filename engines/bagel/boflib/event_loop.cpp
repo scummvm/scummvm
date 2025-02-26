@@ -19,53 +19,37 @@
  *
  */
 
-#include "common/system.h"
-#include "common/savefile.h"
-#include "common/debug.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "common/events.h"
+#include "bagel/boflib/event_loop.h"
+#include "bagel/bagel.h"
+#include "bagel/spacebar/baglib/master_win.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
-static const char *const g_pszLogTypes[4] = {
-	"Fatal Error: ",
-	"Error: ",
-	"Warning: ",
-	""
-};
-
-void logInfo(const char *msg) {
-	if (gDebugLevel > 0)
-		debug("%s", msg);
+EventLoop::EventLoop(Mode mode) : _limiter(g_system, 60, false),
+_mode(mode) {
 }
 
-void logWarning(const char *msg) {
-	if (gDebugLevel > 0)
-		debug("%s%s", g_pszLogTypes[2], msg);
-}
+bool EventLoop::frame() {
+	Common::Event e;
 
-void logError(const char *msg) {
-	if (gDebugLevel > 0)
-		debug("%s%s", g_pszLogTypes[1], msg);
-}
-
-const char *buildString(const char *pszFormat, ...) {
-	static char szBuf[256];
-	va_list argptr;
-
-	assert(pszFormat != nullptr);
-
-	if (pszFormat != nullptr) {
-		// Parse the variable argument list
-		va_start(argptr, pszFormat);
-		Common::vsprintf_s(szBuf, pszFormat, argptr);
-		va_end(argptr);
-
-		return (const char *)&szBuf[0];
+	// Handle pending events
+	while (g_system->getEventManager()->pollEvent(e)) {
+		if (g_engine->shouldQuit() || (e.type == Common::EVENT_LBUTTONDOWN) ||
+			(e.type == Common::EVENT_KEYDOWN && e.kbd.keycode == Common::KEYCODE_ESCAPE))
+			return true;
 	}
 
-	return nullptr;
+	_limiter.delayBeforeSwap();
+
+	// Update the screen
+	if (_mode == FORCE_REPAINT && g_engine->isSpaceBar())
+		SpaceBar::CBagMasterWin::forcePaintScreen();
+	g_engine->_screen->update();
+
+	_limiter.startFrame();
+
+	return false;
 }
 
-} // namespace SpaceBar
 } // namespace Bagel

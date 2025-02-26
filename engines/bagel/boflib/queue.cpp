@@ -19,11 +19,10 @@
  *
  */
 
-#include "bagel/spacebar/boflib/queue.h"
-#include "bagel/spacebar/boflib/stdinc.h"
+#include "bagel/boflib/queue.h"
+#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 CQueue::CQueue() {
 }
@@ -111,5 +110,4 @@ void CQueue::flush() {
 	}
 }
 
-} // namespace SpaceBar
 } // namespace Bagel

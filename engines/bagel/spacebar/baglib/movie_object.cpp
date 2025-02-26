@@ -24,11 +24,11 @@
 #include "bagel/spacebar/baglib/exam.h"
 #include "bagel/spacebar/baglib/master_win.h"
 #include "bagel/spacebar/baglib/pan_window.h"
-#include "bagel/spacebar/boflib/sound.h"
+#include "bagel/boflib/sound.h"
 #include "bagel/spacebar/baglib/fmovie.h"
 #include "bagel/spacebar/baglib/zoom_pda.h"
-#include "bagel/spacebar/boflib/file_functions.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 namespace SpaceBar {

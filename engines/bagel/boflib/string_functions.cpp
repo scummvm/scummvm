@@ -21,10 +21,9 @@
 
 #include "common/str.h"
 
-#include "bagel/spacebar/boflib/string_functions.h"
+#include "bagel/boflib/string_functions.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 int strCharCount(const char *str, char c) {
 	assert(str != nullptr);
@@ -96,5 +95,4 @@ void memreplaceChar(byte *pBuf, byte chOld, byte chNew, int32 lSize) {
 	}
 }
 
-} // namespace SpaceBar
 } // namespace Bagel

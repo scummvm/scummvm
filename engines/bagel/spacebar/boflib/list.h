@@ -24,7 +24,7 @@
 #define BAGEL_BOFLIB_LIST_H
 
 #include "common/scummsys.h"
-#include "bagel/spacebar/boflib/misc.h"
+#include "bagel/boflib/misc.h"
 
 namespace Bagel {
 namespace SpaceBar {

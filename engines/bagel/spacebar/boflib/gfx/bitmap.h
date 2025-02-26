@@ -24,13 +24,13 @@
 #define BAGEL_BOFLIB_GFX_BMP_H
 
 #include "graphics/managed_surface.h"
-#include "bagel/spacebar/boflib/cache.h"
-#include "bagel/spacebar/boflib/error.h"
-#include "bagel/spacebar/boflib/object.h"
+#include "bagel/boflib/cache.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/object.h"
 #include "bagel/spacebar/boflib/point.h"
 #include "bagel/spacebar/boflib/rect.h"
 #include "bagel/spacebar/boflib/size.h"
-#include "bagel/spacebar/boflib/stdinc.h"
+#include "bagel/boflib/stdinc.h"
 #include "bagel/spacebar/boflib/gfx/palette.h"
 
 namespace Bagel {

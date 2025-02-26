@@ -24,7 +24,7 @@
 #define BAGEL_BOFLIB_GUI_EDIT_TEXT_H
 
 #include "bagel/spacebar/boflib/gui/window.h"
-#include "bagel/spacebar/boflib/string.h"
+#include "bagel/boflib/string.h"
 
 namespace Bagel {
 namespace SpaceBar {

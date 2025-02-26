@@ -26,9 +26,9 @@
 #include "bagel/spacebar/boflib/app.h"
 #include "bagel/spacebar/boflib/gui/window.h"
 #include "bagel/spacebar/boflib/options.h"
-#include "bagel/spacebar/boflib/error.h"
+#include "bagel/boflib/error.h"
 #include "bagel/spacebar/boflib/list.h"
-#include "bagel/spacebar/boflib/string.h"
+#include "bagel/boflib/string.h"
 #include "bagel/spacebar/boflib/vhash_table.h"
 
 namespace Bagel {
@@ -51,8 +51,6 @@ namespace SpaceBar {
 
 // Defines default chroma color to be palette index 1
 #define DEFAULT_CHROMA_COLOR 1
-
-extern void fixPathName(CBofString &s);
 
 class CBagMasterWin;
 

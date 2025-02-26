@@ -19,13 +19,12 @@
  *
  */
 
-#include "bagel/spacebar/boflib/cache.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "bagel/boflib/cache.h"
+#include "bagel/boflib/log.h"
 #include "bagel/spacebar/boflib/debug.h"
-#include "bagel/spacebar/boflib/misc.h"
+#include "bagel/boflib/misc.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 // Static members
 CCache *CCache::_pCacheList;
@@ -175,5 +174,4 @@ bool CCache::release() {
 	return bReleased;
 }
 
-} // namespace SpaceBar
 } // namespace Bagel

@@ -38,7 +38,7 @@
 #include "bagel/spacebar/baglib/moo.h"
 #include "bagel/spacebar/baglib/log_msg.h"
 #include "bagel/spacebar/baglib/event_sdev.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "bagel/boflib/log.h"
 #include "bagel/spacebar/filter.h"
 
 namespace Bagel {

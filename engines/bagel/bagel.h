@@ -25,7 +25,7 @@
 #include "common/random.h"
 
 #include "bagel/detection.h"
-#include "bagel/spacebar/music.h"
+#include "bagel/music.h"
 #include "bagel/spacebar/baglib/master_win.h"
 
 namespace Bagel {
@@ -44,6 +44,7 @@ public:
 	SpaceBar::CBofPoint g_cInitLoc;       // This is the initial location for the next new pan (only option at this point)
 	bool g_bUseInitLoc = false;
 	bool g_getVilVarsFl = true;
+	MusicPlayer *_midi = nullptr;
 
 public:
 	BagelEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -55,6 +56,13 @@ public:
 	 * Returns the game Id
 	 */
 	Common::String getGameId() const;
+
+	/**
+	 * Return if the game is Space Bar
+	 */
+	bool isSpaceBar() const {
+		return getGameId() == "spacebar";
+	}
 
 	/**
 	 * Return the game's platform

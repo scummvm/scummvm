@@ -23,11 +23,10 @@
 #ifndef BAGEL_BOFLIB_QUEUE_H
 #define BAGEL_BOFLIB_QUEUE_H
 
-#include "bagel/spacebar/boflib/object.h"
-#include "bagel/spacebar/boflib/llist.h"
+#include "bagel/boflib/object.h"
+#include "bagel/boflib/llist.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 class CQueue : public CBofObject {
 protected:
@@ -74,7 +73,6 @@ public:
 	void flush();
 };
 
-} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

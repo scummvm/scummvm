@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,27 +20,32 @@
  *
  */
 
-#ifndef BAGEL_MUSIC_H
-#define BAGEL_MUSIC_H
+#ifndef BAGEL_BOFLIB_EVENT_LOOP_H
+#define BAGEL_BOFLIB_EVENT_LOOP_H
 
-#include "audio/midiplayer.h"
-#include "bagel/spacebar/boflib/sound.h"
+#include "graphics/framelimiter.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
-class MusicPlayer : public Audio::MidiPlayer {
+class EventLoop {
+public:
+	enum Mode {
+		NO_UPDATES = 0, FORCE_REPAINT = 1
+	};
 private:
-	CBofSound *_sound = nullptr;
+	Graphics::FrameLimiter _limiter;
+	Mode _mode;
 
 public:
-	MusicPlayer();
+	EventLoop(Mode mode = NO_UPDATES);
 
-	void play(CBofSound *sound);
-	void stop() override;
+	/**
+	 * Processes pending events and does a frame output.
+	 * @returns		True if Escape was pressed to abort loop
+	 */
+	bool frame();
 };
 
-} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

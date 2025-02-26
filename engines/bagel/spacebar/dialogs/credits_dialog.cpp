@@ -24,8 +24,8 @@
 #include "bagel/spacebar/dialogs/opt_window.h"
 #include "bagel/spacebar/baglib/bagel.h"
 #include "bagel/spacebar/baglib/master_win.h"
-#include "bagel/spacebar/boflib/file_functions.h"
-#include "bagel/spacebar/boflib/string_functions.h"
+#include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/string_functions.h"
 
 namespace Bagel {
 namespace SpaceBar {

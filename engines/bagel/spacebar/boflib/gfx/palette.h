@@ -24,9 +24,9 @@
 #define BAGEL_BOFLIB_GFX_PALETTE_H
 
 #include "graphics/screen.h"
-#include "bagel/spacebar/boflib/error.h"
-#include "bagel/spacebar/boflib/object.h"
-#include "bagel/spacebar/boflib/stdinc.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/object.h"
+#include "bagel/boflib/stdinc.h"
 #include "bagel/mfc/palette.h"
 
 namespace Bagel {

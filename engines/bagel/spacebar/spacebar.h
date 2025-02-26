@@ -25,7 +25,6 @@
 #include "bagel/bagel.h"
 #include "bagel/spacebar/baglib/bagel.h"
 #include "bagel/spacebar/bibble_window.h"
-#include "bagel/spacebar/music.h"
 
 namespace Bagel {
 namespace SpaceBar {
@@ -55,7 +54,6 @@ public:
 	CBetArea g_cBetAreas[BIBBLE_NUM_BET_AREAS];
 	const CBofRect viewPortRect = CBofRect(80, 10, 559, 369);
 	CBofRect viewRect;
-	MusicPlayer *_midi = nullptr;
 
 public:
 	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);

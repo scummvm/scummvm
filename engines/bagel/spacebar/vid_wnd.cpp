@@ -23,8 +23,8 @@
 #include "bagel/spacebar/main_window.h"
 #include "bagel/spacebar/baglib/bagel.h"
 #include "bagel/spacebar/baglib/master_win.h"
-#include "bagel/spacebar/boflib/file_functions.h"
-#include "bagel/spacebar/boflib/stdinc.h"
+#include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 namespace SpaceBar {

@@ -24,7 +24,7 @@
 #define BAGEL_BAGLIB_VAR_H
 
 #include "bagel/spacebar/baglib/parse_object.h"
-#include "bagel/spacebar/boflib/string.h"
+#include "bagel/boflib/string.h"
 #include "bagel/spacebar/boflib/list.h"
 
 namespace Bagel {

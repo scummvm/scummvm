@@ -67,6 +67,7 @@ Common::Error HodjNPodjEngine::run() {
 
 	// Initialize systems
 	_screen = new Graphics::Screen();
+	_midi = new MusicPlayer();
 	syncSoundSettings();
 
 	// Set the engine's debugger console

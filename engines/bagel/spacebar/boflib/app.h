@@ -26,7 +26,7 @@
 #include "video/video_decoder.h"
 #include "bagel/spacebar/boflib/gui/window.h"
 #include "bagel/spacebar/boflib/gfx/cursor.h"
-#include "bagel/spacebar/boflib/error.h"
+#include "bagel/boflib/error.h"
 #include "bagel/spacebar/boflib/list.h"
 
 namespace Bagel {

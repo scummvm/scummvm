@@ -25,10 +25,10 @@
 
 #include "common/stream.h"
 
-#include "bagel/spacebar/boflib/stdinc.h"
-#include "bagel/spacebar/boflib/llist.h"
-#include "bagel/spacebar/boflib/object.h"
-#include "bagel/spacebar/boflib/error.h"
+#include "bagel/boflib/stdinc.h"
+#include "bagel/boflib/llist.h"
+#include "bagel/boflib/object.h"
+#include "bagel/boflib/error.h"
 
 namespace Bagel {
 namespace SpaceBar {

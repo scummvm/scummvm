@@ -24,7 +24,7 @@
 #define BAGEL_BAGLIB_CURSOR_H
 
 #include "bagel/spacebar/boflib/gfx/bitmap.h"
-#include "bagel/spacebar/boflib/error.h"
+#include "bagel/boflib/error.h"
 
 namespace Bagel {
 namespace SpaceBar {

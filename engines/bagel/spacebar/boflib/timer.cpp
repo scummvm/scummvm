@@ -23,7 +23,7 @@
 #include "common/system.h"
 #include "bagel/spacebar/boflib/timer.h"
 #include "bagel/bagel.h"
-#include "log.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 namespace SpaceBar {

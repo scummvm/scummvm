@@ -23,8 +23,10 @@
 #ifndef BAGEL_BOFLIB_FILE_FUNCTIONS_H
 #define BAGEL_BOFLIB_FILE_FUNCTIONS_H
 
+#include "common/scummsys.h"
+#include "bagel/boflib/string.h"
+
 namespace Bagel {
-namespace SpaceBar {
 
 /**
  * Checks to see if specified file exists
@@ -52,7 +54,8 @@ extern char *fileGetFullPath(char *pszDstBuf, const char *pszSrcBuf);
  */
 extern const char *formPath(const char *dir, const char *pszFile);
 
-} // namespace SpaceBar
+extern void fixPathName(CBofString &s);
+
 } // namespace Bagel
 
 #endif

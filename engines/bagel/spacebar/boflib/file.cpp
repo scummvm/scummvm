@@ -25,9 +25,9 @@
 #include "common/savefile.h"
 #include "bagel/bagel.h"
 #include "bagel/spacebar/boflib/file.h"
-#include "bagel/spacebar/boflib/file_functions.h"
+#include "bagel/boflib/file_functions.h"
 #include "bagel/spacebar/boflib/debug.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 namespace SpaceBar {

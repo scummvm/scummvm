@@ -26,7 +26,6 @@
 #include "common/str.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 /**
  * Error reporting codes
@@ -97,7 +96,6 @@ public:
 
 };
 
-} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

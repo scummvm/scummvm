@@ -21,9 +21,9 @@
 
 #include "bagel/spacebar/boflib/res.h"
 #include "bagel/spacebar/boflib/debug.h"
-#include "bagel/spacebar/boflib/misc.h"
-#include "bagel/spacebar/boflib/string_functions.h"
-#include "bagel/spacebar/boflib/log.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/boflib/string_functions.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 namespace SpaceBar {

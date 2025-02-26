@@ -23,7 +23,7 @@
 #define BAGEL_BOFLIB_TIMER_H
 
 #include "bagel/spacebar/boflib/timer.h"
-#include "bagel/spacebar/boflib/llist.h"
+#include "bagel/boflib/llist.h"
 #include "bagel/spacebar/boflib/gfx/palette.h"
 
 namespace Bagel {

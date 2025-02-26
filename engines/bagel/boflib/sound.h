@@ -24,15 +24,13 @@
 #define BAGEL_BOFLIB_SOUND_H
 
 #include "audio/mixer.h"
-#include "bagel/spacebar/boflib/stdinc.h"
-#include "bagel/spacebar/boflib/llist.h"
-#include "bagel/spacebar/boflib/object.h"
-#include "bagel/spacebar/boflib/error.h"
-#include "bagel/spacebar/boflib/queue.h"
-#include "bagel/spacebar/boflib/gui/window.h"
+#include "bagel/boflib/stdinc.h"
+#include "bagel/boflib/llist.h"
+#include "bagel/boflib/object.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/queue.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 //
 // Wavemix-related constants
@@ -74,7 +72,7 @@ class CBofSound : public CBofError, public CBofObject, public CLList {
 public:
 	friend class MusicPlayer;
 
-	CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, int nLoops = 1);
+	CBofSound(void *pWnd, const char *pszPathName, uint16 wFlags, int nLoops = 1);
 	virtual ~CBofSound();
 
 	bool midiLoopPlaySegment(uint32 LoopBegin, uint32 LoopEnd = 0L, uint32 FirstPassBegin = 0L, uint32 TimeFmt = FMT_MILLISEC);
@@ -190,7 +188,7 @@ private:
 	bool _bStarted = false;
 	int _nVol = 0;
 
-	CBofWindow *_pWnd = nullptr; // Parent window for messages
+	void *_pWnd = nullptr; // Parent window for messages
 
 	static char _szDrivePath[MAX_DIRPATH]; // Path spec to drive
 	static CBofSound *_pSoundChain;        // First item in chain or nullptr
@@ -201,7 +199,7 @@ private:
 	static bool _bMidiAvailable;           // Whether midi sound is available
 	static bool _bWaveVolume;              // Whether wave volume can be set
 	static bool _bMidiVolume;              // Whether midi volume can be set
-	static CBofWindow *_pMainWnd;          // Window for message processing
+	static void *_pMainWnd;                // Window for message processing
 	static bool _bInit;
 
 	static int _nSlotVol[NUM_QUEUES];
@@ -211,7 +209,6 @@ private:
 bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0);
 bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0, bool bWait = false);
 
-} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

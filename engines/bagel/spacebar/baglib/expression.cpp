@@ -23,7 +23,7 @@
 #include "bagel/spacebar/baglib/master_win.h"
 #include "bagel/spacebar/baglib/storage_dev_win.h"
 #include "bagel/spacebar/baglib/sound_object.h"
-#include "bagel/spacebar/boflib/sound.h"
+#include "bagel/boflib/sound.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {

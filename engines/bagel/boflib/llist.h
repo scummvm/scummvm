@@ -24,7 +24,6 @@
 #define BAGEL_BOFLIB_LLIST_H
 
 namespace Bagel {
-namespace SpaceBar {
 
 /**
  * Linked list class
@@ -132,7 +131,6 @@ public:
 	void FlushList();
 };
 
-} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

@@ -24,8 +24,8 @@
 #define BAGEL_BOFLIB_RECT_H
 
 #include "common/rect.h"
-#include "bagel/spacebar/boflib/stdinc.h"
-#include "bagel/spacebar/boflib/object.h"
+#include "bagel/boflib/stdinc.h"
+#include "bagel/boflib/object.h"
 #include "bagel/spacebar/boflib/point.h"
 #include "bagel/spacebar/boflib/size.h"
 

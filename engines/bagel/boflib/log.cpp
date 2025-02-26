@@ -19,11 +19,51 @@
  *
  */
 
-#include "bagel/hodjnpodj/boflib/sound.h"
+#include "common/system.h"
+#include "common/savefile.h"
+#include "common/debug.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
-namespace HodjNPodj {
 
+static const char *const g_pszLogTypes[4] = {
+	"Fatal Error: ",
+	"Error: ",
+	"Warning: ",
+	""
+};
 
-} // namespace HodjNPodj
+void logInfo(const char *msg) {
+	if (gDebugLevel > 0)
+		debug("%s", msg);
+}
+
+void logWarning(const char *msg) {
+	if (gDebugLevel > 0)
+		debug("%s%s", g_pszLogTypes[2], msg);
+}
+
+void logError(const char *msg) {
+	if (gDebugLevel > 0)
+		debug("%s%s", g_pszLogTypes[1], msg);
+}
+
+const char *buildString(const char *pszFormat, ...) {
+	static char szBuf[256];
+	va_list argptr;
+
+	assert(pszFormat != nullptr);
+
+	if (pszFormat != nullptr) {
+		// Parse the variable argument list
+		va_start(argptr, pszFormat);
+		Common::vsprintf_s(szBuf, pszFormat, argptr);
+		va_end(argptr);
+
+		return (const char *)&szBuf[0];
+	}
+
+	return nullptr;
+}
+
 } // namespace Bagel

@@ -25,7 +25,7 @@
 #include "bagel/spacebar/boflib/gfx/palette.h"
 #include "bagel/spacebar/boflib/app.h"
 #include "bagel/spacebar/boflib/file.h"
-#include "bagel/spacebar/boflib/file_functions.h"
+#include "bagel/boflib/file_functions.h"
 
 namespace Bagel {
 namespace SpaceBar {

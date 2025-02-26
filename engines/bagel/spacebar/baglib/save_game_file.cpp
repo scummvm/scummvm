@@ -23,7 +23,8 @@
 #include "common/memstream.h"
 #include "common/serializer.h"
 #include "bagel/spacebar/baglib/save_game_file.h"
-#include "bagel/spacebar/boflib/misc.h"
+#include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/misc.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {

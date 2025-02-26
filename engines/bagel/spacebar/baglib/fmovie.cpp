@@ -22,7 +22,7 @@
 #include "graphics/cursorman.h"
 
 #include "bagel/spacebar/baglib/fmovie.h"
-#include "bagel/spacebar/boflib/string.h"
+#include "bagel/boflib/string.h"
 #include "bagel/spacebar/boflib/gfx/palette.h"
 #include "bagel/spacebar/boflib/app.h"
 #include "bagel/spacebar/baglib/master_win.h"

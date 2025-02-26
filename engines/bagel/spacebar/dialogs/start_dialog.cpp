@@ -22,7 +22,7 @@
 #include "bagel/spacebar/dialogs/start_dialog.h"
 #include "bagel/spacebar/baglib/bagel.h"
 #include "bagel/spacebar/baglib/button_object.h"
-#include "bagel/spacebar/boflib/sound.h"
+#include "bagel/boflib/sound.h"
 #include "bagel/spacebar/dialogs/opt_window.h"
 #include "bagel/bagel.h"
 #include "bagel/spacebar/boflib/std_keys.h"

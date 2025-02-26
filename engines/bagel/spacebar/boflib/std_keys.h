@@ -23,7 +23,7 @@
 #ifndef BAGEL_BOFLIB_STD_KEYS_H
 #define BAGEL_BOFLIB_STD_KEYS_H
 
-#include "bagel/spacebar/boflib/stdinc.h"
+#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 namespace SpaceBar {

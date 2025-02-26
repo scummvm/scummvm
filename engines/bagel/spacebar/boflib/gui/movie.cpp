@@ -21,7 +21,7 @@
 
 #include "graphics/cursorman.h"
 
-#include "bagel/spacebar/boflib/string.h"
+#include "bagel/boflib/string.h"
 #include "bagel/spacebar/boflib/gui/movie.h"
 #include "bagel/spacebar/boflib/gfx/cursor.h"
 #include "bagel/spacebar/boflib/std_keys.h"

@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,38 +20,21 @@
  *
  */
 
-#include "common/events.h"
-#include "bagel/spacebar/boflib/event_loop.h"
-#include "bagel/bagel.h"
+#ifndef BAGEL_BOFLIB_OBJECT_H
+#define BAGEL_BOFLIB_OBJECT_H
 
 namespace Bagel {
-namespace SpaceBar {
 
-EventLoop::EventLoop(Mode mode) : _limiter(g_system, 60, false),
-_mode(mode) {
-}
-
-bool EventLoop::frame() {
-	Common::Event e;
-
-	// Handle pending events
-	while (g_system->getEventManager()->pollEvent(e)) {
-		if (g_engine->shouldQuit() || (e.type == Common::EVENT_LBUTTONDOWN) ||
-			(e.type == Common::EVENT_KEYDOWN && e.kbd.keycode == Common::KEYCODE_ESCAPE))
-			return true;
+class CBofObject {
+public:
+	virtual ~CBofObject() {}
+	static bool isValidObject(const CBofObject *pObject) {
+		return true;
 	}
 
-	_limiter.delayBeforeSwap();
+	virtual void DeleteObject() {}
+};
 
-	// Update the screen
-	if (_mode == FORCE_REPAINT)
-		CBagMasterWin::forcePaintScreen();
-	g_engine->_screen->update();
-
-	_limiter.startFrame();
-
-	return false;
-}
-
-} // namespace SpaceBar
 } // namespace Bagel
+
+#endif

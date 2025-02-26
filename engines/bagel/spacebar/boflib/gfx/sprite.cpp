@@ -20,7 +20,7 @@
  */
 
 #include "bagel/spacebar/boflib/gfx/sprite.h"
-#include "bagel/spacebar/boflib/misc.h"
+#include "bagel/boflib/misc.h"
 
 namespace Bagel {
 namespace SpaceBar {

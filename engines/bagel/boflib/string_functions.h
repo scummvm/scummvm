@@ -24,7 +24,6 @@
 #define BAGEL_BOFLIB_STRING_FUNCTIONS_H
 
 namespace Bagel {
-namespace SpaceBar {
 
 /**
  * Counts number of occurrences of a specified char in String
@@ -61,7 +60,6 @@ extern void memreplaceChar(byte *pBuf, byte chOld, byte chNew, int32 lSize);
  */
 extern char *strreplaceStr(char *pszBuf, const char *pszTok1, const char *pszTok2);
 
-} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

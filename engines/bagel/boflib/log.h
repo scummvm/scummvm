@@ -20,34 +20,21 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_EVENT_LOOP_H
-#define BAGEL_BOFLIB_EVENT_LOOP_H
-
-#include "graphics/framelimiter.h"
+#ifndef BAGEL_BOFLIB_LOG_H
+#define BAGEL_BOFLIB_LOG_H
 
 namespace Bagel {
-namespace SpaceBar {
 
-class EventLoop {
-public:
-	enum Mode {
-		NO_UPDATES = 0, FORCE_REPAINT = 1
-	};
-private:
-	Graphics::FrameLimiter _limiter;
-	Mode _mode;
+/**
+ * Builds a string like sprintf()
+ * @return      Pointer to new (temporary) buffer.
+ */
+const char *buildString(const char *pszFormat, ...);
 
-public:
-	EventLoop(Mode mode = NO_UPDATES);
+extern void logInfo(const char *msg);
+extern void logWarning(const char *msg);
+extern void logError(const char *msg);
 
-	/**
-	 * Processes pending events and does a frame output.
-	 * @returns		True if Escape was pressed to abort loop
-	 */
-	bool frame();
-};
-
-} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

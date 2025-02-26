@@ -20,10 +20,10 @@
  */
 
 #include "bagel/spacebar/baglib/storage_dev_win.h"
-#include "bagel/spacebar/boflib/misc.h"
-#include "bagel/spacebar/boflib/error.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/boflib/error.h"
 #include "bagel/spacebar/boflib/gfx/sprite.h"
-#include "bagel/spacebar/boflib/event_loop.h"
+#include "bagel/boflib/event_loop.h"
 #include "bagel/spacebar/baglib/bagel.h"
 #include "bagel/spacebar/baglib/master_win.h"
 #include "bagel/spacebar/baglib/wield.h"
@@ -49,7 +49,7 @@
 #include "bagel/spacebar/baglib/dossier_object.h"
 #include "bagel/spacebar/baglib/pan_window.h"
 #include "bagel/bagel.h"
-#include "bagel/spacebar/boflib/file_functions.h"
+#include "bagel/boflib/file_functions.h"
 
 namespace Bagel {
 namespace SpaceBar {

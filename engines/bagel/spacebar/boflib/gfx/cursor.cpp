@@ -21,7 +21,7 @@
 
 #include "graphics/cursorman.h"
 #include "bagel/spacebar/boflib/gfx/cursor.h"
-#include "bagel/spacebar/boflib/stdinc.h"
+#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 namespace SpaceBar {
