@@ -14831,9 +14831,66 @@ static const uint16 qfg1egaPatchPickSafeMessage2[] = {
 	PATCH_END
 };
 
+// In the brigands' fortress (room 94), opening the jack in the box and then
+//  tripping over the wire next to it locks up the game. The `egoTripsSouth`
+//  script is missing a call to egoObj:ignoreActors, unlike `egoTripsNorth`.
+//  Without this, the jack in the box causes egoObj:canBeHere to return false.
+//
+// We fix this by adding the missing call to ignoreActors. This bug occurs in
+//  the original, but only in some versions, and inconsistently, because another
+//  unrelated bug can cancel it out. Due to a script typo and a compiler bug,
+//  Actor:canBeHere reads an invalid property and tests out of bounds memory to
+//  determine if kCanBeHere is called to perform collision tests. We normalize
+//  this behavior in `validate_property`.
+//
+// Applies to: All versions
+// Responsible method: egoTripsSouth:changeState(0)
+// Fixes bug: #15736
+static const uint16 qfg1egaSignatureTripWire[] = {
+	SIG_MAGICDWORD,
+	0x3c,                               // dup
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq?
+	0x30,                               // bnt [ state 1 ]
+	SIG_ADDTOOFFSET(+71),
+	0x4a, 0x30,                         // send 30 [ egoObj ... ]
+	SIG_END
+};
+
+static const uint16 qfg1egaPatchTripWire[] = {
+	0x2e, PATCH_GETORIGINALUINT16ADJUST(5, +4), // bt [ state 1 ]
+	0x38, PATCH_SELECTOR16(ignoreActors),       // pushi ignoreActors
+	0x36,                                       // push0
+	PATCH_ADDTOOFFSET(+69),
+	0x4a, 0x34,                                 // send 34 [ egoObj ignoreActors: ... ]
+	PATCH_END
+};
+
+static const uint16 qfg1egaSignatureTripWirePC98[] = {
+	SIG_MAGICDWORD,
+	0x3c,                               // dup
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq?
+	0x30,                               // bnt [ state 1 ]
+	SIG_ADDTOOFFSET(+72),
+	0x4a, 0x30,                         // send 30 [ egoObj ... ]
+	SIG_END
+};
+
+static const uint16 qfg1egaPatchTripWirePC98[] = {
+	0x2e, PATCH_GETORIGINALUINT16ADJUST(5, +4), // bt [ state 1 ]
+	0x38, PATCH_SELECTOR16(ignoreActors),       // pushi ignoreActors
+	0x36,                                       // push0
+	PATCH_ADDTOOFFSET(+70),
+	0x4a, 0x34,                                 // send 34 [ egoObj ignoreActors: ... ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1egaSignatures[] = {
 	{  true,    54, "throw rock at nest while running",            1, qfg1egaSignatureThrowRockAtNest,     qfg1egaPatchThrowRockAtNest },
+	{  true,    94, "trip wire",                                   1, qfg1egaSignatureTripWirePC98,        qfg1egaPatchTripWirePC98 },
+	{  true,   189, "trip wire",                                   1, qfg1egaSignatureTripWire,            qfg1egaPatchTripWire },
 	{  true,   289, "pick safe message",                           1, qfg1egaSignaturePickSafeMessage1,    qfg1egaPatchPickSafeMessage1 },
 	{  true,   299, "disable speed test",                          1, sci01SpeedTestGlobalSignature,       sci01SpeedTestGlobalPatch },
 	{  true,   321, "pick safe message",                           1, qfg1egaSignaturePickSafeMessage2,    qfg1egaPatchPickSafeMessage2 },
