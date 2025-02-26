@@ -1358,23 +1358,12 @@ l0017_2458:
 	*/
 	StreamHandler* sh = Func19BE_SH(song, 0x6);
 	uint16 delta = sh->peekByte();
-	
+	shMem2248 = Func19BE_SH(song, delta);
+	sh = Func19BE_SH(song, 0x8);
 	/*
 l0017_2460:
-	push	word ptr [bp+8h]
-	push	word ptr [bp+6h]
-	les	di,[bp-6h]
-	push	word ptr es:[di]
-	call	far 0017h:19BEh
-	// TODO: Continue here
-	mov	[2248h],ax
-	mov	[224Ah],dx
-	push	word ptr [bp+8h]
-	push	word ptr [bp+6h]
-	push	8h
-	call	far 0017h:19BEh
-	mov	[bp-6h],ax
-	mov	[bp-4h],dx
+
+
 	push	word ptr [bp+8h]
 	push	word ptr [bp+6h]
 	les	di,[bp-6h]
@@ -1604,18 +1593,21 @@ int64 StreamHandler::size() const {
 }
 
 bool StreamHandler::seek(int64 offset, int whence) {
+	_stream->seek(_pos, SEEK_SET);
 	bool result = _stream->seek(offset, whence);
 	_pos = _stream->pos();
 	return result;
 }
 
 byte StreamHandler::peekByte() {
+	seek(_pos, SEEK_SET);
 	byte result = readByte();
 	seek(-0x1, SEEK_CUR);
 	return result;
 }
 
 uint16 StreamHandler::peekWord() {
+	seek(_pos, SEEK_SET);
 	uint16 result = readUint16LE();
 	seek(-0x2, SEEK_CUR);
 	return result;
