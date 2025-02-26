@@ -440,9 +440,9 @@ Logo::Logo(ScalpelEngine *vm) : _vm(vm), _lib("sf3.rlb") {
 	_vm->_screen->getPalette(_originalPalette);
 
 	// Set up the palettes
-	Common::fill(&_palette1[0], &_palette1[PALETTE_SIZE], 0);
-	Common::fill(&_palette1[0], &_palette2[PALETTE_SIZE], 0);
-	Common::fill(&_palette1[0], &_palette3[PALETTE_SIZE], 0);
+	Common::fill(&_palette1[0], &_palette1[Graphics::PALETTE_SIZE], 0);
+	Common::fill(&_palette1[0], &_palette2[Graphics::PALETTE_SIZE], 0);
+	Common::fill(&_palette1[0], &_palette3[Graphics::PALETTE_SIZE], 0);
 
 	_lib.getPalette(_palette1, 1111);
 	_lib.getPalette(_palette1, 10);
@@ -550,8 +550,8 @@ void Logo::nextFrame() {
 
 	case 4:
 		// Load the new palette
-		byte palette[PALETTE_SIZE];
-		Common::copy(&_palette2[0], &_palette2[PALETTE_SIZE], &palette[0]);
+		byte palette[Graphics::PALETTE_SIZE];
+		Common::copy(&_palette2[0], &_palette2[Graphics::PALETTE_SIZE], &palette[0]);
 		_lib.getPalette(palette, 12);
 		screen.clear();
 		screen.setPalette(palette);
@@ -646,19 +646,19 @@ void Logo::loadBackground() {
 	}
 
 	// Default to a blank palette
-	byte palette[PALETTE_SIZE];
-	Common::fill(&palette[0], &palette[PALETTE_SIZE], 0);
+	byte palette[Graphics::PALETTE_SIZE];
+	Common::fill(&palette[0], &palette[Graphics::PALETTE_SIZE], 0);
 	screen.setPalette(palette);
 
 	// Copy the surface to the screen
 	screen.SHblitFrom(screen._backBuffer1);
 }
 
-void Logo::fade(const byte palette[PALETTE_SIZE], int step) {
+void Logo::fade(const byte palette[Graphics::PALETTE_SIZE], int step) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	byte startPalette[PALETTE_SIZE];
-	byte tempPalette[PALETTE_SIZE];
+	byte startPalette[Graphics::PALETTE_SIZE];
+	byte tempPalette[Graphics::PALETTE_SIZE];
 
 	screen.getPalette(startPalette);
 

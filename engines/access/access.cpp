@@ -570,7 +570,7 @@ void AccessEngine::writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameH
 	out->writeByte('\0');
 
 	// Write a thumbnail of the screen
-	uint8 thumbPalette[PALETTE_SIZE];
+	uint8 thumbPalette[Graphics::PALETTE_SIZE];
 	_screen->getPalette(thumbPalette);
 	Graphics::Surface saveThumb;
 	::createThumbnail(&saveThumb, (const byte *)_screen->getPixels(),

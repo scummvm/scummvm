@@ -32,10 +32,10 @@ namespace Gfx {
 
 #define FADE_STEPS 10
 
-static byte saved_palette[PALETTE_SIZE];
+static byte saved_palette[Graphics::PALETTE_SIZE];
 
 Palette63::Palette63(const byte *pal) {
-	for (uint i = 0; i < PALETTE_SIZE; ++i)
+	for (uint i = 0; i < Graphics::PALETTE_SIZE; ++i)
 		_pal[i] = pal[i] << 2;
 }
 
@@ -63,12 +63,12 @@ void xSetPal(const byte color, const byte R, const byte G, const byte B) {
 }
 
 void xSetPal(const byte *pal) {
-	g_system->getPaletteManager()->setPalette(pal, 0, PALETTE_COUNT);
+	g_system->getPaletteManager()->setPalette(pal, 0, Graphics::PALETTE_COUNT);
 }
 
 void setPalette(const byte *pal) {
 	xSetPal(pal);
-	Common::copy(pal, pal + PALETTE_SIZE, saved_palette);
+	Common::copy(pal, pal + Graphics::PALETTE_SIZE, saved_palette);
 }
 
 void xGetPal(byte *pal, const int numColors, const int startIndex) {
@@ -76,18 +76,18 @@ void xGetPal(byte *pal, const int numColors, const int startIndex) {
 }
 
 void fadeOut() {
-	byte tempPal[PALETTE_SIZE];
+	byte tempPal[Graphics::PALETTE_SIZE];
 	const byte *srcP;
 	byte *destP;
 	int count;
 	Common::Event evt;
 
-	xGetPal(saved_palette, PALETTE_COUNT, 0);
+	xGetPal(saved_palette, Graphics::PALETTE_COUNT, 0);
 
 	for (int step = FADE_STEPS - 1; step >= 0; --step) {
 		// Set each palette RGB proportionately
 		for (srcP = &saved_palette[0], destP = &tempPal[0], count = 0;
-			 count < PALETTE_SIZE; ++count, ++srcP, ++destP) {
+			 count < Graphics::PALETTE_SIZE; ++count, ++srcP, ++destP) {
 			*destP = *srcP * step / FADE_STEPS;
 		}
 
@@ -106,23 +106,23 @@ void fadeOut() {
 }
 
 void fadeIn(const byte *pal) {
-	byte tempPal[PALETTE_SIZE];
+	byte tempPal[Graphics::PALETTE_SIZE];
 	const byte *srcP;
 	byte *destP;
 	int count;
 	Common::Event evt;
 
 	if (pal)
-		Common::copy(pal, pal + PALETTE_SIZE, saved_palette);
+		Common::copy(pal, pal + Graphics::PALETTE_SIZE, saved_palette);
 
 	// Start with a black palette
-	Common::fill(tempPal, tempPal + PALETTE_SIZE, 0);
+	Common::fill(tempPal, tempPal + Graphics::PALETTE_SIZE, 0);
 	xSetPal(tempPal);
 
 	for (int step = 1; step <= FADE_STEPS; ++step) {
 		// Set each palette RGB proportionately
 		for (srcP = &saved_palette[0], destP = &tempPal[0], count = 0;
-			 count < PALETTE_SIZE; ++count, ++srcP, ++destP) {
+			 count < Graphics::PALETTE_SIZE; ++count, ++srcP, ++destP) {
 			*destP = *srcP * step / FADE_STEPS;
 		}
 

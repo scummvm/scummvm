@@ -51,8 +51,8 @@ bool SplashScreen::msgFocus(const FocusMessage &msg) {
 	_delayCtr = 0;
 
 	// This is the first screen shown, so start with black, and fade it in
-	byte blackPal[PALETTE_SIZE];
-	Common::fill(blackPal, blackPal + PALETTE_SIZE, 0);
+	byte blackPal[Graphics::PALETTE_SIZE];
+	Common::fill(blackPal, blackPal + Graphics::PALETTE_SIZE, 0);
 	Gfx::xSetPal(blackPal);
 
 	draw();

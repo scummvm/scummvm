@@ -43,7 +43,7 @@ ScreenSave::ScreenSave(){
 
 Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	create(320, 200);
-	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
+	Common::fill(&_tempPalette[0], &_tempPalette[Graphics::PALETTE_SIZE], 0);
 	Common::fill(&_manPal[0], &_manPal[0x60], 0);
 	Common::fill(&_scaleTable1[0], &_scaleTable1[256], 0);
 	Common::fill(&_scaleTable2[0], &_scaleTable2[256], 0);
@@ -113,7 +113,7 @@ void Screen::update() {
 
 void Screen::setInitialPalettte() {
 	Common::copy(&INITIAL_PALETTE[0], &INITIAL_PALETTE[18 * 3], _rawPalette);
-	Common::fill(&_rawPalette[18 * 3], &_rawPalette[PALETTE_SIZE], 0);
+	Common::fill(&_rawPalette[18 * 3], &_rawPalette[Graphics::PALETTE_SIZE], 0);
 
 	g_system->getPaletteManager()->setPalette(INITIAL_PALETTE, 0, 18);
 }
@@ -140,22 +140,22 @@ void Screen::loadPalette(int fileNum, int subfile) {
 }
 
 void Screen::setPalette() {
-	g_system->getPaletteManager()->setPalette(&_rawPalette[0], 0, PALETTE_COUNT);
+	g_system->getPaletteManager()->setPalette(&_rawPalette[0], 0, Graphics::PALETTE_COUNT);
 }
 
 void Screen::loadRawPalette(Common::SeekableReadStream *stream) {
-	stream->read(&_rawPalette[0], PALETTE_SIZE);
-	for (byte *p = &_rawPalette[0]; p < &_rawPalette[PALETTE_SIZE]; ++p)
+	stream->read(&_rawPalette[0], Graphics::PALETTE_SIZE);
+	for (byte *p = &_rawPalette[0]; p < &_rawPalette[Graphics::PALETTE_SIZE]; ++p)
 		*p = VGA_COLOR_TRANS(*p);
 }
 
 void Screen::updatePalette() {
-	g_system->getPaletteManager()->setPalette(&_tempPalette[0], 0, PALETTE_COUNT);
+	g_system->getPaletteManager()->setPalette(&_tempPalette[0], 0, Graphics::PALETTE_COUNT);
 	update();
 }
 
 void Screen::savePalette() {
-	Common::copy(&_rawPalette[0], &_rawPalette[PALETTE_SIZE],
+	Common::copy(&_rawPalette[0], &_rawPalette[Graphics::PALETTE_SIZE],
 		&_savedPalettes[_savedPaletteCount][0]);
 
 	if (++_savedPaletteCount == 2)
@@ -167,7 +167,7 @@ void Screen::restorePalette() {
 		_savedPaletteCount = 0;
 
 	Common::copy(&_savedPalettes[_savedPaletteCount][0],
-		&_savedPalettes[_savedPaletteCount][PALETTE_SIZE], &_rawPalette[0]);
+		&_savedPalettes[_savedPaletteCount][Graphics::PALETTE_SIZE], &_rawPalette[0]);
 }
 
 void Screen::getPalette(byte *pal) {
@@ -182,7 +182,7 @@ void Screen::forceFadeOut() {
 
 	do {
 		repeatFlag = false;
-		for (srcP = &_tempPalette[0], count = 0; count < PALETTE_SIZE; ++count, ++srcP) {
+		for (srcP = &_tempPalette[0], count = 0; count < Graphics::PALETTE_SIZE; ++count, ++srcP) {
 			int v = *srcP;
 			if (v) {
 				repeatFlag = true;
@@ -196,7 +196,7 @@ void Screen::forceFadeOut() {
 }
 
 void Screen::forceFadeIn() {
-	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
+	Common::fill(&_tempPalette[0], &_tempPalette[Graphics::PALETTE_SIZE], 0);
 
 	const int FADE_AMOUNT = 2;
 	bool repeatFlag;
@@ -205,7 +205,7 @@ void Screen::forceFadeIn() {
 		const byte *srcP = &_rawPalette[0];
 		byte *destP = &_tempPalette[0];
 
-		for (int idx = 0; idx < PALETTE_SIZE; ++idx, ++srcP, ++destP) {
+		for (int idx = 0; idx < Graphics::PALETTE_SIZE; ++idx, ++srcP, ++destP) {
 			if (*destP != *srcP) {
 				repeatFlag = true;
 				*destP = MIN((int)*destP + FADE_AMOUNT, (int)*srcP);

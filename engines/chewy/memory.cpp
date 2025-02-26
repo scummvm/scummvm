@@ -33,12 +33,12 @@ TafInfo *Memory::taf_adr(const char *filename) {
 	uint32 size = res->getAllSize() + imageCount * 8 + sizeof(TafInfo);
 	uint32 kgroesse = imageCount * sizeof(byte *);
 
-	byte *tmp1 = (byte *)MALLOC(size + PALETTE_SIZE + kgroesse);
+	byte *tmp1 = (byte *)MALLOC(size + Graphics::PALETTE_SIZE + kgroesse);
 	TafInfo *tinfo = (TafInfo *)tmp1;
 	tinfo->image = (byte **)(tmp1 + sizeof(TafInfo));
 	tinfo->palette = tmp1 + size;
 	tinfo->count = imageCount;
-	memcpy(tinfo->palette, res->getSpritePalette(), PALETTE_SIZE);
+	memcpy(tinfo->palette, res->getSpritePalette(), Graphics::PALETTE_SIZE);
 	byte *imgPtr = tmp1 + sizeof(TafInfo) + kgroesse;
 
 	for (int i = 0; i < imageCount; i++) {

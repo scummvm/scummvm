@@ -36,9 +36,9 @@ namespace Bagel {
 
 typedef uint32 RGBCOLOR;
 struct HPALETTE {
-	byte _data[PALETTE_SIZE];
+	byte _data[Graphics::PALETTE_SIZE];
 	int16 _numColors;
-	HPALETTE(int16 numColors = PALETTE_COUNT);
+	HPALETTE(int16 numColors = Graphics::PALETTE_COUNT);
 };
 
 struct PALETTEENTRY {
@@ -124,7 +124,7 @@ public:
 	}
 
 	void setData(const byte* colors) {
-		memcpy(_palette._data, colors, PALETTE_SIZE);
+		memcpy(_palette._data, colors, Graphics::PALETTE_SIZE);
 	}
 
 	virtual ~CBofPalette();

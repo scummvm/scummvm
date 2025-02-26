@@ -43,8 +43,8 @@ bool WidgetList::contains(const WidgetBase *item) const {
 TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 		_inventoryWidget(vm), _messageWidget(vm), _textWidget(vm), _tooltipWidget(vm),
 		_verbsWidget(vm), _creditsWidget(vm), _optionsWidget(vm), _quitWidget(vm) {
-	Common::fill(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], 0);
-	Common::fill(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], 0);
+	Common::fill(&_lookupTable[0], &_lookupTable[Graphics::PALETTE_COUNT], 0);
+	Common::fill(&_lookupTable1[0], &_lookupTable1[Graphics::PALETTE_COUNT], 0);
 	_scrollSize = 0;
 	_scrollSpeed = 16;
 	_drawMenu = false;
@@ -214,10 +214,10 @@ void TattooUserInterface::doJournal() {
 	TattooJournal &journal = *(TattooJournal *)_vm->_journal;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	Screen &screen = *_vm->_screen;
-	byte lookupTable[PALETTE_COUNT], lookupTable1[PALETTE_COUNT];
+	byte lookupTable[Graphics::PALETTE_COUNT], lookupTable1[Graphics::PALETTE_COUNT];
 
-	Common::copy(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], &lookupTable[0]);
-	Common::copy(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], &lookupTable1[0]);
+	Common::copy(&_lookupTable[0], &_lookupTable[Graphics::PALETTE_COUNT], &lookupTable[0]);
+	Common::copy(&_lookupTable1[0], &_lookupTable1[Graphics::PALETTE_COUNT], &lookupTable1[0]);
 	_menuMode = JOURNAL_MODE;
 	journal.show();
 
@@ -228,8 +228,8 @@ void TattooUserInterface::doJournal() {
 	// Restore the old screen palette and greyscale lookup table
 	screen.clear();
 	screen.setPalette(screen._cMap);
-	Common::copy(&lookupTable[0], &lookupTable[PALETTE_COUNT], &_lookupTable[0]);
-	Common::copy(&lookupTable1[0], &lookupTable1[PALETTE_COUNT], &_lookupTable1[0]);
+	Common::copy(&lookupTable[0], &lookupTable[Graphics::PALETTE_COUNT], &_lookupTable[0]);
+	Common::copy(&lookupTable1[0], &lookupTable1[Graphics::PALETTE_COUNT], &_lookupTable1[0]);
 
 	// Restore the scene
 	screen._backBuffer1.SHblitFrom(screen._backBuffer2);
@@ -658,20 +658,20 @@ void TattooUserInterface::putMessage(const char *formatStr, ...) {
 	_messageWidget.summonWindow();
 }
 
-void TattooUserInterface::setupBGArea(const byte cMap[PALETTE_SIZE]) {
+void TattooUserInterface::setupBGArea(const byte cMap[Graphics::PALETTE_SIZE]) {
 	Scene &scene = *_vm->_scene;
 
 	// This requires that there is a 16 grayscale palette sequence in the palette that goes from lighter
 	// to darker as the palette numbers go up. The last palette entry in that run is specified by _bgColor
 	byte *p = &_lookupTable[0];
-	for (int idx = 0; idx < PALETTE_COUNT; ++idx)
+	for (int idx = 0; idx < Graphics::PALETTE_COUNT; ++idx)
 		*p++ = BG_GREYSCALE_RANGE_END - (cMap[idx * 3] * 30 + cMap[idx * 3 + 1] * 59 + cMap[idx * 3 + 2] * 11) / 480;
 
 	// If we're going to a scene with a haze special effect, initialize the translate table to lighten the colors
 	if (_mask != nullptr) {
 		p = &_lookupTable1[0];
 
-		for (int idx = 0; idx < PALETTE_COUNT; ++idx) {
+		for (int idx = 0; idx < Graphics::PALETTE_COUNT; ++idx) {
 			int r, g, b;
 			switch (scene._currentScene) {
 			case 8:
@@ -702,7 +702,7 @@ void TattooUserInterface::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 			byte c = 0xff;
 			int cd = 99999;
 
-			for (int pal = 0; pal < PALETTE_COUNT; ++pal) {
+			for (int pal = 0; pal < Graphics::PALETTE_COUNT; ++pal) {
 				int d = (r - cMap[pal * 3]) * (r - cMap[pal * 3]) + (g - cMap[pal * 3 + 1]) * (g - cMap[pal * 3 + 1]) +
 					(b - cMap[pal * 3 + 2]) * (b - cMap[pal * 3 + 2]);
 

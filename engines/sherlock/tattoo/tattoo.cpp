@@ -141,7 +141,7 @@ void TattooEngine::startScene() {
 void TattooEngine::loadInitialPalette() {
 	byte palette[768];
 	Common::SeekableReadStream *stream = _res->load("room.pal");
-	stream->read(palette, PALETTE_SIZE);
+	stream->read(palette, Graphics::PALETTE_SIZE);
 	_screen->translatePalette(palette);
 	_screen->setPalette(palette);
 

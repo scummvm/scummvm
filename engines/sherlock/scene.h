@@ -51,7 +51,7 @@ struct BgFileHeader {
 	int _scrollSize;
 	int _bytesWritten;				// Size of the main body of the RRM
 	int _fadeStyle;					// Fade style
-	byte _palette[PALETTE_SIZE];	// Palette
+	byte _palette[Graphics::PALETTE_SIZE];	// Palette
 
 
 	BgFileHeader();

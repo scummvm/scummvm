@@ -350,7 +350,7 @@ void Darts::initDarts() {
 void Darts::loadDarts() {
 	Resources &res = *_vm->_res;
 	Screen &screen = *_vm->_screen;
-	byte palette[PALETTE_SIZE];
+	byte palette[Graphics::PALETTE_SIZE];
 
 	// Load images
 	_hand1 = new ImageFile("hand1.vgs");
@@ -362,7 +362,7 @@ void Darts::loadDarts() {
 
 	// Load and set the palette
 	Common::SeekableReadStream *stream = res.load("DartBd.pal");
-	stream->read(palette, PALETTE_SIZE);
+	stream->read(palette, Graphics::PALETTE_SIZE);
 	screen.translatePalette(palette);
 	screen.setPalette(palette);
 	delete stream;

@@ -180,7 +180,7 @@ ErrorCode CBofBitmap::loadBitmap(const char *pszFileName, CBofPalette *pPalette)
 		_bitmap.copyFrom(*decoder.getSurface());
 
 		// Load the bitmap palette
-		_bitmap.setPalette(decoder.getPalette(), 0, PALETTE_COUNT);
+		_bitmap.setPalette(decoder.getPalette(), 0, Graphics::PALETTE_COUNT);
 
 		_nDX = _bitmap.w;
 		_nDY = _bitmap.h;
@@ -599,7 +599,7 @@ ErrorCode CBofBitmap::captureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofRe
 
 		// If we're capturing the screen, we have to convert the format first.
 		if (!_bUseBackdrop || pBackdrop == nullptr) {
-			Graphics::Surface *tmp = pWnd->getSurface()->rawSurface().convertTo(_bitmap.format, nullptr, 0, _pPalette->getData(), PALETTE_COUNT);
+			Graphics::Surface *tmp = pWnd->getSurface()->rawSurface().convertTo(_bitmap.format, nullptr, 0, _pPalette->getData(), Graphics::PALETTE_COUNT);
 			_bitmap.blitFrom(*tmp, cSrcRect, cDestRect);
 			tmp->free();
 			delete tmp;
@@ -625,7 +625,7 @@ void CBofBitmap::setPalette(CBofPalette *pBofPalette, bool bOwnPalette) {
 		_bOwnPalette = bOwnPalette;
 		_pPalette = pBofPalette;
 
-		_bitmap.setPalette(_pPalette->getData(), 0, PALETTE_COUNT);
+		_bitmap.setPalette(_pPalette->getData(), 0, Graphics::PALETTE_COUNT);
 	}
 }
 
@@ -1114,7 +1114,7 @@ Graphics::ManagedSurface CBofBitmap::getSurface() {
 	s.h = _nDY;
 	s.pitch = _nScanDX;
 	s.format = Graphics::PixelFormat::createFormatCLUT8();
-	s.setPalette(_pPalette->getData(), 0, PALETTE_COUNT);
+	s.setPalette(_pPalette->getData(), 0, Graphics::PALETTE_COUNT);
 	s.setPixels(_pBits);
 
 	return s;

@@ -149,7 +149,7 @@ void CBagCursor::unLoad() {
 
 void CBagCursor::setCurrent() {
 	_currentCursor = this;
-	CursorMan.replaceCursorPalette(_bitmap->getPalette()->getData(), 0, PALETTE_COUNT);
+	CursorMan.replaceCursorPalette(_bitmap->getPalette()->getData(), 0, Graphics::PALETTE_COUNT);
 	CursorMan.replaceCursor(_bitmap->getSurface(), _x, _y, 1);
 }
 

@@ -47,9 +47,9 @@ void color::writeToFile(AGS::Shared::Stream *file) const {
 	file->WriteByte(filler);
 }
 
-static void convertPalette(const PALETTE src, byte dest[PALETTE_SIZE]) {
+static void convertPalette(const PALETTE src, byte dest[Graphics::PALETTE_SIZE]) {
 	const color *cSrc = (const color *)src;
-	for (int i = 0; i < PALETTE_COUNT; ++i, cSrc++, dest += 3) {
+	for (int i = 0; i < Graphics::PALETTE_COUNT; ++i, cSrc++, dest += 3) {
 		dest[0] = VGA_COLOR_TRANS(cSrc->r);
 		dest[1] = VGA_COLOR_TRANS(cSrc->g);
 		dest[2] = VGA_COLOR_TRANS(cSrc->b);
@@ -58,9 +58,9 @@ static void convertPalette(const PALETTE src, byte dest[PALETTE_SIZE]) {
 
 static void applyPalette() {
 	if (g_system->getScreenFormat().bytesPerPixel == 1) {
-		byte pal[PALETTE_SIZE];
+		byte pal[Graphics::PALETTE_SIZE];
 		convertPalette(_G(current_palette), pal);
-		g_system->getPaletteManager()->setPalette(pal, 0, PALETTE_COUNT);
+		g_system->getPaletteManager()->setPalette(pal, 0, Graphics::PALETTE_COUNT);
 	}
 }
 

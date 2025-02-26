@@ -186,7 +186,7 @@ void SaveManager::createThumbnail() {
 	_saveThumb = new Graphics::Surface();
 
 	if (!IS_3DO) {
-		uint8 thumbPalette[PALETTE_SIZE];
+		uint8 thumbPalette[Graphics::PALETTE_SIZE];
 		_vm->_screen->getPalette(thumbPalette);
 		::createThumbnail(_saveThumb, (const byte *)_vm->_screen->getPixels(), SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT, thumbPalette);
 	} else {

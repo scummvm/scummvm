@@ -49,9 +49,9 @@ struct ScreenSave {
 class Screen : public BaseSurface {
 private:
 	AccessEngine *_vm;
-	byte _tempPalette[PALETTE_SIZE];
-	byte _rawPalette[PALETTE_SIZE];
-	byte _savedPalettes[2][PALETTE_SIZE];
+	byte _tempPalette[Graphics::PALETTE_SIZE];
+	byte _rawPalette[Graphics::PALETTE_SIZE];
+	byte _savedPalettes[2][Graphics::PALETTE_SIZE];
 	int _savedPaletteCount;
 	int _vesaCurrentWin;
 	int _currentPanel;

@@ -231,16 +231,16 @@ void ScalpelJournal::loadLocations() {
 void ScalpelJournal::drawFrame() {
 	Resources &res = *_vm->_res;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
-	byte palette[PALETTE_SIZE];
+	byte palette[Graphics::PALETTE_SIZE];
 
 	// Load in the journal background
 	Common::SeekableReadStream *bg = res.load("journal.lbv");
 	bg->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
-	bg->read(palette, PALETTE_SIZE);
+	bg->read(palette, Graphics::PALETTE_SIZE);
 	delete bg;
 
 	// Translate the palette for display
-	for (int idx = 0; idx < PALETTE_SIZE; ++idx)
+	for (int idx = 0; idx < Graphics::PALETTE_SIZE; ++idx)
 		palette[idx] = VGA_COLOR_TRANS(palette[idx]);
 
 	// Set the palette and print the title

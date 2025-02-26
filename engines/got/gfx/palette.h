@@ -28,7 +28,7 @@ namespace Got {
 namespace Gfx {
 
 struct Palette63 {
-	byte _pal[PALETTE_SIZE] = {};
+	byte _pal[Graphics::PALETTE_SIZE] = {};
 	Palette63() {}
 	Palette63(const byte *pal);
 

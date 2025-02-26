@@ -294,7 +294,7 @@ void TLib::loadIndex() {
  *
  * @paletteNum Specefies the palette number
  */
-void TLib::getPalette(byte palette[PALETTE_SIZE], int paletteNum) {
+void TLib::getPalette(byte palette[Graphics::PALETTE_SIZE], int paletteNum) {
 	// Get the specified palette
 	Common::SeekableReadStream *stream = getResource(RES_PALETTE, paletteNum, 0, true);
 	if (!stream)
