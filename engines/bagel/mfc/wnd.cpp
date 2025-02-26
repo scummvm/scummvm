@@ -78,5 +78,10 @@ long CWnd::SetTimer(UINT nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc) {
 	return 0;
 }
 
+BOOL CWnd::PostMessage(UINT message, WPARAM wParam, LPARAM lParam) {
+	error("TODO: CWnd::PostMessage");
+	return true;
+}
+
 } // namespace MFC
 } // namespace Bagel

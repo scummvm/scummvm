@@ -80,7 +80,7 @@ struct TILE {
 	}
 } mazeTile[NUM_COLUMNS][NUM_ROWS];
 
-static CSound *pGameSound;                             // Game theme song
+CSound *pGameSound;                             // Game theme song
 
 LPGAMESTRUCT pGameInfo;
 

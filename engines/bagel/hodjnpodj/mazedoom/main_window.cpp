@@ -165,11 +165,10 @@ CMainWindow::CMainWindow() {
 	bPlaying = TRUE;
 	SetTimer(GAME_TIMER, CLICK_TIME, nullptr);   // Reset ticker
 
-#ifdef TODO
 	if (pGameInfo->bMusicEnabled) {
 		pGameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 		if (pGameSound != nullptr) {
-			(*pGameSound).MidiLoopPlaySegment(3000, 32980, 0, FMT_MILLISEC);
+			(*pGameSound).midiLoopPlaySegment(3000, 32980, 0, FMT_MILLISEC);
 		} // end if pGameSound
 	}
 
@@ -177,7 +176,7 @@ CMainWindow::CMainWindow() {
 
 	if (!pGameInfo->bPlayingMetagame)
 		PostMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);       // Activate the Options dialog
-#endif
+
 } // End of CMainWindow
 
 // OnPaint:

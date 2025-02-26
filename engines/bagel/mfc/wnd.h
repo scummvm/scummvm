@@ -51,6 +51,12 @@ enum {
 	WS_POPUP,
 	SW_SHOWNORMAL
 };
+enum {
+	WM_COMMAND
+};
+enum {
+	BN_CLICKED
+};
 
 typedef void *TIMERPROC;
 
@@ -169,6 +175,8 @@ public:
 
 	long SendMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 	long SetTimer(UINT nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
+
+	BOOL PostMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 };
 
 class CFrameWnd : public CWnd {

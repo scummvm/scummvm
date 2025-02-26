@@ -28,6 +28,7 @@
 #include "bagel/hodjnpodj/boflib/button.h"
 #include "bagel/hodjnpodj/boflib/sprite.h"
 #include "bagel/hodjnpodj/boflib/text.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -319,6 +320,7 @@ extern int tempDifficulty;
 extern int tempTime;
 
 extern LPGAMESTRUCT pGameInfo;
+extern CSound *pGameSound;
 
 } // namespace MazeDoom
 } // namespace HodjNPodj

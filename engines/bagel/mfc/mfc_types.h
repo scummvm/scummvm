@@ -78,8 +78,6 @@ typedef void *LPBITMAPINFOHEADER;
 typedef Graphics::ManagedSurface *HWND;
 
 
-class CSound {
-};
 class CDibDoc {
 };
 

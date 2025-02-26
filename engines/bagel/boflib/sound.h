@@ -206,6 +206,8 @@ private:
 	static CQueue *_cQueue[NUM_QUEUES];
 };
 
+#define CSound CBofSound
+
 bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0);
 bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0, bool bWait = false);
 
