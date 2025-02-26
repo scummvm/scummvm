@@ -686,7 +686,7 @@ protected:
 	void oPlaytoons_copyFile();
 	void oPlaytoons_openItk();
 
-	Common::String getFile(const char *path, bool stripPath = true);
+	Common::String getFile(const char *path, bool stripPath = true, bool *isCd = nullptr);
 
 	bool readSprite(Common::String file, int32 dataVar, int32 size, int32 offset);
 };
@@ -780,7 +780,7 @@ private:
 	Common::String _currentCDPath;
 
 	Common::String findFile(const Common::String &mask, const Common::String &previousFile);
-	void copyFile(const Common::String &sourceFile, const Common::String &destFile);
+	void copyFile(const Common::String &sourceFile, bool sourceIsCd, const Common::String &destFile);
 
 	bool setCurrentCDPath(const Common::String &dir);
 	Common::Array<uint32> getAdibou2InstalledApplications();
