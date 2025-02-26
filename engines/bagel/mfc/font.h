@@ -22,12 +22,65 @@
 #ifndef BAGEL_MFC_FONT_H
 #define BAGEL_MFC_FONT_H
 
+#include "bagel/mfc/mfc_types.h"
+
 namespace Bagel {
 namespace MFC {
+
+#define OUT_DEFAULT_PRECIS          0
+#define OUT_STRING_PRECIS           1
+#define OUT_CHARACTER_PRECIS        2
+#define OUT_STROKE_PRECIS           3
+#define OUT_TT_PRECIS               4
+#define OUT_DEVICE_PRECIS           5
+#define OUT_RASTER_PRECIS           6
+#define OUT_TT_ONLY_PRECIS          7
+#define OUT_OUTLINE_PRECIS          8
+#define OUT_SCREEN_OUTLINE_PRECIS   9
+#define OUT_PS_ONLY_PRECIS          10
+
+#define DEFAULT_QUALITY         0
+#define DRAFT_QUALITY           1
+#define PROOF_QUALITY           2
+#define NONANTIALIASED_QUALITY  3
+#define ANTIALIASED_QUALITY     4
+
+/* Font Families */
+#define FF_DONTCARE         (0<<4)  /* Don't care or don't know. */
+#define FF_ROMAN            (1<<4)  /* Variable stroke width, serifed. */
+									/* Times Roman, Century Schoolbook, etc. */
+#define FF_SWISS            (2<<4)  /* Variable stroke width, sans-serifed. */
+									/* Helvetica, Swiss, etc. */
+#define FF_MODERN           (3<<4)  /* Constant stroke width, serifed or sans-serifed. */
+									/* Pica, Elite, Courier, etc. */
+#define FF_SCRIPT           (4<<4)  /* Cursive, etc. */
+#define FF_DECORATIVE       (5<<4)  /* Old English, etc. */
+
 
 struct TEXTMETRIC {
 };
 typedef TEXTMETRIC *LPTEXTMETRIC;
+
+class CFont {
+public:
+	BOOL CreateFont(
+		int nHeight,
+		int nWidth,
+		int nEscapement,
+		int nOrientation,
+		int nWeight,
+		BYTE bItalic,
+		BYTE bUnderline,
+		BYTE cStrikeOut,
+		BYTE nCharSet,
+		BYTE nOutPrecision,
+		BYTE nClipPrecision,
+		BYTE nQuality,
+		BYTE nPitchAndFamily,
+		LPCTSTR lpszFacename
+	);
+
+};
 
 } // namespace MFC
 } // namespace Bagel

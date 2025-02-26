@@ -47,32 +47,37 @@ namespace MFC {
 
 
 typedef bool BOOL;
+typedef byte BYTE;
 typedef uint16 WPARAM;
+typedef uint16 WORD;
 typedef int32 LPARAM;
 typedef uint UINT;
 typedef uint32 DWORD;
+typedef int32 LONG;
 
 #define TRUE true
 #define FALSE false
 
-typedef void *HANDLE;
 typedef Graphics::ManagedSurface *HDIB;
 typedef Common::Serializer CDumpContext;
 typedef Graphics::Palette *HPALETTE;
 typedef uint32 COLORREF;
 typedef Common::File CFile;
 
+typedef int INT;
+typedef void *HANDLE;
+typedef void *HGLOBAL;
+typedef void *LPVOID;
+typedef void *HGDIOBJ;
 typedef char *LPSTR;
 typedef const char *LPCSTR;
+typedef const char *LPCTSTR;
 typedef void *HBITMAP;
 typedef void *LPBITMAPINFO;
 typedef void *LPBITMAPINFOHEADER;
 typedef Graphics::ManagedSurface *HWND;
 
-class CSprite {
-};
-class CText {
-};
+
 class CSound {
 };
 class CDibDoc {

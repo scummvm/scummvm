@@ -52,6 +52,8 @@ enum {
 	SW_SHOWNORMAL
 };
 
+typedef void *TIMERPROC;
+
 class CWnd {
 protected:
 	HWND m_hWnd;
@@ -166,6 +168,7 @@ public:
 	CWnd *GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious) const;
 
 	long SendMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
+	long SetTimer(UINT nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
 };
 
 class CFrameWnd : public CWnd {

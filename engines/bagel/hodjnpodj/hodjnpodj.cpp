@@ -106,5 +106,9 @@ void HodjNPodjEngine::playMinigame(const Common::String &name) {
 	error("Unknown minigame specified - %s", name.c_str());
 }
 
+void HodjNPodjEngine::AddFontResource(const char *fontName) {
+	error("TODO: AddFontResource");
+}
+
 } // namespace HodjNPodj
 } // namespace Bagel

@@ -29,6 +29,19 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+#define	PATHSPECSIZE		256
+
+#define SKILLLEVEL_LOW      0
+#define SKILLLEVEL_MEDIUM   1
+#define SKILLLEVEL_HIGH     2
+
+#define	INSTALL_NONE		0
+#define	INSTALL_MINIMAL		1
+#define INSTALL_BASIC		2
+#define	INSTALL_EXTRA		3
+#define INSTALL_FULL		4
+
+
 struct GAMESTRUCT {
 	long lCrowns = 0;
 	long lScore = 0;

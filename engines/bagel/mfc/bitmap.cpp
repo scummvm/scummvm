@@ -25,8 +25,25 @@
 namespace Bagel {
 namespace MFC {
 
-void CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
+BOOL CBitmap::CreateBitmap(int nWidth, int nHeight,
+		UINT nPlanes, UINT nBitCount, const void *lpBits) {
+	error("TODO: CBitmap::CreateBitmap");
+	return true;
+}
+
+BOOL CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
 	error("TODO: CBitmap::CreateCompatibleBitmap");
+	return true;
+}
+
+int CBitmap::GetObject(int nCount, LPVOID lpObject) const {
+	error("TODO: CBitmap::GetObject");
+	return 0;
+}
+
+LONG CBitmap::GetBitmapBits(LONG dwCount, LPVOID lpBits) const {
+	error("TODO: CBitmap::GetBitmapBits");
+	return 0;
 }
 
 } // namespace MFC

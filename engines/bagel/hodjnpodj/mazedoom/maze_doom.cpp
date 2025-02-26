@@ -25,6 +25,7 @@
 #include "bagel/hodjnpodj/mazedoom/main_window.h"
 #include "bagel/hodjnpodj/mazedoom/globals.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/hodjnpodj/boflib/bitmaps.h"
 #include "bagel/mfc/afx.h"
 
 namespace Bagel {
@@ -145,6 +146,34 @@ void run() {
 		pMain->SetActiveWindow();
 	}
 }
+
+void PaintMaze(CDC *pDC) {
+	int x, y;
+
+	for (x = 0; x < NUM_COLUMNS; x++) {
+		for (y = 0; y < NUM_ROWS; y++) {
+			mazeTile[x][y].m_nStart.x = x * SQ_SIZE_X;                              // Put in location info
+			mazeTile[x][y].m_nStart.y = y * SQ_SIZE_Y;
+			if ((mazeTile[x][y].m_nWall == PATH) || (mazeTile[x][y].m_nWall == EXIT) ||
+				mazeTile[x][y].m_bHidden)      // Path or hidden obj. 
+				PaintBitmap(pDC, pGamePalette, pPathBitmap,                        //...draw path bitmap
+					mazeTile[x][y].m_nStart.x, mazeTile[x][y].m_nStart.y);
+			else if (mazeTile[x][y].m_nWall == START)                             // Start of maze
+				PaintBitmap(pDC, pGamePalette, pStartBitmap,                       //...draw start bitmap
+					mazeTile[x][y].m_nStart.x, mazeTile[x][y].m_nStart.y);
+			else                                                                    // Otherwise, it's a
+				PaintBitmap(pDC, pGamePalette, pWallBitmap,                        //...wall
+					mazeTile[x][y].m_nStart.x, mazeTile[x][y].m_nStart.y);
+		} // end for y
+	} // end for x
+
+	for (x = 0; x < NUM_COLUMNS; x++) {                                    // Go through the grid
+		for (y = 0; y < NUM_ROWS; y++) {                                   //...and for every square
+			AddEdges(pDC, x, y, 0, 0);                                    //...add trim if needed
+		} // end for y
+	} // end for x
+
+} // End PaintMaze
 
 void SetUpMaze() {
 	int     x, y;

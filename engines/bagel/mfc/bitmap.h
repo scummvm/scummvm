@@ -24,37 +24,31 @@
 
 #include "graphics/managed_surface.h"
 #include "bagel/mfc/mfc_types.h"
+#include "bagel/mfc/object.h"
 
 namespace Bagel {
 namespace MFC {
 
 class CDC;
 
-class CGdiObject {
-private:
-	HBITMAP _bitmap = nullptr;
-
-public:
-	~CGdiObject() {}
-
-	void Attach(HBITMAP bitmap) {
-		_bitmap = bitmap;
-	}
-	HBITMAP Detach() {
-		HBITMAP result = _bitmap;
-		_bitmap = nullptr;
-		return result;
-	}
-
-	void DeleteObject() {
-		delete _bitmap;
-		_bitmap = nullptr;
-	}
-};
+typedef struct tagBITMAP {
+	LONG bmType;
+	LONG bmWidth;
+	LONG bmHeight;
+	LONG bmWidthBytes;
+	WORD bmPlanes;
+	WORD bmBitsPixel;
+	LPVOID bmBits;
+} BITMAP;
 
 class CBitmap : public CGdiObject {
 public:
-	void CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight);
+	BOOL CreateBitmap(int nWidth, int nHeight,
+		UINT nPlanes, UINT nBitCount, const void *lpBits);
+	BOOL CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight);
+
+	int GetObject(int nCount, LPVOID lpObject) const;
+	LONG GetBitmapBits(LONG dwCount, LPVOID lpBits) const;
 };
 
 } // namespace MFC

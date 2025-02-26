@@ -68,6 +68,11 @@ CBitmap *CDC::SelectObject(CBitmap *bitmap) {
 	return nullptr;
 }
 
+CFont *CDC::SelectObject(CFont *font) {
+	error("TODO: CDC::SelectObject");
+	return nullptr;
+}
+
 void CDC::RealizePalette() {
 	g_system->getPaletteManager()->setPalette(_palette.data(), 0, _palette.size());
 }
@@ -80,13 +85,18 @@ void CDC::Detach() {
 	m_hDC = nullptr;
 }
 
+void CDC::DeleteDC() {
+	error("TODO: CDC::DeleteDC");
+}
+
 CBitmap *CDC::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
 	error("TODO: CreateCompatibleBitmap");
 	return nullptr;
 }
 
-void CDC::CreateCompatibleDC(CDC *pDC) {
+BOOL CDC::CreateCompatibleDC(CDC *pDC) {
 	error("TODO: CDC::CreateCompatibleDC");
+	return true;
 }
 
 bool CDC::BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
@@ -130,6 +140,10 @@ void CDC::LineTo(int x, int y) {
 int CDC::FrameRect(LPCRECT lpRect, CBrush *pBrush) {
 	error("TODO: CDC::FrameRect");
 	return 0;
+}
+
+void CDC::FillRect(LPCRECT lpRect, CBrush *pBrush) {
+	error("TODO: FillRect");
 }
 
 void CDC::Ellipse(LPCRECT lpRect) {
@@ -179,6 +193,13 @@ BOOL CDC::TextOut(int x, int y, const char *lpszString) {
 BOOL CDC::TextOut(int x, int y, const char *lpszString, int nCount) {
 	error("TODO: CDC::TextOut");
 	return true;
+}
+
+int CDC::TabbedTextOut(int x, int y, LPCSTR lpszString,
+		int nCount, int nTabPositions,
+		const INT *lpnTabStopPositions, int nTabOrigin) {
+	error("TODO: CDC::TabbedTextOut");
+	return 0;
 }
 
 } // namespace MFC

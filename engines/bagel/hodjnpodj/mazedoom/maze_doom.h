@@ -26,6 +26,8 @@
 #include "bagel/mfc/afx.h"
 #include "bagel/hodjnpodj/libs/types.h"
 #include "bagel/hodjnpodj/boflib/button.h"
+#include "bagel/hodjnpodj/boflib/sprite.h"
+#include "bagel/hodjnpodj/boflib/text.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -103,6 +105,22 @@ namespace MazeDoom {
 #define	TIME_LOCATION_Y		  4
 #define	TIME_WIDTH			195
 #define TIME_HEIGHT			 15
+
+//
+// bitmap locations in modparts.bmp
+//
+#define	WALL_X		0
+#define	WALL_Y		22
+#define	PATH_WIDTH	24
+#define	PATH_HEIGHT	24
+#define	PATH_X		48
+#define	START_X		24
+#define	EDGE_Y		46
+#define	EDGE_WIDTH	5
+#define	EDGE_HEIGHT	24
+#define	TRAP_WIDTH	22
+#define	TRAP_HEIGHT	22
+
 
 extern void run();
 

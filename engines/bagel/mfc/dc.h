@@ -36,7 +36,13 @@ enum DeviceCaps {
 	HORZRES, VERTRES
 };
 enum {
-	SRCCOPY
+	SRCCOPY	  = 0x00CC0020,
+	SRCPAINT  = 0x00EE0086,
+	SRCAND    = 0x008800C6,
+	SRCINVERT = 0x00660046,
+	SRCERASE  = 0x00440328,
+	NOTSRCCOPY  = 0x00330008,
+	NOTSRCERASE = 0x001100A6
 };
 enum {
 	PS_INSIDEFRAME,
@@ -70,6 +76,26 @@ enum {
 	ODA_SELECT     = 0x0002,
 	ODA_FOCUS      = 0x0004
 };
+
+/* Ternary raster operations */
+#define SRCCOPY             (DWORD)0x00CC0020 /* dest = source                   */
+#define SRCPAINT            (DWORD)0x00EE0086 /* dest = source OR dest           */
+#define SRCAND              (DWORD)0x008800C6 /* dest = source AND dest          */
+#define SRCINVERT           (DWORD)0x00660046 /* dest = source XOR dest          */
+#define SRCERASE            (DWORD)0x00440328 /* dest = source AND (NOT dest )   */
+#define NOTSRCCOPY          (DWORD)0x00330008 /* dest = (NOT source)             */
+#define NOTSRCERASE         (DWORD)0x001100A6 /* dest = (NOT src) AND (NOT dest) */
+#define MERGECOPY           (DWORD)0x00C000CA /* dest = (source AND pattern)     */
+#define MERGEPAINT          (DWORD)0x00BB0226 /* dest = (NOT source) OR dest     */
+#define PATCOPY             (DWORD)0x00F00021 /* dest = pattern                  */
+#define PATPAINT            (DWORD)0x00FB0A09 /* dest = DPSnoo                   */
+#define PATINVERT           (DWORD)0x005A0049 /* dest = pattern XOR dest         */
+#define DSTINVERT           (DWORD)0x00550009 /* dest = (NOT dest)               */
+#define BLACKNESS           (DWORD)0x00000042 /* dest = BLACK                    */
+#define WHITENESS           (DWORD)0x00FF0062 /* dest = WHITE                    */
+#define NOMIRRORBITMAP      (DWORD)0x80000000 /* Do not Mirror the bitmap in this call */
+#define CAPTUREBLT          (DWORD)0x40000000 /* Include layered windows */
+
 
 class CPen {
 public:
@@ -115,12 +141,15 @@ public:
 	int GetDeviceCaps(int field) const;
 	CPalette *SelectPalette(CPalette *pPalette, bool bForceBackground);
 	CBitmap *SelectObject(CBitmap *bitmap);
+	CFont *SelectObject(CFont *font);
 	void RealizePalette();
 
 	void Attach(HDC dc);
 	void Detach();
+	void DeleteDC();
+
 	CBitmap *CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight);
-	void CreateCompatibleDC(CDC *pDC);
+	BOOL CreateCompatibleDC(CDC *pDC);
 
 	CPen *SelectObject(CPen *pen);
 	CBrush *SelectObject(CBrush *brush);
@@ -145,6 +174,7 @@ public:
 	void MoveTo(int x, int y);
 	void LineTo(int x, int y);
 	int FrameRect(LPCRECT lpRect, CBrush *pBrush);
+	void FillRect(LPCRECT lpRect, CBrush *pBrush);
 	void Ellipse(LPCRECT lpRect);
 	int SetBkMode(int nBkMode);
 
@@ -156,6 +186,10 @@ public:
 	int SetTextColor(int nTextColor);
 	BOOL TextOut(int x, int y, const char *lpszString);
 	BOOL TextOut(int x, int y, const char *lpszString, int nCount);
+
+	int TabbedTextOut(int x, int y, LPCSTR lpszString,
+		int nCount, int nTabPositions,
+		const INT *lpnTabStopPositions, int nTabOrigin);
 };
 
 } // namespace MFC

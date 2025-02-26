@@ -22,17 +22,20 @@
 #ifndef BAGEL_MFC_RECT_H
 #define BAGEL_MFC_RECT_H
 
-#include "common/rect.h"
 #include "bagel/mfc/mfc_types.h"
 
 namespace Bagel {
 namespace MFC {
+
+typedef Common::Point CPoint;
 
 struct CRect : public Common::Rect {
 public:
 	CRect() : Common::Rect() {
 	}
 	CRect(const Common::Rect &src) : Common::Rect(src) {
+	}
+	CRect(int x1, int y1, int x2, int y2) : Common::Rect(x1, y1, x2, y2) {
 	}
 
 	void SetRect(int x1, int y1, int x2, int y2) {
@@ -46,6 +49,22 @@ public:
 		right += dx;
 		top -= dy;
 		bottom += dy;
+	}
+
+	BOOL IntersectRect(const CRect *lpRect1, const CRect *lpRect2) {
+		*this = lpRect1->findIntersectingRect(*lpRect2);
+		return !isEmpty();
+	}
+	void UnionRect(const CRect &lpRect1, const CRect &lpRect2) {
+		*this = lpRect1;
+		this->extend(lpRect2);
+	}
+	void UnionRect(const CRect &lpRect1, const CRect *lpRect2) {
+		*this = lpRect1;
+		this->extend(*lpRect2);
+	}
+	BOOL PtInRect(const CPoint &pt) const {
+		return contains(pt.x, pt.y);
 	}
 };
 
@@ -68,7 +87,6 @@ public:
 typedef CRect RECT;
 typedef CRect *LPRECT;
 typedef const CRect *LPCRECT;
-typedef Common::Point CPoint;
 
 } // namespace MFC
 } // namespace Bagel

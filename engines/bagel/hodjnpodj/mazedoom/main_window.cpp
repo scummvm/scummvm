@@ -23,7 +23,9 @@
 #include "bagel/hodjnpodj/mazedoom/maze_doom.h"
 #include "bagel/hodjnpodj/mazedoom/globals.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/hodjnpodj/boflib/bitmaps.h"
 #include "bagel/hodjnpodj/libs/dib_doc.h"
+#include "bagel/hodjnpodj/libs/types.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -31,10 +33,10 @@ namespace MazeDoom {
 
 CMainWindow::CMainWindow() {
 	CString WndClass;
-	CRect   MainRect, tmpRect;
-//	CBitmap *pPartsBitmap = nullptr;
+	CRect MainRect, tmpRect;
+	CBitmap *pPartsBitmap = nullptr;
 	CDC *pDC = nullptr;
-//	int     i;                  // counter for trap assignment   
+	int i;
 
 	BeginWaitCursor();
 
@@ -87,7 +89,7 @@ CMainWindow::CMainWindow() {
 	pOldPal = pMazeDC->SelectPalette(pGamePalette, false);            // select the game palette
 	pMazeDC->RealizePalette();                                          //...and realize it
 
-#ifdef TODO
+
 	// Load up the various bitmaps for wall, edge, booby traps, etc.
 	//
 	pPartsBitmap = FetchResourceBitmap(pDC, nullptr, IDB_PARTS);
@@ -127,15 +129,13 @@ CMainWindow::CMainWindow() {
 	pBlankBitmap = FetchResourceBitmap(pDC, nullptr, "IDB_BLANK_BMP");
 	assert(pBlankBitmap != nullptr);
 
-	tmpRect.setRect(TIME_LOCATION_X, TIME_LOCATION_Y,
+	tmpRect.SetRect(TIME_LOCATION_X, TIME_LOCATION_Y,
 		TIME_LOCATION_X + TIME_WIDTH, TIME_LOCATION_Y + TIME_HEIGHT);
 	if ((m_pTimeText = new CText()) != nullptr) {
 		(*m_pTimeText).SetupText(pDC, pGamePalette, &tmpRect, JUSTIFY_CENTER);
 	}
 
 	ReleaseDC(pDC);
-
-	srand((unsigned)time(nullptr));         // seed the random number generator 
 
 	if (pGameInfo->bPlayingMetagame) {
 		if (pGameInfo->nSkillLevel == SKILLLEVEL_LOW) {
@@ -165,11 +165,7 @@ CMainWindow::CMainWindow() {
 	bPlaying = TRUE;
 	SetTimer(GAME_TIMER, CLICK_TIME, nullptr);   // Reset ticker
 
-#ifdef _DEBUG
-	//pGameInfo->bMusicEnabled = TRUE;
-	//pGameInfo->bPlayingMetagame = TRUE;
-#endif //_DEBUG
-
+#ifdef TODO
 	if (pGameInfo->bMusicEnabled) {
 		pGameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 		if (pGameSound != nullptr) {

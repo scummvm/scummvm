@@ -20,11 +20,20 @@
  */
 
 #include "common/textconsole.h"
-#include "bagel/mfc/palette.h"
+#include "bagel/mfc/object.h"
 
 namespace Bagel {
 namespace MFC {
 
+LPVOID GlobalLock(HGLOBAL hMem) {
+	error("TODO: GlobalLock");
+	return nullptr;
+}
+
+BOOL GlobalUnlock(HGLOBAL hMem) {
+	error("TODO: GlobalUnlock");
+	return true;
+}
 
 } // namespace MFC
 } // namespace Bagel

@@ -29,7 +29,13 @@ CPalette *DuplicatePalette(CPalette *pOrigPal) {
 	return nullptr;
 }
 
-#if 0
+HBITMAP DIBtoBitmap(HDC hDC, HPALETTE hPal, LPBITMAPINFO lpbih) {
+	error("TODO: DIBtoBitmap");
+	return nullptr;
+}
+
+
+#if TODO
 /*************************************************************************
  *
  * PaintDIB()
@@ -97,7 +103,7 @@ BOOL WINAPI PaintDIB(HDC     hDC,
 
 	nDevCaps = GetDeviceCaps(hDC, RASTERCAPS);
 	if (!(nDevCaps & RC_STRETCHDIB)) {
-		hBitmap = ::DIBtoBitmap(hDC, NULL, (LPBITMAPINFO)lpDIBHdr);
+		hBitmap = DIBtoBitmap(hDC, NULL, (LPBITMAPINFO)lpDIBHdr);
 		if (hBitmap) {
 			hdcMem = ::CreateCompatibleDC(hDC);
 			if (hdcMem) {
@@ -582,7 +588,7 @@ CBitmap *WINAPI ConvertDIB(CDC *pDC,
 	lpDIBHdr = (LPSTR) ::GlobalLock((HGLOBAL)hDIB);
 	lpDIBBits = ::FindDIBBits(lpDIBHdr);
 
-	hBitmap = ::DIBtoBitmap(hDC, NULL, (LPBITMAPINFO)lpDIBHdr);
+	hBitmap = DIBtoBitmap(hDC, NULL, (LPBITMAPINFO)lpDIBHdr);
 
 	::GlobalUnlock((HGLOBAL)hDIB);
 

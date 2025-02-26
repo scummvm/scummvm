@@ -1,0 +1,117 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef BAGEL_HODJNPODJ_BOFLIB_TEXT_H
+#define BAGEL_HODJNPODJ_BOFLIB_TEXT_H
+
+#include "bagel/mfc/afx.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+
+
+// text color and offset definitions
+
+#define CTEXT_COLOR			RGB(0,0,0)
+#define CTEXT_SHADOW_COLOR	RGB(0,0,0)
+#define	CTEXT_SHADOW_DX		2
+#define	CTEXT_SHADOW_DY		2
+
+// text justification definitions
+
+#define	JUSTIFY_CENTER		0
+#define	JUSTIFY_LEFT		1
+#define JUSTIFY_RIGHT		2
+
+// text weight definitions
+
+#define TEXT_DONTCARE		0
+#define TEXT_THIN			FW_THIN
+#define TEXT_EXTRALIGHT		FW_EXTRALIGHT
+#define TEXT_ULTRALIGHT		FW_ULTRALIGHT
+#define TEXT_LIGHT			FW_LIGHT
+#define TEXT_NORMAL			FW_NORMAL
+#define TEXT_REGULAR		FW_REGULAR
+#define TEXT_MEDIUM			FW_MEDIUM
+#define TEXT_SEMIBOLD		FW_SEMIBOLD
+#define TEXT_DEMIBOLD		FW_DEMIBOLD
+#define TEXT_BOLD			FW_BOLD
+#define TEXT_EXTRABOLD		FW_EXTRABOLD
+#define TEXT_ULTRABOLD		FW_ULTRABOLD
+#define TEXT_BLACK			FW_BLACK
+#define TEXT_HEAVY			FW_HEAVY
+
+class CText : public CObject
+{
+	DECLARE_DYNCREATE(CText)
+
+	// Constructors
+public:
+	CText();
+	CText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify = JUSTIFY_CENTER);
+
+	// Destructors
+public:
+	~CText();
+
+	// Implementation
+public:
+	BOOL SetupText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify = JUSTIFY_CENTER);
+	BOOL RestoreBackground(CDC *pDC);
+	BOOL DisplayString(CDC *pDC, const char *pszText, const int nSize, const int nWeight, const COLORREF crColor = CTEXT_COLOR);
+	BOOL DisplayShadowedString(CDC *pDC, const char *pszText, const int nSize, const int nWeight, const COLORREF crColor, const COLORREF crShadow = CTEXT_SHADOW_COLOR, const int DX = CTEXT_SHADOW_DX, const int DY = CTEXT_SHADOW_DY);
+
+private:
+	void InitializeFields(void);
+	BOOL SetupContexts(CDC *pDC);
+	void ReleaseContexts(void);
+	BOOL DisplayText(CDC *pDC, const char *pszText, const int nSize, const int nWeight, const BOOL bShadowed);
+
+private:
+	CDC *m_pBackgroundDC;	// offscreen bitmap device context for background
+	CBitmap *m_pBackground;		// bitmap for the text's background
+	CBitmap *m_pBackgroundOld;	// previous bitmap mapped in the DC
+	CDC *m_pWorkDC;			// offscreen bitmap device context for work area
+	CBitmap *m_pWork;			// bitmap for the work area
+	CBitmap *m_pWorkOld;		// previous bitmap mapped in the DC
+	CPalette *m_pPalette;		// color palette for the text
+	CPalette *m_pPalBackOld;		// previous palette mapped to background DC 
+	CPalette *m_pPalWorkOld;		// previous palette mapped to work area DC 
+	CPoint		m_cPosition;		// upper left corner of text displayed
+	CSize		m_cSize;			// dx/dy size of the text bitmap
+	CRect		m_cRect;			// bounding rectangle of text area
+	CFont *m_pFont;           // font to use for the text
+	int			m_nJustify;			// positioning within the rectangle
+	BOOL		m_bBounded;			// bounded versus free-form text output
+	BOOL		m_bHaveBackground;	// whether the background has been saved
+	COLORREF	m_cTextColor;		// color to use for the text itself
+	COLORREF	m_cShadowColor;		// color to use for the text's shadow
+	int			m_nShadow_DX;		// horizontal offset for shadow
+	int			m_nShadow_DY;		// vertical offset for shadow
+
+	static	int		m_nTabStop;			// tabstop table
+	static	BOOL	m_bFontLoaded;      // font loaded flag
+};
+
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

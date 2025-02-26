@@ -24,6 +24,7 @@
 
 #include "graphics/palette.h"
 #include "bagel/mfc/mfc_types.h"
+#include "bagel/mfc/object.h"
 
 namespace Bagel {
 namespace MFC {
@@ -33,7 +34,7 @@ typedef uint32 COLORREF;
 #define RGB(r,g,b)          ((COLORREF)(((byte)(r)|((uint16)((byte)(g))<<8))|(((uint32)(byte)(b))<<16)))
 #define PALETTERGB(r,g,b)   (0x02000000 | RGB(r,g,b))
 
-class CPalette {
+class CPalette : public CGdiObject {
 private:
 	Graphics::Palette _palette;
 public:

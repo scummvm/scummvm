@@ -38,10 +38,11 @@ namespace SpaceBar {
 
 // Color constants
 //
-#define NOT_TRANSPARENT -1
-
-#define COLOR_WHITE 255
-#define COLOR_BLACK 0
+enum {
+	NOT_TRANSPARENT = -1,
+	COLOR_WHITE     = 255,
+	COLOR_BLACK     = 0
+};
 
 #define CBMP_FADE_SPEED 10
 #define CBMP_FADE_SIZE 4

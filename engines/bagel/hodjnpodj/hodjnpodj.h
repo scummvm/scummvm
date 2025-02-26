@@ -55,6 +55,8 @@ public:
 public:
 	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~HodjNPodjEngine() override;
+
+	void AddFontResource(const char *fontName);
 };
 
 extern HodjNPodjEngine *g_engine;

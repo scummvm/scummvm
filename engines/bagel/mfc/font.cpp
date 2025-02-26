@@ -20,11 +20,28 @@
  */
 
 #include "common/textconsole.h"
-#include "bagel/mfc/palette.h"
+#include "bagel/mfc/font.h"
 
 namespace Bagel {
 namespace MFC {
 
-
+BOOL CFont::CreateFont(
+	int nHeight,
+	int nWidth,
+	int nEscapement,
+	int nOrientation,
+	int nWeight,
+	BYTE bItalic,
+	BYTE bUnderline,
+	BYTE cStrikeOut,
+	BYTE nCharSet,
+	BYTE nOutPrecision,
+	BYTE nClipPrecision,
+	BYTE nQuality,
+	BYTE nPitchAndFamily,
+	LPCTSTR lpszFacename
+) {
+	error("TODO: CFont::CreateFont");
+}
 } // namespace MFC
 } // namespace Bagel

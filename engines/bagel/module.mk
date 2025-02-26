@@ -7,6 +7,8 @@ MODULE_OBJS = \
 	mfc/button.o \
 	mfc/dc.o \
 	mfc/document.o \
+	mfc/font.o \
+	mfc/object.o \
 	mfc/palette.o \
 	mfc/wnd.o \
 	spacebar/baglib/area_object.o \
@@ -116,6 +118,7 @@ MODULE_OBJS = \
 	hodjnpodj/boflib/button.o \
 	hodjnpodj/boflib/sound.o \
 	hodjnpodj/boflib/sprite.o \
+	hodjnpodj/boflib/text.o \
 	hodjnpodj/mazedoom/main_window.o \
 	hodjnpodj/mazedoom/maze_doom.o \
 	hodjnpodj/mazedoom/maze_gen.o
