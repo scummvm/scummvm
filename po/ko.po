@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-02-24 23:38+0000\n"
-"PO-Revision-Date: 2025-02-16 19:18+0000\n"
+"PO-Revision-Date: 2025-02-26 12:46+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -4181,7 +4181,7 @@ msgstr "마우스 캡처 전환"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:545
 msgid "Toggle resizable window"
-msgstr ""
+msgstr "크기 조절 가능한 창 전환"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:550 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
@@ -7462,16 +7462,15 @@ msgid "Unable to locate the darkseed.dat engine data file."
 msgstr "darkseed.dat 엔진 데이터 파일을 찾을 수 없습니다."
 
 #: engines/darkseed/metaengine.cpp:47
-#, fuzzy
-#| msgid "Use DOS version music tempos"
 msgid "Use floppy version music"
-msgstr "도스 버전 음악 템포 사용"
+msgstr "플로피 버전 음악 사용"
 
 #: engines/darkseed/metaengine.cpp:48
 msgid ""
 "Use the music from the floppy version. The floppy version's music files must "
 "be copied to the SOUND directory."
-msgstr ""
+msgstr "플로피 버전의 음악을 사용하세요. 플로피 버전의 음악 파일은 SOUND 디렉터리에 "
+"복사해야 합니다."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:75 engines/dragons/metaengine.cpp:136
@@ -10486,7 +10485,7 @@ msgstr "매킨토시 모니터를 시뮬레이션하기 위해 그래픽을 밝�
 
 #: engines/scumm/dialogs.cpp:1195
 msgid "Simulate Sega colors"
-msgstr ""
+msgstr "세가 컬러 시뮬레이트"
 
 #: engines/scumm/dialogs.cpp:1196
 msgid ""
@@ -10494,6 +10493,8 @@ msgid ""
 "actual Sega hardware. These are significantly darker, though it's unclear if "
 "that was intended or not."
 msgstr ""
+"게임에서 정의된 색상을 사용하는 대신 실제 세가 하드웨어에서 사용되는 색상을 "
+"시뮬레이션합니다. 이는 상당히 어둡지만 의도한 것인지 아닌지는 불분명합니다."
 
 #: engines/scumm/dialogs.cpp:1312
 msgid "Overture Timing:"
