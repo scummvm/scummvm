@@ -582,6 +582,7 @@ void ADSInterpreter::handleRandomOp(Common::SeekableReadStream *scr) {
 
 bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *scr) {
 	uint16 enviro, seqnum;
+	const char *segname; // for debug messages
 
 	switch (code) {
 	case 0x0001:
@@ -776,7 +777,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		break;
 
 	case 0xF000:
-		debug(10, "ADS 0x%04x: set state 2, current idx (%d)", code, _adsData->_runningSegmentIdx);
+		debug(10, "ADS 0x%04x: set state 2, current segment idx (%d)", code, _adsData->_runningSegmentIdx);
 		if (_adsData->_runningSegmentIdx != -1)
 			_adsData->_state[_adsData->_runningSegmentIdx] = 2;
 		return false;
@@ -786,7 +787,8 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		int16 idx = _adsData->_runningSegmentIdx;
 		if (segment >= 0)
 			idx = getArrIndexOfSegNum(segment);
-		debug(10, "ADS 0x%04x: set state 2, segment %d (idx %d)", code, segment, idx);
+		segname = _adsData->_tags.contains(segment) ? _adsData->_tags.getVal(segment).c_str() : "";
+		debug(10, "ADS 0x%04x: set state 2, seg %d idx %d %s", code, segment, idx, segname);
 		if (idx >= 0)
 			_adsData->_state[idx] = 2;
 		if (idx == _adsData->_runningSegmentIdx)
@@ -798,7 +800,8 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0xF200: { // RUN_SCRIPT, 1 param
 		int16 segment = scr->readSint16LE();
 		int16 idx = getArrIndexOfSegNum(segment);
-		debug(10, "ADS 0x%04x: run seg %d idx %d", code, segment, idx);
+		segname = _adsData->_tags.contains(segment) ? _adsData->_tags.getVal(segment).c_str() : "";
+		debug(10, "ADS 0x%04x: run seg %d idx %d %s", code, segment, idx, segname);
 		if (segment >= 0 && idx >= 0) {
 			int state = (_adsData->_state[idx] & 8) | 4;
 			_adsData->_state[idx] = state;
@@ -809,7 +812,8 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0xF210: { // RESTART_SCRIPT, 1 param
 		int16 segment = scr->readSint16LE();
 		int16 idx = getArrIndexOfSegNum(segment);
-		debug(10, "ADS 0x%04x: restart seg %d idx %d", code, segment, idx);
+		segname = _adsData->_tags.contains(segment) ? _adsData->_tags.getVal(segment).c_str() : "";
+		debug(10, "ADS 0x%04x: restart seg %d idx %d %s", code, segment, idx, segname);
 		if (segment >= 0 && idx >= 0) {
 			int state = (_adsData->_state[idx] & 8) | 3;
 			_adsData->_state[idx] = state;
@@ -933,7 +937,10 @@ bool ADSInterpreter::run() {
 		_adsData->_runningSegmentIdx = idx;
 		if (state == 1) {
 			_adsData->scr->seek(offset);
-			debug(10, "ADS: Run segment %d idx %d/%d", segnum, idx, _adsData->_maxSegments);
+			const char *tag = "";
+			if (_adsData->_tags.contains(segnum))
+				tag = _adsData->_tags[segnum].c_str();
+			debug(10, "ADS: Run segment %d idx %d/%d %s", segnum, idx, _adsData->_maxSegments, tag);
 			runUntilBranchOpOrEnd();
 		}
 	}
