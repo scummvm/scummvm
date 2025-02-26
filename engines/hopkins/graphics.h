@@ -31,10 +31,10 @@
 
 namespace Hopkins {
 
-#define DIRTY_RECTS_SIZE 250
-#define PALETTE_SIZE 256
-#define PALETTE_BLOCK_SIZE (PALETTE_SIZE * 3)
-#define PALETTE_EXT_BLOCK_SIZE 800
+constexpr int DIRTY_RECTS_SIZE = 250;
+constexpr int PALETTE_SIZE = 256;
+constexpr int PALETTE_BLOCK_SIZE = (PALETTE_SIZE * 3);
+constexpr int PALETTE_EXT_BLOCK_SIZE = 800;
 static const byte kSetOffset = 251;
 static const byte kByteStop = 252;
 static const byte k8bVal = 253;
