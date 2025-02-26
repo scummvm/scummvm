@@ -463,19 +463,25 @@ void Inter_Playtoons::oPlaytoons_openItk() {
 	_vm->_dataIO->openArchive(file, false);
 }
 
-Common::String Inter_Playtoons::getFile(const char *path, bool stripPath) {
+Common::String Inter_Playtoons::getFile(const char *path, bool stripPath, bool *isCd) {
 	const char *orig = path;
 
 	if      (!strncmp(path, "@:\\", 3))
 		path += 3;
 	else if (!strncmp(path, "<ME>", 4))
 		path += 4;
-	else if (!strncmp(path, "<CD>", 4))
+	else if (!strncmp(path, "<CD>", 4)) {
 		path += 4;
+		if (isCd)
+			*isCd = true;
+	}
 	else if (!strncmp(path, "<STK>", 5))
 		path += 5;
-	else if (!strncmp(path, "<ALLCD>", 7))
+	else if (!strncmp(path, "<ALLCD>", 7)) {
 		path += 7;
+		if (isCd)
+			*isCd = true;
+	}
 
 	if (stripPath) {
 		const char *backslash = strrchr(path, '\\');
