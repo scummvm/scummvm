@@ -66,6 +66,8 @@ public:
 
 	Common::String dump() const;
 
+	void resetMinsAdded() { _gameMinsAdded = 0; }
+
 private:
 	uint32 _lastPlayTime;
 	uint32 _millis;

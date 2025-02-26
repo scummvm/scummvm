@@ -253,8 +253,8 @@ bool DgdsEngine::changeScene(int sceneNum) {
 
 	debug(1, "%s", _scene->dump("").c_str());
 	_scene->runEnterSceneOps();
-
 	_justChangedScene1 = true;
+	_clock.resetMinsAdded();
 
 	return true;
 }
