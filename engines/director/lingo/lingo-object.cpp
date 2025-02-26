@@ -846,11 +846,10 @@ void LM::m_moveToBack(int nargs) {
 }
 
 void LM::m_moveToFront(int nargs) {
-	g_lingo->printSTUBWithArglist("m_moveToFront", nargs);
-
 	Window *me = static_cast<Window *>(g_lingo->_state->me.u.obj);
 	me->ensureMovieIsLoaded();
-	g_lingo->dropStack(nargs);
+
+	g_director->_wm->setActiveWindow(me->getId());
 }
 
 } // End of namespace Director
