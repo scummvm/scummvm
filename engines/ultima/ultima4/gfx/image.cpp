@@ -103,9 +103,9 @@ void Image::setPalette(const byte *colors, unsigned n_colors) {
 void Image::setPaletteFromImage(const Image *src) {
 	assertMsg(_paletted && src->_paletted, "imageSetPaletteFromImage called on non-indexed image");
 
-	uint8 srcPal[PALETTE_COUNT * 3];
-	src->_surface->grabPalette(srcPal, 0, PALETTE_COUNT);
-	_surface->setPalette(srcPal, 0, PALETTE_COUNT);
+	uint8 srcPal[Graphics::PALETTE_COUNT * 3];
+	src->_surface->grabPalette(srcPal, 0, Graphics::PALETTE_COUNT);
+	_surface->setPalette(srcPal, 0, Graphics::PALETTE_COUNT);
 }
 
 RGBA Image::getPaletteColor(int index) {

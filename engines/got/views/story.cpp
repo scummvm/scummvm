@@ -35,10 +35,10 @@ bool Story::msgFocus(const FocusMessage &msg) {
 		Common::String::format("STORY%d", _G(area));
 	resourceRead(storyName, _G(tmpBuff));
 
-	byte paletteBuffer[PALETTE_SIZE] = {};
+	byte paletteBuffer[Graphics::PALETTE_SIZE] = {};
 	resourceRead("STORYPAL", paletteBuffer);
 
-	for (int i = 0; i < PALETTE_SIZE; ++i)
+	for (int i = 0; i < Graphics::PALETTE_SIZE; ++i)
 		paletteBuffer[i] = ((int)paletteBuffer[i] * 255 + 31) / 63;
 	Gfx::setPalette(paletteBuffer);
 

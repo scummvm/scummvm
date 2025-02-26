@@ -335,10 +335,10 @@ bool M4Engine::loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const {
 	thumbnail->sourceOffset = 0;
 	thumbnail->data = data;
 
-	byte pal[PALETTE_SIZE];
+	byte pal[Graphics::PALETTE_SIZE];
 	byte r, g, b;
 	int proximity, minProximity;
-	g_system->getPaletteManager()->grabPalette(pal, 0, PALETTE_COUNT);
+	g_system->getPaletteManager()->grabPalette(pal, 0, Graphics::PALETTE_COUNT);
 
 	// Translate the 16-bit thumbnail to paletted
 	for (int y = 0; y < surf->h; ++y) {
@@ -350,7 +350,7 @@ bool M4Engine::loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const {
 			surf->format.colorToRGB(*srcLine, r, g, b);
 
 			const byte *palP = pal;
-			for (int palIdx = 0; palIdx < PALETTE_COUNT; ++palIdx, palP += 3) {
+			for (int palIdx = 0; palIdx < Graphics::PALETTE_COUNT; ++palIdx, palP += 3) {
 				proximity = ABS((int)r - (int)palP[0]) +
 					ABS((int)g - (int)palP[1]) +
 					ABS((int)b - (int)palP[2]);

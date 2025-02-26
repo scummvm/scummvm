@@ -47,7 +47,7 @@ BgFileHeader::BgFileHeader() {
 	_scrollSize = -1;
 	_bytesWritten = -1;
 	_fadeStyle = -1;
-	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
+	Common::fill(&_palette[0], &_palette[Graphics::PALETTE_SIZE], 0);
 }
 
 void BgFileHeader::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
@@ -363,7 +363,7 @@ bool Scene::loadScene(const Common::Path &filename) {
 
 				// Handle initializing the palette
 				screen.initPaletteFade(bgHeader._bytesWritten);
-				rrmStream->read(screen._cMap, PALETTE_SIZE);
+				rrmStream->read(screen._cMap, Graphics::PALETTE_SIZE);
 				paletteLoaded();
 				screen.translatePalette(screen._cMap);
 
@@ -636,9 +636,9 @@ bool Scene::loadScene(const Common::Path &filename) {
 				}
 			} else {
 				// Read in palette
-				rrmStream->read(screen._cMap, PALETTE_SIZE);
+				rrmStream->read(screen._cMap, Graphics::PALETTE_SIZE);
 				screen.translatePalette(screen._cMap);
-				Common::copy(screen._cMap, screen._cMap + PALETTE_SIZE, screen._sMap);
+				Common::copy(screen._cMap, screen._cMap + Graphics::PALETTE_SIZE, screen._sMap);
 
 				// Read in the background
 				Common::SeekableReadStream *bgStream = !_compressed ? rrmStream :

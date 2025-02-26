@@ -33,7 +33,7 @@ CBofPalette *CBofPalette::_pSharedPalette;
 char CBofPalette::_szSharedPalFile[MAX_FNAME];
 
 HPALETTE::HPALETTE(int16 numColors) : _numColors(numColors) {
-	Common::fill(&_data[0], &_data[PALETTE_SIZE], 0);
+	Common::fill(&_data[0], &_data[Graphics::PALETTE_SIZE], 0);
 }
 
 void CBofPalette::initialize() {
@@ -42,11 +42,11 @@ void CBofPalette::initialize() {
 }
 
 CBofPalette::CBofPalette() {
-	Common::fill(&_palette._data[0], &_palette._data[PALETTE_SIZE], 0);
+	Common::fill(&_palette._data[0], &_palette._data[Graphics::PALETTE_SIZE], 0);
 }
 
 CBofPalette::CBofPalette(const char *pszFileName) {
-	Common::fill(&_palette._data[0], &_palette._data[PALETTE_SIZE], 0);
+	Common::fill(&_palette._data[0], &_palette._data[Graphics::PALETTE_SIZE], 0);
 	assert(pszFileName != nullptr);
 
 	loadPalette(pszFileName);
@@ -105,7 +105,7 @@ ErrorCode CBofPalette::loadPalette(const char *pszFileName, uint16 nFlags) {
 }
 
 void CBofPalette::ReleasePalette() {
-	Common::fill(_palette._data, _palette._data + PALETTE_SIZE, 0);
+	Common::fill(_palette._data, _palette._data + Graphics::PALETTE_SIZE, 0);
 }
 
 CBofPalette *CBofPalette::copyPalette() {
@@ -115,7 +115,7 @@ CBofPalette *CBofPalette::copyPalette() {
 }
 
 byte CBofPalette::getNearestIndex(RGBCOLOR stRGB) {
-	Graphics::PaletteLookup lookup(_palette._data, PALETTE_COUNT);
+	Graphics::PaletteLookup lookup(_palette._data, Graphics::PALETTE_COUNT);
 	return lookup.findBestColor(GetRed(stRGB), GetGreen(stRGB), GetBlue(stRGB));
 }
 

@@ -112,7 +112,7 @@ public:
 	virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
 
 	Graphics::Palette grabPalette(uint start, uint num) {
-		byte tmp[PALETTE_SIZE];
+		byte tmp[Graphics::PALETTE_SIZE];
 		grabPalette(tmp, start, num);
 		return Graphics::Palette(tmp, num);
 	}

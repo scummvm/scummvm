@@ -44,7 +44,7 @@ void McgaGraphics::init() {
 }
 
 void setScummVMPalette(const byte *palette, uint start, uint count) {
-	byte tempPal[PALETTE_SIZE];
+	byte tempPal[Graphics::PALETTE_SIZE];
 	byte *dest = &tempPal[0];
 
 	for (uint i = 0; i < count * 3; ++i, ++palette, ++dest)
@@ -64,7 +64,7 @@ void McgaGraphics::setPointer(byte *ptr) {
 void McgaGraphics::setPalette(byte *palette) {
 	for (int16 i = 0; i < 768; i++)
 		_palTable[i] = palette[i];
-	setScummVMPalette(palette, 0, PALETTE_COUNT);
+	setScummVMPalette(palette, 0, Graphics::PALETTE_COUNT);
 }
 
 void McgaGraphics::raster_col(int16 c, int16 r, int16 g, int16 b) {
@@ -92,7 +92,7 @@ void McgaGraphics::fadeIn(byte *palette) {
 				_palTable[k + 2] = b1;
 			k += 3;
 		}
-		setScummVMPalette(_palTable, 0, PALETTE_COUNT);
+		setScummVMPalette(_palTable, 0, Graphics::PALETTE_COUNT);
 	}
 }
 
@@ -111,7 +111,7 @@ void McgaGraphics::fadeOut() {
 			_palTable[k + 2] = b;
 			k += 3;
 		}
-		setScummVMPalette(_palTable, 0, PALETTE_COUNT);
+		setScummVMPalette(_palTable, 0, Graphics::PALETTE_COUNT);
 	}
 }
 

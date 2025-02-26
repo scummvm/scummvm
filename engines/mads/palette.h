@@ -34,9 +34,9 @@ class MADSEngine;
 #define PALETTE_RESERVED_LOW_COUNT 18
 #define PALETTE_RESERVED_HIGH_COUNT 10
 
-#define PALETTE_COUNT 256
-#define RGB_SIZE 3
-#define PALETTE_SIZE (256 * 3)
+constexpr int PALETTE_COUNT = 256;
+constexpr int RGB_SIZE = 3;
+constexpr int PALETTE_SIZE = (256 * 3);
 
 /**
  * Palette mapping options

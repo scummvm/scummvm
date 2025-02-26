@@ -97,7 +97,7 @@ int TattooMap::show() {
 
 	// Load the palette
 	Common::SeekableReadStream *stream = res.load("map.pal");
-	stream->read(screen._cMap, PALETTE_SIZE);
+	stream->read(screen._cMap, Graphics::PALETTE_SIZE);
 	screen.translatePalette(screen._cMap);
 	delete stream;
 

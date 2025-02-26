@@ -124,10 +124,10 @@ bool MM1Engine::setupEnhanced() {
 		error("Could not load palette");
 
 	// Load the Xeen palette
-	byte pal[PALETTE_SIZE];
-	for (int i = 0; i < PALETTE_SIZE; ++i)
+	byte pal[Graphics::PALETTE_SIZE];
+	for (int i = 0; i < Graphics::PALETTE_SIZE; ++i)
 		pal[i] = f.readByte() << 2;
-	g_system->getPaletteManager()->setPalette(pal, 0, PALETTE_COUNT);
+	g_system->getPaletteManager()->setPalette(pal, 0, Graphics::PALETTE_COUNT);
 	Gfx::GFX::findPalette(pal);
 
 	// Show the mouse cursor

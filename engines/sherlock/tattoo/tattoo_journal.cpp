@@ -48,7 +48,7 @@ void TattooJournal::show() {
 	Resources &res = *_vm->_res;
 	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	byte palette[PALETTE_SIZE];
+	byte palette[Graphics::PALETTE_SIZE];
 
 	Common::Point oldScroll = screen._currentScroll;
 	screen._currentScroll = Common::Point(0, 0);
@@ -58,7 +58,7 @@ void TattooJournal::show() {
 
 	// Load palette
 	Common::SeekableReadStream *stream = res.load("journal.pal");
-	stream->read(palette, PALETTE_SIZE);
+	stream->read(palette, Graphics::PALETTE_SIZE);
 	ui.setupBGArea(palette);
 	screen.translatePalette(palette);
 	delete stream;

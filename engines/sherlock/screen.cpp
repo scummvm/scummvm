@@ -43,9 +43,9 @@ Screen::Screen(SherlockEngine *vm) : BaseSurface(), _vm(vm),
 		_backBuffer2(vm->getGameID() == GType_RoseTattoo ? 640 : 320, vm->getGameID() == GType_RoseTattoo ? 480 : 200) {
 	_transitionSeed = 1;
 	_fadeStyle = false;
-	Common::fill(&_cMap[0], &_cMap[PALETTE_SIZE], 0);
-	Common::fill(&_sMap[0], &_sMap[PALETTE_SIZE], 0);
-	Common::fill(&_tMap[0], &_tMap[PALETTE_SIZE], 0);
+	Common::fill(&_cMap[0], &_cMap[Graphics::PALETTE_SIZE], 0);
+	Common::fill(&_sMap[0], &_sMap[Graphics::PALETTE_SIZE], 0);
+	Common::fill(&_tMap[0], &_tMap[Graphics::PALETTE_SIZE], 0);
 
 	// Set up the initial font
 	setFont(IS_SERRATED_SCALPEL ? 1 : 4);
@@ -71,14 +71,14 @@ void Screen::activateBackBuffer2() {
 	_backBuffer.create(_backBuffer2, _backBuffer2.getBounds());
 }
 
-int Screen::equalizePalette(const byte palette[PALETTE_SIZE]) {
+int Screen::equalizePalette(const byte palette[Graphics::PALETTE_SIZE]) {
 	int total = 0;
-	byte tempPalette[PALETTE_SIZE];
+	byte tempPalette[Graphics::PALETTE_SIZE];
 	getPalette(tempPalette);
 
 	// For any palette component that doesn't already match the given destination
 	// palette, change by 1 towards the reference palette component
-	for (int idx = 0; idx < PALETTE_SIZE; ++idx) {
+	for (int idx = 0; idx < Graphics::PALETTE_SIZE; ++idx) {
 		if (tempPalette[idx] > palette[idx]) {
 			tempPalette[idx] = MAX((int)palette[idx], (int)tempPalette[idx] - 4);
 			++total;
@@ -96,8 +96,8 @@ int Screen::equalizePalette(const byte palette[PALETTE_SIZE]) {
 }
 
 void Screen::fadeToBlack(int speed) {
-	byte tempPalette[PALETTE_SIZE];
-	Common::fill(&tempPalette[0], &tempPalette[PALETTE_SIZE], 0);
+	byte tempPalette[Graphics::PALETTE_SIZE];
+	Common::fill(&tempPalette[0], &tempPalette[Graphics::PALETTE_SIZE], 0);
 
 	while (equalizePalette(tempPalette)) {
 		_vm->_events->delay(15 * speed);
@@ -107,7 +107,7 @@ void Screen::fadeToBlack(int speed) {
 	fillRect(Common::Rect(0, 0, this->w, this->h), 0);
 }
 
-void Screen::fadeIn(const byte palette[PALETTE_SIZE], int speed) {
+void Screen::fadeIn(const byte palette[Graphics::PALETTE_SIZE], int speed) {
 	int count = 50;
 	while (equalizePalette(palette) && --count) {
 		_vm->_events->delay(15 * speed);
@@ -351,8 +351,8 @@ void Screen::synchronize(Serializer &s) {
 }
 
 void Screen::initPaletteFade(int bytesToRead) {
-	Common::copy(&_cMap[0], &_cMap[PALETTE_SIZE], &_sMap[0]);
-	Common::copy(&_cMap[0], &_cMap[PALETTE_SIZE], &_tMap[0]);
+	Common::copy(&_cMap[0], &_cMap[Graphics::PALETTE_SIZE], &_sMap[0]);
+	Common::copy(&_cMap[0], &_cMap[Graphics::PALETTE_SIZE], &_tMap[0]);
 
 	// Set how many bytes need to be read / have been read
 	_fadeBytesRead = 0;
@@ -366,8 +366,8 @@ int Screen::fadeRead(Common::SeekableReadStream &stream, byte *buf, int totalSiz
 	return totalSize;
 }
 
-void Screen::translatePalette(byte palette[PALETTE_SIZE]) {
-	for (int idx = 0; idx < PALETTE_SIZE; ++idx)
+void Screen::translatePalette(byte palette[Graphics::PALETTE_SIZE]) {
+	for (int idx = 0; idx < Graphics::PALETTE_SIZE; ++idx)
 		palette[idx] = VGA_COLOR_TRANS(palette[idx]);
 }
 

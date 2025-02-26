@@ -357,11 +357,11 @@ void ScalpelEngine::showOpening() {
 }
 
 bool ScalpelEngine::showCityCutscene() {
-	byte greyPalette[PALETTE_SIZE];
-	byte palette[PALETTE_SIZE];
+	byte greyPalette[Graphics::PALETTE_SIZE];
+	byte palette[Graphics::PALETTE_SIZE];
 
 	// Demo fades from black into grey and then fades from grey into the scene
-	Common::fill(&greyPalette[0], &greyPalette[PALETTE_SIZE], 142);
+	Common::fill(&greyPalette[0], &greyPalette[Graphics::PALETTE_SIZE], 142);
 	_screen->fadeIn((const byte *)greyPalette, 3);
 
 	_music->loadSong("prolog1");
@@ -475,7 +475,7 @@ bool ScalpelEngine::showCityCutscene() {
 }
 
 bool ScalpelEngine::showAlleyCutscene() {
-	byte palette[PALETTE_SIZE];
+	byte palette[Graphics::PALETTE_SIZE];
 	_music->loadSong("prolog2");
 
 	_animation->_gfxLibraryFilename = "TITLE.LIB";
