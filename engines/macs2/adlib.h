@@ -75,7 +75,7 @@ namespace Macs2 {
 		Common::MemorySeekableReadWriteStream Func19BE_2(Common::MemorySeekableReadWriteStream &inStream, uint8 seekDelta);
 
 		// TODO: Consider pointer vs. passing by value
-		StreamHandler* Func19BE_SH(StreamHandler* inHandler, uint8 seekDelta);
+		StreamHandler* Func19BE_SH(StreamHandler* inHandler, uint16 seekDelta);
 
 		void Func244D(StreamHandler *song);
 
@@ -130,8 +130,17 @@ namespace Macs2 {
 		// [223Eh] - Seems to be a 16 bit value - Initial value?
 		uint16 g223E;
 
+		// Memory being pointed to by [2244] and [2246]
+		StreamHandler *shMem2244;
+
 		// Memory being pointed to by [2248] and [224A]
 		StreamHandler* shMem2248;
+
+		// Global word variable [2240h]
+		uint16 g2240;
+
+		// Global word variable [224Eh]
+		uint16 g224E;
 
 		// Memory being pointed to by [2250] and [2252]
 		StreamHandler *shMem2250 = nullptr;
