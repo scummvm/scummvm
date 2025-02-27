@@ -91,7 +91,6 @@ void kernel_unload_room(SceneDef *rdef, GrBuff **code_data, GrBuff **loadBuffer)
 bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff **scr_orig_data, GrBuff **scr_orig) {
 	if (!scr_orig_data || !scr_orig) {
 		error_show(FL, 'BUF!', "load_picture_and_codes");
-		return false;
 	}
 
 	term_message("Reading scene %d", _G(game).new_room);
@@ -103,7 +102,6 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 	// Read DEF file
 	if (db_def_chk_read(_G(game).new_room, rdef) != -1) {
 		error_show(FL, 'DF:(', "trying to find %d.CHK", (uint32)_G(game).new_room);
-		return false;
 	}
 
 	set_walker_scaling(rdef);
@@ -197,8 +195,6 @@ bool kernel_load_variant(const char *variant) {
 	if (_G(kernel).hag_mode) {
 		filename = f_extension_new(variant, "COD");
 	} else {
-		const char lastChar = variant[strlen(variant) - 1];
-
 		char *base = env_find(sceneDef.art_base);
 		char *dotPos = nullptr;
 		if (base)
@@ -207,8 +203,6 @@ bool kernel_load_variant(const char *variant) {
 		if (!dotPos)
 			return false;
 
-		*dotPos++ = lastChar;
-		*dotPos++ = '.';
 		filename = f_extension_new(base, "COD");
 
 		if (!f_info_exists(Common::Path(filename)))
@@ -248,15 +242,14 @@ GrBuff *load_codes(SysFile *code_file) {
 	GrBuff *temp = new GrBuff(x_size, y_size);
 	if (!temp) {
 		error_show(FL, 'OOM!', "load_codes: %d bytes", (int16)(x_size * y_size));
-		return nullptr;
 	}
 
-	Buffer *mybuff = temp->get_buffer();
-	byte *bufferHandle = mybuff->data;
+	Buffer *myBuff = temp->get_buffer();
+	byte *bufferHandle = myBuff->data;
 
 	for (int i = 0; i < y_size; i++) {
 		code_file->read(bufferHandle, x_size);
-		bufferHandle += mybuff->stride;
+		bufferHandle += myBuff->stride;
 	}
 
 	// Let the memory float
@@ -301,7 +294,7 @@ bool load_background(SysFile *pic_file, GrBuff **loadBuffer, RGB8 *palette) {
 }
 
 static Common::SeekableReadStream *openForLoading(int slot) {
-	Common::String slotName = g_engine->getSaveStateName(slot);
+	const Common::String slotName = g_engine->getSaveStateName(slot);
 	return g_system->getSavefileManager()->openForLoading(slotName);
 }
 
@@ -329,24 +322,25 @@ int32 extract_room_num(const Common::String &name) {
 
 	if (Common::isDigit(name[0]) && Common::isDigit(name[1]) && Common::isDigit(name[2])) {
 		return ((int32)(name[0] - '0')) * 100 + ((int32)(name[1] - '0')) * 10 + ((int32)(name[2] - '0'));
-	} else
-		return _G(game).room_id;
+	}
+
+	return _G(game).room_id;
 }
 
 static Common::String get_background_filename(const SceneDef *rdef) {
 	if (_G(art_base_override) != nullptr) {
 		return _G(art_base_override);
-	} else {
-		return rdef->art_base;
 	}
+
+	return rdef->art_base;
 }
 
 static Common::String get_attribute_filename(const SceneDef *rdef) {
 	if (_G(art_base_override) == nullptr || !_G(use_alternate_attribute_file)) {
 		return rdef->art_base;
-	} else {
-		return _G(art_base_override);
 	}
+
+	return _G(art_base_override);
 }
 
 static void recreate_animation_draw_screen(GrBuff **loadBuf) {
