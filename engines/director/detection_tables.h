@@ -129,6 +129,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "csidarkmotives",		"CSI: Crime Scene Investigation - Dark Motives" },
 	{ "csimiami",			"CSI: Miami" },
 	{ "cutemachine",		"The Cute machine" },
+	{ "cybergrannies",		"Cyber Grannies" },
 	{ "daedalus",			"The Daedalus Encounter" },
 	{ "darkeye",			"The Dark Eye" },
 	{ "dazzeloids",			"Dazzeloids" },
@@ -6554,6 +6555,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// 3 CDs, executables are only on CD 1
 	MACGAME1("crystalskull",  "", "Crystal Skull", "c148f66ae3511fb88733102aa27efe7e", 719459,  501),
 	WINGAME1t("crystalskull", "", "CRYS32.EXE",	   "3f5fd025e808943e1fa9b91ce63ef9b7", 1410495, 501),
+
+	MACGAME1("cybergrannies", "", "Cyber Grannies", "r:231d3041df162be4a0ddd36a74eb03b6", 719337, 501),
+	WINGAME1("cybergrannies", "", "GRANNIES.EXE", "t:2bbebcd580ab1c80f4488d1d2bd0ddbb", 3281215, 501),
 
 	MACGAME1f_l("darlun", "", "DARLUN", "4bc4f93f5c5169de9f2fee12071a68b9", 717372, Common::JA_JPN, 501, GF_32BPP),
 	WINGAME1tf_l("darlun", "", "DARLUN_P.EXE", "713a7ef3728ed1952745d204e520972a", 1440286, Common::JA_JPN, 501, GF_32BPP),
