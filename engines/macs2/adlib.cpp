@@ -1330,7 +1330,7 @@ Common::MemorySeekableReadWriteStream Adlib::Func19BE_2(Common::MemorySeekableRe
 	return result;
 }
 
-StreamHandler *Adlib::Func19BE_SH(StreamHandler *inHandler, uint8 seekDelta) {
+StreamHandler *Adlib::Func19BE_SH(StreamHandler *inHandler, uint16 seekDelta) {
 	StreamHandler *result = new StreamHandler(*inHandler);
 	uint16 pos = result->pos();
 	if (seekDelta > 0xF8) {
@@ -1351,44 +1351,24 @@ void Adlib::Func244D(StreamHandler *song) {
 
 	cmp	byte ptr [0036h],0h
 	jz	2460h
-
+	
 l0017_2458:
 	mov	word ptr [bp-2h],3h
 	jmp	24F6h
 	*/
 	StreamHandler* sh = Func19BE_SH(song, 0x6);
-	uint16 delta = sh->peekByte();
+	uint16 delta = sh->peekWord();
 	shMem2248 = Func19BE_SH(song, delta);
 	sh = Func19BE_SH(song, 0x8);
+	delta = sh->peekWord();
+	shMem2244 = Func19BE_SH(song, delta);
+	sh = Func19BE_SH(song, 0x24);
+	g2240 = sh->peekWord();
+	sh = Func19BE_SH(song, 0xC);
+	g224E = sh->peekWord();
+	Func24FD();
+	// TODO: We should in theory return the resut of 24FD
 	/*
-l0017_2460:
-
-
-	push	word ptr [bp+8h]
-	push	word ptr [bp+6h]
-	les	di,[bp-6h]
-	push	word ptr es:[di]
-	call	far 0017h:19BEh
-	mov	[2244h],ax
-	mov	[2246h],dx
-	push	word ptr [bp+8h]
-	push	word ptr [bp+6h]
-	push	24h
-	call	far 0017h:19BEh
-	mov	[bp-6h],ax
-	mov	[bp-4h],dx
-	les	di,[bp-6h]
-	mov	ax,es:[di]
-	mov	[224Ch],ax
-	push	word ptr [bp+8h]
-	push	word ptr [bp+6h]
-	push	0Ch
-	call	far 0017h:19BEh
-	mov	[bp-6h],ax
-	mov	[bp-4h],dx
-	les	di,[bp-6h]
-	mov	ax,es:[di]
-	mov	[224Eh],ax
 	call	far 0017h:24FDh
 	mov	[bp-2h],ax
 
@@ -1512,7 +1492,7 @@ void Adlib::Init() {
 	// TODO: Check where this is called from and if we need to implement that one as well
 	// TODO: CHeck if we need to react to return value
 	Func2686();
-	Func24FD();
+	// Func24FD();
 	// TODO: Consider adding the caller
 	// TODO: Add proper arguments here
 	Func2839(0, 0);
@@ -1557,6 +1537,7 @@ void Adlib::Deinit() {
 
 void Adlib::SetSong(Macs2::StreamHandler *sh) {
 	shMem2250 = sh;
+	Func244D(shMem2250);
 }
 
 void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
@@ -1594,22 +1575,21 @@ int64 StreamHandler::size() const {
 
 bool StreamHandler::seek(int64 offset, int whence) {
 	_stream->seek(_pos, SEEK_SET);
+	_stream->seek(_pos, whence);
 	bool result = _stream->seek(offset, whence);
 	_pos = _stream->pos();
 	return result;
 }
 
 byte StreamHandler::peekByte() {
-	seek(_pos, SEEK_SET);
+	_stream->seek(_pos, SEEK_SET);
 	byte result = readByte();
-	seek(-0x1, SEEK_CUR);
 	return result;
 }
 
 uint16 StreamHandler::peekWord() {
-	seek(_pos, SEEK_SET);
+	_stream->seek(_pos, SEEK_SET);
 	uint16 result = readUint16LE();
-	seek(-0x2, SEEK_CUR);
 	return result;
 }
 
