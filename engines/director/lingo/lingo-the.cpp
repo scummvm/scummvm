@@ -1475,7 +1475,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = (int)g_director->transformColor(sprite->_backColor);
 		break;
 	case kTheBlend:
-		d = (255 - sprite->_blendAmount) * 255 / 100;
+		d = (255 - sprite->_blendAmount) * 100 / 255;
 		break;
 	case kTheBottom:
 		d = channel->getBbox().bottom;
