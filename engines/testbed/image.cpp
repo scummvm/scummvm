@@ -77,7 +77,7 @@ TestExitStatus ImageTests::testRenderPM5544() {
 						  "This test pattern is the comparison reference for the other image decoders.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : testRenderPM5544()\n");
+		Testsuite::logPrintf("Info! Skipping test: testRenderPM5544()\n");
 		return kTestSkipped;
 	}
 
@@ -111,7 +111,7 @@ TestExitStatus ImageTests::testRenderPM5544() {
 
 TestExitStatus ImageTests::testBitmapDecoder() {
 	if (Testsuite::handleInteractiveInput("Test bitmap decoder?", "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : testBitmapDecoder()\n");
+		Testsuite::logPrintf("Info! Skipping test: testBitmapDecoder()\n");
 		return kTestSkipped;
 	}
 
@@ -136,7 +136,7 @@ TestExitStatus ImageTests::testBitmapDecoder() {
 
 TestExitStatus ImageTests::testJPEGDecoder() {
 	if (Testsuite::handleInteractiveInput("Test JPEG decoder?", "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : testJPEGDecoder()\n");
+		Testsuite::logPrintf("Info! Skipping test: testJPEGDecoder()\n");
 		return kTestSkipped;
 	}
 
@@ -156,7 +156,7 @@ TestExitStatus ImageTests::testJPEGDecoder() {
 TestExitStatus ImageTests::testGIFDecoder() {
 #ifdef USE_GIF
 	if (Testsuite::handleInteractiveInput("Test GIF decoder?", "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : testGIFDecoder()\n");
+		Testsuite::logPrintf("Info! Skipping test: testGIFDecoder()\n");
 		return kTestSkipped;
 	}
 
@@ -179,7 +179,7 @@ TestExitStatus ImageTests::testGIFDecoder() {
 
 TestExitStatus ImageTests::testPCXDecoder() {
 	if (Testsuite::handleInteractiveInput("Test PCX decoder?", "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : testPCXDecoder()\n");
+		Testsuite::logPrintf("Info! Skipping test: testPCXDecoder()\n");
 		return kTestSkipped;
 	}
 
@@ -204,7 +204,7 @@ TestExitStatus ImageTests::testPCXDecoder() {
 
 TestExitStatus ImageTests::testPICTDecoder() {
 	if (Testsuite::handleInteractiveInput("Test PICT decoder?", "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : testPICTDecoder()\n");
+		Testsuite::logPrintf("Info! Skipping test: testPICTDecoder()\n");
 		return kTestSkipped;
 	}
 
@@ -229,7 +229,7 @@ TestExitStatus ImageTests::testPICTDecoder() {
 
 TestExitStatus ImageTests::testPNGDecoder() {
 	if (Testsuite::handleInteractiveInput("Test PNG decoder?", "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : testPNGDecoder()\n");
+		Testsuite::logPrintf("Info! Skipping test: testPNGDecoder()\n");
 		return kTestSkipped;
 	}
 
@@ -254,7 +254,7 @@ TestExitStatus ImageTests::testPNGDecoder() {
 
 TestExitStatus ImageTests::testTGADecoder() {
 	if (Testsuite::handleInteractiveInput("Test TGA decoder?", "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : testTGADecoder()\n");
+		Testsuite::logPrintf("Info! Skipping test: testTGADecoder()\n");
 		return kTestSkipped;
 	}
 
@@ -279,7 +279,7 @@ TestExitStatus ImageTests::testTGADecoder() {
 
 TestExitStatus ImageTests::testXBMDecoder() {
 	if (Testsuite::handleInteractiveInput("Test XBM decoder?", "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : testXBMDecoder()\n");
+		Testsuite::logPrintf("Info! Skipping test: testXBMDecoder()\n");
 		return kTestSkipped;
 	}
 
