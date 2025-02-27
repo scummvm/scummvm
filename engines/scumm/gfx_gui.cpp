@@ -333,6 +333,8 @@ Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int color, i
 	int pixelYOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
 	int pixelXOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
 
+	_messageBannerActive = true;
+
 	// Pause the engine
 	PauseToken pt = pauseEngine();
 
@@ -434,6 +436,8 @@ Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int color, i
 	// Finally, resume the engine, clear the input state, and restore the charset.
 	pt.clear();
 	clearClickedStatus();
+
+	_messageBannerActive = false;
 
 	return ks;
 }
