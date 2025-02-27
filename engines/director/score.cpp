@@ -325,6 +325,8 @@ void Score::startPlay() {
 		for (uint i = 0; i < _currentFrame->_sprites.size(); i++)
 			_channels.push_back(new Channel(this, _currentFrame->_sprites[i], i));
 
+	updateSprites(kRenderForceUpdate, true);
+
 	if (_vm->getVersion() >= 300)
 		_movie->processEvent(kEventStartMovie);
 }
@@ -479,7 +481,7 @@ void Score::updateCurrentFrame() {
 		loadFrame(nextFrameNumberToLoad, true);
 
 		// finally, update the channels and buffer any dirty rectangles
-		updateSprites();
+		updateSprites(kRenderModeNormal, true);
 	}
 	return;
 }
@@ -781,7 +783,7 @@ void Score::incrementFilmLoops() {
 	}
 }
 
-void Score::updateSprites(RenderMode mode) {
+void Score::updateSprites(RenderMode mode, bool withClean) {
 	if (_window->_newMovieStarted)
 		mode = kRenderForceUpdate;
 
@@ -816,7 +818,9 @@ void Score::updateSprites(RenderMode mode) {
 				nextSprite->setCast(nextSprite->_castId);
 			}
 
-			channel->setClean(nextSprite);
+			// Only clean out the channel if we're moving to a different frame
+			if (withClean)
+				channel->setClean(nextSprite);
 			invalidCastMember = currentSprite ? (currentSprite->_spriteType == kCastMemberSprite && currentSprite->_cast == nullptr) : false;
 			// Check again to see if a video has just been started by setClean.
 			if (channel->isActiveVideo())
