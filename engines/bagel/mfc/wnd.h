@@ -77,11 +77,13 @@ typedef struct tagCREATESTRUCT {
 	DWORD     dwExStyle;
 } CREATESTRUCT, *LPCREATESTRUCT;
 
+class CWnd;
+typedef CWnd *HWND;
 
 class CWnd {
 protected:
 	HWND m_hWnd;
-	CWnd *_parent = nullptr;
+	CWnd *m_pParentWnd = nullptr;
 	Common::Rect _bounds;
 	CString _text;
 	uint _tag = 0;
@@ -172,7 +174,7 @@ public:
 #endif //_DEBUG
 
 	CWnd *GetParent() const {
-		return _parent;
+		return m_pParentWnd;
 	}
 	bool IsWindowVisible() const {
 		return _visible;
@@ -190,11 +192,22 @@ public:
 	void UpdateWindow();
 	void SetActiveWindow();
 	CWnd *GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious) const;
+	BOOL ValidateRect(LPCRECT lpRect = NULL);
+	BOOL GetUpdateRect(LPRECT lpRect, BOOL bErase = FALSE);
+	void MoveWindow(int x, int y, int nWidth, int nHeight, BOOL bRepaint = TRUE);
+	void MoveWindow(LPCRECT lpRect, BOOL bRepaint = TRUE);
 
 	long SendMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 	long SetTimer(UINT nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
 
 	BOOL PostMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
+
+	void OnDestroy() {}
+	void OnShowWindow(BOOL bShow, UINT nStatus) {}
+	void OnSize(UINT nType, int cx, int cy) {}
+	int OnCreate(LPCREATESTRUCT lpCreateStruct) {
+		return 0;
+	}
 };
 
 class CFrameWnd : public CWnd {
@@ -211,8 +224,15 @@ public:
 
 class CDialog : public CWnd {
 public:
+	CDialog(UINT nIDTemplate, CWnd *pParent = NULL);
+	CDialog(LPCTSTR lpszTemplateName, CWnd *pParent = NULL);
+
+	void OnInitDialog();
 	void EndDialog(int nResult);
 	void OnCancel();
+
+	virtual void DoDataExchange(CDataExchange *pDX);
+
 };
 
 } // namespace MFC

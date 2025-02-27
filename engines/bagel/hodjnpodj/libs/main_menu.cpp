@@ -24,7 +24,43 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+#define IDD_OPTIONS_DIALOG 0, 0, 131, 110
 
+CMainMenu::CMainMenu(CWnd *pParent, CPalette *pPalette, UINT, FPFUNC, char *,
+		const char *pWavFileName, LPGAMESTRUCT pGameParams) :
+		CBmpDialog(pParent, pPalette, IDD_OPTIONS_DIALOG, "art/OSCROLL.BMP") {
+}
+
+void CMainMenu::ClearDialogImage() {
+}
+void CMainMenu::DoDataExchange(CDataExchange *pDX) {
+}
+BOOL CMainMenu::OnInitDialog() {
+	return false;
+}
+void CMainMenu::OnOK() {
+}
+void CMainMenu::OnCancel() {
+}
+BOOL CMainMenu::OnEraseBkgnd(CDC *pDC) {
+	return false;
+}
+void CMainMenu::OnPaint() {
+}
+void CMainMenu::OnDestroy() {
+}
+void CMainMenu::OnClickedRules() {
+}
+void CMainMenu::OnClickedNewgame() {
+}
+void CMainMenu::OnClickedOptions() {
+}
+void CMainMenu::OnClickedAudio() {
+}
+void CMainMenu::OnClickedReturn() {
+}
+void CMainMenu::OnClickedQuit() {
+}
 
 } // namespace HodjNPodj
 } // namespace Bagel

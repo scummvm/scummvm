@@ -19,59 +19,54 @@
  *
  */
 
-#ifndef HODJNPODJ_LIBS_MAIN_MENU_H
-#define HODJNPODJ_LIBS_MAIN_MENU_H
+#ifndef BAGEL_HODJNPODJ_BOFLIB_DIALOG_H
+#define BAGEL_HODJNPODJ_BOFLIB_DIALOG_H
 
-#include "bagel/hodjnpodj/boflib/dialog.h"
-#include "bagel/hodjnpodj/libs/types.h"
+#include "bagel/mfc/afx.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-typedef void (*FPFUNC)();
-
-class CMainMenu : public CBmpDialog {
+class CBmpDialog : public CDialog {
 public:
-	CMainMenu(CWnd *pParent, CPalette *pPalette, UINT, FPFUNC, char *,
-		const char *pWavFileName = nullptr, LPGAMESTRUCT pGameParams = nullptr);
-	void ClearDialogImage();
+	CBmpDialog(CWnd *, CPalette *, int, const char *, const int dx = -1, const int dy = -1, BOOL bSaveBackground = TRUE);
+	CBmpDialog(CWnd *, CPalette *, int, int, const int dx = -1, const int dy = -1, BOOL bSaveBackground = TRUE);
+
+	void RefreshBackground(CDC *pDC = NULL);
 
 private:
 
-
 	// Dialog Data
-		//{{AFX_DATA(CMainMenu)
-// IDD_OPTIONS_DIALOG DIALOG DISCARDABLE  0, 0, 131, 110
-//	enum { IDD = IDD_OPTIONS_DIALOG };
-	// NOTE: the ClassWizard will add data members here
-//}}AFX_DATA
+		//{{AFX_DATA(CBmpDialog)
+			// NOTE: the ClassWizard will add data members here
+		//}}AFX_DATA
 
-// Implementation
+	// Implementation
 protected:
+	void EndDialog(int);
 	virtual void DoDataExchange(CDataExchange *pDX);    // DDX/DDV support
 
 	// Generated message map functions
-	//{{AFX_MSG(CMainMenu)
+	//{{AFX_MSG(CBmpDialog)
+	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
 	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	virtual void OnCancel();
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
-	afx_msg void OnClickedRules();
-	afx_msg void OnClickedNewgame();
-	afx_msg void OnClickedOptions();
-	afx_msg void OnClickedAudio();
-	afx_msg void OnClickedReturn();
-	afx_msg void OnClickedQuit();
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	FPFUNC      	m_pOptionsFunction;
-	char *m_pRulesFileName;
-	char *m_pWavFileName;
-	int         	m_nFlags;
-	LPGAMESTRUCT	m_pGameParams;
+	CBitmap *m_pDlgBackground;
+	CPalette *m_pPalette;
+	const char *m_pBmpFileName;
+	int         m_nBmpID;
+	int			m_nDx;
+	int			m_nDy;
+	BOOL        m_bSaveBackground;
 };
 
 } // namespace HodjNPodj

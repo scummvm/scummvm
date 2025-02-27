@@ -96,6 +96,8 @@ enum {
 #define NOMIRRORBITMAP      (DWORD)0x80000000 /* Do not Mirror the bitmap in this call */
 #define CAPTUREBLT          (DWORD)0x40000000 /* Include layered windows */
 
+class CWnd;
+typedef CWnd *HWND;
 
 class CPen {
 public:
@@ -124,6 +126,8 @@ struct DRAWITEMSTRUCT {
 };
 typedef DRAWITEMSTRUCT *LPDRAWITEMSTRUCT;
 
+struct PAINTSTRUCT {
+};
 
 class CDC {
 private:
@@ -190,6 +194,21 @@ public:
 	int TabbedTextOut(int x, int y, LPCSTR lpszString,
 		int nCount, int nTabPositions,
 		const INT *lpnTabStopPositions, int nTabOrigin);
+};
+
+class CPaintDC : public CDC {
+public:
+	explicit CPaintDC(CWnd *pWnd) : m_hWnd(pWnd) {
+	}
+
+	// Attributes
+protected:
+	HWND m_hWnd;
+public:
+	PAINTSTRUCT m_ps;       // actual paint struct!
+
+public:
+	virtual ~CPaintDC() {}
 };
 
 } // namespace MFC

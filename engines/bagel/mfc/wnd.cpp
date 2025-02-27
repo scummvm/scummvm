@@ -68,6 +68,24 @@ CWnd *CWnd::GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious) const {
 	return nullptr;
 }
 
+BOOL CWnd::ValidateRect(LPCRECT lpRect) {
+	error("TODO: CWnd::ValidateRect");
+	return true;
+}
+
+BOOL CWnd::GetUpdateRect(LPRECT lpRect, BOOL bErase) {
+	error("TODO: CWnd::GetUpdateRect");
+	return true;
+}
+
+void CWnd::MoveWindow(int x, int y, int nWidth, int nHeight, BOOL bRepaint) {
+	error("TODO: CWnd::MoveWindow");
+}
+
+void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
+	error("TODO: CWnd::MoveWindow");
+}
+
 long CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 	error("TODO: CWnd::SendMessage");
 	return 0;
@@ -84,6 +102,16 @@ BOOL CWnd::PostMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 }
 
 
+CDialog::CDialog(UINT nIDTemplate, CWnd *pParent) {
+}
+
+CDialog::CDialog(LPCTSTR lpszTemplateName, CWnd *pParent) {
+}
+
+void CDialog::OnInitDialog() {
+	error("TODO: CDialog::OnInitDialog");
+}
+
 void CDialog::EndDialog(int nResult) {
 	error("TODO: CDialog::EndDialog");
 }
@@ -92,6 +120,9 @@ void CDialog::OnCancel() {
 	error("TODO: CDialog::OnCancel");
 }
 
+void CDialog::DoDataExchange(CDataExchange *pDX) {
+	error("TODO: CDialog::DoDataExchange");
+}
 
 } // namespace MFC
 } // namespace Bagel

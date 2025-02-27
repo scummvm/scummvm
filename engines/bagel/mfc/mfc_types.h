@@ -89,7 +89,6 @@ typedef const char *LPCSTR;
 typedef const char *LPCTSTR;
 typedef void *LPBITMAPINFO;
 typedef void *LPBITMAPINFOHEADER;
-typedef Graphics::ManagedSurface *HWND;
 typedef uint clock_t;
 
 class CDibDoc {
