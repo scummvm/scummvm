@@ -55,7 +55,10 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 
 	// If there isn't already frozen Lingo (e.g. from a previous func_goto we haven't yet unfrozen),
 	// freeze this script context. We'll return to it after entering the next frame.
-	g_lingo->_freezeState = true;
+
+	// Returning from a script with "play done" does not freeze the state. Instead it obliterates it.
+	if (!g_lingo->_playDone)
+		g_lingo->_freezeState = true;
 
 	if (movie.type != VOID) {
 		Common::String movieFilenameRaw = movie.asString();

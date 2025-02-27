@@ -133,6 +133,7 @@ public:
 	void playSoundChannel(bool puppetOnly);
 
 	Common::String formatChannelInfo();
+	bool processFrozenPlayScript();
 
 private:
 	bool isWaitingForNextFrame();
