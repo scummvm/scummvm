@@ -40,10 +40,17 @@ CMainWindow::CMainWindow() {
 
 	BeginWaitCursor();
 
-	if (pGameInfo->bPlayingHodj)
-		m_nPlayerID = HODJ;
-	else
-		m_nPlayerID = PODJ;
+	if (pGameInfo->bPlayingHodj) {
+		_upBmp = IDB_HODJ_UP;
+		_downBmp = IDB_HODJ_DOWN;
+		_leftBmp = IDB_HODJ_LEFT;
+		_rightBmp = IDB_HODJ_RIGHT;
+	} else {
+		_upBmp = IDB_PODJ_UP;
+		_downBmp = IDB_PODJ_DOWN;
+		_leftBmp = IDB_PODJ_LEFT;
+		_rightBmp = IDB_PODJ_RIGHT;
+	}
 
 	// Define a special window class which traps double-clicks, is byte aligned
 	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
@@ -119,7 +126,7 @@ CMainWindow::CMainWindow() {
 
 	pPlayerSprite = new CSprite;
 	(*pPlayerSprite).SharePalette(pGamePalette);
-	bSuccess = (*pPlayerSprite).LoadResourceCels(pDC, IDB_HODJ_LEFT + m_nPlayerID, NUM_CELS);
+	bSuccess = (*pPlayerSprite).LoadResourceCels(pDC, _leftBmp, NUM_CELS);
 	assert(bSuccess);
 	(*pPlayerSprite).SetMasked(TRUE);
 	(*pPlayerSprite).SetMobile(TRUE);
@@ -786,18 +793,18 @@ void CMainWindow::MovePlayer(CPoint point) {
 	if (ABS(Delta.x) > ABS(Delta.y)) {     // Moving horizontally:
 		if (Delta.x < 0) {                    // To the RIGHT
 			Step.x = 1;                             // move one tile at a time
-			nBmpID = IDB_HODJ_RIGHT + m_nPlayerID;  // use the Bitmap of the player moving Right
+			nBmpID = _rightBmp;  // use the Bitmap of the player moving Right
 		} else if (Delta.x > 0) {               // To the LEFT
 			Step.x = -1;                            // move one tile at a time
-			nBmpID = IDB_HODJ_LEFT + m_nPlayerID;   // use Bitmap of player moving Left
+			nBmpID = _leftBmp;   // use Bitmap of player moving Left
 		}
 	} else if (ABS(Delta.y) > ABS(Delta.x)) {
 		if (Delta.y > 0) {                    // Going UPward
 			Step.y = -1;                            // move one tile at a time                                         
-			nBmpID = IDB_HODJ_UP + m_nPlayerID;     // use Bitmap of player moving Up
+			nBmpID = _upBmp;     // use Bitmap of player moving Up
 		} else if (Delta.y < 0) {               // Going DOWNward
 			Step.y = 1;                             // move one tile at a time
-			nBmpID = IDB_HODJ_DOWN + m_nPlayerID;   // use Bitmap of player moving Down
+			nBmpID = _downBmp;   // use Bitmap of player moving Down
 		}
 	}
 

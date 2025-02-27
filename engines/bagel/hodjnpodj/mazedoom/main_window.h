@@ -63,6 +63,11 @@ protected:
 	//}}AFX_MSG
 
 	//DECLARE_MESSAGE_MAP()
+private:
+	const char *_upBmp;
+	const char *_downBmp;
+	const char *_leftBmp;
+	const char *_rightBmp;
 };
 
 } // namespace MazeDoom

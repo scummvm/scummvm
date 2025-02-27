@@ -56,7 +56,6 @@ bool m_bIgnoreScrollClick;
 bool bPlaying;
 bool m_bGameOver;
 CPoint m_PlayerPos;
-uint m_nPlayerID;         // Hodj = 0, Podj = 4 to Offset the Bitmap ID for player
 
 int m_nDifficulty;
 int m_nTime, nSeconds, nMinutes;
@@ -109,7 +108,6 @@ static void init() {
 	bPlaying = false;
 	m_bGameOver = false;
 	m_PlayerPos = CPoint();
-	m_nPlayerID = PODJ;         // Hodj = 0; Podj = 4 to Offset the Bitmap ID for player
 
 	m_nDifficulty = 0;
 	m_nTime = 0;
