@@ -618,7 +618,7 @@ Common::String Lingo::formatFunctionBody(Symbol &sym) {
 bool Lingo::execute(int targetFrame) {
 	uint localCounter = 0;
 
-	while (!_abort && !_freezeState && _state->script && (*_state->script)[_state->pc] != STOP) {
+	while (!_abort && !_freezeState && !_playDone && _state->script && (*_state->script)[_state->pc] != STOP) {
 		if (targetFrame != -1 && (int)_state->callstack.size() == targetFrame)
 			break;
 
@@ -698,7 +698,8 @@ bool Lingo::execute(int targetFrame) {
 	} else if (_freezeState) {
 		debugC(5, kDebugLingoExec, "Lingo::execute(): Context is frozen, pausing execution");
 		freezeState();
-	} else if (_abort || _vm->getCurrentMovie()->getScore()->_playState == kPlayStopped) {
+	// Returning from a script with "play done" does not freeze the state. Instead it obliterates it.
+	} else if (_abort || _playDone || _vm->getCurrentMovie()->getScore()->_playState == kPlayStopped) {
 		// Clean up call stack
 		while (_state->callstack.size()) {
 			popContext(true);

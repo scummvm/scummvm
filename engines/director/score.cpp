@@ -133,7 +133,7 @@ bool Score::processImmediateFrameScript(Common::String s, int id) {
 	return false;
 }
 
-bool Score::processFrozenScripts(bool recursion, int count) {
+bool Score::processFrozenPlayScript() {
 	// Unfreeze the play script if the special flag is set
 	if (g_lingo->_playDone) {
 		g_lingo->_playDone = false;
@@ -142,15 +142,22 @@ bool Score::processFrozenScripts(bool recursion, int count) {
 			g_lingo->switchStateFromWindow();
 			bool completed = g_lingo->execute();
 			if (!completed) {
-				debugC(3, kDebugLingoExec, "Score::processFrozenScripts(): State froze again mid-thaw, interrupting");
+				debugC(3, kDebugLingoExec, "Score::processFrozenPlayScript(): State froze again mid-thaw, interrupting");
 				return false;
 			} else if (currentScript == g_lingo->_currentInputEvent) {
 				// script that just completed was the current input event, clear the flag
-				debugC(3, kDebugEvents, "Score::processFrozenScripts(): Input event completed");
+				debugC(3, kDebugEvents, "Score::processFrozenPlayScript(): Input event completed");
 				g_lingo->_currentInputEvent = Symbol();
 			}
 		}
 	}
+	return true;
+}
+
+
+bool Score::processFrozenScripts(bool recursion, int count) {
+	if (!processFrozenPlayScript())
+		return false;
 
 	// Unfreeze any in-progress scripts and attempt to run them
 	// to completion.
@@ -380,22 +387,26 @@ bool Score::isWaitingForNextFrame() {
 	bool keepWaiting = false;
 	debugC(8, kDebugEvents, "Score::isWaitingForNextFrame(): nextFrameTime: %d, time: %d, sound: %d, click: %d, video: %d", _nextFrameTime, g_system->getMillis(false), _waitForChannel, _waitForClick, _waitForVideoChannel);
 
+	bool goingTo = _nextFrame && _nextFrame != _curFrameNumber;
+
 	if (_waitForChannel) {
-		if (_soundManager->isChannelActive(_waitForChannel)) {
+		if (_soundManager->isChannelActive(_waitForChannel) && !goingTo) {
 			keepWaiting = true;
 		} else {
 			_waitForChannel = 0;
 		}
 	} else if (_waitForClick) {
-		if (g_system->getMillis() >= _nextFrameTime + 1000) {
-			_waitForClickCursor = !_waitForClickCursor;
-			renderCursor(_movie->getWindow()->getMousePos());
-			_nextFrameTime = g_system->getMillis();
+		if (!goingTo) {
+			if (g_system->getMillis() >= _nextFrameTime + 1000) {
+				_waitForClickCursor = !_waitForClickCursor;
+				renderCursor(_movie->getWindow()->getMousePos());
+				_nextFrameTime = g_system->getMillis();
+			}
+			keepWaiting = true;
 		}
-		keepWaiting = true;
 	} else if (_waitForVideoChannel) {
 		Channel *movieChannel = _channels[_waitForVideoChannel];
-		if (movieChannel->isActiveVideo() && movieChannel->_movieRate != 0.0) {
+		if (movieChannel->isActiveVideo() && movieChannel->_movieRate != 0.0 && !goingTo) {
 			keepWaiting = true;
 		} else {
 			_waitForVideoChannel = 0;
