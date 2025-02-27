@@ -19,13 +19,16 @@
  *
  */
 
+#include "common/str.h"
 #include "bagel/hodjnpodj/mazedoom/main_window.h"
 #include "bagel/hodjnpodj/mazedoom/maze_doom.h"
 #include "bagel/hodjnpodj/mazedoom/globals.h"
+#include "bagel/hodjnpodj/mazedoom/option_dialog.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/boflib/bitmaps.h"
 #include "bagel/hodjnpodj/libs/dib_doc.h"
 #include "bagel/hodjnpodj/libs/types.h"
+#include "bagel/boflib/rect.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -205,7 +208,7 @@ void CMainWindow::SplashScreen() {
 	CPalette *pPalOld = nullptr;                                                    // Old palette holder
 	CDibDoc myDoc;
 	HDIB hDIB;
-	//char msg[64];
+	char msg[64];
 
 	pDC = GetDC();
 
@@ -217,9 +220,8 @@ void CMainWindow::SplashScreen() {
 	hDIB = myDoc.GetHDIB();
 
 	if (hDIB) {
-#ifdef TODO
 		GetClientRect(rcDest);
-		rcDIB = CBofRect(0, 0, hDIB->w, hDIB->h);
+		rcDIB = CRect(0, 0, hDIB->w, hDIB->h);
 
 		PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 
@@ -227,22 +229,21 @@ void CMainWindow::SplashScreen() {
 		if ((pPlayerSprite != nullptr) && bPlaying)
 			(*pPlayerSprite).PaintSprite(pDC, (m_PlayerPos.x * SQ_SIZE_X) + SIDE_BORDER,
 				(m_PlayerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2); // Update PLAYER
-#endif
 	}
-#ifdef TODO
+
 	if (bPlaying) {                       // only false when the options are displayed
 		PaintBitmap(pDC, pGamePalette, pBlankBitmap, TIME_LOCATION_X, TIME_LOCATION_Y);
 		if (m_nTime == 0)
-			sprintf(msg, "Time Used: %02d:%02d", nMinutes, nSeconds);
+			Common::sprintf_s(msg, "Time Used: %02d:%02d", nMinutes, nSeconds);
 		else {
-			sprintf(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
+			Common::sprintf_s(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
 		}
 		(*m_pTimeText).DisplayString(pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
 	} else {
 		if (pLocaleBitmap != nullptr)
 			PaintBitmap(pDC, pGamePalette, pLocaleBitmap, TIME_LOCATION_X, TIME_LOCATION_Y);
 	}
-#endif
+
 	(*pDC).SelectPalette(pPalOld, false);                                         // Select back old palette
 	ReleaseDC(pDC);
 }
@@ -627,9 +628,9 @@ void CMainWindow::OnTimer(UINT nIDEvent) {
 		}
 
 		if (m_nTime == 0)
-			sprintf(msg, "Time Used: %02d:%02d", nMinutes, nSeconds);
+			Common::sprintf_s(msg, "Time Used: %02d:%02d", nMinutes, nSeconds);
 		else {
-			sprintf(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
+			Common::sprintf_s(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
 		}
 		(*m_pTimeText).DisplayString(pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
 
@@ -727,9 +728,9 @@ void CMainWindow::NewGame() {
 
 	PaintBitmap(pDC, pGamePalette, pBlankBitmap, TIME_LOCATION_X, TIME_LOCATION_Y);
 	if (m_nTime == 0)
-		sprintf(msg, "Time Used: %02d:%02d", nMinutes, nSeconds);
+		Common::sprintf_s(msg, "Time Used: %02d:%02d", nMinutes, nSeconds);
 	else {
-		sprintf(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
+		Common::sprintf_s(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
 	}
 	(*m_pTimeText).DisplayString(pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
 

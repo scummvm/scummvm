@@ -38,7 +38,7 @@
 #include "bagel/spacebar/boflib/file.h"
 #include "bagel/spacebar/boflib/gfx/palette.h"
 #include "bagel/spacebar/baglib/pan_window.h"
-#include "bagel/spacebar/boflib/rect.h"
+#include "bagel/boflib/rect.h"
 #include "bagel/bagel.h"
 #include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/log.h"

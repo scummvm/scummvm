@@ -27,7 +27,6 @@
 #include "bagel/boflib/object.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 class CBofSize : public StSize, public CBofObject {
 public:
@@ -134,7 +133,6 @@ inline CBofSize CBofSize::operator-() {
 	return CBofSize(-cx, -cy);
 }
 
-} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

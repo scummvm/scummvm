@@ -25,7 +25,7 @@
 
 #include "bagel/spacebar/baglib/ifstream.h"
 #include "bagel/boflib/error.h"
-#include "bagel/spacebar/boflib/rect.h"
+#include "bagel/boflib/rect.h"
 #include "bagel/boflib/string.h"
 
 namespace Bagel {

@@ -26,11 +26,10 @@
 #include "common/rect.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/object.h"
-#include "bagel/spacebar/boflib/point.h"
-#include "bagel/spacebar/boflib/size.h"
+#include "bagel/boflib/point.h"
+#include "bagel/boflib/size.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 typedef Common::Rect RECT;
 
@@ -446,7 +445,6 @@ inline CBofRect CBofRect::operator|(const CBofRect &rect2) {
 	return rect;
 }
 
-} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

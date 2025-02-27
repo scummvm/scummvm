@@ -25,7 +25,7 @@
 
 #include "video/smk_decoder.h"
 #include "bagel/spacebar/boflib/gui/dialog.h"
-#include "bagel/spacebar/boflib/rect.h"
+#include "bagel/boflib/rect.h"
 #include "bagel/boflib/error.h"
 #include "bagel/spacebar/boflib/gfx/palette.h"
 

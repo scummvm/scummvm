@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,31 +19,20 @@
  *
  */
 
-#ifndef BAGEL_SPACEBAR_FILTER_H
-#define BAGEL_SPACEBAR_FILTER_H
+#ifndef HODJNPODJ_MAZEDOOM_OPTION_DIALOG_H
+#define HODJNPODJ_MAZEDOOM_OPTION_DIALOG_H
 
-#include "bagel/spacebar/boflib/gfx/bitmap.h"
-#include "bagel/boflib/rect.h"
+#include "common/scummsys.h"
 
 namespace Bagel {
-namespace SpaceBar {
+namespace HodjNPodj {
+namespace MazeDoom {
 
-const uint16 kTriFilter = (uint16)1;
-const uint16 kHalucinateFilter = (uint16)2;
-const uint16 kVildroidFilter = (uint16)4;
-const uint16 kZzazzlFilter = (uint16)8;
-const uint16 kLightningFilter = (uint16)16;
+#define LEFT_SIDE		 30 
+#define	OPTIONS_COLOR	RGB(0, 0, 0)	// Color of the stats info CText
 
-typedef bool(*FilterFxn)(uint16, CBofBitmap *, CBofRect *);
-
-void vilInitFilters(CBofBitmap *pBmp);
-void triInitFilters(CBofBitmap *pBmp);
-void lightningInitFilters();
-void destroyFilters();
-
-bool doFilters(uint16 nFilterId, CBofBitmap *pBmp, CBofRect *pRect);
-
-} // namespace SpaceBar
+} // namespace MazeDoom
+} // namespace HodjNPodj
 } // namespace Bagel
 
 #endif

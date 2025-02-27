@@ -41,7 +41,7 @@ public:
 	Graphics::Screen *_screen = nullptr;
 	bool _useOriginalSaveLoad = false;
 	SpaceBar::CBagMasterWin *_masterWin = nullptr;
-	SpaceBar::CBofPoint g_cInitLoc;       // This is the initial location for the next new pan (only option at this point)
+	CBofPoint g_cInitLoc;       // This is the initial location for the next new pan (only option at this point)
 	bool g_bUseInitLoc = false;
 	bool g_getVilVarsFl = true;
 	MusicPlayer *_midi = nullptr;

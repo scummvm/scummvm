@@ -45,6 +45,26 @@ namespace MFC {
 #define NONANTIALIASED_QUALITY  3
 #define ANTIALIASED_QUALITY     4
 
+/* Font Weights */
+enum FontWeight {
+	FW_DONTCARE         = 0,
+	FW_THIN             = 100,
+	FW_EXTRALIGHT       = 200,
+	FW_LIGHT            = 300,
+	FW_NORMAL           = 400,
+	FW_MEDIUM           = 500,
+	FW_SEMIBOLD         = 600,
+	FW_BOLD             = 700,
+	FW_EXTRABOLD        = 800,
+	FW_HEAVY            = 900,
+
+	FW_ULTRALIGHT       = FW_EXTRALIGHT,
+	FW_REGULAR          = FW_NORMAL,
+	FW_DEMIBOLD         = FW_SEMIBOLD,
+	FW_ULTRABOLD        = FW_EXTRABOLD,
+	FW_BLACK            = FW_HEAVY
+};
+
 /* Font Families */
 #define FF_DONTCARE         (0<<4)  /* Don't care or don't know. */
 #define FF_ROMAN            (1<<4)  /* Variable stroke width, serifed. */
