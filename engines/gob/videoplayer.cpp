@@ -421,8 +421,10 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 	while ((properties.startFrame != properties.lastFrame) &&
 	       (properties.startFrame < (int32)(video->decoder->getFrameCount() - 1))) {
 
-		if (_vm->getGameType() == kGameTypeAdibou2 && video->live)
-			properties.startFrame = video->decoder->getCurFrame();
+		if (_vm->getGameType() == kGameTypeAdibou2 && video->live) {
+			properties.startFrame = video->decoder->getCurFrame() +
+									video->decoder->getNbFramesPastEnd();
+		}
 
 		playFrame(slot, properties);
 		if (properties.canceled)
@@ -508,7 +510,7 @@ void VideoPlayer::updateLive(int slot, bool force) {
 		return;
 
 	if (_vm->getGameType() == kGameTypeAdibou2 && slot < kVideoSlotWithCurFrameVarCount)
-		WRITE_VAR(53 + slot, video->decoder->getCurFrame());
+		WRITE_VAR(53 + slot, video->decoder->getCurFrame() + video->decoder->getNbFramesPastEnd());
 
 	int nbrOfLiveVideos = 0;
 	for (int i = 0; i < kVideoSlotCount; i++) {
@@ -558,7 +560,7 @@ void VideoPlayer::updateLive(int slot, bool force) {
 		video->properties.startFrame += backwards ? -1 : 1;
 
 	if (_vm->getGameType() == kGameTypeAdibou2 && slot < kVideoSlotWithCurFrameVarCount)
-		WRITE_VAR(53 + slot, video->decoder->getCurFrame());
+		WRITE_VAR(53 + slot, video->decoder->getCurFrame() + video->decoder->getNbFramesPastEnd());
 
 	if (video->properties.fade) {
 		_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
