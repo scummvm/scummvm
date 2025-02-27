@@ -406,6 +406,8 @@ void MidiPlayer_Midi::setReverb(int8 reverb) {
 	assert(reverb < kReverbConfigNr);
 
 	if (_hasReverb && _reverb != reverb) {
+		if (reverb < 0)
+			reverb = 0;
 		sendMt32SysEx(0x100001, SciSpan<const byte>(_reverbConfig[reverb], 3), true, true);
 	}
 
