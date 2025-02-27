@@ -38,13 +38,26 @@ namespace MFC {
 #define IMPLEMENT_DYNCREATE(KLASS, PARENT)
 #define afx_msg
 #define BEGIN_MESSAGE_MAP(KLASS, PARENT)
-#define ON_WM_ERASEBKGND()
-#define ON_WM_DRAWITEM()
 #define END_MESSAGE_MAP()
 #define ON_MESSAGE(TAG, METHOD)
+#define ON_WM_ERASEBKGND()
+#define ON_WM_DRAWITEM()
+#define ON_WM_CREATE()
+#define ON_WM_PAINT()
+#define ON_WM_SHOWWINDOW()
+#define ON_WM_SIZE()
+#define ON_WM_MOUSEMOVE()
+#define ON_WM_SETCURSOR()
+#define ON_WM_NCMOUSEMOVE()
+#define ON_WM_LBUTTONDOWN()
+#define ON_WM_DESTROY()
+#define ON_WM_ACTIVATE()
+
 #define BM_SETCHECK 0
 #define BM_GETCHECK 1
 
+#define FAR
+#define PASCAL
 
 typedef bool BOOL;
 typedef byte BYTE;
@@ -54,6 +67,8 @@ typedef int32 LPARAM;
 typedef uint UINT;
 typedef uint32 DWORD;
 typedef int32 LONG;
+typedef long LRESULT;
+typedef void(*FARPROC)();
 
 #define TRUE true
 #define FALSE false
@@ -76,9 +91,12 @@ typedef void *HBITMAP;
 typedef void *LPBITMAPINFO;
 typedef void *LPBITMAPINFOHEADER;
 typedef Graphics::ManagedSurface *HWND;
-
+typedef uint clock_t;
 
 class CDibDoc {
+};
+
+struct CDataExchange {
 };
 
 } // namespace MFC

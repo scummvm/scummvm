@@ -83,5 +83,15 @@ BOOL CWnd::PostMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 	return true;
 }
 
+
+void CDialog::EndDialog(int nResult) {
+	error("TODO: CDialog::EndDialog");
+}
+
+void CDialog::OnCancel() {
+	error("TODO: CDialog::OnCancel");
+}
+
+
 } // namespace MFC
 } // namespace Bagel

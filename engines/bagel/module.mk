@@ -114,6 +114,8 @@ MODULE_OBJS = \
 	hodjnpodj/hodjnpodj.o \
 	hodjnpodj/libs/dib_api.o \
 	hodjnpodj/libs/dib_doc.o \
+	hodjnpodj/libs/main_menu.o \
+	hodjnpodj/libs/rules.o \
 	hodjnpodj/boflib/bitmaps.o \
 	hodjnpodj/boflib/button.o \
 	hodjnpodj/boflib/sprite.o \

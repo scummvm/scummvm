@@ -243,7 +243,6 @@ void CMainWindow::SplashScreen() {
 BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 #ifdef TODO
 	if (HIWORD(lParam) == BN_CLICKED) {
-
 		CDC *pDC;
 		CRules  RulesDlg((CWnd *)this, RULES_TEXT, pGamePalette,
 			pGameInfo->bSoundEffectsEnabled ? RULES_WAV : nullptr);
@@ -256,10 +255,9 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		PaintBitmap(pDC, pGamePalette, pLocaleBitmap, TIME_LOCATION_X, TIME_LOCATION_Y);
 
 		switch (wParam) {
-
 		case IDC_RULES:
 			KillTimer(GAME_TIMER);
-			CBofSound::WaitWaveSounds();
+			CBofSound::waitWaveSounds();
 			m_bIgnoreScrollClick = TRUE;
 			(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
 

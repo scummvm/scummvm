@@ -59,6 +59,24 @@ enum {
 };
 
 typedef void *TIMERPROC;
+typedef void *HINSTANCE;
+typedef void *HMENU;
+
+typedef struct tagCREATESTRUCT {
+	LPVOID    lpCreateParams;
+	HINSTANCE hInstance;
+	HMENU     hMenu;
+	HWND      hwndParent;
+	int       cy;
+	int       cx;
+	int       y;
+	int       x;
+	LONG      style;
+	LPCSTR    lpszName;
+	LPCSTR    lpszClass;
+	DWORD     dwExStyle;
+} CREATESTRUCT, *LPCREATESTRUCT;
+
 
 class CWnd {
 protected:
@@ -189,6 +207,12 @@ public:
 		return CWnd::Create(label, flags, bounds, nullptr, 0);
 	}
 
+};
+
+class CDialog : public CWnd {
+public:
+	void EndDialog(int nResult);
+	void OnCancel();
 };
 
 } // namespace MFC
