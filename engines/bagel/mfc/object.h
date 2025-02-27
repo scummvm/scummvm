@@ -30,30 +30,6 @@ namespace MFC {
 class CObject {
 };
 
-class CGdiObject {
-public:
-	HBITMAP _bitmap = nullptr;
-	HGDIOBJ m_hObject = nullptr;
-
-public:
-	~CGdiObject() {
-	}
-
-	void Attach(HBITMAP bitmap) {
-		_bitmap = bitmap;
-	}
-	HBITMAP Detach() {
-		HBITMAP result = _bitmap;
-		_bitmap = nullptr;
-		return result;
-	}
-
-	void DeleteObject() {
-		delete _bitmap;
-		_bitmap = nullptr;
-	}
-};
-
 extern LPVOID GlobalLock(HGLOBAL hMem);
 extern BOOL GlobalUnlock(HGLOBAL hMem);
 

@@ -40,6 +40,31 @@ typedef struct tagBITMAP {
 	WORD bmBitsPixel;
 	LPVOID bmBits;
 } BITMAP;
+typedef BITMAP *HBITMAP;
+
+class CGdiObject {
+public:
+	HBITMAP _bitmap = nullptr;
+	HGDIOBJ m_hObject = nullptr;
+
+public:
+	~CGdiObject() {
+	}
+
+	void Attach(HBITMAP bitmap) {
+		_bitmap = bitmap;
+	}
+	HBITMAP Detach() {
+		HBITMAP result = _bitmap;
+		_bitmap = nullptr;
+		return result;
+	}
+
+	void DeleteObject() {
+		delete _bitmap;
+		_bitmap = nullptr;
+	}
+};
 
 class CBitmap : public CGdiObject {
 public:

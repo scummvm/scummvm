@@ -24,7 +24,7 @@
 
 #include "graphics/palette.h"
 #include "bagel/mfc/mfc_types.h"
-#include "bagel/mfc/object.h"
+#include "bagel/mfc/bitmap.h"
 
 namespace Bagel {
 namespace MFC {
