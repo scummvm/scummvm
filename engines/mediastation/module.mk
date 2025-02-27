@@ -18,7 +18,6 @@ MODULE_OBJS = \
 	bitmap.o \
 	boot.o \
 	context.o \
-	contextparameters.o \
 	cursors.o \
 	datafile.o \
 	datum.o \

@@ -22,16 +22,25 @@
 #ifndef MEDIASTATION_CONTEXT_H
 #define MEDIASTATION_CONTEXT_H
 
+#include "common/str.h"
 #include "common/path.h"
 #include "common/hashmap.h"
 #include "graphics/palette.h"
 
 #include "mediastation/datafile.h"
-#include "mediastation/contextparameters.h"
 #include "mediastation/assetheader.h"
 #include "mediastation/mediascript/function.h"
+#include "mediastation/mediascript/variable.h"
 
 namespace MediaStation {
+
+enum ContextParametersSectionType {
+	kContextParametersEmptySection = 0x0000,
+	kContextParametersVariable = 0x0014,
+	kContextParametersName = 0x0bb9,
+	kContextParametersFileNumber = 0x0011,
+	kContextParametersBytecode = 0x0017
+};
 
 enum ContextSectionType {
 	kContextEmptySection = 0x0000,
@@ -54,7 +63,6 @@ public:
 	uint32 _subfileCount;
 	uint32 _fileSize;
 	Graphics::Palette *_palette = nullptr;
-	ContextParameters *_parameters = nullptr;
 	// TODO: Eliminate this screenAsset because the screen that this context
 	// represents is now an asset in itself.
 	AssetHeader *_screenAsset = nullptr;
@@ -65,10 +73,17 @@ public:
 	void registerActiveAssets();
 
 private:
+	// This is not an internal file ID, but the number of the file
+	// as it appears in the filename. For instance, the context in
+	// "100.cxt" would have file number 100.
+	uint _fileNumber = 0;
+	Common::String *_contextName = nullptr;
+
 	Common::HashMap<uint, Asset *> _assets;
 	Common::HashMap<uint, Function *> _functions;
 	Common::HashMap<uint, Asset *> _assetsByChunkReference;
 
+	void readParametersSection(Chunk &chunk);
 	void readOldStyleHeaderSections(Subfile &subfile, Chunk &chunk);
 	void readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk);
 	bool readHeaderSection(Subfile &subfile, Chunk &chunk);
