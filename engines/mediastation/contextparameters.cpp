@@ -58,9 +58,11 @@ ContextParameters::ContextParameters(Chunk &chunk) : _contextName(nullptr) {
 				warning("ContextParameters::ContextParameters(): Repeated file number didn't match: %d != %d", repeatedFileNumber, _fileNumber);
 			}
 			Variable *variable = new Variable(chunk);
-			Operand operand;
 			if (g_engine->_variables.contains(variable->_id)) {
-				error("ContextParameters::ContextParameters(): Variable with ID 0x%x already exists", variable->_id);
+				// Don't overwrite the variable if it already exists. This can happen if we have
+				// unloaded a screen but are returning to it later.
+				debugC(5, kDebugScript, "ContextParameters::ContextParameters(): Skipping re-creation of existing global variable %d (type: %s)", variable->_id, variableTypeToStr(variable->_type));
+				delete variable;
 			} else {
 				g_engine->_variables.setVal(variable->_id, variable);
 				debugC(5, kDebugScript, "ContextParameters::ContextParameters(): Created global variable %d (type: %s)", variable->_id, variableTypeToStr(variable->_type));
