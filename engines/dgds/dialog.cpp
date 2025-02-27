@@ -346,11 +346,13 @@ void Dialog::drawType4(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 		fillbgcolor = _bgColor;
 	}
 
+	const DgdsGameId gameId = DgdsEngine::getInstance()->getGameId();
 	if (stage == kDlgDrawStageBackground) {
 		//int radius = (midy * 5) / 4;
 
 		// This is not exactly the same as the original - might need some work to get pixel-perfect
-		if (DgdsEngine::getInstance()->getGameId() != GID_HOC) {
+		// Beamish uses 20x20 dialogs of type 4 to have effects without actually drawing anything.
+		if (gameId != GID_HOC && (w > 20 || h > 20)) {
 			Common::Rect drawRect(x, y, x + w, y + h);
 			dst->drawRoundRect(drawRect, midy, fillbgcolor, true);
 			dst->drawRoundRect(drawRect, midy, fillcolor, false);
@@ -361,12 +363,17 @@ void Dialog::drawType4(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 		drawFindSelectionTxtOffset();
 	} else {
 		assert(_state);
-		if (DgdsEngine::getInstance()->getGameId() != GID_HOC) {
+		if (gameId != GID_HOC) {
 			_state->_loc = DgdsRect(x + midy, y + 1, w - midy, h - 1);
 		} else {
 			_state->_loc = DgdsRect(x, y, w, h);
 			fillcolor = 25; // ignore the color??
 		}
+
+		// WORKAROUND for the Willy Beamish dialogs which are 20x20 - these should not be drawn
+		if (gameId == GID_WILLY && (w <= 20 && h <= 20))
+			return;
+
 		drawForeground(dst, fillcolor, _str);
 	}
 }
