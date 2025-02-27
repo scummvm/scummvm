@@ -1959,8 +1959,12 @@ Common::String GDSScene::dump(const Common::String &indent) const {
 }
 
 void GDSScene::globalOps(const Common::Array<uint16> &args) {
-	if (!args.size())
-		error("GDSScene::globalOps: Empty arg list");
+	if (!args.size()) {
+		// This happens in Willy Beamish CD version when vacuuming
+		// up the babysitter (D50.DDS, dialog num 54)
+		warning("GDSScene::globalOps: Empty arg list");
+		return;
+	}
 
 	// The arg list should be a first value giving the count of operations,
 	// then 3 values for each op (num, opcode, val).
