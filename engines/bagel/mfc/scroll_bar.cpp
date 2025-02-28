@@ -19,27 +19,28 @@
  *
  */
 
-#ifndef BAGEL_MFC_AFX_H
-#define BAGEL_MFC_AFX_H
-
-#include "bagel/mfc/mfc_types.h"
-#include "bagel/mfc/bitmap.h"
-#include "bagel/mfc/button.h"
-#include "bagel/mfc/dc.h"
-#include "bagel/mfc/document.h"
-#include "bagel/mfc/font.h"
-#include "bagel/mfc/palette.h"
-#include "bagel/mfc/rect.h"
+#include "common/textconsole.h"
 #include "bagel/mfc/scroll_bar.h"
-#include "bagel/mfc/str.h"
-#include "bagel/mfc/wnd.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
-using namespace Bagel::MFC;
+void CScrollBar::SetScrollRange(int nBar, int nMinPos, int nMaxPos, BOOL bRedraw) {
+	error("TODO: CScrollBar::SetScrollRange");
+}
 
-} // namespace HodjNPodj
+void CScrollBar::GetScrollRange(int *nMinPos, int *nMaxPos) {
+	error("TODO: CScrollBar::GetScrollRange");
+}
+
+int CScrollBar::SetScrollPos(int nBar, int nPos, BOOL bRedraw) {
+	error("TODO: CScrollBar::SetScrollPos");
+}
+
+int CScrollBar::GetScrollPos() const {
+	error("TODO: CScrollBar::GetScrollPos");
+	return 0;
+}
+
+} // namespace MFC
 } // namespace Bagel
-
-#endif

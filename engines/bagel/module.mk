@@ -22,6 +22,7 @@ MODULE_OBJS = \
 	mfc/font.o \
 	mfc/object.o \
 	mfc/palette.o \
+	mfc/scroll_bar.o \
 	mfc/wnd.o \
 	spacebar/baglib/area_object.o \
 	spacebar/baglib/bagel.o \

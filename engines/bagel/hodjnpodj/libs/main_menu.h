@@ -28,11 +28,42 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-typedef void (*FPFUNC)();
+#define NO_RULES    0x0001
+#define NO_NEWGAME  0x0002
+#define NO_OPTIONS  0x0004
+#define NO_RETURN   0x0008
+#define NO_QUIT     0x0010
+#define NO_AUDIO    0x0020
+
+#define IDC_OPTIONS_ARROWUP	503
+#define IDC_OPTIONS_ARROWDN	504
+
+#define	ID_OPTIONS_CODES	450
+
+// obsolete
+//#define IDR_BITMAP_SCROLL   451
+
+#define IDR_OPTION_SCROLL	452
+#define IDD_OPTIONS_DIALOG	453
+
+#define IDC_OPTIONS_RETURN	454
+#define IDC_OPTIONS_QUIT	455
+#define IDC_OPTIONS_RULES	456
+#define IDC_OPTIONS_NEWGAME	457
+#define IDC_OPTIONS_OPTIONS	458
+#define IDC_OPTIONS_AUDIO	459
+
+#define IDB_SCROLBTN        460
+#define SCROLLUP            461
+#define SCROLLDOWN          462
+
+#define IDD_AUDIOCFG		463
+
+typedef void (*FPFUNC)(CWnd *parentWnd);
 
 class CMainMenu : public CBmpDialog {
 public:
-	CMainMenu(CWnd *pParent, CPalette *pPalette, UINT, FPFUNC, char *,
+	CMainMenu(CWnd *pParent, CPalette *pPalette, UINT, FPFUNC, const char *,
 		const char *pWavFileName = nullptr, LPGAMESTRUCT pGameParams = nullptr);
 	void ClearDialogImage();
 

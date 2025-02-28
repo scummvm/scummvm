@@ -35,6 +35,23 @@ enum {
 	WS_VISIBLE
 };
 
+enum {
+	BM_GETCHECK        = 0x00F0,
+	BM_SETCHECK        = 0x00F1,
+	BM_GETSTATE        = 0x00F2,
+	BM_SETSTATE        = 0x00F3,
+	BM_SETSTYLE        = 0x00F4,
+	BM_CLICK           = 0x00F5,
+	BM_GETIMAGE        = 0x00F6,
+	BM_SETIMAGE        = 0x00F7,
+	BM_SETDONTCLICK    = 0x00F8,
+	BST_UNCHECKED      = 0x0000,
+	BST_CHECKED        = 0x0001,
+	BST_INDETERMINATE  = 0x0002,
+	BST_PUSHED         = 0x0004,
+	BST_FOCUS          = 0x0008
+};
+
 class CButton : public CWnd {
 public:
 	void SetButtonStyle(UINT nStyle, BOOL bRedraw = TRUE);

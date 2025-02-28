@@ -151,6 +151,9 @@ static	BOOL		bBruteForce = FALSE;			// whether we can be clever
 /////////////////////////////////////////////////////////////////////////////
 // CRules dialog
 
+CRules::CRules(CWnd *pParent, const char *pszPathName, CPalette *pPalette, const char *pszSoundPath)
+		: CDialog(CRules::IDD, pParent) {
+}
 void CRules::UpdateScroll(int nPage) {}
 void CRules::ClearDialogImage() {}
 void CRules::RefreshBackground() {}

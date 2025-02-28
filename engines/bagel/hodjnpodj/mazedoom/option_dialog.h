@@ -22,7 +22,9 @@
 #ifndef HODJNPODJ_MAZEDOOM_OPTION_DIALOG_H
 #define HODJNPODJ_MAZEDOOM_OPTION_DIALOG_H
 
-#include "common/scummsys.h"
+#include "bagel/mfc/afx.h"
+#include "bagel/hodjnpodj/boflib/dialog.h"
+#include "bagel/hodjnpodj/mazedoom/maze_doom.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -30,6 +32,42 @@ namespace MazeDoom {
 
 #define LEFT_SIDE		 30 
 #define	OPTIONS_COLOR	RGB(0, 0, 0)	// Color of the stats info CText
+
+
+class COptnDlg : public CBmpDialog {
+	// Construction
+public:
+	COptnDlg(CWnd *pParent = NULL, CPalette *pPalette = NULL);	// standard constructor
+	~COptnDlg();		// destructor
+	void UpdateScrollbars();
+	void ClearDialogImage(void);
+
+	CScrollBar m_ScrollTime;
+	CScrollBar m_ScrollDifficulty;
+	int m_nDifficulty;
+	int m_nTime;
+	int nSeconds;
+	int nMinutes;
+	CString mDifficultyTable[MAX_DIFFICULTY];
+	//}}AFX_DATA
+
+// Implementation
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX);	// DDX/DDV support
+
+	// Generated message map functions
+	//{{AFX_MSG(COptnDlg)
+	virtual BOOL OnInitDialog();
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg	BOOL OnEraseBkgnd(CDC *pDC);
+	virtual void OnOK();
+	virtual void OnCancel();
+	afx_msg void OnPaint();
+	afx_msg void OnDestroy();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+};
 
 } // namespace MazeDoom
 } // namespace HodjNPodj

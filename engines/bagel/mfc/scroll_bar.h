@@ -19,27 +19,45 @@
  *
  */
 
-#ifndef BAGEL_MFC_AFX_H
-#define BAGEL_MFC_AFX_H
+#ifndef BAGEL_HODJNPODJ_MFC_SCROLL_BAR_H
+#define BAGEL_HODJNPODJ_MFC_SCROLL_BAR_H
 
 #include "bagel/mfc/mfc_types.h"
-#include "bagel/mfc/bitmap.h"
-#include "bagel/mfc/button.h"
-#include "bagel/mfc/dc.h"
-#include "bagel/mfc/document.h"
-#include "bagel/mfc/font.h"
-#include "bagel/mfc/palette.h"
-#include "bagel/mfc/rect.h"
-#include "bagel/mfc/scroll_bar.h"
-#include "bagel/mfc/str.h"
 #include "bagel/mfc/wnd.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
-using namespace Bagel::MFC;
+/*
+ * Scroll Bar Commands
+ */
+enum {
+	SB_LINEUP        = 0,
+	SB_LINELEFT      = 0,
+	SB_LINEDOWN      = 1,
+	SB_LINERIGHT     = 1,
+	SB_PAGEUP        = 2,
+	SB_PAGELEFT      = 2,
+	SB_PAGEDOWN      = 3,
+	SB_PAGERIGHT     = 3,
+	SB_THUMBPOSITION = 4,
+	SB_THUMBTRACK    = 5,
+	SB_TOP           = 6,
+	SB_LEFT          = 6,
+	SB_BOTTOM        = 7,
+	SB_RIGHT         = 7,
+	SB_ENDSCROLL     = 8
+};
 
-} // namespace HodjNPodj
+class CScrollBar : public CWnd {
+public:
+	void SetScrollRange(int nBar, int nMinPos, int nMaxPos, BOOL bRedraw = TRUE);
+	void GetScrollRange(int *nMinPos, int *nMaxPos);
+	int SetScrollPos(int nBar, int nPos, BOOL bRedraw = TRUE);
+	int GetScrollPos() const;
+};
+
+} // namespace MFC
 } // namespace Bagel
 
 #endif

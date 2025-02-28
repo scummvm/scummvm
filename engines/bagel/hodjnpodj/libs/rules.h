@@ -38,7 +38,8 @@ namespace HodjNPodj {
 class CRules : public CDialog {
 	// Construction
 public:
-	CRules(CWnd *pParent = NULL, char *pszPathName = NULL, CPalette *pPalette = NULL, char *pszSoundPath = NULL);	// standard constructor
+	CRules(CWnd *pParent = NULL, const char *pszPathName = NULL,
+		CPalette *pPalette = NULL, const char *pszSoundPath = NULL);	// standard constructor
 
 	void UpdateScroll(int nPage);
 	void ClearDialogImage();

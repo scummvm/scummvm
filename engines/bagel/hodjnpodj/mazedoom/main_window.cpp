@@ -28,6 +28,8 @@
 #include "bagel/hodjnpodj/boflib/bitmaps.h"
 #include "bagel/hodjnpodj/libs/dib_doc.h"
 #include "bagel/hodjnpodj/libs/types.h"
+#include "bagel/hodjnpodj/libs/rules.h"
+#include "bagel/hodjnpodj/libs/main_menu.h"
 #include "bagel/boflib/rect.h"
 
 namespace Bagel {
@@ -86,7 +88,7 @@ CMainWindow::CMainWindow() {
 		SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1);
 	bSuccess = (*m_pScrollButton).Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_SCROLL);
 	assert(bSuccess);
-	bSuccess = (*m_pScrollButton).LoadBitmaps(SCROLLUP, SCROLLDOWN, nullptr, nullptr);
+	bSuccess = (*m_pScrollButton).LoadBitmaps(SCROLLUP_BMP, SCROLLDOWN_BMP, nullptr, nullptr);
 	assert(bSuccess);
 	m_bIgnoreScrollClick = false;
 
@@ -249,7 +251,6 @@ void CMainWindow::SplashScreen() {
 }
 
 BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
-#ifdef TODO
 	if (HIWORD(lParam) == BN_CLICKED) {
 		CDC *pDC;
 		CRules  RulesDlg((CWnd *)this, RULES_TEXT, pGamePalette,
@@ -287,7 +288,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
 			SendDlgItemMessage(IDC_SCROLL, BM_SETSTATE, TRUE, 0L);
 
-			CBofSound::WaitWaveSounds();
+			CBofSound::waitWaveSounds();
 
 			switch (COptionsWind.DoModal()) {
 
@@ -316,15 +317,14 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			if (!pGameInfo->bMusicEnabled && (pGameSound != nullptr)) {
 
-				pGameSound->Stop();
+				pGameSound->stop();
 				delete pGameSound;
 				pGameSound = nullptr;
 
 			} else if (pGameInfo->bMusicEnabled && (pGameSound == nullptr)) {
-
-				if ((pGameSound = new CSound) != nullptr) {
-					pGameSound->Initialize(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-					pGameSound->MidiLoopPlaySegment(3000, 32980, 0, FMT_MILLISEC);
+				pGameSound = new CBofSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+				if (pGameSound != nullptr) {
+					pGameSound->midiLoopPlaySegment(3000, 32980, 0, FMT_MILLISEC);
 				}
 			}
 
@@ -336,7 +336,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	} // end if
 
 	(*this).SetFocus();                     // Reset focus back to the main window
-#endif
+
 	return TRUE;
 }
 

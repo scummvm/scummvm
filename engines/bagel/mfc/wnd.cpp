@@ -86,6 +86,11 @@ void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
 	error("TODO: CWnd::MoveWindow");
 }
 
+CWnd *CWnd::SetFocus() {
+	error("TODO: CWnd::SetFocus");
+	return nullptr;
+}
+
 long CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 	error("TODO: CWnd::SendMessage");
 	return 0;
@@ -96,9 +101,19 @@ long CWnd::SetTimer(UINT nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc) {
 	return 0;
 }
 
+bool CWnd::KillTimer(UINT nIDEvent) {
+	error("TODO: CWnd::KillTimer");
+	return true;
+}
+
 BOOL CWnd::PostMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 	error("TODO: CWnd::PostMessage");
 	return true;
+}
+
+LRESULT CWnd::SendDlgItemMessage(int nID, UINT message, WPARAM wParam, LPARAM lParam) const {
+	error("TODO: CWnd::SendDlgItemMessage");
+	return 0;
 }
 
 
@@ -112,12 +127,21 @@ void CDialog::OnInitDialog() {
 	error("TODO: CDialog::OnInitDialog");
 }
 
+int CDialog::DoModal() {
+	error("TODO: CDialog::DoModal");
+	return 0;
+}
+
 void CDialog::EndDialog(int nResult) {
 	error("TODO: CDialog::EndDialog");
 }
 
 void CDialog::OnCancel() {
 	error("TODO: CDialog::OnCancel");
+}
+
+void CDialog::DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl) {
+	error("TODO: CDialog::DDX_Control");
 }
 
 void CDialog::DoDataExchange(CDataExchange *pDX) {

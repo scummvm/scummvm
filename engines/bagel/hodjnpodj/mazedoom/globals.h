@@ -28,6 +28,9 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace MazeDoom {
 
+#define IDOK 10001
+#define IDCANCEL 10002
+
 // Scroll button size and positioning information
 #define IDC_SCROLL			850
 
@@ -36,8 +39,8 @@ namespace MazeDoom {
 #define SCROLL_BUTTON_DX	140
 #define SCROLL_BUTTON_DY	23
 
-#define SCROLLUP		"ART/SCROLLUP.BMP"
-#define SCROLLDOWN		"ART/SCROLLDN.BMP"
+#define SCROLLUP_BMP	"ART/SCROLLUP.BMP"
+#define SCROLLDOWN_BMP	"ART/SCROLLDN.BMP"
 
 #define IDB_HODJ_UP		"ART/HODJUP.BMP"
 #define IDB_HODJ_RIGHT	"ART/HODJRT.BMP"
@@ -51,6 +54,10 @@ namespace MazeDoom {
 #define IDB_PARTS       "ART/MODPARTS.BMP"
 #define IDB_LOCALE_BMP	"ART/LOCALE.BMP"
 #define IDB_BLANK_BMP	"ART/BLANK.BMP"
+
+#define IDC_RULES						1002
+#define IDC_DIFFICULTY                  1021
+#define IDC_TIMELIMIT                   1022
 
 } // namespace MazeDoom
 } // namespace HodjNPodj

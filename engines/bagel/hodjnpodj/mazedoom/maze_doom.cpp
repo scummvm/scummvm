@@ -23,6 +23,7 @@
 #include "bagel/hodjnpodj/mazedoom/maze_doom.h"
 #include "bagel/hodjnpodj/mazedoom/maze_gen.h"
 #include "bagel/hodjnpodj/mazedoom/main_window.h"
+#include "bagel/hodjnpodj/mazedoom/option_dialog.h"
 #include "bagel/hodjnpodj/mazedoom/globals.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/boflib/bitmaps.h"
@@ -582,6 +583,20 @@ bool InArtRegion(CPoint point) {
 		(point.y > TOP_BORDER && point.y < GAME_HEIGHT - BOTTOM_BORDER))     //...ArtWork area
 		return true;                                                            // Return true if it's inside
 	else return false;                                                          //...and false if not
+}
+
+void GetSubOptions(CWnd *pParentWind) {
+	COptnDlg OptionsDlg(pParentWind, pGamePalette);   // Call Specific Game
+	//...Options dialog box
+	OptionsDlg.m_nTime = m_nTime;
+	OptionsDlg.nSeconds = nSeconds;             // Send clock info
+	OptionsDlg.nMinutes = nMinutes;
+	OptionsDlg.m_nDifficulty = m_nDifficulty;
+
+	if (OptionsDlg.DoModal() == IDOK) {           // save values set in dialog box
+		tempTime = OptionsDlg.m_nTime;;             // get new time limit,
+		tempDifficulty = OptionsDlg.m_nDifficulty;  //...new Difficulty
+	}
 }
 
 } // namespace MazeDoom

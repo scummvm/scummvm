@@ -24,9 +24,7 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-#define IDD_OPTIONS_DIALOG 0, 0, 131, 110
-
-CMainMenu::CMainMenu(CWnd *pParent, CPalette *pPalette, UINT, FPFUNC, char *,
+CMainMenu::CMainMenu(CWnd *pParent, CPalette *pPalette, UINT, FPFUNC, const char *,
 		const char *pWavFileName, LPGAMESTRUCT pGameParams) :
 		CBmpDialog(pParent, pPalette, IDD_OPTIONS_DIALOG, "art/OSCROLL.BMP") {
 }

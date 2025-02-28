@@ -44,6 +44,32 @@ namespace MFC {
 #define ODS_NOFOCUSRECT 0x0200  // Do not draw a focus rectangle.
 
 enum {
+	WM_NULL            = 0x0000,
+	WM_CREATE          = 0x0001,
+	WM_DESTROY         = 0x0002,
+	WM_MOVE            = 0x0003,
+	WM_SIZE            = 0x0005,
+	WM_ACTIVATE        = 0x0006,
+	WM_SETFOCUS        = 0x0007,
+	WM_KILLFOCUS       = 0x0008,
+	WM_ENABLE          = 0x000A,
+	WM_SETREDRAW       = 0x000B,
+	WM_SETTEXT         = 0x000C,
+	WM_GETTEXT         = 0x000D,
+	WM_GETTEXTLENGTH   = 0x000E,
+	WM_PAINT           = 0x000F,
+	WM_CLOSE           = 0x0010,
+	WM_QUERYENDSESSION = 0x0011,
+	WM_QUERYOPEN       = 0x0013,
+	WM_ENDSESSION      = 0x0016,
+	WM_QUIT            = 0x0012,
+	WM_ERASEBKGND      = 0x0014,
+	WM_SYSCOLORCHANGE  = 0x0015,
+	WM_SHOWWINDOW      = 0x0018,
+	WM_WININICHANGE    = 0x001A
+};
+
+enum {
 	CS_BYTEALIGNWINDOW,
 	CS_OWNDC
 };
@@ -58,6 +84,7 @@ enum {
 	BN_CLICKED
 };
 
+class CScrollBar;
 typedef void *TIMERPROC;
 typedef void *HINSTANCE;
 typedef void *HMENU;
@@ -196,18 +223,19 @@ public:
 	BOOL GetUpdateRect(LPRECT lpRect, BOOL bErase = FALSE);
 	void MoveWindow(int x, int y, int nWidth, int nHeight, BOOL bRepaint = TRUE);
 	void MoveWindow(LPCRECT lpRect, BOOL bRepaint = TRUE);
+	CWnd *SetFocus();
 
 	long SendMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 	long SetTimer(UINT nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
-
+	bool KillTimer(UINT nIDEvent);
 	BOOL PostMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
+	LRESULT SendDlgItemMessage(int nID, UINT message, WPARAM wParam = 0, LPARAM lParam = 0) const;
 
-	void OnDestroy() {}
-	void OnShowWindow(BOOL bShow, UINT nStatus) {}
-	void OnSize(UINT nType, int cx, int cy) {}
-	int OnCreate(LPCREATESTRUCT lpCreateStruct) {
-		return 0;
-	}
+	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct) { return 0; }
+	virtual void OnDestroy() {}
+	virtual void OnShowWindow(BOOL bShow, UINT nStatus) {}
+	virtual void OnSize(UINT nType, int cx, int cy) {}
+	virtual void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar) {}
 };
 
 class CFrameWnd : public CWnd {
@@ -227,9 +255,12 @@ public:
 	CDialog(UINT nIDTemplate, CWnd *pParent = NULL);
 	CDialog(LPCTSTR lpszTemplateName, CWnd *pParent = NULL);
 
-	void OnInitDialog();
+	int DoModal();
 	void EndDialog(int nResult);
+
+	void OnInitDialog();
 	void OnCancel();
+	void DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl);
 
 	virtual void DoDataExchange(CDataExchange *pDX);
 

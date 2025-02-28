@@ -42,6 +42,7 @@ namespace MFC {
 #define ON_MESSAGE(TAG, METHOD)
 #define ON_WM_ERASEBKGND()
 #define ON_WM_DRAWITEM()
+#define ON_WM_HSCROLL()
 #define ON_WM_CREATE()
 #define ON_WM_PAINT()
 #define ON_WM_SHOWWINDOW()
@@ -52,9 +53,6 @@ namespace MFC {
 #define ON_WM_LBUTTONDOWN()
 #define ON_WM_DESTROY()
 #define ON_WM_ACTIVATE()
-
-#define BM_SETCHECK 0
-#define BM_GETCHECK 1
 
 #define FAR
 #define PASCAL

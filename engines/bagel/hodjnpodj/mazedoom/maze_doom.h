@@ -287,6 +287,7 @@ extern CPoint ScreenToTile(CPoint pointScreen);
 **/
 extern bool InArtRegion(CPoint point);
 
+extern void GetSubOptions(CWnd *pParentWind);
 
 extern CBmpButton *m_pScrollButton;
 extern CSprite *pPlayerSprite;
