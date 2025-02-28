@@ -260,6 +260,72 @@ uint8 Adlib::Func2779(uint8 arg1) {
 }
 
 void Adlib::Func24FD() {
+	// This function was reverse-engineered with Deepseek R1
+	// Local variables (BP-2 = return value, BP-4/BG-6 temps)
+	uint16 return_value;
+	uint16 temp_var;
+	uint16 loop_counter;
+
+	// [Original label: fn0017_24FD proc]
+
+	if (g36 != 0) { // [Original label: l0017_2508]
+		return_value = 3;
+		goto CLEANUP_2648;
+	}
+
+	// [Original label: l0017_2510]
+	return_value = func_2686(); // Far call to 17:2686
+	if (return_value != 0) {
+		goto CLEANUP_2648;
+	}
+
+	// [Original label: l0017_2527]
+	// Following code corresponds to the memory/port operations
+	func_2792(1, 0x20); // Push args and call 17:2792
+	// Additional far call to 17:2FBE
+	// ... other function calls
+
+	asm volatile("cli"); // Disable interrupts
+
+	// Memory operations on various global addresses
+	*reinterpret_cast<uint16 *>(0x2250) = *global_2244;
+	*reinterpret_cast<uint16 *>(0x2252) = *global_2246;
+	// ... rest of memory initializations
+
+	// Loop 1: Initialize 225Fh-226Fh [Original labels: 257A-2593]
+	for (loop_counter = 0; loop_counter <= 0x0F; ++loop_counter) {
+		*reinterpret_cast<uint8 *>(0x225F + loop_counter) = 0;
+		*reinterpret_cast<uint8 *>(0x226F + loop_counter) = 0;
+	}
+
+	// Loop 2: Initialize array elements [Original labels: 259A-25C3]
+	for (loop_counter = 0; loop_counter <= 8; ++loop_counter) {
+		*reinterpret_cast<uint8 *>(0x222C + loop_counter) = 1;
+		*reinterpret_cast<uint8 *>(0x227F + loop_counter) = 0xFF;
+		// ... other array initializations
+	}
+
+	// Device/hardware operations (timer/speaker?)
+	if (*reinterpret_cast<uint16 *>(0x224E) > 0x12) {
+		// Complex division and port writes
+		asm volatile(
+			"out %%al, %%dx"
+			:
+			: "a"(temp_var & 0xFF), "d"(0x40));
+		// ... more port operations
+	}
+
+	// Final memory writes and cleanup [Original label: 2629]
+	*global_36 = 1;
+	asm volatile("sti"); // Enable interrupts
+	return_value = 0;
+
+CLEANUP_2648: // [Original label: l0017_2648]
+	return return_value;
+}
+
+
+void Adlib::Func24FD() {
 	/*
 
 	fn0017_24FD proc

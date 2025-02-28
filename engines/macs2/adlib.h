@@ -102,6 +102,9 @@ namespace Macs2 {
 
 		void Func294E(uint16 bpp6, uint8 bpp8, uint16 bppA);
 
+		// TODO: Where initialized?
+		uint8 g37;
+
 		// Array accessed as [di + 37h]
 		Common::Array<uint8> gArray37;
 
