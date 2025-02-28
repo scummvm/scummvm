@@ -80,6 +80,10 @@ public:
 	Operand operator-() const;
 
 private:
+	bool isInteger() { return getType() == kOperandTypeLiteral1 || getType() == kOperandTypeLiteral2; };
+	bool isDouble() { return getType() == kOperandTypeFloat1 || getType() == kOperandTypeFloat2; };
+	bool isNumber() { return isInteger() || isDouble(); };
+
 	OperandType _type = kOperandTypeEmpty;
 	union {
 		uint assetId = 0;
