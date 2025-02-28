@@ -188,12 +188,12 @@ Common::Error MediaStationEngine::run() {
 }
 
 void MediaStationEngine::processEvents() {
-	while (g_system->getEventManager()->pollEvent(e)) {
+	while (g_system->getEventManager()->pollEvent(_event)) {
 		debugC(9, kDebugEvents, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		debugC(9, kDebugEvents, "@@@@   Processing events");
 		debugC(9, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-		switch (e.type) {
+		switch (_event.type) {
 		case Common::EVENT_QUIT: {
 			// TODO: Do any necessary clean-up.
 			return;
@@ -209,16 +209,16 @@ void MediaStationEngine::processEvents() {
 			Common::Point mousePos = g_system->getEventManager()->getMousePos();
 			Asset *hotspot = findAssetToAcceptMouseEvents(mousePos);
 			if (hotspot != nullptr) {
-				debugC(1, kDebugEvents, "EVENT_KEYDOWN (%d): Sent to hotspot %d", e.kbd.ascii, hotspot->getHeader()->_id);
-				hotspot->runKeyDownEventHandlerIfExists(e.kbd);
+				debugC(1, kDebugEvents, "EVENT_KEYDOWN (%d): Sent to hotspot %d", _event.kbd.ascii, hotspot->getHeader()->_id);
+				hotspot->runKeyDownEventHandlerIfExists(_event.kbd);
 			}
 			break;
 		}
 
 		case Common::EVENT_LBUTTONDOWN: {
-			Asset *hotspot = findAssetToAcceptMouseEvents(e.mouse);
+			Asset *hotspot = findAssetToAcceptMouseEvents(_event.mouse);
 			if (hotspot != nullptr) {
-				debugC(1, kDebugEvents, "EVENT_LBUTTONDOWN (%d, %d): Sent to hotspot %d", e.mouse.x, e.mouse.y, hotspot->getHeader()->_id);
+				debugC(1, kDebugEvents, "EVENT_LBUTTONDOWN (%d, %d): Sent to hotspot %d", _event.mouse.x, _event.mouse.y, hotspot->getHeader()->_id);
 				hotspot->runEventHandlerIfExists(kMouseDownEvent);
 			}
 			break;
@@ -256,11 +256,11 @@ void MediaStationEngine::refreshActiveHotspot() {
 	if (hotspot != _currentHotspot) {
 		if (_currentHotspot != nullptr) {
 			_currentHotspot->runEventHandlerIfExists(kMouseExitedEvent);
-			debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Exited hotspot %d", e.mouse.x, e.mouse.y, _currentHotspot->getHeader()->_id);
+			debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Exited hotspot %d", _event.mouse.x, _event.mouse.y, _currentHotspot->getHeader()->_id);
 		}
 		_currentHotspot = hotspot;
 		if (hotspot != nullptr) {
-			debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Entered hotspot %d", e.mouse.x, e.mouse.y, hotspot->getHeader()->_id);
+			debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Entered hotspot %d", _event.mouse.x, _event.mouse.y, hotspot->getHeader()->_id);
 			setCursor(hotspot->getHeader()->_cursorResourceId);
 			hotspot->runEventHandlerIfExists(kMouseEnteredEvent);
 		} else {
@@ -270,7 +270,7 @@ void MediaStationEngine::refreshActiveHotspot() {
 	}
 
 	if (hotspot != nullptr) {
-		debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Sent to hotspot %d", e.mouse.x, e.mouse.y, hotspot->getHeader()->_id);
+		debugC(5, kDebugEvents, "EVENT_MOUSEMOVE (%d, %d): Sent to hotspot %d", _event.mouse.x, _event.mouse.y, hotspot->getHeader()->_id);
 		hotspot->runEventHandlerIfExists(kMouseMovedEvent);
 	}
 }

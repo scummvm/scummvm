@@ -103,7 +103,7 @@ protected:
 	Common::Error run() override;
 
 private:
-	Common::Event e;
+	Common::Event _event;
 	Common::FSNode _gameDataDir;
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
