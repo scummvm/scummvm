@@ -1265,7 +1265,7 @@ void LB::b_setProp(int nargs) {
 }
 
 static bool sortArrayHelper(const Datum &lhs, const Datum &rhs) {
-	return lhs.asString() < rhs.asString();
+	return lhs < rhs;
 }
 
 static bool sortNumericArrayHelper(const Datum &lhs, const Datum &rhs) {
@@ -1273,7 +1273,7 @@ static bool sortNumericArrayHelper(const Datum &lhs, const Datum &rhs) {
 }
 
 static bool sortPArrayHelper(const PCell &lhs, const PCell &rhs) {
-	return lhs.p.asString() < rhs.p.asString();
+	return lhs.p < rhs.p;
 }
 
 static bool sortNumericPArrayHelper(const PCell &lhs, const PCell &rhs) {
