@@ -632,9 +632,30 @@ void LB::b_value(int nargs) {
 // Lists
 ///////////////////
 void LB::b_add(int nargs) {
-	// FIXME: when a list is "sorted", add should insert based on
-	// the current ordering. otherwise, append to the end.
-	LB::b_append(nargs);
+	Datum value = g_lingo->pop();
+	Datum list = g_lingo->pop();
+
+	TYPECHECK(list, ARRAY);
+
+	// If the list is sorted, keep the sort
+	if (list.u.farr->_sorted) {
+		if (list.u.farr->arr.empty()) {
+			list.u.farr->arr.push_back(value);
+		} else {
+			// TODO: We'd better do a binary search here
+			uint pos = list.u.farr->arr.size();
+			for (uint i = 0; i < list.u.farr->arr.size(); i++) {
+				if (list.u.farr->arr[i] > value) { // We are using Datum::compareTo() here
+					pos = i;
+					break;
+				}
+			}
+			list.u.farr->arr.insert_at(pos, value);
+		}
+	} else {
+		list.u.farr->arr.push_back(value);
+		list.u.farr->_sorted = false;		// Drop the sorted flag
+	}
 }
 
 void LB::b_addAt(int nargs) {
@@ -687,22 +708,8 @@ void LB::b_append(int nargs) {
 
 	TYPECHECK(list, ARRAY);
 
-	if (list.u.farr->_sorted) {
-		if (list.u.farr->arr.empty())
-			list.u.farr->arr.push_back(value);
-		else {
-			uint pos = list.u.farr->arr.size();
-			for (uint i = 0; i < list.u.farr->arr.size(); i++) {
-				if (list.u.farr->arr[i].asInt() > value.asInt()) {
-					pos = i;
-					break;
-				}
-			}
-			list.u.farr->arr.insert_at(pos, value);
-		}
-	} else {
-		list.u.farr->arr.push_back(value);
-	}
+	list.u.farr->arr.push_back(value);
+	list.u.farr->_sorted = false;		// Drop the sorted flag
 }
 
 void LB::b_count(int nargs) {
