@@ -1293,6 +1293,7 @@ Datum Datum::clone() const {
 		for (auto &it : u.farr->arr) {
 			result.u.farr->arr.push_back(it.clone());
 		}
+		result.u.farr->_sorted = u.farr->_sorted;
 		break;
 	case PARRAY:
 		result.type = PARRAY;
@@ -1300,6 +1301,7 @@ Datum Datum::clone() const {
 		for (auto &it : u.parr->arr) {
 			result.u.parr->arr.push_back(PCell(it.p.clone(), it.v.clone()));
 		}
+		result.u.parr->_sorted = u.parr->_sorted;
 		break;
 	default:
 		result = *this;
