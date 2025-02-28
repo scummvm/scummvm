@@ -23,6 +23,7 @@
 #define BAGEL_HODJNPODJ_BOFLIB_BITMAPS_H
 
 #include "bagel/mfc/afx.h"
+#include "bagel/hodjnpodj/libs/dib_doc.h"
 
 namespace Bagel {
 namespace HodjNPodj {

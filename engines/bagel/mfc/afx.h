@@ -27,6 +27,7 @@
 #include "bagel/mfc/button.h"
 #include "bagel/mfc/dc.h"
 #include "bagel/mfc/document.h"
+#include "bagel/mfc/file.h"
 #include "bagel/mfc/font.h"
 #include "bagel/mfc/palette.h"
 #include "bagel/mfc/rect.h"

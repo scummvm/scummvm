@@ -42,17 +42,6 @@ void CWnd::InvalidateRect(const CRect *r, bool bErase) {
 	error("TODO: CWnd::InvalidateRect");
 }
 
-bool CWnd::PaintDIB(HDC, CRect *lpDestRect, HDIB hSrc,
-	CRect *lpSrcRect, CPalette *hPal) {
-	Graphics::Screen &screen = *g_engine->_screen;
-
-	Common::Rect rSrc(lpSrcRect->left, lpSrcRect->top, lpSrcRect->right, lpSrcRect->bottom);
-	Common::Rect rDest(lpDestRect->left, lpDestRect->top, lpDestRect->right, lpDestRect->bottom);
-
-	screen.blitFrom(*hSrc, rSrc, rDest);
-	return true;
-}
-
 BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 	error("TODO: CBitmapButton::SubclassDlgItem");
 	return false;
@@ -144,6 +133,16 @@ int CDialog::DoModal() {
 
 void CDialog::EndDialog(int nResult) {
 	error("TODO: CDialog::EndDialog");
+}
+
+DWORD CDialog::GetDefID() const {
+	error("TODO: CDialog::GetDefID");
+	return 0;
+}
+
+CWnd *CDialog::GetDlgItem(int nID) const {
+	error("TODO: CDialog::GetDlgItem");
+	return nullptr;
 }
 
 void CDialog::OnCancel() {

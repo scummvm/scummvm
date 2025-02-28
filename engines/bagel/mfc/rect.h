@@ -73,7 +73,12 @@ public:
 	void InflateRect(int dx, int dy);
 	BOOL IntersectRect(const CRect *lpRect1, const CRect *lpRect2);
 	void UnionRect(const CRect &lpRect1, const CRect &lpRect2);
-	void UnionRect(const CRect &lpRect1, const CRect *lpRect2);
+	void UnionRect(const CRect &lpRect1, const CRect *lpRect2) {
+		UnionRect(lpRect1, *lpRect2);
+	}
+	void UnionRect(const CRect *lpRect1, const CRect *lpRect2) {
+		UnionRect(*lpRect1, *lpRect2);
+	}
 	BOOL PtInRect(const CPoint &pt) const;
 };
 

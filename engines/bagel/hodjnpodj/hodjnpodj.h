@@ -34,7 +34,7 @@ struct Minigame {
 	void (*_run)();
 };
 
-class HodjNPodjEngine : public BagelEngine {
+class HodjNPodjEngine : public BagelEngine, public CWinApp {
 private:
 	static const Minigame MINIGAMES[];
 

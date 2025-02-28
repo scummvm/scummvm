@@ -97,6 +97,12 @@ enum {
 };
 
 enum {
+	WA_INACTIVE     = 0,
+	WA_ACTIVE       = 1,
+	WA_CLICKACTIVE  = 2
+};
+
+enum {
 	MK_LBUTTON  = 0x0001,
 	MK_RBUTTON  = 0x0002,
 	MK_SHIFT    = 0x0004,
@@ -160,7 +166,7 @@ class CWnd;
 typedef CWnd *HWND;
 
 class CWnd : public CObject {
-protected:
+public:
 	HWND m_hWnd;
 	CWnd *m_pParentWnd = nullptr;
 	CRect _bounds;
@@ -202,12 +208,6 @@ protected:
 		return 0;
 	}
 
-	// Dummy functions
-	void BeginWaitCursor() {
-	}
-	void EndWaitCursor() {
-	}
-
 	CString AfxRegisterWndClass(int flags, void *, void *, void *) const {
 		return CString();
 	}
@@ -240,9 +240,6 @@ public:
 		lpRect->bottom = _bounds.bottom;
 	}
 	void InvalidateRect(const CRect *r, bool bErase = true);
-
-	bool PaintDIB(HDC, CRect *lpDestRect, HDIB hSrc,
-		CRect *lpSrcRect, CPalette *hPal);
 
 	virtual void SetRect(int x1, int y1, int x2, int y2) {
 		_bounds = CRect(x1, y1, x2, y2);
@@ -319,6 +316,8 @@ public:
 
 	int DoModal();
 	void EndDialog(int nResult);
+	DWORD GetDefID() const;
+	CWnd *GetDlgItem(int nID) const;
 
 	void OnInitDialog();
 	void OnCancel();

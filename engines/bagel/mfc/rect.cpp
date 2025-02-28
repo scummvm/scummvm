@@ -78,17 +78,6 @@ void CRect::UnionRect(const CRect &lpRect1, const CRect &lpRect2) {
 	bottom = r1.bottom;
 }
 
-void CRect::UnionRect(const CRect &lpRect1, const CRect *lpRect2) {
-	Common::Rect r1(lpRect1.left, lpRect1.top, lpRect1.right, lpRect1.bottom);
-	Common::Rect r2(lpRect2->left, lpRect2->top, lpRect2->right, lpRect2->bottom);
-	r1.extend(r2);
-
-	left = r1.left;
-	top = r1.top;
-	right = r1.right;
-	bottom = r1.bottom;
-}
-
 BOOL CRect::PtInRect(const CPoint &pt) const {
 	return pt.x >= left && pt.x < right && pt.y >= top && pt.y < bottom;
 }

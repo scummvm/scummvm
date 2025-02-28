@@ -19,31 +19,49 @@
  *
  */
 
-#ifndef BAGEL_HODJNPODJ_GLOBALS_H
-#define BAGEL_HODJNPODJ_GLOBALS_H
+#ifndef BAGEL_MFC_FILE_H
+#define BAGEL_MFC_FILE_H
+
+#include "bagel/mfc/mfc_types.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
-#define	PATHSPECSIZE		256
+class CFile : public Common::File {
+public:
+	enum {
+		begin = 0,
+		current = 1,
+		end = 2
+	};
+	enum {
+		modeRead = 1,
+		typeBinary = 2
+	};
 
-#define IDOK				1
-#define IDCANCEL			2
+	BOOL Open(LPCTSTR lpszFileName, UINT nOpenFlags, void *pError = nullptr) {
+		assert((nOpenFlags & modeRead) != 0);
+		return Common::File::open(Common::Path(lpszFileName));
+	}
 
-#define SKILLLEVEL_LOW      0
-#define SKILLLEVEL_MEDIUM   1
-#define SKILLLEVEL_HIGH     2
+	long Seek(long offset, int whence = CFile::begin) {
+		return Common::File::seek(offset, whence);
+	}
+	void SeekToBegin() {
+		Seek(0);
+	}
+	long GetPosition() const {
+		return Common::File::pos();
+	}
+	long GetLength() const {
+		return Common::File::size();
+	}
+	long Read(void *buf, size_t size) {
+		return Common::File::read(buf, size);
+	}
+};
 
-#define	INSTALL_NONE		0
-#define	INSTALL_MINIMAL		1
-#define INSTALL_BASIC		2
-#define	INSTALL_EXTRA		3
-#define INSTALL_FULL		4
-
-// TODO: Unknown id
-#define IDC_ARROW			-1
-
-} // namespace HodjNPodj
+} // namespace MFC
 } // namespace Bagel
 
 #endif

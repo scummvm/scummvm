@@ -23,6 +23,7 @@
 #define HODJNPODJ_LIBS_RULES_H
 
 #include "bagel/mfc/afx.h"
+#include "bagel/hodjnpodj/libs/dib_doc.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -50,7 +51,7 @@ private:
 	BOOL SetupKeyboardHook();
 	void RemoveKeyboardHook();
 
-	static	CDibDoc *LoadScrollDIB(char *pSpec, CRect *pRect);
+	static	CDibDoc *LoadScrollDIB(const char *pSpec, CRect *pRect);
 	static	BOOL PaintScrollDIB(CDC *pDC, CDibDoc *pDibDoc);
 	static	CBitmap *CreateScrollBitmap(CDC *pDC, CDibDoc *pDibDoc, CPalette *pPalette);
 	static  CDC *SetupMask(CDC *pDC, CDC *pBitmapDC, CBitmap *pMask, CBitmap *&pMaskOld, CRect *pRect);

@@ -19,31 +19,46 @@
  *
  */
 
-#ifndef BAGEL_HODJNPODJ_GLOBALS_H
-#define BAGEL_HODJNPODJ_GLOBALS_H
+#include "common/textconsole.h"
+#include "bagel/mfc/app.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
-#define	PATHSPECSIZE		256
+HCURSOR CWinApp::LoadCursor(void *hInstance, LPCTSTR lpCursorName) {
+	error("TODO: LoadCursor");
+	return nullptr;
+}
 
-#define IDOK				1
-#define IDCANCEL			2
+HCURSOR CWinApp::LoadCursor(void *hInstance, int cursorId) {
+	error("TODO: LoadCursor");
+	return nullptr;
+}
 
-#define SKILLLEVEL_LOW      0
-#define SKILLLEVEL_MEDIUM   1
-#define SKILLLEVEL_HIGH     2
+HCURSOR CWinApp::LoadCursor(int cursorId) {
+	error("TODO: LoadCursor");
+	return nullptr;
+}
 
-#define	INSTALL_NONE		0
-#define	INSTALL_MINIMAL		1
-#define INSTALL_BASIC		2
-#define	INSTALL_EXTRA		3
-#define INSTALL_FULL		4
+HCURSOR CWinApp::LoadStandardCursor(int cursorId) {
+	error("TODO: LoadCursor");
+	return nullptr;
+}
 
-// TODO: Unknown id
-#define IDC_ARROW			-1
+HCURSOR CWinApp::SetCursor(HCURSOR hCursor) {
+	error("TODO: SetCursor");
+	return nullptr;
+}
 
-} // namespace HodjNPodj
+void CWinApp::GetCursorPos(POINT *point) {
+	error("TODO: GetCursorPos");
+}
+
+void CWinApp::BeginWaitCursor() {
+}
+
+void CWinApp::EndWaitCursor() {
+}
+
+} // namespace MFC
 } // namespace Bagel
-
-#endif

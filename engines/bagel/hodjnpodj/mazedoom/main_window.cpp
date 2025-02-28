@@ -25,6 +25,7 @@
 #include "bagel/hodjnpodj/mazedoom/globals.h"
 #include "bagel/hodjnpodj/mazedoom/option_dialog.h"
 #include "bagel/hodjnpodj/boflib/bitmaps.h"
+#include "bagel/hodjnpodj/libs/dib_api.h"
 #include "bagel/hodjnpodj/libs/dib_doc.h"
 #include "bagel/hodjnpodj/libs/main_menu.h"
 #include "bagel/hodjnpodj/libs/message_box.h"

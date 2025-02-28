@@ -19,31 +19,11 @@
  *
  */
 
-#ifndef BAGEL_HODJNPODJ_GLOBALS_H
-#define BAGEL_HODJNPODJ_GLOBALS_H
+#include "common/textconsole.h"
+#include "bagel/mfc/file.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
-#define	PATHSPECSIZE		256
-
-#define IDOK				1
-#define IDCANCEL			2
-
-#define SKILLLEVEL_LOW      0
-#define SKILLLEVEL_MEDIUM   1
-#define SKILLLEVEL_HIGH     2
-
-#define	INSTALL_NONE		0
-#define	INSTALL_MINIMAL		1
-#define INSTALL_BASIC		2
-#define	INSTALL_EXTRA		3
-#define INSTALL_FULL		4
-
-// TODO: Unknown id
-#define IDC_ARROW			-1
-
-} // namespace HodjNPodj
+} // namespace MFC
 } // namespace Bagel
-
-#endif

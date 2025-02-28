@@ -24,6 +24,11 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+bool PaintDIB(HDC, LPRECT, HDIB, LPRECT, CPalette *pPal) {
+	error("TODO: PaintDIB");
+	return false;
+}
+
 CPalette *DuplicatePalette(CPalette *pOrigPal) {
 	error("TODO: DuplicatePalette");
 	return nullptr;
@@ -34,6 +39,15 @@ HBITMAP DIBtoBitmap(HDC hDC, HPALETTE hPal, LPBITMAPINFO lpbih) {
 	return nullptr;
 }
 
+uint32 DIBWidth(const char *lpDIB) {
+	return 0;
+}
+uint32 DIBHeight(const char *lpDIB) {
+	return 0;
+}
+CBitmap *ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal) {
+	return nullptr;
+}
 
 #if TODO
 /*************************************************************************

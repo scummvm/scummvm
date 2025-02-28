@@ -76,10 +76,28 @@ enum FontWeight {
 #define FF_SCRIPT           (4<<4)  /* Cursive, etc. */
 #define FF_DECORATIVE       (5<<4)  /* Old English, etc. */
 
-
-struct TEXTMETRIC {
-};
-typedef TEXTMETRIC *LPTEXTMETRIC;
+typedef struct tagTEXTMETRIC {
+	LONG tmHeight;
+	LONG tmAscent;
+	LONG tmDescent;
+	LONG tmInternalLeading;
+	LONG tmExternalLeading;
+	LONG tmAveCharWidth;
+	LONG tmMaxCharWidth;
+	LONG tmWeight;
+	LONG tmOverhang;
+	LONG tmDigitizedAspectX;
+	LONG tmDigitizedAspectY;
+	TCHAR tmFirstChar;
+	TCHAR tmLastChar;
+	TCHAR tmDefaultChar;
+	TCHAR tmBreakChar;
+	BYTE tmItalic;
+	BYTE tmUnderlined;
+	BYTE tmStruckOut;
+	BYTE tmPitchAndFamily;
+	BYTE tmCharSet;
+} TEXTMETRIC, *PTEXTMETRIC, *LPTEXTMETRIC;
 
 class CFont {
 public:

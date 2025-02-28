@@ -19,31 +19,31 @@
  *
  */
 
-#ifndef BAGEL_HODJNPODJ_GLOBALS_H
-#define BAGEL_HODJNPODJ_GLOBALS_H
+#ifndef BAGEL_MFC_APP_H
+#define BAGEL_MFC_APP_H
+
+#include "bagel/mfc/mfc_types.h"
+#include "bagel/mfc/rect.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
-#define	PATHSPECSIZE		256
+struct CURSOR {
+};
+typedef CURSOR *HCURSOR;
 
-#define IDOK				1
-#define IDCANCEL			2
+struct CWinApp {
+	static HCURSOR LoadCursor(void *hInstance, LPCTSTR lpCursorName);
+	static HCURSOR LoadCursor(void *hInstance, int cursorId);
+	static HCURSOR LoadCursor(int cursorId);
+	static HCURSOR LoadStandardCursor(int cursorId);
+	static HCURSOR SetCursor(HCURSOR hCursor);
+	static void GetCursorPos(POINT *point);
+	static void BeginWaitCursor();
+	static void EndWaitCursor();
+};
 
-#define SKILLLEVEL_LOW      0
-#define SKILLLEVEL_MEDIUM   1
-#define SKILLLEVEL_HIGH     2
-
-#define	INSTALL_NONE		0
-#define	INSTALL_MINIMAL		1
-#define INSTALL_BASIC		2
-#define	INSTALL_EXTRA		3
-#define INSTALL_FULL		4
-
-// TODO: Unknown id
-#define IDC_ARROW			-1
-
-} // namespace HodjNPodj
+} // namespace MFC
 } // namespace Bagel
 
 #endif

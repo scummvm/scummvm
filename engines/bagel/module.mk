@@ -15,10 +15,12 @@ MODULE_OBJS = \
 	boflib/sound.o \
 	boflib/string.o \
 	boflib/string_functions.o \
+	mfc/app.o \
 	mfc/bitmap.o \
 	mfc/button.o \
 	mfc/dc.o \
 	mfc/document.o \
+	mfc/file.o \
 	mfc/font.o \
 	mfc/object.o \
 	mfc/palette.o \

@@ -67,6 +67,7 @@ typedef uint32 DWORD;
 typedef int32 LONG;
 typedef long LRESULT;
 typedef void(*FARPROC)();
+typedef uint16 TCHAR;
 
 #define TRUE true
 #define FALSE false
@@ -75,7 +76,6 @@ typedef Graphics::ManagedSurface *HDIB;
 typedef Common::Serializer CDumpContext;
 typedef Graphics::Palette *HPALETTE;
 typedef uint32 COLORREF;
-typedef Common::File CFile;
 
 typedef int INT;
 typedef void *HANDLE;
@@ -88,9 +88,6 @@ typedef const char *LPCTSTR;
 typedef void *LPBITMAPINFO;
 typedef void *LPBITMAPINFOHEADER;
 typedef uint clock_t;
-
-class CDibDoc {
-};
 
 struct CDataExchange {
 };
