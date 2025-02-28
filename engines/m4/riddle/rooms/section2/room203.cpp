@@ -2639,7 +2639,7 @@ void Room203::parser() {
 			kernel_trigger_dispatchx(kernel_trigger_create(140));
 			_G(kernel).trigger_mode = KT_PARSE;
 			break;
-		case 1:
+		case 2:
 			player_set_commands_allowed(true);
 			break;
 		default:
