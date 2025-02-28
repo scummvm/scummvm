@@ -32,7 +32,7 @@ MemHandle NewHandle(size_t size, const Common::String &str) {
 	HR *result = (HR *)malloc(sizeof(HR));
 
 	if (!result)
-		error("Unable to allocate memory - %d bytes for %s", size, str.c_str());
+		error("Unable to allocate memory - %zd bytes for %s", size, str.c_str());
 
 	result->_data = malloc(size);
 
