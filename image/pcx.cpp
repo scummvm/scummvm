@@ -120,9 +120,9 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 			decodeRLE(stream, scanLine, bytesPerscanLine, compressed);
 
 			for (x = 0; x < width; x++) {
-				byte b = scanLine[x];
+				byte r = scanLine[x];
 				byte g = scanLine[x +  bytesPerLine];
-				byte r = scanLine[x + (bytesPerLine << 1)];
+				byte b = scanLine[x + (bytesPerLine << 1)];
 				uint32 color = format.RGBToColor(r, g, b);
 
 				*((uint32 *)dst) = color;
