@@ -3088,8 +3088,10 @@ EOF
 					# newer GDB, but we need it for the updated toolchain
 					# anyway. This improves the debugging experience quite
 					# a lot, and it still creates meaningful traces for the
-					# Crash Reporter of OSX 10.4.
-					append_var CXXFLAGS "-gdwarf-2"
+					# Crash Reporter of OSX 10.4. -fvar-tracking-assignments
+					# should be disabled then, as it seems to cause issues
+					# and we can't use the later DWARF version it recommends.
+					append_var CXXFLAGS "-gdwarf-2 -fno-var-tracking-assignments"
 				fi
 			fi
 
