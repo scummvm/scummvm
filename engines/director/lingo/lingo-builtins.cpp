@@ -690,7 +690,7 @@ void LB::b_addProp(int nargs) {
 		else {
 			uint pos = list.u.parr->arr.size();
 			for (uint i = 0; i < list.u.parr->arr.size(); i++) {
-				if (list.u.parr->arr[i].p.asString() > cell.p.asString()) {
+				if (list.u.parr->arr[i].p > cell.p) {
 					pos = i;
 					break;
 				}
