@@ -183,7 +183,13 @@ put templst
 
 
 -- add
-
+set list1 = [1, 4, 2]
+add list1, 3
+scummVMAssert(getPos(list1, 3) = 4)
+set list1 = [1, 4, 2]
+sort list1
+add list1, 3
+scummVMAssert(getPos(list1, 3) = 3)
 
 -- addAt
 
@@ -232,7 +238,22 @@ set testList to [#a: 1, #b: 2, #bb: 3, #d: 4, #e: 5]
 scummvmAssertEqual(findPos(testList, #b), 2)
 scummvmAssertEqual(findPos(testList, #f), VOID)
 
+set testList to []
+scummvmAssertEqual(findPos(testList, #3), 0)
+set testList to [1, 3, 0]
+scummvmAssertEqual(findPos(testList, 3), 3)
+scummvmAssertEqual(findPos(testList, 2), 2)
+scummvmAssertEqual(findPos(testList, 4), 0)
+scummvmAssertEqual(findPos(testList, -1), 0)
+scummvmAssertEqual(findPos(testList, 1), 1)
+sort testList
+scummvmAssertEqual(findPos(testList, 1), 2)
+scummvmAssertEqual(findPos(testList, 0), 1)
+scummvmAssertEqual(findPos(testList, 2), 0)
+scummvmAssertEqual(findPos(testList, 4), 0)
+
 -- findPosNear
+set testList to [#a: 1, #b: 2, #bb: 3, #d: 4, #e: 5]
 scummvmAssertEqual(findPosNear(testList, #f), 6)
 scummvmAssertEqual(findPosNear(testList, #d), 4)
 
