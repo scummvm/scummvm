@@ -1288,6 +1288,9 @@ void LB::b_sort(int nargs) {
 	Datum list = g_lingo->pop();
 
 	if (list.type == ARRAY) {
+		if (list.u.farr->_sorted)
+			return;
+
 		// Check to see if the array is full of numbers
 		bool isNumeric = true;
 		for (const auto &it : list.u.farr->arr) {
@@ -1306,6 +1309,9 @@ void LB::b_sort(int nargs) {
 		list.u.farr->_sorted = true;
 
 	} else if (list.type == PARRAY) {
+		if (list.u.parr->_sorted)
+			return;
+
 		// Check to see if the array is full of numbers
 		bool isNumeric = true;
 		for (const auto &it : list.u.parr->arr) {
