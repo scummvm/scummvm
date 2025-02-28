@@ -29,6 +29,11 @@ namespace MFC {
 
 typedef Common::Point CPoint;
 
+struct POINT {
+	int x;
+	int y;
+};
+
 struct CRect : public Common::Rect {
 public:
 	CRect() : Common::Rect() {

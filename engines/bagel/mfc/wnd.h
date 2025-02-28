@@ -67,7 +67,33 @@ enum {
 	WM_ERASEBKGND      = 0x0014,
 	WM_SYSCOLORCHANGE  = 0x0015,
 	WM_SHOWWINDOW      = 0x0018,
-	WM_WININICHANGE    = 0x001A
+	WM_WININICHANGE    = 0x001A,
+
+	WM_CTLCOLORMSGBOX     = 0x0132,
+	WM_CTLCOLOREDIT       = 0x0133,
+	WM_CTLCOLORLISTBOX    = 0x0134,
+	WM_CTLCOLORBTN        = 0x0135,
+	WM_CTLCOLORDLG        = 0x0136,
+	WM_CTLCOLORSCROLLBAR  = 0x0137,
+	WM_CTLCOLORSTATIC     = 0x0138,
+	MN_GETHMENU           = 0x01E1,
+	WM_MOUSEFIRST         = 0x0200,
+	WM_MOUSEMOVE          = 0x0200,
+	WM_LBUTTONDOWN        = 0x0201,
+	WM_LBUTTONUP          = 0x0202,
+	WM_LBUTTONDBLCLK      = 0x0203,
+	WM_RBUTTONDOWN        = 0x0204,
+	WM_RBUTTONUP          = 0x0205,
+	WM_RBUTTONDBLCLK      = 0x0206,
+	WM_MBUTTONDOWN        = 0x0207,
+	WM_MBUTTONUP          = 0x0208,
+	WM_MBUTTONDBLCLK      = 0x0209,
+	WM_MOUSEWHEEL         = 0x020A,
+	WM_XBUTTONDOWN        = 0x020B,
+	WM_XBUTTONUP          = 0x020C,
+	WM_XBUTTONDBLCLK      = 0x020D,
+	WM_MOUSEHWHEEL        = 0x020E,
+	WM_MOUSELAST          = 0x020E
 };
 
 enum {
@@ -78,6 +104,12 @@ enum {
 	MK_MBUTTON  = 0x0010,
 	MK_XBUTTON1 = 0x0020,
 	MK_XBUTTON2 = 0x0040
+};
+
+enum {
+	PM_NOREMOVE = 0x0000,
+	PM_REMOVE   = 0x0001,
+	PM_NOYIELD  = 0x0002
 };
 
 enum {
@@ -114,6 +146,15 @@ typedef struct tagCREATESTRUCT {
 	LPCSTR    lpszClass;
 	DWORD     dwExStyle;
 } CREATESTRUCT, *LPCREATESTRUCT;
+
+typedef struct tagMSG {
+	HWND   hwnd;    // Handle to the window that received the message
+	UINT   message; // Message identifier (e.g., WM_PAINT, WM_KEYDOWN)
+	WPARAM wParam;  // Additional message-specific information
+	LPARAM lParam;  // Additional message-specific information
+	DWORD  time;    // Timestamp of when the message was posted
+	POINT  pt;      // Mouse cursor position when the message was posted
+} MSG, *PMSG, *LPMSG;
 
 class CWnd;
 typedef CWnd *HWND;
@@ -241,6 +282,13 @@ public:
 	bool KillTimer(UINT nIDEvent);
 	BOOL PostMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 	LRESULT SendDlgItemMessage(int nID, UINT message, WPARAM wParam = 0, LPARAM lParam = 0) const;
+	BOOL PeekMessage(
+		LPMSG lpMsg,       // Pointer to an MSG structure
+		HWND hWnd,         // Handle to window (or NULL for all windows)
+		UINT wMsgFilterMin,// Minimum message filter
+		UINT wMsgFilterMax,// Maximum message filter
+		UINT wRemoveMsg    // Flags: PM_NOREMOVE, PM_REMOVE, etc.
+	);
 
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct) { return 0; }
 	virtual void OnDestroy() {}

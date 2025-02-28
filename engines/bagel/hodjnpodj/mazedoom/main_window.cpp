@@ -27,9 +27,10 @@
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/boflib/bitmaps.h"
 #include "bagel/hodjnpodj/libs/dib_doc.h"
-#include "bagel/hodjnpodj/libs/types.h"
-#include "bagel/hodjnpodj/libs/rules.h"
 #include "bagel/hodjnpodj/libs/main_menu.h"
+#include "bagel/hodjnpodj/libs/message_box.h"
+#include "bagel/hodjnpodj/libs/rules.h"
+#include "bagel/hodjnpodj/libs/types.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/boflib/rect.h"
 
@@ -594,25 +595,23 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *
  ****************************************************************/
 void CMainWindow::OnTimer(UINT nIDEvent) {
-#ifdef TODO
 	CDC *pDC;
 	CSound *pEffect = nullptr;
-	char    msg[64];
+	char msg[64];
 
 	pDC = GetDC();
 
 	switch (nIDEvent) {
-
 	case GAME_TIMER:
-		if (m_nTime == 0) {                       // No time limit, increment 
+		if (m_nTime == 0) {
+			// No time limit, increment 
 			nSeconds++;
 			if (nSeconds == 60) {
 				nMinutes++;
 				nSeconds = 0;
 			}
-		}
-
-		else {                                      // Count down time left
+		} else {
+			// Count down time left
 			if (nSeconds == 0 && nMinutes != 0) {
 				nMinutes--;
 				nSeconds = 60;
@@ -634,13 +633,14 @@ void CMainWindow::OnTimer(UINT nIDEvent) {
 			if (pGameInfo->bSoundEffectsEnabled) {
 				pEffect = new CSound((CWnd *)this, LOSE_SOUND,
 					SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-				(*pEffect).Play();                                                      //...play the narration
+				(*pEffect).play();                                                      //...play the narration
 			}
+
 			MSG lpmsg;
 			while (PeekMessage(&lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE));
 
 			CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Game over.", "Time ran out!");
-			CBofSound::WaitWaveSounds();
+			CBofSound::waitWaveSounds();
 			if (pGameInfo->bPlayingMetagame) {
 				pGameInfo->lScore = 0;
 				PostMessage(WM_CLOSE, 0, 0);            // and post a program exit
@@ -655,7 +655,6 @@ void CMainWindow::OnTimer(UINT nIDEvent) {
 	}
 
 	ReleaseDC(pDC);
-#endif
 }
 
 /**********************************************************

@@ -27,6 +27,7 @@
 #include "bagel/hodjnpodj/mazedoom/globals.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/boflib/bitmaps.h"
+#include "bagel/hodjnpodj/globals.h"
 #include "bagel/mfc/afx.h"
 
 namespace Bagel {

@@ -19,44 +19,29 @@
  *
  */
 
-#ifndef HODJNPODJ_MAZEDOOM_GLOBALS_H
-#define HODJNPODJ_MAZEDOOM_GLOBALS_H
-
-#include "common/scummsys.h"
+#ifndef BAGEL_HODJNPODJ_GLOBALS_H
+#define BAGEL_HODJNPODJ_GLOBALS_H
 
 namespace Bagel {
 namespace HodjNPodj {
-namespace MazeDoom {
 
-// Scroll button size and positioning information
-#define IDC_SCROLL			850
+#define	PATHSPECSIZE		256
 
-#define SCROLL_BUTTON_X		250
-#define SCROLL_BUTTON_Y		0
-#define SCROLL_BUTTON_DX	140
-#define SCROLL_BUTTON_DY	23
+#define IDOK				1
+#define IDCANCEL			2
 
-#define SCROLLUP_BMP	"ART/SCROLLUP.BMP"
-#define SCROLLDOWN_BMP	"ART/SCROLLDN.BMP"
+#define SKILLLEVEL_LOW      0
+#define SKILLLEVEL_MEDIUM   1
+#define SKILLLEVEL_HIGH     2
 
-#define IDB_HODJ_UP		"ART/HODJUP.BMP"
-#define IDB_HODJ_RIGHT	"ART/HODJRT.BMP"
-#define IDB_HODJ_DOWN	"ART/HODJDOWN.BMP"
-#define IDB_HODJ_LEFT	"ART/HODJLF.BMP"
-#define IDB_PODJ_UP		"ART/PODJUP.BMP"
-#define IDB_PODJ_RIGHT	"ART/PODJRT.BMP"
-#define IDB_PODJ_DOWN	"ART/PODJDOWN.BMP"
-#define IDB_PODJ_LEFT	"ART/PODJLF.BMP"
+#define	INSTALL_NONE		0
+#define	INSTALL_MINIMAL		1
+#define INSTALL_BASIC		2
+#define	INSTALL_EXTRA		3
+#define INSTALL_FULL		4
 
-#define IDB_PARTS       "ART/MODPARTS.BMP"
-#define IDB_LOCALE_BMP	"ART/LOCALE.BMP"
-#define IDB_BLANK_BMP	"ART/BLANK.BMP"
+#define IDC_ARROW			"TODO"
 
-#define IDC_RULES						1002
-#define IDC_DIFFICULTY                  1021
-#define IDC_TIMELIMIT                   1022
-
-} // namespace MazeDoom
 } // namespace HodjNPodj
 } // namespace Bagel
 

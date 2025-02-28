@@ -21,6 +21,7 @@
 
 #include "bagel/hodjnpodj/mazedoom/option_dialog.h"
 #include "bagel/hodjnpodj/mazedoom/globals.h"
+#include "bagel/hodjnpodj/globals.h"
 
 namespace Bagel {
 namespace HodjNPodj {

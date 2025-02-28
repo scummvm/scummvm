@@ -116,6 +116,12 @@ LRESULT CWnd::SendDlgItemMessage(int nID, UINT message, WPARAM wParam, LPARAM lP
 	return 0;
 }
 
+BOOL CWnd::PeekMessage(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin,
+		UINT wMsgFilterMax, UINT wRemoveMsg) {
+	assert(wRemoveMsg == PM_REMOVE);
+	error("TODO: CWnd::PeekMessage");
+	return true;
+}
 
 CDialog::CDialog(UINT nIDTemplate, CWnd *pParent) {
 }

@@ -121,6 +121,7 @@ MODULE_OBJS = \
 	hodjnpodj/libs/dib_api.o \
 	hodjnpodj/libs/dib_doc.o \
 	hodjnpodj/libs/main_menu.o \
+	hodjnpodj/libs/message_box.o \
 	hodjnpodj/libs/rules.o \
 	hodjnpodj/mazedoom/main_window.o \
 	hodjnpodj/mazedoom/maze_doom.o \
