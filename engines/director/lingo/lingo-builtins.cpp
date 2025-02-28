@@ -820,11 +820,26 @@ void LB::b_findPos(int nargs) {
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	Datum d(g_lingo->getVoid());
-	TYPECHECK(list, PARRAY);
+	TYPECHECK2(list, ARRAY, PARRAY);
 
-	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
-	if (index > 0) {
-		d = index;
+	if (list.type == ARRAY) {
+		if (list.u.farr->_sorted) {
+			int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
+			if (index > 0)
+				d = index;
+			else
+				d = 0;
+		} else {
+			if (prop.asInt() > 0 && prop.asInt() <= list.u.farr->arr.size())
+				d = prop.asInt();
+			else
+				d = 0;
+		}
+	} else {
+		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
+		if (index > 0) {
+			d = index;
+		}
 	}
 
 	g_lingo->push(d);
