@@ -355,7 +355,7 @@ void Room207::parser() {
 			break;
 
 		case 4:
-			series_ranged_play_xy("rip trek low reacher pos1", 1, 2, 0, 9, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 6, 6, false);
+			series_ranged_play_xy("rip trek low reacher pos1", 1, 2, 0, 9, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 5, 5, false);
 			_peasantShould = 0;
 
 			break;
