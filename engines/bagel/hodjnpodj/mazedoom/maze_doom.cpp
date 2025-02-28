@@ -261,7 +261,6 @@ void SetUpMaze() {
 }
 
 void AddEdges(CDC *pDC, int x, int y, int offset_x, int offset_y) {
-#ifdef TODO
 	if ((mazeTile[x][y].m_bHidden == false) && (mazeTile[x][y].m_nWall == WALL)) {
 
 		if ((y > 0) && ((((mazeTile[x][y - 1].m_nWall == PATH) || (mazeTile[x][y - 1].m_nWall == EXIT)) ||
@@ -289,9 +288,6 @@ void AddEdges(CDC *pDC, int x, int y, int offset_x, int offset_y) {
 				mazeTile[x - 1][y].m_nStart.x + offset_x + SQ_SIZE_X - 1 - EDGE_SIZE,
 				mazeTile[x - 1][y].m_nStart.y + offset_y);
 	} // end if WALL
-#else
-	error("TODO: AddEdges");
-#endif
 }
 
 void SetTraps() {

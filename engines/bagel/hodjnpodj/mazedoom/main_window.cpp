@@ -30,6 +30,7 @@
 #include "bagel/hodjnpodj/libs/types.h"
 #include "bagel/hodjnpodj/libs/rules.h"
 #include "bagel/hodjnpodj/libs/main_menu.h"
+#include "bagel/hodjnpodj/globals.h"
 #include "bagel/boflib/rect.h"
 
 namespace Bagel {
@@ -368,14 +369,13 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
  *
  ****************************************************************/
 void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
-#ifdef TODO
 	CRect   rectTitle;
 
-	rectTitle.setRect(NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
+	rectTitle.SetRect(NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
 		NEWGAME_LOCATION_X + NEWGAME_WIDTH,
 		NEWGAME_LOCATION_Y + NEWGAME_HEIGHT);
 
-	if (rectTitle.ptInRect(point) && (pGameInfo->bPlayingMetagame == false))
+	if (rectTitle.PtInRect(point) && (pGameInfo->bPlayingMetagame == false))
 		NewGame();                              // Activate New Game
 
 	if (bPlaying && InArtRegion(point)) {
@@ -383,7 +383,6 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	}
 
 	CFrameWnd::OnLButtonDown(nFlags, point);
-#endif
 }
 
 /*****************************************************************
@@ -443,16 +442,17 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
  *
  ****************************************************************/
 void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
-#ifdef TODO
-	if (InArtRegion(point) && bPlaying) {               // If the cursor is within the border
-		GetNewCursor();                                     //...and we're playing, update the cursor
-		if (nFlags & MK_LBUTTON) {                        // If the Left mouse button is down,
-			MovePlayer(point);                            //...have the player follow the mouse
+	if (InArtRegion(point) && bPlaying) {           // If the cursor is within the border
+		GetNewCursor();                             //...and we're playing, update the cursor
+		if (nFlags & MK_LBUTTON) {                  // If the Left mouse button is down,
+			MovePlayer(point);                      //...have the player follow the mouse
 		}
-	} else SetCursor(LoadCursor(nullptr, IDC_ARROW));        // Refresh cursor object to arrow
-	//...when outside the maze area
+	} else {
+		SetCursor(LoadCursor(nullptr, IDC_ARROW));	// Refresh cursor object to arrow
+													//...when outside the maze area
+	}
+
 	CFrameWnd::OnMouseMove(nFlags, point);
-#endif
 }
 
 /*****************************************************************
@@ -496,23 +496,19 @@ void CMainWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
-#ifdef TODO
 	if ((nChar == 'q') && (nFlags & 0x2000)) {      // terminate app on ALT-q
 		if (pGameInfo->bPlayingMetagame)
 			pGameInfo->lScore = 0;
 		PostMessage(WM_CLOSE, 0, 0);                   // *** remove later ***
 	} else
 		CFrameWnd::OnChar(nChar, nRepCnt, nFlags);  // default action
-#endif
 }
 
 void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-#ifdef TODO
 	switch (nChar) {
-
 		// User has hit ALT_F4 so close down this App
 		//
-	case VK_F4:
+	case Common::KEYCODE_F4:
 		if (pGameInfo->bPlayingMetagame)
 			pGameInfo->lScore = 0;
 		PostMessage(WM_CLOSE, 0, 0);
@@ -522,56 +518,53 @@ void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		CFrameWnd::OnSysKeyDown(nChar, nRepCnt, nFlags);
 		break;
 	}
-#endif
 }
 
 void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-#ifdef TODO
 	CPoint  NewPosition;
 	NewPosition = (*pPlayerSprite).GetPosition();
 
 	switch (nChar) {
-	case VK_F1:                                             // F1 key is hit
+	case Common::KEYCODE_F1:                                             // F1 key is hit
 		SendMessage(WM_COMMAND, IDC_RULES, BN_CLICKED);    // Activate the Rules dialog
 		break;
 
-	case VK_F2:                                             // F2 key is hit
+	case Common::KEYCODE_F2:                                             // F2 key is hit
 		SendMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);   // Activate the Options dialog
 		break;
 
 	case 'h':
 	case 'H':
-	case VK_LEFT:
-	case VK_NUMPAD4:
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_KP4:
 		NewPosition.x -= SQ_SIZE_X;
 		MovePlayer(NewPosition);
 		break;
 
 	case 'k':
 	case 'K':
-	case VK_UP:
-		//      case VK_NUMPAD8:
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
 		NewPosition.y -= SQ_SIZE_Y;
 		MovePlayer(NewPosition);
 		break;
 
 	case 'l':
 	case 'L':
-	case VK_RIGHT:
-	case VK_NUMPAD6:
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_KP6:
 		NewPosition.x += SQ_SIZE_X;
 		MovePlayer(NewPosition);
 		break;
 
 	case 'j':
 	case 'J':
-	case VK_DOWN:
-	case VK_NUMPAD2:
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2:
 		NewPosition.y += SQ_SIZE_Y;
 		MovePlayer(NewPosition);
 		break;
 	}
-#endif
 }
 
 
@@ -1002,7 +995,7 @@ void CMainWindow::OnClose() {
 	CRect   myRect;
 
 	pDC = GetDC();
-	myRect.setRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+	myRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 	myBrush.CreateStockObject(BLACK_BRUSH);
 	(*pDC).FillRect(&myRect, &myBrush);
 	ReleaseDC(pDC);

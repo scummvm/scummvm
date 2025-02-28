@@ -24,6 +24,7 @@
 
 #include "graphics/managed_surface.h"
 #include "bagel/mfc/mfc_types.h"
+#include "bagel/mfc/object.h"
 #include "bagel/mfc/dc.h"
 #include "bagel/mfc/rect.h"
 #include "bagel/mfc/str.h"
@@ -70,6 +71,16 @@ enum {
 };
 
 enum {
+	MK_LBUTTON  = 0x0001,
+	MK_RBUTTON  = 0x0002,
+	MK_SHIFT    = 0x0004,
+	MK_CONTROL  = 0x0008,
+	MK_MBUTTON  = 0x0010,
+	MK_XBUTTON1 = 0x0020,
+	MK_XBUTTON2 = 0x0040
+};
+
+enum {
 	CS_BYTEALIGNWINDOW,
 	CS_OWNDC
 };
@@ -107,7 +118,7 @@ typedef struct tagCREATESTRUCT {
 class CWnd;
 typedef CWnd *HWND;
 
-class CWnd {
+class CWnd : public CObject {
 protected:
 	HWND m_hWnd;
 	CWnd *m_pParentWnd = nullptr;

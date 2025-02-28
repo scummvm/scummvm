@@ -25,6 +25,16 @@
 namespace Bagel {
 namespace MFC {
 
+HCURSOR CObject::LoadCursor(void *hInstance, LPCTSTR lpCursorName) {
+	error("TODO: LoadCursor");
+	return nullptr;
+}
+
+HCURSOR CObject::SetCursor(HCURSOR hCursor) {
+	error("TODO: SetCursor");
+	return nullptr;
+}
+
 LPVOID GlobalLock(HGLOBAL hMem) {
 	error("TODO: GlobalLock");
 	return nullptr;
