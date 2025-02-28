@@ -45,7 +45,11 @@ void CWnd::InvalidateRect(const CRect *r, bool bErase) {
 bool CWnd::PaintDIB(HDC, CRect *lpDestRect, HDIB hSrc,
 	CRect *lpSrcRect, CPalette *hPal) {
 	Graphics::Screen &screen = *g_engine->_screen;
-	screen.blitFrom(*hSrc, *lpSrcRect, *lpDestRect);
+
+	Common::Rect rSrc(lpSrcRect->left, lpSrcRect->top, lpSrcRect->right, lpSrcRect->bottom);
+	Common::Rect rDest(lpDestRect->left, lpDestRect->top, lpDestRect->right, lpDestRect->bottom);
+
+	screen.blitFrom(*hSrc, rSrc, rDest);
 	return true;
 }
 

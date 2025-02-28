@@ -64,10 +64,10 @@ protected:
 
 	//DECLARE_MESSAGE_MAP()
 private:
-	const char *_upBmp;
-	const char *_downBmp;
-	const char *_leftBmp;
-	const char *_rightBmp;
+	int _upId;
+	int _downId;
+	int _leftId;
+	int _rightId;
 };
 
 } // namespace MazeDoom

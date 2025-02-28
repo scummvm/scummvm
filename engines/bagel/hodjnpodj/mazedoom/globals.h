@@ -39,20 +39,41 @@ namespace MazeDoom {
 #define SCROLLUP_BMP	"ART/SCROLLUP.BMP"
 #define SCROLLDOWN_BMP	"ART/SCROLLDN.BMP"
 
-#define IDB_HODJ_UP		"ART/HODJUP.BMP"
-#define IDB_HODJ_RIGHT	"ART/HODJRT.BMP"
-#define IDB_HODJ_DOWN	"ART/HODJDOWN.BMP"
-#define IDB_HODJ_LEFT	"ART/HODJLF.BMP"
-#define IDB_PODJ_UP		"ART/PODJUP.BMP"
-#define IDB_PODJ_RIGHT	"ART/PODJRT.BMP"
-#define IDB_PODJ_DOWN	"ART/PODJDOWN.BMP"
-#define IDB_PODJ_LEFT	"ART/PODJLF.BMP"
+#define IDB_HODJ_UP_BMP		"ART/HODJUP.BMP"
+#define IDB_HODJ_RIGHT_BMP	"ART/HODJRT.BMP"
+#define IDB_HODJ_DOWN_BMP	"ART/HODJDOWN.BMP"
+#define IDB_HODJ_LEFT_BMP	"ART/HODJLF.BMP"
+#define IDB_PODJ_UP_BMP		"ART/PODJUP.BMP"
+#define IDB_PODJ_RIGHT_BMP	"ART/PODJRT.BMP"
+#define IDB_PODJ_DOWN_BMP	"ART/PODJDOWN.BMP"
+#define IDB_PODJ_LEFT_BMP	"ART/PODJLF.BMP"
 
-#define IDB_PARTS       "ART/MODPARTS.BMP"
-#define IDB_LOCALE_BMP	"ART/LOCALE.BMP"
-#define IDB_BLANK_BMP	"ART/BLANK.BMP"
+#define IDB_PARTS_BMP       "ART/MODPARTS.BMP"
+#define IDB_LOCALE_BMP_BMP	"ART/LOCALE.BMP"
+#define IDB_BLANK_BMP_BMP	"ART/BLANK.BMP"
+
+#define IDC_MOD_DNARROW                 116
+#define IDC_MOD_UPARROW                 117
+#define IDC_MOD_LFARROW                 118
+#define IDC_MOD_RTARROW                 119
+#define	IDC_MOD_NOARROW					120
+
+#define IDD_SUBOPTIONS                  115
+
+#define	IDB_PARTS 						301
+
+#define IDB_HODJ_UP						330
+#define IDB_HODJ_RIGHT					331
+#define IDB_HODJ_DOWN					332
+#define IDB_HODJ_LEFT					333
+
+#define IDB_PODJ_UP						334
+#define IDB_PODJ_RIGHT					335
+#define IDB_PODJ_DOWN					336
+#define IDB_PODJ_LEFT					337
 
 #define IDC_RULES						1002
+
 #define IDC_DIFFICULTY                  1021
 #define IDC_TIMELIMIT                   1022
 

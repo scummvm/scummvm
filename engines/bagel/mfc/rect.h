@@ -27,50 +27,54 @@
 namespace Bagel {
 namespace MFC {
 
-typedef Common::Point CPoint;
-
 struct POINT {
 	int x;
 	int y;
 };
+typedef POINT *LPPOINT;
 
-struct CRect : public Common::Rect {
+struct RECT {
+	int top, left, right, bottom;
+};
+typedef RECT *LPRECT;
+typedef const RECT *LPCRECT;
+
+typedef POINT SIZE;
+typedef POINT *LPSIZE;
+typedef const POINT *LPCSIZE;
+
+struct CPoint : public POINT {
 public:
-	CRect() : Common::Rect() {
+	CPoint() {
+		x = y = 0;
 	}
-	CRect(const Common::Rect &src) : Common::Rect(src) {
-	}
-	CRect(int x1, int y1, int x2, int y2) : Common::Rect(x1, y1, x2, y2) {
-	}
-
-	void SetRect(int x1, int y1, int x2, int y2) {
-		top = x1;
-		left = y1;
-		right = x2;
-		bottom = y2;
-	}
-	void InflateRect(int dx, int dy) {
-		left -= dx;
-		right += dx;
-		top -= dy;
-		bottom += dy;
+	CPoint(int xp, int yp) {
+		x = xp;
+		y = yp;
 	}
 
-	BOOL IntersectRect(const CRect *lpRect1, const CRect *lpRect2) {
-		*this = lpRect1->findIntersectingRect(*lpRect2);
-		return !isEmpty();
+	void Offset(int xOffset, int yOffset) {
+		x += xOffset;
+		y += yOffset;
 	}
-	void UnionRect(const CRect &lpRect1, const CRect &lpRect2) {
-		*this = lpRect1;
-		this->extend(lpRect2);
+	void Offset(const POINT &point) {
+		x += point.x;
+		y += point.y;
 	}
-	void UnionRect(const CRect &lpRect1, const CRect *lpRect2) {
-		*this = lpRect1;
-		this->extend(*lpRect2);
-	}
-	BOOL PtInRect(const CPoint &pt) const {
-		return contains(pt.x, pt.y);
-	}
+};
+
+struct CRect : public RECT {
+public:
+	CRect();
+	CRect(const RECT &src);
+	CRect(int x1, int y1, int x2, int y2);
+
+	void SetRect(int x1, int y1, int x2, int y2);
+	void InflateRect(int dx, int dy);
+	BOOL IntersectRect(const CRect *lpRect1, const CRect *lpRect2);
+	void UnionRect(const CRect &lpRect1, const CRect &lpRect2);
+	void UnionRect(const CRect &lpRect1, const CRect *lpRect2);
+	BOOL PtInRect(const CPoint &pt) const;
 };
 
 struct CSize : public Common::Point {
@@ -88,10 +92,6 @@ public:
 		return *this;
 	}
 };
-
-typedef CRect RECT;
-typedef CRect *LPRECT;
-typedef const CRect *LPCRECT;
 
 } // namespace MFC
 } // namespace Bagel

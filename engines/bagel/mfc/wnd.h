@@ -163,7 +163,7 @@ class CWnd : public CObject {
 protected:
 	HWND m_hWnd;
 	CWnd *m_pParentWnd = nullptr;
-	Common::Rect _bounds;
+	CRect _bounds;
 	CString _text;
 	uint _tag = 0;
 	bool _visible = true;
@@ -233,8 +233,11 @@ public:
 	void GetClientRect(CRect &r) const {
 		r = _bounds;
 	}
-	void GetWindowRect(LPRECT lpRect) const {
-		*lpRect = _bounds;
+	void GetWindowRect(CRect *lpRect) const {
+		lpRect->left = _bounds.left;
+		lpRect->top = _bounds.top;
+		lpRect->right = _bounds.right;
+		lpRect->bottom = _bounds.bottom;
 	}
 	void InvalidateRect(const CRect *r, bool bErase = true);
 
@@ -242,7 +245,7 @@ public:
 		CRect *lpSrcRect, CPalette *hPal);
 
 	virtual void SetRect(int x1, int y1, int x2, int y2) {
-		_bounds = Common::Rect(x1, y1, x2, y2);
+		_bounds = CRect(x1, y1, x2, y2);
 	}
 
 #ifdef _DEBUG

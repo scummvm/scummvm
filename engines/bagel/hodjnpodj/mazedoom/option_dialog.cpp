@@ -27,12 +27,6 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace MazeDoom {
 
-#define IDD_SUBOPTIONS 0, 0, 131, 110
-//#define IDC_DIFFICULTY, 15, 50, 65, 10, 0
-//#define IDC_TIMELIMIT, 15, 80, 65, 10, 0
-//DEFPUSHBUTTON   "&OK", IDOK, 85, 59, 30, 14, BS_OWNERDRAW
-//PUSHBUTTON      "&Cancel", IDCANCEL, 85, 80, 30, 15, BS_OWNERDRAW
-
 static	CPalette *pSubOptionsPalette;
 static	CColorButton *pOKButton = NULL;						// OKAY button on scroll
 static	CColorButton *pCancelButton = NULL;					// Cancel button on scroll

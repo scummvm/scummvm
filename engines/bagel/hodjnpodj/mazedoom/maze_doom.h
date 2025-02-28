@@ -289,6 +289,23 @@ extern bool InArtRegion(CPoint point);
 
 extern void GetSubOptions(CWnd *pParentWind);
 
+struct TILE {
+	CPoint   m_nStart;   // Upper-left-hand corner where the bmp is to be drawn (24 X 24)
+	uint    m_nWall;    // 0 = Path, 1 = Wall, 2 = Trap, etc...
+	uint    m_nTrap;    // Index of trap bitmap to use for drawing
+	CPoint   m_nDest;    // x,y Tile location of Trap exit point
+	bool    m_bHidden;  // 0 = Visible, 1 = Invisible
+
+	void clear() {
+		m_nStart = CPoint();
+		m_nWall = 0;
+		m_nTrap = 0;
+		m_nDest = CPoint();
+		m_bHidden = false;
+	}
+};
+extern TILE mazeTile[NUM_COLUMNS][NUM_ROWS];
+
 extern CBmpButton *m_pScrollButton;
 extern CSprite *pPlayerSprite;
 extern CPalette *pGamePalette,                   // Palette of current artwork

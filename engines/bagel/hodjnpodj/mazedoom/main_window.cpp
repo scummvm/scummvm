@@ -24,13 +24,13 @@
 #include "bagel/hodjnpodj/mazedoom/maze_doom.h"
 #include "bagel/hodjnpodj/mazedoom/globals.h"
 #include "bagel/hodjnpodj/mazedoom/option_dialog.h"
-#include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/boflib/bitmaps.h"
 #include "bagel/hodjnpodj/libs/dib_doc.h"
 #include "bagel/hodjnpodj/libs/main_menu.h"
 #include "bagel/hodjnpodj/libs/message_box.h"
 #include "bagel/hodjnpodj/libs/rules.h"
 #include "bagel/hodjnpodj/libs/types.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/boflib/rect.h"
 
@@ -48,15 +48,15 @@ CMainWindow::CMainWindow() {
 	BeginWaitCursor();
 
 	if (pGameInfo->bPlayingHodj) {
-		_upBmp = IDB_HODJ_UP;
-		_downBmp = IDB_HODJ_DOWN;
-		_leftBmp = IDB_HODJ_LEFT;
-		_rightBmp = IDB_HODJ_RIGHT;
+		_upId = IDB_HODJ_UP;
+		_downId = IDB_HODJ_DOWN;
+		_leftId = IDB_HODJ_LEFT;
+		_rightId = IDB_HODJ_RIGHT;
 	} else {
-		_upBmp = IDB_PODJ_UP;
-		_downBmp = IDB_PODJ_DOWN;
-		_leftBmp = IDB_PODJ_LEFT;
-		_rightBmp = IDB_PODJ_RIGHT;
+		_upId = IDB_PODJ_UP;
+		_downId = IDB_PODJ_DOWN;
+		_leftId = IDB_PODJ_LEFT;
+		_rightId = IDB_PODJ_RIGHT;
 	}
 
 	// Define a special window class which traps double-clicks, is byte aligned
@@ -133,7 +133,7 @@ CMainWindow::CMainWindow() {
 
 	pPlayerSprite = new CSprite;
 	(*pPlayerSprite).SharePalette(pGamePalette);
-	bSuccess = (*pPlayerSprite).LoadResourceCels(pDC, _leftBmp, NUM_CELS);
+	bSuccess = (*pPlayerSprite).LoadResourceCels(pDC, _leftId, NUM_CELS);
 	assert(bSuccess);
 	(*pPlayerSprite).SetMasked(TRUE);
 	(*pPlayerSprite).SetMobile(TRUE);
@@ -687,9 +687,8 @@ Other functions:
  *
  ****************************************************************/
 void CMainWindow::NewGame() {
-#ifdef TODO
 	CDC *pDC;
-	char    msg[64];
+	char msg[64];
 
 	pDC = GetDC();
 
@@ -729,7 +728,6 @@ void CMainWindow::NewGame() {
 	SetTimer(GAME_TIMER, CLICK_TIME, nullptr);       // Reset ticker
 
 	ReleaseDC(pDC);
-#endif
 } // end NewGame
 
 /*****************************************************************
@@ -759,16 +757,15 @@ void CMainWindow::NewGame() {
  *
  ****************************************************************/
 void CMainWindow::MovePlayer(CPoint point) {
-#ifdef TODO
 	CDC *pDC;
 	CSound *pEffect = nullptr;
-	CPoint  NewPosition;
-	CPoint  TileLocation;
-	CPoint  Hit;
-	BOOL    bCollision = false;
-	POINT   Delta;
-	POINT   Step;
-	UINT    nBmpID = IDB_HODJ_RIGHT;
+	CPoint NewPosition;
+	CPoint TileLocation;
+	CPoint Hit;
+	BOOL bCollision = false;
+	POINT Delta;
+	POINT Step;
+	UINT nBmpID = IDB_HODJ_RIGHT;
 
 	pDC = GetDC();
 
@@ -786,18 +783,18 @@ void CMainWindow::MovePlayer(CPoint point) {
 	if (ABS(Delta.x) > ABS(Delta.y)) {     // Moving horizontally:
 		if (Delta.x < 0) {                    // To the RIGHT
 			Step.x = 1;                             // move one tile at a time
-			nBmpID = _rightBmp;  // use the Bitmap of the player moving Right
+			nBmpID = _rightId;  // use the Bitmap of the player moving Right
 		} else if (Delta.x > 0) {               // To the LEFT
 			Step.x = -1;                            // move one tile at a time
-			nBmpID = _leftBmp;   // use Bitmap of player moving Left
+			nBmpID = _leftId;   // use Bitmap of player moving Left
 		}
 	} else if (ABS(Delta.y) > ABS(Delta.x)) {
 		if (Delta.y > 0) {                    // Going UPward
 			Step.y = -1;                            // move one tile at a time                                         
-			nBmpID = _upBmp;     // use Bitmap of player moving Up
+			nBmpID = _upId;     // use Bitmap of player moving Up
 		} else if (Delta.y < 0) {               // Going DOWNward
 			Step.y = 1;                             // move one tile at a time
-			nBmpID = _downBmp;   // use Bitmap of player moving Down
+			nBmpID = _downId;   // use Bitmap of player moving Down
 		}
 	}
 
@@ -838,7 +835,7 @@ void CMainWindow::MovePlayer(CPoint point) {
 				if (pGameInfo->bSoundEffectsEnabled) {
 					pEffect = new CSound((CWnd *)this, HIT_SOUND,
 						SOUND_WAVE | SOUND_AUTODELETE); //| SOUND_ASYNCH ...Wave file, to delete itself
-					(*pEffect).Play();                                                      //...play the narration
+					(*pEffect).play();                                                      //...play the narration
 				}
 				mazeTile[NewPosition.x][NewPosition.y].m_bHidden = false;
 
@@ -874,7 +871,7 @@ void CMainWindow::MovePlayer(CPoint point) {
 				if (pGameInfo->bSoundEffectsEnabled) {
 					pEffect = new CSound((CWnd *)this, TRAP_SOUND,
 						SOUND_WAVE | SOUND_AUTODELETE); //| SOUND_ASYNCH ...Wave file, to delete itself
-					(*pEffect).Play();                                                      //...play the narration
+					(*pEffect).play();                                                      //...play the narration
 				}
 				PaintBitmap(pMazeDC, pGamePalette,                         // Paint trap in Maze Bitmap
 					TrapBitmap[mazeTile[NewPosition.x][NewPosition.y].m_nTrap],
@@ -899,12 +896,12 @@ void CMainWindow::MovePlayer(CPoint point) {
 				if (pGameInfo->bSoundEffectsEnabled) {
 					pEffect = new CSound((CWnd *)this, WIN_SOUND,
 						SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-					(*pEffect).Play();                                                      //...play the narration
+					(*pEffect).play();                                                      //...play the narration
 				}
 				MSG lpmsg;
 				while (PeekMessage(&lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE));
 				CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Game over.", "He's free!");
-				CBofSound::WaitWaveSounds();
+				CBofSound::waitWaveSounds();
 				if (pGameInfo->bPlayingMetagame) {
 					pGameInfo->lScore = 1;                  // A victorious maze solving
 					PostMessage(WM_CLOSE, 0, 0);            // and post a program exit
@@ -919,7 +916,6 @@ void CMainWindow::MovePlayer(CPoint point) {
 	} // end if       
 
 	ReleaseDC(pDC);
-#endif
 }
 
 /*****************************************************************
