@@ -1096,10 +1096,15 @@ void LB::b_max(int nargs) {
 		Datum d = g_lingo->pop();
 		if (d.type == ARRAY) {
 			uint arrsize = d.u.farr->arr.size();
-			for (uint i = 0; i < arrsize; i++) {
-				Datum item = d.u.farr->arr[i];
-				if (i == 0 || item > max) {
-					max = item;
+
+			if (d.u.farr->_sorted && arrsize) {
+				max = d.u.farr->arr[arrsize - 1];
+			} else {
+				for (uint i = 0; i < arrsize; i++) {
+					Datum item = d.u.farr->arr[i];
+					if (i == 0 || item > max) {
+						max = item;
+					}
 				}
 			}
 		} else {
@@ -1129,10 +1134,15 @@ void LB::b_min(int nargs) {
 		Datum d = g_lingo->pop();
 		if (d.type == ARRAY) {
 			uint arrsize = d.u.farr->arr.size();
-			for (uint i = 0; i < arrsize; i++) {
-				Datum item = d.u.farr->arr[i];
-				if (i == 0 || item < min) {
-					min = item;
+
+			if (d.u.farr->_sorted && arrsize) {
+				min = d.u.farr->arr[0];
+			} else {
+				for (uint i = 0; i < arrsize; i++) {
+					Datum item = d.u.farr->arr[i];
+					if (i == 0 || item < min) {
+						min = item;
+					}
 				}
 			}
 		} else {
