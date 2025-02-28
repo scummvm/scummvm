@@ -944,17 +944,13 @@ void CMainWindow::MovePlayer(CPoint point) {
  *
  ****************************************************************/
 void CMainWindow::GetNewCursor() {
-#ifdef TODO
 	CPoint  Hit, Delta;
 	POINT   pCursorLoc;
 
 	HCURSOR hNewCursor = nullptr;
-	CWinApp *pMyApp;
+	
+	GetCursorPos(&pCursorLoc);
 
-	pMyApp = AfxGetApp();
-
-	::GetCursorPos(&pCursorLoc);
-	::ScreenToClient(m_hWnd, &pCursorLoc);
 	Delta.x = pCursorLoc.x;
 	Delta.y = pCursorLoc.y;
 	Hit = ScreenToTile(Delta);
@@ -963,28 +959,26 @@ void CMainWindow::GetNewCursor() {
 	Delta.y = m_PlayerPos.y - Hit.y;
 
 	if ((m_PlayerPos.x == Hit.x) && (m_PlayerPos.y == Hit.y)) {     // Directly over player
-		hNewCursor = (*pMyApp).LoadCursor(IDC_MOD_NOARROW);
+		hNewCursor = LoadCursor(IDC_MOD_NOARROW);
 	}
 
 	else if (ABS(Delta.x) >= ABS(Delta.y)) {                   // Moving horizontally:
 		if (Delta.x <= 0)                                         // To the RIGHT
-			hNewCursor = (*pMyApp).LoadCursor(IDC_MOD_RTARROW);
+			hNewCursor = LoadCursor(IDC_MOD_RTARROW);
 		else if (Delta.x > 0)                                     // To the LEFT
-			hNewCursor = (*pMyApp).LoadCursor(IDC_MOD_LFARROW);
+			hNewCursor = LoadCursor(IDC_MOD_LFARROW);
 	} else if (ABS(Delta.y) > ABS(Delta.x)) {
 		if (Delta.y >= 0)                                         // Going UPward
-			hNewCursor = (*pMyApp).LoadCursor(IDC_MOD_UPARROW);
+			hNewCursor = LoadCursor(IDC_MOD_UPARROW);
 		else if (Delta.y < 0)                                     // Going DOWNward
-			hNewCursor = (*pMyApp).LoadCursor(IDC_MOD_DNARROW);
+			hNewCursor = LoadCursor(IDC_MOD_DNARROW);
 	}
 
-	if (hNewCursor != nullptr);
-	::SetCursor(hNewCursor);
-#endif
+	if (hNewCursor != nullptr)
+		SetCursor(hNewCursor);
 }
 
 void CMainWindow::OnClose() {
-#ifdef TODO
 	CDC *pDC;
 	CBrush  myBrush;
 	CRect   myRect;
@@ -1004,7 +998,7 @@ void CMainWindow::OnClose() {
 		pGameSound = nullptr;
 	}
 
-	CBofSound::ClearSounds();                              // Clean up sounds before returning
+	CBofSound::clearSounds();                              // Clean up sounds before returning
 
 	if (m_pScrollButton != nullptr)
 		delete m_pScrollButton;
@@ -1078,10 +1072,6 @@ void CMainWindow::OnClose() {
 	}
 
 	CFrameWnd::OnClose();
-#ifdef  _USRDLL
-	::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
-#endif  //_USRDLL
-#endif
 }
 
 //////////// Additional Sound Notify routines //////////////
@@ -1093,6 +1083,8 @@ long CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CBofSound::OnMCIStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
+#else
+	error("TODO: CMainWindow::ONMCINotify");
 #endif
 	return 0L;
 }
@@ -1105,6 +1097,8 @@ long CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CBofSound::OnMMIOStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
+#else
+	error("TODO: CMainWindow::OnMMIONotify");
 #endif
 	return 0L;
 }

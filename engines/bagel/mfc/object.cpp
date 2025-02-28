@@ -21,6 +21,7 @@
 
 #include "common/textconsole.h"
 #include "bagel/mfc/object.h"
+#include "bagel/mfc/rect.h"
 
 namespace Bagel {
 namespace MFC {
@@ -30,10 +31,20 @@ HCURSOR CObject::LoadCursor(void *hInstance, LPCTSTR lpCursorName) {
 	return nullptr;
 }
 
+HCURSOR CObject::LoadCursor(int cursorId) {
+	error("TODO: LoadCursor");
+	return nullptr;
+}
+
 HCURSOR CObject::SetCursor(HCURSOR hCursor) {
 	error("TODO: SetCursor");
 	return nullptr;
 }
+
+void CObject::GetCursorPos(POINT *point) {
+	error("TODO: GetCursorPos");
+}
+
 
 LPVOID GlobalLock(HGLOBAL hMem) {
 	error("TODO: GlobalLock");

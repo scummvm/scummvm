@@ -30,12 +30,16 @@ namespace MFC {
 struct CURSOR {
 };
 typedef CURSOR *HCURSOR;
+struct POINT;
 
 class CObject {
 public:
+	// These are global methods in MFC I've put as CObject methods
+	// for convenience
 	static HCURSOR LoadCursor(void *hInstance, LPCTSTR lpCursorName);
+	static HCURSOR LoadCursor(int cursorId);
 	static HCURSOR SetCursor(HCURSOR hCursor);
-	
+	static void GetCursorPos(POINT *point);
 };
 
 extern LPVOID GlobalLock(HGLOBAL hMem);
