@@ -78,33 +78,33 @@ const seriesPlayBreak Room207::PLAY8[] = {
 };
 
 const seriesPlayBreak Room207::PLAY9[] = {
-	{ 23, 5, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 23, 5, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room207::PLAY10[] = {
-	{ 31, 24, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 31, 24, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room207::PLAY11[] = {
-	{ 24, 31, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 24, 31, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room207::PLAY12[] = {
-	{ 18, 22, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 18, 22, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesStreamBreak Room207::SERIES1[] = {
-	{ 0, 0, 0, 0, -1, 0, 0, 0 },
-	{ 18, "207w001", 1, 255, -1, 0, 0, 0 },
+	{ 0, nullptr, 0, 0, -1, 0, nullptr, 0 },
+	{ 18, "207w001", 1, 255, -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
 const seriesStreamBreak Room207::SERIES2[] = {
-	{ 0, 0, 0, 0, -1, 0, 0, 0 },
+	{ 0, nullptr, 0, 0, -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -398,9 +398,9 @@ void Room207::parser() {
 
 void Room207::handleConv() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (sound) {
 		if (who == 1) {
@@ -420,7 +420,7 @@ void Room207::handleConv() {
 }
 
 int Room207::getAstralShould() const {
-	int rand = imath_ranged_rand(1, 24);
+	const int rand = imath_ranged_rand(1, 24);
 
 	switch (_astralMode) {
 	case 15:
@@ -468,7 +468,7 @@ int Room207::getAstralShould() const {
 }
 
 int Room207::getWilburShould() const {
-	int rand = imath_ranged_rand(1, 8);
+	const int rand = imath_ranged_rand(1, 8);
 	return (rand == 1) ? 4 : 3;
 }
 
