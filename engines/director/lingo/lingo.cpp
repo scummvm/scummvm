@@ -1384,7 +1384,7 @@ const char *Datum::type2str(bool ilk) const {
 	}
 }
 
-int Datum::equalTo(Datum &d, bool ignoreCase) const {
+int Datum::equalTo(const Datum &d, bool ignoreCase) const {
 	// VOID can only be equal to VOID and INT 0
 	if (type == VOID && d.type == VOID) {
 		return 1;
@@ -1421,29 +1421,29 @@ int Datum::equalTo(Datum &d, bool ignoreCase) const {
 	return 0;
 }
 
-bool Datum::operator==(Datum &d) const {
+bool Datum::operator==(const Datum &d) const {
 	return equalTo(d);
 }
 
-bool Datum::operator>(Datum &d) const {
+bool Datum::operator>(const Datum &d) const {
 	return compareTo(d) & kCompareGreater;
 }
 
-bool Datum::operator<(Datum &d) const {
+bool Datum::operator<(const Datum &d) const {
 	return compareTo(d) & kCompareLess;
 }
 
-bool Datum::operator>=(Datum &d) const {
+bool Datum::operator>=(const Datum &d) const {
 	uint32 res = compareTo(d);
 	return res & kCompareGreater || res & kCompareEqual;
 }
 
-bool Datum::operator<=(Datum &d) const {
+bool Datum::operator<=(const Datum &d) const {
 	uint32 res = compareTo(d);
 	return res & kCompareLess || res & kCompareEqual;
 }
 
-uint32 Datum::compareTo(Datum &d) const {
+uint32 Datum::compareTo(const Datum &d) const {
 	// VOID will always be treated as:
 	// - equal to VOID
 	// - less than -and- equal to INT 0 (yes, really)
