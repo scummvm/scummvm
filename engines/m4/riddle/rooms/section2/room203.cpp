@@ -1843,6 +1843,8 @@ void Room203::daemon() {
 				_officialHalt = series_load("official halt");
 				sendWSMessage_10000(1, _official, _officialHalt, 1, 15, 141,
 					_officialHalt, 15, 15, 0);
+
+				_officialShould = 2024;
 				digi_play("03_02n01", 1);
 				break;
 
