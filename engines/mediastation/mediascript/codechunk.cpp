@@ -39,7 +39,10 @@ Operand CodeChunk::execute(Common::Array<Operand> *args) {
 	_args = args;
 	Operand returnValue;
 	while (_bytecode->pos() < _bytecode->size()) {
-		returnValue = executeNextStatement();
+		Operand instructionResult = executeNextStatement();
+		if (instructionResult.getType() != kOperandTypeEmpty) {
+			returnValue = instructionResult;
+		}
 	}
 
 	// Rewind the stream once we're finished, in case we need to execute
@@ -317,6 +320,13 @@ Operand CodeChunk::executeNextStatement() {
 			debugCN(5, kDebugScript, "    value: ");
 
 			return -value;
+		}
+
+		case kOpcodeReturn: {
+			debugCN(5, kDebugScript, "    return: ");
+			Operand value = executeNextStatement();
+
+			return value;
 		}
 
 		default: {
