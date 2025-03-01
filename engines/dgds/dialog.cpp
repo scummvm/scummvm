@@ -362,7 +362,7 @@ void Dialog::drawType4(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 
 		// This is not exactly the same as the original - might need some work to get pixel-perfect
 		// Beamish uses 20x20 dialogs of type 4 to have effects without actually drawing anything.
-		if (gameId != GID_HOC && (w > 20 || h > 20)) {
+		if (gameId != GID_HOC && (w > 22 || h > 22)) {
 			Common::Rect drawRect(x, y, x + w, y + h);
 			dst->drawRoundRect(drawRect, midy, fillbgcolor, true);
 			dst->drawRoundRect(drawRect, midy, fillcolor, false);
