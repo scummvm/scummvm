@@ -39,6 +39,8 @@ public:
 	int getMaxCharWidth() const override;
 	int getCharWidth(uint32 chr) const override;
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+private:
+	void drawBiosFontGlyph(uint8 chr, int x, int y, uint8 color) const;
 };
 
 } // namespace Darkseed
