@@ -40,7 +40,7 @@ public:
 	}
 
 	// Create a new script string by copying the given text
-	static DynObjectRef Create(const char *text) { return CreateImpl(text, -1); }
+	static DynObjectRef Create(const char *text) { return CreateImpl(text, 0); }
 	// Create a new script string with a buffer of at least the given text length
 	static DynObjectRef Create(size_t buf_len) { return CreateImpl(nullptr, buf_len); }
 
