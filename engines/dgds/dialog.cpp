@@ -87,16 +87,26 @@ void Dialog::drawType1(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	int w = _rect.width;
 	int h = _rect.height;
 
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	if (stage == kDlgDrawStageBackground) {
-		dst->fillRect(Common::Rect(x, y, x + w, y + h), _bgColor);
-		dst->fillRect(Common::Rect(x + 1, y + 1, x + w - 1, y + h - 1), _fontColor);
+		dst->frameRect(Common::Rect(x, y, x + w, y + h), _bgColor);
+		if (engine->getGameId() != GID_WILLY) {
+			dst->fillRect(Common::Rect(x + 1, y + 1, x + w - 1, y + h - 1), _fontColor);
+		} else {
+			dst->frameRect(Common::Rect(x + 1, y + 1, x + w - 1, y + h - 1), _fontColor);
+			dst->fillRect(Common::Rect(x + 2, y + 2, x + w - 2, y + h - 2), _bgColor);
+		}
 	} else if (stage == kDlgDrawFindSelectionPointXY) {
 		drawFindSelectionXY();
 	} else if (stage == kDlgDrawFindSelectionTxtOffset) {
 		drawFindSelectionTxtOffset();
 	} else {
-		_state->_loc = DgdsRect(x + 3, y + 3, w - 6, h - 6);
-		drawForeground(dst, _bgColor, _str);
+		if (engine->getGameId() != GID_WILLY)
+			_state->_loc = DgdsRect(x + 3, y + 3, w - 6, h - 6);
+		else
+			_state->_loc = DgdsRect(x + 5, y + 5, w - 10, h - 10);
+		byte txtCol = (engine->getGameId() == GID_WILLY) ? _fontColor : _bgColor;
+		drawForeground(dst, txtCol, _str);
 	}
 }
 
