@@ -380,13 +380,17 @@ bool Inventory::isItemInInventory(const GameItem &item) {
 }
 
 void Inventory::mouseLDown(const Common::Point &pt) {
-	RequestData &boxreq = _reqData._requests[0];
+	DgdsEngine *engine = DgdsEngine::getInstance();
 
-	// Ignore this, and close on mouseup.
-	if (!boxreq._rect.contains(pt))
+	// In willy beamish, might be clicking to drop a drag item - ignore.
+	GameItem *dragItem = engine->getScene()->getDragItem();
+	if (dragItem)
 		return;
 
-	DgdsEngine *engine = DgdsEngine::getInstance();
+	// If clicking outside area, ignore mousedown - will close on mouseup.
+	RequestData &boxreq = _reqData._requests[0];
+	if (!boxreq._rect.contains(pt))
+		return;
 
 	if (engine->getScene()->hasVisibleDialog() || !_itemBox->containsPoint(pt)) {
 		return engine->getScene()->mouseLDown(pt);
