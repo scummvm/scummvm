@@ -41,6 +41,8 @@ WinFont::~WinFont() {
 
 void WinFont::close() {
 	_pixHeight = 0;
+	_sizeInPoints = 0;
+	_dpi = 0;
 	_maxWidth = 0;
 	_firstChar = 0;
 	_lastChar = 0;
@@ -127,6 +129,20 @@ bool WinFont::loadFromEXE(Common::WinResources *exe, const Common::Path &fileNam
 	return ok;
 }
 
+/**
+ * Size in typographic "points"
+ *
+ * While early Macintosh mapped "points" and "pixels" very closely,
+ * that was not the case on Windows.
+ *
+ * Windows used 96 dpi for font rendering so a 10 point font would
+ *
+ * Macintosh used 72 dpi for fonts while Windows used 96 dpi
+ */
+int WinFont::getFontSizeInPointsAtDPI(const int dpi) const {
+	return _sizeInPoints * _dpi / dpi;
+}
+
 uint32 WinFont::getFontIndex(Common::SeekableReadStream &stream, const WinFontDirEntry &dirEntry) {
 	uint16 numFonts = stream.readUint16LE();
 
@@ -199,12 +215,18 @@ bool WinFont::loadFromFNT(Common::SeekableReadStream &stream) {
 		return false;
 	}
 
-	/* uint32 size = */ stream.readUint32LE();
+	/* uint32 sizeOfGlyphTableInBytes = */ stream.readUint32LE();
 	stream.skip(60); // Copyright info
 	uint16 fontType = stream.readUint16LE();
-	/* uint16 points = */ stream.readUint16LE();
-	/* uint16 vertRes = */ stream.readUint16LE();
-	/* uint16 horizRes = */ stream.readUint16LE();
+	_sizeInPoints = stream.readUint16LE();
+	uint16 vertRes = stream.readUint16LE();		// usually 96 as in 96dpi
+	uint16 horizRes = stream.readUint16LE();	// usually 96 as in 96dpi
+
+	if (vertRes != horizRes)
+		warning("WinFont::loadFromFNT(): FNT horizontal resolution and vertical resolution differ (%d vs %d)", horizRes, vertRes);
+
+	_dpi = vertRes;
+
 	_ascent = stream.readUint16LE();
 	/* uint16 internalLeading = */ stream.readUint16LE();
 	/* uint16 externalLeading = */ stream.readUint16LE();
