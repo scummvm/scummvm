@@ -90,7 +90,7 @@ enum Flag {
 	V055 =  55,
 	V056 =  56,
 	V057 =  57,
-	V058 =  58,
+	V058 =  58, // Room 207 - 0 = Wheel ; 1 = Wheel broken down to pieces
 	V059 =  59,
 	V060 =  60,
 	V061 =  61,

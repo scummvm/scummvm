@@ -49,8 +49,8 @@ private:
 	int32 _fieldA8 = 0; // unused ?
 	bool _pipeFlag = false;
 	int32 _fieldAE_rnd = 0;
-	bool _fieldB2 = false;
-	int32 _fieldB6_counter = 0;
+	bool _peasantShoutingFl = false;
+	int32 _guardComingDelay = 0;
 	int32 _fieldC2 = 0;
 	bool _fieldC6 = false; // always false??
 
