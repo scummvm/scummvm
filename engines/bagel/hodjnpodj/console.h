@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,27 +20,23 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "bagel/mfc/object.h"
-#include "bagel/mfc/rect.h"
-#include "bagel/hodjnpodj/hodjnpodj.h"
+#ifndef HODJNPODJ_CONSOLE_H
+#define HODJNPODJ_CONSOLE_H
+
+#include "gui/debugger.h"
 
 namespace Bagel {
-namespace MFC {
+namespace HodjNPodj {
 
-CWinApp *CObject::AfxGetApp() {
-	return nullptr;
-}
+class Console : public GUI::Debugger {
+private:
+	bool Cmd_test(int argc, const char **argv);
+public:
+	Console();
+	~Console() override;
+};
 
-LPVOID GlobalLock(HGLOBAL hMem) {
-	error("TODO: GlobalLock");
-	return nullptr;
-}
-
-BOOL GlobalUnlock(HGLOBAL hMem) {
-	error("TODO: GlobalUnlock");
-	return true;
-}
-
-} // namespace MFC
+} // namespace HodjNPodj
 } // namespace Bagel
+
+#endif

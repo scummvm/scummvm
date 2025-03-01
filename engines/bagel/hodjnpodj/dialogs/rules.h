@@ -19,27 +19,34 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "bagel/mfc/object.h"
-#include "bagel/mfc/rect.h"
-#include "bagel/hodjnpodj/hodjnpodj.h"
+#ifndef HODJNPODJ_DIALOGS_RULES_H
+#define HODJNPODJ_DIALOGS_RULES_H
+
+#include "bagel/hodjnpodj/view.h"
 
 namespace Bagel {
-namespace MFC {
+namespace HodjNPodj {
+namespace Dialogs {
 
-CWinApp *CObject::AfxGetApp() {
-	return nullptr;
-}
+class Rules : public View {
+private:
+	byte _pal[256 * 3] = { 0 };
+	int _offset = 0;
 
-LPVOID GlobalLock(HGLOBAL hMem) {
-	error("TODO: GlobalLock");
-	return nullptr;
-}
+public:
+	Rules() : View("Rules") {
+	}
+	virtual ~Rules() {
+	}
 
-BOOL GlobalUnlock(HGLOBAL hMem) {
-	error("TODO: GlobalUnlock");
-	return true;
-}
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	void draw() override;
+	bool tick() override;
+};
 
-} // namespace MFC
+} // namespace Dialogs
+} // namespace HodjNPodj
 } // namespace Bagel
+
+#endif

@@ -19,96 +19,58 @@
  *
  */
 
+#include "common/scummsys.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
+#include "common/events.h"
+#include "common/system.h"
 #include "engines/util.h"
+#include "graphics/paletteman.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
-#include "bagel/hodjnpodj/mazedoom/maze_doom.h"
-#include "gui/debugger.h"
+#include "bagel/hodjnpodj/console.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
 HodjNPodjEngine *g_engine;
 
-const Minigame HodjNPodjEngine::MINIGAMES[] = {
-	{ "mazedoom", &MazeDoom::run },
-	{ nullptr, nullptr }
-};
-
-
-HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-		BagelEngine(syst, gameDesc) {
+HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
+_gameDescription(gameDesc), _randomSource("HodjNPodj") {
 	g_engine = this;
 }
 
 HodjNPodjEngine::~HodjNPodjEngine() {
-	g_engine = nullptr;
 }
 
-void HodjNPodjEngine::initialize() {
-	// No implementation
+uint32 HodjNPodjEngine::getFeatures() const {
+	return _gameDescription->flags;
 }
 
-void HodjNPodjEngine::shutdown() {
-	// No more Sound System
-	ShutDownSoundSystem();
-}
-
-void HodjNPodjEngine::InitializeSoundSystem(uint16 nChannels, uint32 nFreq, uint16 nBitsPerSample) {
-	// Nothing to do
-}
-
-void HodjNPodjEngine::ShutDownSoundSystem() {
-	_mixer->stopAll();
+Common::String HodjNPodjEngine::getGameId() const {
+	return _gameDescription->gameId;
 }
 
 Common::Error HodjNPodjEngine::run() {
-	initGraphics(640, 480);
-
-	// Initialize systems
-	_screen = new Graphics::Screen();
-	_midi = new MusicPlayer();
-	syncSoundSettings();
+	// Initialize 320x200 paletted graphics mode
+	initGraphics(320, 200);
 
 	// Set the engine's debugger console
-	setDebugger(new GUI::Debugger());
+	setDebugger(new Console());
 
-	// Initialize
-	initialize();
-
-	Common::String minigame = ConfMan.get("minigame");
-	if (!minigame.empty())
-		playMinigame(minigame);
-	else
-		warning("TODO: entire game");
-
-	// TODO: overall game
-
-	// shutdown
-	shutdown();
+	runGame();
 
 	return Common::kNoError;
 }
 
-void HodjNPodjEngine::playMinigame(const Common::String &name) {
-	for (const Minigame *game = MINIGAMES; game->_name; ++game) {
-		if (name == game->_name) {
-			// Add the minigame's folder to the search path
-			Common::FSNode gamePath(ConfMan.getPath("path"));
-			SearchMan.addDirectory("minigame", gamePath.getChild(game->_name), 0, 2);
+Common::Error HodjNPodjEngine::syncGame(Common::Serializer &s) {
+	// The Serializer has methods isLoading() and isSaving()
+	// if you need to specific steps; for example setting
+	// an array size after reading it's length, whereas
+	// for saving it would write the existing array's length
+	int dummy = 0;
+	s.syncAsUint32LE(dummy);
 
-			game->_run();
-
-			SearchMan.remove("minigame");
-			return;
-		}
-	}
-
-	error("Unknown minigame specified - %s", name.c_str());
-}
-
-void HodjNPodjEngine::AddFontResource(const char *fontName) {
-	error("TODO: AddFontResource");
+	return Common::kNoError;
 }
 
 } // namespace HodjNPodj

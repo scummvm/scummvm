@@ -19,27 +19,27 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "bagel/mfc/object.h"
-#include "bagel/mfc/rect.h"
-#include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/hodjnpodj/messages.h"
 
 namespace Bagel {
-namespace MFC {
+namespace HodjNPodj {
 
-CWinApp *CObject::AfxGetApp() {
-	return nullptr;
+MouseMessage::MouseMessage(Common::EventType type,
+	const Common::Point &pos) : Message(), _pos(pos) {
+	switch (type) {
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_RBUTTONUP:
+		_button = MB_RIGHT;
+		break;
+	case Common::EVENT_MBUTTONDOWN:
+	case Common::EVENT_MBUTTONUP:
+		_button = MB_MIDDLE;
+		break;
+	default:
+		_button = MB_LEFT;
+		break;
+	}
 }
 
-LPVOID GlobalLock(HGLOBAL hMem) {
-	error("TODO: GlobalLock");
-	return nullptr;
-}
-
-BOOL GlobalUnlock(HGLOBAL hMem) {
-	error("TODO: GlobalUnlock");
-	return true;
-}
-
-} // namespace MFC
+} // namespace HodjNPodj
 } // namespace Bagel

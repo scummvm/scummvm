@@ -19,27 +19,22 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "bagel/mfc/object.h"
-#include "bagel/mfc/rect.h"
-#include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/hodjnpodj/console.h"
 
 namespace Bagel {
-namespace MFC {
+namespace HodjNPodj {
 
-CWinApp *CObject::AfxGetApp() {
-	return nullptr;
+Console::Console() : GUI::Debugger() {
+	registerCmd("test", WRAP_METHOD(Console, Cmd_test));
 }
 
-LPVOID GlobalLock(HGLOBAL hMem) {
-	error("TODO: GlobalLock");
-	return nullptr;
+Console::~Console() {
 }
 
-BOOL GlobalUnlock(HGLOBAL hMem) {
-	error("TODO: GlobalUnlock");
+bool Console::Cmd_test(int argc, const char **argv) {
+	debugPrintf("Test\n");
 	return true;
 }
 
-} // namespace MFC
+} // namespace HodjNPodj
 } // namespace Bagel

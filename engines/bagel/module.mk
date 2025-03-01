@@ -116,20 +116,11 @@ MODULE_OBJS = \
 	spacebar/thud.o \
 	spacebar/vid_wnd.o \
 	hodjnpodj/hodjnpodj.o \
-	hodjnpodj/boflib/bitmaps.o \
-	hodjnpodj/boflib/button.o \
-	hodjnpodj/boflib/dialog.o \
-	hodjnpodj/boflib/sprite.o \
-	hodjnpodj/boflib/text.o \
-	hodjnpodj/libs/dib_api.o \
-	hodjnpodj/libs/dib_doc.o \
-	hodjnpodj/libs/main_menu.o \
-	hodjnpodj/libs/message_box.o \
-	hodjnpodj/libs/rules.o \
-	hodjnpodj/mazedoom/main_window.o \
-	hodjnpodj/mazedoom/maze_doom.o \
-	hodjnpodj/mazedoom/maze_gen.o \
-	hodjnpodj/mazedoom/option_dialog.o
+	hodjnpodj/console.o \
+	hodjnpodj/events.o \
+	hodjnpodj/messages.o \
+	hodjnpodj/view.o \
+	hodjnpodj/dialogs/rules.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)

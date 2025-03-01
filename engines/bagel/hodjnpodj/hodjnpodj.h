@@ -19,44 +19,87 @@
  *
  */
 
-#ifndef BAGEL_HODJNPODJ_H
-#define BAGEL_HODJNPODJ_H
+#ifndef HODJNPODJ_H
+#define HODJNPODJ_H
 
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "common/error.h"
+#include "common/fs.h"
+#include "common/hash-str.h"
+#include "common/random.h"
+#include "common/serializer.h"
+#include "common/util.h"
+#include "engines/engine.h"
+#include "engines/savestate.h"
+#include "graphics/screen.h"
+#include "bagel/hodjnpodj/events.h"
 #include "bagel/bagel.h"
-#include "bagel/hodjnpodj/libs/types.h"
-#include "bagel/mfc/afx.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-struct Minigame {
-	const char *_name;
-	void (*_run)();
-};
-
-class HodjNPodjEngine : public BagelEngine, public CWinApp {
+class HodjNPodjEngine : public Engine, public Events {
 private:
-	static const Minigame MINIGAMES[];
-
-	void InitializeSoundSystem(uint16 nChannels = 1, uint32 nFreq = 11025, uint16 nBitsPerSample = 8);
-	void ShutDownSoundSystem();
-	void playMinigame(const Common::String &name);
-
+	const ADGameDescription *_gameDescription;
+	Common::RandomSource _randomSource;
 protected:
 	// Engine APIs
 	Common::Error run() override;
 
-	void initialize();
-	void shutdown();
-
-public:
-	GAMESTRUCT gGameInfo;
+	/**
+	 * Returns true if the game should quit
+	 */
+	bool shouldQuit() const override {
+		return Engine::shouldQuit();
+	}
 
 public:
 	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~HodjNPodjEngine() override;
 
-	void AddFontResource(const char *fontName);
+	uint32 getFeatures() const;
+
+	/**
+	 * Returns the game Id
+	 */
+	Common::String getGameId() const;
+
+	/**
+	 * Gets a random number
+	 */
+	uint32 getRandomNumber(uint maxNum) {
+		return _randomSource.getRandomNumber(maxNum);
+	}
+
+	bool hasFeature(EngineFeature f) const override {
+		return
+			(f == kSupportsLoadingDuringRuntime) ||
+			(f == kSupportsSavingDuringRuntime) ||
+			(f == kSupportsReturnToLauncher);
+	};
+
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
+		return true;
+	}
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
+		return true;
+	}
+
+	/**
+	 * Uses a serializer to allow implementing savegame
+	 * loading and saving using a single method
+	 */
+	Common::Error syncGame(Common::Serializer &s);
+
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
+		Common::Serializer s(nullptr, stream);
+		return syncGame(s);
+	}
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
+		Common::Serializer s(stream, nullptr);
+		return syncGame(s);
+	}
 };
 
 extern HodjNPodjEngine *g_engine;
