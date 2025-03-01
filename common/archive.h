@@ -317,7 +317,7 @@ private:
 
 	mutable HashMap<CacheKey, SharedArchiveContents, CacheKey_Hash, CacheKey_EqualTo> _cache;
 	uint32 _maxStronglyCachedSize;
-	char _separator;
+	char _separator = '\0';
 };
 
 /**
