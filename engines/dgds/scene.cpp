@@ -2055,13 +2055,6 @@ void GDSScene::drawItems(Graphics::ManagedSurface &surf) {
 		if (item._inSceneNum == currentScene && &item != engine->getScene()->getDragItem()) {
 			if (!(item._flags & kItemStateDragging)) {
 				// Dropped item.
-				// Update the rect for the icon - Note: original doesn't do this,
-				// but then the napent icon is offset??
-				/*Common::SharedPtr<Graphics::ManagedSurface> icon = icons->getSurface(item._iconNum);
-				if (icon) {
-					item._rect.width = MIN((int)icon->w, item._rect.width);
-					item._rect.height = MIN((int)icon->h, item._rect.height);
-				}*/
 				if (xoff + item._rect.width > maxx)
 					xoff = 20;
 				int yoff = SCREEN_HEIGHT - (item._rect.height + 2);

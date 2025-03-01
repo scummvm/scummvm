@@ -45,6 +45,7 @@ public:
 	void play();
 	void stop();
 	bool isPlaying() const;
+	bool isEmpty() const { return _data.empty(); }
 	void loadFromStream(Common::SeekableReadStream *stream, int size);
 	uint32 playedOffset() const; //< Current offset into the sample in bytes, or 0xFFFFFFFF if not playing.
 

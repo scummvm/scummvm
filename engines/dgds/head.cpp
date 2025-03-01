@@ -444,7 +444,7 @@ void Conversation::incrementFrame() {
 
 bool Conversation::isScriptRunning() {
 	return (_ttmScript &&
-		((_ttmEnv._soundRaw && _ttmEnv._soundRaw->isPlaying())
+		((_ttmEnv._soundRaw->isEmpty() || _ttmEnv._soundRaw->isPlaying())
 		||
 		(_ttmEnv._cdsFrame < _ttmEnv._totalFrames)
 		));
