@@ -48,6 +48,9 @@ memory constraints.
 got.gfx:
 This is a set of graphics for the title screen and main menu that were embedded in the executable.
 
+got.aud:
+This is the title screen music that was embedded in the executable.
+
 grim-patch.lab:
 This file contains set of script patches for Grim Fandango game.
 

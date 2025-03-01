@@ -40,6 +40,7 @@ Game::Game() : View("Game") {
 
 bool Game::msgFocus(const FocusMessage &msg) {
 	Gfx::loadPalette();
+	musicPlay(_G(levelMusic), false);
 	return View::msgFocus(msg);
 }
 

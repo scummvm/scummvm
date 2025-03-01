@@ -20,15 +20,22 @@
  */
 
 #include "got/sound.h"
+
+#include "got/got.h"
+#include "got/musicdriver_adlib.h"
+#include "got/utils/file.h"
+
+#include "common/config-manager.h"
+#include "common/memstream.h"
+#include "audio/mididrv.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
-#include "common/memstream.h"
-#include "got/got.h"
-#include "got/utils/file.h"
 
 namespace Got {
 
 static const byte SOUND_PRIORITY[] = {1, 2, 3, 3, 3, 1, 4, 4, 4, 5, 4, 3, 1, 2, 2, 5, 1, 3, 1};
+
+static const char *MUSIC_MENU_DATA_FILENAME = "GOT.AUD";
 
 Sound::Sound() {
 	for (int i = 0; i < 3; i++)
@@ -40,6 +47,23 @@ Sound::~Sound() {
 	for (int i = 0; i < 3; i++) {
 		delete(_bossSounds[i]);
 	}
+
+	musicStop();
+
+	if (_musicDriver != nullptr) {
+		_musicDriver->setTimerCallback(nullptr, nullptr);
+		_musicDriver->close();
+	}
+
+	if (_musicParser != nullptr) {
+		delete _musicParser;
+	}
+	if (_musicDriver != nullptr) {
+		delete _musicDriver;
+	}
+
+	if (_musicData != nullptr)
+		delete[] _musicData;
 }
 
 void Sound::load() {
@@ -52,6 +76,40 @@ void Sound::load() {
 	// Allocate memory and load sound data
 	_soundData = new byte[f.size() - 16 * 8];
 	f.read(_soundData, f.size() - 16 * 8);
+
+	// Initialize music.
+
+	// Check the type of music device that the user has configured.
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB);
+	MusicType deviceType = MidiDriver::getMusicType(dev);
+
+	// Initialize the appropriate driver.
+	switch (deviceType) {
+		case MT_ADLIB:
+			_musicDriver = new MusicDriver_Got_AdLib(MUSIC_TIMER_FREQUENCY_GAME);
+			break;
+		default:
+			// No support for music other than AdLib.
+			_musicDriver = new MusicDriver_Got_NULL(MUSIC_TIMER_FREQUENCY_GAME);
+			break;
+	}
+
+	// Initialize the parser.
+	_musicParser = new MusicParser_Got();
+
+	// Open the driver.
+	int returnCode = _musicDriver->open();
+	if (returnCode != 0) {
+		warning("Sound::load - Failed to open music driver - error code %d.", returnCode);
+		return;
+	}
+
+	// Apply user volume settings.
+	syncSoundSettings();
+
+	// Connect the driver and the parser.
+	_musicParser->setMusicDriver(_musicDriver);
+	_musicDriver->setTimerCallback(_musicParser, &_musicParser->timerCallback);
 }
 
 void Sound::setupBoss(const int num) {
@@ -84,13 +142,17 @@ void Sound::playSound(const int index, const bool override) {
 	if (index >= NUM_SOUNDS)
 		return;
 
+	byte newPriority = SOUND_PRIORITY[index];
+
 	// If a sound is playing, stop it unless there is a priority override
 	if (soundPlaying()) {
-		if (!override && _currentPriority < SOUND_PRIORITY[index])
+		if (!override && _currentPriority < newPriority)
 			return;
 
 		g_engine->_mixer->stopHandle(_soundHandle);
 	}
+
+	_currentPriority = newPriority;
 
 	Common::MemoryReadStream *stream;
 	if (index >= 16) {
@@ -122,71 +184,60 @@ bool Sound::soundPlaying() const {
 }
 
 void Sound::musicPlay(const char *name, bool override) {
-	if (name != _currentMusic || override) {
-		g_engine->_mixer->stopHandle(_musicHandle);
+	if (_currentMusic == nullptr || strcmp(name, _currentMusic) || override) {
+		_musicParser->stopPlaying();
+		_musicParser->unloadMusic();
+		delete[] _musicData;
+
 		_currentMusic = name;
 
-		File file(name);
-
-#ifdef TODO
-		// FIXME: Completely wrong. Don't know music format yet
-		// Open it up for access
-		Common::SeekableReadStream *f = file.readStream(file.size());
-		Audio::AudioStream *audioStream = Audio::makeRawStream(
-			f, 11025, 0, DisposeAfterUse::YES);
-		g_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType,
-									 &_musicHandle, audioStream);
-
-#else
-		warning("TODO: play_music %s", name);
-
-#if 0
-		Common::DumpFile *outFile = new Common::DumpFile();
-		const Common::String outName = Common::String::format("%s.dump", name);
-		outFile->open(Common::Path(outName));
-		byte *buffer = new byte[file.size()];
-		file.read(buffer, file.size());
-		outFile->write(buffer, file.size());
-		outFile->finalize();
-		outFile->close();
-#endif
-
-		const int startLoop = file.readUint16LE();
-
-		while (!file.eos()) {
-			int delayAfter = file.readByte();
-			if (delayAfter & 0x80)
-				delayAfter = ((delayAfter & 0x7f) << 8) | file.readByte();
-
-			const int reg = file.readByte();
-			const int value = file.readByte();
-			if (reg == 0 && value == 0) {
-				debug(1, "End of song");
-				break;
+		File file;
+		if (!strcmp(name, "MENU")) {
+			// Title menu music is embedded in the executable.
+			// It has been extracted and included with ScummVM.
+			if (!file.exists(MUSIC_MENU_DATA_FILENAME)) {
+				warning("Could not find %s", MUSIC_MENU_DATA_FILENAME);
+				return;
 			}
+			file.open(MUSIC_MENU_DATA_FILENAME);
 
-			debug(1, "DelayAfter %d, OPL reg 0x%X, value %d", delayAfter, reg, value);
+			// Title music uses an alternate timer frequency.
+			_musicDriver->setTimerFrequency(MUSIC_TIMER_FREQUENCY_TITLE);
+		} else {
+			file.open(name);
+
+			_musicDriver->setTimerFrequency(MUSIC_TIMER_FREQUENCY_GAME);
 		}
-		debug(1, "looping at pos %d", startLoop);
-#endif
+
+		// Copy music data to local buffer and load it into the parser.
+		_musicData = new byte[file.size()];
+		file.read(_musicData, file.size());
+
+		if (!_musicParser->loadMusic(_musicData, file.size())) {
+			warning("Could not load music track %s", name);
+			return;
+		}
+
+		//debug("Playing music track %s", name);
+		_musicParser->startPlaying();
 	}
 }
 
 void Sound::musicPause() {
-	g_engine->_mixer->pauseHandle(_musicHandle, true);
+	_musicParser->pausePlaying();
 }
 
 void Sound::musicResume() {
-	g_engine->_mixer->pauseHandle(_musicHandle, false);
+	_musicParser->resumePlaying();
 }
 
 void Sound::musicStop() {
-	musicPause();
+	_musicParser->stopPlaying();
 	_currentMusic = nullptr;
 }
 
 bool Sound::musicIsOn() const {
-	return g_engine->_mixer->isSoundHandleActive(_musicHandle);
+	return _musicParser->isPlaying();
 }
 
 const char *Sound::getMusicName(const int num) const {
@@ -288,6 +339,13 @@ const char *Sound::getMusicName(const int num) const {
 		error("Invalid music");
 
 	return name;
+}
+
+void Sound::syncSoundSettings() {
+	g_engine->_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getBool("sfx_mute") || ConfMan.getBool("mute"));
+
+	if (_musicDriver)
+		_musicDriver->syncSoundSettings();
 }
 
 void playSound(const int index, const bool override) {

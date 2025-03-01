@@ -103,9 +103,6 @@ void showLevel(const int newLevel) {
 	if (!_G(setup)._scrollFlag)
 		_G(currentLevel) = newLevel; // Force no scroll
 
-	if (_G(currentMusic) != _G(levelMusic))
-		_G(sound).musicPause();
-
 	switch (_G(newLevel) - _G(currentLevel)) {
 	case 0:
 		// Nothing to do

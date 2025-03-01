@@ -36,6 +36,8 @@ MainMenu::MainMenu() : SelectOption("MainMenu", "God of Thunder Menu",
 
 bool MainMenu::msgFocus(const FocusMessage &msg) {
 	g_vars->resetEndGameFlags();
+	musicPlay("MENU", false);
+
 	return SelectOption::msgFocus(msg);
 }
 

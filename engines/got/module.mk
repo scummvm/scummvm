@@ -6,6 +6,9 @@ MODULE_OBJS = \
 	events.o \
 	messages.o \
 	metaengine.o \
+	musicdriver.o \
+	musicdriver_adlib.o \
+	musicparser.o \
 	sound.o \
 	vars.o \
 	data/actor.o \

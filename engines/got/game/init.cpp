@@ -110,7 +110,6 @@ void initGame() {
 	_G(newLevel) = _G(currentLevel);
 	_G(scrn).load(_G(currentLevel));
 	showLevel(_G(currentLevel));
-	_G(sound).musicPlay(_G(levelMusic), true);
 
 	g_vars->resetEndGameFlags();
 	_G(startup) = false;

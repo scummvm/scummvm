@@ -100,7 +100,9 @@ bool Opening::tick() {
 	} else if (_frameCtr == 41) {
 		_shakeX = 0;
 		redraw();
-	} else if (_frameCtr == 150) {
+	} else if (_frameCtr == 100) {
+		musicPlay("MENU", true);
+	} else if (_frameCtr == 200) {
 		fadeOut();
 		replaceView("Credits", true);
 	}

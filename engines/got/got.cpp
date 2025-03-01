@@ -207,10 +207,7 @@ bool GotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 void GotEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	const bool allSoundIsMuted = ConfMan.getBool("mute");
-
-	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getBool("sfx_mute") || allSoundIsMuted);
-	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getBool("music_mute") || allSoundIsMuted);
+	_G(sound).syncSoundSettings();
 }
 
 void GotEngine::pauseEngineIntern(bool pause) {
@@ -230,6 +227,13 @@ void GotEngine::pauseEngineIntern(bool pause) {
 	}
 
 	_G(thunderSnakeCounter) = 0;
+
+	if (pause) {
+		_G(sound).musicPause();
+	}
+	else {
+		_G(sound).musicResume();
+	}
 
 	Engine::pauseEngineIntern(pause);
 }

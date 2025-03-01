@@ -22,11 +22,12 @@
 #ifndef GOT_SOUND_H
 #define GOT_SOUND_H
 
-#include "audio/fmopl.h"
-
-#include "audio/mixer.h"
+#include "got/musicdriver.h"
+#include "got/musicparser.h"
 #include "got/data/defines.h"
 #include "got/gfx/gfx_chunks.h"
+
+#include "audio/mixer.h"
 
 namespace Got {
 
@@ -56,15 +57,20 @@ enum {
 
 class Sound {
 private:
+	static const uint8 MUSIC_TIMER_FREQUENCY_GAME = 120;
+	static const uint8 MUSIC_TIMER_FREQUENCY_TITLE = 140;
+
 	byte *_soundData = nullptr;
 	byte *_bossSounds[3];
 	Header _digiSounds[NUM_SOUNDS];
 	Audio::SoundHandle _soundHandle;
-	int _currentPriority = 0;
+	byte _currentPriority = 0;
 	int8 _currentBossLoaded = 0;
 
 	const char *_currentMusic = nullptr;
-	Audio::SoundHandle _musicHandle;
+	byte *_musicData = nullptr;
+	MusicDriver_Got *_musicDriver = nullptr;
+	MusicParser_Got *_musicParser = nullptr;
 
 	const char *getMusicName(int num) const;
 
@@ -87,6 +93,8 @@ public:
 	void musicResume();
 	void musicStop();
 	bool musicIsOn() const;
+
+	void syncSoundSettings();
 };
 
 extern void playSound(int index, bool override);
