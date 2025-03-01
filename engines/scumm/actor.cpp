@@ -1662,7 +1662,7 @@ void Actor::faceToObject(int obj) {
 	} else {
 		_vm->getObjectOrActorWidth(obj, width);
 		dir = (_pos.x < x2) ? 1 : 0;
-		if (abs(_pos.x - x2) < width / 2)
+		if (abs(_pos.x - x2) < (_vm->_game.version > 2 ? width / 2 : 2))
 			dir = (_pos.y > y2) ? 3 : 2;
 
 		dir = oldDirToNewDir(dir);
