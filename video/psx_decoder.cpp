@@ -189,6 +189,7 @@ void PSXStreamDecoder::readNextPacket() {
 	Common::SeekableReadStream *sector = 0;
 	byte *partialFrame = 0;
 	int sectorsRead = 0;
+	int64 prevPos = _stream->pos();
 
 	while (_stream->pos() < _stream->size()) {
 		sector = readSector();
@@ -211,6 +212,12 @@ void PSXStreamDecoder::readNextPacket() {
 				if (!_videoTrack) {
 					_videoTrack = new PSXVideoTrack(sector, _speed, _frameCount);
 					addTrack(_videoTrack);
+
+					// If no video track is initialized, we are called
+					// by loadStream(). Stop here, and start rendering
+					// the track from the next call.
+					_stream->seek(prevPos);
+					return;
 				}
 
 				sector->seek(28);
