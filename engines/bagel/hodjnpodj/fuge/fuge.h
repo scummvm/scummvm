@@ -19,20 +19,29 @@
  *
  */
 
-#ifndef HODJNPODJ_VIEWS_H
-#define HODJNPODJ_VIEWS_H
+#ifndef HODJNPODJ_DIALOGS_Fuge_H
+#define HODJNPODJ_DIALOGS_Fuge_H
 
-#include "bagel/hodjnpodj/dialogs/rules.h"
-#include "bagel/hodjnpodj/fuge/fuge.h"
+#include "bagel/hodjnpodj/view.h"
 
 namespace Bagel {
 namespace HodjNPodj {
+namespace Fuge {
 
-struct Views {
-	Dialogs::Rules _rules;
-	Fuge::Fuge _fuge;
+class Fuge : public View {
+public:
+	Fuge() : View("Fuge") {
+	}
+	virtual ~Fuge() {
+	}
+
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	void draw() override;
+	bool tick() override;
 };
 
+} // namespace Fuge
 } // namespace HodjNPodj
 } // namespace Bagel
 

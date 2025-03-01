@@ -108,6 +108,13 @@ struct GameMessage : public Message {
 	}
 };
 
+struct MinigameMessage : public Message {
+	Common::String _name;
+
+	MinigameMessage(const Common::String &name) :
+		Message(), _name(name) {}
+};
+
 struct ValueMessage : public Message {
 	int _value;
 
