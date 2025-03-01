@@ -571,6 +571,8 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 	bool primary = slot == 0;
 
 	if (video->decoder->getCurFrame() != properties.startFrame) {
+		if (video->live && _vm->getGameType() == kGameTypeAdibou2)
+			return true;
 
 		if (properties.startFrame != -1) {
 			// Seek into the middle of the video
