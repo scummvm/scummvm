@@ -76,6 +76,7 @@ int SagaEngine::processInput() {
 				return SUCCESS;
 			}
 
+#ifdef SAGA_DEBUG
 			switch (event.kbd.keycode) {
 #if 0
 			case Common::KEYCODE_KP_MINUS:
@@ -92,7 +93,6 @@ int SagaEngine::processInput() {
 				break;
 #endif
 
-#ifdef SAGA_DEBUG
 			case Common::KEYCODE_F1:
 				_render->toggleFlag(RF_SHOW_FPS);
 				_actor->_handleActionDiv = (_actor->_handleActionDiv == 15) ? 50 : 15;
@@ -114,11 +114,13 @@ int SagaEngine::processInput() {
 				break;
 			case Common::KEYCODE_F8:
 				break;
-#endif
 			default:
 				_interface->processAscii(event.kbd, event.customType);
 				break;
 			}
+#else
+			_interface->processAscii(event.kbd, event.customType);
+#endif
 			break;
 		case Common::EVENT_LBUTTONUP:
 			_leftMouseButtonPressed = false;
