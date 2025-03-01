@@ -367,13 +367,13 @@ void Image::loadBitmap4(Graphics::ManagedSurface *surf, uint32 toffset, Common::
 	stream->skip(toffset >> 1);
 
 	if (highByte) {
-		for (uint i = 0; i < tw * th; i += 2) {
+		for (uint32 i = 0; i < tw * th; i += 2) {
 			byte val = stream->readByte();
 			data[i + 0] |= val & 0xF0;
 			data[i + 1] |= (val & 0x0F) << 4;
 		}
 	} else {
-		for (uint i = 0; i < tw * th; i += 2) {
+		for (uint32 i = 0; i < tw * th; i += 2) {
 			byte val = stream->readByte();
 			data[i + 0] |= (val & 0xF0) >> 4;
 			data[i + 1] |= val & 0x0F;
@@ -509,7 +509,7 @@ uint32 Image::loadVQT(Graphics::ManagedSurface *surf, uint32 toffset, Common::Se
 	uint32 th = surf->h;
 	assert(th != 0);
 	assert(DgdsEngine::getInstance()->getGameId() != GID_CASTAWAY);
-	if (th > SCREEN_HEIGHT)
+	if (th > (uint32)SCREEN_HEIGHT)
 		error("Max VQT height supported is 200px");
 	VQTDecodeState state;
 	state.dstPtr = (byte *)surf->getPixels();
