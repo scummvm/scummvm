@@ -471,7 +471,7 @@ void MacFontManager::loadWindowsFont(const Common::Path &fileName) {
 	Common::String fontName = winFont->getName();
 	_winFontRegistry.setVal(fontName, winFont);
 	MacFont *font = new MacFont();
-	Common::String fullName = Common::String::format("%s-%d-%d", fontName.c_str(), winFont->getStyle(), winFont->getFontHeight());
+	Common::String fullName = Common::String::format("%s-%d-%d", fontName.c_str(), winFont->getStyle(), winFont->getFontSizeInPointsAtDPI(72));
 	font->setName(fullName);
 	font->setFont(winFont, false);
 	_fontRegistry.setVal(font->getName(), font);
@@ -510,8 +510,8 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 				font = _winFontRegistry.getVal(_fontInfo.getVal(id)->name);
 				const Graphics::WinFont *winfont = (const Graphics::WinFont *)font;
 
-				if (winfont->getFontHeight() != macFont->getSize()) {
-					Common::String fullFontName = Common::String::format("%s-%d-%d", winfont->getName().c_str(), winfont->getStyle(), macFont->getSize());
+				if (winfont->getFontSizeInPointsAtDPI(72) != macFont->getSize()) {
+					Common::String fullFontName = Common::String::format("%s-%d-%d", winfont->getName().c_str(), winfont->getStyle(), winfont->getFontSizeInPointsAtDPI(72));
 
 					if (_winFontRegistry.contains(fullFontName)) {
 						font = _winFontRegistry.getVal(fullFontName);
