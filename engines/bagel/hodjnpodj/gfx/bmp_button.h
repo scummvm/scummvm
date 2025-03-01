@@ -35,6 +35,8 @@ private:
 	Graphics::ManagedSurface _focused;
 	Graphics::ManagedSurface _disabled;
 
+	void loadBitmap(const char *name, Graphics::ManagedSurface &field);
+
 public:
 	BmpButton(const Common::String &name, UIElement *parent,
 		const Common::Rect &r) :
