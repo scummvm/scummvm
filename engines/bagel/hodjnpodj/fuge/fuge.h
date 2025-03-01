@@ -91,6 +91,7 @@ private:
 	void eraseBrick(int brickIndex);
 	void realignVectors();
 	ErrorCode loadMasterSprites();
+	ErrorCode loadNewPaddle(int);
 
 	void GameReset();
 	void GamePause();
@@ -99,7 +100,6 @@ private:
 	void ReleaseMasterSprites();
 	ErrorCode LoadMasterSounds();
 	void ReleaseMasterSounds();
-	ErrorCode LoadNewPaddle(int);
 	void InitializeJoystick();
 	void StartBall();
 	void EndBall();

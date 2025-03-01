@@ -30,36 +30,10 @@ namespace HodjNPodj {
 
 void BmpButton::loadBitmaps(const char *base, const char *selected,
 		const char *focused, const char *disabled) {
-	loadBitmap(base, _base);
-	loadBitmap(selected, _selected);
-	loadBitmap(focused, _focused);
-	loadBitmap(disabled, _disabled);
-}
-
-void BmpButton::loadBitmap(const char *name, Graphics::ManagedSurface &field) {
-	assert(name);
-
-	Image::BitmapDecoder decoder;
-	Common::File f;
-	if (!f.open(name) || !decoder.loadStream(f))
-		error("Could not load bitmap - %s", name);
-
-	// Create a lookup between the bitmap palette and game palette
-	byte destPal[PALETTE_SIZE];
-	g_system->getPaletteManager()->grabPalette(destPal, 0, PALETTE_COUNT);
-	Graphics::PaletteLookup lookup(destPal, PALETTE_COUNT);
-	uint32 *map = lookup.createMap(decoder.getPalette(),
-		decoder.getPaletteColorCount());
-
-	// Get the bitmap
-	field.copyFrom(decoder.getSurface());
-
-	// Translate the pixels using the lookup
-	byte *pixel = (byte *)field.getPixels();
-	for (int i = 0; i < field.w * field.h; ++i, ++pixel)
-		*pixel = map[*pixel];
-
-	delete[] map;
+	_base.loadBitmap(base);
+	_selected.loadBitmap(selected);
+	_focused.loadBitmap(focused);
+	_disabled.loadBitmap(disabled);
 }
 
 void BmpButton::clear() {

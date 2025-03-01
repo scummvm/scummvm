@@ -52,14 +52,13 @@ namespace Fuge {
 #define GFORCE_DEF     0
 #define GFORCE_MAX     20
 
+// Bitmaps originally embedded resources
+#define BALL_BMP		"fuge/art/ball.bmp"
+
 //
 // This mini-game's main screen bitmap
 //
 #define MINI_GAME_MAP   "ART/FUGE6.BMP"
-
-// Fuge sprite bitmaps
-//
-#define IDB_BALL        103
 
 #define N_PADDLE_CELS    31
 #define PADDLE_START_X  285

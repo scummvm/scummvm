@@ -29,6 +29,7 @@ namespace HodjNPodj {
 
 class GfxSurface : public Graphics::ManagedSurface {
 public:
+	GfxSurface() : Graphics::ManagedSurface() {}
 	GfxSurface(Graphics::ManagedSurface &surf, const Common::Rect &bounds) :
 		Graphics::ManagedSurface(surf, bounds) {
 	}
@@ -37,6 +38,9 @@ public:
 	void floodFill(const Common::Point &pt, byte color) {
 		floodFill(pt.x, pt.y, color);
 	}
+
+	void loadBitmap(const char *filename);
+	void convertTo(const byte *palette, int count = PALETTE_COUNT);
 };
 
 } // namespace HodjNPodj

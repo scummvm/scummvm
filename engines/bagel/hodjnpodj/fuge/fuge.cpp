@@ -330,6 +330,100 @@ void Fuge::realignVectors() {
 	}
 }
 
+
+ErrorCode Fuge::loadMasterSprites() {
+	ErrorCode errCode = loadNewPaddle(m_nInitPaddleSize);
+#ifdef TODO
+
+	if (errCode == ERR_NONE) {
+		m_pBall = new Graphics::ManagedSurface();
+
+		Image::BitmapDecoder decoder;
+
+
+		if (m_pBall->SharePalette(m_pGamePalette) != FALSE) {
+
+			if (m_pBall->LoadResourceSprite(pDC, BALL_BMP) != FALSE) {
+
+				m_pBall->SetMasked(TRUE);
+				m_pBall->SetMobile(TRUE);
+
+				// uncomment this if we decide to animate the ball as
+				// it moves
+				//if (m_pBall->LoadResourceCels(pDC, IDB_BALLSTRIP, N_BALLS) == FALSE)
+				//    errCode = ERR_UNKNOWN;
+
+			} else {
+				errCode = ERR_UNKNOWN;
+			}
+
+		} else {
+			errCode = ERR_UNKNOWN;
+		}
+	}
+#endif
+	return errCode;
+}
+
+
+ErrorCode Fuge::loadNewPaddle(int nNewSize) {
+	return ERR_NONE;
+#ifdef TODO
+	STATIC INT nOldSize = -1;
+	CDC *pDC;
+	ERROR_CODE errCode;
+
+	assert(nNewSize >= SIZE_MIN && nNewSize <= SIZE_MAX);
+
+	// assume no error
+	errCode = ERR_NONE;
+
+	if ((pDC = GetDC()) != NULL) {
+
+		// don't try to load the same paddle
+		//
+		if (nOldSize != nNewSize) {
+
+			if (m_pPaddle != NULL) {
+				m_pPaddle->EraseSprite(pDC);
+				m_pPaddle->UnlinkSprite();
+				delete m_pPaddle;
+				m_pPaddle = NULL;
+			}
+
+			if ((m_pPaddle = new CSprite) != NULL) {
+
+				if (m_pPaddle->SharePalette(m_pGamePalette) != FALSE) {
+
+					if (m_pPaddle->LoadCels(pDC, pszPaddles[nNewSize], N_PADDLE_CELS) != FALSE) {
+
+						nOldSize = nNewSize;
+						m_pPaddle->SetMasked(TRUE);
+						m_pPaddle->SetMobile(TRUE);
+						m_pPaddle->SetAnimated(TRUE);
+
+					} else {
+						errCode = ERR_UNKNOWN;
+					}
+
+				} else {
+					errCode = ERR_UNKNOWN;
+				}
+
+			} else {
+				errCode = ERR_MEMORY;
+			}
+		}
+		ReleaseDC(pDC);
+
+	} else {
+		errCode = ERR_MEMORY;
+	}
+
+	return errCode;
+#endif
+}
+
 } // namespace Fuge
 } // namespace HodjNPodj
 } // namespace Bagel

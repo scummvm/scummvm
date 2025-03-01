@@ -22,7 +22,7 @@
 #ifndef HODJNPODJ_GFX_BMP_BUTTON_H
 #define HODJNPODJ_GFX_BMP_BUTTON_H
 
-#include "graphics/managed_surface.h"
+#include "bagel/hodjnpodj/gfx/gfx_surface.h"
 #include "bagel/hodjnpodj/events.h"
 
 namespace Bagel {
@@ -30,12 +30,10 @@ namespace HodjNPodj {
 
 class BmpButton : public UIElement {
 private:
-	Graphics::ManagedSurface _base;
-	Graphics::ManagedSurface _selected;
-	Graphics::ManagedSurface _focused;
-	Graphics::ManagedSurface _disabled;
-
-	void loadBitmap(const char *name, Graphics::ManagedSurface &field);
+	GfxSurface _base;
+	GfxSurface _selected;
+	GfxSurface _focused;
+	GfxSurface _disabled;
 
 public:
 	BmpButton(const Common::String &name, UIElement *parent,

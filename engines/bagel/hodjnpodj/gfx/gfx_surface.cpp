@@ -19,7 +19,12 @@
  *
  */
 
+#include "common/file.h"
 #include "common/queue.h"
+#include "common/system.h"
+#include "graphics/palette.h"
+#include "graphics/paletteman.h"
+#include "image/bmp.h"
 #include "bagel/hodjnpodj/gfx/gfx_surface.h"
 
 namespace Bagel {
@@ -66,6 +71,42 @@ void GfxSurface::floodFill(int x, int y, byte color) {
 	}
 
 	addDirtyRect(Common::Rect(minX, minY, maxX + 1, maxY + 1));
+}
+
+void GfxSurface::loadBitmap(const char *filename) {
+	Common::File f;
+	Image::BitmapDecoder decoder;
+	if (!f.open(filename) || !decoder.loadStream(f))
+		error("Could not load bitmap - %s", filename);
+
+	// Get the bitmap
+	copyFrom(decoder.getSurface());
+	setPalette(decoder.getPalette(), 0, decoder.getPaletteColorCount());
+
+	// Convert it to the currently active game palette
+	byte destPal[PALETTE_SIZE];
+	g_system->getPaletteManager()->grabPalette(destPal, 0, PALETTE_COUNT);
+	convertTo(destPal);
+}
+
+void GfxSurface::convertTo(const byte *palette, int count) {
+	assert(hasPalette());
+	const Graphics::Palette *surfacePal = grabPalette();
+
+	// Create a lookup between the bitmap palette and game palette
+	Graphics::PaletteLookup lookup(palette, count);
+	uint32 *map = lookup.createMap(surfacePal->data(), PALETTE_COUNT);
+
+	// Translate the pixels using the lookup
+	byte *pixel = (byte *)getPixels();
+	for (int i = 0; i < this->w * this->h; ++i, ++pixel)
+		*pixel = map[*pixel];
+
+	delete[] map;
+
+	// Now we're using the game palette, don't maintain
+	// the surface-specific palette any longer
+	clearPalette();
 }
 
 } // namespace HodjNPodj
