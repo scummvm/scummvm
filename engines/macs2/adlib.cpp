@@ -117,7 +117,7 @@ void Adlib::Func27E4() {
 		} while (local_counter <= 0x11); // cmp 11h, jnz 281Ah
 	}
 
-void Adlib::Func2686() {
+uint16 Adlib::Func2686() {
 	// Ignoring this code for now, maybe just fancy sync stuff not needed on the emulator
 	/*
 
@@ -253,13 +253,15 @@ l0017_2774:
 	retf
 
 		*/
+	// TODO: Hardcoded zero return until this function is implementedf
+	return 0;
 }
 
 uint8 Adlib::Func2779(uint8 arg1) {
 	return gArray229C[arg1];
 }
 
-void Adlib::Func24FD() {
+uint16 Adlib::Func24FD() {
 	// This function was reverse-engineered with Deepseek R1
 	// Local variables (BP-2 = return value, BP-4/BG-6 temps)
 	uint16 return_value;
@@ -274,175 +276,60 @@ void Adlib::Func24FD() {
 	}
 
 	// [Original label: l0017_2510]
-	return_value = func_2686(); // Far call to 17:2686
+	return_value = Func2686();
 	if (return_value != 0) {
 		goto CLEANUP_2648;
 	}
 
 	// [Original label: l0017_2527]
 	// Following code corresponds to the memory/port operations
-	func_2792(1, 0x20); // Push args and call 17:2792
+	Func2792(0x1, 0x20);
 	// Additional far call to 17:2FBE
-	// ... other function calls
+	// That call saves the interrupt vector - not implementing this
+	// for now
 
-	asm volatile("cli"); // Disable interrupts
-
-	// Memory operations on various global addresses
-	*reinterpret_cast<uint16 *>(0x2250) = *global_2244;
-	*reinterpret_cast<uint16 *>(0x2252) = *global_2246;
-	// ... rest of memory initializations
+	// Original clears interrupts here
+	shMem2250 = shMem2244;
+	g225E = 0;
+	// TODO: Not sure if these are actually a pointer or 32 bit value
+	g225A = g225C = 0;
+	g2259 = 0;
+	g2291 = 9;
+	Func2792(0xBD, 0);
+	g223E = 0;
+	g2240 = 0;
 
 	// Loop 1: Initialize 225Fh-226Fh [Original labels: 257A-2593]
 	for (loop_counter = 0; loop_counter <= 0x0F; ++loop_counter) {
-		*reinterpret_cast<uint8 *>(0x225F + loop_counter) = 0;
-		*reinterpret_cast<uint8 *>(0x226F + loop_counter) = 0;
+		gArray225F[loop_counter] = 0;
+		gArray226F[loop_counter] = 0;
 	}
 
 	// Loop 2: Initialize array elements [Original labels: 259A-25C3]
 	for (loop_counter = 0; loop_counter <= 8; ++loop_counter) {
-		*reinterpret_cast<uint8 *>(0x222C + loop_counter) = 1;
-		*reinterpret_cast<uint8 *>(0x227F + loop_counter) = 0xFF;
-		// ... other array initializations
+		gArray222C[loop_counter] = 1;
+		gArray227F[loop_counter] = 0xFF;
+		gArray2288[loop_counter] = 0xFF;
+		gArray2235[loop_counter] = 0xFF;
 	}
+
+	
+	// l0017_25C3:
+	Func1A03();
 
 	// Device/hardware operations (timer/speaker?)
-	if (*reinterpret_cast<uint16 *>(0x224E) > 0x12) {
-		// Complex division and port writes
-		asm volatile(
-			"out %%al, %%dx"
-			:
-			: "a"(temp_var & 0xFF), "d"(0x40));
-		// ... more port operations
-	}
+	if ((g224E > 0x12) && (g224E != 0)) {
+		g224E += 9;
+		uint32 temp = g224E;
+		temp = temp % 0x12;
+		g224E -= temp;
+		g2296 = 0;
+		g2298 = g224E / 0x12;
 
-	// Final memory writes and cleanup [Original label: 2629]
-	*global_36 = 1;
-	asm volatile("sti"); // Enable interrupts
-	return_value = 0;
-
-CLEANUP_2648: // [Original label: l0017_2648]
-	return return_value;
-}
-
-
-void Adlib::Func24FD() {
-	/*
-
-	fn0017_24FD proc
-	enter	6h,0h
-	cmp	byte ptr [0036h],0h
-	jz	2510h
-
-l0017_2508:
-	mov	word ptr [bp-2h],3h
-	jmp	2648h
-
-l0017_2510:
-	call	far 0017h:2686h
-	mov	[bp-6h],ax
-	cmp	word ptr [bp-6h],0h
-	jz	2527h
-
-l0017_251E:
-	mov	ax,[bp-6h]
-	mov	[bp-2h],ax
-	jmp	2648h
-*/
-	// TODO: There is some conditional code around this one
-	// l0017_2527:
-	// Waveform select of register 1
-	Func2792(0x1, 0x20);
-	// TODO: Figure out this call
-	/*
-	push	8h
-	mov	di,2292h
-	push	ds
-	push	di
-	call	far 0017h:2FBEh
-	*/
-	// TODO: Figure out this part
-	/*
-	cli
-	mov	ax,[2244h]
-	mov	dx,[2246h]
-	mov	[2250h],ax
-	mov	[2252h],dx
-	mov	byte ptr [225Eh],0h
-	xor	ax,ax
-	mov	[225Ah],ax
-	mov	[225Ch],ax
-	mov	byte ptr [2259h],0h
-	mov	byte ptr [2291h],9h
-	*/
-	// rite to BD, Amplitude Modulation Depth / Vibrato Depth / Rhythm - all reset
-	Func2792(0xBD, 0);
-	/*
-	xor	ax,ax
-	mov	[223Eh],ax
-	mov	[2240h],ax
-	xor	ax,ax
-	mov	[bp-6h],ax
-	jmp	257Dh
-
-l0017_257A:
-	inc	word ptr [bp-6h]
-
-l0017_257D:
-	mov	di,[bp-6h]
-	mov	byte ptr [di+225Fh],0h
-	mov	di,[bp-6h]
-	mov	byte ptr [di+226Fh],0h
-	cmp	word ptr [bp-6h],0Fh
-	jnz	257Ah
-
-l0017_2593:
-	xor	ax,ax
-	mov	[bp-6h],ax
-	jmp	259Dh
-
-l0017_259A:
-	inc	word ptr [bp-6h]
-
-l0017_259D:
-	mov	di,[bp-6h]
-	mov	byte ptr [di+222Ch],1h
-	mov	di,[bp-6h]
-	mov	byte ptr [di+227Fh],0FFh
-	mov	di,[bp-6h]
-	mov	byte ptr [di+2288h],0FFh
-	mov	di,[bp-6h]
-	mov	byte ptr [di+2235h],0FFh
-	cmp	word ptr [bp-6h],8h
-	jnz	259Ah
-
-l0017_25C3:
-	call	far 0017h:1A03h
-	cmp	word ptr [224Eh],12h
-	jbe	2629h
-
-l0017_25CF:
-	cmp	word ptr [224Eh],0h
-	jz	2629h
-
-l0017_25D6:
-	add	word ptr [224Eh],9h
-	mov	ax,[224Eh]
-	xor	dx,dx
-	mov	cx,12h
-	div	cx
-	xchg	dx,ax
-	mov	dx,ax
-	mov	ax,[224Eh]
-	sub	ax,dx
-	mov	[224Eh],ax
-	xor	ax,ax
-	mov	[2296h],ax
-	mov	ax,[224Eh]
-	xor	dx,dx
-	mov	cx,12h
-	div	cx
-	mov	[2298h],ax
-	mov	ax,[224Eh]
+		// TODO: This part sets the frequency of the timer,
+		// leaving it out for now.
+		/*
+		mov	ax,[224Eh]
 	xor	dx,dx
 	mov	cx,ax
 	mov	bx,dx
@@ -456,28 +343,27 @@ l0017_25D6:
 	mov	ax,[bp-4h]
 	shr	ax,8h
 	out	40h,al
+		*/
+	}
 
-l0017_2629:
+	// l0017_2629:
+	// This part sets an interrupt
+	// TODO: Leaving out for now
+	/*
 	push	8h
 	mov	di,1A9Fh
 	mov	ax,17h
 	push	ax
 	push	di
 	call	far 0017h:2FD6h
-	mov	byte ptr [0036h],1h
 	*/
+	g36 = 1;
 	g2258 = 0x10;
-	/*
-	mov	byte ptr [2258h],10h
-	sti
-	xor	ax,ax
-	mov	[bp-2h],ax
+	// TODO: Enable interrupts - sti
+	return_value = 0;
 
-l0017_2648:
-	mov	ax,[bp-2h]
-	leave
-	retf
-	*/
+CLEANUP_2648: // [Original label: l0017_2648]
+	return return_value;
 }
 
 void Adlib::Func2839(uint8 bpp0A, uint32 bpp06) {
@@ -1534,6 +1420,14 @@ void Adlib::Init() {
 	int status = _opl->init();
 
 	gArray229C.resize(256);
+
+	gArray225F.resize(0x10);
+	gArray226F.resize(0x10);
+
+	gArray222C.resize(0x9);
+	gArray227F.resize(0x9);
+	gArray2288.resize(0x9);
+	gArray2235.resize(0x9);
 
 #define CALLBACKS_PER_SECOND 10
 	_opl->start(new Common::Functor0Mem<void, Adlib>(this, &Adlib::OnTimer), CALLBACKS_PER_SECOND);
