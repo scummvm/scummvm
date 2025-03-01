@@ -1935,6 +1935,7 @@ void DarkseedEngine::lookCode(int objNum) {
 void DarkseedEngine::printTime() {
 	_console->printTosText(958);
 	int hour = g_engine->_currentTimeInSeconds / 60 / 60 + 1;
+	// TODO fix chinese time display
 	_console->addToCurrentLine(Common::String::format("%d: %02d %s", hour % 12, (g_engine->_currentTimeInSeconds / 60) % 60, hour < 12 ? "a.m." : "p.m."));
 }
 

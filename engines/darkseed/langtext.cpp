@@ -30,6 +30,7 @@ Common::U32String getI18NText(const I18nText &text) {
 	case Common::FR_FRA : return Common::U32String(text.fr);
 	case Common::DE_DEU : return Common::U32String(text.de);
 	case Common::KO_KOR : return text.ko ? convertToU32String(text.ko, Common::KO_KOR) : Common::U32String(text.en);
+	case Common::ZH_ANY : return text.zh ? convertToU32String(text.zh, Common::ZH_ANY) : Common::U32String(text.en);
 	default : return Common::U32String(text.en);
 	}
 }
