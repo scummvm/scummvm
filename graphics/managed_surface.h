@@ -1028,6 +1028,9 @@ public:
 	 * Grab the palette using RGB tuples.
 	 */
 	void grabPalette(byte *colors, uint start, uint num) const;
+	const Graphics::Palette *grabPalette() const {
+		return _palette;
+	}
 
 	/**
 	 * Set the palette using RGB tuples.
