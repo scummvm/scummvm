@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef HODJNPODJ_DIALOGS_Fuge_H
-#define HODJNPODJ_DIALOGS_Fuge_H
+#ifndef HODJNPODJ_FUGE_FUGE_H
+#define HODJNPODJ_FUGE_FUGE_H
 
-#include "bagel/hodjnpodj/view.h"
+#include "bagel/hodjnpodj/gfx/view.h"
 #include "bagel/hodjnpodj/boflib/vector.h"
 #include "bagel/hodjnpodj/fuge/defines.h"
 #include "bagel/boflib/error.h"
@@ -36,13 +36,15 @@ class Fuge : public View {
 private:
 	//CBmpButton *m_pScrollButton;
 	Graphics::Palette m_GamePalette;
+	Graphics::ManagedSurface _background;
+	int _backgroundNumRows = -1;
 
-	bool        m_bBrickVisible[N_BRICKS];
-	Common::Point      m_ptOrigin;
-	Common::Rect       m_rNewGameButton;
-	Common::Rect       m_rBlackHole;
-	CVector     m_vBallVector;
-	CVector     m_ptBallLocation;
+	bool m_bBrickVisible[N_BRICKS] = { false };
+	const Common::Point m_ptOrigin;
+	const Common::Rect m_rNewGameButton;
+	Common::Rect m_rBlackHole;
+	CVector m_vBallVector;
+	CVector m_ptBallLocation;
 	Graphics::ManagedSurface *m_pBall;
 	Graphics::ManagedSurface *m_pPaddle;
 	CBofSound *m_pSoundTrack;
@@ -83,6 +85,11 @@ private:
 
 private:
 	void clear();
+	void paintBricks();
+	void repaintSpriteList();
+	void eraseBrick(int brickIndex);
+
+
 	void GameReset();
 	void GamePause();
 	void GameResume();
@@ -94,8 +101,6 @@ private:
 	void ReleaseMasterSounds();
 	ErrorCode LoadNewPaddle(int);
 	void InitializeJoystick();
-	void RepaintSpriteList(void *);
-	void PaintBricks(void *);
 	void StartBall();
 	void EndBall();
 	void PaintBall();
@@ -106,7 +111,6 @@ private:
 	CVector BallOnPaddle();
 	void StartBricks();
 	void EndBricks();
-	void EraseBrick(void *, int);
 	void LoseBall();
 	void BallvsPaddle();
 	void BallvsBrick(double);
@@ -128,9 +132,7 @@ private:
 	void OnClose();
 
 public:
-	Fuge() : View("Fuge"), m_GamePalette(0) {
-		clear();
-	}
+	Fuge();
 	virtual ~Fuge() {
 	}
 

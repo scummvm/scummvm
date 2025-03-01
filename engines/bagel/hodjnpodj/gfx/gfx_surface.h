@@ -19,33 +19,25 @@
  *
  */
 
-#ifndef BAGEL_HODJNPODJ_GLOBALS_H
-#define BAGEL_HODJNPODJ_GLOBALS_H
+#ifndef HODJNPODJ_VIEWS_GFX_SURFACE_H
+#define HODJNPODJ_VIEWS_GFX_SURFACE_H
+
+#include "graphics/managed_surface.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-/*
-* Main Window positioning constants
-*/
-#define GAME_WIDTH                  640
-#define GAME_HEIGHT                 480
-#define GAME_TOP_BORDER_WIDTH        24
-#define GAME_BOTTOM_BORDER_WIDTH     16
-#define GAME_LEFT_BORDER_WIDTH       16
-#define GAME_RIGHT_BORDER_WIDTH      16
+class GfxSurface : public Graphics::ManagedSurface {
+public:
+	GfxSurface(Graphics::ManagedSurface &surf, const Common::Rect &bounds) :
+		Graphics::ManagedSurface(surf, bounds) {
+	}
 
-// Scroll button size and positioning information
-#define SCROLL_BUTTON_X		250
-#define SCROLL_BUTTON_Y		0
-#define SCROLL_BUTTON_DX	140
-#define SCROLL_BUTTON_DY    23
-
-// New Game button area
-#define	NEWGAME_LOCATION_X	 15
-#define	NEWGAME_LOCATION_Y	  0
-#define	NEWGAME_WIDTH		217
-#define NEWGAME_HEIGHT		 20
+	void floodFill(int x, int y, byte color);
+	void floodFill(const Common::Point &pt, byte color) {
+		floodFill(pt.x, pt.y, color);
+	}
+};
 
 } // namespace HodjNPodj
 } // namespace Bagel

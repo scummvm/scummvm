@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/hodjnpodj/view.h"
+#include "bagel/hodjnpodj/gfx/view.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -80,4 +80,4 @@ bool View::msgMouseUp(const MouseUpMessage &msg) {
 }
 
 } // namespace HodjNPodj
-} // namesapce Bagel
+} // namespace Bagel

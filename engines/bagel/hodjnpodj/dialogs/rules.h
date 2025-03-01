@@ -22,7 +22,7 @@
 #ifndef HODJNPODJ_DIALOGS_RULES_H
 #define HODJNPODJ_DIALOGS_RULES_H
 
-#include "bagel/hodjnpodj/view.h"
+#include "bagel/hodjnpodj/gfx/view.h"
 
 namespace Bagel {
 namespace HodjNPodj {

@@ -26,6 +26,7 @@
 #include "common/stack.h"
 #include "graphics/screen.h"
 #include "bagel/hodjnpodj/messages.h"
+#include "bagel/hodjnpodj/gfx/gfx_surface.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -196,7 +197,7 @@ public:
 	/**
 	 * Returns a surface for drawing the element
 	 */
-	Graphics::ManagedSurface getSurface() const;
+	GfxSurface getSurface() const;
 
 	/**
 	 * Clear the surface

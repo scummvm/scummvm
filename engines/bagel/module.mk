@@ -119,7 +119,8 @@ MODULE_OBJS = \
 	hodjnpodj/console.o \
 	hodjnpodj/events.o \
 	hodjnpodj/messages.o \
-	hodjnpodj/view.o \
+	hodjnpodj/gfx/gfx_surface.o \
+	hodjnpodj/gfx/view.o \
 	hodjnpodj/boflib/vector.o \
 	hodjnpodj/dialogs/rules.o \
 	hodjnpodj/fuge/fuge.o \

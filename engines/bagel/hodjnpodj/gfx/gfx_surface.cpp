@@ -1,0 +1,72 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/queue.h"
+#include "bagel/hodjnpodj/gfx/gfx_surface.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+
+void GfxSurface::floodFill(int x, int y, byte color) {
+	if (x < 0 || y < 0 || x >= this->w || y >= this->h)
+		return;
+
+	byte *pixel = (byte *)getBasePtr(x, y);
+	const byte oldColor = *pixel;
+	int cx, cy;
+	int minX = 9999, maxX = -1, minY = 9999, maxY = -1;
+
+	Common::Queue<Common::Pair<int, int>> queue;
+	queue.push({ x, y });
+
+	while (!queue.empty()) {
+		cx = queue.front().first;
+		cy = queue.front().second;
+		queue.pop();
+
+		// Check bounds and color match
+		if (cx < 0 || cx >= this->w || cy < 0 || cy >= this->h)
+			continue;
+		pixel = (byte *)getBasePtr(cx, cy);
+		if (*pixel != oldColor)
+			continue;
+
+		// Set new color
+		*pixel = color;
+
+		// Keep track of the modified area
+		minX = MIN(minX, cx);
+		maxX = MAX(maxX, cx);
+		minY = MIN(minY, cy);
+		maxY = MAX(maxY, cy);
+
+		// Push neighboring pixels
+		queue.push({ cx + 1, cy });
+		queue.push({ cx - 1, cy });
+		queue.push({ cx, cy + 1 });
+		queue.push({ cx, cy - 1 });
+	}
+
+	addDirtyRect(Common::Rect(minX, minY, maxX + 1, maxY + 1));
+}
+
+} // namespace HodjNPodj
+} // namespace Bagel

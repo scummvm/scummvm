@@ -60,7 +60,7 @@ Common::String HodjNPodjEngine::getGameId() const {
 }
 
 Common::Error HodjNPodjEngine::run() {
-	initGraphics(640, 480);
+	initGraphics(GAME_WIDTH, GAME_HEIGHT);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());

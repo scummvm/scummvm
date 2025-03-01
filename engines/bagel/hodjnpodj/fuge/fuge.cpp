@@ -26,6 +26,7 @@
 #include "bagel/hodjnpodj/fuge/fuge.h"
 #include "bagel/hodjnpodj/fuge/defines.h"
 #include "bagel/hodjnpodj/boflib/vector.h"
+#include "bagel/hodjnpodj/globals.h"
 #include "bagel/boflib/point.h"
 #include "bagel/boflib/size.h"
 
@@ -169,6 +170,13 @@ static double fPaddleAngles[N_PADDLE_SIZES] = {
 	PADDLE2_ANGLE
 };
 
+Fuge::Fuge() : View("Fuge"), m_GamePalette(0),
+		m_rNewGameButton(NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
+			NEWGAME_LOCATION_X + NEWGAME_WIDTH, NEWGAME_LOCATION_Y + NEWGAME_HEIGHT),
+		m_ptOrigin(GAME_WIDTH / 2, GAME_HEIGHT / 2) {
+	clear();
+}
+
 void Fuge::clear() {
 	m_nInitNumBalls = BALLS_DEF;
 	m_nInitStartLevel = LEVEL_DEF;
@@ -204,6 +212,9 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 	Common::FSNode gamePath(ConfMan.getPath("path"));
 	SearchMan.addDirectory("minigame", gamePath.getChild("fuge"), 0, 2);
 
+	// Clear fields
+	clear();
+
 	// Get the game palette from a bitmap
 	Image::BitmapDecoder decoder;
 	Common::File f;
@@ -217,7 +228,13 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 }
 
 bool Fuge::msgClose(const CloseMessage &msg) {
+	// Remove the SearchMan reference to our subfolder
 	SearchMan.remove("minigame");
+
+	// Clear bitmaps
+	_background.clear();
+	_backgroundNumRows = -1;
+
 	return true;
 }
 
@@ -226,19 +243,57 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 }
 
 void Fuge::draw() {
-	// Dummy image display
-	Image::BitmapDecoder decoder;
-	Common::File f;
-	if (!f.open(MINI_GAME_MAP) || !decoder.loadStream(f))
-		error("Could not load %s", MINI_GAME_MAP);
+	paintBricks();
+	repaintSpriteList();
 
-	Graphics::ManagedSurface s = getSurface();
-	s.blitFrom(*decoder.getSurface());
+}
+
+void Fuge::paintBricks() {
+	assert((m_nNumRows >= 0) && (m_nNumRows <= N_ROWS));
+
+	if (m_nNumRows != _backgroundNumRows) {
+		// Change the background bitmap
+		_backgroundNumRows = m_nNumRows;
+
+		Image::BitmapDecoder decoder;
+		Common::File f;
+		if (!f.open(pszFugeArt[m_nNumRows]) || !decoder.loadStream(f))
+			error("Could not load %s", MINI_GAME_MAP);
+
+		_background.copyFrom(*decoder.getSurface());
+	}
+
+	// Draw the background
+	GfxSurface s = getSurface();
+	s.blitFrom(_background);
+
+	// Erase all the bricks that are hidden
+	if (m_nNumRows != 0) {
+		for (int brickIndex = 0; brickIndex < N_BRICKS; brickIndex++) {
+			if (!m_bBrickVisible[brickIndex]) {
+				// Remove this brick from the screen
+				s.floodFill(ptBrickPos[brickIndex].x + ptBrickSize[brickIndex].cx / 2,
+					ptBrickPos[brickIndex].y + ptBrickSize[brickIndex].cy / 2,
+					255);
+			}
+		}
+	}
+}
+
+void Fuge::repaintSpriteList() {
+
 }
 
 bool Fuge::tick() {
 	return true;
 }
+
+void Fuge::eraseBrick(int brickIndex) {
+	assert((brickIndex >= 0) && (brickIndex < N_BRICKS));
+	m_bBrickVisible[brickIndex] = false;
+	redraw();
+}
+
 
 } // namespace Fuge
 } // namespace HodjNPodj

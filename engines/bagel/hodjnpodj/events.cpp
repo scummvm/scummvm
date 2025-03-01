@@ -23,7 +23,8 @@
 #include "graphics/screen.h"
 #include "bagel/hodjnpodj/events.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
-#include "bagel/hodjnpodj/views.h"
+#include "bagel/hodjnpodj/gfx/views.h"
+#include "bagel/hodjnpodj/globals.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -200,7 +201,7 @@ void Events::addKeypress(const Common::KeyCode kc) {
 /*------------------------------------------------------------------------*/
 
 Bounds::Bounds(Common::Rect &innerBounds) :
-	_bounds(0, 0, 640, 480),
+	_bounds(0, 0, GAME_WIDTH, GAME_HEIGHT),
 	_innerBounds(innerBounds),
 	left(_bounds.left), top(_bounds.top),
 	right(_bounds.right), bottom(_bounds.bottom) {
@@ -324,8 +325,8 @@ void UIElement::addView() {
 	g_events->addView(this);
 }
 
-Graphics::ManagedSurface UIElement::getSurface() const {
-	return Graphics::ManagedSurface(*g_events->getScreen(), _bounds);
+GfxSurface UIElement::getSurface() const {
+	return GfxSurface(*g_events->getScreen(), _bounds);
 }
 
 int UIElement::getRandomNumber(int minNumber, int maxNumber) {
