@@ -19,37 +19,42 @@
  *
  */
 
-#ifndef BAGEL_HODJNPODJ_GLOBALS_H
-#define BAGEL_HODJNPODJ_GLOBALS_H
+#include "common/file.h"
+#include "image/bmp.h"
+#include "bagel/hodjnpodj/gfx/bmp_button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-/*
-* Main Window positioning constants
-*/
-#define GAME_WIDTH                  640
-#define GAME_HEIGHT                 480
-#define GAME_TOP_BORDER_WIDTH        24
-#define GAME_BOTTOM_BORDER_WIDTH     16
-#define GAME_LEFT_BORDER_WIDTH       16
-#define GAME_RIGHT_BORDER_WIDTH      16
+void BmpButton::loadBitmaps(const char *base, const char *selected,
+		const char *focused, const char *disabled) {
+	#define LOAD(FILE, FIELD) \
+		if (FILE) { \
+			Image::BitmapDecoder decoder; \
+			Common::File f; \
+			if (f.exists(FILE) && f.open(FILE) && decoder.loadStream(f)) \
+				FIELD.copyFrom(decoder.getSurface()); \
+			else \
+				error("Could not load bitmap - %s", FILE); \
+		}
+	LOAD(base, _base)
+	LOAD(selected, _selected)
+	LOAD(focused, _focused)
+	LOAD(disabled, _disabled)
+	#undef LOAD
+}
 
-// Scroll button size and positioning information
-#define SCROLL_BUTTON_X		250
-#define SCROLL_BUTTON_Y		0
-#define SCROLL_BUTTON_DX	140
-#define SCROLL_BUTTON_DY    23
-#define SCROLLUP "ART/SCROLLUP.BMP"
-#define SCROLLDOWN "ART/SCROLLDN.BMP"
+void BmpButton::clear() {
+	_base.clear();
+	_selected.clear();
+	_focused.clear();
+	_disabled.clear();
+}
 
-// New Game button area
-#define	NEWGAME_LOCATION_X	 15
-#define	NEWGAME_LOCATION_Y	  0
-#define	NEWGAME_WIDTH		217
-#define NEWGAME_HEIGHT		 20
+void BmpButton::draw() {
+	GfxSurface s = getSurface();
+	s.blitFrom(_base);
+}
 
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif

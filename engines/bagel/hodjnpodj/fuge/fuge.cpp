@@ -173,7 +173,12 @@ static double fPaddleAngles[N_PADDLE_SIZES] = {
 Fuge::Fuge() : View("Fuge"), m_GamePalette(0),
 		m_rNewGameButton(NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
 			NEWGAME_LOCATION_X + NEWGAME_WIDTH, NEWGAME_LOCATION_Y + NEWGAME_HEIGHT),
+		m_ScrollButton("ScrollButton", this, Common::Rect(
+			SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
+			SCROLL_BUTTON_X + SCROLL_BUTTON_DX,
+			SCROLL_BUTTON_Y + SCROLL_BUTTON_DY)),
 		m_ptOrigin(GAME_WIDTH / 2, GAME_HEIGHT / 2) {
+
 	clear();
 }
 
@@ -224,6 +229,9 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 	m_GamePalette = Graphics::Palette(decoder.getPalette(), decoder.getPaletteColorCount());
 	g_system->getPaletteManager()->setPalette(m_GamePalette);
 
+	// Load scroll button
+	m_ScrollButton.loadBitmaps(SCROLLUP, SCROLLDOWN, SCROLLUP, SCROLLUP);
+
 	return true;
 }
 
@@ -234,6 +242,7 @@ bool Fuge::msgClose(const CloseMessage &msg) {
 	// Clear bitmaps
 	_background.clear();
 	_backgroundNumRows = -1;
+	m_ScrollButton.clear();
 
 	return true;
 }
