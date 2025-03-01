@@ -166,7 +166,7 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 	if (_pressedButton != -1 && _pressStart != 0) {
 		uint32 curTime = g_nancy->getTotalPlayTime();
 		uint pixelsToMove = 0;
-		if (curTime - _pressStart >= 1000 / _pixelsToScroll) {
+		if (curTime - _pressStart >= 1000u / _pixelsToScroll) {
 			pixelsToMove = (curTime - _pressStart) / (1000 / _pixelsToScroll);
 		}
 
