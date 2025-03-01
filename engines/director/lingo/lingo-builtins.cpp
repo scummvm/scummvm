@@ -830,7 +830,7 @@ void LB::b_findPos(int nargs) {
 			else
 				d = 0;
 		} else {
-			if (prop.asInt() > 0 && prop.asInt() <= list.u.farr->arr.size())
+			if (prop.asInt() > 0 && prop.asInt() <= (int)list.u.farr->arr.size())
 				d = prop.asInt();
 			else
 				d = 0;
