@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-02-28 17:55+0000\n"
+"POT-Creation-Date: 2025-03-01 01:35+0000\n"
 "PO-Revision-Date: 2025-02-26 12:46+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -7457,7 +7457,7 @@ msgstr "게임 나가기"
 msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685 지원이 컴파일 되지 않음"
 
-#: engines/darkseed/darkseed.cpp:67
+#: engines/darkseed/darkseed.cpp:68
 msgid "Unable to locate the darkseed.dat engine data file."
 msgstr "darkseed.dat 엔진 데이터 파일을 찾을 수 없습니다."
 
