@@ -39,6 +39,17 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+struct GAMESTRUCT {
+	long lCrowns;
+	long lScore;
+	int  nSkillLevel;
+	bool bSoundEffectsEnabled;
+	bool bMusicEnabled;
+	bool bPlayingMetagame;
+	bool bPlayingHodj;
+};
+extern GAMESTRUCT gameInfo;
+
 class HodjNPodjEngine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;

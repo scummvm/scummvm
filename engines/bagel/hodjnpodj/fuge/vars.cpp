@@ -26,6 +26,18 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Fuge {
 
+Vars *g_vars = nullptr;
+
+Vars::Vars() : _gvCenter(CENTER_X, CENTER_Y) {
+	g_vars = this;
+}
+
+Vars::~Vars() {
+	g_vars = nullptr;
+}
+
+void Vars::clear() {
+}
 
 } // namespace Fuge
 } // namespace HodjNPodj

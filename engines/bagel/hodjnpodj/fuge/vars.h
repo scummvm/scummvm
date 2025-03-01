@@ -27,62 +27,21 @@
 #include "graphics/palette.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/hodjnpodj/boflib/vector.h"
+#include "bagel/hodjnpodj/fuge/defines.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Fuge {
 
-#define N_ROWS           6
-#define BRICKS_PER_ROW  16
-#define N_BRICKS        (N_ROWS * BRICKS_PER_ROW)
-
 struct Vars {
-	bool _bBrickVisible[N_BRICKS] = { false };
-	Common::Point _ptOrigin;
-	Common::Rect _rNewGameButton;
-	Common::Rect _rBlackHole;
-	CVector _vBallVector;
-	CVector _ptBallLocation;
-	Graphics::Palette *m_pGamePalette = nullptr;
-	//CBmpButton *m_pScrollButton;
-	Graphics::ManagedSurface *m_pBall = nullptr;
-	Graphics::ManagedSurface *m_pPaddle = nullptr;
-	CSound *m_pSoundTrack = nullptr;
+	CVector _gvCenter;
 
-	Common::String _pBrickSound;
-	Common::String _pWallSound;
-	Common::String _pPaddleSound;
-	Common::String _pExtraLifeSound;
-	void *_hBrickRes = nullptr;
-	void *_hWallRes = nullptr;
-	void *_hPaddleRes = nullptr;
-	void *_hExtraLifeRes = nullptr;
-
-	int _nInitNumBalls = 0;
-	int _nInitStartLevel = 0;
-	int _nInitBallSpeed = 0;
-	int _nInitPaddleSize = 0;
-	int _nGForceFactor = 0;
-
-	double _fTurboBoost = 0;
-	long _lScore = 0;
-	long _lExtraLifeScore = 0;
-	long _nJoyOrgX = 0;
-	long _nJoyOrgY = 0;
-	int _nBricks = 0;
-	int _nBalls = 0;
-	int _nBallSpeed = 0;
-	int _nNumRows = 0;
-	int _nPaddleCelIndex = 0;
-	bool _bMovingPaddle = false;
-	bool _bGameActive = false;
-	bool _bPause = false;
-	bool _bIgnoreScrollClick = false;
-	bool _bPaddleHit = false;
-	bool _bOutterWall = false;
-	bool _bJoyActive = false;
-	bool _bBallOnPaddle = false;
+	Vars();
+	~Vars();
+	void clear();
 };
+
+extern Vars *g_vars;
 
 } // namespace Fuge
 } // namespace HodjNPodj

@@ -33,10 +33,19 @@ namespace Bagel {
 namespace HodjNPodj {
 
 HodjNPodjEngine *g_engine;
+GAMESTRUCT gameInfo;
 
 HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-_gameDescription(gameDesc), _randomSource("HodjNPodj") {
+		_gameDescription(gameDesc), _randomSource("HodjNPodj") {
 	g_engine = this;
+
+	gameInfo.lCrowns = 0;
+	gameInfo.lScore = 0;
+	gameInfo.nSkillLevel = 0;
+	gameInfo.bSoundEffectsEnabled = false;
+	gameInfo.bMusicEnabled = false;
+	gameInfo.bPlayingMetagame = false;
+	gameInfo.bPlayingHodj = false;
 }
 
 HodjNPodjEngine::~HodjNPodjEngine() {

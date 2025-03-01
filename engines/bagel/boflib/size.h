@@ -28,27 +28,29 @@
 
 namespace Bagel {
 
-class CBofSize : public StSize, public CBofObject {
+typedef StSize SIZE;
+
+class CBofSize : public SIZE, public CBofObject {
 public:
 	// Constructors
 	CBofSize();
 	virtual ~CBofSize() {
 	}
 	CBofSize(int initCX, int initCY);
-	CBofSize(const StSize &stSize);
+	CBofSize(const SIZE &stSize);
 	CBofSize(const CBofSize &cSize);
 	CBofSize(StPoint stPoint);
 
 	// Operations
 	void operator=(const CBofSize &cSize);
-	bool operator==(StSize size);
-	bool operator!=(StSize size);
-	void operator+=(StSize size);
-	void operator-=(StSize size);
+	bool operator==(SIZE size);
+	bool operator!=(SIZE size);
+	void operator+=(SIZE size);
+	void operator-=(SIZE size);
 
 	// Operators returning CBofSize values
-	CBofSize operator+(StSize size);
-	CBofSize operator-(StSize size);
+	CBofSize operator+(SIZE size);
+	CBofSize operator-(SIZE size);
 	CBofSize operator-();
 };
 
@@ -62,7 +64,7 @@ inline CBofSize::CBofSize(int initCX, int initCY) {
 	cy = initCY;
 }
 
-inline CBofSize::CBofSize(const StSize &stSize) {
+inline CBofSize::CBofSize(const SIZE &stSize) {
 	cx = stSize.cx;
 	cy = stSize.cy;
 }
@@ -82,21 +84,21 @@ inline void CBofSize::operator=(const CBofSize &cSize) {
 	cy = cSize.cy;
 }
 
-inline bool CBofSize::operator==(StSize size) {
+inline bool CBofSize::operator==(SIZE size) {
 	// Make sure object is not used after it is destructed
 	assert(isValidObject(this));
 
 	return (cx == size.cx && cy == size.cy);
 }
 
-inline bool CBofSize::operator!=(StSize size) {
+inline bool CBofSize::operator!=(SIZE size) {
 	// Make sure object is not used after it is destructed
 	assert(isValidObject(this));
 
 	return (cx != size.cx || cy != size.cy);
 }
 
-inline void CBofSize::operator+=(StSize size) {
+inline void CBofSize::operator+=(SIZE size) {
 	// Make sure object is not used after it is destructed
 	assert(isValidObject(this));
 
@@ -104,7 +106,7 @@ inline void CBofSize::operator+=(StSize size) {
 	cy += size.cy;
 }
 
-inline void CBofSize::operator-=(StSize size) {
+inline void CBofSize::operator-=(SIZE size) {
 	// Make sure object is not used after it is destructed
 	assert(isValidObject(this));
 
@@ -112,14 +114,14 @@ inline void CBofSize::operator-=(StSize size) {
 	cy -= size.cy;
 }
 
-inline CBofSize CBofSize::operator+(StSize size) {
+inline CBofSize CBofSize::operator+(SIZE size) {
 	// Make sure object is not used after it is destructed
 	assert(isValidObject(this));
 
 	return CBofSize(cx + size.cx, cy + size.cy);
 }
 
-inline CBofSize CBofSize::operator-(StSize size) {
+inline CBofSize CBofSize::operator-(SIZE size) {
 	// Make sure object is not used after it is destructed
 	assert(isValidObject(this));
 
