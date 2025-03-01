@@ -421,6 +421,9 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 	while ((properties.startFrame != properties.lastFrame) &&
 	       (properties.startFrame < (int32)(video->decoder->getFrameCount() - 1))) {
 
+		if (_vm->getGameType() == kGameTypeAdibou2 && video->live)
+			properties.startFrame = video->decoder->getCurFrame();
+
 		playFrame(slot, properties);
 		if (properties.canceled)
 			break;
