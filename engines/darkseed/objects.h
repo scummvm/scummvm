@@ -71,6 +71,7 @@ public:
 
 private:
 	void loadKoreanObjectNames();
+	void loadChineseObjectNames();
 
 	Common::U32String readU32String(Common::SeekableReadStream &readStream);
 };

@@ -22,18 +22,26 @@
 #ifndef DARKSEED_MENU_H
 #define DARKSEED_MENU_H
 
+#include "darkseed/zhmenufont.h"
+#include "darkseed/langtext.h"
+
 namespace Darkseed {
 
 class Menu {
 private:
 	bool _open = false;
+	ZhMenuFont *_zhFont = nullptr;
+
 public:
+	Menu();
+	~Menu();
 	bool isOpen() const { return _open; }
 
 	void loadMenu();
 private:
 	void drawSoundMenuItem();
 	Common::KeyCode getLocalisedConfirmToQuitKeycode();
+	void drawMenuItem(const I18NTextWithPosition &menuText);
 };
 
 } // namespace Darkseed

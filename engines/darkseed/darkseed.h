@@ -118,7 +118,7 @@ public:
 	UseCode *_useCode = nullptr;
 	Cutscene _cutscene;
 	Animation *_animation = nullptr;
-	Menu _menu;
+	Menu *_menu = nullptr;
 
 	uint8 _currentDay = 1;
 	int _currentTimeInSeconds = 0x7e8e;
@@ -214,7 +214,7 @@ public:
 	}
 
 	bool canSaveGameStateCurrently(Common::U32String *msg) override {
-		return _canSaveGame && !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_heroWaiting && !_cutscene.isPlaying() && !_menu.isOpen();
+		return _canSaveGame && !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_heroWaiting && !_cutscene.isPlaying() && !_menu->isOpen();
 	}
 
 	/**

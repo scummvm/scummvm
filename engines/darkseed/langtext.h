@@ -54,7 +54,7 @@ struct I18NTextWithPosition {
 	const TextWithPosition fr;
 	const TextWithPosition de;
 	const TextWithPosition ko;
-
+	const TextWithPosition zh;
 };
 
 Common::U32String getI18NText(const I18nText &text);

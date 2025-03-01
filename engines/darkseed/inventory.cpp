@@ -142,7 +142,7 @@ void Inventory::handleClick() {
 	} else if (icon == 43) {
 		rightArrowClicked();
 	} else if (icon == 4) {
-		g_engine->_menu.loadMenu();
+		g_engine->_menu->loadMenu();
 	} else if (icon == 21) {
 		g_engine->_console->printTosText(935);
 		g_engine->_objectVar[21] = 1;

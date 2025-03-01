@@ -32,7 +32,8 @@ constexpr I18NTextWithPosition kMenu_load = {
 	{119, 62, "CARGAR"},
 	{118, 62, "CHARGER"},
 	{121, 62, "LADEN"},
-	{120, 62, "\xA6\x89\x9C\xE1\x90\x91"}
+	{120, 62, "\xA6\x89\x9C\xE1\x90\x91"},
+	{118, 55, "\xa8\xfa\x20\xc0\xc9"}
 };
 
 constexpr I18NTextWithPosition kMenu_silent = {
@@ -40,7 +41,9 @@ constexpr I18NTextWithPosition kMenu_silent = {
 	{115, 136, "SIN SON"},
 	{118, 136, "SILENCE"},
 	{129, 136, "RUHE"},
-	{121, 136, "\xB7q\xAD\xA1\x88\xE1"}
+	{121, 136, "\xB7q\xAD\xA1\x88\xE1"},
+	{118, 129, "\xc0\x52\x20\xad\xb5"}
+
 };
 
 constexpr I18NTextWithPosition kMenu_sounds = {
@@ -48,7 +51,8 @@ constexpr I18NTextWithPosition kMenu_sounds = {
 	{121, 136, "SONIDO"},
 	{126, 136, "SONS"},
 	{123, 136, "SOUND"},
-	{128, 136, "\xB7q\xD0\xB7"}
+	{128, 136, "\xB7q\xD0\xB7"},
+{118, 129, "\xad\xb5\x20\xae\xc4"}
 };
 
 constexpr I18NTextWithPosition kMenu_save = {
@@ -56,7 +60,8 @@ constexpr I18NTextWithPosition kMenu_save = {
 	{119, 99, "GRABAR"},
 	{121, 99, "SAUVER"},
 	{115, 99, "SICHERN"},
-	{128, 99, "\xB8\xE1\xB8w"}
+	{128, 99, "\xB8\xE1\xB8w"},
+	{118, 92, "\xa6\x73\x20\xc0\xc9"}
 };
 
 constexpr I18NTextWithPosition kMenu_resume = {
@@ -64,7 +69,8 @@ constexpr I18NTextWithPosition kMenu_resume = {
 	{122, 173, "SEQUIR"},
 	{124, 173, "JOUER"},
 	{118, 173, "WEITER"},
-	{128, 173, "\xA5\xA2\x8A\xE1"}
+	{128, 173, "\xA5\xA2\x8A\xE1"},
+	{118, 166, "\xc4\x7e\x20\xc4\xf2"}
 };
 
 constexpr I18NTextWithPosition kMenu_quit = {
@@ -72,16 +78,25 @@ constexpr I18NTextWithPosition kMenu_quit = {
 	{125, 210, "SALIR"},
 	{117, 210, "QUITTER"},
 	{129, 210, "ENDE"},
-	{119, 210, "\x8F{\xA0""a\xC3\xB1"}
+	{119, 210, "\x8F{\xA0""a\xC3\xB1"},
+	{118, 203, "\xb5\xb2\x20\xa7\xf4"}
 };
 
-void drawMenuItem(const I18NTextWithPosition &menuText) {
+void Menu::drawMenuItem(const I18NTextWithPosition &menuText) {
 	const TextWithPosition &textWithPosition = getI18NTextWithPosition(menuText);
-	g_engine->_console->drawStringAt(textWithPosition.x, textWithPosition.y, convertToU32String(textWithPosition.text, g_engine->getLanguage()));
+	if (_zhFont) {
+		_zhFont->drawString(g_engine->_screen, convertToU32String(textWithPosition.text, g_engine->getLanguage()), textWithPosition.x, textWithPosition.y, 640, 14);
+	} else {
+		g_engine->_console->drawStringAt(textWithPosition.x, textWithPosition.y, convertToU32String(textWithPosition.text, g_engine->getLanguage()));
+	}
 }
 
 void Menu::drawSoundMenuItem() {
-	g_engine->_screen->fillRect({{115, 136}, 62, 13}, 0);
+	if (g_engine->getLanguage() == Common::ZH_ANY) {
+		g_engine->_screen->fillRect({{115, 129}, 62, 20}, 0);
+	} else {
+		g_engine->_screen->fillRect({{115, 136}, 62, 13}, 0);
+	}
 	if (g_engine->_sound->isMuted()) {
 		drawMenuItem(kMenu_silent);
 	} else {
@@ -96,6 +111,16 @@ Common::KeyCode Menu::getLocalisedConfirmToQuitKeycode() {
 	case Common::DE_DEU : return Common::KeyCode::KEYCODE_j;
 	default : return Common::KeyCode::KEYCODE_y;
 	}
+}
+
+Menu::Menu() {
+	if (g_engine->getLanguage() == Common::ZH_ANY) {
+		_zhFont = new ZhMenuFont();
+	}
+}
+
+Menu::~Menu() {
+	delete _zhFont;
 }
 
 void Menu::loadMenu() {

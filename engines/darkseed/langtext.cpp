@@ -40,6 +40,7 @@ const TextWithPosition &getI18NTextWithPosition(const I18NTextWithPosition &i18n
 	case Common::FR_FRA : return i18nTextWithPosition.fr;
 	case Common::DE_DEU : return i18nTextWithPosition.de;
 	case Common::KO_KOR : return i18nTextWithPosition.ko;
+	case Common::ZH_ANY : return i18nTextWithPosition.zh;
 	default : return i18nTextWithPosition.en;
 	}
 }

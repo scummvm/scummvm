@@ -49,6 +49,7 @@ DarkseedEngine::DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc)
 DarkseedEngine::~DarkseedEngine() {
 	delete _screen;
 	delete _sound;
+	delete _menu;
 }
 
 uint32 DarkseedEngine::getFeatures() const {
@@ -80,6 +81,7 @@ Common::Error DarkseedEngine::run() {
 	_tosText->load();
 	_objectVar.loadObjectNames();
 	_console = new Console(_tosText, _sound);
+	_menu = new Menu();
 	_player = new Player();
 	_useCode = new UseCode(_console, _player, _objectVar, _inventory);
 	_animation = new Animation(_player, _objectVar);

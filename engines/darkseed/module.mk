@@ -32,7 +32,8 @@ MODULE_OBJS = \
 	sprites.o \
 	titlefont.o \
 	tostext.o \
-	usecode.o
+	usecode.o \
+	zhmenufont.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DARKSEED), DYNAMIC_PLUGIN)

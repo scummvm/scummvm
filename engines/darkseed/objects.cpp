@@ -101,6 +101,8 @@ void Objects::loadObjectNames() {
 	auto lang = g_engine->getLanguage();
 	if (lang == Common::KO_KOR) {
 		loadKoreanObjectNames();
+	} else if (lang == Common::ZH_ANY) {
+		loadChineseObjectNames();
 	} else {
 		for (int i = 0; i < MAX_OBJECTS; i++) {
 			switch (lang) {
@@ -123,6 +125,20 @@ void Objects::loadKoreanObjectNames() {
 		file.seek(0x22f62 + i * 4);
 		uint16 offset = file.readUint16LE();
 		file.seek(0x20990 + offset);
+		_objectNames[i] = readU32String(file);
+	}
+
+	file.close();
+}
+
+void Objects::loadChineseObjectNames() {
+	Common::File file;
+	if (!file.open("zh_objectnames.dat")) {
+		error("Failed to open zh_objectnames.dat");
+	}
+
+	for (int i = 0; i < MAX_OBJECTS; i++) {
+		file.seek(i * 21);
 		_objectNames[i] = readU32String(file);
 	}
 
