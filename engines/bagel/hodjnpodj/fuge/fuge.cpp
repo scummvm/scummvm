@@ -27,6 +27,7 @@
 #include "bagel/hodjnpodj/fuge/defines.h"
 #include "bagel/hodjnpodj/boflib/vector.h"
 #include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/boflib/point.h"
 #include "bagel/boflib/size.h"
 
@@ -38,7 +39,7 @@ struct BRICK_VECTORS {
     VECTOR v1, v2;
 };
 
-static BRICK_VECTORS aBrickVectors[BRICKS_PER_ROW] = {
+static const BRICK_VECTORS aBrickVectors[BRICKS_PER_ROW] = {
     {{-1,  1}, { 5, -2}},
     {{-5,  2}, { 1,  0}},
     {{-1,  0}, { 5,  2}},
@@ -95,7 +96,7 @@ static VECTOR vBrickCritPoints[N_ROWS][N_BRICK_POINTS] = {
     {  0, -109}}
 };
 
-static POINT ptBrickPos[N_BRICKS] = {
+static const POINT ptBrickPos[N_BRICKS] = {
     {184,  62}, {250,  48}, {319,  48}, {385,  62},         // Purple Bricks
     {445, 104}, {483, 165}, {483, 240}, {445, 309},
     {385, 365}, {321, 404}, {250, 404}, {184, 365},
@@ -127,7 +128,7 @@ static POINT ptBrickPos[N_BRICKS] = {
     {214, 280}, {204, 240}, {204, 195}, {214, 158}
 };
 
-static SIZE ptBrickSize[N_BRICKS] = {
+static const SIZE ptBrickSize[N_BRICKS] = {
     {70, 52}, {68, 27}, {70, 27}, {70, 52}, {50, 66}, {28, 74},
     {28, 75}, {50, 66}, {70, 52}, {68, 27}, {70, 27}, {69, 52},
     {50, 66}, {28, 74}, {28, 75}, {50, 65}, {64, 48}, {62, 24},
@@ -178,6 +179,11 @@ Fuge::Fuge() : View("Fuge"), m_GamePalette(0),
 			SCROLL_BUTTON_X + SCROLL_BUTTON_DX,
 			SCROLL_BUTTON_Y + SCROLL_BUTTON_DY)),
 		m_ptOrigin(GAME_WIDTH / 2, GAME_HEIGHT / 2) {
+
+	// The vector table is rotated by 11 or so degrees, because it
+	// was easier to type in (125, 320) as opposed to (114.452865, 300.526372).
+	// So the conversion is done here.
+	realignVectors();
 
 	clear();
 }
@@ -231,6 +237,13 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 
 	// Load scroll button
 	m_ScrollButton.loadBitmaps(SCROLLUP, SCROLLDOWN, SCROLLUP, SCROLLUP);
+
+	// Start the Fuge soundtrack
+	if (gameInfo.bMusicEnabled) {
+		m_pSoundTrack = new CBofSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+		m_pSoundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
+	}
+
 
 	return true;
 }
@@ -303,6 +316,19 @@ void Fuge::eraseBrick(int brickIndex) {
 	redraw();
 }
 
+void Fuge::realignVectors() {
+	CVector vTmp;
+	int i, j;
+
+	for (i = 0; i < N_ROWS; i++) {
+
+		for (j = 0; j < N_BRICK_POINTS; j++) {
+			vTmp = vBrickCritPoints[i][j];
+			vTmp.Rotate(2 * PI / BRICKS_PER_ROW * -2);
+			vBrickCritPoints[i][j] = vTmp;
+		}
+	}
+}
 
 } // namespace Fuge
 } // namespace HodjNPodj

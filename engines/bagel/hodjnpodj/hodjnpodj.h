@@ -40,13 +40,13 @@ namespace Bagel {
 namespace HodjNPodj {
 
 struct GAMESTRUCT {
-	long lCrowns;
-	long lScore;
-	int  nSkillLevel;
-	bool bSoundEffectsEnabled;
-	bool bMusicEnabled;
-	bool bPlayingMetagame;
-	bool bPlayingHodj;
+	long lCrowns = 0;
+	long lScore = 0;
+	int  nSkillLevel = 0;
+	bool bSoundEffectsEnabled = false;
+	bool bMusicEnabled = false;
+	bool bPlayingMetagame = true;
+	bool bPlayingHodj = true;
 };
 extern GAMESTRUCT gameInfo;
 

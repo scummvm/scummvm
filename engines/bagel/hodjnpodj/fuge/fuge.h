@@ -89,14 +89,13 @@ private:
 	void paintBricks();
 	void repaintSpriteList();
 	void eraseBrick(int brickIndex);
-
+	void realignVectors();
+	ErrorCode loadMasterSprites();
 
 	void GameReset();
 	void GamePause();
 	void GameResume();
 	void HandleError(ErrorCode);
-	void RealignVectors();
-	ErrorCode LoadMasterSprites();
 	void ReleaseMasterSprites();
 	ErrorCode LoadMasterSounds();
 	void ReleaseMasterSounds();
