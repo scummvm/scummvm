@@ -558,7 +558,7 @@ void TTMInterpreter::doDrawDialogForStrings(const TTMEnviro &env, const TTMSeq &
 }
 
 /// Handle 0xa5xx draw ops
-void TTMInterpreter::doDrawSpriteOp(const TTMEnviro &env, const TTMSeq &seq, uint16 op, byte count, const int16 *ivals, int16 xoff, int16 yoff) {
+void TTMInterpreter::doDrawSpriteOp(const TTMEnviro &env, const TTMSeq &seq, uint16 op, byte count, const int16 *ivals) {
 	int frameno;
 	int bmpNo;
 	int dstWidth = 0;
@@ -586,8 +586,8 @@ void TTMInterpreter::doDrawSpriteOp(const TTMEnviro &env, const TTMSeq &seq, uin
 
 	Common::SharedPtr<Image> img = env._scriptShapes[bmpNo];
 	if (img) {
-		int x = ivals[0] + xoff;
-		int y = ivals[1] + yoff;
+		int x = ivals[0];
+		int y = ivals[1];
 		// Use env offset if we are in gosub
 		if (_stackDepth > 0) {
 			x += env._xOff;

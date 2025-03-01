@@ -777,7 +777,8 @@ bool SDSScene::readTalkData(Common::SeekableReadStream *s, TalkData &dst) {
 					h._shape.reset(new Image(resMan, engine->getDecompressor()));
 					h._shape->loadBitmap(h._bmpFile);
 				} else {
-					warning("Couldn't load talkdata %d head %d BMP: %s", dst._num, h._num, h._bmpFile.c_str());
+					// This is the default situation in Willy Beamish CD
+					debug("Couldn't load talkdata %d head %d BMP: %s", dst._num, h._num, h._bmpFile.c_str());
 				}
 			}
 		}

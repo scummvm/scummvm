@@ -33,25 +33,30 @@
 
 namespace Dgds {
 
+ImageFlipMode Conversation::_lastHeadFrameFlipMode = kImageFlipNone;
+int16 Conversation::_lastHeadFrameX = 0;
+int16 Conversation::_lastHeadFrameY = 0;
+
 void TalkDataHead::drawHead(Graphics::ManagedSurface &dst, const TalkData &data) const {
 	uint drawtype = _drawType ? _drawType : 1;
 	// Use specific head shape if available (eg, in Willy Beamish), if not use talk data shape
 	Common::SharedPtr<Image> img = _shape;
 	if (!img)
 		img = data._shape;
-	if (!img)
-		return;
+
 	switch (drawtype) {
 	case 1:
-		drawHeadType1(dst, *img);
+		if (img)
+			drawHeadType1(dst, *img);
 		break;
 	case 2:
-		drawHeadType2(dst, *img);
+		if (img)
+			drawHeadType2(dst, *img);
 		break;
 	case 3:
 		if (DgdsEngine::getInstance()->getGameId() == GID_WILLY)
 			drawHeadType3Beamish(dst, data);
-		else
+		else if (img)
 			drawHeadType3(dst, *img);
 		break;
 	default:
@@ -86,29 +91,39 @@ void TalkDataHead::drawHeadType2(Graphics::ManagedSurface &dst, const Image &img
 
 void TalkDataHead::drawHeadType3Beamish(Graphics::ManagedSurface &dst, const TalkData &data) const {
 	const Common::Rect r = _rect.toCommonRect();
-
-	// Note: only really need the 1px border here but just fill the box.
-	dst.fillRect(r, 8);
-
 	Common::Rect fillRect(r);
 	fillRect.grow(-1);
-	dst.fillRect(fillRect, _drawCol);
+
+	bool bgDone = false;
 
 	for (const auto &frame : _headFrames) {
 		int frameNo = frame._frameNo & 0x7fff;
 		bool useHeadShape = frame._frameNo & 0x8000;
 
 		Common::SharedPtr<Image> img = useHeadShape ? _shape : data._shape;
-		if (!img || !img->isLoaded() || frameNo >= img->loadedFrameCount())
-			continue;
+
+		if (!bgDone && img) {
+			dst.frameRect(r, 8);
+			dst.fillRect(fillRect, _drawCol);
+			bgDone = true;
+		}
 
 		ImageFlipMode flip = kImageFlipNone;
 		// Yes, the numerical values are reversed here (1 -> 2 and 2 -> 1).
 		// The head flip flags are reversed from the image draw flags.
 		if (frame._flipFlags & 1)
-			flip = static_cast<ImageFlipMode>(flip & kImageFlipH);
+			flip = static_cast<ImageFlipMode>(flip | kImageFlipH);
 		if (frame._flipFlags & 2)
-			flip = static_cast<ImageFlipMode>(flip & kImageFlipV);
+			flip = static_cast<ImageFlipMode>(flip | kImageFlipV);
+
+		// Slight hack from original CD version -  record the flip mode and offset
+		// for this frame and use it for drawing the head sprites in the script.
+		Conversation::_lastHeadFrameFlipMode = flip;
+		Conversation::_lastHeadFrameX = frame._xoff;
+		Conversation::_lastHeadFrameY = frame._yoff;
+
+		if (!img || !img->isLoaded() || frameNo >= img->loadedFrameCount())
+			continue;
 
 		img->drawBitmap(frameNo, r.left + frame._xoff, r.top + frame._yoff, fillRect, dst);
 	}
@@ -237,12 +252,21 @@ void CDSTTMInterpreter::handleOperation(TTMEnviro &env_, TTMSeq &seq, uint16 op,
 		env._cdsDidStoreArea = true;
 		break;
 	}
-	case 0xa500: // DRAW SPRITE: x,y,frameno,bmpno:int [-n,+n]
-	case 0xa510: // DRAW SPRITE FLIP V x,y:int
-	case 0xa520: // DRAW SPRITE FLIP H: x,y:int
-	case 0xa530: // DRAW SPRITE FLIP HV: x,y,frameno,bmpno:int	[-n,+n]
-		doDrawSpriteOp(env, seq, op, count, ivals, env._xOff, env._yOff);
+	case 0xa500:   // DRAW SPRITE: x,y,frameno,bmpno:int [-n,+n]
+	case 0xa510:   // DRAW SPRITE FLIP V x,y:int
+	case 0xa520:   // DRAW SPRITE FLIP H: x,y:int
+	case 0xa530: { // DRAW SPRITE FLIP HV: x,y,frameno,bmpno:int	[-n,+n]
+		ImageFlipMode flip = Conversation::_lastHeadFrameFlipMode;
+		int16 x = ivals[0] + env._xOff;
+		int16 y = ivals[1] + env._yOff;
+		int16 frameno = ivals[2];
+		int16 bmpNo = ivals[3];
+		Common::SharedPtr<Image> img = env._scriptShapes[bmpNo];
+		if (flip & kImageFlipH)
+			x = env._xOff + (env._scriptShapes[0]->width(0) - ivals[0] - img->width(frameno));
+		img->drawBitmap(frameno, x, y, seq._drawWin, _vm->_compositionBuffer, flip, img->width(frameno), img->height(frameno));
 		break;
+	}
 	case 0xc220: // PLAY RAW SFX
 		if (env._cdsPlayedSound) // this is a one-shot op
 			break;
@@ -304,6 +328,9 @@ void Conversation::unloadData() {
 		_ttmEnv._soundRaw->stop();
 	_ttmEnv = CDSTTMEnviro();
 	_loadState = 0;
+	_lastHeadFrameFlipMode = kImageFlipNone;
+	_lastHeadFrameX = 0;
+	_lastHeadFrameY = 0;
 }
 
 void Conversation::clear() {
@@ -503,6 +530,8 @@ void Conversation::runScriptExclusive() {
 	engine->disableKeymapper();
 
 	_nextExecMs = 0;
+	_drawRect.x += _lastHeadFrameX;
+	_drawRect.y += _lastHeadFrameY;
 	_ttmEnv._xOff = _drawRect.x;
 	_ttmEnv._yOff = _drawRect.y;
 	_runTempFrame = 2;
@@ -545,10 +574,14 @@ void Conversation::runScriptExclusive() {
 		if (!_nextExecMs || _nextExecMs <= _thisFrameMs) {
 			incrementFrame();
 
-			const Common::Rect r = _drawRect.toCommonRect();
-
 			checkAndRunScript();
 
+			// Redraw active dialogs eg to make sure thought bubble dots are
+			// over the moving heads
+			engine->getScene()->drawAndUpdateDialogs(&engine->_compositionBuffer);
+
+			Common::Rect r = _drawRect.toCommonRect();
+			r.clip(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT));
 			const byte *srcPtr = (const byte *)engine->_compositionBuffer.getPixels() + r.top * SCREEN_WIDTH + r.left;
 			g_system->copyRectToScreen(srcPtr, SCREEN_WIDTH, r.left, r.top, r.width(), r.height());
 		}

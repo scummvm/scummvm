@@ -30,6 +30,7 @@
 #include "graphics/managed_surface.h"
 
 #include "dgds/dgds_rect.h"
+#include "dgds/image.h"
 #include "dgds/ttm.h"
 
 // Classes related to talking heads and conversations.
@@ -151,6 +152,10 @@ public:
 	void clear();
 
 	DgdsRect _drawRect;
+
+	static enum ImageFlipMode _lastHeadFrameFlipMode;
+	static int16 _lastHeadFrameX;
+	static int16 _lastHeadFrameY;
 
 private:
 	Common::SharedPtr<CDSTTMInterpreter> _ttmScript;
