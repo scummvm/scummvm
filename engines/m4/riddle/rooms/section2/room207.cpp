@@ -250,7 +250,7 @@ void Room207::pre_parser() {
 				Common::strcpy_s(_G(player).noun, "SPLEEN");
 			} else if (player_said("take", "WHEEL")) {
 				Common::strcpy_s(_G(player).verb, "take");
-				Common::strcpy_s(_G(player).noun, "METAL RIM");
+				Common::strcpy_s(_G(player).noun, "SPLEEN");
 			} else if (player_said("take", "SEVEN SPOKES") && inv_object_is_here("SEVEN SPOKES")) {
 				Common::strcpy_s(_G(player).verb, "take");
 				Common::strcpy_s(_G(player).noun, "SPLEEN");
@@ -1318,7 +1318,7 @@ void Room207::daemon() {
 				else
 					sendWSMessage_10000(1, _ppSquatMach, _peskyPointsRipBackgroundSeries, 17, 17, 100, _peskyPointsRipBackgroundSeries, 17, 17, 1);
 				_peasantMode = 3;
-			} else { // _field92 != 2 && _field92 != 3
+			} else { // _peasantShould != 2 && _peasantShould != 3
 				if (_ripForegroundFl)
 					sendWSMessage_10000(1, _ppSquatMach, _peskyPointsRipForegroundSeries, 18, 1, 115, _peskyRockLoopSeries, 1, 1, 0);
 				else
