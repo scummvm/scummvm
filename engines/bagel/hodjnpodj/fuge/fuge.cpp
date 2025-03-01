@@ -20,6 +20,8 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
+#include "image/bmp.h"
 #include "graphics/paletteman.h"
 #include "bagel/hodjnpodj/fuge/fuge.h"
 #include "bagel/hodjnpodj/fuge/defines.h"
@@ -174,7 +176,6 @@ void Fuge::clear() {
 	m_nInitPaddleSize = PSIZE_DEF;
 	m_nGForceFactor = GFORCE_DEF;
 
-	m_pGamePalette = NULL;
 	m_pSoundTrack = NULL;
 	m_bPause = FALSE;
 	m_bGameActive = FALSE;
@@ -198,7 +199,25 @@ void Fuge::clear() {
 	Common::fill(m_bBrickVisible, m_bBrickVisible + N_BRICKS, false);
 }
 
-bool Fuge::msgFocus(const FocusMessage &msg) {
+bool Fuge::msgOpen(const OpenMessage &msg) {
+	// Add the minigame's folder to the search path
+	Common::FSNode gamePath(ConfMan.getPath("path"));
+	SearchMan.addDirectory("minigame", gamePath.getChild("fuge"), 0, 2);
+
+	// Get the game palette from a bitmap
+	Image::BitmapDecoder decoder;
+	Common::File f;
+	if (!f.open(MINI_GAME_MAP) || !decoder.loadStream(f))
+		error("Could not load %s", MINI_GAME_MAP);
+
+	m_GamePalette = Graphics::Palette(decoder.getPalette(), decoder.getPaletteColorCount());
+	g_system->getPaletteManager()->setPalette(m_GamePalette);
+
+	return true;
+}
+
+bool Fuge::msgClose(const CloseMessage &msg) {
+	SearchMan.remove("minigame");
 	return true;
 }
 
@@ -207,7 +226,14 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 }
 
 void Fuge::draw() {
+	// Dummy image display
+	Image::BitmapDecoder decoder;
+	Common::File f;
+	if (!f.open(MINI_GAME_MAP) || !decoder.loadStream(f))
+		error("Could not load %s", MINI_GAME_MAP);
 
+	Graphics::ManagedSurface s = getSurface();
+	s.blitFrom(*decoder.getSurface());
 }
 
 bool Fuge::tick() {

@@ -43,6 +43,9 @@ struct FocusMessage : public Message {
 };
 
 struct UnfocusMessage : public Message {};
+struct OpenMessage : public Message {};
+struct CloseMessage : public Message {};
+
 struct MouseEnterMessage : public Message {};
 struct MouseLeaveMessage : public Message {};
 

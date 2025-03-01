@@ -35,13 +35,14 @@ namespace Fuge {
 class Fuge : public View {
 private:
 	//CBmpButton *m_pScrollButton;
+	Graphics::Palette m_GamePalette;
+
 	bool        m_bBrickVisible[N_BRICKS];
 	Common::Point      m_ptOrigin;
 	Common::Rect       m_rNewGameButton;
 	Common::Rect       m_rBlackHole;
 	CVector     m_vBallVector;
 	CVector     m_ptBallLocation;
-	Graphics::Palette *m_pGamePalette;
 	Graphics::ManagedSurface *m_pBall;
 	Graphics::ManagedSurface *m_pPaddle;
 	CBofSound *m_pSoundTrack;
@@ -127,13 +128,14 @@ private:
 	void OnClose();
 
 public:
-	Fuge() : View("Fuge") {
+	Fuge() : View("Fuge"), m_GamePalette(0) {
 		clear();
 	}
 	virtual ~Fuge() {
 	}
 
-	bool msgFocus(const FocusMessage &msg) override;
+	bool msgOpen(const OpenMessage &msg) override;
+	bool msgClose(const CloseMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 	bool tick() override;

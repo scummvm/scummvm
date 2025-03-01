@@ -252,6 +252,8 @@ public:
 
 	MESSAGE(Focus);
 	MESSAGE(Unfocus);
+	MESSAGE(Open);
+	MESSAGE(Close);
 	MESSAGE(MouseEnter);
 	MESSAGE(MouseLeave);
 	MESSAGE(Keypress);
@@ -295,6 +297,8 @@ protected:
 	MESSAGE(Action);
 	MESSAGE(Focus);
 	MESSAGE(Unfocus);
+	MESSAGE(Open);
+	MESSAGE(Close);
 	MESSAGE(MouseEnter);
 	MESSAGE(MouseLeave);
 	MESSAGE(Keypress);

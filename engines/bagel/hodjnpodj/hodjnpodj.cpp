@@ -60,8 +60,7 @@ Common::String HodjNPodjEngine::getGameId() const {
 }
 
 Common::Error HodjNPodjEngine::run() {
-	// Initialize 320x200 paletted graphics mode
-	initGraphics(320, 200);
+	initGraphics(640, 480);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());

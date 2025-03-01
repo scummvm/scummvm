@@ -113,12 +113,14 @@ void Events::replaceView(UIElement *ui, bool replaceAllViews) {
 
 	} else if (!_views.empty()) {
 		priorView->msgUnfocus(UnfocusMessage());
+		priorView->msgClose(CloseMessage());
 		_views.pop();
 	}
 
 	_views.push(ui);
 	ui->redraw();
 	ui->msgFocus(FocusMessage(priorView));
+	ui->msgOpen(OpenMessage());
 }
 
 void Events::replaceView(const Common::String &name, bool replaceAllViews) {
@@ -135,6 +137,7 @@ void Events::addView(UIElement *ui) {
 	_views.push(ui);
 	ui->redraw();
 	ui->msgFocus(FocusMessage(priorView));
+	ui->msgOpen(OpenMessage());
 }
 
 void Events::addView(const Common::String &name) {
@@ -144,6 +147,7 @@ void Events::addView(const Common::String &name) {
 void Events::popView() {
 	UIElement *priorView = focusedView();
 	priorView->msgUnfocus(UnfocusMessage());
+	priorView->msgClose(CloseMessage());
 	_views.pop();
 
 	for (int i = 0; i < (int)_views.size() - 1; ++i) {
@@ -176,8 +180,10 @@ bool Events::isPresent(const Common::String &name) const {
 }
 
 void Events::clearViews() {
-	if (!_views.empty())
+	if (!_views.empty()) {
 		focusedView()->msgUnfocus(UnfocusMessage());
+		focusedView()->msgClose(CloseMessage());
+	}
 
 	_views.clear();
 }
@@ -194,7 +200,7 @@ void Events::addKeypress(const Common::KeyCode kc) {
 /*------------------------------------------------------------------------*/
 
 Bounds::Bounds(Common::Rect &innerBounds) :
-	_bounds(0, 0, 320, 200),
+	_bounds(0, 0, 640, 480),
 	_innerBounds(innerBounds),
 	left(_bounds.left), top(_bounds.top),
 	right(_bounds.right), bottom(_bounds.bottom) {
