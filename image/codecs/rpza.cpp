@@ -22,6 +22,7 @@
  // Based off ffmpeg's RPZA decoder
 
 #include "image/codecs/rpza.h"
+#include "image/codecs/dither.h"
 
 #include "common/debug.h"
 #include "common/system.h"
@@ -358,7 +359,7 @@ void RPZADecoder::setDither(DitherType type, const byte *palette) {
 	_format = Graphics::PixelFormat::createFormatCLUT8();
 
 	delete[] _colorMap;
-	_colorMap = createQuickTimeDitherTable(palette, 256);
+	_colorMap = DitherCodec::createQuickTimeDitherTable(palette, 256);
 }
 
 } // End of namespace Image

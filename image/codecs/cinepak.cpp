@@ -21,6 +21,7 @@
 
 #include "image/codecs/cinepak.h"
 #include "image/codecs/cinepak_tables.h"
+#include "image/codecs/dither.h"
 
 #include "common/debug.h"
 #include "common/stream.h"
@@ -680,7 +681,7 @@ void CinepakDecoder::setDither(DitherType type, const byte *palette) {
 	} else {
 		// Generate QuickTime dither table
 		// 4 blocks of 0x4000 bytes (RGB554 lookup)
-		_colorMap = createQuickTimeDitherTable(palette, 256);
+		_colorMap = DitherCodec::createQuickTimeDitherTable(palette, 256);
 	}
 }
 

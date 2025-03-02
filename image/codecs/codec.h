@@ -122,11 +122,6 @@ public:
 	 * Set the decoding accuracy of the codec, if supported
 	 */
 	virtual void setCodecAccuracy(CodecAccuracy accuracy) {}
-
-	/**
-	 * Create a dither table, as used by QuickTime codecs.
-	 */
-	static byte *createQuickTimeDitherTable(const byte *palette, uint colorCount);
 };
 
 /**

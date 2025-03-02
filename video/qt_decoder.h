@@ -369,12 +369,6 @@ private:
 		mutable bool _dirtyPalette;
 		bool _reversed;
 
-		// Forced dithering of frames
-		Graphics::Palette _forcedDitherPalette;
-		byte *_ditherTable;
-		Graphics::Surface *_ditherFrame;
-		const Graphics::Surface *forceDither(const Graphics::Surface &frame);
-
 		Common::SeekableReadStream *getNextFramePacket(uint32 &descId);
 		uint32 getCurFrameDuration();            // media time
 		uint32 findKeyFrame(uint32 frame) const;
