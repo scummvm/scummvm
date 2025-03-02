@@ -1112,6 +1112,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			_vm->_soundPlayer->stopAllSfx();
 		}
 		env._lastSelectedSample = 0;
+		break;
 	}
 	case 0xc050: {	// PLAY SAMPLE: int: i
 		if (seq._executed) // this is a one-shot op
