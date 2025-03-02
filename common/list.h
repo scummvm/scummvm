@@ -72,10 +72,27 @@ public:
 	}
 
 	/**
+	 * Construct an @p element before @p pos.
+	 */
+	template<class... TArgs>
+	iterator emplace(iterator pos, TArgs &&...args) {
+		emplace(pos._node, Common::forward<TArgs>(args)...);
+		return --pos;
+	}
+
+	/**
 	 * Insert an @p element before @p pos.
 	 */
 	iterator insert(iterator pos, const t_T &element) {
 		insert(pos._node, element);
+		return --pos;
+	}
+
+	/**
+	 * Insert an @p element before @p pos.
+	 */
+	iterator insert(iterator pos, t_T &&element) {
+		insert(pos._node, Common::move(element));
 		return --pos;
 	}
 
@@ -131,14 +148,36 @@ public:
 				i = i->_next;
 	}
 
+	/** Construct an @p element at the start of the list. */
+	template<class... TArgs>
+	void emplace_front(TArgs &&...args) {
+		emplace(_anchor._next, Common::forward<TArgs>(args)...);
+	}
+
 	/** Insert an @p element at the start of the list. */
 	void push_front(const t_T &element) {
 		insert(_anchor._next, element);
 	}
 
+	/** Insert an @p element at the start of the list. */
+	void push_front(t_T &&element) {
+		insert(_anchor._next, Common::move(element));
+	}
+
+	/** Construct an @p element at the end of the list. */
+	template<class... TArgs>
+	void emplace_back(TArgs &&...args) {
+		emplace(&_anchor, Common::forward<TArgs>(args)...);
+	}
+
 	/** Append an @p element to the end of the list. */
 	void push_back(const t_T &element) {
 		insert(&_anchor, element);
+	}
+
+	/** Append an @p element to the end of the list. */
+	void push_back(t_T &&element) {
+		insert(&_anchor, Common::move(element));
 	}
 
 	/** Remove the first element of the list. */
@@ -276,10 +315,37 @@ protected:
 	}
 
 	/**
+	 * Construct an @p element before @p pos.
+	 */
+	template<class... TArgs>
+	void emplace(NodeBase *pos, TArgs&&... args) {
+		ListInternal::NodeBase *newNode = new Node(Common::forward<TArgs>(args)...);
+		assert(newNode);
+
+		newNode->_next = pos;
+		newNode->_prev = pos->_prev;
+		newNode->_prev->_next = newNode;
+		newNode->_next->_prev = newNode;
+	}
+
+	/**
 	 * Insert an @p element before @p pos.
 	 */
 	void insert(NodeBase *pos, const t_T &element) {
 		ListInternal::NodeBase *newNode = new Node(element);
+		assert(newNode);
+
+		newNode->_next = pos;
+		newNode->_prev = pos->_prev;
+		newNode->_prev->_next = newNode;
+		newNode->_next->_prev = newNode;
+	}
+
+	/**
+	 * Insert an @p element before @p pos.
+	 */
+	void insert(NodeBase *pos, t_T &&element) {
+		ListInternal::NodeBase *newNode = new Node(Common::move(element));
 		assert(newNode);
 
 		newNode->_next = pos;
