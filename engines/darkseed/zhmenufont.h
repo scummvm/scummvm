@@ -29,7 +29,7 @@
 namespace Darkseed {
 
 struct ZhMenuFontGlyph {
-	int charIdx;
+	uint16 charIdx;
 	uint8 pixels[72]; // 24x24 pixels @ 1bpp
 };
 
