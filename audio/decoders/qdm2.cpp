@@ -22,10 +22,10 @@
 // Based off ffmpeg's QDM2 decoder
 
 #include "common/scummsys.h"
+
+#ifdef USE_QDM2
+
 #include "audio/decoders/qdm2.h"
-
-#ifdef AUDIO_QDM2_H
-
 #include "audio/audiostream.h"
 #include "audio/decoders/codec.h"
 #include "audio/decoders/qdm2data.h"
