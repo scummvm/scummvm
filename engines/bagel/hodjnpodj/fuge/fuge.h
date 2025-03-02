@@ -46,8 +46,8 @@ private:
 	Common::Rect m_rBlackHole;
 	CVector m_vBallVector;
 	CVector m_ptBallLocation;
-	Graphics::ManagedSurface *m_pBall;
-	Graphics::ManagedSurface *m_pPaddle;
+	GfxSurface m_pBall;
+	GfxSurface m_pPaddle;
 	CBofSound *m_pSoundTrack;
 
 	const char *m_pBrickSound;

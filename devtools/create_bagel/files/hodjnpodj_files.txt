@@ -1,0 +1,3 @@
+The following is a list of resource bitmaps:
+
+fuge/art/ball.bmp

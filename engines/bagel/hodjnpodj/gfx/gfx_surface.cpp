@@ -97,12 +97,14 @@ void GfxSurface::convertTo(const byte *palette, int count) {
 	Graphics::PaletteLookup lookup(palette, count);
 	uint32 *map = lookup.createMap(surfacePal->data(), PALETTE_COUNT);
 
-	// Translate the pixels using the lookup
-	byte *pixel = (byte *)getPixels();
-	for (int i = 0; i < this->w * this->h; ++i, ++pixel)
-		*pixel = map[*pixel];
+	if (map) {
+		// Translate the pixels using the lookup
+		byte *pixel = (byte *)getPixels();
+		for (int i = 0; i < this->w * this->h; ++i, ++pixel)
+			*pixel = map[*pixel];
 
-	delete[] map;
+		delete[] map;
+	}
 
 	// Now we're using the game palette, don't maintain
 	// the surface-specific palette any longer

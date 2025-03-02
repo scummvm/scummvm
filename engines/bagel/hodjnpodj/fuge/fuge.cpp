@@ -201,8 +201,6 @@ void Fuge::clear() {
 	m_bIgnoreScrollClick = FALSE;
 	m_bBallOnPaddle = FALSE;
 	m_nPaddleCelIndex = 29;
-	m_pPaddle = NULL;
-	m_pBall = NULL;
 	m_bMovingPaddle = FALSE;
 	m_lScore = 0;
 	m_pBrickSound = NULL;
@@ -244,6 +242,8 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 		m_pSoundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
 	}
 
+	// Load graphics
+	loadMasterSprites();
 
 	return true;
 }
@@ -256,6 +256,8 @@ bool Fuge::msgClose(const CloseMessage &msg) {
 	_background.clear();
 	_backgroundNumRows = -1;
 	m_ScrollButton.clear();
+	m_pBall.clear();
+	m_pPaddle.clear();
 
 	return true;
 }
@@ -333,35 +335,10 @@ void Fuge::realignVectors() {
 
 ErrorCode Fuge::loadMasterSprites() {
 	ErrorCode errCode = loadNewPaddle(m_nInitPaddleSize);
-#ifdef TODO
 
-	if (errCode == ERR_NONE) {
-		m_pBall = new Graphics::ManagedSurface();
+	if (errCode == ERR_NONE)
+		m_pBall.loadBitmap(BALL_BMP);
 
-		Image::BitmapDecoder decoder;
-
-
-		if (m_pBall->SharePalette(m_pGamePalette) != FALSE) {
-
-			if (m_pBall->LoadResourceSprite(pDC, BALL_BMP) != FALSE) {
-
-				m_pBall->SetMasked(TRUE);
-				m_pBall->SetMobile(TRUE);
-
-				// uncomment this if we decide to animate the ball as
-				// it moves
-				//if (m_pBall->LoadResourceCels(pDC, IDB_BALLSTRIP, N_BALLS) == FALSE)
-				//    errCode = ERR_UNKNOWN;
-
-			} else {
-				errCode = ERR_UNKNOWN;
-			}
-
-		} else {
-			errCode = ERR_UNKNOWN;
-		}
-	}
-#endif
 	return errCode;
 }
 
