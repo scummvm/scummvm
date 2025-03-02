@@ -53,17 +53,17 @@ public:
 	double  Length() const;
 
 	// Generic operations
-	CVector operator +(const VECTOR &rhs);
-	CVector operator +(double);
-	CVector operator -(const VECTOR &rhs);
-	CVector operator -(double);
-	CVector operator *(double);
-	CVector operator /(double);
+	CVector operator +(const VECTOR &rhs) const;
+	CVector operator +(double) const;
+	CVector operator -(const VECTOR &rhs) const;
+	CVector operator -(double) const;
+	CVector operator *(double) const;
+	CVector operator /(double) const;
 	void    operator +=(const VECTOR &rhs);
 	void    operator -=(const VECTOR &rhs);
 	void    operator *=(double);
 	void    operator /=(double);
-	bool operator ==(const VECTOR &rhs);
+	bool operator ==(const VECTOR &rhs) const;
 
 protected:
 

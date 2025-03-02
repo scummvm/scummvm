@@ -73,6 +73,10 @@ public:
 	Common::Point getPosition() const {
 		return *this;
 	}
+	void setPosition(int xx, int yy) {
+		this->x = xx;
+		this->y = yy;
+	}
 };
 
 } // namespace HodjNPodj

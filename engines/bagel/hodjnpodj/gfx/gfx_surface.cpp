@@ -40,6 +40,10 @@ void GfxSurface::floodFill(int x, int y, byte color) {
 	int cx, cy;
 	int minX = 9999, maxX = -1, minY = 9999, maxY = -1;
 
+	// TODO: Temporary hack for Huge, to ensure floodFill
+	// isn't called for erasing a brick that isn't present
+	assert(oldColor != 255);
+
 	Common::Queue<Common::Pair<int, int>> queue;
 	queue.push({ x, y });
 
@@ -145,7 +149,8 @@ bool Sprite::isLinked() const {
 }
 
 void Sprite::linkSprite() {
-	_minigame->_linkedSprites.push_back(this);
+	if (!isLinked())
+		_minigame->_linkedSprites.push_back(this);
 }
 
 void Sprite::unlinkSprite() {

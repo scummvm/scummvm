@@ -38,6 +38,8 @@ private:
 	BmpButton m_ScrollButton;
 	Graphics::Palette m_GamePalette;
 	Graphics::ManagedSurface _background;
+	const CVector _gvCenter;
+
 	int _backgroundNumRows = -1;
 	int _paddleOldSize = -1;
 	bool _timerPaused = true;
@@ -85,7 +87,6 @@ private:
 	bool m_bOutterWall = false;
 	bool m_bJoyActive = false;
 	bool m_bBallOnPaddle = false;
-	CVector _gvCenter;
 
 private:
 	void clear();

@@ -154,28 +154,28 @@ double CVector::RealAngle(const VECTOR &rhs) {
 }
 
 
-CVector CVector::operator +(const VECTOR &rhs) {
+CVector CVector::operator +(const VECTOR &rhs) const {
 	CVector vSum(this->x + rhs.x, this->y + rhs.y, this->z + rhs.z);
 
 	return vSum;
 }
 
 
-CVector CVector::operator +(double offset) {
+CVector CVector::operator +(double offset) const {
 	CVector vSum(this->x + offset, this->y + offset, this->z + offset);
 
 	return vSum;
 }
 
 
-CVector CVector::operator -(const VECTOR &rhs) {
+CVector CVector::operator -(const VECTOR &rhs) const {
 	CVector vDif(this->x - rhs.x, this->y - rhs.y, this->z - rhs.z);
 
 	return vDif;
 }
 
 
-CVector CVector::operator -(double offset) {
+CVector CVector::operator -(double offset) const {
 	CVector vDif(this->x - offset, this->y - offset, this->z - offset);
 
 	return vDif;
@@ -196,14 +196,14 @@ void CVector::operator -=(const VECTOR &rhs) {
 }
 
 
-CVector CVector::operator *(double scalar) {
+CVector CVector::operator *(double scalar) const {
 	CVector vProduct(this->x * scalar, this->y * scalar, this->z * scalar);
 
 	return vProduct;
 }
 
 
-CVector CVector::operator /(double scalar) {
+CVector CVector::operator /(double scalar) const {
 	// can't divide by 0
 	assert(scalar != (double)0.0);
 
@@ -237,7 +237,7 @@ void CVector::operator /=(double scalar) {
 	}
 }
 
-bool CVector::operator ==(const VECTOR &v) {
+bool CVector::operator ==(const VECTOR &v) const {
 	bool bReturn = ((this->x == v.x) && (this->y == v.y));
 	return bReturn;
 }

@@ -184,6 +184,7 @@ Fuge::Fuge() : MinigameView("Fuge", "fuge/hnpfuge.dll"), m_GamePalette(0),
 			SCROLL_BUTTON_X + SCROLL_BUTTON_DX,
 			SCROLL_BUTTON_Y + SCROLL_BUTTON_DY)),
 		m_ptOrigin(GAME_WIDTH / 2, GAME_HEIGHT / 2),
+		_gvCenter(CENTER_X, CENTER_Y),
 		m_pPaddle(this),
 		m_pBall(this) {
 
@@ -428,6 +429,7 @@ void Fuge::loadMasterSprites() {
 	loadNewPaddle(m_nInitPaddleSize);
 
 	m_pBall.loadBitmap(BALL_BMP);
+	m_pBall.setTransparentColor(255);
 }
 
 void Fuge::loadNewPaddle(int nNewSize) {
@@ -510,8 +512,8 @@ void Fuge::playGame() {
 
 	// Start game
 	startBricks();
-	startBall();
 	startPaddle();
+	startBall();
 
 	// game starts paused
 	m_bPause = true;
@@ -609,18 +611,11 @@ void Fuge::endBall() {
 }
 
 void Fuge::startBall() {
-#ifdef TODO
-	// have the ball start on the paddle like in arkinoids
-	m_ptBallLocation = BallOnPaddle();
-
-	m_pBall->LinkSprite();
-	if ((pDC = GetDC()) != NULL) {
-		m_pBall->PaintSprite(pDC, (int)m_ptBallLocation.x, (int)m_ptBallLocation.y);
-		ReleaseDC(pDC);
-	}
-#endif
+	// Have the ball start on the paddle like in Arkinoids
+	m_ptBallLocation = ballOnPaddle();
+	m_pBall.setPosition(m_ptBallLocation.x, m_ptBallLocation.y);
+	m_pBall.linkSprite();
 }
-
 
 CVector Fuge::ballOnPaddle() {
 	CVector vBall(0, -(PADDLE_RADIUS + BALL_RADIUS));
@@ -891,7 +886,7 @@ void Fuge::paintPaddle(bool bPaint) {
 	// don't re-paint the paddle if we would paint the same cel
 	//
 	if (bPaint || (nOldIndex != m_nPaddleCelIndex)) {
-		m_pPaddle.setCel(m_nPaddleCelIndex - 1);
+		m_pPaddle.setCel(m_nPaddleCelIndex);
 
 		// move paddle to new location
 		m_pPaddle.x = PADDLE_START_X;
