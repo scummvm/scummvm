@@ -49,7 +49,18 @@ void Events::runGame() {
 	if (saveSlot != -1)
 		g_engine->loadGameState(saveSlot);
 
-	addView("Fuge");
+	// The minigames are specially designed so that
+	// they can be run independantly
+	Common::String minigame = ConfMan.hasKey("minigame") ?
+		ConfMan.get("minigame") : "Fuge";
+	if (minigame.empty()) {
+		// Start the metagame
+		gameInfo.bPlayingMetagame = true;
+		addView("Metagame");
+	} else {
+		//gameInfo.bPlayingMetagame = false;
+		addView(minigame);
+	}
 
 	Common::Event e;
 	while (!_views.empty() && !shouldQuit()) {
