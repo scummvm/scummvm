@@ -40,6 +40,7 @@ private:
 	Graphics::ManagedSurface _background;
 	int _backgroundNumRows = -1;
 	int _paddleOldSize = -1;
+	bool _timerPaused = true;
 
 	bool m_bBrickVisible[N_BRICKS] = { false };
 	const Common::Point m_ptOrigin;
@@ -47,8 +48,8 @@ private:
 	Common::Rect m_rBlackHole;
 	CVector m_vBallVector;
 	CVector m_ptBallLocation;
-	GfxSurface m_pBall;
-	GfxSurface m_pPaddle;
+	Sprite m_pBall;
+	Sprite m_pPaddle;
 	CBofSound *m_pSoundTrack;
 
 	const char *m_pBrickSound;
@@ -84,6 +85,7 @@ private:
 	bool m_bOutterWall = false;
 	bool m_bJoyActive = false;
 	bool m_bBallOnPaddle = false;
+	CVector _gvCenter;
 
 private:
 	void clear();
@@ -97,25 +99,27 @@ private:
 	void showOptionsMenu();
 	void gamePause();
 	void gameResume();
+	void playGame();
+	void gameReset();
+	void loadIniSettings();
 
-	void GameReset();
 	void HandleError(ErrorCode);
-	void ReleaseMasterSprites();
-	void ReleaseMasterSounds();
-	void InitializeJoystick();
-	void StartBall();
-	void EndBall();
-	void PaintBall();
-	void LaunchBall();
-	void StartPaddle();
-	void EndPaddle();
-	void PaintPaddle(bool);
-	CVector BallOnPaddle();
-	void StartBricks();
-	void EndBricks();
-	void LoseBall();
-	void BallvsPaddle();
-	void BallvsBrick(double);
+	void releaseMasterSprites();
+	void releaseMasterSounds();
+	void initializeJoystick();
+	void startBall();
+	void endBall();
+	void paintBall();
+	void launchBall();
+	void startPaddle();
+	void endPaddle();
+	void paintPaddle(bool);
+	CVector ballOnPaddle();
+	void startBricks();
+	void endBricks();
+	void loseBall();
+	void ballvsPaddle();
+	void ballvsBrick(double);
 
 	//virtual bool OnCommand(uint16 uint16, int32 int32);
 	int32 OnJoyStick(uint, int32);
@@ -145,9 +149,7 @@ public:
 	void draw() override;
 	bool tick() override;
 
-	void        PlayGame();
 	void        PaintScreen();
-	void        LoadIniSettings();
 };
 
 } // namespace Fuge

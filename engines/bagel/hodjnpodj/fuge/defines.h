@@ -208,6 +208,8 @@ namespace Fuge {
 #define BRICKS_PER_ROW  16
 #define N_BRICKS        (N_ROWS * BRICKS_PER_ROW)
 
+#define INI_SECTION "fuge"
+
 } // namespace Fuge
 } // namespace HodjNPodj
 } // namespace Bagel

@@ -125,8 +125,7 @@ MODULE_OBJS = \
 	hodjnpodj/gfx/view.o \
 	hodjnpodj/boflib/vector.o \
 	hodjnpodj/dialogs/rules.o \
-	hodjnpodj/fuge/fuge.o \
-	hodjnpodj/fuge/vars.o
+	hodjnpodj/fuge/fuge.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)

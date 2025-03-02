@@ -24,6 +24,7 @@
 
 #include "common/archive.h"
 #include "common/hashmap.h"
+#include "common/list.h"
 #include "common/formats/winexe_ne.h"
 #include "bagel/hodjnpodj/gfx/view.h"
 
@@ -34,12 +35,14 @@ namespace HodjNPodj {
  * Base view class for the main view for each minigame
  */
 class MinigameView : public View, public Common::Archive {
+	friend class Sprite;
 private:
 	Common::String _resourceFilename;
 	Common::HashMap<Common::String, int,
 		Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _bitmapFiles;
 	Common::HashMap<Common::String, Common::String,
 		Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _soundFiles;
+	Common::List<Sprite *> _linkedSprites;
 
 protected:
 	void addResource(const Common::String &filename, int resourceId = 0) {
@@ -48,6 +51,8 @@ protected:
 	void addResource(const Common::String &filename, const Common::String &strName) {
 		_soundFiles[filename] = strName;
 	}
+
+	void drawSprites();
 
 public:
 	MinigameView(const Common::String &name, const Common::String &resFilename) :

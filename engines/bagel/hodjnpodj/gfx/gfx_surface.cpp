@@ -26,6 +26,7 @@
 #include "graphics/paletteman.h"
 #include "image/bmp.h"
 #include "bagel/hodjnpodj/gfx/gfx_surface.h"
+#include "bagel/hodjnpodj/gfx/minigame_view.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -129,6 +130,24 @@ void GfxSurface::setCell(size_t cellNum) {
 	r.moveTo(_cellWidth * cellNum, 0);
 	Graphics::ManagedSurface::operator=(
 		Graphics::ManagedSurface(_cellsSource, r));
+}
+
+bool Sprite::isLinked() const {
+	for (auto it = _minigame->_linkedSprites.begin();
+		it != _minigame->_linkedSprites.end(); ++it) {
+		if (*it == this)
+			return true;
+	}
+
+	return false;
+}
+
+void Sprite::linkSprite() {
+	_minigame->_linkedSprites.push_back(this);
+}
+
+void Sprite::unlinkSprite() {
+	_minigame->_linkedSprites.remove(this);
 }
 
 } // namespace HodjNPodj

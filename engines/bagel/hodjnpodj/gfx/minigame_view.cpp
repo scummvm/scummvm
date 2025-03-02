@@ -76,5 +76,16 @@ Common::SeekableReadStream *MinigameView::createReadStreamForMember(const Common
 	return nullptr;
 }
 
+void MinigameView::drawSprites() {
+	GfxSurface s = getSurface();
+
+	for (auto it = _linkedSprites.begin();
+			it != _linkedSprites.end(); ++it) {
+		Sprite &sprite = **it;
+
+		s.blitFrom(sprite, sprite);
+	}
+}
+
 } // namespace HodjNPodj
 } // namespace Bagel

@@ -41,7 +41,7 @@ HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDes
 
 	gameInfo.lCrowns = 0;
 	gameInfo.lScore = 0;
-	gameInfo.nSkillLevel = 0;
+	gameInfo.nSkillLevel = SKILLLEVEL_LOW;
 	gameInfo.bSoundEffectsEnabled = false;
 	gameInfo.bMusicEnabled = false;
 	gameInfo.bPlayingMetagame = false;

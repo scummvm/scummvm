@@ -178,7 +178,9 @@ Fuge::Fuge() : MinigameView("Fuge", "fuge/hnpfuge.dll"), m_GamePalette(0),
 			SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
 			SCROLL_BUTTON_X + SCROLL_BUTTON_DX,
 			SCROLL_BUTTON_Y + SCROLL_BUTTON_DY)),
-		m_ptOrigin(GAME_WIDTH / 2, GAME_HEIGHT / 2) {
+		m_ptOrigin(GAME_WIDTH / 2, GAME_HEIGHT / 2),
+		m_pPaddle(this),
+		m_pBall(this) {
 
 	clear();
 
@@ -244,7 +246,9 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 	loadMasterSprites();
 	loadMasterSounds();
 
-	if (!gameInfo.bPlayingMetagame) {
+	if (gameInfo.bPlayingMetagame) {
+		playGame();
+	} else {
 		draw();
 		showOptionsMenu();
 	}
@@ -441,6 +445,178 @@ void Fuge::gamePause() {
 void Fuge::gameResume() {
 	if (!m_bBallOnPaddle && m_bMovingPaddle)
 		m_bPause = FALSE;
+}
+
+void Fuge::playGame() {
+	// load the .INI settings
+	loadIniSettings();
+
+	// reset all game parameters
+	gameReset();
+
+	loadNewPaddle(m_nInitPaddleSize);
+
+	// Start game
+	startBricks();
+	startBall();
+	startPaddle();
+
+	// game starts paused
+	m_bPause = TRUE;
+	m_bGameActive = TRUE;
+	_timerPaused = true;
+}
+
+void Fuge::gameReset() {
+	_timerPaused = false;		// Stop the timer
+
+	if (gameInfo.bSoundEffectsEnabled) {
+		BofPlaySound(NULL, SOUND_ASYNCH);	// Stop all sounds
+	}
+
+	endBricks();	// remove all bricks from sprite chain
+	endBall();		// remove ball from sprite chain
+	endPaddle();    // remove paddle from sprite chain
+
+	m_fTurboBoost = 0.0;	// no turbo
+	m_lExtraLifeScore = EXTRA_LIFE_SCORE; // user needs this many points for an extra life
+	m_bGameActive = false;	// there is no currently active game
+	m_bPause = false;		// the game is not paused
+	m_bBallOnPaddle = false;			// Ball is not yet on paddle
+	m_bMovingPaddle = false;			// user is not moving the paddle
+	m_nBalls = m_nInitNumBalls;			// reset # of balls
+	m_nBallSpeed = m_nInitBallSpeed;	// reset ball speed
+
+	m_nNumRows = m_nInitStartLevel;				// reset number of brick rows
+	m_nBricks = m_nNumRows * BRICKS_PER_ROW;	// get new brick count
+	m_lScore = 0;                               // reset the score
+	m_bPaddleHit = FALSE;                       // paddle starts fresh
+}
+
+void Fuge::loadIniSettings() {
+	if (gameInfo.bPlayingMetagame) {
+		m_bOutterWall = FALSE;
+		m_nInitNumBalls = 1;
+		m_nInitStartLevel = 3;
+		m_nGForceFactor = GFORCE_DEF;
+		m_nInitPaddleSize = SIZE_MAX;
+
+		switch (gameInfo.nSkillLevel) {
+		case SKILLLEVEL_LOW:
+			m_nInitBallSpeed = 4;
+			break;
+
+		case SKILLLEVEL_MEDIUM:
+			m_nInitBallSpeed = 6;
+			break;
+
+		default:
+			assert(gameInfo.nSkillLevel == SKILLLEVEL_HIGH);
+			m_nInitBallSpeed = 8;
+			break;
+		}
+
+	} else {
+		Common::String domain = ConfMan.getActiveDomainName();
+		ConfMan.setActiveDomain(INI_SECTION);
+
+		m_nInitNumBalls = ConfMan.hasKey("NumberOfBalls") ?
+			ConfMan.getInt("NumberOfBalls") : BALLS_DEF;
+		if ((m_nInitNumBalls < BALLS_MIN) || (m_nInitNumBalls > BALLS_MAX))
+			m_nInitNumBalls = BALLS_DEF;
+
+		m_nInitStartLevel = ConfMan.hasKey("StartingLevel") ?
+			ConfMan.getInt("StartingLevel") : LEVEL_DEF;
+		if ((m_nInitStartLevel < LEVEL_MIN) || (m_nInitStartLevel > LEVEL_MAX))
+			m_nInitStartLevel = LEVEL_DEF;
+
+		m_nInitBallSpeed = ConfMan.hasKey("BallSpeed") ?
+			ConfMan.getInt("BallSpeed") : SPEED_DEF;
+		if ((m_nInitBallSpeed < SPEED_MIN) || (m_nInitBallSpeed > SPEED_MAX))
+			m_nInitBallSpeed = SPEED_DEF;
+
+		m_nInitPaddleSize = ConfMan.hasKey("PaddleSize") ?
+			ConfMan.getInt("PaddleSize") : PSIZE_DEF;
+		if ((m_nInitPaddleSize < PSIZE_MIN) || (m_nInitPaddleSize > PSIZE_MAX))
+			m_nInitPaddleSize = PSIZE_DEF;
+
+		m_bOutterWall = ConfMan.hasKey("OutterWall") ?
+			ConfMan.getBool("OutterWall") : false;
+
+		m_nGForceFactor = ConfMan.hasKey("Gravity") ?
+			ConfMan.getInt("Gravity") : GFORCE_DEF;
+		if ((m_nGForceFactor < GFORCE_MIN) || (m_nGForceFactor > GFORCE_MAX))
+			m_nGForceFactor = GFORCE_DEF;
+
+		ConfMan.setActiveDomain(domain);
+	}
+}
+
+void Fuge::endBall() {
+	// Nothing to do
+}
+
+void Fuge::startBall() {
+#ifdef TODO
+	// have the ball start on the paddle like in arkinoids
+	m_ptBallLocation = BallOnPaddle();
+
+	m_pBall->LinkSprite();
+	if ((pDC = GetDC()) != NULL) {
+		m_pBall->PaintSprite(pDC, (INT)m_ptBallLocation.x, (INT)m_ptBallLocation.y);
+		ReleaseDC(pDC);
+	}
+#endif
+}
+
+
+CVector Fuge::ballOnPaddle() {
+	CVector vBall(0, -(PADDLE_RADIUS + BALL_RADIUS));
+
+	vBall.Rotate(fPaddleAngles[m_nInitPaddleSize] / 2);
+
+	vBall.Rotate(m_nPaddleCelIndex * ((2 * PI) / N_PADDLE_CELS));
+	vBall -= CVector(BALL_RADIUS, BALL_RADIUS);
+
+	// this vector was relative to center so now make it a real point
+	vBall += _gvCenter;
+
+	return vBall;
+}
+
+
+void Fuge::startPaddle() {
+	assert(!m_pPaddle.empty());
+
+	m_pPaddle.linkSprite();
+	m_bBallOnPaddle = TRUE;
+
+	paintPaddle(TRUE);
+}
+
+
+void Fuge::endPaddle() {
+	assert(!m_pPaddle.empty());
+
+	if (m_pPaddle.isLinked())
+		m_pPaddle.unlinkSprite();
+}
+
+void Fuge::launchBall() {
+	assert(m_bGameActive);
+	assert(m_bBallOnPaddle);
+
+	m_bPause = FALSE;
+	m_bBallOnPaddle = FALSE;
+
+	// starting ball vector is determined by the location of the paddle
+	m_vBallVector = _gvCenter - (m_ptBallLocation + BALL_RADIUS);
+
+	// add a slight randomness to the balls vector
+	m_vBallVector.Rotate(Deg2Rad(getRandomNumber(2) - 1));
+	m_vBallVector.Unitize();
+
+	paintBall();
 }
 
 } // namespace Fuge

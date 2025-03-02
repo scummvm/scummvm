@@ -39,10 +39,16 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+enum SkillLevel {
+	SKILLLEVEL_LOW = 0,
+	SKILLLEVEL_MEDIUM = 1,
+	SKILLLEVEL_HIGH = 2
+};
+
 struct GAMESTRUCT {
 	long lCrowns = 0;
 	long lScore = 0;
-	int  nSkillLevel = 0;
+	SkillLevel nSkillLevel = SKILLLEVEL_LOW;
 	bool bSoundEffectsEnabled = false;
 	bool bMusicEnabled = false;
 	bool bPlayingMetagame = true;

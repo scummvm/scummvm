@@ -27,6 +27,8 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+class MinigameView;
+
 class GfxSurface : public Graphics::ManagedSurface {
 private:
 	Graphics::ManagedSurface _cellsSource; // Used with loadCels
@@ -46,8 +48,22 @@ public:
 	void loadBitmap(const char *filename);
 	void loadCels(const char *filename, size_t numCells);
 	void convertTo(const byte *palette, int count = PALETTE_COUNT);
-
 	void setCell(size_t cellNum);
+};
+
+class Sprite : public GfxSurface, public Common::Point {
+private:
+	MinigameView *_minigame = nullptr;
+
+public:
+	Sprite(MinigameView *minigame) : GfxSurface(),
+			_minigame(minigame) {
+		assert(_minigame);
+	}
+
+	bool isLinked() const;
+	void linkSprite();
+	void unlinkSprite();
 };
 
 } // namespace HodjNPodj
