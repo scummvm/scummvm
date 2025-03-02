@@ -351,6 +351,7 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 		break;
 	}
 
+	redraw();
 	return true;
 }
 
@@ -378,15 +379,18 @@ void Fuge::paintBricks() {
 	GfxSurface s = getSurface();
 	s.blitFrom(_background);
 
+	if (m_bBrickVisible[0])
+		return;
+
 	// Erase all the bricks that are hidden
-	if (m_nNumRows != 0) {
-		for (int brickIndex = 0; brickIndex < N_BRICKS; brickIndex++) {
-			if (!m_bBrickVisible[brickIndex]) {
-				// Remove this brick from the screen
-				s.floodFill(ptBrickPos[brickIndex].x + ptBrickSize[brickIndex].cx / 2,
-					ptBrickPos[brickIndex].y + ptBrickSize[brickIndex].cy / 2,
-					255);
-			}
+	for (int brickIndex = 0;
+			brickIndex < (m_nNumRows * BRICKS_PER_ROW);
+			brickIndex++) {
+		if (!m_bBrickVisible[brickIndex]) {
+			// Remove this brick from the screen
+			s.floodFill(ptBrickPos[brickIndex].x + ptBrickSize[brickIndex].cx / 2,
+				ptBrickPos[brickIndex].y + ptBrickSize[brickIndex].cy / 2,
+				255);
 		}
 	}
 }
@@ -474,7 +478,7 @@ void Fuge::showOptionsMenu() {
 	m_ScrollButton.setPressed(true);
 
 	if (!m_bIgnoreScrollClick) {
-		m_bIgnoreScrollClick = TRUE;
+		m_bIgnoreScrollClick = true;
 
 		gamePause();
 		CBofSound::waitWaveSounds();
@@ -487,7 +491,7 @@ void Fuge::showOptionsMenu() {
 }
 
 void Fuge::gamePause() {
-	m_bPause = TRUE;
+	m_bPause = true;
 }
 
 void Fuge::gameResume() {
@@ -510,8 +514,8 @@ void Fuge::playGame() {
 	startPaddle();
 
 	// game starts paused
-	m_bPause = TRUE;
-	m_bGameActive = TRUE;
+	m_bPause = true;
+	m_bGameActive = true;
 	_timerPaused = true;
 }
 
@@ -547,7 +551,7 @@ void Fuge::loadIniSettings() {
 		m_nInitNumBalls = 1;
 		m_nInitStartLevel = 3;
 		m_nGForceFactor = GFORCE_DEF;
-		m_nInitPaddleSize = SIZE_MAX;
+		m_nInitPaddleSize = PSIZE_MAX;
 
 		switch (gameInfo.nSkillLevel) {
 		case SKILLLEVEL_LOW:
@@ -637,9 +641,9 @@ void Fuge::startPaddle() {
 	assert(!m_pPaddle.empty());
 
 	m_pPaddle.linkSprite();
-	m_bBallOnPaddle = TRUE;
+	m_bBallOnPaddle = true;
 
-	paintPaddle(TRUE);
+	paintPaddle(true);
 }
 
 
@@ -674,11 +678,9 @@ void Fuge::startBricks() {
 
 	for (i = 0; i < nBricks; i++) {
 		if (!m_bBrickVisible[i]) {
-			m_bBrickVisible[i] = TRUE;
+			m_bBrickVisible[i] = true;
 		}
 	}
-
-	paintBricks();
 }
 
 void Fuge::endBricks() {
@@ -1107,15 +1109,15 @@ void Fuge::ballvsPaddle() {
 		nRollBack = 0;
 		if (fLen1 <= BALL_RADIUS) {
 			nRollBack = BALL_RADIUS - (int)fLen1;
-			bHit = TRUE;
+			bHit = true;
 			break;
 		} else if (fLen2 <= BALL_RADIUS) {
 			nRollBack = (BALL_RADIUS - (int)fLen2);
-			bHit = TRUE;
+			bHit = true;
 			break;
 		} else if (fLen1 + fLen2 <= length) {
 			nRollBack = (int)(length - (fLen1 + fLen2)) + 2;
-			bHit = TRUE;
+			bHit = true;
 			break;
 		}
 	}
@@ -1259,7 +1261,7 @@ void Fuge::ballvsPaddle() {
 			}
 		}
 
-		m_bPaddleHit = TRUE;
+		m_bPaddleHit = true;
 	}
 }
 
@@ -1432,7 +1434,7 @@ void Fuge::ballvsBrick(double length) {
 					vPoints[j] += _gvCenter;
 
 					if (distanceBetweenPoints(vBallCenter, vPoints[j]) < 11.0) {
-						bHit = TRUE;
+						bHit = true;
 					}
 				}
 
@@ -1494,7 +1496,7 @@ void Fuge::ballvsBrick(double length) {
 						// there are more bricks left,
 						// so just calc a new vector for the ball
 
-						bStillHit = TRUE;
+						bStillHit = true;
 						while (bStillHit) {
 
 							// roll ball back to point of contact with brick
@@ -1507,7 +1509,7 @@ void Fuge::ballvsBrick(double length) {
 							for (j = 0; j < N_BRICK_POINTS; j++) {
 
 								if ((fLen[j] = distanceBetweenPoints(vBallCenter, vPoints[j])) < 11.0) {
-									bStillHit = TRUE;
+									bStillHit = true;
 									break;
 								}
 							}
