@@ -233,9 +233,7 @@ namespace Macs2 {
 
 	void ReadDataFromExecutable(Common::MemoryReadStream *fileStream);
 
-		// TODO: Check where these contents live
-		// Memory pointed to by [2250] global
-		Common::MemoryReadStream *data = nullptr;
+		
 	};
 
 } // namespace Macs2
