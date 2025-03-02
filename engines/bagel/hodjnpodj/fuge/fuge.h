@@ -39,10 +39,10 @@ private:
 	Graphics::Palette m_GamePalette;
 	Graphics::ManagedSurface _background;
 	const CVector _gvCenter;
+	int _timerCtr = 0;
 
 	int _backgroundNumRows = -1;
 	int _paddleOldSize = -1;
-	bool _timerPaused = true;
 
 	bool m_bBrickVisible[N_BRICKS] = { false };
 	const Common::Point m_ptOrigin;
@@ -107,7 +107,7 @@ private:
 	void initializeJoystick();
 	void startBall();
 	void endBall();
-	void paintBall();
+	void moveBall();
 	void launchBall();
 	void startPaddle();
 	void endPaddle();

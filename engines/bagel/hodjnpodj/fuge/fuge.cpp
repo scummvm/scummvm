@@ -401,6 +401,14 @@ void Fuge::repaintSpriteList() {
 }
 
 bool Fuge::tick() {
+	// Continue as long as there is a currently active non-paused game
+	if (m_bGameActive && !m_bPause) {
+		if (++_timerCtr >= 5) {
+			moveBall();
+			redraw();
+		}
+	}
+
 	return true;
 }
 
@@ -518,12 +526,9 @@ void Fuge::playGame() {
 	// game starts paused
 	m_bPause = true;
 	m_bGameActive = true;
-	_timerPaused = true;
 }
 
 void Fuge::gameReset() {
-	_timerPaused = false;		// Stop the timer
-
 	if (gameInfo.bSoundEffectsEnabled) {
 		BofPlaySound(NULL, SOUND_ASYNCH);	// Stop all sounds
 	}
@@ -663,7 +668,7 @@ void Fuge::launchBall() {
 	m_vBallVector.Rotate(Deg2Rad(getRandomNumber(2) - 1));
 	m_vBallVector.Unitize();
 
-	paintBall();
+	moveBall();
 }
 
 void Fuge::startBricks() {
@@ -682,7 +687,7 @@ void Fuge::endBricks() {
 	Common::fill(m_bBrickVisible, m_bBrickVisible + N_BRICKS, false);
 }
 
-void Fuge::paintBall() {
+void Fuge::moveBall() {
 	Common::Point ptLast;
 	CVector vBall, vGravity;
 	double length;
