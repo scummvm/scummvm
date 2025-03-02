@@ -98,7 +98,6 @@ private:
 	void loadMasterSounds();
 	void showOptionsMenu();
 	void gamePause();
-	void gameResume();
 	void playGame();
 	void gameReset();
 	void loadIniSettings();
@@ -144,6 +143,7 @@ public:
 	void gameOverClosed();
 	void newLifeClosed();
 	void roundCompleteClosed();
+	void gameResume();
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;

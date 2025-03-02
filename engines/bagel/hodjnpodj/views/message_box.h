@@ -27,13 +27,11 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-typedef void(*DialogCloseCallback)();
-
 class MessageBox: public View {
 private:
 	Common::String _title;
 	Common::String _message;
-	DialogCloseCallback _callback;
+	ViewCloseCallback _callback;
 
 public:
 	MessageBox() : View("MessageBox") {
@@ -41,7 +39,7 @@ public:
 	virtual ~MessageBox() {}
 
 	static void show(const Common::String &title,
-		const Common::String &msg, DialogCloseCallback callback);
+		const Common::String &msg, ViewCloseCallback callback);
 };
 
 } // namespace HodjNPodj

@@ -62,5 +62,12 @@ bool Rules::tick() {
 	return true;
 }
 
+void Rules::show(const Common::Path &filename,
+		const Common::String &waveFile,
+		ViewCloseCallback callback) {
+
+}
+
+
 } // namespace HodjNPodj
 } // namespace Bagel

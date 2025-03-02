@@ -42,6 +42,10 @@ public:
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 	bool tick() override;
+
+	static void show(const Common::Path &filename,
+		const Common::String &waveFile,
+		ViewCloseCallback callback);
 };
 
 } // namespace HodjNPodj

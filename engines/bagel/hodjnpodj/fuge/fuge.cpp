@@ -31,6 +31,7 @@
 #include "bagel/boflib/point.h"
 #include "bagel/boflib/size.h"
 #include "bagel/hodjnpodj/views/message_box.h"
+#include "bagel/hodjnpodj/views/rules.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -205,19 +206,19 @@ void Fuge::clear() {
 	m_nGForceFactor = GFORCE_DEF;
 
 	m_pSoundTrack = NULL;
-	m_bPause = FALSE;
-	m_bGameActive = FALSE;
-	m_bIgnoreScrollClick = FALSE;
-	m_bBallOnPaddle = FALSE;
+	m_bPause = false;
+	m_bGameActive = false;
+	m_bIgnoreScrollClick = false;
+	m_bBallOnPaddle = false;
 	m_nPaddleCelIndex = 29;
-	m_bMovingPaddle = FALSE;
+	m_bMovingPaddle = false;
 	m_lScore = 0;
 	m_pBrickSound = NULL;
 	m_pWallSound = NULL;
 	m_pPaddleSound = NULL;
 	m_pExtraLifeSound = NULL;
 	m_nNumRows = 0;
-	m_bJoyActive = FALSE;
+	m_bJoyActive = false;
 	Common::fill(m_bBrickVisible, m_bBrickVisible + N_BRICKS, false);
 }
 
@@ -288,7 +289,7 @@ bool Fuge::msgFocus(const FocusMessage &msg) {
 		// Closing options menu
 		// show the command scroll
 		m_ScrollButton.setPressed(false);
-		m_bIgnoreScrollClick = FALSE;
+		m_bIgnoreScrollClick = false;
 
 		if (!gameInfo.bMusicEnabled && (m_pSoundTrack != NULL)) {
 			m_pSoundTrack->stop();
@@ -308,7 +309,72 @@ bool Fuge::msgFocus(const FocusMessage &msg) {
 }
 
 bool Fuge::msgKeypress(const KeypressMessage &msg) {
-	return false;
+	switch (msg.keycode) {
+	// Move paddle clockwise
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_KP8:
+	case Common::KEYCODE_KP6:
+		if (m_bGameActive) {
+			m_nPaddleCelIndex += PADDLE_CEL_JUMP;
+			paintPaddle(false);
+		}
+		break;
+
+	// Move paddle counter-clockwise
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_KP2:
+	case Common::KEYCODE_KP4:
+		if (m_bGameActive) {
+			m_nPaddleCelIndex -= PADDLE_CEL_JUMP;
+			paintPaddle(false);
+		}
+		break;
+
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_SPACE:
+		if (m_bGameActive) {
+			if (m_bBallOnPaddle) {
+				launchBall();
+			}
+		}
+		break;
+
+	// Bring up the Rules
+	case Common::KEYCODE_F1: {
+		gamePause();
+		CBofSound::waitWaveSounds();
+		Rules::show("fuge.txt",
+			(gameInfo.bSoundEffectsEnabled ? WAV_NARRATION : NULL),
+			[]() {
+				((Fuge *)g_events->findView("Fuge"))->gameResume();
+			});
+		break;
+	}
+
+	//
+	// Bring up the options menu
+	case Common::KEYCODE_F2:
+		showOptionsMenu();
+		break;
+
+	case Common::KEYCODE_SCROLLOCK:
+		if (m_bGameActive) {
+			if (!m_bPause) {
+				gamePause();
+			} else {
+				gameResume();
+			}
+		}
+		break;
+
+	default:
+		return MinigameView::msgKeypress(msg);
+		break;
+	}
+
+	return true;
 }
 
 void Fuge::draw() {
@@ -349,7 +415,7 @@ void Fuge::paintBricks() {
 }
 
 void Fuge::repaintSpriteList() {
-
+	drawSprites();
 }
 
 bool Fuge::tick() {
@@ -447,7 +513,7 @@ void Fuge::gamePause() {
 
 void Fuge::gameResume() {
 	if (!m_bBallOnPaddle && m_bMovingPaddle)
-		m_bPause = FALSE;
+		m_bPause = false;
 }
 
 void Fuge::playGame() {
@@ -493,12 +559,12 @@ void Fuge::gameReset() {
 	m_nNumRows = m_nInitStartLevel;				// reset number of brick rows
 	m_nBricks = m_nNumRows * BRICKS_PER_ROW;	// get new brick count
 	m_lScore = 0;                               // reset the score
-	m_bPaddleHit = FALSE;                       // paddle starts fresh
+	m_bPaddleHit = false;                       // paddle starts fresh
 }
 
 void Fuge::loadIniSettings() {
 	if (gameInfo.bPlayingMetagame) {
-		m_bOutterWall = FALSE;
+		m_bOutterWall = false;
 		m_nInitNumBalls = 1;
 		m_nInitStartLevel = 3;
 		m_nGForceFactor = GFORCE_DEF;
@@ -609,8 +675,8 @@ void Fuge::launchBall() {
 	assert(m_bGameActive);
 	assert(m_bBallOnPaddle);
 
-	m_bPause = FALSE;
-	m_bBallOnPaddle = FALSE;
+	m_bPause = false;
+	m_bBallOnPaddle = false;
 
 	// starting ball vector is determined by the location of the paddle
 	m_vBallVector = _gvCenter - (m_ptBallLocation + BALL_RADIUS);
@@ -686,7 +752,7 @@ void Fuge::paintBall() {
 			// Play the ball-gets-sucked-into-black-hole animation
 			//
 			loseBall();
-			m_bPaddleHit = FALSE;
+			m_bPaddleHit = false;
 
 			// or has ball hit the paddle?
 			//
@@ -705,7 +771,7 @@ void Fuge::paintBall() {
 			//
 			// determine if a ball actually hit a brick
 			//
-			m_bPaddleHit = FALSE;
+			m_bPaddleHit = false;
 
 
 			// or did ball hit edge of ferris wheel
@@ -802,7 +868,7 @@ void Fuge::paintBall() {
 				m_vBallVector.Reflect(vBall);
 			}
 
-			m_bPaddleHit = FALSE;
+			m_bPaddleHit = false;
 		}
 
 		// only paint the ball if it actually moved
@@ -999,7 +1065,7 @@ void Fuge::ballvsPaddle() {
 	// away from the center of the ball, then the ball has hit
 	// the paddle
 	//
-	bHit = FALSE;
+	bHit = false;
 	for (i = 0; i < N_CRIT_POINTS - 1; i++) {
 
 		switch (i) {
@@ -1339,7 +1405,7 @@ void Fuge::ballvsBrick(double length) {
 
 	// which brick did we hit?
 	//
-	bHit = FALSE;
+	bHit = false;
 
 	for (i = 0; i < nMaxHits; i++) {
 		nBrickIndex = nUse[i];
@@ -1440,7 +1506,7 @@ void Fuge::ballvsBrick(double length) {
 							// get new center of ball
 							vBallCenter = m_ptBallLocation + BALL_RADIUS;
 
-							bStillHit = FALSE;
+							bStillHit = false;
 							for (j = 0; j < N_BRICK_POINTS; j++) {
 
 								if ((fLen[j] = distanceBetweenPoints(vBallCenter, vPoints[j])) < 11.0) {

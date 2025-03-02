@@ -27,6 +27,8 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+typedef void(*ViewCloseCallback)();
+
 /**
  * Base view class for screens and dialogs that appear on-screen.
  * The View class takes care of two important things:

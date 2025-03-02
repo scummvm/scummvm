@@ -25,7 +25,7 @@ namespace Bagel {
 namespace HodjNPodj {
 
 void MessageBox::show(const Common::String &title,
-		const Common::String &msg, DialogCloseCallback callback) {
+		const Common::String &msg, ViewCloseCallback callback) {
 	MessageBox *view = (MessageBox *)g_events->findView("MessageBox");
 	view->_title = title;
 	view->_message = msg;
