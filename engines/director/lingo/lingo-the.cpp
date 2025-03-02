@@ -1708,7 +1708,9 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 				}
 			}
 
-			if (castId != sprite->_castId) {
+			// Since Digital Video dimensions get clarified after loading,
+			// we enforce them here
+			if (castId != sprite->_castId || (castMember && castMember->_type == kCastDigitalVideo)) {
 				if (!sprite->_trails) {
 					movie->getWindow()->addDirtyRect(channel->getBbox());
 					channel->_dirty = true;

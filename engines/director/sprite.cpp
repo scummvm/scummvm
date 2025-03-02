@@ -527,7 +527,7 @@ void Sprite::setCast(CastMemberID memberID, bool replaceDims) {
 			Common::Rect dims = _cast->getInitialRect();
 			switch (_cast->_type) {
 			case kCastShape:
-			case kCastText: 	// fall-through
+			case kCastText:
 				break;
 			case kCastBitmap:
 			default:
