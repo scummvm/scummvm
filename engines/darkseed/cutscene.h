@@ -22,9 +22,10 @@
 #ifndef DARKSEED_CUTSCENE_H
 #define DARKSEED_CUTSCENE_H
 
+#include "darkseed/morph.h"
 #include "darkseed/pal.h"
 #include "darkseed/titlefont.h"
-#include "darkseed/morph.h"
+#include "zhmenufont.h"
 
 namespace Darkseed {
 
@@ -34,6 +35,7 @@ class Cutscene {
 	char _cutsceneId = 0;
 	uint16 _movieStep = 9999;
 	TitleFont *_titleFont = nullptr;
+	ZhMenuFont *_zhFont = nullptr;
 	Pal _palette;
 	Anm _animation;
 	int _animIdx = 0;
@@ -77,6 +79,7 @@ private:
 	void freeMorph();
 
 	void displayTitleText(const I18NTextWithPosition &text);
+	void displayZhString(const char *text, int y);
 };
 
 } // namespace Darkseed

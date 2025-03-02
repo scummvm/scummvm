@@ -24,18 +24,19 @@
 
 namespace Darkseed {
 
-ZhMenuFont::ZhMenuFont() {
-	load();
+ZhMenuFont::ZhMenuFont(const Common::Path &filename, ZhLargeFontType type) : _type(type) {
+	load(filename);
 }
 
-void ZhMenuFont::load() {
+void ZhMenuFont::load(const Common::Path &filename) {
 	Common::File fontData;
-	if (!fontData.open("zhmenufont_game.dat")) {
+	if (!fontData.open(filename)) {
 		error("Error: failed to open zhmenufont_game.dat");
 	}
-	_glyphs.resize(10);
+	int numGlyphs = fontData.size()/74;
+	_glyphs.resize(numGlyphs);
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < numGlyphs; i++) {
 		_glyphs[i].charIdx = fontData.readUint16BE();
 		fontData.read(_glyphs[i].pixels, 72);
 	}
@@ -43,7 +44,7 @@ void ZhMenuFont::load() {
 	fontData.close();
 }
 
-const ZhMenuFontGlyph *ZhMenuFont::getGlyph(uint32 chr) const {
+const ZhLargeFontGlyph *ZhMenuFont::getGlyph(uint32 chr) const {
 	for (auto &glyph : _glyphs) {
 		if (glyph.charIdx == chr) {
 			return &glyph;

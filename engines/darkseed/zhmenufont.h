@@ -28,17 +28,23 @@
 
 namespace Darkseed {
 
-struct ZhMenuFontGlyph {
+struct ZhLargeFontGlyph {
 	uint16 charIdx;
 	uint8 pixels[72]; // 24x24 pixels @ 1bpp
 };
 
+enum class ZhLargeFontType {
+	InGame,
+	Titles
+};
+
 class ZhMenuFont : public Graphics::Font {
 private:
-	Common::Array<ZhMenuFontGlyph> _glyphs;
+	ZhLargeFontType _type = ZhLargeFontType::InGame;
+	Common::Array<ZhLargeFontGlyph> _glyphs;
 
 public:
-	ZhMenuFont();
+	ZhMenuFont(const Common::Path &filename, ZhLargeFontType type);
 
 	int getFontHeight() const override;
 	int getMaxCharWidth() const override;
@@ -46,8 +52,8 @@ public:
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 private:
-	void load();
-	const ZhMenuFontGlyph *getGlyph(uint32 chr) const;
+	void load(const Common::Path &filename);
+	const ZhLargeFontGlyph *getGlyph(uint32 chr) const;
 };
 
 } // namespace Darkseed

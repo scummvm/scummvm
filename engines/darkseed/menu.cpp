@@ -115,7 +115,7 @@ Common::KeyCode Menu::getLocalisedConfirmToQuitKeycode() {
 
 Menu::Menu() {
 	if (g_engine->getLanguage() == Common::ZH_ANY) {
-		_zhFont = new ZhMenuFont();
+		_zhFont = new ZhMenuFont("zhmenufont_game.dat", ZhLargeFontType::InGame);
 	}
 }
 

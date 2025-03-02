@@ -28,6 +28,7 @@ namespace Darkseed {
 
 Cutscene::~Cutscene() {
 	delete _titleFont;
+	delete _zhFont;
 }
 
 void Cutscene::play(char cutsceneId) {
@@ -86,6 +87,8 @@ void Cutscene::update() {
 		} else if (_cutsceneId == 'J') {
 			delete _titleFont;
 			_titleFont = nullptr;
+			delete _zhFont;
+			_zhFont = nullptr;
 			g_engine->newGame();
 		} else if (_cutsceneId == 'Y') {
 			play('I');
@@ -148,6 +151,9 @@ bool Cutscene::introScene() {
 		if (_titleFont == nullptr) {
 			_titleFont = new TitleFont();
 		}
+		if (_zhFont == nullptr && lang == Common::ZH_ANY) {
+			_zhFont = new ZhMenuFont("zh_start_font.dat", ZhLargeFontType::Titles);
+		}
 		if (lang == Common::FR_FRA || lang == Common::DE_DEU) {
 			displayTitleText({
 				{0, 0, ""},
@@ -172,7 +178,7 @@ bool Cutscene::introScene() {
 				{0, 0, ""},
 				{0, 0, ""},
 				{68, 160, "DEVELOPING NEW WAYS TO AMAZE"},
-				{0, 0, ""}
+				{0, 160, "\xb3\xd0\xb3\x79\xc5\xe5\xb7\x58\xb9\x43\xc0\xb8\xb7\x73\xad\xb7\xae\xe6\xaa\xba"}
 			});
 		}
 		g_engine->fadeIn(_palette);
@@ -193,7 +199,11 @@ bool Cutscene::introScene() {
 		break;
 	case 7:
 		g_engine->_screen->clear();
-		_titleFont->displayString(222, 160, "CYBERDREAMS");
+		if (lang == Common::ZH_ANY) {
+			displayZhString("\xb6\xeb\xac\x66\xab\x54\x28\x43\x59\x42\x45\x52\x44\x52\x45\x41\x4d\x53\x29\xb3\x5d\xad\x70\xa4\xbd\xa5\x71", 160);
+		} else {
+			_titleFont->displayString(222, 160, "CYBERDREAMS");
+		}
 		g_engine->fadeIn(_palette);
 		break;
 	case 8:
@@ -217,7 +227,7 @@ bool Cutscene::introScene() {
 			{250, 160, "PRESENTE"},
 			{232, 160, "PRAESENTIERT"},
 			{250, 160, "PRESENTS"},
-			{0, 0, ""}
+			{0, 160, "\xb3\x5d\xad\x70\xa5\x58\xab\x7e"}
 		});
 		g_engine->fadeIn(_palette);
 		break;
@@ -234,7 +244,35 @@ bool Cutscene::introScene() {
 			return true;
 		}
 		break;
-	case 15: {
+	case 15:
+		if (lang == Common::ZH_ANY) {
+			g_engine->_screen->clear();
+			displayZhString("\xa8\xc8\xac\x77\xb9\x71\xb8\xa3\xa5\xf0\xb6\xa2\xb3\x6e\xc5\xe9\xb6\x7d\xb5\x6f\xb6\xb0\xb9\xce", 100);
+			displayZhString("\xb9\x71\xb8\xa3\xa5\xf0\xb6\xa2\xa5\x40\xac\xc9\xc5\xb8\xe5\xa5\xb1\xc0\xa5\x58", 140);
+			displayZhString("\xb5\x7b\x20\xa6\xa1\x20\xa7\xef\x20\xbd\x73\x3a\xa5\xdb\x20\xc5\xe9\x20\xb7\xbd", 176);
+			g_engine->fadeIn(_palette);
+		}
+		break;
+	case 16:
+		if (lang == Common::ZH_ANY) {
+			if (g_engine->fadeStep()) {
+				return true;
+			}
+		}
+		break;
+	case 17:
+		if (lang == Common::ZH_ANY) {
+			g_engine->fadeOut();
+		}
+		break;
+	case 18:
+		if (lang == Common::ZH_ANY) {
+			if (g_engine->fadeStep()) {
+				return true;
+			}
+		}
+		break;
+	case 19: {
 		g_engine->_sound->playMusic(StartMusicId::kCredits);
 		g_engine->_screen->clear();
 		g_engine->_screen->clearPalette();
@@ -251,36 +289,36 @@ bool Cutscene::introScene() {
 		i001Img.draw(1);
 		break;
 	}
-	case 16:
+	case 20:
 		g_engine->fadeIn(_palette);
 		break;
-	case 17:
+	case 21:
 		if (g_engine->fadeStep()) {
 			return true;
 		}
 		break;
-	case 18:
+	case 22:
 		_animation.load("art/shipin.anm");
 		_animIdx = 0;
 		_animCount = 47;
 		runAnim();
 		break;
-	case 19:
+	case 23:
 		if (stepAnim()) {
 			return true;
 		}
 		break;
-	case 20:
+	case 24:
 		_animIdx = 47;
 		_animCount = 29;
 		runAnim();
 		break;
-	case 21:
+	case 25:
 		if (stepAnim()) {
 			return true;
 		}
 		break;
-	case 22:
+	case 26:
 		if (lang == Common::KO_KOR) {
 			_animation.load("art/ht2.anm");
 			_animCount = 45;
@@ -291,12 +329,12 @@ bool Cutscene::introScene() {
 		_animIdx = 0;
 		runAnim();
 		break;
-	case 23:
+	case 27:
 		if (stepAnim()) {
 			return true;
 		}
 		break;
-	case 24: {
+	case 28: {
 		g_engine->_screen->clear();
 		g_engine->_screen->makeAllDirty();
 		_palette.load("art/house.pal");
@@ -315,22 +353,22 @@ bool Cutscene::introScene() {
 		registTime();
 		break;
 	}
-	case 25:
+	case 29:
 		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
-	case 26:
+	case 30:
 		putHouse();
 		registTime();
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 27:
+	case 31:
 		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
-	case 28:
+	case 32:
 		putHouse();
 		registTime();
 		if (lang == Common::DE_DEU) {
@@ -347,53 +385,13 @@ bool Cutscene::introScene() {
 				{119, 90, "DIRECTEURS DE PRODUCTION"},
 				{0, 0, ""},
 				{155, 90, "EXECUTIVE PRODUCERS"},
-				{0, 0, ""}
+				{0, 90, "\xb0\xf5\x20\xa6\xe6\x20\xbb\x73\x20\xa7\x40\x20\xc1\x60\x20\xba\xca"}
 			});
 
 			_titleFont->displayString(200, 130, "PATRICK KETCHUM");
 			_titleFont->displayString(236, 160, "ROLF KLUG");
 			_titleFont->displayString(236, 190, "JEAN KLUG");
 		}
-		g_engine->_screen->makeAllDirty();
-		break;
-	case 29:
-		if (waitTime(CREDITS_DELAY)) {
-			return true;
-		}
-		break;
-	case 30:
-		putHouse();
-		registTime();
-		displayTitleText({
-			{236, 95, "PRODUCERS"},
-			{218, 95, "PRODUCTORES"},
-			{218, 95, "PRODUCTEURS"},
-			{218, 95, "PRODUZENTEN"},
-			{236, 95, "PRODUCERS"},
-			{0, 0, ""}
-		});
-		_titleFont->displayString(200, 135, "HARALD SEELEY");
-		_titleFont->displayString(218, 165, "MIKE DAWSON");
-		g_engine->_screen->makeAllDirty();
-		break;
-	case 31:
-		if (waitTime(CREDITS_DELAY)) {
-			return true;
-		}
-		break;
-	case 32:
-		putHouse();
-		registTime();
-		displayTitleText({
-			{245, 95, "DESIGNERS"},
-			{227, 95, "DISENADORES"},
-			{218, 95, "DESSINATEURS"},
-			{254, 95, "DESIGNER"},
-			{245, 95, "DESIGNERS"},
-			{0, 0, ""}
-		});
-		_titleFont->displayString(209, 135, "MIKE CRANFORD");
-		_titleFont->displayString(227, 165, "MIKE DAWSON");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 33:
@@ -405,16 +403,15 @@ bool Cutscene::introScene() {
 		putHouse();
 		registTime();
 		displayTitleText({
-			{227, 95, "PROGRAMMERS"},
-			{203, 95, "PROGRAMADORES"},
-			{218, 95, "PROGRAMMEURS"},
-			{206, 95, "PROGRAMMIERER"},
-			{227, 95, "PROGRAMMERS"},
-			{0, 0, ""}
+			{236, 95, "PRODUCERS"},
+			{218, 95, "PRODUCTORES"},
+			{218, 95, "PRODUCTEURS"},
+			{218, 95, "PRODUZENTEN"},
+			{236, 95, "PRODUCERS"},
+			{0, 95, "\xbb\x73\x20\x20\x20\x20\x20\x20\xa7\x40"}
 		});
-		_titleFont->displayString(164, 135, "LENNARD FEDDERSEN");
-		_titleFont->displayString(227, 165, "JOHN KRAUSE");
-		_titleFont->displayString(245, 195, "GARY VICK");
+		_titleFont->displayString(200, 135, "HARALD SEELEY");
+		_titleFont->displayString(218, 165, "MIKE DAWSON");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 35:
@@ -426,14 +423,15 @@ bool Cutscene::introScene() {
 		putHouse();
 		registTime();
 		displayTitleText({
-			{200, 100, "MUSICAL SCORE"},
-			{206, 100, "BANDA SONORA"},
-			{200, 100, "THEME MUSICAL"},
-			{214, 100, "MUSIKSTUECKE"},
-			{200, 100, "MUSICAL SCORE"},
-			{0, 0, ""}
+			{245, 95, "DESIGNERS"},
+			{227, 95, "DISENADORES"},
+			{218, 95, "DESSINATEURS"},
+			{254, 95, "DESIGNER"},
+			{245, 95, "DESIGNERS"},
+			{0, 95, "\xb3\x5d\x20\x20\xad\x70\x20\x20\xb8\x73"}
 		});
-		_titleFont->displayString(200, 140, "GREGORY ALPER");
+		_titleFont->displayString(209, 135, "MIKE CRANFORD");
+		_titleFont->displayString(227, 165, "MIKE DAWSON");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 37:
@@ -445,14 +443,16 @@ bool Cutscene::introScene() {
 		putHouse();
 		registTime();
 		displayTitleText({
-			{119, 100, "MUSIC AND SOUND EFFECTS"},
-			{89, 100, "MUSICA Y EFECTOS DE SONIDO"},
-			{92, 100, "MUSIQUE ET EFFETS SONORES"},
-			{128, 100, "MUSIK-UND SOUNDEFFEKTE"},
-			{119, 100, "MUSIC AND SOUND EFFECTS"},
-			{0, 0, ""}
+			{227, 95, "PROGRAMMERS"},
+			{203, 95, "PROGRAMADORES"},
+			{218, 95, "PROGRAMMEURS"},
+			{206, 95, "PROGRAMMIERER"},
+			{227, 95, "PROGRAMMERS"},
+			{0, 95, "\xb5\x7b\xa6\xa1\xb3\x5d\xad\x70\xb2\xd5"}
 		});
-		_titleFont->displayString(200, 140, "DAVID A. BEAN");
+		_titleFont->displayString(164, 135, "LENNARD FEDDERSEN");
+		_titleFont->displayString(227, 165, "JOHN KRAUSE");
+		_titleFont->displayString(245, 195, "GARY VICK");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 39:
@@ -461,6 +461,44 @@ bool Cutscene::introScene() {
 		}
 		break;
 	case 40:
+		putHouse();
+		registTime();
+		displayTitleText({
+			{200, 100, "MUSICAL SCORE"},
+			{206, 100, "BANDA SONORA"},
+			{200, 100, "THEME MUSICAL"},
+			{214, 100, "MUSIKSTUECKE"},
+			{200, 100, "MUSICAL SCORE"},
+			{0, 100, "\xad\xb5\xbc\xd6\xb3\x5d\xad\x70\xb8\x73"}
+		});
+		_titleFont->displayString(200, 140, "GREGORY ALPER");
+		g_engine->_screen->makeAllDirty();
+		break;
+	case 41:
+		if (waitTime(CREDITS_DELAY)) {
+			return true;
+		}
+		break;
+	case 42:
+		putHouse();
+		registTime();
+		displayTitleText({
+			{119, 100, "MUSIC AND SOUND EFFECTS"},
+			{89, 100, "MUSICA Y EFECTOS DE SONIDO"},
+			{92, 100, "MUSIQUE ET EFFETS SONORES"},
+			{128, 100, "MUSIK-UND SOUNDEFFEKTE"},
+			{119, 100, "MUSIC AND SOUND EFFECTS"},
+			{0, 100, "\xad\xb5\xbc\xd6\xbb\x50\xad\xb5\xae\xc4\xa4\x75\xa7\x40\xb2\xd5"}
+		});
+		_titleFont->displayString(200, 140, "DAVID A. BEAN");
+		g_engine->_screen->makeAllDirty();
+		break;
+	case 43:
+		if (waitTime(CREDITS_DELAY)) {
+			return true;
+		}
+		break;
+	case 44:
 		putHouse();
 		registTime();
 		if (lang == Common::DE_DEU) {
@@ -474,22 +512,26 @@ bool Cutscene::introScene() {
 				{146, 100, "DIRECTEUR ARTISTIQUE"},
 				{0, 100, ""},
 				{218, 100, "ART DIRECTOR"},
-				{0, 0, ""}
+				{0, 100, "\xc3\xc0\xb3\x4e\xab\xfc\xbe\xc9\xc1\x60\xba\xca"}
 			});
 			_titleFont->displayString(236, 140, "BRUMMBAER");
 		}
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 41:
+	case 45:
 		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
-	case 42:
+	case 46:
 		putHouse();
 		registTime();
-		if (lang == Common::EN_ANY || lang == Common::KO_KOR) {
-			_titleFont->displayString(164, 100, "ASST. ART DIRECTOR");
+		if (lang == Common::EN_ANY || lang == Common::KO_KOR || lang == Common::ZH_ANY) {
+			if (lang == Common::ZH_ANY) {
+				displayZhString("\xc3\xc0\xb3\x4e\xa7\x55\xb2\x7a\xab\xfc\xbe\xc9", 100);
+			} else {
+				_titleFont->displayString(164, 100, "ASST. ART DIRECTOR");
+			}
 			_titleFont->displayString(191, 140, "PAUL DRZEWIECKI");
 		} else {
 			displayTitleText({
@@ -512,12 +554,12 @@ bool Cutscene::introScene() {
 		}
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 43:
+	case 47:
 		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
-	case 44:
+	case 48:
 		putHouse();
 		registTime();
 		displayTitleText({
@@ -526,17 +568,17 @@ bool Cutscene::introScene() {
 			{137, 100, "L'ART DU MONDE OBSCUR"},
 			{188, 100, "DARK-WORLD-KUNST"},
 			{200, 100, "DARK WORLD ART"},
-			{0, 0, ""}
+			{0, 100, "\xb6\xc2\xb7\x74\xa5\x40\xac\xc9\xc3\xc0\xb3\x4e"}
 		});
 		_titleFont->displayString(245, 140, "H.R. GIGER");
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 45:
+	case 49:
 		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
-	case 46:
+	case 50:
 		putHouse();
 		registTime();
 		if (lang == Common::FR_FRA) {
@@ -553,7 +595,7 @@ bool Cutscene::introScene() {
 				{0, 0, ""},
 				{107, 90, "COMPUTERGRAFIK-KUENSTLER"},
 				{182, 90, "COMPUTER ARTISTS"},
-				{0, 0, ""}
+				{0, 90, "\xb9\x71\xb8\xa3\xac\xfc\xa4\x75\xc3\xc0\xb3\x4e"}
 			});
 			_titleFont->displayString(227, 130, "JULIA ULANO");
 			_titleFont->displayString(191, 160, "JOBY ROME-OTERO");
@@ -561,12 +603,12 @@ bool Cutscene::introScene() {
 		}
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 47:
+	case 51:
 		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
-	case 48:
+	case 52:
 		putHouse();
 		registTime();
 		displayTitleText({
@@ -575,12 +617,12 @@ bool Cutscene::introScene() {
 			{173, 100, "LE TEXTE DU JEUX"},
 			{281, 100, "TEXTE"},
 			{236, 100, "GAME TEXT"},
-			{0, 0, ""}
+			{0, 100, "\xb9\x43\xc0\xb8\xa4\xe5\xa6\x72\xb9\xef\xa5\xd5"}
 		});
 		_titleFont->displayString(209, 140, "MICHEL HORVAT");
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 49:
+	case 53:
 		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
@@ -591,10 +633,17 @@ bool Cutscene::introScene() {
 			distrib.draw(1);
 			g_engine->_screen->makeAllDirty();
 			registTime();
+		} else if (lang == Common::ZH_ANY) {
+			putHouse();
+			registTime();
+			displayZhString("\xa8\xc8\xac\x77\xb9\x71\xb8\xa3\xa5\xf0\xb6\xa2\xb3\x6e\xc5\xe9\xb6\x7d\xb5\x6f\xb6\xb0\xb9\xce", 100);
+			displayZhString("\xb9\x71\xb8\xa3\xa5\xf0\xb6\xa2\xa5\x40\xac\xc9\xc5\xb8\xe5\xa5\xb1\xc0\xa5\x58", 140);
+			displayZhString("\xb5\x7b\x20\xa6\xa1\x20\xa7\xef\x20\xbd\x73\x3a\xa5\xdb\x20\xc5\xe9\x20\xb7\xbd", 176);
+			g_engine->_screen->makeAllDirty();
 		}
 		break;
-	case 50:
-		if (lang == Common::KO_KOR) {
+	case 54:
+		if (lang == Common::KO_KOR || lang == Common::ZH_ANY) {
 			if (waitTime(CREDITS_DELAY * 2)) {
 				return true;
 			}
@@ -607,12 +656,12 @@ bool Cutscene::introScene() {
 			return true;
 		}
 		break;
-	case 51:
+	case 55:
 		if (g_engine->_sound->isPlayingMusic())
 			g_engine->_sound->startFadeOut();
 		g_engine->fadeOut();
 		break;
-	case 52:
+	case 56:
 		if (g_engine->fadeStep() || g_engine->_sound->isFading()) {
 			return true;
 		}
@@ -624,8 +673,8 @@ bool Cutscene::introScene() {
 	_movieStep++;
 	if (g_engine->_isLeftMouseClicked || g_engine->_isRightMouseClicked) {
 		g_engine->zeroMouseButtons();
-		if (_movieStep < 51) {
-			_movieStep = 51;
+		if (_movieStep < 55) {
+			_movieStep = 55;
 		}
 	}
 	return true;
@@ -730,6 +779,11 @@ bool Cutscene::embryoInsertedScene() {
 			wakes1Img.draw() ;
 			break;
 		}
+		case Common::ZH_ANY :
+			displayZhString("\xa4\xa3\xad\x6e\x21\xa4\xa3\xad\x6e\xb1\x4e\xa8\xba\xad\xd3\xb2\xa7\xa7\xce\xad\x46\xad\x4c\xb6\xeb\xa8\xec\xa7\xda\xaa\xba\xb8\xa3\xa4\x6c\xb8\xcc", 130);
+			displayZhString("\xb1\xcf\xa9\x52\xa7\x72\x21\xa4\xd1\xa5\x44\xbc\x65\xae\xa4\xa7\xda\xa7\x61\x21", 170);
+			displayZhString("\xa6\x62\xb3\xc1\xa7\x4a\xb9\x44\xb4\xcb\xaa\xba\xa6\x79\xa5\x73\xc1\x6e\xa4\xa4\x2c\xac\x47\xa8\xc6\xa5\xd1\xa6\xb9\xb6\x7d\xa9\x6c\x2e\x2e\x2e", 210);
+			break;
 		default :
 			_titleFont->displayString(80, 130, "AFTER A HORRIFYING NIGHTMARE");
 			_titleFont->displayString(80, 170, "MIKE DAWSON AWAKENS TO THE");
@@ -1399,7 +1453,16 @@ void Cutscene::freeMorph() {
 
 void Cutscene::displayTitleText(const I18NTextWithPosition &text) {
 	const TextWithPosition &textWithPosition = getI18NTextWithPosition(text);
-	_titleFont->displayString(textWithPosition.x, textWithPosition.y, textWithPosition.text);
+	if (g_engine->getLanguage() == Common::ZH_ANY && _zhFont) {
+		displayZhString(textWithPosition.text, textWithPosition.y);
+	} else {
+		_titleFont->displayString(textWithPosition.x, textWithPosition.y, textWithPosition.text);
+	}
 }
 
+void Cutscene::displayZhString(const char *text, int y) {
+	auto str = convertToU32String(text, Common::ZH_ANY);
+	int x = (640 - str.size() * 24) / 2;
+	_zhFont->drawString(g_engine->_screen, str, x, y, 640, 14);
+}
 } // End of namespace Darkseed
