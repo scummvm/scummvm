@@ -87,48 +87,6 @@ ManagedSurface::ManagedSurface(ManagedSurface &surf, const Common::Rect &bounds)
 	create(surf, bounds);
 }
 
-ManagedSurface::ManagedSurface(Surface *surf, DisposeAfterUse::Flag disposeAfterUse) :
-		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
-		_owner(nullptr), _transparentColor(0), _transparentColorSet(false), _palette(nullptr) {
-	if (!surf) {
-		_disposeAfterUse = DisposeAfterUse::YES;
-
-		return;
-	}
-
-	if (disposeAfterUse == DisposeAfterUse::YES) {
-		_innerSurface.w = surf->w;
-		_innerSurface.h = surf->h;
-		_innerSurface.pitch = surf->pitch;
-		_innerSurface.format = surf->format;
-		_innerSurface.setPixels(surf->getPixels());
-
-		delete surf;
-	} else {
-		void *srcPixels = surf->getPixels();
-		_innerSurface.setPixels(srcPixels);
-		_innerSurface.w = surf->w;
-		_innerSurface.h = surf->h;
-		_innerSurface.pitch = surf->pitch;
-		this->format = surf->format;
-	}
-
-	_disposeAfterUse = disposeAfterUse;
-}
-
-ManagedSurface::ManagedSurface(const Surface *surf) :
-		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
-		_owner(nullptr), _transparentColor(0), _transparentColorSet(false), _palette(nullptr) {
-	if (!surf)  {
-		_disposeAfterUse = DisposeAfterUse::YES;
-
-		return;
-	}
-
-	_disposeAfterUse = DisposeAfterUse::NO;
-	copyFrom(*surf);
-}
-
 ManagedSurface::~ManagedSurface() {
 	free();
 }
