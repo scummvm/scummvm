@@ -359,6 +359,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "odissea", "Odissea - An Almost True Story" },
 	{ "oldskies", "Old Skies" },
 	{ "oott", "Order of the Thorne: The King's Challenge" },
+	{ "pepperodyssey", "Pepper Odyssey" },
 	{ "perfecttides", "Perfect Tides" },
 	{ "perfecttidess2s", "Perfect Tides: Station to Station" },
 	{ "perfidiouspetrolstation", "The Perfidious Petrol Station" },
@@ -893,6 +894,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "butcherstanys", "Butcher Stanys" },
 	{ "butcherstanys2", "Butcher Stanys II: Stanys Meets Marilyn Manson" },
 	{ "buttercup", "Buttercup's Gone Missing!" },
+	{ "bvsr", "Barbarian vs. Robot" },
 	{ "byohero", "BYO-Hero" },
 	{ "bytebetrayal", "Byte-Sized Betrayal" },
 	{ "bythenumbers", "By the Numbers" },
@@ -1887,6 +1889,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lavablava", "Lava Blava" },
 	{ "lazaruswantspants", "Lazarus Wants Pants" },
 	{ "lazytownthenewkid", "LazyTown: The New Kid" },
+	{ "learnromanianl1", "Learn Romanian - Lesson 1" },
 	{ "lechuckstories", "LeChuck Stories" },
 	{ "legacyicecream", "The Legacy of Icecream Man" },
 	{ "legendofrovendale", "Legend of Rovendale" },
@@ -1918,6 +1921,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "likeadream", "Like A Dream" },
 	{ "likeafox", "Like a Fox!" },
 	{ "lillywizard", "Lilly the Wonder Wizard" },
+	{ "limblob", "Limblob" },
 	{ "limeylizardwastewizard", "Limey Lizard: Waste Wizard!" },
 	{ "linegame", "Line Game" },
 	{ "linkattus", "The Devious and Daring Commando Raid of Linkattus" },
@@ -5436,6 +5440,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("paramnesia", "Paramnesia.exe", "7b665533f5d1fe08284fd9dbff395b06", 20233668),
 	DEMO_ENTRY_EN("patchesspazcat", "CatGame.exe", "0736c98683a5ee6179edd886ca674909", 45161300),
 	DEMO_ENTRY_EN("pengaobcster", "PAO.exe", "f45c6354507e154938bdb0f55f9f9d7a", 294757192),
+	DEMO_ENTRY_EN("pepperodyssey", "PepperOdysseyDemo.ags", "77d80d02ff44ead99fc24bb66e981718", 28898923),
 	DEMO_ENTRY_EN("perfecttidess2s", "s2s.exe", "95ffa47057b9906869a04cf95d264629", 531651451),
 	DEMO_ENTRY_EN("perfecttidess2s", "game.ags", "1be40c752a39ae37d7a9f5420139ea14", 528389246), // Mac Steam demo
 	DEMO_ENTRY_EN("persephonediary", "royce.exe", "a524cbb1c51589903c4043b98917f1d9", 4972848),
@@ -6209,6 +6214,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("butcherstanys", "stanys.exe", "97d700529f5cc826f230c27acf81adfd", 1404933),
 	GAME_ENTRY_EN("butcherstanys2", "stanys.exe", "97d700529f5cc826f230c27acf81adfd", 1489182),
 	GAME_ENTRY_EN("buttercup", "Buttercups gone missing!.exe", "4d17844029d8910fbaae1bdc99e250f2", 2854591),
+	GAME_ENTRY_EN("bvsr", "BvR.exe", "74adb5f9f94e0fc29c7ab6518d6de9e4", 7278740),
+	GAME_ENTRY_EN("bvsr", "BvR.ags", "7630852721801f6bdd66fe29f37d5aa8", 4135552),
 	GAME_ENTRY_EN("byohero", "BYO-Hero.exe", "f0dd8a7e2c0e033d8f928e65aa54b10f", 163626763),
 	GAME_ENTRY_EN("bytebetrayal", "Byte-Sized Betrayal.exe", "bf0c8894a91378e7772dbb0a930b188d", 167768171),
 	GAME_ENTRY_EN("bythenumbers", "By the Numbers.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 15781843),
@@ -7436,6 +7443,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("laundryday", "Laundry Day.exe", "06a03fe35791b0578068ab1873455463", 2456888),
 	GAME_ENTRY_EN("lavablava", "Rumble.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 2294674),
 	GAME_ENTRY_EN("lazaruswantspants", "pants.exe", "9cf51833e787cc919837d9a8bd8fc14c", 1311852),
+	GAME_ENTRY_EN("learnromanianl1", "LR1.exe", "36d6add6c7e2925bb6bc1915323a8537", 129398662),
 	GAME_ENTRY_EN("legacyicecream", "Cold.exe", "82da2565c456dcfb265ded6fe3189c0b", 9033418),
 	GAME_ENTRY_LANG("lechuckstories", "CHUCK_272.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 6274861, Common::DE_DEU),
 	GAME_ENTRY_LANG("legendofrovendale", "Vampire.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 10018497, Common::RU_RUS),
@@ -7473,6 +7481,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("likeadream", "Dream.exe", "ad1801105cfae0915313c73ca7fb7f1c", 5704211),
 	GAME_ENTRY_EN("likeafox", "likeafox.exe", "c7916b82f00c94013a3f7706b4d333c6", 2707737),
 	GAME_ENTRY_EN("lillywizard", "Lilly.exe", "7c0c89edf8e321fad4191ee1d7fcaaae", 22269463),
+	GAME_ENTRY_EN("limblob", "limblob.ags", "345eb2269fc763379353bc02bcc5ba09", 1238384),
 	GAME_ENTRY_EN("limeylizardwastewizard", "LLWW.exe", "fab982fd31570655ac3b1858bd8265e4", 33755872),
 	GAME_ENTRY_EN("limeylizardwastewizard", "LLWW.exe", "1991fde090b8c3b7cf53561d11593836", 38188301),
 	GAME_ENTRY_EN("linegame", "a_noble_game.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3580379),
@@ -8708,7 +8717,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("sisyphus", "SisyphusReborn.exe", "548f7dfee3c3567ee43792823532b5ff", 99531181),
 	GAME_ENTRY_EN("skippysavestheday", "First Game Test.exe", "06a03fe35791b0578068ab1873455463", 10473902),
 	GAME_ENTRY_EN("skrex", "Skrex.exe", "43c3b9739bc8ff9b573f40a5c06707b0", 38799705),
-	GAME_ENTRY_EN("skrexevalquest", "SkrexevalsQuest.exe", "592fb44095724dfcfe7c3f99519735d2", 4691196),
+	GAME_ENTRY_EN_PLATFORM("skrexevalquest", "SkrexevalsQuest.exe", "592fb44095724dfcfe7c3f99519735d2", 4691196, "MAGS"),
+	GAME_ENTRY_EN("skrexevalquest", "SkrexevalsQuest.exe", "592fb44095724dfcfe7c3f99519735d2", 4717856),
 	GAME_ENTRY_EN("skumring", "Skumring.exe", "660bec8a9540e00fc8a61be3bfd54e0a", 855262786),  //v1.0.1
 	GAME_ENTRY_EN_PLATFORM("skumring", "Skumring Extra Noir Edition.exe", "d84cd417bf24f76e9c74ce1f01dc5f3b", 803654540, "Extra Noir Edition"),
 	GAME_ENTRY_EN("skyadventure", "skyadventure.exe", "97f74f77ff127215fc44f35958fd2d55", 4266937),
@@ -9622,6 +9632,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("zakrepixeled", "ZAK.exe", "06885f43ad98fa6a50772b664ad2a81b", 5090444), // v0.1.4
 	GAME_ENTRY_EN("zakrepixeled", "ZAK.exe", "305a819bce4004ef3c9b1a3a9f6ac1c8", 5741632), // v0.2.2.2
 	GAME_ENTRY_EN("zakrepixeled", "ZAK.exe", "7bf50af77154660465704b80cec1476d", 5816900), // v0.2.3.3
+	GAME_ENTRY_EN("zakrepixeled", "ZAK.exe", "4f5275d2c9c451940a5d23b267c7a269", 5842142), // v0.3.2.1
 	GAME_ENTRY_EN("zakthemaniac", "maniaczak.exe", "dee872e31c6d205e68aa9d87a542f07b", 24492152),
 	GAME_ENTRY_EN("zalgohs", "ZTT.ags", "4ab5683ccc5a075cd336493239678138", 17650653),
 	GAME_ENTRY_EN("zedquest", "NewZud.exe", "0500aacb6c176d47ac0f8158f055db83", 1367132),
