@@ -54,21 +54,21 @@ namespace OldTransparentSurface {
 
 using namespace Graphics;
 
-struct OldTransparentSurface : public Graphics::Surface {
+struct OldTransparentSurface : public Graphics::ManagedSurface {
 	OldTransparentSurface();
-	OldTransparentSurface(const Graphics::Surface &surf, bool copyData = false);
+	OldTransparentSurface(const Graphics::ManagedSurface &surf, bool copyData = false);
 
 	static PixelFormat getSupportedPixelFormat() {
 		return PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	}
 
-	Common::Rect blit(Graphics::Surface &target, int posX = 0, int posY = 0,
+	Common::Rect blit(Graphics::ManagedSurface &target, int posX = 0, int posY = 0,
 	                  int flipping = FLIP_NONE,
 	                  Common::Rect *pPartRect = nullptr,
 	                  uint color = MS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
 	                  TSpriteBlendMode blend = BLEND_NORMAL);
-	Common::Rect blitClip(Graphics::Surface &target, Common::Rect clippingArea,
+	Common::Rect blitClip(Graphics::ManagedSurface &target, Common::Rect clippingArea,
 	                      int posX = 0, int posY = 0,
 	                      int flipping = FLIP_NONE,
 	                      Common::Rect *pPartRect = nullptr,
@@ -103,9 +103,9 @@ static const int kGIndex = 1;
 static const int kRIndex = 0;
 #endif
 
-OldTransparentSurface::OldTransparentSurface() : Surface(), _alphaMode(ALPHA_FULL) {}
+OldTransparentSurface::OldTransparentSurface() : ManagedSurface(), _alphaMode(ALPHA_FULL) {}
 
-OldTransparentSurface::OldTransparentSurface(const Surface &surf, bool copyData) : Surface(), _alphaMode(ALPHA_FULL) {
+OldTransparentSurface::OldTransparentSurface(const ManagedSurface &surf, bool copyData) : ManagedSurface(), _alphaMode(ALPHA_FULL) {
 	if (copyData) {
 		copyFrom(surf);
 	} else {
@@ -116,7 +116,7 @@ OldTransparentSurface::OldTransparentSurface(const Surface &surf, bool copyData)
 		// We need to cast the const qualifier away here because 'pixels'
 		// always needs to be writable. 'surf' however is a constant Surface,
 		// thus getPixels will always return const pixel data.
-		pixels = const_cast<void *>(surf.getPixels());
+		setPixels(const_cast<void *>(surf.getPixels()));
 	}
 }
 
@@ -433,7 +433,7 @@ static void doBlitMultiplyBlend(byte *ino, byte *outo, uint32 width, uint32 heig
 	}
 }
 
-Common::Rect OldTransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
+Common::Rect OldTransparentSurface::blit(Graphics::ManagedSurface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
 
 	Common::Rect retSize;
 	retSize.top = 0;
@@ -468,7 +468,7 @@ Common::Rect OldTransparentSurface::blit(Graphics::Surface &target, int posX, in
 			xOffset = srcImage.w - pPartRect->right;
 		}
 
-		srcImage.pixels = getBasePtr(xOffset, yOffset);
+		srcImage.setPixels(getBasePtr(xOffset, yOffset));
 		srcImage.w = pPartRect->width();
 		srcImage.h = pPartRect->height();
 
@@ -493,8 +493,8 @@ Common::Rect OldTransparentSurface::blit(Graphics::Surface &target, int posX, in
 	height = height * 2 / 3;
 #endif
 
-	Graphics::Surface *img = nullptr;
-	Graphics::Surface *imgScaled = nullptr;
+	Graphics::ManagedSurface *img = nullptr;
+	Graphics::ManagedSurface *imgScaled = nullptr;
 	byte *savedPixels = nullptr;
 	if ((width != srcImage.w) || (height != srcImage.h)) {
 		// Scale the image
@@ -581,7 +581,7 @@ Common::Rect OldTransparentSurface::blit(Graphics::Surface &target, int posX, in
 	return retSize;
 }
 
-Common::Rect OldTransparentSurface::blitClip(Graphics::Surface &target, Common::Rect clippingArea, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
+Common::Rect OldTransparentSurface::blitClip(Graphics::ManagedSurface &target, Common::Rect clippingArea, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
 	Common::Rect retSize;
 	retSize.top = 0;
 	retSize.left = 0;
@@ -615,7 +615,7 @@ Common::Rect OldTransparentSurface::blitClip(Graphics::Surface &target, Common::
 			xOffset = srcImage.w - pPartRect->right;
 		}
 
-		srcImage.pixels = getBasePtr(xOffset, yOffset);
+		srcImage.setPixels(getBasePtr(xOffset, yOffset));
 		srcImage.w = pPartRect->width();
 		srcImage.h = pPartRect->height();
 
@@ -640,8 +640,8 @@ Common::Rect OldTransparentSurface::blitClip(Graphics::Surface &target, Common::
 	height = height * 2 / 3;
 #endif
 
-	Graphics::Surface *img = nullptr;
-	Graphics::Surface *imgScaled = nullptr;
+	Graphics::ManagedSurface *img = nullptr;
+	Graphics::ManagedSurface *imgScaled = nullptr;
 	byte *savedPixels = nullptr;
 	if ((width != srcImage.w) || (height != srcImage.h)) {
 		// Scale the image
@@ -746,7 +746,7 @@ OldTransparentSurface *OldTransparentSurface::scale(int16 newWidth, int16 newHei
 } // namespace OldTransparentSurface
 
 #ifdef TEST_IMAGE_BLENDING_SAVE
-static int save_bitmap(const char *path, const Graphics::Surface *surf) {
+static int save_bitmap(const char *path, const Graphics::ManagedSurface *surf) {
 	Common::FSNode fileNode(path);
 	Common::SeekableWriteStream *out = fileNode.createWriteStream();
 #ifdef SCUMM_LITTLE_ENDIAN
@@ -793,7 +793,7 @@ static int save_bitmap(const char *path, const Graphics::Surface *surf) {
 }
 #endif
 
-static bool areSurfacesEqual(const Graphics::Surface *a, const Graphics::Surface *b) {
+static bool areSurfacesEqual(const Graphics::ManagedSurface *a, const Graphics::ManagedSurface *b) {
 	if (a->w != b->w || a->h != b->h) return false;
 	return memcmp(a->getPixels(), b->getPixels(), a->h * a->pitch) == 0;
 }
@@ -818,7 +818,7 @@ public:
 			Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitAVX2;
 		}
 #endif
-		Graphics::Surface baseSurface, destSurface;
+		Graphics::ManagedSurface baseSurface, destSurface;
 		baseSurface.create(103, 103, OldTransparentSurface::OldTransparentSurface::getSupportedPixelFormat());
 		destSurface.create(256, 256, OldTransparentSurface::OldTransparentSurface::getSupportedPixelFormat());
 		for (int y = 0; y < baseSurface.h; y++) {
@@ -830,8 +830,8 @@ public:
 
 		OldTransparentSurface::OldTransparentSurface oldSurf(baseSurface, true);
 		OldTransparentSurface::OldTransparentSurface oldSurfDest(destSurface, true);
-		Graphics::ManagedSurface managedSurf(&baseSurface, DisposeAfterUse::NO);
-		Graphics::ManagedSurface managedSurfDest(&destSurface, DisposeAfterUse::NO);
+		Graphics::ManagedSurface &managedSurf = baseSurface;
+		Graphics::ManagedSurface &managedSurfDest = destSurface;
 
 		int numIters = 0, numItersScaled = 0;
 		double oldTime = 0.0, newTime = 0.0, genericTime = 0.0;
@@ -929,7 +929,7 @@ public:
 			Common::Rect(0, 0, 16, 16), // Case 6 (completely bigger)
 		};
 
-		Graphics::Surface baseSurface, destSurface;
+		Graphics::ManagedSurface baseSurface, destSurface;
 		baseSurface.create(16, 16, OldTransparentSurface::OldTransparentSurface::getSupportedPixelFormat());
 		destSurface.create(32, 32, OldTransparentSurface::OldTransparentSurface::getSupportedPixelFormat());
 		for (int y = 0; y < baseSurface.h; y++) {
