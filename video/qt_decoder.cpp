@@ -498,6 +498,7 @@ Graphics::PixelFormat QuickTimeDecoder::VideoTrackHandler::getPixelFormat() cons
 	if (_forcedDitherPalette)
 		return Graphics::PixelFormat::createFormatCLUT8();
 
+	// TODO: What should happen if there are multiple codecs with different formats?
 	return ((VideoSampleDesc *)_parent->sampleDescs[0])->_videoCodec->getPixelFormat();
 }
 
@@ -505,7 +506,15 @@ bool QuickTimeDecoder::VideoTrackHandler::setOutputPixelFormat(const Graphics::P
 	if (_forcedDitherPalette)
 		return false;
 
-	return ((VideoSampleDesc *)_parent->sampleDescs[0])->_videoCodec->setOutputPixelFormat(format);
+	bool success = true;
+
+	for (uint i = 0; i < _parent->sampleDescs.size(); i++) {
+		VideoSampleDesc *desc = (VideoSampleDesc *)_parent->sampleDescs[i];
+
+		success = success && desc->_videoCodec->setOutputPixelFormat(format);
+	}
+
+	return success;
 }
 
 int QuickTimeDecoder::VideoTrackHandler::getFrameCount() const {
