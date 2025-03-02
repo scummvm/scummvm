@@ -22,6 +22,8 @@
 #include "darkseed/darkseed.h"
 #include "darkseed/zhmenufont.h"
 
+#include "graphics/fonts/dosfont.h"
+
 namespace Darkseed {
 
 ZhMenuFont::ZhMenuFont(const Common::Path &filename, ZhLargeFontType type) : _type(type) {
@@ -69,24 +71,62 @@ int ZhMenuFont::getCharWidth(uint32 chr) const {
 void ZhMenuFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	auto glyph = getGlyph(chr);
 	if (glyph) {
-		byte *ptr = (byte *)g_engine->_screen->getBasePtr(x, y);
-		int srcPixel = 0;
-		int sByteOffset = 0;
-		for (int sy = 0; sy < getFontHeight(); sy++) {
-			for (int sx = 0; sx < getMaxCharWidth(); sx++) {
-				if (glyph->pixels[srcPixel] & 1 << (7 - sByteOffset)) {
-					*ptr = (uint8)color;
-				}
-				sByteOffset++;
-				if (sByteOffset == 8) {
-					sByteOffset = 0;
-					srcPixel++;
-				}
-				ptr++;
-			}
-			ptr -= getMaxCharWidth();
-			ptr += g_engine->_screen->pitch;
+		if (_type == ZhLargeFontType::InGame) {
+			drawGlyph(glyph, x, y, color);
+		} else {
+			drawGlyph(glyph, x-1, y, 0);
+			drawGlyph(glyph, x, y+1, 0);
+			drawGlyph(glyph, x-1, y+1, 0);
+			drawGlyph(glyph, x, y, 0xd);
 		}
+	} else if (chr < 128) {
+		drawBiosFontGlyph(chr, x, y, 0);
+		drawBiosFontGlyph(chr, x+1, y, 0xd);
+	}
+}
+
+void ZhMenuFont::drawBiosFontGlyph(uint8 chr, int x, int y, uint8 color) const {
+	byte *ptr = (byte *)g_engine->_screen->getBasePtr(x, y);
+	int srcPixel = chr * 8;
+	int colorOffset = 1;
+	for (int sy = 0; sy < 8; sy++) {
+		for (int sx = 0; sx < 8; sx++) {
+			if (Graphics::DosFont::fontData_PCBIOS[srcPixel] & 1 << (7 - sx)) {
+				*ptr = color;
+				ptr[g_engine->_screen->pitch] = color;
+				ptr[g_engine->_screen->pitch * 2] = color;
+				color += colorOffset;
+				colorOffset = -colorOffset;
+			}
+			ptr++;
+		}
+		srcPixel++;
+		ptr -= 8;
+		ptr += (g_engine->_screen->pitch * 3);
+	}
+}
+
+void ZhMenuFont::drawGlyph(const ZhLargeFontGlyph *glyph, int x, int y, uint8 color) const {
+	byte *ptr = (byte *)g_engine->_screen->getBasePtr(x, y);
+	int srcPixel = 0;
+	int sByteOffset = 0;
+	int colorOffset = _type == ZhLargeFontType::InGame ? 0 : 1;
+	for (int sy = 0; sy < getFontHeight(); sy++) {
+		for (int sx = 0; sx < getMaxCharWidth(); sx++) {
+			if (glyph->pixels[srcPixel] & 1 << (7 - sByteOffset)) {
+				*ptr = (uint8)color;
+				color += colorOffset;
+				colorOffset = -colorOffset;
+			}
+			sByteOffset++;
+			if (sByteOffset == 8) {
+				sByteOffset = 0;
+				srcPixel++;
+			}
+			ptr++;
+		}
+		ptr -= getMaxCharWidth();
+		ptr += g_engine->_screen->pitch;
 	}
 }
 

@@ -54,6 +54,8 @@ public:
 private:
 	void load(const Common::Path &filename);
 	const ZhLargeFontGlyph *getGlyph(uint32 chr) const;
+	void drawBiosFontGlyph(uint8 chr, int x, int y, uint8 color) const;
+	void drawGlyph(const ZhLargeFontGlyph *glyph, int x, int y, uint8 color) const;
 };
 
 } // namespace Darkseed

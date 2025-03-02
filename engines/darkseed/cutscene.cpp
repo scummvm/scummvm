@@ -651,7 +651,7 @@ bool Cutscene::introScene() {
 		if (g_engine->_sound->isPlayingMusic()) {
 			if (g_engine->_isLeftMouseClicked || g_engine->_isRightMouseClicked) {
 				g_engine->zeroMouseButtons();
-				_movieStep = 51;
+				_movieStep = 55;
 			}
 			return true;
 		}
