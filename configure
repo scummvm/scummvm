@@ -293,8 +293,10 @@ _imgui=yes
 _indeo3=auto
 _indeo45=auto
 _hnm=auto
+_qdm2=auto
 _fmtowns_pc98_audio=auto
 _sid_audio=auto
+_svq1=auto
 _vgmtrans_audio=auto
 _midi=auto
 _universaltracker=auto
@@ -332,7 +334,9 @@ add_component theoradec "libtheoradec" "_theoradec" "USE_THEORADEC"
 add_component midi "MIDI synthesis" "_midi" "USE_MIDI"
 add_component mpc "MPC" "_libmpcdec" "USE_MPCDEC"
 add_component mpeg2 "mpeg2" "_mpeg2" "USE_MPEG2"
+add_component qdm2 "QDM2" "_qdm2" "USE_QDM2"
 add_component sid_audio "SID audio" "_sid_audio" "USE_SID_AUDIO"
+add_component svq1 "Sorenson Video 1" "_svq1" "USE_SVQ1"
 add_component tinygl "TinyGL" "_tinygl" "USE_TINYGL"
 add_component universaltracker "External Tracker Libraries" "_universaltracker" "USE_UNIVERSALTRACKER"
 add_component vgmtrans_audio "VGMTrans Soundfont audio" "_vgmtrans_audio" "USE_VGMTRANS_AUDIO"

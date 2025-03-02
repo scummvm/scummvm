@@ -570,7 +570,7 @@ bool QuickTimeAudioDecoder::AudioSampleDesc::isAudioCodecSupported() const {
 	if (_codecTag == MKTAG('t', 'w', 'o', 's') || _codecTag == MKTAG('r', 'a', 'w', ' ') || _codecTag == MKTAG('i', 'm', 'a', '4'))
 		return true;
 
-#ifdef AUDIO_QDM2_H
+#ifdef USE_QDM2
 	if (_codecTag == MKTAG('Q', 'D', 'M', '2'))
 		return true;
 #endif
@@ -634,7 +634,7 @@ void QuickTimeAudioDecoder::AudioSampleDesc::initCodec() {
 
 	switch (_codecTag) {
 	case MKTAG('Q', 'D', 'M', '2'):
-#ifdef AUDIO_QDM2_H
+#ifdef USE_QDM2
 		_codec = makeQDM2Decoder(_extraData);
 #endif
 		break;

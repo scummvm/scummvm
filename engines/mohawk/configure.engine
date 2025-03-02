@@ -4,4 +4,4 @@ add_engine mohawk "Mohawk" yes "cstime myst mystme riven" "Living Books" "highre
 add_engine cstime "Where in Time is Carmen Sandiego?" no
 add_engine riven "Riven: The Sequel to Myst" yes "" "" "16bit"
 add_engine myst "Myst" yes
-add_engine mystme "Myst ME" yes "" "" "jpeg"
+add_engine mystme "Myst ME" yes "" "" "16bit jpeg" "qdm2 svq1"

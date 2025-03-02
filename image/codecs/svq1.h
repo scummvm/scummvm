@@ -22,6 +22,10 @@
 #ifndef IMAGE_CODECS_SVQ1_H
 #define IMAGE_CODECS_SVQ1_H
 
+#include "common/scummsys.h"
+
+#ifdef USE_SVQ1
+
 #include "common/bitstream.h"
 #include "image/codecs/codec.h"
 
@@ -92,5 +96,7 @@ private:
 };
 
 } // End of namespace Image
+
+#endif
 
 #endif
