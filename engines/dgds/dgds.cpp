@@ -445,7 +445,7 @@ void DgdsEngine::loadGameFiles() {
 		reqParser.parse(&invRequestData, "WINV.REQ");
 		reqParser.parse(&vcrRequestData, "WVCR.REQ");
 		if (!_isDemo)
-			_menu->readRESData("WVCR.RES");
+			_menu->loadVCRHelp("WVCR.RES");
 
 		break;
 	case GID_QUARKY:

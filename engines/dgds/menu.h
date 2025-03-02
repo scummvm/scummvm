@@ -68,7 +68,7 @@ enum MenuId {
 	kMenuArcadeFrustrated = 47,
 	kMenuSkipPlayIntro = 50,
 	kMenuSkipArcade = 52,
-	kMenuWillyHelp = 54,
+	kMenuWillyVCRHelp = 54,
 	kMenuWillyCredits = 56,
 };
 
@@ -82,15 +82,15 @@ public:
 	virtual ~Menu();
 
 	void setScreenBuffer();
-	void drawMenu(MenuId menu = kMenuMain);
+	void drawMenu(MenuId menu = kMenuMain, bool clearScreen = true);
 	void onMouseLUp(const Common::Point &mouse);
 	void onMouseLDown(const Common::Point &mouse);
 	void onMouseMove(const Common::Point &mouse);
 	bool menuShown() const { return _curMenu != kMenuNone; }
-	void hideMenu() { _curMenu = kMenuNone; }
+	void hideMenu();
 
 	void setRequestData(const REQFileData &data);
-	void readRESData(const char *fname);
+	void loadVCRHelp(const char *fname);
 	void prevChoice();
 	void nextChoice();
 	void activateChoice();
@@ -107,13 +107,15 @@ private:
 	void handleClickOptionsMenu(const Common::Point &mouse);
 	void handleClickSkipPlayIntroMenu(const Common::Point &mouse);
 	void loadCredits();
+	void startVcrHelp();
+	void doVcrHelp(int16 button);
 
 	void putMouseOnSelectedItem();
 	Gadget *getSelectedItem();
 
 	Common::HashMap<int, RequestData> _menuRequests;
 
-	Common::Array<Common::Array<Common::String>> _helpStrings;
+	Common::HashMap<int16, Common::Array<Common::String>> _helpStrings;
 	Common::Array<Common::String> _credits;
 
 	SliderGadget *_dragGadget;
@@ -121,6 +123,7 @@ private:
 	int _selectedItem;
 	int _numSelectable;
 	int _creditsOffset;
+	bool _vcrHelpMode;
 };
 
 } // End of namespace Dgds

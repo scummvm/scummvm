@@ -47,6 +47,7 @@ enum MenuButtonIds {
 	kMainMenuWillyLoad = 111,
 	kMainMenuWillyRestart = 112,
 	kMainMenuWillyQuit = 113,
+	kMainMenuWillyVCRHelp = 114,
 	kMainMenuWillyHelp = 120,
 	kMainMenuWillySoundsOnOff = 115,
 	kMainMenuWillyMusicOnOff = 116,
@@ -138,10 +139,13 @@ enum MenuButtonIds {
 	// Tank/train menu in Heart of China
 	kMenuTankTrainSkipArcade = 153,
 	kMenuTankTrainPlayArcade = 154,
+
+	kMenuButtonNone = 0,
 };
 
-Menu::Menu() : _curMenu(kMenuNone), _dragGadget(nullptr), _selectedItem(0), _numSelectable(0), _creditsOffset(0) {
-	_screenBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+Menu::Menu() : _curMenu(kMenuNone), _dragGadget(nullptr), _selectedItem(0), _numSelectable(0), _creditsOffset(0),
+	_vcrHelpMode(false) {
+_screenBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 Menu::~Menu() {
@@ -154,20 +158,36 @@ void Menu::setRequestData(const REQFileData &data) {
 	}
 }
 
-void Menu::readRESData(const char *fname) {
+void Menu::loadVCRHelp(const char *fname) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	Common::SeekableReadStream *s = engine->getResourceManager()->getResource(fname);
 
 	if (!s)
 		error("Couldn't open RES file for menu help %s", fname);
 
+	static const MenuButtonIds helpIds[] = {
+		kMenuButtonNone, // Help not available right now
+		kMainMenuWillySave,
+		kMainMenuWillyLoad,
+		kMainMenuWillyRestart,
+		kMainMenuWillyQuit,
+		kMainMenuWillyVCRHelp,
+		kMainMenuWillySoundsOnOff,
+		kMainMenuWillyMusicOnOff,
+		kMainMenuWillyHelp,
+		kMenuMainCalibrate, // Same ID as Credits in Willy Beamish
+		kMenuMainFiles, 	// Same ID as Resume in Willy Beamish
+	};
+
+	int menuId = 0;
 	_helpStrings.clear();
 	Common::Array<Common::String> message;
 	while (!s->eos() && !s->err()) {
 		Common::String str = s->readLine();
 		if (str == "!" || s->eos()) {
-			_helpStrings.push_back(message);
+			_helpStrings[helpIds[menuId]] = message;
 			message.clear();
+			menuId++;
 		} else {
 			message.push_back(str);
 		}
@@ -282,14 +302,15 @@ void Menu::onTick() {
 		drawMenu(kMenuWillyCredits);
 }
 
-void Menu::drawMenu(MenuId menu) {
+void Menu::drawMenu(MenuId menu, bool clearScreen /* = true*/) {
 	bool firstDraw = (_curMenu != menu);
 	_curMenu = menu;
 
 	Common::Array<Common::SharedPtr<Gadget> > gadgets = _menuRequests[_curMenu]._gadgets;
 
 	// Restore background when drawing submenus
-	g_system->copyRectToScreen(_screenBuffer.getPixels(), _screenBuffer.pitch, 0, 0, _screenBuffer.w, _screenBuffer.h);
+	if (clearScreen)
+		g_system->copyRectToScreen(_screenBuffer.getPixels(), _screenBuffer.pitch, 0, 0, _screenBuffer.w, _screenBuffer.h);
 
 	// This is not very efficient, but it only happens once when the menu is opened.
 	Graphics::Surface *screen = g_system->lockScreen();
@@ -322,6 +343,14 @@ void Menu::drawMenu(MenuId menu) {
 
 	g_system->unlockScreen();
 	g_system->updateScreen();
+}
+
+void Menu::hideMenu() {
+	_curMenu = kMenuNone;
+	if (_vcrHelpMode) {
+		_vcrHelpMode = false;
+		DgdsEngine::getInstance()->setMouseCursor(-1);
+	}
 }
 
 Gadget *Menu::getSelectedItem() {
@@ -476,11 +505,11 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 		return;
 
 	// Click animation
-	if (dynamic_cast<ButtonGadget *>(gadget)) {
+	if (dynamic_cast<ButtonGadget *>(gadget) && !_vcrHelpMode) {
 		gadget->toggle(false);
 		if (_curMenu == kMenuOptions)
 			isToggle = updateOptionsGadget(gadget);
-		drawMenu(_curMenu);
+		drawMenu(_curMenu, false);
 		g_system->delayMillis(300);
 		gadget->toggle(true);
 		isToggle = true;
@@ -517,6 +546,11 @@ bool Menu::handleClick(const Common::Point &mouse) {
 	Gadget *gadget = getClickedMenuItem(mouse);
 	int16 clickedMenuItem = gadget->_gadgetNo;
 
+	if (_vcrHelpMode) {
+		doVcrHelp(clickedMenuItem);
+		return false;
+	}
+
 	switch (clickedMenuItem) {
 	case kMenuMainPlay:
 	case kMenuControlsPlay:
@@ -545,7 +579,6 @@ bool Menu::handleClick(const Common::Point &mouse) {
 		break;
 	case kMenuMainCalibrate: // same as credits button in Willy Beamish
 		if (engine->getGameId() == GID_WILLY) {
-			debug("TODO: Implement willy beamish credits");
 			hideMenu();
 			loadCredits();
 			drawMenu(kMenuWillyCredits);
@@ -576,6 +609,9 @@ bool Menu::handleClick(const Common::Point &mouse) {
 		break;
 	case kMenuMainQuit:
 		drawMenu(kMenuReallyQuit);
+		break;
+	case kMainMenuWillyVCRHelp:
+		startVcrHelp();
 		break;
 	//case kMenuCalibrateVCR: // NOTE: same ID as kMenuIntroPlay
 	case kMenuIntroPlay:
@@ -725,14 +761,61 @@ bool Menu::handleClick(const Common::Point &mouse) {
 		updateOptionsGadget(gadget);
 		break;
 	case kMenuWillyCreditsDone:
-	case kMenuWillyHelpDone:
 		hideMenu();
+		break;
+	case kMenuWillyHelpDone:
+		drawMenu(kMenuMain, false);
 		break;
 	default:
 		debug(1, "Clicked ID %d", clickedMenuItem);
 		break;
 	}
 	return true;
+}
+
+void Menu::startVcrHelp() {
+	_vcrHelpMode = true;
+	Common::SharedPtr<Graphics::ManagedSurface> iconSurf = RequestData::getCorners()->getSurface(37);
+	int hotspotX = iconSurf->w / 2;
+	int hotspotY = iconSurf->h / 2;
+	CursorMan.replaceCursor(*(iconSurf->surfacePtr()), hotspotX, hotspotY, 0, 0);
+}
+
+void Menu::doVcrHelp(int16 button) {
+	if (_helpStrings.contains(button)) {
+		RequestData &helpRequest = _menuRequests[kMenuWillyVCRHelp];
+		const Common::Array<Common::String> msg = _helpStrings[button];
+		const DgdsFont *font = RequestData::getMenuFont();
+		const Gadget *doneButton = helpRequest.findGadgetByNumWithFlags3Not0x40(174);
+		int16 msgHeight = font->getFontHeight() * msg.size();
+		int16 msgAreaTop = helpRequest._textItemList.front()._y + font->getFontHeight();
+		int16 msgAreaHeight = doneButton->_y - msgAreaTop;
+		int16 msgAreaLeft = 0;
+		int16 msgAreaWidth = helpRequest._rect.width;
+
+		// Vertically centre the message
+		int16 msgTop = msgAreaTop + (msgAreaHeight - msgHeight) / 2;
+
+		while (helpRequest._textItemList.size() > 1)
+			helpRequest._textItemList.pop_back();
+
+		for (const Common::String &line : msg) {
+			TextItem helpText;
+			int msgLen = font->getStringWidth(line);
+			// Horizontally centre the line
+			helpText._x = msgAreaLeft + (msgAreaWidth - msgLen) / 2;
+			helpText._y = msgTop;
+			helpText._txt = line;
+			msgTop += font->getFontHeight();
+			helpRequest._textItemList.push_back(helpText);
+		}
+
+		// HACK: Set a different cursor to force an update.
+		DgdsEngine::getInstance()->setMouseCursor(1);
+		DgdsEngine::getInstance()->setMouseCursor(-1);
+		drawMenu(kMenuWillyVCRHelp, false);
+		_vcrHelpMode = false;
+	}
 }
 
 void Menu::handleClickOptionsMenu(const Common::Point &mouse) {

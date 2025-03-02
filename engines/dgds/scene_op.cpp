@@ -419,7 +419,6 @@ Common::String ConditionalSceneOp::dump(const Common::String &indent) const {
 
 	str += DebugUtil::dumpStructList(indent, "conditionList", _conditionList);
 	if (!_conditionList.empty()) {
-		str += "\n";
 		str += indent;
 	}
 	str += DebugUtil::dumpStructList(indent, "opList", _opList);
