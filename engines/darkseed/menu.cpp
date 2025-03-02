@@ -236,6 +236,7 @@ void Menu::loadMenu() {
 	g_engine->_room->loadRoomMusic();
 
 	g_engine->removeFullscreenPic();
+	screenCopy.free();
 	_open = false;
 }
 
