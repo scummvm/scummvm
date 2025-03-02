@@ -46,14 +46,12 @@ Operand Image::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 		assert(args.empty());
 		spatialShow();
 		return Operand();
-		break;
 	}
 
 	case kSpatialHideMethod: {
 		assert(args.empty());
 		spatialHide();
 		return Operand();
-		break;
 	}
 
 	case kSetDissolveFactorMethod: {
@@ -62,10 +60,8 @@ Operand Image::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 		return Operand();
 	}
 
-
-	default: {
-		error("Image::callMethod(): Got unimplemented method ID %d", methodId);
-	}
+	default:
+		error("Image::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 	}
 }
 

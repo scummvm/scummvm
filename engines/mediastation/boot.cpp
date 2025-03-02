@@ -414,10 +414,8 @@ Boot::Boot(const Common::Path &path) : Datafile(path){
 			break;
 		}
 
-		default: {
-			warning("Boot::Boot(): Unknown section type 0x%x", static_cast<uint>(sectionType));
-			break;
-		}
+		default:
+			warning("Boot::Boot(): Unknown section type %d", static_cast<uint>(sectionType));
 		}
 
 		sectionType = getSectionType(chunk);

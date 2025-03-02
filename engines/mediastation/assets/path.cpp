@@ -56,9 +56,8 @@ Operand Path::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 		return Operand();
 	}
 
-	default: {
-		error("Got unimplemented method ID %d", methodId);
-	}
+	default:
+		error("Path::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 	}
 }
 

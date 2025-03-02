@@ -69,9 +69,8 @@ Operand Sound::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 		return Operand();
 	}
 
-	default: {
-		error("Sound::callMethod(): Got unimplemented method %s (%d)", builtInMethodToStr(methodId), methodId);
-	}
+	default:
+		error("Sound::callMethod(): Got unimplemented method %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 	}
 }
 

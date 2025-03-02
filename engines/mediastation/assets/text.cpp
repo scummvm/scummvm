@@ -49,9 +49,8 @@ Operand Text::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 		return Operand();
 	}
 
-	default: {
-		error("Got unimplemented method ID %d", methodId);
-	}
+	default:
+		error("Text::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 	}
 }
 

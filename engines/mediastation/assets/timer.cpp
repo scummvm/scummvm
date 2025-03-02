@@ -47,9 +47,8 @@ Operand Timer::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 		return returnValue;
 	}
 
-	default: {
-		error("Got unimplemented method ID %d", methodId);
-	}
+	default:
+		error("Timer::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 	}
 }
 

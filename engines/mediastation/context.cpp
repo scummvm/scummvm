@@ -102,9 +102,8 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 				break;
 			}
 
-			default: {
+			default:
 				error("Context::Context(): Asset type %d referenced, but reference not implemented yet", asset->getHeader()->_type);
-			}
 			}
 		}
 	}
@@ -420,9 +419,8 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 		break;
 	}
 
-	default: {
+	default:
 		error("Context::readHeaderSection(): Unknown section type 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
-	}
 	}
 
 	return true;

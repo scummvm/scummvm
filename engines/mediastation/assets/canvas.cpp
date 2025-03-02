@@ -29,9 +29,8 @@ Operand Canvas::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args)
 		error("Canvas::callMethod(): BuiltInFunction::clearToPalette is not implemented yet");
 	}
 
-	default: {
-		error("Got unimplemented method ID %d", methodId);
-	}
+	default:
+		error("Canvas::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 	}
 }
 

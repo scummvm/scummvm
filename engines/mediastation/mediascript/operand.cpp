@@ -39,10 +39,9 @@ void Operand::putInteger(int i) {
 		break;
 	}
 
-	default: {
+	default:
 		error("Operand::putInteger(): Attempt to put integer into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -58,10 +57,9 @@ int Operand::getInteger() {
 		return _u.variable->_value.i;
 	}
 
-	default: {
+	default:
 		error("Operand::getInteger(): Attempt to get integer from operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -79,10 +77,9 @@ void Operand::putDouble(double d) {
 		break;
 	}
 
-	default: {
+	default:
 		error("Operand::putDouble(): Attempt to put double into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -98,10 +95,9 @@ double Operand::getDouble() {
 		return _u.variable->_value.d;
 	}
 
-	default: {
+	default:
 		error("Operand::getDouble(): Attempt to get double from operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -118,10 +114,9 @@ void Operand::putString(Common::String *string) {
 		break;
 	}
 
-	default: {
+	default:
 		error("Operand::putString(): Attempt to put string into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -136,10 +131,9 @@ Common::String *Operand::getString() {
 		return _u.variable->_value.string;
 	}
 
-	default: {
+	default:
 		error("Operand::getString(): Attempt to get string from operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -150,10 +144,9 @@ void Operand::putVariable(Variable *variable) {
 		break;
 	}
 
-	default: {
+	default:
 		error("Operand::putVariable(): Attempt to put variable into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -163,10 +156,9 @@ Variable *Operand::getVariable() {
 		return _u.variable;
 	}
 
-	default: {
+	default:
 		error("Operand::getVariable(): Attempt to get variable from operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -177,10 +169,9 @@ void Operand::putFunction(uint functionId) {
 		break;
 	}
 
-	default: {
+	default:
 		error("Operand::putFunction(): Attempt to put function ID into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -190,10 +181,9 @@ uint Operand::getFunctionId() {
 		return _u.functionId;
 	}
 
-	default: {
+	default:
 		error("Operand::getFunction(): Attempt to get function ID from operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -210,10 +200,9 @@ void Operand::putAsset(uint32 assetId) {
 		break;
 	}
 
-	default: {
+	default:
 		error("Operand::putAsset(): Attempt to put asset ID into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -232,10 +221,9 @@ Asset *Operand::getAsset() {
 		return g_engine->getAssetById(_u.variable->_value.assetId);
 	}
 
-	default: {
+	default:
 		error("Operand::getAsset(): Attempt to get asset from operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -250,10 +238,9 @@ uint32 Operand::getAssetId() {
 		return _u.variable->_value.assetId;
 	}
 
-	default: {
+	default:
 		error("Operand::getAssetId(): Attempt to get asset ID from operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -270,10 +257,9 @@ void Operand::putCollection(Collection *collection) {
 		break;
 	}
 
-	default: {
+	default:
 		error("Operand::putCollection(): Attempt to put collection into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -286,13 +272,11 @@ Collection *Operand::getCollection() {
 	case kOperandTypeVariableDeclaration: {
 		assert(_u.variable->_type == kVariableTypeCollection);
 		return _u.variable->_value.collection;
-		break;
 	}
 
-	default: {
+	default:
 		error("Operand::getCollection(): Attempt to get collection from operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 

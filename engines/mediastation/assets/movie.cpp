@@ -219,9 +219,8 @@ Operand Movie::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 		return returnValue;
 	}
 
-	default: {
-		error("Movie::callMethod(): Got unimplemented method ID %d", methodId);
-	}
+	default:
+		error("Movie::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 	}
 }
 
@@ -463,9 +462,8 @@ void Movie::readChunk(Chunk &chunk) {
 		break;
 	}
 
-	default: {
+	default:
 		error("Unknown movie still section type");
-	}
 	}
 }
 
@@ -517,9 +515,8 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 				break;
 			}
 
-			default: {
+			default:
 				error("Movie::readSubfile(): Unknown movie animation section type 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
-			}
 			}
 
 			// READ THE NEXT CHUNK.

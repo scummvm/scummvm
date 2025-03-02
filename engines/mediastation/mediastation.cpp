@@ -234,11 +234,11 @@ void MediaStationEngine::processEvents() {
 			// Station engine doesn't seem to use the right button itself.
 			warning("EVENT_RBUTTONDOWN: Quitting for development purposes");
 			quitGame();
-		}
-
-		default: {
 			break;
 		}
+
+		default:
+			break;
 		}
 	}
 }
@@ -407,9 +407,8 @@ Operand MediaStationEngine::callMethod(BuiltInMethod methodId, Common::Array<Ope
 		return Operand();
 	}
 
-	default: {
-		error("MediaStationEngine::callMethod(): Got unimplemented method ID %d", static_cast<uint>(methodId));
-	}
+	default:
+		error("MediaStationEngine::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 	}
 }
 
@@ -504,9 +503,8 @@ Operand MediaStationEngine::callBuiltInFunction(BuiltInFunction function, Common
 		return Operand();
 	}
 
-	default: {
-		error("MediaStationEngine::callBuiltInFunction(): Got unknown built-in function %s (%d)", builtInFunctionToStr(function), function);
-	}
+	default:
+		error("MediaStationEngine::callBuiltInFunction(): Got unknown built-in function %s (%d)", builtInFunctionToStr(function), static_cast<uint>(function));
 	}
 }
 

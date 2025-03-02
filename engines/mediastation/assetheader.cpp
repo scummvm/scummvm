@@ -133,11 +133,12 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 		default: {
 			if (eventHandler->_argumentType != kNullEventHandlerArgument && \
 				eventHandler->_argumentType != kUnk1EventHandlerArgument) {
-				error("AssetHeader::readSection(): Event handler of type %d has a non-null argument type %d", eventHandler->_type, eventHandler->_argumentType);
+				error("AssetHeader::readSection(): Event handler of type %s has a non-null argument type %s",
+					eventTypeToStr(eventHandler->_type), eventHandlerArgumentTypeToStr(eventHandler->_argumentType));
 			}
 
 			if (_eventHandlers.contains(eventHandler->_type)) {
-				error("AssetHeader::readSection(): Event handler type %d already exists", eventHandler->_type);
+				error("AssetHeader::readSection(): Event handler type %s already exists", eventTypeToStr(eventHandler->_type));
 			} else {
 				_eventHandlers.setVal(eventHandler->_type, eventHandler);
 			}
@@ -353,10 +354,8 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 		break;
 	}
 
-	default: {
+	default:
 		error("AssetHeader::readSection(): Unknown section type 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
-		break;
-	}
 	}
 }
 

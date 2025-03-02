@@ -48,9 +48,8 @@ Operand Collection::callMethod(BuiltInMethod method, Common::Array<Operand> &arg
 		return returnValue;
 	}
 
-	default: {
-		error("Collection::callMethod(): Attempt to call unimplemented method %s (%d)", builtInMethodToStr(method), method);
-	}
+	default:
+		error("Collection::callMethod(): Attempt to call unimplemented method %s (%d)", builtInMethodToStr(method), static_cast<uint>(method));
 	}
 }
 
@@ -114,9 +113,8 @@ Variable::Variable(Chunk &chunk, bool readId) {
 		break;
 	}
 
-	default: {
+	default:
 		error("Variable::Variable(): Got unknown variable value type %s (%d)", variableTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -133,9 +131,8 @@ Variable::~Variable() {
 		break;
 	}
 
-	default: {
+	default:
 		break;
-	}
 	}
 }
 
@@ -187,9 +184,8 @@ Operand Variable::getValue() {
 		return returnValue;
 	}
 
-	default: {
+	default:
 		error("Variable::getValue(): Attempt to get value from unknown variable type %s (%d)", variableTypeToStr(_type), static_cast<uint>(_type));
-	}
 	}
 }
 
@@ -231,10 +227,9 @@ void Variable::putValue(Operand value) {
 		break;
 	}
 
-	default: {
+	default:
 		error("Variable::putValue(): Assigning an unknown operand type %s (%d) to a variable not supported",
 			operandTypeToStr(value.getType()), static_cast<uint>(value.getType()));
-	}
 	}
 }
 

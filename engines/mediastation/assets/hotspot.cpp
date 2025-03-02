@@ -92,10 +92,8 @@ Operand Hotspot::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args
 		return returnValue;
 	}
 
-
-	default: {
-		error("Hotspot::callMethod(): Got unimplemented method ID %d", methodId);
-	}
+	default:
+		error("Hotspot::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 	}
 }
 

@@ -84,9 +84,8 @@ void MediaStationEngine::effectTransition(Common::Array<Operand> &args) {
 		break;
 	}
 
-	default: {
+	default:
 		error("MediaStationEngine::effectTransition(): Got unknown transition type %d", static_cast<uint>(transitionType));
-	}
 	}
 }
 

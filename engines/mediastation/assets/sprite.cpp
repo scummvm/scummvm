@@ -128,9 +128,8 @@ Operand Sprite::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args)
 		return returnValue;
 	}
 
-	default: {
-		error("Sprite::callMethod(): Got unimplemented method ID %d", methodId);
-	}
+	default:
+		error("Sprite::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 	}
 }
 

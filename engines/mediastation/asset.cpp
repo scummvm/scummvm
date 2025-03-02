@@ -21,6 +21,7 @@
 
 #include "mediastation/debugchannels.h"
 #include "mediastation/asset.h"
+#include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
@@ -86,10 +87,10 @@ void Asset::processTimeEventHandlers() {
 void Asset::runEventHandlerIfExists(EventType eventType) {
 	EventHandler *eventHandler = _header->_eventHandlers.getValOrDefault(eventType);
 	if (eventHandler != nullptr) {
-		debugC(5, kDebugScript, "Executing handler for event type %d on asset %d", static_cast<uint>(eventType), _header->_id);
+		debugC(5, kDebugScript, "Executing handler for event type %s on asset %d", eventTypeToStr(eventType), _header->_id);
 		eventHandler->execute(_header->_id);
 	} else {
-		debugC(5, kDebugScript, "No event handler for event type %d on asset %d", static_cast<uint>(eventType), _header->_id);
+		debugC(5, kDebugScript, "No event handler for event type %s on asset %d", eventTypeToStr(eventType), _header->_id);
 	}
 }
 
