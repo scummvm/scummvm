@@ -39,7 +39,8 @@ bool MinigameView::msgClose(const CloseMessage &msg) {
 }
 
 bool MinigameView::hasFile(const Common::Path &path) const {
-	return _resourceFiles.contains(path.baseName());
+	return _bitmapFiles.contains(path.toString()) ||
+		_soundFiles.contains(path.toString());
 }
 
 int MinigameView::listMembers(Common::ArchiveMemberList &list) const {
@@ -52,13 +53,27 @@ const Common::ArchiveMemberPtr MinigameView::getMember(const Common::Path &path)
 
 Common::SeekableReadStream *MinigameView::createReadStreamForMember(const Common::Path &path) const {
 	Common::NEResources winResources;
+	Common::String filename = path.toString();
 
-	if (!_resourceFiles.contains(path.toString()) ||
-			!winResources.loadFromEXE(Common::Path(_resourceFilename)))
+	// See if it's a filename that's been registered
+	if (!_bitmapFiles.contains(filename) &&
+		!_soundFiles.contains(filename))
 		return nullptr;
 
-	return winResources.getResource(Common::kWinBitmap,
-		_resourceFiles[path.toString()]);
+	// Load the resources from the specified file
+	if (!winResources.loadFromEXE(Common::Path(_resourceFilename)))
+		return nullptr;
+
+	// Get and return the appropriate resource
+	if (_bitmapFiles.contains(filename)) {
+		return winResources.getResource(Common::kWinBitmap,
+			_bitmapFiles[filename]);
+	} else {
+		return winResources.getResource(Common::WinResourceID("WAVE"),
+			_soundFiles[filename]);
+	}
+
+	return nullptr;
 }
 
 } // namespace HodjNPodj

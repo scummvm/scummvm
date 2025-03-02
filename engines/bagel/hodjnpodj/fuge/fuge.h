@@ -55,10 +55,10 @@ private:
 	const char *m_pWallSound;
 	const char *m_pPaddleSound;
 	const char *m_pExtraLifeSound;
-	uint m_hBrickRes = 0;
-	uint m_hWallRes = 0;
-	uint m_hPaddleRes = 0;
-	uint m_hExtraLifeRes = 0;
+	Common::SeekableReadStream *m_hBrickRes = nullptr;
+	Common::SeekableReadStream *m_hWallRes = nullptr;
+	Common::SeekableReadStream *m_hPaddleRes = nullptr;
+	Common::SeekableReadStream *m_hExtraLifeRes = nullptr;
 
 	int m_nInitNumBalls = 0;
 	int m_nInitStartLevel = 0;
@@ -91,15 +91,15 @@ private:
 	void repaintSpriteList();
 	void eraseBrick(int brickIndex);
 	void realignVectors();
-	ErrorCode loadMasterSprites();
-	ErrorCode loadNewPaddle(int);
+	void loadMasterSprites();
+	void loadNewPaddle(int nNewSize);
+	void loadMasterSounds();
 
 	void GameReset();
 	void GamePause();
 	void GameResume();
 	void HandleError(ErrorCode);
 	void ReleaseMasterSprites();
-	ErrorCode LoadMasterSounds();
 	void ReleaseMasterSounds();
 	void InitializeJoystick();
 	void StartBall();

@@ -37,11 +37,16 @@ class MinigameView : public View, public Common::Archive {
 private:
 	Common::String _resourceFilename;
 	Common::HashMap<Common::String, int,
-		Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _resourceFiles;
+		Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _bitmapFiles;
+	Common::HashMap<Common::String, Common::String,
+		Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _soundFiles;
 
 protected:
-	void addResource(const Common::String &filename, int resourceId) {
-		_resourceFiles[filename] = resourceId;
+	void addResource(const Common::String &filename, int resourceId = 0) {
+		_bitmapFiles[filename] = resourceId;
+	}
+	void addResource(const Common::String &filename, const Common::String &strName) {
+		_soundFiles[filename] = strName;
 	}
 
 public:

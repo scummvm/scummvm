@@ -189,6 +189,7 @@ Fuge::Fuge() : MinigameView("Fuge", "fuge/hnpfuge.dll"), m_GamePalette(0),
 
 	// Add mappings to resource entries
 	addResource("fuge/art/ball.bmp", 103);
+	addResource("fuge/sound/newlife.wav", "brickSound");
 }
 
 void Fuge::clear() {
@@ -210,10 +211,6 @@ void Fuge::clear() {
 	m_pWallSound = NULL;
 	m_pPaddleSound = NULL;
 	m_pExtraLifeSound = NULL;
-	m_hBrickRes = NULL;
-	m_hWallRes = NULL;
-	m_hPaddleRes = NULL;
-	m_hExtraLifeRes = NULL;
 	m_nNumRows = 0;
 	m_bJoyActive = FALSE;
 	Common::fill(m_bBrickVisible, m_bBrickVisible + N_BRICKS, false);
@@ -243,8 +240,9 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 		m_pSoundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
 	}
 
-	// Load graphics
+	// Load data
 	loadMasterSprites();
+	loadMasterSounds();
 
 	return true;
 }
@@ -260,6 +258,16 @@ bool Fuge::msgClose(const CloseMessage &msg) {
 	_backgroundNumRows = -1;
 	_paddleOldSize = -1;
 
+	// Clear sounds
+	delete m_hBrickRes;
+	delete m_hWallRes;
+	delete m_hPaddleRes;
+	delete m_hExtraLifeRes;
+	m_hBrickRes = nullptr;
+	m_hWallRes = nullptr;
+	m_hPaddleRes = nullptr;
+	m_hExtraLifeRes = nullptr;
+
 	return true;
 }
 
@@ -270,9 +278,6 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 void Fuge::draw() {
 	paintBricks();
 	repaintSpriteList();
-
-	GfxSurface s = getSurface();
-	s.blitFrom(m_pPaddle, Common::Point(360, 240)); //***DEBUG****
 }
 
 void Fuge::paintBricks() {
@@ -336,17 +341,13 @@ void Fuge::realignVectors() {
 }
 
 
-ErrorCode Fuge::loadMasterSprites() {
-	ErrorCode errCode = loadNewPaddle(m_nInitPaddleSize);
+void Fuge::loadMasterSprites() {
+	loadNewPaddle(m_nInitPaddleSize);
 
-	if (errCode == ERR_NONE)
-		m_pBall.loadBitmap(BALL_BMP);
-
-	return errCode;
+	m_pBall.loadBitmap(BALL_BMP);
 }
 
-
-ErrorCode Fuge::loadNewPaddle(int nNewSize) {
+void Fuge::loadNewPaddle(int nNewSize) {
 	assert(nNewSize >= PSIZE_MIN && nNewSize <= SIZE_MAX);
 
 	// Don't try to load the same paddle
@@ -354,8 +355,42 @@ ErrorCode Fuge::loadNewPaddle(int nNewSize) {
 		_paddleOldSize = nNewSize;
 		m_pPaddle.loadCels(pszPaddles[nNewSize], N_PADDLE_CELS);
 	}
+}
 
-	return ERR_NONE;
+
+void Fuge::loadMasterSounds() {
+
+	// Load the Brick "ping" into memory
+	{
+		Common::File f;
+		if (!f.open(WAV_BRICK))
+			error("Error loading sound - %s", WAV_BRICK);
+		m_hBrickRes = f.readStream(f.size());
+	}
+
+	// Load the wall "ping" into memory
+	{
+		Common::File f;
+		if (!f.open(WAV_WALL))
+			error("Error loading sound - %s", WAV_WALL);
+		m_hWallRes = f.readStream(f.size());
+	}
+
+	// Load the paddle "ping" into memory
+	{
+		Common::File f;
+		if (!f.open(WAV_PADDLE))
+			error("Error loading sound - %s", WAV_PADDLE);
+		m_hPaddleRes = f.readStream(f.size());
+	}
+
+	// Load the extra life sound into memory
+	{
+		Common::File f;
+		if (!f.open(WAV_NEWLIFE))
+			error("Error loading sound - %s", WAV_NEWLIFE);
+		m_hExtraLifeRes = f.readStream(f.size());
+	}
 }
 
 } // namespace Fuge

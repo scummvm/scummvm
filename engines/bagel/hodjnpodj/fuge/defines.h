@@ -128,23 +128,26 @@ namespace Fuge {
 #define TIMER_ID 10
 #define TIMER_INTERVAL  50
 
+// Sound Resources
+#define WAV_NEWLIFE     "FUGE/SOUND/NEWLIFE.WAV"
+
 // Sounds
-//
-#define WAV_PADDLE      ".\\SOUND\\PADDLE.WAV"
-#define WAV_WALL        ".\\SOUND\\WALL.WAV"
-#define WAV_WINWAVE     ".\\SOUND\\WINWAVE.WAV"
-#define WAV_GAMEOVER    ".\\SOUND\\SOSORRY.WAV"     //GAMEOVER.WAV"
-#define WAV_LOSEBALL    ".\\SOUND\\TOILET.WAV"      //LOSEBALL.WAV"
+#define WAV_BRICK       "FUGE/SOUND/BRICK0.WAV"
+#define WAV_PADDLE      "FUGE/SOUND/PADDLE.WAV"
+#define WAV_WALL        "FUGE/SOUND/WALL.WAV"
+#define WAV_WINWAVE     "FUGE/SOUND/WINWAVE.WAV"
+#define WAV_GAMEOVER    "FUGE/SOUND/SOSORRY.WAV"     //GAMEOVER.WAV"
+#define WAV_LOSEBALL    "FUGE/SOUND/TOILET.WAV"      //LOSEBALL.WAV"
 
-#define WAV_NARRATION   ".\\SOUND\\FUGE.WAV"
-#define MID_SOUNDTRACK  ".\\SOUND\\FUGE.MID"
+#define WAV_NARRATION   "FUGE/SOUND/FUGE.WAV"
+#define MID_SOUNDTRACK  "FUGE/SOUND/FUGE.MID"
 
-#define WAV_CAR1        ".\\SOUND\\SICK.WAV"
-#define WAV_CAR2        ".\\SOUND\\FERRIS.WAV"
-#define WAV_TENT        ".\\SOUND\\LAWYER.WAV"
-#define WAV_BOOTH       ".\\SOUND\\STEPUP.WAV"
-#define WAV_PEOPLE1     ".\\SOUND\\BALLOON.WAV"
-#define WAV_PEOPLE2     ".\\SOUND\\AUNTEDNA.WAV"
+#define WAV_CAR1        "FUGE/SOUND/SICK.WAV"
+#define WAV_CAR2        "FUGE/SOUND/FERRIS.WAV"
+#define WAV_TENT        "FUGE/SOUND/LAWYER.WAV"
+#define WAV_BOOTH       "FUGE/SOUND/STEPUP.WAV"
+#define WAV_PEOPLE1     "FUGE/SOUND/BALLOON.WAV"
+#define WAV_PEOPLE2     "FUGE/SOUND/AUNTEDNA.WAV"
 
 #define NUM_WAVS        2                           //There are two people and two car sounds
 
