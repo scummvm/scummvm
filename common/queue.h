@@ -52,8 +52,17 @@ public:
 		_impl.clear();
 	}
 
+	template<class... TArgs>
+	void emplace(TArgs&&... args) {
+		_impl.emplace_back(Common::forward<TArgs>(args)...);
+	}
+
 	void push(const T &x) {
 		_impl.push_back(x);
+	}
+
+	void push(T &&x) {
+		_impl.push_back(Common::move(x));
 	}
 
 	T &front() {
@@ -73,7 +82,7 @@ public:
 	}
 
 	T pop() {
-		T tmp = front();
+		T tmp = Common::move(front());
 		_impl.pop_front();
 		return tmp;
 	}
