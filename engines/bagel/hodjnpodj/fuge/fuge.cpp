@@ -30,6 +30,7 @@
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/boflib/point.h"
 #include "bagel/boflib/size.h"
+#include "bagel/hodjnpodj/views/main_menu.h"
 #include "bagel/hodjnpodj/views/message_box.h"
 #include "bagel/hodjnpodj/views/rules.h"
 
@@ -284,30 +285,6 @@ bool Fuge::msgClose(const CloseMessage &msg) {
 	return true;
 }
 
-bool Fuge::msgFocus(const FocusMessage &msg) {
-	if (msg._priorView->getName() == "FugeOptions") {
-		// Closing options menu
-		// show the command scroll
-		m_ScrollButton.setPressed(false);
-		m_bIgnoreScrollClick = false;
-
-		if (!gameInfo.bMusicEnabled && (m_pSoundTrack != NULL)) {
-			m_pSoundTrack->stop();
-			delete m_pSoundTrack;
-			m_pSoundTrack = NULL;
-
-		} else if (gameInfo.bMusicEnabled && (m_pSoundTrack == NULL)) {
-			m_pSoundTrack = new CBofSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-			m_pSoundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
-		}
-
-		gameResume();
-		return true;
-	}
-
-	return false;
-}
-
 bool Fuge::msgKeypress(const KeypressMessage &msg) {
 	switch (msg.keycode) {
 	// Move paddle clockwise
@@ -503,7 +480,9 @@ void Fuge::showOptionsMenu() {
 		CBofSound::waitWaveSounds();
 
 		// Show the options view
-		addView("FugeOptions");
+		MainMenu::show([]() {
+			((Fuge *)g_events->findView("Fuge"))->optionsClosed();
+		});
 	}
 }
 
@@ -1002,6 +981,24 @@ void Fuge::newLifeClosed() {
 	endPaddle();
 	startPaddle();
 	startBall();
+}
+
+void Fuge::optionsClosed() {
+	// show the command scroll
+	m_ScrollButton.setPressed(false);
+	m_bIgnoreScrollClick = false;
+
+	if (!gameInfo.bMusicEnabled && (m_pSoundTrack != NULL)) {
+		m_pSoundTrack->stop();
+		delete m_pSoundTrack;
+		m_pSoundTrack = NULL;
+
+	} else if (gameInfo.bMusicEnabled && (m_pSoundTrack == NULL)) {
+		m_pSoundTrack = new CBofSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+		m_pSoundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
+	}
+
+	gameResume();
 }
 
 #define N_CRIT_POINTS 7

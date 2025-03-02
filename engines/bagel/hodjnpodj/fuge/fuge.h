@@ -143,11 +143,11 @@ public:
 	void gameOverClosed();
 	void newLifeClosed();
 	void roundCompleteClosed();
+	void optionsClosed();
 	void gameResume();
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
-	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 	bool tick() override;
