@@ -474,11 +474,12 @@ void Macs2Engine::readResourceFile() {
 	_fileStream->seek(0x00708410);
 	_stick.ReadFromStream(_fileStream);
 
+	/*
 	_fileStream->seek(0x000d4fbd);
 	// TODO: Figure out where the number comes from
 	byte *adlibData = new byte[15610];
 	_fileStream->read(adlibData, 15610);
-	_adlib->data = new Common::MemoryReadStream(adlibData, 15610);
+	_adlib->data = new Common::MemoryReadStream(adlibData, 15610); */
 }
 
 void Macs2Engine::readExecutable() {

@@ -1337,83 +1337,15 @@ void Adlib::Func1A03() {
 	uint8 bp1;
 	// l0017_1A0F:
 	do {
-
-		bp1 = data->readByte();
-		// Go back to allow 19BE below to handle it properly
-		data->seek(-1, SEEK_CUR);
-
-		uint32 timer = _nextEventTimer;
+		bp1 = shMem2250->peekByte();
+		
 		// TODO: Not sure what this does in practice
-		timer << 7;
-		_nextEventTimer = timer;
-		_nextEventTimer += bp1;
-		// TODO: Check if this can also change the segment address
-		uint16 newPos = Func19BE(1);
-		data->seek(newPos, SEEK_SET);
-		// TODO: Not yet implemented
-		// add	word ptr [225Ah],1h
-		// adc word ptr[225Ch], 0h
+		_nextEventTimer = _nextEventTimer << 7;
+		_nextEventTimer += bp1 & 0x7F;
+		Func19BE_SH(shMem2250, 1);
+
+		g225A++;
 	} while ((bp1 & 0x80) != 0);
-	/*
-	;; fn0017_1A03: 0017:1A03
-;;   Called from:
-;;     0017:25C3 (in fn0017_24FD)
-fn0017_1A03 proc
-	enter	2h,0h
-	xor	ax,ax
-	;; These control the end condition of the other function
-	;; TODO: Check if there is a relation with the other one
-	mov	[2254h],ax
-	mov	[2256h],ax
-
-l0017_1A0F:
-	;; This one has the first read overall of the structure
-	les	di,[2250h]
-	mov	al,es:[di]
-	;; Save the read value to [bp-1h]
-	mov	[bp-1h],al
-	mov	ax,[2254h]
-	mov	dx,[2256h]
-	mov	cx,7h
-	xor	bx,bx
-	;; Left-shift DX:AX by cx = 7h based on the previous value of the variables
-	call	far 00CDh:0D93h
-	mov	[2254h],ax
-	mov	[2256h],dx
-	mov	al,[bp-1h]
-	;; This will remove the first bit and leave the last 7 bits in place
-	;; Note that we also shifted by 7 above
-	and	al,7Fh
-	xor	ah,ah
-	xor	dx,dx
-	;; We add the value that we loaded from the file
-	add	ax,[2254h]
-	adc	dx,[2256h]
-	mov	[2254h],ax
-	mov	[2256h],dx
-	;; This does some kind of conditional increment to the offset in [2250]
-	push	word ptr [2252h]
-	push	word ptr [2250h]
-	push	1h
-	call	far 0017h:19BEh
-	mov	[2250h],ax
-	mov	[2252h],dx
-	;; This seems like a 32-bit counter?
-	add	word ptr [225Ah],1h
-	adc	word ptr [225Ch],0h
-	;; We take the original value
-	mov	al,[bp-1h]
-	;; AND with 80h, then check if any bits are set. If any bits are set, do another
-	;; round
-	;; 80h means that we get only the first bit, so the first bit seems to be there only
-	;; to datermine how many times we go on here
-	and	al,80h
-	or	al,al
-	jnz	1A0Fh
-
-l0017_1A72:
-	leave
-	retf*/
 }
 
 uint8 Adlib::peekByte() {
