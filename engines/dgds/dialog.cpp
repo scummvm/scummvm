@@ -381,7 +381,7 @@ void Dialog::drawType4(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 		}
 
 		// WORKAROUND for the Willy Beamish dialogs which are 20x20 - these should not be drawn
-		if (gameId == GID_WILLY && (w <= 20 && h <= 20))
+		if (gameId == GID_WILLY && (w <= 22 && h <= 22))
 			return;
 
 		drawForeground(dst, fillcolor, _str);
