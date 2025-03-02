@@ -21,7 +21,7 @@
 
 #include "common/file.h"
 #include "common/formats/winexe_ne.h"
-#include "bagel/hodjnpodj/gfx/minigame_view.h"
+#include "bagel/hodjnpodj/views/minigame_view.h"
 
 namespace Bagel {
 namespace HodjNPodj {

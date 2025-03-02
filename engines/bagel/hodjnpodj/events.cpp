@@ -23,7 +23,7 @@
 #include "graphics/screen.h"
 #include "bagel/hodjnpodj/events.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
-#include "bagel/hodjnpodj/gfx/views.h"
+#include "bagel/hodjnpodj/views/views.h"
 #include "bagel/hodjnpodj/globals.h"
 
 namespace Bagel {

@@ -22,9 +22,9 @@
 #ifndef HODJNPODJ_FUGE_FUGE_H
 #define HODJNPODJ_FUGE_FUGE_H
 
-#include "bagel/hodjnpodj/gfx/minigame_view.h"
+#include "bagel/hodjnpodj/views/minigame_view.h"
 #include "bagel/hodjnpodj/gfx/bmp_button.h"
-#include "bagel/hodjnpodj/boflib/vector.h"
+#include "bagel/hodjnpodj/libs/vector.h"
 #include "bagel/hodjnpodj/fuge/defines.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/sound.h"
@@ -102,8 +102,6 @@ private:
 	void playGame();
 	void gameReset();
 	void loadIniSettings();
-
-	void HandleError(ErrorCode);
 	void releaseMasterSprites();
 	void releaseMasterSounds();
 	void initializeJoystick();
@@ -120,6 +118,7 @@ private:
 	void loseBall();
 	void ballvsPaddle();
 	void ballvsBrick(double);
+	void HandleError(ErrorCode);
 
 	//virtual bool OnCommand(uint16 uint16, int32 int32);
 	int32 OnJoyStick(uint, int32);
@@ -141,6 +140,10 @@ public:
 	Fuge();
 	virtual ~Fuge() {
 	}
+
+	void gameOverClosed();
+	void newLifeClosed();
+	void roundCompleteClosed();
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;

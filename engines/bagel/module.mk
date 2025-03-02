@@ -121,10 +121,11 @@ MODULE_OBJS = \
 	hodjnpodj/messages.o \
 	hodjnpodj/gfx/bmp_button.o \
 	hodjnpodj/gfx/gfx_surface.o \
-	hodjnpodj/gfx/minigame_view.o \
-	hodjnpodj/gfx/view.o \
-	hodjnpodj/boflib/vector.o \
-	hodjnpodj/dialogs/rules.o \
+	hodjnpodj/libs/vector.o \
+	hodjnpodj/views/message_box.o \
+	hodjnpodj/views/minigame_view.o \
+	hodjnpodj/views/rules.o \
+	hodjnpodj/views/view.o \
 	hodjnpodj/fuge/fuge.o
 
 # This module can be built as a plugin

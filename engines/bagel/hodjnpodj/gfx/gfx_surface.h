@@ -33,6 +33,7 @@ class GfxSurface : public Graphics::ManagedSurface {
 private:
 	Graphics::ManagedSurface _cellsSource; // Used with loadCels
 	size_t _cellWidth = 0;
+	int _cellIndex = 0;
 
 public:
 	GfxSurface() : Graphics::ManagedSurface() {}
@@ -48,7 +49,11 @@ public:
 	void loadBitmap(const char *filename);
 	void loadCels(const char *filename, size_t numCells);
 	void convertTo(const byte *palette, int count = PALETTE_COUNT);
-	void setCell(size_t cellNum);
+
+	void setCel(size_t cellNum);
+	int getCelIndex() const {
+		return _cellIndex;
+	}
 };
 
 class Sprite : public GfxSurface, public Common::Point {
@@ -64,6 +69,10 @@ public:
 	bool isLinked() const;
 	void linkSprite();
 	void unlinkSprite();
+
+	Common::Point getPosition() const {
+		return *this;
+	}
 };
 
 } // namespace HodjNPodj

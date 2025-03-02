@@ -59,6 +59,11 @@ namespace Bagel {
 #define SOUND_PRELOAD 0x2000 // Only works for Resource MAC snd files
 #define SOUND_OVEROK 0x4000  // OK to play another sound over this file
 
+#define SND_MEMORY 0
+#define SND_NODEFAULT 0
+#define SND_SYNC 0
+#define SND_ASYNC SOUND_ASYNCH
+
 #define SOUND_TYPE_WAV 1
 #define SOUND_TYPE_XM 2
 #define SOUND_TYPE_QT 3
@@ -210,6 +215,8 @@ private:
 
 bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0);
 bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0, bool bWait = false);
+
+#define sndPlaySound BofPlaySound
 
 } // namespace Bagel
 

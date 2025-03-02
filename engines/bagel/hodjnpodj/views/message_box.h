@@ -19,18 +19,29 @@
  *
  */
 
-#ifndef HODJNPODJ_VIEWS_H
-#define HODJNPODJ_VIEWS_H
+#ifndef HODJNPODJ_VIEWS_MESSAGE_BOX_H
+#define HODJNPODJ_VIEWS_MESSAGE_BOX_H
 
-#include "bagel/hodjnpodj/dialogs/rules.h"
-#include "bagel/hodjnpodj/fuge/fuge.h"
+#include "bagel/hodjnpodj/views/view.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-struct Views {
-	Dialogs::Rules _rules;
-	Fuge::Fuge _fuge;
+typedef void(*DialogCloseCallback)();
+
+class MessageBox: public View {
+private:
+	Common::String _title;
+	Common::String _message;
+	DialogCloseCallback _callback;
+
+public:
+	MessageBox() : View("MessageBox") {
+	}
+	virtual ~MessageBox() {}
+
+	static void show(const Common::String &title,
+		const Common::String &msg, DialogCloseCallback callback);
 };
 
 } // namespace HodjNPodj

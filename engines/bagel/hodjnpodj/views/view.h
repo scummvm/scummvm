@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HODJNPODJ_GFX_VIEW_H
-#define HODJNPODJ_GFX_VIEW_H
+#ifndef HODJNPODJ_VIEWS_VIEW_H
+#define HODJNPODJ_VIEWS_VIEW_H
 
 #include "bagel/hodjnpodj/events.h"
 

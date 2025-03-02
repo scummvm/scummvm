@@ -19,34 +19,19 @@
  *
  */
 
-#ifndef HODJNPODJ_DIALOGS_RULES_H
-#define HODJNPODJ_DIALOGS_RULES_H
-
-#include "bagel/hodjnpodj/gfx/view.h"
+#include "bagel/hodjnpodj/views/message_box.h"
 
 namespace Bagel {
 namespace HodjNPodj {
-namespace Dialogs {
 
-class Rules : public View {
-private:
-	byte _pal[256 * 3] = { 0 };
-	int _offset = 0;
+void MessageBox::show(const Common::String &title,
+		const Common::String &msg, DialogCloseCallback callback) {
+	MessageBox *view = (MessageBox *)g_events->findView("MessageBox");
+	view->_title = title;
+	view->_message = msg;
+	view->_callback = callback;
+	view->addView();
+}
 
-public:
-	Rules() : View("Rules") {
-	}
-	virtual ~Rules() {
-	}
-
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	void draw() override;
-	bool tick() override;
-};
-
-} // namespace Dialogs
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif

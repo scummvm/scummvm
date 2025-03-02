@@ -21,11 +21,10 @@
 
 #include "common/system.h"
 #include "graphics/paletteman.h"
-#include "bagel/hodjnpodj/dialogs/rules.h"
+#include "bagel/hodjnpodj/views/rules.h"
 
 namespace Bagel {
 namespace HodjNPodj {
-namespace Dialogs {
 
 bool Rules::msgFocus(const FocusMessage &msg) {
 	Common::fill(&_pal[0], &_pal[256 * 3], 0);
@@ -63,6 +62,5 @@ bool Rules::tick() {
 	return true;
 }
 
-} // namespace Dialogs
 } // namespace HodjNPodj
 } // namespace Bagel

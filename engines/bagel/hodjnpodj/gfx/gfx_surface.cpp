@@ -26,7 +26,7 @@
 #include "graphics/paletteman.h"
 #include "image/bmp.h"
 #include "bagel/hodjnpodj/gfx/gfx_surface.h"
-#include "bagel/hodjnpodj/gfx/minigame_view.h"
+#include "bagel/hodjnpodj/views/minigame_view.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -120,12 +120,14 @@ void GfxSurface::loadCels(const char *filename, size_t numCells) {
 	assert((this->w % numCells) == 0);
 	_cellWidth = this->w / numCells;
 
-	setCell(0);
+	setCel(0);
 }
 
-void GfxSurface::setCell(size_t cellNum) {
+void GfxSurface::setCel(size_t cellNum) {
 	assert(_cellWidth != 0);
+	assert((int)(cellNum * _cellWidth) < _cellsSource.w);
 
+	_cellIndex = cellNum;
 	Common::Rect r(0, 0, _cellWidth, this->h);
 	r.moveTo(_cellWidth * cellNum, 0);
 	Graphics::ManagedSurface::operator=(

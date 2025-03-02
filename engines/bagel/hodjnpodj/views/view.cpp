@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/hodjnpodj/gfx/view.h"
+#include "bagel/hodjnpodj/views/view.h"
 
 namespace Bagel {
 namespace HodjNPodj {

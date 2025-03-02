@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/hodjnpodj/boflib/vector.h"
+#include "bagel/hodjnpodj/libs/vector.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -243,7 +243,7 @@ bool CVector::operator ==(const VECTOR &v) {
 }
 
 
-double DistanceBetweenPoints(VECTOR v1, VECTOR v2) {
+double distanceBetweenPoints(const VECTOR &v1, const VECTOR &v2) {
 	CVector vTmp(v1.x - v2.x, v1.y - v2.y, 0);
 
 	return vTmp.Length();

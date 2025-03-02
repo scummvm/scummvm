@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef BAGEL_HODJNPODJ_BOFLIB_VECTOR_H
-#define BAGEL_HODJNPODJ_BOFLIB_VECTOR_H
+#ifndef BAGEL_HODJNPODJ_LIBS_VECTOR_H
+#define BAGEL_HODJNPODJ_LIBS_VECTOR_H
 
 #include "bagel/boflib/stdinc.h"
 
@@ -71,7 +71,7 @@ private:
 };
 
 // misc Vector add-ons
-double DistanceBetweenPoints(const VECTOR &v1, const VECTOR &v2);
+extern double distanceBetweenPoints(const VECTOR &v1, const VECTOR &v2);
 
 } // namespace HodjNPodj
 } // namespace Bagel

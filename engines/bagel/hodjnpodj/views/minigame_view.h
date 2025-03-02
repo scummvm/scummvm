@@ -19,14 +19,14 @@
  *
  */
 
-#ifndef HODJNPODJ_GFX_MINIGAME_VIEW_H
-#define HODJNPODJ_GFX_MINIGAME_VIEW_H
+#ifndef HODJNPODJ_VIEWS_MINIGAME_VIEW_H
+#define HODJNPODJ_VIEWS_MINIGAME_VIEW_H
 
 #include "common/archive.h"
 #include "common/hashmap.h"
 #include "common/list.h"
 #include "common/formats/winexe_ne.h"
-#include "bagel/hodjnpodj/gfx/view.h"
+#include "bagel/hodjnpodj/views/view.h"
 
 namespace Bagel {
 namespace HodjNPodj {
