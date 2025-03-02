@@ -94,10 +94,11 @@ private:
 	void loadMasterSprites();
 	void loadNewPaddle(int nNewSize);
 	void loadMasterSounds();
+	void showOptionsMenu();
+	void gamePause();
+	void gameResume();
 
 	void GameReset();
-	void GamePause();
-	void GameResume();
 	void HandleError(ErrorCode);
 	void ReleaseMasterSprites();
 	void ReleaseMasterSounds();
@@ -139,6 +140,7 @@ public:
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
+	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 	bool tick() override;

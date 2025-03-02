@@ -29,11 +29,17 @@ namespace Bagel {
 namespace HodjNPodj {
 
 class BmpButton : public UIElement {
+public:
+	enum Mode {
+		kBtnNormal, kBtnSelected,
+		kBtnFocused, kBtnDisabled
+	};
 private:
 	GfxSurface _base;
 	GfxSurface _selected;
 	GfxSurface _focused;
 	GfxSurface _disabled;
+	Mode _mode = BmpButton::kBtnNormal;
 
 public:
 	BmpButton(const Common::String &name, UIElement *parent,
@@ -45,6 +51,11 @@ public:
 	void loadBitmaps(const char *base, const char *selected,
 		const char *focused, const char *disabled);
 	void clear();
+
+	void setPressed(bool pressed) {
+		_mode = pressed ? kBtnSelected : kBtnNormal;
+		redraw();
+	}
 
 	void draw() override;
 };

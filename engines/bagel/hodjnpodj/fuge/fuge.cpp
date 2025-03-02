@@ -244,6 +244,11 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 	loadMasterSprites();
 	loadMasterSounds();
 
+	if (!gameInfo.bPlayingMetagame) {
+		draw();
+		showOptionsMenu();
+	}
+
 	return true;
 }
 
@@ -269,6 +274,30 @@ bool Fuge::msgClose(const CloseMessage &msg) {
 	m_hExtraLifeRes = nullptr;
 
 	return true;
+}
+
+bool Fuge::msgFocus(const FocusMessage &msg) {
+	if (msg._priorView->getName() == "FugeOptions") {
+		// Closing options menu
+		// show the command scroll
+		m_ScrollButton.setPressed(false);
+		m_bIgnoreScrollClick = FALSE;
+
+		if (!gameInfo.bMusicEnabled && (m_pSoundTrack != NULL)) {
+			m_pSoundTrack->stop();
+			delete m_pSoundTrack;
+			m_pSoundTrack = NULL;
+
+		} else if (gameInfo.bMusicEnabled && (m_pSoundTrack == NULL)) {
+			m_pSoundTrack = new CBofSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+			m_pSoundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
+		}
+
+		gameResume();
+		return true;
+	}
+
+	return false;
 }
 
 bool Fuge::msgKeypress(const KeypressMessage &msg) {
@@ -357,9 +386,7 @@ void Fuge::loadNewPaddle(int nNewSize) {
 	}
 }
 
-
 void Fuge::loadMasterSounds() {
-
 	// Load the Brick "ping" into memory
 	{
 		Common::File f;
@@ -391,6 +418,29 @@ void Fuge::loadMasterSounds() {
 			error("Error loading sound - %s", WAV_NEWLIFE);
 		m_hExtraLifeRes = f.readStream(f.size());
 	}
+}
+
+void Fuge::showOptionsMenu() {
+	m_ScrollButton.setPressed(true);
+
+	if (!m_bIgnoreScrollClick) {
+		m_bIgnoreScrollClick = TRUE;
+
+		gamePause();
+		CBofSound::waitWaveSounds();
+
+		// Show the options view
+		addView("FugeOptions");
+	}
+}
+
+void Fuge::gamePause() {
+	m_bPause = TRUE;
+}
+
+void Fuge::gameResume() {
+	if (!m_bBallOnPaddle && m_bMovingPaddle)
+		m_bPause = FALSE;
 }
 
 } // namespace Fuge
