@@ -77,6 +77,8 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 	} else {
 		if (pixelformat.isCLUT8() && video->setDitheringPalette(Video::quickTimeDefaultPalette256)) {
 			pixelformat = Graphics::PixelFormat::createFormatCLUT8();
+		} else if (video->setOutputPixelFormats(supportedFormatsList)) {
+			pixelformat = video->getPixelFormat();
 		} else {
 			pixelformat = supportedFormatsList.front();
 		}
@@ -86,6 +88,8 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 
 #ifdef __DS__
 	int w = 256, h = 192;
+#elif defined(__3DS__)
+	int w = 320, h = 240;
 #elif defined(USE_HIGHRES)
 	int w = 640, h = 480;
 #else
@@ -108,7 +112,7 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 			debug(5, "video time: %d", pos);
 
 			if (pixelformat.isCLUT8() && video->hasDirtyPalette()) {
-				g_system->getPaletteManager()->setPalette(Video::quickTimeDefaultPalette256, 0, 256);
+				g_system->getPaletteManager()->setPalette(video->getPalette(), 0, 256);
 			}
 
 			const Graphics::Surface *frame = video->decodeNextFrame();
@@ -126,10 +130,11 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 				mw = surf->w;
 				mh = surf->h;
 
-				if (surf->w < w && surf->h < h) {
+				if (surf->w < w)
 					x = (w - surf->w) >> 1;
+				if (surf->h < h)
 					y = (h - surf->h) >> 1;
-				}
+
 				g_system->copyRectToScreen(surf->getPixels(), surf->pitch, x, y, MIN<uint16>(surf->w, w), MIN<uint16>(surf->h, h));
 
 				if (conv) {
