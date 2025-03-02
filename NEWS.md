@@ -6,6 +6,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  New games:
    - Added support for Dark Seed.
    - Added support for God of Thunder.
+   - Added support for The Adventures of Willy Beamish.
 
  Hopkins:
    - Fix crash using elevator to go to other floors.
