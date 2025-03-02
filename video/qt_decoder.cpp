@@ -46,6 +46,7 @@
 
 // Video codecs
 #include "image/codecs/codec.h"
+#include "image/codecs/dither.h"
 
 namespace Video {
 
@@ -325,7 +326,7 @@ Audio::SeekableAudioStream *QuickTimeDecoder::AudioTrackHandler::getSeekableAudi
 	return _audioTrack;
 }
 
-QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder, Common::QuickTimeParser::Track *parent) : _decoder(decoder), _parent(parent), _forcedDitherPalette(0) {
+QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder, Common::QuickTimeParser::Track *parent) : _decoder(decoder), _parent(parent) {
 	if (decoder->_enableEditListBoundsCheckQuirk) {
 		checkEditListBounds();
 	}
@@ -343,8 +344,6 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 	_curPalette = 0;
 	_dirtyPalette = false;
 	_reversed = false;
-	_ditherTable = 0;
-	_ditherFrame = 0;
 }
 
 // FIXME: This check breaks valid QuickTime movies, such as the KQ6 Mac opening.
@@ -388,13 +387,6 @@ QuickTimeDecoder::VideoTrackHandler::~VideoTrackHandler() {
 	if (_scaledSurface) {
 		_scaledSurface->free();
 		delete _scaledSurface;
-	}
-
-	delete[] _ditherTable;
-
-	if (_ditherFrame) {
-		_ditherFrame->free();
-		delete _ditherFrame;
 	}
 }
 
@@ -492,17 +484,11 @@ uint16 QuickTimeDecoder::VideoTrackHandler::getHeight() const {
 }
 
 Graphics::PixelFormat QuickTimeDecoder::VideoTrackHandler::getPixelFormat() const {
-	if (_forcedDitherPalette.size() > 0)
-		return Graphics::PixelFormat::createFormatCLUT8();
-
 	// TODO: What should happen if there are multiple codecs with different formats?
 	return ((VideoSampleDesc *)_parent->sampleDescs[0])->_videoCodec->getPixelFormat();
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::setOutputPixelFormat(const Graphics::PixelFormat &format) {
-	if (_forcedDitherPalette.size() > 0)
-		return false;
-
 	bool success = true;
 
 	for (uint i = 0; i < _parent->sampleDescs.size(); i++) {
@@ -597,10 +583,6 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 		}
 	}
 
-	// Handle forced dithering
-	if (frame && _forcedDitherPalette.size() > 0)
-		frame = forceDither(*frame);
-
 	if (frame && (_parent->scaleFactorX != 1 || _parent->scaleFactorY != 1)) {
 		if (!_scaledSurface) {
 			_scaledSurface = new Graphics::Surface();
@@ -641,7 +623,7 @@ Audio::Timestamp QuickTimeDecoder::VideoTrackHandler::getFrameTime(uint frame) c
 
 const byte *QuickTimeDecoder::VideoTrackHandler::getPalette() const {
 	_dirtyPalette = false;
-	return _forcedDitherPalette.size() > 0 ? _forcedDitherPalette.data() : _curPalette;
+	return _curPalette;
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
@@ -976,79 +958,10 @@ void QuickTimeDecoder::VideoTrackHandler::setDither(const byte *palette) {
 			desc->_videoCodec->setDither(Image::Codec::kDitherTypeQT, palette);
 		} else {
 			// Forced dither
-			_forcedDitherPalette.resize(256, false);
-			_forcedDitherPalette.set(palette, 0, 256);
-			_ditherTable = Image::Codec::createQuickTimeDitherTable(_forcedDitherPalette.data(), 256);
-			_dirtyPalette = true;
+			desc->_videoCodec = new Image::DitherCodec(desc->_videoCodec);
+			desc->_videoCodec->setDither(Image::Codec::kDitherTypeQT, palette);
 		}
 	}
-}
-
-namespace {
-
-// Return a pixel in RGB554
-uint16 makeDitherColor(byte r, byte g, byte b) {
-	return ((r & 0xF8) << 6) | ((g & 0xF8) << 1) | (b >> 4);
-}
-
-// Default template to convert a dither color
-template<typename PixelInt>
-inline uint16 readDitherColor(PixelInt srcColor, const Graphics::PixelFormat& format, const byte *palette) {
-	byte r, g, b;
-	format.colorToRGB(srcColor, r, g, b);
-	return makeDitherColor(r, g, b);
-}
-
-// Specialized version for 8bpp
-template<>
-inline uint16 readDitherColor(byte srcColor, const Graphics::PixelFormat& format, const byte *palette) {
-	return makeDitherColor(palette[srcColor * 3], palette[srcColor * 3 + 1], palette[srcColor * 3 + 2]);
-}
-
-template<typename PixelInt>
-void ditherFrame(const Graphics::Surface &src, Graphics::Surface &dst, const byte *ditherTable, const byte *palette = 0) {
-	static const uint16 colorTableOffsets[] = { 0x0000, 0xC000, 0x4000, 0x8000 };
-
-	for (int y = 0; y < dst.h; y++) {
-		const PixelInt *srcPtr = (const PixelInt *)src.getBasePtr(0, y);
-		byte *dstPtr = (byte *)dst.getBasePtr(0, y);
-		uint16 colorTableOffset = colorTableOffsets[y & 3];
-
-		for (int x = 0; x < dst.w; x++) {
-			uint16 color = readDitherColor(*srcPtr++, src.format, palette);
-			*dstPtr++ = ditherTable[colorTableOffset + color];
-			colorTableOffset += 0x4000;
-		}
-	}
-}
-
-} // End of anonymous namespace
-
-const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::forceDither(const Graphics::Surface &frame) {
-	if (frame.format.bytesPerPixel == 1) {
-		// This should always be true, but this is for sanity
-		if (!_curPalette)
-			return &frame;
-
-		// If the palettes match, bail out
-		if (memcmp(_forcedDitherPalette.data(), _curPalette, 256 * 3) == 0)
-			return &frame;
-	}
-
-	// Need to create a new one
-	if (!_ditherFrame) {
-		_ditherFrame = new Graphics::Surface();
-		_ditherFrame->create(frame.w, frame.h, Graphics::PixelFormat::createFormatCLUT8());
-	}
-
-	if (frame.format.bytesPerPixel == 1)
-		ditherFrame<byte>(frame, *_ditherFrame, _ditherTable, _curPalette);
-	else if (frame.format.bytesPerPixel == 2)
-		ditherFrame<uint16>(frame, *_ditherFrame, _ditherTable);
-	else if (frame.format.bytesPerPixel == 4)
-		ditherFrame<uint32>(frame, *_ditherFrame, _ditherTable);
-
-	return _ditherFrame;
 }
 
 } // End of namespace Video

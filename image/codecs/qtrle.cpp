@@ -23,6 +23,7 @@
 // Based off ffmpeg's QuickTime RLE decoder (written by Mike Melanson)
 
 #include "image/codecs/qtrle.h"
+#include "image/codecs/dither.h"
 
 #include "common/debug.h"
 #include "common/scummsys.h"
@@ -662,7 +663,7 @@ void QTRLEDecoder::setDither(DitherType type, const byte *palette) {
 	_dirtyPalette = true;
 
 	delete[] _colorMap;
-	_colorMap = createQuickTimeDitherTable(palette, 256);
+	_colorMap = DitherCodec::createQuickTimeDitherTable(palette, 256);
 }
 
 void QTRLEDecoder::createSurface() {

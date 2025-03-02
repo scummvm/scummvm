@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	codecs/cdtoons.o \
 	codecs/cinepak.o \
 	codecs/codec.o \
+	codecs/dither.o \
 	codecs/hlz.o \
 	codecs/jyv1.o \
 	codecs/mjpeg.o \
