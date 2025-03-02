@@ -49,7 +49,7 @@ SciResource *getMidiPatchData(int num) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	ResourceManager *resource = engine->getResourceManager();
 	Decompressor *decomp = engine->getDecompressor();
-
+	ResourceManager *fddMgr = nullptr;
 	Common::SeekableReadStream *ovlStream;
 
 	int resNum = 0;
@@ -59,8 +59,23 @@ SciResource *getMidiPatchData(int num) {
 			break;
 	}
 
+	//
+	// WORKAROUND: The MT-32 patch data in Willy Beamish CD version is corrupted.
+	// If the FDD version is avaialble in the "FDD" directory, use that instead.
+	// This is how the data comes arranged in the GOG version.
+	//
+	if (num == 1 && engine->getGameId() == GID_WILLY) {
+		fddMgr = new ResourceManager("FDD");
+		if (fddMgr->hasResource("SX.OVL")) {
+			debug("Overriding MT32 patch data with patches from FDD version.");
+			delete ovlStream;
+			resNum = 2;
+			ovlStream = fddMgr->getResource("SX.OVL");
+		}
+	}
+
 	if (!ovlStream) {
-		warning("Couldn't load DGDS midi patch data from any known OVL file.");
+		warning("Couldn't load DGDS midi patch data from any known OVL file");
 		return nullptr;
 	}
 
@@ -93,6 +108,10 @@ SciResource *getMidiPatchData(int num) {
 			chunk.skipContent();
 		}
 	}
+
+	delete ovlStream;
+	if (fddMgr)
+		delete fddMgr;
 
 	warning("Didn't find section %s in midi patch resource %s", targetSection.c_str(), PATCH_RESOURCES[resNum]);
 

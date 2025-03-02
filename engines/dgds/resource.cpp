@@ -34,8 +34,8 @@ namespace Dgds {
 
 static const int FILENAME_LENGTH = 12;
 
-ResourceManager::ResourceManager() {
-	const char *indexFiles[] = {
+ResourceManager::ResourceManager(const char *dir /* = ""*/) {
+	static const char *indexFiles[] = {
 		"volume.vga", // Dragon VGA versions
 		"volume.ega", // Dragon EGA versions
 		"volume.rmf", // Beamish / HoC
@@ -44,14 +44,16 @@ ResourceManager::ResourceManager() {
 
 	Common::File indexFile;
 	for (int i = 0; i < ARRAYSIZE(indexFiles); i++) {
-		if (Common::File::exists(indexFiles[i])) {
-			indexFile.open(indexFiles[i]);
+		Common::Path path(dir);
+		path.joinInPlace(indexFiles[i]);
+		if (Common::File::exists(path)) {
+			indexFile.open(path);
 			break;
 		}
 	}
 
 	if (!indexFile.isOpen()) {
-		warning("No DGDS volume index file found to open.");
+		debug("No DGDS volume index file found to open in directory '%s'.", dir);
 		return;
 	}
 
@@ -63,8 +65,9 @@ ResourceManager::ResourceManager() {
 
 	for (int i = 0; i < nvolumes; i++) {
 		indexFile.read(fnbuf, FILENAME_LENGTH);
-		Common::Path volumeName(fnbuf);
-		assert(!volumeName.empty());
+		assert(strlen(fnbuf) > 0);
+		Common::Path volumeName(dir);
+		volumeName.joinInPlace(fnbuf);
 
 		_volumes[i].open(volumeName);
 		if (!_volumes[i].isOpen())

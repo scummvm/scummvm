@@ -48,7 +48,7 @@ typedef Common::HashMap<Common::String, Resource> ResourceList;
 
 class ResourceManager {
 public:
-	ResourceManager();
+	ResourceManager(const char *dir = "");
 	virtual ~ResourceManager();
 
 	Common::SeekableReadStream *getResource(Common::String name, bool ignorePatches = false);
