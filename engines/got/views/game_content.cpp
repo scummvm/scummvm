@@ -263,7 +263,7 @@ void GameContent::drawActors(GfxSurface &s) {
 
 	for (int actor_num = 0; actor_num <= MAX_ACTORS;) {
 		// Check for blinking flag
-		if (actor_ptr->_active && !(actor_ptr->_show & 2)) {
+		if (actor_ptr && actor_ptr->_active && !(actor_ptr->_show & 2)) {
 			actor_ptr->_lastX[_G(pge)] = actor_ptr->_x;
 			actor_ptr->_lastY[_G(pge)] = actor_ptr->_y;
 
