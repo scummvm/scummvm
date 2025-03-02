@@ -649,7 +649,7 @@ void CinepakDecoder::decodeVectors24(Common::SeekableReadStream &stream, uint16 
 
 bool CinepakDecoder::setOutputPixelFormat(const Graphics::PixelFormat &format) {
 	if (_bitsPerPixel == 8)
-		return false;
+		return format.isCLUT8();
 
 	if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4)
 		return false;

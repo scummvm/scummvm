@@ -612,7 +612,7 @@ protected:
 		/**
 		 * Set the default high color format for videos that convert from YUV.
 		 */
-		virtual bool setOutputPixelFormat(const Graphics::PixelFormat &format) { return false; }
+		virtual bool setOutputPixelFormat(const Graphics::PixelFormat &format) { return format == getPixelFormat(); }
 
 		/**
 		 * Set the image codec accuracy

@@ -91,7 +91,7 @@ public:
 	 * Select the preferred format to use, for codecs where this is faster than converting
 	 * the image afterwards. Returns true if supported, and false otherwise.
 	 */
-	virtual bool setOutputPixelFormat(const Graphics::PixelFormat &format) { return false; }
+	virtual bool setOutputPixelFormat(const Graphics::PixelFormat &format) { return format == getPixelFormat(); }
 
 	/**
 	 * Can this codec's frames contain a palette?
