@@ -129,7 +129,6 @@ const char *const inkType[] = {
 	"Dark"
 };
 
-
 const char *inkType2str(InkType type) {
 	if (type <= kInkTypeMask)
 		return inkType[type];
@@ -139,6 +138,26 @@ const char *inkType2str(InkType type) {
 
 	return "<unknown>";
 
+}
+
+const char *const symbolType[] = {
+	"VOIDSYM",
+	"OPCODE",
+	"CBLTIN",
+	"FBLTIN",
+	"HBLTIN",
+	"KBLTIN",
+	"FBLTIN_LIST",
+	"HBLTIN_LIST",
+	"HANDLER",
+};
+
+const char *symbolType2str(SymbolType type) {
+	if (type >= VOIDSYM && type <= HANDLER)
+		return symbolType[type];
+
+	warning("BUILDBOT: Unknown SymbolType: %d", type);
+	return "<unknown>";
 }
 
 #define defFlag(x) { x, #x }
