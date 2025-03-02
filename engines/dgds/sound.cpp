@@ -640,15 +640,25 @@ void Sound::playPCSound(int num, const Common::Array<SoundData> &dataArray, Audi
 			playPCM(data._data, data._size);
 		} else {
 			int idOffset = soundType == Audio::Mixer::kSFXSoundType ? SND_RESOURCE_OFFSET : MUSIC_RESOURCE_OFFSET;
+			int soundId = num + idOffset;
 
 			// Only play one music at a time, don't play sfx if sfx muted.
-			if (soundType == Audio::Mixer::kMusicSoundType)
+			if (soundType == Audio::Mixer::kMusicSoundType) {
+				MusicEntry *currentMusic = _music->getSlot(soundId);
+				//
+				// Don't change music if we are already playing the same track.  This happens
+				// when walking through the house in Willy Beamish where all the rooms have
+				// the same music track.
+				//
+				if (currentMusic && currentMusic->status == kSoundPlaying)
+					return;
 				stopMusic();
-			else if (soundType == Audio::Mixer::kSFXSoundType && _isSfxMuted)
+			} else if (soundType == Audio::Mixer::kSFXSoundType && _isSfxMuted) {
 				return;
+			}
 
-			processInitSound(num + idOffset, data, soundType);
-			processPlaySound(num + idOffset, false, false, data);
+			processInitSound(soundId, data, soundType);
+			processPlaySound(soundId, false, false, data);
 
 			// Immediately pause new music if muted
 			if (_isMusicMuted && soundType == Audio::Mixer::kMusicSoundType)
