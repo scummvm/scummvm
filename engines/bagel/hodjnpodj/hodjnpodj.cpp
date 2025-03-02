@@ -22,7 +22,6 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/engine_data.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "engines/util.h"
@@ -65,14 +64,6 @@ Common::Error HodjNPodjEngine::run() {
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
-
-	// Initialise engine data for the game
-	Common::U32String errMsg;
-	if (!Common::load_engine_data("bagel.dat", "", 1, 0, errMsg)) {
-		GUIErrorMessage("Could not find bagel.dat data file");
-		const Common::String msg(errMsg);
-		error("%s", msg.c_str());
-	}
 
 	// Run the game
 	runGame();

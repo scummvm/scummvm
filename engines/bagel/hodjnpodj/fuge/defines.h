@@ -58,7 +58,7 @@ namespace Fuge {
 //
 // This mini-game's main screen bitmap
 //
-#define MINI_GAME_MAP   "ART/FUGE6.BMP"
+#define MINI_GAME_MAP   "FUGE/ART/FUGE6.BMP"
 
 #define N_PADDLE_CELS    31
 #define PADDLE_START_X  285

@@ -121,6 +121,7 @@ MODULE_OBJS = \
 	hodjnpodj/messages.o \
 	hodjnpodj/gfx/bmp_button.o \
 	hodjnpodj/gfx/gfx_surface.o \
+	hodjnpodj/gfx/minigame_view.o \
 	hodjnpodj/gfx/view.o \
 	hodjnpodj/boflib/vector.o \
 	hodjnpodj/dialogs/rules.o \

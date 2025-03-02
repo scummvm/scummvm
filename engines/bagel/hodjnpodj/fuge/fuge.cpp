@@ -148,21 +148,21 @@ static const SIZE ptBrickSize[N_BRICKS] = {
 };
 
 static const char *pszFugeArt[N_ROWS + 1] = {
-	"ART/FUGE6.BMP",
-	"ART/FUGE1.BMP",
-	"ART/FUGE2.BMP",
-	"ART/FUGE3.BMP",
-	"ART/FUGE4.BMP",
-	"ART/FUGE5.BMP",
-	"ART/FUGE6.BMP"
+	"FUGE/ART/FUGE6.BMP",
+	"FUGE/ART/FUGE1.BMP",
+	"FUGE/ART/FUGE2.BMP",
+	"FUGE/ART/FUGE3.BMP",
+	"FUGE/ART/FUGE4.BMP",
+	"FUGE/ART/FUGE5.BMP",
+	"FUGE/ART/FUGE6.BMP"
 };
 
 #define N_PADDLE_SIZES (PSIZE_MAX + 1)
 
 static const char *pszPaddles[N_PADDLE_SIZES] = {
-	"ART/PADCEL45.BMP",
-	"ART/PADCEL60.BMP",
-	"ART/PADCEL90.BMP"
+	"FUGE/ART/PADCEL45.BMP",
+	"FUGE/ART/PADCEL60.BMP",
+	"FUGE/ART/PADCEL90.BMP"
 };
 
 static double fPaddleAngles[N_PADDLE_SIZES] = {
@@ -171,7 +171,7 @@ static double fPaddleAngles[N_PADDLE_SIZES] = {
 	PADDLE2_ANGLE
 };
 
-Fuge::Fuge() : View("Fuge"), m_GamePalette(0),
+Fuge::Fuge() : MinigameView("Fuge", "fuge/hnpfuge.dll"), m_GamePalette(0),
 		m_rNewGameButton(NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
 			NEWGAME_LOCATION_X + NEWGAME_WIDTH, NEWGAME_LOCATION_Y + NEWGAME_HEIGHT),
 		m_ScrollButton("ScrollButton", this, Common::Rect(
@@ -180,12 +180,15 @@ Fuge::Fuge() : View("Fuge"), m_GamePalette(0),
 			SCROLL_BUTTON_Y + SCROLL_BUTTON_DY)),
 		m_ptOrigin(GAME_WIDTH / 2, GAME_HEIGHT / 2) {
 
+	clear();
+
 	// The vector table is rotated by 11 or so degrees, because it
 	// was easier to type in (125, 320) as opposed to (114.452865, 300.526372).
 	// So the conversion is done here.
 	realignVectors();
 
-	clear();
+	// Add mappings to resource entries
+	addResource("fuge/art/ball.bmp", 103);
 }
 
 void Fuge::clear() {
@@ -217,9 +220,7 @@ void Fuge::clear() {
 }
 
 bool Fuge::msgOpen(const OpenMessage &msg) {
-	// Add the minigame's folder to the search path
-	Common::FSNode gamePath(ConfMan.getPath("path"));
-	SearchMan.addDirectory("minigame", gamePath.getChild("fuge"), 0, 2);
+	MinigameView::msgOpen(msg);
 
 	// Clear fields
 	clear();
@@ -249,8 +250,7 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 }
 
 bool Fuge::msgClose(const CloseMessage &msg) {
-	// Remove the SearchMan reference to our subfolder
-	SearchMan.remove("minigame");
+	MinigameView::msgClose(msg);
 
 	// Clear bitmaps
 	_background.clear();
@@ -270,6 +270,9 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 void Fuge::draw() {
 	paintBricks();
 	repaintSpriteList();
+
+	GfxSurface s = getSurface();
+	s.blitFrom(m_pPaddle, Common::Point(360, 240)); //***DEBUG****
 }
 
 void Fuge::paintBricks() {
