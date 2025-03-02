@@ -70,21 +70,29 @@ DitherCodec::~DitherCodec() {
 namespace {
 
 // Default template to convert a dither color
-template<typename PixelInt>
-inline uint16 readQuickTimeDitherColor(PixelInt srcColor, const Graphics::PixelFormat& format, const byte *palette) {
+inline uint16 readQT_RGB(uint32 srcColor, const Graphics::PixelFormat& format, const byte *palette) {
 	byte r, g, b;
 	format.colorToRGB(srcColor, r, g, b);
 	return makeQuickTimeDitherColor(r, g, b);
 }
 
 // Specialized version for 8bpp
-template<>
-inline uint16 readQuickTimeDitherColor(byte srcColor, const Graphics::PixelFormat& format, const byte *palette) {
+inline uint16 readQT_Palette(uint8 srcColor, const Graphics::PixelFormat& format, const byte *palette) {
 	return makeQuickTimeDitherColor(palette[srcColor * 3], palette[srcColor * 3 + 1], palette[srcColor * 3 + 2]);
 }
 
-template<typename PixelInt>
-void ditherQuickTimeFrame(const Graphics::Surface &src, Graphics::Surface &dst, const byte *ditherTable, const byte *palette = 0) {
+// Specialized version for RGB554
+inline uint16 readQT_RGB554(uint16 srcColor, const Graphics::PixelFormat& format, const byte *palette) {
+	return srcColor;
+}
+
+// Specialized version for RGB555 and ARGB1555
+inline uint16 readQT_RGB555(uint16 srcColor, const Graphics::PixelFormat& format, const byte *palette) {
+	return (srcColor >> 1) & 0x3FFF;
+}
+
+template<typename PixelInt, class Fn>
+void ditherQuickTimeFrame(const Graphics::Surface &src, Graphics::Surface &dst, const byte *ditherTable, Fn fn, const byte *palette = 0) {
 	static const uint16 colorTableOffsets[] = { 0x0000, 0xC000, 0x4000, 0x8000 };
 
 	for (int y = 0; y < dst.h; y++) {
@@ -93,7 +101,7 @@ void ditherQuickTimeFrame(const Graphics::Surface &src, Graphics::Surface &dst, 
 		uint16 colorTableOffset = colorTableOffsets[y & 3];
 
 		for (int x = 0; x < dst.w; x++) {
-			uint16 color = readQuickTimeDitherColor(*srcPtr++, src.format, palette);
+			uint16 color = fn(*srcPtr++, src.format, palette);
 			*dstPtr++ = ditherTable[colorTableOffset + color];
 			colorTableOffset += 0x4000;
 		}
@@ -127,11 +135,16 @@ const Graphics::Surface *DitherCodec::decodeFrame(Common::SeekableReadStream &st
 	}
 
 	if (frame->format.isCLUT8() && curPalette)
-		ditherQuickTimeFrame<byte>(*frame, *_ditherFrame, _ditherTable, curPalette);
+		ditherQuickTimeFrame<byte>(*frame, *_ditherFrame, _ditherTable, readQT_Palette, curPalette);
+	else if (frame->format == Graphics::PixelFormat(2, 5, 5, 4, 0, 9, 4, 0, 0))
+		ditherQuickTimeFrame<uint16>(*frame, *_ditherFrame, _ditherTable, readQT_RGB554);
+	else if (frame->format == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0) ||
+	         frame->format == Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 1))
+		ditherQuickTimeFrame<uint16>(*frame, *_ditherFrame, _ditherTable, readQT_RGB555);
 	else if (frame->format.bytesPerPixel == 2)
-		ditherQuickTimeFrame<uint16>(*frame, *_ditherFrame, _ditherTable);
+		ditherQuickTimeFrame<uint16>(*frame, *_ditherFrame, _ditherTable, readQT_RGB);
 	else if (frame->format.bytesPerPixel == 4)
-		ditherQuickTimeFrame<uint32>(*frame, *_ditherFrame, _ditherTable);
+		ditherQuickTimeFrame<uint32>(*frame, *_ditherFrame, _ditherTable, readQT_RGB);
 
 	return _ditherFrame;
 }
@@ -184,6 +197,10 @@ void DitherCodec::setDither(DitherType type, const byte *palette) {
 		_dirtyPalette = true;
 
 		_ditherTable = createQuickTimeDitherTable(_forcedDitherPalette, 256);
+
+		// Prefer RGB554 or RGB555 to avoid extra conversion when dithering
+		if (!_codec->setOutputPixelFormat(Graphics::PixelFormat(2, 5, 5, 4, 0, 9, 4, 0, 0)))
+			_codec->setOutputPixelFormat(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 	}
 }
 
