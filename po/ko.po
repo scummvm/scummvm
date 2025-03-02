@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-01 01:35+0000\n"
+"POT-Creation-Date: 2025-03-02 00:34+0000\n"
 "PO-Revision-Date: 2025-02-26 12:46+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -360,10 +360,9 @@ msgstr "JSON 코드 내용이 잘못되었습니다."
 #: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1351
 #: engines/scumm/scumm.cpp:1768 engines/scumm/scumm.cpp:2258
 #: engines/scumm/scumm.cpp:2274 engines/sky/compact.cpp:140
-#: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
-#: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2816
-#: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
-#: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
+#: engines/sword1/animation.cpp:566 engines/sword1/animation.cpp:574
+#: engines/sword1/control.cpp:2816 engines/sword1/logic.cpp:1738
+#: engines/sword2/animation.cpp:459 engines/sword2/animation.cpp:469
 #: engines/vcruise/vcruise.cpp:96 engines/vcruise/vcruise.cpp:106
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
@@ -11841,17 +11840,12 @@ msgid ""
 msgstr ""
 "일부 반복적인 작업을 제거하고,키보드로 버브를 변경할 수 있는 기능을 추가함"
 
-#: engines/sword1/animation.cpp:532
-#, c-format
-msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr "'%s' PSX 스트림 컷씬은 팔레트 모드에서 재생할 수 없음"
-
-#: engines/sword1/animation.cpp:563 engines/sword2/animation.cpp:456
+#: engines/sword1/animation.cpp:566 engines/sword2/animation.cpp:459
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr "MPEG-2 컷씬이 발견되었지만 ScummVM은 MPEG-2 지원 없이 빌드되었음"
 
-#: engines/sword1/animation.cpp:570 engines/sword2/animation.cpp:465
+#: engines/sword1/animation.cpp:573 engines/sword2/animation.cpp:468
 #, c-format
 msgid "Cutscene '%s' not found"
 msgstr "'%s' 컷씬을 찾지 못 함"
@@ -11891,7 +11885,7 @@ msgstr "이전 것을 유지"
 msgid "Keep the new one"
 msgstr "새 것을 유지"
 
-#: engines/sword1/logic.cpp:1732
+#: engines/sword1/logic.cpp:1738
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "이 브로큰 소드 1 데모는 끝났음"
 
@@ -11951,11 +11945,6 @@ msgstr "추가 옵션:"
 #: engines/sword1/metaengine.cpp:301
 msgid "Main Menu"
 msgstr "메인 메뉴"
-
-#: engines/sword2/animation.cpp:426
-msgid ""
-"PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr "PSX 컷씬이 발견되었지만 ScummVM은 RGB 색상 지원 없이 빌드되었음"
 
 #: engines/sword2/detection_tables.h:419
 msgid "Remastered edition is not supported. Please, use the classic version"
@@ -13475,6 +13464,14 @@ msgstr ""
 "합니다. 또는 Liberation Fonts 패키지를 다운로드할 수 있습니다. 선택한 글꼴 패"
 "키지의 모든 글꼴, 즉 LiberationMono, LiberationSans, LiberationSerif가 필요합"
 "니다."
+
+#, c-format
+#~ msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
+#~ msgstr "'%s' PSX 스트림 컷씬은 팔레트 모드에서 재생할 수 없음"
+
+#~ msgid ""
+#~ "PSX cutscenes found but ScummVM has been built without RGB color support"
+#~ msgstr "PSX 컷씬이 발견되었지만 ScummVM은 RGB 색상 지원 없이 빌드되었음"
 
 #~ msgid ""
 #~ "Could not find the 'Fate of Atlantis' Macintosh executable.\n"

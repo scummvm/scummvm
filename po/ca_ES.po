@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-01 01:35+0000\n"
+"POT-Creation-Date: 2025-03-02 00:34+0000\n"
 "PO-Revision-Date: 2025-02-12 14:18+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -362,10 +362,9 @@ msgstr "El contingut del codi JSON està mal format."
 #: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1351
 #: engines/scumm/scumm.cpp:1768 engines/scumm/scumm.cpp:2258
 #: engines/scumm/scumm.cpp:2274 engines/sky/compact.cpp:140
-#: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
-#: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2816
-#: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
-#: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
+#: engines/sword1/animation.cpp:566 engines/sword1/animation.cpp:574
+#: engines/sword1/control.cpp:2816 engines/sword1/logic.cpp:1738
+#: engines/sword2/animation.cpp:459 engines/sword2/animation.cpp:469
 #: engines/vcruise/vcruise.cpp:96 engines/vcruise/vcruise.cpp:106
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
@@ -11287,19 +11286,14 @@ msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
 
-#: engines/sword1/animation.cpp:532
-#, c-format
-msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr "L'escena '%s' de PSX no es pot reproduir en mode paleta"
-
-#: engines/sword1/animation.cpp:563 engines/sword2/animation.cpp:456
+#: engines/sword1/animation.cpp:566 engines/sword2/animation.cpp:459
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
 "S'han trobat escenes en MPEG-2, però s'ha compilat el ScummVM sense suport "
 "de MPEG-2"
 
-#: engines/sword1/animation.cpp:570 engines/sword2/animation.cpp:465
+#: engines/sword1/animation.cpp:573 engines/sword2/animation.cpp:468
 #, c-format
 msgid "Cutscene '%s' not found"
 msgstr "No s'ha trobat l'escena '%s'"
@@ -11339,7 +11333,7 @@ msgstr "Mantingues el vell"
 msgid "Keep the new one"
 msgstr "Mantingues el nou"
 
-#: engines/sword1/logic.cpp:1732
+#: engines/sword1/logic.cpp:1738
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Aquest és el final de la Demo del Broken Sword 1"
 
@@ -11397,13 +11391,6 @@ msgstr "Opcions addicionals:"
 #: engines/sword1/metaengine.cpp:301
 msgid "Main Menu"
 msgstr "Menú principal"
-
-#: engines/sword2/animation.cpp:426
-msgid ""
-"PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr ""
-"S'han trobat escenes de PSX, però s'ha compilat el ScummVM sense suport de "
-"color RGB"
 
 #: engines/sword2/detection_tables.h:419
 msgid "Remastered edition is not supported. Please, use the classic version"
@@ -12921,6 +12908,16 @@ msgid ""
 "from the font package you choose, i.e., LiberationMono, LiberationSans and "
 "LiberationSerif."
 msgstr ""
+
+#, c-format
+#~ msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
+#~ msgstr "L'escena '%s' de PSX no es pot reproduir en mode paleta"
+
+#~ msgid ""
+#~ "PSX cutscenes found but ScummVM has been built without RGB color support"
+#~ msgstr ""
+#~ "S'han trobat escenes de PSX, però s'ha compilat el ScummVM sense suport "
+#~ "de color RGB"
 
 #~ msgid "Show memory consumption"
 #~ msgstr "Mostra el consum de memòria"

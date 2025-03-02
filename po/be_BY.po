@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-01 01:35+0000\n"
+"POT-Creation-Date: 2025-03-02 00:34+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -379,10 +379,9 @@ msgstr ""
 #: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1351
 #: engines/scumm/scumm.cpp:1768 engines/scumm/scumm.cpp:2258
 #: engines/scumm/scumm.cpp:2274 engines/sky/compact.cpp:140
-#: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
-#: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2816
-#: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
-#: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
+#: engines/sword1/animation.cpp:566 engines/sword1/animation.cpp:574
+#: engines/sword1/control.cpp:2816 engines/sword1/logic.cpp:1738
+#: engines/sword2/animation.cpp:459 engines/sword2/animation.cpp:469
 #: engines/vcruise/vcruise.cpp:96 engines/vcruise/vcruise.cpp:106
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
@@ -11968,19 +11967,14 @@ msgstr ""
 "Выдаляе некаторыя паўторныя дзеянні, дадае магчымасць змяняць дзеясловы з "
 "дапамогай клавіятуры"
 
-#: engines/sword1/animation.cpp:532
-#, c-format
-msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr "Застаўка PSX '%s' не можа быць прайграна ў рэжыме з палітрай"
-
-#: engines/sword1/animation.cpp:563 engines/sword2/animation.cpp:456
+#: engines/sword1/animation.cpp:566 engines/sword2/animation.cpp:459
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
 "Знойдзены застаўкі ў фармаце MPEG-2, але ScummVM быў сабраны без падтрымкі "
 "MPEG-2"
 
-#: engines/sword1/animation.cpp:570 engines/sword2/animation.cpp:465
+#: engines/sword1/animation.cpp:573 engines/sword2/animation.cpp:468
 #, c-format
 msgid "Cutscene '%s' not found"
 msgstr "Застаўка '%s' не знойдзена"
@@ -12019,7 +12013,7 @@ msgstr "Пакінуць старую"
 msgid "Keep the new one"
 msgstr "Зрабіць новую"
 
-#: engines/sword1/logic.cpp:1732
+#: engines/sword1/logic.cpp:1738
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Гэта завяршэнне дэма Broken Sword 1"
 
@@ -12080,13 +12074,6 @@ msgstr ""
 #| msgid "Main Men~u~"
 msgid "Main Menu"
 msgstr "Галоўнае мен~ю~"
-
-#: engines/sword2/animation.cpp:426
-msgid ""
-"PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr ""
-"Знойдзены застаўкі ў фармаце PSX, але ScummVM быў сабраны без падтрымкі RGB-"
-"колераў"
 
 #: engines/sword2/detection_tables.h:419
 msgid "Remastered edition is not supported. Please, use the classic version"
@@ -13724,6 +13711,16 @@ msgid ""
 "from the font package you choose, i.e., LiberationMono, LiberationSans and "
 "LiberationSerif."
 msgstr ""
+
+#, c-format
+#~ msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
+#~ msgstr "Застаўка PSX '%s' не можа быць прайграна ў рэжыме з палітрай"
+
+#~ msgid ""
+#~ "PSX cutscenes found but ScummVM has been built without RGB color support"
+#~ msgstr ""
+#~ "Знойдзены застаўкі ў фармаце PSX, але ScummVM быў сабраны без падтрымкі "
+#~ "RGB-колераў"
 
 #, fuzzy
 #~ msgid ""

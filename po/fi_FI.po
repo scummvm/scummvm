@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-01 01:35+0000\n"
+"POT-Creation-Date: 2025-03-02 00:34+0000\n"
 "PO-Revision-Date: 2025-02-03 19:18+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -360,10 +360,9 @@ msgstr "JSON-koodin sisältö on epämuodostunutta."
 #: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1351
 #: engines/scumm/scumm.cpp:1768 engines/scumm/scumm.cpp:2258
 #: engines/scumm/scumm.cpp:2274 engines/sky/compact.cpp:140
-#: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
-#: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2816
-#: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
-#: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
+#: engines/sword1/animation.cpp:566 engines/sword1/animation.cpp:574
+#: engines/sword1/control.cpp:2816 engines/sword1/logic.cpp:1738
+#: engines/sword2/animation.cpp:459 engines/sword2/animation.cpp:469
 #: engines/vcruise/vcruise.cpp:96 engines/vcruise/vcruise.cpp:106
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
@@ -11977,19 +11976,14 @@ msgstr ""
 "Poistaa jotakin toistuvia toimintoja, lisää mahdollisuuden vaihtaa verbiä "
 "näppäimistöltä"
 
-#: engines/sword1/animation.cpp:532
-#, c-format
-msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr "PSX stream videota '%s' ei voi toistaa paletisoidussa tilassa"
-
-#: engines/sword1/animation.cpp:563 engines/sword2/animation.cpp:456
+#: engines/sword1/animation.cpp:566 engines/sword2/animation.cpp:459
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
 "MPEG-2 videotiedostoja löydettiin mutta ScummVM on käännetty ilman MPEG-2-"
 "tukea"
 
-#: engines/sword1/animation.cpp:570 engines/sword2/animation.cpp:465
+#: engines/sword1/animation.cpp:573 engines/sword2/animation.cpp:468
 #, c-format
 msgid "Cutscene '%s' not found"
 msgstr "Videotiedosto '%s' ei löytynyt"
@@ -12029,7 +12023,7 @@ msgstr "Säilytä vanha tallennus"
 msgid "Keep the new one"
 msgstr "Säilytä uusi tallennus"
 
-#: engines/sword1/logic.cpp:1732
+#: engines/sword1/logic.cpp:1738
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Broken Sword 1:n demo päättyy tähän"
 
@@ -12090,11 +12084,6 @@ msgstr "Lisäasetukset:"
 #: engines/sword1/metaengine.cpp:301
 msgid "Main Menu"
 msgstr "Päävalikko"
-
-#: engines/sword2/animation.cpp:426
-msgid ""
-"PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr "PSX videoita löydetty, mutta ScummVM on käännetty ilman RGB tukea"
 
 #: engines/sword2/detection_tables.h:419
 msgid "Remastered edition is not supported. Please, use the classic version"
@@ -13626,6 +13615,14 @@ msgstr ""
 "ladata Liberation Fonts -paketin. Tarvitset kaikki fontit paketista jonka "
 "valitset, i.e. LiberationMono, LiberationSans ja LiberationSerif riippuen "
 "valinnastasi."
+
+#, c-format
+#~ msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
+#~ msgstr "PSX stream videota '%s' ei voi toistaa paletisoidussa tilassa"
+
+#~ msgid ""
+#~ "PSX cutscenes found but ScummVM has been built without RGB color support"
+#~ msgstr "PSX videoita löydetty, mutta ScummVM on käännetty ilman RGB tukea"
 
 #~ msgid ""
 #~ "Could not find the 'Fate of Atlantis' Macintosh executable.\n"

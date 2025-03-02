@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-01 01:35+0000\n"
+"POT-Creation-Date: 2025-03-02 00:34+0000\n"
 "PO-Revision-Date: 2024-12-25 11:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -363,10 +363,9 @@ msgstr "Τα περιεχόμενα του κώδικα JSON δεν έχουν �
 #: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1351
 #: engines/scumm/scumm.cpp:1768 engines/scumm/scumm.cpp:2258
 #: engines/scumm/scumm.cpp:2274 engines/sky/compact.cpp:140
-#: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
-#: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2816
-#: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
-#: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
+#: engines/sword1/animation.cpp:566 engines/sword1/animation.cpp:574
+#: engines/sword1/control.cpp:2816 engines/sword1/logic.cpp:1738
+#: engines/sword2/animation.cpp:459 engines/sword2/animation.cpp:469
 #: engines/vcruise/vcruise.cpp:96 engines/vcruise/vcruise.cpp:106
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
@@ -12359,20 +12358,13 @@ msgstr ""
 "Αφαιρεί κάποιες επαναλαμβανόμενες ενέργειες, προσθέτει δυνατότητα εναλλαγής "
 "ρημάτων από το πληκτρολόγιο"
 
-#: engines/sword1/animation.cpp:532
-#, c-format
-msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr ""
-"Το αρχείο (τύπου ροής PSX) ταινίας '%s' δεν γίνεται να αναπαραχθεί σε "
-"λειτουργία παλέτας"
-
-#: engines/sword1/animation.cpp:563 engines/sword2/animation.cpp:456
+#: engines/sword1/animation.cpp:566 engines/sword2/animation.cpp:459
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
 "Βρέθηκαν βίντεο MPEG-2 αλλά το ScummVM κατασκευάστηκε χωρίς υποστήριξη MPEG-2"
 
-#: engines/sword1/animation.cpp:570 engines/sword2/animation.cpp:465
+#: engines/sword1/animation.cpp:573 engines/sword2/animation.cpp:468
 #, c-format
 msgid "Cutscene '%s' not found"
 msgstr "Η ταινία '%s' δε βρέθηκε"
@@ -12412,7 +12404,7 @@ msgstr "Κράτησε το παλιό"
 msgid "Keep the new one"
 msgstr "Κράτησε το καινούργιο"
 
-#: engines/sword1/logic.cpp:1732
+#: engines/sword1/logic.cpp:1738
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Αυτό είναι το τέλος της επίδειξης του Broken Sword 1"
 
@@ -12474,13 +12466,6 @@ msgstr "Πρόσθετες επιλογές:"
 #: engines/sword1/metaengine.cpp:301
 msgid "Main Menu"
 msgstr "Κυρίως Μενού"
-
-#: engines/sword2/animation.cpp:426
-msgid ""
-"PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr ""
-"Βρέθηκαν βίντεο PSX αλλά το ScummVM δημιουργήθηκε χωρίς υποστήριξη χρώματος "
-"RGB"
 
 #: engines/sword2/detection_tables.h:419
 msgid "Remastered edition is not supported. Please, use the classic version"
@@ -14053,6 +14038,18 @@ msgstr ""
 "Liberation Fonts ή το πακέτο GNU FreeFont. Θα χρειαστείτε όλα τα fonts από "
 "το πακέτο με fonts που θα επιλέξετε, δηλαδή, LiberationMono, LiberationSans "
 "και LiberationSerif, ή FreeMono, FreeSans και FreeSerif αντίστοιχα."
+
+#, c-format
+#~ msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
+#~ msgstr ""
+#~ "Το αρχείο (τύπου ροής PSX) ταινίας '%s' δεν γίνεται να αναπαραχθεί σε "
+#~ "λειτουργία παλέτας"
+
+#~ msgid ""
+#~ "PSX cutscenes found but ScummVM has been built without RGB color support"
+#~ msgstr ""
+#~ "Βρέθηκαν βίντεο PSX αλλά το ScummVM δημιουργήθηκε χωρίς υποστήριξη "
+#~ "χρώματος RGB"
 
 #~ msgid ""
 #~ "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
