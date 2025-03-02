@@ -1462,7 +1462,8 @@ void Cutscene::displayTitleText(const I18NTextWithPosition &text) {
 
 void Cutscene::displayZhString(const char *text, int y) {
 	auto str = convertToU32String(text, Common::ZH_ANY);
-	int x = (640 - str.size() * 24) / 2;
+	int rawStringSize = strlen(text) * 12;
+	int x = (640 - ((rawStringSize / 24) * 24 + (rawStringSize % 24) - 4)) / 2;
 	_zhFont->drawString(g_engine->_screen, str, x, y, 640, 14);
 }
 } // End of namespace Darkseed
