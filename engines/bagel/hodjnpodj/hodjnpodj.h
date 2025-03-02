@@ -46,13 +46,15 @@ enum SkillLevel {
 };
 
 struct GAMESTRUCT {
-	long lCrowns = 0;
-	long lScore = 0;
-	SkillLevel nSkillLevel = SKILLLEVEL_LOW;
-	bool bSoundEffectsEnabled = false;
-	bool bMusicEnabled = false;
-	bool bPlayingMetagame = true;
-	bool bPlayingHodj = true;
+	long lCrowns;
+	long lScore;
+	SkillLevel nSkillLevel;
+	bool bSoundEffectsEnabled;
+	bool bMusicEnabled;
+	bool bPlayingMetagame;
+	bool bPlayingHodj;
+
+	void clear();
 };
 extern GAMESTRUCT gameInfo;
 

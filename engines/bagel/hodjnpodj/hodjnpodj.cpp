@@ -35,17 +35,20 @@ namespace HodjNPodj {
 HodjNPodjEngine *g_engine;
 GAMESTRUCT gameInfo;
 
+void GAMESTRUCT::clear() {
+	lCrowns = 0;
+	lScore = 0;
+	nSkillLevel = SKILLLEVEL_LOW;
+	bSoundEffectsEnabled = false;
+	bMusicEnabled = false;
+	bPlayingMetagame = true;
+	bPlayingHodj = true;
+}
+
 HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 		_gameDescription(gameDesc), _randomSource("HodjNPodj") {
 	g_engine = this;
-
-	gameInfo.lCrowns = 0;
-	gameInfo.lScore = 0;
-	gameInfo.nSkillLevel = SKILLLEVEL_LOW;
-	gameInfo.bSoundEffectsEnabled = false;
-	gameInfo.bMusicEnabled = false;
-	gameInfo.bPlayingMetagame = false;
-	gameInfo.bPlayingHodj = false;
+	gameInfo.clear();
 }
 
 HodjNPodjEngine::~HodjNPodjEngine() {
