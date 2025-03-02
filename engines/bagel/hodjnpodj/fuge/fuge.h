@@ -39,6 +39,7 @@ private:
 	Graphics::Palette m_GamePalette;
 	Graphics::ManagedSurface _background;
 	int _backgroundNumRows = -1;
+	int _paddleOldSize = -1;
 
 	bool m_bBrickVisible[N_BRICKS] = { false };
 	const Common::Point m_ptOrigin;

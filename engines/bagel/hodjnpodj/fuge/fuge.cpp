@@ -254,10 +254,11 @@ bool Fuge::msgClose(const CloseMessage &msg) {
 
 	// Clear bitmaps
 	_background.clear();
-	_backgroundNumRows = -1;
 	m_ScrollButton.clear();
 	m_pBall.clear();
 	m_pPaddle.clear();
+	_backgroundNumRows = -1;
+	_paddleOldSize = -1;
 
 	return true;
 }
@@ -269,7 +270,6 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 void Fuge::draw() {
 	paintBricks();
 	repaintSpriteList();
-
 }
 
 void Fuge::paintBricks() {
@@ -344,61 +344,15 @@ ErrorCode Fuge::loadMasterSprites() {
 
 
 ErrorCode Fuge::loadNewPaddle(int nNewSize) {
-	return ERR_NONE;
-#ifdef TODO
-	STATIC INT nOldSize = -1;
-	CDC *pDC;
-	ERROR_CODE errCode;
+	assert(nNewSize >= PSIZE_MIN && nNewSize <= SIZE_MAX);
 
-	assert(nNewSize >= SIZE_MIN && nNewSize <= SIZE_MAX);
-
-	// assume no error
-	errCode = ERR_NONE;
-
-	if ((pDC = GetDC()) != NULL) {
-
-		// don't try to load the same paddle
-		//
-		if (nOldSize != nNewSize) {
-
-			if (m_pPaddle != NULL) {
-				m_pPaddle->EraseSprite(pDC);
-				m_pPaddle->UnlinkSprite();
-				delete m_pPaddle;
-				m_pPaddle = NULL;
-			}
-
-			if ((m_pPaddle = new CSprite) != NULL) {
-
-				if (m_pPaddle->SharePalette(m_pGamePalette) != FALSE) {
-
-					if (m_pPaddle->LoadCels(pDC, pszPaddles[nNewSize], N_PADDLE_CELS) != FALSE) {
-
-						nOldSize = nNewSize;
-						m_pPaddle->SetMasked(TRUE);
-						m_pPaddle->SetMobile(TRUE);
-						m_pPaddle->SetAnimated(TRUE);
-
-					} else {
-						errCode = ERR_UNKNOWN;
-					}
-
-				} else {
-					errCode = ERR_UNKNOWN;
-				}
-
-			} else {
-				errCode = ERR_MEMORY;
-			}
-		}
-		ReleaseDC(pDC);
-
-	} else {
-		errCode = ERR_MEMORY;
+	// Don't try to load the same paddle
+	if (_paddleOldSize != nNewSize) {
+		_paddleOldSize = nNewSize;
+		m_pPaddle.loadCels(pszPaddles[nNewSize], N_PADDLE_CELS);
 	}
 
-	return errCode;
-#endif
+	return ERR_NONE;
 }
 
 } // namespace Fuge

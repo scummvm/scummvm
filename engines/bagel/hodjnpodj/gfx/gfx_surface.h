@@ -28,6 +28,10 @@ namespace Bagel {
 namespace HodjNPodj {
 
 class GfxSurface : public Graphics::ManagedSurface {
+private:
+	Graphics::ManagedSurface _cellsSource; // Used with loadCels
+	size_t _cellWidth = 0;
+
 public:
 	GfxSurface() : Graphics::ManagedSurface() {}
 	GfxSurface(Graphics::ManagedSurface &surf, const Common::Rect &bounds) :
@@ -40,7 +44,10 @@ public:
 	}
 
 	void loadBitmap(const char *filename);
+	void loadCels(const char *filename, size_t numCells);
 	void convertTo(const byte *palette, int count = PALETTE_COUNT);
+
+	void setCell(size_t cellNum);
 };
 
 } // namespace HodjNPodj

@@ -111,5 +111,25 @@ void GfxSurface::convertTo(const byte *palette, int count) {
 	clearPalette();
 }
 
+void GfxSurface::loadCels(const char *filename, size_t numCells) {
+	// First load the bitmap
+	loadBitmap(filename);
+	_cellsSource = *this;
+
+	assert((this->w % numCells) == 0);
+	_cellWidth = this->w / numCells;
+
+	setCell(0);
+}
+
+void GfxSurface::setCell(size_t cellNum) {
+	assert(_cellWidth != 0);
+
+	Common::Rect r(0, 0, _cellWidth, this->h);
+	r.moveTo(_cellWidth * cellNum, 0);
+	Graphics::ManagedSurface::operator=(
+		Graphics::ManagedSurface(_cellsSource, r));
+}
+
 } // namespace HodjNPodj
 } // namespace Bagel
