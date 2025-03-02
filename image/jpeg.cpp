@@ -83,7 +83,9 @@ void JPEGDecoder::setCodecAccuracy(CodecAccuracy accuracy) {
 }
 
 Graphics::PixelFormat JPEGDecoder::getPixelFormat() const {
-	return _surface.format;
+	if (_surface.getPixels())
+		return _surface.format;
+	return _requestedPixelFormat;
 }
 
 #ifdef USE_JPEG
