@@ -118,19 +118,6 @@ private:
 	void loseBall();
 	void ballvsPaddle();
 	void ballvsBrick(double);
-	void HandleError(ErrorCode);
-
-	void OnMouseMove(uint, const Common::Point &);
-	void OnRButtonUp(uint, const Common::Point &);
-	void OnLButtonDown(uint, const Common::Point &);
-	void OnSysChar(uint, uint, uint);
-	void OnSysKeyDown(uint, uint, uint);
-	void OnKeyDown(uint, uint, uint);
-	void OnActivate(uint, void *, bool);
-	int32 OnMCINotify(uint16, int32);
-	int32 OnMMIONotify(uint16, int32);
-	void OnSoundNotify(CBofSound *);
-	void OnClose();
 
 public:
 	Fuge();

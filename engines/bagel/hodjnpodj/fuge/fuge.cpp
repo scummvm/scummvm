@@ -209,7 +209,7 @@ void Fuge::clear() {
 	m_nInitPaddleSize = PSIZE_DEF;
 	m_nGForceFactor = GFORCE_DEF;
 
-	m_pSoundTrack = NULL;
+	m_pSoundTrack = nullptr;
 	m_bPause = false;
 	m_bGameActive = false;
 	m_bIgnoreScrollClick = false;
@@ -217,10 +217,10 @@ void Fuge::clear() {
 	m_nPaddleCelIndex = 29;
 	m_bMovingPaddle = false;
 	m_lScore = 0;
-	m_pBrickSound = NULL;
-	m_pWallSound = NULL;
-	m_pPaddleSound = NULL;
-	m_pExtraLifeSound = NULL;
+	m_pBrickSound = nullptr;
+	m_pWallSound = nullptr;
+	m_pPaddleSound = nullptr;
+	m_pExtraLifeSound = nullptr;
 	m_nNumRows = 0;
 	m_bJoyActive = false;
 	Common::fill(m_bBrickVisible, m_bBrickVisible + N_BRICKS, false);
@@ -267,23 +267,9 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 bool Fuge::msgClose(const CloseMessage &msg) {
 	MinigameView::msgClose(msg);
 
-	// Clear bitmaps
-	_background.clear();
-	m_ScrollButton.clear();
-	m_pBall.clear();
-	m_pPaddle.clear();
-	_backgroundNumRows = -1;
-	_paddleOldSize = -1;
-
-	// Clear sounds
-	delete m_hBrickRes;
-	delete m_hWallRes;
-	delete m_hPaddleRes;
-	delete m_hExtraLifeRes;
-	m_hBrickRes = nullptr;
-	m_hWallRes = nullptr;
-	m_hPaddleRes = nullptr;
-	m_hExtraLifeRes = nullptr;
+	gameReset();
+	releaseMasterSounds();
+	releaseMasterSprites();	// Release all master sprites
 
 	return true;
 }
@@ -332,7 +318,7 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 		gamePause();
 		CBofSound::waitWaveSounds();
 		Rules::show("fuge.txt",
-			(gameInfo.bSoundEffectsEnabled ? WAV_NARRATION : NULL),
+			(gameInfo.bSoundEffectsEnabled ? WAV_NARRATION : nullptr),
 			[]() {
 				((Fuge *)g_events->findView("Fuge"))->gameResume();
 			});
@@ -394,7 +380,7 @@ bool Fuge::msgMouseMove(const MouseMoveMessage &msg) {
 }
 
 bool Fuge::msgMouseDown(const MouseDownMessage &msg) {
-	CBofSound *pEffect = NULL;
+	CBofSound *pEffect = nullptr;
 	Common::Rect boothRect, tentRect, peopRect,
 		car1Rect, car2Rect, car3Rect, car4Rect,
 		car5Rect, car6Rect, car7Rect, car8Rect,
@@ -589,12 +575,21 @@ void Fuge::realignVectors() {
 	}
 }
 
-
 void Fuge::loadMasterSprites() {
 	loadNewPaddle(m_nInitPaddleSize);
 
 	m_pBall.loadBitmap(BALL_BMP);
 	m_pBall.setTransparentColor(255);
+}
+
+void Fuge::releaseMasterSprites() {
+	// Clear bitmaps
+	_background.clear();
+	m_ScrollButton.clear();
+	m_pBall.clear();
+	m_pPaddle.clear();
+	_backgroundNumRows = -1;
+	_paddleOldSize = -1;
 }
 
 void Fuge::loadNewPaddle(int nNewSize) {
@@ -639,6 +634,29 @@ void Fuge::loadMasterSounds() {
 			error("Error loading sound - %s", WAV_NEWLIFE);
 		m_hExtraLifeRes = f.readStream(f.size());
 	}
+}
+
+void Fuge::releaseMasterSounds() {
+	// Stop the soundtrack
+	if (m_pSoundTrack != nullptr) {
+		// We should have been playing music
+		assert(gameInfo.bMusicEnabled);
+		delete m_pSoundTrack;
+		m_pSoundTrack = nullptr;
+	}
+
+#if CSOUND
+	CBofSound::clearSounds();
+#endif
+
+	delete m_hExtraLifeRes;
+	m_hExtraLifeRes = nullptr;
+	delete m_hPaddleRes;
+	m_pPaddleSound = nullptr;
+	delete m_hWallRes;
+	m_pWallSound = nullptr;
+	delete m_hBrickRes;
+	m_pBrickSound = nullptr;
 }
 
 void Fuge::showOptionsMenu() {
@@ -687,7 +705,7 @@ void Fuge::playGame() {
 
 void Fuge::gameReset() {
 	if (gameInfo.bSoundEffectsEnabled) {
-		BofPlaySound(NULL, SOUND_ASYNCH);	// Stop all sounds
+		BofPlaySound(nullptr, SOUND_ASYNCH);	// Stop all sounds
 	}
 
 	endBricks();	// Remove all bricks from sprite chain
@@ -1029,7 +1047,7 @@ void Fuge::movePaddle(bool bPaint) {
 }
 
 void Fuge::loseBall() {
-	CSound *pEffect = NULL;
+	CSound *pEffect = nullptr;
 	ErrorCode errCode;
 
 	// Assume no error
@@ -1107,12 +1125,12 @@ void Fuge::optionsClosed() {
 	m_ScrollButton.setPressed(false);
 	m_bIgnoreScrollClick = false;
 
-	if (!gameInfo.bMusicEnabled && (m_pSoundTrack != NULL)) {
+	if (!gameInfo.bMusicEnabled && (m_pSoundTrack != nullptr)) {
 		m_pSoundTrack->stop();
 		delete m_pSoundTrack;
-		m_pSoundTrack = NULL;
+		m_pSoundTrack = nullptr;
 
-	} else if (gameInfo.bMusicEnabled && (m_pSoundTrack == NULL)) {
+	} else if (gameInfo.bMusicEnabled && (m_pSoundTrack == nullptr)) {
 		m_pSoundTrack = new CBofSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 		m_pSoundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
 	}
@@ -1369,7 +1387,7 @@ void Fuge::ballvsPaddle() {
 void Fuge::ballvsBrick(double length) {
 	CVector vPoints[N_BRICK_POINTS];
 	CVector vBrick, vBallCenter, vOrigin, vTmp;
-	CSound *pEffect = NULL;
+	CSound *pEffect = nullptr;
 	Common::Rect rTmpRect, rBall, cRect;
 	Common::Point ptTmp;
 	double fMin, fLast, fLen[N_BRICK_POINTS];
@@ -1674,7 +1692,7 @@ void Fuge::roundCompleteClosed() {
 	if (gameInfo.bSoundEffectsEnabled) {
 #if CSOUND
 #else
-		sndPlaySound(NULL, SND_ASYNC);
+		sndPlaySound(nullptr, SND_ASYNC);
 #endif
 	}
 
