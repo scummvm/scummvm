@@ -385,8 +385,8 @@ void IMuseChannel_Midi::sendNoteOn(byte note, byte velocity) {
 namespace Scumm {
 using namespace IMSMidi;
 
-IMuseDriver_GMidi::IMuseDriver_GMidi(MidiDriver::DeviceHandle dev, bool rolandGSMode, bool newSystem) : MidiDriver(), _drv(nullptr), _gsMode(rolandGSMode),
-	_imsParts(nullptr), _newSystem(newSystem), _numChannels(16), _notesPlaying(nullptr), _notesSustained(nullptr), _idleChain(nullptr), _activeChain(nullptr), _numVoices(12) {
+IMuseDriver_GMidi::IMuseDriver_GMidi(MidiDriver::DeviceHandle dev, bool rolandGSMode, bool newSystem) : MidiDriver(), _drv(nullptr), _gsMode(rolandGSMode), _noProgramTracking(false),
+	_imsParts(nullptr), _newSystem(newSystem), _numChannels(16), _notesPlaying(nullptr), _notesSustained(nullptr), _midiRegState(nullptr), _idleChain(nullptr), _activeChain(nullptr), _numVoices(12) {
 	_drv = MidiDriver::createMidi(dev);
 	assert(_drv);
 }
@@ -465,6 +465,9 @@ void IMuseDriver_GMidi::createChannels() {
 		_notesPlaying = new uint16[128]();
 		_notesSustained = new uint16[128]();
 	}
+
+	_midiRegState = new byte[160];
+	memset(_midiRegState, 0xFF, 160);
 }
 
 void IMuseDriver_GMidi::createParts() {
@@ -503,6 +506,8 @@ void IMuseDriver_GMidi::releaseChannels() {
 	_notesPlaying = nullptr;
 	delete[] _notesSustained;
 	_notesSustained = nullptr;
+	delete[] _midiRegState;
+	_midiRegState = nullptr;
 }
 
 void IMuseDriver_GMidi::initDevice() {
@@ -637,6 +642,58 @@ void IMuseDriver_GMidi::deinitDevice() {
 		send(0x0040B0 | i);
 		send(0x007BB0 | i);
 	}
+}
+
+bool IMuseDriver_GMidi::trackMidiState(uint32 b) {
+	// The purpose of this function is to reduce the amount of data sent to hardware devices and
+	// thus avoid possible lag. It tracks certain midi messages with a table and allows skipping of
+	// messages which just repeat the already present device state.
+
+	byte evt = ((b & 0xF0) - 0xB0) >> 4;
+	if (evt > 3) // Only track the state of program change, control change and pitch bend events
+		return true;
+
+	// Skip program change tracking for old MT-32 tracks, since their sysex based program changing
+	// method requires resending the program change message, even with the same program.
+	if (evt == 1 && _noProgramTracking)
+		return true;
+
+	byte part = b & 0x0F;
+	b >>= 8; // Switch to para 1
+
+	byte *var = &_midiRegState[part];
+
+	switch (evt) {
+	case 0: { // Control Change
+		// Only track the state of these controllers. The first entry is an invalid placeholder,
+		// since the first part of the reg state table is reserved for the program change state.
+		static const byte regOrder[] = { 0xFF, 0, 1, 7, 10, 64, 91, 93 };
+		int srchReslt = Common::find(regOrder, &regOrder[ARRAYSIZE(regOrder)], b & 0xFF) - regOrder;
+		if (srchReslt > 0 && srchReslt < ARRAYSIZE(regOrder))
+			var += (srchReslt * 0x10);
+		else
+			return true;
+		b >>= 8; // Switch to para 2
+	}
+	// fall through
+	case 1: // Program change
+		if (*var == (b & 0xFF))
+			return false;
+		else
+			*var = b & 0xFF;
+		break;
+	case 3: // Pitch bend
+		var += (0x80 + part);
+		if (*reinterpret_cast<uint16*>(var) == (b & 0xFFFF))
+			return false;
+		else
+			*reinterpret_cast<uint16*>(var) = b & 0xFFFF;
+		break;
+	default:
+		break;
+	}
+
+	return true;
 }
 
 } // End of namespace Scumm
@@ -873,6 +930,8 @@ IMuseDriver_MT32::IMuseDriver_MT32(MidiDriver::DeviceHandle dev, bool newSystem)
 
 	if (_newSystem)
 		_programsMapping = MidiDriver::_gmToMt32;
+	else
+		_noProgramTracking = true;
 }
 
 void IMuseDriver_MT32::initDevice() {

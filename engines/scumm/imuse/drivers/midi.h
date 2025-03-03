@@ -46,7 +46,7 @@ public:
 	uint32 property(int prop, uint32 param) override { return _drv ? _drv->property(prop, param) : 0; }
 	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override { if (_drv) _drv->setTimerCallback(timerParam, timerProc); }
 	uint32 getBaseTempo() override { return _drv ? _drv->getBaseTempo() : 0; }
-	void send(uint32 b) override { if (_drv) _drv->send(b); };
+	void send(uint32 b) override { if (_drv && trackMidiState(b)) _drv->send(b); };
 	void sysEx(const byte *msg, uint16 length) override { if (_drv) _drv->sysEx(msg, length); }
 	virtual void setPitchBendRange(byte channel, uint range) override { if (_drv) _drv->setPitchBendRange(channel, range); }
 
@@ -65,6 +65,7 @@ protected:
 	byte _numChannels;
 	byte _numVoices;
 	IMSMidi::IMuseChannel_Midi **_imsParts;
+	bool _noProgramTracking;
 
 private:
 	virtual void initDevice();
@@ -78,6 +79,8 @@ private:
 	void clearSustainFlag(byte chan, byte note) { if (_notesSustained && chan < 16 && note < 128) _notesSustained[note] &= ~(1 << chan); }
 	bool querySustainFlag(byte chan, byte note) const { return (_notesSustained && chan < 16 && note < 128) ? _notesSustained[note] & (1 << chan) : false; }
 
+	bool trackMidiState(uint32 b);
+
 	const bool _gsMode;
 
 	IMSMidi::ChannelNode *_idleChain;
@@ -85,6 +88,7 @@ private:
 
 	uint16 *_notesPlaying;
 	uint16 *_notesSustained;
+	byte *_midiRegState;
 };
 
 class IMuseDriver_MT32 final : public IMuseDriver_GMidi {
