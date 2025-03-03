@@ -918,7 +918,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 		float yInterpolator = sideEdgeXYInterpolators[y * 2 + 1];
 
 		int32 srcY = static_cast<int32>(yInterpolator * (float)h);
-		int32 scanlineWidth = static_cast<int32>(xInterpolator * w);
+		int32 scanlineWidth = static_cast<int32>(xInterpolator * w) / 2 * 2;
 		int32 startX = (w - scanlineWidth) / 2;
 		//int32 endX = startX + scanlineWidth;
 
