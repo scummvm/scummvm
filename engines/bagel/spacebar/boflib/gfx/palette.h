@@ -27,12 +27,14 @@
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/stdinc.h"
-#include "bagel/mfc/palette.h"
 
 namespace Bagel {
 namespace SpaceBar {
 
-using MFC::COLORREF;
+typedef uint32 COLORREF;
+
+#define RGB(r,g,b)          ((COLORREF)(((byte)(r)|((uint16)((byte)(g))<<8))|(((uint32)(byte)(b))<<16)))
+#define PALETTERGB(r,g,b)   (0x02000000 | RGB(r,g,b))
 
 #define PAL_DEFAULT 0x0000
 #define PAL_ANIMATED 0x0001

@@ -27,6 +27,7 @@
 #include "engines/util.h"
 #include "graphics/paletteman.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/console.h"
 
 namespace Bagel {

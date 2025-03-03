@@ -26,11 +26,10 @@
 #include "common/rect.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/object.h"
-#include "bagel/mfc/rect.h"
 
 namespace Bagel {
 
-using Bagel::MFC::POINT;
+typedef Common::Point POINT;
 
 class CBofPoint : public StPoint, public CBofObject {
 public:
@@ -40,7 +39,6 @@ public:
 	CBofPoint(StPoint stPoint);
 	CBofPoint(const CBofPoint &cPoint);
 	CBofPoint(const StSize &stSize);
-	CBofPoint(const Common::Point &point);
 
 	CBofPoint(const POINT &stPoint) {
 		setWinPoint(&stPoint);
@@ -105,11 +103,6 @@ inline CBofPoint::CBofPoint(const StSize &stSize) {
 inline CBofPoint::CBofPoint(const CBofPoint &cPoint) {
 	x = cPoint.x;
 	y = cPoint.y;
-}
-
-inline CBofPoint::CBofPoint(const Common::Point &point) {
-	x = point.x;
-	y = point.y;
 }
 
 inline void CBofPoint::setWinPoint(const POINT *pPoint) {
