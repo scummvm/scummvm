@@ -16,18 +16,6 @@ MODULE_OBJS = \
 	boflib/sound.o \
 	boflib/string.o \
 	boflib/string_functions.o \
-	mfc/app.o \
-	mfc/bitmap.o \
-	mfc/button.o \
-	mfc/dc.o \
-	mfc/document.o \
-	mfc/file.o \
-	mfc/font.o \
-	mfc/object.o \
-	mfc/palette.o \
-	mfc/rect.o \
-	mfc/scroll_bar.o \
-	mfc/wnd.o \
 	spacebar/baglib/area_object.o \
 	spacebar/baglib/bagel.o \
 	spacebar/baglib/base_pda.o \
