@@ -172,7 +172,25 @@ Common::Error WageEngine::run() {
 	return Common::kNoError;
 }
 
+// Resetting required variables
+void WageEngine::resetState() {
+	_aim = -1;
+	_opponentAim = -1;
+	_temporarilyHidden = false;
+	_isGameOver = false;
+	_monster = nullptr;
+	_running = nullptr;
+	_lastScene = nullptr;
+	_loopCount = 0;
+	_turn = 0;
+	_commandWasQuick = false;
+	_shouldQuit = false;
+	_offer = nullptr;
+}
+
 void WageEngine::restart() {
+	if (_isGameOver)
+		resetState();
 	_restartRequested = false;
 	delete _gui;
 	delete _world;

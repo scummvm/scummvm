@@ -438,7 +438,7 @@ void World::move(Obj *obj, Chr *chr) {
 		return;
 
 	Designed *from = obj->removeFromCharOrScene();
-	obj->_currentOwner = chr;
+	obj->setCurrentOwner(chr);
 	chr->_inventory.push_back(obj);
 
 	Common::sort(chr->_inventory.begin(), chr->_inventory.end(), invComparator);
@@ -460,7 +460,7 @@ void World::move(Obj *obj, Scene *scene, bool skipSort) {
 		return;
 
 	Designed *from = obj->removeFromCharOrScene();
-	obj->_currentScene = scene;
+	obj->setCurrentScene(scene);
 	scene->_objs.push_back(obj);
 
 	if (!skipSort)
