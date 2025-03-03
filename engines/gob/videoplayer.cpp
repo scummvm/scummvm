@@ -376,6 +376,15 @@ void VideoPlayer::waitSoundEnd(int slot) {
 		_vm->_util->longDelay(1);
 }
 
+bool VideoPlayer::lastFrameReached(Video &video, Properties &properties) {
+	if (_vm->getGameType() == kGameTypeAdibou2) {
+		return properties.startFrame >= properties.lastFrame;
+	} else {
+		return (properties.startFrame == properties.lastFrame ||
+				properties.startFrame >= (int32)(video.decoder->getFrameCount() - 1));
+	}
+}
+
 bool VideoPlayer::play(int slot, Properties &properties) {
 	Video *video = getVideoBySlot(slot);
 	if (!video)
@@ -429,8 +438,7 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 	if (_vm->_draw->_renderFlags & RENDERFLAG_DOUBLEVIDEO)
 		video->decoder->setDouble(true);
 
-	while ((properties.startFrame != properties.lastFrame) &&
-	       (properties.startFrame < (int32)(video->decoder->getFrameCount() - 1))) {
+	while (!lastFrameReached(*video, properties)) {
 
 		if (_vm->getGameType() == kGameTypeAdibou2 && video->live) {
 			properties.startFrame = video->decoder->getCurFrame() +
@@ -596,7 +604,9 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 	if (!video)
 		return false;
 
-	bool primary = slot == 0;
+	bool primary = slot == 0 ||
+				   (_vm->getGameType() == kGameTypeAdibou2 &&
+					slot < kLiveVideoSlotCount);
 
 	if (video->decoder->getCurFrame() != properties.startFrame) {
 		if (video->live && _vm->getGameType() == kGameTypeAdibou2)
