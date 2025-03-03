@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-02 00:34+0000\n"
-"PO-Revision-Date: 2025-03-03 07:41+0000\n"
+"PO-Revision-Date: 2025-03-03 14:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -9354,15 +9354,15 @@ msgstr ""
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:145
 msgid "~D~rop Page"
-msgstr "Oldal~D~obás"
+msgstr "Oldal Eldobás"
 
 #: engines/mohawk/dialogs.cpp:149
 msgid "Show ~M~ap"
-msgstr "~M~ Térkép nézet"
+msgstr "Térkép megjelenítése"
 
 #: engines/mohawk/dialogs.cpp:154
 msgid "Main Men~u~"
-msgstr "Fõ Menü ~u~"
+msgstr "Fő Menü"
 
 #: engines/mohawk/dialogs.cpp:286
 msgid "The new language will be applied after restarting the game."
@@ -9370,7 +9370,7 @@ msgstr "Az új nyelv a játék újraindítása után kerül alkalmazásra."
 
 #: engines/mohawk/dialogs.cpp:358
 msgid "~W~ater Effect Enabled"
-msgstr "Vízeffektus engedélyezve"
+msgstr "Víz-effektus engedélyezve"
 
 #: engines/mohawk/dialogs.cpp:358
 msgid ""
@@ -9422,7 +9422,7 @@ msgstr "CSTime támogatás nincs lefordítva"
 
 #: engines/mohawk/mohawk.cpp:51
 msgid "The game is paused. Press any key to continue."
-msgstr "A játék szünetel. Nyomj egy gombot a folytatáshoz."
+msgstr "A játék megállításra került. Nyomjon egy gombot a folytatáshoz."
 
 #: engines/mohawk/myst.cpp:578 engines/mohawk/riven.cpp:859
 msgid "Load game state"
@@ -9438,7 +9438,7 @@ msgstr "Opciók menü megjelenítése"
 
 #: engines/mohawk/myst.cpp:600
 msgid "Drop page"
-msgstr "Oldal Dobás"
+msgstr "Oldal eldobás"
 
 #: engines/mohawk/myst.cpp:606 engines/wintermute/keymapper_tables.h:1526
 #: engines/wintermute/keymapper_tables.h:1673
@@ -9447,7 +9447,7 @@ msgstr "Oldal Dobás"
 #: engines/wintermute/keymapper_tables.h:1764
 #: engines/wintermute/keymapper_tables.h:1797
 msgid "Show map"
-msgstr "Térkép mutatása"
+msgstr "Térkép megjelenítés"
 
 #: engines/mohawk/myst_stacks/menu.cpp:282
 #: engines/mohawk/riven_stacks/aspit.cpp:348
@@ -9455,41 +9455,41 @@ msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
-"Biztosan be akarod tölteni a mentett játékot? Minden nem mentett változás el "
-"fog veszni."
+"Biztosan be akar tölteni egy mentést? Minden korábban nem mentett "
+"előrehaladása elvész."
 
 #: engines/mohawk/myst_stacks/menu.cpp:299
 #: engines/mohawk/riven_stacks/aspit.cpp:370
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
-"Biztos, hogy új játékot szeretnél kezdeni? Minden nem mentett változás el "
-"fog veszni."
+"Biztosan új játékot akar indítani? Minden korábban nem mentett előrehaladása "
+"elvész."
 
 #: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgstr ""
-"Biztosan ki szeretnél lépni? Minden nem mentett változás el fog veszni."
+"Biztosan ki akar lépni? Minden korábban nem mentett előrehaladása elvész."
 
 #: engines/mohawk/myst_stacks/preview.cpp:89
 msgid "You can't leave the library in the demo."
-msgstr "Nem hagyhatod el a könyvtárt a demóban."
+msgstr "Nem hagyhatja el a könyvtárt a demóban."
 
 #: engines/mohawk/riven.cpp:155
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
-"Hiányzik a Riven futtatható állomány. A Windows fájlok neve 'riven.exe' vagy "
-"'rivendmo.exe'. "
+"Hiányzik a Riven futtató fájlja. A Windows futtató fájl neve 'riven.exe' "
+"vagy 'rivendmo.exe'. "
 
 #: engines/mohawk/riven.cpp:156
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
-"Az 'arcriven.z' telepítõ fájl is használható. Ezen felül használható még a "
+"Az 'arcriven.z' telepítő fájl is használható. Ezen felül használható még a "
 "'Riven' Mac indítófájl."
 
 #: engines/mohawk/riven.cpp:168
@@ -9497,39 +9497,39 @@ msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
-"Hiányzik az 'extras.mhk'. A telepítõ 'arcriven.z' fájlja is használható még."
+"Hiányzik az 'extras.mhk'. A telepítő 'arcriven.z' fájlja is használható."
 
 #: engines/mohawk/riven.cpp:509
 msgid "You are missing the following required Riven data files:\n"
-msgstr "A következõ szükséges Riven adatfájlok hiányoznak:\n"
+msgstr "A következő szükséges Riven adatfájlok hiányoznak:\n"
 
 #: engines/mohawk/riven.cpp:887
 msgid "Move forward left"
-msgstr "Menj balra"
+msgstr "Mozgás bal-előre"
 
 #: engines/mohawk/riven.cpp:891
 msgid "Move forward right"
-msgstr "Menj jobbra"
+msgstr "Mozgás jobb-előre"
 
 #: engines/mohawk/riven.cpp:913
 msgid "Look up"
-msgstr "Nézz fel"
+msgstr "Felfelé néz"
 
 #: engines/mohawk/riven.cpp:918
 msgid "Look down"
-msgstr "Nézz le"
+msgstr "Lefelé néz"
 
 #: engines/mohawk/riven.cpp:924
 msgid "Play intro videos"
-msgstr "Intro videók lejátszása"
+msgstr "Bevezető videók lejátszása"
 
 #: engines/mohawk/riven_stack.cpp:203
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
 msgstr ""
-"Kutatás ezen a ponton túl csak a játék teljes verziójával\n"
-"elérhetõ."
+"A további felderítés ezen a ponton túl csak a játék teljes verziójával\n"
+"elérhető."
 
 #: engines/mohawk/riven_stacks/aspit.cpp:428
 msgid ""
@@ -9539,11 +9539,11 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
-"Ezen a ponton, a Riven Demo megkérdezi\n"
-"hogy a web böngészõddel nyissa-e meg\n"
-"a Red Orb áruházát, hogy megvásárold\n"
-"a játékot. A ScummVM nem teszi ezt\n"
-"az oldal többé nem elérhetõ."
+"Ennél a pontnál a Riven demója rákérdez,\n"
+"hogy meg akarja-e nyitni a böngészőjében\n"
+"a Red Orb boltját, hogy megvegye a játékot.\n"
+"A ScummVM nem teszi ezt meg,\n"
+"legfőképp mivel az oldal már nem létezik."
 
 #: engines/mtropolis/metaengine.cpp:53
 msgid "16:9 widescreen mod"
@@ -9554,8 +9554,8 @@ msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
 msgstr ""
-"Eltávolítja a levéldobozokat és áthelyez néhány kijelzőelemet, javítva a "
-"lefedettséget a szélesvásznú kijelzőkön"
+"Eltávolítja a képlevágásokat és áthelyez egyes elemeket, ezzel jobban "
+"kitöltve a szélesvásznú képet"
 
 #: engines/mtropolis/metaengine.cpp:64
 msgid "Improved music mixing"
@@ -9567,11 +9567,11 @@ msgid ""
 "mTropolis Player."
 msgstr ""
 "Lehetővé teszi a dinamikus MIDI keverőt, javítva a minőséget, de kevésbé "
-"viselkedik, mint az mTropolis Player."
+"viselkedik úgy, mint az mTropolis Player."
 
 #: engines/mtropolis/metaengine.cpp:75
 msgid "Autosave at progress points"
-msgstr "Automatikus mentés a folyamatpontokon"
+msgstr "Automatikus mentés az előrehaladás-pontoknál"
 
 #: engines/mtropolis/metaengine.cpp:76
 msgid "Automatically saves the game after completing puzzles and chapters."
@@ -9607,45 +9607,39 @@ msgstr "Kezdés a hibakeresővel"
 
 #: engines/mtropolis/metaengine.cpp:109 engines/vcruise/metaengine.cpp:66
 msgid "Starts with the debugger dashboard active."
-msgstr "A hibakereső irányítópult aktív állapotával kezdődik."
+msgstr "Aktív hibakereső irányítópulttal indul."
 
 #: engines/mtropolis/metaengine.cpp:179
 msgid "Toggle debug overlay"
-msgstr "Hibakeresés be- és kikapcsolása"
+msgstr "Hibakereső felület be- és kikapcsolása"
 
 #: engines/mtropolis/metaengine.cpp:184
 msgid "Force any playing movies to end"
-msgstr "Kényszerítsd a filmek lejátszását a végére"
+msgstr "Bármely éppen lejátszott átvezető leállítása"
 
 #: engines/mtropolis/mtropolis.cpp:111
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG video support for some\n"
 "content but MPEG video support was not compiled in.\n"
 "The game will still play, but MPEG videos will not work."
 msgstr ""
-"A játék zenéjéhez MP3-támogatás szükséges, ami nem lett lefordítva.\n"
-"A játék továbbra is játszható, de nem lesz benne zene."
+"A játék számára szükséges az MPEG videó támogatás\n"
+"egyes tartalmakhoz, azonban ez nem került lefordításra.\n"
+"A játék működik, de az MPEG fájlok nem kerülnek lejátszásra."
 
 #: engines/mtropolis/mtropolis.cpp:121
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG audio support for some\n"
 "content but MPEG audio support was not compiled in.\n"
 "The game will still play, but some audio will not work."
 msgstr ""
-"A játék zenéjéhez MP3-támogatás szükséges, ami nem lett lefordítva.\n"
-"A játék továbbra is játszható, de nem lesz benne zene."
+"A játék számára szükséges az MPEG hang támogatás\n"
+"egyes tartalmakhoz, azonban ez nem került lefordításra.\n"
+"A játék működik, de az MPEG hangok nem kerülnek lejátszásra."
 
 #: engines/mtropolis/saveload.cpp:142
 msgid "Failed to read version information from save file"
-msgstr "Nem sikerült a mentett játékállás betöltése fájlból"
+msgstr "Nem sikerült a mentés verziószámának beolvasása"
 
 #: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:340
 msgid ""
@@ -9659,8 +9653,8 @@ msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
 msgstr ""
-"A mentett játék a ScummVM egy régebbi, nem kompatíbilis verziójával készült. "
-"Nem lehet betölteni."
+"A játékmentés a ScummVM egy régebbi, nem kompatibilis verziójával készült. "
+"Nem tölthető be."
 
 #: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
@@ -9677,10 +9671,8 @@ msgid "An error occurred while writing the save game"
 msgstr "Hiba történt a játék mentés írása közben"
 
 #: engines/mtropolis/plugin/standard.cpp:1670
-#, fuzzy
-#| msgid "PNG Image File"
 msgid "Image Viewer"
-msgstr "PNG képfájl"
+msgstr "Kép nézegető"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -9697,7 +9689,7 @@ msgstr "Szélesvásznú mód"
 
 #: engines/myst3/metaengine.cpp:41
 msgid "Enable widescreen rendering in fullscreen mode."
-msgstr "Engedélyezi a szélesképernyős megjelenítést teljesképernyős módban."
+msgstr "Engedélyezi a szélesvásznú megjelenítést teljesképernyős módban."
 
 #: engines/myst3/myst3.cpp:412
 #, c-format
@@ -9708,9 +9700,10 @@ msgid ""
 "The updates can be downloaded from:\n"
 "%s"
 msgstr ""
-"A Myst III ezen verzióját nem frissítették a legújabb hivatalos javítással.\n"
-"Kérlek, telepítsd a játék nyelvének megfelelő hivatalos frissítést.\n"
-"A frissítések letölthetők innen:\n"
+"A Myst III ezen verziója nem tartalmazza a legfrissebb hivatalos "
+"frissítéseket.\n"
+"Kérem telepítse a nyelvének megfelelő hivatalos frissítést.\n"
+"A frissítések a következő helyről tölthetőek le:\n"
 "%s"
 
 #: engines/myst3/myst3.cpp:1640 engines/pegasus/pegasus.cpp:749
@@ -9719,15 +9712,15 @@ msgstr "Érvénytelen fájlnév a mentéshez"
 
 #: engines/nancy/input.cpp:178
 msgid "Nancy Drew"
-msgstr ""
+msgstr "Nancy Drew"
 
 #: engines/nancy/input.cpp:181
 msgid "Left Click Interact"
-msgstr "Bal Katt Interakció"
+msgstr "Bal Kattintás Interakció"
 
 #: engines/nancy/input.cpp:188
 msgid "Right Click Interact"
-msgstr "Jobb Katt Interakció"
+msgstr "Jobb Kattintás Interakció"
 
 #: engines/nancy/input.cpp:219
 msgid "Fast move modifier"
@@ -9735,24 +9728,22 @@ msgstr "Gyors mozgás módosító"
 
 #: engines/nancy/input.cpp:234
 msgid "Nancy Drew - Maze"
-msgstr ""
+msgstr "Nancy Drew - Útvesztő"
 
 #: engines/nancy/input.cpp:236
-#, fuzzy
-#| msgid "Show/hide keyboard"
 msgid "Show/hide maze map"
-msgstr "Billentyűzet megjelenítés/rejtés"
+msgstr "Útvesztő térkép megjelenítés/elrejtés"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
-msgstr "Játékos Beszéd"
+msgstr "Játékos Beszéde"
 
 #: engines/nancy/metaengine.cpp:39
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 "Engedélyezi a játékos beszédét. Csak akkor működik, ha a beszéd engedélyezve "
-"van az Audio beállításokban."
+"van az Hang beállításokban."
 
 #: engines/nancy/metaengine.cpp:49
 msgid "Character Speech"
@@ -9763,64 +9754,66 @@ msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 "Engedélyezi az NPC beszédet. Csak akkor működik, ha a beszéd engedélyezve "
-"van az Audio beállításokban."
+"van az Hang beállításokban."
 
 #: engines/nancy/metaengine.cpp:60
-#, fuzzy
-#| msgid "Autosave"
 msgid "Auto Move"
-msgstr "Automentés"
+msgstr "Automata Mozgás"
 
 #: engines/nancy/metaengine.cpp:61
 msgid "Automatically rotate the viewport when the mouse reaches an edge."
 msgstr ""
+"Automatikusan forgatja a szövegdobozt ha az egér a képernyő széléhez ér."
 
 #: engines/nancy/metaengine.cpp:71
 msgid "Fix softlocks"
-msgstr ""
+msgstr "Softlock-ok javítása"
 
 #: engines/nancy/metaengine.cpp:72
 msgid ""
 "Fix instances where missing something earlier in the game blocks you from "
 "progressing any further."
 msgstr ""
+"Javítja azokat az eseteket, amikor a játék megakadályozza a továbbjutást, ha "
+"egyes tárgyakat korábban nem szerzett meg."
 
 #: engines/nancy/metaengine.cpp:82
 msgid "Fix annoyances"
-msgstr ""
+msgstr "Zavaró tényezők javítása"
 
 #: engines/nancy/metaengine.cpp:83
 msgid "Fix various minor annoyances."
-msgstr ""
+msgstr "Több zavaró tényező javítása."
 
 #: engines/nancy/metaengine.cpp:93
-#, fuzzy
-#| msgid "Extended timer"
 msgid "Extend endgame timer"
-msgstr "Kiterjesztett időzítő"
+msgstr "Végjáték visszaszámláló meghosszabbítása"
 
 #: engines/nancy/metaengine.cpp:94
 msgid ""
 "Get a little more time before failing the final puzzle. This is an official "
 "patch by HeR Interactive."
 msgstr ""
+"Több idő jut az utolsó rejtvény megfejtésére. Ez egy hivatalos javítás a HeR "
+"Interactive-tól."
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr "Hall of Records storyboard átvezetõk átugrása"
+msgstr "A Feljegyzések Csarnoka vázlat átvezető átugrása"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr ""
-"Lehetõség, hogy a játékos átugorja a Hall of Records storyboard átvezetõket"
+"Lehetőséget nyújt a játékos számára, hogy átugorja a Feljegyzések Csarnoka "
+"vázlat átvezetőket"
 
 #: engines/neverhood/dialogs.cpp:57
 msgid "Scale the making of videos to full screen"
-msgstr "Hogyan készült videók átméretezése teljesképernyõre"
+msgstr "Hogyan készült videók átméretezése teljesképernyőre"
 
 #: engines/neverhood/dialogs.cpp:58
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr "Hogyan készült videók átméretezése, hogy teljesképernyõt használjanak"
+msgstr "Hogyan készült videók kinyújtása, hogy a teljes képernyőt használjanak"
 
 #: engines/neverhood/dialogs.cpp:62
 msgid "Repeat useful Willie's hint"
@@ -9828,7 +9821,7 @@ msgstr "Ismételd meg Willie hasznos tippjét"
 
 #: engines/neverhood/dialogs.cpp:63
 msgid "Repeat actual useful hint by Willie"
-msgstr "Ismételd meg Willie tényleges hasznos tippjét"
+msgstr "Willie valóban hasznos tippjének megismétlése"
 
 #. I18N: NHC is a file extension
 #: engines/neverhood/dialogs.cpp:89
@@ -9845,7 +9838,7 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
-"Játékállás nem menthetõ %i slotba\n"
+"Játékállás nem menthető a %i slotba\n"
 "\n"
 
 #: engines/parallaction/saveload.cpp:193
@@ -9862,7 +9855,7 @@ msgstr "Fájl mentése"
 
 #: engines/parallaction/saveload.cpp:215
 msgid "Saving game..."
-msgstr "Játék mentés..."
+msgstr "Játék mentése..."
 
 #: engines/parallaction/saveload.cpp:268
 msgid ""
@@ -9873,16 +9866,17 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
-"ScummVM régi játékmentést talált a Nippon Safes hez ezt át kell nevezni.\n"
-"A régi játékmentés nem támogatott, ezért a játék nem töltõdik be átnevezés "
-"nélkül..\n"
+"A ScummVM számára túl régi Nippon Safes mentések állnak rendelkezésre, ezért "
+"újra kell nevezni őket.\n"
+"A régi nevek nem támogatottak, ezért konvertálás nélkül nem fogja tudni "
+"használni őket.\n"
 "\n"
-"Nyomj OK-t az átalakításhoz, vagy rákérdezzek ha legközelebb elindítod a "
-"játékot.\n"
+"Nyomjon az OK-ra a konvertáláshoz, máskülönben legközelebb újra megjelenik "
+"az ablak.\n"
 
 #: engines/parallaction/saveload.cpp:315
 msgid "ScummVM successfully converted all your saved games."
-msgstr "ScummVM sikeresen konvertálta az összes játékállásodat."
+msgstr "ScummVM sikeresen konvertálta az összes játékállását."
 
 #: engines/parallaction/saveload.cpp:317
 msgid ""
@@ -9891,42 +9885,42 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
-"ScummVM kiírt néhány figyelmeztetést a konzolablakba és nem biztos hogy az "
-"összes fájlod át lett alakítva.\n"
+"A konzol ablakban írt hibák merültek fel, melyek miatt nem garantálható a "
+"konvertált mentések épsége.\n"
 "\n"
-"Légyszíves jelentsd a csapatnak."
+"Kérjük jelezzen vissza a csapatunknak ezzel kapcsolatban."
 
 #: engines/pegasus/pegasus.cpp:2724
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr "Fel/Nagyítás/Elõre mozgás/Ajtónyitás"
+msgstr "Fel/Nagyítás/Előre mozgás/Ajtó kicsinytás"
 
 #: engines/pegasus/pegasus.cpp:2732
 msgid "Down/Zoom Out"
-msgstr "Le/Zoom Ki"
+msgstr "Le/Kinagyítás"
 
 #: engines/pegasus/pegasus.cpp:2754
 msgid "Action/Select"
-msgstr "Akció/Választ"
+msgstr "Művelet/Választ"
 
 #: engines/pegasus/pegasus.cpp:2774
 msgid "Display/Hide Inventory Tray"
-msgstr "Tárgylista tálca Képre/Elrejt"
+msgstr "Felszerelés tálca Megjelenítés/Elrejtés"
 
 #: engines/pegasus/pegasus.cpp:2781
 msgid "Display/Hide Biochip Tray"
-msgstr "Biochip tálca Képre/Elrejt"
+msgstr "Biochip tálca Megjelenítés/Elrejtés"
 
 #: engines/pegasus/pegasus.cpp:2789
 msgid "Toggle Center Data Display"
-msgstr "Adatképernyõ kapcsoló"
+msgstr "Adatképernyő kapcsoló"
 
 #: engines/pegasus/pegasus.cpp:2796
 msgid "Display/Hide Info Screen"
-msgstr "Infóképernyõ Képre/Elrejt"
+msgstr "Infóképernyő Megjelenítés/Elrejtés"
 
 #: engines/pegasus/pegasus.cpp:2803
 msgid "Display/Hide Pause Menu"
-msgstr "Szünet menü Képre/Elrejt"
+msgstr "Szünet menü Megjelenítés/Elrejtés"
 
 #: engines/pegasus/pegasus.cpp:2810
 msgid "Toggle Chatty AI"
@@ -9934,7 +9928,7 @@ msgstr "Kapcsold be a Csevegő AI-t"
 
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
-msgstr "Ez a menüpont még nincs megvalósítva"
+msgstr "Ez a menüpont még nem ikerült implementálásra"
 
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
@@ -9943,11 +9937,11 @@ msgstr "A 3DO Plumbers RGB támogatást igényel."
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
-msgstr "Alternatív intro"
+msgstr "Alternatív bevezető"
 
 #: engines/queen/metaengine.cpp:37
 msgid "Use an alternative game intro (CD version only)"
-msgstr "Alternatív játékintro használata (csak CD verziónál)"
+msgstr "Alternatív bevezető videó használata (csak CD verziónál)"
 
 #: engines/queen/metaengine.cpp:47
 msgid "Improved font"
@@ -9960,101 +9954,83 @@ msgstr "Használjon könnyebben olvasható egyéni betűtípust"
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:875
 msgid "Windows Trial version is not supported"
-msgstr "A Windows Trial verzió nem támogatott"
+msgstr "A Windows próbaverzió nem támogatott"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:902
 msgid "macOS Trial version is not supported"
-msgstr "macOS Trial verzió nem támogatott"
+msgstr "macOS próbaverzió nem támogatott"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:928
 msgid "Pocket PC Trial version is not supported"
-msgstr "Pocket PC Trial verzió nem támogatott"
+msgstr "Pocket PC próbaverzió nem támogatott"
 
 #: engines/saga/metaengine.cpp:137
 msgid "I Have No Mouth support not compiled in"
 msgstr "I Have No Mouth támogatás nincs lefordítva"
 
 #: engines/saga/metaengine.cpp:268
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game keymapping"
-msgstr "Játék Opciók"
+msgstr "Játék gombkiosztás"
 
 #: engines/saga/metaengine.cpp:269
-#, fuzzy
-#| msgid "Game Options"
 msgid "Option panel keymapping"
-msgstr "Játék Opciók"
+msgstr "Opció panel gombkiosztás"
 
 #: engines/saga/metaengine.cpp:270
-#, fuzzy
-#| msgid "Game Options"
 msgid "Save panel keymapping"
-msgstr "Játék Opciók"
+msgstr "Mentés panel gombkiosztás"
 
 #: engines/saga/metaengine.cpp:271
-#, fuzzy
-#| msgid "Game Options"
 msgid "Load panel keymapping"
-msgstr "Játék Opciók"
+msgstr "Betöltő panel gombkiosztás"
 
 #: engines/saga/metaengine.cpp:272
-#, fuzzy
-#| msgid "Game Options"
 msgid "Quit panel keymapping"
-msgstr "Játék Opciók"
+msgstr "Kilépő panel gombkiosztás"
 
 #: engines/saga/metaengine.cpp:273
 msgid "Converse panel keymapping"
-msgstr ""
+msgstr "Beszélgető panel gombkiosztás"
 
 #. I18N: the boss key is a feature,
 #. that allows players to quickly switch to a fake screen that looks like a business application,
 #. typically to avoid detection if someone, like a boss, walks by while they are playing.
 #: engines/saga/metaengine.cpp:298
 msgid "Boss key"
-msgstr ""
+msgstr "Főnök gomb"
 
 #: engines/saga/metaengine.cpp:303 engines/toon/metaengine.cpp:148
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show options"
-msgstr "Beszéd Beállítások"
+msgstr "Opciók megjelenítése"
 
 #: engines/saga/metaengine.cpp:311
-#, fuzzy
-#| msgid "Next location"
 msgid "Exit conversation"
-msgstr "Következő hely"
+msgstr "Kilépés párbeszéd"
 
 #: engines/saga/metaengine.cpp:316
 msgid "Conversation position - Up"
-msgstr ""
+msgstr "Párbeszéd pozíció - Fel"
 
 #: engines/saga/metaengine.cpp:321
 msgid "Conversation position - Down"
-msgstr ""
+msgstr "Párbeszéd pozíció - Le"
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
 #: engines/stark/metaengine.cpp:286 engines/sword1/metaengine.cpp:289
 #: engines/trecision/metaengine.cpp:150 engines/tsage/metaengine.cpp:252
 #: engines/vcruise/metaengine.cpp:195
 msgid "Pause game"
-msgstr "Szünet a játékban"
+msgstr "Játék szünetelése"
 
 #: engines/saga/metaengine.cpp:339
-#, fuzzy
-#| msgid "Speech"
 msgid "Abort speech"
-msgstr "Csak beszéd"
+msgstr "Beszéd leállítás"
 
 #: engines/saga/metaengine.cpp:344
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Show dialogue"
-msgstr "Dialógus kihagyása"
+msgstr "Dialógus megjelenítése"
 
 #. I18N: Walk to where cursor points
 #: engines/saga/metaengine.cpp:349 engines/scumm/help.cpp:143
@@ -10068,7 +10044,7 @@ msgstr "Odamegy"
 #: engines/wintermute/keymapper_tables.h:122
 #: engines/wintermute/keymapper_tables.h:1534
 msgid "Look at"
-msgstr "Megnézi"
+msgstr "Megnéz"
 
 #: engines/saga/metaengine.cpp:359 engines/scumm/help.cpp:144
 #: engines/scumm/help.cpp:169 engines/scumm/help.cpp:198
@@ -10090,7 +10066,7 @@ msgstr "Beszél"
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
 #: engines/twp/metaengine.cpp:178
 msgid "Open"
-msgstr "Nyit"
+msgstr "Kinyit"
 
 #: engines/saga/metaengine.cpp:384 engines/scumm/help.cpp:124
 #: engines/scumm/help.cpp:139 engines/scumm/help.cpp:164
@@ -10108,66 +10084,48 @@ msgstr "Tol"
 #. I18N: It is a verb for gulping, not a bird
 #: engines/saga/metaengine.cpp:400
 msgid "Swallow"
-msgstr ""
+msgstr "Nyelés"
 
 #: engines/saga/metaengine.cpp:407
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Reading speed"
-msgstr "A Beolvasott adat hibás"
+msgstr "Olvasási sebesség"
 
 #: engines/saga/metaengine.cpp:412
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change music"
-msgstr "Betûméret változtatás"
+msgstr "Zene változtatása"
 
 #: engines/saga/metaengine.cpp:417
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change sound"
-msgstr "Utasítás Változtatás"
+msgstr "Hang változtatása"
 
 #: engines/saga/metaengine.cpp:422
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change voices"
-msgstr "Utasítás Változtatás"
+msgstr "Beszédhang változtatása"
 
 #: engines/saga/metaengine.cpp:427
-#, fuzzy
-#| msgid "Continue"
 msgid "Continue game"
-msgstr "Folytatás"
+msgstr "Játék folytatás"
 
 #: engines/saga/metaengine.cpp:437 engines/trecision/metaengine.cpp:156
 #: engines/tsage/metaengine.cpp:231 engines/vcruise/metaengine.cpp:190
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit game"
-msgstr "Játék Vége"
+msgstr "Kilépés játékból"
 
 #: engines/saga/metaengine.cpp:454
-#, fuzzy
-#| msgid "Cancel input"
 msgid "Cancel quit"
-msgstr "Bevitel megszakítás"
+msgstr "Kilépés megszakítása"
 
 #: engines/saga/metaengine.cpp:459
 msgid "Okay"
-msgstr ""
+msgstr "Oké"
 
 #: engines/saga/metaengine.cpp:464
-#, fuzzy
-#| msgid "Cancel download"
 msgid "Cancel load"
-msgstr "Letöltés megszakítás"
+msgstr "Betöltés megszakítása"
 
 #: engines/saga/metaengine.cpp:474
-#, fuzzy
-#| msgid "Cancel autosave"
 msgid "Cancel save"
-msgstr "Autómentés megszakítás"
+msgstr "Mentés megszakítása"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -10176,23 +10134,23 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
-"Nem található AdLib hangszerdefiníciós fájl\n"
-"%s és %s. Ezen fájlok nélkül,\n"
-"a zene nem ugyanaz, mint az eredeti játékban."
+"Nem található a %s és %s AdLib hangszerdefiníciós \n"
+"fájl. Ezen fájlok nélkül,\n"
+"a zene nem olyan hangzású, mint az eredeti játékban."
 
 #: engines/saga/saga.cpp:404
 msgid "Error loading game resources."
-msgstr "Hiba a játék erőforrások betöltésekor."
+msgstr "Hiba a játék források betöltésekor."
 
 #: engines/sci/detection_options.h:33
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr "EGA dithering művelet átugrása (teljes színskálás háttér)"
+msgstr "EGA dithering művelet átugrása (teljes színmélységű hátterek)"
 
 #: engines/sci/detection_options.h:34
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
-"Dithering művelet átugrása EGA játékok esetében, grafika teljes színskálán "
-"jelenik meg"
+"Dithering művelet átugrása EGA játékok esetében, grafika teljes "
+"színmélységben jelenik meg"
 
 #: engines/sci/detection_options.h:45
 msgid "Enable high resolution graphics"
@@ -10204,36 +10162,37 @@ msgstr "Nagy felbontású grafika/tartalom engedélyezése"
 
 #: engines/sci/detection_options.h:57
 msgid "Enable black-lined video"
-msgstr "Feketevonalas videó engedélyezve"
+msgstr "Feketevonalas videó engedélyezése"
 
 #: engines/sci/detection_options.h:58
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr "Fekete vonalat rajzol a videó fölé, hogy növelje a kép élességét"
+msgstr "A videó fölé fekete vonalakat rajzol, ezzel élesebb hatást keltve"
 
 #: engines/sci/detection_options.h:70
 msgid "Use high-quality video scaling"
-msgstr "Magas minõségû videó használata"
+msgstr "Magas minőségû videó átméretezés használata"
 
 #: engines/sci/detection_options.h:71
 msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr ""
-"Ha lehetséges, használja a lineáris interpolációt a videók feljavításakor"
+"Ha lehetséges, használja a lineáris interpolációt a videók átméretezésekor"
 
 #: engines/sci/detection_options.h:83
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr "Használjon minõségi \"LarryScale\" cel skálázást"
+msgstr "Magas minőségű \"LarryScale\" pont skálázás használata"
 
 #: engines/sci/detection_options.h:84
 msgid "Use special cartoon scaler for drawing character sprites"
-msgstr "Használjon speciális rajzfilm-skálát a karakter rajzoláshoz"
+msgstr ""
+"Használjon speciális rajzfilm-skálázást a karakter sprite-ok rajzolásához"
 
 #: engines/sci/detection_options.h:119
 msgid "Use CD audio"
-msgstr "CD audió használata"
+msgstr "CD hang használata"
 
 #: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr "CD audió használata a játékban lévõvel szemben, ha elérhetõ"
+msgstr "CD hang használata a játékban lévővel szemben, ha rendelkezésre áll"
 
 #: engines/sci/detection_options.h:132
 msgid "Use Windows cursors"
@@ -10251,15 +10210,15 @@ msgstr "Ezüst kurzor használata"
 #: engines/sci/detection_options.h:146
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
-msgstr "Használd az alternatív ezüst kurzorokat, a normál arany helyett"
+msgstr "Használjon alternatív ezüst kurzorokat, a normál arany színűek helyett"
 
 #: engines/sci/detection_options.h:158
 msgid "Enable content censoring"
-msgstr "Tartalmi cenzúra engedélyezése"
+msgstr "Tartalom cenzúrázásának engedélyezése"
 
 #: engines/sci/detection_options.h:159
 msgid "Enable the game's built-in optional content censoring"
-msgstr "Engedélyezze a játék beépített opcionális tartalmi cenzúrázását"
+msgstr "Engedélyezze a játék beépített opcionális tartalom cenzúrázását"
 
 #: engines/sci/detection_options.h:171
 msgid "Upscale videos"
@@ -10267,7 +10226,7 @@ msgstr "Felskálázott videók"
 
 #: engines/sci/detection_options.h:172
 msgid "Upscale videos to double their size"
-msgstr "Felskáláz videót, hogy megduplázza a méretét"
+msgstr "Videók méretének megduplázása felskálázással"
 
 #: engines/sci/detection_options.h:184
 msgid "Use RGB rendering"
@@ -10275,11 +10234,11 @@ msgstr "RGB megjelenítés használata"
 
 #: engines/sci/detection_options.h:185
 msgid "Use RGB rendering to improve screen transitions"
-msgstr "Használja az RGB renderelést a képernyőátmenet javításához"
+msgstr "Használjon RGB renderelést a képernyőátmenet javításához"
 
 #: engines/sci/detection_options.h:197
 msgid "Use per-resource modified palettes"
-msgstr "Használjon erőforrásonként módosított palettákat"
+msgstr "Használjon erőforrásonkénti módosított palettákat"
 
 #: engines/sci/detection_options.h:198
 msgid "Use custom per-resource palettes to improve visuals"
@@ -10291,29 +10250,32 @@ msgstr "Szakállas zenészek engedélyezése"
 
 #: engines/sci/detection_options.h:211
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr "Engedélyezze a jogi okok miatt letiltott grafikákat"
+msgstr "Engedélyezze a jogi okok miatt letiltott grafikai tartalmakat"
 
 #: engines/sci/detection_options.h:236
 msgid "Enable saving via the GMM"
-msgstr ""
+msgstr "GMM-en keresztüli mentés engedélyezése"
 
 #: engines/sci/detection_options.h:237
 msgid ""
 "Allows saving via the GMM. WARNING: saves created via the GMM may be "
 "corrupted and unusable. Use at your own risk!"
 msgstr ""
+"Engedélyezi a GMM-en keresztül való mentést. FIGYELEM: a GMM-el készült "
+"mentések eredménye sérült vagy használhatatlan is lehet. Saját felelősségre "
+"használja!"
 
 #: engines/sci/detection_options.h:248
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Repair speech audio"
-msgstr "A Beolvasott adat hibás"
+msgstr "Beszédhangok javítása"
 
 #: engines/sci/detection_options.h:249
 msgid ""
 "Detect and attempt to repair overflows in DPCM8 audio, which cause "
 "noticeable pops and crackles."
 msgstr ""
+"A DPCM8 hang túlfolyások felismerése és kipróbálása, amely máskülönben "
+"recsegést okozhat."
 
 #: engines/sci/detection_options.h:263
 msgid "MIDI mode:"
@@ -10324,8 +10286,8 @@ msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
 msgstr ""
-"Külsõ MIDI-eszköz használatakor (pl. USB-MIDI-n keresztül), válaszd ki itt "
-"eszközöd"
+"Külső MIDI-eszköz használatakor (pl. USB-MIDI-n keresztül), itt válassza ki "
+"eszközét"
 
 #: engines/sci/detection_options.h:269
 msgid "Standard (GM / MT-32)"
@@ -10348,28 +10310,25 @@ msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:1447 engines/sci/detection_tables.h:1458
-#, fuzzy
-#| msgid "Failed to initialize resources"
 msgid "Game does not contain menu resources"
-msgstr "Nem sikerült inicializálni az erõforrásokat"
+msgstr "A játék nem tartalmaz menü forrásokat"
 
 #: engines/sci/detection_tables.h:4777
 msgid "This demo uses an unimplemented version of Robot videos"
-msgstr "Ez a demó Robot videók implementálatlan verzióját használja"
+msgstr "Ez a demó a Robot videók implementálatlan verzióját használja"
 
 #: engines/sci/detection_tables.h:4832
 msgid "Incomplete game detected. You have to copy data from all the CDs."
-msgstr "Hiányos játék észlelve. Adatokat kell másolnia az összes CD-ről."
+msgstr "Hiányos játék észlelve. Az összes CD-ről át kell másolnia az adatokat."
 
 #: engines/sci/engine/kfile.cpp:491 engines/sci/metaengine.cpp:283
 msgid "(Autosave)"
-msgstr "(Automentés)"
+msgstr "(Automatamentés)"
 
 #: engines/sci/engine/kgraphics32.cpp:361
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
-msgstr ""
-"A játék súgófájljának megnyitásához külsõ megjelenítõt kell használnia: %s"
+msgstr "A játék súgófájljának megnyitásához használjon külső megjelenítőt: %s"
 
 #: engines/sci/engine/kmisc.cpp:928
 msgid ""
@@ -10377,13 +10336,13 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
-"A Póker logikát egy külső DLL kódolja, és még nincs megvalósítva. Jelenleg "
+"A Póker logikát egy külső DLL kódolja, és még nincs implementálva. Jelenleg "
 "van némi színlelt logika, ami az ellenfél műveleteit véletlenszerűen "
 "választja ki"
 
 #: engines/sci/engine/savegame.cpp:1455
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr "A mentett játék formátuma elavult, nem lehet betölteni"
+msgstr "A mentett játék formátuma elavult, nem tölthető be"
 
 #: engines/sci/engine/savegame.cpp:1457
 #, c-format
@@ -10395,8 +10354,7 @@ msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
-"Ez a mentett játék a játék másik verziójával jött létre, és nem lehet "
-"betölteni"
+"Ez a mentett játék a játék másik verziójával készült, ezért nem tölthető be"
 
 #: engines/sci/graphics/video32.cpp:68
 #, c-format
@@ -10416,9 +10374,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
-"Hiányzó vagy sérült játék készleteket észlelek. Bizonyos játékfunkciók nem "
-"mûködnek megfelelõen. Kérem, ellenõrizze a konzolt további információkért, "
-"és ellenõrizze, hogy a játékfájljai érvényesek-e."
+"Úgy tűnik egyes játék elemek hiányoznak vagy sérültek. Bizonyos "
+"játékfunkciók nem feltétlenül fognak működni. Tekintse meg a konzolt további "
+"információért, és ellenőrizze, hogy játékfájljai megfelelőek-e."
 
 #: engines/sci/sci.cpp:408
 msgid ""
@@ -10429,10 +10387,11 @@ msgid ""
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
 "A feliratok engedélyezve vannak, de a King's Quest 7 feliratozása "
-"befejezetlen és letiltották a játék kiadott verziójában. A ScummVM lehetõvé "
-"teszi a feliratok újbóli engedélyezését, de mivel eltávolításra kerültek az "
-"eredeti játéktól, nem minden esetben látszik megfelelõen, vagy tükrözi a "
-"tényleges beszédet. Ez nem ScummVM hiba - ez probléma a játékban található."
+"befejezetlen és letiltották a játék véglegesen kiadott verziójában. A "
+"ScummVM lehetővé teszi a feliratok újbóli engedélyezését, de mivel "
+"eltávolításra kerültek az eredeti játéktól, nem minden esetben látszik "
+"megfelelően, vagy tükrözi a tényleges beszédet. Ez nem ScummVM hiba -- a "
+"játék belső hibájából eredeztethető."
 
 #: engines/sci/sci.cpp:432
 msgid ""
@@ -10446,15 +10405,15 @@ msgid ""
 "PAT and place it in the game folder. Without this patch, General MIDI music "
 "for this game will sound badly distorted."
 msgstr ""
-"A General MIDI hangeszközt választotta. A Sierra a General MIDI-t a "
-"\"General MIDI Utility\"-n keresztül támogatta a General MIDI számára. "
-"Kérjük, alkalmazza ezt a javítást, hogy élvezhesse a MIDI zenét a játékkal. "
-"Ha beszerezte, a ScummVM extrák mappába az összes mellékelt * .PAT fájlt "
-"csomagolja ki, a ScummVM automatikusan hozzáadja a megfelelõ javítást. "
-"Alternatív megoldásként követheti a javításban szereplõ READ.ME fájlban "
-"található utasításokat, és átnevezheti a hozzárendelt * .PAT fájlt a 4.PAT "
-"fájlba és helyezze a játék mappába. A javítás nélkül a General MIDI zene "
-"ennél a játéknál torzul."
+"A General MIDI-t válaszotta hangeszközének. A Sierra biztosított egy "
+"utólagos támogatást a játék General MIDI-hez a \"General MIDI Utility\" "
+"programjával. Kérjük használja ezt a patch-et, hogy teljes mértékben tudja "
+"élvezni a MIDI zenét a játékban. Miután beszerezte, ki tudja csomagolni a "
+"már meglevő *.PAT fájlokat a ScummVM extrák mappájába, és a ScummVM "
+"automatikusan hozzáadja ezt a játékhoz. Esetlegesen követheti a patch "
+"READM.ME fájl utasításait, és átnevezheti a megfelelő PAT fájlt \"4.PAT\"-"
+"ra, majd bemásolja a játék könyvtárba. Enélkül a patch nélkül a General MIDI "
+"borzasztóan torzítani fog."
 
 #: engines/sci/sci.cpp:524
 msgid "Download patch"
@@ -10465,18 +10424,10 @@ msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
 msgstr ""
-"(vagy kattints a 'Patch letöltése' gombra. De vedd figyelembe - csak letölt, "
-"onnan folytatnod kell)\n"
+"(vagy kattints a 'Patch letöltése' gombra. Vegye azonban figyelembe - ez "
+"csak maga a letöltés, innen még folytatnia kell a folyamatot)\n"
 
 #: engines/sci/sci.cpp:532
-#, fuzzy
-#| msgid ""
-#| "GK2 has a fan made subtitles, available thanks to the good persons at "
-#| "SierraHelp.\n"
-#| "\n"
-#| "Installation:\n"
-#| "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
-#| "GK2Subtitles.zip\n"
 msgid ""
 "GK2 has fan made subtitles, available thanks to the good people at "
 "SierraHelp.\n"
@@ -10485,12 +10436,12 @@ msgid ""
 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 msgstr ""
-"A GK2 rajongói felirattal rendelkezik, amely elérhetõ a SierraHelp "
-"embereinek köszönhetõen.\n"
+"A GK2 rendelkezik egy rajongói felirattal, amely a SierraHelp tagjainak "
+"köszönhető.\n"
 "\n"
 "Telepítés:\n"
-"- letöltés http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
-"GK2Subtitles.zip\n"
+"- töltse le a http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
+"GK2Subtitles.zip fájlt\n"
 
 #: engines/sci/sci.cpp:965
 msgid ""
@@ -10500,11 +10451,11 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
-"A ScummVM-ben a karakterek automatikusan megjelennek. Az eredeti "
-"karakterfájlokat a ScummVM mentett játékkönyvtárába kell másolni, és hozzá "
-"kell adni egy elõtagot attól függõen, hogy melyik játékot mentette el: "
-"'qfg1-' Quest for Glory 1 'qfg2-' Quest for Glory 2. Például: 'qfg2-thief."
-"sav'."
+"A ScummVM-ben mentett karakterek automatikusan megjelenítésre kerülnek. Az "
+"eredeti tolmácsban mentett fájlokat azonban be kell rakni a ScummVM mentés "
+"könyvtárába, és a nevükbe egy prefixet kell beszúrni attól függően melyik "
+"játékban kerültek mentésre: 'qfg1-' Quest for Glory 1 esetén, 'qfg2-' Quest "
+"for Glory 2 esetén. Például: 'qfg2-thief.sav'."
 
 #: engines/sci/sound/music.cpp:173
 msgid ""
