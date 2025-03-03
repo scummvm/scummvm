@@ -94,12 +94,12 @@ struct Bytecode {
 	byte opID;
 	OpCode opcode;
 	int32 obj;
-	uint32 pos;
+	int32 pos;
 	BytecodeTag tag;
 	uint32 ownerLoop;
 	Common::SharedPtr<Node> translation;
 
-	Bytecode(byte op, int32 o, uint32 p)
+	Bytecode(byte op, int32 o, int32 p)
 		: opID(op), obj(o), pos(p), tag(kTagNone), ownerLoop(0xffffffff) {
 		opcode = static_cast<OpCode>(op >= 0x40 ? 0x40 + op % 0x40 : op);
 	}
