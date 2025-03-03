@@ -191,6 +191,22 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Adventures of Willy Beamish (PC FDD)
+	// 1.01, Int. 10.11.91 reported by gabberhead (#15773)
+	{
+		"beamish",
+		0,
+		{
+			{"volume.rmf", 0, "25ac28f345a849237ad2662f0ce2ccb5", 9896},
+			{"volume.001", 0, "7e9f3b0b7a5ec9989d3149f5e1f011a9", 1263366},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Adventures of Willy Beamish (Macintosh)
 	{
 		"beamish",
