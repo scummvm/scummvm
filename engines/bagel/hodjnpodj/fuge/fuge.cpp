@@ -701,8 +701,7 @@ void Fuge::moveBall() {
 		vGravity = _gvCenter - (m_ptBallLocation + BALL_RADIUS);
 		vGravity.Unitize();
 
-		// calc new ball location
-		//
+		// Calc new ball location
 		if (m_nGForceFactor != 0) {
 			vGravity *= G_FORCE * m_nGForceFactor;
 			m_vBallVector += vGravity;
@@ -720,112 +719,77 @@ void Fuge::moveBall() {
 
 		m_vBallVector.Unitize();
 
-		// get radius of the ball from the center of the screen
-		//
+		// Get radius of the ball from the center of the screen
 		vBall = m_ptBallLocation + BALL_RADIUS - _gvCenter;
 
 		length = vBall.Length() + BALL_RADIUS;
 
-		// check to see if ball has entered the balck hole
-		//
+		// check to see if ball has entered the black hole
 		if (length <= BLACKHOLE_RADIUS + BALL_RADIUS * 2) {
-
 			// Play the ball-gets-sucked-into-black-hole animation
-			//
 			loseBall();
 			m_bPaddleHit = false;
 
-			// or has ball hit the paddle?
-			//
 		} else if (length <= PADDLE_RADIUS + BALL_RADIUS * 2) {
+			// The ball hit the paddle
 			ballvsPaddle();
 
-			// or has ball hit a brick?
-			//
 		} else if ((length >= INNER_BRICK_RADIUS) && (length < WHEEL_RADIUS + (m_bOutterWall ? BALL_RADIUS * 2 : 0))) {
-
-			//
-			// determine which row ball is in
-			//
+			// The ball hit a brick
+			// Determine if a ball actually hit a brick
 			ballvsBrick(length);
-
-			//
-			// determine if a ball actually hit a brick
-			//
 			m_bPaddleHit = false;
 
-
-			// or did ball hit edge of ferris wheel
-			//
 		} else if (length >= WHEEL_RADIUS) {
-
+			// The ball hit edge of Ferris Wheel
 			if (m_bOutterWall) {
-
 				// has ball hit right border
-				//
 				if (m_ptBallLocation.x >= GAME_WIDTH - GAME_RIGHT_BORDER_WIDTH - BALL_SIZE_X) {
-
 					m_ptBallLocation.x = GAME_WIDTH - GAME_RIGHT_BORDER_WIDTH - BALL_SIZE_X;
-
 					m_vBallVector.x = -m_vBallVector.x;
 
-					// randomly rotate 1 or -1 degrees
+					// Randomly rotate 1 or -1 degrees
 					m_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
 
 					m_fTurboBoost = (double)12 - m_nBallSpeed;
 
 					if (gameInfo.bSoundEffectsEnabled) {
-
 						sndPlaySound(m_pWallSound, SND_MEMORY | SOUND_ASYNCH | SND_NODEFAULT);
 					}
 
-					// has ball hit left border
-					//
 				} else if (m_ptBallLocation.x <= 0 + GAME_LEFT_BORDER_WIDTH) {
-
+					// Ball hit left border
 					m_ptBallLocation.x = 0 + GAME_LEFT_BORDER_WIDTH;
-
 					m_vBallVector.x = -m_vBallVector.x;
 
-					// randomly rotate 1 or -1 degrees
+					// Randomly rotate 1 or -1 degrees
 					m_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
-
 					m_fTurboBoost = (double)12 - m_nBallSpeed;
-
 
 					if (gameInfo.bSoundEffectsEnabled) {
 						sndPlaySound(m_pWallSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 					}
 
-					// has ball hit bottom of screen
-					//
 				} else if (m_ptBallLocation.y >= GAME_HEIGHT - GAME_BOTTOM_BORDER_WIDTH - BALL_SIZE_Y) {
-
+					// Ball hit bottom of screen
 					m_ptBallLocation.y = GAME_HEIGHT - GAME_BOTTOM_BORDER_WIDTH - BALL_SIZE_Y;
-
 					m_vBallVector.y = -m_vBallVector.y;
 
-					// randomly rotate 1 or -1 degrees
+					// Randomly rotate 1 or -1 degrees
 					m_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
-
 					m_fTurboBoost = (double)12 - m_nBallSpeed;
-
 
 					if (gameInfo.bSoundEffectsEnabled) {
 						sndPlaySound(m_pWallSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 					}
 
-					// has ball hit top of screen
-					//
 				} else if (m_ptBallLocation.y <= 0 + GAME_TOP_BORDER_WIDTH) {
-
+					// Ball hit top of screen
 					m_ptBallLocation.y = 0 + GAME_TOP_BORDER_WIDTH;
-
 					m_vBallVector.y = -m_vBallVector.y;
 
-					// randomly rotate 1 or -1 degrees
+					// Randomly rotate 1 or -1 degrees
 					m_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
-
 					m_fTurboBoost = (double)12 - m_nBallSpeed;
 
 					if (gameInfo.bSoundEffectsEnabled) {
@@ -834,13 +798,11 @@ void Fuge::moveBall() {
 				}
 
 			} else {
-
 				if (gameInfo.bSoundEffectsEnabled) {
 					sndPlaySound(m_pWallSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 				}
 
-				// pull ball back to just on the border
-				//
+				// Pull ball back to just on the border
 				m_ptBallLocation -= m_vBallVector * (length - WHEEL_RADIUS + 1);
 
 				m_vBallVector.x = -m_vBallVector.x;
@@ -852,8 +814,7 @@ void Fuge::moveBall() {
 			m_bPaddleHit = false;
 		}
 
-		// only paint the ball if it actually moved
-		//
+		// Only update the ball if it actually moved
 		if ((ptLast.x != (int)m_ptBallLocation.x) || (ptLast.y != (int)m_ptBallLocation.y)) {
 			if (m_pBall.isLinked()) {
 				// Move the ball to it's new location
@@ -1256,7 +1217,6 @@ void Fuge::ballvsPaddle() {
 			// correct direction.
 			//
 			if (m_vBallVector.AngleBetween(_gvCenter - vBallCenter) <= Deg2Rad(15)) {
-				//error("RealAjusting the Vector\n");
 				m_vBallVector.Rotate(Deg2Rad(180));
 			}
 		}
@@ -1280,13 +1240,12 @@ void Fuge::ballvsBrick(double length) {
 	bool bHit, bStillHit;
 	Common::String title, msg;
 
-	// get bounding rectangle of the ball
-	//
+	// Get bounding rectangle of the ball
 	rBall = Common::Rect((int)m_ptBallLocation.x, (int)m_ptBallLocation.y,
 		(int)m_ptBallLocation.x + BALL_SIZE_X,
 		(int)m_ptBallLocation.y + BALL_SIZE_Y);
 
-	// get center of the ball
+	// Get center of the ball
 	vBallCenter.SetVector(m_ptBallLocation.x + BALL_RADIUS, m_ptBallLocation.y + BALL_RADIUS);
 
 	vOrigin.SetVector(-1, -1);
@@ -1294,8 +1253,6 @@ void Fuge::ballvsBrick(double length) {
 	vTmp = vBallCenter - _gvCenter;
 
 	angle = vTmp.RealAngle(vOrigin);
-
-	//error("RealAngle: %f\n", angle);
 
 	nMaxHits = MAX_BRICK_HITS;
 	if (length <= ROW6_RADIUS) {
@@ -1402,8 +1359,7 @@ void Fuge::ballvsBrick(double length) {
 	nUse[4] = (nRow2 * BRICKS_PER_ROW) + nBrick0;
 	nUse[5] = (nRow2 * BRICKS_PER_ROW) + nBrick1;
 
-	// which brick did we hit?
-	//
+	// Which brick did we hit?
 	bHit = false;
 
 	for (i = 0; i < nMaxHits; i++) {
@@ -1412,11 +1368,7 @@ void Fuge::ballvsBrick(double length) {
 		assert(nBrickIndex >= 0 && nBrickIndex < N_BRICKS);
 
 		if (m_bBrickVisible[nBrickIndex]) {
-
-			//error("Checking %d\n", nBrickIndex);
-
-			//  if ball's rectange intersects this brick's rectangle
-			//
+			// Does the ball's rectange intersects this brick's rectangle
 			cRect = Common::Rect(
 				ptBrickPos[nBrickIndex].x, ptBrickPos[nBrickIndex].y,
 				ptBrickPos[nBrickIndex].x + ptBrickSize[nBrickIndex].cx,
@@ -1424,51 +1376,46 @@ void Fuge::ballvsBrick(double length) {
 
 			rTmpRect = rBall.findIntersectingRect(cRect);
 			if (rTmpRect.isValidRect()) {
-				// calculate the 21 points for this brick
-				//
+				// Calculate the 21 points for this brick
 				for (j = 0; j < N_BRICK_POINTS; j++) {
-
 					vPoints[j] = vBrickCritPoints[nBrickIndex / BRICKS_PER_ROW][j];
 
 					vPoints[j].Rotate(((2 * PI) / BRICKS_PER_ROW) * (nBrickIndex % BRICKS_PER_ROW));
 					vPoints[j] += _gvCenter;
 
-					if (distanceBetweenPoints(vBallCenter, vPoints[j]) < 11.0) {
+					if (distanceBetweenPoints(vBallCenter, vPoints[j]) < 11.0)
 						bHit = true;
-					}
 				}
 
 				if (bHit) {
-
 					if (gameInfo.bSoundEffectsEnabled) {
 						sndPlaySound(m_pBrickSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 					}
 
-					// on less brick
+					// One less brick
 					--m_nBricks;
 
 					// Score: 1 point for each brick regardless of color
 					m_lScore += 1;
 
-					// did user earn an extra ball?
-					//
+					// Did user earn an extra ball?
 					if (m_lScore >= m_lExtraLifeScore) {
 						if (gameInfo.bSoundEffectsEnabled) {
 							sndPlaySound(m_pExtraLifeSound, SND_MEMORY | SND_SYNC | SND_NODEFAULT);
 						}
 
-						// double the amount the user needs for their next extra life
+						// Double the amount the user needs for their next extra life
 						m_lExtraLifeScore += m_lExtraLifeScore;
 
-						// extra ball
+						// Extra ball
 						m_nBalls++;
 					}
 
-					// if no bricks left
+					// If no bricks left
 					if (m_nBricks == 0) {
 						gamePause();
 
-						// reset turbo
+						// Reset turbo
 						m_fTurboBoost = 0.0;
 
 						if (gameInfo.bSoundEffectsEnabled) {
@@ -1493,21 +1440,19 @@ void Fuge::ballvsBrick(double length) {
 						});
 
 					} else {
-						// there are more bricks left,
-						// so just calc a new vector for the ball
+						// There are more bricks left,
+						// So just calc a new vector for the ball
 
 						bStillHit = true;
 						while (bStillHit) {
-
-							// roll ball back to point of contact with brick
+							// Roll ball back to point of contact with brick
 							m_ptBallLocation -= m_vBallVector;
 
-							// get new center of ball
+							// Get new center of ball
 							vBallCenter = m_ptBallLocation + BALL_RADIUS;
 
 							bStillHit = false;
 							for (j = 0; j < N_BRICK_POINTS; j++) {
-
 								if ((fLen[j] = distanceBetweenPoints(vBallCenter, vPoints[j])) < 11.0) {
 									bStillHit = true;
 									break;
@@ -1515,12 +1460,10 @@ void Fuge::ballvsBrick(double length) {
 							}
 						}
 
-						// find the 2 closest points to the center of the ball
-						//
+						// Find the 2 closest points to the center of the ball
 						nIndex = nLastIndex = -1;
 						fMin = fLast = 9999;
 						for (j = 0; j < N_BRICK_POINTS; j++) {
-
 							if (fLen[j] < fMin) {
 								fLast = fMin;
 								fMin = fLen[j];
@@ -1533,12 +1476,11 @@ void Fuge::ballvsBrick(double length) {
 							}
 						}
 
-						// make sure we actually found an intersect point
+						// Make sure we actually found an intersect point
 						assert((nIndex != -1) && (nLastIndex != -1));
 
-						// if ball hit a corner, then use next best point to
+						// If ball hit a corner, then use next best point to
 						// determine which side the ball actually hit
-						//
 						switch (nIndex) {
 						case 0:
 						case 9:
@@ -1551,43 +1493,33 @@ void Fuge::ballvsBrick(double length) {
 							break;
 						}
 
-						// if hit back face of brick
-						//
 						if (nIndex >= 1 && nIndex <= 8) {
-
+							// Hit back face of brick
 							vBrick = vPoints[nIndex] - _gvCenter;
 
-							// if hit inner face of brick
-							//
 						} else if (nIndex >= 12 && nIndex <= 18) {
-
+							// Hit inner face of brick
 							vBrick = _gvCenter - vPoints[nIndex];
 
-							// hit clockwise side of brick
-							//
 						} else if (nIndex == 10) {
-
+							// Hit clockwise side of brick
 							vBrick = aBrickVectors[nBrickIndex % BRICKS_PER_ROW].v2;
 
-							// hit counter-clockwise side of brick
-							//
 						} else if (nIndex == 20) {
+							// Hit counter-clockwise side of brick
 							vBrick = aBrickVectors[nBrickIndex % BRICKS_PER_ROW].v1;
 
-							// invalid index
-							//
 						} else {
+							// Invalid index
 							error("Invalid Index (%d)\n", nIndex);
 						}
 
-						// determine the vector of the brick (using ptHit as the intersect point)
-						//
+						// Determine the vector of the brick (using ptHit as the intersect point)
 						m_vBallVector.x = -m_vBallVector.x;
 						m_vBallVector.y = -m_vBallVector.y;
 
 						m_vBallVector.Reflect(vBrick);
 					}
-
 					break;
 				}
 			}
