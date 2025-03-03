@@ -214,6 +214,7 @@ private:
 
 	bool reopenVideo(Video &video);
 
+	bool lastFrameReached(Video &video, Properties &properties);
 	bool playFrame(int slot, Properties &properties);
 
 	void checkAbort(Video &video, Properties &properties);
