@@ -27,6 +27,7 @@
 #include "graphics/screen.h"
 #include "bagel/hodjnpodj/messages.h"
 #include "bagel/hodjnpodj/gfx/gfx_surface.h"
+#include "bagel/hodjnpodj/gfx/cursor.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -229,16 +230,7 @@ public:
 	/**
 	 * Handles events
 	 */
-	 // Mouse move only has a minimal implementation for performance reasons
-protected:
-	virtual bool msgMouseMove(const MouseMoveMessage &msg) {
-		return false;
-	}
 public:
-	bool send(const MouseMoveMessage &msg) {
-		return msgMouseMove(msg);
-	}
-
 #define MESSAGE(NAME) \
 	protected: \
 		virtual bool msg##NAME(const NAME##Message &e) { \
@@ -262,6 +254,7 @@ public:
 	MESSAGE(Unfocus);
 	MESSAGE(Open);
 	MESSAGE(Close);
+	MESSAGE(MouseMove);
 	MESSAGE(MouseEnter);
 	MESSAGE(MouseLeave);
 	MESSAGE(Keypress);
@@ -280,7 +273,7 @@ public:
  * access basic view management methods like addView or replaceView
  * only need to include events.h rather than the whole engine.
  */
-class Events : public UIElement {
+class Events : public UIElement, public Cursor {
 private:
 	Graphics::Screen *_screen = nullptr;
 	Common::Stack<UIElement *> _views;

@@ -21,35 +21,10 @@
 
 #include "graphics/cursorman.h"
 #include "bagel/spacebar/baglib/cursor.h"
+#include "bagel/boflib/cursor_data.h"
 
 namespace Bagel {
 namespace SpaceBar {
-
-static const int CURSOR_W = 12;
-static const int CURSOR_H = 20;
-static const byte ARROW_CURSOR[CURSOR_W * CURSOR_H] = {
-	1,1,0,0,0,0,0,0,0,0,0,0,
-	1,2,1,0,0,0,0,0,0,0,0,0,
-	1,2,2,1,0,0,0,0,0,0,0,0,
-	1,2,2,2,1,0,0,0,0,0,0,0,
-	1,2,2,2,2,1,0,0,0,0,0,0,
-	1,2,2,2,2,2,1,0,0,0,0,0,
-	1,2,2,2,2,2,2,1,0,0,0,0,
-	1,2,2,2,2,2,2,2,1,0,0,0,
-	1,2,2,2,2,2,2,2,2,1,0,0,
-	1,2,2,2,2,2,2,2,2,2,1,0,
-	1,2,2,2,2,2,2,1,1,1,1,1,
-	1,2,2,2,1,2,2,1,0,0,0,0,
-	1,2,2,1,1,2,2,1,0,0,0,0,
-	1,2,1,0,0,1,2,2,1,0,0,0,
-	1,1,0,0,0,1,2,2,1,0,0,0,
-	1,0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,0,0,1,2,2,1,0,
-	0,0,0,0,0,0,0,1,2,2,1,0,
-	0,0,0,0,0,0,0,0,1,1,0,0,
-};
-static const byte CURSOR_PALETTE[] = { 0x80, 0x80, 0x80, 0, 0, 0, 0xff, 0xff, 0xff };
 
 CBagCursor *CBagCursor::_currentCursor;
 CSystemCursor *CBagCursor::_systemCursor;

@@ -44,6 +44,8 @@ void Events::runGame() {
 	_screen = new Graphics::Screen();
 	Views views;	// Loads all views in the structure
 
+	loadCursors();
+
 	// Run the game
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
@@ -63,16 +65,32 @@ void Events::runGame() {
 	}
 
 	Common::Event e;
+	Common::Point mouseMovePos(-1, -1);
 	while (!_views.empty() && !shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (e.type == Common::EVENT_QUIT ||
 				e.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_views.clear();
 				break;
+			} else if (e.type == Common::EVENT_MOUSEMOVE) {
+				// For performance, cache all mouse moves for
+				// a single event call per loop
+				mouseMovePos = e.mouse;
 			} else {
+				if (mouseMovePos.x != -1) {
+					msgMouseMove(MouseMoveMessage(
+						Common::EVENT_MOUSEMOVE, mouseMovePos));
+					mouseMovePos.x = mouseMovePos.y = -1;
+				}
+
 				processEvent(e);
 			}
 		}
+
+		// If mouse move events occurred, generate a single one now
+		if (mouseMovePos.x != -1)
+			msgMouseMove(MouseMoveMessage(
+				Common::EVENT_MOUSEMOVE, mouseMovePos));
 
 		if (_views.empty())
 			break;
@@ -107,9 +125,6 @@ void Events::processEvent(Common::Event &ev) {
 	case Common::EVENT_RBUTTONUP:
 	case Common::EVENT_MBUTTONUP:
 		msgMouseUp(MouseUpMessage(ev.type, ev.mouse));
-		break;
-	case Common::EVENT_MOUSEMOVE:
-		msgMouseMove(MouseMoveMessage(ev.type, ev.mouse));
 		break;
 	default:
 		break;

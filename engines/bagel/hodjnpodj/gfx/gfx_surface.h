@@ -23,6 +23,7 @@
 #define HODJNPODJ_VIEWS_GFX_SURFACE_H
 
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 
 namespace Bagel {
 namespace HodjNPodj {

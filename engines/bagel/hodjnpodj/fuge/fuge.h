@@ -111,7 +111,7 @@ private:
 	void launchBall();
 	void startPaddle();
 	void endPaddle();
-	void paintPaddle(bool);
+	void movePaddle(bool);
 	CVector ballOnPaddle();
 	void startBricks();
 	void endBricks();
@@ -120,10 +120,6 @@ private:
 	void ballvsBrick(double);
 	void HandleError(ErrorCode);
 
-	//virtual bool OnCommand(uint16 uint16, int32 int32);
-	int32 OnJoyStick(uint, int32);
-	void OnPaint();
-	void OnTimer(uint);
 	void OnMouseMove(uint, const Common::Point &);
 	void OnRButtonUp(uint, const Common::Point &);
 	void OnLButtonDown(uint, const Common::Point &);
@@ -151,6 +147,7 @@ public:
 	bool msgClose(const CloseMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgMouseMove(const MouseMoveMessage &msg) override;
 	void draw() override;
 	bool tick() override;
 };

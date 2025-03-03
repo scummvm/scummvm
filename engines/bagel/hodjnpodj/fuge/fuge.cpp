@@ -295,7 +295,7 @@ bool Fuge::msgAction(const ActionMessage &msg) {
 		// Move paddle clockwise
 		if (m_bGameActive) {
 			m_nPaddleCelIndex += PADDLE_CEL_JUMP;
-			paintPaddle(false);
+			movePaddle(false);
 		}
 		break;
 
@@ -304,7 +304,7 @@ bool Fuge::msgAction(const ActionMessage &msg) {
 		// Move paddle counter-clockwise
 		if (m_bGameActive) {
 			m_nPaddleCelIndex -= PADDLE_CEL_JUMP;
-			paintPaddle(false);
+			movePaddle(false);
 		}
 		break;
 
@@ -358,6 +358,34 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	redraw();
+	return true;
+}
+
+bool Fuge::msgMouseMove(const MouseMoveMessage &msg) {
+	int nMove;
+
+	if (m_bGameActive && m_bMovingPaddle) {
+		Common::Point point = msg._pos;
+
+		if (point.x > m_ptOrigin.x) {
+			nMove = (point.x - m_ptOrigin.x) / MOUSE_SENS + 1;
+			m_nPaddleCelIndex += nMove;
+			movePaddle(false);
+
+		} else if (point.x < m_ptOrigin.x) {
+			nMove = -((m_ptOrigin.x - point.x) / MOUSE_SENS + 1);
+			m_nPaddleCelIndex += nMove;
+			movePaddle(false);
+
+		}
+
+		// Hide the cursor
+		g_events->setCursor(0);
+
+	} else {
+		g_events->setCursor(IDC_ARROW);
+	}
+
 	return true;
 }
 
@@ -645,7 +673,7 @@ void Fuge::startPaddle() {
 	m_pPaddle.linkSprite();
 	m_bBallOnPaddle = true;
 
-	paintPaddle(true);
+	movePaddle(true);
 }
 
 
@@ -827,7 +855,7 @@ void Fuge::moveBall() {
 	}
 }
 
-void Fuge::paintPaddle(bool bPaint) {
+void Fuge::movePaddle(bool bPaint) {
 	CVector vPaddle;
 	int nOldIndex;
 

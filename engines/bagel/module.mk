@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	music.o \
 	boflib/cache.o \
+	boflib/cursor_data.o \
 	boflib/error.o \
 	boflib/event_loop.o \
 	boflib/file_functions.o \
@@ -120,6 +121,7 @@ MODULE_OBJS = \
 	hodjnpodj/events.o \
 	hodjnpodj/messages.o \
 	hodjnpodj/gfx/bmp_button.o \
+	hodjnpodj/gfx/cursor.o \
 	hodjnpodj/gfx/gfx_surface.o \
 	hodjnpodj/libs/vector.o \
 	hodjnpodj/views/main_menu.o \
