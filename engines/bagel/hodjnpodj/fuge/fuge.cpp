@@ -380,9 +380,6 @@ void Fuge::paintBricks() {
 	GfxSurface s = getSurface();
 	s.blitFrom(_background);
 
-	if (m_bBrickVisible[0])
-		return;
-
 	// Erase all the bricks that are hidden
 	for (int brickIndex = 0;
 			brickIndex < (m_nNumRows * BRICKS_PER_ROW);
@@ -1084,7 +1081,6 @@ void Fuge::ballvsPaddle() {
 	}
 
 	if (bHit) {
-
 		nRollBack = MIN(m_nInitBallSpeed, nRollBack);
 
 		if (gameInfo.bSoundEffectsEnabled) {
@@ -1391,6 +1387,9 @@ void Fuge::ballvsBrick(double length) {
 					if (gameInfo.bSoundEffectsEnabled) {
 						sndPlaySound(m_pBrickSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 					}
+
+					// Remove the brick
+					eraseBrick(nBrickIndex);
 
 					// One less brick
 					--m_nBricks;
