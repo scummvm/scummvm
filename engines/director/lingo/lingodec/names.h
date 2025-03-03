@@ -42,12 +42,12 @@ Common::String getOpcodeName(byte id);
 /* ScriptNames */
 
 struct ScriptNames {
-	int32 unknown0;
-	int32 unknown1;
-	uint32 len1;
-	uint32 len2;
-	uint16 namesOffset;
-	uint16 namesCount;
+	int32 unknown0 = 0;
+	int32 unknown1 = 0;
+	uint32 len1 = 0;
+	uint32 len2 = 0;
+	uint16 namesOffset = 0;
+	uint16 namesCount = 0;
 	Common::Array<Common::String> names;
 
 	unsigned int version;

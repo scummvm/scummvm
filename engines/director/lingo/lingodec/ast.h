@@ -25,8 +25,8 @@ struct RepeatWithInStmtNode;
 
 struct Datum {
 	DatumType type;
-	int i;
-	double f;
+	int i = -1;
+	double f = 0.0f;
 	Common::String s;
 	Common::Array<Common::SharedPtr<Node>> l;
 
@@ -147,9 +147,9 @@ struct BlockNode : Node {
 
 	// for use during translation:
 	uint32 endPos;
-	CaseLabelNode *currentCaseLabel;
+	CaseLabelNode *currentCaseLabel = nullptr;
 
-	explicit BlockNode(uint32 offset) : Node(kBlockNode, offset), endPos(-1), currentCaseLabel(nullptr) {}
+	explicit BlockNode(uint32 offset) : Node(kBlockNode, offset), endPos(-1) {}
 	void addChild(Common::SharedPtr<Node> child);
 	virtual void accept(NodeVisitor &visitor) const override;
 };
