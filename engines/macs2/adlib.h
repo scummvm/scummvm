@@ -54,6 +54,7 @@ namespace Macs2 {
 		int64 size() const override;
 		bool seek(int64 offset, int whence) override;
 		byte peekByte();
+		byte peekByteAtOffset(int64 offset, int whence);
 		uint16 peekWord();
 	};
 
@@ -66,13 +67,6 @@ namespace Macs2 {
 
 		// 01D7:1AA7
 		void OnTimer();
-
-		uint16 Func19BE(uint8 offset);
-
-		// TODO: Function should take a pointer to data
-		uint16 Func19BE_TODO(uint8 offset);
-
-		Common::MemorySeekableReadWriteStream Func19BE_2(Common::MemorySeekableReadWriteStream &inStream, uint8 seekDelta);
 
 		// TODO: Consider pointer vs. passing by value
 		StreamHandler* Func19BE_SH(StreamHandler* inHandler, uint16 seekDelta);
@@ -213,12 +207,6 @@ namespace Macs2 {
 
 		// [229Bh] - seems to contain song byte - TODO: Initial value?
 		uint8 g229B;
-
-		// Reads a byte without advancing the read stream
-		uint8 peekByte();
-
-		// Reads a byte from the specified offset without changing the position in the stream
-		uint8 peekByteAt(uint16 offset);
 
 		// fn0017_2A80: 0017:2A80
 		void Func2A80(uint8 bpp6, uint8 bpp8, uint8 reg_base);
