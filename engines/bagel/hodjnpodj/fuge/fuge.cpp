@@ -1088,21 +1088,15 @@ void Fuge::ballvsPaddle() {
 			sndPlaySound(m_pPaddleSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 		}
 
-		// if we hit the ball twice in a row
-		//
+		// If we hit the ball twice in a row
 		if (m_bPaddleHit) {
-			error("DoubleHit\n");
-
-			// then shoot the ball away from the paddle
-			//
+			// Then shoot the ball away from the paddle
 			m_vBallVector = vBallCenter - _gvCenter;
 			m_vBallVector.Unitize();
 			m_vBallVector *= 2;
 
 		} else {
-
-			// role the ball back to the exact point that it hit the paddle
-			//
+			// Roll the ball back to the exact point that it hit the paddle
 			vTmp = m_vBallVector;
 			vTmp.Unitize();
 			vTmp *= nRollBack;
