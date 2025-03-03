@@ -178,17 +178,17 @@ static double fPaddleAngles[N_PADDLE_SIZES] = {
 	PADDLE2_ANGLE
 };
 
-Fuge::Fuge() : MinigameView("Fuge", "fuge/hnpfuge.dll"), m_GamePalette(0),
-		m_rNewGameButton(NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
+Fuge::Fuge() : MinigameView("Fuge", "fuge/hnpfuge.dll"), _gamePalette(0),
+		_rNewGameButton(NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
 			NEWGAME_LOCATION_X + NEWGAME_WIDTH, NEWGAME_LOCATION_Y + NEWGAME_HEIGHT),
-		m_ScrollButton("ScrollButton", this, Common::Rect(
+		_scrollButton("ScrollButton", this, Common::Rect(
 			SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
 			SCROLL_BUTTON_X + SCROLL_BUTTON_DX,
 			SCROLL_BUTTON_Y + SCROLL_BUTTON_DY)),
-		m_ptOrigin(GAME_WIDTH / 2, GAME_HEIGHT / 2),
+		_ptOrigin(GAME_WIDTH / 2, GAME_HEIGHT / 2),
 		_gvCenter(CENTER_X, CENTER_Y),
-		m_pPaddle(this),
-		m_pBall(this) {
+		_sprPaddle(this),
+		_sprBall(this) {
 
 	clear();
 
@@ -203,27 +203,27 @@ Fuge::Fuge() : MinigameView("Fuge", "fuge/hnpfuge.dll"), m_GamePalette(0),
 }
 
 void Fuge::clear() {
-	m_nInitNumBalls = BALLS_DEF;
-	m_nInitStartLevel = LEVEL_DEF;
-	m_nInitBallSpeed = SPEED_DEF;
-	m_nInitPaddleSize = PSIZE_DEF;
-	m_nGForceFactor = GFORCE_DEF;
+	_nInitNumBalls = BALLS_DEF;
+	_nInitStartLevel = LEVEL_DEF;
+	_nInitBallSpeed = SPEED_DEF;
+	_nInitPaddleSize = PSIZE_DEF;
+	_nGForceFactor = GFORCE_DEF;
 
-	m_pSoundTrack = nullptr;
-	m_bPause = false;
-	m_bGameActive = false;
-	m_bIgnoreScrollClick = false;
-	m_bBallOnPaddle = false;
-	m_nPaddleCelIndex = 29;
-	m_bMovingPaddle = false;
-	m_lScore = 0;
+	_soundTrack = nullptr;
+	_bPause = false;
+	_bGameActive = false;
+	_bIgnoreScrollClick = false;
+	_bBallOnPaddle = false;
+	_nPaddleCelIndex = 29;
+	_bMovingPaddle = false;
+	_lScore = 0;
 	m_pBrickSound = nullptr;
 	m_pWallSound = nullptr;
 	m_pPaddleSound = nullptr;
 	m_pExtraLifeSound = nullptr;
-	m_nNumRows = 0;
-	m_bJoyActive = false;
-	Common::fill(m_bBrickVisible, m_bBrickVisible + N_BRICKS, false);
+	_nNumRows = 0;
+	_bJoyActive = false;
+	Common::fill(_brickVisible, _brickVisible + N_BRICKS, false);
 }
 
 bool Fuge::msgOpen(const OpenMessage &msg) {
@@ -238,16 +238,16 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 	if (!f.open(MINI_GAME_MAP) || !decoder.loadStream(f))
 		error("Could not load %s", MINI_GAME_MAP);
 
-	m_GamePalette = Graphics::Palette(decoder.getPalette(), decoder.getPaletteColorCount());
-	g_system->getPaletteManager()->setPalette(m_GamePalette);
+	_gamePalette = Graphics::Palette(decoder.getPalette(), decoder.getPaletteColorCount());
+	g_system->getPaletteManager()->setPalette(_gamePalette);
 
 	// Load scroll button
-	m_ScrollButton.loadBitmaps(SCROLLUP, SCROLLDOWN, SCROLLUP, SCROLLUP);
+	_scrollButton.loadBitmaps(SCROLLUP, SCROLLDOWN, SCROLLUP, SCROLLUP);
 
 	// Start the Fuge soundtrack
 	if (gameInfo.bMusicEnabled) {
-		m_pSoundTrack = new CBofSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-		m_pSoundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
+		_soundTrack = new CBofSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+		_soundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
 	}
 
 	// Load data
@@ -279,8 +279,8 @@ bool Fuge::msgAction(const ActionMessage &msg) {
 	case KEYBIND_UP:
 	case KEYBIND_RIGHT:
 		// Move paddle clockwise
-		if (m_bGameActive) {
-			m_nPaddleCelIndex += PADDLE_CEL_JUMP;
+		if (_bGameActive) {
+			_nPaddleCelIndex += PADDLE_CEL_JUMP;
 			movePaddle(false);
 		}
 		break;
@@ -288,16 +288,16 @@ bool Fuge::msgAction(const ActionMessage &msg) {
 	case KEYBIND_DOWN:
 	case KEYBIND_LEFT:
 		// Move paddle counter-clockwise
-		if (m_bGameActive) {
-			m_nPaddleCelIndex -= PADDLE_CEL_JUMP;
+		if (_bGameActive) {
+			_nPaddleCelIndex -= PADDLE_CEL_JUMP;
 			movePaddle(false);
 		}
 		break;
 
 	case KEYBIND_SELECT:
 		// Launch ball
-		if (m_bGameActive) {
-			if (m_bBallOnPaddle) {
+		if (_bGameActive) {
+			if (_bBallOnPaddle) {
 				launchBall();
 			}
 		}
@@ -330,8 +330,8 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 		break;
 
 	case Common::KEYCODE_SCROLLOCK:
-		if (m_bGameActive) {
-			if (!m_bPause) {
+		if (_bGameActive) {
+			if (!_bPause) {
 				gamePause();
 			} else {
 				gameResume();
@@ -353,20 +353,20 @@ bool Fuge::msgMouseMove(const MouseMoveMessage &msg) {
 	// Even the original authors admit that mouse control
 	// mode (toggled by right clicking) kinda sucks.
 	// But it's left in to remain faithful to the original
-	if (m_bGameActive && m_bMovingPaddle) {
+	if (_bGameActive && _bMovingPaddle) {
 		Common::Point point = msg._pos;
 
-		if (point.x > m_ptOrigin.x) {
-			nMove = (point.x - m_ptOrigin.x) / MOUSE_SENS + 1;
-			m_nPaddleCelIndex += nMove;
+		if (point.x > _ptOrigin.x) {
+			nMove = (point.x - _ptOrigin.x) / MOUSE_SENS + 1;
+			_nPaddleCelIndex += nMove;
 			movePaddle(false);
-			g_system->warpMouse(m_ptOrigin.x, m_ptOrigin.y);
+			g_system->warpMouse(_ptOrigin.x, _ptOrigin.y);
 
-		} else if (point.x < m_ptOrigin.x) {
-			nMove = -((m_ptOrigin.x - point.x) / MOUSE_SENS + 1);
-			m_nPaddleCelIndex += nMove;
+		} else if (point.x < _ptOrigin.x) {
+			nMove = -((_ptOrigin.x - point.x) / MOUSE_SENS + 1);
+			_nPaddleCelIndex += nMove;
 			movePaddle(false);
-			g_system->warpMouse(m_ptOrigin.x, m_ptOrigin.y);
+			g_system->warpMouse(_ptOrigin.x, _ptOrigin.y);
 		}
 
 		// Hide the cursor
@@ -404,7 +404,7 @@ bool Fuge::msgMouseDown(const MouseDownMessage &msg) {
 	car9Rect = Common::Rect(CAR9_X, CAR9_Y, CAR9_X + CAR9_DX, CAR9_Y + CAR9_DY);
 	car10Rect = Common::Rect(CAR10_X, CAR10_Y, CAR10_X + CAR10_DX, CAR10_Y + CAR10_DY);
 
-	if (m_rNewGameButton.contains(msg._pos)) {
+	if (_rNewGameButton.contains(msg._pos)) {
 		// User clicked on the Title - NewGame button
 		// if we are not playing from the metagame
 		if (!gameInfo.bPlayingMetagame) {
@@ -473,8 +473,8 @@ bool Fuge::msgMouseDown(const MouseDownMessage &msg) {
 		}
 	} else {
 
-		if (m_bGameActive) {
-			if (m_bBallOnPaddle) {
+		if (_bGameActive) {
+			if (_bBallOnPaddle) {
 				launchBall();
 			}
 		}
@@ -484,13 +484,13 @@ bool Fuge::msgMouseDown(const MouseDownMessage &msg) {
 }
 
 bool Fuge::msgMouseUp(const MouseUpMessage &msg) {
-	if (m_bGameActive && msg._button == MouseUpMessage::MB_RIGHT) {
+	if (_bGameActive && msg._button == MouseUpMessage::MB_RIGHT) {
 		// Toggle move paddle mode
-		m_bMovingPaddle = !m_bMovingPaddle;
+		_bMovingPaddle = !_bMovingPaddle;
 
-		if (m_bMovingPaddle) {
+		if (_bMovingPaddle) {
 			g_events->setCursor(IDC_NONE);
-			g_system->warpMouse(m_ptOrigin.x, m_ptOrigin.y);
+			g_system->warpMouse(_ptOrigin.x, _ptOrigin.y);
 			gameResume();
 
 		} else {
@@ -508,15 +508,15 @@ void Fuge::draw() {
 }
 
 void Fuge::paintBricks() {
-	assert((m_nNumRows >= 0) && (m_nNumRows <= N_ROWS));
+	assert((_nNumRows >= 0) && (_nNumRows <= N_ROWS));
 
-	if (m_nNumRows != _backgroundNumRows) {
+	if (_nNumRows != _backgroundNumRows) {
 		// Change the background bitmap
-		_backgroundNumRows = m_nNumRows;
+		_backgroundNumRows = _nNumRows;
 
 		Image::BitmapDecoder decoder;
 		Common::File f;
-		if (!f.open(pszFugeArt[m_nNumRows]) || !decoder.loadStream(f))
+		if (!f.open(pszFugeArt[_nNumRows]) || !decoder.loadStream(f))
 			error("Could not load %s", MINI_GAME_MAP);
 
 		_background.copyFrom(*decoder.getSurface());
@@ -528,9 +528,9 @@ void Fuge::paintBricks() {
 
 	// Erase all the bricks that are hidden
 	for (int brickIndex = 0;
-			brickIndex < (m_nNumRows * BRICKS_PER_ROW);
+			brickIndex < (_nNumRows * BRICKS_PER_ROW);
 			brickIndex++) {
-		if (!m_bBrickVisible[brickIndex]) {
+		if (!_brickVisible[brickIndex]) {
 			// Remove this brick from the screen
 			s.floodFill(ptBrickPos[brickIndex].x + ptBrickSize[brickIndex].cx / 2,
 				ptBrickPos[brickIndex].y + ptBrickSize[brickIndex].cy / 2,
@@ -545,7 +545,7 @@ void Fuge::repaintSpriteList() {
 
 bool Fuge::tick() {
 	// Continue as long as there is a currently active non-paused game
-	if (m_bGameActive && !m_bPause) {
+	if (_bGameActive && !_bPause) {
 		if (++_timerCtr >= 5) {
 			moveBall();
 			redraw();
@@ -557,7 +557,7 @@ bool Fuge::tick() {
 
 void Fuge::eraseBrick(int brickIndex) {
 	assert((brickIndex >= 0) && (brickIndex < N_BRICKS));
-	m_bBrickVisible[brickIndex] = false;
+	_brickVisible[brickIndex] = false;
 	redraw();
 }
 
@@ -576,18 +576,18 @@ void Fuge::realignVectors() {
 }
 
 void Fuge::loadMasterSprites() {
-	loadNewPaddle(m_nInitPaddleSize);
+	loadNewPaddle(_nInitPaddleSize);
 
-	m_pBall.loadBitmap(BALL_BMP);
-	m_pBall.setTransparentColor(255);
+	_sprBall.loadBitmap(BALL_BMP);
+	_sprBall.setTransparentColor(255);
 }
 
 void Fuge::releaseMasterSprites() {
 	// Clear bitmaps
 	_background.clear();
-	m_ScrollButton.clear();
-	m_pBall.clear();
-	m_pPaddle.clear();
+	_scrollButton.clear();
+	_sprBall.clear();
+	_sprPaddle.clear();
 	_backgroundNumRows = -1;
 	_paddleOldSize = -1;
 }
@@ -598,7 +598,7 @@ void Fuge::loadNewPaddle(int nNewSize) {
 	// Don't try to load the same paddle
 	if (_paddleOldSize != nNewSize) {
 		_paddleOldSize = nNewSize;
-		m_pPaddle.loadCels(pszPaddles[nNewSize], N_PADDLE_CELS);
+		_sprPaddle.loadCels(pszPaddles[nNewSize], N_PADDLE_CELS);
 	}
 }
 
@@ -608,7 +608,7 @@ void Fuge::loadMasterSounds() {
 		Common::File f;
 		if (!f.open(WAV_BRICK))
 			error("Error loading sound - %s", WAV_BRICK);
-		m_hBrickRes = f.readStream(f.size());
+		_brickSound = f.readStream(f.size());
 	}
 
 	// Load the wall "ping" into memory
@@ -616,7 +616,7 @@ void Fuge::loadMasterSounds() {
 		Common::File f;
 		if (!f.open(WAV_WALL))
 			error("Error loading sound - %s", WAV_WALL);
-		m_hWallRes = f.readStream(f.size());
+		_wallSound = f.readStream(f.size());
 	}
 
 	// Load the paddle "ping" into memory
@@ -624,7 +624,7 @@ void Fuge::loadMasterSounds() {
 		Common::File f;
 		if (!f.open(WAV_PADDLE))
 			error("Error loading sound - %s", WAV_PADDLE);
-		m_hPaddleRes = f.readStream(f.size());
+		_paddleSound = f.readStream(f.size());
 	}
 
 	// Load the extra life sound into memory
@@ -632,38 +632,38 @@ void Fuge::loadMasterSounds() {
 		Common::File f;
 		if (!f.open(WAV_NEWLIFE))
 			error("Error loading sound - %s", WAV_NEWLIFE);
-		m_hExtraLifeRes = f.readStream(f.size());
+		_extraLifeSound = f.readStream(f.size());
 	}
 }
 
 void Fuge::releaseMasterSounds() {
 	// Stop the soundtrack
-	if (m_pSoundTrack != nullptr) {
+	if (_soundTrack != nullptr) {
 		// We should have been playing music
 		assert(gameInfo.bMusicEnabled);
-		delete m_pSoundTrack;
-		m_pSoundTrack = nullptr;
+		delete _soundTrack;
+		_soundTrack = nullptr;
 	}
 
 #if CSOUND
 	CBofSound::clearSounds();
 #endif
 
-	delete m_hExtraLifeRes;
-	m_hExtraLifeRes = nullptr;
-	delete m_hPaddleRes;
+	delete _extraLifeSound;
+	_extraLifeSound = nullptr;
+	delete _paddleSound;
 	m_pPaddleSound = nullptr;
-	delete m_hWallRes;
+	delete _wallSound;
 	m_pWallSound = nullptr;
-	delete m_hBrickRes;
+	delete _brickSound;
 	m_pBrickSound = nullptr;
 }
 
 void Fuge::showOptionsMenu() {
-	m_ScrollButton.setPressed(true);
+	_scrollButton.setPressed(true);
 
-	if (!m_bIgnoreScrollClick) {
-		m_bIgnoreScrollClick = true;
+	if (!_bIgnoreScrollClick) {
+		_bIgnoreScrollClick = true;
 
 		gamePause();
 		CBofSound::waitWaveSounds();
@@ -676,12 +676,12 @@ void Fuge::showOptionsMenu() {
 }
 
 void Fuge::gamePause() {
-	m_bPause = true;
+	_bPause = true;
 }
 
 void Fuge::gameResume() {
-	if (!m_bBallOnPaddle && m_bMovingPaddle)
-		m_bPause = false;
+	if (!_bBallOnPaddle && _bMovingPaddle)
+		_bPause = false;
 }
 
 void Fuge::playGame() {
@@ -691,7 +691,7 @@ void Fuge::playGame() {
 	// Reset all game parameters
 	gameReset();
 
-	loadNewPaddle(m_nInitPaddleSize);
+	loadNewPaddle(_nInitPaddleSize);
 
 	// Start game
 	startBricks();
@@ -699,8 +699,8 @@ void Fuge::playGame() {
 	startBall();
 
 	// Game starts paused
-	m_bPause = true;
-	m_bGameActive = true;
+	_bPause = true;
+	_bGameActive = true;
 }
 
 void Fuge::gameReset() {
@@ -712,41 +712,41 @@ void Fuge::gameReset() {
 	endBall();		// Remove ball from sprite chain
 	endPaddle();    // Remove paddle from sprite chain
 
-	m_fTurboBoost = 0.0;					// No turbo
-	m_lExtraLifeScore = EXTRA_LIFE_SCORE;	// User needs this many points for an extra life
-	m_bGameActive = false;	// There is no currently active game
-	m_bPause = false;		// The game is not paused
-	m_bBallOnPaddle = false;			// Ball is not yet on paddle
-	m_bMovingPaddle = false;			// User is not moving the paddle
-	m_nBalls = m_nInitNumBalls;			// Reset # of balls
-	m_nBallSpeed = m_nInitBallSpeed;	// Reset ball speed
+	_fTurboBoost = 0.0;					// No turbo
+	_lExtraLifeScore = EXTRA_LIFE_SCORE;	// User needs this many points for an extra life
+	_bGameActive = false;	// There is no currently active game
+	_bPause = false;		// The game is not paused
+	_bBallOnPaddle = false;			// Ball is not yet on paddle
+	_bMovingPaddle = false;			// User is not moving the paddle
+	_nBalls = _nInitNumBalls;			// Reset # of balls
+	_nBallSpeed = _nInitBallSpeed;	// Reset ball speed
 
-	m_nNumRows = m_nInitStartLevel;				// Reset number of brick rows
-	m_nBricks = m_nNumRows * BRICKS_PER_ROW;	// Get new brick count
-	m_lScore = 0;                               // Reset the score
-	m_bPaddleHit = false;                       // Paddle starts fresh
+	_nNumRows = _nInitStartLevel;				// Reset number of brick rows
+	_nBricks = _nNumRows * BRICKS_PER_ROW;	// Get new brick count
+	_lScore = 0;                               // Reset the score
+	_bPaddleHit = false;                       // Paddle starts fresh
 }
 
 void Fuge::loadIniSettings() {
 	if (gameInfo.bPlayingMetagame) {
-		m_bOutterWall = false;
-		m_nInitNumBalls = 1;
-		m_nInitStartLevel = 3;
-		m_nGForceFactor = GFORCE_DEF;
-		m_nInitPaddleSize = PSIZE_MAX;
+		_bOuterWall = false;
+		_nInitNumBalls = 1;
+		_nInitStartLevel = 3;
+		_nGForceFactor = GFORCE_DEF;
+		_nInitPaddleSize = PSIZE_MAX;
 
 		switch (gameInfo.nSkillLevel) {
 		case SKILLLEVEL_LOW:
-			m_nInitBallSpeed = 4;
+			_nInitBallSpeed = 4;
 			break;
 
 		case SKILLLEVEL_MEDIUM:
-			m_nInitBallSpeed = 6;
+			_nInitBallSpeed = 6;
 			break;
 
 		default:
 			assert(gameInfo.nSkillLevel == SKILLLEVEL_HIGH);
-			m_nInitBallSpeed = 8;
+			_nInitBallSpeed = 8;
 			break;
 		}
 
@@ -754,33 +754,33 @@ void Fuge::loadIniSettings() {
 		Common::String domain = ConfMan.getActiveDomainName();
 		ConfMan.setActiveDomain(INI_SECTION);
 
-		m_nInitNumBalls = ConfMan.hasKey("NumberOfBalls") ?
+		_nInitNumBalls = ConfMan.hasKey("NumberOfBalls") ?
 			ConfMan.getInt("NumberOfBalls") : BALLS_DEF;
-		if ((m_nInitNumBalls < BALLS_MIN) || (m_nInitNumBalls > BALLS_MAX))
-			m_nInitNumBalls = BALLS_DEF;
+		if ((_nInitNumBalls < BALLS_MIN) || (_nInitNumBalls > BALLS_MAX))
+			_nInitNumBalls = BALLS_DEF;
 
-		m_nInitStartLevel = ConfMan.hasKey("StartingLevel") ?
+		_nInitStartLevel = ConfMan.hasKey("StartingLevel") ?
 			ConfMan.getInt("StartingLevel") : LEVEL_DEF;
-		if ((m_nInitStartLevel < LEVEL_MIN) || (m_nInitStartLevel > LEVEL_MAX))
-			m_nInitStartLevel = LEVEL_DEF;
+		if ((_nInitStartLevel < LEVEL_MIN) || (_nInitStartLevel > LEVEL_MAX))
+			_nInitStartLevel = LEVEL_DEF;
 
-		m_nInitBallSpeed = ConfMan.hasKey("BallSpeed") ?
+		_nInitBallSpeed = ConfMan.hasKey("BallSpeed") ?
 			ConfMan.getInt("BallSpeed") : SPEED_DEF;
-		if ((m_nInitBallSpeed < SPEED_MIN) || (m_nInitBallSpeed > SPEED_MAX))
-			m_nInitBallSpeed = SPEED_DEF;
+		if ((_nInitBallSpeed < SPEED_MIN) || (_nInitBallSpeed > SPEED_MAX))
+			_nInitBallSpeed = SPEED_DEF;
 
-		m_nInitPaddleSize = ConfMan.hasKey("PaddleSize") ?
+		_nInitPaddleSize = ConfMan.hasKey("PaddleSize") ?
 			ConfMan.getInt("PaddleSize") : PSIZE_DEF;
-		if ((m_nInitPaddleSize < PSIZE_MIN) || (m_nInitPaddleSize > PSIZE_MAX))
-			m_nInitPaddleSize = PSIZE_DEF;
+		if ((_nInitPaddleSize < PSIZE_MIN) || (_nInitPaddleSize > PSIZE_MAX))
+			_nInitPaddleSize = PSIZE_DEF;
 
-		m_bOutterWall = ConfMan.hasKey("OutterWall") ?
+		_bOuterWall = ConfMan.hasKey("OutterWall") ?
 			ConfMan.getBool("OutterWall") : false;
 
-		m_nGForceFactor = ConfMan.hasKey("Gravity") ?
+		_nGForceFactor = ConfMan.hasKey("Gravity") ?
 			ConfMan.getInt("Gravity") : GFORCE_DEF;
-		if ((m_nGForceFactor < GFORCE_MIN) || (m_nGForceFactor > GFORCE_MAX))
-			m_nGForceFactor = GFORCE_DEF;
+		if ((_nGForceFactor < GFORCE_MIN) || (_nGForceFactor > GFORCE_MAX))
+			_nGForceFactor = GFORCE_DEF;
 
 		ConfMan.setActiveDomain(domain);
 	}
@@ -792,17 +792,17 @@ void Fuge::endBall() {
 
 void Fuge::startBall() {
 	// Have the ball start on the paddle like in Arkinoids
-	m_ptBallLocation = ballOnPaddle();
-	m_pBall.setPosition(m_ptBallLocation.x, m_ptBallLocation.y);
-	m_pBall.linkSprite();
+	_ptBallLocation = ballOnPaddle();
+	_sprBall.setPosition(_ptBallLocation.x, _ptBallLocation.y);
+	_sprBall.linkSprite();
 }
 
 CVector Fuge::ballOnPaddle() {
 	CVector vBall(0, -(PADDLE_RADIUS + BALL_RADIUS));
 
-	vBall.Rotate(fPaddleAngles[m_nInitPaddleSize] / 2);
+	vBall.Rotate(fPaddleAngles[_nInitPaddleSize] / 2);
 
-	vBall.Rotate(m_nPaddleCelIndex * ((2 * PI) / N_PADDLE_CELS));
+	vBall.Rotate(_nPaddleCelIndex * ((2 * PI) / N_PADDLE_CELS));
 	vBall -= CVector(BALL_RADIUS, BALL_RADIUS);
 
 	// This vector was relative to center so now make it a real point
@@ -813,35 +813,35 @@ CVector Fuge::ballOnPaddle() {
 
 
 void Fuge::startPaddle() {
-	assert(!m_pPaddle.empty());
+	assert(!_sprPaddle.empty());
 
-	m_pPaddle.linkSprite();
-	m_bBallOnPaddle = true;
+	_sprPaddle.linkSprite();
+	_bBallOnPaddle = true;
 
 	movePaddle(true);
 }
 
 
 void Fuge::endPaddle() {
-	assert(!m_pPaddle.empty());
+	assert(!_sprPaddle.empty());
 
-	if (m_pPaddle.isLinked())
-		m_pPaddle.unlinkSprite();
+	if (_sprPaddle.isLinked())
+		_sprPaddle.unlinkSprite();
 }
 
 void Fuge::launchBall() {
-	assert(m_bGameActive);
-	assert(m_bBallOnPaddle);
+	assert(_bGameActive);
+	assert(_bBallOnPaddle);
 
-	m_bPause = false;
-	m_bBallOnPaddle = false;
+	_bPause = false;
+	_bBallOnPaddle = false;
 
 	// Starting ball vector is determined by the location of the paddle
-	m_vBallVector = _gvCenter - (m_ptBallLocation + BALL_RADIUS);
+	_vBallVector = _gvCenter - (_ptBallLocation + BALL_RADIUS);
 
 	// Add a slight randomness to the balls vector
-	m_vBallVector.Rotate(Deg2Rad(getRandomNumber(2) - 1));
-	m_vBallVector.Unitize();
+	_vBallVector.Rotate(Deg2Rad(getRandomNumber(2) - 1));
+	_vBallVector.Unitize();
 
 	moveBall();
 }
@@ -849,17 +849,17 @@ void Fuge::launchBall() {
 void Fuge::startBricks() {
 	int i, nBricks;
 
-	nBricks = m_nNumRows * BRICKS_PER_ROW;
+	nBricks = _nNumRows * BRICKS_PER_ROW;
 
 	for (i = 0; i < nBricks; i++) {
-		if (!m_bBrickVisible[i]) {
-			m_bBrickVisible[i] = true;
+		if (!_brickVisible[i]) {
+			_brickVisible[i] = true;
 		}
 	}
 }
 
 void Fuge::endBricks() {
-	Common::fill(m_bBrickVisible, m_bBrickVisible + N_BRICKS, false);
+	Common::fill(_brickVisible, _brickVisible + N_BRICKS, false);
 }
 
 void Fuge::moveBall() {
@@ -867,35 +867,35 @@ void Fuge::moveBall() {
 	CVector vBall, vGravity;
 	double length;
 
-	if (m_bGameActive && !m_bPause && !m_bBallOnPaddle) {
-		assert(!m_pBall.empty());
+	if (_bGameActive && !_bPause && !_bBallOnPaddle) {
+		assert(!_sprBall.empty());
 
-		ptLast.x = (int)m_ptBallLocation.x;
-		ptLast.y = (int)m_ptBallLocation.y;
+		ptLast.x = (int)_ptBallLocation.x;
+		ptLast.y = (int)_ptBallLocation.y;
 
-		vGravity = _gvCenter - (m_ptBallLocation + BALL_RADIUS);
+		vGravity = _gvCenter - (_ptBallLocation + BALL_RADIUS);
 		vGravity.Unitize();
 
 		// Calc new ball location
-		if (m_nGForceFactor != 0) {
-			vGravity *= G_FORCE * m_nGForceFactor;
-			m_vBallVector += vGravity;
-			m_ptBallLocation += m_vBallVector * (m_fTurboBoost + m_nBallSpeed);
+		if (_nGForceFactor != 0) {
+			vGravity *= G_FORCE * _nGForceFactor;
+			_vBallVector += vGravity;
+			_ptBallLocation += _vBallVector * (_fTurboBoost + _nBallSpeed);
 
 		} else {
 			vGravity *= G_FORCE * 10;
-			m_ptBallLocation += (m_vBallVector + vGravity) * (m_fTurboBoost + m_nBallSpeed);
+			_ptBallLocation += (_vBallVector + vGravity) * (_fTurboBoost + _nBallSpeed);
 		}
 
-		assert(m_fTurboBoost <= TURBO_MAX);
-		m_fTurboBoost -= 0.05;
-		if (m_fTurboBoost < 0.0)
-			m_fTurboBoost = 0.0;
+		assert(_fTurboBoost <= TURBO_MAX);
+		_fTurboBoost -= 0.05;
+		if (_fTurboBoost < 0.0)
+			_fTurboBoost = 0.0;
 
-		m_vBallVector.Unitize();
+		_vBallVector.Unitize();
 
 		// Get radius of the ball from the center of the screen
-		vBall = m_ptBallLocation + BALL_RADIUS - _gvCenter;
+		vBall = _ptBallLocation + BALL_RADIUS - _gvCenter;
 
 		length = vBall.Length() + BALL_RADIUS;
 
@@ -903,69 +903,69 @@ void Fuge::moveBall() {
 		if (length <= BLACKHOLE_RADIUS + BALL_RADIUS * 2) {
 			// Play the ball-gets-sucked-into-black-hole animation
 			loseBall();
-			m_bPaddleHit = false;
+			_bPaddleHit = false;
 
 		} else if (length <= PADDLE_RADIUS + BALL_RADIUS * 2) {
 			// The ball hit the paddle
 			ballvsPaddle();
 
-		} else if ((length >= INNER_BRICK_RADIUS) && (length < WHEEL_RADIUS + (m_bOutterWall ? BALL_RADIUS * 2 : 0))) {
+		} else if ((length >= INNER_BRICK_RADIUS) && (length < WHEEL_RADIUS + (_bOuterWall ? BALL_RADIUS * 2 : 0))) {
 			// The ball hit a brick
 			// Determine if a ball actually hit a brick
 			ballvsBrick(length);
-			m_bPaddleHit = false;
+			_bPaddleHit = false;
 
 		} else if (length >= WHEEL_RADIUS) {
 			// The ball hit edge of Ferris Wheel
-			if (m_bOutterWall) {
+			if (_bOuterWall) {
 				// Has ball hit right border
-				if (m_ptBallLocation.x >= GAME_WIDTH - GAME_RIGHT_BORDER_WIDTH - BALL_SIZE_X) {
-					m_ptBallLocation.x = GAME_WIDTH - GAME_RIGHT_BORDER_WIDTH - BALL_SIZE_X;
-					m_vBallVector.x = -m_vBallVector.x;
+				if (_ptBallLocation.x >= GAME_WIDTH - GAME_RIGHT_BORDER_WIDTH - BALL_SIZE_X) {
+					_ptBallLocation.x = GAME_WIDTH - GAME_RIGHT_BORDER_WIDTH - BALL_SIZE_X;
+					_vBallVector.x = -_vBallVector.x;
 
 					// Randomly rotate 1 or -1 degrees
-					m_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
+					_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
 
-					m_fTurboBoost = (double)12 - m_nBallSpeed;
+					_fTurboBoost = (double)12 - _nBallSpeed;
 
 					if (gameInfo.bSoundEffectsEnabled) {
 						sndPlaySound(m_pWallSound, SND_MEMORY | SOUND_ASYNCH | SND_NODEFAULT);
 					}
 
-				} else if (m_ptBallLocation.x <= 0 + GAME_LEFT_BORDER_WIDTH) {
+				} else if (_ptBallLocation.x <= 0 + GAME_LEFT_BORDER_WIDTH) {
 					// Ball hit left border
-					m_ptBallLocation.x = 0 + GAME_LEFT_BORDER_WIDTH;
-					m_vBallVector.x = -m_vBallVector.x;
+					_ptBallLocation.x = 0 + GAME_LEFT_BORDER_WIDTH;
+					_vBallVector.x = -_vBallVector.x;
 
 					// Randomly rotate 1 or -1 degrees
-					m_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
-					m_fTurboBoost = (double)12 - m_nBallSpeed;
+					_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
+					_fTurboBoost = (double)12 - _nBallSpeed;
 
 					if (gameInfo.bSoundEffectsEnabled) {
 						sndPlaySound(m_pWallSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 					}
 
-				} else if (m_ptBallLocation.y >= GAME_HEIGHT - GAME_BOTTOM_BORDER_WIDTH - BALL_SIZE_Y) {
+				} else if (_ptBallLocation.y >= GAME_HEIGHT - GAME_BOTTOM_BORDER_WIDTH - BALL_SIZE_Y) {
 					// Ball hit bottom of screen
-					m_ptBallLocation.y = GAME_HEIGHT - GAME_BOTTOM_BORDER_WIDTH - BALL_SIZE_Y;
-					m_vBallVector.y = -m_vBallVector.y;
+					_ptBallLocation.y = GAME_HEIGHT - GAME_BOTTOM_BORDER_WIDTH - BALL_SIZE_Y;
+					_vBallVector.y = -_vBallVector.y;
 
 					// Randomly rotate 1 or -1 degrees
-					m_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
-					m_fTurboBoost = (double)12 - m_nBallSpeed;
+					_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
+					_fTurboBoost = (double)12 - _nBallSpeed;
 
 					if (gameInfo.bSoundEffectsEnabled) {
 						sndPlaySound(m_pWallSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 					}
 
-				} else if (m_ptBallLocation.y <= 0 + GAME_TOP_BORDER_WIDTH) {
+				} else if (_ptBallLocation.y <= 0 + GAME_TOP_BORDER_WIDTH) {
 					// Ball hit top of screen
-					m_ptBallLocation.y = 0 + GAME_TOP_BORDER_WIDTH;
-					m_vBallVector.y = -m_vBallVector.y;
+					_ptBallLocation.y = 0 + GAME_TOP_BORDER_WIDTH;
+					_vBallVector.y = -_vBallVector.y;
 
 					// Randomly rotate 1 or -1 degrees
-					m_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
-					m_fTurboBoost = (double)12 - m_nBallSpeed;
+					_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
+					_fTurboBoost = (double)12 - _nBallSpeed;
 
 					if (gameInfo.bSoundEffectsEnabled) {
 						sndPlaySound(m_pWallSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
@@ -978,23 +978,23 @@ void Fuge::moveBall() {
 				}
 
 				// Pull ball back to just on the border
-				m_ptBallLocation -= m_vBallVector * (length - WHEEL_RADIUS + 1);
+				_ptBallLocation -= _vBallVector * (length - WHEEL_RADIUS + 1);
 
-				m_vBallVector.x = -m_vBallVector.x;
-				m_vBallVector.y = -m_vBallVector.y;
+				_vBallVector.x = -_vBallVector.x;
+				_vBallVector.y = -_vBallVector.y;
 
-				m_vBallVector.Reflect(vBall);
+				_vBallVector.Reflect(vBall);
 			}
 
-			m_bPaddleHit = false;
+			_bPaddleHit = false;
 		}
 
 		// Only update the ball if it actually moved
-		if ((ptLast.x != (int)m_ptBallLocation.x) || (ptLast.y != (int)m_ptBallLocation.y)) {
-			if (m_pBall.isLinked()) {
+		if ((ptLast.x != (int)_ptBallLocation.x) || (ptLast.y != (int)_ptBallLocation.y)) {
+			if (_sprBall.isLinked()) {
 				// Move the ball to it's new location
-				m_pBall.x = m_ptBallLocation.x;
-				m_pBall.y = m_ptBallLocation.y;
+				_sprBall.x = _ptBallLocation.x;
+				_sprBall.y = _ptBallLocation.y;
 			}
 		}
 	}
@@ -1005,43 +1005,43 @@ void Fuge::movePaddle(bool bPaint) {
 	int nOldIndex;
 
 	// Verify that the input was not tainted
-	assert(m_nPaddleCelIndex < N_PADDLE_CELS * 2);
-	assert(m_nPaddleCelIndex > -N_PADDLE_CELS);
+	assert(_nPaddleCelIndex < N_PADDLE_CELS * 2);
+	assert(_nPaddleCelIndex > -N_PADDLE_CELS);
 
 	// Can't access a null pointer
-	assert(!m_pPaddle.empty());
+	assert(!_sprPaddle.empty());
 
 	// Get old cel index
-	nOldIndex = m_pPaddle.getCelIndex();
+	nOldIndex = _sprPaddle.getCelIndex();
 
-	if (m_nPaddleCelIndex >= N_PADDLE_CELS) {
-		m_nPaddleCelIndex = m_nPaddleCelIndex - N_PADDLE_CELS;
+	if (_nPaddleCelIndex >= N_PADDLE_CELS) {
+		_nPaddleCelIndex = _nPaddleCelIndex - N_PADDLE_CELS;
 
-	} else if (m_nPaddleCelIndex < 0) {
-		m_nPaddleCelIndex = m_nPaddleCelIndex + N_PADDLE_CELS;
+	} else if (_nPaddleCelIndex < 0) {
+		_nPaddleCelIndex = _nPaddleCelIndex + N_PADDLE_CELS;
 	}
 
 	// Verify our calculations
-	assert((m_nPaddleCelIndex >= 0) && (m_nPaddleCelIndex < N_PADDLE_CELS));
+	assert((_nPaddleCelIndex >= 0) && (_nPaddleCelIndex < N_PADDLE_CELS));
 
 	// Don't adjust the paddle if we would paint the same cel
-	if (bPaint || (nOldIndex != m_nPaddleCelIndex)) {
-		m_pPaddle.setCel(m_nPaddleCelIndex);
+	if (bPaint || (nOldIndex != _nPaddleCelIndex)) {
+		_sprPaddle.setCel(_nPaddleCelIndex);
 
 		// Move paddle to new location
-		m_pPaddle.x = PADDLE_START_X;
-		m_pPaddle.y = PADDLE_START_Y;
+		_sprPaddle.x = PADDLE_START_X;
+		_sprPaddle.y = PADDLE_START_Y;
 
 		// If the ball is resting on the paddle
-		if (m_bBallOnPaddle) {
-			assert(!m_pBall.empty());
+		if (_bBallOnPaddle) {
+			assert(!_sprBall.empty());
 
 			// Ball is rotating with paddle
-			m_ptBallLocation = ballOnPaddle();
+			_ptBallLocation = ballOnPaddle();
 
 			// Set the ball to it's new location
-			m_pBall.x = m_ptBallLocation.x;
-			m_pBall.y = m_ptBallLocation.y;
+			_sprBall.x = _ptBallLocation.x;
+			_sprBall.y = _ptBallLocation.y;
 		}
 	}
 }
@@ -1057,14 +1057,14 @@ void Fuge::loseBall() {
 	gamePause();
 
 	// Reset turbo
-	m_fTurboBoost = 0.0;
+	_fTurboBoost = 0.0;
 
-	m_pBall.unlinkSprite();
+	_sprBall.unlinkSprite();
 
-	assert(m_nBalls > 0);
+	assert(_nBalls > 0);
 
 	// One less ball
-	m_nBalls--;
+	_nBalls--;
 
 	if (gameInfo.bSoundEffectsEnabled) {
 #if CSOUND
@@ -1077,7 +1077,7 @@ void Fuge::loseBall() {
 	}
 
 	// If no more balls left - user has lost
-	if (m_nBalls == 0) {
+	if (_nBalls == 0) {
 
 		if (gameInfo.bSoundEffectsEnabled) {
 #if CSOUND
@@ -1089,15 +1089,15 @@ void Fuge::loseBall() {
 #endif
 		}
 
-		Common::String msg = Common::String::format("Score:  %ld", m_lScore);
+		Common::String msg = Common::String::format("Score:  %ld", _lScore);
 		MessageBox::show("Game over.", msg, []() {
 			((Fuge *)g_events->findView("Fuge"))->gameOverClosed();
 		});
 
 	} else {
 		// Display score, and start a new ball
-		Common::String title = Common::String::format("Score:  %ld", m_lScore);
-		Common::String msg = Common::String::format("Balls Left:  %d", m_nBalls);
+		Common::String title = Common::String::format("Score:  %ld", _lScore);
+		Common::String msg = Common::String::format("Balls Left:  %d", _nBalls);
 		MessageBox::show(title, msg, []() {
 			((Fuge *)g_events->findView("Fuge"))->newLifeClosed();
 		});
@@ -1107,7 +1107,7 @@ void Fuge::loseBall() {
 void Fuge::gameOverClosed() {
 	if (gameInfo.bPlayingMetagame) {
 		// Return the final score
-		gameInfo.lScore = m_lScore;
+		gameInfo.lScore = _lScore;
 	}
 
 	gameReset();
@@ -1122,17 +1122,17 @@ void Fuge::newLifeClosed() {
 
 void Fuge::optionsClosed() {
 	// Show the command scroll
-	m_ScrollButton.setPressed(false);
-	m_bIgnoreScrollClick = false;
+	_scrollButton.setPressed(false);
+	_bIgnoreScrollClick = false;
 
-	if (!gameInfo.bMusicEnabled && (m_pSoundTrack != nullptr)) {
-		m_pSoundTrack->stop();
-		delete m_pSoundTrack;
-		m_pSoundTrack = nullptr;
+	if (!gameInfo.bMusicEnabled && (_soundTrack != nullptr)) {
+		_soundTrack->stop();
+		delete _soundTrack;
+		_soundTrack = nullptr;
 
-	} else if (gameInfo.bMusicEnabled && (m_pSoundTrack == nullptr)) {
-		m_pSoundTrack = new CBofSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-		m_pSoundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
+	} else if (gameInfo.bMusicEnabled && (_soundTrack == nullptr)) {
+		_soundTrack = new CBofSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+		_soundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
 	}
 
 	gameResume();
@@ -1153,16 +1153,16 @@ void Fuge::ballvsPaddle() {
 	vTmp.SetVector(0, -PADDLE_RADIUS);
 
 	// Cel index determines paddle angle
-	vTmp.Rotate((2 * PI / N_PADDLE_CELS) * m_nPaddleCelIndex);
+	vTmp.Rotate((2 * PI / N_PADDLE_CELS) * _nPaddleCelIndex);
 
 	vPoints[1] = _gvCenter + vTmp;
 
 	vPoints[0] = vTmp;
-	vPoints[0].Rotate(fPaddleAngles[m_nInitPaddleSize] / 2);
+	vPoints[0].Rotate(fPaddleAngles[_nInitPaddleSize] / 2);
 	vPoints[0] += _gvCenter;
 
 	vPoints[2] = vTmp;
-	vPoints[2].Rotate(fPaddleAngles[m_nInitPaddleSize]);
+	vPoints[2].Rotate(fPaddleAngles[_nInitPaddleSize]);
 	vPoints[2] += _gvCenter;
 
 	vTmp.Unitize();
@@ -1172,12 +1172,12 @@ void Fuge::ballvsPaddle() {
 	vPoints[3] = _gvCenter + vTmp;
 
 	vPoints[4] = vTmp;
-	vPoints[4].Rotate(fPaddleAngles[m_nInitPaddleSize]);
+	vPoints[4].Rotate(fPaddleAngles[_nInitPaddleSize]);
 	vPoints[4] += _gvCenter;
 
 	vPoints[5] = vPoints[1];
 	vPoints[6] = vPoints[2];
-	if (m_nInitPaddleSize > PSIZE_MIN) {
+	if (_nInitPaddleSize > PSIZE_MIN) {
 		vTmp = vPoints[0] - vPoints[1];
 		vTmp.Unitize();
 		vTmp *= 9; // Paddle width
@@ -1191,7 +1191,7 @@ void Fuge::ballvsPaddle() {
 	}
 
 	// Get center of the ball
-	vBallCenter = m_ptBallLocation + BALL_RADIUS;
+	vBallCenter = _ptBallLocation + BALL_RADIUS;
 
 	// If any of those points are less than the radius distance
 	// away from the center of the ball, then the ball has hit
@@ -1255,29 +1255,29 @@ void Fuge::ballvsPaddle() {
 	}
 
 	if (bHit) {
-		nRollBack = MIN(m_nInitBallSpeed, nRollBack);
+		nRollBack = MIN(_nInitBallSpeed, nRollBack);
 
 		if (gameInfo.bSoundEffectsEnabled) {
 			sndPlaySound(m_pPaddleSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 		}
 
 		// If we hit the ball twice in a row
-		if (m_bPaddleHit) {
+		if (_bPaddleHit) {
 			// Then shoot the ball away from the paddle
-			m_vBallVector = vBallCenter - _gvCenter;
-			m_vBallVector.Unitize();
-			m_vBallVector *= 2;
+			_vBallVector = vBallCenter - _gvCenter;
+			_vBallVector.Unitize();
+			_vBallVector *= 2;
 
 		} else {
 			// Roll the ball back to the exact point that it hit the paddle
-			vTmp = m_vBallVector;
+			vTmp = _vBallVector;
 			vTmp.Unitize();
 			vTmp *= nRollBack;
 
-			m_ptBallLocation -= vTmp;
+			_ptBallLocation -= vTmp;
 
 			// Get center of ball
-			vBallCenter = m_ptBallLocation + BALL_RADIUS;
+			vBallCenter = _ptBallLocation + BALL_RADIUS;
 
 			fLen1 = distanceBetweenPoints(vBallCenter, vPoints[0]);
 			fLen1 += distanceBetweenPoints(vBallCenter, vPoints[1]);
@@ -1300,7 +1300,7 @@ void Fuge::ballvsPaddle() {
 
 			fLen5 = fLen1;
 			fLen6 = fLen2;
-			if (m_nInitPaddleSize > PSIZE_MIN) {
+			if (_nInitPaddleSize > PSIZE_MIN) {
 
 				fLen5 = distanceBetweenPoints(vBallCenter, vPoints[1]);
 				fLen5 += distanceBetweenPoints(vBallCenter, vPoints[5]);
@@ -1311,9 +1311,9 @@ void Fuge::ballvsPaddle() {
 				fMin = MIN(fMin, fLen6);
 			}
 
-			vTmp = m_vBallVector;
-			m_vBallVector.x = -m_vBallVector.x;
-			m_vBallVector.y = -m_vBallVector.y;
+			vTmp = _vBallVector;
+			_vBallVector.x = -_vBallVector.x;
+			_vBallVector.y = -_vBallVector.y;
 
 			vFace = vPoints[0] - _gvCenter;
 
@@ -1329,14 +1329,14 @@ void Fuge::ballvsPaddle() {
 				}
 
 				// Get center of ball
-				vBallCenter = m_ptBallLocation + BALL_RADIUS;
+				vBallCenter = _ptBallLocation + BALL_RADIUS;
 
 				// Roll ball back to edge of paddle
 				while (distanceBetweenPoints(vBallCenter, _gvCenter) < PADDLE_RADIUS + BALL_RADIUS) {
-					m_ptBallLocation -= vTmp;
+					_ptBallLocation -= vTmp;
 
 					// Get center of ball
-					vBallCenter = m_ptBallLocation + BALL_RADIUS;
+					vBallCenter = _ptBallLocation + BALL_RADIUS;
 				}
 
 				vPaddle = vFace;
@@ -1346,8 +1346,8 @@ void Fuge::ballvsPaddle() {
 				vPaddle.SetVector(vPoints[3].x - CENTER_X, vPoints[3].y - CENTER_Y);
 				vPaddle.Rotate(-PI / 2);
 
-				a1 = vPaddle.AngleBetween(m_vBallVector);
-				a2 = vFace.AngleBetween(m_vBallVector);
+				a1 = vPaddle.AngleBetween(_vBallVector);
+				a2 = vFace.AngleBetween(_vBallVector);
 
 				// Kludge to compensate for when angle is too big
 				if (a1 > a2) {
@@ -1359,8 +1359,8 @@ void Fuge::ballvsPaddle() {
 				vPaddle.SetVector(vPoints[4].x - CENTER_X, vPoints[4].y - CENTER_Y);
 				vPaddle.Rotate(PI / 2);
 
-				a1 = vPaddle.AngleBetween(m_vBallVector);
-				a2 = vFace.AngleBetween(m_vBallVector);
+				a1 = vPaddle.AngleBetween(_vBallVector);
+				a2 = vFace.AngleBetween(_vBallVector);
 
 				// Kludge to compensate for when angle is too big
 				if (a1 > a2) {
@@ -1369,16 +1369,16 @@ void Fuge::ballvsPaddle() {
 			}
 
 			// Reflect the ball vector around the final paddle (mirror) vector
-			m_vBallVector.Reflect(vPaddle);
+			_vBallVector.Reflect(vPaddle);
 
 			// One final check to make sure the ball is bouncing in the
 			// correct direction.
-			if (m_vBallVector.AngleBetween(_gvCenter - vBallCenter) <= Deg2Rad(15)) {
-				m_vBallVector.Rotate(Deg2Rad(180));
+			if (_vBallVector.AngleBetween(_gvCenter - vBallCenter) <= Deg2Rad(15)) {
+				_vBallVector.Rotate(Deg2Rad(180));
 			}
 		}
 
-		m_bPaddleHit = true;
+		_bPaddleHit = true;
 	}
 }
 
@@ -1398,12 +1398,12 @@ void Fuge::ballvsBrick(double length) {
 	Common::String title, msg;
 
 	// Get bounding rectangle of the ball
-	rBall = Common::Rect((int)m_ptBallLocation.x, (int)m_ptBallLocation.y,
-		(int)m_ptBallLocation.x + BALL_SIZE_X,
-		(int)m_ptBallLocation.y + BALL_SIZE_Y);
+	rBall = Common::Rect((int)_ptBallLocation.x, (int)_ptBallLocation.y,
+		(int)_ptBallLocation.x + BALL_SIZE_X,
+		(int)_ptBallLocation.y + BALL_SIZE_Y);
 
 	// Get center of the ball
-	vBallCenter.SetVector(m_ptBallLocation.x + BALL_RADIUS, m_ptBallLocation.y + BALL_RADIUS);
+	vBallCenter.SetVector(_ptBallLocation.x + BALL_RADIUS, _ptBallLocation.y + BALL_RADIUS);
 
 	vOrigin.SetVector(-1, -1);
 	vOrigin.Rotate(PI / BRICKS_PER_ROW);
@@ -1524,7 +1524,7 @@ void Fuge::ballvsBrick(double length) {
 
 		assert(nBrickIndex >= 0 && nBrickIndex < N_BRICKS);
 
-		if (m_bBrickVisible[nBrickIndex]) {
+		if (_brickVisible[nBrickIndex]) {
 			// Does the ball's rectange intersects this brick's rectangle
 			cRect = Common::Rect(
 				ptBrickPos[nBrickIndex].x, ptBrickPos[nBrickIndex].y,
@@ -1553,30 +1553,30 @@ void Fuge::ballvsBrick(double length) {
 					eraseBrick(nBrickIndex);
 
 					// One less brick
-					--m_nBricks;
+					--_nBricks;
 
 					// Score: 1 point for each brick regardless of color
-					m_lScore += 1;
+					_lScore += 1;
 
 					// Did user earn an extra ball?
-					if (m_lScore >= m_lExtraLifeScore) {
+					if (_lScore >= _lExtraLifeScore) {
 						if (gameInfo.bSoundEffectsEnabled) {
 							sndPlaySound(m_pExtraLifeSound, SND_MEMORY | SND_SYNC | SND_NODEFAULT);
 						}
 
 						// Double the amount the user needs for their next extra life
-						m_lExtraLifeScore += m_lExtraLifeScore;
+						_lExtraLifeScore += _lExtraLifeScore;
 
 						// Extra ball
-						m_nBalls++;
+						_nBalls++;
 					}
 
 					// If no bricks left
-					if (m_nBricks == 0) {
+					if (_nBricks == 0) {
 						gamePause();
 
 						// Reset turbo
-						m_fTurboBoost = 0.0;
+						_fTurboBoost = 0.0;
 
 						if (gameInfo.bSoundEffectsEnabled) {
 #if CSOUND
@@ -1589,12 +1589,12 @@ void Fuge::ballvsBrick(double length) {
 						}
 
 						// 5 point bonus for clearing all bricks
-						m_lScore += 5;
+						_lScore += 5;
 
 						//
 						// User wins this round
 						title = Common::String::format("Round complete.");
-						msg = Common::String::format("Score:  %ld", m_lScore);
+						msg = Common::String::format("Score:  %ld", _lScore);
 						MessageBox::show(title, msg, []() {
 							((Fuge *)g_events->findView("Fuge"))->roundCompleteClosed();
 						});
@@ -1606,10 +1606,10 @@ void Fuge::ballvsBrick(double length) {
 						bStillHit = true;
 						while (bStillHit) {
 							// Roll ball back to point of contact with brick
-							m_ptBallLocation -= m_vBallVector;
+							_ptBallLocation -= _vBallVector;
 
 							// Get new center of ball
-							vBallCenter = m_ptBallLocation + BALL_RADIUS;
+							vBallCenter = _ptBallLocation + BALL_RADIUS;
 
 							bStillHit = false;
 							for (j = 0; j < N_BRICK_POINTS; j++) {
@@ -1675,10 +1675,10 @@ void Fuge::ballvsBrick(double length) {
 						}
 
 						// Determine the vector of the brick (using ptHit as the intersect point)
-						m_vBallVector.x = -m_vBallVector.x;
-						m_vBallVector.y = -m_vBallVector.y;
+						_vBallVector.x = -_vBallVector.x;
+						_vBallVector.y = -_vBallVector.y;
 
-						m_vBallVector.Reflect(vBrick);
+						_vBallVector.Reflect(vBrick);
 					}
 					break;
 				}
@@ -1696,19 +1696,19 @@ void Fuge::roundCompleteClosed() {
 #endif
 	}
 
-	m_nNumRows++;
-	if (m_nNumRows > N_ROWS) {
-		m_nNumRows = 1;
-		m_nBallSpeed++;
+	_nNumRows++;
+	if (_nNumRows > N_ROWS) {
+		_nNumRows = 1;
+		_nBallSpeed++;
 	}
 
 	// Get new brick count
-	m_nBricks = m_nNumRows * BRICKS_PER_ROW;
+	_nBricks = _nNumRows * BRICKS_PER_ROW;
 
 	if (gameInfo.bPlayingMetagame) {
 		// If user is playing the metagame
 		// return to the metagame
-		gameInfo.lScore = m_lScore;
+		gameInfo.lScore = _lScore;
 		close();
 
 	} else {

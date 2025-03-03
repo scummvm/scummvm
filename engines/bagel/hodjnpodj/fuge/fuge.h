@@ -35,58 +35,54 @@ namespace Fuge {
 
 class Fuge : public MinigameView {
 private:
-	BmpButton m_ScrollButton;
-	Graphics::Palette m_GamePalette;
+	BmpButton _scrollButton;
+	Graphics::Palette _gamePalette;
 	Graphics::ManagedSurface _background;
 	const CVector _gvCenter;
 	int _timerCtr = 0;
-
 	int _backgroundNumRows = -1;
 	int _paddleOldSize = -1;
 
-	bool m_bBrickVisible[N_BRICKS] = { false };
-	const Common::Point m_ptOrigin;
-	const Common::Rect m_rNewGameButton;
-	Common::Rect m_rBlackHole;
-	CVector m_vBallVector;
-	CVector m_ptBallLocation;
-	Sprite m_pBall;
-	Sprite m_pPaddle;
-	CBofSound *m_pSoundTrack;
+	bool _brickVisible[N_BRICKS] = { false };
+	const Common::Point _ptOrigin;
+	const Common::Rect _rNewGameButton;
+	CVector _vBallVector;
+	CVector _ptBallLocation;
+	Sprite _sprBall;
+	Sprite _sprPaddle;
+	CBofSound *_soundTrack;
 
 	const char *m_pBrickSound;
 	const char *m_pWallSound;
 	const char *m_pPaddleSound;
 	const char *m_pExtraLifeSound;
-	Common::SeekableReadStream *m_hBrickRes = nullptr;
-	Common::SeekableReadStream *m_hWallRes = nullptr;
-	Common::SeekableReadStream *m_hPaddleRes = nullptr;
-	Common::SeekableReadStream *m_hExtraLifeRes = nullptr;
+	Common::SeekableReadStream *_brickSound = nullptr;
+	Common::SeekableReadStream *_wallSound = nullptr;
+	Common::SeekableReadStream *_paddleSound = nullptr;
+	Common::SeekableReadStream *_extraLifeSound = nullptr;
 
-	int m_nInitNumBalls = 0;
-	int m_nInitStartLevel = 0;
-	int m_nInitBallSpeed = 0;
-	int m_nInitPaddleSize = 0;
-	int m_nGForceFactor = 0;
+	int _nInitNumBalls = 0;
+	int _nInitStartLevel = 0;
+	int _nInitBallSpeed = 0;
+	int _nInitPaddleSize = 0;
+	int _nGForceFactor = 0;
 
-	double m_fTurboBoost = 0;
-	int m_lScore = 0;
-	int m_lExtraLifeScore = 0;
-	int m_nJoyOrgX = 0;
-	int m_nJoyOrgY = 0;
-	int m_nBricks = 0;
-	int m_nBalls = 0;
-	int m_nBallSpeed = 0;
-	int m_nNumRows = 0;
-	int m_nPaddleCelIndex = 0;
-	bool m_bMovingPaddle = false;
-	bool m_bGameActive = false;
-	bool m_bPause = false;
-	bool m_bIgnoreScrollClick = false;
-	bool m_bPaddleHit = false;
-	bool m_bOutterWall = false;
-	bool m_bJoyActive = false;
-	bool m_bBallOnPaddle = false;
+	double _fTurboBoost = 0;
+	int _lScore = 0;
+	int _lExtraLifeScore = 0;
+	int _nBricks = 0;
+	int _nBalls = 0;
+	int _nBallSpeed = 0;
+	int _nNumRows = 0;
+	int _nPaddleCelIndex = 0;
+	bool _bMovingPaddle = false;
+	bool _bGameActive = false;
+	bool _bPause = false;
+	bool _bIgnoreScrollClick = false;
+	bool _bPaddleHit = false;
+	bool _bOuterWall = false;
+	bool _bJoyActive = false;
+	bool _bBallOnPaddle = false;
 
 private:
 	void clear();
