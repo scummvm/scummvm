@@ -6,6 +6,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Neue Spiele:
    - Unterstützung für Dark Seed hinzugefügt.
    - Unterstützung für God of Thunder hinzugefügt.
+   - Unterstützung für The Adventures of Willy Beamish hinzugefügt.
 
  Hopkins:
    - Absturz behoben, der auftritt, wenn mit dem Aufzug zwischen Stockwerken gewechselt wird.
@@ -17,6 +18,15 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für die "klassischen" SE-Varianten von MI1, MI2, DOTT und FT hinzugefügt.
    - Unterstützung für die neue Sprachausgabe und verbesserten Soundeffekte der
      Remastered-Version von Day of the Tentacle hinzugefügt.
+   - Verbesserung der Grafik-Unterstützung für die Macintosh-Versionen von DOTT, Sam & Max, The Dig,
+     Full Throttle und Maniac Mansion.
+   - Audio-Fehler in der Sega-CD-Version von MI1 korrigiert.
+
+ TwinE:
+   - Bewegung des Meca-Pinguins korrigiert.
+   - Fehler bei der Audio-Wiedergabe behoben.
+   - Ursprünngliche Fehlerkorrektur aktiviert (Tür zum Hauptquartier von FunFrock).
+   - Fehlerkorrektur für das Auslösen von Action-Events.
 
 
 #### 2.9.0 "Close Encounters of the 2.9th Kind" (22.12.2024)
