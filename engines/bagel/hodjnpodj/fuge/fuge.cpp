@@ -29,6 +29,7 @@
 #include "bagel/hodjnpodj/libs/vector.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/metaengine.h"
 #include "bagel/boflib/point.h"
 #include "bagel/boflib/size.h"
 #include "bagel/hodjnpodj/views/main_menu.h"
@@ -287,32 +288,27 @@ bool Fuge::msgClose(const CloseMessage &msg) {
 	return true;
 }
 
-bool Fuge::msgKeypress(const KeypressMessage &msg) {
-	switch (msg.keycode) {
-	// Move paddle clockwise
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_KP8:
-	case Common::KEYCODE_KP6:
+bool Fuge::msgAction(const ActionMessage &msg) {
+	switch (msg._action) {
+		// Move paddle clockwise
+	case KEYBIND_UP:
+	case KEYBIND_RIGHT:
 		if (m_bGameActive) {
 			m_nPaddleCelIndex += PADDLE_CEL_JUMP;
 			paintPaddle(false);
 		}
 		break;
 
-	// Move paddle counter-clockwise
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_KP2:
-	case Common::KEYCODE_KP4:
+		// Move paddle counter-clockwise
+	case KEYBIND_DOWN:
+	case KEYBIND_LEFT:
 		if (m_bGameActive) {
 			m_nPaddleCelIndex -= PADDLE_CEL_JUMP;
 			paintPaddle(false);
 		}
 		break;
 
-	case Common::KEYCODE_RETURN:
-	case Common::KEYCODE_SPACE:
+	case KEYBIND_SELECT:
 		if (m_bGameActive) {
 			if (m_bBallOnPaddle) {
 				launchBall();
@@ -320,8 +316,18 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 		}
 		break;
 
-	// Bring up the Rules
-	case Common::KEYCODE_F1: {
+	default:
+		return MinigameView::msgAction(msg);
+	}
+
+	redraw();
+	return true;
+}
+
+bool Fuge::msgKeypress(const KeypressMessage &msg) {
+	switch (msg.keycode) {
+	case Common::KEYCODE_F1:
+		// Bring up the Rules
 		gamePause();
 		CBofSound::waitWaveSounds();
 		Rules::show("fuge.txt",
@@ -330,11 +336,9 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 				((Fuge *)g_events->findView("Fuge"))->gameResume();
 			});
 		break;
-	}
 
-	//
-	// Bring up the options menu
 	case Common::KEYCODE_F2:
+		// Options menu
 		showOptionsMenu();
 		break;
 
@@ -350,7 +354,6 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 
 	default:
 		return MinigameView::msgKeypress(msg);
-		break;
 	}
 
 	redraw();

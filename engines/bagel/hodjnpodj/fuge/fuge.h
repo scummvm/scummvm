@@ -149,11 +149,10 @@ public:
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 	bool tick() override;
-
-	void        PaintScreen();
 };
 
 } // namespace Fuge

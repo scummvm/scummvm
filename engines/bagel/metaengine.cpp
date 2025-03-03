@@ -34,15 +34,33 @@ struct KeybindingRecord {
 	KeybindingAction _action;
 	const char *_id;
 	const char *_desc;
-	const char *_key;
+	const char *_key1;
+	const char *_key2;
 	const char *_joy;
 };
 
+namespace SpaceBar {
+
 static const KeybindingRecord MINIMAL_KEYS[] = {
-	{ KEYBIND_WAIT, "WAIT", _s("Wait"), "SPACE", nullptr },
-	{ KEYBIND_CHEAT714, "CHEAT714", _s("Soldier 714 Eye Cheat"), "SCROLLOCK", nullptr },
-	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
+	{ KEYBIND_WAIT, "WAIT", _s("Wait"), "SPACE", nullptr, nullptr },
+	{ KEYBIND_CHEAT714, "CHEAT714", _s("Soldier 714 Eye Cheat"), "SCROLLOCK", nullptr, nullptr },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
+
+} // namespace SpaceBar
+
+namespace HodjNPodj {
+
+static const KeybindingRecord MINIMAL_KEYS[] = {
+	{ KEYBIND_SELECT, "SELECT", _s("Select"), "SPACE", "RETURN", "JOY_A" },
+	{ KEYBIND_UP, "UP", _s("Up"), "UP", nullptr, "JOY_UP"},
+	{ KEYBIND_DOWN, "DOWN", _s("Down"), "DOWN", nullptr, "JOY_DOWN"},
+	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", nullptr, "JOY_LEFT"},
+	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", nullptr, "JOY_RIGHT"},
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
+};
+
+} // namespace HodjNPodj
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -59,7 +77,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-} // End of namespace Bagel
+} // namespace Bagel
 
 const char *BagelMetaEngine::getName() const {
 	return "bagel";
@@ -91,18 +109,26 @@ Common::KeymapArray BagelMetaEngine::initKeymaps(const char *target) const {
 	// The current keymaps are only applicable for Space Bar
 	const Common::ConfigManager::Domain *domain = ConfMan.getDomain(target);
 	Common::String gameId = domain->getVal("gameid");
-	if (gameId != "spacebar")
-		return keymapArray;
+
+	const Bagel::KeybindingRecord *keys = (gameId == "spacebar") ?
+		Bagel::SpaceBar::MINIMAL_KEYS :
+		Bagel::HodjNPodj::MINIMAL_KEYS;
 
 	Common::Keymap *keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "bagel", _s("General Keys"));
 	keymapArray.push_back(keyMap);
 
-	for (const Bagel::KeybindingRecord *r = Bagel::MINIMAL_KEYS; r->_id; ++r) {
+	for (const Bagel::KeybindingRecord *r = keys; r->_id; ++r) {
 		Common::Action *act = new Common::Action(r->_id, _(r->_desc));
 		act->setCustomEngineActionEvent(r->_action);
-		act->addDefaultInputMapping(r->_key);
+		act->addDefaultInputMapping(r->_key1);
+		if (r->_key2)
+			act->addDefaultInputMapping(r->_key2);
 		if (r->_joy)
 			act->addDefaultInputMapping(r->_joy);
+
+		if (r->_action == Bagel::KEYBIND_UP || r->_action == Bagel::KEYBIND_DOWN ||
+				r->_action == Bagel::KEYBIND_LEFT || r->_action == Bagel::KEYBIND_RIGHT)
+			act->allowKbdRepeats();
 
 		keyMap->addAction(act);
 	}
