@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-02 00:34+0000\n"
-"PO-Revision-Date: 2025-02-21 10:35+0000\n"
+"PO-Revision-Date: 2025-03-03 07:41+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -9331,24 +9331,25 @@ msgstr "A Myst bevezetõ filmet nem játszotta le az eredeti motor."
 #.
 #: engines/mohawk/dialogs.cpp:133
 msgid "Improve Selenitic Age puzzle ~a~ccessibility"
-msgstr "Javítja a szelenit kor puzzle ~h~ozzáférését"
+msgstr "A Selenitic Age rejtvény \"könnyebb kezelés\" javítása"
 
 #: engines/mohawk/dialogs.cpp:134
 msgid "Allow solving Selenitic Age audio puzzles with more error margin."
 msgstr ""
-"Engedélyezi a szelenit kor audió rejtvények megoldását több hibahatárral."
+"A Selentic Age hang rejtvények megoldását nagyobb tűréshatárral engedi "
+"megfejteni a játék."
 
 #: engines/mohawk/dialogs.cpp:137
 msgid "Simulate loading times of old CD drives"
-msgstr "Szimulálja a régi CD-meghajtók betöltési idejét"
+msgstr "CD meghajtó betöltő sebesség szimulálása"
 
 #: engines/mohawk/dialogs.cpp:138
 msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
 msgstr ""
-"Szimulálja a régi CD-ROM meghajtók betöltési idejét véletlenszerű "
-"késleltetés hozzáadásával a jelenetek átmenetében."
+"A jelenetek közé véletlenszerű késleltetések hozzáadása, ezáltal szimulálva "
+"a régi CD meghajtók sebességét."
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:145
