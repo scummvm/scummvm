@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-02 00:34+0000\n"
-"PO-Revision-Date: 2025-03-03 14:18+0000\n"
+"PO-Revision-Date: 2025-03-03 21:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -10462,7 +10462,7 @@ msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
 msgstr ""
-"A választott audio illesztõhöz a következõ fájl(oka)t kell használni:\n"
+"A választott hang driver-hez a következő fájlok szükségesek:\n"
 "\n"
 
 #: engines/sci/sound/music.cpp:176
@@ -10482,26 +10482,18 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Néhány audio meghajtót (legalábbis néhány játéknál) a Sierra\n"
-"csak utángyártott javításként forgalmazott, így esetleg nem\n"
-"az eredeti játék beállítás részeként kerültek telepítésre.\n"
+"Egyes hang drivereket (legalábbis néhány játéknál) a Sierra mint\n"
+"utángyártott javításként jelentette meg. Emiatt nem feltétlenül\n"
+"kerültek telepítésre a játékkal együtt.\n"
 "\n"
-"Kérlek, másold ez(eke)t a fájl(oka)t a játék könyvtárába.\n"
+"Kérjük másolja ezeket a fájlokat a játék adat könyvtárába.\n"
 "\n"
-"Felhívjuk a figyelmét azonban, hogy a fájl(ok) nem érhetõ(k) el\n"
-"külön, csak mint (javított) erõforrás-csomag tartalomként.\n"
-"Ebben az esetben szükség lehet az eredeti Sierra folt alkalmazására.\n"
+"Azonban lehetséges, hogy a fájlok nem elérhetőek külön,\n"
+"hanem egy összecsomagolt már javított fájl pack-ként.\n"
+"Ebben az esetben az eredeti Sierra javítást kell telepítenie.\n"
 "\n"
 
 #: engines/scumm/detection_internal.h:384
-#, fuzzy
-#| msgid ""
-#| "This version of Monkey Island can't be played, because Limited Run Games "
-#| "provided corrupted DISK04.LEC and 903.LFL files.\n"
-#| "\n"
-#| "Please contact their technical support for replacement files, or look "
-#| "online for some guides which can help you recover valid files from the "
-#| "KryoFlux dumps that Limited Run Games also provided."
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
 "provided corrupted DISK03.LEC, DISK04.LEC and 903.LFL files.\n"
@@ -10510,12 +10502,12 @@ msgid ""
 "for some guides which can help you recover valid files from the KryoFlux "
 "dumps that Limited Run Games also provided."
 msgstr ""
-"A Monkey Island ezen verziója nem játszható le, mert a Limited Run Games "
-"sérült DISK04.LEC és 903.LFL fájlokat jelzett.\n"
+"A Monkey Island ezen verziója nem játszható, mert a Limited Run Games sérült "
+"DISK03.LEC, DISK04.LEC és 903.LFL fájlokat mellékelt.\n"
 "\n"
-"Kérjük, lépj kapcsolatba a technikai támogatással a cserefájlokért, vagy "
-"keress online útmutatót, amely segíthet a fájlok helyreállításában a Limited "
-"Run Games által is biztosított KryoFlux másolatokból."
+"Kérjük lépjen kapcsolatba az ügyfélszolgálatukkal a fájlok pótlásával "
+"kapcsolatban, vagy keressen rá online útmutatókra, melyek segítenek az "
+"eredeti Limited Run Games által biztosított KryoFlux fájlok felderítésében."
 
 #. I18N: Creates new online session for multiplayer
 #: engines/scumm/dialog-createsession.cpp:37
@@ -10531,7 +10523,7 @@ msgstr "Játék Neve:"
 #: engines/scumm/dialog-createsession.cpp:44
 #: engines/scumm/dialog-sessionselector.cpp:60
 msgid "Your Name:"
-msgstr "A Neved:"
+msgstr "Az Ön Neve:"
 
 #. I18N: Button, start hosting online multiplayer game
 #: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4205
@@ -10557,16 +10549,16 @@ msgstr "%d elérhető játék található."
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:285
 msgid "~P~revious"
-msgstr "~E~lõzõ"
+msgstr "Előzők"
 
 #. I18N: Next page button
 #: engines/scumm/dialogs.cpp:287
 msgid "~N~ext"
-msgstr "Következõ"
+msgstr "Következők"
 
 #: engines/scumm/dialogs.cpp:288
 msgid "~C~lose"
-msgstr "~B~ezár"
+msgstr "Bezár"
 
 #: engines/scumm/dialogs.cpp:969
 msgid "Speech Only"
@@ -10574,7 +10566,7 @@ msgstr "Csak beszéd"
 
 #: engines/scumm/dialogs.cpp:970
 msgid "Speech and Subtitles"
-msgstr "Beszéd és felirat"
+msgstr "Beszéd és feliratok"
 
 #: engines/scumm/dialogs.cpp:971
 msgid "Subtitles Only"
@@ -10583,15 +10575,15 @@ msgstr "Csak felirat"
 #: engines/scumm/dialogs.cpp:979
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr "Beszéd & Felir"
+msgstr "Beszéd & Feliratok"
 
 #: engines/scumm/dialogs.cpp:1025
 msgid "Select a Proficiency Level."
-msgstr "Válassz hozzáértés szintet."
+msgstr "Válasszon nehézségi szintet."
 
 #: engines/scumm/dialogs.cpp:1027
 msgid "Refer to your Loom(TM) manual for help."
-msgstr "Segítségért nézd meg a Loom(TM) kézikönyvedet."
+msgstr "Tekintse meg Loom kézikönyvét a további segítségért."
 
 #: engines/scumm/dialogs.cpp:1031
 msgid "Practice"
@@ -10599,59 +10591,63 @@ msgstr "Gyakorlás"
 
 #: engines/scumm/dialogs.cpp:1032
 msgid "Expert"
-msgstr "Szakértõ"
+msgstr "Szakértő"
 
 #: engines/scumm/dialogs.cpp:1139
 msgid "Enhancements:"
-msgstr ""
+msgstr "Feljavítások:"
 
 #: engines/scumm/dialogs.cpp:1144
-#, fuzzy
-#| msgid "Use original menus"
 msgid "Fix original bugs"
-msgstr "Eredeti menük használata"
+msgstr "Eredeti hibák javítása"
 
 #: engines/scumm/dialogs.cpp:1145
 msgid ""
 "Fixes bugs which were present in the original release, and noticeable "
 "graphical/audio glitches."
 msgstr ""
+"A megjelent verzióban is megtalálható, valamint látható grafikai/hang hibák "
+"javítása."
 
 #: engines/scumm/dialogs.cpp:1148
 msgid "Audio-visual improvements"
-msgstr ""
+msgstr "Hang-vizuális javítások"
 
 #: engines/scumm/dialogs.cpp:1149
 msgid ""
 "Makes adjustments not related to bugs for certain audio and graphics "
 "elements (e.g. version consistency changes)."
 msgstr ""
+"Finomhangolások, melyek nem hibaként jellemezhető hang és grafikai "
+"furcsaságokat javít (pl: konzisztens verzió változások)."
 
 #: engines/scumm/dialogs.cpp:1152
-#, fuzzy
-#| msgid "Enable restored content"
 msgid "Restored content"
-msgstr "Visszaállított tartalom engedélyezése"
+msgstr "Visszaállított tartalom"
 
 #: engines/scumm/dialogs.cpp:1153
 msgid ""
 "Restores dialogs, graphics, and audio elements which were originally cut in "
 "the original release."
 msgstr ""
+"Dialógusok, grafikák, hang elemek visszaállítása, melyeket kivágtak a "
+"végleges verzióból."
 
 #: engines/scumm/dialogs.cpp:1156
 msgid "Modern UI/UX adjustments"
-msgstr ""
+msgstr "Modern UI/UX hangolások"
 
 #: engines/scumm/dialogs.cpp:1157
 msgid ""
 "Activates some modern comforts; e.g it removes the fake sound loading screen "
 "in Sam&Max, and makes early save menus snappier."
 msgstr ""
+"Néhány modern komfortos kezelést hozzáad; pl: eltávolítja a hamis betöltő "
+"hangot a Sam&Max-ben, valamint a mentés menük reszponzívabbá tétele."
 
 #: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:746
 msgid "Enable the original GUI and Menu"
-msgstr "Eredeti GUI és Menü engedélyezése"
+msgstr "Eredeti felület és Menü engedélyezése"
 
 #: engines/scumm/dialogs.cpp:1182 engines/scumm/metaengine.cpp:747
 msgid ""
@@ -10660,22 +10656,20 @@ msgid ""
 "for a more complete experience."
 msgstr ""
 "Engedélyezi a motoron belüli grafikus felület és az eredeti mentés/töltés "
-"menü használatát. A teljesebb élmény érdekében használd a „Kérj "
+"menü használatát. A teljesebb élmény érdekében használja a „Kérj "
 "visszaigazolást kilépéskor” funkcióval együtt."
 
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:756
-#, fuzzy
-#| msgid "Enabled aspect ratio correction"
 msgid "Enable gamma correction"
-msgstr "Méretarány korrekció engedélyezve"
+msgstr "Gamma korrekció bekapcsolása"
 
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:757
 msgid "Brighten the graphics to simulate a Macintosh monitor."
-msgstr ""
+msgstr "A Macintosh monitorhoz hasonló világos képet szimulál."
 
 #: engines/scumm/dialogs.cpp:1195
 msgid "Simulate Sega colors"
-msgstr ""
+msgstr "Sega színek szimulálása"
 
 #: engines/scumm/dialogs.cpp:1196
 msgid ""
@@ -10683,6 +10677,9 @@ msgid ""
 "actual Sega hardware. These are significantly darker, though it's unclear if "
 "that was intended or not."
 msgstr ""
+"A játék által definiált színek helyett, Sega hardver alapú szín emulációt "
+"használ. Ezek jelentősen sötétebbek, és nem teljesen egyértelmű, hogy ez "
+"szándékos-e."
 
 #: engines/scumm/dialogs.cpp:1312
 msgid "Overture Timing:"
