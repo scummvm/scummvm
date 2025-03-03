@@ -290,18 +290,18 @@ bool Fuge::msgClose(const CloseMessage &msg) {
 
 bool Fuge::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
-		// Move paddle clockwise
 	case KEYBIND_UP:
 	case KEYBIND_RIGHT:
+		// Move paddle clockwise
 		if (m_bGameActive) {
 			m_nPaddleCelIndex += PADDLE_CEL_JUMP;
 			paintPaddle(false);
 		}
 		break;
 
-		// Move paddle counter-clockwise
 	case KEYBIND_DOWN:
 	case KEYBIND_LEFT:
+		// Move paddle counter-clockwise
 		if (m_bGameActive) {
 			m_nPaddleCelIndex -= PADDLE_CEL_JUMP;
 			paintPaddle(false);
@@ -309,6 +309,7 @@ bool Fuge::msgAction(const ActionMessage &msg) {
 		break;
 
 	case KEYBIND_SELECT:
+		// Launch ball
 		if (m_bGameActive) {
 			if (m_bBallOnPaddle) {
 				launchBall();
@@ -511,10 +512,10 @@ void Fuge::gameResume() {
 }
 
 void Fuge::playGame() {
-	// load the .INI settings
+	// Load the .INI settings
 	loadIniSettings();
 
-	// reset all game parameters
+	// Reset all game parameters
 	gameReset();
 
 	loadNewPaddle(m_nInitPaddleSize);
@@ -524,7 +525,7 @@ void Fuge::playGame() {
 	startPaddle();
 	startBall();
 
-	// game starts paused
+	// Game starts paused
 	m_bPause = true;
 	m_bGameActive = true;
 }
@@ -534,23 +535,23 @@ void Fuge::gameReset() {
 		BofPlaySound(NULL, SOUND_ASYNCH);	// Stop all sounds
 	}
 
-	endBricks();	// remove all bricks from sprite chain
-	endBall();		// remove ball from sprite chain
-	endPaddle();    // remove paddle from sprite chain
+	endBricks();	// Remove all bricks from sprite chain
+	endBall();		// Remove ball from sprite chain
+	endPaddle();    // Remove paddle from sprite chain
 
-	m_fTurboBoost = 0.0;	// no turbo
-	m_lExtraLifeScore = EXTRA_LIFE_SCORE; // user needs this many points for an extra life
-	m_bGameActive = false;	// there is no currently active game
-	m_bPause = false;		// the game is not paused
+	m_fTurboBoost = 0.0;					// No turbo
+	m_lExtraLifeScore = EXTRA_LIFE_SCORE;	// User needs this many points for an extra life
+	m_bGameActive = false;	// There is no currently active game
+	m_bPause = false;		// The game is not paused
 	m_bBallOnPaddle = false;			// Ball is not yet on paddle
-	m_bMovingPaddle = false;			// user is not moving the paddle
-	m_nBalls = m_nInitNumBalls;			// reset # of balls
-	m_nBallSpeed = m_nInitBallSpeed;	// reset ball speed
+	m_bMovingPaddle = false;			// User is not moving the paddle
+	m_nBalls = m_nInitNumBalls;			// Reset # of balls
+	m_nBallSpeed = m_nInitBallSpeed;	// Reset ball speed
 
-	m_nNumRows = m_nInitStartLevel;				// reset number of brick rows
-	m_nBricks = m_nNumRows * BRICKS_PER_ROW;	// get new brick count
-	m_lScore = 0;                               // reset the score
-	m_bPaddleHit = false;                       // paddle starts fresh
+	m_nNumRows = m_nInitStartLevel;				// Reset number of brick rows
+	m_nBricks = m_nNumRows * BRICKS_PER_ROW;	// Get new brick count
+	m_lScore = 0;                               // Reset the score
+	m_bPaddleHit = false;                       // Paddle starts fresh
 }
 
 void Fuge::loadIniSettings() {
@@ -631,7 +632,7 @@ CVector Fuge::ballOnPaddle() {
 	vBall.Rotate(m_nPaddleCelIndex * ((2 * PI) / N_PADDLE_CELS));
 	vBall -= CVector(BALL_RADIUS, BALL_RADIUS);
 
-	// this vector was relative to center so now make it a real point
+	// This vector was relative to center so now make it a real point
 	vBall += _gvCenter;
 
 	return vBall;
@@ -662,10 +663,10 @@ void Fuge::launchBall() {
 	m_bPause = false;
 	m_bBallOnPaddle = false;
 
-	// starting ball vector is determined by the location of the paddle
+	// Starting ball vector is determined by the location of the paddle
 	m_vBallVector = _gvCenter - (m_ptBallLocation + BALL_RADIUS);
 
-	// add a slight randomness to the balls vector
+	// Add a slight randomness to the balls vector
 	m_vBallVector.Rotate(Deg2Rad(getRandomNumber(2) - 1));
 	m_vBallVector.Unitize();
 
@@ -725,7 +726,7 @@ void Fuge::moveBall() {
 
 		length = vBall.Length() + BALL_RADIUS;
 
-		// check to see if ball has entered the black hole
+		// Check to see if ball has entered the black hole
 		if (length <= BLACKHOLE_RADIUS + BALL_RADIUS * 2) {
 			// Play the ball-gets-sucked-into-black-hole animation
 			loseBall();
@@ -744,7 +745,7 @@ void Fuge::moveBall() {
 		} else if (length >= WHEEL_RADIUS) {
 			// The ball hit edge of Ferris Wheel
 			if (m_bOutterWall) {
-				// has ball hit right border
+				// Has ball hit right border
 				if (m_ptBallLocation.x >= GAME_WIDTH - GAME_RIGHT_BORDER_WIDTH - BALL_SIZE_X) {
 					m_ptBallLocation.x = GAME_WIDTH - GAME_RIGHT_BORDER_WIDTH - BALL_SIZE_X;
 					m_vBallVector.x = -m_vBallVector.x;
@@ -830,14 +831,14 @@ void Fuge::paintPaddle(bool bPaint) {
 	CVector vPaddle;
 	int nOldIndex;
 
-	// verify that the input was not tainted
+	// Verify that the input was not tainted
 	assert(m_nPaddleCelIndex < N_PADDLE_CELS * 2);
 	assert(m_nPaddleCelIndex > -N_PADDLE_CELS);
 
-	// can't access a null pointer
+	// Can't access a null pointer
 	assert(!m_pPaddle.empty());
 
-	// get old cel index
+	// Get old cel index
 	nOldIndex = m_pPaddle.getCelIndex();
 
 	if (m_nPaddleCelIndex >= N_PADDLE_CELS) {
@@ -847,15 +848,14 @@ void Fuge::paintPaddle(bool bPaint) {
 		m_nPaddleCelIndex = m_nPaddleCelIndex + N_PADDLE_CELS;
 	}
 
-	// verify our calculations
+	// Verify our calculations
 	assert((m_nPaddleCelIndex >= 0) && (m_nPaddleCelIndex < N_PADDLE_CELS));
 
-	// don't re-paint the paddle if we would paint the same cel
-	//
+	// Don't adjust the paddle if we would paint the same cel
 	if (bPaint || (nOldIndex != m_nPaddleCelIndex)) {
 		m_pPaddle.setCel(m_nPaddleCelIndex);
 
-		// move paddle to new location
+		// Move paddle to new location
 		m_pPaddle.x = PADDLE_START_X;
 		m_pPaddle.y = PADDLE_START_Y;
 
@@ -863,10 +863,10 @@ void Fuge::paintPaddle(bool bPaint) {
 		if (m_bBallOnPaddle) {
 			assert(!m_pBall.empty());
 
-			// ball is rotating with paddle
+			// Ball is rotating with paddle
 			m_ptBallLocation = ballOnPaddle();
 
-			// set the ball to it's new location
+			// Set the ball to it's new location
 			m_pBall.x = m_ptBallLocation.x;
 			m_pBall.y = m_ptBallLocation.y;
 		}
@@ -877,20 +877,20 @@ void Fuge::loseBall() {
 	CSound *pEffect = NULL;
 	ErrorCode errCode;
 
-	// assume no error
+	// Assume no error
 	errCode = ERR_NONE;
 
-	// pause the game
+	// Pause the game
 	gamePause();
 
-	// reset turbo
+	// Reset turbo
 	m_fTurboBoost = 0.0;
 
 	m_pBall.unlinkSprite();
 
 	assert(m_nBalls > 0);
 
-	// on less ball
+	// One less ball
 	m_nBalls--;
 
 	if (gameInfo.bSoundEffectsEnabled) {
@@ -903,7 +903,7 @@ void Fuge::loseBall() {
 #endif
 	}
 
-	// if no more balls left - user has lost
+	// If no more balls left - user has lost
 	if (m_nBalls == 0) {
 
 		if (gameInfo.bSoundEffectsEnabled) {
@@ -933,7 +933,7 @@ void Fuge::loseBall() {
 
 void Fuge::gameOverClosed() {
 	if (gameInfo.bPlayingMetagame) {
-		// return the final score
+		// Return the final score
 		gameInfo.lScore = m_lScore;
 	}
 
@@ -941,14 +941,14 @@ void Fuge::gameOverClosed() {
 }
 
 void Fuge::newLifeClosed() {
-	// reset the ball position
+	// Reset the ball position
 	endPaddle();
 	startPaddle();
 	startBall();
 }
 
 void Fuge::optionsClosed() {
-	// show the command scroll
+	// Show the command scroll
 	m_ScrollButton.setPressed(false);
 	m_bIgnoreScrollClick = false;
 
@@ -976,12 +976,10 @@ void Fuge::ballvsPaddle() {
 	int nRollBack = 0;
 	bool bHit;
 
-	// calculate the 7 critical points for the paddle
-	//
+	// Calculate the 7 critical points for the paddle
 	vTmp.SetVector(0, -PADDLE_RADIUS);
 
-	// cel index determines paddle angle
-	//
+	// Cel index determines paddle angle
 	vTmp.Rotate((2 * PI / N_PADDLE_CELS) * m_nPaddleCelIndex);
 
 	vPoints[1] = _gvCenter + vTmp;
@@ -1009,23 +1007,22 @@ void Fuge::ballvsPaddle() {
 	if (m_nInitPaddleSize > PSIZE_MIN) {
 		vTmp = vPoints[0] - vPoints[1];
 		vTmp.Unitize();
-		vTmp *= 9; // paddle width
+		vTmp *= 9; // Paddle width
 
 		vPoints[5] = vPoints[1] + vTmp;
 
 		vTmp = vPoints[0] - vPoints[2];
 		vTmp.Unitize();
-		vTmp *= 9; // paddle width
+		vTmp *= 9; // Paddle width
 		vPoints[6] = vPoints[2] - vTmp;
 	}
 
-	// get center of the ball
+	// Get center of the ball
 	vBallCenter = m_ptBallLocation + BALL_RADIUS;
 
-	// if any of those points are less than the radius distance
+	// If any of those points are less than the radius distance
 	// away from the center of the ball, then the ball has hit
 	// the paddle
-	//
 	bHit = false;
 	for (i = 0; i < N_CRIT_POINTS - 1; i++) {
 
@@ -1106,7 +1103,7 @@ void Fuge::ballvsPaddle() {
 
 			m_ptBallLocation -= vTmp;
 
-			// get center of ball
+			// Get center of ball
 			vBallCenter = m_ptBallLocation + BALL_RADIUS;
 
 			fLen1 = distanceBetweenPoints(vBallCenter, vPoints[0]);
@@ -1158,16 +1155,14 @@ void Fuge::ballvsPaddle() {
 					vFace.Rotate(Deg2Rad(10));
 				}
 
-				// get center of ball
+				// Get center of ball
 				vBallCenter = m_ptBallLocation + BALL_RADIUS;
 
-				// roll ball back to edge of paddle
-				//
+				// Roll ball back to edge of paddle
 				while (distanceBetweenPoints(vBallCenter, _gvCenter) < PADDLE_RADIUS + BALL_RADIUS) {
-
 					m_ptBallLocation -= vTmp;
 
-					// get center of ball
+					// Get center of ball
 					vBallCenter = m_ptBallLocation + BALL_RADIUS;
 				}
 
@@ -1181,8 +1176,7 @@ void Fuge::ballvsPaddle() {
 				a1 = vPaddle.AngleBetween(m_vBallVector);
 				a2 = vFace.AngleBetween(m_vBallVector);
 
-				// kludge to compensate for when angle is too big
-				//
+				// Kludge to compensate for when angle is too big
 				if (a1 > a2) {
 					vPaddle = vFace;
 				}
@@ -1195,21 +1189,17 @@ void Fuge::ballvsPaddle() {
 				a1 = vPaddle.AngleBetween(m_vBallVector);
 				a2 = vFace.AngleBetween(m_vBallVector);
 
-				// kludge to compensate for when angle is too big
-				//
+				// Kludge to compensate for when angle is too big
 				if (a1 > a2) {
 					vPaddle = vFace;
 				}
 			}
 
-			// reflect the ball vector around the final paddle (mirror) vector
-			//
+			// Reflect the ball vector around the final paddle (mirror) vector
 			m_vBallVector.Reflect(vPaddle);
 
-			//
-			// one final check to make sure the ball is bouncing in the
+			// One final check to make sure the ball is bouncing in the
 			// correct direction.
-			//
 			if (m_vBallVector.AngleBetween(_gvCenter - vBallCenter) <= Deg2Rad(15)) {
 				m_vBallVector.Rotate(Deg2Rad(180));
 			}
@@ -1525,7 +1515,7 @@ void Fuge::ballvsBrick(double length) {
 }
 
 void Fuge::roundCompleteClosed() {
-	// stop all sounds
+	// Stop all sounds
 	if (gameInfo.bSoundEffectsEnabled) {
 #if CSOUND
 #else
@@ -1539,17 +1529,17 @@ void Fuge::roundCompleteClosed() {
 		m_nBallSpeed++;
 	}
 
-	// get new brick count
+	// Get new brick count
 	m_nBricks = m_nNumRows * BRICKS_PER_ROW;
 
 	if (gameInfo.bPlayingMetagame) {
-		// if user is playing the metagame
+		// If user is playing the metagame
 		// return to the metagame
 		gameInfo.lScore = m_lScore;
 		close();
 
 	} else {
-		// reset the ball position
+		// Reset the ball position
 		endPaddle();
 		endBall();
 		startBricks();
