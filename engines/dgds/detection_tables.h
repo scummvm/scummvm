@@ -238,9 +238,12 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// Adventures of Willy Beamish (GOG CD data)
+	// RESOURCE.RME is not strictly required to run the game (we read data from
+	// RESOURCE.MAP), but it helps differentiate this game from all the SCI
+	// detection entries.
 	{
 		"beamish",
-		0,
+		"CD",
 		{
 			{"resource.001", 0, "07eaebf5c9e569347308ff097bc6607c", 151525997},
 			{"resource.rme", 0, "09bc7bcb83b6d036c5988c81a769cf0c", 44247},
