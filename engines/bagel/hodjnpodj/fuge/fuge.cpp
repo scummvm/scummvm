@@ -364,6 +364,9 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 bool Fuge::msgMouseMove(const MouseMoveMessage &msg) {
 	int nMove;
 
+	// Even the original authors admit that mouse control
+	// mode (toggled by right clicking) kinda sucks.
+	// But it's left in to remain faithful to the original
 	if (m_bGameActive && m_bMovingPaddle) {
 		Common::Point point = msg._pos;
 
@@ -371,12 +374,13 @@ bool Fuge::msgMouseMove(const MouseMoveMessage &msg) {
 			nMove = (point.x - m_ptOrigin.x) / MOUSE_SENS + 1;
 			m_nPaddleCelIndex += nMove;
 			movePaddle(false);
+			g_system->warpMouse(m_ptOrigin.x, m_ptOrigin.y);
 
 		} else if (point.x < m_ptOrigin.x) {
 			nMove = -((m_ptOrigin.x - point.x) / MOUSE_SENS + 1);
 			m_nPaddleCelIndex += nMove;
 			movePaddle(false);
-
+			g_system->warpMouse(m_ptOrigin.x, m_ptOrigin.y);
 		}
 
 		// Hide the cursor
@@ -384,6 +388,129 @@ bool Fuge::msgMouseMove(const MouseMoveMessage &msg) {
 
 	} else {
 		g_events->setCursor(IDC_ARROW);
+	}
+
+	return true;
+}
+
+bool Fuge::msgMouseDown(const MouseDownMessage &msg) {
+	CBofSound *pEffect = NULL;
+	Common::Rect boothRect, tentRect, peopRect,
+		car1Rect, car2Rect, car3Rect, car4Rect,
+		car5Rect, car6Rect, car7Rect, car8Rect,
+		car9Rect, car10Rect;
+	int nPick = 0;
+
+	if (msg._button != MouseDownMessage::MB_LEFT)
+		return false;
+
+	boothRect = Common::Rect(BOOTH_X, BOOTH_Y, BOOTH_X + BOOTH_DX, BOOTH_Y + BOOTH_DY);
+	tentRect = Common::Rect(TENT_X, TENT_Y, TENT_X + TENT_DX, TENT_Y + TENT_DY);
+	peopRect = Common::Rect(PEOPLE_X, PEOPLE_Y, PEOPLE_X + PEOPLE_DX, PEOPLE_Y + PEOPLE_DY);
+	car1Rect = Common::Rect(CAR1_X, CAR1_Y, CAR1_X + CAR_DX, CAR1_Y + CAR_DY);
+	car2Rect = Common::Rect(CAR2_X, CAR2_Y, CAR2_X + CAR_DX, CAR2_Y + CAR_DY);
+	car3Rect = Common::Rect(CAR3_X, CAR3_Y, CAR3_X + CAR_DX, CAR3_Y + CAR_DY);
+	car4Rect = Common::Rect(CAR4_X, CAR4_Y, CAR4_X + CAR_DX, CAR4_Y + CAR_DY);
+	car5Rect = Common::Rect(CAR5_X, CAR5_Y, CAR5_X + CAR_DX, CAR5_Y + CAR_DY);
+	car6Rect = Common::Rect(CAR6_X, CAR6_Y, CAR6_X + CAR_DX, CAR6_Y + CAR_DY);
+	car7Rect = Common::Rect(CAR7_X, CAR7_Y, CAR7_X + CAR_DX, CAR7_Y + CAR_DY);
+	car8Rect = Common::Rect(CAR8_X, CAR8_Y, CAR8_X + CAR_DX, CAR8_Y + CAR_DY);
+	car9Rect = Common::Rect(CAR9_X, CAR9_Y, CAR9_X + CAR9_DX, CAR9_Y + CAR9_DY);
+	car10Rect = Common::Rect(CAR10_X, CAR10_Y, CAR10_X + CAR10_DX, CAR10_Y + CAR10_DY);
+
+	if (m_rNewGameButton.contains(msg._pos)) {
+		// User clicked on the Title - NewGame button
+		// if we are not playing from the metagame
+		if (!gameInfo.bPlayingMetagame) {
+			// Start a new game
+			playGame();
+		}
+	} else if (boothRect.contains(msg._pos)) {
+		if (gameInfo.bSoundEffectsEnabled) {
+#if CSOUND
+			pEffect = new CBofSound(this, WAV_BOOTH,
+				SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE);  //...Wave file, to delete itself
+			(*pEffect).play();                                                      //...play the narration
+#else
+			sndPlaySound(WAV_BOOTH, SND_ASYNC);
+#endif
+		}
+	} else if (tentRect.contains(msg._pos)) {
+
+		if (gameInfo.bSoundEffectsEnabled) {
+#if CSOUND
+			pEffect = new CBofSound(this, WAV_TENT,
+				SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE);  //...Wave file, to delete itself
+			(*pEffect).play();                                                      //...play the narration
+#else
+			sndPlaySound(WAV_TENT, SND_ASYNC);
+#endif
+		}
+
+	} else if (peopRect.contains(msg._pos)) {
+		if (gameInfo.bSoundEffectsEnabled) {
+			nPick = getRandomNumber(NUM_WAVS - 1);
+			if (nPick == 0) {
+#if CSOUND
+				pEffect = new CBofSound(this, WAV_PEOPLE1,
+					SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE);  //...Wave file, to delete itself
+				(*pEffect).play();                                                      //...play the narration
+#else
+				sndPlaySound(WAV_PEOPLE1, SND_ASYNC);
+#endif
+			} else {
+#if CSOUND
+				pEffect = new CBofSound(this, WAV_PEOPLE2,
+					SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE);  //...Wave file, to delete itself
+				(*pEffect).play();                                                      //...play the narration
+#else
+				sndPlaySound(WAV_PEOPLE2, SND_ASYNC);
+#endif
+			}
+		}
+
+	} else if (((((((((car1Rect.contains(msg._pos) || car2Rect.contains(msg._pos)) || car3Rect.contains(msg._pos)) ||
+		car4Rect.contains(msg._pos)) || car5Rect.contains(msg._pos)) || car6Rect.contains(msg._pos)) ||
+		car7Rect.contains(msg._pos)) || car8Rect.contains(msg._pos)) || car9Rect.contains(msg._pos)) ||
+		car10Rect.contains(msg._pos)) {
+
+		if (gameInfo.bSoundEffectsEnabled) {
+			nPick = getRandomNumber(NUM_WAVS - 1);
+
+#if CSOUND
+			// Wave file, to delete itself play the narration
+			pEffect = new CBofSound(this, ((nPick == 0) ? WAV_CAR1 : WAV_CAR2), SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE);
+			pEffect->play();
+#else
+			sndPlaySound(((nPick == 0) ? WAV_CAR1 : WAV_CAR2), SND_ASYNC);
+#endif
+		}
+	} else {
+
+		if (m_bGameActive) {
+			if (m_bBallOnPaddle) {
+				launchBall();
+			}
+		}
+	}
+
+	return true;
+}
+
+bool Fuge::msgMouseUp(const MouseUpMessage &msg) {
+	if (m_bGameActive && msg._button == MouseUpMessage::MB_RIGHT) {
+		// Toggle move paddle mode
+		m_bMovingPaddle = !m_bMovingPaddle;
+
+		if (m_bMovingPaddle) {
+			g_events->setCursor(IDC_NONE);
+			g_system->warpMouse(m_ptOrigin.x, m_ptOrigin.y);
+			gameResume();
+
+		} else {
+			g_events->setCursor(IDC_ARROW);
+			gamePause();
+		}
 	}
 
 	return true;

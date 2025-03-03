@@ -148,6 +148,8 @@ public:
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgMouseMove(const MouseMoveMessage &msg) override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 	void draw() override;
 	bool tick() override;
 };
