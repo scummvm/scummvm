@@ -42,7 +42,7 @@ VersionInfo::~VersionInfo() {
 
 #pragma region ContextDeclaration
 ContextDeclaration::ContextDeclaration(Chunk &chunk) {
-	// ENSURE WE HAVEN'T REACHED THE END OF THE DECLARATIONS.
+	// Make sure this declaration isn't empty.
 	ContextDeclarationSectionType sectionType = getSectionType(chunk);
 	if (kContextDeclarationEmptySection == sectionType) {
 		_isLast = true;
@@ -52,9 +52,8 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 		_isLast = false;
 	}
 
-	// READ THE OTHER CONTEXT METADATA.
 	if (kContextDeclarationPlaceholder == sectionType) {
-		// READ THE FILE NUMBER.
+		// Read the file number.
 		sectionType = getSectionType(chunk);
 		if (kContextDeclarationFileNumber1 == sectionType) {
 			_fileNumber = Datum(chunk).u.i;
@@ -73,7 +72,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 			error("ContextDeclaration(): Expected section type FILE_NUMBER_2, got 0x%x", static_cast<uint>(sectionType));
 		}
 
-		// READ THE CONTEXT NAME.
+		// Read the context name.
 		// Only some titles have context names, and unfortunately we can't
 		// determine which just by relying on the title compiler version
 		// number.
@@ -84,7 +83,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 		if (kContextDeclarationName == sectionType) {
 			_contextName = Datum(chunk, kDatumTypeString).u.string;
 		} else {
-			// THERE IS NO CONTEXT NAME.
+			// There is no context name.
 			// We have instead read into the next declaration, so let's undo that.
 			chunk.seek(rewindOffset);
 		}
@@ -94,7 +93,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 		error("ContextDeclaration::ContextDeclaration(): Unknown section type 0x%x", static_cast<uint>(sectionType));
 	}
 
-	// READ THE FILE REFERENCES.
+	// Read the file references.
 	// We don't know how many file references there are beforehand, so we'll
 	// just read until we get something else.
 	int rewindOffset = 0;
@@ -122,7 +121,7 @@ ContextDeclaration::~ContextDeclaration() {
 
 #pragma region UnknownDeclaration
 UnknownDeclaration::UnknownDeclaration(Chunk &chunk) {
-	// ENSURE THIS DECLARATION IS NOT EMPTY.
+	// Make sure this declaration isn't empty.
 	UnknownDeclarationSectionType sectionType = getSectionType(chunk);
 	if (kUnknownDeclarationEmptySection == sectionType) {
 		_isLast = true;
@@ -132,7 +131,6 @@ UnknownDeclaration::UnknownDeclaration(Chunk &chunk) {
 		_isLast = false;
 	}
 
-	// READ THE UNKNOWN VALUE.
 	sectionType = getSectionType(chunk);
 	if (kUnknownDeclarationUnk1 == sectionType) {
 		_unk = Datum(chunk, kDatumTypeUint16_1).u.i;
@@ -159,7 +157,7 @@ UnknownDeclarationSectionType UnknownDeclaration::getSectionType(Chunk &chunk) {
 
 #pragma region FileDeclaration
 FileDeclaration::FileDeclaration(Chunk &chunk) {
-	// ENSURE THIS DECLARATION IS NOT EMPTY.
+	// Make sure this declaration isn't empty.
 	FileDeclarationSectionType sectionType = getSectionType(chunk);
 	if (kFileDeclarationEmptySection == sectionType) {
 		_isLast = true;
@@ -169,7 +167,7 @@ FileDeclaration::FileDeclaration(Chunk &chunk) {
 		_isLast = false;
 	}
 
-	// READ THE FILE ID.
+	// Read the file ID.
 	sectionType = getSectionType(chunk);
 	if (kFileDeclarationFileId == sectionType) {
 		_id = Datum(chunk, kDatumTypeUint16_1).u.i;
@@ -177,7 +175,7 @@ FileDeclaration::FileDeclaration(Chunk &chunk) {
 		error("FileDeclaration(): Expected section type FILE_ID, got 0x%x", static_cast<uint>(sectionType));
 	}
 
-	// READ THE INTENDED LOCATION OF THE FILE.
+	// Read the intended file location.
 	sectionType = getSectionType(chunk);
 	if (kFileDeclarationFileNameAndType == sectionType) {
 		Datum datum = Datum(chunk, kDatumTypeUint16_1);
@@ -187,7 +185,6 @@ FileDeclaration::FileDeclaration(Chunk &chunk) {
 		error("FileDeclaration(): Expected section type FILE_NAME_AND_TYPE, got 0x%x", static_cast<uint>(sectionType));
 	}
 
-	// READ THE CASE-INSENSITIVE FILENAME.
 	// Since the platforms that Media Station originally targeted were case-insensitive,
 	// the case of these filenames might not match the case of the files actually in
 	// the directory. All files should be matched case-insensitively.
@@ -208,7 +205,7 @@ FileDeclaration::~FileDeclaration() {
 
 #pragma region SubfileDeclaration
 SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
-	// ENSURE THIS DECLARATION IS NOT EMPTY.
+	// Make sure this declaration isn't empty.
 	SubfileDeclarationSectionType sectionType = getSectionType(chunk);
 	if (kSubfileDeclarationEmptySection == sectionType) {
 		_isLast = true;
@@ -218,7 +215,7 @@ SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
 		_isLast = false;
 	}
 
-	// READ THE ASSET ID.
+	// Read the asset ID.
 	sectionType = getSectionType(chunk);
 	if (kSubfileDeclarationAssetId == sectionType) {
 		_assetId = Datum(chunk, kDatumTypeUint16_1).u.i;
@@ -226,7 +223,7 @@ SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
 		error("SubfileDeclaration(): Expected section type ASSET_ID, got 0x%x", static_cast<uint>(sectionType));
 	}
 
-	// READ THE FILE ID.
+	// Read the file ID.
 	sectionType = getSectionType(chunk);
 	if (kSubfileDeclarationFileId == sectionType) {
 		_fileId = Datum(chunk, kDatumTypeUint16_1).u.i;
@@ -234,8 +231,7 @@ SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
 		error("SubfileDeclaration(): Expected section type FILE_ID, got 0x%x", static_cast<uint>(sectionType));
 	}
 
-	// READ THE START OFFSET IN THE GIVEN FILE.
-	// This is from the absolute start of the given file.
+	// Read the start offset from the absolute start of the file.
 	sectionType = getSectionType(chunk);
 	if (kSubfileDeclarationStartOffset == sectionType) {
 		_startOffsetInFile = Datum(chunk, kDatumTypeUint32_1).u.i;
@@ -253,7 +249,6 @@ SubfileDeclarationSectionType SubfileDeclaration::getSectionType(Chunk &chunk) {
 
 #pragma region CursorDeclaration
 CursorDeclaration::CursorDeclaration(Chunk& chunk) {
-	// READ THE CURSOR RESOURCE.
 	uint16 unk1 = Datum(chunk, kDatumTypeUint16_1).u.i; // Always 0x0001
 	_id = Datum(chunk, kDatumTypeUint16_1).u.i;
 	_unk = Datum(chunk, kDatumTypeUint16_1).u.i;

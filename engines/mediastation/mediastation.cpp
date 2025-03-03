@@ -126,14 +126,11 @@ bool MediaStationEngine::isFirstGenerationEngine() {
 }
 
 Common::Error MediaStationEngine::run() {
-	// INITIALIZE SUBSYSTEMS.
-	// All Media Station games run at 640x480.
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 	_screen = new Graphics::Screen();
 	// TODO: Determine if all titles blank the screen to 0xff.
 	_screen->fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0xff);
 
-	// LOAD BOOT.STM.
 	Common::Path bootStmFilepath = Common::Path("BOOT.STM");
 	_boot = new Boot(bootStmFilepath);
 
@@ -188,7 +185,6 @@ Common::Error MediaStationEngine::run() {
 		g_system->delayMillis(10);
 	}
 
-	// CLEAN UP.
 	return Common::kNoError;
 }
 
@@ -315,7 +311,7 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 		return _loadedContexts.getVal(contextId);
 	}
 
-	// GET THE FILE ID.
+	// Get the file ID.
 	SubfileDeclaration *subfileDeclaration = _boot->_subfileDeclarations.getValOrDefault(contextId);
 	if (subfileDeclaration == nullptr) {
 		error("MediaStationEngine::loadContext(): Couldn't find subfile declaration with ID %d", contextId);
@@ -329,7 +325,7 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 	}
 	uint32 fileId = subfileDeclaration->_fileId;
 
-	// GET THE FILENAME.
+	// Get the filename.
 	FileDeclaration *fileDeclaration = _boot->_fileDeclarations.getValOrDefault(fileId);
 	if (fileDeclaration == nullptr) {
 		warning("MediaStationEngine::loadContext(): Couldn't find file declaration with ID 0x%x", fileId);

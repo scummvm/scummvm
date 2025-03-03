@@ -63,14 +63,14 @@ bool Chunk::seek(int64 offset, int whence) {
 }
 
 Subfile::Subfile(Common::SeekableReadStream *stream) : _stream(stream) {
-	// VERIFY FILE SIGNATURE.
+	// Verify file signature.
 	debugC(5, kDebugLoading, "\n*** Subfile::Subfile(): Got new subfile (@0x%llx) ***", static_cast<long long int>(_stream->pos()));
 	_rootChunk = nextChunk();
 	if (_rootChunk._id != MKTAG('R', 'I', 'F', 'F'))
 		error("Subfile::Subfile(): Expected \"RIFF\" chunk, got %s (@0x%llx)", tag2str(_rootChunk._id), static_cast<long long int>(_stream->pos()));
 	_stream->skip(4); // IMTS
 
-	// READ RATE CHUNK.
+	// Read the RATE chunk.
 	// This chunk should  always contain just one piece of data,
 	// the "rate" (whatever that is). Usually it is zero.
 	// TODO: Figure out what this actually is.
@@ -79,10 +79,9 @@ Subfile::Subfile(Common::SeekableReadStream *stream) : _stream(stream) {
 		error("Subfile::Subfile(): Expected \"rate\" chunk, got %s (@0x%llx)", tag2str(_rootChunk._id), static_cast<long long int>(_stream->pos()));
 	_rate = _stream->readUint32LE();
 
-	// READ PAST LIST CHUNK.
+	// Queue up the first data chunk.
+	// First, we need to read past the LIST chunk.
 	nextChunk();
-
-	// QUEUE UP THE FIRST DATA CHUNK.
 	if (_stream->readUint32BE() != MKTAG('d', 'a', 't', 'a'))
 		error("Subfile::Subfile(): Expected \"data\" as first bytes of subfile, got %s @0x%llx)", tag2str(rateChunk._id), static_cast<long long int>(_stream->pos()));
 }

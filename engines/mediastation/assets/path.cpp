@@ -77,7 +77,7 @@ void Path::timePlay() {
 	// TODO: Run the path start event. Haven't seen one the wild yet, don't know its ID.
 	debugC(5, kDebugScript, "Path::timePlay(): No PathStart event handler");
 
-	// STEP THE PATH.
+	// Step the path.
 	for (uint i = 0; i < totalSteps; i++) {
 		_percentComplete = (double)(i + 1) / totalSteps;
 		debugC(5, kDebugScript, "Path::timePlay(): Step %d of %d", i, totalSteps);

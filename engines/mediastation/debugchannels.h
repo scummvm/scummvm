@@ -29,18 +29,13 @@
 
 namespace MediaStation {
 
-// TODO: Finish comments that describe the various debug levels
+// TODO: Finish comments that describe the various debug levels.
 enum DebugChannels {
 	kDebugGraphics = 1,
 	kDebugPath,
 	kDebugScan,
-
-	// Level 5: Decompiled Script Lines
-	// Level 7: Instruction Types & Opcodes
 	kDebugScript,
 	kDebugEvents,
-
-	// Level 9: Individual Datums
 	kDebugLoading
 };
 

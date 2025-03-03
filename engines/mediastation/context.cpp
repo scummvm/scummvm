@@ -219,7 +219,7 @@ void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 	}
 
 	while (moreSectionsToRead) {
-		// VERIFY THIS CHUNK IS A HEADER.
+		// Verify this chunk is a header.
 		// TODO: What are the situations when it's not?
 		uint16 sectionType = Datum(chunk, kDatumTypeUint16_1).u.i;
 		debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
@@ -228,7 +228,7 @@ void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 			error("Context::readNewStyleHeaderSections(): Expected header chunk, got %s (@0x%llx)", tag2str(chunk._id), static_cast<long long int>(chunk.pos()));
 		}
 
-		// READ THIS HEADER SECTION.
+		// Read this header section.
 		moreSectionsToRead = readHeaderSection(subfile, chunk);
 		if (subfile.atEnd()) {
 			break;
