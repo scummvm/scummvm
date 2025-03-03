@@ -393,18 +393,15 @@ void Adlib::Func2839(uint8 bpp0A, uint32 bpp06) {
 	push	ax
 	call	far 0017h:2792h
 	*/
-	uint16 di = 0x01FE;
 	uint16 bp1 = 0x0;
 	bp1 += 0x20;
-	data->seek(di + 0, SEEK_SET);
-	uint8 v0 = data->readByte();
+	uint8 v0 = shMem2250->peekByteAtOffset(0, SEEK_CUR);
 	Func2792(bp1, v0);
 	// [bp-2h] - TODO: Hardcoded to 3, but actually loaded
 	uint16 bp2 = 0x3;
 	bp2 += 0x20;
 	// TODO: Get proper DI
-	data->seek(di + 1, SEEK_SET);
-	uint8 v1 = data->readByte();
+	uint8 v1 = shMem2250->peekByteAtOffset(1, SEEK_CUR);
 	Func2792(bp2, v1);
 	/* push ax
 		les di,
@@ -417,8 +414,7 @@ void Adlib::Func2839(uint8 bpp0A, uint32 bpp06) {
 	bp1 = 0;
 	bp1 += 0x40;
 	// TODO: Get proper DI
-	data->seek(di + 2, SEEK_SET);
-	uint8 v2 = data->readByte();
+	uint8 v2 = shMem2250->peekByteAtOffset(2, SEEK_CUR);
 	Func2792(bp1, v2);
 	/*
 	mov	al,[bp-1h]
@@ -431,8 +427,7 @@ void Adlib::Func2839(uint8 bpp0A, uint32 bpp06) {
 	call	far 0017h:2792h */
 	bp2 = 0x3;
 	bp2 += 0x40;
-	data->seek(di + 3, SEEK_SET);
-	uint8 v3 = data->readByte();
+	uint8 v3 = shMem2250->peekByteAtOffset(3, SEEK_CUR);
 	Func2792(bp2, v3);
 	/*
 	mov	al,[bp-2h]
@@ -445,8 +440,7 @@ void Adlib::Func2839(uint8 bpp0A, uint32 bpp06) {
 	call	far 0017h:2792h */
 	bp1 = 0;
 	bp1 += 0x60;
-	data->seek(di + 4, SEEK_SET);
-	uint8 v4 = data->readByte();
+	uint8 v4 = shMem2250->peekByteAtOffset(4, SEEK_CUR);
 	Func2792(bp1, v4);
 	/*
 	mov	al,[bp-1h]
@@ -460,8 +454,7 @@ void Adlib::Func2839(uint8 bpp0A, uint32 bpp06) {
 	*/
 	bp2 = 0x3;
 	bp2 += 0x60;
-	data->seek(di + 5, SEEK_SET);
-	uint8 v5 = data->readByte();
+	uint8 v5 = shMem2250->peekByteAtOffset(5, SEEK_CUR);
 	Func2792(bp2, v5);
 
 	/*
@@ -476,8 +469,7 @@ void Adlib::Func2839(uint8 bpp0A, uint32 bpp06) {
 	*/
 	bp1 = 0;
 	bp1 += 0x80;
-	data->seek(di + 6, SEEK_SET);
-	uint8 v6 = data->readByte();
+	uint8 v6 = shMem2250->peekByteAtOffset(6, SEEK_CUR);
 	Func2792(bp1, v6);
 
 	/*
@@ -492,8 +484,7 @@ void Adlib::Func2839(uint8 bpp0A, uint32 bpp06) {
 	*/
 	bp2 = 0x3;
 	bp2 += 0x80;
-	data->seek(di + 7, SEEK_SET);
-	uint8 v7 = data->readByte();
+	uint8 v7 = shMem2250->peekByteAtOffset(7, SEEK_CUR);
 	Func2792(bp2, v7);
 	/*
 	mov	al,[bp-2h]
@@ -507,8 +498,7 @@ void Adlib::Func2839(uint8 bpp0A, uint32 bpp06) {
 	*/
 	bp1 = 0;
 	bp1 += 0xE0;
-	data->seek(di + 8, SEEK_SET);
-	uint8 v8 = data->readByte();
+	uint8 v8 = shMem2250->peekByteAtOffset(8, SEEK_CUR);
 	Func2792(bp1, v8);
 
 	/*
@@ -523,8 +513,7 @@ void Adlib::Func2839(uint8 bpp0A, uint32 bpp06) {
 
 	bp2 = 0x3;
 	bp2 += 0xE0;
-	data->seek(di + 9, SEEK_SET);
-	uint8 v9 = data->readByte();
+	uint8 v9 = shMem2250->peekByteAtOffset(9, SEEK_CUR);
 	Func2792(bp2, v9);
 
 	/*
@@ -540,8 +529,7 @@ void Adlib::Func2839(uint8 bpp0A, uint32 bpp06) {
 
 	uint16 bp0A = 0x100;
 	bp0A += 0xC0;
-	data->seek(di + 10, SEEK_SET);
-	uint8 v10 = data->readByte();
+	uint8 v10 = shMem2250->peekByteAtOffset(0xA, SEEK_CUR);
 	Func2792(bp0A, v10);
 	/*
 	mov	al,[bp+0Ah]
@@ -1250,38 +1238,6 @@ void Adlib::OnTimer() {
 	// Just epilogue and interrupt return
 }
 
-uint16 Adlib::Func19BE(uint8 offset) {
-	uint16 pos = data->pos();
-	if (offset > 0xF8) {
-		// l0017_19D8:
-		// TODO: Confirm that this works as expected
-		pos &= 0xF;
-	}
-	// l0017_19EA
-	pos += offset;
-	return pos;
-}
-
-uint16 Adlib::Func19BE_TODO(uint8 offset) {
-	return uint16();
-}
-
-Common::MemorySeekableReadWriteStream Adlib::Func19BE_2(Common::MemorySeekableReadWriteStream &inStream, uint8 seekDelta) {
-	// TODO: If this will work depends on how the constructor works here
-	Common::MemorySeekableReadWriteStream result = inStream;
-	uint16 pos = inStream.pos();
-	if (seekDelta > 0xF8) {
-		// l0017_19D8:
-		// TODO: Confirm that this works as expected and if it is every used in
-		// the actual game
-		pos &= 0xF;
-	}
-	// l0017_19EA
-	pos += seekDelta;
-	result.seek(pos, SEEK_SET);
-	return result;
-}
-
 StreamHandler *Adlib::Func19BE_SH(StreamHandler *inHandler, uint16 seekDelta) {
 	StreamHandler *result = new StreamHandler(*inHandler);
 	uint16 pos = result->pos();
@@ -1348,20 +1304,6 @@ void Adlib::Func1A03() {
 	} while ((bp1 & 0x80) != 0);
 }
 
-uint8 Adlib::peekByte() {
-	uint8 result = data->readByte();
-	data->seek(-1, SEEK_CUR);
-	return result;
-}
-
-uint8 Adlib::peekByteAt(uint16 offset) {
-	int32 originalOffset = data->pos();
-	data->seek(offset, SEEK_SET);
-	uint8 result = data->readByte();
-	data->seek(originalOffset, SEEK_SET);
-	return result;
-}
-
 void Adlib::Func2A80(uint8 blend_param, uint8 index, uint8 reg_base) {
 	// AI-reverse engineered by Deepseek
 	// Initial value calculation
@@ -1424,9 +1366,7 @@ void Adlib::Init() {
 #define CALLBACKS_PER_SECOND 10
 	_opl->start(new Common::Functor0Mem<void, Adlib>(this, &Adlib::OnTimer), CALLBACKS_PER_SECOND);
 
-	// Hardcoded test to see if I got the logic right
-	data->seek(0x06DE, SEEK_SET);
-	Func1A03();
+	// Func1A03();
 
 	/* _opl->writeReg(0x20, 0x01);
 	_opl->writeReg(0x40, 0x10);
@@ -1447,7 +1387,7 @@ void Adlib::Init() {
 	// Func24FD();
 	// TODO: Consider adding the caller
 	// TODO: Add proper arguments here
-	Func2839(0, 0);
+	// Func2839(0, 0);
 
 	// TODO: More hardcoded:
 	// TODO: I think this was not actual code from the game but from the example I found!
@@ -1536,6 +1476,14 @@ bool StreamHandler::seek(int64 offset, int whence) {
 byte StreamHandler::peekByte() {
 	_stream->seek(_pos, SEEK_SET);
 	byte result = readByte();
+	return result;
+}
+
+byte StreamHandler::peekByteAtOffset(int64 offset, int whence) {
+	int64 oldPos = _pos;
+	seek(offset, whence);
+	byte result = peekByte();
+	seek(oldPos, SEEK_SET);
 	return result;
 }
 
