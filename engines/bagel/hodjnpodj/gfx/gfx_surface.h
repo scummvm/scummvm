@@ -23,6 +23,7 @@
 #define HODJNPODJ_VIEWS_GFX_SURFACE_H
 
 #include "graphics/managed_surface.h"
+#include "graphics/font.h"
 #include "graphics/palette.h"
 
 namespace Bagel {
@@ -55,6 +56,12 @@ public:
 	int getCelIndex() const {
 		return _cellIndex;
 	}
+
+	void writeString(const Common::String &text,
+		const Common::Point &pos, int color = 0);
+	void writeString(const Common::String &text,
+		const Common::Rect &bounds, int color = 0,
+		Graphics::TextAlign justify = Graphics::kTextAlignLeft);
 };
 
 class Sprite : public GfxSurface, public Common::Point {

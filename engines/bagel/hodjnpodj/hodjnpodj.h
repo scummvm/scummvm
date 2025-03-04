@@ -32,6 +32,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
+#include "graphics/fonts/winfont.h"
 #include "graphics/screen.h"
 #include "bagel/hodjnpodj/events.h"
 #include "bagel/bagel.h"
@@ -72,6 +73,9 @@ protected:
 	bool shouldQuit() const override {
 		return Engine::shouldQuit();
 	}
+
+public:
+	Graphics::WinFont _font;
 
 public:
 	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);

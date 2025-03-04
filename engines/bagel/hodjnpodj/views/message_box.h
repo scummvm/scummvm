@@ -29,6 +29,7 @@ namespace HodjNPodj {
 
 class MessageBox: public View {
 private:
+	GfxSurface _background;
 	Common::String _title;
 	Common::String _message;
 	ViewCloseCallback _callback;
@@ -40,6 +41,10 @@ public:
 
 	static void show(const Common::String &title,
 		const Common::String &msg, ViewCloseCallback callback);
+
+	bool msgOpen(const OpenMessage &msg) override;
+	bool msgClose(const CloseMessage &msg) override;
+	void draw() override;
 };
 
 } // namespace HodjNPodj

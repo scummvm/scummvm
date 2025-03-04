@@ -69,6 +69,10 @@ Common::Error HodjNPodjEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
+	// Load the font
+	if (!_font.loadFromFON("msserif.fon"))
+		error("Could not load msserif.fon");
+
 	// Run the game
 	runGame();
 

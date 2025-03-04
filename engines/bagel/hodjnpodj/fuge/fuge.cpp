@@ -339,6 +339,11 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 		}
 		break;
 
+	case Common::KEYCODE_BACKSPACE:
+		MessageBox::show("ScummVM", "Lorem Ipsum", []() {
+		});
+		break;
+
 	default:
 		return MinigameView::msgKeypress(msg);
 	}

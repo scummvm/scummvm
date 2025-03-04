@@ -49,6 +49,9 @@ namespace HodjNPodj {
 #define	NEWGAME_WIDTH		217
 #define NEWGAME_HEIGHT		 20
 
+#define BLACK 0
+#define WHITE 255
+
 } // namespace HodjNPodj
 } // namespace Bagel
 

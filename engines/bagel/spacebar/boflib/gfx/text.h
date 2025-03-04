@@ -43,10 +43,12 @@ namespace SpaceBar {
 #define CTEXT_SHADOW_DY     2
 
 // Text justification definitions
-#define JUSTIFY_CENTER      0
-#define JUSTIFY_LEFT        1
-#define JUSTIFY_RIGHT       2
-#define JUSTIFY_WRAP        3
+enum {
+	JUSTIFY_CENTER      = 0,
+	JUSTIFY_LEFT        = 1,
+	JUSTIFY_RIGHT       = 2,
+	JUSTIFY_WRAP        = 3
+};
 
 // Text weight definitions
 //

@@ -27,6 +27,7 @@
 #include "image/bmp.h"
 #include "bagel/hodjnpodj/gfx/gfx_surface.h"
 #include "bagel/hodjnpodj/views/minigame_view.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -137,6 +138,23 @@ void GfxSurface::setCel(size_t cellNum) {
 	Graphics::ManagedSurface::operator=(
 		Graphics::ManagedSurface(_cellsSource, r));
 }
+
+void GfxSurface::writeString(const Common::String &text, const Common::Point &pos,
+		int color) {
+	Graphics::WinFont &font = g_engine->_font;
+	font.drawString(this, text, pos.x, pos.y, this->w - pos.x,
+		color);
+}
+
+void GfxSurface::writeString(const Common::String &text,
+		const Common::Rect &bounds, int color,
+		Graphics::TextAlign justify) {
+	Graphics::WinFont &font = g_engine->_font;
+
+	font.drawString(this, text, bounds.left, bounds.top,
+		bounds.width(), color, justify);
+}
+
 
 bool Sprite::isLinked() const {
 	for (auto it = _minigame->_linkedSprites.begin();
