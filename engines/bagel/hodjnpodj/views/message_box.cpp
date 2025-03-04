@@ -39,13 +39,17 @@ namespace HodjNPodj {
 #define MESSAGE2_ROW_OFFSET ( MESSAGE_HEIGHT + 4 )
 
 
-void MessageBox::show(const Common::String &title,
-		const Common::String &msg, ViewCloseCallback callback) {
+void MessageBox::show(const Common::String &line1,
+		const Common::String &line2, ViewCloseCallback callback) {
 	MessageBox *view = (MessageBox *)g_events->findView("MessageBox");
-	view->_title = title;
-	view->_message = msg;
+	view->_line1 = line1;
+	view->_line2 = line2;
 	view->_callback = callback;
 	view->addView();
+}
+
+MessageBox::MessageBox() : View("MessageBox"),
+		_okButton("&OK", this) {
 }
 
 bool MessageBox::msgOpen(const OpenMessage &msg) {
@@ -56,6 +60,11 @@ bool MessageBox::msgOpen(const OpenMessage &msg) {
 	r.moveTo((GAME_WIDTH - _background.w) / 2,
 		(GAME_HEIGHT - _background.h) / 2);
 	setBounds(r);
+
+	Common::Rect btnRect(0, 0, 80, 25);
+	btnRect.moveTo(_bounds.left + (_bounds.width() - btnRect.width()) / 2,
+		_bounds.bottom - 54);
+	_okButton.setBounds(btnRect);
 
 	// Make sure the cursor is shown
 	g_events->setCursor(IDC_ARROW);
@@ -74,10 +83,10 @@ void MessageBox::draw() {
 
 	Common::Rect r(MESSAGE_COL, MESSAGE_ROW,
 		MESSAGE_COL + MESSAGE_WIDTH, MESSAGE_ROW + MESSAGE_HEIGHT);
-	s.writeString(_title, r, BLACK, Graphics::kTextAlignCenter);
+	s.writeString(_line1, r, BLACK, Graphics::kTextAlignCenter);
 
 	r.translate(0, MESSAGE2_ROW_OFFSET);
-	s.writeString(_message, r, BLACK, Graphics::kTextAlignCenter);
+	s.writeString(_line2, r, BLACK, Graphics::kTextAlignCenter);
 }
 
 } // namespace HodjNPodj

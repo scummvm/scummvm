@@ -23,6 +23,7 @@
 #define HODJNPODJ_VIEWS_MESSAGE_BOX_H
 
 #include "bagel/hodjnpodj/views/view.h"
+#include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -30,13 +31,13 @@ namespace HodjNPodj {
 class MessageBox: public View {
 private:
 	GfxSurface _background;
-	Common::String _title;
-	Common::String _message;
+	ColorButton _okButton;
+	Common::String _line1;
+	Common::String _line2;
 	ViewCloseCallback _callback;
 
 public:
-	MessageBox() : View("MessageBox") {
-	}
+	MessageBox();
 	virtual ~MessageBox() {}
 
 	static void show(const Common::String &title,

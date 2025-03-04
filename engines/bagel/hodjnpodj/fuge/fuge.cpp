@@ -340,7 +340,7 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 		break;
 
 	case Common::KEYCODE_BACKSPACE:
-		MessageBox::show("ScummVM", "Lorem Ipsum", []() {
+		MessageBox::show("Score: 22", "Balls Left: 4", []() {
 		});
 		break;
 
