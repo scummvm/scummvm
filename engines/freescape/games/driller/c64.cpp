@@ -27,6 +27,8 @@
 
 namespace Freescape {
 
+extern byte kDrillerC64Palette[16][3];
+
 void DrillerEngine::initC64() {
 	_viewArea = Common::Rect(32, 16, 288, 120);
 }
@@ -41,12 +43,22 @@ void DrillerEngine::loadAssetsC64FullGame() {
 		loadGlobalObjects(&file, 0x1855, 8);
 	} else if (_targetName.hasPrefix("driller")) {
 		file.open("driller.c64.data");
-		//loadMessagesFixedSize(&file, 0x167a - 0x400, 14, 20);
-		//loadFonts(&file, 0xae54);
-		loadFonts(&file, 0x4ee);
-		load8bitBinary(&file, 0x8eee, 16);
-		loadMessagesFixedSize(&file, 0x1766, 14, 20);
-		loadGlobalObjects(&file, 0x1941, 8);
+
+		if (_variant & GF_C64_RETAIL) {
+			loadFonts(&file, 0x402);
+			load8bitBinary(&file, 0x8b04, 16);
+			loadMessagesFixedSize(&file, 0x167a, 14, 20);
+			loadGlobalObjects(&file, 0x1855, 8);
+		} else if (_variant & GF_C64_BUDGET) {
+			//loadFonts(&file, 0x402);
+			load8bitBinary(&file, 0x7df7, 16);
+			loadMessagesFixedSize(&file, 0x1399, 14, 20);
+			loadGlobalObjects(&file, 0x150a, 8);
+		} else {
+			//error("Unknown C64 release");
+			assert(false);
+		}
+
 
 		// The color map from the C64 version looks invalid
 		// so we'll just hardcode the Dark Side one which works fine
@@ -134,8 +146,15 @@ void DrillerEngine::loadAssetsC64FullGame() {
 		_border = new Graphics::ManagedSurface();
 		_border->copyFrom(*surf);
 
-		//_border = _title;
-		//loadGlobalObjects(&file, 0x1855 - 0x400, 8);
+		/*file.close();
+		file.open("driller.c64.title.bitmap");
+
+		Common::File colorFile1;
+		colorFile1.open("driller.c64.title.colors1");
+		Common::File colorFile2;
+		colorFile2.open("driller.c64.title.colors2");
+
+		_title = loadAndConvertDoodleImage(&file, &colorFile1, &colorFile2, (byte *)&kDrillerC64Palette);*/
 	} else
 		error("Unknown C64 release");
 }

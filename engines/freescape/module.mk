@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	font.o \
 	events.o \
 	demo.o \
+	doodle.o \
 	freescape.o \
 	games/castle/castle.o \
 	games/castle/amiga.o \

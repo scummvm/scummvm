@@ -32,6 +32,7 @@
 #include "freescape/language/8bitDetokeniser.h"
 #include "freescape/objects/sensor.h"
 #include "freescape/sweepAABB.h"
+#include "freescape/doodle.h"
 
 namespace Freescape {
 
@@ -641,7 +642,7 @@ void FreescapeEngine::processInput() {
 
 				_eventManager->purgeMouseEvents();
 				rotate(event.relMouse.x * _mouseSensitivity, event.relMouse.y * _mouseSensitivity);
-			}			
+			}
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -1126,6 +1127,16 @@ Graphics::ManagedSurface *FreescapeEngine::loadAndConvertNeoImage(Common::Seekab
 	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette(), decoder.getPaletteColorCount());
 	return surface;
 }
+
+Graphics::ManagedSurface *FreescapeEngine::loadAndConvertDoodleImage(Common::SeekableReadStream *bitmap, Common::SeekableReadStream *color1, Common::SeekableReadStream *color2, byte *palette) {
+	Image::DoodleDecoder decoder(palette);
+	decoder.loadStreams(*bitmap, *color1, *color2);
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
+	surface->copyFrom(*decoder.getSurface());
+	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette(), decoder.getPaletteColorCount());
+	return surface;
+}
+
 
 Graphics::ManagedSurface *FreescapeEngine::loadAndCenterScrImage(Common::SeekableReadStream *stream) {
 	Image::ScrDecoder decoder;

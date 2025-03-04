@@ -253,6 +253,8 @@ public:
 	byte *getPaletteFromNeoImage(Common::SeekableReadStream *stream, int offset);
 	Graphics::ManagedSurface *loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte *palette = nullptr);
 	Graphics::ManagedSurface *loadAndCenterScrImage(Common::SeekableReadStream *stream);
+	Graphics::ManagedSurface *loadAndConvertDoodleImage(Common::SeekableReadStream *bitmap, Common::SeekableReadStream *color1, Common::SeekableReadStream *color2, byte *palette);
+
 	void loadPalettes(Common::SeekableReadStream *file, int offset);
 	byte *loadPalette(Common::SeekableReadStream *file);
 	void swapPalette(uint16 areaID);
@@ -599,7 +601,9 @@ enum GameReleaseFlags {
 	GF_CPC_BUDGET = (1 << 7),
 	GF_CPC_VIRTUALWORLDS = (1 << 8),
 	GF_ATARI_RETAIL = (1 << 9),
-	GF_ATARI_BUDGET = (1 << 10)
+	GF_ATARI_BUDGET = (1 << 10),
+	GF_C64_RETAIL = (1 << 11),
+	GF_C64_BUDGET = (1 << 12),
 };
 
 extern FreescapeEngine *g_freescape;
