@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/macresman.h"
+
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "graphics/macgui/macwidget.h"
@@ -156,6 +158,16 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	bool result = _video->loadFile(location);
 	if (!result) {
 		delete _video;
+		_video = nullptr;
+
+		// Probe for empty file
+		Common::MacResManager mgr;
+		if (mgr.open(location)) {
+			if (!mgr.hasDataFork())
+			debugC(8, kDebugLevelGVideo, "AVIDecoder::loadStream(): skipping empty stream");
+			return false;
+		}
+
 		_video = new Video::AVIDecoder();
 		result = _video->loadFile(location);
 		if (!result) {
