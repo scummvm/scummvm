@@ -70,6 +70,7 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 	_crop = !(_vflags & 0x02);
 	_center = _vflags & 0x01;
 	_dirty = false;
+	_emptyFile = false;
 
 	if (debugChannelSet(2, kDebugLoading))
 		_initialRect.debugPrint(2, "DigitalVideoCastMember(): rect:");
@@ -163,8 +164,11 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 		// Probe for empty file
 		Common::MacResManager mgr;
 		if (mgr.open(location)) {
-			if (!mgr.hasDataFork())
-			debugC(8, kDebugLevelGVideo, "AVIDecoder::loadStream(): skipping empty stream");
+			if (!mgr.hasDataFork()) {
+				debugC(8, kDebugLevelGVideo, "DigitalVideoCastMember::loadVideo(): skipping empty stream");
+				_emptyFile = true;
+			}
+
 			return false;
 		}
 
@@ -255,7 +259,8 @@ void DigitalVideoCastMember::startVideo() {
 
 void DigitalVideoCastMember::stopVideo() {
 	if (!_video || !_video->isVideoLoaded()) {
-		warning("DigitalVideoCastMember::stopVideo: No video decoder");
+		if (!_emptyFile)
+			warning("DigitalVideoCastMember::stopVideo: No video decoder");
 		return;
 	}
 
@@ -266,7 +271,8 @@ void DigitalVideoCastMember::stopVideo() {
 
 void DigitalVideoCastMember::rewindVideo() {
 	if (!_video || !_video->isVideoLoaded()) {
-		warning("DigitalVideoCastMember::rewindVideo: No video decoder");
+		if (!_emptyFile)
+			warning("DigitalVideoCastMember::rewindVideo: No video decoder");
 		return;
 	}
 
@@ -276,6 +282,9 @@ void DigitalVideoCastMember::rewindVideo() {
 }
 
 Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) {
+	if (_emptyFile)
+		return nullptr;
+
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
 	_channel = channel;

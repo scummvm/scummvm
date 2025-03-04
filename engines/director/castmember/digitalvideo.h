@@ -83,6 +83,7 @@ public:
 	bool _directToStage;
 	bool _avimovie, _qtmovie;
 	bool _dirty;
+	bool _emptyFile;
 	FrameRateType _frameRateType;
 	DigitalVideoType _videoType;
 
