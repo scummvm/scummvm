@@ -425,6 +425,11 @@ void AVIDecoder::readPalette8(uint32 size) {
 bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
+	if (!stream->size()) {
+		debugC(8, kDebugLevelGVideo, "AVIDecoder::loadStream(): skipping empty stream");
+		return false;
+	}
+
 	uint32 riffTag = stream->readUint32BE();
 	if (riffTag != ID_RIFF) {
 		warning("Failed to find RIFF header");
