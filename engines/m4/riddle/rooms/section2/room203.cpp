@@ -2295,6 +2295,7 @@ void Room203::daemon() {
 
 		setupOfficial();
 		kernel_trigger_dispatchx(kernel_trigger_create(125));
+		kernel_trigger_dispatchx(kernel_trigger_create(130));
 		break;
 
 
@@ -2315,6 +2316,7 @@ void Room203::daemon() {
 
 	case 350:
 		kernel_trigger_dispatchx(kernel_trigger_create(125));
+		kernel_trigger_dispatchx(kernel_trigger_create(130));
 		break;
 
 	case 352:
