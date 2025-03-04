@@ -51,7 +51,7 @@ public:
 	Common::String _character;
 
 protected:
-	int PreFunctionInvokation(lua_State *L) {
+	int preFunctionInvokation(lua_State *L) override {
 		lua_pushstring(L, _character.c_str());
 		return 1;
 	}
