@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-02 00:34+0000\n"
-"PO-Revision-Date: 2025-02-08 11:18+0000\n"
+"PO-Revision-Date: 2025-03-04 07:19+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -9816,7 +9816,7 @@ msgstr ""
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
-msgstr ""
+msgstr "საერთო კლავიატური ბრძანებები:"
 
 #: engines/scumm/help.cpp:73
 msgid "Save / Load dialog"
@@ -9853,7 +9853,7 @@ msgstr ""
 
 #: engines/scumm/help.cpp:82
 msgid "Save game 1-10"
-msgstr ""
+msgstr "1-10 თამაშების შენახვა"
 
 #: engines/scumm/help.cpp:89
 msgid "Music volume up / down"
@@ -9877,7 +9877,7 @@ msgstr ""
 
 #: engines/scumm/help.cpp:95
 msgid "Special keyboard commands:"
-msgstr ""
+msgstr "სპეციალური კლავიატურის ბრძანებები:"
 
 #: engines/scumm/help.cpp:96
 msgid "Show / Hide console"
