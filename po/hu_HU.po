@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-02 00:34+0000\n"
-"PO-Revision-Date: 2025-03-03 21:18+0000\n"
+"PO-Revision-Date: 2025-03-04 14:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -10690,17 +10690,18 @@ msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
 msgstr ""
-"Cserezene használatakor ez beállítja azt az időt, amit a nyitány a Lucasfilm "
-"és a Loom emblémák között tölt."
+"Hogy ha kicseréli az eredeti zenét, ez az érték fogja meghatározni, hogy "
+"pontosan mikor megy át a jelenet a Lucasarts és Loom logokhoz."
 
 #: engines/scumm/dialogs.cpp:1403
 msgid "Music Quality:"
-msgstr ""
+msgstr "Zene Minőség:"
 
 #: engines/scumm/dialogs.cpp:1407
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
 msgstr ""
+"Válassza ki a zene minőséget. Az eredeti lehetővé teszi ezt a játék menüből."
 
 #: engines/scumm/dialogs.cpp:1408
 msgid ""
@@ -10708,59 +10709,59 @@ msgid ""
 "detection and speed tests, but also allows changes through the Game menu to "
 "some degree."
 msgstr ""
+"Válassza ki a zene minőséget. Eredetileg ez egy hardveres vizsgálat alapján "
+"állítódott be, de ez bizonyos szintig játékon belül is állítható."
 
 #: engines/scumm/dialogs.cpp:1499 engines/scumm/dialogs.cpp:1500
 msgid "auto"
-msgstr ""
+msgstr "automata"
 
 #: engines/scumm/dialogs.cpp:1499
 msgid "Low"
-msgstr ""
+msgstr "Alacsony"
 
 #: engines/scumm/dialogs.cpp:1499
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:75
-#, fuzzy
-#| msgid "Medium"
 msgid "Medium"
 msgstr "Közepes"
 
 #: engines/scumm/dialogs.cpp:1499
 msgid "High"
-msgstr ""
+msgstr "Magas"
 
 #: engines/scumm/dialogs.cpp:1500
 msgid "Good"
-msgstr ""
+msgstr "Jó"
 
 #: engines/scumm/dialogs.cpp:1500
 msgid "Better"
-msgstr ""
+msgstr "Jobb"
 
 #: engines/scumm/dialogs.cpp:1501
 #, c-format
 msgid "Hardware Rating: %s   -   "
-msgstr ""
+msgstr "Hardver Érték: %s   -   "
 
 #: engines/scumm/dialogs.cpp:1501
 #, c-format
 msgid "Quality Selection: %s"
-msgstr ""
+msgstr "Minőség Kiválasztása: %s"
 
 #: engines/scumm/dialogs.cpp:1515
 msgid "Playback Adjust:"
-msgstr "Lejátszás beállítása:"
+msgstr "Lejátszás hangolás:"
 
 #: engines/scumm/dialogs.cpp:1519
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
 msgstr ""
-"Ha hangot játszik le a CD hangsávjáról, állítsa be ennyivel a hang "
+"Ha hangot játszik le a CD hangsávjáról, igazítsa át ennyivel a hang "
 "kezdőpozícióját. Használja ezt, ha gyakran nem megfelelő hangot hall."
 
 #: engines/scumm/dialogs.cpp:1604
 msgid "Intro Adjust:"
-msgstr "Bevezető beállítás:"
+msgstr "Bevezető hangolás:"
 
 #: engines/scumm/dialogs.cpp:1608
 msgid ""
@@ -10768,13 +10769,13 @@ msgid ""
 "music gets cut off prematurely, or if you are unhappy with the way the music "
 "syncs up with the intro."
 msgstr ""
-"A bevezető szám lejátszásakor játsszon ettől a ponttól. Használja ezt, ha a "
-"zene idő előtt megszakad, vagy ha elégedetlen azzal, ahogyan a zene "
-"szinkronizálódik a bevezetővel."
+"A bevezető szám lejátszásakor kezdje a lejátszást ettől a ponttól. Használja "
+"ezt, ha a zene idő előtt megszakad, vagy ha elégedetlen azzal, ahogyan a "
+"zene illeszkedik a bevezetőhöz."
 
 #: engines/scumm/dialogs.cpp:1617
 msgid "Outlook Adjust:"
-msgstr "Az Outlook beállítása:"
+msgstr "Kilátás zene hangolás:"
 
 #: engines/scumm/dialogs.cpp:1621
 msgid ""
@@ -10782,13 +10783,13 @@ msgid ""
 "track at which it starts playing. Use this if the music is cut off, or if "
 "you hear part of the previous music."
 msgstr ""
-"Az outlook zene a bevezető dal része. Állítsa be a zeneszám pozícióját, ahol "
-"a lejátszás elkezdődik. Használja ezt, ha a zene le van vágva, vagy ha az "
-"előző zene egy részét hallja."
+"A kilátás zene a bevezető dal része. Állítsa be a zeneszám pozícióját, ahol "
+"a lejátszás elkezdődik. Használja ezt, ha a zene vége levágásra kerül, vagy "
+"ha az előző zene még mindig hallatszik."
 
 #: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:737
 msgid "Load modded audio"
-msgstr "Módosított audió betöltése"
+msgstr "Módosított hang betöltése"
 
 #: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:738
 msgid ""
@@ -10816,15 +10817,11 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1745
 msgid "Enable online competitive mods"
-msgstr "Online kompetitív modok engedélyezése"
+msgstr "Online kompetitív módok engedélyezése"
 
 #: engines/scumm/dialogs.cpp:1745
-#, fuzzy
-#| msgid ""
-#| "Enables custom-made modifications intented for online competitive play."
 msgid "Enables custom-made modifications intended for online competitive play."
-msgstr ""
-"Lehetővé teszi az egyedi módosításokat az online versenyszerű játékhoz."
+msgstr "Engedélyezi a kompetitív játékhoz készült külső modokat."
 
 #: engines/scumm/dialogs.cpp:1749
 msgid "Enable connection to Multiplayer Server"
@@ -10840,7 +10837,7 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1750
 msgid "Host games over LAN"
-msgstr "Játékok tárolása LAN-on keresztül"
+msgstr "Játékok hosztolása helyi hálózaton keresztül"
 
 #: engines/scumm/dialogs.cpp:1750
 msgid "Allows the game sessions to be discovered over your local area network."
@@ -10850,33 +10847,32 @@ msgstr ""
 #. I18N: Moonbase Console is a program name
 #: engines/scumm/dialogs.cpp:1754
 msgid "Generate random maps"
-msgstr ""
+msgstr "Véletlenszerű pályák generálása"
 
 #: engines/scumm/dialogs.cpp:1754
 msgid "Allow random map generation (Based from Moonbase Console)."
 msgstr ""
+"A véletlenszerű pályák generálásának engedélyezése (a Holdbázis Konzolon "
+"keresztül)."
 
 #: engines/scumm/dialogs.cpp:1757
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
 msgstr ""
-"Annak a szervernek a címe, amelyhez online játékmenetekhez csatlakozni és "
-"csatlakozni kell."
+"Azon szerver ip cím, amihez lehet csatlakozni hosztolás vagy belépés célból."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
-msgstr "Általános billentyûparancsok:"
+msgstr "Általános billentyű-parancsok:"
 
 #: engines/scumm/help.cpp:73
 msgid "Save / Load dialog"
-msgstr "Ment / Tölt dialógus"
+msgstr "Mentés / Betöltés párbeszéd"
 
 #: engines/scumm/help.cpp:77
-#, fuzzy
-#| msgid "Select shader"
 msgid "Selection screen"
-msgstr "Válassz Shadert"
+msgstr "Kiválasztó képernyő"
 
 #: engines/scumm/help.cpp:78
 msgid "Skip line of text"
@@ -10909,11 +10905,11 @@ msgstr "1-10 Játékállás mentése"
 
 #: engines/scumm/help.cpp:89
 msgid "Music volume up / down"
-msgstr "Zene hangerõ fel / le"
+msgstr "Zene hangerő fel / le"
 
 #: engines/scumm/help.cpp:90
 msgid "Text speed slower / faster"
-msgstr "Szövegsebesség gyors / lassú"
+msgstr "Szövegsebesség gyorsabb / lassabb"
 
 #: engines/scumm/help.cpp:91
 msgid "Simulate left mouse button"
@@ -10929,15 +10925,15 @@ msgstr "Jobb egérgomb szimuláció"
 
 #: engines/scumm/help.cpp:95
 msgid "Special keyboard commands:"
-msgstr "Speciális billentyûparancsok:"
+msgstr "Speciális billentyű-parancsok:"
 
 #: engines/scumm/help.cpp:96
 msgid "Show / Hide console"
-msgstr "Konzol be / ki kapcsolás"
+msgstr "Konzol megjelenítés / elrejtés"
 
 #: engines/scumm/help.cpp:97
 msgid "Start the debugger"
-msgstr "Hibakeresõ indítása"
+msgstr "Hibakereső indítása"
 
 #: engines/scumm/help.cpp:98
 msgid "Run in fast mode (*)"
@@ -10945,13 +10941,11 @@ msgstr "Futtatás gyors módban (*)"
 
 #: engines/scumm/help.cpp:99
 msgid "Run in really fast mode (*)"
-msgstr "Futtatás túlgyors módban (*)"
+msgstr "Futtatás nagyon gyors módban (*)"
 
 #: engines/scumm/help.cpp:101
-#, fuzzy
-#| msgid "Switch between graphics filters"
 msgid "Cycle between graphics filters"
-msgstr "Kapcsolás grafikus szûrõk között"
+msgstr "Grafikus filterek közötti váltás"
 
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
@@ -10963,7 +10957,7 @@ msgstr "Méretarány korrekció kapcsoló"
 
 #: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
-msgstr "* Megjegyzés, ctrl-f és"
+msgstr "* Megjegyzés, a ctrl-f és"
 
 #: engines/scumm/help.cpp:109
 msgid "  ctrl-g are not recommended"
@@ -10975,15 +10969,16 @@ msgstr "  mert rendszerösszeomlást vagy"
 
 #: engines/scumm/help.cpp:111
 msgid "  or incorrect game behavior."
-msgstr "  vagy hibás játékmûködést okoz."
+msgstr "  vagy hibás játékműködést eredményez."
 
 #: engines/scumm/help.cpp:115
+#, fuzzy
 msgid "Spinning drafts on the keyboard:"
-msgstr "Forgó draftok a billentyûzeten:"
+msgstr "Forgó draftok a billentyűzeten:"
 
 #: engines/scumm/help.cpp:117
 msgid "Main game controls:"
-msgstr "Fõ játékvezérlõk:"
+msgstr "Fő játékvezérlők:"
 
 #: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
 #: engines/scumm/help.cpp:163 engines/twp/metaengine.cpp:185
@@ -11042,46 +11037,46 @@ msgstr "Utazás"
 
 #: engines/scumm/help.cpp:176
 msgid "To Henry / To Indy"
-msgstr "Henrytõl / Indytõl"
+msgstr "Henrynek / Indynek"
 
 #. I18N: These are different musical notes
 #: engines/scumm/help.cpp:180
 msgid "play C minor on distaff"
-msgstr "C moll játék a bottal"
+msgstr "C moll a guzsalyon"
 
 #: engines/scumm/help.cpp:181
 msgid "play D on distaff"
-msgstr "Játék D-ben a bottal"
+msgstr "D hang a guzsalyon"
 
 #: engines/scumm/help.cpp:182
 msgid "play E on distaff"
-msgstr "Játék E-ben a bottal"
+msgstr "E hang a guzsalyon"
 
 #: engines/scumm/help.cpp:183
 msgid "play F on distaff"
-msgstr "Játék F-ben a bottal"
+msgstr "F hang a guzsalyon"
 
 #: engines/scumm/help.cpp:184
 msgid "play G on distaff"
-msgstr "Játék G-ben a bottal"
+msgstr "G hang a guzsalyon"
 
 #: engines/scumm/help.cpp:185
 msgid "play A on distaff"
-msgstr "Játék A-ban a bottal"
+msgstr "A hang a guzsalyon"
 
 #: engines/scumm/help.cpp:186
 msgid "play B on distaff"
-msgstr "Játék B-ben a bottal"
+msgstr "B hang a guzsalyon"
 
 #: engines/scumm/help.cpp:187
 msgid "play C major on distaff"
-msgstr "C dúr játék a bottal"
+msgstr "C dúr a guzsalyon"
 
 #: engines/scumm/help.cpp:189
 #, fuzzy
 #| msgid "Show inventory"
 msgid "Shows the drafts inventory"
-msgstr "Mutasd a tárgylistát"
+msgstr "A draft felszerelés megjelenítése"
 
 #: engines/scumm/help.cpp:195 engines/scumm/help.cpp:217
 msgid "puSh"
@@ -11101,19 +11096,19 @@ msgstr "Kikapcsol"
 
 #: engines/scumm/help.cpp:220
 msgid "KeyUp"
-msgstr "FelGomb"
+msgstr "JegyzetFel"
 
 #: engines/scumm/help.cpp:220
 msgid "Highlight prev dialogue"
-msgstr "Elõzõ dialógus kiemelése"
+msgstr "Előző dialógus kiemelése"
 
 #: engines/scumm/help.cpp:221
 msgid "KeyDown"
-msgstr "LeGomb"
+msgstr "JegyzetLe"
 
 #: engines/scumm/help.cpp:221
 msgid "Highlight next dialogue"
-msgstr "Következõ dialógus kiemelése"
+msgstr "Következő dialógus kiemelése"
 
 #: engines/scumm/help.cpp:229
 msgid "Object"
@@ -11137,16 +11132,16 @@ msgstr "Megüt"
 
 #: engines/scumm/help.cpp:239
 msgid "Kick"
-msgstr "Megüt"
+msgstr "Rúg"
 
 #: engines/scumm/help.cpp:243
 msgid "Regular cursor"
-msgstr "Szabvány kurzor"
+msgstr "Hagyományos kurzor"
 
 #. I18N: Comm is a communication device
 #: engines/scumm/help.cpp:246
 msgid "Comm"
-msgstr "Comm"
+msgstr "Komm"
 
 #: engines/scumm/help.cpp:249
 msgid "Save / Load / Options"
@@ -11154,23 +11149,23 @@ msgstr "Ment / Tölt / Opciók"
 
 #: engines/scumm/help.cpp:260
 msgid "Other game controls:"
-msgstr "Egyébb játékvezérlõk:"
+msgstr "Egyéb játékvezérlők:"
 
 #: engines/scumm/help.cpp:262 engines/scumm/help.cpp:272
 msgid "Inventory:"
-msgstr "Tárgylista:"
+msgstr "Felszerelés:"
 
 #: engines/scumm/help.cpp:263 engines/scumm/help.cpp:279
 msgid "Scroll list up"
-msgstr "Listagörgetés fel"
+msgstr "Lista felfelé görgetés"
 
 #: engines/scumm/help.cpp:264 engines/scumm/help.cpp:280
 msgid "Scroll list down"
-msgstr "Listagörgetés le"
+msgstr "Lista lefelé görgetése"
 
 #: engines/scumm/help.cpp:265 engines/scumm/help.cpp:273
 msgid "Upper left item"
-msgstr "Bal felsõ tárgy"
+msgstr "Bal felső tárgy"
 
 #: engines/scumm/help.cpp:266 engines/scumm/help.cpp:275
 msgid "Lower left item"
@@ -11178,7 +11173,7 @@ msgstr "Bal alsó tárgy"
 
 #: engines/scumm/help.cpp:267 engines/scumm/help.cpp:276
 msgid "Upper right item"
-msgstr "Jobb felsõ tárgy"
+msgstr "Jobb felső tárgy"
 
 #: engines/scumm/help.cpp:268 engines/scumm/help.cpp:278
 msgid "Lower right item"
@@ -11186,15 +11181,15 @@ msgstr "Jobb alsó tárgy"
 
 #: engines/scumm/help.cpp:274
 msgid "Middle left item"
-msgstr "Bal középsõ tárgy"
+msgstr "Bal középső tárgy"
 
 #: engines/scumm/help.cpp:277
 msgid "Middle right item"
-msgstr "Jobb középsõ tárgy"
+msgstr "Jobb középső tárgy"
 
 #: engines/scumm/help.cpp:284 engines/scumm/help.cpp:289
 msgid "Switching characters:"
-msgstr "Karakterek cseréje:"
+msgstr "Váltás karakterek között:"
 
 #: engines/scumm/help.cpp:286
 msgid "Second kid"
@@ -11206,19 +11201,19 @@ msgstr "Harmadik gyerek"
 
 #: engines/scumm/help.cpp:296
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Leltár/IQ pont kijelzõ kapcsoló"
+msgstr "Felszerelés / IQ pont kijelző kapcsoló"
 
 #: engines/scumm/help.cpp:297
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr "Billentyûzet/Egér harc kapcsoló (*)"
+msgstr "Billentyűzet/Egér harc kapcsoló (*)"
 
 #: engines/scumm/help.cpp:299
 msgid "* Keyboard Fighting is always on,"
-msgstr "* Harc billentyûzetrõl mindíg aktív,"
+msgstr "* Billentyűzetes harc mindig aktív,"
 
 #: engines/scumm/help.cpp:300
 msgid "  so despite the in-game message this"
-msgstr "  a játékon belüli üzenet ellenére, ez"
+msgstr "  így a játékon belüli üzenet ellenére, ez"
 
 #: engines/scumm/help.cpp:301
 msgid "  actually toggles Mouse Fighting Off/On"
@@ -11226,7 +11221,7 @@ msgstr "  egérrel harcolás mód átkapcsolás Be/Ki"
 
 #: engines/scumm/help.cpp:308
 msgid "Fighting controls (numpad):"
-msgstr "Verekedés irányítók (numpad):"
+msgstr "Verekedés vezérlők (numpad):"
 
 #: engines/scumm/help.cpp:309 engines/scumm/help.cpp:310
 #: engines/scumm/help.cpp:311
@@ -11235,7 +11230,7 @@ msgstr "Hátralép"
 
 #: engines/scumm/help.cpp:312
 msgid "Block high"
-msgstr "Felsõ védés"
+msgstr "Felső védés"
 
 #: engines/scumm/help.cpp:313
 msgid "Block middle"
@@ -11247,7 +11242,7 @@ msgstr "Alsó védés"
 
 #: engines/scumm/help.cpp:315
 msgid "Punch high"
-msgstr "Felsõ ütés"
+msgstr "Felső ütés"
 
 #: engines/scumm/help.cpp:316
 msgid "Punch middle"
@@ -11263,15 +11258,15 @@ msgstr "Váratlan ütés"
 
 #: engines/scumm/help.cpp:322
 msgid "These are for Indy on left."
-msgstr "Indytõl balra levõ."
+msgstr "Indy-től balra levő."
 
 #: engines/scumm/help.cpp:323
 msgid "When Indy is on the right,"
-msgstr "Indytõl jobbra levõ,"
+msgstr "Indy-től jobbra levő,"
 
 #: engines/scumm/help.cpp:324
 msgid "7, 4, and 1 are switched with"
-msgstr "7, 4, és 1 átkapcsolva"
+msgstr "7, 4, és 1 átkapcsolja"
 
 #: engines/scumm/help.cpp:325
 msgid "9, 6, and 3, respectively."
@@ -11279,7 +11274,7 @@ msgstr "9, 6, és 3-ra, egyenként."
 
 #: engines/scumm/help.cpp:334
 msgid "Biplane controls (numpad):"
-msgstr "Repülõ vezérlõk (numpad):"
+msgstr "Kétfedelű repülő vezérlők (numpad):"
 
 #: engines/scumm/help.cpp:335
 msgid "Fly to upper left"
@@ -11299,7 +11294,7 @@ msgstr "Repülés fel"
 
 #: engines/scumm/help.cpp:339
 msgid "Fly straight"
-msgstr "Repülés elõre"
+msgstr "Repülés előre"
 
 #: engines/scumm/help.cpp:340
 msgid "Fly down"
@@ -11327,7 +11322,7 @@ msgstr "Finomgörgetés ki"
 
 #: engines/scumm/input.cpp:1408
 msgid "Music volume: "
-msgstr "Zene hangereje: "
+msgstr "Zene hangerő: "
 
 #: engines/scumm/input.cpp:1425
 msgid "Subtitle speed: "
@@ -11339,14 +11334,18 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
-"A Putt-Putt Saves the Zoo iOS Lite verziója nem támogatott.\n"
-"A teljes változat elérhetõ az iTunes Áruházban."
+"A Putt-Putt Saves the Zoo iOS Lite verziója nem támogatott a kalózkodás "
+"megelőzése miatt.\n"
+"A teljes változat elérhető az iTunes Áruházban."
 
 #: engines/scumm/metaengine.cpp:382
 msgid ""
 "Warning: this re-release version contains patched game scripts,\n"
 "and therefore it might crash or not work properly for the time being."
 msgstr ""
+"Figyelem: Ez az újra kiadott verzió tartalmaz javított játék szkripteket is,"
+"\n"
+"emiatt lehet hogy kifagy, vagy nem fog megfelelően működni egyelőre."
 
 #: engines/scumm/metaengine.cpp:485
 msgid "HE v71+ support is not compiled in"
@@ -11358,11 +11357,11 @@ msgstr "SCUMM v7-8 támogatás nincs lefordítva"
 
 #: engines/scumm/metaengine.cpp:666
 msgid "Show Object Line"
-msgstr "Tárgynév sor látható"
+msgstr "Céltárgy sor megjelenítése"
 
 #: engines/scumm/metaengine.cpp:667
 msgid "Show the names of objects at the bottom of the screen"
-msgstr "Tárgyak neveinek megjelenítése a képernyõ alján"
+msgstr "Tárgyak neveinek megjelenítése a képernyő alján"
 
 #: engines/scumm/metaengine.cpp:675
 msgid "Use NES Classic Palette"
@@ -11370,7 +11369,7 @@ msgstr "NES klasszikus paletta használata"
 
 #: engines/scumm/metaengine.cpp:676
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
-msgstr "Semlegesebb színpaletta használata, amely utánozza a NES Classic-ot"
+msgstr "Semlegesebb színpaletta használata, amely emulálja a NES Classic-ot"
 
 #: engines/scumm/metaengine.cpp:684
 msgid "Trim FM-TOWNS games to 200 pixels height"
@@ -11386,27 +11385,23 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:693
 msgid "Run in original 640 x 480 resolution"
-msgstr ""
+msgstr "Futtatás az eredeti 640 x 480 felbontásban"
 
 #: engines/scumm/metaengine.cpp:694
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
 msgstr ""
+"Ez az opció lehetővé teszi a pontosabb szünet/újraindítás bannereket, de "
+"hatással lehet a játék teljesítményére és shader/skálázó használatra."
 
 #: engines/scumm/metaengine.cpp:701
 msgid "Play simplified music"
-msgstr "Egyszerűsített zene lejátszás"
+msgstr "Egyszerűsített zene lejátszása"
 
 #: engines/scumm/metaengine.cpp:702
-#, fuzzy
-#| msgid ""
-#| "This music was presumably intended for low-end Macs, and uses only one "
-#| "channel."
 msgid "This music was intended for low-end Macs, and uses only one channel."
-msgstr ""
-"Ezt a zenét feltehetően alacsony kategóriájú Mac-eknek szánták, és csak egy "
-"csatornát használ."
+msgstr "Ezt a zenét gyengébb Mac-ekhez szánták, és csak egy csatornát használ."
 
 #: engines/scumm/metaengine.cpp:710
 msgid "Enable smooth scrolling"
