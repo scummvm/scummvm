@@ -201,10 +201,16 @@ public:
 	void close();
 
 	/**
-	 * Query whether or not we have a data fork present.
+	 * Query whether or not we have a resource fork present.
 	 * @return True if the resource fork is present
 	 */
 	bool hasResFork() const;
+
+	/**
+	 * Query whether or not we have a resource fork present.
+	 * @return True if the resource fork is present
+	 */
+	bool hasDataFork() const;
 
 	/**
 	 * Read resource from the MacBinary file

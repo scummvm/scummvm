@@ -139,6 +139,10 @@ bool MacResManager::hasResFork() const {
 	return !_baseFileName.empty() && _mode != kResForkNone && _resForkSize != 0;
 }
 
+bool MacResManager::hasDataFork() const {
+	return !_baseFileName.empty() && _mode != kResForkNone && _dataLength != 0;
+}
+
 uint32 MacResManager::getResForkDataSize() const {
 	if (!hasResFork())
 		return 0;
