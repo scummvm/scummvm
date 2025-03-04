@@ -40,7 +40,6 @@ MediaStationEngine::MediaStationEngine(OSystem *syst, const ADGameDescription *g
 	_gameDescription(gameDesc),
 	_randomSource("MediaStation") {
 	g_engine = this;
-	_mixer = g_system->getMixer();
 
 	_gameDataDir = Common::FSNode(ConfMan.getPath("path"));
 	SearchMan.addDirectory(_gameDataDir, 0, 3);
