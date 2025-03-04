@@ -1240,6 +1240,10 @@ begin_credits("Credits");
 		add_paragraph(
 			"Fabrizio Lagorio from Trecision S.p.A., for finding and providing the source code ".
 			"of many of their games.");
+
+		add_paragraph(
+			"Ron Davis for releasing the sources and generously giving away the three chapters of God of Thunder.");
+
 	end_section();
 
 end_credits();
