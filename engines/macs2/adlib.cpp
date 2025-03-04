@@ -674,28 +674,48 @@ void Adlib::OnTimer() {
 			//	// l0017_1B1A:
 			uint8 current = shMem2250->peekByte();
 			if (current & 0x80) {
+				// The first bit of the read value was 0
 				// l0017_1B27:
+				g229B = g223E = shMem2250->peekByte();
+				shMem2250 = Func19BE_SH(shMem2250, 1);
+				g225A++;
 			}
 			// l0017_1B5F:
-			//	uint8 current = peekByte();
-			//	if (current & 0x80) {
-			//		// l0017_1B27:
-			//		uint8 copy = peekByte();
-			//		g229B = copy;
-			//		g223E = copy;
-			//		data->seek(Func19BE(1), SEEK_SET);
-			//		g225A++;
-			//	}
-			//	// l0017_1B5F:
-			//	uint8 bp1;
-			//	uint8 bp2;
-			//	uint8 bp3 = g229B & 0x0F;
-			//	uint8 bp6 = g229B;
-			//	uint8 bp4 = peekByte();
-			//	uint16 bp10 = Func19BE(1);
-			//	// TODO: This and the adjacent value are actually a pointer adjusted by Func19BE
-			//	uint16 bp12;
-			//	uint8 bp5 = peekByteAt(bp10);
+			uint8 bp1;
+			uint8 bp2;
+			uint8 bp3 = g229B & 0x0F;
+			uint8 bp6 = g229B;
+			uint8 bp4 = shMem2250->peekByte();
+			StreamHandler* bp10 = Func19BE_SH(shMem2250, 1);
+			// TODO: This and the adjacent value are actually a pointer adjusted by Func19BE
+			uint16 bp12;
+			uint8 bp5 = bp10->peekByte();
+
+			/*
+			
+
+	
+	
+	
+	;; Load a value from the next address in the song data -> [bp-5h]
+	les	di,[bp-10h]
+	mov	al,es:[di]
+	mov	[bp-5h],al
+	;; ss:[00000FE2]=00B0 
+	;; Test the first 4 bits and then check if the bits are set like this: 1001XXXX
+	mov	al,[bp-6h]
+	and	al,0F0h
+	cmp	al,90h
+	;; #first_note_on_timing: We must take this jump
+	;; #timing_conditions: We are looking for an exact value of 90h in AL
+	;; AL comes from global [229Bh]
+	;; And this one comes from data:
+	;; les	di,[2250h]
+	;; mov	al,es:[di]
+	;; mov	[229Bh],al
+	;; #timing_log: AL is still B0 at this point, so no jump
+	jz	1BA1h
+	*/
 
 			//	if ((bp6 & 0x0F) == 0x90) {
 			//		// l0017_1BA1:
@@ -1298,7 +1318,7 @@ void Adlib::Func1A03() {
 		// TODO: Not sure what this does in practice
 		_nextEventTimer = _nextEventTimer << 7;
 		_nextEventTimer += bp1 & 0x7F;
-		Func19BE_SH(shMem2250, 1);
+		shMem2250 = Func19BE_SH(shMem2250, 1);
 
 		g225A++;
 	} while ((bp1 & 0x80) != 0);
