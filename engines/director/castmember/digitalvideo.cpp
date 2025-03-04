@@ -159,7 +159,7 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 		_video = new Video::AVIDecoder();
 		result = _video->loadFile(location);
 		if (!result) {
-		    warning("DigitalVideoCastMember::loadVideo(): format not supported, skipping");
+		    warning("DigitalVideoCastMember::loadVideo(): format not supported, skipping video '%s'", path.c_str());
 		    delete _video;
 		    _video = nullptr;
 		} else {
@@ -179,9 +179,11 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 
 	_duration = getMovieTotalTime();
 
-	// Setting the initial rect to the actual movie dimensions
-	_initialRect.setWidth(_video->getWidth());
-	_initialRect.setHeight(_video->getHeight());
+	if (_video) {
+		// Setting the initial rect to the actual movie dimensions
+		_initialRect.setWidth(_video->getWidth());
+		_initialRect.setHeight(_video->getHeight());
+	}
 
 	return result;
 }
