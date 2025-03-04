@@ -238,11 +238,16 @@ void QTVR::m_mouseOver(int nargs) {
 						g_lingo->push(Common::String::format("jump,%d", node));
 					else
 						g_lingo->push(Common::String("pan ,0"));
+
 					return;
 				}
 
 				const Common::QuickTimeParser::PanoHotSpot *hotspotData = me->_video->getHotSpotByID(hotspot);
-				g_lingo->push(Common::String::format("%s,%d", hotspotData ? tag2str((uint32)hotspotData->type) : "undf", hotspot));
+
+				if (nodeChanged || (hotspotData && hotspotData->type == MKTAG('l','i','n','k')))
+					g_lingo->push(Common::String::format("jump,%d", node));
+				else
+					g_lingo->push(Common::String::format("%s,%d", hotspotData ? tag2str((uint32)hotspotData->type) : "undf", hotspot));
 
 				return;
 			}
