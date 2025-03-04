@@ -23,7 +23,7 @@
 #ifndef BAGEL_SPACEBAR_MAIN_WINDOW_H
 #define BAGEL_SPACEBAR_MAIN_WINDOW_H
 
-#include "bagel/spacebar/boflib/gfx/palette.h"
+#include "bagel/boflib/palette.h"
 #include "bagel/spacebar/baglib/pan_window.h"
 #include "bagel/spacebar/baglib/menu_dlg.h"
 #include "bagel/spacebar/thud.h"

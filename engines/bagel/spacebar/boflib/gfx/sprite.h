@@ -24,7 +24,7 @@
 
 #include "bagel/spacebar/boflib/gfx/bitmap.h"
 #include "bagel/boflib/object.h"
-#include "bagel/spacebar/boflib/gfx/palette.h"
+#include "bagel/boflib/palette.h"
 #include "bagel/spacebar/boflib/gui/window.h"
 
 namespace Bagel {

@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	boflib/llist.o \
 	boflib/log.o \
 	boflib/misc.o \
+	boflib/palette.o \
 	boflib/queue.o \
 	boflib/sound.o \
 	boflib/string.o \
@@ -70,7 +71,6 @@ MODULE_OBJS = \
 	spacebar/boflib/vector.o \
 	spacebar/boflib/gfx/bitmap.o \
 	spacebar/boflib/gfx/cursor.o \
-	spacebar/boflib/gfx/palette.o \
 	spacebar/boflib/gfx/sprite.o \
 	spacebar/boflib/gfx/text.o \
 	spacebar/boflib/gui/button.o \

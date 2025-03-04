@@ -24,7 +24,7 @@
 #define BAGEL_BOFLIB_GUI_BUTTON_H
 
 #include "bagel/spacebar/boflib/gui/window.h"
-#include "bagel/spacebar/boflib/gfx/palette.h"
+#include "bagel/boflib/palette.h"
 
 namespace Bagel {
 namespace SpaceBar {

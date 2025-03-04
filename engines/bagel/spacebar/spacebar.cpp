@@ -61,7 +61,7 @@
 #include "bagel/spacebar/boflib/gfx/cursor.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/sound.h"
-#include "bagel/spacebar/boflib/gfx/palette.h"
+#include "bagel/boflib/palette.h"
 #include "bagel/spacebar/boflib/gfx/sprite.h"
 #include "bagel/spacebar/boflib/gui/window.h"
 

@@ -24,10 +24,19 @@
 
 #include "bagel/hodjnpodj/gfx/gfx_surface.h"
 #include "bagel/hodjnpodj/events.h"
+#include "bagel/boflib/palette.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
+/*
+ * Owner draw state
+ */
+#define ODS_SELECTED    0x0001
+#define ODS_GRAYED      0x0002
+#define ODS_DISABLED    0x0004
+#define ODS_CHECKED     0x0008
+#define ODS_FOCUS       0x0010
 
 #define BUTTON_EDGE_WIDTH		3
 #define	FOCUS_RECT_DX			2
@@ -95,21 +104,25 @@ public:
 
 class ColorButton : public UIElement {
 private:
-	uint32 _cButtonFace = RGB_BUTTON_FACE;
-	uint32 _cButtonHighlight = RGB_BUTTON_HIGHLIGHT;
-	uint32 _cButtonShadow = RGB_BUTTON_SHADOW;
-	uint32 _cButtonText = RGB_BUTTON_TEXT;
-	uint32 _cButtonTextDisabled = RGB_BUTTON_TEXT_DISABLE;
-	uint32 _cButtonOutline = RGB_BUTTON_OUTLINE;
+	Common::String _text;
+	uint _itemState = 0;
+	COLORREF _cButtonFace = RGB_BUTTON_FACE;
+	COLORREF _cButtonHighlight = RGB_BUTTON_HIGHLIGHT;
+	COLORREF _cButtonShadow = RGB_BUTTON_SHADOW;
+	COLORREF _cButtonText = RGB_BUTTON_TEXT;
+	COLORREF _cButtonTextDisabled = RGB_BUTTON_TEXT_DISABLE;
+	COLORREF _cButtonOutline = RGB_BUTTON_OUTLINE;
 
 public:
-	ColorButton(UIElement *parent) : UIElement("ColorButton", parent) {
+	ColorButton(const Common::String &text, UIElement *parent) :
+		UIElement("ColorButton", parent), _text(text) {
 	}
 	~ColorButton() override {
 	}
 
 	void draw() override;
 };
+
 } // namespace HodjNPodj
 } // namespace Bagel
 

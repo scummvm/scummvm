@@ -22,7 +22,7 @@
 #include "common/file.h"
 #include "graphics/palette.h"
 #include "image/bmp.h"
-#include "bagel/spacebar/boflib/gfx/palette.h"
+#include "bagel/boflib/palette.h"
 #include "bagel/spacebar/boflib/app.h"
 #include "bagel/spacebar/boflib/file.h"
 #include "bagel/boflib/file_functions.h"

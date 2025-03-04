@@ -35,7 +35,7 @@
 #include "bagel/spacebar/boflib/timer.h"
 #include "bagel/boflib/llist.h"
 #include "bagel/spacebar/boflib/gfx/bitmap.h"
-#include "bagel/spacebar/boflib/gfx/palette.h"
+#include "bagel/boflib/palette.h"
 #include "bagel/spacebar/boflib/gfx/text.h"
 
 namespace Bagel {

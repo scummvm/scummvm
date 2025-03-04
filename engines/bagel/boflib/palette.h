@@ -29,7 +29,6 @@
 #include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
-namespace SpaceBar {
 
 typedef uint32 COLORREF;
 
@@ -39,6 +38,8 @@ typedef uint32 COLORREF;
 #define PAL_DEFAULT 0x0000
 #define PAL_ANIMATED 0x0001
 #define PAL_EXPLICIT 0x0002
+
+namespace SpaceBar {
 
 struct HPALETTE {
 	byte _data[Graphics::PALETTE_SIZE];

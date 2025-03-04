@@ -22,7 +22,7 @@
 #include "bagel/spacebar/filter.h"
 #include "bagel/spacebar/main_window.h"
 #include "bagel/spacebar/spacebar.h"
-#include "bagel/spacebar/boflib/gfx/palette.h"
+#include "bagel/boflib/palette.h"
 #include "bagel/boflib/string.h"
 #include "bagel/spacebar/boflib/gfx/text.h"
 #include "bagel/spacebar/baglib/bagel.h"

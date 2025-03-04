@@ -36,7 +36,7 @@
 #include "bagel/spacebar/boflib/app.h"
 #include "bagel/boflib/event_loop.h"
 #include "bagel/spacebar/boflib/file.h"
-#include "bagel/spacebar/boflib/gfx/palette.h"
+#include "bagel/boflib/palette.h"
 #include "bagel/spacebar/baglib/pan_window.h"
 #include "bagel/boflib/rect.h"
 #include "bagel/bagel.h"
