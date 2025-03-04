@@ -19,23 +19,32 @@
  *
  */
 
-#ifndef MEDIASTATION_CANVAS_H
-#define MEDIASTATION_CANVAS_H
+#ifndef MEDIASTATION_STAGE_H
+#define MEDIASTATION_STAGE_H
 
 #include "mediastation/asset.h"
-#include "mediastation/assetheader.h"
-#include "mediastation/mediascript/operand.h"
-#include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
-class Canvas : public Asset {
+class Camera : public Asset {
 public:
-	Canvas(AssetHeader *header) : Asset(header) {};
+	Camera(AssetHeader *header) : Asset(header) {};
 
-	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override;
+	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override { error("CallMethod not implemented"); };
+	virtual void process() override {};
 };
 
-} // End of namespace MediaStation
+class Stage : public Asset {
+public:
+	Stage(AssetHeader *header) : Asset(header) {};
+
+	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override { error("CallMethod not implemented"); };
+	virtual void process() override {};
+
+private:
+	Common::Array<Asset *> _children;
+};
+
+}
 
 #endif

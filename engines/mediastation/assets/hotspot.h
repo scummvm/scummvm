@@ -32,7 +32,6 @@ namespace MediaStation {
 class Hotspot : public Asset {
 public:
 	Hotspot(AssetHeader *header);
-	virtual ~Hotspot() override = default;
 
 	bool isInside(const Common::Point &pointToCheck);
 

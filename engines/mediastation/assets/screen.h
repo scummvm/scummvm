@@ -35,7 +35,6 @@ namespace MediaStation {
 class Screen : public Asset {
 public:
 	Screen(AssetHeader *header) : Asset(header) {};
-	~Screen() = default;
 
 	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override;
 };

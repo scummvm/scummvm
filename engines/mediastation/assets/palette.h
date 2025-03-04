@@ -32,7 +32,6 @@ namespace MediaStation {
 class Palette : public Asset {
 public:
 	Palette(AssetHeader *header) : Asset(header) {};
-	~Palette() = default;
 
 	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override;
 };
