@@ -70,6 +70,7 @@ Sprite::Sprite(AssetHeader *header) : Asset(header) {
 	if (header->_startup == kAssetStartupActive) {
 		setActive();
 		_isShowing = true;
+		_showFirstFrame = true;
 	}
 }
 
@@ -117,7 +118,10 @@ Operand Sprite::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args)
 	}
 
 	case kSetCurrentClipMethod: {
-		assert(args.empty());
+		assert(args.size() <= 1);
+		if (args.size() == 1 && args[0].getInteger() != 0) {
+			error("Sprite::callMethod(): (%d) setClip() called with unhandled arg: %d", _header->_id, args[0].getInteger());
+		}
 		setCurrentClip();
 		return Operand();
 	}
@@ -236,6 +240,12 @@ void Sprite::readChunk(Chunk &chunk) {
 }
 
 void Sprite::updateFrameState() {
+	if (_showFirstFrame) {
+		showFrame(_frames[0]);
+		_showFirstFrame = false;
+		return;
+	}
+
 	if (!_isActive) {
 		return;
 	}

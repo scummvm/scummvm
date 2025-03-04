@@ -76,6 +76,7 @@ public:
 private:
 	Common::Array<SpriteFrame *> _frames;
 	SpriteFrame *_activeFrame = nullptr;
+	bool _showFirstFrame = true;
 	bool _isShowing = false;
 	bool _isPlaying = false;
 	uint _currentFrameIndex = 0;
