@@ -419,8 +419,8 @@ bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMS
 		return true;
 	case 0x1380: // IF_DETAIL_LTE, 1 param
 		debugN(10, "ADS 0x%04x: if detail <= %d", code, arg);
-		// FIXME: This should be right but we only have detail 0/1 and maybe HOC onward use
-		// different numbers?  HOC intro checks for >= 4.
+		// TODO: This check is right, but we only have detail 0/1 and HOC onward use
+		// different numbers.  HOC intro checks for >= 4, and default in HOC is 4.
 		return false;
 		//return ((int)DgdsEngine::getInstance()->getDetailLevel() <= arg);
 	case 0x1390: // IF_DETAIL_GTE, 1 param
