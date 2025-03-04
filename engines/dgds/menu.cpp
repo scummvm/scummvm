@@ -277,7 +277,7 @@ void Menu::configureGadget(MenuId menu, Gadget *gadget) {
 			break;
 		case kMenuSliderControlsTextSpeed:
 			slider->setSteps(10, false);
-			slider->setValue(9 - engine->getTextSpeed());
+			slider->setValue(engine->getTextSpeed());
 			break;
 		case kMenuSliderControlsDetailLevel:
 			slider->setSteps(2, true);
@@ -486,7 +486,7 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 			engine->setDifficulty(setting);
 			break;
 		case kMenuSliderControlsTextSpeed:
-			engine->setTextSpeed(9 - setting);
+			engine->setTextSpeed(setting);
 			break;
 		case kMenuSliderControlsDetailLevel:
 			engine->setDetailLevel(static_cast<DgdsDetailLevel>(setting));
@@ -698,7 +698,7 @@ bool Menu::handleClick(const Common::Point &mouse) {
 		if (!slider)
 			break;
 		int16 setting = slider->onClick(mouse);
-		engine->setTextSpeed(9 - setting);
+		engine->setTextSpeed(setting);
 		drawMenu(_curMenu);
 		break;
 	}

@@ -1157,7 +1157,7 @@ bool SDSScene::drawAndUpdateDialogs(Graphics::ManagedSurface *dst) {
 				if (dlg._time)
 					delay = dlg._time;
 
-				int time = delay * (9 - engine->getTextSpeed());
+				int time = delay * 2 * (9 - engine->getTextSpeed());
 				assert(dlg._state);
 
 				dlg._state->_hideTime = DgdsEngine::getInstance()->getThisFrameMs() + time;
@@ -1454,6 +1454,8 @@ void SDSScene::mouseRDown(const Common::Point &pt) {
 		return;
 	}
 	_rbuttonDown = true;
+	// Ensure mouse cursor is updated
+	mouseMoved(pt);
 }
 
 void SDSScene::mouseRUp(const Common::Point &pt) {
