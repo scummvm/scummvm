@@ -116,6 +116,10 @@ void InputEngine::update() {
 			break;
 
 		case Common::EVENT_KEYDOWN:
+			if (event.kbd.ascii != 0) {
+				reportCharacter(event.kbd.ascii);
+			}
+			// fall through
 		case Common::EVENT_KEYUP:
 			alterKeyboardState(event.kbd.keycode, (event.type == Common::EVENT_KEYDOWN) ? 0x80 : 0);
 			break;
