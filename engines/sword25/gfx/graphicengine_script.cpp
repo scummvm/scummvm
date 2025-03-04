@@ -58,7 +58,7 @@ public:
 	Common::String Action;
 
 protected:
-	virtual int PreFunctionInvokation(lua_State *L) {
+	int preFunctionInvocation(lua_State *L) override {
 		lua_pushstring(L, Action.c_str());
 		return 1;
 	}

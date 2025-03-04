@@ -113,7 +113,7 @@ void LuaCallback::invokeCallbackFunctions(lua_State *L, uint objectHandle) {
 			// Pre-Function Call
 			// Derived classes can function in this parameter onto the stack.
 			// The return value indicates the number of parameters
-			int argumentCount = preFunctionInvokation(L);
+			int argumentCount = preFunctionInvocation(L);
 
 			// Lua_pcall the function and the parameters pop themselves from the stack
 			if (lua_pcall(L, argumentCount, 0, 0) != 0) {
