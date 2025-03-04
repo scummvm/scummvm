@@ -23,7 +23,7 @@
 #define HODJNPODJ_FUGE_FUGE_H
 
 #include "bagel/hodjnpodj/views/minigame_view.h"
-#include "bagel/hodjnpodj/gfx/bmp_button.h"
+#include "bagel/hodjnpodj/gfx/button.h"
 #include "bagel/hodjnpodj/libs/vector.h"
 #include "bagel/hodjnpodj/fuge/defines.h"
 #include "bagel/boflib/error.h"
@@ -36,7 +36,6 @@ namespace Fuge {
 class Fuge : public MinigameView {
 private:
 	BmpButton _scrollButton;
-	Graphics::Palette _gamePalette;
 	Graphics::ManagedSurface _background;
 	const CVector _gvCenter;
 	int _timerCtr = 0;

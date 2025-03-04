@@ -178,7 +178,7 @@ static double fPaddleAngles[N_PADDLE_SIZES] = {
 	PADDLE2_ANGLE
 };
 
-Fuge::Fuge() : MinigameView("Fuge", "fuge/hnpfuge.dll"), _gamePalette(0),
+Fuge::Fuge() : MinigameView("Fuge", "fuge/hnpfuge.dll"),
 		_rNewGameButton(NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
 			NEWGAME_LOCATION_X + NEWGAME_WIDTH, NEWGAME_LOCATION_Y + NEWGAME_HEIGHT),
 		_scrollButton("ScrollButton", this, Common::Rect(
@@ -238,8 +238,8 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 	if (!f.open(MINI_GAME_MAP) || !decoder.loadStream(f))
 		error("Could not load %s", MINI_GAME_MAP);
 
-	_gamePalette = Graphics::Palette(decoder.getPalette(), decoder.getPaletteColorCount());
-	g_system->getPaletteManager()->setPalette(_gamePalette);
+	assert(decoder.getPaletteColorCount() == PALETTE_COUNT);
+	loadPalette(decoder.getPalette());
 
 	// Load scroll button
 	_scrollButton.loadBitmaps(SCROLLUP, SCROLLDOWN, SCROLLUP, SCROLLUP);

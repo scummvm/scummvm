@@ -108,7 +108,7 @@ MODULE_OBJS = \
 	hodjnpodj/console.o \
 	hodjnpodj/events.o \
 	hodjnpodj/messages.o \
-	hodjnpodj/gfx/bmp_button.o \
+	hodjnpodj/gfx/button.o \
 	hodjnpodj/gfx/cursor.o \
 	hodjnpodj/gfx/gfx_surface.o \
 	hodjnpodj/libs/vector.o \

@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/stack.h"
+#include "graphics/palette.h"
 #include "graphics/screen.h"
 #include "bagel/hodjnpodj/messages.h"
 #include "bagel/hodjnpodj/gfx/gfx_surface.h"
@@ -228,6 +229,16 @@ public:
 	virtual UIElement *findView(const Common::String &name);
 
 	/**
+	 * Set the palette to use
+	 */
+	virtual void loadPalette(const byte *palette);
+
+	/**
+	 * Gets the closest palette index to a given rgb color
+	 */
+	virtual byte getPaletteIndex(uint32 color);
+
+	/**
 	 * Handles events
 	 */
 public:
@@ -277,6 +288,7 @@ class Events : public UIElement, public Cursor {
 private:
 	Graphics::Screen *_screen = nullptr;
 	Common::Stack<UIElement *> _views;
+	Graphics::Palette _gamePalette;
 protected:
 	/**
 	 * Process an event
@@ -412,6 +424,9 @@ public:
 	void close() override {
 		focusedView()->close();
 	}
+
+	void loadPalette(const byte *palette) override;
+	byte getPaletteIndex(uint32 color) override;
 };
 
 extern Events *g_events;

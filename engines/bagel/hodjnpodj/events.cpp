@@ -19,7 +19,9 @@
  *
  */
 
+#include "common/system.h"
 #include "common/config-manager.h"
+#include "graphics/paletteman.h"
 #include "graphics/screen.h"
 #include "bagel/hodjnpodj/events.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
@@ -31,7 +33,7 @@ namespace HodjNPodj {
 
 Events *g_events;
 
-Events::Events() : UIElement("Root", nullptr) {
+Events::Events() : UIElement("Root", nullptr), _gamePalette(0) {
 	g_events = this;
 }
 
@@ -224,6 +226,18 @@ void Events::addKeypress(const Common::KeyCode kc) {
 	focusedView()->msgKeypress(KeypressMessage(ks));
 }
 
+void Events::loadPalette(const byte *palette) {
+	_gamePalette = Graphics::Palette(palette, PALETTE_COUNT);
+	g_system->getPaletteManager()->setPalette(_gamePalette);
+}
+
+byte Events::getPaletteIndex(uint32 color) {
+	byte r = color & 0xff;
+	byte g = (color >> 8) & 0xff;
+	byte b = (color >> 16) & 0xff;
+	return _gamePalette.findBestColor(r, g, b);
+}
+
 /*------------------------------------------------------------------------*/
 
 Bounds::Bounds(Common::Rect &innerBounds) :
@@ -329,6 +343,14 @@ UIElement *UIElement::findView(const Common::String &name) {
 	}
 
 	return nullptr;
+}
+
+void UIElement::loadPalette(const byte *palette) {
+	g_events->loadPalette(palette);
+}
+
+byte UIElement::getPaletteIndex(uint32 color) {
+	return g_events->getPaletteIndex(color);
 }
 
 void UIElement::replaceView(UIElement *ui, bool replaceAllViews) {

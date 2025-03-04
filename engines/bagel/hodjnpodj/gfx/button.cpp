@@ -19,48 +19,40 @@
  *
  */
 
-#ifndef HODJNPODJ_GFX_BMP_BUTTON_H
-#define HODJNPODJ_GFX_BMP_BUTTON_H
-
-#include "bagel/hodjnpodj/gfx/gfx_surface.h"
-#include "bagel/hodjnpodj/events.h"
+#include "common/system.h"
+#include "graphics/paletteman.h"
+#include "common/file.h"
+#include "image/bmp.h"
+#include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-class BmpButton : public UIElement {
-public:
-	enum Mode {
-		kBtnNormal, kBtnSelected,
-		kBtnFocused, kBtnDisabled
-	};
-private:
-	GfxSurface _base;
-	GfxSurface _selected;
-	GfxSurface _focused;
-	GfxSurface _disabled;
-	Mode _mode = BmpButton::kBtnNormal;
+void BmpButton::loadBitmaps(const char *base, const char *selected,
+		const char *focused, const char *disabled) {
+	_base.loadBitmap(base);
+	_selected.loadBitmap(selected);
+	_focused.loadBitmap(focused);
+	_disabled.loadBitmap(disabled);
+}
 
-public:
-	BmpButton(const Common::String &name, UIElement *parent,
-		const Common::Rect &r) :
-		UIElement(name, parent) {
-		setBounds(r);
-	}
+void BmpButton::clear() {
+	_base.clear();
+	_selected.clear();
+	_focused.clear();
+	_disabled.clear();
+}
 
-	void loadBitmaps(const char *base, const char *selected,
-		const char *focused, const char *disabled);
-	void clear();
+void BmpButton::draw() {
+	GfxSurface s = getSurface();
+	s.blitFrom(_base);
+}
 
-	void setPressed(bool pressed) {
-		_mode = pressed ? kBtnSelected : kBtnNormal;
-		redraw();
-	}
+/*------------------------------------------------------------------------*/
 
-	void draw() override;
-};
+void ColorButton::draw() {
+
+}
 
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif
