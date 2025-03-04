@@ -39,6 +39,7 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 	_loaded = false;
 	_modified = true;
 	_isChanged = false;
+	_needsReload = false;
 
 	_objType = kCastMemberObj;
 
@@ -231,6 +232,7 @@ bool CastMember::setField(int field, const Datum &d) {
 			return false;
 		}
 		castInfo->fileName = d.asString();
+		_needsReload = true;
 		return true;
 	case kTheForeColor:
 		_cast->getCastMember(_castId)->setForeColor(d.asInt());

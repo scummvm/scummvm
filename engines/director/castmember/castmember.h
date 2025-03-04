@@ -113,6 +113,7 @@ protected:
 	bool _loaded;
 	bool _modified;
 	bool _isChanged;
+	bool _needsReload;
 };
 
 struct EditInfo {

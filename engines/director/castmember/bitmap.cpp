@@ -539,8 +539,10 @@ Common::String BitmapCastMember::formatInfo() {
 }
 
 void BitmapCastMember::load() {
-	if (_loaded)
+	if (_loaded && !_needsReload)
 		return;
+
+	_needsReload = false;
 
 	uint32 tag = _tag;
 	uint16 imgId = _castId;
