@@ -24,6 +24,7 @@
 #include "m4/burger/vars.h"
 #include "m4/core/imath.h"
 #include "m4/graphics/gr_series.h"
+#include "m4/platform/timer.h"
 
 namespace M4 {
 namespace Burger {
@@ -172,7 +173,7 @@ void Room102::init() {
 }
 
 void Room102::daemon() {
-	KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
 	int frame;
 
 	switch (_G(kernel).trigger) {
@@ -632,6 +633,9 @@ void Room102::daemon() {
 				if (!_flag1)
 					player_set_commands_allowed(true);
 				break;
+
+			default:
+				break;
 			}
 			break;
 
@@ -856,7 +860,7 @@ void Room102::daemon() {
 		break;
 
 	case 16:
-		ws_walk(318, 343, nullptr, -1, 2, 1);
+		ws_walk(318, 343, nullptr, -1, 2, true);
 		break;
 
 	case 17:
@@ -1142,7 +1146,7 @@ void Room102::pre_parser() {
 }
 
 void Room102::parser() {
-	bool lookFlag = player_said("look") || player_said("look at");
+	const bool lookFlag = player_said("look") || player_said("look at");
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (player_said("conv04")) {
@@ -1495,9 +1499,9 @@ void Room102::freshen() {
 void Room102::conv04() {
 	_G(kernel).trigger_mode = KT_PARSE;
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (_G(kernel).trigger == 22) {
 		if (who <= 0) {
@@ -1573,9 +1577,9 @@ void Room102::conv04() {
 void Room102::conv05() {
 	_G(kernel).trigger_mode = KT_PARSE;
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (_G(kernel).trigger == 22) {
 		if (who <= 0) {
@@ -1619,9 +1623,9 @@ void Room102::conv05() {
 void Room102::conv06() {
 	_G(kernel).trigger_mode = KT_PARSE;
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (_G(kernel).trigger == 22) {
 		if (who <= 0) {

@@ -21,6 +21,7 @@
 
 #include "m4/burger/rooms/section3/room303.h"
 #include "m4/burger/vars.h"
+#include "m4/platform/timer.h"
 
 namespace M4 {
 namespace Burger {

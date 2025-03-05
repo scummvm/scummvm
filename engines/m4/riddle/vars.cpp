@@ -24,7 +24,6 @@
 #include "m4/riddle/vars.h"
 #include "m4/riddle/inventory.h"
 #include "m4/gui/gui_sys.h"
-#include "m4/gui/gui_vmng.h"
 #include "m4/platform/keys.h"
 
 namespace M4 {

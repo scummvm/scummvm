@@ -23,6 +23,7 @@
 #include "m4/platform/events.h"
 #include "m4/vars.h"
 #include "m4/m4.h"
+#include "m4/platform/timer.h"
 
 namespace M4 {
 

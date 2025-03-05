@@ -24,6 +24,7 @@
 #include "m4/gui/gui_sys.h"
 #include "m4/riddle/vars.h"
 #include "m4/platform/keys.h"
+#include "m4/platform/timer.h"
 
 namespace M4 {
 namespace Riddle {

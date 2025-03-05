@@ -31,6 +31,7 @@
 #include "m4/platform/keys.h"
 #include "m4/vars.h"
 #include "m4/m4.h"
+#include "m4/platform/timer.h"
 
 namespace M4 {
 

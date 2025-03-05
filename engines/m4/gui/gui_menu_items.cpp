@@ -39,6 +39,7 @@
 #include "m4/platform/keys.h"
 #include "m4/vars.h"
 #include "m4/m4.h"
+#include "m4/platform/timer.h"
 
 namespace M4 {
 namespace GUI {
@@ -500,6 +501,7 @@ bool guiMenu::eventHandler(guiMenu *theMenu, int32 eventType, int32 parm1, int32
 	case _ME_move:
 	case _ME_L_hold:
 	case _ME_doubleclick_hold:
+	default:
 		break;
 	}
 	return true;
@@ -658,19 +660,17 @@ void menuItem::destroyItem(menuItem *theItem) {
 	if (!theItem) {
 		return;
 	}
-	if (theItem->background) {
-		delete theItem->background;
-	}
 
+	delete theItem->background;
 	delete theItem;
 }
 
 bool menuItem::cursorInsideItem(menuItem *myItem, int32 cursorX, int32 cursorY) {
 	if ((cursorX >= myItem->x1) && (cursorX <= myItem->x2) && (cursorY >= myItem->y1) && (cursorY <= myItem->y2)) {
 		return true;
-	} else {
-		return false;
 	}
+
+	return false;
 }
 
 //-----------------------------  BUTTON FUNCTIONS    ---------------------------------//
@@ -1009,6 +1009,7 @@ bool menuItemButton::handler(menuItemButton *myItem, int32 eventType, int32 even
 
 	case _ME_L_hold:
 	case _ME_doubleclick_hold:
+	default:
 		break;
 	}
 
@@ -1050,7 +1051,7 @@ bool menuItemButton::handler(menuItemButton *myItem, int32 eventType, int32 even
 }
 
 menuItemButton *menuItemButton::add(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback, int32 buttonType,
-	bool greyed, bool transparent, const char *prompt, ItemHandlerFunction i_handler) {
+	bool ghosted, bool transparent, const char *prompt, ItemHandlerFunction i_handler) {
 	int32 status;
 
 	// Verify params
@@ -1085,7 +1086,7 @@ menuItemButton *menuItemButton::add(guiMenu *myMenu, int32 tag, int32 x, int32 y
 		newItem->background = guiMenu::copyBackground(myMenu, x, y, w, h);
 	}
 
-	if (greyed) {
+	if (ghosted) {
 		newItem->itemFlags = BTN_STATE_GREY;
 	} else {
 		newItem->itemFlags = BTN_STATE_NORM;

@@ -32,6 +32,7 @@
 #include "m4/mem/mem.h"
 #include "m4/platform/keys.h"
 #include "m4/m4.h"
+#include "m4/platform/timer.h"
 
 namespace M4 {
 namespace Burger {
