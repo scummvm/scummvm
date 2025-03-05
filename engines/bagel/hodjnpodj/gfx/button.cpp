@@ -132,5 +132,51 @@ void ColorButton::draw() {
 	}
 }
 
+bool ColorButton::msgMouseDown(const MouseDownMessage &msg) {
+	if (msg._button == MouseDownMessage::MB_LEFT) {
+		_itemState = ODS_SELECTED;
+		redraw();
+	}
+
+	return true;
+}
+
+bool ColorButton::msgMouseUp(const MouseUpMessage &msg) {
+	if (msg._button == MouseUpMessage::MB_LEFT && _itemState == ODS_SELECTED) {
+		_itemState = 0;
+		redraw();
+
+		// Notify parent dialog that the button was pressed
+		_parent->send(GameMessage("BUTTON"));
+	}
+
+	return true;
+}
+
+bool ColorButton::msgUnfocus(const UnfocusMessage &msg) {
+	// If the mouse cursor moves outside the button whilst
+	// it's being depressed, reset it to unpressed
+	if (_itemState == ODS_SELECTED) {
+		_itemState = 0;
+		redraw();
+	}
+
+	return true;
+}
+
+bool ColorButton::msgKeypress(const KeypressMessage &msg) {
+	size_t ampPos = _text.findFirstOf('&');
+
+	if (ampPos != Common::String::npos &&
+			(msg.flags & Common::KBD_ALT) &&
+			(msg.ascii == tolower(_text[ampPos + 1]))) {
+		// Notify parent dialog that the button was pressed
+		_parent->send(GameMessage("BUTTON"));
+		return true;
+	}
+
+	return false;
+}
+
 } // namespace HodjNPodj
 } // namespace Bagel

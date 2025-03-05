@@ -21,6 +21,7 @@
 
 #include "bagel/hodjnpodj/views/message_box.h"
 #include "bagel/hodjnpodj/globals.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -77,6 +78,25 @@ bool MessageBox::msgClose(const CloseMessage &msg) {
 	return View::msgClose(msg);
 }
 
+bool MessageBox::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_SELECT ||
+		msg._action == KEYBIND_ESCAPE) {
+		closeDialog();
+		return true;
+	}
+
+	return false;
+}
+
+bool MessageBox::msgGame(const GameMessage &msg) {
+	if (msg._name == "BUTTON") {
+		closeDialog();
+		return true;
+	}
+
+	return false;
+}
+
 void MessageBox::draw() {
 	GfxSurface s = getSurface();
 	s.blitFrom(_background);
@@ -87,6 +107,11 @@ void MessageBox::draw() {
 
 	r.translate(0, MESSAGE2_ROW_OFFSET);
 	s.writeString(_line2, r, BLACK, Graphics::kTextAlignCenter);
+}
+
+void MessageBox::closeDialog() {
+	close();
+	_callback();
 }
 
 } // namespace HodjNPodj

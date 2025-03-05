@@ -121,6 +121,10 @@ public:
 	}
 
 	void draw() override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace HodjNPodj

@@ -36,6 +36,8 @@ private:
 	Common::String _line2;
 	ViewCloseCallback _callback;
 
+	void closeDialog();
+
 public:
 	MessageBox();
 	virtual ~MessageBox() {}
@@ -45,6 +47,8 @@ public:
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 };
 
