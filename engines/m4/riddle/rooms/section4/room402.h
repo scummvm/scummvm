@@ -86,6 +86,7 @@ public:
 	void daemon() override;
 	void pre_parser() override;
 	void parser() override;
+	void syncGame(Common::Serializer &s) override;
 };
 
 } // namespace Rooms

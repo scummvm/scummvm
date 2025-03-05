@@ -1398,9 +1398,9 @@ void Room402::daemon() {
 }
 
 void Room402::pre_parser() {
-	bool talkFlag = player_said_any("talk", "talk to");
-	bool takeFlag = player_said("take");
-	bool lookFlag = player_said_any("look", "look at");
+	const bool talkFlag = player_said_any("talk", "talk to");
+	const bool takeFlag = player_said("take");
+	const bool lookFlag = player_said_any("look", "look at");
 
 	if (lookFlag && player_said(" "))
 		_G(player).resetWalk();
@@ -1455,7 +1455,7 @@ void Room402::parser() {
 	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("conv402a")) {
-		if (_G(kernel).trigger) {
+		if (_G(kernel).trigger == 777) {
 			conv402a777();
 		} else {
 			conv402a();
@@ -1563,9 +1563,9 @@ void Room402::parser() {
 
 void Room402::conv402a() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 	_currentNode = node;
 
 	if (!sound) {
@@ -1739,7 +1739,7 @@ void Room402::conv402a() {
 				digi_play(sound, 1, 255, 777);
 			} else {
 				_val11 = 1102;
-				conv_resume();
+				digi_play(sound, 1, 255, 777);
 			}
 			break;
 
@@ -1782,9 +1782,9 @@ void Room402::conv402a() {
 }
 
 void Room402::conv402a777() {
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (who <= 0) {
 		if (node == 26 && entry == 0) {
@@ -1895,6 +1895,20 @@ void Room402::enterCastle() {
 	default:
 		break;
 	}
+}
+
+void Room402::syncGame(Common::Serializer &s) {
+	s.syncAsSint16LE(_val1);
+	s.syncAsSint16LE(_val2);
+	s.syncAsSint16LE(_val4);
+	s.syncAsSint16LE(_trigger1);
+	s.syncAsSint16LE(_val6);
+	s.syncAsSint16LE(_val8);
+	s.syncAsSint16LE(_currentNode);
+	s.syncAsSint16LE(_val10);
+	s.syncAsSint16LE(_val11);
+	s.syncAsSint16LE(_wolfMode);
+	s.syncAsSint16LE(_wolfShould);
 }
 
 } // namespace Rooms
