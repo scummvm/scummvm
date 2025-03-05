@@ -85,7 +85,10 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 			ImGui::Text(modes[mode]);
 		}
 
-		ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImGuiCol_TableHeaderBg));
+		if (ch == _state->_selectedScoreCast.channel)
+			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(0.5f, 0.5f, 0.5f, 0.6f)));
+		else
+			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImGuiCol_TableHeaderBg));
 
 		ImGui::Unindent(indentSize);
 	}
