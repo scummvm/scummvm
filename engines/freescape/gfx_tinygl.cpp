@@ -436,12 +436,12 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 }
 
 void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, byte color) {
-	/*uint8 r1, g1, b1, r2, g2, b2;
+	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple = nullptr;
 	getRGBAt(color, 0, r1, g1, b1, r2, g2, b2, stipple);
 
 	int triangleAmount = 20;
-	float twicePi = (float)(2.0 * M_PI);*/
+	float twicePi = (float)(2.0 * M_PI);
 
 	// Quick billboard effect inspired from this code:
 	// http://www.lighthouse3d.com/opengl/billboarding/index.php?billCheat
@@ -460,7 +460,7 @@ void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 		}
 
 	glLoadMatrixf(m);*/
-	/*tglDisable(TGL_DEPTH_TEST);
+	tglDisable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_FALSE);
 
 	setStippleData(stipple);
@@ -504,7 +504,7 @@ void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 
 	tglEnable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_TRUE);
-	//tglPopMatrix();*/
+	//tglPopMatrix();
 }
 
 void TinyGLRenderer::depthTesting(bool enabled) {
