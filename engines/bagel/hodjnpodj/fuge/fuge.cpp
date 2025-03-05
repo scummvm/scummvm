@@ -317,7 +317,7 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 		// Bring up the Rules
 		gamePause();
 		CBofSound::waitWaveSounds();
-		Rules::show("fuge.txt",
+		Rules::show("fuge/fuge.txt",
 			(gameInfo.bSoundEffectsEnabled ? WAV_NARRATION : nullptr),
 			[]() {
 				((Fuge *)g_events->findView("Fuge"))->gameResume();

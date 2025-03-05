@@ -19,55 +19,80 @@
  *
  */
 
-#include "common/system.h"
-#include "graphics/paletteman.h"
 #include "bagel/hodjnpodj/views/rules.h"
+#include "bagel/hodjnpodj/globals.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-bool Rules::msgFocus(const FocusMessage &msg) {
-	Common::fill(&_pal[0], &_pal[256 * 3], 0);
-	_offset = 128;
-	return true;
-}
+#define COLOR_BUTTONS		TRUE
+#define SCROLL_PIECES		6						// number of mid-scroll segments
 
-bool Rules::msgKeypress(const KeypressMessage &msg) {
-	// Any keypress to close the view
-	close();
-	return true;
+// Scroll bitmaps. Since all minigames have the same bitmaps,
+// this just uses one minigame at random
+#define SCROLL_SPEC	    "fuge/art/lscroll.bmp"       // path for scroll DIB on disk
+#define SCROLL_TOP_SPEC	"fuge/art/lscrollt.bmp"      // path for scroll's top section DIB on disk
+#define SCROLL_BOT_SPEC	"fuge/art/lscrollb.bmp"      // path for scroll's bottom section DIB on disk
+#define SCROLL_MID_SPEC	"fuge/art/lscrollm.bmp"      // path for scroll's middle section DIB on disk
+
+#define BUTTON_DY			15						// offset for Okay button from scroll base
+
+#define	SCROLL_STRIP_WIDTH	10						// width of scroll middle to reveal per interval 
+#define	SCROLL_STRIP_DELAY	1000					// delay to wait after each partial scroll unfurling
+
+#define	TEXT_BUFFER_SIZE	512						// # characters in the text input buffer
+#define	TEXT_LEFT_MARGIN	55						// left margin offset for display of text
+#define	TEXT_TOP_MARGIN		5                       // top margin offset for display of text
+#define	TEXT_BOTTOM_MARGIN	20                      // bottom margin offset for display of text
+#define	TEXT_WIDTH			435                     // width of text display area
+#define TEXT_MORE_DX		120						// offset of "more" indicator from right margin
+#define TEXT_MORE_DY		10                      // offset of "more" indicator bottom of scroll
+#define MORE_TEXT_BLURB		"[ More ]"				// actual text to display for "more" indicator
+#define MORE_TEXT_LENGTH	8                       // # characters in "more" indicator string
+#define TEXT_NEWLINE		'\\'                    // character that indicates enforced line break
+
+Rules::Rules() : View("Rules") {
 }
 
 void Rules::draw() {
-	// Draw a bunch of squares on screen
-	Graphics::ManagedSurface s = getSurface();
-
-	for (int i = 0; i < 100; ++i)
-		s.frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
+	GfxSurface s = getSurface();
+	s.blitFrom(_background);
 }
 
-bool Rules::tick() {
-	// Cycle the palette
-	++_offset;
-	for (int i = 0; i < 256; ++i)
-		_pal[i * 3 + 1] = (i + _offset) % 256;
-	g_system->getPaletteManager()->setPalette(_pal, 0, 256);
-
-	// Below is redundant since we're only cycling the palette, but it demonstrates
-	// how to trigger the view to do further draws after the first time, since views
-	// don't automatically keep redrawing unless you tell it to
-	if ((_offset % 256) == 0)
-		redraw();
-
-	return true;
-}
-
-void Rules::show(const Common::Path &filename,
+void Rules::show(const Common::String &filename,
 		const Common::String &waveFile,
 		ViewCloseCallback callback) {
-
+	Rules *view = (Rules *)g_events->findView("Rules");
+	view->_filename = filename;
+	view->_waveFilename = waveFile;
+	view->_callback = callback;
+	view->addView();
 }
 
+bool Rules::msgOpen(const OpenMessage &msg) {
+	// All minigames share the same bitmaps, so use Fuge's arbitrarily
+	_background.loadBitmap(SCROLL_SPEC);
+	_background.setTransparentColor(255);
+	Common::Rect r(0, 0, _background.w, _background.h);
+	r.moveTo((GAME_WIDTH - _background.w) / 2,
+		(GAME_HEIGHT - _background.h) / 2);
+	setBounds(r);
+#if 0
+	Common::Rect btnRect(0, 0, 80, 25);
+	btnRect.moveTo(_bounds.left + (_bounds.width() - btnRect.width()) / 2,
+		_bounds.bottom - 54);
+	_okButton.setBounds(btnRect);
+#endif
+	// Make sure the cursor is shown
+	g_events->setCursor(IDC_ARROW);
+
+	return View::msgOpen(msg);
+}
+
+bool Rules::msgClose(const CloseMessage &msg) {
+	_background.clear();
+	return View::msgClose(msg);
+}
 
 } // namespace HodjNPodj
 } // namespace Bagel

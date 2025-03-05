@@ -29,23 +29,21 @@ namespace HodjNPodj {
 
 class Rules : public View {
 private:
-	byte _pal[256 * 3] = { 0 };
-	int _offset = 0;
+	GfxSurface _background;
+	Common::String _filename, _waveFilename;
+	ViewCloseCallback _callback = nullptr;
 
 public:
-	Rules() : View("Rules") {
-	}
-	virtual ~Rules() {
-	}
+	Rules();
+	virtual ~Rules() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	void draw() override;
-	bool tick() override;
-
-	static void show(const Common::Path &filename,
+	static void show(const Common::String &filename,
 		const Common::String &waveFile,
 		ViewCloseCallback callback);
+
+	void draw() override;
+	bool msgOpen(const OpenMessage &msg) override;
+	bool msgClose(const CloseMessage &msg) override;
 };
 
 } // namespace HodjNPodj
