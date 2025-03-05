@@ -110,6 +110,21 @@ byte Palette::findBestColor(byte cr, byte cg, byte cb, ColorDistanceMethod metho
 
 	switch (method)
 	{
+	case kColorDistanceEuclidean:
+		for (int i = 0; i < _size; i++) {
+			int r = _data[3 * i + 0] - cr;
+			int g = _data[3 * i + 1] - cg;
+			int b = _data[3 * i + 2] - cb;
+			if (r == 0 && g == 0 && b == 0)
+				return i;
+
+			uint32 distSquared =  r * r + g * g + b * b;
+			if (distSquared < min) {
+				bestColor = i;
+				min = distSquared;
+			}
+		}
+	break;
 	case kColorDistanceNaive:
 		for (uint i = 0; i < _size; i++) {
 			int r = _data[3 * i + 0] - cr;
