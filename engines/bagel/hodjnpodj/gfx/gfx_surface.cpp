@@ -141,7 +141,7 @@ void GfxSurface::setCel(size_t cellNum) {
 
 void GfxSurface::writeString(const Common::String &text, const Common::Point &pos,
 		int color) {
-	Graphics::WinFont &font = g_engine->_font;
+	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
 	font.drawString(this, text, pos.x, pos.y, this->w - pos.x,
 		color);
 }
@@ -149,12 +149,22 @@ void GfxSurface::writeString(const Common::String &text, const Common::Point &po
 void GfxSurface::writeString(const Common::String &text,
 		const Common::Rect &bounds, int color,
 		Graphics::TextAlign justify) {
-	Graphics::WinFont &font = g_engine->_font;
-
+	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
 	font.drawString(this, text, bounds.left, bounds.top,
 		bounds.width(), color, justify);
 }
 
+size_t GfxSurface::getStringWidth(const Common::String &text) const {
+	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
+	return font.getStringWidth(text);
+}
+
+size_t GfxSurface::getStringHeight() const {
+	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
+	return font.getFontHeight();
+}
+
+/*------------------------------------------------------------------------*/
 
 bool Sprite::isLinked() const {
 	for (auto it = _minigame->_linkedSprites.begin();

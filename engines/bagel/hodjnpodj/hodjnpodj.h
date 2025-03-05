@@ -75,7 +75,7 @@ protected:
 	}
 
 public:
-	Graphics::WinFont _font;
+	Common::HashMap<int, Graphics::WinFont> _fonts;
 
 public:
 	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);

@@ -36,6 +36,7 @@ private:
 	Graphics::ManagedSurface _cellsSource; // Used with loadCels
 	size_t _cellWidth = 0;
 	int _cellIndex = 0;
+	int _fontSize = 14;
 
 public:
 	GfxSurface() : Graphics::ManagedSurface() {}
@@ -57,11 +58,16 @@ public:
 		return _cellIndex;
 	}
 
+	void setFontSize(int fontSize) {
+		_fontSize = fontSize;
+	}
 	void writeString(const Common::String &text,
 		const Common::Point &pos, int color = 0);
 	void writeString(const Common::String &text,
 		const Common::Rect &bounds, int color = 0,
 		Graphics::TextAlign justify = Graphics::kTextAlignLeft);
+	size_t getStringWidth(const Common::String &text) const;
+	size_t getStringHeight() const;
 };
 
 class Sprite : public GfxSurface, public Common::Point {

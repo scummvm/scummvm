@@ -70,7 +70,9 @@ Common::Error HodjNPodjEngine::run() {
 	setDebugger(new Console());
 
 	// Load the font
-	if (!_font.loadFromFON("msserif.fon",
+	if (!_fonts[8].loadFromFON("msserif.fon",
+		Graphics::WinFontDirEntry("MS Sans Serif", 8)) ||
+		!_fonts[14].loadFromFON("msserif.fon",
 			Graphics::WinFontDirEntry("MS Sans Serif", 14)))
 		error("Could not load msserif.fon");
 

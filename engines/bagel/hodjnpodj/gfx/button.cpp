@@ -52,25 +52,20 @@ void BmpButton::draw() {
 
 void ColorButton::draw() {
 	GfxSurface s = getSurface();
-	COLORREF myTextColor, oldTextColor,
-		myPen, myInversePen, myBrush;
+	COLORREF myTextColor, myPen, myInversePen, myBrush;
 	Common::String text;
-	int nUnderscore = -1;
-	int i, x, y, dx, dy;
+	int i, x, y, w, h, fw, fh;
 	Common::Point textInfo, letterInfo,
 		underscoreInfo;
 	Common::Rect focusRect;
+	size_t nUnderscore;
 	byte color;
 
 	// Check for any ampersand character, which indicates underline
 	// for the keyboard key associated with the button
 	text = _text;
-	for (i = 0; i < (int)text.size(); i++) {
-		if (text[i] == '&') {
-			nUnderscore = i;
-			text.deleteChar(i);
-		}
-	}
+	if ((nUnderscore = text.findFirstOf('&')) != Common::String::npos)
+		text.deleteChar(nUnderscore);
 
 	x = 0;
 	y = 0;
@@ -106,39 +101,35 @@ void ColorButton::draw() {
 		s.vLine(_bounds.width() - i, i - 1, _bounds.height() - i, color);
 	}
 
-#ifdef TODO
 	color = getPaletteIndex(_cButtonOutline);
+	s.frameRect(Common::Rect(0, 0, _bounds.width(), _bounds.height()), color);
 
-	dx = rcItem.right - rcItem.left;
-	dy = rcItem.bottom - rcItem.top;
-	x += (dx - textInfo.cx) >> 1;
-	y += (dy - textInfo.cy) >> 1;
+	s.setFontSize(8);
+	w = _bounds.width();
+	h = _bounds.height();
+	fw = s.getStringWidth(text);
+	fh = s.getStringHeight();
+	x += (w - fw) / 2;
+	y += (h - fh) / 2;
 
-	(*pDC).SetBkMode(TRANSPARENT);        					// make the text overlay transparently
-	oldTextColor = (*pDC).SetTextColor(myTextColor);         // set the color of the text
+	color = getPaletteIndex(myTextColor);
+	s.writeString(text, Common::Point(x, y), color);
 
-	(*pDC).TextOut(x, y, (LPCSTR)&chMyText, nMyTextLength);
-
-	if (nUnderscore >= 0) {
-		underscoreInfo = (*pDC).GetTextExtent(chMyText, nUnderscore);
-		dx = x + underscoreInfo.cx;
-		letterInfo = (*pDC).GetTextExtent(&chMyText[nUnderscore], 1);
-		underscoreInfo = (*pDC).GetTextExtent((LPCSTR)"_", 1);
-		dx += (letterInfo.cx - underscoreInfo.cx) >> 1;
-		(*pDC).TextOut(dx, y, (LPCSTR)"_", 1);
+	if (nUnderscore != Common::String::npos) {
+		Common::String str;
+		while (nUnderscore-- > 0)
+			str += ' ';
+		str += '_';
+		s.writeString(str, Common::Point(x + 1, y + 1), color);
 	}
-
-	(void)(*pDC).SetTextColor(oldTextColor);         		// set the color of the text
 
 	if (_itemState & ODS_FOCUS) {
-		focusRect.SetRect(x - FOCUS_RECT_DX,
+		focusRect = Common::Rect(x - FOCUS_RECT_DX,
 			y - FOCUS_RECT_DY,
-			x + textInfo.cx + FOCUS_RECT_DX,
-			y + textInfo.cy + FOCUS_RECT_DY + 1);
-		myQuill.CreateStockObject(DKGRAY_BRUSH);
-		(*pDC).FrameRect(&focusRect, &myQuill);
+			x + fw + FOCUS_RECT_DX,
+			y + fh + FOCUS_RECT_DY + 1);
+		s.frameRect(focusRect, 3);	// Dark grey
 	}
-#endif
 }
 
 } // namespace HodjNPodj
