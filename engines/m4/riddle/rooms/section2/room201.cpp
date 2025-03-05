@@ -1346,6 +1346,13 @@ void Room201::daemon() {
 		kernel_timing_trigger(120, 75);
 		break;
 
+	case 9000:
+		player_set_commands_allowed(false);
+		_ripleyShould = 10;
+		_trigger8 = kernel_trigger_create(9010);
+
+		break;
+
 	case 9010:
 		kernel_timing_trigger(1, 509);
 		kernel_timing_trigger(5, 9020);
@@ -1528,10 +1535,10 @@ void Room201::daemon() {
 }
 
 void Room201::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool talkFlag = player_said_any("talk", "talk to");
-	bool useFlag = player_said("gear");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool talkFlag = player_said_any("talk", "talk to");
+	const bool useFlag = player_said("gear");
 
 	if (player_said("conv201a")) {
 		conv201a();
@@ -1710,9 +1717,9 @@ void Room201::setupMei() {
 
 void Room201::conv201a() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	player_set_commands_allowed(false);
 
