@@ -372,7 +372,7 @@ void Room204::parser() {
 
 		if (lookFl && player_said("SHIH CHI TABLETS")) {
 			player_update_info(_G(my_walker), &_G(player_info));
-			if (_G(player_info).x >= 1300) {
+			if (_G(player_info).x < 1300) {
 				_meiMachineFlag = false;
 				_fieldE4_walkerDestX = 1245;
 				moveAndLookFl = true;
