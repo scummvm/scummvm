@@ -34,6 +34,7 @@ static const PlainGameDescriptor sword25Game[] = {
 static const DebugChannelDef debugFlagList[] = {
 	{Sword25::kDebugScript, "Script", "Script debug level"},
 	{Sword25::kDebugSound, "Sound", "Sound debug level"},
+	{Sword25::kDebugInternalDebugger, "Internaldebugger", "Internal debugger level"}, 
 	DEBUG_CHANNEL_END
 };
 
