@@ -868,7 +868,7 @@ bool FreescapeEngine::checkIfGameEnded() {
 		if (!_noShieldMessage.empty())
 			insertTemporaryMessage(_noShieldMessage, _countdown - 2);
 		_gameStateControl = kFreescapeGameStateEnd;
-	} else if (_gameStateVars[k8bitVariableEnergy] == 0) {
+	} else if (_gameStateVars[k8bitVariableEnergy] == 0 && isDriller()) {
 		playSound(_soundIndexNoEnergy, true);
 
 		if (!_noEnergyMessage.empty())
