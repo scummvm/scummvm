@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-02 00:34+0000\n"
-"PO-Revision-Date: 2025-03-05 15:18+0000\n"
+"PO-Revision-Date: 2025-03-05 18:04+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -12508,27 +12508,28 @@ msgstr "Hibakereső rács Kamera Jobbra"
 
 #: engines/twine/metaengine.cpp:249 engines/twine/metaengine.cpp:269
 msgid "Normal Behaviour"
-msgstr "Normális viselkedés"
+msgstr "Normális magatartás"
 
 #: engines/twine/metaengine.cpp:254 engines/twine/metaengine.cpp:274
 msgid "Athletic Behaviour"
-msgstr "Sportos viselkedés"
+msgstr "Sportos magatartás"
 
 #: engines/twine/metaengine.cpp:259 engines/twine/metaengine.cpp:279
 msgid "Aggressive Behaviour"
-msgstr "Agresszív viselkedés"
+msgstr "Agresszív magatartás"
 
 #: engines/twine/metaengine.cpp:264 engines/twine/metaengine.cpp:284
 msgid "Discreet Behaviour"
-msgstr "Diszkrét viselkedés"
+msgstr "Diszkrét magatartás"
 
 #: engines/twine/metaengine.cpp:289
+#, fuzzy
 msgid "Behaviour Action"
-msgstr "Viselkedés Akció"
+msgstr "Viselkedési Művelet"
 
 #: engines/twine/metaengine.cpp:295
 msgid "Change Behaviour"
-msgstr "Viselkedés változtatás"
+msgstr "Magatartás megváltoztatása"
 
 #: engines/twine/metaengine.cpp:307
 msgid "Options Menu"
@@ -12536,19 +12537,19 @@ msgstr "Opciók Menü"
 
 #: engines/twine/metaengine.cpp:319
 msgid "Use Selected Object"
-msgstr "Használd a Kiválasztott objektumot"
+msgstr "Kiválasztott tárgy használata"
 
 #: engines/twine/metaengine.cpp:325
 msgid "Throw Magic Ball"
-msgstr "Dobd el a Varázslabdát"
+msgstr "Mágikus golyó eldobás"
 
 #: engines/twine/metaengine.cpp:360
 msgid "Use Protopack"
-msgstr "Használ Protopackot"
+msgstr "Protopack használata"
 
 #: engines/twine/metaengine.cpp:365
 msgid "Open Holomap"
-msgstr "Holomap megnyitás"
+msgstr "Holomap megnyitása"
 
 #: engines/twine/metaengine.cpp:378
 msgid "Special Action"
@@ -12556,7 +12557,7 @@ msgstr "Speciális Akció"
 
 #: engines/twine/metaengine.cpp:384
 msgid "Scenery Zoom"
-msgstr ""
+msgstr "Táj Nagyítás"
 
 #: engines/twine/metaengine.cpp:527
 msgid "Previous location"
@@ -12567,26 +12568,26 @@ msgid "Next location"
 msgstr "Következő hely"
 
 #: engines/twp/dialogs.cpp:32
-#, fuzzy
-#| msgid "Video"
 msgid "Video:"
-msgstr "Videó"
+msgstr "Videó:"
 
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
 msgid "Toilet paper over"
-msgstr ""
+msgstr "Elfogyott wc-papír"
 
 #: engines/twp/dialogs.cpp:38
 msgid ""
 "The toilet paper in some toilets will be shown \"over\".\n"
 "It's a joke option that has no effects on the gameplay."
 msgstr ""
+"A wc-papír egyes helyeken \"elfogyott\" kiírást fog jelezni.\n"
+"Ez egy vicces opció, amely nincs hatással a játékmenetre."
 
 #. I18N: Setting to enable or disable additional jokes in the game.
 #: engines/twp/dialogs.cpp:41
 msgid "Annoying in-jokes"
-msgstr ""
+msgstr "Idegesítő belső poénok"
 
 #: engines/twp/dialogs.cpp:42
 msgid ""
