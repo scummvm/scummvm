@@ -278,12 +278,11 @@ void decodeVectorsTmpl(CinepakFrame &frame, const byte *clipTable, Common::Seeka
 
 } // End of anonymous namespace
 
-CinepakDecoder::CinepakDecoder(int bitsPerPixel) : Codec(), _bitsPerPixel(bitsPerPixel) {
+CinepakDecoder::CinepakDecoder(int bitsPerPixel) : Codec(), _bitsPerPixel(bitsPerPixel), _ditherPalette(0) {
 	_curFrame.surface = 0;
 	_curFrame.strips = 0;
 	_y = 0;
 	_colorMap = 0;
-	_ditherPalette = 0;
 	_ditherType = kDitherTypeUnknown;
 
 	if (bitsPerPixel == 8) {
@@ -322,7 +321,6 @@ CinepakDecoder::~CinepakDecoder() {
 	delete[] _clipTableBuf;
 
 	delete[] _colorMap;
-	delete[] _ditherPalette;
 }
 
 const Graphics::Surface *CinepakDecoder::decodeFrame(Common::SeekableReadStream &stream) {
@@ -412,7 +410,7 @@ const Graphics::Surface *CinepakDecoder::decodeFrame(Common::SeekableReadStream 
 			case 0x30:
 			case 0x31:
 			case 0x32:
-				if (_ditherPalette)
+				if (_ditherPalette.size() > 0)
 					ditherVectors(stream, i, chunkID, chunkSize);
 				else if (_bitsPerPixel == 8)
 					decodeVectors8(stream, i, chunkID, chunkSize);
@@ -666,10 +664,9 @@ void CinepakDecoder::setDither(DitherType type, const byte *palette) {
 	assert(canDither(type));
 
 	delete[] _colorMap;
-	delete[] _ditherPalette;
 
-	_ditherPalette = new byte[256 * 3];
-	memcpy(_ditherPalette, palette, 256 * 3);
+	_ditherPalette.resize(256, false);
+	_ditherPalette.set(palette, 0, 256);
 
 	_dirtyPalette = true;
 	_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
@@ -688,37 +685,11 @@ void CinepakDecoder::setDither(DitherType type, const byte *palette) {
 }
 
 byte CinepakDecoder::findNearestRGB(int index) const {
-	int r = s_defaultPalette[index * 3];
-	int g = s_defaultPalette[index * 3 + 1];
-	int b = s_defaultPalette[index * 3 + 2];
+	byte r = s_defaultPalette[index * 3];
+	byte g = s_defaultPalette[index * 3 + 1];
+	byte b = s_defaultPalette[index * 3 + 2];
 
-	byte result = 0;
-	int diff = 0x7FFFFFFF;
-
-	for (int i = 0; i < 256; i++) {
-		int bDiff = b - (int)_ditherPalette[i * 3 + 2];
-		int curDiffB = diff - (bDiff * bDiff);
-
-		if (curDiffB > 0) {
-			int gDiff = g - (int)_ditherPalette[i * 3 + 1];
-			int curDiffG = curDiffB - (gDiff * gDiff);
-
-			if (curDiffG > 0) {
-				int rDiff = r - (int)_ditherPalette[i * 3];
-				int curDiffR = curDiffG - (rDiff * rDiff);
-
-				if (curDiffR > 0) {
-					diff -= curDiffR;
-					result = i;
-
-					if (diff == 0)
-						break;
-				}
-			}
-		}
-	}
-
-	return result;
+	return _ditherPalette.findBestColor(r, g, b, Graphics::kColorDistanceEuclidean);
 }
 
 void CinepakDecoder::ditherVectors(Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize) {

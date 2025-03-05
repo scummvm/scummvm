@@ -27,8 +27,9 @@
 namespace Graphics {
 
 enum ColorDistanceMethod {
-	kColorDistanceNaive,	///< Weighted red 30%, green 50%, blue 20%
-	kColorDistanceRedmean,	///< Common low-cost approximation
+	kColorDistanceEuclidean, ///< Non-Weighted distance
+	kColorDistanceNaive,	 ///< Weighted red 30%, green 50%, blue 20%
+	kColorDistanceRedmean,	 ///< Common low-cost approximation
 };
 
 /**
