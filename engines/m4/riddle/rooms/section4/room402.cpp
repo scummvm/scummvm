@@ -1592,18 +1592,15 @@ void Room402::conv402a() {
 			break;
 
 		case 7:
+		case 12:
 		case 25:
-			switch (entry) {
-			case 1:
+			if (entry == 1) {
 				digi_play(sound, 1);
 				_wolfMode = 2002;
 				_wolfShould = 2160;
-				break;
-
-			default:
+			} else {
 				_wolfShould = 2142;
 				digi_play(sound, 1, 255, 777);
-				break;
 			}
 			break;
 
@@ -1718,7 +1715,7 @@ void Room402::conv402a() {
 		case 53:
 		case 54:
 			_val8 = 1;
-			_wolfShould = 201;
+			_wolfShould = 2101;
 			digi_play(sound, 1, 255, 777);
 			break;
 
