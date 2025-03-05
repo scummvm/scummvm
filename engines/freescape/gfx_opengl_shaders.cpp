@@ -114,7 +114,7 @@ void OpenGLShaderRenderer::init() {
 	_cubemapShader->enableVertexAttribute("texcoord", _cubemapTexCoordVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 
 	// populate default stipple data for shader rendering
-	for(int i = 0; i < 128; i++)
+	for (int i = 0; i < 128; i++)
 		_defaultShaderStippleArray[i] = _defaultStippleArray[i];
 
 	glDisable(GL_TEXTURE_2D);
@@ -125,14 +125,14 @@ void OpenGLShaderRenderer::init() {
 
 void OpenGLShaderRenderer::setViewport(const Common::Rect &rect) {
 	_viewport = Common::Rect(
-					_screenViewport.width() * rect.width() / _screenW,
-					_screenViewport.height() * rect.height() / _screenH
-					);
+	                _screenViewport.width() * rect.width() / _screenW,
+	                _screenViewport.height() * rect.height() / _screenH
+	            );
 
 	_viewport.translate(
-					_screenViewport.left + _screenViewport.width() * rect.left / _screenW,
-					_screenViewport.top + _screenViewport.height() * rect.top / _screenH
-					);
+	    _screenViewport.left + _screenViewport.width() * rect.left / _screenW,
+	    _screenViewport.top + _screenViewport.height() * rect.top / _screenH
+	);
 
 	_unscaledViewport = rect;
 	glViewport(_viewport.left, g_system->getHeight() - _viewport.bottom, _viewport.width(), _viewport.height());
@@ -209,7 +209,7 @@ void OpenGLShaderRenderer::positionCamera(const Math::Vector3d &pos, const Math:
 	Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(pos, interest, up_vec);
 	Math::Matrix4 viewMatrix;
 	viewMatrix.translate(-pos);
-    viewMatrix.transpose();
+	viewMatrix.transpose();
 
 	_modelViewMatrix = viewMatrix * lookMatrix;
 
@@ -283,7 +283,7 @@ void OpenGLShaderRenderer::renderPlayerShootBall(byte color, const Common::Point
 
 	copyToVertexArray(0, Math::Vector3d(remap(ball_position.x, _screenW), remap(ball_position.y, _screenH), 0));
 
-	for(int i = 0; i <= triangleAmount; i++) {
+	for (int i = 0; i <= triangleAmount; i++) {
 		float x = remap(ball_position.x + (radius * cos(i *  twicePi / triangleAmount)), _screenW);
 		float y = remap(ball_position.y + (radius * sin(i * twicePi / triangleAmount)), _screenH);
 		copyToVertexArray(i + 1, Math::Vector3d(x, y, 0));
@@ -326,7 +326,7 @@ void OpenGLShaderRenderer::renderPlayerShootRay(byte color, const Common::Point 
 	useColor(r, g, b);
 
 	glLineWidth(5); // It will not work in every OpenGL implementation since the
-					 // spec doesn't require support for line widths other than 1
+	                // spec doesn't require support for line widths other than 1
 	copyToVertexArray(0, Math::Vector3d(remap(viewArea.left, _screenW), remap(viewArea.height() - viewArea.top,  _screenH), 0));
 	copyToVertexArray(1, Math::Vector3d(remap(position.x,  _screenW), remap(_screenH - position.y, _screenH), 0));
 
@@ -385,7 +385,7 @@ void OpenGLShaderRenderer::drawCelestialBody(Math::Vector3d position, float radi
 
 	copyToVertexArray(0, position);
 
-	for(int i = 0; i <= triangleAmount; i++) {
+	for (int i = 0; i <= triangleAmount; i++) {
 		float x = position.x();
 		float y = position.y() + (radius * cos(i *  twicePi / triangleAmount));
 		float z = position.z() + (adj * radius * sin(i * twicePi / triangleAmount));
@@ -422,7 +422,7 @@ void OpenGLShaderRenderer::renderCrossair(const Common::Point crossairPosition) 
 	useColor(255, 255, 255);
 
 	glLineWidth(MAX(2, g_system->getWidth() / 192)); // It will not work in every OpenGL implementation since the
-					 // spec doesn't require support for line widths other than 1
+	                                                 // spec doesn't require support for line widths other than 1
 
 	copyToVertexArray(0, Math::Vector3d(remap(crossairPosition.x - 3, _screenW), remap(_screenH - crossairPosition.y, _screenH), 0));
 	copyToVertexArray(1, Math::Vector3d(remap(crossairPosition.x - 1, _screenW), remap(_screenH - crossairPosition.y, _screenH), 0));
@@ -527,9 +527,9 @@ void OpenGLShaderRenderer::useStipple(bool enabled) {
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(factor - 0.5f, -1.0f);
 		if (_renderMode == Common::kRenderZX    ||
-			_renderMode == Common::kRenderCPC   ||
-			_renderMode == Common::kRenderCGA   ||
-			_renderMode == Common::kRenderHercG)
+		        _renderMode == Common::kRenderCPC   ||
+		        _renderMode == Common::kRenderCGA   ||
+		        _renderMode == Common::kRenderHercG)
 			_triangleShader->setUniform("stipple", 128, _variableStippleArray);
 		else
 			_triangleShader->setUniform("stipple", 128, _defaultShaderStippleArray);

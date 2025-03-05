@@ -527,7 +527,7 @@ void FreescapeEngine::processInput() {
 			if (event.type == Common::EVENT_SCREEN_CHANGED)
 				; // Allow event
 			else if (_gameStateControl == kFreescapeGameStateEnd
-						&& (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START)) {
+			         && (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START)) {
 				_endGameKeyPressed = true;
 				continue;
 			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START && event.customType == kActionEscape)
@@ -999,9 +999,9 @@ bool FreescapeEngine::hasFeature(EngineFeature f) const {
 	// The TinyGL renderer does not support arbitrary resolutions for now
 	bool softRenderer = determinateRenderType() == Graphics::kRendererTypeTinyGL;
 	return (f == kSupportsReturnToLauncher) ||
-		   (f == kSupportsLoadingDuringRuntime) ||
-		   (f == kSupportsSavingDuringRuntime) ||
-		   (f == kSupportsArbitraryResolutions && !softRenderer);
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime) ||
+	       (f == kSupportsArbitraryResolutions && !softRenderer);
 }
 
 Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream) {

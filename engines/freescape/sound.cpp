@@ -197,7 +197,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 						//bVar4 = bVar4 ^ 0x10;
 						beep = !beep;
 						repetitions = (((uint16)soundType * 0x100 + (uint16)soundType * -2) -
-									(uint16)((uint16)soundType * 0x100 < (uint16)soundType)) + (uVar2 & 0xff);
+						               (uint16)((uint16)soundType * 0x100 < (uint16)soundType)) + (uVar2 & 0xff);
 						uint8 bVar9 = (byte)repetitions;
 						uint8 bVar8 = (byte)((uint16)repetitions >> 8);
 						uint8 bVar1 = bVar9 - bVar8;

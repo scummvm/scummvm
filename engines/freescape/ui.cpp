@@ -24,7 +24,7 @@
 namespace Freescape {
 
 void FreescapeEngine::waitInLoop(int maxWait) {
-	for (int i = 0; i < maxWait; i++ ) {
+	for (int i = 0; i < maxWait; i++) {
 		Common::Event event;
 		while (_eventManager->pollEvent(event)) {
 			Common::Point mousePos;
@@ -42,13 +42,14 @@ void FreescapeEngine::waitInLoop(int maxWait) {
 				if (_demoMode)
 					break;
 
-				if (_shootMode) {;
+				if (_shootMode) {
+					;
 					break;
 				} else {
 					// Mouse pointer is locked into the the middle of the screen
 					// since we only need the relative movements. This will not affect any touchscreen device
 					// so on-screen controls are still accesible
-					mousePos.x = g_system->getWidth() * ( _viewArea.left + _viewArea.width() / 2) / _screenW;
+					mousePos.x = g_system->getWidth() * (_viewArea.left + _viewArea.width() / 2) / _screenW;
 					mousePos.y = g_system->getHeight() * (_viewArea.top + _viewArea.height() / 2) / _screenW;
 					if (_invertY)
 						event.relMouse.y = -event.relMouse.y;
@@ -82,7 +83,7 @@ void FreescapeEngine::titleScreen() {
 		return;
 
 	int maxWait = 60 * 6;
-	for (int i = 0; i < maxWait; i++ ) {
+	for (int i = 0; i < maxWait; i++) {
 		Common::Event event;
 		while (_eventManager->pollEvent(event)) {
 			switch (event.type) {
@@ -103,9 +104,9 @@ void FreescapeEngine::titleScreen() {
 				default:
 					break;
 				}
-			break;
+				break;
 			case Common::EVENT_RBUTTONDOWN:
-				// fallthrough
+			// fallthrough
 			case Common::EVENT_LBUTTONDOWN:
 				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
 					maxWait = -1;
@@ -131,20 +132,20 @@ Graphics::Surface *FreescapeEngine::drawStringsInSurface(const Common::Array<Com
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 
 	switch (_renderMode) {
-		case Common::kRenderCGA:
-		case Common::kRenderHercG:
-			color = 1;
-			break;
-		case Common::kRenderZX:
-			color = isCastle() ? 7 : 6;
-			break;
-		case Common::kRenderCPC:
-			color = _gfx->_underFireBackgroundColor;
-			if (color == uint32(-1))
-				color = 14;
-			break;
-		default:
+	case Common::kRenderCGA:
+	case Common::kRenderHercG:
+		color = 1;
+		break;
+	case Common::kRenderZX:
+		color = isCastle() ? 7 : 6;
+		break;
+	case Common::kRenderCPC:
+		color = _gfx->_underFireBackgroundColor;
+		if (color == uint32(-1))
 			color = 14;
+		break;
+	default:
+		color = 14;
 	}
 	uint8 r, g, b;
 
@@ -281,7 +282,7 @@ void FreescapeEngine::drawFullscreenMessageAndWait(Common::String message) {
 }
 
 void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface, int maxWait) {
-	for (int i = 0; i < maxWait; i++ ) {
+	for (int i = 0; i < maxWait; i++) {
 		Common::Event event;
 		while (_eventManager->pollEvent(event)) {
 			switch (event.type) {
@@ -314,7 +315,7 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface, int ma
 				}
 				break;
 			case Common::EVENT_RBUTTONDOWN:
-				// fallthrough
+			// fallthrough
 			case Common::EVENT_LBUTTONDOWN:
 				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
 					maxWait = -1;

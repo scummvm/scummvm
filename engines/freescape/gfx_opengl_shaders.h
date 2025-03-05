@@ -48,7 +48,9 @@ public:
 
 	void copyToVertexArray(uint idx, const Math::Vector3d &src) {
 		assert(idx < kVertexArraySize);
-		_verts[idx].x = src.x(); _verts[idx].y = src.y(); _verts[idx].z = src.z();
+		_verts[idx].x = src.x();
+		_verts[idx].y = src.y();
+		_verts[idx].z = src.z();
 	}
 
 	Vertex *_verts;

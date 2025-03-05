@@ -45,7 +45,9 @@ public:
 
 	void copyToVertexArray(uint idx, const Math::Vector3d &src) {
 		assert(idx < kVertexArraySize);
-		_verts[idx].x = src.x(); _verts[idx].y = src.y(); _verts[idx].z = src.z();
+		_verts[idx].x = src.x();
+		_verts[idx].y = src.y();
+		_verts[idx].z = src.z();
 	}
 
 	Vertex *_verts;
@@ -59,7 +61,8 @@ public:
 
 	void copyToCoordArray(uint idx, const Math::Vector2d &src) {
 		assert(idx < kCoordsArraySize);
-		_coords[idx].x = src.getValue(0); _coords[idx].y = src.getValue(1);
+		_coords[idx].x = src.getValue(0);
+		_coords[idx].y = src.getValue(1);
 	}
 
 	virtual void init() override;

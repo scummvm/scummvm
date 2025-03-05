@@ -25,9 +25,9 @@
 namespace Freescape {
 
 EventManagerWrapper::EventManagerWrapper(Common::EventManager *delegate) :
-		_delegate(delegate),
-		_keyRepeatTime(0),
-		_currentActionDown(kActionNone) {
+	_delegate(delegate),
+	_keyRepeatTime(0),
+	_currentActionDown(kActionNone) {
 	assert(delegate);
 }
 

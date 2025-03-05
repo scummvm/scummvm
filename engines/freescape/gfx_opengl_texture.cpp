@@ -42,11 +42,11 @@ static uint32 upperPowerOfTwo(uint32 v) {
 }
 
 OpenGLTexture::OpenGLTexture() :
-		_internalFormat(0),
-		_sourceFormat(0),
-		_internalWidth(0),
-		_internalHeight(0),
-		_upsideDown(false) {
+	_internalFormat(0),
+	_sourceFormat(0),
+	_internalWidth(0),
+	_internalHeight(0),
+	_upsideDown(false) {
 	glGenTextures(1, &_id);
 }
 

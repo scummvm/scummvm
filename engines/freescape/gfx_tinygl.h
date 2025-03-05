@@ -44,7 +44,9 @@ public:
 	Vertex *_verts;
 	void copyToVertexArray(uint idx, const Math::Vector3d &src) {
 		assert(idx < kVertexArraySize);
-		_verts[idx].x = src.x(); _verts[idx].y = src.y(); _verts[idx].z = src.z();
+		_verts[idx].x = src.x();
+		_verts[idx].y = src.y();
+		_verts[idx].z = src.z();
 	}
 
 	struct Coord {
@@ -56,7 +58,8 @@ public:
 
 	void copyToTexCoordArray(uint idx, float x, float y) {
 		assert(idx < kVertexArraySize);
-		_texCoord[idx].x = x; _texCoord[idx].y = y;
+		_texCoord[idx].x = x;
+		_texCoord[idx].y = y;
 	}
 
 	bool _stippleEnabled;

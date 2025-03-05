@@ -164,7 +164,7 @@ Common::Array<Graphics::ManagedSurface *> FreescapeEngine::getCharsAmigaAtariInt
 	Common::Array<Graphics::ManagedSurface *> chars;
 
 	for (int c = 0; c < charsNumber - 1; c++) {
-		int position = 8 * (m1*c + 1);
+		int position = 8 * (m1 * c + 1);
 		Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 		surface->create(sizeX, sizeY, Graphics::PixelFormat::createFormatCLUT8());
 		for (int j = 0; j < sizeY; j++) {

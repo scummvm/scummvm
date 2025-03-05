@@ -35,7 +35,8 @@ static const PlainGameDescriptor freescapeGames[] = {
 	{"totaleclipse", "Total Eclipse"},
 	{"totaleclipse2", "Total Eclipse 2"},
 	{"castlemaster", "Castle Master"},
-	{0, 0}};
+	{0, 0}
+};
 
 static const ADGameDescription gameDescriptions[] = {
 	// Original Freescape games
@@ -128,7 +129,8 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO5(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GUIO_RENDERHERCGREEN, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
-	{ // Retail release
+	{
+		// Retail release
 		"driller",
 		"",
 		AD_ENTRY1s("x.prg", "d002983a8b652f25b18a09425db78c4c", 293159),
@@ -137,7 +139,8 @@ static const ADGameDescription gameDescriptions[] = {
 		GF_ATARI_RETAIL,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDERATARIST, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
-	{ // Budget release
+	{
+		// Budget release
 		"driller",
 		"",
 		AD_ENTRY1s("x.prg", "1a79e68e6c2c223c96de0ca2d65149ae", 293062),
@@ -146,7 +149,8 @@ static const ADGameDescription gameDescriptions[] = {
 		GF_ATARI_BUDGET,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDERATARIST, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
-	{ // Virtual Worlds release
+	{
+		// Virtual Worlds release
 		"driller",
 		"This release requires unpacking, check the wiki for instructions: https://wiki.scummvm.org/index.php?title=Driller#AtariST_releases",
 		{
@@ -172,7 +176,8 @@ static const ADGameDescription gameDescriptions[] = {
 		GF_AMIGA_RETAIL,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDERAMIGA, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
-	{ // Virtual Worlds release
+	{
+		// Virtual Worlds release
 		"driller",
 		"",
 		{
@@ -398,13 +403,14 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSUPPORTED,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
-	{ // Stampede AtariST, Issue 1
+	{
+		// Stampede AtariST, Issue 1
 		"darkside",
 		"",
 		{
 			{"0.DRK", 0, "86794a6cb2d371cdf892a2173e3b7568", 47966},
 			{"1.DRK", 0, "9e700d991054f4393b1ccef706586b5b", 223272},
-  			AD_LISTEND
+			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
@@ -639,7 +645,8 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
-	{ // Erbe Software release
+	{
+		// Erbe Software release
 		"totaleclipse",
 		"",
 		{
@@ -668,13 +675,14 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSUPPORTED,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERAMIGA)
 	},
-	{ // Virtual Worlds release
+	{
+		// Virtual Worlds release
 		"totaleclipse",
 		"",
 		{
 			{"0.TEC", 0, "8daa244d6814f06b9a081b7bd0ec542d", 89500},
 			{"1.TEC", 0, "c1b022ad7284578f97aa2ff46ed3db38", 304030},
-  			AD_LISTEND
+			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
@@ -694,7 +702,8 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
-	{ // Stampede Atari, Issue 7
+	{
+		// Stampede Atari, Issue 7
 		"totaleclipse",
 		"",
 		{
@@ -1050,7 +1059,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"3dkit",
 		"3D House v4",
 		AD_ENTRY2s("3DHOUSE4.EXE", "49f7a832104ae76d38851d1b4fd8f0a1", 8859,
-				   "RUNNER.3WD", "cc0bfa95f695d2b7eadc1d6f3dd6e8f9", 62434),
+		           "RUNNER.3WD", "cc0bfa95f695d2b7eadc1d6f3dd6e8f9", 62434),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSUPPORTED,
@@ -1060,7 +1069,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"3dkit",
 		"Anarchy Academy",
 		AD_ENTRY2s("ANARCHY.PRG", "78d543be4aad9608093c1e91bc100307", 270,
-				   "RUNNER.DAT", "1cf7c049ee59503dd7218b0f45828132", 42802),
+		           "RUNNER.DAT", "1cf7c049ee59503dd7218b0f45828132", 42802),
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
 		ADGF_UNSUPPORTED,
@@ -1070,14 +1079,15 @@ static const ADGameDescription gameDescriptions[] = {
 		"3dkit",
 		"The World of Stairs",
 		AD_ENTRY2s("RUNNER.EXE", "8d20d849694fb098b5fa7883f770a122", 96439,
-				   "RUNNER.3WD", "daf373f23a122dd1b7eda48f33d3aa54", 44694),
+		           "RUNNER.3WD", "daf373f23a122dd1b7eda48f33d3aa54", 44694),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NOMIDI)
 	},
 
-	AD_TABLE_END_MARKER};
+	AD_TABLE_END_MARKER
+};
 } // End of namespace Freescape
 
 static const DebugChannelDef debugFlagList[] = {

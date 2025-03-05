@@ -48,7 +48,7 @@ public:
 
 	//const Graphics::ManagedSurface &getImageSurface() const { return _image; }
 private:
-    Common::Array<Graphics::ManagedSurface *> _chars;
+	Common::Array<Graphics::ManagedSurface *> _chars;
 	uint32 _backgroundColor;
 	uint32 _secondaryColor;
 	int _kerningOffset;
