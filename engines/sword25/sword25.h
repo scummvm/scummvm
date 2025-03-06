@@ -55,6 +55,7 @@ enum {
 enum {
 	kDebugScript = 1,
 	kDebugSound,
+	kDebugInternalDebugger,
 	kDebugResource,
 };
 

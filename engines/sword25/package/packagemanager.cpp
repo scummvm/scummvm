@@ -198,6 +198,14 @@ byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr)
 	int bytesRead = in->read(buffer, in->size());
 	delete in;
 
+	// Modify the buffer to enable internal debugger if needed
+	if (debugChannelSet(-1, kDebugInternalDebugger) && fileName.equals("/system/internal_config.lua")) {
+		char *found = strstr((char *)buffer, "ENGINE_RELEASE_TYPE = 'pub'");
+		if (found != nullptr) {
+			memcpy(found + 23, "dev", 3);
+		}
+	}
+
 	if (!bytesRead) {
 		delete[] buffer;
 		return NULL;
