@@ -160,6 +160,22 @@ bool Rules::msgGame(const GameMessage &msg) {
 	return false;
 }
 
+bool Rules::msgMouseUp(const MouseUpMessage &msg) {
+	Common::Rect moreRect = _moreRect;
+	moreRect.translate(_bounds.left, _bounds.top);
+
+	if (msg._button == MouseUpMessage::MB_LEFT &&
+		moreRect.contains(msg._pos) && !_lines.empty()) {
+		// Move to the next page
+		renderPage();
+		redraw();
+		return true;
+	} else {
+		return View::msgMouseUp(msg);
+	}
+}
+
+
 void Rules::draw() {
 	GfxSurface s = getSurface();
 	s.setFontSize(TEXT_SIZE);
@@ -169,7 +185,8 @@ void Rules::draw() {
 	if (_children.empty())
 		_okButton.setParent(this);
 
-	s.writeString(_more, _moreRect, BLACK);
+	if (!_lines.empty())
+		s.writeString(_more, _moreRect, BLACK);
 }
 
 void Rules::renderPage() {
