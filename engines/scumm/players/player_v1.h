@@ -76,7 +76,6 @@ private:
 	uint  _mplex_step;
 	uint  _mplex;
 	uint  _repeat_ctr;
-	uint  _freq_current;
 	int   _forced_level;
 	uint16 _random_lsr;
 	uint  *_value_ptr;
