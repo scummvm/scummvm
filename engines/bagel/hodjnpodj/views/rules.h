@@ -23,15 +23,25 @@
 #define HODJNPODJ_VIEWS_RULES_H
 
 #include "bagel/hodjnpodj/views/view.h"
+#include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
 class Rules : public View {
 private:
-	GfxSurface _background;
+	OkButton _okButton;
+	GfxSurface _background, _scroll;
+	GfxSurface _scrollTop, _scrollBottom, _scrollMiddle;
+	GfxSurface _scrollContent;
 	Common::String _filename, _waveFilename;
 	ViewCloseCallback _callback = nullptr;
+	int _scrollY = 0;
+	Common::StringArray _lines;
+	size_t _helpPagePosition[100] = { 0 };
+
+	void renderPage();
+	void closeDialog();
 
 public:
 	Rules();
@@ -44,6 +54,8 @@ public:
 	void draw() override;
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	bool msgGame(const GameMessage & msg) override;
 };
 
 } // namespace HodjNPodj

@@ -68,6 +68,9 @@ public:
 		Graphics::TextAlign justify = Graphics::kTextAlignLeft);
 	size_t getStringWidth(const Common::String &text) const;
 	size_t getStringHeight() const;
+	int wordWrapText(const Common::String &str,
+		Common::StringArray &lines) const;
+
 };
 
 class Sprite : public GfxSurface, public Common::Point {

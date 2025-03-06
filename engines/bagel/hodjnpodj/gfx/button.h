@@ -114,7 +114,7 @@ private:
 	COLORREF _cButtonOutline = RGB_BUTTON_OUTLINE;
 
 public:
-	ColorButton(const Common::String &text, UIElement *parent) :
+	ColorButton(const Common::String &text, UIElement *parent = nullptr) :
 		UIElement("ColorButton", parent), _text(text) {
 	}
 	~ColorButton() override {
@@ -125,6 +125,11 @@ public:
 	bool msgMouseUp(const MouseUpMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+};
+
+class OkButton : public ColorButton {
+public:
+	OkButton(UIElement *parent = nullptr);
 };
 
 } // namespace HodjNPodj

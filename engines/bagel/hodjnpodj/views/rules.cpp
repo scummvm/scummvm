@@ -19,14 +19,17 @@
  *
  */
 
+#include "common/file.h"
 #include "bagel/hodjnpodj/views/rules.h"
 #include "bagel/hodjnpodj/globals.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
 #define COLOR_BUTTONS		TRUE
 #define SCROLL_PIECES		6						// number of mid-scroll segments
+#define WHITE               255
 
 // Scroll bitmaps. Since all minigames have the same bitmaps,
 // this just uses one minigame at random
@@ -40,6 +43,7 @@ namespace HodjNPodj {
 #define	SCROLL_STRIP_WIDTH	10						// width of scroll middle to reveal per interval 
 #define	SCROLL_STRIP_DELAY	1000					// delay to wait after each partial scroll unfurling
 
+#define TEXT_SIZE           12
 #define	TEXT_BUFFER_SIZE	512						// # characters in the text input buffer
 #define	TEXT_LEFT_MARGIN	55						// left margin offset for display of text
 #define	TEXT_TOP_MARGIN		5                       // top margin offset for display of text
@@ -54,11 +58,6 @@ namespace HodjNPodj {
 Rules::Rules() : View("Rules") {
 }
 
-void Rules::draw() {
-	GfxSurface s = getSurface();
-	s.blitFrom(_background);
-}
-
 void Rules::show(const Common::String &filename,
 		const Common::String &waveFile,
 		ViewCloseCallback callback) {
@@ -70,21 +69,59 @@ void Rules::show(const Common::String &filename,
 }
 
 bool Rules::msgOpen(const OpenMessage &msg) {
+	size_t idx;
+
 	// All minigames share the same bitmaps, so use Fuge's arbitrarily
-	_background.loadBitmap(SCROLL_SPEC);
-	_background.setTransparentColor(255);
-	Common::Rect r(0, 0, _background.w, _background.h);
-	r.moveTo((GAME_WIDTH - _background.w) / 2,
-		(GAME_HEIGHT - _background.h) / 2);
+	_scroll.loadBitmap(SCROLL_SPEC);
+	_scrollTop.loadBitmap(SCROLL_TOP_SPEC);
+	_scrollBottom.loadBitmap(SCROLL_BOT_SPEC);
+	_scrollMiddle.loadBitmap(SCROLL_MID_SPEC);
+	_scroll.setTransparentColor(WHITE);
+	_scrollTop.setTransparentColor(WHITE);
+	_scrollBottom.setTransparentColor(WHITE);
+	_scrollMiddle.setTransparentColor(WHITE);
+
+	Common::Rect r(0, 0, _scroll.w, _scroll.h);
+	r.moveTo((GAME_WIDTH - _scroll.w) / 2,
+		(GAME_HEIGHT - _scroll.h) / 2);
 	setBounds(r);
-#if 0
-	Common::Rect btnRect(0, 0, 80, 25);
-	btnRect.moveTo(_bounds.left + (_bounds.width() - btnRect.width()) / 2,
-		_bounds.bottom - 54);
-	_okButton.setBounds(btnRect);
-#endif
+
+	// Save a copy of the current background, since it's used
+	// for redrawing as the scroll opens
+	GfxSurface s = getSurface();
+	_background.copyFrom(s);
+
 	// Make sure the cursor is shown
 	g_events->setCursor(IDC_ARROW);
+
+	// Read the text content
+	Common::File f;
+	if (!f.open(Common::Path(_filename)))
+		error("Could not open - %s", _filename.c_str());
+	Common::String text = f.readString();
+
+	// Pre-formatting of text into something suitable for wordWrapText
+	idx = 0;
+	while ((idx = text.find("\r\n", idx)) != Common::String::npos) {
+		text.deleteChar(idx);
+		text.deleteChar(idx);
+	}
+
+	idx = 0;
+	while ((idx = text.find("\t", idx)) != Common::String::npos) {
+		text.deleteChar(idx);
+		text.insertString("    ", idx);
+	}
+
+	text.replace('\\', '\n');
+
+	// Line wrap the lines
+	s = getSurface(Common::Rect(TEXT_LEFT_MARGIN, _scrollTop.h + TEXT_TOP_MARGIN,
+		TEXT_LEFT_MARGIN + TEXT_WIDTH, _scroll.h - _scrollBottom.h - TEXT_BOTTOM_MARGIN));
+	s.wordWrapText(text, _lines);
+
+	// Render the first page of text
+	renderPage();
 
 	return View::msgOpen(msg);
 }
@@ -92,6 +129,65 @@ bool Rules::msgOpen(const OpenMessage &msg) {
 bool Rules::msgClose(const CloseMessage &msg) {
 	_background.clear();
 	return View::msgClose(msg);
+}
+
+bool Rules::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_SELECT ||
+		msg._action == KEYBIND_ESCAPE) {
+		closeDialog();
+		return true;
+	}
+
+	return false;
+}
+
+bool Rules::msgGame(const GameMessage &msg) {
+	if (msg._name == "BUTTON") {
+		closeDialog();
+		return true;
+	}
+
+	return false;
+}
+
+void Rules::draw() {
+	GfxSurface s = getSurface();
+	s.blitFrom(_scrollContent);
+}
+
+void Rules::renderPage() {
+	Common::String line;
+
+	// Build up scroll image
+	_scrollContent.create(_scroll.w, _scroll.h);
+	_scrollContent.clear(WHITE);
+	_scrollContent.setTransparentColor(WHITE);
+
+	_scrollContent.blitFrom(_scrollTop);
+	for (int i = 0; i < SCROLL_PIECES; ++i)
+		_scrollContent.blitFrom(_scrollMiddle,
+			Common::Point(0, _scrollTop.h + _scrollMiddle.h * i));
+	_scrollContent.blitFrom(_scrollBottom,
+		Common::Point(0, _scrollTop.h + _scrollMiddle.h * SCROLL_PIECES));
+
+	Common::Rect textRect(TEXT_LEFT_MARGIN, _scrollTop.h + TEXT_TOP_MARGIN,
+		TEXT_LEFT_MARGIN + TEXT_WIDTH, _scroll.h - _scrollBottom.h - TEXT_BOTTOM_MARGIN);
+	GfxSurface s(_scrollContent, textRect);
+	s.setFontSize(TEXT_SIZE);
+
+	for (int y = 0; y < s.h && !_lines.empty(); y += s.getStringHeight() + 2) {
+		// Get the next line
+		line = _lines.front();
+		_lines.remove_at(0);
+
+		// Write it out
+		s.writeString(line, Common::Point(0, y), BLACK);
+	}
+}
+
+void Rules::closeDialog() {
+	close();
+	_callback();
 }
 
 } // namespace HodjNPodj

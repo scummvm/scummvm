@@ -377,6 +377,13 @@ GfxSurface UIElement::getSurface() const {
 	return GfxSurface(*g_events->getScreen(), _bounds);
 }
 
+GfxSurface UIElement::getSurface(const Common::Rect &subRect) const {
+	Common::Rect r = _bounds;
+	r = Common::Rect(r.left + subRect.left, r.top + subRect.top,
+		r.left + subRect.right, r.top + subRect.bottom);
+	return GfxSurface(*g_events->getScreen(), r);
+}
+
 int UIElement::getRandomNumber(int minNumber, int maxNumber) {
 	return g_engine->getRandomNumber(maxNumber - minNumber + 1) + minNumber;
 }

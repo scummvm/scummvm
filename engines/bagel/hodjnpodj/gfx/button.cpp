@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/translation.h"
 #include "graphics/paletteman.h"
 #include "common/file.h"
 #include "image/bmp.h"
@@ -176,6 +177,12 @@ bool ColorButton::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return false;
+}
+
+/*------------------------------------------------------------------------*/
+
+OkButton::OkButton(UIElement *parent) :
+		ColorButton(_s("&OK"), parent) {
 }
 
 } // namespace HodjNPodj

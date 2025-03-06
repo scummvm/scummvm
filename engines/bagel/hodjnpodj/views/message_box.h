@@ -31,7 +31,7 @@ namespace HodjNPodj {
 class MessageBox: public View {
 private:
 	GfxSurface _background;
-	ColorButton _okButton;
+	OkButton _okButton;
 	Common::String _line1;
 	Common::String _line2;
 	ViewCloseCallback _callback;

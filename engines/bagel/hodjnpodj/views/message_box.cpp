@@ -50,7 +50,7 @@ void MessageBox::show(const Common::String &line1,
 }
 
 MessageBox::MessageBox() : View("MessageBox"),
-		_okButton("&OK", this) {
+		_okButton(this) {
 }
 
 bool MessageBox::msgOpen(const OpenMessage &msg) {

@@ -70,11 +70,12 @@ Common::Error HodjNPodjEngine::run() {
 	setDebugger(new Console());
 
 	// Load the font
-	if (!_fonts[8].loadFromFON("msserif.fon",
-		Graphics::WinFontDirEntry("MS Sans Serif", 8)) ||
-		!_fonts[14].loadFromFON("msserif.fon",
-			Graphics::WinFontDirEntry("MS Sans Serif", 14)))
-		error("Could not load msserif.fon");
+	for (int size = 8; size <= 14; size += 2) {
+		if (!_fonts[size].loadFromFON("msserif.fon",
+				Graphics::WinFontDirEntry("MS Sans Serif", size)))
+			error("Could not load msserif.fon");
+
+	}
 
 	// Run the game
 	runGame();

@@ -207,6 +207,7 @@ public:
 	 * Returns a surface for drawing the element
 	 */
 	GfxSurface getSurface() const;
+	GfxSurface getSurface(const Common::Rect &subRect) const;
 
 	/**
 	 * Clear the surface
