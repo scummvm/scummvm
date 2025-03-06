@@ -39,6 +39,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_COPY_PROTECTION,
 		{
+			// I18N: lockout is code to start the game
 			_s("Enable lockout system"),
 			_s("Require a lockout code to start the game."),
 			"copy_protection",

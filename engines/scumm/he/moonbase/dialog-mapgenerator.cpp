@@ -81,7 +81,7 @@ MapGeneratorDialog::MapGeneratorDialog(bool demo) : Dialog("MapGenerator"), _ref
 	// I18N: Random map size
 	_sizeRandom = new GUI::CheckboxWidget(this, "MapGenerator.SizeRandom", _("Random"), _("Picks the map size randomly."), kSizeRandCmd);
 
-	// I18N: Map tilesets
+	// I18N: Map tile sets
 	_tileDesc = new GUI::StaticTextWidget(this, "MapGenerator.Tileset", _("Tileset"));
 	_tileDesc->setAlign(Graphics::kTextAlignCenter);
 	_tileGroup = new GUI::RadiobuttonGroup(this, kTileCmd);

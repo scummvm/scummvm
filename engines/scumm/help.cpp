@@ -112,7 +112,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 		break;
 	case 3:
 		if (gameId == GID_LOOM)
-			title = _("Spinning drafts on the keyboard:");
+			title = _("Spinning drafts on the keyboard:"); // I18N: Drafts is set of notes in Loom to invoke spells
 		else
 			title = _("Main game controls:");
 		switch (gameId) {
