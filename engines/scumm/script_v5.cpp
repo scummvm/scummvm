@@ -633,6 +633,8 @@ void ScummEngine_v5::o5_actorOps() {
 			error("o5_actorOps: default case %d", _opcode & 0x1F);
 		}
 	}
+
+	workaroundLoomHetchelDoubleHead(a, act);
 }
 
 void ScummEngine_v5::o5_setClass() {
@@ -3563,6 +3565,10 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 	}
 }
 
+#pragma mark -
+#pragma mark --- Enhancements & workarounds ---
+#pragma mark -
+
 void ScummEngine_v5::printPatchedMI1CannibalString(int textSlot, const byte *ptr) {
 	const char *msg = (const char *)ptr;
 
@@ -3589,6 +3595,35 @@ void ScummEngine_v5::printPatchedMI1CannibalString(int textSlot, const byte *ptr
 	}
 
 	printString(textSlot, (const byte *)msg);
+}
+
+void ScummEngine_v5::workaroundLoomHetchelDoubleHead(Actor *a, int act) {
+	// WORKAROUND: In Loom, when Hetchel appears at the forge to help Bobbin, she
+	// may have two heads for some frames, when she's talking as she's flying.
+	//
+	// The problem is known to exist in (at least) the EGA 1.0, 1.1 and Macintosh
+	// releases. The fix is taken from the official French EGA 1.2 release; the
+	// TG16 and all later 256-color releases appear to be fixed by default as well.
+	if (_game.id == GID_LOOM && _game.version == 3 && !(_game.features & GF_OLD256) && _currentScript != 0xFF &&
+		(act == 11 || act == 12) && enhancementEnabled(kEnhMinorBugFixes)) {
+		// Hetchel looks at and then flies to the forge; TalkAnimNr() options were
+		// added to some ActorOps() calls in EGA 1.2 script 34-88.
+		if (vm.slot[_currentScript].number == 88 && _roomResource == 34) {
+			if (a->_walkFrame == 6 && a->_standFrame == 6) {
+				a->_talkStartFrame = a->_talkStopFrame = 6;
+			} else if (a->_walkFrame == 2 && a->_standFrame == 3 && act == 11) {
+				a->_talkStartFrame = 4;
+				a->_talkStopFrame = 5;
+			}
+		}
+
+		// Hetchel goes into the forge chimney to get Bobbin's distaff;
+		// TalkAnimNr(6,6) option was added to ActorOps(12) in script 38-087.
+		if (vm.slot[_currentScript].number == 87 && _roomResource >= 38 && _roomResource <= 40) {
+			if (a->_walkFrame == 6 && a->_standFrame == 6 && act == 12)
+				a->_talkStartFrame = a->_talkStopFrame = 6;
+		}
+	}
 }
 
 } // End of namespace Scumm
