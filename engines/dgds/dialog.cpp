@@ -137,16 +137,15 @@ void Dialog::drawType2BackgroundDragon(Graphics::ManagedSurface *dst, const Comm
 }
 
 void Dialog::drawType2BackgroundChina(Graphics::ManagedSurface *dst, const Common::String &title) {
-	_state->_loc = DgdsRect(_rect.x + 12, _rect.y + 10, _rect.width - 24, _rect.height - 20);
 	if (title.empty()) {
+		_state->_loc = DgdsRect(_rect.x + 10, _rect.y + 10, _rect.width - 20, _rect.height - 20);
 		RequestData::fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
 		RequestData::drawCorners(dst, 1, _rect.x, _rect.y, _rect.width, _rect.height);
 	} else {
+		// This is 1 more pixel down than the original, but seems to be needed to get the right spot?
+		_state->_loc = DgdsRect(_rect.x + 6, _rect.y + 17, _rect.width - 12, _rect.height - 24);
 		dst->fillRect(Common::Rect(Common::Point(_rect.x, _rect.y), _rect.width, _rect.height), 0);
 		RequestData::drawCorners(dst, 11, _rect.x, _rect.y, _rect.width, _rect.height);
-		// TODO: Maybe should measure the font?
-		_state->_loc.y += 11;
-		_state->_loc.height -= 11;
 		RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 2, title, _fontColor, false, 0, 0);
 	}
 }
