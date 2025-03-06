@@ -1009,65 +1009,60 @@ void Adlib::OnTimer() {
 				}
 			}
 			// l0017_209B:
-			// TODO: Confirm that the following code is correct
-			//	if ((bp6 & 0xF0) == 0x80) {
-			//		// l0017_20A7:
-
-			//		// TODO: Better place for these two
-			//		Macs2::StreamHandler *sh2252;
-			//		Macs2::StreamHandler *sh225A;
-			//		Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x2);
-			//		sh2252 = shResult;
-			//		sh225A->seek(2, SEEK_CUR);
-			//		uint8 bp16 = g2291 - 1;
-			//		if (0 <= bp16) {
-			//			// l0017_20E1:
-			//			for (uint8 bp0A = 0; bp0A != bp16; bp0A++) {
-			//				// l0017_20E9:
-			//				if (gArray222C[bp0A] != 0) {
-			//					// l0017_20F3:
-			//					gArray222C[bp0A]++;
-			//				}
-			//			}
-			//		}
-			//		// l0017_2102 and l0017_2109:
-			//		if (g2291 == 0x09 || bp3 < 0x0B) {
-			//			// l0017_210F:
-			//			uint8 bp8 = 0;
-			//			// l0017_2114:
-			//			while (g2291 > bp8) {
-			//				// l0017_211E:
-			//				// TODO: Continue here
-			//				if (gArray222C[bp8] == 0) {
-			//					// l0017_2128:
-			//					if (gArray227F[bp8] == bp3) {
-			//						// l0017_2134:
-			//						if (gArray2235[bp8] == bp4) {
-			//							break;
-			//						}
-			//					}
-			//				}
-			//				// l0017_2140:
-			//				bp8++;
-			//			}
-			//			// l0017_2145:
-			//			if (g2291 != bp8) {
-			//				// l0017_214F:
-			//				Func2A80(bp8, bp4, gArray226F[bp3]);
-			//				gArray222C[bp8] = 1;
-			//			}
-			//		} else {
-			//			// l0017_2172:
-			//			uint8 bx = Func2779(0xBD);
-			//			uint8 dx = bp3;
-			//			uint8 ax = 0x0F - dx;
-			//			dx = ax;
-			//			ax = 1 << dx;
-			//			dx = ax;
-			//			ax = (0xFF - dx) & bx;
-			//			Func2792(0xBD, ax);
-			//		}
-			//	}
+			if ((bp6 & 0xF0) == 0x80) {
+				// l0017_20A7:
+				shMem2250 = Func19BE_SH(shMem2250, 0x2);
+				g225A += 2;
+				uint8 bp16 = g2291 - 1;
+				if (0 <= bp16) {
+					// l0017_20E1:
+					for (uint8 bp0A = 0; bp0A != bp16; bp0A++) {
+						// l0017_20E9:
+						if (gArray222C[bp0A] != 0) {
+							// l0017_20F3:
+							gArray222C[bp0A]++;
+						}
+					}
+				}
+				//		// l0017_2102 and l0017_2109:
+				//		if (g2291 == 0x09 || bp3 < 0x0B) {
+				//			// l0017_210F:
+				//			uint8 bp8 = 0;
+				//			// l0017_2114:
+				//			while (g2291 > bp8) {
+				//				// l0017_211E:
+				//				// TODO: Continue here
+				//				if (gArray222C[bp8] == 0) {
+				//					// l0017_2128:
+				//					if (gArray227F[bp8] == bp3) {
+				//						// l0017_2134:
+				//						if (gArray2235[bp8] == bp4) {
+				//							break;
+				//						}
+				//					}
+				//				}
+				//				// l0017_2140:
+				//				bp8++;
+				//			}
+				//			// l0017_2145:
+				//			if (g2291 != bp8) {
+				//				// l0017_214F:
+				//				Func2A80(bp8, bp4, gArray226F[bp3]);
+				//				gArray222C[bp8] = 1;
+				//			}
+				//		} else {
+				//			// l0017_2172:
+				//			uint8 bx = Func2779(0xBD);
+				//			uint8 dx = bp3;
+				//			uint8 ax = 0x0F - dx;
+				//			dx = ax;
+				//			ax = 1 << dx;
+				//			dx = ax;
+				//			ax = (0xFF - dx) & bx;
+				//			Func2792(0xBD, ax);
+				//		}
+				//	}
+			}
 			//	// l0017_21A3 and l0017_21AC:
 			//	if (((bp6 & 0xF0) == 0xE0) || (bp6 & 0xF0) == 0xA0 ) {
 			//		// l0017_21B5:
