@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-06 18:07+0000\n"
-"PO-Revision-Date: 2025-03-06 14:18+0000\n"
+"PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -936,9 +936,8 @@ msgstr "Kórus"
 
 #. I18N: N stands for number here
 #: gui/fluidsynth-dialog.cpp:105
-#, fuzzy
 msgid "N:"
-msgstr "N:"
+msgstr "S:"
 
 #: gui/fluidsynth-dialog.cpp:119
 msgid "Speed:"
@@ -8283,7 +8282,7 @@ msgstr "GroovieV2 támogatás nincs lefordítva"
 
 #: engines/groovie/metaengine.cpp:201
 msgid "Groovie engine"
-msgstr "Groovie motor:"
+msgstr "Groovie motor"
 
 #: engines/groovie/metaengine.cpp:217
 msgid "Skip or fast forward scene"
@@ -10952,9 +10951,8 @@ msgid "  or incorrect game behavior."
 msgstr "  vagy hibás játékműködést eredményez."
 
 #: engines/scumm/help.cpp:115
-#, fuzzy
 msgid "Spinning drafts on the keyboard:"
-msgstr "Forgó draftok a billentyűzeten:"
+msgstr "Forgó hangjegyek a billentyűzeten:"
 
 #: engines/scumm/help.cpp:117
 msgid "Main game controls:"
@@ -11053,10 +11051,8 @@ msgid "play C major on distaff"
 msgstr "C dúr a guzsalyon"
 
 #: engines/scumm/help.cpp:189
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Shows the drafts inventory"
-msgstr "A draft felszerelés megjelenítése"
+msgstr "A hangjegy felszerelés megjelenítése"
 
 #: engines/scumm/help.cpp:195 engines/scumm/help.cpp:217
 msgid "puSh"
@@ -11685,10 +11681,8 @@ msgstr "Véletlenszerűen választja ki a térkép méretet."
 
 #. I18N: Map tile sets
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:85
-#, fuzzy
-#| msgid "Reset"
 msgid "Tileset"
-msgstr "Térképminta"
+msgstr "Térképrács"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:99
 msgid "Picks the map tileset randomly."
@@ -12140,7 +12134,7 @@ msgstr "Fő Menü"
 #: engines/sword2/detection_tables.h:419
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
-"A Remastered kiadás nem támogatott. Kérem, használja a klasszikus verzót."
+"A Remastered kiadás nem támogatott. Kérem, használja a klasszikus verzót"
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
@@ -12973,8 +12967,6 @@ msgstr "Ismeretlen hiba történt a mentett játék betöltése során."
 
 #. I18N: lockout is code to start the game
 #: engines/voyeur/metaengine.cpp:43
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable lockout system"
 msgstr "Kizáró rendszer bekapcsolása"
 
@@ -13369,14 +13361,12 @@ msgid "Show game credits"
 msgstr "Játék stáblista megjelenítése"
 
 #: engines/wintermute/keymapper_tables.h:999
-#, fuzzy
 msgid "Play selected music record"
-msgstr "Kiválasztott zene lemez lejátszása"
+msgstr "Kiválasztott zenei lemez lejátszása"
 
 #: engines/wintermute/keymapper_tables.h:1004
-#, fuzzy
 msgid "Select next music record"
-msgstr "Következő zene lemez kiválasztása"
+msgstr "Következő zenei lemez kiválasztása"
 
 #: engines/wintermute/keymapper_tables.h:1009
 msgid "Play note 1: A"
