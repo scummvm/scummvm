@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-02 00:34+0000\n"
+"POT-Creation-Date: 2025-03-06 18:07+0000\n"
 "PO-Revision-Date: 2025-03-06 14:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -94,7 +94,7 @@ msgstr "Fentebb lépés"
 #: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:340
 #: gui/editrecorddialog.cpp:66 gui/integrity-dialog.cpp:118
 #: gui/integrity-dialog.cpp:169 gui/filebrowser-dialog.cpp:68
-#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2427
+#: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:93 gui/options.cpp:2427
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:456
@@ -311,7 +311,7 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
+#: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:421 gui/launcher.cpp:450
 #: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
 #: base/main.cpp:585 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
@@ -325,7 +325,7 @@ msgstr "Igen"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
+#: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:421 gui/launcher.cpp:450
 #: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
@@ -347,7 +347,7 @@ msgstr "A JSON kód tartalma hibás."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
-#: gui/integrity-dialog.cpp:176 gui/fluidsynth-dialog.cpp:153
+#: gui/integrity-dialog.cpp:176 gui/fluidsynth-dialog.cpp:154
 #: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
 #: gui/options.cpp:2429 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 dists/android.strings.xml.cpp:33
@@ -926,7 +926,7 @@ msgstr "Csillapítás:"
 msgid "Width:"
 msgstr "Szélesség:"
 
-#: gui/fluidsynth-dialog.cpp:93 gui/fluidsynth-dialog.cpp:111
+#: gui/fluidsynth-dialog.cpp:93 gui/fluidsynth-dialog.cpp:112
 msgid "Level:"
 msgstr "Szint:"
 
@@ -934,66 +934,67 @@ msgstr "Szint:"
 msgid "Chorus"
 msgstr "Kórus"
 
-#: gui/fluidsynth-dialog.cpp:104
+#. I18N: N stands for number here
+#: gui/fluidsynth-dialog.cpp:105
 #, fuzzy
 msgid "N:"
 msgstr "N:"
 
-#: gui/fluidsynth-dialog.cpp:118
+#: gui/fluidsynth-dialog.cpp:119
 msgid "Speed:"
 msgstr "Sebesség:"
 
-#: gui/fluidsynth-dialog.cpp:125
+#: gui/fluidsynth-dialog.cpp:126
 msgid "Depth:"
 msgstr "Mélység:"
 
-#: gui/fluidsynth-dialog.cpp:132
+#: gui/fluidsynth-dialog.cpp:133
 msgid "Type:"
 msgstr "Típus:"
 
-#: gui/fluidsynth-dialog.cpp:135
+#: gui/fluidsynth-dialog.cpp:136
 msgid "Sine"
 msgstr "Szinusz"
 
-#: gui/fluidsynth-dialog.cpp:136 backends/platform/sdl/ps3/ps3.cpp:43
+#: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:43
 #: backends/platform/sdl/psp2/psp2.cpp:46 engines/dragons/metaengine.cpp:189
 msgid "Triangle"
 msgstr "Háromszög"
 
-#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2375
+#: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:2375
 msgid "Misc"
 msgstr "Egyéb"
 
-#: gui/fluidsynth-dialog.cpp:140
+#: gui/fluidsynth-dialog.cpp:141
 msgid "Interpolation:"
 msgstr "Interpoláció:"
 
-#: gui/fluidsynth-dialog.cpp:143
+#: gui/fluidsynth-dialog.cpp:144
 msgid "None (fastest)"
 msgstr "Nincs (leggyorsabb)"
 
-#: gui/fluidsynth-dialog.cpp:144
+#: gui/fluidsynth-dialog.cpp:145
 msgid "Linear"
 msgstr "Lineáris"
 
-#: gui/fluidsynth-dialog.cpp:145
+#: gui/fluidsynth-dialog.cpp:146
 msgid "Fourth-order"
 msgstr "Negyedrangú"
 
-#: gui/fluidsynth-dialog.cpp:146
+#: gui/fluidsynth-dialog.cpp:147
 msgid "Seventh-order"
 msgstr "Hetedrangú"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:327
+#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:327
 msgid "Reset"
 msgstr "Alaphelyzetbe állít"
 
-#: gui/fluidsynth-dialog.cpp:150
+#: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
 msgstr "Minden FluidSynth visszaállítása alapértelmezett értékre."
 
-#: gui/fluidsynth-dialog.cpp:209
+#: gui/fluidsynth-dialog.cpp:210
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
@@ -10389,9 +10390,9 @@ msgstr ""
 "programjával. Kérjük használja ezt a patch-et, hogy teljes mértékben tudja "
 "élvezni a MIDI zenét a játékban. Miután beszerezte, ki tudja csomagolni a "
 "már meglevő *.PAT fájlokat a ScummVM extrák mappájába, és a ScummVM "
-"automatikusan hozzáadja ezt a játékhoz. Esetlegesen követheti a patch "
-"READM.ME fájl utasításait, és átnevezheti a megfelelő PAT fájlt \"4.PAT\"-"
-"ra, majd bemásolja a játék könyvtárba. Enélkül a patch nélkül a General MIDI "
+"automatikusan hozzáadja ezt a játékhoz. Esetlegesen követheti a patch READM."
+"ME fájl utasításait, és átnevezheti a megfelelő PAT fájlt \"4.PAT\"-ra, majd "
+"bemásolja a játék könyvtárba. Enélkül a patch nélkül a General MIDI "
 "borzasztóan torzítani fog."
 
 #: engines/sci/sci.cpp:524
@@ -11322,8 +11323,8 @@ msgid ""
 "Warning: this re-release version contains patched game scripts,\n"
 "and therefore it might crash or not work properly for the time being."
 msgstr ""
-"Figyelem: Ez az újra kiadott verzió tartalmaz javított játék szkripteket is,"
-"\n"
+"Figyelem: Ez az újra kiadott verzió tartalmaz javított játék szkripteket "
+"is,\n"
 "emiatt lehet hogy kifagy, vagy nem fog megfelelően működni egyelőre."
 
 #: engines/scumm/metaengine.cpp:485
@@ -11518,7 +11519,8 @@ msgstr ""
 #: engines/scumm/scumm.cpp:1342
 #, c-format
 msgid "This game requires the '%s' Macintosh executable for its fonts."
-msgstr "A játékhoz szükség van a '%s' Macintosh indítófájlra a betűtípus miatt."
+msgstr ""
+"A játékhoz szükség van a '%s' Macintosh indítófájlra a betűtípus miatt."
 
 #: engines/scumm/scumm.cpp:1346
 #, c-format
@@ -11681,7 +11683,7 @@ msgstr "Max"
 msgid "Picks the map size randomly."
 msgstr "Véletlenszerűen választja ki a térkép méretet."
 
-#. I18N: Map tilesets
+#. I18N: Map tile sets
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:85
 #, fuzzy
 #| msgid "Reset"
@@ -11840,7 +11842,8 @@ msgstr "A floppy verziós bevezető használata (csak CD verziónál)"
 
 #: engines/sky/metaengine.cpp:235
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
-msgstr "FIGYELEM: Ez a motor nem támogatja az automatikus mentési slot törlését"
+msgstr ""
+"FIGYELEM: Ez a motor nem támogatja az automatikus mentési slot törlését"
 
 #: engines/stark/metaengine.cpp:41
 msgid "Load modded assets"
@@ -11973,7 +11976,8 @@ msgstr "A 'gui.ini' szükséges a megfelelő lefordított betű megjelenítéshe
 
 #: engines/stark/stark.cpp:319
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
-msgstr "A 'language.ini' ajánlott a lefordított megerősítő párbeszédpanelekhez."
+msgstr ""
+"A 'language.ini' ajánlott a lefordított megerősítő párbeszédpanelekhez."
 
 #: engines/stark/stark.cpp:325
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
@@ -12698,7 +12702,8 @@ msgstr "Forrópontok mutatása"
 #: engines/twp/twp.cpp:830
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
-msgstr "Kiválasztotta a Váltságdíj *kisípolva* DLC-t, de a dlc nincs telepítve!"
+msgstr ""
+"Kiválasztotta a Váltságdíj *kisípolva* DLC-t, de a dlc nincs telepítve!"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
@@ -12833,8 +12838,8 @@ msgid ""
 msgstr ""
 "A Crusader bevezető filmfájlja hiányzik – ellenőrizze, hogy a FLICS és a "
 "SOUND könyvtárak másolásra kerültek-e a CD-ről. További információkért "
-"forduljon a wikihez: https://wiki.scummvm.org/index."
-"php?title=Crusader:_No_Remorse."
+"forduljon a wikihez: https://wiki.scummvm.org/index.php?title=Crusader:"
+"_No_Remorse."
 
 #: engines/ultima/ultima8/games/u8_game.cpp:108
 msgid ""
@@ -12966,13 +12971,14 @@ msgstr "Nem sikerült verzió információt kinyerni a mentésből."
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Ismeretlen hiba történt a mentett játék betöltése során."
 
-#: engines/voyeur/metaengine.cpp:42
+#. I18N: lockout is code to start the game
+#: engines/voyeur/metaengine.cpp:43
 #, fuzzy
 #| msgid "Enable storage"
 msgid "Enable lockout system"
 msgstr "Kizáró rendszer bekapcsolása"
 
-#: engines/voyeur/metaengine.cpp:43
+#: engines/voyeur/metaengine.cpp:44
 msgid "Require a lockout code to start the game."
 msgstr "Egy kizárási kód szükséges a játék elindításához."
 

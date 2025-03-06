@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-02 00:34+0000\n"
+"POT-Creation-Date: 2025-03-06 18:07+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -99,7 +99,7 @@ msgstr "Oppover"
 #: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:340
 #: gui/editrecorddialog.cpp:66 gui/integrity-dialog.cpp:118
 #: gui/integrity-dialog.cpp:169 gui/filebrowser-dialog.cpp:68
-#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2427
+#: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:93 gui/options.cpp:2427
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:456
@@ -313,7 +313,7 @@ msgstr "Ein anna lagringsteneste arbeider nett no. Vill du abryta han?"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
+#: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:421 gui/launcher.cpp:450
 #: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
 #: base/main.cpp:585 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
@@ -327,7 +327,7 @@ msgstr "Ja"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
+#: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:421 gui/launcher.cpp:450
 #: gui/launcher.cpp:502 gui/options.cpp:3528 gui/options.cpp:3911
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
@@ -349,7 +349,7 @@ msgstr "JSON-koden er feil utforma."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
-#: gui/integrity-dialog.cpp:176 gui/fluidsynth-dialog.cpp:153
+#: gui/integrity-dialog.cpp:176 gui/fluidsynth-dialog.cpp:154
 #: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
 #: gui/options.cpp:2429 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 dists/android.strings.xml.cpp:33
@@ -932,7 +932,7 @@ msgstr "Demp:"
 msgid "Width:"
 msgstr "Bredde:"
 
-#: gui/fluidsynth-dialog.cpp:93 gui/fluidsynth-dialog.cpp:111
+#: gui/fluidsynth-dialog.cpp:93 gui/fluidsynth-dialog.cpp:112
 msgid "Level:"
 msgstr "Nivå:"
 
@@ -940,65 +940,66 @@ msgstr "Nivå:"
 msgid "Chorus"
 msgstr "Chorus"
 
-#: gui/fluidsynth-dialog.cpp:104
+#. I18N: N stands for number here
+#: gui/fluidsynth-dialog.cpp:105
 msgid "N:"
 msgstr "N:"
 
-#: gui/fluidsynth-dialog.cpp:118
+#: gui/fluidsynth-dialog.cpp:119
 msgid "Speed:"
 msgstr "Hastighet:"
 
-#: gui/fluidsynth-dialog.cpp:125
+#: gui/fluidsynth-dialog.cpp:126
 msgid "Depth:"
 msgstr "Dybde:"
 
-#: gui/fluidsynth-dialog.cpp:132
+#: gui/fluidsynth-dialog.cpp:133
 msgid "Type:"
 msgstr "Type:"
 
-#: gui/fluidsynth-dialog.cpp:135
+#: gui/fluidsynth-dialog.cpp:136
 msgid "Sine"
 msgstr "Sinus"
 
-#: gui/fluidsynth-dialog.cpp:136 backends/platform/sdl/ps3/ps3.cpp:43
+#: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:43
 #: backends/platform/sdl/psp2/psp2.cpp:46 engines/dragons/metaengine.cpp:189
 msgid "Triangle"
 msgstr "Triangel"
 
-#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2375
+#: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:2375
 msgid "Misc"
 msgstr "Diverse"
 
-#: gui/fluidsynth-dialog.cpp:140
+#: gui/fluidsynth-dialog.cpp:141
 msgid "Interpolation:"
 msgstr "Interpolering:"
 
-#: gui/fluidsynth-dialog.cpp:143
+#: gui/fluidsynth-dialog.cpp:144
 msgid "None (fastest)"
 msgstr "Ingen (raskast)"
 
-#: gui/fluidsynth-dialog.cpp:144
+#: gui/fluidsynth-dialog.cpp:145
 msgid "Linear"
 msgstr "Linjær"
 
-#: gui/fluidsynth-dialog.cpp:145
+#: gui/fluidsynth-dialog.cpp:146
 msgid "Fourth-order"
 msgstr "Fjerdeordens"
 
-#: gui/fluidsynth-dialog.cpp:146
+#: gui/fluidsynth-dialog.cpp:147
 msgid "Seventh-order"
 msgstr "Sjuandeordens"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:327
+#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:327
 msgid "Reset"
 msgstr "Nullstill"
 
-#: gui/fluidsynth-dialog.cpp:150
+#: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
 msgstr "Nullstill alle FluidSynth-instillingar til standardverdiar."
 
-#: gui/fluidsynth-dialog.cpp:209
+#: gui/fluidsynth-dialog.cpp:210
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
@@ -11432,7 +11433,7 @@ msgstr "Kople"
 msgid "Picks the map size randomly."
 msgstr ""
 
-#. I18N: Map tilesets
+#. I18N: Map tile sets
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:85
 #, fuzzy
 #| msgid "Reset"
@@ -12802,12 +12803,13 @@ msgstr "Kunne ikkje laste lagra spel frå fil."
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ", feil under montering av delt ressurs"
 
-#: engines/voyeur/metaengine.cpp:42
+#. I18N: lockout is code to start the game
+#: engines/voyeur/metaengine.cpp:43
 #, fuzzy
 msgid "Enable lockout system"
 msgstr "Aktiver studiopublikum"
 
-#: engines/voyeur/metaengine.cpp:43
+#: engines/voyeur/metaengine.cpp:44
 msgid "Require a lockout code to start the game."
 msgstr ""
 
