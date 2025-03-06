@@ -137,7 +137,9 @@
 #include "director/lingo/xtras/directsound.h"
 #include "director/lingo/xtras/filextra.h"
 #include "director/lingo/xtras/keypoll.h"
+#include "director/lingo/xtras/openurl.h"
 #include "director/lingo/xtras/qtvrxtra.h"
+#include "director/lingo/xtras/rtk.h"
 #include "director/lingo/xtras/scrnutil.h"
 #include "director/lingo/xtras/timextra.h"
 #include "director/lingo/xtras/xsound.h"
@@ -285,6 +287,7 @@ static const struct XLibProto {
 	XLIBDEF(MovUtilsXObj,		kXObj,			400),	// D4
 	XLIBDEF(MystIsleXObj,			kXObj,					400),	// D4
 	XLIBDEF(OpenBleedWindowXCMD,kXObj,			300),	// D3
+	XLIBDEF(OpenURLXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(OrthoPlayXObj,		kXObj,			400),	// D4
 	XLIBDEF(PACoXObj,			kXObj,			300),	// D3
 	XLIBDEF(PalXObj,			kXObj,			400),	// D4
@@ -302,6 +305,7 @@ static const struct XLibProto {
 	XLIBDEF(RearWindowXObj,		kXObj,			400),	// D4
 	XLIBDEF(RegisterComponent,	kXObj,			400),	// D4
 	XLIBDEF(RemixXCMD,			kXObj,			300),	// D3
+	XLIBDEF(RolloverToolkitXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(ScrnUtilXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(SerialPortXObj,		kXObj,			200),	// D2
 	XLIBDEF(SoundJam,			kXObj,			400),	// D4
