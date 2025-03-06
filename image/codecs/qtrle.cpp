@@ -33,9 +33,8 @@
 
 namespace Image {
 
-QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Codec() {
+QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Codec(), _ditherPalette(0) {
 	_bitsPerPixel = bitsPerPixel;
-	_ditherPalette = 0;
 	_width = width;
 	_height = height;
 	_surface = 0;
@@ -56,7 +55,6 @@ QTRLEDecoder::~QTRLEDecoder() {
 	}
 
 	delete[] _colorMap;
-	delete[] _ditherPalette;
 }
 
 #define CHECK_STREAM_PTR(n) \
@@ -472,7 +470,7 @@ const Graphics::Surface *QTRLEDecoder::decodeFrame(Common::SeekableReadStream &s
 		decode16(stream, rowPtr, height);
 		break;
 	case 24:
-		if (_ditherPalette)
+		if (_ditherPalette.size() > 0)
 			dither24(stream, rowPtr, height);
 		else
 			decode24(stream, rowPtr, height);
@@ -488,7 +486,7 @@ const Graphics::Surface *QTRLEDecoder::decodeFrame(Common::SeekableReadStream &s
 }
 
 Graphics::PixelFormat QTRLEDecoder::getPixelFormat() const {
-	if (_ditherPalette)
+	if (_ditherPalette.size() > 0)
 		return Graphics::PixelFormat::createFormatCLUT8();
 
 	switch (_bitsPerPixel) {
@@ -521,8 +519,8 @@ bool QTRLEDecoder::canDither(DitherType type) const {
 void QTRLEDecoder::setDither(DitherType type, const byte *palette) {
 	assert(canDither(type));
 
-	_ditherPalette = new byte[256 * 3];
-	memcpy(_ditherPalette, palette, 256 * 3);
+	_ditherPalette.resize(256, false);
+	_ditherPalette.set(palette, 0, 256);
 	_dirtyPalette = true;
 
 	delete[] _colorMap;

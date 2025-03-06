@@ -25,6 +25,7 @@
 #include "image/codecs/codec.h"
 
 #include "common/hashmap.h"
+#include "graphics/palette.h"
 
 namespace Image {
 
@@ -50,12 +51,12 @@ public:
 	Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
 	Graphics::PixelFormat getPixelFormat() const override { return Graphics::PixelFormat::createFormatCLUT8(); }
 	bool containsPalette() const override { return true; }
-	const byte *getPalette() override { _dirtyPalette = false; return _palette; }
+	const byte *getPalette() override { _dirtyPalette = false; return _palette.data(); }
 	bool hasDirtyPalette() const override { return _dirtyPalette; }
 
 private:
 	Graphics::Surface *_surface;
-	byte _palette[256 * 3];
+	Graphics::Palette _palette;
 	bool _dirtyPalette;
 	uint16 _currentPaletteId;
 

@@ -30,9 +30,8 @@
 
 namespace Image {
 
-RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Codec() {
+RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Codec(), _ditherPalette(0) {
 	_format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-	_ditherPalette = 0;
 	_dirtyPalette = false;
 	_colorMap = 0;
 	_width = width;
@@ -48,7 +47,6 @@ RPZADecoder::~RPZADecoder() {
 		delete _surface;
 	}
 
-	delete[] _ditherPalette;
 	delete[] _colorMap;
 }
 
@@ -353,8 +351,8 @@ bool RPZADecoder::canDither(DitherType type) const {
 void RPZADecoder::setDither(DitherType type, const byte *palette) {
 	assert(canDither(type));
 
-	_ditherPalette = new byte[256 * 3];
-	memcpy(_ditherPalette, palette, 256 * 3);
+	_ditherPalette.resize(256, false);
+	_ditherPalette.set(palette, 0, 256);
 
 	_dirtyPalette = true;
 	_format = Graphics::PixelFormat::createFormatCLUT8();
