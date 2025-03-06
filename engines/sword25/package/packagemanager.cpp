@@ -200,16 +200,9 @@ byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr)
 
 	// Modify the buffer to enable internal debugger if needed
 	if (debugChannelSet(-1, kDebugInternalDebugger) && fileName.equals("/system/internal_config.lua")) {
-		const char oldSentence[] = "ENGINE_RELEASE_TYPE = 'pub'";
-		const char newSentence[] = "ENGINE_RELEASE_TYPE = 'dev'";
-		const int sentenceLen = strlen(oldSentence);
-		byte *pos = buffer;
-		while (*pos) {
-			if (memcmp(pos, oldSentence, sentenceLen) == 0) {
-				memcpy(pos, newSentence, sentenceLen);
-				break;
-			}
-			pos++;
+		char *found = strstr((char *)buffer, "ENGINE_RELEASE_TYPE = 'pub'");
+		if (found != nullptr) {
+			memcpy(found + 23, "dev", 3);
 		}
 	}
 
