@@ -99,12 +99,9 @@ private:
 
 	bool isSFXplaying, wasSFXplaying;
 
-	byte *dataStart;
 	int numNotes;
 	byte *auxData1;
 	byte *auxData2;
-
-	byte *soundptr;
 };
 
 } // End of namespace Scumm
