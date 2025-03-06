@@ -786,7 +786,7 @@ int ScummEngine::getNextBox(byte from, byte to) {
 	// WORKAROUND #2: In addition to the above, we have to add this special
 	// case to fix the scene in Indy3 where Indy meets Hitler in Berlin.
 	// See bug #1017 and also bug #1052.
-	if ((_game.id == GID_INDY3) && _roomResource == 46 && from == 1 && to == 0)
+	if (_game.id == GID_INDY3 && _roomResource == 46 && from == 1 && to == 0 && enhancementEnabled(kEnhGameBreakingBugFixes))
 		return 0;
 
 	// Skip up to the matrix data for box 'from'
