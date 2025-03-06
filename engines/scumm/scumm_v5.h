@@ -92,6 +92,8 @@ protected:
 
 	void injectMISESpeech();
 
+	void workaroundLoomHetchelDoubleHead(Actor *a, int act);
+
 	/**
 	 * Fetch the next script word, then if cond is *false*, perform a relative jump.
 	 * So this corresponds to a "jne" jump instruction.
