@@ -257,16 +257,14 @@ bool Scene::readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &li
 }
 
 
-bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> &list, int16 filenum /* = 0 */) const {
+bool Scene::readDialogList(Common::SeekableReadStream *s, Common::List<Dialog> &list, int16 filenum /* = 0 */) const {
 	// Some data on this format here https://www.oldgamesitalia.net/forum/index.php?showtopic=24055&st=25&p=359214&#entry359214
 
 	uint16 nitems = s->readUint16LE();
 	_checkListNotTooLong(nitems, "dialogs");
-	uint startsize = list.size();
-	list.resize(startsize + nitems);
 
-	for (uint i = startsize; i < list.size(); i++) {
-		Dialog &dst = list[i];
+	for (uint i = 0; i < nitems; i++) {
+		Dialog dst;
 		dst._num = s->readUint16LE();
 		dst._fileNum = filenum;
 		dst._rect.x = s->readUint16LE();
@@ -324,6 +322,7 @@ bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> 
 			else
 				dst._fontColor = dst._fontColor ^ 8;
 		}
+		list.push_back(dst);
 	}
 
 	return !s->err();
@@ -728,8 +727,9 @@ void SDSScene::loadDialogData(uint16 fileNum) {
 	if (_dialogs.size() != prevSize) {
 		debug(10, "Read %d dialogs from DDS %s (ver %s id '%s'):", _dialogs.size() - prevSize,
 			filename.c_str(), fileVersion.c_str(), fileId.c_str());
-		for (uint i = prevSize; i < _dialogs.size(); i++)
-			debug(10, "%s", _dialogs[i].dump("").c_str());
+		for (const auto &dlg: _dialogs)
+			if (dlg._fileNum == fileNum)
+				debug(10, "%s", dlg.dump("").c_str());
 	}
 
 	if (!result)
@@ -746,11 +746,9 @@ void SDSScene::freeDialogData(uint16 fileNum) {
 	if (!fileNum)
 		return;
 
-	for (int i = 0; i < (int)_dialogs.size(); i++) {
-		if (_dialogs[i]._fileNum == fileNum) {
-			_dialogs.remove_at(i);
-			i--;
-		}
+	for (Common::List<Dialog>::iterator iter = _dialogs.begin(); iter != _dialogs.end(); iter++) {
+		if (iter->_fileNum == fileNum)
+			iter = _dialogs.erase(iter);
 	}
 }
 

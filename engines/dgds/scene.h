@@ -197,7 +197,7 @@ protected:
 	bool readMouseHotspotList(Common::SeekableReadStream *s, Common::Array<MouseCursor> &list) const;
 	bool readObjInteractionList(Common::SeekableReadStream *s, Common::Array<ObjectInteraction> &list) const;
 	bool readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &list) const;
-	bool readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> &list, int16 filenum = 0) const;
+	bool readDialogList(Common::SeekableReadStream *s, Common::List<Dialog> &list, int16 filenum = 0) const;
 	bool readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTrigger> &list) const;
 	bool readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogAction> &list) const;
 	bool readConditionalSceneOpList(Common::SeekableReadStream *s, Common::Array<ConditionalSceneOp> &list) const;
@@ -367,7 +367,7 @@ private:
 	Common::Array<TalkData> _talkData;
 
 	// From here on is mutable stuff that might need saving
-	Common::Array<Dialog> _dialogs;
+	Common::List<Dialog> _dialogs;
 	Common::Array<SceneTrigger> _triggers;
 	Conversation _conversation;
 
