@@ -157,7 +157,6 @@ public:
 	int16 getSheckels() const { return _sheckels; }
 
 	int16 getShellBet() const { return _shellBet; }
-	void setShellBet(int16 bet) { _shellBet = bet; }
 
 	int16 getShellPea() const { return _shellPea; }
 	void setShellPea(int16 pea) { _shellPea = pea; }
