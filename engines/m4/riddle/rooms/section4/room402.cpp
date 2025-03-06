@@ -398,7 +398,10 @@ void Room402::daemon() {
 			_val11 = 1105;
 			break;
 		case 1001:
-			_trigger1 = (_G(flags)[V132]) ? 300 : 1112;
+			if (_G(flags)[V132])
+				_trigger1 = 300;
+			else
+				_val11 = 1112;
 			break;
 
 		default:
@@ -1765,11 +1768,24 @@ void Room402::conv402a() {
 				kernel_timing_trigger(1, 110);
 				_G(kernel).trigger_mode = KT_PARSE;
 			} else {
-				_val11 = (_val11 == 1001) ? 1114 : 2142;
+				_val11 = (_val10 == 1001) ? 1114 : 2142;
 				digi_play(sound, 1, 255, 777);
 			}
 			break;
+		case 26:
+			if (entry == 2) {
+				_val10 = 1001;
+				_val11 = 1115;
+				_sound2 = sound;
+				_wolfMode = 2002;
+				_wolfShould = 2180;
 
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(1, 110);
+				_G(kernel).trigger_mode = KT_PARSE;
+			}
+			break;
+			
 		default:
 			_val11 = (_val10 == 1001) ? 1114 : 2142;
 			digi_play(sound, 1, 255, 777);
