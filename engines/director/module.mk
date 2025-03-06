@@ -167,7 +167,9 @@ MODULE_OBJS = \
 	lingo/xtras/directsound.o \
 	lingo/xtras/filextra.o \
 	lingo/xtras/keypoll.o \
+	lingo/xtras/openurl.o \
 	lingo/xtras/qtvrxtra.o \
+	lingo/xtras/rtk.o \
 	lingo/xtras/scrnutil.o \
 	lingo/xtras/timextra.o \
 	lingo/xtras/xsound.o
