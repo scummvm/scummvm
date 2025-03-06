@@ -404,5 +404,13 @@ void UIElement::timeout() {
 	redraw();
 }
 
+void UIElement::setParent(UIElement *newParent) {
+	if (_parent)
+		_parent->_children.remove(this);
+
+	_parent = newParent;
+	newParent->_children.push_back(this);
+}
+
 } // namespace HodjNPodj
 } // namespace Bagel

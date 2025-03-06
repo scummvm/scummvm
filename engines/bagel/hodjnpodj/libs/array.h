@@ -19,44 +19,29 @@
  *
  */
 
-#ifndef HODJNPODJ_VIEWS_RULES_H
-#define HODJNPODJ_VIEWS_RULES_H
+#ifndef BAGEL_HODJNPODJ_LIBS_ARRAY_H
+#define BAGEL_HODJNPODJ_LIBS_ARRAY_H
 
-#include "bagel/hodjnpodj/views/view.h"
-#include "bagel/hodjnpodj/gfx/button.h"
+#include "common/array.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-class Rules : public View {
-private:
-	OkButton _okButton;
-	GfxSurface _background, _scroll;
-	GfxSurface _scrollTop, _scrollBottom, _scrollMiddle;
-	GfxSurface _scrollContent;
-	Common::String _filename, _waveFilename;
-	ViewCloseCallback _callback = nullptr;
-	Common::StringArray _lines;
-	Common::Rect _moreRect;
-	Common::String _more;
-	int _scrollY = 0;
-
-	void renderPage();
-	void closeDialog();
-
+template<class T>
+class Array : public Common::Array<T> {
 public:
-	Rules();
-	virtual ~Rules() {}
-
-	static void show(const Common::String &filename,
-		const Common::String &waveFile,
-		ViewCloseCallback callback);
-
-	void draw() override;
-	bool msgOpen(const OpenMessage &msg) override;
-	bool msgClose(const CloseMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgGame(const GameMessage & msg) override;
+	int indexOf(const T elem) const {
+		for (uint i = 0; i < this->size(); ++i) {
+			if (this->operator[](i) == elem)
+				return i;
+		}
+		return -1;
+	}
+	void remove(T elem) {
+		int idx = this->indexOf(elem);
+		if (idx != -1)
+			this->remove_at(idx);
+	}
 };
 
 } // namespace HodjNPodj

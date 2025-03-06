@@ -29,6 +29,7 @@
 #include "bagel/hodjnpodj/messages.h"
 #include "bagel/hodjnpodj/gfx/gfx_surface.h"
 #include "bagel/hodjnpodj/gfx/cursor.h"
+#include "bagel/hodjnpodj/libs/array.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -80,7 +81,7 @@ private:
 	int _timeoutCtr = 0;
 protected:
 	UIElement *_parent;
-	Common::Array<UIElement *> _children;
+	Array<UIElement *> _children;
 	Common::Rect _innerBounds;
 	Bounds _bounds;
 	bool _needsRedraw = true;
@@ -202,6 +203,11 @@ public:
 	Common::Rect getBounds() const {
 		return _bounds;
 	}
+
+	/**
+	 * Sets the element's parent
+	 */
+	void setParent(UIElement *newParent);
 
 	/**
 	 * Returns a surface for drawing the element

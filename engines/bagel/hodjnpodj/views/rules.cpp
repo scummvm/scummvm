@@ -20,6 +20,7 @@
  */
 
 #include "common/file.h"
+#include "common/translation.h"
 #include "bagel/hodjnpodj/views/rules.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/metaengine.h"
@@ -38,8 +39,7 @@ namespace HodjNPodj {
 #define SCROLL_BOT_SPEC	"fuge/art/lscrollb.bmp"      // path for scroll's bottom section DIB on disk
 #define SCROLL_MID_SPEC	"fuge/art/lscrollm.bmp"      // path for scroll's middle section DIB on disk
 
-#define BUTTON_DY			15						// offset for Okay button from scroll base
-
+#define BUTTON_DY			15						// offset for Okay button from scroll baseBUTTON_DY
 #define	SCROLL_STRIP_WIDTH	10						// width of scroll middle to reveal per interval 
 #define	SCROLL_STRIP_DELAY	1000					// delay to wait after each partial scroll unfurling
 
@@ -55,7 +55,7 @@ namespace HodjNPodj {
 #define MORE_TEXT_LENGTH	8                       // # characters in "more" indicator string
 #define TEXT_NEWLINE		'\\'                    // character that indicates enforced line break
 
-Rules::Rules() : View("Rules") {
+Rules::Rules() : View("Rules"), _more(_s(MORE_TEXT_BLURB)) {
 }
 
 void Rules::show(const Common::String &filename,
@@ -85,6 +85,13 @@ bool Rules::msgOpen(const OpenMessage &msg) {
 	r.moveTo((GAME_WIDTH - _scroll.w) / 2,
 		(GAME_HEIGHT - _scroll.h) / 2);
 	setBounds(r);
+
+	// Set the position of the Ok button, but don't immediately
+	// add it, since it will only show when the scroll is unfurled
+	Common::Rect btnRect(0, 0, 80, 25);
+	btnRect.moveTo(_bounds.left + (_bounds.width() - btnRect.width()) / 2,
+		_bounds.bottom - btnRect.height() - BUTTON_DY);
+	_okButton.setBounds(btnRect);
 
 	// Save a copy of the current background, since it's used
 	// for redrawing as the scroll opens
@@ -120,6 +127,9 @@ bool Rules::msgOpen(const OpenMessage &msg) {
 		TEXT_LEFT_MARGIN + TEXT_WIDTH, _scroll.h - _scrollBottom.h - TEXT_BOTTOM_MARGIN));
 	s.wordWrapText(text, _lines);
 
+	_moreRect = Common::Rect(0, 0, s.getStringWidth(_more), s.getStringHeight());
+	_moreRect.moveTo(_bounds.width() - 120, _bounds.height() - 45);
+
 	// Render the first page of text
 	renderPage();
 
@@ -152,7 +162,14 @@ bool Rules::msgGame(const GameMessage &msg) {
 
 void Rules::draw() {
 	GfxSurface s = getSurface();
+	s.setFontSize(TEXT_SIZE);
+
 	s.blitFrom(_scrollContent);
+
+	if (_children.empty())
+		_okButton.setParent(this);
+
+	s.writeString(_more, _moreRect, BLACK);
 }
 
 void Rules::renderPage() {

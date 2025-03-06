@@ -1,1 +1,3 @@
 engines/bagel/metaengine.cpp
+engines/bagel/hodjnpodj/gfx/button.cpp
+engines/bagel/hodjnpodj/views/rules.cpp
