@@ -199,10 +199,10 @@ byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr)
 	delete in;
 
 	// Modify the buffer to enable internal debugger if needed
-	if (debugChannelSet(-1, kDebugInternalDebugger) && fileName.matchString("/system/internal_config.lua")) {
-		const int sentenceLen = 27;
-		byte oldSentence[sentenceLen + 1] = "ENGINE_RELEASE_TYPE = 'pub'";
-		byte newSentence[sentenceLen + 1] = "ENGINE_RELEASE_TYPE = 'dev'";
+	if (debugChannelSet(-1, kDebugInternalDebugger) && fileName.equals("/system/internal_config.lua")) {
+		const char oldSentence[] = "ENGINE_RELEASE_TYPE = 'pub'";
+		const char newSentence[] = "ENGINE_RELEASE_TYPE = 'dev'";
+		const int sentenceLen = strlen(oldSentence);
 		byte *pos = buffer;
 		while (*pos) {
 			if (memcmp(pos, oldSentence, sentenceLen) == 0) {
