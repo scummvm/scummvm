@@ -147,7 +147,7 @@ enum Flag {
 	V111 = 111,
 	V112 = 112,
 	V113 = 113,
-	V114 = 114,
+	V114 = 114, // Give marks to Wolf, room 402
 	V115 = 115,
 	V116 = 116, // Try to give to Wolf a foreign currency, room 402
 	V117 = 117,
