@@ -398,7 +398,7 @@ void Room702::daemon() {
 	switch (_G(kernel).trigger) {
 	case 40:
 		player_set_commands_allowed(false);
-		setGlobals1(1, _ripShowsRingSeries, 10, 10, 10, 0, 10, 19, 19, 19, 0, 19, 30, 30, 30, 0, 0, 0, 0, 0, 0);
+		setGlobals1(_ripShowsRingSeries, 1, 10, 10, 10, 0, 10, 19, 19, 19, 0, 19, 30, 30, 30, 0, 0, 0, 0, 0, 0);
 		if (_G(flags)[V210]) {
 			sendWSMessage_110000(_G(my_walker), 41);
 		} else {
