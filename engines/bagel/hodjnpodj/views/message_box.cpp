@@ -41,7 +41,7 @@ namespace HodjNPodj {
 
 
 void MessageBox::show(const Common::String &line1,
-		const Common::String &line2, ViewCloseCallback callback) {
+		const Common::String &line2, ViewCallback callback) {
 	MessageBox *view = (MessageBox *)g_events->findView("MessageBox");
 	view->_line1 = line1;
 	view->_line2 = line2;

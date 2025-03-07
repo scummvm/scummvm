@@ -23,6 +23,7 @@
 #define HODJNPODJ_VIEWS_H
 
 #include "bagel/hodjnpodj/views/rules.h"
+#include "bagel/hodjnpodj/views/main_menu.h"
 #include "bagel/hodjnpodj/views/message_box.h"
 #include "bagel/hodjnpodj/fuge/fuge.h"
 
@@ -30,6 +31,7 @@ namespace Bagel {
 namespace HodjNPodj {
 
 struct Views {
+	MainMenu _mainMenu;
 	MessageBox _messageBox;
 	Rules _rules;
 	Fuge::Fuge _fuge;

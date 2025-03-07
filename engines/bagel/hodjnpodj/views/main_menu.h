@@ -23,20 +23,50 @@
 #define HODJNPODJ_VIEWS_MAIN_MENU_H
 
 #include "bagel/hodjnpodj/views/view.h"
+#include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
+#define NO_RULES    0x0001
+#define NO_NEWGAME  0x0002
+#define NO_OPTIONS  0x0004
+#define NO_RETURN   0x0008
+#define NO_QUIT     0x0010
+#define NO_AUDIO    0x0020
+
 class MainMenu: public View {
 private:
-	ViewCloseCallback _callback;
+	uint _flags = 0;
+	const char *_rulesFilename = nullptr;
+	const char *_wavFilename;
+	ViewCallback _optionsCallback;
+	ViewCallback _closeCallback;
+
+	GfxSurface _background;
+	ColorButton _rulesButton;
+	ColorButton _newGameButton;
+	ColorButton _optionsButton;
+	ColorButton _audioButton;
+	ColorButton _continueButton;
+	ColorButton _quitButton;
+
+	void closeDialog();
 
 public:
-	MainMenu() : View("MainMenu") {
-	}
+	MainMenu();
 	virtual ~MainMenu() {}
 
-	static void show(ViewCloseCallback callback);
+	static void show(
+		uint nFlags, const char *rulesFileName,
+		const char *wavFileName, ViewCallback optionsCallback,
+		ViewCallback closeCallback);
+
+	void draw() override;
+	bool msgOpen(const OpenMessage &msg) override;
+	bool msgClose(const CloseMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 };
 
 } // namespace HodjNPodj

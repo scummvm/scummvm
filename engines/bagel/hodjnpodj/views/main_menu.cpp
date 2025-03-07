@@ -19,15 +19,116 @@
  *
  */
 
+#include "common/translation.h"
 #include "bagel/hodjnpodj/views/main_menu.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-void MainMenu::show(ViewCloseCallback callback) {
+void MainMenu::show(
+		uint nFlags, const char *rulesFileName,
+		const char *wavFileName, ViewCallback optionsCallback,
+		ViewCallback closeCallback) {
 	MainMenu *view = (MainMenu *)g_events->findView("MainMenu");
-	view->_callback = callback;
+	view->_flags = nFlags;
+	view->_rulesFilename = rulesFileName;
+	view->_wavFilename = wavFileName;
+	view->_optionsCallback = optionsCallback;
+	view->_closeCallback = closeCallback;
+
+	if (!(nFlags & NO_OPTIONS)) {
+		assert(optionsCallback != nullptr);
+	}
+
 	view->addView();
+}
+
+MainMenu::MainMenu() : View("MainMenu"),
+		_rulesButton("Rules", _s("&Rules"), this),
+		_newGameButton("NewGame", _s("&New Game"), this),
+		_optionsButton("Options", _s("&Options"), this),
+		_audioButton("Audio", _s("&Audio"), this),
+		_continueButton("Continue", _s("&Continue"), this),
+		_quitButton("Quit", _s("&Quit"), this) {
+}
+
+void MainMenu::draw() {
+	GfxSurface s = getSurface();
+	s.blitFrom(_background);
+	View::draw();
+}
+bool MainMenu::msgOpen(const OpenMessage &msg) {
+	_background.loadBitmap("fuge/art/oscroll.bmp");
+	_background.setTransparentColor(255);
+	int x = (GAME_WIDTH - _background.w) / 2;
+	int y = (GAME_HEIGHT - _background.h) / 2;
+	setBounds(Common::Rect(x, y, x + _background.w, y + _background.h));
+
+	// Set up button positions
+	ColorButton *BUTTONS[6] = {
+		&_rulesButton, &_newGameButton, &_optionsButton,
+		&_audioButton, &_continueButton, &_quitButton
+	};
+	Common::Rect btnRect(0, 0, 80, 23);
+	btnRect.translate(_bounds.left + (_bounds.width() - btnRect.width()) / 2,
+		_bounds.top + 28);
+	for (int i = 0; i < 6; ++i) {
+		BUTTONS[i]->setBounds(btnRect);
+		btnRect.translate(0, 26);
+	}
+
+	// Disable the Rules button if told to do so
+	if (_flags & NO_RULES)
+		_rulesButton.enableWindow(false);
+
+	// Disable the NewGame button if told to do so
+	if (_flags & NO_NEWGAME)
+		_newGameButton.enableWindow(false);
+
+	// Disable the Options button if told to do so
+	if (_flags & NO_OPTIONS)
+		_optionsButton.enableWindow(false);
+
+	// Disable the Audio button if told to do so
+	if (_flags & NO_AUDIO)
+		_audioButton.enableWindow(false);
+
+	// Disable the Return button if told to do so
+	if (_flags & NO_RETURN)
+		_continueButton.enableWindow(false);
+
+	// Disable the Return button if told to do so
+	if (_flags & NO_QUIT)
+		_quitButton.enableWindow(false);
+
+	return true;
+}
+
+bool MainMenu::msgClose(const CloseMessage &msg) {
+	_background.clear();
+	return true;
+}
+
+bool MainMenu::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		closeDialog();
+		return true;
+	}
+
+	return false;
+}
+
+bool MainMenu::msgGame(const GameMessage &msg) {
+	// TODO: Handle buttons
+
+	return true;
+}
+
+void MainMenu::closeDialog() {
+	close();
+	_closeCallback();
 }
 
 } // namespace HodjNPodj

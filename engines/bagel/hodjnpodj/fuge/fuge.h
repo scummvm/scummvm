@@ -122,6 +122,7 @@ public:
 	void gameOverClosed();
 	void newLifeClosed();
 	void roundCompleteClosed();
+	void getUserOptions();
 	void optionsClosed();
 	void gameResume();
 

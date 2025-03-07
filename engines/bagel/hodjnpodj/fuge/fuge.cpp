@@ -674,9 +674,18 @@ void Fuge::showOptionsMenu() {
 		CBofSound::waitWaveSounds();
 
 		// Show the options view
-		MainMenu::show([]() {
-			((Fuge *)g_events->findView("Fuge"))->optionsClosed();
-		});
+		MainMenu::show(
+			(gameInfo.bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) |
+			(_bGameActive ? 0 : NO_RETURN),
+			"fuge/fuge.txt",
+			gameInfo.bSoundEffectsEnabled ? WAV_NARRATION : NULL,
+			[]() {
+				((Fuge *)g_events->findView("Fuge"))->getUserOptions();
+			},
+			[]() {
+				((Fuge *)g_events->findView("Fuge"))->optionsClosed();
+			}
+		);
 	}
 }
 
@@ -1123,6 +1132,10 @@ void Fuge::newLifeClosed() {
 	endPaddle();
 	startPaddle();
 	startBall();
+}
+
+void Fuge::getUserOptions() {
+	error("TODO: Fuge::getUserOptions");
 }
 
 void Fuge::optionsClosed() {

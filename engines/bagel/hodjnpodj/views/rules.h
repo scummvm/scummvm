@@ -35,7 +35,7 @@ private:
 	GfxSurface _scrollTop, _scrollBottom, _scrollMiddle;
 	GfxSurface _scrollContent;
 	Common::String _filename, _waveFilename;
-	ViewCloseCallback _callback = nullptr;
+	ViewCallback _callback = nullptr;
 	Common::StringArray _lines;
 	Common::Rect _moreRect;
 	Common::String _more;
@@ -50,7 +50,7 @@ public:
 
 	static void show(const Common::String &filename,
 		const Common::String &waveFile,
-		ViewCloseCallback callback);
+		ViewCallback callback);
 
 	void draw() override;
 	bool msgOpen(const OpenMessage &msg) override;

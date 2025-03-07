@@ -34,7 +34,7 @@ private:
 	OkButton _okButton;
 	Common::String _line1;
 	Common::String _line2;
-	ViewCloseCallback _callback;
+	ViewCallback _callback;
 
 	void closeDialog();
 
@@ -43,7 +43,7 @@ public:
 	virtual ~MessageBox() {}
 
 	static void show(const Common::String &title,
-		const Common::String &msg, ViewCloseCallback callback);
+		const Common::String &msg, ViewCallback callback);
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;

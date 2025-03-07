@@ -148,7 +148,7 @@ bool ColorButton::msgMouseUp(const MouseUpMessage &msg) {
 		redraw();
 
 		// Notify parent dialog that the button was pressed
-		_parent->send(GameMessage("BUTTON"));
+		_parent->send(GameMessage("BUTTON", _name));
 	}
 
 	return true;
@@ -172,7 +172,7 @@ bool ColorButton::msgKeypress(const KeypressMessage &msg) {
 			(msg.flags & Common::KBD_ALT) &&
 			(msg.ascii == tolower(_text[ampPos + 1]))) {
 		// Notify parent dialog that the button was pressed
-		_parent->send(GameMessage("BUTTON"));
+		_parent->send(GameMessage("BUTTON", _name));
 		return true;
 	}
 

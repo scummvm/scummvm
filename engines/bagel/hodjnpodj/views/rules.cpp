@@ -60,7 +60,7 @@ Rules::Rules() : View("Rules"), _more(_s(MORE_TEXT_BLURB)) {
 
 void Rules::show(const Common::String &filename,
 	const Common::String &waveFile,
-	ViewCloseCallback callback) {
+	ViewCallback callback) {
 	Rules *view = (Rules *)g_events->findView("Rules");
 	view->_filename = filename;
 	view->_waveFilename = waveFile;

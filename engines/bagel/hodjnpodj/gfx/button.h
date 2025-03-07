@@ -69,8 +69,27 @@ namespace HodjNPodj {
 #define RGB_RADIO_TEXT_DISABLE 	PALETTERGB(155,139,123)
 #define	RGB_RADIO_OUTLINE      	PALETTERGB(83,59,51) // PALETTERGB(207,159,115)
 
+class Button : public UIElement {
+protected:
+	uint _itemState = 0;
+public:
+	Button(const Common::String &name, UIElement *uiParent) :
+		UIElement(name, uiParent) {}
+	Button(const Common::String &name) :
+		UIElement(name) {}
 
-class BmpButton : public UIElement {
+	void setPressed(bool pressed) {
+		_itemState = pressed ? ODS_SELECTED : 0;
+		redraw();
+	}
+
+	void enableWindow(bool enabled) {
+		_itemState = enabled ? 0 : ODS_DISABLED;
+		redraw();
+	}
+};
+
+class BmpButton : public Button {
 public:
 	enum Mode {
 		kBtnNormal, kBtnSelected,
@@ -81,12 +100,11 @@ private:
 	GfxSurface _selected;
 	GfxSurface _focused;
 	GfxSurface _disabled;
-	Mode _mode = BmpButton::kBtnNormal;
 
 public:
 	BmpButton(const Common::String &name, UIElement *parent,
 		const Common::Rect &r) :
-		UIElement(name, parent) {
+		Button(name, parent) {
 		setBounds(r);
 	}
 
@@ -94,18 +112,12 @@ public:
 		const char *focused, const char *disabled);
 	void clear();
 
-	void setPressed(bool pressed) {
-		_mode = pressed ? kBtnSelected : kBtnNormal;
-		redraw();
-	}
-
 	void draw() override;
 };
 
-class ColorButton : public UIElement {
+class ColorButton : public Button {
 private:
 	Common::String _text;
-	uint _itemState = 0;
 	COLORREF _cButtonFace = RGB_BUTTON_FACE;
 	COLORREF _cButtonHighlight = RGB_BUTTON_HIGHLIGHT;
 	COLORREF _cButtonShadow = RGB_BUTTON_SHADOW;
@@ -115,7 +127,18 @@ private:
 
 public:
 	ColorButton(const Common::String &text, UIElement *parent = nullptr) :
-		UIElement("ColorButton", parent), _text(text) {
+		Button("ColorButton", parent), _text(text) {
+	}
+	ColorButton(const Common::String &text, const Common::Rect &r, UIElement *parent = nullptr) :
+		Button("ColorButton", parent), _text(text) {
+		setBounds(r);
+	}
+	ColorButton(const Common::String &name, const Common::String &text, UIElement *parent = nullptr) :
+		Button(name, parent), _text(text) {
+	}
+	ColorButton(const Common::String &name, const Common::String &text, const Common::Rect &r, UIElement *parent = nullptr) :
+		Button(name, parent), _text(text) {
+		setBounds(r);
 	}
 	~ColorButton() override {
 	}
