@@ -58,7 +58,7 @@ CoktelDecoder::State::State() : flags(0), speechId(0) {
 CoktelDecoder::CoktelDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
 	_mixer(mixer), _soundType(soundType), _width(0), _height(0), _x(0), _y(0),
 	_defaultX(0), _defaultY(0), _features(0), _frameCount(0), _palette(256), _paletteDirty(false),
-	_isDouble(false), _ownSurface(true), _frameRate(12), _hasSound(false),
+	_highColorMap(nullptr), _isDouble(false), _ownSurface(true), _frameRate(12), _hasSound(false),
 	_soundEnabled(false), _soundStage(kSoundNone), _audioStream(0), _startTime(0),
 	_pauseStartTime(0), _isPaused(false) {
 
@@ -66,6 +66,7 @@ CoktelDecoder::CoktelDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundT
 }
 
 CoktelDecoder::~CoktelDecoder() {
+	delete[] _highColorMap;
 }
 
 bool CoktelDecoder::evaluateSeekFrame(int32 &frame, int whence) const {
@@ -103,6 +104,30 @@ void CoktelDecoder::setSurfaceMemory(void *mem, uint16 width, uint16 height, uin
 	// Create a surface over this memory
 	// TODO: Check whether it is fine to assume we want the setup PixelFormat.
 	_surface.init(width, height, width * bpp, mem, getPixelFormat());
+
+	_ownSurface = false;
+}
+
+void CoktelDecoder::setSurfaceMemoryPalettedToHighColor(void *mem,
+														uint16 width,
+														uint16 height,
+														Graphics::PixelFormat format,
+														uint32 *highColorMap) {
+	freeSurface();
+
+	if (!hasVideo())
+		return;
+
+	// Sanity checks
+	assert((width > 0) && (height > 0));
+	assert(isPaletted() && format.bytesPerPixel > 1);
+
+	_tmpSurfBppConversion.create(width, height, getPixelFormat());
+	delete[] _highColorMap;
+	_highColorMap = highColorMap;
+
+	// Create a surface over this memory
+	_surface.init(width, height, width * format.bytesPerPixel, mem, format);
 
 	_ownSurface = false;
 }
@@ -315,6 +340,10 @@ uint32 CoktelDecoder::getFrameCount() const {
 const byte *CoktelDecoder::getPalette() {
 	_paletteDirty = false;
 	return _palette.data();
+}
+
+const uint32 *CoktelDecoder::getHighColorMap() {
+	return _highColorMap;
 }
 
 bool CoktelDecoder::hasDirtyPalette() const {
@@ -2496,12 +2525,14 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 
 	uint8 type = *dataPtr++;
 
+	bool palettedToHighColor = _surface.format.bytesPerPixel != _bytesPerPixel && _bytesPerPixel == 1;
+
 	if (type & 0x80) {
 		// Frame data is compressed
 
 		type &= 0x7F;
 
-		if ((type == 2) && (rect.width() == _surface.w) && (_x == 0) && (_blitMode == 0)) {
+		if ((type == 2) && (rect.width() == _surface.w) && (_x == 0) && (_blitMode == 0) && !palettedToHighColor) {
 			// Directly uncompress onto the video surface
 			const int offsetX = rect.left * _surface.format.bytesPerPixel;
 			const int offsetY = rect.top * _surface.pitch;
@@ -2529,6 +2560,10 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 		surface = &_8bppSurface[2];
 	}
 
+	if (palettedToHighColor) {
+		surface = &_tmpSurfBppConversion;
+	}
+
 	// Evaluate the block type
 	if      (type == 0x01) {
 		if (_isDouble)
@@ -2549,7 +2584,10 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 	else
 		renderBlockSparse2Y(*surface, dataPtr, *blockRect);
 
-	if (_blitMode > 0) {
+	if (palettedToHighColor) {
+		blitPalettedToHighColor(*surface, *blockRect);
+	}
+	else if (_blitMode > 0) {
 		if      (_bytesPerPixel == 2)
 			blit16(*surface, *blockRect);
 		else if (_bytesPerPixel == 3)
@@ -2610,6 +2648,22 @@ bool VMDDecoder::getRenderRects(const Common::Rect &rect,
 		return false;
 
 	return true;
+}
+
+void VMDDecoder::blitPalettedToHighColor(const Graphics::Surface &srcSurf, Common::Rect &rect) {
+	rect = Common::Rect(rect.left, rect.top, rect.right, rect.bottom);
+
+	rect.clip(_surface.w, _surface.h);
+
+	assert(isPaletted());
+	assert(_highColorMap != nullptr);
+
+	for (int x = rect.left; x < rect.left + rect.width(); x++) {
+		for (int y = rect.top; y < rect.top + rect.height(); y++) {
+			uint32 color = srcSurf.getPixel(x, y);
+			_surface.setPixel(x, y, _highColorMap[color]);
+		}
+	}
 }
 
 void VMDDecoder::blit16(const Graphics::Surface &srcSurf, Common::Rect &rect) {
