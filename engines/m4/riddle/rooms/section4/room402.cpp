@@ -274,7 +274,7 @@ void Room402::init() {
 
 void Room402::daemon() {
 	int frame;
-
+	
 	switch (_G(kernel).trigger) {
 	case 19:
 		ws_walk(_G(my_walker), 449, 317, nullptr, 20, 3);
@@ -1045,7 +1045,7 @@ void Room402::daemon() {
 		break;
 
 	case 202:
-		sendWSMessage_10000(1, _wolfieMach, _ripPaysWolfie, 1, 24, 203,
+		sendWSMessage_10000(1, _ripEnterLeave, _ripPaysWolfie, 1, 24, 203,
 			_ripPaysWolfie, 24, 24, 0);
 		break;
 
@@ -1187,7 +1187,7 @@ void Room402::daemon() {
 		break;
 
 	case 223:
-		sendWSMessage_10000(1, _wolfieMach, _ripPaysWolfie, 1, 24, 224,
+		sendWSMessage_10000(1, _ripEnterLeave, _ripPaysWolfie, 1, 24, 224,
 			_ripPaysWolfie, 24, 24, 0);
 		break;
 
