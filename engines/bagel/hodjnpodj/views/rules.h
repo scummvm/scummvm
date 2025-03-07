@@ -58,6 +58,7 @@ public:
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	bool msgMouseUp(const MouseUpMessage &msg) override;
+	bool tick() override;
 };
 
 } // namespace HodjNPodj

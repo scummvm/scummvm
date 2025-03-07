@@ -59,8 +59,8 @@ Rules::Rules() : View("Rules"), _more(_s(MORE_TEXT_BLURB)) {
 }
 
 void Rules::show(const Common::String &filename,
-		const Common::String &waveFile,
-		ViewCloseCallback callback) {
+	const Common::String &waveFile,
+	ViewCloseCallback callback) {
 	Rules *view = (Rules *)g_events->findView("Rules");
 	view->_filename = filename;
 	view->_waveFilename = waveFile;
@@ -133,6 +133,8 @@ bool Rules::msgOpen(const OpenMessage &msg) {
 	// Render the first page of text
 	renderPage();
 
+	_scrollY = 0;
+
 	return View::msgOpen(msg);
 }
 
@@ -177,16 +179,44 @@ bool Rules::msgMouseUp(const MouseUpMessage &msg) {
 
 
 void Rules::draw() {
+	int scrollHeight = _scroll.h - _scrollTop.h - _scrollBottom.h;
 	GfxSurface s = getSurface();
 	s.setFontSize(TEXT_SIZE);
+	s.blitFrom(_background);
 
-	s.blitFrom(_scrollContent);
+	if (_scrollY < scrollHeight) {
+		// Unfurling scroll
+		// Top scroll
+		int y = (s.h - _scrollTop.h - _scrollY - _scrollBottom.h) / 2;
+		s.blitFrom(_scrollTop, Common::Point(0, y));
 
-	if (_children.empty())
-		_okButton.setParent(this);
+		// Bottom scroll
+		s.blitFrom(_scrollBottom,
+			Common::Point(0, y + _scrollTop.h + _scrollY));
 
-	if (!_lines.empty())
-		s.writeString(_more, _moreRect, BLACK);
+		// Partial content of the scroll middle
+		const Graphics::ManagedSurface content(_scrollContent,
+			Common::Rect(0, _scrollTop.h, _scrollContent.w,
+				_scrollContent.h - _scrollBottom.h));
+
+		s.blitFrom(content,
+			Common::Rect(0, content.h / 2 - (_scrollY / 2),
+				content.w, content.h / 2 + (_scrollY / 2)),
+			Common::Point(0, y + _scrollTop.h)
+		);
+
+	} else {
+		// The scroll is completely unfurled
+		s.blitFrom(_scrollContent);
+
+		// Add the Ok button if not already
+		if (_children.empty())
+			_okButton.setParent(this);
+
+		// Show the more button if there's more pages left
+		if (!_lines.empty())
+			s.writeString(_more, _moreRect, BLACK);
+	}
 }
 
 void Rules::renderPage() {
@@ -222,6 +252,17 @@ void Rules::renderPage() {
 void Rules::closeDialog() {
 	close();
 	_callback();
+}
+
+bool Rules::tick() {
+	int scrollHeight = _scroll.h - _scrollTop.h - _scrollBottom.h;
+
+	if (_scrollY < scrollHeight) {
+		_scrollY = MIN(_scrollY + 20, scrollHeight);
+		redraw();
+	}
+
+	return true;
 }
 
 } // namespace HodjNPodj
