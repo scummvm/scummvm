@@ -274,7 +274,7 @@ void Room402::init() {
 
 void Room402::daemon() {
 	int frame;
-	
+
 	switch (_G(kernel).trigger) {
 	case 19:
 		ws_walk(_G(my_walker), 449, 317, nullptr, 20, 3);
@@ -338,7 +338,8 @@ void Room402::daemon() {
 		break;
 
 	case 30:
-		setGlobals1(_ripTalker, 0, 0, 1, 1, 0, 1, 5, 1, 5, 1);
+		midi_stop();
+		setGlobals1(_ripTalker, 1, 1, 1, 1, 0, 1, 5, 1, 5, 1);
 		sendWSMessage_110000(32);
 		break;
 
@@ -1414,9 +1415,7 @@ void Room402::pre_parser() {
 	if (player_said("DANZIG") && !player_said("ENTER", "DANZIG"))
 		_G(player).resetWalk();
 
-	if (!_G(flags)[V112] && !player_said("WALK TO") &&
-		(!talkFlag || !player_said("WOLF")) &&
-		!player_said("POMERANIAN MARKS", "WOLF"))
+	if (!_G(flags)[V112] && !player_said("WALK TO") && !(talkFlag  && player_said("WOLF")) && !player_said("POMERANIAN MARKS", "WOLF"))
 		_G(flags)[V112] = 1;
 
 	if (_val6 == 0)
