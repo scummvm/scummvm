@@ -31,7 +31,7 @@ MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 	_type = kCastMovie;
 
 	_initialRect = Movie::readRect(stream);
-	_flags = stream.readUint32();
+	_flags = stream.readUint32BE();
 
 	_looping = !(_flags & 0x20);
 	_enableScripts = _flags & 0x10;
