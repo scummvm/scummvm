@@ -1064,21 +1064,18 @@ void Adlib::OnTimer() {
 				//	}
 			}
 			//	// l0017_21A3 and l0017_21AC:
-			//	if (((bp6 & 0xF0) == 0xE0) || (bp6 & 0xF0) == 0xA0 ) {
-			//		// l0017_21B5:
-			//		// TODO: Define in the header
-			//		Macs2::StreamHandler *sh2252;
-			//		Macs2::StreamHandler *sh225A;
-			//		sh2252 = Func19BE_SH(sh2252, 0x2);
-			//		sh225A->seek(0x2, SEEK_CUR);
-			//	}
-			//	// l0017_21DF:
-			//	if ((bp6 & 0xF0) == 0xB0) {
-			//		// l0017_21EB:
-			//		Macs2::StreamHandler *sh2252;
-			//		Macs2::StreamHandler *sh225A;
-			//		sh2252 = Func19BE_SH(sh2252, 0x2);
-			//		sh225A->seek(0x2, SEEK_CUR);
+			if (((bp6 & 0xF0) == 0xE0) || (bp6 & 0xF0) == 0xA0 ) {
+				// l0017_21B5:
+				shMem2250 = Func19BE_SH(shMem2250, 0x2);
+				g225A += 0x2;
+			}
+			// l0017_21DF:
+			if ((bp6 & 0xF0) == 0xB0) {
+				// l0017_21EB:
+				shMem2250 = Func19BE_SH(shMem2250, 0x2);
+				g225A += 0x2;
+				// TODO: Continue from here
+
 			//		if (bp4 == 0x66) {
 			//			// l0017_221C:
 			//			g2259 = bp5;
@@ -1146,9 +1143,9 @@ void Adlib::OnTimer() {
 			//
 			//			}
 			//		}
-			//	}
+			}
 			//	// TODO: Not sure about indentation level here
-			//	// l0017_231E:
+			// l0017_231E:
 			//	if ((bp6 & 0xF0) == 0xC0) {
 			//		// l0017_2327:
 			//		Macs2::StreamHandler *sh2252;
