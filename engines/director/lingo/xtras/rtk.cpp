@@ -72,6 +72,7 @@ namespace Director {
 
 const char *RolloverToolkitXtra::xlibName = "RolloverToolkit";
 const XlibFileDesc RolloverToolkitXtra::fileNames[] = {
+	{ "RTK",   nullptr },
 	{ "rollover_toolkit",   nullptr },
 	{ nullptr,        nullptr },
 };
