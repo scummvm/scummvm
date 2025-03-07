@@ -45,7 +45,7 @@ VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFront
 	startFrame(-1), lastFrame(-1), endFrame(-1), forceSeek(false),
 	breakKey(kShortKeyEscape), palCmd(8), palStart(0), palEnd(255), palFrame(-1),
 	noBlock(false), loop(false), fade(false), waitEndFrame(true),
-	hasSound(false), canceled(false) {
+	hasSound(false), canceled(false), slot(-1) {
 
 }
 
@@ -98,19 +98,58 @@ void VideoPlayer::evaluateFlags(Properties &properties) {
 }
 
 int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties &properties) {
-	int slot = 0;
+	int slot = kPrimaryVideoSlot;
 
-	Video *video = 0;
-	if (!primary) {
-		slot = getNextFreeSlot();
-		if (slot < 0) {
-			warning("VideoPlayer::openVideo(): Can't open video \"%s\": No free slot", file.c_str());
-			return -1;
+	Video *video = nullptr;
+	if (_vm->getGameType() == kGameTypeAdibou2) {
+		// Check whether a slot is already open for this file
+		for (int i = 0; i < kVideoSlotCount; i++) {
+			if (_videoSlots[i].isEmpty())
+				continue;
+
+			if (_videoSlots[i].fileName.equalsIgnoreCase(file)) {
+				slot = i;
+				video = &_videoSlots[i];
+				break;
+			}
 		}
 
-		video = &_videoSlots[slot];
-	} else
-		video = &_videoSlots[0];
+		if (video == nullptr) {
+			if (properties.slot >= 0 && properties.slot < kVideoSlotCount) {
+				if (properties.slot >= kLiveVideoSlotCount)
+					warning("VideoPlayer::openVideo(): explicit slot index %d is"
+							" beyond reserved spots for live videos (0 - %d)",
+							properties.slot, kLiveVideoSlotCount - 1);
+				slot = properties.slot;
+			} else if (primary) {
+				slot = kPrimaryVideoSlot;
+			} else {
+				if (properties.slot >= 0)
+					warning("VideoPlayer::openVideo(): explicit slot number %d is "
+							"beyond maximum slot index %d, will be ignored",
+							properties.slot, kVideoSlotCount - 1);
+
+				slot = getNextFreeSlot();
+				if (slot < 0) {
+					warning("VideoPlayer::openVideo(): Can't open video \"%s\": No free slot", file.c_str());
+					return -1;
+				}
+			}
+
+			video = &_videoSlots[slot];
+		}
+	} else {
+		if (!primary) {
+			slot = getNextFreeSlot();
+			if (slot < 0) {
+				warning("VideoPlayer::openVideo(): Can't open video \"%s\": No free slot", file.c_str());
+				return -1;
+			}
+
+			video = &_videoSlots[slot];
+		} else
+			video = &_videoSlots[kPrimaryVideoSlot];
+	}
 
 	// Different video already in the slot => close that video
 	if (!video->isEmpty() && (video->fileName.compareToIgnoreCase(file) != 0))
@@ -845,8 +884,8 @@ VideoPlayer::Video *VideoPlayer::getVideoBySlot(int slot) {
 }
 
 int VideoPlayer::getNextFreeSlot() {
-	// Starting with 1, since 0 is reserved for the "primary" video
-	for (int i = 1; i < kVideoSlotCount; i++)
+	// index 0 is reserved for "primary" videos, 1..kLiveVideoSlotCount for "live" videos, so start at kLiveVideoSlotCount + 1
+	for (int i = kLiveVideoSlotCount + 1; i < kVideoSlotCount; i++)
 		if (_videoSlots[i].isEmpty())
 			return i;
 
