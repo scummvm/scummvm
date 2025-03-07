@@ -686,12 +686,10 @@ void Inter_v7::o7_playVmdOrMusic() {
 	} else if (props.lastFrame <= -10) {
 		_vm->_vidPlayer->closeVideo();
 
-		if (!(props.flags & VideoPlayer::kFlagNoVideo))
-			props.loop = true;
+		//if (!(props.flags & VideoPlayer::kFlagNoVideo))
+		//	props.loop = true;
 
-	} else if (props.lastFrame < 0) {
-		warning("Urban/Playtoons Stub: Unknown Video/Music command: %d, %s", props.lastFrame, file.c_str());
-		return;
+		props.slot = (-props.lastFrame) % 10;
 	}
 
 	// TODO: conditions below for unblocking videos have been found partly from asm, partly by trial and errors.

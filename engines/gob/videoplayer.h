@@ -104,6 +104,8 @@ public:
 		bool hasSound; ///< Does the video have sound?
 		bool canceled; ///< Was the video canceled?
 
+		int slot; ///< Explicit slot index (-1 = auto).
+
 		Properties();
 	};
 
@@ -183,6 +185,9 @@ private:
 	};
 
 	static const int kVideoSlotCount = 32;
+	static const int kPrimaryVideoSlot = 0;
+	static const int kLiveVideoSlotCount = 5;
+	static const int kVideoSlotWithCurFrameVarCount = 4;
 
 	static const char *const _extensions[];
 
