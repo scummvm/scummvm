@@ -21,23 +21,19 @@
 
 #include "director/director.h"
 #include "director/movie.h"
+#include "director/sprite.h"
+
 #include "director/castmember/movie.h"
+
 #include "director/lingo/lingo-the.h"
 
 namespace Director {
 
 MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
-		: CastMember(cast, castId, stream) {
+		: FilmLoopCastMember(cast, castId, stream, version) {
 	_type = kCastMovie;
 
-	_initialRect = Movie::readRect(stream);
-	_flags = stream.readUint32BE();
-
-	_looping = !(_flags & 0x20);
 	_enableScripts = _flags & 0x10;
-	_enableSound = _flags & 0x08;
-	_crop = !(_flags & 0x02);
-	_center = _flags & 0x01;
 
 	if (debugChannelSet(2, kDebugLoading))
 		_initialRect.debugPrint(2, "MovieCastMember(): rect:");
@@ -48,20 +44,10 @@ MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 }
 
 MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &source)
-	: CastMember(cast, castId) {
+	: FilmLoopCastMember(cast, castId, source) {
 	_type = kCastMovie;
-	_loaded = source._loaded;
 
-	_initialRect = source._initialRect;
-	_boundingRect = source._boundingRect;
-	_children = source._children;
-
-	_flags = source._flags;
-	_looping = source._looping;
 	_enableScripts = source._enableScripts;
-	_enableSound = source._enableSound;
-	_crop = source._crop;
-	_center = source._center;
 }
 
 bool MovieCastMember::hasField(int field) {

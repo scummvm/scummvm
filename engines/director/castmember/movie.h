@@ -22,11 +22,11 @@
 #ifndef DIRECTOR_CASTMEMBER_MOVIE_H
 #define DIRECTOR_CASTMEMBER_MOVIE_H
 
-#include "director/castmember/castmember.h"
+#include "director/castmember/filmloop.h"
 
 namespace Director {
 
-class MovieCastMember : public CastMember {
+class MovieCastMember : public FilmLoopCastMember {
 public:
 	MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &source);
@@ -38,11 +38,7 @@ public:
 	Common::String formatInfo() override;
 
 	uint32 _flags;
-	bool _looping;
 	bool _enableScripts;
-	bool _enableSound;
-	bool _crop;
-	bool _center;
 };
 
 } // End of namespace Director

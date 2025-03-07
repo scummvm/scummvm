@@ -423,7 +423,7 @@ void Channel::setClean(Sprite *nextSprite, bool partial) {
 					((DigitalVideoCastMember *)nextSprite->_cast)->setChannel(this);
 					((DigitalVideoCastMember *)nextSprite->_cast)->startVideo();
 				}
-			} else if (nextSprite->_cast->_type == kCastFilmLoop) {
+			} else if (nextSprite->_cast->_type == kCastFilmLoop || nextSprite->_cast->_type == kCastMovie) {
 				// brand new film loop, reset the frame counter.
 				_filmLoopFrame = 1;
 			}
@@ -722,14 +722,14 @@ int Channel::getMouseLine(int x, int y) {
 }
 
 bool Channel::hasSubChannels() {
-	if ((_sprite->_cast) && (_sprite->_cast->_type == kCastFilmLoop)) {
+	if ((_sprite->_cast) && (_sprite->_cast->_type == kCastFilmLoop || _sprite->_cast->_type == kCastMovie)) {
 		return true;
 	}
 	return false;
 }
 
 Common::Array<Channel> *Channel::getSubChannels() {
-	if ((!_sprite->_cast) || (_sprite->_cast->_type != kCastFilmLoop)) {
+	if ((!_sprite->_cast) || (_sprite->_cast->_type != kCastFilmLoop && _sprite->_cast->_type != kCastMovie)) {
 		warning("Channel doesn't have any sub-channels");
 		return nullptr;
 	}

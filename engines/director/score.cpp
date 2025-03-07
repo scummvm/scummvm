@@ -770,7 +770,7 @@ bool Score::renderTransition(uint16 frameId, RenderMode mode) {
 
 void Score::incrementFilmLoops() {
 	for (auto &it : _channels) {
-		if (it->_sprite->_cast && it->_sprite->_cast->_type == kCastFilmLoop) {
+		if (it->_sprite->_cast && (it->_sprite->_cast->_type == kCastFilmLoop || it->_sprite->_cast->_type == kCastMovie)) {
 			FilmLoopCastMember *fl = ((FilmLoopCastMember *)it->_sprite->_cast);
 			if (!fl->_frames.empty()) {
 				// increment the film loop counter
