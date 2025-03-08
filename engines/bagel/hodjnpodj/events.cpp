@@ -62,11 +62,10 @@ void Events::runGame() {
 		ConfMan.get("minigame") : "";
 	if (minigame.empty()) {
 		// Start the metagame
-		gameInfo.bPlayingMetagame = true;
+		_gameInfo.bPlayingMetagame = true;
 		send("Movie", GameMessage("MOVIE", "video/logo.avi"));
 
 	} else {
-		//gameInfo.bPlayingMetagame = false;
 		addView(minigame);
 	}
 

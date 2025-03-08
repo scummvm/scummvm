@@ -35,15 +35,12 @@
 #include "graphics/fonts/winfont.h"
 #include "graphics/screen.h"
 #include "bagel/hodjnpodj/events.h"
-#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-using Metagame::GAMESTRUCT;
-using Metagame::SkillLevel;
-extern GAMESTRUCT gameInfo;
+extern GAMESTRUCT *pGameParams;
 
 class HodjNPodjEngine : public BagelEngine, public Events {
 protected:

@@ -58,7 +58,16 @@ struct GAMESTRUCT {
 	bool bPlayingMetagame;
 	bool bPlayingHodj;
 
-	void clear();
+	void clear() {
+		lCrowns = lScore = 0;
+		nSkillLevel = SKILLLEVEL_LOW;
+		bSoundEffectsEnabled = bMusicEnabled = true;
+		bPlayingMetagame = false;
+		bPlayingHodj = true;
+	}
+	GAMESTRUCT() {
+		clear();
+	}
 };
 
 struct NOTE_LIST {

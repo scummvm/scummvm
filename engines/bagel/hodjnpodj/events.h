@@ -30,6 +30,7 @@
 #include "bagel/hodjnpodj/gfx/gfx_surface.h"
 #include "bagel/hodjnpodj/gfx/cursor.h"
 #include "bagel/hodjnpodj/libs/array.h"
+#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -37,6 +38,8 @@ namespace HodjNPodj {
 #define FRAME_RATE 50
 #define FRAME_DELAY (1000 / FRAME_RATE)
 
+using Metagame::GAMESTRUCT;
+using Metagame::SkillLevel;
 class Events;
 
 /**
@@ -300,6 +303,8 @@ private:
 	void loadInitialPalette();
 
 protected:
+	GAMESTRUCT _gameInfo;
+
 	/**
 	 * Process an event
 	 */

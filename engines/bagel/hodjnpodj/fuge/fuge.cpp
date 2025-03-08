@@ -24,17 +24,18 @@
 #include "common/file.h"
 #include "image/bmp.h"
 #include "graphics/paletteman.h"
+#include "bagel/metaengine.h"
+#include "bagel/boflib/point.h"
+#include "bagel/boflib/size.h"
 #include "bagel/hodjnpodj/fuge/fuge.h"
 #include "bagel/hodjnpodj/fuge/defines.h"
 #include "bagel/hodjnpodj/libs/vector.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
-#include "bagel/metaengine.h"
-#include "bagel/boflib/point.h"
-#include "bagel/boflib/size.h"
 #include "bagel/hodjnpodj/views/main_menu.h"
 #include "bagel/hodjnpodj/views/message_box.h"
 #include "bagel/hodjnpodj/views/rules.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -245,7 +246,7 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 	_scrollButton.loadBitmaps(SCROLLUP, SCROLLDOWN, SCROLLUP, SCROLLUP);
 
 	// Start the Fuge soundtrack
-	if (gameInfo.bMusicEnabled) {
+	if (pGameParams->bMusicEnabled) {
 		_soundTrack = new CBofSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 		_soundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
 	}
@@ -254,7 +255,7 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 	loadMasterSprites();
 	loadMasterSounds();
 
-	if (gameInfo.bPlayingMetagame) {
+	if (pGameParams->bPlayingMetagame) {
 		playGame();
 	} else {
 		draw();
@@ -318,7 +319,7 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 		gamePause();
 		CBofSound::waitWaveSounds();
 		Rules::show("fuge/fuge.txt",
-			(gameInfo.bSoundEffectsEnabled ? WAV_NARRATION : nullptr),
+			(pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : nullptr),
 			[]() {
 				((Fuge *)g_events->findView("Fuge"))->gameResume();
 			});
@@ -412,12 +413,12 @@ bool Fuge::msgMouseDown(const MouseDownMessage &msg) {
 	if (_rNewGameButton.contains(msg._pos)) {
 		// User clicked on the Title - NewGame button
 		// if we are not playing from the metagame
-		if (!gameInfo.bPlayingMetagame) {
+		if (!pGameParams->bPlayingMetagame) {
 			// Start a new game
 			playGame();
 		}
 	} else if (boothRect.contains(msg._pos)) {
-		if (gameInfo.bSoundEffectsEnabled) {
+		if (pGameParams->bSoundEffectsEnabled) {
 #if CSOUND
 			pEffect = new CBofSound(this, WAV_BOOTH,
 				SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE);  //...Wave file, to delete itself
@@ -428,7 +429,7 @@ bool Fuge::msgMouseDown(const MouseDownMessage &msg) {
 		}
 	} else if (tentRect.contains(msg._pos)) {
 
-		if (gameInfo.bSoundEffectsEnabled) {
+		if (pGameParams->bSoundEffectsEnabled) {
 #if CSOUND
 			pEffect = new CBofSound(this, WAV_TENT,
 				SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE);  //...Wave file, to delete itself
@@ -439,7 +440,7 @@ bool Fuge::msgMouseDown(const MouseDownMessage &msg) {
 		}
 
 	} else if (peopRect.contains(msg._pos)) {
-		if (gameInfo.bSoundEffectsEnabled) {
+		if (pGameParams->bSoundEffectsEnabled) {
 			nPick = getRandomNumber(NUM_WAVS - 1);
 			if (nPick == 0) {
 #if CSOUND
@@ -465,7 +466,7 @@ bool Fuge::msgMouseDown(const MouseDownMessage &msg) {
 		car7Rect.contains(msg._pos)) || car8Rect.contains(msg._pos)) || car9Rect.contains(msg._pos)) ||
 		car10Rect.contains(msg._pos)) {
 
-		if (gameInfo.bSoundEffectsEnabled) {
+		if (pGameParams->bSoundEffectsEnabled) {
 			nPick = getRandomNumber(NUM_WAVS - 1);
 
 #if CSOUND
@@ -645,7 +646,7 @@ void Fuge::releaseMasterSounds() {
 	// Stop the soundtrack
 	if (_soundTrack != nullptr) {
 		// We should have been playing music
-		assert(gameInfo.bMusicEnabled);
+		assert(pGameParams->bMusicEnabled);
 		delete _soundTrack;
 		_soundTrack = nullptr;
 	}
@@ -675,10 +676,10 @@ void Fuge::showOptionsMenu() {
 
 		// Show the options view
 		MainMenu::show(
-			(gameInfo.bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) |
+			(pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) |
 			(_bGameActive ? 0 : NO_RETURN),
 			"fuge/fuge.txt",
-			gameInfo.bSoundEffectsEnabled ? WAV_NARRATION : NULL,
+			pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL,
 			[]() {
 				((Fuge *)g_events->findView("Fuge"))->getUserOptions();
 			},
@@ -718,7 +719,7 @@ void Fuge::playGame() {
 }
 
 void Fuge::gameReset() {
-	if (gameInfo.bSoundEffectsEnabled) {
+	if (pGameParams->bSoundEffectsEnabled) {
 		BofPlaySound(nullptr, SOUND_ASYNCH);	// Stop all sounds
 	}
 
@@ -742,14 +743,14 @@ void Fuge::gameReset() {
 }
 
 void Fuge::loadIniSettings() {
-	if (gameInfo.bPlayingMetagame) {
+	if (pGameParams->bPlayingMetagame) {
 		_bOuterWall = false;
 		_nInitNumBalls = 1;
 		_nInitStartLevel = 3;
 		_nGForceFactor = GFORCE_DEF;
 		_nInitPaddleSize = PSIZE_MAX;
 
-		switch (gameInfo.nSkillLevel) {
+		switch (pGameParams->nSkillLevel) {
 		case SkillLevel::SKILLLEVEL_LOW:
 			_nInitBallSpeed = 4;
 			break;
@@ -759,7 +760,7 @@ void Fuge::loadIniSettings() {
 			break;
 
 		default:
-			assert(gameInfo.nSkillLevel == SkillLevel::SKILLLEVEL_HIGH);
+			assert(pGameParams->nSkillLevel == SkillLevel::SKILLLEVEL_HIGH);
 			_nInitBallSpeed = 8;
 			break;
 		}
@@ -942,7 +943,7 @@ void Fuge::moveBall() {
 
 					_fTurboBoost = (double)12 - _nBallSpeed;
 
-					if (gameInfo.bSoundEffectsEnabled) {
+					if (pGameParams->bSoundEffectsEnabled) {
 						sndPlaySound(m_pWallSound, SND_MEMORY | SOUND_ASYNCH | SND_NODEFAULT);
 					}
 
@@ -955,7 +956,7 @@ void Fuge::moveBall() {
 					_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
 					_fTurboBoost = (double)12 - _nBallSpeed;
 
-					if (gameInfo.bSoundEffectsEnabled) {
+					if (pGameParams->bSoundEffectsEnabled) {
 						sndPlaySound(m_pWallSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 					}
 
@@ -968,7 +969,7 @@ void Fuge::moveBall() {
 					_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
 					_fTurboBoost = (double)12 - _nBallSpeed;
 
-					if (gameInfo.bSoundEffectsEnabled) {
+					if (pGameParams->bSoundEffectsEnabled) {
 						sndPlaySound(m_pWallSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 					}
 
@@ -981,13 +982,13 @@ void Fuge::moveBall() {
 					_vBallVector.Rotate(Deg2Rad(getRandomNumber(1) ? 0.125 : 0));
 					_fTurboBoost = (double)12 - _nBallSpeed;
 
-					if (gameInfo.bSoundEffectsEnabled) {
+					if (pGameParams->bSoundEffectsEnabled) {
 						sndPlaySound(m_pWallSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 					}
 				}
 
 			} else {
-				if (gameInfo.bSoundEffectsEnabled) {
+				if (pGameParams->bSoundEffectsEnabled) {
 					sndPlaySound(m_pWallSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 				}
 
@@ -1080,7 +1081,7 @@ void Fuge::loseBall() {
 	// One less ball
 	_nBalls--;
 
-	if (gameInfo.bSoundEffectsEnabled) {
+	if (pGameParams->bSoundEffectsEnabled) {
 #if CSOUND
 		pEffect = new CBofSound(this, WAV_LOSEBALL,
 			SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
@@ -1093,7 +1094,7 @@ void Fuge::loseBall() {
 	// If no more balls left - user has lost
 	if (_nBalls == 0) {
 
-		if (gameInfo.bSoundEffectsEnabled) {
+		if (pGameParams->bSoundEffectsEnabled) {
 #if CSOUND
 			pEffect = new CSound(this, WAV_GAMEOVER,
 				SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
@@ -1119,9 +1120,9 @@ void Fuge::loseBall() {
 }
 
 void Fuge::gameOverClosed() {
-	if (gameInfo.bPlayingMetagame) {
+	if (pGameParams->bPlayingMetagame) {
 		// Return the final score
-		gameInfo.lScore = _lScore;
+		pGameParams->lScore = _lScore;
 	}
 
 	gameReset();
@@ -1143,12 +1144,12 @@ void Fuge::optionsClosed() {
 	_scrollButton.setPressed(false);
 	_bIgnoreScrollClick = false;
 
-	if (!gameInfo.bMusicEnabled && (_soundTrack != nullptr)) {
+	if (!pGameParams->bMusicEnabled && (_soundTrack != nullptr)) {
 		_soundTrack->stop();
 		delete _soundTrack;
 		_soundTrack = nullptr;
 
-	} else if (gameInfo.bMusicEnabled && (_soundTrack == nullptr)) {
+	} else if (pGameParams->bMusicEnabled && (_soundTrack == nullptr)) {
 		_soundTrack = new CBofSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 		_soundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
 	}
@@ -1275,7 +1276,7 @@ void Fuge::ballvsPaddle() {
 	if (bHit) {
 		nRollBack = MIN(_nInitBallSpeed, nRollBack);
 
-		if (gameInfo.bSoundEffectsEnabled) {
+		if (pGameParams->bSoundEffectsEnabled) {
 			sndPlaySound(m_pPaddleSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 		}
 
@@ -1563,7 +1564,7 @@ void Fuge::ballvsBrick(double length) {
 				}
 
 				if (bHit) {
-					if (gameInfo.bSoundEffectsEnabled) {
+					if (pGameParams->bSoundEffectsEnabled) {
 						sndPlaySound(m_pBrickSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 					}
 
@@ -1578,7 +1579,7 @@ void Fuge::ballvsBrick(double length) {
 
 					// Did user earn an extra ball?
 					if (_lScore >= _lExtraLifeScore) {
-						if (gameInfo.bSoundEffectsEnabled) {
+						if (pGameParams->bSoundEffectsEnabled) {
 							sndPlaySound(m_pExtraLifeSound, SND_MEMORY | SND_SYNC | SND_NODEFAULT);
 						}
 
@@ -1596,7 +1597,7 @@ void Fuge::ballvsBrick(double length) {
 						// Reset turbo
 						_fTurboBoost = 0.0;
 
-						if (gameInfo.bSoundEffectsEnabled) {
+						if (pGameParams->bSoundEffectsEnabled) {
 #if CSOUND
 							pEffect = new CBofSound(this, WAV_WINWAVE,
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
@@ -1707,7 +1708,7 @@ void Fuge::ballvsBrick(double length) {
 
 void Fuge::roundCompleteClosed() {
 	// Stop all sounds
-	if (gameInfo.bSoundEffectsEnabled) {
+	if (pGameParams->bSoundEffectsEnabled) {
 #if CSOUND
 #else
 		sndPlaySound(nullptr, SND_ASYNC);
@@ -1723,10 +1724,10 @@ void Fuge::roundCompleteClosed() {
 	// Get new brick count
 	_nBricks = _nNumRows * BRICKS_PER_ROW;
 
-	if (gameInfo.bPlayingMetagame) {
+	if (pGameParams->bPlayingMetagame) {
 		// If user is playing the metagame
 		// return to the metagame
-		gameInfo.lScore = _lScore;
+		pGameParams->lScore = _lScore;
 		close();
 
 	} else {

@@ -34,22 +34,12 @@ namespace Bagel {
 namespace HodjNPodj {
 
 HodjNPodjEngine *g_engine;
-GAMESTRUCT gameInfo;
-
-void GAMESTRUCT::clear() {
-	lCrowns = 0;
-	lScore = 0;
-	nSkillLevel = SKILLLEVEL_LOW;
-	bSoundEffectsEnabled = false;
-	bMusicEnabled = false;
-	bPlayingMetagame = true;
-	bPlayingHodj = true;
-}
+GAMESTRUCT *pGameParams;
 
 HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		BagelEngine(syst, gameDesc) {
 	g_engine = this;
-	gameInfo.clear();
+	pGameParams = &_gameInfo;
 }
 
 HodjNPodjEngine::~HodjNPodjEngine() {
