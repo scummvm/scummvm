@@ -46,12 +46,12 @@ void MainMenu::show(
 }
 
 MainMenu::MainMenu() : View("MainMenu"),
-		_rulesButton("Rules", _s("&Rules"), this),
-		_newGameButton("NewGame", _s("&New Game"), this),
-		_optionsButton("Options", _s("&Options"), this),
-		_audioButton("Audio", _s("&Audio"), this),
-		_continueButton("Continue", _s("&Continue"), this),
-		_quitButton("Quit", _s("&Quit"), this) {
+		_rulesButton("MenuRules", _s("&Rules"), this),
+		_newGameButton("MenuNewGame", _s("&New Game"), this),
+		_optionsButton("MenuOptions", _s("&Options"), this),
+		_audioButton("MenuAudio", _s("&Audio"), this),
+		_continueButton("MenuContinue", _s("&Continue"), this),
+		_quitButton("MenuQuit", _s("&Quit"), this) {
 }
 
 void MainMenu::draw() {

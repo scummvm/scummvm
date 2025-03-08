@@ -58,9 +58,8 @@ namespace HodjNPodj {
 Rules::Rules() : View("Rules"), _more(_s(MORE_TEXT_BLURB)) {
 }
 
-void Rules::show(const Common::String &filename,
-	const Common::String &waveFile,
-	ViewCallback callback) {
+void Rules::show(const char *filename, const char *waveFile,
+		ViewCallback callback) {
 	Rules *view = (Rules *)g_events->findView("Rules");
 	view->_filename = filename;
 	view->_waveFilename = waveFile;
@@ -103,8 +102,8 @@ bool Rules::msgOpen(const OpenMessage &msg) {
 
 	// Read the text content
 	Common::File f;
-	if (!f.open(Common::Path(_filename)))
-		error("Could not open - %s", _filename.c_str());
+	if (!f.open(_filename))
+		error("Could not open - %s", _filename);
 	Common::String text = f.readString();
 
 	// Pre-formatting of text into something suitable for wordWrapText
@@ -132,14 +131,22 @@ bool Rules::msgOpen(const OpenMessage &msg) {
 
 	// Render the first page of text
 	renderPage();
-
 	_scrollY = 0;
+
+	// Play dictation
+	if (_waveFilename)
+		_dictation = new CBofSound(this, _waveFilename,
+			SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);
 
 	return View::msgOpen(msg);
 }
 
 bool Rules::msgClose(const CloseMessage &msg) {
 	_background.clear();
+
+	delete _dictation;
+	_dictation = nullptr;
+
 	return View::msgClose(msg);
 }
 
@@ -260,6 +267,9 @@ bool Rules::tick() {
 	if (_scrollY < scrollHeight) {
 		_scrollY = MIN(_scrollY + 20, scrollHeight);
 		redraw();
+
+		if (_scrollY == scrollHeight && _dictation)
+			_dictation->play();
 	}
 
 	return true;

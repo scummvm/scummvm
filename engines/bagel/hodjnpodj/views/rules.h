@@ -24,6 +24,7 @@
 
 #include "bagel/hodjnpodj/views/view.h"
 #include "bagel/hodjnpodj/gfx/button.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -34,7 +35,8 @@ private:
 	GfxSurface _background, _scroll;
 	GfxSurface _scrollTop, _scrollBottom, _scrollMiddle;
 	GfxSurface _scrollContent;
-	Common::String _filename, _waveFilename;
+	const char *_filename, *_waveFilename;
+	CBofSound *_dictation = nullptr;
 	ViewCallback _callback = nullptr;
 	Common::StringArray _lines;
 	Common::Rect _moreRect;
@@ -48,9 +50,8 @@ public:
 	Rules();
 	virtual ~Rules() {}
 
-	static void show(const Common::String &filename,
-		const Common::String &waveFile,
-		ViewCallback callback);
+	static void show(const char *filename,
+		const char *waveFile, ViewCallback callback);
 
 	void draw() override;
 	bool msgOpen(const OpenMessage &msg) override;
