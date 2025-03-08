@@ -116,7 +116,7 @@ void Inventory::draw() {
 	for (int i = 0; i < _numIcons; i++) {
 		int icon = _iconList[i];
 		if (icon != 42 && icon != 43) {
-			icon += 42;
+			icon += g_engine->isDosDemo() ? 36 : 42;
 		}
 
 		if (g_engine->_actionMode == _iconList[i] && g_engine->_actionMode > 4) {
@@ -142,7 +142,11 @@ void Inventory::handleClick() {
 	} else if (icon == 43) {
 		rightArrowClicked();
 	} else if (icon == 4) {
-		g_engine->_menu->loadMenu();
+		if (g_engine->isDosDemo()) {
+			g_engine->_console->addTextLine(Common::U32String("You can't load or save games in demo mode, press 'q' to exit."));
+		} else {
+			g_engine->_menu->loadMenu();
+		}
 	} else if (icon == 21) {
 		g_engine->_console->printTosText(935);
 		g_engine->_objectVar[21] = 1;

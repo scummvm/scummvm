@@ -58,6 +58,9 @@ Console::~Console() {
 }
 
 void Console::printTosText(int tosIndex, bool shouldAddToCurrentLine) {
+	if (g_engine->isDosDemo()) {
+		debug("TosIndex: %d", tosIndex);
+	}
 	const Common::U32String &text = _tosText->getText(tosIndex);
 
 	if (!_isCJKLanguage) {

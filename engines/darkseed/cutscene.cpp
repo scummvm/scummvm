@@ -68,7 +68,9 @@ void Cutscene::update() {
 		break;
 	case 'H' :
 	case 'Z' :
-		_movieStep = 9999;
+		if (!g_engine->fadeStep()) {
+			_movieStep = 9999;
+		}
 		break;
 	default:
 		break;
@@ -81,7 +83,11 @@ void Cutscene::update() {
 			g_engine->_previousRoomNumber = 38;
 			g_engine->changeToRoom(7);
 		} else if (_cutsceneId == 'Z') {
-			g_engine->restartGame();
+			if (g_engine->isDosDemo()) {
+				g_engine->quitGame();
+			} else {
+				g_engine->restartGame();
+			}
 		} else if (_cutsceneId == 'I') {
 			play('J');
 		} else if (_cutsceneId == 'J') {

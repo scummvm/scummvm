@@ -102,11 +102,13 @@ Common::Error DarkseedEngine::run() {
 	_player->_direction = 1;
 	_player->_frameIdx = 0;
 
-	_room = new Room(0);
+	_room = new Room(isDosDemo() ? 4 : 0);
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot != -1) {
+	if (isDosDemo()) {
+		newGame();
+	} else if (saveSlot != -1) {
 		(void)loadGameState(saveSlot);
 	} else {
 		_cutscene.play('I');
@@ -237,10 +239,12 @@ void DarkseedEngine::gameLoop() {
 			if (_currentTimeInSeconds * 2 != _fttime) {
 				_fttime = _currentTimeInSeconds * 2;
 			}
-			if (!_room->isGiger()) {
-				_fttime += 4;
-			} else {
-				_fttime += 9;
+			if (!isDosDemo()) {
+				if (!_room->isGiger()) {
+					_fttime += 4;
+				} else {
+					_fttime += 9;
+				}
 			}
 			_currentTimeInSeconds = _fttime / 2;
 			if ((_currentTimeInSeconds == 46800 || _currentTimeInSeconds == 46801) && _currentDay == 2 && _room->_roomNumber != 34) {
@@ -373,6 +377,9 @@ void DarkseedEngine::updateEvents() {
 			break;
 		case Common::EVENT_KEYDOWN:
 			_lastKeyPressed = event.kbd.keycode;
+			if (isDosDemo() && _lastKeyPressed == Common::KEYCODE_q) {
+				quitGame();
+			}
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			if (event.customType == kDarkseedActionSelect) {
@@ -380,7 +387,9 @@ void DarkseedEngine::updateEvents() {
 			} else if (event.customType == kDarkseedActionChangeCommand) {
 				_isRightMouseClicked = true;
 			} else if (event.customType == kDarkseedActionTimeAdvance) {
-				_timeAdvanceEventSelected = true;
+				if (!isDosDemo()) {
+					_timeAdvanceEventSelected = true;
+				}
 			} else if (event.customType == kDarkseedActionQuit) {
 				quitGame();
 			}
@@ -1084,6 +1093,15 @@ void DarkseedEngine::loadRoom(int roomNumber) {
 }
 
 void DarkseedEngine::changeToRoom(int newRoomNumber, bool placeDirectly) { // AKA LoadNewRoom
+	if (isDosDemo()) {
+		if (newRoomNumber == 0) {
+			newRoomNumber = 43;
+			_previousRoomNumber = 44;
+		} else if (newRoomNumber == 44) {
+			newRoomNumber = 4;
+			_previousRoomNumber = 0;
+		}
+	}
 	MusicId newMusicId = Room::getMusicIdForRoom(newRoomNumber);
 	if (g_engine->_sound->isPlayingMusic() && Room::getMusicIdForRoom(_room->_roomNumber) != newMusicId) {
 		g_engine->_sound->startFadeOut();
@@ -1915,7 +1933,7 @@ void DarkseedEngine::lookCode(int objNum) {
 	if (objNum == 103) {
 		printTime();
 	}
-	if (_cursor.getY() > 39 && objNum != 77) {
+	if (_cursor.getY() > 39 && objNum != 77 && !isDosDemo()) {
 		int eyeTosIdx = _objectVar.getEyeDescriptionTosIdx(objNum);
 		if (eyeTosIdx < 979 && eyeTosIdx != 0)  {
 			_console->printTosText(eyeTosIdx);
@@ -2589,22 +2607,35 @@ void DarkseedEngine::waitxticks(int ticks) {
 
 void DarkseedEngine::doCircles() {
 	debug("DarkseedEngine::doCircles");
-	_player->loadAnimations("bedsleep.nsp");
-	_player->_position.x = 0x87;
-	_player->_position.y = 0x5b;
-	_player->_frameIdx = 0;
-	_player->_direction = 1;
-	_animation->setupOtherNspAnimation(0, 1);
+	if (isDosDemo()) {
+		_player->_position.x = 320;
+		_player->_position.y = 220;
+		_player->_walkTarget = _player->_position;
+		_player->_frameIdx = 28;
+		_player->_direction = 2;
+		_frame.draw();
+		_room->draw();
+		_console->draw(true);
+		updateDisplay();
+		_sprites.drawSprites();
+	} else {
+		_player->loadAnimations("bedsleep.nsp");
+		_player->_position.x = 0x87;
+		_player->_position.y = 0x5b;
+		_player->_frameIdx = 0;
+		_player->_direction = 1;
+		_animation->setupOtherNspAnimation(0, 1);
 
-	_frame.draw();
-	_room->draw();
-	_console->draw(true);
+		_frame.draw();
+		_room->draw();
+		_console->draw(true);
 
-	// setup & draw Mike in bed.
-	_sprites.clearSpriteDrawList();
-	const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-	_sprites.addSpriteToDrawList(0x75, 0x71, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
-	_sprites.drawSprites();
+		// setup & draw Mike in bed.
+		_sprites.clearSpriteDrawList();
+		const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+		_sprites.addSpriteToDrawList(0x75, 0x71, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
+		_sprites.drawSprites();
+	}
 
 	// Capture screen.
 
@@ -2674,9 +2705,9 @@ void DarkseedEngine::newGame() {
 	_inventory.reset();
 	_sound->resetSpeech();
 	_objectVar.reset();
-	_room->_roomNumber = 0;
+	_room->_roomNumber = isDosDemo() ? 4 : 0;
 	_currentDay = 1;
-	changeToRoom(0);
+	changeToRoom(_room->_roomNumber);
 
 	doCircles();
 
@@ -2688,7 +2719,9 @@ void DarkseedEngine::newGame() {
 	waitForSpeech();
 	_systemTimerCounter = 4;
 	_cursor.showCursor(true);
-	_canSaveGame = true;
+	if (!isDosDemo()) {
+		_canSaveGame = true;
+	}
 }
 
 void DarkseedEngine::waitForSpeech() {

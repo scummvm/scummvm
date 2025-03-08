@@ -175,7 +175,9 @@ bool Nsp::load(const Common::Path &filename) {
 		Common::String filePathStr = filePath.toString();
 		debug("Loaded %s", filePathStr.c_str());
 		Common::Path obtFilename = Common::Path(filePathStr.substr(0, filePathStr.size() - 4) + ".obt");
-		ret = loadObt(obtFilename);
+		if (!loadObt(obtFilename)) {
+			debug("failed to load %s", obtFilename.toString().c_str());
+		}
 	}
 	return ret;
 }

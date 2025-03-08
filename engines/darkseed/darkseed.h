@@ -202,6 +202,10 @@ public:
 		return isDosVersion() && !isCdVersion();
 	}
 
+	bool isDosDemo() const {
+		return isDosVersion() && getFeatures() & ADGF_DEMO;
+	}
+
 	bool hasFeature(EngineFeature f) const override {
 		return
 		    (f == kSupportsLoadingDuringRuntime) ||
@@ -210,7 +214,7 @@ public:
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg) override {
-		return !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_heroWaiting && !_cutscene.isPlaying();
+		return !isDosDemo() && !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_heroWaiting && !_cutscene.isPlaying();
 	}
 
 	bool canSaveGameStateCurrently(Common::U32String *msg) override {

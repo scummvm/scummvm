@@ -40,6 +40,7 @@ public:
 
 private:
 	Common::U32String loadString(Common::File &file, uint16 index) const;
+	void loadDemoTosEntries();
 };
 
 } // namespace Darkseed

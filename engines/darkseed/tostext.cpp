@@ -26,6 +26,10 @@
 namespace Darkseed {
 
 bool TosText::load() {
+	if (g_engine->isDosDemo()) {
+		loadDemoTosEntries();
+		return true;
+	}
 	Common::File tostextFile;
 	if (!tostextFile.open("tostext.bin")) {
 		return false;
@@ -37,6 +41,18 @@ bool TosText::load() {
 		_textArray[i] = loadString(tostextFile, i);
 	}
 	return true;
+}
+
+void TosText::loadDemoTosEntries() {
+	_numEntries = 973;
+	_textArray.resize(_numEntries);
+	_textArray[10] = "My head is killing me.";
+	_textArray[11] = "My head feels like it is going to explode.";
+	_textArray[12] = "It seems like I've had this headache since I moved here.";
+	_textArray[13] = "I need an asprin or something.";
+
+	_textArray[798] = "You can't touch the horizon!";
+	_textArray[972] = "Holding ";
 }
 
 const Common::U32String &TosText::getText(uint16 textIndex) {
