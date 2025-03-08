@@ -296,6 +296,9 @@ private:
 	Graphics::Screen *_screen = nullptr;
 	Common::Stack<UIElement *> _views;
 	Graphics::Palette _gamePalette;
+
+	void loadInitialPalette();
+
 protected:
 	/**
 	 * Process an event

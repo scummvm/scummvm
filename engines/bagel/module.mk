@@ -117,6 +117,7 @@ MODULE_OBJS = \
 	hodjnpodj/views/minigame_view.o \
 	hodjnpodj/views/rules.o \
 	hodjnpodj/views/view.o \
+	hodjnpodj/metagame/movie.o \
 	hodjnpodj/fuge/fuge.o
 
 # This module can be built as a plugin

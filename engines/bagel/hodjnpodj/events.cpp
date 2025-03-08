@@ -21,8 +21,10 @@
 
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "graphics/paletteman.h"
 #include "graphics/screen.h"
+#include "image/bmp.h"
 #include "bagel/hodjnpodj/events.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/views/views.h"
@@ -47,6 +49,7 @@ void Events::runGame() {
 	Views views;	// Loads all views in the structure
 
 	loadCursors();
+	loadInitialPalette();
 
 	// Run the game
 	int saveSlot = ConfMan.getInt("save_slot");
@@ -56,11 +59,12 @@ void Events::runGame() {
 	// The minigames are specially designed so that
 	// they can be run independantly
 	Common::String minigame = ConfMan.hasKey("minigame") ?
-		ConfMan.get("minigame") : "Fuge";
+		ConfMan.get("minigame") : "";
 	if (minigame.empty()) {
 		// Start the metagame
 		gameInfo.bPlayingMetagame = true;
-		addView("Metagame");
+		send("Movie", GameMessage("MOVIE", "video/logo.avi"));
+
 	} else {
 		//gameInfo.bPlayingMetagame = false;
 		addView(minigame);
@@ -224,6 +228,17 @@ void Events::addKeypress(const Common::KeyCode kc) {
 		ks.ascii = kc;
 
 	focusedView()->msgKeypress(KeypressMessage(ks));
+}
+
+void Events::loadInitialPalette() {
+	Common::File f;
+	Image::BitmapDecoder decoder;
+	const char *FILENAME = "meta/art/mlscroll.bmp";
+
+	if (!f.open(FILENAME) || !decoder.loadStream(f))
+		error("Error loading - %s", FILENAME);
+
+	loadPalette(decoder.getPalette());
 }
 
 void Events::loadPalette(const byte *palette) {
