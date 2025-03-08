@@ -1440,7 +1440,7 @@ void Room305::openDrawer() {
 
 		if (_G(flags)[V000]) {
 			_rip4 = series_load("RIP TREK MED REACH HAND POS1");
-			setGlobals1(1, 5, 5, 5, 0, 5, 1, 1, 1);
+			setGlobals1(_rip4, 1, 5, 5, 5, 0, 5, 1, 1, 1);
 			sendWSMessage_110000(1);
 		} else {
 			ws_hide_walker();
