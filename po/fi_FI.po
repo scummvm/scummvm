@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-06 18:07+0000\n"
-"PO-Revision-Date: 2025-02-03 19:18+0000\n"
+"PO-Revision-Date: 2025-03-08 22:18+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -4219,7 +4219,7 @@ msgstr "Kytke hiiren kaappaus päälle tai pois"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:545
 msgid "Toggle resizable window"
-msgstr ""
+msgstr "Muokattava ikkunan koko päälle/pois"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:550 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
@@ -7541,16 +7541,16 @@ msgid "Unable to locate the darkseed.dat engine data file."
 msgstr "Pelimoottorin datatiedostoa darkseed.dat ei löydetty."
 
 #: engines/darkseed/metaengine.cpp:47
-#, fuzzy
-#| msgid "Use DOS version music tempos"
 msgid "Use floppy version music"
-msgstr "Käytä DOS-version musiikin tempoja"
+msgstr "Käytä levykeversion musiikkia"
 
 #: engines/darkseed/metaengine.cpp:48
 msgid ""
 "Use the music from the floppy version. The floppy version's music files must "
 "be copied to the SOUND directory."
 msgstr ""
+"Käytä levykeversion musiikia. Levykeversion musiikkitiedostojen pitää löytyä "
+"SOUND-hakemistosta."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:75 engines/dragons/metaengine.cpp:136
@@ -10604,7 +10604,7 @@ msgstr "Kirkasta grafiikkaa Macintosh-monitorin simuloimiseksi."
 
 #: engines/scumm/dialogs.cpp:1195
 msgid "Simulate Sega colors"
-msgstr ""
+msgstr "Simuloi Sega-värejä"
 
 #: engines/scumm/dialogs.cpp:1196
 msgid ""
@@ -10612,6 +10612,9 @@ msgid ""
 "actual Sega hardware. These are significantly darker, though it's unclear if "
 "that was intended or not."
 msgstr ""
+"Simuloi oikean Segan näyttämiä värejä pelissä määriteltyjen sijaan. Nämä "
+"ovat huomattavasti tummempia, vaikkakin on epäselvää oliko se "
+"tarkoituksellista vai ei."
 
 #: engines/scumm/dialogs.cpp:1312
 msgid "Overture Timing:"
@@ -11512,6 +11515,10 @@ msgid ""
 "dialog definitions. Look for a 'The Dig f' folder on your CD. Any one from "
 "its sub-folders should be what you need."
 msgstr ""
+"'%s' vaikuttaa olevan väärä Dig-ohjelmatiedosto. Se saattaa olla CD:n "
+"juurihakemistosta löytyvä käynnistysohjelma, joka ei sisällä mitään "
+"tarvituista menu- ja dialogimäärityksistä. Etsi CD:ltäsi 'The Dig f'-"
+"hakemisto. Minkä tahansa sen alahakemistoista pitäisi toimia."
 
 #: engines/scumm/scumm.cpp:1765
 msgid ""
