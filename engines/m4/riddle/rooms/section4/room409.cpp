@@ -242,7 +242,7 @@ void Room409::daemon() {
 		break;
 
 	case 403:
-		setGlobals1(1, _seriesReachHand, 10, 10, 10, 0, 10, 1, 1, 1);
+		setGlobals1(_seriesReachHand, 1, 10, 10, 10, 0, 10, 1, 1, 1);
 		sendWSMessage_110000(405);
 		break;
 
