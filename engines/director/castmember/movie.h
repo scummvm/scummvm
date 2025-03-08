@@ -31,6 +31,9 @@ public:
 	MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &source);
 
+	Common::Array<Channel> *getSubChannels(Common::Rect &bbox, Channel *channel) override;
+	void load() override;
+
 	bool hasField(int field) override;
 	Datum getField(int field) override;
 	bool setField(int field, const Datum &value) override;

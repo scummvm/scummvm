@@ -50,6 +50,25 @@ MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &sou
 	_enableScripts = source._enableScripts;
 }
 
+Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox, Channel *channel) {
+	if (_needsReload) {
+		_loaded = false;
+		load();
+	}
+
+	return FilmLoopCastMember::getSubChannels(bbox, channel);
+}
+
+void MovieCastMember::load() {
+	if (_loaded)
+		return;
+
+	FilmLoopCastMember::load();
+
+	_loaded = true;
+	_needsReload = false;
+}
+
 bool MovieCastMember::hasField(int field) {
 	switch (field) {
 	case kTheCenter:

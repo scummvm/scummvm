@@ -41,7 +41,7 @@ public:
 	bool isModified() override;
 	//Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
-	Common::Array<Channel> *getSubChannels(Common::Rect &bbox, Channel *channel);
+	virtual Common::Array<Channel> *getSubChannels(Common::Rect &bbox, Channel *channel);
 
 	void loadFilmLoopDataD2(Common::SeekableReadStreamEndian &stream);
 	void loadFilmLoopDataD4(Common::SeekableReadStreamEndian &stream);
