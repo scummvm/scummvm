@@ -186,7 +186,7 @@ void Room205::parser() {
 			case -1:
 				_fieldDC = 1;
 				player_set_commands_allowed(false);
-				setGlobals1(_ripTrekMedReachHandPos1Series, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				setGlobals1(_ripTrekMedReachHandPos1Series, 1, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 				sendWSMessage_110000(_G(my_walker), 3);
 				break;
 
