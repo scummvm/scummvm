@@ -46,21 +46,13 @@ void GAMESTRUCT::clear() {
 	bPlayingHodj = true;
 }
 
-HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc), _randomSource("HodjNPodj") {
+HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc) :
+		BagelEngine(syst, gameDesc) {
 	g_engine = this;
 	gameInfo.clear();
 }
 
 HodjNPodjEngine::~HodjNPodjEngine() {
-}
-
-uint32 HodjNPodjEngine::getFeatures() const {
-	return _gameDescription->flags;
-}
-
-Common::String HodjNPodjEngine::getGameId() const {
-	return _gameDescription->gameId;
 }
 
 Common::Error HodjNPodjEngine::run() {

@@ -59,10 +59,7 @@ struct GAMESTRUCT {
 };
 extern GAMESTRUCT gameInfo;
 
-class HodjNPodjEngine : public Engine, public Events {
-private:
-	const ADGameDescription *_gameDescription;
-	Common::RandomSource _randomSource;
+class HodjNPodjEngine : public BagelEngine, public Events {
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -81,18 +78,11 @@ public:
 	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~HodjNPodjEngine() override;
 
-	uint32 getFeatures() const;
-
-	/**
-	 * Returns the game Id
-	 */
-	Common::String getGameId() const;
-
 	/**
 	 * Gets a random number
 	 */
 	uint32 getRandomNumber(uint maxNum) {
-		return _randomSource.getRandomNumber(maxNum);
+		return BagelEngine::getRandomNumber(maxNum);
 	}
 
 	bool hasFeature(EngineFeature f) const override {
