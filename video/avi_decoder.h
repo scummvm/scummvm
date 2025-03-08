@@ -26,6 +26,7 @@
 #include "common/rational.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "graphics/palette.h"
 
 #include "video/video_decoder.h"
 #include "audio/mixer.h"
@@ -270,7 +271,7 @@ protected:
 	private:
 		AVIStreamHeader _vidsHeader;
 		BitmapInfoHeader _bmInfo;
-		byte _palette[3 * 256];
+		Graphics::Palette _palette;
 		byte *_initialPalette;
 		mutable bool _dirtyPalette;
 		int _frameCount, _curFrame;
