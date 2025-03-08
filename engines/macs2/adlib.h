@@ -63,6 +63,8 @@ namespace Macs2 {
 	private:
 		OPL::OPL *_opl;
 
+		void SIS_LogEntry(uint16 seg, uint16 off, Common::String msg);
+
 		void Func1A03();
 
 		// 01D7:1AA7

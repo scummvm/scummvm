@@ -1274,6 +1274,14 @@ l0017_24F6:
 }
 
 
+void Adlib::SIS_LogEntry(uint16 seg, uint16 off, Common::String msg) {
+	if (msg.empty()) {
+		debug("Entered %.4X:%.4X", seg, off);
+	} else {
+		debug(msg.c_str());
+	}
+}
+
 void Adlib::Func1A03() {
 
 	_nextEventTimer = 0;
