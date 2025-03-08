@@ -35,28 +35,14 @@
 #include "graphics/fonts/winfont.h"
 #include "graphics/screen.h"
 #include "bagel/hodjnpodj/events.h"
+#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-enum SkillLevel {
-	SKILLLEVEL_LOW = 0,
-	SKILLLEVEL_MEDIUM = 1,
-	SKILLLEVEL_HIGH = 2
-};
-
-struct GAMESTRUCT {
-	long lCrowns;
-	long lScore;
-	SkillLevel nSkillLevel;
-	bool bSoundEffectsEnabled;
-	bool bMusicEnabled;
-	bool bPlayingMetagame;
-	bool bPlayingHodj;
-
-	void clear();
-};
+using Metagame::GAMESTRUCT;
+using Metagame::SkillLevel;
 extern GAMESTRUCT gameInfo;
 
 class HodjNPodjEngine : public BagelEngine, public Events {
@@ -73,6 +59,7 @@ protected:
 
 public:
 	Common::HashMap<int, Graphics::WinFont> _fonts;
+	Metagame::CBfcMgr _metaGame;
 
 public:
 	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);

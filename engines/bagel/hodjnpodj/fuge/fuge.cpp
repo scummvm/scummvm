@@ -750,16 +750,16 @@ void Fuge::loadIniSettings() {
 		_nInitPaddleSize = PSIZE_MAX;
 
 		switch (gameInfo.nSkillLevel) {
-		case SKILLLEVEL_LOW:
+		case SkillLevel::SKILLLEVEL_LOW:
 			_nInitBallSpeed = 4;
 			break;
 
-		case SKILLLEVEL_MEDIUM:
+		case SkillLevel::SKILLLEVEL_MEDIUM:
 			_nInitBallSpeed = 6;
 			break;
 
 		default:
-			assert(gameInfo.nSkillLevel == SKILLLEVEL_HIGH);
+			assert(gameInfo.nSkillLevel == SkillLevel::SKILLLEVEL_HIGH);
 			_nInitBallSpeed = 8;
 			break;
 		}

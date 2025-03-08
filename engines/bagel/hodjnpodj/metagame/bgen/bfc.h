@@ -43,6 +43,24 @@ namespace Metagame {
 #define MAX_GAME_TABLE 12
 #define NUMBER_OF_CLUES 65
 
+enum SkillLevel {
+	SKILLLEVEL_LOW = 0,
+	SKILLLEVEL_MEDIUM = 1,
+	SKILLLEVEL_HIGH = 2
+};
+
+struct GAMESTRUCT {
+	long lCrowns;
+	long lScore;
+	SkillLevel nSkillLevel;
+	bool bSoundEffectsEnabled;
+	bool bMusicEnabled;
+	bool bPlayingMetagame;
+	bool bPlayingHodj;
+
+	void clear();
+};
+
 struct NOTE_LIST {
 	CNote *pNote;
 	bool   bUsed;
@@ -153,7 +171,7 @@ public:
 	char m_chCDPath[PATHSPECSIZE];
 	char m_chMiniPath[PATHSPECSIZE];
 
-	struct GAMESTRUCT m_stGameStruct;
+	GAMESTRUCT m_stGameStruct;
 	int m_iMishMoshLoc;    // MG_LOC_xxxx -- Mish/Mosh location
 
 	// ... need color narration information from Barbara
@@ -167,7 +185,7 @@ public:
 	char m_cEndData;
 
 	// constructor
-	CBfcMgr::CBfcMgr(void) {
+	CBfcMgr(void) {
 		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
 	}
 };
@@ -180,107 +198,95 @@ public:
 #define MAX_PLAYERS     2
 #define BOFFO_GAME_ID   0x01464F42      // "BOF1" <--- our first game
 
-typedef struct {
-
+struct CLUE_ARRAY {
 	bool bUsed;
-	INT iNoteID;
-	INT iPlaceID;
-	INT iPersonID;
+	int iNoteID;
+	int iPlaceID;
+	int iPersonID;
+};
 
-} CLUE_ARRAY;
+struct INVENTORY {
+	char m_szTitle[40];
+	int  m_aItemList[MG_OBJ_COUNT];
+	int  m_nItems;
+};
 
-typedef struct {
-	CHAR    m_szTitle[40];
-	INT     m_aItemList[MG_OBJ_COUNT];
-	INT     m_nItems;
-
-} INVENTORY;
-
-typedef struct {
-
-	// these items are directly translated from CHodjPodj
-	//
-
-	bool m_bMoving;         // flag: this player moving
-	bool m_bComputer;       // flag: played by computer
+struct PLAYER_INFO {
+	// These items are directly translated from CHodjPodj
+	bool m_bMoving;         // Flag: this player moving
+	bool m_bComputer;       // Flag: played by computer
 	bool m_bHaveMishMosh;
-	INT  m_iSectorCode;     // MG_SECTOR_xxxx
-	INT  m_iNode;           // node # location
-	INT  m_iSkillLevel;
+	int  m_iSectorCode;     // MG_SECTOR_xxxx
+	int  m_iNode;           // Node # location
+	int  m_iSkillLevel;
 
-	// list of clue numbers for clues given by winning mini-game
-	INT m_iWinInfoWon;
-	INT m_iWinInfoNeed;
-	INT m_iWinInfoTable[MAX_GAME_TABLE];
+	// List of clue numbers for clues given by winning mini-game
+	int m_iWinInfoWon;
+	int m_iWinInfoNeed;
+	int m_iWinInfoTable[MAX_GAME_TABLE];
 
-	// list of clue numbers for clues given by farmer, etc.
-	INT m_iSecondaryInfoWon;
-	INT m_iSecondaryInfoNeed;
-	INT m_iSecondaryInfoTable[MAX_GAME_TABLE];
+	// List of clue numbers for clues given by farmer, etc.
+	int m_iSecondaryInfoWon;
+	int m_iSecondaryInfoNeed;
+	int m_iSecondaryInfoTable[MAX_GAME_TABLE];
 
-	// list of objects required to get Mish/Mosh
-	INT m_iRequiredObjectsCount;
-	INT m_iRequiredObjectsTable[MAX_GAME_TABLE];
-	INT m_iRequiredMoney;      // money needed for Mish/Mosh
+	// List of objects required to get Mish/Mosh
+	int m_iRequiredObjectsCount;
+	int m_iRequiredObjectsTable[MAX_GAME_TABLE];
+	int m_iRequiredMoney;      // Money needed for Mish/Mosh
 
-	// list of secondary information location we still have to visit
-	INT m_iSecondaryLoc[MAX_GAME_TABLE];
+	// List of secondary information location we still have to visit
+	int m_iSecondaryLoc[MAX_GAME_TABLE];
 
-	INT m_iGameHistory[20];     // last 20 mini-games played
-	INT m_iTargetLocation;      // target location for computer play
-	INT m_iSpecialTravelCode;
-	INT m_iNumberBoatTries;
-	INT m_iFurlongs;            // players remaining furlongs
-	INT m_nTurns;               // players remaining turns
+	int m_iGameHistory[20];     // Last 20 mini-games played
+	int m_iTargetLocation;      // Target location for computer play
+	int m_iSpecialTravelCode;
+	int m_iNumberBoatTries;
+	int m_iFurlongs;            // Players remaining furlongs
+	int m_nTurns;               // Players remaining turns
 
-	// these items require special attention when saving or restoring a game
-	//
+	// These items require special attention when saving or restoring a game
 
-	LONG m_lCrowns;             // from inventory
+	long m_lCrowns;             // From inventory
 
-	CLUE_ARRAY m_bClueArray[NUMBER_OF_CLUES]; // array of clues for the notebook
+	CLUE_ARRAY m_bClueArray[NUMBER_OF_CLUES]; // Array of clues for the notebook
 
 	INVENTORY m_stInventory;
 	INVENTORY m_stGenStore;
 	INVENTORY m_stBlackMarket;
 	INVENTORY m_stTradingPost;
 
-	UBYTE     m_chJunk[20];     // for future use so the .SAV file size
-	// does not have to change
+	byte      m_chJunk[20];     // For future use so the .SAV file size
+								// does not have to change
+};
 
-} PLAYER_INFO;
 
-
-// structure for the save game file format
-//
-typedef struct {
-
-	ULONG   m_lBoffoGameID;
-	USHORT  m_nFixedRecordSize;
+// Structure for the save game file format
+struct SAVEGAME_INFO {
+	uint32  m_lBoffoGameID;
+	uint16  m_nFixedRecordSize;
 	bool    m_bUsed;
 
-	CHAR    m_szSaveGameDescription[40];    // description of this saved game
+	char    m_szSaveGameDescription[40];    // Description of this saved game
 
 	PLAYER_INFO m_stPlayerInfo[MAX_PLAYERS];
 
-	bool    m_bTraps[240];      // table of used booby traps and narrations
+	bool    m_bTraps[240];		// Table of used booby traps and narrations
 
-	INT     m_iGameTime;        // SHORT_GAME, MEDIUM_GAME or LONG_GAME
+	int     m_iGameTime;		// SHORT_GAME, MEDIUM_GAME or LONG_GAME
 
-	INT     m_iMishMoshLoc;     // MG_LOC_xxxx -- Mish/Mosh location
+	int     m_iMishMoshLoc;		// MG_LOC_xxxx -- Mish/Mosh location
 
-	UBYTE   m_chJunk[80];       // for future use so the .SAV file size
-	// does not have to change
+	byte   m_chJunk[80];		// For future use so the .SAV file size
+								// does not have to change
 
 	bool    m_bSoundEffectsEnabled;
 	bool    m_bMusicEnabled;
 
 	bool    m_bScrolling;
 
-	bool    m_bNewMishMosh;     // TRUE if frame should allocate new Mish/Mosh
-
-} SAVEGAME_INFO;
-
+	bool    m_bNewMishMosh;     // true if frame should allocate new Mish/Mosh
+};
 
 } // namespace Metagame
 } // namespace HodjNPodj
