@@ -1070,19 +1070,18 @@ void Adlib::OnTimer() {
 				g225A += 0x2;
 			}
 			// l0017_21DF:
-			if ((bp6 & 0xF0) == 0xB0) {
+			if ((bp6 & 0xF0) == 0xB0) { // Scope ends 231E
 				// l0017_21EB:
 				shMem2250 = Func19BE_SH(shMem2250, 0x2);
 				g225A += 0x2;
-				// TODO: Continue from here
 
-			//		if (bp4 == 0x66) {
-			//			// l0017_221C:
-			//			g2259 = bp5;
-			//			g2258 = g2258 | 0x20;
-			//		} else {
-			//			// l0017_222D:
-			//			if (bp4 == 0x67) {
+				// Big if-else that ends at 231E
+				if (bp4 == 0x66) {
+					// l0017_221C:
+					g2259 = bp5;
+					g2258 = g2258 | 0x20;
+					// l0017_222D:
+				} else if (bp4 == 0x67) { 
 			//				// TODO: Continue from here
 			//				// l0017_2231:
 			//				if (bp5 != 0) {
@@ -1093,10 +1092,8 @@ void Adlib::OnTimer() {
 			//					// l0017_2247:
 			//					g2291 = 0x9;
 			//					Func2792(0xBD, 0);
-			//				}
-			//			} else {
-			//				// l0017_2258:
-			//				if (bp4 == 0x69) {
+			//				} // l0017_2258:
+						} else if (bp4 == 0x69) {
 			//					// l0017_225C:
 			//					// TODO: Check if the neg works out the right way
 			//					bp5 = -bp5;
@@ -1118,9 +1115,8 @@ void Adlib::OnTimer() {
 			//							Func294E(bp8, gArray2235[bp8], bp5);
 			//						}
 			//					}
-			//				}
-			//				// l0017_22C1:
-			//				if (bp4 == 0x68) {
+							// l0017_22C1:
+						} else if (bp4 == 0x68) {
 			//					// l0017_22C5:
 			//					gArray226F[bp3] = bp5;
 			//					uint16 bp16 = g2291 - 1;
@@ -1141,13 +1137,12 @@ void Adlib::OnTimer() {
 			//					}
 			//				}
 			//
-			//			}
-			//		}
+					
+				}
 			}
-			//	// TODO: Not sure about indentation level here
 			// l0017_231E:
-			//	if ((bp6 & 0xF0) == 0xC0) {
-			//		// l0017_2327:
+			if ((bp6 & 0xF0) == 0xC0) {
+				// l0017_2327:
 			//		Macs2::StreamHandler *sh2252;
 			//		Macs2::StreamHandler *sh225A;
 			//		Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x1);
@@ -1155,9 +1150,9 @@ void Adlib::OnTimer() {
 			//		// TODO: Check if this is the right way to handle the plus operation
 			//		sh225A->seek(1, SEEK_CUR);
 			//		gArray225F[bp3] = bp4;
-			//	}
-			//	// l0017_2355:
-			//	if ((bp6 & 0xF0) == 0xD0) {
+			}
+			// l0017_2355:
+			if ((bp6 & 0xF0) == 0xD0) {
 			//		// l0017_235E:
 			//		Macs2::StreamHandler *sh2252;
 			//		Macs2::StreamHandler *sh225A;
@@ -1165,9 +1160,9 @@ void Adlib::OnTimer() {
 			//		sh2252 = shResult;
 			//		// TODO: Check if this is the right way to handle the plus operation
 			//		sh225A->seek(1, SEEK_CUR);
-			//	}
-			//	// l0017_237E:
-			//	if ((bp6 & 0xF0) == 0xF0) {
+			}
+			// l0017_237E:
+			if ((bp6 & 0xF0) == 0xF0) {
 			//		// l0017_2387:
 			//		if (bp4 == 0x2F) {
 			//			// l0017_238D:
@@ -1183,22 +1178,23 @@ void Adlib::OnTimer() {
 			//			// l0017_23B4:
 			//			// TODO: Identical code as the previous branch?
 			//		}
-			//	} else {
-			//		// l0017_23DB:
-			//		Func1A03();
-			//	}
-			//	// l0017_23E0:
-			//	// TODO: Check the logic of the if here
-			//	if ((g2256 <= 0) || ((g2256 >= 0) && (g2254 > 0x0FFF)) {
-			//		// l0017_23F1:
-			//		// TODO: Identical code as the previous branch?
-			//		// The code in l0017_238D:
-			//	}
+			} else {
+				// l0017_23DB:
+				Func1A03();
+			}
+			// l0017_23E0:
 
-			//	// TODO: Absolutely not sure about indentation here any more
-			//	// l0017_2423:
-			//	// jmp	2438h
-
+			// Deepseek R1 figured out that this part was just checking
+			// this inequality by using the msw and lsw
+			if (_nextEventTimer > 0x0FFF) {
+				// l0017_23F1:
+				shMem2250 = shMem2244;
+				g225A = 0;
+				g2259 = 0;
+				g2242 = 1;
+				Func1A03();
+			}
+			
 			// l0017_2416:
 			if (_nextEventTimer != 0) {
 				break;
