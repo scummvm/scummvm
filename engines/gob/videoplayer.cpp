@@ -183,7 +183,11 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		videoFile.toUppercase();
 		if (videoFile.hasSuffix(".IMD"))
 			videoFile = videoFile.substr(0, videoFile.find('.'));
-		_noCursorSwitch = false;
+
+		if (_vm->getGameType() == kGameTypeAdibou2)
+			_noCursorSwitch = true; // For Adibou2, we want to see the cursor, on the contrary
+		else
+			_noCursorSwitch = false;
 
 		if (primary && (_vm->getGameType() == kGameTypeLostInTime)) {
 			static const Common::StringArray videosWithCursorLIT = {
