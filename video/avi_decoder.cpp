@@ -951,7 +951,7 @@ VideoDecoder::AudioTrack *AVIDecoder::getAudioTrack(int index) {
 }
 
 AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, byte *initialPalette, Image::CodecAccuracy accuracy)
-		: _frameCount(frameCount), _vidsHeader(streamHeader), _bmInfo(bitmapInfoHeader), _initialPalette(initialPalette), _accuracy(accuracy) {
+		: _frameCount(frameCount), _vidsHeader(streamHeader), _bmInfo(bitmapInfoHeader), _palette(256), _initialPalette(initialPalette), _accuracy(accuracy) {
 	_videoCodec = createCodec();
 	_lastFrame = 0;
 	_curFrame = -1;
@@ -1002,9 +1002,10 @@ void AVIDecoder::AVIVideoTrack::loadPaletteFromChunkRaw(Common::SeekableReadStre
 	assert(firstEntry >= 0);
 	assert(numEntries > 0);
 	for (uint16 i = firstEntry; i < numEntries + firstEntry; i++) {
-		_palette[i * 3] = chunk->readByte();
-		_palette[i * 3 + 1] = chunk->readByte();
-		_palette[i * 3 + 2] = chunk->readByte();
+		byte r = chunk->readByte();
+		byte g = chunk->readByte();
+		byte b = chunk->readByte();
+		_palette.set(i, r, g, b);
 		chunk->readByte(); // Flags that don't serve us any purpose
 	}
 	_dirtyPalette = true;
@@ -1030,7 +1031,7 @@ void AVIDecoder::AVIVideoTrack::useInitialPalette() {
 	_dirtyPalette = false;
 
 	if (_initialPalette) {
-		memcpy(_palette, _initialPalette, sizeof(_palette));
+		_palette.set(_initialPalette, 0, 256);
 		_dirtyPalette = true;
 	}
 }
@@ -1073,7 +1074,7 @@ const byte *AVIDecoder::AVIVideoTrack::getPalette() const {
 		return _videoCodec->getPalette();
 
 	_dirtyPalette = false;
-	return _palette;
+	return _palette.data();
 }
 
 bool AVIDecoder::AVIVideoTrack::hasDirtyPalette() const {
