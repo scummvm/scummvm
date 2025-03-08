@@ -165,7 +165,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 		// if the depth is 2, 4, or 8 bpp, file is palettized
 		if (colorDepth == 2 || colorDepth == 4 || colorDepth == 8) {
 			// Initialize the palette
-			entry->_palette = new byte[256 * 3]();
+			entry->_palette.resize(256, false);
 
 			if (colorGreyscale) {
 				debugC(0, kDebugLevelGVideo, "Greyscale palette");
@@ -175,7 +175,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 				int16 colorIndex = 255;
 				byte colorDec = 256 / (colorCount - 1);
 				for (uint16 j = 0; j < colorCount; j++) {
-					entry->_palette[j * 3] = entry->_palette[j * 3 + 1] = entry->_palette[j * 3 + 2] = colorIndex;
+					entry->_palette.set(j, colorIndex, colorIndex, colorIndex);
 					colorIndex -= colorDec;
 					if (colorIndex < 0)
 						colorIndex = 0;
@@ -186,11 +186,11 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 
 				debugC(0, kDebugLevelGVideo, "Predefined palette! %dbpp", colorDepth);
 				if (colorDepth == 2)
-					memcpy(entry->_palette, quickTimeDefaultPalette4, 4 * 3);
+					entry->_palette.set(quickTimeDefaultPalette4, 0, 4);
 				else if (colorDepth == 4)
-					memcpy(entry->_palette, quickTimeDefaultPalette16, 16 * 3);
+					entry->_palette.set(quickTimeDefaultPalette16, 0, 16);
 				else if (colorDepth == 8)
-					memcpy(entry->_palette, quickTimeDefaultPalette256, 256 * 3);
+					entry->_palette.set(quickTimeDefaultPalette256, 0, 256);
 			} else {
 				debugC(0, kDebugLevelGVideo, "Palette from file");
 
@@ -204,12 +204,13 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 					// up front
 					_fd->readByte();
 					_fd->readByte();
-					entry->_palette[j * 3] = _fd->readByte();
+					byte r = _fd->readByte();
 					_fd->readByte();
-					entry->_palette[j * 3 + 1] = _fd->readByte();
+					byte g = _fd->readByte();
 					_fd->readByte();
-					entry->_palette[j * 3 + 2] = _fd->readByte();
+					byte b = _fd->readByte();
 					_fd->readByte();
+					entry->_palette.set(j, r, g, b);
 				}
 			}
 
@@ -292,16 +293,14 @@ void QuickTimeDecoder::scaleSurface(const Graphics::Surface *src, Graphics::Surf
 			memcpy(dst->getBasePtr(k, j), src->getBasePtr((k * scaleFactorX).toInt() , (j * scaleFactorY).toInt()), src->format.bytesPerPixel);
 }
 
-QuickTimeDecoder::VideoSampleDesc::VideoSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag) : Common::QuickTimeParser::SampleDesc(parentTrack, codecTag) {
+QuickTimeDecoder::VideoSampleDesc::VideoSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag) : Common::QuickTimeParser::SampleDesc(parentTrack, codecTag), _palette(0) {
 	memset(_codecName, 0, 32);
 	_colorTableId = 0;
-	_palette = 0;
 	_videoCodec = 0;
 	_bitsPerSample = 0;
 }
 
 QuickTimeDecoder::VideoSampleDesc::~VideoSampleDesc() {
-	delete[] _palette;
 	delete _videoCodec;
 }
 
@@ -326,7 +325,7 @@ Audio::SeekableAudioStream *QuickTimeDecoder::AudioTrackHandler::getSeekableAudi
 	return _audioTrack;
 }
 
-QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder, Common::QuickTimeParser::Track *parent) : _decoder(decoder), _parent(parent) {
+QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder, Common::QuickTimeParser::Track *parent) : _decoder(decoder), _parent(parent), _forcedDitherPalette(0) {
 	if (decoder->_enableEditListBoundsCheckQuirk) {
 		checkEditListBounds();
 	}
@@ -344,7 +343,6 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 	_curPalette = 0;
 	_dirtyPalette = false;
 	_reversed = false;
-	_forcedDitherPalette = 0;
 	_ditherTable = 0;
 	_ditherFrame = 0;
 }
@@ -392,7 +390,6 @@ QuickTimeDecoder::VideoTrackHandler::~VideoTrackHandler() {
 		delete _scaledSurface;
 	}
 
-	delete[] _forcedDitherPalette;
 	delete[] _ditherTable;
 
 	if (_ditherFrame) {
@@ -495,7 +492,7 @@ uint16 QuickTimeDecoder::VideoTrackHandler::getHeight() const {
 }
 
 Graphics::PixelFormat QuickTimeDecoder::VideoTrackHandler::getPixelFormat() const {
-	if (_forcedDitherPalette)
+	if (_forcedDitherPalette.size() > 0)
 		return Graphics::PixelFormat::createFormatCLUT8();
 
 	// TODO: What should happen if there are multiple codecs with different formats?
@@ -503,7 +500,7 @@ Graphics::PixelFormat QuickTimeDecoder::VideoTrackHandler::getPixelFormat() cons
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::setOutputPixelFormat(const Graphics::PixelFormat &format) {
-	if (_forcedDitherPalette)
+	if (_forcedDitherPalette.size() > 0)
 		return false;
 
 	bool success = true;
@@ -601,7 +598,7 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 	}
 
 	// Handle forced dithering
-	if (frame && _forcedDitherPalette)
+	if (frame && _forcedDitherPalette.size() > 0)
 		frame = forceDither(*frame);
 
 	if (frame && (_parent->scaleFactorX != 1 || _parent->scaleFactorY != 1)) {
@@ -644,7 +641,7 @@ Audio::Timestamp QuickTimeDecoder::VideoTrackHandler::getFrameTime(uint frame) c
 
 const byte *QuickTimeDecoder::VideoTrackHandler::getPalette() const {
 	_dirtyPalette = false;
-	return _forcedDitherPalette ? _forcedDitherPalette : _curPalette;
+	return _forcedDitherPalette.size() > 0 ? _forcedDitherPalette.data() : _curPalette;
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
@@ -896,7 +893,7 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::bufferNextFrame() 
 		}
 	} else {
 		// Check if the video description has been updated
-		byte *palette = entry->_palette;
+		const byte *palette = entry->_palette.data();
 
 		if (palette != _curPalette) {
 			_curPalette = palette;
@@ -979,9 +976,9 @@ void QuickTimeDecoder::VideoTrackHandler::setDither(const byte *palette) {
 			desc->_videoCodec->setDither(Image::Codec::kDitherTypeQT, palette);
 		} else {
 			// Forced dither
-			_forcedDitherPalette = new byte[256 * 3];
-			memcpy(_forcedDitherPalette, palette, 256 * 3);
-			_ditherTable = Image::Codec::createQuickTimeDitherTable(_forcedDitherPalette, 256);
+			_forcedDitherPalette.resize(256, false);
+			_forcedDitherPalette.set(palette, 0, 256);
+			_ditherTable = Image::Codec::createQuickTimeDitherTable(_forcedDitherPalette.data(), 256);
 			_dirtyPalette = true;
 		}
 	}
@@ -1034,7 +1031,7 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::forceDither(const 
 			return &frame;
 
 		// If the palettes match, bail out
-		if (memcmp(_forcedDitherPalette, _curPalette, 256 * 3) == 0)
+		if (memcmp(_forcedDitherPalette.data(), _curPalette, 256 * 3) == 0)
 			return &frame;
 	}
 
