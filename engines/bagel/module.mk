@@ -118,6 +118,10 @@ MODULE_OBJS = \
 	hodjnpodj/views/rules.o \
 	hodjnpodj/views/view.o \
 	hodjnpodj/metagame/movie.o \
+	hodjnpodj/metagame/bgen/invent.o \
+	hodjnpodj/metagame/bgen/item .o \
+	hodjnpodj/metagame/bgen/mgstat.o \
+	hodjnpodj/metagame/bgen/note.o \
 	hodjnpodj/fuge/fuge.o
 
 # This module can be built as a plugin

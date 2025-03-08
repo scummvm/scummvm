@@ -25,6 +25,8 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+#define PATHSPECSIZE				256
+
 /*
 * Main Window positioning constants
 */
