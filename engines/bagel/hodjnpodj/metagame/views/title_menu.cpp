@@ -19,24 +19,65 @@
  *
  */
 
+#include "common/file.h"
+#include "image/bmp.h"
 #include "bagel/hodjnpodj/metagame/views/title_menu.h"
+#include "bagel/hodjnpodj/libs/dialog_unit.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-TitleMenu::TitleMenu() : View("TitleMenu") {
+#define	BACKGROUND_BMP		"meta/art/mlscroll.bmp"
+#define FONT_SIZE 12
+
+TitleMenu::TitleMenu() : View("TitleMenu"),
+	_newGame("NewGame", "&Start a New Board Game",
+		DialogRect(FONT_SIZE, 46, 29, 108, 15), this),
+	_restoreGame("RestoreGame", "&Restore an Old Board Game",
+		DialogRect(FONT_SIZE, 46, 47, 108, 15), this),
+	_standAlone("StandAlone", "&Play Mini-Games Stand-Alone",
+		DialogRect(FONT_SIZE, 46, 65, 108, 15), this),
+	_grandTour("GrandTour", "&Take the Grand Tour",
+		DialogRect(FONT_SIZE, 46, 83, 108, 15), this),
+	_viewFairyTale("ViewFairyTale", "&View the Fairy Tale",
+		DialogRect(FONT_SIZE, 46, 101, 108, 15), this),
+	_quit("Quit", "&Quit",
+		DialogRect(FONT_SIZE, 46, 119, 108, 15), this) {
 }
 
 bool TitleMenu::msgOpen(const OpenMessage &msg) {
 	g_events->showCursor(true);
+
+	Common::File f;
+	Image::BitmapDecoder decoder;
+	if (!f.open(BACKGROUND_BMP) || !decoder.loadStream(f))
+		error("Error loading - %s", BACKGROUND_BMP);
+
+	const Graphics::Surface *surf = decoder.getSurface();
+	_background.copyFrom(surf);
+	_background.setTransparentColor(255);
+
+	Common::Rect r(0, 0, surf->w, surf->h);
+	r.moveTo((GAME_WIDTH - surf->w) / 2, (GAME_HEIGHT - surf->h) / 2);
+	setBounds(r);
+
+	for (uint i = 0; i < _children.size(); ++i) {
+		Common::Rect cr = _children[i]->getBounds();
+		cr.translate(r.left, r.top);
+		_children[i]->setBounds(cr);
+	}
+
 	return View::msgOpen(msg);
 }
 
 void TitleMenu::draw() {
-	// TODO
-}
+	GfxSurface s = getSurface();
+	s.setFontSize(FONT_SIZE);
 
+	s.clear();
+	s.blitFrom(_background);
+}
 
 } // namespace Metagame
 } // namespace HodjNPodj

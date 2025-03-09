@@ -19,34 +19,37 @@
  *
  */
 
-#ifndef HODJNPODJ_METAGAME_VIEWS_TITLE_MENU_H
-#define HODJNPODJ_METAGAME_VIEWS_TITLE_MENU_H
+#ifndef BAGEL_HODJNPODJ_LIBS_DIALOG_UNIT_H
+#define BAGEL_HODJNPODJ_LIBS_DIALOG_UNIT_H
 
-#include "bagel/hodjnpodj/views/view.h"
-#include "bagel/hodjnpodj/gfx/button.h"
+#include "common/rect.h"
+#include "bagel/hodjnpodj/gfx/gfx_surface.h"
 
 namespace Bagel {
 namespace HodjNPodj {
-namespace Metagame {
 
-class TitleMenu : public View {
-private:
-	GfxSurface _background;
-	ColorButton _newGame;
-	ColorButton _restoreGame;
-	ColorButton _standAlone;
-	ColorButton _grandTour;
-	ColorButton _viewFairyTale;
-	ColorButton _quit;
-
+struct DialogPoint : public Common::Point {
 public:
-	TitleMenu();
-
-	bool msgOpen(const OpenMessage &msg) override;
-	void draw() override;
+	DialogPoint(int fontSize, int xx, int yy) {
+		GfxSurface s;
+		s.setFontSize(fontSize);
+		this->x = (xx * s.getStringWidth("X")) / 4;
+		this->y = (yy * s.getStringHeight()) / 8;
+	}
 };
 
-} // namespace Metagame
+struct DialogRect : public Common::Rect {
+public:
+	DialogRect(int fontSize, int x, int y, int w, int h) {
+		GfxSurface s;
+		s.setFontSize(fontSize);
+		left = (x * s.getStringWidth("X")) / 4;
+		top = (y * s.getStringHeight()) / 8;
+		right = left + (w * s.getStringWidth("X")) / 4;
+		bottom = top + (h * s.getStringHeight()) / 8;
+	}
+};
+
 } // namespace HodjNPodj
 } // namespace Bagel
 
