@@ -240,6 +240,7 @@ public:
 
 	virtual void loadPalette(const byte *palette);
 	virtual void loadPalette(const Graphics::Palette &palette);
+	virtual Graphics::Palette getPalette() const;
 	virtual byte getPaletteIndex(uint32 color) const;
 
 	/**
@@ -433,6 +434,7 @@ public:
 
 	void loadPalette(const byte *palette) override;
 	void loadPalette(const Graphics::Palette &palette) override;
+	Graphics::Palette getPalette() const override;
 	byte getPaletteIndex(uint32 color) const override;
 };
 

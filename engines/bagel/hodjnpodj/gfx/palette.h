@@ -47,7 +47,7 @@ public:
 	/**
 	 * Gets the currently active palette
 	 */
-	Graphics::Palette getPalette() const;
+	virtual Graphics::Palette getPalette() const;
 
 	/**
 	 * Set the palette to use, saving it in the internal _gamePalette

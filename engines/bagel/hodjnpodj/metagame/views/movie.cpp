@@ -40,6 +40,8 @@ bool Movie::msgOpen(const OpenMessage &msg) {
 	s.clear();
 
 	// Get the movie playback palette
+	_savedPalette = getPalette();
+
 	Common::File f;
 	Image::BitmapDecoder decoder;
 	if (!f.open(SCROLL_BITMAP) || !decoder.loadStream(f))
@@ -51,6 +53,10 @@ bool Movie::msgOpen(const OpenMessage &msg) {
 }
 
 void Movie::close() {
+	GfxSurface s = getSurface();
+	s.clear();
+	loadPalette(_savedPalette);
+
 	View::close();
 	_video.close();
 
@@ -73,6 +79,15 @@ bool Movie::msgAction(const ActionMessage &msg) {
 	}
 
 	return View::msgAction(msg);
+}
+
+bool Movie::msgMouseUp(const MouseUpMessage &msg) {
+	if (msg._button == MouseUpMessage::MB_LEFT) {
+		close();
+		return true;
+	}
+
+	return false;
 }
 
 bool Movie::msgGame(const GameMessage &msg) {

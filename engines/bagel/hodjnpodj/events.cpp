@@ -350,6 +350,10 @@ void UIElement::loadPalette(const Graphics::Palette &palette) {
 	g_events->loadPalette(palette);
 }
 
+Graphics::Palette UIElement::getPalette() const {
+	return g_events->getPalette();
+}
+
 byte UIElement::getPaletteIndex(uint32 color) const {
 	return g_events->getPaletteIndex(color);
 }
@@ -419,6 +423,10 @@ void Events::loadPalette(const byte *palette) {
 
 void Events::loadPalette(const Graphics::Palette &palette) {
 	Palette::loadPalette(palette);
+}
+
+Graphics::Palette Events::getPalette() const {
+	return Palette::getPalette();
 }
 
 byte Events::getPaletteIndex(uint32 color) const {

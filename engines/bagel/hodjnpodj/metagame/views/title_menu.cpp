@@ -22,7 +22,9 @@
 #include "common/file.h"
 #include "image/bmp.h"
 #include "bagel/hodjnpodj/metagame/views/title_menu.h"
+#include "bagel/hodjnpodj/metagame/views/movie.h"
 #include "bagel/hodjnpodj/libs/dialog_unit.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -40,7 +42,7 @@ TitleMenu::TitleMenu() : View("TitleMenu"),
 		DialogRect(FONT_SIZE, 46, 65, 108, 15), this),
 	_grandTour("GrandTour", "&Take the Grand Tour",
 		DialogRect(FONT_SIZE, 46, 83, 108, 15), this),
-	_viewFairyTale("ViewFairyTale", "&View the Fairy Tale",
+	_viewFairyTale("RestartMovie", "&View the Fairy Tale",
 		DialogRect(FONT_SIZE, 46, 101, 108, 15), this),
 	_quit("Quit", "&Quit",
 		DialogRect(FONT_SIZE, 46, 119, 108, 15), this) {
@@ -63,6 +65,22 @@ bool TitleMenu::msgOpen(const OpenMessage &msg) {
 	setBounds(r);
 
 	return View::msgOpen(msg);
+}
+
+bool TitleMenu::msgGame(const GameMessage &msg) {
+	if (msg._name == "BUTTON") {
+		if (msg._stringValue == "RestartMovie") {
+			send("Movie", GameMessage("MOVIE", STARTUP_MOVIE, MOVIE_ID_INTRO));
+
+		} else if (msg._stringValue == "Quit") {
+			g_engine->stopBackgroundMidi();
+			g_engine->quitGame();
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 void TitleMenu::draw() {

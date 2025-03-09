@@ -46,6 +46,7 @@ class Movie : public View {
 private:
 	Video::AVIDecoder _video;
 	int _movieId = 0;
+	Graphics::Palette _savedPalette;
 
 public:
 	Movie();
@@ -56,6 +57,7 @@ public:
 	void draw() override;
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	bool tick() override;
 };

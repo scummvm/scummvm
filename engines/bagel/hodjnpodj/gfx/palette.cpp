@@ -28,7 +28,7 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-Palette::Palette() : _gamePalette(0) {
+Palette::Palette() {
 }
 
 void Palette::loadInitialPalette() {
