@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/str.h"
 #include "bagel/hodjnpodj/metagame/bgen/item.h"
 
 namespace Bagel {
@@ -233,7 +234,7 @@ CItem::CItem(int nID) {
 CItem::~CItem() {
 	CNote *pNote;
 
-	while (m_pNotes != nullptr) {						// remove all associated notes
+	while (m_pNotes != nullptr) {						// Remove all associated notes
 		pNote = m_pNotes;
 		m_pNotes = (*pNote).m_pNext;
 		delete pNote;
@@ -241,19 +242,19 @@ CItem::~CItem() {
 }
 
 #ifndef FRAME_EXE
-char *CItem::GetDescription(int nID, long nQuantity) {
+const char *CItem::GetDescription(int nID, long nQuantity) {
 	if ((nID < MG_OBJ_BASE) ||
-		(nID >= MG_OBJ_BASE + MG_OBJ_COUNT))			// return nullptr if invalid identifier
+		(nID >= MG_OBJ_BASE + MG_OBJ_COUNT))			// Return nullptr if invalid identifier
 		m_chTextBuffer[0] = '\0';
 	else {
-		if (nQuantity > 1)                              // create blurb for multiple
-			sprintf(m_chTextBuffer, "%ld %s", nQuantity, m_pItemPluralText[nID - MG_OBJ_BASE]);
+		if (nQuantity > 1)                              // Create blurb for multiple
+			Common::sprintf_s(m_chTextBuffer, "%ld %s", nQuantity, m_pItemPluralText[nID - MG_OBJ_BASE]);
 		else
-			if ((nID == MG_OBJ_CROWN) &&					// special case having no crowns
+			if ((nID == MG_OBJ_CROWN) &&				// Special case having no crowns
 				(nQuantity == 0))
-				sprintf(m_chTextBuffer, "%s %s", "You have no", m_pItemPluralText[nID - MG_OBJ_BASE]);
+				Common::sprintf_s(m_chTextBuffer, "%s %s", "You have no", m_pItemPluralText[nID - MG_OBJ_BASE]);
 			else
-				strcpy(m_chTextBuffer, m_pItemText[nID - MG_OBJ_BASE]);    // get the text for the item
+				Common::strcpy_s(m_chTextBuffer, m_pItemText[nID - MG_OBJ_BASE]);    // get the text for the item
 	}
 
 	return(m_chTextBuffer);
@@ -277,23 +278,23 @@ char *CItem::GetDescription(int nID, long nQuantity) {
  ************************************************************************/
 
 bool CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
-	bool	bSuccess = FALSE;
+	bool	bSuccess = false;
 	CNote *pNote;
 
-	if ((GetID() != MG_OBJ_HODJ_NOTEBOOK) &&			// punt if not using notebook
+	if ((GetID() != MG_OBJ_HODJ_NOTEBOOK) &&			// Punt if not using notebook
 		(GetID() != MG_OBJ_PODJ_NOTEBOOK))
-		return(FALSE);
+		return false;
 
-	pNote = new CNote(nID, nClue, nRepeat, nPerson, nPlace);	// create the note object
+	pNote = new CNote(nID, nClue, nRepeat, nPerson, nPlace);	// Create the note object
 	if (pNote != nullptr) {							// ... and add it to the list
-		(*pNote).m_pNext = m_pNotes;				// make head of list follow us
-		if (m_pNotes != nullptr)                       // have list point back at us
+		(*pNote).m_pNext = m_pNotes;				// Make head of list follow us
+		if (m_pNotes != nullptr)                    // Have list point back at us
 			(*m_pNotes).m_pPrev = pNote;
-		m_pNotes = pNote;							// make us be new head of list
-		bSuccess = TRUE;
+		m_pNotes = pNote;							// Make us be new head of list
+		bSuccess = true;
 	}
 
-	return(bSuccess);
+	return bSuccess;
 }
 
 
@@ -312,14 +313,14 @@ bool CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
  ************************************************************************/
 
 bool CItem::AddNote(CNote *pNote) {
-	bool bSuccess = FALSE;
+	bool bSuccess = false;
 
 	if (pNote != nullptr) {							// ... and add it to the list
-		(*pNote).m_pNext = m_pNotes;				// make head of list follow us
-		if (m_pNotes != nullptr)                       // have list point back at us
+		(*pNote).m_pNext = m_pNotes;				// Make head of list follow us
+		if (m_pNotes != nullptr)                    // Have list point back at us
 			(*m_pNotes).m_pPrev = pNote;
-		m_pNotes = pNote;							// make us be new head of list
-		bSuccess = TRUE;
+		m_pNotes = pNote;							// Make us be new head of list
+		bSuccess = true;
 	}
 
 	return bSuccess;
