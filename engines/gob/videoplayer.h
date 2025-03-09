@@ -136,7 +136,7 @@ public:
 	bool isPlayingLive() const;
 	bool isSoundPlaying() const;
 
-	void updateLive(bool force = false);
+	void updateLive(bool force = false, int exceptSlot = -1);
 
 	bool slotIsOpen(int slot = 0) const;
 
@@ -188,7 +188,7 @@ private:
 
 	static const int kVideoSlotCount = 32;
 	static const int kPrimaryVideoSlot = 0;
-	static const int kLiveVideoSlotCount = 5;
+	static const int kLiveVideoSlotCount = 6;
 	static const int kVideoSlotWithCurFrameVarCount = 4;
 
 	static const char *const _extensions[];
