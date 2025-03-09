@@ -718,9 +718,6 @@ Common::Error DgdsEngine::run() {
 
 			if (_inventory->isOpen()) {
 				switch (_lastMouseEvent) {
-				case Common::EVENT_MOUSEMOVE:
-					_inventory->mouseMoved(_lastMouse);
-					break;
 				case Common::EVENT_LBUTTONDOWN:
 					_inventory->mouseLDown(_lastMouse);
 					break;
@@ -730,14 +727,13 @@ Common::Error DgdsEngine::run() {
 				case Common::EVENT_RBUTTONUP:
 					_inventory->mouseRUp(_lastMouse);
 					break;
+				case Common::EVENT_MOUSEMOVE:
 				default:
+					_inventory->mouseUpdate(_lastMouse);
 					break;
 				}
 			} else {
 				switch (_lastMouseEvent) {
-				case Common::EVENT_MOUSEMOVE:
-					_scene->mouseMoved(_lastMouse);
-					break;
 				case Common::EVENT_LBUTTONDOWN:
 					_scene->mouseLDown(_lastMouse);
 					break;
@@ -750,7 +746,9 @@ Common::Error DgdsEngine::run() {
 				case Common::EVENT_RBUTTONUP:
 					_scene->mouseRUp(_lastMouse);
 					break;
+				case Common::EVENT_MOUSEMOVE:
 				default:
+					_scene->mouseUpdate(_lastMouse);
 					break;
 				}
 			}

@@ -61,7 +61,7 @@ private:
 
 Globals::Globals(Clock &clock) :
 _lastOpcode1SceneChangeNum(0), _sceneOp12SceneNum(0), _currentSelectedItem(0),
-_gameMinsToAddOnLClick(0), _gameMinsToAddOnStartDrag(0), _gameMinsToAddOnRClick(0), _gameMinsToAddOnDragFinished(0),
+_gameMinsToAddOnUse(0), _gameMinsToAddOnPickUp(0), _gameMinsToAddOnLook(0), _gameMinsToAddOnDrop(0),
 _gameMinsToAddOnObjInteraction(0), _gameIsInteractiveGlobal(0), _sceneOpcode15FromScene(0),
 _sceneOpcode15ToScene(0) {
 	_globals.push_back(clock.getGameMinsAddedGlobal(1));
@@ -73,10 +73,10 @@ _sceneOpcode15ToScene(0) {
 	_globals.push_back(clock.getDaysGlobal(0x5F));
 	_globals.push_back(clock.getHoursGlobal(0x5E));
 	_globals.push_back(clock.getMinsGlobal(0x5D));
-	_globals.push_back(new RWI16Global(0x5C, &_gameMinsToAddOnLClick));
-	_globals.push_back(new RWI16Global(0x5B, &_gameMinsToAddOnStartDrag));
-	_globals.push_back(new RWI16Global(0x5A, &_gameMinsToAddOnRClick));
-	_globals.push_back(new RWI16Global(0x59, &_gameMinsToAddOnDragFinished));
+	_globals.push_back(new RWI16Global(0x5C, &_gameMinsToAddOnUse));
+	_globals.push_back(new RWI16Global(0x5B, &_gameMinsToAddOnPickUp));
+	_globals.push_back(new RWI16Global(0x5A, &_gameMinsToAddOnLook));
+	_globals.push_back(new RWI16Global(0x59, &_gameMinsToAddOnDrop));
 	_globals.push_back(new RWI16Global(0x58, &_gameMinsToAddOnObjInteraction));
 	_globals.push_back(new GameIsInteractiveGlobal(0x57, &_gameIsInteractiveGlobal));
 	_globals.push_back(clock.getDays2Global(0x56));
@@ -126,10 +126,10 @@ Common::Error Globals::syncState(Common::Serializer &s) {
 	s.syncAsSint16LE(_lastOpcode1SceneChangeNum);
 	s.syncAsSint16LE(_sceneOp12SceneNum);
 	s.syncAsSint16LE(_currentSelectedItem);
-	s.syncAsSint16LE(_gameMinsToAddOnLClick);
-	s.syncAsSint16LE(_gameMinsToAddOnStartDrag);
-	s.syncAsSint16LE(_gameMinsToAddOnRClick);
-	s.syncAsSint16LE(_gameMinsToAddOnDragFinished);
+	s.syncAsSint16LE(_gameMinsToAddOnUse);
+	s.syncAsSint16LE(_gameMinsToAddOnPickUp);
+	s.syncAsSint16LE(_gameMinsToAddOnLook);
+	s.syncAsSint16LE(_gameMinsToAddOnDrop);
 	s.syncAsSint16LE(_gameMinsToAddOnObjInteraction);
 	s.syncAsSint16LE(_gameIsInteractiveGlobal);
 	s.syncAsSint16LE(_sceneOpcode15FromScene);

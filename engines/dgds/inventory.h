@@ -46,7 +46,7 @@ public:
 	void drawTime(Graphics::ManagedSurface &surf);
 	void drawHeader(Graphics::ManagedSurface &surf);
 
-	void mouseMoved(const Common::Point &pt);
+	void mouseUpdate(const Common::Point &pt);
 	void mouseLDown(const Common::Point &pt);
 	void mouseLUp(const Common::Point &pt);
 	void mouseRUp(const Common::Point &pt);

@@ -322,7 +322,7 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 	}
 }
 
-void Inventory::mouseMoved(const Common::Point &pt) {
+void Inventory::mouseUpdate(const Common::Point &pt) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	GameItem *dragItem = engine->getScene()->getDragItem();
 	if (dragItem) {
@@ -398,7 +398,7 @@ void Inventory::mouseLDown(const Common::Point &pt) {
 		GameItem *underMouse = itemUnderMouse(pt);
 		if (underMouse) {
 			_highlightItemNo = underMouse->_num;
-			engine->getScene()->runOps(underMouse->onLDownOps);
+			engine->getScene()->runOps(underMouse->onPickUpOps);
 			engine->getScene()->setDragItem(underMouse);
 			underMouse->_flags |= kItemStateWasInInv;
 			if (underMouse->_iconNum)
@@ -477,7 +477,7 @@ void Inventory::mouseRUp(const Common::Point &pt) {
 				// here for zooming within the box.
 				engine->getBackgroundBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 			}
-			engine->getScene()->runOps(underMouse->onRClickOps);
+			engine->getScene()->runOps(underMouse->onLookOps);
 		}
 	} else {
 		engine->getScene()->mouseRUp(pt);

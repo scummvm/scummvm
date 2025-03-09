@@ -89,10 +89,10 @@ public:
 	virtual Common::Error syncState(Common::Serializer &s); // note: children should call parent first
 	Common::Array<Global *> &getAllGlobals() { return _globals; }
 
-	int16 getGameMinsToAddOnLClick() const { return _gameMinsToAddOnLClick; }
-	int16 getGameMinsToAddOnStartDrag() const { return _gameMinsToAddOnStartDrag; }
-	int16 getGameMinsToAddOnRClick() const { return _gameMinsToAddOnRClick; }
-	int16 getGameMinsToAddOnDragFinished() const { return _gameMinsToAddOnDragFinished; }
+	int16 getGameMinsToAddOnUse() const { return _gameMinsToAddOnUse; }
+	int16 getGameMinsToAddOnPickUp() const { return _gameMinsToAddOnPickUp; }
+	int16 getGameMinsToAddOnLook() const { return _gameMinsToAddOnLook; }
+	int16 getGameMinsToAddOnDrop() const { return _gameMinsToAddOnDrop; }
 	int16 getGameMinsToAddOnObjInteraction() const { return _gameMinsToAddOnObjInteraction; }
 	int16 getGameIsInteractiveGlobal() { return _gameIsInteractiveGlobal; }
 
@@ -105,10 +105,10 @@ protected:
 	int16 _lastOpcode1SceneChangeNum;
 	int16 _sceneOp12SceneNum;
 	int16 _currentSelectedItem;
-	int16 _gameMinsToAddOnLClick;
-	int16 _gameMinsToAddOnStartDrag;
-	int16 _gameMinsToAddOnRClick;
-	int16 _gameMinsToAddOnDragFinished;
+	int16 _gameMinsToAddOnUse;
+	int16 _gameMinsToAddOnPickUp;
+	int16 _gameMinsToAddOnLook;
+	int16 _gameMinsToAddOnDrop;
 	int16 _gameMinsToAddOnObjInteraction;
 	int16 _gameIsInteractiveGlobal; // used to decide if the game can start a "meanwhile" sequence
 	int16 _sceneOpcode15FromScene;
