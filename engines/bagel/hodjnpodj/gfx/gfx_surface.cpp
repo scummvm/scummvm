@@ -160,7 +160,8 @@ size_t GfxSurface::getStringWidth(const Common::String &text) const {
 }
 
 size_t GfxSurface::getStringHeight() const {
-	return _fontSize;
+	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
+	return font.getFontHeight();
 }
 
 int GfxSurface::wordWrapText(const Common::String &str,
