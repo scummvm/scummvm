@@ -719,6 +719,8 @@ void Inter_v7::o7_playVmdOrMusic() {
 			// if (video not in cache)
 			//   return;
 
+			props.noWaitSound = true;
+
 			props.lastFrame += 100;
 		}
 
@@ -752,6 +754,10 @@ void Inter_v7::o7_playVmdOrMusic() {
 
 	if (_vm->_vidPlayer->getVideoBufferSize(slot) == 0 || !_vm->_vidPlayer->hasVideo(slot)) {
 		props.noBlock = true;
+	}
+
+	if (_vm->_vidPlayer->getSoundFlags() & 0x100) {
+		props.noWaitSound = true;
 	}
 
 	if (props.startFrame == -2 || props.startFrame == -3) {

@@ -1000,6 +1000,10 @@ uint32 PreIMDDecoder::getFlags() const {
 	return 0;
 }
 
+uint16 PreIMDDecoder::getSoundFlags() const {
+	return 0;
+}
+
 uint32 PreIMDDecoder::getVideoBufferSize() const {
 	return _videoBufferSize;
 }
@@ -1687,6 +1691,10 @@ void IMDDecoder::emptySoundSlice(bool hasNextCmd) {
 
 uint32 IMDDecoder::getFlags() const {
 	return _flags;
+}
+
+uint16 IMDDecoder::getSoundFlags() const {
+	return _soundFlags;
 }
 
 uint32 IMDDecoder::getVideoBufferSize() const {
@@ -2927,6 +2935,10 @@ Audio::AudioStream *VMDDecoder::create16bitADPCM(Common::SeekableReadStream *str
 
 uint32 VMDDecoder::getFlags() const {
 	return _flags;
+}
+
+uint16 VMDDecoder::getSoundFlags() const {
+	return _soundFlags;
 }
 
 uint32 VMDDecoder::getVideoBufferSize() const {
