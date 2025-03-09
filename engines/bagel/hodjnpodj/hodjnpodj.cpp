@@ -29,9 +29,12 @@
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/console.h"
+#include "bagel/music.h"
 
 namespace Bagel {
 namespace HodjNPodj {
+
+#define LOGO_MIDI       "sound/maintitl.mid"
 
 HodjNPodjEngine *g_engine;
 GAMESTRUCT *pGameParams;
@@ -50,6 +53,8 @@ Common::Error HodjNPodjEngine::run() {
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
+
+	_midi = new MusicPlayer();
 
 	// Load the font
 	for (int size = 8; size <= 14; size += 2) {
@@ -75,6 +80,20 @@ Common::Error HodjNPodjEngine::syncGame(Common::Serializer &s) {
 
 	return Common::kNoError;
 }
+
+void HodjNPodjEngine::startBackgroundMidi() {
+	_backgroundMidi = new CBofSound(this, LOGO_MIDI, SOUND_MIDI | SOUND_LOOP /* | SOUND_DONT_LOOP_TO_END */);
+	(*_backgroundMidi).play();
+}
+
+void HodjNPodjEngine::stopBackgroundMidi() {
+	if (_backgroundMidi != nullptr) {
+		(*_backgroundMidi).stop();
+		delete _backgroundMidi;
+		_backgroundMidi = nullptr;
+	}
+}
+
 
 } // namespace HodjNPodj
 } // namespace Bagel

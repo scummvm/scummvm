@@ -52,9 +52,9 @@ public:
 	virtual ~Movie() {
 	}
 
+	void close();
 	void draw() override;
 	bool msgOpen(const OpenMessage &msg) override;
-	bool msgClose(const CloseMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	bool tick() override;

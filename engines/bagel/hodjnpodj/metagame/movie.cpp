@@ -24,6 +24,7 @@
 #include "bagel/hodjnpodj/metagame/movie.h"
 #include "bagel/metaengine.h"
 #include "bagel/hodjnpodj/events.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -49,31 +50,20 @@ bool Movie::msgOpen(const OpenMessage &msg) {
 	return true;
 }
 
-bool Movie::msgClose(const CloseMessage &msg) {
+void Movie::close() {
+	View::close();
 	_video.close();
 
-	if (_movieId != MOVIE_ID_TITLE)
-		g_events->showCursor(false);
-	// TODO: Handling when different movies end
-#ifdef TODO
-	if (nMovieId == MOVIE_ID_LOGO) {
-		::ShowCursor(TRUE);
-		StartBackgroundMidi();
-		::ShowCursor(FALSE);
-		PostMessage(WM_COMMAND, IDC_PLAY_TITLE_MOVIE);
+	if (_movieId == MOVIE_ID_LOGO) {
+		g_engine->startBackgroundMidi();
+		send("Movie", GameMessage("MOVIE", TITLE_MOVIE, MOVIE_ID_TITLE));
 
-	} else if (nMovieId == MOVIE_ID_ENDING) {
-		::ShowCursor(TRUE);
-		ShowCredits();
-		BlackScreen();
-		PostMessage(WM_COMMAND, IDC_MAINDLG);
+	} else if (_movieId == MOVIE_ID_ENDING) {
+		replaceView("Credits");
 
 	} else {
-		::ShowCursor(TRUE);
-		PostMessage(WM_COMMAND, IDC_MAINDLG);
+		replaceView("Title");
 	}
-#endif
-	return true;
 }
 
 bool Movie::msgAction(const ActionMessage &msg) {
@@ -91,7 +81,7 @@ bool Movie::msgGame(const GameMessage &msg) {
 		if (!_video.loadFile(Common::Path(msg._stringValue)))
 			error("Could not load video - %s", msg._stringValue.c_str());
 
-		addView();
+		replaceView("Movie", true);
 		return true;
 	}
 
@@ -99,7 +89,7 @@ bool Movie::msgGame(const GameMessage &msg) {
 }
 
 bool Movie::tick() {
-	if (_video.isPlaying()) {
+	if (!_video.endOfVideo()) {
 		if (_video.needsUpdate())
 			redraw();
 	} else {

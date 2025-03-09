@@ -43,6 +43,9 @@ namespace HodjNPodj {
 extern GAMESTRUCT *pGameParams;
 
 class HodjNPodjEngine : public BagelEngine, public Events {
+private:
+	CBofSound *_backgroundMidi = nullptr;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -97,6 +100,9 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
+	void startBackgroundMidi();
+	void stopBackgroundMidi();
 };
 
 extern HodjNPodjEngine *g_engine;
