@@ -123,7 +123,7 @@ void DynamicSprite_Flip(ScriptDynamicSprite *sds, int direction) {
 
 	// resize the sprite to the requested size
 	Bitmap *sprite = _GP(spriteset)[sds->slot];
-	std::unique_ptr<Bitmap> new_pic(BitmapHelper::CreateBitmap(sprite->GetWidth(), sprite->GetHeight(), sprite->GetColorDepth()));
+	std::unique_ptr<Bitmap> new_pic(BitmapHelper::CreateTransparentBitmap(sprite->GetWidth(), sprite->GetHeight(), sprite->GetColorDepth()));
 
 	// AGS script FlipDirection corresponds to internal GraphicFlip
 	new_pic->FlipBlt(sprite, 0, 0, static_cast<GraphicFlip>(direction));
