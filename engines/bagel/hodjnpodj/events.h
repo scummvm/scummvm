@@ -213,6 +213,22 @@ public:
 	void setParent(UIElement *newParent);
 
 	/**
+	 * Gets the element's parent
+	 */
+	UIElement *getParent() const {
+		return _parent;
+	}
+
+	/**
+	 * Returns true if the control is visible.
+	 * Currently this is pretty basic, just checking if
+	 * the control is assigned to a parent
+	 */
+	bool isVisible() const {
+		return _parent != nullptr;
+	}
+
+	/**
 	 * Returns a surface for drawing the element
 	 */
 	GfxSurface getSurface() const;

@@ -29,16 +29,30 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
+#define MINIGAMES_HOTSPOTS_COUNT 21
+
 class Minigames : public View {
+	struct MinigameRect {
+		int left, top, right, bottom;
+	};
 private:
+	static MinigameRect MINIGAME_RECTS[MINIGAMES_HOTSPOTS_COUNT];
+	static const char *MINIGAME_TEXTS[MINIGAMES_HOTSPOTS_COUNT];
 	GfxSurface _background;
+	ColorButton _exitButton;
+	Common::Rect _textRect;
+	Common::Point _mousePos;
+
+	int getSelectedMinigame() const;
 
 public:
 	Minigames();
 
-	bool msgOpen(const OpenMessage &msg) override;
-	bool msgClose(const CloseMessage &msg) override;
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
+	bool msgMouseMove(const MouseMoveMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 	void draw() override;
 };
 
