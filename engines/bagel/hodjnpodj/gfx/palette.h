@@ -19,39 +19,46 @@
  *
  */
 
-#ifndef HODJNPODJ_GFX_CURSOR_H
-#define HODJNPODJ_GFX_CURSOR_H
+#ifndef HODJNPODJ_GFX_PALETTE_H
+#define HODJNPODJ_GFX_PALETTE_H
 
-#include "common/formats/winexe_ne.h"
-#include "bagel/boflib/cursor_data.h"
+#include "graphics/palette.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-enum CursorId {
-	IDC_NONE		  =   0,
-	IDC_ARROW         =   1,
-	IDC_RULES_OKAY    = 900,
-	IDC_RULES_ARROWDN = 901,
-	IDC_RULES_ARROWUP = 902,
-	IDC_RULES_INVALID = 903
-};
-
-class Cursor {
+class Palette {
 private:
-	Common::NEResources _resources;
-	int _cursorId = IDC_NONE;
+	Graphics::Palette _gamePalette;
 
-	void setArrowCursor();
-	void setCursorResource();
+protected:
+	void loadInitialPalette();
 
 public:
-	void loadCursors();
+	Palette();
+	virtual ~Palette() {}
 
-	void setCursor(int cursorId);
-	void showCursor(bool visible) {
-		setCursor(visible ? IDC_ARROW : IDC_NONE);
-	}
+	/**
+	 * Set the palette to use, without changing _gamePalette
+	 */
+	virtual void setPalette(const byte *palette);
+	virtual void setPalette(const Graphics::Palette &palette);
+
+	/**
+	 * Gets the currently active palette
+	 */
+	Graphics::Palette getPalette() const;
+
+	/**
+	 * Set the palette to use, saving it in the internal _gamePalette
+	 */
+	virtual void loadPalette(const byte *palette);
+	virtual void loadPalette(const Graphics::Palette &palette);
+
+	/**
+	 * Gets the closest palette index to a given rgb color
+	 */
+	virtual byte getPaletteIndex(uint32 color) const;
 };
 
 } // namespace HodjNPodj

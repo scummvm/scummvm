@@ -35,7 +35,7 @@ namespace HodjNPodj {
 
 Events *g_events;
 
-Events::Events() : UIElement("Root", nullptr), _gamePalette(0) {
+Events::Events() : UIElement("Root", nullptr) {
 	g_events = this;
 }
 
@@ -63,7 +63,13 @@ void Events::runGame() {
 	if (minigame.empty()) {
 		// Start the metagame
 		_gameInfo.bPlayingMetagame = true;
-		send("Movie", GameMessage("MOVIE", "video/logo.avi"));
+
+		if (ConfMan.getBool("skip_intro"))
+			// Original used /n cmd line parameter instead
+			addView("Title");
+		else
+			// Start by showing the logo video
+			send("Movie", GameMessage("MOVIE", LOGO_MOVIE, MOVIE_ID_LOGO));
 
 	} else {
 		addView(minigame);
@@ -229,29 +235,6 @@ void Events::addKeypress(const Common::KeyCode kc) {
 	focusedView()->msgKeypress(KeypressMessage(ks));
 }
 
-void Events::loadInitialPalette() {
-	Common::File f;
-	Image::BitmapDecoder decoder;
-	const char *FILENAME = "meta/art/mlscroll.bmp";
-
-	if (!f.open(FILENAME) || !decoder.loadStream(f))
-		error("Error loading - %s", FILENAME);
-
-	loadPalette(decoder.getPalette());
-}
-
-void Events::loadPalette(const byte *palette) {
-	_gamePalette = Graphics::Palette(palette, PALETTE_COUNT);
-	g_system->getPaletteManager()->setPalette(_gamePalette);
-}
-
-byte Events::getPaletteIndex(uint32 color) {
-	byte r = color & 0xff;
-	byte g = (color >> 8) & 0xff;
-	byte b = (color >> 16) & 0xff;
-	return _gamePalette.findBestColor(r, g, b);
-}
-
 /*------------------------------------------------------------------------*/
 
 Bounds::Bounds(Common::Rect &innerBounds) :
@@ -363,7 +346,11 @@ void UIElement::loadPalette(const byte *palette) {
 	g_events->loadPalette(palette);
 }
 
-byte UIElement::getPaletteIndex(uint32 color) {
+void UIElement::loadPalette(const Graphics::Palette &palette) {
+	g_events->loadPalette(palette);
+}
+
+byte UIElement::getPaletteIndex(uint32 color) const {
 	return g_events->getPaletteIndex(color);
 }
 
@@ -425,6 +412,19 @@ void UIElement::setParent(UIElement *newParent) {
 	_parent = newParent;
 	newParent->_children.push_back(this);
 }
+
+void Events::loadPalette(const byte *palette) {
+	Palette::loadPalette(palette);
+}
+
+void Events::loadPalette(const Graphics::Palette &palette) {
+	Palette::loadPalette(palette);
+}
+
+byte Events::getPaletteIndex(uint32 color) const {
+	return Palette::getPaletteIndex(color);
+}
+
 
 } // namespace HodjNPodj
 } // namespace Bagel

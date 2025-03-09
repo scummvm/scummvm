@@ -29,9 +29,23 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
+// Movie Identifiers
+#define MOVIE_ID_NONE   0
+#define MOVIE_ID_LOGO   1
+#define MOVIE_ID_TITLE  2
+#define MOVIE_ID_INTRO  3
+#define MOVIE_ID_ENDING 4
+
+#define LOGO_MOVIE      "video/logo.avi"
+#define TITLE_MOVIE     "video/title.avi"
+#define STARTUP_MOVIE   "video/intro.avi"
+#define HODJ_WIN_MOVIE  "video/hodj.avi"
+#define PODJ_WIN_MOVIE  "video/podj.avi"
+
 class Movie : public View {
 private:
 	Video::AVIDecoder _video;
+	int _movieId = 0;
 
 public:
 	Movie();

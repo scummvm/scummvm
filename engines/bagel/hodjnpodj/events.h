@@ -24,11 +24,11 @@
 
 #include "common/array.h"
 #include "common/stack.h"
-#include "graphics/palette.h"
 #include "graphics/screen.h"
 #include "bagel/hodjnpodj/messages.h"
 #include "bagel/hodjnpodj/gfx/gfx_surface.h"
 #include "bagel/hodjnpodj/gfx/cursor.h"
+#include "bagel/hodjnpodj/gfx/palette.h"
 #include "bagel/hodjnpodj/libs/array.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 
@@ -238,15 +238,9 @@ public:
 	 */
 	virtual UIElement *findView(const Common::String &name);
 
-	/**
-	 * Set the palette to use
-	 */
 	virtual void loadPalette(const byte *palette);
-
-	/**
-	 * Gets the closest palette index to a given rgb color
-	 */
-	virtual byte getPaletteIndex(uint32 color);
+	virtual void loadPalette(const Graphics::Palette &palette);
+	virtual byte getPaletteIndex(uint32 color) const;
 
 	/**
 	 * Handles events
@@ -294,13 +288,10 @@ public:
  * access basic view management methods like addView or replaceView
  * only need to include events.h rather than the whole engine.
  */
-class Events : public UIElement, public Cursor {
+class Events : public UIElement, public Cursor, public Palette {
 private:
 	Graphics::Screen *_screen = nullptr;
 	Common::Stack<UIElement *> _views;
-	Graphics::Palette _gamePalette;
-
-	void loadInitialPalette();
 
 protected:
 	GAMESTRUCT _gameInfo;
@@ -441,7 +432,8 @@ public:
 	}
 
 	void loadPalette(const byte *palette) override;
-	byte getPaletteIndex(uint32 color) override;
+	void loadPalette(const Graphics::Palette &palette) override;
+	byte getPaletteIndex(uint32 color) const override;
 };
 
 extern Events *g_events;

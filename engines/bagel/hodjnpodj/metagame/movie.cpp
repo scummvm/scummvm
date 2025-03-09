@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/file.h"
+#include "image/bmp.h"
 #include "bagel/hodjnpodj/metagame/movie.h"
 #include "bagel/metaengine.h"
 #include "bagel/hodjnpodj/events.h"
@@ -27,16 +29,50 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
+#define SCROLL_BITMAP "video/vscroll.bmp"
+
 Movie::Movie() : View("Movie") {
 }
 
 bool Movie::msgOpen(const OpenMessage &msg) {
+	GfxSurface s = getSurface();
+	s.clear();
+
+	// Get the movie playback palette
+	Common::File f;
+	Image::BitmapDecoder decoder;
+	if (!f.open(SCROLL_BITMAP) || !decoder.loadStream(f))
+		error("Could not open - %s", SCROLL_BITMAP);
+	loadPalette(decoder.getPalette());
+
 	_video.start();
 	return true;
 }
 
 bool Movie::msgClose(const CloseMessage &msg) {
 	_video.close();
+
+	if (_movieId != MOVIE_ID_TITLE)
+		g_events->showCursor(false);
+	// TODO: Handling when different movies end
+#ifdef TODO
+	if (nMovieId == MOVIE_ID_LOGO) {
+		::ShowCursor(TRUE);
+		StartBackgroundMidi();
+		::ShowCursor(FALSE);
+		PostMessage(WM_COMMAND, IDC_PLAY_TITLE_MOVIE);
+
+	} else if (nMovieId == MOVIE_ID_ENDING) {
+		::ShowCursor(TRUE);
+		ShowCredits();
+		BlackScreen();
+		PostMessage(WM_COMMAND, IDC_MAINDLG);
+
+	} else {
+		::ShowCursor(TRUE);
+		PostMessage(WM_COMMAND, IDC_MAINDLG);
+	}
+#endif
 	return true;
 }
 
@@ -51,6 +87,7 @@ bool Movie::msgAction(const ActionMessage &msg) {
 
 bool Movie::msgGame(const GameMessage &msg) {
 	if (msg._name == "MOVIE") {
+		_movieId = msg._value;
 		if (!_video.loadFile(Common::Path(msg._stringValue)))
 			error("Could not load video - %s", msg._stringValue.c_str());
 
@@ -76,7 +113,8 @@ void Movie::draw() {
 	if (_video.isPlaying() && _video.needsUpdate()) {
 		GfxSurface s = getSurface();
 		const Graphics::Surface *frame = _video.decodeNextFrame();
-		s.blitFrom(frame);
+		s.blitFrom(frame, Common::Rect(0, 0, frame->w, frame->h),
+			Common::Rect(0, 0, s.w, s.h));
 	}
 }
 
