@@ -54,7 +54,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	// Myst
 	// English Windows 3.11, v1.0.1
-	// From lotharsm
+	// From felsqualle
 	{
 		{
 			"myst",
