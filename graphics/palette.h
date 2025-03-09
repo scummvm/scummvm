@@ -65,7 +65,7 @@ public:
 	 *
 	 * @param size   the number of palette entries
 	 */
-	Palette(uint size);
+	Palette(uint size = 0);
 
 	/**
 	 * @brief Construct a new Palette object with a copy of the palette data
