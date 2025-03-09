@@ -79,7 +79,7 @@ void Room405::init() {
 		_bankNote = series_place_sprite("405 BANK NOTE UNDER RUG", 0, 0, 0, 100, 0xf00);
 
 	_candlesBurning = series_load("TWO CANDLES BURNING");
-	_candles = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+	_candles = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 		triggerMachineByHashCallback, "candles");
 	sendWSMessage_10000(1, _candles, _candlesBurning, 1, 8, -1,
 		_candlesBurning, 1, 8, 0);
@@ -108,7 +108,6 @@ void Room405::init() {
 
 void Room405::daemon() {
 	int frame;
-
 	switch (_G(kernel).trigger) {
 	case 20:
 		digi_preload("405b01a");
@@ -140,7 +139,7 @@ void Room405::daemon() {
 		ws_hide_walker(_baron);
 		sendWSMessage_150000(-1);
 		ws_hide_walker(_G(my_walker));
-		_baronWalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x600, 0,
+		_baronWalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x600, false,
 			triggerMachineByHashCallback, "BARON talks rip");
 		sendWSMessage_10000(1, _baronWalker, _baronShakeSit, 1, 48, 23,
 			_baronShakeSit, 48, 48, 0);
@@ -154,7 +153,7 @@ void Room405::daemon() {
 		break;
 
 	case 24:
-		_ripTalksBaron = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x600, 0,
+		_ripTalksBaron = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x600, false,
 			triggerMachineByHashCallback, "rip talks baron");
 		_val5 = 1000;
 		_val6 = 1103;
@@ -225,7 +224,7 @@ void Room405::daemon() {
 		break;
 
 	case 36:
-		_baronWalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x600, 0,
+		_baronWalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x600, false,
 			triggerMachineByHashCallback, "BARON talks rip");
 		sendWSMessage_10000(1, _baronWalker, _baronTalkLoop, 1, 1, 110,
 			_baronTalkLoop, 1, 1, 0);
@@ -599,9 +598,9 @@ void Room405::daemon() {
 }
 
 void Room405::pre_parser() {
-	bool takeFlag = player_said("take");
-	bool lookFlag = player_said_any("look", "look at");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool takeFlag = player_said("take");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("DOOR") && (lookFlag || useFlag || takeFlag)) {
 		_G(player).need_to_walk = false;
@@ -617,11 +616,11 @@ void Room405::pre_parser() {
 }
 
 void Room405::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool talkFlag = player_said_any("talk", "talk to");
-	bool takeFlag = player_said("take");
-	bool enterFlag = player_said("enter");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool talkFlag = player_said_any("talk", "talk to");
+	const bool takeFlag = player_said("take");
+	const bool enterFlag = player_said("enter");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("conv405a")) {
 		if (_G(kernel).trigger == 1)
@@ -721,9 +720,9 @@ void Room405::parser() {
 }
 
 void Room405::conv405a() {
-	int who = conv_whos_talking();
+	const int who = conv_whos_talking();
 	_currentNode = conv_current_node();
-	int entry = conv_current_entry();
+	const int entry = conv_current_entry();
 	const char *sound = conv_sound_to_play();
 
 	if (sound) {
@@ -814,7 +813,7 @@ void Room405::conv405a() {
 }
 
 void Room405::conv405a1() {
-	int who = conv_whos_talking();
+	const int who = conv_whos_talking();
 
 	if (who <= 0)
 		_val8 = 2102;

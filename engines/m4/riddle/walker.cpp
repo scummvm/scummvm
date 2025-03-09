@@ -65,8 +65,8 @@ static const int16 SAFARI_SHADOWS_DIRS[6] = {
 };
 
 void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
-	int triggerType = _G(globals)[GLB_TEMP_1] >> 16;
-	int subVal = _G(globals)[GLB_TEMP_2] >> 16;
+	const int triggerType = _G(globals)[GLB_TEMP_1] >> 16;
+	const int subVal = _G(globals)[GLB_TEMP_2] >> 16;
 
 	switch (triggerType) {
 	case 0:
@@ -112,9 +112,6 @@ bool Walker::walk_load_walker_and_shadow_series() {
 }
 
 machine *Walker::walk_initialize_walker() {
-	machine *m;
-	int32 s;
-
 	_G(player).walker_visible = true;
 
 	// Default walker
@@ -126,13 +123,13 @@ machine *Walker::walk_initialize_walker() {
 	_G(globals)[GLB_TEMP_3] = *RIPLEY_SHADOWS_DIRS << 24;	// Starting series hash of default walker shadows
 
 	// initialize with bogus data (this is for the real walker)
-	s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
+	int32 s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
 	_G(globals)[GLB_TEMP_4] = 320 << 16;
 	_G(globals)[GLB_TEMP_5] = 400 << 16;
 	_G(globals)[GLB_TEMP_6] = s;
 	_G(globals)[GLB_TEMP_7] = 3 << 16;	 // facing
 
-	m = TriggerMachineByHash(WALKER_HASH, nullptr, _G(player).walker_type + WALKER_HASH, 0, player_walker_callback, false, "PLAYER WALKER");
+	machine *m = TriggerMachineByHash(WALKER_HASH, nullptr, _G(player).walker_type + WALKER_HASH, 0, player_walker_callback, false, "PLAYER WALKER");
 
 	// We need to all init sequences to happen immediately (init coordinates)
 	cycleEngines(nullptr, &(_G(currentSceneDef).depth_table[0]),

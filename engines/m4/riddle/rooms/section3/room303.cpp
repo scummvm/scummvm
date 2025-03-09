@@ -2016,11 +2016,11 @@ void Room303::conv303b() {
 }
 
 void Room303::priestTalkCallback(frac16 myMessage, machine *sender) {
-	Room303 *room = (Room303 *)g_engine->_activeRoom;
-	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
 	const int trigger = myMessage >> 16;
 
 	if (trigger > 0) {
+		Room303 *room = (Room303 *)g_engine->_activeRoom;
+		const KernelTriggerType oldMode = _G(kernel).trigger_mode;
 		_G(kernel).trigger_mode = room->_val12;
 		kernel_timing_trigger(1, trigger);
 		_G(kernel).trigger_mode = oldMode;
