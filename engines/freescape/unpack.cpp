@@ -109,6 +109,7 @@ void unpack_data(unsigned char *unpacked_data, unsigned char *buf, unsigned int 
 	unsigned char *save_buf = NULL;
 	unsigned char *save_unp = NULL;
 	unsigned int cur_unpacked_data_size = 0x00;
+	unsigned int data_left = 0x00;
 
 	save_buf = buf;
 	save_unp = unpacked_data;
@@ -141,16 +142,17 @@ void unpack_data(unsigned char *unpacked_data, unsigned char *buf, unsigned int 
 		if ((opcode & 1) == 1) {
 			break;
 		}
-		if (buf - save_buf >= packed_data_len) {
+		data_left = (unsigned int)(buf - save_buf);
+		if (data_left >= packed_data_len) {
 			break;
 		}
 	}
-	if (buf - save_buf < packed_data_len) {
-		if ((packed_data_len - (buf - save_buf)) > (*unpacked_data_size - (unpacked_data - save_unp))) {
+	if (data_left < packed_data_len) {
+		if ((packed_data_len - data_left) > (*unpacked_data_size - (unpacked_data - save_unp))) {
 			debug("Data left are too large!");
 		}
-		memcpy(unpacked_data, buf, packed_data_len - (buf - save_buf));
-		cur_unpacked_data_size += packed_data_len - (buf - save_buf);
+		memcpy(unpacked_data, buf, packed_data_len - data_left);
+		cur_unpacked_data_size += packed_data_len - data_left;
 	}
 	*unpacked_data_size = cur_unpacked_data_size;
 }
