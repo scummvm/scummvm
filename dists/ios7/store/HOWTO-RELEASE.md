@@ -25,6 +25,6 @@ Version 2.8.1 on AppStore was bundled with `Dráscula: The Vampire Strikes Back`
 
 ### Useful information
 
-The ScummVM project Apple account is registered on Eugene Sandulenko (sev). Access to the Apple account can only be granted by sev or rootfather.
+The ScummVM project Apple account is registered on Eugene Sandulenko (sev). Access to the Apple account can only be granted by sev or felsqualle.
 
 Another application bundle name is used for TestFlight builds: org.scummvm.beta
