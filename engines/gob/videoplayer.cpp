@@ -430,8 +430,15 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 									video->decoder->getNbFramesPastEnd();
 		}
 
-		playFrame(slot, properties);
-		if (properties.canceled)
+		bool playFrameResult = playFrame(slot, properties);
+		if (_vm->getGameType() == kGameTypeAdibou2 && !playFrameResult && slot < kLiveVideoSlotCount) {
+			_vm->_util->processInput();
+			_vm->_video->retrace();
+			_vm->_util->delay(5);
+			continue;
+		}
+
+			if (properties.canceled)
 			break;
 
 		if (_vm->getGameType() == kGameTypeAdibou2) {
@@ -609,6 +616,9 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 		}
 
 	}
+
+	if (_vm->getGameType() == kGameTypeAdibou2 && video->decoder->getTimeToNextFrame() > 0)
+		return false;
 
 	if (video->decoder->getCurFrame() > properties.startFrame)
 		// If the video is already beyond the wanted frame, skip
