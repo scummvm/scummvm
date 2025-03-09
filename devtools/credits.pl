@@ -511,7 +511,7 @@ begin_credits("Credits");
 				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 				add_person("Eugene Sandulenko", "sev", "");
 				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
-				add_person("Lothar Serra Mari", "lotharsm", "");
+				add_person("Lothar Serra Mari", "felsqualle", "");
 			end_persons();
 		end_section();
 
@@ -695,7 +695,7 @@ begin_credits("Credits");
 				add_person("Coen Rampen", "NMIError", "Sound improvements");
 				add_person("Robin Watts", "robinwatts", "ARM assembly routines for nice speedups on several ports; improvements to the sound mixer");
 				add_person("", "Trembyle", "Archivist");
-				add_person("Lothar Serra Mari", "rootfather", "Tackling Tremendously Tedious Tasks(tm); ScummVM's Seal of Approval (Awp?!)");
+				add_person("Lothar Serra Mari", "felsqualle", "Tackling Tremendously Tedious Tasks(tm); ScummVM's Seal of Approval (Awp?!)");
 			end_section();
 		end_section();
 
@@ -817,13 +817,13 @@ begin_credits("Credits");
 
 			begin_section("Win32");
 				add_person("Travis Howell", "Kirben", "");
-				add_person("Lothar Serra Mari", "lotharsm", "");
+				add_person("Lothar Serra Mari", "felsqualle", "");
 			end_section();
 
 			begin_section("Win64");
 				add_person("Chris Gray", "Psychoid", "(retired)");
 				add_person("Johannes Schickel", "LordHoto", "(retired)");
-				add_person("Lothar Serra Mari", "lotharsm", "");
+				add_person("Lothar Serra Mari", "felsqualle", "");
 			end_section();
 		end_section();
 
@@ -864,7 +864,7 @@ begin_credits("Credits");
 				end_section();
 				begin_section("German");
 					add_person("Simon Sawatzki", "SimSaw", "");
-					add_person("Lothar Serra Mari", "lotharsm", "");
+					add_person("Lothar Serra Mari", "felsqualle", "");
 				end_section();
 				begin_section("Greek");
 					add_person("Thanasis Antoniou", "Praetorian", "");
@@ -965,7 +965,7 @@ begin_credits("Credits");
 				add_person("Eugene Sandulenko", "sev", "");
 				add_person("J Moretti", "", "");
 				add_person("Jennifer McMurray", "", "");
-				add_person("Lothar Serra Mari", "rootfather", "");
+				add_person("Lothar Serra Mari", "felsqualle", "");
 				add_person("Oleg Ermakov", "epushiron", "");
 				add_person("Olly Dean", "olly", "");
 				add_person("Walter Agazzi", "tag2015", "");
