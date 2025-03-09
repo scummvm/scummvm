@@ -619,6 +619,8 @@ void Adlib::OnTimer() {
 		return;
 	}
 
+	debug("Entered OnTimer");
+
 	// fn0017_1AA7 proc
 
 	g2296++;
@@ -626,6 +628,7 @@ void Adlib::OnTimer() {
 	if (g2296 >= g2298) {
 		// Every nth time we execute this code
 		// l0017_1ABD:
+		SIS_LogEntry(0x01D7, 0x1ABD);
 		g2296 = 0;
 
 		/* TODO: Skipped parts with a function pointer
@@ -639,6 +642,7 @@ void Adlib::OnTimer() {
 		g229A = true;
 	} else {
 		// l0017_1ACE:
+		SIS_LogEntry(0x01D7, 0x1ACE);
 		g229A = false;
 	}
 	// l0017_1AD3:
@@ -652,6 +656,7 @@ void Adlib::OnTimer() {
 	if (g2258 & 0x2) {
 		// [2258] & 2 was not zero
 		// l0017_1AEF:
+		SIS_LogEntry(0x01D7, 0x1AEF);
 		g2258 |= 0x40;
 	}
 	// l0017_1AF7:
@@ -659,6 +664,7 @@ void Adlib::OnTimer() {
 	// TODO: This is a huge jump, maybe should go for a separate function
 	if (!(g2258 & 0xC3)) {
 		// l0017_1B03:
+		SIS_LogEntry(0x01D7, 0x1B03);
 		if (_nextEventTimer != 0) {
 			_nextEventTimer--;
 			// Original code also sends the "End of Interrupt" signal, which
@@ -673,9 +679,11 @@ void Adlib::OnTimer() {
 		for (;;) {
 			//	// l0017_1B1A:
 			uint8 current = shMem2250->peekByte();
+			debug("Loop iteration, [2250] value: %.2X at offset %.2X", current, shMem2250->pos());
 			if (current & 0x80) {
 				// The first bit of the read value was 0
 				// l0017_1B27:
+				SIS_LogEntry(0x01D7, 0x1B27);
 				g229B = g223E = shMem2250->peekByte();
 				shMem2250 = Func19BE_SH(shMem2250, 1);
 				g225A++;
@@ -694,13 +702,16 @@ void Adlib::OnTimer() {
 
 			if ((bp6 & 0x0F) == 0x90) {
 				// l0017_1BA1:
+				SIS_LogEntry(0x01D7, 0x1BA1);
 				if (bp5 != 0) {
 					// l0017_1BAA:
+					SIS_LogEntry(0x01D7, 0x1BAA);
 					shMem2250 = Func19BE_SH(shMem2250, 0x2);
 					g225A += 2;
 
 					if (g2291 == 0x09 || bp3 < 0x0B) {
 					//				// l0017_1BE4:
+						SIS_LogEntry(0x01D7, 0x1BE4);
 					//				// TODO: Is this the first usage?
 					//				uint8 bp8 = 0;
 					//				// TODO: Figure out the loop conditions and correct indentation
@@ -919,9 +930,8 @@ void Adlib::OnTimer() {
 					//				// TODO: Should be 1CF2
 					//				// TODO: Check if this is an else or just an if
 					} else {
-
 						//			// l0017_1E94:
-
+						SIS_LogEntry(0x01D7, 0x1E94);
 						//			// TODO: These pushes are not arguments for 19BE
 						//			// push	word ptr [224Ah]
 						//			// push word ptr[2248h]
@@ -1004,6 +1014,7 @@ void Adlib::OnTimer() {
 					// TODO: Not sure if this should really be an else
 				} else {
 					// l0017_2097
+					SIS_LogEntry(0x01D7, 0x2097);
 					// TODO: Confirm that the following code is correct
 					bp6 = 0x80;
 				}
@@ -1011,11 +1022,13 @@ void Adlib::OnTimer() {
 			// l0017_209B:
 			if ((bp6 & 0xF0) == 0x80) {
 				// l0017_20A7:
+				SIS_LogEntry(0x01D7, 0x20A7);
 				shMem2250 = Func19BE_SH(shMem2250, 0x2);
 				g225A += 2;
 				uint8 bp16 = g2291 - 1;
 				if (0 <= bp16) {
 					// l0017_20E1:
+					SIS_LogEntry(0x01D7, 0x20E1);
 					for (uint8 bp0A = 0; bp0A != bp16; bp0A++) {
 						// l0017_20E9:
 						if (gArray222C[bp0A] != 0) {
@@ -1066,22 +1079,26 @@ void Adlib::OnTimer() {
 			//	// l0017_21A3 and l0017_21AC:
 			if (((bp6 & 0xF0) == 0xE0) || (bp6 & 0xF0) == 0xA0 ) {
 				// l0017_21B5:
+				SIS_LogEntry(0x01D7, 0x21B5);
 				shMem2250 = Func19BE_SH(shMem2250, 0x2);
 				g225A += 0x2;
 			}
 			// l0017_21DF:
 			if ((bp6 & 0xF0) == 0xB0) { // Scope ends 231E
 				// l0017_21EB:
+				SIS_LogEntry(0x01D7, 0x21EB);
 				shMem2250 = Func19BE_SH(shMem2250, 0x2);
 				g225A += 0x2;
 
 				// Big if-else that ends at 231E
 				if (bp4 == 0x66) {
 					// l0017_221C:
+					SIS_LogEntry(0x01D7, 0x221C);
 					g2259 = bp5;
 					g2258 = g2258 | 0x20;
 					// l0017_222D:
-				} else if (bp4 == 0x67) { 
+				} else if (bp4 == 0x67) {
+					SIS_LogEntry(0x01D7, 0x2231);
 			//				// TODO: Continue from here
 			//				// l0017_2231:
 			//				if (bp5 != 0) {
@@ -1095,6 +1112,7 @@ void Adlib::OnTimer() {
 			//				} // l0017_2258:
 						} else if (bp4 == 0x69) {
 			//					// l0017_225C:
+							SIS_LogEntry(0x01D7, 0x225C);
 			//					// TODO: Check if the neg works out the right way
 			//					bp5 = -bp5;
 			//					gArray226F[bp3] = bp5;
@@ -1118,6 +1136,7 @@ void Adlib::OnTimer() {
 							// l0017_22C1:
 						} else if (bp4 == 0x68) {
 			//					// l0017_22C5:
+							SIS_LogEntry(0x01D7, 0x22C5);
 			//					gArray226F[bp3] = bp5;
 			//					uint16 bp16 = g2291 - 1;
 			//					if (0 <= bp16) {
@@ -1143,6 +1162,7 @@ void Adlib::OnTimer() {
 			// l0017_231E:
 			if ((bp6 & 0xF0) == 0xC0) {
 				// l0017_2327:
+				SIS_LogEntry(0x01D7, 0x2327);
 			//		Macs2::StreamHandler *sh2252;
 			//		Macs2::StreamHandler *sh225A;
 			//		Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x1);
@@ -1154,6 +1174,7 @@ void Adlib::OnTimer() {
 			// l0017_2355:
 			if ((bp6 & 0xF0) == 0xD0) {
 			//		// l0017_235E:
+				SIS_LogEntry(0x01D7, 0x235E);
 			//		Macs2::StreamHandler *sh2252;
 			//		Macs2::StreamHandler *sh225A;
 			//		Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x1);
@@ -1164,6 +1185,7 @@ void Adlib::OnTimer() {
 			// l0017_237E:
 			if ((bp6 & 0xF0) == 0xF0) {
 			//		// l0017_2387:
+				SIS_LogEntry(0x01D7, 0x2387);
 			//		if (bp4 == 0x2F) {
 			//			// l0017_238D:
 			//			Macs2::StreamHandler *sh2244;
@@ -1180,6 +1202,7 @@ void Adlib::OnTimer() {
 			//		}
 			} else {
 				// l0017_23DB:
+				SIS_LogEntry(0x01D7, 0x23DB);
 				Func1A03();
 			}
 			// l0017_23E0:
@@ -1188,6 +1211,7 @@ void Adlib::OnTimer() {
 			// this inequality by using the msw and lsw
 			if (_nextEventTimer > 0x0FFF) {
 				// l0017_23F1:
+				SIS_LogEntry(0x01D7, 0x23F1);
 				shMem2250 = shMem2244;
 				g225A = 0;
 				g2259 = 0;
@@ -1208,6 +1232,7 @@ void Adlib::OnTimer() {
 	// l0017_2425:
 	if ((g2258 & 0xC2) != 0) {
 		// l0017_242E:
+		SIS_LogEntry(0x01D7, 0x242E);
 		// TODO: I think this just calls the function again
 		// Func1A74();
 	}
