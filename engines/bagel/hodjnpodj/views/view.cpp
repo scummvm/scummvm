@@ -51,6 +51,18 @@ UIElement *View::getElementAtPos(const Common::Point &pos) const {
 	return nullptr;
 }
 
+void View::setBounds(const Common::Rect &r) {
+	int deltaX = r.left - _bounds.left;
+	int deltaY = r.top - _bounds.top;
+	UIElement::setBounds(r);
+
+	// Adjust all children by the delta
+	for (uint i = 0; i < _children.size(); ++i) {
+		Common::Rect temp = _children[i]->getBounds();
+		temp.translate(deltaX, deltaY);
+		_children[i]->setBounds(temp);
+	}
+}
 
 bool View::msgFocus(const FocusMessage &msg) {
 	_focusedElement = nullptr;

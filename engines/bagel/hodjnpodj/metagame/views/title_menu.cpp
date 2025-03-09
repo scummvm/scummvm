@@ -62,12 +62,6 @@ bool TitleMenu::msgOpen(const OpenMessage &msg) {
 	r.moveTo((GAME_WIDTH - surf->w) / 2, (GAME_HEIGHT - surf->h) / 2);
 	setBounds(r);
 
-	for (uint i = 0; i < _children.size(); ++i) {
-		Common::Rect cr = _children[i]->getBounds();
-		cr.translate(r.left, r.top);
-		_children[i]->setBounds(cr);
-	}
-
 	return View::msgOpen(msg);
 }
 

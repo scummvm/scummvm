@@ -64,6 +64,7 @@ public:
 	virtual ~View() {
 	}
 
+	void setBounds(const Common::Rect &r) override;
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	bool msgMouseMove(const MouseMoveMessage &msg) override;
