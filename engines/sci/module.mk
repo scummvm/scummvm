@@ -54,13 +54,13 @@ MODULE_OBJS := \
 	graphics/maciconbar.o \
 	graphics/menu.o \
 	graphics/paint16.o \
-	graphics/palette.o \
 	graphics/picture.o \
 	graphics/portrait.o \
 	graphics/ports.o \
 	graphics/remap.o \
 	graphics/scifont.o \
 	graphics/scifx.o \
+	graphics/scipalette.o \
 	graphics/screen.o \
 	graphics/text16.o \
 	graphics/transitions.o \
@@ -113,8 +113,8 @@ MODULE_OBJS += \
 	graphics/frameout.o \
 	graphics/paint32.o \
 	graphics/plane32.o \
-	graphics/palette32.o \
 	graphics/remap32.o \
+	graphics/scipalette32.o \
 	graphics/screen_item32.o \
 	graphics/text32.o \
 	graphics/transitions32.o \

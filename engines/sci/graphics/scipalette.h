@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_PALETTE_H
-#define SCI_GRAPHICS_PALETTE_H
+#ifndef SCI_GRAPHICS_SCIPALETTE_H
+#define SCI_GRAPHICS_SCIPALETTE_H
 
 #include "common/array.h"
 #include "sci/graphics/helpers.h"
@@ -132,4 +132,4 @@ protected:
 
 } // End of namespace Sci
 
-#endif // SCI_GRAPHICS_PALETTE_H
+#endif // SCI_GRAPHICS_SCIPALETTE_H

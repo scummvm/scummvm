@@ -21,7 +21,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/features.h"
-#include "sci/graphics/palette32.h"
+#include "sci/graphics/scipalette32.h"
 #include "sci/graphics/remap32.h"
 
 namespace Sci {
