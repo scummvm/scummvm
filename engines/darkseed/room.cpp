@@ -287,9 +287,32 @@ bool Room::load() {
 void Room::dosDemoFixupRoomObjects() {
 	if (_roomNumber == 45) {
 		// The dos demo is missing the object entries for the life leech victims and the force field
-		_roomObj[8] = {0, 120, 245, 100, 25, 25, 0, 0};
-		_roomObj[9] = {0, 120, 342, 100, 36, 27, 0, 0};
-		_roomObj[10] = {0, 119, 298, 160, 63, 31, 0, 0};
+		_roomObj[8].type = 0;
+		_roomObj[8].objNum = 120;
+		_roomObj[8].xOffset = 245;
+		_roomObj[8].yOffset = 100;
+		_roomObj[8].width = 25;
+		_roomObj[8].height = 25;
+		_roomObj[8].depth = 0;
+		_roomObj[8].spriteNum = 0;
+
+		_roomObj[9].type = 0;
+		_roomObj[9].objNum = 120;
+		_roomObj[9].xOffset = 342;
+		_roomObj[9].yOffset = 100;
+		_roomObj[9].width = 36;
+		_roomObj[9].height = 27;
+		_roomObj[9].depth = 0;
+		_roomObj[9].spriteNum = 0;
+
+		_roomObj[10].type = 0;
+		_roomObj[10].objNum = 119;
+		_roomObj[10].xOffset = 298;
+		_roomObj[10].yOffset = 160;
+		_roomObj[10].width = 63;
+		_roomObj[10].height = 31;
+		_roomObj[10].depth = 0;
+		_roomObj[10].spriteNum = 0;
 	}
 }
 
