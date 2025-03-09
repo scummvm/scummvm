@@ -19,45 +19,21 @@
  *
  */
 
-#ifndef HODJNPODJ_METAGAME_MOVIE_H
-#define HODJNPODJ_METAGAME_MOVIE_H
+#ifndef HODJNPODJ_METAGAME_VIEWS_TITLE_MENU_H
+#define HODJNPODJ_METAGAME_VIEWS_TITLE_MENU_H
 
-#include "video/avi_decoder.h"
 #include "bagel/hodjnpodj/views/view.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-// Movie Identifiers
-#define MOVIE_ID_NONE   0
-#define MOVIE_ID_LOGO   1
-#define MOVIE_ID_TITLE  2
-#define MOVIE_ID_INTRO  3
-#define MOVIE_ID_ENDING 4
-
-#define LOGO_MOVIE      "video/logo.avi"
-#define TITLE_MOVIE     "video/title.avi"
-#define STARTUP_MOVIE   "video/intro.avi"
-#define HODJ_WIN_MOVIE  "video/hodj.avi"
-#define PODJ_WIN_MOVIE  "video/podj.avi"
-
-class Movie : public View {
-private:
-	Video::AVIDecoder _video;
-	int _movieId = 0;
-
+class TitleMenu : public View {
 public:
-	Movie();
-	virtual ~Movie() {
-	}
+	TitleMenu();
 
-	void close();
-	void draw() override;
 	bool msgOpen(const OpenMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-	bool tick() override;
+	void draw() override;
 };
 
 } // namespace Metagame

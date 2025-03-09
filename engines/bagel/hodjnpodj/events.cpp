@@ -66,7 +66,7 @@ void Events::runGame() {
 
 		if (ConfMan.getBool("skip_intro"))
 			// Original used /n cmd line parameter instead
-			addView("Title");
+			addView("TitleMenu");
 		else
 			// Start by showing the logo video
 			send("Movie", GameMessage("MOVIE", LOGO_MOVIE, MOVIE_ID_LOGO));

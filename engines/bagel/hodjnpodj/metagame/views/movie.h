@@ -19,28 +19,48 @@
  *
  */
 
-#ifndef HODJNPODJ_VIEWS_H
-#define HODJNPODJ_VIEWS_H
+#ifndef HODJNPODJ_METAGAME_VIEWS_MOVIE_H
+#define HODJNPODJ_METAGAME_VIEWS_MOVIE_H
 
-#include "bagel/hodjnpodj/views/rules.h"
-#include "bagel/hodjnpodj/views/main_menu.h"
-#include "bagel/hodjnpodj/views/message_box.h"
-#include "bagel/hodjnpodj/metagame/views/movie.h"
-#include "bagel/hodjnpodj/metagame/views/title_menu.h"
-#include "bagel/hodjnpodj/fuge/fuge.h"
+#include "video/avi_decoder.h"
+#include "bagel/hodjnpodj/views/view.h"
 
 namespace Bagel {
 namespace HodjNPodj {
+namespace Metagame {
 
-struct Views {
-	MainMenu _mainMenu;
-	MessageBox _messageBox;
-	Rules _rules;
-	Metagame::Movie _movie;
-	Metagame::TitleMenu _titleMenu;
-	Fuge::Fuge _fuge;
+// Movie Identifiers
+#define MOVIE_ID_NONE   0
+#define MOVIE_ID_LOGO   1
+#define MOVIE_ID_TITLE  2
+#define MOVIE_ID_INTRO  3
+#define MOVIE_ID_ENDING 4
+
+#define LOGO_MOVIE      "video/logo.avi"
+#define TITLE_MOVIE     "video/title.avi"
+#define STARTUP_MOVIE   "video/intro.avi"
+#define HODJ_WIN_MOVIE  "video/hodj.avi"
+#define PODJ_WIN_MOVIE  "video/podj.avi"
+
+class Movie : public View {
+private:
+	Video::AVIDecoder _video;
+	int _movieId = 0;
+
+public:
+	Movie();
+	virtual ~Movie() {
+	}
+
+	void close();
+	void draw() override;
+	bool msgOpen(const OpenMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
+	bool tick() override;
 };
 
+} // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel
 

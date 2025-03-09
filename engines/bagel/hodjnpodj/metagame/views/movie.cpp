@@ -21,7 +21,7 @@
 
 #include "common/file.h"
 #include "image/bmp.h"
-#include "bagel/hodjnpodj/metagame/movie.h"
+#include "bagel/hodjnpodj/metagame/views/movie.h"
 #include "bagel/metaengine.h"
 #include "bagel/hodjnpodj/events.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
@@ -62,7 +62,7 @@ void Movie::close() {
 		replaceView("Credits");
 
 	} else {
-		replaceView("Title");
+		replaceView("TitleMenu");
 	}
 }
 
