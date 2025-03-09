@@ -745,7 +745,7 @@ public:
 	/**
 	 * Fill a rect with a given color.
 	 */
-	void fillRect(Common::Rect r, uint32 color) {
+	void fillRect(const Common::Rect &r, uint32 color) {
 		_innerSurface.fillRect(r, color);
 		addDirtyRect(r);
 	}
