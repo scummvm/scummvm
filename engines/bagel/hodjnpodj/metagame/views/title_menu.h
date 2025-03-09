@@ -43,6 +43,7 @@ public:
 	TitleMenu();
 
 	bool msgOpen(const OpenMessage &msg) override;
+	bool msgClose(const CloseMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 };

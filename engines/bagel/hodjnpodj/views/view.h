@@ -64,6 +64,8 @@ public:
 	virtual ~View() {
 	}
 
+	void blackScreen();
+
 	void setBounds(const Common::Rect &r) override;
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;

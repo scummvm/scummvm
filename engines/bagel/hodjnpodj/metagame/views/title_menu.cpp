@@ -60,11 +60,18 @@ bool TitleMenu::msgOpen(const OpenMessage &msg) {
 	_background.copyFrom(surf);
 	_background.setTransparentColor(255);
 
+	blackScreen();
+
 	Common::Rect r(0, 0, surf->w, surf->h);
 	r.moveTo((GAME_WIDTH - surf->w) / 2, (GAME_HEIGHT - surf->h) / 2);
 	setBounds(r);
 
 	return View::msgOpen(msg);
+}
+
+bool TitleMenu::msgClose(const CloseMessage &msg) {
+	blackScreen();
+	return View::msgClose(msg);
 }
 
 bool TitleMenu::msgGame(const GameMessage &msg) {

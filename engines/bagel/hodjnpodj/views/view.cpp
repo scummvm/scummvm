@@ -51,6 +51,11 @@ UIElement *View::getElementAtPos(const Common::Point &pos) const {
 	return nullptr;
 }
 
+void View::blackScreen() {
+	GfxSurface s = getSurface(Common::Rect(0, 0, GAME_WIDTH, GAME_HEIGHT));
+	s.clear();
+}
+
 void View::setBounds(const Common::Rect &r) {
 	int deltaX = r.left - _bounds.left;
 	int deltaY = r.top - _bounds.top;
