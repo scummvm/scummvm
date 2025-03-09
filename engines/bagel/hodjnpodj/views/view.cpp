@@ -52,8 +52,7 @@ UIElement *View::getElementAtPos(const Common::Point &pos) const {
 }
 
 void View::blackScreen() {
-	GfxSurface s = getSurface(Common::Rect(0, 0, GAME_WIDTH, GAME_HEIGHT));
-	s.clear();
+	g_events->getScreen()->clear();
 }
 
 void View::setBounds(const Common::Rect &r) {

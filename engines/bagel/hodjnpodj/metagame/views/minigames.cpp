@@ -132,7 +132,7 @@ bool Minigames::msgMouseMove(const MouseMoveMessage &msg) {
 bool Minigames::msgMouseUp(const MouseUpMessage &msg) {
 	int selectedMinigame = getSelectedMinigame();
 	warning("TODO: Selection %d", selectedMinigame);
-	return Minigames::msgMouseUp(msg);
+	return View::msgMouseUp(msg);
 }
 
 void Minigames::draw() {
