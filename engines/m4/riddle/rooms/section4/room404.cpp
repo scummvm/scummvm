@@ -74,7 +74,7 @@ void Room404::init() {
 
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
-		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, 0,
+		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, false,
 			triggerMachineByHashCallback, "BUTLER talks rip");
 		sendWSMessage_10000(1, _butlerTalks, _butlerTalkLoop, 1, 1, -1,
 			_butlerTalkLoop, 1, 1, 0);
@@ -82,7 +82,7 @@ void Room404::init() {
 		break;
 
 	case 405:
-		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, 0,
+		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, false,
 			triggerMachineByHashCallback, "BUTLER talks rip");
 		sendWSMessage_10000(1, _butlerTalks, _butlerTalkLoop, 1, 1, -1,
 			_butlerTalkLoop, 1, 1, 0);
@@ -91,7 +91,7 @@ void Room404::init() {
 		break;
 
 	case 406:
-		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, 0,
+		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, false,
 			triggerMachineByHashCallback, "BUTLER talks rip");
 		sendWSMessage_10000(1, _butlerTalks, _butlerTalkLoop, 1, 1, -1,
 			_butlerTalkLoop, 1, 1, 0);
@@ -131,7 +131,7 @@ void Room404::daemon() {
 
 	case 21:
 		sendWSMessage_60000(_machine1);
-		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, 0,
+		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, false,
 			triggerMachineByHashCallback, "BUTLER talks rip");
 		sendWSMessage_10000(1, _butlerTalks, _butlerTurns7, 1, 10, 23,
 			_butlerTalkLoop, 1, 1, 0);
@@ -189,11 +189,12 @@ void Room404::daemon() {
 		terminateMachineAndNull(_butlerTalks);
 		_machine1 = triggerMachineByHash_3000(8, 10, *NORMAL_DIRS, *SHADOW_DIRS,
 			390, 332, 9, triggerMachineByHashCallback3000, "BUTLER_walker");
+		sendWSMessage_10000(_machine1, 58, 347, 1, -1, true);
 		kernel_timing_trigger(270, 33);
 		break;
 
 	case 33:
-		ws_walk(_G(my_walker), 58, 347, nullptr, -1, 9);
+		ws_walk(_G(my_walker), 58, 347, nullptr, -1, 9, true);
 		kernel_timing_trigger(90, 34);
 		break;
 
@@ -213,7 +214,7 @@ void Room404::daemon() {
 
 	case 42:
 		sendWSMessage_60000(_machine1);
-		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, 0,
+		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, false,
 			triggerMachineByHashCallback, "BUTLER talks rip");
 		sendWSMessage_10000(1, _butlerTalks, _butlerTurns7, 1, 10, 43,
 			_butlerTalkLoop, 1, 1, 0);
@@ -392,10 +393,9 @@ void Room404::daemon() {
 }
 
 void Room404::pre_parser() {
-	bool takeFlag = player_said("take");
-	bool lookFlag = player_said_any("look", "look at");
-	bool useFlag = player_said_any("push", "pull", "gear",
-		"open", "close");
+	const bool takeFlag = player_said("take");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if ((player_said("SITTING ROOM") && (lookFlag || useFlag || takeFlag)) ||
 			(lookFlag && player_said(" "))) {
@@ -413,12 +413,11 @@ void Room404::pre_parser() {
 }
 
 void Room404::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool talkFlag = player_said_any("talk", "talk to");
-	bool takeFlag = player_said("take");
-	bool enterFlag = player_said("enter");
-	bool useFlag = player_said_any("push", "pull", "gear",
-		"open", "close");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool talkFlag = player_said_any("talk", "talk to");
+	const bool takeFlag = player_said("take");
+	const bool enterFlag = player_said("enter");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("conv404a")) {
 		if (_G(kernel).trigger == 1) {
@@ -568,7 +567,7 @@ void Room404::parser() {
 }
 
 void Room404::conv404a() {
-	int who = conv_whos_talking();
+	const int who = conv_whos_talking();
 	_currentNode = conv_current_node();
 	const char *sound = conv_sound_to_play();
 
