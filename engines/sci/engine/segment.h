@@ -29,7 +29,7 @@
 #include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/util.h"
 #ifdef ENABLE_SCI32
-#include "sci/graphics/palette32.h"
+#include "sci/graphics/scipalette32.h"
 #endif
 
 namespace Sci {

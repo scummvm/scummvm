@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_PALETTE32_H
-#define SCI_GRAPHICS_PALETTE32_H
+#ifndef SCI_GRAPHICS_SCIPALETTE32_H
+#define SCI_GRAPHICS_SCIPALETTE32_H
 
 #include "common/ptr.h"
 
@@ -673,4 +673,4 @@ private:
 
 } // End of namespace Sci
 
-#endif // SCI_GRAPHICS_PALETTE32_H
+#endif // SCI_GRAPHICS_SCIPALETTE32_H

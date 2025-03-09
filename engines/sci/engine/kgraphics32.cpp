@@ -38,7 +38,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls16.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/scipalette.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
@@ -53,7 +53,7 @@
 #include "sci/graphics/scifont.h"	// TODO: remove once kBitmap is moved in a separate class
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/paint32.h"
-#include "sci/graphics/palette32.h"
+#include "sci/graphics/scipalette32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/text32.h"
 #include "sci/graphics/transitions32.h"
