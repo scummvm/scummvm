@@ -233,6 +233,9 @@ bool Room::load() {
 		return false;
 	}
 
+	if (g_engine->isDosDemo()) {
+		dosDemoFixupRoomObjects();
+	}
 	for (auto &roomObj : _roomObj) {
 		if (roomObj.objNum < 42 && g_engine->_objectVar.getMoveObjectRoom(roomObj.objNum) != 255) {
 			removeObjectFromRoom(roomObj.objNum);
@@ -280,6 +283,16 @@ bool Room::load() {
 	}
 	return true;
 }
+
+void Room::dosDemoFixupRoomObjects() {
+	if (_roomNumber == 45) {
+		// The dos demo is missing the object entries for the life leech victims and the force field
+		_roomObj[8] = {0, 120, 245, 100, 25, 25, 0, 0};
+		_roomObj[9] = {0, 120, 342, 100, 36, 27, 0, 0};
+		_roomObj[10] = {0, 119, 298, 160, 63, 31, 0, 0};
+	}
+}
+
 
 Common::String Room::stripSpaces(const Common::String &source) {
 	Common::String out;

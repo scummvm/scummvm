@@ -1933,7 +1933,7 @@ void DarkseedEngine::lookCode(int objNum) {
 	if (objNum == 103) {
 		printTime();
 	}
-	if (_cursor.getY() > 39 && objNum != 77 && !isDosDemo()) {
+	if (_cursor.getY() > 39 && objNum != 77 && (!isDosDemo() || objNum == 120)) {
 		int eyeTosIdx = _objectVar.getEyeDescriptionTosIdx(objNum);
 		if (eyeTosIdx < 979 && eyeTosIdx != 0)  {
 			_console->printTosText(eyeTosIdx);

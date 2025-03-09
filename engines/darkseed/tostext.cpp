@@ -52,6 +52,9 @@ void TosText::loadDemoTosEntries() {
 	_textArray[13] = "I need an asprin or something.";
 
 	_textArray[798] = "You can't touch the horizon!";
+
+	_textArray[802] = "You see the unfortunate victims of the life leech.";
+
 	_textArray[972] = "Holding ";
 }
 

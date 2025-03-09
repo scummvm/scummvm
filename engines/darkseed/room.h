@@ -117,6 +117,7 @@ private:
 	static Common::String stripSpaces(const Common::String &source);
 	void drawTrunk();
 	void advanceLocAnimFrame(int roomObjIdx);
+	void dosDemoFixupRoomObjects();
 };
 
 } // namespace Darkseed
