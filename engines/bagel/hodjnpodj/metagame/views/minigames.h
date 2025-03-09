@@ -19,30 +19,30 @@
  *
  */
 
-#ifndef HODJNPODJ_VIEWS_H
-#define HODJNPODJ_VIEWS_H
+#ifndef HODJNPODJ_METAGAME_VIEWS_MINIGAMES_H
+#define HODJNPODJ_METAGAME_VIEWS_MINIGAMES_H
 
-#include "bagel/hodjnpodj/views/rules.h"
-#include "bagel/hodjnpodj/views/main_menu.h"
-#include "bagel/hodjnpodj/views/message_box.h"
-#include "bagel/hodjnpodj/metagame/views/minigames.h"
-#include "bagel/hodjnpodj/metagame/views/movie.h"
-#include "bagel/hodjnpodj/metagame/views/title_menu.h"
-#include "bagel/hodjnpodj/fuge/fuge.h"
+#include "bagel/hodjnpodj/views/view.h"
+#include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
+namespace Metagame {
 
-struct Views {
-	MainMenu _mainMenu;
-	MessageBox _messageBox;
-	Rules _rules;
-	Metagame::Minigames _minigames;
-	Metagame::Movie _movie;
-	Metagame::TitleMenu _titleMenu;
-	Fuge::Fuge _fuge;
+class Minigames : public View {
+private:
+	GfxSurface _background;
+
+public:
+	Minigames();
+
+	bool msgOpen(const OpenMessage &msg) override;
+	bool msgClose(const CloseMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
+	void draw() override;
 };
 
+} // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel
 

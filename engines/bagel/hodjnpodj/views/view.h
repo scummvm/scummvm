@@ -23,6 +23,7 @@
 #define HODJNPODJ_VIEWS_VIEW_H
 
 #include "bagel/hodjnpodj/events.h"
+#include "bagel/hodjnpodj/libs/dialog_unit.h"
 
 namespace Bagel {
 namespace HodjNPodj {

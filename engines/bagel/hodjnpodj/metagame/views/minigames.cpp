@@ -21,9 +21,7 @@
 
 #include "common/file.h"
 #include "image/bmp.h"
-#include "bagel/hodjnpodj/metagame/views/title_menu.h"
-#include "bagel/hodjnpodj/metagame/views/movie.h"
-#include "bagel/hodjnpodj/libs/dialog_unit.h"
+#include "bagel/hodjnpodj/metagame/views/minigames.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
@@ -33,22 +31,10 @@ namespace Metagame {
 #define	BACKGROUND_BMP		"meta/art/mlscroll.bmp"
 #define FONT_SIZE 12
 
-TitleMenu::TitleMenu() : View("TitleMenu"),
-	_newGame("NewGame", "&Start a New Board Game",
-		DialogRect(FONT_SIZE, 46, 29, 108, 15), this),
-	_restoreGame("RestoreGame", "&Restore an Old Board Game",
-		DialogRect(FONT_SIZE, 46, 47, 108, 15), this),
-	_standAlone("StandAlone", "&Play Mini-Games Stand-Alone",
-		DialogRect(FONT_SIZE, 46, 65, 108, 15), this),
-	_grandTour("GrandTour", "&Take the Grand Tour",
-		DialogRect(FONT_SIZE, 46, 83, 108, 15), this),
-	_viewFairyTale("RestartMovie", "&View the Fairy Tale",
-		DialogRect(FONT_SIZE, 46, 101, 108, 15), this),
-	_quit("Quit", "&Quit",
-		DialogRect(FONT_SIZE, 46, 119, 108, 15), this) {
+Minigames::Minigames() : View("Minigames") {
 }
 
-bool TitleMenu::msgOpen(const OpenMessage &msg) {
+bool Minigames::msgOpen(const OpenMessage &msg) {
 	g_events->showCursor(true);
 
 	Common::File f;
@@ -69,31 +55,16 @@ bool TitleMenu::msgOpen(const OpenMessage &msg) {
 	return View::msgOpen(msg);
 }
 
-bool TitleMenu::msgClose(const CloseMessage &msg) {
-	blackScreen();
+bool Minigames::msgClose(const CloseMessage &msg) {
 	return View::msgClose(msg);
 }
 
-bool TitleMenu::msgGame(const GameMessage &msg) {
-	if (msg._name == "BUTTON") {
-		if (msg._stringValue == "StandAlone") {
-			replaceView("Minigames");
-
-		} else if (msg._stringValue == "RestartMovie") {
-			send("Movie", GameMessage("MOVIE", STARTUP_MOVIE, MOVIE_ID_INTRO));
-
-		} else if (msg._stringValue == "Quit") {
-			g_engine->stopBackgroundMidi();
-			g_engine->quitGame();
-		}
-
-		return true;
-	}
-
+bool Minigames::msgGame(const GameMessage &msg) {
+	
 	return false;
 }
 
-void TitleMenu::draw() {
+void Minigames::draw() {
 	GfxSurface s = getSurface();
 	s.setFontSize(FONT_SIZE);
 
