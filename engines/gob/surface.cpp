@@ -1013,8 +1013,6 @@ ImageType Surface::identifyImage(Common::SeekableReadStream &stream) {
 	// Check width, height and bpp for sane values
 	if ((width == 0) || (height == 0) || (bpp == 0))
 		return kImageTypeNone;
-	if ((width > 800) || (height > 600))
-		return kImageTypeNone;
 	if ((bpp != 8) && (bpp != 16) && (bpp != 24) && (bpp != 32))
 		return kImageTypeNone;
 
