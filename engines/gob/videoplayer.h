@@ -106,6 +106,8 @@ public:
 
 		int slot; ///< Explicit slot index (-1 = auto).
 
+		bool noWaitSound;
+
 		Properties();
 	};
 
@@ -149,6 +151,7 @@ public:
 	uint16 getDefaultX       (int slot = 0) const;
 	uint16 getDefaultY       (int slot = 0) const;
 	uint32 getFlags          (int slot = 0) const;
+	uint16 getSoundFlags     (int slot = 0) const;
 	uint32 getVideoBufferSize(int slot = 0) const;
 	bool   hasVideo          (int slot = 0) const;
 
