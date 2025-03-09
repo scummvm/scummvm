@@ -560,10 +560,7 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 
 void RasterizationDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
 	TinyGL::GLContext *c = gl_get_context();
-
-	// set scissor rectangle here
-	c->fb->setScissorRectangle(c->fb->getScissorTestEnabled() ? c->fb->getScissorTestRectangle() : clippingRectangle);
-
+	c->fb->setScissorRectangle(clippingRectangle);
 	execute(restoreState);
 	c->fb->resetScissorRectangle();
 }

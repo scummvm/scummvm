@@ -396,7 +396,10 @@ private:
 	}
 
 	FORCEINLINE bool scissorPixel(int x, int y) {
-		return !_clipRectangle.contains(x, y);
+		Common::Rect r = _clipRectangle;
+	    if(_enableScissorTest) r = _scissorTestRectangle.findIntersectingRect(_clipRectangle);
+
+		return !r.contains(x, y);
 	}
 
 public:
