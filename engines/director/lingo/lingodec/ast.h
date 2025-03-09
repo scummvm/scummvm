@@ -64,10 +64,10 @@ struct Node {
 	bool isLabel;
 	bool isLoop;
 	Node *parent;
-	uint32 _startOffset;
-	uint32 _endOffset;
+	int32 _startOffset;
+	int32 _endOffset;
 
-	Node(NodeType t, uint32 offset) : type(t), isExpression(false), isStatement(false), isLabel(false), isLoop(false), parent(nullptr), _startOffset(offset), _endOffset(offset) {}
+	Node(NodeType t, int32 offset) : type(t), isExpression(false), isStatement(false), isLabel(false), isLoop(false), parent(nullptr), _startOffset(offset), _endOffset(offset) {}
 	virtual ~Node() {}
 	virtual void accept(NodeVisitor& visitor) const = 0;
 	virtual Common::SharedPtr<Datum> getValue();
@@ -79,7 +79,7 @@ struct Node {
 /* ExprNode */
 
 struct ExprNode : Node {
-	ExprNode(NodeType t, uint32 offset) : Node(t, offset) {
+	ExprNode(NodeType t, int32 offset) : Node(t, offset) {
 		isExpression = true;
 	}
 };
@@ -87,7 +87,7 @@ struct ExprNode : Node {
 /* StmtNode */
 
 struct StmtNode : Node {
-	StmtNode(NodeType t, uint32 offset) : Node(t, offset) {
+	StmtNode(NodeType t, int32 offset) : Node(t, offset) {
 		isStatement = true;
 	}
 };
@@ -95,7 +95,7 @@ struct StmtNode : Node {
 /* LabelNode */
 
 struct LabelNode : Node {
-	LabelNode(NodeType t, uint32 offset) : Node(t, offset) {
+	LabelNode(NodeType t, int32 offset) : Node(t, offset) {
 		isLabel = true;
 	}
 };
@@ -105,7 +105,7 @@ struct LabelNode : Node {
 struct LoopNode : StmtNode {
 	uint32 startIndex;
 
-	LoopNode(NodeType t, uint32 startIndex_, uint32 offset) : StmtNode(t, offset), startIndex(startIndex_) {
+	LoopNode(NodeType t, uint32 startIndex_, int32 offset) : StmtNode(t, offset), startIndex(startIndex_) {
 		isLoop = true;
 	}
 };
@@ -113,7 +113,7 @@ struct LoopNode : StmtNode {
 /* ErrorNode */
 
 struct ErrorNode : ExprNode {
-	explicit ErrorNode(uint32 offset) : ExprNode(kErrorNode, offset) {}
+	explicit ErrorNode(int32 offset) : ExprNode(kErrorNode, offset) {}
 	bool hasSpaces(bool dot) override;
 	void accept(NodeVisitor &visitor) const override;
 };
@@ -123,7 +123,7 @@ struct ErrorNode : ExprNode {
 struct CommentNode : Node {
 	Common::String text;
 
-	CommentNode(uint32 offset, Common::String t) : Node(kCommentNode, offset), text(t) {}
+	CommentNode(int32 offset, Common::String t) : Node(kCommentNode, offset), text(t) {}
 	void accept(NodeVisitor &visitor) const override;
 };
 
@@ -132,7 +132,7 @@ struct CommentNode : Node {
 struct LiteralNode : ExprNode {
 	Common::SharedPtr<Datum> value;
 
-	LiteralNode(uint32 offset, Common::SharedPtr<Datum> d) : ExprNode(kLiteralNode, offset) {
+	LiteralNode(int32 offset, Common::SharedPtr<Datum> d) : ExprNode(kLiteralNode, offset) {
 		value = Common::move(d);
 	}
 	Common::SharedPtr<Datum> getValue() override;
@@ -146,10 +146,10 @@ struct BlockNode : Node {
 	Common::Array<Common::SharedPtr<Node>> children;
 
 	// for use during translation:
-	uint32 endPos;
+	int32 endPos = -1;
 	CaseLabelNode *currentCaseLabel = nullptr;
 
-	explicit BlockNode(uint32 offset) : Node(kBlockNode, offset), endPos(-1) {}
+	explicit BlockNode(int32 offset) : Node(kBlockNode, offset) {}
 	void addChild(Common::SharedPtr<Node> child);
 	void accept(NodeVisitor &visitor) const override;
 };
@@ -160,7 +160,7 @@ struct HandlerNode : Node {
 	Handler *handler;
 	Common::SharedPtr<BlockNode> block;
 
-	HandlerNode(uint32 offset, Handler *h)
+	HandlerNode(int32 offset, Handler *h)
 		: Node(kHandlerNode, offset), handler(h) {
 		block = Common::SharedPtr<BlockNode>(new BlockNode(offset));
 		block->parent = this;
@@ -171,7 +171,7 @@ struct HandlerNode : Node {
 /* ExitStmtNode */
 
 struct ExitStmtNode : StmtNode {
-	explicit ExitStmtNode(uint32 offset) : StmtNode(kExitStmtNode, offset) {}
+	explicit ExitStmtNode(int32 offset) : StmtNode(kExitStmtNode, offset) {}
 	void accept(NodeVisitor &visitor) const override;
 };
 
@@ -180,7 +180,7 @@ struct ExitStmtNode : StmtNode {
 struct InverseOpNode : ExprNode {
 	Common::SharedPtr<Node> operand;
 
-	InverseOpNode(uint32 offset, Common::SharedPtr<Node> o) : ExprNode(kInverseOpNode, offset) {
+	InverseOpNode(int32 offset, Common::SharedPtr<Node> o) : ExprNode(kInverseOpNode, offset) {
 		operand = Common::move(o);
 		operand->parent = this;
 	}
@@ -192,7 +192,7 @@ struct InverseOpNode : ExprNode {
 struct NotOpNode : ExprNode {
 	Common::SharedPtr<Node> operand;
 
-	NotOpNode(uint32 offset, Common::SharedPtr<Node> o) : ExprNode(kNotOpNode, offset) {
+	NotOpNode(int32 offset, Common::SharedPtr<Node> o) : ExprNode(kNotOpNode, offset) {
 		operand = Common::move(o);
 		operand->parent = this;
 	}
@@ -206,7 +206,7 @@ struct BinaryOpNode : ExprNode {
 	Common::SharedPtr<Node> left;
 	Common::SharedPtr<Node> right;
 
-	BinaryOpNode(uint32 offset, OpCode op, Common::SharedPtr<Node> a, Common::SharedPtr<Node> b)
+	BinaryOpNode(int32 offset, OpCode op, Common::SharedPtr<Node> a, Common::SharedPtr<Node> b)
 		: ExprNode(kBinaryOpNode, offset), opcode(op) {
 		left = Common::move(a);
 		left->parent = this;
@@ -225,7 +225,7 @@ struct ChunkExprNode : ExprNode {
 	Common::SharedPtr<Node> last;
 	Common::SharedPtr<Node> string;
 
-	ChunkExprNode(uint32 offset, ChunkExprType t, Common::SharedPtr<Node> a, Common::SharedPtr<Node> b, Common::SharedPtr<Node> s)
+	ChunkExprNode(int32 offset, ChunkExprType t, Common::SharedPtr<Node> a, Common::SharedPtr<Node> b, Common::SharedPtr<Node> s)
 		: ExprNode(kChunkExprNode, offset), type(t) {
 		first = Common::move(a);
 		first->parent = this;
@@ -242,7 +242,7 @@ struct ChunkExprNode : ExprNode {
 struct ChunkHiliteStmtNode : StmtNode {
 	Common::SharedPtr<Node> chunk;
 
-	ChunkHiliteStmtNode(uint32 offset, Common::SharedPtr<Node> c) : StmtNode(kChunkHiliteStmtNode, offset) {
+	ChunkHiliteStmtNode(int32 offset, Common::SharedPtr<Node> c) : StmtNode(kChunkHiliteStmtNode, offset) {
 		chunk = Common::move(c);
 		chunk->parent = this;
 	}
@@ -254,7 +254,7 @@ struct ChunkHiliteStmtNode : StmtNode {
 struct ChunkDeleteStmtNode : StmtNode {
 	Common::SharedPtr<Node> chunk;
 
-	ChunkDeleteStmtNode(uint32 offset, Common::SharedPtr<Node> c) : StmtNode(kChunkDeleteStmtNode, offset) {
+	ChunkDeleteStmtNode(int32 offset, Common::SharedPtr<Node> c) : StmtNode(kChunkDeleteStmtNode, offset) {
 		chunk = Common::move(c);
 		chunk->parent = this;
 	}
@@ -267,7 +267,7 @@ struct SpriteIntersectsExprNode : ExprNode {
 	Common::SharedPtr<Node> firstSprite;
 	Common::SharedPtr<Node> secondSprite;
 
-	SpriteIntersectsExprNode(uint32 offset, Common::SharedPtr<Node> a, Common::SharedPtr<Node> b)
+	SpriteIntersectsExprNode(int32 offset, Common::SharedPtr<Node> a, Common::SharedPtr<Node> b)
 		: ExprNode(kSpriteIntersectsExprNode, offset) {
 		firstSprite = Common::move(a);
 		firstSprite->parent = this;
@@ -283,7 +283,7 @@ struct SpriteWithinExprNode : ExprNode {
 	Common::SharedPtr<Node> firstSprite;
 	Common::SharedPtr<Node> secondSprite;
 
-	SpriteWithinExprNode(uint32 offset, Common::SharedPtr<Node> a, Common::SharedPtr<Node> b)
+	SpriteWithinExprNode(int32 offset, Common::SharedPtr<Node> a, Common::SharedPtr<Node> b)
 		: ExprNode(kSpriteWithinExprNode, offset) {
 		firstSprite = Common::move(a);
 		firstSprite->parent = this;
@@ -300,7 +300,7 @@ struct MemberExprNode : ExprNode {
 	Common::SharedPtr<Node> memberID;
 	Common::SharedPtr<Node> castID;
 
-	MemberExprNode(uint32 offset, Common::String type_, Common::SharedPtr<Node> memberID_, Common::SharedPtr<Node> castID_)
+	MemberExprNode(int32 offset, Common::String type_, Common::SharedPtr<Node> memberID_, Common::SharedPtr<Node> castID_)
 		: ExprNode(kMemberExprNode, offset), type(type_) {
 		this->memberID = Common::move(memberID_);
 		this->memberID->parent = this;
@@ -318,7 +318,7 @@ struct MemberExprNode : ExprNode {
 struct VarNode : ExprNode {
 	Common::String varName;
 
-	VarNode(uint32 offset, Common::String v) : ExprNode(kVarNode, offset), varName(v) {}
+	VarNode(int32 offset, Common::String v) : ExprNode(kVarNode, offset), varName(v) {}
 	bool hasSpaces(bool dot) override;
 	void accept(NodeVisitor &visitor) const override;
 };
@@ -330,7 +330,7 @@ struct AssignmentStmtNode : StmtNode {
 	Common::SharedPtr<Node> value;
 	bool forceVerbose;
 
-	AssignmentStmtNode(uint32 offset, Common::SharedPtr<Node> var, Common::SharedPtr<Node> val, bool forceVerbose_ = false)
+	AssignmentStmtNode(int32 offset, Common::SharedPtr<Node> var, Common::SharedPtr<Node> val, bool forceVerbose_ = false)
 		: StmtNode(kAssignmentStmtNode, offset), forceVerbose(forceVerbose_) {
 		variable = Common::move(var);
 		variable->parent = this;
@@ -349,7 +349,7 @@ struct IfStmtNode : StmtNode {
 	Common::SharedPtr<BlockNode> block1;
 	Common::SharedPtr<BlockNode> block2;
 
-	IfStmtNode(uint32 offset, Common::SharedPtr<Node> c) : StmtNode(kIfStmtNode, offset), hasElse(false) {
+	IfStmtNode(int32 offset, Common::SharedPtr<Node> c) : StmtNode(kIfStmtNode, offset), hasElse(false) {
 		condition = Common::move(c);
 		condition->parent = this;
 		block1 = Common::SharedPtr<BlockNode>(new BlockNode(offset));
@@ -366,7 +366,7 @@ struct RepeatWhileStmtNode : LoopNode {
 	Common::SharedPtr<Node> condition;
 	Common::SharedPtr<BlockNode> block;
 
-	RepeatWhileStmtNode(uint32 startIndex_, Common::SharedPtr<Node> c, uint32 offset)
+	RepeatWhileStmtNode(uint32 startIndex_, Common::SharedPtr<Node> c, int32 offset)
 		: LoopNode(kRepeatWhileStmtNode, startIndex_, offset) {
 		condition = Common::move(c);
 		condition->parent = this;
@@ -383,7 +383,7 @@ struct RepeatWithInStmtNode : LoopNode {
 	Common::SharedPtr<Node> list;
 	Common::SharedPtr<BlockNode> block;
 
-	RepeatWithInStmtNode(uint32 startIndex_, Common::String v, Common::SharedPtr<Node> l, uint32 offset)
+	RepeatWithInStmtNode(uint32 startIndex_, Common::String v, Common::SharedPtr<Node> l, int32 offset)
 		: LoopNode(kRepeatWithInStmtNode, startIndex_, offset) {
 		varName = v;
 		list = Common::move(l);
@@ -427,7 +427,7 @@ struct CaseLabelNode : LabelNode {
 	Common::SharedPtr<CaseLabelNode> nextLabel;
 	Common::SharedPtr<BlockNode> block;
 
-	CaseLabelNode(uint32 offset, Common::SharedPtr<Node> v, CaseExpect e) : LabelNode(kCaseLabelNode, offset), expect(e) {
+	CaseLabelNode(int32 offset, Common::SharedPtr<Node> v, CaseExpect e) : LabelNode(kCaseLabelNode, offset), expect(e) {
 		value = Common::move(v);
 		value->parent = this;
 	}
@@ -439,7 +439,7 @@ struct CaseLabelNode : LabelNode {
 struct OtherwiseNode : LabelNode {
 	Common::SharedPtr<BlockNode> block;
 
-	explicit OtherwiseNode(uint32 offset) : LabelNode(kOtherwiseNode, offset) {
+	explicit OtherwiseNode(int32 offset) : LabelNode(kOtherwiseNode, offset) {
 		block = Common::SharedPtr<BlockNode>(new BlockNode(offset));
 		block->parent = this;
 	}
@@ -449,7 +449,7 @@ struct OtherwiseNode : LabelNode {
 /* EndCaseNode */
 
 struct EndCaseNode : LabelNode {
-	explicit EndCaseNode(uint32 offset) : LabelNode(kEndCaseNode, offset) {}
+	explicit EndCaseNode(int32 offset) : LabelNode(kEndCaseNode, offset) {}
 	void accept(NodeVisitor &visitor) const override;
 };
 
@@ -464,7 +464,7 @@ struct CaseStmtNode : StmtNode {
 	int32 endPos = -1;
 	int32 potentialOtherwisePos = -1;
 
-	CaseStmtNode(uint32 offset, Common::SharedPtr<Node> v) : StmtNode(kCaseStmtNode, offset) {
+	CaseStmtNode(int32 offset, Common::SharedPtr<Node> v) : StmtNode(kCaseStmtNode, offset) {
 		value = Common::move(v);
 		value->parent = this;
 	}
@@ -478,7 +478,7 @@ struct TellStmtNode : StmtNode {
 	Common::SharedPtr<Node> window;
 	Common::SharedPtr<BlockNode> block;
 
-	TellStmtNode(uint32 offset, Common::SharedPtr<Node> w) : StmtNode(kTellStmtNode, offset) {
+	TellStmtNode(int32 offset, Common::SharedPtr<Node> w) : StmtNode(kTellStmtNode, offset) {
 		window = Common::move(w);
 		window->parent = this;
 		block = Common::SharedPtr<BlockNode>(new BlockNode(offset));
@@ -493,7 +493,7 @@ struct SoundCmdStmtNode : StmtNode {
 	Common::String cmd;
 	Common::SharedPtr<Node> argList;
 
-	SoundCmdStmtNode(uint32 offset, Common::String c, Common::SharedPtr<Node> a) : StmtNode(kSoundCmdStmtNode, offset) {
+	SoundCmdStmtNode(int32 offset, Common::String c, Common::SharedPtr<Node> a) : StmtNode(kSoundCmdStmtNode, offset) {
 		cmd = c;
 		argList = Common::move(a);
 		argList->parent = this;
@@ -506,7 +506,7 @@ struct SoundCmdStmtNode : StmtNode {
 struct PlayCmdStmtNode : StmtNode {
 	Common::SharedPtr<Node> argList;
 
-	PlayCmdStmtNode(uint32 offset, Common::SharedPtr<Node> a) : StmtNode(kPlayCmdStmtNode, offset) {
+	PlayCmdStmtNode(int32 offset, Common::SharedPtr<Node> a) : StmtNode(kPlayCmdStmtNode, offset) {
 		argList = Common::move(a);
 		argList->parent = this;
 	}
@@ -519,7 +519,7 @@ struct CallNode : Node {
 	Common::String name;
 	Common::SharedPtr<Node> argList;
 
-	CallNode(uint32 offset, Common::String n, Common::SharedPtr<Node> a) : Node(kCallNode, offset) {
+	CallNode(int32 offset, Common::String n, Common::SharedPtr<Node> a) : Node(kCallNode, offset) {
 		name = n;
 		argList = Common::move(a);
 		argList->parent = this;
@@ -540,7 +540,7 @@ struct ObjCallNode : Node {
 	Common::String name;
 	Common::SharedPtr<Node> argList;
 
-	ObjCallNode(uint32 offset, Common::String n, Common::SharedPtr<Node> a) : Node(kObjCallNode, offset) {
+	ObjCallNode(int32 offset, Common::String n, Common::SharedPtr<Node> a) : Node(kObjCallNode, offset) {
 		name = n;
 		argList = Common::move(a);
 		argList->parent = this;
@@ -559,7 +559,7 @@ struct ObjCallV4Node : Node {
 	Common::SharedPtr<Node> obj;
 	Common::SharedPtr<Node> argList;
 
-	ObjCallV4Node(uint32 offset, Common::SharedPtr<Node> o, Common::SharedPtr<Node> a) : Node(kObjCallV4Node, offset) {
+	ObjCallV4Node(int32 offset, Common::SharedPtr<Node> o, Common::SharedPtr<Node> a) : Node(kObjCallV4Node, offset) {
 		obj = o;
 		argList = Common::move(a);
 		argList->parent = this;
@@ -577,7 +577,7 @@ struct ObjCallV4Node : Node {
 struct TheExprNode : ExprNode {
 	Common::String prop;
 
-	TheExprNode(uint32 offset, Common::String p) : ExprNode(kTheExprNode, offset), prop(p) {}
+	TheExprNode(int32 offset, Common::String p) : ExprNode(kTheExprNode, offset), prop(p) {}
 	void accept(NodeVisitor &visitor) const override;
 };
 
@@ -587,7 +587,7 @@ struct LastStringChunkExprNode : ExprNode {
 	ChunkExprType type;
 	Common::SharedPtr<Node> obj;
 
-	LastStringChunkExprNode(uint32 offset, ChunkExprType t, Common::SharedPtr<Node> o)
+	LastStringChunkExprNode(int32 offset, ChunkExprType t, Common::SharedPtr<Node> o)
 		: ExprNode(kLastStringChunkExprNode, offset), type(t) {
 		obj = Common::move(o);
 		obj->parent = this;
@@ -601,7 +601,7 @@ struct StringChunkCountExprNode : ExprNode {
 	ChunkExprType type;
 	Common::SharedPtr<Node> obj;
 
-	StringChunkCountExprNode(uint32 offset, ChunkExprType t, Common::SharedPtr<Node> o)
+	StringChunkCountExprNode(int32 offset, ChunkExprType t, Common::SharedPtr<Node> o)
 		: ExprNode(kStringChunkCountExprNode, offset), type(t) {
 		obj = Common::move(o);
 		obj->parent = this;
@@ -615,7 +615,7 @@ struct MenuPropExprNode : ExprNode {
 	Common::SharedPtr<Node> menuID;
 	unsigned int prop;
 
-	MenuPropExprNode(uint32 offset, Common::SharedPtr<Node> m, unsigned int p)
+	MenuPropExprNode(int32 offset, Common::SharedPtr<Node> m, unsigned int p)
 		: ExprNode(kMenuPropExprNode, offset), prop(p) {
 		menuID = Common::move(m);
 		menuID->parent = this;
@@ -630,7 +630,7 @@ struct MenuItemPropExprNode : ExprNode {
 	Common::SharedPtr<Node> itemID;
 	unsigned int prop;
 
-	MenuItemPropExprNode(uint32 offset, Common::SharedPtr<Node> m, Common::SharedPtr<Node> i, unsigned int p)
+	MenuItemPropExprNode(int32 offset, Common::SharedPtr<Node> m, Common::SharedPtr<Node> i, unsigned int p)
 		: ExprNode(kMenuItemPropExprNode, offset), prop(p) {
 		menuID = Common::move(m);
 		menuID->parent = this;
@@ -646,7 +646,7 @@ struct SoundPropExprNode : ExprNode {
 	Common::SharedPtr<Node> soundID;
 	unsigned int prop;
 
-	SoundPropExprNode(uint32 offset, Common::SharedPtr<Node> s, unsigned int p)
+	SoundPropExprNode(int32 offset, Common::SharedPtr<Node> s, unsigned int p)
 		: ExprNode(kSoundPropExprNode, offset), prop(p) {
 		soundID = Common::move(s);
 		soundID->parent = this;
@@ -660,7 +660,7 @@ struct SpritePropExprNode : ExprNode {
 	Common::SharedPtr<Node> spriteID;
 	unsigned int prop;
 
-	SpritePropExprNode(uint32 offset, Common::SharedPtr<Node> s, unsigned int p)
+	SpritePropExprNode(int32 offset, Common::SharedPtr<Node> s, unsigned int p)
 		: ExprNode(kSpritePropExprNode, offset), prop(p) {
 		spriteID = Common::move(s);
 		spriteID->parent = this;
@@ -674,7 +674,7 @@ struct ThePropExprNode : ExprNode {
 	Common::SharedPtr<Node> obj;
 	Common::String prop;
 
-	ThePropExprNode(uint32 offset, Common::SharedPtr<Node> o, Common::String p)
+	ThePropExprNode(int32 offset, Common::SharedPtr<Node> o, Common::String p)
 		: ExprNode(kThePropExprNode, offset), prop(p) {
 		obj = Common::move(o);
 		obj->parent = this;
@@ -688,7 +688,7 @@ struct ObjPropExprNode : ExprNode {
 	Common::SharedPtr<Node> obj;
 	Common::String prop;
 
-	ObjPropExprNode(uint32 offset, Common::SharedPtr<Node> o, Common::String p)
+	ObjPropExprNode(int32 offset, Common::SharedPtr<Node> o, Common::String p)
 		: ExprNode(kObjPropExprNode, offset), prop(p) {
 		obj = Common::move(o);
 		obj->parent = this;
@@ -703,7 +703,7 @@ struct ObjBracketExprNode : ExprNode {
 	Common::SharedPtr<Node> obj;
 	Common::SharedPtr<Node> prop;
 
-	ObjBracketExprNode(uint32 offset, Common::SharedPtr<Node> o, Common::SharedPtr<Node> p)
+	ObjBracketExprNode(int32 offset, Common::SharedPtr<Node> o, Common::SharedPtr<Node> p)
 		: ExprNode(kObjBracketExprNode, offset) {
 		obj = Common::move(o);
 		obj->parent = this;
@@ -722,7 +722,7 @@ struct ObjPropIndexExprNode : ExprNode {
 	Common::SharedPtr<Node> index;
 	Common::SharedPtr<Node> index2;
 
-	ObjPropIndexExprNode(uint32 offset, Common::SharedPtr<Node> o, Common::String p, Common::SharedPtr<Node> i, Common::SharedPtr<Node> i2)
+	ObjPropIndexExprNode(int32 offset, Common::SharedPtr<Node> o, Common::String p, Common::SharedPtr<Node> i, Common::SharedPtr<Node> i2)
 		: ExprNode(kObjPropIndexExprNode, offset), prop(p) {
 		obj = Common::move(o);
 		obj->parent = this;
@@ -758,7 +758,7 @@ struct PutStmtNode : StmtNode {
 	Common::SharedPtr<Node> variable;
 	Common::SharedPtr<Node> value;
 
-	PutStmtNode(uint32 offset, PutType t, Common::SharedPtr<Node> var, Common::SharedPtr<Node> val)
+	PutStmtNode(int32 offset, PutType t, Common::SharedPtr<Node> var, Common::SharedPtr<Node> val)
 		: StmtNode(kPutStmtNode, offset), type(t) {
 		variable = Common::move(var);
 		variable->parent = this;
@@ -774,7 +774,7 @@ struct WhenStmtNode : StmtNode {
 	int event;
 	Common::String script;
 
-	WhenStmtNode(uint32 offset, int e, Common::String s)
+	WhenStmtNode(int32 offset, int e, Common::String s)
 		: StmtNode(kWhenStmtNode, offset), event(e), script(s) {}
 	void accept(NodeVisitor &visitor) const override;
 };
@@ -785,7 +785,7 @@ struct NewObjNode : ExprNode {
 	Common::String objType;
 	Common::SharedPtr<Node> objArgs;
 
-	NewObjNode(uint32 offset, Common::String o, Common::SharedPtr<Node> args) : ExprNode(kNewObjNode, offset), objType(o), objArgs(args) {}
+	NewObjNode(int32 offset, Common::String o, Common::SharedPtr<Node> args) : ExprNode(kNewObjNode, offset), objType(o), objArgs(args) {}
 	void accept(NodeVisitor &visitor) const override;
 };
 
@@ -849,7 +849,7 @@ struct AST {
 	Common::SharedPtr<HandlerNode> root;
 	BlockNode *currentBlock;
 
-	AST(uint32 offset, Handler *handler){
+	AST(int32 offset, Handler *handler){
 		root = Common::SharedPtr<HandlerNode>(new HandlerNode(offset, handler));
 		currentBlock = root->block.get();
 	}
