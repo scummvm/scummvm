@@ -518,6 +518,11 @@ void qdGameScene::debug_redraw() {
 	if (g_engine->_debugDrawGrid)
 		_camera.draw_grid();
 
+	if (g_engine->_debugDrawPath) {
+		qdGameObjectMoving *personage = get_active_personage();
+		if (personage)
+			personage->drawDebugPath();
+	}
 }
 
 int qdGameScene::get_resources_size() {

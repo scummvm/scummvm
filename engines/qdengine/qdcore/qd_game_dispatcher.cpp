@@ -2410,6 +2410,10 @@ bool qdGameDispatcher::keyboard_handler(Common::KeyCode vkey, bool event) {
 			g_engine->_debugDraw = !g_engine->_debugDraw;
 			toggle_full_redraw();
 			return true;
+		case Common::KEYCODE_F7:
+			g_engine->_debugDrawPath = !g_engine->_debugDrawPath;
+			toggle_full_redraw();
+			return true;
 		case Common::KEYCODE_F8:
 			g_engine->_debugDrawGrid = !g_engine->_debugDrawGrid;
 			toggle_full_redraw();
