@@ -490,6 +490,8 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 		case kMenuSliderControlsDetailLevel:
 			engine->setDetailLevel(static_cast<DgdsDetailLevel>(setting));
 			break;
+		default:
+			break;
 		}
 		drawMenu(_curMenu);
 		_dragGadget = nullptr;
@@ -507,7 +509,7 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 	if (dynamic_cast<ButtonGadget *>(gadget) && !_vcrHelpMode) {
 		gadget->toggle(false);
 		if (_curMenu == kMenuOptions)
-			isToggle = updateOptionsGadget(gadget);
+			/*isToggle = */updateOptionsGadget(gadget);
 		drawMenu(_curMenu, false);
 		g_system->delayMillis(300);
 		gadget->toggle(true);
@@ -614,8 +616,6 @@ bool Menu::handleClick(const Common::Point &mouse) {
 		break;
 	//case kMenuCalibrateVCR: // NOTE: same ID as kMenuIntroPlay
 	case kMenuIntroPlay:
-		drawMenu(kMenuMain);
-		break;
 	case kMenuControlsVCR:
 	case kMenuOptionsVCR:
 	//case kMenuCalibrateVCRHoC:
