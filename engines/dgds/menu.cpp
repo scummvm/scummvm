@@ -743,14 +743,9 @@ bool Menu::handleClick(const Common::Point &mouse) {
 			engine->changeScene(57);	// skip train mini-game, return to travel map
 		break;
 	case kMenuTankTrainPlayArcade:
-		if (currentScene == 73) {
-			// Tank game - not implemented.
-			warning("TODO: Play tank mini-game");
-			drawMenu(_curMenu);
-		} else if (currentScene == 84) {
-			// Play train game - open the "save before arcade" menu.
-			drawMenu(kMenuSaveBeforeArcade);
-		}
+		// Open the "save before arcade" menu before playing the tank
+		// or train mini-games.
+		drawMenu(kMenuSaveBeforeArcade);
 		break;
 	case kMainMenuWillySoundsOnOff:
 		_toggleSoundType(Audio::Mixer::kSFXSoundType);
