@@ -77,7 +77,7 @@ protected:
 	int8 _reverb;
 
 public:
-	MidiPlayer() : _driver(0), _reverb(-1) {}
+	MidiPlayer() : _driver(nullptr), _reverb(-1) {}
 
 	virtual int open() { return _driver->open(); }
 	virtual void close() { _driver->close(); }

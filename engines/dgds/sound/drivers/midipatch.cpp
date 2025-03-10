@@ -49,7 +49,7 @@ SciResource *getMidiPatchData(int num) {
 	ResourceManager *resource = engine->getResourceManager();
 	Decompressor *decomp = engine->getDecompressor();
 	ResourceManager *fddMgr = nullptr;
-	Common::SeekableReadStream *ovlStream;
+	Common::SeekableReadStream *ovlStream = nullptr;
 
 	int resNum = 0;
 	for (; resNum < ARRAYSIZE(PATCH_RESOURCES); resNum++) {
