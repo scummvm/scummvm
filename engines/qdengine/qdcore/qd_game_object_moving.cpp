@@ -1088,7 +1088,7 @@ float qdGameObjectMoving::radius() const {
 	return qdGameObjectAnimated::radius() * calc_scale();
 }
 
-void qdGameObjectMoving::debug_redraw() const {
+void qdGameObjectMoving::drawDebugPath() const {
 	if (check_flag(QD_OBJ_MOVING_FLAG)) {
 		const int cl = grDispatcher::instance()->make_rgb(255, 255, 255);
 		Vect3f r = R();
@@ -1104,6 +1104,10 @@ void qdGameObjectMoving::debug_redraw() const {
 			v0 = v1;
 		}
 	}
+}
+
+void qdGameObjectMoving::debug_redraw() const {
+	drawDebugPath();
 
 	Common::String str = Common::String::format("movement_mode: %d", _movement_mode);
 	grDispatcher::instance()->drawText(10, 110, grDispatcher::instance()->make_rgb888(255, 255, 255), str.c_str());
