@@ -62,7 +62,7 @@
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/palette16.h"
 #include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"

@@ -28,7 +28,7 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/drivers/gfxdriver.h"
 #include "sci/graphics/screen.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/palette16.h"
 #include "sci/graphics/portrait.h"
 #include "sci/sound/audio.h"
 

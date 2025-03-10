@@ -54,7 +54,7 @@ MODULE_OBJS := \
 	graphics/maciconbar.o \
 	graphics/menu.o \
 	graphics/paint16.o \
-	graphics/palette.o \
+	graphics/palette16.o \
 	graphics/picture.o \
 	graphics/portrait.o \
 	graphics/ports.o \

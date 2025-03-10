@@ -24,7 +24,7 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
 #include "sci/graphics/paint16.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/palette16.h"
 #include "sci/graphics/screen.h"
 #ifdef ENABLE_SCI32
 #include "sci/graphics/paint32.h"

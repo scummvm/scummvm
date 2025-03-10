@@ -23,7 +23,7 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/drivers/gfxdriver.h"
 #include "sci/graphics/screen.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/palette16.h"
 #include "sci/graphics/remap.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/view.h"

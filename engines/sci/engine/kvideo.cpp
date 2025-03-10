@@ -24,7 +24,7 @@
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/drivers/gfxdriver.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/palette16.h"
 #include "sci/graphics/screen.h"
 #include "sci/util.h"
 #include "common/events.h"
