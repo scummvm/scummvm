@@ -29,7 +29,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#define MINIGAMES_HOTSPOTS_COUNT 21
+#define MINIGAMES_HOTSPOTS_COUNT 20
 
 class Minigames : public View {
 	struct MinigameRect {
@@ -37,7 +37,8 @@ class Minigames : public View {
 	};
 private:
 	static MinigameRect MINIGAME_RECTS[MINIGAMES_HOTSPOTS_COUNT];
-	static const char *MINIGAME_TEXTS[MINIGAMES_HOTSPOTS_COUNT];
+	static int MINIGAME_IDS[MINIGAMES_HOTSPOTS_COUNT];
+	static const char *MINIGAME_TEXTS[MINIGAMES_HOTSPOTS_COUNT + 1];
 	GfxSurface _background;
 	ColorButton _exitButton;
 	Common::Rect _textRect;

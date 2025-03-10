@@ -30,9 +30,8 @@ namespace HodjNPodj {
 namespace Metagame {
 
 #define	BACKGROUND_BMP	"meta/art/zoommap.bmp"
-#define FONT_SIZE		12
 
-Minigames::MinigameRect Minigames::MINIGAME_RECTS[21] = {
+Minigames::MinigameRect Minigames::MINIGAME_RECTS[MINIGAMES_HOTSPOTS_COUNT] = {
 	{  24, 243,  63, 263 },
 	{ 495, 373, 529, 406 },
 	{ 412, 185, 432, 201 },
@@ -55,7 +54,29 @@ Minigames::MinigameRect Minigames::MINIGAME_RECTS[21] = {
 	{ 402, 203, 433, 250 }
 };
 
-const char *Minigames::MINIGAME_TEXTS[] = {
+int Minigames::MINIGAME_IDS[MINIGAMES_HOTSPOTS_COUNT] = {
+	MG_GAME_ARCHEROIDS,
+	MG_GAME_ARTPARTS,
+	MG_GAME_BARBERSHOP,
+	MG_GAME_BATTLEFISH,
+	MG_GAME_BEACON,
+	MG_GAME_CRYPTOGRAMS,
+	MG_GAME_DAMFURRY,
+	MG_GAME_FUGE,
+	MG_GAME_GARFUNKEL,
+	MG_GAME_LIFE,
+	MG_GAME_MANKALA,
+	MG_GAME_MAZEODOOM,
+	MG_GAME_NOVACANCY,
+	MG_GAME_PACRAT,
+	MG_GAME_PEGGLEBOZ,
+	MG_GAME_RIDDLES,
+	MG_GAME_THGESNGGME,
+	MG_GAME_VIDEOPOKER,
+	MG_GAME_WORDSEARCH
+};
+
+const char *Minigames::MINIGAME_TEXTS[MINIGAMES_HOTSPOTS_COUNT + 1] = {
 	"Click Here To Play Archeroids",
 	"Click Here To Play Art Parts",
 	"Click Here To Play Barbershop Quintet",
@@ -83,6 +104,7 @@ Minigames::Minigames() : View("Minigames"),
 			Common::Rect((GAME_WIDTH / 2) - 50, 450,
 			(GAME_WIDTH / 2) + 50, 470)),
 		_textRect(0, 428, 640, 450) {
+	setBounds(Common::Rect(0, 0, GAME_WIDTH, GAME_HEIGHT));
 }
 
 bool Minigames::msgFocus(const FocusMessage &msg) {
@@ -98,13 +120,6 @@ bool Minigames::msgFocus(const FocusMessage &msg) {
 
 	const Graphics::Surface *surf = decoder.getSurface();
 	_background.copyFrom(surf);
-	_background.setTransparentColor(255);
-
-	blackScreen();
-
-	Common::Rect r(0, 0, surf->w, surf->h);
-	r.moveTo((GAME_WIDTH - surf->w) / 2, (GAME_HEIGHT - surf->h) / 2);
-	setBounds(r);
 
 	return View::msgFocus(msg);
 }
@@ -119,7 +134,11 @@ bool Minigames::msgAction(const ActionMessage &msg) {
 }
 
 bool Minigames::msgGame(const GameMessage &msg) {
-	
+	if (msg._name == "BUTTON" && msg._stringValue == "MinigamesExit") {
+		replaceView("TitleMenu");
+		return true;
+	}
+
 	return false;
 }
 
@@ -137,10 +156,32 @@ bool Minigames::msgMouseUp(const MouseUpMessage &msg) {
 
 void Minigames::draw() {
 	GfxSurface s = getSurface();
-	s.setFontSize(FONT_SIZE);
-
-	s.clear();
 	s.blitFrom(_background);
+
+	int index = getSelectedMinigame();
+	if (index != -1) {
+		const Common::Rect rTemp1(
+			(MINIGAME_RECTS[index].left - 5 + 2),
+			(MINIGAME_RECTS[index].top - 5 + 2),
+			(MINIGAME_RECTS[index].right + 5 + 2),
+			(MINIGAME_RECTS[index].bottom + 5 + 2));
+		const Common::Rect rTemp2(
+			(MINIGAME_RECTS[index].left - 5),
+			(MINIGAME_RECTS[index].top - 5),
+			(MINIGAME_RECTS[index].right + 5),
+			(MINIGAME_RECTS[index].bottom + 5));
+
+		const byte cyan = getPaletteIndex(RGB(0, 255, 255));
+		const byte black = 0;
+		s.frameRect(rTemp1, black);
+		s.frameRect(rTemp2, cyan);
+
+		s.setFontSize(12);
+		const char *text = MINIGAME_TEXTS[index];
+		s.fillRect(Common::Rect(0, 0, s.getStringWidth(text) + 10,
+			s.getStringHeight()), black);
+		s.writeShadowedString(text, Common::Point(5, 0), cyan);
+	}
 }
 
 int Minigames::getSelectedMinigame() const {
