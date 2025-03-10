@@ -679,6 +679,7 @@ void Adlib::OnTimer() {
 		for (;;) {
 			//	// l0017_1B1A:
 			uint8 current = shMem2250->peekByte();
+			int64 pos = shMem2250->pos();
 			debug("Loop iteration, [2250] value: %.2X at offset %.2X", current, shMem2250->pos());
 			if (current & 0x80) {
 				// The first bit of the read value was 0
@@ -1163,13 +1164,9 @@ void Adlib::OnTimer() {
 			if ((bp6 & 0xF0) == 0xC0) {
 				// l0017_2327:
 				SIS_LogEntry(0x01D7, 0x2327);
-			//		Macs2::StreamHandler *sh2252;
-			//		Macs2::StreamHandler *sh225A;
-			//		Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x1);
-			//		sh2252 = shResult;
-			//		// TODO: Check if this is the right way to handle the plus operation
-			//		sh225A->seek(1, SEEK_CUR);
-			//		gArray225F[bp3] = bp4;
+				shMem2250 = Func19BE_SH(shMem2250, 0x1);
+				g225A++;
+				gArray225F[bp3] = bp4;
 			}
 			// l0017_2355:
 			if ((bp6 & 0xF0) == 0xD0) {
