@@ -302,7 +302,7 @@ void Room406::daemon() {
 		terminateMachineAndNull(_painting);
 		digi_play("406_s07", 2, 255, 311);
 		_paintingOpening = series_load("406 PAINTING OPENING");
-		_painting = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+		_painting = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 			triggerMachineByHashCallbackAlways, "HUTCH painting opens");
 		sendWSMessage_10000(1, _painting, _paintingOpening, 30, 1, 312,
 			_paintingOpening, 1, 1, 0);
@@ -340,9 +340,9 @@ void Room406::daemon() {
 }
 
 void Room406::pre_parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (useFlag && player_said_any("BILLIARD TABLE", "BILLIARD TABLE ")) {
 		_G(player).resetWalk();
@@ -388,9 +388,9 @@ void Room406::pre_parser() {
 
 #define LOOK(ITEM) (lookFlag && player_said(ITEM) && inv_object_is_here(ITEM))
 void Room406::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (takeFlag && player_said("ENVELOPE")) {
 		switch (_G(kernel).trigger) {
@@ -400,7 +400,7 @@ void Room406::parser() {
 				hotspot_set_active("ENVELOPE", false);
 				terminateMachineAndNull(_envelope);
 				kernel_examine_inventory_object("PING ENVELOPE", _G(master_palette),
-					5, 1, 398, 220, 8, 0, -1);
+					5, 1, 398, 220, 8, nullptr, -1);
 			}
 			break;
 		case 8:
@@ -486,7 +486,7 @@ void Room406::parser() {
 			_G(flags)[kCrackedMirror] = 1;
 			_lookMirror = series_load("406 RIP LOOKS MIRROR");
 			ws_hide_walker();
-			_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
+			_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, false,
 				triggerMachineByHashCallbackAlways, "rip looks at mirror");
 			sendWSMessage_10000(1, _ripAction, _lookMirror, 1, 17, 2,
 				_lookMirror, 17, 17, 0);
@@ -581,7 +581,7 @@ void Room406::parser() {
 			_tableRaises = series_load("808 BILLIARDS TABLE RAISES");
 			digi_play("406_s11", 2);
 			terminateMachineAndNull(_billiardTable);
-			_billiardTable = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, 0,
+			_billiardTable = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, false,
 				triggerMachineByHashCallbackAlways, "Table raises");
 			sendWSMessage_10000(1, _billiardTable, _tableRaises, 1, 24, 6,
 				_tableRaises, 24, 24, 0);
@@ -791,7 +791,7 @@ void Room406::parser() {
 			terminateMachineAndNull(_desk);
 			_deskOpening = series_load("406 DESK OPENING");
 			digi_play("406_s05", 2, 255, -1, 406);
-			_desk = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x500, 0,
+			_desk = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x500, false,
 				triggerMachineByHashCallbackAlways, "writing desk opens");
 			sendWSMessage_10000(1, _desk, _deskOpening, 1, 15, 2,
 				_deskOpening, 15, 15, 0);
@@ -828,7 +828,7 @@ void Room406::parser() {
 			terminateMachineAndNull(_desk);
 			_deskOpening = series_load("406 DESK OPENING");
 			digi_play("406_s05", 2, 255, -1, 406);
-			_desk = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x500, 0,
+			_desk = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x500, false,
 				triggerMachineByHashCallbackAlways, "writing desk opens");
 			sendWSMessage_10000(1, _desk, _deskOpening, 15, 1, 2,
 				_deskOpening, 1, 1, 0);
@@ -866,7 +866,7 @@ void Room406::parser() {
 				terminateMachineAndNull(_gamesCabinet);
 				_cabinetOpens = series_load("406 GAMES CABINET OPENS");
 				digi_play("950_s36", 2, 255, -1, 950);
-				_gamesCabinet = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
+				_gamesCabinet = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false,
 					triggerMachineByHashCallbackAlways, "game cabinet opens");
 				sendWSMessage_10000(1, _gamesCabinet, _cabinetOpens, 1, 10, 2,
 					_cabinetOpens, 10, 10, 0);
@@ -909,7 +909,7 @@ void Room406::parser() {
 			terminateMachineAndNull(_gamesCabinet);
 			_cabinetOpens = series_load("406 GAMES CABINET OPENS");
 			digi_play("950_s36", 2, 255, -1, 950);
-			_gamesCabinet = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
+			_gamesCabinet = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false,
 				triggerMachineByHashCallbackAlways, "game cabinet opens");
 			sendWSMessage_10000(1, _gamesCabinet, _cabinetOpens, 10, 1, 2,
 				_cabinetOpens, 1, 1, 0);
@@ -953,7 +953,7 @@ void Room406::parser() {
 			terminateMachineAndNull(_gamesCabinet);
 			_cabinetOpens = series_load("406 GAMES CABINET OPENS");
 			digi_play("950_s36", 2, 255, -1, 950);
-			_gamesCabinet = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
+			_gamesCabinet = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false,
 				triggerMachineByHashCallbackAlways, "game cabinet opens");
 			sendWSMessage_10000(1, _gamesCabinet, _cabinetOpens, 10, 1, 2,
 				_cabinetOpens, 1, 1, 0);
@@ -1149,7 +1149,7 @@ bool Room406::takeBilliardBall() {
 		inv_give_to_player("BILLIARD BALL");
 		hotspot_set_active("BILLIARD BALL", false);
 		kernel_examine_inventory_object("PING BILLIARD BALL", _G(master_palette),
-			5, 1, 125, 240, 3, 0, -1);
+			5, 1, 125, 240, 3, nullptr, -1);
 		return true;
 
 	case 3:
@@ -1181,7 +1181,7 @@ bool Room406::billiardBallOnTable() {
 			player_set_commands_allowed(false);
 			_pickupBall = series_load("406 RIP PICKUP BALL");
 			ws_hide_walker();
-			_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 				triggerMachineByHashCallbackAlways, "RIP picks up ball");
 			sendWSMessage_10000(1, _ripAction, _pickupBall, 1, 14, 2,
 				_pickupBall, 14, 14, 0);
@@ -1189,6 +1189,24 @@ bool Room406::billiardBallOnTable() {
 		}
 		break;
 
+	case 2:
+		_poolBall = series_place_sprite("BILLIARD BALL", 0, 0, 0, 100, 512);
+		inv_move_object("BILLIARD BALL", 406);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "BILLIARD BALL", true);		
+		sendWSMessage_10000(1, _ripAction, _pickupBall, 14, 1, 4, _pickupBall, 1, 1, 0);
+		return true;
+		
+	case 4:
+		terminateMachine(_ripAction);
+		ws_unhide_walker(_G(my_walker));
+		series_unload(_pickupBall);
+		player_set_commands_allowed(true);
+		return true;
+		
+	case 69:
+		ws_walk(_G(my_walker), 180, 348, nullptr, 1, 4, true);
+		return true;
+		
 	default:
 		break;
 	}
@@ -1211,7 +1229,7 @@ void Room406::useSwitchPaintingOpen() {
 		terminateMachineAndNull(_painting);
 		_paintingOpening = series_load("406 PAINTING OPENING");
 		digi_play("406_s07", 2, 255, 69);
-		_painting = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+		_painting = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 			triggerMachineByHashCallbackAlways, "HUTCH painting opens");
 		sendWSMessage_10000(1, _painting, _paintingOpening, 30, 1, 2,
 			_paintingOpening, 1, 1, 0);
@@ -1259,7 +1277,7 @@ void Room406::useSwitchPaintingClosed() {
 		terminateMachineAndNull(_painting);
 		_paintingOpening = series_load("406 PAINTING OPENING");
 		digi_play("406_s07", 2, 255, 69);
-		_painting = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+		_painting = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 			triggerMachineByHashCallbackAlways, "HUTCH painting opens");
 		sendWSMessage_10000(1, _painting, _paintingOpening, 1, 30, 2,
 			_paintingOpening, 30, 30, 0);
@@ -1365,7 +1383,7 @@ bool Room406::lookBilliardBall() {
 			digi_preload("406_s12");
 			terminateMachineAndNull(_poolBall);
 			ws_hide_walker();
-			_poolBall = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			_poolBall = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 				triggerMachineByHashCallbackAlways, "RIP throws ball");
 			sendWSMessage_10000(1, _poolBall, _ripThrowsBall, 1, 31, 2,
 				_ripThrowsBall, 31, 31, 0);
