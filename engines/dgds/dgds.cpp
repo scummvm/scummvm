@@ -593,9 +593,7 @@ void DgdsEngine::pumpMessages() {
 }
 
 void DgdsEngine::dimPalForWillyDialog(bool force) {
-	WillyGlobals *globals = static_cast<WillyGlobals *>(_gameGlobals);
-	int16 fade = globals->getPalFade();
-	fade = CLIP(fade, (int16)0, (int16)255);
+	int16 fade;
 
 	// TODO: Same constants are in globals.cpp
 	static const int FADE_STARTCOL = 0x40;
