@@ -496,7 +496,7 @@ void Handler::parse() {
 	uint32 i = 0;
 	while (i < bytecodeArray.size()) {
 		auto &bytecode = bytecodeArray[i];
-		uint32 pos = bytecode.pos;
+		int32 pos = bytecode.pos;
 		// exit last block if at end
 		while (pos == ast.currentBlock->endPos) {
 			auto exitedBlock = ast.currentBlock;
