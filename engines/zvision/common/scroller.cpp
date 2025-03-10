@@ -41,12 +41,10 @@ bool LinearScroller::update(uint32 deltatime) {
     {
     int16 targetPos;
 	  float dPos=0;
-	  
 	  if (_active)
 	    targetPos = _activePos;
     else
     	targetPos = _idlePos;
-
     if (Pos != targetPos) {
       dPos = (float)((int32)deltatime * (int32)deltaPos) / _period;
       if((int16)dPos == 0) {
@@ -55,11 +53,9 @@ bool LinearScroller::update(uint32 deltatime) {
         else
           dPos = -1;
       }
-    }
-    
+    }   
     if(!_active)
       dPos = -dPos;
-    
     Pos += (int16)dPos;
     if( (dPos == 0) || ( (dPos > 0) && (Pos > targetPos) ) || ( (dPos < 0) && (Pos < targetPos) ) )
       Pos = targetPos;
