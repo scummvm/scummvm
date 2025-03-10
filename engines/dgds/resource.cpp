@@ -208,59 +208,57 @@ bool DgdsChunkReader::isPacked() const {
 		packed = !strcmp(_idStr, "DDS:");
 		break;
 	case EX_OVL:
-		if (0) {
-		} else if (strcmp(_idStr, "ADL:") == 0)
+		if (!strcmp(_idStr, "ADL:"))
 			packed = true;
-		else if (strcmp(_idStr, "ADS:") == 0)
+		else if (!strcmp(_idStr, "ADS:"))
 			packed = true;
-		else if (strcmp(_idStr, "APA:") == 0)
+		else if (!strcmp(_idStr, "APA:"))
 			packed = true;
-		else if (strcmp(_idStr, "ASB:") == 0)
+		else if (!strcmp(_idStr, "ASB:"))
 			packed = true;
-		else if (strcmp(_idStr, "GMD:") == 0)
+		else if (!strcmp(_idStr, "GMD:"))
 			packed = true;
-		else if (strcmp(_idStr, "M32:") == 0)
+		else if (!strcmp(_idStr, "M32:"))
 			packed = true;
-		else if (strcmp(_idStr, "NLD:") == 0)
+		else if (!strcmp(_idStr, "NLD:"))
 			packed = true;
-		else if (strcmp(_idStr, "PRO:") == 0)
+		else if (!strcmp(_idStr, "PRO:"))
 			packed = true;
-		else if (strcmp(_idStr, "PS1:") == 0)
+		else if (!strcmp(_idStr, "PS1:"))
 			packed = true;
-		else if (strcmp(_idStr, "SBL:") == 0)
+		else if (!strcmp(_idStr, "SBL:"))
 			packed = true;
-		else if (strcmp(_idStr, "SBP:") == 0)
+		else if (!strcmp(_idStr, "SBP:"))
 			packed = true;
-		else if (strcmp(_idStr, "STD:") == 0)
+		else if (!strcmp(_idStr, "STD:"))
 			packed = true;
-		else if (strcmp(_idStr, "TAN:") == 0)
+		else if (!strcmp(_idStr, "TAN:"))
 			packed = true;
-		else if (strcmp(_idStr, "T3V:") == 0)
+		else if (!strcmp(_idStr, "T3V:"))
 			packed = true;
-		else if (strcmp(_idStr, "001:") == 0)
+		else if (!strcmp(_idStr, "001:"))
 			packed = true;
-		else if (strcmp(_idStr, "003:") == 0)
+		else if (!strcmp(_idStr, "003:"))
 			packed = true;
-		else if (strcmp(_idStr, "004:") == 0)
+		else if (!strcmp(_idStr, "004:"))
 			packed = true;
-		else if (strcmp(_idStr, "005:") == 0)
+		else if (!strcmp(_idStr, "005:"))
 			packed = true;
-		else if (strcmp(_idStr, "007:") == 0)
+		else if (!strcmp(_idStr, "007:"))
 			packed = true;
-		else if (strcmp(_idStr, "009:") == 0)
+		else if (!strcmp(_idStr, "009:"))
 			packed = true;
-		else if (strcmp(_idStr, "101:") == 0)
+		else if (!strcmp(_idStr, "101:"))
 			packed = true;
-		else if (strcmp(_idStr, "VGA:") == 0)
+		else if (!strcmp(_idStr, "VGA:"))
 			packed = true;
-		else if (strcmp(_idStr, "EGA:") == 0)
+		else if (!strcmp(_idStr, "EGA:"))
 			packed = true;
-		else if (strcmp(_idStr, "HCG:") == 0)
+		else if (!strcmp(_idStr, "HCG:"))
 			packed = true;
 		break;
 	case EX_TDS:
-		if (0) {
-		} else if (strcmp(_idStr, "TDS:") == 0)
+		if (!strcmp(_idStr, "TDS:"))
 			packed = true; /* ? */
 		break;
 	default:
