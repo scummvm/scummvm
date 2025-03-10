@@ -634,6 +634,7 @@ void Room406::parser() {
 			break;
 		case 2:
 			digi_play(inv_player_has("KEYS") ? "406r27" : "406r20", 1);
+			sendWSMessage_120000(4);
 			break;
 		case 4:
 			sendWSMessage_150000(5);
