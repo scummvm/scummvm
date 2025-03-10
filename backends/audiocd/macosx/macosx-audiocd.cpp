@@ -42,6 +42,8 @@
 
 #ifdef MACOSX
 
+#include <sys/param.h>
+#include <sys/ucred.h>
 #include <sys/stat.h>
 #include <sys/mount.h>
 
@@ -195,16 +197,19 @@ enum {
 
 MacOSXAudioCDManager::DriveList MacOSXAudioCDManager::detectAllDrives() {
 	// Fetch the lists of drives
-	struct statfs driveStats[kMaxDriveCount];
-	int foundDrives = getfsstat(driveStats, sizeof(driveStats), MNT_WAIT);
-	if (foundDrives <= 0)
+	struct statfs *driveStats = (struct statfs *)malloc(sizeof(struct statfs) * kMaxDriveCount);
+	int foundDrives = getfsstat(driveStats, sizeof(struct statfs) * kMaxDriveCount, MNT_WAIT);
+	if (foundDrives <= 0) {
+		free(driveStats);
 		return DriveList();
+	}
 
 	DriveList drives;
 	for (int i = 0; i < foundDrives; i++)
 		drives.push_back(Drive(Common::Path(driveStats[i].f_mntonname, Common::Path::kNativeSeparator),
 			Common::Path(driveStats[i].f_mntfromname, Common::Path::kNativeSeparator), driveStats[i].f_fstypename));
 
+	free(driveStats);
 	return drives;
 }
 
@@ -287,7 +292,7 @@ bool MacOSXAudioCDManager::findTrackNames(const Common::Path &drivePath) {
 				char *endPtr = nullptr;
 				long trackID = strtol(trackIDString, &endPtr, 10);
 
-				if (trackIDString != endPtr && trackID > 0 && trackID < UINT_MAX) {
+				if (trackIDString != endPtr && trackID > 0 && (unsigned long)trackID < UINT_MAX) {
 					_trackMap[trackID - 1] = drivePath.appendComponent(fileName);
 				} else {
 					warning("Invalid track file name: '%s'", fileName.c_str());
