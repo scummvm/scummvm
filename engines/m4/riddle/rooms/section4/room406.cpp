@@ -443,11 +443,13 @@ void Room406::parser() {
 	} else if (lookFlag && player_said("GAMES CABINET ")) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			digi_play("406r25", 1);
 			if (!_G(flags)[V317]) {
 				player_set_commands_allowed(false);
 				_G(flags)[V317] = 1;
-			}
+				digi_play("406r25", 1, 255, 2, -1);
+			} else
+				digi_play("406r25", 1, 255, -1, -1);
+
 			break;
 		case 2:
 			digi_play("406r25a", 1, 255, 3);
@@ -628,7 +630,10 @@ void Room406::parser() {
 		case -1:
 			player_set_commands_allowed(false);
 			_ripReachHand = series_load("RIP TREK MED REACH HAND POS1");
+			setGlobals1(_ripReachHand, 1, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 1);
 			break;
+			
 		case 1:
 			digi_play("406_s04", 2, 255, 2);
 			break;

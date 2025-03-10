@@ -352,7 +352,7 @@ enum Flag {
 	V314 = 314,
 	V315 = 315,
 	kCrackedMirror = 316,
-	V317 = 317,
+	V317 = 317, // Look at the game cabinet for the first time after opening it, room 406
 	V318 = 318,
 	V319 = 319,
 	V320 = 320,
