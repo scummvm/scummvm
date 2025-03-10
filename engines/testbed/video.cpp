@@ -22,8 +22,13 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "engines/util.h"
+#include "video/avi_decoder.h"
+#include "video/dxa_decoder.h"
+#include "video/flic_decoder.h"
+#include "video/mve_decoder.h"
 #include "video/qt_decoder.h"
 #include "video/qt_data.h"
+#include "video/smk_decoder.h"
 
 #include "testbed/testbed.h"
 #include "testbed/video.h"
@@ -56,14 +61,32 @@ Common::Error Videotests::videoTest(const Common::FSNode &node) {
 }
 
 Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Common::String &name) {
-	Video::QuickTimeDecoder *video = new Video::QuickTimeDecoder();
+	Video::QuickTimeDecoder *qtVideo = nullptr;
+	Video::VideoDecoder *video = nullptr;
+
+	if (name.hasSuffixIgnoreCase(".avi")) {
+		video = new Video::AVIDecoder();
+	} else if (name.hasSuffixIgnoreCase(".dxa")) {
+		video = new Video::DXADecoder();
+	} else if (name.hasSuffixIgnoreCase(".flc")) {
+		video = new Video::FlicDecoder();
+	} else if (name.hasSuffixIgnoreCase(".mve")) {
+		video = new Video::MveDecoder();
+	} else if (name.hasSuffixIgnoreCase(".smk")) {
+		video = new Video::SmackerDecoder();
+	} else {
+		qtVideo = new Video::QuickTimeDecoder();
+		video = qtVideo;
+	}
+
 	if (!video->loadStream(stream)) {
 		warning("Cannot open video %s", name.c_str());
 		delete video;
 		return Common::kReadingFailed;
 	}
 
-	video->setTargetSize(400, 300);
+	if (qtVideo)
+		qtVideo->setTargetSize(400, 300);
 
 	warning("Video size: %d x %d", video->getWidth(), video->getHeight());
 
@@ -153,17 +176,21 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 						mouse.y >= y && mouse.y < y + mh) {
 					switch (event.type) {
 					case Common::EVENT_LBUTTONDOWN:
-						((Video::QuickTimeDecoder *)video)->handleMouseButton(true, event.mouse.x - x, event.mouse.y - y);
+						if (qtVideo)
+							qtVideo->handleMouseButton(true, event.mouse.x - x, event.mouse.y - y);
 						break;
 					case Common::EVENT_LBUTTONUP:
-						((Video::QuickTimeDecoder *)video)->handleMouseButton(false, event.mouse.x - x, event.mouse.y - y);
+						if (qtVideo)
+							qtVideo->handleMouseButton(false, event.mouse.x - x, event.mouse.y - y);
 						break;
 					case Common::EVENT_MOUSEMOVE:
-						((Video::QuickTimeDecoder *)video)->handleMouseMove(event.mouse.x - x, event.mouse.y - y);
+						if (qtVideo)
+							qtVideo->handleMouseMove(event.mouse.x - x, event.mouse.y - y);
 						break;
 					case Common::EVENT_KEYUP:
 					case Common::EVENT_KEYDOWN:
-						((Video::QuickTimeDecoder *)video)->handleKey(event.kbd, event.type == Common::EVENT_KEYDOWN);
+						if (qtVideo)
+							qtVideo->handleKey(event.kbd, event.type == Common::EVENT_KEYDOWN);
 						break;
 					default:
 						break;
@@ -190,7 +217,7 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 
 TestExitStatus Videotests::testPlayback() {
 	Testsuite::clearScreen();
-	Common::String info = "Video playback test. A QuickTime video should be selected using the file browser, and it'll be played on the screen.";
+	Common::String info = "Video playback test. A video should be selected using the file browser, and it'll be played on the screen.";
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing video playback", pt);

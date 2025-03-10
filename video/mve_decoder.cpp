@@ -500,15 +500,15 @@ bool MveDecoder::MveVideoTrack::endOfTrack() const {
 }
 
 uint16 MveDecoder::MveVideoTrack::getWidth() const {
-	return _decoder->getWidth();
+	return _decoder->_width;
 }
 
 uint16 MveDecoder::MveVideoTrack::getHeight() const {
-	return _decoder->getHeight();
+	return _decoder->_height;
 }
 
 Graphics::PixelFormat MveDecoder::MveVideoTrack::getPixelFormat() const {
-	return _decoder->getPixelFormat();
+	return _decoder->_pixelFormat;
 }
 
 int MveDecoder::MveVideoTrack::getCurFrame() const {
