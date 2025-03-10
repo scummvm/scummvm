@@ -1525,7 +1525,7 @@ void qdGameScene::collision_quant() {
 				}
 			}
 
-			if (dr.norm() > dist) {
+			if (dr.norm() < dist) {
 				if (fabs(getDeltaAngle(angle, _selected_object->direction_angle())) < M_PI / 2.0f) {
 					if ((*it)->has_control_type(qdGameObjectMoving::CONTROL_AVOID_COLLISION))
 						(*it)->avoid_collision(_selected_object);
