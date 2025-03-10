@@ -40,6 +40,7 @@ MveDecoder::MveDecoder()
 	: _done(false),
 	  _s(nullptr),
 	  _dirtyPalette(false),
+	  _palette(256),
 	  _skipMapSize(0),
 	  _skipMap(nullptr),
 	  _decodingMapSize(0),
@@ -50,8 +51,6 @@ MveDecoder::MveDecoder()
 	  _audioTrack(0),
 	  _audioStream(nullptr)
 {
-	for (int i = 0; i < 0x300; ++i)
-		_palette[i] = 0;
 }
 
 MveDecoder::~MveDecoder() {
@@ -97,7 +96,7 @@ void MveDecoder::setAudioTrack(int track) {
 }
 
 void MveDecoder::applyPalette(PaletteManager *paletteManager) {
-	paletteManager->setPalette(_palette + 3 * _palStart, _palStart, _palCount);
+	paletteManager->setPalette(_palette.data() + 3 * _palStart, _palStart, _palCount);
 }
 
 void MveDecoder::copyBlock_8bit(Graphics::Surface &dst, Common::MemoryReadStream &s, int block) {
@@ -443,9 +442,7 @@ void MveDecoder::readNextPacket() {
 					byte g = _s->readByte();
 					byte b = _s->readByte();
 
-					_palette[3*i+0] = (r << 2) | (r >> 4);
-					_palette[3*i+1] = (g << 2) | (g >> 4);
-					_palette[3*i+2] = (b << 2) | (b >> 4);
+					_palette.set(i, (r << 2) | (r >> 4), (g << 2) | (g >> 4), (b << 2) | (b >> 4));
 				}
 				if (palCount & 1) {
 					_s->skip(1);
@@ -523,7 +520,7 @@ const Graphics::Surface *MveDecoder::MveVideoTrack::decodeNextFrame() {
 }
 
 const byte *MveDecoder::MveVideoTrack::getPalette() const {
-	return _decoder->_palette;
+	return _decoder->_palette.data();
 }
 
 bool MveDecoder::MveVideoTrack::hasDirtyPalette() const {
