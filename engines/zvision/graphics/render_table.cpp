@@ -178,7 +178,7 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 	  }
   }
   mutationTime = _system->getMillis() - mutationTime;
-  debug(1,"\tPanorama mutation time %dms, %s quality", mutationTime, _engine->getScriptManager()->getStateValue(StateKey_HighQuality) ? "high" : "low");
+  debug(5,"\tPanorama mutation time %dms, %s quality", mutationTime, _highQuality? "high" : "low");
 }
 
 void RenderTable::generateRenderTable() {
@@ -280,7 +280,7 @@ void RenderTable::generateLookupTable(bool tilt) {
   }
   generationTime = _system->getMillis() - generationTime;		  
 	debug(1,"Render table generated, %s quality", _highQuality ? "high" : "low");
-  debug(1,"\tRender table generation time %dms, %s quality", generationTime, _engine->getScriptManager()->getStateValue(StateKey_HighQuality) ? "high" : "low");
+  debug(1,"\tRender table generation time %dms", generationTime);
 }
 
 void RenderTable::setPanoramaFoV(float fov) {
