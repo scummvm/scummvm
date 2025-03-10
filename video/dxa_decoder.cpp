@@ -73,13 +73,12 @@ void DXADecoder::readSoundData(Common::SeekableReadStream *stream) {
 	}
 }
 
-DXADecoder::DXAVideoTrack::DXAVideoTrack(Common::SeekableReadStream *stream) {
+DXADecoder::DXAVideoTrack::DXAVideoTrack(Common::SeekableReadStream *stream) : _palette(256) {
 	_fileStream = stream;
 	_curFrame = -1;
 	_frameStartOffset = 0;
 	_decompBuffer = 0;
 	_inBuffer = 0;
-	memset(_palette, 0, 256 * 3);
 
 	uint8 flags = _fileStream->readByte();
 	_frameCount = _fileStream->readUint16BE();
@@ -465,7 +464,13 @@ void DXADecoder::DXAVideoTrack::decode13(int size) {
 const Graphics::Surface *DXADecoder::DXAVideoTrack::decodeNextFrame() {
 	uint32 tag = _fileStream->readUint32BE();
 	if (tag == MKTAG('C','M','A','P')) {
-		_fileStream->read(_palette, 256 * 3);
+		for (int i = 0; i < 256; i++) {
+			byte r = _fileStream->readByte();
+			byte g = _fileStream->readByte();
+			byte b = _fileStream->readByte();
+			_palette.set(i, r, g, b);
+		}
+
 		_dirtyPalette = true;
 	}
 
