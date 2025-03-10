@@ -555,7 +555,6 @@ byte *transCyrillic(const Common::String &str) {
 	const byte *s = (const byte *)str.c_str();
 	static byte tmp[1024];
 
-#ifndef WIN32
 	static int trans[] = {
 		0xa0, 0xc2a0,
 		0xa8, 0xd081, 0xab, 0xc2ab, 0xb8, 0xd191, 0xbb, 0xc2bb, 0xc0, 0xd090,
@@ -575,24 +574,10 @@ byte *transCyrillic(const Common::String &str) {
 		0xf5, 0xd185, 0xf6, 0xd186, 0xf7, 0xd187, 0xf8, 0xd188,
 		0xf9, 0xd189, 0xfa, 0xd18a, 0xfb, 0xd18b, 0xfc, 0xd18c,
 		0xfd, 0xd18d, 0xfe, 0xd18e, 0xff, 0xd18f, 0x00 };
-#endif
 
 	int i = 0;
 
 	for (const byte *p = s; *p; p++) {
-#ifdef WIN32
-		// translate from cp1251 to cp866
-		byte c = *p;
-		if (c >= 0xC0 && c <= 0xEF)
-			c = c - 0xC0 + 0x80;
-		else if (c >= 0xF0)
-			c = c - 0xF0 + 0xE0;
-		else if (c == 0xA8)
-			c = 0xF0;
-		else if (c == 0xB8)
-			c = 0xF1;
-		tmp[i++] = c;
-#else
 		if (*p < 128) {
 			tmp[i++] = *p;
 		} else {
@@ -628,7 +613,6 @@ byte *transCyrillic(const Common::String &str) {
 				}
 			}
 		}
-#endif
 	}
 
 	tmp[i] = 0;
