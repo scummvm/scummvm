@@ -206,6 +206,15 @@ byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr)
 		}
 	}
 
+	// Modify the buffer to properly set the death screen as background 
+	// by changing its z value
+    if (fileName.equals("rooms/tod/scripts/default.lua")) {
+        char *found = strstr((char *)buffer, "self:AddOccluder('/rooms/tod/gfx/rip.png', { X = 0, Y = 80 }, 10)");
+        if (found != nullptr) {
+            memcpy(found + 62, " 8", 2);
+        }
+    }
+
 	if (!bytesRead) {
 		delete[] buffer;
 		return NULL;
