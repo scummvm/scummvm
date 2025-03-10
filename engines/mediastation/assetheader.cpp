@@ -354,6 +354,17 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 		break;
 	}
 
+	case kAssetHeaderSpriteFrameMapping: {
+		uint32 externalFrameId = Datum(chunk).u.i;
+		uint32 internalFrameId = Datum(chunk).u.i;
+		uint32 unk1 = Datum(chunk).u.i;
+		if (unk1 != internalFrameId) {
+			warning("AssetHeader::readSection(): Repeated internalFrameId doesn't match");
+		}
+		_spriteFrameMapping.setVal(externalFrameId, internalFrameId);
+		break;
+	}
+
 	default:
 		error("AssetHeader::readSection(): Unknown section type 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 	}

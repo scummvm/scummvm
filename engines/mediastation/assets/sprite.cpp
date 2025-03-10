@@ -122,6 +122,14 @@ Operand Sprite::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args)
 		return Operand();
 	}
 
+	case kSetSpriteFrameByIdMethod: {
+		assert(args.size() == 1);
+		uint32 externalFrameId = args[0].getInteger();
+		uint32 internalFrameId = _header->_spriteFrameMapping.getVal(externalFrameId);
+		showFrame(_frames[internalFrameId]);
+		return Operand();
+	}
+
 	case kIsPlayingMethod: {
 		Operand returnValue(kOperandTypeLiteral1);
 		returnValue.putInteger(static_cast<int>(_isPlaying));

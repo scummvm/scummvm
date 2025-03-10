@@ -131,7 +131,10 @@ enum AssetHeaderSectionType {
 	kAssetHeaderTextPosition = 0x25f,
 	kAssetHeaderTextUnk1 = 0x262,
 	kAssetHeaderTextUnk2 = 0x263,
-	kAssetHeaderTextCharacterClass = 0x0266
+	kAssetHeaderTextCharacterClass = 0x0266,
+
+	// SPRITE FIELDS.
+	kAssetHeaderSpriteFrameMapping = 0x03e9
 };
 
 enum TextJustification {
@@ -189,6 +192,7 @@ public:
 	uint32 _stageId = 0;
 	SoundEncoding _soundEncoding;
 	uint32 _chunkCount = 0;
+	Common::HashMap<uint32, uint32> _spriteFrameMapping;
 
 	// PATH FIELDS.
 	uint32 _dissolveFactor = 0;
