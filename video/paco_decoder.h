@@ -25,6 +25,7 @@
 #include "audio/audiostream.h"
 #include "common/list.h"
 #include "common/rect.h"
+#include "graphics/palette.h"
 #include "video/video_decoder.h"
 
 namespace Common {
@@ -88,8 +89,7 @@ protected:
 
 	protected:
 		Graphics::Surface *_surface;
-
-		byte *_palette;
+		Graphics::Palette _palette;
 
 		mutable bool _dirtyPalette;
 
