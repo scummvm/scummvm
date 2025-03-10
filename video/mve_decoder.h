@@ -24,6 +24,7 @@
 
 #include "audio/audiostream.h"
 #include "video/video_decoder.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "common/list.h"
 #include "common/rect.h"
@@ -72,7 +73,7 @@ class MveDecoder : public VideoDecoder {
 	bool      _dirtyPalette;
 	uint16    _palStart;
 	uint16    _palCount;
-	byte      _palette[0x300];
+	Graphics::Palette _palette;
 
 	uint16    _skipMapSize;
 	byte     *_skipMap;
