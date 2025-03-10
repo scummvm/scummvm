@@ -143,6 +143,7 @@ public:
 	int _thumbSizeX = 0, _thumbSizeY = 0;
 	bool _debugDraw = false;
 	bool _debugDrawGrid = false;
+	bool _debugDrawPath = false;
 	int _gameVersion = 0;
 
 	Vect2i _screen_offset = Vect2i(0, 0);
