@@ -25,6 +25,7 @@
 #include "video/video_decoder.h"
 #include "common/list.h"
 #include "common/rect.h"
+#include "graphics/palette.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -77,7 +78,7 @@ protected:
 		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
 		virtual const Graphics::Surface *decodeNextFrame();
 		virtual void handleFrame();
-		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
+		const byte *getPalette() const { _dirtyPalette = false; return _palette.data(); }
 		bool hasDirtyPalette() const { return _dirtyPalette; }
 
 		const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
@@ -93,7 +94,7 @@ protected:
 
 		uint32 _offsetFrame1;
 		uint32 _offsetFrame2;
-		byte *_palette;
+		Graphics::Palette _palette;
 		mutable bool _dirtyPalette;
 
 		uint32 _frameCount;
