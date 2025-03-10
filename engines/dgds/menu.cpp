@@ -740,7 +740,7 @@ bool Menu::handleClick(const Common::Point &mouse) {
 		if (currentScene == 73)
 			engine->changeScene(12);	// skip tank mini-game
 		else if (currentScene == 84)
-			engine->changeScene(106);	// skip train mini-game
+			engine->changeScene(57);	// skip train mini-game, return to travel map
 		break;
 	case kMenuTankTrainPlayArcade:
 		if (currentScene == 73) {
