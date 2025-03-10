@@ -33,7 +33,6 @@
 #include "dgds/globals.h"
 #include "dgds/game_palettes.h"
 #include "dgds/menu.h"
-#include "dgds/font.h"
 
 namespace Dgds {
 

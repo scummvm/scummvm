@@ -22,7 +22,6 @@
 // Resource library
 
 #include "common/file.h"
-#include "common/fs.h"
 
 #include "dgds/sound/resource/sci_resource.h"
 #include "dgds/sound/scispan.h"

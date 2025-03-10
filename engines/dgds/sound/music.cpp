@@ -23,6 +23,7 @@
 #include "audio/decoders/raw.h"
 #include "common/config-manager.h"
 
+#include "dgds/dgds.h"
 #include "dgds/sound/resource/sci_resource.h"
 #include "dgds/sound/midiparser_sci.h"
 #include "dgds/sound/music.h"

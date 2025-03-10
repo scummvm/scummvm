@@ -22,7 +22,6 @@
 #ifndef DGDS_REQUEST_H
 #define DGDS_REQUEST_H
 
-#include "common/stream.h"
 #include "common/array.h"
 
 #include "dgds/parser.h"

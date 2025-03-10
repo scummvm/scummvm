@@ -24,7 +24,6 @@
 #include "common/archive.h"
 #include "common/file.h"
 #include "common/textconsole.h"
-#include "common/memstream.h"
 
 #include "dgds/sound/resource/sci_resource.h"
 #include "dgds/sound/scispan.h"

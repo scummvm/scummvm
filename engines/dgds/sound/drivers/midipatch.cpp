@@ -23,7 +23,6 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
-#include "common/system.h"
 
 #include "dgds/sound/resource/sci_resource.h"
 #include "dgds/dgds.h"

@@ -24,8 +24,6 @@
 
 namespace Dgds {
 
-#include "common/list.h"
-
 // Patch not mapped
 #define MIDI_UNMAPPED 0xff
 // Patch mapped to rhythm key

@@ -25,7 +25,6 @@
 #include "common/stream.h"
 #include "common/array.h"
 #include "common/error.h"
-#include "common/rect.h"
 #include "common/serializer.h"
 
 #include "dgds/dgds_rect.h"

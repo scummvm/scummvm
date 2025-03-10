@@ -30,15 +30,12 @@
 #include "audio/mixer.h"
 
 #include "dgds/decompress.h"
+#include "dgds/dgds.h"
 #include "dgds/includes.h"
-#include "dgds/parser.h"
 #include "dgds/resource.h"
 #include "dgds/sound.h"
 #include "dgds/sound/music.h"
 #include "dgds/sound/resource/sci_resource.h"
-
-#include "common/debug.h"
-
 
 namespace Dgds {
 

@@ -26,14 +26,11 @@
 #include "common/system.h"
 #include "common/util.h"
 
-#include "graphics/surface.h"
-
 #include "dgds/dgds.h"
 #include "dgds/includes.h"
 #include "dgds/resource.h"
 #include "dgds/scene.h"
 #include "dgds/ads.h"
-#include "dgds/menu.h"
 #include "dgds/globals.h"
 #include "dgds/inventory.h"
 #include "dgds/debug_util.h"

@@ -22,7 +22,6 @@
 #ifndef DGDS_SCENE_CONDITION_H
 #define DGDS_SCENE_CONDITION_H
 
-#include "common/types.h"
 #include "common/str.h"
 #include "common/array.h"
 

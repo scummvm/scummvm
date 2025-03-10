@@ -22,7 +22,6 @@
 #include "common/system.h"
 
 #include "dgds/dgds.h"
-#include "dgds/drawing.h"
 #include "dgds/globals.h"
 #include "dgds/game_palettes.h"
 #include "dgds/image.h"

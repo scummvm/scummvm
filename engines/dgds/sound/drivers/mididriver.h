@@ -22,10 +22,7 @@
 #ifndef DGDS_SOUND_DRIVERS_MIDIDRIVER_H
 #define DGDS_SOUND_DRIVERS_MIDIDRIVER_H
 
-#include "dgds/sound/scispan.h"
-#include "dgds/dgds.h"
 #include "audio/mididrv.h"
-#include "common/error.h"
 #include "common/platform.h"
 
 namespace Dgds {

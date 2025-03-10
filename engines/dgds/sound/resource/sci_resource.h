@@ -22,11 +22,6 @@
 #ifndef DGDS_SOUND_RESOURCE_SCI_RESOURCE_H
 #define DGDS_SOUND_RESOURCE_SCI_RESOURCE_H
 
-#include "common/str.h"
-#include "common/list.h"
-#include "common/hashmap.h"
-
-#include "dgds/dgds.h"
 #include "dgds/sound/scispan.h"
 
 namespace Common {

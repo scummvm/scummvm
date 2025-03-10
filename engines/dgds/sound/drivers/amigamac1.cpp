@@ -27,12 +27,10 @@
 #include "audio/mixer.h"
 #include "audio/mods/paula.h"
 #include "common/array.h"
-#include "common/debug-channels.h"
 #include "common/hashmap.h"
 #include "common/memstream.h"
 #include "common/mutex.h"
 #include "common/stream.h"
-#include "common/util.h"
 
 namespace Dgds {
 

@@ -22,10 +22,9 @@
 #ifndef DGDS_IMAGE_H
 #define DGDS_IMAGE_H
 
-#include <common/ptr.h>
-#include <common/rect.h>
-#include <graphics/palette.h>
-#include <dgds/resource.h>
+#include "common/ptr.h"
+#include "common/rect.h"
+#include "dgds/resource.h"
 
 namespace Common {
 class SeekableReadStream;

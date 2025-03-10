@@ -24,7 +24,6 @@
 #include "dgds/image.h"
 #include "dgds/includes.h"
 #include "dgds/sound_raw.h"
-#include "dgds/drawing.h"
 #include "dgds/scene.h"
 #include "dgds/dialog.h"
 #include "dgds/ads.h"

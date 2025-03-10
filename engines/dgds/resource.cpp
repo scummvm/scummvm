@@ -23,7 +23,6 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
-#include "common/platform.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/substream.h"

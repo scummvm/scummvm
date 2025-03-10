@@ -21,6 +21,7 @@
 
 // This file was mostly copied from SCI with light modifications.
 
+#include "dgds/dgds.h"
 #include "dgds/sound/midiparser_sci.h"
 #include "dgds/sound/drivers/mididriver.h"
 

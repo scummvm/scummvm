@@ -29,7 +29,6 @@
 
 #include "dgds/ads.h"
 #include "dgds/console.h"
-#include "dgds/decompress.h"
 #include "dgds/dgds.h"
 #include "dgds/globals.h"
 #include "dgds/includes.h"

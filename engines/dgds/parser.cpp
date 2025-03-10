@@ -23,7 +23,6 @@
 #include "common/textconsole.h"
 #include "common/str.h"
 #include "common/stream.h"
-#include "common/platform.h"
 #include "dgds/includes.h"
 #include "dgds/resource.h"
 #include "dgds/parser.h"

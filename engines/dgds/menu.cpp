@@ -26,7 +26,6 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/managed_surface.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "dgds/includes.h"

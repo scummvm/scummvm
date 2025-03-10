@@ -27,8 +27,6 @@
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/platform.h"
-#include "common/str-array.h"
-#include "common/stream.h"
 #include "common/substream.h"
 #include "common/system.h"
 
@@ -36,10 +34,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
-#include "graphics/fontman.h"
 #include "graphics/managed_surface.h"
-#include "graphics/palette.h"
-#include "graphics/surface.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -59,7 +54,6 @@
 #include "dgds/parser.h"
 #include "dgds/request.h"
 #include "dgds/resource.h"
-#include "dgds/scripts.h"
 #include "dgds/sound.h"
 #include "dgds/game_palettes.h"
 #include "dgds/minigames/dragon_arcade.h"

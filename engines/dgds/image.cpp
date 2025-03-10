@@ -28,13 +28,10 @@
 #include "common/system.h"
 #include "common/platform.h"
 #include "graphics/managed_surface.h"
-#include "graphics/surface.h"
 #include "dgds/dgds.h"
-#include "dgds/font.h"
 #include "dgds/includes.h"
 #include "dgds/image.h"
 #include "dgds/resource.h"
-#include "dgds/parser.h"
 
 namespace Dgds {
 

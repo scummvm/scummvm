@@ -28,7 +28,6 @@
 #include "common/memstream.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/textconsole.h"
 
 namespace Dgds {
 

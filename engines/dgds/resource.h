@@ -25,7 +25,6 @@
 #include "common/file.h"
 #include "common/hashmap.h"
 #include "common/platform.h"
-#include "common/stream.h"
 
 namespace Dgds {
 

@@ -22,16 +22,11 @@
 #include "dgds/dialog.h"
 
 #include "common/debug.h"
-#include "common/endian.h"
 #include "common/rect.h"
 #include "common/system.h"
 
-#include "graphics/surface.h"
-
 #include "dgds/dgds.h"
-#include "dgds/includes.h"
 #include "dgds/request.h"
-#include "dgds/scripts.h"
 #include "dgds/scene.h"
 #include "dgds/font.h"
 #include "dgds/drawing.h"

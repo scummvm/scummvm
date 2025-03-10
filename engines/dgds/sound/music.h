@@ -32,11 +32,11 @@
 #ifndef DGDS_SOUND_MUSIC_H
 #define DGDS_SOUND_MUSIC_H
 
-#include "common/serializer.h"
 #include "common/mutex.h"
 
 #include "audio/mixer.h"
 
+#include "dgds/console.h"
 #include "dgds/sound/drivers/mididriver.h"
 #include "dgds/sound/resource/sci_resource.h"
 

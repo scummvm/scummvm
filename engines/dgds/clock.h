@@ -22,7 +22,6 @@
 #ifndef DGDS_CLOCK_H
 #define DGDS_CLOCK_H
 
-#include "common/types.h"
 #include "common/rect.h"
 #include "common/error.h"
 #include "common/serializer.h"

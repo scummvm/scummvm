@@ -22,7 +22,6 @@
 #ifndef DGDS_MINIGAMES_DRAGON_ARCADE_TTM_H
 #define DGDS_MINIGAMES_DRAGON_ARCADE_TTM_H
 
-#include "common/types.h"
 #include "common/ptr.h"
 
 #include "dgds/image.h"

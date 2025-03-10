@@ -22,19 +22,7 @@
 #ifndef DGDS_MENU_H
 #define DGDS_MENU_H
 
-#include "common/error.h"
-#include "common/events.h"
-#include "common/platform.h"
-
 #include "graphics/surface.h"
-#include "graphics/managed_surface.h"
-
-#include "engines/advancedDetector.h"
-#include "engines/engine.h"
-
-#include "gui/debugger.h"
-
-#include "dgds/resource.h"
 #include "dgds/request.h"
 
 namespace Dgds {
