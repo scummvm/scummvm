@@ -57,14 +57,12 @@ CoktelDecoder::State::State() : flags(0), speechId(0) {
 
 CoktelDecoder::CoktelDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
 	_mixer(mixer), _soundType(soundType), _width(0), _height(0), _x(0), _y(0),
-	_defaultX(0), _defaultY(0), _features(0), _frameCount(0), _paletteDirty(false),
+	_defaultX(0), _defaultY(0), _features(0), _frameCount(0), _palette(256), _paletteDirty(false),
 	_isDouble(false), _ownSurface(true), _frameRate(12), _hasSound(false),
 	_soundEnabled(false), _soundStage(kSoundNone), _audioStream(0), _startTime(0),
 	_pauseStartTime(0), _isPaused(false) {
 
 	assert(_mixer);
-
-	memset(_palette, 0, 768);
 }
 
 CoktelDecoder::~CoktelDecoder() {
@@ -316,7 +314,7 @@ uint32 CoktelDecoder::getFrameCount() const {
 
 const byte *CoktelDecoder::getPalette() {
 	_paletteDirty = false;
-	return _palette;
+	return _palette.data();
 }
 
 bool CoktelDecoder::hasDirtyPalette() const {
@@ -1122,8 +1120,12 @@ bool IMDDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_features |= kFeaturesPalette;
 
 	// Palette
-	for (int i = 0; i < 768; i++)
-		_palette[i] = _stream->readByte() << 2;
+	for (int i = 0; i < 256; i++) {
+		byte r = _stream->readByte() << 2;
+		byte g = _stream->readByte() << 2;
+		byte b = _stream->readByte() << 2;
+		_palette.set(i, r, g, b);
+	}
 
 	_paletteDirty = true;
 
@@ -1403,8 +1405,12 @@ void IMDDecoder::processFrame() {
 
 			_paletteDirty = true;
 
-			for (int i = 0; i < 768; i++)
-				_palette[i] = _stream->readByte() << 2;
+			for (int i = 0; i < 256; i++) {
+				byte r = _stream->readByte() << 2;
+				byte g = _stream->readByte() << 2;
+				byte b = _stream->readByte() << 2;
+				_palette.set(i, r, g, b);
+			}
 
 			cmd = _stream->readUint16LE();
 		}
@@ -1519,9 +1525,13 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 		// One byte index
 		int index = *dataPtr++;
 
-		int count = MIN((255 - index) * 3, 48);
-		for (int i = 0; i < count; i++)
-			_palette[index * 3 + i] = dataPtr[i] << 2;
+		int count = MIN((255 - index), 16);
+		for (int i = 0; i < count; i++) {
+			byte r = dataPtr[i * 3] << 2;
+			byte g = dataPtr[i * 3 + 1] << 2;
+			byte b = dataPtr[i * 3 + 2] << 2;
+			_palette.set(index + i, r, g, b);
+		}
 
 		dataPtr  += 48;
 		dataSize -= 49;
@@ -1964,8 +1974,12 @@ bool VMDDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_videoCodec = _stream->readUint32BE();
 
 	if (_features & kFeaturesPalette) {
-		for (int i = 0; i < 768; i++)
-			_palette[i] = _stream->readByte() << 2;
+		for (int i = 0; i < 256; i++) {
+			byte r = _stream->readByte() << 2;
+			byte g = _stream->readByte() << 2;
+			byte b = _stream->readByte() << 2;
+			_palette.set(i, r, g, b);
+		}
 
 		_paletteDirty = true;
 	}
@@ -2389,8 +2403,12 @@ void VMDDecoder::processFrame() {
 				uint8 index = _stream->readByte();
 				uint8 count = _stream->readByte();
 
-				for (int j = 0; j < ((count + 1) * 3); j++)
-					_palette[index * 3 + j] = _stream->readByte() << 2;
+				for (int j = 0; j < (count + 1); j++) {
+					byte r = _stream->readByte() << 2;
+					byte g = _stream->readByte() << 2;
+					byte b = _stream->readByte() << 2;
+					_palette.set(index + j, r, g, b); 
+				}
 
 				_stream->skip((255 - count) * 3);
 

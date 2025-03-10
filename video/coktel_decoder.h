@@ -40,6 +40,7 @@
 #include "common/rational.h"
 #include "common/str.h"
 
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "video/video_decoder.h"
@@ -236,7 +237,7 @@ protected:
 
 	uint32 _startTime;
 
-	byte _palette[768];
+	Graphics::Palette _palette;
 	bool _paletteDirty;
 
 	bool _isDouble;
