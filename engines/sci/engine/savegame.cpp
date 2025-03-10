@@ -40,7 +40,7 @@
 #include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/menu.h"
-#include "sci/graphics/scipalette.h"
+#include "sci/graphics/palette.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/screen.h"
 #include "sci/parser/vocabulary.h"
@@ -53,7 +53,7 @@
 #include "sci/engine/guest_additions.h"
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
-#include "sci/graphics/scipalette32.h"
+#include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/video32.h"
 #endif

@@ -47,7 +47,7 @@
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/paint32.h"
-#include "sci/graphics/scipalette32.h"
+#include "sci/graphics/palette32.h"
 #include "sci/graphics/plane32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/screen.h"

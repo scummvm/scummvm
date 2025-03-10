@@ -25,7 +25,7 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/celobj32.h"
 #include "sci/graphics/frameout.h"
-#include "sci/graphics/scipalette32.h"
+#include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/text32.h"
 #include "sci/engine/workarounds.h"

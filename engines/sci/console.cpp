@@ -44,7 +44,7 @@
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint16.h"
-#include "sci/graphics/scipalette.h"
+#include "sci/graphics/palette.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/view.h"
 
@@ -56,7 +56,7 @@
 #include "common/memstream.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/paint32.h"
-#include "sci/graphics/scipalette32.h"
+#include "sci/graphics/palette32.h"
 #include "sci/sound/decoders/sol.h"
 #include "video/coktel_decoder.h"
 #endif
