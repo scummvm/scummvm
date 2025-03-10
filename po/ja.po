@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-06 18:07+0000\n"
+"POT-Creation-Date: 2025-03-10 16:53+0000\n"
 "PO-Revision-Date: 2025-02-15 11:09+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -6611,7 +6611,7 @@ msgstr "脱出"
 msgid "Open inventory"
 msgstr "インベントリーを開く"
 
-#: engines/bbvs/metaengine.cpp:124 engines/dgds/metaengine.cpp:82
+#: engines/bbvs/metaengine.cpp:124 engines/dgds/metaengine.cpp:81
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:231
 #: engines/tinsel/metaengine.cpp:300 engines/tsage/metaengine.cpp:206
 msgid "Look"
@@ -6843,7 +6843,7 @@ msgstr "手がかり表示の切替"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
-#: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:74
+#: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:73
 #: engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:132
@@ -6856,7 +6856,7 @@ msgstr "ゲームをセーブ"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
-#: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:73
+#: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:72
 #: engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:137
@@ -7364,41 +7364,41 @@ msgstr "コマンドを変更"
 msgid "Time Advance"
 msgstr "時間経過"
 
-#: engines/dgds/metaengine.cpp:75
+#: engines/dgds/metaengine.cpp:74
 msgid "Toggle Menu"
 msgstr "メニュー切替"
 
-#: engines/dgds/metaengine.cpp:76
+#: engines/dgds/metaengine.cpp:75
 msgid "Toggle Clock"
 msgstr "時計を切替"
 
-#: engines/dgds/metaengine.cpp:77
+#: engines/dgds/metaengine.cpp:76
 msgid "Next dialog / menu item"
 msgstr "次へ / メニューアイテム"
 
-#: engines/dgds/metaengine.cpp:78
+#: engines/dgds/metaengine.cpp:77
 msgid "Previous dialog / menu item"
 msgstr "前へ / メニューアイテム"
 
-#: engines/dgds/metaengine.cpp:79
+#: engines/dgds/metaengine.cpp:78
 msgid "Next object"
 msgstr "次のオブジェクト"
 
-#: engines/dgds/metaengine.cpp:80
+#: engines/dgds/metaengine.cpp:79
 msgid "Previous object"
 msgstr "前のオブジェクト"
 
-#: engines/dgds/metaengine.cpp:81
+#: engines/dgds/metaengine.cpp:80
 msgid "Pick up / Operate"
 msgstr "拾う/操作"
 
-#: engines/dgds/metaengine.cpp:83
+#: engines/dgds/metaengine.cpp:82
 #, fuzzy
 #| msgid "Animated inventory items"
 msgid "Activate Inventory Object"
 msgstr "アニメーション化された在庫アイテム"
 
-#: engines/dgds/metaengine.cpp:86 engines/got/metaengine.cpp:90
+#: engines/dgds/metaengine.cpp:85 engines/got/metaengine.cpp:90
 #, fuzzy
 #| msgid "Game Keymappings"
 msgid "Game Keys"

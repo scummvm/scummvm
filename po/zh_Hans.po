@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-06 18:07+0000\n"
+"POT-Creation-Date: 2025-03-10 16:53+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -6623,7 +6623,7 @@ msgstr "退出"
 msgid "Open inventory"
 msgstr "打开物品栏"
 
-#: engines/bbvs/metaengine.cpp:124 engines/dgds/metaengine.cpp:82
+#: engines/bbvs/metaengine.cpp:124 engines/dgds/metaengine.cpp:81
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:231
 #: engines/tinsel/metaengine.cpp:300 engines/tsage/metaengine.cpp:206
 msgid "Look"
@@ -6851,7 +6851,7 @@ msgstr "开关线索隐私"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
-#: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:74
+#: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:73
 #: engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:132
@@ -6864,7 +6864,7 @@ msgstr "保存游戏"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
-#: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:73
+#: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:72
 #: engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:137
@@ -7368,39 +7368,39 @@ msgstr "更改命令"
 msgid "Time Advance"
 msgstr ""
 
-#: engines/dgds/metaengine.cpp:75
+#: engines/dgds/metaengine.cpp:74
 msgid "Toggle Menu"
 msgstr "开关菜单"
 
-#: engines/dgds/metaengine.cpp:76
+#: engines/dgds/metaengine.cpp:75
 msgid "Toggle Clock"
 msgstr "开关时钟"
 
-#: engines/dgds/metaengine.cpp:77
+#: engines/dgds/metaengine.cpp:76
 msgid "Next dialog / menu item"
 msgstr "下一个对话框/菜单项"
 
-#: engines/dgds/metaengine.cpp:78
+#: engines/dgds/metaengine.cpp:77
 msgid "Previous dialog / menu item"
 msgstr "上一个对话框/菜单项"
 
-#: engines/dgds/metaengine.cpp:79
+#: engines/dgds/metaengine.cpp:78
 msgid "Next object"
 msgstr "下一个物品"
 
-#: engines/dgds/metaengine.cpp:80
+#: engines/dgds/metaengine.cpp:79
 msgid "Previous object"
 msgstr "上一个物品"
 
-#: engines/dgds/metaengine.cpp:81
+#: engines/dgds/metaengine.cpp:80
 msgid "Pick up / Operate"
 msgstr "捡起/操作"
 
-#: engines/dgds/metaengine.cpp:83
+#: engines/dgds/metaengine.cpp:82
 msgid "Activate Inventory Object"
 msgstr "激活物品栏物品"
 
-#: engines/dgds/metaengine.cpp:86 engines/got/metaengine.cpp:90
+#: engines/dgds/metaengine.cpp:85 engines/got/metaengine.cpp:90
 msgid "Game Keys"
 msgstr "游戏按键"
 
