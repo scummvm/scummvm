@@ -23,6 +23,7 @@
 #define INPUT_H
 
 #include "common/events.h"
+#include "common/ptr.h"
 
 namespace Alcachofa {
 
@@ -39,9 +40,11 @@ public:
 	inline bool isAnyMouseDown() const { return _isMouseLeftDown || _isMouseRightDown; }
 	inline const Common::Point &mousePos2D() const { return _mousePos2D; }
 	inline const Common::Point &mousePos3D() const { return _mousePos3D; }
+	const Input &debugInput() const { scumm_assert(_debugInput != nullptr); return *_debugInput; }
 
 	void nextFrame();
 	bool handleEvent(const Common::Event &event);
+	void toggleDebugInput(bool debugMode); ///< Toggles input debug mode which blocks any input not retrieved with debugInput
 
 private:
 	bool
@@ -54,6 +57,7 @@ private:
 	Common::Point
 		_mousePos2D,
 		_mousePos3D;
+	Common::ScopedPtr<Input> _debugInput;
 };
 
 }

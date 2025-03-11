@@ -41,9 +41,20 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("disableDebugDraw", WRAP_METHOD(Console, cmdDisableDebugDraw));
 	registerCmd("pickup", WRAP_METHOD(Console, cmdItem));
 	registerCmd("drop", WRAP_METHOD(Console, cmdItem));
+	registerCmd("debugMode", WRAP_METHOD(Console, cmdDebugMode));
 }
 
 Console::~Console() {
+}
+
+bool Console::isAnyDebugDrawingOn() const
+{
+	return
+		g_engine->isDebugModeActive() ||
+		_showInteractables ||
+		_showCharacters ||
+		_showFloor ||
+		_showFloorColor;
 }
 
 bool Console::cmdVar(int argc, const char **args) {
@@ -190,6 +201,33 @@ bool Console::cmdItem(int argc, const char **args) {
 	}
 	if (!hasMatchedSomething)
 		debugPrintf("Cannot find any item matching \"%s\"\n", itemName);
+	return true;
+}
+
+bool Console::cmdDebugMode(int argc, const char **args)
+{
+	if (argc < 2 || argc > 3) {
+		debugPrintf("usage: debugMode <mode> [<param>]\n");
+		debugPrintf("modes:\n");
+		debugPrintf("  0 - None, disables debug mode\n");
+		debugPrintf("  1 - Closest floor point, param limits to polygon\n");
+		return true;
+	}
+
+	int32 param = -1;
+	if (argc > 2)
+	{
+		char *end = nullptr;
+		param = (int32)strtol(args[2], &end, 10);
+		if (end == nullptr || *end != '\0')
+		{
+			debugPrintf("Debug mode parameter can only be integers");
+			return true;
+		}
+	}
+
+	auto mode = (DebugMode)strtol(args[1], nullptr, 10);
+	g_engine->setDebugMode(mode, param);
 	return true;
 }
 

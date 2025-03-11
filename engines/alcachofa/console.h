@@ -27,6 +27,11 @@
 
 namespace Alcachofa {
 
+enum class DebugMode {
+	None,
+	ClosestFloorPoint
+};
+
 class Console : public GUI::Debugger {
 public:
 	Console();
@@ -36,14 +41,7 @@ public:
 	inline bool showCharacters() const { return _showCharacters; }
 	inline bool showFloor() const { return _showFloor; }
 	inline bool showFloorColor() const { return _showFloorColor; }
-
-	inline bool isAnyDebugDrawingOn() const {
-		return
-			_showInteractables ||
-			_showCharacters ||
-			_showFloor ||
-			_showFloorColor;
-	}
+	bool isAnyDebugDrawingOn() const;
 
 private:
 	bool cmdVar(int argc, const char **args);
@@ -53,6 +51,7 @@ private:
 	bool cmdChangeRoom(int argc, const char **args);
 	bool cmdDisableDebugDraw(int argc, const char **args);
 	bool cmdItem(int argc, const char **args);
+	bool cmdDebugMode(int argc, const char **args);
 
 	bool _showInteractables = true;
 	bool _showCharacters = true;

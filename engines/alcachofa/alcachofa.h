@@ -44,6 +44,7 @@
 
 namespace Alcachofa {
 
+class IDebugHandler;
 class IRenderer;
 class DrawQueue;
 class World;
@@ -70,9 +71,11 @@ public:
 	inline World &world() { return *_world; }
 	inline Script &script() { return *_script; }
 	inline Scheduler &scheduler() { return _scheduler; }
-	inline Console &console() { return *_console; }	
+	inline Console &console() { return *_console; }
+	inline bool isDebugModeActive() const { return _debugHandler != nullptr; }
 
 	void playVideo(int32 videoId);
+	void setDebugMode(DebugMode debugMode, int32 param);
 
 	uint32 getFeatures() const;
 
@@ -119,6 +122,7 @@ public:
 
 private:
 	Console *_console = new Console();
+	Common::ScopedPtr<IDebugHandler> _debugHandler;
 	Common::ScopedPtr<IRenderer> _renderer;
 	Common::ScopedPtr<DrawQueue> _drawQueue;
 	Common::ScopedPtr<World> _world;
