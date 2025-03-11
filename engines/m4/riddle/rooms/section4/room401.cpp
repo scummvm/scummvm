@@ -66,7 +66,7 @@ void Room401::init() {
 	_rip4 = series_load("RIP TREK TALKER POS3");
 	_401rp01 = series_load("401rp01");
 
-	_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x500, 0,
+	_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x500, false,
 		triggerMachineByHashCallback, "agent");
 	sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
 	_agentMode = 1;
@@ -101,7 +101,6 @@ void Room401::init() {
 
 void Room401::daemon() {
 	int val;
-
 	switch (_G(kernel).trigger) {
 	case 1:
 		player_set_commands_allowed(true);
@@ -279,7 +278,7 @@ void Room401::daemon() {
 		break;
 
 	case 102:
-		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 11, 200, _401rp01, 11, 11, 0);
 		_ripleyMode = _ripleyShould = 0;
@@ -300,7 +299,7 @@ void Room401::daemon() {
 
 	case 104:
 		series_show("401a06", 0);
-		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 11, 200, _401rp01, 11, 11, 0);
 		_ripleyMode = _ripleyShould = 0;
@@ -317,7 +316,7 @@ void Room401::daemon() {
 		break;
 
 	case 106:
-		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 11, 200, _401rp01, 11, 11, 0);
 		_ripleyMode = _ripleyShould = 0;
@@ -371,7 +370,7 @@ void Room401::daemon() {
 
 	case 300:
 		ws_hide_walker();
-		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 1, 11, 305, _401rp01, 11, 11, 0);
 		_agentShould = 5;
@@ -395,7 +394,7 @@ void Room401::daemon() {
 
 	case 322:
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 324, _401rp01, 1, 1, 0);
-		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
+		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, false,
 			triggerMachineByHashCallback, "agent");
 		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
 		break;
@@ -502,7 +501,7 @@ void Room401::daemon() {
 
 	case 515:
 		ws_hide_walker();
-		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 1, 11, 516, _401rp01, 11, 11, 0);
 		break;
@@ -523,7 +522,7 @@ void Room401::daemon() {
 		_G(flags)[V016] = 1;
 		_G(flags)[V366] = 1;
 
-		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 520, _401rp01, 1, 1, 0);
 		_agentShould = 0;
@@ -548,7 +547,7 @@ void Room401::daemon() {
 
 	case 613:
 		ws_hide_walker();
-		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 1, 11, 616, _401rp01, 11, 11, 0);
 		break;
@@ -565,7 +564,7 @@ void Room401::daemon() {
 
 	case 618:
 		series_show("401a06", 0x600, 16);
-		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
+		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, false,
 			triggerMachineByHashCallback, "agent");
 		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 620, _401rp01, 1, 1, 0);
@@ -619,7 +618,7 @@ void Room401::daemon() {
 
 	case 715:
 		ws_hide_walker();
-		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401a04, 1, 11, 716, _401rp01, 11, 11, 0);
 		break;
@@ -634,7 +633,7 @@ void Room401::daemon() {
 		inv_move_object("TURTLE", 305);
 		inv_move_object("TURTLE TREATS", 305);
 
-		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 720, _401rp01, 1, 1, 0);
 		_ctr1 = 0;
@@ -651,7 +650,7 @@ void Room401::daemon() {
 	case 824:
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 826, _401rp01, 1, 1, 0);
 		inv_give_to_player("ROMANOV EMERALD");
-		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
+		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, false,
 			triggerMachineByHashCallback, "agent");
 		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
 		_agentShould = 0;
@@ -779,9 +778,9 @@ void Room401::daemon() {
 }
 
 void Room401::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said("gear");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said("gear");
 
 	if (player_said("conv401a")) {
 		conv401a();
@@ -815,7 +814,7 @@ void Room401::parser() {
 	} else if (player_said("talk to", "agent")) {
 		ws_hide_walker();
 		_G(kernel).trigger_mode = KT_DAEMON;
-		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 1, 11, 200, _401rp01, 11, 11, 0);
 
@@ -934,9 +933,9 @@ void Room401::parser() {
 }
 
 void Room401::conv401a() {
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 	const char *sound = conv_sound_to_play();
 
 	if (_G(kernel).trigger == 1) {
@@ -995,12 +994,13 @@ void Room401::conv401a() {
 			ITEM(11, 4, "SHRUNKEN HEAD");
 			ITEM(11, 5, "SILVER BUTTERFLY");
 			ITEM(11, 6, "POSTAGE STAMP");
-			ITEM(11, 7, "GERMAN BAKNOTE");
+			ITEM(11, 7, "GERMAN BANKNOTE");
 			ITEM(11, 8, "WHALE BONE HORN");
 			ITEM(11, 9, "CHISEL");
 			ITEM(11, 10, "INCENSE BURNER");
 #undef ITEM
-			if (node == 11 && entry == 11) inv_move_object("ROMANOV EMERALD", NOWHERE);
+			if (node == 11 && entry == 11)
+				inv_move_object("ROMANOV EMERALD", NOWHERE);
 
 			if (node != 11)
 				_ripleyShould = 1;
