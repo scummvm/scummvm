@@ -34,6 +34,9 @@ void Input::nextFrame() {
 }
 
 bool Input::handleEvent(const Common::Event &event) {
+	if (_debugInput != nullptr)
+		return _debugInput->handleEvent(event);
+
 	switch (event.type) {
 	case EVENT_LBUTTONDOWN:
 		_wasMouseLeftPressed = true;
@@ -60,6 +63,17 @@ bool Input::handleEvent(const Common::Event &event) {
 	default:
 		return false;
 	}
+}
+
+void Input::toggleDebugInput(bool debugMode) {
+	if (!debugMode) {
+		_debugInput.reset();
+		return;
+	}
+	if (_debugInput == nullptr)
+		_debugInput.reset(new Input());
+	nextFrame(); // resets frame-specific flags
+	_isMouseLeftDown = _isMouseRightDown = false;
 }
 
 }
