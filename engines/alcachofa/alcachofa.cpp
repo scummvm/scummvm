@@ -35,6 +35,7 @@
 
 #include "rooms.h"
 #include "script.h"
+#include "debug.h"
 
 using namespace Math;
 
@@ -67,9 +68,9 @@ Common::Error AlcachofaEngine::run() {
 	_script.reset(new Script());
 	_player.reset(new Player());
 
-	//_script->createProcess(MainCharacterKind::None, "Inicializar_Variables");
-	//_player->changeRoom("MINA", true);
-	_script->createProcess(MainCharacterKind::None, "CREDITOS_INICIALES");
+	_script->createProcess(MainCharacterKind::None, "Inicializar_Variables");
+	_player->changeRoom("MINA", true);
+	//_script->createProcess(MainCharacterKind::None, "CREDITOS_INICIALES");
 	_scheduler.run();
 
 	Common::Event e;
@@ -88,7 +89,8 @@ Common::Error AlcachofaEngine::run() {
 		_player->preUpdate();
 		_player->currentRoom()->update();
 		_player->postUpdate();
-
+		if (_debugHandler != nullptr)
+			_debugHandler->update();
 		_renderer->end();
 
 		// Delay for a bit. All events loops should have a delay
@@ -134,6 +136,16 @@ void AlcachofaEngine::playVideo(int32 videoId) {
 		g_system->delayMillis(decoder.getTimeToNextFrame() / 2);
 	}
 	decoder.stop();
+}
+
+void AlcachofaEngine::setDebugMode(DebugMode mode, int32 param)
+{
+	switch (mode)
+	{
+	case DebugMode::ClosestFloorPoint: _debugHandler.reset(new ClosestFloorPointDebugHandler(param)); break;
+	default: _debugHandler.reset(nullptr);
+	}
+	_input.toggleDebugInput(isDebugModeActive());
 }
 
 Common::Error AlcachofaEngine::syncGame(Common::Serializer &s) {

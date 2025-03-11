@@ -141,19 +141,23 @@ ObjectBase *Room::getObjectByName(const Common::String &name) const {
 }
 
 void Room::update() {
-	updateScripts();
+	if (!g_engine->isDebugModeActive())
+	{
+		updateScripts();
 
-	if (g_engine->player().currentRoom() == this) {
-		updateRoomBounds();
-		updateClosingInventory();
-		if (!updateInput())
-			return;
+		if (g_engine->player().currentRoom() == this) {
+			updateRoomBounds();
+			updateClosingInventory();
+			if (!updateInput())
+				return;
+		}
+		if (!g_engine->player().isOptionsMenuOpen() &&
+			g_engine->player().currentRoom() != &g_engine->world().inventory())
+			world().globalRoom().updateObjects();
+		if (g_engine->player().currentRoom() == this)
+			updateObjects();
 	}
-	if (!g_engine->player().isOptionsMenuOpen() &&
-		g_engine->player().currentRoom() != &g_engine->world().inventory())
-		world().globalRoom().updateObjects();
-	if (g_engine->player().currentRoom() == this)
-		updateObjects();
+
 	if (g_engine->player().currentRoom() == this) {
 		g_engine->camera().update();
 		drawObjects();
