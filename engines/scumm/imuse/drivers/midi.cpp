@@ -389,11 +389,16 @@ IMuseDriver_GMidi::IMuseDriver_GMidi(MidiDriver::DeviceHandle dev, bool rolandGS
 	_imsParts(nullptr), _newSystem(newSystem), _numChannels(16), _notesPlaying(nullptr), _notesSustained(nullptr), _midiRegState(nullptr), _idleChain(nullptr), _activeChain(nullptr), _numVoices(12) {
 	_drv = MidiDriver::createMidi(dev);
 	assert(_drv);
+	_midiRegState = new byte[160];
+	assert(_midiRegState);
+	memset(_midiRegState, 0xFF, 160);
 }
 
 IMuseDriver_GMidi::~IMuseDriver_GMidi() {
 	close();
 	delete _drv;
+	delete[] _midiRegState;
+	_midiRegState = nullptr;
 }
 
 int IMuseDriver_GMidi::open() {
@@ -465,9 +470,6 @@ void IMuseDriver_GMidi::createChannels() {
 		_notesPlaying = new uint16[128]();
 		_notesSustained = new uint16[128]();
 	}
-
-	_midiRegState = new byte[160];
-	memset(_midiRegState, 0xFF, 160);
 }
 
 void IMuseDriver_GMidi::createParts() {
@@ -506,8 +508,6 @@ void IMuseDriver_GMidi::releaseChannels() {
 	_notesPlaying = nullptr;
 	delete[] _notesSustained;
 	_notesSustained = nullptr;
-	delete[] _midiRegState;
-	_midiRegState = nullptr;
 }
 
 void IMuseDriver_GMidi::initDevice() {
@@ -661,6 +661,7 @@ bool IMuseDriver_GMidi::trackMidiState(uint32 b) {
 	byte part = b & 0x0F;
 	b >>= 8; // Switch to para 1
 
+	assert(_midiRegState);
 	byte *var = &_midiRegState[part];
 
 	switch (evt) {
