@@ -35,9 +35,10 @@ namespace Fuge {
 
 class Fuge : public MinigameView {
 private:
+	const CVector _gvCenter;
 	BmpButton _scrollButton;
 	Graphics::ManagedSurface _background;
-	const CVector _gvCenter;
+	int _showMenuCtr = 2;
 	int _timerCtr = 0;
 	int _backgroundNumRows = -1;
 	int _paddleOldSize = -1;

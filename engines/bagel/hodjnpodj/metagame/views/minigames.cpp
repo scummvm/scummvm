@@ -156,6 +156,7 @@ bool Minigames::msgMouseUp(const MouseUpMessage &msg) {
 	if (MINIGAME_IDS[index] == -1) {
 		replaceView("TitleMenu");
 	} else {
+		pGameParams->bPlayingMetagame = false;
 		g_engine->selectMinigame(MINIGAME_IDS[index]);
 	}
 
