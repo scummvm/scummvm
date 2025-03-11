@@ -93,6 +93,7 @@ public:
 	Graphics::Screen *_screen = nullptr;
 	Context *_currentContext = nullptr;
 
+	Common::Point _mousePos;
 	Common::Array<Common::Rect> _dirtyRects;
 
 	// All Media Station titles run at 640x480.
@@ -124,7 +125,7 @@ private:
 	Context *loadContext(uint32 contextId);
 	void setPaletteFromHeader(AssetHeader *header);
 	void releaseContext(uint32 contextId);
-	Asset *findAssetToAcceptMouseEvents(Common::Point point);
+	Asset *findAssetToAcceptMouseEvents();
 
 	void effectTransition(Common::Array<Operand> &args);
 };

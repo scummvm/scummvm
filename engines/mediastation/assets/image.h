@@ -46,6 +46,8 @@ public:
 
 private:
 	Bitmap *_bitmap = nullptr;
+	int _xAdjust = 0;
+	int _yAdjust = 0;
 
 	// Script method implementations.
 	void spatialShow();

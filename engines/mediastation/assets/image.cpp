@@ -60,6 +60,27 @@ Operand Image::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 		return Operand();
 	}
 
+	case kSpatialMoveToMethod: {
+		assert(args.size() == 2);
+
+		// Mark the previous location dirty.
+		Common::Rect bbox(getLeftTop(), _bitmap->width(), _bitmap->height());
+		g_engine->_dirtyRects.push_back(bbox);
+
+		// Update location and mark new location dirty.
+		int newXAdjust = args[0].getInteger();
+		int newYAdjust = args[1].getInteger();
+		if (_xAdjust != newXAdjust || _yAdjust != newYAdjust) {
+			_xAdjust = newXAdjust;
+			_yAdjust = newYAdjust;
+
+			bbox = Common::Rect(getLeftTop(), _bitmap->width(), _bitmap->height());
+			g_engine->_dirtyRects.push_back(bbox);
+		}
+
+		return Operand();
+	}
+
 	default:
 		error("Image::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 	}
@@ -76,6 +97,7 @@ void Image::redraw(Common::Rect &rect) {
 	if (!areaToRedraw.isEmpty()) {
 		Common::Point originOnScreen(areaToRedraw.left, areaToRedraw.top);
 		areaToRedraw.translate(-leftTop.x, -leftTop.y);
+		areaToRedraw.clip(Common::Rect(0, 0, _bitmap->width(), _bitmap->height()));
 		g_engine->_screen->simpleBlitFrom(_bitmap->_surface, areaToRedraw, originOnScreen);
 	}
 }
@@ -94,7 +116,7 @@ void Image::spatialHide() {
 }
 
 Common::Point Image::getLeftTop() {
-	return Common::Point(_header->_x + _header->_boundingBox->left, _header->_y + _header->_boundingBox->top);
+	return Common::Point(_header->_x + _header->_boundingBox->left + _xAdjust, _header->_y + _header->_boundingBox->top + _yAdjust);
 }
 
 void Image::readChunk(Chunk &chunk) {

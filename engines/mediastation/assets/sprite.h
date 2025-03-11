@@ -82,6 +82,9 @@ private:
 	uint _currentFrameIndex = 0;
 	uint _nextFrameTime = 0;
 
+	int _xAdjust = 0;
+	int _yAdjust = 0;
+
 	// Method implementations.
 	void spatialShow();
 	void spatialHide();

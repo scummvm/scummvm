@@ -92,6 +92,18 @@ Operand Hotspot::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args
 		return returnValue;
 	}
 
+	case kTriggerAbsXPositionMethod: {
+		Operand returnValue(kOperandTypeLiteral1);
+		returnValue.putInteger(g_engine->_mousePos.x);
+		return returnValue;
+	}
+
+	case kTriggerAbsYPositionMethod: {
+		Operand returnValue(kOperandTypeLiteral1);
+		returnValue.putInteger(g_engine->_mousePos.y);
+		return returnValue;
+	}
+
 	default:
 		error("Hotspot::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 	}

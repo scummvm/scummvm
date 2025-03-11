@@ -140,6 +140,29 @@ Operand Sprite::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args)
 		return returnValue;
 	}
 
+	case kSpatialMoveToMethod: {
+		assert(args.size() == 2);
+
+		// Mark the previous location dirty.
+		if (_activeFrame != nullptr) {
+			g_engine->_dirtyRects.push_back(getActiveFrameBoundingBox());
+		}
+
+		// Update the location and mark the new location dirty.
+		int newXAdjust = args[0].getInteger();
+		int newYAdjust = args[1].getInteger();
+		if (_xAdjust != newXAdjust || _yAdjust != newYAdjust) {
+			debugC(5, kDebugGraphics, "Sprite::callMethod(): (%d) Moving sprite to (%d, %d)", _header->_id, newXAdjust, newYAdjust);
+			_xAdjust = newXAdjust;
+			_yAdjust = newYAdjust;
+			if (_activeFrame != nullptr) {
+				g_engine->_dirtyRects.push_back(getActiveFrameBoundingBox());
+			}
+		}
+
+		return Operand();
+	}
+
 	default:
 		error("Sprite::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 	}
@@ -301,7 +324,8 @@ void Sprite::redraw(Common::Rect &rect) {
 	Common::Rect areaToRedraw = bbox.findIntersectingRect(rect);
 	if (!areaToRedraw.isEmpty()) {
 		Common::Point originOnScreen(areaToRedraw.left, areaToRedraw.top);
-		areaToRedraw.translate(-_activeFrame->left() - _header->_boundingBox->left, -_activeFrame->top() - _header->_boundingBox->top);
+		areaToRedraw.translate(-_activeFrame->left() - _header->_boundingBox->left - _xAdjust, -_activeFrame->top() - _header->_boundingBox->top - _yAdjust);
+		areaToRedraw.clip(Common::Rect(0, 0, _activeFrame->width(), _activeFrame->height()));
 		g_engine->_screen->simpleBlitFrom(_activeFrame->_surface, areaToRedraw, originOnScreen);
 	}
 }
@@ -323,7 +347,7 @@ Common::Rect Sprite::getActiveFrameBoundingBox() {
 	// The frame dimensions are relative to those of the sprite movie.
 	// So we must get the absolute coordinates.
 	Common::Rect bbox = _activeFrame->boundingBox();
-	bbox.translate(_header->_boundingBox->left, _header->_boundingBox->top);
+	bbox.translate(_header->_boundingBox->left + _xAdjust, _header->_boundingBox->top + _yAdjust);
 	return bbox;
 }
 
