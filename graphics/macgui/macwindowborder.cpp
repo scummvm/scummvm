@@ -82,12 +82,13 @@ bool MacWindowBorder::hasBorder(uint32 flags) {
 void MacWindowBorder::disableBorder() {
 	const byte palette[] = {
 		255, 0,   255,
-		0,   0,   0
+		0,   0,   0,
+		255, 255, 255,
 	};
 
 	Graphics::ManagedSurface *noborder = new Graphics::ManagedSurface();
 	noborder->create(3, 3, Graphics::PixelFormat::createFormatCLUT8());
-	noborder->setPalette(palette, 0, 2);
+	noborder->setPalette(palette, 0, 3);
 	noborder->setTransparentColor(0);
 
 	for (int y = 0; y < 3; y++)
