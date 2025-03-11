@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-10 16:53+0000\n"
-"PO-Revision-Date: 2024-10-10 12:33+0000\n"
-"Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
+"PO-Revision-Date: 2025-03-11 09:18+0000\n"
+"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
 "Language: sv_SE\n"
@@ -23,7 +23,7 @@ msgstr ""
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"
-msgstr ""
+msgstr "Apple Macintosh-ljud"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
@@ -1179,6 +1179,45 @@ msgid ""
 "eBay, Game Trading Zone, or other auction sites. Be cautious of faulty games "
 "and illegal game copies.\n"
 msgstr ""
+"## ScummVM i en överblick\n"
+"\n"
+"ScummVM är en modern reimplementering av olika spelmotorer. När du överför "
+"originalspeldata till din enhet försöker den använda den för att troget "
+"återskapa den ursprungliga spelupplevelsen.\n"
+"\n"
+"ScummVM är inte din typiska emulator för DOS, Windows eller någon konsol. "
+"Snarare än ett tillvägagångssätt som passar alla, tar det en noggrann väg "
+"och implementerar den exakta spellogiken för varje specifik titel eller "
+"motor som den stöder. ScummVM kommer inte att fungera med spelmotorer som "
+"den inte stöder.\n"
+"\n"
+"ScummVM är utvecklat av ett team av frivilliga och är fri programvara. Vi "
+"saknar ett omfattande testteam, har endast ett begränsat utbud av enheter "
+"och kan inte alltid tillgodose alla önskemål. Vi kör inte heller annonser "
+"eller säljer något till dig. Tänk på detta när du skickar in ett klagomål "
+"eller en felrapport.\n"
+"\n"
+"## Var kan man få tag på spelen\n"
+"\n"
+"Besök [vår Wiki] (https://wiki.scummvm.org/index."
+"php?title=Where_to_get_the_games) för en detaljerad lista över spel som "
+"stöds och var du kan köpa dem.\n"
+"\n"
+"Alternativt kan du hämta ner en mängd olika [freeware-spel](https://scummvm."
+"org/games) och [demos](https://www.scummvm.org/demos/) direkt från vår "
+"webbplats.\n"
+"\n"
+"ScummVM-teamet stödjer inte någon specifik spelleverantör. Projektet får "
+"dock en provision från varje köp som görs på [ZOOM-Platform](https://www."
+"zoom-platform.com/?affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) genom "
+"affilierade referenslänkar.\n"
+"\n"
+"Dessutom kan spel som inte finns tillgängliga på ZOOM-plattformen hittas på "
+"andra leverantörer som GOG.com och Steam.\n"
+"\n"
+"För andra (out-of-print) spel kan du överväga att kontrollera plattformar "
+"som Amazon, eBay, Game Trading Zone eller andra auktionswebbplatser. Var "
+"försiktig med felaktiga spel och olagliga spelkopior.\n"
 
 #: gui/helpdialog.cpp:68 gui/options.cpp:2387
 msgid "Cloud"
@@ -1235,6 +1274,54 @@ msgid ""
 "see our [Cloud documentation](https://docs.scummvm.org/en/latest/use_scummvm/"
 "connect_cloud.html) "
 msgstr ""
+"## Ansluta en molntjänst - Snabbläge\n"
+"\n"
+"1. I startprogrammet väljer du **Globala alternativ** och sedan fliken "
+"**Moln**.\n"
+"\n"
+"2. Välj önskad molnlagringstjänst i rullgardinsmenyn **Aktiv lagring** och "
+"välj sedan **Anslut**.\n"
+"\n"
+"\t  ![Välj molntjänst](choose_storage.png \"Välj molntjänst\"){w=70%}\n"
+"\n"
+"3. Välj **Snabbläge**.\n"
+"\n"
+"\t  ![Snabbläge](quick_mode.png \"Snabbläge\"){w=70%}\n"
+"\n"
+"4. Välj **Kör server** och välj sedan **Nästa**\n"
+"\n"
+"\t  ![Kör server](run_server.png \"Kör server\"){w=70%}\n"
+"\n"
+"  ![Nästa steg](server_next.png \"Nästa steg\"){w=70%}\n"
+"\n"
+"5. Öppna länken.\n"
+"\n"
+"\t  ![Öppna länken](open_link.png \"Öppna länken\"){w=70%}\n"
+"\n"
+"6. I webbläsarfönstret som öppnas väljer du den molntjänst som du vill "
+"ansluta till.\n"
+"\n"
+"\t  ![Välj molntjänst](cloud_browser.png \"Välj molntjänst\"){w=70%}\n"
+"\n"
+"7. Logga in på den valda molntjänsten. När du är klar återvänder du till "
+"ScummVM.\n"
+"\n"
+"8. På skärmen för framgång väljer du **Färdig** för att avsluta.\n"
+"\n"
+"\t  ![Lyckades](cloud_success.png \"Lyckades\"){w=70%}\n"
+"9. Tillbaka på huvudfliken Moln väljer du **Aktivera lagring**.\n"
+"\n"
+"\t  ![Aktivera lagring](enable_storage.png \"Aktivera lagring\"){w=70%}\n"
+"\n"
+"10. Nu är du redo att köra! Använd molnfunktionen för att synkronisera "
+"sparade spel eller spelfiler mellan dina enheter.\n"
+"\n"
+"\t  ![Molnfunktionalitet](cloud_functions.png \"Molnfunktionalitet\"){w=70%}"
+"\n"
+"\n"
+"   För mer information, inklusive hur du använder den manuella "
+"anslutningsguiden, se vår [Molndokumentation](https://docs.scummvm.org/en/"
+"latest/use_scummvm/connect_cloud.html) "
 
 #: gui/imagealbum-dialog.cpp:103 gui/saveload-dialog.cpp:843
 msgid "Prev"
@@ -1449,16 +1536,12 @@ msgstr ""
 "ScummVM kunde inte hitta en motor kapabel till att köra det valda spelet!"
 
 #: gui/launcher.cpp:665 gui/launcher.cpp:689
-#, fuzzy
-#| msgid ""
-#| "Did you add this directory to the SAF? Press the help button [?] on the "
-#| "top for detailed instructions"
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
-"Lade du till denna katalog till SAF? Tryck på hjälpknappen [?] i toppen för "
-"detaljerade instruktioner"
+"Har du gett ScummVM åtkomstbehörighet för denna katalog? Tryck på "
+"hjälpknappen [?] i toppen för detaljerade instruktioner"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -1749,10 +1832,8 @@ msgid "Scaler:"
 msgstr "Skalning:"
 
 #: gui/options.cpp:1678
-#, fuzzy
-#| msgid "Render mode:"
 msgid "Rotation mode:"
-msgstr "Renderingsläge:"
+msgstr "Roteringsläge:"
 
 #: gui/options.cpp:1692
 msgid "Shader:"
@@ -2886,6 +2967,25 @@ msgid ""
 "\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
+"I den här nya versionen av ScummVM för Android har betydande ändringar "
+"gjorts i filåtkomstsystemet för att möjliggöra stöd för moderna versioner av "
+"Android-operativsystemet.\n"
+"Om du upptäcker att dina befintliga tillagda spel eller anpassade sökvägar "
+"inte längre fungerar, vänligen redigera dessa sökvägar:\n"
+"  1. Från startprogrammet, gå till **Spelalternativ &gt; Sökvägar**. Välj "
+"**Spelsökväg** eller **Extra sökväg**, beroende på vad som är lämpligt. \n"
+"  2. I ScummVM:s filbläddrare väljer du **Gå upp** tills du når rotmappen "
+"som har alternativet **<Lägg till en ny mapp>**.\n"
+"  3. Dubbelklicka på **<Lägg till en ny mapp>**. I din enhets filbläddrare "
+"navigerar du till mappen som innehåller alla dina spelmappar. Till exempel, "
+"**SD-kort &gt; ScummVM-spel** \n"
+"  4. Välj **Använd den här mappen**. \n"
+"  5. Välj **Tillåt** för att ge ScummVM behörighet att komma åt mappen. \n"
+"  6. I ScummVM:s filbläddrare dubbelklickar du för att bläddra igenom din "
+"tillagda mapp. Välj den mapp som innehåller spelets filer och tryck sedan på "
+"**Välj**. \n"
+"\n"
+"Upprepa steg 1 och 6 för varje spel."
 
 #: base/main.cpp:652 base/main.cpp:677
 #: engines/director/lingo/lingo-builtins.cpp:1454
@@ -2920,6 +3020,23 @@ msgid ""
 "**Choose**.\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
+"I den här nya versionen av ScummVM för Android gjordes betydande ändringar i "
+"filåtkomstsystemet för att möjliggöra stöd för moderna versioner av Android-"
+"operativsystemet.\n"
+"För att lägga till ett spel:\n"
+"\n"
+"  1. Välj **Lägg till spel...** från startprogrammet. \n"
+"  2. I ScummVM:s filbläddrare väljer du **Gå upp** tills du kommer till "
+"rotmappen som har alternativet **<Lägg till en ny mapp>**.\n"
+"  3. Dubbelklicka på **<Lägg till en ny mapp>**. I din enhets filbläddrare "
+"navigerar du till mappen som innehåller alla dina spelmappar. Till exempel, "
+"**SD-kort &gt; ScummVM-spel** \n"
+"  4. Välj **Använd den här mappen**. \n"
+"  5. Välj **Tillåt** för att ge ScummVM tillåtelse att komma åt mappen. \n"
+"  6. I ScummVM:s filbläddrare dubbelklickar du för att bläddra igenom din "
+"tillagda mapp. Välj den undermapp som innehåller spelets filer och tryck "
+"sedan på **Välj**.\n"
+"Upprepa steg 1 och 6 för varje spel."
 
 #: base/main.cpp:822
 msgid "Error running game:"
@@ -3039,16 +3156,12 @@ msgid "VGA Grey Scale"
 msgstr "VGA-gråskala"
 
 #: common/rendermode.cpp:58
-#, fuzzy
-#| msgid "PC-9821 (256 Colors)"
 msgid "Windows (256 Colors)"
-msgstr "PC-9821 (256 färger)"
+msgstr "Windows (256 färger)"
 
 #: common/rendermode.cpp:59
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "Windows (16 Colors)"
-msgstr "PC-9801 (16 färger)"
+msgstr "Windows (16 färger)"
 
 #: common/rendermode.cpp:96
 msgctxt "lowres"
@@ -3061,23 +3174,22 @@ msgid "Hercules Amber"
 msgstr "Herkules bärnsten"
 
 #: common/rotationmode.cpp:33
-#, fuzzy
 msgid "No rotation"
-msgstr "~F~öregående"
+msgstr "Ingen rotering"
 
 #: common/rotationmode.cpp:34
 msgid "Clockwise"
-msgstr ""
+msgstr "Medurs"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:35
 msgid "180 degrees"
-msgstr ""
+msgstr "180 grader"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:36
 msgid "Counter-clockwise"
-msgstr ""
+msgstr "Moturs"
 
 #: common/updates.cpp:57
 msgid "Daily"
@@ -4116,7 +4228,7 @@ msgstr "Musrestriktion av/på"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:545
 msgid "Toggle resizable window"
-msgstr ""
+msgstr "Växla storleksändringsbart fönster"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:550 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
@@ -4743,6 +4855,25 @@ msgid ""
 "sometimes mind-bogglingly so. If you're stuck in a game, think about "
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
+"## Hjälp, vad gör jag nu!\n"
+"\n"
+"Först måste du se till att du har spelen och de nödvändiga spelfilerna redo. "
+"Se avsnittet **Var får jag tag på spelen** under fliken **Allmänt**. När du "
+"har skaffat spelen följer du stegen på fliken **Lägga till spel** för att "
+"lägga till dem på den här enheten. Ta en stund att granska denna process "
+"noggrant, eftersom vissa användare stötte på utmaningar här på grund av de "
+"senaste Android-förändringarna.\n"
+"\n"
+"Behöver du mer hjälp? Se vår [online-dokumentation för Android] (https://docs"
+".scummvm.org/en/latest/other_platforms/android.html). Har du några frågor? "
+"Besök våra [supportforum](https://forums.scummvm.org/viewforum.php?f=17) "
+"eller hoppa in på vår [Discord-server](https://discord.gg/4cDsMNtcpG), som "
+"har en [Android-supportkanal](https://discord.com/channels/"
+"581224060529148060/1135579923185139862).\n"
+"\n"
+"Många av de spel som vi stöder är avsiktligt svåra, ibland helt förbluffande "
+"svåra. Om du fastnar i ett spel, fundera på att kolla in en spelgenomgång. "
+"Vi önskar dig lycka till!\n"
 
 #: backends/platform/android/android.cpp:1114
 #: backends/platform/ios7/ios7_osys_misc.mm:261
@@ -4864,6 +4995,41 @@ msgid ""
 "See our [Android documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/android.html) for more information.\n"
 msgstr ""
+"## Lägga till spel \n"
+"\n"
+"1. Välj **Lägg till spel...** från startprogrammet. \n"
+"\n"
+"2. I ScummVM:s filbläddrare väljer du **Gå upp** tills du når rotmappen som "
+"har alternativet **<Lägg till en ny mapp>**. \n"
+"\n"
+"  ![ScummVM-filbläddrarens rot](browser-root.png \"ScummVM-filbläddrarens "
+"rot\"){w=70%}\n"
+"\n"
+"3. Dubbelklicka på **<Lägg till en ny mapp>**. I enhetens filbläddrare "
+"navigerar du till mappen som innehåller alla dina spelmappar. Till exempel, "
+"**SD-kort &gt; ScummVM-spel**. \n"
+"\n"
+"4. Välj **Använd den här mappen**. \n"
+"\n"
+"  ![OS-valbar mapp](fs-folder.png \"OS-valbar mapp\"){w=70%}\n"
+"\n"
+"5. Välj **TILLÅT** för att ge ScummVM tillstånd att komma åt mappen. \n"
+"\n"
+"  ![Dialog för OS-åtkomstbehörighet](fs-permission.png \"OS-"
+"åtkomstbehörighet\"){w=70%}\n"
+"\n"
+"6. I ScummVM:s filbläddrare dubbelklickar du för att bläddra igenom den mapp "
+"du lagt till. Lägg till ett spel genom att välja den undermapp som "
+"innehåller spelfilerna och tryck sedan på **Välj**. \n"
+"\n"
+"  ![SAF-mapp tillagd](browser-folder-in-list.png \"SAF-mapp tillagd\"){w=70%}"
+"\n"
+"\n"
+"Steg 2 och 3 görs bara en gång. Om du vill lägga till fler spel upprepar du "
+"steg 1 och 6. \n"
+"\n"
+"Se vår [Android-dokumentation](https://docs.scummvm.org/en/latest/"
+"other_platforms/android.html) för mer information.\n"
 
 #: backends/platform/android/options.cpp:131
 #: backends/platform/ios7/ios7_options.mm:165
@@ -5020,6 +5186,23 @@ msgid ""
 "sometimes mind-bogglingly so. If you're stuck in a game, think about "
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
+"## Hjälp, vad gör jag nu!\n"
+"\n"
+"Först måste du se till att du har spelen och de nödvändiga spelfilerna redo. "
+"Se avsnittet **Var får jag tag på spelen** under fliken **Allmänt**. När du "
+"har fått tag på dem följer du stegen på fliken **Lägga till spel** för att "
+"lägga till dem på den här enheten.\n"
+"\n"
+"Behöver du mer hjälp? Se vår [online-dokumentation för iOS] (https://docs."
+"scummvm.org/en/latest/other_platforms/ios.html). Har du några frågor? Besök "
+"våra [supportforum](https://forums.scummvm.org/viewforum.php?f=15) eller "
+"hoppa in på vår [Discord-server](https://discord.gg/4cDsMNtcpG), som "
+"innehåller en [iOS-supportkanal](https://discord.com/channels/"
+"581224060529148060/1149456560922316911).\n"
+"\n"
+"Många av de spel som vi stöder är avsiktligt svåra, ibland helt förbluffande "
+"svåra. Om du fastnar i ett spel, fundera på att kolla in en spelgenomgång. "
+"Vi önskar dig lycka till!\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:264
 msgid ""
@@ -5123,6 +5306,27 @@ msgid ""
 "| `CMD + RIGHT`     | END               \n"
 "\n"
 msgstr ""
+"## Användning av tangentbord\n"
+"Externa tangentbord stöds och från iOS 13.4 är de flesta specialtangenterna, "
+"t.ex. funktionstangenter, Home och End, mappade.\n"
+"För externa tangentbord som saknar specialtangenter, t.ex. Apple Magic "
+"Keyboard för iPads, kan specialtangenterna utlösas med följande "
+"tangentkombinationer:\n"
+"\n"
+"\n"
+"| Tangentkombination | Åtgärd\n"
+"| ------------------|-------------------\n"
+"| `CMD + 1` | F1\n"
+"| `CMD + 2` | F2\n"
+"| `...` | ...\n"
+"| `CMD + 0` | F10\n"
+"| `CMD + SHIFT + 1` | F11\n"
+"| `CMD + SHIFT + 2` | F12\n"
+"| `CMD + UP` | SIDA UPP\n"
+"| `CMD + NER` | SIDA NER\n"
+"| `CMD + VÄNSTER` | HOME\n"
+"| `CMD + HÖGER` | END               \n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:339
 msgid ""
@@ -5144,6 +5348,23 @@ msgid ""
 "See our [iOS documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/ios.html) for more information.\n"
 msgstr ""
+"## Lägga till spel\n"
+"\n"
+"1. Kopiera de nödvändiga spelfilerna till ScummVM-programmet. Det finns "
+"flera sätt att göra det på, se vår [Dokumentation om överföring av spelfiler]"
+" (https://docs.scummvm.org/en/latest/other_platforms/ios.html#transferring-"
+"game-files) för mer information.\n"
+"\n"
+"2. Välj **Lägg till spel...** från startprogrammet.\n"
+"\n"
+"3. I ScummVM:s filbläddrare dubbelklickar du för att bläddra till din "
+"tillagda mapp. Lägg till ett spel genom att välja den undermapp som "
+"innehåller spelfilerna och tryck sedan på **Välj**.\n"
+"\n"
+"Upprepa stegen ovan om du vill lägga till fler spel.\n"
+"\n"
+"Se vår [iOS-dokumentation] (https://docs.scummvm.org/en/latest/"
+"other_platforms/ios.html) för mer information.\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:360
 msgid ""
@@ -5187,6 +5408,23 @@ msgid ""
 "See our [tvOS documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/tvos.html) for more information.\n"
 msgstr ""
+"## Lägga till spel\n"
+"\n"
+"1. Kopiera de nödvändiga spelfilerna till ScummVM-programmet. Det finns "
+"flera sätt att göra det på, se vår [Dokumentation om överföring av spelfiler]"
+" (https://docs.scummvm.org/en/latest/other_platforms/tvos.html#transferring-"
+"game-files) för mer information.\n"
+"\n"
+"2. Välj **Lägg till spel...** från startprogrammet.\n"
+"\n"
+"3. I ScummVM:s filbläddrare dubbelklickar du för att bläddra till din "
+"tillagda mapp. Lägg till ett spel genom att välja den undermapp som "
+"innehåller spelfilerna och tryck sedan på **Välj**.\n"
+"\n"
+"Upprepa stegen ovan om du vill lägga till fler spel.\n"
+"\n"
+"Se vår [tvOS-dokumentation] (https://docs.scummvm.org/en/latest/"
+"other_platforms/tvos.html) för mer information.\n"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:46
 msgid "LIBRETRO PLAYLIST GENERATOR"
@@ -5268,6 +5506,19 @@ msgid ""
 "\n"
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
+"## Libretro-spellistor för ScummVM-kärnan\n"
+"Spellistor som används i Libretro-frontends (t.ex. Retroarch) är listor i "
+"klartext som används för att direkt starta ett spel med en specifik kärna "
+"från användargränssnittet. Dessa listor är strukturerade för att skicka "
+"sökvägen till en specifik innehållsfil som ska läsas in (t.ex. ROM) till "
+"kärnan.\n"
+"\n"
+"ScummVM-kärnan kan som innehåll acceptera sökvägen till vilken som helst av "
+"filerna i en giltig spelmapp, detekteringssystemet kommer att försöka "
+"autodetektera spelet från innehållsfilens överordnade mapp och köra spelet "
+"med standard ScummVM-alternativ.\n"
+"\n"
+"Kärnan stöder också dedikerade per spel **hook** ren textfiler med **."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -5294,6 +5545,20 @@ msgid ""
 "| --------------|------------------\n"
 "| `Ctrl+F5` | Displays the Global Main Menu\n"
 msgstr ""
+"## Kortkommandon för tangentbord\n"
+"\n"
+"ScummVM stöder olika kortkommandon för tangentbord och mus i spelet, och "
+"sedan version 2.2.0 kan dessa konfigureras manuellt i fliken "
+"**Tangentuppsättningar** eller i konfigurationsfilen **.\n"
+"\n"
+"För spelspecifika kontroller, se [wiki-posten] (https://wiki.scummvm.org/"
+"index.php?title=Category:Supported_Games) för det spel du spelar.\n"
+"\n"
+"Standardgenvägar visas i tabellen.\n"
+"\n"
+"| Kortkommando | Beskrivning\n"
+"| --------------|------------------\n"
+"| `Ctrl+F5` | Visar den globala huvudmenyn\n"
 
 #: backends/platform/sdl/sdl.cpp:1151
 msgid "| `Cmd+q`    | Quit (macOS)\n"
@@ -5328,6 +5593,19 @@ msgid ""
 "opened with a long press of the middle mouse button or wheel.\n"
 "| `Ctrl+Alt+d` | Opens the ScummVM debugger\n"
 msgstr ""
+"| Ctrl+u | Tystar alla ljud\n"
+"| `Ctrl+m` | Växlar till musfångst\n"
+"| `Ctrl+Alt` och `9` eller `0` | Växlar framåt/bakåt mellan grafikfilter\n"
+"| `Ctrl+Alt` och `+` eller `-` | Ökar/minskar skalfaktorn\n"
+"| `Ctrl+Alt+a` | Slår på/av korrigering av bildförhållande\n"
+"| `Ctrl+Alt+f` | Växlar mellan närmaste granne och bilinjär interpolation ("
+"grafikfiltrering på/av)\n"
+"| `Ctrl+Alt+s` | Växlar genom utsträckningslägen\n"
+"| `Alt+Enter` | Växlar mellan helskärms- och fönsterläge\n"
+"| `Alt+s` | Tar en skärmdump\n"
+"| `Ctrl+F7` | Öppnar virtuellt tangentbord (om aktiverat). Detta kan också "
+"öppnas med en lång tryckning på musens mittknapp eller hjul.\n"
+"| `Ctrl+Alt+d` | Öppnar ScummVM-felsökaren\n"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:298
 msgid "Hide ScummVM"
@@ -6044,27 +6322,20 @@ msgstr "Sväng vänster"
 #: engines/wintermute/keymapper_tables.h:746
 #: engines/wintermute/keymapper_tables.h:2128
 #: engines/wintermute/keymapper_tables.h:2230
-#, fuzzy
 msgid "Turn right"
 msgstr "Sväng höger"
 
 #: engines/agos/metaengine.cpp:316
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Fast"
-msgstr "Texthastighet sänk / öka"
+msgstr "Texthastighet - Snabb"
 
 #: engines/agos/metaengine.cpp:321
-#, fuzzy
-#| msgid "Walking speed: Medium"
 msgid "Text speed - Medium"
-msgstr "Gånghastighet: Medium"
+msgstr "Texthastighet - Medel"
 
 #: engines/agos/metaengine.cpp:326
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Slow"
-msgstr "Texthastighet sänk / öka"
+msgstr "Texthastighet - Långsam"
 
 #: engines/agos/metaengine.cpp:331
 #, fuzzy
@@ -6133,6 +6404,9 @@ msgid ""
 "%s. Without this file,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"Kunde inte hitta AdLib-definitionsfilen för instrument\n"
+"%s. Utan den här filen,\n"
+"låter musiken inte på samma sätt som i originalspelet."
 
 #: engines/agos/midi.cpp:374
 #, c-format
@@ -6141,6 +6415,9 @@ msgid ""
 "%s. Without this file,\n"
 "the sound effects will not sound the same as the original game."
 msgstr ""
+"Kunde inte hitta AdLib-definitionsfilen för instrument\n"
+"%s. Utan den här filen,\n"
+"kan inte ljudeffekterna låta på samma sätt som i originalspelet."
 
 #: engines/agos/midi.cpp:453
 #, c-format
@@ -6149,6 +6426,9 @@ msgid ""
 "%s or %s. Without one of these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"Kunde inte hitta AdLib-definitionsfilen för instrument\n"
+"%s eller %s. Utan någon av dessa filer,\n"
+"låter musiken inte på samma sätt som i originalspelet."
 
 #: engines/ags/ags.cpp:152
 msgid ""
@@ -6177,14 +6457,12 @@ msgid ""
 msgstr ""
 
 #: engines/ags/dialogs.cpp:61
-#, fuzzy
 msgid "Game language:"
-msgstr "GUI-språk:"
+msgstr "Spelspråk:"
 
 #: engines/ags/dialogs.cpp:61
-#, fuzzy
 msgid "Language to use for multilingual games"
-msgstr "AdLib används för musik i många spel"
+msgstr "Språk att använda för flerspråkiga spel"
 
 #: engines/ags/dialogs.cpp:77
 msgid "Enable ScummVM save management"
@@ -6207,9 +6485,8 @@ msgstr ""
 
 #: engines/ags/dialogs.cpp:85 engines/grim/metaengine.cpp:48
 #: engines/zvision/metaengine.cpp:221
-#, fuzzy
 msgid "Show FPS"
-msgstr "Visa FPS-räknare"
+msgstr "Visa bilder/s"
 
 #: engines/ags/dialogs.cpp:85 engines/grim/metaengine.cpp:49
 msgid "Show the current FPS-rate, while you play."
@@ -6225,9 +6502,8 @@ msgid ""
 msgstr ""
 
 #: engines/asylum/metaengine.cpp:115
-#, fuzzy
 msgid "Show version"
-msgstr "Visa objektrad"
+msgstr "Visa version"
 
 #: engines/asylum/metaengine.cpp:120 engines/wintermute/keymapper_tables.h:950
 #, fuzzy
@@ -6248,9 +6524,8 @@ msgid "Switch to Grimwall"
 msgstr "Växla till Grimwall"
 
 #: engines/asylum/metaengine.cpp:140
-#, fuzzy
 msgid "Switch to Olmec"
-msgstr "Växla till spelet"
+msgstr "Växla till Olmec"
 
 #: engines/asylum/metaengine.cpp:145
 msgid "Bring up the In-Game Menu"
@@ -6265,17 +6540,15 @@ msgstr "Öppna/Stäng Inventarie"
 #: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
 #: engines/cine/metaengine.cpp:365 engines/hdb/metaengine.cpp:213
 #: engines/nancy/input.cpp:195 engines/tinsel/metaengine.cpp:263
-#, fuzzy
 msgid "Move up"
-msgstr "Steg bakåt"
+msgstr "Flytta uppåt"
 
 #. I18N: Move Actor to downwards direction
 #: engines/asylum/metaengine.cpp:177 engines/asylum/metaengine.cpp:205
 #: engines/cine/metaengine.cpp:372 engines/hdb/metaengine.cpp:219
 #: engines/nancy/input.cpp:201 engines/tinsel/metaengine.cpp:269
-#, fuzzy
 msgid "Move down"
-msgstr "Avbryt nedladdning"
+msgstr "Flytta neråt"
 
 #. I18N: Move Actor to left direction
 #. I18N: Move actor left during fight
@@ -6283,7 +6556,6 @@ msgstr "Avbryt nedladdning"
 #: engines/cine/metaengine.cpp:379 engines/hdb/metaengine.cpp:225
 #: engines/lure/metaengine.cpp:218 engines/nancy/input.cpp:207
 #: engines/tinsel/metaengine.cpp:275
-#, fuzzy
 msgid "Move left"
 msgstr "Flytta åt vänster"
 
@@ -6293,9 +6565,8 @@ msgstr "Flytta åt vänster"
 #: engines/cine/metaengine.cpp:386 engines/hdb/metaengine.cpp:231
 #: engines/lure/metaengine.cpp:226 engines/nancy/input.cpp:213
 #: engines/tinsel/metaengine.cpp:281
-#, fuzzy
 msgid "Move right"
-msgstr "Flytta till höger"
+msgstr "Flytta åt höger"
 
 #: engines/asylum/metaengine.cpp:226
 #, fuzzy
@@ -6310,28 +6581,23 @@ msgstr "V-Sync i 3D-spel"
 
 #. I18N: Switch to previous image in internal game resource viewer
 #: engines/asylum/metaengine.cpp:239
-#, fuzzy
 msgid "Previous resource"
-msgstr "~F~öregående"
+msgstr "Föregående resurs"
 
 #. I18N: Switch to next image in internal game resource viewer
 #: engines/asylum/metaengine.cpp:247
-#, fuzzy
-#| msgid "[ Resources ]"
 msgid "Next resource"
-msgstr "[ Resurser ]"
+msgstr "Nästa resurs"
 
 #. I18N: Switch to previous palette in internal game resource viewer
 #: engines/asylum/metaengine.cpp:255
-#, fuzzy
 msgid "Previous palette"
-msgstr "~F~öregående"
+msgstr "Föregående palett"
 
 #. I18N: Switch to next palette in internal game resource viewer
 #: engines/asylum/metaengine.cpp:263
-#, fuzzy
 msgid "Next palette"
-msgstr "Nästa"
+msgstr "Nästa palett"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:203
@@ -6342,13 +6608,12 @@ msgid ""
 msgstr ""
 
 #: engines/asylum/asylum.cpp:204 engines/cine/saveload.cpp:863
-#, fuzzy
 msgid "Load anyway"
-msgstr "Starta ändå"
+msgstr "Läs in ändå"
 
 #: engines/bagel/metaengine.cpp:41
 msgid "Wait"
-msgstr ""
+msgstr "Vänta"
 
 #: engines/bagel/metaengine.cpp:42
 msgid "Soldier 714 Eye Cheat"
@@ -6356,7 +6621,7 @@ msgstr ""
 
 #: engines/bagel/metaengine.cpp:83
 msgid "General Keys"
-msgstr ""
+msgstr "Allmänna tangenter"
 
 #: engines/bbvs/metaengine.cpp:92 engines/cine/metaengine.cpp:258
 #: engines/cruise/metaengine.cpp:142 engines/draci/metaengine.cpp:138
@@ -6434,7 +6699,7 @@ msgstr "Misslyckades med att initiera resurser"
 
 #: engines/bladerunner/bladerunner.cpp:1177
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "En nödvändig spelresurs hittades inte"
 
 #: engines/bladerunner/bladerunner.cpp:2764
 msgid ""
@@ -6472,6 +6737,7 @@ msgid ""
 "Enhanced Edition not supported. Please, use the original files which are "
 "part of the release."
 msgstr ""
+"Enhanced Edition stöds inte. Använd originalfilerna som är en del av utgåvan."
 
 #: engines/bladerunner/metaengine.cpp:45
 #, fuzzy
@@ -6481,6 +6747,8 @@ msgstr "Skalningsläge:"
 #: engines/bladerunner/metaengine.cpp:46
 msgid "Game will add laughter after actor's line or narration"
 msgstr ""
+"Spelet kommer att lägga till skratt efter skådespelarens replik eller "
+"berättelse"
 
 #: engines/bladerunner/metaengine.cpp:56
 #, fuzzy
@@ -6489,7 +6757,7 @@ msgstr "Skalningsläge:"
 
 #: engines/bladerunner/metaengine.cpp:57
 msgid "Game will shrink the actors and make their voices high pitched"
-msgstr ""
+msgstr "Spelet krymper skådespelarna och gör deras röster högfrekventa"
 
 #: engines/bladerunner/metaengine.cpp:67
 msgid "Frame limiter high performance mode"
@@ -6515,13 +6783,15 @@ msgstr ""
 
 #: engines/bladerunner/metaengine.cpp:89
 msgid "Disable McCoy's quick stamina drain"
-msgstr ""
+msgstr "Inaktivera McCoys snabba uthållighetsförlust"
 
 #: engines/bladerunner/metaengine.cpp:90
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
 msgstr ""
+"Under springturer kommer McCoy inte att börja sakta ner så snart spelaren "
+"slutar klicka på musen"
 
 #: engines/bladerunner/metaengine.cpp:100
 #, fuzzy
@@ -6561,7 +6831,7 @@ msgstr ""
 #. It is used with the game's cursor to select, walk-to, run-to, look-at, talk-to, pick up, use, shoot (combat mode), open KIA (when clicking on McCoy).
 #: engines/bladerunner/metaengine.cpp:210
 msgid "Walk / Look / Talk / Select / Shoot"
-msgstr ""
+msgstr "Gå / Titta / Prata / Välj / Skjut"
 
 #. I18N: This keymap toggles McCoy's status between combat mode (drawing his gun) and normal mode (holstering his gun)
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6584,18 +6854,16 @@ msgstr "Skippa scen"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SKIP PAST CURRENT LINE OF DIALOGUE
 #: engines/bladerunner/metaengine.cpp:242
-#, fuzzy
 msgid "Skip dialogue"
-msgstr "Skippa rad"
+msgstr "Hoppa över dialog"
 
 #. I18N: This keymap toggles between opening the KIA in the Game Options tab, and closing the KIA.
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:253
-#, fuzzy
 msgid "Game Options"
-msgstr "~I~nställningar..."
+msgstr "Spelalternativ"
 
 #. I18N: This keymap opens the KIA database on one of the investigation tabs,
 #. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
@@ -6604,7 +6872,7 @@ msgstr "~I~nställningar..."
 #. ACTIVATE KIA CLUE DATABASE SYSTEM
 #: engines/bladerunner/metaengine.cpp:264
 msgid "Open KIA Database"
-msgstr ""
+msgstr "Öppna KIA-databas"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows submitting a selected existing save game for deletion.
@@ -6655,9 +6923,8 @@ msgstr "Spara spelet:"
 #: engines/freescape/games/driller/driller.cpp:137
 #: engines/freescape/games/eclipse/eclipse.cpp:209
 #: engines/pegasus/pegasus.cpp:2831
-#, fuzzy
 msgid "Load Game"
-msgstr "Ladda spel"
+msgstr "Läs in spel"
 
 #. I18N: This keymap opens KIA's CRIME SCENE DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6702,9 +6969,8 @@ msgid "Are you sure you want to quit?"
 msgstr "Är du säker på att du vill avsluta?"
 
 #: engines/buried/buried.cpp:600
-#, fuzzy
 msgid "Your game is now Paused.  Click OK to continue."
-msgstr "Spelet pausat. Tryck på valfri tangent för att fortsätta."
+msgstr "Ditt spel är nu pausat.  Tryck OK för att fortsätta."
 
 #. I18N: This option allows the user to skip cutscenes.
 #. I18N: This option allows the user to skip text and cutscenes.
@@ -6771,10 +7037,8 @@ msgstr "~I~nställningar..."
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:225
 #: engines/sword1/metaengine.cpp:283
-#, fuzzy
-#| msgid "Skip"
 msgid "Exit/Skip"
-msgstr "Skippa"
+msgstr "Avsluta/Hoppa över"
 
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/hopkins/metaengine.cpp:238 engines/hugo/metaengine.cpp:128
@@ -6903,10 +7167,8 @@ msgstr "Använd TTT för att läsa beskrivningarna (om TTT är tilgängligt)"
 
 #. I18N: This closes the Dialogue/text box.
 #: engines/cge2/metaengine.cpp:229
-#, fuzzy
-#| msgid "Close"
 msgid "Close the Dialogue box"
-msgstr "Stäng"
+msgstr "Stäng dialogrutan"
 
 #: engines/cine/metaengine.cpp:57
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -6966,15 +7228,12 @@ msgid "Default game speed"
 msgstr "Förvald knappuppsättning"
 
 #: engines/cine/metaengine.cpp:300
-#, fuzzy
 msgid "Slower game speed"
-msgstr "Visa muspekare"
+msgstr "Långsammare spelhastighet"
 
 #: engines/cine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Faster game speed"
-msgstr "Snabb filmhastighet"
+msgstr "Snabbare spelhastighet"
 
 #: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:506
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:242
@@ -7003,24 +7262,20 @@ msgid "Inventory"
 msgstr "Inventarie"
 
 #: engines/cine/metaengine.cpp:335
-#, fuzzy
-#| msgid "Active"
 msgid "Activate"
-msgstr "Aktiv"
+msgstr "Aktivera"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
 msgstr ""
 
 #: engines/cine/metaengine.cpp:345
-#, fuzzy
 msgid "Action menu"
-msgstr "Aktiv"
+msgstr "Åtgärdsmeny"
 
 #: engines/cine/metaengine.cpp:351
-#, fuzzy
 msgid "System menu"
-msgstr "Spelmeny"
+msgstr "Systemmeny"
 
 #. I18N: Opens collision map of where the actor can freely move
 #: engines/cine/metaengine.cpp:358
@@ -7082,64 +7337,56 @@ msgstr "Attack 1"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:130 engines/mm/mm1/metaengine.cpp:67
-#, fuzzy
-#| msgid "Unlock"
 msgid "Block"
-msgstr "Lås upp"
+msgstr "Blockera"
 
 #: engines/crab/input/input.cpp:169 engines/twine/metaengine.cpp:414
 msgid "Accept"
-msgstr ""
+msgstr "Acceptera"
 
 #: engines/crab/input/input.cpp:186
-#, fuzzy
-#| msgid "~P~revious"
 msgid "Previous"
-msgstr "~F~öregående"
+msgstr "Föregående"
 
 #: engines/crab/input/input.cpp:191
 msgid "Reply 1"
-msgstr ""
+msgstr "Svar 1"
 
 #: engines/crab/input/input.cpp:196
 msgid "Reply 2"
-msgstr ""
+msgstr "Svar 2"
 
 #: engines/crab/input/input.cpp:201
 msgid "Reply 3"
-msgstr ""
+msgstr "Svar 3"
 
 #: engines/crab/input/input.cpp:206
 msgid "Reply 4"
-msgstr ""
+msgstr "Svar 4"
 
 #: engines/crab/input/input.cpp:211
 msgid "Reply 5"
-msgstr ""
+msgstr "Svar 5"
 
 #: engines/crab/input/input.cpp:216
 msgid "Reply 6"
-msgstr ""
+msgstr "Svar 6"
 
 #: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:460
-#, fuzzy
 msgid "Next Page"
-msgstr "Nästa"
+msgstr "Nästa sida"
 
 #: engines/crab/input/input.cpp:226
-#, fuzzy
 msgid "Previous Page"
-msgstr "~F~öregående"
+msgstr "Föregående sida"
 
 #: engines/crab/input/input.cpp:241
 msgid "Map"
 msgstr "Ställ in"
 
 #: engines/crab/input/input.cpp:246
-#, fuzzy
-#| msgid "Show journal"
 msgid "Journal"
-msgstr "Visa journal"
+msgstr "Journal"
 
 #: engines/crab/input/input.cpp:256
 msgid "Traits"
@@ -7157,34 +7404,26 @@ msgstr "Klickläge"
 
 #. I18N: Game runs at faster speed
 #: engines/cruise/metaengine.cpp:160 engines/tucker/metaengine.cpp:196
-#, fuzzy
 msgid "Fast mode"
 msgstr "Snabbläge"
 
 #. I18N: Opens menu with player commands
 #: engines/cruise/metaengine.cpp:173
-#, fuzzy
 msgid "Player menu"
-msgstr "Speltid: "
+msgstr "Spelarmeny"
 
 #: engines/cruise/metaengine.cpp:179
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Increase game speed"
-msgstr "Snabb filmhastighet"
+msgstr "Öka spelhastighet"
 
 #: engines/cruise/metaengine.cpp:185
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Decrease game speed"
-msgstr "Snabb filmhastighet"
+msgstr "Sänk spelhastighet"
 
 #: engines/cruise/metaengine.cpp:203 engines/mads/metaengine.cpp:361
 #: engines/stark/metaengine.cpp:280
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Exit game"
-msgstr "Avsluta Spel"
+msgstr "Avsluta spel"
 
 #: engines/cryomni3d/metaengine.cpp:143
 #, fuzzy
