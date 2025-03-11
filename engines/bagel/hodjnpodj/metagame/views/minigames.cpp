@@ -30,6 +30,7 @@ namespace HodjNPodj {
 namespace Metagame {
 
 #define	BACKGROUND_BMP	"meta/art/zoommap.bmp"
+#define FONT_SIZE		10
 
 Minigames::MinigameRect Minigames::MINIGAME_RECTS[MINIGAMES_HOTSPOTS_COUNT] = {
 	{  24, 243,  63, 263 },
@@ -73,10 +74,11 @@ int Minigames::MINIGAME_IDS[MINIGAMES_HOTSPOTS_COUNT] = {
 	MG_GAME_RIDDLES,
 	MG_GAME_THGESNGGME,
 	MG_GAME_VIDEOPOKER,
-	MG_GAME_WORDSEARCH
+	MG_GAME_WORDSEARCH,
+	-1
 };
 
-const char *Minigames::MINIGAME_TEXTS[MINIGAMES_HOTSPOTS_COUNT + 1] = {
+const char *Minigames::MINIGAME_TEXTS[MINIGAMES_HOTSPOTS_COUNT] = {
 	"Click Here To Play Archeroids",
 	"Click Here To Play Art Parts",
 	"Click Here To Play Barbershop Quintet",
@@ -103,7 +105,7 @@ Minigames::Minigames() : View("Minigames"),
 		_exitButton("MinigamesExit", "Main Menu",
 			Common::Rect((GAME_WIDTH / 2) - 50, 450,
 			(GAME_WIDTH / 2) + 50, 470)),
-		_textRect(0, 428, 640, 450) {
+		_textRect(0, 428, GAME_WIDTH, 450) {
 	setBounds(Common::Rect(0, 0, GAME_WIDTH, GAME_HEIGHT));
 }
 
@@ -150,7 +152,13 @@ bool Minigames::msgMouseMove(const MouseMoveMessage &msg) {
 
 bool Minigames::msgMouseUp(const MouseUpMessage &msg) {
 	int selectedMinigame = getSelectedMinigame();
-	warning("TODO: Selection %d", selectedMinigame);
+
+	if (MINIGAME_IDS[selectedMinigame] == -1) {
+		replaceView("TitleMenu");
+	} else {
+		warning("TODO: Selection %d", selectedMinigame);
+	}
+
 	return View::msgMouseUp(msg);
 }
 
@@ -171,16 +179,18 @@ void Minigames::draw() {
 			(MINIGAME_RECTS[index].right + 5),
 			(MINIGAME_RECTS[index].bottom + 5));
 
-		const byte cyan = getPaletteIndex(RGB(0, 255, 255));
-		const byte black = 0;
-		s.frameRect(rTemp1, black);
-		s.frameRect(rTemp2, cyan);
+		const byte CYAN = getPaletteIndex(RGB(0, 255, 255));
+		const byte RED = getPaletteIndex(RGB(255, 0, 0));
+		s.frameRect(rTemp1, BLACK);
+		s.frameRect(rTemp2, CYAN);
 
-		s.setFontSize(12);
+		// FIXME: The original used bold cyan text for tooltips.
+		// But since there's no facility in ScummVM to make the
+		// loaded font bold, I chose a red color for contrast
+		s.setFontSize(FONT_SIZE);
 		const char *text = MINIGAME_TEXTS[index];
-		s.fillRect(Common::Rect(0, 0, s.getStringWidth(text) + 10,
-			s.getStringHeight()), black);
-		s.writeShadowedString(text, Common::Point(5, 0), cyan);
+		s.writeShadowedString(text, _textRect,
+			RED, Graphics::kTextAlignCenter);
 	}
 }
 

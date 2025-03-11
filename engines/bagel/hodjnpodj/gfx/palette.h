@@ -27,6 +27,9 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+constexpr byte BLACK = 0;
+constexpr byte WHITE = 255;
+
 class Palette {
 private:
 	Graphics::Palette _gamePalette;

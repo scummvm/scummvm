@@ -38,7 +38,7 @@ class Minigames : public View {
 private:
 	static MinigameRect MINIGAME_RECTS[MINIGAMES_HOTSPOTS_COUNT];
 	static int MINIGAME_IDS[MINIGAMES_HOTSPOTS_COUNT];
-	static const char *MINIGAME_TEXTS[MINIGAMES_HOTSPOTS_COUNT + 1];
+	static const char *MINIGAME_TEXTS[MINIGAMES_HOTSPOTS_COUNT];
 	GfxSurface _background;
 	ColorButton _exitButton;
 	Common::Rect _textRect;

@@ -67,9 +67,10 @@ public:
 		const Common::Rect &bounds, int color = 0,
 		Graphics::TextAlign justify = Graphics::kTextAlignLeft);
 	void writeShadowedString(const Common::String &text,
-		const Common::Point &pos, int color = 0) {
-		writeString(text, pos, color);
-	}
+		const Common::Point &pos, int color = 0);
+	void writeShadowedString(const Common::String &text,
+		const Common::Rect &bounds, int color = 0,
+		Graphics::TextAlign justify = Graphics::kTextAlignLeft);
 	size_t getStringWidth(const Common::String &text) const;
 	size_t getStringHeight() const;
 	int wordWrapText(const Common::String &str,

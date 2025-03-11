@@ -154,6 +154,21 @@ void GfxSurface::writeString(const Common::String &text,
 		bounds.width(), color, justify);
 }
 
+void GfxSurface::writeShadowedString(const Common::String &text,
+		const Common::Point &pos, int color) {
+	writeString(text, Common::Point(pos.x + 1, pos.y), BLACK);
+	writeString(text, pos, color);
+}
+
+void GfxSurface::writeShadowedString(const Common::String &text,
+		const Common::Rect &bounds, int color,
+		Graphics::TextAlign justify) {
+	Common::Rect temp(bounds.left + 1, bounds.top, bounds.right + 1, bounds.bottom);
+	writeString(text, temp, BLACK, justify);
+	writeString(text, bounds, color, justify);
+}
+
+
 size_t GfxSurface::getStringWidth(const Common::String &text) const {
 	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
 	return font.getStringWidth(text);
