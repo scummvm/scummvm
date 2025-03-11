@@ -24,7 +24,7 @@
 
 #include "engines/advancedDetector.h"
 
-class AlcachofaMetaEngine : public AdvancedMetaEngine {
+class AlcachofaMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override;
 

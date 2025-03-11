@@ -2,8 +2,23 @@ MODULE := engines/alcachofa
 
 MODULE_OBJS = \
 	alcachofa.o \
+	camera.cpp \
+	common.cpp \
 	console.o \
-	metaengine.o
+	game-objects.cpp \
+	general-objects.cpp \
+	graphics.cpp \
+	graphics-opengl.cpp \
+	Input.cpp \
+	metaengine.o \
+	player.cpp \
+	rooms.cpp \
+	scheduler.cpp \
+	script.cpp \
+	shape.cpp \
+	sounds.cpp \
+	ui-objects.cpp \
+
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ALCACHOFA), DYNAMIC_PLUGIN)
