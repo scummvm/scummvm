@@ -60,6 +60,7 @@ public:
 	}
 	virtual ~MinigameView() {}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
 
@@ -68,6 +69,8 @@ public:
 	int listMembers(Common::ArchiveMemberList &list) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const;
+
+	void close();
 };
 
 } // namespace HodjNPodj

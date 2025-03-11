@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "common/formats/winexe_ne.h"
 #include "bagel/hodjnpodj/views/minigame_view.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -36,6 +37,34 @@ bool MinigameView::msgClose(const CloseMessage &msg) {
 	SearchMan.remove("Resources");
 
 	return View::msgClose(msg);
+}
+
+bool MinigameView::msgFocus(const FocusMessage &msg) {
+	if (msg._priorView != nullptr) {
+		Common::String name = msg._priorView->getName();
+
+		if (name == "Minigames")
+			g_engine->_bReturnToZoom = true;
+		if (name == "GrandTour")
+			g_engine->_bReturnToGrandTour = true;
+		if (name == "Metagame")
+			g_engine->_bReturnToMeta = true;
+	}
+
+	return View::msgFocus(msg);
+}
+
+void MinigameView::close() {
+	if (g_engine->_bReturnToGrandTour) {
+		g_engine->_bReturnToGrandTour = false;
+		replaceView("GrandTour");
+	} else if (g_engine->_bReturnToMeta) {
+		g_engine->_bReturnToMeta = false;
+		replaceView("MetaGame");
+	} else if (g_engine->_bReturnToZoom) {
+		g_engine->_bReturnToZoom = false;
+		replaceView("Minigames");
+	}
 }
 
 bool MinigameView::hasFile(const Common::Path &path) const {

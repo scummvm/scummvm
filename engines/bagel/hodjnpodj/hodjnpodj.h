@@ -60,6 +60,9 @@ protected:
 public:
 	Common::HashMap<int, Graphics::WinFont> _fonts;
 	Metagame::CBfcMgr _metaGame;
+	bool _bReturnToZoom = false;
+	bool _bReturnToMeta = false;
+	bool _bReturnToGrandTour = false;
 
 public:
 	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);
