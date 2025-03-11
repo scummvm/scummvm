@@ -172,25 +172,21 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 				if (Common::isMouseEvent(event))
 					mouse = event.mouse;
 
-				if (mouse.x >= x && mouse.x < x + mw &&
+				if (qtVideo && mouse.x >= x && mouse.x < x + mw &&
 						mouse.y >= y && mouse.y < y + mh) {
 					switch (event.type) {
 					case Common::EVENT_LBUTTONDOWN:
-						if (qtVideo)
-							qtVideo->handleMouseButton(true, event.mouse.x - x, event.mouse.y - y);
+						qtVideo->handleMouseButton(true, event.mouse.x - x, event.mouse.y - y);
 						break;
 					case Common::EVENT_LBUTTONUP:
-						if (qtVideo)
-							qtVideo->handleMouseButton(false, event.mouse.x - x, event.mouse.y - y);
+						qtVideo->handleMouseButton(false, event.mouse.x - x, event.mouse.y - y);
 						break;
 					case Common::EVENT_MOUSEMOVE:
-						if (qtVideo)
-							qtVideo->handleMouseMove(event.mouse.x - x, event.mouse.y - y);
+						qtVideo->handleMouseMove(event.mouse.x - x, event.mouse.y - y);
 						break;
 					case Common::EVENT_KEYUP:
 					case Common::EVENT_KEYDOWN:
-						if (qtVideo)
-							qtVideo->handleKey(event.kbd, event.type == Common::EVENT_KEYDOWN);
+						qtVideo->handleKey(event.kbd, event.type == Common::EVENT_KEYDOWN);
 						break;
 					default:
 						break;
