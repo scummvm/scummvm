@@ -1343,7 +1343,7 @@ bool Score::checkShotSimilarity(const Graphics::Surface *oldSurface, const Graph
 				absolute_pixel_differences++;
 
 				for (int c = 0; c < 4; c++) {
-					if (ABS((newColor & 0xFF) - (oldColor & 0xFF)) > kShotColorDiffThreshold) {
+					if (ABS<int32>((newColor & 0xFF) - (oldColor & 0xFF)) > kShotColorDiffThreshold) {
 						different_pixel_count++;
 						break;
 					}
