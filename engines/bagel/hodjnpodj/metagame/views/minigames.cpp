@@ -151,12 +151,12 @@ bool Minigames::msgMouseMove(const MouseMoveMessage &msg) {
 }
 
 bool Minigames::msgMouseUp(const MouseUpMessage &msg) {
-	int selectedMinigame = getSelectedMinigame();
+	int index = getSelectedMinigame();
 
-	if (MINIGAME_IDS[selectedMinigame] == -1) {
+	if (MINIGAME_IDS[index] == -1) {
 		replaceView("TitleMenu");
 	} else {
-		warning("TODO: Selection %d", selectedMinigame);
+		g_engine->selectMinigame(MINIGAME_IDS[index]);
 	}
 
 	return View::msgMouseUp(msg);

@@ -41,6 +41,7 @@ namespace Bagel {
 namespace HodjNPodj {
 
 extern GAMESTRUCT *pGameParams;
+extern Metagame::CBfcMgr *lpMetaGame;
 
 class HodjNPodjEngine : public BagelEngine, public Events {
 private:
@@ -106,6 +107,7 @@ public:
 
 	void startBackgroundMidi();
 	void stopBackgroundMidi();
+	void selectMinigame(int newArea);
 };
 
 extern HodjNPodjEngine *g_engine;

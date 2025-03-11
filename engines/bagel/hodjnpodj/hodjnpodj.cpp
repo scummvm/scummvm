@@ -29,6 +29,7 @@
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/console.h"
+#include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
 #include "bagel/music.h"
 
 namespace Bagel {
@@ -38,11 +39,15 @@ namespace HodjNPodj {
 
 HodjNPodjEngine *g_engine;
 GAMESTRUCT *pGameParams;
+Metagame::CBfcMgr *lpMetaGame;
+
+using Metagame::CMgStatic;
 
 HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		BagelEngine(syst, gameDesc) {
 	g_engine = this;
 	pGameParams = &_gameInfo;
+	lpMetaGame = &_metaGame;
 }
 
 HodjNPodjEngine::~HodjNPodjEngine() {
@@ -94,6 +99,54 @@ void HodjNPodjEngine::stopBackgroundMidi() {
 	}
 }
 
+void HodjNPodjEngine::selectMinigame(int newArea) {
+	int nWhichMinigame = newArea - MG_GAME_BASE;
+	assert(nWhichMinigame >= 0 && nWhichMinigame < MG_GAME_COUNT);
+
+	getScreen()->clear();
+
+    //bLoadedDLL = FALSE;
+
+    if (newArea == MG_GAME_CHALLENGE) {
+        startBackgroundMidi();
+#ifdef TODO
+		bSuccess = LoadZoomDLL();
+        bReturnToZoom = FALSE;
+        if ( bSuccess == FALSE ) {
+            lpMetaGame->m_bRestart = TRUE;
+            bSuccess = LoadMetaDLL();
+        } else
+            startBackgroundMidi();
+#else
+		error("TODO: MG_GAME_CHALLENGE");
+#endif
+        return;
+    }
+
+    stopBackgroundMidi();
+#ifdef TODO
+    if ( bReturnToZoom ) {
+
+        if ( lpGameStruct != NULL ) {
+            delete lpGameStruct;
+            lpGameStruct = NULL;
+        }
+        lpGameStruct = new GAMESTRUCT;
+        lpGameStruct->lCrowns = 1000;
+        lpGameStruct->lScore = 0;
+        lpGameStruct->nSkillLevel = SKILLLEVEL_MEDIUM;
+        bSoundEffectsEnabled = pMyApp->GetProfileInt("Meta","SoundEffects",TRUE);
+        bMusicEnabled = pMyApp->GetProfileInt("Meta","Music",TRUE);
+        lpGameStruct->bSoundEffectsEnabled = bSoundEffectsEnabled;
+        lpGameStruct->bMusicEnabled = bMusicEnabled;
+        lpGameStruct->bPlayingMetagame = FALSE;
+        lpGameStruct->bPlayingHodj = TRUE;
+    }
+#endif
+
+	// Switch to the minigame
+	replaceView(CMgStatic::cGameTable[nWhichMinigame]._viewName);
+}
 
 } // namespace HodjNPodj
 } // namespace Bagel

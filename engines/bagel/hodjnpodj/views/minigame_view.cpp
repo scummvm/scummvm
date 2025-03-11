@@ -57,12 +57,17 @@ bool MinigameView::msgFocus(const FocusMessage &msg) {
 void MinigameView::close() {
 	if (g_engine->_bReturnToGrandTour) {
 		g_engine->_bReturnToGrandTour = false;
+		g_engine->startBackgroundMidi();
 		replaceView("GrandTour");
 	} else if (g_engine->_bReturnToMeta) {
 		g_engine->_bReturnToMeta = false;
+		lpMetaGame->m_bRestart = true;
+
+		g_engine->stopBackgroundMidi();
 		replaceView("MetaGame");
 	} else if (g_engine->_bReturnToZoom) {
 		g_engine->_bReturnToZoom = false;
+		g_engine->startBackgroundMidi();
 		replaceView("Minigames");
 	}
 }

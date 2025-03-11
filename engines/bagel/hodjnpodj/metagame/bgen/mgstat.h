@@ -457,10 +457,7 @@ public:
 	int m_iGameCode;			// MG_GAME_xxxx
 	int m_iWinCode;				// MG_WIN_xxxx (win money, object, info)
 	const char *m_lpszGameName;	// Full name of game
-	const char *m_lpszDllPath;	// Path of DLL
-	const char *m_lpszDllName;	// Name of DLL
-	const char *m_lpszApiName;	// Entry point of DLL
-	bool m_bLocalDLL;			// Whether an updated game DLL is in the Meta directory
+	const char *_viewName;		// Name of view implementing it
 };
 
 class CNoteTable {
