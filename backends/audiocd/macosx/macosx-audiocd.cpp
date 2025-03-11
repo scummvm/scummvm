@@ -190,15 +190,14 @@ void MacOSXAudioCDManager::close() {
 	_trackMap.clear();
 }
 
-enum {
-	// Some crazy high number that we'll never actually hit
-	kMaxDriveCount = 256
-};
-
 MacOSXAudioCDManager::DriveList MacOSXAudioCDManager::detectAllDrives() {
+	int foundDrives = getfsstat(nullptr, 0, MNT_WAIT);
+	if (foundDrives <= 0)
+		return DriveList();
+
 	// Fetch the lists of drives
-	struct statfs *driveStats = (struct statfs *)malloc(sizeof(struct statfs) * kMaxDriveCount);
-	int foundDrives = getfsstat(driveStats, sizeof(struct statfs) * kMaxDriveCount, MNT_WAIT);
+	struct statfs *driveStats = (struct statfs *)malloc(sizeof(struct statfs) * foundDrives);
+	foundDrives = getfsstat(driveStats, sizeof(struct statfs) * foundDrives, MNT_NOWAIT);
 	if (foundDrives <= 0) {
 		free(driveStats);
 		return DriveList();
