@@ -45,14 +45,16 @@ public:
 
 protected:
   bool available = false;
+  bool mt32workaround = false;
 	struct chan {
 		bool playing;
 		int8 note;
 		chan() : playing(false), note(0) {};
 	};
-
+  uint8 startChannel = 0;
+  uint8 maxChannels = 16;
 	MidiDriver *_driver;
-	chan _playChannels[16];
+	chan activeChannels[16];
 };
 
 }
