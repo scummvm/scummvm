@@ -134,9 +134,12 @@ void ColorButton::draw() {
 }
 
 bool ColorButton::msgMouseDown(const MouseDownMessage &msg) {
-	if (msg._button == MouseDownMessage::MB_LEFT) {
-		_itemState = ODS_SELECTED;
-		redraw();
+	if (!(_itemState & ODS_GRAYED) &&
+		!(_itemState & ODS_DISABLED)) {
+		if (msg._button == MouseDownMessage::MB_LEFT) {
+			_itemState = ODS_SELECTED;
+			redraw();
+		}
 	}
 
 	return true;
@@ -166,14 +169,17 @@ bool ColorButton::msgUnfocus(const UnfocusMessage &msg) {
 }
 
 bool ColorButton::msgKeypress(const KeypressMessage &msg) {
-	size_t ampPos = _text.findFirstOf('&');
+	if (!(_itemState & ODS_GRAYED) &&
+			!(_itemState & ODS_DISABLED)) {
+		size_t ampPos = _text.findFirstOf('&');
 
-	if (ampPos != Common::String::npos &&
+		if (ampPos != Common::String::npos &&
 			(msg.flags & Common::KBD_ALT) &&
 			(msg.ascii == tolower(_text[ampPos + 1]))) {
-		// Notify parent dialog that the button was pressed
-		_parent->send(GameMessage("BUTTON", _name));
-		return true;
+			// Notify parent dialog that the button was pressed
+			_parent->send(GameMessage("BUTTON", _name));
+			return true;
+		}
 	}
 
 	return false;
