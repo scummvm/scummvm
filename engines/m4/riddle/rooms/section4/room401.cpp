@@ -611,7 +611,7 @@ void Room401::daemon() {
 		}
 		break;
 
-	case 711:
+	case 712:
 		sendWSMessage_10000(1, _agent, _401a01, 3, 3, -1, _401a01, 3, 3, 0);
 		kernel_timing_trigger(1, 715);
 		break;
@@ -632,10 +632,13 @@ void Room401::daemon() {
 		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
 		inv_move_object("TURTLE", 305);
 		inv_move_object("TURTLE TREATS", 305);
-
+		_G(flags[V091]) = 1;
+		
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 720, _401rp01, 1, 1, 0);
+
+		_agentShould = 0;
 		_ctr1 = 0;
 		break;
 
@@ -758,7 +761,7 @@ void Room401::daemon() {
 		break;
 
 	case 1000:
-		if (_G(flags)[V020]) {
+		if (!_G(flags)[V020]) {
 			kernel_timing_trigger(30, 400);
 		} else if (_G(flags)[V110] && !_G(flags)[V016]) {
 			kernel_timing_trigger(30, 500);
