@@ -42,7 +42,7 @@ extern const ADGameDescription gameDescriptions[];
 
 } // End of namespace Alcachofa
 
-class AlcachofaMetaEngineDetection : public AdvancedMetaEngineDetection {
+class AlcachofaMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

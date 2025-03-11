@@ -177,8 +177,10 @@ ManagedSurface *AnimationBase::readImage(SeekableReadStream &stream) const {
 	if (source->w == 2 && source->h == 1)
 		return nullptr;
 
-	auto target = source->convertTo(BlendBlit::getSupportedPixelFormat(), decoder.getPalette(), decoder.getPaletteColorCount());	
-	return new ManagedSurface(target);
+	auto target = new ManagedSurface();
+	target->setPalette(decoder.getPalette(), 0, decoder.getPaletteColorCount());
+	target->convertFrom(*source, BlendBlit::getSupportedPixelFormat());
+	return target;
 }
 
 void AnimationBase::loadMissingAnimation() {

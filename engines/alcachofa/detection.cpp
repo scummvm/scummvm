@@ -38,8 +38,8 @@ const DebugChannelDef AlcachofaMetaEngineDetection::debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-AlcachofaMetaEngineDetection::AlcachofaMetaEngineDetection() : AdvancedMetaEngineDetection(Alcachofa::gameDescriptions,
-	sizeof(ADGameDescription), Alcachofa::alcachofaGames) {
+AlcachofaMetaEngineDetection::AlcachofaMetaEngineDetection() : AdvancedMetaEngineDetection<ADGameDescription>(
+	Alcachofa::gameDescriptions, Alcachofa::alcachofaGames) {
 	_flags |= kADFlagMatchFullPaths;
 }
 

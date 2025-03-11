@@ -22,7 +22,6 @@
 #include "common/translation.h"
 
 #include "alcachofa/metaengine.h"
-#include "alcachofa/detection.h"
 #include "alcachofa/alcachofa.h"
 
 namespace Alcachofa {
