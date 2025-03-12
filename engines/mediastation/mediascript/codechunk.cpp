@@ -29,13 +29,14 @@
 
 namespace MediaStation {
 
-CodeChunk::CodeChunk(Common::SeekableReadStream &chunk) : _args(nullptr) {
+CodeChunk::CodeChunk(Common::SeekableReadStream &chunk) {
 	uint lengthInBytes = Datum(chunk, kDatumTypeUint32_1).u.i;
 	debugC(5, kDebugLoading, "CodeChunk::CodeChunk(): Length 0x%x (@0x%llx)", lengthInBytes, static_cast<long long int>(chunk.pos()));
 	_bytecode = chunk.readStream(lengthInBytes);
 }
 
-Operand CodeChunk::execute(Common::Array<Operand> *args) {
+Operand CodeChunk::execute(Common::Array<Operand> *args, Common::Array<Operand> *locals) {
+	_locals = locals;
 	_args = args;
 	Operand returnValue;
 	while (_bytecode->pos() < _bytecode->size()) {
@@ -51,6 +52,12 @@ Operand CodeChunk::execute(Common::Array<Operand> *args) {
 	// We don't own the args, so we will prevent a potentially out-of-scope
 	// variable from being re-accessed.
 	_args = nullptr;
+
+	if (_weOwnLocals) {
+		delete _locals;
+	}
+	_locals = nullptr;
+
 	return returnValue;
 }
 
@@ -129,7 +136,9 @@ Operand CodeChunk::executeNextStatement() {
 		case kOpcodeDeclareVariables: {
 			uint32 localVariableCount = Datum(*_bytecode).u.i;
 			debugC(5, kDebugScript, "%d", localVariableCount);
-			_locals.resize(localVariableCount);
+			assert(_locals == nullptr);
+			_locals = new Common::Array<Operand>(localVariableCount);
+			_weOwnLocals = true;
 			return Operand();
 		}
 
@@ -176,11 +185,9 @@ Operand CodeChunk::executeNextStatement() {
 			// Doesn't seem like there is a real bool type for values,
 			// ao just get an integer.
 			if (condition.getInteger()) {
-				// TODO: If locals are modified in here, they won't be
-				// propagated up since it's its own code chunk.
-				ifBlock.execute(_args);
+				ifBlock.execute(_args, _locals);
 			} else {
-				elseBlock.execute(_args);
+				elseBlock.execute(_args, _locals);
 			}
 
 			// If blocks themselves shouldn't return anything.
@@ -415,7 +422,7 @@ Operand CodeChunk::getVariable(uint32 id, VariableScope scope) {
 
 	case kVariableScopeLocal: {
 		uint index = id - 1;
-		return _locals.operator[](index);
+		return _locals->operator[](index);
 	}
 
 	case kVariableScopeParameter: {
@@ -444,7 +451,7 @@ void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand value) {
 
 	case kVariableScopeLocal: {
 		uint index = id - 1;
-		_locals[index] = value;
+		_locals->operator[](index) = value;
 		break;
 	}
 
@@ -502,6 +509,11 @@ Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand self, Common:
 CodeChunk::~CodeChunk() {
 	// We don't own the args, so we don't need to delete it.
 	_args = nullptr;
+
+	if (_weOwnLocals) {
+		delete _locals;
+	}
+	_locals = nullptr;
 
 	delete _bytecode;
 	_bytecode = nullptr;

@@ -37,7 +37,7 @@ public:
 	CodeChunk(Common::SeekableReadStream &chunk);
 	~CodeChunk();
 
-	Operand execute(Common::Array<Operand> *args = nullptr);
+	Operand execute(Common::Array<Operand> *args = nullptr, Common::Array<Operand> *locals = nullptr);
 
 private:
 	Operand executeNextStatement();
@@ -45,9 +45,10 @@ private:
 	Operand getVariable(uint32 id, VariableScope scope);
 	void putVariable(uint32 id, VariableScope scope, Operand value);
 
-	Common::Array<Operand> _locals;
-	Common::Array<Operand> *_args;
-	Common::SeekableReadStream *_bytecode;
+	bool _weOwnLocals = false;
+	Common::Array<Operand> *_locals = nullptr;
+	Common::Array<Operand> *_args = nullptr;
+	Common::SeekableReadStream *_bytecode = nullptr;
 };
 
 } // End of namespace MediaStation
