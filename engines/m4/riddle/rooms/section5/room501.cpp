@@ -103,7 +103,7 @@ void Room501::daemon() {
 		player_update_info();
 		_shadow = series_show("SAFARI SHADOW 3", 0xf00, 128, -1, -1, 0,
 			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, false,
 			triggerMachineByHashCallback, "Rip Delta Machine State");
 
 		switch (_ripleyShould) {
@@ -256,7 +256,7 @@ void Room501::daemon() {
 			case 18:
 				if (!_paper) {
 					_paper = series_place_sprite("one frame paper", 0, 0, 0, 100, 0x780);
-					_flag = 1;
+					_flag = true;
 				}
 
 				kernel_timing_trigger(1, 505);
@@ -276,8 +276,8 @@ void Room501::daemon() {
 					inv_give_to_player("US DOLLARS");
 
 				kernel_timing_trigger(1, 505);
-				sendWSMessage_10000(1, _ripley, _ripSignsPaper, 85, 85, 502,
-					_ripSignsPaper, 85, 85, 0);
+				sendWSMessage_10000(1, _ripley, _ripMoneyExchange, 85, 85, 502,
+									_ripMoneyExchange, 85, 85, 0);
 				_ripleyShould = 3;
 				break;
 			default:
@@ -335,7 +335,7 @@ void Room501::daemon() {
 		_xyzzy6 = -1;
 		_xyzzy7 = -1;
 		_xyzzy5 = -1;
-		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
+		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, false,
 			triggerMachineByHashCallback, "Agent at Desk");
 		sendWSMessage_10000(1, _agent, _agentTalkLoop, 1, 1, 506,
 			_agentTalkLoop, 1, 1, 0);
@@ -831,7 +831,7 @@ void Room501::daemon() {
 		break;
 
 	case 557:
-		_deltaPuffinMachine = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
+		_deltaPuffinMachine = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, false,
 			triggerMachineByHashCallback, "Delta Puffin Machine State");
 		_xyzzy3 = 1;
 		_xyzzy1 = 1;
@@ -1040,7 +1040,7 @@ void Room501::daemon() {
 		break;
 
 	case 596:
-		_deltaPuffinMachine = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
+		_deltaPuffinMachine = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, false,
 			triggerMachineByHashCallback, "Delta Puffin Machine State");
 		_xyzzy3 = 1;
 		_xyzzy1 = 1;
@@ -1116,10 +1116,10 @@ void Room501::daemon() {
 }
 
 void Room501::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool talkFlag = player_said_any("talk", "talk to");
-	bool useFlag = player_said("gear");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool talkFlag = player_said_any("talk", "talk to");
+	const bool useFlag = player_said("gear");
 
 	if (player_said("conv501a")) {
 		conv501a();
@@ -1292,9 +1292,9 @@ void Room501::parser() {
 
 void Room501::conv501a() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (node == 15) {
 		if (entry == 0)
