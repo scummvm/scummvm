@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-10 16:53+0000\n"
-"PO-Revision-Date: 2025-03-11 09:18+0000\n"
+"PO-Revision-Date: 2025-03-12 07:18+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -2797,10 +2797,8 @@ msgid "Do you really want to delete this saved game?"
 msgstr "Vill du verkligen radera den här spardatan?"
 
 #: gui/saveload-dialog.cpp:557
-#, fuzzy
-#| msgid "Error writing save file\n"
 msgid "Error deleting saved game"
-msgstr "Fel vid sparning av fil\n"
+msgstr "Fel vid borttagning av sparat spel"
 
 #: gui/saveload-dialog.cpp:675 gui/saveload-dialog.cpp:1192
 msgid "Date: "
@@ -4785,9 +4783,8 @@ msgid "Magnify Mode Off. Returning to Launcher..."
 msgstr "Förstoringsläge av. Återvänder till start..."
 
 #: backends/platform/3ds/osystem-events.cpp:385
-#, fuzzy
 msgid "Hover Mode"
-msgstr "Våldsamt läge"
+msgstr "Hovringsläge"
 
 #: backends/platform/3ds/osystem-events.cpp:389
 msgid "Drag Mode"
@@ -4815,7 +4812,7 @@ msgstr "Upplösning i spelet är för liten för att förstoras."
 
 #: backends/platform/3ds/osystem-events.cpp:409
 msgid "Magnify Mode On. Switching to Hover Mode..."
-msgstr ""
+msgstr "Förstoringsläge på. Växlar till hovringsläge..."
 
 #: backends/platform/3ds/osystem-events.cpp:411
 msgid "Magnify Mode On"
@@ -4951,6 +4948,72 @@ msgid ""
 "  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 msgstr ""
+"## Läget för pekstyrning\n"
+"Pekstyrningsläget kan ändras genom att trycka eller klicka på "
+"styrenhetsikonen i det övre högra hörnet\n"
+"### Direkt mus\n"
+"\n"
+"Pekkontrollerna är direkta. Pekaren hoppar till den plats där fingret rör "
+"vid skärmen (standard för menyer).\n"
+"\n"
+"  ![Direkt musläge](mouse.png \"Direkt musläge\"){w=10em}\n"
+"\n"
+"### Emulering av pekplatta\n"
+"\n"
+"Pekkontrollerna är indirekta, som på en bärbar dators pekplatta.\n"
+"\n"
+"  ![Pekplattans läge](touchpad.png \"Pekplattans läge\"){w=10em}\n"
+"\n"
+"### Gamepad-emulering\n"
+"\n"
+"Fingrarna måste placeras längst ner till vänster och höger på skärmen för "
+"att emulera en styrplatta och åtgärdsknappar.\n"
+"\n"
+"  ![Gamepad-läge](gamepad.png \"Gamepad-läge\"){w=10em}\n"
+"\n"
+"För att välja önskat pekläge för menyer, 2D-spel och 3D-spel, gå till **"
+"Globala alternativ > Backend > Välj önskat pekläge**.\n"
+"\n"
+"## Beröringsåtgärder\n"
+"\n"
+"### Bläddra med två fingrar\n"
+"\n"
+"För att bläddra, dra två fingrar uppåt eller nedåt på skärmen\n"
+"### Tryck med två fingrar\n"
+"\n"
+"Tryck med två fingrar genom att hålla ner ett finger och sedan trycka med "
+"det andra fingret.\n"
+"\n"
+"### Tryck med tre fingrar\n"
+"\n"
+"För att knacka med tre fingrar börjar du med att hålla ned ett finger och "
+"knackar sedan successivt med de andra två fingrarna, ett i taget, medan du "
+"fortfarande håller ned de föregående fingrarna. Föreställ dig att du otåligt "
+"knackar med fingrarna på en yta, men sakta sedan ner rörelsen så att den "
+"blir rytmisk, men inte för långsam.\n"
+"\n"
+"### Immersive Sticky helskärmsläge\n"
+"\n"
+"Svep från kanten för att visa systemfälten.  De förblir halvgenomskinliga "
+"och försvinner efter några sekunder om du inte interagerar med dem.\n"
+"\n"
+"### Global huvudmeny\n"
+"\n"
+"För att öppna den globala huvudmenyn trycker du på menyikonen längst upp "
+"till höger på skärmen.\n"
+"\n"
+"  ![Menyikon](menu.png \"Menyikon\"){w=10em}\n"
+"\n"
+"## Virtuellt tangentbord\n"
+"\n"
+"Du öppnar det virtuella tangentbordet genom att trycka länge på "
+"styrenhetsikonen längst upp till höger på skärmen eller genom att trycka på "
+"ett redigerbart textfält. Du döljer det virtuella tangentbordet genom att "
+"trycka på controller-ikonen igen eller genom att trycka utanför textfältet.\n"
+"\n"
+"\n"
+"  ![Tangentbordsikon](keyboard.png \"Tangentbordsikon\"){w=10em}\n"
+"\n"
 
 #: backends/platform/android/android.cpp:1173
 #: backends/platform/ios7/ios7_osys_misc.mm:336
@@ -5039,7 +5102,7 @@ msgstr "Visa kontroller på skärmen"
 #: backends/platform/android/options.cpp:132
 #: backends/platform/ios7/ios7_options.mm:112
 msgid "Choose the preferred touch mode:"
-msgstr ""
+msgstr "Välj önskat pekläge:"
 
 #: backends/platform/android/options.cpp:134
 #: backends/platform/android/options.cpp:165
@@ -5055,9 +5118,8 @@ msgstr "I menyer"
 #: backends/platform/ios7/ios7_options.mm:136
 #: backends/platform/ios7/ios7_options.mm:137
 #: backends/platform/ios7/ios7_osys_events.cpp:344
-#, fuzzy
 msgid "Touchpad emulation"
-msgstr "MT-32 emulator"
+msgstr "Emulering av pekplatta"
 
 #: backends/platform/android/options.cpp:137
 #: backends/platform/android/options.cpp:157
@@ -5277,6 +5339,78 @@ msgid ""
 "  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 msgstr ""
+"## Lägen för pekstyrning\n"
+"Pekstyrningsläget kan ändras genom att trycka eller klicka på "
+"styrenhetsikonen i det övre högra hörnet, genom att svepa med två fingrar "
+"från vänster till höger, eller i de globala inställningarna från "
+"startprogrammet gå till **Globala alternativ > Backend > Välj önskat "
+"pekläge**. Det är möjligt att konfigurera pekläget för tre situationer "
+"(ScummVM-menyer, 2D-spel och 3D-spel).\n"
+"\n"
+"### Direkt mus\n"
+"\n"
+"Pekkontrollerna är direkta. Pekaren hoppar till den plats där fingret rör "
+"vid skärmen (standard för menyer).\n"
+"\n"
+"  ![Direkt musläge](mouse.png \"Direkt musläge\"){w=10em}\n"
+"\n"
+"### Emulering av pekplatta\n"
+"\n"
+"Pekkontrollerna är indirekta, som på en bärbar dators pekplatta.\n"
+"\n"
+"  ![Pekplattans läge](touchpad.png \"Pekplattans läge\"){w=10em}\n"
+"\n"
+"För att välja önskat pekläge för menyer, 2D-spel och 3D-spel, gå till **"
+"Globala alternativ > Backend > Välj önskat pekläge**.\n"
+"\n"
+"## Beröringsåtgärder\n"
+"\n"
+"| Gest | Åtgärd\n"
+"| ------------------|-------------------\n"
+"| Ett fingers tryck | Vänster musklick\n"
+"| Två fingrar trycker på höger musklick\n"
+"| `Två fingrar dubbelklickar` | ESC\n"
+"| `Ett fingers tryck och håll i >0,5s` | Vänster musknapp håll och dra, till "
+"exempel för att välja från actionhjulet i Curse of Monkey Island\n"
+"| `Två fingrar trycker och håller ned i >0,5s` | Höger musknapp hålls ned "
+"och dras, t.ex. för att välja från actionhjulet i Tony Tough\n"
+"| `Svep med två fingrar (vänster till höger)` | Växlar mellan peklägena\n"
+"| `Två fingrar sveper (höger till vänster)` | Växlar virtuell kontroll (>iOS "
+"15)\n"
+"| \"Svep med två fingrar (uppifrån och ned)\" | Tillgång till den globala "
+"huvudmenyn i spel\n"
+"| \"Nyp (zooma in/ut)\" | Aktiverar/avaktiverar tangentbord\n"
+"\n"
+"### Virtuell spelkontroll\n"
+"\n"
+"Enheter som kör iOS 15 eller senare kan ansluta en virtuell gamepad-"
+"kontroller genom att svepa två fingrar från höger till vänster eller via **"
+"Globala alternativ > Backend**. Riktningsknappen kan konfigureras till "
+"antingen en thumbstick eller en dpad.\n"
+"**Anmärkning** När den virtuella kontrollenheten är ansluten går det inte "
+"att utföra musklick med hjälp av tryckgester eftersom de är inaktiverade så "
+"länge den virtuella kontrollenheten är synlig. Vänster musklick utförs genom "
+"att trycka på A-knappen. Tap gestures aktiveras igen när den virtuella "
+"kontrollen kopplas bort.\n"
+"\n"
+"### Global huvudmeny\n"
+"\n"
+"För att öppna den globala huvudmenyn trycker du på menyikonen längst upp "
+"till höger på skärmen eller sveper två fingrar nedåt.\n"
+"\n"
+"  ![Menyikon](menu.png \"Menyikon\"){w=10em}\n"
+"\n"
+"## Virtuellt tangentbord\n"
+"\n"
+"Du öppnar det virtuella tangentbordet genom att trycka länge på "
+"styrenhetsikonen längst upp till höger på skärmen, göra en nyprörelse (zooma "
+"ut) eller trycka på ett redigerbart textfält. För att dölja det virtuella "
+"tangentbordet trycker du på controller-ikonen igen, gör en motsatt nypgest ("
+"zoomar in) eller trycker utanför textfältet.\n"
+"\n"
+"\n"
+"  ![Tangentbordsikon](keyboard.png \"Tangentbordsikon\"){w=10em}\n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:314
 msgid "External keyboard"
@@ -5387,6 +5521,25 @@ msgid ""
 "the virtual keyboard, press the Back/Menu button.\n"
 "\n"
 msgstr ""
+"## Beröringsåtgärder\n"
+"\n"
+"### Tryck på pekområde\n"
+"\n"
+"Tryck på pekområdet för att utföra ett vänster musklick\n"
+"### Spela upp/Pausa\n"
+"\n"
+"Tryck på Spela upp/Paus för att utföra en höger musklickning\n"
+"\n"
+"### Global huvudmeny\n"
+"\n"
+"För att öppna den globala huvudmenyn, tryck på Bakåt/Meny-knappen.\n"
+"\n"
+"## Virtuellt tangentbord\n"
+"\n"
+"Öppna det virtuella tangentbordet genom att hålla Spela upp/Paus-knappen "
+"intryckt. För att dölja det virtuella tangentbordet, tryck på Bakåt/Meny-"
+"knappen.\n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:383
 msgid ""
@@ -6313,7 +6466,6 @@ msgstr "Vänd bakåt"
 #: engines/wintermute/keymapper_tables.h:741
 #: engines/wintermute/keymapper_tables.h:2122
 #: engines/wintermute/keymapper_tables.h:2223
-#, fuzzy
 msgid "Turn left"
 msgstr "Sväng vänster"
 
@@ -6338,23 +6490,17 @@ msgid "Text speed - Slow"
 msgstr "Texthastighet - Långsam"
 
 #: engines/agos/metaengine.cpp:331
-#, fuzzy
-#| msgid "Show Object Line"
 msgid "Show objects to interact"
-msgstr "Visa objektrad"
+msgstr "Visa objekt för att interagera"
 
 #: engines/agos/metaengine.cpp:338
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Toggle background sounds on/off"
-msgstr "Volym för specialeffekter"
+msgstr "Växla bakgrundsljud på/av"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:347
-#, fuzzy
-#| msgid "Switching characters:"
 msgid "Switch characters"
-msgstr "Byta karaktärer:"
+msgstr "Växla karaktärer"
 
 #: engines/agos/metaengine.cpp:353
 #, fuzzy
@@ -6364,11 +6510,11 @@ msgstr "Fullskärmsläge"
 
 #: engines/agos/metaengine.cpp:360
 msgid "Switches between speech only and combined speech and subtitles"
-msgstr ""
+msgstr "Växlar mellan endast tal och kombinerat tal och undertexter"
 
 #: engines/agos/metaengine.cpp:366
 msgid "Switches between subtitles only and combined speech and subtitles"
-msgstr ""
+msgstr "Växlar mellan endast undertexter och kombinerat tal och undertexter"
 
 #: engines/agos/metaengine.cpp:376
 msgid "High speed mode on/off in Swampy Adventures"
@@ -6377,11 +6523,11 @@ msgstr ""
 #: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
 #: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
-msgstr ""
+msgstr "Tryck på \"Ja\"-tangenten"
 
 #: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
-msgstr ""
+msgstr "Tryck på \"Nej\"-tangenten"
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -6435,12 +6581,16 @@ msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
 msgstr ""
+"Det valda spelet använder en version av AGS-motorn som är äldre än 2.5 och "
+"som inte stöds."
 
 #: engines/ags/ags.cpp:160
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
 msgstr ""
+"Det valda spelet har en datafil som är större än 2 GB, vilket inte stöds av "
+"din version av ScummVM ännu."
 
 #: engines/ags/ags.cpp:338
 msgid ""
@@ -6448,6 +6598,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"För att bevara den ursprungliga upplevelsen bör det här spelet läsas in med "
+"hjälp av gränssnittet i spelet.\n"
+"Du kan dock åsidosätta den här inställningen i Spelalternativ."
 
 #: engines/ags/ags.cpp:353
 msgid ""
@@ -6455,6 +6608,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"För att bevara den ursprungliga upplevelsen bör detta spel sparas med hjälp "
+"av gränssnittet i spelet.\n"
+"Du kan dock åsidosätta den här inställningen i Spelalternativ."
 
 #: engines/ags/dialogs.cpp:61
 msgid "Game language:"
@@ -6466,22 +6622,24 @@ msgstr "Språk att använda för flerspråkiga spel"
 
 #: engines/ags/dialogs.cpp:77
 msgid "Enable ScummVM save management"
-msgstr ""
+msgstr "Aktivera ScummVMs sparningshantering"
 
 #: engines/ags/dialogs.cpp:77
 msgid ""
 "Never disable ScummVM save management and autosaves.\n"
 "NOTE: This could cause save duplication and other oddities"
 msgstr ""
+"Inaktivera aldrig ScummVM:s sparhantering och autospar.\n"
+"OBS: Detta kan orsaka dubblering av sparande och andra konstigheter"
 
 #: engines/ags/dialogs.cpp:82
-#, fuzzy
 msgid "Force antialiased text"
-msgstr "Antialiserad"
+msgstr "Tvinga kantutjämnad text"
 
 #: engines/ags/dialogs.cpp:82
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
+"Använd kantutjämning för att rita text även om spelet inte frågar efter det"
 
 #: engines/ags/dialogs.cpp:85 engines/grim/metaengine.cpp:48
 #: engines/zvision/metaengine.cpp:221
@@ -6490,7 +6648,7 @@ msgstr "Visa bilder/s"
 
 #: engines/ags/dialogs.cpp:85 engines/grim/metaengine.cpp:49
 msgid "Show the current FPS-rate, while you play."
-msgstr ""
+msgstr "Visa den aktuella bildfrekvensen medan du spelar."
 
 #: engines/ags/engine/ac/listbox.cpp:78
 msgid ""
@@ -6500,20 +6658,23 @@ msgid ""
 "or\n"
 "2. Any .sav file inside the QfG2 Remake game directory"
 msgstr ""
+"Spelet kommer nu att lista karaktärer som exporterats från Sierra-spelen som "
+"kan importeras:\n"
+"1. Spara filer med namnet qfg1*.sav eller qfg1vga*.sav i ScummVM:s "
+"sparkatalog, eller\n"
+"2. Alla .sav-filer i spelkatalogen för QfG2 Remake"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
 msgstr "Visa version"
 
 #: engines/asylum/metaengine.cpp:120 engines/wintermute/keymapper_tables.h:950
-#, fuzzy
 msgid "Quick load"
-msgstr "Klickläge"
+msgstr "Snabbinläsning"
 
 #: engines/asylum/metaengine.cpp:125 engines/wintermute/keymapper_tables.h:930
-#, fuzzy
 msgid "Quick save"
-msgstr "Klickläge"
+msgstr "Snabbsparning"
 
 #: engines/asylum/metaengine.cpp:130
 msgid "Switch to Sarah"
@@ -6529,7 +6690,7 @@ msgstr "Växla till Olmec"
 
 #: engines/asylum/metaengine.cpp:145
 msgid "Bring up the In-Game Menu"
-msgstr ""
+msgstr "Ta fram menyn i spelet"
 
 #: engines/asylum/metaengine.cpp:152
 #, fuzzy
@@ -6569,15 +6730,12 @@ msgid "Move right"
 msgstr "Flytta åt höger"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle animation on/off"
-msgstr "Fullskärmsläge"
+msgstr "Växla animering på/av"
 
 #: engines/asylum/metaengine.cpp:232
-#, fuzzy
 msgid "Return to gameplay"
-msgstr "V-Sync i 3D-spel"
+msgstr "Återgå till spelet"
 
 #. I18N: Switch to previous image in internal game resource viewer
 #: engines/asylum/metaengine.cpp:239
@@ -6606,6 +6764,8 @@ msgid ""
 "WARNING: Attempt to load saved game from a previous version: Version %s / "
 "Build %d"
 msgstr ""
+"VARNING: Försök att läsa in ett sparat spel från en tidigare version: "
+"Version %s / Byggversion %d"
 
 #: engines/asylum/asylum.cpp:204 engines/cine/saveload.cpp:863
 msgid "Load anyway"
@@ -6632,17 +6792,13 @@ msgstr "Allmänna tangenter"
 #: engines/tinsel/metaengine.cpp:240 engines/toon/metaengine.cpp:81
 #: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
 #: engines/tucker/metaengine.cpp:167
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default keymappings"
-msgstr "Förvald knappuppsättning"
+msgstr "Standardtangentmappningar"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Escape keymappings"
-msgstr "Tangentmappningar för spel"
+msgstr "Escape-tangentmappningar"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:197
@@ -6707,6 +6863,9 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
+"VARNING: Det här spelet sparades i läget Restored Cut Content, men du spelar "
+"i läget Original Content. Läget kommer att justeras till Restored Cut "
+"Content för den här sessionen tills du avslutar spelet helt och hållet."
 
 #: engines/bladerunner/bladerunner.cpp:2766
 msgid ""
@@ -6714,6 +6873,9 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
+"VARNING: Det här spelet sparades i läget Original Content, men du spelar i "
+"läget Restored Cut Content. Läget kommer att justeras till Original Content-"
+"läget för den här sessionen tills du avslutar spelet helt och hållet."
 
 #: engines/bladerunner/bladerunner.cpp:2768
 msgid "Continue"
@@ -6740,9 +6902,8 @@ msgstr ""
 "Enhanced Edition stöds inte. Använd originalfilerna som är en del av utgåvan."
 
 #: engines/bladerunner/metaengine.cpp:45
-#, fuzzy
 msgid "Sitcom mode"
-msgstr "Skalningsläge:"
+msgstr "Sitcom-läge"
 
 #: engines/bladerunner/metaengine.cpp:46
 msgid "Game will add laughter after actor's line or narration"
@@ -6773,13 +6934,15 @@ msgstr ""
 
 #: engines/bladerunner/metaengine.cpp:78
 msgid "Max frames per second limit"
-msgstr ""
+msgstr "Maximal gräns för bildrutor per sekund"
 
 #: engines/bladerunner/metaengine.cpp:79
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
 msgstr ""
+"Detta läge siktar på maximalt 120 bilder/s. När det är inaktiverat siktar "
+"spelet på 60 bilder/s"
 
 #: engines/bladerunner/metaengine.cpp:89
 msgid "Disable McCoy's quick stamina drain"
@@ -6810,11 +6973,13 @@ msgstr ""
 msgid ""
 "Updates the end credits with corrected credits for the Spanish voice actors"
 msgstr ""
+"Uppdaterar eftertexterna med korrigerade eftertexter för de spanska "
+"röstskådespelarna"
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:199
 msgid "common shortcuts"
-msgstr ""
+msgstr "vanliga genvägar"
 
 #. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:201
@@ -6878,19 +7043,17 @@ msgstr "Öppna KIA-databas"
 #. and allows submitting a selected existing save game for deletion.
 #: engines/bladerunner/metaengine.cpp:282
 msgid "Delete Selected Saved Game"
-msgstr ""
+msgstr "Ta bort markerat sparat spel"
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:296
-#, fuzzy
 msgid "Scroll Up"
-msgstr "Bläddra listan uppåt"
+msgstr "Rulla uppåt"
 
 #. I18N: This keymap allows scrolling texts and lists downwards
 #: engines/bladerunner/metaengine.cpp:303
-#, fuzzy
 msgid "Scroll Down"
-msgstr "Bläddra listan nedåt"
+msgstr "Rulla nedåt"
 
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
@@ -6909,9 +7072,8 @@ msgstr "Ljud av/på"
 #: engines/freescape/games/driller/driller.cpp:132
 #: engines/freescape/games/eclipse/eclipse.cpp:204
 #: engines/pegasus/pegasus.cpp:2825
-#, fuzzy
 msgid "Save Game"
-msgstr "Spara spelet:"
+msgstr "Spara spel"
 
 #. I18N: This keymap opens KIA's LOAD GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6932,7 +7094,7 @@ msgstr "Läs in spel"
 #. CRIME SCENE DATABASE
 #: engines/bladerunner/metaengine.cpp:348
 msgid "Crime Scene Database"
-msgstr ""
+msgstr "Databas för brottsplats"
 
 #. I18N: This keymap opens KIA's SUSPECT DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6940,7 +7102,7 @@ msgstr ""
 #. SUSPECT DATABASE
 #: engines/bladerunner/metaengine.cpp:357
 msgid "Suspect Database"
-msgstr ""
+msgstr "Databas över misstänkta"
 
 #. I18N: This keymap opens KIA's CLUE DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6948,7 +7110,7 @@ msgstr ""
 #. CLUE DATABASE
 #: engines/bladerunner/metaengine.cpp:366
 msgid "Clue Database"
-msgstr ""
+msgstr "Databas för ledtrådar"
 
 #. I18N: This keymap opens KIA's QUIT GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -7021,19 +7183,16 @@ msgstr "Aktivera färgblint läge som standard"
 #: engines/cge/metaengine.cpp:56 engines/glk/metaengine.cpp:193
 #: engines/griffon/metaengine.cpp:40 engines/mortevielle/metaengine.cpp:37
 #: engines/sci/detection_options.h:223 engines/supernova/metaengine.cpp:49
-#, fuzzy
 msgid "Enable Text to Speech"
-msgstr "Undertext och tal:"
+msgstr "Aktivera text till tal"
 
 #: engines/cge/metaengine.cpp:57 engines/mortevielle/metaengine.cpp:38
-#, fuzzy
 msgid "Use TTS to read text in the game (if TTS is available)"
-msgstr "Använd TTT för att läsa beskrivningarna (om TTT är tilgängligt)"
+msgstr "Använd TTS för att läsa text i spelet (om TTS är tillgängligt)"
 
 #: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-#, fuzzy
 msgid "Game Keymappings"
-msgstr "~I~nställningar..."
+msgstr "Tangentmappningar för spel"
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:225
 #: engines/sword1/metaengine.cpp:283
@@ -7047,9 +7206,8 @@ msgstr "Avsluta/Hoppa över"
 #: engines/stark/metaengine.cpp:208 engines/toon/metaengine.cpp:112
 #: engines/trecision/metaengine.cpp:169 engines/tsage/metaengine.cpp:242
 #: engines/vcruise/metaengine.cpp:175 engines/wintermute/keymapper_tables.h:920
-#, fuzzy
 msgid "Save game"
-msgstr "Spara spelet:"
+msgstr "Spara spel"
 
 #: engines/cge/metaengine.cpp:227 engines/cge2/metaengine.cpp:241
 #: engines/hopkins/metaengine.cpp:244 engines/made/metaengine.cpp:168
@@ -7064,10 +7222,8 @@ msgstr "Ladda spel"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:234 engines/cge2/metaengine.cpp:248
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Info"
-msgstr "Spelmeny"
+msgstr "Spelinformation"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
@@ -7143,9 +7299,8 @@ msgid "DEBUG: Access to Locations 1-24"
 msgstr ""
 
 #: engines/cge2/metaengine.cpp:59
-#, fuzzy
 msgid "Enable Text to Speech for Objects and Options"
-msgstr "Undertext och tal:"
+msgstr "Aktivera text till tal för objekt och alternativ"
 
 #: engines/cge2/metaengine.cpp:60 engines/dreamweb/metaengine.cpp:74
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:54
@@ -7156,14 +7311,12 @@ msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Använd TTT för att läsa beskrivningarna (om TTT är tilgängligt)"
 
 #: engines/cge2/metaengine.cpp:71 engines/dreamweb/metaengine.cpp:85
-#, fuzzy
 msgid "Enable Text to Speech for Subtitles"
-msgstr "Undertext och tal:"
+msgstr "Aktivera text till tal för undertexter"
 
 #: engines/cge2/metaengine.cpp:72 engines/dreamweb/metaengine.cpp:86
-#, fuzzy
 msgid "Use TTS to read the subtitles (if TTS is available)"
-msgstr "Använd TTT för att läsa beskrivningarna (om TTT är tilgängligt)"
+msgstr "Använd TTS för att läsa undertexter (om TTS är tillgängligt)"
 
 #. I18N: This closes the Dialogue/text box.
 #: engines/cge2/metaengine.cpp:229
@@ -7183,18 +7336,16 @@ msgstr ""
 "stödje dem"
 
 #: engines/cine/metaengine.cpp:164
-#, fuzzy
 msgid "Unnamed autosave"
-msgstr "Namnlös sparfil"
+msgstr "Namnlös autosparning"
 
 #: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
 msgid "Unnamed savegame"
 msgstr "Namnlös sparfil"
 
 #: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
-#, fuzzy
 msgid "Empty autosave"
-msgstr "Autospara:"
+msgstr "Tom autosparning"
 
 #: engines/cine/metaengine.cpp:260
 #, fuzzy
@@ -7211,21 +7362,16 @@ msgid "Exit Sony intro screen"
 msgstr ""
 
 #: engines/cine/metaengine.cpp:283
-#, fuzzy
-#| msgid "Select to end of line"
 msgid "Select option / Click in game"
-msgstr "Välj linjeslut"
+msgstr "Välj alternativ / Klicka i spelet"
 
 #: engines/cine/metaengine.cpp:290
-#, fuzzy
 msgid "Open action menu / Close menu"
-msgstr "Åte~r~vänd till launcher"
+msgstr "Öppna åtgärdsmeny / Stäng meny"
 
 #: engines/cine/metaengine.cpp:295
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default game speed"
-msgstr "Förvald knappuppsättning"
+msgstr "Standardhastighet för spelet"
 
 #: engines/cine/metaengine.cpp:300
 msgid "Slower game speed"
@@ -7242,10 +7388,8 @@ msgid "Examine"
 msgstr "Undersök"
 
 #: engines/cine/metaengine.cpp:320 engines/saga/metaengine.cpp:394
-#, fuzzy
-#| msgid "Take off"
 msgid "Take"
-msgstr "Ta av"
+msgstr "Ta"
 
 #. I18N: Action in In Cold Blood
 #: engines/cine/metaengine.cpp:325 engines/crab/input/input.cpp:251
@@ -7267,7 +7411,7 @@ msgstr "Aktivera"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
-msgstr ""
+msgstr "Tala"
 
 #: engines/cine/metaengine.cpp:345
 msgid "Action menu"
@@ -7279,33 +7423,28 @@ msgstr "Systemmeny"
 
 #. I18N: Opens collision map of where the actor can freely move
 #: engines/cine/metaengine.cpp:358
-#, fuzzy
 msgid "Show collisions"
-msgstr "Endast tal"
+msgstr "Visa kollisioner"
 
 #. I18N: Move Actor to top-left direction
 #: engines/cine/metaengine.cpp:393
-#, fuzzy
 msgid "Move up-left"
-msgstr "Flytta åt vänster"
+msgstr "Flytta upp till vänster"
 
 #. I18N: Move Actor to top-right direction
 #: engines/cine/metaengine.cpp:399
-#, fuzzy
 msgid "Move up-right"
-msgstr "Flytta till höger"
+msgstr "Flytta upp till höger"
 
 #. I18N: Move Actor to bottom-left direction
 #: engines/cine/metaengine.cpp:405
-#, fuzzy
 msgid "Move down-left"
-msgstr "Avbryt nedladdning"
+msgstr "Flytta ner till vänster"
 
 #. I18N: Move Actor to bottom-right direction
 #: engines/cine/metaengine.cpp:411
-#, fuzzy
 msgid "Move down-right"
-msgstr "Flytta till höger"
+msgstr "Flytta ner till höger"
 
 #: engines/cine/metaengine.cpp:416
 msgid "Menu option up"
@@ -7321,19 +7460,19 @@ msgid ""
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
+"VARNING: Sparade spelet som du läser in använder ett tillfälligt trasigt "
+"format. Saker och ting kommer att vara trasiga. Överväg att starta Operation "
+"Stealth från början med nya sparade spel."
 
 #: engines/crab/input/input.cpp:119
-#, fuzzy
-#| msgid "Interact"
 msgid "Talk/Interact"
-msgstr "Använd"
+msgstr "Prata/Interagera"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:981
-#, fuzzy
 msgid "Attack"
-msgstr "Attack 1"
+msgstr "Attackera"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:130 engines/mm/mm1/metaengine.cpp:67
@@ -7393,14 +7532,12 @@ msgid "Traits"
 msgstr ""
 
 #: engines/crab/input/input.cpp:266
-#, fuzzy
 msgid "Quick Save"
-msgstr "Klickläge"
+msgstr "Snabbsparning"
 
 #: engines/crab/input/input.cpp:271
-#, fuzzy
 msgid "Quick Load"
-msgstr "Klickläge"
+msgstr "Snabbinläsning"
 
 #. I18N: Game runs at faster speed
 #: engines/cruise/metaengine.cpp:160 engines/tucker/metaengine.cpp:196
@@ -7426,34 +7563,30 @@ msgid "Exit game"
 msgstr "Avsluta spel"
 
 #: engines/cryomni3d/metaengine.cpp:143
-#, fuzzy
 msgid "Versailles 1685 support is not compiled in"
-msgstr "Funktioner kompilerade i:"
+msgstr "Stöd för Versailles 1685 har inte kompilerats in"
 
 #: engines/darkseed/darkseed.cpp:68
-#, fuzzy
-#| msgid "Unable to locate the '%s' engine data file."
 msgid "Unable to locate the darkseed.dat engine data file."
-msgstr "Kunde inte hitta spelmotorns datafil '%s'."
+msgstr "Kunde inte hitta spelmotorns datafil darkseed.dat."
 
 #: engines/darkseed/metaengine.cpp:47
-#, fuzzy
-#| msgid "Use DOS version music tempos"
 msgid "Use floppy version music"
-msgstr "Använd musiktempon från DOS-version"
+msgstr "Använd musik för diskettversionen"
 
 #: engines/darkseed/metaengine.cpp:48
 msgid ""
 "Use the music from the floppy version. The floppy version's music files must "
 "be copied to the SOUND directory."
 msgstr ""
+"Använd musiken från diskettversionen. Diskettversionens musikfiler måste "
+"kopieras till katalogen SOUND."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:75 engines/dragons/metaengine.cpp:136
 #: engines/tinsel/metaengine.cpp:294 engines/twp/metaengine.cpp:150
-#, fuzzy
 msgid "Action"
-msgstr "Aktiv"
+msgstr "Åtgärd"
 
 #: engines/darkseed/metaengine.cpp:81 engines/dragons/metaengine.cpp:142
 msgid "Change Command"
@@ -7465,36 +7598,28 @@ msgid "Time Advance"
 msgstr "Tid: "
 
 #: engines/dgds/metaengine.cpp:74
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Menu"
-msgstr "Ljud av/på"
+msgstr "Växla meny"
 
 #: engines/dgds/metaengine.cpp:75
-#, fuzzy
 msgid "Toggle Clock"
-msgstr "Ljud av/på"
+msgstr "Växla klocka"
 
 #: engines/dgds/metaengine.cpp:76
 msgid "Next dialog / menu item"
-msgstr ""
+msgstr "Nästa dialog / menypost"
 
 #: engines/dgds/metaengine.cpp:77
-#, fuzzy
 msgid "Previous dialog / menu item"
-msgstr "~F~öregående"
+msgstr "Föregående dialog / menypost"
 
 #: engines/dgds/metaengine.cpp:78
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Next object"
-msgstr "Gå till nästa objekt"
+msgstr "Nästa objekt"
 
 #: engines/dgds/metaengine.cpp:79
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Previous object"
-msgstr "Gå till föregående objekt"
+msgstr "Föregående objekt"
 
 #: engines/dgds/metaengine.cpp:80
 #, fuzzy
@@ -7517,16 +7642,16 @@ msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
 msgstr ""
+"Spelet förhindrar att du avslutar just nu. Är du säker på att du vill sluta "
+"ändå?"
 
 #: engines/draci/metaengine.cpp:155
 msgid "Skip intro/Exit map or inventory"
 msgstr ""
 
 #: engines/draci/metaengine.cpp:161
-#, fuzzy
-#| msgid "Open Holomap"
 msgid "Open map"
-msgstr "Öppna Holokarta"
+msgstr "Öppna karta"
 
 #. I18N: shows where the game actor is able to move
 #: engines/draci/metaengine.cpp:168
@@ -7535,16 +7660,13 @@ msgid "Show walking map"
 msgstr "~V~isa karta"
 
 #: engines/draci/metaengine.cpp:174
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Toggle walk speed"
-msgstr "Växla snabb gång"
+msgstr "Växla gånghastighet"
 
 #: engines/draci/metaengine.cpp:186 engines/mohawk/myst.cpp:554
 #: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
-#, fuzzy
 msgid "Open main menu"
-msgstr "Åte~r~vänd till launcher"
+msgstr "Öppna huvudmenyn"
 
 #: engines/draci/metaengine.cpp:192
 msgid "Toggle between mouse pointer and the last game item"
@@ -7570,6 +7692,10 @@ msgid ""
 "%s for details on how to properly extract the DTSPEECH.XA and *.STR files "
 "from your game disc."
 msgstr ""
+"Felmeddelande: Filen '%s' har inte extraherats på rätt sätt.\n"
+"Referera till wiki-sidan\n"
+"%s för information om hur du korrekt extraherar filerna DTSPEECH.XA och *."
+"STR från din spelskiva."
 
 #: engines/dragons/metaengine.cpp:121
 #, c-format
@@ -7581,6 +7707,12 @@ msgid ""
 "\n"
 " See %s"
 msgstr ""
+"Fel: Det verkar som om speldatafilerna extraherades på ett felaktigt sätt.\n"
+"\n"
+"Du bör endast extrahera STR- och XA-filer med hjälp av specialmetoden. "
+"Resten ska kopieras normalt från din spel-cd.\n"
+"\n"
+" Se %s"
 
 #: engines/dragons/metaengine.cpp:219
 msgid "Debug Graphics"
@@ -7614,15 +7746,17 @@ msgstr "Visa grafik med spelets ljusa palett"
 
 #: engines/dreamweb/metaengine.cpp:73
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
-msgstr ""
+msgstr "Aktivera text till tal för objekt, alternativ och bibelcitat"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
-msgstr ""
+msgstr "Förinspelade ljud"
 
 #: engines/freescape/metaengine.cpp:43
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
+"Använd förinspelade ljud av hög kvalitet i stället för emulering av "
+"datorhögtalare"
 
 #: engines/freescape/metaengine.cpp:53
 msgid "Extended timer"
@@ -7634,11 +7768,12 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:64
 msgid "Automatic drilling"
-msgstr ""
+msgstr "Automatisk borrning"
 
 #: engines/freescape/metaengine.cpp:65
 msgid "Allow to successfully drill in any part of the area in Driller"
 msgstr ""
+"Gör det möjligt att framgångsrikt borra i alla delar av området i Driller"
 
 #: engines/freescape/metaengine.cpp:75
 msgid "Disable demo mode"
@@ -7714,10 +7849,8 @@ msgid "Rotate down"
 msgstr "Rotera ner"
 
 #: engines/freescape/movement.cpp:82
-#, fuzzy
-#| msgid "Turn backward"
 msgid "Turn back"
-msgstr "Vänd bakåt"
+msgstr "Vänd tillbaka"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:95
@@ -7729,16 +7862,12 @@ msgid "Info Menu"
 msgstr "Info-meny"
 
 #: engines/freescape/games/castle/castle.cpp:236
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Prince"
-msgstr "Välj shader"
+msgstr "Välj prins"
 
 #: engines/freescape/games/castle/castle.cpp:241
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Princess"
-msgstr "Välj shader"
+msgstr "Välj prinsessa"
 
 #: engines/freescape/games/castle/castle.cpp:268
 #: engines/freescape/games/dark/dark.cpp:206
@@ -7771,14 +7900,12 @@ msgstr "Spring"
 
 #: engines/freescape/games/castle/castle.cpp:294
 msgid "Crawl"
-msgstr ""
+msgstr "Kryp"
 
 #: engines/freescape/games/castle/castle.cpp:300
 #: engines/freescape/games/eclipse/eclipse.cpp:259
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Face Forward"
-msgstr "Steg framåt"
+msgstr "Vänd framåt"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:223
@@ -7818,23 +7945,17 @@ msgstr "Korrigera borrningsrigg"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/eclipse/eclipse.cpp:238
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Angle"
-msgstr "Ändra läge"
+msgstr "Ändra vinkel"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/eclipse/eclipse.cpp:244
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change Step Size"
-msgstr "Ändra typsnittsstorlek"
+msgstr "Ändra stegstorlek"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:249
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Height"
-msgstr "Ljud av/på"
+msgstr "Växla höjd"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:254
@@ -7964,17 +8085,15 @@ msgstr "Skjut"
 
 #: engines/got/metaengine.cpp:60
 msgid "Magic"
-msgstr ""
+msgstr "Magi"
 
 #: engines/got/metaengine.cpp:64
 msgid "Thor Dies"
-msgstr ""
+msgstr "Thor dör"
 
 #: engines/got/got.cpp:185 engines/got/got.cpp:195
-#, fuzzy
-#| msgid "Saving game is currently unavailable"
 msgid "Savegames are not available in demo mode"
-msgstr "Det går inte att spara just nu"
+msgstr "Sparade spel är inte tillgängligt i demoläget"
 
 #: engines/griffon/metaengine.cpp:109
 msgid "Menu / Skip"
@@ -8095,6 +8214,10 @@ msgid ""
 "%s\n"
 "and put it in the game data files directory"
 msgstr ""
+"Den ursprungliga patchen för Grim Fandango\n"
+"saknas. Hämta ner den från\n"
+"%s\n"
+"och lägg den i katalogen för speldatafiler"
 
 #: engines/grim/resource.cpp:107
 #, c-format
@@ -8105,6 +8228,10 @@ msgid ""
 "Pay attention to download the correct version according to the game's "
 "language!"
 msgstr ""
+"Den ursprungliga patchen för Escape from Monkey Island saknas.\n"
+"Hämta ner den från %s\n"
+"och lägg den i katalogen för speldatafiler.\n"
+"Var uppmärksam på att hämta ner rätt version enligt spelets språk!"
 
 #: engines/grim/emi/sound/emisound.cpp:655
 msgid ""
@@ -8171,15 +8298,12 @@ msgid "Affects the controls for fast forwarding the game"
 msgstr ""
 
 #: engines/groovie/metaengine.cpp:150
-#, fuzzy
 msgid "GroovieV2 support is not compiled in"
-msgstr "Funktioner kompilerade i:"
+msgstr "Stöd för GroovieV2 har inte kompilerats in"
 
 #: engines/groovie/metaengine.cpp:201
-#, fuzzy
-#| msgid "Available engines:"
 msgid "Groovie engine"
-msgstr "Tillgängliga motorer:"
+msgstr "Groovie-motor"
 
 #: engines/groovie/metaengine.cpp:217
 #, fuzzy
@@ -8188,34 +8312,28 @@ msgid "Skip or fast forward scene"
 msgstr "Skippa Hall of Records storyboard-scenerna"
 
 #: engines/groovie/saveload.cpp:52
-#, fuzzy
-#| msgid "Run server"
 msgid "Reserved"
-msgstr "Starta server"
+msgstr "Reserverad"
 
 #: engines/groovie/script.cpp:665
 msgid "Failed to save game"
 msgstr "Kunde inte spara spelet"
 
 #: engines/groovie/script.cpp:853 engines/lab/savegame.cpp:237
-#, fuzzy
 msgid "Would you like to save or restore a game?"
-msgstr "Vill du ladda eller spara spelet?"
+msgstr "Vill du spara eller återställa ett spel?"
 
 #: engines/hadesch/rooms/daedalus.cpp:213
-#, fuzzy
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr "Spel-ID stöds inte"
+msgstr "Minispelet Minotaur stöds ännu inte. Hoppar över"
 
 #: engines/hadesch/rooms/medisle.cpp:647
-#, fuzzy
 msgid "The Medusa minigame is not supported yet. Skipping"
-msgstr "Spel-ID stöds inte"
+msgstr "Minispelet Medusa stöds ännu inte. Hoppar över"
 
 #: engines/hadesch/rooms/troy.cpp:505
-#, fuzzy
 msgid "The Troy minigame is not supported yet. Skipping"
-msgstr "Spel-ID stöds inte"
+msgstr "Minispelet Troy stöds ännu inte. Hoppar över"
 
 #: engines/hdb/metaengine.cpp:44 engines/illusions/metaengine.cpp:153
 msgid "Enable cheat mode"
@@ -8248,25 +8366,20 @@ msgid "Option dialog"
 msgstr "Skippa rad"
 
 #: engines/hpl1/metaengine.cpp:76
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forward"
-msgstr "Steg framåt"
+msgstr "Framåt"
 
 #: engines/hpl1/metaengine.cpp:77
-#, fuzzy
 msgid "Backward"
-msgstr "Steg bakåt"
+msgstr "Bakåt"
 
 #: engines/hpl1/metaengine.cpp:80
-#, fuzzy
 msgid "Lean Left"
-msgstr "Glid vänster"
+msgstr "Luta åt vänster"
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
 msgid "Lean Right"
-msgstr "Glid höger"
+msgstr "Luta åt höger"
 
 #: engines/hpl1/metaengine.cpp:83
 msgid "Jump"
@@ -8303,26 +8416,20 @@ msgid "Personal Notes"
 msgstr "Personliga Anteckningar"
 
 #: engines/hpl1/metaengine.cpp:97
-#, fuzzy
-#| msgid "Fly straight"
 msgid "Flashlight"
-msgstr "Flyg rakt fram"
+msgstr "Ficklampa"
 
 #: engines/hpl1/metaengine.cpp:98
 msgid "Glowstick"
 msgstr "Ljusstav"
 
 #: engines/hugo/metaengine.cpp:111
-#, fuzzy
-#| msgid "User canceled"
 msgid "User help"
-msgstr "Avbrutit av användaren"
+msgstr "Användarhjälp"
 
 #: engines/hugo/metaengine.cpp:117
-#, fuzzy
-#| msgid "Toggle Sound"
 msgid "Toggle sound"
-msgstr "Växla ljud på/av"
+msgstr "Växla ljud"
 
 #: engines/hugo/metaengine.cpp:122
 #, fuzzy
@@ -8331,16 +8438,13 @@ msgstr "Inget datum sparat"
 
 #: engines/hugo/metaengine.cpp:135 engines/lure/metaengine.cpp:197
 #: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restore game"
-msgstr "Ladda sparfil:"
+msgstr "Återställ spel"
 
 #: engines/hugo/metaengine.cpp:142 engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
-#, fuzzy
 msgid "New game"
-msgstr "Ny sparning"
+msgstr "Nytt spel"
 
 #: engines/hugo/metaengine.cpp:148 engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:396
@@ -8356,62 +8460,52 @@ msgid "Show inventory"
 msgstr "Visa förråd"
 
 #: engines/hugo/metaengine.cpp:154
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Turbo mode"
-msgstr "Förbättrat läge"
+msgstr "Turbo-läge"
 
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
-#, fuzzy
 msgid "Move to top"
-msgstr "Steg bakåt"
+msgstr "Flytta överst"
 
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:175
 msgid "Move to bottom"
-msgstr ""
+msgstr "Flytta nederst"
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
-#, fuzzy
 msgid "Move to left"
 msgstr "Flytta åt vänster"
 
 #. I18N: Move actor in the right direction
 #: engines/hugo/metaengine.cpp:191
-#, fuzzy
 msgid "Move to right"
-msgstr "Flytta till höger"
+msgstr "Flytta åt höger"
 
 #. I18N: Move actor in the top-left direction
 #: engines/hugo/metaengine.cpp:199
-#, fuzzy
 msgid "Move to top left"
-msgstr "Flytta åt vänster"
+msgstr "Flytta överst till vänster"
 
 #. I18N: Move actor in the top-right direction
 #: engines/hugo/metaengine.cpp:205
-#, fuzzy
 msgid "Move to top right"
-msgstr "Flytta till höger"
+msgstr "Flytta överst till höger"
 
 #. I18N: Move actor in the bottom-left direction
 #: engines/hugo/metaengine.cpp:211
-#, fuzzy
 msgid "Move to bottom left"
-msgstr "Flytta åt vänster"
+msgstr "Flytta nederst till vänster"
 
 #. I18N: Move actor in the bottom-right direction
 #: engines/hugo/metaengine.cpp:217
-#, fuzzy
 msgid "Move to bottom right"
-msgstr "Flytta till höger"
+msgstr "Flytta nederst till höger"
 
 #: engines/hypno/metaengine.cpp:33
-#, fuzzy
 msgid "Enable original cheats"
-msgstr "Aktivera fusk"
+msgstr "Aktivera ursprungliga fusk"
 
 #: engines/hypno/metaengine.cpp:34
 msgid "Allow cheats using the C key."
@@ -8507,14 +8601,15 @@ msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
+"Saknar språkspecifik spelkod och/eller resurser för denna fan-översättning."
 
 #: engines/kyra/detection_tables.h:78
 msgid "Demo plays simple animations without using Westwood's Engine."
-msgstr ""
+msgstr "Demo spelar upp enkla animationer utan att använda Westwoods motor."
 
 #: engines/kyra/detection_tables.h:1369
 msgid "You added the game incorrectly. Please add the root folder of the game."
-msgstr ""
+msgstr "Du har lagt till spelet felaktigt. Lägg till spelets rotmapp."
 
 #. I18N: The file in the game directory needs to be extracted
 #: engines/kyra/detection_tables.h:1385
@@ -8522,6 +8617,8 @@ msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
 msgstr ""
+"Du har lagt till spelet felaktigt. Filen GAME.DAT är en ISO-avbildning och "
+"du måste extrahera speldatafilerna från den."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -8570,9 +8667,8 @@ msgstr "Aktivera flytande pekare"
 #. I18N: When enabled, this option will fill in an autogenerated savegame
 #. description into the input prompt where.
 #: engines/kyra/metaengine.cpp:119
-#, fuzzy
 msgid "Suggest save names"
-msgstr "Spara spelet:"
+msgstr "Föreslå sparade namn"
 
 #: engines/kyra/metaengine.cpp:120
 msgid "Autogenerated naming suggestions for savegames"
@@ -8607,36 +8703,34 @@ msgid ""
 msgstr ""
 
 #: engines/kyra/metaengine.cpp:251
-#, fuzzy
 msgid "Lands of Lore support is not compiled in"
-msgstr "Funktioner kompilerade i:"
+msgstr "Stöd för Lands of Lore har inte kompilerats in"
 
 #: engines/kyra/metaengine.cpp:261
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
 msgstr ""
+"EOB II FM-TOWNS kräver stöd för 16-bitars färglägen som inte har aktiverats "
+"i din ScummVM-byggnation"
 
 #: engines/kyra/metaengine.cpp:267
-#, fuzzy
 msgid "Eye of Beholder support is not compiled in"
-msgstr "Funktioner kompilerade i:"
+msgstr "Stöd för Eye of Beholder har inte kompilerats in"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/nuvie/metaengine.cpp:222
 #: engines/ultima/ultima8/metaengine.cpp:145
-#, fuzzy
 msgid "Interact via Left Click"
-msgstr "Vänsterklick"
+msgstr "Interagera via vänsterklick"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/nuvie/metaengine.cpp:228
 #: engines/ultima/ultima8/metaengine.cpp:151
-#, fuzzy
 msgid "Interact via Right Click"
-msgstr "Högerklick"
+msgstr "Interagera via högerklick"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:510
 #: engines/mohawk/riven.cpp:881 engines/twine/metaengine.cpp:332
@@ -8652,8 +8746,6 @@ msgstr "Steg framåt"
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Move Backwards"
 msgstr "Flytta bakåt"
 
@@ -8730,9 +8822,8 @@ msgid "Attack 3"
 msgstr "Attack 3"
 
 #: engines/kyra/engine/lol.cpp:509 engines/mm/mm1/metaengine.cpp:103
-#, fuzzy
 msgid "Show Map"
-msgstr "~V~isa karta"
+msgstr "Visa karta"
 
 #: engines/kyra/engine/lol.cpp:512
 msgid "Slide Left"
@@ -8804,6 +8895,16 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
+"Denna AMIGA-version kräver följande teckensnittsfiler:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Om du använde det ursprungliga installationsprogrammet för installationen\n"
+"ska dessa filer ligga i AmigaDOS-systemets \"Fonts/\"-mapp.\n"
+"Kopiera dem till EOB-spelets datakatalog.\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:287
 msgid ""
@@ -8826,18 +8927,42 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
+"Denna AMIGA-version kräver följande teckensnittsfiler:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Detta är en lokaliserad (icke-engelsk) version av EOB II som använder "
+"språkspecifika tecken\n"
+"som endast finns i de specifika teckensnittsfiler som medföljde ditt spel. "
+"Du kan inte använda\n"
+"teckensnittsfilerna filer från den engelska versionen eller från något EOB I-"
+"spel, vilket\n"
+"verkar vara vad du gör.\n"
+"\n"
+"Spelet kommer att fortsätta, men de språkspecifika tecknen kommer inte att "
+"visas.\n"
+"Kopiera de korrekta teckensnittsfilerna till din EOB II-speldatakatalog.\n"
+"\n"
 
 #: engines/lab/engine.cpp:124
 msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
+"Detta är en Windows-testversion av spelet. För att spela den fullständiga "
+"versionen måste du använda den ursprungliga tolken och köpa en nyckel från "
+"Wyrmkeep"
 
 #: engines/lab/processroom.cpp:329
 msgid ""
 "This is the end of the trial version. You can play the full game using the "
 "original interpreter from Wyrmkeep"
 msgstr ""
+"Detta är slutet på testversionen. Du kan spela hela spelet med den "
+"ursprungliga tolken från Wyrmkeep"
 
 #: engines/lab/speciallocks.cpp:148
 #, fuzzy
@@ -8860,15 +8985,12 @@ msgid "Index keymappings"
 msgstr "~I~nställningar..."
 
 #: engines/lure/metaengine.cpp:172
-#, fuzzy
 msgid "Yes/No keymappings"
-msgstr "~I~nställningar..."
+msgstr "Tangentmappningar för Ja/Nej"
 
 #: engines/lure/metaengine.cpp:203 engines/tsage/metaengine.cpp:237
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restart game"
-msgstr "Ladda sparfil:"
+msgstr "Starta om spelet"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
@@ -8909,36 +9031,32 @@ msgid "Shift Cursor - Bottom right"
 msgstr "Pekare höger"
 
 #: engines/lure/metaengine.cpp:270
-#, fuzzy
 msgid "Go to next index"
-msgstr "Inställningar"
+msgstr "Gå till nästa index"
 
 #: engines/lure/metaengine.cpp:277
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous index"
-msgstr "Gå till föregående katalognivå"
+msgstr "Gå till föregående index"
 
 #: engines/lure/metaengine.cpp:284
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select index"
-msgstr "Välj shader"
+msgstr "Välj index"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
-#, fuzzy
 msgid "The game is using unsupported engine"
-msgstr "Spel-ID stöds inte"
+msgstr "Spelet använder en motor som inte stöds"
 
 #: engines/made/metaengine.cpp:38
 msgid "Play a digital soundtrack during the opening movie"
-msgstr ""
+msgstr "Spela upp ett digitalt soundtrack under öppningsfilmen"
 
 #: engines/made/metaengine.cpp:39
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
+"Om detta väljs kommer spelet att använda ett digitalt soundtrack under "
+"inledningen. Annars spelar det MIDI-musik."
 
 #: engines/made/metaengine.cpp:128
 #, fuzzy
@@ -8965,9 +9083,8 @@ msgid "Cursor right"
 msgstr "Pekare höger"
 
 #: engines/made/metaengine.cpp:174
-#, fuzzy
 msgid "Repeat last message"
-msgstr "Inget datum sparat"
+msgstr "Upprepa sista meddelandet"
 
 #: engines/mads/metaengine.cpp:63
 msgid "Easy mouse interface"
@@ -8990,14 +9107,12 @@ msgid "Naughty game mode"
 msgstr "\"Busigt\" spelläge"
 
 #: engines/mads/metaengine.cpp:276
-#, fuzzy
 msgid "Start menu keymappings"
-msgstr "~I~nställningar..."
+msgstr "Tangentmappningar för startmeny"
 
 #: engines/mads/metaengine.cpp:299
-#, fuzzy
 msgid "Open game menu"
-msgstr "Åte~r~vänd till launcher"
+msgstr "Öppna spelmenyn"
 
 #: engines/mads/metaengine.cpp:317
 #, fuzzy
@@ -9010,22 +9125,16 @@ msgid "Scroll bar down"
 msgstr "Bläddra listan nedåt"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Start game"
-msgstr "Ladda sparfil:"
+msgstr "Starta spelet"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Resume game"
-msgstr "Ladda sparfil:"
+msgstr "Återuppta spelet"
 
 #: engines/mads/metaengine.cpp:343
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show intro"
-msgstr "Visa ledtrådar"
+msgstr "Visa intro"
 
 #: engines/mads/metaengine.cpp:349 engines/tsage/metaengine.cpp:259
 #, fuzzy
@@ -9038,10 +9147,8 @@ msgid "Show quotes"
 msgstr "Endast tal"
 
 #: engines/mads/metaengine.cpp:368
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Restart animation"
-msgstr "Övergångar:"
+msgstr "Starta om animering"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
@@ -9062,6 +9169,7 @@ msgstr "Extra tålig rustning"
 #: engines/mm/metaengine.cpp:69
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
+"Rustning går inte sönder förrän karaktären är på -80HP, snarare än bara -10HP"
 
 #: engines/mm/metaengine.cpp:79
 #, fuzzy
@@ -9116,9 +9224,8 @@ msgstr "Höger"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:75 engines/mm/mm1/metaengine.cpp:116
-#, fuzzy
 msgid "Quick Reference"
-msgstr "Föredragen enhet:"
+msgstr "Snabbreferens"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:77
@@ -9128,31 +9235,27 @@ msgstr ""
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:84
 msgid "Delay"
-msgstr ""
+msgstr "Fördröjning"
 
 #. I18N: Combat command in Might & Magic 1
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:86 engines/mm/mm1/metaengine.cpp:107
 msgid "Protect"
-msgstr ""
+msgstr "Skydda"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:94
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forwards"
-msgstr "Steg framåt"
+msgstr "Framåt"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:96
-#, fuzzy
 msgid "Backwards"
-msgstr "Steg bakåt"
+msgstr "Bakåt"
 
 #: engines/mm/mm1/metaengine.cpp:104
-#, fuzzy
 msgid "Toggle Minimap"
-msgstr "Ljud av/på"
+msgstr "Växla minikarta"
 
 #: engines/mm/mm1/metaengine.cpp:105
 msgid "Reorder Party"
@@ -9160,10 +9263,8 @@ msgstr ""
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:111
-#, fuzzy
-#| msgid "Search:"
 msgid "Search"
-msgstr "Sök:"
+msgstr "Sök"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:113
@@ -9203,7 +9304,7 @@ msgstr ""
 
 #: engines/mm/mm1/metaengine.cpp:157
 msgid "Might and Magic 1 - Cheats"
-msgstr ""
+msgstr "Might and Magic 1 - Fusk"
 
 #: engines/mm/mm1/mm1.cpp:56
 msgid ""
@@ -9211,6 +9312,9 @@ msgid ""
 "will automatically be available if you detect the original game and select "
 "Enhanced mode."
 msgstr ""
+"Du kan inte köra spelet direkt från Graphics Overhaul Mod. Istället kommer "
+"den automatiskt att vara tillgänglig om du identifierar originalspelet och "
+"väljer Enhanced-läget."
 
 #: engines/mm/mm1/mm1.cpp:108
 msgid ""
@@ -9218,11 +9322,13 @@ msgid ""
 "of Xeen\n"
 "or Clouds of Xeen to your Might and Magic 1 game folder"
 msgstr ""
+"För att kunna köra i Enhanced-läget, kopiera xeen.cc från en kopia av World "
+"of Xeen\n"
+"eller Clouds of Xeen till din spelmapp för Might and Magic 1"
 
 #: engines/mm/xeen/saves.cpp:294
-#, fuzzy
 msgid "Failed to autosave"
-msgstr "Kunde inte spara spelet"
+msgstr "Misslyckades med att autospara"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:112 engines/mohawk/dialogs.cpp:357
@@ -9271,13 +9377,15 @@ msgstr ""
 
 #: engines/mohawk/dialogs.cpp:137
 msgid "Simulate loading times of old CD drives"
-msgstr ""
+msgstr "Simulera inläsningstider för gamla cd-enheter"
 
 #: engines/mohawk/dialogs.cpp:138
 msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
 msgstr ""
+"Simulera inläsningstiderna för gamla cd-rom-enheter genom att lägga till en "
+"slumpmässig fördröjning under scenövergångar."
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:145
@@ -9294,7 +9402,7 @@ msgstr "Huvud~m~eny"
 
 #: engines/mohawk/dialogs.cpp:286
 msgid "The new language will be applied after restarting the game."
-msgstr ""
+msgstr "Det nya språket kommer att tillämpas efter omstart av spelet."
 
 #: engines/mohawk/dialogs.cpp:358
 msgid "~W~ater Effect Enabled"
@@ -9329,43 +9437,36 @@ msgid "Best"
 msgstr "Bästa"
 
 #: engines/mohawk/metaengine.cpp:291
-#, fuzzy
 msgid "Myst ME support not compiled in"
-msgstr "Funktioner kompilerade i:"
+msgstr "Stöd för Myst ME har inte kompilerats in"
 
 #: engines/mohawk/metaengine.cpp:296
-#, fuzzy
 msgid "Myst support not compiled in"
-msgstr "Funktioner kompilerade i:"
+msgstr "Stöd för Myst har inte kompilerats in"
 
 #: engines/mohawk/metaengine.cpp:303
-#, fuzzy
 msgid "Riven support not compiled in"
-msgstr "Funktioner kompilerade i:"
+msgstr "Stöd för Riven har inte kompilerats in"
 
 #: engines/mohawk/metaengine.cpp:317
-#, fuzzy
 msgid "CSTime support not compiled in"
-msgstr "Funktioner kompilerade i:"
+msgstr "Stöd för CSTime har inte kompilerats in"
 
 #: engines/mohawk/mohawk.cpp:51
 msgid "The game is paused. Press any key to continue."
 msgstr "Spelet pausat. Tryck på valfri tangent för att fortsätta."
 
 #: engines/mohawk/myst.cpp:578 engines/mohawk/riven.cpp:859
-#, fuzzy
 msgid "Load game state"
-msgstr "Ladda spel"
+msgstr "Läs in speltillstånd"
 
 #: engines/mohawk/myst.cpp:583 engines/mohawk/riven.cpp:864
-#, fuzzy
 msgid "Save game state"
-msgstr "Spara spelet:"
+msgstr "Spara speltillstånd"
 
 #: engines/mohawk/myst.cpp:588 engines/mohawk/riven.cpp:869
-#, fuzzy
 msgid "Show options menu"
-msgstr "Inställningar"
+msgstr "Visa alternativmenyn"
 
 #: engines/mohawk/myst.cpp:600
 #, fuzzy
@@ -9378,28 +9479,25 @@ msgstr "Släpp si~d~a"
 #: engines/wintermute/keymapper_tables.h:1745
 #: engines/wintermute/keymapper_tables.h:1764
 #: engines/wintermute/keymapper_tables.h:1797
-#, fuzzy
 msgid "Show map"
-msgstr "~V~isa karta"
+msgstr "Visa karta"
 
 #: engines/mohawk/myst_stacks/menu.cpp:282
 #: engines/mohawk/riven_stacks/aspit.cpp:348
-#, fuzzy
 msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
-"Är du säker på att du vill avsluta? Alla osparade framsteg kommer gå "
-"förlorade."
+"Är du säker på att du vill läsa in ett sparat spel? Alla osparade framsteg "
+"kommer gå förlorade."
 
 #: engines/mohawk/myst_stacks/menu.cpp:299
 #: engines/mohawk/riven_stacks/aspit.cpp:370
-#, fuzzy
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
-"Är du säker på att du vill avsluta? Alla osparade framsteg kommer gå "
-"förlorade."
+"Är du säker på att du vill starta ett nytt spel? Alla osparade framsteg "
+"kommer gå förlorade."
 
 #: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
@@ -9451,18 +9549,16 @@ msgid "Move forward right"
 msgstr "Steg framåt"
 
 #: engines/mohawk/riven.cpp:913
-#, fuzzy
 msgid "Look up"
-msgstr "Titta"
+msgstr "Titta upp"
 
 #: engines/mohawk/riven.cpp:918
-#, fuzzy
 msgid "Look down"
-msgstr "Zooma ned"
+msgstr "Titta ner"
 
 #: engines/mohawk/riven.cpp:924
 msgid "Play intro videos"
-msgstr ""
+msgstr "Spela upp introvideor"
 
 #: engines/mohawk/riven_stack.cpp:203
 msgid ""
@@ -9516,29 +9612,31 @@ msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr ""
 
 #: engines/mtropolis/metaengine.cpp:86
-#, fuzzy
 msgid "Enable short transitions"
-msgstr "Aktivera Discord integration"
+msgstr "Aktivera korta övergångar"
 
 #: engines/mtropolis/metaengine.cpp:87
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
 msgstr ""
+"Aktiverar övergångar som är inställda på maximal hastighet i stället för att "
+"hoppa över dem."
 
 #: engines/mtropolis/metaengine.cpp:97
 msgid "Enable subtitles for important sound effects"
-msgstr ""
+msgstr "Aktivera undertexter för viktiga ljudeffekter"
 
 #: engines/mtropolis/metaengine.cpp:98
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
+"Aktiverar undertexter för viktiga ljudeffekter.  Detta kan minska "
+"svårighetsgraden för pussel och minispel med ljudigenkänning."
 
 #: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:65
-#, fuzzy
 msgid "Start with debugger"
-msgstr "Öppna debug-konsolen"
+msgstr "Starta med felsökaren"
 
 #: engines/mtropolis/metaengine.cpp:109 engines/vcruise/metaengine.cpp:66
 #, fuzzy
@@ -9546,13 +9644,12 @@ msgid "Starts with the debugger dashboard active."
 msgstr "Öppna debug-konsolen"
 
 #: engines/mtropolis/metaengine.cpp:179
-#, fuzzy
 msgid "Toggle debug overlay"
-msgstr "Ljud av/på"
+msgstr "Växla felsökningsöverlägg"
 
 #: engines/mtropolis/metaengine.cpp:184
 msgid "Force any playing movies to end"
-msgstr ""
+msgstr "Tvinga alla uppspelade filmer att avslutas"
 
 #: engines/mtropolis/mtropolis.cpp:111
 msgid ""
@@ -9560,6 +9657,10 @@ msgid ""
 "content but MPEG video support was not compiled in.\n"
 "The game will still play, but MPEG videos will not work."
 msgstr ""
+"Detta spel kräver MPEG-videostöd för en del innehåll\n"
+"men MPEG-videostöd har inte kompilerats in. Spelet\n"
+"kommer fortfarande att gå att spela, men MPEG-videor\n"
+"kommer inte att fungera."
 
 #: engines/mtropolis/mtropolis.cpp:121
 msgid ""
@@ -9567,54 +9668,56 @@ msgid ""
 "content but MPEG audio support was not compiled in.\n"
 "The game will still play, but some audio will not work."
 msgstr ""
+"Detta spel kräver MPEG-ljudstöd för en del innehåll\n"
+"men MPEG-ljudstöd har inte kompilerats in.\n"
+"Spelet kommer fortfarande gå att spela, men en del\n"
+"ljud kommer inte att fungera."
 
 #: engines/mtropolis/saveload.cpp:142
-#, fuzzy
 msgid "Failed to read version information from save file"
-msgstr "Kunde inte läsa spardata från filen."
+msgstr "Kunde inte läsa versionsinformation från sparfil"
 
 #: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:340
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
+"Misslyckades med att läsa in sparning, sparfilen innehåller inte giltig "
+"versionsinformation."
 
 #: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:350
-#, fuzzy
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
 msgstr ""
-"Dessa sparade data skapades med en annan version av spelet, de kunde inte "
-"läsas in"
+"Sparat spel skapades med en tidigare, inkompatibel version av ScummVM. Kan "
+"inte läsa in."
 
 #: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr ""
+"Misslyckades med att läsa in sparat spel, ett fel uppstod vid läsning av "
+"sparat speldata."
 
 #: engines/mtropolis/saveload.cpp:234
 msgid "An internal error occurred while attempting to write save game data"
-msgstr ""
+msgstr "Ett internt fel uppstod vid försök att skriva sparat speldata"
 
 #: engines/mtropolis/saveload.cpp:242
-#, fuzzy
 msgid "An error occurred while writing the save game"
-msgstr ", fel under montering av delade kataloger"
+msgstr "Ett fel inträffade vid skrivning av sparat spel"
 
 #: engines/mtropolis/plugin/standard.cpp:1670
-#, fuzzy
-#| msgid "PNG Image File"
 msgid "Image Viewer"
-msgstr "PNG-bildfil"
+msgstr "Bildvisare"
 
 #: engines/mutationofjb/util.cpp:32
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' engine data file"
-msgstr "Kunde inte hitta spelmotorns datafil '%s'."
+msgstr "Kunde inte hitta spelmotorns datafil för '%s'"
 
 #: engines/myst3/detection.cpp:220 engines/myst3/detection.cpp:234
-#, fuzzy
 msgid "PS2 version is not yet supported"
-msgstr "Spel-ID stöds inte"
+msgstr "PS2-versionen stöds ännu inte"
 
 #: engines/myst3/metaengine.cpp:40
 #, fuzzy
@@ -9623,7 +9726,7 @@ msgstr "Fullskärmsläge"
 
 #: engines/myst3/metaengine.cpp:41
 msgid "Enable widescreen rendering in fullscreen mode."
-msgstr ""
+msgstr "Aktivera bredbildsrendering i helskärmsläge."
 
 #: engines/myst3/myst3.cpp:412
 #, c-format
@@ -9634,6 +9737,11 @@ msgid ""
 "The updates can be downloaded from:\n"
 "%s"
 msgstr ""
+"Den här versionen av Myst III har inte uppdaterats med den senaste "
+"officiella patchen.\n"
+"Installera den officiella uppdateringen som motsvarar ditt spels språk.\n"
+"Uppdateringarna kan hämtas ner från:\n"
+"%s"
 
 #: engines/myst3/myst3.cpp:1640 engines/pegasus/pegasus.cpp:749
 msgid "Invalid file name for saving"
@@ -9641,17 +9749,15 @@ msgstr "Ogiltigt namn på sparfilen"
 
 #: engines/nancy/input.cpp:178
 msgid "Nancy Drew"
-msgstr ""
+msgstr "Nancy Drew"
 
 #: engines/nancy/input.cpp:181
-#, fuzzy
 msgid "Left Click Interact"
-msgstr "Vänsterklick"
+msgstr "Interagera med vänsterklick"
 
 #: engines/nancy/input.cpp:188
-#, fuzzy
 msgid "Right Click Interact"
-msgstr "Ett högerklick"
+msgstr "Interagera med högerklick"
 
 #: engines/nancy/input.cpp:219
 #, fuzzy
@@ -9870,36 +9976,31 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Använd alternativt spelintro (endast CD-version)"
 
 #: engines/queen/metaengine.cpp:47
-#, fuzzy
 msgid "Improved font"
-msgstr "Fönsterläge"
+msgstr "Förbättrat typsnitt"
 
 #: engines/queen/metaengine.cpp:48
 msgid "Use an easier to read custom font"
-msgstr ""
+msgstr "Använd ett anpassat typsnitt som är enklare att läsa"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:875
-#, fuzzy
 msgid "Windows Trial version is not supported"
-msgstr "Spel-ID stöds inte"
+msgstr "Testversionen för Windows stöds inte"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:902
-#, fuzzy
 msgid "macOS Trial version is not supported"
-msgstr "Spel-ID stöds inte"
+msgstr "Testversionen för macOS stöds inte"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:928
-#, fuzzy
 msgid "Pocket PC Trial version is not supported"
-msgstr "Spel-ID stöds inte"
+msgstr "Testversionen för Pocket PC stöds inte"
 
 #: engines/saga/metaengine.cpp:137
-#, fuzzy
 msgid "I Have No Mouth support not compiled in"
-msgstr "Funktioner kompilerade i:"
+msgstr "Stöd för I Have No Mouth har inte kompilerats in"
 
 #: engines/saga/metaengine.cpp:268
 #, fuzzy
@@ -9938,14 +10039,12 @@ msgid "Boss key"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:303 engines/toon/metaengine.cpp:148
-#, fuzzy
 msgid "Show options"
-msgstr "Endast tal"
+msgstr "Visa alternativ"
 
 #: engines/saga/metaengine.cpp:311
-#, fuzzy
 msgid "Exit conversation"
-msgstr "~F~öregående"
+msgstr "Avsluta konversation"
 
 #: engines/saga/metaengine.cpp:316
 msgid "Conversation position - Up"
@@ -9969,9 +10068,8 @@ msgid "Abort speech"
 msgstr "Tal"
 
 #: engines/saga/metaengine.cpp:344
-#, fuzzy
 msgid "Show dialogue"
-msgstr "Skippa rad"
+msgstr "Visa dialog"
 
 #. I18N: Walk to where cursor points
 #: engines/saga/metaengine.cpp:349 engines/scumm/help.cpp:143
@@ -10025,64 +10123,48 @@ msgstr "Tryck"
 #. I18N: It is a verb for gulping, not a bird
 #: engines/saga/metaengine.cpp:400
 msgid "Swallow"
-msgstr ""
+msgstr "Svälj"
 
 #: engines/saga/metaengine.cpp:407
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Reading speed"
-msgstr "Inläsning misslyckades"
+msgstr "Läsningshastighet"
 
 #: engines/saga/metaengine.cpp:412
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Change music"
-msgstr "Snabbläge"
+msgstr "Byt musik"
 
 #: engines/saga/metaengine.cpp:417
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Change sound"
-msgstr "Snabbläge"
+msgstr "Byt ljud"
 
 #: engines/saga/metaengine.cpp:422
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Change voices"
-msgstr "Snabbläge"
+msgstr "Byt röster"
 
 #: engines/saga/metaengine.cpp:427
-#, fuzzy
-#| msgid "Continue"
 msgid "Continue game"
-msgstr "Fortsätt"
+msgstr "Fortsätt spelet"
 
 #: engines/saga/metaengine.cpp:437 engines/trecision/metaengine.cpp:156
 #: engines/tsage/metaengine.cpp:231 engines/vcruise/metaengine.cpp:190
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit game"
-msgstr "Avsluta Spel"
+msgstr "Avsluta spel"
 
 #: engines/saga/metaengine.cpp:454
-#, fuzzy
 msgid "Cancel quit"
-msgstr "Avbryt"
+msgstr "Avsluta inte"
 
 #: engines/saga/metaengine.cpp:459
 msgid "Okay"
-msgstr ""
+msgstr "Okej"
 
 #: engines/saga/metaengine.cpp:464
-#, fuzzy
-#| msgid "Cancel download"
 msgid "Cancel load"
-msgstr "Avbryt nedladdning"
+msgstr "Avbryt inläsning"
 
 #: engines/saga/metaengine.cpp:474
-#, fuzzy
 msgid "Cancel save"
-msgstr "Namnlös sparfil"
+msgstr "Avbryt sparning"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -10091,11 +10173,13 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"Kunde inte hitta AdLib-definitionsfiler för instrument\n"
+"%s och %s. Utan dessa filer,\n"
+"låter musiken inte på samma sätt som i originalspelet."
 
 #: engines/saga/saga.cpp:404
-#, fuzzy
 msgid "Error loading game resources."
-msgstr "Fel under körning av spel:"
+msgstr "Fel vid inläsning av spelresurser."
 
 #: engines/sci/detection_options.h:33
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -10173,13 +10257,12 @@ msgid "Enable the game's built-in optional content censoring"
 msgstr "Aktivera spelets inbyggda och valfria censurfunktion"
 
 #: engines/sci/detection_options.h:171
-#, fuzzy
 msgid "Upscale videos"
-msgstr "Oskalad"
+msgstr "Skala upp videor"
 
 #: engines/sci/detection_options.h:172
 msgid "Upscale videos to double their size"
-msgstr ""
+msgstr "Skala upp videor till dubbla storleken"
 
 #: engines/sci/detection_options.h:184
 msgid "Use RGB rendering"
@@ -10187,7 +10270,7 @@ msgstr "Använd RGB rendering"
 
 #: engines/sci/detection_options.h:185
 msgid "Use RGB rendering to improve screen transitions"
-msgstr ""
+msgstr "Använd RGB-rendering för att förbättra skärmövergångar"
 
 #: engines/sci/detection_options.h:197
 msgid "Use per-resource modified palettes"
@@ -10198,13 +10281,12 @@ msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
 
 #: engines/sci/detection_options.h:210
-#, fuzzy
 msgid "Enable bearded musicians"
-msgstr "Aktivera censurering"
+msgstr "Aktivera skäggiga musiker"
 
 #: engines/sci/detection_options.h:211
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr ""
+msgstr "Aktivera grafik som inaktiverades av juridiska skäl"
 
 #: engines/sci/detection_options.h:236
 msgid "Enable saving via the GMM"
@@ -10227,17 +10309,20 @@ msgid ""
 "Detect and attempt to repair overflows in DPCM8 audio, which cause "
 "noticeable pops and crackles."
 msgstr ""
+"Upptäck och försök att reparera överflöden i DPCM8-ljud, som orsakar "
+"märkbara ljudproblem."
 
 #: engines/sci/detection_options.h:263
-#, fuzzy
 msgid "MIDI mode:"
-msgstr "MIDI gain:"
+msgstr "MIDI-läge:"
 
 #: engines/sci/detection_options.h:264
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
 msgstr ""
+"Vid användning av externa MIDI-enheter (t.ex. via USB-MIDI) väljer du "
+"enheten här"
 
 #: engines/sci/detection_options.h:269
 msgid "Standard (GM / MT-32)"
@@ -10253,11 +10338,11 @@ msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_options.h:281
 msgid "Casio MT-540"
-msgstr ""
+msgstr "Casio MT-540"
 
 #: engines/sci/detection_options.h:285
 msgid "Casio CT-460 / CSM-1"
-msgstr ""
+msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:1447 engines/sci/detection_tables.h:1458
 msgid "Game does not contain menu resources"
@@ -10265,11 +10350,12 @@ msgstr "Spel innehåller inte menyresurser"
 
 #: engines/sci/detection_tables.h:4777
 msgid "This demo uses an unimplemented version of Robot videos"
-msgstr ""
+msgstr "Denna demo använder en oimplementerad version av Robot-videor"
 
 #: engines/sci/detection_tables.h:4832
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
+"Ofullständigt spel upptäcktes. Du måste kopiera data från alla cd-skivor."
 
 #: engines/sci/engine/kfile.cpp:491 engines/sci/metaengine.cpp:283
 msgid "(Autosave)"
@@ -10312,9 +10398,8 @@ msgid ""
 msgstr ""
 
 #: engines/sci/metaengine.cpp:212
-#, fuzzy
 msgid "SCI32 support not compiled in"
-msgstr "Funktioner kompilerade i:"
+msgstr "Stöd för SCI32 har inte kompilerats in"
 
 #: engines/sci/resource/resource.cpp:858
 msgid ""
@@ -10364,9 +10449,8 @@ msgstr ""
 "väldigt förvrängd i det här spelet."
 
 #: engines/sci/sci.cpp:524
-#, fuzzy
 msgid "Download patch"
-msgstr "Nedladdning"
+msgstr "Hämta patch"
 
 #: engines/sci/sci.cpp:525
 msgid ""
@@ -10383,6 +10467,12 @@ msgid ""
 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 msgstr ""
+"GK2 har undertexter gjorda av fans, tillgängliga tack vare de snälla "
+"personerna på SierraHelp.\n"
+"\n"
+"Installation:\n"
+"- hämta ner http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
+"GK2Subtitles.zip\n"
 
 #: engines/sci/sci.cpp:965
 msgid ""
@@ -10421,6 +10511,18 @@ msgid ""
 "In that case you may need to apply the original Sierra patch.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"Vissa ljuddrivrutiner (åtminstone för vissa spel) gjordes tillgängliga\n"
+"av Sierra som eftermarknadspatchar och kan därför inte\n"
+"ha installerats som en del av den ursprungliga spelinställningen.\n"
+"\n"
+"Kopiera dessa fil(er) till din speldatakatalog.\n"
+"\n"
+"Observera dock att filen/filerna kanske inte är tillgänglig(a)\n"
+"separat utan endast som innehåll i (patchade) resurspaket.\n"
+"I så fall kan du behöva använda den ursprungliga Sierra-patchen.\n"
+"\n"
 
 #: engines/scumm/detection_internal.h:384
 msgid ""
@@ -10431,45 +10533,43 @@ msgid ""
 "for some guides which can help you recover valid files from the KryoFlux "
 "dumps that Limited Run Games also provided."
 msgstr ""
+"Den här versionen av Monkey Island kan inte spelas, eftersom Limited Run "
+"Games levererade skadade DISK03.LEC-, DISK04.LEC- och 903.LFL-filer.\n"
+"\n"
+"Kontakta deras tekniska support för ersättningsfiler, eller leta online "
+"efter några guider som kan hjälpa dig att återställa giltiga filer från "
+"KryoFlux-dumparna som Limited Run Games också tillhandahöll."
 
 #. I18N: Creates new online session for multiplayer
 #: engines/scumm/dialog-createsession.cpp:37
-#, fuzzy
-#| msgid "Create a new saved game"
 msgid "Create a new game session"
-msgstr "Skapa ett nytt sparat spel"
+msgstr "Skapa en ny spelsession"
 
 #. I18N: Name of the online game session
 #: engines/scumm/dialog-createsession.cpp:40
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Name:"
-msgstr "Spelmeny"
+msgstr "Spelnamn:"
 
 #. I18N: The user's name for online
 #: engines/scumm/dialog-createsession.cpp:44
 #: engines/scumm/dialog-sessionselector.cpp:60
-#, fuzzy
-#| msgid "Name:"
 msgid "Your Name:"
-msgstr "Namn:"
+msgstr "Ditt namn:"
 
 #. I18N: Button, start hosting online multiplayer game
 #: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4205
 msgid "Host"
-msgstr ""
+msgstr "Värd"
 
 #. I18N: Retrieving list of online multiplayer games
 #: engines/scumm/dialog-sessionselector.cpp:51
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Querying games..."
-msgstr "Sparar speldata..."
+msgstr "Söker efter spel..."
 
 #. I18N: Join online multiplayer game
 #: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4205
 msgid "Join"
-msgstr ""
+msgstr "Gå med"
 
 #. I18N: Online multiplayer games were found
 #: engines/scumm/dialog-sessionselector.cpp:118
@@ -10526,18 +10626,19 @@ msgstr "Expert"
 
 #: engines/scumm/dialogs.cpp:1139
 msgid "Enhancements:"
-msgstr ""
+msgstr "Förbättringar:"
 
 #: engines/scumm/dialogs.cpp:1144
-#, fuzzy
 msgid "Fix original bugs"
-msgstr "Använd originalskärmar för spara/ladda"
+msgstr "Rätta till originalbuggar"
 
 #: engines/scumm/dialogs.cpp:1145
 msgid ""
 "Fixes bugs which were present in the original release, and noticeable "
 "graphical/audio glitches."
 msgstr ""
+"Åtgärdar buggar som fanns i den ursprungliga versionen och märkbara grafiska "
+"och ljudmässiga fel."
 
 #: engines/scumm/dialogs.cpp:1148
 msgid "Audio-visual improvements"
@@ -10550,15 +10651,16 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1152
-#, fuzzy
 msgid "Restored content"
-msgstr "Aktivera Discord integration"
+msgstr "Återskapat innehåll"
 
 #: engines/scumm/dialogs.cpp:1153
 msgid ""
 "Restores dialogs, graphics, and audio elements which were originally cut in "
 "the original release."
 msgstr ""
+"Återställer dialoger, grafik och ljudelement som ursprungligen klipptes bort "
+"i originalutgåvan."
 
 #: engines/scumm/dialogs.cpp:1156
 msgid "Modern UI/UX adjustments"
@@ -10571,9 +10673,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:746
-#, fuzzy
 msgid "Enable the original GUI and Menu"
-msgstr "Aktivera anti-gitter i EGA-spel"
+msgstr "Aktivera ursprungligt gränssnitt och meny"
 
 #: engines/scumm/dialogs.cpp:1182 engines/scumm/metaengine.cpp:747
 msgid ""
@@ -10583,18 +10684,16 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:756
-#, fuzzy
-#| msgid "Enabled aspect ratio correction"
 msgid "Enable gamma correction"
-msgstr "Korrektion av bildförhållande på"
+msgstr "Aktivera gammakorrigering"
 
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:757
 msgid "Brighten the graphics to simulate a Macintosh monitor."
-msgstr ""
+msgstr "Ljusa upp grafiken för att simulera en Macintosh-skärm."
 
 #: engines/scumm/dialogs.cpp:1195
 msgid "Simulate Sega colors"
-msgstr ""
+msgstr "Simulera Sega-färger"
 
 #: engines/scumm/dialogs.cpp:1196
 msgid ""
@@ -10615,12 +10714,12 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1403
 msgid "Music Quality:"
-msgstr ""
+msgstr "Musikkvalitet:"
 
 #: engines/scumm/dialogs.cpp:1407
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
-msgstr ""
+msgstr "Välj musikkvalitet. I originalet kan du välja detta från spelmenyn."
 
 #: engines/scumm/dialogs.cpp:1408
 msgid ""
@@ -10628,33 +10727,34 @@ msgid ""
 "detection and speed tests, but also allows changes through the Game menu to "
 "some degree."
 msgstr ""
+"Välj musikkvalitet. Originalet fastställer grundinställningarna genom "
+"hårdvaruidentifiering och hastighetstester, men tillåter också ändringar via "
+"spelmenyn i viss utsträckning."
 
 #: engines/scumm/dialogs.cpp:1499 engines/scumm/dialogs.cpp:1500
 msgid "auto"
-msgstr ""
+msgstr "automatiskt"
 
 #: engines/scumm/dialogs.cpp:1499
 msgid "Low"
-msgstr ""
+msgstr "Låg"
 
 #: engines/scumm/dialogs.cpp:1499
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:75
-#, fuzzy
-#| msgid "Medium"
 msgid "Medium"
-msgstr "Mellan"
+msgstr "Medel"
 
 #: engines/scumm/dialogs.cpp:1499
 msgid "High"
-msgstr ""
+msgstr "Hög"
 
 #: engines/scumm/dialogs.cpp:1500
 msgid "Good"
-msgstr ""
+msgstr "Bra"
 
 #: engines/scumm/dialogs.cpp:1500
 msgid "Better"
-msgstr ""
+msgstr "Bättre"
 
 #: engines/scumm/dialogs.cpp:1501
 #, c-format
@@ -10664,12 +10764,11 @@ msgstr ""
 #: engines/scumm/dialogs.cpp:1501
 #, c-format
 msgid "Quality Selection: %s"
-msgstr ""
+msgstr "Kvalitetsval: %s"
 
 #: engines/scumm/dialogs.cpp:1515
-#, fuzzy
 msgid "Playback Adjust:"
-msgstr "Spela upp"
+msgstr "Uppspelningsjustering:"
 
 #: engines/scumm/dialogs.cpp:1519
 msgid ""
@@ -10700,30 +10799,32 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:737
-#, fuzzy
 msgid "Load modded audio"
-msgstr "Ladda spel"
+msgstr "Läs in modifierat ljud"
 
 #: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:738
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
 msgstr ""
+"Ersätt musik, ljudeffekter och talklipp med modifierade ljudfiler, om sådana "
+"finns tillgängliga."
 
 #: engines/scumm/dialogs.cpp:1736
 msgid "Multiplayer Server:"
-msgstr ""
+msgstr "Flerspelarserver:"
 
 #: engines/scumm/dialogs.cpp:1742
-#, fuzzy
 msgid "Online Server:"
-msgstr "Server:"
+msgstr "Online-server:"
 
 #: engines/scumm/dialogs.cpp:1743
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
 msgstr ""
+"Adress till den server som du ska ansluta till för onlinespel.  Den måste "
+"börja med antingen \"https://\" eller \"http://\"."
 
 #: engines/scumm/dialogs.cpp:1745
 msgid "Enable online competitive mods"
@@ -10735,26 +10836,28 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1749
 msgid "Enable connection to Multiplayer Server"
-msgstr ""
+msgstr "Aktivera anslutning till flerspelarserver"
 
 #: engines/scumm/dialogs.cpp:1749
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
 msgstr ""
+"Växlar anslutningen till den server som gör det möjligt att vara värd för "
+"och delta i online flerspelarspel över Internet."
 
 #: engines/scumm/dialogs.cpp:1750
 msgid "Host games over LAN"
-msgstr ""
+msgstr "Stå värd för spel över LAN"
 
 #: engines/scumm/dialogs.cpp:1750
 msgid "Allows the game sessions to be discovered over your local area network."
-msgstr ""
+msgstr "Gör att spelsessionerna kan upptäckas via ditt lokala nätverk."
 
 #. I18N: Moonbase Console is a program name
 #: engines/scumm/dialogs.cpp:1754
 msgid "Generate random maps"
-msgstr ""
+msgstr "Generera slumpmässiga kartor"
 
 #: engines/scumm/dialogs.cpp:1754
 msgid "Allow random map generation (Based from Moonbase Console)."
@@ -10849,8 +10952,6 @@ msgid "Run in really fast mode (*)"
 msgstr "Kör i extra snabbt läge (*)"
 
 #: engines/scumm/help.cpp:101
-#, fuzzy
-#| msgid "Switch between graphics filters"
 msgid "Cycle between graphics filters"
 msgstr "Växla mellan grafikfilter"
 
@@ -11248,16 +11349,16 @@ msgid ""
 "Warning: this re-release version contains patched game scripts,\n"
 "and therefore it might crash or not work properly for the time being."
 msgstr ""
+"Varning: denna återutgivna version innehåller patchade spelskript,\n"
+"och därför kan den krascha eller inte fungera korrekt för tillfället."
 
 #: engines/scumm/metaengine.cpp:485
-#, fuzzy
 msgid "HE v71+ support is not compiled in"
-msgstr "Funktioner kompilerade i:"
+msgstr "Stöd för HE v71+ har inte kompilerats in"
 
 #: engines/scumm/metaengine.cpp:509
-#, fuzzy
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr "Funktioner kompilerade i:"
+msgstr "Stöd för SCUMM v7-8 har inte kompilerats in"
 
 #: engines/scumm/metaengine.cpp:666
 msgid "Show Object Line"
@@ -11268,9 +11369,8 @@ msgid "Show the names of objects at the bottom of the screen"
 msgstr "Visa namnen på objekt på botten av skärmen"
 
 #: engines/scumm/metaengine.cpp:675
-#, fuzzy
 msgid "Use NES Classic Palette"
-msgstr "Använd alternativ färgkarta"
+msgstr "Använd klassisk NES-palett"
 
 #: engines/scumm/metaengine.cpp:676
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
@@ -11288,7 +11388,7 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:693
 msgid "Run in original 640 x 480 resolution"
-msgstr ""
+msgstr "Körs i originalupplösning 640 x 480"
 
 #: engines/scumm/metaengine.cpp:694
 msgid ""
@@ -11297,9 +11397,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:701
-#, fuzzy
 msgid "Play simplified music"
-msgstr "Spela vald musikskiva"
+msgstr "Spela upp förenklad musik"
 
 #: engines/scumm/metaengine.cpp:702
 msgid "This music was intended for low-end Macs, and uses only one channel."
@@ -11374,26 +11473,20 @@ msgstr ""
 "Aktivera demo-/kioskläge i den fullständiga versionen av Maniac Mansion."
 
 #: engines/scumm/metaengine.cpp:803
-#, fuzzy
-#| msgid "Use CD audio"
 msgid "Use remastered audio"
-msgstr "Använd CD-ljud"
+msgstr "Använd remastrat ljud"
 
 #: engines/scumm/metaengine.cpp:804
 msgid "Use the remastered speech and sound effects."
-msgstr ""
+msgstr "Använd det remastrade talet och ljudeffekterna."
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds"
-msgstr "Aktivera ljud"
+msgstr "Aktivera stämningsljud"
 
 #: engines/scumm/metaengine.cpp:817
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds."
-msgstr "Aktivera ljud"
+msgstr "Aktivera stämningsljud."
 
 #: engines/scumm/metaengine.cpp:929
 msgid "Down Left"
@@ -11404,9 +11497,8 @@ msgid "Down Right"
 msgstr "Nedåt höger"
 
 #: engines/scumm/metaengine.cpp:962
-#, fuzzy
 msgid "Up Left"
-msgstr "Vänster"
+msgstr "Upp till vänster"
 
 #: engines/scumm/metaengine.cpp:975
 msgid "Up Right"
@@ -11453,40 +11545,34 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/scumm.cpp:1342
-#, fuzzy, c-format
-#| msgid "This game requires the 'Indy' Macintosh executable for its fonts."
+#, c-format
 msgid "This game requires the '%s' Macintosh executable for its fonts."
-msgstr "Detta spel kräver Indy Macintosh-körbarafiler för sitt typsnitt."
+msgstr "Detta spel kräver körbara '%s' Macintosh-filen för sina typsnitt."
 
 #: engines/scumm/scumm.cpp:1346
-#, fuzzy, c-format
-#| msgid ""
-#| "This game requires the 'Loom' Macintosh executable for its music and "
-#| "fonts."
+#, c-format
 msgid ""
 "This game requires the '%s' Macintosh executable for its music and fonts."
 msgstr ""
-"Detta spel kräver Loom Macintosh-körbara filer för sin musik och typsnitt."
+"Detta spel kräver den körbara '%s' Macintosh-filen för sin musik och "
+"typsnitt."
 
 #: engines/scumm/scumm.cpp:1350
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
+#, c-format
 msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. %s will "
 "be disabled."
 msgstr ""
-"Kunde inte hitta Macintosh-programmet för 'Monkey Island'\n"
-"för att läsa instrumenten. Musiken kommer att avaktiveras."
+"Kunde inte hitta den körbara Macintosh-filen för '%s' att läsa in resurser "
+"från. %s kommer att inaktiveras."
 
 #: engines/scumm/scumm.cpp:1351
 msgid "The Mac GUI"
-msgstr ""
+msgstr "Mac-gränssnittet"
 
 #: engines/scumm/scumm.cpp:1351
 msgid "The music and the Mac GUI"
-msgstr ""
+msgstr "Musiken och Mac-gränssnittet"
 
 #: engines/scumm/scumm.cpp:1371
 #, c-format
@@ -11506,6 +11592,10 @@ msgid ""
 "dialog definitions. Look for a 'The Dig f' folder on your CD. Any one from "
 "its sub-folders should be what you need."
 msgstr ""
+"'%s' verkar vara fel körbar Dig-fil. Det kan vara startprogrammet som finns "
+"i cd-skivans rot, som inte innehåller några av de nödvändiga meny- och "
+"dialogdefinitionerna. Leta efter en \"The Dig f\"-mapp på din cd. Vilken som "
+"helst av dess undermappar bör vara vad du behöver."
 
 #: engines/scumm/scumm.cpp:1765
 msgid ""
@@ -11661,7 +11751,7 @@ msgstr "Väljer den slumpmässiga mängden terrängnivå"
 #. I18N: Percentage of water
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:127
 msgid "Water"
-msgstr ""
+msgstr "Vatten"
 
 #. I18N: Water slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:132
@@ -11766,10 +11856,8 @@ msgid "Open control panel"
 msgstr "Öppna kontrolpanel"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode"
 msgid "Toggle really fast mode on/off"
-msgstr "Växla extra snabbt läge"
+msgstr "Växla extra snabbt läge på/av"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
@@ -11820,9 +11908,8 @@ msgstr "Spelmeny"
 
 #. I18N: Opens in-game conversation log
 #: engines/stark/metaengine.cpp:219
-#, fuzzy
 msgid "Conversation log"
-msgstr "~F~öregående"
+msgstr "Konversationslogg"
 
 #. I18N: Opens in-game Diary. April is the female protagonist name
 #: engines/stark/metaengine.cpp:225
@@ -11830,15 +11917,12 @@ msgid "April's diary (initially disabled)"
 msgstr ""
 
 #: engines/stark/metaengine.cpp:230
-#, fuzzy
-#| msgid "Fast replay"
 msgid "Video replay"
-msgstr "Snabb uppspelning"
+msgstr "Spela upp video igen"
 
 #: engines/stark/metaengine.cpp:235
-#, fuzzy
 msgid "Game settings"
-msgstr "~I~nställningar..."
+msgstr "Spelinställningar"
 
 #: engines/stark/metaengine.cpp:245 engines/toon/metaengine.cpp:124
 #: engines/wintermute/keymapper_tables.h:1345
@@ -11846,10 +11930,8 @@ msgid "Toggle subtitles"
 msgstr "Undertexter av/på"
 
 #: engines/stark/metaengine.cpp:250
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit to menu"
-msgstr "Avsluta Spel"
+msgstr "Avsluta till menyn"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
@@ -11884,25 +11966,20 @@ msgid "Scroll down in your dialogues"
 msgstr ""
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "Go to next dialogue"
-msgstr "Markera nästa dialog"
+msgstr "Gå till nästa dialog"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous dialogues"
-msgstr "Gå till föregående katalognivå"
+msgstr "Gå till föregående dialoger"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
 msgid "Select dialogue"
-msgstr "Skippa rad"
+msgstr "Välj dialog"
 
 #: engines/stark/metaengine.cpp:335
 msgid "Skip video sequence or dialogue"
-msgstr ""
+msgstr "Hoppa över videosekvens eller dialog"
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
@@ -12033,50 +12110,44 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Här slutar Broken Sword 1-demon"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "Voices: English"
 msgid "English"
-msgstr "Röster: Engelska"
+msgstr "Engelska"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "German"
-msgstr ""
+msgstr "Tyska"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "French"
-msgstr ""
+msgstr "Franska"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Italian"
-msgstr ""
+msgstr "Italienska"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgid "Finish"
 msgid "Spanish"
-msgstr "Avslut"
+msgstr "Spanska"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Brazilian Portuguese"
-msgstr ""
+msgstr "Braziliansk portugisiska"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Czech"
-msgstr ""
+msgstr "Tjeckiska"
 
 #: engines/sword1/metaengine.cpp:86
-#, fuzzy
 msgid "Text language:"
-msgstr "GUI-språk:"
+msgstr "Textspråk:"
 
 #: engines/sword1/metaengine.cpp:87 engines/sword1/metaengine.cpp:95
 msgid "Set the language for the subtitles. This will not affect voices."
-msgstr ""
+msgstr "Ställ in språket för undertexterna. Detta påverkar inte rösterna."
 
 #: engines/sword1/metaengine.cpp:114
 msgid "Simulate the audio engine from the Windows executable"
-msgstr ""
+msgstr "Simulera ljudmotorn från den körbara Windows-filen"
 
 #: engines/sword1/metaengine.cpp:115
 msgid ""
@@ -12086,20 +12157,16 @@ msgid ""
 msgstr ""
 
 #: engines/sword1/metaengine.cpp:127
-#, fuzzy
-#| msgid "Directional button:"
 msgid "Additional options:"
-msgstr "Riktningsknapp:"
+msgstr "Ytterligare alternativ:"
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Men~u~"
 msgid "Main Menu"
-msgstr "Huvud~m~eny"
+msgstr "Huvudmeny"
 
 #: engines/sword2/detection_tables.h:419
 msgid "Remastered edition is not supported. Please, use the classic version"
-msgstr ""
+msgstr "Remastrad utgåva stöds inte. Använd den klassiska versionen"
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
@@ -12191,35 +12258,25 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr "Typsnittsvarianten finns inte i datafilen '%s'."
 
 #: engines/toon/metaengine.cpp:98
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip intro"
-msgstr "Skippa rad"
+msgstr "Hoppa över intro"
 
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
-#, fuzzy
-#| msgid "Skip current animation"
 msgid "Stop current voice"
-msgstr "Skippa aktuellt animation"
+msgstr "Stoppa aktuell röst"
 
 #: engines/toon/metaengine.cpp:130
-#, fuzzy
-#| msgid "No music"
 msgid "Mute music"
 msgstr "Ingen musik"
 
 #: engines/toon/metaengine.cpp:136
-#, fuzzy
-#| msgid "Speech"
 msgid "Mute speech"
-msgstr "Tal"
+msgstr "Inget tal"
 
 #: engines/toon/metaengine.cpp:142
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Mute sound effects"
-msgstr "Växla ljudeffektier av/på"
+msgstr "Inga ljudeffektier"
 
 #: engines/toon/toon.cpp:273
 #, c-format
@@ -12255,9 +12312,8 @@ msgid "Skip sequence/open quit dialogue"
 msgstr ""
 
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
 msgid "Skip Dialogue"
-msgstr "Skippa rad"
+msgstr "Hoppa över dialog"
 
 #: engines/touche/metaengine.cpp:147
 #, fuzzy
@@ -12266,17 +12322,13 @@ msgstr "Åte~r~vänd till launcher"
 
 #. I18N: The actor walking pace is increased
 #: engines/touche/metaengine.cpp:154
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Enable fast walk"
-msgstr "Växla snabb gång"
+msgstr "Aktivera snabb gång"
 
 #. I18N: The actor walking pace is decreased
 #: engines/touche/metaengine.cpp:161
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Disable fast walk"
-msgstr "Växla snabb gång"
+msgstr "Inaktivera snabb gång"
 
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
@@ -12284,11 +12336,11 @@ msgstr "Växla snabbläge"
 
 #: engines/touche/metaengine.cpp:173
 msgid "Toggle between voice/text/text and voice"
-msgstr ""
+msgstr "Växla mellan röst/text/text och röst"
 
 #: engines/touche/metaengine.cpp:182
 msgid "Press \"Yes\" Key"
-msgstr ""
+msgstr "Tryck på \"Ja\"-tangenten"
 
 #: engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -12305,80 +12357,56 @@ msgstr "Öppna systemmeny"
 
 #. I18N: Return refers to return/enter key
 #: engines/tsage/metaengine.cpp:196
-#, fuzzy
-#| msgid "turn oN"
 msgid "Return"
-msgstr "Sätt på"
+msgstr "Return"
 
 #: engines/tsage/metaengine.cpp:221
-#, fuzzy
-#| msgid "View"
 msgid "View Help"
-msgstr "Vy"
+msgstr "Visa hjälp"
 
 #: engines/tsage/metaengine.cpp:226
-#, fuzzy
 msgid "Sound options"
-msgstr "Endast tal"
+msgstr "Ljudalternativ"
 
 #: engines/tsage/metaengine.cpp:264
-#, fuzzy
-#| msgid "North"
 msgid "Crawl North"
-msgstr "Norr"
+msgstr "Kryp norrut"
 
 #: engines/tsage/metaengine.cpp:271
-#, fuzzy
-#| msgid "South"
 msgid "Crawl South"
-msgstr "Syd"
+msgstr "Kryp söderut"
 
 #: engines/tsage/metaengine.cpp:278
-#, fuzzy
-#| msgid "Turn left fast"
 msgid "Turn Left/Crawl West"
-msgstr "Sväng vänster snabbt"
+msgstr "Sväng vänster/kryp västerut"
 
 #: engines/tsage/metaengine.cpp:285
-#, fuzzy
-#| msgid "Turn right fast"
 msgid "Turn Right/Crawl East"
-msgstr "Sväng höger snabbt"
+msgstr "Sväng höger/kryp österut"
 
 #: engines/tsage/metaengine.cpp:292
-#, fuzzy
-#| msgid "Increase Step Size"
 msgid "Increase speed"
-msgstr "Öka stegstorlek"
+msgstr "Öka hastighet"
 
 #: engines/tsage/metaengine.cpp:297
-#, fuzzy
-#| msgid "Decrease Step Size"
 msgid "Decrease speed"
-msgstr "Minska stegstorlek"
+msgstr "Sänk hastighet"
 
 #: engines/tsage/metaengine.cpp:302
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Minimum speed"
-msgstr "Inläsning misslyckades"
+msgstr "Minsta hastighet"
 
 #: engines/tsage/metaengine.cpp:307
-#, fuzzy
-#| msgid "Maximum Volume"
 msgid "Maximum speed"
-msgstr "Max. volym"
+msgstr "Högsta hastighet"
 
 #: engines/tsage/metaengine.cpp:312
-#, fuzzy
 msgid "Low speed"
-msgstr "Visa muspekare"
+msgstr "Låg hastighet"
 
 #: engines/tsage/metaengine.cpp:317
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Medium speed"
-msgstr "Inläsning misslyckades"
+msgstr "Medelhastighet"
 
 #. I18N: Pull cards from the deck
 #: engines/tsage/metaengine.cpp:323
@@ -12388,23 +12416,17 @@ msgid "Draw Cards"
 msgstr "Steg framåt"
 
 #: engines/tucker/metaengine.cpp:190
-#, fuzzy
-#| msgid "Speech"
 msgid "Skip speech"
-msgstr "Tal"
+msgstr "Hoppa över tal"
 
 #. I18N: Panel contains all actor actions and the artstyle is toggled
 #: engines/tucker/metaengine.cpp:203
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle panel style"
-msgstr "Växla snabbläge"
+msgstr "Växla panelstil"
 
 #: engines/tucker/metaengine.cpp:209
-#, fuzzy
-#| msgid "Use Text to speech"
 msgid "Toggle text speech"
-msgstr "Använd automatisk uppläsning"
+msgstr "Växla texttal"
 
 #: engines/twine/detection.cpp:188
 msgid "This version requires Giflib which was not compiled into ScummVM"
@@ -12502,11 +12524,11 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:249 engines/twine/metaengine.cpp:269
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "Normalt beteende"
 
 #: engines/twine/metaengine.cpp:254 engines/twine/metaengine.cpp:274
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "Atletiskt beteende"
 
 #: engines/twine/metaengine.cpp:259 engines/twine/metaengine.cpp:279
 msgid "Aggressive Behaviour"
@@ -12567,13 +12589,15 @@ msgstr "Video:"
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
 msgid "Toilet paper over"
-msgstr ""
+msgstr "Toalettpapper över"
 
 #: engines/twp/dialogs.cpp:38
 msgid ""
 "The toilet paper in some toilets will be shown \"over\".\n"
 "It's a joke option that has no effects on the gameplay."
 msgstr ""
+"Toalettpapperet i vissa toaletter kommer att visas \"över\".\n"
+"Det är ett skämtsamt alternativ som inte har någon effekt på spelet."
 
 #. I18N: Setting to enable or disable additional jokes in the game.
 #: engines/twp/dialogs.cpp:41
@@ -12854,6 +12878,12 @@ msgid ""
 "\n"
 "Please check you have copied all the files correctly."
 msgstr ""
+"Saknar nödvändig fil\n"
+"\n"
+"För att starta ett spel krävs SAVEGAME/U8SAVE.000\n"
+"från en originalinstallation.\n"
+"\n"
+"Kontrollera att du har kopierat alla filer korrekt."
 
 #: engines/vcruise/metaengine.cpp:43
 msgid "Improved click sensitivity"
@@ -12903,11 +12933,11 @@ msgstr "Förinläs ljud. Kan förbättra prestanda på långsamma hårddiskar."
 
 #: engines/vcruise/metaengine.cpp:109
 msgid "Faster video decoder (lower quality)"
-msgstr ""
+msgstr "Snabbare videoavkodare (lägre kvalitet)"
 
 #: engines/vcruise/metaengine.cpp:110
 msgid "Reduce video decoding CPU usage at the cost of quality."
-msgstr ""
+msgstr "Minska CPU-användningen för videoavkodning på bekostnad av kvaliteten."
 
 #: engines/vcruise/metaengine.cpp:170
 msgid "Display help screen"
@@ -13649,16 +13679,6 @@ msgid "Preferences"
 msgstr "Inställningar"
 
 #: engines/zvision/zvision.cpp:302
-#, fuzzy
-#| msgid ""
-#| "Before playing this game, you'll need to copy the required fonts into "
-#| "ScummVM's extras directory, or into the game directory. On Windows, "
-#| "you'll need the following font files from the Windows font directory: "
-#| "Times New Roman, Century Schoolbook, Garamond, Courier New and Arial. "
-#| "Alternatively, you can download the Liberation Fonts or the GNU FreeFont "
-#| "package. You'll need all the fonts from the font package you choose, i."
-#| "e., LiberationMono, LiberationSans and LiberationSerif, or FreeMono, "
-#| "FreeSans and FreeSerif respectively."
 msgid ""
 "Before playing this game, you'll need to copy the required fonts into "
 "ScummVM's extras directory, or into the game directory. On Windows, you'll "
@@ -13672,10 +13692,9 @@ msgstr ""
 "ScummVMs extras-katalog, eller in i spelkatalogen. På Windows kommer du att "
 "behöva följande typsnittsfiler från Windows typsnittskatalog: Times New "
 "Roman, Century Schoolbook, Garamond, Courier New och Arial. Alternativt kan "
-"du ladda ner Liberation typsnitten eller GNUs FreeFont-paket. Du kommer att "
-"behöva alla fontera från typsnittspaketet du väljer, d.v.s. LiberationMono, "
-"LiberationSans och LiberationSerif eller FreeMono, FreeSans och FreeSerif, "
-"respektive."
+"du hämta ner Liberation-typsnitten. Du kommer att behöva alla typsnitten "
+"från typsnittspaketet du väljer, d.v.s. LiberationMono, LiberationSans och "
+"LiberationSerif."
 
 #, c-format
 #~ msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
