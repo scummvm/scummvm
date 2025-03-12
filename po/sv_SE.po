@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-10 16:53+0000\n"
-"PO-Revision-Date: 2025-03-12 10:25+0000\n"
+"PO-Revision-Date: 2025-03-12 17:18+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -843,9 +843,7 @@ msgstr "Anteckningar:"
 #: gui/integrity-dialog.cpp:100
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
-msgstr ""
-"Verifikation av filintegritet kan ta lång tid att genomföra. Vänligen "
-"vänta...\n"
+msgstr "Verifikation av filintegritet kan ta lång tid att genomföra. Vänta...\n"
 
 #: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:168
 msgid "Calculating file checksums..."
@@ -875,8 +873,8 @@ msgstr ""
 "### Resultat\n"
 "Din uppsättning av spelfiler förefaller vara okänd för oss.\n"
 "\n"
-"Om du är säker på att du har en giltig okänd variant, vänligen skicka "
-"följande e-postmeddelande till integrity@scummvm.org"
+"Om du är säker på att du har en giltig okänd variant, skicka följande e-"
+"postmeddelande till integrity@scummvm.org"
 
 #: gui/integrity-dialog.cpp:537
 msgid ""
@@ -889,8 +887,8 @@ msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
 msgstr ""
-"Sepelet verkar inte ha någon metadata associerad med det, så det kan inte "
-"matchas. Vänligen fyll i den korrekta metadatan för spelet."
+"Spelet verkar inte ha någon metadata associerad med det, så det kan inte "
+"matchas. Fyll i den korrekta metadatan för spelet."
 
 #: gui/integrity-dialog.cpp:569
 msgid "Files all OK"
@@ -2694,7 +2692,7 @@ msgstr "# nästa"
 
 #: gui/predictivedialog.cpp:102
 msgid "add"
-msgstr "Lägg till"
+msgstr "lägg till"
 
 #: gui/predictivedialog.cpp:107 gui/predictivedialog.cpp:183
 msgid "Delete char"
@@ -2969,7 +2967,7 @@ msgstr ""
 "gjorts i filåtkomstsystemet för att möjliggöra stöd för moderna versioner av "
 "Android-operativsystemet.\n"
 "Om du upptäcker att dina befintliga tillagda spel eller anpassade sökvägar "
-"inte längre fungerar, vänligen redigera dessa sökvägar:\n"
+"inte längre fungerar, redigera dessa sökvägar:\n"
 "  1. Från startprogrammet, gå till **Spelalternativ &gt; Sökvägar**. Välj "
 "**Spelsökväg** eller **Extra sökväg**, beroende på vad som är lämpligt. \n"
 "  2. I ScummVM:s filbläddrare väljer du **Gå upp** tills du når rotmappen "
@@ -3317,8 +3315,8 @@ msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
 msgstr ""
-"Kan inte komma åt den globalt inställda sökvägen! Vänligen återgå till "
-"standard i ScummVM-inställningar"
+"Kan inte komma åt den globalt inställda sökvägen! Återställ till standard i "
+"ScummVM-alternativen"
 
 #: dists/android.strings.xml.cpp:44
 msgid "Toggle virtual keyboard"
@@ -3358,8 +3356,8 @@ msgid ""
 "Please select the *root* of your external (physical) SD card. This is "
 "required for ScummVM to access this path: "
 msgstr ""
-"Vänligen välj *root* som ditt external (fysiska) SD-kort. Detta krävs för "
-"att ScummVM ska kunna komma åt denna sökväg: "
+"Välj *roten* för ditt externa (fysiska) SD-kort. Detta krävs för att ScummVM "
+"ska kunna komma åt denna sökväg: "
 
 #: dists/android.strings.xml.cpp:54
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"
@@ -5597,9 +5595,8 @@ msgid "Playlist format:"
 msgstr "Spellist format:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
-#, fuzzy
 msgid "Hooks location:"
-msgstr "~F~öregående"
+msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
 msgid "All in save folder"
@@ -6907,9 +6904,8 @@ msgstr ""
 "berättelse"
 
 #: engines/bladerunner/metaengine.cpp:56
-#, fuzzy
 msgid "Shorty mode"
-msgstr "Skalningsläge:"
+msgstr ""
 
 #: engines/bladerunner/metaengine.cpp:57
 msgid "Game will shrink the actors and make their voices high pitched"
@@ -6977,9 +6973,8 @@ msgstr "vanliga genvägar"
 
 #. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:201
-#, fuzzy
 msgid "main game shortcuts"
-msgstr "Huvudkontroller:"
+msgstr ""
 
 #. I18N: These are keymaps that work only within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:203
@@ -7581,9 +7576,8 @@ msgid "Change Command"
 msgstr ""
 
 #: engines/darkseed/metaengine.cpp:87
-#, fuzzy
 msgid "Time Advance"
-msgstr "Tid: "
+msgstr ""
 
 #: engines/dgds/metaengine.cpp:74
 msgid "Toggle Menu"
@@ -8171,7 +8165,7 @@ msgid ""
 msgstr ""
 "ScummVM kommer nu att verifiera speldatafilerna för att säkerställa att du "
 "får den bästa spelupplevelsen.\n"
-"Detta kan ta ett tag, vänligen vänta.\n"
+"Detta kan ta ett tag, vänta.\n"
 "Vid framtida körningar behöver kontrollen göras igen."
 
 #: engines/grim/metaengine.cpp:37
@@ -8801,7 +8795,7 @@ msgstr "Glid höger"
 
 #: engines/kyra/engine/lol.cpp:517
 msgid "Options"
-msgstr "Inställningar"
+msgstr "Alternativ"
 
 #: engines/kyra/engine/lol.cpp:518
 msgid "Choose Spell"
@@ -8940,14 +8934,12 @@ msgid "TTS Narrator"
 msgstr "TTT Berättare"
 
 #: engines/lure/metaengine.cpp:170
-#, fuzzy
 msgid "Fight sequence keymappings"
-msgstr "~I~nställningar..."
+msgstr "Tangentmappningar för slåssekvens"
 
 #: engines/lure/metaengine.cpp:171
-#, fuzzy
 msgid "Index keymappings"
-msgstr "~I~nställningar..."
+msgstr "Tangentmappningar för index"
 
 #: engines/lure/metaengine.cpp:172
 msgid "Yes/No keymappings"
@@ -9591,9 +9583,8 @@ msgid "Start with debugger"
 msgstr "Starta med felsökaren"
 
 #: engines/mtropolis/metaengine.cpp:109 engines/vcruise/metaengine.cpp:66
-#, fuzzy
 msgid "Starts with the debugger dashboard active."
-msgstr "Öppna debug-konsolen"
+msgstr "Startar med felsökarens anslagstavla aktiv."
 
 #: engines/mtropolis/metaengine.cpp:179
 msgid "Toggle debug overlay"
@@ -9807,9 +9798,8 @@ msgstr ""
 
 #. I18N: NHC is a file extension
 #: engines/neverhood/dialogs.cpp:89
-#, fuzzy
 msgid "NHC replacement:"
-msgstr "Aktivera censurering"
+msgstr "NHC-ersättning:"
 
 #: engines/neverhood/dialogs.cpp:95
 msgid "<original>"
@@ -9955,29 +9945,24 @@ msgid "I Have No Mouth support not compiled in"
 msgstr "Stöd för I Have No Mouth har inte kompilerats in"
 
 #: engines/saga/metaengine.cpp:268
-#, fuzzy
 msgid "Game keymapping"
-msgstr "~I~nställningar..."
+msgstr "Tangentmappning för spel"
 
 #: engines/saga/metaengine.cpp:269
-#, fuzzy
 msgid "Option panel keymapping"
-msgstr "~I~nställningar..."
+msgstr "Tangentmappning för alternativpanel"
 
 #: engines/saga/metaengine.cpp:270
-#, fuzzy
 msgid "Save panel keymapping"
-msgstr "~I~nställningar..."
+msgstr "Tangentmappning för sparningspanel"
 
 #: engines/saga/metaengine.cpp:271
-#, fuzzy
 msgid "Load panel keymapping"
-msgstr "~I~nställningar..."
+msgstr "Tangentmappning för inläsningspanel"
 
 #: engines/saga/metaengine.cpp:272
-#, fuzzy
 msgid "Quit panel keymapping"
-msgstr "~I~nställningar..."
+msgstr "Tangentmappning för avslutningspanel"
 
 #: engines/saga/metaengine.cpp:273
 msgid "Converse panel keymapping"
@@ -11720,7 +11705,7 @@ msgstr "Karg - Ojämn"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 msgid "Picks the random amount of terrain level."
-msgstr "Väljer den slumpmässiga mängden terrängnivå"
+msgstr "Väljer den slumpmässiga mängden terrängnivå."
 
 #. I18N: Percentage of water
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:127
@@ -11855,7 +11840,7 @@ msgstr "Aktivera inläsning av externa ersättningsresurser."
 
 #: engines/stark/metaengine.cpp:52
 msgid "Enable linear filtering of the backgrounds images"
-msgstr "Aktivera linjärfiltrering av bakgrundsbilder."
+msgstr "Aktivera linjärfiltrering av bakgrundsbilder"
 
 #: engines/stark/metaengine.cpp:53
 msgid ""
