@@ -22,6 +22,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Verbesserung der Grafik-Unterstützung für die Macintosh-Versionen von DOTT, Sam & Max, The Dig,
      Full Throttle und Maniac Mansion.
    - Audio-Fehler in der Sega-CD-Version von MI1 korrigiert.
+   - Option hinzugefügt, über welche die Sega CD-Version von MI1 mit der "Shadow Mode"-Farbpalette
+     dargestellt wird. Die Farbpalette wurde für diese Veröffentlichung ursprünglich benutzt.
+	 (Es ist unklar, ob die deutlich dunklere Darstellung beabsichtigt ist oder nicht.)
 
  TwinE:
    - Bewegung des Meca-Pinguins korrigiert.
