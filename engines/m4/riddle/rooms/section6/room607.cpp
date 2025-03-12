@@ -107,9 +107,9 @@ void Room607::daemon() {
 }
 
 void Room607::pre_parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (useFlag && player_said("GREY ROCK") && !_G(flags)[V193])
 		_G(player).resetWalk();
@@ -120,9 +120,9 @@ void Room607::pre_parser() {
 }
 
 void Room607::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (lookFlag && player_said("FISSURE") && inv_object_is_here("RONGORONGO TABLET")) {
 		hotspot_set_active("RONGORONGO TABLET", true);
@@ -318,7 +318,7 @@ void Room607::parser() {
 		}
 	} else if (useFlag && player_said("RED BOULDER")) {
 		digi_play("607r10", 1);
-	} else if (player_said("left") ) {
+	} else if (player_said("left") && left()) {
 		// No implementation
 	} else if (player_said("right") && right()) {
 		// No implementation
