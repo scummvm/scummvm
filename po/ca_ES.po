@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-10 16:53+0000\n"
-"PO-Revision-Date: 2025-02-12 14:18+0000\n"
+"PO-Revision-Date: 2025-03-12 17:18+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -4142,7 +4142,7 @@ msgstr "Commuta la captura del ratolí"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:545
 msgid "Toggle resizable window"
-msgstr ""
+msgstr "Commuta la finestra redimensionable"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:550 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
@@ -6260,6 +6260,11 @@ msgid ""
 "or\n"
 "2. Any .sav file inside the QfG2 Remake game directory"
 msgstr ""
+"El joc llistarà els personatges exportats dels jocs de Sierra que es poden "
+"importar:\n"
+"1. Desa els fitxers anomenats qfg1*.sav o qfg1vga*.sav que hi ha dins del "
+"directori de desament ScummVM, o\n"
+"2. Qualsevol fitxer .sav que hi ha dins del directori del joc QfG2 Remake"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -6341,7 +6346,7 @@ msgstr "Recurs anterior"
 #. I18N: Switch to next image in internal game resource viewer
 #: engines/asylum/metaengine.cpp:247
 msgid "Next resource"
-msgstr ""
+msgstr "Següent recurs"
 
 #. I18N: Switch to previous palette in internal game resource viewer
 #: engines/asylum/metaengine.cpp:255
@@ -6369,11 +6374,11 @@ msgstr "Carrega de totes maneres"
 
 #: engines/bagel/metaengine.cpp:41
 msgid "Wait"
-msgstr ""
+msgstr "Espera"
 
 #: engines/bagel/metaengine.cpp:42
 msgid "Soldier 714 Eye Cheat"
-msgstr ""
+msgstr "Truc de l'ull del soldat 714"
 
 #: engines/bagel/metaengine.cpp:83
 msgid "General Keys"
@@ -6820,66 +6825,66 @@ msgstr "Finestra de confirmació per sortir"
 #. In order to escape the dice game loop press Right/Left Alt
 #: engines/cge/metaengine.cpp:250
 msgid "ALTered Item"
-msgstr ""
+msgstr "Element ALTerat"
 
 #: engines/cge/metaengine.cpp:257
 msgid "Inventory Item 1 (Select/Deselect)"
-msgstr ""
+msgstr "Element 1 de l'inventari (selecciona/desselecciona)"
 
 #: engines/cge/metaengine.cpp:262
 msgid "Inventory Item 2 (Select/Deselect)"
-msgstr ""
+msgstr "Element 2 de l'inventari (selecciona/desselecciona)"
 
 #: engines/cge/metaengine.cpp:267
 msgid "Inventory Item 3 (Select/Deselect)"
-msgstr ""
+msgstr "Element 3 de l'inventari (selecciona/desselecciona)"
 
 #: engines/cge/metaengine.cpp:272
 msgid "Inventory Item 4 (Select/Deselect)"
-msgstr ""
+msgstr "Element 4 de l'inventari (selecciona/desselecciona)"
 
 #: engines/cge/metaengine.cpp:277
 msgid "Inventory Item 5 (Select/Deselect)"
-msgstr ""
+msgstr "Element 5 de l'inventari (selecciona/desselecciona)"
 
 #: engines/cge/metaengine.cpp:282
 msgid "Inventory Item 6 (Select/Deselect)"
-msgstr ""
+msgstr "Element 6 de l'inventari (selecciona/desselecciona)"
 
 #: engines/cge/metaengine.cpp:287
 msgid "Inventory Item 7 (Select/Deselect)"
-msgstr ""
+msgstr "Element 7 de l'inventari (selecciona/desselecciona)"
 
 #: engines/cge/metaengine.cpp:292
 msgid "Inventory Item 8 (Select/Deselect)"
-msgstr ""
+msgstr "Element 8 de l'inventari (selecciona/desselecciona)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
 #. Sets the current access to only the first Location
 #: engines/cge/metaengine.cpp:300
 msgid "DEBUG: Access to Location 1"
-msgstr ""
+msgstr "DEBUG: Accés a la ubicació 1"
 
 #. I18N: Sets the current access to Locations 1 to 8.
 #: engines/cge/metaengine.cpp:306
 msgid "DEBUG: Access to Locations 1-8"
-msgstr ""
+msgstr "DEBUG: Accés a les ubicacions 1-8"
 
 #. I18N: Sets the current access to Locations 1 to 16.
 #: engines/cge/metaengine.cpp:312
 msgid "DEBUG: Access to Locations 1-16"
-msgstr ""
+msgstr "DEBUG: Accés a les ubicacions 1-16"
 
 #. I18N: Sets the current access to Locations 1 to 23.
 #: engines/cge/metaengine.cpp:318
 msgid "DEBUG: Access to Locations 1-23"
-msgstr ""
+msgstr "DEBUG: Accés a les ubicacions 1-23"
 
 #. I18N: Sets the current access to Locations 1 to 24.
 #: engines/cge/metaengine.cpp:324
 msgid "DEBUG: Access to Locations 1-24"
-msgstr ""
+msgstr "DEBUG: Accés a les ubicacions 1-24"
 
 #: engines/cge2/metaengine.cpp:59
 msgid "Enable Text to Speech for Objects and Options"
@@ -6943,7 +6948,7 @@ msgstr "Assignació de tecles de la pantalla de sortida"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
-msgstr ""
+msgstr "Surt de la pantalla d'introducció de Sony"
 
 #: engines/cine/metaengine.cpp:283
 msgid "Select option / Click in game"
@@ -6995,7 +7000,7 @@ msgstr "Activa"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
-msgstr ""
+msgstr "Parla"
 
 #: engines/cine/metaengine.cpp:345
 msgid "Action menu"
@@ -7032,11 +7037,11 @@ msgstr "Mou cap avall a la dreta"
 
 #: engines/cine/metaengine.cpp:416
 msgid "Menu option up"
-msgstr ""
+msgstr "Opció de menú cap amunt"
 
 #: engines/cine/metaengine.cpp:421
 msgid "Menu option down"
-msgstr ""
+msgstr "Opció de menú avall"
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -7044,6 +7049,9 @@ msgid ""
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
+"AVÍS: La partida desada que esteu carregant està utilitzant un format "
+"temporal incorrecte. Les coses es trencaran. Si us plau, considereu començar "
+"l'Operation Stealth des del començament utilitzant noves partides desades."
 
 #: engines/crab/input/input.cpp:119
 msgid "Talk/Interact"
@@ -7152,16 +7160,16 @@ msgid "Unable to locate the darkseed.dat engine data file."
 msgstr "No s'ha pogut localitzar el fitxer de dades del motor darkseed.dat."
 
 #: engines/darkseed/metaengine.cpp:47
-#, fuzzy
-#| msgid "Use DOS version music tempos"
 msgid "Use floppy version music"
-msgstr "Utilitza els tempos de música de versió DOS"
+msgstr "Utilitza la música de la versió en disquet"
 
 #: engines/darkseed/metaengine.cpp:48
 msgid ""
 "Use the music from the floppy version. The floppy version's music files must "
 "be copied to the SOUND directory."
 msgstr ""
+"Utilitza la música de la versió del disquet. Els fitxers de música de la "
+"versió del disquet s'han de copiar al directori SOUND."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:75 engines/dragons/metaengine.cpp:136
@@ -7187,7 +7195,7 @@ msgstr "Commuta el rellotge"
 
 #: engines/dgds/metaengine.cpp:76
 msgid "Next dialog / menu item"
-msgstr ""
+msgstr "Següent diàleg / element de menú"
 
 #: engines/dgds/metaengine.cpp:77
 msgid "Previous dialog / menu item"
@@ -7207,7 +7215,7 @@ msgstr "Recull / Opera"
 
 #: engines/dgds/metaengine.cpp:82
 msgid "Activate Inventory Object"
-msgstr ""
+msgstr "Activa l'objecte de l'inventari"
 
 #: engines/dgds/metaengine.cpp:85 engines/got/metaengine.cpp:90
 msgid "Game Keys"
@@ -7222,7 +7230,7 @@ msgstr ""
 
 #: engines/draci/metaengine.cpp:155
 msgid "Skip intro/Exit map or inventory"
-msgstr ""
+msgstr "Omet el mapa d'entrada/sortida o l'inventari"
 
 #: engines/draci/metaengine.cpp:161
 msgid "Open map"
@@ -7244,7 +7252,7 @@ msgstr "Obre el menú principal"
 
 #: engines/draci/metaengine.cpp:192
 msgid "Toggle between mouse pointer and the last game item"
-msgstr ""
+msgstr "Commuta entre el punter del ratolí i l'últim element del joc"
 
 #: engines/draci/metaengine.cpp:198
 msgid "Previous item in inventory"
@@ -7371,7 +7379,7 @@ msgstr "Gràfics autèntics"
 
 #: engines/freescape/metaengine.cpp:120
 msgid "Keep graphics as close as possible to the original"
-msgstr ""
+msgstr "Mantén els gràfics el més a prop possible de l'original"
 
 #: engines/freescape/metaengine.cpp:130
 msgid "Enable rock travel"
@@ -7379,7 +7387,7 @@ msgstr "Habilita el viatge amb roca"
 
 #: engines/freescape/metaengine.cpp:131
 msgid "Enable traveling using a rock shoot at start"
-msgstr ""
+msgstr "Habilita viatjar llançant una roca des del començament"
 
 #: engines/freescape/movement.cpp:49 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -7456,7 +7464,7 @@ msgstr "Còrrer"
 
 #: engines/freescape/games/castle/castle.cpp:294
 msgid "Crawl"
-msgstr ""
+msgstr "Arrossegar-se"
 
 #: engines/freescape/games/castle/castle.cpp:300
 #: engines/freescape/games/eclipse/eclipse.cpp:259
@@ -7487,17 +7495,17 @@ msgstr "Descendeix/Vola avall"
 
 #: engines/freescape/games/dark/dark.cpp:246
 msgid "Enable/Disable Jetpack"
-msgstr ""
+msgstr "Activa/Desactiva Jetpack"
 
 #. I18N: drilling rig is an in game item
 #: engines/freescape/games/driller/driller.cpp:191
 msgid "Deploy drilling rig"
-msgstr ""
+msgstr "Desplega l'equip de perforació"
 
 #. I18N: drilling rig is an in game item
 #: engines/freescape/games/driller/driller.cpp:198
 msgid "Collect drilling rig"
-msgstr ""
+msgstr "Recull l'equip de perforació"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/eclipse/eclipse.cpp:238
@@ -7642,11 +7650,11 @@ msgstr "Dispara"
 
 #: engines/got/metaengine.cpp:60
 msgid "Magic"
-msgstr ""
+msgstr "Màgia"
 
 #: engines/got/metaengine.cpp:64
 msgid "Thor Dies"
-msgstr ""
+msgstr "Mort de Thor"
 
 #: engines/got/got.cpp:185 engines/got/got.cpp:195
 msgid "Savegames are not available in demo mode"
