@@ -35,23 +35,21 @@ private:
 	GfxSurface _background, _scroll;
 	GfxSurface _scrollTop, _scrollBottom, _scrollMiddle;
 	GfxSurface _scrollContent;
-	const char *_filename, *_waveFilename;
+	const char *_filename, *_soundFilename;
 	CBofSound *_dictation = nullptr;
-	ViewCallback _callback = nullptr;
 	Common::StringArray _lines;
 	Common::Rect _moreRect;
 	Common::String _more;
 	int _scrollY = 0;
 
 	void renderPage();
-	void closeDialog();
 
 public:
 	Rules();
 	virtual ~Rules() {}
 
 	static void show(const char *filename,
-		const char *waveFile, ViewCallback callback);
+		const char *soundFilename);
 
 	void draw() override;
 	bool msgOpen(const OpenMessage &msg) override;

@@ -366,6 +366,10 @@ void UIElement::replaceView(const Common::String &name, bool replaceAllViews) {
 	g_events->replaceView(name, replaceAllViews);
 }
 
+void UIElement::replaceView() {
+	g_events->replaceView(this);
+}
+
 void UIElement::addView(UIElement *ui) {
 	g_events->addView(ui);
 }

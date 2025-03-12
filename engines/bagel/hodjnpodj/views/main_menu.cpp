@@ -21,7 +21,9 @@
 
 #include "common/translation.h"
 #include "bagel/hodjnpodj/views/main_menu.h"
+#include "bagel/hodjnpodj/views/rules.h"
 #include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/metaengine.h"
 
 namespace Bagel {
@@ -29,18 +31,11 @@ namespace HodjNPodj {
 
 void MainMenu::show(
 		uint nFlags, const char *rulesFileName,
-		const char *wavFileName, ViewCallback optionsCallback,
-		ViewCallback closeCallback) {
+		const char *rulesSoundFileName) {
 	MainMenu *view = (MainMenu *)g_events->findView("MainMenu");
 	view->_flags = nFlags;
 	view->_rulesFilename = rulesFileName;
-	view->_wavFilename = wavFileName;
-	view->_optionsCallback = optionsCallback;
-	view->_closeCallback = closeCallback;
-
-	if (!(nFlags & NO_OPTIONS)) {
-		assert(optionsCallback != nullptr);
-	}
+	view->_rulesSoundFilename = rulesSoundFileName;
 
 	view->addView();
 }
@@ -113,7 +108,7 @@ bool MainMenu::msgClose(const CloseMessage &msg) {
 
 bool MainMenu::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
-		closeDialog();
+		close();
 		return true;
 	}
 
@@ -121,14 +116,23 @@ bool MainMenu::msgAction(const ActionMessage &msg) {
 }
 
 bool MainMenu::msgGame(const GameMessage &msg) {
-	// TODO: Handle buttons
+	Common::String btn = msg._stringValue;
 
-	return true;
-}
+	if (btn == "MenuRules") {
+		Rules::show(_rulesFilename, _rulesSoundFilename);
+		return true;
+	}
 
-void MainMenu::closeDialog() {
-	close();
-	_closeCallback();
+#if 0
+	_rulesButton("MenuRules", _s("&Rules"), this),
+		_newGameButton("MenuNewGame", _s("&New Game"), this),
+		_optionsButton("MenuOptions", _s("&Options"), this),
+		_audioButton("MenuAudio", _s("&Audio"), this),
+		_continueButton("MenuContinue", _s("&Continue"), this),
+		_quitButton("MenuQuit", _s("&Quit"), this) {
+
+#endif
+	return false;
 }
 
 } // namespace HodjNPodj

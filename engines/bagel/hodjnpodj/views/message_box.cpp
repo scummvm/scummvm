@@ -41,11 +41,11 @@ namespace HodjNPodj {
 
 
 void MessageBox::show(const Common::String &line1,
-		const Common::String &line2, ViewCallback callback) {
+		const Common::String &line2, const char *closeMessage) {
 	MessageBox *view = (MessageBox *)g_events->findView("MessageBox");
 	view->_line1 = line1;
 	view->_line2 = line2;
-	view->_callback = callback;
+	view->_closeMessage = closeMessage;
 	view->addView();
 }
 
@@ -81,7 +81,7 @@ bool MessageBox::msgClose(const CloseMessage &msg) {
 bool MessageBox::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_SELECT ||
 		msg._action == KEYBIND_ESCAPE) {
-		closeDialog();
+		close();
 		return true;
 	}
 
@@ -90,7 +90,7 @@ bool MessageBox::msgAction(const ActionMessage &msg) {
 
 bool MessageBox::msgGame(const GameMessage &msg) {
 	if (msg._name == "BUTTON") {
-		closeDialog();
+		close();
 		return true;
 	}
 
@@ -109,9 +109,11 @@ void MessageBox::draw() {
 	s.writeString(_line2, r, BLACK, Graphics::kTextAlignCenter);
 }
 
-void MessageBox::closeDialog() {
-	close();
-	_callback();
+void MessageBox::close() {
+	View::close();
+
+	if (_closeMessage)
+		g_events->focusedView()->send(GameMessage(_closeMessage));
 }
 
 } // namespace HodjNPodj

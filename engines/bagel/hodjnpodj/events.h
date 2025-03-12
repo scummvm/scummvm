@@ -176,6 +176,7 @@ public:
 	 */
 	void replaceView(UIElement *ui, bool replaceAllViews = false);
 	void replaceView(const Common::String &name, bool replaceAllViews = false);
+	void replaceView();
 
 	/**
 	 * Adds a focused view to the view stack without replacing current one

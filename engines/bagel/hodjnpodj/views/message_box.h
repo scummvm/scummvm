@@ -34,22 +34,22 @@ private:
 	OkButton _okButton;
 	Common::String _line1;
 	Common::String _line2;
-	ViewCallback _callback;
-
-	void closeDialog();
+	const char *_closeMessage = nullptr;
 
 public:
 	MessageBox();
 	virtual ~MessageBox() {}
 
 	static void show(const Common::String &title,
-		const Common::String &msg, ViewCallback callback);
+		const Common::String &msg,
+		const char *closeMessage = nullptr);
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
+	void close();
 };
 
 } // namespace HodjNPodj

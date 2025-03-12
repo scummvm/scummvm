@@ -39,9 +39,7 @@ class MainMenu: public View {
 private:
 	uint _flags = 0;
 	const char *_rulesFilename = nullptr;
-	const char *_wavFilename;
-	ViewCallback _optionsCallback;
-	ViewCallback _closeCallback;
+	const char *_rulesSoundFilename = nullptr;
 
 	GfxSurface _background;
 	ColorButton _rulesButton;
@@ -51,16 +49,13 @@ private:
 	ColorButton _continueButton;
 	ColorButton _quitButton;
 
-	void closeDialog();
-
 public:
 	MainMenu();
 	virtual ~MainMenu() {}
 
 	static void show(
 		uint nFlags, const char *rulesFileName,
-		const char *wavFileName, ViewCallback optionsCallback,
-		ViewCallback closeCallback);
+		const char *rulesSoundFilename);
 
 	void draw() override;
 	bool msgOpen(const OpenMessage &msg) override;

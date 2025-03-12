@@ -58,13 +58,15 @@ namespace HodjNPodj {
 Rules::Rules() : View("Rules"), _more(_s(MORE_TEXT_BLURB)) {
 }
 
-void Rules::show(const char *filename, const char *waveFile,
-		ViewCallback callback) {
+void Rules::show(const char *filename, const char *soundFilename) {
 	Rules *view = (Rules *)g_events->findView("Rules");
 	view->_filename = filename;
-	view->_waveFilename = waveFile;
-	view->_callback = callback;
-	view->addView();
+	view->_soundFilename  = soundFilename;
+
+	if (g_events->focusedView()->getName() == "MainMenu")
+		view->replaceView();
+	else
+		view->addView();
 }
 
 bool Rules::msgOpen(const OpenMessage &msg) {
@@ -134,8 +136,8 @@ bool Rules::msgOpen(const OpenMessage &msg) {
 	_scrollY = 0;
 
 	// Play dictation
-	if (_waveFilename)
-		_dictation = new CBofSound(this, _waveFilename,
+	if (_soundFilename)
+		_dictation = new CBofSound(this, _soundFilename,
 			SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);
 
 	return View::msgOpen(msg);
@@ -153,7 +155,7 @@ bool Rules::msgClose(const CloseMessage &msg) {
 bool Rules::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_SELECT ||
 		msg._action == KEYBIND_ESCAPE) {
-		closeDialog();
+		close();
 		return true;
 	}
 
@@ -162,7 +164,7 @@ bool Rules::msgAction(const ActionMessage &msg) {
 
 bool Rules::msgGame(const GameMessage &msg) {
 	if (msg._name == "BUTTON") {
-		closeDialog();
+		close();
 		return true;
 	}
 
@@ -254,11 +256,6 @@ void Rules::renderPage() {
 		// Write it out
 		s.writeString(line, Common::Point(0, y), BLACK);
 	}
-}
-
-void Rules::closeDialog() {
-	close();
-	_callback();
 }
 
 bool Rules::tick() {

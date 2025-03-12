@@ -309,6 +309,21 @@ bool Fuge::msgAction(const ActionMessage &msg) {
 	return true;
 }
 
+bool Fuge::msgGame(const GameMessage &msg) {
+	if (msg._name == "GAME_OVER") {
+		gameOverClosed();
+		return true;
+	} else if (msg._name == "NEW_LIFE") {
+		newLifeClosed();
+		return true;
+	} else if (msg._name == "ROUND_COMPLETE") {
+		roundCompleteClosed();
+		return true;
+	}
+
+	return false;
+}
+
 bool Fuge::msgKeypress(const KeypressMessage &msg) {
 	switch (msg.keycode) {
 	case Common::KEYCODE_F1:
@@ -316,10 +331,8 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 		gamePause();
 		CBofSound::waitWaveSounds();
 		Rules::show("fuge/fuge.txt",
-			(pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : nullptr),
-			[]() {
-				((Fuge *)g_events->findView("Fuge"))->gameResume();
-			});
+			(pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : nullptr)
+		);
 		break;
 
 	case Common::KEYCODE_F2:
@@ -338,8 +351,7 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 		break;
 
 	case Common::KEYCODE_BACKSPACE:
-		MessageBox::show("ScummVM", "Lorem Ipsum", []() {
-		});
+		MessageBox::show("ScummVM", "Lorem Ipsum");
 		break;
 
 	default:
@@ -681,13 +693,7 @@ void Fuge::showOptionsMenu() {
 			(pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) |
 			(_bGameActive ? 0 : NO_RETURN),
 			"fuge/fuge.txt",
-			pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL,
-			[]() {
-				((Fuge *)g_events->findView("Fuge"))->getUserOptions();
-			},
-			[]() {
-				((Fuge *)g_events->findView("Fuge"))->optionsClosed();
-			}
+			pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL
 		);
 	}
 }
@@ -1107,17 +1113,13 @@ void Fuge::loseBall() {
 		}
 
 		Common::String msg = Common::String::format("Score:  %ld", _lScore);
-		MessageBox::show("Game over.", msg, []() {
-			((Fuge *)g_events->findView("Fuge"))->gameOverClosed();
-		});
+		MessageBox::show("Game over.", msg, "GAME_OVER");
 
 	} else {
 		// Display score, and start a new ball
 		Common::String title = Common::String::format("Score:  %ld", _lScore);
 		Common::String msg = Common::String::format("Balls Left:  %d", _nBalls);
-		MessageBox::show(title, msg, []() {
-			((Fuge *)g_events->findView("Fuge"))->newLifeClosed();
-		});
+		MessageBox::show(title, msg, "NEW_LIFE");
 	}
 }
 
@@ -1616,9 +1618,7 @@ void Fuge::ballvsBrick(double length) {
 						// User wins this round
 						title = Common::String::format("Round complete.");
 						msg = Common::String::format("Score:  %ld", _lScore);
-						MessageBox::show(title, msg, []() {
-							((Fuge *)g_events->findView("Fuge"))->roundCompleteClosed();
-						});
+						MessageBox::show(title, msg, "ROUND_COMPLETE");
 
 					} else {
 						// There are more bricks left,
