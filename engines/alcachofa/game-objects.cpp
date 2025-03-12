@@ -358,9 +358,9 @@ void WalkingCharacter::update() {
 	auto activeFloor = room()->activeFloor();
 	if (activeFloor != nullptr) {
 		if (activeFloor->polygonContaining(_sourcePos) < 0)
-			_sourcePos = _currentPos = activeFloor->getClosestPoint(_sourcePos);
+			_sourcePos = _currentPos = activeFloor->closestPointTo(_sourcePos);
 		if (activeFloor->polygonContaining(_currentPos) < 0)
-			_currentPos = activeFloor->getClosestPoint(_currentPos);
+			_currentPos = activeFloor->closestPointTo(_currentPos);
 	}
 
 	if (!_isWalking) {

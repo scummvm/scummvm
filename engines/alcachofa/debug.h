@@ -48,9 +48,9 @@ public:
 		Point target3D;
 
 		if (_polygonI < 0 || (uint)_polygonI >= floor->polygonCount())
-			target3D = floor->getClosestPoint(mousePos3D);
+			target3D = floor->closestPointTo(mousePos3D);
 		else
-			target3D = floor->at((uint)_polygonI)._points[0];
+			target3D = floor->at((uint)_polygonI).closestPointTo(mousePos3D);
 		auto target2Dv = g_engine->camera().transform3Dto2D(
 			{ (float)target3D.x, (float)target3D.y, kBaseScale });
 

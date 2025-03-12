@@ -88,6 +88,51 @@ EdgeDistances Polygon::edgeDistances(uint startPointI, const Point &query) const
 	return distances;
 }
 
+static Point wiggleOnToLine(Point a, Point b, Point q)
+{
+	// due to rounding errors contains(bestPoint) might be false for on-edge closest points, let's fix that
+	// maybe there is a more mathematical solution to this, but it suffices for now
+	if (sideOfLine(a, b, q) >= 0) return q;
+	if (sideOfLine(a, b, q + Point(+1, 0)) >= 0) return q + Point(+1, 0);
+	if (sideOfLine(a, b, q + Point(-1, 0)) >= 0) return q + Point(-1, 0);
+	if (sideOfLine(a, b, q + Point(0, +1)) >= 0) return q + Point(0, +1);
+	if (sideOfLine(a, b, q + Point(0, -1)) >= 0) return q + Point(0, -1);
+	assert(false && "More than two pixels means some more serious math error occured");
+}
+
+Point Polygon::closestPointTo(const Common::Point& query, float &distanceSqr) const
+{
+	assert(_points.size() > 0);
+	Common::Point bestPoint = {};
+	distanceSqr = std::numeric_limits<float>::infinity();
+	for (uint i = 0; i < _points.size(); i++)
+	{
+		auto edgeDists = edgeDistances(i, query);
+		if (edgeDists._onEdge < 0.0f)
+		{
+			float pointDistSqr = as2D(query - _points[i]).getSquareMagnitude();
+			if (pointDistSqr < distanceSqr)
+			{
+				bestPoint = _points[i];
+				distanceSqr = pointDistSqr;
+			}
+		}
+		if (edgeDists._onEdge >= 0.0f && edgeDists._onEdge <= edgeDists._edgeLength)
+		{
+			float edgeDistSqr = powf(edgeDists._toEdge , 2.0f);
+			if (edgeDistSqr < distanceSqr)
+			{
+				distanceSqr = edgeDistSqr;
+				uint j = (i + 1) % _points.size();
+				bestPoint = _points[i] + (_points[j] - _points[i]) * (edgeDists._onEdge / edgeDists._edgeLength);
+				bestPoint = wiggleOnToLine(_points[i], _points[j], bestPoint);
+			}
+		}		
+	}
+	assert(contains(bestPoint));
+	return bestPoint;
+}
+
 static float depthAtForLine(const Point &a, const Point &b, const Point &q, int8 depthA, int8 depthB) {
 	return (sqrtf(a.sqrDist(q)) / a.sqrDist(b) * depthB + depthA) * 0.01f;
 }
@@ -249,6 +294,25 @@ int32 Shape::polygonContaining(const Point &query) const {
 
 bool Shape::contains(const Point &query) const {
 	return polygonContaining(query) >= 0;
+}
+
+Point Shape::closestPointTo(const Point &query, int32 &polygonI) const
+{
+	assert(_polygons.size() > 0);
+	float bestDistanceSqr = std::numeric_limits<float>::infinity();
+	Point bestPoint = {};
+	for (uint i = 0; i < _polygons.size(); i++)
+	{
+		float curDistanceSqr = std::numeric_limits<float>::infinity();
+		Point curPoint = at(i).closestPointTo(query, curDistanceSqr);
+		if (curDistanceSqr < bestDistanceSqr)
+		{
+			bestDistanceSqr = curDistanceSqr;
+			bestPoint = curPoint;
+			polygonI = (int32)i;
+		}
+	}
+	return bestPoint;
 }
 
 void Shape::setAsRectangle(const Rect &rect) {
@@ -441,8 +505,7 @@ bool PathFindingShape::findPath(const Point &from, const Point &to_, Stack<Point
 		return false;
 	int32 toContaining = polygonContaining(to);
 	if (toContaining < 0) {
-		to = getClosestPoint(to);
-		toContaining = polygonContaining(to);
+		to = closestPointTo(to, toContaining);
 		assert(toContaining >= 0);
 	}
 	//if (canGoStraightThrough(from, to, fromContaining, toContaining)) {
@@ -521,24 +584,6 @@ void PathFindingShape::floydWarshallPath(
 		assert(toLink < _linkPoints.size());
 	}
 	path.push(_linkPoints[fromLink]);
-}
-
-Point PathFindingShape::getClosestPoint(const Point &query) const {
-	// TODO: Improve this function, it does not seem correct
-
-	assert(!_points.empty());
-	Point bestPoint;
-	uint bestDistance = UINT_MAX;
-	for (auto p : _points) {
-		uint curDistance = query.sqrDist(p);
-		if (curDistance < bestDistance) {
-			bestDistance = curDistance;
-			bestPoint = p;
-		}
-	}
-
-	assert(bestDistance < UINT_MAX);
-	return bestPoint;
 }
 
 FloorColorShape::FloorColorShape() {}
