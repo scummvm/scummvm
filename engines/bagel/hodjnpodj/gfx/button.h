@@ -87,6 +87,16 @@ public:
 		_itemState = enabled ? 0 : ODS_DISABLED;
 		redraw();
 	}
+
+	uint getItemState() const {
+		return _itemState;
+	}
+	bool isDisabled() const {
+		return (_itemState & ODS_DISABLED) != 0;
+	}
+	bool isEnabled() const {
+		return !isDisabled();
+	}
 };
 
 class BmpButton : public Button {

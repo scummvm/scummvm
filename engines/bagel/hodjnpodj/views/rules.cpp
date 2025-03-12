@@ -62,11 +62,7 @@ void Rules::show(const char *filename, const char *soundFilename) {
 	Rules *view = (Rules *)g_events->findView("Rules");
 	view->_filename = filename;
 	view->_soundFilename  = soundFilename;
-
-	if (g_events->focusedView()->getName() == "MainMenu")
-		view->replaceView();
-	else
-		view->addView();
+	view->addView();
 }
 
 bool Rules::msgOpen(const OpenMessage &msg) {

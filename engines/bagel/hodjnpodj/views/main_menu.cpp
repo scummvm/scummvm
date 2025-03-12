@@ -107,7 +107,8 @@ bool MainMenu::msgClose(const CloseMessage &msg) {
 }
 
 bool MainMenu::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
+	if (msg._action == KEYBIND_ESCAPE &&
+			_continueButton.isEnabled()) {
 		close();
 		return true;
 	}
@@ -121,15 +122,25 @@ bool MainMenu::msgGame(const GameMessage &msg) {
 	if (btn == "MenuRules") {
 		Rules::show(_rulesFilename, _rulesSoundFilename);
 		return true;
+	} else if (btn == "MenuOptions") {
+		// Pass a message to the minigame to show it's
+		// custom options dialog
+		g_events->focusedView()->send(GameMessage("OPTIONS"));
+		return true;
+	} else if (btn == "MenuContinue") {
+		// Return to minigame
+		close();
+		return true;
+	} else if (btn == "MenuQuit") {
+		close();							// Close menu dialog
+		g_events->focusedView()->close();	// Close minigame
+		return true;
 	}
 
-#if 0
-	_rulesButton("MenuRules", _s("&Rules"), this),
+#if TODO
 		_newGameButton("MenuNewGame", _s("&New Game"), this),
-		_optionsButton("MenuOptions", _s("&Options"), this),
 		_audioButton("MenuAudio", _s("&Audio"), this),
 		_continueButton("MenuContinue", _s("&Continue"), this),
-		_quitButton("MenuQuit", _s("&Quit"), this) {
 
 #endif
 	return false;
