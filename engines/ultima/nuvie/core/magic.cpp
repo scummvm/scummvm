@@ -398,6 +398,7 @@ bool Magic::process_script_return(uint8 ret) {
 		delete magic_script;
 		magic_script = nullptr;
 		state = MAGIC_STATE_READY;
+		Game::get_game()->get_actor_manager()->startActors(); // end player turn
 		break;
 	case NUVIE_SCRIPT_GET_TARGET :
 		state = MAGIC_STATE_ACQUIRE_TARGET;
