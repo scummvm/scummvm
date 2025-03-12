@@ -46,6 +46,11 @@ struct Polygon {
 
 	bool contains(const Common::Point &query) const;
 	EdgeDistances edgeDistances(uint startPointI, const Common::Point &query) const;
+	Common::Point closestPointTo(const Common::Point &query, float& distanceSqr) const;
+	inline Common::Point closestPointTo(const Common::Point &query) const {
+		float dummy;
+		return closestPointTo(query, dummy);
+	}
 };
 
 struct PathFindingPolygon : Polygon {
@@ -122,6 +127,11 @@ public:
 	Polygon at(uint index) const;
 	int32 polygonContaining(const Common::Point &query) const;
 	bool contains(const Common::Point &query) const;
+	Common::Point closestPointTo(const Common::Point &query, int32 &polygonI) const;
+	inline Common::Point closestPointTo(const Common::Point &query) const {
+		int32 dummy;
+		return closestPointTo(query, dummy);
+	}
 	void setAsRectangle(const Common::Rect &rect);
 
 protected:
@@ -160,7 +170,6 @@ public:
 		const Common::Point &from,
 		const Common::Point &to,
 		Common::Stack<Common::Point> &path) const;
-	Common::Point getClosestPoint(const Common::Point &query) const;
 
 private:
 	void setupLinks();
