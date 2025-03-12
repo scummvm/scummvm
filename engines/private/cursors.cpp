@@ -22,7 +22,13 @@
 #include "common/rect.h"
 #include "graphics/cursorman.h"
 
+#include "common/formats/winexe_ne.h"
+#include "common/formats/winexe_pe.h"
+#include "graphics/wincursor.h"
+
 #include "private/private.h"
+
+#include "engines/advancedDetector.h"
 
 namespace Private {
 
@@ -236,7 +242,7 @@ static const byte MOUSECURSOR_kZoomOut[] = {
 	0,0,0,0,0,0,0,1,2,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,
 	1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,0,0,0,0,
 	1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0,0,
-	1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,0,0,0,0,
+	1,1,2,2,2,2,2,2,2,2,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,1,1,0,0,0,0,
 	1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,0,0,0,0,
 	0,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,0,0,0,0,
 	0,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,0,0,0,0,0,
@@ -307,6 +313,12 @@ struct CursorTable {
 	int hotspotY;
 };
 
+struct CursorEntry {
+	const char *name;
+ 	const char *aname;
+	uint id;
+};
+
 static const CursorTable cursorTable[] = {
 	{ "kTurnLeft",  "k1", MOUSECURSOR_kTurnLeft,  32, 32, 29, 16 },
 	{ "kTurnRight", "k2", MOUSECURSOR_kTurnRight, 32, 32, 1,  15 },
@@ -319,18 +331,69 @@ static const CursorTable cursorTable[] = {
 	{ nullptr,      nullptr, nullptr,                0,  0,  0,  0  }
 };
 
+static const CursorEntry cursorTable2[] = {
+	{ "kTurnLeft",  "k1", 23 },
+	{ "kTurnRight", "k2", 9  },
+	{ "kZoomIn",    "k3", 17 },
+	{ "kZoomOut",   "k4", 11 },
+	{ "kExit",      "k5", 7  },
+	{ "kPhone",     "k6", 25 },
+	{ "kInventory", "k7", 19 },
+	{ nullptr, nullptr,   0  }
+};
+
 void PrivateEngine::changeCursor(const Common::String &cursor) {
-	const CursorTable *entry = cursorTable;
-	while (entry->name) {
-		if (cursor == entry->name || cursor == entry->aname)
+	// const CursorTable *entry = cursorTable;
+	// while (entry->name) {
+	// 	if (cursor == entry->name || cursor == entry->aname)
+	// 		break;
+	// 	entry++;
+	// }
+	// if (!entry->name)
+	// 	return;
+
+	if (cursor == "default") {
+		CursorMan.replaceCursor(Graphics::makeDefaultWinCursor());
+		CursorMan.showMouse(true);
+		return;
+	}
+
+	Common::Array<Graphics::WinCursorGroup*> cursors;
+	if (_installerArchive.open("SUPPORT/PVTEYE.Z")) {
+		Common::SharedPtr<Common::WinResources> exe(Common::WinResources::createFromEXE(_installerArchive.createReadStreamForMember("PVTEYE.EXE")));
+		
+		if (exe == nullptr) {
+			error("Executable not found");
+		}
+
+		const Common::Array<Common::WinResourceID> cursorGroups = exe->getIDList(Common::kWinGroupCursor);
+
+		cursors.resize(cursorGroups.size());
+		for (uint i = 0; i < cursorGroups.size(); i++) {
+			cursors[i] = Graphics::WinCursorGroup::createCursorGroup(exe.get(), cursorGroups[i]);
+		}
+	}
+
+	const CursorEntry *entry = cursorTable2;
+	uint id = 0;
+
+	while (entry->name != nullptr) {
+		if (entry->name == cursor || entry->aname == cursor) {
+			id = entry->id;
 			break;
+		}
 		entry++;
 	}
-	if (!entry->name)
-		return;
 
-	CursorMan.replaceCursor(entry->buf, entry->w, entry->h, entry->hotspotX, entry->hotspotY, 0);
-	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
+	for (uint i = 0; i < cursors.size(); i++) {
+		if (cursors[i]->cursors[0].id.getID() == id) {
+			CursorMan.replaceCursor(cursors[i]->cursors[0].cursor);
+			break;
+		}
+	}
+
+	//CursorMan.replaceCursor(entry->buf, entry->w, entry->h, entry->hotspotX, entry->hotspotY, 0);
+	//CursorMan.replaceCursorPalette(cursorPalette, 0, 3);//17 13L 15R w7
 	CursorMan.showMouse(true);
 }
 
