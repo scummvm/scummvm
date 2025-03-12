@@ -1715,7 +1715,7 @@ void Room603::conv603a() {
 		sendWSMessage_60000(_tt);
 		_ttShadow = series_show("tt walker shadow 4", 0xf00, 0, -1, -1, 0, 53, 291, 293);
 		_trigger1 = 400;
-		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, 0,
+		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, false,
 			triggerMachineByHashCallback, "tt");
 		_G(kernel).trigger_mode = KT_DAEMON;
 		sendWSMessage_10000(1, _tt, _tt03, 110, 122, 400, _ttD01, 1, 1, 0);
@@ -1729,7 +1729,7 @@ void Room603::conv603a() {
 	case 16:
 		ws_hide_walker();
 		_val2 = 1;
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 345, 300, -56, 0x100, 1,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 345, 300, -56, 0x100, true,
 			triggerMachineByHashCallback, "rip");
 		_shadow = series_show("safari shadow 2", 0xf00, 128, -1, -1, 0, 56, 345, 300);
 		_G(kernel).trigger_mode = KT_DAEMON;

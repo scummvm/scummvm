@@ -20,7 +20,6 @@
  */
 
 #include "m4/riddle/rooms/section6/room644.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
 #include "m4/riddle/riddle.h"
 
@@ -68,7 +67,7 @@ void Room644::parser() {
 		} else {
 			if (_G(kernel).trigger == 6)
 				_G(flags)[V207] = 1;
-			sketchInJournal(0);
+			sketchInJournal(nullptr);
 		}
 
 		_G(player).command_ready = false;
