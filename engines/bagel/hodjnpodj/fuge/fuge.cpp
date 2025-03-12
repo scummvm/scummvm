@@ -213,7 +213,6 @@ void Fuge::clear() {
 	_soundTrack = nullptr;
 	_bPause = false;
 	_bGameActive = false;
-	_bIgnoreScrollClick = false;
 	_bBallOnPaddle = false;
 	_nPaddleCelIndex = 29;
 	_bMovingPaddle = false;
@@ -270,6 +269,15 @@ bool Fuge::msgClose(const CloseMessage &msg) {
 	releaseMasterSprites();	// Release all master sprites
 
 	return true;
+}
+
+bool Fuge::msgFocus(const FocusMessage &msg) {
+	_scrollButton.setPressed(false);
+
+	if (msg._priorView && msg._priorView->getName() == "MainMenu")
+		optionsClosed();
+
+	return MinigameView::msgFocus(msg);
 }
 
 bool Fuge::msgAction(const ActionMessage &msg) {
@@ -685,20 +693,15 @@ void Fuge::releaseMasterSounds() {
 void Fuge::showOptionsMenu() {
 	_scrollButton.setPressed(true);
 
-	if (!_bIgnoreScrollClick) {
-		_bIgnoreScrollClick = true;
+	CBofSound::waitWaveSounds();
 
-		gamePause();
-		CBofSound::waitWaveSounds();
-
-		// Show the options view
-		MainMenu::show(
-			(pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) |
-			(_bGameActive ? 0 : NO_RETURN),
-			"fuge/fuge.txt",
-			pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL
-		);
-	}
+	// Show the options view
+	MainMenu::show(
+		(pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) |
+		(_bGameActive ? 0 : NO_RETURN),
+		"fuge/fuge.txt",
+		pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL
+	);
 }
 
 void Fuge::gamePause() {
@@ -1142,15 +1145,7 @@ void Fuge::newLifeClosed() {
 	startBall();
 }
 
-void Fuge::getUserOptions() {
-	error("TODO: Fuge::getUserOptions");
-}
-
 void Fuge::optionsClosed() {
-	// Show the command scroll
-	_scrollButton.setPressed(false);
-	_bIgnoreScrollClick = false;
-
 	if (!pGameParams->bMusicEnabled && (_soundTrack != nullptr)) {
 		_soundTrack->stop();
 		delete _soundTrack;

@@ -69,6 +69,8 @@ void MinigameView::close() {
 		g_engine->_bReturnToZoom = false;
 		g_engine->startBackgroundMidi();
 		replaceView("Minigames");
+	} else {
+		View::close();
 	}
 }
 

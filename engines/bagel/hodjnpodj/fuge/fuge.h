@@ -78,7 +78,6 @@ private:
 	bool _bMovingPaddle = false;
 	bool _bGameActive = false;
 	bool _bPause = false;
-	bool _bIgnoreScrollClick = false;
 	bool _bPaddleHit = false;
 	bool _bOuterWall = false;
 	bool _bJoyActive = false;
@@ -95,6 +94,7 @@ private:
 	void loadMasterSounds();
 	void showOptionsMenu();
 	void gamePause();
+	void gameResume();
 	void playGame();
 	void gameReset();
 	void loadIniSettings();
@@ -115,20 +115,19 @@ private:
 	void ballvsPaddle();
 	void ballvsBrick(double);
 
+	void gameOverClosed();
+	void newLifeClosed();
+	void roundCompleteClosed();
+	void optionsClosed();
+
 public:
 	Fuge();
 	virtual ~Fuge() {
 	}
 
-	void gameOverClosed();
-	void newLifeClosed();
-	void roundCompleteClosed();
-	void getUserOptions();
-	void optionsClosed();
-	void gameResume();
-
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
+	bool msgFocus(const FocusMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgMouseMove(const MouseMoveMessage &msg) override;
