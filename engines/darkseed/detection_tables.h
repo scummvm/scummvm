@@ -36,7 +36,16 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
-{
+	{ // version 1.2
+		"darkseed",
+		nullptr,
+		AD_ENTRY1s("TOS.EXE", "9fad9d0a4b5e7d0657172593750c7b81", 214784),
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+	{
 		"darkseed",
 		nullptr,
 		AD_ENTRY1s("TOS.EXE", "73854f950819beb0eb0d73bd52cc9030", 149412),
