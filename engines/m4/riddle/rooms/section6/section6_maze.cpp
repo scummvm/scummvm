@@ -20,7 +20,6 @@
  */
 
 #include "m4/riddle/rooms/section6/section6_maze.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
 
 namespace M4 {
@@ -39,10 +38,10 @@ void Maze::daemon() {
 }
 
 void Maze::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
 
-	if (player_said("gear") && player_said("STATUE")) {
+	if ((player_said("gear") || lookFlag) && player_said("STATUE")) {
 		digi_play("623R02", 1, 255, -1, 623);
 	} else if (lookFlag && player_said("RED BOULDER")) {
 		digi_play("623R01", 1, 255, -1, 623);
