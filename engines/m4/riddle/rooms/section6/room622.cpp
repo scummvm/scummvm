@@ -20,7 +20,6 @@
  */
 
 #include "m4/riddle/rooms/section6/room622.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
 
 namespace M4 {

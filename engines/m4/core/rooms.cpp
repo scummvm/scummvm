@@ -52,7 +52,7 @@ void Room::parser() {
 
 
 void Sections::global_section_constructor() {
-	uint sectionNum = _G(game).new_section;
+	const uint sectionNum = _G(game).new_section;
 	assert(sectionNum >= 1 && sectionNum <= 9);
 
 	_activeSection = _sections[sectionNum - 1];
@@ -242,10 +242,9 @@ void Sections::get_ipl() {
 		delete _G(inverse_pal);
 	_G(inverse_pal) = nullptr;
 
-	char *name;
 	Common::String filename;
 
-	name = env_find(_G(currentSceneDef).art_base);
+	char *name = env_find(_G(currentSceneDef).art_base);
 	if (name) {
 		// Means found in database
 		filename = f_extension_new(name, "ipl");
@@ -310,11 +309,11 @@ void Sections::game_control_cycle() {
 
 		if (_G(player).walker_in_this_scene && _G(camera_reacts_to_player) &&
 				_G(gameDrawBuff)->w > 640 && _G(my_walker)) {
-			int xp = (_G(my_walker)->myAnim8->myRegs[IDX_X] >> 16) + screen->x1;
+			const int xp = (_G(my_walker)->myAnim8->myRegs[IDX_X] >> 16) + screen->x1;
 
 			if (xp > 560 && _cameraShiftAmount >= 0) {
 				_cameraShiftAmount += screen->x1 - 427;
-				int xv = _cameraShiftAmount + _G(gameDrawBuff)->w - 1;
+				const int xv = _cameraShiftAmount + _G(gameDrawBuff)->w - 1;
 
 				if (xv < 639)
 					_cameraShiftAmount = -(_G(gameDrawBuff)->w - 640);
@@ -369,7 +368,6 @@ void Sections::parse_player_command_now() {
 
 void Sections::pal_game_task() {
 	int32 status;
-	bool updateVideo;
 	int delta = 0;
 	Common::String line;
 
@@ -385,7 +383,7 @@ void Sections::pal_game_task() {
 			g_vars->getHotkeys()->toggle_through_cursors(change);
 		}
 
-		updateVideo = !_cameraShiftAmount && !_cameraShift_vert_Amount;
+		const bool updateVideo = !_cameraShiftAmount && !_cameraShift_vert_Amount;
 
 		cycleEngines(_G(game_bgBuff)->get_buffer(), &(_G(currentSceneDef).depth_table[0]),
 			_G(screenCodeBuff)->get_buffer(), (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), updateVideo);

@@ -147,7 +147,7 @@ void Room615::daemon() {
 
 	case 25:
 		_flag1 = false;
-		_ripTalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 393, 361, 97, 256, 1,
+		_ripTalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 393, 361, 97, 256, true,
 			triggerMachineByHashCallback, "rip talker");
 		sendWSMessage_10000(1, _ripTalker, _ripTalk, 1, 1, 40, _ripTalk, 1, 7, 4);
 		sendWSMessage_1a0000(_ripTalker, 11);
@@ -196,7 +196,7 @@ void Room615::daemon() {
 				392, 361, 10, triggerMachineByHashCallback3000, "rip");
 			sendWSMessage_10000(_pu, 426, 347, 9, 50, 1);
 
-			_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 				triggerMachineByHashCallback, "untie tt");
 			sendWSMessage_10000(1, _tt, _loop7, 1, 1, 50, _loop7, 1, 5, 1);
 			sendWSMessage_1a0000(_tt, 15);
@@ -227,7 +227,7 @@ void Room615::daemon() {
 		break;
 
 	case 57:
-		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "x");
 		sendWSMessage_10000(1, _tt, _loop0, 1, 1, 60, _loop0, 1, 5, 1);
 		sendWSMessage_1a0000(_tt, 13);
@@ -249,7 +249,7 @@ void Room615::daemon() {
 		break;
 
 	case 65:
-		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "spleen");
 		sendWSMessage_10000(1, _tt, _loop1, 1, 1, 75, _loop1, 1, 7, 1);
 		sendWSMessage_1a0000(_tt, 13);
@@ -269,7 +269,7 @@ void Room615::daemon() {
 	case 80:
 		if (_ctr1 >= 1) {
 			_ctr1 = 0;
-			_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 				triggerMachineByHashCallback, "spleen");
 			sendWSMessage_10000(1, _tt, _loop2, 1, 1, 85, _loop2, 1, 9, 1);
 			sendWSMessage_1a0000(_tt, 13);
@@ -334,12 +334,12 @@ void Room615::daemon() {
 	case 102:
 		if (_ctr1 >= 1) {
 			_ctr1 = 0;
-			_untie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			_untie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 				triggerMachineByHashCallback, "spleen");
 			sendWSMessage_10000(1, _untie, _loop5, 1, 1, 105, _loop5, 1, 5, 1);
 			sendWSMessage_1a0000(_untie, 15);
 
-			_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 				triggerMachineByHashCallback, "spleen");
 			sendWSMessage_10000(1, _tt, _loop6, 1, 1, 105, _loop6, 1, 1, 1);
 			digi_play("615r09", 1, 255, 105);
@@ -423,13 +423,13 @@ void Room615::daemon() {
 
 	case 120:
 		midi_play("love", 255, 0, -1, 949);
-		_untie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_untie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "spleen");
 		sendWSMessage_10000(1, _untie, _loop5, 1, 1, 125, _loop5, 1, 1, 1);
 		sendWSMessage_190000(_untie, 15);
 		sendWSMessage_1a0000(_untie, 15);
 
-		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_tt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "spleen");
 		sendWSMessage_10000(1, _tt, _loop7, 1, 1, 125, _loop7, 1, 5, 1);
 		sendWSMessage_1a0000(_tt, 13);
