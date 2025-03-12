@@ -1336,7 +1336,7 @@ void Room603::parser() {
 		player_set_commands_allowed(false);
 		ws_hide_walker();
 		_val2 = 1;
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 345, 300, -56, 0x100, 1,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 345, 300, -56, 0x100, true,
 			triggerMachineByHashCallback, "rip");
 		_shadow = series_show("safari shadow 2", 0xf00, 128, -1, -1, 0, 56, 345, 300);
 		_G(kernel).trigger_mode = KT_DAEMON;
@@ -1355,7 +1355,7 @@ void Room603::parser() {
 		player_set_commands_allowed(false);
 		ws_hide_walker();
 		_val2 = 1;
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 311, 308, -59, 0x100, 1,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 311, 308, -59, 0x100, true,
 			triggerMachineByHashCallback, "rip");
 		_shadow = series_show("safari shadow 2", 0xf00, 128, -1, -1, 0, 59, 311, 308);
 
@@ -1925,7 +1925,7 @@ bool Room603::takeSleeve() {
 		case 2:
 			hotspot_set_active("SLEEVE", false);
 			inv_give_to_player("SLEEVE");
-			kernel_examine_inventory_object("ping sleeve", 5, 1, 280, 220, 3, 0, -1);
+			kernel_examine_inventory_object("ping sleeve", 5, 1, 280, 220, 3, nullptr, -1);
 			terminateMachineAndNull(_sleeve);
 			return true;
 
