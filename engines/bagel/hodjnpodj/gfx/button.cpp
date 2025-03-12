@@ -187,8 +187,22 @@ bool ColorButton::msgKeypress(const KeypressMessage &msg) {
 
 /*------------------------------------------------------------------------*/
 
+void CheckButton::setCheck(bool checked) {
+	// TODO
+}
+
+/*------------------------------------------------------------------------*/
+
 OkButton::OkButton(UIElement *parent) :
-		ColorButton(_s("&OK"), parent) {
+		ColorButton("OK", _s("&OK"), parent) {
+}
+
+CancelButton::CancelButton(UIElement *parent) :
+	ColorButton("CANCEL", _s("Cancel"), parent) {
+}
+
+DefaultsButton::DefaultsButton(UIElement *parent) :
+	ColorButton("DEFAULTS", _s("Defaults"), parent) {
 }
 
 } // namespace HodjNPodj

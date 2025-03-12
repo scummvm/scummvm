@@ -328,7 +328,7 @@ bool Fuge::msgGame(const GameMessage &msg) {
 		roundCompleteClosed();
 		return true;
 	} else if (msg._name == "OPTIONS") {
-		addView("FugeOptions");
+		_optionsView.addView();
 		return true;
 	}
 

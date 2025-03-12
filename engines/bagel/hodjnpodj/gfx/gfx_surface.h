@@ -22,6 +22,7 @@
 #ifndef HODJNPODJ_VIEWS_GFX_SURFACE_H
 #define HODJNPODJ_VIEWS_GFX_SURFACE_H
 
+#include "common/str-array.h"
 #include "graphics/managed_surface.h"
 #include "graphics/font.h"
 #include "graphics/palette.h"

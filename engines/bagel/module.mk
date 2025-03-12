@@ -109,6 +109,7 @@ MODULE_OBJS = \
 	hodjnpodj/events.o \
 	hodjnpodj/messages.o \
 	hodjnpodj/gfx/button.o \
+	hodjnpodj/gfx/scrollbar.o \
 	hodjnpodj/gfx/cursor.o \
 	hodjnpodj/gfx/gfx_surface.o \
 	hodjnpodj/gfx/palette.o \
@@ -125,7 +126,8 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/views/minigames.o \
 	hodjnpodj/metagame/views/movie.o \
 	hodjnpodj/metagame/views/title_menu.o \
-	hodjnpodj/fuge/fuge.o
+	hodjnpodj/fuge/fuge.o \
+	hodjnpodj/fuge/options.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)

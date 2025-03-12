@@ -26,6 +26,7 @@
 #include "bagel/hodjnpodj/gfx/button.h"
 #include "bagel/hodjnpodj/libs/vector.h"
 #include "bagel/hodjnpodj/fuge/defines.h"
+#include "bagel/hodjnpodj/fuge/options.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/sound.h"
 
@@ -35,6 +36,7 @@ namespace Fuge {
 
 class Fuge : public MinigameView {
 private:
+	Options _optionsView;
 	const CVector _gvCenter;
 	BmpButton _scrollButton;
 	Graphics::ManagedSurface _background;

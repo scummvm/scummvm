@@ -1,0 +1,163 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/config-manager.h"
+#include "bagel/hodjnpodj/fuge/options.h"
+#include "bagel/hodjnpodj/fuge/defines.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Fuge {
+
+Options::Options() : View("FugeOptions"),
+		_numBallsRect(22, 22, 13, 35),
+		_startLevelRect(22, 57, 135, 70),
+		_ballSpeedRect(22, 92, 135, 105),
+		_paddleSizeRect(22, 127, 110, 140),
+		_numBallsScroll("NumBalls",
+			Common::Rect(22, 35, 92, 53), this),
+		_startLevelScroll("StartLevel",
+			Common::Rect(22, 70, 92, 88), this),
+		_ballSpeedScroll("BallSpeed",
+			Common::Rect(22, 105, 92, 123), this),
+		_paddleSizeScroll("PaddleSize",
+			Common::Rect(22, 140, 92, 158), this),
+		_outerWallCheck("WallCheck",
+			Common::Rect(60, 60, 70, 70), this) {
+
+	_numBallsScroll.setScrollRange(BALLS_MIN, BALLS_MAX);
+	_startLevelScroll.setScrollRange(LEVEL_MIN, LEVEL_MAX);
+	_ballSpeedScroll.setScrollRange(SPEED_MIN, SPEED_MAX);
+	_paddleSizeScroll.setScrollRange(PSIZE_MIN, PSIZE_MAX);
+
+}
+
+bool Options::msgOpen(const OpenMessage &msg) {
+	loadIniSettings();
+
+	return View::msgOpen(msg);
+}
+
+bool Options::msgGame(const GameMessage &msg) {
+	if (msg._name == "BUTTON") {
+		if (msg._stringValue == "OK") {
+			if (_hasChanges)
+				saveIniSettings();
+			close();
+		} else if (msg._stringValue == "CANCEL") {
+			close();
+		} else if (msg._stringValue == "DEFAULTS") {
+			reset();
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Options::msgAction(const ActionMessage &msg) {
+	return true;
+}
+
+void Options::draw() {
+	GfxSurface s = getSurface();
+	Common::String text;
+	s.setFontSize(10);
+
+	text = Common::String::format("Number of Balls: %d", _numBalls);
+	s.writeString(text, _numBallsRect);
+	text = Common::String::format("Starting Level: %d", _startLevel);
+	s.writeString(text, _startLevelRect);
+	text = Common::String::format("Ball Speed: %d", _ballSpeed);
+	s.writeString(text, _ballSpeedRect);
+	text = Common::String::format("Paddle Size: %d", _paddleSize);
+	s.writeString(text, _paddleSizeRect);
+}
+
+void Options::reset() {
+	_numBalls = BALLS_DEF;
+	_startLevel = LEVEL_DEF;
+	_ballSpeed = SPEED_DEF;
+	_paddleSize = PSIZE_DEF;
+	_outerWall = false;
+
+	putDialogData();
+}
+
+void Options::putDialogData() {
+	_numBallsScroll.setScrollPos(_numBalls);
+	_startLevelScroll.setScrollPos(_startLevel);
+	_ballSpeedScroll.setScrollPos(_ballSpeed);
+	_paddleSizeScroll.setScrollPos(_paddleSize);
+	_outerWallCheck.setCheck(_outerWall);
+
+	redraw();
+}
+
+void Options::loadIniSettings() {
+	Common::String domain = ConfMan.getActiveDomainName();
+	ConfMan.setActiveDomain("Fuge");
+
+	_numBalls = !ConfMan.hasKey("NumberOfBalls") ? BALLS_DEF :
+		ConfMan.getInt("NumberOfBalls");
+	if ((_numBalls < BALLS_MIN) || (_numBalls > BALLS_MAX))
+		_numBalls = BALLS_DEF;
+
+	_startLevel = !ConfMan.hasKey("StartingLevel") ? LEVEL_DEF :
+		ConfMan.getInt("StartingLevel");
+	if ((_startLevel < LEVEL_MIN) || (_startLevel > LEVEL_MAX))
+		_startLevel = LEVEL_DEF;
+
+	_ballSpeed = !ConfMan.hasKey("BallSpeed") ? SPEED_DEF :
+		ConfMan.getInt("BallSpeed");
+	if ((_ballSpeed < SPEED_MIN) || (_ballSpeed > SPEED_MAX))
+		_ballSpeed = SPEED_DEF;
+
+	_paddleSize = !ConfMan.hasKey("PaddleSize") ? PSIZE_DEF :
+		ConfMan.getInt("PaddleSize");
+	if ((_paddleSize < PSIZE_MIN) || (_paddleSize > PSIZE_MAX))
+		_paddleSize = PSIZE_DEF;
+
+	_outerWall = !ConfMan.hasKey("OuterWall") ? false :
+		ConfMan.getBool("OuterWall");
+
+	_hasChanges = false;
+
+	ConfMan.setActiveDomain(domain);
+}
+
+void Options::saveIniSettings() {
+	Common::String domain = ConfMan.getActiveDomainName();
+	ConfMan.setActiveDomain("Fuge");
+
+	ConfMan.setInt("NumberOfBalls", _numBalls);
+	ConfMan.setInt("StartingLevel", _startLevel);
+	ConfMan.setInt("BallSpeed", _ballSpeed);
+	ConfMan.setInt("PaddleSize", _paddleSize);
+	ConfMan.setBool("OuterWall", _outerWall);
+
+	ConfMan.setActiveDomain(domain);
+}
+
+} // namespace Fuge
+} // namespace HodjNPodj
+} // namespace Bagel

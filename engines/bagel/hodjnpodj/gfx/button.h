@@ -160,9 +160,34 @@ public:
 	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
+class CheckButton : public Button {
+public:
+	CheckButton(const Common::String &name, UIElement *parent = nullptr) :
+		Button(name, parent) {
+	}
+	CheckButton(const Common::String &name, const Common::Rect &r, UIElement *parent = nullptr) :
+		Button(name, parent) {
+		setBounds(r);
+	}
+	~CheckButton() override {
+	}
+
+	void setCheck(bool checked);
+};
+
 class OkButton : public ColorButton {
 public:
 	OkButton(UIElement *parent = nullptr);
+};
+
+class CancelButton : public ColorButton {
+public:
+	CancelButton(UIElement *parent = nullptr);
+};
+
+class DefaultsButton : public ColorButton {
+public:
+	DefaultsButton(UIElement *parent = nullptr);
 };
 
 } // namespace HodjNPodj
