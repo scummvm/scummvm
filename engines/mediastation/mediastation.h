@@ -95,6 +95,7 @@ public:
 
 	Common::Point _mousePos;
 	Common::Array<Common::Rect> _dirtyRects;
+	bool _needsHotspotRefresh = false;
 
 	// All Media Station titles run at 640x480.
 	const uint16 SCREEN_WIDTH = 640;

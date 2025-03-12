@@ -171,6 +171,11 @@ Common::Error MediaStationEngine::run() {
 				break;
 			}
 
+			if (_needsHotspotRefresh) {
+				refreshActiveHotspot();
+				_needsHotspotRefresh = false;
+			}
+
 			if (!(*it)->isActive()) {
 				it = _assetsPlaying.erase(it);
 			} else {
@@ -201,7 +206,7 @@ void MediaStationEngine::processEvents() {
 
 		case Common::EVENT_MOUSEMOVE: {
 			_mousePos = g_system->getEventManager()->getMousePos();
-			refreshActiveHotspot();
+			_needsHotspotRefresh = true;
 			break;
 		}
 
