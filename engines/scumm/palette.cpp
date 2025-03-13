@@ -25,6 +25,7 @@
 #include "common/util.h"
 
 #include "graphics/macega.h"
+#include "graphics/macgamma.h"
 #include "graphics/paletteman.h"
 
 #include "scumm/resource.h"
@@ -1728,7 +1729,7 @@ void ScummEngine::updatePalette() {
 
 	if (_game.platform == Common::kPlatformMacintosh && _game.heversion == 0 && _useGammaCorrection) {
 		for (int i = 0; i < 3 * num; ++i)
-			paletteColors[i] = _macGammaCorrectionLookUp[paletteColors[i]];
+			paletteColors[i] = Graphics::macGammaCorrectionLookUp[paletteColors[i]];
 	} else if (_game.platform == Common::kPlatformSegaCD && _game.id == GID_MONKEY && _enableSegaShadowMode) {
 		// Apparently the Sega had only 15 levels of intensity for each
 		// color component. You might think there would be 16, but the
