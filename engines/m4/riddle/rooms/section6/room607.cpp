@@ -265,7 +265,6 @@ void Room607::parser() {
 			digi_play("607_s02", 2);
 			break;
 
-			break;
 		default:
 			break;
 		}
