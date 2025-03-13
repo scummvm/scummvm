@@ -2327,7 +2327,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 					break;
 				case kTheRect:
 					d = Datum(Common::Rect(0, 0, 0, 0));
-					break;
+break;
 				case kTheRegPoint:
 					d = Datum(Common::Point(0, 0));
 					break;
@@ -2441,6 +2441,31 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 		CastMemberID id = *obj.u.cast;
 		CastMember *member = movie->getCastMember(id);
 		if (!member) {
+			Common::String key = Common::String::format("%d%s", kTheCast, propName.c_str());
+			bool emptyAllowed = false;
+			if (_theEntityFields.contains(key)) {
+				switch (_theEntityFields[key]->field) {
+				case kTheFileName:
+				case kTheScriptText:
+				case kTheLoaded:
+				case kThePurgePriority:
+				case kTheCenter:
+				case kTheFrameRate:
+				case kThePausedAtStart:
+				case kThePreLoad:
+				case kThePalette:
+				case kTheCrop:
+				case kTheRegPoint:
+					emptyAllowed = true;
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (emptyAllowed) {
+				return;
+			}
 			g_lingo->lingoError("Lingo::setObjectProp(): %s not found", id.asString().c_str());
 			return;
 		}
