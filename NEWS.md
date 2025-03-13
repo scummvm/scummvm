@@ -7,6 +7,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Dark Seed.
    - Added support for God of Thunder.
    - Added support for The Adventures of Willy Beamish.
+   - Added support for Heart of China.
 
  Hopkins:
    - Fix crash using elevator to go to other floors.
