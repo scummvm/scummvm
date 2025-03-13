@@ -1678,9 +1678,11 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 
 	if (!_assemblyContext->isFactory()) {
 		// Register this context's functions with the containing archive.
-		for (auto &it : _assemblyContext->_functionHandlers) {
-			if (!_assemblyArchive->functionHandlers.contains(it._key)) {
-				_assemblyArchive->functionHandlers[it._key] = it._value;
+		if (scriptType == kScoreScript || scriptType == kMovieScript) {
+			for (auto &it : _assemblyContext->_functionHandlers) {
+				if (!_assemblyArchive->functionHandlers.contains(it._key)) {
+					_assemblyArchive->functionHandlers[it._key] = it._value;
+				}
 			}
 		}
 	}
