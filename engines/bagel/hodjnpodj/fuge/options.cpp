@@ -74,16 +74,36 @@ bool Options::msgClose(const CloseMessage &msg) {
 }
 
 bool Options::msgGame(const GameMessage &msg) {
+	Common::String ctl = msg._stringValue;
+
 	if (msg._name == "BUTTON") {
-		if (msg._stringValue == "OK") {
+		if (ctl == "OK") {
 			saveIniSettings();
 			close();
-		} else if (msg._stringValue == "CANCEL") {
+		} else if (ctl == "CANCEL") {
 			close();
-		} else if (msg._stringValue == "DEFAULTS") {
+		} else if (ctl == "DEFAULTS") {
 			reset();
 		}
 
+		return true;
+
+	} else if (msg._name == "SCROLL") {
+		if (ctl == "NumBalls") {
+			_numBalls = msg._value;
+			_hasChanges = true;
+		} else if (ctl == "StartLevel") {
+			_startLevel = msg._value;
+			_hasChanges = true;
+		} else if (ctl == "BallSpeed") {
+			_ballSpeed = msg._value;
+			_hasChanges = true;
+		} else if (ctl == "PaddleSize") {
+			_paddleSize = msg._value;
+			_hasChanges = true;
+		}
+
+		redraw();
 		return true;
 	}
 
@@ -125,6 +145,7 @@ void Options::putDialogData() {
 	_ballSpeedScroll.setScrollPos(_ballSpeed);
 	_paddleSizeScroll.setScrollPos(_paddleSize);
 	_outerWallCheck.setCheck(_outerWall);
+	_hasChanges = false;
 
 	redraw();
 }

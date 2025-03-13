@@ -82,6 +82,10 @@ bool View::msgUnfocus(const UnfocusMessage &msg) {
 
 bool View::msgMouseMove(const MouseMoveMessage &msg) {
 	checkFocusedControl(msg._pos);
+
+	if (_focusedElement)
+		_focusedElement->send(msg);
+	
 	return true;
 }
 

@@ -34,10 +34,12 @@ private:
 	int _minValue = 0;
 	int _maxValue = 9;
 	int _value = 5;
+	bool _isDragging = false;
 
 	void drawSquare(GfxSurface &s, const Common::Rect &r);
 	void drawArrow(GfxSurface &s, const Common::Rect &r, bool leftArrow);
 	Common::Rect getThumbRect() const;
+	int getIndexFromX(int xp) const;
 
 public:
 	ScrollBar(const Common::String &name, UIElement *uiParent = nullptr) :
@@ -49,6 +51,10 @@ public:
 	}
 
 	void draw() override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
+	bool msgMouseMove(const MouseMoveMessage &msg) override;
+	bool msgMouseLeave(const MouseLeaveMessage &msg) override;
 
 	void setScrollRange(int nMinPos, int nMaxPos,
 		bool bRedraw = true);

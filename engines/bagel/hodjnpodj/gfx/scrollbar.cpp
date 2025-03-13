@@ -66,18 +66,57 @@ void ScrollBar::drawArrow(GfxSurface &s, const Common::Rect &r,
 	}
 }
 
+bool ScrollBar::msgMouseDown(const MouseDownMessage &msg) {
+	if (msg._pos.x < (_bounds.left + _bounds.height())) {
+		// Left arrow button
+		if (_value > _minValue)
+			setScrollPos(_value - 1);
+
+	} else if (msg._pos.x >= (_bounds.right - _bounds.height())) {
+		// Right arrow button
+		if (_value < _maxValue)
+			setScrollPos(_value + 1);
+
+	} else {
+		// Presume we're dragging the thumb
+		setScrollPos(getIndexFromX(msg._pos.x));
+		_isDragging = true;
+	}
+
+	return true;
+}
+
+bool ScrollBar::msgMouseUp(const MouseUpMessage &msg) {
+	_isDragging = false;
+	return true;
+}
+
+bool ScrollBar::msgMouseMove(const MouseMoveMessage &msg) {
+	if (_isDragging)
+		setScrollPos(getIndexFromX(msg._pos.x));
+
+	return true;
+}
+
+bool ScrollBar::msgMouseLeave(const MouseLeaveMessage &msg) {
+	_isDragging = false;
+	return true;
+}
+
 void ScrollBar::setScrollRange(int nMinPos, int nMaxPos,
 		bool bRedraw) {
 	_minValue = nMinPos;
 	_maxValue = nMaxPos;
+	_value = CLIP(_value, _minValue, _maxValue);
 
 	if (bRedraw)
 		redraw();
 }
 
 void ScrollBar::setScrollPos(int value) {
-	_value = value;
+	_value = CLIP(value, _minValue, _maxValue);
 	redraw();
+	_parent->send(GameMessage("SCROLL", _name, _value));
 }
 
 Common::Rect ScrollBar::getThumbRect() const {
@@ -91,6 +130,20 @@ Common::Rect ScrollBar::getThumbRect() const {
 
 	return Common::Rect(xStart, 0,
 		xStart + _bounds.height(), _bounds.height());
+}
+
+int ScrollBar::getIndexFromX(int xp) const {
+	int slideStart = _bounds.left + _bounds.height();
+	int slideFinish = _bounds.right - (_bounds.height() * 2) + 1;
+	int slideArea = _bounds.width() - (_bounds.height() * 3) + 1;
+
+	if (xp < slideStart)
+		return _minValue;
+	if (xp >= slideFinish)
+		return _maxValue;
+
+	return _minValue + (xp - slideStart)
+		* (_maxValue - _minValue) / slideArea;
 }
 
 } // namespace HodjNPodj
