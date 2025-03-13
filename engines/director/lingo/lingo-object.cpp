@@ -73,6 +73,7 @@
 #include "director/lingo/xlibs/genutils.h"
 #include "director/lingo/xlibs/getscreenrectsxfcn.h"
 #include "director/lingo/xlibs/getscreensizexfcn.h"
+#include "director/lingo/xlibs/getsoundinlevel.h"
 #include "director/lingo/xlibs/gpid.h"
 #include "director/lingo/xlibs/henry.h"
 #include "director/lingo/xlibs/hitmap.h"
@@ -83,6 +84,7 @@
 #include "director/lingo/xlibs/ispippin.h"
 #include "director/lingo/xlibs/jitdraw3.h"
 #include "director/lingo/xlibs/labeldrvxobj.h"
+#include "director/lingo/xlibs/listdev.h"
 #include "director/lingo/xlibs/maniacbg.h"
 #include "director/lingo/xlibs/mapnavigatorxobj.h"
 #include "director/lingo/xlibs/memcheckxobj.h"
@@ -261,6 +263,7 @@ static const struct XLibProto {
 	XLIBDEF(GenUtilsXObj,		kXObj,			400),	// D4
 	XLIBDEF(GetScreenRectsXFCN,	kXObj,			300),	// D3
 	XLIBDEF(GetScreenSizeXFCN,	kXObj,			300),	// D3
+	XLIBDEF(GetSoundInLevelXObj,			kXObj,					400),	// D4
 	XLIBDEF(GpidXObj,			kXObj,			400),	// D4
 	XLIBDEF(HenryXObj,			kXObj,					400),	// D4
 	XLIBDEF(HitMap,				kXObj,			400),	// D4
@@ -272,6 +275,7 @@ static const struct XLibProto {
 	XLIBDEF(JourneyWareXINIXObj,kXObj,			400),	// D4
 	XLIBDEF(KeypollXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(LabelDrvXObj,		kXObj,			400),	// D4
+	XLIBDEF(ListDevXObj,			kXObj,					500),	// D5
 	XLIBDEF(MMovieXObj,			kXObj,			400),	// D4
 	XLIBDEF(ManiacBgXObj,		kXObj,			300),	// D3
 	XLIBDEF(MapNavigatorXObj,	kXObj,			400),	// D4
