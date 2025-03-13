@@ -170,7 +170,6 @@ public:
 	StartMovie getStartMovie() const;
 	void parseOptions();
 	Graphics::MacWindowManager *getMacWindowManager() const { return _wm; }
-	Archive *getMainArchive() const;
 	Lingo *getLingo() const { return _lingo; }
 	Window *getStage() const { return _stage; }
 	Window *getCurrentWindow() const { return _currentWindow; }
@@ -181,6 +180,8 @@ public:
 	void setCursorWindow(Window *window) { _cursorWindow = window; }
 	Movie *getCurrentMovie() const;
 	void setCurrentMovie(Movie *movie);
+	Archive *getMainArchive() const { return _mainArchive; }
+	void setMainArchive(Archive *archive) { _mainArchive = archive; }
 	Common::String getCurrentPath() const;
 	Common::String getCurrentAbsolutePath();
 	Common::Path getStartupPath() const;
@@ -264,6 +265,7 @@ public:
 	bool _centerStage;
 	char _dirSeparator;
 	bool _fixStageSize;
+	Archive *_mainArchive;
 	Common::Rect _fixStageRect;
 	Common::List<Common::String> _extraSearchPath;
 

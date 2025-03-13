@@ -52,7 +52,6 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_lingoPlayState = nullptr;
 
 	_currentMovie = nullptr;
-	_mainArchive = nullptr;
 	_nextMovie.frameI = -1;
 	_newMovieStarted = true;
 
