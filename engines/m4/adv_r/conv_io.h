@@ -102,7 +102,7 @@ void conv_set_handle(Conv *c);
 
 void conv_resume(Conv *c);
 void conv_resume();
-void conv_reset(char *filename);
+void conv_reset(const char *filename);
 
 void conv_reset_all();
 void conv_play(Conv *c);

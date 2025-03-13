@@ -663,7 +663,8 @@ static Conv *conv_restore_state(Conv *c) {
 
 		conv_unload(c);
 		c = nullptr;
-	} else c->exit_now = CONV_OK;
+	} else
+		c->exit_now = CONV_OK;
 
 i_am_so_done:
 	if (conv_save_buff)
