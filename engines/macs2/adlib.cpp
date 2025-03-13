@@ -734,42 +734,36 @@ void Adlib::OnTimer() {
 							// l0017_1C15:
 							bp8++;
 						} while (true);
-					//				// l0017_1C1A:
-					//				// TODO: Not sure about removal of AH bits in the original
-					//				if (g2291 == bp8) {
-					//					// l0017_1C27:
-					//					uint16 bp0C = 0;
-					//					// TODO: Not sure about upper bits removal for both
-					//					bp8 = g2291;
-					//					uint16 bp16 = g2291 - 1;
-					//					if (bp16 <= 0) {
-					//						// l0017_1C44:
-					//						uint16 bp0A = 0;
-					//						// TODO: Loop condition
-					//						do {
-					//							// l0017_1C49:
-					//							bp0A++;
-					//							// l0017_1C4C:
-					//							if (gArray222C[bp0A] != 0) {
-					//								// l0017_1C56:
-					//								gArray222C[bp0A]++;
-					//							}
-					//							// l0017_1C5D:
-					//							// TODO: Again several struct accesses that are not
-					//							// implemented yet
-					//							if (gArray222C[bp0A] > bp0C) {
-					//								// l0017_1C6B:
-					//								bp0C = gArray222C[bp0A];
-					//								bp8 = bp0A;
-					//							}
-					//							// l0017_1C7D:
-					//							if (bp0A == bp16) {
-					//								break;
-					//							}
-					//							// TODO: Continue from here
-					//						} while (true);
-					//					}
-					//					// l0017_1C85:
+						// l0017_1C1A:
+						if (g2291 == bp8) {
+							// l0017_1C27:
+							uint16 bp0C = 0;
+							bp8 = g2291;
+							uint16 bp16 = g2291 - 1;
+							if (bp16 > 0) {
+								// l0017_1C44:
+								uint16 bp0A = 0;
+								do {
+									// l0017_1C49:
+									bp0A++;
+									// l0017_1C4C:
+									if (gArray222C[bp0A] != 0) {
+										// l0017_1C56:
+										gArray222C[bp0A]++;
+									}
+									// l0017_1C5D:
+									if (gArray222C[bp0A] > bp0C) {
+										// l0017_1C6B:
+										bp0C = gArray222C[bp0A];
+										bp8 = bp0A;
+									}
+									// l0017_1C7D:
+									if (bp0A == bp16) {
+										break;
+									}
+								} while (true);
+							}
+						// l0017_1C85:
 					//					if (bp0C != 0) {
 					//						gArray222C[bp8] = 0;
 					//						gArray227F[bp8] = bp3;
@@ -796,8 +790,8 @@ void Adlib::OnTimer() {
 					//							// the return value
 					//							bp12 = Func19BE(gArray2288[bp8] << 0x4);
 					//							Func2839(bp8, bp12);
-					//						}
-					//						// l0017_1CF2:
+					}
+					// l0017_1CF2:
 					//						if (g2291 == bp8) {
 					//							// l0017_1CFF:
 					//							gArray2235[bp4] = bp8;
