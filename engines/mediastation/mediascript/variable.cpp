@@ -227,6 +227,12 @@ void Variable::putValue(Operand value) {
 		break;
 	}
 
+	case kOperandTypeFunction: {
+		_type = kVariableTypeFunction;
+		_value.functionId = value.getFunctionId();
+		break;
+	}
+
 	default:
 		error("Variable::putValue(): Assigning an unknown operand type %s (%d) to a variable not supported",
 			operandTypeToStr(value.getType()), static_cast<uint>(value.getType()));

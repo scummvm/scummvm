@@ -45,6 +45,7 @@ public:
 	union {
 		Common::String *string;
 		Collection *collection;
+		uint functionId;
 		int i;
 		double d;
 		uint assetId;

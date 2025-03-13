@@ -42,6 +42,7 @@ public:
 private:
 	Operand executeNextStatement();
 	Operand callBuiltInMethod(BuiltInMethod method, Operand self, Common::Array<Operand> &args);
+	Operand callFunction(uint functionId, uint parameterCount);
 	Operand getVariable(uint32 id, VariableScope scope);
 	void putVariable(uint32 id, VariableScope scope, Operand value);
 

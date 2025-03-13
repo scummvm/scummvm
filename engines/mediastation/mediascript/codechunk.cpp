@@ -88,29 +88,11 @@ Operand CodeChunk::executeNextStatement() {
 			return Operand();
 		}
 
-		case kOpcodeCallRoutine: {
+		case kOpcodeCallFunction: {
 			uint functionId = Datum(*_bytecode).u.i;
 			uint32 parameterCount = Datum(*_bytecode).u.i;
-			Common::Array<Operand> args;
 			debugC(5, kDebugScript, "%d (%d params)", functionId, parameterCount);
-			for (uint i = 0; i < parameterCount; i++) {
-				debugCN(5, kDebugScript, "  Param %d: ", i);
-				Operand arg = executeNextStatement();
-				args.push_back(arg);
-			}
-
-			Operand returnValue;
-			Function *function = g_engine->getFunctionById(functionId);
-			if (function != nullptr) {
-				// This is a title-defined function.
-				returnValue = function->execute(args);
-			} else {
-				// This is a function built in (and global to) the engine.
-				BuiltInFunction builtInFunctionId = static_cast<BuiltInFunction>(functionId);
-				debugC(5, kDebugScript, "  Function Name: %s ", builtInFunctionToStr(builtInFunctionId));
-				returnValue = g_engine->callBuiltInFunction(builtInFunctionId, args);
-			}
-			return returnValue;
+			return callFunction(functionId, parameterCount);
 		}
 
 		case kOpcodeCallMethod: {
@@ -336,6 +318,15 @@ Operand CodeChunk::executeNextStatement() {
 			return value;
 		}
 
+		case kOpcodeCallFunctionInVariable: {
+			uint parameterCount = Datum(*_bytecode).u.i;
+			Operand variable = executeNextStatement();
+			uint functionId = variable.getFunctionId();
+			debugC(5, kDebugScript, "Variable %d [function %d] (%d params)", variable.getVariable()->_id, functionId, parameterCount);
+
+			return callFunction(functionId, parameterCount);
+		}
+
 		default:
 			error("CodeChunk::getNextStatement(): Got unimplemented opcode %s (%d)", opcodeToStr(opcode), static_cast<uint>(opcode));
 		}
@@ -379,7 +370,7 @@ Operand CodeChunk::executeNextStatement() {
 		}
 
 		case kOperandTypeString: {
-			// This is indeed a raw string anot not a string wrapped in a datum!
+			// This is indeed a raw string, not a string wrapped in a datum!
 			// TODO: This copies the string. Can we read it directly from the chunk?
 			int size = Datum(*_bytecode, kDatumTypeUint16_1).u.i;
 			char *buffer = new char[size + 1];
@@ -409,6 +400,29 @@ Operand CodeChunk::executeNextStatement() {
 	default:
 		error("CodeChunk::getNextStatement(): Got unimplemented instruction type %s (%d)", instructionTypeToStr(instructionType), static_cast<uint>(instructionType));
 	}
+}
+
+Operand CodeChunk::callFunction(uint functionId, uint parameterCount) {
+	Common::Array<Operand> args;
+	for (uint i = 0; i < parameterCount; i++) {
+		debugCN(5, kDebugScript, "  Param %d: ", i);
+		Operand arg = executeNextStatement();
+		args.push_back(arg);
+	}
+
+	Operand returnValue;
+	Function *function = g_engine->getFunctionById(functionId);
+	if (function != nullptr) {
+		// This is a title-defined function.
+		returnValue = function->execute(args);
+	} else {
+		// This is a function built in (and global to) the engine.
+		BuiltInFunction builtInFunctionId = static_cast<BuiltInFunction>(functionId);
+		debugC(5, kDebugScript, "  Function Name: %s ", builtInFunctionToStr(builtInFunctionId));
+		returnValue = g_engine->callBuiltInFunction(builtInFunctionId, args);
+	}
+
+	return returnValue;
 }
 
 Operand CodeChunk::getVariable(uint32 id, VariableScope scope) {

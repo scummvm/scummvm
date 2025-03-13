@@ -181,6 +181,11 @@ uint Operand::getFunctionId() {
 		return _u.functionId;
 	}
 
+	case kOperandTypeVariableDeclaration: {
+		assert(_u.variable->_type == kVariableTypeFunction);
+		return _u.variable->_value.functionId;
+	}
+
 	default:
 		error("Operand::getFunction(): Attempt to get function ID from operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));

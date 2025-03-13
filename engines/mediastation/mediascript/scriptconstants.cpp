@@ -74,8 +74,8 @@ const char *opcodeToStr(Opcode opcode) {
 		return "%";
 	case kOpcodeNegate:
 		return "-";
-	case kOpcodeCallRoutine:
-		return "CallRoutine";
+	case kOpcodeCallFunction:
+		return "CallFunction";
 	case kOpcodeCallMethod:
 		return "CallMethod";
 	case kOpcodeDeclareVariables:
@@ -84,6 +84,8 @@ const char *opcodeToStr(Opcode opcode) {
 		return "Return";
 	case kOpcodeUnk1:
 		return "UNKNOWN (Unk1)";
+	case kOpcodeCallFunctionInVariable:
+		return "CallFunctionInVariable";
 	case kOpcodeWhile:
 		return "While";
 	default:
@@ -332,6 +334,8 @@ const char *operandTypeToStr(OperandType type) {
 		return "Collection";
 	case kOperandTypeFunction:
 		return "Function";
+	case kOperandTypeMethod:
+		return "Method";
 	default:
 		return "UNKNOWN";
 	}
@@ -341,6 +345,8 @@ const char *variableTypeToStr(VariableType type) {
 	switch (type) {
 	case kVariableTypeEmpty:
 		return "Empty";
+	case kVariableTypeFunction:
+		return "Function";
 	case kVariableTypeCollection:
 		return "Collection";
 	case kVariableTypeString:
