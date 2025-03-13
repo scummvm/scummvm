@@ -701,7 +701,7 @@ void Adlib::OnTimer() {
 			uint8 bp5 = bp10->peekByte();
 
 
-			if ((bp6 & 0x0F) == 0x90) {
+			if ((bp6 & 0xF0) == 0x90) {
 				// l0017_1BA1:
 				SIS_LogEntry(0x01D7, 0x1BA1);
 				if (bp5 != 0) {
@@ -1259,6 +1259,9 @@ StreamHandler *Adlib::Func19BE_SH(StreamHandler *inHandler, uint16 seekDelta) {
 	// l0017_19EA
 	pos += seekDelta;
 	result->seek(pos, SEEK_SET);
+	debug("Adlib seek by %.2x new offset %04x",
+		  seekDelta, pos);
+
 	return result;
 }
 
@@ -1309,6 +1312,7 @@ void Adlib::Func1A03() {
 	_nextEventTimer = 0;
 	uint8 bp1;
 	// l0017_1A0F:
+	uint8 continueCondition;
 	do {
 		bp1 = shMem2250->peekByte();
 		
@@ -1316,9 +1320,10 @@ void Adlib::Func1A03() {
 		_nextEventTimer = _nextEventTimer << 7;
 		_nextEventTimer += bp1 & 0x7F;
 		shMem2250 = Func19BE_SH(shMem2250, 1);
-
 		g225A++;
-	} while ((bp1 & 0x80) != 0);
+		continueCondition = bp1 & 0x80;
+		debug("1A03 iteration - Value: %.2x at offset %.4x Next timer: %.8x Continuation: %.2x", bp1, shMem2250->pos(), _nextEventTimer, continueCondition);
+	} while (continueCondition != 0);
 }
 
 void Adlib::Func2A80(uint8 blend_param, uint8 index, uint8 reg_base) {
