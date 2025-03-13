@@ -31,8 +31,13 @@ namespace HodjNPodj {
 
 class ScrollBar : public UIElement {
 private:
+	int _minValue = 0;
+	int _maxValue = 9;
+	int _value = 5;
+
 	void drawSquare(GfxSurface &s, const Common::Rect &r);
 	void drawArrow(GfxSurface &s, const Common::Rect &r, bool leftArrow);
+	Common::Rect getThumbRect() const;
 
 public:
 	ScrollBar(const Common::String &name, UIElement *uiParent = nullptr) :

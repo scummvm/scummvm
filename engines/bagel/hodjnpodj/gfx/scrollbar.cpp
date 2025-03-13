@@ -36,6 +36,8 @@ void ScrollBar::draw() {
 	Common::Rect right(s.w - s.h, 0, s.w, s.h);
 	drawSquare(s, right);
 	drawArrow(s, right, false);
+
+	drawSquare(s, getThumbRect());
 }
 
 void ScrollBar::drawSquare(GfxSurface &s, const Common::Rect &r) {
@@ -66,13 +68,30 @@ void ScrollBar::drawArrow(GfxSurface &s, const Common::Rect &r,
 
 void ScrollBar::setScrollRange(int nMinPos, int nMaxPos,
 		bool bRedraw) {
+	_minValue = nMinPos;
+	_maxValue = nMaxPos;
 
+	if (bRedraw)
+		redraw();
 }
 
 void ScrollBar::setScrollPos(int value) {
-
+	_value = value;
+	redraw();
 }
 
+Common::Rect ScrollBar::getThumbRect() const {
+	// The thumb will start after the left arrow button,
+	// and at most, it will be drawn before the right arrow
+	int slideArea = _bounds.width() - (_bounds.height() * 3) + 1;
+
+	int xStart = _bounds.height() +
+		slideArea * (_value - _minValue) /
+		(_maxValue - _minValue);
+
+	return Common::Rect(xStart, 0,
+		xStart + _bounds.height(), _bounds.height());
+}
 
 } // namespace HodjNPodj
 } // namespace Bagel
