@@ -27,6 +27,7 @@
 #include "common/serializer.h"
 #include "engines/engine.h"
 #include "graphics/managed_surface.h"
+#include "graphics/wincursor.h"
 #include "video/smk_decoder.h"
 
 #include "private/grammar.h"
@@ -103,6 +104,12 @@ typedef struct DossierInfo {
 	Common::String page1;
 	Common::String page2;
 } DossierInfo;
+
+typedef struct CursorInfo {
+	Common::String name;
+	Common::String aname;
+	Graphics::WinCursorGroup *cursorGroup;
+} CursorInfo;
 
 // funcs
 
@@ -205,9 +212,12 @@ public:
 	void drawScreenFrame(const byte *videoPalette);
 
 	// Cursors
+	Common::Array<CursorInfo> _cursors;
+	Common::String _cursorCache;
 	void changeCursor(const Common::String &);
 	Common::String getInventoryCursor();
 	Common::String getExitCursor();
+	void loadCursors();
 
 	// Rendering
 	Graphics::ManagedSurface *_compositeSurface;

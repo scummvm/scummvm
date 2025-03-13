@@ -125,6 +125,11 @@ PrivateEngine::~PrivateEngine() {
 
 	delete Gen::g_vm;
 	delete Settings::g_setts;
+
+	for (uint i = 0; i < _cursors.size(); i++)
+	{
+		delete _cursors[i].cursorGroup;
+	}
 }
 
 void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
@@ -224,6 +229,7 @@ Common::Error PrivateEngine::run() {
 
 	_safeColor = _pixelFormat.RGBToColor(65, 65, 65);
 	_screenRect = Common::Rect(0, 0, _screenW, _screenH);
+	loadCursors();
 	changeCursor("default");
 	_origin = Common::Point(0, 0);
 	_image = new Image::BitmapDecoder();
