@@ -29,31 +29,16 @@
 #include "zvision/sound/midi.h"
 #include "zvision/sound/zork_raw.h"
 
+#include "zvision/sound/volume_manager.h"
+
 #include "common/stream.h"
 #include "common/file.h"
 #include "audio/decoders/wave.h"
 
-namespace ZVision {
+#include "math/utils.h"
+#include "math/angle.h"
 
-// FIXME: This is wrong, and not what the original is doing.
-// Using actual linear volume values fixes bug #7176.
-/*static const uint8 dbMapLinear[256] =
-{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2,
-2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4,
-4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7,
-8, 8, 8, 9, 9, 9, 10, 10, 11, 11, 11, 12, 12, 13, 13, 14,
-14, 15, 15, 16, 16, 17, 18, 18, 19, 20, 21, 21, 22, 23, 24, 25,
-26, 27, 28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 40, 41, 43, 45,
-46, 48, 50, 52, 53, 55, 57, 60, 62, 64, 67, 69, 72, 74, 77, 80,
-83, 86, 89, 92, 96, 99, 103, 107, 111, 115, 119, 123, 128, 133, 137, 143,
-148, 153, 159, 165, 171, 177, 184, 191, 198, 205, 212, 220, 228, 237, 245, 255};*/
+namespace ZVision {
 
 MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool loop, uint8 volume)
 	: MusicNodeBASE(engine, key, SCRIPTING_EFFECT_AUDIO) {
@@ -84,9 +69,11 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 
 		if (_loop) {
 			Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
-			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, loopingAudioStream, -1, _volume /*dbMapLinear[_volume]*/);
+//			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, loopingAudioStream, -1, _volume /*dbMapLinear[_volume]*/);
+			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, loopingAudioStream, -1, _engine->getVolumeManager()->convert(_volume));
 		} else {
-			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audioStream, -1, _volume /*dbMapLinear[_volume]*/);
+//			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audioStream, -1, _volume /*dbMapLinear[_volume]*/);
+			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audioStream, -1, _engine->getVolumeManager()->convert(_volume));
 		}
 
 		if (_key != StateKey_NotSet)
@@ -167,7 +154,8 @@ void MusicNode::setVolume(uint8 newVolume) {
 	if (_deltaVolume >= _volume)
 		_engine->_mixer->setChannelVolume(_handle, 0);
 	else
-		_engine->_mixer->setChannelVolume(_handle, _volume - _deltaVolume /*dbMapLinear[_volume - _deltaVolume]*/);
+//		_engine->_mixer->setChannelVolume(_handle, _volume - _deltaVolume /*dbMapLinear[_volume - _deltaVolume]*/);
+    _engine->_mixer->setChannelVolume(_handle, _engine->getVolumeManager()->convert(_volume - _deltaVolume));
 }
 
 uint8 MusicNode::getVolume() {
@@ -177,7 +165,7 @@ uint8 MusicNode::getVolume() {
 PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos)
 	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_PANTRACK) {
 	_slot = slot;
-	_position = pos;
+	sourcePos = pos;
 
 	// Try to set pan value for music node immediately
 	process(0);
@@ -192,31 +180,50 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 
-		int curPos = scriptManager->getStateValue(StateKey_ViewPos);
+		int viewPos = scriptManager->getStateValue(StateKey_ViewPos);
 		int16 _width = _engine->getRenderManager()->getBkgSize().x;
 		int16 _halfWidth = _width / 2;
 		int16 _quarterWidth = _width / 4;
 
-		int tmp = 0;
-		if (curPos <= _position)
-			tmp = _position - curPos;
+		int deltaPos = 0;
+		if (viewPos <= sourcePos)
+			deltaPos = sourcePos - viewPos;
 		else
-			tmp = _position - curPos + _width;
+			deltaPos = sourcePos - viewPos + _width;
+		debug(1,"soundPos: %d, viewPos: %d, deltaPos: %d, width: %d", sourcePos, viewPos, deltaPos, _width);
+    //deltaPos is sound source position relative to player, clockwise from centre of camera axis to front when viewed top-down
+//*/
+    //NEW SYSTEM
+    Math::Angle azimuth = 360*deltaPos/_width;
+    int8 balance = (int)127*azimuth.getSine();
+    uint8 volume = mus->getVolume();
+    uint8 deltaVol = volume - _engine->getVolumeManager()->convert(volume, kVolumeLinear, azimuth);
+		mus->setBalance(balance);  
+		mus->setDeltaVolume(deltaVol);
+		debug(1,"Balance %d, volume %d, deltaVol %d", balance, volume-deltaVol, deltaVol);
+      
+/*/
+    //OLD SYSTEM;		
 		int balance = 0;
-		if (tmp > _halfWidth)
-			tmp -= _width;
-		if (tmp > _quarterWidth) {
+		if (deltaPos > _halfWidth)  //Source to left
+			deltaPos -= _width; //Make angle negative relative to datum
+		if (deltaPos > _quarterWidth) {
 			balance = 1;
-			tmp = _halfWidth - tmp;
-		} else if (tmp < -_quarterWidth) {
+			deltaPos = _halfWidth - deltaPos; //Make relative to right centre?
+		} else if (deltaPos < -_quarterWidth) {
 			balance = -1;
-			tmp = -_halfWidth - tmp;
+			deltaPos = -_halfWidth - deltaPos;  //Make relative to left centre?
 		}
 
+    //TODO - rework this so that balance correctly shifts back to centre when in rear, and ensure that attenuation in rear is also correct.
+    //Correlate this effort with adjusting the volume curves in VolumeManager.
+
 		// Originally it's value -90...90 but we use -127...127 and therefore 360 replaced by 508
-		mus->setBalance( (508 * tmp) / _width );
-		tmp = (360 * tmp) / _width;
+		// Left = -127, centre = 0, right = +127
+		mus->setBalance( (508 * deltaPos) / _width );
+		deltaPos = (360 * deltaPos) / _width;
 		int deltaVol = balance;
+		debug(1,"Balance %d", balance);
 
 		// This value sets how fast volume goes off than sound source back of you
 		// By this value we can hack some "bugs" have place in original game engine like beat sound in ZGI-dc10
@@ -227,10 +234,11 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 				volumeCorrection = 5;
 		}
 		if (deltaVol != 0)
-			deltaVol = (mus->getVolume() * volumeCorrection) * (90 - tmp * balance) / 90;
+			deltaVol = (mus->getVolume() * volumeCorrection) * (90 - deltaPos * balance) / 90;
 		if (deltaVol > 255)
 			deltaVol = 255;
 		mus->setDeltaVolume(deltaVol);
+//*/
 	}
 	return false;
 }

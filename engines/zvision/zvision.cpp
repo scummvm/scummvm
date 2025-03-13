@@ -34,6 +34,7 @@
 #include "zvision/text/text.h"
 #include "zvision/text/truetype_font.h"
 #include "zvision/sound/midi.h"
+#include "zvision/sound/volume_manager.h"
 
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/keymapper.h"
@@ -52,6 +53,7 @@
 #include "gui/message.h"
 #include "engines/util.h"
 #include "audio/mixer.h"
+
 
 namespace ZVision {
 
@@ -100,6 +102,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _rnd(nullptr),
 	  _menu(nullptr),
 	  _subtitleManager(nullptr),
+	  _volumeManager(nullptr),
 	  _searchManager(nullptr),
 	  _textRenderer(nullptr),
 	  _doubleFPS(false),
@@ -128,6 +131,7 @@ ZVision::~ZVision() {
 	delete _subtitleManager;	
 	delete _rnd;
 	delete _midiManager;
+	delete _volumeManager;
 	getTimerManager()->removeTimerProc(&fpsTimerCallback);
 }
 
@@ -208,11 +212,13 @@ void ZVision::initialize() {
       _renderManager = new RenderManager(this, nemesisLayout, _resourcePixelFormat, _doubleFPS, _widescreen);
 	    _menu = new MenuNemesis(this, _renderManager->getMenuArea());
       _subtitleManager = new SubtitleManager(this, nemesisLayout, _resourcePixelFormat, _doubleFPS);
+	    _volumeManager = new VolumeManager(kVolumeLinear);
 	    break;
     case GID_GRANDINQUISITOR:
       _renderManager = new RenderManager(this, zgiLayout, _resourcePixelFormat, _doubleFPS, _widescreen);
 		  _menu = new MenuZGI(this, _renderManager->getMenuArea());
       _subtitleManager = new SubtitleManager(this, zgiLayout, _resourcePixelFormat, _doubleFPS);
+	    _volumeManager = new VolumeManager(kVolumeLogAmplitude);
 		  break;
 	  case GID_NONE:
 	  default:

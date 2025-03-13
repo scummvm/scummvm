@@ -68,6 +68,7 @@ class SubtitleManager;
 class TextRenderer;
 class Subtitle;
 class MidiManager;
+class VolumeManager;
 
 struct ScreenLayout {
   Common::Rect screenArea;  //Original screen resolution
@@ -180,6 +181,7 @@ private:
 	SaveManager *_saveManager;
 	MenuManager *_menu;
   SubtitleManager *_subtitleManager;
+  VolumeManager *_volumeManager;
 
 	// Clock
 	Clock _clock;
@@ -241,7 +243,9 @@ public:
 	SubtitleManager *getSubtitleManager() const {
 		return _subtitleManager;
 	}
-
+	VolumeManager *getVolumeManager() const {
+		return _volumeManager;
+	}
 	Common::Keymap *getGameKeymap() const {
 		return _gameKeymap;
 	}

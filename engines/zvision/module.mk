@@ -42,6 +42,7 @@ MODULE_OBJS := \
 	scripting/effects/ttytext_effect.o \
 	sound/midi.o \
 	sound/zork_raw.o \
+	sound/volume_manager.o \
 	text/string_manager.o \
 	text/subtitle_manager.o \
 	text/text.o \

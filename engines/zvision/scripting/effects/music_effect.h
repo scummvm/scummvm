@@ -26,6 +26,7 @@
 #include "zvision/scripting/scripting_effect.h"
 #include "zvision/text/subtitle_manager.h"
 
+
 namespace Common {
 class String;
 }
@@ -50,7 +51,6 @@ public:
 	virtual uint8 getVolume() = 0;
 	virtual void setDeltaVolume(uint8 volume) = 0;
 	virtual void setBalance(int8 balance) = 0;
-
 	virtual void setFade(int32 time, uint8 target) = 0;
 };
 
@@ -128,7 +128,7 @@ public:
 
 private:
 	uint32 _slot;
-	int16 _position;
+	int16 sourcePos;
 };
 
 } // End of namespace ZVision
