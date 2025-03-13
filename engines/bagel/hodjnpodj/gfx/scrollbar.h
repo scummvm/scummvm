@@ -24,11 +24,16 @@
 
 #include "bagel/hodjnpodj/events.h"
 #include "bagel/hodjnpodj/gfx/gfx_surface.h"
+#include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
 class ScrollBar : public UIElement {
+private:
+	void drawSquare(GfxSurface &s, const Common::Rect &r);
+	void drawArrow(GfxSurface &s, const Common::Rect &r, bool leftArrow);
+
 public:
 	ScrollBar(const Common::String &name, UIElement *uiParent = nullptr) :
 		UIElement(name, uiParent) {}

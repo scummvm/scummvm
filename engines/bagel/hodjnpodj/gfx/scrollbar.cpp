@@ -25,7 +25,43 @@ namespace Bagel {
 namespace HodjNPodj {
 
 void ScrollBar::draw() {
+	GfxSurface s = getSurface();
 
+	s.clear(getPaletteIndex(RGB(211, 211, 211)));
+	s.frameRect(_bounds, BLACK);
+
+	Common::Rect left(0, 0, s.h, s.h);
+	drawSquare(s, left);
+	drawArrow(s, left, true);
+	Common::Rect right(s.w - s.h, 0, s.w, s.h);
+	drawSquare(s, right);
+	drawArrow(s, right, false);
+}
+
+void ScrollBar::drawSquare(GfxSurface &s, const Common::Rect &r) {
+	s.frameRect(r, BLACK);
+	byte darkGrey = getPaletteIndex(RGB(169, 169, 169));
+
+	s.hLine(r.left + 2, r.bottom - 3, r.right - 2, darkGrey);
+	s.hLine(r.left + 1, r.bottom - 2, r.right - 2, darkGrey);
+	s.vLine(r.right - 3, r.top + 1, r.bottom - 2, darkGrey);
+	s.vLine(r.right - 2, r.top + 1, r.bottom - 2, darkGrey);
+
+	s.hLine(r.left + 1, r.top + 1, r.right - 3, WHITE);
+	s.vLine(r.left + 1, r.top + 1, r.bottom - 3, WHITE);
+}
+
+void ScrollBar::drawArrow(GfxSurface &s, const Common::Rect &r,
+		bool leftArrow) {
+	int xCenter = (r.left + r.right) / 2;
+	int yCenter = (r.top + r.bottom) / 2;
+	int xDelta = leftArrow ? 1 : -1;
+	int x = leftArrow ? xCenter - 3 : xCenter + 3;
+
+	for (int xCtr = 0; xCtr < 7; ++xCtr, x += xDelta) {
+		int yDiff = (xCtr >= 4) ? 1 : xCtr;
+		s.vLine(x, yCenter - yDiff, yCenter + yDiff, BLACK);
+	}
 }
 
 void ScrollBar::setScrollRange(int nMinPos, int nMaxPos,
