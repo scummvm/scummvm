@@ -71,9 +71,9 @@ void Room610::init() {
 		hotspot_set_active("window ", false);
 	}
 
-	_k = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xa00, 0,
+	_k = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xa00, false,
 		triggerMachineByHashCallback610, "k");
-	_sgTt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xb00, 0,
+	_sgTt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xb00, false,
 		triggerMachineByHashCallback610, "sg and tt");
 
 	switch (_G(kernel).trigger) {
@@ -128,7 +128,7 @@ void Room610::daemon() {
 
 	switch (_G(kernel).trigger) {
 	case 1:
-		player_set_commands_allowed(1);
+		player_set_commands_allowed(true);
 		break;
 
 	case 10:
@@ -137,7 +137,7 @@ void Room610::daemon() {
 		ws_demand_location(_G(my_walker), 272, 273, 7);
 		ws_hide_walker();
 
-		_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+		_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, false,
 			triggerMachineByHashCallback610, "spleen");
 		sendWSMessage_10000(1, _ripAction, _ripPeerAroundHut, 1, 65, -1,
 			_ripPeerAroundHut, 65, 65, 1);
@@ -269,7 +269,7 @@ void Room610::daemon() {
 		_kShould = 0;
 		_val5 = 1;
 		_val6 = 0;
-		_flag2 = 1;
+		_flag2 = true;
 		player_set_commands_allowed(true);
 		kernel_timing_trigger(300, 135);
 		break;
@@ -410,7 +410,7 @@ void Room610::daemon() {
 
 	case 666:
 		ws_hide_walker();
-		_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+		_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, false,
 			triggerMachineByHashCallback610, "spleen");
 		sendWSMessage_10000(1, _ripAction, _rp04, 1, 21, -1, _rp04, 21, 11, 4);
 		sendWSMessage_1a0000(_ripAction, 50);
@@ -451,16 +451,16 @@ void Room610::daemon() {
 }
 
 void Room610::pre_parser() {
-	bool lookFlag = player_said_any("look", "look at");
+	const bool lookFlag = player_said_any("look", "look at");
 
 	if (lookFlag && player_said_any("HUT", "PIT", "SAMANTHA", "KUANG", "SHEN GUO"))
 		_G(player).resetWalk();
 }
 
 void Room610::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool talkFlag = player_said_any("talk", "talk to");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool talkFlag = player_said_any("talk", "talk to");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (talkFlag && player_said_any("KUANG", "SHEN GUO")) {
 		talkKuangShenGuo();
@@ -516,7 +516,7 @@ void Room610::parser() {
 }
 
 void Room610::triggerMachineByHashCallback610(frac16 myMessage, machine *sender) {
-	int trigger = myMessage >> 16;
+	const int trigger = myMessage >> 16;
 
 	if (trigger >= 0)
 		kernel_trigger_dispatchx(myMessage);
@@ -549,7 +549,7 @@ void Room610::talkKuangShenGuo() {
 
 	case 1:
 		ws_hide_walker();
-		_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+		_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, false,
 			triggerMachineByHashCallback610, "spleen");
 		sendWSMessage_10000(1, _ripAction, _rp04, 1, 21, 2, _rp04, 21, 11, 4);
 		sendWSMessage_1a0000(_ripAction, 50);
@@ -595,7 +595,7 @@ void Room610::talkSamantha() {
 
 	case 1:
 		ws_hide_walker();
-		_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+		_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, false,
 			triggerMachineByHashCallback610, "spleen");
 		sendWSMessage_10000(1, _ripAction, _rp04, 1, 21, 2, _rp04, 21, 11, 4);
 		sendWSMessage_1a0000(_ripAction, 50);

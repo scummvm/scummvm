@@ -216,8 +216,8 @@ void Room604::daemon() {
 }
 
 void Room604::pre_parser() {
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("PULL CORD", "generator set"))
 		_G(player).resetWalk();
@@ -248,9 +248,9 @@ void Room604::pre_parser() {
 }
 
 void Room604::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (useFlag && player_said("WHALE BONE HORN") && useWhaleBoneHorn()) {
 		// No implementation
