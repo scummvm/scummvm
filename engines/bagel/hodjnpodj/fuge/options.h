@@ -32,9 +32,10 @@ namespace Fuge {
 
 class Options : public View {
 private:
-	OkButton _ok;
-	CancelButton _cancel;
-	DefaultsButton _defaults;
+	GfxSurface _background;
+	OkButton _okButton;
+	CancelButton _cancelButton;
+	DefaultsButton _defaultsButton;
 	Common::Rect _numBallsRect;
 	Common::Rect _startLevelRect;
 	Common::Rect _ballSpeedRect;
@@ -62,8 +63,8 @@ public:
 	}
 
 	bool msgOpen(const OpenMessage &msg) override;
+	bool msgClose(const CloseMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
 	void draw() override;
 };
 

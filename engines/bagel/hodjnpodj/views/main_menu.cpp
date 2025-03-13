@@ -98,6 +98,8 @@ bool MainMenu::msgOpen(const OpenMessage &msg) {
 	if (_flags & NO_QUIT)
 		_quitButton.enableWindow(false);
 
+	g_events->showCursor(true);
+
 	return true;
 }
 
@@ -117,24 +119,26 @@ bool MainMenu::msgAction(const ActionMessage &msg) {
 }
 
 bool MainMenu::msgGame(const GameMessage &msg) {
-	Common::String btn = msg._stringValue;
+	if (msg._name == "BUTTON") {
+		Common::String btn = msg._stringValue;
 
-	if (btn == "MenuRules") {
-		Rules::show(_rulesFilename, _rulesSoundFilename);
-		return true;
-	} else if (btn == "MenuOptions") {
-		// Pass a message to the minigame to show it's
-		// custom options dialog
-		g_events->focusedView()->send(GameMessage("OPTIONS"));
-		return true;
-	} else if (btn == "MenuContinue") {
-		// Return to minigame
-		close();
-		return true;
-	} else if (btn == "MenuQuit") {
-		close();							// Close menu dialog
-		g_events->focusedView()->close();	// Close minigame
-		return true;
+		if (btn == "MenuRules") {
+			Rules::show(_rulesFilename, _rulesSoundFilename);
+			return true;
+		} else if (btn == "MenuOptions") {
+			// Pass a message to the minigame to show it's
+			// custom options dialog
+			_parent->send(GameMessage("OPTIONS"));
+			return true;
+		} else if (btn == "MenuContinue") {
+			// Return to minigame
+			close();
+			return true;
+		} else if (btn == "MenuQuit") {
+			close();							// Close menu dialog
+			g_events->focusedView()->close();	// Close minigame
+			return true;
+		}
 	}
 
 #if TODO

@@ -178,16 +178,21 @@ public:
 class OkButton : public ColorButton {
 public:
 	OkButton(UIElement *parent = nullptr);
+	OkButton(const Common::Rect &r, UIElement *parent = nullptr);
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 class CancelButton : public ColorButton {
 public:
 	CancelButton(UIElement *parent = nullptr);
+	CancelButton(const Common::Rect &r, UIElement *parent = nullptr);
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 class DefaultsButton : public ColorButton {
 public:
 	DefaultsButton(UIElement *parent = nullptr);
+	DefaultsButton(const Common::Rect &r, UIElement *parent = nullptr);
 };
 
 } // namespace HodjNPodj

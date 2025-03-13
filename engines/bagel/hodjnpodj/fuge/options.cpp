@@ -28,7 +28,7 @@ namespace HodjNPodj {
 namespace Fuge {
 
 Options::Options() : View("FugeOptions"),
-		_numBallsRect(22, 22, 13, 35),
+		_numBallsRect(22, 22, 135, 35),
 		_startLevelRect(22, 57, 135, 70),
 		_ballSpeedRect(22, 92, 135, 105),
 		_paddleSizeRect(22, 127, 110, 140),
@@ -41,7 +41,10 @@ Options::Options() : View("FugeOptions"),
 		_paddleSizeScroll("PaddleSize",
 			Common::Rect(22, 140, 92, 158), this),
 		_outerWallCheck("WallCheck",
-			Common::Rect(60, 60, 70, 70), this) {
+			Common::Rect(60, 60, 70, 70), this),
+		_okButton(DialogRect(8, 87, 16, 31, 14), this),
+		_cancelButton(DialogRect(8, 87, 32, 31, 14), this),
+		_defaultsButton(DialogRect(8, 87, 48, 31, 14), this) {
 
 	_numBallsScroll.setScrollRange(BALLS_MIN, BALLS_MAX);
 	_startLevelScroll.setScrollRange(LEVEL_MIN, LEVEL_MAX);
@@ -53,14 +56,27 @@ Options::Options() : View("FugeOptions"),
 bool Options::msgOpen(const OpenMessage &msg) {
 	loadIniSettings();
 
+	// Load the scroll background and center the view
+	_background.loadBitmap("fuge/art/sscroll.bmp");
+	_background.setTransparentColor(WHITE);
+
+	Common::Rect r(0, 0, _background.w, _background.h);
+	r.moveTo((GAME_WIDTH - _background.w) / 2,
+		(GAME_HEIGHT - _background.h) / 2);
+	setBounds(r);
+
 	return View::msgOpen(msg);
+}
+
+bool Options::msgClose(const CloseMessage &msg) {
+	_background.clear();
+	return View::msgClose(msg);
 }
 
 bool Options::msgGame(const GameMessage &msg) {
 	if (msg._name == "BUTTON") {
 		if (msg._stringValue == "OK") {
-			if (_hasChanges)
-				saveIniSettings();
+			saveIniSettings();
 			close();
 		} else if (msg._stringValue == "CANCEL") {
 			close();
@@ -74,15 +90,15 @@ bool Options::msgGame(const GameMessage &msg) {
 	return false;
 }
 
-bool Options::msgAction(const ActionMessage &msg) {
-	return true;
-}
-
 void Options::draw() {
 	GfxSurface s = getSurface();
 	Common::String text;
-	s.setFontSize(10);
+	s.setFontSize(8);
 
+	// Copy the background
+	s.blitFrom(_background);
+
+	// Write the scrollbars header text
 	text = Common::String::format("Number of Balls: %d", _numBalls);
 	s.writeString(text, _numBallsRect);
 	text = Common::String::format("Starting Level: %d", _startLevel);
@@ -146,6 +162,9 @@ void Options::loadIniSettings() {
 }
 
 void Options::saveIniSettings() {
+	if (!_hasChanges)
+		return;
+
 	Common::String domain = ConfMan.getActiveDomainName();
 	ConfMan.setActiveDomain("Fuge");
 
@@ -156,6 +175,7 @@ void Options::saveIniSettings() {
 	ConfMan.setBool("OuterWall", _outerWall);
 
 	ConfMan.setActiveDomain(domain);
+	ConfMan.flushToDisk();
 }
 
 } // namespace Fuge

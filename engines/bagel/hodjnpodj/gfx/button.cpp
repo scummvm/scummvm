@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "image/bmp.h"
 #include "bagel/hodjnpodj/gfx/button.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -197,12 +198,47 @@ OkButton::OkButton(UIElement *parent) :
 		ColorButton("OK", _s("&OK"), parent) {
 }
 
-CancelButton::CancelButton(UIElement *parent) :
-	ColorButton("CANCEL", _s("Cancel"), parent) {
+OkButton::OkButton(const Common::Rect &r, UIElement *parent) :
+		ColorButton("OK", _s("&OK"), parent) {
+	setBounds(r);
 }
 
+bool OkButton::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_SELECT) {
+		_parent->send(GameMessage("BUTTON", _name));
+		return true;
+	}
+	return false;
+}
+
+/*------------------------------------------------------------------------*/
+
+CancelButton::CancelButton(UIElement *parent) :
+		ColorButton("CANCEL", _s("Cancel"), parent) {
+}
+
+CancelButton::CancelButton(const Common::Rect &r, UIElement *parent) :
+		ColorButton("CANCEL", _s("Cancel"), parent) {
+	setBounds(r);
+}
+
+bool CancelButton::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		_parent->send(GameMessage("BUTTON", _name));
+		return true;
+	}
+	return false;
+}
+
+/*------------------------------------------------------------------------*/
+
 DefaultsButton::DefaultsButton(UIElement *parent) :
-	ColorButton("DEFAULTS", _s("Defaults"), parent) {
+		ColorButton("DEFAULTS", _s("Defaults"), parent) {
+}
+
+DefaultsButton::DefaultsButton(const Common::Rect &r, UIElement *parent) :
+		ColorButton("DEFAULTS", _s("Defaults"), parent) {
+	setBounds(r);
 }
 
 } // namespace HodjNPodj
