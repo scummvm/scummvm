@@ -711,34 +711,29 @@ void Adlib::OnTimer() {
 					g225A += 2;
 
 					if (g2291 == 0x09 || bp3 < 0x0B) {
-					//				// l0017_1BE4:
+						// l0017_1BE4:
 						SIS_LogEntry(0x01D7, 0x1BE4);
-					//				// TODO: Is this the first usage?
-					//				uint8 bp8 = 0;
-					//				// TODO: Figure out the loop conditions and correct indentation
-					//				do {
-					//					// l0017_1BE9:
-					//					// TODO: Not sure if it's important to remove the higher bits as the
-					//					// original does
-					//					if (g2291 > bp8) {
-					//						// l0017_1BF3:
-					//						if (gArray222C[bp8] == 0) {
-					//							// l0017_1BFD:
-					//							uint8 v = gArray227F[bp8];
-					//							if (v == bp3) {
-					//								// l0017_1C09:
-					//								uint8 v2 = gArray2235[bp8];
-					//								if (v2 != bp4) {
-					//									// l0017_1C15:
-					//									bp8++;
-					//								} else {
-					//									break;
-					//								}
-					//							}
-					//						}
-					//					}
-					//					// TODO: Check if there is a better exit condition
-					//				} while (true);
+						uint8 bp8 = 0;
+						do {
+							// l0017_1BE9:			
+							if (g2291 <= bp8) {
+								break;
+							}
+							// l0017_1BF3:
+							if (gArray222C[bp8] == 0) {
+								// l0017_1BFD:
+								uint8 v = gArray227F[bp8];
+								if (v == bp3) {
+									// l0017_1C09:
+									uint8 v2 = gArray2235[bp8];
+									if (v2 == bp4) {
+										break;
+									}
+								}
+							}
+							// l0017_1C15:
+							bp8++;
+						} while (true);
 					//				// l0017_1C1A:
 					//				// TODO: Not sure about removal of AH bits in the original
 					//				if (g2291 == bp8) {
