@@ -33,7 +33,8 @@ enum TransitionType {
 	kTransitionSetToPercentOfPalette = 306,
 	kTransitionFadeToPaletteObject = 307,
 	kTransitionSetToPaletteObject = 308,
-	kTransitionSetToPercentOfPaletteObject = 309
+	kTransitionSetToPercentOfPaletteObject = 309,
+	kTransitionCircleOut = 328
 };
 
 void MediaStationEngine::effectTransition(Common::Array<Operand> &args) {
@@ -84,8 +85,13 @@ void MediaStationEngine::effectTransition(Common::Array<Operand> &args) {
 		break;
 	}
 
+	case kTransitionCircleOut: {
+		warning("MediaStationEngine::effectTransition(): Circle out transition not implemented");
+		break;
+	}
+
 	default:
-		error("MediaStationEngine::effectTransition(): Got unknown transition type %d", static_cast<uint>(transitionType));
+		warning("MediaStationEngine::effectTransition(): Got unknown transition type %d", static_cast<uint>(transitionType));
 	}
 }
 
