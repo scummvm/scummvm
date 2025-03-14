@@ -188,8 +188,28 @@ bool ColorButton::msgKeypress(const KeypressMessage &msg) {
 
 /*------------------------------------------------------------------------*/
 
+void CheckButton::draw() {
+#if 0
+	COLORREF _cButtonFace = RGB_CHECK_FACE;
+	const COLORREF _cButtonControl = RGB_CHECK_CONTROL;
+	const COLORREF _cButtonText = RGB_CHECK_TEXT;
+	const COLORREF _cButtonTextDisabled = RGB_CHECK_TEXT_DISABLE;
+	const COLORREF _cButtonOutline = RGB_CHECK_OUTLINE;
+#endif
+	GfxSurface s = getSurface();
+
+}
+
+bool CheckButton::msgMouseUp(const MouseUpMessage &msg) {
+	setCheck(!_checked);
+	return true;
+}
+
 void CheckButton::setCheck(bool checked) {
-	// TODO
+	_checked = checked;
+	redraw();
+	_parent->send(GameMessage("CHECKBOX", _name,
+		_checked ? 1 : 0));
 }
 
 /*------------------------------------------------------------------------*/

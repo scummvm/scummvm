@@ -40,11 +40,10 @@ Options::Options() : View("FugeOptions"),
 			Common::Rect(22, 105, 92, 123), this),
 		_paddleSizeScroll("PaddleSize",
 			Common::Rect(22, 140, 92, 158), this),
-		_outerWallCheck("WallCheck",
-			Common::Rect(60, 60, 70, 70), this),
 		_okButton(DialogRect(8, 87, 16, 31, 14), this),
 		_cancelButton(DialogRect(8, 87, 32, 31, 14), this),
-		_defaultsButton(DialogRect(8, 87, 48, 31, 14), this) {
+		_defaultsButton(DialogRect(8, 87, 48, 31, 14), this),
+		_outerWallCheck("OuterWall", DialogRect(8, 67, 84, 52, 11), this) {
 
 	_numBallsScroll.setScrollRange(BALLS_MIN, BALLS_MAX);
 	_startLevelScroll.setScrollRange(LEVEL_MIN, LEVEL_MAX);

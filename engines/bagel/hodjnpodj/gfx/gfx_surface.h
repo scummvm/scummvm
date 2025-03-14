@@ -30,23 +30,27 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+class UIElement;
 class MinigameView;
 
 class GfxSurface : public Graphics::ManagedSurface {
 private:
 	Graphics::ManagedSurface _cellsSource; // Used with loadCels
+	const UIElement *_owner = nullptr;
 	size_t _cellWidth = 0;
 	int _cellIndex = 0;
 	int _fontSize = 14;
 
 public:
 	GfxSurface() : Graphics::ManagedSurface() {}
-	GfxSurface(Graphics::ManagedSurface &surf, const Common::Rect &bounds) :
-		Graphics::ManagedSurface(surf, bounds) {
+	GfxSurface(Graphics::ManagedSurface &surf, const Common::Rect &bounds,
+			const UIElement *owner) :
+		Graphics::ManagedSurface(surf, bounds),
+		_owner(owner) {
 	}
 
-	void floodFill(int x, int y, byte color);
-	void floodFill(const Common::Point &pt, byte color) {
+	void floodFill(int x, int y, int color);
+	void floodFill(const Common::Point &pt, int color) {
 		floodFill(pt.x, pt.y, color);
 	}
 
@@ -77,6 +81,10 @@ public:
 	int wordWrapText(const Common::String &str,
 		Common::StringArray &lines) const;
 
+	void hLine(int x, int y, int x2, uint32 color);
+	void vLine(int x, int y, int y2, uint32 color);
+	void fillRect(Common::Rect r, uint32 color);
+	void frameRect(const Common::Rect &r, uint32 color);
 };
 
 class Sprite : public GfxSurface, public Common::Point {

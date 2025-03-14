@@ -32,7 +32,15 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-void GfxSurface::floodFill(int x, int y, byte color) {
+#define CONVERT_COLOR \
+	if (IS_RGB(color)) { \
+		assert(_owner); \
+		color = _owner->getPaletteIndex(color); \
+	}
+
+void GfxSurface::floodFill(int x, int y, int color) {
+	CONVERT_COLOR
+
 	if (x < 0 || y < 0 || x >= this->w || y >= this->h)
 		return;
 
@@ -141,6 +149,8 @@ void GfxSurface::setCel(size_t cellNum) {
 
 void GfxSurface::writeString(const Common::String &text, const Common::Point &pos,
 		int color) {
+	CONVERT_COLOR
+
 	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
 	font.drawString(this, text, pos.x, pos.y, this->w - pos.x,
 		color);
@@ -149,6 +159,8 @@ void GfxSurface::writeString(const Common::String &text, const Common::Point &po
 void GfxSurface::writeString(const Common::String &text,
 		const Common::Rect &bounds, int color,
 		Graphics::TextAlign justify) {
+	CONVERT_COLOR
+
 	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
 	font.drawString(this, text, bounds.left, bounds.top,
 		bounds.width(), color, justify);
@@ -156,6 +168,8 @@ void GfxSurface::writeString(const Common::String &text,
 
 void GfxSurface::writeShadowedString(const Common::String &text,
 		const Common::Point &pos, int color) {
+	CONVERT_COLOR
+
 	writeString(text, Common::Point(pos.x + 1, pos.y), BLACK);
 	writeString(text, pos, color);
 }
@@ -163,6 +177,8 @@ void GfxSurface::writeShadowedString(const Common::String &text,
 void GfxSurface::writeShadowedString(const Common::String &text,
 		const Common::Rect &bounds, int color,
 		Graphics::TextAlign justify) {
+	CONVERT_COLOR
+
 	Common::Rect temp(bounds.left + 1, bounds.top, bounds.right + 1, bounds.bottom);
 	writeString(text, temp, BLACK, justify);
 	writeString(text, bounds, color, justify);
@@ -183,6 +199,26 @@ int GfxSurface::wordWrapText(const Common::String &str,
 		Common::StringArray &lines) const {
 	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
 	return font.wordWrapText(str, this->w, lines);
+}
+
+void GfxSurface::hLine(int x, int y, int x2, uint32 color) {
+	CONVERT_COLOR
+	Graphics::ManagedSurface::hLine(x, y, x2, color);
+}
+
+void GfxSurface::vLine(int x, int y, int y2, uint32 color) {
+	CONVERT_COLOR
+	Graphics::ManagedSurface::vLine(x, y, y2, color);
+}
+
+void GfxSurface::fillRect(Common::Rect r, uint32 color) {
+	CONVERT_COLOR
+	fillRect(r, color);
+}
+
+void GfxSurface::frameRect(const Common::Rect &r, uint32 color) {
+	CONVERT_COLOR
+	frameRect(r, color);
 }
 
 /*------------------------------------------------------------------------*/

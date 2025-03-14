@@ -241,7 +241,7 @@ void Rules::renderPage() {
 
 	Common::Rect textRect(TEXT_LEFT_MARGIN, _scrollTop.h + TEXT_TOP_MARGIN,
 		TEXT_LEFT_MARGIN + TEXT_WIDTH, _scroll.h - _scrollBottom.h - TEXT_BOTTOM_MARGIN);
-	GfxSurface s(_scrollContent, textRect);
+	GfxSurface s(_scrollContent, textRect, this);
 	s.setFontSize(TEXT_SIZE);
 
 	for (int y = 0; y < s.h && !_lines.empty(); y += s.getStringHeight() + 2) {

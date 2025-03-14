@@ -34,6 +34,7 @@ typedef uint32 COLORREF;
 
 #define RGB(r,g,b)          ((COLORREF)(((byte)(r)|((uint16)((byte)(g))<<8))|(((uint32)(byte)(b))<<16)))
 #define PALETTERGB(r,g,b)   (0x02000000 | RGB(r,g,b))
+#define IS_RGB(VAL) ((VAL & 0x02000000) != 0)
 
 #define PAL_DEFAULT 0x0000
 #define PAL_ANIMATED 0x0001

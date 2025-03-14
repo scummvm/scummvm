@@ -161,6 +161,14 @@ public:
 };
 
 class CheckButton : public Button {
+private:
+	const COLORREF _cButtonFace = RGB_CHECK_FACE;
+	const COLORREF _cButtonControl = RGB_CHECK_CONTROL;
+	const COLORREF _cButtonText = RGB_CHECK_TEXT;
+	const COLORREF _cButtonTextDisabled = RGB_CHECK_TEXT_DISABLE;
+	const COLORREF _cButtonOutline = RGB_CHECK_OUTLINE;
+	bool _checked = false;
+
 public:
 	CheckButton(const Common::String &name, UIElement *parent = nullptr) :
 		Button(name, parent) {
@@ -171,6 +179,9 @@ public:
 	}
 	~CheckButton() override {
 	}
+
+	void draw() override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 
 	void setCheck(bool checked);
 };
