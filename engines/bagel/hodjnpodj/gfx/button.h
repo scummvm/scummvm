@@ -167,7 +167,10 @@ private:
 	const COLORREF _cButtonText = RGB_CHECK_TEXT;
 	const COLORREF _cButtonTextDisabled = RGB_CHECK_TEXT_DISABLE;
 	const COLORREF _cButtonOutline = RGB_CHECK_OUTLINE;
+	Common::String _text;
 	bool _checked = false;
+
+	Common::Rect getCheckRect() const;
 
 public:
 	CheckButton(const Common::String &name, UIElement *parent = nullptr) :
@@ -182,7 +185,9 @@ public:
 
 	void draw() override;
 	bool msgMouseUp(const MouseUpMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 
+	void setText(const Common::String &text);
 	void setCheck(bool checked);
 };
 

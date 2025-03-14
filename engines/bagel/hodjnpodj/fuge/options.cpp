@@ -49,7 +49,7 @@ Options::Options() : View("FugeOptions"),
 	_startLevelScroll.setScrollRange(LEVEL_MIN, LEVEL_MAX);
 	_ballSpeedScroll.setScrollRange(SPEED_MIN, SPEED_MAX);
 	_paddleSizeScroll.setScrollRange(PSIZE_MIN, PSIZE_MAX);
-
+	_outerWallCheck.setText("Breakout");
 }
 
 bool Options::msgOpen(const OpenMessage &msg) {
@@ -102,6 +102,12 @@ bool Options::msgGame(const GameMessage &msg) {
 			_hasChanges = true;
 		}
 
+		redraw();
+		return true;
+
+	} else if (msg._name == "CHECKBOX") {
+		_outerWall = msg._value;
+		_hasChanges = true;
 		redraw();
 		return true;
 	}

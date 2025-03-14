@@ -81,10 +81,12 @@ public:
 	int wordWrapText(const Common::String &str,
 		Common::StringArray &lines) const;
 
+	void clear(uint32 color = 0);
 	void hLine(int x, int y, int x2, uint32 color);
 	void vLine(int x, int y, int y2, uint32 color);
 	void fillRect(Common::Rect r, uint32 color);
 	void frameRect(const Common::Rect &r, uint32 color);
+	void drawLine(int x0, int y0, int x1, int y1, uint32 color);
 };
 
 class Sprite : public GfxSurface, public Common::Point {

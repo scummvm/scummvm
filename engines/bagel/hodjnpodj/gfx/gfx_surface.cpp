@@ -201,6 +201,11 @@ int GfxSurface::wordWrapText(const Common::String &str,
 	return font.wordWrapText(str, this->w, lines);
 }
 
+void GfxSurface::clear(uint32 color) {
+	CONVERT_COLOR
+	Graphics::ManagedSurface::clear(color);
+}
+
 void GfxSurface::hLine(int x, int y, int x2, uint32 color) {
 	CONVERT_COLOR
 	Graphics::ManagedSurface::hLine(x, y, x2, color);
@@ -213,12 +218,17 @@ void GfxSurface::vLine(int x, int y, int y2, uint32 color) {
 
 void GfxSurface::fillRect(Common::Rect r, uint32 color) {
 	CONVERT_COLOR
-	fillRect(r, color);
+	Graphics::ManagedSurface::fillRect(r, color);
 }
 
 void GfxSurface::frameRect(const Common::Rect &r, uint32 color) {
 	CONVERT_COLOR
-	frameRect(r, color);
+	Graphics::ManagedSurface::frameRect(r, color);
+}
+
+void GfxSurface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
+	CONVERT_COLOR
+	Graphics::ManagedSurface::drawLine(x0, y0, x1, y1, color);
 }
 
 /*------------------------------------------------------------------------*/

@@ -189,20 +189,79 @@ bool ColorButton::msgKeypress(const KeypressMessage &msg) {
 /*------------------------------------------------------------------------*/
 
 void CheckButton::draw() {
-#if 0
-	COLORREF _cButtonFace = RGB_CHECK_FACE;
-	const COLORREF _cButtonControl = RGB_CHECK_CONTROL;
-	const COLORREF _cButtonText = RGB_CHECK_TEXT;
-	const COLORREF _cButtonTextDisabled = RGB_CHECK_TEXT_DISABLE;
-	const COLORREF _cButtonOutline = RGB_CHECK_OUTLINE;
-#endif
 	GfxSurface s = getSurface();
+	Common::Rect checkRect = getCheckRect();
+	Common::String text;
+	uint nUnderscore;
 
+	s.clear(_cButtonFace);
+	s.frameRect(Common::Rect(0, 0, s.w, s.h), _cButtonOutline);
+	s.frameRect(checkRect, _cButtonControl);
+
+	if (_checked) {
+		// Draw x shape
+		s.drawLine(checkRect.left, checkRect.top,
+			checkRect.right - 1, checkRect.bottom - 1, _cButtonControl);
+		s.drawLine(checkRect.left, checkRect.bottom - 1,
+			checkRect.right - 1, checkRect.top, _cButtonControl);
+	}
+
+	// Check for any ampersand character, which indicates underline
+	// for the keyboard key associated with the button
+	text = _text;
+	if ((nUnderscore = text.findFirstOf('&')) != Common::String::npos)
+		text.deleteChar(nUnderscore);
+
+	uint color = !(_itemState & ODS_DISABLED) ?
+		_cButtonText : _cButtonTextDisabled;
+	int x = 20, y = 2;
+
+	s.setFontSize(8);
+	s.writeString(text, Common::Point(x, y), color);
+
+	if (nUnderscore != Common::String::npos) {
+		Common::String str;
+		while (nUnderscore-- > 0)
+			str += ' ';
+		str += '_';
+		s.writeString(str, Common::Point(x + 1, y + 1), color);
+	}
+}
+
+Common::Rect CheckButton::getCheckRect() const {
+	int checkSize = _bounds.height() - 6;
+	return Common::Rect(3, 3, 3 + checkSize, 3 + checkSize);
 }
 
 bool CheckButton::msgMouseUp(const MouseUpMessage &msg) {
-	setCheck(!_checked);
+	if (!(_itemState & ODS_GRAYED) &&
+		!(_itemState & ODS_DISABLED)) {
+		setCheck(!_checked);
+	}
+
 	return true;
+}
+
+bool CheckButton::msgKeypress(const KeypressMessage &msg) {
+	if (!(_itemState & ODS_GRAYED) &&
+		!(_itemState & ODS_DISABLED)) {
+		size_t ampPos = _text.findFirstOf('&');
+
+		if (ampPos != Common::String::npos &&
+			(msg.flags & Common::KBD_ALT) &&
+			(msg.ascii == tolower(_text[ampPos + 1]))) {
+			// Notify parent dialog that the button was pressed
+			_parent->send(GameMessage("BUTTON", _name));
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void CheckButton::setText(const Common::String &text) {
+	_text = text;
+	redraw();
 }
 
 void CheckButton::setCheck(bool checked) {
