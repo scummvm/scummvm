@@ -36,7 +36,11 @@ Cursor::Cursor() {
 	_keyColor = 0xff;
 
 	_cursorResId = Datum(0);
-	_cursorType = Graphics::kMacCursorArrow;
+	if (debugChannelSet(-1, kDebugNoCursor)) {
+		_cursorType = Graphics::kMacCursorOff;
+	} else {
+		_cursorType = Graphics::kMacCursorArrow;
+	}
 
 	_usePalette = false;
 }
