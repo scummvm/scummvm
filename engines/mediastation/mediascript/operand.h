@@ -22,6 +22,7 @@
 #ifndef MEDIASTATION_MEDIASCRIPT_OPERAND_H
 #define MEDIASTATION_MEDIASCRIPT_OPERAND_H
 
+#include "common/ptr.h"
 #include "common/str.h"
 
 #include "mediastation/mediascript/scriptconstants.h"
@@ -52,15 +53,18 @@ public:
 	void putVariable(Variable *variable);
 	Variable *getVariable();
 
-	void putFunction(uint functionId);
+	void putFunctionId(uint functionId);
 	uint getFunctionId();
+
+	void putMethodId(BuiltInMethod methodId);
+	BuiltInMethod getMethodId();
 
 	void putAsset(uint32 assetId);
 	Asset *getAsset();
 	uint32 getAssetId();
 
-	void putCollection(Collection *collection);
-	Collection *getCollection();
+	void putCollection(Common::SharedPtr<Collection> collection);
+	Common::SharedPtr<Collection> getCollection();
 
 	Operand getLiteralValue() const;
 
@@ -88,12 +92,13 @@ private:
 	union {
 		uint assetId = 0;
 		uint functionId;
+		BuiltInMethod methodId;
 		Common::String *string;
 		Variable *variable;
 		int i;
 		double d;
-		Collection *collection;
 	} _u;
+	Common::SharedPtr<Collection> _collection;
 };
 
 } // End of namespace MediaStation

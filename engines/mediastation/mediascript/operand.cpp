@@ -162,7 +162,7 @@ Variable *Operand::getVariable() {
 	}
 }
 
-void Operand::putFunction(uint functionId) {
+void Operand::putFunctionId(uint functionId) {
 	switch (_type) {
 	case kOperandTypeFunction: {
 		_u.functionId = functionId;
@@ -170,7 +170,7 @@ void Operand::putFunction(uint functionId) {
 	}
 
 	default:
-		error("Operand::putFunction(): Attempt to put function ID into operand type %s (%d)",
+		error("Operand::putFunctionId(): Attempt to put function ID into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
 	}
 }
@@ -188,6 +188,31 @@ uint Operand::getFunctionId() {
 
 	default:
 		error("Operand::getFunction(): Attempt to get function ID from operand type %s (%d)",
+			operandTypeToStr(_type), static_cast<uint>(_type));
+	}
+}
+
+void Operand::putMethodId(BuiltInMethod methodId) {
+	switch (_type) {
+	case kOperandTypeMethod: {
+		_u.methodId = methodId;
+		break;
+	}
+
+	default:
+		error("Operand::putFunctionId(): Attempt to put method ID into operand type %s (%d)",
+			operandTypeToStr(_type), static_cast<uint>(_type));
+	}
+}
+
+BuiltInMethod Operand::getMethodId() {
+	switch (_type) {
+	case kOperandTypeMethod: {
+		return _u.methodId;
+	}
+
+	default:
+		error("Operand::getFunction(): Attempt to get method ID from operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
 	}
 }
@@ -249,16 +274,16 @@ uint32 Operand::getAssetId() {
 	}
 }
 
-void Operand::putCollection(Collection *collection) {
+void Operand::putCollection(Common::SharedPtr<Collection> collection) {
 	switch (_type) {
 	case kOperandTypeCollection: {
-		_u.collection = collection;
+		_collection = collection;
 		break;
 	}
 
 	case kOperandTypeVariableDeclaration: {
 		assert(_u.variable->_type == kVariableTypeCollection);
-		_u.variable->_value.collection = collection;
+		_u.variable->_c = collection;
 		break;
 	}
 
@@ -268,15 +293,15 @@ void Operand::putCollection(Collection *collection) {
 	}
 }
 
-Collection *Operand::getCollection() {
+Common::SharedPtr<Collection> Operand::getCollection() {
 	switch (_type) {
 	case kOperandTypeCollection: {
-		return _u.collection;
+		return _collection;
 	}
 
 	case kOperandTypeVariableDeclaration: {
 		assert(_u.variable->_type == kVariableTypeCollection);
-		return _u.variable->_value.collection;
+		return _u.variable->_c;
 	}
 
 	default:

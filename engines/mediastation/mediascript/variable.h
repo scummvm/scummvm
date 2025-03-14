@@ -22,6 +22,7 @@
 #ifndef MEDIASTATION_MEDIASCRIPT_VARIABLE_DECLARATION_H
 #define MEDIASTATION_MEDIASCRIPT_VARIABLE_DECLARATION_H
 
+#include "common/ptr.h"
 #include "common/str.h"
 #include "common/array.h"
 
@@ -44,19 +45,22 @@ public:
 	VariableType _type = kVariableTypeEmpty;
 	union {
 		Common::String *string;
-		Collection *collection;
 		uint functionId;
 		int i;
 		double d;
 		uint assetId;
 	} _value;
+	Common::SharedPtr<Collection> _c;
 
 	Variable();
 	Variable(Chunk &chunk, bool readId = true);
+	~Variable();
 
 	Operand getValue();
 	void putValue(Operand value);
-	~Variable();
+
+private:
+	void clear();
 };
 
 } // End of namespace MediaStation

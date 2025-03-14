@@ -19,13 +19,12 @@
  *
  */
 
+#include "common/ptr.h"
+
 #include "mediastation/mediastation.h"
 #include "mediastation/mediascript/codechunk.h"
 #include "mediastation/datum.h"
 #include "mediastation/debugchannels.h"
-
-#include "mediastation/assets/movie.h"
-#include "mediastation/assets/path.h"
 
 namespace MediaStation {
 
@@ -362,10 +361,17 @@ Operand CodeChunk::executeNextStatement() {
 			return operand;
 		}
 
+		case kOperandTypeMethod: {
+			BuiltInMethod methodId = static_cast<BuiltInMethod>(Datum(*_bytecode).u.i);
+			debugC(5, kDebugScript, "%s ", builtInMethodToStr(methodId));
+			operand.putMethodId(methodId);
+			return operand;
+		}
+
 		case kOperandTypeFunction: {
 			uint functionId = Datum(*_bytecode).u.i;
 			debugC(5, kDebugScript, "%d ", functionId);
-			operand.putFunction(functionId);
+			operand.putFunctionId(functionId);
 			return operand;
 		}
 
@@ -452,7 +458,7 @@ Operand CodeChunk::getVariable(uint32 id, VariableScope scope) {
 	}
 }
 
-void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand value) {
+void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand &value) {
 	switch (scope) {
 	case kVariableScopeGlobal: {
 		Variable *variable = g_engine->_variables.getVal(id);
@@ -479,7 +485,7 @@ void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand value) {
 	}
 }
 
-Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand self, Common::Array<Operand> &args) {
+Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand &self, Common::Array<Operand> &args) {
 	Operand literalSelf = self.getLiteralValue();
 	OperandType literalType = literalSelf.getType();
 	switch (literalType) {
@@ -509,7 +515,7 @@ Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand self, Common:
 	}
 
 	case kOperandTypeCollection: {
-		Collection *collection = literalSelf.getCollection();
+		Common::SharedPtr<Collection> collection = literalSelf.getCollection();
 		Operand returnValue = collection->callMethod(method, args);
 		return returnValue;
 	}
