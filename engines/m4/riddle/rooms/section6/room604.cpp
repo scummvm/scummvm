@@ -742,7 +742,7 @@ void Room604::parser() {
 		} else if (_G(flags)[V188]) {
 			digi_play("604r27", 1);
 		} else {
-			digi_play("604r27", 1);
+			digi_play("604r27", 1, 255, 1, -1);
 			player_set_commands_allowed(false);
 		}
 	} else if (lookFlag && player_said("pull cord") &&
