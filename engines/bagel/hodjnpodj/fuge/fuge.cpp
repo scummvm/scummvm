@@ -318,7 +318,10 @@ bool Fuge::msgAction(const ActionMessage &msg) {
 }
 
 bool Fuge::msgGame(const GameMessage &msg) {
-	if (msg._name == "GAME_OVER") {
+	if (msg._name == "NEW_GAME") {
+		playGame();
+		return true;
+	} else if (msg._name == "GAME_OVER") {
 		gameOverClosed();
 		return true;
 	} else if (msg._name == "NEW_LIFE") {

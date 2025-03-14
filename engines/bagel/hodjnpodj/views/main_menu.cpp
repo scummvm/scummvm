@@ -125,6 +125,10 @@ bool MainMenu::msgGame(const GameMessage &msg) {
 		if (btn == "MenuRules") {
 			Rules::show(_rulesFilename, _rulesSoundFilename);
 			return true;
+		} else if (btn == "MenuNewGame") {
+			close();
+			_parent->send(GameMessage("NEW_GAME"));
+			return true;
 		} else if (btn == "MenuOptions") {
 			// Pass a message to the minigame to show it's
 			// custom options dialog
