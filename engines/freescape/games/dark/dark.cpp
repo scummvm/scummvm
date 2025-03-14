@@ -691,6 +691,7 @@ void DarkEngine::updateTimeVariables() {
 				_gameStateVars[k8bitVariableEnergy]--;
 
 		if (_flyMode && _gameStateVars[k8bitVariableEnergy] == 0) {
+			_mixer->stopHandle(_soundFxHandleJetpack);
 			_flyMode = false;
 			insertTemporaryMessage(_messagesList[13], _countdown - 2);
 		}
