@@ -367,22 +367,10 @@ CLEANUP_2648: // [Original label: l0017_2648]
 }
 
 void Adlib::Func2839(uint8 bpp0A, StreamHandler* sh) {
-
-	// TODO: We are doing some loading of values in bp-1 and bp-2 from some central data, skipping this
-	// and hardcoding for now
-	/*
-	fn0017_2839 proc
-	enter	2h,0h
-	mov	al,[bp+0Ah]
-	xor	ah,ah
-	mov	di,ax
-	mov	al,[di+8Dh]
-	mov	[bp-1h],al
-	mov	al,[bp+0Ah]
-	xor	ah,ah
-	mov	di,ax
-	mov	al,[di+96h]
-	mov	[bp-2h],al
+	uint8 bp1 = gArray8d[bpp0A];
+	uint8 bp2 = gArray96[bpp0A];
+	/* 
+	
 	mov	al,[bp-1h]
 	xor	ah,ah
 	add	ax,20h
