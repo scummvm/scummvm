@@ -32,11 +32,13 @@ namespace HodjNPodj {
 /*
  * Owner draw state
  */
-#define ODS_SELECTED    0x0001
-#define ODS_GRAYED      0x0002
-#define ODS_DISABLED    0x0004
-#define ODS_CHECKED     0x0008
-#define ODS_FOCUS       0x0010
+enum DrawState {
+	ODS_SELECTED    = 0x0001,
+	ODS_GRAYED      = 0x0002,
+	ODS_DISABLED    = 0x0004,
+	ODS_CHECKED     = 0x0008,
+	ODS_FOCUS       = 0x0010
+};
 
 #define BUTTON_EDGE_WIDTH		3
 #define	FOCUS_RECT_DX			2
@@ -72,17 +74,34 @@ namespace HodjNPodj {
 class Button : public UIElement {
 protected:
 	uint _itemState = 0;
+	Common::String _text;
+
+	virtual void buttonPressed();
+
 public:
 	Button(const Common::String &name, UIElement *uiParent) :
 		UIElement(name, uiParent) {}
 	Button(const Common::String &name) :
 		UIElement(name) {}
+	Button(const Common::String &name, const Common::String &text, UIElement *uiParent) :
+		UIElement(name, uiParent), _text(text) {
+	}
+	Button(const Common::String &name, const Common::String &text) :
+		UIElement(name), _text(text) {
+	}
+
+	bool msgMouseDown(const MouseDownMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
+	bool msgMouseEnter(const MouseEnterMessage &msg) override;
+	bool msgMouseLeave(const MouseLeaveMessage &msg);
+	bool msgKeypress(const KeypressMessage &msg) override;
 
 	void setPressed(bool pressed) {
 		_itemState = pressed ? ODS_SELECTED : 0;
 		redraw();
 	}
 
+	void setText(const Common::String &text);
 	void enableWindow(bool enabled) {
 		_itemState = enabled ? 0 : ODS_DISABLED;
 		redraw();
@@ -100,11 +119,6 @@ public:
 };
 
 class BmpButton : public Button {
-public:
-	enum Mode {
-		kBtnNormal, kBtnSelected,
-		kBtnFocused, kBtnDisabled
-	};
 private:
 	GfxSurface _base;
 	GfxSurface _selected;
@@ -127,7 +141,6 @@ public:
 
 class ColorButton : public Button {
 private:
-	Common::String _text;
 	COLORREF _cButtonFace = RGB_BUTTON_FACE;
 	COLORREF _cButtonHighlight = RGB_BUTTON_HIGHLIGHT;
 	COLORREF _cButtonShadow = RGB_BUTTON_SHADOW;
@@ -137,27 +150,23 @@ private:
 
 public:
 	ColorButton(const Common::String &text, UIElement *parent = nullptr) :
-		Button("ColorButton", parent), _text(text) {
+		Button(text, "ColorButton", parent) {
 	}
 	ColorButton(const Common::String &text, const Common::Rect &r, UIElement *parent = nullptr) :
-		Button("ColorButton", parent), _text(text) {
+		Button(text, "ColorButton", parent) {
 		setBounds(r);
 	}
 	ColorButton(const Common::String &name, const Common::String &text, UIElement *parent = nullptr) :
-		Button(name, parent), _text(text) {
+		Button(name, text, parent) {
 	}
 	ColorButton(const Common::String &name, const Common::String &text, const Common::Rect &r, UIElement *parent = nullptr) :
-		Button(name, parent), _text(text) {
+		Button(name, text, parent) {
 		setBounds(r);
 	}
 	~ColorButton() override {
 	}
 
 	void draw() override;
-	bool msgMouseDown(const MouseDownMessage &msg) override;
-	bool msgMouseUp(const MouseUpMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 class CheckButton : public Button {
@@ -167,10 +176,12 @@ private:
 	const COLORREF _cButtonText = RGB_CHECK_TEXT;
 	const COLORREF _cButtonTextDisabled = RGB_CHECK_TEXT_DISABLE;
 	const COLORREF _cButtonOutline = RGB_CHECK_OUTLINE;
-	Common::String _text;
 	bool _checked = false;
 
 	Common::Rect getCheckRect() const;
+
+protected:
+	void buttonPressed() override;
 
 public:
 	CheckButton(const Common::String &name, UIElement *parent = nullptr) :
@@ -184,10 +195,11 @@ public:
 	}
 
 	void draw() override;
+	bool msgMouseDown(const MouseDownMessage &msg) override {
+		return true;
+	}
 	bool msgMouseUp(const MouseUpMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
 
-	void setText(const Common::String &text);
 	void setCheck(bool checked);
 };
 

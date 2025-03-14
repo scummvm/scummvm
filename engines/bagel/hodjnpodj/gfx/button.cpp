@@ -30,6 +30,82 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+bool Button::msgMouseDown(const MouseDownMessage &msg) {
+	if (!(_itemState & ODS_GRAYED) &&
+		!(_itemState & ODS_DISABLED)) {
+		if (msg._button == MouseDownMessage::MB_LEFT) {
+			_itemState |= ODS_SELECTED;
+			redraw();
+		}
+	}
+
+	return true;
+}
+
+bool Button::msgMouseUp(const MouseUpMessage &msg) {
+	if (!(_itemState & ODS_GRAYED) &&
+		!(_itemState & ODS_DISABLED)) {
+		if (msg._button == MouseUpMessage::MB_LEFT && (_itemState & ODS_SELECTED)) {
+			_itemState &= ~ODS_SELECTED;
+			redraw();
+
+			// Notify to owner that button was pressed
+			buttonPressed();
+		}
+	}
+
+	return true;
+}
+
+bool Button::msgMouseEnter(const MouseEnterMessage &msg) {
+	if (!(_itemState & ODS_GRAYED) &&
+		!(_itemState & ODS_DISABLED)) {
+		_itemState |= ODS_FOCUS;
+		redraw();
+	}
+
+	return true;
+}
+
+bool Button::msgMouseLeave(const MouseLeaveMessage &msg) {
+	if (!(_itemState & ODS_GRAYED) &&
+		!(_itemState & ODS_DISABLED)) {
+		_itemState &= ~ODS_FOCUS;
+		redraw();
+	}
+
+	return true;
+}
+
+bool Button::msgKeypress(const KeypressMessage &msg) {
+	if (!(_itemState & ODS_GRAYED) &&
+		!(_itemState & ODS_DISABLED)) {
+		size_t ampPos = _text.findFirstOf('&');
+
+		if (ampPos != Common::String::npos &&
+			(msg.flags & Common::KBD_ALT) &&
+			(msg.ascii == tolower(_text[ampPos + 1]))) {
+			// Notify parent dialog that the button was pressed
+			_itemState &= ~ODS_SELECTED;
+			buttonPressed();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Button::buttonPressed() {
+	_parent->send(GameMessage("BUTTON", _name));
+}
+
+void Button::setText(const Common::String &text) {
+	_text = text;
+	redraw();
+}
+
+/*------------------------------------------------------------------------*/
+
 void BmpButton::loadBitmaps(const char *base, const char *selected,
 		const char *focused, const char *disabled) {
 	_base.loadBitmap(base);
@@ -47,7 +123,16 @@ void BmpButton::clear() {
 
 void BmpButton::draw() {
 	GfxSurface s = getSurface();
-	s.blitFrom(_base);
+
+	if ((_itemState & ODS_DISABLED) ||
+		(_itemState & ODS_GRAYED))
+		s.blitFrom(_disabled);
+	else if (_itemState & ODS_SELECTED)
+		s.blitFrom(_selected);
+	else if (_itemState & ODS_FOCUS)
+		s.blitFrom(_focused);
+	else
+		s.blitFrom(_base);
 }
 
 /*------------------------------------------------------------------------*/
@@ -134,58 +219,6 @@ void ColorButton::draw() {
 	}
 }
 
-bool ColorButton::msgMouseDown(const MouseDownMessage &msg) {
-	if (!(_itemState & ODS_GRAYED) &&
-		!(_itemState & ODS_DISABLED)) {
-		if (msg._button == MouseDownMessage::MB_LEFT) {
-			_itemState = ODS_SELECTED;
-			redraw();
-		}
-	}
-
-	return true;
-}
-
-bool ColorButton::msgMouseUp(const MouseUpMessage &msg) {
-	if (msg._button == MouseUpMessage::MB_LEFT && _itemState == ODS_SELECTED) {
-		_itemState = 0;
-		redraw();
-
-		// Notify parent dialog that the button was pressed
-		_parent->send(GameMessage("BUTTON", _name));
-	}
-
-	return true;
-}
-
-bool ColorButton::msgUnfocus(const UnfocusMessage &msg) {
-	// If the mouse cursor moves outside the button whilst
-	// it's being depressed, reset it to unpressed
-	if (_itemState == ODS_SELECTED) {
-		_itemState = 0;
-		redraw();
-	}
-
-	return true;
-}
-
-bool ColorButton::msgKeypress(const KeypressMessage &msg) {
-	if (!(_itemState & ODS_GRAYED) &&
-			!(_itemState & ODS_DISABLED)) {
-		size_t ampPos = _text.findFirstOf('&');
-
-		if (ampPos != Common::String::npos &&
-			(msg.flags & Common::KBD_ALT) &&
-			(msg.ascii == tolower(_text[ampPos + 1]))) {
-			// Notify parent dialog that the button was pressed
-			_parent->send(GameMessage("BUTTON", _name));
-			return true;
-		}
-	}
-
-	return false;
-}
-
 /*------------------------------------------------------------------------*/
 
 void CheckButton::draw() {
@@ -233,6 +266,12 @@ Common::Rect CheckButton::getCheckRect() const {
 	return Common::Rect(3, 3, 3 + checkSize, 3 + checkSize);
 }
 
+void CheckButton::buttonPressed() {
+	// For checkboxes, if this is called due to
+	// a hotkey match, trigger toggling the checkbox
+	setCheck(!_checked);
+}
+
 bool CheckButton::msgMouseUp(const MouseUpMessage &msg) {
 	if (!(_itemState & ODS_GRAYED) &&
 		!(_itemState & ODS_DISABLED)) {
@@ -240,28 +279,6 @@ bool CheckButton::msgMouseUp(const MouseUpMessage &msg) {
 	}
 
 	return true;
-}
-
-bool CheckButton::msgKeypress(const KeypressMessage &msg) {
-	if (!(_itemState & ODS_GRAYED) &&
-		!(_itemState & ODS_DISABLED)) {
-		size_t ampPos = _text.findFirstOf('&');
-
-		if (ampPos != Common::String::npos &&
-			(msg.flags & Common::KBD_ALT) &&
-			(msg.ascii == tolower(_text[ampPos + 1]))) {
-			// Notify parent dialog that the button was pressed
-			_parent->send(GameMessage("BUTTON", _name));
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void CheckButton::setText(const Common::String &text) {
-	_text = text;
-	redraw();
 }
 
 void CheckButton::setCheck(bool checked) {

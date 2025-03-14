@@ -416,6 +416,8 @@ bool Fuge::msgMouseDown(const MouseDownMessage &msg) {
 		car9Rect, car10Rect;
 	int nPick = 0;
 
+	if (MinigameView::msgMouseDown(msg))
+		return true;
 	if (msg._button != MouseDownMessage::MB_LEFT)
 		return false;
 
@@ -513,6 +515,9 @@ bool Fuge::msgMouseDown(const MouseDownMessage &msg) {
 }
 
 bool Fuge::msgMouseUp(const MouseUpMessage &msg) {
+	if (MinigameView::msgMouseUp(msg))
+		return true;
+
 	if (_bGameActive && msg._button == MouseUpMessage::MB_RIGHT) {
 		// Toggle move paddle mode
 		_bMovingPaddle = !_bMovingPaddle;
