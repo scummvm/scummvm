@@ -140,11 +140,17 @@ void GfxSurface::setCel(size_t cellNum) {
 	assert(_cellWidth != 0);
 	assert((int)(cellNum * _cellWidth) < _cellsSource.w);
 
+	uint transColor = getTransparentColor();
+	bool isTransparent = hasTransparentColor();
+
 	_cellIndex = cellNum;
 	Common::Rect r(0, 0, _cellWidth, this->h);
 	r.moveTo(_cellWidth * cellNum, 0);
 	Graphics::ManagedSurface::operator=(
 		Graphics::ManagedSurface(_cellsSource, r));
+
+	if (isTransparent)
+		setTransparentColor(transColor);
 }
 
 void GfxSurface::writeString(const Common::String &text, const Common::Point &pos,

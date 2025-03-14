@@ -94,7 +94,7 @@ private:
 	void loadMasterSprites();
 	void loadNewPaddle(int nNewSize);
 	void loadMasterSounds();
-	void showOptionsMenu();
+	void showMainMenu();
 	void gamePause();
 	void gameResume();
 	void playGame();

@@ -351,7 +351,7 @@ bool Fuge::msgKeypress(const KeypressMessage &msg) {
 
 	case Common::KEYCODE_F2:
 		// Options menu
-		showOptionsMenu();
+		showMainMenu();
 		break;
 
 	case Common::KEYCODE_SCROLLOCK:
@@ -434,8 +434,8 @@ bool Fuge::msgMouseDown(const MouseDownMessage &msg) {
 	car10Rect = Common::Rect(CAR10_X, CAR10_Y, CAR10_X + CAR10_DX, CAR10_Y + CAR10_DY);
 
 	if (_rNewGameButton.contains(msg._pos)) {
-		// User clicked on the Title - NewGame button
-		// if we are not playing from the metagame
+		// User clicked on the left hand side of the title area.
+		// If we're not in the metagame, start a new Fuge game
 		if (!pGameParams->bPlayingMetagame) {
 			// Start a new game
 			playGame();
@@ -575,7 +575,7 @@ void Fuge::repaintSpriteList() {
 bool Fuge::tick() {
 	if (_showMenuCtr) {
 		if (--_showMenuCtr == 0)
-			showOptionsMenu();
+			showMainMenu();
 	}
 
 	// Continue as long as there is a currently active non-paused game
@@ -693,7 +693,7 @@ void Fuge::releaseMasterSounds() {
 	m_pBrickSound = nullptr;
 }
 
-void Fuge::showOptionsMenu() {
+void Fuge::showMainMenu() {
 	_scrollButton.setPressed(true);
 
 	CBofSound::waitWaveSounds();
@@ -733,6 +733,7 @@ void Fuge::playGame() {
 	// Game starts paused
 	_bPause = true;
 	_bGameActive = true;
+	redraw();
 }
 
 void Fuge::gameReset() {
@@ -819,7 +820,8 @@ void Fuge::loadIniSettings() {
 }
 
 void Fuge::endBall() {
-	// Nothing to do
+	if (_sprBall.isLinked())
+		_sprBall.unlinkSprite();
 }
 
 void Fuge::startBall() {
