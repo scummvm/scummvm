@@ -366,7 +366,7 @@ CLEANUP_2648: // [Original label: l0017_2648]
 	return return_value;
 }
 
-void Adlib::Func2839(uint8 bpp0A, uint32 bpp06) {
+void Adlib::Func2839(uint8 bpp0A, StreamHandler* sh) {
 
 	// TODO: We are doing some loading of values in bp-1 and bp-2 from some central data, skipping this
 	// and hardcoding for now
@@ -734,191 +734,180 @@ void Adlib::OnTimer() {
 							// l0017_1C15:
 							bp8++;
 						} while (true);
-						// l0017_1C1A:
-						if (g2291 == bp8) {
-							// l0017_1C27:
-							uint16 bp0C = 0;
-							bp8 = g2291;
-							uint16 bp16 = g2291 - 1;
-							if (bp16 > 0) {
-								// l0017_1C44:
-								uint16 bp0A = 0;
-								do {
-									// l0017_1C49:
-									bp0A++;
-									// l0017_1C4C:
-									if (gArray222C[bp0A] != 0) {
-										// l0017_1C56:
-										gArray222C[bp0A]++;
-									}
-									// l0017_1C5D:
-									if (gArray222C[bp0A] > bp0C) {
-										// l0017_1C6B:
-										bp0C = gArray222C[bp0A];
-										bp8 = bp0A;
-									}
-									// l0017_1C7D:
-									if (bp0A == bp16) {
-										break;
-									}
-								} while (true);
-							}
+					// l0017_1C1A:
+					if (g2291 == bp8) {
+						// l0017_1C27:
+						SIS_LogEntry(0x01D7, 0x1C27);
+						uint16 bp0C = 0;
+						bp8 = g2291;
+						uint16 bp16 = g2291 - 1;
+						if (bp16 > 0) {
+							// l0017_1C44:
+							SIS_LogEntry(0x01D7, 0x1C44);
+							uint16 bp0A = 0;
+							do {
+								// l0017_1C49:
+								bp0A++;
+								// l0017_1C4C:
+								if (gArray222C[bp0A] != 0) {
+									// l0017_1C56:
+									gArray222C[bp0A]++;
+								}
+								// l0017_1C5D:
+								if (gArray222C[bp0A] > bp0C) {
+									// l0017_1C6B:
+									bp0C = gArray222C[bp0A];
+									bp8 = bp0A;
+								}
+								// l0017_1C7D:
+								if (bp0A == bp16) {
+									break;
+								}
+							} while (true);
+						}
 						// l0017_1C85:
-					//					if (bp0C != 0) {
-					//						gArray222C[bp8] = 0;
-					//						gArray227F[bp8] = bp3;
-					//						// TODO: Original code uses a 16 bit register and clears the upper bit
-					//						// Not sure if this is really needed
-					//						if (gArray225F[bp3] != gArray2288[bp8]) {
-					//							// l0017_1CB1:
-					//							// TODO: Original uses 16 bit again and throws away
-					//							// upper 8
-					//							gArray2288[bp8] = gArray225F[bp3];
-					//							// TODO: Access an array via bp-3h
-
-					//							// TODO: Move an offset in global 2248 forward based on
-					//							// the struct
-					//							// TODO: Pushes
-					//							// push word ptr[224Ah]
-					//							// push word ptr[2248h]
-					//							// TODO: Is the data type wide enough?
-					//							// TODO: In the original code, we throw away the upper byte
-					//							// before the calculation
-
-					//							// TODO: Not sure if I have the resurn value of Func19BE completely
-					//							// TODO: Stay consistent which of the locals we use to save
-					//							// the return value
-					//							bp12 = Func19BE(gArray2288[bp8] << 0x4);
-					//							Func2839(bp8, bp12);
+						if (bp0C != 0) {
+							// l0017_1C8B:
+							SIS_LogEntry(0x01D7, 0x1C8B);
+							gArray222C[bp8] = 0;
+							gArray227F[bp8] = bp3;
+							if (gArray225F[bp3] != gArray2288[bp8]) {
+								// l0017_1CB1:
+								SIS_LogEntry(0x01D7, 0x1CB1);
+								gArray2288[bp8] = gArray225F[bp3];
+								StreamHandler* shBP12 = Func19BE_SH(shMem2248, gArray2288[bp8] << 0x4);
+								Func2839(bp8, shBP12);
+							}
+						}
 					}
 					// l0017_1CF2:
-					//						if (g2291 == bp8) {
-					//							// l0017_1CFF:
-					//							gArray2235[bp4] = bp8;
-					//							// TODO: Argument missing so far
-					//							/* push word ptr[224Ah]
-					//							push	word ptr [2248h]
-					//							*/
-					//							// TODO: Original code throws away AH before and after
-					//							// the array access
-					//							uint16 value = gArray225F[bp3];
-					//							bp10 = Func19BE_TODO(value << 4);
-					//							// TODO: Not sure about amount of bits necessary
-					//							// for the following calculations
-					//							uint16 temp = bp5;
-					//							temp &= 0x7F;
-					//							// TODO: We throw away AH - should be superfluous
-					//							// after the AND
-					//							temp = temp >> 0x1;
-					//							temp -= 0x3F;
-					//							temp = temp >> 0x1;
-					//							// TODO: Again throwing away AH in the original
-					//							bp1 = temp >> 0x1;
-					//							// TODO: Need to give as argument
-					//							// push word ptr[bp - 0Eh]
-					//							// push word ptr[bp - 10h]
-					//							bp12 = Func19BE_TODO(0x2);
-					//							// TODO: Set result back
-					//							// mov	[bp-14h],ax
-					//							// mov[bp - 12h], dx
+					if (g2291 == bp8) {
+						SIS_LogEntry(0x01D7, 0x1CFF);
+						//							// l0017_1CFF:
+						//							gArray2235[bp4] = bp8;
+						//							// TODO: Argument missing so far
+						//							/* push word ptr[224Ah]
+						//							push	word ptr [2248h]
+						//							*/
+						//							// TODO: Original code throws away AH before and after
+						//							// the array access
+						//							uint16 value = gArray225F[bp3];
+						//							bp10 = Func19BE_TODO(value << 4);
+						//							// TODO: Not sure about amount of bits necessary
+						//							// for the following calculations
+						//							uint16 temp = bp5;
+						//							temp &= 0x7F;
+						//							// TODO: We throw away AH - should be superfluous
+						//							// after the AND
+						//							temp = temp >> 0x1;
+						//							temp -= 0x3F;
+						//							temp = temp >> 0x1;
+						//							// TODO: Again throwing away AH in the original
+						//							bp1 = temp >> 0x1;
+						//							// TODO: Need to give as argument
+						//							// push word ptr[bp - 0Eh]
+						//							// push word ptr[bp - 10h]
+						//							bp12 = Func19BE_TODO(0x2);
+						//							// TODO: Set result back
+						//							// mov	[bp-14h],ax
+						//							// mov[bp - 12h], dx
 
-					//							temp = g225E;         // TODO: xor	ah,ah
-					//							uint8 temp2 = temp; // bx = ax
-					//							// TODO: Read from [bp-14h] - using temp for al
-					//							// les	di,[bp-14h]
-					//							// mov al, es : [di]
-					//							temp &= 0x3F;         // TODO: xor	ah,ah
-					//							uint8 temp3 = temp; // dx = ax
-					//							temp = 0x3F;
-					//							// TODO: Not sure if these should be 16 bit values
-					//							temp -= temp3;
-					//							temp3 = temp;
-					//							temp = bp1; // TODO: xor	ah,ah
-					//							// TODO: Should these be 16 bit?
-					//							temp = temp * temp3;
+						//							temp = g225E;         // TODO: xor	ah,ah
+						//							uint8 temp2 = temp; // bx = ax
+						//							// TODO: Read from [bp-14h] - using temp for al
+						//							// les	di,[bp-14h]
+						//							// mov al, es : [di]
+						//							temp &= 0x3F;         // TODO: xor	ah,ah
+						//							uint8 temp3 = temp; // dx = ax
+						//							temp = 0x3F;
+						//							// TODO: Not sure if these should be 16 bit values
+						//							temp -= temp3;
+						//							temp3 = temp;
+						//							temp = bp1; // TODO: xor	ah,ah
+						//							// TODO: Should these be 16 bit?
+						//							temp = temp * temp3;
 
-					//							// TODO: cwd
-					//							uint16 tempCX = 0x3F;
-					//							temp /= tempCX;
-					//							temp += temp2;
-					//							temp3 = temp;
-					//							// TODO: Need to read from pointer
-					//							// les	di,[bp-14h]
-					//							// mov al, es : [di]
-					//							temp &= 0x3F; // TODO: xor ah,ah
-					//							temp += temp3;
-					//							bp2 = temp;
-					//							// TODO: Need to pass arguments
-					//							// push	word ptr [bp-0Eh]
-					//							// push word ptr[bp - 10h]
-					//							Func19BE_TODO(0x3);
-					//							// TODO: Assign result to pointer
-					//							// mov	[bp-14h],ax
-					//							// mov[bp - 12h], dx
-					//							temp = g225E; // TODO: xor ah,ah
-					//							uint16 tempBX = temp;
-					//							// TODO: Assign from pointer
-					//							// les	di,[bp-14h]
-					//							// mov al, es : [di]
-					//							temp &= 0x3F; // TODO: xor ah, ah
-					//							uint16 tempDX = temp;
-					//							temp = 0x3F;
-					//							temp -= tempDX;
-					//							tempDX = temp;
-					//							temp = bp1; // TODO: xor ah, ah
-					//							temp *= tempDX;
-					//							// TODO: CWD
-					//							tempCX = 0x3F;
-					//							temp /= tempCX;
-					//							temp += tempBX;
-					//							tempDX = temp;
-					//							// TODO: Load from data
-					//							// les	di,[bp-14h]
-					//							// mov al, es : [di]
-					//							temp &= 0x3F; // TODO: xor ah,ah
-					//							temp += tempDX;
-					//							bp1 = temp; // TODO: al part only
-					//							if (bp1 > 0x3F) {
-					//								// l0017_1DEC:
-					//								bp1 = 0x3F;
-					//							}
-					//							// l0017_1DF0:
-					//							if (bp2 > 0x3F) {
-					//								// l0017_1DF6:
-					//								bp2 = 0x3F;
-					//							}
-					//							// 1DFAh
-					//							// TODO: Careful if argument are correct here,
-					//							// I stumbled over the 2 pushed values before calling
-					//							// the 1-arg function 2779
-					//							Func2792(bp8 + 0xb0, 0);
+						//							// TODO: cwd
+						//							uint16 tempCX = 0x3F;
+						//							temp /= tempCX;
+						//							temp += temp2;
+						//							temp3 = temp;
+						//							// TODO: Need to read from pointer
+						//							// les	di,[bp-14h]
+						//							// mov al, es : [di]
+						//							temp &= 0x3F; // TODO: xor ah,ah
+						//							temp += temp3;
+						//							bp2 = temp;
+						//							// TODO: Need to pass arguments
+						//							// push	word ptr [bp-0Eh]
+						//							// push word ptr[bp - 10h]
+						//							Func19BE_TODO(0x3);
+						//							// TODO: Assign result to pointer
+						//							// mov	[bp-14h],ax
+						//							// mov[bp - 12h], dx
+						//							temp = g225E; // TODO: xor ah,ah
+						//							uint16 tempBX = temp;
+						//							// TODO: Assign from pointer
+						//							// les	di,[bp-14h]
+						//							// mov al, es : [di]
+						//							temp &= 0x3F; // TODO: xor ah, ah
+						//							uint16 tempDX = temp;
+						//							temp = 0x3F;
+						//							temp -= tempDX;
+						//							tempDX = temp;
+						//							temp = bp1; // TODO: xor ah, ah
+						//							temp *= tempDX;
+						//							// TODO: CWD
+						//							tempCX = 0x3F;
+						//							temp /= tempCX;
+						//							temp += tempBX;
+						//							tempDX = temp;
+						//							// TODO: Load from data
+						//							// les	di,[bp-14h]
+						//							// mov al, es : [di]
+						//							temp &= 0x3F; // TODO: xor ah,ah
+						//							temp += tempDX;
+						//							bp1 = temp; // TODO: al part only
+						//							if (bp1 > 0x3F) {
+						//								// l0017_1DEC:
+						//								bp1 = 0x3F;
+						//							}
+						//							// l0017_1DF0:
+						//							if (bp2 > 0x3F) {
+						//								// l0017_1DF6:
+						//								bp2 = 0x3F;
+						//							}
+						//							// 1DFAh
+						//							// TODO: Careful if argument are correct here,
+						//							// I stumbled over the 2 pushed values before calling
+						//							// the 1-arg function 2779
+						//							Func2792(bp8 + 0xb0, 0);
 
-					//							// TODO: Confirm that these are indeed identical
-					//							uint8 arg1 = gArray96[bp8] + 0x40;
-					//							uint8 arg2 = gArray96[bp8] + 0x40;
+						//							// TODO: Confirm that these are indeed identical
+						//							uint8 arg1 = gArray96[bp8] + 0x40;
+						//							uint8 arg2 = gArray96[bp8] + 0x40;
 
-					//							uint8 result = Func2779(arg2);
-					//							Func2792(arg1, (result & 0xC0) + bp1);
-					//							result = Func2779(
-					//								gArray8d[bp8] + 0x40);
+						//							uint8 result = Func2779(arg2);
+						//							Func2792(arg1, (result & 0xC0) + bp1);
+						//							result = Func2779(
+						//								gArray8d[bp8] + 0x40);
 
-					//							// Note that we again push one more copy of the
-					//							// value which is not used in g2779 above.
-					//							Func2792(gArray8d[bp8] + 0x40,
-					//									 result & 0xC0 + bp2);
-					//							// TODO: Do we need to do something about
-					//							// the upper 8 bits?
-					//							gArray226F[bp3] = 0;
-					//							Func294E(bp8, bp4, gArray226F[bp3]);
-					//						}
-					//						// TODO: Figure out the logic here, I think
-					//						// I got lost with jumps
-					//						// l0017_1E91:
-					//						// jmp 2095h
-					//					}
-					//				}
-					//				// TODO: Should be 1CF2
-					//				// TODO: Check if this is an else or just an if
+						//							// Note that we again push one more copy of the
+						//							// value which is not used in g2779 above.
+						//							Func2792(gArray8d[bp8] + 0x40,
+						//									 result & 0xC0 + bp2);
+						//							// TODO: Do we need to do something about
+						//							// the upper 8 bits?
+						//							gArray226F[bp3] = 0;
+						//							Func294E(bp8, bp4, gArray226F[bp3]);
+						//						}
+						//						// TODO: Figure out the logic here, I think
+						//						// I got lost with jumps
+						//						// l0017_1E91:
+						//						// jmp 2095h
+						//					}
+						//				}
+						}
 					} else {
 						//			// l0017_1E94:
 						SIS_LogEntry(0x01D7, 0x1E94);
