@@ -108,7 +108,8 @@ typedef struct DossierInfo {
 typedef struct CursorInfo {
 	Common::String name;
 	Common::String aname;
-	Graphics::WinCursorGroup *cursorGroup;
+	Graphics::Cursor *cursor;
+	Graphics::WinCursorGroup *winCursorGroup;
 } CursorInfo;
 
 // funcs
@@ -213,7 +214,7 @@ public:
 
 	// Cursors
 	Common::Array<CursorInfo> _cursors;
-	Common::String _cursorCache;
+	Common::String _currentCursor;
 	void changeCursor(const Common::String &);
 	Common::String getInventoryCursor();
 	Common::String getExitCursor();

@@ -128,7 +128,8 @@ PrivateEngine::~PrivateEngine() {
 
 	for (uint i = 0; i < _cursors.size(); i++)
 	{
-		delete _cursors[i].cursorGroup;
+		delete _cursors[i].cursor;
+		delete _cursors[i].winCursorGroup;
 	}
 }
 
