@@ -207,6 +207,7 @@ class OkButton : public ColorButton {
 public:
 	OkButton(UIElement *parent = nullptr);
 	OkButton(const Common::Rect &r, UIElement *parent = nullptr);
+	bool msgMouseEnter(const MouseEnterMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 };
 

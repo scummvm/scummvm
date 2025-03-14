@@ -77,6 +77,8 @@ bool Rules::msgOpen(const OpenMessage &msg) {
 	_scrollTop.setTransparentColor(WHITE);
 	_scrollBottom.setTransparentColor(WHITE);
 	_scrollMiddle.setTransparentColor(WHITE);
+	_scrollTopRect = Common::Rect();
+	_scrollBottomRect = Common::Rect();
 
 	Common::Rect r(0, 0, _scroll.w, _scroll.h);
 	r.moveTo((GAME_WIDTH - _scroll.w) / 2,
@@ -122,14 +124,28 @@ bool Rules::msgOpen(const OpenMessage &msg) {
 	// Line wrap the lines
 	s = getSurface(Common::Rect(TEXT_LEFT_MARGIN, _scrollTop.h + TEXT_TOP_MARGIN,
 		TEXT_LEFT_MARGIN + TEXT_WIDTH, _scroll.h - _scrollBottom.h - TEXT_BOTTOM_MARGIN));
-	s.wordWrapText(text, _lines);
+	s.setFontSize(TEXT_SIZE);
+	Common::StringArray lines;
+	s.wordWrapText(text, lines);
 
-	_moreRect = Common::Rect(0, 0, s.getStringWidth(_more), s.getStringHeight());
-	_moreRect.moveTo(_bounds.width() - 120, _bounds.height() - 45);
+	// Split the lines into each page's
+	_lines.clear();
+	int numLines = s.h / (s.getStringHeight() + 2);
+	_lines.resize((lines.size() + numLines - 1) / numLines);
+
+	for (idx = 0; idx < lines.size(); ++idx)
+		_lines[idx / numLines].push_back(lines[idx]);
+
+	// Set More text button rects
+	_moreTopRect = Common::Rect(0, 0, s.getStringWidth(_more), s.getStringHeight());
+	_moreTopRect.moveTo(_bounds.width() - 120, 20);
+	_moreBottomRect = Common::Rect(0, 0, s.getStringWidth(_more), s.getStringHeight());
+	_moreBottomRect.moveTo(_bounds.width() - 120, _bounds.height() - 45);
 
 	// Render the first page of text
-	renderPage();
 	_scrollY = 0;
+	_helpPage = 0;
+	renderPage();
 
 	// Play dictation
 	if (_soundFilename)
@@ -167,19 +183,49 @@ bool Rules::msgGame(const GameMessage &msg) {
 	return false;
 }
 
-bool Rules::msgMouseUp(const MouseUpMessage &msg) {
-	Common::Rect moreRect = _moreRect;
-	moreRect.translate(_bounds.left, _bounds.top);
-
-	if (msg._button == MouseUpMessage::MB_LEFT &&
-		moreRect.contains(msg._pos) && !_lines.empty()) {
-		// Move to the next page
-		renderPage();
-		redraw();
-		return true;
+bool Rules::msgMouseMove(const MouseMoveMessage &msg) {
+	if (_scrollTopRect.contains(msg._pos)) {
+		if (_helpPage == 0)
+			g_events->setCursor(IDC_RULES_INVALID);
+		else
+			g_events->setCursor(IDC_RULES_ARROWUP);
 	} else {
-		return View::msgMouseUp(msg);
+		if (_scrollBottomRect.contains(msg._pos)) {
+			if (_helpPage = (_lines.size() - 1))
+				g_events->setCursor(IDC_RULES_INVALID);
+			else
+				g_events->setCursor(IDC_RULES_ARROWDN);
+		} else {
+			g_events->setCursor(IDC_ARROW);
+		}
 	}
+
+	return true;
+}
+
+bool Rules::msgMouseUp(const MouseUpMessage &msg) {
+	Common::Rect topRect = _moreTopRect,
+		botRect = _moreBottomRect;
+	topRect.translate(_bounds.left, _bounds.top);
+	botRect.translate(_bounds.left, _bounds.top);
+
+	if (msg._button == MouseUpMessage::MB_LEFT) {
+		if (topRect.contains(msg._pos) && _helpPage > 0) {
+			// Move to prior page
+			--_helpPage;
+			renderPage();
+			redraw();
+			return true;
+		} else if (botRect.contains(msg._pos) &&
+				_helpPage < (_lines.size() - 1)) {
+			// Move to the next page
+			renderPage();
+			redraw();
+			return true;
+		}
+	}
+
+	return View::msgMouseUp(msg);
 }
 
 
@@ -220,7 +266,7 @@ void Rules::draw() {
 
 		// Show the more button if there's more pages left
 		if (!_lines.empty())
-			s.writeString(_more, _moreRect, BLACK);
+			s.writeString(_more, _moreBottomRect, BLACK);
 	}
 }
 
@@ -244,10 +290,10 @@ void Rules::renderPage() {
 	GfxSurface s(_scrollContent, textRect, this);
 	s.setFontSize(TEXT_SIZE);
 
-	for (int y = 0; y < s.h && !_lines.empty(); y += s.getStringHeight() + 2) {
+	for (uint idx = 0, y = 0; idx < _lines[_helpPage].size();
+			++idx, y += s.getStringHeight() + 2) {
 		// Get the next line
-		line = _lines.front();
-		_lines.remove_at(0);
+		line = _lines[_helpPage][idx];
 
 		// Write it out
 		s.writeString(line, Common::Point(0, y), BLACK);
@@ -261,8 +307,14 @@ bool Rules::tick() {
 		_scrollY = MIN(_scrollY + 20, scrollHeight);
 		redraw();
 
-		if (_scrollY == scrollHeight && _dictation)
+		if (_scrollY == scrollHeight && _dictation) {
 			_dictation->play();
+
+			_scrollTopRect = Common::Rect(0, 0, 501, 48);
+			_scrollBottomRect = Common::Rect(0, 0, 501, 47);
+			_scrollTopRect.moveTo(_bounds.left, _bounds.top);
+			_scrollBottomRect.moveTo(_bounds.left, _bounds.top);
+		}
 	}
 
 	return true;

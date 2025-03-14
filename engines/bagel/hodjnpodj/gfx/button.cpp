@@ -299,6 +299,11 @@ OkButton::OkButton(const Common::Rect &r, UIElement *parent) :
 	setBounds(r);
 }
 
+bool OkButton::msgMouseEnter(const MouseEnterMessage &msg) {
+	g_events->setCursor(IDC_ARROW);
+	return ColorButton::msgMouseEnter(msg);
+}
+
 bool OkButton::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_SELECT) {
 		_parent->send(GameMessage("BUTTON", _name));

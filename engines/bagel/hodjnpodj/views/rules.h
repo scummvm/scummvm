@@ -37,10 +37,12 @@ private:
 	GfxSurface _scrollContent;
 	const char *_filename, *_soundFilename;
 	CBofSound *_dictation = nullptr;
-	Common::StringArray _lines;
-	Common::Rect _moreRect;
+	Common::Array<Common::StringArray> _lines;
+	uint _helpPage = 0;
+	Common::Rect _moreTopRect, _moreBottomRect;
 	Common::String _more;
 	int _scrollY = 0;
+	Common::Rect _scrollTopRect, _scrollBottomRect;
 
 	void renderPage();
 
@@ -56,6 +58,7 @@ public:
 	bool msgClose(const CloseMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
+	bool msgMouseMove(const MouseMoveMessage &msg) override;
 	bool msgMouseUp(const MouseUpMessage &msg) override;
 	bool tick() override;
 };
