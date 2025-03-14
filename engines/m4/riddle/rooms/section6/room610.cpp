@@ -76,7 +76,7 @@ void Room610::init() {
 	_sgTt = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xb00, false,
 		triggerMachineByHashCallback610, "sg and tt");
 
-	switch (_G(kernel).trigger) {
+	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
 		midi_play("tensions", 255, 1, -1, 949);
 
