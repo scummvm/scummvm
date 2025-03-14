@@ -503,6 +503,9 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 			macFont->setName(name);
 		}
 
+		if (_fontRegistry.contains(macFont->getName()))
+			return _fontRegistry[macFont->getName()]->getFont();
+
 		if (!_fontRegistry.contains(macFont->getName())) {
 			int id = macFont->getId();
 
