@@ -407,9 +407,14 @@ void Font::load() {
 		return;
 	AnimationBase::load();
 	// We now render all frames into a 16x16 atlas and fill up to power of two size just because it is easy here
+	// However in two out of three fonts the character 128 is massive, it looks like a bug
+	// as we want easy regular-sized characters it is ignored
+
 	Point cellSize;
 	for (auto image : _images) {
 		assert(image != nullptr); // no fake pictures in fonts please
+		if (image == _images[128])
+			continue;
 		cellSize.x = MAX(cellSize.x, image->w);
 		cellSize.y = MAX(cellSize.y, image->h);
 	}
@@ -422,6 +427,8 @@ void Font::load() {
 	const float invWidth = 1.0f / atlasSurface.w;
 	const float invHeight = 1.0f / atlasSurface.h;
 	for (uint i = 0; i < _images.size(); i++) {
+		if (i == 128) continue;
+
 		int offsetX = (i % 16) * cellSize.x + (cellSize.x - _images[i]->w) / 2;
 		int offsetY = (i / 16) * cellSize.y + (cellSize.y - _images[i]->h) / 2;
 		fullBlend(*_images[i], atlasSurface, offsetX, offsetY);
