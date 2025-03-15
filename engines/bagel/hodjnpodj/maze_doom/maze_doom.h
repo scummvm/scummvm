@@ -29,13 +29,24 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace MazeDoom {
 
+#define	NUM_TRAP_MAPS	 7							// There are seven trap icons available
+
 class MazeDoom : public MinigameView {
 private:
 	const char *_upBmp, *_downBmp,
 		*_leftBmp, *_rightBmp;
+	BmpButton _scrollButton;
 	GfxSurface _background;
 	GfxSurface _locale, _blank;
-	BmpButton _scrollButton;
+	GfxSurface _mazeBitmap;
+	GfxSurface _partsBitmap, pWallBitmap,
+		pPathBitmap, pStartBitmap;
+	GfxSurface pLeftEdgeBmp, pRightEdgeBmp,
+		pTopEdgeBmp, pBottomEdgeBmp;
+	GfxSurface TrapBitmap[NUM_TRAP_MAPS];
+	GfxSurface pLocaleBitmap;
+	GfxSurface pBlankBitmap;
+	Sprite pPlayerSprite;
 
 	void setupHodjPodj();
 	void loadBitmaps();

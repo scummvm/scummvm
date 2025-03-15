@@ -33,6 +33,12 @@ namespace HodjNPodj {
 class UIElement;
 class MinigameView;
 
+struct RectWH : public Common::Rect {
+	RectWH() : Common::Rect() {}
+	RectWH(int16 x, int16 y, int16 w, int16 h) :
+		Common::Rect(x, y, x + w, y + h) {}
+};
+
 class GfxSurface : public Graphics::ManagedSurface {
 private:
 	Graphics::ManagedSurface _cellsSource; // Used with loadCels

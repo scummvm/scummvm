@@ -32,6 +32,17 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace MazeDoom {
 
+#define	WALL_X		0
+#define	WALL_Y		22
+#define	PATH_WIDTH	24
+#define	PATH_HEIGHT	24
+#define	PATH_X		48
+#define	START_X		24
+#define	EDGE_Y		46
+#define	EDGE_WIDTH	5
+#define	EDGE_HEIGHT	24
+#define	TRAP_WIDTH	22
+#define	TRAP_HEIGHT	22
 
 // Border info              
 #define SIDE_BORDER 	 20
@@ -61,7 +72,6 @@ namespace MazeDoom {
 #define NUM_ROWS		19
 #define NUM_NEIGHBORS	 9							// The "clump" area is 3 X 3 grid spaces
 
-#define	NUM_TRAP_MAPS	 7							// There are seven trap icons available
 #define	MIN_TRAPS		 4
 
 #define NUM_CELS		 8
@@ -111,9 +121,11 @@ MazeDoom::MazeDoom() : MinigameView("MazeDoom", "mazedoom/hnpmaze.dll"),
 			SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
 			SCROLL_BUTTON_X + SCROLL_BUTTON_DX - 1,
 			SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1)
-		) {
+		),
+		pPlayerSprite(this) {
 	addResource(IDB_LOCALE_BMP, "idb_locale_bmp");
 	addResource(IDB_BLANK_BMP, "idb_blank_bmp");
+	addResource(IDB_PARTS_BMP, IDB_PARTS);
 }
 
 bool MazeDoom::msgOpen(const OpenMessage &msg) {
@@ -121,9 +133,6 @@ bool MazeDoom::msgOpen(const OpenMessage &msg) {
 
 	setupHodjPodj();
 	loadBitmaps();
-
-	_scrollButton.loadBitmaps(SCROLLUP_BMP, SCROLLDOWN_BMP,
-		nullptr, nullptr);
 
 	return true;
 }
@@ -133,6 +142,8 @@ bool MazeDoom::msgClose(const CloseMessage &msg) {
 
 	_background.clear();
 	_scrollButton.clear();
+	_mazeBitmap.clear();
+	_partsBitmap.clear();
 
 	return true;
 }
@@ -175,6 +186,42 @@ void MazeDoom::loadBitmaps() {
 	loadPalette(decoder.getPalette());
 
 	_background.copyFrom(*decoder.getSurface());
+
+	_scrollButton.loadBitmaps(SCROLLUP_BMP, SCROLLDOWN_BMP,
+		nullptr, nullptr);
+	_mazeBitmap.create(NUM_COLUMNS * SQ_SIZE_X,
+		NUM_ROWS * SQ_SIZE_Y);
+
+	// Load up the various bitmaps for wall, edge, booby traps, etc.
+	_partsBitmap.loadBitmap(IDB_PARTS_BMP);
+
+	pWallBitmap = GfxSurface(_partsBitmap,
+		RectWH(WALL_X, WALL_Y, PATH_WIDTH, PATH_HEIGHT), this);
+	pPathBitmap = GfxSurface(_partsBitmap,
+		RectWH(PATH_X, WALL_Y, PATH_WIDTH, PATH_HEIGHT), this);
+	pStartBitmap = GfxSurface(_partsBitmap,
+		RectWH(START_X, WALL_Y, PATH_WIDTH, PATH_HEIGHT), this);
+
+	pLeftEdgeBmp = GfxSurface(_partsBitmap,
+		RectWH(0, EDGE_Y, EDGE_WIDTH, EDGE_HEIGHT), this);
+	pRightEdgeBmp = GfxSurface(_partsBitmap,
+		RectWH(EDGE_WIDTH, EDGE_Y, EDGE_WIDTH, EDGE_HEIGHT), this);
+	pTopEdgeBmp = GfxSurface(_partsBitmap,
+		RectWH(EDGE_WIDTH * 2, EDGE_Y, EDGE_HEIGHT, EDGE_WIDTH), this);
+	pBottomEdgeBmp = GfxSurface(_partsBitmap,
+		RectWH((EDGE_WIDTH * 2) + EDGE_HEIGHT, EDGE_Y,
+			EDGE_HEIGHT, EDGE_WIDTH), this);
+
+	for (int i = 0; i < NUM_TRAP_MAPS; i++) {
+		TrapBitmap[i] = GfxSurface(_partsBitmap,
+			RectWH(TRAP_WIDTH * i, 0, TRAP_WIDTH, TRAP_HEIGHT), this);
+	}
+
+	pPlayerSprite.loadCels(_leftBmp, NUM_CELS);
+	pPlayerSprite.setTransparentColor(WHITE);
+
+	pLocaleBitmap.loadBitmap(IDB_LOCALE_BMP);
+	pBlankBitmap.loadBitmap(IDB_BLANK_BMP);
 }
 
 void MazeDoom::showMainMenu() {
