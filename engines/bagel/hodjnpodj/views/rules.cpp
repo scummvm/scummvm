@@ -46,9 +46,10 @@ namespace HodjNPodj {
 #define TEXT_SIZE           12
 #define	TEXT_BUFFER_SIZE	512						// # characters in the text input buffer
 #define	TEXT_LEFT_MARGIN	55						// left margin offset for display of text
+#define	TEXT_RIGHT_MARGIN	45						// right margin offset for display of text
 #define	TEXT_TOP_MARGIN		5                       // top margin offset for display of text
 #define	TEXT_BOTTOM_MARGIN	20                      // bottom margin offset for display of text
-#define	TEXT_WIDTH			435                     // width of text display area
+#define	TEXT_WIDTH			(490-TEXT_LEFT_MARGIN-TEXT_RIGHT_MARGIN)	// Width of text display area
 #define TEXT_MORE_DX		120						// offset of "more" indicator from right margin
 #define TEXT_MORE_DY		10                      // offset of "more" indicator bottom of scroll
 #define MORE_TEXT_BLURB		"[ More ]"				// actual text to display for "more" indicator
