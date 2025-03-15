@@ -20,20 +20,26 @@
  */
 
 #include "bagel/hodjnpodj/console.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("test", WRAP_METHOD(Console, Cmd_test));
+	registerCmd("view", WRAP_METHOD(Console, cmdView));
 }
 
 Console::~Console() {
 }
 
-bool Console::Cmd_test(int argc, const char **argv) {
-	debugPrintf("Test\n");
-	return true;
+bool Console::cmdView(int argc, const char **argv) {
+	if (argc == 2) {
+		g_events->replaceView(argv[1], true);
+		return false;
+	} else {
+		debugPrintf("view <name>\n");
+		return true;
+	}
 }
 
 } // namespace HodjNPodj
