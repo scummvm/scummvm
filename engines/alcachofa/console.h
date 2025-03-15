@@ -41,6 +41,7 @@ public:
 	inline bool showInteractables() const { return _showInteractables; }
 	inline bool showCharacters() const { return _showCharacters; }
 	inline bool showFloor() const { return _showFloor; }
+	inline bool showFloorEdges() const { return _showFloorEdges; }
 	inline bool showFloorColor() const { return _showFloorColor; }
 	bool isAnyDebugDrawingOn() const;
 
@@ -57,6 +58,7 @@ private:
 	bool _showInteractables = true;
 	bool _showCharacters = true;
 	bool _showFloor = true;
+	bool _showFloorEdges = false;
 	bool _showFloorColor = false;
 };
 

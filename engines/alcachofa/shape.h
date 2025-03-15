@@ -52,6 +52,7 @@ struct Polygon {
 		float dummy;
 		return closestPointTo(query, dummy);
 	}
+	Common::Point midPoint() const;
 };
 
 struct PathFindingPolygon : Polygon {
@@ -171,8 +172,11 @@ public:
 		const Common::Point &from,
 		const Common::Point &to,
 		Common::Stack<Common::Point> &path) const;
+	int32 edgeTarget(uint polygonI, uint pointI) const;
 
 private:
+	using LinkIndex = Common::Pair<int32, int32>;
+
 	void setupLinks();
 	void setupLinkPoint(
 		const PathFindingPolygon &outer,
@@ -181,7 +185,7 @@ private:
 	void setupLinkEdge(
 		const PathFindingPolygon &outer,
 		const PathFindingPolygon &inner,
-		int32 outerP1, int32 outerP2, int32 innerP);
+		LinkIndex outerP, LinkIndex innerP);
 	void initializeFloydWarshall();
 	void calculateFloydWarshall();
 	bool canGoStraightThrough(
@@ -208,7 +212,6 @@ private:
 	 * the corresponding link point. The second point is the
 	 * index to the artifical center point
 	 */
-	using LinkIndex = Common::Pair<int32, int32>;
 	struct LinkPolygonIndices {
 		LinkPolygonIndices();
 		LinkIndex _points[kPointsPerPolygon];

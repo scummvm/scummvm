@@ -248,7 +248,6 @@ public:
 
 		float colors[] = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f };
 
-		//GL_CALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
 		GL_CALL(glColor4f(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f));
 		GL_CALL(glVertexPointer(2, GL_FLOAT, 0, positions));
 		if (_currentTexture != nullptr)
@@ -256,7 +255,7 @@ public:
 		GL_CALL(glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, colors));
 		GL_CALL(glDrawArrays(GL_QUADS, 0, 4));
 
-#if DEBUG
+#if _DEBUG
 		// make sure we crash instead of someone using our stack arrays
 		GL_CALL(glVertexPointer(2, GL_FLOAT, sizeof(Vector2d), nullptr));
 		GL_CALL(glTexCoordPointer(2, GL_FLOAT, sizeof(Vector2d), nullptr));
