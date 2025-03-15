@@ -369,167 +369,39 @@ CLEANUP_2648: // [Original label: l0017_2648]
 void Adlib::Func2839(uint8 bpp0A, StreamHandler* sh) {
 	uint8 bp1 = gArray8d[bpp0A];
 	uint8 bp2 = gArray96[bpp0A];
-	/* 
 	
-	mov	al,[bp-1h]
-	xor	ah,ah
-	add	ax,20h
-	push	ax
-	les	di,[bp+6h]
-	;; Looks like we are drawing data from this, let's see if this comes from the file
-	mov	al,es:[di]
-	push	ax
-	call	far 0017h:2792h
-	*/
-	uint16 bp1 = 0x0;
-	bp1 += 0x20;
-	uint8 v0 = shMem2250->peekByteAtOffset(0, SEEK_CUR);
-	Func2792(bp1, v0);
-	// [bp-2h] - TODO: Hardcoded to 3, but actually loaded
-	uint16 bp2 = 0x3;
-	bp2 += 0x20;
-	// TODO: Get proper DI
-	uint8 v1 = shMem2250->peekByteAtOffset(1, SEEK_CUR);
-	Func2792(bp2, v1);
-	/* push ax
-		les di,
-		[bp + 6h]
+	uint8 value = sh->peekByteAtOffset(0, SEEK_CUR);
+	Func2792(bp1 + 0x20, value);
+	
+	value = sh->peekByteAtOffset(1, SEEK_CUR);
+	Func2792(bp2 + 0x20, value);
+	
+	value = sh->peekByteAtOffset(2, SEEK_CUR);
+	Func2792(bp1 + 0x40, value);
+	
+	value = sh->peekByteAtOffset(3, SEEK_CUR);
+	Func2792(bp2 + 0x40, value);
+	
+	value = sh->peekByteAtOffset(4, SEEK_CUR);
+	Func2792(bp1 + 0x60, value);
+	
+	value = sh->peekByteAtOffset(5, SEEK_CUR);
+	Func2792(bp2 + 0x60, value);
 
-		mov al,
-		es : [di + 1h] push ax
-				 call far 0017h : 2792h
-	*/
-	bp1 = 0;
-	bp1 += 0x40;
-	// TODO: Get proper DI
-	uint8 v2 = shMem2250->peekByteAtOffset(2, SEEK_CUR);
-	Func2792(bp1, v2);
-	/*
-	mov	al,[bp-1h]
-	xor	ah,ah
-	add	ax,40h
-	push	ax
-	les	di,[bp+6h]
-	mov	al,es:[di+2h]
-	push	ax
-	call	far 0017h:2792h */
-	bp2 = 0x3;
-	bp2 += 0x40;
-	uint8 v3 = shMem2250->peekByteAtOffset(3, SEEK_CUR);
-	Func2792(bp2, v3);
-	/*
-	mov	al,[bp-2h]
-	xor	ah,ah
-	add	ax,40h
-	push	ax
-	les	di,[bp+6h]
-	mov	al,es:[di+3h]
-	push	ax
-	call	far 0017h:2792h */
-	bp1 = 0;
-	bp1 += 0x60;
-	uint8 v4 = shMem2250->peekByteAtOffset(4, SEEK_CUR);
-	Func2792(bp1, v4);
-	/*
-	mov	al,[bp-1h]
-	xor	ah,ah
-	add	ax,60h
-	push	ax
-	les	di,[bp+6h]
-	mov	al,es:[di+4h]
-	push	ax
-	call	far 0017h:2792h
-	*/
-	bp2 = 0x3;
-	bp2 += 0x60;
-	uint8 v5 = shMem2250->peekByteAtOffset(5, SEEK_CUR);
-	Func2792(bp2, v5);
+	value = sh->peekByteAtOffset(6, SEEK_CUR);
+	Func2792(bp1 + 0x80, value);
 
-	/*
-	mov	al,[bp-2h]
-	xor	ah,ah
-	add	ax,60h
-	push	ax
-	les	di,[bp+6h]
-	mov	al,es:[di+5h]
-	push	ax
-	call	far 0017h:2792h
-	*/
-	bp1 = 0;
-	bp1 += 0x80;
-	uint8 v6 = shMem2250->peekByteAtOffset(6, SEEK_CUR);
-	Func2792(bp1, v6);
+	value = sh->peekByteAtOffset(7, SEEK_CUR);
+	Func2792(bp2 + 0x80, value);
+	
+	value = sh->peekByteAtOffset(8, SEEK_CUR);
+	Func2792(bp1 + 0xE0, value);
 
-	/*
-	mov	al,[bp-1h]
-	xor	ah,ah
-	add	ax,80h
-	push	ax
-	les	di,[bp+6h]
-	mov	al,es:[di+6h]
-	push	ax
-	call	far 0017h:2792h
-	*/
-	bp2 = 0x3;
-	bp2 += 0x80;
-	uint8 v7 = shMem2250->peekByteAtOffset(7, SEEK_CUR);
-	Func2792(bp2, v7);
-	/*
-	mov	al,[bp-2h]
-	xor	ah,ah
-	add	ax,80h
-	push	ax
-	les	di,[bp+6h]
-	mov	al,es:[di+7h]
-	push	ax
-	call	far 0017h:2792h
-	*/
-	bp1 = 0;
-	bp1 += 0xE0;
-	uint8 v8 = shMem2250->peekByteAtOffset(8, SEEK_CUR);
-	Func2792(bp1, v8);
+	value = sh->peekByteAtOffset(9, SEEK_CUR);
+	Func2792(bp2 + 0xE0, value);
 
-	/*
-	mov	al,[bp-1h]
-	xor	ah,ah
-	add	ax,0E0h
-	push	ax
-	les	di,[bp+6h]
-	mov	al,es:[di+8h]
-	push	ax
-	call	far 0017h:2792h */
-
-	bp2 = 0x3;
-	bp2 += 0xE0;
-	uint8 v9 = shMem2250->peekByteAtOffset(9, SEEK_CUR);
-	Func2792(bp2, v9);
-
-	/*
-	mov	al,[bp-2h]
-	xor	ah,ah
-	add	ax,0E0h
-	push	ax
-	les	di,[bp+6h]
-	mov	al,es:[di+9h]
-	push	ax
-	call	far 0017h:2792h */
-	// TODO: This is a parameter
-
-	uint16 bp0A = 0x100;
-	bp0A += 0xC0;
-	uint8 v10 = shMem2250->peekByteAtOffset(0xA, SEEK_CUR);
-	Func2792(bp0A, v10);
-	/*
-	mov	al,[bp+0Ah]
-	xor	ah,ah
-	add	ax,0C0h
-	push	ax
-	les	di,[bp+6h]
-	mov	al,es:[di+0Ah]
-	push	ax
-	call	far 0017h:2792h
-	*/
-	// TODO: Refactor, this code is unnecessarily cumbersome
+	value = sh->peekByteAtOffset(0xA, SEEK_CUR);
+	Func2792(bpp0A + 0xC0, value);
 }
 
 void Adlib::Func294E(uint16 bpp6, uint8 bpp8, uint16 bppA) {
@@ -730,12 +602,10 @@ void Adlib::OnTimer() {
 						bp8 = g2291;
 						uint16 bp16 = g2291 - 1;
 						if (bp16 > 0) {
-							// l0017_1C44:
 							SIS_LogEntry(0x01D7, 0x1C44);
 							uint16 bp0A = 0;
 							do {
 								// l0017_1C49:
-								bp0A++;
 								// l0017_1C4C:
 								if (gArray222C[bp0A] != 0) {
 									// l0017_1C56:
@@ -751,6 +621,10 @@ void Adlib::OnTimer() {
 								if (bp0A == bp16) {
 									break;
 								}
+								// l0017_1C44:
+								// Original has this at the top but skips
+								// it for the first round
+								bp0A++;
 							} while (true);
 						}
 						// l0017_1C85:
@@ -1216,7 +1090,7 @@ void Adlib::OnTimer() {
 StreamHandler *Adlib::Func19BE_SH(StreamHandler *inHandler, uint16 seekDelta) {
 	StreamHandler *result = new StreamHandler(*inHandler);
 	uint16 pos = result->pos();
-	if (seekDelta > 0xF8) {
+	if (seekDelta > 0xFFF8) {
 		// l0017_19D8:
 		// TODO: Confirm that this works as expected and if it is every used in
 		// the actual game
@@ -1421,10 +1295,22 @@ void Adlib::SetSong(Macs2::StreamHandler *sh) {
 }
 
 void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
-	fileStream->seek(0x0001B669, SEEK_SET);
+	// TODO: Figure out the actual sizes
 	constexpr uint32 size = 255;
 	gArray69.resize(size);
-	fileStream->read(gArray69.data(), size);
+	LoadData(fileStream, 0x0001B669, size, gArray69.data());
+
+	gArray8d.resize(size);
+	LoadData(fileStream, 0x0001B68D, size, gArray8d.data());
+
+	gArray96.resize(size);
+	LoadData(fileStream, 0x0001B696, size, gArray96.data());
+
+}
+
+void Adlib::LoadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target) {
+	fileStream->seek(pos, SEEK_SET);
+	fileStream->read(target, size);
 }
 
 inline StreamHandler::StreamHandler(Common::MemorySeekableReadWriteStream *s) : _stream(s), _pos(s->pos()) {
@@ -1455,7 +1341,6 @@ int64 StreamHandler::size() const {
 
 bool StreamHandler::seek(int64 offset, int whence) {
 	_stream->seek(_pos, SEEK_SET);
-	_stream->seek(_pos, whence);
 	bool result = _stream->seek(offset, whence);
 	_pos = _stream->pos();
 	return result;
