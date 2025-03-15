@@ -29,10 +29,20 @@ namespace HodjNPodj {
 namespace MazeDoom {
 
 class MazeDoom : public MinigameView {
+private:
+	const char *_upBmp, *_downBmp,
+		*_leftBmp, *_rightBmp;
+	GfxSurface _background;
+
+	void setupBitmaps();
+	void loadBackground();
+
 public:
 	MazeDoom();
-	virtual ~MazeDoom() {
-	}
+	virtual ~MazeDoom() {}
+
+	bool msgOpen(const OpenMessage &msg) override;
+	void draw() override;
 };
 
 } // namespace MazeDoom

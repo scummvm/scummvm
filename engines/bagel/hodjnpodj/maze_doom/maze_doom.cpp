@@ -19,7 +19,10 @@
  *
  */
 
+#include "common/file.h"
+#include "image/bmp.h"
 #include "bagel/hodjnpodj/maze_doom/maze_doom.h"
+#include "bagel/hodjnpodj/maze_doom/globals.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/views/main_menu.h"
@@ -29,6 +32,46 @@ namespace HodjNPodj {
 namespace MazeDoom {
 
 MazeDoom::MazeDoom() : MinigameView("mazedoom", "mazedoom/hnpmaze.dll") {
+}
+
+bool MazeDoom::msgOpen(const OpenMessage &msg) {
+	MinigameView::msgOpen(msg);
+
+	setupBitmaps();
+	loadBackground();
+
+
+	return true;
+}
+
+void MazeDoom::draw() {
+	GfxSurface s = getSurface();
+	s.blitFrom(_background);
+}
+
+void MazeDoom::setupBitmaps() {
+	if (pGameParams->bPlayingHodj) {
+		_upBmp = IDB_HODJ_UP_BMP;
+		_downBmp = IDB_HODJ_DOWN_BMP;
+		_leftBmp = IDB_HODJ_LEFT_BMP;
+		_rightBmp = IDB_HODJ_RIGHT_BMP;
+	} else {
+		_upBmp = IDB_PODJ_UP_BMP;
+		_downBmp = IDB_PODJ_DOWN_BMP;
+		_leftBmp = IDB_PODJ_LEFT_BMP;
+		_rightBmp = IDB_PODJ_RIGHT_BMP;
+	}
+}
+
+void MazeDoom::loadBackground() {
+	Image::BitmapDecoder decoder;
+	Common::File f;
+
+	if (!f.open(MAIN_SCREEN) || !decoder.loadStream(f))
+		error("Could not load - %s", MAIN_SCREEN);
+	loadPalette(decoder.getPalette());
+
+	_background.copyFrom(*decoder.getSurface());
 }
 
 } // namespace MazeDoom
