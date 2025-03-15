@@ -22,7 +22,7 @@
 #include "common/file.h"
 #include "image/bmp.h"
 #include "bagel/hodjnpodj/maze_doom/maze_doom.h"
-#include "bagel/hodjnpodj/maze_doom/globals.h"
+#include "bagel/hodjnpodj/maze_doom/defines.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/views/main_menu.h"
