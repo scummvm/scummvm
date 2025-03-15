@@ -85,8 +85,7 @@ void MinigameView::close() {
 }
 
 bool MinigameView::hasFile(const Common::Path &path) const {
-	return _bitmapFiles.contains(path.toString()) ||
-		_soundFiles.contains(path.toString());
+	return _files.contains(path.toString());
 }
 
 int MinigameView::listMembers(Common::ArchiveMemberList &list) const {
@@ -102,8 +101,7 @@ Common::SeekableReadStream *MinigameView::createReadStreamForMember(const Common
 	Common::String filename = path.toString();
 
 	// See if it's a filename that's been registered
-	if (!_bitmapFiles.contains(filename) &&
-		!_soundFiles.contains(filename))
+	if (!_files.contains(filename))
 		return nullptr;
 
 	// TODO: Is there any way to share the _resources field?
@@ -114,15 +112,8 @@ Common::SeekableReadStream *MinigameView::createReadStreamForMember(const Common
 		return nullptr;
 
 	// Get and return the appropriate resource
-	if (_bitmapFiles.contains(filename)) {
-		return winResources.getResource(Common::kWinBitmap,
-			_bitmapFiles[filename]);
-	} else {
-		return winResources.getResource(Common::WinResourceID("WAVE"),
-			_soundFiles[filename]);
-	}
-
-	return nullptr;
+	return winResources.getResource(
+		_files[filename]._type, _files[filename]._id);
 }
 
 void MinigameView::drawSprites() {

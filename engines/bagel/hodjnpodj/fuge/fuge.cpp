@@ -199,7 +199,10 @@ Fuge::Fuge() : MinigameView("Fuge", "fuge/hnpfuge.dll"),
 
 	// Add mappings to resource entries
 	addResource("fuge/art/ball.bmp", 103);
-	addResource("fuge/sound/newlife.wav", "brickSound");
+	addResource("fuge/sound/newlife.wav",
+		Common::WinResourceID("brickSound"),
+		Common::WinResourceID("WAVE")
+	);
 }
 
 void Fuge::clear() {
