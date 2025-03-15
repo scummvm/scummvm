@@ -107,8 +107,24 @@ extern "C" {
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN 1
 #endif
-#include <windows.h>
+
+// HACK: Windows.h defines its own ARRAYSIZE. However, we want
+// to use the version from common/util.h. Thus, we make sure
+// that we actually have the correct one after loading.
+#if defined(ARRAYSIZE) && defined(COMMON_UTIL_H)
+#define HACK_REDEFINE_ARRAYSIZE
+#undef ARRAYSIZE
 #endif
+
+#include <windows.h>
+
+#ifdef HACK_REDEFINE_ARRAYSIZE
+#undef HACK_REDEFINE_ARRAYSIZE
+#undef ARRAYSIZE
+#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+#endif
+#endif //_WIN32
+
 #ifndef APIENTRY
 #define APIENTRY
 #endif
