@@ -43,6 +43,7 @@ public:
 	void update();
 	Math::Vector3d transform2Dto3D(Math::Vector3d v) const;
 	Math::Vector3d transform3Dto2D(Math::Vector3d v) const;
+	Common::Point transform3Dto2D(Common::Point p) const;
 	void resetRotationAndScale();
 	void setRoomBounds(Common::Point bgSize, int16 bgScale);
 	void setFollow(WalkingCharacter *target, bool catchUp = false);
