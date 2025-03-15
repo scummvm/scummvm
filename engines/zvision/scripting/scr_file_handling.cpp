@@ -274,9 +274,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				break;
 
 		if (pos < line.size()) {
-
 			uint startpos = pos + 1;
-
 			for (pos = startpos; pos < line.size(); pos++)
 				if (chrs[pos] == ':' || chrs[pos] == '(')
 					break;
@@ -324,6 +322,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 					actionList.push_back(new ActionChangeLocation(_engine, slot, args));
 				} else if (act.matchString("crossfade", true)) {
 					actionList.push_back(new ActionCrossfade(_engine, slot, args));
+//					debug(1,"\tpush.ActionCrossFade, script line: %s", line.c_str());
 				} else if (act.matchString("cursor", true)) {
 					actionList.push_back(new ActionCursor(_engine, slot, args));
 				} else if (act.matchString("debug", true)) {
@@ -354,8 +353,10 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 					actionList.push_back(new ActionMenuBarEnable(_engine, slot, args));
 				} else if (act.matchString("music", true)) {
 					actionList.push_back(new ActionMusic(_engine, slot, args, false));
+//					debug(1,"\tpush.ActionMusic, script line: %s", line.c_str());
 				} else if (act.matchString("pan_track", true)) {
 					actionList.push_back(new ActionPanTrack(_engine, slot, args));
+//					debug(1,"\tpush.ActionPanTrack, script line: %s", line.c_str());
 				} else if (act.matchString("playpreload", true)) {
 					actionList.push_back(new ActionPlayPreloadAnimation(_engine, slot, args));
 				} else if (act.matchString("preferences", true)) {

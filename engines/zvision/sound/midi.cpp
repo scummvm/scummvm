@@ -53,50 +53,65 @@ MidiManager::~MidiManager() {
 	delete _driver;
 }
 
-void MidiManager::stop() {
-	for (int8 i = 0; i < 16; i++)
-		if (activeChannels[i].playing)
-			noteOff(i);
+void MidiManager::send(uint8 status, uint8 data1, uint8 data2) {
+  assert(status & 0x80 && "Malformed MIDI status byte");
+  assert(!(data1 & 0x80) && "Malformed MIDI data byte 1");
+  assert(!(data2 & 0x80) && "Malformed MIDI data byte 2");
+  _driver->send(status | (data1 << 8) | (data2 << 16) );
 }
 
-void MidiManager::noteOn(int8 channel, int8 note, int8 velocity) {
+void MidiManager::stop() {
+	for (uint8 i = 0; i < 16; i++)
+		noteOff(i);
+}
+
+void MidiManager::noteOn(uint8 channel, uint8 note, uint8 velocity) {
 	assert(channel <= 15);
 	activeChannels[channel].playing = true;
 	activeChannels[channel].note = note;
-	_driver->send(channel | (velocity << 16) | (note << 8) | 0x90);
+  send(0x90 | channel, note, velocity);
 	debug(1,"MIDI note on, channel %d, note %d, velocity %d", channel, note, velocity);
 }
 
-void MidiManager::noteOff(int8 channel) {
+void MidiManager::noteOff(uint8 channel) {
 	assert(channel <= 15);
-
 	if (activeChannels[channel].playing) {
 		activeChannels[channel].playing = false;
-		_driver->send(channel | (activeChannels[channel].note << 8) | 0x80);
+		send(0x80 | channel, activeChannels[channel].note);
 	}
 }
 
 int8 MidiManager::getFreeChannel() {
   uint8 start = mt32workaround ? 1 : 0; //MT-32 emulator driver currently fails to play anything when sent notes on channel 0.  Quick & dirty fix, since we only need a few notes for Nemesis music puzzles.  Inform maintainer of MT-32 emulator code of bug for proper fix in the future & then remove this nasty hack once that's sorted out.
-	for (int8 i = start; i < 16; i++)
+	for (uint8 i = start; i < 16; i++)
 		if (!activeChannels[i].playing)
 			return i;
 	return -1;
 }
 
-void MidiManager::setPan(int8 channel, int8 pan) {
+void MidiManager::setVolume(uint8 channel, uint8 volume) {
 	assert(channel <= 15);
-	_driver->send(channel | (pan << 16) | 0xAB0);
+	debug(1,"MIDI volume out %d", volume >> 1);
+  send(0xB0 | channel, 0x07, volume >> 1);
 }
 
-void MidiManager::setVolume(int8 channel, int8 volume) {
+void MidiManager::setBalance(uint8 channel, int8 balance) {
 	assert(channel <= 15);
-	_driver->send(channel | (volume << 16) | 0x7B0);
+	uint8 _balance = (uint8)(balance + 128);
+	debug(1,"MIDI balance out %d", _balance >> 1);
+  send(0xB0 | channel, 0x08, _balance >> 1);
 }
 
-void MidiManager::setProgram(int8 channel, int8 prog) {
+void MidiManager::setPan(uint8 channel, int8 pan) {
 	assert(channel <= 15);
-	_driver->send(channel | (prog << 8) | 0xC0);
+	uint8 _pan = (uint8)(pan + 128);
+	debug(1,"MIDI pan in %d, out %d", pan, _pan >> 1);
+  send(0xB0 | channel, 0x0A, _pan >> 1);
+}
+
+void MidiManager::setProgram(uint8 channel, uint8 prog) {
+	assert(channel <= 15);
+  send(0xC0 | channel, prog);
 }
 
 } // End of namespace ZVision
