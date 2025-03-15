@@ -444,6 +444,19 @@ int TextCastMember::getLineCount() {
 	return 0;
 }
 
+int TextCastMember::getLineHeight(int line) {
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			return ((Graphics::MacTextWindow *)target)->getLineHeight(line);
+		} else {
+			return ((Graphics::MacText *)target)->getLineHeight(line);
+		}
+	}
+	warning("TextCastMember::getLineHeight(): no widget available, returning 0");
+	return 0;
+}
+
 // D4 dictionary book said this is line spacing
 int TextCastMember::getTextHeight() {
 	Graphics::MacWidget *target = getWidget();

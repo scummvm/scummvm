@@ -72,6 +72,7 @@ public:
 	int getTextSlant() { return _mactext->getTextSlant(); }
 	int getTextSlant(int start, int end) { return _mactext->getTextSlant(start, end); }
 	int getTextHeight() { return _mactext->getTextHeight(); }
+	int getLineHeight(int line) { return _mactext->getLineHeight(line); }
 	Common::U32String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true) { return _mactext->getTextChunk(startRow, startCol, endRow, endCol, formatted, newlines); }
 	Common::U32String getPlainText() { return _mactext->getPlainText(); }
 	Common::U32String getEditedString() { return _mactext->getEditedString(); };
