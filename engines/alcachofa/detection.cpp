@@ -31,9 +31,6 @@
 
 const DebugChannelDef AlcachofaMetaEngineDetection::debugFlagList[] = {
 	{ Alcachofa::kDebugGraphics, "Graphics", "Graphics debug level" },
-	{ Alcachofa::kDebugPath, "Path", "Pathfinding debug level" },
-	{ Alcachofa::kDebugFilePath, "FilePath", "File path debug level" },
-	{ Alcachofa::kDebugScan, "Scan", "Scan for unrecognised games" },
 	{ Alcachofa::kDebugScript, "Script", "Enable debug script dump" },
 	DEBUG_CHANNEL_END
 };
