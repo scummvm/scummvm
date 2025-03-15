@@ -323,12 +323,13 @@ void Animation::prerenderFrame(int32 frameI) {
 		fullBlend(*image, _renderedSurface, offsetX, offsetY);
 	}
 
+	/* TODO: Find a situation where this is actually used, otherwise this currently just produces bugs
 	if (_premultiplyAlpha != 100) {
 		byte *itPixel = (byte*)_renderedSurface.getPixels();
 		uint componentCount = _renderedSurface.w * _renderedSurface.h * 4;
 		for (uint32 i = 0; i < componentCount; i++, itPixel++)
 			*itPixel = *itPixel * _premultiplyAlpha / 100;
-	}
+	}*/
 
 	_renderedTexture->update(_renderedSurface);
 	_renderedFrameI = frameI;
