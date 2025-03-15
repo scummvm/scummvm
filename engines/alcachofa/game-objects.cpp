@@ -288,9 +288,14 @@ struct SayTextTask : public Task {
 		graphicOf(_character->_curTalkingObject, &_character->_graphicTalking)->start(true);
 		while (true) {
 			if (_soundId == kInvalidSoundID)
+			{
+				bool isMortadeloVoice =
+					_character == &g_engine->world().mortadelo() ||
+					_character->name().equalsIgnoreCase("MORTADELO_TREN"); // an original hard-coded special case
 				_soundId = g_engine->sounds().playVoice(
-					String::format(_character == &g_engine->world().mortadelo() ? "M%04d" : "%04d", _dialogId),
+					String::format(isMortadeloVoice ? "M%04d" : "%04d", _dialogId),
 					0);
+			}
 			g_engine->sounds().setAppropriateVolume(_soundId, process().character(), _character);
 			if (!g_engine->sounds().isAlive(_soundId) || g_engine->input().wasAnyMouseReleased())
 				_character->_isTalking = false;
