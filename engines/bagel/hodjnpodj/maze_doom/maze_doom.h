@@ -15,36 +15,27 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aint32 with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#ifndef HODJNPODJ_VIEWS_H
-#define HODJNPODJ_VIEWS_H
+#ifndef HODJNPODJ_MAZE_DOOM_H
+#define HODJNPODJ_MAZE_DOOM_H
 
-#include "bagel/hodjnpodj/views/rules.h"
-#include "bagel/hodjnpodj/views/main_menu.h"
-#include "bagel/hodjnpodj/views/message_box.h"
-#include "bagel/hodjnpodj/metagame/views/minigames.h"
-#include "bagel/hodjnpodj/metagame/views/movie.h"
-#include "bagel/hodjnpodj/metagame/views/title_menu.h"
-#include "bagel/hodjnpodj/fuge/fuge.h"
-#include "bagel/hodjnpodj/maze_doom/maze_doom.h"
+#include "bagel/hodjnpodj/views/minigame_view.h"
 
 namespace Bagel {
 namespace HodjNPodj {
+namespace MazeDoom {
 
-struct Views {
-	MainMenu _mainMenu;
-	MessageBox _messageBox;
-	Rules _rules;
-	Metagame::Minigames _minigames;
-	Metagame::Movie _movie;
-	Metagame::TitleMenu _titleMenu;
-	Fuge::Fuge _fuge;
-	MazeDoom::MazeDoom _mazeDoom;
+class MazeDoom : public MinigameView {
+public:
+	MazeDoom();
+	virtual ~MazeDoom() {
+	}
 };
 
+} // namespace MazeDoom
 } // namespace HodjNPodj
 } // namespace Bagel
 

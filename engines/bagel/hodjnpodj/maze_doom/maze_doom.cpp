@@ -19,33 +19,18 @@
  *
  */
 
-#ifndef HODJNPODJ_VIEWS_H
-#define HODJNPODJ_VIEWS_H
-
-#include "bagel/hodjnpodj/views/rules.h"
-#include "bagel/hodjnpodj/views/main_menu.h"
-#include "bagel/hodjnpodj/views/message_box.h"
-#include "bagel/hodjnpodj/metagame/views/minigames.h"
-#include "bagel/hodjnpodj/metagame/views/movie.h"
-#include "bagel/hodjnpodj/metagame/views/title_menu.h"
-#include "bagel/hodjnpodj/fuge/fuge.h"
 #include "bagel/hodjnpodj/maze_doom/maze_doom.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/hodjnpodj/views/main_menu.h"
 
 namespace Bagel {
 namespace HodjNPodj {
+namespace MazeDoom {
 
-struct Views {
-	MainMenu _mainMenu;
-	MessageBox _messageBox;
-	Rules _rules;
-	Metagame::Minigames _minigames;
-	Metagame::Movie _movie;
-	Metagame::TitleMenu _titleMenu;
-	Fuge::Fuge _fuge;
-	MazeDoom::MazeDoom _mazeDoom;
-};
+MazeDoom::MazeDoom() : MinigameView("mazedoom", "mazedoom/hnpmaze.dll") {
+}
 
+} // namespace MazeDoom
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif
