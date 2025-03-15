@@ -33,8 +33,8 @@ namespace MazeDoom {
 
 class MazeDoom : public MinigameView {
 private:
-	const char *_upBmp, *_downBmp,
-		*_leftBmp, *_rightBmp;
+	const char *_upBmp = nullptr, *_downBmp = nullptr,
+		*_leftBmp = nullptr, *_rightBmp = nullptr;
 	BmpButton _scrollButton;
 	GfxSurface _background;
 	GfxSurface _locale, _blank;
@@ -47,10 +47,21 @@ private:
 	GfxSurface pLocaleBitmap;
 	GfxSurface pBlankBitmap;
 	Sprite pPlayerSprite;
+	const Common::Rect _timeRect;
+	bool bSuccess = false;
+	bool m_bIgnoreScrollClick = false;
+	bool bPlaying = false;
+	bool m_bGameOver = false;
+	Common::Point m_PlayerPos;
+	int m_nDifficulty = 0;
+	int m_nTime = 0, nSeconds = 0, nMinutes = 0;
+	int tempDifficulty = 0;
+	int tempTime = 0;
 
 	void setupHodjPodj();
 	void loadBitmaps();
 	void showMainMenu();
+	void setupSettings();
 
 public:
 	MazeDoom();

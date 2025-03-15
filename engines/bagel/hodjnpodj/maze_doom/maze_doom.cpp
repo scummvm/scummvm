@@ -38,7 +38,9 @@ MazeDoom::MazeDoom() : MinigameView("MazeDoom", "mazedoom/hnpmaze.dll"),
 			SCROLL_BUTTON_X + SCROLL_BUTTON_DX - 1,
 			SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1)
 		),
-		pPlayerSprite(this) {
+		pPlayerSprite(this),
+		_timeRect(RectWH(TIME_LOCATION_X, TIME_LOCATION_Y,
+			TIME_WIDTH, TIME_HEIGHT)) {
 	addResource(IDB_LOCALE_BMP, Common::WinResourceID("idb_locale_bmp"));
 	addResource(IDB_BLANK_BMP, Common::WinResourceID("idb_blank_bmp"));
 	addResource(IDB_PARTS_BMP, IDB_PARTS);
@@ -57,6 +59,7 @@ bool MazeDoom::msgOpen(const OpenMessage &msg) {
 
 	setupHodjPodj();
 	loadBitmaps();
+	setupSettings();
 
 	return true;
 }
@@ -146,6 +149,32 @@ void MazeDoom::loadBitmaps() {
 
 	pLocaleBitmap.loadBitmap(IDB_LOCALE_BMP);
 	pBlankBitmap.loadBitmap(IDB_BLANK_BMP);
+}
+
+void MazeDoom::setupSettings() {
+	if (pGameParams->bPlayingMetagame) {
+		if (pGameParams->nSkillLevel == Metagame::SKILLLEVEL_LOW) {
+			// Total Wussy
+			m_nDifficulty = MIN_DIFFICULTY;
+			m_nTime = 60;
+		} else if (pGameParams->nSkillLevel == Metagame::SKILLLEVEL_MEDIUM) {
+			// Big Sissy
+			m_nDifficulty = 2;
+			m_nTime = 60;
+		} else {
+			// Minor Whimp
+			m_nDifficulty = 4;
+			m_nTime = 60;
+		}
+	} else {                                      // Use Defaults 
+		m_nDifficulty = 6;                      // Miner
+		m_nTime = 180;
+	}
+
+	tempDifficulty = m_nDifficulty;
+	tempTime = m_nTime;
+	nSeconds = m_nTime % 60;
+	nMinutes = m_nTime / 60;
 }
 
 void MazeDoom::showMainMenu() {
