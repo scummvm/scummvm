@@ -25,7 +25,7 @@
 #include "audio/mixer.h"
 #include "zvision/scripting/scripting_effect.h"
 #include "zvision/text/subtitle_manager.h"
-
+#include "zvision/sound/volume_manager.h"
 
 namespace Common {
 class String;
@@ -48,10 +48,19 @@ public:
 	bool process(uint32 deltaTimeInMillis) override = 0;
 
 	virtual void setVolume(uint8 volume) = 0;
-	virtual uint8 getVolume() = 0;
-	virtual void setDeltaVolume(uint8 volume) = 0;
-	virtual void setBalance(int8 balance) = 0;
+	uint8 getVolume() {return _volume;};
 	virtual void setFade(int32 time, uint8 target) = 0;
+	virtual void setBalance(int8 balance);  //NB Overrides effects of setAzimuth()
+	void setAzimuth(Math::Angle azimuth);  //NB Overrides effects of setBalance()
+protected:
+  void updateMixer();
+  virtual void outputMixer() = 0;
+  
+  uint8 _volume = 0;
+	int8 _balance = 0;
+  Math::Angle _azimuth;
+  uint8 fadeGain = 255;  //Linear scale, 255 corresponds to unity gain
+	uint8 volumeOut = 0;
 };
 
 class MusicNode : public MusicNodeBASE {
@@ -67,18 +76,11 @@ public:
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
 	bool process(uint32 deltaTimeInMillis) override;
-
 	void setVolume(uint8 volume) override;
-	uint8 getVolume() override;
-	void setDeltaVolume(uint8 volume) override;
-	void setBalance(int8 balance) override;
-
 	void setFade(int32 time, uint8 target) override;
 
 private:
-	uint8 _volume;
-	uint8 _deltaVolume;
-	int8 _balance;
+  void outputMixer() override;
 	bool _loop;
 	bool _crossfade;
 	uint8 _crossfadeTarget;
@@ -92,7 +94,7 @@ private:
 // Only used by Zork: Nemesis, for the flute and piano puzzles (tj4e and ve6f, as well as vr)
 class MusicMidiNode : public MusicNodeBASE {
 public:
-	MusicMidiNode(ZVision *engine, uint32 key, int8 program, int8 note, int8 volume);
+	MusicMidiNode(ZVision *engine, uint32 key, uint8 program, uint8 note, uint8 volume);
 	~MusicMidiNode() override;
 
 	/**
@@ -103,20 +105,15 @@ public:
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
 	bool process(uint32 deltaTimeInMillis) override;
-
 	void setVolume(uint8 volume) override;
-	uint8 getVolume() override;
-	void setDeltaVolume(uint8 volume) override;
-	void setBalance(int8 balance) override;
-
 	void setFade(int32 time, uint8 target) override;
 
 private:
+  void outputMixer() override;
 	int8 _chan;
-	int8 _noteNumber;
+	uint8 _noteNumber;
 	int8 _pan;
-	int8 _volume;
-	int8 _prog;
+	uint8 _prog;
 };
 
 class PanTrackNode : public ScriptingEffect {

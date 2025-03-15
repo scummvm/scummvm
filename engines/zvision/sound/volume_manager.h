@@ -48,8 +48,7 @@ public:
   uint8 convert(uint8 inputValue, Math::Angle azimuth);
   uint8 convert(uint8 inputValue, volumeScaling mode, Math::Angle azimuth);
 private:
-  uint8 directionalDivisor = 1; //Used to lessen effect of directional audio to match directional effect strength to different volume scaling profiles.
-  uint internalScale = 255;
+  uint scriptScale = 100; //Z-Vision scripts internally use a volume scale of 0-100; ScummVM uses a scale of 0-255.
   volumeScaling _mode = kVolumeLinear;
 };
 

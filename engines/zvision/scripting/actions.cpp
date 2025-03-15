@@ -43,6 +43,7 @@
 #include "zvision/graphics/effects/light.h"
 #include "zvision/graphics/effects/wave.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/sound/volume_manager.h"
 
 namespace ZVision {
 
@@ -102,12 +103,17 @@ bool ActionAssign::execute() {
 // ActionAttenuate
 //////////////////////////////////////////////////////////////////////////////
 
+//TODO - the effects of this seem permanent until the musicnode is deleted; check if they should only be applied on a per-cycle basis!
+
 ActionAttenuate::ActionAttenuate(ZVision *engine, int32 slotKey, const Common::String &line) :
 	ResultAction(engine, slotKey) {
 	_key = 0;
 	_attenuation = 0;
 
 	sscanf(line.c_str(), "%u, %d", &_key, &_attenuation);
+  debug(2,"Created Action: Attenuate, slotKey %d", _slotKey);
+  debug(2,"Attenuate script: %s", line.c_str());
+  debug(2,"Attenuate parameters: key1 %d, attenuation %d", _key, _attenuation);
 }
 
 bool ActionAttenuate::execute() {
@@ -115,7 +121,7 @@ bool ActionAttenuate::execute() {
 	ScriptingEffect *fx = _scriptManager->getSideFX(_key);
 	if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
-		mus->setVolume(255 * (10000 - abs(_attenuation)) / 10000 );
+	mus->setVolume((10000 - abs(_attenuation)) / 100 ); //TODO - verify that this is working correctly.
 	}
 	return true;
 }
@@ -158,19 +164,20 @@ ActionCrossfade::ActionCrossfade(ZVision *engine, int32 slotKey, const Common::S
 	sscanf(line.c_str(),
 	       "%u %u %d %d %d %d %d",
 	       &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
-  debug(2,"Created Action: CrossFade, slotKey %d", slotKey);
+  debug(2,"Created Action: CrossFade, slotKey %d", _slotKey);
   debug(2,"Crossfade script: %s", line.c_str());
+  debug(2,"Crossfade parameters: key1 %u, key2 %u, startVol1 %d, startVol2 %d, endVol1 %d, endVol2 %d, time %dms", _keyOne, _keyTwo, _oneStartVolume, _twoStartVolume, _oneEndVolume, _twoEndVolume, _timeInMillis);
 }
 
 bool ActionCrossfade::execute() {
-  debug(2,"Executing Action: CrossFade");
+  debug(2,"Executing Action: CrossFade, slotkey %d", _slotKey);
 	if (_keyOne) {
 		ScriptingEffect *fx = _scriptManager->getSideFX(_keyOne);
 		if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 			MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 			if (_oneStartVolume >= 0)
-				mus->setVolume((_oneStartVolume * 255) / 100);
-			mus->setFade(_timeInMillis, (_oneEndVolume * 255) / 100);
+				mus->setVolume(_oneStartVolume);
+			mus->setFade(_timeInMillis, _oneEndVolume);
 		}
 	}
 	if (_keyTwo) {
@@ -178,8 +185,8 @@ bool ActionCrossfade::execute() {
 		if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 			MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 			if (_twoStartVolume >= 0)
-				mus->setVolume((_twoStartVolume * 255) / 100);
-			mus->setFade(_timeInMillis, (_twoEndVolume * 255) / 100);
+				mus->setVolume(_twoStartVolume);
+			mus->setFade(_timeInMillis, _twoEndVolume);
 		}
 	}
 	return true;
@@ -282,7 +289,7 @@ ActionDissolve::ActionDissolve(ZVision *engine) :
 
 bool ActionDissolve::execute() {
 	// Cause black screen flick
-	// _engine->getRenderManager()->bkgFill(0, 0, 0);
+	// _engine->getRenderManager()->bkgFill(0, 0, 0); //TODO - reimplement this?  Find out where it is used first.
 	return true;
 }
 
@@ -476,37 +483,35 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 	// Zork: Nemesis, for the flute and piano puzzles (tj4e and ve6f, as well
 	// as vr)
 	switch(type) {
-    case 4: {
+    case 4:
 		  _midi = true;
 		  int note;
 		  int prog;
 		  sscanf(line.c_str(), "%u %d %d %14s", &type, &prog, &note, volumeBuffer);
-		  _volume = new ValueSlot(_scriptManager, volumeBuffer);
 		  _note = note;
 		  _prog = prog;
 		  break;
-	  }
-	  default: {
+	  default:
 		  _midi = false;
 		  _fileName = Common::String(fileNameBuffer);
 		  _loop = loop == 1 ? true : false;
-		  if (volumeBuffer[0] != '[' && atoi(volumeBuffer) > 100) {
-			  // I thought I saw a case like this in Zork Nemesis, so
-			  // let's guard against it.
-			  warning("ActionMusic: Adjusting volume for %s from %s to 100", _fileName.toString().c_str(), volumeBuffer);
-			  Common::strcpy_s(volumeBuffer, "100");
-		  }
-		  _volume = new ValueSlot(_scriptManager, volumeBuffer);
 		  break;
-	  }
   }
+  if (volumeBuffer[0] != '[' && atoi(volumeBuffer) > 100) {
+	  // I thought I saw a case like this in Zork Nemesis, so
+	  // let's guard against it.
+	  warning("\tActionMusic: Adjusting volume for %s from %s to 100", _fileName.toString().c_str(), volumeBuffer);
+	  Common::strcpy_s(volumeBuffer, "100");
+  }
+  _volume = new ValueSlot(_scriptManager, volumeBuffer);
+
 	// WORKAROUND for a script bug in Zork Nemesis, rooms mq70/mq80.
 	// Fixes an edge case where the player goes to the dark room with the grue
 	// without holding a torch, and then quickly runs away before the grue's
 	// sound effect finishes. Fixes script bug #6794.
 	if (engine->getGameId() == GID_NEMESIS && _slotKey == 14822 && _scriptManager->getStateValue(_slotKey) == 2)
 		_scriptManager->setStateValue(_slotKey, 0);
-  //debug(2,"Created Action: Music, slotKey %d, type %u, file %24s, note %u, volume %14s", _slotKey, type, fileNameBuffer);
+  debug(2,"Created Action: Music, slotKey %d, type %u, file %24s, note %u, volume %d", _slotKey, type, fileNameBuffer, _note, _volume->getValue());
   debug(2,"Music script: %s", line.c_str());
 }
 
@@ -517,19 +522,18 @@ ActionMusic::~ActionMusic() {
 }
 
 bool ActionMusic::execute() {
-  debug(2,"Executing Action: Music, slotKey %d", _slotKey);
+  debug(2,"Executing Action: Music, slotKey %d, volume %d", _slotKey, _volume->getValue());
 	if (_scriptManager->getSideFX(_slotKey)) {
 		_scriptManager->killSideFx(_slotKey);
 		_scriptManager->setStateValue(_slotKey, 2);
 	}
 	uint volume = _volume->getValue();
-	if (_midi) {
+	if (_midi)
 		_scriptManager->addSideFX(new MusicMidiNode(_engine, _slotKey, _prog, _note, volume));
-	} else {
+	else {
 		if (!_engine->getSearchManager()->hasFile(_fileName))
 			return true;
-		// Volume in the script files is mapped to [0, 100], but the ScummVM mixer uses [0, 255]
-		_scriptManager->addSideFX(new MusicNode(_engine, _slotKey, _fileName, _loop, volume * 255 / 100));
+    _scriptManager->addSideFX(new MusicNode(_engine, _slotKey, _fileName, _loop, volume));
 	}
 	return true;
 }

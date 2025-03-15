@@ -105,9 +105,16 @@ static constexpr uint8 logAmplitude[256] = {
 };
 //*/
 
-//Relative absolute amplitude (to 255) of a sound source as it circles the listener's head from front to rear, due to ear pinna shape.
-//Maximum attenuation -5dB when fully to rear.
-//Ideally should be applied AFTER volume profile is applied to script files.
+/*
+Estimated relative amplitude of a point sound source as it circles the listener's head from front to rear, due to ear pinna shape.
+Maximum attenuation -5dB when fully to rear.  Seems to give a reasonably realistic effect when tested on the Nemesis cloister fountain.
+Ideally should be applied AFTER volume profile is applied to script files.
+Generating function:
+  for 0 < theta < 90, amp = 255;
+  for 90 < theta < 180, amp = 255*10^(1-(cos(2*(theta-90))/4))
+  where theta is the azimuth, in degrees, of the sound source relative to straight ahead of listener
+Source: Own work; crude and naive model that is probably not remotely scientifically accurate, but good enough for a 30-year-old game.
+*/
 static constexpr uint8 directionalAmplitude[181] = {
 255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
 255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
@@ -136,31 +143,17 @@ uint8 VolumeManager::convert(uint8 inputValue, Math::Angle azimuth) {
 };
 
 uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode, Math::Angle azimuth) {
-  Math::Angle _azimuth = azimuth;
-  uint8 index = abs(round(_azimuth.getDegrees(-180)));
-  switch(mode) {
-    case kVolumeLogPower:
-      break;
-    case kVolumeLogAmplitude:
-      break;
-    case kVolumePowerLaw:
-      break;
-    case kVolumeParabolic:
-      break;
-    case kVolumeCubic:
-      break;
-    case kVolumeQuartic:
-      break;
-    case kVolumeLinear:
-    default:
-      break;
-  }
-  uint8 deltaVolume = (255 - directionalAmplitude[index])/directionalDivisor;
-  return convert(inputValue*(255-deltaVolume)/255, mode);
+  uint8 index = abs(round(azimuth.getDegrees(-180)));
+  uint16 output = convert(inputValue, mode);
+  output *= directionalAmplitude[index];
+  output /= 255;
+  debug(1,"Azimuth-scaled converted output %d", output);
+  return output;
 };
 
 uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode) {
-  uint8 scaledInput = inputValue * 255 / internalScale;
+  uint16 scaledInput = inputValue * 255;
+  scaledInput /= scriptScale;
   uint8 output = 0;
   switch(mode) {
     case kVolumeLogPower:
@@ -186,7 +179,7 @@ uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode) {
       output = scaledInput;
       break;
   }
-  debug(1,"Script volume %d, converted output %d", scaledInput, output);
+  debug(1,"Scripted volume %d, scaled volume %d, converted output %d", inputValue, scaledInput, output);
   return output;
 };
 

@@ -212,7 +212,7 @@ void ZVision::initialize() {
       _renderManager = new RenderManager(this, nemesisLayout, _resourcePixelFormat, _doubleFPS, _widescreen);
 	    _menu = new MenuNemesis(this, _renderManager->getMenuArea());
       _subtitleManager = new SubtitleManager(this, nemesisLayout, _resourcePixelFormat, _doubleFPS);
-	    _volumeManager = new VolumeManager(kVolumeLinear);
+	    _volumeManager = new VolumeManager(kVolumePowerLaw);
 	    break;
     case GID_GRANDINQUISITOR:
       _renderManager = new RenderManager(this, zgiLayout, _resourcePixelFormat, _doubleFPS, _widescreen);
