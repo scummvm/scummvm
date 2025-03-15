@@ -593,7 +593,7 @@ ObjectBase *World::getObjectByName(MainCharacterKind character, const Common::St
 		return getObjectByName(name);
 	const auto &player = g_engine->player();
 	ObjectBase *result = nullptr;
-	if (player.activeCharacterKind() == character && player.currentRoom() == player.activeCharacter()->room())
+	if (player.activeCharacterKind() == character && player.currentRoom() != player.activeCharacter()->room())
 		result = player.currentRoom()->getObjectByName(name);
 	if (result == nullptr)
 		result = player.activeCharacter()->room()->getObjectByName(name);
