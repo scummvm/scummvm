@@ -27,6 +27,9 @@ using namespace Common;
 namespace Alcachofa {
 
 void Input::nextFrame() {
+	if (_debugInput != nullptr)
+		return _debugInput->nextFrame();
+
 	_wasMouseLeftPressed = false;
 	_wasMouseRightPressed = false;
 	_wasMouseLeftReleased = false;
@@ -70,10 +73,10 @@ void Input::toggleDebugInput(bool debugMode) {
 		_debugInput.reset();
 		return;
 	}
-	if (_debugInput == nullptr)
-		_debugInput.reset(new Input());
 	nextFrame(); // resets frame-specific flags
 	_isMouseLeftDown = _isMouseRightDown = false;
+	if (_debugInput == nullptr)
+		_debugInput.reset(new Input());
 }
 
 }

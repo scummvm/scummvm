@@ -211,6 +211,7 @@ bool Console::cmdDebugMode(int argc, const char **args)
 		debugPrintf("modes:\n");
 		debugPrintf("  0 - None, disables debug mode\n");
 		debugPrintf("  1 - Closest floor point, param limits to polygon\n");
+		debugPrintf("  2 - Floor edge intersections, param limits to polygon\n");
 		return true;
 	}
 

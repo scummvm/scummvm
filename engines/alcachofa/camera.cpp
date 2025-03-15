@@ -156,6 +156,11 @@ Vector3d Camera::transform3Dto2D(Vector3d v3d) const {
 		_cur._scale * kBaseScale / vh.z());
 }
 
+Point Camera::transform3Dto2D(Point p3d) const {
+	auto v2d = transform3Dto2D({ (float)p3d.x, (float)p3d.y, kBaseScale });
+	return { (int16)v2d.x(), (int16)v2d.y() };
+}
+
 void Camera::update() {
 	// original would be some smoothing of delta times, let's not.
 	uint32 now = g_system->getMillis();
