@@ -76,6 +76,7 @@ static constexpr const Color kClear = { 0, 0, 0, 0 };
 static constexpr const Color kDebugRed = { 250, 0, 0, 70 };
 static constexpr const Color kDebugGreen = { 0, 255, 0, 85 };
 static constexpr const Color kDebugBlue = { 0, 0, 255, 110 };
+static constexpr const Color kDebugLightBlue = { 80, 80, 255, 190 };
 
 /**
  * @brief This *fake* semaphore does not work in multi-threaded scenarios
