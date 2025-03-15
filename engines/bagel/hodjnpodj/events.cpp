@@ -437,6 +437,13 @@ byte Events::getPaletteIndex(uint32 color) const {
 	return Palette::getPaletteIndex(color);
 }
 
+Common::WinResources *Events::getResources() {
+	Common::WinResources *res = nullptr;
+	for (int i = (int)_views.size() - 1; i >= 0 && !res; --i)
+		res = _views[i]->getResources();
+
+	return res;
+}
 
 } // namespace HodjNPodj
 } // namespace Bagel

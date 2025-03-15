@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/stack.h"
+#include "common/formats/winexe.h"
 #include "graphics/screen.h"
 #include "bagel/hodjnpodj/messages.h"
 #include "bagel/hodjnpodj/gfx/gfx_surface.h"
@@ -259,6 +260,9 @@ public:
 	virtual void loadPalette(const Graphics::Palette &palette);
 	virtual Graphics::Palette getPalette() const;
 	virtual byte getPaletteIndex(uint32 color) const;
+	virtual Common::WinResources *getResources() {
+		return nullptr;
+	}
 
 	/**
 	 * Handles events
@@ -448,6 +452,11 @@ public:
 	void close() override {
 		focusedView()->close();
 	}
+
+	/**
+	 * Get any active resources
+	 */
+	Common::WinResources *getResources() override;
 
 	void loadPalette(const byte *palette) override;
 	void loadPalette(const Graphics::Palette &palette) override;

@@ -22,9 +22,11 @@
 #include "common/system.h"
 #include "common/file.h"
 #include "graphics/cursorman.h"
+#include "graphics/wincursor.h"
 #include "image/bmp.h"
 #include "bagel/hodjnpodj/gfx/cursor.h"
 #include "bagel/hodjnpodj/gfx/gfx_surface.h"
+#include "bagel/hodjnpodj/events.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -61,12 +63,35 @@ void Cursor::setCursorResource() {
 	Image::BitmapDecoder decoder;
 	Common::SeekableReadStream *bmp = _resources.getResource(
 		Common::kWinBitmap, _cursorId);
-	if (!bmp || !decoder.loadStream(*bmp))
-		error("Could not load cursor resource - %d", _cursorId);
-	const Graphics::Surface &s = *decoder.getSurface();
 
 	CursorMan.disableCursorPalette(true);
-	CursorMan.replaceCursor(s.getPixels(), s.w, s.h, 0, 0, 0, true, &format);
+
+	bool success = false;
+	if (bmp) {
+		success = decoder.loadStream(*bmp);
+
+		if (success) {
+			const Graphics::Surface &s = *decoder.getSurface();
+			CursorMan.replaceCursor(s.getPixels(), s.w, s.h, 0, 0, 0, true, &format);
+		}
+	} else {
+		Common::WinResources *res = g_events->getResources();
+		if (res) {
+			Graphics::WinCursorGroup *group =
+				Graphics::WinCursorGroup::createCursorGroup(res, _cursorId);
+			if (group) {
+				const auto &cursor = group->cursors[0].cursor;
+				CursorMan.replaceCursor(cursor);
+
+				delete group;
+				success = true;
+			}
+		}
+	}
+
+	if (!success)
+		error("Could not load cursor resource - %d", _cursorId);
+
 }
 
 } // namespace HodjNPodj

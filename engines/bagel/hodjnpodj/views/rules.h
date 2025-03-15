@@ -39,7 +39,7 @@ private:
 	CBofSound *_dictation = nullptr;
 	Common::Array<Common::StringArray> _lines;
 	uint _helpPage = 0;
-	Common::Rect _moreTopRect, _moreBottomRect;
+	Common::Point _moreTop, _moreBottom;
 	Common::String _more;
 	int _scrollY = 0;
 	Common::Rect _scrollTopRect, _scrollBottomRect;

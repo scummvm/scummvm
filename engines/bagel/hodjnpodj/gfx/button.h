@@ -94,6 +94,9 @@ public:
 	bool msgMouseUp(const MouseUpMessage &msg) override;
 	bool msgMouseEnter(const MouseEnterMessage &msg) override;
 	bool msgMouseLeave(const MouseLeaveMessage &msg);
+	bool msgMouseMove(const MouseMoveMessage &msg) override {
+		return true;
+	}
 	bool msgKeypress(const KeypressMessage &msg) override;
 
 	void setPressed(bool pressed) {

@@ -136,11 +136,9 @@ bool Rules::msgOpen(const OpenMessage &msg) {
 	for (idx = 0; idx < lines.size(); ++idx)
 		_lines[idx / numLines].push_back(lines[idx]);
 
-	// Set More text button rects
-	_moreTopRect = Common::Rect(0, 0, s.getStringWidth(_more), s.getStringHeight());
-	_moreTopRect.moveTo(_bounds.width() - 120, 20);
-	_moreBottomRect = Common::Rect(0, 0, s.getStringWidth(_more), s.getStringHeight());
-	_moreBottomRect.moveTo(_bounds.width() - 120, _bounds.height() - 45);
+	// Set More text positions
+	_moreTop = Common::Point(_bounds.width() - 120, 20);
+	_moreBottom = Common::Point(_bounds.width() - 120, _bounds.height() - 45);
 
 	// Render the first page of text
 	_scrollY = 0;
@@ -184,48 +182,46 @@ bool Rules::msgGame(const GameMessage &msg) {
 }
 
 bool Rules::msgMouseMove(const MouseMoveMessage &msg) {
+	if (View::msgMouseMove(msg))
+		return true;
+
 	if (_scrollTopRect.contains(msg._pos)) {
 		if (_helpPage == 0)
 			g_events->setCursor(IDC_RULES_INVALID);
 		else
 			g_events->setCursor(IDC_RULES_ARROWUP);
+	} else if (_scrollBottomRect.contains(msg._pos)) {
+		if (_helpPage == (_lines.size() - 1))
+			g_events->setCursor(IDC_RULES_INVALID);
+		else
+			g_events->setCursor(IDC_RULES_ARROWDN);
 	} else {
-		if (_scrollBottomRect.contains(msg._pos)) {
-			if (_helpPage = (_lines.size() - 1))
-				g_events->setCursor(IDC_RULES_INVALID);
-			else
-				g_events->setCursor(IDC_RULES_ARROWDN);
-		} else {
-			g_events->setCursor(IDC_ARROW);
-		}
+		g_events->setCursor(IDC_ARROW);
 	}
 
 	return true;
 }
 
 bool Rules::msgMouseUp(const MouseUpMessage &msg) {
-	Common::Rect topRect = _moreTopRect,
-		botRect = _moreBottomRect;
-	topRect.translate(_bounds.left, _bounds.top);
-	botRect.translate(_bounds.left, _bounds.top);
+	if (View::msgMouseUp(msg))
+		return true;
 
 	if (msg._button == MouseUpMessage::MB_LEFT) {
-		if (topRect.contains(msg._pos) && _helpPage > 0) {
+		if (_scrollTopRect.contains(msg._pos) && _helpPage > 0) {
 			// Move to prior page
 			--_helpPage;
 			renderPage();
 			redraw();
-			return true;
-		} else if (botRect.contains(msg._pos) &&
+		} else if (_scrollBottomRect.contains(msg._pos) &&
 				_helpPage < (_lines.size() - 1)) {
 			// Move to the next page
+			++_helpPage;
 			renderPage();
 			redraw();
-			return true;
 		}
 	}
 
-	return View::msgMouseUp(msg);
+	return true;
 }
 
 
@@ -264,9 +260,13 @@ void Rules::draw() {
 		if (_children.empty())
 			_okButton.setParent(this);
 
-		// Show the more button if there's more pages left
-		if (!_lines.empty())
-			s.writeString(_more, _moreBottomRect, BLACK);
+		// Show the more buttons
+		if (_helpPage > 0) {
+			s.writeString(_more, _moreTop, BLACK);
+		}
+		if ((_helpPage + 1) < _lines.size()) {
+			s.writeString(_more, _moreBottom, BLACK);
+		}
 	}
 }
 
@@ -313,7 +313,8 @@ bool Rules::tick() {
 			_scrollTopRect = Common::Rect(0, 0, 501, 48);
 			_scrollBottomRect = Common::Rect(0, 0, 501, 47);
 			_scrollTopRect.moveTo(_bounds.left, _bounds.top);
-			_scrollBottomRect.moveTo(_bounds.left, _bounds.top);
+			_scrollBottomRect.moveTo(_bounds.left,
+				_bounds.bottom - _scrollBottomRect.height());
 		}
 	}
 

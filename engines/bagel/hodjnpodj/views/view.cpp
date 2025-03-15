@@ -84,9 +84,9 @@ bool View::msgMouseMove(const MouseMoveMessage &msg) {
 	checkFocusedControl(msg._pos);
 
 	if (_focusedElement)
-		_focusedElement->send(msg);
+		return _focusedElement->send(msg);
 	
-	return true;
+	return false;
 }
 
 bool View::msgMouseDown(const MouseDownMessage &msg) {

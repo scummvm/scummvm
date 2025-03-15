@@ -38,6 +38,7 @@ class MinigameView : public View, public Common::Archive {
 	friend class Sprite;
 private:
 	Common::String _resourceFilename;
+	Common::WinResources *_resources = nullptr;
 	Common::HashMap<Common::String, int,
 		Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _bitmapFiles;
 	Common::HashMap<Common::String, Common::String,
@@ -58,12 +59,15 @@ public:
 	MinigameView(const Common::String &name, const Common::String &resFilename) :
 		View(name), _resourceFilename(resFilename) {
 	}
-	virtual ~MinigameView() {}
+	virtual ~MinigameView();
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
 
+	Common::WinResources *getResources() override {
+		return _resources;
+	}
 	// Archive methods
 	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;

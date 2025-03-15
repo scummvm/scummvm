@@ -27,14 +27,23 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+MinigameView::~MinigameView() {
+	delete _resources;
+}
+
 bool MinigameView::msgOpen(const OpenMessage &msg) {
 	SearchMan.add("Resources", this, 0, false);
+
+	if (!_resourceFilename.empty())
+		_resources = Common::NEResources::createFromEXE(Common::Path(_resourceFilename));
 
 	return View::msgOpen(msg);
 }
 
 bool MinigameView::msgClose(const CloseMessage &msg) {
 	SearchMan.remove("Resources");
+	delete _resources;
+	_resources = nullptr;
 
 	return View::msgClose(msg);
 }
@@ -96,6 +105,9 @@ Common::SeekableReadStream *MinigameView::createReadStreamForMember(const Common
 		!_soundFiles.contains(filename))
 		return nullptr;
 
+	// TODO: Is there any way to share the _resources field?
+	// We're in a const method, and the getResource call
+	// isn't const. So maybe not? 
 	// Load the resources from the specified file
 	if (!winResources.loadFromEXE(Common::Path(_resourceFilename)))
 		return nullptr;
