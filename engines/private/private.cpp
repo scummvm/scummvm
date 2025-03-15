@@ -126,9 +126,10 @@ PrivateEngine::~PrivateEngine() {
 	delete Gen::g_vm;
 	delete Settings::g_setts;
 
-	for (uint i = 0; i < _cursors.size(); i++)
-	{
-		delete _cursors[i].cursor;
+	for (uint i = 0; i < _cursors.size(); i++) {
+		if (_cursors[i].winCursorGroup == nullptr) {
+			delete _cursors[i].cursor;
+		}
 		delete _cursors[i].winCursorGroup;
 	}
 }
