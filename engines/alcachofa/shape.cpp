@@ -71,6 +71,12 @@ bool Polygon::contains(const Point &query) const {
 	}
 }
 
+bool Polygon::intersectsEdge(uint startPointI, Point a, Point b) const {
+	assert(startPointI < _points.size());
+	uint endPointI = (startPointI + 1) % _points.size();
+	return segmentsIntersect(_points[startPointI], _points[endPointI], a, b);
+}
+
 EdgeDistances Polygon::edgeDistances(uint startPointI, const Point &query) const {
 	assert(startPointI < _points.size());
 	uint endPointI = startPointI + 1 == _points.size() ? 0 : startPointI + 1;
@@ -98,6 +104,7 @@ static Point wiggleOnToLine(Point a, Point b, Point q)
 	if (sideOfLine(a, b, q + Point(0, +1)) >= 0) return q + Point(0, +1);
 	if (sideOfLine(a, b, q + Point(0, -1)) >= 0) return q + Point(0, -1);
 	assert(false && "More than two pixels means some more serious math error occured");
+	return q;
 }
 
 Point Polygon::closestPointTo(const Common::Point& query, float &distanceSqr) const
@@ -529,8 +536,7 @@ bool PathFindingShape::canGoStraightThrough(
 			if (_targetQuads[fullI] < 0 || _targetQuads[fullI] == lastContainingI)
 				continue;
 
-			uint j = i + 1 == toContaining._points.size() ? 0 : i + 1;
-			if (segmentsIntersect(from, to, toContaining._points[i], toContaining._points[j])) {
+			if (toContaining.intersectsEdge(i, from, to)) {
 				foundPortal = true;
 				lastContainingI = toContainingI;
 				toContainingI = _targetQuads[fullI];

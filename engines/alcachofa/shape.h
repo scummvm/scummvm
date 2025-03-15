@@ -45,6 +45,7 @@ struct Polygon {
 	Common::Span<const Common::Point> _points;
 
 	bool contains(const Common::Point &query) const;
+	bool intersectsEdge(uint startPointI, Common::Point a, Common::Point b) const;
 	EdgeDistances edgeDistances(uint startPointI, const Common::Point &query) const;
 	Common::Point closestPointTo(const Common::Point &query, float& distanceSqr) const;
 	inline Common::Point closestPointTo(const Common::Point &query) const {

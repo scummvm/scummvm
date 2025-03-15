@@ -29,7 +29,8 @@ namespace Alcachofa {
 
 enum class DebugMode {
 	None,
-	ClosestFloorPoint
+	ClosestFloorPoint,
+	FloorIntersections
 };
 
 class Console : public GUI::Debugger {

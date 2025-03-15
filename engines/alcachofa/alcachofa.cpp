@@ -142,7 +142,12 @@ void AlcachofaEngine::setDebugMode(DebugMode mode, int32 param)
 {
 	switch (mode)
 	{
-	case DebugMode::ClosestFloorPoint: _debugHandler.reset(new ClosestFloorPointDebugHandler(param)); break;
+	case DebugMode::ClosestFloorPoint:
+		_debugHandler.reset(new ClosestFloorPointDebugHandler(param));
+		break;
+	case DebugMode::FloorIntersections:
+		_debugHandler.reset(new FloorIntersectionsDebugHandler(param));
+		break;
 	default: _debugHandler.reset(nullptr);
 	}
 	_input.toggleDebugInput(isDebugModeActive());
