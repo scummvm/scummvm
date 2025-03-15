@@ -74,29 +74,13 @@ bool MainMenu::msgOpen(const OpenMessage &msg) {
 		btnRect.translate(0, 26);
 	}
 
-	// Disable the Rules button if told to do so
-	if (_flags & NO_RULES)
-		_rulesButton.enableWindow(false);
-
-	// Disable the NewGame button if told to do so
-	if (_flags & NO_NEWGAME)
-		_newGameButton.enableWindow(false);
-
-	// Disable the Options button if told to do so
-	if (_flags & NO_OPTIONS)
-		_optionsButton.enableWindow(false);
-
-	// Disable the Audio button if told to do so
-	if (_flags & NO_AUDIO)
-		_audioButton.enableWindow(false);
-
-	// Disable the Return button if told to do so
-	if (_flags & NO_RETURN)
-		_continueButton.enableWindow(false);
-
-	// Disable the Return button if told to do so
-	if (_flags & NO_QUIT)
-		_quitButton.enableWindow(false);
+	// Set buttons enablement
+	_rulesButton.enableWindow(!(_flags & NO_RULES));
+	_newGameButton.enableWindow(!(_flags & NO_NEWGAME));
+	_optionsButton.enableWindow(!(_flags & NO_OPTIONS));
+	_audioButton.enableWindow(!(_flags & NO_AUDIO));
+	_continueButton.enableWindow(!(_flags & NO_RETURN));
+	_quitButton.enableWindow(!(_flags & NO_QUIT));
 
 	g_events->showCursor(true);
 
