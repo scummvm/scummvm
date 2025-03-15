@@ -200,7 +200,8 @@ void Character::draw() {
 		return;
 	Graphic *activeGraphic = graphic();
 	assert(activeGraphic != nullptr);
-	g_engine->drawQueue().add<AnimationDrawRequest>(*activeGraphic, true, BlendMode::AdditiveAlpha, _lodBias);
+	if (activeGraphic->hasAnimation())
+		g_engine->drawQueue().add<AnimationDrawRequest>(*activeGraphic, true, BlendMode::AdditiveAlpha, _lodBias);
 }
 
 void Character::drawDebug() {

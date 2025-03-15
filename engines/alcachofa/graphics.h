@@ -258,6 +258,7 @@ public:
 	inline Color &color() { return _color; }
 	inline int32 &frameI() { return _frameI; }
 	inline uint32 lastTime() const { return _lastTime; }
+	inline bool hasAnimation() const { return _animation != nullptr; }
 	inline Animation &animation() {
 		assert(_animation != nullptr && _animation->isLoaded());
 		return *_animation;
