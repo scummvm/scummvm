@@ -23,6 +23,7 @@
 #define HODJNPODJ_MAZE_DOOM_H
 
 #include "bagel/hodjnpodj/views/minigame_view.h"
+#include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -33,15 +34,20 @@ private:
 	const char *_upBmp, *_downBmp,
 		*_leftBmp, *_rightBmp;
 	GfxSurface _background;
+	GfxSurface _locale, _blank;
+	BmpButton _scrollButton;
 
-	void setupBitmaps();
-	void loadBackground();
+	void setupHodjPodj();
+	void loadBitmaps();
+	void showMainMenu();
 
 public:
 	MazeDoom();
 	virtual ~MazeDoom() {}
 
 	bool msgOpen(const OpenMessage &msg) override;
+	bool msgClose(const CloseMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 };
 

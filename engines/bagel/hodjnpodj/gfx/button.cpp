@@ -110,8 +110,10 @@ void BmpButton::loadBitmaps(const char *base, const char *selected,
 		const char *focused, const char *disabled) {
 	_base.loadBitmap(base);
 	_selected.loadBitmap(selected);
-	_focused.loadBitmap(focused);
-	_disabled.loadBitmap(disabled);
+	if (focused)
+		_focused.loadBitmap(focused);
+	if (disabled)
+		_disabled.loadBitmap(disabled);
 }
 
 void BmpButton::clear() {

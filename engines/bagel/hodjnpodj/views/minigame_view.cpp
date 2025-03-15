@@ -37,6 +37,7 @@ bool MinigameView::msgOpen(const OpenMessage &msg) {
 	if (!_resourceFilename.empty())
 		_resources = Common::NEResources::createFromEXE(Common::Path(_resourceFilename));
 
+	g_events->setCursor(IDC_ARROW);
 	return View::msgOpen(msg);
 }
 

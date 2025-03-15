@@ -51,8 +51,8 @@ namespace MazeDoom {
 #define IDB_PODJ_LEFT_BMP	"mazedoom/art/podjlf.bmp"
 
 #define IDB_PARTS_BMP       "mazedoom/art/modparts.bmp"
-#define IDB_LOCALE_BMP_BMP	"mazedoom/art/locale.bmp"
-#define IDB_BLANK_BMP_BMP	"mazedoom/art/blank.bmp"
+#define IDB_LOCALE_BMP		"mazedoom/art/locale.bmp"
+#define IDB_BLANK_BMP		"mazedoom/art/blank.bmp"
 
 #define IDC_MOD_DNARROW                 116
 #define IDC_MOD_UPARROW                 117

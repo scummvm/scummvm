@@ -26,22 +26,125 @@
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/views/main_menu.h"
+#include "bagel/hodjnpodj/views/rules.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace MazeDoom {
 
-MazeDoom::MazeDoom() : MinigameView("mazedoom", "mazedoom/hnpmaze.dll") {
+
+// Border info              
+#define SIDE_BORDER 	 20
+#define TOP_BORDER		 28	 
+#define BOTTOM_BORDER	 16	 
+#define HILITE_BORDER	  3
+
+// Dimensions constants
+#define ART_WIDTH	600
+#define ART_HEIGHT	432
+
+#define SQ_SIZE_X	24
+#define SQ_SIZE_Y   24 
+#define EDGE_SIZE	 5
+
+// Starting value defaults
+#define MAX_DIFFICULTY	10	//8
+#define MIN_DIFFICULTY	 1	//0 
+
+// Timer constants         
+#define MIN_TIME			 15						//  15 Seconds
+#define MAX_TIME			180						// 180 Seconds = 3 minute max
+#define TIMER_MIN			  0						// Increment scrollbar in steps of 15 Secs
+#define TIMER_MAX			 10						// if Time > MAX_TIME, No Time Limit
+
+#define NUM_COLUMNS		25
+#define NUM_ROWS		19
+#define NUM_NEIGHBORS	 9							// The "clump" area is 3 X 3 grid spaces
+
+#define	NUM_TRAP_MAPS	 7							// There are seven trap icons available
+#define	MIN_TRAPS		 4
+
+#define NUM_CELS		 8
+
+#define PATH	0
+#define WALL	1
+#define TRAP	2
+#define START	3
+#define EXIT	4
+
+#define HODJ	0
+#define PODJ	4
+
+// Timer stuff
+#define GAME_TIMER 		1
+#define CLICK_TIME	 1000		// Every Second, update timer clock 
+
+// Rules files
+#define	RULES_TEXT		"MAZEOD.TXT"
+#define	RULES_WAV		".\\SOUND\\MAZEOD.WAV"
+
+// Sound files                          
+#define WIN_SOUND	".\\sound\\fanfare2.wav"
+#define LOSE_SOUND	".\\sound\\buzzer.wav"
+#define HIT_SOUND	".\\sound\\thud.wav"
+#define TRAP_SOUND	".\\sound\\boing.wav"
+
+#define GAME_THEME	".\\sound\\mazeod.mid"
+
+// Backdrop bitmaps
+#define MAINSCREEN	".\\ART\\DOOM2.BMP"
+
+// New Game button area
+#define	NEWGAME_LOCATION_X	 15
+#define	NEWGAME_LOCATION_Y	  0
+#define	NEWGAME_WIDTH		217
+#define NEWGAME_HEIGHT		 20
+
+// Time Display area
+#define	TIME_LOCATION_X		420
+#define	TIME_LOCATION_Y		  4
+#define	TIME_WIDTH			195
+#define TIME_HEIGHT			 15
+
+MazeDoom::MazeDoom() : MinigameView("MazeDoom", "mazedoom/hnpmaze.dll"),
+		_scrollButton("Scroll", this, Common::Rect(
+			SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
+			SCROLL_BUTTON_X + SCROLL_BUTTON_DX - 1,
+			SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1)
+		) {
+	addResource(IDB_LOCALE_BMP, "idb_locale_bmp");
+	addResource(IDB_BLANK_BMP, "idb_blank_bmp");
 }
 
 bool MazeDoom::msgOpen(const OpenMessage &msg) {
 	MinigameView::msgOpen(msg);
 
-	setupBitmaps();
-	loadBackground();
+	setupHodjPodj();
+	loadBitmaps();
 
+	_scrollButton.loadBitmaps(SCROLLUP_BMP, SCROLLDOWN_BMP,
+		nullptr, nullptr);
 
 	return true;
+}
+
+bool MazeDoom::msgClose(const CloseMessage &msg) {
+	MinigameView::msgClose(msg);
+
+	_background.clear();
+	_scrollButton.clear();
+
+	return true;
+}
+
+bool MazeDoom::msgGame(const GameMessage &msg) {
+	if (msg._name == "BUTTON") {
+		// Show the main menu
+		showMainMenu();
+		return true;
+	}
+
+	return false;
 }
 
 void MazeDoom::draw() {
@@ -49,7 +152,7 @@ void MazeDoom::draw() {
 	s.blitFrom(_background);
 }
 
-void MazeDoom::setupBitmaps() {
+void MazeDoom::setupHodjPodj() {
 	if (pGameParams->bPlayingHodj) {
 		_upBmp = IDB_HODJ_UP_BMP;
 		_downBmp = IDB_HODJ_DOWN_BMP;
@@ -63,7 +166,7 @@ void MazeDoom::setupBitmaps() {
 	}
 }
 
-void MazeDoom::loadBackground() {
+void MazeDoom::loadBitmaps() {
 	Image::BitmapDecoder decoder;
 	Common::File f;
 
@@ -72,6 +175,13 @@ void MazeDoom::loadBackground() {
 	loadPalette(decoder.getPalette());
 
 	_background.copyFrom(*decoder.getSurface());
+}
+
+void MazeDoom::showMainMenu() {
+	MainMenu::show(
+		pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0,
+		RULES_TEXT,
+		pGameParams->bSoundEffectsEnabled ? RULES_WAV : NULL);
 }
 
 } // namespace MazeDoom
