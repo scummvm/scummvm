@@ -699,7 +699,7 @@ void Sound::unloadMusic() {
 	for (auto &data: _musicData)
 		delete [] data._data;
 	_musicData.clear();
-
+	_currentMusic.clear();
 	// Don't unload sfxData.
 }
 

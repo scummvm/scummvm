@@ -922,6 +922,13 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 		setMouseCursor(kDgdsMouseGameDefault);
 		_soundPlayer->stopAllSfx();
 		_soundPlayer->stopMusic();
+		//
+		// Willy Beamish has a single music file that we load on game init and keep
+		// loaded. Others will load whatever music is needed in the scene init so
+		// we should unload here.
+		//
+		if (getGameId() != GID_WILLY)
+			_soundPlayer->unloadMusic();
 		_scene->unload();
 		_scene->setDragItem(nullptr);
 		_adsInterp->unload();
