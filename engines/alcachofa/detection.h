@@ -28,9 +28,6 @@ namespace Alcachofa {
 
 enum AlcachofaDebugChannels {
 	kDebugGraphics = 1,
-	kDebugPath,
-	kDebugScan,
-	kDebugFilePath,
 	kDebugScript,
 };
 

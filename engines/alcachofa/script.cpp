@@ -22,6 +22,7 @@
 #include "script.h"
 #include "rooms.h"
 #include "alcachofa.h"
+#include "script-debug.h"
 
 #include "common/file.h"
 
@@ -29,6 +30,13 @@ using namespace Common;
 using namespace Math;
 
 namespace Alcachofa {
+
+enum ScriptDebugLevel {
+	SCRIPT_DEBUG_LVL_NONE = 0,
+	SCRIPT_DEBUG_LVL_TASKS = 1,
+	SCRIPT_DEBUG_LVL_KERNELCALLS = 2,
+	SCRIPT_DEBUG_LVL_INSTRUCTIONS = 3
+};
 
 ScriptInstruction::ScriptInstruction(ReadStream &stream)
 	: _op((ScriptOp)stream.readSint32LE())
@@ -161,6 +169,7 @@ struct ScriptTask : public Task {
 		, _pc(pc)
 		, _lock(Common::move(lock)) {
 		pushInstruction(UINT_MAX);
+		debugC(SCRIPT_DEBUG_LVL_TASKS, kDebugScript, "%u: Script start at %u", process.pid(), pc);
 	}
 
 	ScriptTask(Process &process, const ScriptTask &forkParent)
@@ -172,6 +181,7 @@ struct ScriptTask : public Task {
 		for (uint i = 0; i < forkParent._stack.size(); i++)
 			_stack.push(forkParent._stack[i]);
 		pushNumber(1); // this task is the forked one
+		debugC(SCRIPT_DEBUG_LVL_TASKS, kDebugScript, "%u: Script fork from %u at %u", process.pid(), forkParent.process().pid(), _pc);
 	}
 
 	virtual TaskReturn run() override {
@@ -185,6 +195,9 @@ struct ScriptTask : public Task {
 			if (_pc >= _script._instructions.size())
 				error("Script process reached instruction out-of-bounds");
 			const auto &instruction = _script._instructions[_pc++];
+			debugC(SCRIPT_DEBUG_LVL_INSTRUCTIONS, kDebugScript, "%u: %5u %-12s %8d",
+				process().pid(), _pc - 1, ScriptOpNames[(int)instruction._op], instruction._arg);
+
 			switch (instruction._op) {
 			case ScriptOp::Nop: break;
 			case ScriptOp::Dup:
@@ -411,6 +424,9 @@ private:
 	}
 
 	TaskReturn kernelCall(ScriptKernelTask task) {
+		debugC(SCRIPT_DEBUG_LVL_KERNELCALLS, kDebugScript, "%u: %5u Kernel %-25s",
+			process().pid(), _pc - 1, KernelCallNames[(int)task]);
+
 		switch (task) {
 		// sound/video
 		case ScriptKernelTask::PlayVideo:
