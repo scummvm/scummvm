@@ -178,7 +178,7 @@ private:
 	int16 _shellPea;
 	int16 _shellBet;
 	int16 _sheckels;
-	int16 _unk45;
+	int16 _palFade;
 	int16 _unk46;
 	int16 _unk47;
 	int16 _tankState;
@@ -186,10 +186,9 @@ private:
 	int16 _tankFinished;
 	int16 _currentCharacter;
 	int16 _currentCharacter2;
-	int16 _unkDlgDlgNum;
-	int16 _unkDlgFileNum;
+	int16 _partnerDlgDlgNum;	// Dialog shown when right-clicking
+	int16 _partnerDlgFileNum;	//  on character swap button
 	int16 _unk55;
-	int16 _difficultyLevel;
 
 	Common::Error syncState(Common::Serializer &s) override;
 };
