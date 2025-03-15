@@ -116,7 +116,7 @@ public:
 	}
 
 	virtual ScopedPtr<ITexture> createTexture(int32 w, int32 h, bool withMipmaps) override {
-		assert(w > 0 && h > 0);
+		assert(w >= 0 && h >= 0);
 		return ScopedPtr<ITexture>(new OpenGLTexture(w, h, withMipmaps));
 	}
 
