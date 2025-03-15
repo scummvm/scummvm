@@ -332,6 +332,10 @@ bool Fuge::msgGame(const GameMessage &msg) {
 	} else if (msg._name == "OPTIONS") {
 		_optionsView.addView();
 		return true;
+	} else if (msg._name == "BUTTON") {
+		// Scroll button
+		showMainMenu();
+		return true;
 	}
 
 	return false;
