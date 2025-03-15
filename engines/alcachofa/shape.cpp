@@ -31,11 +31,8 @@ static int sideOfLine(const Point &a, const Point &b, const Point &q) {
 }
 
 static bool segmentsIntersect(const Point &a1, const Point &b1, const Point &a2, const Point &b2) {
-	// as there are a number of special cases to consider, this method is a direct translation
-	// of the original engine
-	// TODO: It is still bad and does sometimes not work correctly. Check this. keep in mind
-	// it *could* also be a case of incorrect floor segments being passed into in the first place.
-
+	// as there are a number of special cases to consider,
+	// this method is a direct translation of the original engine
 	const auto sideOfLine = [](const Point &a, const Point &b, const Point q) {
 		return Alcachofa::sideOfLine(a, b, q) > 0;
 	};
@@ -138,6 +135,14 @@ Point Polygon::closestPointTo(const Common::Point& query, float &distanceSqr) co
 	}
 	assert(contains(bestPoint));
 	return bestPoint;
+}
+
+Point Polygon::midPoint() const {
+	assert(_points.size() > 0);
+	Common::Point sum = {};
+	for (uint i = 0; i < _points.size(); i++)
+		sum += _points[i];
+	return sum / (int16)_points.size();
 }
 
 static float depthAtForLine(const Point &a, const Point &b, const Point &q, int8 depthA, int8 depthB) {
@@ -383,12 +388,14 @@ PathFindingShape::LinkPolygonIndices::LinkPolygonIndices() {
 }
 
 static Pair<int32, int32> orderPoints(const Polygon &polygon, int32 point1, int32 point2) {
-	if ((point1 > point2 && point1 + 1 != (int32)polygon._points.size()) ||
-		point2 + 1 == (int32)polygon._points.size()) {
+	if (point1 > point2) {
 		int32 tmp = point1;
 		point1 = point2;
 		point2 = tmp;
 	}
+	const int32 maxPointI = polygon._points.size() - 1;
+	if (point1 == 0 && point2 == maxPointI)
+		return { maxPointI, 0 };
 	return { point1, point2 };
 }
 
@@ -409,7 +416,7 @@ void PathFindingShape::setupLinks() {
 			if (sharedPointCount > 1) {
 				auto outerPoints = orderPoints(outer, sharedPoints[0].first, sharedPoints[1].first);
 				auto innerPoints = orderPoints(inner, sharedPoints[0].second, sharedPoints[1].second);
-				setupLinkEdge(outer, inner, outerPoints.first, outerPoints.second, innerPoints.first);
+				setupLinkEdge(outer, inner, outerPoints, innerPoints);
 				setupLinkPoint(outer, inner, sharedPoints[1]);
 			}
 		}
@@ -432,14 +439,15 @@ void PathFindingShape::setupLinkPoint(
 void PathFindingShape::setupLinkEdge(
 	const PathFindingPolygon &outer,
 	const PathFindingPolygon &inner,
-	int32 outerP1, int32 outerP2, int32 innerP) {
-	_targetQuads[outer._index * kPointsPerPolygon + outerP1] = inner._index;
-	_targetQuads[inner._index * kPointsPerPolygon + innerP] = outer._index;
-	auto &outerLink = _linkIndices[outer._index]._points[outerP1];
-	auto &innerLink = _linkIndices[inner._index]._points[innerP];
+	PathFindingShape::LinkIndex outerP,
+	PathFindingShape::LinkIndex innerP) {
+	_targetQuads[outer._index * kPointsPerPolygon + outerP.first] = inner._index;
+	_targetQuads[inner._index * kPointsPerPolygon + innerP.first] = outer._index;
+	auto &outerLink = _linkIndices[outer._index]._points[outerP.first];
+	auto &innerLink = _linkIndices[inner._index]._points[innerP.first];
 	if (outerLink.second < 0) {
 		outerLink.second = _linkPoints.size();
-		_linkPoints.push_back((outer._points[outerP1] + outer._points[outerP2]) / 2);
+		_linkPoints.push_back((outer._points[outerP.first] + outer._points[outerP.second]) / 2);
 	}
 	innerLink.second = outerLink.second;
 }
@@ -524,6 +532,12 @@ bool PathFindingShape::findPath(const Point &from, const Point &to_, Stack<Point
 	return true;
 }
 
+int32 PathFindingShape::edgeTarget(uint polygonI, uint pointI) const {
+	assert(polygonI < polygonCount() && pointI < kPointsPerPolygon);
+	uint fullI = polygonI * kPointsPerPolygon + pointI;
+	return _targetQuads[fullI];
+}
+
 bool PathFindingShape::canGoStraightThrough(
 	const Point &from, const Point &to,
 	int32 fromContainingI, int32 toContainingI) const {
@@ -532,14 +546,14 @@ bool PathFindingShape::canGoStraightThrough(
 		auto toContaining = at(toContainingI);
 		bool foundPortal = false;
 		for (uint i = 0; i < toContaining._points.size(); i++) {
-			uint fullI = toContainingI * kPointsPerPolygon + i;
-			if (_targetQuads[fullI] < 0 || _targetQuads[fullI] == lastContainingI)
+			int32 target = edgeTarget((uint)toContainingI, i);
+			if (target < 0 || target == lastContainingI)
 				continue;
 
 			if (toContaining.intersectsEdge(i, from, to)) {
 				foundPortal = true;
 				lastContainingI = toContainingI;
-				toContainingI = _targetQuads[fullI];
+				toContainingI = target;
 				break;
 			}
 		}

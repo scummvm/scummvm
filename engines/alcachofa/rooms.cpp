@@ -105,6 +105,8 @@ Room::Room(World *world, ReadStream &stream, bool hasUselessByte)
 	_musicId = stream.readSByte();
 	_characterAlphaTint = stream.readByte();
 	auto backgroundScale = stream.readSint16LE();
+	if (_name == "MINA")
+		backgroundScale += 0;
 	_floors[0] = PathFindingShape(stream);
 	_floors[1] = PathFindingShape(stream);
 	_fixedCameraOnEntering = readBool(stream);
@@ -259,8 +261,28 @@ void Room::drawDebug() {
 	}
 	if (_activeFloorI < 0)
 		return;
-	if (_activeFloorI >= 0 && g_engine->console().showFloor())
-		renderer->debugShape(_floors[_activeFloorI], kDebugBlue);
+	auto &floor = _floors[_activeFloorI];
+	if (g_engine->console().showFloor())
+		renderer->debugShape(floor, kDebugBlue);
+
+	if (g_engine->console().showFloorEdges()) {
+		auto &camera = g_engine->camera();
+		for (uint polygonI = 0; polygonI < floor.polygonCount(); polygonI++)
+		{
+			auto polygon = floor.at(polygonI);
+			for (uint pointI = 0; pointI < polygon._points.size(); pointI++)
+			{
+				int32 targetI = floor.edgeTarget(polygonI, pointI);
+				if (targetI < 0)
+					continue;
+				Point a = camera.transform3Dto2D(polygon._points[pointI]);
+				Point b = camera.transform3Dto2D(polygon._points[(pointI + 1) % polygon._points.size()]);
+				Point source = (a + b) / 2;
+				Point target = camera.transform3Dto2D(floor.at((uint)targetI).midPoint());
+				renderer->debugPolyline(source, target, kDebugLightBlue);
+			}
+		}
+	}
 }
 
 void Room::loadResources() {

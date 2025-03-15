@@ -30,7 +30,8 @@ namespace Alcachofa {
 Console::Console() : GUI::Debugger() {
 	registerVar("showInteractables", &_showInteractables);
 	registerVar("showCharacters", &_showCharacters);
-	registerVar("showFloor", &_showFloor);
+	registerVar("showFloorShape", &_showFloor);
+	registerVar("showFloorEdges", &_showFloorEdges);
 	registerVar("showFloorColor", &_showFloorColor);
 
 	registerCmd("var", WRAP_METHOD(Console, cmdVar));
@@ -54,6 +55,7 @@ bool Console::isAnyDebugDrawingOn() const
 		_showInteractables ||
 		_showCharacters ||
 		_showFloor ||
+		_showFloorEdges ||
 		_showFloorColor;
 }
 
