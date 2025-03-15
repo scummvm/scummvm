@@ -24,6 +24,7 @@
 
 #include "bagel/hodjnpodj/views/minigame_view.h"
 #include "bagel/hodjnpodj/gfx/button.h"
+#include "bagel/hodjnpodj/maze_doom/maze_gen.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -31,7 +32,7 @@ namespace MazeDoom {
 
 #define	NUM_TRAP_MAPS	 7							// There are seven trap icons available
 
-class MazeDoom : public MinigameView {
+class MazeDoom : public MinigameView, public MazeGen {
 private:
 	const char *_upBmp = nullptr, *_downBmp = nullptr,
 		*_leftBmp = nullptr, *_rightBmp = nullptr;
@@ -62,6 +63,22 @@ private:
 	void loadBitmaps();
 	void showMainMenu();
 	void setupSettings();
+
+	/**
+	 * Translates the random maze generated into
+	 * the mazeTile grid for the game
+	 *  IMPLICIT INPUT PARAMETERS:
+	 *
+	 *      maze[][]            The randomly generated maze
+	 *      TILE mazeTile[][] grid
+	 *      start_y
+	 *      exit_y
+	 *
+	 *  IMPLICIT OUTPUT PARAMETERS:
+	 *
+	 *      TILE mazeTile[][] grid
+	**/
+	void setUpMaze();
 
 public:
 	MazeDoom();

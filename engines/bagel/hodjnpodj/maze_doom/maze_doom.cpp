@@ -60,6 +60,8 @@ bool MazeDoom::msgOpen(const OpenMessage &msg) {
 	setupHodjPodj();
 	loadBitmaps();
 	setupSettings();
+	initializeMaze();	// Set the surrounding wall and start/end squares 
+	createMaze();		// Create a maze layout given the initialized maze
 
 	return true;
 }

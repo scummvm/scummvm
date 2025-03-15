@@ -66,8 +66,6 @@ namespace MazeDoom {
 #define TIMER_MIN			  0						// Increment scrollbar in steps of 15 Secs
 #define TIMER_MAX			 10						// if Time > MAX_TIME, No Time Limit
 
-#define NUM_COLUMNS		25
-#define NUM_ROWS		19
 #define NUM_NEIGHBORS	 9							// The "clump" area is 3 X 3 grid spaces
 
 #define	MIN_TRAPS		 4
