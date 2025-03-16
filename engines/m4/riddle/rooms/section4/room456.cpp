@@ -41,11 +41,11 @@ void Room456::init() {
 	_seriesGrateOpens = series_load("456 GRATE OPENS");
 	_seriesCigarBoxTop = series_load("456 CIGAR BOX TOP");
 
-	_lighter = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+	_lighter = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 		triggerMachineByHashCallback456, "Lighter");
-	_vent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+	_vent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 			triggerMachineByHashCallback456, "Vent");
-	_lid = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+	_lid = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 		triggerMachineByHashCallback456, "Cigar box lid");
 
 	if (_G(flags)[V335]) {
@@ -105,9 +105,9 @@ void Room456::pre_parser() {
 }
 
 void Room456::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (lookFlag && player_said_any("RED BUTTON", "BLACK BUTTON", "FAN SWITCH")) {
 		digi_play("456r09", 1);
@@ -258,7 +258,7 @@ void Room456::parser() {
 			switch (_G(kernel).trigger) {
 			case -1:
 				kernel_examine_inventory_object("PING CIGAR", _G(master_palette),
-					5, 1, 210, 210, 2, 0, -1);
+					5, 1, 210, 210, 2, nullptr, -1);
 				break;
 			case 2:
 				inv_give_to_player("CIGAR");
@@ -272,7 +272,7 @@ void Room456::parser() {
 	} else if (takeFlag && player_said("LIGHTER")) {
 		digi_play("456r14", 1);
 	} else if (takeFlag && player_said("CIGAR BOX")) {
-		digi_play("r56r15", 1);
+		digi_play("456r15", 1);
 	} else if (useFlag && player_said("RED BUTTON ")) {
 		digi_play("456_s01", 2);
 	} else if (useFlag && player_said("BLACK BUTTON ")) {
