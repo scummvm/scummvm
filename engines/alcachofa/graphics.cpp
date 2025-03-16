@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "common/file.h"
 #include "common/substream.h"
+#include "common/bufferedstream.h"
 #include "image/tga.h"
 
 using namespace Common;
@@ -66,7 +67,7 @@ void AnimationBase::load() {
 	if (_isLoaded)
 		return;
 
-	Common::String fullPath;
+	String fullPath;
 	switch (_folder) {
 	case AnimationFolder::Animations: fullPath = "Animaciones/"; break;
 	case AnimationFolder::Masks: fullPath = "Mascaras/"; break;
@@ -76,7 +77,8 @@ void AnimationBase::load() {
 	if (_fileName.size() < 4 || scumm_strnicmp(_fileName.end() - 4, ".AN0", 4) != 0)
 		_fileName += ".AN0";
 	fullPath += _fileName;
-	Common::File file;
+
+	File file;
 	if (!file.open(fullPath.c_str())) {
 		// original fallback
 		fullPath = "Mascaras/" + _fileName;
@@ -85,16 +87,18 @@ void AnimationBase::load() {
 			return;
 		}
 	}
+	// Reading the images is a major bottleneck in loading, buffering helps a lot with that
+	ScopedPtr<SeekableReadStream> stream(wrapBufferedSeekableReadStream(&file, file.size(), DisposeAfterUse::NO));
 
-	uint spriteCount = file.readUint32LE();
+	uint spriteCount = stream->readUint32LE();
 	assert(spriteCount < kMaxSpriteIDs);
 	_spriteBases.reserve(spriteCount);
 
-	uint imageCount = file.readUint32LE();
+	uint imageCount = stream->readUint32LE();
 	_images.reserve(imageCount);
 	_imageOffsets.reserve(imageCount);
 	for (uint i = 0; i < imageCount; i++) {
-		_images.push_back(readImage(file));
+		_images.push_back(readImage(*stream));
 	}
 
 	// an inconsistency, maybe a historical reason:
@@ -102,32 +106,32 @@ void AnimationBase::load() {
 	// have to be contiguous we do not need to do that ourselves.
 	// but let's check in Debug to be sure
 	for (uint i = 0; i < spriteCount; i++) {
-		_spriteBases.push_back(file.readUint32LE());
+		_spriteBases.push_back(stream->readUint32LE());
 		assert(_spriteBases.back() < imageCount);
 	}
 #ifdef _DEBUG
 	for (uint i = spriteCount; i < kMaxSpriteIDs; i++)
-		assert(file.readSint32LE() == 0);
+		assert(stream->readSint32LE() == 0);
 #else
-	file.skip(sizeof(int32) * (kMaxSpriteIDs - spriteCount));
+	stream->skip(sizeof(int32) * (kMaxSpriteIDs - spriteCount));
 #endif
 
 	for (uint i = 0; i < imageCount; i++)
-		_imageOffsets.push_back(readPoint(file));
+		_imageOffsets.push_back(readPoint(*stream));
 	for (uint i = 0; i < kMaxSpriteIDs; i++)
-		_spriteIndexMapping[i] = file.readSint32LE();
+		_spriteIndexMapping[i] = stream->readSint32LE();
 
-	uint frameCount = file.readUint32LE();
+	uint frameCount = stream->readUint32LE();
 	_frames.reserve(frameCount);
 	_spriteOffsets.reserve(frameCount * spriteCount);
 	_totalDuration = 0;
 	for (uint i = 0; i < frameCount; i++) {
 		for (uint j = 0; j < spriteCount; j++)
-			_spriteOffsets.push_back(file.readUint32LE());
+			_spriteOffsets.push_back(stream->readUint32LE());
 		AnimationFrame frame;
-		frame._center = readPoint(file);
-		frame._offset = readPoint(file);
-		frame._duration = file.readUint32LE();
+		frame._center = readPoint(*stream);
+		frame._offset = readPoint(*stream);
+		frame._duration = stream->readUint32LE();
 		_frames.push_back(frame);
 		_totalDuration += frame._duration;
 	}
