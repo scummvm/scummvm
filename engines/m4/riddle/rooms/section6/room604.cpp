@@ -313,7 +313,7 @@ void Room604::parser() {
 		(player_said("generator set") && inv_object_is_here("PULL CORD"))
 	)) {
 		if (_G(flags)[V011]) {
-			digi_play("com115", 1);
+			digi_play("com115", 1, 255, -1, 997);
 		} else {
 			switch (_G(kernel).trigger) {
 			case -1:
@@ -356,7 +356,7 @@ void Room604::parser() {
 
 			case 3:
 				terminateMachineAndNull(_shedDoor);
-				_shedDoor = series_play("SEHD DOOR OPENS", 0x300, 16, 4);
+				_shedDoor = series_play("SHED DOOR OPENS", 0x300, 16, 4);
 				break;
 
 			case 4:
