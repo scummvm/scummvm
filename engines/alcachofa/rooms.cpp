@@ -30,21 +30,6 @@ using namespace Common;
 
 namespace Alcachofa {
 
-// originally the inventory only reacts to exactly top-left/bottom-right which is fine in
-// fullscreen when you just slam the mouse cursor into the corner.
-// In any other scenario this is cumbersome so I expand this area.
-static constexpr int16 kInventoryTriggerSize = 10;
-
-Rect openInventoryTriggerBounds() {
-	int16 size = kInventoryTriggerSize * 1024 / g_system->getWidth();
-	return Rect(0, 0, size, size);
-}
-
-Rect closeInventoryTriggerBounds() {
-	int16 size = kInventoryTriggerSize * 1024 / g_system->getWidth();
-	return Rect(g_system->getWidth() - size, g_system->getHeight() - size, g_system->getWidth(), g_system->getHeight());
-}
-
 Room::Room(World *world, ReadStream &stream) : Room(world, stream, false) {
 }
 
@@ -150,7 +135,7 @@ void Room::update() {
 
 		if (g_engine->player().currentRoom() == this) {
 			updateRoomBounds();
-			updateClosingInventory();
+			g_engine->globalUI().updateClosingInventory();
 			if (!updateInput())
 				return;
 		}
@@ -206,7 +191,7 @@ void Room::updateInteraction() {
 	auto &input = g_engine->input();
 	// TODO: Add interaction with change character button
 
-	if (updateOpeningInventory())
+	if (g_engine->globalUI().updateOpeningInventory())
 		return;
 
 	player.selectedObject() = world().globalRoom().getSelectedObject(getSelectedObject());
@@ -316,51 +301,6 @@ ShapeObject *Room::getSelectedObject(ShapeObject *best) const {
 			best = shapeObject;
 	}
 	return best;
-}
-
-void Room::startClosingInventory() {
-	_isOpeningInventory = false;
-	_isClosingInventory = true;
-	_timeForInventory = g_system->getMillis();
-}
-
-void Room::updateClosingInventory() {
-	static constexpr uint32 kDuration = 300;
-	static constexpr float kSpeed = -10 / 3.0f / 1000.0f;
-
-	uint32 deltaTime = g_system->getMillis() - _timeForInventory;
-	if (!_isClosingInventory || deltaTime >= kDuration)
-		_isClosingInventory = false;
-	else
-		g_engine->world().inventory().drawAsOverlay((int32)(g_system->getHeight() * (deltaTime * kSpeed)));
-}
-
-bool Room::updateOpeningInventory() {
-	static constexpr float kSpeed = 10 / 3.0f / 1000.0f;
-	if (g_engine->player().isOptionsMenuOpen() || !g_engine->player().isGameLoaded())
-		return false;
-
-	if (_isOpeningInventory) {
-		uint32 deltaTime = g_system->getMillis() - _timeForInventory;
-		if (deltaTime >= 1000) {
-			_isOpeningInventory = false;
-			g_engine->world().inventory().open();
-		}
-		else {
-			deltaTime = MIN<uint32>(300, deltaTime);
-			g_engine->world().inventory().drawAsOverlay((int32)(g_system->getHeight() * (deltaTime * kSpeed - 1)));
-		}
-		return true;
-	}
-	else if (openInventoryTriggerBounds().contains(g_engine->input().mousePos2D())) {
-		_isClosingInventory = false;
-		_isOpeningInventory = true;
-		_timeForInventory = g_system->getMillis();
-		g_engine->player().activeCharacter()->stopWalking();
-		g_engine->world().inventory().updateItemsByActiveCharacter();
-		return true;
-	}
-	return false;
 }
 
 OptionsMenu::OptionsMenu(World *world, ReadStream &stream)
@@ -487,7 +427,7 @@ void Inventory::open() {
 void Inventory::close() {
 	g_engine->player().changeRoomToBeforeInventory();
 	g_engine->camera().restore(1);
-	g_engine->player().currentRoom()->startClosingInventory();
+	g_engine->globalUI().startClosingInventory();
 }
 
 void Room::debugPrint(bool withObjects) const {

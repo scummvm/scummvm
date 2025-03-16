@@ -26,12 +26,19 @@
 
 namespace Alcachofa {
 
+Common::Rect openInventoryTriggerBounds();
+Common::Rect closeInventoryTriggerBounds();
+
 class GlobalUI {
 public:
 	GlobalUI();
 
 	inline Font &generalFont() const { assert(_generalFont != nullptr); return *_generalFont; }
 	inline Font &dialogFont() const { assert(_dialogFont != nullptr); return *_dialogFont; }
+
+	bool updateOpeningInventory();
+	void updateClosingInventory();
+	void startClosingInventory();
 
 private:
 	Common::ScopedPtr<Font>
@@ -44,6 +51,11 @@ private:
 		_iconMortadeloDisabled,
 		_iconFilemonDisabled,
 		_iconInventoryDisabled;
+
+	bool
+		_isOpeningInventory = false,
+		_isClosingInventory = false;
+	uint32 _timeForInventory = 0;
 };
 
 }

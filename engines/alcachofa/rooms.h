@@ -60,15 +60,12 @@ public:
 	virtual void serializeSave(Common::Serializer &serializer);
 	ObjectBase *getObjectByName(const Common::String &name) const;
 	void toggleActiveFloor();
-	void startClosingInventory();
 	void debugPrint(bool withObjects) const;
 
 protected:
 	Room(World *world, Common::ReadStream &stream, bool hasUselessByte);
 	void updateScripts();
 	void updateRoomBounds();
-	bool updateOpeningInventory();
-	void updateClosingInventory();
 	void updateInteraction();
 	void updateObjects();
 	void drawObjects();
@@ -78,17 +75,13 @@ protected:
 	World *_world;
 	Common::String _name;
 	PathFindingShape _floors[2];
-	bool
-		_fixedCameraOnEntering,
-		_isOpeningInventory = false,
-		_isClosingInventory = false;
+	bool _fixedCameraOnEntering;
 	int8
 		_musicId,
 		_activeFloorI = -1;
 	uint8
 		_characterAlphaTint,
 		_characterAlphaPremultiplier; ///< for some reason in percent instead of 0-255
-	uint32 _timeForInventory = 0;
 
 	Common::Array<ObjectBase *> _objects;
 };
