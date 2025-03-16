@@ -74,6 +74,8 @@ bool MazeDoom::msgOpen(const OpenMessage &msg) {
 	}
 
 	bPlaying = pGameParams->bPlayingMetagame;
+	m_bGameOver = false;
+	_move.clear();
 
 	return true;
 }
@@ -113,6 +115,15 @@ bool MazeDoom::msgGame(const GameMessage &msg) {
 		}
 
 		return true;
+	} else if (msg._name == "EXIT") {
+		CBofSound::waitWaveSounds();
+
+		if (pGameParams->bPlayingMetagame) {
+			pGameParams->lScore = 1;	// A victorious maze solving
+			close();					// and close minigame
+		}
+
+		return true;
 	}
 
 	return false;
@@ -128,6 +139,12 @@ bool MazeDoom::tick() {
 		if (bPlaying && !m_bGameOver)
 			updateTimer();
 	}
+
+	// Handle automatic moving
+	if (_move.isMoving())
+		playerMoving();
+
+	exitCheck();
 
 	return true;
 }
@@ -160,6 +177,7 @@ void MazeDoom::gameOver() {
 
 	bPlaying = false;
 	m_bGameOver = true;
+	_move.clear();
 
 	if (pGameParams->bSoundEffectsEnabled) {
 		pEffect = new CBofSound(this, LOSE_SOUND,
@@ -312,6 +330,7 @@ void MazeDoom::newGame() {
 	m_nTime = tempTime;				// Get new time limit,
 	m_nDifficulty = tempDifficulty;	//...new Difficulty
 	_priorTime = g_system->getMillis();
+	_move.clear();
 
 	if (m_nTime != 0) {				// If we've got a time limit
 		nMinutes = m_nTime / 60;	//...get the minutes and seconds
@@ -329,6 +348,134 @@ void MazeDoom::newGame() {
 	// Flag the new game to start
 	bPlaying = true;
 	m_bGameOver = false;
+}
+
+void MazeDoom::movePlayer(const Common::Point &point) {
+	Common::Point tileLocation;
+	Common::Point delta;
+	const char *nBmpID = _rightBmp;
+
+	_move.clear();
+	_move._hit = screenToTile(point);
+	_move._newPosition.x = m_PlayerPos.x;
+	_move._newPosition.y = m_PlayerPos.y;
+
+	delta.x = m_PlayerPos.x - _move._hit.x;	// Get x distance from mouse click to player in Tile spaces 
+	delta.y = m_PlayerPos.y - _move._hit.y;	// Get y distance from mouse click to player in Tile spaces 
+
+	if (ABS(delta.x) > ABS(delta.y)) {
+		// Moving horizontally
+		if (delta.x < 0) {
+			// To the RIGHT
+			_move._step.x = 1;			// move one tile at a time
+			nBmpID = _rightBmp;
+		} else if (delta.x > 0) {
+			// To the LEFT
+			_move._step.x = -1;		// move one tile at a time
+			nBmpID = _leftBmp;
+		}
+	} else if (ABS(delta.y) > ABS(delta.x)) {
+		if (delta.y > 0) {
+			// Going Upward
+			_move._step.y = -1;		// move one tile at a time                                         
+			nBmpID = _upBmp;	// use Bitmap of player moving Up
+		} else if (delta.y < 0) {
+			// Going Downward
+			_move._step.y = 1;			// move one tile at a time
+			nBmpID = _downBmp;	// use Bitmap of player moving Down
+		}
+	}
+
+	if ((_move._step.x != 0) || (_move._step.y != 0)) {
+		// If the click is not in the player's tile, preparing for moving
+		pPlayerSprite.loadCels(nBmpID, NUM_CELS);
+	}
+}
+
+void MazeDoom::playerMoving() {
+	bool bCollision = false;
+	CBofSound *pEffect = nullptr;
+
+	assert(_move.isMoving());
+	_move._newPosition += _move._step;
+
+	if ((mazeTile[_move._newPosition.x][_move._newPosition.y].m_bHidden) &&
+		(mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == WALL)) {
+
+		if (pGameParams->bSoundEffectsEnabled) {
+			// SOUND_ASYNCH ...Wave file, to delete itself
+			pEffect = new CBofSound(this, HIT_SOUND,
+				SOUND_WAVE | SOUND_AUTODELETE);
+			(*pEffect).play();                                                      //...play the narration
+		}
+		mazeTile[_move._newPosition.x][_move._newPosition.y].m_bHidden = false;
+		bCollision = true;
+	}
+
+	if (mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == TRAP &&
+		(mazeTile[_move._newPosition.x][_move._newPosition.y].m_bHidden)) {
+		// Traps are only good once 
+		mazeTile[_move._newPosition.x][_move._newPosition.y].m_bHidden = false;
+
+		m_PlayerPos.x = mazeTile[_move._newPosition.x][_move._newPosition.y].m_nDest.x;
+		m_PlayerPos.y = mazeTile[_move._newPosition.x][_move._newPosition.y].m_nDest.y;
+
+		if (pGameParams->bSoundEffectsEnabled) {
+			// SOUND_ASYNCH ...Wave file, to delete itself
+			pEffect = new CBofSound(this, TRAP_SOUND,
+				SOUND_WAVE | SOUND_AUTODELETE);
+			(*pEffect).play();                                                      //...play the narration
+		}
+
+		// Paint trap in Maze bitmap for display
+		_mazeBitmap.blitFrom(TrapBitmap[mazeTile[_move._newPosition.x][_move._newPosition.y].m_nTrap],
+			Common::Point(
+				mazeTile[_move._newPosition.x][_move._newPosition.y].m_nStart.x,
+				mazeTile[_move._newPosition.x][_move._newPosition.y].m_nStart.y
+			));
+		bCollision = true;
+	}
+
+	if ((mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == WALL) ||
+		(mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == START)) {
+		bCollision = true;
+	}
+
+	if ((_move._newPosition.x == _move._hit.x) && (_move._newPosition.y == _move._hit.y))
+		bCollision = true;
+
+	if (bCollision)
+		_move.clear();
+//	GetNewCursor();
+}
+
+void MazeDoom::exitCheck() {
+	CBofSound *pEffect = nullptr;
+
+	if (mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall != EXIT)
+		return;
+
+	bPlaying = false;
+	m_bGameOver = true;
+
+	if (pGameParams->bSoundEffectsEnabled) {
+		//...Wave file, to delete itself
+		pEffect = new CBofSound(this, WIN_SOUND,
+			SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);
+		(*pEffect).play();                                                      //...play the narration
+	}
+
+	g_events->clearEvents();
+	MessageBox::show("Game over.", "He's free!", "EXIT");
+}
+
+Common::Point MazeDoom::screenToTile(const Common::Point &pointScreen) const {
+	Common::Point point;
+
+	point.x = (pointScreen.x - SIDE_BORDER) / SQ_SIZE_X;
+	point.y = (pointScreen.y - TOP_BORDER + SQ_SIZE_Y / 2) / SQ_SIZE_Y;
+
+	return point;
 }
 
 } // namespace MazeDoom

@@ -32,6 +32,17 @@ namespace HodjNPodj {
 namespace MazeDoom {
 
 class MazeDoom : public MinigameView, public MazeGen {
+	struct Move {
+		Common::Point _newPosition, _step;
+		Common::Point _hit;
+
+		void clear() {
+			_hit = _newPosition = _step = Common::Point();	
+		}
+		bool isMoving() const {
+			return _step.x != 0 || _step.y != 0;
+		}
+	};
 private:
 	const char *_upBmp = nullptr, *_downBmp = nullptr,
 		*_leftBmp = nullptr, *_rightBmp = nullptr;
@@ -53,6 +64,7 @@ private:
 	int tempDifficulty = 0;
 	int tempTime = 0;
 	CBofSound *pGameSound = nullptr;
+	Move _move;
 
 	void setupHodjPodj();
 	void loadBitmaps();
@@ -60,6 +72,32 @@ private:
 	void newGame();
 	void updateTimer();
 	void gameOver();
+	void exitCheck();
+
+	/**
+	 * Mouse movement processing function
+	 *
+	 *  FORMAL PARAMETERS:
+	 *
+	 *      UINT nFlags     Virtual key info
+	 *      Point point     Location of cursor
+	 */
+	void movePlayer(const Common::Point &point);
+
+	/**
+	 * Converts a point in screen coordinates to x & y location on maze grid
+	 *
+	 *  FORMAL PARAMETERS:
+	 *
+	 *      Point pointScreen      a point in screen coordinates
+	 *
+	 *  RETURN VALUE:
+	 *
+	 *      Point  point           the x & y grid coordinates where pointScreen fell
+	 */
+	Common::Point screenToTile(const Common::Point &pointScreen) const;
+
+	void playerMoving();
 
 protected:
 	void showMainMenu() override;
