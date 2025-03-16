@@ -33,7 +33,7 @@ public:
 	inline Room *currentRoom() const { return _currentRoom; }
 	inline MainCharacter *activeCharacter() const { return _activeCharacter; }
     inline ShapeObject *&selectedObject() { return _selectedObject; }
-	inline ShapeObject *&pressedObject() { return _pressedObject; }
+	inline void *&pressedObject() { return _pressedObject; }
 	inline Item *&heldItem() { return _heldItem; }
 	inline FakeSemaphore &semaphore() { return _semaphore; }
 	MainCharacter *inactiveCharacter() const;
@@ -51,6 +51,7 @@ public:
 	void drawScreenStates(); // black borders and/or permanent fade
 	void updateCursor();
 	void drawCursor(bool forceDefaultCursor = false);
+	void resetCursor();
 	void changeRoom(const Common::String &targetRoomName, bool resetCamera);
 	void changeRoomToBeforeInventory();
 	void triggerObject(ObjectBase *object, const char *action);
@@ -69,7 +70,7 @@ private:
 		*_roomBeforeInventory = nullptr;
 	MainCharacter *_activeCharacter;
     ShapeObject *_selectedObject = nullptr;
-    ShapeObject *_pressedObject = nullptr;
+    void *_pressedObject = nullptr; // terrible but GlobalUI wants to store a Graphic pointer
 	Item *_heldItem = nullptr;
 	int32 _cursorFrameI = 0;
 	bool
