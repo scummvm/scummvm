@@ -23,6 +23,7 @@
 #define HODJNPODJ_MAZEDOOM_MAZE_GEN_H
 
 #include "common/rect.h"
+#include "bagel/hodjnpodj/gfx/gfx_surface.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -88,6 +89,11 @@ struct MazeGen {
 
 	Common::Point m_PlayerPos;
 	int m_nDifficulty = 0;
+	GfxSurface _mazeBitmap;
+	GfxSurface pWallBitmap,
+		pPathBitmap, pStartBitmap;
+	GfxSurface pLeftEdgeBmp, pRightEdgeBmp,
+		pTopEdgeBmp, pBottomEdgeBmp;
 
 	/**
 	 * Set the surrounding wall and start/end squares
@@ -167,6 +173,23 @@ struct MazeGen {
 	 *      Point      The random X and Y of a path space in the mazeTile grid
 	 */
 	Common::Point getRandomPoint(bool bRight);
+
+	/**
+	 * Paints the maze onto a passed bitmap
+	 */
+	void paintMaze();
+
+	/**
+	 * Draws fancy edgework around a piece of wall on the sides where possible
+	 *
+	 *  FORMAL PARAMETERS:
+	 *
+	 *      int     x           Column of piece to check
+	 *      int     y           Row of piece to check
+	 *      int     offset_x    Width offset for drawing the bitmap
+	 *      int     offset_y    Hieght offset as above
+	 */
+	void addEdges(int x, int y, int offset_x, int offset_y);
 };
 
 } // namespace MazeDoom

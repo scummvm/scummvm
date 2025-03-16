@@ -396,6 +396,69 @@ Common::Point MazeGen::getRandomPoint(bool bRight) {
 	return point;
 }
 
+void MazeGen::paintMaze() {
+	int x, y;
+
+	for (x = 0; x < NUM_COLUMNS; x++) {
+		for (y = 0; y < NUM_ROWS; y++) {
+			mazeTile[x][y].m_nStart.x = x * SQ_SIZE_X;                              // Put in location info
+			mazeTile[x][y].m_nStart.y = y * SQ_SIZE_Y;
+			if ((mazeTile[x][y].m_nWall == PATH) || (mazeTile[x][y].m_nWall == EXIT) ||
+				mazeTile[x][y].m_bHidden)
+				// Path or hidden obj 
+				_mazeBitmap.blitFrom(pPathBitmap, Common::Point(
+					mazeTile[x][y].m_nStart.x, mazeTile[x][y].m_nStart.y));
+			else if (mazeTile[x][y].m_nWall == START)
+				// Start of maze
+				_mazeBitmap.blitFrom(pStartBitmap, Common::Point(
+					mazeTile[x][y].m_nStart.x, mazeTile[x][y].m_nStart.y));
+			else
+				// Otherwise, it's a wall
+				_mazeBitmap.blitFrom(pWallBitmap, Common::Point(
+					mazeTile[x][y].m_nStart.x, mazeTile[x][y].m_nStart.y));
+		}
+	}
+
+	for (x = 0; x < NUM_COLUMNS; x++) {		// Go through the grid
+		for (y = 0; y < NUM_ROWS; y++) {	//...and for every square
+			addEdges(x, y, 0, 0);			//...add trim if needed
+		}
+	}
+}
+
+void MazeGen::addEdges(int x, int y, int offset_x, int offset_y) {
+	if ((mazeTile[x][y].m_bHidden == false) && (mazeTile[x][y].m_nWall == WALL)) {
+		if ((y > 0) && ((((mazeTile[x][y - 1].m_nWall == PATH) || (mazeTile[x][y - 1].m_nWall == EXIT)) ||
+				(mazeTile[x][y - 1].m_nWall == START)) || mazeTile[x][y - 1].m_bHidden))
+			// TOP
+			_mazeBitmap.blitFrom(pBottomEdgeBmp, Common::Point(
+				mazeTile[x][y - 1].m_nStart.x + offset_x,
+				mazeTile[x][y - 1].m_nStart.y + offset_y + SQ_SIZE_Y - 1 - EDGE_SIZE));
+
+		if ((x < (NUM_COLUMNS - 1)) && ((mazeTile[x + 1][y].m_nWall == PATH) ||
+				mazeTile[x + 1][y].m_bHidden))
+			// RIGHT
+			_mazeBitmap.blitFrom(pLeftEdgeBmp, Common::Point(
+				mazeTile[x + 1][y].m_nStart.x + offset_x,
+				mazeTile[x + 1][y].m_nStart.y + offset_y));
+
+		if ((y < (NUM_ROWS - 1)) && ((((mazeTile[x][y + 1].m_nWall == EXIT) ||
+				(mazeTile[x][y + 1].m_nWall == PATH)) ||
+				(mazeTile[x][y + 1].m_nWall == START)) || mazeTile[x][y + 1].m_bHidden))
+			// BOTTOM
+			_mazeBitmap.blitFrom(pTopEdgeBmp, Common::Point(
+				mazeTile[x][y + 1].m_nStart.x + offset_x,
+				mazeTile[x][y + 1].m_nStart.y + offset_y));
+
+		if ((x > 0) && ((mazeTile[x - 1][y].m_nWall == PATH) ||
+			mazeTile[x - 1][y].m_bHidden))
+			// LEFT
+			_mazeBitmap.blitFrom(pRightEdgeBmp, Common::Point(
+				mazeTile[x - 1][y].m_nStart.x + offset_x + SQ_SIZE_X - 1 - EDGE_SIZE,
+				mazeTile[x - 1][y].m_nStart.y + offset_y));
+	}
+}
+
 } // namespace MazeDoom
 } // namespace HodjNPodj
 } // namespace Bagel

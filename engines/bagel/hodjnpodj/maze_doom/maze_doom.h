@@ -37,11 +37,7 @@ private:
 	BmpButton _scrollButton;
 	GfxSurface _background;
 	GfxSurface _locale, _blank;
-	GfxSurface _mazeBitmap;
-	GfxSurface _partsBitmap, pWallBitmap,
-		pPathBitmap, pStartBitmap;
-	GfxSurface pLeftEdgeBmp, pRightEdgeBmp,
-		pTopEdgeBmp, pBottomEdgeBmp;
+	GfxSurface _partsBitmap;
 	GfxSurface TrapBitmap[NUM_TRAP_MAPS];
 	GfxSurface pLocaleBitmap;
 	GfxSurface pBlankBitmap;
