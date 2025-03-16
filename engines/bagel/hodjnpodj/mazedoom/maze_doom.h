@@ -25,6 +25,7 @@
 #include "bagel/hodjnpodj/views/minigame_view.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 #include "bagel/hodjnpodj/mazedoom/maze_gen.h"
+#include "bagel/hodjnpodj/mazedoom/options.h"
 #include "bagel/boflib/sound.h"
 
 namespace Bagel {
@@ -44,6 +45,7 @@ class MazeDoom : public MinigameView, public MazeGen {
 		}
 	};
 private:
+	Options _options;
 	const char *_upBmp = nullptr, *_downBmp = nullptr,
 		*_leftBmp = nullptr, *_rightBmp = nullptr;
 	BmpButton _scrollButton;
@@ -60,14 +62,14 @@ private:
 	bool m_bGameOver = false;
 	uint32 _priorTime = 0;
 	int m_nTime = 0, nSeconds = 0, nMinutes = 0;
-	int tempDifficulty = 0;
-	int tempTime = 0;
+	int _tempDifficulty = 0;
+	int _tempTime = 0;
 	CBofSound *pGameSound = nullptr;
 	Move _move;
 
 	void setupHodjPodj();
 	void loadBitmaps();
-	void setupSettings();
+	void loadIniSettings();
 	void newGame();
 	void updateTimer();
 	void gameOver();

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HODJNPODJ_MAZEDOOM_GLOBALS_H
-#define HODJNPODJ_MAZEDOOM_GLOBALS_H
+#ifndef HODJNPODJ_MAZEDOOM_DEFINES_H
+#define HODJNPODJ_MAZEDOOM_DEFINES_H
 
 #include "common/scummsys.h"
 
@@ -28,7 +28,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace MazeDoom {
 
-#define MAIN_SCREEN		"mazedoom/art/doom2.bmp"
+#define MAIN_SCREEN			"mazedoom/art/doom2.bmp"
 
 #define	WALL_X		0
 #define	WALL_Y		22
@@ -57,16 +57,20 @@ namespace MazeDoom {
 #define EDGE_SIZE	 5
 
 // Starting value defaults
-#define MAX_DIFFICULTY	10	//8
-#define MIN_DIFFICULTY	 1	//0
+#define MAX_DIFFICULTY		10
+#define MIN_DIFFICULTY		1
+#define DEFAULT_DIFFICULTY	6                      // Miner
 
 // Timer constants
 #define MIN_TIME			 15						//  15 Seconds
 #define MAX_TIME			180						// 180 Seconds = 3 minute max
+#define DEFAULT_TIME		180
 #define TIMER_MIN			  0						// Increment scrollbar in steps of 15 Secs
 #define TIMER_MAX			 10						// if Time > MAX_TIME, No Time Limit
+#define TIMER_DEFAULT		  6
 
-#define NUM_NEIGHBORS	 9							// The "clump" area is 3 X 3 grid spaces
+// The "clump" area is 3 X 3 grid spaces
+#define NUM_NEIGHBORS	 9
 
 #define	MIN_TRAPS		 4
 

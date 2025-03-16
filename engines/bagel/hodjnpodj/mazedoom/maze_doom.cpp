@@ -61,7 +61,7 @@ bool MazeDoom::msgOpen(const OpenMessage &msg) {
 
 	setupHodjPodj();
 	loadBitmaps();
-	setupSettings();
+	loadIniSettings();
 	initializeMaze();	// Set the surrounding wall and start/end squares 
 	createMaze();		// Create a maze layout given the initialized maze
 	setupMaze();
@@ -142,6 +142,9 @@ bool MazeDoom::msgGame(const GameMessage &msg) {
 		}
 
 		return true;
+	} else if (msg._name == "OPTIONS") {
+		_options.setTime(nMinutes, nSeconds);
+		_options.addView();
 	}
 
 	return false;
@@ -421,7 +424,7 @@ void MazeDoom::loadBitmaps() {
 	pBlankBitmap.loadBitmap(IDB_BLANK_BMP);
 }
 
-void MazeDoom::setupSettings() {
+void MazeDoom::loadIniSettings() {
 	if (pGameParams->bPlayingMetagame) {
 		if (pGameParams->nSkillLevel == Metagame::SKILLLEVEL_LOW) {
 			// Total Wussy
@@ -436,13 +439,14 @@ void MazeDoom::setupSettings() {
 			m_nDifficulty = 4;
 			m_nTime = 60;
 		}
-	} else {                                      // Use Defaults 
-		m_nDifficulty = 6;                      // Miner
-		m_nTime = 180;
+	} else {
+		// Use Defaults 
+		m_nDifficulty = DEFAULT_DIFFICULTY;                      // Miner
+		m_nTime = DEFAULT_TIME;
 	}
 
-	tempDifficulty = m_nDifficulty;
-	tempTime = m_nTime;
+	_tempDifficulty = m_nDifficulty;
+	_tempTime = m_nTime;
 	nSeconds = m_nTime % 60;
 	nMinutes = m_nTime / 60;
 	_priorTime = g_system->getMillis();
@@ -460,8 +464,8 @@ void MazeDoom::showMainMenu() {
 }
 
 void MazeDoom::newGame() {
-	m_nTime = tempTime;				// Get new time limit,
-	m_nDifficulty = tempDifficulty;	//...new Difficulty
+	m_nTime = _tempTime;				// Get new time limit,
+	m_nDifficulty = _tempDifficulty;	//...new Difficulty
 	_priorTime = g_system->getMillis();
 	_move.clear();
 
