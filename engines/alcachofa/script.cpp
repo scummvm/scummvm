@@ -584,9 +584,21 @@ private:
 		case ScriptKernelTask::AnimateCharacter:
 			warning("STUB KERNEL CALL: AnimateCharacter");
 			return TaskReturn::finish(0);
-		case ScriptKernelTask::AnimateTalking:
-			warning("STUB KERNEL CALL: AnimateTalking");
-			return TaskReturn::finish(0);
+		case ScriptKernelTask::AnimateTalking: {
+			auto *character = dynamic_cast<Character *>(g_engine->world().getObjectByName(getStringArg(0)));
+			if (character == nullptr)
+				error("Invalid character name: %s", getStringArg(0));
+			const char *talkObjectName = getStringArg(1);
+			ObjectBase *talkObject = nullptr;
+			if (talkObjectName != nullptr && *talkObjectName)
+			{
+				talkObject = g_engine->world().getObjectByName(talkObjectName);
+				if (talkObject == nullptr)
+					error("Invalid talk object name: %s", talkObjectName);
+			}
+			character->talkUsing(talkObject);
+			return TaskReturn::finish(1);
+		}
 		case ScriptKernelTask::SayText: {
 			const char *characterName = getStringArg(0);
 			int32 dialogId = getNumberArg(1);
