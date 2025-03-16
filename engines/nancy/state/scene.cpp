@@ -365,6 +365,13 @@ void Scene::setNoHeldItem() {
 }
 
 byte Scene::hasItem(int16 id) const {
+	// ND Ghost dogs of Moon Lake uses larger item id in conditionalDialogue than actually exists.
+	// Specifically when calling the hardy boys.
+	// The specific dialog options are hint prompts so it might be a feature of the hint system.
+	// Checking it here at least makes the game not crash, but may not be fully correct
+	if (static_cast<uint16_t>(id) >= _flags.items.size()) {
+		return g_nancy->_false;
+	}
 	if (getHeldItem() == id) {
 		return g_nancy->_true;
 	} else {
