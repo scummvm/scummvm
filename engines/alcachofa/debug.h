@@ -40,7 +40,7 @@ class ClosestFloorPointDebugHandler final : public IDebugHandler {
 public:
 	ClosestFloorPointDebugHandler(int32 polygonI) : _polygonI(polygonI) {}
 
-	virtual void update() final
+	virtual void update() override
 	{
 		auto mousePos2D = g_engine->input().debugInput().mousePos2D();
 		auto mousePos3D = g_engine->input().debugInput().mousePos3D();
@@ -64,7 +64,7 @@ class FloorIntersectionsDebugHandler final : public IDebugHandler {
 public:
 	FloorIntersectionsDebugHandler(int32 polygonI) : _polygonI(polygonI) {}
 
-	virtual void update() final
+	virtual void update() override
 	{
 		auto floor = g_engine->player().currentRoom()->activeFloor();
 		auto renderer = dynamic_cast<IDebugRenderer *>(&g_engine->renderer());
@@ -110,6 +110,54 @@ private:
 			renderer->debugPolyline(a, b, kDebugGreen);
 			renderer->debugPolyline(mid, inner, kDebugGreen);
 		}
+	}
+};
+
+class TeleportCharacterDebugHandler final : public IDebugHandler {
+	MainCharacterKind _kind;
+public:
+	TeleportCharacterDebugHandler(int32 kindI) : _kind((MainCharacterKind)kindI) {}
+
+	virtual void update() override
+	{
+		g_engine->drawQueue().clear();
+		g_engine->player().drawCursor(true);
+		g_engine->drawQueue().draw();
+
+		auto &input = g_engine->input().debugInput();
+		if (input.wasMouseRightPressed())
+		{
+			g_engine->setDebugMode(DebugMode::None, 0);
+			return;
+		}
+
+		if (!input.wasMouseLeftPressed())
+			return;
+		auto floor = g_engine->player().currentRoom()->activeFloor();
+		if (floor == nullptr || !floor->contains(input.mousePos3D()))
+			return;
+
+		if (_kind == MainCharacterKind::Filemon)
+			teleport(g_engine->world().filemon(), input.mousePos3D());
+		else if (_kind == MainCharacterKind::Mortadelo)
+			teleport(g_engine->world().mortadelo(), input.mousePos3D());
+		else {
+			teleport(g_engine->world().filemon(), input.mousePos3D());
+			teleport(g_engine->world().mortadelo(), input.mousePos3D());
+		}
+		g_engine->setDebugMode(DebugMode::None, 0);
+	}
+
+private:
+	void teleport(MainCharacter &character, Point position)
+	{
+		auto currentRoom = g_engine->player().currentRoom();
+		if (character.room() != currentRoom)
+		{
+			character.resetTalking();
+			character.room() = currentRoom;
+		}
+		character.setPosition(position);
 	}
 };
 

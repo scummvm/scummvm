@@ -43,6 +43,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("pickup", WRAP_METHOD(Console, cmdItem));
 	registerCmd("drop", WRAP_METHOD(Console, cmdItem));
 	registerCmd("debugMode", WRAP_METHOD(Console, cmdDebugMode));
+	registerCmd("tp", WRAP_METHOD(Console, cmdTeleport));
 }
 
 Console::~Console() {
@@ -214,6 +215,7 @@ bool Console::cmdDebugMode(int argc, const char **args)
 		debugPrintf("  0 - None, disables debug mode\n");
 		debugPrintf("  1 - Closest floor point, param limits to polygon\n");
 		debugPrintf("  2 - Floor edge intersections, param limits to polygon\n");
+		debugPrintf("  3 - Teleport character to mouse click, param selects character\n");
 		return true;
 	}
 
@@ -232,6 +234,33 @@ bool Console::cmdDebugMode(int argc, const char **args)
 	auto mode = (DebugMode)strtol(args[1], nullptr, 10);
 	g_engine->setDebugMode(mode, param);
 	return true;
+}
+
+bool Console::cmdTeleport(int argc, const char **args)
+{
+	if (argc < 1 || argc > 2)
+	{
+		debugPrintf("usagge: tp [<character>]\n");
+		debugPrintf("characters:\n");
+		debugPrintf("  0 - Both\n");
+		debugPrintf("  1 - Mortadelo\n");
+		debugPrintf("  2 - Filemon\n");
+	}
+
+	int32 param = 0;
+	if (argc > 1)
+	{
+		char *end = nullptr;
+		param = (int32)strtol(args[2], &end, 10);
+		if (end == nullptr || *end != '\0')
+		{
+			debugPrintf("Character kind can only be integer");
+			return true;
+		}
+	}
+
+	g_engine->setDebugMode(DebugMode::TeleportCharacter, param);
+	return false;
 }
 
 } // End of namespace Alcachofa

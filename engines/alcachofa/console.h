@@ -30,7 +30,8 @@ namespace Alcachofa {
 enum class DebugMode {
 	None,
 	ClosestFloorPoint,
-	FloorIntersections
+	FloorIntersections,
+	TeleportCharacter,
 };
 
 class Console : public GUI::Debugger {
@@ -54,6 +55,7 @@ private:
 	bool cmdDisableDebugDraw(int argc, const char **args);
 	bool cmdItem(int argc, const char **args);
 	bool cmdDebugMode(int argc, const char **args);
+	bool cmdTeleport(int argc, const char **args);
 
 	bool _showInteractables = true;
 	bool _showCharacters = true;
