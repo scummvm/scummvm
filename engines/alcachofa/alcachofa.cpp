@@ -35,6 +35,7 @@
 
 #include "rooms.h"
 #include "script.h"
+#include "global-ui.h"
 #include "debug.h"
 
 using namespace Math;
@@ -67,10 +68,11 @@ Common::Error AlcachofaEngine::run() {
 	_world.reset(new World());
 	_script.reset(new Script());
 	_player.reset(new Player());
+	_globalUI.reset(new GlobalUI());
 
-	_script->createProcess(MainCharacterKind::None, "Inicializar_Variables");
-	_player->changeRoom("MINA", true);
-	//_script->createProcess(MainCharacterKind::None, "CREDITOS_INICIALES");
+	//_script->createProcess(MainCharacterKind::None, "Inicializar_Variables");
+	//_player->changeRoom("HORCA", true);
+	_script->createProcess(MainCharacterKind::None, "CREDITOS_INICIALES");
 	_scheduler.run();
 
 	Common::Event e;

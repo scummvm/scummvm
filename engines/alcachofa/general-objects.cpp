@@ -22,6 +22,7 @@
 #include "objects.h"
 #include "rooms.h"
 #include "scheduler.h"
+#include "global-ui.h"
 #include "alcachofa.h"
 
 #include "common/system.h"
@@ -227,7 +228,7 @@ void ShapeObject::onHoverEnd() {
 
 void ShapeObject::onHoverUpdate() {
 	g_engine->drawQueue().add<TextDrawRequest>(
-		g_engine->world().generalFont(),
+		g_engine->globalUI().generalFont(),
 		g_engine->world().getLocalizedName(name()),
 		g_engine->input().mousePos2D() - Point(0, 35),
 		-1, true, kWhite, 0);

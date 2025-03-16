@@ -22,6 +22,7 @@
 #include "objects.h"
 #include "rooms.h"
 #include "script.h"
+#include "global-ui.h"
 #include "alcachofa.h"
 
 using namespace Common;
@@ -306,7 +307,7 @@ struct SayTextTask final : public Task {
 			if (true && // TODO: Add game option for subtitles
 				process().isActiveForPlayer()) {
 				g_engine->drawQueue().add<TextDrawRequest>(
-					g_engine->world().dialogFont(),
+					g_engine->globalUI().dialogFont(),
 					g_engine->world().getDialogLine(_dialogId),
 					Point(g_system->getWidth() / 2, g_system->getHeight() - 200),
 					-1, true, kWhite, -kForegroundOrderCount);
@@ -972,7 +973,7 @@ private:
 		for (auto &itLine : lines) {
 			// we reuse the draw request to measure the actual height without using it to actually draw
 			TextDrawRequest request(
-				g_engine->world().dialogFont(),
+				g_engine->globalUI().dialogFont(),
 				g_engine->world().getDialogLine(itLine._dialogId),
 				Point(kTextXOffset, 0), maxTextWidth(), false, kWhite, 2);
 			itLine._yPosition = request.size().y; // briefly storing line height
@@ -989,7 +990,7 @@ private:
 			auto &itLine = _character->_dialogLines[i - 1];
 			bool isHovered = !isSomethingHovered && _input.mousePos2D().y >= itLine._yPosition - kTextYOffset;
 			g_engine->drawQueue().add<TextDrawRequest>(
-				g_engine->world().dialogFont(),
+				g_engine->globalUI().dialogFont(),
 				g_engine->world().getDialogLine(itLine._dialogId),
 				Point(kTextXOffset, itLine._yPosition),
 				maxTextWidth(), false, isHovered ? Color{ 255, 255, 128, 255 } : kWhite, -kForegroundOrderCount + 2);

@@ -22,6 +22,7 @@
 #include "alcachofa.h"
 #include "rooms.h"
 #include "script.h"
+#include "global-ui.h"
 
 #include "common/file.h"
 
@@ -207,10 +208,6 @@ void Room::updateInteraction() {
 
 	if (updateOpeningInventory())
 		return;
-
-	if (false && player.activeCharacter()->room() != this) { // TODO: Remove active character hack
-		player.activeCharacter()->room() = this;
-	}
 
 	player.selectedObject() = world().globalRoom().getSelectedObject(getSelectedObject());
 	if (player.selectedObject() == nullptr) {
@@ -403,7 +400,7 @@ bool Inventory::updateInput() {
 		}
 
 		g_engine->drawQueue().add<TextDrawRequest>(
-			g_engine->world().generalFont(),
+			g_engine->globalUI().generalFont(),
 			g_engine->world().getLocalizedName(hoveredItem->name()),
 			input.mousePos2D() + Point(0, -50),
 			-1, true, kWhite, -kForegroundOrderCount + 1);
@@ -537,11 +534,6 @@ World::World() {
 	_mortadelo = dynamic_cast<MainCharacter *>(_globalRoom->getObjectByName("MORTADELO"));
 	if (_mortadelo == nullptr)
 		error("Could not find MORTADELO");
-
-	_generalFont.reset(new Font(getGlobalAnimationName(GlobalAnimationKind::GeneralFont)));
-	_generalFont->load();
-	_dialogFont.reset(new Font(getGlobalAnimationName(GlobalAnimationKind::DialogFont)));
-	_dialogFont->load();
 
 	_inventory->initItems();
 }
