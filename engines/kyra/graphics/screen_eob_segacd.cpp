@@ -403,7 +403,7 @@ void SCDRenderer::fillRectWithTiles(int vramArea, int x, int y, int w, int h, ui
 		while (h--) {
 			const uint16 *pos = patternTable;
 			for (int i = w; i; --i)
-				*dst++ = nameTblEntry + *pos++;
+				*dst++ = TO_BE_16(nameTblEntry + *pos++);
 			dst += ptch;
 			patternTable += w;
 		}
@@ -412,7 +412,7 @@ void SCDRenderer::fillRectWithTiles(int vramArea, int x, int y, int w, int h, ui
 			while (w--) {
 				uint16 *dst2 = dst;
 				for (int i = h; i; --i) {
-					*dst = nameTblEntry++;
+					*dst = TO_BE_16(nameTblEntry++);
 					dst += _pitch;
 				}
 				dst = ++dst2;
@@ -420,7 +420,7 @@ void SCDRenderer::fillRectWithTiles(int vramArea, int x, int y, int w, int h, ui
 		} else {
 			while (h--) {
 				for (int i = w; i; --i)
-					*dst++ = nameTblEntry++;
+					*dst++ = TO_BE_16(nameTblEntry++);
 				dst += ptch;
 			}
 		}
@@ -429,7 +429,7 @@ void SCDRenderer::fillRectWithTiles(int vramArea, int x, int y, int w, int h, ui
 			while (w--) {
 				uint16 *dst2 = dst;
 				for (int i = h; i; --i) {
-					*dst = nameTblEntry;
+					*dst = TO_BE_16(nameTblEntry);
 					dst += _pitch;
 				}
 				dst = ++dst2;
@@ -437,7 +437,7 @@ void SCDRenderer::fillRectWithTiles(int vramArea, int x, int y, int w, int h, ui
 		} else {
 			while (h--) {
 				for (int i = w; i; --i)
-					*dst++ = nameTblEntry;
+					*dst++ = TO_BE_16(nameTblEntry);
 				dst += ptch;
 			}
 		}
@@ -463,9 +463,10 @@ SegaAnimator::SegaAnimator(SCDRenderer *renderer) : _renderer(renderer), _needUp
 	assert(_sprites);
 	_tempBuffer = new uint16[320]();
 	assert(_tempBuffer);
-	int linkCnt = 1;
-	for (int i = 1; i < 317; i += 4)
-		_tempBuffer[i] = linkCnt++;
+	int linkCnt = 0x1;
+	for (int i = 1; i < 317; i += 4) {
+		_tempBuffer[i] = TO_BE_16(linkCnt++);
+	}
 	clearSprites();
 	_renderer->memsetVRAM(0xDC00, 0, 0x400);
 }
@@ -532,11 +533,10 @@ void SegaAnimator::update() {
 	for (Sprite *s = _sprites; s != &_sprites[80]; ++s) {
 		if (s->x == 0x4000)
 			continue;
-		*dst++ = (uint16)(s->y + 128);
-		*dst = (*dst & 0xFF) | (s->hw << 8);
-		dst++;
-		*dst++ = s->nameTbl;
-		*dst++ = (uint16)(s->x + 128);
+		*dst++ = TO_BE_16(s->y + 128);
+		*dst++ = (*dst & 0xFF00) | (s->hw & 0xFF);
+		*dst++ = TO_BE_16(s->nameTbl);
+		*dst++ = TO_BE_16(s->x + 128);
 	}
 
 	for (; dst < &_tempBuffer[320]; dst += 4)
@@ -765,17 +765,17 @@ void ScrollManager::updateScrollTimers() {
 		t._timer = t._delay;
 	}
 
-	_renderer->writeUint16VSRAM(0, _vScrollTimers[0]._offsCur);
-	_renderer->writeUint16VSRAM(2, _vScrollTimers[1]._offsCur);
-	_renderer->writeUint16VRAM(0xD800, _hScrollTimers[0]._offsCur);
-	_renderer->writeUint16VRAM(0xD802, _hScrollTimers[1]._offsCur);
+	_renderer->writeUint16VSRAM(0, TO_BE_16(_vScrollTimers[0]._offsCur));
+	_renderer->writeUint16VSRAM(2, TO_BE_16(_vScrollTimers[1]._offsCur));
+	_renderer->writeUint16VRAM(0xD800, TO_BE_16(_hScrollTimers[0]._offsCur));
+	_renderer->writeUint16VRAM(0xD802, TO_BE_16(_hScrollTimers[1]._offsCur));
 }
 
 void ScrollManager::fastForward() {
-	_renderer->writeUint16VSRAM(0, _vScrollTimers[0]._offsDest);
-	_renderer->writeUint16VSRAM(2, _vScrollTimers[1]._offsDest);
-	_renderer->writeUint16VRAM(0xD800, _hScrollTimers[0]._offsDest);
-	_renderer->writeUint16VRAM(0xD802, _hScrollTimers[1]._offsDest);
+	_renderer->writeUint16VSRAM(0, TO_BE_16(_vScrollTimers[0]._offsDest));
+	_renderer->writeUint16VSRAM(2, TO_BE_16(_vScrollTimers[1]._offsDest));
+	_renderer->writeUint16VRAM(0xD800, TO_BE_16(_hScrollTimers[0]._offsDest));
+	_renderer->writeUint16VRAM(0xD802, TO_BE_16(_hScrollTimers[1]._offsDest));
 }
 
 } // End of namespace Kyra

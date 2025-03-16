@@ -159,7 +159,7 @@ public:
 	void memsetVRAM(int addr, uint8 val, int len);
 
 	/**
-	 * Write uint16 value into vs ram. No endianness corrections take place here.
+	 * Write uint16 value into vs ram. Values must be BE.
 	 * @param addr:		target address in the vdp vs ram
 	 * @param val:		value
 	 */
@@ -173,7 +173,7 @@ public:
 	void writeUint8VRAM(int addr, uint8 value);
 
 	/**
-	 * Write uint16 value into vram. No endianness corrections take place here.
+	 * Write uint16 value into vram. Values must be BE.
 	 * @param addr:		target address in the vdp vram
 	 * @param val:		value
 	 */
