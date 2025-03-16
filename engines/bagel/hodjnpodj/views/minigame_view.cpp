@@ -68,6 +68,8 @@ bool MinigameView::msgFocus(const FocusMessage &msg) {
 }
 
 void MinigameView::close() {
+	g_events->setCursor(IDC_ARROW);
+
 	if (g_engine->_bReturnToGrandTour) {
 		g_engine->_bReturnToGrandTour = false;
 		g_engine->startBackgroundMidi();

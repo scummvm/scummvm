@@ -87,6 +87,23 @@ bool MazeDoom::msgClose(const CloseMessage &msg) {
 	_scrollButton.clear();
 	_mazeBitmap.clear();
 	_partsBitmap.clear();
+	pBlankBitmap.clear();
+	pLocaleBitmap.clear();
+	pPlayerSprite.clear();
+
+	pWallBitmap.clear();
+	pPathBitmap.clear();
+	pStartBitmap.clear();
+	pLeftEdgeBmp.clear();
+	pRightEdgeBmp.clear();
+	pTopEdgeBmp.clear();
+	pBottomEdgeBmp.clear();
+
+	for (int i = 0; i < NUM_TRAP_MAPS; ++i)
+		TrapBitmap[i].clear();
+
+	delete pGameSound;
+	pGameSound = nullptr;
 
 	return true;
 }

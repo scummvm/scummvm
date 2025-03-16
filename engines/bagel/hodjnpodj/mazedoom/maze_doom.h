@@ -48,7 +48,6 @@ private:
 		*_leftBmp = nullptr, *_rightBmp = nullptr;
 	BmpButton _scrollButton;
 	GfxSurface _background;
-	GfxSurface _locale, _blank;
 	GfxSurface _partsBitmap;
 	GfxSurface TrapBitmap[NUM_TRAP_MAPS];
 	GfxSurface pLocaleBitmap;
