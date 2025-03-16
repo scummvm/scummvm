@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	console.o \
 	game-objects.cpp \
 	general-objects.cpp \
+	global-ui.cpp \
 	graphics.cpp \
 	graphics-opengl.cpp \
 	Input.cpp \
