@@ -222,7 +222,7 @@ enum Flag {
 	V186 = 186,
 	V187 = 187,
 	V188 = 188,
-	V189 = 189,
+	V189 = 189, // Room 604: 2= wire connected to pull 3= Also connected to the plug
 	V190 = 190,
 	V191 = 191,
 	V192 = 192,

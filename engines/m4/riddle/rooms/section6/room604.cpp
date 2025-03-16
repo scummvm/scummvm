@@ -798,11 +798,11 @@ bool Room604::useWhaleBoneHorn() {
 	switch (_G(kernel).trigger) {
 	case 5:
 		_ripley = series_play("BAD GUYS LOOK TO SHED", 0, 0, 6, 6);
-		return true;
+		return false;
 
 	case 6:
 		kernel_timing_trigger(30, 7);
-		return true;
+		return false;
 
 	case 7:
 		digi_play("604k01", 1);
@@ -829,7 +829,7 @@ void Room604::killRipley() {
 
 	case 1:
 		if (_G(flags)[V189] == 3) {
-			series_play("glass flowing out", 0x700, 0, 2, 5);
+			series_play("gas flowing out", 0x700, 0, 2, 5);
 
 			if (inv_object_is_here("LIGHTER")) {
 				kernel_timing_trigger(20, 30);
