@@ -556,8 +556,7 @@ void Adlib::OnTimer() {
 			uint8 bp6 = g229B;
 			uint8 bp4 = shMem2250->peekByte();
 			StreamHandler* bp10 = Func19BE_SH(shMem2250, 1);
-			// TODO: This and the adjacent value are actually a pointer adjusted by Func19BE
-			uint16 bp12;
+			StreamHandler* bp12;
 			uint8 bp5 = bp10->peekByte();
 
 
@@ -643,70 +642,46 @@ void Adlib::OnTimer() {
 						}
 					}
 					// l0017_1CF2:
-					if (g2291 == bp8) {
+					if (g2291 != bp8) {
 						SIS_LogEntry(0x01D7, 0x1CFF);
-						//							// l0017_1CFF:
-						//							gArray2235[bp4] = bp8;
-						//							// TODO: Argument missing so far
-						//							/* push word ptr[224Ah]
-						//							push	word ptr [2248h]
-						//							*/
-						//							// TODO: Original code throws away AH before and after
-						//							// the array access
-						//							uint16 value = gArray225F[bp3];
-						//							bp10 = Func19BE_TODO(value << 4);
-						//							// TODO: Not sure about amount of bits necessary
-						//							// for the following calculations
-						//							uint16 temp = bp5;
-						//							temp &= 0x7F;
-						//							// TODO: We throw away AH - should be superfluous
-						//							// after the AND
-						//							temp = temp >> 0x1;
-						//							temp -= 0x3F;
-						//							temp = temp >> 0x1;
-						//							// TODO: Again throwing away AH in the original
-						//							bp1 = temp >> 0x1;
-						//							// TODO: Need to give as argument
-						//							// push word ptr[bp - 0Eh]
-						//							// push word ptr[bp - 10h]
-						//							bp12 = Func19BE_TODO(0x2);
-						//							// TODO: Set result back
-						//							// mov	[bp-14h],ax
-						//							// mov[bp - 12h], dx
+						// l0017_1CFF:
+						gArray2235[bp8] = bp4;
+						uint8 value = gArray225F[bp3];
+						bp10 = Func19BE_SH(shMem2248, value << 0x4);
+						uint8 temp = bp5;
+						temp &= 0x7F;
+						// dx
+						uint8 temp2 = temp >> 0x1;
+						temp = 0x3F;
+						temp -= temp2;
+						temp = temp >> 0x1;
+						bp1 = temp;
+						bp1 = bp1 >> 1;
+	
+						bp12 = Func19BE_SH(bp10, 0x2);
 
-						//							temp = g225E;         // TODO: xor	ah,ah
-						//							uint8 temp2 = temp; // bx = ax
-						//							// TODO: Read from [bp-14h] - using temp for al
-						//							// les	di,[bp-14h]
-						//							// mov al, es : [di]
-						//							temp &= 0x3F;         // TODO: xor	ah,ah
-						//							uint8 temp3 = temp; // dx = ax
-						//							temp = 0x3F;
-						//							// TODO: Not sure if these should be 16 bit values
-						//							temp -= temp3;
-						//							temp3 = temp;
-						//							temp = bp1; // TODO: xor	ah,ah
-						//							// TODO: Should these be 16 bit?
-						//							temp = temp * temp3;
-
-						//							// TODO: cwd
-						//							uint16 tempCX = 0x3F;
-						//							temp /= tempCX;
-						//							temp += temp2;
-						//							temp3 = temp;
-						//							// TODO: Need to read from pointer
-						//							// les	di,[bp-14h]
-						//							// mov al, es : [di]
-						//							temp &= 0x3F; // TODO: xor ah,ah
-						//							temp += temp3;
-						//							bp2 = temp;
-						//							// TODO: Need to pass arguments
-						//							// push	word ptr [bp-0Eh]
-						//							// push word ptr[bp - 10h]
-						//							Func19BE_TODO(0x3);
-						//							// TODO: Assign result to pointer
-						//							// mov	[bp-14h],ax
-						//							// mov[bp - 12h], dx
+						temp = g225E;
+						// bx
+						temp2 = temp;
+						temp = bp12->peekByte();
+						temp &= 0x3F;
+						// dx
+						uint8 temp3 = temp;
+						temp = 0x3F;
+						temp -= temp3;
+						temp3 = temp;
+						uint16 tempW = bp1;
+						tempW *= temp3;
+						tempW /= 0x3F;
+						tempW += temp2;
+						// dx word
+						uint16 temp2W = tempW;
+						// ax
+						temp = bp12->peekByte() & 0x3F;
+						// TODO: Cast to 8 bit here
+						bp2 = temp2W + temp;
+						bp12 = Func19BE_SH(bp10, 0x3);
+					
 						//							temp = g225E; // TODO: xor ah,ah
 						//							uint16 tempBX = temp;
 						//							// TODO: Assign from pointer
