@@ -263,7 +263,11 @@ void CDSTTMInterpreter::handleOperation(TTMEnviro &env_, TTMSeq &seq, uint16 op,
 		Common::SharedPtr<Image> img = env._scriptShapes[bmpNo];
 		if (flip & kImageFlipH)
 			x = env._xOff + (env._scriptShapes[0]->width(0) - ivals[0] - img->width(frameno));
-		img->drawBitmap(frameno, x, y, seq._drawWin, _vm->_compositionBuffer, flip, img->width(frameno), img->height(frameno));
+		if (frameno >= img->loadedFrameCount()) {
+			warning("CDS script tried to draw frame %d but img only has %d", frameno, img->loadedFrameCount());
+		} else {
+			img->drawBitmap(frameno, x, y, seq._drawWin, _vm->_compositionBuffer, flip, img->width(frameno), img->height(frameno));
+		}
 		break;
 	}
 	case 0xc220: // PLAY RAW SFX
