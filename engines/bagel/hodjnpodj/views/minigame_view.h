@@ -47,6 +47,7 @@ private:
 	Common::HashMap<Common::String, ResourceEntry,
 		Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _files;
 	Common::List<Sprite *> _linkedSprites;
+	int _showMenuCtr = 0;
 
 protected:
 	void addResource(const Common::String &filename,
@@ -58,6 +59,8 @@ protected:
 
 	void drawSprites();
 
+	virtual void showMainMenu() = 0;
+
 public:
 	MinigameView(const Common::String &name, const Common::String &resFilename) :
 		View(name), _resourceFilename(resFilename) {
@@ -67,6 +70,7 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
+	bool tick() override;
 
 	Common::WinResources *getResources() override {
 		return _resources;

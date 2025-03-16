@@ -40,7 +40,6 @@ private:
 	const CVector _gvCenter;
 	BmpButton _scrollButton;
 	Graphics::ManagedSurface _background;
-	int _showMenuCtr = 2;
 	int _timerCtr = 0;
 	int _backgroundNumRows = -1;
 	int _paddleOldSize = -1;
@@ -94,7 +93,6 @@ private:
 	void loadMasterSprites();
 	void loadNewPaddle(int nNewSize);
 	void loadMasterSounds();
-	void showMainMenu();
 	void gamePause();
 	void gameResume();
 	void playGame();
@@ -121,6 +119,9 @@ private:
 	void newLifeClosed();
 	void roundCompleteClosed();
 	void optionsClosed();
+
+protected:
+	void showMainMenu() override;
 
 public:
 	Fuge();

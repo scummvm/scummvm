@@ -25,6 +25,7 @@
 #include "bagel/hodjnpodj/views/minigame_view.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 #include "bagel/hodjnpodj/mazedoom/maze_gen.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -50,11 +51,14 @@ private:
 	int m_nTime = 0, nSeconds = 0, nMinutes = 0;
 	int tempDifficulty = 0;
 	int tempTime = 0;
+	CBofSound *pGameSound = nullptr;
 
 	void setupHodjPodj();
 	void loadBitmaps();
-	void showMainMenu();
 	void setupSettings();
+
+protected:
+	void showMainMenu() override;
 
 public:
 	MazeDoom();
@@ -64,6 +68,7 @@ public:
 	bool msgClose(const CloseMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
+	bool tick() override;
 };
 
 } // namespace MazeDoom

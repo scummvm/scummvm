@@ -38,6 +38,9 @@ bool MinigameView::msgOpen(const OpenMessage &msg) {
 		_resources = Common::NEResources::createFromEXE(Common::Path(_resourceFilename));
 
 	g_events->setCursor(IDC_ARROW);
+
+	_showMenuCtr = pGameParams->bPlayingMetagame ? 0 : 2;
+
 	return View::msgOpen(msg);
 }
 
@@ -82,6 +85,15 @@ void MinigameView::close() {
 	} else {
 		View::close();
 	}
+}
+
+bool MinigameView::tick() {
+	if (_showMenuCtr) {
+		if (--_showMenuCtr == 0)
+			showMainMenu();
+	}
+
+	return View::tick();
 }
 
 bool MinigameView::hasFile(const Common::Path &path) const {

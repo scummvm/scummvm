@@ -64,6 +64,15 @@ bool MazeDoom::msgOpen(const OpenMessage &msg) {
 	createMaze();		// Create a maze layout given the initialized maze
 	setupMaze();
 
+	bPlaying = true;
+
+	if (pGameParams->bMusicEnabled) {
+		pGameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+		if (pGameSound != nullptr) {
+			(*pGameSound).midiLoopPlaySegment(3000, 32980, 0, FMT_MILLISEC);
+		}
+	}
+
 	return true;
 }
 
@@ -86,6 +95,12 @@ bool MazeDoom::msgGame(const GameMessage &msg) {
 	}
 
 	return false;
+}
+
+bool MazeDoom::tick() {
+	MinigameView::tick();
+
+	return true;
 }
 
 void MazeDoom::draw() {

@@ -256,7 +256,6 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 	loadMasterSprites();
 	loadMasterSounds();
 
-	_showMenuCtr = pGameParams->bPlayingMetagame ? 0 : 2;
 	if (pGameParams->bPlayingMetagame)
 		playGame();
 
@@ -584,10 +583,7 @@ void Fuge::repaintSpriteList() {
 }
 
 bool Fuge::tick() {
-	if (_showMenuCtr) {
-		if (--_showMenuCtr == 0)
-			showMainMenu();
-	}
+	MinigameView::tick();
 
 	// Continue as long as there is a currently active non-paused game
 	if (_bGameActive && !_bPause) {
