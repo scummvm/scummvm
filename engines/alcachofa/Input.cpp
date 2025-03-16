@@ -38,7 +38,12 @@ void Input::nextFrame() {
 
 bool Input::handleEvent(const Common::Event &event) {
 	if (_debugInput != nullptr)
-		return _debugInput->handleEvent(event);
+	{
+		auto result = _debugInput->handleEvent(event);
+		_mousePos2D = _debugInput->mousePos2D(); // even for debug input we want to e.g. draw a cursor
+		_mousePos3D = _debugInput->mousePos3D();
+		return result;
+	}
 
 	switch (event.type) {
 	case EVENT_LBUTTONDOWN:
