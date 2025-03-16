@@ -28,6 +28,7 @@
 #include "bagel/hodjnpodj/views/main_menu.h"
 #include "bagel/hodjnpodj/views/rules.h"
 #include "bagel/hodjnpodj/views/message_box.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -186,6 +187,80 @@ bool MazeDoom::msgMouseMove(const MouseMoveMessage &msg) {
 	return true;
 }
 
+bool MazeDoom::msgKeypress(const KeypressMessage &msg) {
+	Common::Point newPosition = pPlayerSprite.getPosition();
+
+	switch (msg.keycode) {
+	case Common::KEYCODE_F1:
+		// Bring up the Rules
+		CBofSound::waitWaveSounds();
+		Rules::show(RULES_TEXT,
+			(pGameParams->bSoundEffectsEnabled ? RULES_WAV : nullptr)
+		);
+		break;
+
+	case Common::KEYCODE_F2:
+		// Options menu
+		showMainMenu();
+		break;
+
+	case Common::KEYCODE_h:
+		newPosition.x -= SQ_SIZE_X;
+		movePlayer(newPosition);
+		break;
+
+	case Common::KEYCODE_k:
+		newPosition.y -= SQ_SIZE_Y;
+		movePlayer(newPosition);
+		break;
+
+	case Common::KEYCODE_l:
+		newPosition.x += SQ_SIZE_X;
+		movePlayer(newPosition);
+		break;
+
+	case Common::KEYCODE_j:
+		newPosition.y += SQ_SIZE_Y;
+		movePlayer(newPosition);
+		break;
+
+	default:
+		return MinigameView::msgKeypress(msg);
+	}
+
+	return true;
+}
+
+bool MazeDoom::msgAction(const ActionMessage &msg) {
+	Common::Point newPosition = pPlayerSprite.getPosition();
+
+	switch (msg._action) {
+	case KEYBIND_LEFT:
+		newPosition.x -= SQ_SIZE_X;
+		movePlayer(newPosition);
+		break;
+
+	case KEYBIND_UP:
+		newPosition.y -= SQ_SIZE_Y;
+		movePlayer(newPosition);
+		break;
+
+	case KEYBIND_RIGHT:
+		newPosition.x += SQ_SIZE_X;
+		movePlayer(newPosition);
+		break;
+
+	case KEYBIND_DOWN:
+		newPosition.y += SQ_SIZE_Y;
+		movePlayer(newPosition);
+		break;
+
+	default:
+		return MinigameView::msgAction(msg);
+	}
+
+	return true;
+}
 
 bool MazeDoom::tick() {
 	MinigameView::tick();

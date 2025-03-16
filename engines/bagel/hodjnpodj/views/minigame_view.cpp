@@ -67,6 +67,18 @@ bool MinigameView::msgFocus(const FocusMessage &msg) {
 	return View::msgFocus(msg);
 }
 
+bool MinigameView::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_q &&
+			(msg.flags & Common::KBD_ALT)) {
+		if (pGameParams->bPlayingMetagame)
+			pGameParams->lScore = 0;
+		close();
+		return true;
+	} else {
+		return View::msgKeypress(msg);
+	}
+}
+
 void MinigameView::close() {
 	g_events->setCursor(IDC_ARROW);
 

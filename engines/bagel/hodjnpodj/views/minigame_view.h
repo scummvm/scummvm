@@ -73,6 +73,7 @@ public:
 	bool msgGame(const GameMessage &msg) override {
 		return true;
 	}
+	bool msgKeypress(const KeypressMessage &msg) override;
 	bool tick() override;
 
 	Common::WinResources *getResources() override {

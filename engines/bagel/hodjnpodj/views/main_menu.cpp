@@ -21,6 +21,7 @@
 
 #include "common/translation.h"
 #include "bagel/hodjnpodj/views/main_menu.h"
+#include "bagel/hodjnpodj/views/minigame_view.h"
 #include "bagel/hodjnpodj/views/rules.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
@@ -123,8 +124,18 @@ bool MainMenu::msgGame(const GameMessage &msg) {
 			close();
 			return true;
 		} else if (btn == "MenuQuit") {
-			close();							// Close menu dialog
-			g_events->focusedView()->close();	// Close minigame
+			// Close menu dialog
+			close();
+
+			if (pGameParams->bPlayingMetagame)
+				pGameParams->lScore = 0;
+
+			// Close the minigame
+			MinigameView *view = dynamic_cast<MinigameView *>(
+				g_events->focusedView());
+			assert(view);
+			view->close();
+
 			return true;
 		}
 	}
