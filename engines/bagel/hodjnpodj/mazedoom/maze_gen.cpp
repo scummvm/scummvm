@@ -19,8 +19,8 @@
  *
  */
 
-#include "bagel/hodjnpodj/maze_doom/maze_gen.h"
-#include "bagel/hodjnpodj/maze_doom/defines.h"
+#include "bagel/hodjnpodj/mazedoom/maze_gen.h"
+#include "bagel/hodjnpodj/mazedoom/defines.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {

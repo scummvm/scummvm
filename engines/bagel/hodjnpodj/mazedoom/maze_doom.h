@@ -24,7 +24,7 @@
 
 #include "bagel/hodjnpodj/views/minigame_view.h"
 #include "bagel/hodjnpodj/gfx/button.h"
-#include "bagel/hodjnpodj/maze_doom/maze_gen.h"
+#include "bagel/hodjnpodj/mazedoom/maze_gen.h"
 
 namespace Bagel {
 namespace HodjNPodj {

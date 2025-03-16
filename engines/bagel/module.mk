@@ -128,8 +128,8 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/views/title_menu.o \
 	hodjnpodj/fuge/fuge.o \
 	hodjnpodj/fuge/options.o \
-	hodjnpodj/maze_doom/maze_doom.o \
-	hodjnpodj/maze_doom/maze_gen.o
+	hodjnpodj/mazedoom/maze_doom.o \
+	hodjnpodj/mazedoom/maze_gen.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)

@@ -29,7 +29,7 @@
 #include "bagel/hodjnpodj/metagame/views/movie.h"
 #include "bagel/hodjnpodj/metagame/views/title_menu.h"
 #include "bagel/hodjnpodj/fuge/fuge.h"
-#include "bagel/hodjnpodj/maze_doom/maze_doom.h"
+#include "bagel/hodjnpodj/mazedoom/maze_doom.h"
 
 namespace Bagel {
 namespace HodjNPodj {
