@@ -2457,7 +2457,7 @@ void EoBEngine::seq_xdeath() {
 
 #define updateScrollState(scrollTable, step) \
 	for (int iii = 0; iii < 228; ++iii) \
-		((int16*)scrollTable)[iii << 1] = ((int16*)scrollTable)[(iii << 1) + 1] = (iii & 1) ? -step : step;
+		((int16*)scrollTable)[iii << 1] = ((int16*)scrollTable)[(iii << 1) + 1] = TO_BE_16((iii & 1) ? -step : step);
 
 void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 	uint16 *scrollTable = new uint16[0x200]();

@@ -252,23 +252,22 @@ void SegaRenderer::render(uint8 *dest, int renderBlockX, int renderBlockY, int r
 	memset(_spriteMask, 0xFF, (uint32)_screenW * (uint32)_screenH * sizeof(uint8));
 	const uint16 *pos = _spriteTable;
 	for (int i = 0; i < _numSpritesMax && pos; ++i) {
-		int y = *pos++ & 0x3FF;
-		uint8 bH = ((*pos >> 8) & 3) + 1;
-		uint8 bW = ((*pos >> 10) & 3) + 1;
-		uint8 next = *pos++ & 0x7F;
-		uint16 pal = ((*pos >> 13) & 3) << 4;
-		bool prio = (*pos & 0x8000);
-		bool hflip = (*pos & 0x800);
-		bool vflip = (*pos & 0x1000);
-		uint16 tile = *pos++ & 0x7FF;
-		int x = *pos & 0x3FF;
+		int y = FROM_BE_16(*pos++) & 0x3FF;
+		uint16 in = FROM_BE_16(*pos++);
+		uint8 bH = ((in >> 8) & 3) + 1;
+		uint8 bW = ((in >> 10) & 3) + 1;
+		uint8 next = in & 0x7F;
+		in = FROM_BE_16(*pos++);
+		uint16 pal = ((in >> 13) & 3) << 4;
+		bool prio = (in & 0x8000);
+		bool hflip = (in & 0x800);
+		bool vflip = (in & 0x1000);
+		uint16 tile = in++ & 0x7FF;
+		int x = FROM_BE_16(*pos) & 0x3FF;
 
 		// Sprite masking. Can't happen in EOB at least, since the animator automatically adds 128 to x and y coords for all sprites.
-		// If this triggers anywhere else it will need to be added...
+		// Same in Snatcher. If this triggers anywhere else it will need to be added...
 		assert(!(x == 0 && y >= 128));
-
-		assert(!hflip);
-		assert(!vflip);
 
 		x -= 128;
 		y -= 128;
@@ -289,15 +288,31 @@ void SegaRenderer::render(uint8 *dest, int renderBlockX, int renderBlockY, int r
 
 		uint8 *dst = renderBuffer + y * _screenW + x;
 		uint8 *msk = _spriteMask + y * _screenW + x;
+		int8 hstep = 0;
+		int8 vstep = 1;
+
+		if (hflip)
+			tile += ((bW - 1) * bH);
+
+		if (vflip) {
+			tile += (bH - 1);
+			vstep = -1;
+			hstep = hflip ? 0 : 2 * bH;
+		} else {
+			hstep = hflip ? -2 * bH : 0;
+		}
+
 
 		for (int blX = 0; blX < bW; ++blX) {
 			uint8 *dst2 = dst;
 			uint8 *msk2 = msk;
 			for (int blY = 0; blY < bH; ++blY) {
-				renderSpriteTile(dst, msk, x + (blX << 3), y + (blY << 3), tile++, pal, vflip, hflip, prio);
+				renderSpriteTile(dst, msk, x + (blX << 3), y + (blY << 3), tile, pal, vflip, hflip, prio);
+				tile += vstep;
 				dst += (_screenW << 3);
 				msk += (_screenW << 3);
 			}
+			tile += hstep;
 			dst = dst2 + 8;
 			msk = msk2 + 8;
 		}
@@ -309,7 +324,7 @@ void SegaRenderer::render(uint8 *dest, int renderBlockX, int renderBlockY, int r
 	// Instead of going through all rendering passes for all planes again (only now drawing the
 	// prio tiles instead of the non-priority tiles) I have collected the data for the priority
 	// tiles on the way and put that data into a chain. Should be faster...
-	for (PrioTileRenderObj *e = _prioChainStart; e; e = e->_next)
+	for (const PrioTileRenderObj *e = _prioChainStart; e; e = e->_next)
 		mRenderLineFragment(e->_hflip, e->_start & 1, e->_end & 1, e->_mask, e->_dst, e->_mask, e->_src, e->_start, e->_end, e->_pal)
 
 	clearPrioChain();
@@ -344,7 +359,7 @@ void SegaRenderer::renderPlanePart(int plane, uint8 *dstBuffer, int x1, int y1, 
 			uint16 vscrPxEnd = 8;
 
 			if (vScrollTableIndex != -1) {
-				vscrNt = _vsram[vScrollTableIndex] & 0x3FF;
+				vscrNt = FROM_BE_16(_vsram[vScrollTableIndex]) & 0x3FF;
 				vscrPxStart = vscrNt & 7;
 				vscrNt >>= 3;
 			}
@@ -373,14 +388,14 @@ void SegaRenderer::renderPlaneTile(uint8 *dst, int ntblX, const uint16 *ntblLine
 		uint16 hscrPx = 0;
 
 		if (hScrollTableIndex != -1) {
-			hscrNt = (-_hScrollTable[hScrollTableIndex]) & 0x3FF;
+			hscrNt = (-(FROM_BE_16(_hScrollTable[hScrollTableIndex]))) & 0x3FF;
 			hscrPx = hscrNt & 7;
 			hscrNt >>= 3;
 		}
 
 		const uint16 *pNt = &ntblLine[(ntblX + hscrNt) % pitch];
 		if (pNt < (const uint16*)(&_vram[0x10000])) {
-			uint16 nt = *pNt;
+			uint16 nt = FROM_BE_16(*pNt);
 			uint16 pal = ((nt >> 13) & 3) << 4;
 			bool hflip = (nt & 0x800);
 			int y = bY % 8;
@@ -398,7 +413,7 @@ void SegaRenderer::renderPlaneTile(uint8 *dst, int ntblX, const uint16 *ntblLine
 			dst += (8 - hscrPx);
 			pNt = &ntblLine[(ntblX + hscrNt + 1) % pitch];
 			if (pNt < (const uint16*)(&_vram[0x10000])) {
-				uint16 nt = *pNt;
+				uint16 nt = FROM_BE_16(*pNt);
 				uint16 pal = ((nt >> 13) & 3) << 4;
 				bool hflip = (nt & 0x800);
 				int y = bY % 8;
@@ -419,15 +434,11 @@ void SegaRenderer::renderPlaneTile(uint8 *dst, int ntblX, const uint16 *ntblLine
 	}
 }
 
-#undef vflip
-
 void SegaRenderer::renderSpriteTile(uint8 *dst, uint8 *mask, int x, int y, uint16 tile, uint8 pal, bool vflip, bool hflip, bool prio) {
 	if (y <= -8 || y >= _screenH || x <= -8 || x >= _screenW)
 		return;
 
 	const uint8 *src = &_vram[tile << 5];
-	if (vflip)
-		src += 31;
 
 	if (y < 0) {
 		dst -= (y * _screenW);
@@ -443,7 +454,8 @@ void SegaRenderer::renderSpriteTile(uint8 *dst, uint8 *mask, int x, int y, uint1
 
 	int ystart = CLIP<int>(-y, 0, 7);
 	int yend = CLIP<int>(_screenH - y, 0, 8);
-	src += (ystart << 2);
+	src += ((vflip ? (7 - ystart) : ystart) << 2);
+	int incr = vflip ? -4 : 4;
 
 	for (int bY = ystart; bY < yend; ++bY) {
 		uint8 *dst2 = dst;
@@ -454,7 +466,7 @@ void SegaRenderer::renderSpriteTile(uint8 *dst, uint8 *mask, int x, int y, uint1
 		else
 			mRenderLineFragment(hflip, xstart & 1, xend & 1, 1, dst, mask, src, xstart, xend, pal);
 
-		src += 4;
+		src += incr;
 		dst = dst2 + _screenW;
 		mask = msk2 + _screenW;
 	}
