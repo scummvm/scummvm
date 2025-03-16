@@ -22,7 +22,25 @@
 #include "global-ui.h"
 #include "alcachofa.h"
 
+using namespace Common;
+
 namespace Alcachofa {
+
+// originally the inventory only reacts to exactly top-left/bottom-right which is fine in
+// fullscreen when you just slam the mouse cursor into the corner.
+// In any other scenario this is cumbersome so I expand this area.
+// And it is still pretty bad, especially in windowed mode so I should add key-based controls for it
+static constexpr int16 kInventoryTriggerSize = 10;
+
+Rect openInventoryTriggerBounds() {
+	int16 size = kInventoryTriggerSize * 1024 / g_system->getWidth();
+	return Rect(0, 0, size, size);
+}
+
+Rect closeInventoryTriggerBounds() {
+	int16 size = kInventoryTriggerSize * 1024 / g_system->getWidth();
+	return Rect(g_system->getWidth() - size, g_system->getHeight() - size, g_system->getWidth(), g_system->getHeight());
+}
 
 GlobalUI::GlobalUI() {
 	auto &world = g_engine->world();
@@ -43,6 +61,51 @@ GlobalUI::GlobalUI() {
 	_iconMortadeloDisabled->load();
 	_iconFilemonDisabled->load();
 	_iconInventoryDisabled->load();
+}
+
+void GlobalUI::startClosingInventory() {
+	_isOpeningInventory = false;
+	_isClosingInventory = true;
+	_timeForInventory = g_system->getMillis();
+}
+
+void GlobalUI::updateClosingInventory() {
+	static constexpr uint32 kDuration = 300;
+	static constexpr float kSpeed = -10 / 3.0f / 1000.0f;
+
+	uint32 deltaTime = g_system->getMillis() - _timeForInventory;
+	if (!_isClosingInventory || deltaTime >= kDuration)
+		_isClosingInventory = false;
+	else
+		g_engine->world().inventory().drawAsOverlay((int32)(g_system->getHeight() * (deltaTime * kSpeed)));
+}
+
+bool GlobalUI::updateOpeningInventory() {
+	static constexpr float kSpeed = 10 / 3.0f / 1000.0f;
+	if (g_engine->player().isOptionsMenuOpen() || !g_engine->player().isGameLoaded())
+		return false;
+
+	if (_isOpeningInventory) {
+		uint32 deltaTime = g_system->getMillis() - _timeForInventory;
+		if (deltaTime >= 1000) {
+			_isOpeningInventory = false;
+			g_engine->world().inventory().open();
+		}
+		else {
+			deltaTime = MIN<uint32>(300, deltaTime);
+			g_engine->world().inventory().drawAsOverlay((int32)(g_system->getHeight() * (deltaTime * kSpeed - 1)));
+		}
+		return true;
+	}
+	else if (openInventoryTriggerBounds().contains(g_engine->input().mousePos2D())) {
+		_isClosingInventory = false;
+		_isOpeningInventory = true;
+		_timeForInventory = g_system->getMillis();
+		g_engine->player().activeCharacter()->stopWalking();
+		g_engine->world().inventory().updateItemsByActiveCharacter();
+		return true;
+	}
+	return false;
 }
 
 }
