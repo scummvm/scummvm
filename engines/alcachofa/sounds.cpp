@@ -122,13 +122,21 @@ static AudioStream *openAudio(const String &fileName) {
 	error("Could not open audio file: %s", fileName.c_str());
 }
 
-SoundID Sounds::playVoice(const String &fileName, byte volume) {
+SoundID Sounds::playSoundInternal(const String &fileName, byte volume, Mixer::SoundType type) {
 	AudioStream *stream = openAudio(fileName);
 	SoundHandle handle;
-	_mixer->playStream(Mixer::kSpeechSoundType, &handle, stream, -1, volume);
+	_mixer->playStream(type, &handle, stream, -1, volume);
 	SoundID id = _nextID++;
-	_playbacks.push_back({ id, handle, Mixer::kSpeechSoundType });
+	_playbacks.push_back({ id, handle, type });
 	return id;
+}
+
+SoundID Sounds::playVoice(const String &fileName, byte volume) {
+	return playSoundInternal(fileName, volume, Mixer::kSpeechSoundType);
+}
+
+SoundID Sounds::playSFX(const String &fileName, byte volume) {
+	return playSoundInternal(fileName, volume, Mixer::kSFXSoundType);
 }
 
 void Sounds::stopVoice() {
@@ -152,17 +160,19 @@ void Sounds::setVolume(SoundID id, byte volume) {
 }
 
 void Sounds::setAppropriateVolume(SoundID id,
-	MainCharacterKind processCharacter,
+	MainCharacterKind processCharacterKind,
 	Character *speakingCharacter) {
 	static constexpr byte kAlmostMaxVolume = Mixer::kMaxChannelVolume * 9 / 10;
 
 	auto &player = g_engine->player();
+	auto processCharacter = processCharacterKind == MainCharacterKind::None ? nullptr
+		: &g_engine->world().getMainCharacterByKind(processCharacterKind);
 	byte newVolume;
-	if (player.activeCharacter() == nullptr || player.activeCharacter() == speakingCharacter)
+	if (processCharacter == nullptr || processCharacter == player.activeCharacter())
 		newVolume = Mixer::kMaxChannelVolume;
 	else if (speakingCharacter != nullptr && speakingCharacter->room() == player.currentRoom())
 		newVolume = kAlmostMaxVolume;
-	else if (g_engine->world().getMainCharacterByKind(processCharacter).room() == player.currentRoom())
+	else if (processCharacter->room() == player.currentRoom())
 		newVolume = kAlmostMaxVolume;
 	else
 		newVolume = 0;
@@ -175,6 +185,25 @@ void Sounds::fadeOut(SoundID id, uint32 duration) {
 		playback->_fadeStart = g_system->getMillis();
 		playback->_fadeDuration = MAX<uint32>(duration, 1);
 	}
+}
+
+PlaySoundTask::PlaySoundTask(Process &process, SoundID soundID)
+	: Task(process)
+	, _soundID(soundID) { }
+
+TaskReturn PlaySoundTask::run() {
+	auto &sounds = g_engine->sounds();
+	if (sounds.isAlive(_soundID))
+	{
+		sounds.setAppropriateVolume(_soundID, process().character(), nullptr);
+		return TaskReturn::yield();
+	}
+	else
+		return TaskReturn::finish(1);
+}
+
+void PlaySoundTask::debugPrint() {
+	g_engine->console().debugPrintf("PlaySound %u\n", _soundID);
 }
 
 }

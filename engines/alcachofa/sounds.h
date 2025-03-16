@@ -22,7 +22,7 @@
 #ifndef SOUNDS_H
 #define SOUNDS_H
 
-#include "common.h"
+#include "scheduler.h"
 #include "audio/mixer.h"
 
 namespace Alcachofa {
@@ -38,6 +38,7 @@ public:
 
 	void update();
 	SoundID playVoice(const Common::String &fileName, byte volume = Audio::Mixer::kMaxChannelVolume);
+	SoundID playSFX(const Common::String &fileName, byte volume = Audio::Mixer::kMaxChannelVolume);
 	void stopVoice();
 	void fadeOut(SoundID id, uint32 duration);
 	bool isAlive(SoundID id);
@@ -57,10 +58,19 @@ private:
 			_fadeDuration = 0;
 	};
 	Playback *getPlaybackById(SoundID id);
+	SoundID playSoundInternal(const Common::String &fileName, byte volume, Audio::Mixer::SoundType type);
 
 	Common::Array<Playback> _playbacks;
 	Audio::Mixer *_mixer;
 	SoundID _nextID = 1;
+};
+
+struct PlaySoundTask final : public Task {
+	PlaySoundTask(Process &process, SoundID soundID);
+	virtual TaskReturn run() override;
+	virtual void debugPrint() override;
+private:
+	SoundID _soundID;
 };
 
 }
