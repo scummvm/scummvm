@@ -49,6 +49,10 @@ void Player::drawScreenStates() {
 		g_engine->drawQueue().add<FadeDrawRequest>(FadeType::ToBlack, 1.0f, -9);
 }
 
+void Player::resetCursor() {
+	_cursorFrameI = 0;
+}
+
 void Player::updateCursor() {
 	if (_isOptionsMenuOpen || !_isGameLoaded)
 		_cursorFrameI = 0;
@@ -75,8 +79,6 @@ void Player::updateCursor() {
 		else if (g_engine->input().isMouseRightDown())
 			_cursorFrameI = 4;
 	}
-
-	drawCursor();
 }
 
 void Player::drawCursor(bool forceDefaultCursor) {
