@@ -86,19 +86,16 @@ namespace MazeDoom {
 #define CLICK_TIME	 1000		// Every Second, update timer clock
 
 // Rules files
-#define	RULES_TEXT		"MAZEOD.TXT"
-#define	RULES_WAV		".\\SOUND\\MAZEOD.WAV"
+#define	RULES_TEXT		"mazedoom/mazeod.txt"
+#define	RULES_WAV		"mazedoom/sound/mazeod.wav"
 
 // Sound files
-#define WIN_SOUND	".\\sound\\fanfare2.wav"
-#define LOSE_SOUND	".\\sound\\buzzer.wav"
-#define HIT_SOUND	".\\sound\\thud.wav"
-#define TRAP_SOUND	".\\sound\\boing.wav"
+#define WIN_SOUND	"mazedoom/sound/fanfare2.wav"
+#define LOSE_SOUND	"mazedoom/sound/buzzer.wav"
+#define HIT_SOUND	"mazedoom/sound/thud.wav"
+#define TRAP_SOUND	"mazedoom/sound/boing.wav"
 
-#define GAME_THEME	".\\sound\\mazeod.mid"
-
-// Backdrop bitmaps
-#define MAINSCREEN	".\\ART\\DOOM2.BMP"
+#define GAME_THEME	"mazedoom/sound/mazeod.mid"
 
 // New Game button area
 #define	NEWGAME_LOCATION_X	 15
