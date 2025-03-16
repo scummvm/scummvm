@@ -432,9 +432,13 @@ private:
 		case ScriptKernelTask::PlayVideo:
 			g_engine->playVideo(getNumberArg(0));
 			return TaskReturn::finish(0);
-		case ScriptKernelTask::PlaySound:
-			warning("STUB KERNEL CALL: PlaySound");
-			return TaskReturn::finish(0);
+		case ScriptKernelTask::PlaySound: {
+			auto soundID = g_engine->sounds().playSFX(getStringArg(0));
+			g_engine->sounds().setAppropriateVolume(soundID, process().character(), nullptr);
+			return getNumberArg(1) == 0
+				? TaskReturn::waitFor(new PlaySoundTask(process(), soundID))
+				: TaskReturn::finish(1);
+		}
 		case ScriptKernelTask::PlayMusic:
 			warning("STUB KERNEL CALL: PlayMusic");
 			return TaskReturn::finish(0);
