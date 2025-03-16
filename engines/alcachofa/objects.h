@@ -392,9 +392,11 @@ public:
 	Task *sayText(Process &process, int32 dialogId);
 	void resetTalking();
 	void talkUsing(ObjectBase *talkObject);
+	Task *animate(Process &process, ObjectBase *animateObject);
 
 protected:
 	friend struct SayTextTask;
+	friend struct AnimateCharacterTask;
 	void syncObjectAsString(Common::Serializer &serializer, ObjectBase *&object);
 	void updateTalkingAnimation();
 
