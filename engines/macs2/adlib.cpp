@@ -680,35 +680,33 @@ void Adlib::OnTimer() {
 						temp = bp12->peekByte() & 0x3F;
 						// TODO: Cast to 8 bit here
 						bp2 = temp2W + temp;
+
 						bp12 = Func19BE_SH(bp10, 0x3);
-					
-						//							temp = g225E; // TODO: xor ah,ah
-						//							uint16 tempBX = temp;
-						//							// TODO: Assign from pointer
-						//							// les	di,[bp-14h]
-						//							// mov al, es : [di]
-						//							temp &= 0x3F; // TODO: xor ah, ah
-						//							uint16 tempDX = temp;
-						//							temp = 0x3F;
-						//							temp -= tempDX;
-						//							tempDX = temp;
-						//							temp = bp1; // TODO: xor ah, ah
-						//							temp *= tempDX;
-						//							// TODO: CWD
-						//							tempCX = 0x3F;
-						//							temp /= tempCX;
-						//							temp += tempBX;
-						//							tempDX = temp;
-						//							// TODO: Load from data
-						//							// les	di,[bp-14h]
-						//							// mov al, es : [di]
-						//							temp &= 0x3F; // TODO: xor ah,ah
-						//							temp += tempDX;
-						//							bp1 = temp; // TODO: al part only
-						//							if (bp1 > 0x3F) {
-						//								// l0017_1DEC:
-						//								bp1 = 0x3F;
-						//							}
+						// TODO: Identical section but final assignment is different
+						temp = g225E;
+						// bx
+						temp2 = temp;
+						temp = bp12->peekByte();
+						temp &= 0x3F;
+						// dx
+						uint8 temp3 = temp;
+						temp = 0x3F;
+						temp -= temp3;
+						temp3 = temp;
+						uint16 tempW = bp1;
+						tempW *= temp3;
+						tempW /= 0x3F;
+						tempW += temp2;
+						// dx word
+						uint16 temp2W = tempW;
+						// ax
+						temp = bp12->peekByte() & 0x3F;
+						// TODO: Cast to 8 bit here
+						bp1 = temp2W + temp;
+						if (bp1 > 0x3F) {
+							// l0017_1DEC:
+							bp1 = 0x3F;
+						}
 						//							// l0017_1DF0:
 						//							if (bp2 > 0x3F) {
 						//								// l0017_1DF6:
