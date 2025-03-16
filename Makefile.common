@@ -395,7 +395,7 @@ DIST_FILES_DOCS_es:=$(addprefix $(srcdir)/doc/es/,InicioRapido)
 DIST_FILES_DOCS_fr:=$(addprefix $(srcdir)/doc/fr/,DemarrageRapide)
 DIST_FILES_DOCS_it:=$(addprefix $(srcdir)/doc/it/,GuidaRapida)
 DIST_FILES_DOCS_no-nb:=$(addprefix $(srcdir)/doc/no-nb/,HurtigStart)
-DIST_FILES_DOCS_se:=$(addprefix $(srcdir)/doc/se/,LasMig Snabbstart)
+DIST_FILES_DOCS_se:=$(addprefix $(srcdir)/doc/sv/,LasMig Snabbstart)
 
 # Themes files
 DIST_FILES_THEMES=scummmodern.zip scummclassic.zip scummremastered.zip residualvm.zip gui-icons.dat shaders.dat
