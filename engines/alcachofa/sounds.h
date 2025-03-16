@@ -41,6 +41,7 @@ public:
 	SoundID playSFX(const Common::String &fileName, byte volume = Audio::Mixer::kMaxChannelVolume);
 	void stopVoice();
 	void fadeOut(SoundID id, uint32 duration);
+	void fadeOutVoiceAndSFX(uint32 duration);
 	bool isAlive(SoundID id);
 	void setVolume(SoundID id, byte volume);
 	void setAppropriateVolume(SoundID id,
@@ -50,6 +51,7 @@ public:
 private:
 	struct Playback {
 		Playback(uint32 id, Audio::SoundHandle handle, Audio::Mixer::SoundType type);
+		void fadeOut(uint32 duration);
 
 		SoundID _id;
 		Audio::SoundHandle _handle;
