@@ -129,6 +129,47 @@ bool MazeDoom::msgGame(const GameMessage &msg) {
 	return false;
 }
 
+bool MazeDoom::msgMouseDown(const MouseDownMessage &msg) {
+	if (MinigameView::msgMouseDown(msg))
+		return true;
+
+	if (msg._button == MouseDownMessage::MB_LEFT) {
+		const RectWH rectTitle(NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
+			NEWGAME_WIDTH, NEWGAME_HEIGHT);
+
+		if (rectTitle.contains(msg._pos) && !pGameParams->bPlayingMetagame)
+			// Start new game
+			newGame();
+
+		if (bPlaying && inArtRegion(msg._pos))
+			movePlayer(msg._pos);
+	}
+
+	return true;
+}
+
+bool MazeDoom::msgMouseMove(const MouseMoveMessage &msg) {
+	if (MinigameView::msgMouseMove(msg))
+		return true;
+
+	if (inArtRegion(msg._pos) && bPlaying) {
+		// If the cursor is within the border
+		// and we're playing, update the cursor
+		getNewCursor(msg._pos);
+
+		if (msg._button == MouseMoveMessage::MB_LEFT) {
+			// If the Left mouse button is down,
+			// have the player follow the mouse
+			movePlayer(msg._pos);
+		}
+	} else {
+		g_events->setCursor(IDC_ARROW);
+	}
+
+	return true;
+}
+
+
 bool MazeDoom::tick() {
 	MinigameView::tick();
 
@@ -446,7 +487,6 @@ void MazeDoom::playerMoving() {
 
 	if (bCollision)
 		_move.clear();
-//	GetNewCursor();
 }
 
 void MazeDoom::exitCheck() {
@@ -476,6 +516,45 @@ Common::Point MazeDoom::screenToTile(const Common::Point &pointScreen) const {
 	point.y = (pointScreen.y - TOP_BORDER + SQ_SIZE_Y / 2) / SQ_SIZE_Y;
 
 	return point;
+}
+
+bool MazeDoom::inArtRegion(const Common::Point &point) const {
+	return ((point.x > SIDE_BORDER && point.x < GAME_WIDTH - SIDE_BORDER) &&
+		(point.y > TOP_BORDER && point.y < GAME_HEIGHT - BOTTOM_BORDER));
+}
+
+void MazeDoom::getNewCursor(const Common::Point &mousePos) {
+	Common::Point hit, delta;
+	int hNewCursor = -1;
+	hit = screenToTile(mousePos);
+
+	delta.x = m_PlayerPos.x - hit.x;
+	delta.y = m_PlayerPos.y - hit.y;
+
+	if ((m_PlayerPos.x == hit.x) && (m_PlayerPos.y == hit.y)) {
+		// Directly over player
+		hNewCursor = IDC_MOD_NOARROW;
+	}
+
+	else if (ABS(delta.x) >= ABS(delta.y)) {
+		// Moving horizontally:
+		if (delta.x <= 0)
+			// To the Right
+			hNewCursor = IDC_MOD_RTARROW;
+		else if (delta.x > 0)
+			// To the Left
+			hNewCursor = IDC_MOD_LFARROW;
+	} else if (ABS(delta.y) > ABS(delta.x)) {
+		if (delta.y >= 0)
+			// Going Upward
+			hNewCursor = IDC_MOD_UPARROW;
+		else if (delta.y < 0)
+			// Going Downward
+			hNewCursor = IDC_MOD_DNARROW;
+	}
+
+	if (hNewCursor != -1)
+		g_events->setCursor(hNewCursor);
 }
 
 } // namespace MazeDoom

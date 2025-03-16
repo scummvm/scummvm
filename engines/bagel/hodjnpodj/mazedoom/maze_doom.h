@@ -99,6 +99,25 @@ private:
 
 	void playerMoving();
 
+	/**
+	 * Checks to see if a point is within the Artwork region of the window
+	 *
+	 *  FORMAL PARAMETERS:
+	 *
+	 *      Point point    The point to check
+	 *
+	 *  RETURN VALUE:
+	 *
+	 *      BOOL:   TRUE if point is within the Art Region,
+	 *              FALSE if point is outside the Art Region
+	 */
+	bool inArtRegion(const Common::Point &point) const;
+
+	/**
+	 * Loads up a new cursor with regard to the current cursor position, and the player position
+	 */
+	void getNewCursor(const Common::Point &mousePos);
+
 protected:
 	void showMainMenu() override;
 
@@ -110,6 +129,8 @@ public:
 	bool msgClose(const CloseMessage &msg) override;
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
+	bool msgMouseMove(const MouseMoveMessage &msg) override;
 	void draw() override;
 	bool tick() override;
 };
