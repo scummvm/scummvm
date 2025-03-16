@@ -148,6 +148,9 @@ void AlcachofaEngine::setDebugMode(DebugMode mode, int32 param)
 	case DebugMode::FloorIntersections:
 		_debugHandler.reset(new FloorIntersectionsDebugHandler(param));
 		break;
+	case DebugMode::TeleportCharacter:
+		_debugHandler.reset(new TeleportCharacterDebugHandler(param));
+		break;
 	default: _debugHandler.reset(nullptr);
 	}
 	_input.toggleDebugInput(isDebugModeActive());
