@@ -391,6 +391,7 @@ public:
 
 	Task *sayText(Process &process, int32 dialogId);
 	void resetTalking();
+	void talkUsing(ObjectBase *talkObject);
 
 protected:
 	friend struct SayTextTask;

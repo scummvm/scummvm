@@ -341,6 +341,18 @@ void Character::resetTalking() {
 	_curTalkingObject = nullptr;
 }
 
+void Character::talkUsing(ObjectBase *talkObject) {
+	_curTalkingObject = talkObject;
+	if (talkObject == nullptr)
+		return;
+	auto graphic = talkObject->graphic();
+	if (graphic == nullptr)
+		error("Talk object %s does not have a graphic", talkObject->name().c_str());
+	graphic->start(true);
+	if (room() == g_engine->player().currentRoom())
+		graphic->update();
+}
+
 const char *WalkingCharacter::typeName() const { return "WalkingCharacter"; }
 
 WalkingCharacter::WalkingCharacter(Room *room, ReadStream &stream)
