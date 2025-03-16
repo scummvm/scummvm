@@ -25,7 +25,12 @@
 #include "engines/util.h"
 #include "graphics/managed_surface.h"
 #include "graphics/opengl/system_headers.h"
+
+#ifdef ALCACHOFA_DEBUG_OPENGL // clearing OpenGL errors are very slow, so we only activate the debugging wrapper if necessary
 #include "graphics/opengl/debug.h"
+#else
+#define GL_CALL(call) call
+#endif
 
 using namespace Common;
 using namespace Math;
