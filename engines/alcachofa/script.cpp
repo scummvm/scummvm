@@ -582,9 +582,20 @@ private:
 			character->room() = targetRoom;
 			return TaskReturn::finish(1);
 		}
-		case ScriptKernelTask::LerpCharacterLodBias:
-			warning("STUB KERNEL CALL: LerpCharacterLodBias");
-			return TaskReturn::finish(0);
+		case ScriptKernelTask::LerpCharacterLodBias: {
+			auto *character = dynamic_cast<Character *>(g_engine->world().globalRoom().getObjectByName(getStringArg(0)));
+			if (character == nullptr)
+				error("Invalid character name: %s", getStringArg(0));
+			float targetLodBias = getNumberArg(1) * 0.01f;
+			int32 durationMs = getNumberArg(2);
+			if (durationMs <= 0)
+			{
+				character->lodBias() = targetLodBias;
+				return TaskReturn::finish(1);
+			}
+			else
+				return TaskReturn::waitFor(character->lerpLodBias(process(), targetLodBias, durationMs));
+		}
 		case ScriptKernelTask::AnimateCharacter: {
 			auto *character = dynamic_cast<Character *>(g_engine->world().getObjectByName(getStringArg(0)));
 			if (character == nullptr)

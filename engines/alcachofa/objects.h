@@ -393,6 +393,8 @@ public:
 	void resetTalking();
 	void talkUsing(ObjectBase *talkObject);
 	Task *animate(Process &process, ObjectBase *animateObject);
+	Task *lerpLodBias(Process &process, float targetLodBias, int32 durationMs);
+	inline float &lodBias() { return _lodBias; }
 
 protected:
 	friend struct SayTextTask;

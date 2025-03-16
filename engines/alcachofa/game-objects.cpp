@@ -398,6 +398,44 @@ Task *Character::animate(Process &process, ObjectBase *animateObject) {
 	return new AnimateCharacterTask(process, this, animateObject);
 }
 
+struct LerpLodBiasTask final : public Task {
+	LerpLodBiasTask(Process &process, Character *character, float targetLodBias, uint32 durationMs)
+		: Task(process)
+		, _character(character)
+		, _targetLodBias(targetLodBias)
+		, _durationMs(durationMs) { }
+
+	virtual TaskReturn run() override {
+		TASK_BEGIN;
+		_startTime = g_system->getMillis();
+		_sourceLodBias = _character->lodBias();
+		while (g_system->getMillis() - _startTime < _durationMs) {
+			_character->lodBias() = _sourceLodBias + (_targetLodBias - _sourceLodBias) *
+				((g_system->getMillis() - _startTime) / (float)_durationMs);
+			TASK_YIELD;
+		}
+		_character->lodBias() = _targetLodBias;
+		TASK_END;
+	}
+
+	virtual void debugPrint() override {
+		uint32 remaining = g_system->getMillis() - _startTime <= _durationMs
+			? _durationMs - (g_system->getMillis() - _startTime)
+			: 0;
+		g_engine->console().debugPrintf("Lerp lod bias of %s to %f with %ums remaining\n",
+			_character->name().c_str(), _targetLodBias, remaining);
+	}
+
+private:
+	Character *_character;
+	float _sourceLodBias = 0, _targetLodBias;
+	uint32 _startTime = 0, _durationMs;
+};
+
+Task *Character::lerpLodBias(Process &process, float targetLodBias, int32 durationMs) {
+	return new LerpLodBiasTask(process, this, targetLodBias, durationMs);
+}
+
 const char *WalkingCharacter::typeName() const { return "WalkingCharacter"; }
 
 WalkingCharacter::WalkingCharacter(Room *room, ReadStream &stream)
@@ -627,7 +665,7 @@ void WalkingCharacter::draw() {
 	}
 
 	assert(currentGraphic != nullptr);
-	g_engine->drawQueue().add<AnimationDrawRequest>(*currentGraphic, true, BlendMode::AdditiveAlpha);
+	g_engine->drawQueue().add<AnimationDrawRequest>(*currentGraphic, true, BlendMode::AdditiveAlpha, _lodBias);
 }
 
 void WalkingCharacter::drawDebug() {
