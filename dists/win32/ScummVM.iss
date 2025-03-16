@@ -236,13 +236,13 @@ Source: doc/es/InicioRapido.txt; DestDir: {app}; Flags: ignoreversion; Languages
 Source: doc/fr/DemarrageRapide.txt; DestDir: {app}; Flags: ignoreversion; Languages: french
 Source: doc/it/GuidaRapida.txt; DestDir: {app}; Flags: ignoreversion; Languages: italian
 Source: doc/no-nb/HurtigStart.txt; DestDir: {app}; Flags: ignoreversion; Languages: norwegian
-Source: doc/se/Snabbstart.txt; DestDir: {app}; Flags: ignoreversion; Languages: swedish
+Source: doc/sv/Snabbstart.txt; DestDir: {app}; Flags: ignoreversion; Languages: swedish
 
 ; README and DOCUMENTATION
 Source: README.html; DestDir: {app}; Flags: ignoreversion; Languages: not (czech or german or swedish)
 Source: doc/cz/PrectiMe.txt; DestDir: {app}; Flags: ignoreversion; Languages: czech
 Source: doc/de/LIESMICH.txt; DestDir: {app}; Flags: ignoreversion; Languages: german
-Source: doc/se/LasMig.txt; DestDir: {app}; Flags: ignoreversion; Languages: swedish
+Source: doc/sv/LasMig.txt; DestDir: {app}; Flags: ignoreversion; Languages: swedish
 Source: *Manual*.pdf; DestDir: {app}; Flags: ignoreversion isreadme
 
 ; ScummVM executables and libraries
