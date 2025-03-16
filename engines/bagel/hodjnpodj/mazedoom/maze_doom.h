@@ -56,6 +56,7 @@ private:
 	void setupHodjPodj();
 	void loadBitmaps();
 	void setupSettings();
+	void newGame();
 
 protected:
 	void showMainMenu() override;

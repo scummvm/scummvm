@@ -70,6 +70,9 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override {
+		return true;
+	}
 	bool tick() override;
 
 	Common::WinResources *getResources() override {

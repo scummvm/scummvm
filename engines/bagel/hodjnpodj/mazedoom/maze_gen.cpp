@@ -401,10 +401,14 @@ void MazeGen::paintMaze() {
 
 	for (x = 0; x < NUM_COLUMNS; x++) {
 		for (y = 0; y < NUM_ROWS; y++) {
+			// Set the tile location
 			mazeTile[x][y].m_nStart.x = x * SQ_SIZE_X;                              // Put in location info
 			mazeTile[x][y].m_nStart.y = y * SQ_SIZE_Y;
-			if ((mazeTile[x][y].m_nWall == PATH) || (mazeTile[x][y].m_nWall == EXIT) ||
-				mazeTile[x][y].m_bHidden)
+
+			// Handle drawing the correct tile
+			if ((mazeTile[x][y].m_nWall == PATH) ||
+					(mazeTile[x][y].m_nWall == EXIT) ||
+					mazeTile[x][y].m_bHidden)
 				// Path or hidden obj 
 				_mazeBitmap.blitFrom(pPathBitmap, Common::Point(
 					mazeTile[x][y].m_nStart.x, mazeTile[x][y].m_nStart.y));
@@ -421,7 +425,7 @@ void MazeGen::paintMaze() {
 
 	for (x = 0; x < NUM_COLUMNS; x++) {		// Go through the grid
 		for (y = 0; y < NUM_ROWS; y++) {	//...and for every square
-			addEdges(x, y, 0, 0);			//...add trim if needed
+			addEdges(x, y);					//...add trim if needed
 		}
 	}
 }

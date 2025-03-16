@@ -39,8 +39,8 @@ MazeDoom::MazeDoom() : MinigameView("MazeDoom", "mazedoom/hnpmaze.dll"),
 			SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1)
 		),
 		pPlayerSprite(this),
-		_timeRect(RectWH(TIME_LOCATION_X, TIME_LOCATION_Y,
-			TIME_WIDTH, TIME_HEIGHT)) {
+		_timeRect(RectWH(TIME_LOCATION_X + 20, TIME_LOCATION_Y,
+			TIME_WIDTH - 20, TIME_HEIGHT)) {
 	addResource(IDB_LOCALE_BMP, Common::WinResourceID("idb_locale_bmp"));
 	addResource(IDB_BLANK_BMP, Common::WinResourceID("idb_blank_bmp"));
 	addResource(IDB_PARTS_BMP, IDB_PARTS);
@@ -63,15 +63,16 @@ bool MazeDoom::msgOpen(const OpenMessage &msg) {
 	initializeMaze();	// Set the surrounding wall and start/end squares 
 	createMaze();		// Create a maze layout given the initialized maze
 	setupMaze();
-
-	bPlaying = true;
+	paintMaze();		// Paint that sucker to the offscreen bitmap
 
 	if (pGameParams->bMusicEnabled) {
-		pGameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+		pGameSound = new CBofSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 		if (pGameSound != nullptr) {
 			(*pGameSound).midiLoopPlaySegment(3000, 32980, 0, FMT_MILLISEC);
 		}
 	}
+
+	bPlaying = pGameParams->bPlayingMetagame;
 
 	return true;
 }
@@ -88,9 +89,15 @@ bool MazeDoom::msgClose(const CloseMessage &msg) {
 }
 
 bool MazeDoom::msgGame(const GameMessage &msg) {
+	MinigameView::msgGame(msg);
+
 	if (msg._name == "BUTTON") {
 		// Show the main menu
 		showMainMenu();
+		return true;
+	} else if (msg._name == "NEW_GAME") {
+		assert(!pGameParams->bPlayingMetagame);
+		newGame();
 		return true;
 	}
 
@@ -105,7 +112,38 @@ bool MazeDoom::tick() {
 
 void MazeDoom::draw() {
 	GfxSurface s = getSurface();
+
+	// Draw background
 	s.blitFrom(_background);
+
+	// Draw the maze
+	s.blitFrom(_mazeBitmap, Common::Point(
+		SIDE_BORDER, TOP_BORDER));
+	warning("%d %d", ART_WIDTH, ART_HEIGHT);
+
+	if (!pPlayerSprite.empty() && bPlaying)
+		s.blitFrom(pPlayerSprite, Common::Point(
+			(m_PlayerPos.x * SQ_SIZE_X) + SIDE_BORDER,
+			(m_PlayerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2
+		));
+
+	if (bPlaying) {
+		// only false when the options are displayed
+		char msg[64];
+		s.blitFrom(pBlankBitmap, Common::Point(TIME_LOCATION_X, TIME_LOCATION_Y));
+
+		if (m_nTime == 0)
+			Common::sprintf_s(msg, "Time Used: %02d:%02d", nMinutes, nSeconds);
+		else {
+			Common::sprintf_s(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
+		}
+
+		s.setFontSize(8);
+		s.writeString(msg, _timeRect, BLACK);
+	} else if (!pLocaleBitmap.empty()) {
+		s.blitFrom(pLocaleBitmap,
+			Common::Point(TIME_LOCATION_X, TIME_LOCATION_Y));
+	}
 }
 
 void MazeDoom::setupHodjPodj() {
@@ -200,6 +238,28 @@ void MazeDoom::showMainMenu() {
 		pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0,
 		RULES_TEXT,
 		pGameParams->bSoundEffectsEnabled ? RULES_WAV : NULL);
+}
+
+void MazeDoom::newGame() {
+	m_nTime = tempTime;				// Get new time limit,
+	m_nDifficulty = tempDifficulty;	//...new Difficulty
+
+	if (m_nTime != 0) {				// If we've got a time limit
+		nMinutes = m_nTime / 60;	//...get the minutes and seconds
+		nSeconds = m_nTime % 60;
+	} else {
+		nMinutes = 0;
+		nSeconds = 0;
+	}
+
+	initializeMaze();		// Set the surrounding wall and start/end squares
+	createMaze();			// Create a maze layout given the intiialized maze
+	setupMaze();			// Translate maze data to grid layout for display
+	paintMaze();			// Paint that sucker to the offscreen bitmap
+
+	// Flag the new game to start
+	bPlaying = true;
+	m_bGameOver = false;
 }
 
 } // namespace MazeDoom

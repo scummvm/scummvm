@@ -189,7 +189,7 @@ struct MazeGen {
 	 *      int     offset_x    Width offset for drawing the bitmap
 	 *      int     offset_y    Hieght offset as above
 	 */
-	void addEdges(int x, int y, int offset_x, int offset_y);
+	void addEdges(int x, int y, int offset_x = 0, int offset_y = 0);
 };
 
 } // namespace MazeDoom
