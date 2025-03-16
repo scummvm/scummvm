@@ -58,10 +58,20 @@ FakeLock::FakeLock(FakeLock &&other) noexcept : _semaphore(other._semaphore) {
 }
 
 FakeLock::~FakeLock() {
+	release();
+}
+
+void FakeLock::operator= (FakeLock &&other) noexcept {
+	_semaphore = other._semaphore;
+	other._semaphore = nullptr;
+}
+
+void FakeLock::release() {
 	if (_semaphore == nullptr)
 		return;
 	assert(_semaphore->_counter > 0);
 	_semaphore->_counter--;
+	_semaphore = nullptr;
 }
 
 Vector3d as3D(const Vector2d &v) {

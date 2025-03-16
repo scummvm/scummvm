@@ -56,8 +56,13 @@ public:
 	void triggerObject(ObjectBase *object, const char *action);
 	void triggerDoor(const Door *door);
 	void setPermanentFade(bool isFaded);
+	void addLastDialogCharacter(Character *character);
+	void stopLastDialogCharacters();
+	void setActiveCharacter(MainCharacterKind kind);
 
 private:
+	static constexpr const int kMaxLastDialogCharacters = 4;
+
 	Common::ScopedPtr<Animation> _cursorAnimation;
 	FakeSemaphore _semaphore;
 	Room *_currentRoom = nullptr,
@@ -72,6 +77,8 @@ private:
 		_isGameLoaded = true,
 		_didLoadGlobalRooms = false,
 		_isPermanentFaded = false;
+	Character *_lastDialogCharacters[kMaxLastDialogCharacters] = { nullptr };
+	int _nextLastDialogCharacter = 0;
 };
 
 }

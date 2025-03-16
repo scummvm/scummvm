@@ -463,13 +463,28 @@ private:
 			g_engine->scheduler().createProcess<ScriptTask>(process().character(), *this);
 			return TaskReturn::finish(0); // 0 means this is the forking process
 		case ScriptKernelTask::KillProcesses:
-			warning("STUB KERNEL CALL: KillProcesses");
-			return TaskReturn::finish(0);
+			killProcessesFor((MainCharacterKind)getNumberArg(0));
+			return TaskReturn::finish(1);
 
 		// player/world state changes
-		case ScriptKernelTask::ChangeCharacter:
-			warning("STUB KERNEL CALL: ChangeCharacter");
-			return TaskReturn::finish(0);
+		case ScriptKernelTask::ChangeCharacter: {
+			MainCharacterKind kind = (MainCharacterKind)getNumberArg(0);
+			killProcessesFor(MainCharacterKind::None); // yes, kill for all characters
+			auto &camera = g_engine->camera();
+			auto &player = g_engine->player();
+			camera.resetRotationAndScale();
+			camera.backup(0);
+			if (kind != MainCharacterKind::None) {
+				player.setActiveCharacter(kind);
+				player.heldItem() = nullptr;
+				camera.setFollow(player.activeCharacter());
+				camera.backup(0);
+			}
+			process().character() = MainCharacterKind::None;
+			assert(player.semaphore().isReleased());
+			_lock = { player.semaphore() };
+			return TaskReturn::finish(1);
+		}
 		case ScriptKernelTask::ChangeRoom:
 			if (strcmpi(getStringArg(0), "SALIR") == 0) {
 				g_engine->quitGame();
@@ -775,6 +790,22 @@ private:
 			error("Invalid kernel call");
 			return TaskReturn::finish(0);
 		}
+	}
+
+	void killProcessesFor(MainCharacterKind kind) {
+		if (kind == MainCharacterKind::None) {
+			killProcessesFor(MainCharacterKind::Mortadelo);
+			killProcessesFor(MainCharacterKind::Filemon);
+			g_engine->scheduler().killAllProcessesFor(kind);
+			return;
+		}
+		g_engine->scheduler().killAllProcessesFor(kind);
+		g_engine->sounds().fadeOutVoiceAndSFX(200);
+		g_engine->player().stopLastDialogCharacters();
+		_lock.release(); // yes this seems dangerous, but it is original..
+		auto &character = g_engine->world().getMainCharacterByKind(kind);
+		character.resetUsingObjectAndDialogMenu();
+		assert(character.semaphore().isReleased()); // this process should be the last to hold a lock if at all...
 	}
 
 	Script &_script;

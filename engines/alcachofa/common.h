@@ -99,8 +99,10 @@ struct FakeLock {
 	FakeLock(const FakeLock &other);
 	FakeLock(FakeLock &&other) noexcept;
 	~FakeLock();
+	void operator = (FakeLock &&other) noexcept;
+	void release();
 private:
-	FakeSemaphore *_semaphore;
+	FakeSemaphore *_semaphore = nullptr;
 };
 
 float ease(float t, EasingType type);
