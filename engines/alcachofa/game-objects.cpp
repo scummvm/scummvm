@@ -277,7 +277,7 @@ void Character::trigger(const char *action) {
 	g_engine->player().triggerObject(this, action);
 }
 
-struct SayTextTask : public Task {
+struct SayTextTask final : public Task {
 	SayTextTask(Process &process, Character *character, int32 dialogId)
 		: Task(process)
 		, _character(character)
@@ -351,6 +351,51 @@ void Character::talkUsing(ObjectBase *talkObject) {
 	graphic->start(true);
 	if (room() == g_engine->player().currentRoom())
 		graphic->update();
+}
+
+struct AnimateCharacterTask final : public Task {
+	AnimateCharacterTask(Process &process, Character *character, ObjectBase *animateObject)
+		: Task(process)
+		, _character(character)
+		, _animateObject(animateObject)
+		, _graphic(animateObject->graphic()) {
+		scumm_assert(_graphic != nullptr);
+	}
+
+	virtual TaskReturn run() override {
+		TASK_BEGIN;
+		while (_character->_curAnimateObject != nullptr)
+			TASK_YIELD;
+
+		_character->_curAnimateObject = _animateObject;
+		_graphic->start(false);
+		if (_character->room() == g_engine->player().currentRoom())
+			_graphic->update();
+		do
+		{
+			TASK_YIELD;
+			if (process().isActiveForPlayer() && g_engine->input().wasAnyMouseReleased())
+				_graphic->pause();
+		} while (!_graphic->isPaused());
+
+		_character->_curAnimateObject = nullptr;
+		_character->_curTalkingObject = nullptr;
+		TASK_END;
+	}
+
+	virtual void debugPrint() override {
+		g_engine->console().debugPrintf("AnimateCharacter %s, %s\n", _character->name().c_str(), _animateObject->name().c_str());
+	}
+
+private:
+	Character *_character;
+	ObjectBase *_animateObject;
+	Graphic *_graphic;
+};
+
+Task *Character::animate(Process &process, ObjectBase *animateObject) {
+	assert(animateObject != nullptr);
+	return new AnimateCharacterTask(process, this, animateObject);
 }
 
 const char *WalkingCharacter::typeName() const { return "WalkingCharacter"; }

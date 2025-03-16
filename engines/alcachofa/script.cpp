@@ -581,9 +581,15 @@ private:
 		case ScriptKernelTask::LerpCharacterLodBias:
 			warning("STUB KERNEL CALL: LerpCharacterLodBias");
 			return TaskReturn::finish(0);
-		case ScriptKernelTask::AnimateCharacter:
-			warning("STUB KERNEL CALL: AnimateCharacter");
-			return TaskReturn::finish(0);
+		case ScriptKernelTask::AnimateCharacter: {
+			auto *character = dynamic_cast<Character *>(g_engine->world().getObjectByName(getStringArg(0)));
+			if (character == nullptr)
+				error("Invalid character name: %s", getStringArg(0));
+			auto *animObject = g_engine->world().getObjectByName(getStringArg(1));
+			if (animObject == nullptr)
+				error("Invalid animate object name: %s", getStringArg(1));
+			return TaskReturn::waitFor(character->animate(process(), animObject));
+		}
 		case ScriptKernelTask::AnimateTalking: {
 			auto *character = dynamic_cast<Character *>(g_engine->world().getObjectByName(getStringArg(0)));
 			if (character == nullptr)
