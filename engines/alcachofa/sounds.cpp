@@ -38,6 +38,11 @@ namespace Alcachofa {
 Sounds::Playback::Playback(uint32 id, SoundHandle handle, Mixer::SoundType type)
 	: _id(id), _handle(handle), _type(type) {}
 
+void Sounds::Playback::fadeOut(uint32 duration) {
+	_fadeStart = g_system->getMillis();
+	_fadeDuration = MAX<uint32>(duration, 1);
+}
+
 Sounds::Sounds() : _mixer(g_system->getMixer()) {
 	assert(_mixer != nullptr);
 }
@@ -181,9 +186,14 @@ void Sounds::setAppropriateVolume(SoundID id,
 
 void Sounds::fadeOut(SoundID id, uint32 duration) {
 	Playback *playback = getPlaybackById(id);
-	if (playback != nullptr) {
-		playback->_fadeStart = g_system->getMillis();
-		playback->_fadeDuration = MAX<uint32>(duration, 1);
+	if (playback != nullptr)
+		playback->fadeOut(duration);
+}
+
+void Sounds::fadeOutVoiceAndSFX(uint32 duration) {
+	for (auto &playback : _playbacks) {
+		if (playback._type == Mixer::kSpeechSoundType || playback._type == Mixer::kSFXSoundType)
+			playback.fadeOut(duration);
 	}
 }
 

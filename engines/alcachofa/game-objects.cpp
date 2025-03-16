@@ -288,6 +288,8 @@ struct SayTextTask final : public Task {
 		_character->_isTalking = true;
 		graphicOf(_character->_curTalkingObject, &_character->_graphicTalking)->start(true);
 		while (true) {
+			g_engine->player().addLastDialogCharacter(_character);
+
 			if (_soundId == kInvalidSoundID)
 			{
 				bool isMortadeloVoice =
@@ -1020,6 +1022,11 @@ Task *MainCharacter::dialogMenu(Process &process) {
 	if (_dialogLines.empty())
 		error("Tried to open dialog menu without any lines set");
 	return new DialogMenuTask(process, this);
+}
+
+void MainCharacter::resetUsingObjectAndDialogMenu() {
+	_currentlyUsingObject = nullptr;
+	_dialogLines.clear();
 }
 
 const char *Background::typeName() const { return "Background"; }

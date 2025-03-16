@@ -254,4 +254,30 @@ void Player::setPermanentFade(bool isFaded) {
 	_isPermanentFaded = isFaded;
 }
 
+// the last dialog character mechanic seems like a hack in the original engine
+// all talking characters (see SayText kernel call) are added to a fixed-size
+// rolling queue and stopped upon killProcesses
+
+void Player::addLastDialogCharacter(Character *character) {
+	auto lastDialogCharactersEnd = _lastDialogCharacters + kMaxLastDialogCharacters;
+	if (Common::find(_lastDialogCharacters, lastDialogCharactersEnd, character) != lastDialogCharactersEnd)
+		return;
+	_lastDialogCharacters[_nextLastDialogCharacter++] = character;
+	_nextLastDialogCharacter %= kMaxLastDialogCharacters;
+}
+
+void Player::stopLastDialogCharacters() {
+	// originally only the isTalking flag is reset, but this seems a bit safer so unless we find a bug
+	for (int i = 0; i < kMaxLastDialogCharacters; i++) {
+		auto character = _lastDialogCharacters[i];
+		if (character != nullptr)
+			character->resetTalking();
+	}
+}
+
+void Player::setActiveCharacter(MainCharacterKind kind) {
+	scumm_assert(kind == MainCharacterKind::Mortadelo || kind == MainCharacterKind::Filemon);
+	_activeCharacter = &g_engine->world().getMainCharacterByKind(kind);
+}
+
 }

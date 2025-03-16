@@ -183,7 +183,7 @@ void Scheduler::killAllProcesses() {
 void Scheduler::killAllProcessesFor(MainCharacterKind characterKind) {
 	// this method can be called during run() so be careful
 	killProcessesForIn(characterKind, processesToRunNext(), 0);
-	killProcessesForIn(characterKind, processesToRun(), _currentProcessI == UINT_MAX ? 0 : _currentProcessI);
+	killProcessesForIn(characterKind, processesToRun(), _currentProcessI == UINT_MAX ? 0 : _currentProcessI + 1);
 }
 
 static Process **getProcessByName(Array<Process *> &_processes, const String &name) {

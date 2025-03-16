@@ -510,6 +510,7 @@ public:
 	void addDialogLine(int32 dialogId);
 	void setLastDialogReturnValue(int32 returnValue);
 	Task *dialogMenu(Process &process);
+	void resetUsingObjectAndDialogMenu();
 
 protected:
 	virtual void onArrived() override;
