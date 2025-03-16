@@ -159,8 +159,6 @@ public:
 	inline Inventory &inventory() const { assert(_inventory != nullptr); return *_inventory; }
 	inline MainCharacter &filemon() const { assert(_filemon != nullptr); return *_filemon; }
 	inline MainCharacter &mortadelo() const { assert(_mortadelo != nullptr);  return *_mortadelo; }
-	inline Font &generalFont() const { assert(_generalFont != nullptr); return *_generalFont; }
-	inline Font &dialogFont() const { assert(_dialogFont != nullptr); return *_dialogFont; }
 	inline const Common::String &initScriptName() const { return _initScriptName; }
 	inline uint8 loadedMapCount() const { return _loadedMapCount; }
 
@@ -197,7 +195,6 @@ private:
 	Room *_globalRoom;
 	Inventory *_inventory;
 	MainCharacter *_filemon, *_mortadelo;
-	Common::ScopedPtr<Font> _generalFont, _dialogFont;
 	uint8 _loadedMapCount = 0;
 	Common::HashMap<const char *, const char *,
 		Common::Hash<const char*>,

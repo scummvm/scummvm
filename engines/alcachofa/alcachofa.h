@@ -49,6 +49,7 @@ class IRenderer;
 class DrawQueue;
 class World;
 class Script;
+class GlobalUI;
 struct AlcachofaGameDescription;
 
 class AlcachofaEngine : public Engine {
@@ -70,6 +71,7 @@ public:
 	inline Player &player() { return *_player; }
 	inline World &world() { return *_world; }
 	inline Script &script() { return *_script; }
+	inline GlobalUI &globalUI() { return *_globalUI; }
 	inline Scheduler &scheduler() { return _scheduler; }
 	inline Console &console() { return *_console; }
 	inline bool isDebugModeActive() const { return _debugHandler != nullptr; }
@@ -128,6 +130,7 @@ private:
 	Common::ScopedPtr<World> _world;
 	Common::ScopedPtr<Script> _script;
 	Common::ScopedPtr<Player> _player;
+	Common::ScopedPtr<GlobalUI> _globalUI;
 	Camera _camera;
 	Input _input;
 	Sounds _sounds;
