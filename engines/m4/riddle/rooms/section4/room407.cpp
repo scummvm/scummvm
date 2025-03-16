@@ -228,13 +228,13 @@ void Room407::init() {
 			_407pu08c = series_load("407PU08C");
 			_407pu08d = series_load("407PU08D");
 
-			_lockButton1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			_lockButton1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 				triggerMachineByHashCallback, "LOCK button 1");
-			_lockButton2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			_lockButton2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 				triggerMachineByHashCallback, "LOCK button 2");
-			_lockButton3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			_lockButton3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 				triggerMachineByHashCallback, "LOCK button 3");
-			_lockButton4 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			_lockButton4 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 				triggerMachineByHashCallback, "LOCK button 4");
 
 			sendWSMessage_10000(1, _lockButton1, _407pu08a,
@@ -354,7 +354,7 @@ void Room407::init() {
 
 		if (_frotz2 != 0) {
 			_407h = series_load("407H");
-			_niche = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xb00, 0,
+			_niche = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xb00, false,
 				triggerMachineByHashCallback, "Jar opens cabinet door");
 			sendWSMessage_10000(1, _niche, _407h, 29, 29, -1, _407h, 29, 29, 0);
 
@@ -528,7 +528,7 @@ void Room407::init() {
 		ws_demand_location(_G(my_walker), 250, 331, 3);
 		ws_hide_walker();
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "RIP enters");
 		sendWSMessage_10000(1, _ripley, _ripEnters, 1, 27, 400,
 			_ripEnters, 27, 27, 0);
@@ -545,7 +545,7 @@ void Room407::init() {
 		terminateMachineAndNull(_lever);
 
 		_407h = series_load("407H");
-		_niche = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xb00, 0,
+		_niche = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xb00, false,
 			triggerMachineByHashCallback, "Jar opens cabinet door");
 		sendWSMessage_10000(1, _niche, _407h, 29, 29, -1,
 			_407h, 29, 29, 0);
@@ -599,7 +599,7 @@ void Room407::daemon() {
 		if (_leverKeyState != 1113) {
 			_407tpis2 = series_load("407tpis2");
 			terminateMachineAndNull(_tpist);
-			_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 				triggerMachineByHashCallback, "PISTON ONLY");
 			sendWSMessage_10000(1, _tpist, _407tpis2, 1, 33, 40,
 				_407tpis2, 33, 33, 0);
@@ -635,7 +635,7 @@ void Room407::daemon() {
 		terminateMachineAndNull(_lever);
 		terminateMachineAndNull(_tpist);
 
-		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "PISTON & LEVER");
 		sendWSMessage_10000(1, _tpist, _407j, 1, 33, 52,
 			_407j, 33, 33, 0);
@@ -657,7 +657,7 @@ void Room407::daemon() {
 		terminateMachineAndNull(_lever);
 		terminateMachineAndNull(_tpist);
 
-		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "PISTON & LEVER");
 		sendWSMessage_10000(1, _tpist, _407k, 1, 33, 61, _407k, 33, 33, 0);
 		digi_play("407_s18", 2);
@@ -673,7 +673,7 @@ void Room407::daemon() {
 		terminateMachineAndNull(_bottle);
 		terminateMachineAndNull(_chart);
 
-		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "GLASS JAR SHAKES");
 		sendWSMessage_10000(1, _bottle, _407o, 1, 51, 62,
 			_407o, 51, 51, 0);
@@ -704,7 +704,7 @@ void Room407::daemon() {
 		terminateMachineAndNull(_lever);
 		terminateMachineAndNull(_tpist);
 
-		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "PISTON & LEVER");
 		sendWSMessage_10000(1, _tpist, _407l, 1, 33, 72, _407l, 33, 33, 0);
 		digi_play("407_s18", 2);
@@ -725,7 +725,7 @@ void Room407::daemon() {
 
 		terminateMachineAndNull(_lever);
 		terminateMachineAndNull(_tpist);
-		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "PISTON & LEVER");
 		sendWSMessage_10000(1, _tpist, _407m, 1, 33, 81, _407m, 33, 33, 0);
 		digi_play("407_s18", 2);
@@ -741,7 +741,7 @@ void Room407::daemon() {
 		terminateMachineAndNull(_bottle);
 		terminateMachineAndNull(_chart);
 
-		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "GLASS JAR TURNS");
 		sendWSMessage_10000(1, _bottle, _407p, 1, 51, 82, _407p, 51, 51, 0);
 		break;
@@ -770,7 +770,7 @@ void Room407::daemon() {
 		terminateMachineAndNull(_lever);
 		terminateMachineAndNull(_tpist);
 
-		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "PISTON & LEVER");
 		sendWSMessage_10000(1, _tpist, _407q, 1, 33, 92, _407q, 33, 33, 0);
 		digi_play("407_s18", 2);
@@ -789,7 +789,7 @@ void Room407::daemon() {
 		terminateMachineAndNull(_bottle);
 
 		_407a = series_load("407a");
-		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "GLASS JAR TURNS");
 		sendWSMessage_10000(1, _bottle, _407a, 1, 30, 151, _407a, 30, 30, 0);
 		digi_play("407_s16", 3);
@@ -816,7 +816,7 @@ void Room407::daemon() {
 		terminateMachineAndNull(_chart);
 
 		_407b = series_load("407b");
-		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "GLASS JAR TURNS");
 		sendWSMessage_10000(1, _bottle, _407b, 1, 30, 161, _407b, 30, 30, 0);
 		digi_play("407_s16", 3);
@@ -842,7 +842,7 @@ void Room407::daemon() {
 		terminateMachineAndNull(_stopperInDrawer);
 
 		_407c = series_load("407c");
-		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "GLASS JAR TURNS");
 		sendWSMessage_10000(1, _bottle, _407c, 1, 30, 171, _407c, 30, 30, 0);
 		digi_play("407_s16", 3);
@@ -869,7 +869,7 @@ void Room407::daemon() {
 		terminateMachineAndNull(_chart);
 
 		_407d = series_load("407d");
-		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "GLASS JAR TURNS");
 		sendWSMessage_10000(1, _bottle, _407d, 1, 30, 176, _407d, 30, 30, 0);
 		digi_play("407_s16", 3);
@@ -895,7 +895,7 @@ void Room407::daemon() {
 		terminateMachineAndNull(_gears);
 
 		_407s = series_load("407s");
-		_gears = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_gears = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "GEARS TURN");
 		sendWSMessage_10000(1, _bottle, _407s, 1, 30, 181, _407s, 30, 30, 0);
 		digi_play("407_s16", 3);
@@ -1233,14 +1233,14 @@ void Room407::daemon() {
 
 			_letter = series_place_sprite("407 letter", 0, 0, 0, 100, 0xc00);
 			_407h = series_load("407H");
-			_niche = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xb00, 0,
+			_niche = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xb00, false,
 				triggerMachineByHashCallback, "Jar opens cabinet door");
 			sendWSMessage_10000(1, _niche, _407h, 1, 29, 330, _407h, 29, 29, 0);
 			digi_play("407_s21", 2);
 		} else {
 			if (_stopperState != 1116) {
 				_jarWaterFallingLeft = series_load("407 JAR WATER FALLING LEFT");
-				_jarLeft = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+				_jarLeft = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 					triggerMachineByHashCallback, "407 JAR WATER FALLING LEFT");
 				sendWSMessage_10000(1, _jarLeft, _jarWaterFallingLeft, 1, 13, 323,
 					_jarWaterFallingLeft, 14, 19, 0);
@@ -1248,7 +1248,7 @@ void Room407::daemon() {
 
 			if (_corkState != 1116) {
 				_jarWaterFallingCentre = series_load("407 JAR WATER FALLING CENTRE");
-				_jarCentre = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+				_jarCentre = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 					triggerMachineByHashCallback, "Center jar hole leaks");
 				sendWSMessage_10000(1, _jarCentre, _jarWaterFallingCentre, 1, 11, 323,
 					_jarWaterFallingCentre, 12, 15, 0);
@@ -1256,7 +1256,7 @@ void Room407::daemon() {
 
 			if (_pumpState != 1116) {
 				_jarWaterFallingRight = series_load("407 JAR WATER FALLING RIGHT");
-				_jarRight = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+				_jarRight = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 					triggerMachineByHashCallback, "Right jar hole leaks");
 				sendWSMessage_10000(1, _jarRight, _jarWaterFallingRight, 1, 13, 323,
 					_jarWaterFallingRight, 14, 20, 0);
@@ -1366,7 +1366,7 @@ void Room407::daemon() {
 		setHotspots();
 		_407e = series_load("407E");
 		terminateMachineAndNull(_escape);
-		_escape = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xd00, 0,
+		_escape = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xd00, false,
 			triggerMachineByHashCallback, "METAL DOOR");
 		sendWSMessage_10000(1, _escape, _407e, 1, 30, 364, _407e, 30, 30, 0);
 		digi_play("407_s24", 2);
@@ -1391,7 +1391,7 @@ void Room407::daemon() {
 
 	case 365:
 		ws_hide_walker();
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "RIP exits");
 		sendWSMessage_10000(1, _ripley, _exit, 1, 22, 366, _exit, 22, 22, 0);
 		break;
@@ -1501,13 +1501,13 @@ void Room407::daemon() {
 			digi_play("407_s32", 3);
 		} else if (_tubeState == 1100) {
 			digi_play_loop("407_s31", 3);
-			_sink = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+			_sink = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 				triggerMachineByHashCallback, "water into sink");
 			sendWSMessage_10000(1, _sink, _waterFlowTube, 1, 4, -1,
 				_waterFlowTube, 1, 4, 0);
 			hotspot_set_active("WATER ", true);
 		} else {
-			_sink = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			_sink = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 				triggerMachineByHashCallback, "water into sink");
 			sendWSMessage_10000(1, _sink, _waterFlowFaucet, 1, 4, -1,
 				_waterFlowFaucet, 1, 4, 0);
@@ -1523,7 +1523,7 @@ void Room407::daemon() {
 			digi_play_loop("407_s32", 3);
 		} else {
 			digi_play_loop("407_s31", 3);
-			_sink = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			_sink = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 				triggerMachineByHashCallback, "water into sink");
 			sendWSMessage_10000(1, _sink, _waterFlowStem, 1, 4, -1,
 				_waterFlowStem, 1, 4, 0);
@@ -1762,9 +1762,9 @@ void Room407::pre_parser() {
 }
 
 void Room407::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (lookFlag && _G(walker).ripley_said(SAID)) {
 		// No implementation
@@ -2193,7 +2193,7 @@ take:
 		player_said("IRON SUPPORT") ||
 		player_said("AIR VALVE") ||
 		player_said("NOZZLES") ||
-		player_said("TALBE PIVOT") ||
+		player_said("TABLE PIVOT") ||
 		player_said("HIDDEN DOOR") ||
 		player_said("CEILING PISTON") ||
 		player_said("DRAWER") ||
@@ -3047,7 +3047,7 @@ bool Room407::lookLeverKey() {
 void Room407::gardenHoseSurgicalTube() {
 	switch (_G(kernel).trigger) {
 	case -1:
-		ws_walk(_G(my_walker), 170, 335, nullptr, 0, 11, 1);
+		ws_walk(_G(my_walker), 170, 335, nullptr, 0, 11, true);
 		break;
 	case 0:
 		if (_valveState1 == 1010) {
@@ -3550,7 +3550,7 @@ void Room407::placeLeverKey() {
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
 		ws_hide_walker();
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, false,
 			triggerMachineByHashCallback, "RIP levers ceiling");
 		sendWSMessage_10000(1, _ripley, _placeLeverKey, 1, 42, 2,
 			_placeLeverKey, 42, 42, 0);
@@ -3742,7 +3742,7 @@ void Room407::periodicTableGlassJar() {
 				_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
 			ws_hide_walker();
 
-			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, false,
 				triggerMachineByHashCallback, "RIP folds table into jar");
 			sendWSMessage_10000(1, _ripley, _rollStuff, 1, 90, 2,
 				_rollStuff, 90, 90, 0);
@@ -3851,7 +3851,7 @@ void Room407::pumpRodBracket() {
 			_G(player_info).y, _G(player_info).scale, 0xf00);
 		ws_hide_walker();
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, false,
 			triggerMachineByHashCallback, "RIP levers ceiling");
 		sendWSMessage_10000(1, _ripley, _407rp99, 1, 35, 2,
 			_407rp99, 35, 35, 0);
@@ -3894,7 +3894,7 @@ void Room407::leverKey1() {
 			_G(player_info).y, _G(player_info).scale, 0xf00);
 		ws_hide_walker();
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, false,
 			triggerMachineByHashCallback, "RIP levers ceiling");
 		sendWSMessage_10000(1, _ripley, _407rp98, 1, 53, 2,
 			_407rp98, 53, 53, 0);
@@ -3942,7 +3942,7 @@ void Room407::leverKey2() {
 			_G(player_info).y, _G(player_info).scale, 0xf00);
 		ws_hide_walker();
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, false,
 			triggerMachineByHashCallback, "RIP levers ceiling");
 		sendWSMessage_10000(1, _ripley, _placeLeverKey, 1, 30, 1,
 			_placeLeverKey, 30, 30, 0);
@@ -4082,7 +4082,7 @@ void Room407::pumpRodPump() {
 			_G(player_info).scale, 0xf00);
 
 		ws_hide_walker();
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 			triggerMachineByHashCallback, "RIP pumps");
 		sendWSMessage_10000(1, _ripley, _pump407, 1, 40, 1,
 			_pump407, 40, 40, 0);
@@ -4126,7 +4126,7 @@ void Room407::pumpGripsPump() {
 			_G(player_info).scale, 0xf00);
 		ws_hide_walker();
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 			triggerMachineByHashCallback, "RIP pumps");
 		sendWSMessage_10000(1, _ripley, _pump407, 1, 40, 1,
 			_pump407, 40, 40, 0);
@@ -4336,19 +4336,19 @@ void Room407::useButtons() {
 		_407pu08c = series_load("407PU08C");
 		_407pu08d = series_load("407PU08D");
 
-		_lockButton1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+		_lockButton1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 			triggerMachineByHashCallback, "LOCK button 1");
-		_lockButton2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+		_lockButton2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 			triggerMachineByHashCallback, "LOCK button 2");
-		_lockButton3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+		_lockButton3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 			triggerMachineByHashCallback, "LOCK button 3");
-		_lockButton4 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+		_lockButton4 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 			triggerMachineByHashCallback, "LOCK button 4");
 
-		int frame1 = _buttonFrame1 * 2 + 1;
-		int frame2 = _buttonFrame2 * 2 + 1;
-		int frame3 = _buttonFrame3 * 2 + 1;
-		int frame4 = _buttonFrame4 * 2 + 1;
+		const int frame1 = _buttonFrame1 * 2 + 1;
+		const int frame2 = _buttonFrame2 * 2 + 1;
+		const int frame3 = _buttonFrame3 * 2 + 1;
+		const int frame4 = _buttonFrame4 * 2 + 1;
 		sendWSMessage_10000(1, _lockButton1, _407pu08a, frame1, frame1, -1,
 			_407pu08a, frame1, frame1, 0);
 		sendWSMessage_10000(1, _lockButton2, _407pu08b, frame2, frame2, -1,
@@ -4379,7 +4379,7 @@ void Room407::useLeverKey() {
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
 		ws_hide_walker();
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 			triggerMachineByHashCallback, "RIP hangs from lever");
 		sendWSMessage_10000(1, _ripley, _hangRip, 1, 25, 2,
 			_hangRip, 25, 25, 0);
@@ -4547,7 +4547,7 @@ void Room407::usePump2() {
 			_G(player_info).scale, 0xf00);
 		ws_hide_walker();
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 			triggerMachineByHashCallback, "RIP pumps");
 		sendWSMessage_10000(1, _ripley, _pump407, 81, 62, 1,
 			_pump407, 62, 62, 0);
@@ -4700,7 +4700,7 @@ void Room407::takeFaucetPipe2() {
 			_hoseState = 1000;
 
 			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE/TUBE",
-				_G(master_palette), 5, 1, 400, 150, 3, 0, -1);
+				_G(master_palette), 5, 1, 400, 150, 3, nullptr, -1);
 		} else if (_hoseState == 1116) {
 			terminateMachineAndNull(_drawerPopupHose);
 			inv_give_to_player("GARDEN HOSE");
@@ -4708,10 +4708,10 @@ void Room407::takeFaucetPipe2() {
 			_hoseState = 1000;
 
 			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE",
-				_G(master_palette), 5, 1, 400, 150, 3, 0, -1);
+				_G(master_palette), 5, 1, 400, 150, 3, nullptr, -1);
 		} else {
 			kernel_examine_inventory_object("PING FAUCET PIPE",
-				_G(master_palette), 5, 1, 400, 150, 3, 0, -1);
+				_G(master_palette), 5, 1, 400, 150, 3, nullptr, -1);
 		}
 		break;
 
@@ -4760,7 +4760,7 @@ void Room407::takeFaucetPipe3() {
 			_tubeState = 1000;
 
 			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE/TUBE",
-				_G(master_palette), 5, 1, 75, 200, 2, 0, -1);
+				_G(master_palette), 5, 1, 75, 200, 2, nullptr, -1);
 		} else if (_tubeState == 1100) {
 			terminateMachineAndNull(_tubeInDrawer);
 			hotspot_set_active("SURGICAL TUBE   ", false);
@@ -4768,10 +4768,10 @@ void Room407::takeFaucetPipe3() {
 			_tubeState = 1000;
 
 			kernel_examine_inventory_object("PING FAUCET PIPE/TUBE",
-				_G(master_palette), 5, 1, 75, 200, 2, 0, -1);
+				_G(master_palette), 5, 1, 75, 200, 2, nullptr, -1);
 		} else {
 			kernel_examine_inventory_object("PING FAUCET PIPE",
-				_G(master_palette), 5, 1, 75, 200, 2, 0, -1);
+				_G(master_palette), 5, 1, 75, 200, 2, nullptr, -1);
 		}
 		break;
 
@@ -4994,10 +4994,10 @@ void Room407::takeGardenHose2() {
 			inv_give_to_player("FAUCET PIPE");
 			_faucetPipeState = 1000;
 			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE",
-				_G(master_palette), 5, 1, 175, 150, 3, 0, -1);
+				_G(master_palette), 5, 1, 175, 150, 3, nullptr, -1);
 		} else {
 			kernel_examine_inventory_object("PING GARDEN HOSE",
-				_G(master_palette), 5, 1, 175, 150, 3, 0, -1);
+				_G(master_palette), 5, 1, 175, 150, 3, nullptr, -1);
 		}
 		break;
 
@@ -5045,10 +5045,10 @@ void Room407::takeGardenHose3() {
 			inv_give_to_player("SURGICAL TUBE");
 			_tubeState = 1000;
 			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE",
-				_G(master_palette), 5, 1, 400, 150, 3, 0, -1);
+				_G(master_palette), 5, 1, 400, 150, 3, nullptr, -1);
 		} else {
 			kernel_examine_inventory_object("PING GARDEN HOSE",
-				_G(master_palette), 5, 1, 400, 150, 3, 0, -1);
+				_G(master_palette), 5, 1, 400, 150, 3, nullptr, -1);
 		}
 		break;
 
@@ -5143,7 +5143,7 @@ void Room407::takeGlassJar1() {
 		}
 
 		kernel_examine_inventory_object("PING GLASS JAR",
-			_G(master_palette), 5, 1, 375, 150, 3, 0, -1);
+			_G(master_palette), 5, 1, 375, 150, 3, nullptr, -1);
 		break;
 
 	case 3:
@@ -5194,7 +5194,7 @@ void Room407::takeGlassJar2() {
 		}
 
 		kernel_examine_inventory_object("PING GLASS JAR",
-			_G(master_palette), 5, 1, 100, 200, 3, 0, -1);
+			_G(master_palette), 5, 1, 100, 200, 3, nullptr, -1);
 		break;
 
 	case 3:
@@ -5230,7 +5230,7 @@ void Room407::takePeriodicTable1() {
 		inv_give_to_player("PERIODIC TABLE");
 		hotspot_set_active("PERIODIC TABLE", false);
 		kernel_examine_inventory_object("PING PERIODIC TABLE",
-			_G(master_palette), 5, 1, 450, 200, 3, 0, -1);
+			_G(master_palette), 5, 1, 450, 200, 3, nullptr, -1);
 		break;
 
 	case 3:
@@ -5263,7 +5263,7 @@ void Room407::takePeriodicTable2() {
 		inv_give_to_player("PERIODIC TABLE");
 		hotspot_set_active("PERIODIC TABLE ", false);
 		kernel_examine_inventory_object("PING PERIODIC TABLE",
-			_G(master_palette), 5, 1, 100, 200, 3, 0, -1);
+			_G(master_palette), 5, 1, 100, 200, 3, nullptr, -1);
 		break;
 
 	case 3:
@@ -5573,7 +5573,7 @@ void Room407::takeLeverKey3() {
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
 
 		ws_hide_walker();
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, false,
 			triggerMachineByHashCallback, "RIP levers ceiling");
 		sendWSMessage_10000(1, _ripley, _407rp98, 101, 81, 2,
 			_407rp98, 81, 81, 0);
@@ -5700,7 +5700,7 @@ void Room407::takePumpRod1() {
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
 
 		ws_hide_walker();
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 			triggerMachineByHashCallback, "RIP pumps");
 		sendWSMessage_10000(1, _ripley, _pump407, 1, 40, 1,
 			_pump407, 40, 40, 0);
@@ -5772,7 +5772,7 @@ void Room407::takePumpRod2() {
 				_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
 
 			ws_hide_walker();
-			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, false,
 				triggerMachineByHashCallback, "RIP levers ceiling");
 			sendWSMessage_10000(1, _ripley, _placeLeverKey, 70, 49, 2,
 				_placeLeverKey, 49, 49, 0);
@@ -5818,7 +5818,7 @@ void Room407::takePumpRod3() {
 		_safariShadow = series_place_sprite("SAFARI SHADOW 1", 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, false,
 			triggerMachineByHashCallback, "RIP takes pump rod from ceiling");
 		sendWSMessage_10000(1, _ripley, _407rp99, 61, 42, 2,
 			_407rp99, 42, 42, 0);
@@ -5887,7 +5887,7 @@ void Room407::takePumpGrips2() {
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
 		ws_hide_walker();
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 			triggerMachineByHashCallback, "RIP pumps");
 		sendWSMessage_10000(1, _ripley, _pump407, 1, 40, 1,
 			_pump407, 40, 40, 0);
