@@ -30,6 +30,7 @@ namespace MazeDoom {
 
 #define NUM_COLUMNS		25
 #define NUM_ROWS		19
+#define	NUM_TRAP_MAPS	 7							// There are seven trap icons available
 
 #define MAX_MAZE_SIZE_X	12
 #define MAX_MAZE_SIZE_Y	9
@@ -85,6 +86,9 @@ struct MazeGen {
 	int sqnum = 0, cur_sq_x = 0, cur_sq_y = 0;
 	int start_x = 0, start_y = 0, end_x = 0, end_y = 0;
 
+	Common::Point m_PlayerPos;
+	int m_nDifficulty = 0;
+
 	/**
 	 * Set the surrounding wall and start/end squares
 	 */
@@ -96,6 +100,22 @@ struct MazeGen {
 	void createMaze();
 
 	/**
+	 * Translates the random maze generated into
+	 * the mazeTile grid for the game
+	 *  IMPLICIT INPUT PARAMETERS:
+	 *
+	 *      maze[][]            The randomly generated maze
+	 *      Tile mazeTile[][] grid
+	 *      start_y
+	 *      exit_y
+	 *
+	 *  IMPLICIT OUTPUT PARAMETERS:
+	 *
+	 *      Tile mazeTile[][] grid
+	 */
+	void setupMaze();
+
+	/**
 	 * Pick a new path
 	 */
 	int chooseDoor();
@@ -104,6 +124,49 @@ struct MazeGen {
 	 * Back up a move
 	 */
 	int backup();
+
+	/**
+	 * Randomly sets a number of walls invisible
+	 *
+	 *  IMPLICIT INPUT PARAMETERS:
+	 *
+	 *      Tile mazeTile[][] grid
+	 *      m_nDifficulty       If it's MIN_DIFFICULTY, no walls are invisible
+	 *                          If it's MAX_DIFFICULTY, all walls are invisible
+	 *                          Otherwise, every m_nDifficulty-th wall is visible
+	 *
+	 *  IMPLICIT OUTPUT PARAMETERS:
+	 *
+	 *      Tile mazeTile[][] grid
+	 */
+	void setInvisibleWalls();
+
+	/**
+	 * Sets traps in the maze
+	 *
+	 *  IMPLICIT INPUT PARAMETERS:
+	 *
+	 *      Tile mazeTile[][] array
+	 *      m_nDifficulty       The the number of traps = difficulty setting
+	 *
+	 *  IMPLICIT OUTPUT PARAMETERS:
+	 *
+	 *      Tile mazeTile[][] array
+	 */
+	void setTraps();
+
+	/**
+	 * Gets a random Grid Point in the maze, which is a PATH (not START or EXIT)
+	 *
+	 *  IMPLICIT INPUT PARAMETERS:
+	 *
+	 *      Tile mazeTile[][] grid
+	 *
+	 *  RETURN VALUE:
+	 *
+	 *      Point      The random X and Y of a path space in the mazeTile grid
+	 */
+	Common::Point getRandomPoint(bool bRight);
 };
 
 } // namespace MazeDoom

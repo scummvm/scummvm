@@ -20,6 +20,7 @@
  */
 
 #include "bagel/hodjnpodj/maze_doom/maze_gen.h"
+#include "bagel/hodjnpodj/maze_doom/defines.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
@@ -138,9 +139,94 @@ void MazeGen::createMaze() {
 
 }
 
+void MazeGen::setupMaze() {
+	int x, y;
+	Common::Point exitPos;
+
+	for (y = 0; y < NUM_ROWS; y++)                         // Set the right wall solid
+		mazeTile[NUM_COLUMNS - 1][y].m_nWall = WALL;
+
+	for (x = 0; x < MAX_MAZE_SIZE_X; x++) {
+		for (y = 0; y < MAX_MAZE_SIZE_Y; y++) {
+			mazeTile[x * 2 + 1][y * 2 + 1].m_nWall = PATH;          // Always is PATH
+			mazeTile[x * 2][y * 2].m_nWall = PATH;              // Will be changed to WALL if 
+			if (maze[x][y] & WALL_TOP) {                   //...it is found below
+				mazeTile[x * 2][y * 2].m_nWall = WALL;
+				mazeTile[x * 2 + 1][y * 2].m_nWall = WALL;
+			} else
+				mazeTile[x * 2 + 1][y * 2].m_nWall = PATH;
+
+			if (maze[x][y] & WALL_LEFT) {
+				mazeTile[x * 2][y * 2].m_nWall = WALL;
+				mazeTile[x * 2][y * 2 + 1].m_nWall = WALL;
+			} else
+				mazeTile[x * 2][y * 2 + 1].m_nWall = PATH;
+		}
+	}
+
+	for (x = 0; x < NUM_COLUMNS; x++) {        // Now go through  mazeTile and fix up loose ends, as it were
+		for (y = 0; y < NUM_ROWS; y++) {
+			mazeTile[x][y].m_bHidden = false;
+			if (mazeTile[x][y].m_nWall == PATH) {
+				if (mazeTile[x + 1][y + 1].m_nWall == PATH && (mazeTile[x + 1][y].m_nWall == PATH &&
+					(mazeTile[x][y + 1].m_nWall == PATH &&
+						(mazeTile[x - 1][y].m_nWall == WALL && mazeTile[x][y - 1].m_nWall == WALL))))
+					mazeTile[x][y].m_nWall = WALL;              // If it's a right-hand corner 
+
+				if (mazeTile[x][y + 1].m_nWall == PATH && (mazeTile[x + 1][y - 1].m_nWall == PATH &&
+					(mazeTile[x - 1][y - 1].m_nWall == PATH &&
+						(mazeTile[x - 1][y + 1].m_nWall == PATH && (mazeTile[x + 1][y + 1].m_nWall == PATH &&
+							(mazeTile[x - 1][y].m_nWall == PATH && mazeTile[x + 1][y].m_nWall == PATH))))))
+					mazeTile[x][y].m_nWall = WALL;              // If it's two wide vertically from the top
+
+				if (mazeTile[x][y - 1].m_nWall == PATH && (mazeTile[x - 1][y - 1].m_nWall == PATH &&
+					(mazeTile[x - 1][y + 1].m_nWall == PATH &&
+						(mazeTile[x][y + 1].m_nWall == PATH && (mazeTile[x + 1][y - 1].m_nWall == PATH &&
+							(mazeTile[x + 1][y].m_nWall == PATH && mazeTile[x + 1][y + 1].m_nWall == PATH))))))
+					mazeTile[x][y].m_nWall = WALL;              // If it's two wide horizontally from the left
+
+				if (y == NUM_ROWS - 1)
+					mazeTile[x][y].m_nWall = WALL;              // Make bottom wall
+			}
+		}
+	}
+
+	x = NUM_COLUMNS - 1;                                // Get the Entry point
+	y = (start_y * 2) + 1;
+
+	m_PlayerPos.x = x - 1;                              // Start player in one space from the entrance
+
+	if (mazeTile[x - 1][y].m_nWall == WALL) {          // If a wall runs into the entry space 
+		mazeTile[x][y].m_nWall = WALL;                  //...make it a wall and put the entry
+		mazeTile[x][y + 1].m_nWall = START;             //...space under that
+		m_PlayerPos.y = y;                              // Put the player there
+	} else {
+		mazeTile[x][y].m_nWall = START;                 // Put in the entry way where it was     
+		mazeTile[x][y + 1].m_nWall = WALL;              //...and make sure the one below is a wall
+		m_PlayerPos.y = y;                              // Put the player there
+	}
+
+	x = end_x * 2;                                      // This should be 0
+	y = end_y * 2;
+	exitPos.x = x;
+
+	if (mazeTile[x + 1][y].m_nWall == WALL) {          // If a wall runs into the top exit space 
+		mazeTile[x][y].m_nWall = WALL;                  //...make it a wall and put the exit
+		exitPos.y = y + 1;                              //...one space above that
+	} else {
+		mazeTile[x][y + 1].m_nWall = WALL;              // Put the exit in the top space
+		exitPos.y = y;                                  //...and store the y position in m_pExit
+	}
+
+	mazeTile[exitPos.x][exitPos.y].m_nWall = EXIT;      // Make exit grid space a Pathway
+
+	setInvisibleWalls();                                // Hide some walls
+	setTraps();                                         // Put in some traps
+}
+
 int MazeGen::chooseDoor() {
 	int candidates[3];
-	register int num_candidates;
+	int num_candidates;
 
 	num_candidates = 0;
 
@@ -219,6 +305,95 @@ int MazeGen::backup() {
 	cur_sq_x = move_list[sqnum].x;
 	cur_sq_y = move_list[sqnum].y;
 	return sqnum;
+}
+
+void MazeGen::setInvisibleWalls() {
+	int x, y, i, j;
+	int nWallCount = 0;
+	int nMaxWalls = 0;
+	int nTotalWalls = 0;
+
+	for (x = 1; x < (NUM_COLUMNS - 1); x++) {                     // Don't make edge walls invisible !!
+		for (y = 1; y < (NUM_ROWS - 1); y++) {
+			if (mazeTile[x][y].m_nWall == WALL) {
+				if (m_nDifficulty > MIN_DIFFICULTY)               // Most difficult has all walls hidden  
+					mazeTile[x][y].m_bHidden = true;                // Start with all walls hidden
+				else
+					mazeTile[x][y].m_bHidden = false;               // Least difficult has no walls hidden
+				nTotalWalls++;
+			}
+		}
+	}
+
+	if (m_nDifficulty > MIN_DIFFICULTY && m_nDifficulty < MAX_DIFFICULTY) {
+		x = g_engine->getRandomNumber((NUM_COLUMNS - 4) - 1) + 2;                       // Avoid the edge walls
+		y = g_engine->getRandomNumber((NUM_ROWS - 4) - 1) + 2;
+		nMaxWalls = nTotalWalls - (int)(m_nDifficulty * (nTotalWalls / 10));
+
+		while (nWallCount < nMaxWalls) {
+			if (mazeTile[x][y].m_nWall == WALL && mazeTile[x][y].m_bHidden) {
+				for (i = x - 1; i <= x + 1; i++) {
+					for (j = y - 1; j <= y + 1; j++) {
+						if (mazeTile[i][j].m_nWall == WALL && mazeTile[i][j].m_bHidden) {
+							mazeTile[i][j].m_bHidden = false;       // so it's not hidden
+							nWallCount++;                           // increment the count
+						}
+					}
+				}
+			}
+
+			x += g_engine->getRandomNumber(NUM_NEIGHBORS - 1);// + 1;                                   // Increment Column 
+			y += g_engine->getRandomNumber(NUM_NEIGHBORS - 1);// + 1;                                   // Increment Row
+			if (x >= (NUM_COLUMNS - 2))
+				x = g_engine->getRandomNumber((NUM_COLUMNS - 4) - 1) + 2;               // If we're at the end,
+			if (y >= (NUM_ROWS - 2))
+				y = g_engine->getRandomNumber((NUM_COLUMNS - 4) - 1) + 2;               //...reset the counter
+		}
+	}
+}
+
+void MazeGen::setTraps() {
+	int nTrapCount;
+	int nNumTraps;
+	Common::Point In;
+
+	nNumTraps = MIN_TRAPS + (m_nDifficulty / 2);          // 4 + ([1...10]/2) = 4 to 9 
+
+	for (nTrapCount = 0; nTrapCount < nNumTraps; nTrapCount++) {
+		In = getRandomPoint(false);                                       // Pick a random PATH square
+		mazeTile[In.x][In.y].m_nWall = TRAP;                                // Make it a TRAP
+		mazeTile[In.x][In.y].m_bHidden = true;                              // Hide it
+		mazeTile[In.x][In.y].m_nTrap = nTrapCount % NUM_TRAP_MAPS;          // Assign unique trap bitmap ID
+		mazeTile[In.x][In.y].m_nDest = getRandomPoint(true);              // Pick a random Trap destination
+	}
+}
+
+Common::Point MazeGen::getRandomPoint(bool bRight) {
+	Common::Point point;
+	bool bLocated = false;
+
+	// Get random column
+	if (bRight)
+		point.x = g_engine->getRandomNumber((2 * (NUM_COLUMNS / 3)) - 1) +
+			(NUM_COLUMNS / 3);
+	else
+		point.x = g_engine->getRandomNumber(2 * (NUM_COLUMNS / 3) - 1);
+
+	// Get random row
+	point.y = g_engine->getRandomNumber(NUM_ROWS - 1);
+
+	while (!bLocated) {
+		if (mazeTile[point.x][point.y].m_nWall == PATH)
+			bLocated = true;                                                // OK if it's a pathway
+		else {                                                              // Otherwise, keep lookin'
+			point.x++;                                                      // Increment Column 
+			point.y++;                                                      // Increment Row
+			if (point.x == NUM_COLUMNS) point.x = 1;                      // If we're at the end,
+			if (point.y == NUM_ROWS) point.y = 1;                         //...reset the counter
+		}
+	}
+
+	return point;
 }
 
 } // namespace MazeDoom

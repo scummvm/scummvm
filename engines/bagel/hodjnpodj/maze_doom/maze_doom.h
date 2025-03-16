@@ -30,8 +30,6 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace MazeDoom {
 
-#define	NUM_TRAP_MAPS	 7							// There are seven trap icons available
-
 class MazeDoom : public MinigameView, public MazeGen {
 private:
 	const char *_upBmp = nullptr, *_downBmp = nullptr,
@@ -53,8 +51,6 @@ private:
 	bool m_bIgnoreScrollClick = false;
 	bool bPlaying = false;
 	bool m_bGameOver = false;
-	Common::Point m_PlayerPos;
-	int m_nDifficulty = 0;
 	int m_nTime = 0, nSeconds = 0, nMinutes = 0;
 	int tempDifficulty = 0;
 	int tempTime = 0;
@@ -63,22 +59,6 @@ private:
 	void loadBitmaps();
 	void showMainMenu();
 	void setupSettings();
-
-	/**
-	 * Translates the random maze generated into
-	 * the mazeTile grid for the game
-	 *  IMPLICIT INPUT PARAMETERS:
-	 *
-	 *      maze[][]            The randomly generated maze
-	 *      TILE mazeTile[][] grid
-	 *      start_y
-	 *      exit_y
-	 *
-	 *  IMPLICIT OUTPUT PARAMETERS:
-	 *
-	 *      TILE mazeTile[][] grid
-	**/
-	void setUpMaze();
 
 public:
 	MazeDoom();
