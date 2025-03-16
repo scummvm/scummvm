@@ -755,10 +755,15 @@ void Room501::daemon() {
 				"WHEELED TOY", "REBUS AMULET", "SHRUNKEN HEAD",
 				"SILVER BUTTERFLY", "POSTAGE STAMP",
 				"GERMAN BANKNOTE", "WHALE BONE HORN",
-				"CHISEL",  "INCENSE BURNER",  "INCENSE BURNER"
+				"CHISEL",  "INCENSE BURNER",  "ROMANOV EMERALD"
 			};
 
-			inv_move_object(ITEMS[item], (item == 11) ? NOWHERE : 305);
+			if (item != 11)
+				inv_move_object(ITEMS[item], 305);
+			else {
+				setFlag45();
+				inv_move_object(ITEMS[item], NOWHERE);
+			}
 		}
 		conv_resume();
 		break;
