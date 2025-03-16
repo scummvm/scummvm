@@ -550,6 +550,11 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 		// seems not to be used
 		warning("exCommand EX_FORCE_TALKIE_TEXT: not implemented");
 		break;
+	case EX_SCREEN_SIZE:
+		// only on mobile, used in Bridge.nut: objectScale(text, (exCommand(EX_SCREEN_SIZE) == 3) ? 0.75 : 0.5)
+		sqpush(v, 0);
+		return 1;
+		break;
 	default:
 		warning("exCommand(%lld) not implemented", cmd);
 		break;
@@ -911,6 +916,7 @@ void sqgame_register_constants(HSQUIRRELVM v) {
 	regConst(v, "EX_SHOW_OPTIONS", EX_SHOW_OPTIONS);
 	regConst(v, "EX_OPTIONS_MUSIC", EX_OPTIONS_MUSIC);
 	regConst(v, "EX_FORCE_TALKIE_TEXT", EX_FORCE_TALKIE_TEXT);
+	regConst(v, "EX_SCREEN_SIZE", EX_SCREEN_SIZE);
 	regConst(v, "GRASS_BACKANDFORTH", GRASS_BACKANDFORTH);
 	regConst(v, "EFFECT_NONE", EFFECT_NONE);
 	regConst(v, "DOOR", DOOR);

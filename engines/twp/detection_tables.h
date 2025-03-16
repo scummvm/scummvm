@@ -26,6 +26,20 @@ const PlainGameDescriptor twpGames[] = {
 	{0, 0}};
 
 const TwpGameDescription gameDescriptions[] = {
+	// Thimbleweed Park - App Store/1.0.2
+	{
+		{
+			"twp",
+			"App Store/1.0.2", // release from 2017-09-28
+			AD_ENTRY1s("ThimbleweedPark.ggpack1", "d6ec4c9073c0c41aa8cb685f7a0d8088", 955615767),
+			Common::UNK_LANG,
+			Common::kPlatformIOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_XORKEY_566D,
+		LS_WITH_RUSSIAN
+	},
 	// Thimbleweed Park - STEAM/1.0.859
 	{
 		{
