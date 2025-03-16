@@ -563,7 +563,7 @@ void Score::update() {
 
 			// Don't process frozen script if we use jump instructions
 			// like "go to frame", or open a new movie.
-			if (!_nextFrame || _nextFrame == _curFrameNumber) {
+			if (!_nextFrame) {
 				processFrozenScripts();
 			}
 			return;
@@ -639,7 +639,7 @@ void Score::update() {
 	if (_vm->getVersion() >= 400 && _window->frozenLingoRecursionCount() >= 2) {
 		debugC(1, kDebugEvents, "Score::update(): hitting D4 recursion depth limit, defrosting");
 		processFrozenScripts(true);
-		// keep plowing on
+		return;
 	} else if (_window->frozenLingoStateCount() >= 64) {
 		warning("Score::update(): Stopping runaway script recursion. By this point D3 will have run out of stack space");
 		processFrozenScripts();
@@ -667,6 +667,11 @@ void Score::update() {
 	if (_window->frozenLingoStateCount() > count)
 		return;
 
+	// If we've hit the recursion limit, don't enterFrame
+	if (_vm->getVersion() >= 400 && _window->frozenLingoRecursionCount() >= 2) {
+		debugC(1, kDebugEvents, "Score::update: exiting early due to recursion depth limit");
+		return;
+	}
 
 	// then call the enterFrame hook (if one exists)
 	count = _window->frozenLingoStateCount();
