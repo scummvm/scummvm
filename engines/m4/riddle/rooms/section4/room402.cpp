@@ -1823,6 +1823,7 @@ void Room402::useTopiary() {
 		player_update_info();
 		_safariShadow = series_place_sprite("SAFARI SHADOW 3", 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
+		ws_hide_walker(_G(my_walker));
 		_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x200, false,
 			triggerMachineByHashCallback, "rip entering castle");
 		sendWSMessage_10000(1, _ripEnterLeave, _ripMessesBush, 1, 10, 1,
