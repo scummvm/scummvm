@@ -39,8 +39,8 @@ MazeDoom::MazeDoom() : MinigameView("MazeDoom", "mazedoom/hnpmaze.dll"),
 			SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1)
 		),
 		pPlayerSprite(this),
-		_timeRect(RectWH(TIME_LOCATION_X + 20, TIME_LOCATION_Y,
-			TIME_WIDTH - 20, TIME_HEIGHT)) {
+		_timeRect(RectWH(TIME_LOCATION_X + 50, TIME_LOCATION_Y,
+			TIME_WIDTH - 50, TIME_HEIGHT)) {
 	addResource(IDB_LOCALE_BMP, Common::WinResourceID("idb_locale_bmp"));
 	addResource(IDB_BLANK_BMP, Common::WinResourceID("idb_blank_bmp"));
 	addResource(IDB_PARTS_BMP, IDB_PARTS);

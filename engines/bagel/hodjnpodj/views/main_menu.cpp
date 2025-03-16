@@ -111,12 +111,12 @@ bool MainMenu::msgGame(const GameMessage &msg) {
 			return true;
 		} else if (btn == "MenuNewGame") {
 			close();
-			_parent->send(GameMessage("NEW_GAME"));
+			g_events->focusedView()->send(GameMessage("NEW_GAME"));
 			return true;
 		} else if (btn == "MenuOptions") {
 			// Pass a message to the minigame to show it's
 			// custom options dialog
-			_parent->send(GameMessage("OPTIONS"));
+			g_events->priorView()->send(GameMessage("OPTIONS"));
 			return true;
 		} else if (btn == "MenuContinue") {
 			// Return to minigame
