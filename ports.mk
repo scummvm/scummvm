@@ -642,8 +642,8 @@ osxsnap: bundle
 	cp $(DIST_FILES_DOCS_it) ./ScummVM-snapshot/doc/it/
 	mkdir ScummVM-snapshot/doc/no-nb
 	cp $(DIST_FILES_DOCS_no-nb) ./ScummVM-snapshot/doc/no-nb/
-	mkdir ScummVM-snapshot/doc/se
-	cp $(DIST_FILES_DOCS_se) ./ScummVM-snapshot/doc/se/
+	mkdir ScummVM-snapshot/doc/sv
+	cp $(DIST_FILES_DOCS_se) ./ScummVM-snapshot/doc/sv/
 	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/doc/QuickStart
 	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/doc/*/*
 ifndef MACOSX_LEOPARD_OR_BELOW
