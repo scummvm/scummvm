@@ -72,6 +72,13 @@ static const char *const SAID[][2] = {
 	{ nullptr, nullptr }
 };
 
+void Room407::preload() {
+	_G(player).walker_type = 1;
+	_G(player).shadow_type = 1;
+
+	LoadWSAssets("OTHER SCRIPT", _G(master_palette));
+}
+
 void Room407::init() {
 	player_set_commands_allowed(false);
 	digi_preload("407_s31");
