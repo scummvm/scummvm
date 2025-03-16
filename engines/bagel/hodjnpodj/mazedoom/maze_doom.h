@@ -48,6 +48,7 @@ private:
 	bool m_bIgnoreScrollClick = false;
 	bool bPlaying = false;
 	bool m_bGameOver = false;
+	uint32 _priorTime = 0;
 	int m_nTime = 0, nSeconds = 0, nMinutes = 0;
 	int tempDifficulty = 0;
 	int tempTime = 0;
@@ -57,6 +58,8 @@ private:
 	void loadBitmaps();
 	void setupSettings();
 	void newGame();
+	void updateTimer();
+	void gameOver();
 
 protected:
 	void showMainMenu() override;
@@ -67,6 +70,7 @@ public:
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
+	bool msgFocus(const FocusMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 	bool tick() override;

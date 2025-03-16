@@ -27,6 +27,7 @@
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/views/main_menu.h"
 #include "bagel/hodjnpodj/views/rules.h"
+#include "bagel/hodjnpodj/views/message_box.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -88,6 +89,11 @@ bool MazeDoom::msgClose(const CloseMessage &msg) {
 	return true;
 }
 
+bool MazeDoom::msgFocus(const FocusMessage &msg) {
+	_priorTime = g_system->getMillis();
+	return MinigameView::msgFocus(msg);
+}
+
 bool MazeDoom::msgGame(const GameMessage &msg) {
 	MinigameView::msgGame(msg);
 
@@ -99,6 +105,14 @@ bool MazeDoom::msgGame(const GameMessage &msg) {
 		assert(!pGameParams->bPlayingMetagame);
 		newGame();
 		return true;
+	} else if (msg._name == "GAME_OVER") {
+		CBofSound::waitWaveSounds();
+		if (pGameParams->bPlayingMetagame) {
+			pGameParams->lScore = 0;
+			close();
+		}
+
+		return true;
 	}
 
 	return false;
@@ -107,7 +121,56 @@ bool MazeDoom::msgGame(const GameMessage &msg) {
 bool MazeDoom::tick() {
 	MinigameView::tick();
 
+	uint32 time = g_system->getMillis();
+	if (time >= (_priorTime + 1000)) {
+		_priorTime = time;
+
+		if (bPlaying && !m_bGameOver)
+			updateTimer();
+	}
+
 	return true;
+}
+
+void MazeDoom::updateTimer() {
+	if (m_nTime == 0) {
+		// No time limit, increment 
+		nSeconds++;
+		if (nSeconds == 60) {
+			nMinutes++;
+			nSeconds = 0;
+		}
+	} else {
+		// Count down time left
+		if (nSeconds == 0 && nMinutes == 0) {
+			gameOver();
+		} else if (nSeconds == 0) {
+			nMinutes--;
+			nSeconds = 60;
+		}
+
+		nSeconds--;
+	}
+
+	redraw();
+}
+
+void MazeDoom::gameOver() {
+	CBofSound *pEffect = nullptr;
+
+	bPlaying = false;
+	m_bGameOver = true;
+
+	if (pGameParams->bSoundEffectsEnabled) {
+		pEffect = new CBofSound(this, LOSE_SOUND,
+			SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
+		(*pEffect).play();                                                      //...play the narration
+	}
+
+	g_events->clearEvents();
+
+	MessageBox::show("Game over.", "Time ran out!",
+		"GAME_OVER");
 }
 
 void MazeDoom::draw() {
@@ -231,9 +294,14 @@ void MazeDoom::setupSettings() {
 	tempTime = m_nTime;
 	nSeconds = m_nTime % 60;
 	nMinutes = m_nTime / 60;
+	_priorTime = g_system->getMillis();
 }
 
 void MazeDoom::showMainMenu() {
+	// Flag is not initially set so we can draw the maze
+	// in standalone mode withouth the time remaining showing
+	bPlaying = true;
+
 	MainMenu::show(
 		pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0,
 		RULES_TEXT,
@@ -243,6 +311,7 @@ void MazeDoom::showMainMenu() {
 void MazeDoom::newGame() {
 	m_nTime = tempTime;				// Get new time limit,
 	m_nDifficulty = tempDifficulty;	//...new Difficulty
+	_priorTime = g_system->getMillis();
 
 	if (m_nTime != 0) {				// If we've got a time limit
 		nMinutes = m_nTime / 60;	//...get the minutes and seconds

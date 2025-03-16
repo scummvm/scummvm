@@ -208,6 +208,12 @@ void Events::redrawViews() {
 	}
 }
 
+void Events::clearEvents() {
+	Common::Event evt;
+	while (g_system->getEventManager()->pollEvent(evt) && !shouldQuit()) {
+	}
+}
+
 bool Events::isPresent(const Common::String &name) const {
 	for (uint i = 0; i < _views.size(); ++i) {
 		if (_views[i]->_name == name)

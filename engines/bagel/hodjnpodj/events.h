@@ -386,6 +386,11 @@ public:
 	void redrawViews();
 
 	/**
+	 * Clear any pending events
+	 */
+	void clearEvents();
+
+	/**
 	 * Returns the currently focused view, if any
 	 */
 	UIElement *focusedView() const {
