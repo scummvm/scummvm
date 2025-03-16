@@ -257,7 +257,7 @@ public:
 	inline float &depthScale() { return _depthScale; }
 	inline Color &color() { return _color; }
 	inline int32 &frameI() { return _frameI; }
-	inline uint32 lastTime() const { return _lastTime; }
+	inline uint32 &lastTime() { return _lastTime; }
 	inline bool isPaused() const { return _isPaused; }
 	inline bool hasAnimation() const { return _animation != nullptr; }
 	inline Animation &animation() {

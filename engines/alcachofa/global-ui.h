@@ -36,21 +36,24 @@ public:
 	inline Font &generalFont() const { assert(_generalFont != nullptr); return *_generalFont; }
 	inline Font &dialogFont() const { assert(_dialogFont != nullptr); return *_dialogFont; }
 
+	bool updateChangingCharacter();
+	void drawChangingButton();
 	bool updateOpeningInventory();
 	void updateClosingInventory();
 	void startClosingInventory();
 
 private:
+	Animation *activeAnimation() const;
+	bool isHoveringChangeButton() const;
+
+	Graphic _changeButton;
 	Common::ScopedPtr<Font>
 		_generalFont,
 		_dialogFont;
 	Common::ScopedPtr<Animation>
 		_iconMortadelo,
 		_iconFilemon,
-		_iconInventory,
-		_iconMortadeloDisabled,
-		_iconFilemonDisabled,
-		_iconInventoryDisabled;
+		_iconInventory;
 
 	bool
 		_isOpeningInventory = false,

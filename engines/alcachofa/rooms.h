@@ -131,7 +131,7 @@ enum class GlobalAnimationKind {
 	MortadeloIcon,
 	FilemonIcon,
 	InventoryIcon,
-	MortadeloDisabledIcon,
+	MortadeloDisabledIcon, // only used for multiplayer
 	FilemonDisabledIcon,
 	InventoryDisabledIcon,
 

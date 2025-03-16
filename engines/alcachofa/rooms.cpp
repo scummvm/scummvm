@@ -178,21 +178,26 @@ bool Room::updateInput() {
 	if (player.isOptionsMenuOpen() || !player.isGameLoaded())
 		canInteract = true;
 	if (canInteract) {
-		updateInteraction();
-		player.updateCursor();
+		player.resetCursor();
+		if (!g_engine->globalUI().updateChangingCharacter() &&
+			!g_engine->globalUI().updateOpeningInventory()) {
+			updateInteraction();
+			player.updateCursor();
+		}
+		player.drawCursor();
 	}
 
-	// TODO: Add main menu and opening inventory handling
+	if (player.currentRoom() == this) {
+		g_engine->globalUI().drawChangingButton();
+		// TODO: Add main menu handling
+	}
+
 	return player.currentRoom() == this;
 }
 
 void Room::updateInteraction() {
 	auto &player = g_engine->player();
 	auto &input = g_engine->input();
-	// TODO: Add interaction with change character button
-
-	if (g_engine->globalUI().updateOpeningInventory())
-		return;
 
 	player.selectedObject() = world().globalRoom().getSelectedObject(getSelectedObject());
 	if (player.selectedObject() == nullptr) {

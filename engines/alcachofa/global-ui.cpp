@@ -49,18 +49,12 @@ GlobalUI::GlobalUI() {
 	_iconMortadelo.reset(new Animation(world.getGlobalAnimationName(GlobalAnimationKind::MortadeloIcon)));
 	_iconFilemon.reset(new Animation(world.getGlobalAnimationName(GlobalAnimationKind::FilemonIcon)));
 	_iconInventory.reset(new Animation(world.getGlobalAnimationName(GlobalAnimationKind::InventoryIcon)));
-	_iconMortadeloDisabled.reset(new Animation(world.getGlobalAnimationName(GlobalAnimationKind::MortadeloDisabledIcon)));
-	_iconFilemonDisabled.reset(new Animation(world.getGlobalAnimationName(GlobalAnimationKind::FilemonDisabledIcon)));
-	_iconInventoryDisabled.reset(new Animation(world.getGlobalAnimationName(GlobalAnimationKind::InventoryDisabledIcon)));
 
 	_generalFont->load();
 	_dialogFont->load();
 	_iconMortadelo->load();
 	_iconFilemon->load();
 	_iconInventory->load();
-	_iconMortadeloDisabled->load();
-	_iconFilemonDisabled->load();
-	_iconInventoryDisabled->load();
 }
 
 void GlobalUI::startClosingInventory() {
@@ -106,6 +100,84 @@ bool GlobalUI::updateOpeningInventory() {
 		return true;
 	}
 	return false;
+}
+
+Animation *GlobalUI::activeAnimation() const {
+	return g_engine->player().activeCharacterKind() == MainCharacterKind::Mortadelo
+		? _iconFilemon.get()
+		: _iconMortadelo.get();
+}
+
+bool GlobalUI::isHoveringChangeButton() const {
+	auto mousePos = g_engine->input().mousePos2D();
+	auto anim = activeAnimation();
+	auto offset = anim->totalFrameOffset(0);
+	auto bounds = anim->frameBounds(0);
+
+	const int minX = g_system->getWidth() + offset.x;
+	const int maxY = bounds.height() + offset.y;
+	return mousePos.x >= minX && mousePos.y <= maxY;
+}
+
+bool GlobalUI::updateChangingCharacter() {
+	auto &player = g_engine->player();
+	if (player.isOptionsMenuOpen() ||
+		!player.isGameLoaded() ||
+		_isOpeningInventory)
+		return false;
+	_changeButton.frameI() = 0;
+
+	if (!isHoveringChangeButton())
+		return false;
+	if (g_engine->input().wasMouseLeftPressed())
+	{
+		player.pressedObject() = &_changeButton;
+		return true;
+	}
+	if (player.pressedObject() != &_changeButton)
+		return true;
+
+	player.setActiveCharacter(player.inactiveCharacter()->kind());
+	player.heldItem() = nullptr;
+	g_engine->camera().setFollow(player.activeCharacter());
+	g_engine->camera().restore(0);
+	player.changeRoom(player.activeCharacter()->room()->name(), false);
+	// TODO: Queue character change jingle
+
+	_changeButton.setAnimation(activeAnimation());
+	_changeButton.start(false);
+	return true;
+}
+
+void GlobalUI::drawChangingButton() {
+	auto &player = g_engine->player();
+	if (player.isOptionsMenuOpen() ||
+		!player.isGameLoaded() ||
+		!player.semaphore().isReleased() ||
+		_isOpeningInventory ||
+		_isClosingInventory)
+		return;
+
+	auto anim = activeAnimation();
+	if (!_changeButton.hasAnimation() || &_changeButton.animation() != anim)
+	{
+		_changeButton.setAnimation(anim);
+		_changeButton.pause();
+		_changeButton.lastTime() = 42 * (anim->frameCount() - 1) + 1;
+	}
+
+	_changeButton.center() = { (int16)(g_system->getWidth() + 2), -2 };
+	if (isHoveringChangeButton() &&
+		g_engine->input().isMouseLeftDown() &&
+		player.pressedObject() == &_changeButton)
+	{
+		_changeButton.center().x -= 2;
+		_changeButton.center().y += 2;
+	}
+
+	_changeButton.order() = -9;
+	_changeButton.update();
+	g_engine->drawQueue().add<AnimationDrawRequest>(_changeButton, false, BlendMode::AdditiveAlpha);
 }
 
 }
