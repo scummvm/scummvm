@@ -446,8 +446,10 @@ void MazeDoom::loadIniSettings() {
 
 		m_nDifficulty = !ConfMan.hasKey("Difficulty") ? DEFAULT_DIFFICULTY :
 			CLIP(ConfMan.getInt("Difficulty"), MIN_DIFFICULTY, MAX_DIFFICULTY);
-		m_nTime = !ConfMan.hasKey("Time") ? TIMER_DEFAULT :
-			CLIP(ConfMan.getInt("Time"), TIMER_MIN, TIMER_MAX);
+		m_nTime = TIME_SCALES[
+			!ConfMan.hasKey("Time") ? TIMER_DEFAULT :
+				CLIP(ConfMan.getInt("Time"), TIMER_MIN, TIMER_MAX)
+		];
 
 		ConfMan.setActiveDomain(domain);
 	}

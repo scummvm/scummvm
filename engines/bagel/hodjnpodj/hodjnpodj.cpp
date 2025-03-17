@@ -55,6 +55,7 @@ HodjNPodjEngine::~HodjNPodjEngine() {
 
 Common::Error HodjNPodjEngine::run() {
 	initGraphics(GAME_WIDTH, GAME_HEIGHT);
+	_screen = new Graphics::Screen();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -66,7 +67,6 @@ Common::Error HodjNPodjEngine::run() {
 		if (!_fonts[size].loadFromFON("msserif.fon",
 				Graphics::WinFontDirEntry("MS Sans Serif", size)))
 			error("Could not load msserif.fon");
-
 	}
 
 	// Run the game

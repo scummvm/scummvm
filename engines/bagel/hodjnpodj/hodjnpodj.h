@@ -76,6 +76,13 @@ public:
 		return BagelEngine::getRandomNumber(maxNum);
 	}
 
+	/**
+	 * Returns the underlying screen
+	 */
+	Graphics::Screen *getScreen() const override {
+		return _screen;
+	}
+
 	bool hasFeature(EngineFeature f) const override {
 		return
 			(f == kSupportsLoadingDuringRuntime) ||

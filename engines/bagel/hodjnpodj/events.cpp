@@ -45,7 +45,7 @@ Events::~Events() {
 
 void Events::runGame() {
 	uint currTime, nextFrameTime = 0;
-	_screen = new Graphics::Screen();
+
 	Views views;	// Loads all views in the structure
 
 	loadCursors();
@@ -111,11 +111,9 @@ void Events::runGame() {
 			nextFrameTime = currTime + FRAME_DELAY;
 			tick();
 			drawElements();
-			_screen->update();
+			getScreen()->update();
 		}
 	}
-
-	delete _screen;
 }
 
 void Events::processEvent(Common::Event &ev) {

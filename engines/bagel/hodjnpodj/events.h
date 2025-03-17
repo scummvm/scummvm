@@ -312,7 +312,6 @@ public:
  */
 class Events : public UIElement, public Cursor, public Palette {
 private:
-	Graphics::Screen *_screen = nullptr;
 	Common::Stack<UIElement *> _views;
 
 protected:
@@ -421,9 +420,7 @@ public:
 	/**
 	 * Returns the underlying screen
 	 */
-	Graphics::Screen *getScreen() const {
-		return _screen;
-	}
+	virtual Graphics::Screen *getScreen() const = 0;
 
 	/**
 	 * Draws the focused view
