@@ -163,6 +163,8 @@ void Events::replaceView(UIElement *ui, bool replaceAllViews) {
 	ui->redraw();
 	ui->msgFocus(FocusMessage(priorView));
 	ui->msgOpen(OpenMessage());
+
+	_leftButtonDown = _rightButtonDown = false;
 }
 
 void Events::replaceView(const Common::String &name, bool replaceAllViews) {
@@ -180,6 +182,8 @@ void Events::addView(UIElement *ui) {
 	ui->redraw();
 	ui->msgFocus(FocusMessage(priorView));
 	ui->msgOpen(OpenMessage());
+
+	_leftButtonDown = _rightButtonDown = false;
 }
 
 void Events::addView(const Common::String &name) {
@@ -203,6 +207,8 @@ void Events::popView() {
 		view->redraw();
 		view->draw();
 	}
+
+	_leftButtonDown = _rightButtonDown = false;
 }
 
 void Events::redrawViews() {
@@ -216,6 +222,8 @@ void Events::clearEvents() {
 	Common::Event evt;
 	while (g_system->getEventManager()->pollEvent(evt) && !shouldQuit()) {
 	}
+
+	_leftButtonDown = _rightButtonDown = false;
 }
 
 bool Events::isPresent(const Common::String &name) const {
