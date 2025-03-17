@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "image/bmp.h"
 #include "bagel/hodjnpodj/mazedoom/maze_doom.h"
@@ -440,9 +441,15 @@ void MazeDoom::loadIniSettings() {
 			m_nTime = 60;
 		}
 	} else {
-		// Use Defaults 
-		m_nDifficulty = DEFAULT_DIFFICULTY;                      // Miner
-		m_nTime = DEFAULT_TIME;
+		Common::String domain = ConfMan.getActiveDomainName();
+		ConfMan.setActiveDomain("MazeDoom");
+
+		m_nDifficulty = !ConfMan.hasKey("Difficulty") ? DEFAULT_DIFFICULTY :
+			CLIP(ConfMan.getInt("Difficulty"), MIN_DIFFICULTY, MAX_DIFFICULTY);
+		m_nTime = !ConfMan.hasKey("Time") ? TIMER_DEFAULT :
+			CLIP(ConfMan.getInt("Time"), TIMER_MIN, TIMER_MAX);
+
+		ConfMan.setActiveDomain(domain);
 	}
 
 	_tempDifficulty = m_nDifficulty;

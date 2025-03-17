@@ -64,7 +64,6 @@ namespace MazeDoom {
 // Timer constants
 #define MIN_TIME			 15						//  15 Seconds
 #define MAX_TIME			180						// 180 Seconds = 3 minute max
-#define DEFAULT_TIME		180
 #define TIMER_MIN			  0						// Increment scrollbar in steps of 15 Secs
 #define TIMER_MAX			 10						// if Time > MAX_TIME, No Time Limit
 #define TIMER_DEFAULT		  6

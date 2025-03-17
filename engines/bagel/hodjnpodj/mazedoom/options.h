@@ -30,6 +30,8 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace MazeDoom {
 
+extern const int16 TIME_SCALES[10];
+
 class Options : public View {
 private:
 	GfxSurface _background;

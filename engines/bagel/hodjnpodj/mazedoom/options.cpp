@@ -29,7 +29,7 @@ namespace MazeDoom {
 
 #define LEFT_SIDE		 30
 
-static const int m_nTimeScale[10] = {
+const int16 TIME_SCALES[10] = {
 	30, 45, 60, 75, 90, 120, 180, 240, 300, 600
 };
 
@@ -47,7 +47,7 @@ static const char *mDifficultyTable[10] = {
 };
 
 Options::Options() : View("MazeDoomOptions"),
-		_time(DEFAULT_TIME),
+		_time(TIMER_DEFAULT),
 		_difficulty(DEFAULT_DIFFICULTY),
 		_timeLeftRect(LEFT_SIDE, 25, LEFT_SIDE + 70, 40),
 		_difficultyTitleRect(LEFT_SIDE, 45, LEFT_SIDE + 80, 70),
@@ -126,8 +126,8 @@ void Options::draw() {
 	s.writeString(mDifficultyTable[_difficulty],
 		_difficultyRect, BLACK);
 
-	int mins = m_nTimeScale[_time] / 60;
-	int secs = m_nTimeScale[_time] % 60;
+	int mins = TIME_SCALES[_time] / 60;
+	int secs = TIME_SCALES[_time] % 60;
 	s.writeString(Common::String::format("Time Limit: %02d:%02d",
 		mins, secs), _timeRect, BLACK);
 }
