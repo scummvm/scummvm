@@ -511,7 +511,7 @@ void decodeV2String(Common::Language lang, Common::String &str) {
 	case Common::RU_RUS:
 		map = mapRU;
 		break;
-	case Common::SE_SWE:
+	case Common::SV_SWE:
 		map = mapSE;
 		break;
 	default:
@@ -779,7 +779,7 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 	case Common::RU_RUS:
 		langIndex = useFixedDottMenuStrings ? 0 : 5;
 		break;
-	case Common::SE_SWE:
+	case Common::SV_SWE:
 		langIndex = useFixedDottMenuStrings ? 0 : 6;
 		break;
 	case Common::JA_JPN:

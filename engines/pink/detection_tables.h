@@ -208,7 +208,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"peril",
 		0,
 		AD_ENTRY1s("PPTP.ORB", "eadbc52f4c43b85edb7cc493b4149ba0", 633843917),
-		Common::SE_SWE,
+		Common::SV_SWE,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
@@ -352,7 +352,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"pokus",
 		0,
 		AD_ENTRY1s("HPP.orb", "7b7909414d93f847ff0c023a06ae1f7e", 500103742),
-		Common::SE_SWE,
+		Common::SV_SWE,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
