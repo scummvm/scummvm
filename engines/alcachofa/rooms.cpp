@@ -233,8 +233,7 @@ void Room::updateObjects() {
 
 void Room::drawObjects() {
 	for (auto *object : _objects) {
-		if (object->room() == g_engine->player().currentRoom())
-			object->draw();
+		object->draw();
 	}
 }
 
