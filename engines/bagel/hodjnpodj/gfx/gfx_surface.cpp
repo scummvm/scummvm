@@ -38,6 +38,17 @@ namespace HodjNPodj {
 		color = _owner->getPaletteIndex(color); \
 	}
 
+GfxSurface &GfxSurface::operator=(const GfxSurface &surf) {
+	Graphics::ManagedSurface::operator=(surf);
+
+	_owner = surf._owner;
+	_cellWidth = surf._cellWidth;
+	_cellIndex = surf._cellIndex;
+	_fontSize = surf._fontSize;
+
+	return *this;
+}
+
 void GfxSurface::floodFill(int x, int y, int color) {
 	CONVERT_COLOR
 

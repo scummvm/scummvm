@@ -113,6 +113,7 @@ MODULE_OBJS = \
 	hodjnpodj/gfx/cursor.o \
 	hodjnpodj/gfx/gfx_surface.o \
 	hodjnpodj/gfx/palette.o \
+	hodjnpodj/libs/settings.o \
 	hodjnpodj/libs/vector.o \
 	hodjnpodj/views/main_menu.o \
 	hodjnpodj/views/message_box.o \

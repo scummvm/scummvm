@@ -55,6 +55,8 @@ public:
 		_owner(owner) {
 	}
 
+	GfxSurface &operator=(const GfxSurface &surf);
+
 	void floodFill(int x, int y, int color);
 	void floodFill(const Common::Point &pt, int color) {
 		floodFill(pt.x, pt.y, color);
