@@ -135,9 +135,9 @@ void Events::processEvent(Common::Event &ev) {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONUP:
 	case Common::EVENT_MBUTTONUP:
-		if (ev.type == Common::EVENT_LBUTTONDOWN)
+		if (ev.type == Common::EVENT_LBUTTONUP)
 			_leftButtonDown = false;
-		if (ev.type == Common::EVENT_RBUTTONDOWN)
+		if (ev.type == Common::EVENT_RBUTTONUP)
 			_rightButtonDown = false;
 		msgMouseUp(MouseUpMessage(ev.type, ev.mouse));
 		break;
