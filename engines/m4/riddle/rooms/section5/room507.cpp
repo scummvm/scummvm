@@ -132,8 +132,8 @@ void Room507::pre_parser() {
 }
 
 void Room507::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool useFlag = player_said("gear");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool useFlag = player_said("gear");
 
 	if (lookFlag && player_said("DOOR")) {
 		digi_play("507r03", 1);
