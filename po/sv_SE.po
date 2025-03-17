@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-10 16:53+0000\n"
-"PO-Revision-Date: 2025-03-17 14:50+0000\n"
+"PO-Revision-Date: 2025-03-17 18:15+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -6497,10 +6497,8 @@ msgid "Switch characters"
 msgstr "Växla karaktärer"
 
 #: engines/agos/metaengine.cpp:353
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle hitbox names on/off"
-msgstr "Fullskärmsläge"
+msgstr "Växla hitbox-namn på/av"
 
 #: engines/agos/metaengine.cpp:360
 msgid "Switches between speech only and combined speech and subtitles"
@@ -6687,9 +6685,8 @@ msgid "Bring up the In-Game Menu"
 msgstr "Ta fram menyn i spelet"
 
 #: engines/asylum/metaengine.cpp:152
-#, fuzzy
 msgid "Open character inventory"
-msgstr "Öppna/Stäng Inventarie"
+msgstr "Öppna karaktärsöversikt"
 
 #. I18N: Move Actor to upwards direction
 #: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
@@ -6808,10 +6805,8 @@ msgstr "Escape"
 
 #: engines/bbvs/metaengine.cpp:117 engines/hopkins/metaengine.cpp:231
 #: engines/illusions/metaengine.cpp:147
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open inventory"
-msgstr "Öppna/Stäng Inventarie"
+msgstr "Öppna översikt"
 
 #: engines/bbvs/metaengine.cpp:124 engines/dgds/metaengine.cpp:81
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:231
@@ -6907,7 +6902,7 @@ msgstr ""
 
 #: engines/bladerunner/metaengine.cpp:56
 msgid "Shorty mode"
-msgstr ""
+msgstr "Shorty-läge"
 
 #: engines/bladerunner/metaengine.cpp:57
 msgid "Game will shrink the actors and make their voices high pitched"
@@ -6994,9 +6989,8 @@ msgstr "Gå / Titta / Prata / Välj / Skjut"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. TOGGLE MCCOY'S COMBAT MODE
 #: engines/bladerunner/metaengine.cpp:220
-#, fuzzy
 msgid "Toggle Combat"
-msgstr "Ljud av/på"
+msgstr "Växla strid"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
@@ -7049,9 +7043,8 @@ msgstr "Rulla nedåt"
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
 #: engines/bladerunner/metaengine.cpp:311
-#, fuzzy
 msgid "Toggle Clue Privacy"
-msgstr "Ljud av/på"
+msgstr "Växla sekretess för ledtrådar"
 
 #. I18N: This keymap opens KIA's SAVE GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -7222,39 +7215,39 @@ msgstr "Avsluta"
 #. In order to escape the dice game loop press Right/Left Alt
 #: engines/cge/metaengine.cpp:250
 msgid "ALTered Item"
-msgstr ""
+msgstr "Ändrat (ALT) föremål"
 
 #: engines/cge/metaengine.cpp:257
 msgid "Inventory Item 1 (Select/Deselect)"
-msgstr ""
+msgstr "Inventariepost 1 (Välj/avmarkera)"
 
 #: engines/cge/metaengine.cpp:262
 msgid "Inventory Item 2 (Select/Deselect)"
-msgstr ""
+msgstr "Inventariepost 2 (Välj/avmarkera)"
 
 #: engines/cge/metaengine.cpp:267
 msgid "Inventory Item 3 (Select/Deselect)"
-msgstr ""
+msgstr "Inventariepost 3 (Välj/avmarkera)"
 
 #: engines/cge/metaengine.cpp:272
 msgid "Inventory Item 4 (Select/Deselect)"
-msgstr ""
+msgstr "Inventariepost 4 (Välj/avmarkera)"
 
 #: engines/cge/metaengine.cpp:277
 msgid "Inventory Item 5 (Select/Deselect)"
-msgstr ""
+msgstr "Inventariepost 5 (Välj/avmarkera)"
 
 #: engines/cge/metaengine.cpp:282
 msgid "Inventory Item 6 (Select/Deselect)"
-msgstr ""
+msgstr "Inventariepost 6 (Välj/avmarkera)"
 
 #: engines/cge/metaengine.cpp:287
 msgid "Inventory Item 7 (Select/Deselect)"
-msgstr ""
+msgstr "Inventariepost 7 (Välj/avmarkera)"
 
 #: engines/cge/metaengine.cpp:292
 msgid "Inventory Item 8 (Select/Deselect)"
-msgstr ""
+msgstr "Inventariepost 8 (Välj/avmarkera)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
@@ -7608,10 +7601,8 @@ msgid "Pick up / Operate"
 msgstr "Ta upp / Använd"
 
 #: engines/dgds/metaengine.cpp:82
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Activate Inventory Object"
-msgstr "Animerade delar i inventariet"
+msgstr "Aktivera inventarieobjekt"
 
 #: engines/dgds/metaengine.cpp:85 engines/got/metaengine.cpp:90
 msgid "Game Keys"
@@ -7627,7 +7618,7 @@ msgstr ""
 
 #: engines/draci/metaengine.cpp:155
 msgid "Skip intro/Exit map or inventory"
-msgstr ""
+msgstr "Hoppa över intro/avsluta karta eller översikt"
 
 #: engines/draci/metaengine.cpp:161
 msgid "Open map"
@@ -7652,16 +7643,12 @@ msgid "Toggle between mouse pointer and the last game item"
 msgstr "Växla mellan muspekare och sista spelposten"
 
 #: engines/draci/metaengine.cpp:198
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Previous item in inventory"
-msgstr "Öppna/Stäng Inventarie"
+msgstr "Föregående objekt i översikt"
 
 #: engines/draci/metaengine.cpp:204
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Next item in inventory"
-msgstr "Öppna/Stäng Inventarie"
+msgstr "Nästa objekt i översikt"
 
 #: engines/dragons/dragons.cpp:1884
 #, c-format
@@ -8259,11 +8246,12 @@ msgstr ""
 
 #: engines/groovie/metaengine.cpp:101
 msgid "Slim Left/Right Hotspots"
-msgstr ""
+msgstr "Smala reaktiva områden vänster/höger"
 
 #: engines/groovie/metaengine.cpp:102
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
 msgstr ""
+"Förminskar reaktiva områden på vänster och höger sida för avslutande pussel"
 
 #: engines/groovie/metaengine.cpp:113
 msgid "Speedrun Mode"
@@ -8643,7 +8631,7 @@ msgstr "Aktivera livmätare"
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/metaengine.cpp:147
 msgid "Fight Button L/R Swap"
-msgstr ""
+msgstr "Växla slåssknapp L/R"
 
 #: engines/kyra/metaengine.cpp:148
 msgid "Left button to attack, right button to pick up items"
@@ -8950,41 +8938,33 @@ msgstr "Starta om spelet"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Shift Cursor - Top left"
-msgstr "Pekare vänster"
+msgstr "Skifta markör - Övre vänster"
 
 #. I18N: Shift Cursor during fight to middle left
 #: engines/lure/metaengine.cpp:239
 msgid "Shift Cursor -  Middle left"
-msgstr ""
+msgstr "Skifta markör -  Mitten till vänster"
 
 #. I18N: Shift Cursor during fight to bottom left
 #: engines/lure/metaengine.cpp:245
 msgid "Shift Cursor - Bottom left"
-msgstr ""
+msgstr "Skifta markör - Nedre vänster"
 
 #. I18N: Shift Cursor during fight to top right
 #: engines/lure/metaengine.cpp:251
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Top right"
-msgstr "Pekare höger"
+msgstr "Skifta markör - Övre höger"
 
 #. I18N: Shift Cursor during fight to middle right
 #: engines/lure/metaengine.cpp:257
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Middle right"
-msgstr "Pekare höger"
+msgstr "Skifta markör - Mitten till höger"
 
 #. I18N: Shift Cursor during fight to bottom right
 #: engines/lure/metaengine.cpp:263
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Bottom right"
-msgstr "Pekare höger"
+msgstr "Skifta markör - Nedre höger"
 
 #: engines/lure/metaengine.cpp:270
 msgid "Go to next index"
@@ -9116,14 +9096,13 @@ msgstr ""
 "Rustning går inte sönder förrän karaktären är på -80HP, snarare än bara -10HP"
 
 #: engines/mm/metaengine.cpp:79
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Hitpoint bars"
-msgstr "Aktivera livmätare"
+msgstr "Livmätare"
 
 #: engines/mm/metaengine.cpp:80
 msgid "Replace a colored gem with bars for hit points and spell points."
 msgstr ""
+"Ersätt en färgad ädelsten med staplar för livpoäng och trollformelpoäng."
 
 #: engines/mm/mm1/metaengine.cpp:54
 msgid "View Party Member 1"
@@ -9282,6 +9261,9 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
+"När du klickar på ett föremål eller ett område med blixtmarkören kommer du "
+"direkt dit och hoppar över mellanliggande skärmar. Du kan bara ”Zip” till "
+"ett exakt område där du redan har varit."
 
 #: engines/mohawk/dialogs.cpp:116
 msgid "~T~ransitions Enabled"
@@ -9487,14 +9469,12 @@ msgid "You are missing the following required Riven data files:\n"
 msgstr "Du saknar följande obligatoriska datafiler för Riven:\n"
 
 #: engines/mohawk/riven.cpp:887
-#, fuzzy
 msgid "Move forward left"
-msgstr "Steg framåt"
+msgstr "Flytta framåt till vänster"
 
 #: engines/mohawk/riven.cpp:891
-#, fuzzy
 msgid "Move forward right"
-msgstr "Steg framåt"
+msgstr "Flytta framåt till höger"
 
 #: engines/mohawk/riven.cpp:913
 msgid "Look up"
@@ -11051,9 +11031,8 @@ msgid "play C major on distaff"
 msgstr "spela C-dur på staven"
 
 #: engines/scumm/help.cpp:189
-#, fuzzy
 msgid "Shows the drafts inventory"
-msgstr "Inventarie"
+msgstr "Visar utkastöversikten"
 
 #: engines/scumm/help.cpp:195 engines/scumm/help.cpp:217
 msgid "puSh"
@@ -11904,11 +11883,11 @@ msgstr "Avsluta till menyn"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
-msgstr ""
+msgstr "Växla bakåt genom översiktens markörobjekt"
 
 #: engines/stark/metaengine.cpp:261
 msgid "Cycle forward through inventory cursor items"
-msgstr ""
+msgstr "Växla framåt genom översiktens markörobjekt"
 
 #. I18N: A popup on screen shows shows the exits
 #: engines/stark/metaengine.cpp:274
@@ -11916,15 +11895,12 @@ msgid "Display all exits on current location"
 msgstr "Visa alla utgångar på aktuell plats"
 
 #: engines/stark/metaengine.cpp:292
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Scroll up in inventory"
-msgstr "Öppna/Stäng Inventarie"
+msgstr "Rulla uppåt i översikten"
 
 #: engines/stark/metaengine.cpp:299
-#, fuzzy
 msgid "Scroll down in inventory"
-msgstr "Inventarie"
+msgstr "Rulla nedåt i översikten"
 
 #: engines/stark/metaengine.cpp:306
 msgid "Scroll up in your dialogues"
@@ -12471,19 +12447,19 @@ msgstr "Aktivera en högre upplösning för spelet"
 
 #: engines/twine/metaengine.cpp:228
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "Felsökning: rutnätskamera uppåt"
 
 #: engines/twine/metaengine.cpp:233
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "Felsökning: rutnätskamera nedåt"
 
 #: engines/twine/metaengine.cpp:238
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "Felsökning: rutnätskamera vänster"
 
 #: engines/twine/metaengine.cpp:244
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "Felsökning: rutnätskamera höger"
 
 #: engines/twine/metaengine.cpp:249 engines/twine/metaengine.cpp:269
 msgid "Normal Behaviour"
