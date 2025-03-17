@@ -1623,7 +1623,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 				// { "pData20.mxw", 0, "02aa4a3bfbfba7c21aa7cd388334d060", 15462415 },
 				AD_LISTEND
 			},
-			Common::SE_SWE,
+			Common::SV_SWE,
 			Common::kPlatformWindows,
 			ADGF_UNSUPPORTED,
 			GUIO0()

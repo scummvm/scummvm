@@ -116,7 +116,7 @@ Common::CodePage StringUtil::mapCodePage(TTextCharset charset) {
 		case Common::NL_NLD:
 		case Common::PT_BRA:
 		case Common::PT_PRT:
-		case Common::SE_SWE:
+		case Common::SV_SWE:
 		case Common::UNK_LANG:
 			return Common::kWindows1252;
 
