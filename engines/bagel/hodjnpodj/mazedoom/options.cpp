@@ -148,10 +148,10 @@ void Options::loadIniSettings() {
 	Common::String domain = ConfMan.getActiveDomainName();
 	ConfMan.setActiveDomain("MazeDoom");
 
-	_difficulty = !ConfMan.hasKey("Difficulty") ? DEFAULT_DIFFICULTY :
-		CLIP(ConfMan.getInt("Difficulty"), MIN_DIFFICULTY, MAX_DIFFICULTY);
-	_time = !ConfMan.hasKey("Time") ? TIMER_DEFAULT :
-		CLIP(ConfMan.getInt("Time"), 0, TIMER_MAX);
+	_difficulty = !ConfMan.hasKey("difficulty") ? DEFAULT_DIFFICULTY :
+		CLIP(ConfMan.getInt("difficulty"), MIN_DIFFICULTY, MAX_DIFFICULTY);
+	_time = !ConfMan.hasKey("time_limit") ? TIMER_DEFAULT :
+		CLIP(ConfMan.getInt("time_limit"), 0, TIMER_MAX);
 	if (_time == 0)
 		_time = TIMER_MAX;
 
@@ -167,8 +167,8 @@ void Options::saveIniSettings() {
 	Common::String domain = ConfMan.getActiveDomainName();
 	ConfMan.setActiveDomain("MazeDoom");
 
-	ConfMan.setInt("Difficulty", _difficulty);
-	ConfMan.setInt("Time", _time);
+	ConfMan.setInt("difficulty", _difficulty);
+	ConfMan.setInt("time_limit", _time);
 
 	ConfMan.setActiveDomain(domain);
 	ConfMan.flushToDisk();

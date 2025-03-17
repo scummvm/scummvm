@@ -43,7 +43,9 @@ MazeDoom::MazeDoom() : MinigameView("MazeDoom", "mazedoom/hnpmaze.dll"),
 		),
 		pPlayerSprite(this),
 		_timeRect(RectWH(TIME_LOCATION_X + 50, TIME_LOCATION_Y,
-			TIME_WIDTH - 50, TIME_HEIGHT)) {
+			TIME_WIDTH - 50, TIME_HEIGHT)),
+		_upBitmap(this), _downBitmap(this),
+		_leftBitmap(this), _rightBitmap(this) {
 	addResource(IDB_LOCALE_BMP, Common::WinResourceID("idb_locale_bmp"));
 	addResource(IDB_BLANK_BMP, Common::WinResourceID("idb_blank_bmp"));
 	addResource(IDB_PARTS_BMP, IDB_PARTS);
@@ -365,16 +367,21 @@ void MazeDoom::draw() {
 
 void MazeDoom::setupHodjPodj() {
 	if (pGameParams->bPlayingHodj) {
-		_upBmp = IDB_HODJ_UP_BMP;
-		_downBmp = IDB_HODJ_DOWN_BMP;
-		_leftBmp = IDB_HODJ_LEFT_BMP;
-		_rightBmp = IDB_HODJ_RIGHT_BMP;
+		_upBitmap.loadCels(IDB_HODJ_UP_BMP, NUM_CELS);
+		_downBitmap.loadCels(IDB_HODJ_DOWN_BMP, NUM_CELS);
+		_leftBitmap.loadCels(IDB_HODJ_LEFT_BMP, NUM_CELS);
+		_rightBitmap.loadCels(IDB_HODJ_RIGHT_BMP, NUM_CELS);
 	} else {
-		_upBmp = IDB_PODJ_UP_BMP;
-		_downBmp = IDB_PODJ_DOWN_BMP;
-		_leftBmp = IDB_PODJ_LEFT_BMP;
-		_rightBmp = IDB_PODJ_RIGHT_BMP;
+		_upBitmap.loadCels(IDB_PODJ_UP_BMP, NUM_CELS);
+		_downBitmap.loadCels(IDB_PODJ_DOWN_BMP, NUM_CELS);
+		_leftBitmap.loadCels(IDB_PODJ_LEFT_BMP, NUM_CELS);
+		_rightBitmap.loadCels(IDB_PODJ_RIGHT_BMP, NUM_CELS);
 	}
+
+	_upBitmap.setTransparentColor(WHITE);
+	_downBitmap.setTransparentColor(WHITE);
+	_leftBitmap.setTransparentColor(WHITE);
+	_rightBitmap.setTransparentColor(WHITE);
 }
 
 void MazeDoom::loadBitmaps() {
@@ -417,7 +424,7 @@ void MazeDoom::loadBitmaps() {
 			RectWH(TRAP_WIDTH * i, 0, TRAP_WIDTH, TRAP_HEIGHT), this);
 	}
 
-	pPlayerSprite.loadCels(_leftBmp, NUM_CELS);
+	pPlayerSprite = _leftBitmap;
 	pPlayerSprite.setTransparentColor(WHITE);
 
 	pLocaleBitmap.loadBitmap(IDB_LOCALE_BMP);
@@ -443,10 +450,10 @@ void MazeDoom::loadIniSettings() {
 		Common::String domain = ConfMan.getActiveDomainName();
 		ConfMan.setActiveDomain("MazeDoom");
 
-		m_nDifficulty = !ConfMan.hasKey("Difficulty") ? DEFAULT_DIFFICULTY :
-			CLIP(ConfMan.getInt("Difficulty"), MIN_DIFFICULTY, MAX_DIFFICULTY);
-		int time = !ConfMan.hasKey("Time") ? TIMER_DEFAULT :
-			CLIP(ConfMan.getInt("Time"), TIMER_MIN, TIMER_MAX);
+		m_nDifficulty = !ConfMan.hasKey("difficulty") ? DEFAULT_DIFFICULTY :
+			CLIP(ConfMan.getInt("difficulty"), MIN_DIFFICULTY, MAX_DIFFICULTY);
+		int time = !ConfMan.hasKey("time_limit") ? TIMER_DEFAULT :
+			CLIP(ConfMan.getInt("time_limit"), TIMER_MIN, TIMER_MAX);
 		m_nTime = (time == 0) ? 0 : TIME_SCALES[time - 1];
 
 		ConfMan.setActiveDomain(domain);
@@ -485,7 +492,7 @@ void MazeDoom::newGame() {
 void MazeDoom::movePlayer(const Common::Point &point) {
 	Common::Point tileLocation;
 	Common::Point delta;
-	const char *nBmpID = _rightBmp;
+	const Sprite *sprite = &_rightBitmap;
 
 	_move.clear();
 	_move._hit = screenToTile(point);
@@ -500,27 +507,27 @@ void MazeDoom::movePlayer(const Common::Point &point) {
 		if (delta.x < 0) {
 			// To the RIGHT
 			_move._step.x = 1;			// move one tile at a time
-			nBmpID = _rightBmp;
+			sprite = &_rightBitmap;
 		} else if (delta.x > 0) {
 			// To the LEFT
 			_move._step.x = -1;		// move one tile at a time
-			nBmpID = _leftBmp;
+			sprite = &_leftBitmap;
 		}
 	} else if (ABS(delta.y) > ABS(delta.x)) {
 		if (delta.y > 0) {
 			// Going Upward
 			_move._step.y = -1;		// move one tile at a time                                         
-			nBmpID = _upBmp;	// use Bitmap of player moving Up
+			sprite = &_upBitmap;	// use Bitmap of player moving Up
 		} else if (delta.y < 0) {
 			// Going Downward
-			_move._step.y = 1;			// move one tile at a time
-			nBmpID = _downBmp;	// use Bitmap of player moving Down
+			_move._step.y = 1;		// move one tile at a time
+			sprite = &_downBitmap;	// use Bitmap of player moving Down
 		}
 	}
 
 	if ((_move._step.x != 0) || (_move._step.y != 0)) {
 		// If the click is not in the player's tile, preparing for moving
-		pPlayerSprite.loadCels(nBmpID, NUM_CELS);
+		pPlayerSprite = *sprite;
 		pPlayerSprite.setTransparentColor(WHITE);
 	}
 }

@@ -46,8 +46,8 @@ class MazeDoom : public MinigameView, public MazeGen {
 	};
 private:
 	Options _options;
-	const char *_upBmp = nullptr, *_downBmp = nullptr,
-		*_leftBmp = nullptr, *_rightBmp = nullptr;
+	Sprite _upBitmap, _downBitmap,
+		_leftBitmap, _rightBitmap;
 	BmpButton _scrollButton;
 	GfxSurface _background;
 	GfxSurface _partsBitmap;
