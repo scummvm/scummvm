@@ -707,30 +707,22 @@ void Adlib::OnTimer() {
 							// l0017_1DEC:
 							bp1 = 0x3F;
 						}
-						//							// l0017_1DF0:
-						//							if (bp2 > 0x3F) {
-						//								// l0017_1DF6:
-						//								bp2 = 0x3F;
-						//							}
-						//							// 1DFAh
-						//							// TODO: Careful if argument are correct here,
-						//							// I stumbled over the 2 pushed values before calling
-						//							// the 1-arg function 2779
-						//							Func2792(bp8 + 0xb0, 0);
+						// l0017_1DF0:
+						if (bp2 > 0x3F) {
+							// l0017_1DF6:
+							bp2 = 0x3F;
+						}
+						// 1DFAh
+						Func2792(bp8 + 0xb0, 0);
 
-						//							// TODO: Confirm that these are indeed identical
-						//							uint8 arg1 = gArray96[bp8] + 0x40;
-						//							uint8 arg2 = gArray96[bp8] + 0x40;
+						uint8 result = Func2779(gArray96[bp8] + 0x40);
+						Func2792(gArray96[bp8] + 0x40, (result & 0xC0) + bp1);
+						result = Func2779(gArray8d[bp8] + 0x40);
 
-						//							uint8 result = Func2779(arg2);
-						//							Func2792(arg1, (result & 0xC0) + bp1);
-						//							result = Func2779(
-						//								gArray8d[bp8] + 0x40);
-
-						//							// Note that we again push one more copy of the
-						//							// value which is not used in g2779 above.
-						//							Func2792(gArray8d[bp8] + 0x40,
-						//									 result & 0xC0 + bp2);
+						// Note that we again push one more copy of the
+						// value which is not used in g2779 above.
+						Func2792(gArray8d[bp8] + 0x40,
+									result & 0xC0 + bp2);
 						//							// TODO: Do we need to do something about
 						//							// the upper 8 bits?
 						//							gArray226F[bp3] = 0;
