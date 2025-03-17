@@ -62,8 +62,6 @@ private:
 	bool m_bGameOver = false;
 	uint32 _priorTime = 0;
 	int m_nTime = 0, nSeconds = 0, nMinutes = 0;
-	int _tempDifficulty = 0;
-	int _tempTime = 0;
 	CBofSound *pGameSound = nullptr;
 	Move _move;
 

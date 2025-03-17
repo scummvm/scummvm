@@ -30,7 +30,7 @@ namespace MazeDoom {
 #define LEFT_SIDE		 30
 
 const int16 TIME_SCALES[10] = {
-	30, 45, 60, 75, 90, 120, 180, 240, 300, 600
+	30, 45, 60, 75, 90, 120, 180, 240, 300, 0
 };
 
 static const char *mDifficultyTable[10] = {
@@ -59,7 +59,7 @@ Options::Options() : View("MazeDoomOptions"),
 		_cancelButton(DialogRect(8, 85, 80, 30, 15), this) {
 
 	_difficultyScroll.setScrollRange(MIN_DIFFICULTY, MAX_DIFFICULTY, 0);
-	_timeScroll.setScrollRange(TIMER_MIN, TIMER_MAX - 1, 0);
+	_timeScroll.setScrollRange(TIMER_MIN, TIMER_MAX, 0);
 }
 
 bool Options::msgOpen(const OpenMessage &msg) {
@@ -126,10 +126,14 @@ void Options::draw() {
 	s.writeString(mDifficultyTable[_difficulty],
 		_difficultyRect, BLACK);
 
-	int mins = TIME_SCALES[_time] / 60;
-	int secs = TIME_SCALES[_time] % 60;
-	s.writeString(Common::String::format("Time Limit: %02d:%02d",
-		mins, secs), _timeRect, BLACK);
+	if (_time == TIMER_MAX) {
+		s.writeString("Time Limit: None", _timeRect, BLACK);
+	} else {
+		int mins = TIME_SCALES[_time - 1] / 60;
+		int secs = TIME_SCALES[_time - 1] % 60;
+		s.writeString(Common::String::format("Time Limit: %02d:%02d",
+			mins, secs), _timeRect, BLACK);
+	}
 }
 
 void Options::putDialogData() {
@@ -147,7 +151,10 @@ void Options::loadIniSettings() {
 	_difficulty = !ConfMan.hasKey("Difficulty") ? DEFAULT_DIFFICULTY :
 		CLIP(ConfMan.getInt("Difficulty"), MIN_DIFFICULTY, MAX_DIFFICULTY);
 	_time = !ConfMan.hasKey("Time") ? TIMER_DEFAULT :
-		CLIP(ConfMan.getInt("Time"), TIMER_MIN, TIMER_MAX);
+		CLIP(ConfMan.getInt("Time"), 0, TIMER_MAX);
+	if (_time == 0)
+		_time = TIMER_MAX;
+
 	_hasChanges = false;
 
 	ConfMan.setActiveDomain(domain);

@@ -337,7 +337,6 @@ void MazeDoom::draw() {
 	// Draw the maze
 	s.blitFrom(_mazeBitmap, Common::Point(
 		SIDE_BORDER, TOP_BORDER));
-	warning("%d %d", ART_WIDTH, ART_HEIGHT);
 
 	if (!pPlayerSprite.empty() && bPlaying)
 		s.blitFrom(pPlayerSprite, Common::Point(
@@ -446,16 +445,13 @@ void MazeDoom::loadIniSettings() {
 
 		m_nDifficulty = !ConfMan.hasKey("Difficulty") ? DEFAULT_DIFFICULTY :
 			CLIP(ConfMan.getInt("Difficulty"), MIN_DIFFICULTY, MAX_DIFFICULTY);
-		m_nTime = TIME_SCALES[
-			!ConfMan.hasKey("Time") ? TIMER_DEFAULT :
-				CLIP(ConfMan.getInt("Time"), TIMER_MIN, TIMER_MAX)
-		];
+		int time = !ConfMan.hasKey("Time") ? TIMER_DEFAULT :
+			CLIP(ConfMan.getInt("Time"), TIMER_MIN, TIMER_MAX);
+		m_nTime = (time == 0) ? 0 : TIME_SCALES[time - 1];
 
 		ConfMan.setActiveDomain(domain);
 	}
 
-	_tempDifficulty = m_nDifficulty;
-	_tempTime = m_nTime;
 	nSeconds = m_nTime % 60;
 	nMinutes = m_nTime / 60;
 	_priorTime = g_system->getMillis();
@@ -473,9 +469,7 @@ void MazeDoom::showMainMenu() {
 }
 
 void MazeDoom::newGame() {
-	m_nTime = _tempTime;				// Get new time limit,
-	m_nDifficulty = _tempDifficulty;	//...new Difficulty
-	_priorTime = g_system->getMillis();
+	loadIniSettings();
 	_move.clear();
 
 	if (m_nTime != 0) {				// If we've got a time limit

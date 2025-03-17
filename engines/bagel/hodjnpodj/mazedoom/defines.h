@@ -64,9 +64,9 @@ namespace MazeDoom {
 // Timer constants
 #define MIN_TIME			 15						//  15 Seconds
 #define MAX_TIME			180						// 180 Seconds = 3 minute max
-#define TIMER_MIN			  0						// Increment scrollbar in steps of 15 Secs
+#define TIMER_MIN			  1						// Increment scrollbar in steps of 15 Secs
 #define TIMER_MAX			 10						// if Time > MAX_TIME, No Time Limit
-#define TIMER_DEFAULT		  6
+#define TIMER_DEFAULT		  7
 
 // The "clump" area is 3 X 3 grid spaces
 #define NUM_NEIGHBORS	 9
@@ -160,6 +160,6 @@ namespace MazeDoom {
 
 } // namespace MazeDoom
 } // namespace HodjNPodj
-} // namespace Bagel
+} // namespace Bal
 
 #endif
