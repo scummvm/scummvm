@@ -529,6 +529,7 @@ void MazeDoom::movePlayer(const Common::Point &point) {
 	if ((_move._step.x != 0) || (_move._step.y != 0)) {
 		// If the click is not in the player's tile, preparing for moving
 		pPlayerSprite.loadCels(nBmpID, NUM_CELS);
+		pPlayerSprite.setTransparentColor(WHITE);
 	}
 }
 
