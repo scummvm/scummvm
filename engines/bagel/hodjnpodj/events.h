@@ -313,6 +313,10 @@ public:
 class Events : public UIElement, public Cursor, public Palette {
 private:
 	Common::Stack<UIElement *> _views;
+	bool _leftButtonDown = false,
+		_rightButtonDown = false;
+
+	MouseMessage::Button getMouseButton() const;
 
 protected:
 	GAMESTRUCT _gameInfo;

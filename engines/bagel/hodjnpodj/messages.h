@@ -59,12 +59,12 @@ struct KeypressMessage : public Message, public Common::KeyState {
 
 struct MouseMessage : public Message {
 	enum Button {
-		MB_LEFT, MB_RIGHT, MB_MIDDLE
+		MB_NONE, MB_LEFT, MB_RIGHT, MB_MIDDLE
 	};
 	Button _button;
 	Common::Point _pos;
 
-	MouseMessage() : Message(), _button(MB_LEFT) {
+	MouseMessage() : Message(), _button(MB_NONE) {
 	}
 	MouseMessage(Button btn, const Common::Point &pos) :
 		Message(), _button(btn), _pos(pos) {

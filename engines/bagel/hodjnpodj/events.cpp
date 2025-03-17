@@ -90,7 +90,7 @@ void Events::runGame() {
 			} else {
 				if (mouseMovePos.x != -1) {
 					msgMouseMove(MouseMoveMessage(
-						Common::EVENT_MOUSEMOVE, mouseMovePos));
+						getMouseButton(), mouseMovePos));
 					mouseMovePos.x = mouseMovePos.y = -1;
 				}
 
@@ -101,7 +101,7 @@ void Events::runGame() {
 		// If mouse move events occurred, generate a single one now
 		if (mouseMovePos.x != -1)
 			msgMouseMove(MouseMoveMessage(
-				Common::EVENT_MOUSEMOVE, mouseMovePos));
+				getMouseButton(), mouseMovePos));
 
 		if (_views.empty())
 			break;
@@ -128,11 +128,17 @@ void Events::processEvent(Common::Event &ev) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_MBUTTONDOWN:
+		_leftButtonDown = ev.type == Common::EVENT_LBUTTONDOWN;
+		_rightButtonDown = ev.type == Common::EVENT_RBUTTONDOWN;
 		msgMouseDown(MouseDownMessage(ev.type, ev.mouse));
 		break;
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONUP:
 	case Common::EVENT_MBUTTONUP:
+		if (ev.type == Common::EVENT_LBUTTONDOWN)
+			_leftButtonDown = false;
+		if (ev.type == Common::EVENT_RBUTTONDOWN)
+			_rightButtonDown = false;
 		msgMouseUp(MouseUpMessage(ev.type, ev.mouse));
 		break;
 	default:
@@ -447,6 +453,15 @@ Common::WinResources *Events::getResources() {
 		res = _views[i]->getResources();
 
 	return res;
+}
+
+MouseMessage::Button Events::getMouseButton() const {
+	if (_leftButtonDown)
+		return MouseMessage::MB_LEFT;
+	else if (_rightButtonDown)
+		return MouseMessage::MB_RIGHT;
+	else
+		return MouseMessage::MB_NONE;
 }
 
 } // namespace HodjNPodj
