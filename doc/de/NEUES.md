@@ -7,6 +7,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Dark Seed hinzugefügt.
    - Unterstützung für God of Thunder hinzugefügt.
    - Unterstützung für The Adventures of Willy Beamish hinzugefügt.
+   - Unterstützung für Heart of China hinzugefügt.
 
  Hopkins:
    - Absturz behoben, der auftritt, wenn mit dem Aufzug zwischen Stockwerken gewechselt wird.
