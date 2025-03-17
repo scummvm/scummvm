@@ -1274,7 +1274,7 @@ void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
 	LoadData(fileStream, 0x0001B69F, size, gArray9F.data());
 
 	gArray11F.resize(size);
-	LoadData(fileStream, 0x0001B71F, size, gArray9F.data());
+	LoadData(fileStream, 0x0001B71F, size, gArray11F.data());
 
 }
 
