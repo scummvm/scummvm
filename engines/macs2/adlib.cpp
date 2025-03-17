@@ -418,7 +418,7 @@ void Adlib::Func294E(uint16 bpp6, uint8 bpp8, uint16 bppA) {
 	uint16 dx = al;
 	al = gArray11F[bpp8];
 	// TODO: Check if we need 16 bits
-	uint16 bp2 = al << 0x8;
+	uint16 bp2 = (al << 0x8) + dx;
 	if (bpp6 != 0) {
 		// l0017_297F:
 		if (bpp6 < 0x80) {
@@ -466,9 +466,8 @@ void Adlib::Func294E(uint16 bpp6, uint8 bpp8, uint16 bppA) {
 	}
 	// l0017_2A4F:
 
-	// TODO: Original code is making sure that only 8 bit are pushed
-	// for the second argument using AND FFh - check if ranges matter here
-	Func2792(bppA + 0xA0, bp2);
+	// My version relies on the 16 bit value being correctly cast to 8 bit
+	Func2792(bppA + 0xA0, bp2 & 0xFF);
 	Func2792(bppA + 0xB0, (bp2 >> 0x8) | 0x20);
 }
 
