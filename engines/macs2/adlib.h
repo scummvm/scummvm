@@ -118,10 +118,10 @@ namespace Macs2 {
 		// Array accesed as [di + 96]
 		Common::Array<uint8> gArray96;
 
-		// Array accessed as [di+9Fh]
+		// Array accessed as [di+9Fh] - from 0x0001B69F
 		Common::Array<uint8> gArray9F;
 
-		// Array accessed as [di+11Fh];
+		// Array accessed as [di+11Fh] - from 0x0001B71F
 		Common::Array<uint8> gArray11F;
 
 		// [223Eh] - Seems to be a 16 bit value - Initial value?
