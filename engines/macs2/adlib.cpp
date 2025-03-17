@@ -31,7 +31,7 @@ void Adlib::Func2792(byte registerIndex, byte value) {
 	debug("OPL: Write %.2x to port %.2x", value, registerIndex);
 	// _opl->write(0x388, registerIndex);
 	_opl->writeReg(registerIndex, value);
-	gArray229C[registerIndex = value];
+	gArray229C[registerIndex] = value;
 
 	
 
@@ -689,16 +689,16 @@ void Adlib::OnTimer() {
 						temp = bp12->peekByte();
 						temp &= 0x3F;
 						// dx
-						uint8 temp3 = temp;
+						temp3 = temp;
 						temp = 0x3F;
 						temp -= temp3;
 						temp3 = temp;
-						uint16 tempW = bp1;
+						tempW = bp1;
 						tempW *= temp3;
 						tempW /= 0x3F;
 						tempW += temp2;
 						// dx word
-						uint16 temp2W = tempW;
+						temp2W = tempW;
 						// ax
 						temp = bp12->peekByte() & 0x3F;
 						// TODO: Cast to 8 bit here
@@ -722,7 +722,7 @@ void Adlib::OnTimer() {
 						// Note that we again push one more copy of the
 						// value which is not used in g2779 above.
 						Func2792(gArray8d[bp8] + 0x40,
-									result & 0xC0 + bp2);
+									(result & 0xC0) + bp2);
 						
 						gArray226F[bp3] = 0;							
 						Func294E(bp8, bp4, gArray226F[bp3]);
@@ -1269,6 +1269,12 @@ void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
 
 	gArray96.resize(size);
 	LoadData(fileStream, 0x0001B696, size, gArray96.data());
+
+	gArray9F.resize(size);
+	LoadData(fileStream, 0x0001B69F, size, gArray9F.data());
+
+	gArray11F.resize(size);
+	LoadData(fileStream, 0x0001B71F, size, gArray9F.data());
 
 }
 
