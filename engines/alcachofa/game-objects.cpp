@@ -941,6 +941,7 @@ struct DialogMenuTask : public Task {
 			TASK_YIELD;
 			if (g_engine->player().activeCharacter() != _character)
 				continue;
+			g_engine->globalUI().updateChangingCharacter();
 			g_engine->player().heldItem() = nullptr;
 			g_engine->player().drawCursor();
 
