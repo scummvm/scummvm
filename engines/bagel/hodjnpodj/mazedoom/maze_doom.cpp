@@ -472,14 +472,6 @@ void MazeDoom::newGame() {
 	loadIniSettings();
 	_move.clear();
 
-	if (m_nTime != 0) {				// If we've got a time limit
-		nMinutes = m_nTime / 60;	//...get the minutes and seconds
-		nSeconds = m_nTime % 60;
-	} else {
-		nMinutes = 0;
-		nSeconds = 0;
-	}
-
 	initializeMaze();		// Set the surrounding wall and start/end squares
 	createMaze();			// Create a maze layout given the intiialized maze
 	setupMaze();			// Translate maze data to grid layout for display
