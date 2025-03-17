@@ -723,21 +723,14 @@ void Adlib::OnTimer() {
 						// value which is not used in g2779 above.
 						Func2792(gArray8d[bp8] + 0x40,
 									result & 0xC0 + bp2);
-						//							// TODO: Do we need to do something about
-						//							// the upper 8 bits?
-						//							gArray226F[bp3] = 0;
-						//							Func294E(bp8, bp4, gArray226F[bp3]);
-						//						}
-						//						// TODO: Figure out the logic here, I think
-						//						// I got lost with jumps
-						//						// l0017_1E91:
-						//						// jmp 2095h
-						//					}
-						//				}
+						
+						gArray226F[bp3] = 0;							
+						Func294E(bp8, bp4, gArray226F[bp3]);
 						}
 					} else {
 						//			// l0017_1E94:
 						SIS_LogEntry(0x01D7, 0x1E94);
+						debug("Unimplemented");
 						//			// TODO: These pushes are not arguments for 19BE
 						//			// push	word ptr [224Ah]
 						//			// push word ptr[2248h]
@@ -905,6 +898,7 @@ void Adlib::OnTimer() {
 					// l0017_222D:
 				} else if (bp4 == 0x67) {
 					SIS_LogEntry(0x01D7, 0x2231);
+					debug("Unimplemented");
 			//				// TODO: Continue from here
 			//				// l0017_2231:
 			//				if (bp5 != 0) {
@@ -919,6 +913,7 @@ void Adlib::OnTimer() {
 						} else if (bp4 == 0x69) {
 			//					// l0017_225C:
 							SIS_LogEntry(0x01D7, 0x225C);
+							debug("Unimplemented");
 			//					// TODO: Check if the neg works out the right way
 			//					bp5 = -bp5;
 			//					gArray226F[bp3] = bp5;
@@ -943,6 +938,7 @@ void Adlib::OnTimer() {
 						} else if (bp4 == 0x68) {
 			//					// l0017_22C5:
 							SIS_LogEntry(0x01D7, 0x22C5);
+							debug("Unimplemented");
 			//					gArray226F[bp3] = bp5;
 			//					uint16 bp16 = g2291 - 1;
 			//					if (0 <= bp16) {
@@ -977,6 +973,7 @@ void Adlib::OnTimer() {
 			if ((bp6 & 0xF0) == 0xD0) {
 			//		// l0017_235E:
 				SIS_LogEntry(0x01D7, 0x235E);
+			debug("Unimplemented");
 			//		Macs2::StreamHandler *sh2252;
 			//		Macs2::StreamHandler *sh225A;
 			//		Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x1);
@@ -988,6 +985,7 @@ void Adlib::OnTimer() {
 			if ((bp6 & 0xF0) == 0xF0) {
 			//		// l0017_2387:
 				SIS_LogEntry(0x01D7, 0x2387);
+			debug("Unimplemented");
 			//		if (bp4 == 0x2F) {
 			//			// l0017_238D:
 			//			Macs2::StreamHandler *sh2244;
@@ -1035,6 +1033,7 @@ void Adlib::OnTimer() {
 	if ((g2258 & 0xC2) != 0) {
 		// l0017_242E:
 		SIS_LogEntry(0x01D7, 0x242E);
+		debug("Unimplemented");
 		// TODO: I think this just calls the function again
 		// Func1A74();
 	}
