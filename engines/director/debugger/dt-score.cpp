@@ -616,13 +616,24 @@ void showChannels() {
 					ImGui::TableNextColumn();
 					ImGui::Text("%d (%s)", sprite._spriteType, spriteType2str(sprite._spriteType));
 					ImGui::TableNextColumn();
+					ImGui::PushID(i + 1);
 					ImGui::Text("%3d", sprite._foreColor); ImGui::SameLine();
 					ImGui::ColorButton("foreColor", convertColor(sprite._foreColor));
+					ImGui::PopID();
 					ImGui::TableNextColumn();
+					ImGui::PushID(i + 1);
 					ImGui::Text("%3d", sprite._backColor); ImGui::SameLine();
 					ImGui::ColorButton("backColor", convertColor(sprite._backColor));
+					ImGui::PopID();
 					ImGui::TableNextColumn();
-					displayScriptRef(sprite._scriptId);
+					// Check early for non integer script ids
+					if (sprite._scriptId.member) {
+						displayScriptRef(sprite._scriptId);
+					} else {
+						ImGui::PushID(i + 1);
+						ImGui::Selectable("  ");
+						ImGui::PopID();
+					}
 					ImGui::TableNextColumn();
 					ImGui::Text("0x%x", sprite._colorcode);
 					ImGui::TableNextColumn();
