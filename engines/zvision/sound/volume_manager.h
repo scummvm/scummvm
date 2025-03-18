@@ -21,6 +21,7 @@
 
 #include "common/scummsys.h"
 #include "math/angle.h"
+#include "zvision/zvision.h"
 
 #ifndef ZVISION_VOLUME_MANAGER
 #define ZVISION_VOLUME_MANAGER
@@ -39,7 +40,7 @@ enum volumeScaling {
 
 class VolumeManager {
 public:
-  VolumeManager(volumeScaling mode);
+  VolumeManager(ZVision *engine, volumeScaling mode);
   ~VolumeManager() {};
   volumeScaling getMode() {return _mode;};
   void setMode(volumeScaling mode) {_mode = mode;};
@@ -48,6 +49,7 @@ public:
   uint8 convert(uint8 inputValue, Math::Angle azimuth);
   uint8 convert(uint8 inputValue, volumeScaling mode, Math::Angle azimuth);
 private:
+	ZVision *_engine;
   uint scriptScale = 100; //Z-Vision scripts internally use a volume scale of 0-100; ScummVM uses a scale of 0-255.
   volumeScaling _mode = kVolumeLinear;
 };
