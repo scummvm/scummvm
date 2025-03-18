@@ -41,7 +41,6 @@ public:
 	void daemon() override;
 
 private:
-	int32 _flag = 0;
 	int32 _flagArray[13];
 	int32 _moveValue = 0;
 	bool _check201Fl = false;

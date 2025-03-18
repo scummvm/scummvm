@@ -40,7 +40,7 @@ void Room996::init() {
 	digi_preload("950_s56", -1);
 	interface_hide();
 	series_show("996mark", 0, 16, -1, -1, 0, 100, 0, 0);
-	_flag = 1;
+	_flagArray[12] = 1;
 	if (_G(flags)[V290]) {
 		_roomStates_loop0 = series_show("996 Charcoal Page", 256, 16, -1, -1, 0, 100, 0, 0);
 		digi_preload("205r13a", -1);
@@ -82,32 +82,51 @@ void Room996::init() {
 	for (int i = 1; i < 12; ++i)
 		_flagArray[i] = 0;
 
-	if (_G(flags)[kEasterIslandCartoon])
+	int index = 1;
+	
+	if (_G(flags)[kEasterIslandCartoon]) {
 		_flagArray[1] = 1;
+		++index;
+	}
 
-	if (_G(flags)[kChinshiCartoon])
-		_flagArray[1] = 2;
+	if (_G(flags)[kChinshiCartoon]) {
+		_flagArray[index] = 2;
+		++index;
+	}
 
-	if (_G(flags)[kTabletsCartoon])
-		_flagArray[1] = 3;
+	if (_G(flags)[kTabletsCartoon]) {
+		_flagArray[index] = 3;
+		++index;
+	}
 
-	if (_G(flags)[kEpitaphCartoon])
-		_flagArray[1] = 5;
+	if (_G(flags)[kEpitaphCartoon]) {
+		_flagArray[index] = 5;
+		++index;
+	}
 
-	if (_G(flags)[kGraveyardCartoon])
-		_flagArray[1] = 4;
+	if (_G(flags)[kGraveyardCartoon]) {
+		_flagArray[index] = 4;
+		++index;
+	}
 
-	if (_G(flags)[kCastleCartoon])
-		_flagArray[1] = 6;
+	if (_G(flags)[kCastleCartoon]) {
+		_flagArray[index] = 6;
+		++index;
+	}
 
-	if (_G(flags)[kMocaMocheCartoon])
-		_flagArray[1] = 7;
+	if (_G(flags)[kMocaMocheCartoon]) {
+		_flagArray[index] = 7;
+		++index;
+	}
 
-	if (_G(flags)[kTempleCartoon])
-		_flagArray[1] = 8;
+	if (_G(flags)[kTempleCartoon]) {
+		_flagArray[index] = 8;
+		++index;
+	}
 
-	if (_G(flags)[kEmeraldCartoon])
-		_flagArray[1] = 9;
+	if (_G(flags)[kEmeraldCartoon]) {
+		_flagArray[index] = 9;
+	}
 
 	_flagArray[12] = 1;
 	_moveValue = 0;
