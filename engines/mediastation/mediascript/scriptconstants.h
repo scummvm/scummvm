@@ -73,6 +73,7 @@ enum VariableScope {
 const char *variableScopeToStr(VariableScope scope);
 
 enum BuiltInFunction {
+	kUnk1Function = 10,
 	// TODO: Figure out if effectTransitionOnSync = 13 is consistent across titles?
 	kEffectTransitionFunction = 12, // PARAMS: 1
 	kEffectTransitionOnSyncFunction = 13,

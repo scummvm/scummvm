@@ -504,6 +504,13 @@ Operand MediaStationEngine::callBuiltInFunction(BuiltInFunction function, Common
 		return Operand();
 	}
 
+	case kUnk1Function: {
+		warning("MediaStationEngine::callBuiltInFunction(): Function 10 not implemented");
+		Operand returnValue = Operand(kOperandTypeLiteral1);
+		returnValue.putInteger(1);
+		return returnValue;
+	}
+
 	default:
 		error("MediaStationEngine::callBuiltInFunction(): Got unknown built-in function %s (%d)", builtInFunctionToStr(function), static_cast<uint>(function));
 	}

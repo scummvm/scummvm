@@ -108,6 +108,8 @@ const char *variableScopeToStr(VariableScope scope) {
 
 const char *builtInFunctionToStr(BuiltInFunction function) {
 	switch (function) {
+	case kUnk1Function:
+		return "Unk1Function";
 	case kEffectTransitionFunction:
 		return "EffectTransition";
 	case kEffectTransitionOnSyncFunction:
