@@ -36,12 +36,19 @@ class MazeDoom : public MinigameView, public MazeGen {
 	struct Move {
 		Common::Point _newPosition, _step;
 		Common::Point _hit;
+		bool _walking = false;
+		int _substepCtr = 0;
 
 		void clear() {
-			_hit = _newPosition = _step = Common::Point();	
+			_hit = _newPosition = _step = Common::Point();
+			_substepCtr = 0;
+			_walking = false;
 		}
-		bool isMoving() const {
-			return _step.x != 0 || _step.y != 0;
+		void walk() {
+			_walking = true;
+		}
+		bool isWalking() const {
+			return _walking;
 		}
 	};
 private:
@@ -97,7 +104,9 @@ private:
 	 */
 	Common::Point screenToTile(const Common::Point &pointScreen) const;
 
-	void playerMoving();
+	void playerWalk1();
+	void playerWalk2();
+	void playerWalk3();
 
 	/**
 	 * Checks to see if a point is within the Artwork region of the window
