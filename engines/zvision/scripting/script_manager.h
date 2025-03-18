@@ -104,7 +104,6 @@ enum StateKey {
 
 struct Location {
 	Location() : world('g'), room('a'), node('r'), view('y'), offset(0) {}
-
 	char world;
 	char room;
 	char node;
@@ -366,6 +365,16 @@ private:
 	Control *parseControl(Common::String &line, Common::SeekableReadStream &stream);
 };
 
+	/**
+	 * Instances of this polymorphic class function either as a store of a single value, or as a "slot" that returns a StateValue
+	 *
+	 * @param line      The line initially read
+	 * @param slotValue A text string containing a number, which may be enclosed within square braces.
+	 *  If square braces are not present, getValue() will return slotValue.
+   *  If square braces are present, getValue() will return the StateValue to which slotValue is the key.
+   *
+   * Once instantiated, the value and nature of slotValue may not be changed.
+	 */
 class ValueSlot {
 public:
 	ValueSlot(ScriptManager *scriptManager, const char *slotValue);

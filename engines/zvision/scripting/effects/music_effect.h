@@ -120,7 +120,6 @@ class PanTrackNode : public ScriptingEffect {
 public:
 	PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos);
 	~PanTrackNode() override;
-
 	bool process(uint32 deltaTimeInMillis) override;
 
 private:

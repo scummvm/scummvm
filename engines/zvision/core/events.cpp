@@ -44,20 +44,16 @@ namespace ZVision {
 void ZVision::pushKeyToCheatBuf(uint8 key) {
 	for (int i = 0; i < KEYBUF_SIZE - 1; i++)
 		_cheatBuffer[i] = _cheatBuffer[i + 1];
-
 	_cheatBuffer[KEYBUF_SIZE - 1] = key;
 }
 
 bool ZVision::checkCode(const char *code) {
 	int codeLen = strlen(code);
-
 	if (codeLen > KEYBUF_SIZE)
 		return false;
-
 	for (int i = 0; i < codeLen; i++)
 		if (code[i] != _cheatBuffer[KEYBUF_SIZE - codeLen + i] && code[i] != '?')
 			return false;
-
 	return true;
 }
 
@@ -188,7 +184,6 @@ void ZVision::processEvents() {
 			_cursorManager->cursorDown(true);
 			if(!_menu->inMenu() || !_widescreen) {
 			  _scriptManager->setStateValue(StateKey_RMouse, 1);
-
 			  if (getGameId() == GID_NEMESIS)
 				  _scriptManager->inventoryCycle();
 			}
@@ -196,9 +191,8 @@ void ZVision::processEvents() {
 
 		case Common::EVENT_RBUTTONUP:
 			_cursorManager->cursorDown(false);
-			if(!_menu->inMenu() || !_widescreen) {
+			if(!_menu->inMenu() || !_widescreen)
   			_scriptManager->setStateValue(StateKey_RMouse, 0);
-			}
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
@@ -276,9 +270,7 @@ void ZVision::processEvents() {
 
 		case Common::EVENT_KEYDOWN: {
 			uint8 vkKey = getZvisionKey(_event.kbd.keycode);
-
 			_scriptManager->setStateValue(StateKey_KeyPress, vkKey);
-
 			_scriptManager->addEvent(_event);
 			cheatCodes(vkKey);
 		}
