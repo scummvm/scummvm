@@ -83,7 +83,6 @@ bool ActionAdd::execute() {
 ActionAssign::ActionAssign(ZVision *engine, int32 slotKey, const Common::String &line) :
 	ResultAction(engine, slotKey) {
 	_key = 0;
-
 	char buf[64];
 	memset(buf, 0, 64);
 	sscanf(line.c_str(), "%u, %s", &_key, buf);
@@ -511,7 +510,8 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 	// sound effect finishes. Fixes script bug #6794.
 	if (engine->getGameId() == GID_NEMESIS && _slotKey == 14822 && _scriptManager->getStateValue(_slotKey) == 2)
 		_scriptManager->setStateValue(_slotKey, 0);
-  debug(2,"Created Action: Music, slotKey %d, type %u, file %24s, note %u, volume %d", _slotKey, type, fileNameBuffer, _note, _volume->getValue());
+
+  debug(1,"Created Action: Music, slotKey %d, type %u, file %24s, note %u, volume %d", _slotKey, type, fileNameBuffer, _note, _volume->getValue());
   debug(2,"Music script: %s", line.c_str());
 }
 
@@ -522,7 +522,7 @@ ActionMusic::~ActionMusic() {
 }
 
 bool ActionMusic::execute() {
-  debug(2,"Executing Action: Music, slotKey %d, volume %d", _slotKey, _volume->getValue());
+  debug(1,"Executing Action: Music, slotKey %d, volume %d", _slotKey, _volume->getValue());
 	if (_scriptManager->getSideFX(_slotKey)) {
 		_scriptManager->killSideFx(_slotKey);
 		_scriptManager->setStateValue(_slotKey, 2);
@@ -547,15 +547,18 @@ ActionPanTrack::ActionPanTrack(ZVision *engine, int32 slotKey, const Common::Str
 	_pos(0),
 	_musicSlot(0) {
 	sscanf(line.c_str(), "%u %d", &_musicSlot, &_pos);
-  debug(2,"Created Action: PanTrack, musicSlot %u, pos %d", _musicSlot, _pos);
+	if(_scriptManager->getStateValue(_musicSlot) != 2)
+    _scriptManager->setStateValue(_musicSlot, 2); //Pan_track scripts do not always trigger correctly unless this is set!
+  debug(1,"Created Action: PanTrack, slotkey %d, musicSlot %u, pos %d", _slotKey, _musicSlot, _pos);
 }
 
 ActionPanTrack::~ActionPanTrack() {
 	_scriptManager->killSideFx(_slotKey);
+  debug(1,"Destroyed Action: PanTrack, slotkey %d", _slotKey);
 }
 
 bool ActionPanTrack::execute() {
-  debug(2,"Executing Action: PanTrack, musicSlot %u, pos %d", _musicSlot, _pos);
+  debug(1,"Executing Action: PanTrack, slotkey %d, musicSlot %u, pos %d", _slotKey, _musicSlot, _pos);
 	if (_scriptManager->getSideFX(_slotKey))
 		return true;
 	_scriptManager->addSideFX(new PanTrackNode(_engine, _slotKey, _musicSlot, _pos));
@@ -615,7 +618,8 @@ bool ActionPreloadAnimation::execute() {
 	if (!nod) {
 		nod = new AnimationEffect(_engine, _slotKey, _fileName, _mask, _framerate, false);
 		_scriptManager->addSideFX(nod);
-	} else
+	} 
+	else
 		nod->stop();
 	_scriptManager->setStateValue(_slotKey, 2);
 	return true;

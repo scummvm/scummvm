@@ -20,6 +20,7 @@
  */
 
 #include "zvision/sound/volume_manager.h"
+#include "zvision/scripting/script_manager.h"
 #include "common/debug.h"
 
 namespace ZVision {
@@ -130,7 +131,8 @@ static constexpr uint8 directionalAmplitude[181] = {
  81, 81, 81, 81, 81
 };
 
-VolumeManager::VolumeManager(volumeScaling mode) :
+VolumeManager::VolumeManager(ZVision *engine, volumeScaling mode) :
+  _engine(engine),
   _mode(mode) {
 };
   
@@ -143,11 +145,11 @@ uint8 VolumeManager::convert(uint8 inputValue, Math::Angle azimuth) {
 };
 
 uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode, Math::Angle azimuth) {
-  uint8 index = abs(round(azimuth.getDegrees(-180)));
   uint16 output = convert(inputValue, mode);
+  uint8 index = abs(round(azimuth.getDegrees(-180)));
   output *= directionalAmplitude[index];
   output /= 255;
-  debug(1,"Azimuth-scaled converted output %d", output);
+  debug(2,"Azimuth-scaled converted output %d", output);
   return output;
 };
 
@@ -179,7 +181,7 @@ uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode) {
       output = scaledInput;
       break;
   }
-  debug(1,"Scripted volume %d, scaled volume %d, converted output %d", inputValue, scaledInput, output);
+  debug(2,"Scripted volume %d, scaled volume %d, converted output %d", inputValue, scaledInput, output);
   return output;
 };
 
