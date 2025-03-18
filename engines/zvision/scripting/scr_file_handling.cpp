@@ -45,20 +45,15 @@ namespace ZVision {
 
 void ScriptManager::parseScrFile(const Common::Path &fileName, ScriptScope &scope) {
 	Common::File file;
-	if (!_engine->getSearchManager()->openFile(file, fileName)) {
+	if (!_engine->getSearchManager()->openFile(file, fileName))
 		error("Script file not found: %s", fileName.toString().c_str());
-	}
-
 	while (!file.eos()) {
 		Common::String line = file.readLine();
-		if (file.err()) {
+		if (file.err())
 			error("Error parsing scr file: %s", fileName.toString().c_str());
-		}
-
 		trimCommentsAndWhiteSpace(&line);
 		if (line.empty())
 			continue;
-
 		if (line.matchString("puzzle:*", true)) {
 			Puzzle *puzzle = new Puzzle();
 			sscanf(line.c_str(), "puzzle:%u", &(puzzle->key));
@@ -66,8 +61,8 @@ void ScriptManager::parseScrFile(const Common::Path &fileName, ScriptScope &scop
 				setStateValue(puzzle->key, 0);
 			parsePuzzle(puzzle, file);
 			scope.puzzles.push_back(puzzle);
-
-		} else if (line.matchString("control:*", true)) {
+		} 
+		else if (line.matchString("control:*", true)) {
 			Control *ctrl = parseControl(line, file);
 			if (ctrl)
 				scope.controls.push_back(ctrl);
@@ -79,11 +74,10 @@ void ScriptManager::parseScrFile(const Common::Path &fileName, ScriptScope &scop
 void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stream) {
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
-
 	while (!stream.eos() && !line.contains('}')) {
-		if (line.matchString("criteria {", true)) {
+		if (line.matchString("criteria {", true))
 			parseCriteria(stream, puzzle->criteriaList, puzzle->key);
-		} else if (line.matchString("results {", true)) {
+		else if (line.matchString("results {", true)) {
 			parseResults(stream, puzzle->resultActions);
 
 			// WORKAROUND for a script bug in Zork Nemesis, room ve5e (tuning
@@ -111,14 +105,12 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 			// version doesn't have a separate room for the cutscene.
 			else if (_engine->getGameId() == GID_GRANDINQUISITOR && (_engine->getFeatures() & ADGF_DVD) && puzzle->key == 10836)
 				puzzle->resultActions.push_front(new ActionAssign(_engine, 11, "10803, 0"));
-		} else if (line.matchString("flags {", true)) {
+		} 
+		else if (line.matchString("flags {", true))
 			setStateFlag(puzzle->key, parseFlags(stream));
-		}
-
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
-
 	puzzle->addedBySetState = false;
 }
 
@@ -133,45 +125,47 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
-
 	// Criteria can be empty
-	if (line.contains('}')) {
+	if (line.contains('}'))
 		return false;
-	}
-
 	// Create a new List to hold the CriteriaEntries
 	criteriaList.push_back(Common::List<Puzzle::CriteriaEntry>());
-
-	// WORKAROUND for a script bug in Zork: Nemesis, room td9e (fist puzzle)
-	// Since we patch the script that triggers when manipulating the left fist
-	// (below), we add an additional check for the left fist sound, so that it
-	// doesn't get killed immediately when the left fist animation starts.
-	// Together with the workaround below, it fixes bug #6783.
-	if (_engine->getGameId() == GID_NEMESIS && key == 3594) {
-		Puzzle::CriteriaEntry entry;
-		entry.key = 567;
-		entry.criteriaOperator = Puzzle::NOT_EQUAL_TO;
-		entry.argumentIsAKey = false;
-		entry.argument = 1;
-
-		criteriaList.back().push_back(entry);
-	}
-
-	// WORKAROUND for a script bug in Zork: Grand Inquisitor, room me2j
-	// (Closing the Time Tunnels). When the time tunnel is open the game
-	// shows a close-up of only the tunnel, instead of showing the entire
-	// booth. However, the scripts that draw the lever in its correct
-	// state do not test this flag, causing it to be drawn when it should
-	// not be. This fixes bug #6770.
-	if (_engine->getGameId() == GID_GRANDINQUISITOR && key == 9536) {
-		Puzzle::CriteriaEntry entry;
-		entry.key = 9404; // me2j_time_tunnel_open
-		entry.criteriaOperator = Puzzle::EQUAL_TO;
-		entry.argumentIsAKey = false;
-		entry.argument = 0;
-
-		criteriaList.back().push_back(entry);
-	}
+	
+  switch(_engine->getGameId()) {
+    case GID_NEMESIS:
+	    // WORKAROUND for a script bug in Zork: Nemesis, room td9e (fist puzzle)
+	    // Since we patch the script that triggers when manipulating the left fist
+	    // (below), we add an additional check for the left fist sound, so that it
+	    // doesn't get killed immediately when the left fist animation starts.
+	    // Together with the workaround below, it fixes bug #6783.
+	    if (key == 3594) {
+		    Puzzle::CriteriaEntry entry;
+		    entry.key = 567;
+		    entry.criteriaOperator = Puzzle::NOT_EQUAL_TO;
+		    entry.argumentIsAKey = false;
+		    entry.argument = 1;
+		    criteriaList.back().push_back(entry);
+	    }
+      break;
+    case GID_GRANDINQUISITOR:
+	    // WORKAROUND for a script bug in Zork: Grand Inquisitor, room me2j
+	    // (Closing the Time Tunnels). When the time tunnel is open the game
+	    // shows a close-up of only the tunnel, instead of showing the entire
+	    // booth. However, the scripts that draw the lever in its correct
+	    // state do not test this flag, causing it to be drawn when it should
+	    // not be. This fixes bug #6770.
+	    if (key == 9536) {
+		    Puzzle::CriteriaEntry entry;
+		    entry.key = 9404; // me2j_time_tunnel_open
+		    entry.criteriaOperator = Puzzle::EQUAL_TO;
+		    entry.argumentIsAKey = false;
+		    entry.argument = 0;
+		    criteriaList.back().push_back(entry);
+	    }
+      break;
+    default:
+      break;
+  }
 
 	while (!stream.eos() && !line.contains('}')) {
 		Puzzle::CriteriaEntry entry;
@@ -205,18 +199,18 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 		// There are supposed to be three tokens, but there is no
 		// guarantee that there will be a space between the second and
 		// the third one (bug #6774)
-		if (token.size() == 1) {
+		if (token.size() == 1)
 			token = tokenizer.nextToken();
-		} else {
+		else
 			token.deleteChar(0);
-		}
 
 		// First determine if the last token is an id or a value
 		// Then parse it into 'argument'
 		if (token.contains('[')) {
 			sscanf(token.c_str(), "[%u]", &(entry.argument));
 			entry.argumentIsAKey = true;
-		} else {
+		} 
+		else {
 			sscanf(token.c_str(), "%u", &(entry.argument));
 			entry.argumentIsAKey = false;
 		}
@@ -236,19 +230,15 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 			entry0.criteriaOperator = Puzzle::GREATER_THAN;
 			entry0.argumentIsAKey = false;
 			entry0.argument = 0;
-
 			criteriaList.back().push_back(entry0);
-
 			entry.criteriaOperator = Puzzle::NOT_EQUAL_TO;
 			entry.argument = 2;
 		}
-
+		
 		criteriaList.back().push_back(entry);
-
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
-
 	return true;
 }
 
@@ -266,41 +256,33 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			line.toLowercase();
 			continue;
 		}
-
 		const char *chrs = line.c_str();
 		uint pos;
 		for (pos = 0; pos < line.size(); pos++)
 			if (chrs[pos] == ':')
 				break;
-
 		if (pos < line.size()) {
 			uint startpos = pos + 1;
 			for (pos = startpos; pos < line.size(); pos++)
 				if (chrs[pos] == ':' || chrs[pos] == '(')
 					break;
-
 			if (pos < line.size()) {
 				int32 slot = 11;
 				Common::String args = "";
 				Common::String act(chrs + startpos, chrs + pos);
-
 				startpos = pos + 1;
-
 				if (chrs[pos] == ':') {
 					for (pos = startpos; pos < line.size(); pos++)
 						if (chrs[pos] == '(')
 							break;
 					Common::String strSlot(chrs + startpos, chrs + pos);
 					slot = atoi(strSlot.c_str());
-
 					startpos = pos + 1;
 				}
-
 				if (pos < line.size()) {
 					for (pos = startpos; pos < line.size(); pos++)
 						if (chrs[pos] == ')')
 							break;
-
 					args = Common::String(chrs + startpos, chrs + pos);
 				}
 
@@ -401,35 +383,28 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				}
 			}
 		}
-
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 		line.toLowercase();
 	}
-
 	return;
 }
 
 uint ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
 	uint flags = 0;
-
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
-
 	while (!stream.eos() && !line.contains('}')) {
-		if (line.matchString("ONCE_PER_INST", true)) {
+		if (line.matchString("ONCE_PER_INST", true))
 			flags |= Puzzle::ONCE_PER_INST;
-		} else if (line.matchString("DO_ME_NOW", true)) {
+		else if (line.matchString("DO_ME_NOW", true))
 			flags |= Puzzle::DO_ME_NOW;
-		} else if (line.matchString("DISABLED", true)) {
+		else if (line.matchString("DISABLED", true))
 			flags |= Puzzle::DISABLED;
-		}
-
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
-
 	return flags;
 }
 
