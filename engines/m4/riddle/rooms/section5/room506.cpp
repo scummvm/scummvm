@@ -44,8 +44,8 @@ void Room506::init() {
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME)
 		_flag1 = true;
 
-	for (int i = 0; i < 39; ++i)
-		_palette[i] = _G(master_palette)[i + 7];
+	for (int i = 21; i < 59; ++i)
+		_palette[i] = _G(master_palette)[i];
 
 	_G(kernel).call_daemon_every_loop = true;
 	hotspot_set_active("OBSERVATORY DOOR", !_G(flags)[V156]);
@@ -412,7 +412,12 @@ void Room506::restorePalette() {
 		hotspot_set_active("   ", false);
 		hotspot_set_active("    ", true);
 
-		Common::copy(_palette, _palette + PALETTE_BLOCK, &_G(master_palette)[21]);
+		for (int i = 21; i < 59; ++i) {
+			_G(master_palette)[i].r = _palette[i].r;
+			_G(master_palette)[i].g = _palette[i].g;
+			_G(master_palette)[i].b = _palette[i].b;
+		}
+
 		gr_pal_set_range(21, PALETTE_BLOCK);
 		_flag1 = true;
 	}
@@ -425,14 +430,14 @@ void Room506::setupPalette() {
 		hotspot_set_active("   ", true);
 		hotspot_set_active("    ", false);
 
-		for (int i = 0; i < PALETTE_BLOCK; ++i) {
-			const int palR = MAX(_G(master_palette)[7 + i].r - 100, 0);
-			const int palG = MAX(_G(master_palette)[7 + i].g - 100, 0);
-			const int palB = MAX(_G(master_palette)[7 + i].b - 100, 0);
+		for (int i = 21; i < 59; ++i) {
+			const int palR = MAX(_G(master_palette)[i].r - 100, 0);
+			const int palG = MAX(_G(master_palette)[i].g - 100, 0);
+			const int palB = MAX(_G(master_palette)[i].b - 100, 0);
 
-			_G(master_palette)[7 + i].r = palR;
-			_G(master_palette)[7 + i].g = palG;
-			_G(master_palette)[7 + i].b = palB;
+			_G(master_palette)[i].r = palR;
+			_G(master_palette)[i].g = palG;
+			_G(master_palette)[i].b = palB;
 		}
 
 		gr_pal_set_range(21, PALETTE_BLOCK);
