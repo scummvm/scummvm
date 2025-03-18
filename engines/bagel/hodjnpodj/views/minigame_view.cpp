@@ -27,6 +27,12 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+MinigameView::MinigameView(const Common::String &name, const Common::String &resFilename) :
+		View(name), _resourceFilename(resFilename),
+		_settings(g_engine->_settings[name]) {
+
+}
+
 MinigameView::~MinigameView() {
 	delete _resources;
 }

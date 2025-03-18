@@ -36,10 +36,19 @@ public:
 		typedef Common::HashMap<Common::String, Common::String,
 			Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> Values;
 		Values _values;
+		bool _modified = false;
+
 	public:
 		void load(Common::InSaveFile *src);
 		void save(Common::OutSaveFile *dest);
 		static Common::String getDomainName(Common::InSaveFile *src);
+
+		bool isModified() const {
+			return _modified;
+		}
+		bool empty() const {
+			return _values.empty();
+		}
 
 		bool hasKey(const Common::String &key) const {
 			return _values.contains(key);
@@ -51,18 +60,24 @@ public:
 			return !hasKey(key) || _values[key].empty() ? false :
 				tolower(_values[key][0]) == 't';
 		}
-		void setInt(const Common::String &key,
-			const Common::String &value) {
-			_values[key] = value;
+		void setInt(const Common::String &key, int value) {
+			_values[key] = Common::String::format("%d", value);
+			_modified = true;
 		}
 		void setBool(const Common::String &key, bool value) {
 			_values[key] = value ? "true" : "false";
+			_modified = true;
 		}
 	};
 
 public:
-	Settings();
-	~Settings();
+	void load();
+	void save();
+
+	bool isModified() const;
+	Domain &operator[](const Common::String &domain) {
+		return _domains[domain];
+	}
 
 private:
 	typedef Common::HashMap<Common::String, Domain,

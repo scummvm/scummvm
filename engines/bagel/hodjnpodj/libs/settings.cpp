@@ -25,9 +25,9 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-static const char *FILENAME = "hodjnpodj_settings.dat";
+static const char *FILENAME = "hodjnpodj_settings.ini";
 
-Settings::Settings() {
+void Settings::load() {
 	Common::InSaveFile *src = g_system->getSavefileManager()->openForLoading(FILENAME);
 	Common::String domainName;
 
@@ -42,11 +42,17 @@ Settings::Settings() {
 	}
 }
 
-Settings::~Settings() {
-	Common::OutSaveFile *dest = g_system->getSavefileManager()->openForSaving(FILENAME);
+void Settings::save() {
+	if (_domains.empty() || !isModified())
+		return;
+
+	Common::OutSaveFile *dest = g_system->getSavefileManager()->openForSaving(FILENAME, false);
 	Common::String domainName;
 
 	for (Domains::iterator it = _domains.begin(); it != _domains.end(); ++it) {
+		if (it->_value.empty())
+			continue;
+
 		domainName = it->_key;
 		dest->writeByte('[');
 		dest->writeString(it->_key);
@@ -60,10 +66,22 @@ Settings::~Settings() {
 	delete dest;
 }
 
+bool Settings::isModified() const {
+	for (Domains::iterator it = _domains.begin();
+		it != _domains.end(); ++it) {
+		if (it->_value.isModified())
+			return true;
+	}
+
+	return false;
+}
+
 Common::String Settings::Domain::getDomainName(Common::InSaveFile *src) {
 	Common::String line = src->readLine();
-	assert(line.hasPrefix("[") && line.hasSuffix("]"));
+	if (line.empty())
+		return "";
 
+	assert(line.hasPrefix("[") && line.hasSuffix("]"));
 	return Common::String(line.c_str() + 1, line.size() - 2);
 }
 

@@ -25,6 +25,7 @@
 #include "bagel/hodjnpodj/views/view.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 #include "bagel/hodjnpodj/gfx/scrollbar.h"
+#include "bagel/hodjnpodj/libs/settings.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -45,6 +46,7 @@ private:
 	ScrollBar _ballSpeedScroll;
 	ScrollBar _paddleSizeScroll;
 	CheckButton _outerWallCheck;
+	Settings::Domain &_settings;
 	bool _hasChanges = false;
 	int _numBalls = 0;
 	int _startLevel = 0;

@@ -19,9 +19,9 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "bagel/hodjnpodj/fuge/options.h"
 #include "bagel/hodjnpodj/fuge/defines.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -43,7 +43,8 @@ Options::Options() : View("FugeOptions"),
 		_okButton(DialogRect(8, 87, 16, 31, 14), this),
 		_cancelButton(DialogRect(8, 87, 32, 31, 14), this),
 		_defaultsButton(DialogRect(8, 87, 48, 31, 14), this),
-		_outerWallCheck("OuterWall", DialogRect(8, 67, 84, 52, 11), this) {
+		_outerWallCheck("OuterWall", DialogRect(8, 67, 84, 52, 11), this),
+		_settings(g_engine->_settings["Fuge"]) {
 
 	_numBallsScroll.setScrollRange(BALLS_MIN, BALLS_MAX);
 	_startLevelScroll.setScrollRange(LEVEL_MIN, LEVEL_MAX);
@@ -156,52 +157,41 @@ void Options::putDialogData() {
 }
 
 void Options::loadIniSettings() {
-	Common::String domain = ConfMan.getActiveDomainName();
-	ConfMan.setActiveDomain("Fuge");
-
-	_numBalls = !ConfMan.hasKey("NumberOfBalls") ? BALLS_DEF :
-		ConfMan.getInt("NumberOfBalls");
+	_numBalls = !_settings.hasKey("NumberOfBalls") ? BALLS_DEF :
+		_settings.getInt("NumberOfBalls");
 	if ((_numBalls < BALLS_MIN) || (_numBalls > BALLS_MAX))
 		_numBalls = BALLS_DEF;
 
-	_startLevel = !ConfMan.hasKey("StartingLevel") ? LEVEL_DEF :
-		ConfMan.getInt("StartingLevel");
+	_startLevel = !_settings.hasKey("StartingLevel") ? LEVEL_DEF :
+		_settings.getInt("StartingLevel");
 	if ((_startLevel < LEVEL_MIN) || (_startLevel > LEVEL_MAX))
 		_startLevel = LEVEL_DEF;
 
-	_ballSpeed = !ConfMan.hasKey("BallSpeed") ? SPEED_DEF :
-		ConfMan.getInt("BallSpeed");
+	_ballSpeed = !_settings.hasKey("BallSpeed") ? SPEED_DEF :
+		_settings.getInt("BallSpeed");
 	if ((_ballSpeed < SPEED_MIN) || (_ballSpeed > SPEED_MAX))
 		_ballSpeed = SPEED_DEF;
 
-	_paddleSize = !ConfMan.hasKey("PaddleSize") ? PSIZE_DEF :
-		ConfMan.getInt("PaddleSize");
+	_paddleSize = !_settings.hasKey("PaddleSize") ? PSIZE_DEF :
+		_settings.getInt("PaddleSize");
 	if ((_paddleSize < PSIZE_MIN) || (_paddleSize > PSIZE_MAX))
 		_paddleSize = PSIZE_DEF;
 
-	_outerWall = !ConfMan.hasKey("OuterWall") ? false :
-		ConfMan.getBool("OuterWall");
+	_outerWall = !_settings.hasKey("OuterWall") ? false :
+		_settings.getBool("OuterWall");
 
 	_hasChanges = false;
-
-	ConfMan.setActiveDomain(domain);
 }
 
 void Options::saveIniSettings() {
 	if (!_hasChanges)
 		return;
 
-	Common::String domain = ConfMan.getActiveDomainName();
-	ConfMan.setActiveDomain("Fuge");
-
-	ConfMan.setInt("NumberOfBalls", _numBalls);
-	ConfMan.setInt("StartingLevel", _startLevel);
-	ConfMan.setInt("BallSpeed", _ballSpeed);
-	ConfMan.setInt("PaddleSize", _paddleSize);
-	ConfMan.setBool("OuterWall", _outerWall);
-
-	ConfMan.setActiveDomain(domain);
-	ConfMan.flushToDisk();
+	_settings.setInt("NumberOfBalls", _numBalls);
+	_settings.setInt("StartingLevel", _startLevel);
+	_settings.setInt("BallSpeed", _ballSpeed);
+	_settings.setInt("PaddleSize", _paddleSize);
+	_settings.setBool("OuterWall", _outerWall);
 }
 
 } // namespace Fuge

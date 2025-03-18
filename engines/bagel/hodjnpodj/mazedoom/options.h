@@ -25,6 +25,7 @@
 #include "bagel/hodjnpodj/views/view.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 #include "bagel/hodjnpodj/gfx/scrollbar.h"
+#include "bagel/hodjnpodj/libs/settings.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -44,6 +45,7 @@ private:
 		_difficultyTitleRect;
 	const Common::Rect _timeRect;
 	Common::String _timeStr;
+	Settings::Domain &_settings;
 	int _time;
 	int _difficulty;
 

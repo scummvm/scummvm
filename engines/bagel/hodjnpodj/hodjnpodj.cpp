@@ -69,9 +69,12 @@ Common::Error HodjNPodjEngine::run() {
 			error("Could not load msserif.fon");
 	}
 
+	_settings.load();
+
 	// Run the game
 	runGame();
 
+	_settings.save();
 	return Common::kNoError;
 }
 

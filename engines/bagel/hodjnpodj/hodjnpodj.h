@@ -35,6 +35,7 @@
 #include "graphics/fonts/winfont.h"
 #include "graphics/screen.h"
 #include "bagel/hodjnpodj/events.h"
+#include "bagel/hodjnpodj/libs/settings.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {
@@ -61,6 +62,7 @@ protected:
 public:
 	Common::HashMap<int, Graphics::WinFont> _fonts;
 	Metagame::CBfcMgr _metaGame;
+	Settings _settings;
 	bool _bReturnToZoom = false;
 	bool _bReturnToMeta = false;
 	bool _bReturnToGrandTour = false;

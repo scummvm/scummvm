@@ -19,9 +19,9 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "bagel/hodjnpodj/mazedoom/options.h"
 #include "bagel/hodjnpodj/mazedoom/defines.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -56,7 +56,8 @@ Options::Options() : View("MazeDoomOptions"),
 		_difficultyScroll("Difficulty", DialogRect(8, 15, 50, 65, 10), this),
 		_timeScroll("Time", DialogRect(8, 15, 80, 65, 10), this),
 		_okButton(DialogRect(8, 85, 59, 30, 14), this),
-		_cancelButton(DialogRect(8, 85, 80, 30, 15), this) {
+		_cancelButton(DialogRect(8, 85, 80, 30, 15), this),
+		_settings(g_engine->_settings["MazeDoom"]) {
 
 	_difficultyScroll.setScrollRange(MIN_DIFFICULTY, MAX_DIFFICULTY, 0);
 	_timeScroll.setScrollRange(TIMER_MIN, TIMER_MAX, 0);
@@ -145,33 +146,22 @@ void Options::putDialogData() {
 }
 
 void Options::loadIniSettings() {
-	Common::String domain = ConfMan.getActiveDomainName();
-	ConfMan.setActiveDomain("MazeDoom");
-
-	_difficulty = !ConfMan.hasKey("difficulty") ? DEFAULT_DIFFICULTY :
-		CLIP(ConfMan.getInt("difficulty"), MIN_DIFFICULTY, MAX_DIFFICULTY);
-	_time = !ConfMan.hasKey("time_limit") ? TIMER_DEFAULT :
-		CLIP(ConfMan.getInt("time_limit"), 0, TIMER_MAX);
+	_difficulty = !_settings.hasKey("difficulty") ? DEFAULT_DIFFICULTY :
+		CLIP(_settings.getInt("difficulty"), MIN_DIFFICULTY, MAX_DIFFICULTY);
+	_time = !_settings.hasKey("time_limit") ? TIMER_DEFAULT :
+		CLIP(_settings.getInt("time_limit"), 0, TIMER_MAX);
 	if (_time == 0)
 		_time = TIMER_MAX;
 
 	_hasChanges = false;
-
-	ConfMan.setActiveDomain(domain);
 }
 
 void Options::saveIniSettings() {
 	if (!_hasChanges)
 		return;
 
-	Common::String domain = ConfMan.getActiveDomainName();
-	ConfMan.setActiveDomain("MazeDoom");
-
-	ConfMan.setInt("difficulty", _difficulty);
-	ConfMan.setInt("time_limit", _time);
-
-	ConfMan.setActiveDomain(domain);
-	ConfMan.flushToDisk();
+	_settings.setInt("difficulty", _difficulty);
+	_settings.setInt("time_limit", _time);
 }
 
 void Options::setTime(int nMinutes, int nSeconds) {

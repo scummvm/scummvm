@@ -20,7 +20,6 @@
  */
 
 #include "common/system.h"
-#include "common/config-manager.h"
 #include "common/file.h"
 #include "image/bmp.h"
 #include "graphics/paletteman.h"
@@ -791,38 +790,33 @@ void Fuge::loadIniSettings() {
 		}
 
 	} else {
-		Common::String domain = ConfMan.getActiveDomainName();
-		ConfMan.setActiveDomain(INI_SECTION);
-
-		_nInitNumBalls = ConfMan.hasKey("NumberOfBalls") ?
-			ConfMan.getInt("NumberOfBalls") : BALLS_DEF;
+		_nInitNumBalls = _settings.hasKey("NumberOfBalls") ?
+			_settings.getInt("NumberOfBalls") : BALLS_DEF;
 		if ((_nInitNumBalls < BALLS_MIN) || (_nInitNumBalls > BALLS_MAX))
 			_nInitNumBalls = BALLS_DEF;
 
-		_nInitStartLevel = ConfMan.hasKey("StartingLevel") ?
-			ConfMan.getInt("StartingLevel") : LEVEL_DEF;
+		_nInitStartLevel = _settings.hasKey("StartingLevel") ?
+			_settings.getInt("StartingLevel") : LEVEL_DEF;
 		if ((_nInitStartLevel < LEVEL_MIN) || (_nInitStartLevel > LEVEL_MAX))
 			_nInitStartLevel = LEVEL_DEF;
 
-		_nInitBallSpeed = ConfMan.hasKey("BallSpeed") ?
-			ConfMan.getInt("BallSpeed") : SPEED_DEF;
+		_nInitBallSpeed = _settings.hasKey("BallSpeed") ?
+			_settings.getInt("BallSpeed") : SPEED_DEF;
 		if ((_nInitBallSpeed < SPEED_MIN) || (_nInitBallSpeed > SPEED_MAX))
 			_nInitBallSpeed = SPEED_DEF;
 
-		_nInitPaddleSize = ConfMan.hasKey("PaddleSize") ?
-			ConfMan.getInt("PaddleSize") : PSIZE_DEF;
+		_nInitPaddleSize = _settings.hasKey("PaddleSize") ?
+			_settings.getInt("PaddleSize") : PSIZE_DEF;
 		if ((_nInitPaddleSize < PSIZE_MIN) || (_nInitPaddleSize > PSIZE_MAX))
 			_nInitPaddleSize = PSIZE_DEF;
 
-		_bOuterWall = ConfMan.hasKey("OutterWall") ?
-			ConfMan.getBool("OutterWall") : false;
+		_bOuterWall = _settings.hasKey("OutterWall") ?
+			_settings.getBool("OutterWall") : false;
 
-		_nGForceFactor = ConfMan.hasKey("Gravity") ?
-			ConfMan.getInt("Gravity") : GFORCE_DEF;
+		_nGForceFactor = _settings.hasKey("Gravity") ?
+			_settings.getInt("Gravity") : GFORCE_DEF;
 		if ((_nGForceFactor < GFORCE_MIN) || (_nGForceFactor > GFORCE_MAX))
 			_nGForceFactor = GFORCE_DEF;
-
-		ConfMan.setActiveDomain(domain);
 	}
 }
 

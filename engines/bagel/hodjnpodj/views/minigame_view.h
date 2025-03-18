@@ -27,6 +27,7 @@
 #include "common/list.h"
 #include "common/formats/winexe_ne.h"
 #include "bagel/hodjnpodj/views/view.h"
+#include "bagel/hodjnpodj/libs/settings.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -50,6 +51,8 @@ private:
 	int _showMenuCtr = 0;
 
 protected:
+	Settings::Domain &_settings;
+
 	void addResource(const Common::String &filename,
 		const Common::WinResourceID &id,
 		const Common::WinResourceID &type = Common::kWinBitmap) {
@@ -62,9 +65,7 @@ protected:
 	virtual void showMainMenu() = 0;
 
 public:
-	MinigameView(const Common::String &name, const Common::String &resFilename) :
-		View(name), _resourceFilename(resFilename) {
-	}
+	MinigameView(const Common::String &name, const Common::String &resFilename);
 	virtual ~MinigameView();
 
 	bool msgFocus(const FocusMessage &msg) override;
