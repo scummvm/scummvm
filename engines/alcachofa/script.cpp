@@ -400,7 +400,7 @@ private:
 		auto entry = getArg(argI);
 		if (entry._type != StackEntryType::String)
 			error("Expected string in argument %u for kernel call", argI);
-		return _script._strings->data() + entry._index;
+		return &_script._strings[entry._index];
 	}
 
 	int32 getNumberOrStringArg(uint argI) {
@@ -408,8 +408,18 @@ private:
 		// as it will be interpreted as a boolean we only care about == 0 / != 0
 		auto entry = getArg(argI);
 		if (entry._type != StackEntryType::Number && entry._type != StackEntryType::String)
-			error("Expected number of string in argument %u for kernel call", argI);
+			error("Expected number or string in argument %u for kernel call", argI);
 		return entry._number;
+	}
+
+	const char *getOptionalStringArg(uint argI) {
+		// another special case: a string that may be zero which is passed as number
+		auto entry = getArg(argI);
+		if (entry._type == StackEntryType::String)
+			return &_script._strings[entry._index];
+		if (entry._type == StackEntryType::Number && entry._number == 0)
+			return nullptr;
+		error("Expected optional string in argument %u for kernel call", argI);
 	}
 
 	MainCharacter &relatedCharacter() {
@@ -669,7 +679,7 @@ private:
 			return TaskReturn::finish(1);
 		case ScriptKernelTask::CharacterDrop: {
 			auto &character = g_engine->world().getMainCharacterByKind((MainCharacterKind)getNumberArg(1));
-			character.drop(getStringArg(0));
+			character.drop(getOptionalStringArg(0));
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::ClearInventory:
