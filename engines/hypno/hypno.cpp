@@ -250,7 +250,9 @@ void HypnoEngine::runIntros(Videos &videos) {
 					clicks++;
 				}
 				break;
-
+			case Common::EVENT_RBUTTONUP:
+				setRButtonUp(true);
+				break;
 			default:
 				break;
 			}

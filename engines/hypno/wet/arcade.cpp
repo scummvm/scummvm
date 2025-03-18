@@ -1169,4 +1169,12 @@ byte *WetEngine::getTargetColor(Common::String name, int levelId) {
 	return getPalette(entry->targetColor);
 }
 
+bool WetEngine::checkRButtonUp() {
+	return _rButtonUp;
+}
+
+void WetEngine::setRButtonUp(const bool val) {
+	_rButtonUp = val;
+}
+
 } // End of namespace Hypno

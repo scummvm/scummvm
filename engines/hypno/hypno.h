@@ -285,6 +285,8 @@ public:
 	virtual void missedTarget(Shoot *s, ArcadeShooting *arc);
 	virtual void missNoTarget(ArcadeShooting *arc);
 	virtual byte *getTargetColor(Common::String name, int levelId);
+	virtual bool checkRButtonUp();
+	virtual void setRButtonUp(const bool val);
 
 	// Segments
 	Segments _segments;
@@ -451,6 +453,9 @@ public:
 	void findNextSegment(ArcadeShooting *arc) override;
 	void initSegment(ArcadeShooting *arc) override;
 	byte *getTargetColor(Common::String name, int levelId) override;
+	bool checkRButtonUp() override;
+	void setRButtonUp(const bool val) override;
+
 
 	bool hasFeature(EngineFeature f) const override {
 		return (f == kSupportsReturnToLauncher);
@@ -486,6 +491,8 @@ private:
 	int _c40lastTurn;
 	int _c50LeftTurns;
 	int _c50RigthTurns;
+
+	bool _rButtonUp;
 };
 
 class SpiderEngine : public HypnoEngine {
