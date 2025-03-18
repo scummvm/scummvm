@@ -20,6 +20,7 @@
  */
 
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/formats/winexe_ne.h"
 #include "bagel/hodjnpodj/views/minigame_view.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
@@ -30,7 +31,6 @@ namespace HodjNPodj {
 MinigameView::MinigameView(const Common::String &name, const Common::String &resFilename) :
 		View(name), _resourceFilename(resFilename),
 		_settings(g_engine->_settings[name]) {
-
 }
 
 MinigameView::~MinigameView() {
@@ -40,8 +40,23 @@ MinigameView::~MinigameView() {
 bool MinigameView::msgOpen(const OpenMessage &msg) {
 	SearchMan.add("Resources", this, 0, false);
 
-	if (!_resourceFilename.empty())
+	if (!_resourceFilename.empty()) {
 		_resources = Common::NEResources::createFromEXE(Common::Path(_resourceFilename));
+
+		// Load the data for each mapped file
+		for (ResourceFiles::iterator it = _resourceFiles.begin();
+				it != _resourceFiles.end(); ++it) {
+			ResourceEntry &re = it->_value;
+			Common::SeekableReadStream *src =
+				_resources->getResource(re._type, re._id);
+			assert(src);
+
+			re.resize(src->size());
+			src->read(&re[0], re.size());
+
+			delete src;
+		}
+	}
 
 	g_events->setCursor(IDC_ARROW);
 
@@ -54,6 +69,13 @@ bool MinigameView::msgClose(const CloseMessage &msg) {
 	SearchMan.remove("Resources");
 	delete _resources;
 	_resources = nullptr;
+
+	// Load the data for each mapped file
+	for (ResourceFiles::iterator it = _resourceFiles.begin();
+		it != _resourceFiles.end(); ++it) {
+		ResourceEntry &re = it->_value;
+		re.clear();
+	}
 
 	return View::msgClose(msg);
 }
@@ -117,7 +139,7 @@ bool MinigameView::tick() {
 }
 
 bool MinigameView::hasFile(const Common::Path &path) const {
-	return _files.contains(path.toString());
+	return _resourceFiles.contains(path.toString());
 }
 
 int MinigameView::listMembers(Common::ArchiveMemberList &list) const {
@@ -133,19 +155,11 @@ Common::SeekableReadStream *MinigameView::createReadStreamForMember(const Common
 	Common::String filename = path.toString();
 
 	// See if it's a filename that's been registered
-	if (!_files.contains(filename))
+	if (!_resourceFiles.contains(filename))
 		return nullptr;
 
-	// TODO: Is there any way to share the _resources field?
-	// We're in a const method, and the getResource call
-	// isn't const. So maybe not? 
-	// Load the resources from the specified file
-	if (!winResources.loadFromEXE(Common::Path(_resourceFilename)))
-		return nullptr;
-
-	// Get and return the appropriate resource
-	return winResources.getResource(
-		_files[filename]._type, _files[filename]._id);
+	const ResourceEntry &re = _resourceFiles[filename];
+	return new Common::MemoryReadStream(&re[0], re.size());
 }
 
 void MinigameView::drawSprites() {

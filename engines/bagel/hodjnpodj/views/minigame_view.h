@@ -32,7 +32,7 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-struct ResourceEntry {
+struct ResourceEntry : public Common::Array<byte> {
 	Common::WinResourceID _id;
 	Common::WinResourceID _type;
 };
@@ -45,8 +45,9 @@ class MinigameView : public View, public Common::Archive {
 private:
 	Common::String _resourceFilename;
 	Common::WinResources *_resources = nullptr;
-	Common::HashMap<Common::String, ResourceEntry,
-		Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _files;
+	typedef Common::HashMap<Common::String, ResourceEntry,
+		Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ResourceFiles;
+	ResourceFiles _resourceFiles;
 	Common::List<Sprite *> _linkedSprites;
 	int _showMenuCtr = 0;
 
@@ -56,8 +57,8 @@ protected:
 	void addResource(const Common::String &filename,
 		const Common::WinResourceID &id,
 		const Common::WinResourceID &type = Common::kWinBitmap) {
-		_files[filename]._id = id;
-		_files[filename]._type = type;
+		_resourceFiles[filename]._id = id;
+		_resourceFiles[filename]._type = type;
 	}
 
 	void drawSprites();
