@@ -78,7 +78,12 @@ qdGameObjectMoving::qdGameObjectMoving() :
 	_ignore_personages = false;
 	_is_selected = false;
 	set_flag(QD_OBJ_HAS_BOUND_FLAG);
-	_movement_mode = MOVEMENT_MODE_STOP;
+
+	if (g_engine->_gameVersion <= 20030919)
+		_movement_mode = MOVEMENT_MODE_NONE_EARLY;
+	else
+		_movement_mode = MOVEMENT_MODE_STOP;
+
 	_movement_mode_time = _movement_mode_time_current = 0.f;
 }
 
@@ -116,7 +121,10 @@ qdGameObjectMoving::qdGameObjectMoving(const qdGameObjectMoving &obj) : qdGameOb
 	_is_selected = false;
 	set_flag(QD_OBJ_HAS_BOUND_FLAG);
 
-	_movement_mode = MOVEMENT_MODE_STOP;
+	if (g_engine->_gameVersion <= 20030919)
+		_movement_mode = MOVEMENT_MODE_NONE_EARLY;
+	else
+		_movement_mode = MOVEMENT_MODE_STOP;
 	_movement_mode_time = _movement_mode_time_current = 0.f;
 
 	_circuit_objs = obj.const_ref_circuit_objs();
@@ -2762,6 +2770,7 @@ static const char *movementList[] = {
 	defEnum(MOVEMENT_MODE_START),
 	defEnum(MOVEMENT_MODE_MOVE),
 	defEnum(MOVEMENT_MODE_END),
+	defEnum(MOVEMENT_MODE_NONE_EARLY),
 };
 
 Common::String qdGameObjectMoving::movement2str(int fl, bool truncate) {
