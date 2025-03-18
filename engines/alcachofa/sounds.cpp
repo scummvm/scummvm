@@ -124,11 +124,17 @@ static AudioStream *openAudio(const String &fileName) {
 	if (file->open(path.c_str()))
 		return makeWAVStream(file, DisposeAfterUse::YES);
 	delete file;
+
+	// Ignore the known, original wrong filenames given, report the rest
+	if (fileName == "CHAS")
+		return nullptr;
 	error("Could not open audio file: %s", fileName.c_str());
 }
 
 SoundID Sounds::playSoundInternal(const String &fileName, byte volume, Mixer::SoundType type) {
 	AudioStream *stream = openAudio(fileName);
+	if (stream == nullptr)
+		return UINT32_MAX;
 	SoundHandle handle;
 	_mixer->playStream(type, &handle, stream, -1, volume);
 	SoundID id = _nextID++;
