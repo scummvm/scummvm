@@ -554,7 +554,8 @@ void World::toggleObject(MainCharacterKind character, const Common::String &objN
 	if (object == nullptr)
 		object = getObjectByNameFromAnyRoom(objName);
 	if (object == nullptr)
-		error("Tried to toggle unknown object: %s", objName.c_str());
+		warning("Tried to toggle unknown object: %s", objName.c_str());
+		// I would have liked an error for this, but original inconsistencies...
 	else
 		object->toggle(isEnabled);
 }

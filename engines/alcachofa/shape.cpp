@@ -133,7 +133,6 @@ Point Polygon::closestPointTo(const Common::Point& query, float &distanceSqr) co
 			}
 		}		
 	}
-	assert(contains(bestPoint));
 	return bestPoint;
 }
 

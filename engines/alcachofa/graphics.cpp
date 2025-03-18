@@ -191,7 +191,8 @@ void AnimationBase::loadMissingAnimation() {
 	// only allow missing animations we know are faulty in the original game
 	if (!_fileName.equalsIgnoreCase("ANIMACION.AN0") &&
 		!_fileName.equalsIgnoreCase("DESPACHO_SUPER2_OL_SOMBRAS2.AN0") &&
-		!_fileName.equalsIgnoreCase("PP_MORTA.AN0"))
+		!_fileName.equalsIgnoreCase("PP_MORTA.AN0") &&
+		!_fileName.equalsIgnoreCase("DESPACHO_SUPER2___FONDO_PP_SUPER.AN0"))
 		error("Could not open animation %s", _fileName.c_str());
 
 	// otherwise setup a functioning but empty animation
