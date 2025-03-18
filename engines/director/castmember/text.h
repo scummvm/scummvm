@@ -57,6 +57,7 @@ public:
 	bool setChunkField(int field, int start, int end, const Datum &value);
 
 	int getLineCount();
+	int getLineHeight(int line);
 
 	int getTextHeight();
 
