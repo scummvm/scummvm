@@ -159,6 +159,13 @@ Common::Error MediaStationEngine::run() {
 			break;
 		}
 
+		if (!_requestedContextReleaseId.empty()) {
+			for (uint contextId : _requestedContextReleaseId) {
+				releaseContext(contextId);
+			}
+			_requestedContextReleaseId.clear();
+		}
+
 		debugC(5, kDebugGraphics, "***** START SCREEN UPDATE ***");
 		for (auto it = _assetsPlaying.begin(); it != _assetsPlaying.end();) {
 			(*it)->process();
@@ -403,7 +410,7 @@ Operand MediaStationEngine::callMethod(BuiltInMethod methodId, Common::Array<Ope
 	case kReleaseContextMethod: {
 		assert(args.size() == 1);
 		uint32 contextId = args[0].getAssetId();
-		releaseContext(contextId);
+		_requestedContextReleaseId.push_back(contextId);
 		return Operand();
 	}
 
@@ -450,6 +457,17 @@ void MediaStationEngine::releaseContext(uint32 contextId) {
 	Context *context = _loadedContexts.getValOrDefault(contextId);
 	if (context == nullptr) {
 		error("MediaStationEngine::releaseContext(): Attempted to unload context %d that is not currently loaded", contextId);
+	}
+
+	// Make sure nothing is still using this context.
+	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
+		uint id = it->_key;
+		ContextDeclaration *contextDeclaration = _boot->_contextDeclarations.getValOrDefault(id);
+		for (uint32 childContextId : contextDeclaration->_fileReferences) {
+			if (childContextId == contextId) {
+				return;
+			}
+		}
 	}
 
 	// Unload any assets currently playing from this context. They should have

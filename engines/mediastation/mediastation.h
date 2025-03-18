@@ -121,6 +121,7 @@ private:
 	Asset *_currentHotspot = nullptr;
 
 	uint _requestedScreenBranchId = 0;
+	Common::Array<uint> _requestedContextReleaseId;
 	void doBranchToScreen();
 
 	Context *loadContext(uint32 contextId);
