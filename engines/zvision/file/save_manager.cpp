@@ -111,9 +111,9 @@ void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::S
 
 Common::Error SaveManager::loadGame(int slot) {
 	Common::SeekableReadStream *saveFile = NULL;
-	if (slot >= 0) {
+	if (slot >= 0)
 		saveFile = getSlotFile(slot);
-	} else {
+	else {
 		saveFile = _engine->getSearchManager()->openFile("r.svr");
 		if (!saveFile) {
 			Common::File *restoreFile = new Common::File();
@@ -128,9 +128,8 @@ Common::Error SaveManager::loadGame(int slot) {
 		return Common::kPathDoesNotExist;
 	// Read the header
 	SaveGameHeader header;
-	if (!readSaveGameHeader(saveFile, header)) {
+	if (!readSaveGameHeader(saveFile, header))
 		return Common::kUnknownError;
-	}
 	ScriptManager *scriptManager = _engine->getScriptManager();
 	// Update the state table values
 	scriptManager->deserialize(saveFile);
