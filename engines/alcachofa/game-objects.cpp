@@ -893,12 +893,14 @@ void MainCharacter::pickup(const String &name, bool putInHand) {
 }
 
 void MainCharacter::drop(const Common::String &name) {
-	auto item = getItemByName(name);
-	if (item == nullptr)
-		error("Tried to drop unknown item: %s", name.c_str());
-	item->toggle(false);
+	if (!name.empty()) {
+		auto item = getItemByName(name);
+		if (item == nullptr)
+			error("Tried to drop unknown item: %s", name.c_str());
+		item->toggle(false);
+	}
 	if (g_engine->player().activeCharacter() == this) {
-		// TODO: Clear held item for drop
+		g_engine->player().heldItem() = nullptr;
 		g_engine->world().inventory().updateItemsByActiveCharacter();
 	}
 }
