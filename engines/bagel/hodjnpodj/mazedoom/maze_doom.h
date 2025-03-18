@@ -72,6 +72,7 @@ private:
 	void updateTimer();
 	void gameOver();
 	void exitCheck();
+	void setupMaze();
 
 	/**
 	 * Mouse movement processing function

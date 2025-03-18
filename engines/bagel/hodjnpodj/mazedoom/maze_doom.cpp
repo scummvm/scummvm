@@ -339,11 +339,9 @@ void MazeDoom::draw() {
 	s.blitFrom(_mazeBitmap, Common::Point(
 		SIDE_BORDER, TOP_BORDER));
 
+	// Draw the player sprite
 	if (!pPlayerSprite.empty() && bPlaying)
-		s.blitFrom(pPlayerSprite, Common::Point(
-			(m_PlayerPos.x * SQ_SIZE_X) + SIDE_BORDER,
-			(m_PlayerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2
-		));
+		s.blitFrom(pPlayerSprite, pPlayerSprite);
 
 	if (bPlaying) {
 		// only false when the options are displayed
@@ -381,6 +379,14 @@ void MazeDoom::setupHodjPodj() {
 	_downBitmap.setTransparentColor(WHITE);
 	_leftBitmap.setTransparentColor(WHITE);
 	_rightBitmap.setTransparentColor(WHITE);
+}
+
+void MazeDoom::setupMaze() {
+	MazeGen::setupMaze();
+
+	// Set player sprite position
+	pPlayerSprite.x = (m_PlayerPos.x * SQ_SIZE_X) + SIDE_BORDER;
+	pPlayerSprite.y = (m_PlayerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;
 }
 
 void MazeDoom::loadBitmaps() {
@@ -522,7 +528,8 @@ void MazeDoom::movePlayer(const Common::Point &point) {
 	if ((_move._step.x != 0) || (_move._step.y != 0)) {
 		// If the click is not in the player's tile, preparing for moving
 		pPlayerSprite = *sprite;
-		pPlayerSprite.setTransparentColor(WHITE);
+		pPlayerSprite.x = (m_PlayerPos.x * SQ_SIZE_X) + SIDE_BORDER;
+		pPlayerSprite.y = (m_PlayerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;
 	}
 }
 
