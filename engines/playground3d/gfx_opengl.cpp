@@ -176,6 +176,12 @@ void OpenGLRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &r
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(_modelViewMatrix.getData());
 
+	glDisable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ZERO);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_TEXTURE_2D);
+
 	glTranslatef(pos.x(), pos.y(), pos.z());
 	glRotatef(roll.x(), 1.0f, 0.0f, 0.0f);
 	glRotatef(roll.y(), 0.0f, 1.0f, 0.0f);
@@ -192,6 +198,12 @@ void OpenGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(_modelViewMatrix.getData());
+
+	glDisable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ZERO);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_TEXTURE_2D);
 
 	glTranslatef(pos.x(), pos.y(), pos.z());
 	glRotatef(roll.y(), 0.0f, 1.0f, 0.0f);

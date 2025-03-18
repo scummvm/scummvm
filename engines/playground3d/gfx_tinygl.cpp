@@ -206,6 +206,12 @@ void TinyGLRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &r
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadMatrixf(_modelViewMatrix.getData());
 
+	tglDisable(TGL_BLEND);
+	tglBlendFunc(TGL_ONE, TGL_ZERO);
+	tglEnable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_TRUE);
+	tglDisable(TGL_TEXTURE_2D);
+
 	tglTranslatef(pos.x(), pos.y(), pos.z());
 	tglRotatef(roll.x(), 1.0f, 0.0f, 0.0f);
 	tglRotatef(roll.y(), 0.0f, 1.0f, 0.0f);
@@ -222,6 +228,12 @@ void TinyGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadMatrixf(_modelViewMatrix.getData());
+
+	tglDisable(TGL_BLEND);
+	tglBlendFunc(TGL_ONE, TGL_ZERO);
+	tglEnable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_TRUE);
+	tglDisable(TGL_TEXTURE_2D);
 
 	tglTranslatef(pos.x(), pos.y(), pos.z());
 	tglRotatef(roll.y(), 0.0f, 1.0f, 0.0f);
