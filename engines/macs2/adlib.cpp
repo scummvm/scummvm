@@ -404,7 +404,7 @@ void Adlib::Func2839(uint8 bpp0A, StreamHandler* sh) {
 	Func2792(bpp0A + 0xC0, value);
 }
 
-void Adlib::Func294E(uint16 bpp6, uint8 bpp8, uint16 bppA) {
+void Adlib::Func294E(uint16 bppA, uint8 bpp8, uint16 bpp6) {
 	uint16 bp4;
 	uint8 bp6;
 	/*
@@ -1024,20 +1024,22 @@ void Adlib::OnTimer() {
 			}
 		}
 	}
+	else {
+		// This is the jump target from 1B00 from before the big loop
+		// l0017_2425:
+		if ((g2258 & 0xC2) != 0) {
+			// l0017_242E:
+			SIS_LogEntry(0x01D7, 0x242E);
+			debug("Unimplemented");
+			// TODO: I think this just calls the function again
+			// Func1A74();
+		}
+		// l0017_2433:
+		Func27E4();
+	}
 
 	// l0017_2422
 	// TODO: sti
-
-	// l0017_2425:
-	if ((g2258 & 0xC2) != 0) {
-		// l0017_242E:
-		SIS_LogEntry(0x01D7, 0x242E);
-		debug("Unimplemented");
-		// TODO: I think this just calls the function again
-		// Func1A74();
-	}
-	// l0017_2433:
-	Func27E4();
 
 	// l0017_2438:
 	if (g229A == 0) {
@@ -1188,7 +1190,7 @@ void Adlib::Init() {
 	gArray2288.resize(0x9);
 	gArray2235.resize(0x9);
 
-#define CALLBACKS_PER_SECOND 10
+#define CALLBACKS_PER_SECOND 120
 	_opl->start(new Common::Functor0Mem<void, Adlib>(this, &Adlib::OnTimer), CALLBACKS_PER_SECOND);
 
 	// Func1A03();
