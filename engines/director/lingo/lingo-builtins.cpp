@@ -3663,10 +3663,26 @@ void LB::b_scrollByPage(int nargs) {
 }
 
 void LB::b_lineHeight(int nargs) {
-	g_lingo->printSTUBWithArglist("b_lineHeight", nargs);
-	g_lingo->dropStack(nargs);
-	Datum res(1);
-	g_lingo->push(res);
+	Datum lineNum = g_lingo->pop();
+	Datum castRef = g_lingo->pop();
+
+	if (castRef.type != CASTREF) {
+		g_lingo->lingoError("Incorrect argument type for lineHeight");
+		g_lingo->push(1);
+        return;
+	}
+
+	CastMember *member = g_director->getCurrentMovie()->getCastMember(*castRef.u.cast);
+
+	if (member->_type != kCastText) {
+		g_lingo->lingoError("Incorrect member type for lineHeight");
+		g_lingo->push(1);
+		return;
+	}
+
+	// MacText::getLineHeigt() is zero-indexed, we are one-indexed
+	int lineHeight = ((TextCastMember *)member)->getLineHeight(lineNum.u.i - 1);
+	g_lingo->push(lineHeight);
 }
 
 void LB::b_numberofchars(int nargs) {
