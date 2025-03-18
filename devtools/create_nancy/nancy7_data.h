@@ -216,9 +216,9 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy7ConditionalDialog
 	{	0, 1855, "NFJ55",
 		{ { kEv, 148, true }, { kEv, 155, true }, { kEv, 315, true }, { kEv, 297, true }, { kEv, 298, true }, { kEv, 296, true }, { kEv, 294, true }, { kEv, 156, false } } },
 	{	0, 1870, "NFJ70",
-		{ { kEv, 220, true }, { kEv, 217, true }, { kEv, 158, true }, { kIn, 147, false } } },
+		{ { kEv, 220, true }, { kEv, 217, true }, { kEv, 158, true }, { kEv, 147, false } } },
 	{	0, 1871, "NFJ70",
-		{ { kEv, 220, true }, { kEv, 217, true }, { kEv, 158, true }, { kIn, 147, true } } }
+		{ { kEv, 220, true }, { kEv, 217, true }, { kEv, 158, true }, { kEv, 147, true } } }
 },
 {	// Vivian, 14 responses
 	{	0, 1950, "NVW50",
