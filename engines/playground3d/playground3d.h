@@ -41,6 +41,8 @@ public:
 
 	bool hasFeature(EngineFeature f) const override;
 
+	void genTextures();
+
 	void processInput();
 
 	void drawFrame(int testId);

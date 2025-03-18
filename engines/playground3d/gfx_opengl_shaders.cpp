@@ -84,8 +84,6 @@ void ShaderRenderer::init() {
 
 	computeScreenViewport();
 
-	glEnable(GL_DEPTH_TEST);
-
 	static const char *cubeAttributes[] = { "position", "normal", "color", "texcoord", nullptr };
 	_cubeShader = OpenGL::Shader::fromFiles("playground3d_cube", cubeAttributes);
 	_cubeVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices);
@@ -172,6 +170,12 @@ void ShaderRenderer::enableFog(const Math::Vector4d &fogColor) {
 }
 
 void ShaderRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) {
+	glDisable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ZERO);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_TEXTURE_2D);
+
 	auto rotateMatrix = (Math::Quaternion::fromEuler(roll.x(), roll.y(), roll.z(), Math::EO_XYZ)).inverse().toMatrix();
 	_cubeShader->use();
 	_cubeShader->setUniform("textured", false);
