@@ -70,10 +70,10 @@ struct zvisionIniSettings {
 	{"countrycode", StateKey_CountryCode, 0, false, false},	// always 0 = US, subtitles are shown for codes 0 - 4, unused
 	{"lineskipvideo", StateKey_VideoLineSkip, 0, false, false},	// video line skip, 0 = default, 1 = always, 2 = pixel double when possible, unused
 	{"installlevel", StateKey_InstallLevel, 0, false, false},	// 0 = full, checked by universe.scr
-	{"highquality", StateKey_HighQuality, -1, true, false},	// high panorama quality, unused
-	{"qsoundenabled", StateKey_Qsound, -1, true, false},	// 1 = enable QSound - TODO: not supported yet
 	{"debugcheats", StateKey_DebugCheats, -1, true, false},	// always start with the GOxxxx cheat enabled
 	// Editable settings
+	{"highquality", StateKey_HighQuality, -1, true, false},	// high panorama quality
+	{"qsoundenabled", StateKey_Qsound, -1, true, false},	// 1 = enable generic directional audio and non-linear volume scaling.  Genuine Qsound is copyright & unlikely to be implemented.
 	{"keyboardturnspeed", StateKey_KbdRotateSpeed, 5, false, true},
 	{"panarotatespeed", StateKey_RotateSpeed, 540, false, true},	// checked by universe.scr
 	{"noanimwhileturning", StateKey_NoTurnAnim, -1, false, true},	// toggle playing animations during pana rotation
@@ -181,16 +181,21 @@ void ZVision::initialize() {
 	_searchManager = new SearchManager(ConfMan.getPath("path"), 6);
 	_searchManager->addDir("FONTS");
 	_searchManager->addDir("addon");
-	if (getGameId() == GID_GRANDINQUISITOR) {
-		if (!_searchManager->loadZix("INQUIS.ZIX"))
-			error("Unable to load file INQUIS.ZIX");
-	} 
-	else if (getGameId() == GID_NEMESIS) {
-		if (!_searchManager->loadZix("NEMESIS.ZIX")) {
-			// The game might not be installed, try MEDIUM.ZIX instead
-			if (!_searchManager->loadZix("ZNEMSCR/MEDIUM.ZIX"))
-				error("Unable to load the file ZNEMSCR/MEDIUM.ZIX");
-		}
+	switch(getGameId()) {
+	  case GID_GRANDINQUISITOR:
+		  if (!_searchManager->loadZix("INQUIS.ZIX"))
+			  error("Unable to load file INQUIS.ZIX");	  
+	    break;
+    case GID_NEMESIS:
+		  if (!_searchManager->loadZix("NEMESIS.ZIX"))
+			  // The game might not be installed, try MEDIUM.ZIX instead
+			  if (!_searchManager->loadZix("ZNEMSCR/MEDIUM.ZIX"))
+				  error("Unable to load the file ZNEMSCR/MEDIUM.ZIX");
+      break;
+	  case GID_NONE:
+    default:   
+  		error("Unknown/unspecified GameId");
+	    break;
 	}
 	
 	//Graphics
@@ -212,13 +217,13 @@ void ZVision::initialize() {
       _renderManager = new RenderManager(this, nemesisLayout, _resourcePixelFormat, _doubleFPS, _widescreen);
 	    _menu = new MenuNemesis(this, _renderManager->getMenuArea());
       _subtitleManager = new SubtitleManager(this, nemesisLayout, _resourcePixelFormat, _doubleFPS);
-	    _volumeManager = new VolumeManager(kVolumePowerLaw);
+	    _volumeManager = new VolumeManager(this, kVolumePowerLaw);
 	    break;
     case GID_GRANDINQUISITOR:
       _renderManager = new RenderManager(this, zgiLayout, _resourcePixelFormat, _doubleFPS, _widescreen);
 		  _menu = new MenuZGI(this, _renderManager->getMenuArea());
       _subtitleManager = new SubtitleManager(this, zgiLayout, _resourcePixelFormat, _doubleFPS);
-	    _volumeManager = new VolumeManager(kVolumeLogAmplitude);
+	    _volumeManager = new VolumeManager(this, kVolumeLogAmplitude);
 		  break;
 	  case GID_NONE:
 	  default:
