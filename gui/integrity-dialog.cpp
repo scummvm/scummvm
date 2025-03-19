@@ -187,6 +187,13 @@ void IntegrityDialog::open() {
 void IntegrityDialog::close() {
 	if (g_checksum_state)
 		g_checksum_state->dialog = nullptr;
+		delete g_checksum_state;
+		g_checksum_state = nullptr;
+	
+	if (g_result) {
+		delete g_result;
+		g_result = nullptr;
+	}
 
 	Dialog::close();
 }
@@ -240,13 +247,7 @@ void IntegrityDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		setState(kResponseReceived);
 		break;
 	case kCleanupCmd: {
-		delete g_checksum_state;
-		g_checksum_state = nullptr;
-
-		delete g_result;
-		g_result = nullptr;
-
-		close();
+		_close = true;
 		break;
 	}
 	case kDownloadProgressCmd:
@@ -473,6 +474,9 @@ Common::JSONValue *IntegrityDialog::generateJSONRequest(Common::Path gamePath, C
 }
 
 void IntegrityDialog::checksumResponseCallback(const Common::JSONValue *r) {
+	if (!g_result || !g_checksum_state) {
+        return;
+    }
 	debug(3, "JSON Response: %s", r->stringify().c_str());
 	IntegrityDialog::parseJSON(r);
 
@@ -504,6 +508,9 @@ void IntegrityDialog::sendJSON() {
 }
 
 void IntegrityDialog::parseJSON(const Common::JSONValue *response) {
+	if (!g_result || !g_checksum_state) {
+        return;
+    }
 	Common::JSONObject responseObject = response->asObject();
 	int responseError = responseObject.getVal("error")->asIntegerNumber();
 
