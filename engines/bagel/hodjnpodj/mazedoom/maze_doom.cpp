@@ -284,9 +284,9 @@ bool MazeDoom::tick() {
 	// Handle automatic moving
 	if (_move.isWalking()) {
 		if (!_move._substepCtr)
-			playerWalk1();
+			walking();
 		else
-			playerWalk2();
+			walkOneTile();
 	}
 
 	exitCheck();
@@ -542,7 +542,7 @@ void MazeDoom::movePlayer(const Common::Point &point) {
 	}
 }
 
-void MazeDoom::playerWalk1() {
+void MazeDoom::walking() {
 	assert(_move.isWalking());
 	_move._newPosition += _move._step;
 
@@ -559,18 +559,25 @@ void MazeDoom::playerWalk1() {
 	}
 
 	// Carry on with movement check
-	playerWalk3();
+	checkWalkFinished();
 }
 
-void MazeDoom::playerWalk2() {
+void MazeDoom::walkOneTile() {
 	pPlayerSprite.x += _move._step.x * (SQ_SIZE_X / 4);
 	pPlayerSprite.y += _move._step.y * (SQ_SIZE_Y / 4);
+	redraw();
 
-	if (_move._substepCtr-- == 0)
-		playerWalk3();
+	if (_move._substepCtr-- == 0) {
+		// Refresh play position
+		m_PlayerPos = _move._newPosition;
+		pPlayerSprite.x = (m_PlayerPos.x * SQ_SIZE_X) + SIDE_BORDER;
+		pPlayerSprite.y = (m_PlayerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;
+
+		checkWalkFinished();
+	}
 }
 
-void MazeDoom::playerWalk3() {
+void MazeDoom::checkWalkFinished() {
 	bool bCollision = false;
 	CBofSound *pEffect = nullptr;
 

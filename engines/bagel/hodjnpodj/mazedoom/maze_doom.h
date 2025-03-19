@@ -104,9 +104,9 @@ private:
 	 */
 	Common::Point screenToTile(const Common::Point &pointScreen) const;
 
-	void playerWalk1();
-	void playerWalk2();
-	void playerWalk3();
+	void walking();
+	void walkOneTile();
+	void checkWalkFinished();
 
 	/**
 	 * Checks to see if a point is within the Artwork region of the window
