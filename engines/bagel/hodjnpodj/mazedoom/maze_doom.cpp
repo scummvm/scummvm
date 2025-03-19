@@ -347,9 +347,12 @@ void MazeDoom::draw() {
 	// Draw background
 	s.blitFrom(_background);
 
-	// Draw the maze
-	s.blitFrom(_mazeBitmap, Common::Point(
-		SIDE_BORDER, TOP_BORDER));
+	// Draw the maze. Note that we only draw the bottom
+	// half of the top row, and the top half of the bottom row
+	s.blitFrom(_mazeBitmap,
+		Common::Rect(0, SQ_SIZE_Y / 2, _mazeBitmap.w,
+			_mazeBitmap.h - SQ_SIZE_Y / 2),
+		Common::Point(SIDE_BORDER, TOP_BORDER));
 
 	// Draw the player sprite
 	if (!pPlayerSprite.empty() && bPlaying)
