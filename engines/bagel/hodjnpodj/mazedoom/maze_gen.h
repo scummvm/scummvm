@@ -94,6 +94,7 @@ struct MazeGen {
 		pPathBitmap, pStartBitmap;
 	GfxSurface pLeftEdgeBmp, pRightEdgeBmp,
 		pTopEdgeBmp, pBottomEdgeBmp;
+	bool _showOverlays = false;
 
 	/**
 	 * Set the surrounding wall and start/end squares

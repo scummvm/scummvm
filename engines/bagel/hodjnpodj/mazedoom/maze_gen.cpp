@@ -420,6 +420,12 @@ void MazeGen::paintMaze() {
 				// Otherwise, it's a wall
 				_mazeBitmap.blitFrom(pWallBitmap, Common::Point(
 					mazeTile[x][y].m_nStart.x, mazeTile[x][y].m_nStart.y));
+
+			if (_showOverlays && mazeTile[x][y].m_nWall != 0) {
+				Common::Rect r(SQ_SIZE_X, SQ_SIZE_Y);
+				r.moveTo(mazeTile[x][y].m_nStart);
+				_mazeBitmap.fillRect(r, mazeTile[x][y].m_nWall * 10);
+			}
 		}
 	}
 

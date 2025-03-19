@@ -145,6 +145,11 @@ bool MazeDoom::msgGame(const GameMessage &msg) {
 	} else if (msg._name == "OPTIONS") {
 		_options.setTime(nMinutes, nSeconds);
 		_options.addView();
+		return true;
+	} else if (msg._name == "TOGGLE_OVERLAYS") {
+		_showOverlays = !_showOverlays;
+		paintMaze();
+		return true;
 	}
 
 	return false;
