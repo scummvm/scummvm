@@ -343,6 +343,7 @@ void MazeDoom::gameOver() {
 
 void MazeDoom::draw() {
 	GfxSurface s = getSurface();
+	warning("%d %d", m_PlayerPos.x, m_PlayerPos.y);
 
 	// Draw background
 	s.blitFrom(_background);
@@ -575,8 +576,8 @@ void MazeDoom::walkOneTile() {
 	pPlayerSprite.y += _move._step.y * (SQ_SIZE_Y / 4);
 	redraw();
 
-	if (_move._substepCtr-- == 0) {
-		// Refresh play position
+	if (--_move._substepCtr == 0) {
+		// Set new player position
 		m_PlayerPos = _move._newPosition;
 		pPlayerSprite.x = (m_PlayerPos.x * SQ_SIZE_X) + SIDE_BORDER;
 		pPlayerSprite.y = (m_PlayerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;
