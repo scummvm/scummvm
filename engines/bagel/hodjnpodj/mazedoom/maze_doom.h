@@ -53,7 +53,7 @@ class MazeDoom : public MinigameView, public MazeGen {
 	};
 private:
 	Options _options;
-	Sprite _upBitmap, _downBitmap,
+	GfxSurface _upBitmap, _downBitmap,
 		_leftBitmap, _rightBitmap;
 	BmpButton _scrollButton;
 	GfxSurface _background;

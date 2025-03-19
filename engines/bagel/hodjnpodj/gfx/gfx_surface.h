@@ -118,6 +118,13 @@ public:
 		this->x = xx;
 		this->y = yy;
 	}
+
+	/**
+	 * Assignment operator
+	 * When assigning a surface to a sprite, copy
+	 * the surface without affecting the position
+	 */
+	Sprite &operator=(const GfxSurface &surf);
 };
 
 } // namespace HodjNPodj

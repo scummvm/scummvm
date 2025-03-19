@@ -35,16 +35,14 @@ namespace HodjNPodj {
 namespace MazeDoom {
 
 MazeDoom::MazeDoom() : MinigameView("MazeDoom", "mazedoom/hnpmaze.dll"),
-_scrollButton("Scroll", this, Common::Rect(
-	SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
-	SCROLL_BUTTON_X + SCROLL_BUTTON_DX - 1,
-	SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1)
-),
-pPlayerSprite(this),
-_timeRect(RectWH(TIME_LOCATION_X + 50, TIME_LOCATION_Y,
-	TIME_WIDTH - 50, TIME_HEIGHT)),
-	_upBitmap(this), _downBitmap(this),
-	_leftBitmap(this), _rightBitmap(this) {
+		_scrollButton("Scroll", this, Common::Rect(
+			SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
+			SCROLL_BUTTON_X + SCROLL_BUTTON_DX - 1,
+			SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1)
+		),
+		pPlayerSprite(this),
+		_timeRect(RectWH(TIME_LOCATION_X + 50, TIME_LOCATION_Y,
+			TIME_WIDTH - 50, TIME_HEIGHT)) {
 	addResource(IDB_LOCALE_BMP, Common::WinResourceID("idb_locale_bmp"));
 	addResource(IDB_BLANK_BMP, Common::WinResourceID("idb_blank_bmp"));
 	addResource(IDB_PARTS_BMP, IDB_PARTS);
@@ -501,7 +499,7 @@ void MazeDoom::newGame() {
 void MazeDoom::movePlayer(const Common::Point &point) {
 	Common::Point tileLocation;
 	Common::Point delta;
-	const Sprite *sprite = &_rightBitmap;
+	const GfxSurface *bitmap = &_rightBitmap;
 
 	_move.clear();
 	_move._hit = screenToTile(point);
@@ -516,27 +514,27 @@ void MazeDoom::movePlayer(const Common::Point &point) {
 		if (delta.x < 0) {
 			// To the RIGHT
 			_move._step.x = 1;			// move one tile at a time
-			sprite = &_rightBitmap;
+			bitmap = &_rightBitmap;
 		} else if (delta.x > 0) {
 			// To the LEFT
 			_move._step.x = -1;		// move one tile at a time
-			sprite = &_leftBitmap;
+			bitmap = &_leftBitmap;
 		}
 	} else if (ABS(delta.y) > ABS(delta.x)) {
 		if (delta.y > 0) {
 			// Going Upward
 			_move._step.y = -1;		// move one tile at a time                                         
-			sprite = &_upBitmap;	// use Bitmap of player moving Up
+			bitmap = &_upBitmap;	// use Bitmap of player moving Up
 		} else if (delta.y < 0) {
 			// Going Downward
 			_move._step.y = 1;		// move one tile at a time
-			sprite = &_downBitmap;	// use Bitmap of player moving Down
+			bitmap = &_downBitmap;	// use Bitmap of player moving Down
 		}
 	}
 
 	if ((_move._step.x != 0) || (_move._step.y != 0)) {
 		// If the click is not in the player's tile, preparing for moving
-		pPlayerSprite = *sprite;
+		pPlayerSprite = *bitmap;
 		pPlayerSprite.x = (m_PlayerPos.x * SQ_SIZE_X) + SIDE_BORDER;
 		pPlayerSprite.y = (m_PlayerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;
 

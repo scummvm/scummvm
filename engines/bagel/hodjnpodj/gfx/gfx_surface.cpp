@@ -39,12 +39,16 @@ namespace HodjNPodj {
 	}
 
 GfxSurface &GfxSurface::operator=(const GfxSurface &surf) {
-	Graphics::ManagedSurface::operator=(surf);
-
 	_owner = surf._owner;
 	_cellWidth = surf._cellWidth;
 	_cellIndex = surf._cellIndex;
 	_fontSize = surf._fontSize;
+
+	Graphics::ManagedSurface::operator=(surf);
+	_cellsSource = surf._cellsSource;
+
+	if (!surf._cellsSource.empty())
+		setCel(_cellIndex);
 
 	return *this;
 }
@@ -125,8 +129,10 @@ void GfxSurface::convertTo(const byte *palette, int count) {
 	if (map) {
 		// Translate the pixels using the lookup
 		byte *pixel = (byte *)getPixels();
-		for (int i = 0; i < this->w * this->h; ++i, ++pixel)
-			*pixel = map[*pixel];
+		for (int i = 0; i < this->w * this->h; ++i, ++pixel) {
+			if (*pixel != 255)
+				*pixel = map[*pixel];
+		}
 
 		delete[] map;
 	}
@@ -267,6 +273,11 @@ void Sprite::linkSprite() {
 
 void Sprite::unlinkSprite() {
 	_minigame->_linkedSprites.remove(this);
+}
+
+Sprite &Sprite::operator=(const GfxSurface &surf) {
+	GfxSurface::operator=(surf);
+	return *this;
 }
 
 } // namespace HodjNPodj
