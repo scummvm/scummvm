@@ -2157,6 +2157,7 @@ void qdGameObjectMoving::optimize_path(Std::vector<Vect2i> &path) const {
 
 	auto itp = path.begin();
 	auto val = *itp;
+	opt_path.push_back(val);
 	itp++;
 
 	while (itp != path.end()) {
