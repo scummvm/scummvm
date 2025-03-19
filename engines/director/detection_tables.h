@@ -4868,8 +4868,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("lobomau", "", "LOBO.EXE", "162d4d1aaf42b6e8d7dfc520e5de2bed", 201828999, Common::PT_BRA, 400),
 
 	MACGAME1("louiscatorze", "", "Louis Cat Orze/Louis Catorze", "r:2c7d0c0d55cbe3f622c7d68cedb671e0", 486698, 404),
-	WINGAME2("louiscatorze", "", "LOUIS.EXE",		   "21610856ba0f75598624edd58291600b", 719433,
-								 "LOUIS/V0ASTART.DIR", "65586336bda5bdc737c1ad420b0d403b", 2019106, 404),
+	WINGAME2("louiscatorze", "", "LCO/LOUIS.EXE",	   "t:cf4ba6186525654f10baf9091358b9c1",  719433,
+								 "LOUIS/V0ASTART.DIR", "t:47410892477fcdd0474e7faaeb6013bb", 2019106, 404),
 
 	MACGAME1("louvre", "", "Louvre 5 Mo", "r:a685f1809706f42bff5f3ee94f606065", 483518, 404),
 	WINGAME2("louvre", "", "LOUVRE.EXE",  "f575ed4b37c05ab4249f9d6d3c3d7e17", 698829,
