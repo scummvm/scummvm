@@ -126,12 +126,12 @@ void BmpButton::clear() {
 void BmpButton::draw() {
 	GfxSurface s = getSurface();
 
-	if ((_itemState & ODS_DISABLED) ||
-		(_itemState & ODS_GRAYED))
+	if (((_itemState & ODS_DISABLED) ||
+		(_itemState & ODS_GRAYED)) && !_disabled.empty())
 		s.blitFrom(_disabled);
 	else if (_itemState & ODS_SELECTED)
 		s.blitFrom(_selected);
-	else if (_itemState & ODS_FOCUS)
+	else if ((_itemState & ODS_FOCUS) && !_focused.empty())
 		s.blitFrom(_focused);
 	else
 		s.blitFrom(_base);

@@ -243,7 +243,7 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 	loadPalette(decoder.getPalette());
 
 	// Load scroll button
-	_scrollButton.loadBitmaps(SCROLLUP, SCROLLDOWN, SCROLLUP, SCROLLUP);
+	_scrollButton.loadBitmaps(SCROLLUP_BMP, SCROLLDOWN_BMP, nullptr, nullptr);
 
 	// Start the Fuge soundtrack
 	if (pGameParams->bMusicEnabled) {

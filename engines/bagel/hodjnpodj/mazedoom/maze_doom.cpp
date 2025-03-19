@@ -43,6 +43,8 @@ MazeDoom::MazeDoom() : MinigameView("MazeDoom", "mazedoom/hnpmaze.dll"),
 		pPlayerSprite(this),
 		_timeRect(RectWH(TIME_LOCATION_X + 50, TIME_LOCATION_Y,
 			TIME_WIDTH - 50, TIME_HEIGHT)) {
+	addResource(SCROLLUP_BMP, SCROLLUP);
+	addResource(SCROLLDOWN_BMP, SCROLLDOWN);
 	addResource(IDB_LOCALE_BMP, Common::WinResourceID("idb_locale_bmp"));
 	addResource(IDB_BLANK_BMP, Common::WinResourceID("idb_blank_bmp"));
 	addResource(IDB_PARTS_BMP, IDB_PARTS);
@@ -156,7 +158,7 @@ bool MazeDoom::msgGame(const GameMessage &msg) {
 }
 
 bool MazeDoom::msgMouseDown(const MouseDownMessage &msg) {
-	if (_move.isWalking() && MinigameView::msgMouseDown(msg))
+	if (_move.isWalking() || MinigameView::msgMouseDown(msg))
 		return true;
 
 	if (msg._button == MouseDownMessage::MB_LEFT) {

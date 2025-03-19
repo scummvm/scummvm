@@ -38,7 +38,7 @@ MinigameView::~MinigameView() {
 }
 
 bool MinigameView::msgOpen(const OpenMessage &msg) {
-	SearchMan.add("Resources", this, 0, false);
+	SearchMan.add("Resources", this, 10, false);
 
 	if (!_resourceFilename.empty()) {
 		_resources = Common::NEResources::createFromEXE(Common::Path(_resourceFilename));

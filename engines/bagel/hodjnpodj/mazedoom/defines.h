@@ -120,9 +120,6 @@ namespace MazeDoom {
 #define SCROLL_BUTTON_DX	140
 #define SCROLL_BUTTON_DY	23
 
-#define SCROLLUP_BMP	"art/scrollup.bmp"
-#define SCROLLDOWN_BMP	"art/scrolldn.bmp"
-
 #define IDB_HODJ_UP_BMP		"mazedoom/art/hodjup.bmp"
 #define IDB_HODJ_RIGHT_BMP	"mazedoom/art/hodjrt.bmp"
 #define IDB_HODJ_DOWN_BMP	"mazedoom/art/hodjdown.bmp"
