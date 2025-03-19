@@ -294,8 +294,6 @@ bool MazeDoom::tick() {
 			walkOneTile();
 	}
 
-	exitCheck();
-
 	return true;
 }
 
@@ -637,6 +635,8 @@ void MazeDoom::checkWalkFinished() {
 	if ((_move._newPosition.x == _move._hit.x) && (_move._newPosition.y == _move._hit.y))
 		bCollision = true;
 
+	exitCheck();
+
 	if (bCollision) {
 		paintMaze();
 		redraw();
@@ -661,6 +661,7 @@ void MazeDoom::exitCheck() {
 	}
 
 	g_events->clearEvents();
+
 	MessageBox::show("Game over.", "He's free!", "EXIT");
 }
 
