@@ -343,7 +343,6 @@ void MazeDoom::gameOver() {
 
 void MazeDoom::draw() {
 	GfxSurface s = getSurface();
-	warning("%d %d", m_PlayerPos.x, m_PlayerPos.y);
 
 	// Draw background
 	s.blitFrom(_background);
@@ -638,8 +637,11 @@ void MazeDoom::checkWalkFinished() {
 	if ((_move._newPosition.x == _move._hit.x) && (_move._newPosition.y == _move._hit.y))
 		bCollision = true;
 
-	if (bCollision)
+	if (bCollision) {
+		paintMaze();
+		redraw();
 		_move.clear();
+	}
 }
 
 void MazeDoom::exitCheck() {
