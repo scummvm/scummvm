@@ -168,6 +168,23 @@ String MacResManager::computeResForkMD5AsString(uint32 length, bool tail) const 
 	return computeStreamMD5AsString(resForkStream, MIN<uint32>(length, _resForkSize));
 }
 
+String MacResManager::computeResForkMD5AsString(uint32 length, bool tail, bool (*progressUpdateCallback)(int)) const {
+	if (!hasResFork())
+		return String();
+
+	_stream->seek(_resForkOffset);
+	uint32 dataOffset = _stream->readUint32BE() + _resForkOffset;
+	/* uint32 mapOffset = */ _stream->readUint32BE();
+	uint32 dataLength = _stream->readUint32BE();
+
+
+	SeekableSubReadStream resForkStream(_stream, dataOffset, dataOffset + dataLength);
+	if (tail && dataLength > length)
+		resForkStream.seek(-(int64)length, SEEK_END);
+
+	return computeStreamMD5AsString(resForkStream, MIN<uint32>(length, _resForkSize), progressUpdateCallback);
+}
+
 bool MacResManager::open(const Path &fileName) {
 	return open(fileName, SearchMan);
 }

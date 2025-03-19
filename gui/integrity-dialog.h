@@ -70,6 +70,18 @@ public:
 	IntegrityDialog(Common::String endpoint, Common::String gameConfig);
 	~IntegrityDialog();
 
+
+	/**
+	 * Callback funtion which updates the progress bar every 500ms
+	 * It also poll events to allow mouse movements/button interactions to avoid freezing when processing large files
+	 */
+	static bool progressUpdateCallback(int bytesProcessed);
+
+	/**
+	 * Poll events during callback
+	 */
+	void pollEvent(Common::Event &event);
+
 	void sendJSON();
 	void checksumResponseCallback(const Common::JSONValue *r);
 	void errorCallback(const Networking::ErrorResponse &error);

@@ -49,6 +49,7 @@ class String;
  * @return true on success, false if an error occurred
  */
 bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length = 0);
+bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length, bool (*progressUpdateCallback)(int));
 
 /**
  * Compute the MD5 checksum of the content of the given ReadStream.
@@ -61,6 +62,7 @@ bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length = 0);
  * @return the MD5 as a hex string on success, and an empty string if an error occurred
  */
 String computeStreamMD5AsString(ReadStream &stream, uint32 length = 0);
+String computeStreamMD5AsString(ReadStream &stream, uint32 length, bool (*progressUpdateCallback)(int));
 
 /** @} */
 

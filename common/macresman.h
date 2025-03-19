@@ -269,6 +269,15 @@ public:
 	String computeResForkMD5AsString(uint32 length = 0, bool tail = false) const;
 
 	/**
+	 * Overloaded version for callbacks
+	 * Calculate the MD5 checksum of the resource fork
+	 * @param length The maximum length to compute for
+	 * @param tail Calculate length from the tail
+	 * @return The MD5 checksum of the resource fork
+	 */
+	String computeResForkMD5AsString(uint32 length, bool tail, bool (*progressUpdateCallback)(int)) const;
+
+	/**
 	 * Get the base file name of the data/resource fork pair
 	 * @return The base file name of the data/resource fork pair
 	 */
