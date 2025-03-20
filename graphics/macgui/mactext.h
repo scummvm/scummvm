@@ -46,12 +46,12 @@ struct SelectedText {
 
 class MacText : public MacWidget {
 public:
-	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, bool fixedDims = true);
+	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, bool fixedDims = true, bool scrollBar = false);
 	// 0 pixels between the lines by default
 
-	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true);
+	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true, bool scrollBar = false);
 
-	MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true);
+	MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true, bool scrollBar = false);
 
 	virtual ~MacText();
 
@@ -59,6 +59,10 @@ public:
 	bool processEvent(Common::Event &event) override;
 
 	bool needsRedraw() override { return _contentIsDirty || _cursorDirty; }
+
+	WindowClick isInScrollBar(int x, int y) const;
+	void setScrollBar(bool enable);
+	void resizeScrollBar(int w, int h);
 
 	void render();
 	void undrawCursor();
@@ -220,6 +224,9 @@ protected:
 	const MacFont *_macFont;
 
 	bool _fixedDims;
+	bool _scrollBar;
+	MacWindowBorder _scrollBorder;
+	ManagedSurface _borderSurface;
 
 	int _selEnd;
 	int _selStart;

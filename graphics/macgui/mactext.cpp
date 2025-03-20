@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "common/timer.h"
+#include "graphics/macgui/macwindowborder.h"
 
 #include "graphics/macgui/mactext.h"
 
@@ -104,7 +105,7 @@ uint MacTextLine::getChunkNum(int *col) {
 }
 
 
-MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow, bool fixedDims) :
+MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow, bool fixedDims, bool scrollBar) :
 	MacWidget(parent, x, y, w, h, wm, true, border, gutter, boxShadow),
 	_macFont(macFont) {
 
@@ -114,7 +115,10 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_fullRefresh = true;
 
 	_fixedDims = fixedDims;
+	_scrollBorder.setWindowManager(wm);
+	setScrollBar(scrollBar);
 	_wm = wm;
+	_scrollBorder.setWindowManager(wm);
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm);
@@ -134,14 +138,17 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 }
 
 // NOTE: This constructor and the one afterward are for MacText engines that don't use widgets. This is the classic was MacText was constructed.
-MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *macFont, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, bool fixedDims) :
+MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *macFont, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, bool fixedDims, bool scrollBar) :
 	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
 	_macFont(macFont) {
 
 	_str = s;
 
 	_fixedDims = fixedDims;
+	_scrollBorder.setWindowManager(wm);
+	setScrollBar(scrollBar);
 	_wm = wm;
+	_scrollBorder.setWindowManager(wm);
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -157,13 +164,15 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 }
 
 // Working with plain Font
-MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, bool fixedDims) :
+MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, bool fixedDims, bool scrollBar) :
 	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
 	_macFont(nullptr) {
 
 	_str = s;
 
 	_fixedDims = fixedDims;
+	_scrollBorder.setWindowManager(wm);
+	setScrollBar(scrollBar);
 	_wm = wm;
 
 	if (font) {
@@ -259,9 +268,55 @@ MacText::~MacText() {
 	if (_wm->getActiveWidget() == this)
 		_wm->setActiveWidget(nullptr);
 
+	_borderSurface.free();
+
 	delete _cursorRect;
 	delete _cursorSurface;
 	delete _cursorSurface2;
+}
+
+WindowClick MacText::isInScrollBar(int x, int y) const {
+	int bTop = kBorderWidth;
+	int bRight = kBorderWidth;
+	int bBottom = kBorderWidth;
+	if (_scrollBorder.hasOffsets()) {
+		bTop = _scrollBorder.getOffset().top;
+		bRight = _scrollBorder.getOffset().right;
+		bBottom = _scrollBorder.getOffset().bottom;
+	}
+
+	if (x >= _dims.right - bRight && x < _dims.right) {
+		if (y < _dims.top + bTop)
+			return kBorderBorder;
+
+		if (y >= _dims.bottom - bBottom)
+			return kBorderBorder;
+
+		if (y >= _dims.top + _dims.height() / 2)
+			return kBorderScrollDown;
+
+		return kBorderScrollUp;
+	}
+
+	return kBorderBorder;
+}
+void MacText::setScrollBar(bool enable) {
+	if (enable && _fixedDims) {
+		_scrollBorder.setBorderType(kWindowBorderMacOSNoBorderScrollbar);
+		_scrollBorder.loadInternalBorder(kWindowBorderScrollbar | kWindowBorderActive);
+		resizeScrollBar(_dims.width(), _dims.height());
+	} else {
+		_scrollBorder.disableBorder();
+	}
+}
+
+void MacText::resizeScrollBar(int w, int h) {
+	_borderSurface.free();
+	_borderSurface.create(w, h, _wm->_pixelformat);
+	if (_wm->_pixelformat.bytesPerPixel == 1) {
+		_borderSurface.clear(_wm->_colorGreen);
+	}
+	_scrollBorder.blitBorderInto(_borderSurface, kWindowBorderScrollbar | kWindowBorderActive);
 }
 
 // this func returns the fg color of the first character we met in text
@@ -835,6 +890,12 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 
 	g->transBlitFrom(*_canvas._surface, Common::Rect(MIN<int>(_canvas._surface->w, x), MIN<int>(_canvas._surface->h, y), MIN<int>(_canvas._surface->w, x + w), MIN<int>(_canvas._surface->h, y + h)), Common::Point(xoff, yoff), _canvas._tbgcolor);
 
+	if (_scrollBar && _scrollBorder.hasBorder(kWindowBorderScrollbar)) {
+		uint32 transcolor = (_wm->_pixelformat.bytesPerPixel == 1) ? _wm->_colorGreen : 0;
+
+		g->transBlitFrom(_borderSurface, Common::Rect(0, 0, _borderSurface.w, _borderSurface.h), Common::Point(0, 0), transcolor);
+	}
+
 	_contentIsDirty = false;
 	_cursorDirty = false;
 }
@@ -1348,6 +1409,21 @@ bool MacText::processEvent(Common::Event &event) {
 	if (event.type == Common::EVENT_WHEELDOWN) {
 		scroll(2);
 		return true;
+	}
+
+	if (event.type == Common::EVENT_LBUTTONDOWN && _scrollBar) {
+		switch (isInScrollBar(event.mouse.x, event.mouse.y)) {
+		case kBorderScrollDown:
+			scroll(2);
+			return true;
+			break;
+		case kBorderScrollUp:
+			scroll(-2);
+			return true;
+			break;
+		default:
+			break;
+		}
 	}
 
 	if (!_selectable)

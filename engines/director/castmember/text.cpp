@@ -211,11 +211,7 @@ void TextCastMember::setColors(uint32 *fgcolor, uint32 *bgcolor) {
 	// if we want to keep the format unchanged, then we need to modify _ftext as well
 	Graphics::MacWidget *target = getWidget();
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			((Graphics::MacTextWindow *)target)->setColors(_fgcolor, _bgcolor);
-		} else {
-			((Graphics::MacText *)target)->setColors(_fgcolor, _bgcolor);
-		}
+		((Graphics::MacText *)target)->setColors(_fgcolor, _bgcolor);
 	} else {
 		_modified = true;
 	}
@@ -241,11 +237,7 @@ void TextCastMember::setBackColor(uint32 bgCol) {
 uint32 TextCastMember::getForeColor(int start, int end) {
 	Graphics::MacWidget *target = getWidget();
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			return ((Graphics::MacTextWindow *)target)->getTextColor(start, end);
-		} else {
-			return ((Graphics::MacText *)target)->getTextColor(start, end);
-		}
+		return ((Graphics::MacText *)target)->getTextColor(start, end);
 	}
 	return _fgcolor;
 }
@@ -258,11 +250,7 @@ void TextCastMember::setForeColor(uint32 fgCol) {
 void TextCastMember::setForeColor(uint32 fgCol, int start, int end) {
 	Graphics::MacWidget *target = getWidget();
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			return ((Graphics::MacTextWindow *)target)->setTextColor(fgCol, start, end);
-		} else {
-			return ((Graphics::MacText *)target)->setTextColor(fgCol, start, end);
-		}
+		return ((Graphics::MacText *)target)->setTextColor(fgCol, start, end);
 	}
 	_modified = true;
 }
@@ -302,29 +290,9 @@ bool textWindowCallback(Graphics::WindowClick click, Common::Event &event, void 
 Graphics::MacWidget *TextCastMember::createWindowOrWidget(Common::Rect &bbox, Common::Rect dims, Graphics::MacFont *macFont) {
 	Graphics::MacWidget *widget = nullptr;
 
-	if (_textType == kTextTypeScrolling) {
-		Graphics::MacTextWindow *window = (Graphics::MacTextWindow *)g_director->_wm->addTextWindow(macFont, getForeColor(), getBackColor(), _initialRect.width(),
-														  getAlignment(), nullptr, false);
-		// Set callback so that we can process events like mouse clicks
-		window->setCallback(textWindowCallback, window);
-		// Set widget to this window!
-		widget = window;
-
-		// Set configuration
-		window->setBorderType(Graphics::kWindowBorderMacOSNoBorderScrollbar);
-		window->enableScrollbar(true);
-		// window->setMode(Graphics::kWindowModeDynamicScrollbar);
-		window->move(bbox.left, bbox.top);
-		window->resize(dims.width(), dims.height());
-		window->setEditable(false);
-		window->setSelectable(false);
-		window->appendText(_ftext);
-		window->draw(true);
-	} else {
-		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), _lineSpacing, _borderSize, _gutterSize, _boxShadow, _textShadow, _textType == kTextTypeFixed);
-		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
-		((Graphics::MacText *)widget)->draw();
-	}
+	widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), _lineSpacing, _borderSize, _gutterSize, _boxShadow, _textShadow, _textType == kTextTypeFixed || _textType == kTextTypeScrolling, _textType == kTextTypeScrolling);
+	((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
+	((Graphics::MacText *)widget)->draw();
 
 	return widget;
 }
@@ -436,11 +404,7 @@ void TextCastMember::setRawText(const Common::String &text) {
 int TextCastMember::getLineCount() {
 	Graphics::MacWidget *target = getWidget();
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			return ((Graphics::MacTextWindow *)target)->getRowCount();
-		} else {
-			return ((Graphics::MacText *)target)->getRowCount();
-		}
+		return ((Graphics::MacText *)target)->getRowCount();
 	}
 	warning("TextCastMember::getLineCount(): no widget available, returning 0");
 	return 0;
@@ -463,11 +427,7 @@ int TextCastMember::getLineHeight(int line) {
 int TextCastMember::getTextHeight() {
 	Graphics::MacWidget *target = getWidget();
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			return ((Graphics::MacTextWindow *)target)->getLineSpacing();
-		} else {
-			return ((Graphics::MacText *)target)->getLineSpacing();
-		}
+		return ((Graphics::MacText *)target)->getLineSpacing();
 	}
 	return _lineSpacing;
 }
@@ -475,13 +435,8 @@ int TextCastMember::getTextHeight() {
 Common::String TextCastMember::getTextFont() {
 	Graphics::MacWidget *target = getWidget();
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			int fontId = ((Graphics::MacTextWindow *)target)->getTextFont();
-			return g_director->_wm->_fontMan->getFontName(fontId);
-		} else {
-			int fontId = ((Graphics::MacText *)target)->getTextFont();
-			return g_director->_wm->_fontMan->getFontName(fontId);
-		}
+		int fontId = ((Graphics::MacText *)target)->getTextFont();
+		return g_director->_wm->_fontMan->getFontName(fontId);
 	}
 	return g_director->_wm->_fontMan->getFontName(_fontId);
 }
@@ -489,13 +444,8 @@ Common::String TextCastMember::getTextFont() {
 Common::String TextCastMember::getTextFont(int start, int end) {
 	Graphics::MacWidget *target = getWidget();
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			int fontId = ((Graphics::MacTextWindow *)target)->getTextFont(start, end);
-			return g_director->_wm->_fontMan->getFontName(fontId);
-		} else {
-			int fontId = ((Graphics::MacText *)target)->getTextFont(start, end);
-			return g_director->_wm->_fontMan->getFontName(fontId);
-		}
+		int fontId = ((Graphics::MacText *)target)->getTextFont(start, end);
+		return g_director->_wm->_fontMan->getFontName(fontId);
 	}
 	return g_director->_wm->_fontMan->getFontName(_fontId);
 }
@@ -504,30 +454,18 @@ void TextCastMember::setTextFont(const Common::String &fontName) {
 	Graphics::MacWidget *target = getWidget();
 	if (!target)
 		return;
-	if (_textType == kTextTypeScrolling) {
-		((Graphics::MacTextWindow *)target)->enforceTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(fontName));
-		_ptext = ((Graphics::MacTextWindow *)target)->getPlainText();
-		_ftext = ((Graphics::MacTextWindow *)target)->getTextChunk(0, 0, -1, -1, true);
-	} else {
-		((Graphics::MacText *)target)->enforceTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(fontName));
-		_ptext = ((Graphics::MacText *)target)->getPlainText();
-		_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
-	}
+	((Graphics::MacText *)target)->enforceTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(fontName));
+	_ptext = ((Graphics::MacText *)target)->getPlainText();
+	_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
 }
 
 void TextCastMember::setTextFont(const Common::String &fontName, int start, int end) {
 	Graphics::MacWidget *target = getWidget();
 	if (!target)
 		return;
-	if (_textType == kTextTypeScrolling) {
-		((Graphics::MacTextWindow *)target)->setTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(fontName), start, end);
-		_ptext = ((Graphics::MacTextWindow *)target)->getPlainText();
-		_ftext = ((Graphics::MacTextWindow *)target)->getTextChunk(0, 0, -1, -1, true);
-	} else {
-		((Graphics::MacText *)target)->setTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(fontName), start, end);
-		_ptext = ((Graphics::MacText *)target)->getPlainText();
-		_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
-	}
+	((Graphics::MacText *)target)->setTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(fontName), start, end);
+	_ptext = ((Graphics::MacText *)target)->getPlainText();
+	_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
 }
 
 Common::U32String TextCastMember::getText() {
@@ -541,11 +479,7 @@ Common::String TextCastMember::getRawText() {
 int TextCastMember::getTextSize() {
 	Graphics::MacWidget *target = getWidget();
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			return ((Graphics::MacTextWindow *)target)->getTextSize();
-		} else {
-			return ((Graphics::MacText *)target)->getTextSize();
-		}
+		return ((Graphics::MacText *)target)->getTextSize();
 	}
 
 	return _fontSize;
@@ -554,11 +488,7 @@ int TextCastMember::getTextSize() {
 int TextCastMember::getTextSize(int start, int end) {
 	Graphics::MacWidget *target = getWidget();
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			return ((Graphics::MacTextWindow *)target)->getTextSize(start, end);
-		} else {
-			return ((Graphics::MacText *)target)->getTextSize(start, end);
-		}
+		return ((Graphics::MacText *)target)->getTextSize(start, end);
 	}
 
 	return _fontSize;
@@ -567,16 +497,10 @@ int TextCastMember::getTextSize(int start, int end) {
 void TextCastMember::setTextSize(int textSize) {
 	Graphics::MacWidget *target = getWidget();
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			((Graphics::MacTextWindow *)target)->setTextSize(textSize);
-			_ptext = ((Graphics::MacTextWindow *)target)->getPlainText();
-			_ftext = ((Graphics::MacTextWindow *)target)->getTextChunk(0, 0, -1, -1, true);
-		} else {
-			((Graphics::MacText *)target)->setTextSize(textSize);
-			_ptext = ((Graphics::MacText *)target)->getPlainText();
-			_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
-			((Graphics::MacText *)target)->draw();
-		}
+		((Graphics::MacText *)target)->setTextSize(textSize);
+		_ptext = ((Graphics::MacText *)target)->getPlainText();
+		_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
+		((Graphics::MacText *)target)->draw();
 	}
 	_fontSize = textSize;
 	_modified = true;
@@ -585,16 +509,10 @@ void TextCastMember::setTextSize(int textSize) {
 void TextCastMember::setTextSize(int textSize, int start, int end) {
 	Graphics::MacWidget *target = getWidget();
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			((Graphics::MacTextWindow *)target)->setTextSize(textSize, start, end);
-			_ptext = ((Graphics::MacTextWindow *)target)->getPlainText();
-			_ftext = ((Graphics::MacTextWindow *)target)->getTextChunk(0, 0, -1, -1, true);
-		} else {
-			((Graphics::MacText *)target)->setTextSize(textSize, start, end);
-			_ptext = ((Graphics::MacText *)target)->getPlainText();
-			_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
-			((Graphics::MacText *)target)->draw();
-		}
+		((Graphics::MacText *)target)->setTextSize(textSize, start, end);
+		_ptext = ((Graphics::MacText *)target)->getPlainText();
+		_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
+		((Graphics::MacText *)target)->draw();
 	}
 	_modified = true;
 }
@@ -603,11 +521,7 @@ Common::String TextCastMember::getTextStyle() {
 	int slantVal = _textSlant;
 	Graphics::MacWidget *target = getWidget();
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			slantVal = ((Graphics::MacTextWindow *)target)->getTextSlant();
-		} else {
-			slantVal = ((Graphics::MacText *)target)->getTextSlant();
-		}
+		slantVal = ((Graphics::MacText *)target)->getTextSlant();
 	}
 	return g_director->_wm->_fontMan->getNameFromSlant(slantVal);
 }
@@ -616,11 +530,7 @@ Common::String TextCastMember::getTextStyle(int start, int end) {
 	int slantVal = _textSlant;
 	Graphics::MacWidget *target = getWidget();
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			slantVal = ((Graphics::MacTextWindow *)target)->getTextSlant(start, end);
-		} else {
-			slantVal = ((Graphics::MacText *)target)->getTextSlant(start, end);
-		}
+		slantVal = ((Graphics::MacText *)target)->getTextSlant(start, end);
 	}
 	return g_director->_wm->_fontMan->getNameFromSlant(slantVal);
 }
@@ -629,16 +539,10 @@ void TextCastMember::setTextStyle(const Common::String &textStyle) {
 	Graphics::MacWidget *target = getWidget();
 	int slant = g_director->_wm->_fontMan->parseSlantFromName(textStyle);
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			((Graphics::MacTextWindow *)target)->enforceTextSlant(slant);
-			_ptext = ((Graphics::MacTextWindow *)target)->getPlainText();
-			_ftext = ((Graphics::MacTextWindow *)target)->getTextChunk(0, 0, -1, -1, true);
-		} else {
-			((Graphics::MacText *)target)->enforceTextSlant(slant);
-			_ptext = ((Graphics::MacText *)target)->getPlainText();
-			_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
-			((Graphics::MacText *)target)->draw();
-		}
+		((Graphics::MacText *)target)->enforceTextSlant(slant);
+		_ptext = ((Graphics::MacText *)target)->getPlainText();
+		_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
+		((Graphics::MacText *)target)->draw();
 	}
 	_modified = true;
 }
@@ -647,27 +551,17 @@ void TextCastMember::setTextStyle(const Common::String &textStyle, int start, in
 	Graphics::MacWidget *target = getWidget();
 	int slant = g_director->_wm->_fontMan->parseSlantFromName(textStyle);
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			((Graphics::MacTextWindow *)target)->setTextSlant(slant, start, end);
-			_ptext = ((Graphics::MacTextWindow *)target)->getPlainText();
-			_ftext = ((Graphics::MacTextWindow *)target)->getTextChunk(0, 0, -1, -1, true);
-		} else {
-			((Graphics::MacText *)target)->setTextSlant(slant, start, end);
-			_ptext = ((Graphics::MacText *)target)->getPlainText();
-			_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
-			((Graphics::MacText *)target)->draw();
-		}
+		((Graphics::MacText *)target)->setTextSlant(slant, start, end);
+		_ptext = ((Graphics::MacText *)target)->getPlainText();
+		_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
+		((Graphics::MacText *)target)->draw();
 	}
 	_modified = true;
 }
 
 void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
 	if (widget && _type == kCastText) {
-		if (_textType == kTextTypeScrolling) {
-			_ptext = ((Graphics::MacTextWindow *)widget)->getEditedString();
-		} else {
-			_ptext = ((Graphics::MacText *)widget)->getEditedString();
-		}
+		_ptext = ((Graphics::MacText *)widget)->getEditedString();
 	}
 }
 

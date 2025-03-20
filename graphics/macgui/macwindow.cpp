@@ -71,6 +71,7 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 	_borderWidth = kBorderWidth;
 
 	_macBorder.setWindow(this);
+	_macBorder.setWindowManager(wm);
 
 	_hasScrollBar = false;
 
@@ -290,7 +291,7 @@ void MacWindow::drawBorderFromSurface(ManagedSurface *g, uint32 flags) {
 		g->clear(_wm->_colorGreen);
 	}
 
-	_macBorder.blitBorderInto(*g, flags, _wm);
+	_macBorder.blitBorderInto(*g, flags);
 }
 
 void MacWindow::setTitle(const Common::String &title) {
@@ -302,7 +303,7 @@ void MacWindow::setTitle(const Common::String &title) {
 
 	_title = title;
 	_borderIsDirty = true;
-	_macBorder.setTitle(title, _borderSurface.w, _wm);
+	_macBorder.setTitle(title, _borderSurface.w);
 }
 
 void MacWindow::setTitleVisible(bool visible) {
