@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-10 16:53+0000\n"
-"PO-Revision-Date: 2025-03-19 23:18+0000\n"
+"PO-Revision-Date: 2025-03-20 08:44+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -219,7 +219,7 @@ msgstr "Din molnlagring har anslutits!"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
-msgstr "Avslut"
+msgstr "Avsluta"
 
 #: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
@@ -2656,7 +2656,7 @@ msgstr "Vänta tills det nuvarande lagring är färdigt och försök igen."
 
 #: gui/options.cpp:3740 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
-msgstr "<nu direkt>"
+msgstr "<just nu>"
 
 #: gui/options.cpp:3885
 msgid ""
