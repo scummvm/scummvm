@@ -131,7 +131,8 @@ MODULE_OBJS = \
 	hodjnpodj/fuge/options.o \
 	hodjnpodj/mazedoom/maze_doom.o \
 	hodjnpodj/mazedoom/maze_gen.o \
-	hodjnpodj/mazedoom/options.o
+	hodjnpodj/mazedoom/options.o \
+	hodjnpodj/novacancy/no_vacancy.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)

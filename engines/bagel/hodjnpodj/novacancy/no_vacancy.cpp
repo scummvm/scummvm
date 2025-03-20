@@ -19,35 +19,49 @@
  *
  */
 
-#ifndef HODJNPODJ_VIEWS_H
-#define HODJNPODJ_VIEWS_H
-
-#include "bagel/hodjnpodj/views/rules.h"
+#include "common/system.h"
+#include "common/file.h"
+#include "image/bmp.h"
+#include "bagel/hodjnpodj/novacancy/no_vacancy.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/views/main_menu.h"
 #include "bagel/hodjnpodj/views/message_box.h"
-#include "bagel/hodjnpodj/metagame/views/minigames.h"
-#include "bagel/hodjnpodj/metagame/views/movie.h"
-#include "bagel/hodjnpodj/metagame/views/title_menu.h"
-#include "bagel/hodjnpodj/fuge/fuge.h"
-#include "bagel/hodjnpodj/mazedoom/maze_doom.h"
-#include "bagel/hodjnpodj/novacancy/no_vacancy.h"
+#include "bagel/hodjnpodj/views/rules.h"
 
 namespace Bagel {
 namespace HodjNPodj {
+namespace NoVacancy {
 
-struct Views {
-	MainMenu _mainMenu;
-	MessageBox _messageBox;
-	Rules _rules;
-	Metagame::Minigames _minigames;
-	Metagame::Movie _movie;
-	Metagame::TitleMenu _titleMenu;
-	Fuge::Fuge _fuge;
-	MazeDoom::MazeDoom _mazeDoom;
-	NoVacancy::NoVacancy _noVacancy;
-};
+NoVacancy::NoVacancy() : MinigameView("NoVacancy", "novac/hnpnova.dll"),
+	_scrollButton("Scroll", this, Common::Rect(
+		SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
+		SCROLL_BUTTON_X + SCROLL_BUTTON_DX - 1,
+		SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1)) {
+}
 
+bool NoVacancy::msgOpen(const OpenMessage &msg) {
+	MinigameView::msgOpen(msg);
+	return true;
+}
+
+bool NoVacancy::msgClose(const CloseMessage &msg) { return true; }
+bool NoVacancy::msgAction(const ActionMessage &msg) { return true; }
+bool NoVacancy::msgKeypress(const KeypressMessage &msg) { return true; }
+bool NoVacancy::msgMouseDown(const MouseDownMessage &msg) { return true; }
+bool NoVacancy::msgGame(const GameMessage &msg) { return true; }
+
+void NoVacancy::draw() {
+
+}
+
+bool NoVacancy::tick() {
+	return true;
+}
+
+void NoVacancy::showMainMenu() {
+
+}
+
+} // namespace NoVacancy
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif
