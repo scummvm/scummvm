@@ -30,86 +30,86 @@ namespace MazeDoom {
 void MazeGen::initializeMaze() {
 	int i, j, wall;
 
-	maze_size_x = MAX_MAZE_SIZE_X;
-	maze_size_y = MAX_MAZE_SIZE_Y;
+	_mazeSizeX = MAX_MAZE_SIZE_X;
+	_mazeSizeY = MAX_MAZE_SIZE_Y;
 
 	// Initialize all squares
-	for (i = 0; i < maze_size_x; i++) {
-		for (j = 0; j < maze_size_y; j++) {
-			maze[i][j] = 0;
+	for (i = 0; i < _mazeSizeX; i++) {
+		for (j = 0; j < _mazeSizeY; j++) {
+			_maze[i][j] = 0;
 		}
 	}
 
 	// Top wall
-	for (i = 0; i < maze_size_x; i++) {
-		maze[i][0] |= WALL_TOP;
+	for (i = 0; i < _mazeSizeX; i++) {
+		_maze[i][0] |= WALL_TOP;
 	}
 
 	// Right wall
-	for (j = 0; j < maze_size_y; j++) {
-		maze[maze_size_x - 1][j] |= WALL_RIGHT;
+	for (j = 0; j < _mazeSizeY; j++) {
+		_maze[_mazeSizeX - 1][j] |= WALL_RIGHT;
 	}
 
 	// Bottom wall
-	for (i = 0; i < maze_size_x; i++) {
-		maze[i][maze_size_y - 1] |= WALL_BOTTOM;
+	for (i = 0; i < _mazeSizeX; i++) {
+		_maze[i][_mazeSizeY - 1] |= WALL_BOTTOM;
 	}
 
 	// Left wall
-	for (j = 0; j < maze_size_y; j++) {
-		maze[0][j] |= WALL_LEFT;
+	for (j = 0; j < _mazeSizeY; j++) {
+		_maze[0][j] |= WALL_LEFT;
 	}
 
 	// Set start square
 	wall = 1;				// Start on right side
-	i = maze_size_x - 1;	// Set maze x location
+	i = _mazeSizeX - 1;	// Set maze x location
 	// Set a random y location not on the top row
-	j = g_engine->getRandomNumber(maze_size_y - 1);
+	j = g_engine->getRandomNumber(_mazeSizeY - 1);
 
-	maze[i][j] |= START_SQUARE;
-	maze[i][j] |= (DOOR_IN_TOP >> wall);
-	maze[i][j] &= ~(WALL_TOP >> wall);
-	start_x = i;
-	start_y = j;
-	cur_sq_x = i;
-	cur_sq_y = j;
-	sqnum = 0;
+	_maze[i][j] |= START_SQUARE;
+	_maze[i][j] |= (DOOR_IN_TOP >> wall);
+	_maze[i][j] &= ~(WALL_TOP >> wall);
+	_startX = i;
+	_startY = j;
+	_curSqX = i;
+	_curSqY = j;
+	_sqNum = 0;
 
 	// set end square
 	wall = (wall + 2) % 4;
 	switch (wall) {
 	case 0:
-		i = g_engine->getRandomNumber(maze_size_x - 1);
+		i = g_engine->getRandomNumber(_mazeSizeX - 1);
 		j = 0;
 		break;
 	case 1:
-		i = maze_size_x - 1;
-		j = g_engine->getRandomNumber(maze_size_y - 1);
+		i = _mazeSizeX - 1;
+		j = g_engine->getRandomNumber(_mazeSizeY - 1);
 		break;
 	case 2:
-		i = g_engine->getRandomNumber(maze_size_x - 1);
-		j = maze_size_y - 1;
+		i = g_engine->getRandomNumber(_mazeSizeX - 1);
+		j = _mazeSizeY - 1;
 		break;
 	case 3:
 		i = 0;
-		j = g_engine->getRandomNumber(maze_size_y - 1);
+		j = g_engine->getRandomNumber(_mazeSizeY - 1);
 		break;
 	}
 
-	maze[i][j] |= END_SQUARE;
-	maze[i][j] |= (DOOR_OUT_TOP >> wall);
-	maze[i][j] &= ~(WALL_TOP >> wall);
-	end_x = i;
-	end_y = j;
+	_maze[i][j] |= END_SQUARE;
+	_maze[i][j] |= (DOOR_OUT_TOP >> wall);
+	_maze[i][j] &= ~(WALL_TOP >> wall);
+	_endX = i;
+	_endY = j;
 }
 
 void MazeGen::createMaze() {
 	int newdoor = 0;
 
 	do {
-		move_list[sqnum].x = cur_sq_x;
-		move_list[sqnum].y = cur_sq_y;
-		move_list[sqnum].dir = newdoor;
+		_moveList[_sqNum].x = _curSqX;
+		_moveList[_sqNum].y = _curSqY;
+		_moveList[_sqNum].dir = newdoor;
 		while ((newdoor = chooseDoor()) == -1) { /* pick a door */
 			if (backup() == -1) { /* no more doors ... backup */
 				return; /* done ... return */
@@ -117,22 +117,22 @@ void MazeGen::createMaze() {
 		}
 
 		/* mark the out door */
-		maze[cur_sq_x][cur_sq_y] |= (DOOR_OUT_TOP >> newdoor);
+		_maze[_curSqX][_curSqY] |= (DOOR_OUT_TOP >> newdoor);
 
 		switch (newdoor) {
-		case 0: cur_sq_y--;
+		case 0: _curSqY--;
 			break;
-		case 1: cur_sq_x++;
+		case 1: _curSqX++;
 			break;
-		case 2: cur_sq_y++;
+		case 2: _curSqY++;
 			break;
-		case 3: cur_sq_x--;
+		case 3: _curSqX--;
 			break;
 		}
-		sqnum++;
+		_sqNum++;
 
 		/* mark the in door */
-		maze[cur_sq_x][cur_sq_y] |= (DOOR_IN_TOP >> ((newdoor + 2) % 4));
+		_maze[_curSqX][_curSqY] |= (DOOR_IN_TOP >> ((newdoor + 2) % 4));
 
 		/* if end square set path length and save path */
 	} while (1);
@@ -144,81 +144,81 @@ void MazeGen::setupMaze() {
 	Common::Point exitPos;
 
 	for (y = 0; y < NUM_ROWS; y++)                         // Set the right wall solid
-		mazeTile[NUM_COLUMNS - 1][y].m_nWall = WALL;
+		_mazeTile[NUM_COLUMNS - 1][y].m_nWall = WALL;
 
 	for (x = 0; x < MAX_MAZE_SIZE_X; x++) {
 		for (y = 0; y < MAX_MAZE_SIZE_Y; y++) {
-			mazeTile[x * 2 + 1][y * 2 + 1].m_nWall = PATH;          // Always is PATH
-			mazeTile[x * 2][y * 2].m_nWall = PATH;              // Will be changed to WALL if 
-			if (maze[x][y] & WALL_TOP) {                   //...it is found below
-				mazeTile[x * 2][y * 2].m_nWall = WALL;
-				mazeTile[x * 2 + 1][y * 2].m_nWall = WALL;
+			_mazeTile[x * 2 + 1][y * 2 + 1].m_nWall = PATH;          // Always is PATH
+			_mazeTile[x * 2][y * 2].m_nWall = PATH;              // Will be changed to WALL if 
+			if (_maze[x][y] & WALL_TOP) {                   //...it is found below
+				_mazeTile[x * 2][y * 2].m_nWall = WALL;
+				_mazeTile[x * 2 + 1][y * 2].m_nWall = WALL;
 			} else
-				mazeTile[x * 2 + 1][y * 2].m_nWall = PATH;
+				_mazeTile[x * 2 + 1][y * 2].m_nWall = PATH;
 
-			if (maze[x][y] & WALL_LEFT) {
-				mazeTile[x * 2][y * 2].m_nWall = WALL;
-				mazeTile[x * 2][y * 2 + 1].m_nWall = WALL;
+			if (_maze[x][y] & WALL_LEFT) {
+				_mazeTile[x * 2][y * 2].m_nWall = WALL;
+				_mazeTile[x * 2][y * 2 + 1].m_nWall = WALL;
 			} else
-				mazeTile[x * 2][y * 2 + 1].m_nWall = PATH;
+				_mazeTile[x * 2][y * 2 + 1].m_nWall = PATH;
 		}
 	}
 
 	for (x = 0; x < NUM_COLUMNS; x++) {        // Now go through  mazeTile and fix up loose ends, as it were
 		for (y = 0; y < NUM_ROWS; y++) {
-			mazeTile[x][y].m_bHidden = false;
-			if (mazeTile[x][y].m_nWall == PATH) {
-				if (mazeTile[x + 1][y + 1].m_nWall == PATH && (mazeTile[x + 1][y].m_nWall == PATH &&
-					(mazeTile[x][y + 1].m_nWall == PATH &&
-						(mazeTile[x - 1][y].m_nWall == WALL && mazeTile[x][y - 1].m_nWall == WALL))))
-					mazeTile[x][y].m_nWall = WALL;              // If it's a right-hand corner 
+			_mazeTile[x][y].m_bHidden = false;
+			if (_mazeTile[x][y].m_nWall == PATH) {
+				if (_mazeTile[x + 1][y + 1].m_nWall == PATH && (_mazeTile[x + 1][y].m_nWall == PATH &&
+					(_mazeTile[x][y + 1].m_nWall == PATH &&
+						(_mazeTile[x - 1][y].m_nWall == WALL && _mazeTile[x][y - 1].m_nWall == WALL))))
+					_mazeTile[x][y].m_nWall = WALL;              // If it's a right-hand corner 
 
-				if (mazeTile[x][y + 1].m_nWall == PATH && (mazeTile[x + 1][y - 1].m_nWall == PATH &&
-					(mazeTile[x - 1][y - 1].m_nWall == PATH &&
-						(mazeTile[x - 1][y + 1].m_nWall == PATH && (mazeTile[x + 1][y + 1].m_nWall == PATH &&
-							(mazeTile[x - 1][y].m_nWall == PATH && mazeTile[x + 1][y].m_nWall == PATH))))))
-					mazeTile[x][y].m_nWall = WALL;              // If it's two wide vertically from the top
+				if (_mazeTile[x][y + 1].m_nWall == PATH && (_mazeTile[x + 1][y - 1].m_nWall == PATH &&
+					(_mazeTile[x - 1][y - 1].m_nWall == PATH &&
+						(_mazeTile[x - 1][y + 1].m_nWall == PATH && (_mazeTile[x + 1][y + 1].m_nWall == PATH &&
+							(_mazeTile[x - 1][y].m_nWall == PATH && _mazeTile[x + 1][y].m_nWall == PATH))))))
+					_mazeTile[x][y].m_nWall = WALL;              // If it's two wide vertically from the top
 
-				if (mazeTile[x][y - 1].m_nWall == PATH && (mazeTile[x - 1][y - 1].m_nWall == PATH &&
-					(mazeTile[x - 1][y + 1].m_nWall == PATH &&
-						(mazeTile[x][y + 1].m_nWall == PATH && (mazeTile[x + 1][y - 1].m_nWall == PATH &&
-							(mazeTile[x + 1][y].m_nWall == PATH && mazeTile[x + 1][y + 1].m_nWall == PATH))))))
-					mazeTile[x][y].m_nWall = WALL;              // If it's two wide horizontally from the left
+				if (_mazeTile[x][y - 1].m_nWall == PATH && (_mazeTile[x - 1][y - 1].m_nWall == PATH &&
+					(_mazeTile[x - 1][y + 1].m_nWall == PATH &&
+						(_mazeTile[x][y + 1].m_nWall == PATH && (_mazeTile[x + 1][y - 1].m_nWall == PATH &&
+							(_mazeTile[x + 1][y].m_nWall == PATH && _mazeTile[x + 1][y + 1].m_nWall == PATH))))))
+					_mazeTile[x][y].m_nWall = WALL;              // If it's two wide horizontally from the left
 
 				if (y == NUM_ROWS - 1)
-					mazeTile[x][y].m_nWall = WALL;              // Make bottom wall
+					_mazeTile[x][y].m_nWall = WALL;              // Make bottom wall
 			}
 		}
 	}
 
 	x = NUM_COLUMNS - 1;                                // Get the Entry point
-	y = (start_y * 2) + 1;
+	y = (_startY * 2) + 1;
 
-	m_PlayerPos.x = x - 1;                              // Start player in one space from the entrance
+	_playerPos.x = x - 1;                              // Start player in one space from the entrance
 
-	if (mazeTile[x - 1][y].m_nWall == WALL) {          // If a wall runs into the entry space 
-		mazeTile[x][y].m_nWall = WALL;                  //...make it a wall and put the entry
-		mazeTile[x][y + 1].m_nWall = START;             //...space under that
-		m_PlayerPos.y = y;                              // Put the player there
+	if (_mazeTile[x - 1][y].m_nWall == WALL) {          // If a wall runs into the entry space 
+		_mazeTile[x][y].m_nWall = WALL;                  //...make it a wall and put the entry
+		_mazeTile[x][y + 1].m_nWall = START;             //...space under that
+		_playerPos.y = y;                              // Put the player there
 	} else {
-		mazeTile[x][y].m_nWall = START;                 // Put in the entry way where it was     
-		mazeTile[x][y + 1].m_nWall = WALL;              //...and make sure the one below is a wall
-		m_PlayerPos.y = y;                              // Put the player there
+		_mazeTile[x][y].m_nWall = START;                 // Put in the entry way where it was     
+		_mazeTile[x][y + 1].m_nWall = WALL;              //...and make sure the one below is a wall
+		_playerPos.y = y;                              // Put the player there
 	}
 
-	x = end_x * 2;                                      // This should be 0
-	y = end_y * 2;
+	x = _endX * 2;                                      // This should be 0
+	y = _endY * 2;
 	exitPos.x = x;
 
-	if (mazeTile[x + 1][y].m_nWall == WALL) {          // If a wall runs into the top exit space 
-		mazeTile[x][y].m_nWall = WALL;                  //...make it a wall and put the exit
+	if (_mazeTile[x + 1][y].m_nWall == WALL) {          // If a wall runs into the top exit space 
+		_mazeTile[x][y].m_nWall = WALL;                  //...make it a wall and put the exit
 		exitPos.y = y + 1;                              //...one space above that
 	} else {
-		mazeTile[x][y + 1].m_nWall = WALL;              // Put the exit in the top space
+		_mazeTile[x][y + 1].m_nWall = WALL;              // Put the exit in the top space
 		exitPos.y = y;                                  //...and store the y position in m_pExit
 	}
 
-	mazeTile[exitPos.x][exitPos.y].m_nWall = EXIT;      // Make exit grid space a Pathway
+	_mazeTile[exitPos.x][exitPos.y].m_nWall = EXIT;      // Make exit grid space a Pathway
 
 	setInvisibleWalls();                                // Hide some walls
 	setTraps();                                         // Put in some traps
@@ -232,60 +232,60 @@ int MazeGen::chooseDoor() {
 
 	//topwall:
 	/* top wall */
-	if (maze[cur_sq_x][cur_sq_y] & DOOR_IN_TOP)
+	if (_maze[_curSqX][_curSqY] & DOOR_IN_TOP)
 		goto rightwall;
-	if (maze[cur_sq_x][cur_sq_y] & DOOR_OUT_TOP)
+	if (_maze[_curSqX][_curSqY] & DOOR_OUT_TOP)
 		goto rightwall;
-	if (maze[cur_sq_x][cur_sq_y] & WALL_TOP)
+	if (_maze[_curSqX][_curSqY] & WALL_TOP)
 		goto rightwall;
-	if (maze[cur_sq_x][cur_sq_y - 1] & DOOR_IN_ANY) {
-		maze[cur_sq_x][cur_sq_y] |= WALL_TOP;
-		maze[cur_sq_x][cur_sq_y - 1] |= WALL_BOTTOM;
+	if (_maze[_curSqX][_curSqY - 1] & DOOR_IN_ANY) {
+		_maze[_curSqX][_curSqY] |= WALL_TOP;
+		_maze[_curSqX][_curSqY - 1] |= WALL_BOTTOM;
 		goto rightwall;
 	}
 	candidates[num_candidates++] = 0;
 
 rightwall:
 	/* right wall */
-	if (maze[cur_sq_x][cur_sq_y] & DOOR_IN_RIGHT)
+	if (_maze[_curSqX][_curSqY] & DOOR_IN_RIGHT)
 		goto bottomwall;
-	if (maze[cur_sq_x][cur_sq_y] & DOOR_OUT_RIGHT)
+	if (_maze[_curSqX][_curSqY] & DOOR_OUT_RIGHT)
 		goto bottomwall;
-	if (maze[cur_sq_x][cur_sq_y] & WALL_RIGHT)
+	if (_maze[_curSqX][_curSqY] & WALL_RIGHT)
 		goto bottomwall;
-	if (maze[cur_sq_x + 1][cur_sq_y] & DOOR_IN_ANY) {
-		maze[cur_sq_x][cur_sq_y] |= WALL_RIGHT;
-		maze[cur_sq_x + 1][cur_sq_y] |= WALL_LEFT;
+	if (_maze[_curSqX + 1][_curSqY] & DOOR_IN_ANY) {
+		_maze[_curSqX][_curSqY] |= WALL_RIGHT;
+		_maze[_curSqX + 1][_curSqY] |= WALL_LEFT;
 		goto bottomwall;
 	}
 	candidates[num_candidates++] = 1;
 
 bottomwall:
 	/* bottom wall */
-	if (maze[cur_sq_x][cur_sq_y] & DOOR_IN_BOTTOM)
+	if (_maze[_curSqX][_curSqY] & DOOR_IN_BOTTOM)
 		goto leftwall;
-	if (maze[cur_sq_x][cur_sq_y] & DOOR_OUT_BOTTOM)
+	if (_maze[_curSqX][_curSqY] & DOOR_OUT_BOTTOM)
 		goto leftwall;
-	if (maze[cur_sq_x][cur_sq_y] & WALL_BOTTOM)
+	if (_maze[_curSqX][_curSqY] & WALL_BOTTOM)
 		goto leftwall;
-	if (maze[cur_sq_x][cur_sq_y + 1] & DOOR_IN_ANY) {
-		maze[cur_sq_x][cur_sq_y] |= WALL_BOTTOM;
-		maze[cur_sq_x][cur_sq_y + 1] |= WALL_TOP;
+	if (_maze[_curSqX][_curSqY + 1] & DOOR_IN_ANY) {
+		_maze[_curSqX][_curSqY] |= WALL_BOTTOM;
+		_maze[_curSqX][_curSqY + 1] |= WALL_TOP;
 		goto leftwall;
 	}
 	candidates[num_candidates++] = 2;
 
 leftwall:
 	/* left wall */
-	if (maze[cur_sq_x][cur_sq_y] & DOOR_IN_LEFT)
+	if (_maze[_curSqX][_curSqY] & DOOR_IN_LEFT)
 		goto donewall;
-	if (maze[cur_sq_x][cur_sq_y] & DOOR_OUT_LEFT)
+	if (_maze[_curSqX][_curSqY] & DOOR_OUT_LEFT)
 		goto donewall;
-	if (maze[cur_sq_x][cur_sq_y] & WALL_LEFT)
+	if (_maze[_curSqX][_curSqY] & WALL_LEFT)
 		goto donewall;
-	if (maze[cur_sq_x - 1][cur_sq_y] & DOOR_IN_ANY) {
-		maze[cur_sq_x][cur_sq_y] |= WALL_LEFT;
-		maze[cur_sq_x - 1][cur_sq_y] |= WALL_RIGHT;
+	if (_maze[_curSqX - 1][_curSqY] & DOOR_IN_ANY) {
+		_maze[_curSqX][_curSqY] |= WALL_LEFT;
+		_maze[_curSqX - 1][_curSqY] |= WALL_RIGHT;
 		goto donewall;
 	}
 	candidates[num_candidates++] = 3;
@@ -301,10 +301,10 @@ donewall:
 }
 
 int MazeGen::backup() {
-	sqnum--;
-	cur_sq_x = move_list[sqnum].x;
-	cur_sq_y = move_list[sqnum].y;
-	return sqnum;
+	_sqNum--;
+	_curSqX = _moveList[_sqNum].x;
+	_curSqY = _moveList[_sqNum].y;
+	return _sqNum;
 }
 
 void MazeGen::setInvisibleWalls() {
@@ -315,27 +315,27 @@ void MazeGen::setInvisibleWalls() {
 
 	for (x = 1; x < (NUM_COLUMNS - 1); x++) {                     // Don't make edge walls invisible !!
 		for (y = 1; y < (NUM_ROWS - 1); y++) {
-			if (mazeTile[x][y].m_nWall == WALL) {
-				if (m_nDifficulty > MIN_DIFFICULTY)               // Most difficult has all walls hidden  
-					mazeTile[x][y].m_bHidden = true;                // Start with all walls hidden
+			if (_mazeTile[x][y].m_nWall == WALL) {
+				if (_difficulty > MIN_DIFFICULTY)               // Most difficult has all walls hidden  
+					_mazeTile[x][y].m_bHidden = true;                // Start with all walls hidden
 				else
-					mazeTile[x][y].m_bHidden = false;               // Least difficult has no walls hidden
+					_mazeTile[x][y].m_bHidden = false;               // Least difficult has no walls hidden
 				nTotalWalls++;
 			}
 		}
 	}
 
-	if (m_nDifficulty > MIN_DIFFICULTY && m_nDifficulty < MAX_DIFFICULTY) {
+	if (_difficulty > MIN_DIFFICULTY && _difficulty < MAX_DIFFICULTY) {
 		x = g_engine->getRandomNumber((NUM_COLUMNS - 4) - 1) + 2;                       // Avoid the edge walls
 		y = g_engine->getRandomNumber((NUM_ROWS - 4) - 1) + 2;
-		nMaxWalls = nTotalWalls - (int)(m_nDifficulty * (nTotalWalls / 10));
+		nMaxWalls = nTotalWalls - (int)(_difficulty * (nTotalWalls / 10));
 
 		while (nWallCount < nMaxWalls) {
-			if (mazeTile[x][y].m_nWall == WALL && mazeTile[x][y].m_bHidden) {
+			if (_mazeTile[x][y].m_nWall == WALL && _mazeTile[x][y].m_bHidden) {
 				for (i = x - 1; i <= x + 1; i++) {
 					for (j = y - 1; j <= y + 1; j++) {
-						if (mazeTile[i][j].m_nWall == WALL && mazeTile[i][j].m_bHidden) {
-							mazeTile[i][j].m_bHidden = false;       // so it's not hidden
+						if (_mazeTile[i][j].m_nWall == WALL && _mazeTile[i][j].m_bHidden) {
+							_mazeTile[i][j].m_bHidden = false;       // so it's not hidden
 							nWallCount++;                           // increment the count
 						}
 					}
@@ -357,14 +357,14 @@ void MazeGen::setTraps() {
 	int nNumTraps;
 	Common::Point In;
 
-	nNumTraps = MIN_TRAPS + (m_nDifficulty / 2);          // 4 + ([1...10]/2) = 4 to 9 
+	nNumTraps = MIN_TRAPS + (_difficulty / 2);          // 4 + ([1...10]/2) = 4 to 9 
 
 	for (nTrapCount = 0; nTrapCount < nNumTraps; nTrapCount++) {
 		In = getRandomPoint(false);                                       // Pick a random PATH square
-		mazeTile[In.x][In.y].m_nWall = TRAP;                                // Make it a TRAP
-		mazeTile[In.x][In.y].m_bHidden = true;                              // Hide it
-		mazeTile[In.x][In.y].m_nTrap = nTrapCount % NUM_TRAP_MAPS;          // Assign unique trap bitmap ID
-		mazeTile[In.x][In.y].m_nDest = getRandomPoint(true);              // Pick a random Trap destination
+		_mazeTile[In.x][In.y].m_nWall = TRAP;                                // Make it a TRAP
+		_mazeTile[In.x][In.y].m_bHidden = true;                              // Hide it
+		_mazeTile[In.x][In.y].m_nTrap = nTrapCount % NUM_TRAP_MAPS;          // Assign unique trap bitmap ID
+		_mazeTile[In.x][In.y].m_nDest = getRandomPoint(true);              // Pick a random Trap destination
 	}
 }
 
@@ -383,7 +383,7 @@ Common::Point MazeGen::getRandomPoint(bool bRight) {
 	point.y = g_engine->getRandomNumber(NUM_ROWS - 1);
 
 	while (!bLocated) {
-		if (mazeTile[point.x][point.y].m_nWall == PATH)
+		if (_mazeTile[point.x][point.y].m_nWall == PATH)
 			bLocated = true;                                                // OK if it's a pathway
 		else {                                                              // Otherwise, keep lookin'
 			point.x++;                                                      // Increment Column 
@@ -402,34 +402,34 @@ void MazeGen::paintMaze() {
 	for (x = 0; x < NUM_COLUMNS; x++) {
 		for (y = 0; y < NUM_ROWS; y++) {
 			// Set the tile location
-			mazeTile[x][y].m_nStart.x = x * SQ_SIZE_X;                              // Put in location info
-			mazeTile[x][y].m_nStart.y = y * SQ_SIZE_Y;
+			_mazeTile[x][y].m_nStart.x = x * SQ_SIZE_X;                              // Put in location info
+			_mazeTile[x][y].m_nStart.y = y * SQ_SIZE_Y;
 
 			// Handle drawing the correct tile
-			if ((mazeTile[x][y].m_nWall == PATH) ||
-				(mazeTile[x][y].m_nWall == EXIT) ||
-				mazeTile[x][y].m_bHidden)
+			if ((_mazeTile[x][y].m_nWall == PATH) ||
+				(_mazeTile[x][y].m_nWall == EXIT) ||
+				_mazeTile[x][y].m_bHidden)
 				// Path or hidden obj 
-				_mazeBitmap.blitFrom(pPathBitmap, Common::Point(
-					mazeTile[x][y].m_nStart.x, mazeTile[x][y].m_nStart.y));
-			else if (mazeTile[x][y].m_nWall == START)
+				_mazeBitmap.blitFrom(_pathBitmap, Common::Point(
+					_mazeTile[x][y].m_nStart.x, _mazeTile[x][y].m_nStart.y));
+			else if (_mazeTile[x][y].m_nWall == START)
 				// Start of maze
-				_mazeBitmap.blitFrom(pStartBitmap, Common::Point(
-					mazeTile[x][y].m_nStart.x, mazeTile[x][y].m_nStart.y));
-			else if (mazeTile[x][y].m_nWall == TRAP)
+				_mazeBitmap.blitFrom(_startBitmap, Common::Point(
+					_mazeTile[x][y].m_nStart.x, _mazeTile[x][y].m_nStart.y));
+			else if (_mazeTile[x][y].m_nWall == TRAP)
 				// Revealed trap
 				// Start of maze
-				_mazeBitmap.blitFrom(TrapBitmap[mazeTile[x][y].m_nTrap],
-					mazeTile[x][y].m_nStart);
+				_mazeBitmap.blitFrom(_trapBitmap[_mazeTile[x][y].m_nTrap],
+					_mazeTile[x][y].m_nStart);
 			else
 				// Otherwise, it's a wall
-				_mazeBitmap.blitFrom(pWallBitmap, Common::Point(
-					mazeTile[x][y].m_nStart.x, mazeTile[x][y].m_nStart.y));
+				_mazeBitmap.blitFrom(_wallBitmap, Common::Point(
+					_mazeTile[x][y].m_nStart.x, _mazeTile[x][y].m_nStart.y));
 
-			if (_showOverlays && mazeTile[x][y].m_nWall != 0) {
+			if (_showOverlays && _mazeTile[x][y].m_nWall != 0) {
 				Common::Rect r(SQ_SIZE_X, SQ_SIZE_Y);
-				r.moveTo(mazeTile[x][y].m_nStart);
-				_mazeBitmap.fillRect(r, mazeTile[x][y].m_nWall * 10);
+				r.moveTo(_mazeTile[x][y].m_nStart);
+				_mazeBitmap.fillRect(r, _mazeTile[x][y].m_nWall * 10);
 			}
 		}
 	}
@@ -442,35 +442,35 @@ void MazeGen::paintMaze() {
 }
 
 void MazeGen::addEdges(int x, int y, int offset_x, int offset_y) {
-	if ((mazeTile[x][y].m_bHidden == false) && (mazeTile[x][y].m_nWall == WALL)) {
-		if ((y > 0) && ((((mazeTile[x][y - 1].m_nWall == PATH) || (mazeTile[x][y - 1].m_nWall == EXIT)) ||
-				(mazeTile[x][y - 1].m_nWall == START)) || mazeTile[x][y - 1].m_bHidden))
+	if ((_mazeTile[x][y].m_bHidden == false) && (_mazeTile[x][y].m_nWall == WALL)) {
+		if ((y > 0) && ((((_mazeTile[x][y - 1].m_nWall == PATH) || (_mazeTile[x][y - 1].m_nWall == EXIT)) ||
+				(_mazeTile[x][y - 1].m_nWall == START)) || _mazeTile[x][y - 1].m_bHidden))
 			// TOP
-			_mazeBitmap.blitFrom(pBottomEdgeBmp, Common::Point(
-				mazeTile[x][y - 1].m_nStart.x + offset_x,
-				mazeTile[x][y - 1].m_nStart.y + offset_y + SQ_SIZE_Y - 1 - EDGE_SIZE));
+			_mazeBitmap.blitFrom(_bottomEdgeBmp, Common::Point(
+				_mazeTile[x][y - 1].m_nStart.x + offset_x,
+				_mazeTile[x][y - 1].m_nStart.y + offset_y + SQ_SIZE_Y - 1 - EDGE_SIZE));
 
-		if ((x < (NUM_COLUMNS - 1)) && ((mazeTile[x + 1][y].m_nWall == PATH) ||
-				mazeTile[x + 1][y].m_bHidden))
+		if ((x < (NUM_COLUMNS - 1)) && ((_mazeTile[x + 1][y].m_nWall == PATH) ||
+				_mazeTile[x + 1][y].m_bHidden))
 			// RIGHT
-			_mazeBitmap.blitFrom(pLeftEdgeBmp, Common::Point(
-				mazeTile[x + 1][y].m_nStart.x + offset_x,
-				mazeTile[x + 1][y].m_nStart.y + offset_y));
+			_mazeBitmap.blitFrom(_leftEdgeBmp, Common::Point(
+				_mazeTile[x + 1][y].m_nStart.x + offset_x,
+				_mazeTile[x + 1][y].m_nStart.y + offset_y));
 
-		if ((y < (NUM_ROWS - 1)) && ((((mazeTile[x][y + 1].m_nWall == EXIT) ||
-				(mazeTile[x][y + 1].m_nWall == PATH)) ||
-				(mazeTile[x][y + 1].m_nWall == START)) || mazeTile[x][y + 1].m_bHidden))
+		if ((y < (NUM_ROWS - 1)) && ((((_mazeTile[x][y + 1].m_nWall == EXIT) ||
+				(_mazeTile[x][y + 1].m_nWall == PATH)) ||
+				(_mazeTile[x][y + 1].m_nWall == START)) || _mazeTile[x][y + 1].m_bHidden))
 			// BOTTOM
-			_mazeBitmap.blitFrom(pTopEdgeBmp, Common::Point(
-				mazeTile[x][y + 1].m_nStart.x + offset_x,
-				mazeTile[x][y + 1].m_nStart.y + offset_y));
+			_mazeBitmap.blitFrom(_topEdgeBmp, Common::Point(
+				_mazeTile[x][y + 1].m_nStart.x + offset_x,
+				_mazeTile[x][y + 1].m_nStart.y + offset_y));
 
-		if ((x > 0) && ((mazeTile[x - 1][y].m_nWall == PATH) ||
-			mazeTile[x - 1][y].m_bHidden))
+		if ((x > 0) && ((_mazeTile[x - 1][y].m_nWall == PATH) ||
+			_mazeTile[x - 1][y].m_bHidden))
 			// LEFT
-			_mazeBitmap.blitFrom(pRightEdgeBmp, Common::Point(
-				mazeTile[x - 1][y].m_nStart.x + offset_x + SQ_SIZE_X - 1 - EDGE_SIZE,
-				mazeTile[x - 1][y].m_nStart.y + offset_y));
+			_mazeBitmap.blitFrom(_rightEdgeBmp, Common::Point(
+				_mazeTile[x - 1][y].m_nStart.x + offset_x + SQ_SIZE_X - 1 - EDGE_SIZE,
+				_mazeTile[x - 1][y].m_nStart.y + offset_y));
 	}
 }
 

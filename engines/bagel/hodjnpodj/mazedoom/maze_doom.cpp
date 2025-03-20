@@ -40,7 +40,7 @@ MazeDoom::MazeDoom() : MinigameView("MazeDoom", "mazedoom/hnpmaze.dll"),
 			SCROLL_BUTTON_X + SCROLL_BUTTON_DX - 1,
 			SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1)
 		),
-		pPlayerSprite(this),
+		_playerSprite(this),
 		_timeRect(RectWH(TIME_LOCATION_X + 50, TIME_LOCATION_Y,
 			TIME_WIDTH - 50, TIME_HEIGHT)) {
 	addResource(SCROLLUP_BMP, SCROLLUP);
@@ -70,14 +70,14 @@ bool MazeDoom::msgOpen(const OpenMessage &msg) {
 	paintMaze();		// Paint that sucker to the offscreen bitmap
 
 	if (pGameParams->bMusicEnabled) {
-		pGameSound = new CBofSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-		if (pGameSound != nullptr) {
-			(*pGameSound).midiLoopPlaySegment(3000, 32980, 0, FMT_MILLISEC);
+		_gameSound = new CBofSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+		if (_gameSound != nullptr) {
+			(*_gameSound).midiLoopPlaySegment(3000, 32980, 0, FMT_MILLISEC);
 		}
 	}
 
-	bPlaying = pGameParams->bPlayingMetagame;
-	m_bGameOver = false;
+	_playing = pGameParams->bPlayingMetagame;
+	_gameOver = false;
 	_move.clear();
 
 	return true;
@@ -90,23 +90,23 @@ bool MazeDoom::msgClose(const CloseMessage &msg) {
 	_scrollButton.clear();
 	_mazeBitmap.clear();
 	_partsBitmap.clear();
-	pBlankBitmap.clear();
-	pLocaleBitmap.clear();
-	pPlayerSprite.clear();
+	_blankBitmap.clear();
+	_localeBitmap.clear();
+	_playerSprite.clear();
 
-	pWallBitmap.clear();
-	pPathBitmap.clear();
-	pStartBitmap.clear();
-	pLeftEdgeBmp.clear();
-	pRightEdgeBmp.clear();
-	pTopEdgeBmp.clear();
-	pBottomEdgeBmp.clear();
+	_wallBitmap.clear();
+	_pathBitmap.clear();
+	_startBitmap.clear();
+	_leftEdgeBmp.clear();
+	_rightEdgeBmp.clear();
+	_topEdgeBmp.clear();
+	_bottomEdgeBmp.clear();
 
 	for (int i = 0; i < NUM_TRAP_MAPS; ++i)
-		TrapBitmap[i].clear();
+		_trapBitmap[i].clear();
 
-	delete pGameSound;
-	pGameSound = nullptr;
+	delete _gameSound;
+	_gameSound = nullptr;
 
 	return true;
 }
@@ -145,7 +145,7 @@ bool MazeDoom::msgGame(const GameMessage &msg) {
 
 		return true;
 	} else if (msg._name == "OPTIONS") {
-		_options.setTime(nMinutes, nSeconds);
+		_options.setTime(_minutes, _seconds);
 		_options.addView();
 		return true;
 	} else if (msg._name == "TOGGLE_OVERLAYS") {
@@ -169,7 +169,7 @@ bool MazeDoom::msgMouseDown(const MouseDownMessage &msg) {
 			// Start new game
 			newGame();
 
-		if (bPlaying && inArtRegion(msg._pos))
+		if (_playing && inArtRegion(msg._pos))
 			movePlayer(msg._pos);
 	}
 
@@ -180,7 +180,7 @@ bool MazeDoom::msgMouseMove(const MouseMoveMessage &msg) {
 	if (_move.isWalking() || MinigameView::msgMouseMove(msg))
 		return true;
 
-	if (inArtRegion(msg._pos) && bPlaying) {
+	if (inArtRegion(msg._pos) && _playing) {
 		// If the cursor is within the border
 		// and we're playing, update the cursor
 		getNewCursor(msg._pos);
@@ -200,7 +200,7 @@ bool MazeDoom::msgMouseMove(const MouseMoveMessage &msg) {
 bool MazeDoom::msgKeypress(const KeypressMessage &msg) {
 	if (_move.isWalking())
 		return true;
-	Common::Point newPosition = pPlayerSprite.getPosition();
+	Common::Point newPosition = _playerSprite.getPosition();
 
 	switch (msg.keycode) {
 	case Common::KEYCODE_F1:
@@ -247,7 +247,7 @@ bool MazeDoom::msgAction(const ActionMessage &msg) {
 	if (_move.isWalking())
 		return true;
 
-	Common::Point newPosition = pPlayerSprite.getPosition();
+	Common::Point newPosition = _playerSprite.getPosition();
 
 	switch (msg._action) {
 	case KEYBIND_LEFT:
@@ -284,7 +284,7 @@ bool MazeDoom::tick() {
 	if (time >= (_priorTime + 1000)) {
 		_priorTime = time;
 
-		if (bPlaying && !m_bGameOver)
+		if (_playing && !_gameOver)
 			updateTimer();
 	}
 
@@ -300,23 +300,23 @@ bool MazeDoom::tick() {
 }
 
 void MazeDoom::updateTimer() {
-	if (m_nTime == 0) {
+	if (_time == 0) {
 		// No time limit, increment 
-		nSeconds++;
-		if (nSeconds == 60) {
-			nMinutes++;
-			nSeconds = 0;
+		_seconds++;
+		if (_seconds == 60) {
+			_minutes++;
+			_seconds = 0;
 		}
 	} else {
 		// Count down time left
-		if (nSeconds == 0 && nMinutes == 0) {
+		if (_seconds == 0 && _minutes == 0) {
 			gameOver();
-		} else if (nSeconds == 0) {
-			nMinutes--;
-			nSeconds = 60;
+		} else if (_seconds == 0) {
+			_minutes--;
+			_seconds = 60;
 		}
 
-		nSeconds--;
+		_seconds--;
 	}
 
 	redraw();
@@ -325,8 +325,8 @@ void MazeDoom::updateTimer() {
 void MazeDoom::gameOver() {
 	CBofSound *pEffect = nullptr;
 
-	bPlaying = false;
-	m_bGameOver = true;
+	_playing = false;
+	_gameOver = true;
 	_move.clear();
 
 	if (pGameParams->bSoundEffectsEnabled) {
@@ -355,24 +355,24 @@ void MazeDoom::draw() {
 		Common::Point(SIDE_BORDER, TOP_BORDER));
 
 	// Draw the player sprite
-	if (!pPlayerSprite.empty() && bPlaying)
-		s.blitFrom(pPlayerSprite, pPlayerSprite);
+	if (!_playerSprite.empty() && _playing)
+		s.blitFrom(_playerSprite, _playerSprite);
 
-	if (bPlaying) {
+	if (_playing) {
 		// only false when the options are displayed
 		char msg[64];
-		s.blitFrom(pBlankBitmap, Common::Point(TIME_LOCATION_X, TIME_LOCATION_Y));
+		s.blitFrom(_blankBitmap, Common::Point(TIME_LOCATION_X, TIME_LOCATION_Y));
 
-		if (m_nTime == 0)
-			Common::sprintf_s(msg, "Time Used: %02d:%02d", nMinutes, nSeconds);
+		if (_time == 0)
+			Common::sprintf_s(msg, "Time Used: %02d:%02d", _minutes, _seconds);
 		else {
-			Common::sprintf_s(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
+			Common::sprintf_s(msg, "Time Left: %02d:%02d", _minutes, _seconds);
 		}
 
 		s.setFontSize(8);
 		s.writeString(msg, _timeRect, BLACK);
-	} else if (!pLocaleBitmap.empty()) {
-		s.blitFrom(pLocaleBitmap,
+	} else if (!_localeBitmap.empty()) {
+		s.blitFrom(_localeBitmap,
 			Common::Point(TIME_LOCATION_X, TIME_LOCATION_Y));
 	}
 }
@@ -400,8 +400,8 @@ void MazeDoom::setupMaze() {
 	MazeGen::setupMaze();
 
 	// Set player sprite position
-	pPlayerSprite.x = (m_PlayerPos.x * SQ_SIZE_X) + SIDE_BORDER;
-	pPlayerSprite.y = (m_PlayerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;
+	_playerSprite.x = (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER;
+	_playerSprite.y = (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;
 }
 
 void MazeDoom::loadBitmaps() {
@@ -422,67 +422,67 @@ void MazeDoom::loadBitmaps() {
 	// Load up the various bitmaps for wall, edge, booby traps, etc.
 	_partsBitmap.loadBitmap(IDB_PARTS_BMP);
 
-	pWallBitmap = GfxSurface(_partsBitmap,
+	_wallBitmap = GfxSurface(_partsBitmap,
 		RectWH(WALL_X, WALL_Y, PATH_WIDTH, PATH_HEIGHT), this);
-	pPathBitmap = GfxSurface(_partsBitmap,
+	_pathBitmap = GfxSurface(_partsBitmap,
 		RectWH(PATH_X, WALL_Y, PATH_WIDTH, PATH_HEIGHT), this);
-	pStartBitmap = GfxSurface(_partsBitmap,
+	_startBitmap = GfxSurface(_partsBitmap,
 		RectWH(START_X, WALL_Y, PATH_WIDTH, PATH_HEIGHT), this);
 
-	pLeftEdgeBmp = GfxSurface(_partsBitmap,
+	_leftEdgeBmp = GfxSurface(_partsBitmap,
 		RectWH(0, EDGE_Y, EDGE_WIDTH, EDGE_HEIGHT), this);
-	pRightEdgeBmp = GfxSurface(_partsBitmap,
+	_rightEdgeBmp = GfxSurface(_partsBitmap,
 		RectWH(EDGE_WIDTH, EDGE_Y, EDGE_WIDTH, EDGE_HEIGHT), this);
-	pTopEdgeBmp = GfxSurface(_partsBitmap,
+	_topEdgeBmp = GfxSurface(_partsBitmap,
 		RectWH(EDGE_WIDTH * 2, EDGE_Y, EDGE_HEIGHT, EDGE_WIDTH), this);
-	pBottomEdgeBmp = GfxSurface(_partsBitmap,
+	_bottomEdgeBmp = GfxSurface(_partsBitmap,
 		RectWH((EDGE_WIDTH * 2) + EDGE_HEIGHT, EDGE_Y,
 			EDGE_HEIGHT, EDGE_WIDTH), this);
 
 	for (int i = 0; i < NUM_TRAP_MAPS; i++) {
-		TrapBitmap[i] = GfxSurface(_partsBitmap,
+		_trapBitmap[i] = GfxSurface(_partsBitmap,
 			RectWH(TRAP_WIDTH * i, 0, TRAP_WIDTH, TRAP_HEIGHT), this);
 	}
 
-	pPlayerSprite = _leftBitmap;
-	pPlayerSprite.setTransparentColor(WHITE);
+	_playerSprite = _leftBitmap;
+	_playerSprite.setTransparentColor(WHITE);
 
-	pLocaleBitmap.loadBitmap(IDB_LOCALE_BMP);
-	pBlankBitmap.loadBitmap(IDB_BLANK_BMP);
+	_localeBitmap.loadBitmap(IDB_LOCALE_BMP);
+	_blankBitmap.loadBitmap(IDB_BLANK_BMP);
 }
 
 void MazeDoom::loadIniSettings() {
 	if (pGameParams->bPlayingMetagame) {
 		if (pGameParams->nSkillLevel == Metagame::SKILLLEVEL_LOW) {
 			// Total Wussy
-			m_nDifficulty = MIN_DIFFICULTY;
-			m_nTime = 60;
+			_difficulty = MIN_DIFFICULTY;
+			_time = 60;
 		} else if (pGameParams->nSkillLevel == Metagame::SKILLLEVEL_MEDIUM) {
 			// Big Sissy
-			m_nDifficulty = 2;
-			m_nTime = 60;
+			_difficulty = 2;
+			_time = 60;
 		} else {
 			// Minor Whimp
-			m_nDifficulty = 4;
-			m_nTime = 60;
+			_difficulty = 4;
+			_time = 60;
 		}
 	} else {
-		m_nDifficulty = !_settings.hasKey("difficulty") ? DEFAULT_DIFFICULTY :
+		_difficulty = !_settings.hasKey("difficulty") ? DEFAULT_DIFFICULTY :
 			CLIP(_settings.getInt("difficulty"), MIN_DIFFICULTY, MAX_DIFFICULTY);
 		int time = !_settings.hasKey("time_limit") ? TIMER_DEFAULT :
 			CLIP(_settings.getInt("time_limit"), TIMER_MIN, TIMER_MAX);
-		m_nTime = (time == 0) ? 0 : TIME_SCALES[time - 1];
+		_time = (time == 0) ? 0 : TIME_SCALES[time - 1];
 	}
 
-	nSeconds = m_nTime % 60;
-	nMinutes = m_nTime / 60;
+	_seconds = _time % 60;
+	_minutes = _time / 60;
 	_priorTime = g_system->getMillis();
 }
 
 void MazeDoom::showMainMenu() {
 	// Flag is not initially set so we can draw the maze
 	// in standalone mode withouth the time remaining showing
-	bPlaying = true;
+	_playing = true;
 
 	MainMenu::show(
 		pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0,
@@ -500,8 +500,8 @@ void MazeDoom::newGame() {
 	paintMaze();			// Paint that sucker to the offscreen bitmap
 
 	// Flag the new game to start
-	bPlaying = true;
-	m_bGameOver = false;
+	_playing = true;
+	_gameOver = false;
 }
 
 void MazeDoom::movePlayer(const Common::Point &point) {
@@ -511,11 +511,11 @@ void MazeDoom::movePlayer(const Common::Point &point) {
 
 	_move.clear();
 	_move._hit = screenToTile(point);
-	_move._newPosition.x = m_PlayerPos.x;
-	_move._newPosition.y = m_PlayerPos.y;
+	_move._newPosition.x = _playerPos.x;
+	_move._newPosition.y = _playerPos.y;
 
-	delta.x = m_PlayerPos.x - _move._hit.x;	// Get x distance from mouse click to player in Tile spaces 
-	delta.y = m_PlayerPos.y - _move._hit.y;	// Get y distance from mouse click to player in Tile spaces 
+	delta.x = _playerPos.x - _move._hit.x;	// Get x distance from mouse click to player in Tile spaces 
+	delta.y = _playerPos.y - _move._hit.y;	// Get y distance from mouse click to player in Tile spaces 
 
 	if (ABS(delta.x) > ABS(delta.y)) {
 		// Moving horizontally
@@ -542,9 +542,9 @@ void MazeDoom::movePlayer(const Common::Point &point) {
 
 	if ((_move._step.x != 0) || (_move._step.y != 0)) {
 		// If the click is not in the player's tile, preparing for moving
-		pPlayerSprite = *bitmap;
-		pPlayerSprite.x = (m_PlayerPos.x * SQ_SIZE_X) + SIDE_BORDER;
-		pPlayerSprite.y = (m_PlayerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;
+		_playerSprite = *bitmap;
+		_playerSprite.x = (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER;
+		_playerSprite.y = (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;
 
 		_move.walk();
 	}
@@ -554,12 +554,12 @@ void MazeDoom::walking() {
 	assert(_move.isWalking());
 	_move._newPosition += _move._step;
 
-	if (mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == PATH ||      // Either a pathway 
-		((mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == TRAP &&     //...or a 
-			mazeTile[_move._newPosition.x][_move._newPosition.y].m_bHidden == false) ||  //...revealed trap
-			mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == EXIT)) {   //...or exit is a GO
-		pPlayerSprite.x = (m_PlayerPos.x * SQ_SIZE_X) + SIDE_BORDER;                  // Get player's position
-		pPlayerSprite.y = (m_PlayerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;     //...in screen coords
+	if (_mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == PATH ||      // Either a pathway 
+		((_mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == TRAP &&     //...or a 
+			_mazeTile[_move._newPosition.x][_move._newPosition.y].m_bHidden == false) ||  //...revealed trap
+			_mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == EXIT)) {   //...or exit is a GO
+		_playerSprite.x = (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER;                  // Get player's position
+		_playerSprite.y = (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;     //...in screen coords
 
 		// Start movement to new tile
 		_move._substepCtr = 4;
@@ -571,15 +571,15 @@ void MazeDoom::walking() {
 }
 
 void MazeDoom::walkOneTile() {
-	pPlayerSprite.x += _move._step.x * (SQ_SIZE_X / 4);
-	pPlayerSprite.y += _move._step.y * (SQ_SIZE_Y / 4);
+	_playerSprite.x += _move._step.x * (SQ_SIZE_X / 4);
+	_playerSprite.y += _move._step.y * (SQ_SIZE_Y / 4);
 	redraw();
 
 	if (--_move._substepCtr == 0) {
 		// Set new player position
-		m_PlayerPos = _move._newPosition;
-		pPlayerSprite.x = (m_PlayerPos.x * SQ_SIZE_X) + SIDE_BORDER;
-		pPlayerSprite.y = (m_PlayerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;
+		_playerPos = _move._newPosition;
+		_playerSprite.x = (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER;
+		_playerSprite.y = (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;
 
 		checkWalkFinished();
 	}
@@ -589,8 +589,8 @@ void MazeDoom::checkWalkFinished() {
 	bool bCollision = false;
 	CBofSound *pEffect = nullptr;
 
-	if ((mazeTile[_move._newPosition.x][_move._newPosition.y].m_bHidden) &&
-		(mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == WALL)) {
+	if ((_mazeTile[_move._newPosition.x][_move._newPosition.y].m_bHidden) &&
+		(_mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == WALL)) {
 
 		if (pGameParams->bSoundEffectsEnabled) {
 			// SOUND_ASYNCH ...Wave file, to delete itself
@@ -598,20 +598,20 @@ void MazeDoom::checkWalkFinished() {
 				SOUND_WAVE | SOUND_AUTODELETE);
 			(*pEffect).play();                                                      //...play the narration
 		}
-		mazeTile[_move._newPosition.x][_move._newPosition.y].m_bHidden = false;
+		_mazeTile[_move._newPosition.x][_move._newPosition.y].m_bHidden = false;
 		bCollision = true;
 	}
 
-	if (mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == TRAP &&
-		(mazeTile[_move._newPosition.x][_move._newPosition.y].m_bHidden)) {
+	if (_mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == TRAP &&
+		(_mazeTile[_move._newPosition.x][_move._newPosition.y].m_bHidden)) {
 		// Traps are only good once 
-		mazeTile[_move._newPosition.x][_move._newPosition.y].m_bHidden = false;
+		_mazeTile[_move._newPosition.x][_move._newPosition.y].m_bHidden = false;
 
 		// Set new position
-		m_PlayerPos.x = mazeTile[_move._newPosition.x][_move._newPosition.y].m_nDest.x;
-		m_PlayerPos.y = mazeTile[_move._newPosition.x][_move._newPosition.y].m_nDest.y;
-		pPlayerSprite.x = (m_PlayerPos.x * SQ_SIZE_X) + SIDE_BORDER;
-		pPlayerSprite.y = (m_PlayerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;
+		_playerPos.x = _mazeTile[_move._newPosition.x][_move._newPosition.y].m_nDest.x;
+		_playerPos.y = _mazeTile[_move._newPosition.x][_move._newPosition.y].m_nDest.y;
+		_playerSprite.x = (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER;
+		_playerSprite.y = (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;
 
 		if (pGameParams->bSoundEffectsEnabled) {
 			// SOUND_ASYNCH ...Wave file, to delete itself
@@ -621,16 +621,16 @@ void MazeDoom::checkWalkFinished() {
 		}
 
 		// Paint trap in Maze bitmap for display
-		_mazeBitmap.blitFrom(TrapBitmap[mazeTile[_move._newPosition.x][_move._newPosition.y].m_nTrap],
+		_mazeBitmap.blitFrom(_trapBitmap[_mazeTile[_move._newPosition.x][_move._newPosition.y].m_nTrap],
 			Common::Point(
-				mazeTile[_move._newPosition.x][_move._newPosition.y].m_nStart.x,
-				mazeTile[_move._newPosition.x][_move._newPosition.y].m_nStart.y
+				_mazeTile[_move._newPosition.x][_move._newPosition.y].m_nStart.x,
+				_mazeTile[_move._newPosition.x][_move._newPosition.y].m_nStart.y
 			));
 		bCollision = true;
 	}
 
-	if ((mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == WALL) ||
-		(mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == START)) {
+	if ((_mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == WALL) ||
+		(_mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall == START)) {
 		bCollision = true;
 	}
 
@@ -649,11 +649,11 @@ void MazeDoom::checkWalkFinished() {
 void MazeDoom::exitCheck() {
 	CBofSound *pEffect = nullptr;
 
-	if (mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall != EXIT)
+	if (_mazeTile[_move._newPosition.x][_move._newPosition.y].m_nWall != EXIT)
 		return;
 
-	bPlaying = false;
-	m_bGameOver = true;
+	_playing = false;
+	_gameOver = true;
 
 	if (pGameParams->bSoundEffectsEnabled) {
 		//...Wave file, to delete itself
@@ -686,10 +686,10 @@ void MazeDoom::getNewCursor(const Common::Point &mousePos) {
 	int hNewCursor = -1;
 	hit = screenToTile(mousePos);
 
-	delta.x = m_PlayerPos.x - hit.x;
-	delta.y = m_PlayerPos.y - hit.y;
+	delta.x = _playerPos.x - hit.x;
+	delta.y = _playerPos.y - hit.y;
 
-	if ((m_PlayerPos.x == hit.x) && (m_PlayerPos.y == hit.y)) {
+	if ((_playerPos.x == hit.x) && (_playerPos.y == hit.y)) {
 		// Directly over player
 		hNewCursor = IDC_MOD_NOARROW;
 	}

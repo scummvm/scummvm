@@ -164,9 +164,9 @@ void Options::saveIniSettings() {
 	_settings.setInt("time_limit", _time);
 }
 
-void Options::setTime(int nMinutes, int nSeconds) {
+void Options::setTime(int _minutes, int _seconds) {
 	_timeStr = Common::String::format("Time: %02d:%02d",
-		nMinutes, nSeconds);
+		_minutes, _seconds);
 }
 
 } // namespace MazeDoom

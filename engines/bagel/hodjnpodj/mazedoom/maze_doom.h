@@ -58,17 +58,16 @@ private:
 	BmpButton _scrollButton;
 	GfxSurface _background;
 	GfxSurface _partsBitmap;
-	GfxSurface pLocaleBitmap;
-	GfxSurface pBlankBitmap;
-	Sprite pPlayerSprite;
+	GfxSurface _localeBitmap;
+	GfxSurface _blankBitmap;
+	Sprite _playerSprite;
 	const Common::Rect _timeRect;
-	bool bSuccess = false;
-	bool m_bIgnoreScrollClick = false;
-	bool bPlaying = false;
-	bool m_bGameOver = false;
+	bool _success = false;
+	bool _playing = false;
+	bool _gameOver = false;
 	uint32 _priorTime = 0;
-	int m_nTime = 0, nSeconds = 0, nMinutes = 0;
-	CBofSound *pGameSound = nullptr;
+	int _time = 0, _seconds = 0, _minutes = 0;
+	CBofSound *_gameSound = nullptr;
 	Move _move;
 
 	void setupHodjPodj();

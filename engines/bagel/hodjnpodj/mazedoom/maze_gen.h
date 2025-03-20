@@ -57,7 +57,7 @@ namespace MazeDoom {
 #define START_SQUARE	0x2
 #define END_SQUARE		0x1
 
-extern uint16 maze[MAX_MAZE_SIZE_X][MAX_MAZE_SIZE_Y];
+extern uint16 _maze[MAX_MAZE_SIZE_X][MAX_MAZE_SIZE_Y];
 
 struct PosDir {
 	byte x = 0;
@@ -80,21 +80,21 @@ struct Tile {
 
 
 struct MazeGen {
-	uint16 maze[MAX_MAZE_SIZE_X][MAX_MAZE_SIZE_Y];
-	PosDir move_list[MOVE_LIST_SIZE];
-	Tile mazeTile[NUM_COLUMNS][NUM_ROWS];
-	int maze_size_x = 0, maze_size_y = 0;
-	int sqnum = 0, cur_sq_x = 0, cur_sq_y = 0;
-	int start_x = 0, start_y = 0, end_x = 0, end_y = 0;
+	uint16 _maze[MAX_MAZE_SIZE_X][MAX_MAZE_SIZE_Y];
+	PosDir _moveList[MOVE_LIST_SIZE];
+	Tile _mazeTile[NUM_COLUMNS][NUM_ROWS];
+	int _mazeSizeX = 0, _mazeSizeY = 0;
+	int _sqNum = 0, _curSqX = 0, _curSqY = 0;
+	int _startX = 0, _startY = 0, _endX = 0, _endY = 0;
 
-	Common::Point m_PlayerPos;
-	int m_nDifficulty = 0;
+	Common::Point _playerPos;
+	int _difficulty = 0;
 	GfxSurface _mazeBitmap;
-	GfxSurface pWallBitmap,
-		pPathBitmap, pStartBitmap;
-	GfxSurface pLeftEdgeBmp, pRightEdgeBmp,
-		pTopEdgeBmp, pBottomEdgeBmp;
-	GfxSurface TrapBitmap[NUM_TRAP_MAPS];
+	GfxSurface _wallBitmap,
+		_pathBitmap, _startBitmap;
+	GfxSurface _leftEdgeBmp, _rightEdgeBmp,
+		_topEdgeBmp, _bottomEdgeBmp;
+	GfxSurface _trapBitmap[NUM_TRAP_MAPS];
 	bool _showOverlays = false;
 
 	/**

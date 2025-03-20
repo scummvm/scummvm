@@ -278,7 +278,7 @@ const char *CItem::GetDescription(int nID, long nQuantity) {
  ************************************************************************/
 
 bool CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
-	bool	bSuccess = false;
+	bool	_success = false;
 	CNote *pNote;
 
 	if ((GetID() != MG_OBJ_HODJ_NOTEBOOK) &&			// Punt if not using notebook
@@ -291,10 +291,10 @@ bool CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
 		if (m_pNotes != nullptr)                    // Have list point back at us
 			(*m_pNotes).m_pPrev = pNote;
 		m_pNotes = pNote;							// Make us be new head of list
-		bSuccess = true;
+		_success = true;
 	}
 
-	return bSuccess;
+	return _success;
 }
 
 
@@ -313,17 +313,17 @@ bool CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
  ************************************************************************/
 
 bool CItem::AddNote(CNote *pNote) {
-	bool bSuccess = false;
+	bool _success = false;
 
 	if (pNote != nullptr) {							// ... and add it to the list
 		(*pNote).m_pNext = m_pNotes;				// Make head of list follow us
 		if (m_pNotes != nullptr)                    // Have list point back at us
 			(*m_pNotes).m_pPrev = pNote;
 		m_pNotes = pNote;							// Make us be new head of list
-		bSuccess = true;
+		_success = true;
 	}
 
-	return bSuccess;
+	return _success;
 }
 
 } // namespace Metagame

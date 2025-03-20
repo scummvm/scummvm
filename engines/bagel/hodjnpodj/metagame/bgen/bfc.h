@@ -152,7 +152,7 @@ public:
 	bool m_bRestart;		// (set by EXE for DLL) restarting game
 							// (otherwise, remaining data is invalid, unless
 							// otherwise noted)
-	bool m_bGameOver;		// If set, the meta-game is over (someone
+	bool _gameOver;		// If set, the meta-game is over (someone
 							// has won MishMosh and is in castle)
 	bool m_bScrolling;      // TRUE if scrolling map while walking
 
