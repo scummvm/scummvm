@@ -474,8 +474,8 @@ void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 	copyToVertexArray(0, position);
 	float adj = 1.25; // Perspective correction
 
-	for (int i = 0; i <= triangleAmount; i++) {
-		copyToVertexArray(i + 1,
+	for (int i = 1; i <= triangleAmount; i++) {
+		copyToVertexArray(i,
 		                  Math::Vector3d(position.x(), position.y() + (radius * cos(i *  twicePi / triangleAmount)),
 		                                 position.z() + (adj * radius * sin(i * twicePi / triangleAmount)))
 		                 );
@@ -492,8 +492,8 @@ void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 		tglEnableClientState(TGL_VERTEX_ARRAY);
 		copyToVertexArray(0, position);
 
-		for (int i = 0; i <= triangleAmount; i++) {
-			copyToVertexArray(i + 1,
+		for (int i = 1; i <= triangleAmount; i++) {
+			copyToVertexArray(i,
 			                  Math::Vector3d(position.x(), position.y() + (radius * cos(i *  twicePi / triangleAmount)),
 			                                 position.z() + (adj * radius * sin(i * twicePi / triangleAmount)))
 			                 );
