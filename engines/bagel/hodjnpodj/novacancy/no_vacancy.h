@@ -33,8 +33,9 @@ namespace NoVacancy {
 class NoVacancy : public MinigameView {
 private:
 	BmpButton _scrollButton;
-	Common::Rect m_rNewGameButton,
+	const Common::Rect m_rNewGameButton,
 		m_rectGameArea;
+	GfxSurface _background;
 
 	Common::Rect m_rLDie;		// The rectangles defined by the two dice.
 	Common::Rect m_rRDie;
@@ -42,25 +43,25 @@ private:
 	// Assume all doors are equi-sized and equidistant.
 	Common::Rect m_rDoor1;		// The first door                 
 	Common::Rect m_rDoor[10];	// Rectangles representing doors 0 thru 9  ; #0 is unused.
-	bool m_bDieUpdate;
-	bool m_iDoorStatus[10];		// Status of every door.
-	bool m_bGameJustBegun;
-	bool m_bDiceJustThrown;
-	bool m_bDoorBmpLoaded[10];
-	bool m_bGameLoadUp;
+	bool m_bDieUpdate = false;
+	bool m_iDoorStatus[10] = { false };	// Status of every door.
+	bool m_bGameJustBegun = false;
+	bool m_bDiceJustThrown = false;
+	bool m_bDoorBmpLoaded[10] = { false };
+	bool m_bGameLoadUp = false;
 
-	byte m_cDoorToOpen;
-	byte m_LDie;
-	byte m_RDie;
-	byte m_cUnDoableThrows;
+	byte m_cDoorToOpen = 0;
+	byte m_LDie = 0;
+	byte m_RDie = 0;
+	byte m_cUnDoableThrows = 0;
 
-	short m_iMoveValid;             //	  flag to indicate the legal status of the last move. It is a ternary indicator : 
+	short m_iMoveValid;			//	  flag to indicate the legal status of the last move. It is a ternary indicator : 
 	//		1 => Perfectly legal move, and the dice van be rolled if desired.
 	//		0 => Legal move but not complete to roll the dice. The dice are disabled.
 	//		-1=> Illegal move; stop and correct yourself. The dice are disabled.
-	byte m_cDoorCount;            //	keeps track of all closed doors, irrespective of the  validity of  the move      
-	byte m_cActiveDoor;           //    the door whose status has just been changed (as result of mouse action).   
-	bool m_bOneDieCase;        //	this variable is always FALSE unless doors 7, 8, and 9 are FIEXD.
+	byte m_cDoorCount = 0;		//	keeps track of all closed doors, irrespective of the  validity of  the move      
+	byte m_cActiveDoor = 0;		//    the door whose status has just been changed (as result of mouse action).   
+	bool m_bOneDieCase = false;	//	this variable is always FALSE unless doors 7, 8, and 9 are FIEXD.
 
 	//other objects for animation...
 	Common::Rect Paper,
@@ -73,19 +74,18 @@ private:
 		Hat6,
 		UmbrStand;
 
-	bool        m_bGameActive;
-	bool        m_bPause;
-	bool        m_bIgnoreScrollClick;
-	bool        m_bSound;
-	CSound *m_psndBkgndMusic;
+	bool m_bGameActive = false;
+	bool m_bPause = false;
+	bool m_bSound = true;
+	CSound *m_psndBkgndMusic = nullptr;
 
 	GfxSurface m_pCLRollingDie;
 	GfxSurface m_pCRRollingDie;
 //	GfxSurface m_pCSingleRollingDie;
+	bool m_bDiceBmpsLoaded = false;
 
-
-private:
-	bool m_bDiceBmpsLoaded;
+	void resetFields();
+	void loadBitmaps();
 
 protected:
 	void showMainMenu() override;
