@@ -511,8 +511,8 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 	if (engine->getGameId() == GID_NEMESIS && _slotKey == 14822 && _scriptManager->getStateValue(_slotKey) == 2)
 		_scriptManager->setStateValue(_slotKey, 0);
 
-  debug(1,"Created Action: Music, slotKey %d, type %u, file %24s, note %u, volume %d", _slotKey, type, fileNameBuffer, _note, _volume->getValue());
-  debug(2,"Music script: %s", line.c_str());
+  debug(3,"Created Action: Music, slotKey %d, type %u, file %24s, note %u, volume %d", _slotKey, type, fileNameBuffer, _note, _volume->getValue());
+  debug(4,"Music script: %s", line.c_str());
 }
 
 ActionMusic::~ActionMusic() {
@@ -522,7 +522,7 @@ ActionMusic::~ActionMusic() {
 }
 
 bool ActionMusic::execute() {
-  debug(1,"Executing Action: Music, slotKey %d, volume %d", _slotKey, _volume->getValue());
+  debug(3,"Executing Action: Music, slotKey %d, volume %d", _slotKey, _volume->getValue());
 	if (_scriptManager->getSideFX(_slotKey)) {
 		_scriptManager->killSideFx(_slotKey);
 		_scriptManager->setStateValue(_slotKey, 2);
@@ -549,16 +549,16 @@ ActionPanTrack::ActionPanTrack(ZVision *engine, int32 slotKey, const Common::Str
 	sscanf(line.c_str(), "%u %d", &_musicSlot, &_pos);
 	if(_scriptManager->getStateValue(_musicSlot) != 2)
     _scriptManager->setStateValue(_musicSlot, 2); //Pan_track scripts do not always trigger correctly unless this is set!
-  debug(1,"Created Action: PanTrack, slotkey %d, musicSlot %u, pos %d", _slotKey, _musicSlot, _pos);
+  debug(3,"Created Action: PanTrack, slotkey %d, musicSlot %u, pos %d", _slotKey, _musicSlot, _pos);
 }
 
 ActionPanTrack::~ActionPanTrack() {
 	_scriptManager->killSideFx(_slotKey);
-  debug(1,"Destroyed Action: PanTrack, slotkey %d", _slotKey);
+  debug(3,"Destroyed Action: PanTrack, slotkey %d", _slotKey);
 }
 
 bool ActionPanTrack::execute() {
-  debug(1,"Executing Action: PanTrack, slotkey %d, musicSlot %u, pos %d", _slotKey, _musicSlot, _pos);
+  debug(3,"Executing Action: PanTrack, slotkey %d, musicSlot %u, pos %d", _slotKey, _musicSlot, _pos);
 	if (_scriptManager->getSideFX(_slotKey))
 		return true;
 	_scriptManager->addSideFX(new PanTrackNode(_engine, _slotKey, _musicSlot, _pos));
