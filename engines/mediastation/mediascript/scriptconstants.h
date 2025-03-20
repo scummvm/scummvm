@@ -98,6 +98,7 @@ enum BuiltInMethod {
 	kTimeStopMethod = 207, // PARAMS: 0
 	kIsPlayingMethod = 372, // PARAMS: 0
 	kSetDissolveFactorMethod = 241, // PARAMS: 1
+	kSpatialCenterMoveToMethod = 230,
 
 	// HOTSPOT METHODS.
 	kMouseActivateMethod = 210, // PARAMS: 1

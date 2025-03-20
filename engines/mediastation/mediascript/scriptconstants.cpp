@@ -133,6 +133,8 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "SpatialMoveTo";
 	case kSpatialZMoveToMethod:
 		return "SpatialZMoveTo";
+	case kSpatialCenterMoveToMethod:
+		return "SpatialCenterMoveTo";
 	case kSpatialShowMethod:
 		return "SpatialShow";
 	case kTimePlayMethod:

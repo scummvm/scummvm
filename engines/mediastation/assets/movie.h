@@ -121,6 +121,8 @@ private:
 	void timeStop();
 	void spatialShow();
 	void spatialHide();
+	void spatialCenterMoveTo(int x, int y);
+	void spatialMoveTo(int x, int y);
 
 	void updateFrameState();
 	void showPersistentFrame();
