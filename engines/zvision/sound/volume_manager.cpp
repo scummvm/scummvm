@@ -149,7 +149,7 @@ uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode, Math::Angle a
   uint8 index = abs(round(azimuth.getDegrees(-180)));
   output *= directionalAmplitude[index];
   output /= 255;
-  debug(2,"Azimuth-scaled converted output %d", output);
+  debug(4,"Azimuth-scaled converted output %d", output);
   return output;
 };
 
@@ -181,7 +181,7 @@ uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode) {
       output = scaledInput;
       break;
   }
-  debug(2,"Scripted volume %d, scaled volume %d, converted output %d", inputValue, scaledInput, output);
+  debug(4,"Scripted volume %d, scaled volume %d, converted output %d", inputValue, scaledInput, output);
   return output;
 };
 

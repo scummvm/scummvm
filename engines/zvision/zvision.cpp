@@ -73,7 +73,7 @@ struct zvisionIniSettings {
 	{"debugcheats", StateKey_DebugCheats, -1, true, false},	// always start with the GOxxxx cheat enabled
 	// Editable settings
 	{"highquality", StateKey_HighQuality, -1, true, false},	// high panorama quality
-	{"qsoundenabled", StateKey_Qsound, -1, true, false},	// 1 = enable generic directional audio and non-linear volume scaling.  Genuine Qsound is copyright & unlikely to be implemented.
+	{"qsoundenabled", StateKey_Qsound, -1, true, true},	// 1 = enable generic directional audio and non-linear volume scaling.  Genuine Qsound is copyright & unlikely to be implemented.
 	{"keyboardturnspeed", StateKey_KbdRotateSpeed, 5, false, true},
 	{"panarotatespeed", StateKey_RotateSpeed, 540, false, true},	// checked by universe.scr
 	{"noanimwhileturning", StateKey_NoTurnAnim, -1, false, true},	// toggle playing animations during pana rotation

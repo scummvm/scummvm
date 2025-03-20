@@ -119,6 +119,7 @@ void MenuManager::onMouseDown(const Common::Point &Pos) {
       }
   }
   debug(1, "mouse position %d %d", Pos.x, Pos.y);
+  debug(1, "panorama position %d %d", Pos.x, Pos.y);
 }
 
 void MenuManager::onMouseMove(const Common::Point &Pos) {
