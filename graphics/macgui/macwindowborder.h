@@ -132,18 +132,19 @@ public:
 	 * @param border type that you want to draw
 	 * @param wm The window manager.
 	 */
-	void blitBorderInto(ManagedSurface &destination, uint32 flags, MacWindowManager *wm);
+	void blitBorderInto(ManagedSurface &destination, uint32 flags);
 
-	void setTitle(const Common::String& title, int width, MacWindowManager *wm);
+	void setTitle(const Common::String& title, int width);
 
 	void setScroll(int scrollPos, int scrollSize) { _scrollPos = scrollPos, _scrollSize = scrollSize; }
 
-	void drawTitle(ManagedSurface *g, MacWindowManager *wm, int titleOffset);
+	void drawTitle(ManagedSurface *g, int titleOffset);
 
-	void drawScrollBar(ManagedSurface *g, MacWindowManager *wm);
+	void drawScrollBar(ManagedSurface *g);
 
 	// we should call this method as soon as the macwindowborder is constructed
 	void setWindow(MacWindow *window) { _window = window; }
+	void setWindowManager(MacWindowManager *wm) { _wm = wm; }
 
 	void setBorderType(int type);
 
@@ -162,7 +163,7 @@ private:
 	Common::Array<NinePatchBitmap *> _border;
 
 	MacWindow *_window;
-
+	MacWindowManager *_wm;
 	BorderOffsets _borderOffsets;
 
 	bool _useInternalBorder;
