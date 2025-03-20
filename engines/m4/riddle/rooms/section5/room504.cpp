@@ -1285,7 +1285,7 @@ void Room504::daemon() {
 
 	case 604:
 		if (g_engine->game_camera_panning()) {
-			kernel_timing_trigger(5, 587);
+			kernel_timing_trigger(5, 604);
 		} else {
 			player_set_commands_allowed(false);
 			_ripMedReach = series_load("RIP TREK MED REACH HAND POS1");
