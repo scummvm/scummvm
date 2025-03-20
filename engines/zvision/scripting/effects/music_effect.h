@@ -59,7 +59,6 @@ protected:
   uint8 _volume = 0;
 	int8 _balance = 0;
   Math::Angle _azimuth;
-  uint8 fadeGain = 255;  //Linear scale, 255 corresponds to unity gain
 	uint8 volumeOut = 0;
 };
 
@@ -82,9 +81,11 @@ public:
 private:
   void outputMixer() override;
 	bool _loop;
-	bool _crossfade;
-	uint8 _crossfadeTarget;
-	int32 _crossfadeTime;
+	bool _fade;
+	uint8 fadeStartVol;
+	uint8 fadeEndVol;
+	uint32 fadeTime;
+	uint32 fadeElapsed; //Cumulative time since fade start
 	bool _stereo;
 	Audio::SoundHandle _handle;
 	uint16 _sub;

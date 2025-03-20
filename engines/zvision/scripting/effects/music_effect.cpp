@@ -55,12 +55,10 @@ void MusicNodeBASE::setBalance(int8 balance) {
 }
 
 void MusicNodeBASE::updateMixer() {
-  uint16 tmpVol = _volume * fadeGain;
-  tmpVol /= 0xFF;
   if(_engine->getScriptManager()->getStateValue(StateKey_Qsound) >= 1)
-    volumeOut = _engine->getVolumeManager()->convert(tmpVol, _azimuth);  //Apply volume profile and then attenuate according to azimuth
+    volumeOut = _engine->getVolumeManager()->convert(_volume, _azimuth);  //Apply volume profile and then attenuate according to azimuth
   else
-    volumeOut = _engine->getVolumeManager()->convert(tmpVol, kVolumeLinear);  //Apply linear volume profile and ignore azimuth
+    volumeOut = _engine->getVolumeManager()->convert(_volume, kVolumeLinear);  //Apply linear volume profile and ignore azimuth
   outputMixer();
 }
 
@@ -69,9 +67,11 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 	_loop = loop;
 	_volume = volume;
 	_balance = 0;
-	_crossfade = false;
-	_crossfadeTarget = 0;
-	_crossfadeTime = 0;
+	_fade = false;
+  fadeStartVol = volume;
+	fadeEndVol = 0;
+	fadeTime = 0;
+	fadeElapsed = 0;
 	_sub = 0;
 	_stereo = false;
 	_loaded = false;
@@ -95,7 +95,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 		else
 			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audioStream, -1, _volume);
 		if (_key != StateKey_NotSet) {
-		  debug(1,"setting musicnode state value to 1");
+		  debug(3,"setting musicnode state value to 1");
 			_engine->getScriptManager()->setStateValue(_key, 1);
 		}
 
@@ -111,19 +111,17 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 		_loaded = true;
 		updateMixer();
 	}
-	debug(1, "MusicNode: %d created", _key);
+	debug(3, "MusicNode: %d created", _key);
 }
 
 MusicNode::~MusicNode() {
 	if (_loaded)
 		_engine->_mixer->stopHandle(_handle);
-	if (_key != StateKey_NotSet) {
+	if (_key != StateKey_NotSet)
 		_engine->getScriptManager()->setStateValue(_key, 2);
-		  debug(1,"setting musicnode state value to 2");
-		}
 	if (_sub)
 		_engine->getSubtitleManager()->destroy(_sub);
-	debug(1, "MusicNode: %d destroyed", _key);
+	debug(3, "MusicNode: %d destroyed", _key);
 }
 
 void MusicNode::outputMixer() {
@@ -132,29 +130,34 @@ void MusicNode::outputMixer() {
 }
 
 void MusicNode::setFade(int32 time, uint8 target) {
-	_crossfadeTarget = target;
-	_crossfadeTime = time;
-	_crossfade = true;
+  fadeStartVol = _volume;
+	fadeEndVol = target;
+	fadeElapsed = 0;
+	fadeTime = time <= 0 ? 0 : (uint32)time;
+	_fade = true;
 }
 
 bool MusicNode::process(uint32 deltaTimeInMillis) {
 	if (!_loaded || ! _engine->_mixer->isSoundHandleActive(_handle))
 		return stop();
 	else {
-		uint8 _newvol = _volume;
-		if (_crossfade) {
-			if (_crossfadeTime > 0) {
-				if ((int32)deltaTimeInMillis > _crossfadeTime)
-					deltaTimeInMillis = _crossfadeTime;
-				_newvol += (int)(floor(((float)(_crossfadeTarget - _newvol) / (float)_crossfadeTime)) * (float)deltaTimeInMillis);
-				_crossfadeTime -= deltaTimeInMillis;
-			} else {
-				_crossfade = false;
-				_newvol = _crossfadeTarget;
-			}
+		if (_fade) {
+			debug(3,"Fading music, endVol %d, startVol %d, current %d, fade time %d, elapsed time %dms", fadeEndVol, fadeStartVol, _volume, fadeTime, fadeElapsed);
+		  uint8 _newvol = 0;
+		  fadeElapsed += deltaTimeInMillis;
+		  if( (fadeTime <= 0) | (fadeElapsed >= fadeTime) ) {
+        _newvol = fadeEndVol;
+		    _fade = false;
+		  }
+		  else {
+		    if(fadeEndVol > fadeStartVol)
+		      _newvol = fadeStartVol + (fadeElapsed*(fadeEndVol - fadeStartVol))/fadeTime;
+	      else
+  		    _newvol = fadeStartVol - (fadeElapsed*(fadeStartVol - fadeEndVol))/fadeTime;
+	    }
+		  if (_volume != _newvol)
+			  setVolume(_newvol);
 		}
-		if (_volume != _newvol)
-			setVolume(_newvol);
 		if (_sub && _engine->getScriptManager()->getStateValue(StateKey_Subtitles) == 1)
 			_engine->getSubtitleManager()->update(_engine->_mixer->getSoundElapsedTime(_handle) / 100, _sub);
 	}
@@ -173,6 +176,7 @@ PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos)
 	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_PANTRACK) {
 	_slot = slot;
 	sourcePos = pos;
+  debug(3,"Created PanTrackNode, key %d, slot %d", _key, _slot);
 	process(0); 	// Try to set pan value for music node immediately
 }
 
@@ -180,6 +184,7 @@ PanTrackNode::~PanTrackNode() {
 }
 
 bool PanTrackNode::process(uint32 deltaTimeInMillis) {
+  debug(3,"Processing PanTrackNode, key %d, deltaT %d", _key, deltaTimeInMillis);
 	ScriptManager * scriptManager = _engine->getScriptManager();
 	ScriptingEffect *fx = scriptManager->getSideFX(_slot);
 	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO) {
