@@ -197,8 +197,37 @@ void cga_blitToScreen(int16 ofs, int16 w, int16 h) {
 }
 
 void cga_BackBufferToRealFull(void) {
-	memcpy(CGA_SCREENBUFFER, backbuffer, sizeof(backbuffer));
+	if (g_vm->_videoMode == Common::RenderMode::kRenderCGA) {
+		memcpy(CGA_SCREENBUFFER, backbuffer, sizeof(backbuffer));
 
+	} else if (g_vm->_videoMode == Common::RenderMode::kRenderHercG) {
+		byte tempBackbuffer[0x4000];
+		byte *even = tempBackbuffer;
+		byte *odd = tempBackbuffer + CGA_BYTES_PER_LINE;
+
+		byte *page0 = backbuffer;
+		byte *page1 = backbuffer + CGA_ODD_LINES_OFS;
+
+		for (int i = 0; i < CGA_HEIGHT / 2; i++) {
+			memcpy(odd, page1, CGA_BYTES_PER_LINE);
+			memcpy(even, page0, CGA_BYTES_PER_LINE);
+
+			page0 += CGA_BYTES_PER_LINE;
+			page1 += CGA_BYTES_PER_LINE;
+			even += 2 * CGA_BYTES_PER_LINE;
+			odd += 2 * CGA_BYTES_PER_LINE;
+		}
+
+		const int16 START_X_PIXELS = (HGA_WIDTH - (2 * CGA_WIDTH)) / 4;
+		const int16 START_Y = (HGA_HEIGHT - CGA_HEIGHT) / 2;
+
+		byte *srcPtr = tempBackbuffer;
+		for (int16 row = 0; row < CGA_HEIGHT; row++) {
+			byte *destPtr = CGA_SCREENBUFFER + HGA_CalcXY(START_X_PIXELS, START_Y + row);
+			memmove(destPtr, srcPtr, CGA_BYTES_PER_LINE);
+			srcPtr += CGA_BYTES_PER_LINE;
+		}
+	}
 	cga_blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
 }
 
