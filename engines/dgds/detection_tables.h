@@ -350,6 +350,22 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Heart of China (PC) EGA 720kb German Floppy version
+	// 1.0 reported by ns394 (#15809)
+	{
+		"china",
+		0,
+		{
+			{"volume.rmf", 0, "1655f41c5de53f87c9851b3524f0cbae", 8208},
+			{"volume.001", 0, "9de863e3cb1467fde7d91c02942432de", 344018},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_TESTING | ADGF_DGDS_EGA,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Heart of China (PC)
 	{
 		"china",
