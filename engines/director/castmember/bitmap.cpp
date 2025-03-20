@@ -64,6 +64,15 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		_flags1 = flags1;	// region: 0 - auto, 1 - matte, 2 - disabled
 
 		_bytes = stream.readUint16();
+		// A little context about how bitmap bounding boxes are stored.
+		// In the Director editor, images can be edited on a big scrolling canvas with
+		// the image in the middle. _initialRect describes the location on that virtual
+		// canvas, with the top-left being the start position of the image.
+		// _regX and _regY is the registration offset, in canvas space.
+		// This means if a bitmap cast member is placed at (64, 64) on the score, the
+		// registration offset of the image is placed at (64, 64).
+		// By default the registration offset is the dead centre of the image.
+		// _boundingRect I think is used internally by the editor and not elsewhere.
 		_initialRect = Movie::readRect(stream);
 		_boundingRect = Movie::readRect(stream);
 		_regY = stream.readSint16();
@@ -925,6 +934,9 @@ bool BitmapCastMember::setField(int field, const Datum &d) {
 			// This is a random PICT from somewhere,
 			// set the external flag so we remap the palette.
 			_external = true;
+			// Remove the canvas-space transformation
+			_regX -= _initialRect.left;
+			_regY -= _initialRect.top;
 			_initialRect = Common::Rect(_picture->_surface.w, _picture->_surface.h);
 			return true;
 		} else {
