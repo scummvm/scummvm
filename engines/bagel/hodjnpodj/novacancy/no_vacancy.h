@@ -35,10 +35,23 @@ private:
 	BmpButton _scrollButton;
 	const Common::Rect m_rNewGameButton,
 		m_rectGameArea;
-	GfxSurface _background;
+	//other objects for animation...
+	const Common::Rect Paper,
+		aBrShoes,
+		bBrShoes,
+		BluShoes,
+		Bottle,
+		Cat,
+		Hat6,
+		UmbrStand;
+	// The rectangles defined by the two dice.
+	const Common::Rect m_rLDie, m_rRDie;
 
-	Common::Rect m_rLDie;		// The rectangles defined by the two dice.
-	Common::Rect m_rRDie;
+	GfxSurface _background;
+	GfxSurface pCMonolithDiceBmp;
+	GfxSurface pCLDieBmp[7];
+	GfxSurface pCRDieBmp[7];
+	GfxSurface pCDoorBmp[10];
 
 	// Assume all doors are equi-sized and equidistant.
 	Common::Rect m_rDoor1;		// The first door                 
@@ -63,26 +76,16 @@ private:
 	byte m_cActiveDoor = 0;		//    the door whose status has just been changed (as result of mouse action).   
 	bool m_bOneDieCase = false;	//	this variable is always FALSE unless doors 7, 8, and 9 are FIEXD.
 
-	//other objects for animation...
-	Common::Rect Paper,
-		Glass,
-		aBrShoes,
-		bBrShoes,
-		BluShoes,
-		Bottle,
-		Cat,
-		Hat6,
-		UmbrStand;
+	
 
 	bool m_bGameActive = false;
 	bool m_bPause = false;
 	bool m_bSound = true;
 	CSound *m_psndBkgndMusic = nullptr;
 
-	GfxSurface m_pCLRollingDie;
-	GfxSurface m_pCRRollingDie;
+	Sprite m_pCLRollingDie;
+	Sprite m_pCRRollingDie;
 //	GfxSurface m_pCSingleRollingDie;
-	bool m_bDiceBmpsLoaded = false;
 
 	void resetFields();
 	void loadBitmaps();
