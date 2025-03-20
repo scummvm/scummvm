@@ -407,8 +407,8 @@ void MazeGen::paintMaze() {
 
 			// Handle drawing the correct tile
 			if ((mazeTile[x][y].m_nWall == PATH) ||
-					(mazeTile[x][y].m_nWall == EXIT) ||
-					mazeTile[x][y].m_bHidden)
+				(mazeTile[x][y].m_nWall == EXIT) ||
+				mazeTile[x][y].m_bHidden)
 				// Path or hidden obj 
 				_mazeBitmap.blitFrom(pPathBitmap, Common::Point(
 					mazeTile[x][y].m_nStart.x, mazeTile[x][y].m_nStart.y));
@@ -416,6 +416,11 @@ void MazeGen::paintMaze() {
 				// Start of maze
 				_mazeBitmap.blitFrom(pStartBitmap, Common::Point(
 					mazeTile[x][y].m_nStart.x, mazeTile[x][y].m_nStart.y));
+			else if (mazeTile[x][y].m_nWall == TRAP)
+				// Revealed trap
+				// Start of maze
+				_mazeBitmap.blitFrom(TrapBitmap[mazeTile[x][y].m_nTrap],
+					mazeTile[x][y].m_nStart);
 			else
 				// Otherwise, it's a wall
 				_mazeBitmap.blitFrom(pWallBitmap, Common::Point(

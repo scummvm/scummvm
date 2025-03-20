@@ -58,7 +58,6 @@ private:
 	BmpButton _scrollButton;
 	GfxSurface _background;
 	GfxSurface _partsBitmap;
-	GfxSurface TrapBitmap[NUM_TRAP_MAPS];
 	GfxSurface pLocaleBitmap;
 	GfxSurface pBlankBitmap;
 	Sprite pPlayerSprite;

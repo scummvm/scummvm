@@ -94,6 +94,7 @@ struct MazeGen {
 		pPathBitmap, pStartBitmap;
 	GfxSurface pLeftEdgeBmp, pRightEdgeBmp,
 		pTopEdgeBmp, pBottomEdgeBmp;
+	GfxSurface TrapBitmap[NUM_TRAP_MAPS];
 	bool _showOverlays = false;
 
 	/**
