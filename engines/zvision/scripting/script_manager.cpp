@@ -243,7 +243,7 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 	}
 	// criteriaList can be empty. Aka, the puzzle should be executed immediately
 	if (puzzle->criteriaList.empty() || criteriaMet) {
-		debug(3, "Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
+		debug(5, "Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
 		// Set the puzzle as completed
 		setStateValue(puzzle->key, 1);
 		for (Common::List<ResultAction *>::iterator resultIter = puzzle->resultActions.begin(); resultIter != puzzle->resultActions.end(); ++resultIter) {
@@ -425,6 +425,7 @@ void ScriptManager::killSideFxType(ScriptingEffect::ScriptingEffectType type) {
 }
 
 void ScriptManager::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+  debug(1,"Mouse panorama/script coordinates %d x %d", backgroundImageSpacePos.x, backgroundImageSpacePos.y);
 	if (!_activeControls)
 		return;
 	for (ControlList::iterator iter = _activeControls->reverse_begin(); iter != _activeControls->end(); iter--) {
@@ -642,7 +643,9 @@ void ScriptManager::serialize(Common::WriteStream *stream) {
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter)
 		(*iter)->serialize(stream);
 	stream->writeUint32BE(MKTAG('F', 'L', 'A', 'G'));
-	int32 slots = _engine->getGameId() == GID_NEMESIS ? 30000 : 20000;
+	int32 slots = _engine->getGameId() == GID_NEMESIS ? 31000 : 21000;  
+	//Original games use key values up to 29500 and 19737, respectively
+	//Values 30001~31000 and 20001~21000 are now set aside for auxiliary scripting to add extra directional audio effects.
 	stream->writeUint32LE(slots * 2);
 	for (int32 i = 0; i < slots; i++)
 		stream->writeUint16LE(getStateFlag(i));

@@ -20,6 +20,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/str.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
@@ -44,29 +45,52 @@
 namespace ZVision {
 
 void ScriptManager::parseScrFile(const Common::Path &fileName, ScriptScope &scope) {
-	Common::File file;
-	if (!_engine->getSearchManager()->openFile(file, fileName))
+  auto parse = [&](Common::File &file) {
+	  while (!file.eos()) {
+		  Common::String line = file.readLine();
+		  if (file.err())
+			  error("Error parsing scr file: %s", fileName.toString().c_str());
+		  trimCommentsAndWhiteSpace(&line);
+		  if (line.empty())
+			  continue;
+		  if (line.matchString("puzzle:*", true)) {
+			  Puzzle *puzzle = new Puzzle();
+			  sscanf(line.c_str(), "puzzle:%u", &(puzzle->key));
+			  if (getStateFlag(puzzle->key) & Puzzle::ONCE_PER_INST)
+				  setStateValue(puzzle->key, 0);
+			  parsePuzzle(puzzle, file);
+			  scope.puzzles.push_back(puzzle);
+		  } 
+		  else if (line.matchString("control:*", true)) {
+			  Control *ctrl = parseControl(line, file);
+			  if (ctrl)
+				  scope.controls.push_back(ctrl);
+		  }
+	  }
+	};
+	
+	Common::File mainFile;
+	Common::File auxFile;
+	Common::String auxFileName = fileName.toString();
+  replace(auxFileName, Common::String(".scr"), Common::String(".aux"));
+  debug(1,"Auxiliary filename %s", auxFileName.c_str());
+  Common::Path auxFilePath(auxFileName);
+  debug(1,"Auxiliary path %s", auxFilePath.toString().c_str());
+  
+	if (!_engine->getSearchManager()->openFile(mainFile, fileName))
 		error("Script file not found: %s", fileName.toString().c_str());
-	while (!file.eos()) {
-		Common::String line = file.readLine();
-		if (file.err())
-			error("Error parsing scr file: %s", fileName.toString().c_str());
-		trimCommentsAndWhiteSpace(&line);
-		if (line.empty())
-			continue;
-		if (line.matchString("puzzle:*", true)) {
-			Puzzle *puzzle = new Puzzle();
-			sscanf(line.c_str(), "puzzle:%u", &(puzzle->key));
-			if (getStateFlag(puzzle->key) & Puzzle::ONCE_PER_INST)
-				setStateValue(puzzle->key, 0);
-			parsePuzzle(puzzle, file);
-			scope.puzzles.push_back(puzzle);
-		} 
-		else if (line.matchString("control:*", true)) {
-			Control *ctrl = parseControl(line, file);
-			if (ctrl)
-				scope.controls.push_back(ctrl);
-		}
+	else {
+    debug(1,"Parsing primary script file");
+  	parse(mainFile);
+	  if (auxFile.exists(auxFilePath)) {
+	    debug(1,"Auxiliary script file found");
+	    if (auxFile.open(auxFilePath)) {
+	      debug(1,"Parsing auxiliary script file %s", auxFilePath.toString().c_str());
+        parse(auxFile);
+      }
+      else
+        debug(1,"Unable to open auxiliary script file %s", auxFilePath.toString().c_str());
+    }
 	}
 	scope.procCount = 0;
 }

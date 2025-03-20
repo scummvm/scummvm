@@ -547,18 +547,20 @@ ActionPanTrack::ActionPanTrack(ZVision *engine, int32 slotKey, const Common::Str
 	_pos(0),
 	_musicSlot(0) {
 	sscanf(line.c_str(), "%u %d", &_musicSlot, &_pos);
-	if(_scriptManager->getStateValue(_musicSlot) != 2)
+	if(_scriptManager->getStateValue(_musicSlot) != 2) {
+	  debug(2,"Setting musicSlot %d to 2", _musicSlot);
     _scriptManager->setStateValue(_musicSlot, 2); //Pan_track scripts do not always trigger correctly unless this is set!
-  debug(3,"Created Action: PanTrack, slotkey %d, musicSlot %u, pos %d", _slotKey, _musicSlot, _pos);
+  }
+  debug(2,"Created Action: PanTrack, slotkey %d, musicSlot %u, pos %d", _slotKey, _musicSlot, _pos);
 }
 
 ActionPanTrack::~ActionPanTrack() {
 	_scriptManager->killSideFx(_slotKey);
-  debug(3,"Destroyed Action: PanTrack, slotkey %d", _slotKey);
+  debug(2,"Destroyed Action: PanTrack, slotkey %d", _slotKey);
 }
 
 bool ActionPanTrack::execute() {
-  debug(3,"Executing Action: PanTrack, slotkey %d, musicSlot %u, pos %d", _slotKey, _musicSlot, _pos);
+  debug(2,"Executing Action: PanTrack, slotkey %d, musicSlot %u, pos %d", _slotKey, _musicSlot, _pos);
 	if (_scriptManager->getSideFX(_slotKey))
 		return true;
 	_scriptManager->addSideFX(new PanTrackNode(_engine, _slotKey, _musicSlot, _pos));
