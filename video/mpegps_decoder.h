@@ -72,8 +72,6 @@ private:
 
 		bool loadStream(Common::SeekableReadStream *stream);
 		void close();
-		bool getESStream() { return _isESStream; }
-		void setESStream(bool isESStream) { _isESStream = isESStream; }
 
 		Common::SeekableReadStream *getFirstVideoPacket(int32 &startCode, uint32 &pts, uint32 &dts);
 		Common::SeekableReadStream *getNextPacket(uint32 currentTime, int32 &startCode, uint32 &pts, uint32 &dts);

@@ -65,28 +65,6 @@ MPEGPSDecoder::~MPEGPSDecoder() {
 bool MPEGPSDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
-	// Check if the videostream being loaded is an elementary stream (ES) or a program stream (PS)
-	// PS streams start with the Pack Header which has a start code of 0x1ba
-	// ES streams start with the Sequence Header which has a start code of 0x1b3
-	int64 startPosition = stream->pos();
-	uint32 header = stream->readUint32BE();
-	stream->seek(startPosition);
-
-	// If it is a Sequence Header (ES Stream), pass the stream to a Elementary Stream handler.
-	if (header == kStartCodeSequenceHeader) 
-		_demuxer->setESStream(true);
-		
-	// If it is a Pack Header (PS stream), pass the stream to PS demuxer for demuxing into video and audio packets
-	else if (header == kStartCodePack) 
-		_demuxer->setESStream(false);
-
-	// Currently not handling other stream types like ES audio stream
-	// Instead of throwing an error, we can throw a warning, so that decoding of further streams isn't affected
-	// Unknown stream header types are "handled" (ignored) in the readNextPacketHeader function 
-	else 
-		warning("Unknown Start Code in the MPEG stream, %d", header);
-	
-
 	if (!_demuxer->loadStream(stream)) {
 		close();
 		return false;
@@ -284,6 +262,27 @@ MPEGPSDecoder::MPEGPSDemuxer::~MPEGPSDemuxer() {
 bool MPEGPSDecoder::MPEGPSDemuxer::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
+	// Check if the videostream being loaded is an elementary stream (ES) or a program stream (PS)
+	// PS streams start with the Pack Header which has a start code of 0x1ba
+	// ES streams start with the Sequence Header which has a start code of 0x1b3
+	int64 startPosition = stream->pos();
+	uint32 header = stream->readUint32BE();
+	stream->seek(startPosition);
+
+	// If it is a Sequence Header (ES Stream), pass the stream to a Elementary Stream handler.
+	if (header == kStartCodeSequenceHeader) 
+		_isESStream = true;
+		
+	// If it is a Pack Header (PS stream), pass the stream to PS demuxer for demuxing into video and audio packets
+	else if (header == kStartCodePack) 
+		_isESStream = false;
+
+	// Currently not handling other stream types like ES audio stream
+	// Instead of throwing an error, we can throw a warning, so that decoding of further streams isn't affected
+	// Unknown stream header types are "handled" (ignored) in the readNextPacketHeader function 
+	else 
+		warning("Unknown Start Code in the MPEG stream, %d", header);
+	
 	_stream = stream;
 
 	int queuedPackets = 0;
@@ -379,10 +378,9 @@ bool MPEGPSDecoder::MPEGPSDemuxer::queueNextPacket() {
 	// Elementary stream doesn't have pts and dts, but our sendPacket() function handles that well
 	// TODO: Only handling video ES streams for now, audio ES streams are bit more complicated
 	if (_isESStream) {
-		const uint16 kESPacketSize = 1024;	// FFmpeg uses 1024 to packetize ES streams
+		const uint16 kESPacketSize = 1024;	// FFmpeg uses 1024 to packetize ES streams into PES packets
 	  
-		int64 size =  kESPacketSize > (_stream->size() - _stream->pos() + 1) ? (_stream->size() - _stream->pos() + 1) : kESPacketSize;
-		Common::SeekableReadStream *stream = _stream->readStream(size);
+		Common::SeekableReadStream *stream = _stream->readStream(kESPacketSize);
 
 		int32 startCode = 0x1E0;
 		uint32 pts = 0xFFFFFFFF, dts = 0xFFFFFFFF;
