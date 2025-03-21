@@ -19,59 +19,45 @@
  *
  */
 
-#ifndef HODJNPODJ_METAGAME_VIEWS_GRAND_TOUR_H
-#define HODJNPODJ_METAGAME_VIEWS_GRAND_TOUR_H
-
+#include "common/file.h"
+#include "image/bmp.h"
 #include "bagel/hodjnpodj/metagame/views/dialog.h"
-#include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-struct GRANDTRSTRUCT {
-	int nHodjSkillLevel;
-	int nPodjSkillLevel;
-	int nGameSelection;
-	int nCurrGameCode;
-	int nHodjScore;
-	int nPodjScore;
-	int nHodjLastGame;
-	int nPodjLastGame;
-	int nHodjLastScore;
-	int nPodjLastScore;
-	bool bPlayingHodj;
-	bool bPlayMusic;
-	bool bPlayFX;
-	bool bMidGrandTour;
-	bool abHGamePlayed[18] = {};
-	bool abPGamePlayed[18] = {};
-	GAMESTRUCT stMiniGame;
+#define BACKGROUND_BMP "meta/art/mlscroll.bmp"
 
-	GRANDTRSTRUCT() {
-		reset();
-	}
-	void reset();
-};
 
-class GrandTour : public Dialog {
-private:
-	GRANDTRSTRUCT _grandTour;
-	GRANDTRSTRUCT *const m_pgtGTStruct = &_grandTour;
+bool Dialog::msgOpen(const OpenMessage &msg) {
+	View::msgOpen(msg);
 
-	void adjustScore();
+	_background.loadBitmap(BACKGROUND_BMP);
+	_background.setTransparentColor(WHITE);
 
-public:
-	GrandTour();
+	blackScreen();
 
-	bool msgOpen(const OpenMessage &msg) override;
-	bool msgClose(const CloseMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-	void draw() override;
-};
+	Common::Rect r(0, 0, _background.w, _background.h);
+	r.moveTo((GAME_WIDTH - _background.w) / 2,
+		(GAME_HEIGHT - _background.h) / 2);
+	setBounds(r);
+
+	return true;
+}
+
+bool Dialog::msgClose(const CloseMessage &msg) {
+	View::msgClose(msg);
+	_background.clear();
+
+	return true;
+}
+
+void Dialog::draw() {
+	GfxSurface s = getSurface();
+	s.blitFrom(_background);
+}
 
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif

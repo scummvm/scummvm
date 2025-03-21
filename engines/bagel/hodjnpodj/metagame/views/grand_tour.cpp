@@ -29,7 +29,6 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#define BACKGROUND_BMP "meta/art/mlscroll.bmp"
 #define FONT_SIZE 8
 
 #define	NOPLAY		-1
@@ -37,30 +36,21 @@ namespace Metagame {
 #define GAME_GEO	1
 #define GAME_RAND	2
 
-GrandTour::GrandTour() : View("GrandTour") {
+GrandTour::GrandTour() : Dialog("GrandTour") {
 }
 
 bool GrandTour::msgOpen(const OpenMessage &msg) {
-	View::msgOpen(msg);
+	Dialog::msgOpen(msg);
 	g_engine->_bReturnToGrandTour = true;
 	_grandTour.reset();
 
 	adjustScore();
-	_background.loadBitmap(BACKGROUND_BMP);
-	_background.setTransparentColor(WHITE);
-
-	blackScreen();
-
-	Common::Rect r(0, 0, _background.w, _background.h);
-	r.moveTo((GAME_WIDTH - _background.w) / 2,
-		(GAME_HEIGHT - _background.h) / 2);
-	setBounds(r);
 
 	return true;
 }
 
 bool GrandTour::msgClose(const CloseMessage &msg) {
-	View::msgClose(msg);
+	Dialog::msgClose(msg);
 	g_engine->_bReturnToGrandTour = false;
 
 	return true;
@@ -71,11 +61,10 @@ bool GrandTour::msgGame(const GameMessage &msg) {
 }
 
 void GrandTour::draw() {
+	Dialog::draw();
+
 	GfxSurface s = getSurface();
 	s.setFontSize(FONT_SIZE);
-
-	s.clear();
-	s.blitFrom(_background);
 }
 
 void GrandTour::adjustScore() {

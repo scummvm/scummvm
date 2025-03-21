@@ -19,54 +19,27 @@
  *
  */
 
-#ifndef HODJNPODJ_METAGAME_VIEWS_GRAND_TOUR_H
-#define HODJNPODJ_METAGAME_VIEWS_GRAND_TOUR_H
+#ifndef HODJNPODJ_METAGAME_VIEWS_DIALOG_H
+#define HODJNPODJ_METAGAME_VIEWS_DIALOG_H
 
-#include "bagel/hodjnpodj/metagame/views/dialog.h"
+#include "bagel/hodjnpodj/views/view.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-struct GRANDTRSTRUCT {
-	int nHodjSkillLevel;
-	int nPodjSkillLevel;
-	int nGameSelection;
-	int nCurrGameCode;
-	int nHodjScore;
-	int nPodjScore;
-	int nHodjLastGame;
-	int nPodjLastGame;
-	int nHodjLastScore;
-	int nPodjLastScore;
-	bool bPlayingHodj;
-	bool bPlayMusic;
-	bool bPlayFX;
-	bool bMidGrandTour;
-	bool abHGamePlayed[18] = {};
-	bool abPGamePlayed[18] = {};
-	GAMESTRUCT stMiniGame;
-
-	GRANDTRSTRUCT() {
-		reset();
-	}
-	void reset();
-};
-
-class GrandTour : public Dialog {
+class Dialog : public View {
 private:
-	GRANDTRSTRUCT _grandTour;
-	GRANDTRSTRUCT *const m_pgtGTStruct = &_grandTour;
-
-	void adjustScore();
+	GfxSurface _background;
 
 public:
-	GrandTour();
+	Dialog(const Common::String &name) :
+		View(name) {
+	}
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 };
 
