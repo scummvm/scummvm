@@ -19,36 +19,56 @@
  *
  */
 
-#ifndef HODJNPODJ_VIEWS_H
-#define HODJNPODJ_VIEWS_H
+#ifndef HODJNPODJ_METAGAME_VIEWS_GRAND_TOUR_H
+#define HODJNPODJ_METAGAME_VIEWS_GRAND_TOUR_H
 
-#include "bagel/hodjnpodj/views/rules.h"
-#include "bagel/hodjnpodj/views/main_menu.h"
-#include "bagel/hodjnpodj/views/message_box.h"
-#include "bagel/hodjnpodj/metagame/views/grand_tour.h"
-#include "bagel/hodjnpodj/metagame/views/minigames.h"
-#include "bagel/hodjnpodj/metagame/views/movie.h"
-#include "bagel/hodjnpodj/metagame/views/title_menu.h"
-#include "bagel/hodjnpodj/fuge/fuge.h"
-#include "bagel/hodjnpodj/mazedoom/maze_doom.h"
-#include "bagel/hodjnpodj/novacancy/no_vacancy.h"
+#include "bagel/hodjnpodj/views/view.h"
+#include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
+namespace Metagame {
 
-struct Views {
-	MainMenu _mainMenu;
-	MessageBox _messageBox;
-	Rules _rules;
-	Metagame::GrandTour _grandTour;
-	Metagame::Minigames _minigames;
-	Metagame::Movie _movie;
-	Metagame::TitleMenu _titleMenu;
-	Fuge::Fuge _fuge;
-	MazeDoom::MazeDoom _mazeDoom;
-	NoVacancy::NoVacancy _noVacancy;
+struct GRANDTRSTRUCT {
+	int nHodjSkillLevel;
+	int nPodjSkillLevel;
+	int nGameSelection;
+	int nCurrGameCode;
+	int nHodjScore;
+	int nPodjScore;
+	int nHodjLastGame;
+	int nPodjLastGame;
+	int nHodjLastScore;
+	int nPodjLastScore;
+	bool bPlayingHodj;
+	bool bPlayMusic;
+	bool bPlayFX;
+	bool bMidGrandTour;
+	bool abHGamePlayed[18] = {};
+	bool abPGamePlayed[18] = {};
+	GAMESTRUCT stMiniGame;
+
+	GRANDTRSTRUCT() {
+		reset();
+	}
+	void reset();
 };
 
+class GrandTour : public View {
+private:
+	GfxSurface _background;
+	GRANDTRSTRUCT _grandTour;
+
+public:
+	GrandTour();
+
+	bool msgOpen(const OpenMessage &msg) override;
+	bool msgClose(const CloseMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
+	void draw() override;
+};
+
+} // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel
 

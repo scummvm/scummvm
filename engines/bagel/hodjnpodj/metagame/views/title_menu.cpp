@@ -81,7 +81,8 @@ bool TitleMenu::msgGame(const GameMessage &msg) {
 
 		} else if (msg._stringValue == "RestartMovie") {
 			send("Movie", GameMessage("MOVIE", STARTUP_MOVIE, MOVIE_ID_INTRO));
-
+		} else if (msg._stringValue == "GrandTour") {
+			replaceView("GrandTour");
 		} else if (msg._stringValue == "Quit") {
 			g_engine->stopBackgroundMidi();
 			g_engine->quitGame();
