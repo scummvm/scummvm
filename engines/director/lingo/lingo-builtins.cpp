@@ -1986,7 +1986,8 @@ void LB::b_return(int nargs) {
 	Datum retVal;
 	if (nargs > 0) {
 		retVal = g_lingo->pop();
-		g_lingo->_theResult = retVal;	// Store result for possible reference
+		if (retVal.type != VOID && g_lingo->_state->callstack.size() <= 2)
+			g_lingo->_theResult = retVal;	// Store result for possible reference
 	}
 
 	// clear any temp values from loops
