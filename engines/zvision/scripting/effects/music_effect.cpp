@@ -181,6 +181,12 @@ PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos)
 }
 
 PanTrackNode::~PanTrackNode() {
+	ScriptManager * scriptManager = _engine->getScriptManager();
+	ScriptingEffect *fx = scriptManager->getSideFX(_slot);
+	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO) {
+		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
+    mus->setBalance(0);
+  }
   debug(1,"Deleting PanTrackNode, key %d, slot %d", _key, _slot);
 }
 
