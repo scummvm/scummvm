@@ -3625,7 +3625,7 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 			redrawVerbs();
 		}
 
-		if (restoreSounds)
+		if (_musicEngine && restoreSounds)
 			_musicEngine->restoreAfterLoad();
 	}
 }
@@ -3690,7 +3690,8 @@ void ScummEngine_v5::scummLoop_handleSaveLoad() {
 		clearCharsetMask();
 		_charset->_hasMask = false;
 
-		_musicEngine->restoreAfterLoad();
+		if (_musicEngine)
+			_musicEngine->restoreAfterLoad();
 
 		redrawVerbs();
 
