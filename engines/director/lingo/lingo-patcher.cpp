@@ -281,16 +281,16 @@ on checkkaiwa kaiwatrue, kaiwafalse \r\
   end if \r\
   put \"Original YES options: \" & kaiwatrue \r\
   put \"Original NO options: \" & kaiwafalse \r\
-  -- pre-scrub all input and choices to remove effect of whitespace/punctuation \r\
-  set kaiwaans = scrubInput(field \"KaiwaWindow\") \r\
-  set kaiwatrue = scrubInput(kaiwatrue) \r\
-  set kaiwafalse = scrubInput(kaiwafalse) \r\
   -- yes and no should always give consistent results \r\
   if kaiwaans = \"yes\" then \r\
     return \"YES\" \r\
   else if kaiwaans = \"no\" then \r\
     return \"NO\" \r\
   end if \r\
+  -- pre-scrub all input and choices to remove effect of whitespace/punctuation \r\
+  set kaiwaans = scrubInput(field \"KaiwaWindow\") \r\
+  set kaiwatrue = scrubInput(kaiwatrue) \r\
+  set kaiwafalse = scrubInput(kaiwafalse) \r\
   repeat with y = 1 to the number of items in kaiwatrue \r\
     if item y of kaiwatrue starts kaiwaans then \r\
       when keyDown then CheckQuit \r\
