@@ -22,18 +22,154 @@
 #include "common/file.h"
 #include "image/bmp.h"
 #include "bagel/hodjnpodj/metagame/views/grand_tour.h"
+#include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
+#define BACKGROUND_BMP "meta/art/mlscroll.bmp"
 #define FONT_SIZE 8
 
 #define	NOPLAY		-1
 #define GAME_ALPHA	0
 #define GAME_GEO	1
 #define GAME_RAND	2
+
+GrandTour::GrandTour() : View("GrandTour") {
+}
+
+bool GrandTour::msgOpen(const OpenMessage &msg) {
+	View::msgOpen(msg);
+	g_engine->_bReturnToGrandTour = true;
+	_grandTour.reset();
+
+	adjustScore();
+	_background.loadBitmap(BACKGROUND_BMP);
+	_background.setTransparentColor(WHITE);
+
+	blackScreen();
+
+	Common::Rect r(0, 0, _background.w, _background.h);
+	r.moveTo((GAME_WIDTH - _background.w) / 2,
+		(GAME_HEIGHT - _background.h) / 2);
+	setBounds(r);
+
+	return true;
+}
+
+bool GrandTour::msgClose(const CloseMessage &msg) {
+	View::msgClose(msg);
+	g_engine->_bReturnToGrandTour = false;
+
+	return true;
+}
+
+bool GrandTour::msgGame(const GameMessage &msg) {
+	return false;
+}
+
+void GrandTour::draw() {
+	GfxSurface s = getSurface();
+	s.setFontSize(FONT_SIZE);
+
+	s.clear();
+	s.blitFrom(_background);
+}
+
+void GrandTour::adjustScore() {
+	int nGameScore = 0;
+	int32 lTemp = 0l;
+
+	switch (m_pgtGTStruct->nCurrGameCode) {
+	case MG_GAME_ARCHEROIDS: // 1 or 0
+	case MG_GAME_ARTPARTS: // 1 or 0
+	case MG_GAME_BATTLEFISH: // 1 or 0
+	case MG_GAME_MANKALA: // 1 or 0
+	case MG_GAME_MAZEODOOM: // 1 or 0
+	case MG_GAME_RIDDLES: // 1 or 0
+		nGameScore = m_pgtGTStruct->stMiniGame.lScore * 100;
+		break;
+
+	case MG_GAME_BEACON:
+		//  %
+		nGameScore = MIN<int>(100, (m_pgtGTStruct->stMiniGame.lScore * 2));
+		break;
+
+	case MG_GAME_LIFE:
+		// number
+		nGameScore = MIN<int>(100, ((m_pgtGTStruct->stMiniGame.lScore * 25) / 10));
+		break;
+
+	case MG_GAME_THGESNGGME:
+		// %
+		nGameScore = MIN<int>(100, ((m_pgtGTStruct->stMiniGame.lScore * 15) / 10));
+		break;
+
+	case MG_GAME_CRYPTOGRAMS:
+		// number
+		nGameScore = m_pgtGTStruct->stMiniGame.lScore;
+		break;
+
+	case MG_GAME_PEGGLEBOZ: // number
+	case MG_GAME_GARFUNKEL: // number
+	case MG_GAME_WORDSEARCH: // number
+		nGameScore = (m_pgtGTStruct->stMiniGame.lScore * 100) / 25;
+		break;
+
+	case MG_GAME_BARBERSHOP:
+		// number of cards discarded
+		nGameScore = (m_pgtGTStruct->stMiniGame.lScore * 100) / 62;
+		break;
+
+	case MG_GAME_NOVACANCY:
+		// number
+		nGameScore = 100 - (((m_pgtGTStruct->stMiniGame.lScore) * 100) / 45);
+		break;
+
+	case MG_GAME_DAMFURRY:
+		// number
+		nGameScore = ((m_pgtGTStruct->stMiniGame.lScore) * 100) / 60;
+		break;
+
+	case MG_GAME_FUGE:
+		// number
+		nGameScore = ((m_pgtGTStruct->stMiniGame.lScore) * 100) / 53;
+		break;
+
+	case MG_GAME_PACRAT:
+		// number
+		lTemp = m_pgtGTStruct->stMiniGame.lScore * 100;
+
+		switch (m_pgtGTStruct->stMiniGame.nSkillLevel) {
+		case SKILLLEVEL_LOW:
+			nGameScore = (int)(lTemp / 2373);
+			break;
+		case SKILLLEVEL_MEDIUM:
+			nGameScore = (int)(lTemp / 14280);
+			break;
+		case SKILLLEVEL_HIGH:
+			nGameScore = (int)(lTemp / 28584);
+			break;
+		}
+		break;
+
+	default:
+		nGameScore = 0;
+		break;
+	}
+
+	if (m_pgtGTStruct->bPlayingHodj) {
+		m_pgtGTStruct->nHodjLastScore = nGameScore;
+		m_pgtGTStruct->nHodjScore += nGameScore;
+	} else {
+		m_pgtGTStruct->nPodjLastScore = nGameScore;
+		m_pgtGTStruct->nPodjScore += nGameScore;
+	}
+}
+
+/*------------------------------------------------------------------------*/
 
 void GRANDTRSTRUCT::reset() {
 	bMidGrandTour = false;
@@ -60,35 +196,6 @@ void GRANDTRSTRUCT::reset() {
 	stMiniGame.bMusicEnabled = bPlayMusic;
 	stMiniGame.bPlayingMetagame = true;
 	stMiniGame.bPlayingHodj = true;
-}
-
-GrandTour::GrandTour() : View("GrandTour") {
-}
-
-bool GrandTour::msgOpen(const OpenMessage &msg) {
-	View::msgOpen(msg);
-	g_engine->_bReturnToGrandTour = true;
-	_grandTour.reset();
-
-	return true;
-}
-
-bool GrandTour::msgClose(const CloseMessage &msg) {
-	View::msgClose(msg);
-	g_engine->_bReturnToGrandTour = false;
-
-	return true;
-}
-
-bool GrandTour::msgGame(const GameMessage &msg) {
-	return false;
-}
-
-void GrandTour::draw() {
-	GfxSurface s = getSurface();
-	s.setFontSize(FONT_SIZE);
-
-	s.clear();
 }
 
 } // namespace Metagame

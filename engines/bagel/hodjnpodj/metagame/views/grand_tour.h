@@ -58,6 +58,9 @@ class GrandTour : public View {
 private:
 	GfxSurface _background;
 	GRANDTRSTRUCT _grandTour;
+	GRANDTRSTRUCT *const m_pgtGTStruct = &_grandTour;
+
+	void adjustScore();
 
 public:
 	GrandTour();
