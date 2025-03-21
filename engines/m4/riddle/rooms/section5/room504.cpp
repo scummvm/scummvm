@@ -1290,7 +1290,7 @@ void Room504::daemon() {
 			player_set_commands_allowed(false);
 			_ripMedReach = series_load("RIP TREK MED REACH HAND POS1");
 			_ropeRSlurpsUp = series_load("504 R ROPE SLURPS UP");
-			setGlobals1(_ropeRSlurpsUp, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			setGlobals1(_ripMedReach, 1, 10, 10, 10, 0, 10, 1, 1, 1);
 			sendWSMessage_110000(605);
 		}
 		break;
