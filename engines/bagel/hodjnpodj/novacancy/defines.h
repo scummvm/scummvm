@@ -27,6 +27,8 @@ namespace HodjNPodj {
 namespace NoVacancy {
 
 #define BACKGROUND_BMP "novac/art/novacsy3.bmp"
+#define RULES_TEXT "novac/novac.txt"
+#define RULES_WAV "novac/sound/rlnv.wav"
 
 #define LEFT 0
 #define RIGHT 1                             

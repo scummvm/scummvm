@@ -89,6 +89,8 @@ private:
 
 	void resetFields();
 	void loadBitmaps();
+	void clearBitmaps();
+	void playGame();
 
 protected:
 	void showMainMenu() override;

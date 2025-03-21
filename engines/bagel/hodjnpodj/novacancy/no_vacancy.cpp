@@ -88,11 +88,31 @@ bool NoVacancy::msgOpen(const OpenMessage &msg) {
 	return true;
 }
 
-bool NoVacancy::msgClose(const CloseMessage &msg) { return true; }
-bool NoVacancy::msgAction(const ActionMessage &msg) { return true; }
-bool NoVacancy::msgKeypress(const KeypressMessage &msg) { return true; }
-bool NoVacancy::msgMouseDown(const MouseDownMessage &msg) { return true; }
-bool NoVacancy::msgGame(const GameMessage &msg) { return true; }
+bool NoVacancy::msgClose(const CloseMessage &msg) {
+	clearBitmaps();
+	return MinigameView::msgClose(msg);
+}
+
+bool NoVacancy::msgAction(const ActionMessage &msg) {
+	return true;
+}
+
+bool NoVacancy::msgKeypress(const KeypressMessage &msg) {
+	return true;
+}
+
+bool NoVacancy::msgMouseDown(const MouseDownMessage &msg) {
+	return true;
+}
+
+bool NoVacancy::msgGame(const GameMessage &msg) {
+	if (msg._name == "NEW_GAME") {
+		playGame();
+		return true;
+	}
+
+	return false;
+}
 
 void NoVacancy::draw() {
 	GfxSurface s = getSurface();
@@ -100,11 +120,8 @@ void NoVacancy::draw() {
 }
 
 bool NoVacancy::tick() {
+	MinigameView::tick();
 	return true;
-}
-
-void NoVacancy::showMainMenu() {
-
 }
 
 void NoVacancy::resetFields() {
@@ -159,16 +176,46 @@ void NoVacancy::loadBitmaps() {
 
 	// flr under Ldie
 	pCRDieBmp[0] = GfxSurface(pCMonolithDiceBmp,
-		Common::Rect(xDice[RIGHT][0], yDice[RIGHT][0],
+		RectWH(xDice[RIGHT][0], yDice[RIGHT][0],
 			dxDice[RIGHT][0], dyDice[RIGHT][0]), this);	//flr under Rdie
 	for (int i = 1; i < 7; i++) {
 		pCLDieBmp[i] = GfxSurface(pCMonolithDiceBmp,
-			Common::Rect(xDice[LEFT][i], yDice[LEFT][i],
+			RectWH(xDice[LEFT][i], yDice[LEFT][i],
 				dxDice[LEFT][i], dyDice[LEFT][i]), this);
 		pCRDieBmp[i] = GfxSurface(pCMonolithDiceBmp,
-			Common::Rect(xDice[RIGHT][i], yDice[RIGHT][i],
+			RectWH(xDice[RIGHT][i], yDice[RIGHT][i],
 				dxDice[RIGHT][i], dyDice[RIGHT][i]), this);
 	}
+}
+
+void NoVacancy::clearBitmaps() {
+	_background.clear();
+	_scrollButton.clear();
+	m_pCLRollingDie.clear();
+	m_pCRRollingDie.clear();
+	m_pCLRollingDie.unlinkSprite();
+	m_pCRRollingDie.unlinkSprite();
+
+	pCMonolithDiceBmp.clear();
+	for (int i = 0; i < 7; i++) {
+		pCLDieBmp[i].clear();
+		pCRDieBmp[i].clear();
+	}
+}
+
+void NoVacancy::showMainMenu() {
+	MainMenu::show(
+		(pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) |
+		(m_bGameActive ? 0 : NO_RETURN),
+		RULES_TEXT,
+		pGameParams->bSoundEffectsEnabled ? RULES_WAV : NULL);
+}
+
+void NoVacancy::playGame() {
+	m_LDie = getRandomNumber(1, 6);
+	m_RDie = getRandomNumber(1, 6);
+
+	// TODO: play game
 }
 
 } // namespace NoVacancy
