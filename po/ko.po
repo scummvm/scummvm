@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-10 16:53+0000\n"
+"POT-Creation-Date: 2025-03-21 06:31+0000\n"
 "PO-Revision-Date: 2025-02-26 12:46+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -315,7 +315,7 @@ msgstr "다른 저장소가 지금 작동 중입니다. 중단할까요?"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4199
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4200
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "예"
@@ -328,7 +328,7 @@ msgstr "예"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4199
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4200
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "아니오"
@@ -10346,7 +10346,7 @@ msgid "Your Name:"
 msgstr "사용자 이름:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4205
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4206
 msgid "Host"
 msgstr "호스트"
 
@@ -10356,7 +10356,7 @@ msgid "Querying games..."
 msgstr "게임 쿼리 중..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4205
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4206
 msgid "Join"
 msgstr "참여"
 
@@ -11414,7 +11414,7 @@ msgstr ""
 "이 특정 버전의 원숭이 섬 1은 MT-32에 필요한 리소스가 일부\n"
 "빠진 것으로 알려져 있습니다. 대신 애드립을 사용합니다."
 
-#: engines/scumm/scumm.cpp:4093
+#: engines/scumm/scumm.cpp:4094
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -11424,7 +11424,7 @@ msgstr ""
 "게임 파일이 Tentacle 게임 디렉터리 내의 'Maniac' 디렉터리에 있어야 하고, 게임"
 "을 ScummVM에 추가해야 합니다."
 
-#: engines/scumm/scumm.cpp:4205
+#: engines/scumm/scumm.cpp:4206
 msgid "Would you like to host or join a network play session?"
 msgstr "네트워크 플레이 세션을 호스팅하거나 참여하고 싶습니까?"
 

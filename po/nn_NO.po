@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-10 16:53+0000\n"
+"POT-Creation-Date: 2025-03-21 06:31+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -320,7 +320,7 @@ msgstr "Ein anna lagringsteneste arbeider nett no. Vill du abryta han?"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4199
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4200
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "Ja"
@@ -333,7 +333,7 @@ msgstr "Ja"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4199
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4200
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "Nei"
@@ -10299,7 +10299,7 @@ msgid "Your Name:"
 msgstr "Namn:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4205
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4206
 msgid "Host"
 msgstr ""
 
@@ -10311,7 +10311,7 @@ msgid "Querying games..."
 msgstr "Lagrar spel..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4205
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4206
 msgid "Join"
 msgstr ""
 
@@ -11342,7 +11342,7 @@ msgid ""
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:4093
+#: engines/scumm/scumm.cpp:4094
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -11352,7 +11352,7 @@ msgstr ""
 "må du ha datafilane til Maniac Mansion i «Maniac»-mappa inni «Tentacle»-"
 "spelmappa, og spelet må vere lagt til i ScummVM."
 
-#: engines/scumm/scumm.cpp:4205
+#: engines/scumm/scumm.cpp:4206
 #, fuzzy
 msgid "Would you like to host or join a network play session?"
 msgstr "Vil du åpne eller lagre spelet?"

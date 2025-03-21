@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-10 16:53+0000\n"
+"POT-Creation-Date: 2025-03-21 06:31+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -331,7 +331,7 @@ msgstr "تخزين آخر يعمل الآن. هل تريد مقاطعته؟"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4199
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4200
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "نعم"
@@ -344,7 +344,7 @@ msgstr "نعم"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4199
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4200
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "لا"
@@ -10551,7 +10551,7 @@ msgid "Your Name:"
 msgstr "الأسم:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4205
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4206
 msgid "Host"
 msgstr "يستضيف"
 
@@ -10561,7 +10561,7 @@ msgid "Querying games..."
 msgstr "جاري الاستعلام عن الألعاب ..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4205
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4206
 msgid "Join"
 msgstr "ينضم"
 
@@ -11640,7 +11640,7 @@ msgstr ""
 "من المعروف أن هذه النسخة الخاصة من Monkey Island 1 تفتقد بعضًا منها\n"
 "الموارد المطلوبة ل MT-32. استخدام AdLib بدلاً من ذلك."
 
-#: engines/scumm/scumm.cpp:4093
+#: engines/scumm/scumm.cpp:4094
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -11650,7 +11650,7 @@ msgstr ""
 "اللعبة الخاصة ب Maniac Mansion في دليل \"Maniac\" داخل دليل لعبة Tentacle ، "
 "ويجب إضافة اللعبة إلى ScummVM."
 
-#: engines/scumm/scumm.cpp:4205
+#: engines/scumm/scumm.cpp:4206
 msgid "Would you like to host or join a network play session?"
 msgstr "هل ترغب في استضافة أو الانضمام إلى جلسة لعب على الشبكة؟"
 
