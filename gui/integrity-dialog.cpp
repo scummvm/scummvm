@@ -167,8 +167,7 @@ bool IntegrityDialog::progressUpdateCallback(int bytesProcessed) {
 
 void IntegrityDialog::pollEvent(Common::Event &event) {
 	if (g_system->getEventManager()->pollEvent(event)) {
-		static uint32 lastEventPoll = 0;
-
+		lastEventPoll = 0;
 		if (g_system->getMillis() > lastEventPoll + 16) { 
 			lastEventPoll = g_system->getMillis(); 
 			g_gui.processEvent(event, g_checksum_state->dialog);
