@@ -588,11 +588,16 @@ private:
 			auto characterObject = g_engine->world().getObjectByName(process().character(), getStringArg(0));
 			auto character = dynamic_cast<WalkingCharacter *>(characterObject);
 			if (character == nullptr)
-				error("Script tried to make invalid character go: %s", getStringArg(0));
-			auto targetObject = g_engine->world().getObjectByName(process().character(), getStringArg(1));
-			auto target = dynamic_cast<PointObject *>(targetObject);
+				error("Script tried to make invalid character put: %s", getStringArg(0));
+			auto target = dynamic_cast<PointObject *>(g_engine->world().getObjectByName(process().character(), getStringArg(1)));
+			if (target == nullptr && !scumm_stricmp("A_Poblado_Indio", getStringArg(1))) {
+				// An original bug, A_Poblado_Indio is a Door but is originally cast into a PointObject, a pointer and the draw order is
+				// then interpreted as position and the character snapped onto the floor shape.
+				// Instead I just use the A_Poblado_Indio1 object which exists as counter-part for A_Poblado_Indio2 which should have been used
+				target = dynamic_cast<PointObject *>(g_engine->world().getObjectByName(process().character(), "A_Poblado_Indio1"));
+			}
 			if (target == nullptr)
-				error("Script tried to make character go to invalid object %s", getStringArg(1));
+				error("Script tried to make character put to invalid object %s", getStringArg(1));
 			character->setPosition(target->position());
 			return TaskReturn::finish(1);
 		}
