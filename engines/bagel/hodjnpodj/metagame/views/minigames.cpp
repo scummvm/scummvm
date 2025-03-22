@@ -180,8 +180,6 @@ void Minigames::draw() {
 			(MINIGAME_RECTS[index].right + 5),
 			(MINIGAME_RECTS[index].bottom + 5));
 
-		const byte CYAN = getPaletteIndex(RGB(0, 255, 255));
-		const byte RED = getPaletteIndex(RGB(255, 0, 0));
 		s.frameRect(rTemp1, BLACK);
 		s.frameRect(rTemp2, CYAN);
 

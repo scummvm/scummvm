@@ -22,6 +22,8 @@
 #ifndef BAGEL_HODJNPODJ_GLOBALS_H
 #define BAGEL_HODJNPODJ_GLOBALS_H
 
+#include "bagel/boflib/palette.h"
+
 namespace Bagel {
 namespace HodjNPodj {
 
@@ -53,8 +55,12 @@ namespace HodjNPodj {
 #define	NEWGAME_WIDTH		217
 #define NEWGAME_HEIGHT		 20
 
-#define BLACK 0
-#define WHITE 255
+#define BLACK				0
+#define WHITE				255
+#define RED					PALETTERGB(255, 0, 255)
+#define BLUE				PALETTERGB(0, 0, 255)
+#define CYAN				PALETTERGB(0, 255, 255)
+#define PURPLE				PALETTERGB(0x80, 0, 0x80)
 
 } // namespace HodjNPodj
 } // namespace Bagel

@@ -24,6 +24,7 @@
 #include "bagel/hodjnpodj/metagame/views/grand_tour.h"
 #include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -129,10 +130,22 @@ bool GrandTour::msgClose(const CloseMessage &msg) {
 	return true;
 }
 
+bool GrandTour::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		replaceView("TitleMenu");
+		return true;
+	}
+
+	return false;
+}
+
 bool GrandTour::msgGame(const GameMessage &msg) {
 	if (msg._name == "BUTTON") {
 		if (msg._stringValue == "CLOSE") {
 			replaceView("TitleMenu");
+			return true;
+		} else if (msg._stringValue == "TOP10") {
+			addView("TopScores");
 			return true;
 		}
 	} else if (msg._name == "RADIOBUTTON") {
@@ -172,21 +185,7 @@ bool GrandTour::msgGame(const GameMessage &msg) {
 			m_pgtGTStruct->nGameSelection = GAME_RAND;
 		}
 
-		pHSHButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_HIGH);
-		pHSMButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_MEDIUM);
-		pHSLButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_LOW);
-		pHSNPButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == NOPLAY);
-
-		pPSHButton.setCheck(m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_HIGH);
-		pPSMButton.setCheck(m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_MEDIUM);
-		pPSLButton.setCheck(m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_LOW);
-		pPSNPButton.setCheck(m_pgtGTStruct->nPodjSkillLevel == NOPLAY);
-
-		pGAButton.setCheck(m_pgtGTStruct->nGameSelection == GAME_ALPHA);
-		pGGButton.setCheck(m_pgtGTStruct->nGameSelection == GAME_GEO);
-		pGRButton.setCheck(m_pgtGTStruct->nGameSelection == GAME_RAND);
-
-		redraw();
+		updateRadioButtons();
 		return true;
 	}
 
@@ -289,6 +288,24 @@ void GrandTour::adjustScore() {
 		m_pgtGTStruct->nPodjLastScore = nGameScore;
 		m_pgtGTStruct->nPodjScore += nGameScore;
 	}
+}
+
+void GrandTour::updateRadioButtons() {
+	pHSHButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_HIGH);
+	pHSMButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_MEDIUM);
+	pHSLButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_LOW);
+	pHSNPButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == NOPLAY);
+
+	pPSHButton.setCheck(m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_HIGH);
+	pPSMButton.setCheck(m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_MEDIUM);
+	pPSLButton.setCheck(m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_LOW);
+	pPSNPButton.setCheck(m_pgtGTStruct->nPodjSkillLevel == NOPLAY);
+
+	pGAButton.setCheck(m_pgtGTStruct->nGameSelection == GAME_ALPHA);
+	pGGButton.setCheck(m_pgtGTStruct->nGameSelection == GAME_GEO);
+	pGRButton.setCheck(m_pgtGTStruct->nGameSelection == GAME_RAND);
+
+	redraw();
 }
 
 /*------------------------------------------------------------------------*/

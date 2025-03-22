@@ -75,6 +75,12 @@ struct NOTE_LIST {
 	bool   bUsed;
 };
 
+struct SCORESTRUCT {
+	Common::String _name;
+	int _skillLevel = SKILLLEVEL_LOW;
+	int _score = 0;
+};
+
 // CHodjPodj class -- information about Hodj or Podj
 class CHodjPodj {
 public:

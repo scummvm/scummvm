@@ -19,38 +19,30 @@
  *
  */
 
-#ifndef HODJNPODJ_VIEWS_H
-#define HODJNPODJ_VIEWS_H
+#ifndef HODJNPODJ_METAGAME_VIEWS_TOP_SCORES_H
+#define HODJNPODJ_METAGAME_VIEWS_TOP_SCORES_H
 
-#include "bagel/hodjnpodj/views/rules.h"
-#include "bagel/hodjnpodj/views/main_menu.h"
-#include "bagel/hodjnpodj/views/message_box.h"
-#include "bagel/hodjnpodj/metagame/views/grand_tour.h"
-#include "bagel/hodjnpodj/metagame/views/minigames.h"
-#include "bagel/hodjnpodj/metagame/views/movie.h"
-#include "bagel/hodjnpodj/metagame/views/title_menu.h"
-#include "bagel/hodjnpodj/metagame/views/top_scores.h"
-#include "bagel/hodjnpodj/fuge/fuge.h"
-#include "bagel/hodjnpodj/mazedoom/maze_doom.h"
-#include "bagel/hodjnpodj/novacancy/no_vacancy.h"
+#include "bagel/hodjnpodj/metagame/views/dialog.h"
+#include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
+namespace Metagame {
 
-struct Views {
-	MainMenu _mainMenu;
-	MessageBox _messageBox;
-	Rules _rules;
-	Metagame::GrandTour _grandTour;
-	Metagame::Minigames _minigames;
-	Metagame::Movie _movie;
-	Metagame::TitleMenu _titleMenu;
-	Metagame::TopScores _topScores;
-	Fuge::Fuge _fuge;
-	MazeDoom::MazeDoom _mazeDoom;
-	NoVacancy::NoVacancy _noVacancy;
+class TopScores : public Dialog {
+private:
+	OkButton _okButton;
+
+public:
+	TopScores();
+	~TopScores() override {}
+
+	bool msgAction(const ActionMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
+	void draw() override;
 };
 
+} // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel
 

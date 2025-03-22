@@ -129,6 +129,7 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/views/minigames.o \
 	hodjnpodj/metagame/views/movie.o \
 	hodjnpodj/metagame/views/title_menu.o \
+	hodjnpodj/metagame/views/top_scores.o \
 	hodjnpodj/fuge/fuge.o \
 	hodjnpodj/fuge/options.o \
 	hodjnpodj/mazedoom/maze_doom.o \
