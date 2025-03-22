@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-22 02:52+0000\n"
-"PO-Revision-Date: 2025-03-22 09:07+0000\n"
+"PO-Revision-Date: 2025-03-22 14:48+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -4192,11 +4192,11 @@ msgstr "Utdraget läge"
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:30
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:121
 msgid "SDL Surface"
-msgstr "SDL-yta"
+msgstr "SDL Surface"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:31
 msgid "SDL Surface (forced 8bpp mode)"
-msgstr "SDL-yta (tvingat 8bpp-läge)"
+msgstr "SDL Surface (tvingat 8bpp-läge)"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:456
 #, c-format
