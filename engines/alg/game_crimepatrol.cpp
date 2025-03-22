@@ -651,7 +651,7 @@ uint16 GameCrimePatrol::_RandomUnusedInt(uint8 max, uint16 *mask, uint16 exclude
 	if (*mask == fullMask) {
 		*mask = 0;
 	}
-	uint16 random;
+	uint16 random = 0;
 	// find an unused random number
 	while (1) {
 		random = _rnd->getRandomNumber(max - 1);
@@ -670,7 +670,7 @@ uint16 GameCrimePatrol::_PickRandomScene(uint8 index, uint8 max) {
 	if (max != 0) {
 		_random_max = max;
 		_random_mask = 0;
-		_random_picked = -1;
+		_random_picked = 0;
 		_random_scene_count = 0;
 		while (_level_scenes[index][_random_scene_count] != 0) {
 			_random_scene_count++;

@@ -760,7 +760,7 @@ void GameSpacePirates::_DisplayShotLine(uint16 startX, uint16 startY, uint16 end
 	int16 deltaX = endX - startX;
 	int16 deltaY = endY - startY;
 	int16 stepX, stepY;
-	int16 steep, accum, error;
+	int16 steep = 0, accum = 0, error = 0;
 	if (deltaX > 0)
 		stepX = 1;
 	else if (deltaX == 0)
@@ -810,7 +810,7 @@ uint16 GameSpacePirates::_SceneToNumber(Scene *scene) {
 
 uint16 GameSpacePirates::_RandomUnusedScene(uint8 max) {
 	bool found = 0;
-	uint8 random;
+	uint8 random = 0;
 	for (uint8 i = 0; i < max && !found; i++) {
 		random = _rnd->getRandomNumber(max - 1);
 		if (_random_scenes_used[random] == 0) {

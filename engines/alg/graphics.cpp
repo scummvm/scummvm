@@ -42,7 +42,7 @@ Graphics::Surface *AlgGraphics::loadVgaBackground(const Common::Path &path, uint
 	assert(width >= 317 && width <= 320);
 	assert(height == 200);
 	assert(paletteStart == 0x10);
-	for (uint32 i = paletteStart * 3; i < (paletteStart + paletteEntries) * 3; i += 3) {
+	for (uint32 i = paletteStart * 3; i < (paletteStart + paletteEntries) * 3U; i += 3) {
 		palette[i] = vgaFile.readByte();
 		palette[i + 1] = vgaFile.readByte();
 		palette[i + 2] = vgaFile.readByte();
@@ -67,7 +67,7 @@ Common::Array<Graphics::Surface> *AlgGraphics::loadAniImage(const Common::Path &
 	}
 	uint8 paletteEntries = aniFile.readByte();
 	uint8 paletteStart = aniFile.readByte();
-	for (uint32 i = paletteStart * 3; i < (paletteStart + paletteEntries) * 3; i += 3) {
+	for (uint32 i = paletteStart * 3; i < (paletteStart + paletteEntries) * 3U; i += 3) {
 		palette[i] = aniFile.readByte();
 		palette[i + 1] = aniFile.readByte();
 		palette[i + 2] = aniFile.readByte();
@@ -113,7 +113,7 @@ Common::Array<Graphics::Surface> *AlgGraphics::loadScreenCoordAniImage(const Com
 	}
 	uint8 paletteEntries = aniFile.readByte();
 	uint8 paletteStart = aniFile.readByte();
-	for (uint32 i = paletteStart * 3; i < (paletteStart + paletteEntries) * 3; i += 3) {
+	for (uint32 i = paletteStart * 3; i < (paletteStart + paletteEntries) * 3U; i += 3) {
 		palette[i] = aniFile.readByte();
 		palette[i + 1] = aniFile.readByte();
 		palette[i + 2] = aniFile.readByte();
