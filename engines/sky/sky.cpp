@@ -419,7 +419,7 @@ Common::Error SkyEngine::init() {
 	case Common::ES_ESP:
 		_systemVars->language = SKY_SPANISH;
 		break;
-	case Common::SE_SWE:
+	case Common::SV_SWE:
 		_systemVars->language = SKY_SWEDISH;
 		break;
 	case Common::EN_GRB:

@@ -3039,8 +3039,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("ph10_transcorrupt", Common::ES_ESP, "110711/ulx", "df157d801a60682fb8488c6d5ac4dfad", 1074688),
 
 	// Swedish games
-	DT_ENTRYL1("drakmagi_glulx", Common::SE_SWE, "080419", "93db2e43fafb22b9e4d10f7d6f3a5136", 203630),
-	DT_ENTRYL1("vanyar_glulx", Common::SE_SWE, "030613", "4a80396f31f9cced2b6689341ac5d2cc", 278780),
+	DT_ENTRYL1("drakmagi_glulx", Common::SV_SWE, "080419", "93db2e43fafb22b9e4d10f7d6f3a5136", 203630),
+	DT_ENTRYL1("vanyar_glulx", Common::SV_SWE, "030613", "4a80396f31f9cced2b6689341ac5d2cc", 278780),
 
 	// Russian games
 	DT_ENTRYL1("devours_glulx", Common::RU_RUS, "220224", "65a51e53c1498823024dcec286971f19", 365312),

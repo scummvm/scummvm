@@ -117,7 +117,7 @@ void ActionText::start() {
 
 	case Common::FI_FIN:
 		// fall through
-	case Common::SE_SWE:
+	case Common::SV_SWE:
 		_text = Common::String(str).decode(Common::kWindows1257);
 		break;
 
