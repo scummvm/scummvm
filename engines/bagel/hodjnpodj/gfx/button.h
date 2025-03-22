@@ -206,6 +206,39 @@ public:
 	void setCheck(bool checked);
 };
 
+
+class RadioButton : public Button {
+private:
+	const COLORREF _cButtonFace = RGB_CHECK_FACE;
+	const COLORREF _cButtonControl = RGB_CHECK_CONTROL;
+	const COLORREF _cButtonText = RGB_CHECK_TEXT;
+	const COLORREF _cButtonTextDisabled = RGB_CHECK_TEXT_DISABLE;
+	const COLORREF _cButtonOutline = RGB_CHECK_OUTLINE;
+	bool _checked = false;
+
+	Common::Rect getCheckRect() const;
+
+protected:
+	void buttonPressed() override;
+
+public:
+	RadioButton(const Common::String &name, const Common::String &text,
+			const Common::Rect &r, UIElement *parent) :
+			Button(name, text, parent) {
+		setBounds(r);
+	}
+	~RadioButton() override {
+	}
+
+	void draw() override;
+	bool msgMouseDown(const MouseDownMessage &msg) override {
+		return true;
+	}
+	bool msgMouseUp(const MouseUpMessage &msg) override;
+
+	void setCheck(bool checked, bool notify = true);
+};
+
 class OkButton : public ColorButton {
 public:
 	OkButton(UIElement *parent = nullptr);

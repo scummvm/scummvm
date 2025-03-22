@@ -64,6 +64,10 @@ private:
 	ColorButton _audioButton;
 	ColorButton _top10Button;
 	ColorButton _mainMenuButton;
+	RadioButton pHSHButton, pHSMButton,
+		pHSLButton, pHSNPButton, pPSHButton,
+		pPSMButton, pPSLButton, pPSNPButton,
+		pGAButton, pGGButton, pGRButton;
 
 	void adjustScore();
 

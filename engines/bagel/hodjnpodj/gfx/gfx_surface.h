@@ -95,6 +95,7 @@ public:
 	void fillRect(Common::Rect r, uint32 color);
 	void frameRect(const Common::Rect &r, uint32 color);
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color);
+	void circle(const Common::Point &center, int radius, bool fill, uint32 color);
 };
 
 class Sprite : public GfxSurface, public Common::Point {

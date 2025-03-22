@@ -50,16 +50,16 @@ namespace Metagame {
 #define S_WIDTH					130
 #define S_HEIGHT				21
 
-#define HS_LEFT					SCROLL_LEFT + 110
+#define HS_LEFT					110
 
-#define HSH_TOP					SCROLL_TOP + 50
+#define HSH_TOP					50
 #define HSM_TOP					HSH_TOP + S_HEIGHT + 2
 #define HSL_TOP					HSM_TOP + S_HEIGHT + 2
 #define HSNP_TOP				HSL_TOP + S_HEIGHT + 2
 
-#define PS_LEFT					SCROLL_LEFT + 310
+#define PS_LEFT					310
 
-#define PSH_TOP					SCROLL_TOP + 50
+#define PSH_TOP					50
 #define PSM_TOP					PSH_TOP + S_HEIGHT + 2
 #define PSL_TOP					PSM_TOP + S_HEIGHT + 2
 #define PSNP_TOP				PSL_TOP + S_HEIGHT + 2
@@ -67,18 +67,48 @@ namespace Metagame {
 #define G_WIDTH					130
 #define G_HEIGHT				21
 
-#define G_TOP					SCROLL_TOP + 185
-#define GA_LEFT					SCROLL_LEFT + 55
+#define G_TOP					185
+#define GA_LEFT					55
 #define GG_LEFT					GA_LEFT + G_WIDTH + 5
 #define GR_LEFT					GG_LEFT + G_WIDTH + 5
 
+#define S_WIDTH					130
+#define S_HEIGHT				21
+
+#define HS_LEFT					110
+
+#define HSH_TOP					50
+#define HSM_TOP					HSH_TOP + S_HEIGHT + 2
+#define HSL_TOP					HSM_TOP + S_HEIGHT + 2
+#define HSNP_TOP				HSL_TOP + S_HEIGHT + 2
+
+#define PS_LEFT					310
+
+#define PSH_TOP					50
+#define PSM_TOP					PSH_TOP + S_HEIGHT + 2
+#define PSL_TOP					PSM_TOP + S_HEIGHT + 2
+#define PSNP_TOP				PSL_TOP + S_HEIGHT + 2
+
 GrandTour::GrandTour() : Dialog("GrandTour"),
-	_playButton("PLAY", "Play",          RectWH(PLAY_LEFT, F_TOP - 25, F_WIDTH, F_HEIGHT), this),
-	_saveButton("SAVE", "Save",          RectWH(SAVE_LEFT, F_TOP - 25, F_WIDTH, F_HEIGHT), this),
-	_restoreButton("LOAD", "Restore",    RectWH(RESTORE_LEFT, F_TOP - 25, F_WIDTH, F_HEIGHT), this),
-	_audioButton("AUDIO", "Audio",       RectWH(AUDIO_LEFT, F_TOP, F_WIDTH, F_HEIGHT), this),
-	_top10Button("TOP10", "Top 10 List", RectWH(TOP10_LEFT, F_TOP, F_WIDTH, F_HEIGHT), this),
-	_mainMenuButton("CLOSE", "Main Menu",RectWH(LEAVE_LEFT, F_TOP, F_WIDTH, F_HEIGHT), this)
+	_playButton("PLAY", "Play",           RectWH(PLAY_LEFT, F_TOP - 25, F_WIDTH, F_HEIGHT), this),
+	_saveButton("SAVE", "Save",           RectWH(SAVE_LEFT, F_TOP - 25, F_WIDTH, F_HEIGHT), this),
+	_restoreButton("LOAD", "Restore",     RectWH(RESTORE_LEFT, F_TOP - 25, F_WIDTH, F_HEIGHT), this),
+	_audioButton("AUDIO", "Audio",        RectWH(AUDIO_LEFT, F_TOP, F_WIDTH, F_HEIGHT), this),
+	_top10Button("TOP10", "Top 10 List",  RectWH(TOP10_LEFT, F_TOP, F_WIDTH, F_HEIGHT), this),
+	_mainMenuButton("CLOSE", "Main Menu", RectWH(LEAVE_LEFT, F_TOP, F_WIDTH, F_HEIGHT), this),
+
+	pHSHButton("HHARD", "Hard",          RectWH(HS_LEFT, HSH_TOP, S_WIDTH, S_HEIGHT), this),
+	pHSMButton("HMEDIUM", "Medium",      RectWH(HS_LEFT, HSM_TOP, S_WIDTH, S_HEIGHT), this),
+	pHSLButton("HEASY", "Easy",          RectWH(HS_LEFT, HSL_TOP, S_WIDTH, S_HEIGHT), this),
+	pHSNPButton("HNONE", "Count Me Out", RectWH(HS_LEFT, HSNP_TOP, S_WIDTH, S_HEIGHT), this),
+	pPSHButton("PHARD", "Hard",          RectWH(PS_LEFT, PSH_TOP, S_WIDTH, S_HEIGHT), this),
+	pPSMButton("PMEDIUM", "Medium",      RectWH(PS_LEFT, PSM_TOP, S_WIDTH, S_HEIGHT), this),
+	pPSLButton("PEASY", "Easy",          RectWH(PS_LEFT, PSL_TOP, S_WIDTH, S_HEIGHT), this),
+	pPSNPButton("PNONE", "Count Me Out", RectWH(PS_LEFT, PSNP_TOP, S_WIDTH, S_HEIGHT), this),
+
+	pGAButton("ALPHA", "Alphabetically", RectWH(GA_LEFT, G_TOP, G_WIDTH, G_HEIGHT), this),
+	pGGButton("GEOG",  "Geographically", RectWH(GG_LEFT, G_TOP, G_WIDTH, G_HEIGHT), this),
+	pGRButton("RANDOM", "Randomly",      RectWH(GR_LEFT, G_TOP, G_WIDTH, G_HEIGHT), this)
 {
 }
 
@@ -105,6 +135,59 @@ bool GrandTour::msgGame(const GameMessage &msg) {
 			replaceView("TitleMenu");
 			return true;
 		}
+	} else if (msg._name == "RADIOBUTTON") {
+		if (msg._stringValue == "HHARD") {
+			m_pgtGTStruct->nHodjSkillLevel = SKILLLEVEL_HIGH;
+			m_pgtGTStruct->bPlayingHodj = true;
+		} else if (msg._stringValue == "HMEDIUM") {
+			m_pgtGTStruct->nHodjSkillLevel = SKILLLEVEL_MEDIUM;
+			m_pgtGTStruct->bPlayingHodj = true;
+		} else if (msg._stringValue == "HEASY") {
+			m_pgtGTStruct->nHodjSkillLevel = SKILLLEVEL_LOW;
+			m_pgtGTStruct->bPlayingHodj = true;
+		} else if (msg._stringValue == "HNONE") {
+			m_pgtGTStruct->nHodjSkillLevel = NOPLAY;
+			m_pgtGTStruct->bPlayingHodj = true;
+		}
+
+		else if (msg._stringValue == "PHARD") {
+			m_pgtGTStruct->nPodjSkillLevel = SKILLLEVEL_HIGH;
+			m_pgtGTStruct->bPlayingHodj = false;
+		} else if (msg._stringValue == "PMEDIUM") {
+			m_pgtGTStruct->nPodjSkillLevel = SKILLLEVEL_MEDIUM;
+			m_pgtGTStruct->bPlayingHodj = false;
+		} else if (msg._stringValue == "PEASY") {
+			m_pgtGTStruct->nPodjSkillLevel = SKILLLEVEL_LOW;
+			m_pgtGTStruct->bPlayingHodj = false;
+		} else if (msg._stringValue == "PNONE") {
+			m_pgtGTStruct->nPodjSkillLevel = NOPLAY;
+			m_pgtGTStruct->bPlayingHodj = false;
+		}
+
+		else if (msg._stringValue == "ALPHA") {
+			m_pgtGTStruct->nGameSelection = GAME_ALPHA;
+		} else if (msg._stringValue == "GEOG") {
+			m_pgtGTStruct->nGameSelection = GAME_GEO;
+		} else if (msg._stringValue == "RANDOM") {
+			m_pgtGTStruct->nGameSelection = GAME_RAND;
+		}
+
+		pHSHButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_HIGH);
+		pHSMButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_MEDIUM);
+		pHSLButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_LOW);
+		pHSNPButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == NOPLAY);
+
+		pPSHButton.setCheck(m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_HIGH);
+		pPSMButton.setCheck(m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_MEDIUM);
+		pPSLButton.setCheck(m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_LOW);
+		pPSNPButton.setCheck(m_pgtGTStruct->nPodjSkillLevel == NOPLAY);
+
+		pGAButton.setCheck(m_pgtGTStruct->nGameSelection == GAME_ALPHA);
+		pGGButton.setCheck(m_pgtGTStruct->nGameSelection == GAME_GEO);
+		pGRButton.setCheck(m_pgtGTStruct->nGameSelection == GAME_RAND);
+
+		redraw();
+		return true;
 	}
 
 	return false;

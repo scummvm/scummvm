@@ -254,6 +254,50 @@ void GfxSurface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
 	Graphics::ManagedSurface::drawLine(x0, y0, x1, y1, color);
 }
 
+void GfxSurface::circle(const Common::Point &center,
+		int radius, bool fill, uint32 color) {
+	CONVERT_COLOR
+#define GET (byte *)getBasePtr
+
+	const int cx = center.x, cy = center.y;
+	int x = radius, y = 0;
+	int radiusError = 1 - x;
+
+	while (x >= y) {
+		if (fill) {
+			// Draw horizontal spans to fill the circle
+			for (int dx = -x; dx <= x; ++dx) {
+				*(GET(cx + dx, cy + y)) = color;
+				*(GET(cx + dx, cy - y)) = color;
+			}
+			for (int dx = -y; dx <= y; ++dx) {
+				*(GET(cx + dx, cy + x)) = color;
+				*(GET(cx + dx, cy - x)) = color;
+			}
+		} else {
+			// Draw only the circle outline
+			*(GET(cx + x, cy + y)) = color;
+			*(GET(cx - x, cy + y)) = color;
+			*(GET(cx + x, cy - y)) = color;
+			*(GET(cx - x, cy - y)) = color;
+			*(GET(cx + y, cy + x)) = color;
+			*(GET(cx - y, cy + x)) = color;
+			*(GET(cx + y, cy - x)) = color;
+			*(GET(cx - y, cy - x)) = color;
+		}
+
+		y++;
+		if (radiusError < 0) {
+			radiusError += 2 * y + 1;
+		} else {
+			x--;
+			radiusError += 2 * (y - x) + 1;
+		}
+	}
+#undef GET
+}
+
+
 /*------------------------------------------------------------------------*/
 
 bool Sprite::isLinked() const {

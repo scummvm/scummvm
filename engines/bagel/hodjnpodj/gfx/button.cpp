@@ -290,6 +290,78 @@ void CheckButton::setCheck(bool checked) {
 		_checked ? 1 : 0));
 }
 
+
+/*------------------------------------------------------------------------*/
+
+void RadioButton::draw() {
+	GfxSurface s = getSurface();
+	Common::String text;
+	uint nUnderscore;
+
+	const Common::Rect checkRect = getCheckRect();
+	const Common::Point center((checkRect.left + checkRect.right) / 2,
+		(checkRect.top + checkRect.bottom) / 2);
+
+	s.clear(_cButtonFace);
+	s.frameRect(Common::Rect(0, 0, s.w, s.h), _cButtonOutline);
+	s.circle(center, checkRect.width() / 2, false, _cButtonControl);
+
+	if (_checked)
+		// Draw smaller filled in circle
+		s.circle(center, checkRect.width() / 2 - 2, true, _cButtonControl);
+
+	// Check for any ampersand character, which indicates underline
+	// for the keyboard key associated with the button
+	text = _text;
+	if ((nUnderscore = text.findFirstOf('&')) != Common::String::npos)
+		text.deleteChar(nUnderscore);
+
+	uint color = !(_itemState & ODS_DISABLED) ?
+		_cButtonText : _cButtonTextDisabled;
+	int x = 20, y = 2;
+
+	s.setFontSize(8);
+	s.writeString(text, Common::Point(x, y), color);
+
+	if (nUnderscore != Common::String::npos) {
+		Common::String str;
+		while (nUnderscore-- > 0)
+			str += ' ';
+		str += '_';
+		s.writeString(str, Common::Point(x + 1, y + 1), color);
+	}
+}
+
+Common::Rect RadioButton::getCheckRect() const {
+	int checkSize = _bounds.height() - 6;
+	return Common::Rect(3, 3, 3 + checkSize, 3 + checkSize);
+}
+
+void RadioButton::buttonPressed() {
+	// For radio buttons, if this is called due to
+	// a hotkey match, trigger selecting it
+	setCheck(true);
+}
+
+bool RadioButton::msgMouseUp(const MouseUpMessage &msg) {
+	if (!(_itemState & ODS_GRAYED) &&
+		!(_itemState & ODS_DISABLED)) {
+		setCheck(true);
+	}
+
+	return true;
+}
+
+void RadioButton::setCheck(bool checked, bool notify) {
+	if (checked != _checked) {
+		_checked = checked;
+		redraw();
+
+		if (checked && notify)
+			_parent->send(GameMessage("RADIOBUTTON", _name, true));
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 OkButton::OkButton(UIElement *parent) :
