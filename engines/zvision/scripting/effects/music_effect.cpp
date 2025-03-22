@@ -172,22 +172,30 @@ void MusicNode::setVolume(uint8 newVolume) {
 }
 
 
-PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos)
-	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_PANTRACK) {
-	_slot = slot;
-	sourcePos = pos;
+PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos, uint8 mag, bool resetMixerOnDelete)
+	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_PANTRACK),
+	_slot(slot),
+	sourcePos(pos),
+	_mag(mag),
+	_resetMixerOnDelete(resetMixerOnDelete) {
+//	_slot = slot;
+//	sourcePos = pos;
+//	_mag = mag;
   debug(3,"Created PanTrackNode, key %d, slot %d", _key, _slot);
 	process(0); 	// Try to set pan value for music node immediately
 }
 
 PanTrackNode::~PanTrackNode() {
+  debug(1,"Deleting PanTrackNode, key %d, slot %d", _key, _slot);
 	ScriptManager * scriptManager = _engine->getScriptManager();
 	ScriptingEffect *fx = scriptManager->getSideFX(_slot);
-	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO) {
-		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
+  if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO && _resetMixerOnDelete) {
+    debug(1,"Resetting mixer, slot %d", _slot);
+	  MusicNodeBASE *mus = (MusicNodeBASE *)fx;
     mus->setBalance(0);
   }
-  debug(1,"Deleting PanTrackNode, key %d, slot %d", _key, _slot);
+  else
+    debug(1,"NOT resetting mixer, slot %d", _slot);
 }
 
 bool PanTrackNode::process(uint32 deltaTimeInMillis) {
@@ -198,9 +206,6 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 		int viewPos = scriptManager->getStateValue(StateKey_ViewPos);
 		int16 _width = _engine->getRenderManager()->getBkgSize().x;
-//		int16 _halfWidth = _width / 2;
-//		int16 _quarterWidth = _width / 4;
-
 		int deltaPos = 0;
 		if (viewPos <= sourcePos)
 			deltaPos = sourcePos - viewPos;
@@ -208,44 +213,7 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 			deltaPos = sourcePos - viewPos + _width;
 		debug(3,"soundPos: %d, viewPos: %d, deltaPos: %d, width: %d", sourcePos, viewPos, deltaPos, _width);
     //deltaPos is sound source position relative to player, clockwise from centre of camera axis to front when viewed top-down
-//*/
-    //NEW SYSTEM
     mus->setAzimuth(Math::Angle(360*deltaPos/_width));
-      
-/*/
-    //OLD SYSTEM;		
-		int balance = 0;
-		if (deltaPos > _halfWidth)  //Source to left
-			deltaPos -= _width; //Make angle negative relative to datum
-		if (deltaPos > _quarterWidth) {
-			balance = 1;
-			deltaPos = _halfWidth - deltaPos; //Make relative to right centre?
-		} else if (deltaPos < -_quarterWidth) {
-			balance = -1;
-			deltaPos = -_halfWidth - deltaPos;  //Make relative to left centre?
-		}
-
-		// Originally it's value -90...90 but we use -127...127 and therefore 360 replaced by 508
-		// Left = -127, centre = 0, right = +127
-		mus->setBalance( (508 * deltaPos) / _width );
-		deltaPos = (360 * deltaPos) / _width;
-		int deltaVol = balance;
-		debug(1,"Balance %d", balance);
-
-		// This value sets how fast volume goes off than sound source back of you
-		// By this value we can hack some "bugs" have place in original game engine like beat sound in ZGI-dc10
-		int volumeCorrection = 2;
-
-		if (_engine->getGameId() == GID_GRANDINQUISITOR) {
-			if (scriptManager->getCurrentLocation() == "dc10")
-				volumeCorrection = 5;
-		}
-		if (deltaVol != 0)
-			deltaVol = (mus->getVolume() * volumeCorrection) * (90 - deltaPos * balance) / 90;
-		if (deltaVol > 255)
-			deltaVol = 255;
-		mus->setDeltaVolume(deltaVol);
-//*/
 	}
 	return false;
 }
