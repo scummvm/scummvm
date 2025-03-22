@@ -62,7 +62,7 @@ class IntegrityDialog : public Dialog, public CommandSender {
 	ButtonWidget *_copyEmailButton;
 
 	bool _close;
-	uint32 lastEventPoll;
+	uint32 _lastEventPoll;
 
 
 	Common::U32String getSizeLabelText();
@@ -78,11 +78,6 @@ public:
 	 * It also poll events to allow mouse movements/button interactions to avoid freezing when processing large files
 	 */
 	static bool progressUpdateCallback(int bytesProcessed);
-
-	/**
-	 * Poll events during callback
-	 */
-	void pollEvent(Common::Event &event);
 
 	void sendJSON();
 	void checksumResponseCallback(const Common::JSONValue *r);

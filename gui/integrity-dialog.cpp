@@ -92,7 +92,7 @@ uint32 getCalculationProgress() {
 	return progress;
 }
 
-IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain) : Dialog("GameOptions_IntegrityDialog"), CommandSender(this), _close(false) {
+IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain) : Dialog("GameOptions_IntegrityDialog"), CommandSender(this), _close(false), _lastEventPoll(0) {
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
@@ -148,7 +148,7 @@ IntegrityDialog::~IntegrityDialog() {
 
 
 bool IntegrityDialog::progressUpdateCallback(int bytesProcessed) {
-	if(g_checksum_state->dialog->_close)
+	if (g_checksum_state->dialog->_close)
 		return false;
 	
 	g_checksum_state->calculatedSize += bytesProcessed;
@@ -159,22 +159,16 @@ bool IntegrityDialog::progressUpdateCallback(int bytesProcessed) {
 	}
 
 	Common::Event event;
-	g_checksum_state->dialog->pollEvent(event);
-
-	return true;
-};
-
-
-void IntegrityDialog::pollEvent(Common::Event &event) {
 	if (g_system->getEventManager()->pollEvent(event)) {
-		lastEventPoll = 0;
-		if (g_system->getMillis() > lastEventPoll + 16) { 
-			lastEventPoll = g_system->getMillis(); 
+		if (g_system->getMillis() > g_checksum_state->dialog->_lastEventPoll + 16) { 
+			g_checksum_state->dialog->_lastEventPoll = g_system->getMillis(); 
 			g_gui.processEvent(event, g_checksum_state->dialog);
 			g_system->updateScreen();
 		}
 	}
-}
+
+	return true;
+};
 
 
 void IntegrityDialog::open() {
