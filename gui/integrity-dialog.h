@@ -62,6 +62,8 @@ class IntegrityDialog : public Dialog, public CommandSender {
 	ButtonWidget *_copyEmailButton;
 
 	bool _close;
+	uint32 lastEventPoll;
+
 
 	Common::U32String getSizeLabelText();
 	void refreshWidgets();
