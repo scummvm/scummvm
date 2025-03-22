@@ -109,7 +109,7 @@ static constexpr uint8 logAmplitude[256] = {
 /*
 Estimated relative amplitude of a point sound source as it circles the listener's head from front to rear, due to ear pinna shape.
 Maximum attenuation -5dB when fully to rear.  Seems to give a reasonably realistic effect when tested on the Nemesis cloister fountain.
-Ideally should be applied AFTER volume profile is applied to script files.
+Should be applied AFTER volume profile is applied to script files.
 Generating function:
   for 0 < theta < 90, amp = 255;
   for 90 < theta < 180, amp = 255*10^(1-(cos(2*(theta-90))/4))

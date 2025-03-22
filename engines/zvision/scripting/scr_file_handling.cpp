@@ -82,6 +82,7 @@ void ScriptManager::parseScrFile(const Common::Path &fileName, ScriptScope &scop
 	else {
     debug(1,"Parsing primary script file");
   	parse(mainFile);
+  	//TODO - add config option to disable/enable auxiliary scripting
 	  if (auxFile.exists(auxFilePath)) {
 	    debug(1,"Auxiliary script file found");
 	    if (auxFile.open(auxFilePath)) {

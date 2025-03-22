@@ -119,13 +119,15 @@ private:
 
 class PanTrackNode : public ScriptingEffect {
 public:
-	PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos);
+	PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos, uint8 mag=255, bool resetMixerOnDelete=false);
 	~PanTrackNode() override;
 	bool process(uint32 deltaTimeInMillis) override;
 
 private:
 	uint32 _slot;
 	int16 sourcePos;
+	uint8 _mag;
+	bool _resetMixerOnDelete;
 };
 
 } // End of namespace ZVision
