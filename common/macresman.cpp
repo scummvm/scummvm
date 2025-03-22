@@ -151,7 +151,7 @@ uint32 MacResManager::getResForkDataSize() const {
 	return _stream->readUint32BE();
 }
 
-String MacResManager::computeResForkMD5AsString(uint32 length, bool tail) const {
+String MacResManager::computeResForkMD5AsString(uint32 length, bool tail, ProgressUpdateCallback progressUpdateCallback, void *callbackParameter) const {
 	if (!hasResFork())
 		return String();
 
@@ -165,29 +165,9 @@ String MacResManager::computeResForkMD5AsString(uint32 length, bool tail) const 
 	if (tail && dataLength > length)
 		resForkStream.seek(-(int64)length, SEEK_END);
 
-	return computeStreamMD5AsString(resForkStream, MIN<uint32>(length, _resForkSize));
+	return computeStreamMD5AsString(resForkStream, MIN<uint32>(length, _resForkSize), progressUpdateCallback, callbackParameter);
 }
 
-String MacResManager::computeResForkMD5AsString(uint32 length, bool tail, ProgressUpdateCallback progressUpdateCallback) const {
-	if (!hasResFork())
-		return String();
-
-	_stream->seek(_resForkOffset);
-	uint32 dataOffset = _stream->readUint32BE() + _resForkOffset;
-	/* uint32 mapOffset = */ _stream->readUint32BE();
-	uint32 dataLength = _stream->readUint32BE();
-
-
-	SeekableSubReadStream resForkStream(_stream, dataOffset, dataOffset + dataLength);
-	if (tail && dataLength > length)
-		resForkStream.seek(-(int64)length, SEEK_END);
-
-	return computeStreamMD5AsString(resForkStream, MIN<uint32>(length, _resForkSize), progressUpdateCallback);
-}
-
-bool MacResManager::open(const Path &fileName) {
-	return open(fileName, SearchMan);
-}
 
 SeekableReadStream *MacResManager::openAppleDoubleWithAppleOrOSXNaming(Archive& archive, const Path &fileName) {
 	SeekableReadStream *stream = archive.createReadStreamForMember(constructAppleDoubleName(fileName));
@@ -244,6 +224,10 @@ SeekableReadStream *MacResManager::openAppleDoubleWithAppleOrOSXNaming(Archive& 
 	}
 
 	return nullptr;
+}
+
+bool MacResManager::open(const Path &fileName) {
+    return open(fileName, SearchMan);
 }
 
 bool MacResManager::open(const Path &fileName, Archive &archive) {

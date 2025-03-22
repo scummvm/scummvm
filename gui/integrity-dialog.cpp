@@ -92,7 +92,7 @@ uint32 getCalculationProgress() {
 	return progress;
 }
 
-IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain) : Dialog("GameOptions_IntegrityDialog"), CommandSender(this), _close(false) {
+IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain) : Dialog("GameOptions_IntegrityDialog"), CommandSender(this), _close(false), _lastEventPoll(0) {
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
@@ -147,8 +147,8 @@ IntegrityDialog::~IntegrityDialog() {
 }
 
 
-bool IntegrityDialog::progressUpdateCallback(int bytesProcessed) {
-	if(g_checksum_state->dialog->_close)
+bool IntegrityDialog::progressUpdate(int bytesProcessed) {
+	if (g_checksum_state->dialog->_close)
 		return false;
 	
 	g_checksum_state->calculatedSize += bytesProcessed;
@@ -159,22 +159,21 @@ bool IntegrityDialog::progressUpdateCallback(int bytesProcessed) {
 	}
 
 	Common::Event event;
-	g_checksum_state->dialog->pollEvent(event);
-
-	return true;
-};
-
-
-void IntegrityDialog::pollEvent(Common::Event &event) {
 	if (g_system->getEventManager()->pollEvent(event)) {
-		lastEventPoll = 0;
-		if (g_system->getMillis() > lastEventPoll + 16) { 
-			lastEventPoll = g_system->getMillis(); 
+		if (g_system->getMillis() > g_checksum_state->dialog->_lastEventPoll + 16) { 
+			g_checksum_state->dialog->_lastEventPoll = g_system->getMillis(); 
 			g_gui.processEvent(event, g_checksum_state->dialog);
 			g_system->updateScreen();
 		}
 	}
-}
+
+	return true;
+};
+
+static bool progressUpdateCallback(void *param, int bytesProcessed) {
+	IntegrityDialog *dialog = (IntegrityDialog *)param;
+	return dialog->progressUpdate(bytesProcessed);
+};
 
 
 void IntegrityDialog::open() {
@@ -373,21 +372,21 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 				// Data fork
 				// Various checksizes
 				for (auto size : {0, 5000, 1024 * 1024}) {
-					fileChecksum.push_back(Common::computeStreamMD5AsString(*dataForkStream, size, progressUpdateCallback).c_str());
+					fileChecksum.push_back(Common::computeStreamMD5AsString(*dataForkStream, size, progressUpdateCallback, this).c_str());
 					dataForkStream->seek(0);
 				}
 				// Tail checksums with checksize 5000
 				dataForkStream->seek(-5000, SEEK_END);
-				fileChecksum.push_back(Common::computeStreamMD5AsString(*dataForkStream, 0, progressUpdateCallback).c_str());
+				fileChecksum.push_back(Common::computeStreamMD5AsString(*dataForkStream, 0, progressUpdateCallback, this).c_str());
 
 				// Resource fork
 				if (macFile.hasResFork()) {
 					// Various checksizes
 					for (auto size : {0, 5000, 1024 * 1024}) {
-						fileChecksum.push_back(macFile.computeResForkMD5AsString(size, false, progressUpdateCallback).c_str());
+						fileChecksum.push_back(macFile.computeResForkMD5AsString(size, false, progressUpdateCallback, this).c_str());
 					}
 					// Tail checksums with checksize 5000
-					fileChecksum.push_back(macFile.computeResForkMD5AsString(5000, true, progressUpdateCallback).c_str());
+					fileChecksum.push_back(macFile.computeResForkMD5AsString(5000, true, progressUpdateCallback, this).c_str());
 					fileChecksums.push_back(fileChecksum);
 				}
 
@@ -401,12 +400,12 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 			Common::Array<Common::String> fileChecksum = {filename.toString()};
 			// Various checksizes
 			for (auto size : {0, 5000, 1024 * 1024}) {
-				fileChecksum.push_back(Common::computeStreamMD5AsString(file, size, progressUpdateCallback).c_str());
+				fileChecksum.push_back(Common::computeStreamMD5AsString(file, size, progressUpdateCallback, this).c_str());
 				file.seek(0);
 			}
 			// Tail checksums with checksize 5000
 			file.seek(-5000, SEEK_END);
-			fileChecksum.push_back(Common::computeStreamMD5AsString(file, 0, progressUpdateCallback).c_str());
+			fileChecksum.push_back(Common::computeStreamMD5AsString(file, 0, progressUpdateCallback, this).c_str());
 
 			file.close();
 			fileChecksums.push_back(fileChecksum);

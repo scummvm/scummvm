@@ -55,7 +55,7 @@ namespace Common {
 
 typedef Array<uint16> MacResIDArray;
 typedef Array<uint32> MacResTagArray;
-typedef bool (*ProgressUpdateCallback)(int);
+typedef bool (* ProgressUpdateCallback)(void *, int);
 
 /**
  * Class containing the raw data bytes for a Macintosh Finder Info data block.
@@ -267,16 +267,7 @@ public:
 	 * @param tail Calculate length from the tail
 	 * @return The MD5 checksum of the resource fork
 	 */
-	String computeResForkMD5AsString(uint32 length = 0, bool tail = false) const;
-
-	/**
-	 * Overloaded version for callbacks
-	 * Calculate the MD5 checksum of the resource fork
-	 * @param length The maximum length to compute for
-	 * @param tail Calculate length from the tail
-	 * @return The MD5 checksum of the resource fork
-	 */
-	String computeResForkMD5AsString(uint32 length, bool tail, ProgressUpdateCallback progressUpdateCallback) const;
+	String computeResForkMD5AsString(uint32 length = 0, bool tail = false, ProgressUpdateCallback progressUpdateCallback = nullptr, void *callbackParameter = nullptr) const;
 
 	/**
 	 * Get the base file name of the data/resource fork pair

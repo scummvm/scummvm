@@ -62,7 +62,7 @@ class IntegrityDialog : public Dialog, public CommandSender {
 	ButtonWidget *_copyEmailButton;
 
 	bool _close;
-	uint32 lastEventPoll;
+	uint32 _lastEventPoll;
 
 
 	Common::U32String getSizeLabelText();
@@ -74,15 +74,10 @@ public:
 
 
 	/**
-	 * Callback funtion which updates the progress bar every 500ms
-	 * It also poll events to allow mouse movements/button interactions to avoid freezing when processing large files
+	 * Updates the progress bar every 500ms
+	 * Includes polling to avoid freezing when processing files
 	 */
-	static bool progressUpdateCallback(int bytesProcessed);
-
-	/**
-	 * Poll events during callback
-	 */
-	void pollEvent(Common::Event &event);
+	bool progressUpdate(int bytesProcessed);
 
 	void sendJSON();
 	void checksumResponseCallback(const Common::JSONValue *r);
