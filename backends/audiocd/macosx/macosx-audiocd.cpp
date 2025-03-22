@@ -42,6 +42,8 @@
 
 #ifdef MACOSX
 
+#include <sys/param.h>
+#include <sys/ucred.h>
 #include <sys/stat.h>
 #include <sys/mount.h>
 
@@ -188,23 +190,25 @@ void MacOSXAudioCDManager::close() {
 	_trackMap.clear();
 }
 
-enum {
-	// Some crazy high number that we'll never actually hit
-	kMaxDriveCount = 256
-};
-
 MacOSXAudioCDManager::DriveList MacOSXAudioCDManager::detectAllDrives() {
-	// Fetch the lists of drives
-	struct statfs driveStats[kMaxDriveCount];
-	int foundDrives = getfsstat(driveStats, sizeof(driveStats), MNT_WAIT);
+	int foundDrives = getfsstat(nullptr, 0, MNT_WAIT);
 	if (foundDrives <= 0)
 		return DriveList();
+
+	// Fetch the lists of drives
+	struct statfs *driveStats = (struct statfs *)malloc(sizeof(struct statfs) * foundDrives);
+	foundDrives = getfsstat(driveStats, sizeof(struct statfs) * foundDrives, MNT_NOWAIT);
+	if (foundDrives <= 0) {
+		free(driveStats);
+		return DriveList();
+	}
 
 	DriveList drives;
 	for (int i = 0; i < foundDrives; i++)
 		drives.push_back(Drive(Common::Path(driveStats[i].f_mntonname, Common::Path::kNativeSeparator),
 			Common::Path(driveStats[i].f_mntfromname, Common::Path::kNativeSeparator), driveStats[i].f_fstypename));
 
+	free(driveStats);
 	return drives;
 }
 
@@ -287,7 +291,7 @@ bool MacOSXAudioCDManager::findTrackNames(const Common::Path &drivePath) {
 				char *endPtr = nullptr;
 				long trackID = strtol(trackIDString, &endPtr, 10);
 
-				if (trackIDString != endPtr && trackID > 0 && trackID < UINT_MAX) {
+				if (trackIDString != endPtr && trackID > 0 && (unsigned long)trackID < UINT_MAX) {
 					_trackMap[trackID - 1] = drivePath.appendComponent(fileName);
 				} else {
 					warning("Invalid track file name: '%s'", fileName.c_str());
