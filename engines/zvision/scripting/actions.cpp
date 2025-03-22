@@ -545,13 +545,28 @@ bool ActionMusic::execute() {
 ActionPanTrack::ActionPanTrack(ZVision *engine, int32 slotKey, const Common::String &line) :
 	ResultAction(engine, slotKey),
 	_pos(0),
+	_mag(255),
+	_resetMusicNode(true),
+	_resetMixerOnDelete(false),
 	_musicSlot(0) {
-	sscanf(line.c_str(), "%u %d", &_musicSlot, &_pos);
-	if(_scriptManager->getStateValue(_musicSlot) != 2) {
-	  debug(2,"Setting musicSlot %d to 2", _musicSlot);
-    _scriptManager->setStateValue(_musicSlot, 2); //Pan_track scripts do not always trigger correctly unless this is set!
+	uint mag = 255;
+	uint resetMusicNode = 1;
+	uint resetMixerOnDelete = 0;
+	sscanf(line.c_str(), "%u %d %u %u %u", &_musicSlot, &_pos, &mag, &resetMusicNode, &resetMixerOnDelete);
+	_resetMusicNode = resetMusicNode > 0;
+  _resetMixerOnDelete = resetMixerOnDelete > 0;
+	_mag = mag;
+	if(_resetMusicNode) {
+	  if(_scriptManager->getStateValue(_musicSlot) != 2) {
+	    debug(2,"Forcing musicSlot %d to 2", _musicSlot);
+      _scriptManager->setStateValue(_musicSlot, 2); //Not all original game pan_track scripts trigger correctly unless this is set!
+    }
+    else
+      debug(2,"musicSlot %d already set to 2", _musicSlot);
   }
-  debug(2,"Created Action: PanTrack, slotkey %d, musicSlot %u, pos %d", _slotKey, _musicSlot, _pos);
+  else
+    debug(2,"NOT forcing musicSlot %d to 2", _musicSlot);
+  debug(2,"Created Action: PanTrack, slotkey %d, musicSlot %u, pos %d, mag %d", _slotKey, _musicSlot, _pos, _mag);
 }
 
 ActionPanTrack::~ActionPanTrack() {
@@ -560,10 +575,10 @@ ActionPanTrack::~ActionPanTrack() {
 }
 
 bool ActionPanTrack::execute() {
-  debug(2,"Executing Action: PanTrack, slotkey %d, musicSlot %u, pos %d", _slotKey, _musicSlot, _pos);
+  debug(2,"Executing Action: PanTrack, slotkey %d, musicSlot %u, pos %d, mag %d", _slotKey, _musicSlot, _pos, _mag);
 	if (_scriptManager->getSideFX(_slotKey))
 		return true;
-	_scriptManager->addSideFX(new PanTrackNode(_engine, _slotKey, _musicSlot, _pos));
+	_scriptManager->addSideFX(new PanTrackNode(_engine, _slotKey, _musicSlot, _pos, _mag, _resetMixerOnDelete));
 	return true;
 }
 
