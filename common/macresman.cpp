@@ -168,7 +168,7 @@ String MacResManager::computeResForkMD5AsString(uint32 length, bool tail) const 
 	return computeStreamMD5AsString(resForkStream, MIN<uint32>(length, _resForkSize));
 }
 
-String MacResManager::computeResForkMD5AsString(uint32 length, bool tail, bool (*progressUpdateCallback)(int)) const {
+String MacResManager::computeResForkMD5AsString(uint32 length, bool tail, ProgressUpdateCallback progressUpdateCallback) const {
 	if (!hasResFork())
 		return String();
 
