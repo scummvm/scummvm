@@ -674,7 +674,7 @@ uint16 GameBountyHunter::_RandomUnusedInt(uint8 max, uint16 *mask, uint16 exclud
 	if (*mask == fullMask) {
 		*mask = 0;
 	}
-	uint16 random;
+	uint16 random = 0;
 	// find an unused random number
 	while (1) {
 		random = _rnd->getRandomNumber(max - 1);
