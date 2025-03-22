@@ -26,6 +26,7 @@
 #include "zvision/scripting/scripting_effect.h"
 #include "zvision/text/subtitle_manager.h"
 #include "zvision/sound/volume_manager.h"
+#include "math/angle.h"
 
 namespace Common {
 class String;
@@ -50,8 +51,8 @@ public:
 	virtual void setVolume(uint8 volume) = 0;
 	uint8 getVolume() {return _volume;};
 	virtual void setFade(int32 time, uint8 target) = 0;
-	virtual void setBalance(int8 balance);  //NB Overrides effects of setAzimuth()
-	void setAzimuth(Math::Angle azimuth);  //NB Overrides effects of setBalance()
+	virtual void setBalance(int8 balance);  //NB Overrides effects of setDirection()
+	void setDirection(Math::Angle azimuth, uint8 magnitude = 255);  //NB Overrides effects of setBalance()
 protected:
   void updateMixer();
   virtual void outputMixer() = 0;
@@ -59,6 +60,7 @@ protected:
   uint8 _volume = 0;
 	int8 _balance = 0;
   Math::Angle _azimuth;
+  uint8 _directionality;  //0 = fully ambient, 255 = fully directional
 	uint8 volumeOut = 0;
 };
 
@@ -125,9 +127,11 @@ public:
 
 private:
 	uint32 _slot;
-	int16 sourcePos;
+	int16 _width;
+  Math::Angle sourcePos, viewPos;
 	uint8 _mag;
 	bool _resetMixerOnDelete;
+	bool staticScreen;
 };
 
 } // End of namespace ZVision

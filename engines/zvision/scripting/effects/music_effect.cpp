@@ -40,10 +40,11 @@
 
 namespace ZVision {
 
-void MusicNodeBASE::setAzimuth(Math::Angle azimuth) {
+void MusicNodeBASE::setDirection(Math::Angle azimuth, uint8 magnitude) {
   if(_engine->getScriptManager()->getStateValue(StateKey_Qsound) >= 1) {
     _azimuth = azimuth;
-    _balance = (int)(127*_azimuth.getSine());
+    _directionality = magnitude;
+    _balance = ((int)(127*_azimuth.getSine())*_directionality)/255;
   }
 	updateMixer();
 }
@@ -51,12 +52,13 @@ void MusicNodeBASE::setAzimuth(Math::Angle azimuth) {
 void MusicNodeBASE::setBalance(int8 balance) {
   _balance = balance;
   _azimuth.setDegrees(0);
+  _directionality = 255;
 	updateMixer();
 }
 
 void MusicNodeBASE::updateMixer() {
   if(_engine->getScriptManager()->getStateValue(StateKey_Qsound) >= 1)
-    volumeOut = _engine->getVolumeManager()->convert(_volume, _azimuth);  //Apply volume profile and then attenuate according to azimuth
+    volumeOut = _engine->getVolumeManager()->convert(_volume, _azimuth, _directionality);  //Apply volume profile and then attenuate according to azimuth
   else
     volumeOut = _engine->getVolumeManager()->convert(_volume, kVolumeLinear);  //Apply linear volume profile and ignore azimuth
   outputMixer();
@@ -175,12 +177,22 @@ void MusicNode::setVolume(uint8 newVolume) {
 PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos, uint8 mag, bool resetMixerOnDelete)
 	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_PANTRACK),
 	_slot(slot),
-	sourcePos(pos),
+	sourcePos(0),
+	viewPos(0),
 	_mag(mag),
+	_width(0),
 	_resetMixerOnDelete(resetMixerOnDelete) {
-//	_slot = slot;
-//	sourcePos = pos;
-//	_mag = mag;
+	switch(_engine->getRenderManager()->getRenderTable()->getRenderState()) {
+	  case RenderTable::PANORAMA :
+	    _width = _engine->getRenderManager()->getBkgSize().x;
+	    sourcePos.setDegrees(360*pos/_width);
+	    break;	
+	  case RenderTable::FLAT :
+	  case RenderTable::TILT :
+	  default :
+	    sourcePos.setDegrees(pos);
+	    break;
+	}
   debug(3,"Created PanTrackNode, key %d, slot %d", _key, _slot);
 	process(0); 	// Try to set pan value for music node immediately
 }
@@ -204,16 +216,21 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 	ScriptingEffect *fx = scriptManager->getSideFX(_slot);
 	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
-		int viewPos = scriptManager->getStateValue(StateKey_ViewPos);
-		int16 _width = _engine->getRenderManager()->getBkgSize().x;
-		int deltaPos = 0;
-		if (viewPos <= sourcePos)
-			deltaPos = sourcePos - viewPos;
-		else
-			deltaPos = sourcePos - viewPos + _width;
-		debug(3,"soundPos: %d, viewPos: %d, deltaPos: %d, width: %d", sourcePos, viewPos, deltaPos, _width);
-    //deltaPos is sound source position relative to player, clockwise from centre of camera axis to front when viewed top-down
-    mus->setAzimuth(Math::Angle(360*deltaPos/_width));
+	  switch(_engine->getRenderManager()->getRenderTable()->getRenderState()) {
+	    case RenderTable::PANORAMA :
+	      viewPos.setDegrees(360*scriptManager->getStateValue(StateKey_ViewPos)/_width);
+	      break;	
+	    case RenderTable::FLAT :
+	    case RenderTable::TILT :
+	    default :
+	      viewPos.setDegrees(0);
+	      break;
+	  }
+		Math::Angle azimuth;
+		azimuth = sourcePos - viewPos;
+		debug(3,"soundPos: %f, viewPos: %f, azimuth: %f, width %d", sourcePos.getDegrees(), viewPos.getDegrees(), azimuth.getDegrees(), _width);
+    //azimuth is sound source position relative to player, clockwise from centre of camera axis to front when viewed top-down
+    mus->setDirection(azimuth, _mag);
 	}
 	return false;
 }
