@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-21 06:31+0000\n"
+"POT-Creation-Date: 2025-03-22 02:52+0000\n"
 "PO-Revision-Date: 2025-02-07 15:09+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -8078,7 +8078,7 @@ msgstr "Магия"
 msgid "Thor Dies"
 msgstr "Тор умирает"
 
-#: engines/got/got.cpp:185 engines/got/got.cpp:195
+#: engines/got/got.cpp:188 engines/got/got.cpp:198
 msgid "Savegames are not available in demo mode"
 msgstr "Сохранение игры недоступно в режиме демо"
 
