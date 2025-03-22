@@ -503,24 +503,29 @@ void AGOSEngine::delay(uint amount) {
 						GUI::AboutDialog aboutDialog;
 						aboutDialog.runModal();
 					}
-				} else if (event.kbd.keycode == Common::KEYCODE_f) {
-					HitArea *ha = nullptr;
-					if (_mouseCursor == 3) {
-						// If already in fighting mode, switch to a default non-fighting cursor (0)
-						_mouseCursor = 0;
-						_verbHitArea = 0;
-						_needHitAreaRecalc++;
-						ha = findBox(119); // Some walkable area.
-						if (ha)
-							_lastHitArea = ha;
+				} else if (event.kbd.keycode == Common::KEYCODE_f && getGameId() == GID_WAXWORKS) {
+					if (getLanguage() == Common::EN_ANY) {
+
+						HitArea *ha = nullptr;
+						if (_mouseCursor == 3) {
+							// If already in fighting mode, switch to a default non-fighting cursor (0)
+							_mouseCursor = 0;
+							_verbHitArea = 0;
+							_needHitAreaRecalc++;
+							ha = findBox(119); // Some walkable area.
+							if (ha)
+								_lastHitArea = ha;
+						} else {
+							// If not in fighting mode, switch to fighting mode
+							_mouseCursor = 3;
+							_verbHitArea = 236;
+							_needHitAreaRecalc++;
+							ha = findBox(117); // Find HitArea for fighting mode (ID 117).
+							if (ha)
+								_lastHitArea = ha; // Assign to _lastHitArea.
+						}
 					} else {
-						// If not in fighting mode, switch to fighting mode
-						_mouseCursor = 3;
-						_verbHitArea = 236;
-						_needHitAreaRecalc++;
-						ha = findBox(117); // Find HitArea for fighting mode (ID 117).
-						if (ha)
-							_lastHitArea = ha; // Assign to _lastHitArea.
+						warning("Fighting mode hotkey (F) is not supported for this version/language of Waxworks.");
 					}
 				}
 
