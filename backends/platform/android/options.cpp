@@ -41,7 +41,9 @@
 #include "backends/fs/android/android-fs-factory.h"
 #include "backends/fs/android/android-saf-fs.h"
 
+#include "gui/browser.h"
 #include "gui/gui-manager.h"
+#include "gui/message.h"
 #include "gui/ThemeEval.h"
 #include "gui/widget.h"
 #include "gui/widgets/list.h"
@@ -51,6 +53,8 @@
 
 enum {
 	kRemoveCmd = 'RemS',
+	kExportBackupCmd = 'ExpD',
+	kImportBackupCmd = 'ImpD',
 };
 
 class AndroidOptionsWidget final : public GUI::OptionsContainerWidget {
@@ -183,10 +187,14 @@ AndroidOptionsWidget::AndroidOptionsWidget(GuiObject *boss, const Common::String
 	_orientationGamesPopUp->appendEntry(_("Portrait"), kOrientationPortrait);
 	_orientationGamesPopUp->appendEntry(_("Landscape"), kOrientationLandscape);
 
-	if (inAppDomain && AndroidFilesystemFactory::instance().hasSAF()) {
-		// Only show this checkbox in Options (via Options... in the launcher), and not at game domain level (via Edit Game...)
-		// I18N: This button opens a list of all folders added for Android Storage Attached Framework
-		(new GUI::ButtonWidget(widgetsBoss(), "AndroidOptionsDialog.ForgetSAFButton", _("Remove folder authorizations..."), Common::U32String(), kRemoveCmd))->setTarget(this);
+	if (inAppDomain) {
+		// Only show these buttons in Options (via Options... in the launcher), and not at game domain level (via Edit Game...)
+		(new GUI::ButtonWidget(widgetsBoss(), "AndroidOptionsDialog.ExportDataButton", _("Export backup"), _("Export a backup of the configuration and save files"), kExportBackupCmd))->setTarget(this);
+		(new GUI::ButtonWidget(widgetsBoss(), "AndroidOptionsDialog.ImportDataButton", _("Import backup"), _("Import a previously exported backup file"), kImportBackupCmd))->setTarget(this);
+		if (AndroidFilesystemFactory::instance().hasSAF()) {
+			// I18N: This button opens a list of all folders added for Android Storage Attached Framework
+			(new GUI::ButtonWidget(widgetsBoss(), "AndroidOptionsDialog.ForgetSAFButton", _("Remove folder authorizations..."), Common::U32String(), kRemoveCmd))->setTarget(this);
+		}
 	}
 }
 
@@ -234,8 +242,12 @@ void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 			.addWidget("OGames", "PopUp")
 		.closeLayout();
 
-	if (inAppDomain && AndroidFilesystemFactory::instance().hasSAF()) {
-		layouts.addWidget("ForgetSAFButton", "WideButton");
+	if (inAppDomain) {
+		layouts.addWidget("ExportDataButton", "WideButton");
+		layouts.addWidget("ImportDataButton", "WideButton");
+		if (AndroidFilesystemFactory::instance().hasSAF()) {
+			layouts.addWidget("ForgetSAFButton", "WideButton");
+		}
 	}
 	layouts.closeLayout()
 	    .closeDialog();
@@ -249,6 +261,60 @@ void AndroidOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 		}
 		SAFRemoveDialog removeDlg;
 		removeDlg.runModal();
+		break;
+	}
+	case kExportBackupCmd:
+	{
+		Common::U32String prompt(_("Select backup destination"));
+		int ret = JNI::exportBackup(prompt);
+		if (ret == 1) {
+			// BackupManager.ERROR_CANCELLED
+			break;
+		}
+
+		if (ret == 0 && AndroidFilesystemFactory::instance().hasSAF()) {
+			prompt = _("The backup has been saved successfully.");
+		} else if (ret == 0) {
+			prompt = _("The backup has been saved successfully to the Downloads folder.");
+		} else if (ret == -2) {
+			prompt = _("The game saves couldn't be backed up");
+		} else {
+			prompt = _("An error occured while saving the backup.");
+		}
+		g_system->displayMessageOnOSD(prompt);
+		break;
+	}
+	case kImportBackupCmd:
+	{
+		GUI::MessageDialog alert(_("Restoring a backup will erase the current configuration and overwrite existing saves. Do you want to proceed?"), _("Proceed"), _("Cancel"));
+		if (alert.runModal() != GUI::kMessageOK) {
+			break;
+		}
+
+		Common::U32String prompt(_("Select backup file"));
+		Common::Path path;
+		if (!AndroidFilesystemFactory::instance().hasSAF()) {
+			GUI::BrowserDialog browser(prompt, false);
+			if (browser.runModal() <= 0) {
+				break;
+			}
+
+			path = browser.getResult().getPath();
+		}
+		int ret = JNI::importBackup(prompt, path.toString());
+		if (ret == 1) {
+			// BackupManager.ERROR_CANCELLED
+			break;
+		}
+
+		if (ret == 0) {
+			prompt = _("The backup has been restored successfully.");
+		} else if (ret == -2) {
+			prompt = _("The game saves couldn't be backed up");
+		} else {
+			prompt = _("An error occured while restoring the backup.");
+		}
+		g_system->displayMessageOnOSD(prompt);
 		break;
 	}
 	default:
