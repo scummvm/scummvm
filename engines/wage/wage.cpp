@@ -67,7 +67,7 @@ namespace Wage {
 WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst), _gameDescription(desc) {
 	_rnd = new Common::RandomSource("wage");
 
-	_aim = -1;
+	_aim = Chr::CHEST;
 	_opponentAim = -1;
 	_temporarilyHidden = false;
 	_isGameOver = false;
@@ -174,7 +174,7 @@ Common::Error WageEngine::run() {
 
 // Resetting required variables
 void WageEngine::resetState() {
-	_aim = -1;
+	_aim = Chr::CHEST;
 	_opponentAim = -1;
 	_temporarilyHidden = false;
 	_isGameOver = false;
