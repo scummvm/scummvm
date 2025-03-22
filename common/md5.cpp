@@ -280,7 +280,7 @@ bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length) {
 }
 
 
-bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length, bool (*progressUpdateCallback)(int)) {
+bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length, ProgressUpdateCallback progressUpdateCallback) {
 
 #ifdef DISABLE_MD5
 	memset(digest, 0, 16);
@@ -334,7 +334,7 @@ String computeStreamMD5AsString(ReadStream &stream, uint32 length) {
 }
 
 
-String computeStreamMD5AsString(ReadStream &stream, uint32 length, bool (*progressUpdateCallback)(int)) {
+String computeStreamMD5AsString(ReadStream &stream, uint32 length, ProgressUpdateCallback progressUpdateCallback) {
 	String md5;
 	uint8 digest[16];
 	if (computeStreamMD5(stream, digest, length, progressUpdateCallback)) {
