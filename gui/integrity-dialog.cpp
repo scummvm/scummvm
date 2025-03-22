@@ -148,7 +148,7 @@ IntegrityDialog::~IntegrityDialog() {
 
 
 bool IntegrityDialog::progressUpdateCallback(int bytesProcessed) {
-	if(g_checksum_state->dialog->_close)
+	if (g_checksum_state->dialog->_close)
 		return false;
 	
 	g_checksum_state->calculatedSize += bytesProcessed;
