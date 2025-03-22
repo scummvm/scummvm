@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/memstream.h"
+#include "graphics/macgamma.h"
 #include "graphics/paletteman.h"
 #include "graphics/macgui/macwindowmanager.h"
 
@@ -182,6 +183,7 @@ void DirectorEngine::setPalette(const byte *palette, uint16 count) {
 	memset(_currentPalette, 0, 768);
 	memmove(_currentPalette, palette, count * 3);
 	_currentPaletteLength = count;
+
 	if (debugChannelSet(8, kDebugImages)) {
 		Common::String palData;
 		for (size_t i = 0; i < (size_t)_currentPaletteLength; i++) {
@@ -190,11 +192,7 @@ void DirectorEngine::setPalette(const byte *palette, uint16 count) {
 		debugC(8, kDebugImages, "DirectorEngine::setPalette(): Setting current palette: %s", palData.c_str());
 	}
 
-	// Pass the palette to OSystem only for 8bpp mode
-	if (_pixelformat.bytesPerPixel == 1)
-		_system->getPaletteManager()->setPalette(_currentPalette, 0, _currentPaletteLength);
-
-	_wm->passPalette(_currentPalette, _currentPaletteLength);
+	syncPalette();
 }
 
 void DirectorEngine::shiftPalette(int startIndex, int endIndex, bool reverse) {
@@ -228,11 +226,24 @@ void DirectorEngine::shiftPalette(int startIndex, int endIndex, bool reverse) {
 		debugC(8, kDebugImages, "DirectorEngine::shiftPalette(): Rotating current palette (start: %d, end: %d, reverse: %d): %s", startIndex, endIndex, reverse, palData.c_str());
 	}
 
+	syncPalette();
+}
+
+void DirectorEngine::syncPalette() {
+	byte paletteBuf[768];
+	if (_gammaCorrection) {
+		for (size_t i = 0; i < (size_t)_currentPaletteLength*3; i++) {
+			paletteBuf[i] = Graphics::macGammaCorrectionLookUp[_currentPalette[i]];
+		}
+	} else {
+		memcpy(paletteBuf, _currentPalette, _currentPaletteLength*3);
+	}
+
 	// Pass the palette to OSystem only for 8bpp mode
 	if (_pixelformat.bytesPerPixel == 1)
-		_system->getPaletteManager()->setPalette(_currentPalette, 0, _currentPaletteLength);
+		_system->getPaletteManager()->setPalette(paletteBuf, 0, _currentPaletteLength);
 
-	_wm->passPalette(_currentPalette, _currentPaletteLength);
+	_wm->passPalette(paletteBuf, _currentPaletteLength);
 }
 
 void DirectorEngine::clearPalettes() {

@@ -66,13 +66,14 @@ Common::Error Window::loadInitialMovie() {
 		loadXtrasFromPath();
 	}
 	Common::Path path = findPath(movie);
-	_mainArchive = g_director->openArchive(path);
+	Archive *mainArchive = g_director->openArchive(path);
 
-	if (!_mainArchive) {
+	if (!mainArchive) {
 		warning("Window::loadInitialMovie: Cannot open main movie");
 		return Common::kNoGameDataFoundError;
 	}
-	probeResources(_mainArchive);
+	g_director->setMainArchive(mainArchive);
+	probeResources(mainArchive);
 
 	// Load multiple-resources based executable file (Projector)
 	Common::String rawEXE = _vm->getRawEXEName();
@@ -104,8 +105,8 @@ Common::Error Window::loadInitialMovie() {
 
 			stream->read(script, size);
 
-			LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
-			mainArchive->addCode(Common::U32String(script, Common::kMacRoman), kMovieScript, 65535);
+			LingoArchive *mainLingoArchive = g_director->getCurrentMovie()->getMainLingoArch();
+			mainLingoArchive->addCode(Common::U32String(script, Common::kMacRoman), kMovieScript, 65535);
 			_currentMovie->processEvent(kEventStartUp);
 
 			free(script);
@@ -115,7 +116,7 @@ Common::Error Window::loadInitialMovie() {
 		}
 	}
 
-	_currentMovie->setArchive(_mainArchive);
+	_currentMovie->setArchive(mainArchive);
 	_currentMovie->getScore()->_skipTransition = true;
 	// XLibs are usually loaded in the initial movie.
 	// These may not be present if a --start-movie is specified, so

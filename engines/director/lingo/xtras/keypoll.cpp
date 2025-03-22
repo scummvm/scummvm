@@ -31,6 +31,7 @@
  *
  * USED IN:
  * Safecracker
+ * Teazle
  *
  **************************************************/
 
@@ -53,6 +54,7 @@ namespace Director {
 const char *const KeypollXtra::xlibName = "Keypoll";
 const XlibFileDesc KeypollXtra::fileNames[] = {
 	{ "keypoll",   nullptr },
+	{ "KeyPollFat",   nullptr },
 	{ nullptr,        nullptr },
 };
 

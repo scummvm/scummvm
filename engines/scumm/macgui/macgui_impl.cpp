@@ -26,6 +26,7 @@
 #include "common/str.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/macgamma.h"
 #include "graphics/paletteman.h"
 #include "graphics/fonts/macfont.h"
 #include "graphics/macgui/macwindowmanager.h"
@@ -871,9 +872,9 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 				byte r, g, b;
 
 				palette.get(i, r, g, b);
-				r = _vm->_macGammaCorrectionLookUp[r];
-				g = _vm->_macGammaCorrectionLookUp[g];
-				b = _vm->_macGammaCorrectionLookUp[b];
+				r = Graphics::macGammaCorrectionLookUp[r];
+				g = Graphics::macGammaCorrectionLookUp[g];
+				b = Graphics::macGammaCorrectionLookUp[b];
 				palette.set(i, r, g, b);
 			}
 		}

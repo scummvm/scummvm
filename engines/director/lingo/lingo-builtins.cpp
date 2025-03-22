@@ -450,7 +450,18 @@ void LB::b_integer(int nargs) {
 		Common::String src = d.asString();
 		char *endPtr = nullptr;
 		int result = (int)strtol(src.c_str(), &endPtr, 10);
-		if (endPtr && endPtr != src.c_str() && (*endPtr == '\0' || *endPtr == ' ')) {
+		// Stop conditions found by probing D4 for windows:
+		// repeat with i = 0 to 255
+		//   put i & " = " & integer("12345" & numToChar(i))
+		// end repeat
+		if (endPtr && endPtr != src.c_str() && (
+			(*endPtr >= 0 && *endPtr < 45) ||
+			(*endPtr == 47) ||
+			(*endPtr >= 58 && *endPtr < 65) ||
+			(*endPtr >= 91 && *endPtr < 95) ||
+			(*endPtr == 96) ||
+			(*endPtr >= 123))
+		) {
 			res = result;
 		}
 	} else {
@@ -1975,7 +1986,8 @@ void LB::b_return(int nargs) {
 	Datum retVal;
 	if (nargs > 0) {
 		retVal = g_lingo->pop();
-		g_lingo->_theResult = retVal;	// Store result for possible reference
+		if (retVal.type != VOID && g_lingo->_state->callstack.size() <= 2)
+			g_lingo->_theResult = retVal;	// Store result for possible reference
 	}
 
 	// clear any temp values from loops

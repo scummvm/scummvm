@@ -52,7 +52,6 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_lingoPlayState = nullptr;
 
 	_currentMovie = nullptr;
-	_mainArchive = nullptr;
 	_nextMovie.frameI = -1;
 	_newMovieStarted = true;
 
@@ -165,7 +164,9 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	debugC(7, kDebugImages, "Window::render(): Updating %d rects", _dirtyRects.size());
 
 	for (auto &i : _dirtyRects) {
-		const Common::Rect &r = i;
+		Common::Rect r = i;
+		r.clip(getInnerDimensions());
+
 		_dirtyChannels = _currentMovie->getScore()->getSpriteIntersections(r);
 
 		bool shouldClear = true;

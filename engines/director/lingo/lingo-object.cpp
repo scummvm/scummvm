@@ -73,6 +73,7 @@
 #include "director/lingo/xlibs/genutils.h"
 #include "director/lingo/xlibs/getscreenrectsxfcn.h"
 #include "director/lingo/xlibs/getscreensizexfcn.h"
+#include "director/lingo/xlibs/getsoundinlevel.h"
 #include "director/lingo/xlibs/gpid.h"
 #include "director/lingo/xlibs/henry.h"
 #include "director/lingo/xlibs/hitmap.h"
@@ -83,6 +84,7 @@
 #include "director/lingo/xlibs/ispippin.h"
 #include "director/lingo/xlibs/jitdraw3.h"
 #include "director/lingo/xlibs/labeldrvxobj.h"
+#include "director/lingo/xlibs/listdev.h"
 #include "director/lingo/xlibs/maniacbg.h"
 #include "director/lingo/xlibs/mapnavigatorxobj.h"
 #include "director/lingo/xlibs/memcheckxobj.h"
@@ -137,7 +139,9 @@
 #include "director/lingo/xtras/directsound.h"
 #include "director/lingo/xtras/filextra.h"
 #include "director/lingo/xtras/keypoll.h"
+#include "director/lingo/xtras/openurl.h"
 #include "director/lingo/xtras/qtvrxtra.h"
+#include "director/lingo/xtras/rtk.h"
 #include "director/lingo/xtras/scrnutil.h"
 #include "director/lingo/xtras/timextra.h"
 #include "director/lingo/xtras/xsound.h"
@@ -259,6 +263,7 @@ static const struct XLibProto {
 	XLIBDEF(GenUtilsXObj,		kXObj,			400),	// D4
 	XLIBDEF(GetScreenRectsXFCN,	kXObj,			300),	// D3
 	XLIBDEF(GetScreenSizeXFCN,	kXObj,			300),	// D3
+	XLIBDEF(GetSoundInLevelXObj,			kXObj,					400),	// D4
 	XLIBDEF(GpidXObj,			kXObj,			400),	// D4
 	XLIBDEF(HenryXObj,			kXObj,					400),	// D4
 	XLIBDEF(HitMap,				kXObj,			400),	// D4
@@ -270,6 +275,7 @@ static const struct XLibProto {
 	XLIBDEF(JourneyWareXINIXObj,kXObj,			400),	// D4
 	XLIBDEF(KeypollXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(LabelDrvXObj,		kXObj,			400),	// D4
+	XLIBDEF(ListDevXObj,			kXObj,					500),	// D5
 	XLIBDEF(MMovieXObj,			kXObj,			400),	// D4
 	XLIBDEF(ManiacBgXObj,		kXObj,			300),	// D3
 	XLIBDEF(MapNavigatorXObj,	kXObj,			400),	// D4
@@ -285,6 +291,7 @@ static const struct XLibProto {
 	XLIBDEF(MovUtilsXObj,		kXObj,			400),	// D4
 	XLIBDEF(MystIsleXObj,			kXObj,					400),	// D4
 	XLIBDEF(OpenBleedWindowXCMD,kXObj,			300),	// D3
+	XLIBDEF(OpenURLXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(OrthoPlayXObj,		kXObj,			400),	// D4
 	XLIBDEF(PACoXObj,			kXObj,			300),	// D3
 	XLIBDEF(PalXObj,			kXObj,			400),	// D4
@@ -302,6 +309,7 @@ static const struct XLibProto {
 	XLIBDEF(RearWindowXObj,		kXObj,			400),	// D4
 	XLIBDEF(RegisterComponent,	kXObj,			400),	// D4
 	XLIBDEF(RemixXCMD,			kXObj,			300),	// D3
+	XLIBDEF(RolloverToolkitXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(ScrnUtilXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(SerialPortXObj,		kXObj,			200),	// D2
 	XLIBDEF(SoundJam,			kXObj,			400),	// D4

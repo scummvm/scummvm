@@ -103,6 +103,7 @@ MODULE_OBJS = \
 	lingo/xlibs/genutils.o \
 	lingo/xlibs/getscreenrectsxfcn.o \
 	lingo/xlibs/getscreensizexfcn.o \
+	lingo/xlibs/getsoundinlevel.o \
 	lingo/xlibs/gpid.o \
 	lingo/xlibs/henry.o \
 	lingo/xlibs/hitmap.o \
@@ -113,6 +114,7 @@ MODULE_OBJS = \
 	lingo/xlibs/jitdraw3.o \
 	lingo/xlibs/jwxini.o \
 	lingo/xlibs/labeldrvxobj.o \
+	lingo/xlibs/listdev.o \
 	lingo/xlibs/maniacbg.o \
 	lingo/xlibs/mapnavigatorxobj.o \
 	lingo/xlibs/memcheckxobj.o \
@@ -167,7 +169,9 @@ MODULE_OBJS = \
 	lingo/xtras/directsound.o \
 	lingo/xtras/filextra.o \
 	lingo/xtras/keypoll.o \
+	lingo/xtras/openurl.o \
 	lingo/xtras/qtvrxtra.o \
+	lingo/xtras/rtk.o \
 	lingo/xtras/scrnutil.o \
 	lingo/xtras/timextra.o \
 	lingo/xtras/xsound.o

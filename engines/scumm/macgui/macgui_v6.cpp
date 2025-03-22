@@ -30,6 +30,7 @@
 #include "engines/savestate.h"
 
 #include "graphics/color_quantizer.h"
+#include "graphics/macgamma.h"
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
 #include "graphics/macgui/macwindowmanager.h"
@@ -365,9 +366,9 @@ void MacV6Gui::saveScreen() {
 				byte r, g, b;
 
 				palette.get(i, r, g, b);
-				r = _vm->_macGammaCorrectionLookUp[r];
-				g = _vm->_macGammaCorrectionLookUp[g];
-				b = _vm->_macGammaCorrectionLookUp[b];
+				r = Graphics::macGammaCorrectionLookUp[r];
+				g = Graphics::macGammaCorrectionLookUp[g];
+				b = Graphics::macGammaCorrectionLookUp[b];
 				palette.set(i, r, g, b);
 			}
 		}
@@ -564,9 +565,9 @@ void MacV6Gui::runAboutDialog() {
 			black = i;
 
 		if (_vm->_useGammaCorrection) {
-			r = _vm->_macGammaCorrectionLookUp[r];
-			g = _vm->_macGammaCorrectionLookUp[g];
-			b = _vm->_macGammaCorrectionLookUp[b];
+			r = Graphics::macGammaCorrectionLookUp[r];
+			g = Graphics::macGammaCorrectionLookUp[g];
+			b = Graphics::macGammaCorrectionLookUp[b];
 		}
 
 		palette.set(i, r, g, b);

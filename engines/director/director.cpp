@@ -83,6 +83,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	memset(_currentPalette, 0, 768);
 	_currentPaletteLength = 0;
 	_stage = nullptr;
+	_mainArchive = nullptr;
 	_currentWindow = nullptr;
 	_cursorWindow = nullptr;
 	_lingo = nullptr;
@@ -117,7 +118,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob, 0, 5);
 	}
 
-	if (debugChannelSet(-1, kDebug32bpp) || (getGameFlags() & GF_32BPP)) {
+	if (ConfMan.getBool("true_color") || (getGameFlags() & GF_32BPP) || debugChannelSet(-1, kDebug32bpp)) {
 #ifdef USE_RGB_COLOR
 		_colorDepth = 32;
 #else
@@ -127,6 +128,11 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	} else {
 		_colorDepth = 8;	// 256-color
 	}
+	// Enable Macintosh gamma correction. This resolves the issue of Mac games appearing too dark.
+	// Applied by default for Macintosh and Pippin games in the detection list.
+	// Right now only used in 8-bit mode to adjust the palette.
+	// FIXME: How do we add this to true color rendering without a heap of workarounds?
+	_gammaCorrection = ConfMan.getBool("gamma_correction") || (getGameFlags() & GF_GAMMA);
 
 	switch (getPlatform()) {
 	case Common::kPlatformMacintoshII:
@@ -170,7 +176,6 @@ DirectorEngine::~DirectorEngine() {
 	clearPalettes();
 }
 
-Archive *DirectorEngine::getMainArchive() const { return _currentWindow->getMainArchive(); }
 Movie *DirectorEngine::getCurrentMovie() const { return _currentWindow->getCurrentMovie(); }
 Common::String DirectorEngine::getCurrentPath() const { return _currentWindow->getCurrentPath(); }
 Common::String DirectorEngine::getCurrentAbsolutePath() {
@@ -248,7 +253,7 @@ Common::Error DirectorEngine::run() {
 		_wmMode |= Graphics::kWMModeFullscreen | Graphics::kWMModeNoDesktop;
 
 #ifdef USE_RGB_COLOR
-	if (debugChannelSet(-1, kDebug32bpp) || (getGameFlags() & GF_32BPP))
+	if (ConfMan.getBool("true_color") || (getGameFlags() & GF_32BPP) || debugChannelSet(-1, kDebug32bpp))
 		_wmMode |= Graphics::kWMMode32bpp;
 #endif
 

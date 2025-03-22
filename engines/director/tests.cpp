@@ -324,13 +324,14 @@ void Window::runTests() {
 
 	initGraphics(640, 480);
 
-	_mainArchive = new RIFXArchive();
-	g_director->_allSeenResFiles.setVal("test.dir", _mainArchive);
-	if (!_mainArchive->openStream(stream, 0)) {
+	Archive *mainArchive = new RIFXArchive();
+	g_director->setMainArchive(mainArchive);
+	g_director->_allSeenResFiles.setVal("test.dir", mainArchive);
+	if (!mainArchive->openStream(stream, 0)) {
 		error("DirectorEngine::runTests(): Bad movie data");
 	}
 	_currentMovie = new Movie(this);
-	_currentMovie->setArchive(_mainArchive);
+	_currentMovie->setArchive(mainArchive);
 	_currentMovie->loadArchive();
 
 	if (debugChannelSet(-1, kDebugText)) {
