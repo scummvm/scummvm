@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-22 02:52+0000\n"
-"PO-Revision-Date: 2025-03-20 08:44+0000\n"
+"PO-Revision-Date: 2025-03-22 05:59+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -1787,7 +1787,7 @@ msgstr "Pekarhastighet:"
 
 #: gui/options.cpp:1466
 msgid "Joy Deadzone:"
-msgstr "Dödzon för styrspak:"
+msgstr "Dödzon styrspak:"
 
 #: gui/options.cpp:1466 gui/options.cpp:1468 gui/options.cpp:1469
 msgid "Analog joystick Deadzone"
@@ -1796,7 +1796,7 @@ msgstr "Dödzon för analog styrspak"
 #: gui/options.cpp:1468
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr "Dödzon för styrspak:"
+msgstr "Dödzon styrspak:"
 
 #: gui/options.cpp:1564
 #, c-format
@@ -1852,7 +1852,7 @@ msgstr "Ingen"
 
 #: gui/options.cpp:1700
 msgid "Download Shaders"
-msgstr "Hämta ner shaders"
+msgstr "Hämta shaders"
 
 #: gui/options.cpp:1700
 msgid "Check on the scummvm.org website for updates of shader packs"
@@ -1876,7 +1876,7 @@ msgstr ""
 
 #: gui/options.cpp:1714
 msgid "Game 3D Renderer:"
-msgstr "3D-renderare för spel:"
+msgstr "3D-renderare:"
 
 #: gui/options.cpp:1716
 msgctxt "lowres"
@@ -2244,7 +2244,7 @@ msgstr "%d%% - Anpassad"
 
 #: gui/options.cpp:2647
 msgid "GUI renderer:"
-msgstr "Gränssnittsrenderare:"
+msgstr "GUI-renderare:"
 
 #: gui/options.cpp:2660
 msgid "Return to the launcher when leaving a game"
@@ -4426,7 +4426,7 @@ msgstr "Ministick Y"
 #: backends/keymapper/remap-widget.cpp:298
 #: backends/keymapper/remap-widget.cpp:328
 msgid "Reset to defaults"
-msgstr "Återställ till standard"
+msgstr "Återställ standard"
 
 #: backends/keymapper/remap-widget.cpp:299
 msgid "Clear mapping"
