@@ -58,6 +58,12 @@ class GrandTour : public Dialog {
 private:
 	GRANDTRSTRUCT _grandTour;
 	GRANDTRSTRUCT *const m_pgtGTStruct = &_grandTour;
+	ColorButton _playButton;
+	ColorButton _saveButton;
+	ColorButton _restoreButton;
+	ColorButton _audioButton;
+	ColorButton _top10Button;
+	ColorButton _mainMenuButton;
 
 	void adjustScore();
 

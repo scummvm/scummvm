@@ -36,7 +36,50 @@ namespace Metagame {
 #define GAME_GEO	1
 #define GAME_RAND	2
 
-GrandTour::GrandTour() : Dialog("GrandTour") {
+// Button positioning constants
+#define F_WIDTH					110
+#define F_HEIGHT                20
+#define F_TOP                   325
+#define PLAY_LEFT				75
+#define SAVE_LEFT				PLAY_LEFT + F_WIDTH + 5
+#define RESTORE_LEFT			SAVE_LEFT + F_WIDTH + 5
+#define	AUDIO_LEFT				PLAY_LEFT
+#define TOP10_LEFT              AUDIO_LEFT + F_WIDTH + 5
+#define LEAVE_LEFT				TOP10_LEFT + F_WIDTH + 5
+
+#define S_WIDTH					130
+#define S_HEIGHT				21
+
+#define HS_LEFT					SCROLL_LEFT + 110
+
+#define HSH_TOP					SCROLL_TOP + 50
+#define HSM_TOP					HSH_TOP + S_HEIGHT + 2
+#define HSL_TOP					HSM_TOP + S_HEIGHT + 2
+#define HSNP_TOP				HSL_TOP + S_HEIGHT + 2
+
+#define PS_LEFT					SCROLL_LEFT + 310
+
+#define PSH_TOP					SCROLL_TOP + 50
+#define PSM_TOP					PSH_TOP + S_HEIGHT + 2
+#define PSL_TOP					PSM_TOP + S_HEIGHT + 2
+#define PSNP_TOP				PSL_TOP + S_HEIGHT + 2
+
+#define G_WIDTH					130
+#define G_HEIGHT				21
+
+#define G_TOP					SCROLL_TOP + 185
+#define GA_LEFT					SCROLL_LEFT + 55
+#define GG_LEFT					GA_LEFT + G_WIDTH + 5
+#define GR_LEFT					GG_LEFT + G_WIDTH + 5
+
+GrandTour::GrandTour() : Dialog("GrandTour"),
+	_playButton("PLAY", "Play",          RectWH(PLAY_LEFT, F_TOP - 25, F_WIDTH, F_HEIGHT), this),
+	_saveButton("SAVE", "Save",          RectWH(SAVE_LEFT, F_TOP - 25, F_WIDTH, F_HEIGHT), this),
+	_restoreButton("LOAD", "Restore",    RectWH(RESTORE_LEFT, F_TOP - 25, F_WIDTH, F_HEIGHT), this),
+	_audioButton("AUDIO", "Audio",       RectWH(AUDIO_LEFT, F_TOP, F_WIDTH, F_HEIGHT), this),
+	_top10Button("TOP10", "Top 10 List", RectWH(TOP10_LEFT, F_TOP, F_WIDTH, F_HEIGHT), this),
+	_mainMenuButton("CLOSE", "Main Menu",RectWH(LEAVE_LEFT, F_TOP, F_WIDTH, F_HEIGHT), this)
+{
 }
 
 bool GrandTour::msgOpen(const OpenMessage &msg) {
@@ -57,6 +100,13 @@ bool GrandTour::msgClose(const CloseMessage &msg) {
 }
 
 bool GrandTour::msgGame(const GameMessage &msg) {
+	if (msg._name == "BUTTON") {
+		if (msg._stringValue == "CLOSE") {
+			replaceView("TitleMenu");
+			return true;
+		}
+	}
+
 	return false;
 }
 
