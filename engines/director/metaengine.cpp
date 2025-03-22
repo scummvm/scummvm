@@ -24,6 +24,7 @@
 #include "engines/advancedDetector.h"
 
 #include "common/file.h"
+#include "common/translation.h"
 
 #include "director/director.h"
 
@@ -62,6 +63,32 @@ bool DirectorEngine::hasFeature(EngineFeature f) const {
 		//(f == kSupportsReturnToLauncher);
 }
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_GAMMA_CORRECTION,
+		{
+			_s("Enable gamma correction"),
+			_s("Brighten the graphics to simulate a Macintosh monitor."),
+			"gamma_correction",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_TRUE_COLOR,
+		{
+			_s("Force true color"),
+			_s("Use true color graphics mode, even if the game is not designed for it."),
+			"true_color",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 } // End of Namespace Director
 
 class DirectorMetaEngine : public AdvancedMetaEngine<Director::DirectorGameDescription> {
@@ -71,6 +98,7 @@ public:
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const Director::DirectorGameDescription *desc) const override;
+	virtual const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override { return Director::optionsList; }
 };
 
 Common::Error DirectorMetaEngine::createInstance(OSystem *syst, Engine **engine, const Director::DirectorGameDescription *desc) const {
