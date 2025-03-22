@@ -97,10 +97,8 @@ GfxPics &GfxPics::operator=(const GfxPics &src) {
 }
 
 void BgPics::setArea(int area) {
-	if (area != _area) {
-		_area = area;
-		load();
-	}
+	_area = area;
+	load();
 }
 
 void BgPics::load() {
