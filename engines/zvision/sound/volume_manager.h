@@ -46,8 +46,8 @@ public:
   void setMode(volumeScaling mode) {_mode = mode;};
   uint8 convert(uint8 inputValue);
   uint8 convert(uint8 inputValue, volumeScaling mode);
-  uint8 convert(uint8 inputValue, Math::Angle azimuth);
-  uint8 convert(uint8 inputValue, volumeScaling mode, Math::Angle azimuth);
+  uint8 convert(uint8 inputValue, Math::Angle azimuth, uint8 directionality=255);
+  uint8 convert(uint8 inputValue, volumeScaling mode, Math::Angle azimuth, uint8 directionality=255);
 private:
 	ZVision *_engine;
   uint scriptScale = 100; //Z-Vision scripts internally use a volume scale of 0-100; ScummVM uses a scale of 0-255.
