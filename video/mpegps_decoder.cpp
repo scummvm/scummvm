@@ -270,19 +270,16 @@ bool MPEGPSDecoder::MPEGPSDemuxer::loadStream(Common::SeekableReadStream *stream
 	stream->seek(startPosition);
 
 	// If it is a Sequence Header (ES Stream), pass the stream to a Elementary Stream handler.
+	// If it is a Pack Header (PS stream), pass the stream to PS demuxer for demuxing into video and audio packets
+	// Currently not handling other stream types like ES audio stream
+	// Throwing a warning, so that decoding of further streams isn't affected
+	// Unknown stream header types are "handled" (ignored) in the readNextPacketHeader function 
+
 	if (header == kStartCodeSequenceHeader) {
 		_isESStream = true;
-	}
-		
-	// If it is a Pack Header (PS stream), pass the stream to PS demuxer for demuxing into video and audio packets
-	else if (header == kStartCodePack) {
+	} else if (header == kStartCodePack) {
 		_isESStream = false;
-	}
-
-	// Currently not handling other stream types like ES audio stream
-	// Instead of throwing an error, we can throw a warning, so that decoding of further streams isn't affected
-	// Unknown stream header types are "handled" (ignored) in the readNextPacketHeader function 
-	else {
+	} else {
 		warning("Unknown Start Code in the MPEG stream, %d", header);
 		_isESStream = false;
 	}
