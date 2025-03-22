@@ -208,6 +208,8 @@ shaders/freescape_bitmap.fragment    FILE    "engines/freescape/shaders/freescap
 shaders/freescape_bitmap.vertex      FILE    "engines/freescape/shaders/freescape_bitmap.vertex"
 shaders/freescape_triangle.fragment  FILE    "engines/freescape/shaders/freescape_triangle.fragment"
 shaders/freescape_triangle.vertex    FILE    "engines/freescape/shaders/freescape_triangle.vertex"
+shaders/freescape_cubemap.fragment   FILE    "engines/freescape/shaders/freescape_cubemap.fragment"
+shaders/freescape_cubemap.vertex     FILE    "engines/freescape/shaders/freescape_cubemap.vertex"
 #endif
 #endif
 #endif

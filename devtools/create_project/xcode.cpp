@@ -1161,6 +1161,8 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 			files.push_back("engines/freescape/shaders/freescape_bitmap.vertex");
 			files.push_back("engines/freescape/shaders/freescape_triangle.fragment");
 			files.push_back("engines/freescape/shaders/freescape_triangle.vertex");
+			files.push_back("engines/freescape/shaders/freescape_cubemap.fragment");
+			files.push_back("engines/freescape/shaders/freescape_cubemap.vertex");
 		}
 		if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
 			files.push_back("dists/soundfonts/Roland_SC-55.sf2");
