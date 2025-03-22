@@ -92,6 +92,7 @@ public:
 
 	void load();
 	void setArea(int areaNum);
+	void loadArea();
 	void clearKeyFlags();
 	void resetEndGameFlags();
 

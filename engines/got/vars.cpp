@@ -76,6 +76,11 @@ Vars::~Vars() {
 void Vars::setArea(int areaNum) {
 	_area = areaNum;
 	_setup = Setup();
+	loadArea();
+}
+
+void Vars::loadArea() {
+	int areaNum = _area;
 	_setup._areaNum = areaNum;
 
 	_sdData.setArea(areaNum);
