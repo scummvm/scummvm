@@ -34,6 +34,7 @@
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 #include "audio/fmopl.h"
+#include "audio/mixer.h"
 #include "view1.h"
 #include "adlib.h"
 #include "gameobjects.h"
@@ -1310,6 +1311,16 @@ void Macs2Engine::loadSongFromSceneData(uint8 dataIndex) {
 	
 }
 
+void Macs2Engine::playTestSound() {
+	Audio::Mixer *mixer = g_system->getMixer();
+	Audio::Mixer::SoundType soundType = Audio::Mixer::SoundType::kPlainSoundType;
+	Audio::SoundHandle soundHandle;
+	MacsAudioStream *audioStream;
+	// TODO: Convert 8 bit to 16 signed 
+	mixer->playStream(soundType, &soundHandle, audioStream);
+	
+}
+
 Common::String Macs2Engine::getGameId() const {
 	return _gameDescription->gameId;
 }
@@ -1715,6 +1726,30 @@ uint16 BackgroundAnimationBlob::Func168C(Common::Array<uint8> &blob) {
 	return result;
 }
 
+
+int MacsAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	return 0;
+}
+
+bool MacsAudioStream::isStereo() const {
+	return false;
+}
+
+int MacsAudioStream::getRate() const {
+	return 0;
+}
+
+bool MacsAudioStream::endOfData() const {
+	return false;
+}
+
+bool MacsAudioStream::seek(const Audio::Timestamp &where) {
+	return false;
+}
+
+Audio::Timestamp MacsAudioStream::getLength() const {
+	return Audio::Timestamp();
+}
 
 } // End of namespace Macs2
 

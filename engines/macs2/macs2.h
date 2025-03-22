@@ -39,10 +39,55 @@
 #include "macs2/events.h"
 #include "macs2/script/scriptexecutor.h"
 #include <common/memstream.h>
+#include "audio/audiostream.h"
 
 namespace Macs2 {
 
-struct Macs2GameDescription;
+	class MacsAudioStream : public Audio::SeekableAudioStream {
+
+		virtual ~MacsAudioStream() {}
+
+		/**
+		 * Fill the given buffer with up to @p numSamples samples.
+		 *
+		 * Data must be in native endianness, 16 bits per sample, signed. For stereo
+		 * stream, the buffer will be filled with interleaved left and right channel
+		 * samples, starting with the left sample. Furthermore, the samples in the
+		 * left and right are summed up. So if you request 4 samples from a stereo
+		 * stream, you will get a total of two left channel and two right channel
+		 * samples.
+		 *
+		 * @return The actual number of samples read, or -1 if a critical error occurred.
+		 *
+		 * @note You *must* check whether the returned value is less than what you requested.
+		 *       This indicates that the stream is fully used up.
+		 *
+		 */
+		virtual int readBuffer(int16 *buffer, const int numSamples);
+
+		/** Check whether this is a stereo stream. */
+		virtual bool isStereo() const;
+
+		/** Sample rate of the stream. */
+		virtual int getRate() const;
+
+		/**
+		 * Check whether end of data has been reached.
+		 *
+		 * If this returns true, it indicates that at this time there is no data
+		 * available in the stream. However, there might be more data in the future.
+		 *
+		 * This is used by e.g. a rate converter to decide whether to keep on
+		 * converting data or to stop.
+		 */
+		virtual bool endOfData() const;
+	
+	virtual bool seek(const Audio::Timestamp &where);
+
+	virtual Audio::Timestamp getLength() const;
+	};
+
+	struct Macs2GameDescription;
 
 // enum class CursorMode { Talk = 0, Look = 1, Touch = 2, Walk = 3};
 class Adlib;
@@ -280,6 +325,8 @@ public:
 
 	// TODO: Arguments
 	void loadSongFromSceneData(uint8 dataIndex);
+
+	void playTestSound();
 
 	// Offset 50D3h - This is used in 0037:10C4 to terminate the loop
 	uint16 word50D3;
