@@ -103,39 +103,39 @@ void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera) 
 	debug("Change room to %s", targetRoomName.c_str());
 
 	// original would be to always free all resources from globalRoom, inventory, GlobalUI
+	// We don't do that, it is unnecessary, all resources would be loaded right after
+	// Instead we just keep resources loaded for all global rooms and during inventory/room transitions
+
 	if (targetRoomName.equalsIgnoreCase("SALIR")) {
 		_currentRoom = nullptr;
-		return;
+		return; // exiting game entirely
 	}
 
-	Room &inventory = g_engine->world().inventory();
-	bool keepResources;
-	if (_currentRoom == &inventory)
-		keepResources = _roomBeforeInventory != nullptr && _roomBeforeInventory->name().equalsIgnoreCase(targetRoomName);
-	else {
-		keepResources = _currentRoom != nullptr && _currentRoom->name().equalsIgnoreCase(targetRoomName);
-	}
 	_roomBeforeInventory = nullptr;
-	if (targetRoomName.equalsIgnoreCase("inventario")) {
-		keepResources = true;
-		_roomBeforeInventory = _currentRoom;
+	if (_currentRoom != nullptr) {
+		g_engine->scheduler().killProcessByName("ACTUALIZAR_" + _currentRoom->name());
+
+		bool keepResources =
+			_currentRoom->name().equalsIgnoreCase(targetRoomName) ||
+			_currentRoom->name().equalsIgnoreCase("inventario");
+		if (targetRoomName.equalsIgnoreCase("inventario")) {
+			keepResources = true;
+			_roomBeforeInventory = _currentRoom;
+		}
+		if (!keepResources)
+			_currentRoom->freeResources();
 	}
 
-	if (!keepResources && _currentRoom != nullptr) {
-		g_engine->scheduler().killProcessByName("ACTUALIZAR_" + _currentRoom->name());
-		_currentRoom->freeResources();
-	}
 	_currentRoom = g_engine->world().getRoomByName(targetRoomName);
 	if (_currentRoom == nullptr)
 		error("Invalid room name: %s", targetRoomName.c_str());
 
 	if (!_didLoadGlobalRooms) {
 		_didLoadGlobalRooms = true;
-		inventory.loadResources();
+		g_engine->world().inventory().loadResources();
 		g_engine->world().globalRoom().loadResources();
 	}
-	if (!keepResources)
-		_currentRoom->loadResources();
+	_currentRoom->loadResources(); // if we kept resources we loop over a couple noops, that is fine.
 
 	if (resetCamera)
 		g_engine->camera().resetRotationAndScale();
