@@ -549,9 +549,9 @@ ActionPanTrack::ActionPanTrack(ZVision *engine, int32 slotKey, const Common::Str
 	_resetMusicNode(true),
 	_resetMixerOnDelete(false),
 	_musicSlot(0) {
-	uint mag = 255;
-	uint resetMusicNode = 1;
-	uint resetMixerOnDelete = 0;
+	uint mag = 255;  //Original game scripts do not specify this, but require it to be 255 to work correctly.
+	uint resetMusicNode = 1;  //Original game scripts do not specify this, but require it to be true to work correctly.
+	uint resetMixerOnDelete = 0;  //Original game scripts do not specify this, but require it to be false to work correctly.
 	sscanf(line.c_str(), "%u %d %u %u %u", &_musicSlot, &_pos, &mag, &resetMusicNode, &resetMixerOnDelete);
 	_resetMusicNode = resetMusicNode > 0;
   _resetMixerOnDelete = resetMixerOnDelete > 0;

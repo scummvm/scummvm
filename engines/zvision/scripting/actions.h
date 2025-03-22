@@ -239,7 +239,7 @@ public:
 	bool execute() override;
 
 private:
-	int32 _pos; //Sound source position in panorama
+	int32 _pos; //Sound source position; NB in panoramas (all original game scripts), this is specified as the X background coordinate; otherwise it is specified in azimuth degrees.
 	uint8  _mag; //Magnitude of effect (not used by original game scripts); 255 for fully directional sound, 0 for fully ambient
 	bool _resetMusicNode; //If true (default, original game scripts have no concept of this), associated music slot value is reset to a value of 2 upon creation of this object; 
 	/*
