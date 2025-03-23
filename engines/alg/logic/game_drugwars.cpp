@@ -44,6 +44,12 @@ GameDrugWars::GameDrugWars(AlgEngine *vm, const AlgGameDescription *gd) : Game(v
 }
 
 GameDrugWars::~GameDrugWars() {
+	delete _shotIcon;
+	delete _emptyIcon;
+	delete _liveIcon;
+	delete _deadIcon;
+	delete _difficultyIcon;
+	delete _bulletholeIcon;
 }
 
 void GameDrugWars::init() {

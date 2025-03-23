@@ -44,6 +44,12 @@ GameCrimePatrol::GameCrimePatrol(AlgEngine *vm, const AlgGameDescription *gd) : 
 }
 
 GameCrimePatrol::~GameCrimePatrol() {
+	delete _shotIcon;
+	delete _emptyIcon;
+	delete _liveIcon;
+	delete _deadIcon;
+	delete _difficultyIcon;
+	delete _bulletholeIcon;
 }
 
 void GameCrimePatrol::init() {

@@ -42,8 +42,10 @@ Game::~Game() {
 	_libFileEntries.clear();
 	delete _rnd;
 	delete[] _palette;
-	delete _screen;
 	delete _background;
+	delete _screen;
+	delete _gun;
+	delete _numbers;
 	delete _videoDecoder;
 	delete _sceneInfo;
 }
