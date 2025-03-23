@@ -546,8 +546,7 @@ private:
 			g_engine->world().toggleObject(process().character(), getStringArg(0), false);
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::Animate: {
-			auto object = g_engine->world().getObjectByName(process().character(), getStringArg(0));
-			auto graphicObject = dynamic_cast<GraphicObject *>(object);
+			auto graphicObject = getObjectArg<GraphicObject>(0);
 			if (graphicObject == nullptr && !scumm_stricmp("EXPLOSION DISFRAZ", getStringArg(0)))
 				return TaskReturn::finish(1);
 			if (graphicObject == nullptr)
@@ -563,8 +562,7 @@ private:
 
 		// character control / animation
 		case ScriptKernelTask::StopAndTurn: {
-			auto object = g_engine->world().getObjectByName(process().character(), getStringArg(0));
-			auto character = dynamic_cast<WalkingCharacter *>(object);
+			auto character = getObjectArg<WalkingCharacter>(0);
 			if (character == nullptr)
 				error("Script tried to stop-and-turn unknown character");
 			else
@@ -592,11 +590,10 @@ private:
 				: TaskReturn::waitFor(character->waitForArrival(process()));
 		}
 		case ScriptKernelTask::Put: {
-			auto characterObject = g_engine->world().getObjectByName(process().character(), getStringArg(0));
-			auto character = dynamic_cast<WalkingCharacter *>(characterObject);
+			auto character = getObjectArg<WalkingCharacter>(0);
 			if (character == nullptr)
 				error("Script tried to put invalid character: %s", getStringArg(0));
-			auto target = dynamic_cast<PointObject *>(g_engine->world().getObjectByName(process().character(), getStringArg(1)));
+			auto target = getObjectArg<PointObject>(1);
 			if (target == nullptr && !exceptionsForPut(target, getStringArg(1)))
 				return TaskReturn::finish(2);
 			if (target == nullptr)
@@ -605,7 +602,7 @@ private:
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::ChangeCharacterRoom: {
-			auto *character = dynamic_cast<Character *>(g_engine->world().globalRoom().getObjectByName(getStringArg(0)));
+			auto *character = getObjectArg<Character>(0);
 			if (character == nullptr)
 				error("Invalid character name: %s", getStringArg(0));
 			auto *targetRoom = g_engine->world().getRoomByName(getStringArg(1));
@@ -616,7 +613,7 @@ private:
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::LerpCharacterLodBias: {
-			auto *character = dynamic_cast<Character *>(g_engine->world().globalRoom().getObjectByName(getStringArg(0)));
+			auto *character = getObjectArg<Character>(0);
 			if (character == nullptr)
 				error("Invalid character name: %s", getStringArg(0));
 			float targetLodBias = getNumberArg(1) * 0.01f;
@@ -630,10 +627,10 @@ private:
 				return TaskReturn::waitFor(character->lerpLodBias(process(), targetLodBias, durationMs));
 		}
 		case ScriptKernelTask::AnimateCharacter: {
-			auto *character = dynamic_cast<Character *>(g_engine->world().getObjectByName(getStringArg(0)));
+			auto *character = getObjectArg<Character>(0);
 			if (character == nullptr)
 				error("Invalid character name: %s", getStringArg(0));
-			auto *animObject = g_engine->world().getObjectByName(getStringArg(1));
+			auto *animObject = getObjectArg(1);
 			if (animObject == nullptr && (
 				!scumm_stricmp("COGE F DCH", getStringArg(1)) ||
 				!scumm_stricmp("CHIQUITO_IZQ", getStringArg(1))))
@@ -643,14 +640,14 @@ private:
 			return TaskReturn::waitFor(character->animate(process(), animObject));
 		}
 		case ScriptKernelTask::AnimateTalking: {
-			auto *character = dynamic_cast<Character *>(g_engine->world().getObjectByName(getStringArg(0)));
+			auto *character = getObjectArg<Character>(0);
 			if (character == nullptr)
 				error("Invalid character name: %s", getStringArg(0));
 			const char *talkObjectName = getStringArg(1);
 			ObjectBase *talkObject = nullptr;
 			if (talkObjectName != nullptr && *talkObjectName)
 			{
-				talkObject = g_engine->world().getObjectByName(talkObjectName);
+				talkObject = getObjectArg(1);
 				if (talkObject == nullptr)
 					error("Invalid talk object name: %s", talkObjectName);
 			}
@@ -661,21 +658,21 @@ private:
 			const char *characterName = getStringArg(0);
 			int32 dialogId = getNumberArg(1);
 			if (strncmp(characterName, "MENU_", 5) == 0) {
-				g_engine->world().getMainCharacterByKind(process().character()).addDialogLine(dialogId);
+				relatedCharacter().addDialogLine(dialogId);
 				return TaskReturn::finish(1);
 			}
 			Character *_character = strcmp(characterName, "AMBOS") == 0
-				? &g_engine->world().getMainCharacterByKind(process().character())
-				: dynamic_cast<Character *>(g_engine->world().getObjectByName(characterName));
+				? &relatedCharacter()
+				: getObjectArg<Character>(0);
 			if (_character == nullptr)
 				error("Invalid character for sayText: %s", characterName);
 			return TaskReturn::waitFor(_character->sayText(process(), dialogId));
 		};
 		case ScriptKernelTask::SetDialogLineReturn:
-			g_engine->world().getMainCharacterByKind(process().character()).setLastDialogReturnValue(getNumberArg(0));
+			relatedCharacter().setLastDialogReturnValue(getNumberArg(0));
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::DialogMenu:
-			return TaskReturn::waitFor(g_engine->world().getMainCharacterByKind(process().character()).dialogMenu(process()));
+			return TaskReturn::waitFor(relatedCharacter().dialogMenu(process()));
 
 		// Inventory control
 		case ScriptKernelTask::Pickup:
@@ -739,8 +736,7 @@ private:
 		case ScriptKernelTask::LerpCamToObjectKeepingZ: {
 			if (!process().isActiveForPlayer())
 				return TaskReturn::finish(0); // contrary to ...ResettingZ this one does not delay if not active
-			auto object = g_engine->world().getObjectByName(process().character(), getStringArg(0));
-			auto pointObject = dynamic_cast<PointObject *>(object);
+			auto pointObject = getObjectArg<PointObject>(0);
 			if (pointObject == nullptr)
 				error("Invalid target object for LerpCamToObjectKeepingZ: %s", getStringArg(0));
 			return TaskReturn::waitFor(g_engine->camera().lerpPos(process(),
@@ -750,8 +746,7 @@ private:
 		case ScriptKernelTask::LerpCamToObjectResettingZ: {
 			if (!process().isActiveForPlayer())
 				return TaskReturn::waitFor(delay(getNumberArg(1)));
-			auto object = g_engine->world().getObjectByName(process().character(), getStringArg(0));
-			auto pointObject = dynamic_cast<PointObject *>(object);
+			auto pointObject = getObjectArg<PointObject>(0);
 			if (pointObject == nullptr)
 				error("Invalid target object for LerpCamToObjectResettingZ: %s", getStringArg(0));
 			return TaskReturn::waitFor(g_engine->camera().lerpPos(process(),
@@ -761,8 +756,7 @@ private:
 		case ScriptKernelTask::LerpCamToObjectWithScale: {
 			if (!process().isActiveForPlayer())
 				return TaskReturn::waitFor(delay(getNumberArg(2)));
-			auto object = g_engine->world().getObjectByName(process().character(), getStringArg(0));
-			auto pointObject = dynamic_cast<PointObject *>(object);
+			auto pointObject = getObjectArg<PointObject>(0);
 			if (pointObject == nullptr)
 				error("Invalid target object for LerpCamToObjectWithScale: %s", getStringArg(0));
 			return TaskReturn::waitFor(g_engine->camera().lerpPosScale(process(),
