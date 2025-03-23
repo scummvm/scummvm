@@ -520,6 +520,7 @@ bool WageEngine::handleMoveCommand(Directions dir, const char *dirName) {
 			if (strlen(msg) > 0) {
 				appendText(msg);
 			}
+			_soundQueue.clear();
 			_world->move(_world->_player, scene);
 			return true;
 		}
