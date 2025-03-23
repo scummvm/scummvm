@@ -26,7 +26,7 @@
 
 #include "graphics/cursorman.h"
 
-#include "alg/game_crimepatrol.h"
+#include "alg/logic/game_crimepatrol.h"
 #include "alg/graphics.h"
 #include "alg/scene.h"
 

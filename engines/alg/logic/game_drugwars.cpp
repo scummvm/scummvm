@@ -26,7 +26,7 @@
 
 #include "graphics/cursorman.h"
 
-#include "alg/game_drugwars.h"
+#include "alg/logic/game_drugwars.h"
 #include "alg/graphics.h"
 #include "alg/scene.h"
 

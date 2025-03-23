@@ -24,13 +24,13 @@
 #include "alg/alg.h"
 #include "alg/detection.h"
 #include "alg/game.h"
-#include "alg/game_bountyhunter.h"
-#include "alg/game_crimepatrol.h"
-#include "alg/game_drugwars.h"
-#include "alg/game_johnnyrock.h"
-#include "alg/game_maddog.h"
-#include "alg/game_maddog2.h"
-#include "alg/game_spacepirates.h"
+#include "alg/logic/game_bountyhunter.h"
+#include "alg/logic/game_crimepatrol.h"
+#include "alg/logic/game_drugwars.h"
+#include "alg/logic/game_johnnyrock.h"
+#include "alg/logic/game_maddog.h"
+#include "alg/logic/game_maddog2.h"
+#include "alg/logic/game_spacepirates.h"
 
 namespace Alg {
 
