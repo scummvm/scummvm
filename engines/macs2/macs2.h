@@ -44,6 +44,12 @@
 namespace Macs2 {
 
 	class MacsAudioStream : public Audio::SeekableAudioStream {
+public:
+		Common::MemoryReadStream *_fileStream;
+
+		int64 startPosition;
+		int64 length;
+		int64 pos;
 
 		virtual ~MacsAudioStream() {}
 
