@@ -158,9 +158,7 @@ void BatQT::m_open(int nargs) {
 			 if (g_director->_pixelformat.bytesPerPixel == 1) {
 				// Director supports playing back RGB and paletted video in 256 colour mode.
 				// In both cases they are dithered to match the Director palette.
-				byte palette[256 * 3];
-				g_system->getPaletteManager()->grabPalette(palette, 0, 256);
-				me->_video->setDitheringPalette(palette);
+				me->_video->setDitheringPalette(g_director->getPalette());
 			 }
 		} else {
 			warning("BatQT::m_open: Could not load QT file %s", normPath.toString().c_str());

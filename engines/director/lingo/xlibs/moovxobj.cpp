@@ -162,9 +162,7 @@ void MoovXObj::m_playMovie(int nargs) {
 	if (result && g_director->_pixelformat.bytesPerPixel == 1) {
 		// Director supports playing back RGB and paletted video in 256 colour mode.
 		// In both cases they are dithered to match the Director palette.
-		byte palette[256 * 3];
-		g_system->getPaletteManager()->grabPalette(palette, 0, 256);
-		me->_video->setDitheringPalette(palette);
+		me->_video->setDitheringPalette(g_director->getPalette());
 	}
 	me->_video->start();
 }
