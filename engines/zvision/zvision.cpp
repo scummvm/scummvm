@@ -72,11 +72,11 @@ struct zvisionIniSettings {
 	{"installlevel", StateKey_InstallLevel, 0, false, false},	// 0 = full, checked by universe.scr
 	{"debugcheats", StateKey_DebugCheats, -1, true, false},	// always start with the GOxxxx cheat enabled
 	// Editable settings
-	{"highquality", StateKey_HighQuality, -1, true, false},	// high panorama quality
 	{"qsoundenabled", StateKey_Qsound, -1, true, true},	// 1 = enable generic directional audio and non-linear volume scaling.  Genuine Qsound is copyright & unlikely to be implemented.
 	{"keyboardturnspeed", StateKey_KbdRotateSpeed, 5, false, true},
 	{"panarotatespeed", StateKey_RotateSpeed, 540, false, true},	// checked by universe.scr
 	{"noanimwhileturning", StateKey_NoTurnAnim, -1, false, true},	// toggle playing animations during pana rotation
+	{"highquality", StateKey_HighQuality, -1, true, false},	// high panorama quality; enables bilinear filtering in RenderTable
 	{"venusenabled", StateKey_VenusEnable, -1, true, true},
 	{"subtitles", StateKey_Subtitles, -1, true, true},
 	{"mpegmovies", StateKey_MPEGMovies, -1, true, true}		// Zork: Grand Inquisitor DVD hi-res MPEG movies (0 = normal, 1 = hires, 2 = disable option)
@@ -257,6 +257,9 @@ void ZVision::initialize() {
 
 	// Initialize FPS timer callback
 	getTimerManager()->installTimerProc(&fpsTimerCallback, 1000000, this, "zvisionFPS");
+
+  //Ensure a new game is launched with correct panorama quality setting
+  _scriptManager->setStateValue(StateKey_HighQuality, ConfMan.getBool("highquality"));
 }
 
 extern const FontStyle getSystemFont(int fontIndex);

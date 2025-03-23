@@ -112,6 +112,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_HQ_PANORAMA,
+		{
+			_s("Enable high quality panoramas"),
+			_s("Apply bilinear filtering to panoramic backgrounds."),
+			"highquality",
+			true,
+			0,
+			0
+		}
+	},
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };

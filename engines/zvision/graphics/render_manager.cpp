@@ -213,7 +213,7 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly) {
 	    case RenderTable::PANORAMA:
 	    case RenderTable::TILT:
 		    if (!_backgroundSurfaceDirtyRect.isEmpty()) {
-			    _renderTable.mutateImage(&_warpedSceneSurface, in);
+			    _renderTable.mutateImage(&_warpedSceneSurface, in, _engine->getScriptManager()->getStateValue(StateKey_HighQuality));
 			    out = &_warpedSceneSurface;
 			    outWndDirtyRect = Common::Rect(_workingArea.width(), _workingArea.height());
 		    }
