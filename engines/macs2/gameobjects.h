@@ -104,6 +104,10 @@ public:
 	// les di, [di + 77Ch]
 	Common::Array<GameObject*> Objects;
 
+	Common::Array<Common::String> ObjectNames;
+
+	void Init();
+
 	static GameObject *GetProtagonistObject();
 
 	static GameObject *GetObjectByIndex(uint16 index);

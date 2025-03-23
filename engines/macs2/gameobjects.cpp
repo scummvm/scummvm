@@ -97,6 +97,19 @@ Common::Array<uint8> Macs2::Scenes::ReadSpecialAnimBlob(uint16 index, Common::Me
 	return result;
 }
 
+void Macs2::GameObjects::Init() {
+	ObjectNames.resize(0xFF);
+	// TODO: Make a text file instead
+	ObjectNames[0x10] = "Holzfass"; // leer
+	ObjectNames[0x11] = "Bowiemesser";
+	ObjectNames[0x17] = "Hutschachtel"; // leer und offen
+	ObjectNames[0x18] = "Damenhut"; // Mit Schleier
+	ObjectNames[0x1a] = "Eimer"; // leer
+	ObjectNames[0x1b] = "Feuerhaken";
+	ObjectNames[0x23] = "Tasse"; // leer
+	ObjectNames[0x24] = "Axt";
+}
+
 // TODO: Add all to namespace?
 Macs2::GameObject *Macs2::GameObjects::GetProtagonistObject() {
 	return instance().GetObjectByIndex(1);
