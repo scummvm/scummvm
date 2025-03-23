@@ -37,6 +37,14 @@ GameMaddog::GameMaddog(AlgEngine *vm, const AlgGameDescription *gd) : Game(vm) {
 }
 
 GameMaddog::~GameMaddog() {
+	delete _shotIcon;
+	delete _emptyIcon;
+	delete _liveIcon;
+	delete _deadIcon;
+	delete _reloadIcon;
+	delete _drawIcon;
+	delete _knifeIcon;
+	delete _bulletholeIcon;
 }
 
 void GameMaddog::init() {

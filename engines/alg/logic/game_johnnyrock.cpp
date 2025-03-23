@@ -41,6 +41,9 @@ GameJohnnyRock::GameJohnnyRock(AlgEngine *vm, const AlgGameDescription *gd) : Ga
 }
 
 GameJohnnyRock::~GameJohnnyRock() {
+	delete _difficultyIcon;
+	delete _levelIcon;
+	delete _bulletholeIcon;
 }
 
 void GameJohnnyRock::init() {

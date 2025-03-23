@@ -68,11 +68,17 @@ void AlgVideoDecoder::loadVideoFromStream(uint32 offset) {
 	assert(typeInterHh == 0x0d);
 	assert(typeIntraHhv == 0x0e);
 	assert(typeInterHhv == 0x0f);
+	_currentChunk = 0;
+	_bytesLeft = _size - chunkSize - 6;
+	if (_frame != nullptr) {
+		delete _frame;
+	}
+	if (_audioStream != nullptr) {
+		delete _audioStream;
+	}
 	_frame = new Graphics::Surface();
 	_frame->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
 	_audioStream = makePacketizedRawStream(8000, Audio::FLAG_UNSIGNED);
-	_currentChunk = 0;
-	_bytesLeft = _size - chunkSize - 6;
 }
 
 void AlgVideoDecoder::skipNumberOfFrames(uint32 num) {

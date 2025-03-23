@@ -44,6 +44,14 @@ GameSpacePirates::GameSpacePirates(AlgEngine *vm, const AlgGameDescription *gd) 
 }
 
 GameSpacePirates::~GameSpacePirates() {
+	delete _shotIcon;
+	delete _emptyIcon;
+	delete _deadIcon;
+	delete _liveIcon1;
+	delete _liveIcon2;
+	delete _liveIcon3;
+	delete _difficultyIcon;
+	delete _bulletholeIcon;
 }
 
 void GameSpacePirates::init() {

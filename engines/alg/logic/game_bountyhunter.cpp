@@ -42,6 +42,19 @@ GameBountyHunter::GameBountyHunter(AlgEngine *vm, const AlgGameDescription *gd) 
 }
 
 GameBountyHunter::~GameBountyHunter() {
+	delete _shotIcon;
+	delete _emptyIcon;
+	delete _liveIcon;
+	delete _deadIcon;
+	delete _diffIcon;
+	delete _bulletholeIcon;
+	delete _playersIcon1;
+	delete _playersIcon2;
+	delete _textScoreIcon;
+	delete _textMenuIcon;
+	delete _textBlackBarIcon;
+	delete _bagsIcons;
+	delete _shotgun;
 }
 
 void GameBountyHunter::init() {

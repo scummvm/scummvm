@@ -31,6 +31,8 @@ SceneInfo::SceneInfo() {
 }
 
 SceneInfo::~SceneInfo() {
+	_scenes.clear();
+	_zones.clear();
 }
 
 void SceneInfo::loadScnFile(const Common::Path &path) {
