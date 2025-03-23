@@ -265,9 +265,12 @@ void WageEngine::setMenu(Common::String menu) {
 void WageEngine::appendText(const char *str) {
 	Common::String s(str);
 
-	s += '\n';
+	// HACK: Added here because sometimes empty strings would be passed, leading to extra newlines
+	if (!s.empty()){
+		s += '\n';
 
-	_gui->appendText(s.c_str());
+		_gui->appendText(s.c_str());
+	}
 
 	_inputText.clear();
 }
