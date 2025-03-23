@@ -37,7 +37,6 @@
 #include "image/tga.h"
 
 #include "graphics/blit.h"
-#include "graphics/framelimiter.h"
 
 //FOR BUG TEST ONLY
 #include "common/debug.h"
@@ -59,7 +58,8 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
 	  _backgroundOffset(0),
 	  _renderTable(engine, _layout.workingArea.width(), _layout.workingArea.height(), pixelFormat),
 	  _doubleFPS(doubleFPS),
-	  _widescreen(widescreen) {
+	  _widescreen(widescreen),
+	  frameLimiter(engine->_system, doubleFPS ? 60 : 30) {
 	debug(1,"creating render manager");
   //Define graphics modes & screen subarea geometry
 	Graphics::ModeList modes;
@@ -228,16 +228,23 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly) {
 	}
 	_menuManagedSurface.transBlitFrom(_menuSurface, -1);
   _textManagedSurface.transBlitFrom(_textSurface, -1);
-  if(_engine->canRender() || immediate) {
+  if(immediate) {
+    frameLimiter.startFrame();
     _screen.update();
-    debug(10,"~renderSceneToScreen");
+    debug(10,"~renderSceneToScreen, immediate");
+    return true;
+  }
+  else if (_engine->canRender()) {
+    frameLimiter.delayBeforeSwap();
+    frameLimiter.startFrame();
+    _screen.update();
+    debug(10,"~renderSceneToScreen, frame limited");
     return true;
   }
   else {
     debug(4,"Skipping screen update; engine forbids rendering at this time.");
-    debug(10,"~renderSceneToScreen");
     return false;
-  }
+  };
 }
 
 Graphics::ManagedSurface &RenderManager::getVidSurface(Common::Rect &dstRect) {
