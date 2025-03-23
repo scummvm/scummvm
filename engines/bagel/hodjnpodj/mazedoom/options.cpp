@@ -53,10 +53,10 @@ Options::Options() : View("MazeDoomOptions"),
 		_difficultyTitleRect(LEFT_SIDE, 45, LEFT_SIDE + 80, 70),
 		_difficultyRect(LEFT_SIDE, 65, LEFT_SIDE + 170, 80),
 		_timeRect(LEFT_SIDE, 115, LEFT_SIDE + 100, 130),
-		_difficultyScroll("Difficulty", DialogRect(8, 15, 50, 65, 10), this),
-		_timeScroll("Time", DialogRect(8, 15, 80, 65, 10), this),
-		_okButton(DialogRect(8, 85, 59, 30, 14), this),
-		_cancelButton(DialogRect(8, 85, 80, 30, 15), this),
+		_difficultyScroll("Difficulty", DialogRect(15, 50, 65, 10), this),
+		_timeScroll("Time", DialogRect(15, 80, 65, 10), this),
+		_okButton(DialogRect(85, 59, 30, 14), this),
+		_cancelButton(DialogRect(85, 80, 30, 15), this),
 		_settings(g_engine->_settings["MazeDoom"]) {
 
 	_difficultyScroll.setScrollRange(MIN_DIFFICULTY, MAX_DIFFICULTY, 0);

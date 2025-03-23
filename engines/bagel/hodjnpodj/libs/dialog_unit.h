@@ -28,24 +28,40 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+constexpr double X_FACTOR = 4.6;
+
 struct DialogPoint : public Common::Point {
 public:
+	DialogPoint(int xx, int yy) {
+		GfxSurface s;
+		s.setFontSize(8);
+		this->x = (xx * s.getStringWidth("X")) / X_FACTOR;
+		this->y = (yy * s.getStringHeight()) / 8;
+	}
 	DialogPoint(int fontSize, int xx, int yy) {
 		GfxSurface s;
 		s.setFontSize(fontSize);
-		this->x = (xx * s.getStringWidth("X")) / 4;
+		this->x = (xx * s.getStringWidth("X")) / X_FACTOR;
 		this->y = (yy * s.getStringHeight()) / 8;
 	}
 };
 
 struct DialogRect : public Common::Rect {
 public:
+	DialogRect(int x, int y, int w, int h) {
+		GfxSurface s;
+		s.setFontSize(8);
+		left = (x * s.getStringWidth("X")) / X_FACTOR;
+		top = (y * s.getStringHeight()) / 8;
+		right = left + (w * s.getStringWidth("X")) / X_FACTOR;
+		bottom = top + (h * s.getStringHeight()) / 8;
+	}
 	DialogRect(int fontSize, int x, int y, int w, int h) {
 		GfxSurface s;
 		s.setFontSize(fontSize);
-		left = (x * s.getStringWidth("X")) / 4;
+		left = (x * s.getStringWidth("X")) / X_FACTOR;
 		top = (y * s.getStringHeight()) / 8;
-		right = left + (w * s.getStringWidth("X")) / 4;
+		right = left + (w * s.getStringWidth("X")) / X_FACTOR;
 		bottom = top + (h * s.getStringHeight()) / 8;
 	}
 };

@@ -40,10 +40,10 @@ Options::Options() : View("FugeOptions"),
 			Common::Rect(22, 105, 92, 123), this),
 		_paddleSizeScroll("PaddleSize",
 			Common::Rect(22, 140, 92, 158), this),
-		_okButton(DialogRect(8, 87, 16, 31, 14), this),
-		_cancelButton(DialogRect(8, 87, 32, 31, 14), this),
-		_defaultsButton(DialogRect(8, 87, 48, 31, 14), this),
-		_outerWallCheck("OuterWall", DialogRect(8, 67, 84, 52, 11), this),
+		_okButton(DialogRect(87, 16, 31, 14), this),
+		_cancelButton(DialogRect(87, 32, 31, 14), this),
+		_defaultsButton(DialogRect(87, 48, 31, 14), this),
+		_outerWallCheck("OuterWall", DialogRect(67, 84, 52, 11), this),
 		_settings(g_engine->_settings["Fuge"]) {
 
 	_numBallsScroll.setScrollRange(BALLS_MIN, BALLS_MAX);
