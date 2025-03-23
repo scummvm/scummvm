@@ -61,7 +61,7 @@ protected:
 	}
 
 public:
-	Common::HashMap<int, Graphics::WinFont> _fonts;
+	Common::HashMap<int, Graphics::Font *> _fonts;
 	Metagame::CBfcMgr _metaGame;
 	Metagame::SCORESTRUCT _topScores[10];
 	Settings _settings;

@@ -108,6 +108,7 @@ MODULE_OBJS = \
 	hodjnpodj/console.o \
 	hodjnpodj/events.o \
 	hodjnpodj/messages.o \
+	hodjnpodj/gfx/bold_font.o \
 	hodjnpodj/gfx/button.o \
 	hodjnpodj/gfx/scrollbar.o \
 	hodjnpodj/gfx/cursor.o \

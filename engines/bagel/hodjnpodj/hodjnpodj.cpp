@@ -29,6 +29,7 @@
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/console.h"
+#include "bagel/hodjnpodj/gfx/bold_font.h"
 #include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
 #include "bagel/music.h"
 
@@ -64,15 +65,20 @@ Common::Error HodjNPodjEngine::run() {
 
 	// Load the font
 	for (int size = 8; size <= 14; size += 2) {
-		if (!_fonts[size].loadFromFON("msserif.fon",
+		Graphics::WinFont *font = new Graphics::WinFont();
+		if (!font->loadFromFON("msserif.fon",
 				Graphics::WinFontDirEntry("MS Sans Serif", size)))
 			error("Could not load msserif.fon");
+		_fonts[size] = new Gfx::BoldFont(font);
 	}
 
 	_settings.load();
 
 	// Run the game
 	runGame();
+
+	for (int size = 8; size <= 14; size += 2)
+		delete _fonts[size];
 
 	_settings.save();
 	return Common::kNoError;

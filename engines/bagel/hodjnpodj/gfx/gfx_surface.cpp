@@ -176,7 +176,7 @@ void GfxSurface::writeString(const Common::String &text, const Common::Point &po
 		color = _textColor;
 	CONVERT_COLOR
 
-	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
+	Graphics::Font &font = *g_engine->_fonts[_fontSize];
 	font.drawString(this, text, pos.x, pos.y, this->w - pos.x,
 		color);
 }
@@ -188,7 +188,7 @@ void GfxSurface::writeString(const Common::String &text,
 		color = _textColor;
 	CONVERT_COLOR
 
-	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
+	Graphics::Font &font = *g_engine->_fonts[_fontSize];
 	font.drawString(this, text, bounds.left, bounds.top,
 		bounds.width(), color, justify);
 }
@@ -213,18 +213,18 @@ void GfxSurface::writeShadowedString(const Common::String &text,
 
 
 size_t GfxSurface::getStringWidth(const Common::String &text) const {
-	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
+	Graphics::Font &font = *g_engine->_fonts[_fontSize];
 	return font.getStringWidth(text);
 }
 
 size_t GfxSurface::getStringHeight() const {
-	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
+	Graphics::Font &font = *g_engine->_fonts[_fontSize];
 	return font.getFontHeight();
 }
 
 int GfxSurface::wordWrapText(const Common::String &str,
 		Common::StringArray &lines) const {
-	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
+	Graphics::Font &font = *g_engine->_fonts[_fontSize];
 	return font.wordWrapText(str, this->w, lines);
 }
 
