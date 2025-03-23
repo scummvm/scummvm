@@ -1191,7 +1191,7 @@ void Adlib::Init() {
 	gArray2235.resize(0x9);
 
 #define CALLBACKS_PER_SECOND 120
-	_opl->start(new Common::Functor0Mem<void, Adlib>(this, &Adlib::OnTimer), CALLBACKS_PER_SECOND);
+	// _opl->start(new Common::Functor0Mem<void, Adlib>(this, &Adlib::OnTimer), CALLBACKS_PER_SECOND);
 
 	// Func1A03();
 

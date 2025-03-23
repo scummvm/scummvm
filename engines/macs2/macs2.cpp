@@ -786,6 +786,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	}
 
 	// TODO: Other important areas
+	playTestSound();
 }
 
 bool Macs2Engine::FindGlyph(char c, GlyphData &out) const {
@@ -1315,7 +1316,11 @@ void Macs2Engine::playTestSound() {
 	Audio::Mixer *mixer = g_system->getMixer();
 	Audio::Mixer::SoundType soundType = Audio::Mixer::SoundType::kPlainSoundType;
 	Audio::SoundHandle soundHandle;
-	MacsAudioStream *audioStream;
+	MacsAudioStream *audioStream = new MacsAudioStream();
+	audioStream->_fileStream = _fileStream;
+	audioStream->startPosition = 0x000B66DE + 4;
+	audioStream->pos = 0;
+	audioStream->length = 0x1E42;
 	// TODO: Convert 8 bit to 16 signed 
 	mixer->playStream(soundType, &soundHandle, audioStream);
 	
@@ -1728,7 +1733,17 @@ uint16 BackgroundAnimationBlob::Func168C(Common::Array<uint8> &blob) {
 
 
 int MacsAudioStream::readBuffer(int16 *buffer, const int numSamples) {
-	return 0;
+	int numSamplesRead = 0;
+	_fileStream->seek(startPosition + pos, SEEK_SET);
+	for (int i = 0; i < numSamples; i++) {
+		if (pos >= length) {
+			return numSamplesRead;
+		}
+		buffer[i] = 0 + _fileStream->readByte();
+		numSamplesRead++;
+		pos++;
+	}
+	return numSamplesRead;
 }
 
 bool MacsAudioStream::isStereo() const {
@@ -1736,15 +1751,16 @@ bool MacsAudioStream::isStereo() const {
 }
 
 int MacsAudioStream::getRate() const {
-	return 0;
+	return 0x1F40;
 }
 
 bool MacsAudioStream::endOfData() const {
-	return false;
+	return pos >= length;
 }
 
 bool MacsAudioStream::seek(const Audio::Timestamp &where) {
-	return false;
+	// TODO: Figure this one out
+	return true;
 }
 
 Audio::Timestamp MacsAudioStream::getLength() const {
