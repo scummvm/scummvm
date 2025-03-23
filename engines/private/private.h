@@ -112,6 +112,17 @@ typedef struct CursorInfo {
 	Graphics::WinCursorGroup *winCursorGroup;
 } CursorInfo;
 
+typedef struct MemoryInfo {
+	Common::String image;
+	Common::String movie;
+} MemoryInfo;
+
+typedef struct DiaryPage {
+	Common::String locationName;
+	Common::Array<MemoryInfo> memories;
+	uint locationID;
+} DiaryPage;
+
 // funcs
 
 typedef struct FuncTable {
@@ -133,6 +144,7 @@ typedef Common::List<Common::String> InvList;
 // arrays
 
 typedef Common::Array<DossierInfo> DossierArray;
+typedef Common::Array<DiaryPage> DiaryPages;
 
 // hash tables
 
@@ -284,6 +296,18 @@ public:
 	void loadLocations(const Common::Rect &);
 	void loadInventory(uint32, const Common::Rect &, const Common::Rect &);
 	bool _toTake;
+	DiaryPages _diaryPages;
+	uint _currentDiaryPage;
+	ExitInfo _diaryNextPageExit;
+	ExitInfo _diaryPrevPageExit;
+	bool selectDiaryNextPage(Common::Point mousePos);
+	bool selectDiaryPrevPage(Common::Point mousePos);
+	void addMemory(Common::String path);
+	void loadMemories(const Common::Rect &rect, uint rightPageOffset, uint verticalOffset);
+	bool selectLocation(Common::Point mousePos);
+	Common::Array<MaskInfo> _locationMasks;
+	Common::Array<MaskInfo> _memoryMasks;
+	bool selectMemory(Common::Point mousePos);
 
 	// Save/Load games
 	MaskInfo _saveGameMask;
