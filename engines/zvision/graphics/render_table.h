@@ -69,7 +69,7 @@ private:
 	uint _numColumns, _numRows; //Working area width, height
   FilterPixel *_internalBuffer;
 	RenderState _renderState;
-	bool highQuality = true;
+	bool _highQuality = false;
 	const uint8 filterPasses = 2;
 	const Graphics::PixelFormat _pixelFormat;
 	uint16 avgL, avgH;
@@ -98,7 +98,7 @@ public:
 	const Common::Point convertWarpedCoordToFlatCoord(const Common::Point &point);  //input point in working area coordinates
 
 //	void mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect);
-  void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf);
+  void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool filter=false);
 	
 	inline uint16 avgPixels(uint16 &PixelA, uint16 &PixelB) {
 	  //NB Optimised & valid for RGB555 only!
