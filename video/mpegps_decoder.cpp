@@ -265,9 +265,8 @@ bool MPEGPSDecoder::MPEGPSDemuxer::loadStream(Common::SeekableReadStream *stream
 	// Check if the videostream being loaded is an elementary stream (ES) or a program stream (PS)
 	// PS streams start with the Pack Header which has a start code of 0x1ba
 	// ES streams start with the Sequence Header which has a start code of 0x1b3
-	int64 startPosition = stream->pos();
 	uint32 header = stream->readUint32BE();
-	stream->seek(startPosition);
+	stream->seek(-4, SEEK_CUR);
 
 	// If it is a Sequence Header (ES Stream), pass the stream to a Elementary Stream handler.
 	// If it is a Pack Header (PS stream), pass the stream to PS demuxer for demuxing into video and audio packets
