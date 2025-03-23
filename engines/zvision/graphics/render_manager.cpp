@@ -173,13 +173,15 @@ void RenderManager::initialize(bool hiRes) {
 }
 
 bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly) {
-  debug(10,"renderSceneToScreen");
+  debug(5,"\nrenderSceneToScreen");
+  uint32 startTime = _system->getMillis();
   if(!overlayOnly) {
 	  Graphics::Surface *out = &_warpedSceneSurface;
 	  Graphics::Surface *in = &_backgroundSurface;
 	  Common::Rect outWndDirtyRect;
 	  //Apply graphical effects to temporary effects buffer and/or directly to current background image, as appropriate
 	  if (!_effects.empty()) {
+	    debug(5,"Rendering effects");
 		  bool copied = false;
 		  const Common::Rect windowRect(_workingArea.width(), _workingArea.height());
 		  for (EffectsList::iterator it = _effects.begin(); it != _effects.end(); it++) {
@@ -208,11 +210,13 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly) {
 					  _backgroundSurfaceDirtyRect.extend(screenSpaceLocation);
 			  }
 		  }
+	    debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
 	  }
     //Apply panorama/tilt warp to background image
 	  switch(_renderTable.getRenderState()) {
 	    case RenderTable::PANORAMA:
 	    case RenderTable::TILT:
+	      debug(5,"Rendering panorama");
 		    if (!_backgroundSurfaceDirtyRect.isEmpty()) {
 			    _renderTable.mutateImage(&_warpedSceneSurface, in, _engine->getScriptManager()->getStateValue(StateKey_HighQuality));
 			    out = &_warpedSceneSurface;
@@ -223,21 +227,32 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly) {
 		    out = in;
 		    outWndDirtyRect = _backgroundSurfaceDirtyRect;
 		    break;
+      debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
     }
+    debug(5,"Rendering working area");
 	  _workingManagedSurface.simpleBlitFrom(*out); //TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
+    debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
 	}
+  debug(5,"Rendering menu");
 	_menuManagedSurface.transBlitFrom(_menuSurface, -1);
+  debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
+  debug(5,"Rendering text");
   _textManagedSurface.transBlitFrom(_textSurface, -1);
+  debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
   if(immediate) {
     frameLimiter.startFrame();
+    debug(5,"Updating screen");
     _screen.update();
+    debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
     debug(10,"~renderSceneToScreen, immediate");
     return true;
   }
   else if (_engine->canRender()) {
     frameLimiter.delayBeforeSwap();
     frameLimiter.startFrame();
+    debug(5,"Updating screen");
     _screen.update();
+    debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
     debug(10,"~renderSceneToScreen, frame limited");
     return true;
   }
@@ -716,7 +731,7 @@ Graphics::Surface *RenderManager::loadImage(const Common::Path &file, bool trans
 }
 
 void RenderManager::prepareBackground() {
-  debug(11,"prepareBackground()");
+  debug(5,"prepareBackground()");
 	_backgroundDirtyRect.clip(_backgroundWidth, _backgroundHeight);
   switch(_renderTable.getRenderState()) {
 	  case RenderTable::PANORAMA: {
