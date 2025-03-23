@@ -76,14 +76,14 @@ private:
 	SPScriptFunctionSceneMap _sceneMissedRects;
 
 	// images
-	Graphics::Surface _shotIcon;
-	Graphics::Surface _emptyIcon;
-	Graphics::Surface _deadIcon;
-	Graphics::Surface _liveIcon1;
-	Graphics::Surface _liveIcon2;
-	Graphics::Surface _liveIcon3;
-	Graphics::Surface _difficultyIcon;
-	Graphics::Surface _bulletholeIcon;
+	Graphics::Surface *_shotIcon;
+	Graphics::Surface *_emptyIcon;
+	Graphics::Surface *_deadIcon;
+	Graphics::Surface *_liveIcon1;
+	Graphics::Surface *_liveIcon2;
+	Graphics::Surface *_liveIcon3;
+	Graphics::Surface *_difficultyIcon;
+	Graphics::Surface *_bulletholeIcon;
 
 	// constants
 

@@ -86,15 +86,15 @@ void GameCrimePatrol::init() {
 
 	_gun = AlgGraphics::loadScreenCoordAniImage("gun.ani", _palette);
 	_numbers = AlgGraphics::loadAniImage("numbers.ani", _palette);
-	Common::Array<Graphics::Surface> *bullets = AlgGraphics::loadAniImage("bullets.ani", _palette);
+	auto bullets = AlgGraphics::loadAniImage("bullets.ani", _palette);
 	_shotIcon = (*bullets)[0];
 	_emptyIcon = (*bullets)[1];
-	Common::Array<Graphics::Surface> *lives = AlgGraphics::loadAniImage("lives.ani", _palette);
+	auto lives = AlgGraphics::loadAniImage("lives.ani", _palette);
 	_liveIcon = (*lives)[0];
 	_deadIcon = (*lives)[1];
-	Common::Array<Graphics::Surface> *difficlt = AlgGraphics::loadScreenCoordAniImage("difficlt.ani", _palette);
+	auto difficlt = AlgGraphics::loadScreenCoordAniImage("difficlt.ani", _palette);
 	_difficultyIcon = (*difficlt)[0];
-	Common::Array<Graphics::Surface> *hole = AlgGraphics::loadScreenCoordAniImage("hole.ani", _palette);
+	auto hole = AlgGraphics::loadScreenCoordAniImage("hole.ani", _palette);
 	_bulletholeIcon = (*hole)[0];
 
 	_background = AlgGraphics::loadVgaBackground("cp_menu.vga", _palette);
@@ -463,7 +463,7 @@ void GameCrimePatrol::showDifficulty(uint8 newDifficulty, bool cursor) {
 	// reset menu screen
 	_screen->copyRectToSurface(_background->getBasePtr(_videoPosX, _videoPosY), _background->pitch, _videoPosX, _videoPosY, _videoDecoder->getWidth(), _videoDecoder->getHeight());
 	uint16 posY = 0x45 + ((newDifficulty - 1) * 0x21);
-	AlgGraphics::drawImageCentered(_screen, &_difficultyIcon, 0x0115, posY);
+	AlgGraphics::drawImageCentered(_screen, _difficultyIcon, 0x0115, posY);
 	if (cursor) {
 		updateCursor();
 	}
@@ -475,7 +475,7 @@ void GameCrimePatrol::updateCursor() {
 
 void GameCrimePatrol::updateMouse() {
 	if (_oldWhichGun != _whichGun) {
-		Graphics::Surface *cursor = &(*_gun)[_whichGun];
+		Graphics::Surface *cursor = (*_gun)[_whichGun];
 		CursorMan.popAllCursors();
 		uint16 hotspotX = (cursor->w / 2) + 3;
 		uint16 hotspotY = (cursor->h / 2) + 3;
@@ -524,12 +524,12 @@ void GameCrimePatrol::displayLivesLeft() {
 	}
 	int posY = 0x67;
 	for (int i = 0; i < 3; i++) {
-		AlgGraphics::drawImage(_screen, &_deadIcon, 0x12F, posY);
+		AlgGraphics::drawImage(_screen, _deadIcon, 0x12F, posY);
 		posY += 0xE;
 	}
 	posY = 0x67;
 	for (int i = 0; i < _lives; i++) {
-		AlgGraphics::drawImage(_screen, &_liveIcon, 0x12F, posY);
+		AlgGraphics::drawImage(_screen, _liveIcon, 0x12F, posY);
 		posY += 0xE;
 	}
 	_oldLives = _lives;
@@ -543,7 +543,7 @@ void GameCrimePatrol::displayScores() {
 	int posX = 0x9B;
 	for (int i = 0; i < 5; i++) {
 		uint8 digit = scoreString[i] - '0';
-		AlgGraphics::drawImage(_screen, &(*_numbers)[digit], posX, 0xBF);
+		AlgGraphics::drawImage(_screen, (*_numbers)[digit], posX, 0xBF);
 		posX += 7;
 	}
 	_oldScore = _score;
@@ -555,12 +555,12 @@ void GameCrimePatrol::displayShotsLeft() {
 	}
 	uint16 posX = 0xEE;
 	for (int i = 0; i < 10; i++) {
-		AlgGraphics::drawImage(_screen, &_emptyIcon, posX, 0xBE);
+		AlgGraphics::drawImage(_screen, _emptyIcon, posX, 0xBE);
 		posX += 5;
 	}
 	posX = 0xEE;
 	for (int i = 0; i < _shots; i++) {
-		AlgGraphics::drawImage(_screen, &_shotIcon, posX, 0xBE);
+		AlgGraphics::drawImage(_screen, _shotIcon, posX, 0xBE);
 		posX += 5;
 	}
 	_oldShots = _shots;
@@ -625,7 +625,7 @@ void GameCrimePatrol::displayShotFiredImage(Common::Point *point) {
 	if (point->x >= _videoPosX && point->x <= (_videoPosX + _videoDecoder->getWidth()) && point->y >= _videoPosY && point->y <= (_videoPosY + _videoDecoder->getHeight())) {
 		uint16 targetX = point->x - _videoPosX;
 		uint16 targetY = point->y - _videoPosY;
-		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), &_bulletholeIcon, targetX, targetY);
+		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), _bulletholeIcon, targetX, targetY);
 	}
 }
 

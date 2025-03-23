@@ -86,9 +86,9 @@ void GameJohnnyRock::init() {
 	_gun = AlgGraphics::loadScreenCoordAniImage("gun.ani", _palette);
 	_numbers = AlgGraphics::loadAniImage("numbers.ani", _palette);
 	_difficultyIcon = AlgGraphics::loadAniImage("diff.ani", _palette);
-	Common::Array<Graphics::Surface> *level = AlgGraphics::loadScreenCoordAniImage("level.ani", _palette);
+	auto level = AlgGraphics::loadScreenCoordAniImage("level.ani", _palette);
 	_levelIcon = (*level)[0];
-	Common::Array<Graphics::Surface> *hole = AlgGraphics::loadScreenCoordAniImage("hole.ani", _palette);
+	auto hole = AlgGraphics::loadScreenCoordAniImage("hole.ani", _palette);
 	_bulletholeIcon = (*hole)[0];
 
 	_background = AlgGraphics::loadVgaBackground("backgrnd.vga", _palette);
@@ -540,7 +540,7 @@ void GameJohnnyRock::updateStat() {
 		Common::String buffer = Common::String::format("%05d", _score);
 		for (int i = 0; i < 5; i++) {
 			uint8 digit = buffer[i] - '0';
-			AlgGraphics::drawImage(_screen, &(*_numbers)[digit], (i * 7) + 0x7D, 0xBE);
+			AlgGraphics::drawImage(_screen, (*_numbers)[digit], (i * 7) + 0x7D, 0xBE);
 		}
 	}
 	if (_gameMoney != _oldGameMoney) {
@@ -548,7 +548,7 @@ void GameJohnnyRock::updateStat() {
 		Common::String buffer = Common::String::format("%04d", _gameMoney < 0 ? 0 : _gameMoney);
 		for (int i = 0; i < 4; i++) {
 			uint8 digit = buffer[i] - '0';
-			AlgGraphics::drawImage(_screen, &(*_numbers)[digit], (i * 7) + 0x43, 0xBE);
+			AlgGraphics::drawImage(_screen, (*_numbers)[digit], (i * 7) + 0x43, 0xBE);
 		}
 	}
 	if (_shots != _oldShots) {
@@ -556,10 +556,10 @@ void GameJohnnyRock::updateStat() {
 		Common::String buffer = Common::String::format("%04d", _shots);
 		for (int i = 0; i < 4; i++) {
 			uint8 digit = buffer[i] - '0';
-			AlgGraphics::drawImage(_screen, &(*_numbers)[digit], (i * 7) + 0x10A, 0xBE);
+			AlgGraphics::drawImage(_screen, (*_numbers)[digit], (i * 7) + 0x10A, 0xBE);
 		}
 	}
-	AlgGraphics::drawImage(_screen, &(*_difficultyIcon)[_difficulty - 1], 0xBA, 0xBE);
+	AlgGraphics::drawImage(_screen, (*_difficultyIcon)[_difficulty - 1], 0xBA, 0xBE);
 }
 
 void GameJohnnyRock::displayScore() {
@@ -569,7 +569,7 @@ void GameJohnnyRock::displayScore() {
 void GameJohnnyRock::showDifficulty(uint8 newDifficulty, bool cursor) {
 	// reset menu screen
 	_screen->copyRectToSurface(_background->getBasePtr(_videoPosX, _videoPosY), _background->pitch, _videoPosX, _videoPosY, _videoDecoder->getWidth(), _videoDecoder->getHeight());
-	AlgGraphics::drawImageCentered(_screen, &_levelIcon, _diffPos[newDifficulty][0], _diffPos[newDifficulty][1]);
+	AlgGraphics::drawImageCentered(_screen, _levelIcon, _diffPos[newDifficulty][0], _diffPos[newDifficulty][1]);
 	if (cursor) {
 		updateCursor();
 	}
@@ -591,7 +591,7 @@ void GameJohnnyRock::updateCursor() {
 
 void GameJohnnyRock::updateMouse() {
 	if (_oldWhichGun != _whichGun) {
-		Graphics::Surface *cursor = &(*_gun)[_whichGun];
+		Graphics::Surface *cursor = (*_gun)[_whichGun];
 		CursorMan.popAllCursors();
 		uint16 hotspotX = (cursor->w / 2);
 		uint16 hotspotY = (cursor->h / 2);
@@ -840,7 +840,7 @@ void GameJohnnyRock::defaultBullethole(Common::Point *point) {
 	if (point->x >= 14 && point->x <= 306 && point->y >= 5 && point->y <= 169) {
 		uint16 targetX = point->x - _videoPosX;
 		uint16 targetY = point->y - _videoPosY;
-		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), &_bulletholeIcon, targetX, targetY);
+		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), _bulletholeIcon, targetX, targetY);
 		updateCursor();
 		_shotFired = true;
 		doShot();

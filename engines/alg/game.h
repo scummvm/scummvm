@@ -61,8 +61,8 @@ protected:
 
 	Graphics::Surface *_background;
 	Graphics::Surface *_screen;
-	Common::Array<Graphics::Surface> *_gun;
-	Common::Array<Graphics::Surface> *_numbers;
+	Common::Array<Graphics::Surface *> *_gun;
+	Common::Array<Graphics::Surface *> *_numbers;
 
 	Audio::SeekableAudioStream *_saveSound = nullptr;
 	Audio::SeekableAudioStream *_loadSound = nullptr;

@@ -79,9 +79,9 @@ private:
 	JRScriptFunctionSceneMap _sceneNxtScn;
 
 	// images
-	Common::Array<Graphics::Surface> *_difficultyIcon;
-	Graphics::Surface _levelIcon;
-	Graphics::Surface _bulletholeIcon;
+	Common::Array<Graphics::Surface *> *_difficultyIcon;
+	Graphics::Surface *_levelIcon;
+	Graphics::Surface *_bulletholeIcon;
 
 	// constants
 	const int16 _randomRooftop[6] = {2, -4, 0x104, 0x1E, 0x100, 0x102};

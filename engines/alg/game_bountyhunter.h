@@ -76,19 +76,19 @@ private:
 	BHScriptFunctionSceneMap _sceneNxtScn;
 
 	// images
-	Graphics::Surface _shotIcon;
-	Graphics::Surface _emptyIcon;
-	Graphics::Surface _liveIcon;
-	Graphics::Surface _deadIcon;
-	Graphics::Surface _diffIcon;
-	Graphics::Surface _bulletholeIcon;
-	Graphics::Surface _playersIcon1;
-	Graphics::Surface _playersIcon2;
-	Graphics::Surface _textScoreIcon;
-	Graphics::Surface _textMenuIcon;
-	Graphics::Surface _textBlackBarIcon;
-	Common::Array<Graphics::Surface> *_bagsIcons;
-	Common::Array<Graphics::Surface> *_shotgun;
+	Graphics::Surface *_shotIcon;
+	Graphics::Surface *_emptyIcon;
+	Graphics::Surface *_liveIcon;
+	Graphics::Surface *_deadIcon;
+	Graphics::Surface *_diffIcon;
+	Graphics::Surface *_bulletholeIcon;
+	Graphics::Surface *_playersIcon1;
+	Graphics::Surface *_playersIcon2;
+	Graphics::Surface *_textScoreIcon;
+	Graphics::Surface *_textMenuIcon;
+	Graphics::Surface *_textBlackBarIcon;
+	Common::Array<Graphics::Surface *> *_bagsIcons;
+	Common::Array<Graphics::Surface *> *_shotgun;
 
 	// sounds
 	Audio::SeekableAudioStream *_shotgunSound = nullptr;

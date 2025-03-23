@@ -84,18 +84,18 @@ void GameBountyHunter::init() {
 	_gun = AlgGraphics::loadScreenCoordAniImage("bh_gun.ani", _palette);
 	_shotgun = AlgGraphics::loadScreenCoordAniImage("bh_buck.ani", _palette);
 	_numbers = AlgGraphics::loadAniImage("bh_num.ani", _palette);
-	Common::Array<Graphics::Surface> *bullets = AlgGraphics::loadAniImage("bh_ammo.ani", _palette);
+	auto bullets = AlgGraphics::loadAniImage("bh_ammo.ani", _palette);
 	_shotIcon = (*bullets)[0];
 	_emptyIcon = (*bullets)[1];
-	Common::Array<Graphics::Surface> *lives = AlgGraphics::loadAniImage("bh_life.ani", _palette);
+	auto lives = AlgGraphics::loadAniImage("bh_life.ani", _palette);
 	_liveIcon = (*lives)[0];
 	_deadIcon = (*lives)[1];
-	Common::Array<Graphics::Surface> *hole = AlgGraphics::loadScreenCoordAniImage("bh_hole.ani", _palette);
+	auto hole = AlgGraphics::loadScreenCoordAniImage("bh_hole.ani", _palette);
 	_bulletholeIcon = (*hole)[0];
-	Common::Array<Graphics::Surface> *players = AlgGraphics::loadAniImage("bh_plyr.ani", _palette);
+	auto players = AlgGraphics::loadAniImage("bh_plyr.ani", _palette);
 	_playersIcon1 = (*players)[0];
 	_playersIcon2 = (*players)[1];
-	Common::Array<Graphics::Surface> *text = AlgGraphics::loadAniImage("bh_text.ani", _palette);
+	auto text = AlgGraphics::loadAniImage("bh_text.ani", _palette);
 	_textScoreIcon = (*text)[0];
 	_textMenuIcon = (*text)[1];
 	_textBlackBarIcon = (*text)[2];
@@ -470,9 +470,9 @@ void GameBountyHunter::updateCursor() {
 
 void GameBountyHunter::updateMouse() {
 	if (_oldWhichGun != _whichGun) {
-		Graphics::Surface *cursor = &(*_gun)[_whichGun];
+		Graphics::Surface *cursor = (*_gun)[_whichGun];
 		if (_playerGun[0] == 2 && _whichGun < 2) {
-			cursor = &(*_shotgun)[_whichGun];
+			cursor = (*_shotgun)[_whichGun];
 		}
 		CursorMan.popAllCursors();
 		uint16 hotspotX = (cursor->w / 2) + 8;
@@ -522,12 +522,12 @@ void GameBountyHunter::displayLivesLeft(uint8 player) {
 	}
 	int posY = 0x67;
 	for (int i = 0; i < 3; i++) {
-		AlgGraphics::drawImage(_screen, &_deadIcon, 0x12F, posY);
+		AlgGraphics::drawImage(_screen, _deadIcon, 0x12F, posY);
 		posY += 0xE;
 	}
 	posY = 0x67;
 	for (int i = 0; i < _lives; i++) {
-		AlgGraphics::drawImage(_screen, &_liveIcon, 0x12F, posY);
+		AlgGraphics::drawImage(_screen, _liveIcon, 0x12F, posY);
 		posY += 0xE;
 	}
 	_oldLives = _lives;
@@ -541,7 +541,7 @@ void GameBountyHunter::displayScores(uint8 player) {
 	int posX = 0x9B;
 	for (int i = 0; i < 5; i++) {
 		uint8 digit = scoreString[i] - '0';
-		AlgGraphics::drawImage(_screen, &(*_numbers)[digit], posX, 0xBF);
+		AlgGraphics::drawImage(_screen, (*_numbers)[digit], posX, 0xBF);
 		posX += 7;
 	}
 	_oldScore = _score;
@@ -553,12 +553,12 @@ void GameBountyHunter::displayShotsLeft(uint8 player) {
 	}
 	uint16 posX = 0xEE;
 	for (int i = 0; i < 10; i++) {
-		AlgGraphics::drawImage(_screen, &_emptyIcon, posX, 0xBE);
+		AlgGraphics::drawImage(_screen, _emptyIcon, posX, 0xBE);
 		posX += 5;
 	}
 	posX = 0xEE;
 	for (int i = 0; i < _shots; i++) {
-		AlgGraphics::drawImage(_screen, &_shotIcon, posX, 0xBE);
+		AlgGraphics::drawImage(_screen, _shotIcon, posX, 0xBE);
 		posX += 5;
 	}
 	_oldShots = _shots;
@@ -635,7 +635,7 @@ void GameBountyHunter::displayShotFiredImage(Common::Point *point) {
 	if (point->x >= _videoPosX && point->x <= (_videoPosX + _videoDecoder->getWidth()) && point->y >= _videoPosY && point->y <= (_videoPosY + _videoDecoder->getHeight())) {
 		uint16 targetX = point->x - _videoPosX;
 		uint16 targetY = point->y - _videoPosY;
-		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), &_bulletholeIcon, targetX, targetY);
+		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), _bulletholeIcon, targetX, targetY);
 	}
 }
 
@@ -837,17 +837,17 @@ void GameBountyHunter::rectStart(Rect *rect) {
 void GameBountyHunter::rectTogglePlayers(Rect *rect) {
 	if (_numPlayers == 1) {
 		_numPlayers = 2;
-		AlgGraphics::drawImage(_screen, &_playersIcon2, 0xCE, 0x95);
-		AlgGraphics::drawImage(_screen, &_textBlackBarIcon, 0x78, 0xBF);
-		AlgGraphics::drawImage(_screen, &_textBlackBarIcon, 0x0C, 0xBF);
+		AlgGraphics::drawImage(_screen, _playersIcon2, 0xCE, 0x95);
+		AlgGraphics::drawImage(_screen, _textBlackBarIcon, 0x78, 0xBF);
+		AlgGraphics::drawImage(_screen, _textBlackBarIcon, 0x0C, 0xBF);
 		displayShotsLeft(1);
 		displayLivesLeft(1);
 	} else {
 		_numPlayers = 1;
-		AlgGraphics::drawImage(_screen, &_playersIcon1, 0xCE, 0x95);
-		AlgGraphics::drawImage(_screen, &_textScoreIcon, 0x78, 0xBF);
-		AlgGraphics::drawImage(_screen, &_textMenuIcon, 0x0C, 0xBF);
-		AlgGraphics::drawImage(_screen, &_textBlackBarIcon, 0x50, 0xBE);
+		AlgGraphics::drawImage(_screen, _playersIcon1, 0xCE, 0x95);
+		AlgGraphics::drawImage(_screen, _textScoreIcon, 0x78, 0xBF);
+		AlgGraphics::drawImage(_screen, _textMenuIcon, 0x0C, 0xBF);
+		AlgGraphics::drawImage(_screen, _textBlackBarIcon, 0x50, 0xBE);
 	}
 	doSkullSound();
 	_screen->copyRectToSurface(_background->getBasePtr(_videoPosX, _videoPosY), _background->pitch, _videoPosX, _videoPosY, _videoDecoder->getWidth(), _videoDecoder->getHeight());

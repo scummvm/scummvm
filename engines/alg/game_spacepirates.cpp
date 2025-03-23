@@ -94,15 +94,15 @@ void GameSpacePirates::init() {
 	_gun = AlgGraphics::loadScreenCoordAniImage("gun.ani", _palette);
 	_difficultyIcon = (*_gun)[1];
 	_numbers = AlgGraphics::loadAniImage("numbers.ani", _palette);
-	Common::Array<Graphics::Surface> *bullets = AlgGraphics::loadAniImage("bullets.ani", _palette);
+	auto bullets = AlgGraphics::loadAniImage("bullets.ani", _palette);
 	_shotIcon = (*bullets)[0];
 	_emptyIcon = (*bullets)[1];
-	Common::Array<Graphics::Surface> *lives = AlgGraphics::loadAniImage("lives.ani", _palette);
+	auto lives = AlgGraphics::loadAniImage("lives.ani", _palette);
 	_liveIcon1 = (*lives)[0];
 	_liveIcon2 = (*lives)[1];
 	_liveIcon3 = (*lives)[2];
 	_deadIcon = (*lives)[3];
-	Common::Array<Graphics::Surface> *hole = AlgGraphics::loadScreenCoordAniImage("hole.ani", _palette);
+	auto hole = AlgGraphics::loadScreenCoordAniImage("hole.ani", _palette);
 	_bulletholeIcon = (*hole)[0];
 
 	_background = AlgGraphics::loadVgaBackground("backgrnd.vga", _palette);
@@ -497,7 +497,7 @@ void GameSpacePirates::showDifficulty(uint8 newDifficulty, bool cursor) {
 	} else if (newDifficulty == 2) {
 		posY = 0x86;
 	}
-	AlgGraphics::drawImageCentered(_screen, &_difficultyIcon, 0x0111, posY);
+	AlgGraphics::drawImageCentered(_screen, _difficultyIcon, 0x0111, posY);
 	if (cursor) {
 		updateCursor();
 	}
@@ -509,7 +509,7 @@ void GameSpacePirates::updateCursor() {
 
 void GameSpacePirates::updateMouse() {
 	if (_oldWhichGun != _whichGun) {
-		Graphics::Surface *cursor = &(*_gun)[_whichGun];
+		Graphics::Surface *cursor = (*_gun)[_whichGun];
 		CursorMan.popAllCursors();
 		uint16 hotspotX = (cursor->w / 2) + 8;
 		uint16 hotspotY = (cursor->h / 2) + 10;
@@ -569,16 +569,16 @@ void GameSpacePirates::displayLivesLeft() {
 		margin = 13;
 	}
 	for (int i = 0; i < 3; i++) {
-		AlgGraphics::drawImage(_screen, &_deadIcon, posX, posY + (i * margin));
+		AlgGraphics::drawImage(_screen, _deadIcon, posX, posY + (i * margin));
 	}
 	if (_lives > 2) {
-		AlgGraphics::drawImage(_screen, &_liveIcon3, posX, posY + (margin * 2));
+		AlgGraphics::drawImage(_screen, _liveIcon3, posX, posY + (margin * 2));
 	}
 	if (_lives > 1) {
-		AlgGraphics::drawImage(_screen, &_liveIcon2, posX, posY + margin);
+		AlgGraphics::drawImage(_screen, _liveIcon2, posX, posY + margin);
 	}
 	if (_lives > 0) {
-		AlgGraphics::drawImage(_screen, &_liveIcon1, posX, posY);
+		AlgGraphics::drawImage(_screen, _liveIcon1, posX, posY);
 	}
 	_oldLives = _lives;
 }
@@ -591,7 +591,7 @@ void GameSpacePirates::displayScores() {
 	int posX = 0x71;
 	for (int i = 0; i < 5; i++) {
 		uint8 digit = scoreString[i] - '0';
-		AlgGraphics::drawImage(_screen, &(*_numbers)[digit], posX, 0xBF);
+		AlgGraphics::drawImage(_screen, (*_numbers)[digit], posX, 0xBF);
 		posX += 7;
 	}
 	_oldScore = _score;
@@ -603,12 +603,12 @@ void GameSpacePirates::displayShotsLeft() {
 	}
 	uint16 posX = 0xAA;
 	for (int i = 0; i < 10; i++) {
-		AlgGraphics::drawImage(_screen, &_emptyIcon, posX, 0xBF);
+		AlgGraphics::drawImage(_screen, _emptyIcon, posX, 0xBF);
 		posX += 8;
 	}
 	posX = 0xAA;
 	for (int i = 0; i < _shots; i++) {
-		AlgGraphics::drawImage(_screen, &_shotIcon, posX, 0xBF);
+		AlgGraphics::drawImage(_screen, _shotIcon, posX, 0xBF);
 		posX += 8;
 	}
 	_oldShots = _shots;
@@ -745,7 +745,7 @@ void GameSpacePirates::displayShotFiredImage(Common::Point *point) {
 	if (point->x >= _videoPosX && point->x <= (_videoPosX + _videoDecoder->getWidth()) && point->y >= _videoPosY && point->y <= (_videoPosY + _videoDecoder->getHeight())) {
 		uint16 targetX = point->x - _videoPosX - 4;
 		uint16 targetY = point->y - _videoPosY - 4;
-		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), &_bulletholeIcon, targetX, targetY);
+		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), _bulletholeIcon, targetX, targetY);
 	}
 }
 
@@ -1312,7 +1312,7 @@ void GameSpacePirates::sceneIsoPickAWorld(Scene *scene) {
 		if (_worldDone[world]) {
 			uint16 centerX = zone->_rects[i].left + (zone->_rects[i].width() / 2);
 			uint16 centerY = zone->_rects[i].top + (zone->_rects[i].height() / 2);
-			AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), &(*_gun)[2], centerX - 16, centerY - 24);
+			AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), (*_gun)[2], centerX - 16, centerY - 24);
 		}
 		world--;
 	}

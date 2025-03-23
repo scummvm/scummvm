@@ -79,14 +79,14 @@ private:
 	MDScriptFunctionSceneMap _sceneNxtScn;
 
 	// images
-	Graphics::Surface _shotIcon;
-	Graphics::Surface _emptyIcon;
-	Graphics::Surface _liveIcon;
-	Graphics::Surface _deadIcon;
-	Graphics::Surface _reloadIcon;
-	Graphics::Surface _drawIcon;
-	Graphics::Surface _knifeIcon;
-	Graphics::Surface _bulletholeIcon;
+	Graphics::Surface *_shotIcon;
+	Graphics::Surface *_emptyIcon;
+	Graphics::Surface *_liveIcon;
+	Graphics::Surface *_deadIcon;
+	Graphics::Surface *_reloadIcon;
+	Graphics::Surface *_drawIcon;
+	Graphics::Surface *_knifeIcon;
+	Graphics::Surface *_bulletholeIcon;
 
 	// constants
 	const uint16 _fight[3] = {208, 228, 243};
