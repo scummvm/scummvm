@@ -518,7 +518,7 @@ void AGOSEngine::delay(uint amount) {
 								_needHitAreaRecalc++;
 								ha = findBox(119); // Find a walkable area.
 								if (ha)
-									_lastHitArea = ha;
+									_lastHitArea = ha; // Assign to _lastHitArea.
 							} else {
 								// If not in fighting mode, switch to fighting mode
 								_mouseCursor = 3;
@@ -526,13 +526,27 @@ void AGOSEngine::delay(uint amount) {
 								ha = findBox(117); // Find the fight button's HitArea (ID 117).
 								if (ha)
 									_lastHitArea = ha; // Assign to _lastHitArea.
+
 							}
 						} else {
 							// Hotkey is NOT supported (HitAreas missing)
-							warning("Fighting mode hotkey (F) is not supported for this version of Waxworks (missing HitAreas).");
+							const char *missingHitArea = nullptr;
+							if (!fightButton && !walkButton) {
+								missingHitArea = "HitAreas 117 and 119 are missing.";
+							} else if (!fightButton) {
+								missingHitArea = "HitArea 119 exists but HitArea 117 is missing.";
+							} else if (!walkButton) {
+								missingHitArea = "HitArea 117 exists but HitArea 119 is missing.";
+							}
+
+							warning("Fighting mode hotkey (F) is not supported for this version of Waxworks. "
+									"%s GameID: %d, Language: %d",
+									missingHitArea, getGameId(), getLanguage());
 						}
 					} else {
-						warning("Fighting mode hotkey (F) is not supported for this version/language of Waxworks.");
+						warning("Fighting mode hotkey (F) is not supported for this version/language of Waxworks. "
+								"GameID: %d, Language: %d",
+								getGameId(), getLanguage());
 					}
 				}
 
