@@ -267,7 +267,7 @@ bool MacOSXAudioCDManager::findTrackNames(const Common::Path &drivePath) {
 	}
 
 	Common::FSList children;
-	if (!directory.getChildren(children, Common::FSNode::kListFilesOnly)) {
+	if (!directory.getChildren(children, Common::FSNode::kListFilesOnly) || children.empty()) {
 		warning("Failed to find children for '%s'", drivePath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
