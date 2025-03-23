@@ -422,6 +422,13 @@ private:
 		error("Expected optional string in argument %u for kernel call", argI);
 	}
 
+	template<class TObject = ObjectBase>
+	TObject *getObjectArg(uint argI) {
+		const char *const name = getStringArg(argI);
+		auto *object = g_engine->world().getObjectByName(process().character(), name);
+		return dynamic_cast<TObject*>(object);
+	}
+
 	MainCharacter &relatedCharacter() {
 		if (process().character() == MainCharacterKind::None)
 			error("Script tried to use character from non-character-related process");
@@ -567,12 +574,10 @@ private:
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::Go: {
-			auto characterObject = g_engine->world().getObjectByName(process().character(), getStringArg(0));
-			auto character = dynamic_cast<WalkingCharacter *>(characterObject);
+			auto character = getObjectArg<WalkingCharacter>(0);
 			if (character == nullptr)
 				error("Script tried to make invalid character go: %s", getStringArg(0));
-			auto targetObject = g_engine->world().getObjectByName(process().character(), getStringArg(1));
-			auto target = dynamic_cast<PointObject *>(targetObject);
+			auto target= getObjectArg<PointObject>(1);
 			if (target == nullptr)
 				error("Script tried to make character go to invalid object %s", getStringArg(1));
 			character->walkTo(target->position());
@@ -588,14 +593,10 @@ private:
 			auto characterObject = g_engine->world().getObjectByName(process().character(), getStringArg(0));
 			auto character = dynamic_cast<WalkingCharacter *>(characterObject);
 			if (character == nullptr)
-				error("Script tried to make invalid character put: %s", getStringArg(0));
+				error("Script tried to put invalid character: %s", getStringArg(0));
 			auto target = dynamic_cast<PointObject *>(g_engine->world().getObjectByName(process().character(), getStringArg(1)));
-			if (target == nullptr && !scumm_stricmp("A_Poblado_Indio", getStringArg(1))) {
-				// An original bug, A_Poblado_Indio is a Door but is originally cast into a PointObject, a pointer and the draw order is
-				// then interpreted as position and the character snapped onto the floor shape.
-				// Instead I just use the A_Poblado_Indio1 object which exists as counter-part for A_Poblado_Indio2 which should have been used
-				target = dynamic_cast<PointObject *>(g_engine->world().getObjectByName(process().character(), "A_Poblado_Indio1"));
-			}
+			if (target == nullptr && !exceptionsForPut(target, getStringArg(1)))
+				return TaskReturn::finish(2);
 			if (target == nullptr)
 				error("Script tried to make character put to invalid object %s", getStringArg(1));
 			character->setPosition(target->position());
@@ -821,6 +822,36 @@ private:
 		auto &character = g_engine->world().getMainCharacterByKind(kind);
 		character.resetUsingObjectAndDialogMenu();
 		assert(character.semaphore().isReleased()); // this process should be the last to hold a lock if at all...
+	}
+
+	/**
+	 * @brief Check for original bugs related to the Put kernel call and handle them 
+	 * @param target An out reference to the point object (maybe we can find an alternative one)
+	 * @param targetName The given name of the target object
+	 * @return false if the put kernel call should be ignored, true if we set target and want to continue with the kernel call
+	 */
+	bool exceptionsForPut(PointObject *&target, const char *targetName) {
+		assert(target == nullptr); // if not, why did we check for exceptions?
+
+		if (!scumm_stricmp("A_Poblado_Indio", targetName)) {
+			// A_Poblado_Indio is a Door but is originally cast into a PointObject
+			// a pointer and the draw order is then interpreted as position and the character snapped onto the floor shape.
+			// Instead I just use the A_Poblado_Indio1 object which exists as counter-part for A_Poblado_Indio2 which should have been used
+			target = dynamic_cast<PointObject *>(g_engine->world().getObjectByName(process().character(), "A_Poblado_Indio1"));
+		}
+
+		if (!scumm_stricmp("PUNTO_VENTANA", targetName)) {
+			// The object is in the previous, now inactive room.
+			// Luckily Mortadelo already is at that point so not further action required
+			return false;
+		}
+
+		if (!scumm_stricmp("Puerta_Casa_Freddy_Intermedia", targetName)) {
+			// Another case of a door being cast into a PointObject
+			return false;
+		}
+
+		return true;
 	}
 
 	Script &_script;

@@ -271,10 +271,14 @@ void Character::onClick() {
 
 void Character::trigger(const char *action) {
 	g_engine->player().activeCharacter()->stopWalking(_interactionDirection);
-	if (scumm_stricmp(action, "iSABANA") == 0 && // Original hack probably to fix some bug :)
+	if (scumm_stricmp(action, "iSABANA") == 0 &&
 		dynamic_cast<MainCharacter *>(this) != nullptr &&
-		room()->name().equalsIgnoreCase("CASA_FREDDY_ARRIBA"))
-		error("Not sure what *should* happen. How do we get here?");
+		!room()->name().equalsIgnoreCase("CASA_FREDDY_ARRIBA")) {
+		// An original hack to check that we use the bed sheet on the main character only in the correct room
+		// There *is* another script variable (es_casa_freddy) that should check this
+		// but, I guess, Alcachofa Soft found a corner case where this does not work?
+		return;
+	}
 	g_engine->player().triggerObject(this, action);
 }
 
