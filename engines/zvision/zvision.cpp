@@ -91,7 +91,6 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _gameDescription(gameDesc),
 	  _resourcePixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0), /* RGB 555 */
 	  _screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), /* RGB 565 */
-	  _desiredFrameTime(33), /* ~30 fps */
 	  _clock(_system),
 	  _scriptManager(nullptr),
 	  _renderManager(nullptr),
@@ -201,7 +200,6 @@ void ZVision::initialize() {
 	//Graphics
 	_widescreen = ConfMan.getBool("widescreen");
 	_doubleFPS = ConfMan.getBool("doublefps");
-	_desiredFrameTime = _doubleFPS ? 17 : 33;
 	
   //Keymaps
 	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();
@@ -342,7 +340,7 @@ Common::Error ZVision::run() {
 	  debug(5,"Timers");
 	  //Timers
 		_clock.update();
-		uint32 currentTime = _clock.getLastMeasuredTime();
+		//uint32 currentTime = _clock.getLastMeasuredTime();
 		uint32 deltaTime = _clock.getDeltaTime();
 	  debug(5,"Logic");
     //Process game logic & update backbuffers as necessary
@@ -360,19 +358,11 @@ Common::Error ZVision::run() {
 		_subtitleManager->process(deltaTime);
 	  debug(5,"Render");
 		// Render the backBuffer to the screen
-		//TODO - figure out _doubleFPS effect, apply framerate limiter to get smoother rendering of panorama
-		//Current framerate limiter implementation is buggy, delay is applied based on previous frame time
 		_renderManager->prepareBackground();
 		if(_renderManager->renderSceneToScreen())
 			_renderedFrameCount++;
 		else
 			_frameRenderDelay--;
-	  debug(5,"Frame delay");
-		// Calculate the frame delay based off a desired frame time
-		int delay = _desiredFrameTime - int32(_system->getMillis() - currentTime);
-		// Ensure non-negative
-		delay = delay < 0 ? 0 : delay;
-		_system->delayMillis(delay);
 	}
 	return Common::kNoError;
 }
