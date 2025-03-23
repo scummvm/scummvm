@@ -548,6 +548,8 @@ private:
 		case ScriptKernelTask::Animate: {
 			auto object = g_engine->world().getObjectByName(process().character(), getStringArg(0));
 			auto graphicObject = dynamic_cast<GraphicObject *>(object);
+			if (graphicObject == nullptr && !scumm_stricmp("EXPLOSION DISFRAZ", getStringArg(0)))
+				return TaskReturn::finish(1);
 			if (graphicObject == nullptr)
 				error("Script tried to animate invalid graphic object %s", getStringArg(0));
 			if (getNumberOrStringArg(1)) {
@@ -632,6 +634,10 @@ private:
 			if (character == nullptr)
 				error("Invalid character name: %s", getStringArg(0));
 			auto *animObject = g_engine->world().getObjectByName(getStringArg(1));
+			if (animObject == nullptr && (
+				!scumm_stricmp("COGE F DCH", getStringArg(1)) ||
+				!scumm_stricmp("CHIQUITO_IZQ", getStringArg(1))))
+				return TaskReturn::finish(2); // original bug in MOTEL_ENTRADA
 			if (animObject == nullptr)
 				error("Invalid animate object name: %s", getStringArg(1));
 			return TaskReturn::waitFor(character->animate(process(), animObject));
