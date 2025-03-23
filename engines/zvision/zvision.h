@@ -164,9 +164,7 @@ public:
 
 private:
 	const ZVisionGameDescription *_gameDescription;
-
-	int _desiredFrameTime;
-
+	
 	// We need random numbers
 	Common::RandomSource *_rnd;
 

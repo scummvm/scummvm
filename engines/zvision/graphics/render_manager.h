@@ -28,13 +28,14 @@
 #include "common/hashmap.h"
 
 #include "graphics/surface.h"
-
 #include "graphics/managed_surface.h"
 #include "graphics/screen.h"
+#include "graphics/framelimiter.h"
 
 #include "zvision/graphics/graphics_effect.h"
 
 #include "zvision/graphics/render_table.h"
+
 
 class OSystem;
 
@@ -61,6 +62,7 @@ private:
 	const Graphics::PixelFormat _pixelFormat;
 	const ScreenLayout _layout;
 	bool _hiRes = false;
+	Graphics::FrameLimiter frameLimiter;
 
 	/**
 	 * A Rectangle representing the screen/window resolution.
