@@ -1094,7 +1094,7 @@ void DarkseedEngine::loadRoom(int roomNumber) {
 
 void DarkseedEngine::changeToRoom(int newRoomNumber, bool placeDirectly) { // AKA LoadNewRoom
 	if (isDosDemo()) {
-		if (newRoomNumber == 0) {
+		if (newRoomNumber == 0 || newRoomNumber == 1) {
 			newRoomNumber = 43;
 			_previousRoomNumber = 44;
 		} else if (newRoomNumber == 44) {
