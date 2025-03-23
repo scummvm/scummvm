@@ -43,6 +43,7 @@ namespace Video {
 // --------------------------------------------------------------------------
 
 enum {
+	kStartCodeSequenceHeader = 0x1B3,
 	kStartCodePack = 0x1BA,
 	kStartCodeSystemHeader = 0x1BB,
 	kStartCodeProgramStreamMap = 0x1BC,
@@ -261,6 +262,27 @@ MPEGPSDecoder::MPEGPSDemuxer::~MPEGPSDemuxer() {
 bool MPEGPSDecoder::MPEGPSDemuxer::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
+	// Check if the videostream being loaded is an elementary stream (ES) or a program stream (PS)
+	// PS streams start with the Pack Header which has a start code of 0x1ba
+	// ES streams start with the Sequence Header which has a start code of 0x1b3
+	uint32 header = stream->readUint32BE();
+	stream->seek(-4, SEEK_CUR);
+
+	// If it is a Sequence Header (ES Stream), pass the stream to a Elementary Stream handler.
+	// If it is a Pack Header (PS stream), pass the stream to PS demuxer for demuxing into video and audio packets
+	// Currently not handling other stream types like ES audio stream
+	// Throwing a warning, so that decoding of further streams isn't affected
+	// Unknown stream header types are "handled" (ignored) in the readNextPacketHeader function 
+
+	if (header == kStartCodeSequenceHeader) {
+		_isESStream = true;
+	} else if (header == kStartCodePack) {
+		_isESStream = false;
+	} else {
+		warning("Unknown Start Code in the MPEG stream, %d", header);
+		_isESStream = false;
+	}
+	
 	_stream = stream;
 
 	int queuedPackets = 0;
@@ -350,6 +372,21 @@ Common::SeekableReadStream *MPEGPSDecoder::MPEGPSDemuxer::getNextPacket(uint32 c
 bool MPEGPSDecoder::MPEGPSDemuxer::queueNextPacket() {
 	if (_stream->eos())
 		return false;
+
+	// Program Streams are nothing but a wrapping around Elementary Stream data, this wrapping or header has 
+	// length, pts, dts and other information embedded in it which we parse in the readNextPacketHeader function
+	// Elementary stream doesn't have pts and dts, but our sendPacket() function handles that well
+	// TODO: Only handling video ES streams for now, audio ES streams are bit more complicated
+	if (_isESStream) {
+		const uint16 kESPacketSize = 1024;	// FFmpeg uses 1024 to packetize ES streams into PES packets
+	  
+		Common::SeekableReadStream *stream = _stream->readStream(kESPacketSize);
+
+		int32 startCode = 0x1E0;
+		uint32 pts = 0xFFFFFFFF, dts = 0xFFFFFFFF;
+		_videoQueue.push(Packet(stream, startCode, pts, dts));
+		return true;
+	}
 
 	for (;;) {
 		int32 startCode;
