@@ -337,28 +337,28 @@ Common::Error ZVision::run() {
 
 	// Main loop
 	while (!shouldQuit()) {
+	  debug(5,"\nInitiating new game cycle");
 	  debug(5,"Timers");
 	  //Timers
 		_clock.update();
-		//uint32 currentTime = _clock.getLastMeasuredTime();
-		uint32 deltaTime = _clock.getDeltaTime();
+		uint32 deltaTime = _clock.getDeltaTime();		
 	  debug(5,"Logic");
-    //Process game logic & update backbuffers as necessary
+    //Process game logic & update backbuffers as necessary   
     debug(5,"Cursor");
-		_cursorManager->setItemID(_scriptManager->getStateValue(StateKey_InventoryItem));
+		_cursorManager->setItemID(_scriptManager->getStateValue(StateKey_InventoryItem));	
     debug(5,"Events");
-		processEvents();  //NB rotateTo or playVideo event will pause clock & call renderSceneToScreen() directly.
+		processEvents();  //NB rotateTo or playVideo event will pause clock & call renderSceneToScreen() directly.		
     debug(5,"Rotation");
-		_renderManager->updateRotation();
+		_renderManager->updateRotation();	
     debug(5,"Scripts");
-		_scriptManager->update(deltaTime);
+		_scriptManager->update(deltaTime);		
     debug(5,"Menu");
 		_menu->process(deltaTime);
     debug(5,"Subtitles");
-		_subtitleManager->process(deltaTime);
+		_subtitleManager->process(deltaTime);		
 	  debug(5,"Render");
 		// Render the backBuffer to the screen
-		_renderManager->prepareBackground();
+  	_renderManager->prepareBackground();
 		if(_renderManager->renderSceneToScreen())
 			_renderedFrameCount++;
 		else
