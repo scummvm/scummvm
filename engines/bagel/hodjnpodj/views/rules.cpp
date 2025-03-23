@@ -43,7 +43,7 @@ namespace HodjNPodj {
 #define	SCROLL_STRIP_WIDTH	10						// width of scroll middle to reveal per interval 
 #define	SCROLL_STRIP_DELAY	1000					// delay to wait after each partial scroll unfurling
 
-#define TEXT_SIZE           12
+#define TEXT_SIZE           8
 #define	TEXT_BUFFER_SIZE	512						// # characters in the text input buffer
 #define	TEXT_LEFT_MARGIN	55						// left margin offset for display of text
 #define	TEXT_RIGHT_MARGIN	45						// right margin offset for display of text
