@@ -2622,6 +2622,7 @@ void Room504::parser() {
 		player_set_commands_allowed(false);
 		_vineThrowType = 1;
 		_G(flags)[V154] = 3;
+		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_timing_trigger(1, 603);
 	} else if (takeFlag && player_said_any("GREEN VINE ", "GREEN VINE COIL ") &&
 			_G(flags)[V152] == 1 && _isOnRight) {
@@ -3353,7 +3354,7 @@ void Room504::setVinesRope() {
 
 	if (_G(flags)[V152] == 4) {
 		hotspot_set_active("GREEN VINE ", true);
-		hotspot_set_active("GREEN VINE  ", true);
+		hotspot_set_active("GREEN VINE COIL  ", true);
 	}
 
 	if (_G(flags)[V153] == 4) {
