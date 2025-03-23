@@ -202,11 +202,15 @@ struct DoorTask : public Task {
 		if (_targetRoom == nullptr)
 			error("Invalid door target room: %s", door->targetRoom().c_str());
 
-		_targetDoor = dynamic_cast<Door *>(_targetRoom->getObjectByName(door->targetObject()));
-		if (_targetDoor == nullptr)
+		_targetObject = dynamic_cast<InteractableObject *>(_targetRoom->getObjectByName(door->targetObject()));
+		if (_targetObject == nullptr)
 			error("Invalid door target door: %s", door->targetObject().c_str());
+		auto targetDoor = dynamic_cast<const Door *>(_targetObject);
+		_targetDirection = targetDoor == nullptr
+			? _targetObject->interactionDirection()
+			: targetDoor->characterDirection();
 
-		process.name() = String::format("Door to %s %s", _targetRoom->name().c_str(), _targetDoor->name().c_str());
+		process.name() = String::format("Door to %s %s", _targetRoom->name().c_str(), _targetObject->name().c_str());
 	}
 
 	virtual TaskReturn run() {
@@ -217,11 +221,11 @@ struct DoorTask : public Task {
 		_player.changeRoom(_targetRoom->name(), true);
 
 		if (_targetRoom->fixedCameraOnEntering())
-			g_engine->camera().setPosition(as2D(_targetDoor->interactionPoint()));
+			g_engine->camera().setPosition(as2D(_targetObject->interactionPoint()));
 		else {
 			_character->room() = _targetRoom;
-			_character->setPosition(_targetDoor->interactionPoint());
-			_character->stopWalking(_targetDoor->characterDirection());
+			_character->setPosition(_targetObject->interactionPoint());
+			_character->stopWalking(_targetDirection);
 			g_engine->camera().setFollow(_character, true);
 		}
 
@@ -239,7 +243,9 @@ struct DoorTask : public Task {
 
 private:
 	FakeLock _lock;
-	const Door *_sourceDoor, *_targetDoor;
+	const Door *_sourceDoor;
+	const InteractableObject *_targetObject;
+	Direction _targetDirection;
 	Room *_targetRoom;
 	MainCharacter *_character;
 	Player &_player;
