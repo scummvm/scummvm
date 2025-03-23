@@ -654,6 +654,10 @@ void Channel::replaceWidget(CastMemberID previousCastId, bool force) {
 }
 
 bool Channel::updateWidget() {
+	if (_sprite->_cast && (_sprite->_cast->_type == kCastDigitalVideo) && _sprite->_cast->isModified()) {
+		replaceWidget();
+		return true;
+	}
 	if (_widget && _widget->needsRedraw()) {
 		if (_sprite->_cast) {
 			_sprite->_cast->updateFromWidget(_widget);
