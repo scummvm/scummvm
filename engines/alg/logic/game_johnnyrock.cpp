@@ -26,7 +26,7 @@
 
 #include "graphics/cursorman.h"
 
-#include "alg/game_johnnyrock.h"
+#include "alg/logic/game_johnnyrock.h"
 #include "alg/graphics.h"
 #include "alg/scene.h"
 

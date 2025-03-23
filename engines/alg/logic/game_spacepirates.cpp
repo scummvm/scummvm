@@ -26,7 +26,7 @@
 
 #include "graphics/cursorman.h"
 
-#include "alg/game_spacepirates.h"
+#include "alg/logic/game_spacepirates.h"
 #include "alg/graphics.h"
 #include "alg/scene.h"
 

@@ -4,16 +4,16 @@ MODULE_OBJS := \
 	alg.o \
 	graphics.o \
 	game.o \
-	game_bountyhunter.o \
-	game_crimepatrol.o \
-	game_drugwars.o \
-	game_johnnyrock.o \
-	game_maddog.o \
-	game_maddog2.o \
-	game_spacepirates.o \
 	metaengine.o \
 	scene.o \
-	video.o
+	video.o \
+	logic/game_bountyhunter.o \
+	logic/game_crimepatrol.o \
+	logic/game_drugwars.o \
+	logic/game_johnnyrock.o \
+	logic/game_maddog.o \
+	logic/game_maddog2.o \
+	logic/game_spacepirates.o
 
 MODULE_DIRS += \
 	engines/alg
