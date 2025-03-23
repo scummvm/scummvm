@@ -77,7 +77,7 @@ void AlgVideoDecoder::loadVideoFromStream(uint32 offset) {
 
 void AlgVideoDecoder::skipNumberOfFrames(uint32 num) {
 	uint32 videoFramesSkipped = 0;
-	while(videoFramesSkipped < num && _bytesLeft > 0) {
+	while (videoFramesSkipped < num && _bytesLeft > 0) {
 		uint16 chunkType = _stream->readUint16LE();
 		uint32 chunkSize = _stream->readUint32LE();
 		_currentChunk++;
@@ -98,7 +98,7 @@ void AlgVideoDecoder::skipNumberOfFrames(uint32 num) {
 	}
 	// find next keyframe
 	bool nextKeyframeFound = false;
-	while(!nextKeyframeFound && _bytesLeft > 0) {
+	while (!nextKeyframeFound && _bytesLeft > 0) {
 		uint16 chunkType = _stream->readUint16LE();
 		uint32 chunkSize = _stream->readUint32LE();
 		_currentChunk++;
@@ -131,7 +131,7 @@ void AlgVideoDecoder::readNextChunk() {
 	_currentChunk++;
 	switch (chunkType) {
 	case MKTAG16(0x00, 0x00):
-		error("got repeated header chunk");
+		error("AlgVideoDecoder::readNextChunk(): got repeated header chunk");
 		break;
 	case MKTAG16(0x00, 0x30):
 		updatePalette(chunkSize, false);
@@ -170,11 +170,11 @@ void AlgVideoDecoder::readNextChunk() {
 		_gotVideoFrame = true;
 		break;
 	case MKTAG16(0x00, 0x02):
-		warning("raw video not supported");
+		warning("AlgVideoDecoder::readNextChunk(): raw video not supported");
 		_stream->skip(chunkSize);
 		break;
 	default:
-		error("Unknown chunk encountered: %d", chunkType);
+		error("AlgVideoDecoder::readNextChunk(): Unknown chunk encountered: %d", chunkType);
 	}
 	_bytesLeft -= chunkSize + 6;
 }
@@ -281,9 +281,9 @@ void AlgVideoDecoder::updatePalette(uint32 size, bool partial) {
 	}
 	uint16 paletteIndex = start * 3;
 	for (uint16 i = 0; i < count; i++) {
-		int8 r = _stream->readByte() * 4;
-		int8 g = _stream->readByte() * 4;
-		int8 b = _stream->readByte() * 4;
+		uint8 r = _stream->readByte() * 4;
+		uint8 g = _stream->readByte() * 4;
+		uint8 b = _stream->readByte() * 4;
 		_palette[paletteIndex++] = r;
 		_palette[paletteIndex++] = g;
 		_palette[paletteIndex++] = b;

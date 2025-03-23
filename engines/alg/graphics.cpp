@@ -33,7 +33,7 @@ namespace Alg {
 Graphics::Surface *AlgGraphics::loadVgaBackground(const Common::Path &path, uint8 *palette) {
 	Common::File vgaFile;
 	if (!vgaFile.open(path)) {
-		error("Can't open background file '%s'", path.toString().c_str());
+		error("AlgGraphics::loadVgaBackground(): Can't open background file '%s'", path.toString().c_str());
 	}
 	uint16 width = vgaFile.readUint16LE();
 	uint16 height = vgaFile.readUint16LE();
@@ -63,7 +63,7 @@ Common::Array<Graphics::Surface> *AlgGraphics::loadAniImage(const Common::Path &
 	Common::Array<Graphics::Surface> *images = new Common::Array<Graphics::Surface>();
 	Common::File aniFile;
 	if (!aniFile.open(path)) {
-		error("Can't open image file '%s'", path.toString().c_str());
+		error("AlgGraphics::loadAniImage(): Can't open image file '%s'", path.toString().c_str());
 	}
 	uint8 paletteEntries = aniFile.readByte();
 	uint8 paletteStart = aniFile.readByte();
@@ -109,7 +109,7 @@ Common::Array<Graphics::Surface> *AlgGraphics::loadScreenCoordAniImage(const Com
 	Common::Array<Graphics::Surface> *images = new Common::Array<Graphics::Surface>();
 	Common::File aniFile;
 	if (!aniFile.open(path)) {
-		error("Can't open image file '%s'", path.toString().c_str());
+		error("AlgGraphics::loadScreenCoordAniImage(): Can't open image file '%s'", path.toString().c_str());
 	}
 	uint8 paletteEntries = aniFile.readByte();
 	uint8 paletteStart = aniFile.readByte();

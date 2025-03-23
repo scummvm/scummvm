@@ -71,12 +71,12 @@ const TokenEntry _sceneTokens[] = {
 
 class Rect : public Common::Rect {
 public:
-	Common::String scene;
-	uint32 score;
-	Common::String rectHit;
-	Common::String unknown;
-	bool isMoving = false;
-	Common::Rect dest;
+	Common::String _scene;
+	uint32 _score;
+	Common::String _rectHit;
+	Common::String _unknown;
+	bool _isMoving = false;
+	Common::Rect _dest;
 	void center(int16 cx, int16 cy, int16 w, int16 h) {
 		right = cx + (w / 2);
 		left = cx - (w / 2);
@@ -87,45 +87,45 @@ public:
 
 class Zone {
 public:
-	Common::String name;
-	uint32 startFrame;
-	uint32 endFrame;
-	Common::String ptrfb;
-	Common::Array<Rect> rects;
-	Common::String next;
+	Common::String _name;
+	uint32 _startFrame;
+	uint32 _endFrame;
+	Common::String _ptrfb;
+	Common::Array<Rect> _rects;
+	Common::String _next;
 	void addRect(int16 left, int16 top, int16 right, int16 bottom, Common::String scene, uint32 score, Common::String rectHit, Common::String unknown);
 };
 
 class Scene {
 public:
-	Common::String name;
-	uint32 startFrame;
-	uint32 endFrame;
-	Common::String next;
-	Common::String zonesStart;
-	Common::String zonesStart2;
-	Common::String zonesStart3;
-	Common::String preop;
-	Common::String preopParam;
-	Common::String insop;
-	Common::String insopParam;
-	Common::String scnmsg;
-	Common::String scnmsgParam;
-	Common::String wepdwn;
-	Common::String scnscr;
-	int32 scnscrParam;
-	Common::String nxtfrm;
-	Common::String nxtscn;
-	int32 dataParam1;
-	int32 dataParam2;
-	int32 dataParam3;
-	int32 dataParam4;
-	Common::String dataParam5;
-	Common::String dataParam6;
-	uint32 diff;
-	Common::String missedRects;
-	uint32 difficultyMod;
-	Common::Array<Zone *> zones;
+	Common::String _name;
+	uint32 _startFrame;
+	uint32 _endFrame;
+	Common::String _next;
+	Common::String _zonesStart;
+	Common::String _zonesStart2;
+	Common::String _zonesStart3;
+	Common::String _preop;
+	Common::String _preopParam;
+	Common::String _insop;
+	Common::String _insopParam;
+	Common::String _scnmsg;
+	Common::String _scnmsgParam;
+	Common::String _wepdwn;
+	Common::String _scnscr;
+	int32 _scnscrParam;
+	Common::String _nxtfrm;
+	Common::String _nxtscn;
+	int32 _dataParam1;
+	int32 _dataParam2;
+	int32 _dataParam3;
+	int32 _dataParam4;
+	Common::String _dataParam5;
+	Common::String _dataParam6;
+	uint32 _diff;
+	Common::String _missedRects;
+	uint32 _difficultyMod;
+	Common::Array<Zone *> _zones;
 };
 
 class SceneInfo {
@@ -134,14 +134,14 @@ public:
 	SceneInfo();
 	~SceneInfo();
 	void loadScnFile(const Common::Path &path);
-	Common::String getStartScene() { return _startscene; }
+	Common::String getStartScene() { return _startScene; }
 	Common::Array<Scene *> *getScenes() { return &_scenes; }
 	Scene *findScene(Common::String sceneName);
 	void addScene(Scene *scene);
 
 private:
 	Common::File _scnFile;
-	Common::String _startscene;
+	Common::String _startScene;
 	Common::Array<Scene *> _scenes;
 	Common::Array<Zone *> _zones;
 

@@ -25,7 +25,6 @@
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/pixelformat.h"
 
 #include "alg/game_crimepatrol.h"
 #include "alg/graphics.h"
@@ -33,12 +32,12 @@
 
 namespace Alg {
 
-GameCrimePatrol::GameCrimePatrol(AlgEngine *vm, const ADGameDescription *desc) : Game(vm) {
-	if (scumm_stricmp(desc->gameId, "cpatrols") == 0) {
+GameCrimePatrol::GameCrimePatrol(AlgEngine *vm, const AlgGameDescription *gd) : Game(vm) {
+	if (gd->gameType == GType_CPATROL_SS_DOS) {
 		_libFileName = "cpss.lib";
-	} else if (scumm_stricmp(desc->gameId, "cpatrold") == 0) {
+	} else if (gd->gameType == GType_CPATROL_DS_DOS) {
 		_libFileName = "cpds.lib";
-	} else if (scumm_stricmp(desc->gameId, "cpatroldemo") == 0) {
+	} else if (gd->gameType == GType_CPATROL_DEMO_DOS) {
 		_libFileName = "cp.lib";
 		_isDemo = true;
 	}
@@ -48,25 +47,27 @@ GameCrimePatrol::~GameCrimePatrol() {
 }
 
 void GameCrimePatrol::init() {
+	Game::init();
+
 	_videoPosX = 11;
 	_videoPosY = 2;
 
 	loadLibArchive(_libFileName);
 	_sceneInfo->loadScnFile("cp.scn");
-	_startscene = _sceneInfo->getStartScene();
+	_startScene = _sceneInfo->getStartScene();
 
 	registerScriptFunctions();
 	verifyScriptFunctions();
 
 	_menuzone = new Zone();
-	_menuzone->name = "MainMenu";
-	_menuzone->ptrfb = "GLOBALHIT";
+	_menuzone->_name = "MainMenu";
+	_menuzone->_ptrfb = "GLOBALHIT";
 
 	_menuzone->addRect(0x0C, 0xAA, 0x38, 0xC7, nullptr, 0, "SHOTMENU", "0");
 
 	_submenzone = new Zone();
-	_submenzone->name = "SubMenu";
-	_submenzone->ptrfb = "GLOBALHIT";
+	_submenzone->_name = "SubMenu";
+	_submenzone->_ptrfb = "GLOBALHIT";
 
 	_submenzone->addRect(0x1C, 0x11, 0x5D, 0x20, nullptr, 0, "STARTMENU", "0");
 	_submenzone->addRect(0x1C, 0x31, 0x5D, 0x40, nullptr, 0, "RECTLOAD", "0");
@@ -77,11 +78,11 @@ void GameCrimePatrol::init() {
 	_submenzone->addRect(0xDD, 0x5C, 0x010A, 0x6B, nullptr, 0, "RECTAVG", "0");
 	_submenzone->addRect(0xDD, 0x7C, 0x010A, 0x8B, nullptr, 0, "RECTHARD", "0");
 
-	_shotSound = _LoadSoundFile("blow.8b");
-	_emptySound = _LoadSoundFile("empty.8b");
-	_saveSound = _LoadSoundFile("saved.8b");
-	_loadSound = _LoadSoundFile("loaded.8b");
-	_skullSound = _LoadSoundFile("skull.8b");
+	_shotSound = loadSoundFile("blow.8b");
+	_emptySound = loadSoundFile("empty.8b");
+	_saveSound = loadSoundFile("saved.8b");
+	_loadSound = loadSoundFile("loaded.8b");
+	_skullSound = loadSoundFile("skull.8b");
 
 	_gun = AlgGraphics::loadScreenCoordAniImage("gun.ani", _palette);
 	_numbers = AlgGraphics::loadAniImage("numbers.ani", _palette);
@@ -99,148 +100,148 @@ void GameCrimePatrol::init() {
 	_background = AlgGraphics::loadVgaBackground("cp_menu.vga", _palette);
 	_screen->copyRectToSurface(_background->getPixels(), _background->pitch, 0, 0, _background->w, _background->h);
 
-	_MoveMouse();
+	moveMouse();
 }
 
 void GameCrimePatrol::registerScriptFunctions() {
 #define RECT_HIT_FUNCTION(name, func) _rectHitFuncs[name] = new CPScriptFunctionRect(this, &GameCrimePatrol::func);
-	RECT_HIT_FUNCTION("DEFAULT", _rect_newscene);
-	RECT_HIT_FUNCTION("NEWSCENE", _rect_newscene);
-	RECT_HIT_FUNCTION("EXITMENU", _rect_exit);
-	RECT_HIT_FUNCTION("CONTMENU", _rect_continue);
-	RECT_HIT_FUNCTION("STARTMENU", _rect_start);
-	RECT_HIT_FUNCTION("SHOTMENU", _rect_shotmenu);
-	RECT_HIT_FUNCTION("RECTSAVE", _rect_save);
-	RECT_HIT_FUNCTION("RECTLOAD", _rect_load);
-	RECT_HIT_FUNCTION("RECTEASY", _rect_easy);
-	RECT_HIT_FUNCTION("RECTAVG", _rect_average);
-	RECT_HIT_FUNCTION("RECTHARD", _rect_hard);
-	RECT_HIT_FUNCTION("TARGET_PRACTICE", _rect_target_practice);
-	RECT_HIT_FUNCTION("SELECT_TARGET_PRACTICE", _rect_select_target_practice);
-	RECT_HIT_FUNCTION("SELECT_GANG_FIGHT", _rect_select_gang_fight);
-	RECT_HIT_FUNCTION("SELECT_WAREHOUSE", _rect_select_warehouse);
-	RECT_HIT_FUNCTION("SELECT_WESTCOAST_SOUND", _rect_select_westcoast_sound);
-	RECT_HIT_FUNCTION("SELECT_DRUG_DEAL", _rect_select_drug_deal);
-	RECT_HIT_FUNCTION("SELECT_CAR_RING", _rect_select_car_ring);
-	RECT_HIT_FUNCTION("SELECT_BAR", _rect_select_bar);
-	RECT_HIT_FUNCTION("SELECT_BANK", _rect_select_bank);
-	RECT_HIT_FUNCTION("SELECT_CRACK_HOUSE", _rect_select_crack_house);
-	RECT_HIT_FUNCTION("SELECT_METH_LAB", _rect_select_meth_lab);
-	RECT_HIT_FUNCTION("SELECT_AIRPLANE", _rect_select_airplane);
-	RECT_HIT_FUNCTION("SELECT_NUKE_TRANSPORT", _rect_select_nuke_transport);
-	RECT_HIT_FUNCTION("SELECT_AIRPORT", _rect_select_airport);
-	RECT_HIT_FUNCTION("KILL_INNOCENT_MAN", _rect_kill_innocent_man);
+	RECT_HIT_FUNCTION("DEFAULT", rectNewScene);
+	RECT_HIT_FUNCTION("NEWSCENE", rectNewScene);
+	RECT_HIT_FUNCTION("EXITMENU", rectExit);
+	RECT_HIT_FUNCTION("CONTMENU", rectContinue);
+	RECT_HIT_FUNCTION("STARTMENU", rectStart);
+	RECT_HIT_FUNCTION("SHOTMENU", rectShotMenu);
+	RECT_HIT_FUNCTION("RECTSAVE", rectSave);
+	RECT_HIT_FUNCTION("RECTLOAD", rectLoad);
+	RECT_HIT_FUNCTION("RECTEASY", rectEasy);
+	RECT_HIT_FUNCTION("RECTAVG", rectAverage);
+	RECT_HIT_FUNCTION("RECTHARD", rectHard);
+	RECT_HIT_FUNCTION("TARGET_PRACTICE", rectTargetPractice);
+	RECT_HIT_FUNCTION("SELECT_TARGET_PRACTICE", rectSelectTargetPractice);
+	RECT_HIT_FUNCTION("SELECT_GANG_FIGHT", rectSelectGangFight);
+	RECT_HIT_FUNCTION("SELECT_WAREHOUSE", rectSelectWarehouse);
+	RECT_HIT_FUNCTION("SELECT_WESTCOAST_SOUND", rectSelectWestcoastSound);
+	RECT_HIT_FUNCTION("SELECT_DRUG_DEAL", rectSelectDrugDeal);
+	RECT_HIT_FUNCTION("SELECT_CAR_RING", rectSelectCarRing);
+	RECT_HIT_FUNCTION("SELECT_BAR", rectSelectBar);
+	RECT_HIT_FUNCTION("SELECT_BANK", rectSelectBank);
+	RECT_HIT_FUNCTION("SELECT_CRACK_HOUSE", rectSelectCrackHouse);
+	RECT_HIT_FUNCTION("SELECT_METH_LAB", rectSelectMethLab);
+	RECT_HIT_FUNCTION("SELECT_AIRPLANE", rectSelectAirplane);
+	RECT_HIT_FUNCTION("SELECT_NUKE_TRANSPORT", rectSelectNukeTransport);
+	RECT_HIT_FUNCTION("SELECT_AIRPORT", rectSelectAirport);
+	RECT_HIT_FUNCTION("KILL_INNOCENT_MAN", rectKillInnocentMan);
 #undef RECT_HIT_FUNCTION
 
 #define PRE_OPS_FUNCTION(name, func) _scenePreOps[name] = new CPScriptFunctionScene(this, &GameCrimePatrol::func);
-	PRE_OPS_FUNCTION("DEFAULT", _scene_pso_drawrct);
-	PRE_OPS_FUNCTION("PAUSE", _scene_pso_pause);
-	PRE_OPS_FUNCTION("FADEIN", _scene_pso_fadein);
-	PRE_OPS_FUNCTION("PAUSE_FADEIN", _scene_pso_pause_fadein);
-	PRE_OPS_FUNCTION("WAREHOUSE_GOT_TO", _scene_pso_warehouse_got_to);
-	PRE_OPS_FUNCTION("GANG_FIGHT_GOT_TO", _scene_pso_gang_fight_got_to);
-	PRE_OPS_FUNCTION("WESTCOAST_SOUND_GOT_TO", _scene_pso_westcoast_sound_got_to);
-	PRE_OPS_FUNCTION("DRUG_DEAL_GOT_TO", _scene_pso_drug_deal_got_to);
-	PRE_OPS_FUNCTION("CAR_RING_GOT_TO", _scene_pso_car_ring_got_to);
-	PRE_OPS_FUNCTION("BANK_GOT_TO", _scene_pso_bank_got_to);
-	PRE_OPS_FUNCTION("CRACK_HOUSE_GOT_TO", _scene_pso_crack_house_got_to);
-	PRE_OPS_FUNCTION("METH_LAB_GOT_TO", _scene_pso_meth_lab_got_to);
-	PRE_OPS_FUNCTION("AIRPLANE_GOT_TO", _scene_pso_airplane_got_to);
-	PRE_OPS_FUNCTION("AIRPORT_GOT_TO", _scene_pso_airport_got_to);
-	PRE_OPS_FUNCTION("NUKE_TRANSPORT_GOT_TO", _scene_pso_nuke_transport_got_to);
-	PRE_OPS_FUNCTION("POWER_PLANT_GOT_TO", _scene_pso_power_plant_got_to);
+	PRE_OPS_FUNCTION("DEFAULT", scenePsoDrawRct);
+	PRE_OPS_FUNCTION("PAUSE", scenePsoPause);
+	PRE_OPS_FUNCTION("FADEIN", scenePsoFadeIn);
+	PRE_OPS_FUNCTION("PAUSE_FADEIN", scenePsoPauseFadeIn);
+	PRE_OPS_FUNCTION("WAREHOUSE_GOT_TO", scenePsoWarehouseGotTo);
+	PRE_OPS_FUNCTION("GANG_FIGHT_GOT_TO", scenePsoGangFightGotTo);
+	PRE_OPS_FUNCTION("WESTCOAST_SOUND_GOT_TO", scenePsoWestcoastSoundGotTo);
+	PRE_OPS_FUNCTION("DRUG_DEAL_GOT_TO", scenePsoDrugDealGotTo);
+	PRE_OPS_FUNCTION("CAR_RING_GOT_TO", scenePsoCarRingGotTo);
+	PRE_OPS_FUNCTION("BANK_GOT_TO", scenePsoBankGotTo);
+	PRE_OPS_FUNCTION("CRACK_HOUSE_GOT_TO", scenePsoCrackHouseGotTo);
+	PRE_OPS_FUNCTION("METH_LAB_GOT_TO", scenePsoMethLabGotTo);
+	PRE_OPS_FUNCTION("AIRPLANE_GOT_TO", scenePsoAirplaneGotTo);
+	PRE_OPS_FUNCTION("AIRPORT_GOT_TO", scenePsoAirportGotTo);
+	PRE_OPS_FUNCTION("NUKE_TRANSPORT_GOT_TO", scenePsoNukeTransportGotTo);
+	PRE_OPS_FUNCTION("POWER_PLANT_GOT_TO", scenePsoPowerPlantGotTo);
 #undef PRE_OPS_FUNCTION
 
 #define INS_OPS_FUNCTION(name, func) _sceneInsOps[name] = new CPScriptFunctionScene(this, &GameCrimePatrol::func);
-	INS_OPS_FUNCTION("DEFAULT", _scene_iso_donothing);
-	INS_OPS_FUNCTION("PAUSE", _scene_iso_pause);
+	INS_OPS_FUNCTION("DEFAULT", sceneIsoDoNothing);
+	INS_OPS_FUNCTION("PAUSE", sceneIsoPause);
 #undef INS_OPS_FUNCTION
 
 #define NXT_SCN_FUNCTION(name, func) _sceneNxtScn[name] = new CPScriptFunctionScene(this, &GameCrimePatrol::func);
-	NXT_SCN_FUNCTION("DEFAULT", _scene_default_nxtscn);
-	NXT_SCN_FUNCTION("GAME_WON", _scene_nxtscn_game_won);
-	NXT_SCN_FUNCTION("LOSE_A_LIFE", _scene_nxtscn_lose_a_life);
-	NXT_SCN_FUNCTION("DID_NOT_CONTINUE", _scene_nxtscn_did_not_continue);
-	NXT_SCN_FUNCTION("KILL_INNOCENT_MAN", _scene_nxtscn_kill_innocent_man);
-	NXT_SCN_FUNCTION("KILL_INNOCENT_WOMAN", _scene_nxtscn_kill_innocent_woman);
-	NXT_SCN_FUNCTION("AFTER_DIE", _scene_nxtscn_after_die);
-	NXT_SCN_FUNCTION("SELECT_LANGUAGE_1", _scene_nxtscn_select_language_1);
-	NXT_SCN_FUNCTION("SELECT_LANGUAGE_2", _scene_nxtscn_select_language_2);
-	NXT_SCN_FUNCTION("INIT_RANDOM_TARGET_PRACTICE", _scene_nxtscn_init_random_target_practice);
-	NXT_SCN_FUNCTION("CONTINUE_TARGET_PRACTICE", _scene_nxtscn_continue_target_practice);
-	NXT_SCN_FUNCTION("SELECT_ROOKIE_SCENARIO", _scene_nxtscn_select_rookie_scenario);
-	NXT_SCN_FUNCTION("FINISH_GANG_FIGHT", _scene_nxtscn_finish_gang_fight);
-	NXT_SCN_FUNCTION("FINISH_WESTCOAST_SOUND", _scene_nxtscn_finish_westcoast_sound);
-	NXT_SCN_FUNCTION("FINISH_WAREHOUSE", _scene_nxtscn_finish_warehouse);
-	NXT_SCN_FUNCTION("INIT_RANDOM_WAREHOUSE", _scene_nxtscn_init_random_warehouse);
-	NXT_SCN_FUNCTION("CONTINUE_WAREHOUSE", _scene_nxtscn_continue_warehouse);
-	NXT_SCN_FUNCTION("SELECT_UNDERCOVER_SCENARIO", _scene_nxtscn_select_undercover_scenario);
-	NXT_SCN_FUNCTION("FINISH_DRUG_DEAL", _scene_nxtscn_finish_drug_deal);
-	NXT_SCN_FUNCTION("INIT_RANDOM_CAR_RING_LEADER", _scene_nxtscn_init_random_car_ring_leader);
-	NXT_SCN_FUNCTION("CONTINUE_CAR_RING_LEADER_1", _scene_nxtscn_continue_car_ring_leader_1);
-	NXT_SCN_FUNCTION("CONTINUE_CAR_RING_LEADER_2", _scene_nxtscn_continue_car_ring_leader_2);
-	NXT_SCN_FUNCTION("INIT_RANDOM_CAR_RING", _scene_nxtscn_init_random_car_ring);
-	NXT_SCN_FUNCTION("CONTINUE_CAR_RING", _scene_nxtscn_continue_car_ring);
-	NXT_SCN_FUNCTION("FINISH_CAR_RING", _scene_nxtscn_finish_car_ring);
-	NXT_SCN_FUNCTION("FINISH_BAR", _scene_nxtscn_finish_bar);
-	NXT_SCN_FUNCTION("FINISH_BANK", _scene_nxtscn_finish_bank);
-	NXT_SCN_FUNCTION("FINISH_CRACK_HOUSE", _scene_nxtscn_finish_crack_house);
-	NXT_SCN_FUNCTION("FINISH_METH_LAB", _scene_nxtscn_finish_meth_lab);
-	NXT_SCN_FUNCTION("FINISH_AIRPLANE", _scene_nxtscn_finish_airplane);
-	NXT_SCN_FUNCTION("FINISH_AIRPORT", _scene_nxtscn_finish_airport);
-	NXT_SCN_FUNCTION("FINISH_NUKE_TRANSPORT", _scene_nxtscn_finish_nuke_transport);
-	NXT_SCN_FUNCTION("INIT_RANDOM_BAR", _scene_nxtscn_init_random_bar);
-	NXT_SCN_FUNCTION("CONTINUE_BAR", _scene_nxtscn_continue_bar);
-	NXT_SCN_FUNCTION("SELECT_SWAT_SCENARIO", _scene_nxtscn_select_swat_scenario);
-	NXT_SCN_FUNCTION("INIT_RANDOM_BANK", _scene_nxtscn_init_random_bank);
-	NXT_SCN_FUNCTION("CONTINUE_BANK", _scene_nxtscn_continue_bank);
-	NXT_SCN_FUNCTION("INIT_RANDOM_METH_LAB", _scene_nxtscn_init_random_meth_lab);
-	NXT_SCN_FUNCTION("CONTINUE_METH_LAB", _scene_nxtscn_continue_meth_lab);
-	NXT_SCN_FUNCTION("SELECT_DELTA_SCENARIO", _scene_nxtscn_select_delta_scenario);
-	NXT_SCN_FUNCTION("PICK_RANDOM_RAPPELLER", _scene_nxtscn_pick_random_rapeller);
-	NXT_SCN_FUNCTION("INIT_RANDOM_AIRPLANE", _scene_nxtscn_init_random_airplane);
-	NXT_SCN_FUNCTION("CONTINUE_AIRPLANE", _scene_nxtscn_continue_airplane);
-	NXT_SCN_FUNCTION("PICK_RANDOM_AIRPLANE_FRONT", _scene_nxtscn_pick_random_airplane_front);
-	NXT_SCN_FUNCTION("INIT_RANDOM_AIRPORT", _scene_nxtscn_init_random_airport);
-	NXT_SCN_FUNCTION("CONTINUE_AIRPORT", _scene_nxtscn_continue_airport);
-	NXT_SCN_FUNCTION("INIT_RANDOM_NUKE_TRANSPORT", _scene_nxtscn_init_random_nuke_transport);
-	NXT_SCN_FUNCTION("CONTINUE_NUKE_TRANSPORT", _scene_nxtscn_continue_nuke_transport);
-	NXT_SCN_FUNCTION("INIT_RANDOM_POWERPLANT", _scene_nxtscn_init_random_powerplant);
-	NXT_SCN_FUNCTION("CONTINUE_POWERPLANT", _scene_nxtscn_continue_powerplant);
+	NXT_SCN_FUNCTION("DEFAULT", sceneDefaultNxtscn);
+	NXT_SCN_FUNCTION("GAME_WON", sceneNxtscnGameWon);
+	NXT_SCN_FUNCTION("LOSE_A_LIFE", sceneNxtscnLoseALife);
+	NXT_SCN_FUNCTION("DID_NOT_CONTINUE", sceneNxtscnDidNotContinue);
+	NXT_SCN_FUNCTION("KILL_INNOCENT_MAN", sceneNxtscnKillInnocentMan);
+	NXT_SCN_FUNCTION("KILL_INNOCENT_WOMAN", sceneNxtscnKillInnocentWoman);
+	NXT_SCN_FUNCTION("AFTER_DIE", sceneNxtscnAfterDie);
+	NXT_SCN_FUNCTION("SELECT_LANGUAGE_1", sceneNxtscnSelectLanguage1);
+	NXT_SCN_FUNCTION("SELECT_LANGUAGE_2", sceneNxtscnSelectLanguage2);
+	NXT_SCN_FUNCTION("INIT_RANDOM_TARGET_PRACTICE", sceneNxtscnInitRandomTargetPractice);
+	NXT_SCN_FUNCTION("CONTINUE_TARGET_PRACTICE", sceneNxtscnContinueTargetPractice);
+	NXT_SCN_FUNCTION("SELECT_ROOKIE_SCENARIO", sceneNxtscnSelectRookieScenario);
+	NXT_SCN_FUNCTION("FINISH_GANG_FIGHT", sceneNxtscnFinishGangFight);
+	NXT_SCN_FUNCTION("FINISH_WESTCOAST_SOUND", sceneNxtscnFinishWestcoastSound);
+	NXT_SCN_FUNCTION("FINISH_WAREHOUSE", sceneNxtscnFinishWarehouse);
+	NXT_SCN_FUNCTION("INIT_RANDOM_WAREHOUSE", sceneNxtscnInitRandomWarehouse);
+	NXT_SCN_FUNCTION("CONTINUE_WAREHOUSE", sceneNxtscnContinueWarehouse);
+	NXT_SCN_FUNCTION("SELECT_UNDERCOVER_SCENARIO", sceneNxtscnSelectUndercoverScenario);
+	NXT_SCN_FUNCTION("FINISH_DRUG_DEAL", sceneNxtscnFinishDrugDeal);
+	NXT_SCN_FUNCTION("INIT_RANDOM_CAR_RING_LEADER", sceneNxtscnInitRandomCarRingLeader);
+	NXT_SCN_FUNCTION("CONTINUE_CAR_RING_LEADER_1", sceneNxtscnContinueCarRingLeader1);
+	NXT_SCN_FUNCTION("CONTINUE_CAR_RING_LEADER_2", sceneNxtscnContinueCarRingLeader2);
+	NXT_SCN_FUNCTION("INIT_RANDOM_CAR_RING", sceneNxtscnInitRandomCarRing);
+	NXT_SCN_FUNCTION("CONTINUE_CAR_RING", sceneNxtscnContinueCarRing);
+	NXT_SCN_FUNCTION("FINISH_CAR_RING", sceneNxtscnFinishCarRing);
+	NXT_SCN_FUNCTION("FINISH_BAR", sceneNxtscnFinishBar);
+	NXT_SCN_FUNCTION("FINISH_BANK", sceneNxtscnFinishBank);
+	NXT_SCN_FUNCTION("FINISH_CRACK_HOUSE", sceneNxtscnFinishCrackHouse);
+	NXT_SCN_FUNCTION("FINISH_METH_LAB", sceneNxtscnFinishMethLab);
+	NXT_SCN_FUNCTION("FINISH_AIRPLANE", sceneNxtscnFinishAirplane);
+	NXT_SCN_FUNCTION("FINISH_AIRPORT", sceneNxtscnFinishAirport);
+	NXT_SCN_FUNCTION("FINISH_NUKE_TRANSPORT", sceneNxtscnFinishNukeTransport);
+	NXT_SCN_FUNCTION("INIT_RANDOM_BAR", sceneNxtscnInitRandomBar);
+	NXT_SCN_FUNCTION("CONTINUE_BAR", sceneNxtscnContinueBar);
+	NXT_SCN_FUNCTION("SELECT_SWAT_SCENARIO", sceneNxtscnSelectSwatScenario);
+	NXT_SCN_FUNCTION("INIT_RANDOM_BANK", sceneNxtscnInitRandomBank);
+	NXT_SCN_FUNCTION("CONTINUE_BANK", sceneNxtscnContinueBank);
+	NXT_SCN_FUNCTION("INIT_RANDOM_METH_LAB", sceneNxtscnInitRandomMethLab);
+	NXT_SCN_FUNCTION("CONTINUE_METH_LAB", sceneNxtscnContinueMethLab);
+	NXT_SCN_FUNCTION("SELECT_DELTA_SCENARIO", sceneNxtscnSelectDeltaScenario);
+	NXT_SCN_FUNCTION("PICK_RANDOM_RAPPELLER", sceneNxtscnPickRandomRapeller);
+	NXT_SCN_FUNCTION("INIT_RANDOM_AIRPLANE", sceneNxtscnInitRandomAirplane);
+	NXT_SCN_FUNCTION("CONTINUE_AIRPLANE", sceneNxtscnContinueAirplane);
+	NXT_SCN_FUNCTION("PICK_RANDOM_AIRPLANE_FRONT", sceneNxtscnPickRandomAirplaneFront);
+	NXT_SCN_FUNCTION("INIT_RANDOM_AIRPORT", sceneNxtscnInitRandomAirport);
+	NXT_SCN_FUNCTION("CONTINUE_AIRPORT", sceneNxtscnContinueAirport);
+	NXT_SCN_FUNCTION("INIT_RANDOM_NUKE_TRANSPORT", sceneNxtscnInitRandomNukeTransport);
+	NXT_SCN_FUNCTION("CONTINUE_NUKE_TRANSPORT", sceneNxtscnContinueNukeTransport);
+	NXT_SCN_FUNCTION("INIT_RANDOM_POWERPLANT", sceneNxtscnInitRandomPowerplant);
+	NXT_SCN_FUNCTION("CONTINUE_POWERPLANT", sceneNxtscnContinuePowerplant);
 #undef NXT_SCN_FUNCTION
 
-	_sceneShowMsg["DEFAULT"] = new CPScriptFunctionScene(this, &GameCrimePatrol::_scene_sm_donothing);
-	_sceneWepDwn["DEFAULT"] = new CPScriptFunctionScene(this, &GameCrimePatrol::_scene_default_wepdwn);
-	_sceneScnScr["DEFAULT"] = new CPScriptFunctionScene(this, &GameCrimePatrol::_scene_default_score);
-	_sceneNxtFrm["DEFAULT"] = new CPScriptFunctionScene(this, &GameCrimePatrol::_scene_nxtfrm);
+	_sceneShowMsg["DEFAULT"] = new CPScriptFunctionScene(this, &GameCrimePatrol::sceneSmDonothing);
+	_sceneWepDwn["DEFAULT"] = new CPScriptFunctionScene(this, &GameCrimePatrol::sceneDefaultWepdwn);
+	_sceneScnScr["DEFAULT"] = new CPScriptFunctionScene(this, &GameCrimePatrol::sceneDefaultScore);
+	_sceneNxtFrm["DEFAULT"] = new CPScriptFunctionScene(this, &GameCrimePatrol::sceneNxtfrm);
 }
 
 void GameCrimePatrol::verifyScriptFunctions() {
 	Common::Array<Scene *> *scenes = _sceneInfo->getScenes();
 	for (size_t i = 0; i < scenes->size(); i++) {
 		Scene *scene = (*scenes)[i];
-		getScriptFunctionScene(PREOP, scene->preop);
-		getScriptFunctionScene(SHOWMSG, scene->scnmsg);
-		getScriptFunctionScene(INSOP, scene->insop);
-		getScriptFunctionScene(WEPDWN, scene->wepdwn);
-		getScriptFunctionScene(SCNSCR, scene->scnscr);
-		getScriptFunctionScene(NXTFRM, scene->nxtfrm);
-		getScriptFunctionScene(NXTSCN, scene->nxtscn);
-		for (size_t j = 0; j < scene->zones.size(); j++) {
-			Zone *zone = scene->zones[j];
-			for (size_t k = 0; k < zone->rects.size(); k++) {
-				getScriptFunctionRectHit(zone->rects[k].rectHit);
+		getScriptFunctionScene(PREOP, scene->_preop);
+		getScriptFunctionScene(SHOWMSG, scene->_scnmsg);
+		getScriptFunctionScene(INSOP, scene->_insop);
+		getScriptFunctionScene(WEPDWN, scene->_wepdwn);
+		getScriptFunctionScene(SCNSCR, scene->_scnscr);
+		getScriptFunctionScene(NXTFRM, scene->_nxtfrm);
+		getScriptFunctionScene(NXTSCN, scene->_nxtscn);
+		for (size_t j = 0; j < scene->_zones.size(); j++) {
+			Zone *zone = scene->_zones[j];
+			for (size_t k = 0; k < zone->_rects.size(); k++) {
+				getScriptFunctionRectHit(zone->_rects[k]._rectHit);
 			}
 		}
 	}
 }
 
 CPScriptFunctionRect GameCrimePatrol::getScriptFunctionRectHit(Common::String name) {
-	CPScriptFunctionRectMap::iterator it = _rectHitFuncs.find(name);
+	auto it = _rectHitFuncs.find(name);
 	if (it != _rectHitFuncs.end()) {
 		return (*(*it)._value);
 	} else {
-		error("Could not find rectHit function: %s", name.c_str());
+		error("GameCrimePatrol::getScriptFunctionRectHit(): Could not find rectHit function: %s", name.c_str());
 	}
 }
 
@@ -269,7 +270,7 @@ CPScriptFunctionScene GameCrimePatrol::getScriptFunctionScene(SceneFuncType type
 		functionMap = &_sceneNxtScn;
 		break;
 	default:
-		error("Unkown scene script type: %u", type);
+		error("GameCrimePatrol::getScriptFunctionScene(): Unkown scene script type: %u", type);
 		break;
 	}
 	CPScriptFunctionSceneMap::iterator it;
@@ -277,7 +278,7 @@ CPScriptFunctionScene GameCrimePatrol::getScriptFunctionScene(SceneFuncType type
 	if (it != functionMap->end()) {
 		return (*(*it)._value);
 	} else {
-		error("Could not find scene type %u function: %s", type, name.c_str());
+		error("GameCrimePatrol::getScriptFunctionScene(): Could not find scene type %u function: %s", type, name.c_str());
 	}
 }
 
@@ -293,19 +294,18 @@ void GameCrimePatrol::callScriptFunctionScene(SceneFuncType type, Common::String
 
 Common::Error GameCrimePatrol::run() {
 	init();
-	_NewGame();
-	_cur_scene = _startscene;
+	newGame();
+	_curScene = _startScene;
 	Common::String oldscene;
 	while (!_vm->shouldQuit()) {
-		oldscene = _cur_scene;
-		_SetFrame();
+		oldscene = _curScene;
 		_fired = false;
-		Scene *scene = _sceneInfo->findScene(_cur_scene);
+		Scene *scene = _sceneInfo->findScene(_curScene);
 		if (!loadScene(scene)) {
-			if (scene->nxtscn == "CONTINUE_TARGET_PRACTICE") {
-				callScriptFunctionScene(NXTSCN, scene->nxtscn, scene);
+			if (scene->_nxtscn == "CONTINUE_TARGET_PRACTICE") {
+				callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
 			} else {
-				error("Cannot find scene %s in libfile", scene->name.c_str());
+				error("GameCrimePatrol::run(): Cannot find scene %s in libfile", scene->_name.c_str());
 			}
 		}
 		_sceneSkipped = false;
@@ -313,60 +313,58 @@ Common::Error GameCrimePatrol::run() {
 		g_system->getMixer()->stopHandle(_sceneAudioHandle);
 		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_sceneAudioHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 		_paletteDirty = true;
-		_nextFrameTime = _GetMsTime() + 100;
-		callScriptFunctionScene(PREOP, scene->preop, scene);
-		_currentFrame = _GetFrame(scene);
-		while (_currentFrame <= scene->endFrame && _cur_scene == oldscene && !_vm->shouldQuit()) {
-			_UpdateMouse();
-			callScriptFunctionScene(SHOWMSG, scene->scnmsg, scene);
-			callScriptFunctionScene(INSOP, scene->insop, scene);
-			_holster = _WeaponDown();
+		_nextFrameTime = getMsTime() + 100;
+		callScriptFunctionScene(PREOP, scene->_preop, scene);
+		_currentFrame = getFrame(scene);
+		while (_currentFrame <= scene->_endFrame && _curScene == oldscene && !_vm->shouldQuit()) {
+			updateMouse();
+			callScriptFunctionScene(SHOWMSG, scene->_scnmsg, scene);
+			callScriptFunctionScene(INSOP, scene->_insop, scene);
+			_holster = weaponDown();
 			if (_holster) {
-				callScriptFunctionScene(WEPDWN, scene->wepdwn, scene);
+				callScriptFunctionScene(WEPDWN, scene->_wepdwn, scene);
 			}
 			Common::Point firedCoords;
-			if (__Fired(&firedCoords)) {
+			if (fired(&firedCoords)) {
 				if (!_holster) {
-					Rect *hitGlobalRect = _CheckZone(_menuzone, &firedCoords);
+					Rect *hitGlobalRect = checkZone(_menuzone, &firedCoords);
 					if (hitGlobalRect != nullptr) {
-						callScriptFunctionRectHit(hitGlobalRect->rectHit, hitGlobalRect);
-					} else {
-						if (_shots > 0) {
-							if (!_debug_unlimitedAmmo) {
-								_shots--;
-							}
-							_DisplayShotFiredImage(&firedCoords);
-							_DoShot();
-							Rect *hitRect = nullptr;
-							Zone *hitSceneZone = _CheckZonesV2(scene, hitRect, &firedCoords);
-							if (hitSceneZone != nullptr) {
-								callScriptFunctionRectHit(hitRect->rectHit, hitRect);
-							} else {
-								int8 skip = _SkipToNewScene(scene);
-								if (skip == -1) {
-									callScriptFunctionScene(NXTSCN, scene->nxtscn, scene);
-								} else if (skip == 1) {
-									if (scene->dataParam4 > 0) {
-										uint32 framesToSkip = (scene->dataParam4 - _currentFrame) / _videoFrameSkip;
-										_videoDecoder->skipNumberOfFrames(framesToSkip);
-									} else {
-										callScriptFunctionScene(NXTSCN, scene->nxtscn, scene);
-									}
+						callScriptFunctionRectHit(hitGlobalRect->_rectHit, hitGlobalRect);
+					} else if (_shots > 0) {
+						if (!_debug_unlimitedAmmo) {
+							_shots--;
+						}
+						displayShotFiredImage(&firedCoords);
+						doShot();
+						Rect *hitRect = nullptr;
+						Zone *hitSceneZone = checkZonesV2(scene, hitRect, &firedCoords);
+						if (hitSceneZone != nullptr) {
+							callScriptFunctionRectHit(hitRect->_rectHit, hitRect);
+						} else {
+							int8 skip = skipToNewScene(scene);
+							if (skip == -1) {
+								callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
+							} else if (skip == 1) {
+								if (scene->_dataParam4 > 0) {
+									uint32 framesToSkip = (scene->_dataParam4 - _currentFrame) / _videoFrameSkip;
+									_videoDecoder->skipNumberOfFrames(framesToSkip);
+								} else {
+									callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
 								}
 							}
-						} else {
-							_PlaySound(_emptySound);
 						}
+					} else {
+						playSound(_emptySound);
 					}
 				}
 			}
-			if (_cur_scene == oldscene) {
-				callScriptFunctionScene(NXTFRM, scene->nxtfrm, scene);
+			if (_curScene == oldscene) {
+				callScriptFunctionScene(NXTFRM, scene->_nxtfrm, scene);
 			}
-			_DisplayLivesLeft();
-			_DisplayScores();
-			_DisplayShotsLeft();
-			_MoveMouse();
+			displayLivesLeft();
+			displayScores();
+			displayShotsLeft();
+			moveMouse();
 			if (_pauseTime > 0) {
 				g_system->getMixer()->pauseHandle(_sceneAudioHandle, true);
 			} else {
@@ -375,13 +373,14 @@ Common::Error GameCrimePatrol::run() {
 			if (_videoDecoder->getCurrentFrame() == 0) {
 				_videoDecoder->getNextFrame();
 			}
-			int32 remainingMillis = _nextFrameTime - _GetMsTime();
+			updateScreen();
+			int32 remainingMillis = _nextFrameTime - getMsTime();
 			if (remainingMillis < 10) {
 				if (_videoDecoder->getCurrentFrame() > 0) {
 					_videoDecoder->getNextFrame();
 				}
-				remainingMillis = _nextFrameTime - _GetMsTime();
-				_nextFrameTime = _GetMsTime() + (remainingMillis > 0 ? remainingMillis : 0) + 100;
+				remainingMillis = _nextFrameTime - getMsTime();
+				_nextFrameTime = getMsTime() + (remainingMillis > 0 ? remainingMillis : 0) + 100;
 			}
 			if (remainingMillis > 0) {
 				if (remainingMillis > 15) {
@@ -389,97 +388,93 @@ Common::Error GameCrimePatrol::run() {
 				}
 				g_system->delayMillis(remainingMillis);
 			}
-			_currentFrame = _GetFrame(scene);
-			debug_drawPracticeRects();
-			updateScreen();
+			_currentFrame = getFrame(scene);
+			debugDrawPracticeRects();
 		}
 		// frame limit reached or scene changed, prepare for next scene
 		_hadPause = false;
 		_pauseTime = 0;
-		if (_cur_scene == oldscene) {
-			callScriptFunctionScene(NXTSCN, scene->nxtscn, scene);
+		if (_curScene == oldscene) {
+			callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
 		}
-		if (_cur_scene == "") {
+		if (_curScene == "") {
 			_vm->quitGame();
 		}
 	}
 	return Common::kNoError;
 }
 
-void GameCrimePatrol::_NewGame() {
+void GameCrimePatrol::newGame() {
 	_shots = 10;
 	_lives = 3;
 	_holster = false;
 }
 
-void GameCrimePatrol::_ResetParams() {
-	// fill _got_to with start scenes
-	// 0 in _got_to array means the level is finished
-	for (uint8 i = 0; i < 15; i++) {
-		_got_to[i] = _level_scenes[i][0];
+void GameCrimePatrol::resetParams() {
+	// fill _gotTo with start scenes
+	// 0 in _gotTo array means the level is finished
+	for (int i = 0; i < 15; i++) {
+		_gotTo[i] = _levelScenes[i][0];
 	}
 }
 
-void GameCrimePatrol::_DoMenu() {
-	uint32 startTime = _GetMsTime();
-	_RestoreCursor();
-	_DoCursor();
+void GameCrimePatrol::doMenu() {
+	uint32 startTime = getMsTime();
+	updateCursor();
 	_inMenu = true;
-	_MoveMouse();
+	moveMouse();
 	g_system->getMixer()->pauseHandle(_sceneAudioHandle, true);
 	_screen->copyRectToSurface(_background->getBasePtr(_videoPosX, _videoPosY), _background->pitch, _videoPosX, _videoPosY, _videoDecoder->getWidth(), _videoDecoder->getHeight());
-	_ShowDifficulty(_difficulty, false);
+	showDifficulty(_difficulty, false);
 	while (_inMenu && !_vm->shouldQuit()) {
 		Common::Point firedCoords;
-		if (__Fired(&firedCoords)) {
-			Rect *hitMenuRect = _CheckZone(_submenzone, &firedCoords);
+		if (fired(&firedCoords)) {
+			Rect *hitMenuRect = checkZone(_submenzone, &firedCoords);
 			if (hitMenuRect != nullptr) {
-				callScriptFunctionRectHit(hitMenuRect->rectHit, hitMenuRect);
+				callScriptFunctionRectHit(hitMenuRect->_rectHit, hitMenuRect);
 			}
 		}
 		if (_difficulty != _oldDifficulty) {
-			_ChangeDifficulty(_difficulty);
+			changeDifficulty(_difficulty);
 		}
-		g_system->delayMillis(15);
 		updateScreen();
+		g_system->delayMillis(15);
 	}
-	_RestoreCursor();
-	_DoCursor();
+	updateCursor();
 	g_system->getMixer()->pauseHandle(_sceneAudioHandle, false);
 	if (_hadPause) {
-		unsigned long endTime = _GetMsTime();
-		unsigned long timeDiff = endTime - startTime;
+		uint32 endTime = getMsTime();
+		uint32 timeDiff = endTime - startTime;
 		_pauseTime += timeDiff;
 		_nextFrameTime += timeDiff;
 	}
 }
 
-void GameCrimePatrol::_ChangeDifficulty(uint8 newDifficulty) {
+void GameCrimePatrol::changeDifficulty(uint8 newDifficulty) {
 	if (newDifficulty == _oldDifficulty) {
 		return;
 	}
-	_ShowDifficulty(newDifficulty, true);
+	showDifficulty(newDifficulty, true);
 	_oldDifficulty = newDifficulty;
 	_difficulty = newDifficulty;
 }
 
-void GameCrimePatrol::_ShowDifficulty(uint8 newDifficulty, bool updateCursor) {
+void GameCrimePatrol::showDifficulty(uint8 newDifficulty, bool cursor) {
 	// reset menu screen
 	_screen->copyRectToSurface(_background->getBasePtr(_videoPosX, _videoPosY), _background->pitch, _videoPosX, _videoPosY, _videoDecoder->getWidth(), _videoDecoder->getHeight());
 	uint16 posY = 0x45 + ((newDifficulty - 1) * 0x21);
 	AlgGraphics::drawImageCentered(_screen, &_difficultyIcon, 0x0115, posY);
-	if (updateCursor) {
-		_DoCursor();
+	if (cursor) {
+		updateCursor();
 	}
 }
 
-void GameCrimePatrol::_DoCursor() {
-	_UpdateMouse();
+void GameCrimePatrol::updateCursor() {
+	updateMouse();
 }
 
-void GameCrimePatrol::_UpdateMouse() {
+void GameCrimePatrol::updateMouse() {
 	if (_oldWhichGun != _whichGun) {
-		Graphics::PixelFormat pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 		Graphics::Surface *cursor = &(*_gun)[_whichGun];
 		CursorMan.popAllCursors();
 		uint16 hotspotX = (cursor->w / 2) + 3;
@@ -488,13 +483,13 @@ void GameCrimePatrol::_UpdateMouse() {
 			cursor->drawLine(0, hotspotY, cursor->w, hotspotY, 1);
 			cursor->drawLine(hotspotX, 0, hotspotX, cursor->h, 1);
 		}
-		CursorMan.pushCursor(cursor->getPixels(), cursor->w, cursor->h, hotspotX, hotspotY, 0, false, &pixelFormat);
+		CursorMan.pushCursor(cursor->getPixels(), cursor->w, cursor->h, hotspotX, hotspotY, 0);
 		CursorMan.showMouse(true);
 		_oldWhichGun = _whichGun;
 	}
 }
 
-void GameCrimePatrol::_MoveMouse() {
+void GameCrimePatrol::moveMouse() {
 	if (_inMenu) {
 		_whichGun = 3; // in menu cursor
 	} else {
@@ -520,27 +515,27 @@ void GameCrimePatrol::_MoveMouse() {
 			_whichGun = 0; // regular gun
 		}
 	}
-	_UpdateMouse();
+	updateMouse();
 }
 
-void GameCrimePatrol::_DisplayLivesLeft() {
+void GameCrimePatrol::displayLivesLeft() {
 	if (_lives == _oldLives) {
 		return;
 	}
 	int posY = 0x67;
-	for (uint8 i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		AlgGraphics::drawImage(_screen, &_deadIcon, 0x12F, posY);
 		posY += 0xE;
 	}
 	posY = 0x67;
-	for (uint8 i = 0; i < _lives; i++) {
+	for (int i = 0; i < _lives; i++) {
 		AlgGraphics::drawImage(_screen, &_liveIcon, 0x12F, posY);
 		posY += 0xE;
 	}
 	_oldLives = _lives;
 }
 
-void GameCrimePatrol::_DisplayScores() {
+void GameCrimePatrol::displayScores() {
 	if (_score == _oldScore) {
 		return;
 	}
@@ -554,42 +549,42 @@ void GameCrimePatrol::_DisplayScores() {
 	_oldScore = _score;
 }
 
-void GameCrimePatrol::_DisplayShotsLeft() {
+void GameCrimePatrol::displayShotsLeft() {
 	if (_shots == _oldShots) {
 		return;
 	}
 	uint16 posX = 0xEE;
-	for (uint8 i = 0; i < 10; i++) {
+	for (int i = 0; i < 10; i++) {
 		AlgGraphics::drawImage(_screen, &_emptyIcon, posX, 0xBE);
 		posX += 5;
 	}
 	posX = 0xEE;
-	for (uint8 i = 0; i < _shots; i++) {
+	for (int i = 0; i < _shots; i++) {
 		AlgGraphics::drawImage(_screen, &_shotIcon, posX, 0xBE);
 		posX += 5;
 	}
 	_oldShots = _shots;
 }
 
-bool GameCrimePatrol::_WeaponDown() {
+bool GameCrimePatrol::weaponDown() {
 	if (_rightDown && _mousePos.y >= 0xAA && _mousePos.x >= 0x113) {
 		return true;
 	}
 	return false;
 }
 
-bool GameCrimePatrol::_SaveState() {
+bool GameCrimePatrol::saveState() {
 	Common::OutSaveFile *outSaveFile;
 	Common::String saveFileName = _vm->getSaveStateName(0);
 	if (!(outSaveFile = g_system->getSavefileManager()->openForSaving(saveFileName))) {
-		warning("Can't create file '%s', game not saved", saveFileName.c_str());
+		warning("GameCrimePatrol::saveState(): Can't create file '%s', game not saved", saveFileName.c_str());
 		return false;
 	}
 	outSaveFile->writeUint32BE(MKTAG('A', 'L', 'G', 'S')); // header
 	outSaveFile->writeByte(0);                             // version, unused for now
 	outSaveFile->writeSByte(_stage);
-	for (uint8 i = 0; i < 15; i++) {
-		outSaveFile->writeUint16LE(_got_to[i]);
+	for (int i = 0; i < 15; i++) {
+		outSaveFile->writeUint16LE(_gotTo[i]);
 	}
 	outSaveFile->writeSint32LE(_score);
 	outSaveFile->writeUint16LE(_shots);
@@ -599,34 +594,34 @@ bool GameCrimePatrol::_SaveState() {
 	return true;
 }
 
-bool GameCrimePatrol::_LoadState() {
+bool GameCrimePatrol::loadState() {
 	Common::InSaveFile *inSaveFile;
 	Common::String saveFileName = _vm->getSaveStateName(0);
 	if (!(inSaveFile = g_system->getSavefileManager()->openForLoading(saveFileName))) {
-		debug("Can't load file '%s', game not loaded", saveFileName.c_str());
+		debug("GameCrimePatrol::loadState(): Can't load file '%s', game not loaded", saveFileName.c_str());
 		return false;
 	}
 	uint32 header = inSaveFile->readUint32BE();
 	if (header != MKTAG('A', 'L', 'G', 'S')) {
-		warning("Unkown save file, header: %d", header);
+		warning("GameCrimePatrol::loadState(): Unkown save file, header: %s", tag2str(header));
 		return false;
 	}
 	inSaveFile->skip(1); // version, unused for now
 	_stage = inSaveFile->readSByte();
-	for (uint8 i = 0; i < 15; i++) {
-		_got_to[i] = inSaveFile->readUint16LE();
+	for (int i = 0; i < 15; i++) {
+		_gotTo[i] = inSaveFile->readUint16LE();
 	}
 	_score = inSaveFile->readSint32LE();
 	_shots = inSaveFile->readUint16LE();
 	_lives = inSaveFile->readSByte();
 	delete inSaveFile;
 	_gameInProgress = true;
-	_scene_nxtscn_generic(_stage);
+	sceneNxtscnGeneric(_stage);
 	return true;
 }
 
 // misc game functions
-void GameCrimePatrol::_DisplayShotFiredImage(Common::Point *point) {
+void GameCrimePatrol::displayShotFiredImage(Common::Point *point) {
 	if (point->x >= _videoPosX && point->x <= (_videoPosX + _videoDecoder->getWidth()) && point->y >= _videoPosY && point->y <= (_videoPosY + _videoDecoder->getHeight())) {
 		uint16 targetX = point->x - _videoPosX;
 		uint16 targetY = point->y - _videoPosY;
@@ -634,15 +629,15 @@ void GameCrimePatrol::_DisplayShotFiredImage(Common::Point *point) {
 	}
 }
 
-void GameCrimePatrol::_EnableVideoFadeIn() {
+void GameCrimePatrol::enableVideoFadeIn() {
 	// TODO implement
 }
 
-uint16 GameCrimePatrol::_SceneToNumber(Scene *scene) {
-	return atoi(scene->name.substr(5).c_str());
+uint16 GameCrimePatrol::sceneToNumber(Scene *scene) {
+	return atoi(scene->_name.substr(5).c_str());
 }
 
-uint16 GameCrimePatrol::_RandomUnusedInt(uint8 max, uint16 *mask, uint16 exclude) {
+uint16 GameCrimePatrol::randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude) {
 	if (max == 1) {
 		return 0;
 	}
@@ -651,165 +646,165 @@ uint16 GameCrimePatrol::_RandomUnusedInt(uint8 max, uint16 *mask, uint16 exclude
 	if (*mask == fullMask) {
 		*mask = 0;
 	}
-	uint16 random = 0;
+	uint16 randomNum = 0;
 	// find an unused random number
 	while (1) {
-		random = _rnd->getRandomNumber(max - 1);
+		randomNum = _rnd->getRandomNumber(max - 1);
 		// check if bit is already used
-		unsigned int bit = 1 << random;
-		if (!((*mask & bit) || random == exclude)) {
+		uint16 bit = 1 << randomNum;
+		if (!((*mask & bit) || randomNum == exclude)) {
 			// set the bit in mask
 			*mask |= bit;
 			break;
 		}
 	}
-	return random;
+	return randomNum;
 }
 
-uint16 GameCrimePatrol::_PickRandomScene(uint8 index, uint8 max) {
+uint16 GameCrimePatrol::pickRandomScene(uint8 index, uint8 max) {
 	if (max != 0) {
-		_random_max = max;
-		_random_mask = 0;
-		_random_picked = 0;
-		_random_scene_count = 0;
-		while (_level_scenes[index][_random_scene_count] != 0) {
-			_random_scene_count++;
+		_randomMax = max;
+		_randomMask = 0;
+		_randomPicked = 0;
+		_randomSceneCount = 0;
+		while (_levelScenes[index][_randomSceneCount] != 0) {
+			_randomSceneCount++;
 		}
 	}
-	unsigned short count = _random_max--;
+	uint16 count = _randomMax--;
 	if (count > 0) {
-		_random_picked = _RandomUnusedInt(_random_scene_count, &_random_mask, _random_picked);
-		return _level_scenes[index][_random_picked];
+		_randomPicked = randomUnusedInt(_randomSceneCount, &_randomMask, _randomPicked);
+		return _levelScenes[index][_randomPicked];
 	}
 	return 0;
 }
 
-uint16 GameCrimePatrol::_PickDeathScene() {
-	if (_stage != _old_stage) {
-		_old_stage = _stage;
-		_death_mask = 0;
-		_death_picked = -1;
-		_death_scene_count = 0;
-		while (_died_scenes_by_stage[_stage][_death_scene_count] != 0) {
-			_death_scene_count++;
+uint16 GameCrimePatrol::pickDeathScene() {
+	if (_stage != _oldStage) {
+		_oldStage = _stage;
+		_deathMask = 0;
+		_deathPicked = -1;
+		_deathSceneCount = 0;
+		while (_diedScenesByStage[_stage][_deathSceneCount] != 0) {
+			_deathSceneCount++;
 		}
 	}
-	_death_picked = _RandomUnusedInt(_death_scene_count, &_death_mask, _death_picked);
-	return _died_scenes_by_stage[_stage][_death_picked];
+	_deathPicked = randomUnusedInt(_deathSceneCount, &_deathMask, _deathPicked);
+	return _diedScenesByStage[_stage][_deathPicked];
 }
 
-void GameCrimePatrol::_scene_nxtscn_generic(uint8 index) {
+void GameCrimePatrol::sceneNxtscnGeneric(uint8 index) {
 	uint16 nextSceneId = 0;
-	_got_to[index] = 0;
-	if (_got_to[0] || _got_to[1] || _got_to[3] || _got_to[2]) {
-		nextSceneId = _stage_start_scenes[0];
-	} else if (_got_to[4] || _got_to[5] || _got_to[6]) {
+	_gotTo[index] = 0;
+	if (_gotTo[0] || _gotTo[1] || _gotTo[3] || _gotTo[2]) {
+		nextSceneId = _stageStartScenes[0];
+	} else if (_gotTo[4] || _gotTo[5] || _gotTo[6]) {
 		if (_stage == 1) {
-			nextSceneId = _stage_start_scenes[1];
+			nextSceneId = _stageStartScenes[1];
 		} else {
 			_stage = 1;
 			nextSceneId = 0x50;
 		}
-	} else if (_got_to[7] || _got_to[8] || _got_to[9]) {
+	} else if (_gotTo[7] || _gotTo[8] || _gotTo[9]) {
 		if (_stage == 2) {
-			nextSceneId = _stage_start_scenes[2];
+			nextSceneId = _stageStartScenes[2];
 		} else {
 			_stage = 2;
 			nextSceneId = 0x81;
 		}
-	} else if (_got_to[10] || _got_to[11] || _got_to[12]) {
+	} else if (_gotTo[10] || _gotTo[11] || _gotTo[12]) {
 		if (_stage == 3) {
-			nextSceneId = _stage_start_scenes[3];
+			nextSceneId = _stageStartScenes[3];
 		} else {
 			_stage = 3;
 			nextSceneId = 0x014B;
 		}
-	} else if (_got_to[13]) {
+	} else if (_gotTo[13]) {
 		_stage = 4;
 		nextSceneId = 0x018F;
 	} else {
 		nextSceneId = 0x21;
 	}
-	_cur_scene = Common::String::format("scene%d", nextSceneId);
+	_curScene = Common::String::format("scene%d", nextSceneId);
 }
 
-void GameCrimePatrol::_rect_select_generic(uint8 index) {
-	if (_got_to[index] > 0) {
-		_cur_scene = Common::String::format("scene%d", _got_to[index]);
+void GameCrimePatrol::rectSelectGeneric(uint8 index) {
+	if (_gotTo[index] > 0) {
+		_curScene = Common::String::format("scene%d", _gotTo[index]);
 	}
 }
 
-void GameCrimePatrol::_scene_iso_got_to_generic(uint8 index, uint16 sceneId) {
-	_got_to[index] = sceneId;
+void GameCrimePatrol::sceneIsoGotToGeneric(uint8 index, uint16 sceneId) {
+	_gotTo[index] = sceneId;
 }
 
 // Script functions: RectHit
-void GameCrimePatrol::_rect_shotmenu(Rect *rect) {
-	_DoMenu();
+void GameCrimePatrol::rectShotMenu(Rect *rect) {
+	doMenu();
 }
 
-void GameCrimePatrol::_rect_save(Rect *rect) {
-	if(_SaveState()) {
-		_DoSaveSound();
+void GameCrimePatrol::rectSave(Rect *rect) {
+	if (saveState()) {
+		doSaveSound();
 	}
 }
 
-void GameCrimePatrol::_rect_load(Rect *rect) {
-	if(_LoadState()) {
-		_DoLoadSound();
+void GameCrimePatrol::rectLoad(Rect *rect) {
+	if (loadState()) {
+		doLoadSound();
 	}
 }
 
-void GameCrimePatrol::_rect_continue(Rect *rect) {
+void GameCrimePatrol::rectContinue(Rect *rect) {
 	_inMenu = false;
 	_fired = false;
 	if (_lives <= 0) {
 		_score = (int32)(_score * 0.7f);
-		uint16 returnScene = _stage_start_scenes[_stage];
-		_cur_scene = Common::String::format("scene%d", returnScene);
-		_NewGame();
+		uint16 returnScene = _stageStartScenes[_stage];
+		_curScene = Common::String::format("scene%d", returnScene);
+		newGame();
 	}
 }
 
-void GameCrimePatrol::_rect_start(Rect *rect) {
+void GameCrimePatrol::rectStart(Rect *rect) {
 	_inMenu = false;
 	_fired = false;
 	_gameInProgress = true;
 	if (_isDemo) {
-		_cur_scene = "scene39";
-		_got_to[1] = 39;
+		_curScene = "scene39";
+		_gotTo[1] = 39;
 	} else {
-		_cur_scene = Common::String::format("scene%d", _stage_start_scenes[0]);
+		_curScene = Common::String::format("scene%d", _stageStartScenes[0]);
 	}
-	_ResetParams();
-	_NewGame();
+	resetParams();
+	newGame();
 }
 
-void GameCrimePatrol::_rect_target_practice(Rect *rect) {
+void GameCrimePatrol::rectTargetPractice(Rect *rect) {
 	uint16 nextScene = 0;
-	Scene *scene = _sceneInfo->findScene(_cur_scene);
-	if (_level_scenes[0][0] == _SceneToNumber(scene)) {
-		_practice_mask = 0x1F;
+	Scene *scene = _sceneInfo->findScene(_curScene);
+	if (_levelScenes[0][0] == sceneToNumber(scene)) {
+		_practiceMask = 0x1F;
 	}
-	if (_practice_mask == 0) {
-		_practice_mask = 0x1F;
+	if (_practiceMask == 0) {
+		_practiceMask = 0x1F;
 	}
-	for (uint8 i = 0; i < 5; i++) {
-		if (_mousePos.x <= _practice_target_left[i] || _mousePos.x >= _practice_target_right[i] ||
-			_mousePos.y <= _practice_target_top[i] || _mousePos.y >= _practice_target_bottom[i]) {
+	for (int i = 0; i < 5; i++) {
+		if (_mousePos.x <= _practiceTargetLeft[i] || _mousePos.x >= _practiceTargetRight[i] ||
+			_mousePos.y <= _practiceTargetTop[i] || _mousePos.y >= _practiceTargetBottom[i]) {
 			// did not hit target
 			continue;
 		}
 		uint8 mask = 1 << i;
-		if (!(_practice_mask & mask)) {
+		if (!(_practiceMask & mask)) {
 			// target was already hit before
 			continue;
 		}
 		// did hit target
-		_score += scene->scnscrParam == 0 ? 50 : scene->scnscrParam;
-		_practice_mask ^= mask;
-		uint8 inverted = _practice_mask ^ 0x1F;
-		if (_practice_mask == 0) {
+		_score += scene->_scnscrParam == 0 ? 50 : scene->_scnscrParam;
+		_practiceMask ^= mask;
+		uint8 inverted = _practiceMask ^ 0x1F;
+		if (_practiceMask == 0) {
 			nextScene = 432;
 		} else {
 			nextScene = 401 + inverted;
@@ -817,503 +812,503 @@ void GameCrimePatrol::_rect_target_practice(Rect *rect) {
 		break;
 	}
 	if (nextScene != 0) {
-		_cur_scene = Common::String::format("scene%d", nextScene);
+		_curScene = Common::String::format("scene%d", nextScene);
 	}
 }
 
-void GameCrimePatrol::_rect_select_target_practice(Rect *rect) {
-	_rect_select_generic(0);
-	_got_to[0] = 0;
+void GameCrimePatrol::rectSelectTargetPractice(Rect *rect) {
+	rectSelectGeneric(0);
+	_gotTo[0] = 0;
 }
 
-void GameCrimePatrol::_rect_select_gang_fight(Rect *rect) {
-	_got_to[0] = 0;
-	_rect_select_generic(1);
+void GameCrimePatrol::rectSelectGangFight(Rect *rect) {
+	_gotTo[0] = 0;
+	rectSelectGeneric(1);
 }
 
-void GameCrimePatrol::_rect_select_warehouse(Rect *rect) {
-	_got_to[0] = 0;
-	_rect_select_generic(2);
+void GameCrimePatrol::rectSelectWarehouse(Rect *rect) {
+	_gotTo[0] = 0;
+	rectSelectGeneric(2);
 }
 
-void GameCrimePatrol::_rect_select_westcoast_sound(Rect *rect) {
-	_got_to[0] = 0;
-	_rect_select_generic(3);
+void GameCrimePatrol::rectSelectWestcoastSound(Rect *rect) {
+	_gotTo[0] = 0;
+	rectSelectGeneric(3);
 }
 
-void GameCrimePatrol::_rect_select_drug_deal(Rect *rect) {
-	_rect_select_generic(4);
+void GameCrimePatrol::rectSelectDrugDeal(Rect *rect) {
+	rectSelectGeneric(4);
 }
-void GameCrimePatrol::_rect_select_car_ring(Rect *rect) {
-	_rect_select_generic(5);
+void GameCrimePatrol::rectSelectCarRing(Rect *rect) {
+	rectSelectGeneric(5);
 }
-void GameCrimePatrol::_rect_select_bar(Rect *rect) {
-	_rect_select_generic(6);
+void GameCrimePatrol::rectSelectBar(Rect *rect) {
+	rectSelectGeneric(6);
 }
-void GameCrimePatrol::_rect_select_bank(Rect *rect) {
-	_rect_select_generic(7);
+void GameCrimePatrol::rectSelectBank(Rect *rect) {
+	rectSelectGeneric(7);
 }
-void GameCrimePatrol::_rect_select_crack_house(Rect *rect) {
-	_rect_select_generic(9);
-}
-
-void GameCrimePatrol::_rect_select_meth_lab(Rect *rect) {
-	_rect_select_generic(8);
+void GameCrimePatrol::rectSelectCrackHouse(Rect *rect) {
+	rectSelectGeneric(9);
 }
 
-void GameCrimePatrol::_rect_select_airplane(Rect *rect) {
-	_rect_select_generic(10);
+void GameCrimePatrol::rectSelectMethLab(Rect *rect) {
+	rectSelectGeneric(8);
 }
 
-void GameCrimePatrol::_rect_select_nuke_transport(Rect *rect) {
-	_rect_select_generic(11);
+void GameCrimePatrol::rectSelectAirplane(Rect *rect) {
+	rectSelectGeneric(10);
 }
 
-void GameCrimePatrol::_rect_select_airport(Rect *rect) {
-	_rect_select_generic(12);
+void GameCrimePatrol::rectSelectNukeTransport(Rect *rect) {
+	rectSelectGeneric(11);
 }
 
-void GameCrimePatrol::_rect_kill_innocent_man(Rect *rect) {
+void GameCrimePatrol::rectSelectAirport(Rect *rect) {
+	rectSelectGeneric(12);
+}
+
+void GameCrimePatrol::rectKillInnocentMan(Rect *rect) {
 }
 
 // Script functions: Scene PreOps
-void GameCrimePatrol::_scene_pso_warehouse_got_to(Scene *scene) {
-	uint16 sceneId = _SceneToNumber(scene);
-	_scene_iso_got_to_generic(2, sceneId);
-	_EnableVideoFadeIn();
+void GameCrimePatrol::scenePsoWarehouseGotTo(Scene *scene) {
+	uint16 sceneId = sceneToNumber(scene);
+	sceneIsoGotToGeneric(2, sceneId);
+	enableVideoFadeIn();
 }
 
-void GameCrimePatrol::_scene_pso_gang_fight_got_to(Scene *scene) {
-	uint16 sceneId = _SceneToNumber(scene);
-	_scene_iso_got_to_generic(1, sceneId);
-	_EnableVideoFadeIn();
+void GameCrimePatrol::scenePsoGangFightGotTo(Scene *scene) {
+	uint16 sceneId = sceneToNumber(scene);
+	sceneIsoGotToGeneric(1, sceneId);
+	enableVideoFadeIn();
 }
 
-void GameCrimePatrol::_scene_pso_westcoast_sound_got_to(Scene *scene) {
-	_scene_iso_got_to_generic(3, 456);
-	_EnableVideoFadeIn();
+void GameCrimePatrol::scenePsoWestcoastSoundGotTo(Scene *scene) {
+	sceneIsoGotToGeneric(3, 456);
+	enableVideoFadeIn();
 }
 
-void GameCrimePatrol::_scene_pso_drug_deal_got_to(Scene *scene) {
-	uint16 sceneId = _SceneToNumber(scene);
-	_scene_iso_got_to_generic(4, sceneId);
-	_EnableVideoFadeIn();
+void GameCrimePatrol::scenePsoDrugDealGotTo(Scene *scene) {
+	uint16 sceneId = sceneToNumber(scene);
+	sceneIsoGotToGeneric(4, sceneId);
+	enableVideoFadeIn();
 }
 
-void GameCrimePatrol::_scene_pso_car_ring_got_to(Scene *scene) {
-	uint16 sceneId = _SceneToNumber(scene);
-	_scene_iso_got_to_generic(5, sceneId);
-	_EnableVideoFadeIn();
+void GameCrimePatrol::scenePsoCarRingGotTo(Scene *scene) {
+	uint16 sceneId = sceneToNumber(scene);
+	sceneIsoGotToGeneric(5, sceneId);
+	enableVideoFadeIn();
 }
 
-void GameCrimePatrol::_scene_pso_bank_got_to(Scene *scene) {
-	uint16 sceneId = _SceneToNumber(scene);
-	_scene_iso_got_to_generic(7, sceneId);
-	_EnableVideoFadeIn();
+void GameCrimePatrol::scenePsoBankGotTo(Scene *scene) {
+	uint16 sceneId = sceneToNumber(scene);
+	sceneIsoGotToGeneric(7, sceneId);
+	enableVideoFadeIn();
 }
 
-void GameCrimePatrol::_scene_pso_crack_house_got_to(Scene *scene) {
-	uint16 sceneId = _SceneToNumber(scene);
-	_scene_iso_got_to_generic(9, sceneId);
-	_EnableVideoFadeIn();
+void GameCrimePatrol::scenePsoCrackHouseGotTo(Scene *scene) {
+	uint16 sceneId = sceneToNumber(scene);
+	sceneIsoGotToGeneric(9, sceneId);
+	enableVideoFadeIn();
 }
 
-void GameCrimePatrol::_scene_pso_meth_lab_got_to(Scene *scene) {
-	uint16 sceneId = _SceneToNumber(scene);
-	_scene_iso_got_to_generic(8, sceneId);
-	_EnableVideoFadeIn();
+void GameCrimePatrol::scenePsoMethLabGotTo(Scene *scene) {
+	uint16 sceneId = sceneToNumber(scene);
+	sceneIsoGotToGeneric(8, sceneId);
+	enableVideoFadeIn();
 }
 
-void GameCrimePatrol::_scene_pso_airplane_got_to(Scene *scene) {
-	uint16 sceneId = _SceneToNumber(scene);
-	_scene_iso_got_to_generic(10, sceneId);
-	_EnableVideoFadeIn();
+void GameCrimePatrol::scenePsoAirplaneGotTo(Scene *scene) {
+	uint16 sceneId = sceneToNumber(scene);
+	sceneIsoGotToGeneric(10, sceneId);
+	enableVideoFadeIn();
 }
 
-void GameCrimePatrol::_scene_pso_airport_got_to(Scene *scene) {
-	uint16 sceneId = _SceneToNumber(scene);
-	_scene_iso_got_to_generic(12, sceneId);
-	_EnableVideoFadeIn();
+void GameCrimePatrol::scenePsoAirportGotTo(Scene *scene) {
+	uint16 sceneId = sceneToNumber(scene);
+	sceneIsoGotToGeneric(12, sceneId);
+	enableVideoFadeIn();
 }
 
-void GameCrimePatrol::_scene_pso_nuke_transport_got_to(Scene *scene) {
-	uint16 sceneId = _SceneToNumber(scene);
-	_scene_iso_got_to_generic(11, sceneId);
-	_EnableVideoFadeIn();
+void GameCrimePatrol::scenePsoNukeTransportGotTo(Scene *scene) {
+	uint16 sceneId = sceneToNumber(scene);
+	sceneIsoGotToGeneric(11, sceneId);
+	enableVideoFadeIn();
 }
 
-void GameCrimePatrol::_scene_pso_power_plant_got_to(Scene *scene) {
-	uint16 sceneId = _SceneToNumber(scene);
-	_scene_iso_got_to_generic(13, sceneId);
-	_final_stage_scene = sceneId;
-	_EnableVideoFadeIn();
+void GameCrimePatrol::scenePsoPowerPlantGotTo(Scene *scene) {
+	uint16 sceneId = sceneToNumber(scene);
+	sceneIsoGotToGeneric(13, sceneId);
+	_finalStageScene = sceneId;
+	enableVideoFadeIn();
 }
 
 // Script functions: Scene NxtScn
-void GameCrimePatrol::_scene_nxtscn_lose_a_life(Scene *scene) {
+void GameCrimePatrol::sceneNxtscnLoseALife(Scene *scene) {
 	uint16 picked = 0;
 	if (!_debug_godMode) {
 		_lives--;
 	}
 	if (_isDemo) {
-		_cur_scene = "scene39";
+		_curScene = "scene39";
 		return;
 	} else if (_lives > 0) {
-		_DisplayLivesLeft();
-		picked = _PickDeathScene();
+		displayLivesLeft();
+		picked = pickDeathScene();
 	} else {
-		picked = _dead_scenes[_stage];
+		picked = _deadScenes[_stage];
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_game_won(Scene *scene) {
+void GameCrimePatrol::sceneNxtscnGameWon(Scene *scene) {
 	_gameInProgress = false;
-	_cur_scene = _startscene;
+	_curScene = _startScene;
 }
 
-void GameCrimePatrol::_scene_nxtscn_did_not_continue(Scene *scene) {
+void GameCrimePatrol::sceneNxtscnDidNotContinue(Scene *scene) {
 	_gameInProgress = false;
-	_cur_scene = _startscene;
+	_curScene = _startScene;
 }
 
-void GameCrimePatrol::_scene_nxtscn_kill_innocent_man(Scene *scene) {
+void GameCrimePatrol::sceneNxtscnKillInnocentMan(Scene *scene) {
 	uint16 picked = 0;
 	if (!_debug_godMode) {
 		_lives--;
 	}
 	if (_lives > 0) {
-		picked = _stage_start_scenes[_stage];
+		picked = _stageStartScenes[_stage];
 	} else {
-		picked = _dead_scenes[_stage];
+		picked = _deadScenes[_stage];
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_kill_innocent_woman(Scene *scene) {
+void GameCrimePatrol::sceneNxtscnKillInnocentWoman(Scene *scene) {
 	uint16 picked = 0;
 	if (!_debug_godMode) {
 		_lives--;
 	}
 	if (_lives > 0) {
-		picked = _stage_start_scenes[_stage];
+		picked = _stageStartScenes[_stage];
 	} else {
-		picked = _dead_scenes[_stage];
+		picked = _deadScenes[_stage];
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_after_die(Scene *scene) {
-	uint16 picked = _stage_start_scenes[_stage];
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameCrimePatrol::sceneNxtscnAfterDie(Scene *scene) {
+	uint16 picked = _stageStartScenes[_stage];
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_select_language_1(Scene *scene) {
+void GameCrimePatrol::sceneNxtscnSelectLanguage1(Scene *scene) {
 	// do nothing
 }
 
-void GameCrimePatrol::_scene_nxtscn_select_language_2(Scene *scene) {
+void GameCrimePatrol::sceneNxtscnSelectLanguage2(Scene *scene) {
 	// do nothing
 }
 
-void GameCrimePatrol::_scene_nxtscn_init_random_target_practice(Scene *scene) {
-	uint16 picked = _PickRandomScene(14, 6);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameCrimePatrol::sceneNxtscnInitRandomTargetPractice(Scene *scene) {
+	uint16 picked = pickRandomScene(14, 6);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_continue_target_practice(Scene *scene) {
-	uint16 picked = _PickRandomScene(14, 0);
+void GameCrimePatrol::sceneNxtscnContinueTargetPractice(Scene *scene) {
+	uint16 picked = pickRandomScene(14, 0);
 	if (picked == 0) {
-		_scene_iso_got_to_generic(0, 1);
-		_scene_nxtscn_generic(0);
+		sceneIsoGotToGeneric(0, 1);
+		sceneNxtscnGeneric(0);
 	} else {
-		_cur_scene = Common::String::format("scene%d", picked);
+		_curScene = Common::String::format("scene%d", picked);
 	}
 }
 
-void GameCrimePatrol::_scene_nxtscn_select_rookie_scenario(Scene *scene) {
+void GameCrimePatrol::sceneNxtscnSelectRookieScenario(Scene *scene) {
 	uint16 picked = 0;
-	if (_got_to[0] > 0) {
-		picked = _got_to[0];
-		_got_to[0] = 0;
-	} else if (_got_to[3] > 0) {
-		picked = _got_to[3];
-	} else if (_got_to[1] > 0) {
-		picked = _got_to[1];
-	} else if (_got_to[2] > 0) {
-		picked = _got_to[2];
+	if (_gotTo[0] > 0) {
+		picked = _gotTo[0];
+		_gotTo[0] = 0;
+	} else if (_gotTo[3] > 0) {
+		picked = _gotTo[3];
+	} else if (_gotTo[1] > 0) {
+		picked = _gotTo[1];
+	} else if (_gotTo[2] > 0) {
+		picked = _gotTo[2];
 	} else {
-		picked = _stage_start_scenes[1];
+		picked = _stageStartScenes[1];
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_select_undercover_scenario(Scene *scene) {
+void GameCrimePatrol::sceneNxtscnSelectUndercoverScenario(Scene *scene) {
 	uint16 picked = 0;
-	if (_got_to[4] > 0) {
-		picked = _got_to[4];
-	} else if (_got_to[5] > 0) {
-		picked = _got_to[5];
-	} else if (_got_to[6] > 0) {
-		picked = _got_to[6];
+	if (_gotTo[4] > 0) {
+		picked = _gotTo[4];
+	} else if (_gotTo[5] > 0) {
+		picked = _gotTo[5];
+	} else if (_gotTo[6] > 0) {
+		picked = _gotTo[6];
 	} else {
-		picked = _stage_start_scenes[2];
+		picked = _stageStartScenes[2];
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_select_swat_scenario(Scene *scene) {
+void GameCrimePatrol::sceneNxtscnSelectSwatScenario(Scene *scene) {
 	uint16 picked = 0;
-	if (_got_to[8] > 0) {
-		picked = _got_to[8];
-	} else if (_got_to[7] > 0) {
-		picked = _got_to[7];
-	} else if (_got_to[9] > 0) {
-		picked = _got_to[9];
+	if (_gotTo[8] > 0) {
+		picked = _gotTo[8];
+	} else if (_gotTo[7] > 0) {
+		picked = _gotTo[7];
+	} else if (_gotTo[9] > 0) {
+		picked = _gotTo[9];
 	} else {
-		picked = _stage_start_scenes[3];
+		picked = _stageStartScenes[3];
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_select_delta_scenario(Scene *scene) {
+void GameCrimePatrol::sceneNxtscnSelectDeltaScenario(Scene *scene) {
 	uint16 picked = 0;
-	if (_got_to[10] > 0) {
-		picked = _got_to[10];
-	} else if (_got_to[11] > 0) {
-		picked = _got_to[11];
-	} else if (_got_to[12] > 0) {
-		picked = _got_to[12];
+	if (_gotTo[10] > 0) {
+		picked = _gotTo[10];
+	} else if (_gotTo[11] > 0) {
+		picked = _gotTo[11];
+	} else if (_gotTo[12] > 0) {
+		picked = _gotTo[12];
 	} else {
-		picked = _final_stage_scene;
+		picked = _finalStageScene;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_finish_gang_fight(Scene *scene) {
+void GameCrimePatrol::sceneNxtscnFinishGangFight(Scene *scene) {
 	if (_isDemo) {
-		_cur_scene = _startscene;
+		_curScene = _startScene;
 		return;
 	}
-	_scene_nxtscn_generic(1);
+	sceneNxtscnGeneric(1);
 }
 
-void GameCrimePatrol::_scene_nxtscn_finish_westcoast_sound(Scene *scene) {
-	_scene_nxtscn_generic(3);
+void GameCrimePatrol::sceneNxtscnFinishWestcoastSound(Scene *scene) {
+	sceneNxtscnGeneric(3);
 }
 
-void GameCrimePatrol::_scene_nxtscn_finish_warehouse(Scene *scene) {
-	_scene_nxtscn_generic(2);
+void GameCrimePatrol::sceneNxtscnFinishWarehouse(Scene *scene) {
+	sceneNxtscnGeneric(2);
 }
 
-void GameCrimePatrol::_scene_nxtscn_init_random_warehouse(Scene *scene) {
-	uint16 picked = _PickRandomScene(15, (_difficulty * 2) + 5);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameCrimePatrol::sceneNxtscnInitRandomWarehouse(Scene *scene) {
+	uint16 picked = pickRandomScene(15, (_difficulty * 2) + 5);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_continue_warehouse(Scene *scene) {
-	uint16 picked = _PickRandomScene(15, 0);
+void GameCrimePatrol::sceneNxtscnContinueWarehouse(Scene *scene) {
+	uint16 picked = pickRandomScene(15, 0);
 	if (picked == 0) {
 		picked = 0x43;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_finish_drug_deal(Scene *scene) {
-	_scene_nxtscn_generic(4);
+void GameCrimePatrol::sceneNxtscnFinishDrugDeal(Scene *scene) {
+	sceneNxtscnGeneric(4);
 }
 
-void GameCrimePatrol::_scene_nxtscn_init_random_car_ring_leader(Scene *scene) {
-	uint16 picked = _PickRandomScene(16, 2);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameCrimePatrol::sceneNxtscnInitRandomCarRingLeader(Scene *scene) {
+	uint16 picked = pickRandomScene(16, 2);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_continue_car_ring_leader_1(Scene *scene) {
-	uint16 picked = _PickRandomScene(16, 0);
+void GameCrimePatrol::sceneNxtscnContinueCarRingLeader1(Scene *scene) {
+	uint16 picked = pickRandomScene(16, 0);
 	if (picked == 0) {
 		picked = 0x67;
 	} else {
 		picked = 0x63;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_continue_car_ring_leader_2(Scene *scene) {
-	uint16 picked = _PickRandomScene(16, 0);
+void GameCrimePatrol::sceneNxtscnContinueCarRingLeader2(Scene *scene) {
+	uint16 picked = pickRandomScene(16, 0);
 	if (picked == 0) {
 		picked = 0x67;
 	} else {
 		picked = 0x66;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_init_random_car_ring(Scene *scene) {
-	uint16 picked = _PickRandomScene(17, (_difficulty * 2) + 8);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameCrimePatrol::sceneNxtscnInitRandomCarRing(Scene *scene) {
+	uint16 picked = pickRandomScene(17, (_difficulty * 2) + 8);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_continue_car_ring(Scene *scene) {
-	uint16 picked = _PickRandomScene(17, 0);
+void GameCrimePatrol::sceneNxtscnContinueCarRing(Scene *scene) {
+	uint16 picked = pickRandomScene(17, 0);
 	if (picked == 0) {
 		picked = 0x74;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_finish_car_ring(Scene *scene) {
-	_scene_nxtscn_generic(5);
+void GameCrimePatrol::sceneNxtscnFinishCarRing(Scene *scene) {
+	sceneNxtscnGeneric(5);
 }
 
-void GameCrimePatrol::_scene_nxtscn_finish_bar(Scene *scene) {
-	_scene_nxtscn_generic(6);
+void GameCrimePatrol::sceneNxtscnFinishBar(Scene *scene) {
+	sceneNxtscnGeneric(6);
 }
 
-void GameCrimePatrol::_scene_nxtscn_finish_bank(Scene *scene) {
-	_scene_nxtscn_generic(7);
+void GameCrimePatrol::sceneNxtscnFinishBank(Scene *scene) {
+	sceneNxtscnGeneric(7);
 }
 
-void GameCrimePatrol::_scene_nxtscn_finish_crack_house(Scene *scene) {
-	_scene_nxtscn_generic(9);
+void GameCrimePatrol::sceneNxtscnFinishCrackHouse(Scene *scene) {
+	sceneNxtscnGeneric(9);
 }
 
-void GameCrimePatrol::_scene_nxtscn_finish_meth_lab(Scene *scene) {
-	_scene_nxtscn_generic(8);
+void GameCrimePatrol::sceneNxtscnFinishMethLab(Scene *scene) {
+	sceneNxtscnGeneric(8);
 }
 
-void GameCrimePatrol::_scene_nxtscn_finish_airplane(Scene *scene) {
-	_scene_nxtscn_generic(10);
+void GameCrimePatrol::sceneNxtscnFinishAirplane(Scene *scene) {
+	sceneNxtscnGeneric(10);
 }
 
-void GameCrimePatrol::_scene_nxtscn_finish_airport(Scene *scene) {
-	_scene_nxtscn_generic(12);
+void GameCrimePatrol::sceneNxtscnFinishAirport(Scene *scene) {
+	sceneNxtscnGeneric(12);
 }
 
-void GameCrimePatrol::_scene_nxtscn_finish_nuke_transport(Scene *scene) {
-	_scene_nxtscn_generic(11);
+void GameCrimePatrol::sceneNxtscnFinishNukeTransport(Scene *scene) {
+	sceneNxtscnGeneric(11);
 }
 
-void GameCrimePatrol::_scene_nxtscn_init_random_bar(Scene *scene) {
-	uint16 picked = _PickRandomScene(18, (_difficulty * 2) + 9);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameCrimePatrol::sceneNxtscnInitRandomBar(Scene *scene) {
+	uint16 picked = pickRandomScene(18, (_difficulty * 2) + 9);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_continue_bar(Scene *scene) {
-	uint16 picked = _PickRandomScene(18, 0);
+void GameCrimePatrol::sceneNxtscnContinueBar(Scene *scene) {
+	uint16 picked = pickRandomScene(18, 0);
 	if (picked == 0) {
 		picked = 0x92;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_init_random_bank(Scene *scene) {
-	uint16 picked = _PickRandomScene(19, (_difficulty * 2) + 8);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameCrimePatrol::sceneNxtscnInitRandomBank(Scene *scene) {
+	uint16 picked = pickRandomScene(19, (_difficulty * 2) + 8);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_continue_bank(Scene *scene) {
-	uint16 picked = _PickRandomScene(19, 0);
+void GameCrimePatrol::sceneNxtscnContinueBank(Scene *scene) {
+	uint16 picked = pickRandomScene(19, 0);
 	if (picked == 0) {
 		picked = 0xA8;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_init_random_meth_lab(Scene *scene) {
-	uint16 picked = _PickRandomScene(20, (_difficulty * 2) + 8);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameCrimePatrol::sceneNxtscnInitRandomMethLab(Scene *scene) {
+	uint16 picked = pickRandomScene(20, (_difficulty * 2) + 8);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_continue_meth_lab(Scene *scene) {
-	uint16 picked = _PickRandomScene(20, 0);
+void GameCrimePatrol::sceneNxtscnContinueMethLab(Scene *scene) {
+	uint16 picked = pickRandomScene(20, 0);
 	if (picked == 0) {
 		picked = 0xD0;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_pick_random_rapeller(Scene *scene) {
-	uint16 picked = _PickRandomScene(21, 1);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameCrimePatrol::sceneNxtscnPickRandomRapeller(Scene *scene) {
+	uint16 picked = pickRandomScene(21, 1);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_init_random_airplane(Scene *scene) {
-	uint16 picked = _PickRandomScene(22, (_difficulty * 2) + 8);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameCrimePatrol::sceneNxtscnInitRandomAirplane(Scene *scene) {
+	uint16 picked = pickRandomScene(22, (_difficulty * 2) + 8);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_continue_airplane(Scene *scene) {
-	uint16 picked = _PickRandomScene(22, 0);
+void GameCrimePatrol::sceneNxtscnContinueAirplane(Scene *scene) {
+	uint16 picked = pickRandomScene(22, 0);
 	if (picked == 0) {
 		picked = 0x108;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_pick_random_airplane_front(Scene *scene) {
-	uint16 picked = _PickRandomScene(23, 1);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameCrimePatrol::sceneNxtscnPickRandomAirplaneFront(Scene *scene) {
+	uint16 picked = pickRandomScene(23, 1);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_init_random_airport(Scene *scene) {
-	uint16 picked = _PickRandomScene(24, (_difficulty * 2) + 8);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameCrimePatrol::sceneNxtscnInitRandomAirport(Scene *scene) {
+	uint16 picked = pickRandomScene(24, (_difficulty * 2) + 8);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_continue_airport(Scene *scene) {
-	uint16 picked = _PickRandomScene(24, 0);
+void GameCrimePatrol::sceneNxtscnContinueAirport(Scene *scene) {
+	uint16 picked = pickRandomScene(24, 0);
 	if (picked == 0) {
 		picked = 0x12D;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_init_random_nuke_transport(Scene *scene) {
-	uint16 picked = _PickRandomScene(25, (_difficulty * 2) + 8);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameCrimePatrol::sceneNxtscnInitRandomNukeTransport(Scene *scene) {
+	uint16 picked = pickRandomScene(25, (_difficulty * 2) + 8);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_continue_nuke_transport(Scene *scene) {
-	uint16 picked = _PickRandomScene(25, 0);
+void GameCrimePatrol::sceneNxtscnContinueNukeTransport(Scene *scene) {
+	uint16 picked = pickRandomScene(25, 0);
 	if (picked == 0) {
 		picked = 0x147;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_init_random_powerplant(Scene *scene) {
-	uint16 picked = _PickRandomScene(26, (_difficulty * 2) + 8);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameCrimePatrol::sceneNxtscnInitRandomPowerplant(Scene *scene) {
+	uint16 picked = pickRandomScene(26, (_difficulty * 2) + 8);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameCrimePatrol::_scene_nxtscn_continue_powerplant(Scene *scene) {
-	uint16 picked = _PickRandomScene(26, 0);
+void GameCrimePatrol::sceneNxtscnContinuePowerplant(Scene *scene) {
+	uint16 picked = pickRandomScene(26, 0);
 	if (picked == 0) {
 		picked = 0x169;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
 // Script functions: WepDwn
-void GameCrimePatrol::_scene_default_wepdwn(Scene *scene) {
+void GameCrimePatrol::sceneDefaultWepdwn(Scene *scene) {
 	_shots = 10;
 }
 
 // Debug methods
-void GameCrimePatrol::debug_warpTo(int val) {
+void GameCrimePatrol::debugWarpTo(int val) {
 	// TODO implement
 }
 
-void GameCrimePatrol::debug_drawPracticeRects() {
+void GameCrimePatrol::debugDrawPracticeRects() {
 	if (_debug_drawRects || debugChannelSet(1, Alg::kAlgDebugGraphics)) {
-		Scene *scene = _sceneInfo->findScene(_cur_scene);
-		if (scene->zones.size() > 0) {
-			if (scene->zones[0]->name == "zone283") {
-				for (uint8 i = 0; i < 5; i++) {
-					uint16 left = _practice_target_left[i] - _videoPosX;
-					uint16 right = _practice_target_right[i] - _videoPosX;
-					uint16 top = _practice_target_top[i] - _videoPosY;
-					uint16 bottom = _practice_target_bottom[i] - _videoPosY;
+		Scene *scene = _sceneInfo->findScene(_curScene);
+		if (scene->_zones.size() > 0) {
+			if (scene->_zones[0]->_name == "zone283") {
+				for (int i = 0; i < 5; i++) {
+					uint16 left = _practiceTargetLeft[i] - _videoPosX;
+					uint16 right = _practiceTargetRight[i] - _videoPosX;
+					uint16 top = _practiceTargetTop[i] - _videoPosY;
+					uint16 bottom = _practiceTargetBottom[i] - _videoPosY;
 					_videoDecoder->getVideoFrame()->drawLine(left, top, right, top, 1);
 					_videoDecoder->getVideoFrame()->drawLine(left, top, left, bottom, 1);
 					_videoDecoder->getVideoFrame()->drawLine(right, bottom, right, top, 1);
@@ -1340,7 +1335,7 @@ bool DebuggerCrimePatrol::cmdWarpTo(int argc, const char **argv) {
 		return true;
 	} else {
 		int val = atoi(argv[1]);
-		_game->debug_warpTo(val);
+		_game->debugWarpTo(val);
 		return false;
 	}
 }

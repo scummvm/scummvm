@@ -25,7 +25,6 @@
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/pixelformat.h"
 
 #include "alg/game_johnnyrock.h"
 #include "alg/graphics.h"
@@ -33,10 +32,10 @@
 
 namespace Alg {
 
-GameJohnnyRock::GameJohnnyRock(AlgEngine *vm, const ADGameDescription *desc) : Game(vm) {
-	if (scumm_stricmp(desc->gameId, "johnrocs") == 0) {
+GameJohnnyRock::GameJohnnyRock(AlgEngine *vm, const AlgGameDescription *gd) : Game(vm) {
+	if (gd->gameType == GType_JOHNROC_SS_DOS) {
 		_libFileName = "johnroc.lib";
-	} else if (scumm_stricmp(desc->gameId, "johnrocd") == 0) {
+	} else if (gd->gameType == GType_JOHNROC_DS_DOS) {
 		_libFileName = "johnrocd.lib";
 	}
 }
@@ -45,27 +44,29 @@ GameJohnnyRock::~GameJohnnyRock() {
 }
 
 void GameJohnnyRock::init() {
+	Game::init();
+
 	_videoPosX = 11;
 	_videoPosY = 2;
 
-	_SetupCursorTimer();
+	setupCursorTimer();
 
 	loadLibArchive(_libFileName);
 	_sceneInfo->loadScnFile("johnroc.scn");
-	_startscene = _sceneInfo->getStartScene();
+	_startScene = _sceneInfo->getStartScene();
 
 	registerScriptFunctions();
 	verifyScriptFunctions();
 
 	_menuzone = new Zone();
-	_menuzone->name = "MainMenu";
-	_menuzone->ptrfb = "GLOBALHIT";
+	_menuzone->_name = "MainMenu";
+	_menuzone->_ptrfb = "GLOBALHIT";
 
 	_menuzone->addRect(0x0C, 0xBB, 0x3C, 0xC7, nullptr, 0, "SHOTMENU", "0");
 
 	_submenzone = new Zone();
-	_submenzone->name = "SubMenu";
-	_submenzone->ptrfb = "GLOBALHIT";
+	_submenzone->_name = "SubMenu";
+	_submenzone->_ptrfb = "GLOBALHIT";
 
 	_submenzone->addRect(0x10, 0x0F, 0x78, 0x34, nullptr, 0, "STARTMENU", "0");
 	_submenzone->addRect(0x10, 0x8E, 0x8A, 0xAF, nullptr, 0, "CONTMENU", "0");
@@ -76,11 +77,11 @@ void GameJohnnyRock::init() {
 	_submenzone->addRect(0xD2, 0x50, 0x125, 0x6B, nullptr, 0, "RECTAVG", "0");
 	_submenzone->addRect(0xD2, 0x6D, 0x122, 0x86, nullptr, 0, "RECTHARD", "0");
 
-	_shotSound = _LoadSoundFile("blow.8b");
-	_emptySound = _LoadSoundFile("empty.8b");
-	_saveSound = _LoadSoundFile("saved.8b");
-	_loadSound = _LoadSoundFile("loaded.8b");
-	_skullSound = _LoadSoundFile("money.8b");
+	_shotSound = loadSoundFile("blow.8b");
+	_emptySound = loadSoundFile("empty.8b");
+	_saveSound = loadSoundFile("saved.8b");
+	_loadSound = loadSoundFile("loaded.8b");
+	_skullSound = loadSoundFile("money.8b");
 
 	_gun = AlgGraphics::loadScreenCoordAniImage("gun.ani", _palette);
 	_numbers = AlgGraphics::loadAniImage("numbers.ani", _palette);
@@ -93,159 +94,159 @@ void GameJohnnyRock::init() {
 	_background = AlgGraphics::loadVgaBackground("backgrnd.vga", _palette);
 	_screen->copyRectToSurface(_background->getPixels(), _background->pitch, 0, 0, _background->w, _background->h);
 
-	_MoveMouse();
+	moveMouse();
 }
 
 void GameJohnnyRock::registerScriptFunctions() {
 #define RECT_HIT_FUNCTION(name, func) _rectHitFuncs[name] = new JRScriptFunctionRect(this, &GameJohnnyRock::func);
-	RECT_HIT_FUNCTION("DEFAULT", _rect_newscene);
-	RECT_HIT_FUNCTION("NEWSCENE", _rect_newscene);
-	RECT_HIT_FUNCTION("EXITMENU", _rect_exit);
-	RECT_HIT_FUNCTION("CONTMENU", _rect_continue);
-	RECT_HIT_FUNCTION("STARTMENU", _rect_start);
-	RECT_HIT_FUNCTION("SHOTMENU", _rect_shotmenu);
-	RECT_HIT_FUNCTION("RECTSAVE", _rect_save);
-	RECT_HIT_FUNCTION("RECTLOAD", _rect_load);
-	RECT_HIT_FUNCTION("RECTEASY", _rect_easy);
-	RECT_HIT_FUNCTION("RECTAVG", _rect_average);
-	RECT_HIT_FUNCTION("RECTHARD", _rect_hard);
-	RECT_HIT_FUNCTION("KILLINNOCENT", _rect_killinnocent);
-	RECT_HIT_FUNCTION("SELCASINO", _rect_selectcasino);
-	RECT_HIT_FUNCTION("SELPOOLH", _rect_selectpoolhall);
-	RECT_HIT_FUNCTION("SELWAREHSE", _rect_selectwarehouse);
-	RECT_HIT_FUNCTION("SELGARAGE", _rect_selectgarage);
-	RECT_HIT_FUNCTION("SELMANSION", _rect_selectmansion);
-	RECT_HIT_FUNCTION("SELAMMO", _rect_selectammo);
-	RECT_HIT_FUNCTION("SELOFFICE", _rect_selectoffice);
-	RECT_HIT_FUNCTION("MANBUST", _rect_shotmanbust);
-	RECT_HIT_FUNCTION("WOMANBUST", _rect_shotwomanbust);
-	RECT_HIT_FUNCTION("BLUEVASE", _rect_shotbluevase);
-	RECT_HIT_FUNCTION("CAT", _rect_shotcat);
-	RECT_HIT_FUNCTION("INDIAN", _rect_shotindian);
-	RECT_HIT_FUNCTION("PLATE", _rect_shotplate);
-	RECT_HIT_FUNCTION("BLUEDRESSPIC", _rect_shotbluedresspic);
-	RECT_HIT_FUNCTION("MODERNPIC", _rect_shotmodernpic);
-	RECT_HIT_FUNCTION("MONALISA", _rect_shotmonalisa);
-	RECT_HIT_FUNCTION("GWASHINGTON", _rect_shotgwashington);
-	RECT_HIT_FUNCTION("BOYINREDPIC", _rect_shotboyinredpic);
-	RECT_HIT_FUNCTION("COATOFARMS", _rect_shotcoatofarms);
-	RECT_HIT_FUNCTION("COMBNOA0", _rect_shotcombinationA0);
-	RECT_HIT_FUNCTION("COMBNOA1", _rect_shotcombinationA1);
-	RECT_HIT_FUNCTION("COMBNOA2", _rect_shotcombinationA2);
-	RECT_HIT_FUNCTION("COMBNOA3", _rect_shotcombinationA3);
-	RECT_HIT_FUNCTION("COMBNOA4", _rect_shotcombinationA4);
-	RECT_HIT_FUNCTION("COMBNOA5", _rect_shotcombinationA5);
-	RECT_HIT_FUNCTION("COMBNOB0", _rect_shotcombinationB0);
-	RECT_HIT_FUNCTION("COMBNOB1", _rect_shotcombinationB1);
-	RECT_HIT_FUNCTION("COMBNOB2", _rect_shotcombinationB2);
-	RECT_HIT_FUNCTION("COMBNOB3", _rect_shotcombinationB3);
-	RECT_HIT_FUNCTION("COMBNOB4", _rect_shotcombinationB4);
-	RECT_HIT_FUNCTION("COMBNOB5", _rect_shotcombinationB5);
-	RECT_HIT_FUNCTION("LUCKNO0", _rect_shotluckynum0);
-	RECT_HIT_FUNCTION("LUCKNO1", _rect_shotluckynum1);
-	RECT_HIT_FUNCTION("LUCKNO2", _rect_shotluckynum2);
-	RECT_HIT_FUNCTION("LUCKNO3", _rect_shotluckynum3);
-	RECT_HIT_FUNCTION("LUCKNO4", _rect_shotluckynum4);
-	RECT_HIT_FUNCTION("LUCKNO5", _rect_shotluckynum5);
+	RECT_HIT_FUNCTION("DEFAULT", rectNewScene);
+	RECT_HIT_FUNCTION("NEWSCENE", rectNewScene);
+	RECT_HIT_FUNCTION("EXITMENU", rectExit);
+	RECT_HIT_FUNCTION("CONTMENU", rectContinue);
+	RECT_HIT_FUNCTION("STARTMENU", rectStart);
+	RECT_HIT_FUNCTION("SHOTMENU", rectShotMenu);
+	RECT_HIT_FUNCTION("RECTSAVE", rectSave);
+	RECT_HIT_FUNCTION("RECTLOAD", rectLoad);
+	RECT_HIT_FUNCTION("RECTEASY", rectEasy);
+	RECT_HIT_FUNCTION("RECTAVG", rectAverage);
+	RECT_HIT_FUNCTION("RECTHARD", rectHard);
+	RECT_HIT_FUNCTION("KILLINNOCENT", rectKillInnocent);
+	RECT_HIT_FUNCTION("SELCASINO", rectSelectCasino);
+	RECT_HIT_FUNCTION("SELPOOLH", rectSelectPoolhall);
+	RECT_HIT_FUNCTION("SELWAREHSE", rectSelectWarehouse);
+	RECT_HIT_FUNCTION("SELGARAGE", rectSelectGarage);
+	RECT_HIT_FUNCTION("SELMANSION", rectSelectMansion);
+	RECT_HIT_FUNCTION("SELAMMO", rectSelectAmmo);
+	RECT_HIT_FUNCTION("SELOFFICE", rectSelectOffice);
+	RECT_HIT_FUNCTION("MANBUST", rectShotManBust);
+	RECT_HIT_FUNCTION("WOMANBUST", rectShotWomanBust);
+	RECT_HIT_FUNCTION("BLUEVASE", rectShotBlueVase);
+	RECT_HIT_FUNCTION("CAT", rectShotCat);
+	RECT_HIT_FUNCTION("INDIAN", rectShotIndian);
+	RECT_HIT_FUNCTION("PLATE", rectShotPlate);
+	RECT_HIT_FUNCTION("BLUEDRESSPIC", rectShotBlueDressPic);
+	RECT_HIT_FUNCTION("MODERNPIC", rectShotModernPic);
+	RECT_HIT_FUNCTION("MONALISA", rectShotMonaLisa);
+	RECT_HIT_FUNCTION("GWASHINGTON", rectShotGWashington);
+	RECT_HIT_FUNCTION("BOYINREDPIC", rectShotBoyInRedPic);
+	RECT_HIT_FUNCTION("COATOFARMS", rectShotCoatOfArms);
+	RECT_HIT_FUNCTION("COMBNOA0", rectShotCombinationA0);
+	RECT_HIT_FUNCTION("COMBNOA1", rectShotCombinationA1);
+	RECT_HIT_FUNCTION("COMBNOA2", rectShotCombinationA2);
+	RECT_HIT_FUNCTION("COMBNOA3", rectShotCombinationA3);
+	RECT_HIT_FUNCTION("COMBNOA4", rectShotCombinationA4);
+	RECT_HIT_FUNCTION("COMBNOA5", rectShotCombinationA5);
+	RECT_HIT_FUNCTION("COMBNOB0", rectShotCombinationB0);
+	RECT_HIT_FUNCTION("COMBNOB1", rectShotCombinationB1);
+	RECT_HIT_FUNCTION("COMBNOB2", rectShotCombinationB2);
+	RECT_HIT_FUNCTION("COMBNOB3", rectShotCombinationB3);
+	RECT_HIT_FUNCTION("COMBNOB4", rectShotCombinationB4);
+	RECT_HIT_FUNCTION("COMBNOB5", rectShotCombinationB5);
+	RECT_HIT_FUNCTION("LUCKNO0", rectShotLuckyNumber0);
+	RECT_HIT_FUNCTION("LUCKNO1", rectShotLuckyNumber1);
+	RECT_HIT_FUNCTION("LUCKNO2", rectShotLuckyNumber2);
+	RECT_HIT_FUNCTION("LUCKNO3", rectShotLuckyNumber3);
+	RECT_HIT_FUNCTION("LUCKNO4", rectShotLuckyNumber4);
+	RECT_HIT_FUNCTION("LUCKNO5", rectShotLuckyNumber5);
 #undef RECT_HIT_FUNCTION
 
 #define PRE_OPS_FUNCTION(name, func) _scenePreOps[name] = new JRScriptFunctionScene(this, &GameJohnnyRock::func);
-	PRE_OPS_FUNCTION("DRAWRCT", _scene_pso_drawrct);
-	PRE_OPS_FUNCTION("PAUSE", _scene_pso_pause);
-	PRE_OPS_FUNCTION("FADEIN", _scene_pso_fadein);
-	PRE_OPS_FUNCTION("PAUSFI", _scene_pso_pause_fadein);
-	PRE_OPS_FUNCTION("PREREAD", _scene_pso_preread);
-	PRE_OPS_FUNCTION("PAUSPR", _scene_pso_pause_preread);
-	PRE_OPS_FUNCTION("DEFAULT", _scene_pso_drawrct);
-	PRE_OPS_FUNCTION("DRAWRCTFDI", _scene_pso_drawrct_fadein);
+	PRE_OPS_FUNCTION("DRAWRCT", scenePsoDrawRct);
+	PRE_OPS_FUNCTION("PAUSE", scenePsoPause);
+	PRE_OPS_FUNCTION("FADEIN", scenePsoFadeIn);
+	PRE_OPS_FUNCTION("PAUSFI", scenePsoPauseFadeIn);
+	PRE_OPS_FUNCTION("PREREAD", scenePsoPreRead);
+	PRE_OPS_FUNCTION("PAUSPR", scenePsoPausePreRead);
+	PRE_OPS_FUNCTION("DEFAULT", scenePsoDrawRct);
+	PRE_OPS_FUNCTION("DRAWRCTFDI", scenePsoDrawRctFadeIn);
 #undef PRE_OPS_FUNCTION
 
 #define INS_OPS_FUNCTION(name, func) _sceneInsOps[name] = new JRScriptFunctionScene(this, &GameJohnnyRock::func);
-	INS_OPS_FUNCTION("DEFAULT", _scene_iso_donothing);
-	INS_OPS_FUNCTION("PAUSE", _scene_iso_pause);
-	INS_OPS_FUNCTION("SPAUSE", _scene_iso_spause);
-	INS_OPS_FUNCTION("STARTGAME", _scene_iso_startgame);
-	INS_OPS_FUNCTION("SHOOTPAST", _scene_iso_shootpast);
-	INS_OPS_FUNCTION("GOTTOCASINO", _scene_iso_gotocasino);
-	INS_OPS_FUNCTION("GOTTOPOOLH", _scene_iso_gotopoolh);
-	INS_OPS_FUNCTION("GOTTOWAREHSE", _scene_iso_gotowarehse);
-	INS_OPS_FUNCTION("INWAREHSE2", _scene_iso_inwarehse2);
-	INS_OPS_FUNCTION("INWAREHSE3", _scene_iso_inwarehse3);
-	INS_OPS_FUNCTION("GOTOGARAGE", _scene_iso_gotogarage);
-	INS_OPS_FUNCTION("GOTOMANSION", _scene_iso_gotomansion);
-	INS_OPS_FUNCTION("INMANSION1", _scene_iso_inmansion1);
+	INS_OPS_FUNCTION("DEFAULT", sceneIsoDoNothing);
+	INS_OPS_FUNCTION("PAUSE", sceneIsoPause);
+	INS_OPS_FUNCTION("SPAUSE", sceneIsoShootpastPause);
+	INS_OPS_FUNCTION("STARTGAME", sceneIsoStartGame);
+	INS_OPS_FUNCTION("SHOOTPAST", sceneIsoShootpast);
+	INS_OPS_FUNCTION("GOTTOCASINO", sceneIsoGotoCasino);
+	INS_OPS_FUNCTION("GOTTOPOOLH", sceneIsoGotoPoolhall);
+	INS_OPS_FUNCTION("GOTTOWAREHSE", sceneIsoGotoWarehouse);
+	INS_OPS_FUNCTION("INWAREHSE2", sceneIsoInWarehouse2);
+	INS_OPS_FUNCTION("INWAREHSE3", sceneIsoInwarehouse3);
+	INS_OPS_FUNCTION("GOTOGARAGE", sceneIsoGotoGarage);
+	INS_OPS_FUNCTION("GOTOMANSION", sceneIsoGotoMansion);
+	INS_OPS_FUNCTION("INMANSION1", sceneIsoInMansion1);
 #undef INS_OPS_FUNCTION
 
 #define NXT_SCN_FUNCTION(name, func) _sceneNxtScn[name] = new JRScriptFunctionScene(this, &GameJohnnyRock::func);
-	NXT_SCN_FUNCTION("DEFAULT", _scene_default_nxtscn);
-	NXT_SCN_FUNCTION("DRAWGUN", _scene_default_nxtscn);
-	NXT_SCN_FUNCTION("DIED", _scene_nxtscn_died);
-	NXT_SCN_FUNCTION("BOMBDEAD", _scene_nxtscn_bombdead);
-	NXT_SCN_FUNCTION("PIKUNDRTAKR", _scene_nxtscn_pikundrtakr);
-	NXT_SCN_FUNCTION("CALLATTRACT", _scene_nxtscn_callattract);
-	NXT_SCN_FUNCTION("PICKLUCKNO", _scene_nxtscn_pikluckno);
-	NXT_SCN_FUNCTION("PICKMAP", _scene_nxtscn_pickmap);
-	NXT_SCN_FUNCTION("PICKCLUE", _scene_nxtscn_pickclue);
-	NXT_SCN_FUNCTION("MAPTIMEOUT", _scene_nxtscn_maptimeout);
-	NXT_SCN_FUNCTION("ENTCASINO", _scene_nxtscn_entcasino);
-	NXT_SCN_FUNCTION("CASINOWHAT?", _scene_nxtscn_casinowhat);
-	NXT_SCN_FUNCTION("ENTPOOLH", _scene_nxtscn_entpoolhall);
-	NXT_SCN_FUNCTION("POOLHCLUE", _scene_nxtscn_poolhclue);
-	NXT_SCN_FUNCTION("ENTWAREHSE", _scene_nxtscn_entwarehse);
-	NXT_SCN_FUNCTION("WAREHSECLUE", _scene_nxtscn_warehseclue);
-	NXT_SCN_FUNCTION("ENTGARAGE", _scene_nxtscn_entgarage);
-	NXT_SCN_FUNCTION("GARAGECLUE", _scene_nxtscn_garageclue);
-	NXT_SCN_FUNCTION("ENTMANSION", _scene_nxtscn_entmansion);
-	NXT_SCN_FUNCTION("GIVECLUE", _scene_nxtscn_giveclue);
-	NXT_SCN_FUNCTION("PICKFLOWERMAN", _scene_nxtscn_pikflwrman);
-	NXT_SCN_FUNCTION("RANDOMSCENE", _scene_nxtscn_randomscene);
-	NXT_SCN_FUNCTION("ENDRANDSCENE", _scene_nxtscn_endrandscene);
-	NXT_SCN_FUNCTION("SCN_KILLINNOCENT", _scene_nxtscn_killinnocent);
+	NXT_SCN_FUNCTION("DEFAULT", sceneDefaultNxtscn);
+	NXT_SCN_FUNCTION("DRAWGUN", sceneDefaultNxtscn);
+	NXT_SCN_FUNCTION("DIED", sceneNxtscnDied);
+	NXT_SCN_FUNCTION("BOMBDEAD", sceneNxtscnBombDead);
+	NXT_SCN_FUNCTION("PIKUNDRTAKR", sceneNxtscnPickUndertaker);
+	NXT_SCN_FUNCTION("CALLATTRACT", sceneNxtscnCallAttract);
+	NXT_SCN_FUNCTION("PICKLUCKNO", sceneNxtscnPickLuckyNumber);
+	NXT_SCN_FUNCTION("PICKMAP", sceneNxtscnPickMap);
+	NXT_SCN_FUNCTION("PICKCLUE", sceneNxtscnPickClue);
+	NXT_SCN_FUNCTION("MAPTIMEOUT", sceneNxtscnMapTimeout);
+	NXT_SCN_FUNCTION("ENTCASINO", sceneNxtscnEnterCasino);
+	NXT_SCN_FUNCTION("CASINOWHAT?", sceneNxtscnCasinoWhat);
+	NXT_SCN_FUNCTION("ENTPOOLH", sceneNxtscnEnterPoolhall);
+	NXT_SCN_FUNCTION("POOLHCLUE", sceneNxtscnPoolhallClue);
+	NXT_SCN_FUNCTION("ENTWAREHSE", sceneNxtscnEnterWarehouse);
+	NXT_SCN_FUNCTION("WAREHSECLUE", sceneNxtscnWarehouseClue);
+	NXT_SCN_FUNCTION("ENTGARAGE", sceneNxtscnEnterGarage);
+	NXT_SCN_FUNCTION("GARAGECLUE", sceneNxtscnGarageClue);
+	NXT_SCN_FUNCTION("ENTMANSION", sceneNxtscnEnterMansion);
+	NXT_SCN_FUNCTION("GIVECLUE", sceneNxtscnGiveClue);
+	NXT_SCN_FUNCTION("PICKFLOWERMAN", sceneNxtscnPickFlowerMan);
+	NXT_SCN_FUNCTION("RANDOMSCENE", sceneNxtscnRandomScene);
+	NXT_SCN_FUNCTION("ENDRANDSCENE", sceneNxtscnEndRandScene);
+	NXT_SCN_FUNCTION("SCN_KILLINNOCENT", sceneNxtscnKillInnocent);
 #undef NXT_SCN_FUNCTION
 
-	_zonePtrFb["DEFAULT"] = new JRScriptFunctionPoint(this, &GameJohnnyRock::_zone_bullethole);
-	_sceneShowMsg["DEFAULT"] = new JRScriptFunctionScene(this, &GameJohnnyRock::_scene_sm_donothing);
-	_sceneWepDwn["DEFAULT"] = new JRScriptFunctionScene(this, &GameJohnnyRock::_scene_default_wepdwn);
-	_sceneScnScr["DEFAULT"] = new JRScriptFunctionScene(this, &GameJohnnyRock::_scene_default_score);
-	_sceneNxtFrm["DEFAULT"] = new JRScriptFunctionScene(this, &GameJohnnyRock::_scene_nxtfrm);
+	_zonePtrFb["DEFAULT"] = new JRScriptFunctionPoint(this, &GameJohnnyRock::zoneBullethole);
+	_sceneShowMsg["DEFAULT"] = new JRScriptFunctionScene(this, &GameJohnnyRock::sceneSmDonothing);
+	_sceneWepDwn["DEFAULT"] = new JRScriptFunctionScene(this, &GameJohnnyRock::sceneDefaultWepdwn);
+	_sceneScnScr["DEFAULT"] = new JRScriptFunctionScene(this, &GameJohnnyRock::sceneDefaultScore);
+	_sceneNxtFrm["DEFAULT"] = new JRScriptFunctionScene(this, &GameJohnnyRock::sceneNxtfrm);
 }
 
 void GameJohnnyRock::verifyScriptFunctions() {
 	Common::Array<Scene *> *scenes = _sceneInfo->getScenes();
 	for (size_t i = 0; i < scenes->size(); i++) {
 		Scene *scene = (*scenes)[i];
-		getScriptFunctionScene(PREOP, scene->preop);
+		getScriptFunctionScene(PREOP, scene->_preop);
 		// TODO: SHOWMSG
-		getScriptFunctionScene(INSOP, scene->insop);
-		getScriptFunctionScene(WEPDWN, scene->wepdwn);
-		getScriptFunctionScene(SCNSCR, scene->scnscr);
-		getScriptFunctionScene(NXTFRM, scene->nxtfrm);
-		getScriptFunctionScene(NXTSCN, scene->nxtscn);
-		for (size_t j = 0; j < scene->zones.size(); j++) {
-			Zone *zone = scene->zones[j];
-			getScriptFunctionZonePtrFb(zone->ptrfb);
-			for (size_t k = 0; k < zone->rects.size(); k++) {
-				getScriptFunctionRectHit(zone->rects[k].rectHit);
+		getScriptFunctionScene(INSOP, scene->_insop);
+		getScriptFunctionScene(WEPDWN, scene->_wepdwn);
+		getScriptFunctionScene(SCNSCR, scene->_scnscr);
+		getScriptFunctionScene(NXTFRM, scene->_nxtfrm);
+		getScriptFunctionScene(NXTSCN, scene->_nxtscn);
+		for (size_t j = 0; j < scene->_zones.size(); j++) {
+			Zone *zone = scene->_zones[j];
+			getScriptFunctionZonePtrFb(zone->_ptrfb);
+			for (size_t k = 0; k < zone->_rects.size(); k++) {
+				getScriptFunctionRectHit(zone->_rects[k]._rectHit);
 			}
 		}
 	}
 }
 
 JRScriptFunctionPoint GameJohnnyRock::getScriptFunctionZonePtrFb(Common::String name) {
-	JRScriptFunctionPointMap::iterator it = _zonePtrFb.find(name);
+	auto it = _zonePtrFb.find(name);
 	if (it != _zonePtrFb.end()) {
 		return (*(*it)._value);
 	} else {
-		error("Could not find zonePtrFb function: %s", name.c_str());
+		error("GameJohnnyRock::getScriptFunctionZonePtrFb(): Could not find zonePtrFb function: %s", name.c_str());
 	}
 }
 
 JRScriptFunctionRect GameJohnnyRock::getScriptFunctionRectHit(Common::String name) {
-	JRScriptFunctionRectMap::iterator it = _rectHitFuncs.find(name);
+	auto it = _rectHitFuncs.find(name);
 	if (it != _rectHitFuncs.end()) {
 		return (*(*it)._value);
 	} else {
-		error("Could not find rectHit function: %s", name.c_str());
+		error("GameJohnnyRock::getScriptFunctionRectHit(): Could not find rectHit function: %s", name.c_str());
 	}
 }
 
@@ -274,7 +275,7 @@ JRScriptFunctionScene GameJohnnyRock::getScriptFunctionScene(SceneFuncType type,
 		functionMap = &_sceneNxtScn;
 		break;
 	default:
-		error("Unkown scene script type: %u", type);
+		error("GameJohnnyRock::getScriptFunctionScene(): Unkown scene script type: %u", type);
 		break;
 	}
 	JRScriptFunctionSceneMap::iterator it;
@@ -282,7 +283,7 @@ JRScriptFunctionScene GameJohnnyRock::getScriptFunctionScene(SceneFuncType type,
 	if (it != functionMap->end()) {
 		return (*(*it)._value);
 	} else {
-		error("Could not find scene type %u function: %s", type, name.c_str());
+		error("GameJohnnyRock::getScriptFunctionScene(): Could not find scene type %u function: %s", type, name.c_str());
 	}
 }
 
@@ -303,65 +304,62 @@ void GameJohnnyRock::callScriptFunctionScene(SceneFuncType type, Common::String 
 
 Common::Error GameJohnnyRock::run() {
 	init();
-	_NewGame();
-	_cur_scene = _startscene;
+	newGame();
+	_curScene = _startScene;
 	Common::String oldscene;
 	while (!_vm->shouldQuit()) {
 		_leftDown = false;
-		oldscene = _cur_scene;
-		_SetFrame();
+		oldscene = _curScene;
 		_fired = false;
-		Scene *scene = _sceneInfo->findScene(_cur_scene);
+		Scene *scene = _sceneInfo->findScene(_curScene);
 		if (!loadScene(scene)) {
-			error("Cannot find scene %s in libfile", scene->name.c_str());
+			error("GameJohnnyRock::run(): Cannot find scene %s in libfile", scene->_name.c_str());
 		}
 		Audio::PacketizedAudioStream *audioStream = _videoDecoder->getAudioStream();
 		g_system->getMixer()->stopHandle(_sceneAudioHandle);
 		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_sceneAudioHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 		_paletteDirty = true;
-		_nextFrameTime = _GetMsTime() + 100;
-		callScriptFunctionScene(PREOP, scene->preop, scene);
-		_currentFrame = _GetFrame(scene);
-		while (_currentFrame <= scene->endFrame && _cur_scene == oldscene && !_vm->shouldQuit()) {
-			_UpdateMouse();
+		_nextFrameTime = getMsTime() + 100;
+		callScriptFunctionScene(PREOP, scene->_preop, scene);
+		_currentFrame = getFrame(scene);
+		while (_currentFrame <= scene->_endFrame && _curScene == oldscene && !_vm->shouldQuit()) {
+			updateMouse();
 			// TODO: call scene->messageFunc
-			callScriptFunctionScene(INSOP, scene->insop, scene);
-			_holster = _WeaponDown();
+			callScriptFunctionScene(INSOP, scene->_insop, scene);
+			_holster = weaponDown();
 			if (_holster) {
-				callScriptFunctionScene(WEPDWN, scene->wepdwn, scene);
+				callScriptFunctionScene(WEPDWN, scene->_wepdwn, scene);
 			}
 			Common::Point firedCoords;
-			if (__Fired(&firedCoords)) {
+			if (fired(&firedCoords)) {
 				if (!_holster) {
-					Rect *hitGlobalRect = _CheckZone(_menuzone, &firedCoords);
+					Rect *hitGlobalRect = checkZone(_menuzone, &firedCoords);
 					if (hitGlobalRect != nullptr) {
-						callScriptFunctionRectHit(hitGlobalRect->rectHit, hitGlobalRect);
-					} else {
-						if (_shots > 0) {
-							if (!_debug_unlimitedAmmo) {
-								_shots--;
-							}
-							_UpdateStat();
-							Rect *hitRect = nullptr;
-							Zone *hitSceneZone = _CheckZonesV1(scene, hitRect, &firedCoords);
-							if (hitSceneZone != nullptr) {
-								callScriptFunctionZonePtrFb(hitSceneZone->ptrfb, &firedCoords);
-								callScriptFunctionRectHit(hitRect->rectHit, hitRect);
-							} else {
-								_default_bullethole(&firedCoords);
-							}
-						} else {
-							_PlaySound(_emptySound);
-							_whichGun = 9;
+						callScriptFunctionRectHit(hitGlobalRect->_rectHit, hitGlobalRect);
+					} else if (_shots > 0) {
+						if (!_debug_unlimitedAmmo) {
+							_shots--;
 						}
+						updateStat();
+						Rect *hitRect = nullptr;
+						Zone *hitSceneZone = checkZonesV1(scene, hitRect, &firedCoords);
+						if (hitSceneZone != nullptr) {
+							callScriptFunctionZonePtrFb(hitSceneZone->_ptrfb, &firedCoords);
+							callScriptFunctionRectHit(hitRect->_rectHit, hitRect);
+						} else {
+							defaultBullethole(&firedCoords);
+						}
+					} else {
+						playSound(_emptySound);
+						_whichGun = 9;
 					}
 				}
 			}
-			if (_cur_scene == oldscene) {
-				callScriptFunctionScene(NXTFRM, scene->nxtfrm, scene);
+			if (_curScene == oldscene) {
+				callScriptFunctionScene(NXTFRM, scene->_nxtfrm, scene);
 			}
-			_DisplayScore();
-			_MoveMouse();
+			displayScore();
+			moveMouse();
 			if (_pauseTime > 0) {
 				g_system->getMixer()->pauseHandle(_sceneAudioHandle, true);
 			} else {
@@ -370,13 +368,14 @@ Common::Error GameJohnnyRock::run() {
 			if (_videoDecoder->getCurrentFrame() == 0) {
 				_videoDecoder->getNextFrame();
 			}
-			int32 remainingMillis = _nextFrameTime - _GetMsTime();
+			updateScreen();
+			int32 remainingMillis = _nextFrameTime - getMsTime();
 			if (remainingMillis < 10) {
 				if (_videoDecoder->getCurrentFrame() > 0) {
 					_videoDecoder->getNextFrame();
 				}
-				remainingMillis = _nextFrameTime - _GetMsTime();
-				_nextFrameTime = _GetMsTime() + (remainingMillis > 0 ? remainingMillis : 0) + 100;
+				remainingMillis = _nextFrameTime - getMsTime();
+				_nextFrameTime = getMsTime() + (remainingMillis > 0 ? remainingMillis : 0) + 100;
 			}
 			if (remainingMillis > 0) {
 				if (remainingMillis > 15) {
@@ -384,32 +383,31 @@ Common::Error GameJohnnyRock::run() {
 				}
 				g_system->delayMillis(remainingMillis);
 			}
-			_currentFrame = _GetFrame(scene);
-			updateScreen();
+			_currentFrame = getFrame(scene);
 		}
 		// frame limit reached or scene changed, prepare for next scene
 		_hadPause = false;
 		_pauseTime = 0;
-		if (_ret_scene != "") {
-			_cur_scene = _ret_scene;
-			_ret_scene = "";
+		if (_retScene != "") {
+			_curScene = _retScene;
+			_retScene = "";
 		}
-		if (_sub_scene != "") {
-			_ret_scene = _sub_scene;
-			_sub_scene = "";
+		if (_subScene != "") {
+			_retScene = _subScene;
+			_subScene = "";
 		}
-		if (_cur_scene == oldscene) {
-			callScriptFunctionScene(NXTSCN, scene->nxtscn, scene);
+		if (_curScene == oldscene) {
+			callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
 		}
-		if (_cur_scene == "") {
+		if (_curScene == "") {
 			_vm->quitGame();
 		}
 	}
-	_RemoveCursorTimer();
+	removeCursorTimer();
 	return Common::kNoError;
 }
 
-bool GameJohnnyRock::__Fired(Common::Point *point) {
+bool GameJohnnyRock::fired(Common::Point *point) {
 	pollEvents();
 	_fired = false;
 	if (!_leftDown) {
@@ -420,11 +418,11 @@ bool GameJohnnyRock::__Fired(Common::Point *point) {
 		_leftDown = true;
 	}
 	if (_buttonDown) {
-		if (_thisGameTimer - _mach_gun_timer > 3) {
+		if (_thisGameTimer - _machGunTimer > 3) {
 			_buttonDown = false;
-			_mgun_cnt++;
-			if (_mgun_cnt > 5) {
-				_mgun_cnt = 0;
+			_mgunCnt++;
+			if (_mgunCnt > 5) {
+				_mgunCnt = 0;
 				_leftDown = false;
 			}
 		}
@@ -433,124 +431,122 @@ bool GameJohnnyRock::__Fired(Common::Point *point) {
 	_fired = true;
 	point->x = _mousePos.x;
 	point->y = _mousePos.y;
-	_mach_gun_timer = _thisGameTimer;
+	_machGunTimer = _thisGameTimer;
 	_buttonDown = true;
 	return true;
 }
 
-void GameJohnnyRock::_NewGame() {
-	_game_money = 2000;
+void GameJohnnyRock::newGame() {
+	_gameMoney = 2000;
 	_shots = 400;
 	_score = 0;
 	_holster = false;
-	_UpdateStat();
-	_ret_scene = "";
-	_sub_scene = "";
+	updateStat();
+	_retScene = "";
+	_subScene = "";
 }
 
-void GameJohnnyRock::_ResetParams() {
-	_sub_scene = "";
-	_money_scene = "";
-	_this_map = _rnd->getRandomNumber(2);
+void GameJohnnyRock::resetParams() {
+	_subScene = "";
+	_moneyScene = "";
+	_thisMap = _rnd->getRandomNumber(2);
 	_clues = 0;
-	_got_this_number = 0;
-	_got_this_clue = 0;
-	_this_clue = 0;
+	_gotThisNumber = 0;
+	_gotThisClue = 0;
+	_thisClue = 0;
 	_office = 0;
 	_casino = 0;
-	_pool_hall = 0;
+	_poolHall = 0;
 	_warehouse = 0;
 	_garage = 0;
 	_mansion = 0;
-	_did_continue = 0;
-	_this_difficulty = _difficulty - 1;
-	_casino_type = _rnd->getRandomNumber(1);
-	_pool_hall_type = _rnd->getRandomNumber(2);
-	_warehouse_type = _rnd->getRandomNumber(2);
-	_garage_type = _rnd->getRandomNumber(1);
-	_map_timeout = 0;
-	_ammo_again = 0;
+	_didContinue = 0;
+	_thisDifficulty = _difficulty - 1;
+	_casinoType = _rnd->getRandomNumber(1);
+	_poolHallType = _rnd->getRandomNumber(2);
+	_warehouseType = _rnd->getRandomNumber(2);
+	_garageType = _rnd->getRandomNumber(1);
+	_mapTimeout = 0;
+	_ammoAgain = 0;
 	_combinations[0] = _rnd->getRandomNumber(5);
 	_combinations[1] = _rnd->getRandomNumber(5);
 	_combinations[2] = _rnd->getRandomNumber(5);
 	_combinations[3] = _rnd->getRandomNumber(5);
-	_who_did_it = _rnd->getRandomNumber(3);
-	_in_warehouse = 0;
-	_office_count = 0;
-	_had_go_to_mansion = 0;
-	_random_place_bits = 0;
-	for (uint8 i = 0; i < 5; i++) {
-		// this assigns places from _random_places
-		uint16 picked = _pick_bits(&_random_place_bits, 6);
-		_entrance_index[i] = picked;
+	_whoDidIt = _rnd->getRandomNumber(3);
+	_inWarehouse = 0;
+	_officeCount = 0;
+	_hadGoToMansion = 0;
+	_randomPlaceBits = 0;
+	for (int i = 0; i < 5; i++) {
+		// this assigns places from _randomPlaces
+		uint16 picked = pickBits(&_randomPlaceBits, 6);
+		_entranceIndex[i] = picked;
 	}
-	_random_place_bits = 0;
+	_randomPlaceBits = 0;
 	for (uint8 i = 5; i < 19; i++) {
-		// this assigns places from _random_places_mr
-		uint16 picked = _pick_bits(&_random_place_bits, 8);
-		_entrance_index[i] = picked;
+		// this assigns places from _randomPlacesMR
+		uint16 picked = pickBits(&_randomPlaceBits, 8);
+		_entranceIndex[i] = picked;
 	}
-	_max_repeat = _this_difficulty + 4;
-	_repeat_random_place = 0;
-	_got_to = 0;
-	_UpdateStat();
+	_maxRepeat = _thisDifficulty + 4;
+	_repeatRandomPlace = 0;
+	_gotTo = 0;
+	updateStat();
 }
 
-void GameJohnnyRock::_OutShots() {
+void GameJohnnyRock::outShots() {
 	_shots = 400;
 	_score = 0;
 	_holster = false;
-	_UpdateStat();
+	updateStat();
 }
 
-void GameJohnnyRock::_DoMenu() {
-	uint32 startTime = _GetMsTime();
-	_RestoreCursor();
-	_DoCursor();
+void GameJohnnyRock::doMenu() {
+	uint32 startTime = getMsTime();
+	updateCursor();
 	_inMenu = true;
-	_MoveMouse();
+	moveMouse();
 	g_system->getMixer()->pauseHandle(_sceneAudioHandle, true);
 	_screen->copyRectToSurface(_background->getBasePtr(_videoPosX, _videoPosY), _background->pitch, _videoPosX, _videoPosY, _videoDecoder->getWidth(), _videoDecoder->getHeight());
-	_ShowDifficulty(_difficulty, false);
+	showDifficulty(_difficulty, false);
 	while (_inMenu && !_vm->shouldQuit()) {
 		Common::Point firedCoords;
-		if (__Fired(&firedCoords)) {
-			Rect *hitMenuRect = _CheckZone(_submenzone, &firedCoords);
+		if (fired(&firedCoords)) {
+			Rect *hitMenuRect = checkZone(_submenzone, &firedCoords);
 			if (hitMenuRect != nullptr) {
-				callScriptFunctionRectHit(hitMenuRect->rectHit, hitMenuRect);
+				callScriptFunctionRectHit(hitMenuRect->_rectHit, hitMenuRect);
 			}
 		}
 		_leftDown = false;
 		if (_difficulty != _oldDifficulty) {
-			_ChangeDifficulty(_difficulty);
+			changeDifficulty(_difficulty);
 		}
-		g_system->delayMillis(15);
 		updateScreen();
+		g_system->delayMillis(15);
 	}
-	_RestoreCursor();
-	_DoCursor();
+	updateCursor();
 	g_system->getMixer()->pauseHandle(_sceneAudioHandle, false);
 	if (_hadPause) {
-		unsigned long endTime = _GetMsTime();
-		unsigned long timeDiff = endTime - startTime;
+		uint32 endTime = getMsTime();
+		uint32 timeDiff = endTime - startTime;
 		_pauseTime += timeDiff;
 		_nextFrameTime += timeDiff;
 	}
 }
 
-void GameJohnnyRock::_UpdateStat() {
+void GameJohnnyRock::updateStat() {
 	if (_score != _oldScore) {
 		_oldScore = _score;
 		Common::String buffer = Common::String::format("%05d", _score);
-		for (uint8 i = 0; i < 5; i++) {
+		for (int i = 0; i < 5; i++) {
 			uint8 digit = buffer[i] - '0';
 			AlgGraphics::drawImage(_screen, &(*_numbers)[digit], (i * 7) + 0x7D, 0xBE);
 		}
 	}
-	if (_game_money != _oldgame_money) {
-		_oldgame_money = _game_money;
-		Common::String buffer = Common::String::format("%04d", _game_money < 0 ? 0 : _game_money);
-		for (uint8 i = 0; i < 4; i++) {
+	if (_gameMoney != _oldGameMoney) {
+		_oldGameMoney = _gameMoney;
+		Common::String buffer = Common::String::format("%04d", _gameMoney < 0 ? 0 : _gameMoney);
+		for (int i = 0; i < 4; i++) {
 			uint8 digit = buffer[i] - '0';
 			AlgGraphics::drawImage(_screen, &(*_numbers)[digit], (i * 7) + 0x43, 0xBE);
 		}
@@ -558,7 +554,7 @@ void GameJohnnyRock::_UpdateStat() {
 	if (_shots != _oldShots) {
 		_oldShots = _shots;
 		Common::String buffer = Common::String::format("%04d", _shots);
-		for (uint8 i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			uint8 digit = buffer[i] - '0';
 			AlgGraphics::drawImage(_screen, &(*_numbers)[digit], (i * 7) + 0x10A, 0xBE);
 		}
@@ -566,36 +562,35 @@ void GameJohnnyRock::_UpdateStat() {
 	AlgGraphics::drawImage(_screen, &(*_difficultyIcon)[_difficulty - 1], 0xBA, 0xBE);
 }
 
-void GameJohnnyRock::_DisplayScore() {
-	_UpdateStat();
+void GameJohnnyRock::displayScore() {
+	updateStat();
 }
 
-void GameJohnnyRock::_ShowDifficulty(uint8 newDifficulty, bool updateCursor) {
+void GameJohnnyRock::showDifficulty(uint8 newDifficulty, bool cursor) {
 	// reset menu screen
 	_screen->copyRectToSurface(_background->getBasePtr(_videoPosX, _videoPosY), _background->pitch, _videoPosX, _videoPosY, _videoDecoder->getWidth(), _videoDecoder->getHeight());
-	AlgGraphics::drawImageCentered(_screen, &_levelIcon, _diffpos[newDifficulty][0], _diffpos[newDifficulty][1]);
-	if (updateCursor) {
-		_DoCursor();
+	AlgGraphics::drawImageCentered(_screen, &_levelIcon, _diffPos[newDifficulty][0], _diffPos[newDifficulty][1]);
+	if (cursor) {
+		updateCursor();
 	}
 }
 
-void GameJohnnyRock::_ChangeDifficulty(uint8 newDifficulty) {
+void GameJohnnyRock::changeDifficulty(uint8 newDifficulty) {
 	if (newDifficulty == _oldDifficulty) {
 		return;
 	}
-	_ShowDifficulty(newDifficulty, true);
-	Game::_AdjustDifficulty(newDifficulty, _oldDifficulty);
+	showDifficulty(newDifficulty, true);
+	Game::adjustDifficulty(newDifficulty, _oldDifficulty);
 	_oldDifficulty = newDifficulty;
 	_difficulty = newDifficulty;
 }
 
-void GameJohnnyRock::_DoCursor() {
+void GameJohnnyRock::updateCursor() {
 	_oldWhichGun = _whichGun;
 }
 
-void GameJohnnyRock::_UpdateMouse() {
+void GameJohnnyRock::updateMouse() {
 	if (_oldWhichGun != _whichGun) {
-		Graphics::PixelFormat pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 		Graphics::Surface *cursor = &(*_gun)[_whichGun];
 		CursorMan.popAllCursors();
 		uint16 hotspotX = (cursor->w / 2);
@@ -604,13 +599,13 @@ void GameJohnnyRock::_UpdateMouse() {
 			cursor->drawLine(0, hotspotY, cursor->w, hotspotY, 1);
 			cursor->drawLine(hotspotX, 0, hotspotX, cursor->h, 1);
 		}
-		CursorMan.pushCursor(cursor->getPixels(), cursor->w, cursor->h, hotspotX, hotspotY, 0, false, &pixelFormat);
+		CursorMan.pushCursor(cursor->getPixels(), cursor->w, cursor->h, hotspotX, hotspotY, 0);
 		CursorMan.showMouse(true);
 		_oldWhichGun = _whichGun;
 	}
 }
 
-void GameJohnnyRock::_MoveMouse() {
+void GameJohnnyRock::moveMouse() {
 	if (_inMenu) {
 		if (_mousePos.y > 0xB7) {
 			_mousePos.y = 0xB7;
@@ -623,184 +618,184 @@ void GameJohnnyRock::_MoveMouse() {
 			_whichGun = 0;
 		}
 	}
-	_UpdateMouse();
+	updateMouse();
 }
 
-bool GameJohnnyRock::_WeaponDown() {
+bool GameJohnnyRock::weaponDown() {
 	if (_rightDown && _mousePos.y >= 0xBC && _mousePos.x >= 0x37) {
 		return true;
 	}
 	return false;
 }
 
-bool GameJohnnyRock::_SaveState() {
+bool GameJohnnyRock::saveState() {
 	Common::OutSaveFile *outSaveFile;
 	Common::String saveFileName = _vm->getSaveStateName(0);
 	if (!(outSaveFile = g_system->getSavefileManager()->openForSaving(saveFileName))) {
-		warning("Can't create file '%s', game not saved", saveFileName.c_str());
+		warning("GameJohnnyRock::saveState(): Can't create file '%s', game not saved", saveFileName.c_str());
 		return false;
 	}
 	outSaveFile->writeUint32BE(MKTAG('A', 'L', 'G', 'S')); // header
 	outSaveFile->writeByte(0);                             // version, unused for now
-	outSaveFile->writeUint16LE(_total_dies);
-	outSaveFile->writeSint16LE(_game_money);
-	outSaveFile->writeUint16LE(_ammo_again);
-	outSaveFile->writeUint16LE(_map_timeout);
-	outSaveFile->writeByte(_lucky_number);
-	outSaveFile->writeByte(_this_map);
+	outSaveFile->writeUint16LE(_totalDies);
+	outSaveFile->writeSint16LE(_gameMoney);
+	outSaveFile->writeUint16LE(_ammoAgain);
+	outSaveFile->writeUint16LE(_mapTimeout);
+	outSaveFile->writeByte(_luckyNumber);
+	outSaveFile->writeByte(_thisMap);
 	outSaveFile->writeUint16LE(_clues);
-	outSaveFile->writeUint16LE(_place_bits);
-	outSaveFile->writeByte(_random_count);
-	outSaveFile->writeUint16LE(_doctor_bits);
-	outSaveFile->writeUint16LE(_undertaker_bits);
-	for (uint8 i = 0; i < 4; i++) {
-		outSaveFile->writeByte(_clue_table[i]);
+	outSaveFile->writeUint16LE(_placeBits);
+	outSaveFile->writeByte(_randomCount);
+	outSaveFile->writeUint16LE(_doctorBits);
+	outSaveFile->writeUint16LE(_undertakerBits);
+	for (int i = 0; i < 4; i++) {
+		outSaveFile->writeByte(_clueTable[i]);
 	}
-	outSaveFile->writeUint16LE(_this_clue);
-	outSaveFile->writeByte(_got_this_number);
+	outSaveFile->writeUint16LE(_thisClue);
+	outSaveFile->writeByte(_gotThisNumber);
 	outSaveFile->writeByte(_casino);
-	outSaveFile->writeByte(_pool_hall);
+	outSaveFile->writeByte(_poolHall);
 	outSaveFile->writeByte(_warehouse);
 	outSaveFile->writeByte(_garage);
 	outSaveFile->writeByte(_office);
-	outSaveFile->writeByte(_casino_type);
-	outSaveFile->writeByte(_pool_hall_type);
-	outSaveFile->writeByte(_warehouse_type);
-	outSaveFile->writeByte(_garage_type);
+	outSaveFile->writeByte(_casinoType);
+	outSaveFile->writeByte(_poolHallType);
+	outSaveFile->writeByte(_warehouseType);
+	outSaveFile->writeByte(_garageType);
 	outSaveFile->writeByte(_mansion);
-	outSaveFile->writeByte(_in_warehouse);
-	outSaveFile->writeByte(_in_office);
-	outSaveFile->writeUint16LE(_got_to);
-	for (uint8 i = 0; i < 20; i++) {
-		outSaveFile->writeUint16LE(_entrance_index[i]);
+	outSaveFile->writeByte(_inWarehouse);
+	outSaveFile->writeByte(_inOffice);
+	outSaveFile->writeUint16LE(_gotTo);
+	for (int i = 0; i < 20; i++) {
+		outSaveFile->writeUint16LE(_entranceIndex[i]);
 	}
-	for (uint8 i = 0; i < 10; i++) {
-		outSaveFile->writeUint16LE(_random_scenes_index[i]);
+	for (int i = 0; i < 10; i++) {
+		outSaveFile->writeUint16LE(_randomScenesIndex[i]);
 	}
-	for (uint8 i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		outSaveFile->writeByte(_combinations[i]);
 	}
-	outSaveFile->writeByte(_who_did_it);
-	outSaveFile->writeByte(_had_go_to_mansion);
-	outSaveFile->writeUint16LE(_office_count);
-	outSaveFile->writeUint16LE(_random_place_bits);
-	outSaveFile->writeByte(_max_random_count);
-	outSaveFile->writeUint16LE(_goto_after_random);
-	outSaveFile->writeUint16LE(_repeat_random_place);
-	outSaveFile->writeUint16LE(_max_repeat);
-	outSaveFile->writeUint16LE(_got_this_clue);
-	outSaveFile->writeUint16LE(_did_continue);
-	outSaveFile->writeUint16LE(_this_game_time);
+	outSaveFile->writeByte(_whoDidIt);
+	outSaveFile->writeByte(_hadGoToMansion);
+	outSaveFile->writeUint16LE(_officeCount);
+	outSaveFile->writeUint16LE(_randomPlaceBits);
+	outSaveFile->writeByte(_maxRandomCount);
+	outSaveFile->writeUint16LE(_gotoAfterRandom);
+	outSaveFile->writeUint16LE(_repeatRandomPlace);
+	outSaveFile->writeUint16LE(_maxRepeat);
+	outSaveFile->writeUint16LE(_gotThisClue);
+	outSaveFile->writeUint16LE(_didContinue);
+	outSaveFile->writeUint16LE(_thisGameTime);
 	outSaveFile->writeUint16LE(_shots);
 	outSaveFile->writeSint32LE(_score);
 	outSaveFile->writeByte(_holster);
 	outSaveFile->writeByte(_difficulty);
-	outSaveFile->writeByte(_this_difficulty);
-	outSaveFile->writeString(_money_scene);
+	outSaveFile->writeByte(_thisDifficulty);
+	outSaveFile->writeString(_moneyScene);
 	outSaveFile->writeByte(0);
-	outSaveFile->writeString(_cur_scene);
+	outSaveFile->writeString(_curScene);
 	outSaveFile->writeByte(0);
-	outSaveFile->writeString(_sub_scene);
+	outSaveFile->writeString(_subScene);
 	outSaveFile->writeByte(0);
-	outSaveFile->writeString(_ret_scene);
+	outSaveFile->writeString(_retScene);
 	outSaveFile->writeByte(0);
-	outSaveFile->writeByte(_random_scenes_savestate_index);
+	outSaveFile->writeByte(_randomScenesSavestateIndex);
 	outSaveFile->finalize();
 	delete outSaveFile;
 	return true;
 }
 
-bool GameJohnnyRock::_LoadState() {
+bool GameJohnnyRock::loadState() {
 	Common::InSaveFile *inSaveFile;
 	Common::String saveFileName = _vm->getSaveStateName(0);
 	if (!(inSaveFile = g_system->getSavefileManager()->openForLoading(saveFileName))) {
-		debug("Can't load file '%s', game not loaded", saveFileName.c_str());
+		debug("GameJohnnyRock::loadState(): Can't load file '%s', game not loaded", saveFileName.c_str());
 		return false;
 	}
 	uint32 header = inSaveFile->readUint32BE();
 	if (header != MKTAG('A', 'L', 'G', 'S')) {
-		warning("Unkown save file, header: %d", header);
+		warning("GameJohnnyRock::loadState(): Unkown save file, header: %s", tag2str(header));
 		return false;
 	}
 	inSaveFile->skip(1); // version, unused for now
-	_total_dies = inSaveFile->readUint16LE();
-	_game_money = inSaveFile->readSint16LE();
-	_ammo_again = inSaveFile->readUint16LE();
-	_map_timeout = inSaveFile->readUint16LE();
-	_lucky_number = inSaveFile->readByte();
-	_this_map = inSaveFile->readByte();
+	_totalDies = inSaveFile->readUint16LE();
+	_gameMoney = inSaveFile->readSint16LE();
+	_ammoAgain = inSaveFile->readUint16LE();
+	_mapTimeout = inSaveFile->readUint16LE();
+	_luckyNumber = inSaveFile->readByte();
+	_thisMap = inSaveFile->readByte();
 	_clues = inSaveFile->readUint16LE();
-	_place_bits = inSaveFile->readUint16LE();
-	_random_count = inSaveFile->readByte();
-	_doctor_bits = inSaveFile->readUint16LE();
-	_undertaker_bits = inSaveFile->readUint16LE();
-	for (uint8 i = 0; i < 4; i++) {
-		_clue_table[i] = inSaveFile->readByte();
+	_placeBits = inSaveFile->readUint16LE();
+	_randomCount = inSaveFile->readByte();
+	_doctorBits = inSaveFile->readUint16LE();
+	_undertakerBits = inSaveFile->readUint16LE();
+	for (int i = 0; i < 4; i++) {
+		_clueTable[i] = inSaveFile->readByte();
 	}
-	_this_clue = inSaveFile->readUint16LE();
-	_got_this_number = inSaveFile->readByte();
+	_thisClue = inSaveFile->readUint16LE();
+	_gotThisNumber = inSaveFile->readByte();
 	_casino = inSaveFile->readByte();
-	_pool_hall = inSaveFile->readByte();
+	_poolHall = inSaveFile->readByte();
 	_warehouse = inSaveFile->readByte();
 	_garage = inSaveFile->readByte();
 	_office = inSaveFile->readByte();
-	_casino_type = inSaveFile->readByte();
-	_pool_hall_type = inSaveFile->readByte();
-	_warehouse_type = inSaveFile->readByte();
-	_garage_type = inSaveFile->readByte();
+	_casinoType = inSaveFile->readByte();
+	_poolHallType = inSaveFile->readByte();
+	_warehouseType = inSaveFile->readByte();
+	_garageType = inSaveFile->readByte();
 	_mansion = inSaveFile->readByte();
-	_in_warehouse = inSaveFile->readByte();
-	_in_office = inSaveFile->readByte();
-	_got_to = inSaveFile->readUint16LE();
-	for (uint8 i = 0; i < 20; i++) {
-		_entrance_index[i] = inSaveFile->readUint16LE();
+	_inWarehouse = inSaveFile->readByte();
+	_inOffice = inSaveFile->readByte();
+	_gotTo = inSaveFile->readUint16LE();
+	for (int i = 0; i < 20; i++) {
+		_entranceIndex[i] = inSaveFile->readUint16LE();
 	}
-	for (uint8 i = 0; i < 10; i++) {
-		_random_scenes_index[i] = inSaveFile->readUint16LE();
+	for (int i = 0; i < 10; i++) {
+		_randomScenesIndex[i] = inSaveFile->readUint16LE();
 	}
-	for (uint8 i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		_combinations[i] = inSaveFile->readByte();
 	}
-	_who_did_it = inSaveFile->readByte();
-	_had_go_to_mansion = inSaveFile->readByte();
-	_office_count = inSaveFile->readUint16LE();
-	_random_place_bits = inSaveFile->readUint16LE();
-	_max_random_count = inSaveFile->readByte();
-	_goto_after_random = inSaveFile->readUint16LE();
-	_repeat_random_place = inSaveFile->readUint16LE();
-	_max_repeat = inSaveFile->readUint16LE();
-	_got_this_clue = inSaveFile->readUint16LE();
-	_did_continue = inSaveFile->readUint16LE();
-	_this_game_time = inSaveFile->readUint16LE();
+	_whoDidIt = inSaveFile->readByte();
+	_hadGoToMansion = inSaveFile->readByte();
+	_officeCount = inSaveFile->readUint16LE();
+	_randomPlaceBits = inSaveFile->readUint16LE();
+	_maxRandomCount = inSaveFile->readByte();
+	_gotoAfterRandom = inSaveFile->readUint16LE();
+	_repeatRandomPlace = inSaveFile->readUint16LE();
+	_maxRepeat = inSaveFile->readUint16LE();
+	_gotThisClue = inSaveFile->readUint16LE();
+	_didContinue = inSaveFile->readUint16LE();
+	_thisGameTime = inSaveFile->readUint16LE();
 	_shots = inSaveFile->readUint16LE();
 	_score = inSaveFile->readSint32LE();
 	_holster = inSaveFile->readByte();
 	_difficulty = inSaveFile->readByte();
-	_this_difficulty = inSaveFile->readByte();
-	_money_scene = inSaveFile->readString();
-	_cur_scene = inSaveFile->readString();
-	_sub_scene = inSaveFile->readString();
-	_ret_scene = inSaveFile->readString();
-	_random_scenes_savestate_index = inSaveFile->readByte();
+	_thisDifficulty = inSaveFile->readByte();
+	_moneyScene = inSaveFile->readString();
+	_curScene = inSaveFile->readString();
+	_subScene = inSaveFile->readString();
+	_retScene = inSaveFile->readString();
+	_randomScenesSavestateIndex = inSaveFile->readByte();
 	delete inSaveFile;
 	// find out where _random_scenes should point
-	uint16 placeIndex = _entrance_index[_random_scenes_savestate_index];
-	if (_random_scenes_savestate_index < 5) {
-		_random_scenes = _random_places[placeIndex];
+	uint16 placeIndex = _entranceIndex[_randomScenesSavestateIndex];
+	if (_randomScenesSavestateIndex < 5) {
+		_randomScenes = _randomPlaces[placeIndex];
 	} else {
-		_random_scenes = _random_places_mr[placeIndex];
+		_randomScenes = _randomPlacesMR[placeIndex];
 	}
-	_ChangeDifficulty(_difficulty);
-	debug("lucky number: %d", (_lucky_number + 1));
+	changeDifficulty(_difficulty);
+	debug("lucky number: %d", (_luckyNumber + 1));
 	return true;
 }
 
-void GameJohnnyRock::_DoMoneySound() {
-	_PlaySound(_skullSound);
+void GameJohnnyRock::doMoneySound() {
+	playSound(_skullSound);
 }
 
 // Misc game functions
-Common::String GameJohnnyRock::_NumtoScene(int n) {
+Common::String GameJohnnyRock::numToScene(int n) {
 	switch (n) {
 	case 1:
 		return "scene1a";
@@ -825,7 +820,7 @@ Common::String GameJohnnyRock::_NumtoScene(int n) {
 	}
 }
 
-uint16 GameJohnnyRock::_ScenetoNum(Common::String sceneName) {
+uint16 GameJohnnyRock::sceneToNum(Common::String sceneName) {
 	Common::String temp;
 	uint16 index = 4;
 	if (sceneName[index] == 'e') {
@@ -841,666 +836,665 @@ uint16 GameJohnnyRock::_ScenetoNum(Common::String sceneName) {
 	return atoi(temp.c_str());
 }
 
-void GameJohnnyRock::_default_bullethole(Common::Point *point) {
+void GameJohnnyRock::defaultBullethole(Common::Point *point) {
 	if (point->x >= 14 && point->x <= 306 && point->y >= 5 && point->y <= 169) {
-		_RestoreCursor();
 		uint16 targetX = point->x - _videoPosX;
 		uint16 targetY = point->y - _videoPosY;
 		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), &_bulletholeIcon, targetX, targetY);
-		_DoCursor();
+		updateCursor();
 		_shotFired = true;
-		_DoShot();
+		doShot();
 	}
 }
 
-uint16 GameJohnnyRock::_pick_bits(uint16 *bits, uint8 max) {
+uint16 GameJohnnyRock::pickBits(uint16 *bits, uint8 max) {
 	// reset bits if full
 	if (*bits == (0xFFFF >> (16 - max))) {
 		*bits = 0;
 	}
-	uint8 random = _rnd->getRandomNumber(max - 1);
+	uint8 randomNum = _rnd->getRandomNumber(max - 1);
 	// find first unused bit position
-	while (*bits & (1 << random)) {
-		random++;
-		if (random >= max) {
-			random = 0;
+	while (*bits & (1 << randomNum)) {
+		randomNum++;
+		if (randomNum >= max) {
+			randomNum = 0;
 		}
 	}
-	*bits |= (1 << random);
-	return random;
+	*bits |= (1 << randomNum);
+	return randomNum;
 }
 
-uint16 GameJohnnyRock::_pick_random_place(uint8 place) {
-	_random_scenes_savestate_index = place;
-	uint16 placeIndex = _entrance_index[place];
+uint16 GameJohnnyRock::pickRandomPlace(uint8 place) {
+	_randomScenesSavestateIndex = place;
+	uint16 placeIndex = _entranceIndex[place];
 	if (place < 5) {
-		_random_scenes = _random_places[placeIndex];
+		_randomScenes = _randomPlaces[placeIndex];
 	} else {
-		_random_scenes = _random_places_mr[placeIndex];
+		_randomScenes = _randomPlacesMR[placeIndex];
 	}
-	_place_bits = 0;
-	_random_count = 0;
-	memset(&_random_scenes_index, 0, (10 * sizeof(uint16)));
-	for (uint8 i = 0; i < (_random_scenes[0] + 4); i++) {
-		_random_scenes_index[i] = _random_scenes[i];
+	_placeBits = 0;
+	_randomCount = 0;
+	memset(&_randomScenesIndex, 0, (10 * sizeof(uint16)));
+	for (int i = 0; i < (_randomScenes[0] + 4); i++) {
+		_randomScenesIndex[i] = _randomScenes[i];
 	}
-	if (_random_scenes[1] < 0) {
-		_max_random_count = (_this_difficulty * 2) - _random_scenes[1];
+	if (_randomScenes[1] < 0) {
+		_maxRandomCount = (_thisDifficulty * 2) - _randomScenes[1];
 	} else {
-		_max_random_count = _random_scenes[1];
+		_maxRandomCount = _randomScenes[1];
 	}
-	uint16 index = _pick_bits(&_place_bits, _random_scenes[0]);
-	return _random_scenes[index + 4];
+	uint16 index = pickBits(&_placeBits, _randomScenes[0]);
+	return _randomScenes[index + 4];
 }
 
-void GameJohnnyRock::_show_combination() {
-	uint16 offset = (_got_this_clue * 6) + _combinations[_got_this_clue];
-	_got_this_clue++;
-	if (_got_this_clue == 4) {
+void GameJohnnyRock::showCombination() {
+	uint16 offset = (_gotThisClue * 6) + _combinations[_gotThisClue];
+	_gotThisClue++;
+	if (_gotThisClue == 4) {
 		_mansion = 3;
 	}
-	_cur_scene = _NumtoScene(offset + 0xDB);
+	_curScene = numToScene(offset + 0xDB);
 }
 
 // Script functions: Zone
-void GameJohnnyRock::_zone_bullethole(Common::Point *point) {
-	_default_bullethole(point);
+void GameJohnnyRock::zoneBullethole(Common::Point *point) {
+	defaultBullethole(point);
 }
 
-void GameJohnnyRock::_rect_shotmenu(Rect *rect) {
-	_DoMenu();
+void GameJohnnyRock::rectShotMenu(Rect *rect) {
+	doMenu();
 }
 
-void GameJohnnyRock::_rect_save(Rect *rect) {
-	if(_SaveState()) {
-		_DoSaveSound();
+void GameJohnnyRock::rectSave(Rect *rect) {
+	if (saveState()) {
+		doSaveSound();
 	}
 }
 
-void GameJohnnyRock::_rect_load(Rect *rect) {
-	if(_LoadState()) {
-		_DoLoadSound();
+void GameJohnnyRock::rectLoad(Rect *rect) {
+	if (loadState()) {
+		doLoadSound();
 	}
 }
 
-void GameJohnnyRock::_rect_continue(Rect *rect) {
+void GameJohnnyRock::rectContinue(Rect *rect) {
 	_inMenu = 0;
 	_fired = 0;
-	if (_game_money < 0) {
-		_NewGame();
-		_ret_scene = "";
-		_sub_scene = "";
-		if (_in_office) {
-			_cur_scene = _NumtoScene(_in_office);
+	if (_gameMoney < 0) {
+		newGame();
+		_retScene = "";
+		_subScene = "";
+		if (_inOffice) {
+			_curScene = numToScene(_inOffice);
 		} else {
-			_cur_scene = _NumtoScene(_this_map + 174);
+			_curScene = numToScene(_thisMap + 174);
 		}
-		_did_continue++;
+		_didContinue++;
 	}
 	if (_shots <= 0) {
-		_OutShots();
-		_did_continue++;
+		outShots();
+		_didContinue++;
 	}
 }
 
-void GameJohnnyRock::_rect_start(Rect *rect) {
+void GameJohnnyRock::rectStart(Rect *rect) {
 	_inMenu = 0;
 	_fired = 0;
-	_this_difficulty = 0;
-	Scene *scene = _sceneInfo->findScene(_startscene);
-	if (scene->nxtscn == "DRAWGUN") {
+	_thisDifficulty = 0;
+	Scene *scene = _sceneInfo->findScene(_startScene);
+	if (scene->_nxtscn == "DRAWGUN") {
 		callScriptFunctionScene(NXTSCN, "DRAWGUN", scene);
 	}
-	_cur_scene = _startscene;
-	_ResetParams();
-	_NewGame();
-	_UpdateStat();
+	_curScene = _startScene;
+	resetParams();
+	newGame();
+	updateStat();
 }
 
-void GameJohnnyRock::_rect_killinnocent(Rect *rect) {
-	_in_office = _ScenetoNum(_cur_scene);
-	if (_in_office >= 0x13) {
-		_in_office = 0;
+void GameJohnnyRock::rectKillInnocent(Rect *rect) {
+	_inOffice = sceneToNum(_curScene);
+	if (_inOffice >= 0x13) {
+		_inOffice = 0;
 	}
 	if (!_debug_godMode) {
-		_game_money -= 400;
+		_gameMoney -= 400;
 	}
-	if (_game_money < 0) {
-		_sub_scene = "scene358";
-		_ret_scene = "";
-		_cur_scene = "scene151";
+	if (_gameMoney < 0) {
+		_subScene = "scene358";
+		_retScene = "";
+		_curScene = "scene151";
 	} else {
 		switch (_rnd->getRandomNumber(2)) {
 		case 0:
-			_cur_scene = "scene151";
+			_curScene = "scene151";
 			break;
 		case 1:
-			_cur_scene = "scene152";
+			_curScene = "scene152";
 			break;
 		case 2:
-			_cur_scene = "scene153";
+			_curScene = "scene153";
 			break;
 		}
 	}
 }
 
-void GameJohnnyRock::_rect_selectcasino(Rect *rect) {
-	_ret_scene = "";
-	if (_mansion == 5 && _who_did_it == 1) {
-		_repeat_random_place = _max_repeat;
-		_goto_after_random = 0xF5;
-		_cur_scene = _NumtoScene(_pick_random_place(_max_repeat + 5));
+void GameJohnnyRock::rectSelectCasino(Rect *rect) {
+	_retScene = "";
+	if (_mansion == 5 && _whoDidIt == 1) {
+		_repeatRandomPlace = _maxRepeat;
+		_gotoAfterRandom = 0xF5;
+		_curScene = numToScene(pickRandomPlace(_maxRepeat + 5));
 	} else if (_casino == 0) {
-		if (_got_to & 1) {
-			_cur_scene = "scene19";
+		if (_gotTo & 1) {
+			_curScene = "scene19";
 		} else {
-			_goto_after_random = 0x13;
-			_cur_scene = _NumtoScene(_pick_random_place(0));
+			_gotoAfterRandom = 0x13;
+			_curScene = numToScene(pickRandomPlace(0));
 		}
 	} else if (_casino == 1 || _casino == 3) {
-		_cur_scene = "scene44";
+		_curScene = "scene44";
 	} else {
 		_casino = 3;
 		if (_rnd->getRandomBit()) { // original: (_this_game_time & 1) == 0
-			_cur_scene = "scene64";
+			_curScene = "scene64";
 		} else {
-			_cur_scene = "scene65";
+			_curScene = "scene65";
 		}
 	}
 }
 
-void GameJohnnyRock::_rect_selectpoolhall(Rect *rect) {
-	_ret_scene = "";
-	if (_mansion == 5 && _who_did_it == 0) {
-		_repeat_random_place = _max_repeat;
-		_goto_after_random = 0xF7;
-		_cur_scene = _NumtoScene(_pick_random_place(_max_repeat + 5));
-	} else if (_pool_hall == 0) {
-		if (_got_to & 2) {
-			_cur_scene = "scene66";
+void GameJohnnyRock::rectSelectPoolhall(Rect *rect) {
+	_retScene = "";
+	if (_mansion == 5 && _whoDidIt == 0) {
+		_repeatRandomPlace = _maxRepeat;
+		_gotoAfterRandom = 0xF7;
+		_curScene = numToScene(pickRandomPlace(_maxRepeat + 5));
+	} else if (_poolHall == 0) {
+		if (_gotTo & 2) {
+			_curScene = "scene66";
 		} else {
-			_goto_after_random = 0x42;
-			_cur_scene = _NumtoScene(_pick_random_place(1));
+			_gotoAfterRandom = 0x42;
+			_curScene = numToScene(pickRandomPlace(1));
 		}
-	} else if (_pool_hall == 1 || _pool_hall == 3) {
-		_cur_scene = "scene82";
+	} else if (_poolHall == 1 || _poolHall == 3) {
+		_curScene = "scene82";
 	} else {
-		_pool_hall = 3;
-		_cur_scene = "scene89";
+		_poolHall = 3;
+		_curScene = "scene89";
 	}
 }
 
-void GameJohnnyRock::_rect_selectwarehouse(Rect *rect) {
-	_ret_scene = "";
-	if (_mansion == 5 && _who_did_it == 2) {
-		_repeat_random_place = _max_repeat;
-		_goto_after_random = 0xF9;
-		_cur_scene = _NumtoScene(_pick_random_place(_max_repeat + 5));
+void GameJohnnyRock::rectSelectWarehouse(Rect *rect) {
+	_retScene = "";
+	if (_mansion == 5 && _whoDidIt == 2) {
+		_repeatRandomPlace = _maxRepeat;
+		_gotoAfterRandom = 0xF9;
+		_curScene = numToScene(pickRandomPlace(_maxRepeat + 5));
 	} else if (_warehouse == 0) {
-		if (_in_warehouse < 2) {
-			if (_got_to & 4) {
-				_cur_scene = "scene90";
+		if (_inWarehouse < 2) {
+			if (_gotTo & 4) {
+				_curScene = "scene90";
 			} else {
-				_in_warehouse = 1;
-				_goto_after_random = 0x5A;
-				_cur_scene = _NumtoScene(_pick_random_place(2));
+				_inWarehouse = 1;
+				_gotoAfterRandom = 0x5A;
+				_curScene = numToScene(pickRandomPlace(2));
 			}
-		} else if (_in_warehouse == 2) {
-			_cur_scene = "scene93";
-		} else if (_in_warehouse == 3) {
-			_cur_scene = "scene119";
+		} else if (_inWarehouse == 2) {
+			_curScene = "scene93";
+		} else if (_inWarehouse == 3) {
+			_curScene = "scene119";
 		}
 	} else if (_warehouse == 1 || _warehouse == 3) {
-		_cur_scene = "scene122";
+		_curScene = "scene122";
 	} else {
 		_warehouse = 3;
-		_cur_scene = "scene121";
+		_curScene = "scene121";
 	}
 }
 
-void GameJohnnyRock::_rect_selectgarage(Rect *rect) {
-	_ret_scene = "";
-	if (_mansion == 5 && _who_did_it == 3) {
-		_repeat_random_place = _max_repeat;
-		_goto_after_random = 0xFB;
-		_cur_scene = _NumtoScene(_pick_random_place(_max_repeat + 5));
+void GameJohnnyRock::rectSelectGarage(Rect *rect) {
+	_retScene = "";
+	if (_mansion == 5 && _whoDidIt == 3) {
+		_repeatRandomPlace = _maxRepeat;
+		_gotoAfterRandom = 0xFB;
+		_curScene = numToScene(pickRandomPlace(_maxRepeat + 5));
 	} else if (_garage == 0) {
-		if (_got_to & 8) {
-			_cur_scene = "scene123";
+		if (_gotTo & 8) {
+			_curScene = "scene123";
 		} else {
-			_goto_after_random = 0x7B;
-			_cur_scene = _NumtoScene(_pick_random_place(3));
+			_gotoAfterRandom = 0x7B;
+			_curScene = numToScene(pickRandomPlace(3));
 		}
 	} else if (_garage == 1 || _garage == 3) {
-		_cur_scene = "scene138";
+		_curScene = "scene138";
 	} else {
 		_garage = 3;
-		_cur_scene = "scene139";
+		_curScene = "scene139";
 	}
 }
 
-void GameJohnnyRock::_rect_selectmansion(Rect *rect) {
-	_place_bits = 0;
-	_random_count = 1;
-	_ret_scene = "";
+void GameJohnnyRock::rectSelectMansion(Rect *rect) {
+	_placeBits = 0;
+	_randomCount = 1;
+	_retScene = "";
 	if (_mansion == 1) {
-		uint16 picked = _pick_bits(&_place_bits, 5);
-		_cur_scene = _NumtoScene(0xB8 + (picked * 2));
+		uint16 picked = pickBits(&_placeBits, 5);
+		_curScene = numToScene(0xB8 + (picked * 2));
 	} else if (_mansion == 2) {
-		_cur_scene = "scene194";
+		_curScene = "scene194";
 	} else if (_mansion == 3) {
-		_cur_scene = "scene207";
+		_curScene = "scene207";
 	} else if (_mansion == 4) {
-		_got_this_number = 0;
-		_cur_scene = "scene212";
+		_gotThisNumber = 0;
+		_curScene = "scene212";
 	} else if (_mansion == 5) {
-		_cur_scene = "scene243";
+		_curScene = "scene243";
 	} else {
-		if (_garage == 0 || _casino == 0 || _pool_hall == 0 || _warehouse == 0) {
-			_cur_scene = "scene243";
-		} else if (_got_to & 0x10) {
-			_cur_scene = "scene180";
+		if (_garage == 0 || _casino == 0 || _poolHall == 0 || _warehouse == 0) {
+			_curScene = "scene243";
+		} else if (_gotTo & 0x10) {
+			_curScene = "scene180";
 		} else {
-			_goto_after_random = 0xB4;
-			_cur_scene = _NumtoScene(_pick_random_place(4));
+			_gotoAfterRandom = 0xB4;
+			_curScene = numToScene(pickRandomPlace(4));
 		}
 	}
 }
 
-void GameJohnnyRock::_rect_selectammo(Rect *rect) {
-	_ret_scene = "";
-	if (_game_money >= 100) {
+void GameJohnnyRock::rectSelectAmmo(Rect *rect) {
+	_retScene = "";
+	if (_gameMoney >= 100) {
 		if (!_debug_godMode) {
-			_game_money -= 100;
+			_gameMoney -= 100;
 		}
 		_shots += 200;
-		_ammo_again = 0;
-		_DoMoneySound();
-		_cur_scene = "scene178";
+		_ammoAgain = 0;
+		doMoneySound();
+		_curScene = "scene178";
 	} else {
-		_ammo_again++;
-		if (_ammo_again >= 2) {
-			_cur_scene = "scene243";
+		_ammoAgain++;
+		if (_ammoAgain >= 2) {
+			_curScene = "scene243";
 		} else {
-			_cur_scene = "scene179";
+			_curScene = "scene179";
 		}
 	}
 }
 
-void GameJohnnyRock::_rect_selectoffice(Rect *rect) {
-	_ret_scene = "";
+void GameJohnnyRock::rectSelectOffice(Rect *rect) {
+	_retScene = "";
 	if (!_office) {
 		_office = 1;
-		_cur_scene = "scene168";
+		_curScene = "scene168";
 	} else {
 		if (_rnd->getRandomBit()) { // original: _this_game_time & 1
-			_cur_scene = "scene243";
+			_curScene = "scene243";
 		} else {
-			_cur_scene = "scene262";
+			_curScene = "scene262";
 		}
 	}
 }
 
-void GameJohnnyRock::_shotclue(uint8 clue) {
-	if (_clue_table[_got_this_clue] == clue) {
-		_show_combination();
+void GameJohnnyRock::shotClue(uint8 clue) {
+	if (_clueTable[_gotThisClue] == clue) {
+		showCombination();
 	} else {
-		_got_this_clue = 0;
-		_cur_scene = "scene374";
+		_gotThisClue = 0;
+		_curScene = "scene374";
 	}
 }
 
-void GameJohnnyRock::_rect_shotmanbust(Rect *rect) {
-	_shotclue(0);
+void GameJohnnyRock::rectShotManBust(Rect *rect) {
+	shotClue(0);
 }
 
-void GameJohnnyRock::_rect_shotwomanbust(Rect *rect) {
-	_shotclue(1);
+void GameJohnnyRock::rectShotWomanBust(Rect *rect) {
+	shotClue(1);
 }
 
-void GameJohnnyRock::_rect_shotbluevase(Rect *rect) {
-	_shotclue(2);
+void GameJohnnyRock::rectShotBlueVase(Rect *rect) {
+	shotClue(2);
 }
 
-void GameJohnnyRock::_rect_shotcat(Rect *rect) {
-	_shotclue(3);
+void GameJohnnyRock::rectShotCat(Rect *rect) {
+	shotClue(3);
 }
 
-void GameJohnnyRock::_rect_shotindian(Rect *rect) {
-	_shotclue(4);
+void GameJohnnyRock::rectShotIndian(Rect *rect) {
+	shotClue(4);
 }
 
-void GameJohnnyRock::_rect_shotplate(Rect *rect) {
-	_shotclue(5);
+void GameJohnnyRock::rectShotPlate(Rect *rect) {
+	shotClue(5);
 }
 
-void GameJohnnyRock::_rect_shotbluedresspic(Rect *rect) {
-	_shotclue(6);
+void GameJohnnyRock::rectShotBlueDressPic(Rect *rect) {
+	shotClue(6);
 }
 
-void GameJohnnyRock::_rect_shotmodernpic(Rect *rect) {
-	_shotclue(7);
+void GameJohnnyRock::rectShotModernPic(Rect *rect) {
+	shotClue(7);
 }
 
-void GameJohnnyRock::_rect_shotmonalisa(Rect *rect) {
-	_shotclue(8);
+void GameJohnnyRock::rectShotMonaLisa(Rect *rect) {
+	shotClue(8);
 }
 
-void GameJohnnyRock::_rect_shotgwashington(Rect *rect) {
-	_shotclue(9);
+void GameJohnnyRock::rectShotGWashington(Rect *rect) {
+	shotClue(9);
 }
 
-void GameJohnnyRock::_rect_shotboyinredpic(Rect *rect) {
-	_shotclue(10);
+void GameJohnnyRock::rectShotBoyInRedPic(Rect *rect) {
+	shotClue(10);
 }
 
-void GameJohnnyRock::_rect_shotcoatofarms(Rect *rect) {
-	_shotclue(11);
+void GameJohnnyRock::rectShotCoatOfArms(Rect *rect) {
+	shotClue(11);
 }
 
-void GameJohnnyRock::_shotcombination(uint8 combination, bool combinationB) {
-	if (_combinations[_got_this_number] == combination) {
-		_got_this_number++;
-		if (_got_this_number >= 4) {
+void GameJohnnyRock::shotCombination(uint8 combination, bool combinationB) {
+	if (_combinations[_gotThisNumber] == combination) {
+		_gotThisNumber++;
+		if (_gotThisNumber >= 4) {
 			_mansion = 5;
-			_cur_scene = _NumtoScene(_who_did_it + 0xD7);
+			_curScene = numToScene(_whoDidIt + 0xD7);
 		} else {
 			if (combinationB) {
-				_cur_scene = "scene213";
+				_curScene = "scene213";
 			} else {
-				_cur_scene = "scene214";
+				_curScene = "scene214";
 			}
 		}
 	} else {
-		_got_this_number = 0;
-		_cur_scene = "scene376";
+		_gotThisNumber = 0;
+		_curScene = "scene376";
 	}
 }
 
-void GameJohnnyRock::_rect_shotcombinationA0(Rect *rect) {
-	_shotcombination(0, false);
+void GameJohnnyRock::rectShotCombinationA0(Rect *rect) {
+	shotCombination(0, false);
 }
 
-void GameJohnnyRock::_rect_shotcombinationA1(Rect *rect) {
-	_shotcombination(1, false);
+void GameJohnnyRock::rectShotCombinationA1(Rect *rect) {
+	shotCombination(1, false);
 }
 
-void GameJohnnyRock::_rect_shotcombinationA2(Rect *rect) {
-	_shotcombination(2, false);
+void GameJohnnyRock::rectShotCombinationA2(Rect *rect) {
+	shotCombination(2, false);
 }
 
-void GameJohnnyRock::_rect_shotcombinationA3(Rect *rect) {
-	_shotcombination(3, false);
+void GameJohnnyRock::rectShotCombinationA3(Rect *rect) {
+	shotCombination(3, false);
 }
 
-void GameJohnnyRock::_rect_shotcombinationA4(Rect *rect) {
-	_shotcombination(4, false);
+void GameJohnnyRock::rectShotCombinationA4(Rect *rect) {
+	shotCombination(4, false);
 }
 
-void GameJohnnyRock::_rect_shotcombinationA5(Rect *rect) {
-	_shotcombination(5, false);
+void GameJohnnyRock::rectShotCombinationA5(Rect *rect) {
+	shotCombination(5, false);
 }
 
-void GameJohnnyRock::_rect_shotcombinationB0(Rect *rect) {
-	_shotcombination(0, true);
+void GameJohnnyRock::rectShotCombinationB0(Rect *rect) {
+	shotCombination(0, true);
 }
 
-void GameJohnnyRock::_rect_shotcombinationB1(Rect *rect) {
-	_shotcombination(1, true);
+void GameJohnnyRock::rectShotCombinationB1(Rect *rect) {
+	shotCombination(1, true);
 }
 
-void GameJohnnyRock::_rect_shotcombinationB2(Rect *rect) {
-	_shotcombination(2, true);
+void GameJohnnyRock::rectShotCombinationB2(Rect *rect) {
+	shotCombination(2, true);
 }
 
-void GameJohnnyRock::_rect_shotcombinationB3(Rect *rect) {
-	_shotcombination(3, true);
+void GameJohnnyRock::rectShotCombinationB3(Rect *rect) {
+	shotCombination(3, true);
 }
 
-void GameJohnnyRock::_rect_shotcombinationB4(Rect *rect) {
-	_shotcombination(4, true);
+void GameJohnnyRock::rectShotCombinationB4(Rect *rect) {
+	shotCombination(4, true);
 }
 
-void GameJohnnyRock::_rect_shotcombinationB5(Rect *rect) {
-	_shotcombination(5, true);
+void GameJohnnyRock::rectShotCombinationB5(Rect *rect) {
+	shotCombination(5, true);
 }
 
-void GameJohnnyRock::_shotluckynumber(uint8 number) {
-	if (_lucky_number != number || _cur_scene == _money_scene) {
+void GameJohnnyRock::shotLuckyNumber(uint8 number) {
+	if (_luckyNumber != number || _curScene == _moneyScene) {
 		return;
 	}
-	_DoMoneySound();
-	_game_money += 100;
+	doMoneySound();
+	_gameMoney += 100;
 	_score += 500;
-	_money_scene = _cur_scene;
+	_moneyScene = _curScene;
 }
 
-void GameJohnnyRock::_rect_shotluckynum0(Rect *rect) {
-	_shotluckynumber(0);
+void GameJohnnyRock::rectShotLuckyNumber0(Rect *rect) {
+	shotLuckyNumber(0);
 }
 
-void GameJohnnyRock::_rect_shotluckynum1(Rect *rect) {
-	_shotluckynumber(1);
+void GameJohnnyRock::rectShotLuckyNumber1(Rect *rect) {
+	shotLuckyNumber(1);
 }
 
-void GameJohnnyRock::_rect_shotluckynum2(Rect *rect) {
-	_shotluckynumber(2);
+void GameJohnnyRock::rectShotLuckyNumber2(Rect *rect) {
+	shotLuckyNumber(2);
 }
 
-void GameJohnnyRock::_rect_shotluckynum3(Rect *rect) {
-	_shotluckynumber(3);
+void GameJohnnyRock::rectShotLuckyNumber3(Rect *rect) {
+	shotLuckyNumber(3);
 }
 
-void GameJohnnyRock::_rect_shotluckynum4(Rect *rect) {
-	_shotluckynumber(4);
+void GameJohnnyRock::rectShotLuckyNumber4(Rect *rect) {
+	shotLuckyNumber(4);
 }
 
-void GameJohnnyRock::_rect_shotluckynum5(Rect *rect) {
-	_shotluckynumber(5);
+void GameJohnnyRock::rectShotLuckyNumber5(Rect *rect) {
+	shotLuckyNumber(5);
 }
 
 // Script functions: Scene PreOps
 
 // Script functions: Scene Scene InsOps
-void GameJohnnyRock::_scene_iso_shootpast(Scene *scene) {
+void GameJohnnyRock::sceneIsoShootpast(Scene *scene) {
 	if (_fired) {
-		if (_ret_scene != "") {
-			_cur_scene = _ret_scene;
-			_ret_scene = "";
-		} else if (_sub_scene != "") {
-			_cur_scene = _sub_scene;
-			_sub_scene = "";
+		if (_retScene != "") {
+			_curScene = _retScene;
+			_retScene = "";
+		} else if (_subScene != "") {
+			_curScene = _subScene;
+			_subScene = "";
 		} else {
-			callScriptFunctionScene(NXTSCN, scene->nxtscn, scene);
+			callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
 		}
 	}
 }
 
-void GameJohnnyRock::_scene_iso_spause(Scene *scene) {
-	_scene_iso_shootpast(scene);
-	_scene_iso_pause(scene);
+void GameJohnnyRock::sceneIsoShootpastPause(Scene *scene) {
+	sceneIsoShootpast(scene);
+	sceneIsoPause(scene);
 }
 
-void GameJohnnyRock::_scene_iso_gotocasino(Scene *scene) {
-	_got_to |= 1;
-	_scene_iso_shootpast(scene);
+void GameJohnnyRock::sceneIsoGotoCasino(Scene *scene) {
+	_gotTo |= 1;
+	sceneIsoShootpast(scene);
 }
 
-void GameJohnnyRock::_scene_iso_gotopoolh(Scene *scene) {
-	_got_to |= 2;
-	_scene_iso_shootpast(scene);
+void GameJohnnyRock::sceneIsoGotoPoolhall(Scene *scene) {
+	_gotTo |= 2;
+	sceneIsoShootpast(scene);
 }
 
-void GameJohnnyRock::_scene_iso_gotowarehse(Scene *scene) {
-	_got_to |= 4;
+void GameJohnnyRock::sceneIsoGotoWarehouse(Scene *scene) {
+	_gotTo |= 4;
 }
 
-void GameJohnnyRock::_scene_iso_inwarehse2(Scene *scene) {
-	_in_warehouse = 2;
-	_scene_iso_shootpast(scene);
+void GameJohnnyRock::sceneIsoInWarehouse2(Scene *scene) {
+	_inWarehouse = 2;
+	sceneIsoShootpast(scene);
 }
 
-void GameJohnnyRock::_scene_iso_inwarehse3(Scene *scene) {
-	_in_warehouse = 3;
-	_scene_iso_shootpast(scene);
+void GameJohnnyRock::sceneIsoInwarehouse3(Scene *scene) {
+	_inWarehouse = 3;
+	sceneIsoShootpast(scene);
 }
 
-void GameJohnnyRock::_scene_iso_gotogarage(Scene *scene) {
-	_got_to |= 8;
-	_scene_iso_shootpast(scene);
+void GameJohnnyRock::sceneIsoGotoGarage(Scene *scene) {
+	_gotTo |= 8;
+	sceneIsoShootpast(scene);
 }
 
-void GameJohnnyRock::_scene_iso_gotomansion(Scene *scene) {
-	_got_to |= 0x10;
+void GameJohnnyRock::sceneIsoGotoMansion(Scene *scene) {
+	_gotTo |= 0x10;
 }
 
-void GameJohnnyRock::_scene_iso_inmansion1(Scene *scene) {
+void GameJohnnyRock::sceneIsoInMansion1(Scene *scene) {
 	_mansion = 1;
 }
 
 // Script functions: Scene NxtScn
-void GameJohnnyRock::_scene_nxtscn_died(Scene *scene) {
-	uint16 sceneNum = _ScenetoNum(_cur_scene);
-	_in_office = sceneNum;
+void GameJohnnyRock::sceneNxtscnDied(Scene *scene) {
+	uint16 sceneNum = sceneToNum(_curScene);
+	_inOffice = sceneNum;
 	if (sceneNum >= 0x13) {
-		_in_office = 0;
+		_inOffice = 0;
 	}
-	_total_dies++;
+	_totalDies++;
 	if (!_debug_godMode) {
-		_game_money -= 400;
+		_gameMoney -= 400;
 	}
-	if (_game_money < 0) {
+	if (_gameMoney < 0) {
 		switch (_rnd->getRandomNumber(2)) {
 		case 0:
-			_cur_scene = "scene148";
+			_curScene = "scene148";
 			break;
 		case 1:
-			_cur_scene = "scene149";
+			_curScene = "scene149";
 			break;
 		case 2:
-			_cur_scene = "scene150";
+			_curScene = "scene150";
 			break;
 		}
 	} else {
-		switch (_pick_bits(&_doctor_bits, 8)) {
+		switch (pickBits(&_doctorBits, 8)) {
 		case 0:
-			_cur_scene = "scene140";
+			_curScene = "scene140";
 			break;
 		case 1:
-			_cur_scene = "scene141";
+			_curScene = "scene141";
 			break;
 		case 2:
-			_cur_scene = "scene142";
+			_curScene = "scene142";
 			break;
 		case 3:
-			_cur_scene = "scene143";
+			_curScene = "scene143";
 			break;
 		case 4:
-			_cur_scene = "scene144";
+			_curScene = "scene144";
 			break;
 		case 5:
-			_cur_scene = "scene145";
+			_curScene = "scene145";
 			break;
 		case 6:
-			_cur_scene = "scene146";
+			_curScene = "scene146";
 			break;
 		case 7:
-			_cur_scene = "scene147";
+			_curScene = "scene147";
 			break;
 		}
 	}
 }
 
-void GameJohnnyRock::_scene_nxtscn_bombdead(Scene *scene) {
-	uint16 sceneNum = _ScenetoNum(_cur_scene);
-	_in_office = sceneNum;
+void GameJohnnyRock::sceneNxtscnBombDead(Scene *scene) {
+	uint16 sceneNum = sceneToNum(_curScene);
+	_inOffice = sceneNum;
 	if (sceneNum >= 0x13) {
-		_in_office = 0;
+		_inOffice = 0;
 	}
-	_total_dies++;
+	_totalDies++;
 	if (!_debug_godMode) {
-		_game_money -= 400;
+		_gameMoney -= 400;
 	}
-	if (_game_money < 0) {
+	if (_gameMoney < 0) {
 		switch (_rnd->getRandomNumber(2)) {
 		case 0:
-			_cur_scene = "scene148";
+			_curScene = "scene148";
 			break;
 		case 1:
-			_cur_scene = "scene149";
+			_curScene = "scene149";
 			break;
 		case 2:
-			_cur_scene = "scene150";
+			_curScene = "scene150";
 			break;
 		}
 	} else {
-		_cur_scene = "scene142";
+		_curScene = "scene142";
 	}
 }
 
-void GameJohnnyRock::_scene_nxtscn_pikundrtakr(Scene *scene) {
-	switch (_pick_bits(&_undertaker_bits, 3)) {
+void GameJohnnyRock::sceneNxtscnPickUndertaker(Scene *scene) {
+	switch (pickBits(&_undertakerBits, 3)) {
 	case 0:
-		_cur_scene = "scene154";
+		_curScene = "scene154";
 		break;
 	case 1:
-		_cur_scene = "scene155";
+		_curScene = "scene155";
 		break;
 	case 2:
-		_cur_scene = "scene156";
+		_curScene = "scene156";
 		break;
 	}
 }
 
-void GameJohnnyRock::_scene_nxtscn_callattract(Scene *scene) {
-	_ResetParams();
-	_NewGame();
-	_cur_scene = "scn354aa";
+void GameJohnnyRock::sceneNxtscnCallAttract(Scene *scene) {
+	resetParams();
+	newGame();
+	_curScene = "scn354aa";
 }
 
-void GameJohnnyRock::_scene_nxtscn_pikluckno(Scene *scene) {
-	_lucky_number = _rnd->getRandomNumber(5);
-	debug("lucky number: %d", (_lucky_number + 1));
-	_cur_scene = Common::String::format("scene%d", _lucky_number + 3);
+void GameJohnnyRock::sceneNxtscnPickLuckyNumber(Scene *scene) {
+	_luckyNumber = _rnd->getRandomNumber(5);
+	debug("lucky number: %d", (_luckyNumber + 1));
+	_curScene = Common::String::format("scene%d", _luckyNumber + 3);
 }
 
-void GameJohnnyRock::_scene_nxtscn_pickmap(Scene *scene) {
+void GameJohnnyRock::sceneNxtscnPickMap(Scene *scene) {
 	Common::String nextScene;
-	if (_game_money < 0) {
+	if (_gameMoney < 0) {
 		switch (_rnd->getRandomNumber(2)) {
 		case 0:
-			_cur_scene = "scene148";
+			_curScene = "scene148";
 			break;
 		case 1:
-			_cur_scene = "scene149";
+			_curScene = "scene149";
 			break;
 		case 2:
-			_cur_scene = "scene150";
+			_curScene = "scene150";
 			break;
 		}
 		return;
 	}
-	uint16 sceneNum = _ScenetoNum(_cur_scene);
+	uint16 sceneNum = sceneToNum(_curScene);
 	if (sceneNum == 18) {
-		_in_office = 0;
+		_inOffice = 0;
 	}
-	if (_in_office) {
-		nextScene = _NumtoScene(_in_office);
-	} else if (_office_count < 10) {
-		if ((_office_count % 3) == 0) {
-			uint16 sceneNume = _office_table[_office_count / 3];
-			nextScene = _NumtoScene(sceneNume);
+	if (_inOffice) {
+		nextScene = numToScene(_inOffice);
+	} else if (_officeCount < 10) {
+		if ((_officeCount % 3) == 0) {
+			uint16 sceneNume = _officeTable[_officeCount / 3];
+			nextScene = numToScene(sceneNume);
 		}
-		_office_count++;
-	} else if (_this_clue == 2 && !_had_go_to_mansion) {
-		if (!_did_continue) {
-			_this_difficulty++;
-			if (_this_difficulty > 7)
-				_this_difficulty = 7;
+		_officeCount++;
+	} else if (_thisClue == 2 && !_hadGoToMansion) {
+		if (!_didContinue) {
+			_thisDifficulty++;
+			if (_thisDifficulty > 7)
+				_thisDifficulty = 7;
 		}
-		_had_go_to_mansion = 1;
-		if (_pool_hall) {
-			_pool_hall = 2;
+		_hadGoToMansion = 1;
+		if (_poolHall) {
+			_poolHall = 2;
 			nextScene = "scene162";
 		} else if (_casino) {
 			_casino = 2;
@@ -1509,15 +1503,15 @@ void GameJohnnyRock::_scene_nxtscn_pickmap(Scene *scene) {
 			_warehouse = 2;
 			nextScene = "scene165";
 		}
-	} else if (_this_clue == 3 && _had_go_to_mansion == 1) {
-		if (_total_dies < 4) {
-			_this_difficulty++;
-			if (_this_difficulty > 7)
-				_this_difficulty = 7;
+	} else if (_thisClue == 3 && _hadGoToMansion == 1) {
+		if (_totalDies < 4) {
+			_thisDifficulty++;
+			if (_thisDifficulty > 7)
+				_thisDifficulty = 7;
 		}
-		_had_go_to_mansion = 2;
-		if (_pool_hall == 1) {
-			_pool_hall = 2;
+		_hadGoToMansion = 2;
+		if (_poolHall == 1) {
+			_poolHall = 2;
 			nextScene = "scene162";
 		} else if (_casino == 1) {
 			_casino = 2;
@@ -1526,213 +1520,213 @@ void GameJohnnyRock::_scene_nxtscn_pickmap(Scene *scene) {
 			_warehouse = 2;
 			nextScene = "scene165";
 		}
-	} else if (_had_go_to_mansion == 2 && _garage && _casino && _pool_hall && _warehouse) {
-		if (_total_dies < 5 || _did_continue <= 1) {
-			_this_difficulty++;
-			if (_this_difficulty > 7)
-				_this_difficulty = 7;
+	} else if (_hadGoToMansion == 2 && _garage && _casino && _poolHall && _warehouse) {
+		if (_totalDies < 5 || _didContinue <= 1) {
+			_thisDifficulty++;
+			if (_thisDifficulty > 7)
+				_thisDifficulty = 7;
 		}
-		_had_go_to_mansion = 3;
+		_hadGoToMansion = 3;
 		nextScene = "scene166";
 	}
-	if(nextScene.size() > 0) {
-		_cur_scene = nextScene;
+	if (nextScene.size() > 0) {
+		_curScene = nextScene;
 	} else {
-		_cur_scene = _NumtoScene(_this_map + 174);
+		_curScene = numToScene(_thisMap + 174);
 	}
 }
 
-void GameJohnnyRock::_scene_nxtscn_pickclue(Scene *scene) {
-	uint16 picked = _pick_bits(&_clues, 12);
-	_clue_table[_this_clue] = picked;
-	_this_clue++;
-	_cur_scene = _NumtoScene(picked + 0xC3);
+void GameJohnnyRock::sceneNxtscnPickClue(Scene *scene) {
+	uint16 picked = pickBits(&_clues, 12);
+	_clueTable[_thisClue] = picked;
+	_thisClue++;
+	_curScene = numToScene(picked + 0xC3);
 }
 
-void GameJohnnyRock::_scene_nxtscn_maptimeout(Scene *scene) {
-	_map_timeout++;
-	if (_map_timeout < 3) {
-		_cur_scene = "scene360";
+void GameJohnnyRock::sceneNxtscnMapTimeout(Scene *scene) {
+	_mapTimeout++;
+	if (_mapTimeout < 3) {
+		_curScene = "scene360";
 	} else {
-		_cur_scene = "scene262";
+		_curScene = "scene262";
 	}
 }
 
-void GameJohnnyRock::_scene_nxtscn_entcasino(Scene *scene) {
-	_place_bits = 0;
-	_random_count = 0;
+void GameJohnnyRock::sceneNxtscnEnterCasino(Scene *scene) {
+	_placeBits = 0;
+	_randomCount = 0;
 	uint16 sceneNum;
-	if (_casino_type != 0) {
-		sceneNum = (_pick_bits(&_place_bits, 12) * 2) + 0x14;
+	if (_casinoType != 0) {
+		sceneNum = (pickBits(&_placeBits, 12) * 2) + 0x14;
 	} else {
-		sceneNum = (_pick_bits(&_place_bits, 8) * 2) + 0x2D;
+		sceneNum = (pickBits(&_placeBits, 8) * 2) + 0x2D;
 	}
-	_cur_scene = _NumtoScene(sceneNum);
+	_curScene = numToScene(sceneNum);
 }
 
-void GameJohnnyRock::_scene_nxtscn_casinowhat(Scene *scene) {
-	_random_count++;
-	uint16 maxRandom = ((_this_difficulty * 3) + 6);
-	if (_random_count > maxRandom) {
+void GameJohnnyRock::sceneNxtscnCasinoWhat(Scene *scene) {
+	_randomCount++;
+	uint16 maxRandom = ((_thisDifficulty * 3) + 6);
+	if (_randomCount > maxRandom) {
 		_casino = 1;
-		_cur_scene = "scene63a";
+		_curScene = "scene63a";
 	} else {
 		uint16 sceneNum;
-		if (_casino_type != 0) {
-			sceneNum = (_pick_bits(&_place_bits, 12) * 2) + 0x14;
+		if (_casinoType != 0) {
+			sceneNum = (pickBits(&_placeBits, 12) * 2) + 0x14;
 		} else {
-			sceneNum = (_pick_bits(&_place_bits, 8) * 2) + 0x2D;
+			sceneNum = (pickBits(&_placeBits, 8) * 2) + 0x2D;
 		}
-		_cur_scene = _NumtoScene(sceneNum);
+		_curScene = numToScene(sceneNum);
 	}
 }
 
-void GameJohnnyRock::_scene_nxtscn_entpoolhall(Scene *scene) {
-	if (_pool_hall_type == 0) {
-		_cur_scene = "scene67";
-	} else if (_pool_hall_type == 1) {
-		_cur_scene = "scene73";
+void GameJohnnyRock::sceneNxtscnEnterPoolhall(Scene *scene) {
+	if (_poolHallType == 0) {
+		_curScene = "scene67";
+	} else if (_poolHallType == 1) {
+		_curScene = "scene73";
 	} else {
-		_cur_scene = "scene78";
+		_curScene = "scene78";
 	}
 }
 
-void GameJohnnyRock::_scene_nxtscn_poolhclue(Scene *scene) {
-	_pool_hall = 1;
-	uint16 clue = _pick_bits(&_clues, 12);
-	_clue_table[_this_clue] = clue;
-	_this_clue++;
-	_cur_scene = _NumtoScene(clue + 0xC3);
+void GameJohnnyRock::sceneNxtscnPoolhallClue(Scene *scene) {
+	_poolHall = 1;
+	uint16 clue = pickBits(&_clues, 12);
+	_clueTable[_thisClue] = clue;
+	_thisClue++;
+	_curScene = numToScene(clue + 0xC3);
 }
 
-void GameJohnnyRock::_scene_nxtscn_entwarehse(Scene *scene) {
-	if (_warehouse_type == 0) {
-		_cur_scene = "scene94";
-	} else if (_warehouse_type == 1) {
-		_cur_scene = "scene102";
+void GameJohnnyRock::sceneNxtscnEnterWarehouse(Scene *scene) {
+	if (_warehouseType == 0) {
+		_curScene = "scene94";
+	} else if (_warehouseType == 1) {
+		_curScene = "scene102";
 	} else {
-		_cur_scene = "scene110";
+		_curScene = "scene110";
 	}
 }
 
-void GameJohnnyRock::_scene_nxtscn_warehseclue(Scene *scene) {
+void GameJohnnyRock::sceneNxtscnWarehouseClue(Scene *scene) {
 	_warehouse = 1;
-	uint16 clue = _pick_bits(&_clues, 12);
-	_clue_table[_this_clue] = clue;
-	_this_clue++;
-	_cur_scene = _NumtoScene(clue + 0xC3);
+	uint16 clue = pickBits(&_clues, 12);
+	_clueTable[_thisClue] = clue;
+	_thisClue++;
+	_curScene = numToScene(clue + 0xC3);
 }
 
-void GameJohnnyRock::_scene_nxtscn_entgarage(Scene *scene) {
-	if (_garage_type != 0) {
-		_cur_scene = "scene124";
+void GameJohnnyRock::sceneNxtscnEnterGarage(Scene *scene) {
+	if (_garageType != 0) {
+		_curScene = "scene124";
 	} else {
-		_cur_scene = "scene131";
+		_curScene = "scene131";
 	}
 }
 
-void GameJohnnyRock::_scene_nxtscn_garageclue(Scene *scene) {
+void GameJohnnyRock::sceneNxtscnGarageClue(Scene *scene) {
 	_garage = 1;
-	uint16 clue = _pick_bits(&_clues, 12);
-	_clue_table[_this_clue] = clue;
-	_this_clue++;
-	_cur_scene = _NumtoScene(clue + 0xC3);
+	uint16 clue = pickBits(&_clues, 12);
+	_clueTable[_thisClue] = clue;
+	_thisClue++;
+	_curScene = numToScene(clue + 0xC3);
 }
 
-void GameJohnnyRock::_scene_nxtscn_entmansion(Scene *scene) {
+void GameJohnnyRock::sceneNxtscnEnterMansion(Scene *scene) {
 	_mansion = 1;
-	_random_count++;
-	uint16 maxRandom = ((_this_difficulty * 2) + 7);
-	if (_random_count <= maxRandom) {
-		uint16 picked = _pick_bits(&_place_bits, 5);
-		_cur_scene = _NumtoScene((picked * 2) + 0xB8);
+	_randomCount++;
+	uint16 maxRandom = ((_thisDifficulty * 2) + 7);
+	if (_randomCount <= maxRandom) {
+		uint16 picked = pickBits(&_placeBits, 5);
+		_curScene = numToScene((picked * 2) + 0xB8);
 	} else {
 		_mansion = 2;
-		_cur_scene = "scene194";
+		_curScene = "scene194";
 	}
 }
 
-void GameJohnnyRock::_scene_nxtscn_giveclue(Scene *scene) {
+void GameJohnnyRock::sceneNxtscnGiveClue(Scene *scene) {
 	_score += 1000;
-	_game_money += 50;
-	_scene_nxtscn_pickmap(scene);
+	_gameMoney += 50;
+	sceneNxtscnPickMap(scene);
 }
 
-void GameJohnnyRock::_scene_nxtscn_pikflwrman(Scene *scene) {
+void GameJohnnyRock::sceneNxtscnPickFlowerMan(Scene *scene) {
 	if (_rnd->getRandomBit()) {
-		_cur_scene = "scene10a";
+		_curScene = "scene10a";
 	} else {
-		_cur_scene = "scene12a";
+		_curScene = "scene12a";
 	}
 }
 
-void GameJohnnyRock::_scene_nxtscn_randomscene(Scene *scene) {
-	_random_count++;
-	if (_random_count <= _max_random_count) {
-		_place_bits = _pick_bits(&_place_bits, _random_scenes[0]);
-		_cur_scene = _NumtoScene(_random_scenes[_place_bits + 4]);
+void GameJohnnyRock::sceneNxtscnRandomScene(Scene *scene) {
+	_randomCount++;
+	if (_randomCount <= _maxRandomCount) {
+		_placeBits = pickBits(&_placeBits, _randomScenes[0]);
+		_curScene = numToScene(_randomScenes[_placeBits + 4]);
 	} else {
-		if (_random_scenes[2] != 0) {
-			_cur_scene = _NumtoScene(_random_scenes[2]);
-		} else if (_repeat_random_place > 0) {
-			_repeat_random_place--;
-			_max_repeat--;
-			uint16 picked = _pick_random_place(_repeat_random_place + 5);
-			_cur_scene = _NumtoScene(picked);
+		if (_randomScenes[2] != 0) {
+			_curScene = numToScene(_randomScenes[2]);
+		} else if (_repeatRandomPlace > 0) {
+			_repeatRandomPlace--;
+			_maxRepeat--;
+			uint16 picked = pickRandomPlace(_repeatRandomPlace + 5);
+			_curScene = numToScene(picked);
 		} else {
-			_cur_scene = _NumtoScene(_goto_after_random);
-			_goto_after_random = 0;
-			_place_bits = 0;
-			_random_count = 1;
+			_curScene = numToScene(_gotoAfterRandom);
+			_gotoAfterRandom = 0;
+			_placeBits = 0;
+			_randomCount = 1;
 		}
 	}
 }
 
-void GameJohnnyRock::_scene_nxtscn_endrandscene(Scene *scene) {
-	if (_repeat_random_place > 0) {
-		_repeat_random_place--;
-		_max_repeat--;
-		uint16 picked = _pick_random_place(_repeat_random_place + 5);
-		_cur_scene = _NumtoScene(picked);
+void GameJohnnyRock::sceneNxtscnEndRandScene(Scene *scene) {
+	if (_repeatRandomPlace > 0) {
+		_repeatRandomPlace--;
+		_maxRepeat--;
+		uint16 picked = pickRandomPlace(_repeatRandomPlace + 5);
+		_curScene = numToScene(picked);
 	} else {
-		_cur_scene = _NumtoScene(_goto_after_random);
-		_goto_after_random = 0;
-		_place_bits = 0;
-		_random_count = 1;
+		_curScene = numToScene(_gotoAfterRandom);
+		_gotoAfterRandom = 0;
+		_placeBits = 0;
+		_randomCount = 1;
 	}
 }
 
-void GameJohnnyRock::_scene_nxtscn_killinnocent(Scene *scene) {
+void GameJohnnyRock::sceneNxtscnKillInnocent(Scene *scene) {
 	if (!_debug_godMode) {
-		_game_money -= 400;
+		_gameMoney -= 400;
 	}
-	if (_game_money < 0) {
-		_ret_scene = "scene358";
-		_cur_scene = "scene151";
+	if (_gameMoney < 0) {
+		_retScene = "scene358";
+		_curScene = "scene151";
 	} else {
 		switch (_rnd->getRandomNumber(2)) {
 		case 0:
-			_cur_scene = "scene151";
+			_curScene = "scene151";
 			break;
 		case 1:
-			_cur_scene = "scene152";
+			_curScene = "scene152";
 			break;
 		case 2:
-			_cur_scene = "scene153";
+			_curScene = "scene153";
 			break;
 		}
 	}
 }
 
 // Script functions: WepDwn
-void GameJohnnyRock::_scene_default_wepdwn(Scene *scene) {
+void GameJohnnyRock::sceneDefaultWepdwn(Scene *scene) {
 	_inHolster = 9;
 	_whichGun = 7;
-	_UpdateMouse();
+	updateMouse();
 }
 
 // Debug methods
-void GameJohnnyRock::debug_warpTo(int val) {
+void GameJohnnyRock::debugWarpTo(int val) {
 	// TODO implement
 }
 
@@ -1752,7 +1746,7 @@ bool DebuggerJohnnyRock::cmdWarpTo(int argc, const char **argv) {
 		return true;
 	} else {
 		int val = atoi(argv[1]);
-		_game->debug_warpTo(val);
+		_game->debugWarpTo(val);
 		return false;
 	}
 }

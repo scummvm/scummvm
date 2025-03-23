@@ -19,27 +19,45 @@
  *
  */
 
+#ifndef ALG_DETECTION_H
+#define ALG_DETECTION_H
+
 #include "engines/advancedDetector.h"
 
-#include "alg/alg.h"
-#include "alg/detection.h"
+namespace Alg {
 
-class AlgMetaEngine : public AdvancedMetaEngine<Alg::AlgGameDescription> {
-public:
-	const char *getName() const override {
-		return "alg";
-	}
-
-	Common::Error createInstance(OSystem *syst, Engine **engine, const Alg::AlgGameDescription *gd) const override;
+enum AlgGameType {
+	GType_CPATROL_SS_DOS,
+	GType_CPATROL_DS_DOS,
+	GType_CPATROL_DEMO_DOS,
+	GType_DWARS_SS_DOS,
+	GType_DWARS_DS_DOS,
+	GType_DWARS_DEMO_DOS,
+	GType_JOHNROC_SS_DOS,
+	GType_JOHNROC_DS_DOS,
+	GType_LBHUNTER_DOS,
+	GType_LBHUNTER_DEMO_DOS,
+	GType_MADDOG_DOS,
+	GType_MADDOG2_SS_DOS,
+	GType_MADDOG2_DS_DOS,
+	GType_SPIRATES_SS_DOS,
+	GType_SPIRATES_DS_DOS,
+	GType_SPIRATES_DEMO_DOS,
 };
 
-Common::Error AlgMetaEngine::createInstance(OSystem *syst, Engine **engine, const Alg::AlgGameDescription *gd) const {
-	*engine = new Alg::AlgEngine(syst, gd);
-	return Common::kNoError;
-}
+struct AlgGameDescription {
+	ADGameDescription desc;
+	uint8 gameType;
 
-#if PLUGIN_ENABLED_DYNAMIC(ALG)
-REGISTER_PLUGIN_DYNAMIC(ALG, PLUGIN_TYPE_ENGINE, AlgMetaEngine);
-#else
-REGISTER_PLUGIN_STATIC(ALG, PLUGIN_TYPE_ENGINE, AlgMetaEngine);
-#endif
+	uint32 sizeBuffer() const {
+		return desc.sizeBuffer();
+	}
+
+	void *toBuffer(void *buffer) {
+		return desc.toBuffer(buffer);
+	}
+};
+
+} // End of namespace Alg
+
+#endif // ALG_DETECTION_H

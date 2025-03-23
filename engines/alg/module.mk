@@ -1,7 +1,6 @@
 MODULE := engines/alg
 
 MODULE_OBJS := \
-	metaengine.o \
 	alg.o \
 	graphics.o \
 	game.o \
@@ -12,6 +11,7 @@ MODULE_OBJS := \
 	game_maddog.o \
 	game_maddog2.o \
 	game_spacepirates.o \
+	metaengine.o \
 	scene.o \
 	video.o
 

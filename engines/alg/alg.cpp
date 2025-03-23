@@ -22,6 +22,7 @@
 #include "engines/util.h"
 
 #include "alg/alg.h"
+#include "alg/detection.h"
 #include "alg/game.h"
 #include "alg/game_bountyhunter.h"
 #include "alg/game_crimepatrol.h"
@@ -33,36 +34,60 @@
 
 namespace Alg {
 
-AlgEngine::AlgEngine(OSystem *syst, const ADGameDescription *desc)
+AlgEngine::AlgEngine(OSystem *syst, const AlgGameDescription *gd)
 	: Engine(syst) {
-	if (scumm_stricmp(desc->gameId, "cpatrols") == 0 || scumm_stricmp(desc->gameId, "cpatrold") == 0 || scumm_stricmp(desc->gameId, "cpatroldemo") == 0) {
-		GameCrimePatrol *game = new GameCrimePatrol(this, desc);
+	switch (gd->gameType) {
+	case Alg::GType_CPATROL_SS_DOS:
+	case Alg::GType_CPATROL_DS_DOS:
+	case Alg::GType_CPATROL_DEMO_DOS: {
+		GameCrimePatrol *game = new GameCrimePatrol(this, gd);
 		_debugger = new DebuggerCrimePatrol(game);
 		_game = game;
-	} else if (scumm_stricmp(desc->gameId, "dwarss") == 0 || scumm_stricmp(desc->gameId, "dwarsd") == 0 || scumm_stricmp(desc->gameId, "dwarsdemo") == 0) {
-		GameDrugWars *game = new GameDrugWars(this, desc);
+		break;
+	}
+	case Alg::GType_DWARS_SS_DOS:
+	case Alg::GType_DWARS_DS_DOS:
+	case Alg::GType_DWARS_DEMO_DOS: {
+		GameDrugWars *game = new GameDrugWars(this, gd);
 		_debugger = new DebuggerDrugWars(game);
 		_game = game;
-	} else if (scumm_stricmp(desc->gameId, "johnrocs") == 0 || scumm_stricmp(desc->gameId, "johnrocd") == 0) {
-		GameJohnnyRock *game = new GameJohnnyRock(this, desc);
+		break;
+	}
+	case Alg::GType_JOHNROC_SS_DOS:
+	case Alg::GType_JOHNROC_DS_DOS: {
+		GameJohnnyRock *game = new GameJohnnyRock(this, gd);
 		_debugger = new DebuggerJohnnyRock(game);
 		_game = game;
-	} else if (scumm_stricmp(desc->gameId, "lbhunter") == 0 || scumm_stricmp(desc->gameId, "lbhunterdemo") == 0) {
-		GameBountyHunter *game = new GameBountyHunter(this, desc);
+		break;
+	}
+	case Alg::GType_LBHUNTER_DOS:
+	case Alg::GType_LBHUNTER_DEMO_DOS: {
+		GameBountyHunter *game = new GameBountyHunter(this, gd);
 		_debugger = new DebuggerBountyHunter(game);
 		_game = game;
-	} else if (scumm_stricmp(desc->gameId, "maddog") == 0) {
-		GameMaddog *game = new GameMaddog(this, desc);
+		break;
+	}
+	case Alg::GType_MADDOG_DOS: {
+		GameMaddog *game = new GameMaddog(this, gd);
 		_debugger = new DebuggerMaddog(game);
 		_game = game;
-	} else if (scumm_stricmp(desc->gameId, "maddog2s") == 0 || scumm_stricmp(desc->gameId, "maddog2d") == 0) {
-		GameMaddog2 *game = new GameMaddog2(this, desc);
+		break;
+	}
+	case Alg::GType_MADDOG2_SS_DOS:
+	case Alg::GType_MADDOG2_DS_DOS: {
+		GameMaddog2 *game = new GameMaddog2(this, gd);
 		_debugger = new DebuggerMaddog2(game);
 		_game = game;
-	} else if (scumm_stricmp(desc->gameId, "spiratess") == 0 || scumm_stricmp(desc->gameId, "spiratesd") == 0 || scumm_stricmp(desc->gameId, "spiratesdemo") == 0) {
-		GameSpacePirates *game = new GameSpacePirates(this, desc);
+		break;
+	}
+	case Alg::GType_SPIRATES_SS_DOS:
+	case Alg::GType_SPIRATES_DS_DOS:
+	case Alg::GType_SPIRATES_DEMO_DOS: {
+		GameSpacePirates *game = new GameSpacePirates(this, gd);
 		_debugger = new DebuggerSpacePirates(game);
 		_game = game;
+		break;
+	}
 	}
 }
 

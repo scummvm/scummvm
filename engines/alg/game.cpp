@@ -35,17 +35,6 @@ namespace Alg {
 
 Game::Game(AlgEngine *vm) {
 	_vm = vm;
-	_inMenu = false;
-	_palette = new uint8[257 * 3]();
-	// blue for rect display
-	_palette[5] = 0xFF;
-	_paletteDirty = true;
-	_screen = new Graphics::Surface();
-	_rnd = new Common::RandomSource("alg");
-	_screen->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-	_videoDecoder = new AlgVideoDecoder();
-	_videoDecoder->setPalette(_palette);
-	_sceneInfo = new SceneInfo();
 }
 
 Game::~Game() {
@@ -57,6 +46,20 @@ Game::~Game() {
 	delete _background;
 	delete _videoDecoder;
 	delete _sceneInfo;
+}
+
+void Game::init() {
+	_inMenu = false;
+	_palette = new uint8[257 * 3]();
+	// blue for rect display
+	_palette[5] = 0xFF;
+	_paletteDirty = true;
+	_screen = new Graphics::Surface();
+	_rnd = new Common::RandomSource("alg");
+	_screen->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_videoDecoder = new AlgVideoDecoder();
+	_videoDecoder->setPalette(_palette);
+	_sceneInfo = new SceneInfo();
 }
 
 Common::Error Game::run() {
@@ -90,7 +93,7 @@ bool Game::pollEvents() {
 void Game::loadLibArchive(const Common::Path &path) {
 	debug("loading lib archive: %s", path.toString().c_str());
 	if (!_libFile.open(path)) {
-		error("Can't open library file '%s'", path.toString().c_str());
+		error("Game::loadLibArchive(): Can't open library file '%s'", path.toString().c_str());
 	}
 	uint16 magicBytes = _libFile.readSint16LE();
 	uint32 indexOffset = _libFile.readSint32LE();
@@ -112,10 +115,10 @@ void Game::loadLibArchive(const Common::Path &path) {
 }
 
 bool Game::loadScene(Scene *scene) {
-	Common::String sceneFileName = Common::String::format("%s.mm", scene->name.c_str());
-	Common::HashMap<Common::String, uint32>::iterator it = _libFileEntries.find(sceneFileName);
+	Common::String sceneFileName = Common::String::format("%s.mm", scene->_name.c_str());
+	auto it = _libFileEntries.find(sceneFileName);
 	if (it != _libFileEntries.end()) {
-		debug("loaded scene %s", scene->name.c_str());
+		debug("loaded scene %s", scene->_name.c_str());
 		_videoDecoder->loadVideoFromStream(it->_value);
 		return true;
 	} else {
@@ -137,11 +140,11 @@ void Game::updateScreen() {
 	g_system->updateScreen();
 }
 
-uint32 Game::_GetMsTime() {
+uint32 Game::getMsTime() {
 	return g_system->getMillis();
 }
 
-bool Game::__Fired(Common::Point *point) {
+bool Game::fired(Common::Point *point) {
 	_fired = false;
 	pollEvents();
 	if (_leftDown == true) {
@@ -159,29 +162,27 @@ bool Game::__Fired(Common::Point *point) {
 	}
 }
 
-Rect *Game::_CheckZone(Zone *zone, Common::Point *point) {
-	Common::Array<Rect>::iterator rect;
-	for (rect = zone->rects.begin(); rect != zone->rects.end(); ++rect) {
-		if (point->x >= rect->left &&
-			point->x <= rect->right &&
-			point->y >= rect->top &&
-			point->y <= rect->bottom) {
-			return rect;
+Rect *Game::checkZone(Zone *zone, Common::Point *point) {
+	for (auto &rect : zone->_rects) {
+		if (point->x >= rect.left &&
+			point->x <= rect.right &&
+			point->y >= rect.top &&
+			point->y <= rect.bottom) {
+			return &rect;
 		}
 	}
 	return nullptr;
 }
 
 // This is used by earlier games
-Zone *Game::_CheckZonesV1(Scene *scene, Rect *&hitRect, Common::Point *point) {
-	Common::Array<Zone *>::iterator zone;
-	for (zone = scene->zones.begin(); zone != scene->zones.end(); ++zone) {
-		unsigned long startFrame = (*zone)->startFrame - _videoFrameSkip + 1;
-		unsigned long endFrame = (*zone)->endFrame + _videoFrameSkip - 1;
+Zone *Game::checkZonesV1(Scene *scene, Rect *&hitRect, Common::Point *point) {
+	for (auto &zone : scene->_zones) {
+		uint32 startFrame = zone->_startFrame - _videoFrameSkip + 1;
+		uint32 endFrame = zone->_endFrame + _videoFrameSkip - 1;
 		if (_currentFrame >= startFrame && _currentFrame <= endFrame) {
-			hitRect = _CheckZone(*zone, point);
+			hitRect = checkZone(zone, point);
 			if (hitRect != nullptr) {
-				return *zone;
+				return zone;
 			}
 		}
 	}
@@ -189,15 +190,14 @@ Zone *Game::_CheckZonesV1(Scene *scene, Rect *&hitRect, Common::Point *point) {
 }
 
 // This is used by later games
-Zone *Game::_CheckZonesV2(Scene *scene, Rect *&hitRect, Common::Point *point) {
-	Common::Array<Zone *>::iterator zone;
-	for (zone = scene->zones.begin(); zone != scene->zones.end(); ++zone) {
-		unsigned long startFrame = (*zone)->startFrame - (_videoFrameSkip + 1) + ((_difficulty - 1) * _videoFrameSkip);
-		unsigned long endFrame = (*zone)->endFrame + (_videoFrameSkip - 1) - ((_difficulty - 1) * _videoFrameSkip);
+Zone *Game::checkZonesV2(Scene *scene, Rect *&hitRect, Common::Point *point) {
+	for (auto &zone : scene->_zones) {
+		uint32 startFrame = zone->_startFrame - (_videoFrameSkip + 1) + ((_difficulty - 1) * _videoFrameSkip);
+		uint32 endFrame = zone->_endFrame + (_videoFrameSkip - 1) - ((_difficulty - 1) * _videoFrameSkip);
 		if (_currentFrame >= startFrame && _currentFrame <= endFrame) {
-			hitRect = _CheckZone(*zone, point);
+			hitRect = checkZone(zone, point);
 			if (hitRect != nullptr) {
-				return *zone;
+				return zone;
 			}
 		}
 	}
@@ -205,24 +205,24 @@ Zone *Game::_CheckZonesV2(Scene *scene, Rect *&hitRect, Common::Point *point) {
 }
 
 // only used by earlier games
-void Game::_AdjustDifficulty(uint8 newDifficulty, uint8 oldDifficulty) {
+void Game::adjustDifficulty(uint8 newDifficulty, uint8 oldDifficulty) {
 	Common::Array<Scene *> *scenes = _sceneInfo->getScenes();
 	for (size_t i = 0; i < scenes->size(); i++) {
 		Scene *scene = (*scenes)[i];
-		if (!(scene->diff & 0x01)) {
-			if (scene->preop == "PAUSE" || scene->preop == "PAUSFI" || scene->preop == "PAUSPR") {
-				scene->dataParam1 = (scene->dataParam1 * _pausdifscal[newDifficulty - 1]) / _pausdifscal[oldDifficulty - 1];
+		if (!(scene->_diff & 0x01)) {
+			if (scene->_preop == "PAUSE" || scene->_preop == "PAUSFI" || scene->_preop == "PAUSPR") {
+				scene->_dataParam1 = (scene->_dataParam1 * _pauseDiffScale[newDifficulty - 1]) / _pauseDiffScale[oldDifficulty - 1];
 			}
 		}
-		for (size_t j = 0; j < scene->zones.size(); j++) {
-			Zone *zone = scene->zones[j];
-			for (size_t k = 0; k < zone->rects.size(); k++) {
-				Rect *rect = &zone->rects[k];
-				if (!(scene->diff & 0x02)) {
+		for (size_t j = 0; j < scene->_zones.size(); j++) {
+			Zone *zone = scene->_zones[j];
+			for (size_t k = 0; k < zone->_rects.size(); k++) {
+				Rect *rect = &zone->_rects[k];
+				if (!(scene->_diff & 0x02)) {
 					int16 cx = (rect->left + rect->right) / 2;
 					int16 cy = (rect->top + rect->bottom) / 2;
-					int32 w = (rect->width() * _rectdifscal[newDifficulty - 1]) / _rectdifscal[oldDifficulty - 1];
-					int32 h = (rect->height() * _rectdifscal[newDifficulty - 1]) / _rectdifscal[oldDifficulty - 1];
+					int32 w = (rect->width() * _rectDiffScale[newDifficulty - 1]) / _rectDiffScale[oldDifficulty - 1];
+					int32 h = (rect->height() * _rectDiffScale[newDifficulty - 1]) / _rectDiffScale[oldDifficulty - 1];
 					rect->center(cx, cy, w, h);
 				}
 			}
@@ -230,52 +230,46 @@ void Game::_AdjustDifficulty(uint8 newDifficulty, uint8 oldDifficulty) {
 	}
 }
 
-void Game::_RestoreCursor() {
-}
-
-uint32 Game::_GetFrame(Scene *scene) {
+uint32 Game::getFrame(Scene *scene) {
 	if (_videoDecoder->getCurrentFrame() == 0) {
-		return scene->startFrame;
+		return scene->_startFrame;
 	}
-	return scene->startFrame + (_videoDecoder->getCurrentFrame() * _videoFrameSkip) - _videoFrameSkip;
+	return scene->_startFrame + (_videoDecoder->getCurrentFrame() * _videoFrameSkip) - _videoFrameSkip;
 }
 
-void Game::_SetFrame() {
-}
-
-int8 Game::_SkipToNewScene(Scene *scene) {
+int8 Game::skipToNewScene(Scene *scene) {
 	if (!_gameInProgress || _sceneSkipped) {
 		return 0;
 	}
-    if (scene->dataParam2 == -1) {
+	if (scene->_dataParam2 == -1) {
 		_sceneSkipped = true;
 		return -1;
-    } else if (scene->dataParam2 > 0) {
-        uint32 startFrame = scene->dataParam3;
-        if (startFrame == 0) {
-            startFrame = scene->startFrame + 15;
-        }
-        uint32 endFrame = scene->dataParam4;
-        if (_currentFrame < endFrame && _currentFrame > startFrame) {
+	} else if (scene->_dataParam2 > 0) {
+		uint32 startFrame = scene->_dataParam3;
+		if (startFrame == 0) {
+			startFrame = scene->_startFrame + 15;
+		}
+		uint32 endFrame = scene->_dataParam4;
+		if (_currentFrame < endFrame && _currentFrame > startFrame) {
 			_sceneSkipped = true;
-            return 1;
-        }
-    }
+			return 1;
+		}
+	}
 	return 0;
 }
 
 // Sound
-Audio::SeekableAudioStream *Game::_LoadSoundFile(const Common::Path &path) {
+Audio::SeekableAudioStream *Game::loadSoundFile(const Common::Path &path) {
 	Common::File *file = new Common::File();
 	if (!file->open(path)) {
-		warning("Can't open sound file '%s'", path.toString().c_str());
+		warning("Game::loadSoundFile(): Can't open sound file '%s'", path.toString().c_str());
 		delete file;
 		return nullptr;
 	}
 	return Audio::makeRawStream(new Common::SeekableSubReadStream(file, 0, file->size(), DisposeAfterUse::NO), 8000, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 }
 
-void Game::_PlaySound(Audio::SeekableAudioStream *stream) {
+void Game::playSound(Audio::SeekableAudioStream *stream) {
 	if (stream != nullptr) {
 		stream->rewind();
 		g_system->getMixer()->stopHandle(_sfxAudioHandle);
@@ -283,45 +277,45 @@ void Game::_PlaySound(Audio::SeekableAudioStream *stream) {
 	}
 }
 
-void Game::_DoDiffSound(uint8 difficulty) {
+void Game::doDiffSound(uint8 difficulty) {
 	switch (difficulty) {
 	case 1:
-		return _PlaySound(_easySound);
+		return playSound(_easySound);
 	case 2:
-		return _PlaySound(_avgSound);
+		return playSound(_avgSound);
 	case 3:
-		return _PlaySound(_hardSound);
+		return playSound(_hardSound);
 	}
 }
 
-void Game::_DoSaveSound() {
-	_PlaySound(_saveSound);
+void Game::doSaveSound() {
+	playSound(_saveSound);
 }
 
-void Game::_DoLoadSound() {
-	_PlaySound(_loadSound);
+void Game::doLoadSound() {
+	playSound(_loadSound);
 }
 
-void Game::_DoSkullSound() {
-	_PlaySound(_skullSound);
+void Game::doSkullSound() {
+	playSound(_skullSound);
 }
 
-void Game::_DoShot() {
-	_PlaySound(_shotSound);
+void Game::doShot() {
+	playSound(_shotSound);
 }
 
 // Timer
-static void _cursorTimer(void *refCon) {
+static void cursorTimerCallback(void *refCon) {
 	Game *game = static_cast<Game *>(refCon);
 	game->runCursorTimer();
 }
 
-void Game::_SetupCursorTimer() {
-	g_system->getTimerManager()->installTimerProc(&_cursorTimer, 1000000 / 50, (void *)this, "newtimer");
+void Game::setupCursorTimer() {
+	g_system->getTimerManager()->installTimerProc(&cursorTimerCallback, 1000000 / 50, (void *)this, "newtimer");
 }
 
-void Game::_RemoveCursorTimer() {
-	g_system->getTimerManager()->removeTimerProc(&_cursorTimer);
+void Game::removeCursorTimer() {
+	g_system->getTimerManager()->removeTimerProc(&cursorTimerCallback);
 }
 
 void Game::runCursorTimer() {
@@ -356,154 +350,151 @@ void Game::runCursorTimer() {
 }
 
 // Script functions: Zone
-void Game::_zone_globalhit(Common::Point *point) {
+void Game::zoneGlobalHit(Common::Point *point) {
 	// do nothing
 }
 
 // Script functions: RectHit
-void Game::_rect_hit_donothing(Rect *rect) {
+void Game::rectHitDoNothing(Rect *rect) {
 	// do nothing
 }
 
-void Game::_rect_newscene(Rect *rect) {
-	_score += rect->score;
-	if (!rect->scene.empty()) {
-		_cur_scene = rect->scene;
+void Game::rectNewScene(Rect *rect) {
+	_score += rect->_score;
+	if (!rect->_scene.empty()) {
+		_curScene = rect->_scene;
 	}
 }
 
-void Game::_rect_easy(Rect *rect) {
-	_DoDiffSound(1);
+void Game::rectEasy(Rect *rect) {
+	doDiffSound(1);
 	_difficulty = 1;
 }
 
-void Game::_rect_average(Rect *rect) {
-	_DoDiffSound(2);
+void Game::rectAverage(Rect *rect) {
+	doDiffSound(2);
 	_difficulty = 2;
 }
 
-void Game::_rect_hard(Rect *rect) {
-	_DoDiffSound(3);
+void Game::rectHard(Rect *rect) {
+	doDiffSound(3);
 	_difficulty = 3;
 }
 
-void Game::_rect_exit(Rect *rect) {
+void Game::rectExit(Rect *rect) {
 	_vm->quitGame();
 }
 
 // Script functions: Scene PreOps
-void Game::_scene_pso_drawrct(Scene *scene) {
+void Game::scenePsoDrawRct(Scene *scene) {
 }
 
-void Game::_scene_pso_pause(Scene *scene) {
+void Game::scenePsoPause(Scene *scene) {
 	_hadPause = false;
 	_pauseTime = 0;
 }
 
-void Game::_scene_pso_drawrct_fadein(Scene *scene) {
-	_scene_pso_drawrct(scene);
-	_scene_pso_fadein(scene);
+void Game::scenePsoDrawRctFadeIn(Scene *scene) {
+	scenePsoDrawRct(scene);
+	scenePsoFadeIn(scene);
 }
 
-void Game::_scene_pso_fadein(Scene *scene) {
+void Game::scenePsoFadeIn(Scene *scene) {
 	// do nothing
 }
 
-void Game::_scene_pso_pause_fadein(Scene *scene) {
-	_scene_pso_pause(scene);
-	_scene_pso_fadein(scene);
+void Game::scenePsoPauseFadeIn(Scene *scene) {
+	scenePsoPause(scene);
+	scenePsoFadeIn(scene);
 }
 
-void Game::_scene_pso_preread(Scene *scene) {
+void Game::scenePsoPreRead(Scene *scene) {
 	// do nothing
 }
 
-void Game::_scene_pso_pause_preread(Scene *scene) {
-	_scene_pso_pause(scene);
-	_scene_pso_preread(scene);
+void Game::scenePsoPausePreRead(Scene *scene) {
+	scenePsoPause(scene);
+	scenePsoPreRead(scene);
 }
 
 // Script functions: Scene Scene InsOps
-void Game::_scene_iso_donothing(Scene *scene) {
+void Game::sceneIsoDoNothing(Scene *scene) {
 	// do nothing
 }
 
-void Game::_scene_iso_startgame(Scene *scene) {
-	_startscene = scene->insopParam;
+void Game::sceneIsoStartGame(Scene *scene) {
+	_startScene = scene->_insopParam;
 }
 
-void Game::_scene_iso_pause(Scene *scene) {
+void Game::sceneIsoPause(Scene *scene) {
 	bool checkPause = true;
 	if (_hadPause) {
 		checkPause = false;
 	}
-	if (_currentFrame > scene->endFrame) {
+	if (_currentFrame > scene->_endFrame) {
 		checkPause = false;
 	}
-	if (scene->dataParam1 <= 0) {
+	if (scene->_dataParam1 <= 0) {
 		checkPause = false;
 	}
 	if (checkPause) {
-		unsigned long pauseStart = atoi(scene->insopParam.c_str());
-		unsigned long pauseEnd = atoi(scene->insopParam.c_str()) + _videoFrameSkip + 1;
+		uint32 pauseStart = atoi(scene->_insopParam.c_str());
+		uint32 pauseEnd = atoi(scene->_insopParam.c_str()) + _videoFrameSkip + 1;
 		if (_currentFrame >= pauseStart && _currentFrame < pauseEnd && !_hadPause) {
 			_gameTimer = 0;
-			unsigned long pauseDuration = scene->dataParam1 * 0x90FF / 1000;
+			uint32 pauseDuration = scene->_dataParam1 * 0x90FF / 1000;
 			_pauseTime = pauseDuration;
 			_nextFrameTime += pauseDuration;
-			_pauseTime += _GetMsTime();
+			_pauseTime += getMsTime();
 			_hadPause = true;
 		}
 	}
 	if (_pauseTime != 0) {
-		if (_GetMsTime() > _pauseTime) {
+		if (getMsTime() > _pauseTime) {
 			_pauseTime = 0;
 		}
 	}
 }
 
 // Script functions: Scene NxtScn
-void Game::_scene_nxtscn_donothing(Scene *scene) {
+void Game::sceneNxtscnDoNothing(Scene *scene) {
 	// do nothing
 }
 
-void Game::_scene_default_nxtscn(Scene *scene) {
-	_cur_scene = scene->next;
+void Game::sceneDefaultNxtscn(Scene *scene) {
+	_curScene = scene->_next;
 }
 
 // Script functions: ShowMsg
-void Game::_scene_sm_donothing(Scene *scene) {
+void Game::sceneSmDonothing(Scene *scene) {
 	// do nothing
 }
 
 // Script functions: ScnScr
-void Game::_scene_default_score(Scene *scene) {
-	if (scene->scnscrParam > 0) {
-		_score += scene->scnscrParam;
+void Game::sceneDefaultScore(Scene *scene) {
+	if (scene->_scnscrParam > 0) {
+		_score += scene->_scnscrParam;
 	}
 }
 
 // Script functions: ScnNxtFrm
-void Game::_scene_nxtfrm(Scene *scene) {
+void Game::sceneNxtfrm(Scene *scene) {
 }
 
 // debug methods
 void Game::debug_drawZoneRects() {
 	if (_debug_drawRects || debugChannelSet(1, Alg::kAlgDebugGraphics)) {
 		if (_inMenu) {
-			for (uint8 i = 0; i < _submenzone->rects.size(); i++) {
-				Rect rect = _submenzone->rects[i];
+			for (auto &rect : _submenzone->_rects) {
 				_screen->drawLine(rect.left, rect.top, rect.right, rect.top, 1);
 				_screen->drawLine(rect.left, rect.top, rect.left, rect.bottom, 1);
 				_screen->drawLine(rect.right, rect.bottom, rect.right, rect.top, 1);
 				_screen->drawLine(rect.right, rect.bottom, rect.left, rect.bottom, 1);
 			}
-		} else if (_cur_scene != "") {
-			Scene *targetScene = _sceneInfo->findScene(_cur_scene);
-			for (uint8 i = 0; i < targetScene->zones.size(); i++) {
-				Zone *zone = targetScene->zones[i];
-				for (uint8 j = 0; j < zone->rects.size(); j++) {
-					Rect rect = zone->rects[j];
+		} else if (_curScene != "") {
+			Scene *targetScene = _sceneInfo->findScene(_curScene);
+			for (auto &zone : targetScene->_zones) {
+				for (Rect &rect : zone->_rects) {
 					_screen->drawLine(rect.left, rect.top, rect.right, rect.top, 1);
 					_screen->drawLine(rect.left, rect.top, rect.left, rect.bottom, 1);
 					_screen->drawLine(rect.right, rect.bottom, rect.right, rect.top, 1);
@@ -516,11 +507,10 @@ void Game::debug_drawZoneRects() {
 
 bool Game::debug_dumpLibFile() {
 	Common::DumpFile dumpFile;
-	Common::HashMap<Common::String, uint32>::iterator entry;
-	for (entry = _libFileEntries.begin(); entry != _libFileEntries.end(); ++entry) {
-		_libFile.seek(entry->_value, SEEK_SET);
+	for (auto &entry : _libFileEntries) {
+		_libFile.seek(entry._value, SEEK_SET);
 		uint32 size = _libFile.readUint32LE();
-		Common::Path dumpFileName(Common::String::format("libDump/%s", entry->_key.c_str()));
+		Common::Path dumpFileName(Common::String::format("libDump/%s", entry._key.c_str()));
 		dumpFile.open(dumpFileName, true);
 		assert(dumpFile.isOpen());
 		dumpFile.writeStream(_libFile.readStream(size));
