@@ -72,6 +72,11 @@ private:
 	void adjustScore();
 	void updateRadioButtons();
 
+	/**
+	 * Determines the next game to be played
+	 */
+	int getNextGameCode(bool bExecute);
+
 public:
 	GrandTour();
 

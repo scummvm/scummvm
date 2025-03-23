@@ -172,6 +172,8 @@ void GfxSurface::setCel(size_t cellNum) {
 
 void GfxSurface::writeString(const Common::String &text, const Common::Point &pos,
 		int color) {
+	if (color == -1)
+		color = _textColor;
 	CONVERT_COLOR
 
 	Graphics::WinFont &font = g_engine->_fonts[_fontSize];
@@ -182,6 +184,8 @@ void GfxSurface::writeString(const Common::String &text, const Common::Point &po
 void GfxSurface::writeString(const Common::String &text,
 		const Common::Rect &bounds, int color,
 		Graphics::TextAlign justify) {
+	if (color == -1)
+		color = _textColor;
 	CONVERT_COLOR
 
 	Graphics::WinFont &font = g_engine->_fonts[_fontSize];

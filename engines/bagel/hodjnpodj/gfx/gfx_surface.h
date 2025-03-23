@@ -26,6 +26,7 @@
 #include "graphics/managed_surface.h"
 #include "graphics/font.h"
 #include "graphics/palette.h"
+#include "bagel/boflib/palette.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -46,6 +47,7 @@ private:
 	size_t _cellWidth = 0;
 	int _cellIndex = 0;
 	int _fontSize = 14;
+	int _textColor = 0; // Black
 
 public:
 	GfxSurface() : Graphics::ManagedSurface() {}
@@ -74,10 +76,13 @@ public:
 	void setFontSize(int fontSize) {
 		_fontSize = fontSize;
 	}
+	void setTextColor(int color) {
+		_textColor = color;
+	}
 	void writeString(const Common::String &text,
-		const Common::Point &pos, int color = 0);
+		const Common::Point &pos, int color = -1);
 	void writeString(const Common::String &text,
-		const Common::Rect &bounds, int color = 0,
+		const Common::Rect &bounds, int color = -1,
 		Graphics::TextAlign justify = Graphics::kTextAlignLeft);
 	void writeShadowedString(const Common::String &text,
 		const Common::Point &pos, int color = 0);
