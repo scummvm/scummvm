@@ -80,8 +80,6 @@ static const PlainGameDescriptor macventureGames[] = {
 
 namespace MacVenture {
 
-SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot, bool skipThumbnail = true);
-
 class MacVentureMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
 	MacVentureMetaEngineDetection() : AdvancedMetaEngineDetection(MacVenture::gameDescriptions, macventureGames) {
