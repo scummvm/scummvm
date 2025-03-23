@@ -102,6 +102,13 @@ private:
 	bool _highQuality = false;
 	const Graphics::PixelFormat _pixelFormat;
 	
+	uint32 index;
+  uint32 sourceOffset, destOffset;
+  uint32 srcIndexXL, srcIndexXR, srcIndexYT, srcIndexYB;
+  uint32 rTL,rTR,rBL,rBR,rF;
+  uint32 gTL,gTR,gBL,gBR,gF;
+  uint32 bTL,bTR,bBL,bBR,bF;
+	
   inline void splitColor(uint16 &color, uint32 &r, uint32 &g, uint32 &b) {
     //NB Left & right shifting unnecessary for interpolating & recombining, so not bothering in order to save cycles
     r = color & 0x001f;
@@ -109,7 +116,8 @@ private:
     b = color & 0x7c00;
   };
   inline uint16 mergeColor(uint32 &r, uint32 &g, uint32 &b) const {
-    return (r & 0x001f) | (g & 0x03e0) | (b & 0x7c00);
+    //NB Red uses the lowest bits in RGB555 and so doesn't need its fractional bits masked away after averaging
+    return r | (g & 0x03e0) | (b & 0x7c00);
   };
 
 

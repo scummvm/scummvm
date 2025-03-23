@@ -80,7 +80,7 @@ const Common::Point RenderTable::convertWarpedCoordToFlatCoord(const Common::Poi
 		int16 y = CLIP<int16>(point.y, 0, (int16)_numRows);
 		return Common::Point(x, y);
 	}
-	uint32 index = point.y * _numColumns + point.x;
+	index = point.y * _numColumns + point.x;
 	Common::Point newPoint(point);
 	newPoint.x += (_internalBuffer[index].xDir ? _internalBuffer[index].Src.right : _internalBuffer[index].Src.left);
 	newPoint.y += (_internalBuffer[index].yDir ? _internalBuffer[index].Src.bottom : _internalBuffer[index].Src.top);
@@ -125,11 +125,7 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 d
 //*/
 
 void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool highQuality) {
-	uint32 destOffset = 0;
-  uint32 srcIndexXL = 0;
-  uint32 srcIndexXR = 0;
-  uint32 srcIndexYT = 0;
-  uint32 srcIndexYB = 0;
+	destOffset = 0;
 	uint16 *sourceBuffer = (uint16 *)srcBuf->getPixels();
 	uint16 *destBuffer = (uint16 *)dstBuf->getPixels();
 	if(highQuality != _highQuality) {
@@ -140,15 +136,10 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
   if(_highQuality) {
     //Apply bilinear interpolation
 	  FilterPixel _curP;
-	  uint32 index;
-	  uint32 rTL,rTR,rBL,rBR,rF;
-	  uint32 gTL,gTR,gBL,gBR,gF;
-	  uint32 bTL,bTR,bBL,bBR,bF;
 	  for (int16 y = 0; y < srcBuf->h; ++y) {
-		  uint32 sourceOffset = y * _numColumns;
+		  sourceOffset = y * _numColumns;
 		  for (int16 x = 0; x < srcBuf->w; ++x) {
-		    index = sourceOffset + x;
-			  _curP = _internalBuffer[index];
+			  _curP = _internalBuffer[sourceOffset + x];
 			  srcIndexYT = y + _curP.Src.top;
 			  srcIndexYB = y + _curP.Src.bottom;
 			  srcIndexXL = x + _curP.Src.left;
@@ -156,26 +147,28 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
         splitColor(sourceBuffer[srcIndexYT * _numColumns + srcIndexXL], rTL, gTL, bTL);
         splitColor(sourceBuffer[srcIndexYT * _numColumns + srcIndexXR], rTR, gTR, bTR);
         splitColor(sourceBuffer[srcIndexYB * _numColumns + srcIndexXL], rBL, gBL, bBL);
-        splitColor(sourceBuffer[srcIndexYB * _numColumns + srcIndexXR], rBR, gBR, bBR);      
-        rF = round(_curP.fTL*rTL + _curP.fTR*rTR + _curP.fBL*rBL + _curP.fBR*rBR);
-        gF = round(_curP.fTL*gTL + _curP.fTR*gTR + _curP.fBL*gBL + _curP.fBR*gBR);
-        bF = round(_curP.fTL*bTL + _curP.fTR*bTR + _curP.fBL*bBL + _curP.fBR*bBR);
+        splitColor(sourceBuffer[srcIndexYB * _numColumns + srcIndexXR], rBR, gBR, bBR);
+        rF = _curP.fTL*rTL + _curP.fTR*rTR + _curP.fBL*rBL + _curP.fBR*rBR;
+        gF = _curP.fTL*gTL + _curP.fTR*gTR + _curP.fBL*gBL + _curP.fBR*gBR;
+        bF = _curP.fTL*bTL + _curP.fTR*bTR + _curP.fBL*bBL + _curP.fBR*bBR;
         destBuffer[destOffset] = mergeColor(rF,gF,bF);
 		    destOffset++;
+	      /*/
         if(Common::Point(x,y)==testPixel) {
           debug(2,"\tMutated test pixel %d, %d", x, y);
           debug(2,"\tfX: %f, fY: %f", _curP.fX, _curP.fY);
           debug(2,"\tYT: %d, YB: %d, XL: %d XR: %d", srcIndexYT, srcIndexYB, srcIndexXL, srcIndexXR);
         } 
+        //*/
       }
     }
 	}
   else {
     //Apply nearest-neighbour interpolation
 	  for (int16 y = 0; y < srcBuf->h; ++y) {
-		  uint32 sourceOffset = y * _numColumns;
+		  sourceOffset = y * _numColumns;
 		  for (int16 x = 0; x < srcBuf->w; ++x) {
-			  uint32 index = sourceOffset + x;
+			  index = sourceOffset + x;
 			  // RenderTable only stores offsets from the original coordinates
     		srcIndexXL = x + (_internalBuffer[index].xDir ? _internalBuffer[index].Src.right : _internalBuffer[index].Src.left);			  
 			  srcIndexYT = y + (_internalBuffer[index].yDir ? _internalBuffer[index].Src.bottom : _internalBuffer[index].Src.top);
