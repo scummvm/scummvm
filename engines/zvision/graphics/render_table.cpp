@@ -115,7 +115,7 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 d
 }
 //*/
 
-void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf) {
+void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool highQuality) {
 	uint32 destOffset = 0;
   uint32 srcIndexXL = 0;
   uint32 srcIndexXR = 0;
@@ -125,7 +125,11 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 	uint16 *destBuffer = (uint16 *)dstBuf->getPixels();
 	uint16 avgBufferT = 0;
 	uint16 avgBufferB = 0;
-  if(highQuality) {
+	if(highQuality != _highQuality) {
+	  _highQuality = highQuality;
+	  generateRenderTable();
+	}
+  if(_highQuality) {
     //Apply bilinear interpolation
 	  for (int16 y = 0; y < srcBuf->h; ++y) {
 		  uint32 sourceOffset = y * _numColumns;
@@ -214,12 +218,12 @@ void RenderTable::generatePanoramaLookupTable() {
       yOffset = yInCylinderCoords - y;
       
 			// Only store the (x,y) offsets instead of the absolute positions
-			_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, highQuality);
+			_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality);
 			
 			//Store mirrored offset values
-			_internalBuffer[indexBL] = FilterPixel(xOffset, -yOffset, highQuality);
-			_internalBuffer[indexTR] = FilterPixel(-xOffset, yOffset, highQuality);
-			_internalBuffer[indexBR] = FilterPixel(-xOffset, -yOffset, highQuality);
+			_internalBuffer[indexBL] = FilterPixel(xOffset, -yOffset, _highQuality);
+			_internalBuffer[indexTR] = FilterPixel(-xOffset, yOffset, _highQuality);
+			_internalBuffer[indexBR] = FilterPixel(-xOffset, -yOffset, _highQuality);
 			
 			//Increment indices
 			rowIndexT += _numColumns;
@@ -269,12 +273,12 @@ void RenderTable::generateTiltLookupTable() {
       yOffset = yInCylinderCoords - y;
 
 			// Only store the (x,y) offsets instead of the absolute positions
-			_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, highQuality);
+			_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality);
 			
 			//Store mirrored offset values
-			_internalBuffer[indexBL] = FilterPixel(xOffset, -yOffset, highQuality);
-			_internalBuffer[indexTR] = FilterPixel(-xOffset, yOffset, highQuality);
-			_internalBuffer[indexBR] = FilterPixel(-xOffset, -yOffset, highQuality);
+			_internalBuffer[indexBL] = FilterPixel(xOffset, -yOffset, _highQuality);
+			_internalBuffer[indexTR] = FilterPixel(-xOffset, yOffset, _highQuality);
+			_internalBuffer[indexBR] = FilterPixel(-xOffset, -yOffset, _highQuality);
 		}
 	}
 }
