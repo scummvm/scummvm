@@ -52,10 +52,10 @@ class GameBountyHunter : public Game {
 	};
 
 public:
-	GameBountyHunter(AlgEngine *vm, const ADGameDescription *desc);
+	GameBountyHunter(AlgEngine *vm, const AlgGameDescription *gd);
 	~GameBountyHunter();
 	Common::Error run();
-	void debug_warpTo(int val);
+	void debugWarpTo(int val);
 
 private:
 	void init();
@@ -94,17 +94,17 @@ private:
 	Audio::SeekableAudioStream *_shotgunSound = nullptr;
 
 	// constants
-	const uint16 _randomHarry1[7] = {0x01B9, 0x01B7, 0x01B5, 0x01B3, 0x01AF, 0x01AD, 0};
-	const uint16 _randomHarry2[6] = {0x0194, 0x0190, 0x018E, 0x018C, 0};
-	const uint16 _randomDan1[5] = {0x0173, 0x0171, 0x016F, 0x016D, 0};
-	const uint16 _randomDan1TwoPlayer[6] = {0x0173, 0x0171, 0x016F, 0x016D, 0x016B, 0};
-	const uint16 _randomDan2[7] = {0x0165, 0x0163, 0x0161, 0x015F, 0x015D, 0x015B, 0};
-	const uint16 _randomLoco1[4] = {0xF7, 0xF5, 0xF3, 0};
-	const uint16 _randomLoco2[3] = {0xED, 0xEB, 0};
-	const uint16 _randomKid1[4] = {0xBA, 0xB7, 0xB5, 0};
-	const uint16 _randomKid2[4] = {0xB1, 0xAE, 0xAC, 0};
+	uint16 _randomHarry1[7] = {0x01B9, 0x01B7, 0x01B5, 0x01B3, 0x01AF, 0x01AD, 0};
+	uint16 _randomHarry2[6] = {0x0194, 0x0190, 0x018E, 0x018C, 0};
+	uint16 _randomDan1[5] = {0x0173, 0x0171, 0x016F, 0x016D, 0};
+	uint16 _randomDan1TwoPlayer[6] = {0x0173, 0x0171, 0x016F, 0x016D, 0x016B, 0};
+	uint16 _randomDan2[7] = {0x0165, 0x0163, 0x0161, 0x015F, 0x015D, 0x015B, 0};
+	uint16 _randomLoco1[4] = {0xF7, 0xF5, 0xF3, 0};
+	uint16 _randomLoco2[3] = {0xED, 0xEB, 0};
+	uint16 _randomKid1[4] = {0xBA, 0xB7, 0xB5, 0};
+	uint16 _randomKid2[4] = {0xB1, 0xAE, 0xAC, 0};
 
-	const uint16 *_randomScenes[8] = {_randomHarry1, _randomHarry2, _randomDan1, _randomDan2, _randomLoco1, _randomLoco2, _randomKid1, _randomKid2};
+	uint16 *_randomScenes[8] = {_randomHarry1, _randomHarry2, _randomDan1, _randomDan2, _randomLoco1, _randomLoco2, _randomKid1, _randomKid2};
 	const uint8 _randomScenesPicks[8] = {6, 6, 4, 7, 3, 2, 5, 5};
 
 	const uint8 _subLevelOrder[96] = {0, 1, 2, 4, 0, 0, 0, 1, 3, 4, 0, 0, 0, 2, 3, 4, 0, 0, 0, 1, 2, 3, 4, 0,
@@ -112,7 +112,7 @@ private:
 									  0, 1, 3, 4, 0, 0, 0, 2, 3, 4, 0, 0, 1, 2, 3, 4, 0, 0, 0, 1, 2, 3, 4, 0,
 									  0, 1, 2, 3, 4, 0, 0, 1, 2, 3, 4, 0, 0, 1, 2, 3, 4, 0, 0, 1, 2, 3, 4, 0};
 	const uint16 _subLevelSceneIds[20] = {0x01BE, 0x017A, 0x01A2, 0x0198, 0x0183, 0x0178, 0x0167, 0x0159, 0x014B, 0x0147,
-	 									  0xF1, 0xE1, 0xFF, 0xD8, 0xD0, 0x9B, 0xA8, 0x86, 0xBF, 0x74};
+										  0xF1, 0xE1, 0xFF, 0xD8, 0xD0, 0x9B, 0xA8, 0x86, 0xBF, 0x74};
 
 	const uint16 _clueLevels[4] = {0x017A, 0x013B, 0xC2, 0x68};
 	const uint8 _mainLevelMasks[5] = {2, 4, 8, 0x10, 0x80};
@@ -121,7 +121,7 @@ private:
 	const uint16 _firstSceneInScenario[4] = {4, 0x36, 0x36, 0x66};
 	const uint16 _moneyScenes[4] = {0x017D, 0x013C, 0xC3, 0x69};
 	const uint16 _gunfightScenarios[18] = {0x0116, 0x0118, 0x011B, 0x011D, 0x011F, 0x0121, 0x0123, 0x0125, 0x0127,
-										  0x0129, 0x012B, 0x012D, 0x012F, 0x0131, 0x0133, 0x0135, 0x0137, 0x0139};
+										   0x0129, 0x012B, 0x012D, 0x012F, 0x0131, 0x0133, 0x0135, 0x0137, 0x0139};
 	const uint16 _innocentScenarios[5] = {0x0110, 0x010F, 0x010C, 0x010B, 0};
 	const uint16 _deathScenarios[9] = {0x0100, 0x0101, 0x0102, 0x0103, 0x0104, 0x0105, 0x0106, 0x0107, 0};
 	const uint16 _onePlayerOfTwoDead[2] = {0x0109, 0x010A};
@@ -144,28 +144,28 @@ private:
 	uint8 _levelDoneMask = 0;
 	uint8 _numSubLevelsDone = 0;
 
-	uint16 usedScenes = 0;
-	int16 lastPick = -1;
-	int16 initted = 0;
-	int16 sceneCount = 0;
+	uint16 _usedScenes = 0;
+	int16 _lastPick = -1;
+	int16 _initted = 0;
+	int16 _sceneCount = 0;
 
-	uint16 *_random_scene_list;
-	uint8 _random_max = 0;
-	uint16 _random_mask = 0;
-	int16 _random_picked = 0;
-	uint8 _random_scene_count = 0;
-	bool _gunfight_initialized = false;
-	uint16 _gunfight_mask = 0;
-	int16 _gunfight_picked = 0;
-	uint8 _gunfight_scene_count = 0;
-	bool _innocent_initialized = false;
-	uint16 _innocent_mask = 0;
-	int16 _innocent_picked = 0;
-	uint8 _innocent_scene_count = 0;
-	bool _death_initialized = false;
-	uint16 _death_mask = 0;
-	int16 _death_picked = 0;
-	uint8 _death_scene_count = 0;
+	uint16 *_randomSceneList;
+	uint8 _randomMax = 0;
+	uint16 _randomMask = 0;
+	int16 _randomPicked = 0;
+	uint8 _randomSceneCount = 0;
+	bool _gunfightInitialized = false;
+	uint16 _gunfightMask = 0;
+	int16 _gunfightPicked = 0;
+	uint8 _gunfightSceneCount = 0;
+	bool _innocentInitialized = false;
+	uint16 _innocentMask = 0;
+	int16 _innocentPicked = 0;
+	uint8 _innocentSceneCount = 0;
+	bool _deathInitialized = false;
+	uint16 _deathMask = 0;
+	int16 _deathPicked = 0;
+	uint8 _deathSceneCount = 0;
 
 	uint8 _continuesUsed = 0;
 	bool _wounded = false;
@@ -178,101 +178,101 @@ private:
 	uint8 _unk_2ADA6 = 0;
 
 	// base functions
-	void _NewGame();
-	void _DoMenu();
-	void _DoCursor();
-	void _UpdateMouse();
-	void _MoveMouse();
-	void _DisplayLivesLeft(uint8 player);
-	void _DisplayScores(uint8 player);
-	void _DisplayShotsLeft(uint8 player);
-	bool _WeaponDown();
-	bool _SaveState();
-	bool _LoadState();
+	void newGame();
+	void doMenu();
+	void updateCursor();
+	void updateMouse();
+	void moveMouse();
+	void displayLivesLeft(uint8 player);
+	void displayScores(uint8 player);
+	void displayShotsLeft(uint8 player);
+	bool weaponDown();
+	bool saveState();
+	bool loadState();
 
 	// misc game functions
-	void _SetNextScene(uint16 sceneId);
-	void _DisplayShotFiredImage(Common::Point *point);
-	void _EnableVideoFadeIn();
-	void _IconShotgun();
-	void _IconReset();
-	uint16 _BeginLevel(uint8 levelNumber);
-	uint16 _RandomUnusedInt(uint8 max, uint16 *mask, uint16 exclude);
-	uint16 _PickRandomScene(const uint16 *sceneList, uint8 max);
-	uint16 _PickGunfightScene();
-	uint16 _PickInnocentScene();
-	uint16 _PickDeathScene();
-	uint16 _TimeForGunfight();
-	void _WaitingForShootout(uint32 drawFrame);
-	void _DoShotgunSound();
+	void setNextScene(uint16 sceneId);
+	void displayShotFiredImage(Common::Point *point);
+	void enableVideoFadeIn();
+	void iconShotgun();
+	void iconReset();
+	uint16 beginLevel(uint8 levelNumber);
+	uint16 randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude);
+	uint16 pickRandomScene(uint16 *sceneList, uint8 max);
+	uint16 pickGunfightScene();
+	uint16 pickInnocentScene();
+	uint16 pickDeathScene();
+	uint16 timeForGunfight();
+	void waitingForShootout(uint32 drawFrame);
+	void doShotgunSound();
 
 	// Script functions: RectHit
-	void _rect_shotmenu(Rect *rect);
-	void _rect_save(Rect *rect);
-	void _rect_load(Rect *rect);
-	void _rect_continue(Rect *rect);
-	void _rect_start(Rect *rect);
-	void _rect_toggle_players(Rect *rect);
-	void _rect_hit_icon_jug(Rect *rect);
-	void _rect_hit_icon_lantern(Rect *rect);
-	void _rect_hit_icon_skull(Rect *rect);
-	void _rect_hit_icon_wheel(Rect *rect);
-	void _rect_hit_select_harry(Rect *rect);
-	void _rect_hit_select_dan(Rect *rect);
-	void _rect_hit_select_loco(Rect *rect);
-	void _rect_hit_select_kid(Rect *rect);
-	void _rect_hit_kill_man(Rect *rect);
-	void _rect_hit_give_shotgun(Rect *rect);
-	void _rect_hit_kill3(Rect *rect);
-	void _rect_hit_check_shotgun(Rect *rect);
-	void _rect_hit_cheater(Rect *rect);
+	void rectShotMenu(Rect *rect);
+	void rectSave(Rect *rect);
+	void rectLoad(Rect *rect);
+	void rectContinue(Rect *rect);
+	void rectStart(Rect *rect);
+	void rectTogglePlayers(Rect *rect);
+	void rectHitIconJug(Rect *rect);
+	void rectHitIconLantern(Rect *rect);
+	void rectHitIconSkull(Rect *rect);
+	void rectHitIconWheel(Rect *rect);
+	void rectHitSelectHarry(Rect *rect);
+	void rectHitSelectDan(Rect *rect);
+	void rectHitSelectLoco(Rect *rect);
+	void rectHitSelectKid(Rect *rect);
+	void rectHitKillMan(Rect *rect);
+	void rectHitGiveShotgun(Rect *rect);
+	void rectHitKill3(Rect *rect);
+	void rectHitCheckShotgun(Rect *rect);
+	void rectHitCheater(Rect *rect);
 
 	// Script functions: Scene PreOps
-	void _scene_pso_shootout(Scene *scene);
-	void _scene_pso_wounded_main(Scene *scene);
-	void _scene_pso_gunfight_setup(Scene *scene);
-	void _scene_pso_lose_a_life(Scene *scene);
-	void _scene_pso_setup_ndrandom1(Scene *scene);
-	void _scene_pso_set_current_scene(Scene *scene);
+	void scenePsoShootout(Scene *scene);
+	void scenePsoWoundedMain(Scene *scene);
+	void scenePsoGunfightSetup(Scene *scene);
+	void scenePsoLoseALife(Scene *scene);
+	void scenePsoSetupNdRandom1(Scene *scene);
+	void scenePsoSetCurrentScene(Scene *scene);
 
 	// Script functions: Scene InsOps
-	void _scene_iso_shootout(Scene *scene);
-	void _scene_iso_givemoney(Scene *scene);
+	void sceneIsoShootout(Scene *scene);
+	void sceneIsoGivemoney(Scene *scene);
 
 	// Script functions: Scene NxtScn
-	void _scene_nxtscn_lose_a_life(Scene *scene);
-	void _scene_nxtscn_continue_game(Scene *scene);
-	void _scene_nxtscn_did_not_continue(Scene *scene);
-	void _scene_nxtscn_kill_innocent_man(Scene *scene);
-	void _scene_nxtscn_kill_innocent_woman(Scene *scene);
-	void _scene_nxtscn_after_die(Scene *scene);
-	void _scene_nxtscn_goto_level_select(Scene *scene);
-	void _scene_nxtscn_continue_random(Scene *scene);
-	void _scene_nxtscn_init_random_harry1(Scene *scene);
-	void _scene_nxtscn_init_random_harry2(Scene *scene);
-	void _scene_nxtscn_init_random_dan1(Scene *scene);
-	void _scene_nxtscn_init_random_dan2(Scene *scene);
-	void _scene_nxtscn_init_random_loco1(Scene *scene);
-	void _scene_nxtscn_init_random_loco2(Scene *scene);
-	void _scene_nxtscn_init_random_kid1(Scene *scene);
-	void _scene_nxtscn_init_random_kid2(Scene *scene);
-	void _scene_nxtscn_next_sub_level(Scene *scene);
-	void _scene_nxtscn_goto_bad_guy(Scene *scene);
-	void _scene_nxtscn_auto_select_level(Scene *scene);
-	void _scene_nxtscn_select_scenario(Scene *scene);
-	void _scene_nxtscn_finish_scenario(Scene *scene);
-	void _scene_nxtscn_game_won(Scene *scene);
-	void _scene_nxtscn_killed_main(Scene *scene);
-	void _scene_nxtscn_wounded_main(Scene *scene);
-	void _scene_nxtscn_end_level(Scene *scene);
-	void _scene_nxtscn_end_game(Scene *scene);
-	void _scene_nxtscn_do_breakout_mains(Scene *scene);
-	void _scene_nxtscn_died_refed(Scene *scene);
-	void _scene_nxtscn_give_shotgun(Scene *scene);
-	void _scene_nxtscn_check_2players(Scene *scene);
+	void sceneNxtscnLoseALife(Scene *scene);
+	void sceneNxtscnContinueGame(Scene *scene);
+	void sceneNxtscnDidNotContinue(Scene *scene);
+	void sceneNxtscnKillInnocentMan(Scene *scene);
+	void sceneNxtscnKillInnocentWoman(Scene *scene);
+	void sceneNxtscnAfterDie(Scene *scene);
+	void sceneNxtscnGotoLevelSelect(Scene *scene);
+	void sceneNxtscnContinueRandom(Scene *scene);
+	void sceneNxtscnInitRandomHarry1(Scene *scene);
+	void sceneNxtscnInitRandomHarry2(Scene *scene);
+	void sceneNxtscnInitRandomDan1(Scene *scene);
+	void sceneNxtscnInitRandomDan2(Scene *scene);
+	void sceneNxtscnInitRandomLoco1(Scene *scene);
+	void sceneNxtscnInitRandomLoco2(Scene *scene);
+	void sceneNxtscnInitRandomKid1(Scene *scene);
+	void sceneNxtscnInitRandomKid2(Scene *scene);
+	void sceneNxtscnNextSubLevel(Scene *scene);
+	void sceneNxtscnGotoBadGuy(Scene *scene);
+	void sceneNxtscnAutoSelectLevel(Scene *scene);
+	void sceneNxtscnSelectScenario(Scene *scene);
+	void sceneNxtscnFinishScenario(Scene *scene);
+	void sceneNxtscnGameWon(Scene *scene);
+	void sceneNxtscnKilledMain(Scene *scene);
+	void sceneNxtscnWoundedMain(Scene *scene);
+	void sceneNxtscnEndLevel(Scene *scene);
+	void sceneNxtscnEndGame(Scene *scene);
+	void sceneNxtscnDoBreakoutMains(Scene *scene);
+	void sceneNxtscnDiedRefed(Scene *scene);
+	void sceneNxtscnGiveShotgun(Scene *scene);
+	void sceneNxtscnCheck2Players(Scene *scene);
 
 	// Script functions: Scene WepDwn
-	void _scene_default_wepdwn(Scene *scene);
+	void sceneDefaultWepdwn(Scene *scene);
 };
 
 class DebuggerBountyHunter : public GUI::Debugger {

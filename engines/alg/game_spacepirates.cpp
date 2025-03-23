@@ -25,7 +25,6 @@
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/pixelformat.h"
 
 #include "alg/game_spacepirates.h"
 #include "alg/graphics.h"
@@ -33,12 +32,12 @@
 
 namespace Alg {
 
-GameSpacePirates::GameSpacePirates(AlgEngine *vm, const ADGameDescription *desc) : Game(vm) {
-	if (scumm_stricmp(desc->gameId, "spiratess") == 0) {
+GameSpacePirates::GameSpacePirates(AlgEngine *vm, const AlgGameDescription *gd) : Game(vm) {
+	if (gd->gameType == GType_SPIRATES_SS_DOS) {
 		_libFileName = "spss.lib";
-	} else if (scumm_stricmp(desc->gameId, "spiratesd") == 0) {
+	} else if (gd->gameType == GType_SPIRATES_DS_DOS) {
 		_libFileName = "spds.lib";
-	} else if (scumm_stricmp(desc->gameId, "spiratesdemo") == 0) {
+	} else if (gd->gameType == GType_SPIRATES_DEMO_DOS) {
 		_libFileName = "sp.lib";
 		_isDemo = true;
 	}
@@ -48,6 +47,8 @@ GameSpacePirates::~GameSpacePirates() {
 }
 
 void GameSpacePirates::init() {
+	Game::init();
+
 	_videoPosX = 11;
 	_videoPosY = 2;
 
@@ -57,20 +58,20 @@ void GameSpacePirates::init() {
 
 	loadLibArchive(_libFileName);
 	_sceneInfo->loadScnFile(_isDemo ? "spacepir.scn" : "sp.scn");
-	_startscene = _sceneInfo->getStartScene();
+	_startScene = _sceneInfo->getStartScene();
 
 	registerScriptFunctions();
 	verifyScriptFunctions();
 
 	_menuzone = new Zone();
-	_menuzone->name = "MainMenu";
-	_menuzone->ptrfb = "GLOBALHIT";
+	_menuzone->_name = "MainMenu";
+	_menuzone->_ptrfb = "GLOBALHIT";
 
 	_menuzone->addRect(0x0C, 0xAA, 0x38, 0xC7, nullptr, 0, "SHOTMENU", "0");
 
 	_submenzone = new Zone();
-	_submenzone->name = "SubMenu";
-	_submenzone->ptrfb = "GLOBALHIT";
+	_submenzone->_name = "SubMenu";
+	_submenzone->_ptrfb = "GLOBALHIT";
 
 	_submenzone->addRect(0x24, 0x16, 0x64, 0x26, nullptr, 0, "STARTMENU", "0");
 	_submenzone->addRect(0x24, 0x36, 0x64, 0x46, nullptr, 0, "RECTLOAD", "0");
@@ -81,14 +82,14 @@ void GameSpacePirates::init() {
 	_submenzone->addRect(0xD5, 0x63, 0x0115, 0x73, nullptr, 0, "RECTAVG", "0");
 	_submenzone->addRect(0xD5, 0x90, 0x0115, 0xA0, nullptr, 0, "RECTHARD", "0");
 
-	_shotSound = _LoadSoundFile("phaser.8b");
-	_emptySound = _LoadSoundFile("emptygun.8b");
-	_saveSound = _LoadSoundFile("saved.8b");
-	_loadSound = _LoadSoundFile("loaded.8b");
-	_skullSound = _LoadSoundFile("error.8b");
-	_easySound = _LoadSoundFile("difflev.8b");
-	_avgSound = _LoadSoundFile("difflev.8b");
-	_hardSound = _LoadSoundFile("difflev.8b");
+	_shotSound = loadSoundFile("phaser.8b");
+	_emptySound = loadSoundFile("emptygun.8b");
+	_saveSound = loadSoundFile("saved.8b");
+	_loadSound = loadSoundFile("loaded.8b");
+	_skullSound = loadSoundFile("error.8b");
+	_easySound = loadSoundFile("difflev.8b");
+	_avgSound = loadSoundFile("difflev.8b");
+	_hardSound = loadSoundFile("difflev.8b");
 
 	_gun = AlgGraphics::loadScreenCoordAniImage("gun.ani", _palette);
 	_difficultyIcon = (*_gun)[1];
@@ -107,155 +108,155 @@ void GameSpacePirates::init() {
 	_background = AlgGraphics::loadVgaBackground("backgrnd.vga", _palette);
 	_screen->copyRectToSurface(_background->getPixels(), _background->pitch, 0, 0, _background->w, _background->h);
 
-	_MoveMouse();
+	moveMouse();
 }
 
 void GameSpacePirates::registerScriptFunctions() {
 #define RECT_HIT_FUNCTION(name, func) _rectHitFuncs[name] = new SPScriptFunctionRect(this, &GameSpacePirates::func);
-	RECT_HIT_FUNCTION("DEFAULT", _rect_newscene);
-	RECT_HIT_FUNCTION("NEWSCENE", _rect_newscene);
-	RECT_HIT_FUNCTION("EXITMENU", _rect_exit);
-	RECT_HIT_FUNCTION("CONTMENU", _rect_continue);
-	RECT_HIT_FUNCTION("STARTMENU", _rect_start);
-	RECT_HIT_FUNCTION("SHOTMENU", _rect_shotmenu);
-	RECT_HIT_FUNCTION("RECTSAVE", _rect_save);
-	RECT_HIT_FUNCTION("RECTLOAD", _rect_load);
-	RECT_HIT_FUNCTION("RECTEASY", _rect_easy);
-	RECT_HIT_FUNCTION("RECTAVG", _rect_average);
-	RECT_HIT_FUNCTION("RECTHARD", _rect_hard);
-	RECT_HIT_FUNCTION("KILL_INNOCENT_PERSON", _rect_kill_innocent_person);
-	RECT_HIT_FUNCTION("CONTINUE_JUNK_RINGS", _rect_continue_junk_rings);
-	RECT_HIT_FUNCTION("SHOT_GRIN_REAPER", _rect_shot_grin_reaper);
-	RECT_HIT_FUNCTION("SHOW_MAD_DOG", _rect_show_mad_dog);
-	RECT_HIT_FUNCTION("POTT_WORLD_SHOW_CRYSTAL", _rect_pott_world_show_crystal);
-	RECT_HIT_FUNCTION("SHOT_LEFT", _rect_shot_left);
-	RECT_HIT_FUNCTION("SHOT_RIGHT", _rect_shot_right);
-	RECT_HIT_FUNCTION("SHOT_GOLD", _rect_shot_gold);
-	RECT_HIT_FUNCTION("SHOT_SILVER", _rect_shot_silver);
-	RECT_HIT_FUNCTION("SELECTED_DUNE_WORLD", _rect_selected_dune_world);
-	RECT_HIT_FUNCTION("SELECTED_JUNK_WORLD", _rect_selected_junk_world);
-	RECT_HIT_FUNCTION("SELECTED_DRAGONS_TEETH_WORLD", _rect_selected_dragons_teeth_world);
-	RECT_HIT_FUNCTION("SELECTED_VOLCANO_WORLD", _rect_selected_volcano_world);
-	RECT_HIT_FUNCTION("SHOT_RED_DEATH_GRIP", _rect_shot_red_death_grip);
-	RECT_HIT_FUNCTION("SHOT_BLUE_DEATH_GRIP", _rect_shot_blue_death_grip);
-	RECT_HIT_FUNCTION("SHOT_GREEN_DEATH_GRIP", _rect_shot_green_death_grip);
-	RECT_HIT_FUNCTION("SHOT_YELLOW", _rect_shot_yellow);
-	RECT_HIT_FUNCTION("SHOT_BLUE", _rect_shot_blue);
-	RECT_HIT_FUNCTION("SHOT_RED_CRYSTAL", _rect_shot_red_crystal);
-	RECT_HIT_FUNCTION("SHOT_BLUE_CRYSTAL", _rect_shot_blue_crystal);
-	RECT_HIT_FUNCTION("SHOT_GREEN_CRYSTAL", _rect_shot_green_crystal);
-	RECT_HIT_FUNCTION("SHOT_BLACK_DRAGON_1", _rect_shot_black_dragon_1);
-	RECT_HIT_FUNCTION("SHOT_BLACK_DRAGON_2", _rect_shot_black_dragon_2);
-	RECT_HIT_FUNCTION("SHOT_BLACK_DRAGON_3", _rect_shot_black_dragon_3);
-	RECT_HIT_FUNCTION("DO_FLYING_SKULL", _rect_do_flying_skull);
-	RECT_HIT_FUNCTION("SKIP_SCENE", _rect_skip_scene);
-	RECT_HIT_FUNCTION("HIT_PIRATE_SHIP", _rect_hit_pirate_ship);
+	RECT_HIT_FUNCTION("DEFAULT", rectNewScene);
+	RECT_HIT_FUNCTION("NEWSCENE", rectNewScene);
+	RECT_HIT_FUNCTION("EXITMENU", rectExit);
+	RECT_HIT_FUNCTION("CONTMENU", rectContinue);
+	RECT_HIT_FUNCTION("STARTMENU", rectStart);
+	RECT_HIT_FUNCTION("SHOTMENU", rectShotMenu);
+	RECT_HIT_FUNCTION("RECTSAVE", rectSave);
+	RECT_HIT_FUNCTION("RECTLOAD", rectLoad);
+	RECT_HIT_FUNCTION("RECTEASY", rectEasy);
+	RECT_HIT_FUNCTION("RECTAVG", rectAverage);
+	RECT_HIT_FUNCTION("RECTHARD", rectHard);
+	RECT_HIT_FUNCTION("KILL_INNOCENT_PERSON", rectKillInnocentPerson);
+	RECT_HIT_FUNCTION("CONTINUE_JUNK_RINGS", rectContinueJunkRings);
+	RECT_HIT_FUNCTION("SHOT_GRIN_REAPER", rectShotGrinReaper);
+	RECT_HIT_FUNCTION("SHOW_MAD_DOG", rectShowMadDog);
+	RECT_HIT_FUNCTION("POTT_WORLD_SHOW_CRYSTAL", rectPottWorldShowCrystal);
+	RECT_HIT_FUNCTION("SHOT_LEFT", rectShotLeft);
+	RECT_HIT_FUNCTION("SHOT_RIGHT", rectShotRight);
+	RECT_HIT_FUNCTION("SHOT_GOLD", rectShotGold);
+	RECT_HIT_FUNCTION("SHOT_SILVER", rectShotSilver);
+	RECT_HIT_FUNCTION("SELECTED_DUNE_WORLD", rectSelectedDuneWorld);
+	RECT_HIT_FUNCTION("SELECTED_JUNK_WORLD", rectSelectedJunkWorld);
+	RECT_HIT_FUNCTION("SELECTED_DRAGONS_TEETH_WORLD", rectSelectedDragonsTeethWorld);
+	RECT_HIT_FUNCTION("SELECTED_VOLCANO_WORLD", rectSelectedVolcanoWorld);
+	RECT_HIT_FUNCTION("SHOT_RED_DEATH_GRIP", rectShotRedDeathGrip);
+	RECT_HIT_FUNCTION("SHOT_BLUE_DEATH_GRIP", rectShotBlueDeathGrip);
+	RECT_HIT_FUNCTION("SHOT_GREEN_DEATH_GRIP", rectShotGreenDeathGrip);
+	RECT_HIT_FUNCTION("SHOT_YELLOW", rectShotYellow);
+	RECT_HIT_FUNCTION("SHOT_BLUE", rectShotBlue);
+	RECT_HIT_FUNCTION("SHOT_RED_CRYSTAL", rectShotRedCrystal);
+	RECT_HIT_FUNCTION("SHOT_BLUE_CRYSTAL", rectShotBlueCrystal);
+	RECT_HIT_FUNCTION("SHOT_GREEN_CRYSTAL", rectShotGreenCrystal);
+	RECT_HIT_FUNCTION("SHOT_BLACK_DRAGON_1", rectShotBlackDragon1);
+	RECT_HIT_FUNCTION("SHOT_BLACK_DRAGON_2", rectShotBlackDragon2);
+	RECT_HIT_FUNCTION("SHOT_BLACK_DRAGON_3", rectShotBlackDragon3);
+	RECT_HIT_FUNCTION("DO_FLYING_SKULL", rectDoFlyingSkull);
+	RECT_HIT_FUNCTION("SKIP_SCENE", rectSkipScene);
+	RECT_HIT_FUNCTION("HIT_PIRATE_SHIP", rectHitPirateShip);
 #undef RECT_HIT_FUNCTION
 
 #define PRE_OPS_FUNCTION(name, func) _scenePreOps[name] = new SPScriptFunctionScene(this, &GameSpacePirates::func);
-	PRE_OPS_FUNCTION("DEFAULT", _scene_pso_drawrct);
-	PRE_OPS_FUNCTION("PAUSE", _scene_pso_pause);
-	PRE_OPS_FUNCTION("PAUSE_THEN_FADEIN", _scene_pso_pause_fadein);
-	PRE_OPS_FUNCTION("FADEIN_VIDEO", _scene_pso_fadein_video);
-	PRE_OPS_FUNCTION("FADEIN_SCREEN", _scene_pso_fadein);
-	PRE_OPS_FUNCTION("SET_GOT_TO", _scene_pso_set_got_to);
-	PRE_OPS_FUNCTION("SET_GOT_TO_NO_FADEIN", _scene_pso_set_got_to_no_fadein);
-	PRE_OPS_FUNCTION("SET_WORLD_GOT_TO", _scene_pso_set_world_got_to);
+	PRE_OPS_FUNCTION("DEFAULT", scenePsoDrawRct);
+	PRE_OPS_FUNCTION("PAUSE", scenePsoPause);
+	PRE_OPS_FUNCTION("PAUSE_THEN_FADEIN", scenePsoPauseFadeIn);
+	PRE_OPS_FUNCTION("FADEIN_VIDEO", scenePsoFadeInVideo);
+	PRE_OPS_FUNCTION("FADEIN_SCREEN", scenePsoFadeIn);
+	PRE_OPS_FUNCTION("SET_GOT_TO", scenePsoSetGotTo);
+	PRE_OPS_FUNCTION("SET_GOT_TO_NO_FADEIN", scenePsoSetGotToNoFadeIn);
+	PRE_OPS_FUNCTION("SET_WORLD_GOT_TO", scenePsoSetWorldGotTo);
 
 #undef PRE_OPS_FUNCTION
 
 #define INS_OPS_FUNCTION(name, func) _sceneInsOps[name] = new SPScriptFunctionScene(this, &GameSpacePirates::func);
-	INS_OPS_FUNCTION("DEFAULT", _scene_iso_donothing);
-	INS_OPS_FUNCTION("PAUSE", _scene_iso_pause);
-	INS_OPS_FUNCTION("PICK_A_WORLD", _scene_iso_pick_a_world);
-	INS_OPS_FUNCTION("SET_WORLD_GOT_TO", _scene_iso_set_world_got_to);
+	INS_OPS_FUNCTION("DEFAULT", sceneIsoDoNothing);
+	INS_OPS_FUNCTION("PAUSE", sceneIsoPause);
+	INS_OPS_FUNCTION("PICK_A_WORLD", sceneIsoPickAWorld);
+	INS_OPS_FUNCTION("SET_WORLD_GOT_TO", sceneIsoSetWorldGotTo);
 #undef INS_OPS_FUNCTION
 
 #define NXT_SCN_FUNCTION(name, func) _sceneNxtScn[name] = new SPScriptFunctionScene(this, &GameSpacePirates::func);
-	NXT_SCN_FUNCTION("DEFAULT", _scene_default_nxtscn);
-	NXT_SCN_FUNCTION("GET_CHEWED_OUT", _scene_nxtscn_got_chewed_out);
-	NXT_SCN_FUNCTION("RESTART_FROM_LAST", _scene_nxtscn_restart_from_last);
-	NXT_SCN_FUNCTION("PLAYER_DIED", _scene_nxtscn_player_died);
-	NXT_SCN_FUNCTION("MISC_ROOMS_1", _scene_nxtscn_misc_rooms_1);
-	NXT_SCN_FUNCTION("PICK_DUNGEON_CLUE", _scene_nxtscn_pick_dungeon_clue);
-	NXT_SCN_FUNCTION("CONTINUE_DUNGEON_CLUE", _scene_nxtscn_continue_dungeon_clue);
-	NXT_SCN_FUNCTION("START_MIDSHIP_RANDOM_SCENE", _scene_nxtscn_start_midship_random_scene);
-	NXT_SCN_FUNCTION("CONTINUE_MIDSHIP_RANDOM_SCENE", _scene_nxtscn_continue_midship_random_scene);
-	NXT_SCN_FUNCTION("SHOW_DEATH_GRIP_BEAM_COLOR", _scene_nxtscn_show_death_grip_beam_color);
-	NXT_SCN_FUNCTION("SELECT_ASTEROIDS", _scene_nxtscn_select_asteroids);
-	NXT_SCN_FUNCTION("ASTEROIDS_DONE", _scene_nxtscn_asteroids_done);
-	NXT_SCN_FUNCTION("DO_FLYING_SKULLS", _scene_nxtscn_do_flying_skulls);
-	NXT_SCN_FUNCTION("DID_FLYING_SKULLS", _scene_nxtscn_did_flying_skulls);
-	NXT_SCN_FUNCTION("SHOW_WHICH_STAR_SPLITTER", _scene_nxtscn_show_which_start_splitter);
-	NXT_SCN_FUNCTION("GOTO_SELECTED_WORLD", _scene_nxtscn_goto_selected_world);
-	NXT_SCN_FUNCTION("START_VOLCANO_POPUP", _scene_nxtscn_start_volcano_popup);
-	NXT_SCN_FUNCTION("CONTINUE_VOLCANO_POPUP", _scene_nxtscn_continue_volcano_popup);
-	NXT_SCN_FUNCTION("GIVE_FALINA_CLUE", _scene_nxtscn_give_falina_clue);
-	NXT_SCN_FUNCTION("CHECK_FALINAS_CLUES", _scene_nxtscn_check_falina_clues);
-	NXT_SCN_FUNCTION("SETUP_FALINA_TARGET_PRACTICE", _scene_nxtscn_setup_falina_target_practice);
-	NXT_SCN_FUNCTION("CONTINUE_FALINA_TARGET_PRACTICE", _scene_nxtscn_continue_falina_target_practice);
-	NXT_SCN_FUNCTION("START_DUNE_POPUP", _scene_nxtscn_start_dune_popup);
-	NXT_SCN_FUNCTION("CONTINUE_DUNE_POPUP", _scene_nxtscn_continue_dune_popup);
-	NXT_SCN_FUNCTION("POTT_OR_PAN_SHOOTS", _scene_nxtscn_pott_or_pan_shoots);
-	NXT_SCN_FUNCTION("SETUP_POTT_TARGET_PRACTICE", _scene_nxtscn_setup_pott_target_practice);
-	NXT_SCN_FUNCTION("CONTINUE_POTT_TARGET_PRACTICE", _scene_nxtscn_continue_pott_target_practice);
-	NXT_SCN_FUNCTION("START_DRAGONS_TEETH_POPUP", _scene_nxtscn_start_dragons_teeth_popup);
-	NXT_SCN_FUNCTION("CONTINUE_DRAGONS_TEETH_POPUP", _scene_nxtscn_continue_dragons_teeth_popup);
-	NXT_SCN_FUNCTION("GRIN_REAPER_CLUE", _scene_nxtscn_grin_reaper_clue);
-	NXT_SCN_FUNCTION("START_GRIN_REAPER", _scene_nxtscn_start_grin_reaper);
-	NXT_SCN_FUNCTION("CONTINUE_GRIN_REAPER", _scene_nxtscn_continue_grin_reaper);
-	NXT_SCN_FUNCTION("GRIN_TARGET_PRACTICE", _scene_nxtscn_grin_target_practice);
-	NXT_SCN_FUNCTION("CONTINUE_GRIN_TARGET_PRACTICE", _scene_nxtscn_continue_grin_target_practice);
-	NXT_SCN_FUNCTION("START_JUNK_WORLD", _scene_nxtscn_start_junk_world);
-	NXT_SCN_FUNCTION("CONTINUE_JUNK_WORLD", _scene_nxtscn_continue_junk_world);
-	NXT_SCN_FUNCTION("START_JUNK_RINGS", _scene_nxtscn_start_junk_rings);
-	NXT_SCN_FUNCTION("SHOW_JUNK_WORLD_CRYSTAL", _scene_nxtscn_show_junk_world_crystal);
-	NXT_SCN_FUNCTION("START_JUNK_WORLD_TARGET_PRACTICE", _scene_nxtscn_start_junk_world_target_practice);
-	NXT_SCN_FUNCTION("CONTINUE_JUNK_WORLD_TARGET_PRACTICE", _scene_nxtscn_continue_junk_world_target_practice);
-	NXT_SCN_FUNCTION("ARE_ALL_WORLDS_DONE", _scene_nxtscn_are_all_worlds_done);
-	NXT_SCN_FUNCTION("START_PRACTICE_PIRATE_SHIP", _scene_nxtscn_start_practice_pirate_ship);
-	NXT_SCN_FUNCTION("MORE_PRACTICE_PIRATE_SHIP", _scene_nxtscn_more_practice_pirate_ship);
-	NXT_SCN_FUNCTION("PLAYER_WON", _scene_nxtscn_player_won);
+	NXT_SCN_FUNCTION("DEFAULT", sceneDefaultNxtscn);
+	NXT_SCN_FUNCTION("GET_CHEWED_OUT", sceneNxtscnGotChewedOut);
+	NXT_SCN_FUNCTION("RESTART_FROM_LAST", sceneNxtscnRestartFromLast);
+	NXT_SCN_FUNCTION("PLAYER_DIED", sceneNxtscnPlayerDied);
+	NXT_SCN_FUNCTION("MISC_ROOMS_1", sceneNxtscnMiscRooms1);
+	NXT_SCN_FUNCTION("PICK_DUNGEON_CLUE", sceneNxtscnPickDungeonClue);
+	NXT_SCN_FUNCTION("CONTINUE_DUNGEON_CLUE", sceneNxtscnContinueDungeonClue);
+	NXT_SCN_FUNCTION("START_MIDSHIP_RANDOM_SCENE", sceneNxtscnStartMidshipRandomScene);
+	NXT_SCN_FUNCTION("CONTINUE_MIDSHIP_RANDOM_SCENE", sceneNxtscnContinueMidshipRandomScene);
+	NXT_SCN_FUNCTION("SHOW_DEATH_GRIP_BEAM_COLOR", sceneNxtscnShowDeathGripBeamColor);
+	NXT_SCN_FUNCTION("SELECT_ASTEROIDS", sceneNxtscnSelectAsteroids);
+	NXT_SCN_FUNCTION("ASTEROIDS_DONE", sceneNxtscnAsteroidsDone);
+	NXT_SCN_FUNCTION("DO_FLYING_SKULLS", sceneNxtscnDoFlyingSkulls);
+	NXT_SCN_FUNCTION("DID_FLYING_SKULLS", sceneNxtscnDidFlyingSkulls);
+	NXT_SCN_FUNCTION("SHOW_WHICH_STAR_SPLITTER", sceneNxtscnShowWhichStartSplitter);
+	NXT_SCN_FUNCTION("GOTO_SELECTED_WORLD", sceneNxtscnGotoSelectedWorld);
+	NXT_SCN_FUNCTION("START_VOLCANO_POPUP", sceneNxtscnStartVolcanoPopup);
+	NXT_SCN_FUNCTION("CONTINUE_VOLCANO_POPUP", sceneNxtscnContinueVolcanoPopup);
+	NXT_SCN_FUNCTION("GIVE_FALINA_CLUE", sceneNxtscnGiveFalinaClue);
+	NXT_SCN_FUNCTION("CHECK_FALINAS_CLUES", sceneNxtscnCheckFalinaClues);
+	NXT_SCN_FUNCTION("SETUP_FALINA_TARGET_PRACTICE", sceneNxtscnSetupFalinaTargetPractice);
+	NXT_SCN_FUNCTION("CONTINUE_FALINA_TARGET_PRACTICE", sceneNxtscnContinueFalinaTargetPractice);
+	NXT_SCN_FUNCTION("START_DUNE_POPUP", sceneNxtscnStartDunePopup);
+	NXT_SCN_FUNCTION("CONTINUE_DUNE_POPUP", sceneNxtscnContinueDunePopup);
+	NXT_SCN_FUNCTION("POTT_OR_PAN_SHOOTS", sceneNxtscnPottOrPanShoots);
+	NXT_SCN_FUNCTION("SETUP_POTT_TARGET_PRACTICE", sceneNxtscnSetupPottTargetPractice);
+	NXT_SCN_FUNCTION("CONTINUE_POTT_TARGET_PRACTICE", sceneNxtscnContinuePottTargetPractice);
+	NXT_SCN_FUNCTION("START_DRAGONS_TEETH_POPUP", sceneNxtscnStartDragonsTeethPopup);
+	NXT_SCN_FUNCTION("CONTINUE_DRAGONS_TEETH_POPUP", sceneNxtscnContinueDragonsTeethPopup);
+	NXT_SCN_FUNCTION("GRIN_REAPER_CLUE", sceneNxtscnGrinReaperClue);
+	NXT_SCN_FUNCTION("START_GRIN_REAPER", sceneNxtscnStartGrinReaper);
+	NXT_SCN_FUNCTION("CONTINUE_GRIN_REAPER", sceneNxtscnContinueGrinReaper);
+	NXT_SCN_FUNCTION("GRIN_TARGET_PRACTICE", sceneNxtscnGrinTargetPractice);
+	NXT_SCN_FUNCTION("CONTINUE_GRIN_TARGET_PRACTICE", sceneNxtscnContinueGrinTargetPractice);
+	NXT_SCN_FUNCTION("START_JUNK_WORLD", sceneNxtscnStartJunkWorld);
+	NXT_SCN_FUNCTION("CONTINUE_JUNK_WORLD", sceneNxtscnContinueJunkWorld);
+	NXT_SCN_FUNCTION("START_JUNK_RINGS", sceneNxtscnStartJunkRings);
+	NXT_SCN_FUNCTION("SHOW_JUNK_WORLD_CRYSTAL", sceneNxtscnShowJunkWorldCrystal);
+	NXT_SCN_FUNCTION("START_JUNK_WORLD_TARGET_PRACTICE", sceneNxtscnStartJunkWorldTargetPractice);
+	NXT_SCN_FUNCTION("CONTINUE_JUNK_WORLD_TARGET_PRACTICE", sceneNxtscnContinueJunkWorldTargetPractice);
+	NXT_SCN_FUNCTION("ARE_ALL_WORLDS_DONE", sceneNxtscnAreAllWorldsDone);
+	NXT_SCN_FUNCTION("START_PRACTICE_PIRATE_SHIP", sceneNxtscnStartPracticePirateShip);
+	NXT_SCN_FUNCTION("MORE_PRACTICE_PIRATE_SHIP", sceneNxtscnMorePracticePirateShip);
+	NXT_SCN_FUNCTION("PLAYER_WON", sceneNxtscnPlayerWon);
 #undef NXT_SCN_FUNCTION
 
 #define MISSEDRECTS_FUNCTION(name, func) _sceneMissedRects[name] = new SPScriptFunctionScene(this, &GameSpacePirates::func);
-	MISSEDRECTS_FUNCTION("DEFAULT", _scene_missedrects_default);
-	MISSEDRECTS_FUNCTION("MISSED_PIRATE_SHIP", _scene_missedrects_missed_pirate_ship);
+	MISSEDRECTS_FUNCTION("DEFAULT", sceneMissedRectsDefault);
+	MISSEDRECTS_FUNCTION("MISSED_PIRATE_SHIP", sceneMissedRectsMissedPirateShip);
 #undef MISSEDRECTS_FUNCTION
 
-	_sceneShowMsg["DEFAULT"] = new SPScriptFunctionScene(this, &GameSpacePirates::_scene_sm_donothing);
-	_sceneWepDwn["DEFAULT"] = new SPScriptFunctionScene(this, &GameSpacePirates::_scene_default_wepdwn);
-	_sceneScnScr["DEFAULT"] = new SPScriptFunctionScene(this, &GameSpacePirates::_scene_default_score);
-	_sceneNxtFrm["DEFAULT"] = new SPScriptFunctionScene(this, &GameSpacePirates::_scene_nxtfrm);
+	_sceneShowMsg["DEFAULT"] = new SPScriptFunctionScene(this, &GameSpacePirates::sceneSmDonothing);
+	_sceneWepDwn["DEFAULT"] = new SPScriptFunctionScene(this, &GameSpacePirates::sceneDefaultWepdwn);
+	_sceneScnScr["DEFAULT"] = new SPScriptFunctionScene(this, &GameSpacePirates::sceneDefaultScore);
+	_sceneNxtFrm["DEFAULT"] = new SPScriptFunctionScene(this, &GameSpacePirates::sceneNxtfrm);
 }
 
 void GameSpacePirates::verifyScriptFunctions() {
 	Common::Array<Scene *> *scenes = _sceneInfo->getScenes();
 	for (size_t i = 0; i < scenes->size(); i++) {
 		Scene *scene = (*scenes)[i];
-		getScriptFunctionScene(PREOP, scene->preop);
-		getScriptFunctionScene(SHOWMSG, scene->scnmsg);
-		getScriptFunctionScene(INSOP, scene->insop);
-		getScriptFunctionScene(WEPDWN, scene->wepdwn);
-		getScriptFunctionScene(SCNSCR, scene->scnscr);
-		getScriptFunctionScene(NXTFRM, scene->nxtfrm);
-		getScriptFunctionScene(NXTSCN, scene->nxtscn);
-		getScriptFunctionScene(MISSEDRECTS, scene->missedRects);
-		for (size_t j = 0; j < scene->zones.size(); j++) {
-			Zone *zone = scene->zones[j];
-			for (size_t k = 0; k < zone->rects.size(); k++) {
-				getScriptFunctionRectHit(zone->rects[k].rectHit);
+		getScriptFunctionScene(PREOP, scene->_preop);
+		getScriptFunctionScene(SHOWMSG, scene->_scnmsg);
+		getScriptFunctionScene(INSOP, scene->_insop);
+		getScriptFunctionScene(WEPDWN, scene->_wepdwn);
+		getScriptFunctionScene(SCNSCR, scene->_scnscr);
+		getScriptFunctionScene(NXTFRM, scene->_nxtfrm);
+		getScriptFunctionScene(NXTSCN, scene->_nxtscn);
+		getScriptFunctionScene(MISSEDRECTS, scene->_missedRects);
+		for (size_t j = 0; j < scene->_zones.size(); j++) {
+			Zone *zone = scene->_zones[j];
+			for (size_t k = 0; k < zone->_rects.size(); k++) {
+				getScriptFunctionRectHit(zone->_rects[k]._rectHit);
 			}
 		}
 	}
 }
 
 SPScriptFunctionRect GameSpacePirates::getScriptFunctionRectHit(Common::String name) {
-	SPScriptFunctionRectMap::iterator it = _rectHitFuncs.find(name);
+	auto it = _rectHitFuncs.find(name);
 	if (it != _rectHitFuncs.end()) {
 		return (*(*it)._value);
 	} else {
-		error("Could not find rectHit function: %s", name.c_str());
+		error("GameSpacePirates::getScriptFunctionRectHit(): Could not find rectHit function: %s", name.c_str());
 	}
 }
 
@@ -287,7 +288,7 @@ SPScriptFunctionScene GameSpacePirates::getScriptFunctionScene(SceneFuncType typ
 		functionMap = &_sceneMissedRects;
 		break;
 	default:
-		error("Unkown scene script type: %u", type);
+		error("GameSpacePirates::getScriptFunctionScene(): Unkown scene script type: %u", type);
 		break;
 	}
 	SPScriptFunctionSceneMap::iterator it;
@@ -295,7 +296,7 @@ SPScriptFunctionScene GameSpacePirates::getScriptFunctionScene(SceneFuncType typ
 	if (it != functionMap->end()) {
 		return (*(*it)._value);
 	} else {
-		error("Could not find scene type %u function: %s", type, name.c_str());
+		error("GameSpacePirates::getScriptFunctionScene(): Could not find scene type %u function: %s", type, name.c_str());
 	}
 }
 
@@ -311,69 +312,66 @@ void GameSpacePirates::callScriptFunctionScene(SceneFuncType type, Common::Strin
 
 Common::Error GameSpacePirates::run() {
 	init();
-	_NewGame();
-	_cur_scene = _startscene;
+	newGame();
+	_curScene = _startScene;
 	Common::String oldscene;
 	while (!_vm->shouldQuit()) {
-		oldscene = _cur_scene;
-		_SetFrame();
+		oldscene = _curScene;
 		_fired = false;
-		Scene *scene = _sceneInfo->findScene(_cur_scene);
+		Scene *scene = _sceneInfo->findScene(_curScene);
 		if (!loadScene(scene)) {
-			error("Cannot find scene %s in libfile", scene->name.c_str());
+			error("GameSpacePirates::run(): Cannot find scene %s in libfile", scene->_name.c_str());
 		}
-		_next_scene_found = false;
+		_nextSceneFound = false;
 		Audio::PacketizedAudioStream *audioStream = _videoDecoder->getAudioStream();
 		g_system->getMixer()->stopHandle(_sceneAudioHandle);
 		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_sceneAudioHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 		_paletteDirty = true;
-		_nextFrameTime = _GetMsTime() + 100;
-		callScriptFunctionScene(PREOP, scene->preop, scene);
-		_currentFrame = _GetFrame(scene);
-		while (_currentFrame <= scene->endFrame && _cur_scene == oldscene && !_vm->shouldQuit()) {
-			_UpdateMouse();
-			callScriptFunctionScene(SHOWMSG, scene->scnmsg, scene);
-			callScriptFunctionScene(INSOP, scene->insop, scene);
-			_holster = _WeaponDown();
+		_nextFrameTime = getMsTime() + 100;
+		callScriptFunctionScene(PREOP, scene->_preop, scene);
+		_currentFrame = getFrame(scene);
+		while (_currentFrame <= scene->_endFrame && _curScene == oldscene && !_vm->shouldQuit()) {
+			updateMouse();
+			callScriptFunctionScene(SHOWMSG, scene->_scnmsg, scene);
+			callScriptFunctionScene(INSOP, scene->_insop, scene);
+			_holster = weaponDown();
 			if (_holster) {
-				callScriptFunctionScene(WEPDWN, scene->wepdwn, scene);
+				callScriptFunctionScene(WEPDWN, scene->_wepdwn, scene);
 			}
 			Common::Point firedCoords;
-			if (__Fired(&firedCoords)) {
+			if (fired(&firedCoords)) {
 				if (!_holster) {
-					Rect *hitGlobalRect = _CheckZone(_menuzone, &firedCoords);
+					Rect *hitGlobalRect = checkZone(_menuzone, &firedCoords);
 					if (hitGlobalRect != nullptr) {
-						callScriptFunctionRectHit(hitGlobalRect->rectHit, hitGlobalRect);
-					} else {
-						if (_shots > 0) {
-							if (!_debug_unlimitedAmmo) {
-								_shots--;
-							}
-							_DisplayShotFiredImage(&firedCoords);
-							_DoShot();
-							Rect *hitRect = nullptr;
-							Zone *hitSceneZone = _CheckZonesV2(scene, hitRect, &firedCoords);
-							if (hitSceneZone != nullptr) {
-								callScriptFunctionRectHit(hitRect->rectHit, hitRect);
-							} else {
-								callScriptFunctionScene(MISSEDRECTS, scene->missedRects, scene);
-							}
-						} else {
-							_PlaySound(_emptySound);
+						callScriptFunctionRectHit(hitGlobalRect->_rectHit, hitGlobalRect);
+					} else if (_shots > 0) {
+						if (!_debug_unlimitedAmmo) {
+							_shots--;
 						}
+						displayShotFiredImage(&firedCoords);
+						doShot();
+						Rect *hitRect = nullptr;
+						Zone *hitSceneZone = checkZonesV2(scene, hitRect, &firedCoords);
+						if (hitSceneZone != nullptr) {
+							callScriptFunctionRectHit(hitRect->_rectHit, hitRect);
+						} else {
+							callScriptFunctionScene(MISSEDRECTS, scene->_missedRects, scene);
+						}
+					} else {
+						playSound(_emptySound);
 					}
 				}
 			}
-			if (_next_scene_found && _cur_scene == oldscene) {
-				callScriptFunctionScene(NXTSCN, scene->nxtscn, scene);
+			if (_nextSceneFound && _curScene == oldscene) {
+				callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
 			}
-			if (_cur_scene == oldscene) {
-				callScriptFunctionScene(NXTFRM, scene->nxtfrm, scene);
+			if (_curScene == oldscene) {
+				callScriptFunctionScene(NXTFRM, scene->_nxtfrm, scene);
 			}
-			_DisplayLivesLeft();
-			_DisplayScores();
-			_DisplayShotsLeft();
-			_MoveMouse();
+			displayLivesLeft();
+			displayScores();
+			displayShotsLeft();
+			moveMouse();
 			if (_pauseTime > 0) {
 				g_system->getMixer()->pauseHandle(_sceneAudioHandle, true);
 			} else {
@@ -382,13 +380,14 @@ Common::Error GameSpacePirates::run() {
 			if (_videoDecoder->getCurrentFrame() == 0) {
 				_videoDecoder->getNextFrame();
 			}
-			int32 remainingMillis = _nextFrameTime - _GetMsTime();
+			updateScreen();
+			int32 remainingMillis = _nextFrameTime - getMsTime();
 			if (remainingMillis < 10) {
 				if (_videoDecoder->getCurrentFrame() > 0) {
 					_videoDecoder->getNextFrame();
 				}
-				remainingMillis = _nextFrameTime - _GetMsTime();
-				_nextFrameTime = _GetMsTime() + (remainingMillis > 0 ? remainingMillis : 0) + 100;
+				remainingMillis = _nextFrameTime - getMsTime();
+				_nextFrameTime = getMsTime() + (remainingMillis > 0 ? remainingMillis : 0) + 100;
 			}
 			if (remainingMillis > 0) {
 				if (remainingMillis > 15) {
@@ -396,103 +395,100 @@ Common::Error GameSpacePirates::run() {
 				}
 				g_system->delayMillis(remainingMillis);
 			}
-			_currentFrame = _GetFrame(scene);
-			updateScreen();
+			_currentFrame = getFrame(scene);
 		}
 		// frame limit reached or scene changed, prepare for next scene
 		_hadPause = false;
 		_pauseTime = 0;
-		if (_cur_scene == oldscene) {
-			callScriptFunctionScene(NXTSCN, scene->nxtscn, scene);
+		if (_curScene == oldscene) {
+			callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
 		}
-		if (_cur_scene == "") {
+		if (_curScene == "") {
 			_vm->quitGame();
 		}
 	}
 	return Common::kNoError;
 }
 
-void GameSpacePirates::_NewGame() {
+void GameSpacePirates::newGame() {
 	_holster = false;
 	_shots = 10;
 }
 
-void GameSpacePirates::_ResetParams() {
-	if (_game_loaded) {
+void GameSpacePirates::resetParams() {
+	if (_gameLoaded) {
 		_oldDifficulty = _difficulty;
-		_lives = _lives_loaded;
-		_shots = _shots_loaded;
-		_score = _score_loaded;
-		_difficulty = _difficulty_loaded;
-		_ChangeDifficulty(_oldDifficulty);
+		_lives = _livesLoaded;
+		_shots = _shotsLoaded;
+		_score = _scoreLoaded;
+		_difficulty = _difficultyLoaded;
+		changeDifficulty(_oldDifficulty);
 	} else {
-		_ChangeDifficulty(0);
-		_random_count_asteroids = 0;
-		_scene_before_flying_skulls = 0;
-		_misc_rooms_count = 0;
-		_player_died = 0;
-		_got_to = 0;
-		_selected_a_world = 0;
-		_selected_world_start = 0;
-		_current_world = -1;
-		_world_got_to[0] = 0x91;
-		_world_got_to[1] = 0x0103;
-		_world_got_to[2] = 0xCE;
-		_world_got_to[3] = 0x72;
-		_world_done[0] = false;
-		_world_done[1] = false;
-		_world_done[2] = false;
-		_world_done[3] = false;
-		_crystal_state = 0;
-		_crystals_shot = 1;
-		_last_extra_life_score = 0;
+		changeDifficulty(0);
+		_randomCountAsteroids = 0;
+		_sceneBeforeFlyingSkulls = 0;
+		_miscRoomsCount = 0;
+		_playerDied = 0;
+		_gotTo = 0;
+		_selectedAWorld = 0;
+		_selectedWorldStart = 0;
+		_currentWorld = -1;
+		_worldGotTo[0] = 0x91;
+		_worldGotTo[1] = 0x0103;
+		_worldGotTo[2] = 0xCE;
+		_worldGotTo[3] = 0x72;
+		_worldDone[0] = false;
+		_worldDone[1] = false;
+		_worldDone[2] = false;
+		_worldDone[3] = false;
+		_crystalState = 0;
+		_crystalsShot = 1;
+		_lastExtraLifeScore = 0;
 	}
 }
 
-void GameSpacePirates::_DoMenu() {
-	uint32 startTime = _GetMsTime();
-	_RestoreCursor();
-	_DoCursor();
+void GameSpacePirates::doMenu() {
+	uint32 startTime = getMsTime();
+	updateCursor();
 	_inMenu = true;
-	_MoveMouse();
+	moveMouse();
 	g_system->getMixer()->pauseHandle(_sceneAudioHandle, true);
 	_screen->copyRectToSurface(_background->getBasePtr(_videoPosX, _videoPosY), _background->pitch, _videoPosX, _videoPosY, _videoDecoder->getWidth(), _videoDecoder->getHeight());
-	_ShowDifficulty(_difficulty, false);
+	showDifficulty(_difficulty, false);
 	while (_inMenu && !_vm->shouldQuit()) {
 		Common::Point firedCoords;
-		if (__Fired(&firedCoords)) {
-			Rect *hitMenuRect = _CheckZone(_submenzone, &firedCoords);
+		if (fired(&firedCoords)) {
+			Rect *hitMenuRect = checkZone(_submenzone, &firedCoords);
 			if (hitMenuRect != nullptr) {
-				callScriptFunctionRectHit(hitMenuRect->rectHit, hitMenuRect);
+				callScriptFunctionRectHit(hitMenuRect->_rectHit, hitMenuRect);
 			}
 		}
 		if (_difficulty != _oldDifficulty) {
-			_ChangeDifficulty(_difficulty);
+			changeDifficulty(_difficulty);
 		}
-		g_system->delayMillis(15);
 		updateScreen();
+		g_system->delayMillis(15);
 	}
-	_RestoreCursor();
-	_DoCursor();
+	updateCursor();
 	g_system->getMixer()->pauseHandle(_sceneAudioHandle, false);
 	if (_hadPause) {
-		unsigned long endTime = _GetMsTime();
-		unsigned long timeDiff = endTime - startTime;
+		uint32 endTime = getMsTime();
+		uint32 timeDiff = endTime - startTime;
 		_pauseTime += timeDiff;
 		_nextFrameTime += timeDiff;
 	}
 }
 
-void GameSpacePirates::_ChangeDifficulty(uint8 newDifficulty) {
+void GameSpacePirates::changeDifficulty(uint8 newDifficulty) {
 	if (newDifficulty == _oldDifficulty) {
 		return;
 	}
-	_ShowDifficulty(newDifficulty, true);
+	showDifficulty(newDifficulty, true);
 	_oldDifficulty = newDifficulty;
 	_difficulty = newDifficulty;
 }
 
-void GameSpacePirates::_ShowDifficulty(uint8 newDifficulty, bool updateCursor) {
+void GameSpacePirates::showDifficulty(uint8 newDifficulty, bool cursor) {
 	// reset menu screen
 	_screen->copyRectToSurface(_background->getBasePtr(_videoPosX, _videoPosY), _background->pitch, _videoPosX, _videoPosY, _videoDecoder->getWidth(), _videoDecoder->getHeight());
 	uint16 posY = 0x31;
@@ -502,18 +498,17 @@ void GameSpacePirates::_ShowDifficulty(uint8 newDifficulty, bool updateCursor) {
 		posY = 0x86;
 	}
 	AlgGraphics::drawImageCentered(_screen, &_difficultyIcon, 0x0111, posY);
-	if (updateCursor) {
-		_DoCursor();
+	if (cursor) {
+		updateCursor();
 	}
 }
 
-void GameSpacePirates::_DoCursor() {
-	_UpdateMouse();
+void GameSpacePirates::updateCursor() {
+	updateMouse();
 }
 
-void GameSpacePirates::_UpdateMouse() {
+void GameSpacePirates::updateMouse() {
 	if (_oldWhichGun != _whichGun) {
-		Graphics::PixelFormat pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 		Graphics::Surface *cursor = &(*_gun)[_whichGun];
 		CursorMan.popAllCursors();
 		uint16 hotspotX = (cursor->w / 2) + 8;
@@ -525,13 +520,13 @@ void GameSpacePirates::_UpdateMouse() {
 			cursor->drawLine(0, hotspotY, cursor->w, hotspotY, 1);
 			cursor->drawLine(hotspotX, 0, hotspotX, cursor->h, 1);
 		}
-		CursorMan.pushCursor(cursor->getPixels(), cursor->w, cursor->h, hotspotX, hotspotY, 0, false, &pixelFormat);
+		CursorMan.pushCursor(cursor->getPixels(), cursor->w, cursor->h, hotspotX, hotspotY, 0);
 		CursorMan.showMouse(true);
 		_oldWhichGun = _whichGun;
 	}
 }
 
-void GameSpacePirates::_MoveMouse() {
+void GameSpacePirates::moveMouse() {
 	if (_inMenu) {
 		_whichGun = 2; // in menu cursor
 	} else {
@@ -557,10 +552,10 @@ void GameSpacePirates::_MoveMouse() {
 			_whichGun = 0; // regular gun
 		}
 	}
-	_UpdateMouse();
+	updateMouse();
 }
 
-void GameSpacePirates::_DisplayLivesLeft() {
+void GameSpacePirates::displayLivesLeft() {
 	if (_lives == _oldLives) {
 		return;
 	}
@@ -568,12 +563,12 @@ void GameSpacePirates::_DisplayLivesLeft() {
 	int16 posY = 0x73;
 	int16 posX = 0x0130;
 	int16 margin = 14;
-	if(_isDemo) {
+	if (_isDemo) {
 		posY = 0x68;
 		posX = 0x012F;
 		margin = 13;
 	}
-	for (uint8 i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		AlgGraphics::drawImage(_screen, &_deadIcon, posX, posY + (i * margin));
 	}
 	if (_lives > 2) {
@@ -588,7 +583,7 @@ void GameSpacePirates::_DisplayLivesLeft() {
 	_oldLives = _lives;
 }
 
-void GameSpacePirates::_DisplayScores() {
+void GameSpacePirates::displayScores() {
 	if (_score == _oldScore) {
 		return;
 	}
@@ -602,38 +597,38 @@ void GameSpacePirates::_DisplayScores() {
 	_oldScore = _score;
 }
 
-void GameSpacePirates::_DisplayShotsLeft() {
+void GameSpacePirates::displayShotsLeft() {
 	if (_shots == _oldShots) {
 		return;
 	}
 	uint16 posX = 0xAA;
-	for (uint8 i = 0; i < 10; i++) {
+	for (int i = 0; i < 10; i++) {
 		AlgGraphics::drawImage(_screen, &_emptyIcon, posX, 0xBF);
 		posX += 8;
 	}
 	posX = 0xAA;
-	for (uint8 i = 0; i < _shots; i++) {
+	for (int i = 0; i < _shots; i++) {
 		AlgGraphics::drawImage(_screen, &_shotIcon, posX, 0xBF);
 		posX += 8;
 	}
 	_oldShots = _shots;
 }
 
-bool GameSpacePirates::_WeaponDown() {
+bool GameSpacePirates::weaponDown() {
 	if (_rightDown && _mousePos.y >= 0xAA && _mousePos.x >= 0x113) {
 		return true;
 	}
 	return false;
 }
 
-bool GameSpacePirates::_SaveState() {
-	Scene *scene = _sceneInfo->findScene(_cur_scene);
-	uint16 sceneNum = _SceneToNumber(scene);
+bool GameSpacePirates::saveState() {
+	Scene *scene = _sceneInfo->findScene(_curScene);
+	uint16 sceneNum = sceneToNumber(scene);
 	if ((sceneNum < 0xAC || sceneNum > 0xB9) && sceneNum != 0x6F) {
 		Common::OutSaveFile *outSaveFile;
 		Common::String saveFileName = _vm->getSaveStateName(0);
 		if (!(outSaveFile = g_system->getSavefileManager()->openForSaving(saveFileName))) {
-			warning("Can't create file '%s', game not saved", saveFileName.c_str());
+			warning("GameSpacePirates::saveState(): Can't create file '%s', game not saved", saveFileName.c_str());
 			return false;
 		}
 		outSaveFile->writeUint32BE(MKTAG('A', 'L', 'G', 'S')); // header
@@ -643,33 +638,33 @@ bool GameSpacePirates::_SaveState() {
 		outSaveFile->writeUint32LE(_score);
 		outSaveFile->writeByte(_difficulty);
 		outSaveFile->writeUint16LE(sceneNum);
-		for (uint8 i = 0; i < 9; i++) {
-			outSaveFile->writeUint16LE(_random_scenes_values[i]);
-			outSaveFile->writeByte(_random_scenes_used[i]);
+		for (int i = 0; i < 9; i++) {
+			outSaveFile->writeUint16LE(_randomScenesValues[i]);
+			outSaveFile->writeByte(_randomScenesUsed[i]);
 		}
-		for (uint8 i = 0; i < 4; i++) {
-			outSaveFile->writeByte(_world_done[i]);
-			outSaveFile->writeUint16LE(_world_got_to[i]);
+		for (int i = 0; i < 4; i++) {
+			outSaveFile->writeByte(_worldDone[i]);
+			outSaveFile->writeUint16LE(_worldGotTo[i]);
 		}
-		outSaveFile->writeByte(_max_random);
-		outSaveFile->writeByte(_random_count_asteroids);
-		outSaveFile->writeUint16LE(_scene_before_flying_skulls);
-		outSaveFile->writeByte(_misc_rooms_count);
-		outSaveFile->writeByte(_random_count_midship);
-		outSaveFile->writeByte(_random_count);
-		outSaveFile->writeUint16LE(_got_to);
-		outSaveFile->writeByte(_player_died);
+		outSaveFile->writeByte(_maxRandom);
+		outSaveFile->writeByte(_randomCountAsteroids);
+		outSaveFile->writeUint16LE(_sceneBeforeFlyingSkulls);
+		outSaveFile->writeByte(_miscRoomsCount);
+		outSaveFile->writeByte(_randomCountMidship);
+		outSaveFile->writeByte(_randomCount);
+		outSaveFile->writeUint16LE(_gotTo);
+		outSaveFile->writeByte(_playerDied);
 		outSaveFile->writeUint16LE(_clue);
-		outSaveFile->writeByte(_shot_color);
-		outSaveFile->writeByte(_shot_direction);
-		outSaveFile->writeUint16LE(_picked_start_splitter);
-		outSaveFile->writeSByte(_current_world);
-		outSaveFile->writeByte(_selected_a_world);
-		outSaveFile->writeUint16LE(_selected_world_start);
-		outSaveFile->writeByte(_crystal_state);
-		outSaveFile->writeByte(_shot_grin_reaper_count);
-		outSaveFile->writeByte(_crystals_shot);
-		outSaveFile->writeUint32LE(_last_extra_life_score);
+		outSaveFile->writeByte(_shotColor);
+		outSaveFile->writeByte(_shotDirection);
+		outSaveFile->writeUint16LE(_pickedStartSplitter);
+		outSaveFile->writeSByte(_currentWorld);
+		outSaveFile->writeByte(_selectedAWorld);
+		outSaveFile->writeUint16LE(_selectedWorldStart);
+		outSaveFile->writeByte(_crystalState);
+		outSaveFile->writeByte(_shotGrinReaperCount);
+		outSaveFile->writeByte(_crystalsShot);
+		outSaveFile->writeUint32LE(_lastExtraLifeScore);
 		outSaveFile->finalize();
 		delete outSaveFile;
 		return true;
@@ -677,16 +672,16 @@ bool GameSpacePirates::_SaveState() {
 	return false;
 }
 
-bool GameSpacePirates::_LoadState() {
+bool GameSpacePirates::loadState() {
 	Common::InSaveFile *inSaveFile;
 	Common::String saveFileName = _vm->getSaveStateName(0);
 	if (!(inSaveFile = g_system->getSavefileManager()->openForLoading(saveFileName))) {
-		debug("Can't load file '%s', game not loaded", saveFileName.c_str());
+		debug("GameSpacePirates::loadState(): Can't load file '%s', game not loaded", saveFileName.c_str());
 		return false;
 	}
 	uint32 header = inSaveFile->readUint32BE();
 	if (header != MKTAG('A', 'L', 'G', 'S')) {
-		warning("Unkown save file, header: %d", header);
+		warning("GameSpacePirates::loadState(): Unkown save file, header: %s", tag2str(header));
 		return false;
 	}
 	inSaveFile->skip(1); // version, unused for now
@@ -695,58 +690,58 @@ bool GameSpacePirates::_LoadState() {
 	_score = inSaveFile->readUint32LE();
 	_difficulty = inSaveFile->readByte();
 	uint16 sceneNum = inSaveFile->readUint16LE();
-	for (uint8 i = 0; i < 9; i++) {
-		_random_scenes_values[i] = inSaveFile->readUint16LE();
-		_random_scenes_used[i] = inSaveFile->readByte();
+	for (int i = 0; i < 9; i++) {
+		_randomScenesValues[i] = inSaveFile->readUint16LE();
+		_randomScenesUsed[i] = inSaveFile->readByte();
 	}
-	for (uint8 i = 0; i < 4; i++) {
-		_world_done[i] = inSaveFile->readByte();
-		_world_got_to[i] = inSaveFile->readUint16LE();
+	for (int i = 0; i < 4; i++) {
+		_worldDone[i] = inSaveFile->readByte();
+		_worldGotTo[i] = inSaveFile->readUint16LE();
 	}
-	_max_random = inSaveFile->readByte();
-	_random_count_asteroids = inSaveFile->readByte();
-	_scene_before_flying_skulls = inSaveFile->readUint16LE();
-	_misc_rooms_count = inSaveFile->readByte();
-	_random_count_midship = inSaveFile->readByte();
-	_random_count = inSaveFile->readByte();
-	_got_to = inSaveFile->readUint16LE();
-	_player_died = inSaveFile->readByte();
+	_maxRandom = inSaveFile->readByte();
+	_randomCountAsteroids = inSaveFile->readByte();
+	_sceneBeforeFlyingSkulls = inSaveFile->readUint16LE();
+	_miscRoomsCount = inSaveFile->readByte();
+	_randomCountMidship = inSaveFile->readByte();
+	_randomCount = inSaveFile->readByte();
+	_gotTo = inSaveFile->readUint16LE();
+	_playerDied = inSaveFile->readByte();
 	_clue = inSaveFile->readUint16LE();
-	_shot_color = inSaveFile->readByte();
-	_shot_direction = inSaveFile->readByte();
-	_picked_start_splitter = inSaveFile->readUint16LE();
-	_current_world = inSaveFile->readSByte();
-	_selected_a_world = inSaveFile->readByte();
-	_selected_world_start = inSaveFile->readUint16LE();
-	_crystal_state = inSaveFile->readByte();
-	_shot_grin_reaper_count = inSaveFile->readByte();
-	_crystals_shot = inSaveFile->readByte();
-	_last_extra_life_score = inSaveFile->readUint32LE();
+	_shotColor = inSaveFile->readByte();
+	_shotDirection = inSaveFile->readByte();
+	_pickedStartSplitter = inSaveFile->readUint16LE();
+	_currentWorld = inSaveFile->readSByte();
+	_selectedAWorld = inSaveFile->readByte();
+	_selectedWorldStart = inSaveFile->readUint16LE();
+	_crystalState = inSaveFile->readByte();
+	_shotGrinReaperCount = inSaveFile->readByte();
+	_crystalsShot = inSaveFile->readByte();
+	_lastExtraLifeScore = inSaveFile->readUint32LE();
 	delete inSaveFile;
-	_game_loaded = true;
+	_gameLoaded = true;
 	_gameInProgress = true;
-	_lives_loaded = _lives;
-	_shots_loaded = _shots;
-	_score_loaded = _score;
-	_difficulty_loaded = _difficulty;
-	_cur_scene = Common::String::format("scene%d", sceneNum);
-	_ChangeDifficulty(_difficulty);
-	if (!(_world_done[0] && _world_done[1] && _world_done[2] && _world_done[3]) && _current_world != -1) {
-		_cur_scene = "scene110";
+	_livesLoaded = _lives;
+	_shotsLoaded = _shots;
+	_scoreLoaded = _score;
+	_difficultyLoaded = _difficulty;
+	_curScene = Common::String::format("scene%d", sceneNum);
+	changeDifficulty(_difficulty);
+	if (!(_worldDone[0] && _worldDone[1] && _worldDone[2] && _worldDone[3]) && _currentWorld != -1) {
+		_curScene = "scene110";
 	}
 	return true;
 }
 
 // misc game functions
-void GameSpacePirates::_PlayErrorSound() {
-	_PlaySound(_skullSound);
+void GameSpacePirates::playErrorSound() {
+	playSound(_skullSound);
 }
 
-void GameSpacePirates::_DisplayShotFiredImage() {
-	_DisplayShotFiredImage(&_mousePos);
+void GameSpacePirates::displayShotFiredImage() {
+	displayShotFiredImage(&_mousePos);
 }
 
-void GameSpacePirates::_DisplayShotFiredImage(Common::Point *point) {
+void GameSpacePirates::displayShotFiredImage(Common::Point *point) {
 	if (point->x >= _videoPosX && point->x <= (_videoPosX + _videoDecoder->getWidth()) && point->y >= _videoPosY && point->y <= (_videoPosY + _videoDecoder->getHeight())) {
 		uint16 targetX = point->x - _videoPosX - 4;
 		uint16 targetY = point->y - _videoPosY - 4;
@@ -754,7 +749,7 @@ void GameSpacePirates::_DisplayShotFiredImage(Common::Point *point) {
 	}
 }
 
-void GameSpacePirates::_DisplayShotLine(uint16 startX, uint16 startY, uint16 endX, uint16 endY) {
+void GameSpacePirates::displayShotLine(uint16 startX, uint16 startY, uint16 endX, uint16 endY) {
 	int16 currentX = startX;
 	int16 currentY = startY;
 	int16 deltaX = endX - startX;
@@ -779,7 +774,7 @@ void GameSpacePirates::_DisplayShotLine(uint16 startX, uint16 startY, uint16 end
 	for (int16 count = 0; count <= steep; count++) {
 		if (count % 10 == 0) {
 			Common::Point position = Common::Point(currentX, currentY);
-			_DisplayShotFiredImage(&position);
+			displayShotFiredImage(&position);
 		}
 		accum += deltaX;
 		error += deltaY;
@@ -794,577 +789,577 @@ void GameSpacePirates::_DisplayShotLine(uint16 startX, uint16 startY, uint16 end
 	}
 }
 
-void GameSpacePirates::_DisplayMultipleShotLines() {
-	_DisplayShotLine(0x73, 0x37, _mousePos.x, _mousePos.y);
-	_DisplayShotLine(0x20, 0x9B, _mousePos.x, _mousePos.y);
-	_DisplayShotLine(0x73, 0xFB, _mousePos.x, _mousePos.y);
+void GameSpacePirates::displayMultipleShotLines() {
+	displayShotLine(0x73, 0x37, _mousePos.x, _mousePos.y);
+	displayShotLine(0x20, 0x9B, _mousePos.x, _mousePos.y);
+	displayShotLine(0x73, 0xFB, _mousePos.x, _mousePos.y);
 }
 
-void GameSpacePirates::_EnableVideoFadeIn() {
+void GameSpacePirates::enableVideoFadeIn() {
 	// TODO implement
 }
 
-uint16 GameSpacePirates::_SceneToNumber(Scene *scene) {
-	return atoi(scene->name.substr(5).c_str());
+uint16 GameSpacePirates::sceneToNumber(Scene *scene) {
+	return atoi(scene->_name.substr(5).c_str());
 }
 
-uint16 GameSpacePirates::_RandomUnusedScene(uint8 max) {
+uint16 GameSpacePirates::randomUnusedScene(uint8 max) {
 	bool found = 0;
-	uint8 random = 0;
-	for (uint8 i = 0; i < max && !found; i++) {
-		random = _rnd->getRandomNumber(max - 1);
-		if (_random_scenes_used[random] == 0) {
+	uint8 randomNum = 0;
+	for (int i = 0; i < max && !found; i++) {
+		randomNum = _rnd->getRandomNumber(max - 1);
+		if (_randomScenesUsed[randomNum] == 0) {
 			found = true;
 		}
 	}
 	if (!found) {
-		for (uint8 i = 0; i < max && !found; i++) {
-			if (_random_scenes_used[i] == 0) {
+		for (int i = 0; i < max && !found; i++) {
+			if (_randomScenesUsed[i] == 0) {
 				found = true;
-				random = i;
+				randomNum = i;
 				break;
 			}
 		}
 	}
-	_random_scenes_used[random] = 1;
-	return _random_scenes_values[random];
+	_randomScenesUsed[randomNum] = 1;
+	return _randomScenesValues[randomNum];
 }
 
-uint16 GameSpacePirates::_RandomNumberInRange(uint16 min, uint16 max) {
-	uint16 random;
+uint16 GameSpacePirates::randomNumberInRange(uint16 min, uint16 max) {
+	uint16 randomNum = 0;
 	do {
-		random = _rnd->getRandomNumberRng(min, max);
-	} while (random == _random_picked);
-	_random_picked = random;
-	return random;
+		randomNum = _rnd->getRandomNumberRng(min, max);
+	} while (randomNum == _randomPicked);
+	_randomPicked = randomNum;
+	return randomNum;
 }
 
-uint16 GameSpacePirates::_PickCrystalScene(uint16 scene1, uint16 scene2, uint16 scene3) {
+uint16 GameSpacePirates::pickCrystalScene(uint16 scene1, uint16 scene2, uint16 scene3) {
 	uint16 picked = 0;
-	if (_crystal_state == 7) {
+	if (_crystalState == 7) {
 		picked = 110;
 	} else {
-		if ((_crystal_state & 1) == 0) {
+		if ((_crystalState & 1) == 0) {
 			picked = scene1;
-			_crystal_state |= 1;
-		} else if ((_crystal_state & 2) == 0) {
+			_crystalState |= 1;
+		} else if ((_crystalState & 2) == 0) {
 			picked = scene2;
-			_crystal_state |= 2;
-		} else if ((_crystal_state & 4) == 0) {
+			_crystalState |= 2;
+		} else if ((_crystalState & 4) == 0) {
 			picked = scene3;
-			_crystal_state |= 4;
+			_crystalState |= 4;
 		}
 	}
 	return picked;
 }
 
 // Script functions: RectHit
-void GameSpacePirates::_rect_shotmenu(Rect *rect) {
-	_DoMenu();
+void GameSpacePirates::rectShotMenu(Rect *rect) {
+	doMenu();
 }
 
-void GameSpacePirates::_rect_save(Rect *rect) {
-	if (_SaveState()) {
-		_DoSaveSound();
+void GameSpacePirates::rectSave(Rect *rect) {
+	if (saveState()) {
+		doSaveSound();
 	}
 }
 
-void GameSpacePirates::_rect_load(Rect *rect) {
-	if (_LoadState()) {
-		_DoLoadSound();
+void GameSpacePirates::rectLoad(Rect *rect) {
+	if (loadState()) {
+		doLoadSound();
 	}
 }
 
-void GameSpacePirates::_rect_continue(Rect *rect) {
+void GameSpacePirates::rectContinue(Rect *rect) {
 	_inMenu = false;
 	_fired = false;
 }
 
-void GameSpacePirates::_rect_start(Rect *rect) {
-	_ChangeDifficulty(0);
-	_game_loaded = false;
+void GameSpacePirates::rectStart(Rect *rect) {
+	changeDifficulty(0);
+	_gameLoaded = false;
 	_inMenu = false;
 	_fired = false;
 	_gameInProgress = true;
-	_cur_scene = _isDemo ? "scene62" : "scene187";
-	_ResetParams();
-	_NewGame();
+	_curScene = _isDemo ? "scene62" : "scene187";
+	resetParams();
+	newGame();
 }
 
-void GameSpacePirates::_rect_easy(Rect *rect) {
-	_DoDiffSound(1);
+void GameSpacePirates::rectEasy(Rect *rect) {
+	doDiffSound(1);
 	_difficulty = 0;
 }
 
-void GameSpacePirates::_rect_average(Rect *rect) {
-	_DoDiffSound(2);
+void GameSpacePirates::rectAverage(Rect *rect) {
+	doDiffSound(2);
 	_difficulty = 1;
 }
 
-void GameSpacePirates::_rect_hard(Rect *rect) {
-	_DoDiffSound(3);
+void GameSpacePirates::rectHard(Rect *rect) {
+	doDiffSound(3);
 	_difficulty = 2;
 }
 
-void GameSpacePirates::_rect_default(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_score += rect->score;
-	if (_score - _last_extra_life_score >= 1500 && _lives < 3) {
+void GameSpacePirates::rectDefault(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_score += rect->_score;
+	if (_score - _lastExtraLifeScore >= 1500 && _lives < 3) {
 		_lives++;
-		_last_extra_life_score = _score;
+		_lastExtraLifeScore = _score;
 	}
-	if (!rect->scene.empty()) {
-		_next_scene_found = true;
-		_cur_scene = rect->scene;
+	if (!rect->_scene.empty()) {
+		_nextSceneFound = true;
+		_curScene = rect->_scene;
 	}
 }
 
-void GameSpacePirates::_rect_kill_innocent_person(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
+void GameSpacePirates::rectKillInnocentPerson(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
 	if (!_debug_godMode) {
 		_lives--;
 	}
-	_next_scene_found = true;
-	_player_died = true;
+	_nextSceneFound = true;
+	_playerDied = true;
 	if (_isDemo) {
-		_cur_scene = "scene185";
+		_curScene = "scene185";
 		return;
 	}
-	Scene *scene = _sceneInfo->findScene(rect->scene);
-	uint16 picked = _SceneToNumber(scene);
+	Scene *scene = _sceneInfo->findScene(rect->_scene);
+	uint16 picked = sceneToNumber(scene);
 	if (picked == 0) {
-		picked = _RandomNumberInRange(0xB7, 0xB9);
+		picked = randomNumberInRange(0xB7, 0xB9);
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_rect_continue_junk_rings(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_random_count++;
+void GameSpacePirates::rectContinueJunkRings(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_randomCount++;
 	uint16 picked = 0;
-	if (_random_count >= 10) {
-		if (_crystal_state == 7) {
+	if (_randomCount >= 10) {
+		if (_crystalState == 7) {
 			picked = 0x124;
 		} else {
 			picked = 0x119;
 		}
 	} else {
-		picked = _RandomNumberInRange(0x011E, 0x0122);
+		picked = randomNumberInRange(0x011E, 0x0122);
 	}
-	_next_scene_found = true;
-	_cur_scene = Common::String::format("scene%d", picked);
+	_nextSceneFound = true;
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_rect_shot_grin_reaper(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_shot_grin_reaper_count++;
+void GameSpacePirates::rectShotGrinReaper(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_shotGrinReaperCount++;
 	uint16 picked = 0;
-	if (_clue - 223 <= _shot_grin_reaper_count) {
-		_next_scene_found = true;
-		if (_crystal_state == 7) {
+	if (_clue - 223 <= _shotGrinReaperCount) {
+		_nextSceneFound = true;
+		if (_crystalState == 7) {
 			picked = 0xF9;
 		} else {
-			picked = _PickCrystalScene(0xF6, 0xF7, 0xF8);
+			picked = pickCrystalScene(0xF6, 0xF7, 0xF8);
 		}
 	} else {
 		picked = 0;
 	}
 	if (picked != 0) {
-		_cur_scene = Common::String::format("scene%d", picked);
+		_curScene = Common::String::format("scene%d", picked);
 	}
 }
 
-void GameSpacePirates::_rect_show_mad_dog(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_next_scene_found = true;
-	_cur_scene = "scene354";
+void GameSpacePirates::rectShowMadDog(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_nextSceneFound = true;
+	_curScene = "scene354";
 }
 
-void GameSpacePirates::_rect_pott_world_show_crystal(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
+void GameSpacePirates::rectPottWorldShowCrystal(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
 	uint16 picked = 0;
-	if (_crystal_state == 7) {
+	if (_crystalState == 7) {
 		picked = 0xA6;
 	} else {
-		picked = _PickCrystalScene(0xA3, 0xA4, 0xA5);
+		picked = pickCrystalScene(0xA3, 0xA4, 0xA5);
 	}
-	_next_scene_found = true;
-	_cur_scene = Common::String::format("scene%d", picked);
+	_nextSceneFound = true;
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_rect_shot_left(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_shot_direction = 1;
-	_next_scene_found = true;
+void GameSpacePirates::rectShotLeft(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_shotDirection = 1;
+	_nextSceneFound = true;
 }
 
-void GameSpacePirates::_rect_shot_right(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_shot_direction = 2;
-	_next_scene_found = true;
+void GameSpacePirates::rectShotRight(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_shotDirection = 2;
+	_nextSceneFound = true;
 }
 
-void GameSpacePirates::_rect_shot_gold(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_shot_color = 3;
-	_next_scene_found = true;
-	_cur_scene = rect->scene;
+void GameSpacePirates::rectShotGold(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_shotColor = 3;
+	_nextSceneFound = true;
+	_curScene = rect->_scene;
 }
 
-void GameSpacePirates::_rect_shot_silver(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_shot_color = 4;
-	_next_scene_found = true;
-	_cur_scene = rect->scene;
+void GameSpacePirates::rectShotSilver(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_shotColor = 4;
+	_nextSceneFound = true;
+	_curScene = rect->_scene;
 }
 
-void GameSpacePirates::_rect_selected_dune_world(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	if (!_world_done[0]) {
-		_selected_a_world = true;
-		_current_world = 0;
-		_selected_world_start = _world_got_to[0];
-		_cur_scene = "scene111";
+void GameSpacePirates::rectSelectedDuneWorld(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	if (!_worldDone[0]) {
+		_selectedAWorld = true;
+		_currentWorld = 0;
+		_selectedWorldStart = _worldGotTo[0];
+		_curScene = "scene111";
 	} else {
-		_PlayErrorSound();
+		playErrorSound();
 	}
 	_shots++;
 }
 
-void GameSpacePirates::_rect_selected_junk_world(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	if (!_world_done[1]) {
-		_selected_a_world = true;
-		_current_world = 1;
-		_selected_world_start = _world_got_to[1];
-		_cur_scene = "scene111";
+void GameSpacePirates::rectSelectedJunkWorld(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	if (!_worldDone[1]) {
+		_selectedAWorld = true;
+		_currentWorld = 1;
+		_selectedWorldStart = _worldGotTo[1];
+		_curScene = "scene111";
 	} else {
-		_PlayErrorSound();
+		playErrorSound();
 	}
 	_shots++;
 }
 
-void GameSpacePirates::_rect_selected_dragons_teeth_world(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	if (!_world_done[2]) {
-		_selected_a_world = true;
-		_current_world = 2;
-		_selected_world_start = _world_got_to[2];
-		_cur_scene = "scene111";
+void GameSpacePirates::rectSelectedDragonsTeethWorld(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	if (!_worldDone[2]) {
+		_selectedAWorld = true;
+		_currentWorld = 2;
+		_selectedWorldStart = _worldGotTo[2];
+		_curScene = "scene111";
 	} else {
-		_PlayErrorSound();
+		playErrorSound();
 	}
 	_shots++;
 }
 
-void GameSpacePirates::_rect_selected_volcano_world(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	if (!_world_done[3]) {
-		_selected_a_world = true;
-		_current_world = 3;
-		_selected_world_start = _world_got_to[3];
-		_cur_scene = "scene111";
+void GameSpacePirates::rectSelectedVolcanoWorld(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	if (!_worldDone[3]) {
+		_selectedAWorld = true;
+		_currentWorld = 3;
+		_selectedWorldStart = _worldGotTo[3];
+		_curScene = "scene111";
 	} else {
-		_PlayErrorSound();
+		playErrorSound();
 	}
 	_shots++;
 }
 
-void GameSpacePirates::_rect_shot_red_death_grip(Rect *rect) {
+void GameSpacePirates::rectShotRedDeathGrip(Rect *rect) {
 	uint16 picked = 0;
-	_next_scene_found = true;
+	_nextSceneFound = true;
 	if (_clue == 0x36) {
-		_DisplayShotFiredImage();
-		_DoShot();
+		displayShotFiredImage();
+		doShot();
 		picked = 0x5A;
 	} else {
-		_rect_kill_innocent_person(rect);
-		picked = _RandomNumberInRange(0xB7, 0xB9);
+		rectKillInnocentPerson(rect);
+		picked = randomNumberInRange(0xB7, 0xB9);
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_rect_shot_blue_death_grip(Rect *rect) {
+void GameSpacePirates::rectShotBlueDeathGrip(Rect *rect) {
 	uint16 picked = 0;
-	_next_scene_found = true;
+	_nextSceneFound = true;
 	if (_clue == 0x38) {
-		_DisplayShotFiredImage();
-		_DoShot();
+		displayShotFiredImage();
+		doShot();
 		picked = 0x5C;
 	} else {
-		_rect_kill_innocent_person(rect);
-		picked = _RandomNumberInRange(0xB7, 0xB9);
+		rectKillInnocentPerson(rect);
+		picked = randomNumberInRange(0xB7, 0xB9);
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_rect_shot_green_death_grip(Rect *rect) {
+void GameSpacePirates::rectShotGreenDeathGrip(Rect *rect) {
 	uint16 picked = 0;
-	_next_scene_found = true;
+	_nextSceneFound = true;
 	if (_clue == 0x37) {
-		_DisplayShotFiredImage();
-		_DoShot();
+		displayShotFiredImage();
+		doShot();
 		picked = 0x5B;
 	} else {
-		_rect_kill_innocent_person(rect);
-		picked = _RandomNumberInRange(0xB7, 0xB9);
+		rectKillInnocentPerson(rect);
+		picked = randomNumberInRange(0xB7, 0xB9);
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_rect_shot_yellow(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_shot_color = 0x0F;
-	_next_scene_found = true;
+void GameSpacePirates::rectShotYellow(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_shotColor = 0x0F;
+	_nextSceneFound = true;
 }
 
-void GameSpacePirates::_rect_shot_blue(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_shot_color = 0x0E;
-	_next_scene_found = true;
+void GameSpacePirates::rectShotBlue(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_shotColor = 0x0E;
+	_nextSceneFound = true;
 }
 
-void GameSpacePirates::_rect_shot_red_crystal(Rect *rect) {
+void GameSpacePirates::rectShotRedCrystal(Rect *rect) {
 	uint16 picked = 0;
-	_DisplayShotFiredImage();
-	_DoShot();
-	Scene *scene = _sceneInfo->findScene(_cur_scene);
-	if (_crystals_shot == 1) {
-		if (_picked_start_splitter == 0x6A) {
+	displayShotFiredImage();
+	doShot();
+	Scene *scene = _sceneInfo->findScene(_curScene);
+	if (_crystalsShot == 1) {
+		if (_pickedStartSplitter == 0x6A) {
 			picked = 0xC6;
-			_crystals_shot++;
+			_crystalsShot++;
 		} else {
-			_cur_scene = scene->next;
+			_curScene = scene->_next;
 			return;
 		}
-	} else if (_crystals_shot == 2) {
-		if (_picked_start_splitter == 0x6C) {
+	} else if (_crystalsShot == 2) {
+		if (_pickedStartSplitter == 0x6C) {
 			picked = 0xC5;
-			_crystals_shot++;
+			_crystalsShot++;
 		} else {
-			_cur_scene = scene->next;
+			_curScene = scene->_next;
 			return;
 		}
-	} else if (_crystals_shot == 3) {
-		if (_picked_start_splitter == 0x6B) {
+	} else if (_crystalsShot == 3) {
+		if (_pickedStartSplitter == 0x6B) {
 			picked = 0x14E;
 		} else {
-			_cur_scene = scene->next;
+			_curScene = scene->_next;
 			return;
 		}
 	}
-	_next_scene_found = true;
-	_cur_scene = Common::String::format("scene%d", picked);
+	_nextSceneFound = true;
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_rect_shot_blue_crystal(Rect *rect) {
+void GameSpacePirates::rectShotBlueCrystal(Rect *rect) {
 	uint16 picked = 0;
-	_DisplayShotFiredImage();
-	_DoShot();
-	Scene *scene = _sceneInfo->findScene(_cur_scene);
-	if (_crystals_shot == 1) {
-		if (_picked_start_splitter == 0x6C) {
+	displayShotFiredImage();
+	doShot();
+	Scene *scene = _sceneInfo->findScene(_curScene);
+	if (_crystalsShot == 1) {
+		if (_pickedStartSplitter == 0x6C) {
 			picked = 0xC4;
-			_crystals_shot++;
+			_crystalsShot++;
 		} else {
-			_cur_scene = scene->next;
+			_curScene = scene->_next;
 			return;
 		}
-	} else if (_crystals_shot == 2) {
-		if (_picked_start_splitter == 0x6B) {
+	} else if (_crystalsShot == 2) {
+		if (_pickedStartSplitter == 0x6B) {
 			picked = 0xC2;
-			_crystals_shot++;
+			_crystalsShot++;
 		} else {
-			_cur_scene = scene->next;
+			_curScene = scene->_next;
 			return;
 		}
-	} else if (_crystals_shot == 3) {
-		if (_picked_start_splitter == 0x6A) {
+	} else if (_crystalsShot == 3) {
+		if (_pickedStartSplitter == 0x6A) {
 			picked = 0x14E;
 		} else {
-			_cur_scene = scene->next;
+			_curScene = scene->_next;
 			return;
 		}
 	}
-	_next_scene_found = true;
-	_cur_scene = Common::String::format("scene%d", picked);
+	_nextSceneFound = true;
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_rect_shot_green_crystal(Rect *rect) {
+void GameSpacePirates::rectShotGreenCrystal(Rect *rect) {
 	uint16 picked = 0;
-	_DisplayShotFiredImage();
-	_DoShot();
-	Scene *scene = _sceneInfo->findScene(_cur_scene);
-	if (_crystals_shot == 1) {
-		if (_picked_start_splitter == 0x6B) {
+	displayShotFiredImage();
+	doShot();
+	Scene *scene = _sceneInfo->findScene(_curScene);
+	if (_crystalsShot == 1) {
+		if (_pickedStartSplitter == 0x6B) {
 			picked = 0xC1;
-			_crystals_shot++;
+			_crystalsShot++;
 		} else {
-			_cur_scene = scene->next;
+			_curScene = scene->_next;
 			return;
 		}
-	} else if (_crystals_shot == 2) {
-		if (_picked_start_splitter == 0x6A) {
+	} else if (_crystalsShot == 2) {
+		if (_pickedStartSplitter == 0x6A) {
 			picked = 0xC7;
-			_crystals_shot++;
+			_crystalsShot++;
 		} else {
-			_cur_scene = scene->next;
+			_curScene = scene->_next;
 			return;
 		}
-	} else if (_crystals_shot == 3) {
-		if (_picked_start_splitter == 0x6C) {
+	} else if (_crystalsShot == 3) {
+		if (_pickedStartSplitter == 0x6C) {
 			picked = 0x14E;
 		} else {
-			_cur_scene = scene->next;
+			_curScene = scene->_next;
 			return;
 		}
 	}
-	_next_scene_found = true;
-	_cur_scene = Common::String::format("scene%d", picked);
+	_nextSceneFound = true;
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_rect_shot_black_dragon_1(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_score += rect->score;
-	_next_scene_found = true;
-	_cur_scene = "scene203";
+void GameSpacePirates::rectShotBlackDragon1(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_score += rect->_score;
+	_nextSceneFound = true;
+	_curScene = "scene203";
 }
 
-void GameSpacePirates::_rect_shot_black_dragon_2(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_score += rect->score;
-	_next_scene_found = true;
-	_cur_scene = "scene204";
+void GameSpacePirates::rectShotBlackDragon2(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_score += rect->_score;
+	_nextSceneFound = true;
+	_curScene = "scene204";
 }
 
-void GameSpacePirates::_rect_shot_black_dragon_3(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_score += rect->score;
-	_next_scene_found = true;
-	_cur_scene = "scene335";
+void GameSpacePirates::rectShotBlackDragon3(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_score += rect->_score;
+	_nextSceneFound = true;
+	_curScene = "scene335";
 }
 
-void GameSpacePirates::_rect_do_flying_skull(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_next_scene_found = true;
-	Scene *scene = _sceneInfo->findScene(rect->scene);
-	_scene_before_flying_skulls = _SceneToNumber(scene);
-	uint16 picked = _RandomNumberInRange(0x014A, 0x014D);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::rectDoFlyingSkull(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_nextSceneFound = true;
+	Scene *scene = _sceneInfo->findScene(rect->_scene);
+	_sceneBeforeFlyingSkulls = sceneToNumber(scene);
+	uint16 picked = randomNumberInRange(0x014A, 0x014D);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_rect_skip_scene(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_next_scene_found = true;
-	Scene *scene = _sceneInfo->findScene(_cur_scene);
-	_cur_scene = scene->next;
+void GameSpacePirates::rectSkipScene(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	_nextSceneFound = true;
+	Scene *scene = _sceneInfo->findScene(_curScene);
+	_curScene = scene->_next;
 }
 
-void GameSpacePirates::_rect_hit_pirate_ship(Rect *rect) {
-	_DisplayShotFiredImage();
-	_DoShot();
-	_DisplayMultipleShotLines();
-	_score += rect->score;
-	_next_scene_found = true;
+void GameSpacePirates::rectHitPirateShip(Rect *rect) {
+	displayShotFiredImage();
+	doShot();
+	displayMultipleShotLines();
+	_score += rect->_score;
+	_nextSceneFound = true;
 }
 
 // Script functions: Scene PreOps
-void GameSpacePirates::_scene_pso_fadein_video(Scene *scene) {
+void GameSpacePirates::scenePsoFadeInVideo(Scene *scene) {
 	// TODO implement
 }
 
-void GameSpacePirates::_scene_pso_set_got_to(Scene *scene) {
-	_EnableVideoFadeIn();
-	_got_to = _SceneToNumber(scene);
+void GameSpacePirates::scenePsoSetGotTo(Scene *scene) {
+	enableVideoFadeIn();
+	_gotTo = sceneToNumber(scene);
 }
 
-void GameSpacePirates::_scene_pso_set_got_to_no_fadein(Scene *scene) {
-	_got_to = _SceneToNumber(scene);
+void GameSpacePirates::scenePsoSetGotToNoFadeIn(Scene *scene) {
+	_gotTo = sceneToNumber(scene);
 }
 
-void GameSpacePirates::_scene_pso_set_world_got_to(Scene *scene) {
-	_EnableVideoFadeIn();
-	uint16 sceneNum = _SceneToNumber(scene);
-	_world_got_to[_current_world] = sceneNum;
+void GameSpacePirates::scenePsoSetWorldGotTo(Scene *scene) {
+	enableVideoFadeIn();
+	uint16 sceneNum = sceneToNumber(scene);
+	_worldGotTo[_currentWorld] = sceneNum;
 }
 
 // Script functions: Scene InsOps
-void GameSpacePirates::_scene_iso_pick_a_world(Scene *scene) {
-	Zone *zone = scene->zones[0];
+void GameSpacePirates::sceneIsoPickAWorld(Scene *scene) {
+	Zone *zone = scene->_zones[0];
 	uint8 world = 3;
-	for (size_t i = 0; i < zone->rects.size(); i++) {
-		if (_world_done[world]) {
-			uint16 centerX = zone->rects[i].left + (zone->rects[i].width() / 2);
-			uint16 centerY = zone->rects[i].top + (zone->rects[i].height() / 2);
+	for (size_t i = 0; i < zone->_rects.size(); i++) {
+		if (_worldDone[world]) {
+			uint16 centerX = zone->_rects[i].left + (zone->_rects[i].width() / 2);
+			uint16 centerY = zone->_rects[i].top + (zone->_rects[i].height() / 2);
 			AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), &(*_gun)[2], centerX - 16, centerY - 24);
 		}
 		world--;
 	}
-	if (_world_done[0] && _world_done[1] && _world_done[2] && _world_done[3]) {
-		_current_world = -1;
-		_next_scene_found = true;
-	} else if (_selected_a_world) {
-		if (_world_done[_current_world]) {
-			_current_world = -1;
+	if (_worldDone[0] && _worldDone[1] && _worldDone[2] && _worldDone[3]) {
+		_currentWorld = -1;
+		_nextSceneFound = true;
+	} else if (_selectedAWorld) {
+		if (_worldDone[_currentWorld]) {
+			_currentWorld = -1;
 		}
 	} else {
-		_current_world = -1;
+		_currentWorld = -1;
 	}
 }
 
-void GameSpacePirates::_scene_iso_set_world_got_to(Scene *scene) {
-	uint16 sceneNum = _SceneToNumber(scene);
-	_world_got_to[_current_world] = sceneNum;
+void GameSpacePirates::sceneIsoSetWorldGotTo(Scene *scene) {
+	uint16 sceneNum = sceneToNumber(scene);
+	_worldGotTo[_currentWorld] = sceneNum;
 }
 
 // Script functions: Scene NxtScn
-void GameSpacePirates::_scene_nxtscn_got_chewed_out(Scene *scene) {
-	uint16 picked = _RandomNumberInRange(0xB7, 0xB9);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnGotChewedOut(Scene *scene) {
+	uint16 picked = randomNumberInRange(0xB7, 0xB9);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_restart_from_last(Scene *scene) {
+void GameSpacePirates::sceneNxtscnRestartFromLast(Scene *scene) {
 	uint16 picked = 0;
-	if (!_player_died) {
-		_cur_scene = scene->next;
+	if (!_playerDied) {
+		_curScene = scene->_next;
 	} else {
 		if (_lives > 0) {
-			picked = _got_to;
-			_player_died = false;
+			picked = _gotTo;
+			_playerDied = false;
 		} else {
-			_next_scene_found = true;
+			_nextSceneFound = true;
 			_gameInProgress = false;
 			_shots = 0;
 			picked = 368;
 		}
-		_cur_scene = Common::String::format("scene%d", picked);
+		_curScene = Common::String::format("scene%d", picked);
 	}
 }
 
-void GameSpacePirates::_scene_nxtscn_player_died(Scene *scene) {
+void GameSpacePirates::sceneNxtscnPlayerDied(Scene *scene) {
 	uint16 picked = 0;
-	_player_died = true;
+	_playerDied = true;
 	if (!_debug_godMode) {
 		_lives--;
 	}
@@ -1372,133 +1367,133 @@ void GameSpacePirates::_scene_nxtscn_player_died(Scene *scene) {
 		if (_isDemo) {
 			picked = 178;
 		} else {
-			picked = _RandomNumberInRange(0xB2, 0xB4);
+			picked = randomNumberInRange(0xB2, 0xB4);
 		}
 	} else {
 		if (_isDemo) {
 			picked = 172;
 		} else {
-			uint8 random = _rnd->getRandomNumber(9);
-			if (random < 5) {
-				picked = _RandomNumberInRange(0xB5, 0xB6);
+			uint8 randomNum = _rnd->getRandomNumber(9);
+			if (randomNum < 5) {
+				picked = randomNumberInRange(0xB5, 0xB6);
 			} else {
-				picked = _RandomNumberInRange(0xAC, 0xB1);
+				picked = randomNumberInRange(0xAC, 0xB1);
 			}
 		}
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_misc_rooms_1(Scene *scene) {
+void GameSpacePirates::sceneNxtscnMiscRooms1(Scene *scene) {
 	uint16 picked = 0;
-	if (_misc_rooms_count == 0) {
-		_picked_misc_rooms = 0;
+	if (_miscRoomsCount == 0) {
+		_pickedMiscRooms = 0;
 		while (1) {
-			uint8 random = _rnd->getRandomNumber(9);
-			if (random <= 5) {
+			uint8 randomNum = _rnd->getRandomNumber(9);
+			if (randomNum <= 5) {
 				picked = 0x1F;
 			} else {
 				picked = 0x21;
 			}
-			if (_picked_misc_rooms != picked) {
-				_picked_misc_rooms = picked;
+			if (_pickedMiscRooms != picked) {
+				_pickedMiscRooms = picked;
 				break;
 			}
 		}
 	} else {
-		if (_misc_rooms_count < 2) {
-			if (_picked_misc_rooms == 0x1F) {
+		if (_miscRoomsCount < 2) {
+			if (_pickedMiscRooms == 0x1F) {
 				picked = 0x21;
-			} else if (_picked_misc_rooms == 0x21) {
+			} else if (_pickedMiscRooms == 0x21) {
 				picked = 0x1F;
 			}
 		} else {
-			_cur_scene = scene->next;
+			_curScene = scene->_next;
 			return;
 		}
 	}
-	_misc_rooms_count++;
-	_cur_scene = Common::String::format("scene%d", picked);
+	_miscRoomsCount++;
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_pick_dungeon_clue(Scene *scene) {
-	_clue = _RandomNumberInRange(14, 15);
-	_shot_color = 0;
-	_cur_scene = Common::String::format("scene%d", _clue);
+void GameSpacePirates::sceneNxtscnPickDungeonClue(Scene *scene) {
+	_clue = randomNumberInRange(14, 15);
+	_shotColor = 0;
+	_curScene = Common::String::format("scene%d", _clue);
 }
 
-void GameSpacePirates::_scene_nxtscn_continue_dungeon_clue(Scene *scene) {
+void GameSpacePirates::sceneNxtscnContinueDungeonClue(Scene *scene) {
 	uint16 picked = 0;
-	if (_clue == _shot_color) {
-		if (_shot_color == 14) {
+	if (_clue == _shotColor) {
+		if (_shotColor == 14) {
 			picked = 0x15;
 		} else {
 			picked = 0x16;
 		}
 	} else {
-		_scene_nxtscn_player_died(scene);
+		sceneNxtscnPlayerDied(scene);
 		picked = 0xAE;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_start_midship_random_scene(Scene *scene) {
-	_max_random = 5;
-	_random_count_midship = 0;
-	_random_scenes_values[0] = 0x25;
-	_random_scenes_values[1] = 0x27;
-	_random_scenes_values[2] = 0x29;
-	_random_scenes_values[3] = 0x2B;
-	_random_scenes_values[4] = 0x2D;
-	memset(&_random_scenes_used, 0, (9 * sizeof(uint8)));
-	uint16 picked = _RandomUnusedScene(5);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnStartMidshipRandomScene(Scene *scene) {
+	_maxRandom = 5;
+	_randomCountMidship = 0;
+	_randomScenesValues[0] = 0x25;
+	_randomScenesValues[1] = 0x27;
+	_randomScenesValues[2] = 0x29;
+	_randomScenesValues[3] = 0x2B;
+	_randomScenesValues[4] = 0x2D;
+	memset(&_randomScenesUsed, 0, (9 * sizeof(uint8)));
+	uint16 picked = randomUnusedScene(5);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_continue_midship_random_scene(Scene *scene) {
+void GameSpacePirates::sceneNxtscnContinueMidshipRandomScene(Scene *scene) {
 	uint16 picked = 0;
-	_random_count_midship++;
-	if (((_difficulty * 5) + 5) > _random_count_midship) {
-		memset(&_random_scenes_used, 0, (9 * sizeof(uint8)));
-		picked = _RandomUnusedScene(_max_random);
-		_cur_scene = Common::String::format("scene%d", picked);
+	_randomCountMidship++;
+	if (((_difficulty * 5) + 5) > _randomCountMidship) {
+		memset(&_randomScenesUsed, 0, (9 * sizeof(uint8)));
+		picked = randomUnusedScene(_maxRandom);
+		_curScene = Common::String::format("scene%d", picked);
 	} else {
-		_cur_scene = scene->next;
+		_curScene = scene->_next;
 	}
 }
 
-void GameSpacePirates::_scene_nxtscn_show_death_grip_beam_color(Scene *scene) {
-	_clue = _RandomNumberInRange(0x36, 0x38);
-	_shot_color = 0;
-	_cur_scene = Common::String::format("scene%d", _clue);
+void GameSpacePirates::sceneNxtscnShowDeathGripBeamColor(Scene *scene) {
+	_clue = randomNumberInRange(0x36, 0x38);
+	_shotColor = 0;
+	_curScene = Common::String::format("scene%d", _clue);
 }
 
-void GameSpacePirates::_scene_nxtscn_select_asteroids(Scene *scene) {
-	uint16 picked = _RandomNumberInRange(0x013E, 0x0142);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnSelectAsteroids(Scene *scene) {
+	uint16 picked = randomNumberInRange(0x013E, 0x0142);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_asteroids_done(Scene *scene) {
+void GameSpacePirates::sceneNxtscnAsteroidsDone(Scene *scene) {
 	uint16 picked = 0;
-	if (_random_count_asteroids < 4) {
-		_random_count_asteroids++;
-		picked = _RandomNumberInRange(0x013E, 0x0142);
+	if (_randomCountAsteroids < 4) {
+		_randomCountAsteroids++;
+		picked = randomNumberInRange(0x013E, 0x0142);
 	} else {
-		_scene_nxtscn_do_flying_skulls(scene);
+		sceneNxtscnDoFlyingSkulls(scene);
 		return;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_do_flying_skulls(Scene *scene) {
-	_scene_before_flying_skulls = _SceneToNumber(scene);
-	uint16 picked = _RandomNumberInRange(0x014A, 0x014D);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnDoFlyingSkulls(Scene *scene) {
+	_sceneBeforeFlyingSkulls = sceneToNumber(scene);
+	uint16 picked = randomNumberInRange(0x014A, 0x014D);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_did_flying_skulls(Scene *scene) {
+void GameSpacePirates::sceneNxtscnDidFlyingSkulls(Scene *scene) {
 	uint16 picked = 0;
-	switch (_scene_before_flying_skulls) {
+	switch (_sceneBeforeFlyingSkulls) {
 	case 0x8A:
 	case 0x8B:
 	case 0x8C:
@@ -1541,389 +1536,389 @@ void GameSpacePirates::_scene_nxtscn_did_flying_skulls(Scene *scene) {
 		break;
 	}
 	assert(picked != 0);
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_show_which_start_splitter(Scene *scene) {
-	uint16 picked = _RandomNumberInRange(0x6A, 0x6C);
-	_picked_start_splitter = picked;
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnShowWhichStartSplitter(Scene *scene) {
+	uint16 picked = randomNumberInRange(0x6A, 0x6C);
+	_pickedStartSplitter = picked;
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_goto_selected_world(Scene *scene) {
-	_selected_a_world = false;
-	_cur_scene = Common::String::format("scene%d", _selected_world_start);
+void GameSpacePirates::sceneNxtscnGotoSelectedWorld(Scene *scene) {
+	_selectedAWorld = false;
+	_curScene = Common::String::format("scene%d", _selectedWorldStart);
 }
 
-void GameSpacePirates::_scene_nxtscn_start_volcano_popup(Scene *scene) {
-	_max_random = 3;
-	_random_count = 0;
-	_random_scenes_values[0] = 0x73;
-	_random_scenes_values[1] = 0x75;
-	_random_scenes_values[2] = 0x77;
-	memset(&_random_scenes_used, 0, (9 * sizeof(uint8)));
-	uint16 picked = _RandomUnusedScene(3);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnStartVolcanoPopup(Scene *scene) {
+	_maxRandom = 3;
+	_randomCount = 0;
+	_randomScenesValues[0] = 0x73;
+	_randomScenesValues[1] = 0x75;
+	_randomScenesValues[2] = 0x77;
+	memset(&_randomScenesUsed, 0, (9 * sizeof(uint8)));
+	uint16 picked = randomUnusedScene(3);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_continue_volcano_popup(Scene *scene) {
-	_random_count++;
-	if (_random_count < 3) {
-		uint16 picked = _RandomUnusedScene(_max_random);
-		_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnContinueVolcanoPopup(Scene *scene) {
+	_randomCount++;
+	if (_randomCount < 3) {
+		uint16 picked = randomUnusedScene(_maxRandom);
+		_curScene = Common::String::format("scene%d", picked);
 	} else {
-		_cur_scene = scene->next;
+		_curScene = scene->_next;
 	}
 }
 
-void GameSpacePirates::_scene_nxtscn_give_falina_clue(Scene *scene) {
-	_clue = _RandomNumberInRange(0x7F, 0x82);
-	_shot_color = 0;
-	_shot_direction = 0;
-	_cur_scene = Common::String::format("scene%d", _clue);
+void GameSpacePirates::sceneNxtscnGiveFalinaClue(Scene *scene) {
+	_clue = randomNumberInRange(0x7F, 0x82);
+	_shotColor = 0;
+	_shotDirection = 0;
+	_curScene = Common::String::format("scene%d", _clue);
 }
 
-void GameSpacePirates::_scene_nxtscn_check_falina_clues(Scene *scene) {
+void GameSpacePirates::sceneNxtscnCheckFalinaClues(Scene *scene) {
 	uint16 picked = 0;
 	if (_clue == 0x7F) {
-		if (_shot_color == 3 && _shot_direction == 1) {
-			if (_crystal_state == 7) {
+		if (_shotColor == 3 && _shotDirection == 1) {
+			if (_crystalState == 7) {
 				picked = 0x89;
 			} else {
-				picked = _PickCrystalScene(0x86, 0x87, 0x88);
+				picked = pickCrystalScene(0x86, 0x87, 0x88);
 			}
 		} else {
-			_cur_scene = scene->next;
+			_curScene = scene->_next;
 			return;
 		}
 	} else if (_clue == 0x80) {
-		if (_shot_color == 3 && _shot_direction == 2) {
-			if (_crystal_state == 7) {
+		if (_shotColor == 3 && _shotDirection == 2) {
+			if (_crystalState == 7) {
 				picked = 0x89;
 			} else {
-				picked = _PickCrystalScene(0x86, 0x87, 0x88);
+				picked = pickCrystalScene(0x86, 0x87, 0x88);
 			}
 		} else {
-			_cur_scene = scene->next;
+			_curScene = scene->_next;
 			return;
 		}
 	} else if (_clue == 0x81) {
-		if (_shot_color == 4 && _shot_direction == 2) {
-			if (_crystal_state == 7) {
+		if (_shotColor == 4 && _shotDirection == 2) {
+			if (_crystalState == 7) {
 				picked = 0x89;
 			} else {
-				picked = _PickCrystalScene(0x86, 0x87, 0x88);
+				picked = pickCrystalScene(0x86, 0x87, 0x88);
 			}
 		} else {
-			_cur_scene = scene->next;
+			_curScene = scene->_next;
 			return;
 		}
 	} else if (_clue == 0x82) {
-		if (_shot_color == 4 && _shot_direction == 1) {
-			if (_crystal_state == 7) {
+		if (_shotColor == 4 && _shotDirection == 1) {
+			if (_crystalState == 7) {
 				picked = 0x89;
 			} else {
-				picked = _PickCrystalScene(0x86, 0x87, 0x88);
+				picked = pickCrystalScene(0x86, 0x87, 0x88);
 			}
 		} else {
-			_cur_scene = scene->next;
+			_curScene = scene->_next;
 			return;
 		}
 	} else {
-		_cur_scene = scene->next;
+		_curScene = scene->_next;
 		return;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_setup_falina_target_practice(Scene *scene) {
-	_random_count = 0;
-	uint16 picked = _RandomNumberInRange(0x8A, 0x90);
+void GameSpacePirates::sceneNxtscnSetupFalinaTargetPractice(Scene *scene) {
+	_randomCount = 0;
+	uint16 picked = randomNumberInRange(0x8A, 0x90);
 	if (picked == 0x8D) {
 		picked++;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_continue_falina_target_practice(Scene *scene) {
+void GameSpacePirates::sceneNxtscnContinueFalinaTargetPractice(Scene *scene) {
 	uint16 picked = 0;
-	_random_count++;
-	if (_random_count < 6) {
-		picked = _RandomNumberInRange(0x8A, 0x90);
+	_randomCount++;
+	if (_randomCount < 6) {
+		picked = randomNumberInRange(0x8A, 0x90);
 		if (picked == 0x8D) {
 			picked++;
 		}
-		_cur_scene = Common::String::format("scene%d", picked);
+		_curScene = Common::String::format("scene%d", picked);
 	} else {
-		_scene_nxtscn_do_flying_skulls(scene);
-		_world_done[3] = true;
+		sceneNxtscnDoFlyingSkulls(scene);
+		_worldDone[3] = true;
 	}
 }
 
-void GameSpacePirates::_scene_nxtscn_start_dune_popup(Scene *scene) {
-	_max_random = 4;
-	_random_count = 0;
-	_random_scenes_values[0] = 0x93;
-	_random_scenes_values[1] = 0x95;
-	_random_scenes_values[2] = 0x97;
-	_random_scenes_values[3] = 0x99;
-	memset(&_random_scenes_used, 0, (9 * sizeof(uint8)));
-	uint16 picked = _RandomUnusedScene(4);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnStartDunePopup(Scene *scene) {
+	_maxRandom = 4;
+	_randomCount = 0;
+	_randomScenesValues[0] = 0x93;
+	_randomScenesValues[1] = 0x95;
+	_randomScenesValues[2] = 0x97;
+	_randomScenesValues[3] = 0x99;
+	memset(&_randomScenesUsed, 0, (9 * sizeof(uint8)));
+	uint16 picked = randomUnusedScene(4);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_continue_dune_popup(Scene *scene) {
-	_random_count++;
-	if (((_difficulty * 4) + 4) > _random_count) {
-		memset(&_random_scenes_used, 0, (9 * sizeof(uint8)));
-		uint16 picked = _RandomUnusedScene(_max_random);
-		_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnContinueDunePopup(Scene *scene) {
+	_randomCount++;
+	if (((_difficulty * 4) + 4) > _randomCount) {
+		memset(&_randomScenesUsed, 0, (9 * sizeof(uint8)));
+		uint16 picked = randomUnusedScene(_maxRandom);
+		_curScene = Common::String::format("scene%d", picked);
 		return;
 	}
-	_cur_scene = scene->next;
+	_curScene = scene->_next;
 }
 
-void GameSpacePirates::_scene_nxtscn_pott_or_pan_shoots(Scene *scene) {
-	uint8 random = _rnd->getRandomNumber(9);
-	uint16 picked = (random > 5) ? 0xA2 : 0xA1;
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnPottOrPanShoots(Scene *scene) {
+	uint8 randomNum = _rnd->getRandomNumber(9);
+	uint16 picked = (randomNum > 5) ? 0xA2 : 0xA1;
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_setup_pott_target_practice(Scene *scene) {
+void GameSpacePirates::sceneNxtscnSetupPottTargetPractice(Scene *scene) {
 	uint16 picked = 0;
-	_random_count = 0;
-	uint8 random = _rnd->getRandomNumber(9);
-	if (random < 5) {
+	_randomCount = 0;
+	uint8 randomNum = _rnd->getRandomNumber(9);
+	if (randomNum < 5) {
 		picked = 0xA7;
 	} else {
 		picked = 0xAA;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_continue_pott_target_practice(Scene *scene) {
+void GameSpacePirates::sceneNxtscnContinuePottTargetPractice(Scene *scene) {
 	uint16 picked = 0;
-	_random_count++;
-	if (_random_count < 6) {
-		uint8 random = _rnd->getRandomNumber(9);
-		if (random <= 5) {
+	_randomCount++;
+	if (_randomCount < 6) {
+		uint8 randomNum = _rnd->getRandomNumber(9);
+		if (randomNum <= 5) {
 			picked = 0xA7;
 		} else {
 			picked = 0xAA;
 		}
 	} else {
-		_scene_nxtscn_do_flying_skulls(scene);
-		_world_done[0] = true;
+		sceneNxtscnDoFlyingSkulls(scene);
+		_worldDone[0] = true;
 		return;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_start_dragons_teeth_popup(Scene *scene) {
-	_max_random = 9;
-	_random_count = 0;
-	_random_scenes_values[0] = 0xCF;
-	_random_scenes_values[1] = 0xD2;
-	_random_scenes_values[2] = 0xD4;
-	_random_scenes_values[3] = 0xD6;
-	_random_scenes_values[4] = 0xD8;
-	_random_scenes_values[5] = 0xDA;
-	_random_scenes_values[6] = 0xDC;
-	_random_scenes_values[7] = 0xDE;
-	_random_scenes_values[8] = 0xE0;
-	memset(&_random_scenes_used, 0, (9 * sizeof(uint8)));
-	uint16 picked = _RandomUnusedScene(9);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnStartDragonsTeethPopup(Scene *scene) {
+	_maxRandom = 9;
+	_randomCount = 0;
+	_randomScenesValues[0] = 0xCF;
+	_randomScenesValues[1] = 0xD2;
+	_randomScenesValues[2] = 0xD4;
+	_randomScenesValues[3] = 0xD6;
+	_randomScenesValues[4] = 0xD8;
+	_randomScenesValues[5] = 0xDA;
+	_randomScenesValues[6] = 0xDC;
+	_randomScenesValues[7] = 0xDE;
+	_randomScenesValues[8] = 0xE0;
+	memset(&_randomScenesUsed, 0, (9 * sizeof(uint8)));
+	uint16 picked = randomUnusedScene(9);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_continue_dragons_teeth_popup(Scene *scene) {
-	if (_SceneToNumber(scene) != 0x14F) {
-		_random_count++;
+void GameSpacePirates::sceneNxtscnContinueDragonsTeethPopup(Scene *scene) {
+	if (sceneToNumber(scene) != 0x14F) {
+		_randomCount++;
 	}
-	if (((_difficulty * 9) + 9) > _random_count) {
-		memset(&_random_scenes_used, 0, (9 * sizeof(uint8)));
-		uint16 picked = _RandomUnusedScene(_max_random);
-		_cur_scene = Common::String::format("scene%d", picked);
+	if (((_difficulty * 9) + 9) > _randomCount) {
+		memset(&_randomScenesUsed, 0, (9 * sizeof(uint8)));
+		uint16 picked = randomUnusedScene(_maxRandom);
+		_curScene = Common::String::format("scene%d", picked);
 		return;
 	}
-	_cur_scene = scene->next;
+	_curScene = scene->_next;
 }
 
-void GameSpacePirates::_scene_nxtscn_grin_reaper_clue(Scene *scene) {
-	_shot_grin_reaper_count = 0;
-	_clue = _RandomNumberInRange(0xE2, 0xE7);
-	_shot_color = 0;
-	_cur_scene = Common::String::format("scene%d", _clue);
+void GameSpacePirates::sceneNxtscnGrinReaperClue(Scene *scene) {
+	_shotGrinReaperCount = 0;
+	_clue = randomNumberInRange(0xE2, 0xE7);
+	_shotColor = 0;
+	_curScene = Common::String::format("scene%d", _clue);
 }
 
-void GameSpacePirates::_scene_nxtscn_start_grin_reaper(Scene *scene) {
-	_max_random = 8;
-	_random_count = 0;
-	_random_scenes_values[0] = 0xEC;
-	_random_scenes_values[1] = 0xED;
-	_random_scenes_values[2] = 0xEE;
-	_random_scenes_values[3] = 0xEF;
-	_random_scenes_values[4] = 0xF0;
-	_random_scenes_values[5] = 0xF1;
-	_random_scenes_values[6] = 0xF2;
-	_random_scenes_values[7] = 0xF3;
-	memset(&_random_scenes_used, 0, (9 * sizeof(uint8)));
-	_random_scenes_used[0] = 1;
-	_cur_scene = Common::String::format("scene%d", _random_scenes_values[0]);
+void GameSpacePirates::sceneNxtscnStartGrinReaper(Scene *scene) {
+	_maxRandom = 8;
+	_randomCount = 0;
+	_randomScenesValues[0] = 0xEC;
+	_randomScenesValues[1] = 0xED;
+	_randomScenesValues[2] = 0xEE;
+	_randomScenesValues[3] = 0xEF;
+	_randomScenesValues[4] = 0xF0;
+	_randomScenesValues[5] = 0xF1;
+	_randomScenesValues[6] = 0xF2;
+	_randomScenesValues[7] = 0xF3;
+	memset(&_randomScenesUsed, 0, (9 * sizeof(uint8)));
+	_randomScenesUsed[0] = 1;
+	_curScene = Common::String::format("scene%d", _randomScenesValues[0]);
 }
 
-void GameSpacePirates::_scene_nxtscn_continue_grin_reaper(Scene *scene) {
-	_random_count++;
+void GameSpacePirates::sceneNxtscnContinueGrinReaper(Scene *scene) {
+	_randomCount++;
 	uint16 picked = 0;
-	if (_random_count >= 8 || (_clue - 223) <= _random_count) {
-		_cur_scene = scene->next;
+	if (_randomCount >= 8 || (_clue - 223) <= _randomCount) {
+		_curScene = scene->_next;
 	} else {
-		picked = _RandomUnusedScene(_max_random);
-		_cur_scene = Common::String::format("scene%d", picked);
+		picked = randomUnusedScene(_maxRandom);
+		_curScene = Common::String::format("scene%d", picked);
 	}
 }
 
-void GameSpacePirates::_scene_nxtscn_grin_target_practice(Scene *scene) {
+void GameSpacePirates::sceneNxtscnGrinTargetPractice(Scene *scene) {
 	uint16 picked = 0;
-	_random_count = 0;
-	picked = _RandomNumberInRange(0xFB, 0x0101);
+	_randomCount = 0;
+	picked = randomNumberInRange(0xFB, 0x0101);
 	if (picked == 0xFE) {
 		picked++;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_continue_grin_target_practice(Scene *scene) {
+void GameSpacePirates::sceneNxtscnContinueGrinTargetPractice(Scene *scene) {
 	uint16 picked = 0;
-	_random_count++;
-	if (_random_count < 5) {
-		picked = _RandomNumberInRange(0xFB, 0x0101);
+	_randomCount++;
+	if (_randomCount < 5) {
+		picked = randomNumberInRange(0xFB, 0x0101);
 		if (picked == 0xFE) {
 			picked++;
 		}
 	} else {
-		_scene_nxtscn_do_flying_skulls(scene);
-		_world_done[2] = true;
+		sceneNxtscnDoFlyingSkulls(scene);
+		_worldDone[2] = true;
 		return;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_start_junk_world(Scene *scene) {
-	_max_random = 6;
-	_random_count = 0;
-	_random_scenes_values[0] = 0x0105;
-	_random_scenes_values[1] = 0x0107;
-	_random_scenes_values[2] = 0x0109;
-	_random_scenes_values[3] = 0x010B;
-	_random_scenes_values[4] = 0x010D;
-	_random_scenes_values[5] = 0x010F;
-	memset(&_random_scenes_used, 0, (9 * sizeof(uint8)));
-	uint16 picked = _RandomUnusedScene(6);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnStartJunkWorld(Scene *scene) {
+	_maxRandom = 6;
+	_randomCount = 0;
+	_randomScenesValues[0] = 0x0105;
+	_randomScenesValues[1] = 0x0107;
+	_randomScenesValues[2] = 0x0109;
+	_randomScenesValues[3] = 0x010B;
+	_randomScenesValues[4] = 0x010D;
+	_randomScenesValues[5] = 0x010F;
+	memset(&_randomScenesUsed, 0, (9 * sizeof(uint8)));
+	uint16 picked = randomUnusedScene(6);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_continue_junk_world(Scene *scene) {
+void GameSpacePirates::sceneNxtscnContinueJunkWorld(Scene *scene) {
 	uint16 picked = 0;
-	_random_count++;
-	if (((_difficulty * 6) + 6) > _random_count) {
-		memset(&_random_scenes_used, 0, (9 * sizeof(uint8)));
-		picked = _RandomUnusedScene(_max_random);
+	_randomCount++;
+	if (((_difficulty * 6) + 6) > _randomCount) {
+		memset(&_randomScenesUsed, 0, (9 * sizeof(uint8)));
+		picked = randomUnusedScene(_maxRandom);
 	} else {
-		_cur_scene = scene->next;
+		_curScene = scene->_next;
 		return;
 	}
-	_cur_scene = Common::String::format("scene%d", picked);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_start_junk_rings(Scene *scene) {
-	_random_count = 0;
-	uint16 picked = _RandomNumberInRange(0x011E, 0x0122);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnStartJunkRings(Scene *scene) {
+	_randomCount = 0;
+	uint16 picked = randomNumberInRange(0x011E, 0x0122);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_show_junk_world_crystal(Scene *scene) {
-	uint16 picked = _PickCrystalScene(0x11D, 0x11C, 0x11B);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnShowJunkWorldCrystal(Scene *scene) {
+	uint16 picked = pickCrystalScene(0x11D, 0x11C, 0x11B);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_start_junk_world_target_practice(Scene *scene) {
-	_max_random = 6;
-	_random_count = 0;
-	_random_scenes_values[0] = 0x125;
-	_random_scenes_values[1] = 0x127;
-	_random_scenes_values[2] = 0x129;
-	_random_scenes_values[3] = 0x12C;
-	_random_scenes_values[4] = 0x12E;
-	_random_scenes_values[5] = 0x130;
-	memset(&_random_scenes_used, 0, (9 * sizeof(uint8)));
-	uint16 picked = _RandomUnusedScene(6);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnStartJunkWorldTargetPractice(Scene *scene) {
+	_maxRandom = 6;
+	_randomCount = 0;
+	_randomScenesValues[0] = 0x125;
+	_randomScenesValues[1] = 0x127;
+	_randomScenesValues[2] = 0x129;
+	_randomScenesValues[3] = 0x12C;
+	_randomScenesValues[4] = 0x12E;
+	_randomScenesValues[5] = 0x130;
+	memset(&_randomScenesUsed, 0, (9 * sizeof(uint8)));
+	uint16 picked = randomUnusedScene(6);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_continue_junk_world_target_practice(Scene *scene) {
-	_random_count++;
-	if (_random_count == 1) {
-		_target_practice_reset = false;
+void GameSpacePirates::sceneNxtscnContinueJunkWorldTargetPractice(Scene *scene) {
+	_randomCount++;
+	if (_randomCount == 1) {
+		_targetPracticeReset = false;
 	}
-	if (_random_count >= 0xC) {
-		_scene_nxtscn_do_flying_skulls(scene);
-		_world_done[1] = true;
+	if (_randomCount >= 0xC) {
+		sceneNxtscnDoFlyingSkulls(scene);
+		_worldDone[1] = true;
 		return;
 	}
-	if (_random_count >= 6 && !_target_practice_reset) {
-		memset(&_random_scenes_used, 0, (9 * sizeof(uint8)));
-		_target_practice_reset = true;
+	if (_randomCount >= 6 && !_targetPracticeReset) {
+		memset(&_randomScenesUsed, 0, (9 * sizeof(uint8)));
+		_targetPracticeReset = true;
 	}
-	uint16 picked = _RandomUnusedScene(_max_random);
-	_cur_scene = Common::String::format("scene%d", picked);
+	uint16 picked = randomUnusedScene(_maxRandom);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_are_all_worlds_done(Scene *scene) {
-	if (_world_done[0] && _world_done[1] && _world_done[2] && _world_done[3]) {
-		_cur_scene = "scene192";
+void GameSpacePirates::sceneNxtscnAreAllWorldsDone(Scene *scene) {
+	if (_worldDone[0] && _worldDone[1] && _worldDone[2] && _worldDone[3]) {
+		_curScene = "scene192";
 	} else {
-		_cur_scene = scene->next;
+		_curScene = scene->_next;
 	}
 }
 
-void GameSpacePirates::_scene_nxtscn_start_practice_pirate_ship(Scene *scene) {
-	_random_count = 0;
-	uint16 picked = _RandomNumberInRange(0xBE, 0xBF);
-	_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnStartPracticePirateShip(Scene *scene) {
+	_randomCount = 0;
+	uint16 picked = randomNumberInRange(0xBE, 0xBF);
+	_curScene = Common::String::format("scene%d", picked);
 }
 
-void GameSpacePirates::_scene_nxtscn_more_practice_pirate_ship(Scene *scene) {
-	_random_count++;
-	if (_random_count < 5) {
-		uint16 picked = _RandomNumberInRange(0xBE, 0xBF);
-		_cur_scene = Common::String::format("scene%d", picked);
+void GameSpacePirates::sceneNxtscnMorePracticePirateShip(Scene *scene) {
+	_randomCount++;
+	if (_randomCount < 5) {
+		uint16 picked = randomNumberInRange(0xBE, 0xBF);
+		_curScene = Common::String::format("scene%d", picked);
 	} else {
-		_cur_scene = scene->next;
+		_curScene = scene->_next;
 	}
 }
 
-void GameSpacePirates::_scene_nxtscn_player_won(Scene *scene) {
+void GameSpacePirates::sceneNxtscnPlayerWon(Scene *scene) {
 	_gameInProgress = false;
-	_cur_scene = scene->next;
+	_curScene = scene->_next;
 }
 
 // Script functions: MissedRect
-void GameSpacePirates::_scene_missedrects_default(Scene *scene) {
+void GameSpacePirates::sceneMissedRectsDefault(Scene *scene) {
 	// do nothing
 }
 
-void GameSpacePirates::_scene_missedrects_missed_pirate_ship(Scene *scene) {
-	_DisplayMultipleShotLines();
+void GameSpacePirates::sceneMissedRectsMissedPirateShip(Scene *scene) {
+	displayMultipleShotLines();
 }
 
 // Script functions: WepDwn
-void GameSpacePirates::_scene_default_wepdwn(Scene *scene) {
+void GameSpacePirates::sceneDefaultWepdwn(Scene *scene) {
 	_shots = 10;
 }
 
 // Debug methods
-void GameSpacePirates::debug_warpTo(int val) {
+void GameSpacePirates::debugWarpTo(int val) {
 	// TODO implement
 }
 
@@ -1943,7 +1938,7 @@ bool DebuggerSpacePirates::cmdWarpTo(int argc, const char **argv) {
 		return true;
 	} else {
 		int val = atoi(argv[1]);
-		_game->debug_warpTo(val);
+		_game->debugWarpTo(val);
 		return false;
 	}
 }

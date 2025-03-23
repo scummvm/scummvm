@@ -38,16 +38,15 @@ class Game {
 public:
 	Game(AlgEngine *vm);
 	virtual ~Game();
+	virtual void init();
 	virtual Common::Error run();
+	bool debug_dumpLibFile();
+	void runCursorTimer();
 	bool _debug_drawRects = false;
 	bool _debug_godMode = false;
 	bool _debug_unlimitedAmmo = false;
-	bool debug_dumpLibFile();
-	void runCursorTimer();
 
 protected:
-	virtual void init() = 0;
-
 	AlgEngine *_vm;
 	AlgVideoDecoder *_videoDecoder;
 	SceneInfo *_sceneInfo;
@@ -84,68 +83,66 @@ protected:
 	bool _rightDown;
 	Common::Point _mousePos;
 
-	const uint32 _pausdifscal[3] = {0x10000, 0x8000, 0x4000};
-	const uint32 _rectdifscal[3] = {0x10000, 0x0C000, 0x8000};
+	const uint32 _pauseDiffScale[3] = {0x10000, 0x8000, 0x4000};
+	const uint32 _rectDiffScale[3] = {0x10000, 0x0C000, 0x8000};
 
 	bool pollEvents();
 	void loadLibArchive(const Common::Path &path);
-	Audio::SeekableAudioStream *_LoadSoundFile(const Common::Path &path);
-	void _PlaySound(Audio::SeekableAudioStream *stream);
+	Audio::SeekableAudioStream *loadSoundFile(const Common::Path &path);
+	void playSound(Audio::SeekableAudioStream *stream);
 	bool loadScene(Scene *scene);
 	void updateScreen();
-	uint32 _GetMsTime();
-	bool __Fired(Common::Point *point);
-	Rect *_CheckZone(Zone *zone, Common::Point *point);
-	Zone *_CheckZonesV1(Scene *scene, Rect *&hitRect, Common::Point *point);
-	Zone *_CheckZonesV2(Scene *scene, Rect *&hitRect, Common::Point *point);
-	uint32 _GetFrame(Scene *scene);
-	void _AdjustDifficulty(uint8 newDifficulty, uint8 oldDifficulty);
-	void _RestoreCursor();
-	void _SetFrame();
-	int8 _SkipToNewScene(Scene *scene);
+	uint32 getMsTime();
+	bool fired(Common::Point *point);
+	Rect *checkZone(Zone *zone, Common::Point *point);
+	Zone *checkZonesV1(Scene *scene, Rect *&hitRect, Common::Point *point);
+	Zone *checkZonesV2(Scene *scene, Rect *&hitRect, Common::Point *point);
+	uint32 getFrame(Scene *scene);
+	void adjustDifficulty(uint8 newDifficulty, uint8 oldDifficulty);
+	int8 skipToNewScene(Scene *scene);
 	void debug_drawZoneRects();
 
 	// Sounds
-	void _DoDiffSound(uint8 difficulty);
-	void _DoSaveSound();
-	void _DoLoadSound();
-	void _DoSkullSound();
-	void _DoShot();
+	void doDiffSound(uint8 difficulty);
+	void doSaveSound();
+	void doLoadSound();
+	void doSkullSound();
+	void doShot();
 
 	// Timer
-	void _SetupCursorTimer();
-	void _RemoveCursorTimer();
+	void setupCursorTimer();
+	void removeCursorTimer();
 
 	// Script functions: Zone
-	void _zone_globalhit(Common::Point *point);
+	void zoneGlobalHit(Common::Point *point);
 	// Script functions: RectHit
-	void _rect_hit_donothing(Rect *rect);
-	void _rect_newscene(Rect *rect);
-	void _rect_exit(Rect *rect);
-	void _rect_easy(Rect *rect);
-	void _rect_average(Rect *rect);
-	void _rect_hard(Rect *rect);
+	void rectHitDoNothing(Rect *rect);
+	void rectNewScene(Rect *rect);
+	void rectExit(Rect *rect);
+	void rectEasy(Rect *rect);
+	void rectAverage(Rect *rect);
+	void rectHard(Rect *rect);
 	// Script functions: Scene PreOps
-	void _scene_pso_drawrct(Scene *scene);
-	void _scene_pso_pause(Scene *scene);
-	void _scene_pso_drawrct_fadein(Scene *scene);
-	void _scene_pso_fadein(Scene *scene);
-	void _scene_pso_pause_fadein(Scene *scene);
-	void _scene_pso_preread(Scene *scene);
-	void _scene_pso_pause_preread(Scene *scene);
+	void scenePsoDrawRct(Scene *scene);
+	void scenePsoPause(Scene *scene);
+	void scenePsoDrawRctFadeIn(Scene *scene);
+	void scenePsoFadeIn(Scene *scene);
+	void scenePsoPauseFadeIn(Scene *scene);
+	void scenePsoPreRead(Scene *scene);
+	void scenePsoPausePreRead(Scene *scene);
 	// Script functions: Scene Scene InsOps
-	void _scene_iso_donothing(Scene *scene);
-	void _scene_iso_startgame(Scene *scene);
-	void _scene_iso_pause(Scene *scene);
+	void sceneIsoDoNothing(Scene *scene);
+	void sceneIsoStartGame(Scene *scene);
+	void sceneIsoPause(Scene *scene);
 	// Script functions: Scene Scene NxtScn
-	void _scene_nxtscn_donothing(Scene *scene);
-	void _scene_default_nxtscn(Scene *scene);
+	void sceneNxtscnDoNothing(Scene *scene);
+	void sceneDefaultNxtscn(Scene *scene);
 	// Script functions: ShowMsg
-	void _scene_sm_donothing(Scene *scene);
+	void sceneSmDonothing(Scene *scene);
 	// Script functions: ScnScr
-	void _scene_default_score(Scene *scene);
+	void sceneDefaultScore(Scene *scene);
 	// Script functions: ScnNxtFrm
-	void _scene_nxtfrm(Scene *scene);
+	void sceneNxtfrm(Scene *scene);
 
 	bool _buttonDown = false;
 	uint8 _difficulty = 1;
@@ -178,11 +175,11 @@ protected:
 	uint16 _videoPosY;
 	uint8 _whichGun = 0;
 
-	Common::String _cur_scene;
-	Common::String _sub_scene;
-	Common::String _ret_scene;
-	Common::String _last_scene;
-	Common::String _startscene;
+	Common::String _curScene;
+	Common::String _subScene;
+	Common::String _retScene;
+	Common::String _lastScene;
+	Common::String _startScene;
 };
 
 } // End of namespace Alg

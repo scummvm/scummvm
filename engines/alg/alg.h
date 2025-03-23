@@ -19,11 +19,13 @@
  *
  */
 
-#ifndef ALG_ALG_H
-#define ALG_ALG_H
+#ifndef ALG_H
+#define ALG_H
 
 #include "engines/advancedDetector.h"
 #include "gui/debugger.h"
+
+#include "alg/detection.h"
 
 namespace Alg {
 
@@ -37,13 +39,13 @@ class GameMaddog2;
 class GameSpacePirates;
 
 enum {
-	kAlgDebugGeneral = 1 << 0,
-	kAlgDebugGraphics = 1 << 1
+	kAlgDebugGeneral = 1,
+	kAlgDebugGraphics
 };
 
 class AlgEngine : public Engine {
 public:
-	AlgEngine(OSystem *syst, const ADGameDescription *desc);
+	AlgEngine(OSystem *syst, const AlgGameDescription *desc);
 	~AlgEngine();
 
 	Common::Error run();

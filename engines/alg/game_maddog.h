@@ -52,10 +52,10 @@ class GameMaddog : public Game {
 	};
 
 public:
-	GameMaddog(AlgEngine *vm, const ADGameDescription *desc);
+	GameMaddog(AlgEngine *vm, const AlgGameDescription *gd);
 	~GameMaddog() override;
 	Common::Error run() override;
-	void debug_warpTo(int val);
+	void debugWarpTo(int val);
 
 private:
 	void init();
@@ -91,135 +91,135 @@ private:
 	// constants
 	const uint16 _fight[3] = {208, 228, 243};
 	const uint16 _ambush[3] = {192, 193, 192};
-	const uint16 _hotel_scenes[10] = {77, 77, 87, 87, 89, 89, 97, 97, 105, 105};
-	const uint16 _bottle_toss[14] = {171, 171, 174, 174, 175, 175, 178, 178, 179, 179, 182, 182, 183, 183};
+	const uint16 _hotelScenes[10] = {77, 77, 87, 87, 89, 89, 97, 97, 105, 105};
+	const uint16 _bottleToss[14] = {171, 171, 174, 174, 175, 175, 178, 178, 179, 179, 182, 182, 183, 183};
 
-	const uint16 _diffpos[4][2] = {{0, 0}, {0x4D, 0x43}, {0x4E, 0x66}, {0x4F, 0x80}};
-	const uint16 _livepos[3][2] = {{0x03, 0x5E}, {0x03, 0x76}, {0x03, 0x8E}};
-	const uint16 _shotpos[12][2] = {{0x3, 0x5}, {0x0D, 0x5}, {0x17, 0x5}, {0x21, 0x5}, {0x3, 0x21}, {0x0D, 0x21}, {0x17, 0x21}, {0x21, 0x21}, {0x3, 0x3D}, {0x0D, 0x3D}, {0x17, 0x3D}, {0x21, 0x3D}};
+	const uint16 _diffPos[4][2] = {{0, 0}, {0x4D, 0x43}, {0x4E, 0x66}, {0x4F, 0x80}};
+	const uint16 _livePos[3][2] = {{0x03, 0x5E}, {0x03, 0x76}, {0x03, 0x8E}};
+	const uint16 _shotPos[12][2] = {{0x3, 0x5}, {0x0D, 0x5}, {0x17, 0x5}, {0x21, 0x5}, {0x3, 0x21}, {0x0D, 0x21}, {0x17, 0x21}, {0x21, 0x21}, {0x3, 0x3D}, {0x0D, 0x3D}, {0x17, 0x3D}, {0x21, 0x3D}};
 
 	// gamestate
-	uint8 _bad_men = 0;
-	uint8 _bad_men_bits = 0;
-	bool _bartender_alive = 0;
-	uint16 _been_to = 0;
+	uint8 _badMen = 0;
+	uint8 _badMenBits = 0;
+	bool _bartenderAlive = 0;
+	uint16 _beenTo = 0;
 	uint8 _bottles = 0;
-	uint8 _botmask = 0;
-	bool _got_clue = false;
-	uint16 _got_into = 0;
-	uint8 _gun_time = 0;
-	bool _had_skull = 0;
-	bool _had_lantern = 0;
-	bool _hide_out_front = 0;
-	bool _in_shootout = 0;
+	uint8 _bottlesMask = 0;
+	bool _gotClue = false;
+	uint16 _gotInto = 0;
+	uint8 _gunTime = 0;
+	bool _hadSkull = 0;
+	bool _hadLantern = 0;
+	bool _hideOutFront = 0;
+	bool _inShootout = 0;
 	int8 _map0 = 0;
 	int8 _map1 = 0;
 	int8 _map2 = 0;
-	uint8 _map_pos = 0;
-	uint8 _max_map_pos = 0;
-	uint8 _people_killed = 0;
-	uint8 _pro_clue = 0;
-	uint8 _sheriff_cnt = 0; // unused
-	uint8 _shoot_out_cnt = 0;
+	uint8 _mapPos = 0;
+	uint8 _maxMapPos = 0;
+	uint8 _peopleKilled = 0;
+	uint8 _proClue = 0;
+	uint8 _sheriffCnt = 0; // unused
+	uint8 _shootOutCnt = 0;
 
 	// base functions
-	void _NewGame();
-	void _ResetParams();
-	void _DoMenu();
-	void _UpdateStat();
-	void _ChangeDifficulty(uint8 newDifficulty);
-	void _ShowDifficulty(uint8 newDifficulty, bool updateCursor);
-	void _DoCursor();
-	void _UpdateMouse();
-	void _MoveMouse();
-	void _DisplayScore();
-	bool _WeaponDown();
-	bool _SaveState();
-	bool _LoadState();
+	void newGame();
+	void resetParams();
+	void doMenu();
+	void updateStat();
+	void changeDifficulty(uint8 newDifficulty);
+	void showDifficulty(uint8 newDifficulty, bool updateCursor);
+	void updateCursor();
+	void updateMouse();
+	void moveMouse();
+	void displayScore();
+	bool weaponDown();
+	bool saveState();
+	bool loadState();
 
 	// misc game functions
-	void _default_bullethole(Common::Point *point);
-	void _die();
-	uint8 _pick_rand(uint8 *bits, uint8 max);
-	uint8 _pick_bad(uint8 max);
-	Common::String _pick_town();
-	Common::String _pick_map();
-	Common::String _pick_sign();
-	Common::String _map_right();
-	Common::String _map_left();
+	void defaultBullethole(Common::Point *point);
+	void die();
+	uint8 pickRand(uint8 *bits, uint8 max);
+	uint8 pickBad(uint8 max);
+	Common::String pickTown();
+	Common::String pickMap();
+	Common::String pickSign();
+	Common::String mapRight();
+	Common::String mapLeft();
 
 	// Script functions: Zone
-	void _zone_bullethole(Common::Point *point);
-	void _zone_skullhole(Common::Point *point);
+	void zoneBullethole(Common::Point *point);
+	void zoneSkullhole(Common::Point *point);
 
 	// Script functions: RectHit
-	void _rect_shotmenu(Rect *rect);
-	void _rect_continue(Rect *rect);
-	void _rect_save(Rect *rect);
-	void _rect_load(Rect *rect);
-	void _rect_start(Rect *rect);
-	void _rect_startbottles(Rect *rect);
-	void _rect_hidefront(Rect *rect);
-	void _rect_hiderear(Rect *rect);
-	void _rect_menuselect(Rect *rect);
-	void _rect_skull(Rect *rect);
-	void _rect_killman(Rect *rect);
-	void _rect_killwoman(Rect *rect);
-	void _rect_prospsign(Rect *rect);
-	void _rect_minesign(Rect *rect);
-	void _rect_mineitem1(Rect *rect);
-	void _rect_mineitem2(Rect *rect);
-	void _rect_mineitem3(Rect *rect);
-	void _rect_minelantern(Rect *rect);
-	void _rect_shothideout(Rect *rect);
-	void _rect_shotright(Rect *rect);
-	void _rect_shotleft(Rect *rect);
+	void rectShotMenu(Rect *rect);
+	void rectContinue(Rect *rect);
+	void rectSave(Rect *rect);
+	void rectLoad(Rect *rect);
+	void rectStart(Rect *rect);
+	void rectStartBottles(Rect *rect);
+	void rectHideFront(Rect *rect);
+	void rectHideRear(Rect *rect);
+	void rectMenuSelect(Rect *rect);
+	void rectSkull(Rect *rect);
+	void rectKillMan(Rect *rect);
+	void rectKillWoman(Rect *rect);
+	void rectProspSign(Rect *rect);
+	void rectMineSign(Rect *rect);
+	void rectMineItem1(Rect *rect);
+	void rectMineItem2(Rect *rect);
+	void rectMineItem3(Rect *rect);
+	void rectMineLantern(Rect *rect);
+	void rectShotHideout(Rect *rect);
+	void rectShotRight(Rect *rect);
+	void rectShotLeft(Rect *rect);
 
 	// Script functions: Scene PreOps
-	void _scene_pso_shootout(Scene *scene);
-	void _scene_pso_mdshootout(Scene *scene);
+	void scenePsoShootout(Scene *scene);
+	void scenePsoMDShootout(Scene *scene);
 
 	// Script functions: Scene InsOps
-	void _scene_iso_shootpast(Scene *scene);
-	void _scene_iso_spause(Scene *scene);
-	void _scene_iso_skipsaloon(Scene *scene);
-	void _scene_iso_skipsaloon2(Scene *scene);
-	void _scene_iso_checksaloon(Scene *scene);
-	void _scene_iso_intostable(Scene *scene);
-	void _scene_iso_intoffice(Scene *scene);
-	void _scene_iso_intobank(Scene *scene);
-	void _scene_iso_chkbartndr(Scene *scene);
-	void _scene_iso_didhideout(Scene *scene);
-	void _scene_iso_didsignpost(Scene *scene);
-	void _scene_iso_doshootout(Scene *scene);
-	void _scene_iso_mdshootout(Scene *scene);
-	void _scene_iso_shotinto116(Scene *scene);
+	void sceneIsoShootPast(Scene *scene);
+	void sceneIsoShootPastPause(Scene *scene);
+	void sceneIsoSkipSaloon(Scene *scene);
+	void sceneIsoSkipSaloon2(Scene *scene);
+	void sceneIsoCheckSaloon(Scene *scene);
+	void sceneIsoIntoStable(Scene *scene);
+	void sceneIsoIntoOffice(Scene *scene);
+	void sceneIsoIntoBank(Scene *scene);
+	void sceneIsoCheckBartender(Scene *scene);
+	void sceneIsoDidHideout(Scene *scene);
+	void sceneIsoDidSignPost(Scene *scene);
+	void sceneIsoDoShootout(Scene *scene);
+	void sceneIsoMDShootout(Scene *scene);
+	void sceneIsoShotInto116(Scene *scene);
 
 	// Script functions: Scene NxtScn
-	void _scene_default_nxtscn(Scene *scene);
-	void _scene_nxtscn_pickbottle(Scene *scene);
-	void _scene_nxtscn_died(Scene *scene);
-	void _scene_nxtscn_autosel(Scene *scene);
-	void _scene_nxtscn_finsaloon(Scene *scene);
-	void _scene_nxtscn_finoffice(Scene *scene);
-	void _scene_nxtscn_finstable(Scene *scene);
-	void _scene_nxtscn_finbank(Scene *scene);
-	void _scene_nxtscn_picsaloon(Scene *scene);
-	void _scene_nxtscn_killman(Scene *scene);
-	void _scene_nxtscn_killwoman(Scene *scene);
-	void _scene_nxtscn_bank(Scene *scene);
-	void _scene_nxtscn_stable(Scene *scene);
-	void _scene_nxtscn_savprosp(Scene *scene);
-	void _scene_nxtscn_picktoss(Scene *scene);
-	void _scene_nxtscn_hittoss(Scene *scene);
-	void _scene_nxtscn_misstoss(Scene *scene);
-	void _scene_nxtscn_picksign(Scene *scene);
-	void _scene_nxtscn_brockman(Scene *scene);
-	void _scene_nxtscn_lrockman(Scene *scene);
-	void _scene_nxtscn_hotelmen(Scene *scene);
+	void sceneDefaultNxtscn(Scene *scene);
+	void sceneNxtscnPickBottle(Scene *scene);
+	void sceneNxtscnDied(Scene *scene);
+	void sceneNxtscnAutoSelect(Scene *scene);
+	void sceneNxtscnFinishSaloon(Scene *scene);
+	void sceneNxtscnFinishOffice(Scene *scene);
+	void sceneNxtscnFinishStable(Scene *scene);
+	void sceneNxtscnFinishBank(Scene *scene);
+	void sceneNxtscnPicSaloon(Scene *scene);
+	void sceneNxtscnKillMan(Scene *scene);
+	void sceneNxtscnKillWoman(Scene *scene);
+	void sceneNxtscnBank(Scene *scene);
+	void sceneNxtscnStable(Scene *scene);
+	void sceneNxtscnSavProsp(Scene *scene);
+	void sceneNxtscnPickToss(Scene *scene);
+	void sceneNxtscnHitToss(Scene *scene);
+	void sceneNxtscnMissToss(Scene *scene);
+	void sceneNxtscnPickSign(Scene *scene);
+	void sceneNxtscnBRockMan(Scene *scene);
+	void sceneNxtscnLRockMan(Scene *scene);
+	void sceneNxtscnHotelMen(Scene *scene);
 
 	// Script functions: Scene WepDwn
-	void _scene_default_wepdwn(Scene *scene);
+	void sceneDefaultWepdwn(Scene *scene);
 };
 
 class DebuggerMaddog : public GUI::Debugger {

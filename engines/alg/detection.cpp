@@ -22,8 +22,9 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
-#include "alg/detection_tables.h"
 #include "alg/alg.h"
+#include "alg/detection.h"
+#include "alg/detection_tables.h"
 
 static const PlainGameDescriptor algGame[] = {
 	{ "cpatrols", "Crime Patrol (lower video quality)" },
@@ -51,7 +52,7 @@ static const DebugChannelDef debugFlagList[] = {
 		DEBUG_CHANNEL_END
 };
 
-class AlgMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
+class AlgMetaEngineDetection : public AdvancedMetaEngineDetection<Alg::AlgGameDescription> {
 public:
 	AlgMetaEngineDetection() : AdvancedMetaEngineDetection(Alg::gameDescriptions, algGame) {
 		_guiOptions = GUIO1(GUIO_NOMIDI);
