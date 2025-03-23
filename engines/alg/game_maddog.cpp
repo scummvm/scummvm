@@ -85,18 +85,18 @@ void GameMaddog::init() {
 
 	_gun = AlgGraphics::loadScreenCoordAniImage("gun.ani", _palette);
 	_numbers = AlgGraphics::loadAniImage("numbers.ani", _palette);
-	Common::Array<Graphics::Surface> *bullet = AlgGraphics::loadAniImage("bullet.ani", _palette);
+	auto bullet = AlgGraphics::loadAniImage("bullet.ani", _palette);
 	_shotIcon = (*bullet)[0];
 	_emptyIcon = (*bullet)[1];
-	Common::Array<Graphics::Surface> *hat = AlgGraphics::loadAniImage("hat.ani", _palette);
+	auto hat = AlgGraphics::loadAniImage("hat.ani", _palette);
 	_liveIcon = (*hat)[0];
 	_deadIcon = (*hat)[1];
-	Common::Array<Graphics::Surface> *shootout = AlgGraphics::loadAniImage("shootout.ani", _palette);
+	auto shootout = AlgGraphics::loadAniImage("shootout.ani", _palette);
 	_reloadIcon = (*shootout)[0];
 	_drawIcon = (*shootout)[1];
-	Common::Array<Graphics::Surface> *knife = AlgGraphics::loadScreenCoordAniImage("knife.ani", _palette);
+	auto knife = AlgGraphics::loadScreenCoordAniImage("knife.ani", _palette);
 	_knifeIcon = (*knife)[0];
-	Common::Array<Graphics::Surface> *hole = AlgGraphics::loadScreenCoordAniImage("hole.ani", _palette);
+	auto hole = AlgGraphics::loadScreenCoordAniImage("hole.ani", _palette);
 	_bulletholeIcon = (*hole)[0];
 
 	_background = AlgGraphics::loadVgaBackground("backgrnd.vga", _palette);
@@ -475,11 +475,11 @@ void GameMaddog::updateStat() {
 	if (_lives != _oldLives) {
 		if (_lives > _oldLives) {
 			for (uint8 i = _oldLives; i < _lives; i++) {
-				AlgGraphics::drawImage(_screen, &_liveIcon, _livePos[i][0], _livePos[i][1]);
+				AlgGraphics::drawImage(_screen, _liveIcon, _livePos[i][0], _livePos[i][1]);
 			}
 		} else {
 			for (uint8 i = _lives; i < _oldLives; i++) {
-				AlgGraphics::drawImage(_screen, &_deadIcon, _livePos[i][0], _livePos[i][1]);
+				AlgGraphics::drawImage(_screen, _deadIcon, _livePos[i][0], _livePos[i][1]);
 			}
 		}
 		_oldLives = _lives;
@@ -487,11 +487,11 @@ void GameMaddog::updateStat() {
 	if (_shots != _oldShots) {
 		if (_shots > _oldShots) {
 			for (uint8 i = _oldShots; i < _shots; i++) {
-				AlgGraphics::drawImage(_screen, &_shotIcon, _shotPos[i][0], _shotPos[i][1]);
+				AlgGraphics::drawImage(_screen, _shotIcon, _shotPos[i][0], _shotPos[i][1]);
 			}
 		} else {
 			for (uint8 i = _shots; i < _oldShots; i++) {
-				AlgGraphics::drawImage(_screen, &_emptyIcon, _shotPos[i][0], _shotPos[i][1]);
+				AlgGraphics::drawImage(_screen, _emptyIcon, _shotPos[i][0], _shotPos[i][1]);
 			}
 		}
 		_oldShots = _shots;
@@ -511,7 +511,7 @@ void GameMaddog::changeDifficulty(uint8 newDifficulty) {
 void GameMaddog::showDifficulty(uint8 newDifficulty, bool cursor) {
 	// reset menu screen
 	_screen->copyRectToSurface(_background->getBasePtr(_videoPosX, _videoPosY), _background->pitch, _videoPosX, _videoPosY, _videoDecoder->getWidth(), _videoDecoder->getHeight());
-	AlgGraphics::drawImageCentered(_screen, &_knifeIcon, _diffPos[newDifficulty][0], _diffPos[newDifficulty][1]);
+	AlgGraphics::drawImageCentered(_screen, _knifeIcon, _diffPos[newDifficulty][0], _diffPos[newDifficulty][1]);
 	if (cursor) {
 		updateCursor();
 	}
@@ -523,7 +523,7 @@ void GameMaddog::updateCursor() {
 
 void GameMaddog::updateMouse() {
 	if (_oldWhichGun != _whichGun) {
-		Graphics::Surface *cursor = &(*_gun)[_whichGun];
+		Graphics::Surface *cursor = (*_gun)[_whichGun];
 		CursorMan.popAllCursors();
 		uint16 hotspotX = (cursor->w / 2);
 		uint16 hotspotY = (cursor->h / 2);
@@ -565,7 +565,7 @@ void GameMaddog::displayScore() {
 		} else {
 			digit = scoreString[i] - '0' - 1;
 		}
-		AlgGraphics::drawImage(_screen, &(*_numbers)[digit], posX, 0xAD);
+		AlgGraphics::drawImage(_screen, (*_numbers)[digit], posX, 0xAD);
 		posX += 10;
 	}
 }
@@ -663,7 +663,7 @@ void GameMaddog::defaultBullethole(Common::Point *point) {
 	if (point->x >= 59 && point->y <= 166) {
 		uint16 targetX = point->x - _videoPosX;
 		uint16 targetY = point->y - _videoPosY;
-		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), &_bulletholeIcon, targetX, targetY);
+		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), _bulletholeIcon, targetX, targetY);
 		updateCursor();
 		_shotFired = true;
 		doShot();
@@ -834,7 +834,7 @@ void GameMaddog::zoneSkullhole(Common::Point *point) {
 	if (point->x >= 59 && point->y <= 166) {
 		uint16 targetX = point->x - _videoPosX;
 		uint16 targetY = point->y - _videoPosY;
-		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), &_bulletholeIcon, targetX, targetY);
+		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), _bulletholeIcon, targetX, targetY);
 		updateCursor();
 		_shotFired = true;
 
@@ -1067,7 +1067,7 @@ void GameMaddog::scenePsoShootout(Scene *scene) {
 	}
 	_inShootout = true;
 	updateStat();
-	AlgGraphics::drawImage(_screen, &_reloadIcon, 0x40, 0xB0);
+	AlgGraphics::drawImage(_screen, _reloadIcon, 0x40, 0xB0);
 	updateCursor();
 }
 
@@ -1078,7 +1078,7 @@ void GameMaddog::scenePsoMDShootout(Scene *scene) {
 	}
 	_inShootout = true;
 	updateStat();
-	AlgGraphics::drawImage(_screen, &_reloadIcon, 0x40, 0xB0);
+	AlgGraphics::drawImage(_screen, _reloadIcon, 0x40, 0xB0);
 	updateCursor();
 }
 
@@ -1172,7 +1172,7 @@ void GameMaddog::sceneIsoDidSignPost(Scene *scene) {
 void GameMaddog::sceneIsoDoShootout(Scene *scene) {
 	if (_currentFrame > (uint32)_minF) {
 		if (_inShootout) {
-			AlgGraphics::drawImage(_screen, &_drawIcon, 0x40, 0xB0);
+			AlgGraphics::drawImage(_screen, _drawIcon, 0x40, 0xB0);
 			updateCursor();
 		}
 		_inShootout = false;
@@ -1201,7 +1201,7 @@ void GameMaddog::sceneIsoShotInto116(Scene *scene) {
 // Script functions: Scene NxtScn
 void GameMaddog::sceneDefaultNxtscn(Scene *scene) {
 	// wipe background drawing from shootout
-	_screen->copyRectToSurface(_background->getBasePtr(0x40, 0xB0), _background->pitch, 0x40, 0xB0, _reloadIcon.w, _reloadIcon.h);
+	_screen->copyRectToSurface(_background->getBasePtr(0x40, 0xB0), _background->pitch, 0x40, 0xB0, _reloadIcon->w, _reloadIcon->h);
 	updateCursor();
 	Game::sceneDefaultNxtscn(scene);
 }

@@ -59,8 +59,8 @@ Graphics::Surface *AlgGraphics::loadVgaBackground(const Common::Path &path, uint
 }
 
 // for "normal" ani images
-Common::Array<Graphics::Surface> *AlgGraphics::loadAniImage(const Common::Path &path, uint8 *palette) {
-	Common::Array<Graphics::Surface> *images = new Common::Array<Graphics::Surface>();
+Common::Array<Graphics::Surface *> *AlgGraphics::loadAniImage(const Common::Path &path, uint8 *palette) {
+	Common::Array<Graphics::Surface *> *images = new Common::Array<Graphics::Surface *>();
 	Common::File aniFile;
 	if (!aniFile.open(path)) {
 		error("AlgGraphics::loadAniImage(): Can't open image file '%s'", path.toString().c_str());
@@ -95,7 +95,7 @@ Common::Array<Graphics::Surface> *AlgGraphics::loadAniImage(const Common::Path &
 					aniImage->setPixel(x, y, aniFile.readByte());
 				}
 			}
-			images->push_back(*aniImage);
+			images->push_back(aniImage);
 		}
 	}
 	aniFile.close();
@@ -105,8 +105,8 @@ Common::Array<Graphics::Surface> *AlgGraphics::loadAniImage(const Common::Path &
 // for ani images that use relative positioning.
 // because these are meant to be drawn directly onto a 320x200 screen, they use relative offsets assuming that resolution.
 // as we don't always want to draw directly to screen, we draw to the center of a virtual screen and then copy from a centered subrect.
-Common::Array<Graphics::Surface> *AlgGraphics::loadScreenCoordAniImage(const Common::Path &path, uint8 *palette) {
-	Common::Array<Graphics::Surface> *images = new Common::Array<Graphics::Surface>();
+Common::Array<Graphics::Surface *> *AlgGraphics::loadScreenCoordAniImage(const Common::Path &path, uint8 *palette) {
+	Common::Array<Graphics::Surface *> *images = new Common::Array<Graphics::Surface *>();
 	Common::File aniFile;
 	if (!aniFile.open(path)) {
 		error("AlgGraphics::loadScreenCoordAniImage(): Can't open image file '%s'", path.toString().c_str());
@@ -148,7 +148,7 @@ Common::Array<Graphics::Surface> *AlgGraphics::loadScreenCoordAniImage(const Com
 		subSectionRect.right = (renderTarget->w / 2) + (aniImage->w / 2);
 		subSectionRect.bottom = (renderTarget->h / 2) + (aniImage->h / 2);
 		aniImage->copyRectToSurface(*renderTarget, 0, 0, subSectionRect);
-		images->push_back(*aniImage);
+		images->push_back(aniImage);
 		renderTarget->free();
 	}
 	aniFile.close();

@@ -74,12 +74,12 @@ private:
 	CPScriptFunctionSceneMap _sceneNxtScn;
 
 	// images
-	Graphics::Surface _shotIcon;
-	Graphics::Surface _emptyIcon;
-	Graphics::Surface _liveIcon;
-	Graphics::Surface _deadIcon;
-	Graphics::Surface _difficultyIcon;
-	Graphics::Surface _bulletholeIcon;
+	Graphics::Surface *_shotIcon;
+	Graphics::Surface *_emptyIcon;
+	Graphics::Surface *_liveIcon;
+	Graphics::Surface *_deadIcon;
+	Graphics::Surface *_difficultyIcon;
+	Graphics::Surface *_bulletholeIcon;
 
 	// constants
 	const int16 _scenesLevel0[2] = {0x0191, 0};

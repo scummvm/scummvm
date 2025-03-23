@@ -74,12 +74,12 @@ private:
 	DWScriptFunctionSceneMap _sceneNxtScn;
 
 	// images
-	Graphics::Surface _shotIcon;
-	Graphics::Surface _emptyIcon;
-	Graphics::Surface _liveIcon;
-	Graphics::Surface _deadIcon;
-	Graphics::Surface _difficultyIcon;
-	Graphics::Surface _bulletholeIcon;
+	Graphics::Surface *_shotIcon;
+	Graphics::Surface *_emptyIcon;
+	Graphics::Surface *_liveIcon;
+	Graphics::Surface *_deadIcon;
+	Graphics::Surface *_difficultyIcon;
+	Graphics::Surface *_bulletholeIcon;
 
 	// constants
 	const int16 _randomScenes0[7] = {0x29, 0x2B, 0x2D, 0x2F, 0x31, 0x33, 0};

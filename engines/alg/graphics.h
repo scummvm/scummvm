@@ -30,8 +30,8 @@ namespace Alg {
 class AlgGraphics {
 public:
 	static Graphics::Surface *loadVgaBackground(const Common::Path &path, uint8 *palette);
-	static Common::Array<Graphics::Surface> *loadAniImage(const Common::Path &path, uint8 *palette);
-	static Common::Array<Graphics::Surface> *loadScreenCoordAniImage(const Common::Path &path, uint8 *palette);
+	static Common::Array<Graphics::Surface *> *loadAniImage(const Common::Path &path, uint8 *palette);
+	static Common::Array<Graphics::Surface *> *loadScreenCoordAniImage(const Common::Path &path, uint8 *palette);
 	static void drawImage(Graphics::Surface *dest, Graphics::Surface *src, int32 x, int32 y);
 	static void drawImageCentered(Graphics::Surface *dest, Graphics::Surface *src, int32 x, int32 y);
 };
