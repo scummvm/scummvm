@@ -235,28 +235,28 @@ bool INIFile::saveToSaveFile(const String &filename) {
 }
 
 bool INIFile::saveToStream(WriteStream &stream) {
-	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
+	for (auto &curSection : _sections) {
 		// Write out the section comment, if any
-		if (! i->comment.empty()) {
-			stream.writeString(i->comment);
+		if (!curSection.comment.empty()) {
+			stream.writeString(curSection.comment);
 		}
 
 		// Write out the section name
 		stream.writeByte('[');
-		stream.writeString(i->name);
+		stream.writeString(curSection.name);
 		stream.writeByte(']');
 		stream.writeByte('\n');
 
 		// Write out the key/value pairs
-		for (List<KeyValue>::iterator kv = i->keys.begin(); kv != i->keys.end(); ++kv) {
+		for (auto &kv : curSection.keys) {
 			// Write out the comment, if any
-			if (! kv->comment.empty()) {
-				stream.writeString(kv->comment);
+			if (!kv.comment.empty()) {
+				stream.writeString(kv.comment);
 			}
 			// Write out the key/value pair
-			stream.writeString(kv->key);
+			stream.writeString(kv.key);
 			stream.writeByte('=');
-			stream.writeString(kv->value);
+			stream.writeString(kv.value);
 			stream.writeByte('\n');
 		}
 	}
@@ -426,18 +426,18 @@ const INIFile::SectionKeyList INIFile::getKeys(const String &section) const {
 }
 
 INIFile::Section *INIFile::getSection(const String &section) {
-	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
-		if (section.equalsIgnoreCase(i->name)) {
-			return &(*i);
+	for (auto &curSection : _sections) {
+		if (section.equalsIgnoreCase(curSection.name)) {
+			return &curSection;
 		}
 	}
 	return nullptr;
 }
 
 const INIFile::Section *INIFile::getSection(const String &section) const {
-	for (List<Section>::const_iterator i = _sections.begin(); i != _sections.end(); ++i) {
-		if (section.equalsIgnoreCase(i->name)) {
-			return &(*i);
+	for (const auto &curSection : _sections) {
+		if (section.equalsIgnoreCase(curSection.name)) {
+			return &curSection;
 		}
 	}
 	return nullptr;
@@ -448,18 +448,18 @@ bool INIFile::Section::hasKey(const String &key) const {
 }
 
 const INIFile::KeyValue* INIFile::Section::getKey(const String &key) const {
-	for (List<KeyValue>::const_iterator i = keys.begin(); i != keys.end(); ++i) {
-		if (key.equalsIgnoreCase(i->key)) {
-			return &(*i);
+	for (const auto &curKey : keys) {
+		if (key.equalsIgnoreCase(curKey.key)) {
+			return &curKey;
 		}
 	}
 	return nullptr;
 }
 
 void INIFile::Section::setKey(const String &key, const String &value) {
-	for (List<KeyValue>::iterator i = keys.begin(); i != keys.end(); ++i) {
-		if (key.equalsIgnoreCase(i->key)) {
-			i->value = value;
+	for (auto &curKey : keys) {
+		if (key.equalsIgnoreCase(curKey.key)) {
+			curKey.value = value;
 			return;
 		}
 	}
