@@ -110,13 +110,13 @@ ActionAttenuate::ActionAttenuate(ZVision *engine, int32 slotKey, const Common::S
 	_attenuation = 0;
 
 	sscanf(line.c_str(), "%u, %d", &_key, &_attenuation);
-  debug(2,"Created Action: Attenuate, slotKey %d", _slotKey);
+  debug(1,"Created Action: Attenuate, slotKey %d", _slotKey);
   debug(2,"Attenuate script: %s", line.c_str());
   debug(2,"Attenuate parameters: key1 %d, attenuation %d", _key, _attenuation);
 }
 
 bool ActionAttenuate::execute() {
-  debug(2,"Executing Action: Attenuate");
+  debug(1,"Executing Action: Attenuate, slotkey %d", _slotKey);
 	ScriptingEffect *fx = _scriptManager->getSideFX(_key);
 	if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
@@ -284,11 +284,14 @@ bool ActionDisplayMessage::execute() {
 
 ActionDissolve::ActionDissolve(ZVision *engine) :
 	ResultAction(engine, 0) {
+  debug(1,"Created action: Dissolve");
 }
 
 bool ActionDissolve::execute() {
+  debug(1,"Executing action: Dissolve");
 	// Cause black screen flick
-	// _engine->getRenderManager()->bkgFill(0, 0, 0); //TODO - reimplement this?  Find out where it is used first.
+	// Not ideal.  Original engine used a softer dissolve effect; simply turning the screen black is jarring, so disabled for now.
+	//_engine->getRenderManager()->bkgFill(0, 0, 0); //TODO - reimplement this?  
 	return true;
 }
 
