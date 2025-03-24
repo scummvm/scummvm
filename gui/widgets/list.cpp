@@ -362,8 +362,8 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			int newSelectedItem = 0;
 			int bestMatch = 0;
 			bool stop;
-			for (Common::U32StringArray::const_iterator i = _list.begin(); i != _list.end(); ++i) {
-				const int match = matchingCharsIgnoringCase(stripGUIformatting(*i).encode().c_str(), _quickSelectStr.c_str(), stop, _dictionarySelect);
+			for (const auto &entry : _list) {
+				const int match = matchingCharsIgnoringCase(stripGUIformatting(entry).encode().c_str(), _quickSelectStr.c_str(), stop, _dictionarySelect);
 				if (match > bestMatch || stop) {
 					_selectedItem = newSelectedItem;
 					bestMatch = match;

@@ -291,9 +291,7 @@ void IntegrityDialog::calculateTotalSize(Common::Path gamePath) {
 		return;
 
 	// Process the files and subdirectories in the current directory recursively
-	for (Common::FSList::const_iterator it = fileList.begin(); it != fileList.end(); it++) {
-		const Common::FSNode &entry = *it;
-
+	for (const auto &entry : fileList) {
 		if (entry.isDirectory())
 			calculateTotalSize(entry.getPath());
 		else {
@@ -320,9 +318,7 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 		return {};
 
 	// Process the files and subdirectories in the current directory recursively
-	for (Common::FSList::const_iterator it = fileList.begin(); it != fileList.end(); it++) {
-		const Common::FSNode &entry = *it;
-
+	for (const auto &entry : fileList) {
 		if (entry.isDirectory())
 			generateChecksums(entry.getPath(), fileChecksums);
 		else {
