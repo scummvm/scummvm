@@ -970,7 +970,7 @@ bool Room510::useAltarPost() {
 		if (_G(flags)[V169] <= 0) {
 			terminateMachineAndNull(_statue);
 			_statue = series_play("510 RIP LOWERS STATUE", 0xa00, 16, 1, 5);
-		} else if (_G(flags)[V169] == 1) {
+		} else if (_G(flags)[V169] <= 2) {
 			terminateMachineAndNull(_statue);
 			_statue = series_play("510 RIP LOWERS STATUE", 0xa00, 18, 1, 5);
 		}
