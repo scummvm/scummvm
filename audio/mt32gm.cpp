@@ -387,9 +387,8 @@ bool MidiDriver_MT32GM::isReady(int8 source) {
 
 	// For a specific source, check if there is a SysEx for that source in the
 	// queue.
-	for (Common::ListInternal::Iterator<SysExData> it = _sysExQueue.begin();
-			it != _sysExQueue.end(); it++) {
-		if (it->source == source)
+	for (auto &sysEx : _sysExQueue) {
+		if (sysEx.source == source)
 			return false;
 	}
 

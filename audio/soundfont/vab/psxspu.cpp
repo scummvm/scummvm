@@ -189,10 +189,9 @@ bool PSXSampColl::GetSampleInfo() {
 		_unLength = i - _dwOffset;
 	} else {
 		uint32 sampleIndex = 0;
-		for (Common::Array<SizeOffsetPair>::iterator it = _vagLocations.begin();
-			 it != _vagLocations.end(); ++it) {
-			uint32 offSampStart = _dwOffset + it->offset;
-			uint32 offDataEnd = offSampStart + it->size;
+		for (auto &vag : _vagLocations) {
+			uint32 offSampStart = _dwOffset + vag.offset;
+			uint32 offDataEnd = offSampStart + vag.size;
 			uint32 offSampEnd = offSampStart;
 
 			// detect loop end and ignore garbages like 00 07 77 77 77 77 77 etc.
@@ -207,8 +206,8 @@ bool PSXSampColl::GetSampleInfo() {
 				offSampEnd += 16;
 			} while (!lastBlock);
 
-			PSXSamp *samp = new PSXSamp(this, _dwOffset + it->offset, it->size,
-										_dwOffset + it->offset, offSampEnd - offSampStart, 1, 16,
+			PSXSamp *samp = new PSXSamp(this, _dwOffset + vag.offset, vag.size,
+										_dwOffset + vag.offset, offSampEnd - offSampStart, 1, 16,
 										44100, Common::String::format("Sample %d", sampleIndex));
 			_samples.push_back(samp);
 			sampleIndex++;
