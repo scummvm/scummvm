@@ -351,7 +351,7 @@ Common::Error ZVision::run() {
     debug(5,"Rotation");
 		_renderManager->updateRotation();	
     debug(5,"Scripts");
-		_scriptManager->update(deltaTime);		
+		_scriptManager->update(deltaTime);
     debug(5,"Menu");
 		_menu->process(deltaTime);
     debug(5,"Subtitles");

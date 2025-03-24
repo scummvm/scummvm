@@ -257,7 +257,7 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly) {
     return true;
   }
   else {
-    debug(4,"Skipping screen update; engine forbids rendering at this time.");
+    debug(2,"Skipping screen update; engine forbids rendering at this time.");
     return false;
   };
 }

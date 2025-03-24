@@ -195,11 +195,15 @@ private:
 	int _changeLocationDelayCycles;
 
 	uint32 _currentlyFocusedControl;
+	
+	bool _justStreamedVideo;
 
 public:
 	void initialize();
 	void update(uint deltaTimeMillis);
 	void queuePuzzles(uint32 key);
+	
+	void justStreamedVideo() {_justStreamedVideo=true;};
 
 	int getStateValue(uint32 key);
 	void setStateValue(uint32 key, int value);
