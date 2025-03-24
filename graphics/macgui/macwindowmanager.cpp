@@ -957,8 +957,8 @@ void MacWindowManager::draw() {
 
 		bool forceRedraw = _fullRefresh;
 		if (!forceRedraw && dirtyRects.size()) {
-			for (Common::Array<Common::Rect>::iterator dirty = dirtyRects.begin(); dirty != dirtyRects.end(); dirty++) {
-				if (clip.intersects(*dirty)) {
+			for (auto &dirty : dirtyRects) {
+				if (clip.intersects(dirty)) {
 					forceRedraw = true;
 					break;
 				}
@@ -1021,8 +1021,8 @@ void MacWindowManager::draw() {
 		else {
 			// add intersection check with menu
 			bool menuRedraw = false;
-			for (Common::Array<Common::Rect>::iterator dirty = dirtyRects.begin(); dirty != dirtyRects.end(); dirty++) {
-				if (_menu->checkIntersects(*dirty)) {
+			for (auto &dirty : dirtyRects) {
+				if (_menu->checkIntersects(dirty)) {
 					menuRedraw = true;
 					break;
 				}
