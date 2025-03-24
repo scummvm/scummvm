@@ -82,6 +82,10 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "beautyorbeast",		"Beauty or the Beast" },
 	{ "betterd",			"The Better Dead Ratification" },
 	{ "beyondthewall",		"Beyond the Wall of Stars" },
+	{ "bidule1", 			"La Boîte à bidules de l'oncle Ernest" },
+	{ "bidule2", 			"Le Bidulo Trésor de l'oncle Ernest" },
+	{ "bidule3", 			"Big Bang Bidule chez l'oncle Ernest" },
+	{ "bidule4", 			"La Boîte à bidules : Mission bidule WX-755" },
 	{ "biblechamps",		"Bible Champions: The Birth of Jesus" },
 	{ "bioscopia",			"Bioscopia: Where Science Conquers Evil" },
 	{ "birdlife",			"Shelley Duvall's It's a Bird's Life" },
@@ -8812,6 +8816,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 							"DATEN/SPIELST.DXR", "d:24139a522420d2c6e3f4d0aa502f5936", 2250124, Common::DE_DEU, 702),
 	WINGAME2_l("bibi2", "", "Start.exe",		 "t:cb85c409b1d935e1745478e378074acb", 1820386,
 							"DATEN/SPIELST.DXR", "d:24139a522420d2c6e3f4d0aa502f5936", 2250124, Common::DE_DEU, 702),
+	
+	WINGAME1_l("bidule1", "", "Boitabidules.exe", "t:98831ff6cdc4dc7e74d2660f69db0b49", 3118660, Common::FR_FRA, 702),
+	WINGAME1_l("bidule1", "", "Spielzeugkiste.exe", "t:62ed98ed023e7993b24c5183c7f8354c", 2355933, Common::DE_DEU, 702),
 
 	// Finnish title is Ville & Lilli: Mielikuvitus vauhdissa
 	// Developer website calls this Double Trouble: Crazy Cool Kindergarten,
@@ -9948,6 +9955,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("barbswanlake", "", "SwanLake/SwanLake.exe", "d:310659620631c126edb6943af1f83e38", 4096651, Common::FR_FRA, 900),
 	WINDEMO1("barbswanlake", "Demo", "SwanLake.exe", "t:e658f3c6cbf08ee92cc37fcbf9b0dbcb", 2385166, 900),
 
+	WINGAME1_l("bidule2", "", "BiduloTresor.exe", "t:fafbbdc6df43f3f202c72cb9a2be71f9", 2186440, Common::FR_FRA, 900),
+	WINGAME1_l("bidule2", "", "Albert.exe", "t:fafbbdc6df43f3f202c72cb9a2be71f9", 2186440, Common::DE_DEU, 900),
+
+	WINGAME1_l("bidule3", "", "BAB3.exe", "t:b20e949f87452719e4b214f9e2fe3487", 2185800, Common::FR_FRA, 900),
+
 	WINGAME1_l("bpapao", "", "bpapao.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 4829907, Common::PT_BRA, 900),
 
 	WINGAME1("bobcastle", "", "Bob's Castle Adventure.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 887534, 900),
@@ -10111,6 +10123,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 									  "Files/ba-01_A01.dxr", "d:cb38821091082aeb097e88551b791e05", 9946435, 1010),
 	WINGAME2("babarcoins", "",		  "Start.exe",			 "t:0c40cc1af54fd3c0d06bf5e79bc7075a", 2659300,
 									  "FILES/ba-01_A01.dxr", "d:cb38821091082aeb097e88551b791e05", 9946435, 1010),
+
+	WINGAME1_l("bidule4", "", "BAB4.exe", "t:4ff5d572c2555b49d231015883183900", 2689236, Common::FR_FRA, 1010),
 
 	//Another rerelease
 	WINGAME1_l("bioscopia", "", "Biolab.exe", "t:ec275332cc5b0b2b7d82938b440e1df1", 2672901, Common::DE_DEU, 1010),
