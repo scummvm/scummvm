@@ -247,8 +247,8 @@ ThemeEngine::~ThemeEngine() {
 	unloadExtraFont();
 
 	// Release all graphics surfaces
-	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
-		Graphics::ManagedSurface *surf = i->_value;
+	for (auto &bitmap : _bitmaps) {
+		Graphics::ManagedSurface *surf = bitmap._value;
 		if (surf) {
 			surf->free();
 			delete surf;
@@ -382,8 +382,8 @@ void ThemeEngine::refresh() {
 
 	// Flush all bitmaps if the overlay pixel format changed.
 	if (_overlayFormat != _system->getOverlayFormat() || _needScaleRefresh) {
-		for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
-			Graphics::ManagedSurface *surf = i->_value;
+		for (auto &bitmap : _bitmaps) {
+			Graphics::ManagedSurface *surf = bitmap._value;
 			if (surf) {
 				surf->free();
 				delete surf;
@@ -889,17 +889,17 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeId) {
 	//
 	// Loop over all STX files, load and parse them
 	//
-	for (Common::ArchiveMemberList::iterator i = members.begin(); i != members.end(); ++i) {
-		assert((*i)->getName().hasSuffix(".stx"));
+	for (auto &member : members) {
+		assert(member->getName().hasSuffix(".stx"));
 
-		if (_parser->loadStream((*i)->createReadStream()) == false) {
-			warning("Failed to load STX file '%s'", (*i)->getName().c_str());
+		if (_parser->loadStream(member->createReadStream()) == false) {
+			warning("Failed to load STX file '%s'", member->getName().c_str());
 			_parser->close();
 			return false;
 		}
 
 		if (_parser->parse() == false) {
-			warning("Failed to parse STX file '%s'", (*i)->getName().c_str());
+			warning("Failed to parse STX file '%s'", member->getName().c_str());
 			_parser->close();
 			return false;
 		}
@@ -1983,9 +1983,9 @@ void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 	// in the config file we can not do any better currently.
 	Common::List<ThemeDescriptor> output;
 
-	for (Common::List<ThemeDescriptor>::const_iterator i = list.begin(); i != list.end(); ++i) {
-		if (Common::find_if(output.begin(), output.end(), TDComparator(i->id)) == output.end())
-			output.push_back(*i);
+	for (const auto &theme : list) {
+		if (Common::find_if(output.begin(), output.end(), TDComparator(theme.id)) == output.end())
+			output.push_back(theme);
 	}
 
 	list = output;
@@ -2041,15 +2041,15 @@ void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<Them
 	if (!node.getChildren(fileList, Common::FSNode::kListFilesOnly))
 		return;
 
-	for (Common::FSList::iterator i = fileList.begin(); i != fileList.end(); ++i) {
+	for (auto &file : fileList) {
 		// We will only process zip files for now
-		if (!i->getPath().baseName().matchString("*.zip", true))
+		if (!file.getPath().baseName().matchString("*.zip", true))
 			continue;
 
 		td.name.clear();
-		if (themeConfigUsable(*i, td.name)) {
-			td.filename = i->getPath();
-			td.id = i->getName();
+		if (themeConfigUsable(file, td.name)) {
+			td.filename = file.getPath();
+			td.id = file.getName();
 
 			// If the name of the node object also contains
 			// the ".zip" suffix, we will strip it.
@@ -2101,9 +2101,9 @@ Common::Path ThemeEngine::getThemeFile(const Common::String &id) {
 	Common::List<ThemeDescriptor> list;
 	listUsableThemes(list);
 
-	for (Common::List<ThemeDescriptor>::const_iterator i = list.begin(); i != list.end(); ++i) {
-		if (id.equalsIgnoreCase(i->id))
-			return i->filename;
+	for (const auto &theme : list) {
+		if (id.equalsIgnoreCase(theme.id))
+			return theme.filename;
 	}
 
 	warning("Could not find theme '%s' falling back to builtin", id.c_str());
@@ -2139,9 +2139,9 @@ Common::String ThemeEngine::getThemeId(const Common::Path &filename) {
 	Common::List<ThemeDescriptor> list;
 	listUsableThemes(list);
 
-	for (Common::List<ThemeDescriptor>::const_iterator i = list.begin(); i != list.end(); ++i) {
-		if (filename.equalsIgnoreCase(i->filename))
-			return i->id;
+	for (const auto &theme : list) {
+		if (filename.equalsIgnoreCase(theme.filename))
+			return theme.id;
 	}
 
 	return "builtin";

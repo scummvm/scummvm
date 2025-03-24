@@ -120,13 +120,13 @@ bool DownloadDialog::selectDirectories() {
 			return false;
 	}
 
-	//first user should select remote directory to download
+	// First, the user should select the remote directory to download
 	if (_remoteBrowser->runModal() <= 0)
 		return false;
 
 	Cloud::StorageFile remoteDirectory = _remoteBrowser->getResult();
 
-	//now user should select local directory to download into
+	// Now, the user should select the local directory to download into
 	if (_browser->runModal() <= 0)
 		return false;
 
@@ -138,11 +138,11 @@ bool DownloadDialog::selectDirectories() {
 		return false;
 	}
 
-	//check that there is no file with the remote directory's name in the local one
-	for (Common::FSList::iterator i = files.begin(); i != files.end(); ++i) {
-		if (i->getName().equalsIgnoreCase(remoteDirectory.name())) {
-			//if there is, ask user whether it's OK
-			if (!i->isDirectory()) {
+	// Check that there is no file with the remote directory's name in the local one
+	for (auto &file : files) {
+		if (file.getName().equalsIgnoreCase(remoteDirectory.name())) {
+			// If there is, ask user whether it's OK
+			if (!file.isDirectory()) {
 				GUI::MessageDialog alert(_("Cannot create a directory to download - the specified directory has a file with the same name."), _("OK"));
 				alert.runModal();
 				return false;
@@ -158,7 +158,7 @@ bool DownloadDialog::selectDirectories() {
 		}
 	}
 
-	//make a local path
+	// Make a local path
 	Common::Path localPath = dir.getPath();
 	localPath = localPath.appendComponent(remoteDirectory.name());
 

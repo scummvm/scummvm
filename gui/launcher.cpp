@@ -199,13 +199,13 @@ LauncherDialog::LauncherDialog(const Common::String &dialogName)
 
 	g_gui.lockIconsSet();
 	g_gui.getIconsSet().listMatchingMembers(mdFiles, "*.xml");
-	for (Common::ArchiveMemberList::iterator md = mdFiles.begin(); md != mdFiles.end(); ++md) {
-		if (_metadataParser.loadStream((*md)->createReadStream()) == false) {
-			warning("Failed to load XML file '%s'", (*md)->getDisplayName().encode().c_str());
+	for (auto &md : mdFiles) {
+		if (_metadataParser.loadStream(md->createReadStream()) == false) {
+			warning("Failed to load XML file '%s'", md->getDisplayName().encode().c_str());
 			_metadataParser.close();
 		}
 		if (_metadataParser.parse() == false) {
-			warning("Failed to parse XML file '%s'", (*md)->getDisplayName().encode().c_str());
+			warning("Failed to parse XML file '%s'", md->getDisplayName().encode().c_str());
 		}
 		_metadataParser.close();
 	}
@@ -568,25 +568,25 @@ void LauncherDialog::loadGame(int item) {
 
 Common::Array<LauncherEntry> LauncherDialog::generateEntries(const Common::ConfigManager::DomainMap &domains) {
 	Common::Array<LauncherEntry> domainList;
-	for (Common::ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
+	for (const auto &domain : domains) {
 		// Do not list temporary targets added when starting a game from the command line
-		if (iter->_value.contains("id_came_from_command_line"))
+		if (domain._value.contains("id_came_from_command_line"))
 			continue;
 
 		Common::String description;
 		Common::String title;
 
-		if (!iter->_value.tryGetVal("description", description)) {
-			QualifiedGameDescriptor g = EngineMan.findTarget(iter->_key);
+		if (!domain._value.tryGetVal("description", description)) {
+			QualifiedGameDescriptor g = EngineMan.findTarget(domain._key);
 			if (!g.description.empty())
 				description = g.description;
 		}
 
-		Common::String engineid = iter->_value.getValOrDefault("engineid");
+		Common::String engineid = domain._value.getValOrDefault("engineid");
 
 		Common::String gameid;
-		if (!iter->_value.tryGetVal("gameid", gameid)) {
-			gameid = iter->_key;
+		if (!domain._value.tryGetVal("gameid", gameid)) {
+			gameid = domain._key;
 		}
 
 		Common::StringMap &engineMap = _engines[engineid];
@@ -607,13 +607,13 @@ Common::Array<LauncherEntry> LauncherDialog::generateEntries(const Common::Confi
 			title += " (Demo)";
 
 		if (description.empty()) {
-			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
+			description = Common::String::format("Unknown (target %s, gameid %s)", domain._key.c_str(), gameid.c_str());
 		}
 
 		if (title.empty())
 			title = description;
 		if (!description.empty())
-			domainList.push_back(LauncherEntry(iter->_key, engineid, gameid, description, title, &iter->_value));
+			domainList.push_back(LauncherEntry(domain._key, engineid, gameid, description, title, &domain._value));
 	}
 
 	// Now sort the list in dictionary order
@@ -1145,12 +1145,12 @@ void LauncherSimple::updateListing(int selPos) {
 	Common::Array<LauncherEntry> domainList = generateEntries(domains);
 
 	// And fill out our structures
-	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
+	for (const auto &curDomain : domainList) {
 		color = ThemeEngine::kFontColorNormal;
 
 		if (scanEntries) {
 			Common::String path;
-			if (!iter->domain->tryGetVal("path", path) || !Common::FSNode(Common::Path::fromConfig(path)).isDirectory()) {
+			if (!curDomain.domain->tryGetVal("path", path) || !Common::FSNode(Common::Path::fromConfig(path)).isDirectory()) {
 				color = ThemeEngine::kFontColorAlternate;
 				// If more conditions which grey out entries are added we should consider
 				// enabling this so that it is easy to spot why a certain game entry cannot
@@ -1159,10 +1159,10 @@ void LauncherSimple::updateListing(int selPos) {
 				// description += Common::String::format(" (%s)", _("Not found"));
 			}
 		}
-		Common::U32String gameDesc = GUI::ListWidget::getThemeColor(color) + Common::U32String(iter->description);
+		Common::U32String gameDesc = GUI::ListWidget::getThemeColor(color) + Common::U32String(curDomain.description);
 
 		l.push_back(gameDesc);
-		_domains.push_back(iter->key);
+		_domains.push_back(curDomain.key);
 	}
 
 	const int oldSel = _list->getSelected();
@@ -1197,15 +1197,15 @@ void LauncherSimple::groupEntries(const Common::Array<LauncherEntry> &metadata) 
 	_list->setGroupsVisibility(true);
 	switch (_groupBy) {
 	case kGroupByFirstLetter: {
-		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
-			attrs.push_back(iter->description.substr(0, 1));
+		for (const auto &entry : metadata) {
+			attrs.push_back(entry.description.substr(0, 1));
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String("..."));
 		break;
 	}
 	case kGroupByEngine: {
-		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
-			attrs.push_back(iter->engineid);
+		for (const auto &entry : metadata) {
+			attrs.push_back(entry.engineid);
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		// I18N: List grouping when no engine is specified
@@ -1221,8 +1221,8 @@ void LauncherSimple::groupEntries(const Common::Array<LauncherEntry> &metadata) 
 		break;
 	}
 	case kGroupByCompany: {
-		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
-			attrs.push_back(_metadataParser._gameInfo[buildQualifiedGameName(iter->engineid, iter->gameid)].company_id);
+		for (const auto &entry : metadata) {
+			attrs.push_back(_metadataParser._gameInfo[buildQualifiedGameName(entry.engineid, entry.gameid)].company_id);
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		// I18N: List grouping when no publisher is specified
@@ -1238,8 +1238,8 @@ void LauncherSimple::groupEntries(const Common::Array<LauncherEntry> &metadata) 
 		break;
 	}
 	case kGroupBySeries: {
-		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
-			attrs.push_back(_metadataParser._gameInfo[buildQualifiedGameName(iter->engineid, iter->gameid)].series_id);
+		for (const auto &entry : metadata) {
+			attrs.push_back(_metadataParser._gameInfo[buildQualifiedGameName(entry.engineid, entry.gameid)].series_id);
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		// I18N: List group when no game series is specified
@@ -1251,8 +1251,8 @@ void LauncherSimple::groupEntries(const Common::Array<LauncherEntry> &metadata) 
 		break;
 	}
 	case kGroupByLanguage: {
-		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
-			Common::U32String language = iter->domain->getValOrDefault(Common::String("language"));
+		for (const auto &entry : metadata) {
+			Common::U32String language = entry.domain->getValOrDefault(Common::String("language"));
 			attrs.push_back(language);
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
@@ -1265,8 +1265,8 @@ void LauncherSimple::groupEntries(const Common::Array<LauncherEntry> &metadata) 
 		break;
 	}
 	case kGroupByPlatform: {
-		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
-			Common::U32String platform = iter->domain->getValOrDefault(Common::String("Platform"));
+		for (const auto &entry : metadata) {
+			Common::U32String platform = entry.domain->getValOrDefault(Common::String("Platform"));
 			attrs.push_back(platform);
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
@@ -1279,8 +1279,8 @@ void LauncherSimple::groupEntries(const Common::Array<LauncherEntry> &metadata) 
 		break;
 	}
 	case kGroupByYear: {
-		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
-			Common::U32String year = _metadataParser._gameInfo[buildQualifiedGameName(iter->engineid, iter->gameid)].year;
+		for (const auto &entry : metadata) {
+			Common::U32String year = _metadataParser._gameInfo[buildQualifiedGameName(entry.engineid, entry.gameid)].year;
 			attrs.push_back(year);
 
 			if (!metadataNames.contains(year))
@@ -1393,15 +1393,15 @@ void LauncherGrid::groupEntries(const Common::Array<LauncherEntry> &metadata) {
 	Common::StringMap metadataNames;
 	switch (_groupBy) {
 	case kGroupByFirstLetter: {
-		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
-			attrs.push_back(iter->title.substr(0, 1));
+		for (const auto &entry : metadata) {
+			attrs.push_back(entry.title.substr(0, 1));
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String("..."));
 		break;
 	}
 	case kGroupByEngine: {
-		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
-			attrs.push_back(iter->engineid);
+		for (const auto &entry : metadata) {
+			attrs.push_back(entry.engineid);
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		// I18N: List grouping when no engine is specified
@@ -1417,8 +1417,8 @@ void LauncherGrid::groupEntries(const Common::Array<LauncherEntry> &metadata) {
 		break;
 	}
 	case kGroupByCompany: {
-		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
-			attrs.push_back(_metadataParser._gameInfo[buildQualifiedGameName(iter->engineid, iter->gameid)].company_id);
+		for (const auto &entry : metadata) {
+			attrs.push_back(_metadataParser._gameInfo[buildQualifiedGameName(entry.engineid, entry.gameid)].company_id);
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		// I18N: List group when no publisher is specified
@@ -1434,8 +1434,8 @@ void LauncherGrid::groupEntries(const Common::Array<LauncherEntry> &metadata) {
 		break;
 	}
 	case kGroupBySeries: {
-		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
-			attrs.push_back(_metadataParser._gameInfo[buildQualifiedGameName(iter->engineid, iter->gameid)].series_id);
+		for (const auto &entry : metadata) {
+			attrs.push_back(_metadataParser._gameInfo[buildQualifiedGameName(entry.engineid, entry.gameid)].series_id);
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		// I18N: List grouping when no game series is specified
@@ -1447,8 +1447,8 @@ void LauncherGrid::groupEntries(const Common::Array<LauncherEntry> &metadata) {
 		break;
 	}
 	case kGroupByLanguage: {
-		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
-			Common::U32String language = iter->domain->getValOrDefault(Common::String("language"));
+		for (const auto &entry : metadata) {
+			Common::U32String language = entry.domain->getValOrDefault(Common::String("language"));
 			attrs.push_back(language);
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
@@ -1461,8 +1461,8 @@ void LauncherGrid::groupEntries(const Common::Array<LauncherEntry> &metadata) {
 		break;
 	}
 	case kGroupByPlatform: {
-		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
-			Common::U32String platform = iter->domain->getValOrDefault(Common::String("Platform"));
+		for (const auto &entry : metadata) {
+			Common::U32String platform = entry.domain->getValOrDefault(Common::String("Platform"));
 			attrs.push_back(platform);
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
@@ -1475,8 +1475,8 @@ void LauncherGrid::groupEntries(const Common::Array<LauncherEntry> &metadata) {
 		break;
 	}
 	case kGroupByYear: {
-		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
-			Common::U32String year = _metadataParser._gameInfo[buildQualifiedGameName(iter->engineid, iter->gameid)].year;
+		for (const auto &entry : metadata) {
+			Common::U32String year = _metadataParser._gameInfo[buildQualifiedGameName(entry.engineid, entry.gameid)].year;
 			attrs.push_back(year);
 
 			if (!metadataNames.contains(year))
@@ -1584,21 +1584,21 @@ void LauncherGrid::updateListing(int selPos) {
 	Common::Array<GridItemInfo> gridList;
 
 	int k = 0;
-	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
-		Common::String gameid = iter->domain->getVal("gameid");
+	for (const auto &curDomain : domainList) {
+		Common::String gameid = curDomain.domain->getVal("gameid");
 		Common::String engineid = "UNK";
 		Common::String language = "XX";
 		Common::String platform;
 		Common::String extra;
 		Common::String path;
 		bool valid_path = false;
-		iter->domain->tryGetVal("engineid", engineid);
-		iter->domain->tryGetVal("language", language);
-		iter->domain->tryGetVal("platform", platform);
-		iter->domain->tryGetVal("extra", extra);
-		valid_path = (!iter->domain->tryGetVal("path", path) || !Common::FSNode(Common::Path::fromConfig(path)).isDirectory()) ? false : true;
-		gridList.push_back(GridItemInfo(k++, engineid, gameid, iter->description, iter->title, extra, Common::parseLanguage(language), Common::parsePlatform(platform), valid_path));
-		_domains.push_back(iter->key);
+		curDomain.domain->tryGetVal("engineid", engineid);
+		curDomain.domain->tryGetVal("language", language);
+		curDomain.domain->tryGetVal("platform", platform);
+		curDomain.domain->tryGetVal("extra", extra);
+		valid_path = (!curDomain.domain->tryGetVal("path", path) || !Common::FSNode(Common::Path::fromConfig(path)).isDirectory()) ? false : true;
+		gridList.push_back(GridItemInfo(k++, engineid, gameid, curDomain.description, curDomain.title, extra, Common::parseLanguage(language), Common::parsePlatform(platform), valid_path));
+		_domains.push_back(curDomain.key);
 	}
 
 	const int oldSel = _grid->getSelected();
