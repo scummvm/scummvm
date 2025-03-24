@@ -61,8 +61,8 @@ CDToonsDecoder::~CDToonsDecoder() {
 	_surface->free();
 	delete _surface;
 
-	for (Common::HashMap<uint16, CDToonsBlock>::iterator i = _blocks.begin(); i != _blocks.end(); i++)
-		delete[] i->_value.data;
+	for (auto &block : _blocks)
+		delete[] block._value.data;
 }
 
 Graphics::Surface *CDToonsDecoder::decodeFrame(Common::SeekableReadStream &stream) {
