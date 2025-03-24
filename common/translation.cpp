@@ -228,10 +228,9 @@ bool TranslationManager::openTranslationsFile(File &inFile) {
 	// Then try to open it using the SearchMan.
 	ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, Common::Path(_translationsFileName, Common::Path::kNoSeparator));
-	for (ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
-		ArchiveMember       const &m      = **it;
-		SeekableReadStream *const  stream = m.createReadStream();
-		if (stream && inFile.open(stream, m.getName())) {
+	for (auto &m : fileList) {
+		SeekableReadStream *const stream = m->createReadStream();
+		if (stream && inFile.open(stream, m->getName())) {
 			if (checkHeader(inFile))
 				return true;
 			inFile.close();
@@ -266,8 +265,8 @@ bool TranslationManager::openTranslationsFile(const FSNode &node, File &inFile, 
 	if (!node.getChildren(fileList, FSNode::kListDirectoriesOnly))
 		return false;
 
-	for (FSList::iterator i = fileList.begin(); i != fileList.end(); ++i) {
-		if (openTranslationsFile(*i, inFile, depth == -1 ? - 1 : depth - 1))
+	for (auto &file : fileList) {
+		if (openTranslationsFile(file, inFile, depth == -1 ? - 1 : depth - 1))
 			return true;
 	}
 
