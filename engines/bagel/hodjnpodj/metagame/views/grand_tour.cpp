@@ -160,11 +160,24 @@ bool GrandTour::msgAction(const ActionMessage &msg) {
 
 bool GrandTour::msgGame(const GameMessage &msg) {
 	if (msg._name == "BUTTON") {
-		if (msg._stringValue == "CLOSE") {
-			replaceView("TitleMenu");
-			return true;
+		if (msg._stringValue == "PLAY") {
+			m_pgtGTStruct->bMidGrandTour = true;
+			int gameId = getNextGameCode();
+			m_pgtGTStruct->nCurrGameCode = gameId;
+			// TODO: Launch minigame
+		} else if (msg._stringValue == "SAVE") {
+			// Save tour state
+			saveGame();
+		} else if (msg._stringValue == "LOAD") {
+			// Restore tour state
+			restoreGame();
+		} else if (msg._stringValue == "AUDIO") {
+			// TODO: Audio settings
 		} else if (msg._stringValue == "TOP10") {
 			addView("TopScores");
+			return true;
+		} else if (msg._stringValue == "CLOSE") {
+			replaceView("TitleMenu");
 			return true;
 		}
 	} else if (msg._name == "RADIOBUTTON") {
@@ -541,12 +554,19 @@ void GrandTour::syncGame(bool isSaving) {
 			Common::String::format("pGamePlayed[%d]", i),
 			m_pgtGTStruct->abPGamePlayed[i]);
 	}
-
-	if (!isSaving) {
-		updateRadioButtons();
-		redraw();
-	}
 }
+
+void GrandTour::saveGame() {
+	syncGame(true);
+}
+
+void GrandTour::restoreGame() {
+	syncGame(false);
+
+	updateRadioButtons();
+	redraw();
+}
+
 
 /*------------------------------------------------------------------------*/
 

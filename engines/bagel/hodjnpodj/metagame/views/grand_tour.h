@@ -77,15 +77,11 @@ private:
 	/**
 	 * Determines the next game to be played
 	 */
-	int getNextGameCode(bool bExecute);
+	int getNextGameCode(bool bExecute = true);
 
 	void syncGame(bool isSaving);
-	void saveGame() {
-		syncGame(true);
-	}
-	void restoreGame() {
-		syncGame(false);
-	}
+	void saveGame();
+	void restoreGame();
 
 public:
 	GrandTour();

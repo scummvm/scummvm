@@ -154,7 +154,7 @@ void HodjNPodjEngine::selectMinigame(int newArea) {
 #endif
 
 	// Switch to the minigame
-	replaceView(CMgStatic::cGameTable[nWhichMinigame]._viewName);
+	addView(CMgStatic::cGameTable[nWhichMinigame]._viewName);
 }
 
 } // namespace HodjNPodj
