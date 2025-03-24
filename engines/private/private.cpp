@@ -261,12 +261,15 @@ Common::Error PrivateEngine::run() {
 	Common::Event event;
 	Common::Point mousePos;
 	_videoDecoder = nullptr;
+	_pausedVideo = nullptr;
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) { // load the savegame
 		loadGameState(saveSlot);
 	} else {
 		_nextSetting = getGoIntroSetting();
 	}
+
+	_isMemoryMoviePlaying = false;
 
 	while (!shouldQuit()) {
 		checkPhoneCall();
@@ -302,8 +305,10 @@ Common::Error PrivateEngine::run() {
 					break;
 				else if (selectLocation(mousePos))
 					break;
-				else if (selectMemory(mousePos))
+				else if (selectMemory(mousePos)) {
+					_isMemoryMoviePlaying = true;
 					break;
+				}
 
 				selectPauseGame(mousePos);
 				selectPhoneArea(mousePos);
@@ -352,13 +357,21 @@ Common::Error PrivateEngine::run() {
 		}
 
 		if (_videoDecoder && !_videoDecoder->isPaused()) {
-			if (_videoDecoder->getCurFrame() == 0)
+			if (_videoDecoder->getCurFrame() == 0) {
 				stopSound(true);
+
+				if (_isMemoryMoviePlaying) {
+					const byte *videoPalette = _videoDecoder->getPalette();
+					g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
+					drawScreenFrame(videoPalette);
+				}
+			} 
 			if (_videoDecoder->endOfVideo()) {
 				_videoDecoder->close();
 				delete _videoDecoder;
 				_videoDecoder = nullptr;
 				_currentMovie = "";
+				_isMemoryMoviePlaying = false;
 			} else if (_videoDecoder->needsUpdate()) {
 				drawScreen();
 			}
@@ -659,6 +672,7 @@ void PrivateEngine::selectPauseGame(Common::Point mousePos) {
 				_nextSetting = getPauseMovieSetting();
 				if (_videoDecoder) {
 					_videoDecoder->pauseVideo(true);
+					_pausedVideo = _videoDecoder;
 				}
 				_compositeSurface->fillRect(_screenRect, 0);
 				_compositeSurface->setPalette(_framePalette, 0, 256);
@@ -675,6 +689,12 @@ void PrivateEngine::resumeGame() {
 	_pausedSetting = "";
 	_mode = 1;
 	_origin = Common::Point(kOriginOne[0], kOriginOne[1]);
+
+	if (_pausedVideo != nullptr) {
+		_videoDecoder = _pausedVideo;
+		_pausedVideo = nullptr;
+	}
+
 	if (_videoDecoder) {
 		_videoDecoder->pauseVideo(false);
 		const byte *videoPalette = g_private->_videoDecoder->getPalette();
@@ -750,15 +770,15 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 	}
 }
 
-bool PrivateEngine::selectLocation(Common::Point mousePos) {
+bool PrivateEngine::selectLocation(const Common::Point &mousePos) {
 	if (_locationMasks.size() == 0) {
 		return false;
 	}
 	
 	uint i = 0;
 	uint totalLocations = 0;
-	for (NameList::const_iterator it = maps.locationList.begin(); it != maps.locationList.end(); ++it) {
-		const Private::Symbol *sym = maps.locations.getVal(*it);
+	for (auto &it : maps.locationList) {
+		const Private::Symbol *sym = maps.locations.getVal(it);
 		if (sym->u.val) {
 			if (inMask(_locationMasks[i].surf, mousePos)) {
 				for (uint j = 0; j < _diaryPages.size(); j++) {
@@ -811,11 +831,7 @@ bool PrivateEngine::selectDiaryPrevPage(Common::Point mousePos) {
 	return false;
 }
 
-bool PrivateEngine::selectMemory(Common::Point mousePos) {
-	if (_memoryMasks.size() == 0) { 
-		return false;
-	}
-
+bool PrivateEngine::selectMemory(const Common::Point &mousePos) {
 	for (uint i = 0; i < _memoryMasks.size(); i++) {
 		if (inMask(_memoryMasks[i].surf, mousePos)) {
 			_masks.clear();
@@ -823,7 +839,6 @@ bool PrivateEngine::selectMemory(Common::Point mousePos) {
 			_exits.clear();
 			_nextMovie = _diaryPages[_currentDiaryPage].memories[i].movie;
 			_nextSetting = "kDiaryMiddle";
-			loadImage("inface\\general\\inface2.bmp", 0, 0);
 			return true;
 		}
 	}
@@ -831,7 +846,7 @@ bool PrivateEngine::selectMemory(Common::Point mousePos) {
 	return false;
 }
 
-void PrivateEngine::addMemory(Common::String path) {
+void PrivateEngine::addMemory(const Common::String &path) {
 	size_t index = path.findLastOf('\\');
 	Common::String location = path.substr(index + 2, 2);
 
@@ -840,15 +855,14 @@ void PrivateEngine::addMemory(Common::String path) {
 	// Paths to the global folder have a different pattern from other paths
 	if (path.contains("global")) {
 		if (path.contains("spoc00xs")) {
-			imagePath = "inface\\diary\\ss_icons\\global\\transiti\\ipoc00.bmp";
+			imagePath = "inface/diary/ss_icons/global/transiti/ipoc00.bmp";
 		} else {
-			imagePath = "inface\\diary\\ss_icons\\global\\transiti\\animatio\\mo\\imo" + path.substr(index + 4, 3) + ".bmp";
+			imagePath = "inface/diary/ss_icons/global/transiti/animatio/mo/imo" + path.substr(index + 4, 3) + ".bmp";
 		}
 	} else {
 		// First letter after the last \ is an s, which isn't needed; next 2 are location; and the next 3 are what image to use
-		imagePath = "inface\\diary\\ss_icons\\" + location + "\\i" + location + path.substr(index + 4, 3) + ".bmp";
+		imagePath = "inface/diary/ss_icons/" + location + "/i" + location + path.substr(index + 4, 3) + ".bmp";
 	}
-
 
 	if (!Common::File::exists(convertPath(imagePath))) {
 		return;
@@ -861,7 +875,7 @@ void PrivateEngine::addMemory(Common::String path) {
 	for (int i = _diaryPages.size() - 1; i >= 0; i--) {
 		if (_diaryPages[i].locationName == location) {
 			if (_diaryPages[i].memories.size() == 6) {
-				DiaryPage diaryPage = DiaryPage();
+				DiaryPage diaryPage;
 				diaryPage.locationName = location;
 				diaryPage.locationID = _diaryPages[i].locationID;
 				diaryPage.memories.push_back(memory);
@@ -874,15 +888,15 @@ void PrivateEngine::addMemory(Common::String path) {
 		}
 	}
 
-	DiaryPage diaryPage = DiaryPage();
+	DiaryPage diaryPage;
 	diaryPage.locationName = location;
 
 	uint locationIndex = 0;
-	for (NameList::const_iterator it = maps.locationList.begin(); it != maps.locationList.end(); ++it) {
-		const Private::Symbol *sym = maps.locations.getVal(*it);
+	for (auto &it : maps.locationList) {
+		const Private::Symbol *sym = maps.locations.getVal(it);
 		locationIndex++;
 
-		Common::String currentLocation = it->substr(9);
+		Common::String currentLocation = it.substr(9);
 		currentLocation.toLowercase();
 		if (sym->u.val && currentLocation == location) {
 			diaryPage.locationID = locationIndex;
@@ -1135,6 +1149,7 @@ void PrivateEngine::restartGame() {
 	inventory.clear();
 	_dossiers.clear();
 	_diaryPages.clear();
+	_isMemoryMoviePlaying = false;
 
 	// Sounds
 	_AMRadio.clear();
@@ -1145,6 +1160,7 @@ void PrivateEngine::restartGame() {
 	// Movies
 	_repeatedMovieExit = "";
 	_playedMovies.clear();
+	_pausedVideo = nullptr;
 
 	// Pause
 	_pausedSetting = "";
@@ -1156,6 +1172,7 @@ void PrivateEngine::restartGame() {
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	// We don't want to continue with any sound from a previous game
 	stopSound(true);
+	_pausedVideo = nullptr;
 
 	Common::Serializer s(stream, nullptr);
 	debugC(1, kPrivateDebugFunction, "loadGameStream");
@@ -1179,6 +1196,25 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	uint32 size = stream->readUint32LE();
 	for (uint32 i = 0; i < size; ++i) {
 		inventory.push_back(stream->readString());
+	}
+
+	// Diary pages
+	_diaryPages.clear();
+	uint32 diaryPagesSize = stream->readUint32LE();
+	for (uint32 i = 0; i < diaryPagesSize; i++) {
+		DiaryPage diaryPage;
+		diaryPage.locationName = stream->readString();
+		diaryPage.locationID = stream->readUint32LE();
+
+		uint32 memoriesSize = stream->readUint32LE();
+		for (uint32 j = 0; j < memoriesSize; j++) {
+			MemoryInfo memory;
+			memory.image = stream->readString();
+			memory.movie = stream->readString();
+			diaryPage.memories.push_back(memory);
+		}
+
+		_diaryPages.push_back(diaryPage);
 	}
 
 	// Dossiers
@@ -1278,6 +1314,22 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 	for (NameList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
 		stream->writeString(*it);
 		stream->writeByte(0);
+	}
+
+	stream->writeUint32LE(_diaryPages.size());
+	for (uint i = 0; i < _diaryPages.size(); i++) {
+		stream->writeString(_diaryPages[i].locationName);
+		stream->writeByte(0);
+
+		stream->writeUint32LE(_diaryPages[i].locationID);
+		stream->writeUint32LE(_diaryPages[i].memories.size());
+
+		for (uint j = 0; j < _diaryPages[i].memories.size(); j++) {
+			stream->writeString(_diaryPages[i].memories[j].image);
+			stream->writeByte(0);
+			stream->writeString(_diaryPages[i].memories[j].movie);
+			stream->writeByte(0);
+		}
 	}
 
 	// Dossiers
@@ -1415,6 +1467,7 @@ void PrivateEngine::skipVideo() {
 	delete _videoDecoder;
 	_videoDecoder = nullptr;
 	_currentMovie = "";
+	_isMemoryMoviePlaying = false;
 }
 
 void PrivateEngine::stopSound(bool all) {
@@ -1685,7 +1738,7 @@ void PrivateEngine::loadInventory(uint32 x, const Common::Rect &r1, const Common
 }
 
 void PrivateEngine::loadMemories(const Common::Rect &rect, uint rightPageOffset, uint verticalOffset) {
-	Common::String s = Common::String::format("inface\\diary\\loctabs\\drytab%d.bmp", _diaryPages[_currentDiaryPage].locationID);
+	Common::String s = Common::String::format("inface/diary/loctabs/drytab%d.bmp", _diaryPages[_currentDiaryPage].locationID);
 	loadImage(s, 0, 0);
 
 	uint memoriesLoaded = 0;

@@ -172,6 +172,7 @@ public:
 	Audio::SoundHandle _fgSoundHandle;
 	Audio::SoundHandle _bgSoundHandle;
 	Video::SmackerDecoder *_videoDecoder;
+	Video::SmackerDecoder *_pausedVideo;
 	Common::InstallShieldV3 _installerArchive;
 
 	Common::Error run() override;
@@ -302,12 +303,13 @@ public:
 	ExitInfo _diaryPrevPageExit;
 	bool selectDiaryNextPage(Common::Point mousePos);
 	bool selectDiaryPrevPage(Common::Point mousePos);
-	void addMemory(Common::String path);
+	void addMemory(const Common::String &path);
 	void loadMemories(const Common::Rect &rect, uint rightPageOffset, uint verticalOffset);
-	bool selectLocation(Common::Point mousePos);
+	bool selectLocation(const Common::Point &mousePos);
 	Common::Array<MaskInfo> _locationMasks;
 	Common::Array<MaskInfo> _memoryMasks;
-	bool selectMemory(Common::Point mousePos);
+	bool selectMemory(const Common::Point &mousePos);
+	bool _isMemoryMoviePlaying;
 
 	// Save/Load games
 	MaskInfo _saveGameMask;
