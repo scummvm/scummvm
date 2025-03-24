@@ -311,19 +311,19 @@ void Actor::loadFrameList(int frameListResourceId, ActorFrameSequences &frames) 
 
 	ByteArrayReadStreamEndian readS(resourceData, _actorContext->isBigEndian());
 
-	for (ActorFrameSequences::iterator frame = frames.begin(); frame != frames.end(); ++frame) {
+	for (auto &frame : frames) {
 		for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
 			// Load all four orientations
-			frame->directions[orient].frameIndex = readS.readUint16();
+			frame.directions[orient].frameIndex = readS.readUint16();
 			if (_vm->getGameId() == GID_ITE) {
-				frame->directions[orient].frameCount = readS.readSint16();
+				frame.directions[orient].frameCount = readS.readSint16();
 			} else {
-				frame->directions[orient].frameCount = readS.readByte();
+				frame.directions[orient].frameCount = readS.readByte();
 				readS.readByte();
 			}
-			if (frame->directions[orient].frameCount < 0)
-				warning("frameCount < 0 (%d)", frame->directions[orient].frameCount);
-			debug(9, "frameIndex %d frameCount %d", frame->directions[orient].frameIndex, frame->directions[orient].frameCount);
+			if (frame.directions[orient].frameCount < 0)
+				warning("frameCount < 0 (%d)", frame.directions[orient].frameCount);
+			debug(9, "frameIndex %d frameCount %d", frame.directions[orient].frameIndex, frame.directions[orient].frameCount);
 		}
 	}
 }
@@ -456,9 +456,9 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 
 	_actors[protagonistIdx]._flags |= kProtagonist | kExtended;
 
-	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
+	for (auto &actor : _actors) {
 		//if (actor->_flags & kProtagonist) {
-			loadActorResources(actor);
+			loadActorResources(&actor);
 			//break;
 		//}
 	}
@@ -990,29 +990,29 @@ void Actor::createDrawOrderList() {
 	}
 
 	_drawOrderList.clear();
-	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
+	for (auto &actor : _actors) {
 
-		if (!actor->_inScene)
+		if (!actor._inScene)
 			continue;
 
-		if (calcScreenPosition(actor)) {
-			drawOrderListAdd(actor, compareFunction);
+		if (calcScreenPosition(&actor)) {
+			drawOrderListAdd(&actor, compareFunction);
 		}
 	}
 
-	for (ObjectDataArray::iterator obj = _objs.begin(); obj != _objs.end(); ++obj) {
-		if (obj->_sceneNumber != _vm->_scene->currentSceneNumber())
+	for (auto &obj : _objs) {
+		if (obj._sceneNumber != _vm->_scene->currentSceneNumber())
 			 continue;
 
 		// WORKAROUND for a bug found in the original interpreter of IHNM
 		// If an object's x or y value is negative, don't draw it
 		// Scripts set negative values for an object's x and y when it shouldn't
 		// be drawn anymore (i.e. when it's picked up or used)
-		if (obj->_location.x < 0 || obj->_location.y < 0)
+		if (obj._location.x < 0 || obj._location.y < 0)
 			continue;
 
-		if (calcScreenPosition(obj)) {
-			drawOrderListAdd(obj, compareFunction);
+		if (calcScreenPosition(&obj)) {
+			drawOrderListAdd(&obj, compareFunction);
 		}
 	}
 }
@@ -1247,12 +1247,12 @@ void Actor::saveState(Common::OutSaveFile *out) {
 
 	out->writeSint16LE(getProtagState());
 
-	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
-		actor->saveState(out);
+	for (auto &actor : _actors) {
+		actor.saveState(out);
 	}
 
-	for (ObjectDataArray::iterator obj = _objs.begin(); obj != _objs.end(); ++obj) {
-		obj->saveState(out);
+	for (auto &obj : _objs) {
+		obj.saveState(out);
 	}
 }
 
@@ -1263,12 +1263,12 @@ void Actor::loadState(Common::InSaveFile *in) {
 		setProtagState(protagState);
 	}
 
-	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
-		actor->loadState(_vm->getCurrentLoadVersion(), in);
+	for (auto &actor : _actors) {
+		actor.loadState(_vm->getCurrentLoadVersion(), in);
 	}
 
-	for (ObjectDataArray::iterator obj = _objs.begin(); obj != _objs.end(); ++obj) {
-		obj->loadState(in);
+	for (auto &obj : _objs) {
+		obj.loadState(in);
 	}
 }
 
