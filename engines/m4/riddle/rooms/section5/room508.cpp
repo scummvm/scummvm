@@ -112,7 +112,7 @@ void Room508::daemon() {
 		ws_hide_walker();
 
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-			_G(player_info).depth, 0, triggerMachineByHashCallback, "Rp1");
+			_G(player_info).depth, false, triggerMachineByHashCallback, "Rp1");
 		sendWSMessage_10000(1, _ripley, _ripPutsShovel, 1, 22, 505,
 			_ripPutsShovel, 22, 22, 0);
 		inv_move_object("SHOVEL", 508);
@@ -146,7 +146,7 @@ void Room508::daemon() {
 		ws_hide_walker();
 
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-			_G(player_info).depth, 0, triggerMachineByHashCallback, "Rp2");
+			_G(player_info).depth, false, triggerMachineByHashCallback, "Rp2");
 		sendWSMessage_10000(1, _ripley, _ripPutsShovel, 34, 25, 509,
 			_ripPutsShovel, 25, 25, 0);
 		hotspot_set_active("SHOVEL", false);
@@ -175,7 +175,7 @@ void Room508::daemon() {
 		ws_hide_walker();
 
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-			_G(player_info).depth, 0, triggerMachineByHashCallback, "Rp3");
+			_G(player_info).depth, false, triggerMachineByHashCallback, "Rp3");
 		terminateMachineAndNull(_shovel);
 		sendWSMessage_10000(1, _ripley, _ripTryTurnDome, 1, 29, 512,
 			_ripTryTurnDome, 29, 29, 0);
@@ -217,7 +217,7 @@ void Room508::daemon() {
 		ws_hide_walker();
 
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-			_G(player_info).depth, 0, triggerMachineByHashCallback, "Rp4");
+			_G(player_info).depth, false, triggerMachineByHashCallback, "Rp4");
 		sendWSMessage_10000(1, _ripley, _ripTryTurnDome, 1, 29, 516,
 			_ripTryTurnDome, 29, 29, 0);
 		break;
@@ -268,18 +268,18 @@ void Room508::daemon() {
 		_shovel = series_place_sprite("SHOVEL AFTER DOMES TURNED", 0, 0, 0, 100, 0x300);
 		_statue = series_place_sprite("STATU SPRITE AFTER DOME TURN", 0, 0, 0, 100, 0x450);
 
-		_light = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
+		_light = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false,
 			triggerMachineByHashCallback, "Receeding Light");
 		sendWSMessage_10000(1, _light, _lightAppearing, 12, 12, -1,
 			_lightAppearing, 12, 12, 0);
 
 		player_update_info();
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-			_G(player_info).depth, 0, triggerMachineByHashCallback, "Rp");
+			_G(player_info).depth, false, triggerMachineByHashCallback, "Rp");
 		sendWSMessage_10000(1, _ripley, _ripReturnsToStander, 1, 10, -1,
 			_ripReturnsToStander, 10, 10, 0);
 
-		_chain = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
+		_chain = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false,
 			triggerMachineByHashCallback, "Chain Breaking Machine");
 		sendWSMessage_10000(1, _chain, _chainBreaking, 1, 58, 675,
 			_chainBreaking, 58, 58, 0);
@@ -293,7 +293,7 @@ void Room508::daemon() {
 		break;
 
 	case 539:
-		_x = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
+		_x = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false,
 			triggerMachineByHashCallback, "x");
 		sendWSMessage_10000(1, _x, _flick, 1, 2, -1, _flick, 1, 2, 0);
 		sendWSMessage_190000(_x, 1);
@@ -441,9 +441,9 @@ void Room508::pre_parser() {
 }
 
 void Room508::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said("gear");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said("gear");
 
 	if (lookFlag && player_said(" ")) {
 		if (_G(flags)[V162] == 1) {
