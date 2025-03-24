@@ -468,10 +468,10 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
  */
 inline Graphics::PixelFormat findCompatibleFormat(const Common::List<Graphics::PixelFormat> &backend, const Common::List<Graphics::PixelFormat> &frontend) {
 #ifdef USE_RGB_COLOR
-	for (Common::List<Graphics::PixelFormat>::const_iterator i = backend.begin(); i != backend.end(); ++i) {
-		for (Common::List<Graphics::PixelFormat>::const_iterator j = frontend.begin(); j != frontend.end(); ++j) {
-			if (*i == *j)
-				return *i;
+	for (const auto &back : backend) {
+		for (auto &front : frontend) {
+			if (back == front)
+				return back;
 		}
 	}
 #endif
