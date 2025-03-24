@@ -472,6 +472,7 @@ void ScriptManager::onKeyUp(Common::KeyState keyState) {
 }
 
 void ScriptManager::changeLocation(const Location &_newLocation) {
+  
 	changeLocation(_newLocation.world, _newLocation.room, _newLocation.node, _newLocation.view, _newLocation.offset);
 }
 

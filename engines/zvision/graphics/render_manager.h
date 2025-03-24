@@ -348,10 +348,10 @@ public:
 	// Mark whole background surface as dirty
 	void markDirty();
 
-#if 0
+//*/
 	// Fill background surface by color
 	void bkgFill(uint8 r, uint8 g, uint8 b);
-#endif
+//*/
 	
 	void checkBorders();
 	void rotateTo(int16 to, int16 time);
