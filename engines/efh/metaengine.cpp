@@ -101,14 +101,14 @@ SaveStateList EfhMetaEngine::listSaves(const char *target) const {
 
 	SaveStateList saveList;
 	char slot[3];
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-		slot[0] = filename->c_str()[filename->size() - 2];
-		slot[1] = filename->c_str()[filename->size() - 1];
+	for (const auto &filename : filenames) {
+		slot[0] = filename.c_str()[filename.size() - 2];
+		slot[1] = filename.c_str()[filename.size() - 1];
 		slot[2] = '\0';
 		// Obtain the last 2 digits of the filename (without extension), since they correspond to the save slot
 		int slotNum = atoi(slot);
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
+			Common::InSaveFile *file = saveFileMan->openForLoading(filename);
 			if (file) {
 				uint32 sign = file->readUint32LE();
 				uint8 saveVersion = file->readByte();
