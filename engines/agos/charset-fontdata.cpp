@@ -3060,13 +3060,13 @@ void AGOSEngine_Elvira1::addHiResTextDirtyRect(Common::Rect rect) {
 	rect.right >>= 1;
 	rect.bottom <<= 1;
 
-	for (Common::Array<Common::Rect>::iterator i = _sjisTextFields.begin(); i != _sjisTextFields.end(); ++i) {
+	for (auto &i : _sjisTextFields) {
 		// Merge rects if it makes sense, but only once.
-		if (rect.left <= i->right && rect.right >= i->left && rect.top <= i->bottom && rect.bottom >= i->top) {
-			i->left = MIN<int16>(i->left, rect.left);
-			i->top = MIN<int16>(i->top, rect.top);
-			i->right = MAX<int16>(i->right, rect.right);
-			i->bottom = MAX<int16>(i->bottom, rect.bottom);
+		if (rect.left <= i.right && rect.right >= i.left && rect.top <= i.bottom && rect.bottom >= i.top) {
+			i.left = MIN<int16>(i.left, rect.left);
+			i.top = MIN<int16>(i.top, rect.top);
+			i.right = MAX<int16>(i.right, rect.right);
+			i.bottom = MAX<int16>(i.bottom, rect.bottom);
 			return;
 		}
 	}
@@ -3082,17 +3082,17 @@ void AGOSEngine_Elvira1::clearHiResTextLayer() {
 	assert(p);
 
 	if (_sjisTextFields.size() < 10) {
-		for (Common::Array<Common::Rect>::iterator i = _sjisTextFields.begin(); i != _sjisTextFields.end(); ++i) {
-			uint16 w = i->width();
+		for (auto &i : _sjisTextFields) {
+			uint16 w = i.width();
 			uint16 ptch = _scaleBuf->pitch >> 2;
-			uint32 *dst = (uint32*)p + i->top * ptch + i->left;
-			for (uint32 *end = dst + i->height() * ptch; dst < end; dst += ptch)
+			uint32 *dst = (uint32*)p + i.top * ptch + i.left;
+			for (uint32 *end = dst + i.height() * ptch; dst < end; dst += ptch)
 				Common::fill<uint32*, uint32>(dst, &dst[w], 0);
-			i->left <<= 1;
-			i->top >>= 1;
-			i->right <<= 1;
-			i->bottom >>= 1;
-			updateBackendSurface(i);
+			i.left <<= 1;
+			i.top >>= 1;
+			i.right <<= 1;
+			i.bottom >>= 1;
+			updateBackendSurface(&i);
 		}
 	} else {
 		memset(p, 0, _scaleBuf->w * _scaleBuf->h);
