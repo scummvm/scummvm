@@ -43,7 +43,7 @@ void Room501::init() {
 	digi_play_loop("501_s01", 3, 30);
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 		_val2 = 0;
-		_digiName = 0;
+		_digiName = nullptr;
 		_val4 = 0;
 	}
 
@@ -348,7 +348,7 @@ void Room501::daemon() {
 		_xyzzy6 = -1;
 		_xyzzy7 = -1;
 		_xyzzy5 = -1;
-		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
+		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, false,
 			triggerMachineByHashCallback, "Agent at Desk");
 		sendWSMessage_10000(1, _agent, _agentStridesForward, 15, 15, 506,
 			_agentStridesForward, 15, 15, 0);
@@ -748,7 +748,7 @@ void Room501::daemon() {
 	case 543: {
 		series_unload(_ripParcelExchange);
 
-		int item = conv_current_entry();
+		const int item = conv_current_entry();
 		if (item >= 0 && item <= 11) {
 			static const char *ITEMS[12] = {
 				"CRYSTAL SKULL", "STICK AND SHELL MAP",
