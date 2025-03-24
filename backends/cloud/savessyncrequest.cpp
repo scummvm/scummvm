@@ -84,11 +84,11 @@ void SavesSyncRequest::directoryListedCallback(const Storage::ListDirectoryRespo
 	if (response.request) _date = response.request->date();
 
 	Common::HashMap<Common::String, bool> localFileNotAvailableInCloud;
-	for (Common::HashMap<Common::String, uint32>::iterator i = _localFilesTimestamps.begin(); i != _localFilesTimestamps.end(); ++i) {
-		localFileNotAvailableInCloud[i->_key] = true;
+	for (auto &timestamp : _localFilesTimestamps) {
+		localFileNotAvailableInCloud[timestamp._key] = true;
 	}
 
-	//determine which files to download and which files to upload
+	// Determine which files to download and which files to upload
 	const Common::Array<StorageFile> &remoteFiles = response.value;
 	uint64 totalSize = 0;
 	debug(9, "SavesSyncRequest decisions:");
@@ -110,8 +110,8 @@ void SavesSyncRequest::directoryListedCallback(const Storage::ListDirectoryRespo
 			if (_localFilesTimestamps[name] == file.timestamp())
 				continue;
 
-			//we actually can have some files not only with timestamp < remote
-			//but also with timestamp > remote (when we have been using ANOTHER CLOUD and then switched back)
+			// We actually can have some files not only with timestamp < remote
+			// but also with timestamp > remote (when we have been using ANOTHER CLOUD and then switched back)
 			if (_localFilesTimestamps[name] > file.timestamp() || _localFilesTimestamps[name] == DefaultSaveFileManager::INVALID_TIMESTAMP)
 				_filesToUpload.push_back(file.name());
 			else
@@ -128,13 +128,13 @@ void SavesSyncRequest::directoryListedCallback(const Storage::ListDirectoryRespo
 
 	CloudMan.setStorageUsedSpace(CloudMan.getStorageIndex(), totalSize);
 
-	//upload files which are unavailable in cloud
-	for (Common::HashMap<Common::String, bool>::iterator i = localFileNotAvailableInCloud.begin(); i != localFileNotAvailableInCloud.end(); ++i) {
-		if (i->_key == DefaultSaveFileManager::TIMESTAMPS_FILENAME || !CloudMan.canSyncFilename(i->_key))
+	// Upload files which are unavailable in cloud
+	for (auto &localFile : localFileNotAvailableInCloud) {
+		if (localFile._key == DefaultSaveFileManager::TIMESTAMPS_FILENAME || !CloudMan.canSyncFilename(localFile._key))
 			continue;
-		if (i->_value) {
-			_filesToUpload.push_back(i->_key);
-			debug(9, "- uploading file %s, because it is not present on remote", i->_key.c_str());
+		if (localFile._value) {
+			_filesToUpload.push_back(localFile._key);
+			debug(9, "- uploading file %s, because it is not present on remote", localFile._key.c_str());
 		}
 	}
 
@@ -162,7 +162,7 @@ void SavesSyncRequest::directoryListedCallback(const Storage::ListDirectoryRespo
 	}
 	_totalFilesToHandle = _filesToDownload.size() + _filesToUpload.size();
 
-	//start downloading files
+	// Start downloading files
 	if (!_filesToDownload.empty()) {
 		downloadNextFile();
 	} else {
@@ -181,7 +181,7 @@ void SavesSyncRequest::directoryListedErrorCallback(const Networking::ErrorRespo
 	if (error.failed) {
 		Common::JSONValue *value = Common::JSON::parse(error.response.c_str());
 
-		// somehow OneDrive returns JSON with '.' in unexpected places, try fixing it
+		// Somehow OneDrive returns JSON with '.' in unexpected places, try fixing it
 		if (!value) {
 			Common::String fixedResponse = error.response;
 			for (uint32 i = 0; i < fixedResponse.size(); ++i) {
@@ -195,7 +195,7 @@ void SavesSyncRequest::directoryListedErrorCallback(const Networking::ErrorRespo
 			if (value->isObject()) {
 				Common::JSONObject object = value->asObject();
 
-				//Dropbox-related error:
+				// Dropbox-related error:
 				if (object.contains("error_summary") && object.getVal("error_summary")->isString()) {
 					Common::String summary = object.getVal("error_summary")->asString();
 					if (summary.contains("not_found")) {
@@ -203,7 +203,7 @@ void SavesSyncRequest::directoryListedErrorCallback(const Networking::ErrorRespo
 					}
 				}
 
-				//OneDrive-related error:
+				// OneDrive-related error:
 				if (object.contains("error") && object.getVal("error")->isObject()) {
 					Common::JSONObject errorNode = object.getVal("error")->asObject();
 					if (Networking::CurlJsonRequest::jsonContainsString(errorNode, "code", "SavesSyncRequest")) {
@@ -217,7 +217,7 @@ void SavesSyncRequest::directoryListedErrorCallback(const Networking::ErrorRespo
 			delete value;
 		}
 
-		//Google Drive, Box and OneDrive-related ScummVM-based error
+		// Google Drive, Box and OneDrive-related ScummVM-based error
 		if (error.response.contains("subdirectory not found")) {
 			irrecoverable = false; //base "/ScummVM/" folder not found
 		} else if (error.response.contains("no such file found in its parent directory")) {
@@ -232,7 +232,7 @@ void SavesSyncRequest::directoryListedErrorCallback(const Networking::ErrorRespo
 		return;
 	}
 
-	//we're lucky - user just lacks his "/cloud/" folder - let's create one
+	// We're lucky - user just lacks his "/cloud/" folder - let's create one
 	Common::String dir = _storage->savesDirectoryPath();
 	if (dir.lastChar() == '/')
 		dir.deleteLastChar();
