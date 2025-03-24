@@ -58,8 +58,7 @@ void TextDrawer::drawText(Screen *screen, Graphics::Surface *surface, uint16 bac
 		y = 4;
 	}
 
-	for (Common::Array<TextLine>::iterator it = _textLines.begin(); it != _textLines.end(); ++it) {
-		const TextLine &textLine = *it;
+	for (auto &textLine : _textLines) {
 		if (textLine._text) {
 			screen->drawText(_font, surface, textLine._x + x, textLine._y + y, textLine._text, textLine._length);
 			if (_textFlags & TEXT_FLAG_BORDER_DECORATION) {

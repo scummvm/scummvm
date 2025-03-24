@@ -1220,8 +1220,7 @@ void Controls::destroyDialogItems() {
 }
 
 void Controls::threadIsDead(uint32 threadId) {
-	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
-		Control *control = *it;
+	for (auto &control : _controls) {
 		if (control->_actor &&
 			(control->_actor->_notifyThreadId1 == threadId || control->_actor->_notifyId3C == threadId)) {
 			control->_actor->_notifyThreadId1 = 0;
@@ -1231,8 +1230,7 @@ void Controls::threadIsDead(uint32 threadId) {
 }
 
 void Controls::pauseControls() {
-	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
-		Control *control = *it;
+	for (auto &control : _controls) {
 		++control->_pauseCtr;
 		if (control->_pauseCtr == 1)
 			control->pause();
@@ -1240,8 +1238,7 @@ void Controls::pauseControls() {
 }
 
 void Controls::unpauseControls() {
-	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
-		Control *control = *it;
+	for (auto &control : _controls) {
 		--control->_pauseCtr;
 		if (control->_pauseCtr == 0)
 			control->unpause();
@@ -1249,8 +1246,7 @@ void Controls::unpauseControls() {
 }
 
 void Controls::pauseControlsBySceneId(uint32 sceneId) {
-	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
-		Control *control = *it;
+	for (auto &control : _controls) {
 		if (control->_sceneId == sceneId) {
 			++control->_pauseCtr;
 			if (control->_pauseCtr == 1)
@@ -1260,8 +1256,7 @@ void Controls::pauseControlsBySceneId(uint32 sceneId) {
 }
 
 void Controls::unpauseControlsBySceneId(uint32 sceneId) {
-	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
-		Control *control = *it;
+	for (auto &control : _controls) {
 		if (control->_sceneId == sceneId) {
 			--control->_pauseCtr;
 			if (control->_pauseCtr == 0)
@@ -1275,8 +1270,7 @@ bool Controls::getOverlappedObject(Control *control, Common::Point pt, Control *
 	uint32 foundPriority = 0;
 	uint32 minPriorityExt = _vm->getPriorityFromBase(minPriority);
 
-	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
-		Control *testControl = *it;
+	for (auto &testControl : _controls) {
 		if (testControl != control && testControl->_pauseCtr == 0 &&
 			(testControl->_flags & 1) && !(testControl->_flags & 0x10) &&
 			(!testControl->_actor || (testControl->_actor->_flags & Illusions::ACTOR_FLAG_IS_VISIBLE))) {
@@ -1309,8 +1303,7 @@ bool Controls::getOverlappedObjectAccurate(Control *control, Common::Point pt, C
 	uint32 foundPriority = 0;
 	uint32 minPriorityExt = _vm->getPriorityFromBase(minPriority);
 
-	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
-		Control *testControl = *it;
+	for (auto &testControl : _controls) {
 		if (testControl != control && testControl->_pauseCtr == 0 &&
 			(testControl->_flags & 1) && !(testControl->_flags & 0x10) &&
 			(!testControl->_actor || (testControl->_actor->_flags & Illusions::ACTOR_FLAG_IS_VISIBLE))) {
@@ -1341,8 +1334,7 @@ bool Controls::getOverlappedObjectAccurate(Control *control, Common::Point pt, C
 
 bool Controls::getDialogItemAtPos(Control *control, Common::Point pt, Control **outOverlappedControl) {
 	Control *foundControl = nullptr;
-	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
-		Control *testControl = *it;
+	for (auto &testControl : _controls) {
 		if (testControl != control && testControl->_pauseCtr == 0 &&
 			(testControl->_flags & 1) && (testControl->_flags & 4)) {
 			Common::Rect collisionRect;
@@ -1358,8 +1350,7 @@ bool Controls::getDialogItemAtPos(Control *control, Common::Point pt, Control **
 
 bool Controls::getOverlappedWalkObject(Control *control, Common::Point pt, Control **outOverlappedControl) {
 	Control *foundControl = nullptr;
-	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
-		Control *testControl = *it;
+	for (auto &testControl : _controls) {
 		if (testControl != control && testControl->_pauseCtr == 0 &&
 			(testControl->_flags & 1)) {
 			Common::Rect collisionRect;
@@ -1380,8 +1371,7 @@ void Controls::destroyControl(Control *control) {
 }
 
 bool Controls::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
-	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
-		Control *control = *it;
+	for (auto &control : _controls) {
 		if (control->_pauseCtr == 0 && control->_actor && control->_actor->findNamedPoint(namedPointId, pt))
 			return true;
 	}
@@ -1485,8 +1475,7 @@ void Controls::destroyControlInternal(Control *control) {
 }
 
 void Controls::disappearActors() {
-	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
-		Control *control = *it;
+	for (auto &control : _controls) {
 		if (control->_flags & 4 && control->_pauseCtr == 0) {
 			control->disappearActor();
 		}
@@ -1498,8 +1487,7 @@ void Controls::disappearActors() {
 }
 
 void Controls::appearActors() {
-	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
-		Control *control = *it;
+	for (auto &control : _controls) {
 		if (control->_flags & 4 && control->_pauseCtr == 0) {
 			control->appearActor();
 		}
@@ -1511,8 +1499,7 @@ void Controls::appearActors() {
 }
 
 void Controls::pauseActors(uint32 objectId) {
-	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
-		Control *control = *it;
+	for (auto &control : _controls) {
 		if (control->_actor && control->_objectId != objectId) {
 			control->_actor->pause();
 		}
@@ -1520,8 +1507,7 @@ void Controls::pauseActors(uint32 objectId) {
 }
 
 void Controls::unpauseActors(uint32 objectId) {
-	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
-		Control *control = *it;
+	for (auto &control : _controls) {
 		if (control->_actor && control->_objectId != objectId) {
 			control->_actor->unpause();
 		}

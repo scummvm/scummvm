@@ -583,31 +583,31 @@ void BackgroundInstanceList::removeBackgroundInstance(BackgroundInstance *backgr
 }
 
 void BackgroundInstanceList::pauseBySceneId(uint32 sceneId) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
-		if ((*it)->_sceneId == sceneId)
-			(*it)->pause();
+	for (auto &item : _items) {
+		if (item->_sceneId == sceneId)
+			item->pause();
 	}
 }
 
 void BackgroundInstanceList::unpauseBySceneId(uint32 sceneId) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
-		if ((*it)->_sceneId == sceneId)
-			(*it)->unpause();
+	for (auto &item : _items) {
+		if (item->_sceneId == sceneId)
+			item->unpause();
 	}
 }
 
 BackgroundInstance *BackgroundInstanceList::findActiveBackgroundInstance() {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
-		if ((*it)->_pauseCtr == 0)
-			return (*it);
+	for (auto &item : _items) {
+		if (item->_pauseCtr == 0)
+			return item;
 	}
 	return nullptr;
 }
 
 BackgroundInstance *BackgroundInstanceList::findBackgroundByResource(BackgroundResource *backgroundResource) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
-		if ((*it)->_bgRes == backgroundResource)
-			return (*it);
+	for (auto &item : _items) {
+		if (item->_bgRes == backgroundResource)
+			return item;
 	}
 	return nullptr;
 }

@@ -272,22 +272,21 @@ void ActorInstanceList::removeActorInstance(ActorInstance *actorInstance) {
 }
 
 void ActorInstanceList::pauseBySceneId(uint32 sceneId) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
-		if ((*it)->_sceneId == sceneId)
-			(*it)->pause();
+	for (auto &it : _items) {
+		if (it->_sceneId == sceneId)
+			it->pause();
 	}
 }
 
 void ActorInstanceList::unpauseBySceneId(uint32 sceneId) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
-		if ((*it)->_sceneId == sceneId)
-			(*it)->unpause();
+	for (auto &it : _items) {
+		if (it->_sceneId == sceneId)
+			it->unpause();
 	}
 }
 
 FramesList *ActorInstanceList::findSequenceFrames(Sequence *sequence) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
-		ActorInstance *actorInstance = *it;
+	for (auto &actorInstance : _items) {
 		if (actorInstance->_pauseCtr <= 0 && actorInstance->_actorResource->containsSequence(sequence))
 			return &actorInstance->_actorResource->_frames;
 	}
@@ -295,16 +294,15 @@ FramesList *ActorInstanceList::findSequenceFrames(Sequence *sequence) {
 }
 
 ActorInstance *ActorInstanceList::findActorByResource(ActorResource *actorResource) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
-		if ((*it)->_actorResource == actorResource)
-			return (*it);
+	for (auto &it : _items) {
+		if (it->_actorResource == actorResource)
+			return (it);
 	}
 	return nullptr;
 }
 
 bool ActorInstanceList::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
-		ActorInstance *actorInstance = *it;
+	for (auto &actorInstance : _items) {
 		if (actorInstance->_pauseCtr == 0 && actorInstance->_actorResource->findNamedPoint(namedPointId, pt))
 			return true;
 	}
