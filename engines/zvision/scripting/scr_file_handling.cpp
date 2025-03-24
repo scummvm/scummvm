@@ -274,32 +274,52 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 	line.toLowercase();
 
 	// TODO: Re-order the if-then statements in order of highest occurrence
+	//While within results block
 	while (!stream.eos() && !line.contains('}')) {
+	  //Skip empty lines
 		if (line.empty()) {
 			line = stream.readLine();
 			trimCommentsAndWhiteSpace(&line);
 			line.toLowercase();
 			continue;
 		}
+    debug(4,"Result line: %s", line.c_str());	
 		const char *chrs = line.c_str();
 		uint pos;
-		for (pos = 0; pos < line.size(); pos++)
+/*/
+		//Iterate along line until colon encountered
+		for (pos = 0; pos < line.size(); pos++) {
 			if (chrs[pos] == ':')
 				break;
-		if (pos < line.size()) {
-			uint startpos = pos + 1;
+		}
+/*/
+	  if(line.matchString("action:*", true))
+      pos = 6;
+	  else if(line.matchString("event:*", true))
+	    pos = 5;
+	  else if(line.matchString("background:*", true))
+	    pos = 10;
+	  else
+	    continue;
+//*/
+		if (pos < line.size()) {  //Stuff left
+			uint startpos = pos + 1;  //first character after colon
+			//Scan for next colon or opening bracket
 			for (pos = startpos; pos < line.size(); pos++)
 				if (chrs[pos] == ':' || chrs[pos] == '(')
 					break;
+			debug(4,"startpos %d, pos %d, line.size %d", startpos, pos, line.size());
+			int32 slot = 11;  //Non-setting default slot
+			Common::String args = "";
+			Common::String act(chrs + startpos, chrs + pos);
+			//Extract arguments, if any
 			if (pos < line.size()) {
-				int32 slot = 11;
-				Common::String args = "";
-				Common::String act(chrs + startpos, chrs + pos);
 				startpos = pos + 1;
 				if (chrs[pos] == ':') {
 					for (pos = startpos; pos < line.size(); pos++)
 						if (chrs[pos] == '(')
 							break;
+					//Extract slotkey, if specified
 					Common::String strSlot(chrs + startpos, chrs + pos);
 					slot = atoi(strSlot.c_str());
 					startpos = pos + 1;
@@ -310,6 +330,8 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 							break;
 					args = Common::String(chrs + startpos, chrs + pos);
 				}
+			}
+				debug(4,"Action string: '%s', slot %d, arguments string '%s'", act.c_str(), slot, args.c_str());
 
 				// Parse for the action type
 				if (act.matchString("add", true)) {
@@ -406,7 +428,6 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else {
 					warning("Unhandled result action type: %s", line.c_str());
 				}
-			}
 		}
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
