@@ -171,10 +171,10 @@ bool AVIFrames::flushFrameCache() {
 	if (_cachedFrames.empty())
 		return false;
 
-	for (FrameList::iterator it = _cachedFrames.begin(); it != _cachedFrames.end(); ++it) {
-		if (it->frame) {
-			it->frame->free();
-			delete it->frame;
+	for (auto &cachedFrame : _cachedFrames) {
+		if (cachedFrame.frame) {
+			cachedFrame.frame->free();
+			delete cachedFrame.frame;
 		}
 	}
 
@@ -182,9 +182,9 @@ bool AVIFrames::flushFrameCache() {
 }
 
 const Graphics::Surface *AVIFrames::retrieveFrameFromCache(int frameIndex) const {
-	for (FrameList::const_iterator it = _cachedFrames.begin(); it != _cachedFrames.end(); ++it)
-		if (it->index == frameIndex)
-			return it->frame;
+	for (const auto &cachedFrame : _cachedFrames)
+		if (cachedFrame.index == frameIndex)
+			return cachedFrame.frame;
 
 	return nullptr;
 }
