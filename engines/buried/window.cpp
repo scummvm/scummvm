@@ -141,12 +141,12 @@ void Window::updateWindow() {
 	onPaint();
 
 	// Draw children
-	for (WindowList::iterator it = _children.begin(); it != _children.end(); ++it)
-		(*it)->updateWindow();
+	for (auto &child : _children)
+		child->updateWindow();
 
 	// Draw top-most children
-	for (WindowList::iterator it = _topMostChildren.begin(); it != _topMostChildren.end(); ++it)
-		(*it)->updateWindow();
+	for (auto &child : _topMostChildren)
+		child->updateWindow();
 }
 
 void Window::setWindowPos(const Window *insertAfter, int x, int y, int width, int height, uint flags) {
