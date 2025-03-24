@@ -162,6 +162,7 @@ void Options::saveIniSettings() {
 
 	_settings.setInt("difficulty", _difficulty);
 	_settings.setInt("time_limit", _time);
+	_settings.flushToDisk();
 }
 
 void Options::setTime(int _minutes, int _seconds) {

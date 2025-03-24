@@ -76,6 +76,12 @@ bool Settings::isModified() const {
 	return false;
 }
 
+Settings::Domain &Settings::operator[](const Common::String &domain) {
+	Settings::Domain &result = _domains[domain];
+	result._settings = this;
+	return result;
+}
+
 Common::String Settings::Domain::getDomainName(Common::InSaveFile *src) {
 	Common::String line = src->readLine();
 	if (line.empty())
@@ -114,6 +120,11 @@ void Settings::Domain::save(Common::OutSaveFile *dest) {
 	}
 
 	dest->writeByte('\n');
+}
+
+void Settings::Domain::flushToDisk() {
+	assert(_settings);
+	_settings->save();
 }
 
 } // namespace HodjNPodj

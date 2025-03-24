@@ -32,9 +32,11 @@ namespace HodjNPodj {
 class Settings {
 public:
 	class Domain {
+		friend class Settings;
 	private:
 		typedef Common::HashMap<Common::String, Common::String,
 			Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> Values;
+		Settings *_settings = nullptr;
 		Values _values;
 		bool _modified = false;
 
@@ -68,16 +70,45 @@ public:
 			_values[key] = value ? "true" : "false";
 			_modified = true;
 		}
+
+		void flushToDisk();
+	};
+
+	class Serializer {
+	private:
+		Domain &_domain;
+		bool _isSaving;
+	public:
+		Serializer(Domain &domain, bool isSaving) :
+			_domain(domain), _isSaving(isSaving) {}
+		~Serializer() {
+			_domain.flushToDisk();
+		}
+
+		void sync(const Common::String &key, int &field, int defaultValue = 0) {
+			if (_isSaving)
+				_domain.setInt(key, field);
+			else
+				field = _domain.getInt(key, defaultValue);
+		}
+		void sync(const Common::String &key, bool &field, bool defaultValue = false) {
+			if (_isSaving)
+				_domain.setBool(key, field);
+			else
+				field = _domain.getBool(key, defaultValue);
+		}
 	};
 
 public:
+	~Settings() {
+		save();
+	}
+
 	void load();
 	void save();
 
 	bool isModified() const;
-	Domain &operator[](const Common::String &domain) {
-		return _domains[domain];
-	}
+	Domain &operator[](const Common::String &domain);
 
 private:
 	typedef Common::HashMap<Common::String, Domain,

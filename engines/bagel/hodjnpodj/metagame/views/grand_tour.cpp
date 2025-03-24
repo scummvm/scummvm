@@ -127,8 +127,8 @@ GrandTour::GrandTour() : Dialog("GrandTour"),
 
 	pGAButton("ALPHA", "Alphabetically", RectWH(GA_LEFT, G_TOP, G_WIDTH, G_HEIGHT), this),
 	pGGButton("GEOG",  "Geographically", RectWH(GG_LEFT, G_TOP, G_WIDTH, G_HEIGHT), this),
-	pGRButton("RANDOM", "Randomly",      RectWH(GR_LEFT, G_TOP, G_WIDTH, G_HEIGHT), this)
-{
+	pGRButton("RANDOM", "Randomly",      RectWH(GR_LEFT, G_TOP, G_WIDTH, G_HEIGHT), this),
+	_settings(g_engine->_settings["Grand Tour"]) {
 }
 
 bool GrandTour::msgOpen(const OpenMessage &msg) {
@@ -212,7 +212,6 @@ bool GrandTour::msgGame(const GameMessage &msg) {
 
 void GrandTour::draw() {
 	Dialog::draw();
-	uint nOldTextAlign;
 	Common::String cNextGame;
 	Common::String cLastGame;
 	int nGameCode;
@@ -514,6 +513,37 @@ int GrandTour::getNextGameCode(bool bExecute) {
 		}
 	}
 	return nReturnValue;
+}
+
+void GrandTour::syncGame(bool isSaving) {
+	Settings::Serializer s(_settings, isSaving);
+
+	s.sync("playingHodj", m_pgtGTStruct->bPlayingHodj);
+	s.sync("midGrandTour", m_pgtGTStruct->bMidGrandTour);
+	s.sync("hodjSkillLevel", m_pgtGTStruct->nHodjSkillLevel);
+	s.sync("podjSkillLevel", m_pgtGTStruct->nPodjSkillLevel);
+	s.sync("gameSelection", m_pgtGTStruct->nGameSelection);
+	s.sync("currGameCode", m_pgtGTStruct->nCurrGameCode);
+	s.sync("hodjScore", m_pgtGTStruct->nHodjScore);
+	s.sync("podjScore", m_pgtGTStruct->nPodjScore);
+	s.sync("hodjLastGame", m_pgtGTStruct->nHodjLastGame);
+	s.sync("podjLastGame", m_pgtGTStruct->nPodjLastGame);
+	s.sync("hodjLastScore", m_pgtGTStruct->nHodjLastScore);
+	s.sync("podjLastScore", m_pgtGTStruct->nPodjLastScore);
+
+	for (int i = 0; i < 18; i++) {
+		_settings.setBool(
+			Common::String::format("hGamePlayed[%d]", i),
+			m_pgtGTStruct->abHGamePlayed[i]);
+		_settings.setBool(
+			Common::String::format("pGamePlayed[%d]", i),
+			m_pgtGTStruct->abPGamePlayed[i]);
+	}
+
+	if (!isSaving) {
+		updateRadioButtons();
+		redraw();
+	}
 }
 
 /*------------------------------------------------------------------------*/

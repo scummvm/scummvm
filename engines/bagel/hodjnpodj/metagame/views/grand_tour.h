@@ -24,6 +24,7 @@
 
 #include "bagel/hodjnpodj/metagame/views/dialog.h"
 #include "bagel/hodjnpodj/gfx/button.h"
+#include "bagel/hodjnpodj/libs/settings.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -57,7 +58,7 @@ struct GRANDTRSTRUCT {
 class GrandTour : public Dialog {
 private:
 	GRANDTRSTRUCT _grandTour;
-	GRANDTRSTRUCT *const m_pgtGTStruct = &_grandTour;
+	GRANDTRSTRUCT *m_pgtGTStruct = &_grandTour;
 	ColorButton _playButton;
 	ColorButton _saveButton;
 	ColorButton _restoreButton;
@@ -68,6 +69,7 @@ private:
 		pHSLButton, pHSNPButton, pPSHButton,
 		pPSMButton, pPSLButton, pPSNPButton,
 		pGAButton, pGGButton, pGRButton;
+	Settings::Domain &_settings;
 
 	void adjustScore();
 	void updateRadioButtons();
@@ -76,6 +78,14 @@ private:
 	 * Determines the next game to be played
 	 */
 	int getNextGameCode(bool bExecute);
+
+	void syncGame(bool isSaving);
+	void saveGame() {
+		syncGame(true);
+	}
+	void restoreGame() {
+		syncGame(false);
+	}
 
 public:
 	GrandTour();

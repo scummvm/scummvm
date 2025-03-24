@@ -192,6 +192,7 @@ void Options::saveIniSettings() {
 	_settings.setInt("BallSpeed", _ballSpeed);
 	_settings.setInt("PaddleSize", _paddleSize);
 	_settings.setBool("OuterWall", _outerWall);
+	_settings.flushToDisk();
 }
 
 } // namespace Fuge
