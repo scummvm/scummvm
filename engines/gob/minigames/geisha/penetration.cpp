@@ -1334,20 +1334,20 @@ void Penetration::checkShields() {
 }
 
 void Penetration::checkMouths() {
-	for (Common::List<ManagedMouth>::iterator m = _mouths.begin(); m != _mouths.end(); ++m) {
-		if (!m->mouth->isDeactivated())
+	for (auto &curMouth : _mouths) {
+		if (!curMouth.mouth->isDeactivated())
 			continue;
 
-		if ((( m->tileX      == _sub->tileX) && (m->tileY == _sub->tileY)) ||
-		    (((m->tileX + 1) == _sub->tileX) && (m->tileY == _sub->tileY))) {
+		if ((( curMouth.tileX      == _sub->tileX) && (curMouth.tileY == _sub->tileY)) ||
+		    (((curMouth.tileX + 1) == _sub->tileX) && (curMouth.tileY == _sub->tileY))) {
 
-			m->mouth->activate();
+			curMouth.mouth->activate();
 
 			// Play the mouth sound and do health gain/loss
-			if        (m->type == kMouthTypeBite) {
+			if (curMouth.type == kMouthTypeBite) {
 				_vm->_sound->blasterPlay(&_soundBite, 1, 0);
 				healthLose(230);
-			} else if (m->type == kMouthTypeKiss) {
+			} else if (curMouth.type == kMouthTypeKiss) {
 				_vm->_sound->blasterPlay(&_soundKiss, 1, 0);
 				healthGain(120);
 			}
@@ -1359,8 +1359,8 @@ void Penetration::checkExits() {
 	if (!_sub->sub->canMove())
 		return;
 
-	for (Common::List<MapObject>::iterator e = _exits.begin(); e != _exits.end(); ++e) {
-		if ((e->tileX == _sub->tileX) && (e->tileY == _sub->tileY)) {
+	for (auto &ex : _exits) {
+		if ((ex.tileX == _sub->tileX) && (ex.tileY == _sub->tileY)) {
 			_sub->setMapFromTilePosition();
 
 			_sub->sub->leave();
