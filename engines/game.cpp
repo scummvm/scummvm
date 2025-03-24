@@ -242,9 +242,9 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 		report += game.preferredTarget;
 
 		// Consolidate matched files across all engines and detection entries
-		for (FilePropertiesMap::const_iterator it = game.matchedFiles.begin(); it != game.matchedFiles.end(); it++) {
-			Common::String key = Common::String::format("%s:%s", md5PropToCachePrefix(it->_value.md5prop).c_str(), it->_key.punycodeEncode().toString('/').c_str());
-			matchedFiles.setVal(key, it->_value);
+		for (const auto &file : game.matchedFiles) {
+			Common::String key = Common::String::format("%s:%s", md5PropToCachePrefix(file._value.md5prop).c_str(), file._key.punycodeEncode().toString('/').c_str());
+			matchedFiles.setVal(key, file._value);
 		}
 	}
 
@@ -255,8 +255,8 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 	report += Common::U32String("\n\n");
 
 	Common::StringArray filenames;
-	for (CachedPropertiesMap::const_iterator file = matchedFiles.begin(); file != matchedFiles.end(); ++file) {
-		filenames.push_back(file->_key);
+	for (const auto &file : matchedFiles) {
+		filenames.push_back(file._key);
 	}
 	Common::sort(filenames.begin(), filenames.end());
 	for (uint i = 0; i < filenames.size(); ++i) {

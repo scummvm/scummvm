@@ -148,20 +148,20 @@ bool AchievementsManager::loadAchievementsData(const char *platform, const char 
 
 	_achievements.clear();
 	INIFile::SectionList sections = cfgFile.getSections();
-	for (Common::INIFile::SectionList::const_iterator section = sections.begin(); section != sections.end(); ++section) {
-		if (!(section->name.hasPrefix("achievements:"))) {
+	for (const auto &section : sections) {
+		if (!(section.name.hasPrefix("achievements:"))) {
 			continue;
 		}
 
-		String lang = section->name.substr(13); //strlen("achievements:")
+		String lang = section.name.substr(13); //strlen("achievements:")
 
 		for (int i = 0; i < 256; i++) {
 			String prefix = String::format("item_%d", i);
 
-			String id      = section->getKey(prefix + "_id")      ? section->getKey(prefix + "_id")->value      : "";
-			String title   = section->getKey(prefix + "_title")   ? section->getKey(prefix + "_title")->value   : "";
-			String comment = section->getKey(prefix + "_comment") ? section->getKey(prefix + "_comment")->value : "";
-			String hidden  = section->getKey(prefix + "_hidden")  ? section->getKey(prefix + "_hidden")->value  : "";
+			String id      = section.getKey(prefix + "_id")      ? section.getKey(prefix + "_id")->value      : "";
+			String title   = section.getKey(prefix + "_title")   ? section.getKey(prefix + "_title")->value   : "";
+			String comment = section.getKey(prefix + "_comment") ? section.getKey(prefix + "_comment")->value : "";
+			String hidden  = section.getKey(prefix + "_hidden")  ? section.getKey(prefix + "_hidden")->value  : "";
 
 			if (id.empty()) {
 				break;
