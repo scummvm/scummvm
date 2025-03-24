@@ -117,16 +117,16 @@ bool FilesPageHandler::listDirectory(const Common::String &path_, Common::String
 	}
 
 	// fill the content
-	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
-		Common::String name = i->getName();
-		if (i->isDirectory())
+	for (auto &i : _nodeContent) {
+		Common::String name = i.getName();
+		if (i.isDirectory())
 			name += "/";
 
-		Common::Path relPath = i->getPath().relativeTo(baseFSPath);
+		Common::Path relPath = i.getPath().relativeTo(baseFSPath);
 		Common::String filePath(basePath);
 		filePath += relPath.toString('/');
 
-		addItem(content, itemTemplate, detectType(i->isDirectory(), name), filePath, name);
+		addItem(content, itemTemplate, detectType(i.isDirectory(), name), filePath, name);
 	}
 
 	return true;

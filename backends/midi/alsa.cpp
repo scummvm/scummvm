@@ -424,8 +424,8 @@ MusicDevices AlsaMusicPlugin::getDevices() const {
 
 	// Add the remaining devices in the order they were found.
 
-	for (d = alsaDevices.begin(); d != alsaDevices.end(); ++d)
-		devices.push_back(MusicDevice(this, d->getName(), d->getType()));
+	for (auto &device : alsaDevices)
+		devices.push_back(MusicDevice(this, device.getName(), device.getType()));
 
 	return devices;
 }
@@ -461,12 +461,12 @@ Common::Error AlsaMusicPlugin::createInstance(MidiDriver **mididriver, MidiDrive
 	if (!found && dev) {
 		AlsaDevices alsaDevices = getAlsaDevices();
 
-		for (AlsaDevices::iterator d = alsaDevices.begin(); d != alsaDevices.end(); ++d) {
-			MusicDevice device(this, d->getName(), d->getType());
+		for (auto &d : alsaDevices) {
+			MusicDevice device(this, d.getName(), d.getType());
 
 			if (device.getCompleteId().equals(MidiDriver::getDeviceString(dev, MidiDriver::kDeviceId))) {
 				found = true;
-				seq_client = d->getClient();
+				seq_client = d.getClient();
 				seq_port = -1;
 				break;
 			}

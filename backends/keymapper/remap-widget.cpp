@@ -275,10 +275,10 @@ void RemapWidget::handleTickle() {
 void RemapWidget::loadKeymap() {
 	assert(_actions.empty());
 
-	for (KeymapArray::const_iterator km = _keymapTable.begin(); km != _keymapTable.end(); km++) {
-		for (Keymap::ActionArray::const_iterator it = (*km)->getActions().begin(); it != (*km)->getActions().end(); ++it) {
+	for (const auto &km : _keymapTable) {
+		for (Keymap::ActionArray::const_iterator it = km->getActions().begin(); it != km->getActions().end(); ++it) {
 			ActionRow row;
-			row.keymap = *km;
+			row.keymap = km;
 			row.action = *it;
 
 			_actions.push_back(row);

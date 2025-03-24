@@ -84,9 +84,9 @@ bool DefaultAudioCDManager::existExtractedCDAudioFiles(uint track) {
 	Common::Array<Common::String> trackNames;
 	fillPotentialTrackNames(trackNames, track);
 
-	for (Common::Array<Common::String>::iterator i = trackNames.begin(); i != trackNames.end(); ++i) {
+	for (auto &trackName : trackNames) {
 		for (const char **ext = extensions; *ext; ++ext) {
-			const Common::String &filename = Common::String::format("%s.%s", i->c_str(), *ext);
+			const Common::String &filename = Common::String::format("%s.%s", trackName.c_str(), *ext);
 			if (Common::File::exists(Common::Path(filename, '/'))) {
 				return true;
 			}

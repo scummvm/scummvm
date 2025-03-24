@@ -2680,10 +2680,10 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg
 	Common::Array<Common::U32String> lines;
 	Common::U32String::const_iterator strLineItrBegin = msg.begin();
 
-	for (Common::U32String::const_iterator itr = msg.begin(); itr != msg.end(); itr++) {
-		if (*itr == '\n') {
+	for (const auto &itr : msg) {
+		if (itr == '\n') {
 			lines.push_back(Common::U32String(strLineItrBegin, itr));
-			strLineItrBegin = itr + 1;
+			strLineItrBegin = &itr + 1;
 		}
 	}
 	if (strLineItrBegin != msg.end())
