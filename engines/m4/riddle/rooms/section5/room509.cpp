@@ -65,7 +65,7 @@ void Room509::daemon() {
 
 	case 2:
 		ws_hide_walker();
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "Rip climbs steps from 506");
 		sendWSMessage_10000(1, _ripley, _ripFrom506, 1, 39, 6,
 			_ripFrom506, 40, 40, 0);
@@ -73,7 +73,7 @@ void Room509::daemon() {
 
 	case 3:
 		ws_hide_walker();
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "Rip climbs steps from 506");
 		sendWSMessage_10000(1, _ripley, _ripFrom510, 1, 15, 7,
 			_ripFrom510, 16, 16, 0);
@@ -129,9 +129,9 @@ void Room509::pre_parser() {
 }
 
 void Room509::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said("gear");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said("gear");
 
 	if (lookFlag && player_said("wall")) {
 		digi_play("509R03", 1);
@@ -183,7 +183,7 @@ void Room509::parser() {
 		player_set_commands_allowed(false);
 		ws_hide_walker();
 		digi_preload("509_s02");
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "RIP DIGS AT WALL");
 		_G(kernel).trigger_mode = KT_DAEMON;
 		sendWSMessage_10000(1, _ripley, _ripDigsWall, 1, 33, 8,
@@ -198,7 +198,7 @@ void Room509::parser() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_roomNum = 510;
-			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 				triggerMachineByHashCallback, "RIP CLIMBS UP TO 510");
 			sendWSMessage_10000(1, _ripley, _ripClimbStairs3, 1, 8, 1,
 				_ripClimbStairs3, 9, 16, 0);
@@ -218,7 +218,7 @@ void Room509::parser() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_roomNum = 506;
-			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 				triggerMachineByHashCallback, "RIP CLIMBS DOWN TO 506");
 			sendWSMessage_10000(1, _ripley, _ripClimbStairs1, 1, 14, 1,
 				_ripClimbStairs1, 15, 28, 0);
