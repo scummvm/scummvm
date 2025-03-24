@@ -137,6 +137,7 @@ bool GrandTour::msgOpen(const OpenMessage &msg) {
 	_grandTour.reset();
 
 	adjustScore();
+	updateRadioButtons();
 
 	return true;
 }
@@ -169,30 +170,22 @@ bool GrandTour::msgGame(const GameMessage &msg) {
 	} else if (msg._name == "RADIOBUTTON") {
 		if (msg._stringValue == "HHARD") {
 			m_pgtGTStruct->nHodjSkillLevel = SKILLLEVEL_HIGH;
-			m_pgtGTStruct->bPlayingHodj = true;
 		} else if (msg._stringValue == "HMEDIUM") {
 			m_pgtGTStruct->nHodjSkillLevel = SKILLLEVEL_MEDIUM;
-			m_pgtGTStruct->bPlayingHodj = true;
 		} else if (msg._stringValue == "HEASY") {
 			m_pgtGTStruct->nHodjSkillLevel = SKILLLEVEL_LOW;
-			m_pgtGTStruct->bPlayingHodj = true;
 		} else if (msg._stringValue == "HNONE") {
 			m_pgtGTStruct->nHodjSkillLevel = NOPLAY;
-			m_pgtGTStruct->bPlayingHodj = true;
 		}
 
 		else if (msg._stringValue == "PHARD") {
 			m_pgtGTStruct->nPodjSkillLevel = SKILLLEVEL_HIGH;
-			m_pgtGTStruct->bPlayingHodj = false;
 		} else if (msg._stringValue == "PMEDIUM") {
 			m_pgtGTStruct->nPodjSkillLevel = SKILLLEVEL_MEDIUM;
-			m_pgtGTStruct->bPlayingHodj = false;
 		} else if (msg._stringValue == "PEASY") {
 			m_pgtGTStruct->nPodjSkillLevel = SKILLLEVEL_LOW;
-			m_pgtGTStruct->bPlayingHodj = false;
 		} else if (msg._stringValue == "PNONE") {
 			m_pgtGTStruct->nPodjSkillLevel = NOPLAY;
-			m_pgtGTStruct->bPlayingHodj = false;
 		}
 
 		else if (msg._stringValue == "ALPHA") {
@@ -406,6 +399,15 @@ void GrandTour::updateRadioButtons() {
 	pGAButton.setCheck(m_pgtGTStruct->nGameSelection == GAME_ALPHA);
 	pGGButton.setCheck(m_pgtGTStruct->nGameSelection == GAME_GEO);
 	pGRButton.setCheck(m_pgtGTStruct->nGameSelection == GAME_RAND);
+
+	// Disable the radio buttons if a tour is in progress
+	RadioButton *buttons[11] = {
+		&pHSHButton, &pHSMButton, &pHSLButton, &pHSNPButton,
+		&pPSHButton, &pPSMButton, &pPSLButton, &pPSNPButton,
+		&pGAButton, &pGGButton, &pGRButton
+	};
+	for (int i = 0; i < 11; ++i)
+		buttons[i]->enableWindow(!m_pgtGTStruct->bMidGrandTour);
 
 	redraw();
 }
