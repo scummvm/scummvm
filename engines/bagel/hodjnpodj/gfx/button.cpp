@@ -338,27 +338,21 @@ Common::Rect RadioButton::getCheckRect() const {
 }
 
 void RadioButton::buttonPressed() {
-	// For radio buttons, if this is called due to
-	// a hotkey match, trigger selecting it
-	setCheck(true);
+	if (!(_itemState & ODS_GRAYED) &&
+		!(_itemState & ODS_DISABLED)) {
+		_parent->send(GameMessage("RADIOBUTTON", _name, true));
+	}
 }
 
 bool RadioButton::msgMouseUp(const MouseUpMessage &msg) {
-	if (!(_itemState & ODS_GRAYED) &&
-		!(_itemState & ODS_DISABLED)) {
-		setCheck(true);
-	}
-
+	buttonPressed();
 	return true;
 }
 
-void RadioButton::setCheck(bool checked, bool notify) {
+void RadioButton::setCheck(bool checked) {
 	if (checked != _checked) {
 		_checked = checked;
 		redraw();
-
-		if (checked && notify)
-			_parent->send(GameMessage("RADIOBUTTON", _name, true));
 	}
 }
 

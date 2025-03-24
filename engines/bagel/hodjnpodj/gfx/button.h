@@ -236,7 +236,7 @@ public:
 	}
 	bool msgMouseUp(const MouseUpMessage &msg) override;
 
-	void setCheck(bool checked, bool notify = true);
+	void setCheck(bool checked);
 };
 
 class OkButton : public ColorButton {

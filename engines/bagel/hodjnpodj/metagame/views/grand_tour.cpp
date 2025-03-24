@@ -187,7 +187,8 @@ bool GrandTour::msgGame(const GameMessage &msg) {
 			m_pgtGTStruct->nHodjSkillLevel = SKILLLEVEL_MEDIUM;
 		} else if (msg._stringValue == "HEASY") {
 			m_pgtGTStruct->nHodjSkillLevel = SKILLLEVEL_LOW;
-		} else if (msg._stringValue == "HNONE") {
+		} else if (msg._stringValue == "HNONE" &&
+				m_pgtGTStruct->nPodjSkillLevel != NOPLAY) {
 			m_pgtGTStruct->nHodjSkillLevel = NOPLAY;
 		}
 
@@ -197,7 +198,8 @@ bool GrandTour::msgGame(const GameMessage &msg) {
 			m_pgtGTStruct->nPodjSkillLevel = SKILLLEVEL_MEDIUM;
 		} else if (msg._stringValue == "PEASY") {
 			m_pgtGTStruct->nPodjSkillLevel = SKILLLEVEL_LOW;
-		} else if (msg._stringValue == "PNONE") {
+		} else if (msg._stringValue == "PNONE" &&
+				m_pgtGTStruct->nHodjSkillLevel != NOPLAY) {
 			m_pgtGTStruct->nPodjSkillLevel = NOPLAY;
 		}
 
