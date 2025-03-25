@@ -19,40 +19,25 @@
  *
  */
 
-#ifndef HODJNPODJ_VIEWS_H
-#define HODJNPODJ_VIEWS_H
-
-#include "bagel/hodjnpodj/views/rules.h"
-#include "bagel/hodjnpodj/views/main_menu.h"
-#include "bagel/hodjnpodj/views/message_box.h"
 #include "bagel/hodjnpodj/metagame/views/credits.h"
-#include "bagel/hodjnpodj/metagame/views/grand_tour.h"
-#include "bagel/hodjnpodj/metagame/views/minigames.h"
-#include "bagel/hodjnpodj/metagame/views/movie.h"
-#include "bagel/hodjnpodj/metagame/views/title_menu.h"
-#include "bagel/hodjnpodj/metagame/views/top_scores.h"
-#include "bagel/hodjnpodj/fuge/fuge.h"
-#include "bagel/hodjnpodj/mazedoom/maze_doom.h"
-#include "bagel/hodjnpodj/novacancy/no_vacancy.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
+namespace Metagame {
 
-struct Views {
-	MainMenu _mainMenu;
-	MessageBox _messageBox;
-	Rules _rules;
-	Metagame::GrandTour _grandTour;
-	Metagame::Minigames _minigames;
-	Metagame::Movie _movie;
-	Metagame::TitleMenu _titleMenu;
-	Metagame::TopScores _topScores;
-	Fuge::Fuge _fuge;
-	MazeDoom::MazeDoom _mazeDoom;
-	NoVacancy::NoVacancy _noVacancy;
-};
+bool Credits::msgOpen(const OpenMessage &msg) {
+	return true;
+}
 
+bool Credits::msgClose(const CloseMessage &msg) {
+	return true;
+}
+
+void Credits::draw() {
+	// TODO
+}
+
+} // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif

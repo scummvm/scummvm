@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/file.h"
-#include "image/bmp.h"
 #include "bagel/hodjnpodj/metagame/views/title_menu.h"
 #include "bagel/hodjnpodj/metagame/views/movie.h"
 #include "bagel/hodjnpodj/libs/dialog_unit.h"
