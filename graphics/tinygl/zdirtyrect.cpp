@@ -392,7 +392,7 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 		}
 		break;
 	case TGL_TRIANGLE_FAN:
-		for(int i = 1; i < cnt; i++) {
+		for(int i = 1; i < cnt - 1; i++) {
 			c->gl_draw_triangle(&c->vertex[0], &c->vertex[i], &c->vertex[i + 1]);
 		}
 		break;
