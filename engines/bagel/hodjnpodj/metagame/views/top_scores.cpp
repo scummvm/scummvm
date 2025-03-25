@@ -38,10 +38,12 @@ TopScores::TopScores() : Dialog("TopScores"),
 }
 
 bool TopScores::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_SELECT ||
-		msg._action == KEYBIND_ESCAPE) {
-		close();
-		return true;
+	if (_newRank == -1) {
+		if (msg._action == KEYBIND_SELECT ||
+			msg._action == KEYBIND_ESCAPE) {
+			close();
+			return true;
+		}
 	}
 
 	return false;
