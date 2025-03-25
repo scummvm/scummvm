@@ -102,7 +102,7 @@ GraphicObject::GraphicObject(Room *room, const char *name)
 }
 
 void GraphicObject::draw() {
-	if (!isEnabled())
+	if (!isEnabled() || !_graphic.hasAnimation())
 		return;
 	const BlendMode blendMode = _type == GraphicObjectType::Effect
 		? BlendMode::Alpha

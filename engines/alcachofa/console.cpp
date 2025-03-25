@@ -251,7 +251,7 @@ bool Console::cmdTeleport(int argc, const char **args)
 	if (argc > 1)
 	{
 		char *end = nullptr;
-		param = (int32)strtol(args[2], &end, 10);
+		param = (int32)strtol(args[1], &end, 10);
 		if (end == nullptr || *end != '\0')
 		{
 			debugPrintf("Character kind can only be integer");
