@@ -185,6 +185,16 @@ Widget *Widget::findWidgetInChain(Widget *w, const char *name) {
 	return nullptr;
 }
 
+Widget *Widget::findWidgetInChain(Widget *w, uint32 type) {
+	while (w) {
+		if (w->_type == type) {
+			return w;
+		}
+		w = w->_next;
+	}
+	return nullptr;
+}
+
 bool Widget::containsWidgetInChain(Widget *w, Widget *search) {
 	while (w) {
 		if (w == search || w->containsWidget(search))

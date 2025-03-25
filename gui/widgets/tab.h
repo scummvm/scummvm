@@ -101,6 +101,8 @@ public:
 	 */
 	void setActiveTab(int tabID);
 
+	int getTabCount();
+
 	void setTabTitle(int tabID, const Common::U32String &title) {
 		assert(0 <= tabID && tabID < (int)_tabs.size());
 		_tabs[tabID].title = title;

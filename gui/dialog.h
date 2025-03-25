@@ -95,6 +95,8 @@ public:
 	virtual void open();
 	virtual void close();
 
+	Widget *findWidget(uint32 type);
+
 protected:
 	/** Recursively mark all the widgets in this dialog as dirty so they are redrawn */
 	void markWidgetsAsDirty();
