@@ -104,14 +104,14 @@ void Room701::pre_parser() {
 }
 
 void Room701::parser() {
-	bool lookFl = player_said_any("look", "look at");
-	bool talkFl = player_said_any("talk", "talk to");
-	bool takeFl = player_said("take");
-	bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFl = player_said_any("look", "look at");
+	const bool talkFl = player_said_any("talk", "talk to");
+	const bool takeFl = player_said("take");
+	const bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("conv701a")) {
 		if (_G(kernel).trigger == 1) {
-			int32 who = conv_whos_talking();
+			const int32 who = conv_whos_talking();
 			if (who == 1)
 				_ripleyShould = 1103;
 			else if (who <= 0)
@@ -766,7 +766,7 @@ void Room701::daemon() {
 				break;
 
 			case 1102: {
-				int32 rnd = imath_ranged_rand(1, 5);
+				const int32 rnd = imath_ranged_rand(1, 5);
 				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, rnd, rnd, 102, _ripTrekTalkerPos3Series, rnd, rnd, 0);
 				}
 
@@ -938,7 +938,7 @@ void Room701::daemon() {
 				_agentExchangeMoneySeries = series_load("AGENT  EXCHANGE MONEY", -1, nullptr);
 				sendWSMessage_10000(1, _ripTalksAgentMach, _ripTrekTalkerPos3Series, 1, 5, -1, _ripTrekHandTalkPos3Series, 1, 5, 1);
 				_ripleyShould = 3602;
-				digi_play_loop(_convDigiName_2.c_str(), 1, 255, 103, -1);
+				digi_play(_convDigiName_2.c_str(), 1, 255, 103, -1);
 
 				break;
 
@@ -1153,7 +1153,7 @@ void Room701::daemon() {
 			break;
 
 		case 2101: {
-			int32 rnd = imath_ranged_rand(14, 17);
+			const int32 rnd = imath_ranged_rand(14, 17);
 			sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, rnd, rnd, 110, _agentTalkLoopTjSeries, rnd, rnd, 0);
 			}
 
@@ -1426,7 +1426,7 @@ void Room701::daemon() {
 
 void Room701::conv701a() {
 	_conv701aNode = conv_current_node();
-	int32 entry = conv_current_entry();
+	const int32 entry = conv_current_entry();
 	const char *digiName = conv_sound_to_play();
 
 	if (digiName == nullptr) {
@@ -1434,7 +1434,7 @@ void Room701::conv701a() {
 		return;
 	}
 
-	int32 who = conv_whos_talking();
+	const int32 who = conv_whos_talking();
 	if (who <= 0) {
 		if (_conv701aNode == 3 && entry == 0) {
 			_convDigiName_1 = Common::String(digiName);
