@@ -217,6 +217,11 @@ size_t GfxSurface::getStringWidth(const Common::String &text) const {
 	return font.getStringWidth(text);
 }
 
+size_t GfxSurface::getMaxCharWidth() const {
+	Graphics::Font &font = *g_engine->_fonts[_fontSize];
+	return font.getMaxCharWidth();
+}
+
 size_t GfxSurface::getStringHeight() const {
 	Graphics::Font &font = *g_engine->_fonts[_fontSize];
 	return font.getFontHeight();

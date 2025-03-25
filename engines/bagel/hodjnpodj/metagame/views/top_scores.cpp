@@ -27,6 +27,8 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
+#define FONT_SIZE		8
+
 TopScores::TopScores() : Dialog("TopScores"),
 	_okButton(RectWH(190, 325, 110, 20), this),
 	m_pgtGTStruct(&g_engine->_grandTour),
@@ -58,11 +60,62 @@ bool TopScores::msgGame(const GameMessage &msg) {
 	return false;
 }
 
+bool TopScores::msgKeypress(const KeypressMessage &msg) {
+	if (_newRank == -1)
+		return true;
+
+	auto &astTopTenScores = g_engine->_topScores;
+	auto &name = astTopTenScores[_newRank]._name;
+	Common::Rect rTempRect;
+
+	GfxSurface s = getSurface();
+	s.setFontSize(FONT_SIZE);
+	uint dwTextWidth = s.getStringWidth(astTopTenScores[_newRank]._name);
+	uint tmWidth = s.getMaxCharWidth();
+
+	rTempRect = Common::Rect((70 + dwTextWidth) - tmWidth - 1,
+		(_newRank * 20) + 90 - 1,
+		(70 + dwTextWidth + (tmWidth * 2)) + 1,
+		(_newRank * 20) + 110 + 1);
+
+	if (Common::isAlnum(msg.ascii)) {
+		// Alphabetic or numbers
+		if (name.size() < 30) {
+			name.deleteLastChar();	// Remove the |
+			name += msg.ascii;
+			name += '|';
+			redraw();
+		}
+	} else if (msg.keycode == Common::KEYCODE_SPACE) {
+		// Space
+		if (name.size() < 30) {
+			name.deleteLastChar();
+			name += " |";
+			redraw();
+		}
+	} else if (msg.keycode == Common::KEYCODE_BACKSPACE) {
+		// Backspace
+		if (name.size() > 1) {
+			name.deleteChar(name.size() - 2);
+			redraw();
+		}
+	} else if (Common::KEYCODE_RETURN) {
+		// Return key
+		name.deleteLastChar();
+		saveScores();
+
+		_newRank = -1;
+		redraw();
+	}
+
+	return true;
+}
+
 void TopScores::draw() {
 	Dialog::draw();
 	const int nLeft = 0, nTop = 0;
 	GfxSurface s = getSurface();
-	s.setFontSize(8);
+	s.setFontSize(FONT_SIZE);
 
 	const auto &scores = g_engine->_topScores;
 
@@ -93,7 +146,7 @@ void TopScores::draw() {
 			Common::Point(nLeft + 425, nTop + (i * 20) + 90), PURPLE);
 	}
 
-	if (_newRank > -1) {
+	if (_newRank != -1) {
 		s.writeString(scores[_newRank]._name, _textRect,
 			g_engine->_bDonePodj ? RED : BLUE);
 
