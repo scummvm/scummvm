@@ -38,6 +38,7 @@
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/castmember/castmember.h"
+#include "director/debugger/debugtools.h"
 
 namespace Director {
 
@@ -210,6 +211,20 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 					}
 				}
 			}
+		}
+	}
+
+	int selectedChannel = DT::getSelectedChannel();
+	if (selectedChannel > 0){
+		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+		Channel *channel = _currentMovie->getScore()->_channels[selectedChannel];
+
+		if (!channel->isEmpty()) {
+			Common::Rect bbox = channel->getBbox();
+			blitTo->frameRect(bbox, g_director->_wm->_colorWhite);
+
+			font->drawString(blitTo, Common::String::format("m: %d, ch: %d, fr: %d", channel->_sprite->_castId.member, selectedChannel, channel->_filmLoopFrame ? channel->_filmLoopFrame : channel->_movieTime), bbox.left + 3, bbox.top + 3, 128, g_director->_wm->_colorBlack);
+			font->drawString(blitTo, Common::String::format("m: %d, ch: %d, fr: %d", channel->_sprite->_castId.member, selectedChannel, channel->_filmLoopFrame ? channel->_filmLoopFrame : channel->_movieTime), bbox.left + 2, bbox.top + 2, 128, g_director->_wm->_colorWhite);
 		}
 	}
 
