@@ -30,10 +30,9 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#define	BACKGROUND_BMP		"meta/art/mlscroll.bmp"
 #define FONT_SIZE 12
 
-TitleMenu::TitleMenu() : View("TitleMenu"),
+TitleMenu::TitleMenu() : Dialog("TitleMenu"),
 	_newGame("NewGame", "&Start a New Board Game",
 		DialogRect(FONT_SIZE, 46, 29, 108, 15), this),
 	_restoreGame("RestoreGame", "&Restore an Old Board Game",
@@ -48,37 +47,10 @@ TitleMenu::TitleMenu() : View("TitleMenu"),
 		DialogRect(FONT_SIZE, 46, 119, 108, 15), this) {
 }
 
-bool TitleMenu::msgOpen(const OpenMessage &msg) {
-	g_events->showCursor(true);
-
-	Common::File f;
-	Image::BitmapDecoder decoder;
-	if (!f.open(BACKGROUND_BMP) || !decoder.loadStream(f))
-		error("Error loading - %s", BACKGROUND_BMP);
-
-	const Graphics::Surface *surf = decoder.getSurface();
-	_background.copyFrom(surf);
-	_background.setTransparentColor(255);
-
-	blackScreen();
-
-	Common::Rect r(0, 0, surf->w, surf->h);
-	r.moveTo((GAME_WIDTH - surf->w) / 2, (GAME_HEIGHT - surf->h) / 2);
-	setBounds(r);
-
-	return View::msgOpen(msg);
-}
-
-bool TitleMenu::msgClose(const CloseMessage &msg) {
-	blackScreen();
-	return View::msgClose(msg);
-}
-
 bool TitleMenu::msgGame(const GameMessage &msg) {
 	if (msg._name == "BUTTON") {
 		if (msg._stringValue == "StandAlone") {
 			replaceView("Minigames");
-
 		} else if (msg._stringValue == "RestartMovie") {
 			send("Movie", GameMessage("MOVIE", STARTUP_MOVIE, MOVIE_ID_INTRO));
 		} else if (msg._stringValue == "GrandTour") {
@@ -92,14 +64,6 @@ bool TitleMenu::msgGame(const GameMessage &msg) {
 	}
 
 	return false;
-}
-
-void TitleMenu::draw() {
-	GfxSurface s = getSurface();
-	s.setFontSize(FONT_SIZE);
-
-	s.clear();
-	s.blitFrom(_background);
 }
 
 } // namespace Metagame

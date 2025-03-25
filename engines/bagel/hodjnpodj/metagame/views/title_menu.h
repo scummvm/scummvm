@@ -22,16 +22,15 @@
 #ifndef HODJNPODJ_METAGAME_VIEWS_TITLE_MENU_H
 #define HODJNPODJ_METAGAME_VIEWS_TITLE_MENU_H
 
-#include "bagel/hodjnpodj/views/view.h"
+#include "bagel/hodjnpodj/metagame/views/dialog.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-class TitleMenu : public View {
+class TitleMenu : public Dialog {
 private:
-	GfxSurface _background;
 	ColorButton _newGame;
 	ColorButton _restoreGame;
 	ColorButton _standAlone;
@@ -42,10 +41,7 @@ private:
 public:
 	TitleMenu();
 
-	bool msgOpen(const OpenMessage &msg) override;
-	bool msgClose(const CloseMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
-	void draw() override;
 };
 
 } // namespace Metagame
