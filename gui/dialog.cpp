@@ -405,6 +405,10 @@ Widget *Dialog::findWidget(const char *name) {
 	return Widget::findWidgetInChain(_firstWidget, name);
 }
 
+Widget *Dialog::findWidget(uint32 type) {
+	return Widget::findWidgetInChain(_firstWidget, type);
+}
+
 void Dialog::removeWidget(Widget *del) {
 	if (del == _mouseWidget || del->containsWidget(_mouseWidget))
 		_mouseWidget = nullptr;
