@@ -248,6 +248,7 @@ private:
 	* Since there is literally nothing in the game scripts that sets some of these values to 2, and certain pan_tracks require it to be 2 for the puzzle that creates them to trigger,
 	* the original game engine code must have set these values to 2 manually somehow upon conditions being met to allow a pan_track to be created?
 	*/
+	bool _staticScreen; //Used by auxiliary scripts to apply directionality to audio in static screens; not used in original game scripts.
 	bool _resetMixerOnDelete; //Unnecessary and should be set false for original scripts; useful in some cases in extra scripts to avoid brief volume spikes on location changes
 	uint32 _musicSlot;
 };
