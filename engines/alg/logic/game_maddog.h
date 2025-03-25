@@ -58,7 +58,7 @@ public:
 	void debugWarpTo(int val);
 
 private:
-	void init();
+	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
 	MDScriptFunctionPoint getScriptFunctionZonePtrFb(Common::String name);

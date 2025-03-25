@@ -53,12 +53,12 @@ class GameBountyHunter : public Game {
 
 public:
 	GameBountyHunter(AlgEngine *vm, const AlgGameDescription *gd);
-	~GameBountyHunter();
-	Common::Error run();
+	~GameBountyHunter() override;
+	Common::Error run() override;
 	void debugWarpTo(int val);
 
 private:
-	void init();
+	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
 	BHScriptFunctionRect getScriptFunctionRectHit(Common::String name);
@@ -118,7 +118,7 @@ private:
 	const uint8 _mainLevelMasks[5] = {2, 4, 8, 0x10, 0x80};
 	const uint8 _gunfightCountDown[15] = {5, 4, 3, 3, 3, 4, 3, 3, 2, 1, 3, 2, 2, 2, 1};
 
-	const uint16 _firstSceneInScenario[4] = {4, 0x36, 0x36, 0x66};
+	// const uint16 _firstSceneInScenario[4] = {4, 0x36, 0x36, 0x66};
 	const uint16 _moneyScenes[4] = {0x017D, 0x013C, 0xC3, 0x69};
 	const uint16 _gunfightScenarios[18] = {0x0116, 0x0118, 0x011B, 0x011D, 0x011F, 0x0121, 0x0123, 0x0125, 0x0127,
 										   0x0129, 0x012B, 0x012D, 0x012F, 0x0131, 0x0133, 0x0135, 0x0137, 0x0139};
@@ -126,8 +126,6 @@ private:
 	const uint16 _deathScenarios[9] = {0x0100, 0x0101, 0x0102, 0x0103, 0x0104, 0x0105, 0x0106, 0x0107, 0};
 	const uint16 _onePlayerOfTwoDead[2] = {0x0109, 0x010A};
 	const uint16 _allPlayersDead = 0x108;
-
-	bool _isDemo = 0;
 
 	// gamestate
 	uint16 _restartScene = 0;
@@ -144,10 +142,10 @@ private:
 	uint8 _levelDoneMask = 0;
 	uint8 _numSubLevelsDone = 0;
 
-	uint16 _usedScenes = 0;
-	int16 _lastPick = -1;
-	int16 _initted = 0;
-	int16 _sceneCount = 0;
+	// uint16 _usedScenes = 0;
+	// int16 _lastPick = -1;
+	// int16 _initted = 0;
+	// int16 _sceneCount = 0;
 
 	uint16 *_randomSceneList;
 	uint8 _randomMax = 0;
@@ -197,7 +195,6 @@ private:
 	void iconShotgun();
 	void iconReset();
 	uint16 beginLevel(uint8 levelNumber);
-	uint16 randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude);
 	uint16 pickRandomScene(uint16 *sceneList, uint8 max);
 	uint16 pickGunfightScene();
 	uint16 pickInnocentScene();

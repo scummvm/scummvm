@@ -26,24 +26,28 @@
 
 #include "graphics/cursorman.h"
 
-#include "alg/logic/game_johnnyrock.h"
 #include "alg/graphics.h"
+#include "alg/logic/game_johnnyrock.h"
 #include "alg/scene.h"
 
 namespace Alg {
 
 GameJohnnyRock::GameJohnnyRock(AlgEngine *vm, const AlgGameDescription *gd) : Game(vm) {
-	if (gd->gameType == GType_JOHNROC_SS_DOS) {
-		_libFileName = "johnroc.lib";
-	} else if (gd->gameType == GType_JOHNROC_DS_DOS) {
-		_libFileName = "johnrocd.lib";
-	}
 }
 
 GameJohnnyRock::~GameJohnnyRock() {
-	delete _difficultyIcon;
-	delete _levelIcon;
-	delete _bulletholeIcon;
+	for (auto item : *_difficultyIcon) {
+		item->free();
+		delete item;
+	}
+	if (_levelIcon) {
+		_levelIcon->free();
+		delete _levelIcon;
+	}
+	if (_bulletholeIcon) {
+		_bulletholeIcon->free();
+		delete _bulletholeIcon;
+	}
 }
 
 void GameJohnnyRock::init() {
@@ -54,23 +58,22 @@ void GameJohnnyRock::init() {
 
 	setupCursorTimer();
 
-	loadLibArchive(_libFileName);
+	if(_vm->useSingleSpeedVideos()) {
+		loadLibArchive("johnroc.lib");
+	} else {
+		loadLibArchive("johnrocd.lib");
+	}
+
 	_sceneInfo->loadScnFile("johnroc.scn");
 	_startScene = _sceneInfo->getStartScene();
 
 	registerScriptFunctions();
 	verifyScriptFunctions();
 
-	_menuzone = new Zone();
-	_menuzone->_name = "MainMenu";
-	_menuzone->_ptrfb = "GLOBALHIT";
-
+	_menuzone = new Zone("MainMenu", "GLOBALHIT");
 	_menuzone->addRect(0x0C, 0xBB, 0x3C, 0xC7, nullptr, 0, "SHOTMENU", "0");
 
-	_submenzone = new Zone();
-	_submenzone->_name = "SubMenu";
-	_submenzone->_ptrfb = "GLOBALHIT";
-
+	_submenzone = new Zone("SubMenu", "GLOBALHIT");
 	_submenzone->addRect(0x10, 0x0F, 0x78, 0x34, nullptr, 0, "STARTMENU", "0");
 	_submenzone->addRect(0x10, 0x8E, 0x8A, 0xAF, nullptr, 0, "CONTMENU", "0");
 	_submenzone->addRect(0x10, 0x3A, 0x6A, 0x5C, nullptr, 0, "RECTSAVE", "0");
@@ -215,21 +218,18 @@ void GameJohnnyRock::registerScriptFunctions() {
 }
 
 void GameJohnnyRock::verifyScriptFunctions() {
-	Common::Array<Scene *> *scenes = _sceneInfo->getScenes();
-	for (size_t i = 0; i < scenes->size(); i++) {
-		Scene *scene = (*scenes)[i];
+	auto scenes = _sceneInfo->getScenes();
+	for (auto scene : *scenes) {
 		getScriptFunctionScene(PREOP, scene->_preop);
-		// TODO: SHOWMSG
+		getScriptFunctionScene(SHOWMSG, scene->_scnmsg);
 		getScriptFunctionScene(INSOP, scene->_insop);
 		getScriptFunctionScene(WEPDWN, scene->_wepdwn);
 		getScriptFunctionScene(SCNSCR, scene->_scnscr);
 		getScriptFunctionScene(NXTFRM, scene->_nxtfrm);
 		getScriptFunctionScene(NXTSCN, scene->_nxtscn);
-		for (size_t j = 0; j < scene->_zones.size(); j++) {
-			Zone *zone = scene->_zones[j];
-			getScriptFunctionZonePtrFb(zone->_ptrfb);
-			for (size_t k = 0; k < zone->_rects.size(); k++) {
-				getScriptFunctionRectHit(zone->_rects[k]._rectHit);
+		for (auto zone : scene->_zones) {
+			for (auto rect : zone->_rects) {
+				getScriptFunctionRectHit(rect->_rectHit);
 			}
 		}
 	}
@@ -403,7 +403,7 @@ Common::Error GameJohnnyRock::run() {
 			callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
 		}
 		if (_curScene == "") {
-			_vm->quitGame();
+			shutdown();
 		}
 	}
 	removeCursorTimer();

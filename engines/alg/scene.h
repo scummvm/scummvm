@@ -87,17 +87,22 @@ public:
 
 class Zone {
 public:
+	Zone(Common::String name, uint32 startFrame, uint32 endFrame);
+	Zone(Common::String name, Common::String ptrfb);
+	~Zone();
 	Common::String _name;
 	uint32 _startFrame;
 	uint32 _endFrame;
 	Common::String _ptrfb;
-	Common::Array<Rect> _rects;
+	Common::Array<Rect *> _rects;
 	Common::String _next;
 	void addRect(int16 left, int16 top, int16 right, int16 bottom, Common::String scene, uint32 score, Common::String rectHit, Common::String unknown);
 };
 
 class Scene {
 public:
+	Scene(Common::String name, uint32 startFrame, uint32 endFrame);
+	~Scene();
 	Common::String _name;
 	uint32 _startFrame;
 	uint32 _endFrame;

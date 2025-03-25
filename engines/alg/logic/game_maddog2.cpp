@@ -26,29 +26,48 @@
 
 #include "graphics/cursorman.h"
 
-#include "alg/logic/game_maddog2.h"
 #include "alg/graphics.h"
+#include "alg/logic/game_maddog2.h"
 #include "alg/scene.h"
 
 namespace Alg {
 
 GameMaddog2::GameMaddog2(AlgEngine *vm, const AlgGameDescription *gd) : Game(vm) {
-	if (gd->gameType == GType_MADDOG2_SS_DOS) {
-		_libFileName = "maddog2.lib";
-	} else if (gd->gameType == GType_MADDOG2_DS_DOS) {
-		_libFileName = "maddog2d.lib";
-	}
 }
 
 GameMaddog2::~GameMaddog2() {
-	delete _shotIcon;
-	delete _emptyIcon;
-	delete _liveIcon;
-	delete _deadIcon;
-	delete _reloadIcon;
-	delete _drawIcon;
-	delete _knifeIcon;
-	delete _bulletholeIcon;
+	if (_shotIcon) {
+		_shotIcon->free();
+		delete _shotIcon;
+	}
+	if (_emptyIcon) {
+		_emptyIcon->free();
+		delete _emptyIcon;
+	}
+	if (_liveIcon) {
+		_liveIcon->free();
+		delete _liveIcon;
+	}
+	if (_deadIcon) {
+		_deadIcon->free();
+		delete _deadIcon;
+	}
+	if (_reloadIcon) {
+		_reloadIcon->free();
+		delete _reloadIcon;
+	}
+	if (_drawIcon) {
+		_drawIcon->free();
+		delete _drawIcon;
+	}
+	if (_knifeIcon) {
+		_knifeIcon->free();
+		delete _knifeIcon;
+	}
+	if (_bulletholeIcon) {
+		_bulletholeIcon->free();
+		delete _bulletholeIcon;
+	}
 }
 
 void GameMaddog2::init() {
@@ -59,24 +78,23 @@ void GameMaddog2::init() {
 
 	setupCursorTimer();
 
-	loadLibArchive(_libFileName);
+	if(_vm->useSingleSpeedVideos()) {
+		loadLibArchive("maddog2.lib");
+	} else {
+		loadLibArchive("maddog2d.lib");
+	}
+
 	_sceneInfo->loadScnFile("maddog2.scn");
 	_startScene = _sceneInfo->getStartScene();
 
 	registerScriptFunctions();
 	verifyScriptFunctions();
 
-	_menuzone = new Zone();
-	_menuzone->_name = "MainMenu";
-	_menuzone->_ptrfb = "GLOBALHIT";
-
+	_menuzone = new Zone("MainMenu", "GLOBALHIT");
 	_menuzone->addRect(0x0C, 0xAA, 0x38, 0xC7, nullptr, 0, "SHOTMENU", "0");
 	_menuzone->addRect(0x08, 0xA9, 0x013C, 0xC7, nullptr, 0, "DEFAULT", "0"); // _mm_bott
 
-	_submenzone = new Zone();
-	_submenzone->_name = "SubMenu";
-	_submenzone->_ptrfb = "GLOBALHIT";
-
+	_submenzone = new Zone("SubMenu", "GLOBALHIT");
 	_submenzone->addRect(0x2F, 0x16, 0x64, 0x2B, nullptr, 0, "STARTMENU", "0");
 	_submenzone->addRect(0x2F, 0xA0, 0x8D, 0xC7, nullptr, 0, "CONTMENU", "0");
 	_submenzone->addRect(0x2F, 0x40, 0x64, 0x54, nullptr, 0, "RECTSAVE", "0");
@@ -231,21 +249,18 @@ void GameMaddog2::registerScriptFunctions() {
 }
 
 void GameMaddog2::verifyScriptFunctions() {
-	Common::Array<Scene *> *scenes = _sceneInfo->getScenes();
-	for (size_t i = 0; i < scenes->size(); i++) {
-		Scene *scene = (*scenes)[i];
+	auto scenes = _sceneInfo->getScenes();
+	for (auto scene : *scenes) {
 		getScriptFunctionScene(PREOP, scene->_preop);
-		// TODO: SHOWMSG
+		getScriptFunctionScene(SHOWMSG, scene->_scnmsg);
 		getScriptFunctionScene(INSOP, scene->_insop);
 		getScriptFunctionScene(WEPDWN, scene->_wepdwn);
 		getScriptFunctionScene(SCNSCR, scene->_scnscr);
 		getScriptFunctionScene(NXTFRM, scene->_nxtfrm);
 		getScriptFunctionScene(NXTSCN, scene->_nxtscn);
-		for (size_t j = 0; j < scene->_zones.size(); j++) {
-			Zone *zone = scene->_zones[j];
-			getScriptFunctionZonePtrFb(zone->_ptrfb);
-			for (size_t k = 0; k < zone->_rects.size(); k++) {
-				getScriptFunctionRectHit(zone->_rects[k]._rectHit);
+		for (auto zone : scene->_zones) {
+			for (auto rect : zone->_rects) {
+				getScriptFunctionRectHit(rect->_rectHit);
 			}
 		}
 	}
@@ -419,7 +434,7 @@ Common::Error GameMaddog2::run() {
 			callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
 		}
 		if (_curScene == "") {
-			_vm->quitGame();
+			shutdown();
 		}
 	}
 	removeCursorTimer();
@@ -496,11 +511,11 @@ void GameMaddog2::updateStat() {
 	if (_lives != _oldLives) {
 		if (_lives > _oldLives) {
 			for (uint8 i = _oldLives; i < _lives; i++) {
-				AlgGraphics::drawImage(_screen, _liveIcon, _livepos[i][0], _livepos[i][1]);
+				AlgGraphics::drawImage(_screen, _liveIcon, _livePos[i][0], _livePos[i][1]);
 			}
 		} else {
 			for (uint8 i = _lives; i < _oldLives; i++) {
-				AlgGraphics::drawImage(_screen, _deadIcon, _livepos[i][0], _livepos[i][1]);
+				AlgGraphics::drawImage(_screen, _deadIcon, _livePos[i][0], _livePos[i][1]);
 			}
 		}
 		_oldLives = _lives;
@@ -508,11 +523,11 @@ void GameMaddog2::updateStat() {
 	if (_shots != _oldShots) {
 		if (_shots > _oldShots) {
 			for (uint8 i = _oldShots; i < _shots; i++) {
-				AlgGraphics::drawImage(_screen, _shotIcon, _shotpos[i][0], _shotpos[i][1]);
+				AlgGraphics::drawImage(_screen, _shotIcon, _shotPos[i][0], _shotPos[i][1]);
 			}
 		} else {
 			for (uint8 i = _shots; i < _oldShots; i++) {
-				AlgGraphics::drawImage(_screen, _emptyIcon, _shotpos[i][0], _shotpos[i][1]);
+				AlgGraphics::drawImage(_screen, _emptyIcon, _shotPos[i][0], _shotPos[i][1]);
 			}
 		}
 		_oldShots = _shots;
@@ -532,7 +547,7 @@ void GameMaddog2::changeDifficulty(uint8 newDifficulty) {
 void GameMaddog2::showDifficulty(uint8 newDifficulty, bool cursor) {
 	// reset menu screen
 	_screen->copyRectToSurface(_background->getBasePtr(_videoPosX, _videoPosY), _background->pitch, _videoPosX, _videoPosY, _videoDecoder->getWidth(), _videoDecoder->getHeight());
-	AlgGraphics::drawImageCentered(_screen, _knifeIcon, _diffpos[newDifficulty - 1][0], _diffpos[newDifficulty - 1][1]);
+	AlgGraphics::drawImageCentered(_screen, _knifeIcon, _diffPos[newDifficulty - 1][0], _diffPos[newDifficulty - 1][1]);
 	if (cursor) {
 		updateCursor();
 	}
@@ -692,53 +707,30 @@ bool GameMaddog2::loadState() {
 Common::String GameMaddog2::numToScene(int n) {
 	switch (n) {
 	case 1:
-		return "scene1aa";
 	case 31:
-		return "scen31a";
 	case 34:
-		return "scen34a";
 	case 41:
-		return "scen41a";
 	case 42:
-		return "scen42a";
 	case 67:
-		return "scen67a";
 	case 85:
-		return "scen85a";
 	case 106:
-		return "scen106a";
 	case 118:
-		return "scen118a";
 	case 171:
-		return "scen171a";
 	case 180:
-		return "scen180a";
 	case 181:
-		return "scen181a";
 	case 182:
-		return "scen182a";
 	case 197:
-		return "scen197a";
 	case 199:
-		return "scen199a";
 	case 201:
-		return "scen201a";
 	case 203:
-		return "scen203a";
 	case 227:
-		return "scen227a";
 	case 244:
-		return "scen244a";
 	case 253:
-		return "scen253a";
 	case 287:
-		return "scen287a";
 	case 288:
-		return "scen288a";
 	case 295:
-		return "scen295a";
 	case 296:
-		return "scen296a";
+		return Common::String::format("scen%da", n);
 	default:
 		return Common::String::format("scene%d", n);
 	}
@@ -775,7 +767,8 @@ uint16 GameMaddog2::die() {
 	updateStat();
 	uint8 randomNum = _rnd->getRandomNumber(9);
 	if (randomNum >= 4 && _lives >= 3) {
-		return pickBits(&_dieBits, 6);
+		uint16 picked = pickBits(&_dieBits, 6);
+		return _dieScenes[picked];
 	}
 	if (_lives == 2) {
 		return 0x9D;
@@ -827,10 +820,10 @@ uint16 GameMaddog2::pickShootout() {
 	_lastPick = _lastShootOut;
 	if (_difficulty == 1) {
 		_lastShootOut = pickBits(&_shootOutBits, 5);
-		return _ez_shoot_outs[_lastShootOut];
+		return _ezShootOuts[_lastShootOut];
 	} else {
 		_lastShootOut = pickBits(&_shootOutBits, 6);
-		return _shoot_outs[_lastShootOut];
+		return _shootOuts[_lastShootOut];
 	}
 }
 
@@ -843,18 +836,18 @@ void GameMaddog2::nextSB() {
 	} else {
 		_sbGotTo++;
 	}
-	if (_sb_scenes[_sbGotTo] == 0x87) {
+	if (_sbScenes[_sbGotTo] == 0x87) {
 		_placeBits = 0;
 		_pickMask = 0;
 		ggPickMan();
 		// _scene_pso_fadein(cur_scene);
 	} else {
 		if (_sbGotTo == 7 || _sbGotTo == 9) {
-			_curScene = numToScene(_sb_scenes[_sbGotTo]);
+			_curScene = numToScene(_sbScenes[_sbGotTo]);
 		} else {
 			_shootOutCnt++;
 			if (_shootOutCnt <= 3) {
-				_curScene = numToScene(_sb_scenes[_sbGotTo]);
+				_curScene = numToScene(_sbScenes[_sbGotTo]);
 				// _scene_pso_fadein(cur_scene);
 			} else {
 				_shootoutFromDie = false;
@@ -873,18 +866,18 @@ void GameMaddog2::nextBB() {
 	} else {
 		_bbGotTo++;
 	}
-	if (_bb_scenes[_bbGotTo] == 0x87) {
+	if (_bbScenes[_bbGotTo] == 0x87) {
 		_placeBits = 0;
 		_pickMask = 0;
 		ggPickMan();
 		// _scene_pso_fadein(cur_scene);
 	} else {
 		if (_bbGotTo == 7 || _bbGotTo == 9) {
-			_curScene = numToScene(_bb_scenes[_bbGotTo]);
+			_curScene = numToScene(_bbScenes[_bbGotTo]);
 		} else {
 			_shootOutCnt++;
 			if (_shootOutCnt <= 3) {
-				_curScene = numToScene(_bb_scenes[_bbGotTo]);
+				_curScene = numToScene(_bbScenes[_bbGotTo]);
 				// _scene_pso_fadein(cur_scene);
 			} else {
 				_shootoutFromDie = false;
@@ -903,22 +896,22 @@ void GameMaddog2::nextTP() {
 	} else {
 		_tpGotTo++;
 	}
-	if (_tp_scenes[_tpGotTo] == 0xDC) {
+	if (_tpScenes[_tpGotTo] == 0xDC) {
 		_placeBits = 0;
 		_pickMask = 0;
 	}
-	if (_tp_scenes[_tpGotTo] == 0x87) {
+	if (_tpScenes[_tpGotTo] == 0x87) {
 		_placeBits = 0;
 		_pickMask = 0;
 		ggPickMan();
 		// _scene_pso_fadein(cur_scene);
 	} else {
 		if (_tpGotTo == 7 || _tpGotTo == 9) {
-			_curScene = numToScene(_tp_scenes[_tpGotTo]);
+			_curScene = numToScene(_tpScenes[_tpGotTo]);
 		} else {
 			_shootOutCnt++;
 			if (_shootOutCnt <= 3) {
-				_curScene = numToScene(_tp_scenes[_tpGotTo]);
+				_curScene = numToScene(_tpScenes[_tpGotTo]);
 				// _scene_pso_fadein(cur_scene);
 			} else {
 				_shootoutFromDie = false;
@@ -933,7 +926,7 @@ void GameMaddog2::ggPickMan() {
 	uint8 totalRandom = ((_difficulty - 1) * 2) + 3;
 	if (_randomCount < totalRandom) {
 		uint16 index = pickBits(&_placeBits, 3);
-		_curScene = numToScene(_gg_scenes[index]);
+		_curScene = numToScene(_ggScenes[index]);
 	} else {
 		_curScene = "scene139";
 	}
@@ -1052,12 +1045,12 @@ void GameMaddog2::rectSelectBeaver(Rect *rect) {
 	_thisGuide = 0;
 	_randomCount = 0;
 	_placeBits = 0;
-	if (_sb_scenes[_sbGotTo] == 0x87) {
+	if (_sbScenes[_sbGotTo] == 0x87) {
 		_pickMask = 0;
 		ggPickMan();
 		// scene_pso_fadein(cur_scene);
 	} else {
-		_curScene = numToScene(_sb_scenes[_sbGotTo]);
+		_curScene = numToScene(_sbScenes[_sbGotTo]);
 		// scene_pso_fadein(cur_scene);
 	}
 }
@@ -1070,12 +1063,12 @@ void GameMaddog2::rectSelectBonnie(Rect *rect) {
 	_thisGuide = 1;
 	_randomCount = 0;
 	_placeBits = 0;
-	if (_bb_scenes[_bbGotTo] == 0x87) {
+	if (_bbScenes[_bbGotTo] == 0x87) {
 		_pickMask = 0;
 		ggPickMan();
 		// scene_pso_fadein(cur_scene);
 	} else {
-		_curScene = numToScene(_bb_scenes[_bbGotTo]);
+		_curScene = numToScene(_bbScenes[_bbGotTo]);
 		// scene_pso_fadein(cur_scene);
 	}
 }
@@ -1088,12 +1081,12 @@ void GameMaddog2::rectSelectProfessor(Rect *rect) {
 	_thisGuide = 2;
 	_randomCount = 0;
 	_placeBits = 0;
-	if (_tp_scenes[_tpGotTo] == 0x87) {
+	if (_tpScenes[_tpGotTo] == 0x87) {
 		_pickMask = 0;
 		ggPickMan();
 		// scene_pso_fadein(cur_scene);
 	} else {
-		_curScene = numToScene(_tp_scenes[_tpGotTo]);
+		_curScene = numToScene(_tpScenes[_tpGotTo]);
 		// scene_pso_fadein(cur_scene);
 	}
 }
@@ -1467,13 +1460,13 @@ void GameMaddog2::sceneNxtscnSelectGuide(Scene *scene) {
 	}
 	switch (_thisGuide) {
 	case 0:
-		_curScene = numToScene(_sb_scenes[_sbGotTo]);
+		_curScene = numToScene(_sbScenes[_sbGotTo]);
 		break;
 	case 1:
-		_curScene = numToScene(_bb_scenes[_bbGotTo]);
+		_curScene = numToScene(_bbScenes[_bbGotTo]);
 		break;
 	case 2:
-		_curScene = numToScene(_tp_scenes[_tpGotTo]);
+		_curScene = numToScene(_tpScenes[_tpGotTo]);
 		break;
 	}
 }
@@ -1488,21 +1481,21 @@ void GameMaddog2::sceneNxtscnFinishBonnie(Scene *scene) {
 
 void GameMaddog2::sceneNxtscnShowGGClue(Scene *scene) {
 	_shootoutFromDie = false;
-	_curScene = numToScene(_bb_clue[_whichGatlingGun]);
+	_curScene = numToScene(_bbClue[_whichGatlingGun]);
 }
 
 void GameMaddog2::sceneNxtscnBBAfterClue(Scene *scene) {
 	_shootoutFromDie = false;
 	_randomCount = 0;
 	_bbGotTo = 6;
-	_curScene = numToScene(_bb_scenes[_bbGotTo]);
+	_curScene = numToScene(_bbScenes[_bbGotTo]);
 }
 
 void GameMaddog2::sceneNxtscnAsFarSheGoes(Scene *scene) {
 	_shootoutFromDie = false;
 	_randomCount = 0;
 	_gotTo = 12;
-	_curScene = numToScene(_bb_scenes[_gotTo]);
+	_curScene = numToScene(_bbScenes[_gotTo]);
 }
 
 void GameMaddog2::sceneNxtscnSaveBeaver(Scene *scene) {
@@ -1515,21 +1508,21 @@ void GameMaddog2::sceneNxtscnFinishBeaver(Scene *scene) {
 
 void GameMaddog2::sceneNxtscnToGatlingGunSBClue(Scene *scene) {
 	_shootoutFromDie = false;
-	_curScene = numToScene(_sb_clue[_whichGatlingGun]);
+	_curScene = numToScene(_sbClue[_whichGatlingGun]);
 }
 
 void GameMaddog2::sceneNxtscnToGuideafterClue(Scene *scene) {
 	_shootoutFromDie = false;
 	_randomCount = 0;
 	_sbGotTo = 6;
-	_curScene = numToScene(_sb_scenes[_sbGotTo]);
+	_curScene = numToScene(_sbScenes[_sbGotTo]);
 }
 
 void GameMaddog2::sceneNxtscnToGuideCave(Scene *scene) {
 	_shootoutFromDie = false;
 	_randomCount = 0;
 	_sbGotTo = 12;
-	_gotTo = _sb_scenes[_sbGotTo];
+	_gotTo = _sbScenes[_sbGotTo];
 	_curScene = numToScene(_gotTo);
 }
 
@@ -1538,7 +1531,7 @@ void GameMaddog2::sceneNxtscnInitRandomVillage(Scene *scene) {
 	_placeBits = 0;
 	_randomCount = 0;
 	int index = pickBits(&_placeBits, 6);
-	_curScene = numToScene(_village_scenes[index]);
+	_curScene = numToScene(_villageScenes[index]);
 }
 
 void GameMaddog2::sceneNxtscnPickVillageScenes(Scene *scene) {
@@ -1546,7 +1539,7 @@ void GameMaddog2::sceneNxtscnPickVillageScenes(Scene *scene) {
 	uint8 totalRandom = ((_difficulty - 1) * 2) + 5;
 	if (_randomCount < totalRandom) {
 		int index = pickBits(&_placeBits, 6);
-		_curScene = numToScene(_village_scenes[index]);
+		_curScene = numToScene(_villageScenes[index]);
 	} else {
 		_curScene = "scene100";
 	}
@@ -1562,21 +1555,21 @@ void GameMaddog2::sceneNxtscnFinishProfessor(Scene *scene) {
 
 void GameMaddog2::sceneNxtscnToGatlingGunTPClue(Scene *scene) {
 	_shootoutFromDie = false;
-	_curScene = numToScene(_tp_clue[_whichGatlingGun]);
+	_curScene = numToScene(_tpClue[_whichGatlingGun]);
 }
 
 void GameMaddog2::sceneNxtscnTPAfterClue(Scene *scene) {
 	_shootoutFromDie = false;
 	_randomCount = 0;
 	_tpGotTo = 6;
-	_curScene = numToScene(_tp_scenes[_tpGotTo]);
+	_curScene = numToScene(_tpScenes[_tpGotTo]);
 }
 
 void GameMaddog2::sceneNxtscnFinishGatlingGun1(Scene *scene) {
 	_shootoutFromDie = false;
 	_randomCount = 0;
 	_tpGotTo = 12;
-	_gotTo = _tp_scenes[_tpGotTo];
+	_gotTo = _tpScenes[_tpGotTo];
 	_curScene = numToScene(_gotTo);
 }
 
@@ -1611,7 +1604,7 @@ void GameMaddog2::sceneNxtscnInitRandomCowboys(Scene *scene) {
 	_placeBits = 0;
 	_randomCount = 0;
 	uint16 picked = pickBits(&_placeBits, 7);
-	_curScene = numToScene(_cowboy_scenes[picked]);
+	_curScene = numToScene(_cowboyScenes[picked]);
 }
 
 void GameMaddog2::sceneNxtscnToCowboyScenes(Scene *scene) {
@@ -1619,7 +1612,7 @@ void GameMaddog2::sceneNxtscnToCowboyScenes(Scene *scene) {
 	uint8 totalRandom = ((_difficulty - 1) * 2) + 7;
 	if (_randomCount < totalRandom) {
 		uint16 picked = pickBits(&_placeBits, 7);
-		_curScene = numToScene(_cowboy_scenes[picked]);
+		_curScene = numToScene(_cowboyScenes[picked]);
 	} else {
 		genericNext();
 	}
@@ -1629,7 +1622,7 @@ void GameMaddog2::sceneNxtscnInitRandomFarmyard(Scene *scene) {
 	_placeBits = 0;
 	_randomCount = 0;
 	uint16 picked = pickBits(&_placeBits, 4);
-	_curScene = numToScene(_farmyard_scenes[picked]);
+	_curScene = numToScene(_farmyardScenes[picked]);
 }
 
 void GameMaddog2::sceneNxtscnToFarmyardScenes(Scene *scene) {
@@ -1637,7 +1630,7 @@ void GameMaddog2::sceneNxtscnToFarmyardScenes(Scene *scene) {
 	uint8 totalRandom = ((_difficulty - 1) * 2) + 5;
 	if (_randomCount < totalRandom) {
 		uint16 picked = pickBits(&_placeBits, 4);
-		_curScene = numToScene(_farmyard_scenes[picked]);
+		_curScene = numToScene(_farmyardScenes[picked]);
 	} else {
 		genericNext();
 	}
@@ -1647,7 +1640,7 @@ void GameMaddog2::sceneNxtscnInitRandomCave(Scene *scene) {
 	_placeBits = 0;
 	_randomCount = 0;
 	uint16 picked = pickBits(&_placeBits, 5);
-	_curScene = numToScene(_cave_scenes[picked]);
+	_curScene = numToScene(_caveScenes[picked]);
 }
 
 void GameMaddog2::sceneNxtscnToCaveScenes(Scene *scene) {
@@ -1655,7 +1648,7 @@ void GameMaddog2::sceneNxtscnToCaveScenes(Scene *scene) {
 	uint8 totalRandom = ((_difficulty - 1) * 2) + 8;
 	if (_randomCount < totalRandom) {
 		uint16 picked = pickBits(&_placeBits, 5);
-		_curScene = numToScene(_cave_scenes[picked]);
+		_curScene = numToScene(_caveScenes[picked]);
 	} else {
 		_gotTo = 0xEE;
 		_curScene = numToScene(_gotTo);

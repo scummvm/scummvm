@@ -51,12 +51,12 @@ class GameDrugWars : public Game {
 
 public:
 	GameDrugWars(AlgEngine *vm, const AlgGameDescription *gd);
-	~GameDrugWars();
-	Common::Error run();
+	~GameDrugWars() override;
+	Common::Error run() override;
 	void debugWarpTo(int val);
 
 private:
-	void init();
+	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
 	DWScriptFunctionRect getScriptFunctionRectHit(Common::String name);
@@ -92,7 +92,7 @@ private:
 	const int16 _randomScenes12[10] = {0x014C, 0x014E, 0x0150, 0x0152, 0x0154, 0x0156, 0x0158, 0x015A, 0x015C, 0};
 
 	const int16 *_randomScenes[14] = {_randomScenes0, _randomScenes1, nullptr, nullptr, _randomScenes4, nullptr, nullptr, nullptr,
-									   _randomScenes8, _randomScenes9, _randomScenes10, _randomScenes11, _randomScenes12, nullptr};
+									  _randomScenes8, _randomScenes9, _randomScenes10, _randomScenes11, _randomScenes12, nullptr};
 	const uint8 _randomScenesDifficulty[14] = {6, 4, 0, 0, 6, 0, 0, 0, 5, 6, 7, 8, 8, 0};
 	const uint16 _randomScenesContinue[14] = {0x51, 0x41, 0, 0, 0x01B5, 0, 0, 0, 0xCE, 0x0107, 0x0170, 0x011B, 0x015E, 0};
 
@@ -109,8 +109,6 @@ private:
 	const uint16 _stageStartScenes[5] = {0x51, 0x83, 0xEE, 0x0132, 0x017F};
 
 	const uint16 _scenarioStartScenes[14] = {0x27, 0x36, 0x4A, 0x57, 0x9D, 0x8B, 0x74, 0xD8, 0xBF, 0xB8, 0x0160, 0x010A, 0x0137, 0x017F};
-
-	bool _isDemo = 0;
 
 	// gamestate
 	uint8 _continues = 0;
@@ -147,7 +145,6 @@ private:
 	void displayShotFiredImage(Common::Point *point);
 	void enableVideoFadeIn();
 	uint16 sceneToNumber(Scene *scene);
-	uint16 randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude);
 	uint16 pickRandomScene(uint8 index, uint8 max);
 	uint16 pickDeathScene();
 	void sceneNxtscnGeneric(uint8 index);

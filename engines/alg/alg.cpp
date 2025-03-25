@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "engines/util.h"
 
 #include "alg/alg.h"
@@ -35,54 +36,45 @@
 namespace Alg {
 
 AlgEngine::AlgEngine(OSystem *syst, const AlgGameDescription *gd)
-	: Engine(syst) {
+	: Engine(syst), _gameDescription(gd) {
 	switch (gd->gameType) {
-	case Alg::GType_CPATROL_SS_DOS:
-	case Alg::GType_CPATROL_DS_DOS:
-	case Alg::GType_CPATROL_DEMO_DOS: {
+	case Alg::GType_CRIME_PATROL: {
 		GameCrimePatrol *game = new GameCrimePatrol(this, gd);
 		_debugger = new DebuggerCrimePatrol(game);
 		_game = game;
 		break;
 	}
-	case Alg::GType_DWARS_SS_DOS:
-	case Alg::GType_DWARS_DS_DOS:
-	case Alg::GType_DWARS_DEMO_DOS: {
+	case Alg::GType_DRUG_WARS: {
 		GameDrugWars *game = new GameDrugWars(this, gd);
 		_debugger = new DebuggerDrugWars(game);
 		_game = game;
 		break;
 	}
-	case Alg::GType_JOHNROC_SS_DOS:
-	case Alg::GType_JOHNROC_DS_DOS: {
+	case Alg::GType_WSJR: {
 		GameJohnnyRock *game = new GameJohnnyRock(this, gd);
 		_debugger = new DebuggerJohnnyRock(game);
 		_game = game;
 		break;
 	}
-	case Alg::GType_LBHUNTER_DOS:
-	case Alg::GType_LBHUNTER_DEMO_DOS: {
+	case Alg::GType_LAST_BOUNTY_HUNTER: {
 		GameBountyHunter *game = new GameBountyHunter(this, gd);
 		_debugger = new DebuggerBountyHunter(game);
 		_game = game;
 		break;
 	}
-	case Alg::GType_MADDOG_DOS: {
+	case Alg::GType_MADDOG: {
 		GameMaddog *game = new GameMaddog(this, gd);
 		_debugger = new DebuggerMaddog(game);
 		_game = game;
 		break;
 	}
-	case Alg::GType_MADDOG2_SS_DOS:
-	case Alg::GType_MADDOG2_DS_DOS: {
+	case Alg::GType_MADDOG2: {
 		GameMaddog2 *game = new GameMaddog2(this, gd);
 		_debugger = new DebuggerMaddog2(game);
 		_game = game;
 		break;
 	}
-	case Alg::GType_SPIRATES_SS_DOS:
-	case Alg::GType_SPIRATES_DS_DOS:
-	case Alg::GType_SPIRATES_DEMO_DOS: {
+	case Alg::GType_SPACE_PIRATES: {
 		GameSpacePirates *game = new GameSpacePirates(this, gd);
 		_debugger = new DebuggerSpacePirates(game);
 		_game = game;
@@ -98,6 +90,9 @@ AlgEngine::~AlgEngine() {
 Common::Error AlgEngine::run() {
 	initGraphics(320, 200);
 	setDebugger(_debugger);
+	if (ConfMan.hasKey("single_speed_videos")) {
+		_useSingleSpeedVideos = ConfMan.getBool("single_speed_videos");
+	}
 	return _game->run();
 }
 

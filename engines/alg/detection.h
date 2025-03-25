@@ -27,22 +27,13 @@
 namespace Alg {
 
 enum AlgGameType {
-	GType_CPATROL_SS_DOS,
-	GType_CPATROL_DS_DOS,
-	GType_CPATROL_DEMO_DOS,
-	GType_DWARS_SS_DOS,
-	GType_DWARS_DS_DOS,
-	GType_DWARS_DEMO_DOS,
-	GType_JOHNROC_SS_DOS,
-	GType_JOHNROC_DS_DOS,
-	GType_LBHUNTER_DOS,
-	GType_LBHUNTER_DEMO_DOS,
-	GType_MADDOG_DOS,
-	GType_MADDOG2_SS_DOS,
-	GType_MADDOG2_DS_DOS,
-	GType_SPIRATES_SS_DOS,
-	GType_SPIRATES_DS_DOS,
-	GType_SPIRATES_DEMO_DOS,
+	GType_CRIME_PATROL,
+	GType_DRUG_WARS,
+	GType_WSJR,
+	GType_LAST_BOUNTY_HUNTER,
+	GType_MADDOG,
+	GType_MADDOG2,
+	GType_SPACE_PIRATES,
 };
 
 struct AlgGameDescription {
@@ -57,6 +48,8 @@ struct AlgGameDescription {
 		return desc.toBuffer(buffer);
 	}
 };
+
+#define GAMEOPTION_SINGLE_SPEED_VERSION		GUIO_GAMEOPTIONS1
 
 } // End of namespace Alg
 

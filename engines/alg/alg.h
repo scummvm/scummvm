@@ -47,14 +47,17 @@ class AlgEngine : public Engine {
 public:
 	AlgEngine(OSystem *syst, const AlgGameDescription *desc);
 	~AlgEngine();
-
 	Common::Error run();
-
 	bool hasFeature(EngineFeature f) const;
+	Common::Platform getPlatform() const;
+	bool isDemo() const;
+	bool useSingleSpeedVideos() const { return _useSingleSpeedVideos; };
 
 private:
+	const AlgGameDescription *_gameDescription;
 	Game *_game;
 	GUI::Debugger *_debugger;
+	bool _useSingleSpeedVideos = false;
 };
 
 class Console : public GUI::Debugger {

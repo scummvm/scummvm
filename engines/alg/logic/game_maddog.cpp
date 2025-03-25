@@ -26,25 +26,48 @@
 
 #include "graphics/cursorman.h"
 
-#include "alg/logic/game_maddog.h"
 #include "alg/graphics.h"
+#include "alg/logic/game_maddog.h"
 #include "alg/scene.h"
 
 namespace Alg {
 
 GameMaddog::GameMaddog(AlgEngine *vm, const AlgGameDescription *gd) : Game(vm) {
-	_libFileName = "maddog.lib";
 }
 
 GameMaddog::~GameMaddog() {
-	delete _shotIcon;
-	delete _emptyIcon;
-	delete _liveIcon;
-	delete _deadIcon;
-	delete _reloadIcon;
-	delete _drawIcon;
-	delete _knifeIcon;
-	delete _bulletholeIcon;
+	if (_shotIcon) {
+		_shotIcon->free();
+		delete _shotIcon;
+	}
+	if (_emptyIcon) {
+		_emptyIcon->free();
+		delete _emptyIcon;
+	}
+	if (_liveIcon) {
+		_liveIcon->free();
+		delete _liveIcon;
+	}
+	if (_deadIcon) {
+		_deadIcon->free();
+		delete _deadIcon;
+	}
+	if (_reloadIcon) {
+		_reloadIcon->free();
+		delete _reloadIcon;
+	}
+	if (_drawIcon) {
+		_drawIcon->free();
+		delete _drawIcon;
+	}
+	if (_knifeIcon) {
+		_knifeIcon->free();
+		delete _knifeIcon;
+	}
+	if (_bulletholeIcon) {
+		_bulletholeIcon->free();
+		delete _bulletholeIcon;
+	}
 }
 
 void GameMaddog::init() {
@@ -55,23 +78,19 @@ void GameMaddog::init() {
 
 	setupCursorTimer();
 
-	loadLibArchive(_libFileName);
+	loadLibArchive("maddog.lib");
 	_sceneInfo->loadScnFile("maddog.scn");
 	_startScene = _sceneInfo->getStartScene();
 
 	registerScriptFunctions();
 	verifyScriptFunctions();
 
-	_menuzone = new Zone();
-	_menuzone->_name = "MainMenu";
-	_menuzone->_ptrfb = "GLOBALHIT";
+	_menuzone = new Zone("MainMenu", "GLOBALHIT");
 	_menuzone->addRect(0x0C, 0xAC, 0x3D, 0xBF, nullptr, 0, "SHOTMENU", "0");
 	_menuzone->addRect(0x00, 0xA6, 0x013F, 0xC7, nullptr, 0, "DEFAULT", "0"); // _mm_bott
 	_menuzone->addRect(0x00, 0x00, 0x3B, 0xC7, nullptr, 0, "DEFAULT", "0");   // _mm_left
 
-	_submenzone = new Zone();
-	_submenzone->_name = "SubMenu";
-	_submenzone->_ptrfb = "GLOBALHIT";
+	_submenzone = new Zone("SubMenu", "GLOBALHIT");
 	_submenzone->addRect(0x8A, 0x3B, 0xC2, 0x48, nullptr, 0, "STARTBOT", "0");
 	_submenzone->addRect(0x8A, 0x4E, 0xC2, 0x59, nullptr, 0, "STARTMENU", "0");
 	_submenzone->addRect(0x8A, 0x60, 0xC2, 0x6B, nullptr, 0, "CONTMENU", "0");
@@ -216,21 +235,18 @@ void GameMaddog::registerScriptFunctions() {
 }
 
 void GameMaddog::verifyScriptFunctions() {
-	Common::Array<Scene *> *scenes = _sceneInfo->getScenes();
-	for (size_t i = 0; i < scenes->size(); i++) {
-		Scene *scene = (*scenes)[i];
+	auto scenes = _sceneInfo->getScenes();
+	for (auto scene : *scenes) {
 		getScriptFunctionScene(PREOP, scene->_preop);
-		// TODO: SHOWMSG
+		getScriptFunctionScene(SHOWMSG, scene->_scnmsg);
 		getScriptFunctionScene(INSOP, scene->_insop);
 		getScriptFunctionScene(WEPDWN, scene->_wepdwn);
 		getScriptFunctionScene(SCNSCR, scene->_scnscr);
 		getScriptFunctionScene(NXTFRM, scene->_nxtfrm);
 		getScriptFunctionScene(NXTSCN, scene->_nxtscn);
-		for (size_t j = 0; j < scene->_zones.size(); j++) {
-			Zone *zone = scene->_zones[j];
-			getScriptFunctionZonePtrFb(zone->_ptrfb);
-			for (size_t k = 0; k < zone->_rects.size(); k++) {
-				getScriptFunctionRectHit(zone->_rects[k]._rectHit);
+		for (auto zone : scene->_zones) {
+			for (auto rect : zone->_rects) {
+				getScriptFunctionRectHit(rect->_rectHit);
 			}
 		}
 	}
@@ -407,7 +423,7 @@ Common::Error GameMaddog::run() {
 			callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
 		}
 		if (_curScene == "") {
-			_vm->quitGame();
+			shutdown();
 		}
 	}
 	removeCursorTimer();

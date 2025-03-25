@@ -35,8 +35,8 @@ public:
 	void getNextFrame();
 	void loadVideoFromStream(uint32 offset);
 	void skipNumberOfFrames(uint32 num);
+	void setReadStream(Common::SeekableReadStream *stream);
 	bool isFinished() { return _bytesLeft == 0; }
-	void setStream(Common::SeekableReadStream *stream) { _stream = stream; }
 	Audio::PacketizedAudioStream *getAudioStream() { return _audioStream; }
 	Graphics::Surface *getVideoFrame() { return _frame; }
 	void setPalette(uint8 *palette) { _palette = palette; }

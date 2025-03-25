@@ -26,30 +26,40 @@
 
 #include "graphics/cursorman.h"
 
-#include "alg/logic/game_drugwars.h"
 #include "alg/graphics.h"
+#include "alg/logic/game_drugwars.h"
 #include "alg/scene.h"
 
 namespace Alg {
 
 GameDrugWars::GameDrugWars(AlgEngine *vm, const AlgGameDescription *gd) : Game(vm) {
-	if (gd->gameType == GType_DWARS_SS_DOS) {
-		_libFileName = "dwss.lib";
-	} else if (gd->gameType == GType_DWARS_DS_DOS) {
-		_libFileName = "dwds.lib";
-	} else if (gd->gameType == GType_DWARS_DEMO_DOS) {
-		_libFileName = "dwdemo.lib";
-		_isDemo = true;
-	}
 }
 
 GameDrugWars::~GameDrugWars() {
-	delete _shotIcon;
-	delete _emptyIcon;
-	delete _liveIcon;
-	delete _deadIcon;
-	delete _difficultyIcon;
-	delete _bulletholeIcon;
+	if (_shotIcon) {
+		_shotIcon->free();
+		delete _shotIcon;
+	}
+	if (_emptyIcon) {
+		_emptyIcon->free();
+		delete _emptyIcon;
+	}
+	if (_liveIcon) {
+		_liveIcon->free();
+		delete _liveIcon;
+	}
+	if (_deadIcon) {
+		_deadIcon->free();
+		delete _deadIcon;
+	}
+	if (_difficultyIcon) {
+		_difficultyIcon->free();
+		delete _difficultyIcon;
+	}
+	if (_bulletholeIcon) {
+		_bulletholeIcon->free();
+		delete _bulletholeIcon;
+	}
 }
 
 void GameDrugWars::init() {
@@ -58,23 +68,24 @@ void GameDrugWars::init() {
 	_videoPosX = 11;
 	_videoPosY = 2;
 
-	loadLibArchive(_libFileName);
+	if (_vm->isDemo()) {
+		loadLibArchive("dwdemo.lib");
+	} else if(_vm->useSingleSpeedVideos()) {
+		loadLibArchive("dwss.lib");
+	} else {
+		loadLibArchive("dwds.lib");
+	}
+
 	_sceneInfo->loadScnFile("dw.scn");
 	_startScene = _sceneInfo->getStartScene();
 
 	registerScriptFunctions();
 	verifyScriptFunctions();
 
-	_menuzone = new Zone();
-	_menuzone->_name = "MainMenu";
-	_menuzone->_ptrfb = "GLOBALHIT";
-
+	_menuzone = new Zone("MainMenu", "GLOBALHIT");
 	_menuzone->addRect(0x0C, 0xAA, 0x38, 0xC7, nullptr, 0, "SHOTMENU", "0");
 
-	_submenzone = new Zone();
-	_submenzone->_name = "SubMenu";
-	_submenzone->_ptrfb = "GLOBALHIT";
-
+	_submenzone = new Zone("SubMenu", "GLOBALHIT");
 	_submenzone->addRect(0x1C, 0x13, 0x5D, 0x22, nullptr, 0, "STARTMENU", "0");
 	_submenzone->addRect(0x1C, 0x33, 0x5D, 0x42, nullptr, 0, "RECTLOAD", "0");
 	_submenzone->addRect(0x1C, 0x53, 0x5D, 0x62, nullptr, 0, "RECTSAVE", "0");
@@ -171,9 +182,8 @@ void GameDrugWars::registerScriptFunctions() {
 }
 
 void GameDrugWars::verifyScriptFunctions() {
-	Common::Array<Scene *> *scenes = _sceneInfo->getScenes();
-	for (size_t i = 0; i < scenes->size(); i++) {
-		Scene *scene = (*scenes)[i];
+	auto scenes = _sceneInfo->getScenes();
+	for (auto scene : *scenes) {
 		getScriptFunctionScene(PREOP, scene->_preop);
 		getScriptFunctionScene(SHOWMSG, scene->_scnmsg);
 		getScriptFunctionScene(INSOP, scene->_insop);
@@ -181,10 +191,9 @@ void GameDrugWars::verifyScriptFunctions() {
 		getScriptFunctionScene(SCNSCR, scene->_scnscr);
 		getScriptFunctionScene(NXTFRM, scene->_nxtfrm);
 		getScriptFunctionScene(NXTSCN, scene->_nxtscn);
-		for (size_t j = 0; j < scene->_zones.size(); j++) {
-			Zone *zone = scene->_zones[j];
-			for (size_t k = 0; k < zone->_rects.size(); k++) {
-				getScriptFunctionRectHit(zone->_rects[k]._rectHit);
+		for (auto zone : scene->_zones) {
+			for (auto rect : zone->_rects) {
+				getScriptFunctionRectHit(rect->_rectHit);
 			}
 		}
 	}
@@ -347,7 +356,7 @@ Common::Error GameDrugWars::run() {
 			callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
 		}
 		if (_curScene == "") {
-			_vm->quitGame();
+			shutdown();
 		}
 	}
 	return Common::kNoError;
@@ -442,7 +451,7 @@ void GameDrugWars::moveMouse() {
 	if (_inMenu) {
 		_whichGun = 3; // in menu cursor
 	} else {
-		// disabled for now, because glitchy
+		// TODO: disabled for now, because glitchy
 		/*
 		uint16 x = _mousePos.x;
 		uint16 y = _mousePos.y;
@@ -595,30 +604,6 @@ uint16 GameDrugWars::sceneToNumber(Scene *scene) {
 	return atoi(scene->_name.substr(5).c_str());
 }
 
-uint16 GameDrugWars::randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude) {
-	if (max == 1) {
-		return 0;
-	}
-	// reset mask if full
-	uint16 fullMask = 0xFFFF >> (16 - max);
-	if (*mask == fullMask) {
-		*mask = 0;
-	}
-	uint16 randomNum = 0;
-	// find an unused random number
-	while (1) {
-		randomNum = _rnd->getRandomNumber(max - 1);
-		// check if bit is already used
-		uint16 bit = 1 << randomNum;
-		if (!((*mask & bit) || randomNum == exclude)) {
-			// set the bit in mask
-			*mask |= bit;
-			break;
-		}
-	}
-	return randomNum;
-}
-
 uint16 GameDrugWars::pickRandomScene(uint8 index, uint8 max) {
 	if (_randomScenes[index] == nullptr) {
 		error("GameDrugWars::pickRandomScene(): called with illegal index: %d", index);
@@ -728,7 +713,7 @@ void GameDrugWars::rectStart(Rect *rect) {
 	_inMenu = false;
 	_fired = false;
 	_gameInProgress = true;
-	if (_isDemo) {
+	if (_vm->isDemo()) {
 		_curScene = "scene54";
 		_gotToIndex = 1;
 		_gotTo[_gotToIndex] = 54;
@@ -821,7 +806,7 @@ void GameDrugWars::sceneNxtscnLoseALife(Scene *scene) {
 	if (!_debug_godMode) {
 		_lives--;
 	}
-	if (_isDemo) {
+	if (_vm->isDemo()) {
 		_curScene = "scene83";
 		return;
 	} else if (_lives > 0) {
@@ -846,7 +831,7 @@ void GameDrugWars::sceneNxtscnKillInnocentMan(Scene *scene) {
 	if (!_debug_godMode) {
 		_lives--;
 	}
-	if (_isDemo) {
+	if (_vm->isDemo()) {
 		sceneNxtscnAfterDie(scene);
 		return;
 	} else if (_lives > 0) {
@@ -862,7 +847,7 @@ void GameDrugWars::sceneNxtscnKillInnocentWoman(Scene *scene) {
 }
 
 void GameDrugWars::sceneNxtscnAfterDie(Scene *scene) {
-	if (_isDemo) {
+	if (_vm->isDemo()) {
 		if (_gotTo[_gotToIndex] > 54) {
 			_curScene = "scene67";
 		} else {
@@ -955,7 +940,7 @@ void GameDrugWars::sceneNxtscnSelectScenario(Scene *scene) {
 void GameDrugWars::sceneNxtscnFinishScenario(Scene *scene) {
 	uint16 picked = 0;
 	_gotTo[_gotToIndex] = 0;
-	if (_isDemo) {
+	if (_vm->isDemo()) {
 		_curScene = _startScene;
 		return;
 	}
