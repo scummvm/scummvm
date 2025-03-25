@@ -29,12 +29,20 @@ namespace HodjNPodj {
 namespace Metagame {
 
 class Credits : public View {
+private:
+	GfxSurface _background;
+	int _creditsIndex = 0;
+	uint32 _nextCreditsTime = 0;
+
 public:
 	Credits();
+	~Credits() override {}
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 	void draw() override;
+	bool tick() override;
 };
 
 } // namespace Metagame
