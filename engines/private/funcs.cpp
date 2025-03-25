@@ -266,6 +266,10 @@ static void fBustMovie(ArgArray args) {
 
 	g_private->_nextMovie = pv;
 	g_private->_nextSetting = args[0].u.sym->name->c_str();
+
+	Common::String memoryPath = pv;
+	memoryPath.replace('/', '\\');
+	g_private->addMemory(memoryPath);
 }
 
 static void fDossierAdd(ArgArray args) {
