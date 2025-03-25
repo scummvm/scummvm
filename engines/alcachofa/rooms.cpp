@@ -218,8 +218,16 @@ void Room::updateInteraction() {
 void Room::updateRoomBounds() {
 	auto background = getObjectByName("Background");
 	auto graphic = background == nullptr ? nullptr : background->graphic();
-	if (graphic != nullptr)
-		g_engine->camera().setRoomBounds(graphic->animation().imageSize(0), graphic->scale());
+	if (graphic != nullptr) {
+		auto bgSize = graphic->animation().imageSize(0);
+		/* This fixes a bug where if the background image is invalid the original engine
+		 * would not update the background size. This would be around 1024,768 but I find
+		 * this very unstable. Instead a fixed value is used
+		 */
+		if (bgSize == Point(0, 0))
+			bgSize = Point(1024, 768);
+		g_engine->camera().setRoomBounds(bgSize, graphic->scale());
+	}
 }
 
 void Room::updateObjects() {

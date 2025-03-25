@@ -114,7 +114,7 @@ void minmax(Vector3d &min, Vector3d &max, Vector3d val)
 
 Vector3d Camera::setAppliedCenter(Vector3d center) {
 	setupMatricesAround(center);
-	if (g_engine->script().variable("EncuadrarCamara") || true) {
+	if (g_engine->script().variable("EncuadrarCamara")) {
 		const float screenW = g_system->getWidth(), screenH = g_system->getHeight();
 		Vector3d min, max;
 		min = max = transform2Dto3D(Vector3d(0, 0, _roomScale));
@@ -171,6 +171,7 @@ void Camera::update() {
 	if (_catchUp && _cur._followTarget != nullptr) {
 		for (int i = 0; i < 4; i++)
 			updateFollowing(50.0f);
+		_catchUp = false;
 	}
 	else
 		updateFollowing(deltaTime);
