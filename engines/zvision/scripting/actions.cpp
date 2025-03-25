@@ -552,13 +552,16 @@ ActionPanTrack::ActionPanTrack(ZVision *engine, int32 slotKey, const Common::Str
 	_mag(255),
 	_resetMusicNode(true),
 	_resetMixerOnDelete(false),
+	_staticScreen(false),
 	_musicSlot(0) {
 	uint mag = 255;  //Original game scripts do not specify this, but require it to be 255 to work correctly.
 	uint resetMusicNode = 1;  //Original game scripts do not specify this, but require it to be true to work correctly.
 	uint resetMixerOnDelete = 0;  //Original game scripts do not specify this, but require it to be false to work correctly.
-	sscanf(line.c_str(), "%u %d %u %u %u", &_musicSlot, &_pos, &mag, &resetMusicNode, &resetMixerOnDelete);
+	uint staticScreen = 0;  //Original game scripts do not specify this, but require it to be false to work correctly.
+	sscanf(line.c_str(), "%u %d %u %u %u %u", &_musicSlot, &_pos, &mag, &resetMusicNode, &resetMixerOnDelete, &staticScreen);
 	_resetMusicNode = resetMusicNode > 0;
   _resetMixerOnDelete = resetMixerOnDelete > 0;
+  _staticScreen = staticScreen > 0;
 	_mag = mag;
 	if(_resetMusicNode) {
 	  if(_scriptManager->getStateValue(_musicSlot) != 2) {
@@ -582,7 +585,7 @@ bool ActionPanTrack::execute() {
   debug(2,"Executing Action: PanTrack, slotkey %d, musicSlot %u, pos %d, mag %d", _slotKey, _musicSlot, _pos, _mag);
 	if (_scriptManager->getSideFX(_slotKey))
 		return true;
-	_scriptManager->addSideFX(new PanTrackNode(_engine, _slotKey, _musicSlot, _pos, _mag, _resetMixerOnDelete));
+	_scriptManager->addSideFX(new PanTrackNode(_engine, _slotKey, _musicSlot, _pos, _mag, _resetMixerOnDelete, _staticScreen));
 	return true;
 }
 
