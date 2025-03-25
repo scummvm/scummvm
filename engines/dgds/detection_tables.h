@@ -366,6 +366,22 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Heart of China (PC) 1.2M German Floppy version
+	// reported by windlepoons (#15825)
+	{
+		"china",
+		0,
+		{
+			{"volume.rmf", 0, "a392b2a2d98970fa18ed840fabf6371f", 9775},
+			{"volume.001", 0, "8de3820266d8f7bf1e29543dd87a209a", 845718},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Heart of China (PC)
 	{
 		"china",
