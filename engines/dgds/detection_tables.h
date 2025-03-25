@@ -255,6 +255,22 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Adventures of Willy Beamish (French FDD)
+	// reported by Scaloup (#15822)
+	{
+		"beamish",
+		"FDD",
+		{
+			{"volume.001", 0, "d32a577c428799b2c4d5551991372736", 1358304},
+			{"volume.rmf", 0, "268cb8040af10d6fa24e5f9f1f411675", 9896},
+			AD_LISTEND
+		},
+		Common::FR_FRA,
+		Common::kPlatformDOS,
+		ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Adventures of Willy Beamish Demo
 	{
 		"beamish",
