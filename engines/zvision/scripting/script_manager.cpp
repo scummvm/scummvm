@@ -93,7 +93,6 @@ void ScriptManager::update(uint deltaTimeMillis) {
 	if (!execScope(universe))
 		return;
 	updateControls(deltaTimeMillis);
-	_justStreamedVideo=false;
 }
 
 bool ScriptManager::execScope(ScriptScope &scope) {
@@ -478,13 +477,6 @@ void ScriptManager::changeLocation(const Location &_newLocation) {
 }
 
 void ScriptManager::changeLocation(char _world, char _room, char _node, char _view, uint32 offset) {
-  if(_justStreamedVideo) {
-    debug(1,"Initiating location change after video stream");
-  	_engine->setRenderDelay(2); //Prevents previous scene from being rerendered for a moment after scene transition movie plays (e.g. opening temple door)
-  	_justStreamedVideo = false;
-	}
-	else
-    debug(1,"Initiating normal location change");
 	_changeLocationDelayCycles = 1;
 	_nextLocation.world = _world;
 	_nextLocation.room = _room;

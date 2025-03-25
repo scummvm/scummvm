@@ -1034,7 +1034,7 @@ bool ActionStreamVideo::execute() {
 		_engine->getRenderManager()->initialize(false);
 	_engine->getCursorManager()->showMouse(true);
   _engine->getSubtitleManager()->destroy(sub);
-  _scriptManager->justStreamedVideo();
+  _engine->setRenderDelay(2); //Necessary for avoiding redraw of previous scene between sequential videos (eg totemization sequence in ZGI) & when changing location right after a video (e.g. opening temple door in Nemesis)
   debug(2,"Completed executing video stream");
 	return true;
 }
