@@ -174,25 +174,16 @@ void MusicNode::setVolume(uint8 newVolume) {
 }
 
 
-PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos, uint8 mag, bool resetMixerOnDelete)
+PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos, uint8 mag, bool resetMixerOnDelete, bool staticScreen)
 	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_PANTRACK),
 	_slot(slot),
 	sourcePos(0),
 	viewPos(0),
 	_mag(mag),
 	_width(0),
+	_pos(pos),
+	_staticScreen(staticScreen),
 	_resetMixerOnDelete(resetMixerOnDelete) {
-	switch(_engine->getRenderManager()->getRenderTable()->getRenderState()) {
-	  case RenderTable::PANORAMA :
-	    _width = _engine->getRenderManager()->getBkgSize().x;
-	    sourcePos.setDegrees(360*pos/_width);
-	    break;	
-	  case RenderTable::FLAT :
-	  case RenderTable::TILT :
-	  default :
-	    sourcePos.setDegrees(pos);
-	    break;
-	}
   debug(3,"Created PanTrackNode, key %d, slot %d", _key, _slot);
 	process(0); 	// Try to set pan value for music node immediately
 }
@@ -216,16 +207,35 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 	ScriptingEffect *fx = scriptManager->getSideFX(_slot);
 	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
-	  switch(_engine->getRenderManager()->getRenderTable()->getRenderState()) {
-	    case RenderTable::PANORAMA :
-	      viewPos.setDegrees(360*scriptManager->getStateValue(StateKey_ViewPos)/_width);
-	      break;	
-	    case RenderTable::FLAT :
-	    case RenderTable::TILT :
-	    default :
-	      viewPos.setDegrees(0);
-	      break;
-	  }
+		if(!_staticScreen)
+		  //Original game scripted behaviour
+	    switch(_engine->getRenderManager()->getRenderTable()->getRenderState()) {
+	      case RenderTable::PANORAMA :
+	        debug(3,"PanTrackNode in panorama mode");
+	          _width = _engine->getRenderManager()->getBkgSize().x;
+	          if(_width) {
+	            sourcePos.setDegrees(360*_pos/_width);
+      	      viewPos.setDegrees(360*scriptManager->getStateValue(StateKey_ViewPos)/_width);
+    	      }
+    	      else {
+    	        warning("Encountered zero background width whilst processing PanTrackNode in panoramic mode!");
+	            //sourcePos.setDegrees(0);
+	            //viewPos.setDegrees(0);
+	          }
+	        break;	
+	      case RenderTable::FLAT :
+	      case RenderTable::TILT :
+	      default :
+	        debug(3,"PanTrackNode in FLAT/TILT mode");
+	        sourcePos.setDegrees(0);
+	        viewPos.setDegrees(0);
+	        break;
+      }
+    else {
+      //Used for auxiliary scripts only
+      sourcePos.setDegrees(_pos);
+      viewPos.setDegrees(0);
+    }
 		Math::Angle azimuth;
 		azimuth = sourcePos - viewPos;
 		debug(3,"soundPos: %f, viewPos: %f, azimuth: %f, width %d", sourcePos.getDegrees(), viewPos.getDegrees(), azimuth.getDegrees(), _width);
