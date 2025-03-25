@@ -57,8 +57,7 @@ struct GRANDTRSTRUCT {
 
 class GrandTour : public Dialog {
 private:
-	GRANDTRSTRUCT _grandTour;
-	GRANDTRSTRUCT *m_pgtGTStruct = &_grandTour;
+	GRANDTRSTRUCT *m_pgtGTStruct;
 	ColorButton _playButton;
 	ColorButton _saveButton;
 	ColorButton _restoreButton;
@@ -88,6 +87,7 @@ public:
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
+	bool msgFocus(const FocusMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	void draw() override;

@@ -62,12 +62,19 @@ public:
 			return !hasKey(key) || _values[key].empty() ? false :
 				tolower(_values[key][0]) == 't';
 		}
+		Common::String getString(const Common::String &key, const char *defaultValue = nullptr) const {
+			return hasKey(key) ? _values[key] : defaultValue;
+		}
 		void setInt(const Common::String &key, int value) {
 			_values[key] = Common::String::format("%d", value);
 			_modified = true;
 		}
 		void setBool(const Common::String &key, bool value) {
 			_values[key] = value ? "true" : "false";
+			_modified = true;
+		}
+		void setString(const Common::String &key, const Common::String &value) {
+			_values[key] = value;
 			_modified = true;
 		}
 
@@ -96,6 +103,12 @@ public:
 				_domain.setBool(key, field);
 			else
 				field = _domain.getBool(key, defaultValue);
+		}
+		void sync(const Common::String &key, Common::String &field, const char *defaultValue = nullptr) {
+			if (_isSaving)
+				_domain.setString(key, field);
+			else
+				field = _domain.getString(key, defaultValue);
 		}
 	};
 

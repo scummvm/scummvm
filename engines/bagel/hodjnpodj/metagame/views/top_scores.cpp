@@ -28,7 +28,11 @@ namespace HodjNPodj {
 namespace Metagame {
 
 TopScores::TopScores() : Dialog("TopScores"),
-	_okButton(RectWH(190, 325, 110, 20), this) {
+	_okButton(RectWH(190, 325, 110, 20), this),
+	m_pgtGTStruct(&g_engine->_grandTour),
+	_settings(g_engine->_settings["Top 10"]),
+	_textRect(RectWH(69, (_newRank * 20) + 90, 280, 20))
+{
 }
 
 bool TopScores::msgAction(const ActionMessage &msg) {
@@ -42,7 +46,11 @@ bool TopScores::msgAction(const ActionMessage &msg) {
 }
 
 bool TopScores::msgGame(const GameMessage &msg) {
-	if (msg._name == "BUTTON") {
+	if (msg._name == "GRAND_TOUR") {
+		_newRank = msg._value;
+		show();
+		return true;
+	} else if (msg._name == "BUTTON") {
 		close();
 		return true;
 	}
@@ -57,7 +65,6 @@ void TopScores::draw() {
 	s.setFontSize(8);
 
 	const auto &scores = g_engine->_topScores;
-	const int newRank = g_engine->_newRank;
 
 	s.writeString("GRAND TOUR - TOP TEN SCORES", Common::Point(nLeft + 50, nTop + 50), BLACK);
 	s.writeString("RANK", Common::Point(nLeft + 50, nTop + 70), BLACK);
@@ -66,7 +73,7 @@ void TopScores::draw() {
 		Common::String num = Common::String::format("%d", i + 1);
 		s.writeString(num, Common::Point(nLeft + 50, nTop + (i * 20) + 90), BLACK);
 
-		if (i != newRank)
+		if (i != _newRank)
 			s.writeString(scores[i]._name,
 				Common::Point(nLeft + 70, nTop + (i * 20) + 90), BLACK);
 
@@ -86,12 +93,72 @@ void TopScores::draw() {
 			Common::Point(nLeft + 425, nTop + (i * 20) + 90), PURPLE);
 	}
 
-	if (newRank > -1) {
-		s.writeString(scores[newRank]._name,
-			Common::Point(nLeft + 69, nTop + (newRank * 20) + 90),
+	if (_newRank > -1) {
+		s.writeString(scores[_newRank]._name, _textRect,
 			g_engine->_bDonePodj ? RED : BLUE);
 
 		s.writeString("Press Enter When Done.", Common::Point(75, 325), BLACK);
+	}
+}
+
+void TopScores::show() {
+	auto &astTopTenScores = g_engine->_topScores;
+	int i;
+
+	addView();
+	getScores();
+
+	for (i = 0; i < 10; i++) {
+		if ((m_pgtGTStruct->nHodjSkillLevel != NOPLAY) &&
+				(m_pgtGTStruct->nHodjScore > astTopTenScores[i]._score)) {
+			int	j;
+
+			_newRank = i;
+			for (j = 10; j > i; j--) {
+				astTopTenScores[j]._name = astTopTenScores[j - 1]._name;
+				astTopTenScores[j]._score = astTopTenScores[j - 1]._score;
+				astTopTenScores[j]._skillLevel = astTopTenScores[j - 1]._skillLevel;
+			}
+			astTopTenScores[i]._name = "HODJ|";
+			astTopTenScores[i]._score = m_pgtGTStruct->nHodjScore;
+			astTopTenScores[i]._skillLevel = m_pgtGTStruct->nHodjSkillLevel;
+			break;
+		}
+	}
+
+	if (_newRank == -1) {
+		for (i = 0; i < 10; i++) {
+			if ((m_pgtGTStruct->nPodjSkillLevel != NOPLAY) && (m_pgtGTStruct->nPodjScore > astTopTenScores[i]._score)) {
+				int	j;
+
+				_newRank = i;
+				for (j = 10; j > i; j--) {
+					astTopTenScores[j]._name = astTopTenScores[j - 1]._name;
+					astTopTenScores[j]._score = astTopTenScores[j - 1]._score;
+					astTopTenScores[j]._skillLevel = astTopTenScores[j - 1]._skillLevel;
+				}
+				astTopTenScores[i]._name = "PODJ|";
+				astTopTenScores[i]._score = m_pgtGTStruct->nPodjScore;
+				astTopTenScores[i]._skillLevel = m_pgtGTStruct->nPodjSkillLevel;
+
+
+				g_engine->_bDonePodj = true;
+				break;
+			}
+		}
+	}
+}
+
+void TopScores::syncScores(bool isSaving) {
+	Settings::Serializer s(_settings, isSaving);
+
+	for (int i = 0; i < 10; i++) {
+		s.sync(Common::String::format("name%d", i),
+			g_engine->_topScores[i]._name);
+		s.sync(Common::String::format("skillLevel%d", i),
+			g_engine->_topScores[i]._skillLevel);
+		s.sync(Common::String::format("score%d", i),
+			g_engine->_topScores[i]._score);
 	}
 }
 

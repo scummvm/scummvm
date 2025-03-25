@@ -23,6 +23,7 @@
 #include "image/bmp.h"
 #include "bagel/hodjnpodj/metagame/views/grand_tour.h"
 #include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
+#include "bagel/hodjnpodj/views/minigame_view.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/metaengine.h"
 
@@ -32,7 +33,6 @@ namespace Metagame {
 
 #define FONT_SIZE 8
 
-#define	NOPLAY		-1
 #define GAME_ALPHA	0
 #define GAME_GEO	1
 #define GAME_RAND	2
@@ -128,15 +128,14 @@ GrandTour::GrandTour() : Dialog("GrandTour"),
 	pGAButton("ALPHA", "Alphabetically", RectWH(GA_LEFT, G_TOP, G_WIDTH, G_HEIGHT), this),
 	pGGButton("GEOG",  "Geographically", RectWH(GG_LEFT, G_TOP, G_WIDTH, G_HEIGHT), this),
 	pGRButton("RANDOM", "Randomly",      RectWH(GR_LEFT, G_TOP, G_WIDTH, G_HEIGHT), this),
-	_settings(g_engine->_settings["Grand Tour"]) {
+	_settings(g_engine->_settings["Grand Tour"]),
+	m_pgtGTStruct(&g_engine->_grandTour) {
 }
 
 bool GrandTour::msgOpen(const OpenMessage &msg) {
 	Dialog::msgOpen(msg);
 	g_engine->_bReturnToGrandTour = true;
-	_grandTour.reset();
 
-	adjustScore();
 	updateRadioButtons();
 
 	return true;
@@ -146,6 +145,46 @@ bool GrandTour::msgClose(const CloseMessage &msg) {
 	Dialog::msgClose(msg);
 	g_engine->_bReturnToGrandTour = false;
 
+	return true;
+}
+
+bool GrandTour::msgFocus(const FocusMessage &msg) {
+	Dialog::msgFocus(msg);
+	MinigameView *view = dynamic_cast<MinigameView *>(msg._priorView);
+	if (!view)
+		return true;
+
+	// Returning from playing minigame
+	adjustScore();
+
+	if (m_pgtGTStruct->bPlayingHodj) {
+		if (m_pgtGTStruct->nPodjSkillLevel != NOPLAY)
+			m_pgtGTStruct->bPlayingHodj = false;
+	} else {
+		if (m_pgtGTStruct->nHodjSkillLevel != NOPLAY)
+			m_pgtGTStruct->bPlayingHodj = true;
+	}
+
+	if (m_pgtGTStruct->bPlayingHodj)
+		m_pgtGTStruct->nCurrGameCode = 0;
+
+	bool bThereAreGamesToBePlayed = false;
+	for (int i = 0; i < 18; i++) {
+		if ((m_pgtGTStruct->nHodjSkillLevel != NOPLAY) && (!m_pgtGTStruct->abHGamePlayed[i])) {
+			bThereAreGamesToBePlayed = true;
+			break;
+		}
+		if ((m_pgtGTStruct->nPodjSkillLevel != NOPLAY) && (!m_pgtGTStruct->abPGamePlayed[i])) {
+			bThereAreGamesToBePlayed = true;
+			break;
+		}
+	}
+
+	if (!bThereAreGamesToBePlayed) {
+		send("TopScores", GameMessage("GRAND_TOUR"));
+		return true;
+	}
+	
 	return true;
 }
 
@@ -174,7 +213,7 @@ bool GrandTour::msgGame(const GameMessage &msg) {
 		} else if (msg._stringValue == "AUDIO") {
 			// TODO: Audio settings
 		} else if (msg._stringValue == "TOP10") {
-			addView("TopScores");
+			send("TopScores", GameMessage("GRAND_TOUR", -1));
 			return true;
 		} else if (msg._stringValue == "CLOSE") {
 			replaceView("TitleMenu");

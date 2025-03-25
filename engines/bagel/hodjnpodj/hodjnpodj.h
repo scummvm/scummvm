@@ -37,6 +37,8 @@
 #include "bagel/hodjnpodj/events.h"
 #include "bagel/hodjnpodj/libs/settings.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
+#include "bagel/hodjnpodj/metagame/views/grand_tour.h"
+
 #include "bagel/bagel.h"
 
 namespace Bagel {
@@ -64,8 +66,8 @@ public:
 	Common::HashMap<int, Graphics::Font *> _fonts;
 	Metagame::CBfcMgr _metaGame;
 	Metagame::SCORESTRUCT _topScores[10];
+	Metagame::GRANDTRSTRUCT _grandTour;
 	Settings _settings;
-	int _newRank = -1;
 	bool _bDonePodj = false;
 	bool _bReturnToZoom = false;
 	bool _bReturnToMeta = false;

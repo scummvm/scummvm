@@ -44,6 +44,7 @@ namespace Metagame {
 #define NUMBER_OF_CLUES 65
 
 enum SkillLevel {
+	NOPLAY = -1,
 	SKILLLEVEL_LOW = 0,
 	SKILLLEVEL_MEDIUM = 1,
 	SKILLLEVEL_HIGH = 2

@@ -23,6 +23,7 @@
 #define HODJNPODJ_METAGAME_VIEWS_TOP_SCORES_H
 
 #include "bagel/hodjnpodj/metagame/views/dialog.h"
+#include "bagel/hodjnpodj/metagame/views/grand_tour.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
@@ -31,7 +32,20 @@ namespace Metagame {
 
 class TopScores : public Dialog {
 private:
+	GRANDTRSTRUCT *m_pgtGTStruct;
+	Settings::Domain &_settings;
+	const Common::Rect _textRect;
 	OkButton _okButton;
+	int _newRank = -1;
+
+	void show();
+	void syncScores(bool isSaving);
+	void getScores() {
+		syncScores(false);
+	}
+	void saveScores() {
+		syncScores(true);
+	}
 
 public:
 	TopScores();
