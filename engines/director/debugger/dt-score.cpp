@@ -29,6 +29,7 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
+#include "director/window.h"
 
 namespace Director {
 namespace DT {
@@ -587,7 +588,17 @@ void showChannels() {
 				ImGui::TableNextRow();
 
 				ImGui::TableNextColumn();
-				ImGui::Text("%-3d", i + 1);
+
+				bool isSelected = (_state->_selectedChannel == i + 1);
+				if (ImGui::Selectable(Common::String::format("%-3d", i + 1).c_str(), isSelected, ImGuiSelectableFlags_SpanAllColumns)) {
+					if (isSelected) {
+						_state->_selectedChannel = -1;
+						g_director->getCurrentWindow()->setDirty(true);
+					 } else {
+						_state->_selectedChannel = i + 1;
+					 }
+				}
+
 				ImGui::TableNextColumn();
 
 				if (sprite._castId.member) {

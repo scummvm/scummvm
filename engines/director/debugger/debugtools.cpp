@@ -404,5 +404,9 @@ void onImGuiCleanup() {
 	_state = nullptr;
 }
 
+int getSelectedChannel(){
+	return _state ? _state->_selectedChannel : -1;
+}
+
 } // namespace DT
 } // namespace Director
