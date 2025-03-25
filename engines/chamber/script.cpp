@@ -885,7 +885,7 @@ uint16 SCR_D_DrawPortraitDotEffect(void) {
 		target[CalcXY_p(x + offs % cur_image_size_w, y + offs / cur_image_size_w)] = cur_image_pixels[offs]; // TODO check this
 
 		if (count % 5 == 0)
-			cga_blitToScreen(offs, 4, 1);
+			cga_blitToScreen(offs, g_vm->_screenPPB, 1);
 
 		offs += step;
 		if (offs > cur_image_end)
