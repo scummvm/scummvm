@@ -588,9 +588,9 @@ void showChannels() {
 
 				ImGui::TableNextColumn();
 
-				bool isSelected = (_state->_selectedChannel == i);
+				bool isSelected = (_state->_selectedChannel == i + 1);
 				if (ImGui::Selectable(Common::String::format("%-3d", i + 1).c_str(), isSelected, ImGuiSelectableFlags_SpanAllColumns)) {
-					_state->_selectedChannel = i;
+					_state->_selectedChannel = i + 1;
 				}
 
 				ImGui::TableNextColumn();
