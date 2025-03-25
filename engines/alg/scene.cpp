@@ -31,6 +31,12 @@ SceneInfo::SceneInfo() {
 }
 
 SceneInfo::~SceneInfo() {
+	for (auto scene : _scenes) {
+		delete scene;
+	}
+	for (auto zone : _zones) {
+		delete zone;
+	}
 	_scenes.clear();
 	_zones.clear();
 }
@@ -49,8 +55,8 @@ void SceneInfo::loadScnFile(const Common::Path &path) {
 		}
 		Common::StringTokenizer tokenizer(line, " ");
 		int8 token = getToken(_mainTokens, tokenizer.nextToken());
-		uint32 startFrame, endFrame = 0;
-		Common::String sceneName, zoneName = nullptr;
+		uint32 startFrame = 0, endFrame = 0;
+		Common::String sceneName = nullptr, zoneName = nullptr;
 		switch (token) {
 		case 0: // ;
 			break;
@@ -89,26 +95,7 @@ void SceneInfo::loadScnFile(const Common::Path &path) {
 }
 
 void SceneInfo::parseScene(Common::String sceneName, uint32 startFrame, uint32 endFrame) {
-	Scene *scene = new Scene();
-	scene->_preop = "DEFAULT";
-	scene->_insop = "DEFAULT";
-	scene->_scnmsg = "DEFAULT";
-	scene->_wepdwn = "DEFAULT";
-	scene->_scnscr = "DEFAULT";
-	scene->_nxtfrm = "DEFAULT";
-	scene->_nxtscn = "DEFAULT";
-	scene->_missedRects = "DEFAULT";
-	scene->_missedRects = "DEFAULT";
-	scene->_scnscrParam = 0;
-	scene->_dataParam1 = 0;
-	scene->_dataParam2 = 0;
-	scene->_dataParam3 = 0;
-	scene->_dataParam4 = 0;
-	scene->_dataParam5 = "";
-	scene->_name = sceneName;
-	scene->_startFrame = startFrame;
-	scene->_endFrame = endFrame;
-	scene->_difficultyMod = 0;
+	Scene *scene = new Scene(sceneName, startFrame, endFrame);
 	bool done = false;
 	while (_scnFile.pos() < _scnFile.size() && !done) {
 		Common::String line = _scnFile.readLine();
@@ -190,10 +177,7 @@ void SceneInfo::parseScene(Common::String sceneName, uint32 startFrame, uint32 e
 }
 
 void SceneInfo::parseZone(Common::String zoneName, uint32 startFrame, uint32 endFrame) {
-	Zone *zone = new Zone();
-	zone->_name = zoneName;
-	zone->_startFrame = startFrame;
-	zone->_endFrame = endFrame;
+	Zone *zone = new Zone(zoneName, startFrame, endFrame);
 	bool done = false;
 	while (_scnFile.pos() < _scnFile.size() && !done) {
 		Common::String line = _scnFile.readLine();
@@ -231,7 +215,7 @@ void SceneInfo::parseZone(Common::String zoneName, uint32 startFrame, uint32 end
 				rect->_score = atoi(tokenizer.nextToken().c_str());
 				rect->_rectHit = tokenizer.nextToken();
 				rect->_unknown = tokenizer.nextToken();
-				zone->_rects.push_back(*rect);
+				zone->_rects.push_back(rect);
 			} else {
 				rect = new Rect();
 				rect->_isMoving = false;
@@ -243,7 +227,7 @@ void SceneInfo::parseZone(Common::String zoneName, uint32 startFrame, uint32 end
 				rect->_score = atoi(tokenizer.nextToken().c_str());
 				rect->_rectHit = tokenizer.nextToken();
 				rect->_unknown = tokenizer.nextToken();
-				zone->_rects.push_back(*rect);
+				zone->_rects.push_back(rect);
 			}
 		} break;
 		case 4: // ;
@@ -300,6 +284,10 @@ void SceneInfo::addZonesToScenes() {
 	}
 }
 
+void SceneInfo::addScene(Scene *scene) {
+	_scenes.push_back(scene);
+}
+
 Zone *SceneInfo::findZone(Common::String zoneName) {
 	for (uint32 i = 0; i < _zones.size(); i++) {
 		if (_zones[i]->_name.equalsIgnoreCase(zoneName)) {
@@ -317,23 +305,6 @@ Scene *SceneInfo::findScene(Common::String sceneName) {
 		}
 	}
 	error("SceneInfo::findScene(): Cannot find scene %s", sceneName.c_str());
-}
-
-void SceneInfo::addScene(Scene *scene) {
-	_scenes.push_back(scene);
-}
-
-void Zone::addRect(int16 left, int16 top, int16 right, int16 bottom, Common::String scene, uint32 score, Common::String rectHit, Common::String unknown) {
-	Rect *rect = new Rect();
-	rect->left = left;
-	rect->top = top;
-	rect->right = right;
-	rect->bottom = bottom;
-	rect->_scene = scene;
-	rect->_score = score;
-	rect->_rectHit = rectHit;
-	rect->_unknown = unknown;
-	_rects.push_back(*rect);
 }
 
 int8 SceneInfo::getToken(const struct TokenEntry *tokenList, Common::String token) {
@@ -360,6 +331,61 @@ bool SceneInfo::ignoreScriptLine(Common::String line) {
 		return true; // unnecessary numbers
 	}
 	return false;
+}
+
+Scene::Scene(Common::String name, uint32 startFrame, uint32 endFrame) {
+	_preop = "DEFAULT";
+	_insop = "DEFAULT";
+	_scnmsg = "DEFAULT";
+	_wepdwn = "DEFAULT";
+	_scnscr = "DEFAULT";
+	_nxtfrm = "DEFAULT";
+	_nxtscn = "DEFAULT";
+	_missedRects = "DEFAULT";
+	_missedRects = "DEFAULT";
+	_scnscrParam = 0;
+	_dataParam1 = 0;
+	_dataParam2 = 0;
+	_dataParam3 = 0;
+	_dataParam4 = 0;
+	_dataParam5 = "";
+	_name = name;
+	_startFrame = startFrame;
+	_endFrame = endFrame;
+	_difficultyMod = 0;
+}
+
+Scene::~Scene() {
+}
+
+Zone::Zone(Common::String name, Common::String ptrfb) {
+	_name = name;
+	_ptrfb = ptrfb;
+}
+
+Zone::Zone(Common::String name, uint32 startFrame, uint32 endFrame) {
+	_name = name;
+	_startFrame = startFrame;
+	_endFrame = endFrame;
+}
+
+Zone::~Zone() {
+	for (auto rect : _rects) {
+		delete rect;
+	}
+}
+
+void Zone::addRect(int16 left, int16 top, int16 right, int16 bottom, Common::String scene, uint32 score, Common::String rectHit, Common::String unknown) {
+	Rect *rect = new Rect();
+	rect->left = left;
+	rect->top = top;
+	rect->right = right;
+	rect->bottom = bottom;
+	rect->_scene = scene;
+	rect->_score = score;
+	rect->_rectHit = rectHit;
+	rect->_unknown = unknown;
+	_rects.push_back(rect);
 }
 
 } // End of namespace Alg

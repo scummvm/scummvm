@@ -53,12 +53,12 @@ class GameJohnnyRock : public Game {
 
 public:
 	GameJohnnyRock(AlgEngine *vm, const AlgGameDescription *gd);
-	~GameJohnnyRock();
-	Common::Error run();
+	~GameJohnnyRock() override;
+	Common::Error run() override;
 	void debugWarpTo(int val);
 
 private:
-	void init();
+	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
 	JRScriptFunctionPoint getScriptFunctionZonePtrFb(Common::String name);
@@ -87,17 +87,14 @@ private:
 	const int16 _randomRooftop[6] = {2, -4, 0x104, 0x1E, 0x100, 0x102};
 	const int16 _randomTheater[9] = {5, -5, 0x111, 0x1E, 0x107, 0x109, 0x10B, 0x10D, 0x10F};
 	const int16 _randomAlley[10] = {6, -4, 0, 0x1E, 0x113, 0x115, 0x117, 0x119, 0x11B, 0x11D};
-	const int16 _randomFuneral[10] = {6, -5, 0, 0x1E, 0x11F, 0x121, 0x123, 0x125, 0x127, 0x129};
 	const int16 _randomFuneralMR[10] = {6, -5, 0x12B, 0x1E, 0x11F, 0x121, 0x123, 0x125, 0x127, 0x129};
-	const int16 _randomBook[7] = {3, 5, 0, 0x1E, 0x12E, 0x130, 0x132};
-	const int16 _randomBookMR[8] = {4, 0x5, 0, 0x1E, 0x12E, 0x130, 0x132, 0x134};
+	const int16 _randomBookMR[8] = {4, 5, 0, 0x1E, 0x12E, 0x130, 0x132, 0x134};
 	const int16 _randomStairway[8] = {4, -3, 0, 0x1E, 0x139, 0x13B, 0x13D, 0x13F};
 	const int16 _randomHall[8] = {4, -5, 0, 0x1E, 0x141, 0x143, 0x145, 0x146};
 	const int16 _randomWindows[10] = {6, -3, 0, 0x1E, 0x154, 0x156, 0x158, 0x15A, 0x15C, 0x15E};
 	const int16 _randomCar[5] = {1, 1, 0, 0, 0x0FE};
 	const int16 _randomHall1[5] = {1, 1, 0, 0x1E, 0x148};
 	const int16 _randomElevator[5] = {1, 1, 0, 0, 0x14C};
-	const int16 _randomElevatorMR[5] = {1, 1, 0, 0, 0x151};
 	const int16 _randomBaby[5] = {1, 1, 0, 0, 0x160};
 	const int16 *_randomPlaces[6] = {_randomWindows, _randomStairway, _randomCar, _randomHall1, _randomElevator, _randomBaby};
 	const int16 *_randomPlacesMR[8] = {_randomBookMR, _randomFuneralMR, _randomAlley, _randomTheater, _randomHall, _randomWindows, _randomHall1, _randomRooftop};

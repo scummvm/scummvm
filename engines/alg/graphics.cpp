@@ -121,7 +121,7 @@ Common::Array<Graphics::Surface *> *AlgGraphics::loadScreenCoordAniImage(const C
 	uint16 length = 0;
 	int16 offset = 0;
 	uint32 dest = 0;
-	uint32 x, y = 0;
+	uint32 x = 0, y = 0;
 	while (aniFile.pos() < aniFile.size()) {
 		Graphics::Surface *renderTarget = new Graphics::Surface();
 		renderTarget->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());

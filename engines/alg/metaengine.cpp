@@ -19,10 +19,38 @@
  *
  */
 
+#include "common/translation.h"
 #include "engines/advancedDetector.h"
 
 #include "alg/alg.h"
 #include "alg/detection.h"
+
+namespace Alg {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_SINGLE_SPEED_VERSION,
+		{
+			_s("Use lower quality single speed CD-ROM video"),
+		 	_s("These videos are of lower quality, the default version uses double speed CD-ROM videos which are of better quality"),
+		 	"single_speed_videos",
+		 	false,
+		 	0,
+		 	0
+		},
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+Common::Platform AlgEngine::getPlatform() const {
+	return _gameDescription->desc.platform;
+}
+
+bool AlgEngine::isDemo() const {
+	return (bool)(_gameDescription->desc.flags & ADGF_DEMO);
+}
+
+} // namespace Alg
 
 class AlgMetaEngine : public AdvancedMetaEngine<Alg::AlgGameDescription> {
 public:
@@ -30,6 +58,15 @@ public:
 		return "alg";
 	}
 
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Alg::optionsList;
+	}
+
+	bool hasFeature(MetaEngineFeature f) const override {
+		return
+			(f == kSimpleSavesNames);
+	}
+	
 	Common::Error createInstance(OSystem *syst, Engine **engine, const Alg::AlgGameDescription *gd) const override;
 };
 

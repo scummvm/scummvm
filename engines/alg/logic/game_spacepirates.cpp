@@ -26,32 +26,44 @@
 
 #include "graphics/cursorman.h"
 
-#include "alg/logic/game_spacepirates.h"
 #include "alg/graphics.h"
+#include "alg/logic/game_spacepirates.h"
 #include "alg/scene.h"
 
 namespace Alg {
 
 GameSpacePirates::GameSpacePirates(AlgEngine *vm, const AlgGameDescription *gd) : Game(vm) {
-	if (gd->gameType == GType_SPIRATES_SS_DOS) {
-		_libFileName = "spss.lib";
-	} else if (gd->gameType == GType_SPIRATES_DS_DOS) {
-		_libFileName = "spds.lib";
-	} else if (gd->gameType == GType_SPIRATES_DEMO_DOS) {
-		_libFileName = "sp.lib";
-		_isDemo = true;
-	}
 }
 
 GameSpacePirates::~GameSpacePirates() {
-	delete _shotIcon;
-	delete _emptyIcon;
-	delete _deadIcon;
-	delete _liveIcon1;
-	delete _liveIcon2;
-	delete _liveIcon3;
-	delete _difficultyIcon;
-	delete _bulletholeIcon;
+	if (_shotIcon) {
+		_shotIcon->free();
+		delete _shotIcon;
+	}
+	if (_emptyIcon) {
+		_emptyIcon->free();
+		delete _emptyIcon;
+	}
+	if (_deadIcon) {
+		_deadIcon->free();
+		delete _deadIcon;
+	}
+	if (_liveIcon1) {
+		_liveIcon1->free();
+		delete _liveIcon1;
+	}
+	if (_liveIcon2) {
+		_liveIcon2->free();
+		delete _liveIcon2;
+	}
+	if (_liveIcon3) {
+		_liveIcon3->free();
+		delete _liveIcon3;
+	}
+	if (_bulletholeIcon) {
+		_bulletholeIcon->free();
+		delete _bulletholeIcon;
+	}
 }
 
 void GameSpacePirates::init() {
@@ -64,23 +76,24 @@ void GameSpacePirates::init() {
 	_lives = 3;
 	_shots = 10;
 
-	loadLibArchive(_libFileName);
-	_sceneInfo->loadScnFile(_isDemo ? "spacepir.scn" : "sp.scn");
+	if (_vm->isDemo()) {
+		loadLibArchive("sp.lib");
+	} else if(_vm->useSingleSpeedVideos()) {
+		loadLibArchive("spss.lib");
+	} else {
+		loadLibArchive("spds.lib");
+	}
+
+	_sceneInfo->loadScnFile(_vm->isDemo() ? "spacepir.scn" : "sp.scn");
 	_startScene = _sceneInfo->getStartScene();
 
 	registerScriptFunctions();
 	verifyScriptFunctions();
 
-	_menuzone = new Zone();
-	_menuzone->_name = "MainMenu";
-	_menuzone->_ptrfb = "GLOBALHIT";
-
+	_menuzone = new Zone("MainMenu", "GLOBALHIT");
 	_menuzone->addRect(0x0C, 0xAA, 0x38, 0xC7, nullptr, 0, "SHOTMENU", "0");
 
-	_submenzone = new Zone();
-	_submenzone->_name = "SubMenu";
-	_submenzone->_ptrfb = "GLOBALHIT";
-
+	_submenzone = new Zone("SubMenu", "GLOBALHIT");
 	_submenzone->addRect(0x24, 0x16, 0x64, 0x26, nullptr, 0, "STARTMENU", "0");
 	_submenzone->addRect(0x24, 0x36, 0x64, 0x46, nullptr, 0, "RECTLOAD", "0");
 	_submenzone->addRect(0x24, 0x56, 0x64, 0x66, nullptr, 0, "RECTSAVE", "0");
@@ -239,9 +252,8 @@ void GameSpacePirates::registerScriptFunctions() {
 }
 
 void GameSpacePirates::verifyScriptFunctions() {
-	Common::Array<Scene *> *scenes = _sceneInfo->getScenes();
-	for (size_t i = 0; i < scenes->size(); i++) {
-		Scene *scene = (*scenes)[i];
+	auto scenes = _sceneInfo->getScenes();
+	for (auto scene : *scenes) {
 		getScriptFunctionScene(PREOP, scene->_preop);
 		getScriptFunctionScene(SHOWMSG, scene->_scnmsg);
 		getScriptFunctionScene(INSOP, scene->_insop);
@@ -249,11 +261,9 @@ void GameSpacePirates::verifyScriptFunctions() {
 		getScriptFunctionScene(SCNSCR, scene->_scnscr);
 		getScriptFunctionScene(NXTFRM, scene->_nxtfrm);
 		getScriptFunctionScene(NXTSCN, scene->_nxtscn);
-		getScriptFunctionScene(MISSEDRECTS, scene->_missedRects);
-		for (size_t j = 0; j < scene->_zones.size(); j++) {
-			Zone *zone = scene->_zones[j];
-			for (size_t k = 0; k < zone->_rects.size(); k++) {
-				getScriptFunctionRectHit(zone->_rects[k]._rectHit);
+		for (auto zone : scene->_zones) {
+			for (auto rect : zone->_rects) {
+				getScriptFunctionRectHit(rect->_rectHit);
 			}
 		}
 	}
@@ -412,7 +422,7 @@ Common::Error GameSpacePirates::run() {
 			callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
 		}
 		if (_curScene == "") {
-			_vm->quitGame();
+			shutdown();
 		}
 	}
 	return Common::kNoError;
@@ -538,7 +548,7 @@ void GameSpacePirates::moveMouse() {
 	if (_inMenu) {
 		_whichGun = 2; // in menu cursor
 	} else {
-		// disabled for now, because glitchy
+		// TODO: disabled for now, because glitchy
 		/*
 		uint16 x = _mousePos.x;
 		uint16 y = _mousePos.y;
@@ -571,7 +581,7 @@ void GameSpacePirates::displayLivesLeft() {
 	int16 posY = 0x73;
 	int16 posX = 0x0130;
 	int16 margin = 14;
-	if (_isDemo) {
+	if (_vm->isDemo()) {
 		posY = 0x68;
 		posX = 0x012F;
 		margin = 13;
@@ -889,7 +899,7 @@ void GameSpacePirates::rectStart(Rect *rect) {
 	_inMenu = false;
 	_fired = false;
 	_gameInProgress = true;
-	_curScene = _isDemo ? "scene62" : "scene187";
+	_curScene = _vm->isDemo() ? "scene62" : "scene187";
 	resetParams();
 	newGame();
 }
@@ -931,7 +941,7 @@ void GameSpacePirates::rectKillInnocentPerson(Rect *rect) {
 	}
 	_nextSceneFound = true;
 	_playerDied = true;
-	if (_isDemo) {
+	if (_vm->isDemo()) {
 		_curScene = "scene185";
 		return;
 	}
@@ -1318,8 +1328,8 @@ void GameSpacePirates::sceneIsoPickAWorld(Scene *scene) {
 	uint8 world = 3;
 	for (size_t i = 0; i < zone->_rects.size(); i++) {
 		if (_worldDone[world]) {
-			uint16 centerX = zone->_rects[i].left + (zone->_rects[i].width() / 2);
-			uint16 centerY = zone->_rects[i].top + (zone->_rects[i].height() / 2);
+			uint16 centerX = zone->_rects[i]->left + (zone->_rects[i]->width() / 2);
+			uint16 centerY = zone->_rects[i]->top + (zone->_rects[i]->height() / 2);
 			AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), (*_gun)[2], centerX - 16, centerY - 24);
 		}
 		world--;
@@ -1372,13 +1382,13 @@ void GameSpacePirates::sceneNxtscnPlayerDied(Scene *scene) {
 		_lives--;
 	}
 	if (_lives > 0) {
-		if (_isDemo) {
+		if (_vm->isDemo()) {
 			picked = 178;
 		} else {
 			picked = randomNumberInRange(0xB2, 0xB4);
 		}
 	} else {
-		if (_isDemo) {
+		if (_vm->isDemo()) {
 			picked = 172;
 		} else {
 			uint8 randomNum = _rnd->getRandomNumber(9);

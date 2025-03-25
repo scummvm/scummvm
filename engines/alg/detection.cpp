@@ -26,35 +26,25 @@
 #include "alg/detection.h"
 #include "alg/detection_tables.h"
 
-static const PlainGameDescriptor algGame[] = {
-	{ "cpatrols", "Crime Patrol (lower video quality)" },
-	{ "cpatrold", "Crime Patrol" },
-	{ "cpatroldemo", "Crime Patrol Demo" },
-	{ "dwarss", "Drug Wars (lower video quality)" },
-	{ "dwarsd", "Drug Wars" },
-	{ "dwarsdemo", "Drug Wars Demo" },
-	{ "johnrocs", "Who Shot Johnny Rock? (lower video quality)" },
-	{ "johnrocd", "Who Shot Johnny Rock?" },
+static const PlainGameDescriptor algGames[] = {
+	{ "cpatrol", "Crime Patrol" },
+	{ "dwars", "Drug Wars" },
+	{ "johnroc", "Who Shot Johnny Rock?" },
 	{ "lbhunter", "The Last Bounty Hunter" },
-	{ "lbhunterdemo", "The Last Bounty Hunter Demo" },
 	{ "maddog", "Mad Dog McCree" },
-	{ "maddog2s", "Mad Dog II: The Lost Gold (lower video quality)" },
-	{ "maddog2d", "Mad Dog II: The Lost Gold" },
-	{ "spiratess", "Space Pirates (lower video quality)" },
-	{ "spiratesd", "Space Pirates" },
-	{ "spiratesdemo", "Space Pirates Demo" },
+	{ "maddog2", "Mad Dog II: The Lost Gold" },
+	{ "spirates", "Space Pirates" },
 	{ nullptr, nullptr }
 };
 
 static const DebugChannelDef debugFlagList[] = {
-        { Alg::kAlgDebugGeneral, "general", "General" },
-        { Alg::kAlgDebugGraphics, "graphics", "Graphics" },
-		DEBUG_CHANNEL_END
-};
+	{Alg::kAlgDebugGeneral, "general", "General"},
+	{Alg::kAlgDebugGraphics, "graphics", "Graphics"},
+	DEBUG_CHANNEL_END};
 
 class AlgMetaEngineDetection : public AdvancedMetaEngineDetection<Alg::AlgGameDescription> {
 public:
-	AlgMetaEngineDetection() : AdvancedMetaEngineDetection(Alg::gameDescriptions, algGame) {
+	AlgMetaEngineDetection() : AdvancedMetaEngineDetection(Alg::gameDescriptions, algGames) {
 		_guiOptions = GUIO1(GUIO_NOMIDI);
 		_maxScanDepth = 1;
 	}

@@ -24,6 +24,7 @@
 #include "common/events.h"
 #include "common/substream.h"
 #include "common/timer.h"
+#include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
 
 #include "alg/graphics.h"
@@ -42,12 +43,52 @@ Game::~Game() {
 	_libFileEntries.clear();
 	delete _rnd;
 	delete[] _palette;
-	delete _background;
-	delete _screen;
-	delete _gun;
-	delete _numbers;
 	delete _videoDecoder;
 	delete _sceneInfo;
+	if (_background) {
+		_background->free();
+		delete _background;
+	}
+	if (_screen) {
+		_screen->free();
+		delete _screen;
+	}
+	for (auto item : *_gun) {
+		if (item) {
+			item->free();
+			delete item;
+		}
+	}
+	for (auto item : *_numbers) {
+		if (item) {
+			item->free();
+			delete item;
+		}
+	}
+	if (_saveSound != nullptr) {
+		delete _saveSound;
+	}
+	if (_loadSound != nullptr) {
+		delete _loadSound;
+	}
+	if (_easySound != nullptr) {
+		delete _easySound;
+	}
+	if (_avgSound != nullptr) {
+		delete _avgSound;
+	}
+	if (_hardSound != nullptr) {
+		delete _hardSound;
+	}
+	if (_skullSound != nullptr) {
+		delete _skullSound;
+	}
+	if (_shotSound != nullptr) {
+		delete _shotSound;
+	}
+	if (_emptySound != nullptr) {
+		delete _emptySound;
+	}
 }
 
 void Game::init() {
@@ -66,6 +107,11 @@ void Game::init() {
 
 Common::Error Game::run() {
 	return Common::kNoError;
+}
+
+void Game::shutdown() {
+	g_system->getMixer()->stopAll();
+	_vm->quitGame();
 }
 
 bool Game::pollEvents() {
@@ -113,7 +159,7 @@ void Game::loadLibArchive(const Common::Path &path) {
 		_libFileEntries[entryName] = entryOffset;
 	}
 	_libFile.seek(0);
-	_videoDecoder->setStream(_libFile.readStream(_libFile.size()));
+	_videoDecoder->setReadStream(_libFile.readStream(_libFile.size()));
 }
 
 bool Game::loadScene(Scene *scene) {
@@ -166,11 +212,11 @@ bool Game::fired(Common::Point *point) {
 
 Rect *Game::checkZone(Zone *zone, Common::Point *point) {
 	for (auto &rect : zone->_rects) {
-		if (point->x >= rect.left &&
-			point->x <= rect.right &&
-			point->y >= rect.top &&
-			point->y <= rect.bottom) {
-			return &rect;
+		if (point->x >= rect->left &&
+			point->x <= rect->right &&
+			point->y >= rect->top &&
+			point->y <= rect->bottom) {
+			return rect;
 		}
 	}
 	return nullptr;
@@ -219,7 +265,7 @@ void Game::adjustDifficulty(uint8 newDifficulty, uint8 oldDifficulty) {
 		for (size_t j = 0; j < scene->_zones.size(); j++) {
 			Zone *zone = scene->_zones[j];
 			for (size_t k = 0; k < zone->_rects.size(); k++) {
-				Rect *rect = &zone->_rects[k];
+				Rect *rect = zone->_rects[k];
 				if (!(scene->_diff & 0x02)) {
 					int16 cx = (rect->left + rect->right) / 2;
 					int16 cy = (rect->top + rect->bottom) / 2;
@@ -258,6 +304,30 @@ int8 Game::skipToNewScene(Scene *scene) {
 		}
 	}
 	return 0;
+}
+
+uint16 Game::randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude) {
+	if (max == 1) {
+		return 0;
+	}
+	// reset mask if full
+	uint16 fullMask = 0xFFFF >> (16 - max);
+	if (*mask == fullMask) {
+		*mask = 0;
+	}
+	uint16 randomNum = 0;
+	// find an unused random number
+	while (1) {
+		randomNum = _rnd->getRandomNumber(max - 1);
+		// check if bit is already used
+		uint16 bit = 1 << randomNum;
+		if (!((*mask & bit) || randomNum == exclude)) {
+			// set the bit in mask
+			*mask |= bit;
+			break;
+		}
+	}
+	return randomNum;
 }
 
 // Sound
@@ -313,7 +383,7 @@ static void cursorTimerCallback(void *refCon) {
 }
 
 void Game::setupCursorTimer() {
-	g_system->getTimerManager()->installTimerProc(&cursorTimerCallback, 1000000 / 50, (void *)this, "newtimer");
+	g_system->getTimerManager()->installTimerProc(&cursorTimerCallback, 1000000 / 50, (void *)this, "cursortimer");
 }
 
 void Game::removeCursorTimer() {
@@ -384,7 +454,7 @@ void Game::rectHard(Rect *rect) {
 }
 
 void Game::rectExit(Rect *rect) {
-	_vm->quitGame();
+	shutdown();
 }
 
 // Script functions: Scene PreOps
@@ -487,20 +557,20 @@ void Game::sceneNxtfrm(Scene *scene) {
 void Game::debug_drawZoneRects() {
 	if (_debug_drawRects || debugChannelSet(1, Alg::kAlgDebugGraphics)) {
 		if (_inMenu) {
-			for (auto &rect : _submenzone->_rects) {
-				_screen->drawLine(rect.left, rect.top, rect.right, rect.top, 1);
-				_screen->drawLine(rect.left, rect.top, rect.left, rect.bottom, 1);
-				_screen->drawLine(rect.right, rect.bottom, rect.right, rect.top, 1);
-				_screen->drawLine(rect.right, rect.bottom, rect.left, rect.bottom, 1);
+			for (auto rect : _submenzone->_rects) {
+				_screen->drawLine(rect->left, rect->top, rect->right, rect->top, 1);
+				_screen->drawLine(rect->left, rect->top, rect->left, rect->bottom, 1);
+				_screen->drawLine(rect->right, rect->bottom, rect->right, rect->top, 1);
+				_screen->drawLine(rect->right, rect->bottom, rect->left, rect->bottom, 1);
 			}
 		} else if (_curScene != "") {
 			Scene *targetScene = _sceneInfo->findScene(_curScene);
 			for (auto &zone : targetScene->_zones) {
-				for (Rect &rect : zone->_rects) {
-					_screen->drawLine(rect.left, rect.top, rect.right, rect.top, 1);
-					_screen->drawLine(rect.left, rect.top, rect.left, rect.bottom, 1);
-					_screen->drawLine(rect.right, rect.bottom, rect.right, rect.top, 1);
-					_screen->drawLine(rect.right, rect.bottom, rect.left, rect.bottom, 1);
+				for (auto rect : zone->_rects) {
+					_screen->drawLine(rect->left, rect->top, rect->right, rect->top, 1);
+					_screen->drawLine(rect->left, rect->top, rect->left, rect->bottom, 1);
+					_screen->drawLine(rect->right, rect->bottom, rect->right, rect->top, 1);
+					_screen->drawLine(rect->right, rect->bottom, rect->left, rect->bottom, 1);
 				}
 			}
 		}

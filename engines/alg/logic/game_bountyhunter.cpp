@@ -26,35 +26,71 @@
 
 #include "graphics/cursorman.h"
 
-#include "alg/logic/game_bountyhunter.h"
 #include "alg/graphics.h"
+#include "alg/logic/game_bountyhunter.h"
 #include "alg/scene.h"
 
 namespace Alg {
 
 GameBountyHunter::GameBountyHunter(AlgEngine *vm, const AlgGameDescription *gd) : Game(vm) {
-	if (gd->gameType == GType_LBHUNTER_DOS) {
-		_libFileName = "bhds.lib";
-	} else if (gd->gameType == GType_LBHUNTER_DEMO_DOS) {
-		_libFileName = "bhdemo.lib";
-		_isDemo = true;
-	}
 }
 
 GameBountyHunter::~GameBountyHunter() {
-	delete _shotIcon;
-	delete _emptyIcon;
-	delete _liveIcon;
-	delete _deadIcon;
-	delete _diffIcon;
-	delete _bulletholeIcon;
-	delete _playersIcon1;
-	delete _playersIcon2;
-	delete _textScoreIcon;
-	delete _textMenuIcon;
-	delete _textBlackBarIcon;
-	delete _bagsIcons;
-	delete _shotgun;
+	if (_shotIcon) {
+		_shotIcon->free();
+		delete _shotIcon;
+	}
+	if (_emptyIcon) {
+		_emptyIcon->free();
+		delete _emptyIcon;
+	}
+	if (_liveIcon) {
+		_liveIcon->free();
+		delete _liveIcon;
+	}
+	if (_deadIcon) {
+		_deadIcon->free();
+		delete _deadIcon;
+	}
+	if (_diffIcon) {
+		_diffIcon->free();
+		delete _diffIcon;
+	}
+	if (_bulletholeIcon) {
+		_bulletholeIcon->free();
+		delete _bulletholeIcon;
+	}
+	if (_playersIcon1) {
+		_playersIcon1->free();
+		delete _playersIcon1;
+	}
+	if (_playersIcon2) {
+		_playersIcon2->free();
+		delete _playersIcon2;
+	}
+	if (_textScoreIcon) {
+		_textScoreIcon->free();
+		delete _textScoreIcon;
+	}
+	if (_textMenuIcon) {
+		_textMenuIcon->free();
+		delete _textMenuIcon;
+	}
+	if (_textBlackBarIcon) {
+		_textBlackBarIcon->free();
+		delete _textBlackBarIcon;
+	}
+	for (auto item : *_bagsIcons) {
+		item->free();
+		delete item;
+	}
+	for (auto item : *_shotgun) {
+		item->free();
+		delete item;
+	}
+	if (_shotgunSound != nullptr) {
+		delete _shotgunSound;
+	}
 }
 
 void GameBountyHunter::init() {
@@ -63,23 +99,22 @@ void GameBountyHunter::init() {
 	_videoPosX = 0;
 	_videoPosY = 0;
 
-	loadLibArchive(_libFileName);
+	if (_vm->isDemo()) {
+		loadLibArchive("bhdemo.lib");
+	} else {
+		loadLibArchive("bhds.lib");
+	}
+
 	_sceneInfo->loadScnFile("bh.scn");
 	_startScene = _sceneInfo->getStartScene();
 
 	registerScriptFunctions();
 	verifyScriptFunctions();
 
-	_menuzone = new Zone();
-	_menuzone->_name = "MainMenu";
-	_menuzone->_ptrfb = "GLOBALHIT";
-
+	_menuzone = new Zone("MainMenu", "GLOBALHIT");
 	_menuzone->addRect(0x0C, 0xAA, 0x38, 0xC7, nullptr, 0, "SHOTMENU", "0");
 
-	_submenzone = new Zone();
-	_submenzone->_name = "SubMenu";
-	_submenzone->_ptrfb = "GLOBALHIT";
-
+	_submenzone = new Zone("SubMenu", "GLOBALHIT");
 	_submenzone->addRect(0, 0, 0x78, 0x3C, nullptr, 0, "STARTMENU", "0");
 	_submenzone->addRect(0xC8, 0, 0x0140, 0x3C, nullptr, 0, "RECTLOAD", "0");
 	_submenzone->addRect(0xC8, 0x3C, 0x0140, 0x78, nullptr, 0, "RECTSAVE", "0");
@@ -256,9 +291,8 @@ void GameBountyHunter::registerScriptFunctions() {
 }
 
 void GameBountyHunter::verifyScriptFunctions() {
-	Common::Array<Scene *> *scenes = _sceneInfo->getScenes();
-	for (size_t i = 0; i < scenes->size(); i++) {
-		Scene *scene = (*scenes)[i];
+	auto scenes = _sceneInfo->getScenes();
+	for (auto scene : *scenes) {
 		getScriptFunctionScene(PREOP, scene->_preop);
 		getScriptFunctionScene(SHOWMSG, scene->_scnmsg);
 		getScriptFunctionScene(INSOP, scene->_insop);
@@ -266,10 +300,9 @@ void GameBountyHunter::verifyScriptFunctions() {
 		getScriptFunctionScene(SCNSCR, scene->_scnscr);
 		getScriptFunctionScene(NXTFRM, scene->_nxtfrm);
 		getScriptFunctionScene(NXTSCN, scene->_nxtscn);
-		for (size_t j = 0; j < scene->_zones.size(); j++) {
-			Zone *zone = scene->_zones[j];
-			for (size_t k = 0; k < zone->_rects.size(); k++) {
-				getScriptFunctionRectHit(zone->_rects[k]._rectHit);
+		for (auto zone : scene->_zones) {
+			for (auto rect : zone->_rects) {
+				getScriptFunctionRectHit(rect->_rectHit);
 			}
 		}
 	}
@@ -434,7 +467,7 @@ Common::Error GameBountyHunter::run() {
 			callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
 		}
 		if (_curScene == "") {
-			_vm->quitGame();
+			shutdown();
 		}
 	}
 	return Common::kNoError;
@@ -504,7 +537,7 @@ void GameBountyHunter::moveMouse() {
 	if (_inMenu) {
 		_whichGun = 3; // in menu cursor
 	} else {
-		// disabled for now, because glitchy
+		// TODO: disabled for now, because glitchy
 		/*
 		uint16 x = _mousePos.x;
 		uint16 y = _mousePos.y;
@@ -675,30 +708,6 @@ uint16 GameBountyHunter::beginLevel(uint8 levelNumber) {
 	return sceneNum;
 }
 
-uint16 GameBountyHunter::randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude) {
-	if (max == 1) {
-		return 0;
-	}
-	// reset mask if full
-	uint16 fullMask = 0xFFFF >> (16 - max);
-	if (*mask == fullMask) {
-		*mask = 0;
-	}
-	uint16 randomNum = 0;
-	// find an unused random number
-	while (1) {
-		randomNum = _rnd->getRandomNumber(max - 1);
-		// check if bit is already used
-		uint16 bit = 1 << randomNum;
-		if (!((*mask & bit) || randomNum == exclude)) {
-			// set the bit in mask
-			*mask |= bit;
-			break;
-		}
-	}
-	return randomNum;
-}
-
 uint16 GameBountyHunter::pickRandomScene(uint16 *sceneList, uint8 max) {
 	if (max == 0) {
 		return 0;
@@ -839,7 +848,7 @@ void GameBountyHunter::rectStart(Rect *rect) {
 	_fired = false;
 	_gameInProgress = true;
 	_restartScene = 0;
-	if (_isDemo) {
+	if (_vm->isDemo()) {
 		setNextScene(0x45); // TODO fix
 	} else {
 		setNextScene(0x45);
@@ -1220,22 +1229,7 @@ void GameBountyHunter::sceneNxtscnWoundedMain(Scene *scene) {
 }
 
 void GameBountyHunter::sceneNxtscnEndLevel(Scene *scene) {
-	switch (_currentLevel) {
-	case 0:
-		_levelDoneMask |= 0x02;
-		break;
-	case 1:
-		_levelDoneMask |= 0x04;
-		break;
-	case 2:
-		_levelDoneMask |= 0x08;
-		break;
-	case 3:
-		_levelDoneMask |= 0x10;
-		break;
-	default:
-		return;
-	}
+	_levelDoneMask |= (2 << _currentLevel);
 	_numLevelsDone++;
 	if (_numLevelsDone > 1 && _unk_2ADA6 < 2) {
 		_unk_2ADA6++;

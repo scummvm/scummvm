@@ -51,12 +51,12 @@ class GameCrimePatrol : public Game {
 
 public:
 	GameCrimePatrol(AlgEngine *vm, const AlgGameDescription *gd);
-	~GameCrimePatrol();
-	Common::Error run();
+	~GameCrimePatrol() override;
+	void init() override;
 	void debugWarpTo(int val);
 
 private:
-	void init();
+	Common::Error run() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
 	CPScriptFunctionRect getScriptFunctionRectHit(Common::String name);
@@ -111,9 +111,9 @@ private:
 	const int16 _scenesLevel26[10] = {0x0157, 0x0159, 0x015B, 0x015D, 0x015F, 0x0161, 0x0163, 0x0165, 0x0167, 0};
 
 	const int16 *_levelScenes[27] = {_scenesLevel0, _scenesLevel1, _scenesLevel2, _scenesLevel3, _scenesLevel4, _scenesLevel5, _scenesLevel6,
-									  _scenesLevel7, _scenesLevel8, _scenesLevel9, _scenesLevel10, _scenesLevel11, _scenesLevel12, _scenesLevel13,
-									  _scenesLevel14, _scenesLevel15, _scenesLevel16, _scenesLevel17, _scenesLevel18, _scenesLevel19, _scenesLevel20,
-									  _scenesLevel21, _scenesLevel22, _scenesLevel23, _scenesLevel24, _scenesLevel25, _scenesLevel26};
+									 _scenesLevel7, _scenesLevel8, _scenesLevel9, _scenesLevel10, _scenesLevel11, _scenesLevel12, _scenesLevel13,
+									 _scenesLevel14, _scenesLevel15, _scenesLevel16, _scenesLevel17, _scenesLevel18, _scenesLevel19, _scenesLevel20,
+									 _scenesLevel21, _scenesLevel22, _scenesLevel23, _scenesLevel24, _scenesLevel25, _scenesLevel26};
 
 	const int16 _diedScenesStage0[5] = {0x30, 0x31, 0x47, 0x51, 0};
 	const int16 _diedScenesStage1[7] = {0x5E, 0x5F, 0x7E, 0x7F, 0x98, 0x99, 0};
@@ -131,8 +131,6 @@ private:
 	const int16 _practiceTargetTop[5] = {0x0A, 0x3E, 0x41, 0x6E, 0x6E};
 	const int16 _practiceTargetRight[5] = {0x0104, 0x6D, 0xCB, 0x95, 0x0104};
 	const int16 _practiceTargetBottom[5] = {0x3D, 0x79, 0x7B, 0xA1, 0xA1};
-
-	bool _isDemo = 0;
 
 	// gamestate
 	uint16 _gotTo[15] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -168,7 +166,6 @@ private:
 	void displayShotFiredImage(Common::Point *point);
 	void enableVideoFadeIn();
 	uint16 sceneToNumber(Scene *scene);
-	uint16 randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude);
 	uint16 pickRandomScene(uint8 index, uint8 max);
 	uint16 pickDeathScene();
 	void sceneNxtscnGeneric(uint8 index);

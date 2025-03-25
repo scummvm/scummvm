@@ -26,30 +26,40 @@
 
 #include "graphics/cursorman.h"
 
-#include "alg/logic/game_crimepatrol.h"
 #include "alg/graphics.h"
+#include "alg/logic/game_crimepatrol.h"
 #include "alg/scene.h"
 
 namespace Alg {
 
 GameCrimePatrol::GameCrimePatrol(AlgEngine *vm, const AlgGameDescription *gd) : Game(vm) {
-	if (gd->gameType == GType_CPATROL_SS_DOS) {
-		_libFileName = "cpss.lib";
-	} else if (gd->gameType == GType_CPATROL_DS_DOS) {
-		_libFileName = "cpds.lib";
-	} else if (gd->gameType == GType_CPATROL_DEMO_DOS) {
-		_libFileName = "cp.lib";
-		_isDemo = true;
-	}
 }
 
 GameCrimePatrol::~GameCrimePatrol() {
-	delete _shotIcon;
-	delete _emptyIcon;
-	delete _liveIcon;
-	delete _deadIcon;
-	delete _difficultyIcon;
-	delete _bulletholeIcon;
+	if (_shotIcon) {
+		_shotIcon->free();
+		delete _shotIcon;
+	}
+	if (_emptyIcon) {
+		_emptyIcon->free();
+		delete _emptyIcon;
+	}
+	if (_liveIcon) {
+		_liveIcon->free();
+		delete _liveIcon;
+	}
+	if (_deadIcon) {
+		_deadIcon->free();
+		delete _deadIcon;
+	}
+	if (_difficultyIcon) {
+		_difficultyIcon->free();
+		delete _difficultyIcon;
+	}
+	if (_bulletholeIcon) {
+		_bulletholeIcon->free();
+		delete _bulletholeIcon;
+	}
 }
 
 void GameCrimePatrol::init() {
@@ -58,23 +68,24 @@ void GameCrimePatrol::init() {
 	_videoPosX = 11;
 	_videoPosY = 2;
 
-	loadLibArchive(_libFileName);
+	if (_vm->isDemo()) {
+		loadLibArchive("cp.lib");
+	} else if(_vm->useSingleSpeedVideos()) {
+		loadLibArchive("cpss.lib");
+	} else {
+		loadLibArchive("cpds.lib");
+	}
+
 	_sceneInfo->loadScnFile("cp.scn");
 	_startScene = _sceneInfo->getStartScene();
 
 	registerScriptFunctions();
 	verifyScriptFunctions();
 
-	_menuzone = new Zone();
-	_menuzone->_name = "MainMenu";
-	_menuzone->_ptrfb = "GLOBALHIT";
-
+	_menuzone = new Zone("MainMenu", "GLOBALHIT");
 	_menuzone->addRect(0x0C, 0xAA, 0x38, 0xC7, nullptr, 0, "SHOTMENU", "0");
 
-	_submenzone = new Zone();
-	_submenzone->_name = "SubMenu";
-	_submenzone->_ptrfb = "GLOBALHIT";
-
+	_submenzone = new Zone("SubMenu", "GLOBALHIT");
 	_submenzone->addRect(0x1C, 0x11, 0x5D, 0x20, nullptr, 0, "STARTMENU", "0");
 	_submenzone->addRect(0x1C, 0x31, 0x5D, 0x40, nullptr, 0, "RECTLOAD", "0");
 	_submenzone->addRect(0x1C, 0x51, 0x5D, 0x60, nullptr, 0, "RECTSAVE", "0");
@@ -223,9 +234,8 @@ void GameCrimePatrol::registerScriptFunctions() {
 }
 
 void GameCrimePatrol::verifyScriptFunctions() {
-	Common::Array<Scene *> *scenes = _sceneInfo->getScenes();
-	for (size_t i = 0; i < scenes->size(); i++) {
-		Scene *scene = (*scenes)[i];
+	auto scenes = _sceneInfo->getScenes();
+	for (auto scene : *scenes) {
 		getScriptFunctionScene(PREOP, scene->_preop);
 		getScriptFunctionScene(SHOWMSG, scene->_scnmsg);
 		getScriptFunctionScene(INSOP, scene->_insop);
@@ -233,10 +243,9 @@ void GameCrimePatrol::verifyScriptFunctions() {
 		getScriptFunctionScene(SCNSCR, scene->_scnscr);
 		getScriptFunctionScene(NXTFRM, scene->_nxtfrm);
 		getScriptFunctionScene(NXTSCN, scene->_nxtscn);
-		for (size_t j = 0; j < scene->_zones.size(); j++) {
-			Zone *zone = scene->_zones[j];
-			for (size_t k = 0; k < zone->_rects.size(); k++) {
-				getScriptFunctionRectHit(zone->_rects[k]._rectHit);
+		for (auto zone : scene->_zones) {
+			for (auto rect : zone->_rects) {
+				getScriptFunctionRectHit(rect->_rectHit);
 			}
 		}
 	}
@@ -404,7 +413,7 @@ Common::Error GameCrimePatrol::run() {
 			callScriptFunctionScene(NXTSCN, scene->_nxtscn, scene);
 		}
 		if (_curScene == "") {
-			_vm->quitGame();
+			shutdown();
 		}
 	}
 	return Common::kNoError;
@@ -499,7 +508,7 @@ void GameCrimePatrol::moveMouse() {
 	if (_inMenu) {
 		_whichGun = 3; // in menu cursor
 	} else {
-		// disabled for now, because glitchy
+		// TODO: disabled for now, because glitchy
 		/*
 		uint16 x = _mousePos.x;
 		uint16 y = _mousePos.y;
@@ -643,30 +652,6 @@ uint16 GameCrimePatrol::sceneToNumber(Scene *scene) {
 	return atoi(scene->_name.substr(5).c_str());
 }
 
-uint16 GameCrimePatrol::randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude) {
-	if (max == 1) {
-		return 0;
-	}
-	// reset mask if full
-	uint16 fullMask = 0xFFFF >> (16 - max);
-	if (*mask == fullMask) {
-		*mask = 0;
-	}
-	uint16 randomNum = 0;
-	// find an unused random number
-	while (1) {
-		randomNum = _rnd->getRandomNumber(max - 1);
-		// check if bit is already used
-		uint16 bit = 1 << randomNum;
-		if (!((*mask & bit) || randomNum == exclude)) {
-			// set the bit in mask
-			*mask |= bit;
-			break;
-		}
-	}
-	return randomNum;
-}
-
 uint16 GameCrimePatrol::pickRandomScene(uint8 index, uint8 max) {
 	if (max != 0) {
 		_randomMax = max;
@@ -776,7 +761,7 @@ void GameCrimePatrol::rectStart(Rect *rect) {
 	_inMenu = false;
 	_fired = false;
 	_gameInProgress = true;
-	if (_isDemo) {
+	if (_vm->isDemo()) {
 		_curScene = "scene39";
 		_gotTo[1] = 39;
 	} else {
@@ -956,7 +941,7 @@ void GameCrimePatrol::sceneNxtscnLoseALife(Scene *scene) {
 	if (!_debug_godMode) {
 		_lives--;
 	}
-	if (_isDemo) {
+	if (_vm->isDemo()) {
 		_curScene = "scene39";
 		return;
 	} else if (_lives > 0) {
@@ -1092,7 +1077,7 @@ void GameCrimePatrol::sceneNxtscnSelectDeltaScenario(Scene *scene) {
 }
 
 void GameCrimePatrol::sceneNxtscnFinishGangFight(Scene *scene) {
-	if (_isDemo) {
+	if (_vm->isDemo()) {
 		_curScene = _startScene;
 		return;
 	}

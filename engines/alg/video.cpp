@@ -34,8 +34,13 @@ AlgVideoDecoder::AlgVideoDecoder() {
 }
 
 AlgVideoDecoder::~AlgVideoDecoder() {
-	delete _frame;
-	delete _audioStream;
+	if (_frame) {
+		_frame->free();
+		delete _frame;
+	}
+	if (_audioStream) {
+		delete _audioStream;
+	}
 }
 
 void AlgVideoDecoder::loadVideoFromStream(uint32 offset) {
@@ -70,7 +75,8 @@ void AlgVideoDecoder::loadVideoFromStream(uint32 offset) {
 	assert(typeInterHhv == 0x0f);
 	_currentChunk = 0;
 	_bytesLeft = _size - chunkSize - 6;
-	if (_frame != nullptr) {
+	if (_frame) {
+		_frame->free();
 		delete _frame;
 	}
 	if (_audioStream != nullptr) {
@@ -79,6 +85,13 @@ void AlgVideoDecoder::loadVideoFromStream(uint32 offset) {
 	_frame = new Graphics::Surface();
 	_frame->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
 	_audioStream = makePacketizedRawStream(8000, Audio::FLAG_UNSIGNED);
+}
+
+void AlgVideoDecoder::setReadStream(Common::SeekableReadStream *stream) {
+	if (_stream) {
+		delete stream;
+	}
+	_stream = stream;
 }
 
 void AlgVideoDecoder::skipNumberOfFrames(uint32 num) {

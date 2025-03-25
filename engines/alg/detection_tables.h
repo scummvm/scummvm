@@ -23,111 +23,72 @@ namespace Alg {
 
 static const AlgGameDescription gameDescriptions[] = {
 	{
-		// Crime Patrol (v1.00) (Single Speed CD-ROM Version)
+		// Crime Patrol (v1.00) (DOS)
 		{
-			"cpatrols",
-			"",
-			AD_ENTRY1s("CPSS.LIB", "feddb53975c9832c0f54055c15350389", 193353403),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
-		},
-		GType_CPATROL_SS_DOS,
-	},
-	{
-		// Crime Patrol (v1.00) (Double Speed CD-ROM Version)
-		{
-			"cpatrold",
+			"cpatrol",
 			"",
 			AD_ENTRY1s("CPDS.LIB", "43579f72207298f154f6fb2b1a24e193", 303710700),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO3(GUIO_NOMIDI, GUIO_NOSUBTITLES, GAMEOPTION_SINGLE_SPEED_VERSION)
 		},
-		GType_CPATROL_DS_DOS,
+		GType_CRIME_PATROL,
 	},
 	{
-		// Crime Patrol Demo
+		// Crime Patrol Demo (DOS)
 		{
-			"cpatroldemo",
-			"",
+			"cpatrol",
+			"Demo",
 			AD_ENTRY1s("CP.LIB", "0621e198afb7be96279beec770cd8461", 16859660),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			ADGF_DEMO,
+			GUIO2(GUIO_NOMIDI, GUIO_NOSUBTITLES)
 		},
-		GType_CPATROL_DEMO_DOS,
+		GType_CRIME_PATROL,
 	},
 	{
-		// Drug Wars (v1.00) (Single Speed CD-ROM Version)
+		// Drug Wars (v1.00) (DOS)
 		{
-			"dwarss",
-			"",
-			AD_ENTRY1s("DWSS.LIB", "f041a2b106d3ba27b03b5695e5263172", 191903386),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
-		},
-		GType_DWARS_SS_DOS,
-	},
-	{
-		// Drug Wars (v1.00) (Double Speed CD-ROM Version)
-		{
-			"dwarsd",
+			"dwars",
 			"",
 			AD_ENTRY1s("DWDS.LIB", "f00bc0d980eac72b6bbfa691808b62ae", 320739868),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO3(GUIO_NOMIDI, GUIO_NOSUBTITLES, GAMEOPTION_SINGLE_SPEED_VERSION)
 		},
-		GType_DWARS_DS_DOS,
+		GType_DRUG_WARS,
 	},
 	{
-		// Drug Wars Demo
+		// Drug Wars Demo (DOS)
 		{
-			"dwarsdemo",
-			"",
+			"dwars",
+			"Demo",
 			AD_ENTRY1s("DWDEMO.LIB", "1f0cf57c8aeb326c37777c4ad82e7889", 24435449),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			ADGF_DEMO,
+			GUIO2(GUIO_NOMIDI, GUIO_NOSUBTITLES)
 		},
-		GType_DWARS_DEMO_DOS,
+		GType_DRUG_WARS,
 	},
 	{
-		// Who Shot Johnny Rock? (v1.00) (Single Speed CD-ROM Version)
+		// Who Shot Johnny Rock? (v1.00) (DOS)
 		{
-			"johnrocs",
-			"",
-			AD_ENTRY1s("JOHNROC.LIB", "3cbf7843ef2fdf23716301dceaa2eb10", 141833752),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
-		},
-		GType_JOHNROC_SS_DOS,
-	},
-	{
-		// Who Shot Johnny Rock? (v1.00) (Double Speed CD-ROM Version)
-		{
-			"johnrocd",
+			"johnroc",
 			"",
 			AD_ENTRY1s("JOHNROCD.LIB", "93c38b5fc7d1ae6e9dccf4f7a1c313a8", 326535618),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO3(GUIO_NOMIDI, GUIO_NOSUBTITLES, GAMEOPTION_SINGLE_SPEED_VERSION)
 		},
-		GType_JOHNROC_DS_DOS,
+		GType_WSJR,
 	},
 	{
-		// The Last Bounty Hunter (v1.00)
+		// The Last Bounty Hunter (v1.00) (DOS)
 		{
 			"lbhunter",
 			"",
@@ -135,25 +96,25 @@ static const AlgGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GUIO_NOSUBTITLES)
 		},
-		GType_LBHUNTER_DOS,
+		GType_LAST_BOUNTY_HUNTER,
 	},
 	{
-		// The Last Bounty Hunter Demo
+		// The Last Bounty Hunter Demo (DOS)
 		{
-			"lbhunterdemo",
-			"",
+			"lbhunter",
+			"demo",
 			AD_ENTRY1s("BHDEMO.LIB", "af5fbbd5e18d96225077eb6bf2cac680", 28368775),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOMIDI)
+			ADGF_UNSTABLE | ADGF_DEMO,
+			GUIO3(GUIO_NOMIDI, GUIO_NOSUBTITLES, GAMEOPTION_SINGLE_SPEED_VERSION)
 		},
-		GType_LBHUNTER_DEMO_DOS,
+		GType_LAST_BOUNTY_HUNTER,
 	},
 	{
-		// Mad Dog McCree (v1.03a)
+		// Mad Dog McCree (v1.03a) (DOS)
 		{
 			"maddog",
 			"",
@@ -161,74 +122,48 @@ static const AlgGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GUIO_NOSUBTITLES)
 		},
-		GType_MADDOG_DOS,
+		GType_MADDOG,
 	},
 	{
-		// Mad Dog II: The Lost Gold (v1.00) (Single Speed CD-ROM Version)
+		// Mad Dog II: The Lost Gold (v1.00) (DOS)
 		{
-			"maddog2s",
-			"",
-			AD_ENTRY1s("MADDOG2.LIB", "7b54bca3932b28d8776eaed16a9f43b5", 185708043),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
-		},
-		GType_MADDOG2_SS_DOS,
-	},
-	{
-		// Mad Dog II: The Lost Gold (v1.00) (Double Speed CD-ROM Version)
-		{
-			"maddog2d",
+			"maddog2",
 			"",
 			AD_ENTRY1s("MADDOG2D.LIB", "1660b1728573481483c50206ad92a0ca", 291119013),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO3(GUIO_NOMIDI, GUIO_NOSUBTITLES, GAMEOPTION_SINGLE_SPEED_VERSION)
 		},
-		GType_MADDOG2_DS_DOS,
+		GType_MADDOG2,
 	},
 	{
-		// Space Pirates (v1.00) (Single Speed CD-ROM Version)
+		// Space Pirates (v1.00) (DOS)
 		{
-			"spiratess",
-			"",
-			AD_ENTRY1s("SPSS.LIB", "c006d9f85fd86024b57d69875f23c473", 175141152),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
-		},
-		GType_SPIRATES_SS_DOS,
-	},
-	{
-		// Space Pirates (v1.00) (Double Speed CD-ROM Version)
-		{
-			"spiratesd",
+			"spirates",
 			"",
 			AD_ENTRY1s("SPDS.LIB", "223d3a339d542905c437a6a63cf6dbd8", 273506701),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO3(GUIO_NOMIDI, GUIO_NOSUBTITLES, GAMEOPTION_SINGLE_SPEED_VERSION)
 		},
-		GType_SPIRATES_DS_DOS,
+		GType_SPACE_PIRATES,
 	},
 	{
-		// Space Pirates Demo
+		// Space Pirates Demo (DOS)
 		{
-			"spiratesdemo",
-			"",
+			"spirates",
+			"Demo",
 			AD_ENTRY1s("SP.LIB", "a1a1b7c9ed28ff2484ab8362825c3973", 14556553),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			ADGF_DEMO,
+			GUIO2(GUIO_NOMIDI, GUIO_NOSUBTITLES)
 		},
-		GType_SPIRATES_DEMO_DOS,
+		GType_SPACE_PIRATES,
 	},
 
 	{ AD_TABLE_END_MARKER, 0 }

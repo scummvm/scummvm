@@ -52,7 +52,6 @@ protected:
 	SceneInfo *_sceneInfo;
 	Common::RandomSource *_rnd;
 
-	Common::Path _libFileName;
 	Common::File _libFile;
 	Common::HashMap<Common::String, uint32> _libFileEntries;
 
@@ -79,13 +78,14 @@ protected:
 	Zone *_menuzone;
 	Zone *_submenzone;
 
-	bool _leftDown;
-	bool _rightDown;
+	bool _leftDown = 0;
+	bool _rightDown = 0;
 	Common::Point _mousePos;
 
 	const uint32 _pauseDiffScale[3] = {0x10000, 0x8000, 0x4000};
 	const uint32 _rectDiffScale[3] = {0x10000, 0x0C000, 0x8000};
 
+	void shutdown();
 	bool pollEvents();
 	void loadLibArchive(const Common::Path &path);
 	Audio::SeekableAudioStream *loadSoundFile(const Common::Path &path);
@@ -100,6 +100,7 @@ protected:
 	uint32 getFrame(Scene *scene);
 	void adjustDifficulty(uint8 newDifficulty, uint8 oldDifficulty);
 	int8 skipToNewScene(Scene *scene);
+	uint16 randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude);
 	void debug_drawZoneRects();
 
 	// Sounds

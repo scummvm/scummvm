@@ -52,12 +52,12 @@ class GameSpacePirates : public Game {
 
 public:
 	GameSpacePirates(AlgEngine *vm, const AlgGameDescription *gd);
-	~GameSpacePirates();
-	Common::Error run();
+	~GameSpacePirates() override;
+	Common::Error run() override;
 	void debugWarpTo(int val);
 
 private:
-	void init();
+	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
 	SPScriptFunctionRect getScriptFunctionRectHit(Common::String name);
@@ -86,8 +86,6 @@ private:
 	Graphics::Surface *_bulletholeIcon;
 
 	// constants
-
-	bool _isDemo = 0;
 
 	// gamestate
 	bool _gameLoaded = false;
