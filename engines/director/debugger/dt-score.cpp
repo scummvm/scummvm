@@ -534,8 +534,6 @@ void showChannels() {
 	ImVec2 windowSize = ImGui::GetMainViewport()->Size - pos - pos;
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
-	static int selectedRow = -1;
-
 	if (ImGui::Begin("Channels", &_state->_w.channels)) {
 		Score *score = g_director->getCurrentMovie()->getScore();
 		Frame &frame = *score->_currentFrame;
@@ -590,11 +588,9 @@ void showChannels() {
 
 				ImGui::TableNextColumn();
 
-				char label[16];
-				snprintf(label, sizeof(label), "%-3d", i + 1);
-				bool isSelected = (selectedRow == i);
-				if (ImGui::Selectable(label, isSelected, ImGuiSelectableFlags_SpanAllColumns)) {
-					selectedRow = i; // Update selected row
+				bool isSelected = (_state->_selectedChannel == i);
+				if (ImGui::Selectable(Common::String::format("%-3d", i + 1).c_str(), isSelected, ImGuiSelectableFlags_SpanAllColumns)) {
+					_state->_selectedChannel = i;
 				}
 
 				ImGui::TableNextColumn();
