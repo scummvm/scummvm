@@ -296,6 +296,7 @@ static void _dissolveToScreen(const Graphics::ManagedSurface &src, const Common:
 		if ((stepNr & 0x3FF) == 0) {
 			g_system->unlockScreen();
 			g_system->updateScreen();
+			g_system->delayMillis(5);
 			surf = g_system->lockScreen();
 		}
 		stepNr++;
@@ -313,12 +314,21 @@ static void _doScroll(Graphics::ManagedSurface &compBuf, int16 dir, int16 steps,
 	// more memory and cpu to play with so an extra 64k screen buffer
 	// and more copies is ok for simpler code.
 	//
+	// Example uses:
+	// Heart of China bar scene (scroll left-to-right and right-to-left)
+	//
 	Graphics::Surface *screen = g_system->lockScreen();
 	Graphics::Surface screenCopy;
 
 	screenCopy.copyFrom(*screen);
 	steps = CLIP(steps, (int16)1, offset);
 	const Common::Rect screenRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	Common::String dumpFname = Common::String::format("comp-before-scroll-%d", dir);
+	DgdsEngine::dumpFrame(compBuf, dumpFname.c_str());
+	dumpFname = Common::String::format("screen-before-scroll-%d", dir);
+	DgdsEngine::dumpFrame(screenCopy, dumpFname.c_str());
+
 	for (int16 i = 1; i <= steps; i++) {
 		int stepval = ((int)i * offset) / steps;
 		int xoff = (dir <= 1 ? 0 : (dir == 2 ? stepval : -stepval));
@@ -341,13 +351,13 @@ static void _doScroll(Graphics::ManagedSurface &compBuf, int16 dir, int16 steps,
 		}
 		case 2: {
 			// Draw composition buf to right of screen buf (camera moves to right)
-			Common::Rect rectFromCompBuf(0, 0, SCREEN_WIDTH - srcRectFromOrigScreen.width(), SCREEN_HEIGHT);
+			const Common::Rect rectFromCompBuf(0, 0, SCREEN_WIDTH - srcRectFromOrigScreen.width(), SCREEN_HEIGHT);
 			screen->copyRectToSurface(compBuf, srcRectFromOrigScreen.width(), 0, rectFromCompBuf);
 			break;
 		}
 		case 3: {
 			// Draw composition buf to left of screen buf (camera moves to left)
-			Common::Rect rectFromCompBuf(srcRectFromOrigScreen.width(), 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			const Common::Rect rectFromCompBuf(srcRectFromOrigScreen.width(), 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			screen->copyRectToSurface(compBuf, 0, 0, rectFromCompBuf);
 			break;
 		}
@@ -357,6 +367,7 @@ static void _doScroll(Graphics::ManagedSurface &compBuf, int16 dir, int16 steps,
 		}
 		g_system->unlockScreen();
 		g_system->updateScreen();
+		g_system->delayMillis(5);
 		screen = g_system->lockScreen();
 	}
 	g_system->unlockScreen();
@@ -858,7 +869,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		Graphics::Surface *screen = g_system->lockScreen();
 		_vm->getStoredAreaBuffer().blitFrom(*screen);
 		g_system->unlockScreen();
-		_vm->_compositionBuffer.blitFrom(_vm->getBackgroundBuffer());
+		_vm->_compositionBuffer.blitFrom(_vm->getStoredAreaBuffer());
 		break;
 	}
 	case 0x4000: // SET CLIP WINDOW x,y,x2,y2:int	[0..320,0..200]
