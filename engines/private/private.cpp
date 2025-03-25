@@ -269,7 +269,7 @@ Common::Error PrivateEngine::run() {
 		_nextSetting = getGoIntroSetting();
 	}
 
-	_isMemoryMoviePlaying = false;
+	_needToDrawScreenFrame = false;
 
 	while (!shouldQuit()) {
 		checkPhoneCall();
@@ -306,7 +306,7 @@ Common::Error PrivateEngine::run() {
 				else if (selectLocation(mousePos))
 					break;
 				else if (selectMemory(mousePos)) {
-					_isMemoryMoviePlaying = true;
+					_needToDrawScreenFrame = true;
 					break;
 				}
 
@@ -359,19 +359,20 @@ Common::Error PrivateEngine::run() {
 		if (_videoDecoder && !_videoDecoder->isPaused()) {
 			if (_videoDecoder->getCurFrame() == 0) {
 				stopSound(true);
+			}
 
-				if (_isMemoryMoviePlaying) {
-					const byte *videoPalette = _videoDecoder->getPalette();
-					g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
-					drawScreenFrame(videoPalette);
-				}
-			} 
+			if (_needToDrawScreenFrame && _videoDecoder->getCurFrame() >= 0) {
+				const byte *videoPalette = _videoDecoder->getPalette();
+				g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
+				drawScreenFrame(videoPalette);
+				_needToDrawScreenFrame = false;
+			}
+
 			if (_videoDecoder->endOfVideo()) {
 				_videoDecoder->close();
 				delete _videoDecoder;
 				_videoDecoder = nullptr;
 				_currentMovie = "";
-				_isMemoryMoviePlaying = false;
 			} else if (_videoDecoder->needsUpdate()) {
 				drawScreen();
 			}
@@ -697,9 +698,7 @@ void PrivateEngine::resumeGame() {
 
 	if (_videoDecoder) {
 		_videoDecoder->pauseVideo(false);
-		const byte *videoPalette = g_private->_videoDecoder->getPalette();
-		g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
-		drawScreenFrame(videoPalette);
+		_needToDrawScreenFrame = true;
 	}
 }
 
@@ -781,14 +780,22 @@ bool PrivateEngine::selectLocation(const Common::Point &mousePos) {
 		const Private::Symbol *sym = maps.locations.getVal(it);
 		if (sym->u.val) {
 			if (inMask(_locationMasks[i].surf, mousePos)) {
+				bool diaryPageSet = false;
 				for (uint j = 0; j < _diaryPages.size(); j++) {
 					if (_diaryPages[j].locationID == totalLocations + 1) {
 						_currentDiaryPage = j;
+						diaryPageSet = true;
 						break;
 					}
 				}
-	
+
 				_numberClicks++;
+
+				// Prevent crash if there are no memories for this location
+				if (!diaryPageSet) {
+					return true;
+				}
+	
 				_nextSetting = _locationMasks[i].nextSetting;
 
 				return true;
@@ -1149,7 +1156,6 @@ void PrivateEngine::restartGame() {
 	inventory.clear();
 	_dossiers.clear();
 	_diaryPages.clear();
-	_isMemoryMoviePlaying = false;
 
 	// Sounds
 	_AMRadio.clear();
@@ -1467,7 +1473,6 @@ void PrivateEngine::skipVideo() {
 	delete _videoDecoder;
 	_videoDecoder = nullptr;
 	_currentMovie = "";
-	_isMemoryMoviePlaying = false;
 }
 
 void PrivateEngine::stopSound(bool all) {

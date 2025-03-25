@@ -249,6 +249,7 @@ public:
 	Common::String _currentVS;
 	Common::Point _origin;
 	void drawScreen();
+	bool _needToDrawScreenFrame;
 
 	// settings
 	Common::String _nextSetting;
@@ -309,7 +310,6 @@ public:
 	Common::Array<MaskInfo> _locationMasks;
 	Common::Array<MaskInfo> _memoryMasks;
 	bool selectMemory(const Common::Point &mousePos);
-	bool _isMemoryMoviePlaying;
 
 	// Save/Load games
 	MaskInfo _saveGameMask;
