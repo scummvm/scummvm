@@ -310,10 +310,10 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 }
 
 void RL2Decoder::RL2VideoTrack::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
-	for (Common::List<Common::Rect>::const_iterator it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
-		for (int y = (*it).top; y < (*it).bottom; ++y) {
-			const int x = (*it).left;
-			memcpy(dst + y * pitch + x, (byte *)_surface->getPixels() + y * getWidth() + x, (*it).right - x);
+	for (const auto &r : _dirtyRects) {
+		for (int y = r.top; y < r.bottom; ++y) {
+			const int x = r.left;
+			memcpy(dst + y * pitch + x, (byte *)_surface->getPixels() + y * getWidth() + x, r.right - x);
 		}
 	}
 
