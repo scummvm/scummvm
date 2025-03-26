@@ -385,9 +385,7 @@ void CBofWindow::checkTimers() {
 		uint32 currTime = g_system->getMillis();
 
 		// Iterate over the timers looking for any that have expired
-		for (Common::List<WindowTimer>::iterator it = _timers.begin(); it != _timers.end(); ++it) {
-			WindowTimer &timer = *it;
-
+		for (auto &timer : _timers) {
 			if (currTime >= (timer._lastExpiryTime + timer._interval)) {
 				// Timer has expired
 				timer._lastExpiryTime = currTime;
