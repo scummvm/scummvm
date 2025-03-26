@@ -605,8 +605,7 @@ void SystemUI::createSavedGameDisplayText(char *destDisplayText, const char *act
 void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot) {
 	SavedGameSlotIdArray slotIdArray;
 	int16 lastSlotId = -1;
-	int16 curSlotId = 0;
-	int16 loopSlotId = 0;
+	int16 loopSlotId;
 	SystemUISavedGameEntry savedGameEntry;
 	Common::String saveDescription;
 	uint32         saveDate = 0;
@@ -623,12 +622,7 @@ void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot)
 	slotIdArray = _vm->getSavegameSlotIds();
 	slotIdArray.push_back(SYSTEMUI_SAVEDGAME_MAXIMUM_SLOTS); // so that the loop will process all slots
 
-	SavedGameSlotIdArray::iterator it;
-	SavedGameSlotIdArray::iterator end = slotIdArray.end();
-
-	for (it = slotIdArray.begin(); it != end; ++it) {
-		curSlotId = *it;
-
+	for (auto &curSlotId : slotIdArray) {
 		assert(curSlotId > lastSlotId); // safety check
 
 		if (curSlotId == 0) {

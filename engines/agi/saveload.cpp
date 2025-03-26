@@ -833,22 +833,20 @@ SavedGameSlotIdArray AgiEngine::getSavegameSlotIds() {
 	// search for saved game filenames...
 	filenames = _saveFileMan->listSavefiles(_targetName + ".###");
 
-	Common::StringArray::iterator it;
-	Common::StringArray::iterator end = filenames.end();
-
 	// convert to lower-case, just to be sure
-	for (it = filenames.begin(); it != end; it++) {
-		it->toLowercase();
+	for (auto &file : filenames) {
+		file.toLowercase();
 	}
+
 	// sort
 	Common::sort(filenames.begin(), filenames.end());
 
 	// now extract slot-Ids
-	for (it = filenames.begin(); it != end; it++) {
-		slotId = atoi(it->c_str() + numberPos);
-
+	for (auto &file : filenames) {
+		slotId = atoi(file.c_str() + numberPos);
 		slotIdArray.push_back(slotId);
 	}
+
 	return slotIdArray;
 }
 
