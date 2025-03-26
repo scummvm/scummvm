@@ -115,7 +115,7 @@ WMACodec::~WMACodec() {
 		delete _coefHuffman[i];
 	}
 
-	for (auto &m : _mdct)
+	for (auto *m : _mdct)
 		delete m;
 }
 

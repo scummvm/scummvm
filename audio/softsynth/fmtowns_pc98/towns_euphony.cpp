@@ -78,7 +78,7 @@ EuphonyPlayer::~EuphonyPlayer() {
 	delete[] _partConfig_volume;
 	delete[] _partConfig_transpose;
 
-	for (auto &event : _euphonyEvents)
+	for (auto *event : _euphonyEvents)
 		delete event;
 }
 
