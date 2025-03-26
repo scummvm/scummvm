@@ -58,9 +58,10 @@ void DrasculaEngine::checkForOldSaveGames() {
 	// Get list of savefiles for target game
 	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
 	Common::Array<int> slots;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+
+	for (auto &filename : filenames) {
 		// Obtain the last 2 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 2);
+		int slotNum = atoi(filename.c_str() + filename.size() - 2);
 
 		// Ensure save slot is within valid range
 		if (slotNum >= 1 && slotNum <= 10) {
