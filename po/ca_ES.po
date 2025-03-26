@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-25 04:17+0000\n"
+"POT-Creation-Date: 2025-03-26 15:33+0000\n"
 "PO-Revision-Date: 2025-03-12 17:18+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -9721,11 +9721,12 @@ msgstr ""
 msgid "Game does not contain menu resources"
 msgstr "El joc no conté recursos de menú"
 
-#: engines/sci/detection_tables.h:4777
+#. I18N: 'Robot' is a video format name (as in 'MP4 video')
+#: engines/sci/detection_tables.h:4778
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
 
-#: engines/sci/detection_tables.h:4832
+#: engines/sci/detection_tables.h:4833
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "S'ha detectat un joc incomplet. Heu de copiar les dades de tots els CD."
