@@ -102,10 +102,11 @@ void LibretroOpenGLGraphics::handleResizeImpl(const int width, const int height)
 bool LibretroOpenGLGraphics::hasFeature(OSystem::Feature f) const {
 	return
 #ifdef SCUMMVM_NEON
-	    (f == OSystem::kFeatureCpuNEON) ||
+	(f == OSystem::kFeatureCpuNEON) ||
 #endif
-	OSystem::kFeatureOpenGLForGame ||
-	    OpenGL::OpenGLGraphicsManager::hasFeature(f);
+	(f == OSystem::kFeatureOpenGLForGame) ||
+	(f == OSystem::kFeatureShadersForGame) ||
+	OpenGL::OpenGLGraphicsManager::hasFeature(f);
 }
 
 void LibretroHWFramebuffer::activateInternal() {
