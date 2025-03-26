@@ -55,7 +55,7 @@ Keymap::Keymap(KeymapType type, const String &id, const String &description) :
 }
 
 Keymap::~Keymap() {
-	for (auto &action : _actions)
+	for (auto *action : _actions)
 		delete action;
 }
 

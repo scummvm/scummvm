@@ -49,7 +49,7 @@ Keymapper::~Keymapper() {
 }
 
 void Keymapper::clear() {
-	for (auto &keymap : _keymaps) {
+	for (auto *keymap : _keymaps) {
 		delete keymap;
 	}
 	_keymaps.clear();
