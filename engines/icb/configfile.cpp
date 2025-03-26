@@ -42,10 +42,10 @@ void ConfigFile::readFile(const char *filename) {
 	}
 
 	Common::INIFile::SectionList sections = file.getSections();
-	for (Common::INIFile::SectionList::const_iterator i = sections.begin(); i != sections.end(); i++) {
-		Common::INIFile::SectionKeyList kList = i->getKeys();
-		for (Common::INIFile::SectionKeyList::const_iterator j = kList.begin(); j != kList.end(); j++) {
-			_dataSet[i->name][j->key] = j->value;
+	for (auto &i : sections) {
+		Common::INIFile::SectionKeyList kList = i.getKeys();
+		for (auto &j : kList) {
+			_dataSet[i.name][j.key] = j.value;
 		}
 	}
 }
