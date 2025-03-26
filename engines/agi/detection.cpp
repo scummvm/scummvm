@@ -158,7 +158,7 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 	g_fallbackDesc.version = 0x2917;
 
 	// First grab all filenames and at the same time count the number of *.wag files
-	for (auto &file : fslist) {
+	for (const auto &file : fslist) {
 		if (file.isDirectory()) continue;
 		Common::String filename = file.getName();
 		filename.toLowercase();
@@ -199,7 +199,7 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 	} else { // Try v3
 		char name[8];
 
-		for (auto &f : allFiles) {
+		for (const auto &f : allFiles) {
 			if (f._key.hasSuffix("vol.0")) {
 				memset(name, 0, 8);
 				strncpy(name, f._key.c_str(), MIN((uint)8, f._key.size() > 5 ? f._key.size() - 5 : f._key.size()));
@@ -346,7 +346,7 @@ void AgiMetaEngineDetection::getPotentialDiskImages(
 	Common::Array<Common::Path> &imageFiles) {
 
 	// build an array of files with disk image extensions
-	for (auto &f : allFiles) {
+	for (const auto &f : allFiles) {
 		for (size_t i = 0; i < imageExtensionCount; i++) {
 			if (f._key.baseName().hasSuffixIgnoreCase(imageExtensions[i])) {
 				debug(3, "potential disk image: %s", f._key.baseName().c_str());
