@@ -43,7 +43,7 @@ SRTParser::~SRTParser() {
 }
 
 void SRTParser::cleanup() {
-	for (const auto &item : _entries)
+	for (const auto *item : _entries)
 		delete item;
 
 	_entries.clear();

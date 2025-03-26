@@ -54,7 +54,7 @@ void VideoDecoder::close() {
 	if (isPlaying())
 		stop();
 
-	for (auto &track : _tracks)
+	for (auto *track : _tracks)
 		delete track;
 
 	_tracks.clear();
