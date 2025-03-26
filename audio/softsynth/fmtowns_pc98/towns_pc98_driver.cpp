@@ -213,7 +213,7 @@ _sustain(false), _fading(false), _dataPtr(nullptr), _vbrModInitVal(0), _vbrModCu
 #undef CONTROL
 
 TownsPC98_MusicChannel::~TownsPC98_MusicChannel() {
-	for (auto &event : _controlEvents)
+	for (auto *event : _controlEvents)
 		delete event;
 }
 
@@ -613,7 +613,7 @@ TownsPC98_MusicChannel(driver, regOffs, flgs, num, key, prt, id), _algorithm(0x8
 #undef CONTROL
 
 TownsPC98_MusicChannelSSG::~TownsPC98_MusicChannelSSG() {
-	for (auto &event : _controlEvents)
+	for (auto *event : _controlEvents)
 		delete event;
 	delete[] _envPatchData;
 	_envPatchData = nullptr;
@@ -1001,7 +1001,7 @@ TownsPC98_MusicChannel(driver, regOffs, flgs, num, key, prt, id) {
 #undef CONTROL
 
 TownsPC98_MusicChannelPCM::~TownsPC98_MusicChannelPCM() {
-	for (auto &event : _controlEvents)
+	for (auto *event : _controlEvents)
 		delete event;
 }
 
