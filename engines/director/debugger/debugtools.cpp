@@ -405,7 +405,7 @@ void onImGuiCleanup() {
 }
 
 int getSelectedChannel(){
-	return _state->_selectedChannel;
+	return _state ? _state->_selectedChannel : -1;
 }
 
 } // namespace DT
