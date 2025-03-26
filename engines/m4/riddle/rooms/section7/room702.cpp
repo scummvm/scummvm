@@ -115,10 +115,10 @@ void Room702::pre_parser() {
 }
 
 void Room702::parser() {
-	bool lookFl = player_said_any("look", "look at");
-	bool talkFl = player_said_any("talk", "talk to");
-	bool takeFl = player_said("take");
-	bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFl = player_said_any("look", "look at");
+	const bool talkFl = player_said_any("talk", "talk to");
+	const bool takeFl = player_said("take");
+	const bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("CIGAR BAND", "GUARD") && inv_player_has("CIGAR BAND") && !_G(flags)[V211]) {
 		_G(flags)[V211] = 1;
@@ -129,10 +129,10 @@ void Room702::parser() {
 	} else if (player_said("conv702a")) {
 		if (_G(kernel).trigger != 1) {
 			conv702a();
-			_G(flags)[V211] = 1;
+			_G(flags)[V210] = 1;
 			_G(flags)[V228] = 1;
 		} else {
-			int32 who = conv_whos_talking();
+			const int32 who = conv_whos_talking();
 			if (who <= 0) {
 				_guardShould = 2101;
 			} else if (who == 1) {
@@ -628,7 +628,7 @@ void Room702::daemon() {
 
 				break;
 			case 2104: {
-				int32 rnd = imath_ranged_rand(8, 10);
+				const int32 rnd = imath_ranged_rand(8, 10);
 				sendWSMessage_10000(1, _guardMach, _guardTalksAndBowsSeries, rnd, rnd, 110, _guardTalksAndBowsSeries, rnd, rnd, 0);
 				sendWSMessage_10000(1, _guardShadowMach, _702GuardShadow1Series, rnd, rnd, -1, _702GuardShadow1Series, rnd, rnd, 0);
 				}
@@ -684,10 +684,10 @@ void Room702::conv702a() {
 		return;
 	}
 
-	int32 who = conv_whos_talking();
+	const int32 who = conv_whos_talking();
 	if (who == 0) {
-		int32 node = conv_current_node();
-		int32 entry = conv_current_entry();
+		const int32 node = conv_current_node();
+		const int32 entry = conv_current_entry();
 
 		if (node == 1 && (entry == 1 || entry == 2)) {
 			_guardShould = 2107;
