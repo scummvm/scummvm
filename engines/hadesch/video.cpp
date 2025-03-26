@@ -551,9 +551,9 @@ void VideoRoom::nextFrame(Common::SharedPtr<GfxContext> context, int time, bool 
 		if (stopped) {
 			g_system->getMixer()->stopHandle(_anims[i]._soundHandle);
 			if (_anims[i]._keepLastFrame)
-				for (Common::SortedArray<Layer>::iterator it = _layers.begin(); it != _layers.end(); it++)
-					if (it->name == _anims[i]._animName)
-						it->renderable->selectFrame(-1);
+				for (auto &layer : _layers)
+					if (layer.name == _anims[i]._animName)
+						layer.renderable->selectFrame(-1);
 		}
 
 		if ((soundFinished && animFinished && subFinished) || stopped) {
