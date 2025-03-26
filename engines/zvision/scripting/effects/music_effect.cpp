@@ -109,7 +109,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 
 		Common::Path subpath(filename.getParent().appendComponent(subname));
 		if (_engine->getSearchManager()->hasFile(subpath))
-		  _sub = _engine->getSubtitleManager()->create(subpath);
+		  _sub = _engine->getSubtitleManager()->create(subpath, _handle); //NB automatic subtitle!
 		_loaded = true;
 		updateMixer();
 	}
@@ -160,8 +160,10 @@ bool MusicNode::process(uint32 deltaTimeInMillis) {
 		  if (_volume != _newvol)
 			  setVolume(_newvol);
 		}
+	  /*  //Redundant with switch to automatic subtitles
 		if (_sub && _engine->getScriptManager()->getStateValue(StateKey_Subtitles) == 1)
 			_engine->getSubtitleManager()->update(_engine->_mixer->getSoundElapsedTime(_handle) / 100, _sub);
+		//*/
 	}
 	return false;
 }

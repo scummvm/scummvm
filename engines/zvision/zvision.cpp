@@ -355,7 +355,7 @@ Common::Error ZVision::run() {
     debug(5,"Menu");
 		_menu->process(deltaTime);
     debug(5,"Subtitles");
-		_subtitleManager->process(deltaTime);		
+		_subtitleManager->process(deltaTime);
 	  debug(5,"Render");
 		// Render the backBuffer to the screen
   	_renderManager->prepareBackground();
