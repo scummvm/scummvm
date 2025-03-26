@@ -179,20 +179,19 @@ void LabEngine::freeScreens() {
 
 	// We can't use freeButtonList() here, because some buttons are shared
 	// between the two lists.
-	for (ButtonList::iterator buttonIter = _moveButtonList.begin(); buttonIter != _moveButtonList.end(); ++buttonIter) {
-		delete *buttonIter;
+	for (auto &buttonIter : _moveButtonList) {
+		delete buttonIter;
 	}
 	_moveButtonList.clear();
 
-	for (ButtonList::iterator buttonIter = _invButtonList.begin(); buttonIter != _invButtonList.end(); ++buttonIter) {
-		delete *buttonIter;
+	for (auto &buttonIter : _invButtonList) {
+		delete buttonIter;
 	}
 	_invButtonList.clear();
 }
 
 void LabEngine::perFlipButton(uint16 buttonId) {
-	for (ButtonList::iterator button = _moveButtonList.begin(); button != _moveButtonList.end(); ++button) {
-		Button *topButton = *button;
+	for (auto &topButton : _moveButtonList) {
 		if (topButton->_buttonId == buttonId) {
 			SWAP<Image *>(topButton->_image, topButton->_altImage);
 

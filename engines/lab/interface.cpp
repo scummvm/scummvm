@@ -64,8 +64,7 @@ Button *Interface::createButton(uint16 x, uint16 y, uint16 id, Common::KeyCode k
 }
 
 void Interface::freeButtonList(ButtonList *buttonList) {
-	for (ButtonList::iterator buttonIter = buttonList->begin(); buttonIter != buttonList->end(); ++buttonIter) {
-		Button *button = *buttonIter;
+	for (auto &button : *buttonList) {
 		delete button->_image;
 		delete button->_altImage;
 		delete button;
@@ -75,11 +74,11 @@ void Interface::freeButtonList(ButtonList *buttonList) {
 }
 
 void Interface::drawButtonList(ButtonList *buttonList) {
-	for (ButtonList::iterator button = buttonList->begin(); button != buttonList->end(); ++button) {
-		toggleButton((*button), 1, true);
+	for (auto &button : *buttonList) {
+		toggleButton(button, 1, true);
 
-		if (!(*button)->_isEnabled)
-			toggleButton((*button), 1, false);
+		if (!button->_isEnabled)
+			toggleButton(button, 1, false);
 	}
 }
 
@@ -98,8 +97,7 @@ Button *Interface::checkNumButtonHit(Common::KeyCode key) {
 	if (!_screenButtonList)
 		return nullptr;
 
-	for (ButtonList::iterator buttonItr = _screenButtonList->begin(); buttonItr != _screenButtonList->end(); ++buttonItr) {
-		Button *button = *buttonItr;
+	for (auto &button : *_screenButtonList) {
 		if (!button->_isEnabled)
 			continue;
 
@@ -118,8 +116,7 @@ Button *Interface::checkButtonHit(Common::Point pos) {
 	if (!_screenButtonList)
 		return nullptr;
 
-	for (ButtonList::iterator buttonItr = _screenButtonList->begin(); buttonItr != _screenButtonList->end(); ++buttonItr) {
-		Button *button = *buttonItr;
+	for (auto &button : *_screenButtonList) {
 		Common::Rect buttonRect(button->_x, button->_y, button->_x + button->_image->_width - 1, button->_y + button->_image->_height - 1);
 
 		if (buttonRect.contains(pos) && button->_isEnabled) {
@@ -149,8 +146,7 @@ void Interface::attachButtonList(ButtonList *buttonList) {
 }
 
 Button *Interface::getButton(uint16 id) {
-	for (ButtonList::iterator buttonItr = _screenButtonList->begin(); buttonItr != _screenButtonList->end(); ++buttonItr) {
-		Button *button = *buttonItr;
+	for (auto &button : *_screenButtonList) {
 		if (button->_buttonId == id)
 			return button;
 	}
