@@ -276,7 +276,7 @@ PluginManager::~PluginManager() {
 	unloadAllPlugins();
 
 	// Delete the plugin providers
-	for (auto &pluginProvider : _providers) {
+	for (auto *pluginProvider : _providers) {
 		delete pluginProvider;
 	}
 }
@@ -290,7 +290,7 @@ PluginManagerUncached::~PluginManagerUncached() {
 	// They are also referenced from _allEnginePlugins which we clean up here
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, nullptr, false);
 
-	for (auto &enginePlugin : _allEnginePlugins) {
+	for (auto *enginePlugin : _allEnginePlugins) {
 		delete enginePlugin;
 	}
 	_allEnginePlugins.clear();
@@ -518,7 +518,7 @@ void PluginManager::loadAllPlugins() {
 void PluginManager::loadAllPluginsOfType(PluginType type) {
 	for (auto &pluginProvider : _providers) {
 		PluginList pluginList(pluginProvider->getPlugins());
-		for (auto &plugin : pluginList) {
+		for (auto *plugin : pluginList) {
 			if (plugin->loadPlugin()) {
 				if (plugin->getType() == type) {
 					addToPluginsInMemList(plugin);
@@ -542,7 +542,7 @@ void PluginManager::unloadAllPlugins() {
 
 void PluginManager::unloadPluginsExcept(PluginType type, const Plugin *plugin, bool deletePlugin /*=true*/) {
 	Plugin *found = nullptr;
-	for (auto &curPlugin : _pluginsInMem[type]) {
+	for (auto *curPlugin : _pluginsInMem[type]) {
 		if (curPlugin == plugin) {
 			found = curPlugin;
 		} else {
