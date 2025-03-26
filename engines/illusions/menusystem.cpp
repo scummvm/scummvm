@@ -58,7 +58,7 @@ BaseMenu::BaseMenu(BaseMenuSystem *menuSystem, uint32 fontId, byte backgroundCol
 }
 
 BaseMenu::~BaseMenu() {
-	for (auto &menuItem : _menuItems) {
+	for (auto *menuItem : _menuItems) {
 		delete menuItem;
 	}
 }

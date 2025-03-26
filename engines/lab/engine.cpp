@@ -179,13 +179,13 @@ void LabEngine::freeScreens() {
 
 	// We can't use freeButtonList() here, because some buttons are shared
 	// between the two lists.
-	for (auto &buttonIter : _moveButtonList) {
-		delete buttonIter;
+	for (auto *moveButton : _moveButtonList) {
+		delete moveButton;
 	}
 	_moveButtonList.clear();
 
-	for (auto &buttonIter : _invButtonList) {
-		delete buttonIter;
+	for (auto *invButton : _invButtonList) {
+		delete invButton;
 	}
 	_invButtonList.clear();
 }
