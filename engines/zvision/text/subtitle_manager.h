@@ -24,6 +24,7 @@
 
 #include "zvision/zvision.h"
 #include "zvision/common/focus_list.h"
+#include "audio/mixer.h"
 
 namespace ZVision {
 
@@ -34,12 +35,12 @@ friend class SubtitleManager;
 public:
   Subtitle(ZVision *engine, const Common::Path &subname, bool vob=false);  //For scripted subtitles
   Subtitle(ZVision *engine, const Common::String &str, const Common::Rect &textArea);  //For other text messages
-  ~Subtitle();
-  
+  virtual ~Subtitle();
   bool update(int32 count); //Return true if necessary to redraw
+  virtual bool selfUpdate() {return false;};
 
-private:
-  bool process(int32 deltatime);  //Return true if to be deleted
+protected:
+  virtual bool process(int32 deltatime);  //Return true if to be deleted
 	ZVision *_engine;
 	Common::Rect r;
 	Common::String txt;
@@ -60,6 +61,17 @@ private:
     //DVD videos in VOB format run at 29.97 fps and must be converted to work with the subtitle files, which were made for AVI.
 	
 	Common::Array<line> _lines;
+};
+
+class AutomaticSubtitle : public Subtitle {
+public:
+  AutomaticSubtitle(ZVision *engine, const Common::Path &subname, Audio::SoundHandle handle);  //For scripted audio subtitles
+  ~AutomaticSubtitle() {};
+  
+private:
+  bool process(int32 deltatime);  //Return true if to be deleted
+  bool selfUpdate(); //Return true if necessary to redraw
+  Audio::SoundHandle _handle;
 };
 
 class SubtitleManager {
@@ -86,15 +98,18 @@ private:
   FocusList<uint16> _subsFocus;
   
 public:
+  //Update all subtitle objects' deletion timers, delete expired subtitles, & redraw most recent.  Does NOT update any subtitle's count value or displayed string!
   void process(int32 deltatime);  //deltatime is always milliseconds
+  //Update counter value of referenced subtitle id & set current line to display, if any.
 	void update(int32 count, uint16 subid);  //Count is milliseconds for sound & music; frames for video playback.
 	
   Common::Point getTextOffset() {return _textOffset;}
 	
 	// Create subtitle object and return ID
 	uint16 create(const Common::Path &subname, bool vob = false);
+	uint16 create(const Common::Path &subname, Audio::SoundHandle handle);	//NB this creates an automatic subtitle
 	uint16 create(const Common::String &str);
-
+	
 	// Delete subtitle object by ID
 	void destroy(uint16 id);
 	void destroy(uint16 id, int16 delay);
