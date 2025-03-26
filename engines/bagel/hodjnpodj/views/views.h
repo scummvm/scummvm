@@ -43,6 +43,7 @@ struct Views {
 	MainMenu _mainMenu;
 	MessageBox _messageBox;
 	Rules _rules;
+	Metagame::Boardgame _boardgame;
 	Metagame::Credits _credits;
 	Metagame::GrandTour _grandTour;
 	Metagame::Minigames _minigames;

@@ -26,8 +26,8 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-static bool bHomeWriteLocked = false;
-static bool bPathsDiffer = false;
+constexpr bool bHomeWriteLocked = false;
+constexpr bool bPathsDiffer = false;
 
 void CBfcMgr::initBFCInfo() {
 	static const char *pszTest;
