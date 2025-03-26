@@ -1538,11 +1538,9 @@ void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 par
 }
 
 void removeSeq(uint16 param1, uint16 param2, uint16 param3) {
-	Common::List<SeqListElement>::iterator it;
-
-	for (it = g_cine->_seqList.begin(); it != g_cine->_seqList.end(); ++it) {
-		if (it->objIdx == param1 && it->var4 == param2 && it->varE == param3) {
-			it->var4 = -1;
+	for (auto &seq : g_cine->_seqList) {
+		if (seq.objIdx == param1 && seq.var4 == param2 && seq.varE == param3) {
+			seq.var4 = -1;
 			break;
 		}
 	}
@@ -1550,14 +1548,12 @@ void removeSeq(uint16 param1, uint16 param2, uint16 param3) {
 
 // Checked against Operation Stealth 16 color DOS disassembly, should be correct.
 bool isSeqRunning(uint16 param1, uint16 param2, uint16 param3) {
-	Common::List<SeqListElement>::iterator it;
-
-	for (it = g_cine->_seqList.begin(); it != g_cine->_seqList.end(); ++it) {
-		if (it->objIdx == param1 && it->var4 == param2 && it->varE == param3) {
+	for (auto &seq : g_cine->_seqList) {
+		if (seq.objIdx == param1 && seq.var4 == param2 && seq.varE == param3) {
 			// Just to be on the safe side there's a restriction of the
 			// addition's result to 16-bit arithmetic here like in the
 			// original. It's possible that it's not strictly needed.
-			return ((it->var14 + it->var16) & 0xFFFF) == 0;
+			return ((seq.var14 + seq.var16) & 0xFFFF) == 0;
 		}
 	}
 
@@ -1591,12 +1587,12 @@ void addSeqListElement(uint16 objIdx, int16 param1, int16 param2, int16 frame, i
 
 void modifySeqListElement(uint16 objIdx, int16 var4Test, int16 param1, int16 param2, int16 param3, int16 param4) {
 	// Find a suitable list element and modify it
-	for (Common::List<SeqListElement>::iterator it = g_cine->_seqList.begin(); it != g_cine->_seqList.end(); ++it) {
-		if (it->objIdx == objIdx && it->var4 == var4Test) {
-			it->varC  = param1;
-			it->var18 = param2;
-			it->var1A = param3;
-			it->var10 = it->var12 = param4;
+	for (auto &seq : g_cine->_seqList) {
+		if (seq.objIdx == objIdx && seq.var4 == var4Test) {
+			seq.varC  = param1;
+			seq.var18 = param2;
+			seq.var1A = param3;
+			seq.var10 = seq.var12 = param4;
 			break;
 		}
 	}
@@ -1874,14 +1870,12 @@ void processSeqListElement(SeqListElement &element) {
 }
 
 void processSeqList() {
-	Common::List<SeqListElement>::iterator it;
-
-	for (it = g_cine->_seqList.begin(); it != g_cine->_seqList.end(); ++it) {
-		if (it->var4 == -1) {
+	for (auto &seq : g_cine->_seqList) {
+		if (seq.var4 == -1) {
 			continue;
 		}
 
-		processSeqListElement(*it);
+		processSeqListElement(seq);
 	}
 }
 
