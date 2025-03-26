@@ -230,7 +230,6 @@ protected:
 	};
 
 	Common::Array<Channel *> _channels;
-	typedef Common::Array<Channel *>::const_iterator ChanIt;
 
 	static const byte _envSpeedToStep[32];
 	static const byte _envSpeedToSkip[32];
@@ -269,12 +268,12 @@ void MidiPlayer_AmigaMac1::close() {
 
 	_mixer->stopHandle(_mixerSoundHandle);
 
-	for (ChanIt c = _channels.begin(); c != _channels.end(); ++c)
-		delete *c;
+	for (const auto &channel : _channels)
+		delete channel;
 	_channels.clear();
 
-	for (VoiceIt v = _voices.begin(); v != _voices.end(); ++v)
-		delete *v;
+	for (const auto &voice : _voices)
+		delete voice;
 	_voices.clear();
 
 	freeInstruments();
@@ -446,16 +445,16 @@ bool MidiPlayer_AmigaMac1::loadInstruments(Common::SeekableReadStream &patch, bo
 }
 
 void MidiPlayer_AmigaMac1::freeInstruments() {
-	for (WaveMap::iterator it = _waves.begin(); it != _waves.end(); ++it)
-		delete it->_value;
+	for (auto &wave : _waves)
+		delete wave._value;
 	_waves.clear();
 
-	for (FreqTableMap::iterator it = _freqTables.begin(); it != _freqTables.end(); ++it)
-		delete[] it->_value;
+	for (auto &freq : _freqTables)
+		delete[] freq._value;
 	_freqTables.clear();
 
-	for (Common::Array<const Instrument *>::iterator it = _instruments.begin(); it != _instruments.end(); ++it)
-		delete *it;
+	for (auto &instrument : _instruments)
+		delete instrument;
 	_instruments.clear();
 }
 
@@ -469,14 +468,13 @@ void MidiPlayer_AmigaMac1::onTimer() {
 	_timerMutex.unlock();
 	_mixMutex.lock();
 
-	for (VoiceIt it = _voices.begin(); it != _voices.end(); ++it) {
-		Voice *v = *it;
-		if (v->_note != -1) {
-			++v->_ticks;
-			if (v->_isReleased)
-				++v->_releaseTicks;
-			v->processEnvelope();
-			v->calcMixVelocity();
+	for (const auto &voice : _voices) {
+		if (voice->_note != -1) {
+			++voice->_ticks;
+			if (voice->_isReleased)
+				++voice->_releaseTicks;
+			voice->processEnvelope();
+			voice->calcMixVelocity();
 		}
 	}
 }
@@ -528,8 +526,8 @@ MidiPlayer_AmigaMac1::Voice *MidiPlayer_AmigaMac1::Channel::findVoice() {
 void MidiPlayer_AmigaMac1::Channel::voiceMapping(byte voices) {
 	int curVoices = 0;
 
-	for (VoiceIt it = _driver._voices.begin(); it != _driver._voices.end(); ++it)
-		if ((*it)->_channel == this)
+	for (auto &voice : _driver._voices)
+		if (voice->_channel == this)
 			curVoices++;
 
 	curVoices += _extraVoices;
@@ -543,14 +541,12 @@ void MidiPlayer_AmigaMac1::Channel::voiceMapping(byte voices) {
 }
 
 void MidiPlayer_AmigaMac1::Channel::assignVoices(byte voices) {
-	for (VoiceIt it = _driver._voices.begin(); it != _driver._voices.end(); ++it) {
-		Voice *v = *it;
+	for (const auto &voice : _driver._voices) {
+		if (!voice->_channel) {
+			voice->_channel = this;
 
-		if (!v->_channel) {
-			v->_channel = this;
-
-			if (v->_note != -1)
-				v->noteOff();
+			if (voice->_note != -1)
+				voice->noteOff();
 
 			if (--voices == 0)
 				break;
@@ -569,11 +565,9 @@ void MidiPlayer_AmigaMac1::Channel::releaseVoices(byte voices) {
 	voices -= _extraVoices;
 	_extraVoices = 0;
 
-	for (VoiceIt it = _driver._voices.begin(); it != _driver._voices.end(); ++it) {
-		Voice *v = *it;
-
-		if ((v->_channel == this) && (v->_note == -1)) {
-			v->_channel = nullptr;
+	for (const auto &voice : _driver._voices) {
+		if ((voice->_channel == this) && (voice->_note == -1)) {
+			voice->_channel = nullptr;
 			if (--voices == 0)
 				return;
 		}
@@ -583,21 +577,19 @@ void MidiPlayer_AmigaMac1::Channel::releaseVoices(byte voices) {
 		uint16 maxTicks = 0;
 		Voice *maxTicksVoice = _driver._voices[0];
 
-		for (VoiceIt it = _driver._voices.begin(); it != _driver._voices.end(); ++it) {
-			Voice *v = *it;
-
-			if (v->_channel == this) {
+		for (const auto &voice : _driver._voices) {
+			if (voice->_channel == this) {
 				// The original code seems to be broken here. It reads a word value from
 				// byte array _voiceSustained.
-				uint16 ticks = v->_releaseTicks;
+				uint16 ticks = voice->_releaseTicks;
 				if (ticks > 0)
 					ticks += 0x8000;
 				else
-					ticks = v->_ticks;
+					ticks = voice->_ticks;
 
 				if (ticks >= maxTicks) {
 					maxTicks = ticks;
-					maxTicksVoice = v;
+					maxTicksVoice = voice;
 				}
 			}
 		}
@@ -610,16 +602,14 @@ void MidiPlayer_AmigaMac1::Channel::releaseVoices(byte voices) {
 void MidiPlayer_AmigaMac1::distributeVoices() {
 	int freeVoices = 0;
 
-	for (VoiceIt it = _voices.begin(); it != _voices.end(); ++it)
-		if (!(*it)->_channel)
+	for (const auto &voice : _voices)
+		if (!voice->_channel)
 			freeVoices++;
 
 	if (freeVoices == 0)
 		return;
 
-	for (ChanIt it = _channels.begin(); it != _channels.end(); ++it) {
-		Channel *channel = *it;
-
+	for (const auto &channel : _channels) {
 		if (channel->_extraVoices != 0) {
 			if (channel->_extraVoices >= freeVoices) {
 				channel->_extraVoices -= freeVoices;
@@ -652,24 +642,16 @@ void MidiPlayer_AmigaMac1::Voice::noteOn(int8 note, int8 velocity) {
 	const Instrument *ins = _driver._instruments[patchId];
 
 	// Each patch links to one or more waves, where each wave is assigned to a range of notes.
-	Common::Array<NoteRange>::const_iterator noteRange;
-	for (noteRange = ins->noteRange.begin(); noteRange != ins->noteRange.end(); ++noteRange) {
-		if (noteRange->startNote <= note && note <= noteRange->endNote)
-			break;
+	for (auto &curNote : ins->noteRange) {
+		if (curNote.startNote <= note && note <= curNote.endNote) {
+			_noteRange = &curNote;
+			_wave = curNote.wave;
+			_freqTable = curNote.wave->freqTable;
+
+			play(note, velocity);
+			return;
+		}
 	}
-
-	// Abort if this note has no wave assigned to it
-	if (noteRange == ins->noteRange.end())
-		return;
-
-	const Wave *wave = noteRange->wave;
-	const uint32 *freqTable = wave->freqTable;
-
-	_noteRange = noteRange;
-	_wave = wave;
-	_freqTable = freqTable;
-
-	play(note, velocity);
 }
 
 void MidiPlayer_AmigaMac1::Voice::noteOff() {
@@ -771,13 +753,11 @@ void MidiPlayer_AmigaMac1::Channel::noteOn(int8 note, int8 velocity) {
 		return;
 	}
 
-	for (VoiceIt it = _driver._voices.begin(); it != _driver._voices.end(); ++it) {
-		Voice *v = *it;
-
-		if (v->_channel == this && v->_note == note) {
-			v->_isSustained = false;
-			v->noteOff();
-			v->noteOn(note, velocity);
+	for (const auto &voice : _driver._voices) {
+		if (voice->_channel == this && voice->_note == note) {
+			voice->_isSustained = false;
+			voice->noteOff();
+			voice->noteOn(note, velocity);
 			return;
 		}
 	}
@@ -788,15 +768,13 @@ void MidiPlayer_AmigaMac1::Channel::noteOn(int8 note, int8 velocity) {
 }
 
 void MidiPlayer_AmigaMac1::Channel::noteOff(int8 note) {
-	for (VoiceIt it = _driver._voices.begin(); it != _driver._voices.end(); ++it) {
-		Voice *v = *it;
-
-		if (v->_channel == this && v->_note == note) {
+	for (const auto &voice : _driver._voices) {
+		if (voice->_channel == this && voice->_note == note) {
 			if (_hold)
-				v->_isSustained = true;
+				voice->_isSustained = true;
 			else {
-				v->_isReleased = true;
-				v->_envCntDown = 0;
+				voice->_isReleased = true;
+				voice->_envCntDown = 0;
 			}
 			return;
 		}
@@ -813,12 +791,10 @@ void MidiPlayer_AmigaMac1::Channel::holdPedal(int8 pedal) {
 	if (pedal != 0)
 		return;
 
-	for (VoiceIt it = _driver._voices.begin(); it != _driver._voices.end(); ++it) {
-		Voice *v = *it;
-
-		if (v->_channel == this && v->_isSustained) {
-			v->_isSustained = false;
-			v->_isReleased = true;
+	for (const auto &voice : _driver._voices) {
+		if (voice->_channel == this && voice->_isSustained) {
+			voice->_isSustained = false;
+			voice->_isReleased = true;
 		}
 	}
 }
@@ -826,11 +802,9 @@ void MidiPlayer_AmigaMac1::Channel::holdPedal(int8 pedal) {
 void MidiPlayer_AmigaMac1::Channel::setPitchWheel(uint16 pitch) {
 	_pitch = pitch;
 
-	for (VoiceIt it = _driver._voices.begin(); it != _driver._voices.end(); ++it) {
-		Voice *v = *it;
-
-		if (v->_note != -1 && v->_channel == this)
-			v->calcVoiceStep();
+	for (const auto &voice : _driver._voices) {
+		if (voice->_note != -1 && voice->_channel == this)
+			voice->calcVoiceStep();
 	}
 }
 
@@ -869,11 +843,9 @@ void MidiPlayer_AmigaMac1::send(uint32 b) {
 			channel->voiceMapping(op2);
 			break;
 		case 0x7b:
-			for (VoiceIt it = _voices.begin(); it != _voices.end(); ++it) {
-				Voice *v = *it;
-
-				if (v->_channel == channel && v->_note != -1)
-					v->noteOff();
+			for (const auto &voice : _voices) {
+				if (voice->_channel == channel && voice->_note != -1)
+					voice->noteOff();
 			}
 		default:
 			break;

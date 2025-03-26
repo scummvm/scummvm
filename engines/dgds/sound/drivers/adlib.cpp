@@ -555,11 +555,8 @@ int MidiDriver_AdLib::findVoice(int channel) {
 }
 
 int MidiDriver_AdLib::findVoiceLateSci11(int channel) {
-	Common::List<int>::const_iterator it;
-
 	// Search for unused voice
-	for (it = _voiceQueue.begin(); it != _voiceQueue.end(); ++it) {
-		int voice = *it;
+	for (const auto &voice : _voiceQueue) {
 		if (_voices[voice].note == -1 && _voices[voice].patch == _channels[channel].patch) {
 			_voices[voice].channel = channel;
 			return voice;
@@ -567,8 +564,7 @@ int MidiDriver_AdLib::findVoiceLateSci11(int channel) {
 	}
 
 	// Same as before, minus the program check
-	for (it = _voiceQueue.begin(); it != _voiceQueue.end(); ++it) {
-		int voice = *it;
+	for (const auto &voice : _voiceQueue) {
 		if (_voices[voice].note == -1) {
 			_voices[voice].channel = channel;
 			return voice;
@@ -592,8 +588,7 @@ int MidiDriver_AdLib::findVoiceLateSci11(int channel) {
 	// note on this channel.
 	int stopChan = (maxExceed > 0) ? maxExceedChan : channel;
 
-	for (it = _voiceQueue.begin(); it != _voiceQueue.end(); ++it) {
-		int voice = *it;
+	for (const auto &voice : _voiceQueue) {
 		if (_voices[voice].channel == stopChan) {
 			voiceOff(voice);
 			_voices[voice].channel = channel;

@@ -138,7 +138,6 @@ void SciMusic::miditimerCallback(void *p) {
 }
 
 void SciMusic::onTimer() {
-	const MusicList::iterator end = _playList.end();
 	// sending out queued commands that were "sent" via main thread
 	sendMidiCommandsFromQueue();
 
@@ -147,8 +146,8 @@ void SciMusic::onTimer() {
 		remapChannels(false);
 	_needsRemap = false;
 
-	for (MusicList::iterator i = _playList.begin(); i != end; ++i)
-		(*i)->onTimer();
+	for (auto &music : _playList)
+		music->onTimer();
 }
 
 void SciMusic::putMidiCommandInQueue(byte status, byte firstOp, byte secondOp) {
@@ -203,7 +202,6 @@ void SciMusic::clearPlayList() {
 }
 
 void SciMusic::pauseAll(bool pause) {
-	const MusicList::iterator end = _playList.end();
 	bool alreadyUnpaused = (_globalPause <= 0);
 
 	if (pause)
@@ -225,8 +223,8 @@ void SciMusic::pauseAll(bool pause) {
 	if (alreadyUnpaused && stillUnpaused)
 		return;
 
-	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
-		soundToggle(*i, pause);
+	for (auto &music : _playList) {
+		soundToggle(music, pause);
 	}
 }
 
@@ -843,9 +841,7 @@ void SciMusic::printSongInfo(uint32 obj, Console *con) {
 
 	const char *musicStatus[] = { "Stopped", "Initialized", "Paused", "Playing" };
 
-	const MusicList::iterator end = _playList.end();
-	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
-		MusicEntry *song = *i;
+	for (auto &song : _playList) {
 		if (song->soundObj == obj) {
 			debug(1, "Resource id: %d, status: %s\n", song->resourceId, musicStatus[song->status]);
 			debug(1, "dataInc: %d, hold: %d, loop: %d\n", song->dataInc, song->hold, song->loop);
@@ -1061,10 +1057,8 @@ void SciMusic::remapChannels(bool mainThread) {
 	}
 
 	// Inform MidiParsers of any unmapped channels
-	const MusicList::iterator end = _playList.end();
 	int songIndex = -1;
-	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
-		MusicEntry *song = *i;
+	for (auto &song : _playList) {
 		songIndex++;
 
 		if (!song || !song->pMidiParser)
@@ -1116,9 +1110,9 @@ void SciMusic::remapChannels(bool mainThread) {
 			continue;
 
 		songIndex = -1;
-		for (MusicList::iterator iter = _playList.begin(); iter != end; ++iter) {
+		for (auto &song : _playList) {
 			songIndex++;
-			if (map->_map[i]._song == *iter)
+			if (map->_map[i]._song == song)
 				break;
 		}
 
@@ -1146,9 +1140,9 @@ void SciMusic::remapChannels(bool mainThread) {
 			continue;
 
 		songIndex = -1;
-		for (MusicList::iterator iter = _playList.begin(); iter != end; ++iter) {
+		for (auto &song : _playList) {
 			songIndex++;
-			if (map->_map[i]._song == *iter)
+			if (map->_map[i]._song == song)
 				break;
 		}
 
@@ -1173,9 +1167,9 @@ void SciMusic::remapChannels(bool mainThread) {
 			continue;
 
 		songIndex = -1;
-		for (MusicList::iterator iter = _playList.begin(); iter != end; ++iter) {
+		for (auto &song : _playList) {
 			songIndex++;
-			if (map->_map[i]._song == *iter)
+			if (map->_map[i]._song == song)
 				break;
 		}
 
@@ -1223,11 +1217,9 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 	int8 reverb = _playList.front()->reverb;
 	_pMidiDrv->setReverb(reverb == 127 ? _globalReverb : reverb);
 
-	MusicList::iterator songIter;
 	int songIndex = -1;
-	for (songIter = _playList.begin(); songIter != _playList.end(); ++songIter) {
+	for (auto &song : _playList) {
 		songIndex++;
-		MusicEntry *song = *songIter;
 		if (song->status != kSoundPlaying)
 			continue;
 
