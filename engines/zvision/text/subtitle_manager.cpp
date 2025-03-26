@@ -24,6 +24,7 @@
 #include "zvision/file/search_manager.h"
 #include "zvision/text/text.h"
 #include "common/system.h"
+#include "zvision/scripting/script_manager.h"
 
 namespace ZVision {
 
@@ -50,8 +51,11 @@ SubtitleManager::~SubtitleManager() {
 }
 
 void SubtitleManager::process(int32 deltatime) {
-	//Update all subtitles' respective deletion timers
   for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
+    //Update all automatic subtitles
+    if (it->_value->selfUpdate())
+      redraw = true;
+  	//Update all subtitles' respective deletion timers
 		if (it->_value->process(deltatime)) {
       debug(4,"Deleting subtitle, subId=%d", it->_key);
 			_subsFocus.remove(it->_key);			
@@ -89,7 +93,6 @@ void SubtitleManager::process(int32 deltatime) {
 	}
 }
 
-
 void SubtitleManager::update(int32 count, uint16 subid) {
 	if (_subsList.contains(subid))
     if( _subsList[subid]->update(count) ) {
@@ -102,6 +105,14 @@ uint16 SubtitleManager::create(const Common::Path &subname, bool vob) {
   _subId++;
   debug(2,"Creating scripted subtitle, subId=%d", _subId);
   _subsList[_subId] = new Subtitle(_engine, subname, vob);
+  _subsFocus.set(_subId);
+  return _subId;
+}
+
+uint16 SubtitleManager::create(const Common::Path &subname, Audio::SoundHandle handle) {
+  _subId++;
+  debug(2,"Creating scripted subtitle, subId=%d", _subId);
+  _subsList[_subId] = new AutomaticSubtitle(_engine, subname, handle);
   _subsFocus.set(_subId);
   return _subId;
 }
@@ -356,6 +367,27 @@ bool Subtitle::update(int32 count) {
     }
   }
   return redraw;
+}
+
+AutomaticSubtitle::AutomaticSubtitle(ZVision *engine, const Common::Path &subname, Audio::SoundHandle handle) :
+  Subtitle(engine, subname, false),
+  _handle(handle) {
+}
+
+bool AutomaticSubtitle::selfUpdate() {
+	if (_engine->_mixer->isSoundHandleActive(_handle) && _engine->getScriptManager()->getStateValue(StateKey_Subtitles) == 1)
+    return update(_engine->_mixer->getSoundElapsedTime(_handle) / 100);
+  else {
+    todelete = true;
+    return false;
+  }
+}
+
+bool AutomaticSubtitle::process(int32 deltatime) {
+  Subtitle::process(deltatime);
+	if(!_engine->_mixer->isSoundHandleActive(_handle))
+	  todelete = true;
+	return todelete;
 }
 
 } // End of namespace ZVision
