@@ -135,6 +135,19 @@ void Window::drawFrameCounter(Graphics::ManagedSurface *blitTo) {
 	font->drawString(blitTo, msg, blitTo->w - 2 - width, 2, width, _wm->_colorWhite);
 }
 
+void Window::drawChannelBox(Director::Movie *currentMovie, Graphics::ManagedSurface *blitTo, int selectedChannel) {
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	Channel *channel = currentMovie->getScore()->_channels[selectedChannel];
+
+	if (!channel->isEmpty()) {
+		Common::Rect bbox = channel->getBbox();
+		blitTo->frameRect(bbox, g_director->_wm->_colorWhite);
+
+		font->drawString(blitTo, Common::String::format("m: %d, ch: %d, fr: %d", channel->_sprite->_castId.member, selectedChannel, channel->_filmLoopFrame ? channel->_filmLoopFrame : channel->_movieTime), bbox.left + 3, bbox.top + 3, 128, g_director->_wm->_colorBlack);
+		font->drawString(blitTo, Common::String::format("m: %d, ch: %d, fr: %d", channel->_sprite->_castId.member, selectedChannel, channel->_filmLoopFrame ? channel->_filmLoopFrame : channel->_movieTime), bbox.left + 2, bbox.top + 2, 128, g_director->_wm->_colorWhite);
+	}
+}
+
 bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	if (!_currentMovie)
 		return false;
@@ -216,16 +229,7 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 
 	int selectedChannel = DT::getSelectedChannel();
 	if (selectedChannel > 0){
-		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
-		Channel *channel = _currentMovie->getScore()->_channels[selectedChannel];
-
-		if (!channel->isEmpty()) {
-			Common::Rect bbox = channel->getBbox();
-			blitTo->frameRect(bbox, g_director->_wm->_colorWhite);
-
-			font->drawString(blitTo, Common::String::format("m: %d, ch: %d, fr: %d", channel->_sprite->_castId.member, selectedChannel, channel->_filmLoopFrame ? channel->_filmLoopFrame : channel->_movieTime), bbox.left + 3, bbox.top + 3, 128, g_director->_wm->_colorBlack);
-			font->drawString(blitTo, Common::String::format("m: %d, ch: %d, fr: %d", channel->_sprite->_castId.member, selectedChannel, channel->_filmLoopFrame ? channel->_filmLoopFrame : channel->_movieTime), bbox.left + 2, bbox.top + 2, 128, g_director->_wm->_colorWhite);
-		}
+		Window::drawChannelBox(_currentMovie, blitTo, selectedChannel);
 	}
 
 	if (g_director->_debugDraw & kDebugDrawCast) {
