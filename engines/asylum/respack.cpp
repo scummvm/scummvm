@@ -47,10 +47,10 @@ ResourceManager::ResourceManager(AsylumEngine *vm) : _cdNumber(-1), _musicPackId
 }
 
 ResourceManager::~ResourceManager() {
-	for (ResourceCache::const_iterator it = _resources.begin(); it != _resources.end(); it++)
-		delete it->_value;
-	for (ResourceCache::const_iterator it = _music.begin(); it != _music.end(); it++)
-		delete it->_value;
+	for (const auto &resource : _resources)
+		delete resource._value;
+	for (const auto &music : _music)
+		delete music._value;
 }
 
 ResourceEntry *ResourceManager::get(ResourceId id) {

@@ -3559,11 +3559,11 @@ bool Actor::canGetToDest(Common::Array<int> *actions, const Common::Point &point
 }
 
 bool Actor::testPolyInLink(const Common::Point &pt, Common::Array<int> *actions) {
-	if (actions->size() == 0)
+	if (actions->empty())
 		return false;
 
-	for (Common::Array<int>::iterator it = actions->begin(); it != actions->end(); it++) {
-		if (isInActionArea(pt, getWorld()->actions[*it]))
+	for (auto &action : *actions) {
+		if (isInActionArea(pt, getWorld()->actions[action]))
 			return true;
 	}
 
@@ -3582,8 +3582,7 @@ bool Actor::isInActionArea(const Common::Point &pt, ActionArea *area) {
 
 	// Check flags
 	bool found = false;
-	for (uint32 i = 0; i < 10; i++) {
-		int32 flag = area->flagNums[i];
+	for (auto &flag : area->flagNums) {
 		bool state = (flag <= 0) ? _vm->isGameFlagNotSet((GameFlag)-flag) : _vm->isGameFlagSet((GameFlag)flag);
 
 		if (!state) {
