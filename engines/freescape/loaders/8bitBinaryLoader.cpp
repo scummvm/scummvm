@@ -748,11 +748,11 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 	// Link all groups
 	if (areaNumber != 255) { // Do not link objects in the room structure
-		for (ObjectMap::iterator it = objectsByID->begin(); it != objectsByID->end(); ++it) {
-			if (it->_value->getType() == ObjectType::kGroupType) {
-				Group *group = (Group *)it->_value;
-				for (ObjectMap::iterator itt = objectsByID->begin(); itt != objectsByID->end(); ++itt)
-					group->linkObject(itt->_value);
+		for (auto &obj : *objectsByID) {
+			if (obj._value->getType() == ObjectType::kGroupType) {
+				Group *group = (Group *)obj._value;
+				for (auto &objInner : *objectsByID)
+					group->linkObject(objInner._value);
 			}
 		}
 	}
