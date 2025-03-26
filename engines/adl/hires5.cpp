@@ -147,12 +147,11 @@ void HiRes5Engine::setupOpcodeTables() {
 }
 
 bool HiRes5Engine::isInventoryFull() {
-	Common::List<Item>::const_iterator item;
 	byte weight = 0;
 
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (item->room == IDI_ANY)
-			weight += item->description;
+	for (const auto &item : _state.items) {
+		if (item.room == IDI_ANY)
+			weight += item.description;
 	}
 
 	if (weight >= 100) {
@@ -199,15 +198,14 @@ int HiRes5Engine::o_checkItemTimeLimits(ScriptEnv &e) {
 	OP_DEBUG_1("\tCHECK_ITEM_TIME_LIMITS(VARS[%d])", e.arg(1));
 
 	bool lostAnItem = false;
-	Common::List<Item>::iterator item;
 
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		const byte room = item->room;
-		const byte region = item->region;
+	for (auto &item : _state.items) {
+		const byte room = item.room;
+		const byte region = item.region;
 
 		if (room == IDI_ANY || room == IDI_CUR_ROOM || (room == _state.room && region == _state.region)) {
-			if (getVar(e.arg(1)) < _itemTimeLimits[item->id - 1]) {
-				item->room = IDI_VOID_ROOM;
+			if (getVar(e.arg(1)) < _itemTimeLimits[item.id - 1]) {
+				item.room = IDI_VOID_ROOM;
 				lostAnItem = true;
 			}
 		}

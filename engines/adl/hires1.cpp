@@ -468,26 +468,22 @@ void HiRes1Engine::printMessage(uint idx) {
 }
 
 void HiRes1Engine::drawItems() {
-	Common::List<Item>::iterator item;
-
 	uint dropped = 0;
 
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+	for (auto &item : _state.items) {
 		// Skip items not in this room
-		if (item->room != _state.room)
+		if (item.room != _state.room)
 			continue;
 
-		if (item->state == IDI_ITEM_DROPPED) {
+		if (item.state == IDI_ITEM_DROPPED) {
 			// Draw dropped item if in normal view
 			if (getCurRoom().picture == getCurRoom().curPicture)
-				drawItem(*item, _itemOffsets[dropped++]);
+				drawItem(item, _itemOffsets[dropped++]);
 		} else {
 			// Draw fixed item if current view is in the pic list
-			Common::Array<byte>::const_iterator pic;
-
-			for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-				if (*pic == getCurRoom().curPicture) {
-					drawItem(*item, item->position);
+			for (const auto &pic : item.roomPictures) {
+				if (pic == getCurRoom().curPicture) {
+					drawItem(item, item.position);
 					break;
 				}
 			}
