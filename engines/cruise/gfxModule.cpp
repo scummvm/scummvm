@@ -287,8 +287,6 @@ void gfxModuleData_updateScreen() {
 }
 
 void flip() {
-	CruiseEngine::RectList::iterator dr;
-
 	// Update the palette
 	gfxModuleData_updatePalette();
 
@@ -297,8 +295,7 @@ void flip() {
 	_vm->_priorFrameRects = _vm->_dirtyRects;
 
 	// Merge the prior frame's dirty rects into the current frame's list
-	for (dr = tempList.begin(); dr != tempList.end(); ++dr) {
-		Common::Rect &r = *dr;
+	for (auto &r : tempList) {
 		_vm->_dirtyRects.push_back(Common::Rect(r.left, r.top, r.right, r.bottom));
 	}
 
@@ -306,8 +303,7 @@ void flip() {
 	mergeClipRects();
 
 	// Copy any modified areas
-	for (dr = _vm->_dirtyRects.begin(); dr != _vm->_dirtyRects.end(); ++dr) {
-		Common::Rect &r = *dr;
+	for (auto &r : _vm->_dirtyRects) {
 		g_system->copyRectToScreen(globalScreen + 320 * r.top + r.left, 320,
 			r.left, r.top, r.width(), r.height());
 	}
