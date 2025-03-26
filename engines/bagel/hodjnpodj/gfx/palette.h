@@ -23,12 +23,17 @@
 #define HODJNPODJ_GFX_PALETTE_H
 
 #include "graphics/palette.h"
+#include "bagel/boflib/palette.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
 constexpr byte BLACK = 0;
 constexpr byte WHITE = 255;
+#define RED		PALETTERGB(255, 0, 255)
+#define BLUE	PALETTERGB(0, 0, 255)
+#define CYAN	PALETTERGB(0, 255, 255)
+#define PURPLE	PALETTERGB(0x80, 0, 0x80)
 
 class Palette {
 private:

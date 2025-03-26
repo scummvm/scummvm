@@ -121,6 +121,7 @@ MODULE_OBJS = \
 	hodjnpodj/views/minigame_view.o \
 	hodjnpodj/views/rules.o \
 	hodjnpodj/views/view.o \
+	hodjnpodj/metagame/bgen/bfc.o \
 	hodjnpodj/metagame/bgen/invent.o \
 	hodjnpodj/metagame/bgen/item.o \
 	hodjnpodj/metagame/bgen/mgstat.o \

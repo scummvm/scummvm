@@ -33,7 +33,7 @@ namespace Metagame {
 class CNote {
 public:
 	CNote(int nID = -1, int nClue = -1, int nRepeat = 1, int nPerson = -1, int nPlace = -1);
-	~CNote();
+	~CNote() {}
 
 public:
 	// Implementation

@@ -25,8 +25,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-
-CInventory::CInventory(char *lpsTitle) {
+CInventory::CInventory(const char *lpsTitle) {
 	m_lpsTitle = lpsTitle;
 	m_nItemCount = 0;
 	m_pEquipment = nullptr;

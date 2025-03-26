@@ -72,6 +72,12 @@ public:
 	bool _bReturnToZoom = false;
 	bool _bReturnToMeta = false;
 	bool _bReturnToGrandTour = false;
+	bool _bAnimationsEnabled = true;
+	bool _bScrollingEnabled = false;
+	bool _bSlowCPU = false;
+	bool _bLowMemory = false;
+	size_t _dwFreeSpaceMargin = 850000;
+	size_t _dwFreePhysicalMargin = 850000;
 
 public:
 	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);

@@ -32,7 +32,7 @@ namespace Metagame {
 
 class CInventory {
 public:
-	CInventory(char *lpsTitle = nullptr);
+	CInventory(const char *lpsTitle = nullptr);
 	~CInventory();
 
 public:
@@ -112,8 +112,8 @@ public:
 	}
 
 private:
-	char  *m_lpsTitle;		// Title string for inventory
-	int    m_nItemCount;	// Number of items in the inventory
+	const char *m_lpsTitle;	// Title string for inventory
+	int m_nItemCount;		// Number of items in the inventory
 	CItem *m_pEquipment;	// Linked list of inventory items
 };
 
