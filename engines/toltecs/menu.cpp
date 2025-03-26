@@ -33,6 +33,8 @@
 #include "toltecs/render.h"
 #include "toltecs/resource.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Toltecs {
 
 MenuSystem::MenuSystem(ToltecsEngine *vm) : _vm(vm) {
@@ -206,6 +208,10 @@ void MenuSystem::handleKeyDown(const Common::KeyState& kbd) {
 			_running = false;
 		} else if (kbd.keycode == Common::KEYCODE_ESCAPE) {
 			_editingDescription = false;
+			//// Now we turn on the keymapper
+			Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
+			g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+			keymapper->getKeymap("toltecs-default")->setEnabled(true);
 		}
 	}
 }
@@ -598,6 +604,11 @@ void MenuSystem::clickSavegameItem(ItemID id) {
 		_vm->requestLoadgame(savegameItem->_slotNum);
 		_running = false;
 	} else {
+		Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
+		// Now we turn off the keymapper so it does not interfere with full text input
+		keymapper->getKeymap("toltecs-default")->setEnabled(false);
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
 		_editingDescription = true;
 		_editingDescriptionItem = getItem(id);
 		_editingDescriptionID = id;

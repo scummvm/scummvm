@@ -362,24 +362,23 @@ void ToltecsEngine::updateInput() {
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			_keyState = event.kbd;
-
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			_action = event.customType;
 			//debug("key: flags = %02X; keycode = %d", _keyState.flags, _keyState.keycode);
 
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_F5:
+			switch (event.customType) {
+			case kActionOpenSaveMenu:
 				showMenu(kMenuIdSave);
 				break;
-			case Common::KEYCODE_F7:
+			case kActionOpenLoadMenu:
 				showMenu(kMenuIdLoad);
 				break;
-			case Common::KEYCODE_SPACE:
+			case kActionSkipDialog:
 				// Skip current dialog line, if a dialog is active
 				if (_screen->getTalkTextDuration() > 0) {
 					_sound->stopSpeech();
 					_screen->finishTalkTextItems();
-					_keyState.reset();	// event consumed
+					_action = kActionNone;	// event consumed
 				}
 				break;
 			default:
@@ -387,8 +386,8 @@ void ToltecsEngine::updateInput() {
 			}
 
 			break;
-		case Common::EVENT_KEYUP:
-			_keyState.reset();
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			_action = kActionNone;
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
@@ -682,7 +681,7 @@ void ToltecsEngine::showMenu(MenuID menuId) {
 	_screen->finishTalkTextItems();
 	CursorMan.showMouse(true);
 	_menuSystem->run(menuId);
-	_keyState.reset();
+	_action = kActionNone;
 	_script->setSwitchLocalDataNear(true);
 }
 

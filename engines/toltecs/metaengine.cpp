@@ -31,6 +31,10 @@
 #include "toltecs/toltecs.h"
 #include "toltecs/detection.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 namespace Toltecs {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -75,6 +79,8 @@ public:
 	int getMaximumSaveSlot() const override;
 	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool ToltecsMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -197,6 +203,67 @@ SaveStateDescriptor ToltecsMetaEngine::querySaveMetaInfos(const char *target, in
 	}
 
 	return SaveStateDescriptor();
+}
+
+Common::KeymapArray ToltecsMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Toltecs;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "toltecs-default", _("Default keymappings"));
+	
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Move / Select"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Move / Perform Default Action"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKIPDLG", _("Skip dialogue"));
+	act->setCustomEngineActionEvent(kActionSkipDialog);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action("OPENSAVEMENU", _("Save game"));
+	act->setCustomEngineActionEvent(kActionOpenSaveMenu);
+	act->addDefaultInputMapping("F5");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("OPENLOADMENU", _("Load game"));
+	act->setCustomEngineActionEvent(kActionOpenLoadMenu);
+	act->addDefaultInputMapping("F7");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKIPMOVIE", _("Skip cutscene"));
+	act->setCustomEngineActionEvent(kActionSkipMovie);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	act = new Action("MENUOPEN", _("Menu"));
+	act->setCustomEngineActionEvent(kActionMenuOpen);
+	act->addDefaultInputMapping("F10");
+	act->addDefaultInputMapping("JOY_START");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKIPRIDE", _("Skip ride"));
+	act->setCustomEngineActionEvent(kActionSkipRide);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+
+	return Keymap::arrayOf(engineKeyMap);
+	
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TOLTECS)
