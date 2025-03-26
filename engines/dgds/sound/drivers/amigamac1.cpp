@@ -268,11 +268,11 @@ void MidiPlayer_AmigaMac1::close() {
 
 	_mixer->stopHandle(_mixerSoundHandle);
 
-	for (const auto &channel : _channels)
+	for (const auto *channel : _channels)
 		delete channel;
 	_channels.clear();
 
-	for (const auto &voice : _voices)
+	for (const auto *voice : _voices)
 		delete voice;
 	_voices.clear();
 
@@ -453,7 +453,7 @@ void MidiPlayer_AmigaMac1::freeInstruments() {
 		delete[] freq._value;
 	_freqTables.clear();
 
-	for (auto &instrument : _instruments)
+	for (auto *instrument : _instruments)
 		delete instrument;
 	_instruments.clear();
 }

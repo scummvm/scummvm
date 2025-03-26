@@ -126,7 +126,7 @@ void ResourceSystem::unloadSceneResources(uint32 sceneId1, uint32 sceneId2) {
 }
 
 void ResourceSystem::unloadAllResources() {
-	for (auto &resource : _resources) {
+	for (auto *resource : _resources) {
 		delete resource;
 	}
 	_resources.clear();

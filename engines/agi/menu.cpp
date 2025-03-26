@@ -58,11 +58,11 @@ GfxMenu::GfxMenu(AgiEngine *vm, GfxMgr *gfx, PictureMgr *picture, TextMgr *text)
 }
 
 GfxMenu::~GfxMenu() {
-	for (auto &menu : _array)
+	for (auto *menu : _array)
 		delete menu;
 	_array.clear();
 
-	for (auto &menuItem : _itemArray)
+	for (auto *menuItem : _itemArray)
 		delete menuItem;
 	_itemArray.clear();
 }

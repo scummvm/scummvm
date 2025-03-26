@@ -455,7 +455,7 @@ void AnimationManager::deleteOverlays() {
 void AnimationManager::deleteAll() {
 	debugC(3, kDraciAnimationDebugLevel, "Deleting all animations...");
 
-	for (auto &anim : _animations) {
+	for (auto *anim : _animations) {
 		delete anim;
 	}
 

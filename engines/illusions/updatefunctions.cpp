@@ -34,7 +34,7 @@ UpdateFunctions::UpdateFunctions() {
 
 UpdateFunctions::~UpdateFunctions() {
 	// Free update functions
-	for (auto &updateFunction : _updateFunctions) {
+	for (auto *updateFunction : _updateFunctions) {
 		delete updateFunction;
 	}
 }

@@ -852,7 +852,7 @@ void Talk::exitTalkMenu(bool isFlag8Set, bool isFlag100Set, Common::Array<TalkDi
 		_vm->setFlags(ENGINE_FLAG_100);
 	}
 
-	for (auto &entry : dialogEntries) {
+	for (auto *entry : dialogEntries) {
 		delete entry;
 	}
 	dialogEntries.clear();
@@ -1119,7 +1119,7 @@ uint32 Talk::truncateDialogText(uint16 *srcText, uint16 *destText, uint32 srcLen
 }
 
 void Talk::clearDialogEntries() {
-	for (auto &entry : _dialogEntries) {
+	for (auto *entry : _dialogEntries) {
 		delete entry;
 	}
 	_dialogEntries.clear();
