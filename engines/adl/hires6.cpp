@@ -319,9 +319,8 @@ void HiRes6Engine::showRoom() {
 		_itemRemoved = false;
 		_itemsOnScreen = 0;
 
-		Common::List<Item>::iterator item;
-		for (item = _state.items.begin(); item != _state.items.end(); ++item)
-			item->isOnScreen = false;
+		for (auto &item : _state.items)
+			item.isOnScreen = false;
 	}
 
 	if (!_state.isDark)
