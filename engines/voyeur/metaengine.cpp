@@ -119,7 +119,7 @@ SaveStateList VoyeurMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 	Voyeur::VoyeurSavegameHeader header;
 
-	for (auto &filename : filenames) {
+	for (const auto &filename : filenames) {
 		const char *ext = strrchr(filename.c_str(), '.');
 		int slot = ext ? atoi(ext + 1) : -1;
 
