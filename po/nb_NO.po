@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-26 15:33+0000\n"
+"POT-Creation-Date: 2025-03-26 16:27+0000\n"
 "PO-Revision-Date: 2024-12-05 21:24+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -8212,7 +8212,7 @@ msgstr "Feil: Spillet kunne ikke bli lagret."
 msgid "Input text"
 msgstr "Skriv inn tekst"
 
-#: engines/grim/md5check.cpp:604
+#: engines/grim/md5check.cpp:609
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -8227,7 +8227,7 @@ msgstr ""
 "har (f.eks. DVD-cover eller CD-cover):\n"
 "%s"
 
-#: engines/grim/md5check.cpp:613
+#: engines/grim/md5check.cpp:618
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"

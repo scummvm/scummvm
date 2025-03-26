@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-26 15:33+0000\n"
+"POT-Creation-Date: 2025-03-26 16:27+0000\n"
 "PO-Revision-Date: 2025-02-26 12:46+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -8026,7 +8026,7 @@ msgstr "오류: 게임을 저장하지 못함."
 msgid "Input text"
 msgstr "텍스트 입력"
 
-#: engines/grim/md5check.cpp:604
+#: engines/grim/md5check.cpp:609
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -8040,7 +8040,7 @@ msgstr ""
 "임 버전에 대한 설명(예: DVD 박스 또는 보석 케이스)을 제공해 주세요.\n"
 "%s"
 
-#: engines/grim/md5check.cpp:613
+#: engines/grim/md5check.cpp:618
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
