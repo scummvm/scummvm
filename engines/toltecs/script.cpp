@@ -1018,11 +1018,11 @@ void ScriptInterpreter::sfHandleInput() {
 	} else {
 		// Convert keyboard scancode to IBM PC scancode.
 		// Only scancodes known to be used (so far) are converted.
-		switch (_vm->_keyState.keycode) {
-		case Common::KEYCODE_ESCAPE:
+		switch (_vm->_action) {
+		case kActionSkipRide:
 			keyCode = 1;
 			break;
-		case Common::KEYCODE_F10:
+		case kActionMenuOpen:
 			keyCode = 68;
 			break;
 		default:
