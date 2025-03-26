@@ -1192,9 +1192,7 @@ void DreamWebEngine::commandOnly(uint8 command) {
 }
 
 bool DreamWebEngine::checkIfPerson(uint8 x, uint8 y) {
-	Common::List<People>::iterator i;
-	for (i = _peopleList.begin(); i != _peopleList.end(); ++i) {
-		People &people = *i;
+	for (auto &people : _peopleList) {
 		Reel *reel = getReelStart(people._reelPointer);
 		if (reel->frame() == 0xffff)
 			++reel;

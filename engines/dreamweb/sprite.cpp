@@ -26,9 +26,7 @@ namespace DreamWeb {
 
 void DreamWebEngine::printSprites() {
 	for (uint priority = 0; priority < 7; ++priority) {
-		Common::List<Sprite>::const_iterator i;
-		for (i = _spriteTable.begin(); i != _spriteTable.end(); ++i) {
-			const Sprite &sprite = *i;
+		for (const auto &sprite : _spriteTable) {
 			if (priority != sprite.priority)
 				continue;
 			if (sprite.hidden == 1)
@@ -88,9 +86,7 @@ void DreamWebEngine::spriteUpdate() {
 	if (!_spriteTable.empty())
 		_spriteTable.front().hidden = _vars._ryanOn;
 
-	Common::List<Sprite>::iterator i;
-	for (i = _spriteTable.begin(); i != _spriteTable.end(); ++i) {
-		Sprite &sprite = *i;
+	for (auto &sprite : _spriteTable) {
 		if (sprite._mainManCallback)
 			mainMan(&sprite);
 		else {
