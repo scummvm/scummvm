@@ -42,8 +42,8 @@ void AgiLoader_v3::init() {
 		return;
 	}
 
-	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		Common::String fileName = file->getName();
+	for (const auto &file : fslist) {
+		Common::String fileName = file.getName();
 		if (fileName.size() > 3 && fileName.hasSuffixIgnoreCase("dir")) {
 			_name = fileName.substr(0, fileName.size() - 3);
 			_name.toLowercase();
