@@ -216,7 +216,8 @@ private:
 	const COLORREF _cButtonOutline = RGB_CHECK_OUTLINE;
 	bool _checked = false;
 
-	Common::Rect getCheckRect() const;
+	Common::Point getRadioCenter() const;
+	Common::Rect getRadioRect() const;
 
 protected:
 	void buttonPressed() override;

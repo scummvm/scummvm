@@ -30,6 +30,8 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+constexpr int RADIOBUTTON_RADIUS = 5;
+
 bool Button::msgMouseDown(const MouseDownMessage &msg) {
 	if (!(_itemState & ODS_GRAYED) &&
 		!(_itemState & ODS_DISABLED)) {
@@ -298,17 +300,18 @@ void RadioButton::draw() {
 	Common::String text;
 	uint nUnderscore;
 
-	const Common::Rect checkRect = getCheckRect();
-	const Common::Point center((checkRect.left + checkRect.right) / 2,
-		(checkRect.top + checkRect.bottom) / 2);
+	const Common::Rect circleRect = getRadioRect();
+	const Common::Point center((circleRect.left + circleRect.right) / 2,
+		(circleRect.top + circleRect.bottom) / 2);
 
 	s.clear(_cButtonFace);
+	s.setFontSize(8);
 	s.frameRect(Common::Rect(0, 0, s.w, s.h), _cButtonOutline);
-	s.circle(center, checkRect.width() / 2, false, _cButtonControl);
+	s.circle(center, circleRect.width() / 2, false, _cButtonControl);
 
 	if (_checked)
 		// Draw smaller filled in circle
-		s.circle(center, checkRect.width() / 2 - 2, true, _cButtonControl);
+		s.circle(center, circleRect.width() / 2 - 2, true, _cButtonControl);
 
 	// Check for any ampersand character, which indicates underline
 	// for the keyboard key associated with the button
@@ -318,9 +321,8 @@ void RadioButton::draw() {
 
 	uint color = !(_itemState & ODS_DISABLED) ?
 		_cButtonText : _cButtonTextDisabled;
-	int x = 20, y = 2;
+	int x = 20, y = (_bounds.height() - s.getStringHeight()) / 2;
 
-	s.setFontSize(8);
 	s.writeString(text, Common::Point(x, y), color);
 
 	if (nUnderscore != Common::String::npos) {
@@ -332,9 +334,18 @@ void RadioButton::draw() {
 	}
 }
 
-Common::Rect RadioButton::getCheckRect() const {
-	int checkSize = _bounds.height() - 6;
-	return Common::Rect(3, 3, 3 + checkSize, 3 + checkSize);
+Common::Point RadioButton::getRadioCenter() const {
+	int xc = 3 + RADIOBUTTON_RADIUS;
+	int yc = (_bounds.height() / 2);
+	return Common::Point(xc, yc);
+}
+
+Common::Rect RadioButton::getRadioRect() const {
+	int xc = getRadioCenter().x;
+	int yc = getRadioCenter().y;
+
+	return Common::Rect(3, yc - RADIOBUTTON_RADIUS,
+		xc + RADIOBUTTON_RADIUS, yc + RADIOBUTTON_RADIUS);
 }
 
 void RadioButton::buttonPressed() {
