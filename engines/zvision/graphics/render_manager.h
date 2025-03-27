@@ -118,8 +118,8 @@ private:
 //*/
 
 	// Rectangle for subtitles & other messages
-	Common::Rect _textArea;
-	Common::Rect _textLetterbox;  //Section of text area to be filled with black when blanked
+	Common::Rect _textArea; //NB Screen coordinates
+	Common::Rect _textLetterbox;  //Section of text area outside working window, to be filled with black when blanked
 	Common::Rect _textOverlay;	//Section of text area to be filled with colorkey when blanked (may potentially intersect text letterbox area if screen/window is wider than working area!)
 
 	// Buffer for drawing menu
@@ -128,12 +128,19 @@ private:
 	Common::Rect _menuSurfaceDirtyRect;  //subrectangle of menu area outside working area
 
 	// Rectangle for menu area
-	Common::Rect _menuArea;
+	Common::Rect _menuArea; //Screen coordinates
 	Common::Rect _menuLetterbox; //Section of menu area to be filled with black when blanked
 	Common::Rect _menuOverlay;	//Section of menu area to be filled with colorkey when blanked (may potentially intersect menu letterbox area if screen/window is wider than working area!)
 
-	//Buffer for video playback (render directly for speed; no backbuffer)
+	//Buffer for streamed video playback
+//*
 	Graphics::ManagedSurface _vidManagedSurface;
+/*/
+  Graphics::Surface _vidSurface;
+//*/
+  
+  //Area of streamed video playback
+  Common::Rect _vidArea;
 
 	// A buffer used for apply graphics effects
 	Graphics::Surface _effectSurface;
@@ -146,6 +153,9 @@ private:
 
 	// Visual effects list
 	EffectsList _effects;
+	
+	//Pointer to currently active backbuffer output surface 
+  Graphics::Surface *outputSurface;
 
 	bool _doubleFPS;
 	bool _widescreen;
@@ -155,11 +165,12 @@ public:
 
 	/**
 	 * Renders the scene to the screen
-	 . Returns true if screen was updated
+	 * Returns true if screen was updated
+	 * If streamMode is set true, all background processing is skipped and the previous framebuffer is used
 	 */
-	bool renderSceneToScreen(bool immediate = false, bool overlayOnly = false);
+	bool renderSceneToScreen(bool immediate = false, bool overlayOnly = false, bool preStream = false);
 	
-	Graphics::ManagedSurface &getVidSurface(Common::Rect &dstRect);  //dstRect is defined relative to working window origin
+	Graphics::ManagedSurface &getVidSurface(Common::Rect &dstRect);  //dstRect is defined relative to working area origin
 	
 	Common::Rect getMenuArea() {
 	  return _menuArea;

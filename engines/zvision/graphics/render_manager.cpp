@@ -146,9 +146,6 @@ void RenderManager::initialize(bool hiRes) {
     _menuLetterbox = Common::Rect(_menuArea.left, _menuArea.top, _menuArea.right, _workingArea.top);
   else
     _menuLetterbox = _menuArea;
-  //Convert to menuArea coordinates
-  _menuLetterbox.translate(-_menuArea.left, -_menuArea.top);
-  _menuOverlay.translate(-_menuArea.left, -_menuArea.top);
     
   //TODO - add upscaling for HD mode!
   _textOverlay = _textArea.findIntersectingRect(_workingArea);
@@ -156,9 +153,9 @@ void RenderManager::initialize(bool hiRes) {
     _textLetterbox = Common::Rect(_textArea.left, _workingArea.bottom, _textArea.right, _textArea.bottom);
   else
     _textLetterbox = _textArea;
-  //Convert to textArea coordinates
-  _textOverlay.translate(-_textArea.left, -_textArea.top);
-  _textLetterbox.translate(-_textArea.left, -_textArea.top);
+  
+  debug(2,"text overlay area: %d,%d,%d,%d", _textOverlay.left, _textOverlay.top, _textOverlay.bottom, _textOverlay.right);
+  debug(2,"menu overlay area: %d,%d,%d,%d", _menuOverlay.left, _menuOverlay.top, _menuOverlay.bottom, _menuOverlay.right);
 	
   debug(2,"Clearing backbuffers");
 	//Clear backbuffer surfaces
@@ -172,16 +169,15 @@ void RenderManager::initialize(bool hiRes) {
 	debug(1,"Render manager initialized");
 }
 
-bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly) {
-  debug(5,"\nrenderSceneToScreen");
+bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool preStream) {
+  debug(5,"\nrenderSceneToScreen%s%s%s", immediate ? ", immediate" : "", overlayOnly ? ", overlay only" : "", preStream ? ", pre-stream" : "");
   uint32 startTime = _system->getMillis();
   if(!overlayOnly) {
-	  Graphics::Surface *out = &_warpedSceneSurface;
-	  Graphics::Surface *in = &_backgroundSurface;
+	  Graphics::Surface *inputSurface = &_backgroundSurface;
 	  Common::Rect outWndDirtyRect;
 	  //Apply graphical effects to temporary effects buffer and/or directly to current background image, as appropriate
 	  if (!_effects.empty()) {
-	    debug(5,"Rendering effects");
+	    debug(6,"Rendering effects");
 		  bool copied = false;
 		  const Common::Rect windowRect(_workingArea.width(), _workingArea.height());
 		  for (EffectsList::iterator it = _effects.begin(); it != _effects.end(); it++) {
@@ -193,7 +189,7 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly) {
 				  if (!copied) {
 					  copied = true;
 					  _effectSurface.copyFrom(_backgroundSurface);
-					  in = &_effectSurface;
+					  inputSurface = &_effectSurface;
 				  }
 				  const Graphics::Surface *post;
 				  if ((*it)->isPort())
@@ -218,53 +214,60 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly) {
 	    case RenderTable::TILT:
 	      debug(5,"Rendering panorama");
 		    if (!_backgroundSurfaceDirtyRect.isEmpty()) {
-			    _renderTable.mutateImage(&_warpedSceneSurface, in, _engine->getScriptManager()->getStateValue(StateKey_HighQuality));
-			    out = &_warpedSceneSurface;
+			    _renderTable.mutateImage(&_warpedSceneSurface, inputSurface, _engine->getScriptManager()->getStateValue(StateKey_HighQuality));
+			    outputSurface = &_warpedSceneSurface;
 			    outWndDirtyRect = Common::Rect(_workingArea.width(), _workingArea.height());
 		    }
 	      break;
 	    default:
-		    out = in;
+		    outputSurface = inputSurface;
 		    outWndDirtyRect = _backgroundSurfaceDirtyRect;
 		    break;
       debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
     }
     debug(5,"Rendering working area");
-	  _workingManagedSurface.simpleBlitFrom(*out); //TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
+	  _workingManagedSurface.simpleBlitFrom(*outputSurface); //TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
     debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
 	}
-  debug(5,"Rendering menu");
-	_menuManagedSurface.transBlitFrom(_menuSurface, -1);
-  debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
-  debug(5,"Rendering text");
-  _textManagedSurface.transBlitFrom(_textSurface, -1);
-  debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
-  if(immediate) {
-    frameLimiter.startFrame();
-    debug(5,"Updating screen");
-    _screen.update();
-    debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
-    debug(10,"~renderSceneToScreen, immediate");
-    return true;
-  }
-  else if (_engine->canRender()) {
-    frameLimiter.delayBeforeSwap();
-    frameLimiter.startFrame();
-    debug(5,"Updating screen");
-    _screen.update();
-    debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
-    debug(10,"~renderSceneToScreen, frame limited");
-    return true;
+  if(preStream) {
+    debug(5,"Pre-rendering text area for video stream");    
+	  _workingManagedSurface.simpleBlitFrom(*outputSurface, _textOverlay, _textOverlay.origin()); //Prevents subtitle visual corruption when streaming videos that don't fully overlap them, e.g. Nemesis sarcophagi
+    return false;
   }
   else {
-    debug(2,"Skipping screen update; engine forbids rendering at this time.");
-    return false;
+    debug(5,"Rendering menu");
+	  _menuManagedSurface.transBlitFrom(_menuSurface, -1);
+    debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
+    debug(5,"Rendering text");
+    _textManagedSurface.transBlitFrom(_textSurface, -1);
+    debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
+    if(immediate) {
+      frameLimiter.startFrame();
+      debug(5,"Updating screen");
+      _screen.update();
+      debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
+      debug(10,"~renderSceneToScreen, immediate");
+      return true;
+    }
+    else if (_engine->canRender()) {
+      frameLimiter.delayBeforeSwap();
+      frameLimiter.startFrame();
+      debug(5,"Updating screen");
+      _screen.update();
+      debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
+      debug(10,"~renderSceneToScreen, frame limited");
+      return true;
+    }
+    else {
+      debug(2,"Skipping screen update; engine forbids rendering at this time.");
+      return false;
+    };
   };
 }
 
 Graphics::ManagedSurface &RenderManager::getVidSurface(Common::Rect &dstRect) {
   Common::Rect _dstRect = dstRect;
-  _dstRect.translate(_workingArea.left, _workingArea.top);  //Convert to working area coordinates
+  _dstRect.translate(_workingArea.left, _workingArea.top);  //Convert to screen coordinates
 	_vidManagedSurface.create(_screen, _dstRect);
 	debug(1,"Obtaining managed video surface at %d,%d,%d,%d", _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
 	return _vidManagedSurface;
@@ -667,10 +670,15 @@ void RenderManager::clearMenuSurface(bool force, int32 colorkey) {
   if(force)
     _menuSurfaceDirtyRect = Common::Rect(_menuArea.width(), _menuArea.height());
   if(!_menuSurfaceDirtyRect.isEmpty()) {
-	  Common::Rect _menuLetterboxDirty = _menuSurfaceDirtyRect.findIntersectingRect(_menuLetterbox);
+    //Convert to local menuArea coordinates
+    Common::Rect letterbox = _menuLetterbox;
+    Common::Rect overlay =_menuOverlay;
+    letterbox.translate(-_menuArea.left, -_menuArea.top);
+    overlay.translate(-_menuArea.left, -_menuArea.top);
+	  Common::Rect _menuLetterboxDirty = _menuSurfaceDirtyRect.findIntersectingRect(letterbox);
     if(!_menuLetterboxDirty.isEmpty())
       _menuSurface.fillRect(_menuLetterboxDirty, 0);
-	  Common::Rect _menuOverlayDirty = _menuSurfaceDirtyRect.findIntersectingRect(_menuOverlay);
+	  Common::Rect _menuOverlayDirty = _menuSurfaceDirtyRect.findIntersectingRect(overlay);
     if(!_menuOverlayDirty.isEmpty()) {
 	    _menuSurface.fillRect(_menuOverlayDirty, colorkey);
       //TODO - mark working window dirty here so that it will redraw & blank overlaid residue on next frame
@@ -694,10 +702,15 @@ void RenderManager::clearTextSurface(bool force, int32 colorkey) {
   if(force)
     _textSurfaceDirtyRect = Common::Rect(_textArea.width(),_textArea.height());
   if(!_textSurfaceDirtyRect.isEmpty()) {
-	  Common::Rect _textLetterboxDirty = _textSurfaceDirtyRect.findIntersectingRect(_textLetterbox);
+    //Convert to local textArea coordinates
+    Common::Rect letterbox = _textLetterbox;
+    Common::Rect overlay =_textOverlay;
+    letterbox.translate(-_textArea.left, -_textArea.top);
+    overlay.translate(-_textArea.left, -_textArea.top);
+	  Common::Rect _textLetterboxDirty = _textSurfaceDirtyRect.findIntersectingRect(letterbox);
     if(!_textLetterboxDirty.isEmpty())
       _textSurface.fillRect(_textLetterboxDirty, 0);
-	  Common::Rect _textOverlayDirty = _textSurfaceDirtyRect.findIntersectingRect(_textOverlay);
+	  Common::Rect _textOverlayDirty = _textSurfaceDirtyRect.findIntersectingRect(overlay);
     if(!_textOverlayDirty.isEmpty()) {
 	    _textSurface.fillRect(_textOverlayDirty, colorkey);
       //TODO - mark working window dirty here so that it will redraw & blank overlaid residue on next frame

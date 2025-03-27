@@ -149,6 +149,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 			if (showSubs && sub > 0)
 				_subtitleManager->update(vid.getCurFrame(), sub);
 			if (frame) {
+		    _renderManager->renderSceneToScreen(true,true,true);  //Redraw text area to clean background of subtitles for videos that don't fill entire working area, e.g, Nemesis sarcophagi
 				if (scaled) {
 				  debug(8,"Scaled blit from area %d x %d to video output surface at output surface position %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
 					outSurface.blitFrom(*frame, _srcRect, _dstRect);
@@ -161,7 +162,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 			}
 		}
 		// Always update the screen so the mouse continues to render & video does not skip
-		_renderManager->renderSceneToScreen(true,true);
+		_renderManager->renderSceneToScreen(true,true,false);
 		_system->delayMillis(vid.getTimeToNextFrame() / 2); //Exponentially decaying delay
 	}
 	_cutscenesKeymap->setEnabled(false);
