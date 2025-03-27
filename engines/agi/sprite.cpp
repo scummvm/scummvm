@@ -193,17 +193,9 @@ void SpritesMgr::eraseSprites() {
  * Draw all sprites in the given list.
  */
 void SpritesMgr::drawSprites(SpriteList &spriteList) {
-	SpriteList::iterator iter;
-//	warning("drawSprites");
-
-	for (iter = spriteList.begin(); iter != spriteList.end(); ++iter) {
-		Sprite &sprite = *iter;
-		ScreenObjEntry *screenObj = sprite.screenObjPtr;
-
+	for (auto &sprite : spriteList) {
 		_gfx->block_save(sprite.xPos, sprite.yPos, sprite.xSize, sprite.ySize, sprite.backgroundBuffer);
-		//debugC(8, kDebugLevelSprites, "drawSprites(): s->v->entry = %d (prio %d)", s->viewPtr->entry, s->viewPtr->priority);
-//		warning("sprite %d (view %d), priority %d, sort %d, givenOrder %d", screenObj->objectNr, screenObj->currentView, screenObj->priority, sprite.sortOrder, sprite.givenOrderNr);
-		drawCel(screenObj);
+		drawCel(sprite.screenObjPtr);
 	}
 }
 
@@ -358,11 +350,9 @@ void SpritesMgr::showSprite(ScreenObjEntry *screenObj) {
 }
 
 void SpritesMgr::showSprites(SpriteList &spriteList) {
-	SpriteList::iterator iter;
-	ScreenObjEntry *screenObjPtr = nullptr;
+	ScreenObjEntry *screenObjPtr;
 
-	for (iter = spriteList.begin(); iter != spriteList.end(); ++iter) {
-		Sprite &sprite = *iter;
+	for (auto &sprite : spriteList) {
 		screenObjPtr = sprite.screenObjPtr;
 
 		showSprite(screenObjPtr);

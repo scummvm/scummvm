@@ -171,20 +171,20 @@ AboutDialog::AboutDialog(bool inGame)
 			break;
 		}
 		const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
-		for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
-			enginesDetected.push_back((*iter)->getName());
+		for (const auto &plugin : plugins) {
+			enginesDetected.push_back(plugin->getName());
 		}
 	} while (!inGame && PluginMan.loadNextPlugin());
 
 	if (!inGame) PluginMan.loadDetectionPlugin();
 
-	for (Common::StringArray::iterator iter = enginesDetected.begin(); iter != enginesDetected.end(); iter++) {
+	for (auto &engine : enginesDetected) {
 		Common::String str;
 
-		const Plugin *p = EngineMan.findDetectionPlugin(*iter);
+		const Plugin *p = EngineMan.findDetectionPlugin(engine);
 
 		if (!p) {
-			if (!inGame) warning("Cannot find plugin for %s", iter->c_str());
+			if (!inGame) warning("Cannot find plugin for %s", engine.c_str());
 			continue;
 		}
 
@@ -219,8 +219,8 @@ void AboutDialog::addLine(const Common::U32String &str) {
 		Common::U32StringArray wrappedLines;
 		g_gui.getFont().wordWrapText(renderStr, _w - 2 * _xOff, wrappedLines);
 
-		for (Common::U32StringArray::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
-			_lines.push_back(format + *i);
+		for (const auto &line : wrappedLines) {
+			_lines.push_back(format + line);
 		}
 	}
 }

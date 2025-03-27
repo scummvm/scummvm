@@ -319,12 +319,12 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames = saveFileMan->listSavefiles("sword1.###");
 
 	int slotNum = 0;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (const auto &filename : filenames) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		slotNum = atoi(file->c_str() + file->size() - 3);
+		slotNum = atoi(filename.c_str() + filename.size() - 3);
 
 		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			Common::InSaveFile *in = saveFileMan->openForLoading(filename);
 			if (in) {
 				in->readUint32LE(); // header
 				in->read(saveName, 40);

@@ -363,8 +363,8 @@ Common::Error SeqMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver
 		}
 
 		int devIndex = 0;
-		for (MusicDevices::iterator d = devices.begin(); d != devices.end(); d++) {
-			if (d->getCompleteId().equals(deviceIDString)) {
+		for (auto &d : devices) {
+			if (d.getCompleteId().equals(deviceIDString)) {
 				found = true;
 				isSynth = (devIndex >= firstSynthIndex);
 				port = ports[devIndex];

@@ -101,16 +101,15 @@ bool Console::Cmd_ValidCommands(int argc, const char **argv) {
 		return true;
 	}
 
-	WordMap::const_iterator verb, noun;
 	bool is_any;
 
-	for (verb = _engine->_verbs.begin(); verb != _engine->_verbs.end(); ++verb) {
-		for (noun = _engine->_nouns.begin(); noun != _engine->_nouns.end(); ++noun) {
-			if (_engine->isInputValid(verb->_value, noun->_value, is_any) && !is_any)
-				debugPrintf("%s %s\n", toAscii(verb->_key).c_str(), toAscii(noun->_key).c_str());
+	for (const auto &verb : _engine->_verbs) {
+		for (const auto &noun : _engine->_nouns) {
+			if (_engine->isInputValid(verb._value, noun._value, is_any) && !is_any)
+				debugPrintf("%s %s\n", toAscii(verb._key).c_str(), toAscii(noun._key).c_str());
 		}
-		if (_engine->isInputValid(verb->_value, IDI_ANY, is_any))
-			debugPrintf("%s *\n", toAscii(verb->_key).c_str());
+		if (_engine->isInputValid(verb._value, IDI_ANY, is_any))
+			debugPrintf("%s *\n", toAscii(verb._key).c_str());
 	}
 	if (_engine->isInputValid(IDI_ANY, IDI_ANY, is_any))
 		debugPrintf("* *\n");
@@ -247,10 +246,8 @@ bool Console::Cmd_Items(int argc, const char **argv) {
 		return true;
 	}
 
-	Common::List<Item>::const_iterator item;
-
-	for (item = _engine->_state.items.begin(); item != _engine->_state.items.end(); ++item)
-		printItem(*item);
+	for (const auto &item : _engine->_state.items)
+		printItem(item);
 
 	return true;
 }
@@ -260,8 +257,6 @@ bool Console::Cmd_GiveItem(int argc, const char **argv) {
 		debugPrintf("Usage: %s <ID | name>\n", argv[0]);
 		return true;
 	}
-
-	Common::List<Item>::iterator item;
 
 	char *end;
 	uint id = strtoul(argv[1], &end, 0);
@@ -278,9 +273,9 @@ bool Console::Cmd_GiveItem(int argc, const char **argv) {
 
 		byte noun = _engine->_nouns[name];
 
-		for (item = _engine->_state.items.begin(); item != _engine->_state.items.end(); ++item) {
-			if (item->noun == noun)
-				matches.push_back(&*item);
+		for (auto &item : _engine->_state.items) {
+			if (item.noun == noun)
+				matches.push_back(&item);
 		}
 
 		if (matches.size() == 0) {
@@ -300,9 +295,9 @@ bool Console::Cmd_GiveItem(int argc, const char **argv) {
 		return true;
 	}
 
-	for (item = _engine->_state.items.begin(); item != _engine->_state.items.end(); ++item)
-		if (item->id == id) {
-			item->room = IDI_ANY;
+	for (auto &item : _engine->_state.items)
+		if (item.id == id) {
+			item.room = IDI_ANY;
 			debugPrintf("OK\n");
 			return true;
 		}
@@ -381,10 +376,9 @@ void Console::printItem(const Item &item) {
 
 void Console::printWordMap(const WordMap &wordMap) {
 	Common::StringArray words;
-	WordMap::const_iterator verb;
 
-	for (verb = wordMap.begin(); verb != wordMap.end(); ++verb)
-		words.push_back(Common::String::format("%s: %3d", toAscii(verb->_key).c_str(), wordMap[verb->_key]));
+	for (const auto &verb : wordMap)
+		words.push_back(Common::String::format("%s: %3d", toAscii(verb._key).c_str(), wordMap[verb._key]));
 
 	Common::sort(words.begin(), words.end());
 

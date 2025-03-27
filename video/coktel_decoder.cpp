@@ -2909,35 +2909,35 @@ bool VMDDecoder::hasEmbeddedFiles() const {
 }
 
 bool VMDDecoder::hasEmbeddedFile(const Common::String &fileName) const {
-	for (Common::Array<File>::const_iterator file = _files.begin(); file != _files.end(); ++file)
-		if (!file->name.compareToIgnoreCase(fileName))
+	for (const auto &file : _files)
+		if (!file.name.compareToIgnoreCase(fileName))
 			return true;
 
 	return false;
 }
 
 Common::SeekableReadStream *VMDDecoder::getEmbeddedFile(const Common::String &fileName) const {
-	const File *file = 0;
+	const File *file = nullptr;
 
-	for (Common::Array<File>::const_iterator it = _files.begin(); it != _files.end(); ++it)
-		if (!it->name.compareToIgnoreCase(fileName)) {
-			file = &*it;
+	for (const auto &curFile : _files)
+		if (!curFile.name.compareToIgnoreCase(fileName)) {
+			file = &curFile;
 			break;
 		}
 
 	if (!file)
-		return 0;
+		return nullptr;
 
 	if ((file->size - 20) != file->realSize) {
 		warning("VMDDecoder::getEmbeddedFile(): Sizes for \"%s\" differ! (%d, %d)",
 				fileName.c_str(), (file->size - 20), file->realSize);
-		return 0;
+		return nullptr;
 	}
 
 	if (!_stream->seek(file->offset)) {
 		warning("VMDDecoder::getEmbeddedFile(): Can't seek to offset %d to (file \"%s\")",
 				file->offset, fileName.c_str());
-		return 0;
+		return nullptr;
 	}
 
 	byte *data = (byte *) malloc(file->realSize);
@@ -2945,7 +2945,7 @@ Common::SeekableReadStream *VMDDecoder::getEmbeddedFile(const Common::String &fi
 		free(data);
 		warning("VMDDecoder::getEmbeddedFile(): Couldn't read %d bytes (file \"%s\")",
 				file->realSize, fileName.c_str());
-		return 0;
+		return nullptr;
 	}
 
 	Common::MemoryReadStream *stream =

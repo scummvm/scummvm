@@ -82,6 +82,7 @@ void Cutscene::update() {
 		if (_cutsceneId == 'E') {
 			g_engine->_previousRoomNumber = 38;
 			g_engine->changeToRoom(7);
+			g_engine->_cursor.showCursor(true);
 		} else if (_cutsceneId == 'Z') {
 			if (g_engine->isDosDemo()) {
 				g_engine->quitGame();

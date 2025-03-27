@@ -266,8 +266,8 @@ void manageEvents(CallSource callSource, EventTarget eventTarget, bool useMaxMou
 					}
 				}
 				mousePos = g_system->getEventManager()->getMousePos();
-				for (Common::Array<Common::Rect>::iterator it = rects.begin(); it != rects.end(); ++it) {
-					if (it->contains(mousePos)) {
+				for (auto &r : rects) {
+					if (r.contains(mousePos)) {
 						foundTarget = true;
 						break;
 					}

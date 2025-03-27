@@ -46,6 +46,8 @@ public:
 	Console(TosText *tostext, Sound *sound);
 	~Console();
 
+	void clear();
+
 	void printTosText(int tosIndex, bool shouldAddToCurrentLine = false);
 	void addTextLine(const Common::U32String &text);
 	void addToCurrentLine(const Common::String &text);

@@ -191,26 +191,26 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	_activeSpeech.playing = false;
 	_protagonist = nullptr;
 
-	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
-		actor->_lastZone = nullptr;
-		actor->_inScene = false;
-		actor->_spriteList.clear();
-		if ((actor->_flags & (kProtagonist | kFollower)) || (actor->_index == 0)) {
-			if (actor->_flags & kProtagonist) {
-				actor->_finalTarget = actor->_location;
-				_centerActor = _protagonist = actor;
+	for (auto &actor : _actors) {
+		actor._lastZone = nullptr;
+		actor._inScene = false;
+		actor._spriteList.clear();
+		if ((actor._flags & (kProtagonist | kFollower)) || (actor._index == 0)) {
+			if (actor._flags & kProtagonist) {
+				actor._finalTarget = actor._location;
+				_centerActor = _protagonist = &actor;
 			} else if (_vm->getGameId() == GID_ITE &&
 					   _vm->_scene->currentSceneResourceId() == ITE_SCENE_OVERMAP) {
 				continue;
 			}
 
-			actor->_sceneNumber = _vm->_scene->currentSceneNumber();
+			actor._sceneNumber = _vm->_scene->currentSceneNumber();
 		}
-		if (actor->_sceneNumber == _vm->_scene->currentSceneNumber()) {
-			actor->_inScene = true;
-			actor->_actionCycle = (_vm->_rnd.getRandomNumber(7) & 0x7) * 4; // 1/8th chance
-			if (actor->_currentAction != kActionFreeze) {
-				actor->_currentAction = kActionWait;
+		if (actor._sceneNumber == _vm->_scene->currentSceneNumber()) {
+			actor._inScene = true;
+			actor._actionCycle = (_vm->_rnd.getRandomNumber(7) & 0x7) * 4; // 1/8th chance
+			if (actor._currentAction != kActionFreeze) {
+				actor._currentAction = kActionWait;
 			}
 		}
 	}
@@ -258,16 +258,16 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	followerDirection = _protagonist->_facingDirection + 3;
 	calcScreenPosition(_protagonist);
 
-	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
-		if (actor->_flags & (kFollower)) {
-			actor->_facingDirection = actor->_actionDirection = _protagonist->_facingDirection;
-			actor->_currentAction = kActionWait;
-			actor->_walkStepsCount = actor->_walkStepIndex = 0;
-			actor->_location.z = _protagonist->_location.z;
+	for (auto &actor : _actors) {
+		if (actor._flags & (kFollower)) {
+			actor._facingDirection = actor._actionDirection = _protagonist->_facingDirection;
+			actor._currentAction = kActionWait;
+			actor._walkStepsCount = actor._walkStepIndex = 0;
+			actor._location.z = _protagonist->_location.z;
 
 
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				_vm->_isoMap->placeOnTileMap(_protagonist->_location, actor->_location, 3, followerDirection & 0x07);
+				_vm->_isoMap->placeOnTileMap(_protagonist->_location, actor._location, 3, followerDirection & 0x07);
 			} else {
 				followerDirection &= 0x07;
 
@@ -300,7 +300,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 					}
 				}
 
-				actor->_location = possibleLocation;
+				actor._location = possibleLocation;
 			}
 			followerDirection += 2;
 		}
@@ -325,79 +325,79 @@ void Actor::handleActions(int msec, bool setup) {
 	Point hitPoint;
 	Location pickLocation;
 
-	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
-		if (!actor->_inScene)
+	for (auto &actor : _actors) {
+		if (!actor._inScene)
 			continue;
 
-		if ((_vm->getGameId() == GID_ITE) && (actor->_index == ACTOR_DRAGON_INDEX)) {
-			moveDragon(actor);
+		if ((_vm->getGameId() == GID_ITE) && (actor._index == ACTOR_DRAGON_INDEX)) {
+			moveDragon(&actor);
 			continue;
 		}
 
-		switch (actor->_currentAction) {
+		switch (actor._currentAction) {
 		case kActionWait:
-			if (!setup && (actor->_flags & kFollower)) {
-				followProtagonist(actor);
-				if (actor->_currentAction != kActionWait)
+			if (!setup && (actor._flags & kFollower)) {
+				followProtagonist(&actor);
+				if (actor._currentAction != kActionWait)
 					break;
 			}
 
-			if (actor->_targetObject != ID_NOTHING) {
-				actorFaceTowardsObject(actor->_id, actor->_targetObject);
+			if (actor._targetObject != ID_NOTHING) {
+				actorFaceTowardsObject(actor._id, actor._targetObject);
 			}
 
-			if (actor->_flags & kCycle) {
-				frameRange = getActorFrameRange(actor->_id, getFrameType(kFrameStand));
+			if (actor._flags & kCycle) {
+				frameRange = getActorFrameRange(actor._id, getFrameType(kFrameStand));
 				if (frameRange->frameCount > 0) {
-					actor->_actionCycle++;
-					actor->_actionCycle = (actor->_actionCycle) % frameRange->frameCount;
+					actor._actionCycle++;
+					actor._actionCycle = (actor._actionCycle) % frameRange->frameCount;
 				} else {
-					actor->_actionCycle = 0;
+					actor._actionCycle = 0;
 				}
-				actor->_frameNumber = frameRange->frameIndex + actor->_actionCycle;
+				actor._frameNumber = frameRange->frameIndex + actor._actionCycle;
 				break;
 			}
 
-			if ((actor->_actionCycle & 3) == 0) {
-				actor->cycleWrap(100);
+			if ((actor._actionCycle & 3) == 0) {
+				actor.cycleWrap(100);
 
-				frameRange = getActorFrameRange(actor->_id, getFrameType(kFrameWait));
-				if ((frameRange->frameCount < 1 || actor->_actionCycle > 33))
-					frameRange = getActorFrameRange(actor->_id, getFrameType(kFrameStand));
+				frameRange = getActorFrameRange(actor._id, getFrameType(kFrameWait));
+				if ((frameRange->frameCount < 1 || actor._actionCycle > 33))
+					frameRange = getActorFrameRange(actor._id, getFrameType(kFrameStand));
 
 				if (frameRange->frameCount) {
-					actor->_frameNumber = frameRange->frameIndex + (uint16)_vm->_rnd.getRandomNumber(frameRange->frameCount - 1);
+					actor._frameNumber = frameRange->frameIndex + (uint16)_vm->_rnd.getRandomNumber(frameRange->frameCount - 1);
 				} else {
-					actor->_frameNumber = frameRange->frameIndex;
+					actor._frameNumber = frameRange->frameIndex;
 				}
 			}
-			actor->_actionCycle++;
+			actor._actionCycle++;
 			break;
 
 		case kActionWalkToPoint:
 		case kActionWalkToLink:
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				actor->_partialTarget.delta(actor->_location, delta);
+				actor._partialTarget.delta(actor._location, delta);
 
 				while ((delta.u() == 0) && (delta.v() == 0)) {
 
-					if ((actor == _protagonist) && (_vm->mouseButtonPressed())) {
+					if ((&actor == _protagonist) && (_vm->mouseButtonPressed())) {
 						_vm->_isoMap->screenPointToTileCoords(_vm->mousePos(), pickLocation);
 
 						if (!actorWalkTo(_protagonist->_id, pickLocation)) {
 							break;
 						}
-					} else if (!_vm->_isoMap->nextTileTarget(actor) && !actorEndWalk(actor->_id, true)) {
+					} else if (!_vm->_isoMap->nextTileTarget(&actor) && !actorEndWalk(actor._id, true)) {
 						break;
 					}
 
-					actor->_partialTarget.delta(actor->_location, delta);
-					actor->_partialTarget.z = 0;
+					actor._partialTarget.delta(actor._location, delta);
+					actor._partialTarget.z = 0;
 				}
 
-				if (actor->_flags & kFastest) {
+				if (actor._flags & kFastest) {
 					speed = 8;
-				} else if (actor->_flags & kFaster) {
+				} else if (actor._flags & kFaster) {
 					speed = 6;
 				} else {
 					speed = 4;
@@ -407,7 +407,7 @@ void Actor::handleActions(int msec, bool setup) {
 					speed = 2;
 				}
 
-				if ((actor->_actionDirection == 2) || (actor->_actionDirection == 6)) {
+				if ((actor._actionDirection == 2) || (actor._actionDirection == 6)) {
 					speed = speed / 2;
 				}
 
@@ -431,41 +431,41 @@ void Actor::handleActions(int msec, bool setup) {
 					}
 				}
 
-				actor->_location.add(addDelta);
+				actor._location.add(addDelta);
 			} else {
-				actor->_partialTarget.delta(actor->_location, delta);
+				actor._partialTarget.delta(actor._location, delta);
 
 				while ((delta.x == 0) && (delta.y == 0)) {
 
-					if (actor->_walkStepIndex >= actor->_walkStepsCount) {
-						actorEndWalk(actor->_id, true);
+					if (actor._walkStepIndex >= actor._walkStepsCount) {
+						actorEndWalk(actor._id, true);
 						return;		// break out of select case
 					}
 
-					actor->_partialTarget.fromScreenPoint(actor->_walkStepsPoints[actor->_walkStepIndex++]);
+					actor._partialTarget.fromScreenPoint(actor._walkStepsPoints[actor._walkStepIndex++]);
 					if (_vm->getGameId() == GID_ITE) {
-						if (actor->_partialTarget.x > 224 * 2 * ACTOR_LMULT) {
-							actor->_partialTarget.x -= 256 * 2 * ACTOR_LMULT;
+						if (actor._partialTarget.x > 224 * 2 * ACTOR_LMULT) {
+							actor._partialTarget.x -= 256 * 2 * ACTOR_LMULT;
 						}
 					} else {
-						if (actor->_partialTarget.x > 224 * 4 * ACTOR_LMULT) {
-							actor->_partialTarget.x -= 256 * 4 * ACTOR_LMULT;
+						if (actor._partialTarget.x > 224 * 4 * ACTOR_LMULT) {
+							actor._partialTarget.x -= 256 * 4 * ACTOR_LMULT;
 						}
 					}
 
-					actor->_partialTarget.delta(actor->_location, delta);
+					actor._partialTarget.delta(actor._location, delta);
 
 					if (ABS(delta.y) > ABS(delta.x)) {
-						actor->_actionDirection = delta.y > 0 ? kDirDown : kDirUp;
+						actor._actionDirection = delta.y > 0 ? kDirDown : kDirUp;
 					} else {
-						actor->_actionDirection = delta.x > 0 ? kDirRight : kDirLeft;
+						actor._actionDirection = delta.x > 0 ? kDirRight : kDirLeft;
 					}
 				}
 
 				if (_vm->getGameId() == GID_ITE)
-					speed = (ACTOR_LMULT * 2 * actor->_screenScale + 63) / 256;
+					speed = (ACTOR_LMULT * 2 * actor._screenScale + 63) / 256;
 				else
-					speed = (ACTOR_SPEED * actor->_screenScale + 128) >> 8;
+					speed = (ACTOR_SPEED * actor._screenScale + 128) >> 8;
 
 				if (speed < 1)
 					speed = 1;
@@ -473,7 +473,7 @@ void Actor::handleActions(int msec, bool setup) {
 				if (_vm->getGameId() == GID_IHNM)
 					speed = speed / 2;
 
-				if ((actor->_actionDirection == kDirUp) || (actor->_actionDirection == kDirDown)) {
+				if ((actor._actionDirection == kDirUp) || (actor._actionDirection == kDirDown)) {
 					addDelta.y = CLIP<int>(delta.y, -speed, speed);
 					if (addDelta.y == delta.y) {
 						addDelta.x = delta.x;
@@ -481,7 +481,7 @@ void Actor::handleActions(int msec, bool setup) {
 						addDelta.x = delta.x * addDelta.y;
 						addDelta.x += (addDelta.x > 0) ? (delta.y / 2) : (-delta.y / 2);
 						addDelta.x /= delta.y;
-						actor->_facingDirection = actor->_actionDirection;
+						actor._facingDirection = actor._actionDirection;
 					}
 				} else {
 					addDelta.x = CLIP<int>(delta.x, -2 * speed, 2 * speed);
@@ -491,80 +491,80 @@ void Actor::handleActions(int msec, bool setup) {
 						addDelta.y = delta.y * addDelta.x;
 						addDelta.y += (addDelta.y > 0) ? (delta.x / 2) : (-delta.x / 2);
 						addDelta.y /= delta.x;
-						actor->_facingDirection = actor->_actionDirection;
+						actor._facingDirection = actor._actionDirection;
 					}
 				}
 
-				actor->_location.add(addDelta);
+				actor._location.add(addDelta);
 			}
 
-			if (actor->_actorFlags & kActorBackwards) {
-				actor->_facingDirection = (actor->_actionDirection + 4) & 7;
-				actor->_actionCycle--;
+			if (actor._actorFlags & kActorBackwards) {
+				actor._facingDirection = (actor._actionDirection + 4) & 7;
+				actor._actionCycle--;
 			} else {
-				actor->_actionCycle++;
+				actor._actionCycle++;
 			}
 
-			frameRange = getActorFrameRange(actor->_id, actor->_walkFrameSequence);
+			frameRange = getActorFrameRange(actor._id, actor._walkFrameSequence);
 
-			if (actor->_actionCycle < 0) {
-				actor->_actionCycle = frameRange->frameCount - 1;
-			} else if (actor->_actionCycle >= frameRange->frameCount) {
-				actor->_actionCycle = 0;
+			if (actor._actionCycle < 0) {
+				actor._actionCycle = frameRange->frameCount - 1;
+			} else if (actor._actionCycle >= frameRange->frameCount) {
+				actor._actionCycle = 0;
 			}
 
-			actor->_frameNumber = frameRange->frameIndex + actor->_actionCycle;
+			actor._frameNumber = frameRange->frameIndex + actor._actionCycle;
 			break;
 
 		case kActionWalkDir:
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				actor->_location.u() += tileDirectionLUT[actor->_actionDirection][0];
-				actor->_location.v() += tileDirectionLUT[actor->_actionDirection][1];
+				actor._location.u() += tileDirectionLUT[actor._actionDirection][0];
+				actor._location.v() += tileDirectionLUT[actor._actionDirection][1];
 
-				frameRange = getActorFrameRange(actor->_id, actor->_walkFrameSequence);
+				frameRange = getActorFrameRange(actor._id, actor._walkFrameSequence);
 
-				actor->_actionCycle++;
-				actor->cycleWrap(frameRange->frameCount);
-				actor->_frameNumber = frameRange->frameIndex + actor->_actionCycle;
+				actor._actionCycle++;
+				actor.cycleWrap(frameRange->frameCount);
+				actor._frameNumber = frameRange->frameIndex + actor._actionCycle;
 			} else {
 				if (_vm->getGameId() == GID_ITE) {
-					actor->_location.x += directionLUT[actor->_actionDirection][0] * 2;
-					actor->_location.y += directionLUT[actor->_actionDirection][1] * 2;
+					actor._location.x += directionLUT[actor._actionDirection][0] * 2;
+					actor._location.y += directionLUT[actor._actionDirection][1] * 2;
 				} else {
 					// FIXME: The original does not multiply by 8 here, but we do
-					actor->_location.x += (directionLUT[actor->_actionDirection][0] * 8 * actor->_screenScale + 128) >> 8;
-					actor->_location.y += (directionLUT[actor->_actionDirection][1] * 8 * actor->_screenScale + 128) >> 8;
+					actor._location.x += (directionLUT[actor._actionDirection][0] * 8 * actor._screenScale + 128) >> 8;
+					actor._location.y += (directionLUT[actor._actionDirection][1] * 8 * actor._screenScale + 128) >> 8;
 				}
 
-				frameRange = getActorFrameRange(actor->_id, actor->_walkFrameSequence);
-				actor->_actionCycle++;
-				actor->cycleWrap(frameRange->frameCount);
-				actor->_frameNumber = frameRange->frameIndex + actor->_actionCycle;
+				frameRange = getActorFrameRange(actor._id, actor._walkFrameSequence);
+				actor._actionCycle++;
+				actor.cycleWrap(frameRange->frameCount);
+				actor._frameNumber = frameRange->frameIndex + actor._actionCycle;
 			}
 			break;
 
 		case kActionSpeak:
-			actor->_actionCycle++;
-			actor->cycleWrap(64);
+			actor._actionCycle++;
+			actor.cycleWrap(64);
 
-			frameRange = getActorFrameRange(actor->_id, getFrameType(kFrameGesture));
-			if (actor->_actionCycle >= frameRange->frameCount) {
-				if (actor->_actionCycle & 1)
+			frameRange = getActorFrameRange(actor._id, getFrameType(kFrameGesture));
+			if (actor._actionCycle >= frameRange->frameCount) {
+				if (actor._actionCycle & 1)
 					break;
-				frameRange = getActorFrameRange(actor->_id, getFrameType(kFrameSpeak));
+				frameRange = getActorFrameRange(actor._id, getFrameType(kFrameSpeak));
 
 				state = (uint16)_vm->_rnd.getRandomNumber(frameRange->frameCount);
 
 				if (state == 0) {
-					frameRange = getActorFrameRange(actor->_id, getFrameType(kFrameStand));
+					frameRange = getActorFrameRange(actor._id, getFrameType(kFrameStand));
 				} else {
 					state--;
 				}
 			} else {
-				state = actor->_actionCycle;
+				state = actor._actionCycle;
 			}
 
-			actor->_frameNumber = frameRange->frameIndex + state;
+			actor._frameNumber = frameRange->frameIndex + state;
 			break;
 
 		case kActionAccept:
@@ -574,105 +574,105 @@ void Actor::handleActions(int msec, bool setup) {
 
 		case kActionCycleFrames:
 		case kActionPongFrames:
-			if (actor->_cycleTimeCount > 0) {
-				actor->_cycleTimeCount--;
+			if (actor._cycleTimeCount > 0) {
+				actor._cycleTimeCount--;
 				break;
 			}
 
-			actor->_cycleTimeCount = actor->_cycleDelay;
-			actor->_actionCycle++;
+			actor._cycleTimeCount = actor._cycleDelay;
+			actor._actionCycle++;
 
-			frameRange = getActorFrameRange(actor->_id, actor->_cycleFrameSequence);
+			frameRange = getActorFrameRange(actor._id, actor._cycleFrameSequence);
 
-			if (actor->_currentAction == kActionPongFrames) {
-				if (actor->_actionCycle >= frameRange->frameCount * 2 - 2) {
-					if (actor->_actorFlags & kActorContinuous) {
-						actor->_actionCycle = 0;
+			if (actor._currentAction == kActionPongFrames) {
+				if (actor._actionCycle >= frameRange->frameCount * 2 - 2) {
+					if (actor._actorFlags & kActorContinuous) {
+						actor._actionCycle = 0;
 					} else {
-						actor->_currentAction = kActionFreeze;
+						actor._currentAction = kActionFreeze;
 						break;
 					}
 				}
 
-				state = actor->_actionCycle;
+				state = actor._actionCycle;
 				if (state >= frameRange->frameCount) {
 					state = frameRange->frameCount * 2 - 2 - state;
 				}
 			} else {
-				if (actor->_actionCycle >= frameRange->frameCount) {
-					if (actor->_actorFlags & kActorContinuous) {
-						actor->_actionCycle = 0;
+				if (actor._actionCycle >= frameRange->frameCount) {
+					if (actor._actorFlags & kActorContinuous) {
+						actor._actionCycle = 0;
 					} else {
-						actor->_currentAction = kActionFreeze;
+						actor._currentAction = kActionFreeze;
 						break;
 					}
 				}
-				state = actor->_actionCycle;
+				state = actor._actionCycle;
 			}
 
-			if (frameRange->frameCount && (actor->_actorFlags & kActorRandom)) {
+			if (frameRange->frameCount && (actor._actorFlags & kActorRandom)) {
 				state = _vm->_rnd.getRandomNumber(frameRange->frameCount - 1);
 			}
 
-			if (actor->_actorFlags & kActorBackwards) {
-				actor->_frameNumber = frameRange->frameIndex + frameRange->frameCount - 1 - state;
+			if (actor._actorFlags & kActorBackwards) {
+				actor._frameNumber = frameRange->frameIndex + frameRange->frameCount - 1 - state;
 			} else {
-				actor->_frameNumber = frameRange->frameIndex + state;
+				actor._frameNumber = frameRange->frameIndex + state;
 			}
 			break;
 
 		case kActionFall:
-			if (actor->_actionCycle > 0) {
-				framesLeft = actor->_actionCycle--;
-				actor->_finalTarget.delta(actor->_location, delta);
+			if (actor._actionCycle > 0) {
+				framesLeft = actor._actionCycle--;
+				actor._finalTarget.delta(actor._location, delta);
 				delta.x /= framesLeft;
 				delta.y /= framesLeft;
-				actor->_location.addXY(delta);
-				actor->_fallVelocity += actor->_fallAcceleration;
-				actor->_fallPosition += actor->_fallVelocity;
-				actor->_location.z = actor->_fallPosition >> 4;
+				actor._location.addXY(delta);
+				actor._fallVelocity += actor._fallAcceleration;
+				actor._fallPosition += actor._fallVelocity;
+				actor._location.z = actor._fallPosition >> 4;
 			} else {
-				actor->_location = actor->_finalTarget;
-				actor->_currentAction = kActionFreeze;
-				_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
+				actor._location = actor._finalTarget;
+				actor._currentAction = kActionFreeze;
+				_vm->_script->wakeUpActorThread(kWaitTypeWalk, &actor);
 			}
 			break;
 
 		case kActionClimb:
-			actor->_cycleDelay++;
-			if (actor->_cycleDelay & 3) {
+			actor._cycleDelay++;
+			if (actor._cycleDelay & 3) {
 				break;
 			}
 
-			if (actor->_location.z >= actor->_finalTarget.z + ACTOR_CLIMB_SPEED) {
-				actor->_location.z -= ACTOR_CLIMB_SPEED;
-				actor->_actionCycle--;
-			} else if (actor->_location.z <= actor->_finalTarget.z - ACTOR_CLIMB_SPEED) {
-				actor->_location.z += ACTOR_CLIMB_SPEED;
-				actor->_actionCycle++;
+			if (actor._location.z >= actor._finalTarget.z + ACTOR_CLIMB_SPEED) {
+				actor._location.z -= ACTOR_CLIMB_SPEED;
+				actor._actionCycle--;
+			} else if (actor._location.z <= actor._finalTarget.z - ACTOR_CLIMB_SPEED) {
+				actor._location.z += ACTOR_CLIMB_SPEED;
+				actor._actionCycle++;
 			} else {
-				actor->_location.z = actor->_finalTarget.z;
-				actor->_currentAction = kActionFreeze;
-				_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
+				actor._location.z = actor._finalTarget.z;
+				actor._currentAction = kActionFreeze;
+				_vm->_script->wakeUpActorThread(kWaitTypeWalk, &actor);
 			}
 
-			frameRange = getActorFrameRange(actor->_id, actor->_cycleFrameSequence);
+			frameRange = getActorFrameRange(actor._id, actor._cycleFrameSequence);
 
-			if (actor->_actionCycle < 0) {
-				actor->_actionCycle = frameRange->frameCount - 1;
+			if (actor._actionCycle < 0) {
+				actor._actionCycle = frameRange->frameCount - 1;
 			}
-			actor->cycleWrap(frameRange->frameCount);
-			actor->_frameNumber = frameRange->frameIndex + actor->_actionCycle;
+			actor.cycleWrap(frameRange->frameCount);
+			actor._frameNumber = frameRange->frameIndex + actor._actionCycle;
 			break;
 		}
 
-		if ((actor->_currentAction >= kActionWalkToPoint) && (actor->_currentAction <= kActionWalkDir)) {
+		if ((actor._currentAction >= kActionWalkToPoint) && (actor._currentAction <= kActionWalkDir)) {
 			hitZone = nullptr;
 
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				actor->_location.toScreenPointUV(hitPoint);
+				actor._location.toScreenPointUV(hitPoint);
 			} else {
-				actor->_location.toScreenPointXY(hitPoint);
+				actor._location.toScreenPointXY(hitPoint);
 			}
 			hitZoneIndex = _vm->_scene->_actionMap->hitTest(hitPoint);
 			if (hitZoneIndex != -1) {
@@ -691,16 +691,16 @@ void Actor::handleActions(int msec, bool setup) {
 						hitZone = nullptr;
 			}
 
-			if (hitZone != actor->_lastZone) {
-				if (actor->_lastZone)
-					stepZoneAction(actor, actor->_lastZone, true, false);
-				actor->_lastZone = hitZone;
+			if (hitZone != actor._lastZone) {
+				if (actor._lastZone)
+					stepZoneAction(&actor, actor._lastZone, true, false);
+				actor._lastZone = hitZone;
 				// WORKAROUND for graphics glitch in the rat caves. Don't do this step zone action in the rat caves
 				// (room 51) for hitzone 24577 (the door with the copy protection) to avoid the glitch. This glitch
 				// happens because the copy protection is supposed to kick in at this point, but it's bypassed
 				// (with permission from Wyrmkeep Entertainment)
 				if (hitZone && !(_vm->getGameId() == GID_ITE && _vm->_scene->currentSceneNumber() == 51 && hitZone->getHitZoneId() == 24577)) {
-					stepZoneAction(actor, hitZone, false, false);
+					stepZoneAction(&actor, hitZone, false, false);
 				}
 			}
 		}
@@ -965,13 +965,15 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 				collision.x = ACTOR_COLLISION_WIDTH * actor->_screenScale / (256 * 2);
 				collision.y = ACTOR_COLLISION_HEIGHT * actor->_screenScale / (256 * 2);
 
-				for (ActorDataArray::iterator anotherActor = _actors.begin(); (anotherActor != _actors.end()) && (_barrierCount < ACTOR_BARRIERS_MAX); ++anotherActor) {
-					if (!anotherActor->_inScene)
+				for (auto &anotherActor : _actors) {
+					if (_barrierCount >= ACTOR_BARRIERS_MAX)
+						break;
+					if (!anotherActor._inScene)
 						continue;
-					if (anotherActor == actor)
+					if (&anotherActor == actor)
 						continue;
 
-					anotherActorScreenPosition = anotherActor->_screenPosition;
+					anotherActorScreenPosition = anotherActor._screenPosition;
 					testBox.left = (anotherActorScreenPosition.x - collision.x) & ~1;
 					testBox.right = (anotherActorScreenPosition.x + collision.x) & ~1;
 					testBox.top = anotherActorScreenPosition.y - collision.y;

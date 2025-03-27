@@ -83,12 +83,12 @@ SaveStateList CruiseMetaEngine::listSaves(const char *target) const {
 	filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (const auto &filename : filenames) {
 		// Obtain the last 2 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 2);
+		int slotNum = atoi(filename.c_str() + filename.size() - 2);
 
 		if (slotNum >= 0 && slotNum <= 99) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			Common::InSaveFile *in = saveFileMan->openForLoading(filename);
 			if (in) {
 				Cruise::CruiseSavegameHeader header;
 				if (Cruise::readSavegameHeader(in, header))

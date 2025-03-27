@@ -679,14 +679,14 @@ bool Debugger::cmdMd5(int argc, const char **argv) {
 			debugPrintf("File '%s' not found\n", filename.c_str());
 		} else {
 			sort(list.begin(), list.end(), ArchiveMemberLess());
-			for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
-				Common::SeekableReadStream *stream = (*iter)->createReadStream();
+			for (auto &archive : list) {
+				Common::SeekableReadStream *stream = archive->createReadStream();
 				if (tail && stream->size() > length)
 					stream->seek(-length, SEEK_END);
 				Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
 				if (length != 0 && length < stream->size())
 					md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
-				debugPrintf("%s: %s, %llu bytes\n", (*iter)->getName().c_str(), md5.c_str(), (unsigned long long)stream->size());
+				debugPrintf("%s: %s, %llu bytes\n", archive->getName().c_str(), md5.c_str(), (unsigned long long)stream->size());
 				delete stream;
 			}
 		}
@@ -785,11 +785,11 @@ bool Debugger::cmdDebugFlagsList(int argc, const char **argv) {
 		debugPrintf("No engine debug levels\n");
 		return true;
 	}
-	for (Common::DebugManager::DebugChannelList::const_iterator i = debugLevels.begin(); i != debugLevels.end(); ++i) {
-		bool enabled = DebugMan.isDebugChannelEnabled(i->channel);
+	for (const auto &debugLevel : debugLevels) {
+		bool enabled = DebugMan.isDebugChannelEnabled(debugLevel.channel);
 
 		debugPrintf("%c%s - %s (%s)\n", enabled ? '+' : ' ',
-				i->name.c_str(), i->description.c_str(),
+				debugLevel.name.c_str(), debugLevel.description.c_str(),
 				enabled ? "enabled" : "disabled");
 	}
 	debugPrintf("\n");

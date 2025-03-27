@@ -83,16 +83,16 @@ Common::JSONObject ListAjaxHandler::listDirectory(const Common::String &path_) {
 	}
 
 	// fill the content
-	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
-		Common::String name = i->getName();
-		if (i->isDirectory())
+	for (auto &curNode : _nodeContent) {
+		Common::String name = curNode.getName();
+		if (curNode.isDirectory())
 			name += "/";
 
-		Common::Path relPath = i->getPath().relativeTo(baseFSPath);
+		Common::Path relPath = curNode.getPath().relativeTo(baseFSPath);
 		Common::String filePath(basePath);
 		filePath += relPath.toString('/');
 
-		addItem(itemsList, detectType(i->isDirectory(), name), filePath, name);
+		addItem(itemsList, detectType(curNode.isDirectory(), name), filePath, name);
 	}
 
 	successResult.setVal("items", new Common::JSONValue(itemsList));

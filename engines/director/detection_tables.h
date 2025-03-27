@@ -2293,6 +2293,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Rodem expects to be able to track the mouse cursor outside the
 	// window, which is impossible in ScummVM. Giving it a virtual
 	// desktop allows it to work like it would have on the original OS.
+	MACDEMO1f_l("henachoco05", "Demo", "xn--u9jyjb2hm5dx340eyb5b", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402, GF_DESKTOP|GF_640x480),
+	// Decomposed variant of the above
+	MACDEMO1f_l("henachoco05", "Demo", "xn--u9j8db1pc8mra5f3580fectc", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402, GF_DESKTOP|GF_640x480),
 	MACGAME1f_l("henachoco05", "", "yaken", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402, GF_DESKTOP|GF_640x480),
 	MACGAME1f_l("henachoco05", "Itachoco Taizen 2 rerelease", "yaken", "bb5f4d592c872f610291074fbf34376f", 290434, Common::JA_JPN, 402, GF_DESKTOP|GF_640x480),
 	WINGAME1f_l("henachoco05", "", "YAKEN.EXE", "1f9b0ef872de7b84063a53b2a1083c60", 2103629, Common::JA_JPN, 400, GF_DESKTOP|GF_640x480),

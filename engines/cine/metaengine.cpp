@@ -124,12 +124,11 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 
 	Common::String pattern;
 
-	Common::StringArray::const_iterator file;
-
 	Common::String filename = target;
 	filename += ".dir";
 	Common::InSaveFile *in = saveFileMan->openForLoading(filename);
 	bool foundAutosave = false;
+
 	if (in) {
 		typedef char CommandeType[SAVEGAME_NAME_LEN];
 		CommandeType saveNames[MAX_SAVEGAMES];
@@ -146,9 +145,9 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 		pattern += ".#*";
 		Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
 
-		for (file = filenames.begin(); file != filenames.end(); ++file) {
+		for (const auto &file : filenames) {
 			// Obtain the extension part of the filename, since it corresponds to the save slot number
-			Common::String ext = Common::lastPathComponent(*file, '.');
+			Common::String ext = Common::lastPathComponent(file, '.');
 			int slotNum = (int)ext.asUint64();
 
 			if (ext.equals(Common::String::format("%d", slotNum)) &&

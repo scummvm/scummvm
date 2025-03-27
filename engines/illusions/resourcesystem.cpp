@@ -65,8 +65,8 @@ ResourceSystem::ResourceSystem(IllusionsEngine *vm)
 
 ResourceSystem::~ResourceSystem() {
 	// Delete all registered resource loaders
-	for (ResourceLoadersMapIterator it = _resourceLoaders.begin(); it != _resourceLoaders.end(); ++it) {
-		delete (*it)._value;
+	for (auto &resourceLoader : _resourceLoaders) {
+		delete resourceLoader._value;
 	}
 }
 
@@ -126,8 +126,8 @@ void ResourceSystem::unloadSceneResources(uint32 sceneId1, uint32 sceneId2) {
 }
 
 void ResourceSystem::unloadAllResources() {
-	for (ResourcesArrayIterator it = _resources.begin(); it != _resources.end(); ++it) {
-		delete (*it);
+	for (auto *resource : _resources) {
+		delete resource;
 	}
 	_resources.clear();
 }

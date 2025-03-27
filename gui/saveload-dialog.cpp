@@ -749,9 +749,9 @@ void SaveLoadChooserSimple::updateSaveList(bool external) {
 	Common::U32StringArray saveNames;
 	ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal;
 	Common::U32String emptyDesc;
-	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
+	for (const auto &x : _saveList) {
 		// Handle gaps in the list of save games
-		saveSlot = x->getSaveSlot();
+		saveSlot = x.getSaveSlot();
 		if (curSlot < saveSlot) {
 			while (curSlot < saveSlot) {
 				SaveStateDescriptor dummySave(_metaEngine, curSlot, "");
@@ -761,21 +761,21 @@ void SaveLoadChooserSimple::updateSaveList(bool external) {
 			}
 
 			// Sync the save list iterator
-			for (x = _saveList.begin(); x != _saveList.end(); ++x) {
-				if (x->getSaveSlot() == saveSlot)
+			for (auto &y : _saveList) {
+				if (y.getSaveSlot() == saveSlot)
 					break;
 			}
 		}
 
 		// Show "Untitled saved game" for empty/whitespace saved game descriptions
-		Common::U32String description = x->getDescription();
+		Common::U32String description = x.getDescription();
 		Common::U32String trimmedDescription = description;
 		trimmedDescription.trim();
 		if (trimmedDescription.empty()) {
 			description = _("Untitled saved game");
 			color = ThemeEngine::kFontColorAlternate;
 		} else {
-			color = x->getLocked() ? ThemeEngine::kFontColorAlternate : ThemeEngine::kFontColorNormal;
+			color = x.getLocked() ? ThemeEngine::kFontColorAlternate : ThemeEngine::kFontColorNormal;
 		}
 
 		saveNames.push_back(GUI::ListWidget::getThemeColor(color) + description);
@@ -948,8 +948,8 @@ void SaveLoadChooserGrid::open() {
 	if (_saveMode) {
 		int lastSlot = -1;
 		_nextFreeSaveSlot = -1;
-		for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
-			const int curSlot = x->getSaveSlot();
+		for (const auto &x : _saveList) {
+			const int curSlot = x.getSaveSlot();
 
 			// In case there was a gap found use the slot.
 			if (lastSlot + 1 < curSlot) {

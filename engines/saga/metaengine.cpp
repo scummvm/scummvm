@@ -156,12 +156,12 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 
 	SaveStateList saveList;
 	int slotNum = 0;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (const auto &file : filenames) {
 		// Obtain the last 2 digits of the filename, since they correspond to the save slot
-		slotNum = atoi(file->c_str() + file->size() - 2);
+		slotNum = atoi(file.c_str() + file.size() - 2);
 
 		if (slotNum >= 0 && slotNum < MAX_SAVES) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			Common::InSaveFile *in = saveFileMan->openForLoading(file);
 			if (in) {
 				for (int i = 0; i < 3; i++)
 					in->readUint32BE();

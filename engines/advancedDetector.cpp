@@ -54,8 +54,8 @@ public:
 
 	int listMembers(Common::ArchiveMemberList &list) const override {
 		int files = 0;
-		for (AdvancedMetaEngineDetectionBase::FileMap::const_iterator it = _fileMap.begin(); it != _fileMap.end(); ++it) {
-			list.push_back(Common::ArchiveMemberPtr(new Common::FSNode(it->_value)));
+		for (const auto &file : _fileMap) {
+			list.push_back(Common::ArchiveMemberPtr(new Common::FSNode(file._value)));
 			++files;
 		}
 
@@ -416,8 +416,8 @@ Common::Error AdvancedMetaEngineDetectionBase::identifyGame(DetectedGame &game, 
 		Common::StringArray dirs = getPathsFromEntry(agdDesc.desc);
 		Common::FSNode gameDataDir = Common::FSNode(ConfMan.getPath("path"));
 
-		for (auto d = dirs.begin(); d != dirs.end(); ++d)
-			SearchMan.addSubDirectoryMatching(gameDataDir, *d, 0, _fullPathGlobsDepth);
+		for (auto &curDir : dirs)
+			SearchMan.addSubDirectoryMatching(gameDataDir, curDir, 0, _fullPathGlobsDepth);
 	}
 
 	game = toDetectedGame(agdDesc);
@@ -433,16 +433,16 @@ void AdvancedMetaEngineDetectionBase::composeFileHashMap(FileMap &allFiles, cons
 	if (fslist.empty())
 		return;
 
-	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		Common::String efname = Common::punycode_encodefilename(file->getName());
+	for (const auto &file : fslist) {
+		Common::String efname = Common::punycode_encodefilename(file.getName());
 		Common::Path tstr = ((_flags & kADFlagMatchFullPaths) ? parentName : Common::Path()).appendComponent(efname);
 
-		if (file->isDirectory()) {
+		if (file.isDirectory()) {
 			if (!_globsMap.contains(efname))
 				continue;
 
 			Common::FSList files;
-			if (!file->getChildren(files, Common::FSNode::kListAll))
+			if (!file.getChildren(files, Common::FSNode::kListAll))
 				continue;
 
 			composeFileHashMap(allFiles, files, depth - 1, tstr);
@@ -457,8 +457,8 @@ void AdvancedMetaEngineDetectionBase::composeFileHashMap(FileMap &allFiles, cons
 
 		debugC(9, kDebugGlobalDetection, "$$ ['%s'] ['%s'] in '%s", tstr.toString().c_str(), efname.c_str(), firstPathComponents(fslist.front().getPath().toString(), '/').c_str());
 
-		allFiles[tstr] = *file;		// Record the presence of this file
-		allFiles[Common::Path(efname, Common::Path::kNoSeparator)] = *file;	// ...and its file name
+		allFiles[tstr] = file;		// Record the presence of this file
+		allFiles[Common::Path(efname, Common::Path::kNoSeparator)] = file;	// ...and its file name
 	}
 }
 
@@ -1167,8 +1167,8 @@ Common::Error AdvancedMetaEngineBase::createInstance(OSystem *syst, Engine **eng
 
 	debug("Running %s", gameDescriptor.description.c_str());
 	Common::Array<Common::Path> filenames;
-	for (FilePropertiesMap::const_iterator i = gameDescriptor.matchedFiles.begin(); i != gameDescriptor.matchedFiles.end(); ++i) {
-		filenames.push_back(i->_key);
+	for (const auto &file : gameDescriptor.matchedFiles) {
+		filenames.push_back(file._key);
 	}
 	Common::sort(filenames.begin(), filenames.end());
 	for (uint i = 0; i < filenames.size(); ++i) {

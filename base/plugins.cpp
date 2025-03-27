@@ -203,21 +203,20 @@ PluginList FilePluginProvider::getPlugins() {
 	if (!pluginsPath.empty())
 		pluginDirs.push_back(Common::FSNode(pluginsPath));
 
-	Common::FSList::const_iterator dir;
-	for (dir = pluginDirs.begin(); dir != pluginDirs.end(); ++dir) {
+	for (const auto &dir : pluginDirs) {
 		// Load all plugins.
 		// Scan for all plugins in this directory
 		Common::FSList files;
-		if (!dir->getChildren(files, Common::FSNode::kListFilesOnly)) {
-			debug(1, "Couldn't open plugin directory '%s'", dir->getPath().toString().c_str());
+		if (!dir.getChildren(files, Common::FSNode::kListFilesOnly)) {
+			debug(1, "Couldn't open plugin directory '%s'", dir.getPath().toString().c_str());
 			continue;
 		} else {
-			debug(1, "Reading plugins from plugin directory '%s'", dir->getPath().toString().c_str());
+			debug(1, "Reading plugins from plugin directory '%s'", dir.getPath().toString().c_str());
 		}
 
-		for (Common::FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
-			if (isPluginFilename(*i)) {
-				pl.push_back(createPlugin(*i));
+		for (const auto &curFile : files) {
+			if (isPluginFilename(curFile)) {
+				pl.push_back(createPlugin(curFile));
 			}
 		}
 	}
@@ -277,10 +276,8 @@ PluginManager::~PluginManager() {
 	unloadAllPlugins();
 
 	// Delete the plugin providers
-	for (ProviderList::iterator pp = _providers.begin();
-	                            pp != _providers.end();
-	                            ++pp) {
-		delete *pp;
+	for (auto *pluginProvider : _providers) {
+		delete pluginProvider;
 	}
 }
 
@@ -293,8 +290,8 @@ PluginManagerUncached::~PluginManagerUncached() {
 	// They are also referenced from _allEnginePlugins which we clean up here
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, nullptr, false);
 
-	for (PluginList::iterator p = _allEnginePlugins.begin(); p != _allEnginePlugins.end(); ++p) {
-		delete *p;
+	for (auto *enginePlugin : _allEnginePlugins) {
+		delete enginePlugin;
 	}
 	_allEnginePlugins.clear();
 
@@ -319,21 +316,19 @@ void PluginManagerUncached::init() {
 	bool foundDetectPlugin = false;
 #endif
 
-	for (ProviderList::iterator pp = _providers.begin();
-	                            pp != _providers.end();
-	                            ++pp) {
-		PluginList pl((*pp)->getPlugins());
+	for (auto &pluginProvider : _providers) {
+		PluginList plugins(pluginProvider->getPlugins());
 
-		for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
+		for (auto &curPlugin : plugins) {
 			// This is a 'hack' based on the assumption that we have no sound
 			// file plugins. Currently this is the case. If it changes, we
 			// should find a fast way of detecting whether a plugin is a
 			// music or an engine plugin.
 #ifndef DETECTION_STATIC
-			if (!foundDetectPlugin && (*pp)->isFilePluginProvider()) {
-				Common::Path pName = (*p)->getFileName();
+			if (!foundDetectPlugin && pluginProvider->isFilePluginProvider()) {
+				Common::Path pName = curPlugin->getFileName();
 				if (pName.baseName().hasSuffixIgnoreCase(detectPluginName)) {
-					_detectionPlugin = (*p);
+					_detectionPlugin = curPlugin;
 					foundDetectPlugin = true;
 					debug(9, "Detection plugin found!");
 					continue;
@@ -341,15 +336,15 @@ void PluginManagerUncached::init() {
 			}
 #endif
 
-			if ((*pp)->isFilePluginProvider()) {
-				_allEnginePlugins.push_back(*p);
-			} else if ((*p)->loadPlugin()) { // and this is the proper method
-				if ((*p)->getType() == PLUGIN_TYPE_ENGINE) {
-					(*p)->unloadPlugin();
-					_allEnginePlugins.push_back(*p);
+			if (pluginProvider->isFilePluginProvider()) {
+				_allEnginePlugins.push_back(curPlugin);
+			} else if (curPlugin->loadPlugin()) { // and this is the proper method
+				if (curPlugin->getType() == PLUGIN_TYPE_ENGINE) {
+					curPlugin->unloadPlugin();
+					_allEnginePlugins.push_back(curPlugin);
 				} else {	// add non-engine plugins to the 'in-memory' list
 							// these won't ever get unloaded
-					addToPluginsInMemList(*p);
+					addToPluginsInMemList(curPlugin);
 				}
 			}
  		}
@@ -378,8 +373,8 @@ bool PluginManagerUncached::loadPluginFromEngineId(const Common::String &engineI
 #ifdef PLUGIN_SUFFIX
 	tentativeEnginePluginFilename += PLUGIN_SUFFIX;
 #endif
-	for (PluginList::iterator p = _allEnginePlugins.begin(); p != _allEnginePlugins.end(); ++p) {
-		Common::Path filename = (*p)->getFileName();
+	for (auto &enginePlugin : _allEnginePlugins) {
+		Common::Path filename = enginePlugin->getFileName();
 		if (filename.baseName().hasSuffixIgnoreCase(tentativeEnginePluginFilename)) {
 			if (loadPluginByFileName(filename)) {
 				return true;
@@ -398,11 +393,10 @@ bool PluginManagerUncached::loadPluginByFileName(const Common::Path &filename) {
 
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, nullptr, false);
 
-	PluginList::iterator i;
-	for (i = _allEnginePlugins.begin(); i != _allEnginePlugins.end(); ++i) {
-		if ((*i)->getFileName() == filename && (*i)->loadPlugin()) {
-			addToPluginsInMemList(*i);
-			_currentPlugin = i;
+	for (auto &enginePlugin : _allEnginePlugins) {
+		if (enginePlugin->getFileName() == filename && enginePlugin->loadPlugin()) {
+			addToPluginsInMemList(enginePlugin);
+			_currentPlugin = &enginePlugin;
 			return true;
 		}
 	}
@@ -501,10 +495,8 @@ bool PluginManagerUncached::loadNextPlugin() {
  * one plugin in memory at a time.
  **/
 void PluginManager::loadAllPlugins() {
-	for (ProviderList::iterator pp = _providers.begin();
-	                            pp != _providers.end();
-	                            ++pp) {
-		PluginList pl((*pp)->getPlugins());
+	for (auto &pluginProvider : _providers) {
+		PluginList pl(pluginProvider->getPlugins());
 		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManager::tryLoadPlugin), this));
 	}
 
@@ -515,10 +507,8 @@ void PluginManager::loadAllPlugins() {
 	 */
 	PluginList dpl = getPlugins(PLUGIN_TYPE_DETECTION);
 	_pluginsInMem[PLUGIN_TYPE_ENGINE_DETECTION].clear();
-	for (PluginList::iterator it = dpl.begin();
-	                            it != dpl.end();
-	                            ++it) {
-		const Detection &detectionConnect = (*it)->get<Detection>();
+	for (auto &plugin : dpl) {
+		const Detection &detectionConnect = plugin->get<Detection>();
 		const PluginList &pl = detectionConnect.getPlugins();
 		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManager::tryLoadPlugin), this));
 	}
@@ -526,24 +516,20 @@ void PluginManager::loadAllPlugins() {
 }
 
 void PluginManager::loadAllPluginsOfType(PluginType type) {
-	for (ProviderList::iterator pp = _providers.begin();
-	                            pp != _providers.end();
-	                            ++pp) {
-		PluginList pl((*pp)->getPlugins());
-		for (PluginList::iterator p = pl.begin();
-				                  p != pl.end();
-								  ++p) {
-			if ((*p)->loadPlugin()) {
-				if ((*p)->getType() == type) {
-					addToPluginsInMemList((*p));
+	for (auto &pluginProvider : _providers) {
+		PluginList pluginList(pluginProvider->getPlugins());
+		for (auto *plugin : pluginList) {
+			if (plugin->loadPlugin()) {
+				if (plugin->getType() == type) {
+					addToPluginsInMemList(plugin);
 				} else {
 					// Plugin is wrong type
-					(*p)->unloadPlugin();
-					delete (*p);
+					plugin->unloadPlugin();
+					delete plugin;
 				}
 			} else {
 				// Plugin did not load
-				delete (*p);
+				delete plugin;
 			}
 		}
 	}
@@ -556,13 +542,13 @@ void PluginManager::unloadAllPlugins() {
 
 void PluginManager::unloadPluginsExcept(PluginType type, const Plugin *plugin, bool deletePlugin /*=true*/) {
 	Plugin *found = nullptr;
-	for (PluginList::iterator p = _pluginsInMem[type].begin(); p != _pluginsInMem[type].end(); ++p) {
-		if (*p == plugin) {
-			found = *p;
+	for (auto *curPlugin : _pluginsInMem[type]) {
+		if (curPlugin == plugin) {
+			found = curPlugin;
 		} else {
-			(*p)->unloadPlugin();
+			curPlugin->unloadPlugin();
 			if (deletePlugin) {
-				delete *p;
+				delete curPlugin;
 			}
 		}
 	}
@@ -665,10 +651,9 @@ QualifiedGameList EngineManager::findGameInLoadedPlugins(const Common::String &g
 	const PluginList &plugins = getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 
 	QualifiedGameList results;
-	PluginList::const_iterator iter;
 
-	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		const MetaEngineDetection &engine = (*iter)->get<MetaEngineDetection>();
+	for (const auto &plugin : plugins) {
+		const MetaEngineDetection &engine = plugin->get<MetaEngineDetection>();
 		DebugMan.addAllDebugChannels(engine.getDebugChannels());
 		PlainGameDescriptor pluginResult = engine.findGame(gameId.c_str());
 
@@ -682,20 +667,18 @@ QualifiedGameList EngineManager::findGameInLoadedPlugins(const Common::String &g
 
 DetectionResults EngineManager::detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) {
 	DetectedGames candidates;
-	PluginList plugins;
-	PluginList::const_iterator iter;
 
 	// MetaEngines are always loaded into memory, so, get them and
 	// run detection for all of them.
-	plugins = getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
+	PluginList plugins = getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 
 	// Clear md5 cache before each detection starts, just in case.
 	ADCacheMan.clear();
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
-	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
+	for (const auto &plugin : plugins) {
+		MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
 		// set the debug flags
 		DebugMan.addAllDebugChannels(metaEngine.getDebugChannels());
 		DetectedGames engineCandidates = metaEngine.detectGames(fslist, skipADFlags, skipIncomplete);
@@ -759,9 +742,8 @@ Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
 	addStringToConf("guioptions", game.getGUIOptions(), domain);
 
 	// Add any extra configuration keys
-	for (Common::StringMap::iterator i = game._extraConfigEntries.begin();
-			i != game._extraConfigEntries.end(); ++i)
-		addStringToConf((*i)._key, (*i)._value, domain);
+	for (auto &extraConfigEntry : game._extraConfigEntries)
+		addStringToConf(extraConfigEntry._key, extraConfigEntry._value, domain);
 
 	// TODO: Setting the description field here has the drawback
 	// that the user does never notice when we upgrade our descriptions.
@@ -779,9 +761,9 @@ Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
 const Plugin *EngineManager::findDetectionPlugin(const Common::String &engineId) const {
 	const PluginList &plugins = getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 
-	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++)
-		if (engineId == (*iter)->get<MetaEngineDetection>().getName())
-			return *iter;
+	for (const auto &plugin : plugins)
+		if (engineId == plugin->get<MetaEngineDetection>().getName())
+			return plugin;
 
 	return nullptr;
 }
@@ -789,9 +771,9 @@ const Plugin *EngineManager::findDetectionPlugin(const Common::String &engineId)
 const Plugin *PluginManager::findLoadedPlugin(const Common::String &engineId) {
 	const PluginList &plugins = getPlugins(PLUGIN_TYPE_ENGINE);
 
-	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++)
-		if (engineId == (*iter)->get<MetaEngine>().getName())
-			return *iter;
+	for (const auto &plugin : plugins)
+		if (engineId == plugin->get<MetaEngine>().getName())
+			return plugin;
 
 	return nullptr;
 }
@@ -985,9 +967,8 @@ const PluginList &ScalerManager::getPlugins() const {
 uint ScalerManager::getMaxExtraPixels() const {
 	uint maxPixels = 0;
 	PluginList plugins = getPlugins();
-	PluginList::iterator i = plugins.begin();
-	for (; i != plugins.end(); ++i) {
-		uint n = (*i)->get<ScalerPluginObject>().extraPixels();
+	for (auto &plugin : plugins) {
+		uint n = plugin->get<ScalerPluginObject>().extraPixels();
 		if (n > maxPixels) {
 			maxPixels = n;
 		}
@@ -997,9 +978,9 @@ uint ScalerManager::getMaxExtraPixels() const {
 
 Plugin *ScalerManager::findScalerPlugin(const char *name) const {
 	const PluginList &plugins = getPlugins();
-	for (PluginList::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
-		if (!strcmp((*i)->get<ScalerPluginObject>().getName(), name)) {
-			return *i;
+	for (const auto &plugin : plugins) {
+		if (!strcmp(plugin->get<ScalerPluginObject>().getName(), name)) {
+			return plugin;
 		}
 	}
 
@@ -1010,8 +991,8 @@ uint ScalerManager::findScalerPluginIndex(const char *name) const {
 	const PluginList &plugins = getPlugins();
 	uint index = 0;
 
-	for (PluginList::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
-		if (!strcmp((*i)->get<ScalerPluginObject>().getName(), name)) {
+	for (auto &plugin : plugins) {
+		if (!strcmp(plugin->get<ScalerPluginObject>().getName(), name)) {
 			return index;
 		}
 		index++;

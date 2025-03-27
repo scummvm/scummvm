@@ -57,6 +57,13 @@ Console::~Console() {
 	delete _font;
 }
 
+void Console::clear() {
+	_text.clear();
+	_text.resize(10);
+	_startIdx = 0;
+	_redrawRequired = true;
+}
+
 void Console::printTosText(int tosIndex, bool shouldAddToCurrentLine) {
 	if (g_engine->isDosDemo()) {
 		debug("TosIndex: %d", tosIndex);

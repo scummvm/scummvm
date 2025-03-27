@@ -213,8 +213,8 @@ _sustain(false), _fading(false), _dataPtr(nullptr), _vbrModInitVal(0), _vbrModCu
 #undef CONTROL
 
 TownsPC98_MusicChannel::~TownsPC98_MusicChannel() {
-	for (Common::Array<const ControlEvent*>::iterator i = _controlEvents.begin(); i != _controlEvents.end(); ++i)
-		delete *i;
+	for (auto *event : _controlEvents)
+		delete event;
 }
 
 void TownsPC98_MusicChannel::reset() {
@@ -613,8 +613,8 @@ TownsPC98_MusicChannel(driver, regOffs, flgs, num, key, prt, id), _algorithm(0x8
 #undef CONTROL
 
 TownsPC98_MusicChannelSSG::~TownsPC98_MusicChannelSSG() {
-	for (Common::Array<const ControlEvent*>::iterator i = _controlEvents.begin(); i != _controlEvents.end(); ++i)
-		delete *i;
+	for (auto *event : _controlEvents)
+		delete event;
 	delete[] _envPatchData;
 	_envPatchData = nullptr;
 }
@@ -1001,8 +1001,8 @@ TownsPC98_MusicChannel(driver, regOffs, flgs, num, key, prt, id) {
 #undef CONTROL
 
 TownsPC98_MusicChannelPCM::~TownsPC98_MusicChannelPCM() {
-	for (Common::Array<const ControlEvent*>::iterator i = _controlEvents.begin(); i != _controlEvents.end(); ++i)
-		delete *i;
+	for (auto *event : _controlEvents)
+		delete event;
 }
 
 void TownsPC98_MusicChannelPCM::loadData(uint8 *data) {

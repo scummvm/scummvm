@@ -80,16 +80,16 @@ void Peephole::startUpWater(bool flag) {
 
 	marks[_id] = true;
 
-	for (Common::List<Connector *>::iterator iter = _connectors.begin(); iter != _connectors.end(); ++iter) {
-		for (Common::List<Peephole *>::iterator iter1 = (*iter)->_connectedNodes.begin(); iter1 != (*iter)->_connectedNodes.end(); ++iter1) {
-			if (!marks[(*iter1)->getId()]) {
+	for (auto &connector : _connectors) {
+		for (auto &connectedNode : connector->_connectedNodes) {
+			if (!marks[connectedNode->getId()]) {
 
 				for (uint32 i = 0; i < 4; ++i) {
-					if (isConnected(i) && (*iter1)->getId() > 3)
-						(*iter1)->_flowValues[i] += _flowValues[i];
+					if (isConnected(i) && connectedNode->getId() > 3)
+						connectedNode->_flowValues[i] += _flowValues[i];
 				}
 
-				(*iter1)->startUpWater();
+				connectedNode->startUpWater();
 			}
 		}
 	}
@@ -186,14 +186,14 @@ void Connector::turn(bool updpos) {
 }
 
 void Connector::connect(Connector *connector) {
-	for (Common::List<Peephole *>::iterator iter = _connectedNodes.begin(); iter != _connectedNodes.end(); ++iter) {
-		(*iter)->connect(connector);
-		connector->_connectedNodes.push_back(*iter);
+	for (auto &connectedNode : _connectedNodes) {
+		connectedNode->connect(connector);
+		connector->_connectedNodes.push_back(connectedNode);
 	}
 
-	for (Common::List<Peephole *>::iterator iter = connector->_connectedNodes.begin(); iter != connector->_connectedNodes.end(); ++iter) {
-		(*iter)->connect(this);
-		_connectedNodes.push_back(*iter);
+	for (auto &connectedNode : connector->_connectedNodes) {
+		connectedNode->connect(this);
+		_connectedNodes.push_back(connectedNode);
 	}
 
 	_isConnected = connector->_isConnected = true;

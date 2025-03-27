@@ -64,9 +64,9 @@ void InventoryBag::registerInventorySlot(uint32 namedPointId) {
 bool InventoryBag::addInventoryItem(InventoryItem *inventoryItem, InventorySlot *inventorySlot) {
 	// NOTE Skipped support for multiple items per slot, not used in BBDOU
 	if (!inventorySlot) {
-		for (InventorySlotsIterator it = _inventorySlots.begin(); it != _inventorySlots.end(); ++it) {
-			if (!(*it)->_inventoryItem) {
-				inventorySlot = *it;
+		for (auto &slot : _inventorySlots) {
+			if (!slot->_inventoryItem) {
+				inventorySlot = slot;
 				break;
 			}
 		}
@@ -79,9 +79,9 @@ bool InventoryBag::addInventoryItem(InventoryItem *inventoryItem, InventorySlot 
 }
 
 void InventoryBag::removeInventoryItem(InventoryItem *inventoryItem) {
-	for (InventorySlotsIterator it = _inventorySlots.begin(); it != _inventorySlots.end(); ++it) {
-		if ((*it)->_inventoryItem && (*it)->_inventoryItem->_objectId == inventoryItem->_objectId)
-			(*it)->_inventoryItem = nullptr;
+	for (auto &slot : _inventorySlots) {
+		if (slot->_inventoryItem && slot->_inventoryItem->_objectId == inventoryItem->_objectId)
+			slot->_inventoryItem = nullptr;
 	}
 }
 
@@ -128,8 +128,7 @@ InventorySlot *InventoryBag::getInventorySlot(uint32 objectId) {
 InventorySlot *InventoryBag::findClosestSlot(Common::Point putPos, int index) {
 	uint minDistance = 0xFFFFFFFF;
 	InventorySlot *minDistanceSlot = nullptr;
-	for (InventorySlotsIterator it = _inventorySlots.begin(); it != _inventorySlots.end(); ++it) {
-		InventorySlot *inventorySlot = *it;
+	for (auto &inventorySlot : _inventorySlots) {
 		Common::Point slotPos = _vm->getNamedPointPosition(inventorySlot->_namedPointId);
 		uint currDistance = (slotPos.y - putPos.y) * (slotPos.y - putPos.y) + (slotPos.x - putPos.x) * (slotPos.x - putPos.x);
 		if (currDistance < minDistance) {
@@ -287,12 +286,11 @@ void BbdouInventory::refresh() {
 }
 
 void BbdouInventory::buildItems(InventoryBag *inventoryBag) {
-	for (InventoryItemsIterator it = _inventoryItems.begin(); it != _inventoryItems.end(); ++it) {
-		(*it)->_timesPresent = 0;
+	for (auto &inventoryItem : _inventoryItems) {
+		inventoryItem->_timesPresent = 0;
 	}
 	inventoryBag->buildItems();
-	for (InventoryItemsIterator it = _inventoryItems.begin(); it != _inventoryItems.end(); ++it) {
-		InventoryItem *inventoryItem = *it;
+	for (auto &inventoryItem : _inventoryItems) {
 		if (inventoryItem->_assigned && !inventoryItem->_flag &&
 			inventoryItem->_timesPresent == 0 &&
 			inventoryItem->_objectId != _bbdou->_cursor->_data._holdingObjectId)
@@ -301,8 +299,7 @@ void BbdouInventory::buildItems(InventoryBag *inventoryBag) {
 }
 
 void BbdouInventory::clear() {
-	for (InventoryItemsIterator it = _inventoryItems.begin(); it != _inventoryItems.end(); ++it) {
-		InventoryItem *inventoryItem = *it;
+	for (auto &inventoryItem : _inventoryItems) {
 		inventoryItem->_assigned = false;
 		inventoryItem->_flag = false;
 	}

@@ -149,8 +149,8 @@ void FileBrowserDialog::updateListing() {
 	Common::StringArray filenames = saveFileMan->listSavefiles(_fileMask);
 	Common::sort(filenames.begin(), filenames.end());
 
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		list.push_back(Common::U32String(*file));
+	for (const auto &file : filenames) {
+		list.push_back(Common::U32String(file));
 	}
 
 	_fileList->setList(list);

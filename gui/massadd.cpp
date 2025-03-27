@@ -135,13 +135,13 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		// people who want to edit their config file by hand after a mass add.
 		Common::sort(_games.begin(), _games.end(), GameTargetLess());
 		// Add all the detected games to the config
-		for (DetectedGames::iterator iter = _games.begin(); iter != _games.end(); ++iter) {
+		for (auto &game : _games) {
 			// Make sure the game is selected
-			if (iter->isSelected) {
+			if (game.isSelected) {
 				debug(1, "  Added gameid '%s', desc '%s'",
-					iter->gameId.c_str(),
-					iter->description.c_str());
-				iter->gameId = EngineMan.createTargetForGame(*iter);
+					game.gameId.c_str(),
+					game.description.c_str());
+				game.gameId = EngineMan.createTargetForGame(game);
 			}
 		}
 
@@ -213,8 +213,8 @@ void MassAddDialog::handleTickle() {
 		//
 		// However, we only add games which are not already in the config file.
 		DetectedGames candidates = detectionResults.listRecognizedGames();
-		for (DetectedGames::const_iterator cand = candidates.begin(); cand != candidates.end(); ++cand) {
-			const DetectedGame &result = *cand;
+		for (const auto &cand : candidates) {
+			const DetectedGame &result = cand;
 
 			Common::Path path = dir.getPath();
 			path.removeTrailingSeparators();
@@ -226,9 +226,9 @@ void MassAddDialog::handleTickle() {
 
 				bool duplicate = false;
 				const Common::StringArray &targets = _pathToTargets[path];
-				for (Common::StringArray::const_iterator iter = targets.begin(); iter != targets.end(); ++iter) {
+				for (const auto &target : targets) {
 					// If the engineid, gameid, platform and language match -> skip it
-					Common::ConfigManager::Domain *dom = ConfMan.getDomain(*iter);
+					Common::ConfigManager::Domain *dom = ConfMan.getDomain(target);
 					assert(dom);
 
 					if ((!dom->contains("engineid") || (*dom)["engineid"] == result.engineId) &&
@@ -256,9 +256,9 @@ void MassAddDialog::handleTickle() {
 		updateGameList();
 
 		// Recurse into all subdirs
-		for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
-			if (file->isDirectory()) {
-				_scanStack.push(*file);
+		for (const auto &file : files) {
+			if (file.isDirectory()) {
+				_scanStack.push(file);
 
 				_dirTotal++;
 			}

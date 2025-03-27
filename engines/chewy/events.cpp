@@ -53,8 +53,7 @@ void EventsManager::timer_handler() {
 void EventsManager::checkTimers() {
 	uint32 currTime = g_system->getMillis();
 
-	for (TimerList::iterator it = _timers.begin(); it != _timers.end(); ++it) {
-		TimerRecord &rec = *it;
+	for (auto &rec : _timers) {
 		if (currTime >= rec._nextFrameTime) {
 			rec._proc();
 			rec._nextFrameTime = currTime + rec._interval;

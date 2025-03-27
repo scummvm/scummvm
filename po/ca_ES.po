@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-26 15:33+0000\n"
+"POT-Creation-Date: 2025-03-27 05:48+0000\n"
 "PO-Revision-Date: 2025-03-12 17:18+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -106,7 +106,7 @@ msgstr "Amunt"
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:204
-#: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:863
+#: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:857
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:84
 #: engines/mohawk/myst_stacks/menu.cpp:283
@@ -867,7 +867,7 @@ msgstr "S'ha completat el càlcul"
 msgid "Calculated %s %S / %s %S"
 msgstr "Calculat %s %S / %s %S"
 
-#: gui/integrity-dialog.cpp:513
+#: gui/integrity-dialog.cpp:509
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -881,13 +881,13 @@ msgstr ""
 "Si esteu segur que aquesta és una variant vàlida desconeguda, envieu el "
 "següent correu electrònic a integrity@scummvm.org"
 
-#: gui/integrity-dialog.cpp:537
+#: gui/integrity-dialog.cpp:533
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
 "Sembla que el joc no té cap fitxer. Esteu segur que el camí és correcte?"
 
-#: gui/integrity-dialog.cpp:542
+#: gui/integrity-dialog.cpp:538
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
@@ -895,7 +895,7 @@ msgstr ""
 "Sembla que el joc no té cap metadada associada amb ell, per la qual cosa no "
 "es pot comparar. Si us plau, ompliu les metadades correctes per al joc."
 
-#: gui/integrity-dialog.cpp:569
+#: gui/integrity-dialog.cpp:565
 msgid "Files all OK"
 msgstr "Tots els fitxers són correctes"
 
@@ -2948,12 +2948,12 @@ msgstr "Error al executar el joc:"
 msgid "Could not find any engine capable of running the selected game"
 msgstr "No s'ha pogut trobar cap motor capaç d'executar el joc seleccionat"
 
-#: common/engine_data.cpp:278 engines/ultima/shared/engine/data_archive.cpp:88
+#: common/engine_data.cpp:277 engines/ultima/shared/engine/data_archive.cpp:88
 #, c-format
 msgid "Could not locate engine data %s"
 msgstr "No s'han pogut localitzar les dades del motor %s"
 
-#: common/engine_data.cpp:296 engines/ultima/shared/engine/data_archive.cpp:106
+#: common/engine_data.cpp:295 engines/ultima/shared/engine/data_archive.cpp:106
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
@@ -3401,7 +3401,7 @@ msgstr "~R~etorna al Llançador"
 
 #: engines/dialogs.cpp:95 engines/engine.cpp:980 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
-#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
+#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:858
 #: engines/groovie/script.cpp:2256 engines/groovie/script.cpp:2283
@@ -3421,7 +3421,7 @@ msgstr "Desa la partida:"
 
 #: engines/dialogs.cpp:95 engines/engine.cpp:980 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
-#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
+#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:853
 #: engines/groovie/script.cpp:858 engines/groovie/script.cpp:2256
@@ -3669,10 +3669,10 @@ msgstr "Assignació de tecles per defecte"
 #: engines/metaengine.cpp:62 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:232 engines/asylum/metaengine.cpp:159
 #: engines/bbvs/metaengine.cpp:99 engines/cge/metaengine.cpp:203
-#: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:265
+#: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:264
 #: engines/composer/metaengine.cpp:113 engines/cruise/metaengine.cpp:147
-#: engines/draci/metaengine.cpp:143 engines/groovie/metaengine.cpp:205
-#: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:213
+#: engines/draci/metaengine.cpp:141 engines/groovie/metaengine.cpp:205
+#: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:211
 #: engines/hugo/metaengine.cpp:97 engines/illusions/metaengine.cpp:94
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:107
 #: engines/mads/metaengine.cpp:280 engines/mtropolis/metaengine.cpp:161
@@ -3697,10 +3697,10 @@ msgstr "Clic central"
 #: engines/metaengine.cpp:73 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:238 engines/asylum/metaengine.cpp:165
 #: engines/bbvs/metaengine.cpp:105 engines/cge/metaengine.cpp:209
-#: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:271
+#: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:270
 #: engines/composer/metaengine.cpp:119 engines/cruise/metaengine.cpp:153
-#: engines/draci/metaengine.cpp:149 engines/groovie/metaengine.cpp:211
-#: engines/hopkins/metaengine.cpp:219 engines/hugo/metaengine.cpp:104
+#: engines/draci/metaengine.cpp:147 engines/groovie/metaengine.cpp:211
+#: engines/hopkins/metaengine.cpp:217 engines/hugo/metaengine.cpp:104
 #: engines/illusions/metaengine.cpp:101 engines/lure/metaengine.cpp:183
 #: engines/made/metaengine.cpp:114 engines/mads/metaengine.cpp:286
 #: engines/mtropolis/metaengine.cpp:167 engines/parallaction/metaengine.cpp:118
@@ -4518,7 +4518,7 @@ msgstr "El directori superior no existeix!"
 msgid "Can't upload into a file!"
 msgstr "No es pot pujar a un fitxer!"
 
-#: backends/networking/sdl_net/handlerutils.cpp:204
+#: backends/networking/sdl_net/handlerutils.cpp:203
 msgid "Back to the files manager"
 msgstr "Torna al gestor de fitxers"
 
@@ -5880,7 +5880,7 @@ msgstr "Aquesta partida no permet desar"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:271
-#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
+#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:835
 #: engines/groovie/script.cpp:870 engines/groovie/script.cpp:2243
@@ -5899,7 +5899,7 @@ msgstr "Recupera la partida:"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:271
-#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
+#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:835
 #: engines/groovie/script.cpp:853 engines/groovie/script.cpp:870
@@ -5917,13 +5917,13 @@ msgstr "Recupera la partida:"
 msgid "Restore"
 msgstr "Restaura"
 
-#: engines/agos/saveload.cpp:139
+#: engines/agos/saveload.cpp:138
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 "La càrrega ràpida o desament de la partida no està s'admet en aquesta "
 "ubicació"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3154
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3154
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -5934,7 +5934,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3141
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3141
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -5945,7 +5945,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3174
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3174
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6016,8 +6016,8 @@ msgid "AGOS main"
 msgstr "AGOS principal"
 
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
-#: engines/cine/metaengine.cpp:259 engines/cruise/metaengine.cpp:143
-#: engines/draci/metaengine.cpp:139 engines/hopkins/metaengine.cpp:209
+#: engines/cine/metaengine.cpp:258 engines/cruise/metaengine.cpp:143
+#: engines/draci/metaengine.cpp:137 engines/hopkins/metaengine.cpp:207
 #: engines/hugo/metaengine.cpp:93 engines/illusions/metaengine.cpp:90
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
 #: engines/mads/metaengine.cpp:275 engines/stark/metaengine.cpp:185
@@ -6300,14 +6300,14 @@ msgstr "Obre l'inventari del personatge"
 
 #. I18N: Move Actor to upwards direction
 #: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
-#: engines/cine/metaengine.cpp:365 engines/hdb/metaengine.cpp:213
+#: engines/cine/metaengine.cpp:364 engines/hdb/metaengine.cpp:213
 #: engines/nancy/input.cpp:195 engines/tinsel/metaengine.cpp:263
 msgid "Move up"
 msgstr "Mou amunt"
 
 #. I18N: Move Actor to downwards direction
 #: engines/asylum/metaengine.cpp:177 engines/asylum/metaengine.cpp:205
-#: engines/cine/metaengine.cpp:372 engines/hdb/metaengine.cpp:219
+#: engines/cine/metaengine.cpp:371 engines/hdb/metaengine.cpp:219
 #: engines/nancy/input.cpp:201 engines/tinsel/metaengine.cpp:269
 msgid "Move down"
 msgstr "Mou avall"
@@ -6315,7 +6315,7 @@ msgstr "Mou avall"
 #. I18N: Move Actor to left direction
 #. I18N: Move actor left during fight
 #: engines/asylum/metaengine.cpp:183 engines/asylum/metaengine.cpp:212
-#: engines/cine/metaengine.cpp:379 engines/hdb/metaengine.cpp:225
+#: engines/cine/metaengine.cpp:378 engines/hdb/metaengine.cpp:225
 #: engines/lure/metaengine.cpp:218 engines/nancy/input.cpp:207
 #: engines/tinsel/metaengine.cpp:275
 msgid "Move left"
@@ -6324,7 +6324,7 @@ msgstr "Mou a l'esquerra"
 #. I18N: Move Actor to right direction
 #. I18N: Move actor right during fight
 #: engines/asylum/metaengine.cpp:189 engines/asylum/metaengine.cpp:219
-#: engines/cine/metaengine.cpp:386 engines/hdb/metaengine.cpp:231
+#: engines/cine/metaengine.cpp:385 engines/hdb/metaengine.cpp:231
 #: engines/lure/metaengine.cpp:226 engines/nancy/input.cpp:213
 #: engines/tinsel/metaengine.cpp:281
 msgid "Move right"
@@ -6368,7 +6368,7 @@ msgstr ""
 "AVÍS: S'ha intentat carregar una partida desada des d'una versió anterior: "
 "Versió %s / Compilació %d"
 
-#: engines/asylum/asylum.cpp:204 engines/cine/saveload.cpp:863
+#: engines/asylum/asylum.cpp:204 engines/cine/saveload.cpp:857
 msgid "Load anyway"
 msgstr "Carrega de totes maneres"
 
@@ -6384,9 +6384,9 @@ msgstr "Truc de l'ull del soldat 714"
 msgid "General Keys"
 msgstr "Tecles generals"
 
-#: engines/bbvs/metaengine.cpp:92 engines/cine/metaengine.cpp:258
-#: engines/cruise/metaengine.cpp:142 engines/draci/metaengine.cpp:138
-#: engines/hopkins/metaengine.cpp:208 engines/hugo/metaengine.cpp:92
+#: engines/bbvs/metaengine.cpp:92 engines/cine/metaengine.cpp:257
+#: engines/cruise/metaengine.cpp:142 engines/draci/metaengine.cpp:136
+#: engines/hopkins/metaengine.cpp:206 engines/hugo/metaengine.cpp:92
 #: engines/illusions/metaengine.cpp:89 engines/lure/metaengine.cpp:168
 #: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
 #: engines/stark/metaengine.cpp:184 engines/sword1/metaengine.cpp:266
@@ -6413,7 +6413,7 @@ msgstr "Assignació de tecles d'escapament"
 msgid "Escape"
 msgstr "Tecla Escapa"
 
-#: engines/bbvs/metaengine.cpp:117 engines/hopkins/metaengine.cpp:231
+#: engines/bbvs/metaengine.cpp:117 engines/hopkins/metaengine.cpp:229
 #: engines/illusions/metaengine.cpp:147
 msgid "Open inventory"
 msgstr "Obre l'inventari"
@@ -6430,7 +6430,7 @@ msgid "Talk"
 msgstr "Parla"
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/bbvs/metaengine.cpp:136 engines/cine/metaengine.cpp:330
+#: engines/bbvs/metaengine.cpp:136 engines/cine/metaengine.cpp:329
 #: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
 #: engines/saga/metaengine.cpp:379 engines/scumm/help.cpp:129
 #: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
@@ -6784,13 +6784,13 @@ msgstr "Utilitza TextToSpeech per llegir text del joc (si TTS està disponible)"
 msgid "Game Keymappings"
 msgstr "Assignacions de tecles del joc"
 
-#: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:225
+#: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:223
 #: engines/sword1/metaengine.cpp:283
 msgid "Exit/Skip"
 msgstr "Sortir/Salta"
 
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
-#: engines/hopkins/metaengine.cpp:238 engines/hugo/metaengine.cpp:128
+#: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:128
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
 #: engines/mads/metaengine.cpp:305 engines/saga/metaengine.cpp:442
 #: engines/stark/metaengine.cpp:208 engines/toon/metaengine.cpp:112
@@ -6800,7 +6800,7 @@ msgid "Save game"
 msgstr "Desa la partida"
 
 #: engines/cge/metaengine.cpp:227 engines/cge2/metaengine.cpp:241
-#: engines/hopkins/metaengine.cpp:244 engines/made/metaengine.cpp:168
+#: engines/hopkins/metaengine.cpp:242 engines/made/metaengine.cpp:168
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:432
 #: engines/stark/metaengine.cpp:213 engines/toon/metaengine.cpp:118
@@ -6926,63 +6926,63 @@ msgstr ""
 "Usa quadres de diàleg transparents en escenes de 16 colors fins i tot si la "
 "versió original del joc no els admet"
 
-#: engines/cine/metaengine.cpp:164
+#: engines/cine/metaengine.cpp:163
 msgid "Unnamed autosave"
 msgstr "Partida desada automàtica sense nom"
 
-#: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
+#: engines/cine/metaengine.cpp:165 engines/cine/metaengine.cpp:237
 msgid "Unnamed savegame"
 msgstr "Partida desada sense nom"
 
-#: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
+#: engines/cine/metaengine.cpp:182 engines/cine/metaengine.cpp:245
 msgid "Empty autosave"
 msgstr "El desament automàtic és buit"
 
-#: engines/cine/metaengine.cpp:260
+#: engines/cine/metaengine.cpp:259
 msgid "Key to mouse keymappings"
 msgstr "Assignació de tecles a ratolí"
 
-#: engines/cine/metaengine.cpp:261
+#: engines/cine/metaengine.cpp:260
 msgid "Exit screen keymappings"
 msgstr "Assignació de tecles de la pantalla de sortida"
 
-#: engines/cine/metaengine.cpp:277
+#: engines/cine/metaengine.cpp:276
 msgid "Exit Sony intro screen"
 msgstr "Surt de la pantalla d'introducció de Sony"
 
-#: engines/cine/metaengine.cpp:283
+#: engines/cine/metaengine.cpp:282
 msgid "Select option / Click in game"
 msgstr "Seleccioneu l'opció / Feu clic a la partida"
 
-#: engines/cine/metaengine.cpp:290
+#: engines/cine/metaengine.cpp:289
 msgid "Open action menu / Close menu"
 msgstr "Obre el menú d'acció / Tanca el menú"
 
-#: engines/cine/metaengine.cpp:295
+#: engines/cine/metaengine.cpp:294
 msgid "Default game speed"
 msgstr "Velocitat predeterminada del joc"
 
-#: engines/cine/metaengine.cpp:300
+#: engines/cine/metaengine.cpp:299
 msgid "Slower game speed"
 msgstr "Velocitat de joc més lenta"
 
-#: engines/cine/metaengine.cpp:307
+#: engines/cine/metaengine.cpp:306
 msgid "Faster game speed"
 msgstr "Velocitat de joc més ràpida"
 
-#: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:506
+#: engines/cine/metaengine.cpp:314 engines/grim/grim.cpp:506
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:242
 #: engines/scumm/help.cpp:250
 msgid "Examine"
 msgstr "Examina"
 
-#: engines/cine/metaengine.cpp:320 engines/saga/metaengine.cpp:394
+#: engines/cine/metaengine.cpp:319 engines/saga/metaengine.cpp:394
 msgid "Take"
 msgstr "Agafa"
 
 #. I18N: Action in In Cold Blood
-#: engines/cine/metaengine.cpp:325 engines/crab/input/input.cpp:251
-#: engines/cruise/metaengine.cpp:166 engines/draci/metaengine.cpp:180
+#: engines/cine/metaengine.cpp:324 engines/crab/input/input.cpp:251
+#: engines/cruise/metaengine.cpp:166 engines/draci/metaengine.cpp:178
 #: engines/dragons/metaengine.cpp:148 engines/griffon/metaengine.cpp:152
 #: engines/grim/grim.cpp:521 engines/grim/grim.cpp:621
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
@@ -6994,56 +6994,56 @@ msgstr "Agafa"
 msgid "Inventory"
 msgstr "Inventari"
 
-#: engines/cine/metaengine.cpp:335
+#: engines/cine/metaengine.cpp:334
 msgid "Activate"
 msgstr "Activa"
 
-#: engines/cine/metaengine.cpp:340
+#: engines/cine/metaengine.cpp:339
 msgid "Speak"
 msgstr "Parla"
 
-#: engines/cine/metaengine.cpp:345
+#: engines/cine/metaengine.cpp:344
 msgid "Action menu"
 msgstr "Menú d'accions"
 
-#: engines/cine/metaengine.cpp:351
+#: engines/cine/metaengine.cpp:350
 msgid "System menu"
 msgstr "Menú del sistema"
 
 #. I18N: Opens collision map of where the actor can freely move
-#: engines/cine/metaengine.cpp:358
+#: engines/cine/metaengine.cpp:357
 msgid "Show collisions"
 msgstr "Mostra les col·lisions"
 
 #. I18N: Move Actor to top-left direction
-#: engines/cine/metaengine.cpp:393
+#: engines/cine/metaengine.cpp:392
 msgid "Move up-left"
 msgstr "Mou cap amunt a l'esquerra"
 
 #. I18N: Move Actor to top-right direction
-#: engines/cine/metaengine.cpp:399
+#: engines/cine/metaengine.cpp:398
 msgid "Move up-right"
 msgstr "Mou cap amunt a la dreta"
 
 #. I18N: Move Actor to bottom-left direction
-#: engines/cine/metaengine.cpp:405
+#: engines/cine/metaengine.cpp:404
 msgid "Move down-left"
 msgstr "Mou cap avall a l'esquerra"
 
 #. I18N: Move Actor to bottom-right direction
-#: engines/cine/metaengine.cpp:411
+#: engines/cine/metaengine.cpp:410
 msgid "Move down-right"
 msgstr "Mou cap avall a la dreta"
 
-#: engines/cine/metaengine.cpp:416
+#: engines/cine/metaengine.cpp:415
 msgid "Menu option up"
 msgstr "Opció de menú cap amunt"
 
-#: engines/cine/metaengine.cpp:421
+#: engines/cine/metaengine.cpp:420
 msgid "Menu option down"
 msgstr "Opció de menú avall"
 
-#: engines/cine/saveload.cpp:860
+#: engines/cine/saveload.cpp:854
 msgid ""
 "WARNING: The savegame you are loading is using a temporary broken format. "
 "Things will be broken. Please consider starting Operation Stealth from "
@@ -7228,37 +7228,37 @@ msgid ""
 msgstr ""
 "El joc impedeix sortir en aquest moment. Segur que voleu sortir igualment?"
 
-#: engines/draci/metaengine.cpp:155
+#: engines/draci/metaengine.cpp:153
 msgid "Skip intro/Exit map or inventory"
 msgstr "Omet el mapa d'entrada/sortida o l'inventari"
 
-#: engines/draci/metaengine.cpp:161
+#: engines/draci/metaengine.cpp:159
 msgid "Open map"
 msgstr "Obre el mapa"
 
 #. I18N: shows where the game actor is able to move
-#: engines/draci/metaengine.cpp:168
+#: engines/draci/metaengine.cpp:166
 msgid "Show walking map"
 msgstr "Mostra el mapa de recorreguts"
 
-#: engines/draci/metaengine.cpp:174
+#: engines/draci/metaengine.cpp:172
 msgid "Toggle walk speed"
 msgstr "Commuta la velocitat de caminar"
 
-#: engines/draci/metaengine.cpp:186 engines/mohawk/myst.cpp:554
+#: engines/draci/metaengine.cpp:184 engines/mohawk/myst.cpp:554
 #: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
 msgid "Open main menu"
 msgstr "Obre el menú principal"
 
-#: engines/draci/metaengine.cpp:192
+#: engines/draci/metaengine.cpp:190
 msgid "Toggle between mouse pointer and the last game item"
 msgstr "Commuta entre el punter del ratolí i l'últim element del joc"
 
-#: engines/draci/metaengine.cpp:198
+#: engines/draci/metaengine.cpp:196
 msgid "Previous item in inventory"
 msgstr "Element anterior a l'inventari"
 
-#: engines/draci/metaengine.cpp:204
+#: engines/draci/metaengine.cpp:202
 msgid "Next item in inventory"
 msgstr "Element següent a l'inventari"
 
@@ -7714,7 +7714,7 @@ msgstr "Error: no s'ha pogut desar la partida."
 msgid "Input text"
 msgstr "Introduïu text"
 
-#: engines/grim/md5check.cpp:604
+#: engines/grim/md5check.cpp:609
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -7724,7 +7724,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/grim/md5check.cpp:613
+#: engines/grim/md5check.cpp:618
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
@@ -7892,7 +7892,7 @@ msgstr "Mode “Gore”"
 msgid "Enable Gore Mode when available"
 msgstr "Activa el mode “Gore” quan estigui disponible"
 
-#: engines/hopkins/metaengine.cpp:250
+#: engines/hopkins/metaengine.cpp:248
 msgid "Option dialog"
 msgstr "Finestra d'opcions"
 
@@ -8428,7 +8428,7 @@ msgid ""
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
 
-#: engines/lab/processroom.cpp:329
+#: engines/lab/processroom.cpp:320
 msgid ""
 "This is the end of the trial version. You can play the full game using the "
 "original interpreter from Wyrmkeep"

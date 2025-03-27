@@ -115,8 +115,8 @@ WMACodec::~WMACodec() {
 		delete _coefHuffman[i];
 	}
 
-	for (Common::Array<Math::MDCT *>::iterator m = _mdct.begin(); m != _mdct.end(); ++m)
-		delete *m;
+	for (auto *m : _mdct)
+		delete m;
 }
 
 void WMACodec::init(Common::SeekableReadStream *extraData) {

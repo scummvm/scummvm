@@ -33,8 +33,8 @@ namespace Cine {
 
 /** Resets all elements in the object table. */
 void resetObjectTable() {
-	for (Common::Array<ObjectStruct>::iterator it = g_cine->_objectTable.begin(); it != g_cine->_objectTable.end(); ++it) {
-		it->clear();
+	for (auto &obj : g_cine->_objectTable) {
+		obj.clear();
 	}
 }
 

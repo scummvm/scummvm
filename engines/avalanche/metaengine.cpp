@@ -93,11 +93,10 @@ SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 	filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-		const Common::String &fname = *filename;
-		int slotNum = atoi(fname.c_str() + fname.size() - 3);
+	for (const auto &filename : filenames) {
+		int slotNum = atoi(filename.c_str() + filename.size() - 3);
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			Common::InSaveFile *file = saveFileMan->openForLoading(fname);
+			Common::InSaveFile *file = saveFileMan->openForLoading(filename);
 			if (file) {
 				// Check for our signature.
 				uint32 signature = file->readUint32LE();

@@ -377,8 +377,8 @@ bool Console::cmdListFiles(int argc, const char **argv) {
 	int count = SearchMan.listMatchingMembers(list, filter);
 
 	debugPrintf("Number of matches: %d\n", count);
-	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it)
-		debugPrintf(" %s\n", (*it)->getName().c_str());
+	for (const auto &archive : list)
+		debugPrintf(" %s\n", archive->getName().c_str());
 
 	return true;
 }

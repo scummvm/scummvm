@@ -393,54 +393,49 @@ void saveScreenParams(Common::OutSaveFile &out) {
 }
 
 void saveGlobalScripts(Common::OutSaveFile &out) {
-	ScriptList::const_iterator it;
 	out.writeUint16BE(g_cine->_globalScripts.size());
-	for (it = g_cine->_globalScripts.begin(); it != g_cine->_globalScripts.end(); ++it) {
-		(*it)->save(out);
+	for (const auto &script : g_cine->_globalScripts) {
+		script->save(out);
 	}
 }
 
 void saveObjectScripts(Common::OutSaveFile &out) {
-	ScriptList::const_iterator it;
 	out.writeUint16BE(g_cine->_objectScripts.size());
-	for (it = g_cine->_objectScripts.begin(); it != g_cine->_objectScripts.end(); ++it) {
-		(*it)->save(out);
+	for (const auto &script : g_cine->_objectScripts) {
+		script->save(out);
 	}
 }
 
 void saveOverlayList(Common::OutSaveFile &out) {
-	Common::List<overlay>::const_iterator it;
-
 	out.writeUint16BE(g_cine->_overlayList.size());
 
-	for (it = g_cine->_overlayList.begin(); it != g_cine->_overlayList.end(); ++it) {
+	for (const auto &ov : g_cine->_overlayList) {
 		out.writeUint32BE(0); // next
 		out.writeUint32BE(0); // previous?
-		out.writeUint16BE(it->objIdx);
-		out.writeUint16BE(it->type);
-		out.writeSint16BE(it->x);
-		out.writeSint16BE(it->y);
-		out.writeSint16BE(it->width);
-		out.writeSint16BE(it->color);
+		out.writeUint16BE(ov.objIdx);
+		out.writeUint16BE(ov.type);
+		out.writeSint16BE(ov.x);
+		out.writeSint16BE(ov.y);
+		out.writeSint16BE(ov.width);
+		out.writeSint16BE(ov.color);
 	}
 }
 
 void saveBgIncrustList(Common::OutSaveFile &out) {
-	Common::List<BGIncrust>::const_iterator it;
 	out.writeUint16BE(g_cine->_bgIncrustList.size());
 
-	for (it = g_cine->_bgIncrustList.begin(); it != g_cine->_bgIncrustList.end(); ++it) {
+	for (const auto &inc : g_cine->_bgIncrustList) {
 		out.writeUint32BE(0); // next
 		out.writeUint32BE(0); // previous?
-		out.writeUint16BE(it->objIdx);
-		out.writeUint16BE(it->param);
-		out.writeUint16BE(it->x);
-		out.writeUint16BE(it->y);
-		out.writeUint16BE(it->frame);
-		out.writeUint16BE(it->part);
+		out.writeUint16BE(inc.objIdx);
+		out.writeUint16BE(inc.param);
+		out.writeUint16BE(inc.x);
+		out.writeUint16BE(inc.y);
+		out.writeUint16BE(inc.frame);
+		out.writeUint16BE(inc.part);
 
 		if (g_cine->getGameType() == Cine::GType_OS) {
-			out.writeUint16BE(it->bgIdx);
+			out.writeUint16BE(inc.bgIdx);
 		}
 	}
 }
@@ -452,24 +447,23 @@ void saveZoneQuery(Common::OutSaveFile &out) {
 }
 
 void saveSeqList(Common::OutSaveFile &out) {
-	Common::List<SeqListElement>::const_iterator it;
 	out.writeUint16BE(g_cine->_seqList.size());
 
-	for (it = g_cine->_seqList.begin(); it != g_cine->_seqList.end(); ++it) {
-		out.writeSint16BE(it->var4);
-		out.writeUint16BE(it->objIdx);
-		out.writeSint16BE(it->var8);
-		out.writeSint16BE(it->frame);
-		out.writeSint16BE(it->varC);
-		out.writeSint16BE(it->varE);
-		out.writeSint16BE(it->var10);
-		out.writeSint16BE(it->var12);
-		out.writeSint16BE(it->var14);
-		out.writeSint16BE(it->var16);
-		out.writeSint16BE(it->var18);
-		out.writeSint16BE(it->var1A);
-		out.writeSint16BE(it->var1C);
-		out.writeSint16BE(it->var1E);
+	for (const auto &seq : g_cine->_seqList) {
+		out.writeSint16BE(seq.var4);
+		out.writeUint16BE(seq.objIdx);
+		out.writeSint16BE(seq.var8);
+		out.writeSint16BE(seq.frame);
+		out.writeSint16BE(seq.varC);
+		out.writeSint16BE(seq.varE);
+		out.writeSint16BE(seq.var10);
+		out.writeSint16BE(seq.var12);
+		out.writeSint16BE(seq.var14);
+		out.writeSint16BE(seq.var16);
+		out.writeSint16BE(seq.var18);
+		out.writeSint16BE(seq.var1A);
+		out.writeSint16BE(seq.var1C);
+		out.writeSint16BE(seq.var1E);
 	}
 }
 
