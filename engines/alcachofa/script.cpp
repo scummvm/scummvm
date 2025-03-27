@@ -133,7 +133,7 @@ struct ScriptTimerTask : public Task {
 			else
 				_result = 1;
 		}
-		TASK_YIELD;
+		TASK_YIELD; // Wait a frame to not produce an endless loop
 		TASK_RETURN(_result);
 		TASK_END;
 	}
