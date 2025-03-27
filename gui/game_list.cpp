@@ -80,7 +80,7 @@ void GameListWidget::removeGame(const String &gameId) {
 	applyFilter(_currentFilter);
 
 	if (!_filteredGameList.empty()) {
-		int newIndex = std::min(removedIndex, static_cast<int>(_filteredGameList.size()) - 1);
+		int newIndex = MIN(removedIndex, static_cast<int>(_filteredGameList.size()) - 1);
 		setSelectedGame(_filteredGameList[newIndex]);
 	} else {
 		clearSelection();
