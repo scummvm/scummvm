@@ -493,6 +493,7 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 		  sscanf(line.c_str(), "%u %d %d %14s", &type, &prog, &note, volumeBuffer);
 		  _note = note;
 		  _prog = prog;
+		  _loop = false;
 		  break;
 	  default:
 		  _midi = false;
@@ -515,7 +516,7 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 	if (engine->getGameId() == GID_NEMESIS && _slotKey == 14822 && _scriptManager->getStateValue(_slotKey) == 2)
 		_scriptManager->setStateValue(_slotKey, 0);
 
-  debug(3,"Created Action: Music, slotKey %d, type %u, file %24s, note %u, volume %d", _slotKey, type, fileNameBuffer, _note, _volume->getValue());
+  debug(2,"Created Action: Music, slotKey %d, type %u, file %24s, note %u, volume %d, %s", _slotKey, type, fileNameBuffer, _note, _volume->getValue(), _loop ? "looping" : "");
   debug(4,"Music script: %s", line.c_str());
 }
 
@@ -526,7 +527,7 @@ ActionMusic::~ActionMusic() {
 }
 
 bool ActionMusic::execute() {
-  debug(3,"Executing Action: Music, slotKey %d, volume %d", _slotKey, _volume->getValue());
+  debug(2,"Executing Action: Music, slotKey %d, volume %d", _slotKey, _volume->getValue());
 	if (_scriptManager->getSideFX(_slotKey)) {
 		_scriptManager->killSideFx(_slotKey);
 		_scriptManager->setStateValue(_slotKey, 2);
