@@ -31,22 +31,22 @@ constexpr bool bHomeWriteLocked = false;
 constexpr bool bPathsDiffer = false;
 
 Boardgame::Boardgame() : Dialog("Boardgame"),
-		_pPlayButton("Play", "Play", RectWH(45, 155, 50, 15), this),
-		_pCancelButton("Cancel", "Main Menu", RectWH(130, 155, 50, 15), this),
+		_pPlayButton("Play", "Play",          Common::Rect(88, 310, 185, 340), this),
+		_pCancelButton("Cancel", "Main Menu", Common::Rect(254, 310, 351, 340), this),
 
-		_pHSHButton("HHARD", "Hard", RectWH(32, 104, 76, 12), this),
-		_pHSMButton("HMEDIUM", "Medium", RectWH(32, 117, 76, 12), this),
-		_pHSLButton("HEASY", "Easy", RectWH(32, 130, 76, 12), this),
-		_pPSHButton("PHARD", "Tough Opponent", RectWH(117, 104, 76, 12), this),
-		_pPSMButton("PMEDIUM", "Average Opponent", RectWH(117, 117, 76, 12), this),
-		_pPSLButton("PEASY", "Unskilled Opponent", RectWH(117, 130, 76, 12), this),
+		_pHSHButton("HHARD", "Hard",          Common::Rect(62, 208, 210, 232), this),
+		_pHSMButton("HMEDIUM", "Medium",      Common::Rect(62, 234, 210, 258), this),
+		_pHSLButton("HEASY", "Easy",          Common::Rect(62, 260, 210, 284), this),
+		_pPSHButton("PHARD", "Tough Opponent",     Common::Rect(228, 208, 376, 232), this),
+		_pPSMButton("PMEDIUM", "Average Opponent", Common::Rect(228, 234, 376, 258), this),
+		_pPSLButton("PEASY", "Unskilled Opponent", Common::Rect(228, 260, 376, 284), this),
 		
-		_pGTLButton("GLONG", "Long Game", RectWH(117, 70, 76, 12), this),
-		_pGTMButton("GMEDIUM", "Medium Game", RectWH(117, 57, 76, 12), this),
-		_pGTSButton("GSHORT", "Short Game", RectWH(117, 44, 76, 12), this),
+		_pGTLButton("GLONG", "Long Game",     Common::Rect(228, 140, 376, 164), this),
+		_pGTMButton("GMEDIUM", "Medium Game", Common::Rect(228, 114, 376, 138), this),
+		_pGTSButton("GSHORT", "Short Game",   Common::Rect(228, 88, 376, 112), this),
 		
-		_pPCButton("PLAYERS1", "One Player", RectWH(32, 44, 76, 12), this),
-		_pPHButton("PLAYERS2", "Two Players", RectWH(32, 57, 76, 12), this)
+		_pPCButton("PLAYERS1", "One Player",  Common::Rect(62, 88, 210, 112), this),
+		_pPHButton("PLAYERS2", "Two Players", Common::Rect(62, 114, 210, 138), this)
 {
 }
 
