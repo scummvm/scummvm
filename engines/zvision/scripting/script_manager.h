@@ -344,9 +344,10 @@ private:
 	 *
 	 * @param stream        Scr file stream
 	 * @param actionList    The list where the results will be added
+	 * @param key           Puzzle key (for workarounds)
 	 * @return              Created Results object
 	 */
-	void parseResults(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList) const;
+	void parseResults(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList, uint32 key) const;
 
 	/**
 	 * Helper method for parsePuzzle. Parses the stream into a bitwise or of the StateFlags enum
