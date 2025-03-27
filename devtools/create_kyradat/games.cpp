@@ -56,6 +56,7 @@ const Game kyra1Games[] = {
 	{ kKyra1, kPlatformDOS, kTalkieVersion, ES_ESP },
 	//{ kKyra1, kPlatformDOS, kTalkieVersion, RU_RUS },
 	{ kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR },
+	{ kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE },
 
 	{ kKyra1, kPlatformFMTowns, kNoSpecial, EN_ANY },
 	{ kKyra1, kPlatformFMTowns, kNoSpecial, JA_JPN },
@@ -94,6 +95,7 @@ const Game kyra2Games[] = {
 	//{ kKyra2, kPlatformDOS, kTalkieVersion, RU_RUS },
 	{ kKyra2, kPlatformDOS, kTalkieVersion, ES_ESP },
 	{ kKyra2, kPlatformDOS, kTalkieVersion, HE_ISR },
+	{ kKyra2, kPlatformDOS, kTalkieVersion, CS_CZE },
 
 	{ kKyra2, kPlatformFMTowns, kNoSpecial, EN_ANY },
 	{ kKyra2, kPlatformFMTowns, kNoSpecial, JA_JPN },
@@ -114,6 +116,7 @@ const Game kyra3Games[] = {
 	{ kKyra3, kPlatformDOS, kTalkieVersion, HE_ISR },
 	{ kKyra3, kPlatformDOS, kTalkieVersion, ZH_CHN },
 	{ kKyra3, kPlatformDOS, kTalkieVersion, ZH_TWN },
+	{ kKyra3, kPlatformDOS, kTalkieVersion, CS_CZE },
 
 	GAME_DUMMY_ENTRY
 };
