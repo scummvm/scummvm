@@ -165,7 +165,12 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 
 	for (auto &i : _dirtyRects) {
 		Common::Rect r = i;
-		r.clip(getInnerDimensions());
+		// The inner dimensions are relative to the virtual desktop while
+		// r isn't, so we need to move the window to be relative to the
+		// same sapce.
+		Common::Rect windowRect = getInnerDimensions();
+		windowRect.moveTo(r.left, r.top);
+		r.clip(windowRect);
 
 		_dirtyChannels = _currentMovie->getScore()->getSpriteIntersections(r);
 
