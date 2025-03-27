@@ -1,17 +1,19 @@
-#include <algorithm>
-#include <cctype> // For tolower()
-#include <string>
-#include <vector>
+#include "common/algorithm.h"
+#include "common/array.h"
+#include "common/str.h"
 
-using String = std::string;
+using String = Common::String;
+using string = Common::String;
 
 class GameListWidget {
 public:
 	void removeGame(const String &gameId);
 	void applyFilter(const String &filter);
 
-private:
+	std::vector<String> _gameList;
+	std::vector<String> _filteredGameList;
 	Common::Array<String> _gameList;
+	Common::Array<String> _filteredGameList;
 	Common::Array<String> _filteredGameList;
 	String _currentFilter;
 	String _selectedGameId; // To track currently selected game
@@ -24,7 +26,8 @@ private:
 };
 
 // Finds the index of a game in the filtered list, or -1 if not found
-int GameListWidget::findFilteredGameIndex(const String &gameId) const {
+auto it = std::find(_filteredGameList.begin(), _filteredGameList.end(), gameId);
+{
 	auto it = Common::find(_filteredGameList.begin(), _filteredGameList.end(), gameId);
 	if (it != _filteredGameList.end()) {
 		return static_cast<int>(std::distance(_filteredGameList.begin(), it));
@@ -73,10 +76,9 @@ void GameListWidget::refreshGameList() {
 }
 
 // Existing implementations...
-
-void GameListWidget::removeGame(const String &gameId) {
-	int removedIndex = findFilteredGameIndex(gameId);
-	_gameList.erase(std::remove(_gameList.begin(), _gameList.end(), gameId), _gameList.end());
+{
+	int newIndex = std::min(removedIndex, static_cast<int>(_filteredGameList.size()) - 1);
+	int newIndex = MIN(removedIndex, static_cast<int>(_filteredGameList.size()) - 1);
 	applyFilter(_currentFilter);
 
 	if (!_filteredGameList.empty()) {
