@@ -77,6 +77,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "barbpauper",			"Barbie as the Princess and the Pauper" },
 	{ "barbrapunzel",		"Barbie as Rapunzel: A Creative Adventure" },
 	{ "barbswanlake",		"Barbie of Swan Lake: The Enchanted Forest" },
+	{ "barminski",			"Bar-Min-Ski: Consumer Product" },
 	{ "bbbighelpers",		"Little Bears Make Big Helpers: Life's Little Lessons with the Berenstain Bears" },
 	{ "bearfamily",			"A Bear Family Adventure" },
 	{ "beautyorbeast",		"Beauty or the Beast" },
@@ -3681,6 +3682,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2("barbmagichouse", "", "BARBIE.EXE", "t:daa44668235cb5debf68e9e92cce4643", 909919,
 			                       "BDATA/OUTSIDE.DIR", "b914daee4a5531493247d537ee48a185", 3084168, 404),
+
+	WINGAME2("barminski", "", "CONSUME.EXE", "t:fe663cf1f3101f8267ff886cc6db3937", 13761983,
+							  "A/A1.MOV", "d:b405de93abfec85fadd704fe6448a3db", 2071782, 404),
+	MACGAME2("barminski", "", "Consume Me!", "tr:dacc8a0b70832227a7eb740e790bfdb2", 483490,
+							  "A/A1.MOV", "d:b405de93abfec85fadd704fe6448a3db", 2071782, 404),
 
 	// Original filename is みんなであそぼ　デモ
 	// Kidsoft US packaging says A Bear Family Adventure featuring Playtime in the Park by Erica Dale
@@ -8837,7 +8843,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 							"DATEN/SPIELST.DXR", "d:24139a522420d2c6e3f4d0aa502f5936", 2250124, Common::DE_DEU, 702),
 	WINGAME2_l("bibi2", "", "Start.exe",		 "t:cb85c409b1d935e1745478e378074acb", 1820386,
 							"DATEN/SPIELST.DXR", "d:24139a522420d2c6e3f4d0aa502f5936", 2250124, Common::DE_DEU, 702),
-	
+
 	WINGAME1_l("bidule1", "", "Boitabidules.exe", "t:98831ff6cdc4dc7e74d2660f69db0b49", 3118660, Common::FR_FRA, 702),
 	WINGAME1_l("bidule1", "", "Spielzeugkiste.exe", "t:62ed98ed023e7993b24c5183c7f8354c", 2355933, Common::DE_DEU, 702),
 
