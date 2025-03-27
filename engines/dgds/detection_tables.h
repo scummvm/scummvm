@@ -339,7 +339,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Heart of China (PC) EGA 720kb Floppy version
 	{
 		"china",
-		0,
+		"EGA",
 		{
 			{"volume.rmf", 0, "4e61bfb1d323bf07ae9de7c37fcda0d0", 8208},
 			{"volume.001", 0, "9de863e3cb1467fde7d91c02942432de", 342873},
@@ -354,7 +354,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Heart of China (PC) EGA 1.2MB Floppy version
 	{
 		"china",
-		0,
+		"EGA",
 		{
 			{"volume.rmf", 0, "a1ffe0a1ba0efbb487f4b258ff860623", 8106},
 			{"volume.001", 0, "cd535e57d3ece406a054c254a479906e", 867861},
@@ -370,7 +370,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// 1.0 reported by ns394 (#15809)
 	{
 		"china",
-		0,
+		"EGA",
 		{
 			{"volume.rmf", 0, "1655f41c5de53f87c9851b3524f0cbae", 8208},
 			{"volume.001", 0, "9de863e3cb1467fde7d91c02942432de", 344018},
