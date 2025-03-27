@@ -116,6 +116,7 @@ public:
 	Common::List<Channel *> getSpriteIntersections(const Common::Rect &r);
 	uint16 getSpriteIdByMemberId(CastMemberID id);
 	bool refreshPointersForCastMemberID(CastMemberID id);
+	bool refreshPointersForCastLib(uint16 castLib);
 
 	bool renderTransition(uint16 frameId, RenderMode mode);
 	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);

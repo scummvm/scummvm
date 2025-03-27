@@ -418,6 +418,30 @@ Archive *Movie::loadExternalCastFrom(Common::Path &filename) {
 	return externalCast;
 }
 
+bool Movie::loadCastLibFrom(uint16 libId, Common::Path &filename) {
+	Archive *castArchive = loadExternalCastFrom(filename);
+	if (!castArchive) {
+		return false;
+	}
+
+	Cast *cast = nullptr;
+	uint16 libResourceId = 1024;
+	Common::String name;
+	if (_casts.contains(libId)) {
+		cast = _casts[libId];
+		libResourceId = cast->_libResourceId;
+		name = cast->getCastName();
+	}
+	// FIXME: There's no lifetime handling for multiple castlibs in _casts.
+	cast = new Cast(this, libId, false, true, libResourceId);
+	cast->setArchive(castArchive);
+	cast->loadConfig();
+	cast->loadCast();
+	_casts.setVal(libId, cast);
+	_score->refreshPointersForCastLib(libId);
+	return true;
+}
+
 CastMember *Movie::getCastMember(CastMemberID memberID) {
 	CastMember *result = nullptr;
 	if (_casts.contains(memberID.castLib)) {

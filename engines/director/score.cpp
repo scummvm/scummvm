@@ -1550,6 +1550,29 @@ bool Score::refreshPointersForCastMemberID(CastMemberID id) {
 	return hit;
 }
 
+bool Score::refreshPointersForCastLib(uint16 castLib) {
+	// FIXME: This can be removed once Sprite is refactored to not
+	// keep a pointer to a CastMember.
+	bool hit = false;
+	for (auto &it : _channels) {
+		if (it->_sprite->_castId.castLib == castLib) {
+			it->_sprite->_cast = nullptr;
+			it->setCast(it->_sprite->_castId);
+			it->_dirty = true;
+			hit = true;
+		}
+	}
+
+	for (auto &it : _currentFrame->_sprites) {
+		if (it->_castId.castLib == castLib) {
+			it->_cast = nullptr;
+			it->setCast(it->_castId);
+			hit = true;
+		}
+	}
+	return hit;
+}
+
 Sprite *Score::getSpriteById(uint16 id) {
 	Channel *channel = getChannelById(id);
 
