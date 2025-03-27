@@ -171,8 +171,8 @@ const Array<WinResourceID> PEResources::getTypeList() const {
 	if (!_exe)
 		return array;
 
-	for (TypeMap::const_iterator it = _resources.begin(); it != _resources.end(); it++)
-		array.push_back(it->_key);
+	for (const auto &resource : _resources)
+		array.push_back(resource._key);
 
 	return array;
 }
@@ -185,8 +185,8 @@ const Array<WinResourceID> PEResources::getIDList(const WinResourceID &type) con
 
 	const IDMap &idMap = _resources[type];
 
-	for (IDMap::const_iterator it = idMap.begin(); it != idMap.end(); it++)
-		array.push_back(it->_key);
+	for (const auto &id : idMap)
+		array.push_back(id._key);
 
 	return array;
 }
@@ -204,8 +204,8 @@ const Array<WinResourceID> PEResources::getLangList(const WinResourceID &type, c
 
 	const LangMap &langMap = idMap[id];
 
-	for (LangMap::const_iterator it = langMap.begin(); it != langMap.end(); it++)
-		array.push_back(it->_key);
+	for (const auto &lang : langMap)
+		array.push_back(lang._key);
 
 	return array;
 }

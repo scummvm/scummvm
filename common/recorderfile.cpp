@@ -104,8 +104,8 @@ void PlaybackFile::close() {
 		delete _screenshotsFile;
 		_screenshotsFile = NULL;
 	}
-	for (HashMap<String, SaveFileBuffer>::iterator  i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
-		free(i->_value.buffer);
+	for (auto &saveFile : _header.saveFiles) {
+		free(saveFile._value.buffer);
 	}
 	_header.saveFiles.clear();
 	_mode = kClosed;

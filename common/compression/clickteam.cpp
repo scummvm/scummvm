@@ -449,28 +449,26 @@ ClickteamInstaller* ClickteamInstaller::openPatch(Common::SeekableReadStream *st
 		return nullptr;
 
 	if (verifyOriginal && reference) {
-		for (Common::HashMap<Common::Path, ClickteamFileDescriptor, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo>::iterator i = files.begin(), end = files.end();
-		     i != end; ++i) {
-			if (i->_value._isPatchFile) {
-				Common::ScopedPtr<Common::SeekableReadStream> refStream(reference->createReadStreamForMember(i->_key));
+		for (auto &file : files) {
+			if (file._value._isPatchFile) {
+				Common::ScopedPtr<Common::SeekableReadStream> refStream(reference->createReadStreamForMember(file._key));
 				if (!refStream) {
 					if (verifyAllowSkip) {
-						i->_value._isReferenceMissing = true;
+						file._value._isReferenceMissing = true;
 						continue;
 					}
 					return nullptr;
 				}
-				if (findPatchIdx(i->_value, refStream.get(), i->_key, crc_xor, false) == -1)
+				if (findPatchIdx(file._value, refStream.get(), file._key, crc_xor, false) == -1)
 					return nullptr;
 			}
 		}
 	}
 
 	if (!reference) {
-		for (Common::HashMap<Common::Path, ClickteamFileDescriptor, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo>::iterator i = files.begin(), end = files.end();
-		     i != end; ++i) {
-			if (i->_value._isPatchFile) {
-				i->_value._isReferenceMissing = true;
+		for (auto &file : files) {
+			if (file._value._isPatchFile) {
+				file._value._isReferenceMissing = true;
 			}
 		}
 	}
@@ -485,10 +483,9 @@ bool ClickteamInstaller::hasFile(const Path &path) const {
 int ClickteamInstaller::listMembers(ArchiveMemberList &list) const {
 	int members = 0;
 
-	for (Common::HashMap<Common::Path, ClickteamFileDescriptor, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo>::const_iterator i = _files.begin(), end = _files.end();
-	     i != end; ++i) {
-		if (!i->_value._isReferenceMissing) {
-			list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(i->_key, *this)));
+	for (const auto &file : _files) {
+		if (!file._value._isReferenceMissing) {
+			list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(file._key, *this)));
 			++members;
 		}
 	}
