@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-03-27 05:48+0000\n"
-"PO-Revision-Date: 2025-02-07 15:09+0000\n"
+"PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -4237,7 +4237,7 @@ msgstr "Переключение перехвата мыши"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:545
 msgid "Toggle resizable window"
-msgstr ""
+msgstr "Переключить изменение размеров окна"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:550 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
@@ -7574,16 +7574,16 @@ msgid "Unable to locate the darkseed.dat engine data file."
 msgstr "Не удалось найти файл движка darkseed.dat."
 
 #: engines/darkseed/metaengine.cpp:47
-#, fuzzy
-#| msgid "Use DOS version music tempos"
 msgid "Use floppy version music"
-msgstr "Использовать темп музыки DOS-версии"
+msgstr "Использовать музыку из флоппи-версии"
 
 #: engines/darkseed/metaengine.cpp:48
 msgid ""
 "Use the music from the floppy version. The floppy version's music files must "
 "be copied to the SOUND directory."
 msgstr ""
+"Использовать музыку из флоппи-версии. Файлы музыки из этой версии необходимо "
+"скопировать в папку SOUND."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:75 engines/dragons/metaengine.cpp:136
@@ -10653,7 +10653,7 @@ msgstr "Увеличивает яркость картинки для симул
 
 #: engines/scumm/dialogs.cpp:1195
 msgid "Simulate Sega colors"
-msgstr ""
+msgstr "Симуляция цветов Sega"
 
 #: engines/scumm/dialogs.cpp:1196
 msgid ""
@@ -10661,6 +10661,9 @@ msgid ""
 "actual Sega hardware. These are significantly darker, though it's unclear if "
 "that was intended or not."
 msgstr ""
+"Вместо использования цветов, определенных в игре, имитировать цвета, "
+"используемые на реальной приставке Sega. Они значительно темнее, хотя "
+"неясно, было ли это задумано или нет."
 
 #: engines/scumm/dialogs.cpp:1312
 msgid "Overture Timing:"
