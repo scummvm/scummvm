@@ -1,6 +1,7 @@
-#include "common/algorithm.h"
-#include "common/array.h"
-#include "common/str.h"
+#include Common::Algorithm.h
+#include Common::String.toLowercase()
+#include Common::Array.h
+#include Common::String.h
 
 using String = Common::String;
 using string = Common::String;
