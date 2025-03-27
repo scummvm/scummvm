@@ -49,6 +49,13 @@ private:
 	RadioButton _pPCButton;	// Podj is Computer High Radio Button
 	RadioButton _pPHButton;	// Podj is Human High Radio Button
 
+	int m_nHodjSkillLevel = SKILLLEVEL_LOW;
+	int m_nPodjSkillLevel = SKILLLEVEL_LOW;
+	int m_nGameTime = MEDIUM_GAME;
+	bool m_bPodjIsComputer = true;
+
+	void updateRadioButtons();
+
 public:
 	Boardgame();
 	~Boardgame() override {}

@@ -42,17 +42,18 @@ Boardgame::Boardgame() : Dialog("Boardgame"),
 		_pGTMButton("GMEDIUM", "Medium Game", Common::Rect(262, 114, 440, 138), this),
 		_pGTSButton("GSHORT", "Short Game",   Common::Rect(262, 88, 440, 112), this),
 		
-		_pPCButton("PLAYERS1", "One Player",  Common::Rect(72, 88, 240, 112), this),
-		_pPHButton("PLAYERS2", "Two Players", Common::Rect(72, 114, 240, 138), this),
+		_pPCButton("COMPUTER", "One Player",  Common::Rect(72, 88, 240, 112), this),
+		_pPHButton("HUMAN", "Two Players", Common::Rect(72, 114, 240, 138), this),
 
-		_pPlayButton("Play", "Play", Common::Rect(101, 310, 211, 340), this),
-		_pCancelButton("Cancel", "Main Menu", Common::Rect(291, 310, 401, 340), this)
+		_pPlayButton("PLAY", "Play", Common::Rect(101, 310, 211, 340), this),
+		_pCancelButton("CANCEL", "Main Menu", Common::Rect(291, 310, 401, 340), this)
 {
 }
 
 bool Boardgame::msgOpen(const OpenMessage &msg) {
 	Dialog::msgOpen(msg);
 	lpMetaGame->initBFCInfo();
+	updateRadioButtons();
 
 	return true;
 }
@@ -72,6 +73,44 @@ bool Boardgame::msgAction(const ActionMessage &msg) {
 }
 
 bool Boardgame::msgGame(const GameMessage &msg) {
+	if (msg._name == "BUTTON") {
+		if (msg._stringValue == "PLAY") {
+			// TODO: Play the boardgame
+			return true;
+		} else if (msg._stringValue == "CANCEL") {
+			close();
+			return true;
+		}
+	} else if (msg._name == "RADIOBUTTON") {
+		if (msg._stringValue == "HHARD") {
+			m_nHodjSkillLevel = SKILLLEVEL_HIGH;
+		} else if (msg._stringValue == "HMEDIUM") {
+			m_nHodjSkillLevel = SKILLLEVEL_MEDIUM;
+		} else if (msg._stringValue == "HEASY") {
+			m_nHodjSkillLevel = SKILLLEVEL_LOW;
+		} else if (msg._stringValue == "PHARD") {
+			m_nPodjSkillLevel = SKILLLEVEL_HIGH;
+		} else if (msg._stringValue == "PMEDIUM") {
+			m_nPodjSkillLevel = SKILLLEVEL_MEDIUM;
+		} else if (msg._stringValue == "PEASY") {
+			m_nPodjSkillLevel = SKILLLEVEL_LOW;
+		} else if (msg._stringValue == "GLONG") {
+			m_nGameTime = LONG_GAME;
+		} else if (msg._stringValue == "GMEDIUM") {
+			m_nGameTime = MEDIUM_GAME;
+		} else if (msg._stringValue == "GSHORT") {
+			m_nGameTime = SHORT_GAME;
+		} else if (msg._stringValue == "COMPUTER") {
+			m_bPodjIsComputer = true;
+		} else if (msg._stringValue == "HUMAN") {
+			m_bPodjIsComputer = false;
+		}
+
+		updateRadioButtons();
+		redraw();
+		return true;
+	}
+
 	return false;
 }
 
@@ -83,6 +122,34 @@ void Boardgame::draw() {
 	s.writeString("Game Duration", Common::Point(262, 63));
 	s.writeString("Hodj's Skill Level", Common::Point(72, 184));
 	s.writeString("Podj's Skill Level", Common::Point(262, 184));
+}
+
+void Boardgame::updateRadioButtons() {
+	_pHSHButton.setCheck(m_nHodjSkillLevel == SKILLLEVEL_HIGH);
+	_pHSMButton.setCheck(m_nHodjSkillLevel == SKILLLEVEL_MEDIUM);
+	_pHSLButton.setCheck(m_nHodjSkillLevel == SKILLLEVEL_LOW);
+
+	_pPSHButton.setCheck(m_nPodjSkillLevel == SKILLLEVEL_HIGH);
+	_pPSMButton.setCheck(m_nPodjSkillLevel == SKILLLEVEL_MEDIUM);
+	_pPSLButton.setCheck(m_nPodjSkillLevel == SKILLLEVEL_LOW);
+
+	_pGTLButton.setCheck(m_nGameTime == LONG_GAME);
+	_pGTMButton.setCheck(m_nGameTime == MEDIUM_GAME);
+	_pGTSButton.setCheck(m_nGameTime == SHORT_GAME);
+
+	if (m_bPodjIsComputer) {
+		_pPCButton.setCheck(true);
+		_pPHButton.setCheck(false);
+		_pPSHButton.setText("Tough Opponent");
+		_pPSMButton.setText("Average Opponent");
+		_pPSLButton.setText("Unskilled Opponent");
+	} else {
+		_pPCButton.setCheck(false);
+		_pPHButton.setCheck(true);
+		_pPSHButton.setText("Hard");
+		_pPSMButton.setText("Medium");
+		_pPSLButton.setText("Easy");
+	}
 }
 
 } // namespace Metagame

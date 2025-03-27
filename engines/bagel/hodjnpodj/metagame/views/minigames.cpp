@@ -137,7 +137,7 @@ bool Minigames::msgAction(const ActionMessage &msg) {
 
 bool Minigames::msgGame(const GameMessage &msg) {
 	if (msg._name == "BUTTON" && msg._stringValue == "MinigamesExit") {
-		replaceView("TitleMenu");
+		close();
 		return true;
 	}
 

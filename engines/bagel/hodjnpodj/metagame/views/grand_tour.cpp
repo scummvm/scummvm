@@ -216,7 +216,7 @@ bool GrandTour::msgGame(const GameMessage &msg) {
 			send("TopScores", GameMessage("GRAND_TOUR", -1));
 			return true;
 		} else if (msg._stringValue == "CLOSE") {
-			replaceView("TitleMenu");
+			close();
 			return true;
 		}
 	} else if (msg._name == "RADIOBUTTON") {
