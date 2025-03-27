@@ -125,12 +125,16 @@ struct ScriptTimerTask : public Task {
 
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
-		if (_durationSec >= (int32)((g_system->getMillis() - g_engine->script()._scriptTimer) / 1000) &&
-			g_engine->script().variable("SeHaPulsadoRaton"))
-			_result = 0;
-		
-		// TODO: Add network behavior for script timer
+		{
+			uint32 timeSinceTimer = g_engine->script()._scriptTimer == 0 ? 0
+				: (g_system->getMillis() - g_engine->script()._scriptTimer) / 1000;
+			if (_durationSec >= (int32)timeSinceTimer)
+				_result = g_engine->script().variable("SeHaPulsadoRaton") ? 0 : 2;
+			else
+				_result = 1;
+		}
 		TASK_YIELD;
+		TASK_RETURN(_result);
 		TASK_END;
 	}
 
