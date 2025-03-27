@@ -48,7 +48,7 @@ TitleMenu::TitleMenu() : Dialog("TitleMenu"),
 bool TitleMenu::msgGame(const GameMessage &msg) {
 	if (msg._name == "BUTTON") {
 		if (msg._stringValue == "NewGame") {
-			addView("Boardgame");
+			addView("BoardgameOptions");
 		} else if (msg._stringValue == "StandAlone") {
 			addView("Minigames");
 		} else if (msg._stringValue == "RestartMovie") {

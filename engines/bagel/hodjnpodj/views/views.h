@@ -25,6 +25,7 @@
 #include "bagel/hodjnpodj/views/rules.h"
 #include "bagel/hodjnpodj/views/main_menu.h"
 #include "bagel/hodjnpodj/views/message_box.h"
+#include "bagel/hodjnpodj/metagame/views/boardgame_options.h"
 #include "bagel/hodjnpodj/metagame/views/boardgame.h"
 #include "bagel/hodjnpodj/metagame/views/credits.h"
 #include "bagel/hodjnpodj/metagame/views/grand_tour.h"
@@ -43,6 +44,7 @@ struct Views {
 	MainMenu _mainMenu;
 	MessageBox _messageBox;
 	Rules _rules;
+	Metagame::BoardgameOptions _boardgameOptions;
 	Metagame::Boardgame _boardgame;
 	Metagame::Credits _credits;
 	Metagame::GrandTour _grandTour;

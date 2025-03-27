@@ -19,22 +19,46 @@
  *
  */
 
-#ifndef HODJNPODJ_METAGAME_VIEWS_BOARDGAME_H
-#define HODJNPODJ_METAGAME_VIEWS_BOARDGAME_H
+#ifndef HODJNPODJ_METAGAME_VIEWS_BoardgameOptions_OPTIONS_H
+#define HODJNPODJ_METAGAME_VIEWS_BoardgameOptions_OPTIONS_H
 
-#include "bagel/hodjnpodj/views/view.h"
+#include "bagel/hodjnpodj/metagame/views/dialog.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-class Boardgame : public View {
+class BoardgameOptions : public Dialog {
 private:
+	ColorButton _pPlayButton;
+	ColorButton _pCancelButton;
+
+	RadioButton _pHSHButton;	// Hodj Skill High Radio Button
+	RadioButton _pHSMButton;	// Hodj Skill Medium Radio Button
+	RadioButton _pHSLButton;	// Hodj Skill Low Radio Button
+
+	RadioButton _pPSHButton;	// Podj Skill High Radio Button
+	RadioButton _pPSMButton;	// Podj Skill Medium Radio Button
+	RadioButton _pPSLButton;	// Podj Skill Low Radio Button
+
+	RadioButton _pGTLButton;	// Game Time Long Radio Button
+	RadioButton _pGTMButton;	// Game Time Medium Radio Button
+	RadioButton _pGTSButton;	// Game Time Short Radio Button
+
+	RadioButton _pPCButton;	// Podj is Computer High Radio Button
+	RadioButton _pPHButton;	// Podj is Human High Radio Button
+
+	int m_nHodjSkillLevel = SKILLLEVEL_LOW;
+	int m_nPodjSkillLevel = SKILLLEVEL_LOW;
+	int m_nGameTime = SHORT_GAME;
+	bool m_bPodjIsComputer = true;
+
+	void updateRadioButtons();
 
 public:
-	Boardgame();
-	~Boardgame() override {}
+	BoardgameOptions();
+	~BoardgameOptions() override {}
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
