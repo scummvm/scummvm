@@ -282,9 +282,9 @@ SeekableReadStream *NEResources::getResource(const WinResourceID &type, const Wi
 const Array<WinResourceID> NEResources::getIDList(const WinResourceID &type) const {
 	Array<WinResourceID> idArray;
 
-	for (List<Resource>::const_iterator it = _resources.begin(); it != _resources.end(); ++it)
-		if (it->type == type)
-			idArray.push_back(it->id);
+	for (const auto &resource : _resources)
+		if (resource.type == type)
+			idArray.push_back(resource.id);
 
 	return idArray;
 }

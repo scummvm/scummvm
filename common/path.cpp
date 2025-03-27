@@ -784,9 +784,8 @@ Path Path::normalize() const {
 			// Well, we don't start with ESCAPE so there is still a chance we get unescaped
 			needUnescape = true;
 
-			StringArray::const_iterator it;
-			for (it = comps.begin(); it != comps.end(); it++) {
-				if (!canUnescape(false, false, it->c_str())) {
+			for (const auto &comp : comps) {
+				if (!canUnescape(false, false, comp.c_str())) {
 					// Nope we can't get unescaped
 					needUnescape = false;
 					break;
