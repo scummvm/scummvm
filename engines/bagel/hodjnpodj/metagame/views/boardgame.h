@@ -57,6 +57,7 @@ public:
 	bool msgClose(const CloseMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
+	void draw() override;
 };
 
 } // namespace Metagame

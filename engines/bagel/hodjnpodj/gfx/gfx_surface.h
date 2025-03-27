@@ -46,7 +46,7 @@ private:
 	const UIElement *_owner = nullptr;
 	size_t _cellWidth = 0;
 	int _cellIndex = 0;
-	int _fontSize = 14;
+	int _fontSize = 8;
 	int _textColor = 0; // Black
 
 public:

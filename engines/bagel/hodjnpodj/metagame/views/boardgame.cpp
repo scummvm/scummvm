@@ -31,22 +31,22 @@ constexpr bool bHomeWriteLocked = false;
 constexpr bool bPathsDiffer = false;
 
 Boardgame::Boardgame() : Dialog("Boardgame"),
-		_pPlayButton("Play", "Play",          Common::Rect(88, 310, 185, 340), this),
-		_pCancelButton("Cancel", "Main Menu", Common::Rect(254, 310, 351, 340), this),
+		_pHSHButton("HHARD", "Hard",          Common::Rect(72, 208, 240, 232), this),
+		_pHSMButton("HMEDIUM", "Medium",      Common::Rect(72, 234, 240, 258), this),
+		_pHSLButton("HEASY", "Easy",          Common::Rect(72, 260, 240, 284), this),
+		_pPSHButton("PHARD", "Tough Opponent",     Common::Rect(262, 208, 440, 232), this),
+		_pPSMButton("PMEDIUM", "Average Opponent", Common::Rect(262, 234, 440, 258), this),
+		_pPSLButton("PEASY", "Unskilled Opponent", Common::Rect(262, 260, 440, 284), this),
+		
+		_pGTLButton("GLONG", "Long Game",     Common::Rect(262, 140, 440, 164), this),
+		_pGTMButton("GMEDIUM", "Medium Game", Common::Rect(262, 114, 440, 138), this),
+		_pGTSButton("GSHORT", "Short Game",   Common::Rect(262, 88, 440, 112), this),
+		
+		_pPCButton("PLAYERS1", "One Player",  Common::Rect(72, 88, 240, 112), this),
+		_pPHButton("PLAYERS2", "Two Players", Common::Rect(72, 114, 240, 138), this),
 
-		_pHSHButton("HHARD", "Hard",          Common::Rect(62, 208, 210, 232), this),
-		_pHSMButton("HMEDIUM", "Medium",      Common::Rect(62, 234, 210, 258), this),
-		_pHSLButton("HEASY", "Easy",          Common::Rect(62, 260, 210, 284), this),
-		_pPSHButton("PHARD", "Tough Opponent",     Common::Rect(228, 208, 376, 232), this),
-		_pPSMButton("PMEDIUM", "Average Opponent", Common::Rect(228, 234, 376, 258), this),
-		_pPSLButton("PEASY", "Unskilled Opponent", Common::Rect(228, 260, 376, 284), this),
-		
-		_pGTLButton("GLONG", "Long Game",     Common::Rect(228, 140, 376, 164), this),
-		_pGTMButton("GMEDIUM", "Medium Game", Common::Rect(228, 114, 376, 138), this),
-		_pGTSButton("GSHORT", "Short Game",   Common::Rect(228, 88, 376, 112), this),
-		
-		_pPCButton("PLAYERS1", "One Player",  Common::Rect(62, 88, 210, 112), this),
-		_pPHButton("PLAYERS2", "Two Players", Common::Rect(62, 114, 210, 138), this)
+		_pPlayButton("Play", "Play", Common::Rect(101, 310, 211, 340), this),
+		_pCancelButton("Cancel", "Main Menu", Common::Rect(291, 310, 401, 340), this)
 {
 }
 
@@ -73,6 +73,16 @@ bool Boardgame::msgAction(const ActionMessage &msg) {
 
 bool Boardgame::msgGame(const GameMessage &msg) {
 	return false;
+}
+
+void Boardgame::draw() {
+	Dialog::draw();
+	GfxSurface s = getSurface();
+	
+	s.writeString("Number of Players", Common::Point(72, 63));
+	s.writeString("Game Duration", Common::Point(262, 63));
+	s.writeString("Hodj's Skill Level", Common::Point(72, 184));
+	s.writeString("Podj's Skill Level", Common::Point(262, 184));
 }
 
 } // namespace Metagame
