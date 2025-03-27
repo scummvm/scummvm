@@ -103,7 +103,7 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 		if (line.matchString("criteria {", true))
 			parseCriteria(stream, puzzle->criteriaList, puzzle->key);
 		else if (line.matchString("results {", true)) {
-			parseResults(stream, puzzle->resultActions);
+			parseResults(stream, puzzle->resultActions, puzzle->key);
 
 			// WORKAROUND for a script bug in Zork Nemesis, room ve5e (tuning
 			// fork box closeup). If the player leaves the screen while the
@@ -130,6 +130,7 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 			// version doesn't have a separate room for the cutscene.
 			else if (_engine->getGameId() == GID_GRANDINQUISITOR && (_engine->getFeatures() & ADGF_DVD) && puzzle->key == 10836)
 				puzzle->resultActions.push_front(new ActionAssign(_engine, 11, "10803, 0"));
+
 		} 
 		else if (line.matchString("flags {", true))
 			setStateFlag(puzzle->key, parseFlags(stream));
@@ -267,7 +268,7 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 	return true;
 }
 
-void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList) const {
+void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList, uint32 key) const {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
@@ -346,7 +347,14 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("attenuate", true)) {
 					actionList.push_back(new ActionAttenuate(_engine, slot, args));
 				} else if (act.matchString("assign", true)) {
-					actionList.push_back(new ActionAssign(_engine, slot, args));
+	        if (_engine->getGameId() == GID_GRANDINQUISITOR && key == 17761) {
+	          // WORKAROUND for a script bug in Zork: Grand Inquisitor, room tp1e.
+            // Background looping sound effect continuously restarts on every game cycle.
+            // This is caused by resetting itself to zero as a result of itself.
+            // Simple fix is to simply not generate this result assignment action at all.
+	        }
+	        else 
+  					actionList.push_back(new ActionAssign(_engine, slot, args));
 				} else if (act.matchString("change_location", true)) {
 					actionList.push_back(new ActionChangeLocation(_engine, slot, args));
 				} else if (act.matchString("crossfade", true)) {
