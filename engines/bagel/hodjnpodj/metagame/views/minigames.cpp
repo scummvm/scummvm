@@ -151,16 +151,19 @@ bool Minigames::msgMouseMove(const MouseMoveMessage &msg) {
 }
 
 bool Minigames::msgMouseUp(const MouseUpMessage &msg) {
+	if (View::msgMouseUp(msg))
+		return true;
+
 	int index = getSelectedMinigame();
 
 	if (MINIGAME_IDS[index] == -1) {
-		replaceView("TitleMenu");
+		close();
 	} else {
 		pGameParams->bPlayingMetagame = false;
 		g_engine->selectMinigame(MINIGAME_IDS[index]);
 	}
 
-	return View::msgMouseUp(msg);
+	return true;
 }
 
 void Minigames::draw() {

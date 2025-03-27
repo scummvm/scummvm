@@ -33,7 +33,6 @@ namespace Metagame {
 bool Dialog::msgOpen(const OpenMessage &msg) {
 	View::msgOpen(msg);
 	g_events->showCursor(true);
-	blackScreen();
 
 	_background.loadBitmap(BACKGROUND_BMP);
 	_background.setTransparentColor(WHITE);
@@ -43,6 +42,11 @@ bool Dialog::msgOpen(const OpenMessage &msg) {
 		(GAME_HEIGHT - _background.h) / 2);
 	setBounds(r);
 
+	return true;
+}
+
+bool Dialog::msgFocus(const FocusMessage &msg) {
+	blackScreen();
 	return true;
 }
 

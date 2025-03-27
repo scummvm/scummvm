@@ -39,6 +39,7 @@ public:
 	}
 
 	bool msgOpen(const OpenMessage &msg) override;
+	bool msgFocus(const FocusMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
 	void draw() override;
 };
