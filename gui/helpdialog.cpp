@@ -138,7 +138,7 @@ void HelpDialog::addTabs(const char * const *tabData) {
 
 		tabData++;
 
-		Common::U32String tabText(*tabData++);
+		Common::U32String tabText(_s(*tabData++));
 
 		_tab->addTab(tabName, "HelpContentDialog");
 

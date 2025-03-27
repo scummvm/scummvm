@@ -189,33 +189,56 @@ void RichTextWidget::recalc() {
 }
 
 void RichTextWidget::createWidget() {
-	Graphics::MacWindowManager *wm = g_gui.getWM();
+    Graphics::MacWindowManager *wm = g_gui.getWM();
 
-	uint32 bg = wm->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff); // transparent
-	TextColorData *normal = g_gui.theme()->getTextColorData(kTextColorNormal);
-	uint32 fg = wm->_pixelformat.RGBToColor(normal->r, normal->g, normal->b);
+    uint32 bg = wm->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff); 
+    TextColorData *normal = g_gui.theme()->getTextColorData(kTextColorNormal);
+    uint32 fg = wm->_pixelformat.RGBToColor(normal->r, normal->g, normal->b);
 
-	const int fontHeight = g_gui.xmlEval()->getVar("Globals.Font.Height", 25);
+    const int fontHeight = g_gui.xmlEval()->getVar("Globals.Font.Height", 25);
 
-#if 1
-	Graphics::MacFont macFont(Graphics::kMacFontNewYork, fontHeight, Graphics::kMacFontRegular);
-	(void)ttfFamily;
+    Graphics::MacFont macFont(Graphics::kMacFontNewYork, fontHeight, Graphics::kMacFontRegular);
+    Graphics::Font *ttfFont = nullptr;
+    int newId = -1;
+
+#ifdef USE_FREETYPE2
+    Common::String ttfFontName = "NotoSans-Regular.ttf";
+    const Graphics::TTFMap ttfList[] = {
+        { ttfFontName.c_str(), 0 }, // Regular font, slant = 0
+        { nullptr, 0 }              
+    };
+
+    newId = wm->_fontMan->registerTTFFont(ttfList);
+    if (newId != -1) {
+        ttfFont = wm->_fontMan->loadTTFFont(ttfFontName, fontHeight);
+        if (ttfFont) {
+            // Load TTF font
+            macFont = Graphics::MacFont(newId, fontHeight, Graphics::kMacFontRegular);
+        } else {
+            warning("Failed to load TTF font: %s (size: %d)", ttfFontName.c_str(), fontHeight);
+        }
+    } else {
+        warning("Failed to register TTF font: %s", ttfFontName.c_str());
+    }
 #else
-	int newId = wm->_fontMan->registerTTFFont(ttfFamily);
-	Graphics::MacFont macFont(newId, fontHeight, Graphics::kMacFontRegular);
+    warning("FreeType2 support is not enabled. Falling back to default font.");
 #endif
+	// Create Mactext with selected font (fallback to default if TTF font is not available)
+    _txtWnd = new Graphics::MacText(Common::U32String(), wm, &macFont, fg, bg, _textWidth, Graphics::kTextAlignLeft);
 
-	_txtWnd = new Graphics::MacText(Common::U32String(), wm, &macFont, fg, bg, _textWidth, Graphics::kTextAlignLeft);
+    if (!_imageArchive.empty())
+        _txtWnd->setImageArchive(_imageArchive);
 
-	if (!_imageArchive.empty())
-		_txtWnd->setImageArchive(_imageArchive);
+    if (!_text.empty()) {
+        _txtWnd->setMarkdownText(_text);
+    } else {
+        _txtWnd->setMarkdownText(Common::U32String());
+    }
 
-	_txtWnd->setMarkdownText(_text);
-
-	if (_surface)
-		_surface->create(_textWidth, _textHeight, g_gui.getWM()->_pixelformat);
-	else
-		_surface = new Graphics::ManagedSurface(_textWidth, _textHeight, wm->_pixelformat);
+    if (_surface)
+        _surface->create(_textWidth, _textHeight, g_gui.getWM()->_pixelformat);
+    else
+        _surface = new Graphics::ManagedSurface(_textWidth, _textHeight, wm->_pixelformat);
 }
 
 void RichTextWidget::reflowLayout() {

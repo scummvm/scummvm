@@ -149,7 +149,7 @@ class MacFontManager {
 public:
 	MacFontManager(uint32 mode, Common::Language language);
 	~MacFontManager();
-
+	Graphics::Font* loadTTFFont(const Common::String &ttfName, int size);
 	void setLocalizedFonts();
 
 	/**
@@ -206,6 +206,7 @@ public:
 	int getFamilyId(int newId, int newSlant);
 
 private:
+	Common::HashMap<Common::String, Graphics::Font *> _loadedTTFFonts;
 	void loadFontsBDF();
 	void loadFonts();
 	void loadJapaneseFonts();

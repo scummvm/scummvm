@@ -22,6 +22,9 @@
 #include "common/events.h"
 #include "common/translation.h"
 #include "common/zip-set.h"
+#include "common/system.h" 
+#include "common/fs.h"
+#include "common/file.h"
 #include "gui/EventRecorder.h"
 
 #include "backends/keymapper/action.h"
@@ -82,6 +85,38 @@ GuiManager::GuiManager() : CommandSender(nullptr), _redrawStatus(kRedrawDisabled
 	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
 	setLanguageRTL();
 #endif // USE_TRANSLATION
+
+	
+	Common::FSNode fontDir("gui/themes/fonts");
+	if (fontDir.exists()) {
+		Common::Path fontPath("gui/themes/fonts", '/');
+		SearchMan.addDirectory(fontPath, 0, 1, true); 
+		debug("GuiManager: Added gui/themes/fonts to SearchMan");
+
+		debug("GuiManager: Font directory path: %s", fontDir.getPath().toString(Common::Path::kNativeSeparator).c_str());
+
+		Common::ArchiveMemberList fileList;
+		SearchMan.listMatchingMembers(fileList, Common::Path("gui/themes/fonts/*", '/'));
+		if (fileList.empty()) {
+			warning("GuiManager: No files detected in gui/themes/fonts by SearchMan");
+		} else {
+			for (const auto& member : fileList) {
+				debug("GuiManager: SearchMan detected file: %s", member->getName().c_str());
+			}
+		}
+
+		// Test opening the file with forward slashes
+		Common::File testFile;
+		Common::Path absolutePath = "E:/ScummVM/scummvm/gui/themes/fonts/NotoSans-Regular.ttf";
+		if (testFile.open(absolutePath)) {
+			debug("Successfully opened NotoSans-Regular.ttf directly");
+			testFile.close();
+		} else {
+			warning("Failed to open NotoSans-Regular.ttf directly");
+		}
+	} else {
+		warning("GuiManager: Directory gui/themes/fonts does not exist");
+	}
 
 	initTextToSpeech();
 	initIconsSet();
