@@ -107,6 +107,7 @@ public:
 	void clearSharedCast();
 	void loadSharedCastsFrom(Common::Path &filename);
 	Archive *loadExternalCastFrom(Common::Path &filename);
+	bool loadCastLibFrom(uint16 libId, Common::Path &filename);
 
 	CastMember *getCastMember(CastMemberID memberID);
 	CastMember *createOrReplaceCastMember(CastMemberID memberID, CastMember *cast);
@@ -119,6 +120,7 @@ public:
 	CastMemberInfo *getCastMemberInfo(CastMemberID memberID);
 	bool isValidCastMember(CastMemberID memberID, CastType type);
 	const Stxt *getStxt(CastMemberID memberID);
+
 
 	LingoArchive *getMainLingoArch();
 	LingoArchive *getSharedLingoArch();
