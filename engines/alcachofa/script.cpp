@@ -187,16 +187,35 @@ struct ScriptTask : public Task {
 	virtual TaskReturn run() override {
 		if (_isFirstExecution || _returnsFromKernelCall)
 			setCharacterVariables();
-		if (_returnsFromKernelCall)
+		if (_returnsFromKernelCall) {
+			// this is also original done, every KernelCall is followed by a PopN of the arguments
+			// only *after* the PopN the return value is pushed so that the following script can use it
+			scumm_assert(_pc < _script._instructions.size() && _script._instructions[_pc]._op == ScriptOp::PopN);
+			popN(_script._instructions[_pc++]._arg);
 			pushNumber(process().returnValue());
+		}
 		_isFirstExecution = _returnsFromKernelCall = false;
 
 		while (true) {
 			if (_pc >= _script._instructions.size())
 				error("Script process reached instruction out-of-bounds");
 			const auto &instruction = _script._instructions[_pc++];
-			debugC(SCRIPT_DEBUG_LVL_INSTRUCTIONS, kDebugScript, "%u: %5u %-12s %8d",
-				process().pid(), _pc - 1, ScriptOpNames[(int)instruction._op], instruction._arg);
+			if (debugChannelSet(SCRIPT_DEBUG_LVL_INSTRUCTIONS, kDebugScript)) {
+				debugN("%u: %5u %-12s %8d Stack: ",
+					process().pid(), _pc - 1, ScriptOpNames[(int)instruction._op], instruction._arg);
+				if (_stack.empty())
+					debug("empty");
+				else {
+					const auto& top = _stack.top();
+					switch (top._type) {
+					case StackEntryType::Number: debug("Number %d", top._number); break;
+					case StackEntryType::Variable: debug("Var %u (%d)", top._index, _script._variables[top._index]); break;
+					case StackEntryType::Instruction: debug("Instr %u", top._index); break;
+					case StackEntryType::String: debug("String %u (\"%s\")", top._index, getStringArg(0)); break;
+					default: debug("INVALID"); break;
+					}
+				}
+			}
 
 			switch (instruction._op) {
 			case ScriptOp::Nop: break;
@@ -215,10 +234,7 @@ struct ScriptTask : public Task {
 				pushNumber(popVariable());
 				break;
 			case ScriptOp::PopN:
-				if (instruction._arg < 0 || (uint)instruction._arg > _stack.size())
-					error("Script tried to pop more entries than are available on the stack");
-				for (int32 i = 0; i < instruction._arg; i++)
-					_stack.pop();
+				popN(instruction._arg);
 				break;
 			case ScriptOp::Store: {
 				int32 value = popNumber();
@@ -381,6 +397,13 @@ private:
 		if (entry._type != StackEntryType::Instruction)
 			error("Script tried to pop but top of stack is not an instruction");
 		return entry._index;
+	}
+
+	void popN(int32 count) {
+		if (count < 0 || (uint)count > _stack.size())
+			error("Script tried to pop more entries than are available on the stack");
+		for (int32 i = 0; i < count; i++)
+			_stack.pop();
 	}
 
 	StackEntry getArg(uint argI) {
