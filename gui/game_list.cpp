@@ -11,8 +11,8 @@ public:
 	void applyFilter(const String &filter);
 
 private:
-	std::vector<String> _gameList;
-	std::vector<String> _filteredGameList;
+	Common::Array<String> _gameList;
+	Common::Array<String> _filteredGameList;
 	String _currentFilter;
 	String _selectedGameId; // To track currently selected game
 
