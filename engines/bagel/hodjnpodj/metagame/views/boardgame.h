@@ -51,7 +51,7 @@ private:
 
 	int m_nHodjSkillLevel = SKILLLEVEL_LOW;
 	int m_nPodjSkillLevel = SKILLLEVEL_LOW;
-	int m_nGameTime = MEDIUM_GAME;
+	int m_nGameTime = SHORT_GAME;
 	bool m_bPodjIsComputer = true;
 
 	void updateRadioButtons();

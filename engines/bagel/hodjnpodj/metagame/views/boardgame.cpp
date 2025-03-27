@@ -53,8 +53,13 @@ Boardgame::Boardgame() : Dialog("Boardgame"),
 bool Boardgame::msgOpen(const OpenMessage &msg) {
 	Dialog::msgOpen(msg);
 	lpMetaGame->initBFCInfo();
-	updateRadioButtons();
 
+	m_nHodjSkillLevel = SKILLLEVEL_LOW;
+	m_nPodjSkillLevel = SKILLLEVEL_LOW;
+	m_nGameTime = SHORT_GAME;
+	m_bPodjIsComputer = true;
+
+	updateRadioButtons();
 	return true;
 }
 
