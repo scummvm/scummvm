@@ -25,7 +25,7 @@ private:
 
 // Finds the index of a game in the filtered list, or -1 if not found
 int GameListWidget::findFilteredGameIndex(const String &gameId) const {
-	auto it = std::find(_filteredGameList.begin(), _filteredGameList.end(), gameId);
+	auto it = Common::find(_filteredGameList.begin(), _filteredGameList.end(), gameId);
 	if (it != _filteredGameList.end()) {
 		return static_cast<int>(std::distance(_filteredGameList.begin(), it));
 	}
