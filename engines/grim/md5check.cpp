@@ -415,6 +415,7 @@ const char *emid_voice[] = {
 const char *emi_installer[] = {
 	"93a639e3221405862dc46e9706216c00", // German (EFMI Installer)
 	"a42f8aa079a6d23c285fceba191e67a4", // English (Monkey Island 4 Installer)
+	"d54924078bdfc4c449761500873f279c", // French (Installation de Monkey Island 4)
 };
 
 bool MD5Check::_initted = false;
@@ -518,6 +519,9 @@ void MD5Check::init() {
 				if (g_grim->getGameLanguage() == Common::DE_DEU) {
 					// Known to be the correct filename for german
 					MD5SUM("EFMI Installer", emi_installer)
+				} else if (g_grim->getGameLanguage() == Common::FR_FRA) {
+					// Known to be the correct filename for French
+					MD5SUM("Installation de Monkey Island 4", emi_installer)
 				} else {
 					// Known to be the correct filename for english
 					MD5SUM("Monkey Island 4 Installer", emi_installer)
@@ -529,9 +533,10 @@ void MD5Check::init() {
 			MD5SUM("artMel.m4b", emi_artMel)
 			MD5SUM("artMon.m4b", emi_artMon)
 			MD5SUM("lip.m4b", emi_lip)
-			// At least in the English version, this appears to be part of the
-			// installer.
-			if (g_grim->getGameLanguage() != Common::EN_ANY) {
+			// At least in the English and French versions, this appears to be
+			// part of the installer.
+			if (g_grim->getGameLanguage() != Common::EN_ANY
+				&& g_grim->getGameLanguage() != Common::FR_FRA) {
 				MD5SUM("local.m4b", emi_local)
 			}
 			MD5SUM("sfx.m4b", emi_sfx)

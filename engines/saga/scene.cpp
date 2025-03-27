@@ -180,7 +180,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 			gDebugLevel = backUpDebugLevel;
 			debug(DUMP_SCENES_LEVEL, "Dump Scene: number %i, descriptor resourceId %i, resourceList resourceId %i", i, _sceneLUT[i], _sceneDescription.resourceListResourceId);
 			debug(DUMP_SCENES_LEVEL, "\tresourceListCount %i", (int)resourceList.size());
-			for (SceneResourceDataArray::iterator j = resourceList.begin(); j != resourceList.end(); ++j) {
+			for (auto &j : resourceList) {
 				if (j->resourceType >= typesCount) {
 					error("wrong resource type %i", j->resourceType);
 				}
@@ -223,14 +223,14 @@ void Scene::getResourceTypes(SAGAResourceTypes *&types, int &typesCount) {
 }
 
 void Scene::drawTextList() {
-	for (TextList::iterator entry = _textList.begin(); entry != _textList.end(); ++entry) {
+	for (auto &entry : _textList) {
 
-		if (entry->display) {
+		if (entry.display) {
 
-			if (entry->useRect) {
-				_vm->_font->textDrawRect(entry->font, entry->text, entry->rect, _vm->KnownColor2ColorId(entry->knownColor), _vm->KnownColor2ColorId(entry->effectKnownColor), entry->flags);
+			if (entry.useRect) {
+				_vm->_font->textDrawRect(entry.font, entry.text, entry.rect, _vm->KnownColor2ColorId(entry.knownColor), _vm->KnownColor2ColorId(entry.effectKnownColor), entry.flags);
 			} else {
-				_vm->_font->textDraw(entry->font, entry->text, entry->point, _vm->KnownColor2ColorId(entry->knownColor), _vm->KnownColor2ColorId(entry->effectKnownColor), entry->flags);
+				_vm->_font->textDraw(entry.font, entry.text, entry.point, _vm->KnownColor2ColorId(entry.knownColor), _vm->KnownColor2ColorId(entry.effectKnownColor), entry.flags);
 			}
 		}
 	}
@@ -896,11 +896,11 @@ void Scene::loadSceneResourceList(uint32 resourceId, SceneResourceDataArray &res
 		// resource table
 		debug(3, "Loading scene resource list");
 
-		for (SceneResourceDataArray::iterator resource = resourceList.begin(); resource != resourceList.end(); ++resource) {
-			resource->resourceId = readS.readUint16();
-			resource->resourceType = readS.readUint16();
+		for (auto &resource : resourceList) {
+			resource.resourceId = readS.readUint16();
+			resource.resourceType = readS.readUint16();
 			// demo version may contain invalid resourceId
-			resource->invalid = !_sceneContext->validResourceId(resource->resourceId);
+			resource.invalid = !_sceneContext->validResourceId(resource.resourceId);
 		}
 
 	}
@@ -916,39 +916,39 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList, SceneLoa
 	getResourceTypes(types, typesCount);
 
 	// Process the scene resource list
-	for (SceneResourceDataArray::iterator resource = resourceList.begin(); resource != resourceList.end(); ++resource) {
-		if (resource->invalid) {
+	for (auto &resource : resourceList) {
+		if (resource.invalid) {
 			continue;
 		}
-		_vm->_resource->loadResource(_sceneContext, resource->resourceId, resourceData);
+		_vm->_resource->loadResource(_sceneContext, resource.resourceId, resourceData);
 
 
 		if (resourceData.size() >= 6) {
 			if (!memcmp(resourceData.getBuffer(), "DUMMY!", 6)) {
-				resource->invalid = true;
-				warning("DUMMY resource %i", resource->resourceId);
+				resource.invalid = true;
+				warning("DUMMY resource %i", resource.resourceId);
 			}
 		}
 
 		// Thos resources are bogus. Skip them
 		if (_vm->isITEAmiga() && resourceData.size() == 12 && memcmp(resourceData.getBuffer(), "ECHO is on\r\n", 12) == 0) {
-			resource->invalid = true;
-			warning("DUMMY resource %i", resource->resourceId);
+			resource.invalid = true;
+			warning("DUMMY resource %i", resource.resourceId);
 		}
 
-		if (resource->invalid) {
+		if (resource.invalid) {
 			continue;
 		}
 
-		if (resource->resourceType >= typesCount) {
-			error("Scene::processSceneResources() wrong resource type %i", resource->resourceType);
+		if (resource.resourceType >= typesCount) {
+			error("Scene::processSceneResources() wrong resource type %i", resource.resourceType);
 		}
 
-		resType = types[resource->resourceType];
+		resType = types[resource.resourceType];
 
 		switch (resType) {
 		case SAGA_UNKNOWN:
-			warning("UNKNOWN resourceType %i", resource->resourceType);
+			warning("UNKNOWN resourceType %i", resource.resourceType);
 			break;
 		case SAGA_ACTOR:
 			//for (a = actorsInScene; a; a = a->nextInScene)
@@ -970,7 +970,7 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList, SceneLoa
 				_bg.buffer,
 				&_bg.w,
 				&_bg.h)) {
-				error("Scene::processSceneResources() Error loading background resource %i", resource->resourceId);
+				error("Scene::processSceneResources() Error loading background resource %i", resource.resourceId);
 			}
 			_bg.loaded = true;
 
@@ -1038,7 +1038,7 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList, SceneLoa
 			break;
 		case SAGA_ANIM:
 			{
-				uint16 animId = resource->resourceType - 14;
+				uint16 animId = resource.resourceType - 14;
 				debug(3, "Loading animation resource animId=%i", animId);
 				_vm->_anim->load(animId, resourceData);
 			}
@@ -1061,7 +1061,7 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList, SceneLoa
 			break;
 		case SAGA_FACES:
 			if (_vm->getGameId() == GID_ITE)
-				_vm->_interface->loadScenePortraits(resource->resourceId);
+				_vm->_interface->loadScenePortraits(resource.resourceId);
 			break;
 		case SAGA_PALETTE:
 			{
@@ -1086,7 +1086,7 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList, SceneLoa
 			}
 			break;
 		default:
-			error("Scene::ProcessSceneResources() Encountered unknown resource type %i", resource->resourceType);
+			error("Scene::ProcessSceneResources() Encountered unknown resource type %i", resource.resourceType);
 			break;
 		}
 	}

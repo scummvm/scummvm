@@ -689,12 +689,12 @@ void DreamWebEngine::loadPosition(unsigned int slot) {
 	}
 	// ...and check if the frames overlap.
 	Common::sort(flist.begin(), flist.end(), Common::Less<FrameExtent>());
-	Common::List<FrameExtent>::const_iterator iter;
 	uint16 curEnd = 0;
-	for (iter = flist.begin(); iter != flist.end(); ++iter) {
-		if (iter->start < curEnd)
+
+	for (auto &frame : flist) {
+		if (frame.start < curEnd)
 			error("exFrames data corruption in savegame");
-		curEnd = iter->start + iter->length;
+		curEnd = frame.start + frame.length;
 	}
 	if (curEnd > _vars._exFramePos) {
 		if (curEnd > kExframeslen)

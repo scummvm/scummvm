@@ -454,9 +454,9 @@ bool Resource::createContexts() {
 		break;
 	}
 
-	for (ResourceContextList::iterator i = _contexts.begin(); i != _contexts.end(); ++i) {
-		if (!(*i)->load(_vm, this)) {
-			warning("Cannot load context %s", (*i)->_fileName);
+	for (auto &context : _contexts) {
+		if (!context->load(_vm, this)) {
+			warning("Cannot load context %s", context->_fileName);
 			return false;
 		}
 	}
@@ -549,8 +549,7 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArr
 }
 
 ResourceContext *Resource::getContext(uint16 fileType, int serial) {
-	for (ResourceContextList::const_iterator i = _contexts.begin(); i != _contexts.end(); ++i) {
-		ResourceContext * context = *i;
+	for (const auto &context : _contexts) {
 		if ((context->fileType() & fileType) && (context->serial() == serial)) {
 			return context;
 		}

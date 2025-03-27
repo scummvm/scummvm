@@ -60,9 +60,8 @@ SaveStateList SaveLoad::listValidSaves(const Common::String &target) {
 	sort(savefiles.begin(), savefiles.end());
 
 	// Fill the information for the existing savegames
-	Common::StringArray::iterator it = savefiles.begin();
-	while (it != savefiles.end()) {
-		const char *ext = strrchr(it->c_str(), '.');
+	for (auto &savefile : savefiles) {
+		const char *ext = strrchr(savefile.c_str(), '.');
 		if (!ext)
 			continue;
 
@@ -83,7 +82,6 @@ SaveStateList SaveLoad::listValidSaves(const Common::String &target) {
 			}
 			list.push_back(descriptor);
 		}
-		it++;
 	}
 
 	if (!hasReserved) {

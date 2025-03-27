@@ -58,12 +58,12 @@ GfxMenu::GfxMenu(AgiEngine *vm, GfxMgr *gfx, PictureMgr *picture, TextMgr *text)
 }
 
 GfxMenu::~GfxMenu() {
-	for (GuiMenuArray::iterator itemIter = _array.begin(); itemIter != _array.end(); ++itemIter)
-		delete *itemIter;
+	for (auto *menu : _array)
+		delete menu;
 	_array.clear();
 
-	for (GuiMenuItemArray::iterator menuIter = _itemArray.begin(); menuIter != _itemArray.end(); ++menuIter)
-		delete *menuIter;
+	for (auto *menuItem : _itemArray)
+		delete menuItem;
 	_itemArray.clear();
 }
 
@@ -170,9 +170,9 @@ void GfxMenu::submit() {
 	// WORKAROUND: For Apple II gs we add a Speed menu
 	if (_vm->getPlatform() == Common::kPlatformApple2GS && ConfMan.getBool("apple2gs_speedmenu")) {
 		uint16 maxControllerSlot = 0;
-		for (GuiMenuItemArray::iterator menuIter = _itemArray.begin(); menuIter != _itemArray.end(); ++menuIter)
-			if ((*menuIter)->controllerSlot > maxControllerSlot)
-				maxControllerSlot = (*menuIter)->controllerSlot;
+		for (auto &menuItem : _itemArray)
+			if (menuItem->controllerSlot > maxControllerSlot)
+				maxControllerSlot = menuItem->controllerSlot;
 		for (uint16 curMapping = 0; curMapping < MAX_CONTROLLER_KEYMAPPINGS; curMapping++)
 			if (_vm->_game.controllerKeyMapping[curMapping].controllerSlot > maxControllerSlot)
 				maxControllerSlot = _vm->_game.controllerKeyMapping[curMapping].controllerSlot;
@@ -279,28 +279,16 @@ void GfxMenu::itemDisable(uint16 controllerSlot) {
 }
 
 void GfxMenu::itemEnableDisable(uint16 controllerSlot, bool enabled) {
-	GuiMenuItemArray::iterator listIterator = _itemArray.begin();
-	GuiMenuItemArray::iterator listEnd = _itemArray.end();
-
-	while (listIterator != listEnd) {
-		GuiMenuItemEntry *menuItemEntry = *listIterator;
-		if (menuItemEntry->controllerSlot == controllerSlot) {
-			menuItemEntry->enabled = enabled;
+	for (auto &menuItem : _itemArray) {
+		if (menuItem->controllerSlot == controllerSlot) {
+			menuItem->enabled = enabled;
 		}
-
-		++listIterator;
 	}
 }
 
 void GfxMenu::itemEnableAll() {
-	GuiMenuItemArray::iterator listIterator = _itemArray.begin();
-	GuiMenuItemArray::iterator listEnd = _itemArray.end();
-
-	while (listIterator != listEnd) {
-		GuiMenuItemEntry *menuItemEntry = *listIterator;
-		menuItemEntry->enabled = true;
-
-		++listIterator;
+	for (auto &menuItem : _itemArray) {
+		menuItem->enabled = true;
 	}
 }
 

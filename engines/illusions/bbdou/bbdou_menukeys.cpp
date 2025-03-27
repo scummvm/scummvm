@@ -46,8 +46,7 @@ void BBDOUMenuKeys::addMenuKey(uint bitMask, uint32 threadId) {
 
 void BBDOUMenuKeys::update() {
 	if (_vm->_screen->isDisplayOn() && !_vm->_menuSystem->isActive()) {
-		for (MenuKeys::iterator it = _menuKeys.begin(); it != _menuKeys.end(); ++it) {
-			const MenuKey &menuKey = *it;
+		for (auto &menuKey : _menuKeys) {
 			if (_vm->_input->pollButton(menuKey.bitMask)) {
 				_vm->startScriptThread(menuKey.threadId, 0, 0, 0, 0);
 				break;

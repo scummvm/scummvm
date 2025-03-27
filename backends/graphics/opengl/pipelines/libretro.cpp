@@ -644,8 +644,8 @@ void LibRetroPipeline::setPipelineState() {
 
 bool LibRetroPipeline::setupFBOs() {
 	// Setup the input targets sizes
-	for (Common::Array<LibRetroTextureTarget>::iterator it = _inputTargets.begin(); it != _inputTargets.end(); it++) {
-		if (!it->setScaledSize(_inputWidth, _inputHeight, _outputRect)) {
+	for (auto &inputTarget : _inputTargets) {
+		if (!inputTarget.setScaledSize(_inputWidth, _inputHeight, _outputRect)) {
 			return false;
 		}
 	}

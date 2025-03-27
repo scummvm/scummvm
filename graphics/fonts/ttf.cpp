@@ -995,9 +995,9 @@ Font *findTTFace(const Common::Array<Common::Path> &files, const Common::U32Stri
 	uint32 bestFaceId = (uint32) -1;
 	uint32 bestPenalty = (uint32) -1;
 
-	for (Common::Array<Common::Path>::const_iterator it = files.begin(); it != files.end(); it++) {
+	for (const auto &curFile : files) {
 		Common::File *ttfFile = new Common::File();
-		if (!ttfFile->open(*it)) {
+		if (!ttfFile->open(curFile)) {
 			delete ttfFile;
 			continue;
 		}

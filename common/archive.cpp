@@ -107,12 +107,11 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, b
 
 	const char *wildcardExclusions = matchPathComponents ? NULL : pathSepString;
 
-	ArchiveMemberList::const_iterator it = allNames.begin();
-	for (; it != allNames.end(); ++it) {
+	for (const auto &archive : allNames) {
 		// TODO: We match case-insenstivie for now, our API does not define whether that's ok or not though...
 		// For our use case case-insensitive is probably what we want to have though.
-		if ((*it)->getName().matchString(patternString, true, wildcardExclusions)) {
-			list.push_back(*it);
+		if (archive->getName().matchString(patternString, true, wildcardExclusions)) {
+			list.push_back(archive);
 			matches++;
 		}
 	}
@@ -185,13 +184,13 @@ bool Archive::getChildren(const Common::Path &path, Common::Array<Common::String
 	if (!_fileMap.contains(pathNorm) && !_directoryMap.contains(pathNorm))
 		return false;
 	if (mode == kListDirectoriesOnly || mode == kListAll)
-		for (SubfileSet::iterator its = _directoryMap[pathNorm].begin(); its != _directoryMap[pathNorm].end(); its++)
-		  if (hidden || its->_key.firstChar() != '.')
-				list.push_back(its->_key);
+		for (auto &dir : _directoryMap[pathNorm])
+		  if (hidden || dir._key.firstChar() != '.')
+				list.push_back(dir._key);
 	if (mode == kListFilesOnly || mode == kListAll)
-		for (SubfileSet::iterator its = _fileMap[pathNorm].begin(); its != _fileMap[pathNorm].end(); its++)
-			if (hidden || its->_key.firstChar() != '.')
-				list.push_back(its->_key);
+		for (auto &file : _fileMap[pathNorm])
+			if (hidden || file._key.firstChar() != '.')
+				list.push_back(file._key);
 	return true;
 }
 
@@ -207,9 +206,9 @@ void Archive::prepareMaps() const {
 	ArchiveMemberList list;
 	listMembers(list);
 
-	for (ArchiveMemberList::iterator it = list.begin(); it != list.end(); it++) {
-		Common::Path cur = (*it)->getPathInArchive().normalize();
-		if (!(*it)->isDirectory()) {
+	for (auto &archive : list) {
+		Common::Path cur = archive->getPathInArchive().normalize();
+		if (!archive->isDirectory()) {
 			Common::Path parent = cur.getParent().normalize();
 			Common::String fname = cur.baseName();
 			_fileMap[parent][fname] = true;
@@ -224,10 +223,9 @@ void Archive::prepareMaps() const {
 		}
 	}
 
-	for (AllfileMap::iterator itd = _directoryMap.begin();
-	     itd != _directoryMap.end(); itd++) {
-		for (SubfileSet::iterator its = itd->_value.begin(); its != itd->_value.end(); its++) {
-			_fileMap[itd->_key].erase(its->_key);
+	for (auto &dir : _directoryMap) {
+		for (auto &file : dir._value) {
+			_fileMap[dir._key].erase(file._key);
 		}
 	}
 }
@@ -398,8 +396,8 @@ void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String origPa
 	MatchList multipleMatches;
 	MatchList::iterator matchIter;
 
-	for (FSList::const_iterator i = subDirs.begin(); i != subDirs.end(); ++i) {
-		String name = i->getName();
+	for (const auto &subDir : subDirs) {
+		String name = subDir.getName();
 
 		if (matchString(name.c_str(), pattern.c_str(), ignoreCase)) {
 			matchIter = multipleMatches.find(name);
@@ -417,9 +415,9 @@ void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String origPa
 			}
 
 			if (nextPattern.empty())
-				addDirectory(name, *i, priority, depth, flat);
+				addDirectory(name, subDir, priority, depth, flat);
 			else
-				addSubDirectoriesMatching(*i, nextPattern, ignoreCase, priority, depth, flat);
+				addSubDirectoriesMatching(subDir, nextPattern, ignoreCase, priority, depth, flat);
 		}
 	}
 }
@@ -447,9 +445,9 @@ Archive *SearchSet::getArchive(const String &name) const {
 }
 
 void SearchSet::clear() {
-	for (ArchiveNodeList::iterator i = _list.begin(); i != _list.end(); ++i) {
-		if (i->_autoFree)
-			delete i->_arc;
+	for (auto &archive : _list) {
+		if (archive._autoFree)
+			delete archive._arc;
 	}
 
 	_list.clear();
@@ -475,9 +473,8 @@ bool SearchSet::hasFile(const Path &path) const {
 	if (path.empty())
 		return false;
 
-	ArchiveNodeList::const_iterator it = _list.begin();
-	for (; it != _list.end(); ++it) {
-		if (it->_arc->hasFile(path))
+	for (const auto &archive : _list) {
+		if (archive._arc->hasFile(path))
 			return true;
 	}
 
@@ -509,11 +506,10 @@ bool SearchSet::isPathDirectory(const Path &path) const {
 
 bool SearchSet::getChildren(const Common::Path &path, Common::Array<Common::String> &list, ListMode mode, bool hidden) const {
 	bool hasAny = false;
-	ArchiveNodeList::const_iterator it = _list.begin();
 	list.clear();
-	for (; it != _list.end(); ++it) {
+	for (const auto &archive : _list) {
 		Common::Array<Common::String> tmpList;
-		if (it->_arc->getChildren(path, tmpList, mode, hidden)) {
+		if (archive._arc->getChildren(path, tmpList, mode, hidden)) {
 			list.push_back(tmpList);
 			hasAny = true;
 		}
@@ -525,9 +521,8 @@ bool SearchSet::getChildren(const Common::Path &path, Common::Array<Common::Stri
 int SearchSet::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents) const {
 	int matches = 0;
 
-	ArchiveNodeList::const_iterator it = _list.begin();
-	for (; it != _list.end(); ++it)
-		matches += it->_arc->listMatchingMembers(list, pattern, matchPathComponents);
+	for (const auto &archive : _list)
+		matches += archive._arc->listMatchingMembers(list, pattern, matchPathComponents);
 
 	return matches;
 }
@@ -535,12 +530,11 @@ int SearchSet::listMatchingMembers(ArchiveMemberList &list, const Path &pattern,
 int SearchSet::listMatchingMembers(ArchiveMemberDetailsList &list, const Path &pattern, bool matchPathComponents) const {
 	int matches = 0;
 
-	ArchiveNodeList::const_iterator it = _list.begin();
-	for (; it != _list.end(); ++it) {
+	for (const auto &archive : _list) {
 		List<ArchiveMemberPtr> matchingMembers;
-		matches += it->_arc->listMatchingMembers(matchingMembers, pattern, matchPathComponents);
+		matches += archive._arc->listMatchingMembers(matchingMembers, pattern, matchPathComponents);
 		for (ArchiveMemberPtr &member : matchingMembers)
-			list.push_back(ArchiveMemberDetails(member, it->_name));
+			list.push_back(ArchiveMemberDetails(member, archive._name));
 	}
 
 	return matches;
@@ -549,9 +543,8 @@ int SearchSet::listMatchingMembers(ArchiveMemberDetailsList &list, const Path &p
 int SearchSet::listMembers(ArchiveMemberList &list) const {
 	int matches = 0;
 
-	ArchiveNodeList::const_iterator it = _list.begin();
-	for (; it != _list.end(); ++it)
-		matches += it->_arc->listMembers(list);
+	for (const auto &archive : _list)
+		matches += archive._arc->listMembers(list);
 
 	return matches;
 }
@@ -560,13 +553,12 @@ const ArchiveMemberPtr SearchSet::getMember(const Path &path, Archive **containe
 	if (path.empty())
 		return ArchiveMemberPtr();
 
-	ArchiveNodeList::const_iterator it = _list.begin();
-	for (; it != _list.end(); ++it) {
-		if (it->_arc->hasFile(path)) {
+	for (const auto &archive : _list) {
+		if (archive._arc->hasFile(path)) {
 			if (container) {
-				*container = it->_arc;
+				*container = archive._arc;
 			}
-			return it->_arc->getMember(path);
+			return archive._arc->getMember(path);
 		}
 	}
 
@@ -581,9 +573,8 @@ SeekableReadStream *SearchSet::createReadStreamForMember(const Path &path) const
 	if (path.empty())
 		return nullptr;
 
-	ArchiveNodeList::const_iterator it = _list.begin();
-	for (; it != _list.end(); ++it) {
-		SeekableReadStream *stream = it->_arc->createReadStreamForMember(path);
+	for (const auto &archive : _list) {
+		SeekableReadStream *stream = archive._arc->createReadStreamForMember(path);
 		if (stream)
 			return stream;
 	}
@@ -595,9 +586,8 @@ SeekableReadStream *SearchSet::createReadStreamForMemberAltStream(const Path &pa
 	if (path.empty())
 		return nullptr;
 
-	ArchiveNodeList::const_iterator it = _list.begin();
-	for (; it != _list.end(); ++it) {
-		SeekableReadStream *stream = it->_arc->createReadStreamForMemberAltStream(path, altStreamType);
+	for (const auto &archive : _list) {
+		SeekableReadStream *stream = archive._arc->createReadStreamForMemberAltStream(path, altStreamType);
 		if (stream)
 			return stream;
 	}

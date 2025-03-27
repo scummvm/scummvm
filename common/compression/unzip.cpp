@@ -1096,9 +1096,8 @@ int ZipArchive::listMembers(ArchiveMemberList &list) const {
 	int members = 0;
 
 	const unz_s *const archive = (const unz_s *)_zipFile;
-	for (ZipHash::const_iterator i = archive->_hash.begin(), end = archive->_hash.end();
-	     i != end; ++i) {
-		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(i->_key, *this)));
+	for (const auto &hash : archive->_hash) {
+		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(hash._key, *this)));
 		++members;
 	}
 

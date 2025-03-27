@@ -203,9 +203,9 @@ bool ADLPlayer::readHeader(Common::SeekableReadStream &adl, int &timbreCount) {
 
 bool ADLPlayer::readTimbres(Common::SeekableReadStream &adl, int timbreCount) {
 	_timbres.resize(timbreCount);
-	for (Common::Array<Timbre>::iterator t = _timbres.begin(); t != _timbres.end(); ++t) {
+	for (auto &timbre : _timbres) {
 		for (int i = 0; i < (kOperatorsPerVoice * kParamCount); i++)
-			t->startParams[i] = adl.readUint16LE();
+			timbre.startParams[i] = adl.readUint16LE();
 	}
 
 	if (adl.err()) {

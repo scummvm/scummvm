@@ -73,8 +73,8 @@ bool DebugManager::addDebugChannel(uint32 channel, const String &name, const Str
 	if (_debugChannels.contains(name))
 		warning("Duplicate declaration of engine debug channel '%s'", name.c_str());
 
-	for (DebugChannelMap::iterator i = _debugChannels.begin(); i != _debugChannels.end(); ++i)
-		if (i->_value.channel == channel)
+	for (auto &debugChannel : _debugChannels)
+		if (debugChannel._value.channel == channel)
 			error("Duplicate engine debug channel id '%d' for flag '%s'", channel, name.c_str());
 
 	_debugChannels[name] = DebugChannel(channel, name, description);
@@ -97,9 +97,9 @@ void DebugManager::removeAllDebugChannels() {
 	_debugChannels.clear();
 	addDebugChannels(gDebugChannels);
 
-	for (DebugChannelMap::iterator i = _debugChannels.begin(); i != _debugChannels.end(); ++i)
-		if (oldMap.contains(i->_value.channel))
-			_debugChannelsEnabled[i->_value.channel] = oldMap[i->_value.channel];
+	for (auto &debugChannel : _debugChannels)
+		if (oldMap.contains(debugChannel._value.channel))
+			_debugChannelsEnabled[debugChannel._value.channel] = oldMap[debugChannel._value.channel];
 }
 
 bool DebugManager::enableDebugChannel(const String &name) {
@@ -138,21 +138,21 @@ bool DebugManager::disableDebugChannel(uint32 channel) {
 
 DebugManager::DebugChannelList DebugManager::getDebugChannels() {
 	DebugChannelList tmp;
-	for (DebugChannelMap::iterator i = _debugChannels.begin(); i != _debugChannels.end(); ++i)
-		tmp.push_back(i->_value);
+	for (auto &debugChannel : _debugChannels)
+		tmp.push_back(debugChannel._value);
 	sort(tmp.begin(), tmp.end(), DebugLevelComperator());
 
 	return tmp;
 }
 
 void DebugManager::enableAllDebugChannels() {
-	for (DebugChannelMap::iterator i = _debugChannels.begin(); i != _debugChannels.end(); ++i)
-		enableDebugChannel(i->_value.name);
+	for (auto &debugChannel : _debugChannels)
+		enableDebugChannel(debugChannel._value.name);
 }
 
 void DebugManager::disableAllDebugChannels() {
-	for (DebugChannelMap::iterator i = _debugChannels.begin(); i != _debugChannels.end(); ++i)
-		disableDebugChannel(i->_value.name);
+	for (auto &debugChannel : _debugChannels)
+		disableDebugChannel(debugChannel._value.name);
 }
 
 bool DebugManager::isDebugChannelEnabled(uint32 channel, bool enforce) {

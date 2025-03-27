@@ -60,8 +60,8 @@ DuckmanSpecialCode::~DuckmanSpecialCode() {
 	delete _inventory;
 	delete _credits;
 
-	for (SpecialCodeMap::iterator it = _specialCodeMap.begin(); it != _specialCodeMap.end(); ++it) {
-		delete (*it)._value;
+	for (auto &it : _specialCodeMap) {
+		delete it._value;
 	}
 }
 

@@ -299,14 +299,12 @@ void AnimationManager::pauseAnimations() {
 		return;
 	}
 
-	Common::List<Animation *>::iterator it;
-
-	for (it = _animations.begin(); it != _animations.end(); ++it) {
-		if ((*it)->getID() > 0 || (*it)->getID() == kTitleText) {
+	for (auto &anim : _animations) {
+		if (anim->getID() > 0 || anim->getID() == kTitleText) {
 			// Clean up the last frame that was drawn before stopping
-			(*it)->markDirtyRect(_vm->_screen->getSurface());
+			anim->markDirtyRect(_vm->_screen->getSurface());
 
-			(*it)->setPaused(true);
+			anim->setPaused(true);
 		}
 	}
 }
@@ -317,24 +315,20 @@ void AnimationManager::unpauseAnimations() {
 		return;
 	}
 
-	Common::List<Animation *>::iterator it;
-
-	for (it = _animations.begin(); it != _animations.end(); ++it) {
-		if ((*it)->isPaused()) {
+	for (auto &anim : _animations) {
+		if (anim->isPaused()) {
 			// Clean up the last frame that was drawn before stopping
-			(*it)->markDirtyRect(_vm->_screen->getSurface());
+			anim->markDirtyRect(_vm->_screen->getSurface());
 
-			(*it)->setPaused(false);
+			anim->setPaused(false);
 		}
 	}
 }
 
 Animation *AnimationManager::getAnimation(int id) {
-	Common::List<Animation *>::iterator it;
-
-	for (it = _animations.begin(); it != _animations.end(); ++it) {
-		if ((*it)->getID() == id) {
-			return *it;
+	for (auto &anim : _animations) {
+		if (anim->getID() == id) {
+			return anim;
 		}
 	}
 
@@ -361,15 +355,13 @@ void AnimationManager::drawScene(Surface *surf) {
 
 	sortAnimations();
 
-	Common::List<Animation *>::iterator it;
-
-	for (it = _animations.begin(); it != _animations.end(); ++it) {
-		if (! ((*it)->isPlaying()) ) {
+	for (auto &anim : _animations) {
+		if (!(anim->isPlaying())) {
 			continue;
 		}
 
-		(*it)->nextFrame(false);
-		(*it)->drawFrame(surf);
+		anim->nextFrame(false);
+		anim->drawFrame(surf);
 	}
 }
 
@@ -463,10 +455,8 @@ void AnimationManager::deleteOverlays() {
 void AnimationManager::deleteAll() {
 	debugC(3, kDraciAnimationDebugLevel, "Deleting all animations...");
 
-	Common::List<Animation *>::iterator it;
-
-	for (it = _animations.begin(); it != _animations.end(); ++it) {
-		delete *it;
+	for (auto *anim : _animations) {
+		delete anim;
 	}
 
 	_animations.clear();

@@ -285,8 +285,8 @@ bool StuffItArchive::hasFile(const Common::Path &path) const {
 }
 
 int StuffItArchive::listMembers(Common::ArchiveMemberList &list) const {
-	for (FileMap::const_iterator it = _map.begin(); it != _map.end(); it++)
-		list.push_back(getMember(it->_key));
+	for (const auto &file : _map)
+		list.push_back(getMember(file._key));
 
 	return _map.size();
 }

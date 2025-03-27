@@ -316,27 +316,24 @@ void ConfigManager::flushToDisk() {
 	writeDomain(*stream, kCloudDomain, _cloudDomain);
 #endif
 
-	DomainMap::const_iterator d;
-
 	// Write the miscellaneous domains next
-	for (d = _miscDomains.begin(); d != _miscDomains.end(); ++d) {
-		writeDomain(*stream, d->_key, d->_value);
+	for (const auto &misc : _miscDomains) {
+		writeDomain(*stream, misc._key, misc._value);
 	}
 
 	// First write the domains in _domainSaveOrder, in that order.
 	// Note: It's possible for _domainSaveOrder to list domains which
 	// are not present anymore, so we validate each name.
-	Array<String>::const_iterator i;
-	for (i = _domainSaveOrder.begin(); i != _domainSaveOrder.end(); ++i) {
-		if (_gameDomains.contains(*i)) {
-			writeDomain(*stream, *i, _gameDomains[*i]);
+	for (const auto &domain : _domainSaveOrder) {
+		if (_gameDomains.contains(domain)) {
+			writeDomain(*stream, domain, _gameDomains[domain]);
 		}
 	}
 
 	// Now write the domains which haven't been written yet
-	for (d = _gameDomains.begin(); d != _gameDomains.end(); ++d) {
-		if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), d->_key) == _domainSaveOrder.end())
-			writeDomain(*stream, d->_key, d->_value);
+	for (auto &domain : _gameDomains) {
+		if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), domain._key) == _domainSaveOrder.end())
+			writeDomain(*stream, domain._key, domain._value);
 	}
 
 	delete stream;
@@ -368,18 +365,17 @@ void ConfigManager::writeDomain(WriteStream &stream, const String &name, const D
 	stream.writeByte('\n');
 
 	// Write all key/value pairs in this domain, including comments
-	Domain::const_iterator x;
-	for (x = domain.begin(); x != domain.end(); ++x) {
-		if (!x->_value.empty()) {
+	for (const auto &x : domain) {
+		if (!x._value.empty()) {
 			// Write comment (if any)
-			if (domain.hasKVComment(x->_key)) {
-				comment = domain.getKVComment(x->_key);
+			if (domain.hasKVComment(x._key)) {
+				comment = domain.getKVComment(x._key);
 				stream.writeString(comment);
 			}
 			// Write the key/value pair
-			stream.writeString(x->_key);
+			stream.writeString(x._key);
 			stream.writeByte('=');
-			stream.writeString(x->_value);
+			stream.writeString(x._value);
 			stream.writeByte('\n');
 		}
 	}
@@ -787,9 +783,8 @@ void ConfigManager::renameDomain(const String &oldName, const String &newName, D
 //	_gameDomains[newName].merge(_gameDomains[oldName]);
 	Domain &oldDom = map[oldName];
 	Domain &newDom = map[newName];
-	Domain::const_iterator iter;
-	for (iter = oldDom.begin(); iter != oldDom.end(); ++iter)
-		newDom.setVal(iter->_key, iter->_value);
+	for (const auto &dom : oldDom)
+		newDom.setVal(dom._key, dom._value);
 
 	map.erase(oldName);
 }

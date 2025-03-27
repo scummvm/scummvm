@@ -373,9 +373,9 @@ SaveStateList MetaEngine::listSaves(const char *target) const {
 	filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (const auto &file : filenames) {
 		// Obtain the last 2/3 digits of the filename, since they correspond to the save slot
-		const char *slotStr = file->c_str() + file->size() - 2;
+		const char *slotStr = file.c_str() + file.size() - 2;
 		const char *prev = slotStr - 1;
 		if (*prev >= '0' && *prev <= '9')
 			slotStr = prev;
@@ -401,8 +401,8 @@ SaveStateList MetaEngine::listSaves(const char *target, bool saveMode) const {
 		return saveList;
 
 	// Check to see if an autosave is present
-	for (SaveStateList::iterator it = saveList.begin(); it != saveList.end(); ++it) {
-		int slot = it->getSaveSlot();
+	for (auto &save : saveList) {
+		int slot = save.getSaveSlot();
 		if (slot == autosaveSlot) {
 			// It has an autosave
 			return saveList;

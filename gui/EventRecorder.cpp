@@ -776,8 +776,8 @@ bool EventRecorder::switchMode() {
 	SaveStateList saveList = plugin->get<MetaEngine>().listSaves(target.c_str());
 
 	int emptySlot = 1;
-	for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
-		int saveSlot = x->getSaveSlot();
+	for (const auto &x : saveList) {
+		int saveSlot = x.getSaveSlot();
 		if (saveSlot == 0) {
 			continue;
 		}

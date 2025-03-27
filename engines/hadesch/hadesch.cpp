@@ -958,12 +958,12 @@ Common::Array<HadeschSaveDescriptor> HadeschEngine::getHadeschSavesList() {
 	filenames = saveFileMan->listSavefiles(pattern);
 
 	Common::Array<HadeschSaveDescriptor> saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (const auto &file : filenames) {
 		// Obtain the last 2 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
+		int slotNum = atoi(file.c_str() + file.size() - 3);
 
 		if (slotNum >= 0) {
-			Common::ScopedPtr<Common::InSaveFile> in(saveFileMan->openForLoading(*file));
+			Common::ScopedPtr<Common::InSaveFile> in(saveFileMan->openForLoading(file));
 			if (!in) {
 				continue;
 			}

@@ -44,10 +44,8 @@ typedef CruiseEngine::MemInfo MemInfo;
 void MemoryList() {
 	if (!_vm->_memList.empty()) {
 		debug("Current list of un-freed memory blocks:");
-		Common::List<MemInfo *>::iterator i;
-		for (i = _vm->_memList.begin(); i != _vm->_memList.end(); ++i) {
-			MemInfo const *const v = *i;
-			debug("%s - %d", v->fname, v->lineNum);
+		for (auto &m : _vm->_memList) {
+			debug("%s - %d", m->fname, m->lineNum);
 		}
 	}
 }

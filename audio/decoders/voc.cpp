@@ -431,25 +431,25 @@ void VocStream::preProcess() {
 	_length = Timestamp(0, _rate);
 
 	// Calculate the total play time and do some more sanity checks
-	for (BlockList::const_iterator i = _blocks.begin(), end = _blocks.end(); i != end; ++i) {
+	for (const auto &curBlock : _blocks) {
 		// Check whether we found a block 8 which survived, this is not
 		// allowed to happen!
-		if (i->code == 8) {
+		if (curBlock.code == 8) {
 			warning("VOC file contains unused block 8");
 			return;
 		}
 
 		// For now only use blocks with actual samples
-		if (i->code != 1 && i->code != 9)
+		if (curBlock.code != 1 && curBlock.code != 9)
 			continue;
 
 		// Check the sample rate
-		if (i->sampleBlock.rate != _rate) {
-			warning("VOC file contains chunks with different sample rates (%d != %d)", _rate, i->sampleBlock.rate);
+		if (curBlock.sampleBlock.rate != _rate) {
+			warning("VOC file contains chunks with different sample rates (%d != %d)", _rate, curBlock.sampleBlock.rate);
 			return;
 		}
 
-		_length = _length.addFrames(i->sampleBlock.samples);
+		_length = _length.addFrames(curBlock.sampleBlock.samples);
 	}
 
 	// Set the current block to the first block in the stream

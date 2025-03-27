@@ -50,8 +50,8 @@
 #endif
 
 // Macros to free an array/object
-#define FREE_ARRAY(x) { JSONArray::iterator iter; for (iter = x.begin(); iter != x.end(); iter++) { delete *iter; } }
-#define FREE_OBJECT(x) { JSONObject::iterator iter; for (iter = x.begin(); iter != x.end(); iter++) { delete (*iter)._value; } }
+#define FREE_ARRAY(x) { for (auto *i : x) { delete i; } }
+#define FREE_OBJECT(x) { for (auto &i : x) { delete i._value; } }
 
 namespace Common {
 
@@ -535,7 +535,7 @@ JSONValue *JSONValue::parse(const char **data) {
 			}
 
 			// Special case - empty array
-			if (array.size() == 0 && **data == ']') {
+			if (array.empty() && **data == ']') {
 				(*data)++;
 				return new JSONValue(array);
 			}
@@ -704,20 +704,18 @@ JSONValue::JSONValue(const JSONValue &source) {
 
 	case JSONType_Array: {
 		JSONArray source_array = *source._arrayValue;
-		JSONArray::iterator iter;
 		_arrayValue = new JSONArray();
-		for (iter = source_array.begin(); iter != source_array.end(); iter++)
-			_arrayValue->push_back(new JSONValue(**iter));
+		for (auto &src : source_array)
+			_arrayValue->push_back(new JSONValue(*src));
 		break;
 	}
 
 	case JSONType_Object: {
 		JSONObject source_object = *source._objectValue;
 		_objectValue = new JSONObject();
-		JSONObject::iterator iter;
-		for (iter = source_object.begin(); iter != source_object.end(); iter++) {
-			String name = (*iter)._key;
-			(*_objectValue)[name] = new JSONValue(*((*iter)._value));
+		for (auto &src : source_object) {
+			String name = src._key;
+			(*_objectValue)[name] = new JSONValue(*(src._value));
 		}
 		break;
 	}
@@ -738,15 +736,12 @@ JSONValue::JSONValue(const JSONValue &source) {
 */
 JSONValue::~JSONValue() {
 	if (_type == JSONType_Array) {
-		JSONArray::iterator iter;
-		for (iter = _arrayValue->begin(); iter != _arrayValue->end(); iter++)
-			delete *iter;
+		for (auto *array : *_arrayValue)
+			delete array;
 		delete _arrayValue;
 	} else if (_type == JSONType_Object) {
-		JSONObject::iterator iter;
-		for (iter = _objectValue->begin(); iter != _objectValue->end(); iter++) {
-			delete (*iter)._value;
-		}
+		for (auto &object : *_objectValue)
+			delete object._value;
 		delete _objectValue;
 	} else if (_type == JSONType_String) {
 		delete _stringValue;
@@ -1001,11 +996,8 @@ Array<String> JSONValue::objectKeys() const {
 	Array<String> keys;
 
 	if (_type == JSONType_Object) {
-		JSONObject::const_iterator iter = _objectValue->begin();
-		while (iter != _objectValue->end()) {
-			keys.push_back(iter->_key);
-
-			iter++;
+		for (auto &obj : *_objectValue) {
+			keys.push_back(obj._key);
 		}
 	}
 
