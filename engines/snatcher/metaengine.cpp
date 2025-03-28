@@ -177,7 +177,8 @@ SaveStateDescriptor SnatcherMetaEngine::querySaveMetaInfos(const char *target, i
 		}
 	}*/
 
-	SaveStateDescriptor desc(this, slot, Common::String());
+	Common::String dmy;
+	SaveStateDescriptor desc(this, slot, dmy);
 
 	// We don't allow quick saves (slot 990 till 998) to be overwritten.
 	// The same goes for the 'Autosave', which is slot 999. Slot 0 will also

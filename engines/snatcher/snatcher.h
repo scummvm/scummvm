@@ -33,12 +33,16 @@ namespace Snatcher {
 class GraphicsEngine;
 class FIO;
 class SoundEngine;
-class SceneResource;
+class SceneModule;
+struct GameState;
 
 class SnatcherEngine : public Engine {
 public:
 	SnatcherEngine(OSystem *system, GameDescription &dsc);
 	~SnatcherEngine() override;
+
+	SoundEngine *sound() const { return _snd; }
+	GraphicsEngine *gfx() const { return _gfx; }
 
 private:
 	// Startup
@@ -51,6 +55,9 @@ private:
 	bool start();
 	void delayUntil(uint32 end);
 	void updateEvents();
+
+	bool runInitSequence(GameState &state);
+	void updateScene(GameState &state);
 
 	// ConfigManager sync
 	void registerDefaultSettings();
@@ -65,13 +72,16 @@ private:
 
 	// Resource
 	FIO *_fio;
-	SceneResource *_scene;
+	SceneModule *_module;
 
 	// Graphics
 	GraphicsEngine *_gfx;
 
 	// Sound
 	SoundEngine *_snd;
+public:
+	// Input
+	byte _commandsFromMain;
 };
 
 } // End of namespace Snatcher

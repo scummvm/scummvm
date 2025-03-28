@@ -23,6 +23,7 @@
 #define SNATCHER_PALETTE_H
 
 #include "common/platform.h"
+#include "snatcher/graphics.h"
 
 class PaletteManager;
 
@@ -30,23 +31,27 @@ namespace Snatcher {
 
 class Palette {
 public:
-	Palette(PaletteManager *pm) : _palMan(pm) {}
+	Palette(PaletteManager *pm, GraphicsEngine::State &state) : _palMan(pm), _gfxState(state) {}
 	virtual ~Palette() {}
 
-	virtual bool enqueueEvent(const uint8*, uint32) { return true; }
+	virtual bool enqueueEvent(ResourcePointer &res) { return true; }
 	virtual void processEventQueue() {}
+	virtual void clearEvents() {}
+	virtual void setDefaults(int mode) {}
+	virtual void updateSystemPalette() {}
 
 protected:
 	PaletteManager *_palMan;
+	GraphicsEngine::State &_gfxState;
 
 private:
-	static Palette *createSegaPalette(PaletteManager *pm);
+	static Palette *createSegaPalette(PaletteManager *pm, GraphicsEngine::State &state);
 
 public:
-	static Palette *create(PaletteManager *pm, Common::Platform platform) {
+	static Palette *create(PaletteManager *pm, Common::Platform platform, GraphicsEngine::State &state) {
 		switch (platform) {
 		case Common::kPlatformSegaCD:
-			return createSegaPalette(pm);
+			return createSegaPalette(pm, state);
 		default:
 			break;
 		};

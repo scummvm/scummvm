@@ -22,7 +22,9 @@
 #ifndef SNATCHER_RESOURCE_H
 #define SNATCHER_RESOURCE_H
 
+#include "common/endian.h"
 #include "common/fs.h"
+#include "common/func.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 
@@ -34,33 +36,59 @@ class SeekableReadStreamEndian;
 namespace Snatcher {
 
 class SnatcherEngine;
-class SceneResource;
+class SceneModule;
 class FIO;
+
+struct GameState {
+	int16 frameNo;
+	int16 frameState;
+	int16 finish;
+	int16 progressMain;
+	int16 progressSub;
+	int16 counter;
+	int16 modIndex;
+	int16 initState;
+};
 
 class SceneHandler {
 public:
-	SceneHandler(SnatcherEngine *vm, SceneResource *scn, FIO *fio) : _vm(vm), _scene(scn), _fio(fio) {}
+	SceneHandler(SnatcherEngine *vm, SceneModule *scn, FIO *fio) : _vm(vm), _module(scn), _fio(fio) {}
 	virtual ~SceneHandler() {}
-	virtual void operator()() = 0;
+	virtual void operator()(GameState &state) = 0;
 protected:
 	SnatcherEngine *_vm;
-	SceneResource *_scene;
+	SceneModule *_module;
 	FIO *_fio;
 };
 
-class SceneResource {
+struct ResourcePointer {
+	ResourcePointer() : dataStart(0), offset(0) {}
+	ResourcePointer(const uint8 *data, uint32 offs) : dataStart(data), offset(offs >= 0x28000 ? offs - 0x28000 : offs) {}
+	const uint8 *dataStart;
+	uint32 offset;
+	const uint8 *operator()() const { return dataStart + offset; }
+	const uint8 *operator++(int) { return dataStart + (offset++); }
+	const uint8 *operator++() { return dataStart + (++offset); }
+	const uint8 *operator+(int inc) const { return dataStart + offset + inc; }
+	void operator+=(int inc) { offset += inc; }
+	void operator=(const uint8 *ptr) { offset = ptr - dataStart; }
+	uint8 operator[](int index) const { return dataStart[offset + index]; }
+	ResourcePointer getDataFromTable(int tableEntry) const { return ResourcePointer(dataStart, offset + READ_BE_UINT16(dataStart + offset + (tableEntry << 1))); }
+	ResourcePointer makeAbsPtr(uint32 offs) const { return ResourcePointer(dataStart, offs); }
+};
+
+class SceneModule {
 	friend class FIO;
 public:
-	~SceneResource();
+	~SceneModule();
 
 	const uint8 *getData(int offset) const;
-	const uint8 *getDataFromTable(int offset, int tableEntry) const;
-	const uint8 *getDataFromMainTable(int tableEntry) const;
+	ResourcePointer getPtr(int offset) const;
 
-	void startScene();
+	void run(GameState &state);
 
 private:
-	SceneResource(SnatcherEngine *vm, FIO *fio, const char *resFile, int index);
+	SceneModule(SnatcherEngine *vm, FIO *fio, const char *resFile, int index);
 
 	const uint8 *_data;
 	uint32 _dataSize;
@@ -71,9 +99,9 @@ private:
 	FIO *_fio;
 	const int _resIndex;
 	Common::Path _resFile;
-	SceneHandler *_handler;
+	SceneHandler *_updateHandler;
 
-	typedef SceneHandler*(SHFactory)(SnatcherEngine*, SceneResource*, FIO*);
+	typedef SceneHandler*(SHFactory)(SnatcherEngine*, SceneModule*, FIO*);
 	static SHFactory *const _shList[97];
 };
 
@@ -82,7 +110,7 @@ public:
 	FIO(SnatcherEngine *vm, bool isBigEndian);
 	~FIO();
 
-	SceneResource *createSceneResource(int index);
+	SceneModule *loadModule(int index);
 
 	enum EndianMode {
 		kPlatformEndianness = 0,

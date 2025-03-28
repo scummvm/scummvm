@@ -40,9 +40,9 @@ public:
 	uint32 read(void *dataPtr, uint32 dataSize) override { return _stream->read(dataPtr, dataSize); }
 
 	// Common::SeekableReadStream interface
-	int32 pos() const override { return _stream->pos(); }
-	int32 size() const override { return _stream->size(); }
-	bool seek(int32 offset, int whence = SEEK_SET) override { return _stream->seek(offset, whence); }
+	int64 pos() const override { return _stream->pos(); }
+	int64 size() const override { return _stream->size(); }
+	bool seek(int64 offset, int whence = SEEK_SET) override { return _stream->seek(offset, whence); }
 
 private:
 	Common::SeekableReadStream *_stream;
@@ -56,8 +56,8 @@ FIO::FIO(SnatcherEngine *vm, bool isBigEndian) : _vm(vm), _bigEndianTarget(isBig
 FIO::~FIO() {
 }
 
-SceneResource *FIO::createSceneResource(int index) {
-	return (index >= 0 && index < _resFileListSize)  ? new SceneResource(_vm, this, _resFileList[index], index) : 0;
+SceneModule *FIO::loadModule(int index) {
+	return (index >= 0 && index < _resFileListSize)  ? new SceneModule(_vm, this, _resFileList[index], index) : 0;
 }
 
 Common::SeekableReadStream *FIO::readStream(const Common::Path &file) {
@@ -104,11 +104,10 @@ const char *FIO::_resFileList[97] = {
 
 const int FIO::_resFileListSize = ARRAYSIZE(_resFileList);
 
-SceneResource::SceneResource(SnatcherEngine *vm, FIO *fio, const char *resFile, int index) : _vm(vm), _fio(fio), _resFile(resFile), _resIndex(index), _data(0), _dataSize(0), _handler(0) {
-	_handler = _shList[_resIndex] ? (_shList[_resIndex])(_vm, this, _fio) : 0;
-
+SceneModule::SceneModule(SnatcherEngine *vm, FIO *fio, const char *resFile, int index) : _vm(vm), _fio(fio), _resFile(resFile), _resIndex(index), _data(0), _dataSize(0), _updateHandler(0) {
 	assert(!_resFile.empty());
 	_data = _fio->fileData(_resFile, &_dataSize);
+	_updateHandler = _shList[_resIndex] ? (_shList[_resIndex])(_vm, this, _fio) : 0;
 
 	/*Common::SeekableReadStreamEndian *s = _fio->readStreamEndian(_resFile);
 	if (!s)
@@ -154,7 +153,7 @@ SceneResource::SceneResource(SnatcherEngine *vm, FIO *fio, const char *resFile, 
 	//delete s;
 }
 
-SceneResource::~SceneResource() {
+SceneModule::~SceneModule() {
 	/*if (_table) {
 		for (uint16 i = 0; i < _tableSize; ++i)
 			delete _table[i];
@@ -164,33 +163,34 @@ SceneResource::~SceneResource() {
 	}*/
 
 	delete[] _data;
-	delete _handler;
+	delete _updateHandler;
 }
 
-const uint8 *SceneResource::getData(int offset) const {
+const uint8 *SceneModule::getData(int offset) const {
 	assert(offset >= 0x28000);
 	return _data + offset - 0x28000;
 }
 
-const uint8 *SceneResource::getDataFromTable(int offset, int tableEntry) const {
-	const uint8 *data = getData(offset);
-	return data + READ_BE_UINT16(data + (tableEntry << 1));
-}
-
-const uint8 *SceneResource::getDataFromMainTable(int tableEntry) const {
+/*const uint8 *SceneModule::getDataFromMainTable(int tableEntry) const {
 	return getDataFromTable(READ_BE_UINT32(getData(0x28004)), tableEntry);
+}*/
+
+ResourcePointer SceneModule::getPtr(int offset) const {
+	if (offset > 0x28000)
+		offset -= 0x28000;
+	return ResourcePointer(getData(0x28000), offset);
 }
 
-void SceneResource::startScene() {
-	if (_handler)
-		(*_handler)();
+void SceneModule::run(GameState &state) {
+	if (_updateHandler)
+		(*_updateHandler)(state);
 }
 
 #define S(id) &createSceneHandler_##id
 #define INVALD 0
 
-SceneResource::SHFactory *const SceneResource::_shList[97] = {
-	INVALD, INVALD, S(D0 ), S(D1 ), S(D2 ), INVALD, INVALD, INVALD,
+SceneModule::SHFactory *const SceneModule::_shList[97] = {
+	INVALD, INVALD, S(D0), S(D1), S(D2), INVALD, INVALD, INVALD,
 	INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD,
 	INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD,
 	INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD,

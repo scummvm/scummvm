@@ -19,16 +19,58 @@
 *
 */
 
+
+#include "backends/audiocd/audiocd.h"
+#include "common/system.h"
+
 #include "snatcher/sound_device.h"
+#include "snatcher/util.h"
 
 namespace Snatcher {
 
 class SegaSoundDevice : public SoundDevice {
 public:
-	SegaSoundDevice() : SoundDevice() {}
+	SegaSoundDevice();
 	~SegaSoundDevice() override {}
+
+	void musicPlay(int track) override;
+	void musicStop() override;
+	bool musicIsPlaying() const override;
+	uint32 musicGetTime() const override;
+
+	void pcmPlayEffect(int track) override;
+	void pcmDoCommand(int cmd, int arg) override;
+
 private:
 };
+
+SegaSoundDevice::SegaSoundDevice() : SoundDevice() {
+
+}
+
+void SegaSoundDevice::musicPlay(int track) {
+	g_system->getAudioCDManager()->play(track - 1, 1, 0, 0);
+	_musicStartTime = g_system->getMillis();
+}
+
+void SegaSoundDevice::musicStop() {
+	g_system->getAudioCDManager()->stop();
+}
+
+bool SegaSoundDevice::musicIsPlaying() const {
+	return g_system->getAudioCDManager()->isPlaying();
+}
+
+uint32 SegaSoundDevice::musicGetTime() const {
+	uint32 relTime = musicIsPlaying() ? g_system->getMillis() - _musicStartTime : 0;
+	return Util::makeBCDTimeStamp(relTime);
+}
+
+void SegaSoundDevice::pcmPlayEffect(int track) {
+}
+
+void SegaSoundDevice::pcmDoCommand(int cmd, int arg) {
+}
 
 SoundDevice *SoundDevice::createSegaSoundDevice() {
 	return new SegaSoundDevice();
