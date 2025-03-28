@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/hodjnpodj/metagame/views/boardgame.h"
+#include "bagel/hodjnpodj/metagame/boardgame/boardgame.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/metaengine.h"
 
@@ -27,10 +27,15 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
+static const char *m_szFilename = "meta/meta.gtl";
+
+
 Boardgame::Boardgame() : View("Boardgame") {
 }
 
 bool Boardgame::msgOpen(const OpenMessage &msg) {
+	clearVars();
+
 	return true;
 }
 
@@ -49,6 +54,25 @@ bool Boardgame::msgGame(const GameMessage &msg) {
 void Boardgame::draw() {
 	GfxSurface s = getSurface();
 	s.clear();
+}
+
+/*------------------------------------------------------------------------*/
+
+void BoardgameVars::clearVars() {
+	m_szIniFilename[0] = '\0';
+	m_szIniSectionname[0] = '\0';
+	m_bDebug = false;
+	m_bDebugMessages = false;
+	m_bTimeMessage = false;
+	m_bTrack = m_bTrace = false;
+	m_bTraceError = false;
+	m_iConstructorMsgLevel = 0;
+	m_bVerifyDc = false;
+	Common::fill(m_iDebugValues, m_iDebugValues + 100, 0);
+	m_iTraceObjectCount = 0;
+	m_lpTraceObjects = nullptr;
+	m_iTraceObjectCurrent = 0;
+	m_iErrorCount = 0;
 }
 
 } // namespace Metagame

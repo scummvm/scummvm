@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HODJNPODJ_METAGAME_VIEWS_BOARDGAME_H
-#define HODJNPODJ_METAGAME_VIEWS_BOARDGAME_H
+#ifndef HODJNPODJ_METAGAME_BOARDGAME_H
+#define HODJNPODJ_METAGAME_BOARDGAME_H
 
 #include "bagel/hodjnpodj/views/view.h"
 #include "bagel/hodjnpodj/gfx/button.h"
@@ -29,8 +29,31 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-class Boardgame : public View {
+struct BoardgameVars {
+	char m_szIniFilename[100];		// .INI file name
+	char m_szIniSectionname[15];	// .INI file section name
+	bool m_bDebug;				// flag -- debugging mode
+	bool m_bDebugMessages;		// debugging messages
+	bool m_bTimeMessage;		// time stamp message
+	bool m_bTrack, m_bTrace;	// debugging -- track/trace flags
+	bool m_bTraceError;			// debugging -- trace error exits
+	int  m_iConstructorMsgLevel; // level of constructor messages
+	bool m_bVerifyDc;			// verify device context is ok
+	int  m_iDebugValues[100];	// misc debugging values
+	int  m_iTraceObjectCount;	// max # objects to trace
+	void *m_lpTraceObjects;		// trace object array
+	int  m_iTraceObjectCurrent;	// # of array elements in use
+	int  m_iErrorCount;			// number of errors encountered
+
+	BoardgameVars() {
+		clearVars();
+	}
+	void clearVars();
+};
+
+class Boardgame : public View, public BoardgameVars {
 private:
+	bool bJustReturned = false;
 
 public:
 	Boardgame();
