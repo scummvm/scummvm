@@ -108,23 +108,13 @@ if [ -d "$BUNDLE_LOCAL_DATAFILES_DIR" -a ! -z "$(ls -A ${BUNDLE_LOCAL_DATAFILES_
 fi
 
 if [ ! $3 = "bundle" ]; then
-
-# Update from libretro ScummVM.dat
-if command -v wget >/dev/null; then
-  wget -NO "$BUILD_PATH"/ScummVM.dat https://raw.githubusercontent.com/libretro/libretro-database/master/dat/ScummVM.dat
-else
-  # if wget is not available use curl
-  curl -f -o "$BUILD_PATH"/ScummVM.dat https://raw.githubusercontent.com/libretro/libretro-database/master/dat/ScummVM.dat
-fi
-[ -f "$BUILD_PATH"/ScummVM.dat ] && SUPPORTED_EXTENSIONS="$(cat $BUILD_PATH/ScummVM.dat | grep 'rom (' | sed -e 's/\" .*//g' -e 's/.*\.//g' | sort -u | tr '\n' '|')" || SUPPORTED_EXTENSIONS="$ALLOWED_EXT"
-
 	# Create core.info file
 	set +e
 	read -d '' CORE_INFO_CONTENT <<EOF
 # Software Information
 display_name = "$NICE_NAME"
-authors = "SCUMMVMdev"
-supported_extensions = "$SUPPORTED_EXTENSIONS"
+authors = "ScummVM Team"
+supported_extensions = "$ALLOWED_EXT"
 corename = "$NICE_NAME"
 categories = "Game"
 license = "GPLv3"
@@ -159,7 +149,7 @@ EOF
 	set -e
 
 	CORE_INFO_CONTENT="${CORE_INFO_CONTENT}${CORE_INFO_DATS}
-description = \"The ScummVM adventure game engine ported to libretro. This core is built directly from the upstream repo and is synced upon stable releases, though it is not supported upstream. So please report any bug to Libretro and/or make sure the same apply to the standalone ScummVM program as well, before making any report to ScummVM Team.\""
+description = \"The ScummVM official port to libretro core.\""
 	echo "$CORE_INFO_CONTENT" > "${TARGET_PATH}/${INFO_FILE_PRE}_libretro.info"
 	echo "${INFO_FILE_PRE}_libretro.info created successfully"
 else
