@@ -595,7 +595,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"scummvm_gui_h_res",
 		"Video > GUI resolution",
 		"ScummVM Launcher resolution",
-		"Set ScummVM Launcher aspect ratio.",
+		"Set ScummVM Launcher resolution.",
 		NULL,
 		"video",
 		{
