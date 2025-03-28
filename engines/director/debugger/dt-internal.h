@@ -164,6 +164,8 @@ typedef struct ImGuiState {
 	int _scoreMode = 0;
 	int _scoreFrameOffset = 1;
 
+	int _selectedChannel = -1;
+
 	ImFont *_tinyFont = nullptr;
 
 	struct {
