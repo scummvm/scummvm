@@ -1,10 +1,5 @@
-# ScummVM libretro core
-
-Libretro core built from untouched mainline ScummVM source.
-
-Datafiles and themes bundle (`scummvm.zip`) and `core.info` files are built automatically based on current submodule source.
-
-## Build
+# ScummVM libretro port
+## Building ScummVM core
 To build the core with the default configuration, type in a shell the following:
 ```
 git clone https://github.com/scummvm/scummvm
@@ -36,17 +31,47 @@ Extract `scummvm.zip` and select relevant paths in ScummVM GUI (or modify `scumm
 
 Note that both datafiles and themes included in `scummvm.zip` need to be consistent with ScummVM version in use, hence need to be generally rebuilt and replaced for each new version.
 
-## Core options and configuration
-All options and configuration of the legacy libretro core are applicable to this one as well, refer to relevant link in Resources.
-Some additional options and features have been added to this core:
+## Libretro playlists for ScummVM core
+Playlists used in Libretro frontends (e.g. Retroarch) are plain text lists used to directly launch a game with a specific core from the user interface. Those lists are structured to pass to the core the path of a specific content file to be loaded (e.g. a ROM zip fiile). Detailed info can be found in [Libretro documentation](https://docs.libretro.com/guides/roms-playlists-thumbnails/).
 
-### New options
-* Set D-pad cursor acceleration time
+> WARNING: ScummVM core playlist generation with Retroarch Scanner is **NOT recommended** as it is based on a third party database instead of ScummVM game detection system, hence it is not guaranteed to work properly.
 
-### New features
-* On-screen virtual keyboard (retropad "select" button by default to activate/deactivate)<br>Resources from `scummvm.zip` are needed to be installed for this feature to be enabled.
+ScummVM core can accept as content the playlist-provided path to any of the files inside a valid game folder, the ScummVM internal detection system will try to autodetect the game from the content file parent folder and run the game with default ScummVM options.
 
-* Cloud saving<br>This feature is currently disabled by default (e.g. on buildbot) as it has shared dependencies (libcurl-openssl).<br>To enable the feature, compile passing `USE_CLOUD=1` to make. `libcurl` package with `openssl` must be installed on host system as described [here](https://wiki.scummvm.org/index.php/Compiling_ScummVM).<br>Note that by default the entire retroarch `saves` folder will be syncronized, which may be a plus considering that this feature is currently not available in retroarch.
+The core also supports dedicated per game **hook** plain text files with `.scummvm` extension, which can be used as target path in the playlist. Content of this file shall be a string corresponding to one of the following ScummVM identifiers:
 
-## Resources
-[Legacy ScummVM libretro core](https://github.com/libretro-mirrors/scummvm) documentation is [here](https://docs.libretro.com/library/scummvm).
+  - **target**: this is the game identifier of each entry in the internal Launcher list, hence corresponding to entries in ScummVM configuration file (e.g. 'scummvm.ini'). In this case the game must be added from ScummVM GUI first, and the hook files can be placed anywhere, as the path for the game files is already part of the target configuration. The game will be launched with the options set in ScummVM
+
+  - **game ID**: this is a unique identifier for any game supported by ScummVM. This identifier is hard coded in each engine source and can be subject to change, hence it is **not a recommended choice**. A list of current game IDs is available [here](https://scummvm.org/compatibility). In this case the game will be launched even if not added in ScummVM Launcher, the hook file must be placed in the game folder and the game will be launched with default ScummVM options
+
+### Creating ScummVM core playlist
+The recommended way to generate a ScummVM core playlist is from within the ScummVM Launcher (i.e. the interal core GUI) with the Playlist Generator tool. Both needed hook files and the playlist are created automatically, based on ScummVM Launcher games list.
+  - Load the core from RetroArch and start it to reach the ScummVM GUI (i.e. the Launcher)
+  - Add games to the list as required using the GUI buttons ('Mass Add' available).
+  - Select **Global Options** and then the **Backend** tab.
+  - Check or select the path of frontend playlists. A `ScummVM.lpl` file will be created or overwritten in there.
+  - Check the 'Hooks location' setting, to have one `.scummvm` in each game folder or all of them in a `scummvm_hooks` folder in the `save` path.
+  - Check the 'Playlist version' setting. JSON format should be selected, 6-lines format is deprecated and provided for backwards compatibility only.
+  - Select the 'Clear existing hooks' checkbox to remove any existing `.scummvm` file in the working folders.
+  - Press the 'Generate playlist' button.
+
+Operation status will be shown in the same dialog, while details will be given in the frontend logs.
+
+## Core options
+### Cursor Movement
+  - **Exclusive cursor control with RetroPad**: allows the use of RetroPad only to control mouse cursor, excluding the other inputs (e.g. physical mouse, touch screen).
+  - **Gamepad Cursor Speed**: sets the mouse cursor speed multiplier when moving the cursor with the RetroPad left analog stick or D-Pad. The default value of '1.0' is optimised for games that have a native resolution of '320x200' or '320x240'. When running 'high definition' games with a resolution of '640x400' or '640x480', a Gamepad Cursor Speed of '2.0' is recommended.
+  - **Gamepad Cursor Acceleration**: the amount of time (In seconds) it takes for the cursor to reach full speed
+  - **Analog Cursor Response**: determines how the speed of the cursor varies when tilting the RetroPad left analog stick. 'Linear': Speed is directly proportional to analog stick displacement. This is standard behaviour with which most users will be familiar. 'Quadratic': Speed increases quadratically with analog stick displacement. This allows for greater precision when making small movements without sacrificing maximum speed at full analog range. This mode may require practice for effective use.
+  - **Analog Deadzone**: sets the deadzone in percentage of the RetroPad analog sticks. Used to eliminate cursor drift/unwanted input.
+  - **Mouse Speed**: sets the mouse cursor speed multiplier when moving the cursor with the RetroMouse.
+  - **Mouse Fine Control Speed Reduction**: sets the mouse cursor speed reduction as percentage of normal speed when fine control is activated.
+### Video settings
+  - **Hardware acceleration**: request video hardware acceleration (OpenGL or OpenGLES2) to the frontend if supported. It is needed to reload the core to apply this setting.
+  - **ScummVM Launcher aspect ratio**: set ScummVM Launcher aspect ratio.
+  - **ScummVM Launcher resolution**: set ScummVM Launcher aspect ratio.
+### Timing
+  - **Frame rate cap**: set core frame rate upper limit. Reducing the limit will improve the performance on lower end devices. Changing this setting will reset the core.
+  - **Sample rate**: set core sample rate. Reducing the rate will slightly improve the performance on lower end devices. Changing this setting will reset the core.
+### RetroPad mapping
+Settings to map each RetroPad key to ScummVM controls.
