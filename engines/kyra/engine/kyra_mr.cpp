@@ -1267,7 +1267,7 @@ int KyraEngine_MR::loadLanguageFile(const char *file, uint8 *&buffer) {
 
 	uint32 size = 0;
 	Common::String nBuf = file;
-	nBuf += _languageExtension[_lang];
+	nBuf += _languageExtension[_scriptLang];
 	buffer = _res->fileData(nBuf.c_str(), &size);
 
 	return buffer ? size : 0;
