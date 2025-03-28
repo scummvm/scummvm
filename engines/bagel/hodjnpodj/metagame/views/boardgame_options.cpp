@@ -54,12 +54,12 @@ bool BoardgameOptions::msgOpen(const OpenMessage &msg) {
 	Dialog::msgOpen(msg);
 	lpMetaGame->initBFCInfo();
 
-	m_nHodjSkillLevel = SKILLLEVEL_LOW;
-	m_nPodjSkillLevel = SKILLLEVEL_LOW;
-	m_nGameTime = SHORT_GAME;
-	m_bPodjIsComputer = true;
-
+	m_nHodjSkillLevel = lpMetaGame->m_cHodj.m_iSkillLevel;
+	m_nPodjSkillLevel = lpMetaGame->m_cPodj.m_iSkillLevel;
+	m_bPodjIsComputer = lpMetaGame->m_cPodj.m_bComputer;
+	m_nGameTime = lpMetaGame->m_iGameTime;
 	updateRadioButtons();
+
 	return true;
 }
 
@@ -80,7 +80,12 @@ bool BoardgameOptions::msgAction(const ActionMessage &msg) {
 bool BoardgameOptions::msgGame(const GameMessage &msg) {
 	if (msg._name == "BUTTON") {
 		if (msg._stringValue == "PLAY") {
-			// TODO: Play the boardgame
+			lpMetaGame->m_cHodj.m_iSkillLevel = m_nHodjSkillLevel;
+			lpMetaGame->m_cPodj.m_iSkillLevel = m_nPodjSkillLevel;
+			lpMetaGame->m_cHodj.m_bComputer = false;
+			lpMetaGame->m_cPodj.m_bComputer = m_bPodjIsComputer;
+			lpMetaGame->m_iGameTime = m_nGameTime;
+
 			return true;
 		} else if (msg._stringValue == "CANCEL") {
 			close();
