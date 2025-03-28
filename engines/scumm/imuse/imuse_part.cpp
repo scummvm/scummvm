@@ -216,8 +216,16 @@ void Part::pitchBendFactor(byte value) {
 void Part::set_onoff(bool on) {
 	if (_on != on) {
 		_on = on;
-		if (!on)
-			off();
+		if (!on) {
+			if (!_se->_dynamicChanAllocation) {
+				if (_mc) {
+					_mc->sustain(false);
+					_mc->allNotesOff();
+				}
+			} else {
+				off();
+			}
+		}
 		if (!_percussion)
 			_player->_se->reallocateMidiChannels(_player->getMidiDriver());
 	}
