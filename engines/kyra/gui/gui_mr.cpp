@@ -1523,6 +1523,8 @@ int GUI_MR::changeLanguage(Button *caller) {
 	if (!_vm->queryGameFlag(0x1B2)) {
 		++_vm->_lang;
 		_vm->_lang %= _vm->_numLang;
+		// This fan MR translation use Chinese style script file extensions...
+		_vm->_scriptLang = (_vm->_flags.fanLang == Common::CS_CZE && _vm->_lang == 1) ? 3 : _vm->_lang;
 		setupOptionsButtons();
 		renewHighlight(_gameOptions);
 	}
