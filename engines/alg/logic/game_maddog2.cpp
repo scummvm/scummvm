@@ -560,14 +560,13 @@ void GameMaddog2::updateCursor() {
 void GameMaddog2::updateMouse() {
 	if (_oldWhichGun != _whichGun) {
 		Graphics::Surface *cursor = (*_gun)[_whichGun];
-		CursorMan.popAllCursors();
 		uint16 hotspotX = (cursor->w / 2);
 		uint16 hotspotY = (cursor->h / 2);
 		if (debugChannelSet(1, Alg::kAlgDebugGraphics)) {
 			cursor->drawLine(0, hotspotY, cursor->w, hotspotY, 1);
 			cursor->drawLine(hotspotX, 0, hotspotX, cursor->h, 1);
 		}
-		CursorMan.pushCursor(cursor->getPixels(), cursor->w, cursor->h, hotspotX, hotspotY, 0);
+		CursorMan.replaceCursor(cursor->getPixels(), cursor->w, cursor->h, hotspotX, hotspotY, 0);
 		CursorMan.showMouse(true);
 		_oldWhichGun = _whichGun;
 	}

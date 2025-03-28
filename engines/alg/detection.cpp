@@ -45,7 +45,7 @@ static const DebugChannelDef debugFlagList[] = {
 class AlgMetaEngineDetection : public AdvancedMetaEngineDetection<Alg::AlgGameDescription> {
 public:
 	AlgMetaEngineDetection() : AdvancedMetaEngineDetection(Alg::gameDescriptions, algGames) {
-		_guiOptions = GUIO1(GUIO_NOMIDI);
+		_guiOptions = GUIO2(GUIO_NOMIDI, GUIO_NOSUBTITLES);
 		_maxScanDepth = 1;
 	}
 

@@ -528,7 +528,6 @@ void GameSpacePirates::updateCursor() {
 void GameSpacePirates::updateMouse() {
 	if (_oldWhichGun != _whichGun) {
 		Graphics::Surface *cursor = (*_gun)[_whichGun];
-		CursorMan.popAllCursors();
 		uint16 hotspotX = (cursor->w / 2) + 8;
 		uint16 hotspotY = (cursor->h / 2) + 10;
 		if (_whichGun == 2) {
@@ -538,7 +537,7 @@ void GameSpacePirates::updateMouse() {
 			cursor->drawLine(0, hotspotY, cursor->w, hotspotY, 1);
 			cursor->drawLine(hotspotX, 0, hotspotX, cursor->h, 1);
 		}
-		CursorMan.pushCursor(cursor->getPixels(), cursor->w, cursor->h, hotspotX, hotspotY, 0);
+		CursorMan.replaceCursor(cursor->getPixels(), cursor->w, cursor->h, hotspotX, hotspotY, 0);
 		CursorMan.showMouse(true);
 		_oldWhichGun = _whichGun;
 	}

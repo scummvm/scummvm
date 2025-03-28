@@ -31,7 +31,7 @@ static const AlgGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOMIDI, GUIO_NOSUBTITLES, GAMEOPTION_SINGLE_SPEED_VERSION)
+			GUIO1(GAMEOPTION_SINGLE_SPEED_VERSION)
 		},
 		GType_CRIME_PATROL,
 	},
@@ -44,7 +44,7 @@ static const AlgGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO2(GUIO_NOMIDI, GUIO_NOSUBTITLES)
+			GUIO0()
 		},
 		GType_CRIME_PATROL,
 	},
@@ -57,7 +57,7 @@ static const AlgGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOMIDI, GUIO_NOSUBTITLES, GAMEOPTION_SINGLE_SPEED_VERSION)
+			GUIO1(GAMEOPTION_SINGLE_SPEED_VERSION)
 		},
 		GType_DRUG_WARS,
 	},
@@ -70,7 +70,7 @@ static const AlgGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO2(GUIO_NOMIDI, GUIO_NOSUBTITLES)
+			GUIO0()
 		},
 		GType_DRUG_WARS,
 	},
@@ -83,7 +83,7 @@ static const AlgGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOMIDI, GUIO_NOSUBTITLES, GAMEOPTION_SINGLE_SPEED_VERSION)
+			GUIO1(GAMEOPTION_SINGLE_SPEED_VERSION)
 		},
 		GType_WSJR,
 	},
@@ -96,7 +96,7 @@ static const AlgGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO2(GUIO_NOMIDI, GUIO_NOSUBTITLES)
+			GUIO0()
 		},
 		GType_LAST_BOUNTY_HUNTER,
 	},
@@ -109,7 +109,7 @@ static const AlgGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_DEMO,
-			GUIO3(GUIO_NOMIDI, GUIO_NOSUBTITLES, GAMEOPTION_SINGLE_SPEED_VERSION)
+			GUIO1(GAMEOPTION_SINGLE_SPEED_VERSION)
 		},
 		GType_LAST_BOUNTY_HUNTER,
 	},
@@ -122,7 +122,7 @@ static const AlgGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOMIDI, GUIO_NOSUBTITLES)
+			GUIO0()
 		},
 		GType_MADDOG,
 	},
@@ -135,7 +135,7 @@ static const AlgGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOMIDI, GUIO_NOSUBTITLES, GAMEOPTION_SINGLE_SPEED_VERSION)
+			GUIO1(GAMEOPTION_SINGLE_SPEED_VERSION)
 		},
 		GType_MADDOG2,
 	},
@@ -148,7 +148,7 @@ static const AlgGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOMIDI, GUIO_NOSUBTITLES, GAMEOPTION_SINGLE_SPEED_VERSION)
+			GUIO1(GAMEOPTION_SINGLE_SPEED_VERSION)
 		},
 		GType_SPACE_PIRATES,
 	},
@@ -161,7 +161,7 @@ static const AlgGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO2(GUIO_NOMIDI, GUIO_NOSUBTITLES)
+			GUIO0()
 		},
 		GType_SPACE_PIRATES,
 	},

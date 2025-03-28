@@ -37,16 +37,11 @@ enum AlgGameType {
 };
 
 struct AlgGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	uint8 gameType;
 
-	uint32 sizeBuffer() const {
-		return desc.sizeBuffer();
-	}
-
-	void *toBuffer(void *buffer) {
-		return desc.toBuffer(buffer);
-	}
 };
 
 #define GAMEOPTION_SINGLE_SPEED_VERSION		GUIO_GAMEOPTIONS1
