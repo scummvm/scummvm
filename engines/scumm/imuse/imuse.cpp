@@ -1645,6 +1645,8 @@ void IMuseInternal::suspendPart(Part *part) {
 		_waitingPartsQueue.insert(it, part);
 		return;
 	}
+
+	_waitingPartsQueue.push_back(part);
 }
 
 void IMuseInternal::removeSuspendedPart(Part *part) {
