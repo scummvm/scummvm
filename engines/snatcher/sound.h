@@ -33,6 +33,14 @@ public:
 	SoundEngine(Common::Platform platform, int soundOptions);
 	~SoundEngine();
 
+	void musicPlay(int track);
+	void musicStop();
+	bool musicIsPlaying() const;
+	uint32 musicGetTime() const;
+
+	void pcmPlayEffect(int track);
+	void pcmDoCommand(int cmd, int arg);
+
 private:
 	SoundDevice *_dev;
 };

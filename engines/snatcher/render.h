@@ -23,6 +23,8 @@
 #define SNATCHER_RENDER_H
 
 #include "common/platform.h"
+#include "snatcher/graphics.h"
+#include "snatcher/resource.h"
 
 namespace Snatcher {
 
@@ -30,19 +32,32 @@ class Renderer {
 public:
 	virtual ~Renderer() {}
 
+	virtual void enqueueCopyCommands(ResourcePointer &res) = 0;
+	virtual void doCommand(uint8 cmd) = 0;
+	virtual void clearCopyCommands() = 0;
+	virtual void initData(ResourcePointer &res, uint8 mode) = 0;
+	virtual void initSprites(ResourcePointer &res, uint16 len) = 0;
+	virtual void linkSprites(ResourcePointer &res, uint16 len) = 0;
+	virtual void clearSprites(int mode = 0) = 0;
+	virtual void setPlaneMode(uint16 mode) = 0;
+	virtual void updateScreen(uint8 *screen) = 0;
+	virtual void updateAnimations() = 0;
+
 	virtual uint16 screenWidth() const = 0;
 	virtual uint16 screenHeight() const = 0;
+
 protected:
-	Renderer() {}
+	Renderer(GraphicsEngine::State &state) : _gfxState(state) {}
+	GraphicsEngine::State &_gfxState;
 
 private:
-	static Renderer *createSegaRenderer();
+	static Renderer *createSegaRenderer(GraphicsEngine::State &state);
 
 public:
-	static Renderer *create(Common::Platform platform) {
+	static Renderer *create(Common::Platform platform, GraphicsEngine::State &state) {
 		switch (platform) {
 		case Common::kPlatformSegaCD:
-			return createSegaRenderer();
+			return createSegaRenderer(state);
 		default:
 			break;
 		};

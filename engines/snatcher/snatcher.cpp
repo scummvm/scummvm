@@ -24,6 +24,7 @@
 #include "snatcher/snatcher.h"
 #include "snatcher/sound.h"
 
+#include "common/endian.h"
 #include "common/events.h"
 #include "common/system.h"
 
@@ -31,12 +32,11 @@
 
 namespace Snatcher {
 
-SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(0), _scene(0), _gfx(0), _snd(0) {
-
+SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _gfx(nullptr), _snd(nullptr), _commandsFromMain(0) {
 }
 
 SnatcherEngine::~SnatcherEngine() {
-	delete _scene;
+	delete _module;
 	delete _gfx;
 	delete _snd;
 	delete _fio;
@@ -73,152 +73,37 @@ bool SnatcherEngine::initSound(Common::Platform platform, int soundOptions) {
 	return (_snd = new SoundEngine(platform, soundOptions));
 }
 
-struct Struct80 {
-	uint16 cmd;
-	uint8 f2;
-	uint8 f3;
-	uint8 f4;
-	uint8 f5;
-	uint32 f6;
-	uint32 fa;
-
-	uint16 fe;
-	uint8 f10;
-	uint8 f11;
-	uint16 f12;
-	uint8 f14;
-	uint8 f15;
-	uint8 f16;
-	uint8 f1c;
-
-	uint8 f25;
-	uint8 f26;
-	uint8 f27;
-	uint16 f28;
-	uint16 f2a;
-	uint8 f2c;
-	uint8 f2d;
-
-	uint32 offs_2e;
-	const uint8 *ptr_32;
-	const uint8 *ptr_36;
-
-	const uint8 *ptr_40;
-	const uint8 *ptr_44;
-	uint16 prev;
-	uint16 next;
-	uint16 next2;
-	uint8 f4e;
-	uint8 f4f;
-};
-
-Struct80 _s80[64];
-//memset(_s80, 0, 64 * sizeof(Struct80));
-uint8 _vc1_var_788A_flags;
-uint8 _vc1_var_78BC;
-uint8 _vc1_var_78BD;
-uint16 _vc1_var_78BE;
-const uint8 *_cpos_7880;
-bool _var_7886;
-uint8 _var_7893;
-
-uint16 _word_B6406;
-
 bool SnatcherEngine::start() {
-	_scene = _fio->createSceneResource(2);
+	GameState state;
+	memset(&state, 0, sizeof(GameState));
 
-	const uint8 *scstart = _scene->getData(0x28000);
-	const uint8 *sc = _scene->getDataFromMainTable(0);
-	//
-	memset(_s80, 0, 64 * sizeof(Struct80));
-	//
-	for (uint8 cmd = *sc++; cmd != 0xFF; cmd = *sc++) {
-		uint8 len = *sc++;
-		const uint8 *next = sc + len;
-
-		switch (cmd) {
-		case 0:
-			_gfx->enqueuePaletteEvent(scstart, sc - scstart);
-			break;
-
-		case 1:
-			_vc1_var_788A_flags &= ~1;
-			_vc1_var_78BD = _vc1_var_78BC;
-			_vc1_var_78BE = 0;
-			_cpos_7880 = sc;
-			_var_7886 = true;
-			break;
-
-		case 2: {
-			while (sc < next) {
-				assert(*sc < ARRAYSIZE(_s80));
-				Struct80 *s = &_s80[*sc++];
-				if (s->cmd)
-					return 0;
-
-				s->cmd = 1;
-				s->f25 = *sc++;
-				s->f6 = READ_BE_UINT16(sc);
-				sc += 2;
-				s->fa = READ_BE_UINT16(sc);
-				sc += 2;
-				s->offs_2e = READ_BE_UINT32(sc);
-				sc += 4;
-				s->ptr_32 = sc + READ_BE_UINT16(sc) + 2;
-				sc += 2;
-				s->f28 = 0xFFFF;
-
-				uint8 v = *s->ptr_32;
-				for (bool l = true; l; ) {
-					if (v == 0xA1 || v == 0xA7) {
-						s->f16 = s->ptr_32[1];
-						v = s->ptr_32[4];
-					} else {
-						if (!(v & 0x80))
-							s->ptr_36 = _scene->getDataFromTable(s->offs_2e, v);
-						l = false;
-					}
-				}
-			}
-		} break;
-
-		case 3: 
-		case 4: {
-			while (sc < next) {
-				uint16 i1 = *sc++;
-				uint16 i2 = *sc++;
-				assert(i1 < ARRAYSIZE(_s80) && i2 < ARRAYSIZE(_s80));
-				Struct80 *s1 = &_s80[i1];
-				Struct80 *s2 = &_s80[i2];
-				s2->next2 = s1->next;
-				s1->next = i2;
-				s2->prev = i1;
-			}
-		} break;
-
-		case 5:
-		case 6:
-		case 7:
-			_var_7893 = sc[1];
-			break;
-		case 8:
-			_word_B6406 = READ_BE_UINT16(sc);
-			break;
-		case 9:
-			_vc1_var_78BC = sc[1];
-			break;
-		default:
-			error("Unknown opcode 0x%02x", cmd);
-		}
-
-		sc = next;
-	}
+	uint32 frameLen = (1000 << 16) / 60;
+	uint32 frameTimer = 0;
 
 	while (!shouldQuit()) {
-		uint32 nextFrame = _system->getMillis() + 16;
+		frameTimer += frameLen;
+		uint32 nextFrame = _system->getMillis() + (frameTimer >> 16);
+		frameTimer &= 0xFFFF;
+
+		int _sub_doMainScript = 0;
+
+		if (runInitSequence(state))
+			continue;
+
+		if (!_gfx->busy()) {
+			//subVintSub_2();
+			bool blockedUpdt = _sub_doMainScript;
+			if (_sub_doMainScript) {
+				//subVint_mainScriptRun__36Cases();
+				blockedUpdt = _gfx->busy();
+			}
+			if (!blockedUpdt) {
+				updateScene(state);
+				_gfx->updateAnimations();
+			}
+		}
 
 		_gfx->nextFrame();
-
 		delayUntil(nextFrame);
 	}
 
@@ -238,8 +123,243 @@ void SnatcherEngine::delayUntil(uint32 end) {
 void SnatcherEngine::updateEvents() {
 	Common::Event evt;
 	while (_eventMan->pollEvent(evt)) {
-		/*
-		*/
+		switch (evt.type) {
+		case Common::EVENT_LBUTTONDOWN:
+			_commandsFromMain |= (1 << 7);
+			break;
+		default:
+			_commandsFromMain = 0;
+			break;
+		}
+	}
+}
+
+bool SnatcherEngine::runInitSequence(GameState &gameState) {
+	if (gameState.initState == -1)
+		return false;
+
+	gameState.initState = -1;
+
+	return true;
+}
+
+void SnatcherEngine::updateScene(GameState &state) {
+	int _main_switch_1_0_orM1_postIntr = 0;
+	uint16 _word_unk_Flags = 0;
+	int _word_unk_11 = 0;
+	int _sub_val_2 = 0;
+	int _unlCDREadSeekWord = 0;
+	uint8 _uniobyte_7891 = 0;
+	bool _sub_bool_5 = false;
+
+	uint8 _wordRAM__TABLE48__word_B6400[48];
+	memset(_wordRAM__TABLE48__word_B6400, 0, 48);
+
+	uint16 _word_8F00_table_00[16];
+	memset(_word_8F00_table_00, 0, 16 * sizeof(uint16));
+
+	switch (state.progressMain) {
+	case -1:
+		_snd->musicStop();
+		state.progressMain = 0;
+		break;
+	case 0:
+		switch (state.progressSub) {
+		case 0:
+			++state.progressSub;
+			break;
+		case 1:
+			if (!_snd->musicIsPlaying()) {
+				delete _module;
+				_module = _fio->loadModule(4);
+				assert(_module);
+				++state.progressSub;
+			}
+			break;
+		case 2:
+			++state.progressSub;
+			break;
+		case 3:
+			//if (*(uint16*)(&_wordRAM__TABLE48__word_B6400[0])) {
+				state.progressSub = 0;
+				state.finish = 0;
+				++state.progressMain;
+			//}
+			break;
+		default:
+			break;
+		}
+		break;
+	case 1:
+		switch (state.progressSub) {
+		case 0:
+			state.frameNo = 0;
+			++state.progressSub;
+			_snd->pcmPlayEffect(30);
+			break;
+		case 1:
+			if (!(_word_unk_Flags & 0x0F))
+				++state.progressSub;
+			break;
+		case 2:
+			if (_module)
+				_module->run(state);
+			if (state.finish) {
+				state.progressSub = 0;
+				state.finish = 0;
+				state.progressMain = _word_unk_11 ? 7 : state.progressMain + 1;
+				state.modIndex = 0;
+				_main_switch_1_0_orM1_postIntr = 1;
+			}
+			break;
+		default:
+			break;
+		}
+		break;
+	case 2:
+		switch (state.progressSub) {
+		case 0:
+			if (!(_sub_val_2 & 0x1F)) {
+				if (!_snd->musicIsPlaying()) {
+					uint8 scids[] = { 3, 2 };
+					delete _module;
+					assert(state.modIndex < ARRAYSIZE(scids));
+					_module = _fio->loadModule(scids[state.modIndex]);
+					assert(_module);
+					++state.progressSub;
+				} else {
+					_snd->musicStop();
+				}
+			}
+			break;
+		case 1:
+			if (!(_sub_val_2 & 0x1F)) {
+				// startup__runWithFileFunc(2)
+				_unlCDREadSeekWord = 0;
+				state.frameNo = -1;
+				++state.progressSub;
+			}
+			break;
+		case 2:
+			if (_module)
+				_module->run(state);
+			if (state.finish < 0) {
+				state.finish = 0;
+				state.counter = 10;
+				++state.progressSub;
+				static byte data[] = { 0x83,  0x0,  0x00, 0x3F };
+				_gfx->enqueuePaletteEvent(ResourcePointer(data, 0));
+			} else if (state.finish) {
+				if (state.modIndex == 0) {
+					++state.modIndex;
+					state.finish = 0;
+				}
+				_gfx->reset(GraphicsEngine::kClearSprites);
+				state.progressSub = 0;
+			}
+			break;
+		case 3:
+			if (--state.counter == 1) {
+				static const byte cmd[] = {
+					0x01, 0x00, 0x00, 0x00, 0x00, 0x0E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0xFF, 0xFF,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+				};
+				_gfx->enqueueCopyCommands(ResourcePointer(cmd, 0));
+			} else if (state.counter == 0) {
+				state.finish = -1;
+				state.progressSub = 0;
+				_gfx->reset(GraphicsEngine::kRestoreDefaultsExt);
+			}
+			break;
+		default:
+			break;
+		}
+		if (state.finish) {
+			state.finish = 0;
+			state.progressMain = 7;
+			state.progressSub = 0;
+			//withD0_FF_FD_FC(0xFF);
+			_gfx->setVar(9, 1);
+			_gfx->reset(GraphicsEngine::kClearPalEvents | GraphicsEngine::kClearSprites);
+		}
+		break;
+	case 3:
+		_wordRAM__TABLE48__word_B6400[2] = 1;
+		state.finish = 0;
+		state.progressMain = 0;
+		state.progressSub = 0;
+		memset(_word_8F00_table_00, 0, 16 * sizeof(uint16));
+		break;
+	case 5:
+		if (state.finish) {
+			++state.progressMain;
+			state.progressSub = 0;
+			state.finish = 0;
+		}
+		break;
+	case 6:
+		switch (state.progressSub) {
+		case 0:
+			//if (_s80[31].cmd == 0) {
+				_gfx->reset(GraphicsEngine::kRestoreDefaults | GraphicsEngine::kClearSprites);
+				_uniobyte_7891 = 0xFF;
+				++state.progressSub;
+				state.frameNo = -1;
+				state.frameState = 0;
+			//}
+			break;
+		case 1:
+			if (!_snd->musicIsPlaying()) {
+				delete _module;
+				_module = _fio->loadModule(52);
+				assert(_module);
+				++state.progressSub;
+			}
+			break;
+		case 2:
+			// startup__runWithFileFunc(2)
+			_unlCDREadSeekWord = 0;
+			++state.progressSub;
+			break;
+		case 3:
+			if (_module)
+				_module->run(state);
+			if (state.finish) {
+				_sub_bool_5 = true;
+				++state.progressSub;
+			}
+			break;
+		default:
+			break;
+		}
+	case 7:
+		switch (state.progressSub) {
+		case 0:
+			_snd->musicStop();
+			//loadFile56 PCMLT_01.BIN
+			++state.progressSub;
+			break;
+		case 1:
+		case 3:
+			// startup__runWithFileFunc(2)
+			_unlCDREadSeekWord = 0;
+			++state.progressSub;
+			break;
+		case 2:
+			//loadFile54 PCMDRMDT.BIN
+			++state.progressSub;
+			break;
+		case 4:
+			state.progressMain = 5;
+			state.progressSub = 0;
+			_main_switch_1_0_orM1_postIntr = -1;
+			break;
+		default:
+			break;
+		}
+	default:
+		break;
 	}
 }
 

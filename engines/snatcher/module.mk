@@ -12,7 +12,8 @@ MODULE_OBJS := \
 	snatcher.o \
 	sound.o \
 	sound_device_null.o \
-	sound_device_scd.o
+	sound_device_scd.o \
+	util.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SNATCHER), DYNAMIC_PLUGIN)

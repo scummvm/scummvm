@@ -26,11 +26,11 @@ namespace Snatcher {
 
 class SceneHandler;
 class SnatcherEngine;
-class SceneResource;
+class SceneModule;
 class FIO;
 
 #define declSHF(id) \
-	SceneHandler *createSceneHandler_##id(SnatcherEngine*, SceneResource*, FIO*)
+	SceneHandler *createSceneHandler_##id(SnatcherEngine*, SceneModule*, FIO*)
 
 declSHF(D0);
 declSHF(D1);

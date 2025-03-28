@@ -31,30 +31,25 @@ class SoundDevice {
 public:
 	virtual ~SoundDevice() {}
 
+	virtual void musicPlay(int track) = 0;
+	virtual void musicStop() = 0;
+	virtual bool musicIsPlaying() const = 0;
+	virtual uint32 musicGetTime() const = 0;
+
+	virtual void pcmPlayEffect(int track) = 0;
+	virtual void pcmDoCommand(int cmd, int arg) = 0;
+
 protected:
-	SoundDevice() {}
+	SoundDevice() : _musicStartTime(0) {}
+
+	uint32 _musicStartTime;
 
 private:
 	static SoundDevice *createNullSoundDevice();
 	static SoundDevice *createSegaSoundDevice();
 
 public:
-	static SoundDevice *create(Common::Platform platform, int soundOptions) {
-		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(soundOptions);
-		MusicType musicType = MidiDriver::getMusicType(dev);
-
-		if (musicType == MT_INVALID || musicType == MT_NULL)
-			return createNullSoundDevice();
-
-		switch (platform) {
-		case Common::kPlatformSegaCD:
-			return createSegaSoundDevice();
-		default:
-			break;
-		};
-
-		return 0;
-	}
+	static SoundDevice *create(Common::Platform platform, int soundOptions);
 };
 
 } // End of namespace Snatcher

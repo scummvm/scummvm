@@ -24,13 +24,54 @@
 
 namespace Snatcher {
 
-SoundEngine::SoundEngine(Common::Platform platform, int soundOptions) : _dev(0) {
+SoundEngine::SoundEngine(Common::Platform platform, int soundOptions) : _dev(nullptr) {
 	_dev = SoundDevice::create(platform, soundOptions);
 	assert(_dev);
 }
 
 SoundEngine::~SoundEngine() {
 	delete _dev;
+}
+
+void SoundEngine::musicPlay(int track) {
+	_dev->musicPlay(track);
+}
+
+void SoundEngine::musicStop() {
+	_dev->musicStop();
+}
+
+bool SoundEngine::musicIsPlaying() const {
+	return _dev->musicIsPlaying();
+}
+
+uint32 SoundEngine::musicGetTime() const {
+	return _dev->musicGetTime();
+}
+
+void SoundEngine::pcmPlayEffect(int track) {
+	_dev->pcmPlayEffect(track);
+}
+
+void SoundEngine::pcmDoCommand(int cmd, int arg) {
+	_dev->pcmDoCommand(cmd, arg);
+}
+
+SoundDevice *SoundDevice::create(Common::Platform platform, int soundOptions) {
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(soundOptions);
+	MusicType musicType = MidiDriver::getMusicType(dev);
+
+	if (musicType == MT_INVALID || musicType == MT_NULL)
+		return createNullSoundDevice();
+
+	switch (platform) {
+	case Common::kPlatformSegaCD:
+		return createSegaSoundDevice();
+	default:
+		break;
+	};
+
+	return 0;
 }
 
 } // End of namespace Snatcher
