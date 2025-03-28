@@ -161,6 +161,7 @@ indy3	Indiana Jones and the Last Crusade
 	cb8feea195746e042368e2b738766d8b	-1	ko	DOS	VGA	VGA	Fan translation	ScummVM-Kor
 	e893df6788fc63fef936dd531f9712ec	6295	it	DOS	VGA	VGA	Fan translation	OldGamesItalia (2007)
 	275786f0f6894d1fe1ab5f1d103bb814	6295	ru	DOS	VGA	VGA	Fan translation
+	b27efc535df2bc2db998947c15ce57fb	7552	it	FM-TOWNS	FM-TOWNS	-	Fan translation	Glorifindel at OldGamesItalia/IAGTG (2007), v1.0
 
 loom	Loom
 	4dc780f1bc587a193ce8a97652791438	5748	en	Amiga	EGA	EGA	-	Antti Leimi, Andrea Petrucci
