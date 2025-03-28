@@ -22,6 +22,8 @@
 #ifndef DIRECTOR_CASTMEMBER_CASTMEMBER_H
 #define DIRECTOR_CASTMEMBER_CASTMEMBER_H
 
+#include "common/rect.h"
+
 #include "director/archive.h"
 #include "director/stxt.h"
 
@@ -93,6 +95,8 @@ public:
 	// Return the registration offset, assuming a stretched width and height value.
 	// Offset is relative to the top-left corner of the widget.
 	virtual Common::Point getRegistrationOffset(int16 currentWidth, int16 currentHeight) { return Common::Point(0, 0); }
+
+	virtual CollisionTest isWithin(const Common::Rect &bbox, const Common::Point &pos, InkType ink) { return bbox.contains(pos) ? kCollisionYes : kCollisionNo; }
 
 	CastType _type;
 	Common::Rect _initialRect;

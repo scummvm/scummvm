@@ -40,8 +40,8 @@ public:
 	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
 	bool isModified() override;
-	void createMatte(Common::Rect &bbox);
-	Graphics::Surface *getMatte(Common::Rect &bbox);
+	void createMatte(const Common::Rect &bbox);
+	Graphics::Surface *getMatte(const Common::Rect &bbox);
 	Graphics::Surface *getDitherImg();
 
 	bool hasField(int field) override;
@@ -59,6 +59,8 @@ public:
 
 	Common::Point getRegistrationOffset() override;
 	Common::Point getRegistrationOffset(int16 width, int16 height) override;
+
+	CollisionTest isWithin(const Common::Rect &bbox, const Common::Point &pos, InkType ink) override;
 
 	Picture *_picture = nullptr;
 	Graphics::Surface *_ditheredImg;

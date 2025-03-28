@@ -24,6 +24,10 @@
 
 #include "director/castmember/castmember.h"
 
+namespace Graphics {
+class MacText;
+}
+
 namespace Director {
 
 class TextCastMember : public CastMember {
@@ -34,7 +38,9 @@ public:
 
 	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
-	Graphics::MacWidget *getWidget();
+	Graphics::MacText *getWidget();
+
+	CollisionTest isWithin(const Common::Rect &bbox, const Common::Point &pos, InkType ink) override;
 
 	bool isEditable() override { return _editable; }
 	void setEditable(bool editable) override { _editable = editable; }

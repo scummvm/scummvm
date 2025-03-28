@@ -1277,11 +1277,15 @@ void Score::renderCursor(Common::Point pos, bool forceUpdate) {
 	if (!_channels.empty() && _playState != kPlayStopped) {
 		uint spriteId = 0;
 
-		for (int i = _channels.size() - 1; i >= 0; i--)
-			if (_channels[i]->isMouseIn(pos) && !_channels[i]->_cursor.isEmpty()) {
+		for (int i = _channels.size() - 1; i >= 0; i--) {
+			CollisionTest test = _channels[i]->isMouseIn(pos);
+			if (test == kCollisionYes && !_channels[i]->_cursor.isEmpty()) {
 				spriteId = i;
 				break;
+			} else if (test == kCollisionHole) {
+				break;
 			}
+		}
 
 		if (!_channels[spriteId]->_cursor.isEmpty()) {
 			if (!forceUpdate && _currentCursor == _channels[spriteId]->_cursor)
@@ -1467,26 +1471,37 @@ void Score::screenShot() {
 }
 
 uint16 Score::getSpriteIDFromPos(Common::Point pos) {
-	for (int i = _channels.size() - 1; i >= 0; i--)
-		if (_channels[i]->isMouseIn(pos))
+	for (int i = _channels.size() - 1; i >= 0; i--) {
+		CollisionTest test = _channels[i]->isMouseIn(pos);
+		if (test == kCollisionYes)
 			return i;
+		else if (test == kCollisionHole)
+			break;
+	}
 
 	return 0;
 }
 
 uint16 Score::getMouseSpriteIDFromPos(Common::Point pos) {
-	for (int i = _channels.size() - 1; i >= 0; i--)
-		if (_channels[i]->isMouseIn(pos) && _channels[i]->_sprite->respondsToMouse())
+	for (int i = _channels.size() - 1; i >= 0; i--) {
+		CollisionTest test = _channels[i]->isMouseIn(pos);
+		if (test == kCollisionYes && _channels[i]->_sprite->respondsToMouse())
 			return i;
+		else if (test == kCollisionHole)
+			break;
+	}
 
 	return 0;
 }
 
 uint16 Score::getActiveSpriteIDFromPos(Common::Point pos) {
-	for (int i = _channels.size() - 1; i >= 0; i--)
-		if (_channels[i]->isMouseIn(pos) && _channels[i]->_sprite->isActive())
+	for (int i = _channels.size() - 1; i >= 0; i--) {
+		CollisionTest test = _channels[i]->isMouseIn(pos);
+		if (test == kCollisionYes && _channels[i]->_sprite->isActive())
 			return i;
-
+		else if (test == kCollisionHole)
+			break;
+	}
 	return 0;
 }
 

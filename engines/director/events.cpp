@@ -147,7 +147,7 @@ bool Movie::processEvent(Common::Event &event) {
 
 		// hiliteChannelId is specified for BitMap castmember, so we deal with them separately with other castmember
 		// if we are moving out of bounds, then we don't hilite it anymore
-		if (_currentHiliteChannelId && !sc->_channels[_currentHiliteChannelId]->isMouseIn(pos)) {
+		if (_currentHiliteChannelId && (sc->_channels[_currentHiliteChannelId]->isMouseIn(pos) != kCollisionYes)) {
 			g_director->getCurrentWindow()->setDirty(true);
 			g_director->getCurrentWindow()->addDirtyRect(sc->_channels[_currentHiliteChannelId]->getBbox());
 			_currentHiliteChannelId = 0;

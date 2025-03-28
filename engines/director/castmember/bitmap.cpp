@@ -34,6 +34,7 @@
 #include "director/movie.h"
 #include "director/picture.h"
 #include "director/score.h"
+#include "director/types.h"
 #include "director/window.h"
 #include "director/castmember/bitmap.h"
 #include "director/lingo/lingo-the.h"
@@ -446,7 +447,7 @@ bool BitmapCastMember::isModified() {
 	return false;
 }
 
-void BitmapCastMember::createMatte(Common::Rect &bbox) {
+void BitmapCastMember::createMatte(const Common::Rect &bbox) {
 	// Like background trans, but all white pixels NOT ENCLOSED by coloured pixels
 	// are transparent
 	Graphics::Surface tmp;
@@ -521,7 +522,7 @@ void BitmapCastMember::createMatte(Common::Rect &bbox) {
 	tmp.free();
 }
 
-Graphics::Surface *BitmapCastMember::getMatte(Common::Rect &bbox) {
+Graphics::Surface *BitmapCastMember::getMatte(const Common::Rect &bbox) {
 	// Lazy loading of mattes
 	if (!_matte && !_noMatte) {
 		createMatte(bbox);
@@ -759,6 +760,18 @@ Common::Point BitmapCastMember::getRegistrationOffset() {
 Common::Point BitmapCastMember::getRegistrationOffset(int16 width, int16 height) {
 	Common::Point offset = getRegistrationOffset();
 	return Common::Point(offset.x * width / MAX((int16)1, _initialRect.width()), offset.y * height / MAX((int16)1, _initialRect.height()));
+}
+
+
+CollisionTest BitmapCastMember::isWithin(const Common::Rect &bbox, const Common::Point &pos, InkType ink) {
+	if (!bbox.contains(pos))
+		return kCollisionNo;
+
+	if (ink == kInkTypeMatte) {
+		Graphics::Surface *matte = getMatte(bbox);
+		return (matte ? *(byte *)(matte->getBasePtr(pos.x - bbox.left, pos.y - bbox.top)) : true) ? kCollisionYes : kCollisionNo;
+	}
+	return kCollisionYes;
 }
 
 bool BitmapCastMember::hasField(int field) {
