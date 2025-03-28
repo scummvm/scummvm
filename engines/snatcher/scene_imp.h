@@ -27,16 +27,37 @@ namespace Snatcher {
 #define SH_HEAD_BEGIN(id) \
 	class Scene_##id : public SceneHandler { \
 	public: \
-		Scene_##id(SnatcherEngine *vm, SceneResource *scn, FIO *fio); \
+		Scene_##id(SnatcherEngine *vm, SceneModule *scn, FIO *fio); \
 		~Scene_##id() override; \
-		void operator()() override; \
-	private:
+		void operator()(GameState &state) override; \
+	private: \
+		typedef Common::Functor1Mem<GameState&, void, Scene_##id> FrameProc; \
+		typedef void(Scene_##id::*FrameProcTblEntry)(GameState&); \
+		Common::Array<FrameProc*> _frameProcs; \
+		static const FrameProcTblEntry frameProcTable[];		
 
 #define SH_HEAD_END(id) }; \
-	SceneHandler *createSceneHandler_##id(SnatcherEngine *vm, SceneResource *scn, FIO *fio) { return new Scene_##id(vm, scn, fio); }
+	SceneHandler *createSceneHandler_##id(SnatcherEngine *vm, SceneModule *scn, FIO *fio) { return new Scene_##id(vm, scn, fio); }
+#define SH_IMP_FRMTBL(id) \
+	const Scene_##id::FrameProcTblEntry Scene_##id::frameProcTable[] =
+#define SH_FRM(no) \
+	&frameUpdate##no
 #define SH_IMP_CTOR(id) \
-	Scene_##id::Scene_##id(SnatcherEngine *vm, SceneResource *scn, FIO *fio) : SceneHandler(vm, scn, fio)
-
+	Scene_##id::Scene_##id(SnatcherEngine *vm, SceneModule *scn, FIO *fio) : SceneHandler(vm, scn, fio)
+#define SH_CTOR_MAKEPROCS(id) \
+	for (uint i = 0; i < ARRAYSIZE(frameProcTable); ++i) \
+		_frameProcs.push_back(new FrameProc(this, frameProcTable[i]));
+#define SH_IMP_DTOR(id) \
+	Scene_##id::~Scene_##id()
+#define SH_DTOR_DELPROCS(id) \
+	for (uint i = 0; i < _frameProcs.size(); ++i) \
+		delete _frameProcs[i];
+#define SH_IMPL_UPDT(id) \
+	void Scene_##id::operator()(GameState &state)
+#define SH_DCL_FRM(no) \
+	void frameUpdate##no(GameState &state);
+#define SH_IMPL_FRM(id, no) \
+	void Scene_##id::frameUpdate##no(GameState &state)
 } // End of namespace Snatcher
 
 #endif // SNATCHER_SCENE_IMP_H

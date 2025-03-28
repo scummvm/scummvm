@@ -22,28 +22,101 @@
 #ifndef SNATCHER_GRAPHICS_H
 #define SNATCHER_GRAPHICS_H
 
-#include "snatcher/render.h"
 #include "common/platform.h"
+#include "snatcher/resource.h"
 
 class OSystem;
 
 namespace Snatcher {
 
 class Palette;
+class Renderer;
+class SceneModule;
 
 class GraphicsEngine {
 public:
 	GraphicsEngine(OSystem *system, Common::Platform platform);
 	~GraphicsEngine();
 
-	void enqueuePaletteEvent(const uint8 *data, uint32 curPos);
+	void runScript(ResourcePointer res, int func);
+	void enqueuePaletteEvent(ResourcePointer res);
+	void enqueueCopyCommands(ResourcePointer res);
+	void doCommand(uint8 cmd);
 
+	void updateAnimations();
 	void nextFrame();
 
-	uint16 screenWidth() const { return _renderer ? _renderer->screenWidth() : 0; }
-	uint16 screenHeight() const { return _renderer ? _renderer->screenHeight() : 0; }
+	enum ResetType : uint16 {
+		kClearPalEvents			=	1 << 0,
+		kRestoreDefaults		=	1 << 1,
+		kRestoreDefaultsExt		=	1 << 2,
+		kResetGfxStructs6		=	1 << 3,
+		kClearSprites			=	1 << 4
+	};
+
+	void reset(int mode);
+
+	void setVar(uint8 var, uint8 val);
+
+	uint16 screenWidth() const;
+	uint16 screenHeight() const;
+
+	bool busy() const;
+
+public:
+	struct State {
+		State() {
+			memset(vars, 0, sizeof(vars));
+			_frameCounter = 0;
+		}
+
+		uint8 getVar(uint8 var) const {
+			assert(var < ARRAYSIZE(vars));
+			return vars[var];
+		}
+
+		void setVar(uint8 var, uint8 val) {
+			assert(var < ARRAYSIZE(vars));
+			vars[var] = val;
+		}
+
+		bool testFlag(uint8 var, uint8 bit) const {
+			assert(var < ARRAYSIZE(vars));
+			return vars[var] & (1 << bit);
+		}
+
+		void setFlag(uint8 var, uint8 bit) {
+			assert(var < ARRAYSIZE(vars));
+			vars[var] |= (1 << bit);
+		}
+
+		void clearFlag(uint8 var, uint8 bit) {
+			assert(var < ARRAYSIZE(vars));
+			vars[var] &= ~(1 << bit);
+		}
+
+		uint16 frameCount() const {
+			return _frameCounter;
+		}
+
+		void nextFrame() {
+			++_frameCounter;
+		}
+	
+	private:
+		uint8 vars[10];
+		uint16 _frameCounter;
+	};
 
 private:
+	void restoreDefaultsExt();
+	void restoreDefaults();
+
+	State _state;
+	uint8 _dataMode;
+	uint8 _flags;
+
+	byte *_screen;
 	Renderer *_renderer;
 	Palette *_palette;
 	OSystem *_system;

@@ -19,16 +19,42 @@
 *
 */
 
+#include "common/system.h"
 #include "snatcher/sound_device.h"
+#include "snatcher/util.h"
 
 namespace Snatcher {
 
 class NullSoundDevice : public SoundDevice {
 public:
-	NullSoundDevice() : SoundDevice() {}
+	NullSoundDevice() : SoundDevice(), _playing(false) {}
 	~NullSoundDevice() override {}
+
+	void musicPlay(int track) override { }
+	void musicStop() override { }
+	bool musicIsPlaying() const override;
+	uint32 musicGetTime() const override;
+
+	void pcmPlayEffect(int track) override;
+	void pcmDoCommand(int cmd, int arg) override;
 private:
+	bool _playing;
 };
+
+bool NullSoundDevice::musicIsPlaying() const {
+	return true;
+}
+
+uint32 NullSoundDevice::musicGetTime() const {
+	uint32 relTime = 0;
+	return Util::makeBCDTimeStamp(relTime);
+}
+
+void NullSoundDevice::pcmPlayEffect(int track) {
+}
+
+void NullSoundDevice::pcmDoCommand(int cmd, int arg) {
+}
 
 SoundDevice *SoundDevice::createNullSoundDevice() {
 	return new NullSoundDevice();
