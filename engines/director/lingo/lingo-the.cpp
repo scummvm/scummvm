@@ -2330,7 +2330,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 					break;
 				case kTheRect:
 					d = Datum(Common::Rect(0, 0, 0, 0));
-break;
+					break;
 				case kTheRegPoint:
 					d = Datum(Common::Point(0, 0));
 					break;

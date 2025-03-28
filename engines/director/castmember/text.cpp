@@ -22,7 +22,7 @@
 #include "common/events.h"
 
 #include "graphics/macgui/macbutton.h"
-#include "graphics/macgui/mactextwindow.h"
+#include "graphics/macgui/macwindow.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -209,9 +209,9 @@ void TextCastMember::setColors(uint32 *fgcolor, uint32 *bgcolor) {
 		_bgcolor = *bgcolor;
 
 	// if we want to keep the format unchanged, then we need to modify _ftext as well
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (target) {
-		((Graphics::MacText *)target)->setColors(_fgcolor, _bgcolor);
+		target->setColors(_fgcolor, _bgcolor);
 	} else {
 		_modified = true;
 	}
@@ -235,9 +235,9 @@ void TextCastMember::setBackColor(uint32 bgCol) {
 }
 
 uint32 TextCastMember::getForeColor(int start, int end) {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (target) {
-		return ((Graphics::MacText *)target)->getTextColor(start, end);
+		return target->getTextColor(start, end);
 	}
 	return _fgcolor;
 }
@@ -248,9 +248,9 @@ void TextCastMember::setForeColor(uint32 fgCol) {
 }
 
 void TextCastMember::setForeColor(uint32 fgCol, int start, int end) {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (target) {
-		return ((Graphics::MacText *)target)->setTextColor(fgCol, start, end);
+		return target->setTextColor(fgCol, start, end);
 	}
 	_modified = true;
 }
@@ -288,11 +288,11 @@ bool textWindowCallback(Graphics::WindowClick click, Common::Event &event, void 
 }
 
 Graphics::MacWidget *TextCastMember::createWindowOrWidget(Common::Rect &bbox, Common::Rect dims, Graphics::MacFont *macFont) {
-	Graphics::MacWidget *widget = nullptr;
+	Graphics::MacText *widget = nullptr;
 
 	widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), _lineSpacing, _borderSize, _gutterSize, _boxShadow, _textShadow, _textType == kTextTypeFixed || _textType == kTextTypeScrolling, _textType == kTextTypeScrolling);
-	((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
-	((Graphics::MacText *)widget)->draw();
+	widget->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
+	widget->draw();
 
 	return widget;
 }
@@ -355,7 +355,7 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 	return widget;
 }
 
-Graphics::MacWidget *TextCastMember::getWidget() {
+Graphics::MacText *TextCastMember::getWidget() {
 	// FIXME: The cast member should be the source of truth for the widget.
 	// You don't have the issue you have with e.g. bitmaps where the channel
 	// can stretch: all sprites of the cast member have the same dimensions.
@@ -374,9 +374,21 @@ Graphics::MacWidget *TextCastMember::getWidget() {
 		Common::Rect bbox = toEdit->getBbox();
 		if (!toEdit->_widget)
 			toEdit->_widget = createWidget(bbox, toEdit, toEdit->_sprite->_spriteType);
-		return toEdit->_widget;
+		return (Graphics::MacText *)toEdit->_widget;
 	}
-	return _widget;
+	return (Graphics::MacText *)_widget;
+}
+
+CollisionTest TextCastMember::isWithin(const Common::Rect &bbox, const Common::Point &pos, InkType ink) {
+	if (!bbox.contains(pos))
+		return kCollisionNo;
+
+	Graphics::MacWindowConstants::WindowClick result = getWidget()->isInScrollBar(pos.x, pos.y);
+	if (result == Graphics::MacWindowConstants::kBorderScrollDown ||
+			result == Graphics::MacWindowConstants::kBorderScrollUp)
+		return kCollisionHole;
+
+	return kCollisionYes;
 }
 
 void TextCastMember::importRTE(byte *text) {
@@ -402,22 +414,18 @@ void TextCastMember::setRawText(const Common::String &text) {
 }
 
 int TextCastMember::getLineCount() {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (target) {
-		return ((Graphics::MacText *)target)->getRowCount();
+		return target->getRowCount();
 	}
 	warning("TextCastMember::getLineCount(): no widget available, returning 0");
 	return 0;
 }
 
 int TextCastMember::getLineHeight(int line) {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (target) {
-		if (_textType == kTextTypeScrolling) {
-			return ((Graphics::MacTextWindow *)target)->getLineHeight(line);
-		} else {
-			return ((Graphics::MacText *)target)->getLineHeight(line);
-		}
+		return target->getLineHeight(line);
 	}
 	warning("TextCastMember::getLineHeight(): no widget available, returning 0");
 	return 0;
@@ -425,47 +433,47 @@ int TextCastMember::getLineHeight(int line) {
 
 // D4 dictionary book said this is line spacing
 int TextCastMember::getTextHeight() {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (target) {
-		return ((Graphics::MacText *)target)->getLineSpacing();
+		return target->getLineSpacing();
 	}
 	return _lineSpacing;
 }
 
 Common::String TextCastMember::getTextFont() {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (target) {
-		int fontId = ((Graphics::MacText *)target)->getTextFont();
+		int fontId = target->getTextFont();
 		return g_director->_wm->_fontMan->getFontName(fontId);
 	}
 	return g_director->_wm->_fontMan->getFontName(_fontId);
 }
 
 Common::String TextCastMember::getTextFont(int start, int end) {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (target) {
-		int fontId = ((Graphics::MacText *)target)->getTextFont(start, end);
+		int fontId = target->getTextFont(start, end);
 		return g_director->_wm->_fontMan->getFontName(fontId);
 	}
 	return g_director->_wm->_fontMan->getFontName(_fontId);
 }
 
 void TextCastMember::setTextFont(const Common::String &fontName) {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (!target)
 		return;
-	((Graphics::MacText *)target)->enforceTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(fontName));
-	_ptext = ((Graphics::MacText *)target)->getPlainText();
-	_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
+	target->enforceTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(fontName));
+	_ptext = target->getPlainText();
+	_ftext = target->getTextChunk(0, 0, -1, -1, true);
 }
 
 void TextCastMember::setTextFont(const Common::String &fontName, int start, int end) {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (!target)
 		return;
-	((Graphics::MacText *)target)->setTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(fontName), start, end);
-	_ptext = ((Graphics::MacText *)target)->getPlainText();
-	_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
+	target->setTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(fontName), start, end);
+	_ptext = target->getPlainText();
+	_ftext = target->getTextChunk(0, 0, -1, -1, true);
 }
 
 Common::U32String TextCastMember::getText() {
@@ -477,91 +485,93 @@ Common::String TextCastMember::getRawText() {
 }
 
 int TextCastMember::getTextSize() {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (target) {
-		return ((Graphics::MacText *)target)->getTextSize();
+		return target->getTextSize();
 	}
 
 	return _fontSize;
 }
 
 int TextCastMember::getTextSize(int start, int end) {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (target) {
-		return ((Graphics::MacText *)target)->getTextSize(start, end);
+		return target->getTextSize(start, end);
 	}
 
 	return _fontSize;
 }
 
 void TextCastMember::setTextSize(int textSize) {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (target) {
-		((Graphics::MacText *)target)->setTextSize(textSize);
-		_ptext = ((Graphics::MacText *)target)->getPlainText();
-		_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
-		((Graphics::MacText *)target)->draw();
+		target->setTextSize(textSize);
+		_ptext = target->getPlainText();
+		_ftext = target->getTextChunk(0, 0, -1, -1, true);
+		target->draw();
 	}
 	_fontSize = textSize;
 	_modified = true;
 }
 
 void TextCastMember::setTextSize(int textSize, int start, int end) {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (target) {
-		((Graphics::MacText *)target)->setTextSize(textSize, start, end);
-		_ptext = ((Graphics::MacText *)target)->getPlainText();
-		_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
-		((Graphics::MacText *)target)->draw();
+		target->setTextSize(textSize, start, end);
+		_ptext = target->getPlainText();
+		_ftext = target->getTextChunk(0, 0, -1, -1, true);
+		target->draw();
 	}
 	_modified = true;
 }
 
 Common::String TextCastMember::getTextStyle() {
 	int slantVal = _textSlant;
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (target) {
-		slantVal = ((Graphics::MacText *)target)->getTextSlant();
+		slantVal = target->getTextSlant();
 	}
 	return g_director->_wm->_fontMan->getNameFromSlant(slantVal);
 }
 
 Common::String TextCastMember::getTextStyle(int start, int end) {
 	int slantVal = _textSlant;
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	if (target) {
-		slantVal = ((Graphics::MacText *)target)->getTextSlant(start, end);
+		slantVal = target->getTextSlant(start, end);
 	}
 	return g_director->_wm->_fontMan->getNameFromSlant(slantVal);
 }
 
 void TextCastMember::setTextStyle(const Common::String &textStyle) {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	int slant = g_director->_wm->_fontMan->parseSlantFromName(textStyle);
 	if (target) {
-		((Graphics::MacText *)target)->enforceTextSlant(slant);
-		_ptext = ((Graphics::MacText *)target)->getPlainText();
-		_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
-		((Graphics::MacText *)target)->draw();
+		target->enforceTextSlant(slant);
+		_ptext = target->getPlainText();
+		_ftext = target->getTextChunk(0, 0, -1, -1, true);
+		target->draw();
 	}
 	_modified = true;
 }
 
 void TextCastMember::setTextStyle(const Common::String &textStyle, int start, int end) {
-	Graphics::MacWidget *target = getWidget();
+	Graphics::MacText *target = getWidget();
 	int slant = g_director->_wm->_fontMan->parseSlantFromName(textStyle);
 	if (target) {
-		((Graphics::MacText *)target)->setTextSlant(slant, start, end);
-		_ptext = ((Graphics::MacText *)target)->getPlainText();
-		_ftext = ((Graphics::MacText *)target)->getTextChunk(0, 0, -1, -1, true);
-		((Graphics::MacText *)target)->draw();
+		target->setTextSlant(slant, start, end);
+		_ptext = target->getPlainText();
+		_ftext = target->getTextChunk(0, 0, -1, -1, true);
+		target->draw();
 	}
 	_modified = true;
 }
 
 void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
-	if (widget && _type == kCastText) {
-		_ptext = ((Graphics::MacText *)widget)->getEditedString();
+	if (widget && _editable) {
+		Common::String content = ((Graphics::MacText *)widget)->getEditedString();
+		content.replace('\n', '\r');
+		_ptext = content;
 	}
 }
 

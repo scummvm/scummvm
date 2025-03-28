@@ -697,7 +697,7 @@ void LC::cb_varassign() {
 
 
 void LC::cb_v4assign2() {
-int arg = g_lingo->readInt();
+	int arg = g_lingo->readInt();
 	int op = (arg >> 4) & 0xF;
 	int varType = arg & 0xF;
 	Datum varId = g_lingo->pop();

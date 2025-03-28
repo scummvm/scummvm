@@ -57,7 +57,7 @@ public:
 	bool isDirty(Sprite *nextSprite = nullptr);
 	bool isEmpty();
 	bool isActiveText();
-	bool isMouseIn(const Common::Point &pos);
+	CollisionTest isMouseIn(const Common::Point &pos);
 	bool isMatteIntersect(Channel *channel);
 	bool isMatteWithin(Channel *channel);
 	bool isActiveVideo();
