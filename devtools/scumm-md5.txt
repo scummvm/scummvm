@@ -201,6 +201,7 @@ loom	Loom
 #	37f56ceb13e401a7ac7d9e6b37fecaf7	5748	ru	DOS	EGA	EGA	Fan translation	PRCA RuSCUMM v1.1 (uses custom launcher)
 	cd46c9f122272d02bbf79332ff521898	5748	ru	DOS	EGA	EGA	Fan translation	PRCA RuSCUMM v1.2 16 Mar 07
 	303708df4166067540a5c481eceb04ef	7540	ru	FM-TOWNS	FM-TOWNS	-	Fan translation	PRCA RuSCUMM v1.0 16 Mar 07
+	2edee19abf8ab2868b09c5959683dbd4	7540	it	FM-TOWNS	FM-TOWNS	-	Fan translation	tsm/Carmine OldGamesItalia
 
 monkey	The Secret of Monkey Island
 	c666a998af90d81db447eccba9f72c8d	-1	en	Atari	No AdLib	EGA	-
