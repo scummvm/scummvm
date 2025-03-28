@@ -28,7 +28,7 @@
 #include "bagel/hodjnpodj/metagame/views/boardgame_options.h"
 #include "bagel/hodjnpodj/metagame/views/boardgame.h"
 #include "bagel/hodjnpodj/metagame/views/credits.h"
-#include "bagel/hodjnpodj/metagame/views/grand_tour.h"
+#include "bagel/hodjnpodj/metagame/views/grand_tour_options.h"
 #include "bagel/hodjnpodj/metagame/views/minigames.h"
 #include "bagel/hodjnpodj/metagame/views/movie.h"
 #include "bagel/hodjnpodj/metagame/views/title_menu.h"
@@ -47,7 +47,7 @@ struct Views {
 	Metagame::BoardgameOptions _boardgameOptions;
 	Metagame::Boardgame _boardgame;
 	Metagame::Credits _credits;
-	Metagame::GrandTour _grandTour;
+	Metagame::GrandTourOptions _grandTour;
 	Metagame::Minigames _minigames;
 	Metagame::Movie _movie;
 	Metagame::TitleMenu _titleMenu;

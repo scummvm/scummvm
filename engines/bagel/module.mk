@@ -130,7 +130,7 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/views/boardgame.o \
 	hodjnpodj/metagame/views/credits.o \
 	hodjnpodj/metagame/views/dialog.o \
-	hodjnpodj/metagame/views/grand_tour.o \
+	hodjnpodj/metagame/views/grand_tour_options.o \
 	hodjnpodj/metagame/views/minigames.o \
 	hodjnpodj/metagame/views/movie.o \
 	hodjnpodj/metagame/views/title_menu.o \

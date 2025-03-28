@@ -21,7 +21,7 @@
 
 #include "common/file.h"
 #include "image/bmp.h"
-#include "bagel/hodjnpodj/metagame/views/grand_tour.h"
+#include "bagel/hodjnpodj/metagame/views/grand_tour_options.h"
 #include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
 #include "bagel/hodjnpodj/views/minigame_view.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
@@ -108,7 +108,7 @@ static const char *aszGames[18] = {
 static const byte anGeoOrder[18] = { 9, 12, 11, 0, 7, 13, 5, 16, 17, 1, 4, 14, 3, 10, 15, 2, 6, 8 };
 
 
-GrandTour::GrandTour() : Dialog("GrandTour"),
+GrandTourOptions::GrandTourOptions() : Dialog("GrandTourOptions"),
 	_playButton("PLAY", "Play",           RectWH(PLAY_LEFT, F_TOP - 25, F_WIDTH, F_HEIGHT), this),
 	_saveButton("SAVE", "Save",           RectWH(SAVE_LEFT, F_TOP - 25, F_WIDTH, F_HEIGHT), this),
 	_restoreButton("LOAD", "Restore",     RectWH(RESTORE_LEFT, F_TOP - 25, F_WIDTH, F_HEIGHT), this),
@@ -132,7 +132,7 @@ GrandTour::GrandTour() : Dialog("GrandTour"),
 	m_pgtGTStruct(&g_engine->_grandTour) {
 }
 
-bool GrandTour::msgOpen(const OpenMessage &msg) {
+bool GrandTourOptions::msgOpen(const OpenMessage &msg) {
 	Dialog::msgOpen(msg);
 	g_engine->_bReturnToGrandTour = true;
 
@@ -141,14 +141,14 @@ bool GrandTour::msgOpen(const OpenMessage &msg) {
 	return true;
 }
 
-bool GrandTour::msgClose(const CloseMessage &msg) {
+bool GrandTourOptions::msgClose(const CloseMessage &msg) {
 	Dialog::msgClose(msg);
 	g_engine->_bReturnToGrandTour = false;
 
 	return true;
 }
 
-bool GrandTour::msgFocus(const FocusMessage &msg) {
+bool GrandTourOptions::msgFocus(const FocusMessage &msg) {
 	Dialog::msgFocus(msg);
 	MinigameView *view = dynamic_cast<MinigameView *>(msg._priorView);
 	if (!view)
@@ -188,7 +188,7 @@ bool GrandTour::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
-bool GrandTour::msgAction(const ActionMessage &msg) {
+bool GrandTourOptions::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
 		replaceView("TitleMenu");
 		return true;
@@ -197,7 +197,7 @@ bool GrandTour::msgAction(const ActionMessage &msg) {
 	return false;
 }
 
-bool GrandTour::msgGame(const GameMessage &msg) {
+bool GrandTourOptions::msgGame(const GameMessage &msg) {
 	if (msg._name == "BUTTON") {
 		if (msg._stringValue == "PLAY") {
 			m_pgtGTStruct->bMidGrandTour = true;
@@ -257,7 +257,7 @@ bool GrandTour::msgGame(const GameMessage &msg) {
 	return false;
 }
 
-void GrandTour::draw() {
+void GrandTourOptions::draw() {
 	Dialog::draw();
 	Common::String cNextGame;
 	Common::String cLastGame;
@@ -348,7 +348,7 @@ void GrandTour::draw() {
 		PURPLE, Graphics::kTextAlignRight);
 }
 
-void GrandTour::adjustScore() {
+void GrandTourOptions::adjustScore() {
 	int nGameScore = 0;
 	int32 lTemp = 0l;
 
@@ -439,7 +439,7 @@ void GrandTour::adjustScore() {
 	}
 }
 
-void GrandTour::updateRadioButtons() {
+void GrandTourOptions::updateRadioButtons() {
 	pHSHButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_HIGH);
 	pHSMButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_MEDIUM);
 	pHSLButton.setCheck(m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_LOW);
@@ -466,7 +466,7 @@ void GrandTour::updateRadioButtons() {
 	redraw();
 }
 
-int GrandTour::getNextGameCode(bool bExecute) {
+int GrandTourOptions::getNextGameCode(bool bExecute) {
 	int	i;
 	int	nReturnValue = -1;
 	bool bThereAreGamesToBePlayed = false;
@@ -571,7 +571,7 @@ int GrandTour::getNextGameCode(bool bExecute) {
 	return nReturnValue;
 }
 
-void GrandTour::syncGame(bool isSaving) {
+void GrandTourOptions::syncGame(bool isSaving) {
 	Settings::Serializer s(_settings, isSaving);
 
 	s.sync("playingHodj", m_pgtGTStruct->bPlayingHodj);
@@ -597,11 +597,11 @@ void GrandTour::syncGame(bool isSaving) {
 	}
 }
 
-void GrandTour::saveGame() {
+void GrandTourOptions::saveGame() {
 	syncGame(true);
 }
 
-void GrandTour::restoreGame() {
+void GrandTourOptions::restoreGame() {
 	syncGame(false);
 
 	updateRadioButtons();

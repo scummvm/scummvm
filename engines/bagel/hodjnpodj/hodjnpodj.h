@@ -37,7 +37,7 @@
 #include "bagel/hodjnpodj/events.h"
 #include "bagel/hodjnpodj/libs/settings.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
-#include "bagel/hodjnpodj/metagame/views/grand_tour.h"
+#include "bagel/hodjnpodj/metagame/views/grand_tour_options.h"
 
 #include "bagel/bagel.h"
 
