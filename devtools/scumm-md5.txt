@@ -161,6 +161,7 @@ indy3	Indiana Jones and the Last Crusade
 
 	f3c4ed6101b4c26c762b2dfb16b1481d	6295	fr	DOS	VGA	VGA	Fan translation	atp-fr.com, v0.9a
 	cb8feea195746e042368e2b738766d8b	-1	ko	DOS	VGA	VGA	Fan translation	ScummVM-Kor
+	e893df6788fc63fef936dd531f9712ec	6295	it	DOS	VGA	VGA	Fan translation	OldGamesItalia (2007)
 	275786f0f6894d1fe1ab5f1d103bb814	6295	ru	DOS	VGA	VGA	Fan translation
 
 loom	Loom
