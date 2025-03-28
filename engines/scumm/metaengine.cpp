@@ -365,6 +365,38 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine,
 		debug(1, "Using MD5 '%s'", res.md5.c_str());
 	}
 
+	bool foundCorruptedFanTranslation = false;
+
+	// Some fan-made translations used bad tools or techniques which deeply
+	// corrupted the resources of the game, making them buggy or even crash.
+	//
+	// One such example is a French translation of Indy3 VGA (ca. 2001-2002),
+	// known as "ryf's Indy3act", which contains corrupted opcodes in at least
+	// 07.LFL, 34.LFL and 72.LFL.
+	if (res.md5 == "1875b90fade138c9253a8e967007031a" && !strcmp(res.game.gameid, "indy3") && res.game.platform == Common::kPlatformDOS && (res.game.features & GF_OLD256)) {
+		Common::String md5OtherRes;
+		Common::FSNode resFile;
+		Common::File f;
+
+		// Look for 07.LFL, since this translation shares the English 00.LFL file
+		if (searchFSNode(fslist, "07.LFL", resFile))
+			f.open(resFile);
+		if (f.isOpen()) {
+			md5OtherRes = Common::computeStreamMD5AsString(f, kMD5FileSizeLimit);
+			f.close();
+		}
+
+		if (!md5OtherRes.empty() && md5OtherRes == "0f08943f6cda84ae4fb9b1b1af4f3c58")
+			foundCorruptedFanTranslation = true;
+	}
+
+	if (foundCorruptedFanTranslation) {
+		// Like ADGF_UNSUPPORTED, but cheap
+		GUIErrorMessage(_("This fan-made translation is not supported, because it is known to contain\n"
+		                  "corrupted resources that might make it crash or seriously misbehave."));
+		return Common::kUnsupportedGameidError;
+	}
+
 	// We don't support the "Lite" version off puttzoo iOS because it contains
 	// the full game.
 	if (!strcmp(res.game.gameid, "puttzoo") && !strcmp(res.extra, "Lite")) {
