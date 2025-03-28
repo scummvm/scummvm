@@ -129,7 +129,7 @@ Operand CodeChunk::executeNextStatement() {
 			debugCN(5, kDebugScript, "    rhs: ");
 			Operand value2 = executeNextStatement();
 
-			Operand returnValue(kOperandTypeLiteral1);
+			Operand returnValue(kOperandTypeBool);
 			bool logicalOr = (value1 || value2);
 			returnValue.putInteger(static_cast<uint>(logicalOr));
 			return returnValue;
@@ -139,7 +139,7 @@ Operand CodeChunk::executeNextStatement() {
 			debugCN(5, kDebugScript, "\n    value: ");
 			Operand value = executeNextStatement();
 
-			Operand returnValue(kOperandTypeLiteral1);
+			Operand returnValue(kOperandTypeBool);
 			bool logicalNot = !(static_cast<bool>(value.getInteger()));
 			returnValue.putInteger(static_cast<uint>(logicalNot));
 			return returnValue;
@@ -151,7 +151,7 @@ Operand CodeChunk::executeNextStatement() {
 			debugCN(5, kDebugScript, "    rhs: ");
 			Operand value2 = executeNextStatement();
 
-			Operand returnValue(kOperandTypeLiteral1);
+			Operand returnValue(kOperandTypeBool);
 			bool logicalAnd = (value1 && value2);
 			returnValue.putInteger(static_cast<uint>(logicalAnd));
 			return returnValue;
@@ -181,8 +181,7 @@ Operand CodeChunk::executeNextStatement() {
 			debugCN(5, kDebugScript, "    rhs: ");
 			Operand value2 = executeNextStatement();
 
-			// TODO: Confirm this is the correct value type?
-			Operand returnValue(kOperandTypeLiteral1);
+			Operand returnValue(kOperandTypeBool);
 			bool equal = (value1 == value2);
 			returnValue.putInteger(static_cast<uint>(equal));
 			return returnValue;
@@ -194,8 +193,7 @@ Operand CodeChunk::executeNextStatement() {
 			debugCN(5, kDebugScript, "    rhs: ");
 			Operand value2 = executeNextStatement();
 
-			// TODO: Confirm this is the correct value type?
-			Operand returnValue(kOperandTypeLiteral1);
+			Operand returnValue(kOperandTypeBool);
 			bool notEqual = !(value1 == value2);
 			returnValue.putInteger(static_cast<uint>(notEqual));
 			return returnValue;
@@ -207,8 +205,7 @@ Operand CodeChunk::executeNextStatement() {
 			debugCN(5, kDebugScript, "    rhs: ");
 			Operand value2 = executeNextStatement();
 
-			// TODO: Confirm this is the correct value type?
-			Operand returnValue(kOperandTypeLiteral1);
+			Operand returnValue(kOperandTypeBool);
 			bool lessThan = (value1 < value2);
 			returnValue.putInteger(static_cast<uint>(lessThan));
 			return returnValue;
@@ -220,8 +217,7 @@ Operand CodeChunk::executeNextStatement() {
 			debugCN(5, kDebugScript, "    rhs: ");
 			Operand value2 = executeNextStatement();
 
-			// TODO: Confirm this is the correct value type?
-			Operand returnValue(kOperandTypeLiteral1);
+			Operand returnValue(kOperandTypeBool);
 			bool greaterThan = (value1 > value2);
 			returnValue.putInteger(static_cast<uint>(greaterThan));
 			return returnValue;
@@ -233,8 +229,7 @@ Operand CodeChunk::executeNextStatement() {
 			debugCN(5, kDebugScript, "    rhs: ");
 			Operand value2 = executeNextStatement();
 
-			// TODO: Confirm this is the correct value type?
-			Operand returnValue(kOperandTypeLiteral1);
+			Operand returnValue(kOperandTypeBool);
 			bool lessThanOrEqualTo = (value1 < value2) || (value1 == value2);
 			returnValue.putInteger(static_cast<uint>(lessThanOrEqualTo));
 			return returnValue;
@@ -246,8 +241,7 @@ Operand CodeChunk::executeNextStatement() {
 			debugCN(5, kDebugScript, "    rhs: ");
 			Operand value2 = executeNextStatement();
 
-			// TODO: Confirm this is the correct value type?
-			Operand returnValue(kOperandTypeLiteral1);
+			Operand returnValue(kOperandTypeBool);
 			bool greaterThanOrEqualTo = (value1 > value2) || (value1 == value2);
 			returnValue.putInteger(static_cast<uint>(greaterThanOrEqualTo));
 			return returnValue;
@@ -344,8 +338,8 @@ Operand CodeChunk::executeNextStatement() {
 			return operand;
 		}
 
-		case kOperandTypeLiteral1:
-		case kOperandTypeLiteral2:
+		case kOperandTypeBool:
+		case kOperandTypeInt:
 		case kOperandTypeDollarSignVariable: {
 			int literal = Datum(*_bytecode).u.i;
 			debugC(5, kDebugScript, "%d ", literal);
@@ -353,22 +347,22 @@ Operand CodeChunk::executeNextStatement() {
 			return operand;
 		}
 
-		case kOperandTypeFloat1:
-		case kOperandTypeFloat2: {
+		case kOperandTypeFloat:
+		case kOperandTypeTime: {
 			double d = Datum(*_bytecode).u.f;
 			debugC(5, kDebugScript, "%f ", d);
 			operand.putDouble(d);
 			return operand;
 		}
 
-		case kOperandTypeMethod: {
+		case kOperandTypeMethodId: {
 			BuiltInMethod methodId = static_cast<BuiltInMethod>(Datum(*_bytecode).u.i);
 			debugC(5, kDebugScript, "%s ", builtInMethodToStr(methodId));
 			operand.putMethodId(methodId);
 			return operand;
 		}
 
-		case kOperandTypeFunction: {
+		case kOperandTypeFunctionId: {
 			uint functionId = Datum(*_bytecode).u.i;
 			debugC(5, kDebugScript, "%d ", functionId);
 			operand.putFunctionId(functionId);
@@ -434,7 +428,7 @@ Operand CodeChunk::callFunction(uint functionId, uint parameterCount) {
 Operand CodeChunk::getVariable(uint32 id, VariableScope scope) {
 	switch (scope) {
 	case kVariableScopeGlobal: {
-		Operand returnValue(kOperandTypeVariableDeclaration);
+		Operand returnValue(kOperandTypeVariable);
 		Variable *variable = g_engine->_variables.getVal(id);
 		returnValue.putVariable(variable);
 		return returnValue;

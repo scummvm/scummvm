@@ -31,7 +31,7 @@ namespace MediaStation {
 Operand Collection::callMethod(BuiltInMethod method, Common::Array<Operand> &args) {
 	switch (method) {
 	case kIsEmptyMethod: {
-		Operand returnValue(kOperandTypeLiteral1);
+		Operand returnValue(kOperandTypeBool);
 		returnValue.putInteger(static_cast<uint>(empty()));
 		return returnValue;
 	}
@@ -63,7 +63,7 @@ Operand Collection::callMethod(BuiltInMethod method, Common::Array<Operand> &arg
 	}
 
 	case kCountMethod: {
-		Operand returnValue = Operand(kOperandTypeLiteral1);
+		Operand returnValue = Operand(kOperandTypeBool);
 		returnValue.putInteger(size());
 		return returnValue;
 	}
@@ -95,7 +95,7 @@ Operand Collection::callMethod(BuiltInMethod method, Common::Array<Operand> &arg
 		}
 
 		// The item wasn't found.
-		Operand returnValue(kOperandTypeLiteral1);
+		Operand returnValue(kOperandTypeBool);
 		returnValue.putInteger(-1);
 		return returnValue;
 	}
@@ -222,7 +222,7 @@ Operand Variable::getValue() {
 	case kVariableTypeBoolean: {
 		// TODO: Is this value type correct?
 		// Shouldn't matter too much, though, since it's still an integer type.
-		Operand returnValue(kOperandTypeLiteral1);
+		Operand returnValue(kOperandTypeBool);
 		returnValue.putInteger(_value.i);
 		return returnValue;
 	}
@@ -230,7 +230,7 @@ Operand Variable::getValue() {
 	case kVariableTypeInt: {
 		// TODO: Is this value type correct?
 		// Shouldn't matter too much, though, since it's still an integer type.
-		Operand returnValue(kOperandTypeLiteral1);
+		Operand returnValue(kOperandTypeBool);
 		returnValue.putInteger(_value.i);
 		return returnValue;
 	}
@@ -238,7 +238,7 @@ Operand Variable::getValue() {
 	case kVariableTypeFloat: {
 		// TODO: Is this value type correct?
 		// Shouldn't matter too much, though, since it's still a floating-point type.
-		Operand returnValue(kOperandTypeFloat1);
+		Operand returnValue(kOperandTypeTime);
 		returnValue.putDouble(_value.d);
 		return returnValue;
 	}
@@ -256,16 +256,16 @@ void Variable::putValue(Operand value) {
 		error("Variable::putValue(): Assigning an empty operand to a variable not supported");
 	}
 
-	case kOperandTypeLiteral1:
-	case kOperandTypeLiteral2:
+	case kOperandTypeBool:
+	case kOperandTypeInt:
 	case kOperandTypeDollarSignVariable: {
 		_type = kVariableTypeInt;
 		_value.i = value.getInteger();
 		break;
 	}
 
-	case kOperandTypeFloat1:
-	case kOperandTypeFloat2: {
+	case kOperandTypeTime:
+	case kOperandTypeFloat: {
 		_type = kVariableTypeFloat;
 		_value.d = value.getDouble();
 		break;
@@ -283,12 +283,12 @@ void Variable::putValue(Operand value) {
 		break;
 	}
 
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		putValue(value.getLiteralValue());
 		break;
 	}
 
-	case kOperandTypeFunction: {
+	case kOperandTypeFunctionId: {
 		_type = kVariableTypeFunction;
 		_value.functionId = value.getFunctionId();
 		break;

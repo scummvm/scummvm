@@ -87,19 +87,19 @@ Operand Hotspot::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args
 
 	case kIsActiveMethod: {
 		assert(args.empty());
-		Operand returnValue(kOperandTypeLiteral1);
+		Operand returnValue(kOperandTypeBool);
 		returnValue.putInteger(static_cast<int>(_isActive));
 		return returnValue;
 	}
 
 	case kTriggerAbsXPositionMethod: {
-		Operand returnValue(kOperandTypeLiteral1);
+		Operand returnValue(kOperandTypeBool);
 		returnValue.putInteger(g_engine->_mousePos.x);
 		return returnValue;
 	}
 
 	case kTriggerAbsYPositionMethod: {
-		Operand returnValue(kOperandTypeLiteral1);
+		Operand returnValue(kOperandTypeBool);
 		returnValue.putInteger(g_engine->_mousePos.y);
 		return returnValue;
 	}

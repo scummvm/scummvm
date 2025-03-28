@@ -135,7 +135,7 @@ Operand Sprite::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args)
 	}
 
 	case kIsPlayingMethod: {
-		Operand returnValue(kOperandTypeLiteral1);
+		Operand returnValue(kOperandTypeBool);
 		returnValue.putInteger(static_cast<int>(_isPlaying));
 		return returnValue;
 	}

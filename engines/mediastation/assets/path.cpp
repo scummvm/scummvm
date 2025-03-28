@@ -45,7 +45,7 @@ Operand Path::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 
 	case kPercentCompleteMethod: {
 		assert(args.size() == 0);
-		Operand returnValue(kOperandTypeFloat1);
+		Operand returnValue(kOperandTypeTime);
 		returnValue.putDouble(percentComplete());
 		return returnValue;
 	}
@@ -58,7 +58,7 @@ Operand Path::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 
 	case kIsPlayingMethod: {
 		assert(args.empty());
-		Operand returnValue(kOperandTypeLiteral1);
+		Operand returnValue(kOperandTypeBool);
 		returnValue.putInteger(_isActive);
 		return returnValue;
 	}

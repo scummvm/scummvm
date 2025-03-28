@@ -236,23 +236,17 @@ enum EventHandlerArgumentType {
 const char *eventHandlerArgumentTypeToStr(EventHandlerArgumentType type);
 
 enum OperandType {
-	// This is an invalid type used for initialization only.
 	kOperandTypeEmpty = 0,
-
-	// TODO: Figure out the difference between these two.
-	kOperandTypeLiteral1 = 151,
-	kOperandTypeLiteral2 = 153,
-	// TODO: Figure out the difference between these two.
-	kOperandTypeFloat1 = 152,
-	kOperandTypeFloat2 = 157,
+	kOperandTypeBool = 151,
+	kOperandTypeFloat = 152,
+	kOperandTypeInt = 153,
 	kOperandTypeString = 154,
-	// TODO: This only seems to be used in effectTransition,
-	// as in effectTransition ( $FadeToPalette )
 	kOperandTypeDollarSignVariable = 155,
 	kOperandTypeAssetId = 156,
-	kOperandTypeVariableDeclaration = 158,
-	kOperandTypeFunction = 159,
-	kOperandTypeMethod = 160,
+	kOperandTypeTime = 157,
+	kOperandTypeVariable = 158,
+	kOperandTypeFunctionId = 159,
+	kOperandTypeMethodId = 160,
 	kOperandTypeCollection = 161
 };
 const char *operandTypeToStr(OperandType type);

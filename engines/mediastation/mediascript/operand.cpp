@@ -27,14 +27,14 @@ namespace MediaStation {
 
 void Operand::putInteger(int i) {
 	switch (_type) {
-	case kOperandTypeLiteral1:
-	case kOperandTypeLiteral2:
+	case kOperandTypeBool:
+	case kOperandTypeInt:
 	case kOperandTypeDollarSignVariable: {
 		_u.i = i;
 		break;
 	}
 
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		_u.variable->_value.i = i;
 		break;
 	}
@@ -47,17 +47,17 @@ void Operand::putInteger(int i) {
 
 int Operand::getInteger() {
 	switch (_type) {
-	case kOperandTypeLiteral1:
-	case kOperandTypeLiteral2:
+	case kOperandTypeBool:
+	case kOperandTypeInt:
 	case kOperandTypeDollarSignVariable: {
 		return _u.i;
 	}
 
-	case kOperandTypeFloat1: {
+	case kOperandTypeTime: {
 		return static_cast<int>(_u.d);
 	}
 
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		return _u.variable->_value.i;
 	}
 
@@ -69,13 +69,13 @@ int Operand::getInteger() {
 
 void Operand::putDouble(double d) {
 	switch (_type) {
-	case kOperandTypeFloat1:
-	case kOperandTypeFloat2: {
+	case kOperandTypeTime:
+	case kOperandTypeFloat: {
 		_u.d = d;
 		break;
 	}
 
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		// TODO: Add assertion.
 		_u.variable->_value.d = d;
 		break;
@@ -89,17 +89,17 @@ void Operand::putDouble(double d) {
 
 double Operand::getDouble() {
 	switch (_type) {
-	case kOperandTypeFloat1:
-	case kOperandTypeFloat2: {
+	case kOperandTypeTime:
+	case kOperandTypeFloat: {
 		return _u.d;
 	}
 
-	case kOperandTypeLiteral1:
-	case kOperandTypeLiteral2: {
+	case kOperandTypeBool:
+	case kOperandTypeInt: {
 		return static_cast<double>(_u.i);
 	}
 
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		// TODO: Add assertion that this is the proper type.
 		return _u.variable->_value.d;
 	}
@@ -117,7 +117,7 @@ void Operand::putString(Common::String *string) {
 		break;
 	}
 
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		assert(_u.variable->_type == kVariableTypeString);
 		_u.variable->_value.string = string;
 		break;
@@ -135,7 +135,7 @@ Common::String *Operand::getString() {
 		return _u.string;
 	}
 
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		assert(_u.variable->_type == kVariableTypeString);
 		return _u.variable->_value.string;
 	}
@@ -148,7 +148,7 @@ Common::String *Operand::getString() {
 
 void Operand::putVariable(Variable *variable) {
 	switch (_type) {
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		_u.variable = variable;
 		break;
 	}
@@ -161,7 +161,7 @@ void Operand::putVariable(Variable *variable) {
 
 Variable *Operand::getVariable() {
 	switch (_type) {
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		return _u.variable;
 	}
 
@@ -173,7 +173,7 @@ Variable *Operand::getVariable() {
 
 void Operand::putFunctionId(uint functionId) {
 	switch (_type) {
-	case kOperandTypeFunction: {
+	case kOperandTypeFunctionId: {
 		_u.functionId = functionId;
 		break;
 	}
@@ -186,11 +186,11 @@ void Operand::putFunctionId(uint functionId) {
 
 uint Operand::getFunctionId() {
 	switch (_type) {
-	case kOperandTypeFunction: {
+	case kOperandTypeFunctionId: {
 		return _u.functionId;
 	}
 
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		assert(_u.variable->_type == kVariableTypeFunction);
 		return _u.variable->_value.functionId;
 	}
@@ -203,7 +203,7 @@ uint Operand::getFunctionId() {
 
 void Operand::putMethodId(BuiltInMethod methodId) {
 	switch (_type) {
-	case kOperandTypeMethod: {
+	case kOperandTypeMethodId: {
 		_u.methodId = methodId;
 		break;
 	}
@@ -216,7 +216,7 @@ void Operand::putMethodId(BuiltInMethod methodId) {
 
 BuiltInMethod Operand::getMethodId() {
 	switch (_type) {
-	case kOperandTypeMethod: {
+	case kOperandTypeMethodId: {
 		return _u.methodId;
 	}
 
@@ -233,7 +233,7 @@ void Operand::putAsset(uint32 assetId) {
 		break;
 	}
 
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		assert(_u.variable->_type == kVariableTypeAssetId);
 		_u.variable->_value.assetId = assetId;
 		break;
@@ -255,7 +255,7 @@ Asset *Operand::getAsset() {
 		}
 	}
 
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		assert(_u.variable->_type == kVariableTypeAssetId);
 		return g_engine->getAssetById(_u.variable->_value.assetId);
 	}
@@ -272,7 +272,7 @@ uint32 Operand::getAssetId() {
 		return _u.assetId;
 	}
 
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		assert(_u.variable->_type == kVariableTypeAssetId);
 		return _u.variable->_value.assetId;
 	}
@@ -290,7 +290,7 @@ void Operand::putCollection(Common::SharedPtr<Collection> collection) {
 		break;
 	}
 
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		assert(_u.variable->_type == kVariableTypeCollection);
 		_u.variable->_c = collection;
 		break;
@@ -308,7 +308,7 @@ Common::SharedPtr<Collection> Operand::getCollection() {
 		return _collection;
 	}
 
-	case kOperandTypeVariableDeclaration: {
+	case kOperandTypeVariable: {
 		assert(_u.variable->_type == kVariableTypeCollection);
 		return _u.variable->_c;
 	}
@@ -322,7 +322,7 @@ Common::SharedPtr<Collection> Operand::getCollection() {
 Operand Operand::getLiteralValue() const {
 	// This function dereferences any variable to get the actual
 	// "direct" value (a literal asset ID or otherwise).
-	if (_type == kOperandTypeVariableDeclaration) {
+	if (_type == kOperandTypeVariable) {
 		return _u.variable->getValue();
 	} else {
 		return *this;
@@ -340,12 +340,12 @@ bool Operand::operator==(const Operand &other) const {
 		return lhsValue == rhsValue;
 	} else {
 		switch (lhs.getType()) {
-		case kOperandTypeLiteral1:
-		case kOperandTypeLiteral2:
+		case kOperandTypeBool:
+		case kOperandTypeInt:
 			return lhs.getInteger() == rhs.getInteger();
 
 		case kOperandTypeAssetId:
-			if (rhs.getType() == kOperandTypeLiteral2) {
+			if (rhs.getType() == kOperandTypeInt) {
 				// This might happen if, for example, a given asset wasn't found
 				// in a collection and the script sets the return value to -1.
 				return static_cast<int>(lhs.getAssetId()) == rhs.getInteger();
@@ -408,8 +408,8 @@ bool Operand::operator||(const Operand &other) const {
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (lhs.getType()) {
-	case kOperandTypeLiteral1:
-	case kOperandTypeLiteral2:
+	case kOperandTypeBool:
+	case kOperandTypeInt:
 		return lhs.getInteger() || rhs.getInteger();
 
 	default:
@@ -423,8 +423,8 @@ bool Operand::operator!() const {
 	// If the types being compared end up being incompatible, the respective get
 	// method will raise the error.
 	switch (literalValue.getType()) {
-	case kOperandTypeLiteral1:
-	case kOperandTypeLiteral2:
+	case kOperandTypeBool:
+	case kOperandTypeInt:
 		return !literalValue.getInteger();
 
 	default:
@@ -439,8 +439,8 @@ bool Operand::operator&&(const Operand &other) const {
 	// If the types being compared end up being incompatible, the respective get
 	// method will raise the error.
 	switch (lhs.getType()) {
-	case kOperandTypeLiteral1:
-	case kOperandTypeLiteral2:
+	case kOperandTypeBool:
+	case kOperandTypeInt:
 		return lhs.getInteger() && rhs.getInteger();
 
 	default:
@@ -545,8 +545,8 @@ Operand Operand::operator%(const Operand &other) const {
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (lhs.getType()) {
-	case kOperandTypeLiteral1:
-	case kOperandTypeLiteral2:
+	case kOperandTypeBool:
+	case kOperandTypeInt:
 		if (rhs.getInteger() == 0) {
 			error("Operand::operator%%(): Attempted mod by zero");
 		}
@@ -565,13 +565,13 @@ Operand Operand::operator-() const {
 	// If the types being compared end up being incompatible, the respective get
 	// method on the rhs will raise the error.
 	switch (literalValue.getType()) {
-	case kOperandTypeLiteral1:
-	case kOperandTypeLiteral2:
+	case kOperandTypeBool:
+	case kOperandTypeInt:
 		returnValue.putInteger(-literalValue.getInteger());
 		return returnValue;
 
-	case kOperandTypeFloat1:
-	case kOperandTypeFloat2:
+	case kOperandTypeTime:
+	case kOperandTypeFloat:
 		returnValue.putDouble(-literalValue.getDouble());
 		return returnValue;
 

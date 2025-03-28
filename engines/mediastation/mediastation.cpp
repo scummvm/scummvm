@@ -524,7 +524,7 @@ Operand MediaStationEngine::callBuiltInFunction(BuiltInFunction function, Common
 
 	case kUnk1Function: {
 		warning("MediaStationEngine::callBuiltInFunction(): Function 10 not implemented");
-		Operand returnValue = Operand(kOperandTypeLiteral1);
+		Operand returnValue = Operand(kOperandTypeBool);
 		returnValue.putInteger(1);
 		return returnValue;
 	}

@@ -214,7 +214,7 @@ Operand Movie::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 
 	case kIsVisibleMethod: {
 		assert(args.empty());
-		Operand returnValue(kOperandTypeLiteral1);
+		Operand returnValue(kOperandTypeBool);
 		returnValue.putInteger(_isShowing);
 		return returnValue;
 	}
@@ -233,14 +233,14 @@ Operand Movie::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 
 	case kIsPlayingMethod: {
 		assert(args.empty());
-		Operand returnValue(kOperandTypeLiteral1);
+		Operand returnValue(kOperandTypeBool);
 		returnValue.putInteger(static_cast<uint>(_isPlaying));
 		return returnValue;
 	}
 
 	case kXPositionMethod: {
 		assert(args.empty());
-		Operand returnValue(kOperandTypeLiteral1);
+		Operand returnValue(kOperandTypeBool);
 		returnValue.putInteger(_header->_boundingBox->left);
 		return returnValue;
 
@@ -248,7 +248,7 @@ Operand Movie::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 
 	case kYPositionMethod: {
 		assert(args.empty());
-		Operand returnValue(kOperandTypeLiteral1);
+		Operand returnValue(kOperandTypeBool);
 		returnValue.putInteger(_header->_boundingBox->top);
 		return returnValue;
 	}

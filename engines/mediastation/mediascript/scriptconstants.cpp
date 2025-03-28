@@ -318,28 +318,28 @@ const char *operandTypeToStr(OperandType type) {
 	switch (type) {
 	case kOperandTypeEmpty:
 		return "Empty";
-	case kOperandTypeLiteral1:
-		return "Literal1";
-	case kOperandTypeLiteral2:
-		return "Literal2";
-	case kOperandTypeFloat1:
-		return "Float1";
-	case kOperandTypeFloat2:
-		return "Float2";
+	case kOperandTypeBool:
+		return "Bool";
+	case kOperandTypeFloat:
+		return "Float";
+	case kOperandTypeInt:
+		return "Int";
 	case kOperandTypeString:
 		return "String";
 	case kOperandTypeDollarSignVariable:
 		return "DollarSignVariable";
 	case kOperandTypeAssetId:
 		return "AssetId";
-	case kOperandTypeVariableDeclaration:
-		return "VariableDeclaration";
+	case kOperandTypeTime:
+		return "Time";
+	case kOperandTypeVariable:
+		return "Variable";
+	case kOperandTypeFunctionId:
+		return "FunctionId";
+	case kOperandTypeMethodId:
+		return "MethodId";
 	case kOperandTypeCollection:
 		return "Collection";
-	case kOperandTypeFunction:
-		return "Function";
-	case kOperandTypeMethod:
-		return "Method";
 	default:
 		return "UNKNOWN";
 	}

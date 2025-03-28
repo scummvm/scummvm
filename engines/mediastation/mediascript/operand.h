@@ -84,8 +84,8 @@ public:
 	Operand operator-() const;
 
 private:
-	bool isInteger() { return getType() == kOperandTypeLiteral1 || getType() == kOperandTypeLiteral2; };
-	bool isDouble() { return getType() == kOperandTypeFloat1 || getType() == kOperandTypeFloat2; };
+	bool isInteger() { return getType() == kOperandTypeBool || getType() == kOperandTypeInt; };
+	bool isDouble() { return getType() == kOperandTypeFloat || getType() == kOperandTypeTime; };
 	bool isNumber() { return isInteger() || isDouble(); };
 
 	OperandType _type = kOperandTypeEmpty;

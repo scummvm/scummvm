@@ -42,7 +42,7 @@ Operand Timer::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 
 	case kIsPlayingMethod: {
 		assert(args.size() == 0);
-		Operand returnValue(kOperandTypeLiteral1);
+		Operand returnValue(kOperandTypeBool);
 		returnValue.putInteger(static_cast<int>(_isActive));
 		return returnValue;
 	}
