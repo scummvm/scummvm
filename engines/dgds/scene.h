@@ -371,7 +371,11 @@ private:
 	Common::Array<TalkData> _talkData;
 
 	// From here on is mutable stuff that might need saving
+
+	// Dialogs must be in List, not Array - they can be dynamically added
+	// from another dialog, so pointers need to stay valid while adding more.
 	Common::List<Dialog> _dialogs;
+
 	Common::Array<SceneTrigger> _triggers;
 	Conversation _conversation;
 
