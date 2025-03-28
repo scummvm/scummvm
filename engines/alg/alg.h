@@ -60,14 +60,6 @@ private:
 	bool _useSingleSpeedVideos = false;
 };
 
-class Console : public GUI::Debugger {
-public:
-	Console(AlgEngine *vm) {
-	}
-	virtual ~Console(void) {
-	}
-};
-
 } // End of namespace Alg
 
 #endif

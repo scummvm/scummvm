@@ -520,14 +520,13 @@ void GameBountyHunter::updateMouse() {
 		if (_playerGun[0] == 2 && _whichGun < 2) {
 			cursor = (*_shotgun)[_whichGun];
 		}
-		CursorMan.popAllCursors();
 		uint16 hotspotX = (cursor->w / 2) + 8;
 		uint16 hotspotY = (cursor->h / 2) + 8;
 		if (debugChannelSet(1, Alg::kAlgDebugGraphics)) {
 			cursor->drawLine(0, hotspotY, cursor->w, hotspotY, 1);
 			cursor->drawLine(hotspotX, 0, hotspotX, cursor->h, 1);
 		}
-		CursorMan.pushCursor(cursor->getPixels(), cursor->w, cursor->h, hotspotX, hotspotY, 0);
+		CursorMan.replaceCursor(cursor->getPixels(), cursor->w, cursor->h, hotspotX, hotspotY, 0);
 		CursorMan.showMouse(true);
 		_oldWhichGun = _whichGun;
 	}

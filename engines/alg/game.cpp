@@ -338,7 +338,7 @@ Audio::SeekableAudioStream *Game::loadSoundFile(const Common::Path &path) {
 		delete file;
 		return nullptr;
 	}
-	return Audio::makeRawStream(new Common::SeekableSubReadStream(file, 0, file->size(), DisposeAfterUse::NO), 8000, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
+	return Audio::makeRawStream(file, 8000, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 }
 
 void Game::playSound(Audio::SeekableAudioStream *stream) {
