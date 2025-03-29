@@ -27,11 +27,13 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#define TEXT_MORE_DX		120						// offset of "more" indicator from right margin
-#define TEXT_MORE_DY		5                       // offset of "more" indicator bottom of scroll
 #define MORE_TEXT_BLURB		"[ More ]"				// actual text to display for "more" indicator
-#define MORE_TEXT_LENGTH	8                       // # characters in "more" indicator string
-#define BUTTON_DY			15
+
+#define BACKPACK_TITLEZONE_DY	10
+
+#define BACKPACK_TEXTZONE_DX	75
+#define BACKPACK_TEXTZONE_DY	30
+#define BACKPACK_TEXTZONE_DDY	10
 
 Backpack::Backpack() : Dialog("Backpack"),
 		_okButton(Common::Rect(210, 355, 290, 380), this),
@@ -40,6 +42,22 @@ Backpack::Backpack() : Dialog("Backpack"),
 
 bool Backpack::msgOpen(const OpenMessage &msg) {
 	Dialog::msgOpen(msg);
+
+	_scrollTopRect = Common::Rect(0, 0, 501, 48);
+	_scrollBottomRect = Common::Rect(0, 0, 501, 47);
+
+	GfxSurface s = getSurface();
+	s.setFontSize(14);
+	_titleRect = RectWH(0,
+		DIALOG_TOP + BACKPACK_TITLEZONE_DY,
+		_bounds.width(), s.getStringHeight());
+
+	// Scroll rects will be compared against mouse pos,
+	// so we need to shift them to global screen co-ordinates
+	_scrollTopRect.moveTo(_bounds.left, _bounds.top);
+	_scrollBottomRect.moveTo(_bounds.left,
+		_bounds.bottom - _scrollBottomRect.height());
+
 	return true;
 }
 
@@ -120,7 +138,10 @@ bool Backpack::msgKeypress(const KeypressMessage &msg) {
 void Backpack::draw() {
 	Dialog::draw();
 
-//	GfxSurface s = getSurface();
+	GfxSurface s = getSurface();
+	s.setFontSize(14);
+	s.writeString(pInventory->GetTitle(), _titleRect,
+		PURPLE, Graphics::kTextAlignCenter);
 }
 
 } // namespace Metagame

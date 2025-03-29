@@ -29,6 +29,9 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
+constexpr int DIALOG_TOP = 48;
+constexpr int DIALOG_BOTTOM = 47;
+
 class Dialog : public View {
 private:
 	GfxSurface _background;

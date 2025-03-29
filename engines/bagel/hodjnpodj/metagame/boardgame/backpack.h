@@ -33,6 +33,8 @@ namespace Metagame {
 class Backpack : public Dialog {
 private:
 	OkButton _okButton;
+	Common::Rect _scrollTopRect, _scrollBottomRect;
+	Common::Rect _titleRect;
 	int nFirstSlot = 0;
 	int nItemsPerRow = 0;
 	int nItemsPerColumn = 0;

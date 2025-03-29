@@ -73,6 +73,7 @@ Common::Error HodjNPodjEngine::run() {
 	}
 
 	_settings.load();
+	_metaGame.initBFCInfo();
 
 	Settings::Domain &meta = _settings["Meta"];
 	_bAnimationsEnabled = meta.getBool("Animations", true);
