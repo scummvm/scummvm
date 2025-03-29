@@ -543,18 +543,34 @@ Print a character at current cursor pos, then advance
 void cga_PrintChar(byte c, byte *target) {
 	uint16 i;
 	byte *font = carpc_data + c * g_vm->_fontHeight;
-	uint16 ofs = cga_CalcXY_p(char_draw_coords_x++, char_draw_coords_y); // TODO: hga_calcxy_p doesn't work with this??
-	for (i = 0; i < g_vm->_fontHeight; i++) {
-		c = *font++;
-		c = char_xlat_table[c];
-		target[ofs] = c;
-		ofs ^= g_vm->_line_offset;
-		if ((ofs & g_vm->_line_offset) == 0)
-			ofs += g_vm->_screenBPL;
-	}
 
-	if (target == CGA_SCREENBUFFER)
-		cga_blitToScreen((char_draw_coords_x - 1) * g_vm->_fontWidth, char_draw_coords_y,  g_vm->_fontWidth, g_vm->_fontHeight);
+	if (g_vm->_videoMode == Common::RenderMode::kRenderCGA) {
+		uint16 ofs = cga_CalcXY_p(char_draw_coords_x++, char_draw_coords_y);
+		for (i = 0; i < g_vm->_fontHeight; i++) {
+			c = *font++;
+			c = char_xlat_table[c];
+			target[ofs] = c;
+			ofs ^= g_vm->_line_offset;
+			if ((ofs & g_vm->_line_offset) == 0)
+				ofs += g_vm->_screenBPL;
+		}
+
+		if (target == CGA_SCREENBUFFER)
+			cga_blitToScreen((char_draw_coords_x - 1) * g_vm->_fontWidth, char_draw_coords_y,  g_vm->_fontWidth, g_vm->_fontHeight);
+
+	} else if (g_vm->_videoMode == Common::RenderMode::kRenderHercG) {
+		const int16 START_X = char_draw_coords_x++ + (HGA_WIDTH / 8 - (2 * CGA_WIDTH) / 8) / 2; // x + 5
+		const int16 START_Y = char_draw_coords_y + (HGA_HEIGHT - CGA_HEIGHT) / 2;               // y + 74
+		for (i = 0; i < g_vm->_fontHeight; i++) {
+			uint16 ofs = HGA_CalcXY_p(START_X, START_Y + i);
+			c = *font++;
+			c = char_xlat_table[c];
+			target[ofs] = c;
+		}
+
+		if (target == CGA_SCREENBUFFER)
+			cga_blitToScreen(START_X, START_Y, g_vm->_fontWidth, g_vm->_fontHeight);
+	}
 }
 
 
