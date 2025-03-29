@@ -173,7 +173,7 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 		switch (_pressedButton) {
 		case 0 :
 			// Up
-			_currentSrc.translate(0, -pixelsToMove);
+			_currentSrc.translate(0, -static_cast<int>(pixelsToMove));
 			if (_currentSrc.top < _innerBounds.top) {
 				_currentSrc.translate(0, _innerBounds.top - _currentSrc.top);
 			}
@@ -187,7 +187,7 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 			break;
 		case 2 :
 			// Left
-			_currentSrc.translate(-pixelsToMove, 0);
+			_currentSrc.translate(-static_cast<int>(pixelsToMove), 0);
 			if (_currentSrc.left < _innerBounds.left) {
 				_currentSrc.translate(_innerBounds.left - _currentSrc.left, 0);
 			}
