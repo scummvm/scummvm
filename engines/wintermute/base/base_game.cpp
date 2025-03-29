@@ -2928,7 +2928,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 		case Common::RU_RUS:
 			_scValue->setString("russian");
 			break;
-		case Common::SE_SWE:
+		case Common::SV_SWE:
 			_scValue->setString("swedish");
 			break;
 		case Common::UA_UKR:
