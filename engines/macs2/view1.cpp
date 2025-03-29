@@ -832,6 +832,50 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 	}
 }
 
+void View1::drawInventory2(Graphics::ManagedSurface &s) {
+	// First, draw the whole background
+	// Happens around l0037_47A1:
+
+	uint16 maxWidthIcon;
+	uint16 maxHeightIcon;
+	for (uint16 index : g_engine->inventoryIconIndices) {
+		AnimFrame& currentFrame = g_engine->imageResources[index];
+		maxWidthIcon = MAX(maxWidthIcon, currentFrame.Width);
+		// TODO: Not sure if this one is needed
+		maxHeightIcon = MAX(maxHeightIcon, currentFrame.Height);
+	}
+	// TODO: Implement
+	/*
+	add	word ptr [0FE0h],6h
+	add	word ptr [0FE2h],6h ;; Maybe the maximal height of an item icon?
+	;; I think this is the maximal width of an icon at the bottom
+	mov	ax,[0FDCh]
+	add	ax,4h
+	shl	ax,1h
+	mov	si,ax
+	shl	ax,1h
+	add	ax,si
+	add	ax,4h
+	;; = (x + 4)*2 + (x + 4)*4  + 4
+	;; = (x+4)*6 + 4
+	;; So the icon size determines the inventory width
+	mov	[0FD8h],ax
+	mov	ax,[0FE0h]
+	add	ax,4h
+	mov	si,ax
+	shl	ax,1h
+	shl	ax,1h
+	add	ax,si
+	add	ax,0Ch
+	mov	[bp-2h],ax
+	mov	ax,[bp-2h]
+	cmp	ax,[0FD8h]
+	jle	47A1h
+
+
+	*/
+}
+
 GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
 	// TODO: Add proper grid, add y as well
 	Common::Rect inventoryRect(0x36, 0x2C, 0x10A, 0x82);

@@ -500,6 +500,10 @@ void Macs2Engine::readExecutable() {
 	}
 
 	_adlib->ReadDataFromExecutable(exeFileStream);
+
+	exeFileStream->seek(0x0001B610, SEEK_SET);
+	inventoryIconIndices.resize(6);
+	exeFileStream->read(inventoryIconIndices.data(), 12);
 }
 
 void Macs2Engine::ReadBackgroundAnimations(Common::MemoryReadStream *stream) {
