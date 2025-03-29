@@ -836,44 +836,31 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	// First, draw the whole background
 	// Happens around l0037_47A1:
 
-	uint16 maxWidthIcon;
-	uint16 maxHeightIcon;
+	uint16 maxWidthButtonIcon = 0;
+	uint16 maxHeightButtonIcon = 0;
 	for (uint16 index : g_engine->inventoryIconIndices) {
 		AnimFrame& currentFrame = g_engine->imageResources[index];
-		maxWidthIcon = MAX(maxWidthIcon, currentFrame.Width);
+		maxWidthButtonIcon = MAX(maxWidthButtonIcon, currentFrame.Width);
 		// TODO: Not sure if this one is needed
-		maxHeightIcon = MAX(maxHeightIcon, currentFrame.Height);
+		maxHeightButtonIcon = MAX(maxHeightButtonIcon, currentFrame.Height);
 	}
-	// TODO: Implement
-	/*
-	add	word ptr [0FE0h],6h
-	add	word ptr [0FE2h],6h ;; Maybe the maximal height of an item icon?
-	;; I think this is the maximal width of an icon at the bottom
-	mov	ax,[0FDCh]
-	add	ax,4h
-	shl	ax,1h
-	mov	si,ax
-	shl	ax,1h
-	add	ax,si
-	add	ax,4h
-	;; = (x + 4)*2 + (x + 4)*4  + 4
-	;; = (x+4)*6 + 4
-	;; So the icon size determines the inventory width
-	mov	[0FD8h],ax
-	mov	ax,[0FE0h]
-	add	ax,4h
-	mov	si,ax
-	shl	ax,1h
-	shl	ax,1h
-	add	ax,si
-	add	ax,0Ch
-	mov	[bp-2h],ax
-	mov	ax,[bp-2h]
-	cmp	ax,[0FD8h]
-	jle	47A1h
+
+	uint16 maxWidthInventoryIcon = 0;
+	uint16 maxHeightInventoryIcon = 0;
 
 
-	*/
+	for (GameObject* currentInventoryObject : inventoryItems) {
+		AnimFrame* icon = GetInventoryIcon(currentInventoryObject);
+		maxWidthInventoryIcon = MAX(maxWidthInventoryIcon, icon->Width);
+		// TODO: Not sure if this one is needed
+		maxHeightInventoryIcon = MAX(maxHeightInventoryIcon, icon->Height);
+	}
+
+	// TODO: Verify these in emulator
+	uint16 widthCandidate1 = (maxWidthButtonIcon + 4) * 6 + 4;
+	uint16 widthCandidate2 = (maxWidthInventoryIcon + 6 + 4) * 5 + 0xC;
+	uint16 width = MAX(widthCandidate1, widthCandidate2);
+	
 }
 
 GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
