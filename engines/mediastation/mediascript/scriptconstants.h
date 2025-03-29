@@ -24,13 +24,13 @@
 
 namespace MediaStation {
 
-enum InstructionType {
-	kInstructionTypeEmpty = 0x0000,
-	kInstructionTypeFunctionCall = 0x0067,
-	kInstructionTypeOperand = 0x0066,
-	kInstructionTypeVariableRef = 0x0065
+enum ExpressionType {
+	kExpressionTypeEmpty = 0x0000,
+	kExpressionTypeVariable = 0x0065,
+	kExpressionTypeValue = 0x0066,
+	kExpressionTypeOperation = 0x0067,
 };
-const char *instructionTypeToStr(InstructionType type);
+const char *expressionTypeToStr(ExpressionType type);
 
 enum Opcode {
 	kOpcodeIfElse = 202,
@@ -68,6 +68,7 @@ const char *opcodeToStr(Opcode opcode);
 enum VariableScope {
 	kVariableScopeLocal = 1,
 	kVariableScopeParameter = 2,
+	kVariableScopeIndirectParameter = 3,
 	kVariableScopeGlobal = 4
 };
 const char *variableScopeToStr(VariableScope scope);
@@ -252,9 +253,7 @@ enum OperandType {
 const char *operandTypeToStr(OperandType type);
 
 enum VariableType {
-	// This is an invalid type used for initialization only.
 	kVariableTypeEmpty = 0x0000,
-
 	kVariableTypeFunction = 0x0008,
 	kVariableTypeCollection = 0x0007,
 	kVariableTypeString = 0x0006,

@@ -23,16 +23,16 @@
 
 namespace MediaStation {
 
-const char *instructionTypeToStr(InstructionType type) {
+const char *expressionTypeToStr(ExpressionType type) {
 	switch (type) {
-	case kInstructionTypeEmpty:
+	case kExpressionTypeEmpty:
 		return "Empty";
-	case kInstructionTypeFunctionCall:
-		return "FunctionCall";
-	case kInstructionTypeOperand:
-		return "Operand";
-	case kInstructionTypeVariableRef:
-		return "VariableReference";
+	case kExpressionTypeVariable:
+		return "Variable";
+	case kExpressionTypeValue:
+		return "Value";
+	case kExpressionTypeOperation:
+		return "Operation";
 	default:
 		return "UNKNOWN";
 	}
