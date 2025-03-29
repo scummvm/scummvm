@@ -126,7 +126,7 @@ static AudioStream *openAudio(const String &fileName) {
 	delete file;
 
 	// Ignore the known, original wrong filenames given, report the rest
-	if (fileName == "CHAS")
+	if (fileName == "CHAS" || fileName == "517")
 		return nullptr;
 	error("Could not open audio file: %s", fileName.c_str());
 }

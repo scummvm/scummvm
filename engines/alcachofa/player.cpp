@@ -61,13 +61,13 @@ void Player::updateCursor() {
 	else {
 		auto type = _selectedObject->cursorType();
 		switch (type) {
-		case CursorType::Point: _cursorFrameI = 0; break;
 		case CursorType::LeaveUp: _cursorFrameI = 8; break;
 		case CursorType::LeaveRight: _cursorFrameI = 10; break;
 		case CursorType::LeaveDown: _cursorFrameI = 12; break;
 		case CursorType::LeaveLeft: _cursorFrameI = 14; break;
 		case CursorType::WalkTo: _cursorFrameI = 6; break;
-		default: error("Invalid cursor type %u", (uint)type); break;
+		case CursorType::Point:
+		default: _cursorFrameI = 0; break;
 		}
 
 		if (_cursorFrameI != 0) {
