@@ -874,6 +874,13 @@ uint16 SCR_D_DrawPortraitDotEffect(void) {
 	cur_image_end = width * height;
 	int16 count = 0;
 
+	if (g_vm->_videoMode == Common::RenderMode::kRenderHercG) {
+		const int START_X = (HGA_WIDTH / 8 - (2 * CGA_WIDTH) / 8) / 2;
+		const int START_Y = (HGA_HEIGHT - CGA_HEIGHT) / 2;
+		x += START_X;
+		y += START_Y;
+	}
+
 	for (offs = 0; offs != cur_image_end;) {
 		target[CalcXY_p(x + offs % cur_image_size_w, y + offs / cur_image_size_w)] = cur_image_pixels[offs]; // TODO check this
 
