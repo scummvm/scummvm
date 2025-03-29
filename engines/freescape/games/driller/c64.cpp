@@ -157,6 +157,8 @@ void DrillerEngine::loadAssetsC64FullGame() {
 		_title = loadAndConvertDoodleImage(&file, &colorFile1, &colorFile2, (byte *)&kDrillerC64Palette);*/
 	} else
 		error("Unknown C64 release");
+
+	_playerSid = new DrillerSIDPlayer(_mixer);
 }
 
 

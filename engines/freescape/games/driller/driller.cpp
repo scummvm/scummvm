@@ -113,6 +113,7 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 }
 
 DrillerEngine::~DrillerEngine() {
+	delete _playerSid;
 	delete _drillBase;
 
 	if (_borderExtra) {
@@ -253,7 +254,14 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gameStateVars[0x1f] = 0;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
-		playSound(_soundIndexStart, true);
+		if (isC64())
+			_playerSid->startMusic();
+		else {
+			playSound(_soundIndexStart, true);
+			// Start playing music, if any, in any supported format
+			playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme");
+		}
+
 	} else if (areaID == 127) {
 		assert(entranceID == 0);
 		_pitch = 335;
@@ -858,8 +866,6 @@ void DrillerEngine::initGameState() {
 	_demoIndex = 0;
 	_demoEvents.clear();
 
-	// Start playing music, if any, in any supported format
-	playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme");
 }
 
 bool DrillerEngine::checkIfGameEnded() {

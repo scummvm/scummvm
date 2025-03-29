@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	games/driller/amiga.o \
 	games/driller/atari.o \
 	games/driller/c64.o \
+	games/driller/c64.music.o \
 	games/driller/cpc.o \
 	games/driller/dos.o \
 	games/driller/driller.o \
