@@ -9972,7 +9972,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("barbswanlake", "Demo", "SwanLake.exe", "t:e658f3c6cbf08ee92cc37fcbf9b0dbcb", 2385166, 900),
 
 	WINGAME1_l("bidule2", "", "BiduloTresor.exe", "t:fafbbdc6df43f3f202c72cb9a2be71f9", 2186440, Common::FR_FRA, 900),
-	WINGAME1_l("bidule2", "", "Albert.exe", "t:fafbbdc6df43f3f202c72cb9a2be71f9", 2186440, Common::DE_DEU, 900),
+	WINGAME2_l("bidule2", "", "Albert.exe", "t:fafbbdc6df43f3f202c72cb9a2be71f9", 2186440,
+							  "bidulotresor.ico", "t:9eadaf2bb45331b971c17a64df02fc3f", 6254, Common::DE_DEU, 900),
 
 	WINGAME1_l("bidule3", "", "BAB3.exe", "t:b20e949f87452719e4b214f9e2fe3487", 2185800, Common::FR_FRA, 900),
 
