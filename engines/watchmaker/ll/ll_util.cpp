@@ -63,7 +63,7 @@ uint16 LinkObjToMesh(WGame &game, t3dMESH *m, uint8 op) {
 	for (c = ocCUOCO; c <= ocLASTCHAR; c++) {
 		for (b = 0; b < MAX_OBJ_MESHLINKS; b++)
 			if (Character[c] && Character[c]->Mesh)
-				if ((init.Obj[c].meshlink[b][0] != 0) && (m->name.equalsIgnoreCase((const char *) init.Obj[c].meshlink[b])))
+				if ((!init.Obj[c].meshLinkIsEmpty(b)) && (m->name.equalsIgnoreCase(init.Obj[c].getMeshLink(b))))
 					return (c);
 	}
 
@@ -74,7 +74,7 @@ uint16 LinkObjToMesh(WGame &game, t3dMESH *m, uint8 op) {
 		        (((bFirstPerson) && !(init.Obj[c].flags & HIDEIN1ST)) ||
 		         (!(bFirstPerson) && !(init.Obj[c].flags & HIDEIN3RD)))) {
 			for (b = 0; b < MAX_OBJ_MESHLINKS; b++)
-				if ((init.Obj[c].meshlink[b][0] != 0) && (m->name.equalsIgnoreCase((const char *)init.Obj[c].meshlink[b])))
+				if ((!init.Obj[c].meshLinkIsEmpty(b)) && (m->name.equalsIgnoreCase(init.Obj[c].getMeshLink(b))))
 					for (i = 0; i < t3dCurRoom->NumMeshes(); i++)
 						if ((m->name.equalsIgnoreCase(t3dCurRoom->MeshTable[i].name)))
 							return (c);
@@ -105,7 +105,7 @@ uint16 LinkObjToMesh(WGame &game, t3dMESH *m, uint8 op) {
 				        (((bFirstPerson) && !(init.Obj[c].flags & HIDEIN1ST)) ||
 				         (!(bFirstPerson) && !(init.Obj[c].flags & HIDEIN3RD)))) {
 					for (b = 0; b < MAX_OBJ_MESHLINKS; b++) {
-						if ((init.Obj[c].meshlink[b][0] != 0) && m->name.equalsIgnoreCase((const char *)init.Obj[c].meshlink[b])) {
+						if ((!init.Obj[c].meshLinkIsEmpty(b)) && m->name.equalsIgnoreCase(init.Obj[c].getMeshLink(b))) {
 							if ((op == ME_MRIGHT) || (op == ME_MLEFT))
 								NextPortalObj = c;
 							return (c);

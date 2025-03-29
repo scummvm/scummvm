@@ -119,7 +119,7 @@ void t3dLightRoom(Init &init, t3dBODY *b, t3dV3F *p, t3dF32 NearRange, t3dF32 Fa
 
 		sbl = (uint32 *)&SavedBodyLight[j][0];
 		for (k = 0; k < MAX_OBJ_MESHLINKS ; k++) {
-			if (((init.Obj[oNEXTPORTAL].meshlink[k][0] != '\0') && (m->name.equalsIgnoreCase((const char *)init.Obj[oNEXTPORTAL].meshlink[k]))) ||
+			if (((!init.Obj[oNEXTPORTAL].meshLinkIsEmpty(k)) && (m->name.equalsIgnoreCase(init.Obj[oNEXTPORTAL].getMeshLink(k)))) ||
 			        m->name.equalsIgnoreCase("p50-sentierini01") || m->name.equalsIgnoreCase("p50-sentierini02") || m->name.equalsIgnoreCase("p50-sentierini03") ||
 			        m->name.equalsIgnoreCase("p50-sentierini04") || m->name.equalsIgnoreCase("p50-sentierini05") || m->name.equalsIgnoreCase("p50-sentierini06")) {
 				tmp.x = m->Pos.x - p->x;
@@ -359,7 +359,7 @@ uint8 t3dClipToSurface(Init &init, t3dV3F *pt) {
 	t3dVectCopy(&end, pt);
 	end.y = -130000.0f;
 	for (i = 0; i < 6; i++) {
-		if ((m = LinkMeshToStr(init, (char *)init.Obj[oNEXTPORTAL].meshlink[i])) && (t3dVectMeshInters(m, start, end, &tmp))) {
+		if ((m = LinkMeshToStr(init, init.Obj[oNEXTPORTAL].getMeshLink(i))) && (t3dVectMeshInters(m, start, end, &tmp))) {
 			pt->y = tmp.y;
 			return true;
 		}
@@ -633,7 +633,6 @@ void MeshModifiers::applyAllMeshModifiers(WGame &game, t3dBODY *b) {
  * --------------------------------------------------*/
 void HideRoomMeshes(Init &init, t3dBODY *body) {
 	int32 cr, c, a, b, i, j, k, h, skip;
-	char *str;
 	t3dMESH *m;
 
 	if (!(cr = getRoomFromStr(init, body->name))) return;
@@ -643,9 +642,9 @@ void HideRoomMeshes(Init &init, t3dBODY *body) {
 		if (init.Obj[c].flags & NOUPDATE) continue;
 		if (!(init.Obj[c].flags & ON) || (init.Obj[c].flags & HIDE)) {
 			for (b = 0; b < MAX_OBJ_MESHLINKS; b++) {
-				if (init.Obj[c].meshlink[b][0] == '\0') continue;
+				if (init.Obj[c].meshLinkIsEmpty(b)) continue;
 				m = nullptr;
-				str = (char *)init.Obj[c].meshlink[b];
+				const Common::String &str = init.Obj[c].getMeshLink(b);
 				for (h = 0; h < (uint16)body->NumMeshes(); h++) {
 					if (body->MeshTable[h].name.equalsIgnoreCase(str)) {
 						m = &body->MeshTable[h];
@@ -661,8 +660,8 @@ void HideRoomMeshes(Init &init, t3dBODY *body) {
 					if (!(init.Obj[k].flags & ON) || (init.Obj[k].flags & HIDE)) continue;
 
 					for (j = 0; j < MAX_OBJ_MESHLINKS; j++) {
-						if (init.Obj[k].meshlink[j][0] == '\0') continue;
-						if (!Common::String((char *)init.Obj[c].meshlink[b]).equalsIgnoreCase((char *)init.Obj[k].meshlink[j])) continue;
+						if (init.Obj[k].meshLinkIsEmpty(j)) continue;
+						if (!init.Obj[c].getMeshLink(b).equalsIgnoreCase(init.Obj[k].getMeshLink(j))) continue;
 
 //						DebugFile("Skipped for %d,%d",k,j);
 						skip ++;
@@ -803,7 +802,7 @@ void UpdateObjMesh(Init &init, int32 in) {
 	if (init.Obj[in].flags & NOUPDATE) return;
 
 	for (a = 0; a < MAX_OBJ_MESHLINKS; a++) {
-		m = LinkMeshToStr(init, (char *)init.Obj[in].meshlink[a]);
+		m = LinkMeshToStr(init, init.Obj[in].getMeshLink(a));
 		if (m) {
 			if ((init.Obj[in].flags & ON) && !(init.Obj[in].flags & HIDE))
 //				m->Flags &= ~T3D_MESH_HIDDEN;
@@ -816,11 +815,11 @@ void UpdateObjMesh(Init &init, int32 in) {
 			uint32 newflags;
 
 			newflags = T3D_MESH_HIDDEN;
-			if (init.Obj[in].meshlink[a][0] != '\0') {
+			if (!init.Obj[in].meshLinkIsEmpty(a)) {
 				if ((init.Obj[in].flags & ON) && !(init.Obj[in].flags & HIDE))
-					_vm->addMeshModifier((char *)init.Obj[in].meshlink[a], MM_REMOVE_FLAGS, &newflags);
+					_vm->addMeshModifier(init.Obj[in].getMeshLink(a), MM_REMOVE_FLAGS, &newflags);
 				else
-					_vm->addMeshModifier((char *)init.Obj[in].meshlink[a], MM_ADD_FLAGS, &newflags);
+					_vm->addMeshModifier(init.Obj[in].getMeshLink(a), MM_ADD_FLAGS, &newflags);
 			}
 		}
 	}//for

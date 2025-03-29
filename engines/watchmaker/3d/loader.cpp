@@ -211,7 +211,7 @@ public:
 			return &init._globals._invVars.CameraDummy;
 		//	Cerca tra i personaggi
 		for (uint16 i = 0; i < T3D_MAX_CHARACTERS; i++)
-			if ((Character[i]) && (str.equalsIgnoreCase((char *)init.Obj[i].meshlink[0])))
+			if ((Character[i]) && (str.equalsIgnoreCase(init.Obj[i].getMeshLink(0))))
 				return Character[i]->Mesh;
 		//	Cerca nelle stanze caricate
 		for (uint16 i = 0; i < NumLoadedFiles; i++) {

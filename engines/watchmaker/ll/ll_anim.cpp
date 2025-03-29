@@ -1414,7 +1414,7 @@ void StartAnim(WGame &game, int32 an) {
 //	Se esiste gia' un'animazione sullo stesso oggetto base, la termina
 	for (b = 0; b < MAX_ACTIVE_ANIMS; b++)
 		if ((ActiveAnim[b].index) && (ActiveAnim[b].CurFrame >= 0) && !(ActiveAnim[b].flags & ANIM_PAUSED) &&
-		        (Common::String((const char *)init.Anim[ActiveAnim[b].index].meshlink[0].rawArray()).equalsIgnoreCase((const char *)init.Anim[an].meshlink[0].rawArray())))
+		        (init.Anim[ActiveAnim[b].index].getMeshLink(0).equalsIgnoreCase(init.Anim[an].getMeshLink(0))))
 			StopAnim(game, ActiveAnim[b].index);
 
 //	Se trova uno slot vuoto
@@ -1449,11 +1449,11 @@ void StartAnim(WGame &game, int32 an) {
 		h->sub[a].LastFrame = -3;
 
 		// se non c'e' un link skippa
-		if (init.Anim[an].meshlink[a][0] == 0) continue;
+		if (init.Anim[an].meshLinkIsEmpty(a)) continue;
 
-		h->sub[a].ptr = LinkMeshToStr(init, (char *)init.Anim[an].meshlink[a].rawArray());
+		h->sub[a].ptr = LinkMeshToStr(init, init.Anim[an].getMeshLink(a));
 		if (h->sub[a].ptr != nullptr) h->sub[a].ptr->CurFrame = -2;
-		else DebugLogFile("Mesh not Found: |%s|", (char *)init.Anim[an].meshlink[a].rawArray());
+		else DebugLogFile("Mesh not Found: |%s|", init.Anim[an].getMeshLink(a).c_str());
 
 		// se non deve caricare file skippa
 		if ((init.Anim[an].name[a][0] == '\0') || (h->sub[a].ptr == nullptr) /*|| (h->sub[a].ptr->Flags & T3D_MESH_HIDDEN) */)
@@ -1702,8 +1702,8 @@ void StopObjAnim(WGame &game, int32 obj) {
 //	Se esiste gia' un'animazione sullo stesso oggetto base, la termina
 	for (int32 b = 0; b < MAX_ACTIVE_ANIMS; b++)
 		if ((ActiveAnim[b].index) && (ActiveAnim[b].CurFrame >= 0)/* && !( ActiveAnim[b].flags & ANIM_PAUSED )*/ &&
-		        ((Common::String((const char *)init.Anim[ActiveAnim[b].index].meshlink[0].rawArray()).equalsIgnoreCase((const char *)init.Obj[obj].meshlink[0])) || (ActiveAnim[b].obj == obj) ||
-		         ((CurPlayer == obj - ocDARRELL) && (Common::String((const char *)init.Anim[ActiveAnim[b].index].meshlink[0].rawArray()).equalsIgnoreCase((const char *)init.Obj[ocCURPLAYER].meshlink[0]))
+		        ((init.Anim[ActiveAnim[b].index].getMeshLink(0).equalsIgnoreCase(init.Obj[obj].getMeshLink(0))) || (ActiveAnim[b].obj == obj) ||
+		         ((CurPlayer == obj - ocDARRELL) && (init.Anim[ActiveAnim[b].index].getMeshLink(0).equalsIgnoreCase(init.Obj[ocCURPLAYER].getMeshLink(0)))
 		          && (ActiveAnim[b].sub[0].ptr) && Player && Player->Mesh && (ActiveAnim[b].sub[0].ptr == Player->Mesh))))
 			StopAnim(game, ActiveAnim[b].index);
 }

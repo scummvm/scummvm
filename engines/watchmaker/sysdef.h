@@ -111,6 +111,7 @@ namespace Watchmaker {
 #define MAX_TEXT_LINES              10              // numero massimo di linee per la formattazione
 #define MAX_TEXT_CHARS              160             // numero massimo di caratteri per linea per la formattazione
 
+#define MAX_MESHLINK_SIZE T3D_NAMELEN
 
 // GESTIONE DELL'USA CON..
 #define USED                        0

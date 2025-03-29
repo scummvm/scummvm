@@ -142,11 +142,11 @@ void UpdateSpecial(WGame &game, int32 room) {
 		break;
 
 	case r31:
-		if ((m = LinkMeshToStr(init, (char *)init.Obj[o31LEVETTA1].meshlink[0]))) t3dSetSpecialAnimFrame(game, "r31-cles01.a3d", m, Comb31[0] + 1);
-		if ((m = LinkMeshToStr(init, (char *)init.Obj[o31LEVETTA2].meshlink[0]))) t3dSetSpecialAnimFrame(game,  "r31-cles02.a3d", m, Comb31[1] + 1);
-		if ((m = LinkMeshToStr(init, (char *)init.Obj[o31LEVETTA3].meshlink[0]))) t3dSetSpecialAnimFrame(game,  "r31-cles03.a3d", m, Comb31[2] + 1);
-		if ((m = LinkMeshToStr(init, (char *)init.Obj[o31LEVETTA4].meshlink[0])))  t3dSetSpecialAnimFrame(game,  "r31-cles04.a3d", m, Comb31[3] + 1);
-		if ((m = LinkMeshToStr(init, (char *)init.Obj[o31LEVETTA5].meshlink[0]))) t3dSetSpecialAnimFrame(game,  "r31-cles05.a3d", m, Comb31[4] + 1);
+		if ((m = LinkMeshToStr(init, init.Obj[o31LEVETTA1].getMeshLink(0)))) t3dSetSpecialAnimFrame(game, "r31-cles01.a3d", m, Comb31[0] + 1);
+		if ((m = LinkMeshToStr(init, init.Obj[o31LEVETTA2].getMeshLink(0)))) t3dSetSpecialAnimFrame(game,  "r31-cles02.a3d", m, Comb31[1] + 1);
+		if ((m = LinkMeshToStr(init, init.Obj[o31LEVETTA3].getMeshLink(0)))) t3dSetSpecialAnimFrame(game,  "r31-cles03.a3d", m, Comb31[2] + 1);
+		if ((m = LinkMeshToStr(init, init.Obj[o31LEVETTA4].getMeshLink(0))))  t3dSetSpecialAnimFrame(game,  "r31-cles04.a3d", m, Comb31[3] + 1);
+		if ((m = LinkMeshToStr(init, init.Obj[o31LEVETTA5].getMeshLink(0)))) t3dSetSpecialAnimFrame(game,  "r31-cles05.a3d", m, Comb31[4] + 1);
 		break;
 
 	case r38:

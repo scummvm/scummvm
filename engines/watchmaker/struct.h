@@ -143,6 +143,9 @@ struct SRoom : public SerializableAsset {
 };
 
 struct SObject : public SerializableAsset {
+private:
+	Common::String meshlink[MAX_OBJ_MESHLINKS]; // link -> oggetto mesh (nome mesh) -> da rimuovere
+public:
 	uint16 name;                            // frase nome
 	SerializableArray<uint16, MAX_PLAYERS> examine;            // frase esamina
 	SerializableArray<uint16, MAX_PLAYERS> action;             // frase azione
@@ -154,10 +157,14 @@ struct SObject : public SerializableAsset {
 	uint8  ninv;                            // ptr inventario
 	uint16 flags;                           // EXAMINE | EXAMINEACT | ROOM | PERSON | TAKE | USEWITH | EXTRA | EXTRA2 | DONE | ON | HIDE
 	uint8  pos;                             // 0 se no position
-	SerializableArray<SerializableArray<uint8, T3D_NAMELEN>, MAX_OBJ_MESHLINKS>  meshlink_int = {};// link -> oggetto mesh (nome mesh) -> da rimuovere
-	uint8 *meshlink[MAX_OBJ_MESHLINKS];
 
+	bool meshLinkIsEmpty(int index) { return meshlink[index].empty() || meshlink[index][0] == '\0'; }
+	const Common::String& getMeshLink(int index) { return meshlink[index]; };
+	void setMeshLink(int index, const char *value) {
+		meshlink[index] = value;
+	}
 	void loadFromStream(Common::SeekableReadStream &stream) override {
+		SerializableArray<SerializableArray<uint8, T3D_NAMELEN>, MAX_OBJ_MESHLINKS>  meshlink_int = {};
 		name = stream.readUint16LE();
 		examine.loadFromStream(stream);
 		action.loadFromStream(stream);
@@ -172,7 +179,7 @@ struct SObject : public SerializableAsset {
 		meshlink_int.loadFromStream(stream);
 		// HACK:
 		for (int i = 0; i < MAX_OBJ_MESHLINKS; i++) {
-			meshlink[i] = meshlink_int.rawArray()[i].rawArray();
+			meshlink[i] = (char*)meshlink_int.rawArray()[i].rawArray();
 		}
 	}
 };
@@ -216,7 +223,10 @@ struct SAtFrame : public SerializableAsset {
 };
 
 struct SAnim : public SerializableAsset {
-	SerializableArray<SerializableArray<uint8, T3D_NAMELEN>, MAX_SUBANIMS> meshlink; // link -> anim mesh    (nome mesh) -> da rimuovere
+private:
+
+	Common::String meshlink[MAX_SUBANIMS]; // link -> anim mesh    (nome mesh) -> da rimuovere
+public:
 	SerializableArray<SerializableArray<uint8, T3D_NAMELEN>, MAX_SUBANIMS> name; // nome animazione
 	SerializableArray<uint8, T3D_NAMELEN>  RoomName;           // nome stanza destinazione
 	SerializableArray<SAtFrame, MAX_ATFRAMES> atframe;  // atframe
@@ -226,8 +236,21 @@ struct SAnim : public SerializableAsset {
 	uint8  pos;                             // posizione
 	uint8  cam;                             // camera per l'azione
 
+	bool meshLinkIsEmpty(int index) { return meshlink[index].empty() || meshlink[index][0] == '\0'; }
+	const Common::String& getMeshLink(int index) { return meshlink[index]; }
+	void setMeshLink(int index, const char *value) {
+		meshlink[index] = value;
+	}
+	void setMeshLink(int index, const Common::String &value) {
+		meshlink[index] = value;
+	}
+
 	void loadFromStream(Common::SeekableReadStream &stream) override {
-		meshlink.loadFromStream(stream);
+		SerializableArray<SerializableArray<uint8, T3D_NAMELEN>, MAX_SUBANIMS> meshlink_raw;
+		meshlink_raw.loadFromStream(stream);
+		for (int i = 0; i < MAX_SUBANIMS; i++) {
+			meshlink[i] = (const char*)meshlink_raw.rawArray();
+		}
 		name.loadFromStream(stream);
 		RoomName.loadFromStream(stream);
 		atframe.loadFromStream(stream);

@@ -823,10 +823,10 @@ int StructureInitializer::ParseObject(char *s) {
 			obj->pos = _parser->ReadNumber();
 			break;
 		case 16:
-			for (a = 0; a < MAX_OBJ_MESHLINKS; a++) if (obj->meshlink[a][0] == 0) break;
+			for (a = 0; a < MAX_OBJ_MESHLINKS; a++) if (obj->meshLinkIsEmpty(a)) break;
 			if (a < MAX_OBJ_MESHLINKS)
-				if ((len = _parser->ReadArgument(str)) < 0 || len > sizeof(obj->meshlink[a]))return _parser->ParseError("Error reading meshlink %s in %s", str, s);
-				else strcpy((char*)obj->meshlink[a], str);
+				if ((len = _parser->ReadArgument(str)) < 0 || len > MAX_MESHLINK_SIZE)return _parser->ParseError("Error reading meshlink %s in %s", str, s);
+				else obj->setMeshLink(a, str);
 			else _parser->ParseError("Too many Meshlink in Obj %s %d max is %d", s, a, MAX_OBJ_MESHLINKS);
 			break;
 		case 17:
@@ -958,23 +958,23 @@ int StructureInitializer::ParseAnim(char *s) {
 			anim->flags = ReadFlags();
 			break;
 		case 2:
-			for (a = 0; a < MAX_SUBANIMS; a++) if (anim->meshlink[a][0] == 0) break;
+			for (a = 0; a < MAX_SUBANIMS; a++) if (anim->meshLinkIsEmpty(a)) break;
 			if ((a < MAX_SUBANIMS) && (--a >= 0))
 				if ((len = _parser->ReadArgument(str)) < 0 || len > sizeof(anim->name[a])) return _parser->ParseError("Error reading animname %s in %s", str, s);
 				else strcpy((char*)anim->name[a].rawArray(), str);
 			else return _parser->ParseError("Too many subanim in Anim %s sub %d max is %d", str, a, MAX_SUBANIMS);
 			break;
 		case 3:
-			for (a = 0; a < MAX_SUBANIMS; a++) if (anim->meshlink[a][0] == 0) break;
+			for (a = 0; a < MAX_SUBANIMS; a++) if (anim->meshLinkIsEmpty(a)) break;
 			if ((a < MAX_SUBANIMS) && (len = _parser->ReadArgument(str)))
-				strcpy((char *)anim->meshlink[a].rawArray(), (char *)_init.Obj[GetTokenValue(ObjToken, str)].meshlink[0]);
+				anim->setMeshLink(a, _init.Obj[GetTokenValue(ObjToken, str)].getMeshLink(0));
 			else return _parser->ParseError("Too many Objlinks in Anim %s sub %d max is %d", str, a, MAX_SUBANIMS);
 			break;
 		case 4:
-			for (a = 0; a < MAX_SUBANIMS; a++) if (anim->meshlink[a][0] == 0) break;
+			for (a = 0; a < MAX_SUBANIMS; a++) if (anim->meshLinkIsEmpty(a)) break;
 			if (a < MAX_SUBANIMS)
-				if ((len = _parser->ReadArgument(str)) < 0 || len > sizeof(anim->meshlink[a])) return _parser->ParseError("Error reading meshlink %s in %s", str, s);
-				else strcpy((char*)anim->meshlink[a].rawArray(), str);
+				if ((len = _parser->ReadArgument(str)) < 0 || len > MAX_MESHLINK_SIZE) return _parser->ParseError("Error reading meshlink %s in %s", str, s);
+				else anim->setMeshLink(a, str);
 			else return _parser->ParseError("Too many Meshlinks in Anim %s sub %d max is %d", str, a, MAX_SUBANIMS);
 			break;
 		case 5:

@@ -681,7 +681,7 @@ void doClock33(WGame &game, int32 obj, t3dV3F *mp) {
 	obj = (int32)bClock33 + o33LANCETTAHSX - 1;
 
 //	Trova il puntatore alla mesh
-	if (!(l = LinkMeshToStr(game.init, (char *)game.init.Obj[obj].meshlink[0]))) return;
+	if (!(l = LinkMeshToStr(game.init, game.init.Obj[obj].getMeshLink(0)))) return;
 //	Trova il punto centrale attorno a cui ruotare
 	pos.x = l->Pos.x;
 	pos.y = 350.0f;
