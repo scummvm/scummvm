@@ -43,6 +43,8 @@
 #include "gui/themebrowser.h"
 #include "gui/massadd.h"
 #include "gui/options.h"
+#include "gui/widgets/tab.h"
+#include "gui/launcher.h"
 
 #include "image/png.h"
 
@@ -67,6 +69,22 @@ void handleSimpleDialog(GUI::Dialog &dialog, const Common::String &filename,Grap
 	g_gui.redrawFull();
 	g_system->grabOverlay(surf);
 	saveGUISnapshot(surf, filename);
+	dialog.close();
+}
+
+void loopThroughTabs(GUI::Dialog &dialog, const Common::String &lang, Graphics::Surface surf, const Common::String name) {
+	dialog.open();
+	GUI::Widget *widget = nullptr;
+	widget = dialog.findWidget((uint32)kTabWidget);
+
+	if (widget) {
+		TabWidget *tabWidget = (TabWidget *)widget;
+		for (int tabNo = 0; tabNo < tabWidget->getTabCount(); tabNo++) {
+			Common::String suffix = Common::String::format("-%d-%dx%d-%s.png", tabNo + 1, g_system->getOverlayWidth(), g_system->getOverlayHeight(), lang.c_str());
+			tabWidget->setActiveTab(tabNo);
+			handleSimpleDialog(dialog, name + suffix, surf);
+		}
+	}
 	dialog.close();
 }
 
@@ -129,6 +147,11 @@ void dumpDialogs(const Common::String &message, const Common::String &lang) {
 	// MassAddDialog
 	GUI::MassAddDialog massAddDialog(Common::FSNode("."));
 	handleSimpleDialog(massAddDialog, "massAddDialog-" + suffix, surf);
+
+	// GlobalOptionsDialog
+	LauncherSimple launcherDialog("Launcher");
+	GUI::GlobalOptionsDialog globalOptionsDialog(&launcherDialog);
+	loopThroughTabs(globalOptionsDialog, lang, surf, "GlobalOptionDialog");
 
 	// LauncherDialog
 #if 0
