@@ -108,7 +108,7 @@ enum AssetHeaderSectionType {
 	// PATH FIELDS.
 	kAssetHeaderStartPoint = 0x060e,
 	kAssetHeaderEndPoint = 0x060f,
-	kAssetHeaderPathUnk1 = 0x0610,
+	kAssetHeaderPathTotalSteps = 0x0610,
 	kAssetHeaderStepRate = 0x0611,
 	kAssetHeaderDuration = 0x0612,
 
@@ -200,6 +200,7 @@ public:
 	Common::Point *_endPoint = nullptr;
 	uint32 _stepRate = 0;
 	uint32 _duration = 0;
+	uint _totalSteps = 0;
 
 	// EVENT HANDLER FIELDS.
 	Common::HashMap<uint, EventHandler *> _eventHandlers;

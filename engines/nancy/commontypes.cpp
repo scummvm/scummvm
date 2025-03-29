@@ -391,7 +391,7 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 			}
 
 			logoEndAfter = stream.readUint32LE();
-			if (minorVersion == 1) {
+			if (minorVersion >= 1) {
 				wonGameFlagID = stream.readUint16LE();
 			}
 

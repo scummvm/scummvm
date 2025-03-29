@@ -384,16 +384,15 @@ bool Console::Cmd_BT(int argc, const char **argv) {
 	debugPrintf("Current script: %d\nStack depth: %d\n", _vm->_game.curLogicNr, _vm->_game.execStack.size());
 
 	uint8 p[CMD_BSIZE] = { 0 };
-	Common::Array<ScriptPos>::iterator it;
 
-	for (it = _vm->_game.execStack.begin(); it != _vm->_game.execStack.end(); ++it) {
-		uint8 *code = _vm->_game.logics[it->script].data;
-		uint8 op = code[it->curIP];
+	for (auto &entry : _vm->_game.execStack) {
+		uint8 *code = _vm->_game.logics[entry.script].data;
+		uint8 op = code[entry.curIP];
 		int parameterSize = opCodes[op].parameterSize;
-		memmove(p, &code[it->curIP], parameterSize);
+		memmove(p, &code[entry.curIP], parameterSize);
 		memset(p + parameterSize, 0, CMD_BSIZE - parameterSize);
 
-		debugPrintf("%d(%d): %s(", it->script, it->curIP, opCodes[op].name);
+		debugPrintf("%d(%d): %s(", entry.script, entry.curIP, opCodes[op].name);
 
 		for (int i = 0; i < parameterSize; i++)
 			debugPrintf("%d, ", p[i]);

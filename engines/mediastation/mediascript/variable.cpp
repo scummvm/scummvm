@@ -19,20 +19,20 @@
  *
  */
 
+#include "mediastation/mediastation.h"
 #include "mediastation/mediascript/variable.h"
+#include "mediastation/mediascript/operand.h"
+#include "mediastation/mediascript/codechunk.h"
 #include "mediastation/datum.h"
 #include "mediastation/debugchannels.h"
-#include "mediastation/mediascript/operand.h"
 
 namespace MediaStation {
 
 Operand Collection::callMethod(BuiltInMethod method, Common::Array<Operand> &args) {
 	switch (method) {
 	case kIsEmptyMethod: {
-		// This is a built-in method that checks if a collection is empty.
-		// We can just check the size of the collection.
 		Operand returnValue(kOperandTypeLiteral1);
-		returnValue.putInteger(empty());
+		returnValue.putInteger(static_cast<uint>(empty()));
 		return returnValue;
 	}
 
@@ -48,6 +48,78 @@ Operand Collection::callMethod(BuiltInMethod method, Common::Array<Operand> &arg
 		return returnValue;
 	}
 
+	case kDeleteAtMethod: {
+		// Find the item in the collection, then remove and return it.
+		assert(args.size() == 1);
+		for (uint i = 0; i < size(); i++) {
+			if (args[0] == operator[](i)) {
+				Operand returnValue = remove_at(i);
+				return returnValue;
+			}
+		}
+
+		// The item wasn't found.
+		return Operand();
+	}
+
+	case kCountMethod: {
+		Operand returnValue = Operand(kOperandTypeLiteral1);
+		returnValue.putInteger(size());
+		return returnValue;
+	}
+
+	case kGetAtMethod: {
+		assert(args.size() == 1);
+		Operand returnValue = operator[](args[0].getInteger());
+		return returnValue;
+	}
+
+	case kSendMethod: {
+		// Call a method on each item in the collection.
+		BuiltInMethod methodToSend = static_cast<BuiltInMethod>(args[0].getMethodId());
+		Common::Array<Operand> sendArgs;
+		for (uint i = 0; i < size(); i++) {
+			Operand self = operator[](i);
+			CodeChunk::callBuiltInMethod(methodToSend, self, sendArgs);
+		}
+		return Operand();
+	}
+
+	case kSeekMethod: {
+		// Find the item in the collection if it exists.
+		assert(args.size() == 1);
+		for (uint i = 0; i < size(); i++) {
+			if (args[0] == operator[](i)) {
+				return operator[](i);
+			}
+		}
+
+		// The item wasn't found.
+		Operand returnValue(kOperandTypeLiteral1);
+		returnValue.putInteger(-1);
+		return returnValue;
+	}
+
+	case kJumbleMethod: {
+		// Scramble the items in the collection.
+		for (uint i = size() - 1; i > 0; --i) {
+			uint j = g_engine->_randomSource.getRandomNumber(size() - 1);
+			SWAP(operator[](i), operator[](j));
+		}
+		return Operand();
+	}
+
+	case kSortMethod: {
+		assert(args.empty());
+		Common::sort(begin(), end());
+		return Operand();
+	}
+
+	case kEmptyMethod: {
+		clear();
+		return Operand();
+	}
+
 	default:
 		error("Collection::callMethod(): Attempt to call unimplemented method %s (%d)", builtInMethodToStr(method), static_cast<uint>(method));
 	}
@@ -57,17 +129,18 @@ Variable::Variable(Chunk &chunk, bool readId) {
 	if (readId) {
 		_id = Datum(chunk).u.i;
 	}
+
 	_type = static_cast<VariableType>(Datum(chunk).u.i);
-	debugC(1, kDebugLoading, "Variable::Variable(): id = %d, type %s (%d) (@0x%llx)",
+	debugC(7, kDebugScript, "Variable::Variable(): id = %d, type %s (%d) (@0x%llx)",
 		_id, variableTypeToStr(_type), static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
-	switch ((VariableType)_type) {
+	switch (_type) {
 	case kVariableTypeCollection: {
 		uint totalItems = Datum(chunk).u.i;
-		_value.collection = new Collection;
+		_c = Common::SharedPtr<Collection>(new Collection);
 		for (uint i = 0; i < totalItems; i++) {
 			debugC(7, kDebugLoading, "Variable::Variable(): %s: Value %d of %d", variableTypeToStr(_type), i, totalItems);
 			Variable variable = Variable(chunk, readId = false);
-			_value.collection->push_back(variable.getValue());
+			_c->push_back(variable.getValue());
 		}
 		break;
 	}
@@ -119,21 +192,7 @@ Variable::Variable(Chunk &chunk, bool readId) {
 }
 
 Variable::~Variable() {
-	switch (_type) {
-	case kVariableTypeCollection: {
-		_value.collection->clear();
-		delete _value.collection;
-		break;
-	}
-
-	case kVariableTypeString: {
-		delete _value.string;
-		break;
-	}
-
-	default:
-		break;
-	}
+	clear();
 }
 
 Operand Variable::getValue() {
@@ -144,7 +203,7 @@ Operand Variable::getValue() {
 
 	case kVariableTypeCollection: {
 		Operand returnValue(kOperandTypeCollection);
-		returnValue.putCollection(_value.collection);
+		returnValue.putCollection(_c);
 		return returnValue;
 	}
 
@@ -190,6 +249,8 @@ Operand Variable::getValue() {
 }
 
 void Variable::putValue(Operand value) {
+	clear();
+
 	switch (value.getType()) {
 	case kOperandTypeEmpty: {
 		error("Variable::putValue(): Assigning an empty operand to a variable not supported");
@@ -233,10 +294,36 @@ void Variable::putValue(Operand value) {
 		break;
 	}
 
+	case kOperandTypeCollection: {
+		_type = kVariableTypeCollection;
+		_c = value.getCollection();
+		break;
+	}
+
 	default:
 		error("Variable::putValue(): Assigning an unknown operand type %s (%d) to a variable not supported",
 			operandTypeToStr(value.getType()), static_cast<uint>(value.getType()));
 	}
+}
+
+void Variable::clear() {
+	switch (_type) {
+	case kVariableTypeCollection: {
+		_c.reset();
+		break;
+	}
+
+	case kVariableTypeString: {
+		delete _value.string;
+		_value.string = nullptr;
+		break;
+	}
+
+	default:
+		break;
+	}
+
+	_type = kVariableTypeEmpty;
 }
 
 } // End of namespace MediaStation

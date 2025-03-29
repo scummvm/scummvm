@@ -51,9 +51,9 @@ ConnectionManager::~ConnectionManager() {
 
 	//terminate all added requests which haven't been processed yet
 	_addedRequestsMutex.lock();
-	for (Common::Array<RequestWithCallback>::iterator i = _addedRequests.begin(); i != _addedRequests.end(); ++i) {
-		Request *request = i->request;
-		RequestCallback callback = i->onDeleteCallback;
+	for (auto &curRequest : _addedRequests) {
+		Request *request = curRequest.request;
+		RequestCallback callback = curRequest.onDeleteCallback;
 		if (request)
 			request->finish();
 		delete request;
@@ -67,9 +67,9 @@ ConnectionManager::~ConnectionManager() {
 
 	//terminate all requests
 	_handleMutex.lock();
-	for (Common::Array<RequestWithCallback>::iterator i = _requests.begin(); i != _requests.end(); ++i) {
-		Request *request = i->request;
-		RequestCallback callback = i->onDeleteCallback;
+	for (auto &curRequest : _requests) {
+		Request *request = curRequest.request;
+		RequestCallback callback = curRequest.onDeleteCallback;
 		if (request)
 			request->finish();
 		delete request;
@@ -194,8 +194,8 @@ void ConnectionManager::handle() {
 void ConnectionManager::interateRequests() {
 	//add new requests
 	_addedRequestsMutex.lock();
-	for (Common::Array<RequestWithCallback>::iterator i = _addedRequests.begin(); i != _addedRequests.end(); ++i) {
-		_requests.push_back(*i);
+	for (auto &addedRequest : _addedRequests) {
+		_requests.push_back(addedRequest);
 	}
 	_addedRequests.clear();
 	_addedRequestsMutex.unlock();

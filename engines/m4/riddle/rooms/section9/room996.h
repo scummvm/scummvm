@@ -31,7 +31,7 @@ namespace Rooms {
 
 class Room996 : public Room {
 public:
-	Room996();
+	Room996() : Room() {}
 	~Room996() override {}
 
 	void preload() override;
@@ -41,8 +41,8 @@ public:
 	void daemon() override;
 
 private:
-	int32 _flag = 0;
-	int32 _flagArray[13];
+	int32 _flagArray[12] = {};
+	int32 _journalIndex = 1;
 	int32 _moveValue = 0;
 	bool _check201Fl = false;
 	bool _check207Fl = false;

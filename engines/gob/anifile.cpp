@@ -164,17 +164,17 @@ void ANIFile::loadAnimation(Animation &animation, FrameArray &frames,
 		area.left  = area.top    =  0x7FFF;
 		area.right = area.bottom = -0x7FFF;
 
-		for (ChunkList::const_iterator c = frame.begin(); c != frame.end(); ++c) {
+		for (const auto &c : frame) {
 			uint16 cL, cT, cR, cB;
 
-			if (!getCoordinates(c->layer, c->part, cL, cT, cR, cB))
+			if (!getCoordinates(c.layer, c.part, cL, cT, cR, cB))
 				continue;
 
 			const uint16 width  = cR - cL + 1;
 			const uint16 height = cB - cT + 1;
 
-			const uint16 l = c->x;
-			const uint16 t = c->y;
+			const uint16 l = c.x;
+			const uint16 t = c.y;
 			const uint16 r = l + width  - 1;
 			const uint16 b = t + height - 1;
 

@@ -74,17 +74,15 @@ void Display::moveCursorTo(const Common::Point &pos) {
 }
 
 void Display::printString(const Common::String &str) {
-	Common::String::const_iterator c;
-	for (c = str.begin(); c != str.end(); ++c)
-		printChar(*c);
+	for (const auto &c : str)
+		printChar(c);
 
 	renderText();
 }
 
 void Display::printAsciiString(const Common::String &str) {
-	Common::String::const_iterator c;
-	for (c = str.begin(); c != str.end(); ++c)
-		printChar(asciiToNative(*c));
+	for (const auto &c : str)
+		printChar(asciiToNative(c));
 
 	renderText();
 }

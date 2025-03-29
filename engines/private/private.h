@@ -112,6 +112,17 @@ typedef struct CursorInfo {
 	Graphics::WinCursorGroup *winCursorGroup;
 } CursorInfo;
 
+typedef struct MemoryInfo {
+	Common::String image;
+	Common::String movie;
+} MemoryInfo;
+
+typedef struct DiaryPage {
+	Common::String locationName;
+	Common::Array<MemoryInfo> memories;
+	uint locationID;
+} DiaryPage;
+
 // funcs
 
 typedef struct FuncTable {
@@ -133,6 +144,7 @@ typedef Common::List<Common::String> InvList;
 // arrays
 
 typedef Common::Array<DossierInfo> DossierArray;
+typedef Common::Array<DiaryPage> DiaryPages;
 
 // hash tables
 
@@ -160,6 +172,7 @@ public:
 	Audio::SoundHandle _fgSoundHandle;
 	Audio::SoundHandle _bgSoundHandle;
 	Video::SmackerDecoder *_videoDecoder;
+	Video::SmackerDecoder *_pausedVideo;
 	Common::InstallShieldV3 _installerArchive;
 
 	Common::Error run() override;
@@ -236,6 +249,7 @@ public:
 	Common::String _currentVS;
 	Common::Point _origin;
 	void drawScreen();
+	bool _needToDrawScreenFrame;
 
 	// settings
 	Common::String _nextSetting;
@@ -284,6 +298,18 @@ public:
 	void loadLocations(const Common::Rect &);
 	void loadInventory(uint32, const Common::Rect &, const Common::Rect &);
 	bool _toTake;
+	DiaryPages _diaryPages;
+	uint _currentDiaryPage;
+	ExitInfo _diaryNextPageExit;
+	ExitInfo _diaryPrevPageExit;
+	bool selectDiaryNextPage(Common::Point mousePos);
+	bool selectDiaryPrevPage(Common::Point mousePos);
+	void addMemory(const Common::String &path);
+	void loadMemories(const Common::Rect &rect, uint rightPageOffset, uint verticalOffset);
+	bool selectLocation(const Common::Point &mousePos);
+	Common::Array<MaskInfo> _locationMasks;
+	Common::Array<MaskInfo> _memoryMasks;
+	bool selectMemory(const Common::Point &mousePos);
 
 	// Save/Load games
 	MaskInfo _saveGameMask;

@@ -495,7 +495,7 @@ void DgdsEngine::loadRestartFile() {
 }
 
 /*static*/ void
-DgdsEngine::dumpFrame(const Graphics::ManagedSurface &surf, const char *name) {
+DgdsEngine::dumpFrame(const Graphics::Surface &surf, const char *name) {
 #ifdef DUMP_FRAME_DATA
 	/* For debugging, dump the frame contents.. */
 	Common::DumpFile outf;
@@ -505,8 +505,7 @@ DgdsEngine::dumpFrame(const Graphics::ManagedSurface &surf, const char *name) {
 	g_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
 
 	outf.open(Common::Path(Common::String::format("/tmp/%07d-%s.png", now, name)));
-	// Operator magic - convert ManagedSurface reg to Surface ref.
-	::Image::writePNG(outf, *(&surf), palbuf);
+	::Image::writePNG(outf, surf, palbuf);
 	outf.close();
 #endif
 }

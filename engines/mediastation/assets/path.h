@@ -40,6 +40,10 @@ public:
 
 private:
 	double _percentComplete = 0.0;
+	uint _totalSteps = 0;
+	uint _currentStep = 0;
+	uint _nextPathStepTime = 0;
+	uint _stepDurationInMilliseconds = 0;
 
 	// Method implementations.
 	void timePlay();

@@ -43,8 +43,8 @@ protected:
 public:
 
 	~DictionaryHashMap() {
-		for (MapIterator it = _map.begin(); it != _map.end(); ++it) {
-			delete it->_value;
+		for (auto &it : _map) {
+			delete it._value;
 		}
 	}
 

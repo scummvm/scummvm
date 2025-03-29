@@ -212,11 +212,51 @@ Operand Movie::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) 
 		return Operand();
 	}
 
+	case kIsVisibleMethod: {
+		assert(args.empty());
+		Operand returnValue(kOperandTypeLiteral1);
+		returnValue.putInteger(_isShowing);
+		return returnValue;
+	}
+
+	case kSpatialCenterMoveToMethod: {
+		assert(args.size() == 2);
+		spatialCenterMoveTo(args[0].getInteger(), args[1].getInteger());
+		return Operand();
+	}
+
+	case kSpatialMoveToMethod: {
+		assert(args.size() == 2);
+		spatialMoveTo(args[0].getInteger(), args[1].getInteger());
+		return Operand();
+	}
+
 	case kIsPlayingMethod: {
 		assert(args.empty());
 		Operand returnValue(kOperandTypeLiteral1);
-		returnValue.putInteger(_isPlaying);
+		returnValue.putInteger(static_cast<uint>(_isPlaying));
 		return returnValue;
+	}
+
+	case kXPositionMethod: {
+		assert(args.empty());
+		Operand returnValue(kOperandTypeLiteral1);
+		returnValue.putInteger(_header->_boundingBox->left);
+		return returnValue;
+
+	}
+
+	case kYPositionMethod: {
+		assert(args.empty());
+		Operand returnValue(kOperandTypeLiteral1);
+		returnValue.putInteger(_header->_boundingBox->top);
+		return returnValue;
+	}
+
+	case kSetDissolveFactorMethod: {
+		assert(args.size() == 1);
+		warning("Movie::callMethod(): setDissolveFactor not implemented yet");
+		return Operand();
 	}
 
 	default:
@@ -330,8 +370,52 @@ void Movie::timeStop() {
 	runEventHandlerIfExists(kMovieStoppedEvent);
 }
 
+void Movie::spatialCenterMoveTo(int x, int y) {
+	// Mark the previous location dirty.
+	for (MovieFrame *frame : _framesOnScreen) {
+		Common::Rect bbox = getFrameBoundingBox(frame);
+		g_engine->_dirtyRects.push_back(bbox);
+	}
+
+	// Calculate the center of the movie, and update location.
+	int frameWidth = _header->_boundingBox->width();
+	int frameHeight = _header->_boundingBox->height();
+	int centerX = x - frameWidth / 2;
+	int centerY = y - frameHeight / 2;
+
+	debugC(5, kDebugScript, "Movie::callMethod(): (%d) Moving movie center to (%d, %d)", _header->_id, x, y);
+	// Unlike the sprites, movie bounding boxes must be moved too.
+	_header->_boundingBox->moveTo(centerX, centerY);
+
+	// Mark the new location dirty.
+	for (MovieFrame *frame : _framesOnScreen) {
+		Common::Rect bbox = getFrameBoundingBox(frame);
+		g_engine->_dirtyRects.push_back(bbox);
+	}
+}
+
+void Movie::spatialMoveTo(int x, int y) {
+	// Mark the previous location dirty.
+	for (MovieFrame *frame : _framesOnScreen) {
+		Common::Rect bbox = getFrameBoundingBox(frame);
+		g_engine->_dirtyRects.push_back(bbox);
+	}
+
+	// Update the location and mark the new location dirty.
+	debugC(5, kDebugGraphics, "Movie::callMethod(): (%d) Moving movie to (%d, %d)", _header->_id, x, y);
+	// Unlike the sprites, movie bounding boxes must be moved too.
+	_header->_boundingBox->moveTo(x, y);
+
+	for (MovieFrame *frame : _framesOnScreen) {
+		Common::Rect bbox = getFrameBoundingBox(frame);
+		g_engine->_dirtyRects.push_back(bbox);
+	}
+}
+
 void Movie::process() {
-	processTimeEventHandlers();
+	if (_isPlaying) {
+		processTimeEventHandlers();
+	}
 	updateFrameState();
 }
 
@@ -406,7 +490,6 @@ void Movie::updateFrameState() {
 		return;
 	}
 
-
 	// Show the frames that are currently active, for debugging purposes.
 	for (MovieFrame *frame : _framesOnScreen) {
 		debugC(5, kDebugGraphics, "   (time: %d ms) Frame %d (%d x %d) @ (%d, %d); start: %d ms, end: %d ms, keyframeEnd: %d ms, zIndex = %d", movieTime, frame->index(), frame->width(), frame->height(), frame->left(), frame->top(), frame->startInMilliseconds(), frame->endInMilliseconds(), frame->keyframeEndInMilliseconds(), frame->zCoordinate());
@@ -432,6 +515,7 @@ void Movie::redraw(Common::Rect &rect) {
 		if (!areaToRedraw.isEmpty()) {
 			Common::Point originOnScreen(areaToRedraw.left, areaToRedraw.top);
 			areaToRedraw.translate(-frame->left() - _header->_boundingBox->left, -frame->top() - _header->_boundingBox->top);
+			areaToRedraw.clip(Common::Rect(0, 0, frame->width(), frame->height()));
 			g_engine->_screen->simpleBlitFrom(frame->_surface, areaToRedraw, originOnScreen);
 		}
 	}

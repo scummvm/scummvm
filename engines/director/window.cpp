@@ -52,7 +52,6 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_lingoPlayState = nullptr;
 
 	_currentMovie = nullptr;
-	_mainArchive = nullptr;
 	_nextMovie.frameI = -1;
 	_newMovieStarted = true;
 
@@ -165,7 +164,14 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	debugC(7, kDebugImages, "Window::render(): Updating %d rects", _dirtyRects.size());
 
 	for (auto &i : _dirtyRects) {
-		const Common::Rect &r = i;
+		Common::Rect r = i;
+		// The inner dimensions are relative to the virtual desktop while
+		// r isn't, so we need to move the window to be relative to the
+		// same sapce.
+		Common::Rect windowRect = getInnerDimensions();
+		windowRect.moveTo(r.left, r.top);
+		r.clip(windowRect);
+
 		_dirtyChannels = _currentMovie->getScore()->getSpriteIntersections(r);
 
 		bool shouldClear = true;

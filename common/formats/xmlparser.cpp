@@ -34,9 +34,8 @@ XMLParser::~XMLParser() {
 	delete _XMLkeys;
 	delete _stream;
 
-	for (List<XMLKeyLayout *>::iterator i = _layoutList.begin();
-		i != _layoutList.end(); ++i)
-		delete *i;
+	for (auto *layout : _layoutList)
+		delete layout;
 
 	_layoutList.clear();
 }
@@ -171,12 +170,12 @@ bool XMLParser::parseActiveKey(bool closed) {
 		StringMap localMap = key->values;
 		int keyCount = localMap.size();
 
-		for (List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
-			if (i->required && !localMap.contains(i->name))
-				return parserError("Missing required property '" + i->name + "' inside key '" + key->name + "'");
-			else if (localMap.contains(i->name)) {
+		for (const auto &prop : key->layout->properties) {
+			if (prop.required && !localMap.contains(prop.name))
+				return parserError("Missing required property '" + prop.name + "' inside key '" + key->name + "'");
+			else if (localMap.contains(prop.name)) {
 				keyCount--;
-				localMap.erase(i->name);
+				localMap.erase(prop.name);
 			}
 		}
 

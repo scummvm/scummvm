@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-10 16:53+0000\n"
+"POT-Creation-Date: 2025-03-28 04:53+0000\n"
 "PO-Revision-Date: 2025-02-15 11:09+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -106,7 +106,7 @@ msgstr "上へ"
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:204
-#: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:863
+#: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:857
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:84
 #: engines/mohawk/myst_stacks/menu.cpp:283
@@ -315,7 +315,7 @@ msgstr "すでに別のストレージが使用されています。切断しま
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4199
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4200
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "はい"
@@ -328,7 +328,7 @@ msgstr "はい"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4199
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4200
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "いいえ"
@@ -352,7 +352,7 @@ msgstr "JSONコードの内容が不正です。"
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
 #: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:83
-#: engines/director/lingo/lingo-builtins.cpp:2132
+#: engines/director/lingo/lingo-builtins.cpp:2144
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:665 engines/mtropolis/mtropolis.cpp:114
 #: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
@@ -856,7 +856,7 @@ msgstr "計算完了"
 msgid "Calculated %s %S / %s %S"
 msgstr "計算済 %s %S / %s %S"
 
-#: gui/integrity-dialog.cpp:513
+#: gui/integrity-dialog.cpp:509
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -869,12 +869,12 @@ msgstr ""
 "\n"
 "これが有効なバリアントである場合は、integrity@scummvm.orgまでお知らせください"
 
-#: gui/integrity-dialog.cpp:537
+#: gui/integrity-dialog.cpp:533
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr "ゲームのファイルが見つかりません。正しいパスですか?"
 
-#: gui/integrity-dialog.cpp:542
+#: gui/integrity-dialog.cpp:538
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
@@ -882,7 +882,7 @@ msgstr ""
 "このゲームにはメタデータが関連付けられていないようです。正しいデータを記入し"
 "てください。"
 
-#: gui/integrity-dialog.cpp:569
+#: gui/integrity-dialog.cpp:565
 msgid "Files all OK"
 msgstr "全て正常"
 
@@ -1006,7 +1006,7 @@ msgstr "作用"
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
 #: engines/got/metaengine.cpp:55 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:481 engines/grim/grim.cpp:563 engines/icb/icb.cpp:68
-#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:968
+#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:1000
 #: engines/twine/metaengine.cpp:430 engines/twine/metaengine.cpp:497
 #: engines/twp/metaengine.cpp:154 engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -1021,7 +1021,7 @@ msgstr "上"
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
 #: engines/got/metaengine.cpp:56 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:486 engines/grim/grim.cpp:568 engines/icb/icb.cpp:73
-#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:935
+#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:967
 #: engines/twine/metaengine.cpp:437 engines/twine/metaengine.cpp:505
 #: engines/twp/metaengine.cpp:155 engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -1036,7 +1036,7 @@ msgstr "下"
 #: engines/dragons/metaengine.cpp:171 engines/got/metaengine.cpp:57
 #: engines/griffon/metaengine.cpp:133 engines/grim/grim.cpp:491
 #: engines/grim/grim.cpp:573 engines/icb/icb.cpp:78 engines/icb/icb.cpp:162
-#: engines/scumm/metaengine.cpp:948 engines/twine/metaengine.cpp:452
+#: engines/scumm/metaengine.cpp:980 engines/twine/metaengine.cpp:452
 #: engines/twine/metaengine.cpp:520 engines/twp/metaengine.cpp:152
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -1052,7 +1052,7 @@ msgstr "左"
 #: engines/dragons/metaengine.cpp:177 engines/got/metaengine.cpp:58
 #: engines/griffon/metaengine.cpp:139 engines/grim/grim.cpp:496
 #: engines/grim/grim.cpp:578 engines/icb/icb.cpp:83 engines/icb/icb.cpp:167
-#: engines/scumm/metaengine.cpp:955 engines/twine/metaengine.cpp:444
+#: engines/scumm/metaengine.cpp:987 engines/twine/metaengine.cpp:444
 #: engines/twine/metaengine.cpp:513 engines/twp/metaengine.cpp:153
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -2902,7 +2902,7 @@ msgstr ""
 "ゲーム毎に上記を繰り返します。"
 
 #: base/main.cpp:652 base/main.cpp:677
-#: engines/director/lingo/lingo-builtins.cpp:1454
+#: engines/director/lingo/lingo-builtins.cpp:1465
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
 #: engines/director/lingo/xlibs/jitdraw3.cpp:131
 msgid "Ok"
@@ -2958,12 +2958,12 @@ msgstr "ゲームを実行のエラー："
 msgid "Could not find any engine capable of running the selected game"
 msgstr "選択されたゲームに対応するエンジンが見つかりません"
 
-#: common/engine_data.cpp:278 engines/ultima/shared/engine/data_archive.cpp:88
+#: common/engine_data.cpp:277 engines/ultima/shared/engine/data_archive.cpp:88
 #, c-format
 msgid "Could not locate engine data %s"
 msgstr "エンジンデータ%sが見つかりません"
 
-#: common/engine_data.cpp:296 engines/ultima/shared/engine/data_archive.cpp:106
+#: common/engine_data.cpp:295 engines/ultima/shared/engine/data_archive.cpp:106
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
@@ -3400,7 +3400,7 @@ msgstr "メインメニューに戻る(~R~)"
 
 #: engines/dialogs.cpp:95 engines/engine.cpp:980 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
-#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
+#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:858
 #: engines/groovie/script.cpp:2256 engines/groovie/script.cpp:2283
@@ -3420,7 +3420,7 @@ msgstr "ゲームをセーブ："
 
 #: engines/dialogs.cpp:95 engines/engine.cpp:980 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
-#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
+#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:853
 #: engines/groovie/script.cpp:858 engines/groovie/script.cpp:2256
@@ -3654,10 +3654,10 @@ msgstr "キーマッピング(デフォルト)"
 #: engines/metaengine.cpp:62 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:232 engines/asylum/metaengine.cpp:159
 #: engines/bbvs/metaengine.cpp:99 engines/cge/metaengine.cpp:203
-#: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:265
+#: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:264
 #: engines/composer/metaengine.cpp:113 engines/cruise/metaengine.cpp:147
-#: engines/draci/metaengine.cpp:143 engines/groovie/metaengine.cpp:205
-#: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:213
+#: engines/draci/metaengine.cpp:141 engines/groovie/metaengine.cpp:205
+#: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:211
 #: engines/hugo/metaengine.cpp:97 engines/illusions/metaengine.cpp:94
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:107
 #: engines/mads/metaengine.cpp:280 engines/mtropolis/metaengine.cpp:161
@@ -3682,10 +3682,10 @@ msgstr "中クリック"
 #: engines/metaengine.cpp:73 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:238 engines/asylum/metaengine.cpp:165
 #: engines/bbvs/metaengine.cpp:105 engines/cge/metaengine.cpp:209
-#: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:271
+#: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:270
 #: engines/composer/metaengine.cpp:119 engines/cruise/metaengine.cpp:153
-#: engines/draci/metaengine.cpp:149 engines/groovie/metaengine.cpp:211
-#: engines/hopkins/metaengine.cpp:219 engines/hugo/metaengine.cpp:104
+#: engines/draci/metaengine.cpp:147 engines/groovie/metaengine.cpp:211
+#: engines/hopkins/metaengine.cpp:217 engines/hugo/metaengine.cpp:104
 #: engines/illusions/metaengine.cpp:101 engines/lure/metaengine.cpp:183
 #: engines/made/metaengine.cpp:114 engines/mads/metaengine.cpp:286
 #: engines/mtropolis/metaengine.cpp:167 engines/parallaction/metaengine.cpp:118
@@ -4503,7 +4503,7 @@ msgstr "これより上のディレクトリーは存在しません!"
 msgid "Can't upload into a file!"
 msgstr "アップロード先にはディレクトリーを指定してください!"
 
-#: backends/networking/sdl_net/handlerutils.cpp:204
+#: backends/networking/sdl_net/handlerutils.cpp:203
 msgid "Back to the files manager"
 msgstr "ファイルマネージャーへ戻る"
 
@@ -6056,7 +6056,7 @@ msgstr "ゲームスピードメニューを追加(PC版と同様)"
 #: engines/dreamweb/metaengine.cpp:36 engines/gob/metaengine.cpp:42
 #: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
-#: engines/scumm/dialogs.cpp:1202 engines/scumm/metaengine.cpp:785
+#: engines/scumm/dialogs.cpp:1202 engines/scumm/metaengine.cpp:817
 msgid "Enable copy protection"
 msgstr "コピープロテクト有効化"
 
@@ -6064,7 +6064,7 @@ msgstr "コピープロテクト有効化"
 #: engines/dreamweb/metaengine.cpp:37 engines/gob/metaengine.cpp:43
 #: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
-#: engines/scumm/dialogs.cpp:1203 engines/scumm/metaengine.cpp:786
+#: engines/scumm/dialogs.cpp:1203 engines/scumm/metaengine.cpp:818
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr "デフォルトではバイパスされるコピープロテクトを有効化します。"
 
@@ -6082,7 +6082,7 @@ msgstr "このゲームはセーブ非対応です"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:271
-#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
+#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:835
 #: engines/groovie/script.cpp:870 engines/groovie/script.cpp:2243
@@ -6101,7 +6101,7 @@ msgstr "ゲームを復元する:"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:271
-#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
+#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:835
 #: engines/groovie/script.cpp:853 engines/groovie/script.cpp:870
@@ -6119,12 +6119,12 @@ msgstr "ゲームを復元する:"
 msgid "Restore"
 msgstr "復元"
 
-#: engines/agos/saveload.cpp:139
+#: engines/agos/saveload.cpp:138
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 "このロケーションでは、セーブまたはクイックロードはサポートされていません"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3154
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3154
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6135,7 +6135,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3141
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3141
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6146,7 +6146,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3174
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3174
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6215,8 +6215,8 @@ msgid "AGOS main"
 msgstr "AGOSメイン"
 
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
-#: engines/cine/metaengine.cpp:259 engines/cruise/metaengine.cpp:143
-#: engines/draci/metaengine.cpp:139 engines/hopkins/metaengine.cpp:209
+#: engines/cine/metaengine.cpp:258 engines/cruise/metaengine.cpp:143
+#: engines/draci/metaengine.cpp:137 engines/hopkins/metaengine.cpp:207
 #: engines/hugo/metaengine.cpp:93 engines/illusions/metaengine.cpp:90
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
 #: engines/mads/metaengine.cpp:275 engines/stark/metaengine.cpp:185
@@ -6495,14 +6495,14 @@ msgstr "キャラインベントリーを開く"
 
 #. I18N: Move Actor to upwards direction
 #: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
-#: engines/cine/metaengine.cpp:365 engines/hdb/metaengine.cpp:213
+#: engines/cine/metaengine.cpp:364 engines/hdb/metaengine.cpp:213
 #: engines/nancy/input.cpp:195 engines/tinsel/metaengine.cpp:263
 msgid "Move up"
 msgstr "上"
 
 #. I18N: Move Actor to downwards direction
 #: engines/asylum/metaengine.cpp:177 engines/asylum/metaengine.cpp:205
-#: engines/cine/metaengine.cpp:372 engines/hdb/metaengine.cpp:219
+#: engines/cine/metaengine.cpp:371 engines/hdb/metaengine.cpp:219
 #: engines/nancy/input.cpp:201 engines/tinsel/metaengine.cpp:269
 msgid "Move down"
 msgstr "下"
@@ -6510,7 +6510,7 @@ msgstr "下"
 #. I18N: Move Actor to left direction
 #. I18N: Move actor left during fight
 #: engines/asylum/metaengine.cpp:183 engines/asylum/metaengine.cpp:212
-#: engines/cine/metaengine.cpp:379 engines/hdb/metaengine.cpp:225
+#: engines/cine/metaengine.cpp:378 engines/hdb/metaengine.cpp:225
 #: engines/lure/metaengine.cpp:218 engines/nancy/input.cpp:207
 #: engines/tinsel/metaengine.cpp:275
 msgid "Move left"
@@ -6519,7 +6519,7 @@ msgstr "左に行く"
 #. I18N: Move Actor to right direction
 #. I18N: Move actor right during fight
 #: engines/asylum/metaengine.cpp:189 engines/asylum/metaengine.cpp:219
-#: engines/cine/metaengine.cpp:386 engines/hdb/metaengine.cpp:231
+#: engines/cine/metaengine.cpp:385 engines/hdb/metaengine.cpp:231
 #: engines/lure/metaengine.cpp:226 engines/nancy/input.cpp:213
 #: engines/tinsel/metaengine.cpp:281
 msgid "Move right"
@@ -6561,7 +6561,7 @@ msgid ""
 "Build %d"
 msgstr "警告: 旧バージョンのセーブをロードしようとしています: Ver%s/ビルド%d"
 
-#: engines/asylum/asylum.cpp:204 engines/cine/saveload.cpp:863
+#: engines/asylum/asylum.cpp:204 engines/cine/saveload.cpp:857
 msgid "Load anyway"
 msgstr "とにかくロードする"
 
@@ -6577,9 +6577,9 @@ msgstr "戦士714の目チート"
 msgid "General Keys"
 msgstr "キー全般"
 
-#: engines/bbvs/metaengine.cpp:92 engines/cine/metaengine.cpp:258
-#: engines/cruise/metaengine.cpp:142 engines/draci/metaengine.cpp:138
-#: engines/hopkins/metaengine.cpp:208 engines/hugo/metaengine.cpp:92
+#: engines/bbvs/metaengine.cpp:92 engines/cine/metaengine.cpp:257
+#: engines/cruise/metaengine.cpp:142 engines/draci/metaengine.cpp:136
+#: engines/hopkins/metaengine.cpp:206 engines/hugo/metaengine.cpp:92
 #: engines/illusions/metaengine.cpp:89 engines/lure/metaengine.cpp:168
 #: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
 #: engines/stark/metaengine.cpp:184 engines/sword1/metaengine.cpp:266
@@ -6606,7 +6606,7 @@ msgstr "キーマッピング終了"
 msgid "Escape"
 msgstr "脱出"
 
-#: engines/bbvs/metaengine.cpp:117 engines/hopkins/metaengine.cpp:231
+#: engines/bbvs/metaengine.cpp:117 engines/hopkins/metaengine.cpp:229
 #: engines/illusions/metaengine.cpp:147
 msgid "Open inventory"
 msgstr "インベントリーを開く"
@@ -6623,7 +6623,7 @@ msgid "Talk"
 msgstr "話す"
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/bbvs/metaengine.cpp:136 engines/cine/metaengine.cpp:330
+#: engines/bbvs/metaengine.cpp:136 engines/cine/metaengine.cpp:329
 #: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
 #: engines/saga/metaengine.cpp:379 engines/scumm/help.cpp:129
 #: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
@@ -6787,7 +6787,7 @@ msgstr "モードの切替"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:994 engines/twp/metaengine.cpp:162
+#: engines/scumm/metaengine.cpp:1026 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "ムービーをスキップ"
@@ -6966,13 +6966,13 @@ msgstr "音声合成を使用してゲーム内のテキストを読み上げる
 msgid "Game Keymappings"
 msgstr "キーマッピング"
 
-#: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:225
+#: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:223
 #: engines/sword1/metaengine.cpp:283
 msgid "Exit/Skip"
 msgstr "終了/スキップ"
 
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
-#: engines/hopkins/metaengine.cpp:238 engines/hugo/metaengine.cpp:128
+#: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:128
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
 #: engines/mads/metaengine.cpp:305 engines/saga/metaengine.cpp:442
 #: engines/stark/metaengine.cpp:208 engines/toon/metaengine.cpp:112
@@ -6982,7 +6982,7 @@ msgid "Save game"
 msgstr "ゲームをセーブ"
 
 #: engines/cge/metaengine.cpp:227 engines/cge2/metaengine.cpp:241
-#: engines/hopkins/metaengine.cpp:244 engines/made/metaengine.cpp:168
+#: engines/hopkins/metaengine.cpp:242 engines/made/metaengine.cpp:168
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:432
 #: engines/stark/metaengine.cpp:213 engines/toon/metaengine.cpp:118
@@ -7105,63 +7105,63 @@ msgstr ""
 "オリジナル版でサポートされていない場合でも、16色シーンで透明なダイアログボッ"
 "クスを使用する"
 
-#: engines/cine/metaengine.cpp:164
+#: engines/cine/metaengine.cpp:163
 msgid "Unnamed autosave"
 msgstr "無名のオートセーブ"
 
-#: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
+#: engines/cine/metaengine.cpp:165 engines/cine/metaengine.cpp:237
 msgid "Unnamed savegame"
 msgstr "無名のセーブ"
 
-#: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
+#: engines/cine/metaengine.cpp:182 engines/cine/metaengine.cpp:245
 msgid "Empty autosave"
 msgstr "オートセーブを初期化"
 
-#: engines/cine/metaengine.cpp:260
+#: engines/cine/metaengine.cpp:259
 msgid "Key to mouse keymappings"
 msgstr "マウスへのキーマッピング"
 
-#: engines/cine/metaengine.cpp:261
+#: engines/cine/metaengine.cpp:260
 msgid "Exit screen keymappings"
 msgstr "終了画面のキーマッピング"
 
-#: engines/cine/metaengine.cpp:277
+#: engines/cine/metaengine.cpp:276
 msgid "Exit Sony intro screen"
 msgstr "SONYイントロ画面を終了"
 
-#: engines/cine/metaengine.cpp:283
+#: engines/cine/metaengine.cpp:282
 msgid "Select option / Click in game"
 msgstr "オプション選択/ゲーム内でクリック"
 
-#: engines/cine/metaengine.cpp:290
+#: engines/cine/metaengine.cpp:289
 msgid "Open action menu / Close menu"
 msgstr "アクションメニューを開く/閉じる"
 
-#: engines/cine/metaengine.cpp:295
+#: engines/cine/metaengine.cpp:294
 msgid "Default game speed"
 msgstr "デフォルトのゲームスピード"
 
-#: engines/cine/metaengine.cpp:300
+#: engines/cine/metaengine.cpp:299
 msgid "Slower game speed"
 msgstr "ゲームスピードを低速化"
 
-#: engines/cine/metaengine.cpp:307
+#: engines/cine/metaengine.cpp:306
 msgid "Faster game speed"
 msgstr "ゲームスピードを高速化"
 
-#: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:506
+#: engines/cine/metaengine.cpp:314 engines/grim/grim.cpp:506
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:242
 #: engines/scumm/help.cpp:250
 msgid "Examine"
 msgstr "調べる"
 
-#: engines/cine/metaengine.cpp:320 engines/saga/metaengine.cpp:394
+#: engines/cine/metaengine.cpp:319 engines/saga/metaengine.cpp:394
 msgid "Take"
 msgstr "取る"
 
 #. I18N: Action in In Cold Blood
-#: engines/cine/metaengine.cpp:325 engines/crab/input/input.cpp:251
-#: engines/cruise/metaengine.cpp:166 engines/draci/metaengine.cpp:180
+#: engines/cine/metaengine.cpp:324 engines/crab/input/input.cpp:251
+#: engines/cruise/metaengine.cpp:166 engines/draci/metaengine.cpp:178
 #: engines/dragons/metaengine.cpp:148 engines/griffon/metaengine.cpp:152
 #: engines/grim/grim.cpp:521 engines/grim/grim.cpp:621
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
@@ -7173,56 +7173,56 @@ msgstr "取る"
 msgid "Inventory"
 msgstr "インベントリー"
 
-#: engines/cine/metaengine.cpp:335
+#: engines/cine/metaengine.cpp:334
 msgid "Activate"
 msgstr "起動"
 
-#: engines/cine/metaengine.cpp:340
+#: engines/cine/metaengine.cpp:339
 msgid "Speak"
 msgstr "話す"
 
-#: engines/cine/metaengine.cpp:345
+#: engines/cine/metaengine.cpp:344
 msgid "Action menu"
 msgstr "アクションメニュー"
 
-#: engines/cine/metaengine.cpp:351
+#: engines/cine/metaengine.cpp:350
 msgid "System menu"
 msgstr "システムメニュー"
 
 #. I18N: Opens collision map of where the actor can freely move
-#: engines/cine/metaengine.cpp:358
+#: engines/cine/metaengine.cpp:357
 msgid "Show collisions"
 msgstr "判定を表示"
 
 #. I18N: Move Actor to top-left direction
-#: engines/cine/metaengine.cpp:393
+#: engines/cine/metaengine.cpp:392
 msgid "Move up-left"
 msgstr "左上に動く"
 
 #. I18N: Move Actor to top-right direction
-#: engines/cine/metaengine.cpp:399
+#: engines/cine/metaengine.cpp:398
 msgid "Move up-right"
 msgstr "右上に動く"
 
 #. I18N: Move Actor to bottom-left direction
-#: engines/cine/metaengine.cpp:405
+#: engines/cine/metaengine.cpp:404
 msgid "Move down-left"
 msgstr "左下に動く"
 
 #. I18N: Move Actor to bottom-right direction
-#: engines/cine/metaengine.cpp:411
+#: engines/cine/metaengine.cpp:410
 msgid "Move down-right"
 msgstr "右下に動く"
 
-#: engines/cine/metaengine.cpp:416
+#: engines/cine/metaengine.cpp:415
 msgid "Menu option up"
 msgstr "メニューオプションアップ"
 
-#: engines/cine/metaengine.cpp:421
+#: engines/cine/metaengine.cpp:420
 msgid "Menu option down"
 msgstr "メニューオプションダウン"
 
-#: engines/cine/saveload.cpp:860
+#: engines/cine/saveload.cpp:854
 msgid ""
 "WARNING: The savegame you are loading is using a temporary broken format. "
 "Things will be broken. Please consider starting Operation Stealth from "
@@ -7238,7 +7238,7 @@ msgstr "会話/作用"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:981
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1013
 msgid "Attack"
 msgstr "攻撃"
 
@@ -7410,39 +7410,39 @@ msgid ""
 "anyway?"
 msgstr "このまま進めるとゲームが終了します。それでもよろしいですか?"
 
-#: engines/draci/metaengine.cpp:155
+#: engines/draci/metaengine.cpp:153
 msgid "Skip intro/Exit map or inventory"
 msgstr "イントロスキップ / マップ・インベントリーを終了"
 
-#: engines/draci/metaengine.cpp:161
+#: engines/draci/metaengine.cpp:159
 msgid "Open map"
 msgstr "マップを開く"
 
 #. I18N: shows where the game actor is able to move
-#: engines/draci/metaengine.cpp:168
+#: engines/draci/metaengine.cpp:166
 msgid "Show walking map"
 msgstr "移動先を表示"
 
-#: engines/draci/metaengine.cpp:174
+#: engines/draci/metaengine.cpp:172
 msgid "Toggle walk speed"
 msgstr "歩行速度切り替え"
 
-#: engines/draci/metaengine.cpp:186 engines/mohawk/myst.cpp:554
+#: engines/draci/metaengine.cpp:184 engines/mohawk/myst.cpp:554
 #: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
 msgid "Open main menu"
 msgstr "メインメニューを開く"
 
-#: engines/draci/metaengine.cpp:192
+#: engines/draci/metaengine.cpp:190
 msgid "Toggle between mouse pointer and the last game item"
 msgstr ""
 
-#: engines/draci/metaengine.cpp:198
+#: engines/draci/metaengine.cpp:196
 #, fuzzy
 #| msgid "Open/Close Inventory"
 msgid "Previous item in inventory"
 msgstr "インベントリーを開く/閉じる"
 
-#: engines/draci/metaengine.cpp:204
+#: engines/draci/metaengine.cpp:202
 #, fuzzy
 #| msgid "Open/Close Inventory"
 msgid "Next item in inventory"
@@ -7870,7 +7870,7 @@ msgstr ""
 msgid "Thor Dies"
 msgstr ""
 
-#: engines/got/got.cpp:185 engines/got/got.cpp:195
+#: engines/got/got.cpp:188 engines/got/got.cpp:198
 #, fuzzy
 #| msgid "Saving game is currently unavailable"
 msgid "Savegames are not available in demo mode"
@@ -7934,7 +7934,7 @@ msgstr "エラー：ゲームをセーブできませんでした。"
 msgid "Input text"
 msgstr "入力テキスト"
 
-#: engines/grim/md5check.cpp:604
+#: engines/grim/md5check.cpp:609
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -7948,7 +7948,7 @@ msgstr ""
 "ン(DVDボックスまたはジュエルケースなど)とともに提供してください：\n"
 "%s"
 
-#: engines/grim/md5check.cpp:613
+#: engines/grim/md5check.cpp:618
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
@@ -8138,7 +8138,7 @@ msgstr "ゴアモード"
 msgid "Enable Gore Mode when available"
 msgstr "利用可能ならゴアモードを有効にする"
 
-#: engines/hopkins/metaengine.cpp:250
+#: engines/hopkins/metaengine.cpp:248
 #, fuzzy
 #| msgid "Skip dialogue"
 msgid "Option dialog"
@@ -8741,7 +8741,7 @@ msgstr ""
 "このバージョンはWindows体験版です。完全版をプレイする場合、Wyrmkeepからライセ"
 "ンスキーを購入のうえ、必要な部分を自身で翻訳してください"
 
-#: engines/lab/processroom.cpp:329
+#: engines/lab/processroom.cpp:320
 msgid ""
 "This is the end of the trial version. You can play the full game using the "
 "original interpreter from Wyrmkeep"
@@ -10133,11 +10133,12 @@ msgstr "Casio CT-460 / CSM-1"
 msgid "Game does not contain menu resources"
 msgstr "ゲームにメニューリソースがありません"
 
-#: engines/sci/detection_tables.h:4777
+#. I18N: 'Robot' is a video format name (as in 'MP4 video')
+#: engines/sci/detection_tables.h:4778
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr "本デモでは、未実装版のRobot動画を使用しています"
 
-#: engines/sci/detection_tables.h:4832
+#: engines/sci/detection_tables.h:4833
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "不完全なゲームが検出されました。全てのCDからデータをコピーする必要がありま"
@@ -10344,7 +10345,7 @@ msgid "Your Name:"
 msgstr "ユーザー名："
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4205
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4206
 msgid "Host"
 msgstr "ホスト"
 
@@ -10354,7 +10355,7 @@ msgid "Querying games..."
 msgstr "ゲームに照会中..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4205
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4206
 msgid "Join"
 msgstr "参加"
 
@@ -10460,11 +10461,11 @@ msgstr ""
 "快適性の向上：例えばSam&Maxの偽サウンドローディング画面を削除し、初期のセーブ"
 "メニューをスマートにします。"
 
-#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:746
+#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:778
 msgid "Enable the original GUI and Menu"
 msgstr "オリジナルGUIとメニューを有効化"
 
-#: engines/scumm/dialogs.cpp:1182 engines/scumm/metaengine.cpp:747
+#: engines/scumm/dialogs.cpp:1182 engines/scumm/metaengine.cpp:779
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
@@ -10473,13 +10474,13 @@ msgstr ""
 "エンジン内のGUIとオリジナルのセーブ/ロードメニューを使用可能にします。「終了"
 "時に確認」と併用すると、より完全な体験が可能です。"
 
-#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:756
+#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:788
 #, fuzzy
 #| msgid "Enabled aspect ratio correction"
 msgid "Enable gamma correction"
 msgstr "縦横比修正適用"
 
-#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:757
+#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:789
 msgid "Brighten the graphics to simulate a Macintosh monitor."
 msgstr ""
 
@@ -10597,11 +10598,11 @@ msgstr ""
 "アウトルックミュージックはイントロの一部です。トラック内での再生開始位置を調"
 "整します。曲が途切れたり、前の曲が聞こえる場合に使用して下さい。"
 
-#: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:737
+#: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:769
 msgid "Load modded audio"
 msgstr "改造オーディオをロード"
 
-#: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:738
+#: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:770
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -11134,7 +11135,13 @@ msgstr "音楽の音量： "
 msgid "Subtitle speed: "
 msgstr "字幕の速度： "
 
-#: engines/scumm/metaengine.cpp:371
+#: engines/scumm/metaengine.cpp:395
+msgid ""
+"This fan-made translation is not supported, because it is known to contain\n"
+"corrupted resources that might make it crash or seriously misbehave."
+msgstr ""
+
+#: engines/scumm/metaengine.cpp:403
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -11144,43 +11151,43 @@ msgstr ""
 "ん。\n"
 "製品版はiTunes Storeからご購入いただけます。"
 
-#: engines/scumm/metaengine.cpp:382
+#: engines/scumm/metaengine.cpp:414
 msgid ""
 "Warning: this re-release version contains patched game scripts,\n"
 "and therefore it might crash or not work properly for the time being."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:485
+#: engines/scumm/metaengine.cpp:517
 msgid "HE v71+ support is not compiled in"
 msgstr "HE v71+のサポートはコンパイルされていません"
 
-#: engines/scumm/metaengine.cpp:509
+#: engines/scumm/metaengine.cpp:541
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "SCUMM v7-8のサポートはコンパイルされていません"
 
-#: engines/scumm/metaengine.cpp:666
+#: engines/scumm/metaengine.cpp:698
 msgid "Show Object Line"
 msgstr "オブジェクトラインの表示"
 
-#: engines/scumm/metaengine.cpp:667
+#: engines/scumm/metaengine.cpp:699
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "画面下にオブジェクト名を表示"
 
-#: engines/scumm/metaengine.cpp:675
+#: engines/scumm/metaengine.cpp:707
 msgid "Use NES Classic Palette"
 msgstr "NES Classicのパレットを使用する"
 
-#: engines/scumm/metaengine.cpp:676
+#: engines/scumm/metaengine.cpp:708
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 "NES Classicを厳密にエミュレートした、よりニュートラルなカラーパレットを使用す"
 "る"
 
-#: engines/scumm/metaengine.cpp:684
+#: engines/scumm/metaengine.cpp:716
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "FM-TOWNSゲームを200ピクセルの高さにトリミングします"
 
-#: engines/scumm/metaengine.cpp:685
+#: engines/scumm/metaengine.cpp:717
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
@@ -11188,11 +11195,11 @@ msgstr ""
 "画面下部の余分な40pxをカットし、「アスペクト比補正」を使って標準的な200pxの高"
 "さにします"
 
-#: engines/scumm/metaengine.cpp:693
+#: engines/scumm/metaengine.cpp:725
 msgid "Run in original 640 x 480 resolution"
 msgstr "オリジナル版同様に640×480で実行"
 
-#: engines/scumm/metaengine.cpp:694
+#: engines/scumm/metaengine.cpp:726
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
@@ -11200,37 +11207,37 @@ msgstr ""
 "より正確な一時停止/再起動バナーが可能になりますが、パフォーマンスやシェー"
 "ダー/スケーラーの使用量に影響する可能性があります。"
 
-#: engines/scumm/metaengine.cpp:701
+#: engines/scumm/metaengine.cpp:733
 msgid "Play simplified music"
 msgstr "簡易再生"
 
-#: engines/scumm/metaengine.cpp:702
+#: engines/scumm/metaengine.cpp:734
 msgid "This music was intended for low-end Macs, and uses only one channel."
 msgstr "この音楽はローエンドなMacで再生するため、1チャンネルのみ使います。"
 
-#: engines/scumm/metaengine.cpp:710
+#: engines/scumm/metaengine.cpp:742
 msgid "Enable smooth scrolling"
 msgstr "スムーズスクロールを有効化"
 
-#: engines/scumm/metaengine.cpp:711
+#: engines/scumm/metaengine.cpp:743
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(通常の8px単位でのスクロールの代わりに)"
 
-#: engines/scumm/metaengine.cpp:719
+#: engines/scumm/metaengine.cpp:751
 msgid "Allow semi-smooth scrolling"
 msgstr "セミスムーズスクロールを許可"
 
-#: engines/scumm/metaengine.cpp:720
+#: engines/scumm/metaengine.cpp:752
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
 msgstr "イントロの高速なカメラワークの際、スムーズさが過剰になるのを抑えます。"
 
-#: engines/scumm/metaengine.cpp:765
+#: engines/scumm/metaengine.cpp:797
 msgid "Enable low latency audio mode"
 msgstr "低遅延オーディオを有効化"
 
-#: engines/scumm/metaengine.cpp:766
+#: engines/scumm/metaengine.cpp:798
 #, fuzzy
 #| msgid ""
 #| "Allows the game to use low latency audio, at the cost of sound accuracy. "
@@ -11244,11 +11251,11 @@ msgstr ""
 "低遅延なオーディオを使用できますが、サウンドの再現性は落ちます。\t\t通常の"
 "ゲームプレイでレイテンシーに問題がある場合のみ有効にする事を推奨します。"
 
-#: engines/scumm/metaengine.cpp:775
+#: engines/scumm/metaengine.cpp:807
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "楽曲「A Pirate I Was Meant To Be」を有効化"
 
-#: engines/scumm/metaengine.cpp:776
+#: engines/scumm/metaengine.cpp:808
 #, fuzzy
 #| msgid ""
 #| "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
@@ -11262,58 +11269,58 @@ msgstr ""
 "海外版でカットされた、第3部冒頭の曲「A Pirate I Was Meant To Be」を有効化。た"
 "だし、字幕が完全に翻訳されていない場合がありますのでご了承ください。"
 
-#: engines/scumm/metaengine.cpp:794
+#: engines/scumm/metaengine.cpp:826
 msgid "Enable demo/kiosk mode"
 msgstr "デモ/店頭モードを有効化"
 
-#: engines/scumm/metaengine.cpp:795
+#: engines/scumm/metaengine.cpp:827
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
 msgstr "Maniac Mansion製品版で、デモ/店頭モードを有効化します。"
 
-#: engines/scumm/metaengine.cpp:803
+#: engines/scumm/metaengine.cpp:835
 #, fuzzy
 #| msgid "Use CD audio"
 msgid "Use remastered audio"
 msgstr "CD音楽を使用"
 
-#: engines/scumm/metaengine.cpp:804
+#: engines/scumm/metaengine.cpp:836
 msgid "Use the remastered speech and sound effects."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:816
+#: engines/scumm/metaengine.cpp:848
 #, fuzzy
 #| msgid "Enable sound"
 msgid "Enable ambience sounds"
 msgstr "音声を有効にする"
 
-#: engines/scumm/metaengine.cpp:817
+#: engines/scumm/metaengine.cpp:849
 #, fuzzy
 #| msgid "Enable sound"
 msgid "Enable ambience sounds."
 msgstr "音声を有効にする"
 
-#: engines/scumm/metaengine.cpp:929
+#: engines/scumm/metaengine.cpp:961
 msgid "Down Left"
 msgstr "左下"
 
-#: engines/scumm/metaengine.cpp:942
+#: engines/scumm/metaengine.cpp:974
 msgid "Down Right"
 msgstr "右下"
 
-#: engines/scumm/metaengine.cpp:962
+#: engines/scumm/metaengine.cpp:994
 msgid "Up Left"
 msgstr "左上"
 
-#: engines/scumm/metaengine.cpp:975
+#: engines/scumm/metaengine.cpp:1007
 msgid "Up Right"
 msgstr "右上"
 
-#: engines/scumm/metaengine.cpp:987
+#: engines/scumm/metaengine.cpp:1019
 msgid "Switch weapon"
 msgstr "武器を切り替え"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:1001
+#: engines/scumm/metaengine.cpp:1033
 msgid "Win the bike fight cheat"
 msgstr "バイク戦闘を省略"
 
@@ -11425,7 +11432,7 @@ msgstr ""
 "このMonkey Island 1の特定のバージョンは、MT-32に必要な\n"
 "リソースが欠落しています。AdLibを代用します。"
 
-#: engines/scumm/scumm.cpp:4093
+#: engines/scumm/scumm.cpp:4094
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -11435,7 +11442,7 @@ msgstr ""
 "ディレクトリーの「Maniac」フォルダー内にゲームファイルを配置し、ゲームが"
 "ScummVMに追加されていなければなりません。"
 
-#: engines/scumm/scumm.cpp:4205
+#: engines/scumm/scumm.cpp:4206
 msgid "Would you like to host or join a network play session?"
 msgstr "セッションを開催、または参加しますか?"
 

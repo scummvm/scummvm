@@ -784,9 +784,8 @@ Path Path::normalize() const {
 			// Well, we don't start with ESCAPE so there is still a chance we get unescaped
 			needUnescape = true;
 
-			StringArray::const_iterator it;
-			for (it = comps.begin(); it != comps.end(); it++) {
-				if (!canUnescape(false, false, it->c_str())) {
+			for (const auto &comp : comps) {
+				if (!canUnescape(false, false, comp.c_str())) {
 					// Nope we can't get unescaped
 					needUnescape = false;
 					break;
@@ -810,18 +809,18 @@ Path Path::normalize() const {
 
 	// Finally, assemble all components back into a path
 	bool addSep = hasLeadingSeparator;
-	for (StringArray::const_iterator it = comps.begin(); it != comps.end(); it++) {
+	for (const auto &comp : comps) {
 		if (addSep) {
 			result._str += SEPARATOR;
 		}
 		addSep = true;
 
 		if (needEscape) {
-			escape(result._str, kNoSeparator, it->c_str(), it->c_str() + it->size());
+			escape(result._str, kNoSeparator, comp.c_str(), comp.c_str() + comp.size());
 		} else if (needUnescape) {
-			result._str += unescape(kNoSeparator, it->c_str(), it->c_str() + it->size());
+			result._str += unescape(kNoSeparator, comp.c_str(), comp.c_str() + comp.size());
 		} else {
-			result._str += *it;
+			result._str += comp;
 		}
 	}
 

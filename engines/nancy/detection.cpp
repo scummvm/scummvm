@@ -206,7 +206,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
+			ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
 			GUIO2(GAMEOPTION_PLAYER_SPEECH, GAMEOPTION_CHARACTER_SPEECH)
 		},
 		Nancy::kGameTypeNancy3

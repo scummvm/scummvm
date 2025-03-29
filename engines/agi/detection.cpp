@@ -158,15 +158,15 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 	g_fallbackDesc.version = 0x2917;
 
 	// First grab all filenames and at the same time count the number of *.wag files
-	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory()) continue;
-		Common::String filename = file->getName();
+	for (const auto &file : fslist) {
+		if (file.isDirectory()) continue;
+		Common::String filename = file.getName();
 		filename.toLowercase();
 		allFiles[filename] = true; // Save the filename in a hash table
 
 		if (filename.hasSuffix(".wag")) {
 			// Save latest found *.wag file's path (Can be used to open the file, the name can't)
-			wagFileNode = *file;
+			wagFileNode = file;
 			wagFileCount++; // Count found *.wag files
 		}
 	}
@@ -199,10 +199,10 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 	} else { // Try v3
 		char name[8];
 
-		for (IntMap::const_iterator f = allFiles.begin(); f != allFiles.end(); ++f) {
-			if (f->_key.hasSuffix("vol.0")) {
+		for (const auto &f : allFiles) {
+			if (f._key.hasSuffix("vol.0")) {
 				memset(name, 0, 8);
-				strncpy(name, f->_key.c_str(), MIN((uint)8, f->_key.size() > 5 ? f->_key.size() - 5 : f->_key.size()));
+				strncpy(name, f._key.c_str(), MIN((uint)8, f._key.size() > 5 ? f._key.size() - 5 : f._key.size()));
 
 				if (allFiles.contains("object") && allFiles.contains("words.tok") &&
 				        allFiles.contains(Common::String(name) + "dir")) {
@@ -346,11 +346,11 @@ void AgiMetaEngineDetection::getPotentialDiskImages(
 	Common::Array<Common::Path> &imageFiles) {
 
 	// build an array of files with disk image extensions
-	for (FileMap::const_iterator f = allFiles.begin(); f != allFiles.end(); ++f) {
+	for (const auto &f : allFiles) {
 		for (size_t i = 0; i < imageExtensionCount; i++) {
-			if (f->_key.baseName().hasSuffixIgnoreCase(imageExtensions[i])) {
-				debug(3, "potential disk image: %s", f->_key.baseName().c_str());
-				imageFiles.push_back(f->_key);
+			if (f._key.baseName().hasSuffixIgnoreCase(imageExtensions[i])) {
+				debug(3, "potential disk image: %s", f._key.baseName().c_str());
+				imageFiles.push_back(f._key);
 				break;
 			}
 		}

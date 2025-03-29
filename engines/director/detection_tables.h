@@ -93,6 +93,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "blinkyprint",		"Print & Play with Blinky Bill" },
 	{ "blinkyps",			"Blinky Bill: Play and Learn - Preschool" },
 	{ "blinkyy1",			"Blinky Bill: Play and Learn - Year 1" },
+	{ "blockhead",			"Blockhead" },
 	{ "bobcastle",			"Bob the Builder: Bob's Castle Adventure" },
 	{ "bodypark",			"Body Park" },
 	{ "brer",				"Brer Rabbit and the Wonderful Tar Baby" },
@@ -345,6 +346,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "moominhide",			"Hide and Seek with Moomin"},
 	{ "moominparty",		"The Great Moomin Party" },
 	{ "morebugs",			"More Bugs in Boxes" },
+	{ "mortalus",			"Mortalus: The Quest for Immortality" },
 	{ "mrsquack",			"Reading with Peter Cottontail: The Story of Mrs. Quack" },
 	{ "mummy",				"Mummy: Tomb of the Pharaoh" },
 	{ "muppetkidsearly5",	"Muppets Kids Early Learning Series Volume 5: Sound Patterns: Phonics" },
@@ -475,6 +477,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "takeru",				"Buichi Terasawa's Takeru: Letter of the Law" },
 	{ "teamxtreme1",		"Operation: Weather Disaster" },
 	{ "teamxtreme2",		"Operation: Eco-Nightmare" },
+	{ "teazle",				"Teazle" },
 	{ "the7colors",			"The Seven Colors: Legend of PSY・S City" }, // English fan translation
 	{ "timmysafari",		"Timmy's Safari Adventure" },
 	{ "tkkg1",				"A Case for TKKG 1: Jennifer is Missing" },
@@ -1850,67 +1853,67 @@ namespace Director {
 
 #define SUPPORT_STATUS ADGF_UNSTABLE
 
-#define GENGAME1_(t,e,f,m,s,l,p,fl,v)				{ { t, e, AD_ENTRY1s(f, m, s), l, p, (fl | SUPPORT_STATUS), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
-#define GENGAME1t_(t,e,f,m,s,l,p,fl,v)				{ { t, e, AD_ENTRY1s(f, m, s), l, p, (fl | SUPPORT_STATUS | ADGF_TAILMD5), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
-#define GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,p,fl,v)	{ { t, e, AD_ENTRY2s(f1, m1, s1, f2, m2, s2), l, p, (fl | SUPPORT_STATUS), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
-#define GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,l,p,fl,v)	{ { t, e, AD_ENTRY2s(f1, m1, s1, f2, m2, s2), l, p, (fl | SUPPORT_STATUS | ADGF_TAILMD5), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
+#define GENGAME1_(t,e,f,m,s,l,p,fl,v)				{ { t, e, AD_ENTRY1s(f, m, s), l, p, ((fl) | SUPPORT_STATUS), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
+#define GENGAME1t_(t,e,f,m,s,l,p,fl,v)				{ { t, e, AD_ENTRY1s(f, m, s), l, p, ((fl) | SUPPORT_STATUS | ADGF_TAILMD5), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
+#define GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,p,fl,v)	{ { t, e, AD_ENTRY2s(f1, m1, s1, f2, m2, s2), l, p, ((fl) | SUPPORT_STATUS), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
+#define GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,l,p,fl,v)	{ { t, e, AD_ENTRY2s(f1, m1, s1, f2, m2, s2), l, p, ((fl) | SUPPORT_STATUS | ADGF_TAILMD5), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
 
-#define MACGAME1(t,e,f,m,s,v)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
-#define MACGAME1f(t,e,f,m,s,v,fl)   GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,(fl|ADGF_MACRESFORK),v)
-#define MACGAME1t(t,e,f,m,s,v)	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
-#define MACGAME1tf(t,e,f,m,s,v,fl)	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,(fl|ADGF_MACRESFORK),v)
-#define PIPGAME1(t,e,f,m,s,v)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformPippin,ADGF_MACRESFORK,v)
-#define PIPGAME1f(t,e,f,m,s,v,fl)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformPippin,(fl|ADGF_MACRESFORK),v)
+#define MACGAME1(t,e,f,m,s,v)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,(GF_GAMMA|ADGF_MACRESFORK),v)
+#define MACGAME1f(t,e,f,m,s,v,fl)   GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,((fl)|ADGF_MACRESFORK),v)
+#define MACGAME1t(t,e,f,m,s,v)	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,(GF_GAMMA|ADGF_MACRESFORK),v)
+#define MACGAME1tf(t,e,f,m,s,v,fl)	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,(GF_GAMMA|(fl)|ADGF_MACRESFORK),v)
+#define PIPGAME1(t,e,f,m,s,v)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformPippin,(GF_GAMMA|ADGF_MACRESFORK),v)
+#define PIPGAME1f(t,e,f,m,s,v,fl)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformPippin,(GF_GAMMA|(fl)|ADGF_MACRESFORK),v)
 #define WINGAME1(t,e,f,m,s,v)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
-#define WINGAME1f(t,e,f,m,s,v,fl)   GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,(fl|ADGF_NO_FLAGS),v)
+#define WINGAME1f(t,e,f,m,s,v,fl)   GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,((fl)|ADGF_NO_FLAGS),v)
 #define WINGAME1t(t,e,f,m,s,v)	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
-#define WINGAME1tf(t,e,f,m,s,v,fl)	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,(fl|ADGF_NO_FLAGS),v)
+#define WINGAME1tf(t,e,f,m,s,v,fl)	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,((fl)|ADGF_NO_FLAGS),v)
 #define FMTGAME1(t,e,f,m,s,v)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformFMTowns,ADGF_NO_FLAGS,v)
 #define SHKGAME1(t,e,f,m,s,v)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformShockwave,ADGF_NO_FLAGS,v)
-#define MACDEMO1(t,e,f,m,s,v)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
-#define MACDEMO1t(t,e,f,m,s,v)	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
+#define MACDEMO1(t,e,f,m,s,v)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,(GF_GAMMA|ADGF_MACRESFORK|ADGF_DEMO),v)
+#define MACDEMO1t(t,e,f,m,s,v)	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,(GF_GAMMA|ADGF_MACRESFORK|ADGF_DEMO),v)
 #define WINDEMO1(t,e,f,m,s,v)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
 #define WINDEMO1t(t,e,f,m,s,v)	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
-#define MACGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
-#define MACGAME1f_l(t,e,f,m,s,l,v,fl) GENGAME1_(t,e,f,m,s,l,Common::kPlatformMacintosh,(fl|ADGF_MACRESFORK),v)
-#define PIPGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformPippin,ADGF_MACRESFORK,v)
+#define MACGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformMacintosh,(GF_GAMMA|ADGF_MACRESFORK),v)
+#define MACGAME1f_l(t,e,f,m,s,l,v,fl) GENGAME1_(t,e,f,m,s,l,Common::kPlatformMacintosh,(GF_GAMMA|(fl)|ADGF_MACRESFORK),v)
+#define PIPGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformPippin,(GF_GAMMA|ADGF_MACRESFORK),v)
 #define WINGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
 #define WINGAME1f_l(t,e,f,m,s,l,v,fl) GENGAME1_(t,e,f,m,s,l,Common::kPlatformWindows,fl,v)
 #define WINGAME1t_l(t,e,f,m,s,l,v) GENGAME1t_(t,e,f,m,s,l,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
 #define WINGAME1tf_l(t,e,f,m,s,l,v,fl) GENGAME1t_(t,e,f,m,s,l,Common::kPlatformWindows,fl,v)
-#define MACGAME1t_l(t,e,f,m,s,l,v) GENGAME1t_(t,e,f,m,s,l,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
+#define MACGAME1t_l(t,e,f,m,s,l,v) GENGAME1t_(t,e,f,m,s,l,Common::kPlatformMacintosh,(GF_GAMMA|ADGF_MACRESFORK),v)
 #define FMTGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformFMTowns,ADGF_NO_FLAGS,v)
 #define SHKGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformShockwave,ADGF_NO_FLAGS,v)
-#define MACDEMO1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
-#define MACDEMO1f_l(t,e,f,m,s,l,v,fl) GENGAME1_(t,e,f,m,s,l,Common::kPlatformMacintosh,(fl|ADGF_MACRESFORK|ADGF_DEMO),v)
-#define PIPDEMO1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformPippin,(ADGF_MACRESFORK|ADGF_DEMO),v)
+#define MACDEMO1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformMacintosh,(GF_GAMMA|ADGF_MACRESFORK|ADGF_DEMO),v)
+#define MACDEMO1f_l(t,e,f,m,s,l,v,fl) GENGAME1_(t,e,f,m,s,l,Common::kPlatformMacintosh,(GF_GAMMA|(fl)|ADGF_MACRESFORK|ADGF_DEMO),v)
+#define PIPDEMO1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformPippin,(GF_GAMMA|ADGF_MACRESFORK|ADGF_DEMO),v)
 #define WINDEMO1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformWindows,ADGF_DEMO,v)
 #define WINDEMO1t_l(t,e,f,m,s,l,v) GENGAME1t_(t,e,f,m,s,l,Common::kPlatformWindows,ADGF_DEMO,v)
 
-#define MACGAME2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
-#define MACGAME2f(t,e,f1,m1,s1,f2,m2,s2,v,fl)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,(fl|ADGF_MACRESFORK),v)
-#define MACGAME2tf(t,e,f1,m1,s1,f2,m2,s2,v,fl)	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,(fl|ADGF_MACRESFORK),v)
-#define PIPGAME2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformPippin,ADGF_MACRESFORK,v)
+#define MACGAME2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,(GF_GAMMA|ADGF_MACRESFORK),v)
+#define MACGAME2f(t,e,f1,m1,s1,f2,m2,s2,v,fl)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,(GF_GAMMA|(fl)|ADGF_MACRESFORK),v)
+#define MACGAME2tf(t,e,f1,m1,s1,f2,m2,s2,v,fl)	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,(GF_GAMMA|(fl)|ADGF_MACRESFORK),v)
+#define PIPGAME2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformPippin,(GF_GAMMA|ADGF_MACRESFORK),v)
 #define WINGAME2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
-#define WINGAME2f(t,e,f1,m1,s1,f2,m2,s2,v,fl)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,(fl|ADGF_NO_FLAGS),v)
-#define WINGAME2f_l(t,e,f1,m1,s1,f2,m2,s2,l,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,(fl|ADGF_NO_FLAGS),v)
+#define WINGAME2f(t,e,f1,m1,s1,f2,m2,s2,v,fl)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,((fl)|ADGF_NO_FLAGS),v)
+#define WINGAME2f_l(t,e,f1,m1,s1,f2,m2,s2,l,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,((fl)|ADGF_NO_FLAGS),v)
 #define WINGAME2t(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
-#define WINGAME2tf(t,e,f1,m1,s1,f2,m2,s2,v,fl)	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,(fl|ADGF_NO_FLAGS),v)
+#define WINGAME2tf(t,e,f1,m1,s1,f2,m2,s2,v,fl)	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,((fl)|ADGF_NO_FLAGS),v)
 #define FMTGAME2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformFMTowns,ADGF_NO_FLAGS,v)
-#define MACDEMO2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
+#define MACDEMO2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,(GF_GAMMA|ADGF_MACRESFORK|ADGF_DEMO),v)
 #define WINDEMO2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
 #define WINDEMO2t(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
-#define WINDEMO2f(t,e,f1,m1,s1,f2,m2,s2,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,(fl|ADGF_DEMO),v)
-#define MACGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
-#define PIPGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformPippin,ADGF_MACRESFORK,v)
+#define WINDEMO2f(t,e,f1,m1,s1,f2,m2,s2,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,((fl)|ADGF_DEMO),v)
+#define MACGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh,(GF_GAMMA|ADGF_MACRESFORK),v)
+#define PIPGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformPippin,(GF_GAMMA|ADGF_MACRESFORK),v)
 #define WINGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
-#define MACGAME2f_l(t,e,f1,m1,s1,f2,m2,s2,l,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh, (fl|ADGF_MACRESFORK), v)
+#define MACGAME2f_l(t,e,f1,m1,s1,f2,m2,s2,l,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh, (GF_GAMMA|(fl)|ADGF_MACRESFORK), v)
 #define WINGAME2t_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
 #define FMTGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformFMTowns,ADGF_NO_FLAGS,v)
-#define MACDEMO2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
+#define MACDEMO2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh,(GF_GAMMA|ADGF_MACRESFORK|ADGF_DEMO),v)
 #define WINDEMO2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,ADGF_DEMO,v)
 #define WINDEMO2t_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,ADGF_DEMO,v)
-#define WINDEMO2f_l(t,e,f1,m1,s1,f2,m2,s2,l,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,(fl|ADGF_DEMO),v)
+#define WINDEMO2f_l(t,e,f1,m1,s1,f2,m2,s2,l,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,((fl)|ADGF_DEMO),v)
 
 static const DirectorGameDescription gameDescriptions[] = {
 	// Execute all *.lingo files in game directory
@@ -2290,6 +2293,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Rodem expects to be able to track the mouse cursor outside the
 	// window, which is impossible in ScummVM. Giving it a virtual
 	// desktop allows it to work like it would have on the original OS.
+	MACDEMO1f_l("henachoco05", "Demo", "xn--u9jyjb2hm5dx340eyb5b", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402, GF_DESKTOP|GF_640x480),
+	// Decomposed variant of the above
+	MACDEMO1f_l("henachoco05", "Demo", "xn--u9j8db1pc8mra5f3580fectc", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402, GF_DESKTOP|GF_640x480),
 	MACGAME1f_l("henachoco05", "", "yaken", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402, GF_DESKTOP|GF_640x480),
 	MACGAME1f_l("henachoco05", "Itachoco Taizen 2 rerelease", "yaken", "bb5f4d592c872f610291074fbf34376f", 290434, Common::JA_JPN, 402, GF_DESKTOP|GF_640x480),
 	WINGAME1f_l("henachoco05", "", "YAKEN.EXE", "1f9b0ef872de7b84063a53b2a1083c60", 2103629, Common::JA_JPN, 400, GF_DESKTOP|GF_640x480),
@@ -3995,7 +4001,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("defendinghuman", "Demo", "Donald A Norman", "77f4098988d5386794d1530065f514cd", 301669, 400),
 
 	// Mac executable is Derrat Sorcerum™ v1.0.3
-	MACGAME1("derratsorcerum", "", "xn--Derrat Sorcerum v1.0.3-h40n", "a546ef2b921a9b48fd93928f1a505f22", 483506, 404),
+	MACGAME1("derratsorcerum", "", "xn--Derrat Sorcerum v1.0.3 -tnf/xn--Derrat Sorcerum v1.0.3-h40n", "tr:107ae11bce211dc0abd62d9f43184b27", 483506, 404),
 	MACDEMO1("derratsorcerum", "Demo", "Derrat Sorcerum Demo v1.0.3", "a546ef2b921a9b48fd93928f1a505f22", 483506, 404),
 
 	// Both Mac and Win versions require installation to extract executable
@@ -4868,8 +4874,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("lobomau", "", "LOBO.EXE", "162d4d1aaf42b6e8d7dfc520e5de2bed", 201828999, Common::PT_BRA, 400),
 
 	MACGAME1("louiscatorze", "", "Louis Cat Orze/Louis Catorze", "r:2c7d0c0d55cbe3f622c7d68cedb671e0", 486698, 404),
-	WINGAME2("louiscatorze", "", "LOUIS.EXE",		   "21610856ba0f75598624edd58291600b", 719433,
-								 "LOUIS/V0ASTART.DIR", "65586336bda5bdc737c1ad420b0d403b", 2019106, 404),
+	WINGAME2("louiscatorze", "", "LCO/LOUIS.EXE",	   "t:cf4ba6186525654f10baf9091358b9c1",  719433,
+								 "LOUIS/V0ASTART.DIR", "t:47410892477fcdd0474e7faaeb6013bb", 2019106, 404),
 
 	MACGAME1("louvre", "", "Louvre 5 Mo", "r:a685f1809706f42bff5f3ee94f606065", 483518, 404),
 	WINGAME2("louvre", "", "LOUVRE.EXE",  "f575ed4b37c05ab4249f9d6d3c3d7e17", 698829,
@@ -6461,6 +6467,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("blinkyballoon", "", "Balloon",	 "r:0c0109b03fd29253e5d74c314911fa7f",  719005, 501),
 	WINGAME1("blinkyballoon", "", "BALLN95.EXE", "t:7a6e8152e71b82816b8742cc8e1cb453", 1427375, 501),
 
+	// Designed by Arc Media Works
+	MACGAME1("blockhead", "", "BLOCK/Interactive Puzzle Blockhead", "tr:e835f5af0cc44a8bdedd79124a0b89b0", 719005, 500),
+	WINGAME1("blockhead", "", "BLOCK/BLOCK32.EXE", "t:75150c6b4b8951d36c4503ca53830370", 1411181, 501),
+
 	WINGAME1t_l("bluesango", "", "BLUESANG.EXE", "08e531b980ebfb343201400add17b68e", 2143080, Common::JA_JPN, 501),
 
 	// Designed by In Chair Viewing (ICV)
@@ -7023,8 +7033,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("mecadrill", "", "xn--2bk5af5f2e0ctd/xn--2bk9a5e9d0bg", "16f51fc148898582fcdb6f58456ceb52", 719636, Common::JA_JPN, 501),
 	WINGAME1t_l("mecadrill", "", "MECA/MECA95.EXE", "ff76ffa3616a1acb82f6b12bc94bec64", 1390011, Common::JA_JPN, 505),
 
-	MACGAME1_l("microphonefiend", "8", "Microphone Fiend8", "bfd348abd981acae64c13d5e5e4d9540", 719785, Common::JA_JPN, 501),
-	MACGAME1_l("microphonefiend", "16", "Microphone Fiend16", "d8f16d8e1dbd01ebf1f74f028b16a126", 117830, Common::JA_JPN, 501),
+	MACGAME1f_l("microphonefiend", "8", "MF8/Microphone Fiend8", "tr:b2229850cb4e8ccb977c2f7c25650d6c", 719785, Common::JA_JPN, 501, GF_DESKTOP|GF_640x480),
+	MACGAME1f_l("microphonefiend", "16", "MF16/Microphone Fiend16", "tr:f2cb0ca9bce3a7fad18ba9f7c8c9f400", 117830, Common::JA_JPN, 501, GF_DESKTOP|GF_640x480),
 
 	// On hybrid CD with Joystick (France) covermount
 	// Original filename is CD Mieux-Mieux N°16
@@ -7092,6 +7102,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 										"TRAVEL/BAL_GX_F.MOV", "d:93ed396925332df6e302a67af8bc5e13", 139037, Common::NL_NLD, 500),
 	WINGAME2_l("moordspel", "32-bit",   "32/MOORD32.EXE",	   "t:a49f750a7fdf751840f6766e9faab17c", 2625425,
 										"TRAVEL/BAL_GX_F.MOV", "d:93ed396925332df6e302a67af8bc5e13", 139037, Common::NL_NLD, 500),
+
+	WINGAME1("mortalus", "", "Mortalus.exe", "t:187624cbacaa5bc77af89aefe9fe7345", 1397537, 500),
+	MACGAME1("mortalus", "", "Mortalus", "tr:55f5fbaa02a937ce6346017941e1d439", 705445, 500),
 
 	WINGAME1("msn", "Preview", "MSNPREV8.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 5215403, 501),
 
@@ -7640,6 +7653,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("teddybear", "", "Teddy Bear/Teddy Bear", "r:f117b8395c4859d11b9c02c741e22cea",  704537, Common::FR_FRA, 500),
 	WINGAME1_l("teddybear", "", "INSTALL/BEAR95.EXE",	 "t:8a5534267338a82b6fc959037af3df95", 1394051, Common::FR_FRA, 500),
+
+	WINGAME1("teazle", "",		"TEAZLE.EXE",	"t:b6d3a1d0f44fa23f544569cf97d98126", 1420271, 500),
+	MACGAME1("teazle", "",		"TZPL01",		"tr:50b6f06b9dfad624252d34f5ee8cd877", 112402, 500),
 
 	MACGAME1("tenchijukebox", "8-bit",	"Tenchi Muyo Jukebox 8 bit", "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 482610, 404),
 	MACGAME1("tenchijukebox", "16-bit", "Tenchi Muyo Jukebox 16 bit", "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 482610, 404),

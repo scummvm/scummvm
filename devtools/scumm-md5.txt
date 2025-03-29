@@ -161,7 +161,9 @@ indy3	Indiana Jones and the Last Crusade
 
 	f3c4ed6101b4c26c762b2dfb16b1481d	6295	fr	DOS	VGA	VGA	Fan translation	atp-fr.com, v0.9a
 	cb8feea195746e042368e2b738766d8b	-1	ko	DOS	VGA	VGA	Fan translation	ScummVM-Kor
+	e893df6788fc63fef936dd531f9712ec	6295	it	DOS	VGA	VGA	Fan translation	OldGamesItalia (2007)
 	275786f0f6894d1fe1ab5f1d103bb814	6295	ru	DOS	VGA	VGA	Fan translation
+	b27efc535df2bc2db998947c15ce57fb	7552	it	FM-TOWNS	FM-TOWNS	-	Fan translation	Glorifindel at OldGamesItalia/IAGTG (2007), v1.0
 
 loom	Loom
 	4dc780f1bc587a193ce8a97652791438	5748	en	Amiga	EGA	EGA	-	Antti Leimi, Andrea Petrucci
@@ -203,6 +205,7 @@ loom	Loom
 #	37f56ceb13e401a7ac7d9e6b37fecaf7	5748	ru	DOS	EGA	EGA	Fan translation	PRCA RuSCUMM v1.1 (uses custom launcher)
 	cd46c9f122272d02bbf79332ff521898	5748	ru	DOS	EGA	EGA	Fan translation	PRCA RuSCUMM v1.2 16 Mar 07
 	303708df4166067540a5c481eceb04ef	7540	ru	FM-TOWNS	FM-TOWNS	-	Fan translation	PRCA RuSCUMM v1.0 16 Mar 07
+	2edee19abf8ab2868b09c5959683dbd4	7540	it	FM-TOWNS	FM-TOWNS	-	Fan translation	tsm/Carmine OldGamesItalia
 
 monkey	The Secret of Monkey Island
 	c666a998af90d81db447eccba9f72c8d	-1	en	Atari	No AdLib	EGA	-
@@ -639,7 +642,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	07b810e37be7489263f7bc7627d4765d	-1	ru	Windows	unenc	Unencrypted	-	sev
 	a336134914eaab4892d35625aa15ad1d	-1	ru	Windows	HE 99	-	-	George Kormendi
 	b5298a5c15ffbe8b381d51ea4e26d35c	44233	de	All	HE 99	-	-	Joachim Eberhard
-	4f138ac6f9b2ac5a41bc68b2c3296064	44233	fr	Windows	HE 99	-	-	gist974
+	4f138ac6f9b2ac5a41bc68b2c3296064	44233	fr	All	HE 99	-	-	gist974
 	e9271b3d0694c7101f10d675ab7c0133	-1	it	Windows	HE 99	-	-	George Q. Greg
 	78bd5f036ea35a878b74e4f47941f784	44035	ru	Windows	HE 99	-	-	sev
 

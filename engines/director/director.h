@@ -23,12 +23,16 @@
 #define DIRECTOR_DIRECTOR_H
 
 #include "common/hash-ptr.h"
+#include "common/gui_options.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/types.h"
 #include "director/util.h"
 #include "director/detection.h"
+
+#define GAMEOPTION_GAMMA_CORRECTION GUIO_GAMEOPTIONS1
+#define GAMEOPTION_TRUE_COLOR GUIO_GAMEOPTIONS2
 
 namespace Common {
 class MacResManager;
@@ -95,6 +99,7 @@ enum {
 	GF_DESKTOP = 1 << 0,
 	GF_640x480 = 1 << 1,
 	GF_32BPP   = 1 << 2,
+	GF_GAMMA   = 1 << 3,
 };
 
 struct MovieReference {
@@ -170,7 +175,6 @@ public:
 	StartMovie getStartMovie() const;
 	void parseOptions();
 	Graphics::MacWindowManager *getMacWindowManager() const { return _wm; }
-	Archive *getMainArchive() const;
 	Lingo *getLingo() const { return _lingo; }
 	Window *getStage() const { return _stage; }
 	Window *getCurrentWindow() const { return _currentWindow; }
@@ -181,6 +185,8 @@ public:
 	void setCursorWindow(Window *window) { _cursorWindow = window; }
 	Movie *getCurrentMovie() const;
 	void setCurrentMovie(Movie *movie);
+	Archive *getMainArchive() const { return _mainArchive; }
+	void setMainArchive(Archive *archive) { _mainArchive = archive; }
 	Common::String getCurrentPath() const;
 	Common::String getCurrentAbsolutePath();
 	Common::Path getStartupPath() const;
@@ -192,6 +198,7 @@ public:
 	bool setPalette(const CastMemberID &id);
 	void setPalette(const byte *palette, uint16 count);
 	void shiftPalette(int startIndex, int endIndex, bool reverse);
+	void syncPalette();
 	void clearPalettes();
 	PaletteV4 *getPalette(const CastMemberID &id);
 	bool hasPalette(const CastMemberID &id);
@@ -264,6 +271,7 @@ public:
 	bool _centerStage;
 	char _dirSeparator;
 	bool _fixStageSize;
+	Archive *_mainArchive;
 	Common::Rect _fixStageRect;
 	Common::List<Common::String> _extraSearchPath;
 
@@ -298,6 +306,7 @@ public:
 private:
 	byte _currentPalette[768];
 	uint16 _currentPaletteLength;
+	bool _gammaCorrection;
 	Lingo *_lingo;
 	uint16 _version;
 

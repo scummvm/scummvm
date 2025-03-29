@@ -294,8 +294,8 @@ static Common::Error runGame(const Plugin *enginePlugin, OSystem &system, const 
 	// Initialize any game-specific keymaps
 	Common::KeymapArray gameKeymaps = metaEngine.initKeymaps(target.c_str());
 	Common::Keymapper *keymapper = system.getEventManager()->getKeymapper();
-	for (uint i = 0; i < gameKeymaps.size(); i++) {
-		keymapper->addGameKeymap(gameKeymaps[i]);
+	for (auto &gameKeymap : gameKeymaps) {
+		keymapper->addGameKeymap(gameKeymap);
 	}
 
 	system.applyBackendSettings();
@@ -391,8 +391,8 @@ static void setupKeymapper(OSystem &system) {
 
 	// Get the platform-specific global keymap (if it exists)
 	KeymapArray platformKeymaps = system.getGlobalKeymaps();
-	for (uint i = 0; i < platformKeymaps.size(); i++) {
-		mapper->addGlobalKeymap(platformKeymaps[i]);
+	for (auto &platformKeymap : platformKeymaps) {
+		mapper->addGlobalKeymap(platformKeymap);
 	}
 }
 
@@ -443,9 +443,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		// Merge additional settings and command with command line. Command line has priority.
 		if (command.empty())
 			command = additionalCommand;
-		for (Common::StringMap::const_iterator x = additionalSettings.begin(); x != additionalSettings.end(); ++x) {
-			if (!settings.contains(x->_key))
-				settings[x->_key] = x->_value;
+		for (const auto &additionalSetting : additionalSettings) {
+			if (!settings.contains(additionalSetting._key))
+				settings[additionalSetting._key] = additionalSetting._value;
 		}
 	}
 

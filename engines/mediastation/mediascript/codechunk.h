@@ -39,12 +39,13 @@ public:
 
 	Operand execute(Common::Array<Operand> *args = nullptr, Common::Array<Operand> *locals = nullptr);
 
+	static Operand callBuiltInMethod(BuiltInMethod method, Operand &self, Common::Array<Operand> &args);
+
 private:
 	Operand executeNextStatement();
-	Operand callBuiltInMethod(BuiltInMethod method, Operand self, Common::Array<Operand> &args);
 	Operand callFunction(uint functionId, uint parameterCount);
 	Operand getVariable(uint32 id, VariableScope scope);
-	void putVariable(uint32 id, VariableScope scope, Operand value);
+	void putVariable(uint32 id, VariableScope scope, Operand &value);
 
 	bool _weOwnLocals = false;
 	Common::Array<Operand> *_locals = nullptr;

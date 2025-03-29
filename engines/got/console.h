@@ -38,6 +38,7 @@ private:
 	bool cmdFreeze(int argc, const char **argv);
 	bool cmdLevel(int argc, const char **argv);
 	bool cmdFlying(int argc, const char **argv);
+	bool cmdFlag(int argc, const char **argv);
 
 public:
 	Console();

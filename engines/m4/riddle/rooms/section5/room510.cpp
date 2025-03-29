@@ -838,7 +838,7 @@ bool Room510::useAltarPost() {
 			hotspot_set_active("ALTAR POST ", true);
 			kernel_load_variant("510lock1");
 		} else if (_G(flags)[V169] <= 2) {
-			_statue = series_play(" 510 STATUE", 0xa00, 16, -1, 5, 0, 100, 0, 0, 0, -1);
+			_statue = series_play("510 STATUE", 0xa00, 16, -1, 5, 0, 100, 0, 0, 0, -1);
 			kernel_timing_trigger(1, 2);
 			hotspot_set_active("ALTAR POST", true);
 			hotspot_set_active("ALTAR POST ", false);
@@ -970,7 +970,7 @@ bool Room510::useAltarPost() {
 		if (_G(flags)[V169] <= 0) {
 			terminateMachineAndNull(_statue);
 			_statue = series_play("510 RIP LOWERS STATUE", 0xa00, 16, 1, 5);
-		} else if (_G(flags)[V169] == 1) {
+		} else if (_G(flags)[V169] <= 2) {
 			terminateMachineAndNull(_statue);
 			_statue = series_play("510 RIP LOWERS STATUE", 0xa00, 18, 1, 5);
 		}

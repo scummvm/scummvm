@@ -30,7 +30,7 @@ namespace Rooms {
 
 class Room506 : public Room {
 private:
-	RGB8 _palette[39] = {};
+	RGB8 _palette[59] = {};
 	bool _flag1 = false;
 	bool _flag2 = false;
 	bool _flag3 = false;

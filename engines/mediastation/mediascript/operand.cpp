@@ -53,6 +53,10 @@ int Operand::getInteger() {
 		return _u.i;
 	}
 
+	case kOperandTypeFloat1: {
+		return static_cast<int>(_u.d);
+	}
+
 	case kOperandTypeVariableDeclaration: {
 		return _u.variable->_value.i;
 	}
@@ -88,6 +92,11 @@ double Operand::getDouble() {
 	case kOperandTypeFloat1:
 	case kOperandTypeFloat2: {
 		return _u.d;
+	}
+
+	case kOperandTypeLiteral1:
+	case kOperandTypeLiteral2: {
+		return static_cast<double>(_u.i);
 	}
 
 	case kOperandTypeVariableDeclaration: {
@@ -162,7 +171,7 @@ Variable *Operand::getVariable() {
 	}
 }
 
-void Operand::putFunction(uint functionId) {
+void Operand::putFunctionId(uint functionId) {
 	switch (_type) {
 	case kOperandTypeFunction: {
 		_u.functionId = functionId;
@@ -170,7 +179,7 @@ void Operand::putFunction(uint functionId) {
 	}
 
 	default:
-		error("Operand::putFunction(): Attempt to put function ID into operand type %s (%d)",
+		error("Operand::putFunctionId(): Attempt to put function ID into operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
 	}
 }
@@ -188,6 +197,31 @@ uint Operand::getFunctionId() {
 
 	default:
 		error("Operand::getFunction(): Attempt to get function ID from operand type %s (%d)",
+			operandTypeToStr(_type), static_cast<uint>(_type));
+	}
+}
+
+void Operand::putMethodId(BuiltInMethod methodId) {
+	switch (_type) {
+	case kOperandTypeMethod: {
+		_u.methodId = methodId;
+		break;
+	}
+
+	default:
+		error("Operand::putFunctionId(): Attempt to put method ID into operand type %s (%d)",
+			operandTypeToStr(_type), static_cast<uint>(_type));
+	}
+}
+
+BuiltInMethod Operand::getMethodId() {
+	switch (_type) {
+	case kOperandTypeMethod: {
+		return _u.methodId;
+	}
+
+	default:
+		error("Operand::getFunction(): Attempt to get method ID from operand type %s (%d)",
 			operandTypeToStr(_type), static_cast<uint>(_type));
 	}
 }
@@ -249,16 +283,16 @@ uint32 Operand::getAssetId() {
 	}
 }
 
-void Operand::putCollection(Collection *collection) {
+void Operand::putCollection(Common::SharedPtr<Collection> collection) {
 	switch (_type) {
 	case kOperandTypeCollection: {
-		_u.collection = collection;
+		_collection = collection;
 		break;
 	}
 
 	case kOperandTypeVariableDeclaration: {
 		assert(_u.variable->_type == kVariableTypeCollection);
-		_u.variable->_value.collection = collection;
+		_u.variable->_c = collection;
 		break;
 	}
 
@@ -268,15 +302,15 @@ void Operand::putCollection(Collection *collection) {
 	}
 }
 
-Collection *Operand::getCollection() {
+Common::SharedPtr<Collection> Operand::getCollection() {
 	switch (_type) {
 	case kOperandTypeCollection: {
-		return _u.collection;
+		return _collection;
 	}
 
 	case kOperandTypeVariableDeclaration: {
 		assert(_u.variable->_type == kVariableTypeCollection);
-		return _u.variable->_value.collection;
+		return _u.variable->_c;
 	}
 
 	default:
@@ -311,7 +345,17 @@ bool Operand::operator==(const Operand &other) const {
 			return lhs.getInteger() == rhs.getInteger();
 
 		case kOperandTypeAssetId:
-			return lhs.getAssetId() == rhs.getAssetId();
+			if (rhs.getType() == kOperandTypeLiteral2) {
+				// This might happen if, for example, a given asset wasn't found
+				// in a collection and the script sets the return value to -1.
+				return static_cast<int>(lhs.getAssetId()) == rhs.getInteger();
+			} else {
+				// If the types are incompatiable, rhs will raise the error.
+				return lhs.getAssetId() == rhs.getAssetId();
+			}
+
+		case kOperandTypeString:
+			return *lhs.getString() == *rhs.getString();
 
 		default:
 			error("Operand::operator==(): Unimplemented operand types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));

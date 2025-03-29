@@ -742,6 +742,12 @@ bool HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool
 	if (secondary) {
 		if (_background->decoder->getCurFrame() % 2 == 0)
 			drawShoot(mousePos);
+
+		if (checkRButtonUp()) {
+			setRButtonUp(false);
+			return false;
+		}
+		
 		return clickedSecondaryShoot(mousePos);
 	} else {
 		drawShoot(mousePos);
@@ -810,5 +816,12 @@ bool HypnoEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 	return false;
 }
 
+bool HypnoEngine::checkRButtonUp() {
+	return false;
+}
+
+void HypnoEngine::setRButtonUp(const bool val) {
+	return;
+}
 } // End of namespace Hypno
 

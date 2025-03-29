@@ -124,6 +124,8 @@ void Inventory::drawHeader(Graphics::ManagedSurface &surf) {
 		title = "INVENTORY";
 	else if (DgdsEngine::getInstance()->getGameLang() == Common::DE_DEU)
 		title = "INVENTAR";
+	else if (DgdsEngine::getInstance()->getGameLang() == Common::FR_FRA)
+		title = "INVENTAIRE";
 	else
 		error("Unsupported language %d", DgdsEngine::getInstance()->getGameLang());
 

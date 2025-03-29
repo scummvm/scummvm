@@ -87,15 +87,15 @@ void RXYFile::load(Common::SeekableReadStreamEndian &rxy) {
 	uint16 count = (rxy.size() - 2) / 8;
 
 	_coords.resize(count);
-	for (CoordArray::iterator c = _coords.begin(); c != _coords.end(); ++c) {
-		c->left   = rxy.readUint16();
-		c->right  = rxy.readUint16();
-		c->top    = rxy.readUint16();
-		c->bottom = rxy.readUint16();
+	for (auto &coord : _coords) {
+		coord.left   = rxy.readUint16();
+		coord.right  = rxy.readUint16();
+		coord.top    = rxy.readUint16();
+		coord.bottom = rxy.readUint16();
 
-		if (c->left != 0xFFFF) {
-			_width  = MAX<uint16>(_width , c->right  + 1);
-			_height = MAX<uint16>(_height, c->bottom + 1);
+		if (coord.left != 0xFFFF) {
+			_width  = MAX<uint16>(_width , coord.right  + 1);
+			_height = MAX<uint16>(_height, coord.bottom + 1);
 		}
 	}
 }

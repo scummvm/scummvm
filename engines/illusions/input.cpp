@@ -64,8 +64,7 @@ InputEvent& InputEvent::addMouseButton(int mouseButton) {
 
 uint InputEvent::handle(Common::CustomEventType action, int mouseButton, bool down) {
 	uint newKeys = 0;
-	for (KeyMap::iterator it = _keyMap.begin(); it != _keyMap.end(); ++it) {
-		KeyMapping &keyMapping = *it;
+	for (auto &keyMapping : _keyMap) {
 		if ((keyMapping._action != kActionNone && keyMapping._action == action) ||
 			(keyMapping._mouseButton != MOUSE_NONE && keyMapping._mouseButton == mouseButton)) {
 			if (down && !keyMapping._down) {

@@ -53,9 +53,8 @@ Common::Archive *HandlerUtils::getZipArchive() {
 	// then use SearchMan to find it
 	Common::ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, ARCHIVE_NAME);
-	for (Common::ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
-		Common::ArchiveMember       const &m = **it;
-		Common::SeekableReadStream *const stream = m.createReadStream();
+	for (auto &m : fileList) {
+		Common::SeekableReadStream *const stream = m->createReadStream();
 		Common::Archive *zipArchive = Common::makeZipArchive(stream);
 		if (zipArchive)
 			return zipArchive;

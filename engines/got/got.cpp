@@ -122,7 +122,10 @@ Common::Error GotEngine::syncGame(Common::Serializer &s) {
 		if (area == 0)
 			area = 1;
 
-		g_vars->setArea(area);
+		if (area != _G(area)) {
+			_G(area) = area;
+			g_vars->loadArea();
+		}
 	}
 
 	_G(thorInfo).sync(s);

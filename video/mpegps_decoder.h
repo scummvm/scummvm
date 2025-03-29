@@ -96,6 +96,8 @@ private:
 		Common::SeekableReadStream *_stream;
 		Common::Queue<Packet> _videoQueue;
 		Common::Queue<Packet> _audioQueue;
+		// If we come across a non-packetized elementary stream
+		bool _isESStream;
 	};
 
 	// Base class for handling MPEG streams

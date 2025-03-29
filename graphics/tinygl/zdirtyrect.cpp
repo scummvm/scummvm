@@ -95,13 +95,12 @@ void GLContext::disposeResources() {
 }
 
 void GLContext::disposeDrawCallLists() {
-	typedef Common::List<DrawCall *>::const_iterator DrawCallIterator;
-	for (DrawCallIterator it = _previousFrameDrawCallsQueue.begin(); it != _previousFrameDrawCallsQueue.end(); ++it) {
-		delete *it;
+	for (const auto &drawCall : _previousFrameDrawCallsQueue) {
+		delete drawCall;
 	}
 	_previousFrameDrawCallsQueue.clear();
-	for (DrawCallIterator it = _drawCallsQueue.begin(); it != _drawCallsQueue.end(); ++it) {
-		delete *it;
+	for (auto &drawCall : _drawCallsQueue) {
+		delete drawCall;
 	}
 	_drawCallsQueue.clear();
 }
@@ -144,9 +143,9 @@ void GLContext::presentBufferDirtyRects(Common::List<Common::Rect> &dirtyAreas) 
 	}
 
 	// This loop increases outer rectangle coordinates to favor merging of adjacent rectangles.
-	for (RectangleIterator it = rectangles.begin(); it != rectangles.end(); ++it) {
-		(*it).rectangle.right++;
-		(*it).rectangle.bottom++;
+	for (auto &rect : rectangles) {
+		rect.rectangle.right++;
+		rect.rectangle.bottom++;
 	}
 
 	// Merge coalesce dirty rects.
@@ -182,22 +181,22 @@ void GLContext::presentBufferDirtyRects(Common::List<Common::Rect> &dirtyAreas) 
 		}
 	}
 
-	for (RectangleIterator it1 = rectangles.begin(); it1 != rectangles.end(); ++it1) {
-		(*it1).rectangle.clip(renderRect);
+	for (auto &rect : rectangles) {
+		rect.rectangle.clip(renderRect);
 	}
 
 	if (!rectangles.empty()) {
-		for (RectangleIterator itRect = rectangles.begin(); itRect != rectangles.end(); ++itRect) {
-			dirtyAreas.push_back((*itRect).rectangle);
+		for (auto &rect : rectangles) {
+			dirtyAreas.push_back(rect.rectangle);
 		}
 
 		// Execute draw calls.
-		for (DrawCallIterator it = _drawCallsQueue.begin(); it != _drawCallsQueue.end(); ++it) {
-			Common::Rect drawCallRegion = (*it)->getDirtyRegion();
-			for (RectangleIterator itRect = rectangles.begin(); itRect != rectangles.end(); ++itRect) {
-				Common::Rect dirtyRegion = (*itRect).rectangle;
+		for (auto &drawCall : _drawCallsQueue) {
+			Common::Rect drawCallRegion = drawCall->getDirtyRegion();
+			for (auto &rect : rectangles) {
+				Common::Rect dirtyRegion = rect.rectangle;
 				if (dirtyRegion.intersects(drawCallRegion)) {
-					(*it)->execute(dirtyRegion, true);
+					drawCall->execute(dirtyRegion, true);
 				}
 			}
 		}
@@ -211,8 +210,8 @@ void GLContext::presentBufferDirtyRects(Common::List<Common::Rect> &dirtyAreas) 
 			fb->enableBlending(false);
 			fb->enableAlphaTest(false);
 
-			for (RectangleIterator it = rectangles.begin(); it != rectangles.end(); ++it) {
-				debugDrawRectangle((*it).rectangle, (*it).r, (*it).g, (*it).b);
+			for (auto &rect : rectangles) {
+				debugDrawRectangle(rect.rectangle, rect.r, rect.g, rect.b);
 			}
 
 			fb->enableBlending(blending_enabled);
@@ -221,8 +220,8 @@ void GLContext::presentBufferDirtyRects(Common::List<Common::Rect> &dirtyAreas) 
 	}
 
 	// Dispose not necessary draw calls.
-	for (DrawCallIterator it = _previousFrameDrawCallsQueue.begin(); it !=  _previousFrameDrawCallsQueue.end(); ++it) {
-		delete *it;
+	for (auto &p : _previousFrameDrawCallsQueue) {
+		delete p;
 	}
 
 	_previousFrameDrawCallsQueue = _drawCallsQueue;
@@ -235,13 +234,11 @@ void GLContext::presentBufferDirtyRects(Common::List<Common::Rect> &dirtyAreas) 
 }
 
 void GLContext::presentBufferSimple(Common::List<Common::Rect> &dirtyAreas) {
-	typedef Common::List<DrawCall *>::const_iterator DrawCallIterator;
-
 	dirtyAreas.push_back(Common::Rect(fb->getPixelBufferWidth(), fb->getPixelBufferHeight()));
 
-	for (DrawCallIterator it = _drawCallsQueue.begin(); it != _drawCallsQueue.end(); ++it) {
-		(*it)->execute(true);
-		delete *it;
+	for (const auto &drawCall : _drawCallsQueue) {
+		drawCall->execute(true);
+		delete drawCall;
 	}
 
 	_drawCallsQueue.clear();
@@ -392,7 +389,7 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 		}
 		break;
 	case TGL_TRIANGLE_FAN:
-		for(int i = 1; i < cnt; i += 2) {
+		for(int i = 1; i < cnt - 1; i++) {
 			c->gl_draw_triangle(&c->vertex[0], &c->vertex[i], &c->vertex[i + 1]);
 		}
 		break;

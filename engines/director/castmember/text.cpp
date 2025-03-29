@@ -299,7 +299,7 @@ bool textWindowCallback(Graphics::WindowClick click, Common::Event &event, void 
 	return g_director->getCurrentMovie()->processEvent(event);
 }
 
-Graphics::MacWidget *TextCastMember::createWindowOrWidget(Common::Rect &bbox, Channel *channel, Common::Rect dims, Graphics::MacFont *macFont) {
+Graphics::MacWidget *TextCastMember::createWindowOrWidget(Common::Rect &bbox, Common::Rect dims, Graphics::MacFont *macFont) {
 	Graphics::MacWidget *widget = nullptr;
 
 	if (_textType == kTextTypeScrolling) {
@@ -323,7 +323,6 @@ Graphics::MacWidget *TextCastMember::createWindowOrWidget(Common::Rect &bbox, Ch
 	} else {
 		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), _lineSpacing, _borderSize, _gutterSize, _boxShadow, _textShadow, _textType == kTextTypeFixed);
 		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
-		((Graphics::MacText *)widget)->setEditable(channel->_sprite->_editable);
 		((Graphics::MacText *)widget)->draw();
 	}
 
@@ -351,12 +350,15 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 		if (_textType == kTextTypeAdjustToFit) {
 			dims.right = MIN<int>(dims.right, dims.left + _initialRect.width());
 			dims.bottom = MIN<int>(dims.bottom, dims.top + _initialRect.height());
-		} else if (_textType == kTextTypeFixed) {
+		} else if (_textType == kTextTypeFixed || _textType == kTextTypeScrolling) {
 			// use initialRect to create widget for fixed style text, this maybe related to version.
 			dims.right = MAX<int>(dims.right, dims.left + _initialRect.width());
-			dims.bottom = MAX<int>(dims.bottom, dims.top + _initialRect.height());
+			dims.bottom = MAX<int>(dims.bottom, dims.top + MAX<int>(_initialRect.height(), _maxHeight));
 		}
-		widget = createWindowOrWidget(bbox, channel, dims, macFont);
+		widget = createWindowOrWidget(bbox, dims, macFont);
+		if (_textType != kTextTypeScrolling) {
+			((Graphics::MacText *)widget)->setEditable(channel->_sprite->_editable);
+		}
 
 		// since we disable the ability of setActive in setEdtiable, then we need to set active widget manually
 		if (channel->_sprite->_editable) {
@@ -441,6 +443,19 @@ int TextCastMember::getLineCount() {
 		}
 	}
 	warning("TextCastMember::getLineCount(): no widget available, returning 0");
+	return 0;
+}
+
+int TextCastMember::getLineHeight(int line) {
+	Graphics::MacWidget *target = getWidget();
+	if (target) {
+		if (_textType == kTextTypeScrolling) {
+			return ((Graphics::MacTextWindow *)target)->getLineHeight(line);
+		} else {
+			return ((Graphics::MacText *)target)->getLineHeight(line);
+		}
+	}
+	warning("TextCastMember::getLineHeight(): no widget available, returning 0");
 	return 0;
 }
 

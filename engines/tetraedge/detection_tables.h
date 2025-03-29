@@ -40,6 +40,17 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		GUIO0()
 	},
 
+	// Amerzone Android release
+	{
+		"amerzone",
+		nullptr,
+		AD_ENTRY1s("main.1.com.microids.amerzone.obb", "7f84b8030e523f999fcc77351bf86d8a", 646128261),
+		Common::UNK_LANG,
+		Common::kPlatformAndroid,
+		ADGF_UNSTABLE,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
 	// GOG and Steam releases
 	// Note: Full sum of GOG and Steam are different,
 	// but size and first 5000 bytes are the same.

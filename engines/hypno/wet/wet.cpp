@@ -79,6 +79,8 @@ WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(s
 	_c50LeftTurns = 0;
 	_c50RigthTurns = 0;
 
+	_rButtonUp = false;
+
 	const chapterEntry *entry = rawChapterTable;
 	while (entry->id) {
 		_ids.push_back(entry->id);

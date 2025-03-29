@@ -77,6 +77,8 @@ static void fDiaryLocList(ArgArray args) {
 	assert(args[2].type == NUM);
 	assert(args[3].type == NUM);
 
+	g_private->_currentDiaryPage = -1;
+
 	debugC(1, kPrivateDebugScript, "DiaryLocList(%d, %d, %d, %d)", args[0].u.val, args[1].u.val, args[2].u.val, args[3].u.val);
 
 	x2 = args[0].u.val;
@@ -90,11 +92,61 @@ static void fDiaryLocList(ArgArray args) {
 }
 
 static void fDiaryGoLoc(ArgArray args) {
-	debugC(1, kPrivateDebugScript, "WARNING: DiaryGoLoc not implemented");
+	debugC(1, kPrivateDebugScript, "DiaryGoLoc(%d, ..)", args[0].u.val);
+
+	ExitInfo e;
+
+	e.rect = *args[1].u.rect;
+	e.nextSetting = "kDiaryMiddle";
+
+	if (args[0].u.val) {
+		e.cursor = "kTurnRight";
+		g_private->_diaryNextPageExit = e;
+	} else {
+		e.cursor = "kTurnLeft";
+		g_private->_diaryPrevPageExit = e;
+	}
+
+	g_private->_exits.push_front(e);
+}
+
+static void fDiaryPageTurn(ArgArray args) {
+	debugC(1, kPrivateDebugScript, "DiaryPageTurn(%d, ..)", args[0].u.val);
+
+	ExitInfo e;
+	e.nextSetting = "kDiaryMiddle";
+	e.rect = *args[1].u.rect;
+
+	if (args[0].u.val == 1) {
+		e.cursor = "kTurnRight";
+
+		if (g_private->_currentDiaryPage == g_private->_diaryPages.size() - 1) {
+			e.nextSetting = "kDiaryLastPage";
+		}
+
+		g_private->_diaryNextPageExit = e;
+	} else {
+		e.cursor = "kTurnLeft";
+
+		if (g_private->_currentDiaryPage == 0) {
+			e.nextSetting = "kDiaryTOC";
+		}
+
+		g_private->_diaryPrevPageExit = e;
+	}
+
+	g_private->_exits.push_front(e);
+}
+
+static void fDiaryPage(ArgArray args) {
+	debugC(1, kPrivateDebugScript, "DiaryPage(%d, %d, %d, %d, ..)", args[0].u.rect->left, args[0].u.rect->top, args[0].u.rect->right, args[0].u.rect->bottom);
+	g_private->loadMemories(*args[0].u.rect, args[1].u.val, args[2].u.val);
 }
 
 static void fDiaryInvList(ArgArray args) {
 	debugC(1, kPrivateDebugScript, "DiaryInvList(%d, ..)", args[0].u.val);
+
+	g_private->_currentDiaryPage = g_private->_diaryPages.size();
 
 	const Common::Rect *r1 = args[1].u.rect;
 	const Common::Rect *r2 = args[2].u.rect;
@@ -214,6 +266,10 @@ static void fBustMovie(ArgArray args) {
 
 	g_private->_nextMovie = pv;
 	g_private->_nextSetting = args[0].u.sym->name->c_str();
+
+	Common::String memoryPath = pv;
+	memoryPath.replace('/', '\\');
+	g_private->addMemory(memoryPath);
 }
 
 static void fDossierAdd(ArgArray args) {
@@ -524,6 +580,7 @@ static void fMovie(ArgArray args) {
 	Common::String nextSetting = *args[1].u.sym->name;
 
 	if (!g_private->_playedMovies.contains(movie) && movie != "\"\"") {
+		g_private->addMemory(movie);
 		g_private->_nextMovie = movie;
 		g_private->_playedMovies.setVal(movie, true);
 		g_private->_nextSetting = nextSetting;
@@ -791,6 +848,8 @@ const FuncTable funcTable[] = {
 
 	// Diary
 	{fDiaryLocList, "DiaryLocList"},
+	{fDiaryPageTurn, "DiaryPageTurn"},
+	{fDiaryPage, "DiaryPage"},
 	{fDiaryInvList, "DiaryInvList"},
 	{fDiaryGoLoc, "DiaryGoLoc"},
 

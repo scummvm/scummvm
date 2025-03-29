@@ -1094,7 +1094,7 @@ void DarkseedEngine::loadRoom(int roomNumber) {
 
 void DarkseedEngine::changeToRoom(int newRoomNumber, bool placeDirectly) { // AKA LoadNewRoom
 	if (isDosDemo()) {
-		if (newRoomNumber == 0) {
+		if (newRoomNumber == 0 || newRoomNumber == 1) {
 			newRoomNumber = 43;
 			_previousRoomNumber = 44;
 		} else if (newRoomNumber == 44) {
@@ -2706,7 +2706,42 @@ void DarkseedEngine::newGame() {
 	_sound->resetSpeech();
 	_objectVar.reset();
 	_room->_roomNumber = isDosDemo() ? 4 : 0;
+	_delbertspeech = 0;
+	_yvec = 0;
 	_currentDay = 1;
+	_currentTimeInSeconds = 0x7e8e;
+	_fttime = 0;
+
+	_previousRoomNumber = 0;
+	_targetRoomNumber = 0;
+
+	_headAcheMessageCounter = 0;
+	_headacheMessageIdx = 0;
+
+	_sprite_y_scaling_threshold_maybe = 0xf0;
+	_scaledWalkSpeed_maybe = 0;
+	_scaledSpriteWidth = 0;
+	_scaledSpriteHeight = 0;
+
+	_frameBottom = 0;
+
+	_doorEnabled = false;
+	_useDoorTarget = false;
+
+	_counter_2c85_888b = 0;
+
+	_targetPlayerDirection = 0;
+
+	_systemTimerCounter = 0;
+
+	_phoneStatus = 0;
+
+	_soundTimer = 0;
+	_printedcomeheredawson = false;
+
+	_player->_isAutoWalkingToBed = false;
+
+	_console->clear();
 	changeToRoom(_room->_roomNumber);
 
 	doCircles();

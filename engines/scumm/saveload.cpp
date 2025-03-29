@@ -1492,9 +1492,9 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 				for (i = 0; i < 4096; ++i) {
 					*pos = SWAP_BYTES_16(*pos);
 					pos++;
+				}
 			}
 		}
-	}
 	} else {
 		s.syncBytes(_grabbedCursor, 8192, VER(20));
 	}
@@ -1905,7 +1905,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	}
 
 	// Before version 109, palette cycling for v4 games was handled in a different
-	// way (which is, by retrofitting v5 code, which caused a class of bugs like #10854).
+	// way (which, by retrofitting v5 code, caused a class of bugs like #10854).
 	// The proper v4 code has now been implemented from disasm (specifically, only the
 	// LOOM CD and MI1 VGA executables have said code).
 	//

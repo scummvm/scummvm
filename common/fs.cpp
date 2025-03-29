@@ -149,14 +149,14 @@ bool FSNode::getChildren(FSList &fslist, ListMode mode, bool hidden) const {
 	if (!_realNode || !_realNode->isDirectory())
 		return false;
 
-	AbstractFSList tmp;
+	AbstractFSList nodeList;
 
-	if (!_realNode->getChildren(tmp, mode, hidden))
+	if (!_realNode->getChildren(nodeList, mode, hidden))
 		return false;
 
 	fslist.clear();
-	for (AbstractFSList::iterator i = tmp.begin(); i != tmp.end(); ++i) {
-		fslist.push_back(FSNode(*i));
+	for (auto &node : nodeList) {
+		fslist.push_back(FSNode(node));
 	}
 
 	return true;
@@ -430,12 +430,11 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const Path& pr
 	FSList list;
 	node.getChildren(list, FSNode::kListAll);
 
-	FSList::iterator it = list.begin();
-	for ( ; it != list.end(); ++it) {
-		Path name = prefix.appendComponent(it->getRealName());
+	for (auto &curNode : list) {
+		Path name = prefix.appendComponent(curNode.getRealName());
 
 		// since the hashmap is case insensitive, we need to check for clashes when caching
-		if (it->isDirectory()) {
+		if (curNode.isDirectory()) {
 			if (!_flat && _subDirCache.contains(name)) {
 				// Always warn in this case as it's when there are 2 directories at the same place with different case
 				// That means a problem in user installation as lookups are always done case insensitive
@@ -448,9 +447,9 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const Path& pr
 						        Common::toPrintable(name.toString(Common::Path::kNativeSeparator)).c_str());
 					}
 				}
-				cacheDirectoryRecursive(*it, depth - 1, _flat ? prefix : name);
-				_subDirCache[name] = *it;
-				_dirMapCache[prefix].push_back(it->getRealName());
+				cacheDirectoryRecursive(curNode, depth - 1, _flat ? prefix : name);
+				_subDirCache[name] = curNode;
+				_dirMapCache[prefix].push_back(curNode.getRealName());
 			}
 		} else {
 			if (_fileCache.contains(name)) {
@@ -459,8 +458,8 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const Path& pr
 					        Common::toPrintable(name.toString(Common::Path::kNativeSeparator)).c_str());
 				}
 			} else {
-				_fileCache[name] = *it;
-				_fileMapCache[prefix].push_back(it->getRealName());
+				_fileCache[name] = curNode;
+				_fileMapCache[prefix].push_back(curNode.getRealName());
 			}
 		}
 	}
@@ -486,18 +485,18 @@ bool FSDirectory::getChildren(const Common::Path &path, Common::Array<Common::St
 	int matches = 0;
 
 	if (mode == kListDirectoriesOnly || mode == kListAll) {
-		for (Array<String>::const_iterator it = _dirMapCache[pathNormalized].begin(); it != _dirMapCache[pathNormalized].end(); ++it) {
-			if (hidden || it->firstChar() != '.') {
-				list.push_back(*it);
+		for (const auto &dir : _dirMapCache[pathNormalized]) {
+			if (hidden || dir.firstChar() != '.') {
+				list.push_back(dir);
 				matches++;
 			}
 		}
 	}
 
 	if (mode == kListFilesOnly || mode == kListAll) {
-		for (Array<String>::const_iterator it = _fileMapCache[pathNormalized].begin(); it != _fileMapCache[pathNormalized].end(); ++it) {
-			if (hidden || it->firstChar() != '.') {
-				list.push_back(*it);
+		for (const auto &file : _fileMapCache[pathNormalized]) {
+			if (hidden || file.firstChar() != '.') {
+				list.push_back(file);
 				matches++;
 			}
 		}
@@ -522,16 +521,16 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const Path &patter
 		patternStr = pattern.toString(pathSep);
 
 	auto addMatchingToList = [&](const NodeCache &nodeCache) {
-		for (NodeCache::const_iterator it = nodeCache.begin(); it != nodeCache.end(); ++it) {
+		for (const auto &it : nodeCache) {
 			bool isMatch;
 			if (matchPathComponents) {
-				Common::String keyStr = it->_key.toString(pathSep);
+				Common::String keyStr = it._key.toString(pathSep);
 				isMatch = keyStr.matchString(patternStr, true, wildCardExclusions);
 			} else
-				isMatch = it->_key.matchPattern(pattern);
+				isMatch = it._key.matchPattern(pattern);
 
 			if (isMatch) {
-				list.push_back(ArchiveMemberPtr(new FSDirectoryFile(it->_key, it->_value)));
+				list.push_back(ArchiveMemberPtr(new FSDirectoryFile(it._key, it._value)));
 				++matches;
 			}
 		}
@@ -553,14 +552,14 @@ int FSDirectory::listMembers(ArchiveMemberList &list) const {
 	ensureCached();
 
 	int files = 0;
-	for (NodeCache::const_iterator it = _fileCache.begin(); it != _fileCache.end(); ++it) {
-		list.push_back(ArchiveMemberPtr(new FSDirectoryFile(it->_key, it->_value)));
+	for (const auto &it : _fileCache) {
+		list.push_back(ArchiveMemberPtr(new FSDirectoryFile(it._key, it._value)));
 		++files;
 	}
 
 	if (_includeDirectories) {
-		for (NodeCache::const_iterator it = _subDirCache.begin(); it != _subDirCache.end(); ++it) {
-			list.push_back(ArchiveMemberPtr(new FSDirectoryFile(it->_key, it->_value)));
+		for (const auto &it : _subDirCache) {
+			list.push_back(ArchiveMemberPtr(new FSDirectoryFile(it._key, it._value)));
 			++files;
 		}
 	}

@@ -73,6 +73,7 @@ enum VariableScope {
 const char *variableScopeToStr(VariableScope scope);
 
 enum BuiltInFunction {
+	kUnk1Function = 10,
 	// TODO: Figure out if effectTransitionOnSync = 13 is consistent across titles?
 	kEffectTransitionFunction = 12, // PARAMS: 1
 	kEffectTransitionOnSyncFunction = 13,
@@ -97,6 +98,7 @@ enum BuiltInMethod {
 	kTimeStopMethod = 207, // PARAMS: 0
 	kIsPlayingMethod = 372, // PARAMS: 0
 	kSetDissolveFactorMethod = 241, // PARAMS: 1
+	kSpatialCenterMoveToMethod = 230,
 
 	// HOTSPOT METHODS.
 	kMouseActivateMethod = 210, // PARAMS: 1

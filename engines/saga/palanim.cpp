@@ -51,25 +51,25 @@ void PalAnim::loadPalAnim(const ByteArray &resourceData) {
 
 	debug(3, "PalAnim::loadPalAnim(): Loading %d PALANIM entries.", _entries.size());
 
-	for (Common::Array<PalanimEntry>::iterator i = _entries.begin(); i != _entries.end(); ++i) {
+	for (auto &palAnimEntry : _entries) {
 
-		i->cycle = 0;
+		palAnimEntry.cycle = 0;
 
-		i->colors.resize(readS.readUint16());
-		debug(2, "PalAnim::loadPalAnim(): Loading %d SAGA_COLOR structures.", i->colors.size());
+		palAnimEntry.colors.resize(readS.readUint16());
+		debug(2, "PalAnim::loadPalAnim(): Loading %d SAGA_COLOR structures.", palAnimEntry.colors.size());
 
-		i->palIndex.resize(readS.readUint16());
-		debug(2, "PalAnim::loadPalAnim(): Loading %d palette indices.\n", i->palIndex.size());
+		palAnimEntry.palIndex.resize(readS.readUint16());
+		debug(2, "PalAnim::loadPalAnim(): Loading %d palette indices.\n", palAnimEntry.palIndex.size());
 
 
-		for (uint j = 0; j < i->palIndex.size(); j++) {
-			i->palIndex[j] = readS.readByte();
+		for (uint j = 0; j < palAnimEntry.palIndex.size(); j++) {
+			palAnimEntry.palIndex[j] = readS.readByte();
 		}
 
-		for (Common::Array<Color>::iterator j = i->colors.begin(); j != i->colors.end(); ++j) {
-			j->red = readS.readByte();
-			j->green = readS.readByte();
-			j->blue = readS.readByte();
+		for (auto &color : palAnimEntry.colors) {
+			color.red = readS.readByte();
+			color.green = readS.readByte();
+			color.blue = readS.readByte();
 		}
 	}
 }
@@ -105,21 +105,21 @@ void PalAnim::cycleStep(int vectortime) {
 
 	_vm->_gfx->getCurrentPal(pal);
 
-	for (Common::Array<PalanimEntry>::iterator i = _entries.begin(); i != _entries.end(); ++i) {
-		cycle = i->cycle;
-		cycleLimit = i->colors.size();
-		for (j = 0; j < i->palIndex.size(); j++) {
-			palIndex = i->palIndex[j];
+	for (auto &palAnimEntry : _entries) {
+		cycle = palAnimEntry.cycle;
+		cycleLimit = palAnimEntry.colors.size();
+		for (j = 0; j < palAnimEntry.palIndex.size(); j++) {
+			palIndex = palAnimEntry.palIndex[j];
 			colIndex = (cycle + j) % cycleLimit;
-			pal[palIndex].red = (byte) i->colors[colIndex].red;
-			pal[palIndex].green = (byte) i->colors[colIndex].green;
-			pal[palIndex].blue = (byte) i->colors[colIndex].blue;
+			pal[palIndex].red = (byte) palAnimEntry.colors[colIndex].red;
+			pal[palIndex].green = (byte) palAnimEntry.colors[colIndex].green;
+			pal[palIndex].blue = (byte) palAnimEntry.colors[colIndex].blue;
 		}
 
-		i->cycle++;
+		palAnimEntry.cycle++;
 
-		if (i->cycle == cycleLimit) {
-			i->cycle = 0;
+		if (palAnimEntry.cycle == cycleLimit) {
+			palAnimEntry.cycle = 0;
 		}
 	}
 

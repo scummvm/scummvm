@@ -459,8 +459,8 @@ Win32ResourceArchive::Win32ResourceArchive() {
 }
 
 bool Win32ResourceArchive::hasFile(const Common::Path &path) const {
-	for (FilenameList::const_iterator i = _files.begin(); i != _files.end(); ++i) {
-		if (i->equalsIgnoreCase(path))
+	for (const auto &curPath : _files) {
+		if (curPath.equalsIgnoreCase(path))
 			return true;
 	}
 

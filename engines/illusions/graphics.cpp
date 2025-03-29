@@ -53,9 +53,9 @@ void NamedPoint::load(Common::SeekableReadStream &stream) {
 // NamedPoints
 
 bool NamedPoints::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
-	for (ItemsIterator it = _namedPoints.begin(); it != _namedPoints.end(); ++it) {
-		if ((*it)._namedPointId == namedPointId) {
-			pt = (*it)._pt;
+	for (auto &namedPoint : _namedPoints) {
+		if (namedPoint._namedPointId == namedPointId) {
+			pt = namedPoint._pt;
 			return true;
 		}
 	}

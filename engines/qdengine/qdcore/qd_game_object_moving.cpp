@@ -78,7 +78,12 @@ qdGameObjectMoving::qdGameObjectMoving() :
 	_ignore_personages = false;
 	_is_selected = false;
 	set_flag(QD_OBJ_HAS_BOUND_FLAG);
-	_movement_mode = MOVEMENT_MODE_STOP;
+
+	if (g_engine->_gameVersion <= 20030919)
+		_movement_mode = MOVEMENT_MODE_NONE_EARLY;
+	else
+		_movement_mode = MOVEMENT_MODE_STOP;
+
 	_movement_mode_time = _movement_mode_time_current = 0.f;
 }
 
@@ -116,7 +121,10 @@ qdGameObjectMoving::qdGameObjectMoving(const qdGameObjectMoving &obj) : qdGameOb
 	_is_selected = false;
 	set_flag(QD_OBJ_HAS_BOUND_FLAG);
 
-	_movement_mode = MOVEMENT_MODE_STOP;
+	if (g_engine->_gameVersion <= 20030919)
+		_movement_mode = MOVEMENT_MODE_NONE_EARLY;
+	else
+		_movement_mode = MOVEMENT_MODE_STOP;
 	_movement_mode_time = _movement_mode_time_current = 0.f;
 
 	_circuit_objs = obj.const_ref_circuit_objs();
@@ -524,26 +532,33 @@ bool qdGameObjectMoving::stop_movement() {
 		if (cur_state() == -1) return true;
 
 		qdGameObjectState *st = get_state(cur_state());
-//		if(_movement_mode == MOVEMENT_MODE_MOVE && is_movement_finished() && st->state_type() == qdGameObjectState::STATE_WALK){
-		if (is_movement_finished() && st->state_type() == qdGameObjectState::STATE_WALK) {
-			qdGameObjectStateWalk *wst = static_cast<qdGameObjectStateWalk *>(st);
-
-			if (qdAnimationSet * set = wst->animation_set()) {
-				qdAnimationInfo *inf = set->get_stop_animation_info(_direction_angle);
-				qdAnimation *anm;
-				if (inf && (anm = inf->animation())) {
-					_movement_mode = MOVEMENT_MODE_END;
-					float phase = get_animation()->cur_time_rel();
-					_movement_mode_time = anm->length() * (1.f - phase);
-					_movement_mode_time_current = 0.0f;
-					set_animation_info(inf);
-					get_animation()->set_time_rel(phase);
-					return true;
-				}
+		if (g_engine->_gameVersion <= 20030919) {
+			if (st->state_type() == qdGameObjectState::STATE_WALK) {
+				set_animation_info(static_cast<qdGameObjectStateWalk *>(st)->static_animation_info(_direction_angle));
+				st->stop_sound();
 			}
+		} else {
+	//		if(_movement_mode == MOVEMENT_MODE_MOVE && is_movement_finished() && st->state_type() == qdGameObjectState::STATE_WALK){
+			if (is_movement_finished() && st->state_type() == qdGameObjectState::STATE_WALK) {
+				qdGameObjectStateWalk *wst = static_cast<qdGameObjectStateWalk *>(st);
 
-			set_direction(_direction_angle);
-			st->stop_sound();
+				if (qdAnimationSet * set = wst->animation_set()) {
+					qdAnimationInfo *inf = set->get_stop_animation_info(_direction_angle);
+					qdAnimation *anm;
+					if (inf && (anm = inf->animation())) {
+						_movement_mode = MOVEMENT_MODE_END;
+						float phase = get_animation()->cur_time_rel();
+						_movement_mode_time = anm->length() * (1.f - phase);
+						_movement_mode_time_current = 0.0f;
+						set_animation_info(inf);
+						get_animation()->set_time_rel(phase);
+						return true;
+					}
+				}
+
+				set_direction(_direction_angle);
+				st->stop_sound();
+			}
 		}
 
 		return true;
@@ -719,11 +734,13 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 			}
 		}
 		return R();
+	case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20030919
 	default:
 		break;
 	}
 
-	_movement_mode = MOVEMENT_MODE_MOVE;
+	if (_movement_mode != MOVEMENT_MODE_NONE_EARLY)
+		_movement_mode = MOVEMENT_MODE_MOVE;
 
 	float sp, a, sp_max;
 	get_speed_parameters(sp, sp_max, a);
@@ -860,7 +877,7 @@ void qdGameObjectMoving::quant(float dt) {
 		start_auto_move();
 
 	if (check_flag(QD_OBJ_MOVING_FLAG)) {
-		if (future_pos_correct(dt)) {
+		if (g_engine->_gameVersion <= 20030919 || future_pos_correct(dt)) {
 			bool end_movement = false;
 			Vect3f r = get_future_r(dt, end_movement, true);
 
@@ -878,7 +895,14 @@ void qdGameObjectMoving::quant(float dt) {
 					if (_target_angle >= 0.0f)
 						_direction_angle = _target_angle;
 
-					stop_movement();
+					if (g_engine->_gameVersion <= 20030919) {
+						drop_flag(QD_OBJ_MOVING_FLAG);
+						set_direction(_direction_angle);
+
+						if (get_cur_state())
+							get_cur_state()->stop_sound();
+					} else
+						stop_movement();
 				}
 			}
 		} else
@@ -1058,6 +1082,9 @@ bool qdGameObjectMoving::update_screen_pos() {
 				case MOVEMENT_MODE_END:
 					offs_type = qdGameObjectStateWalk::OFFSET_END;
 					break;
+				case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20030919
+					if (!check_flag(QD_OBJ_MOVING_FLAG))
+						offs_type = qdGameObjectStateWalk::OFFSET_STATIC;
 				}
 
 				offs += static_cast<qdGameObjectStateWalk *>(get_cur_state())->center_offset(_direction_angle, offs_type);
@@ -2015,6 +2042,7 @@ bool qdGameObjectMoving::set_walk_animation() {
 				}
 			}
 			break;
+		case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20030919
 		default:
 			break;
 		}
@@ -2060,6 +2088,9 @@ bool qdGameObjectMoving::movement_impulse() {
 //	_direction_angle = _impulse_direction;
 	_impulse_direction = -1.0f;
 	_target_angle = -1.0f;
+
+	if (g_engine->_gameVersion <= 20030919)
+		set_walk_animation();
 
 	if (_movement_mode == MOVEMENT_MODE_STOP || _movement_mode == MOVEMENT_MODE_END)
 		_movement_mode = MOVEMENT_MODE_TURN;
@@ -2126,6 +2157,7 @@ void qdGameObjectMoving::optimize_path(Std::vector<Vect2i> &path) const {
 
 	auto itp = path.begin();
 	auto val = *itp;
+	opt_path.push_back(val);
 	itp++;
 
 	while (itp != path.end()) {
@@ -2762,6 +2794,7 @@ static const char *movementList[] = {
 	defEnum(MOVEMENT_MODE_START),
 	defEnum(MOVEMENT_MODE_MOVE),
 	defEnum(MOVEMENT_MODE_END),
+	defEnum(MOVEMENT_MODE_NONE_EARLY),
 };
 
 Common::String qdGameObjectMoving::movement2str(int fl, bool truncate) {

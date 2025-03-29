@@ -105,7 +105,6 @@ int Screen::interpolate(int first, int second, int index, int number) {
  */
 void Screen::copyToScreen() {
 	const Common::List<Common::Rect> *dirtyRects = _surface->getDirtyRects();
-	Common::List<Common::Rect>::const_iterator it;
 
 	// If a full update is needed, update the whole screen
 	if (_surface->needsFullUpdate()) {
@@ -116,13 +115,12 @@ void Screen::copyToScreen() {
 	} else {
 		// Otherwise, update only the dirty rectangles
 
-		for (it = dirtyRects->begin(); it != dirtyRects->end(); ++it) {
-
+		for (const auto &r : *dirtyRects) {
 			// Pointer to the upper left corner of the rectangle
-			byte *ptr = (byte *)_surface->getBasePtr(it->left, it->top);
+			byte *ptr = (byte *)_surface->getBasePtr(r.left, r.top);
 
 			_vm->_system->copyRectToScreen(ptr, kScreenWidth,
-				it->left, it->top, it->width(), it->height());
+				r.left, r.top, r.width(), r.height());
 		}
 	}
 

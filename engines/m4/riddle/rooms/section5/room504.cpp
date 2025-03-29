@@ -49,9 +49,9 @@ void Room504::init() {
 	_toy = nullptr;
 	_shovel = nullptr;
 	_driftwood = nullptr;
-	_pole = 0;
+	_pole = nullptr;
 
-	_waterfall = series_plain_play("peruvian waterfall", -1, 0, 100, 0xf00, 9, -1, 0);
+	_waterfall = series_plain_play("peruvian waterfall", -1, 0, 100, 0xf00, 9, -1, false);
 	digi_preload("504_S01");
 	_volume = 1;
 	kernel_timing_trigger(1, 501);
@@ -72,7 +72,7 @@ void Room504::init() {
 		_downSteps = series_load("504 down steps");
 		player_update_info();
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-			_G(player_info).depth, 0, triggerMachineByHashCallback, "Rp");
+			_G(player_info).depth, false, triggerMachineByHashCallback, "Rp");
 		sendWSMessage_10000(1, _ripley, _downSteps, 1, 27, 647,
 			_downSteps, 27, 27, 0);
 		break;
@@ -397,7 +397,7 @@ void Room504::daemon() {
 
 	case 505:
 		_trigger4 = -1;
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x900, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x900, false,
 			triggerMachineByHashCallback, "Rip Delta Machine State");
 		player_update_info();
 		_ripKneels = series_load("504 rip kneels talks");
@@ -1010,7 +1010,7 @@ void Room504::daemon() {
 		digi_preload("COM125");
 		_ripWipe = series_load("504WIPE");
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-			_G(player_info).depth, 0, triggerMachineByHashCallback,
+			_G(player_info).depth, false, triggerMachineByHashCallback,
 			"Rip Delta Machine State");
 		sendWSMessage_10000(1, _ripley, _ripWipe, 1, 6, 568,
 			_ripWipe, 6, 6, 0);
@@ -1086,7 +1086,7 @@ void Room504::daemon() {
 		break;
 
 	case 581:
-		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 			triggerMachineByHashCallback, "Rope Falling to the Ground");
 		sendWSMessage_10000(1, _vineMachine2, _vineTie, 1, 6, 582, _vineTie, 6, 6, 0);
 		break;
@@ -1203,7 +1203,7 @@ void Room504::daemon() {
 		digi_preload("504_S04A");
 		ws_hide_walker();
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, false,
 			triggerMachineByHashCallback, "Rip Crossing");
 		sendWSMessage_10000(1, _ripley, _ripStepUpRight, 1, 33, 596,
 			_ripStepUpRight, 33, 33, 0);
@@ -1285,19 +1285,19 @@ void Room504::daemon() {
 
 	case 604:
 		if (g_engine->game_camera_panning()) {
-			kernel_timing_trigger(5, 587);
+			kernel_timing_trigger(5, 604);
 		} else {
 			player_set_commands_allowed(false);
 			_ripMedReach = series_load("RIP TREK MED REACH HAND POS1");
 			_ropeRSlurpsUp = series_load("504 R ROPE SLURPS UP");
-			setGlobals1(_ropeRSlurpsUp, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			setGlobals1(_ripMedReach, 1, 10, 10, 10, 0, 10, 1, 1, 1);
 			sendWSMessage_110000(605);
 		}
 		break;
 
 	case 605:
 		setVines();
-		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 			triggerMachineByHashCallback, "Rope Being Slurped Up from right");
 		sendWSMessage_10000(1, _vineMachine2, _ropeRSlurpsUp, 1, 14, 606,
 			_ropeRSlurpsUp, 14, 14, 0);
@@ -1373,7 +1373,7 @@ void Room504::daemon() {
 		}
 
 		setVines();
-		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 			triggerMachineByHashCallback, "Tie Thrown Coil to tree");
 		sendWSMessage_10000(1, _vineMachine2, _rightVineTie, 1, 10, -1,
 			_rightVineTie, 10, 10, 0);
@@ -1410,7 +1410,7 @@ void Room504::daemon() {
 
 	case 613:
 		_vineUnrolling = series_load("VINE UNROLLING AS TIED");
-		_vineMachine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+		_vineMachine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 			triggerMachineByHashCallback, "Vine Unrolling as Tied");
 		sendWSMessage_10000(1, _vineMachine1, _vineUnrolling, 1, 6, 614,
 			_vineUnrolling, 6, 6, 0);
@@ -1443,7 +1443,7 @@ void Room504::daemon() {
 		digi_preload("504_S04A");
 		ws_hide_walker();
 
-		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, false,
 			triggerMachineByHashCallback, "Rip Throwing Right");
 		sendWSMessage_10000(1, _ripley, _ripStepUpLeft, 1, 25, 622,
 			_ripStepUpLeft, 25, 25, 0);
@@ -1527,7 +1527,7 @@ void Room504::daemon() {
 		break;
 
 	case 632:
-		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 			triggerMachineByHashCallback, "Vine Unrolling as Tied");
 		sendWSMessage_10000(1, _vineMachine2, _vineUnrolling, 1, 6, 633,
 			_vineUnrolling, 6, 6, 0);
@@ -1599,7 +1599,7 @@ void Room504::daemon() {
 		}
 
 		setVines();
-		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 			triggerMachineByHashCallback, "Rope Rising");
 		sendWSMessage_120000(640);
 		break;
@@ -1632,7 +1632,7 @@ void Room504::daemon() {
 
 	case 641:
 		_vineTie = series_load("504 R VINE TIE BEFORE THROW");
-		_vine = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+		_vine = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 			triggerMachineByHashCallback, "Vine Unrolling as Tied");
 		sendWSMessage_10000(1, _vine, _vineTie, 1, 6, 642, _vineTie, 6, 6, 0);
 		break;
@@ -1773,7 +1773,7 @@ void Room504::daemon() {
 		}
 
 		setVines();
-		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 			triggerMachineByHashCallback, "Rope Falling");
 		sendWSMessage_10000(1, _vineMachine2, _leftVineTie, 9, 1, 677,
 			_leftVineTie, 1, 1, 0);
@@ -1841,7 +1841,7 @@ void Room504::daemon() {
 		}
 
 		setVines();
-		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 			triggerMachineByHashCallback, "Tie Thrown Coil to tree");
 		sendWSMessage_10000(1, _vineMachine2, _rightVineTie, 10, 1, 686,
 			_rightVineTie, 1, 1, 0);
@@ -1910,7 +1910,7 @@ void Room504::daemon() {
 
 		setVines();
 		setVinesRope();
-		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 			triggerMachineByHashCallback, "Vine Untied ");
 		sendWSMessage_10000(1, _vineMachine2, _vineUnrolling, 6, 1, 695,
 			_vineUnrolling, 1, 1, 0);
@@ -1987,7 +1987,7 @@ void Room504::daemon() {
 
 		setVines();
 		setVinesRope();
-		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, false,
 			triggerMachineByHashCallback, "Left Slurp");
 		sendWSMessage_10000(1, _vineMachine2, _ropeLSlurpsUp, 1, 11, 702,
 			_ropeLSlurpsUp, 11, 11, 0);
@@ -2286,9 +2286,9 @@ void Room504::daemon() {
 }
 
 void Room504::pre_parser() {
-	bool useFlag = player_said("gear");
-	bool useFlag1 = useFlag && _isOnRight;
-	bool useFlag0 = useFlag && !_isOnRight;
+	const bool useFlag = player_said("gear");
+	const bool useFlag1 = useFlag && _isOnRight;
+	const bool useFlag0 = useFlag && !_isOnRight;
 
 	if (useFlag1 && player_said("ROPE COIL "))
 		intr_freshen_sentence(62);
@@ -2330,21 +2330,21 @@ void Room504::pre_parser() {
 #define ITEM(NAME) player_said(NAME) && inv_object_is_here(NAME)
 
 void Room504::parser() {
-	bool ropeCoilFlag = player_said_any("ROPE COIL ", "ROPE COIL  ",
-		"ROPE COIL   ", "ROPE COIL    ");
-	bool greenVineFlag = player_said_any("GREEN VINE COIL ",
-		"GREEN VINE COIL  ", "GREEN VINE COIL   ", "GREEN VINE COIL    ");
-	bool brownVineFlag = player_said_any("BROWN VINE COIL ",
-		"BROWN VINE COIL  ", "BROWN VINE COIL   ", "BROWN VINE COIL    ");
-	bool vineCoilFlag = player_said_any("COIL OF VINES ", "COIL OF VINES  ",
-		"COIL OF VINES   ", "COIL OF VINES    ");
-	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
-	bool talkFlag = player_said_any("talk", "talk to");
-	bool useFlag = player_said("gear");
-	bool vineStatueFlag = player_said_any("rope ",
-		"green vine ", "brown vine ", "vines ", "spider statue");
-	bool menendezFlag = player_said_any("PERSON IN HOLE", "MENENDEZ");
+	const bool ropeCoilFlag = player_said_any("ROPE COIL ", "ROPE COIL  ",
+	                                          "ROPE COIL   ", "ROPE COIL    ");
+	const bool greenVineFlag = player_said_any("GREEN VINE COIL ",
+	                                           "GREEN VINE COIL  ", "GREEN VINE COIL   ", "GREEN VINE COIL    ");
+	const bool brownVineFlag = player_said_any("BROWN VINE COIL ",
+	                                           "BROWN VINE COIL  ", "BROWN VINE COIL   ", "BROWN VINE COIL    ");
+	const bool vineCoilFlag = player_said_any("COIL OF VINES ", "COIL OF VINES  ",
+	                                          "COIL OF VINES   ", "COIL OF VINES    ");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool takeFlag = player_said("take");
+	const bool talkFlag = player_said_any("talk", "talk to");
+	const bool useFlag = player_said("gear");
+	const bool vineStatueFlag = player_said_any("rope ",
+	                                            "green vine ", "brown vine ", "vines ", "spider statue");
+	const bool menendezFlag = player_said_any("PERSON IN HOLE", "MENENDEZ");
 
 	player_update_info();
 	_isOnRight = _G(player_info).x > 300;
@@ -2356,7 +2356,9 @@ void Room504::parser() {
 		inv_give_to_player("VINES");
 		_G(player).command_ready = false;
 		return;
-	} else if (((!_isOnRight && _G(player).click_x > 300) ||
+	}
+
+	if (((!_isOnRight && _G(player).click_x > 300) ||
 			(_isOnRight && _G(player).click_x <= 300)) &&
 			!lookFlag && !takeFlag && !useFlag &&
 			checkVinesDistance()) {
@@ -2620,6 +2622,7 @@ void Room504::parser() {
 		player_set_commands_allowed(false);
 		_vineThrowType = 1;
 		_G(flags)[V154] = 3;
+		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_timing_trigger(1, 603);
 	} else if (takeFlag && player_said_any("GREEN VINE ", "GREEN VINE COIL ") &&
 			_G(flags)[V152] == 1 && _isOnRight) {
@@ -3249,16 +3252,16 @@ void Room504::parser() {
 void Room504::setVines() {
 	freeVines();
 
-	bool ropeFlag = _G(flags)[V152] == 2 || _G(flags)[V153] == 2 ||
-		_G(flags)[V154] == 2;
-	bool tiedFlag = _G(flags)[V152] == 0 || _G(flags)[V153] == 0 ||
-		_G(flags)[V154] == 0 || _G(flags)[V171] == 0;
-	bool rightVine = _G(flags)[V152] == 1 || _G(flags)[V153] == 1 ||
-		_G(flags)[V154] == 1 || _G(flags)[V171] == 1;
-	bool acrossFlag = _G(flags)[V152] == 5 || _G(flags)[V153] == 5 ||
-		_G(flags)[V154] == 5 || _G(flags)[V171] == 5;
-	bool hangingFlag = _G(flags)[V152] == 4 || _G(flags)[V153] == 4 ||
-		_G(flags)[V154] == 4 || _G(flags)[V171] == 4;
+	const bool ropeFlag = _G(flags)[V152] == 2 || _G(flags)[V153] == 2 ||
+	                      _G(flags)[V154] == 2;
+	const bool tiedFlag = _G(flags)[V152] == 0 || _G(flags)[V153] == 0 ||
+	                      _G(flags)[V154] == 0 || _G(flags)[V171] == 0;
+	const bool rightVine = _G(flags)[V152] == 1 || _G(flags)[V153] == 1 ||
+	                       _G(flags)[V154] == 1 || _G(flags)[V171] == 1;
+	const bool acrossFlag = _G(flags)[V152] == 5 || _G(flags)[V153] == 5 ||
+	                        _G(flags)[V154] == 5 || _G(flags)[V171] == 5;
+	const bool hangingFlag = _G(flags)[V152] == 4 || _G(flags)[V153] == 4 ||
+	                         _G(flags)[V154] == 4 || _G(flags)[V171] == 4;
 
 	if (hangingFlag)
 		_vines1 = series_place_sprite("504 R VINE HANGING ",
@@ -3351,7 +3354,7 @@ void Room504::setVinesRope() {
 
 	if (_G(flags)[V152] == 4) {
 		hotspot_set_active("GREEN VINE ", true);
-		hotspot_set_active("GREEN VINE  ", true);
+		hotspot_set_active("GREEN VINE COIL  ", true);
 	}
 
 	if (_G(flags)[V153] == 4) {
@@ -3586,9 +3589,9 @@ bool Room504::parser1() {
 }
 
 void Room504::conv504a() {
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 	const char *sound = conv_sound_to_play();
 
 	if (_G(kernel).trigger == 1) {

@@ -57,6 +57,7 @@ public:
 	bool setChunkField(int field, int start, int end, const Datum &value);
 
 	int getLineCount();
+	int getLineHeight(int line);
 
 	int getTextHeight();
 
@@ -111,7 +112,7 @@ public:
 	void setRawText(const Common::String &text);
 
 private:
-	Graphics::MacWidget *createWindowOrWidget(Common::Rect &bbox, Channel *channel, Common::Rect dims, Graphics::MacFont *macFont);
+	Graphics::MacWidget *createWindowOrWidget(Common::Rect &bbox, Common::Rect dims, Graphics::MacFont *macFont);
 
 	uint32 _bgcolor;
 	uint32 _fgcolor;

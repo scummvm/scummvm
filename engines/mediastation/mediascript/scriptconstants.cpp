@@ -108,6 +108,8 @@ const char *variableScopeToStr(VariableScope scope) {
 
 const char *builtInFunctionToStr(BuiltInFunction function) {
 	switch (function) {
+	case kUnk1Function:
+		return "Unk1Function";
 	case kEffectTransitionFunction:
 		return "EffectTransition";
 	case kEffectTransitionOnSyncFunction:
@@ -131,6 +133,8 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "SpatialMoveTo";
 	case kSpatialZMoveToMethod:
 		return "SpatialZMoveTo";
+	case kSpatialCenterMoveToMethod:
+		return "SpatialCenterMoveTo";
 	case kSpatialShowMethod:
 		return "SpatialShow";
 	case kTimePlayMethod:

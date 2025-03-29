@@ -37,8 +37,6 @@ const char *MacVentureEngine::getGameFileName() const {
 
 namespace MacVenture {
 
-SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot, bool skipThumbnail = true);
-
 class MacVentureMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
@@ -48,11 +46,7 @@ public:
 protected:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
-	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	bool removeSaveState(const char *target, int slot) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-
 };
 
 bool MacVentureMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -64,7 +58,8 @@ bool MacVentureMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
 		(f == kSimpleSavesNames) ||
-		(f == kSavesSupportPlayTime);
+		(f == kSavesSupportPlayTime) ||
+		(f == kSavesUseExtendedFormat);
 }
 
 bool MacVentureEngine::hasFeature(EngineFeature f) const {
@@ -74,71 +69,11 @@ bool MacVentureEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-SaveStateList MacVentureMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String pattern = target;
-	pattern += ".###";
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		int slotNum = atoi(file->c_str() + file->size() - 3);
-		SaveStateDescriptor desc(this, slotNum, Common::U32String());
-		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
-			if (in) {
-				desc = loadMetaData(in, slotNum);
-				if (desc.getSaveSlot() != slotNum) {
-					// invalid
-					delete in;
-					continue;
-				}
-				saveList.push_back(desc);
-				delete in;
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
 int MacVentureMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 Common::Error MacVentureMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *game) const {
 	*engine = new MacVenture::MacVentureEngine(syst, game);
 	return Common::kNoError;
-}
-
-bool MacVentureMetaEngine::removeSaveState(const char *target, int slot) const {
-	return g_system->getSavefileManager()->removeSavefile(Common::String::format("%s.%03d", target, slot));
-}
-
-
-SaveStateDescriptor MacVentureMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	SaveStateDescriptor desc;
-	Common::String saveFileName;
-	Common::String pattern = target;
-	pattern += ".###";
-	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		int slotNum = atoi(file->c_str() + file->size() - 3);
-		if (slotNum == slot) {
-			saveFileName = *file;
-		}
-	}
-
-	Common::InSaveFile *in = saveFileMan->openForLoading(saveFileName);
-	if (in) {
-		desc = loadMetaData(in, slot, false);
-		delete in;
-		return desc;
-	}
-	return SaveStateDescriptor();
 }
 
 } // End of namespace MacVenture

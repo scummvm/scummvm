@@ -255,6 +255,22 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Adventures of Willy Beamish (French FDD)
+	// reported by Scaloup (#15822)
+	{
+		"beamish",
+		"FDD",
+		{
+			{"volume.001", 0, "d32a577c428799b2c4d5551991372736", 1358304},
+			{"volume.rmf", 0, "268cb8040af10d6fa24e5f9f1f411675", 9896},
+			AD_LISTEND
+		},
+		Common::FR_FRA,
+		Common::kPlatformDOS,
+		ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Adventures of Willy Beamish Demo
 	{
 		"beamish",
@@ -323,7 +339,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Heart of China (PC) EGA 720kb Floppy version
 	{
 		"china",
-		0,
+		"EGA",
 		{
 			{"volume.rmf", 0, "4e61bfb1d323bf07ae9de7c37fcda0d0", 8208},
 			{"volume.001", 0, "9de863e3cb1467fde7d91c02942432de", 342873},
@@ -338,7 +354,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Heart of China (PC) EGA 1.2MB Floppy version
 	{
 		"china",
-		0,
+		"EGA",
 		{
 			{"volume.rmf", 0, "a1ffe0a1ba0efbb487f4b258ff860623", 8106},
 			{"volume.001", 0, "cd535e57d3ece406a054c254a479906e", 867861},
@@ -347,6 +363,38 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_TESTING | ADGF_DGDS_EGA,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Heart of China (PC) EGA 720kb German Floppy version
+	// 1.0 reported by ns394 (#15809)
+	{
+		"china",
+		"EGA",
+		{
+			{"volume.rmf", 0, "1655f41c5de53f87c9851b3524f0cbae", 8208},
+			{"volume.001", 0, "9de863e3cb1467fde7d91c02942432de", 344018},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_TESTING | ADGF_DGDS_EGA,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Heart of China (PC) 1.2M German Floppy version
+	// reported by windlepoons (#15825)
+	{
+		"china",
+		0,
+		{
+			{"volume.rmf", 0, "a392b2a2d98970fa18ed840fabf6371f", 9775},
+			{"volume.001", 0, "8de3820266d8f7bf1e29543dd87a209a", 845718},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 

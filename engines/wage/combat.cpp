@@ -79,8 +79,8 @@ void WageEngine::encounter(Chr *player, Chr *chr) {
 		appendText(chr->_initialComment.c_str());
 
 	if (chr->_armor[Chr::HEAD_ARMOR] != NULL) {
-		snprintf(buf, 512, "%s%s is wearing %s.", chr->getDefiniteArticle(true), chr->_name.c_str(),
-					getIndefiniteArticle(chr->_armor[Chr::HEAD_ARMOR]->_name));
+		snprintf(buf, 512, "%s%s is wearing %s%s.", chr->getDefiniteArticle(true), chr->_name.c_str(),
+					getIndefiniteArticle(chr->_armor[Chr::HEAD_ARMOR]->_name), chr->_armor[Chr::HEAD_ARMOR]->_name.c_str());
 		appendText(buf);
 	}
 	if (chr->_armor[Chr::BODY_ARMOR] != NULL) {
@@ -520,6 +520,7 @@ bool WageEngine::handleMoveCommand(Directions dir, const char *dirName) {
 			if (strlen(msg) > 0) {
 				appendText(msg);
 			}
+			_soundQueue.clear();
 			_world->move(_world->_player, scene);
 			return true;
 		}

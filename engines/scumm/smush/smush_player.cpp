@@ -28,6 +28,7 @@
 #include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/macgamma.h"
 #include "graphics/paletteman.h"
 
 #include "scumm/file.h"
@@ -717,7 +718,7 @@ void SmushPlayer::handleDeltaPalette(int32 subSize, Common::SeekableReadStream &
 		b.readUint16LE();
 		for (int i = 0; i < 768; ++i) {
 			_shiftedDeltaPal[i] += _deltaPal[i];
-			
+
 			_pal[i] = CLIP<int32>(_shiftedDeltaPal[i] >> 7, 0, 255);
 		}
 
@@ -1291,7 +1292,7 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 
 					if (_vm->_useGammaCorrection) {
 						for (int i = 0; i < ARRAYSIZE(palette); i++) {
-							palette[i] = _vm->_macGammaCorrectionLookUp[_pal[i]];
+							palette[i] = Graphics::macGammaCorrectionLookUp[_pal[i]];
 						}
 					}
 

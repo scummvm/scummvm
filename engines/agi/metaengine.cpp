@@ -279,12 +279,12 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 	filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (const auto &file : filenames) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNr = atoi(file->c_str() + file->size() - 3);
+		int slotNr = atoi(file.c_str() + file.size() - 3);
 
 		if (slotNr >= 0 && slotNr <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			Common::InSaveFile *in = saveFileMan->openForLoading(file);
 			if (in) {
 				uint32 type = in->readUint32BE();
 				char description[31];

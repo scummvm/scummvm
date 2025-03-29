@@ -260,8 +260,8 @@ void RecorderDialog::updateList() {
 	Common::U32StringArray namesList;
 	Common::sort(files.begin(), files.end());
 	_fileHeaders.clear();
-	for (Common::StringArray::iterator i = files.begin(); i != files.end(); ++i) {
-		if (file.openRead(*i)) {
+	for (auto &curFile : files) {
+		if (file.openRead(curFile)) {
 			namesList.push_back(file.getHeader().name);
 			_fileHeaders.push_back(file.getHeader());
 		}

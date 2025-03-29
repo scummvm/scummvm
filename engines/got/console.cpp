@@ -41,6 +41,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("freeze", WRAP_METHOD(Console, cmdFreeze));
 	registerCmd("level", WRAP_METHOD(Console, cmdLevel));
 	registerCmd("flying", WRAP_METHOD(Console, cmdFlying));
+	registerCmd("flag", WRAP_METHOD(Console, cmdFlag));
 }
 
 Console::~Console() {
@@ -147,6 +148,39 @@ bool Console::cmdLevel(int argc, const char **argv) {
 bool Console::cmdFlying(int argc, const char **argv) {
 	_G(thor)->_flying = !_G(thor)->_flying;
 	debugPrintf("Flying is %s\n", _G(thor)->_flying ? "on" : "off");
+	return true;
+}
+
+bool Console::cmdFlag(int argc, const char **argv) {
+	if (argc == 1) {
+		for (int start = 0; start < 64; start += 10) {
+			Common::String line;
+			for (int i = start; i < (start == 60 ? 64 : (start + 10)); ++i) {
+				if ((i % 5) == 0)
+					line += " ";
+				line += Common::String::format("%c",
+					_G(setup)._flags[i] ? 'T' : 'F');
+			}
+
+			debugPrintf("%s\n", line.c_str());
+		}
+	} else {
+		int flag = atoi(argv[1]);
+
+		if (flag < 1 || flag > 64) {
+			debugPrintf("Flags must be from 1 to 64\n");
+		} else if (argc == 2) {
+			debugPrintf("Flag #%d is %s\n", flag,
+				_G(setup)._flags[flag - 1] ? "true" : "false");
+		} else {
+			bool val = tolower(argv[2][0]) == 't';
+			_G(setup)._flags[flag - 1] = val;
+
+			debugPrintf("Flag #%d is %s\n", flag,
+				val ? "true" : "false");
+		}
+	}
+
 	return true;
 }
 

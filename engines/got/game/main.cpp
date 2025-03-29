@@ -66,7 +66,7 @@ void setupLoad() {
 	_G(currentLevel) = _G(newLevel);
 	showLevel(_G(newLevel));
 
-	if (_G(currentLevel) == 105) { // Shovel Maze
+	if (_G(area) == 2 && _G(currentLevel) == 105) { // Shovel Maze
 		_G(thorInfo)._armor = 2; // eyeballs mode
 		loadNewThor();
 		_G(eyeballs) = 1;
