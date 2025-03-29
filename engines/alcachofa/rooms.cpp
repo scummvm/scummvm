@@ -650,7 +650,7 @@ static void loadEncryptedFile(const char *path, Array<char> &output) {
 	File file;
 	if (!file.open(path))
 		error("Could not open text file %s", path);
-	output.resize(file.size() - 5 + 1);
+	output.resize(file.size() - 4 - 1 + 1); // garbage bytes, key and we add a zero terminator for safety
 	if (file.read(output.data(), kHeaderSize) != kHeaderSize)
 		error("Could not read text file header");
 	char key = file.readSByte();
@@ -659,7 +659,7 @@ static void loadEncryptedFile(const char *path, Array<char> &output) {
 		error("Could not read text file body");
 	for (auto &ch : output)
 		ch ^= key;
-	output.back() = ' '; // one for good measure and a zero-terminator
+	output.back() = '\0'; // one for good measure and a zero-terminator
 }
 
 static char *trimTrailing(char *start, char *end) {
