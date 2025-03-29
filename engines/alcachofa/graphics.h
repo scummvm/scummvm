@@ -371,7 +371,7 @@ public:
 	virtual void draw() override;
 
 private:
-	static constexpr uint kMaxLines = 8;
+	static constexpr uint kMaxLines = 12;
 	using TextLine = Common::Span<const byte>; ///< byte to convert 128+ characters to image indices
 
 	Font &_font;
