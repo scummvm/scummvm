@@ -126,7 +126,9 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/bgen/item.o \
 	hodjnpodj/metagame/bgen/mgstat.o \
 	hodjnpodj/metagame/bgen/note.o \
+	hodjnpodj/metagame/boardgame/backpack.o \
 	hodjnpodj/metagame/boardgame/boardgame.o \
+	hodjnpodj/metagame/boardgame/notebook.o \
 	hodjnpodj/metagame/views/boardgame_options.o \
 	hodjnpodj/metagame/views/credits.o \
 	hodjnpodj/metagame/views/dialog.o \
