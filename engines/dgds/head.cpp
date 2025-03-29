@@ -117,6 +117,8 @@ void TalkDataHead::drawHeadType3Beamish(Graphics::ManagedSurface &dst, const Tal
 
 		// Slight hack from original CD version -  record the flip mode and offset
 		// for this frame and use it for drawing the head sprites in the script.
+		if (flip != Conversation::_lastHeadFrameFlipMode)
+			debug(10, "Changing CDS head flip mode %d -> %d", Conversation::_lastHeadFrameFlipMode, flip);
 		Conversation::_lastHeadFrameFlipMode = flip;
 		Conversation::_lastHeadFrameX = frame._xoff;
 		Conversation::_lastHeadFrameY = frame._yoff;
@@ -331,7 +333,6 @@ void Conversation::unloadData() {
 		_ttmEnv._soundRaw->stop();
 	_ttmEnv = CDSTTMEnviro();
 	_loadState = 0;
-	_lastHeadFrameFlipMode = kImageFlipNone;
 	_lastHeadFrameX = 0;
 	_lastHeadFrameY = 0;
 }
@@ -473,8 +474,13 @@ void Conversation::incrementFrame() {
 }
 
 bool Conversation::isScriptRunning() {
+	// HACK: Keep viewing blueprints from inventory running until
+	// interrupted.. other dialogs should stop when they
+	// have finished or their sounds or hit the end.
+	bool isBlueprints = (_dlgNum == 16 && _dlgFileNum == 67 && _subNum == -1);
+
 	return (_ttmScript &&
-		((_ttmEnv._soundRaw->isEmpty() || _ttmEnv._soundRaw->isPlaying())
+		((isBlueprints || _ttmEnv._soundRaw->isPlaying())
 		||
 		(_ttmEnv._cdsFrame < _ttmEnv._totalFrames)
 		));
