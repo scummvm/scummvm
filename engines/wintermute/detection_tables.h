@@ -402,7 +402,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Apeiron
 	WME_WINENTRY("apeiron", "",
-		WME_ENTRY1s("data.dcp", "c0d6190de52b3da9995cbd4b78976bc8", 89912566), Common::SE_SWE, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "c0d6190de52b3da9995cbd4b78976bc8", 89912566), Common::SV_SWE, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Art of Murder: FBI Confidential (English)
 	WME_WINENTRY("artofmurder1", "",

@@ -7255,14 +7255,14 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("ph10_sobrevive", "021127", "f951b4a1540035a90c470fc9016ed39f", 111616, Common::ES_ESP),
 
 	// Swedish games
-	ENTRY1("aventyr", "071029", "fff0eb351b418ada4010d56c4298d6ac", 133632, Common::SE_SWE),
-	ENTRY1("drakmagi_zcode", "080419", "12739044930fc939b0adf0efd5432713", 98304, Common::SE_SWE),
-	ENTRY1("hotellet", "041212", "efb166d12edc19b19dd1d6e99d67800e", 109056, Common::SE_SWE),
-	ENTRY1("pangnyheten", "040916", "2049135115dff02b2baf1b7bfb59606c", 185856, Common::SE_SWE),
-	ENTRY1("storforsen", "041212", "5e3c06b6b0650f938d2831b2aac98153", 103936, Common::SE_SWE),
-	ENTRY1("stuga", "090712/z5", "c9be7126299f47dfd395af5b951233ff", 122368, Common::SE_SWE),
-	ENTRY1("stuga", "090712/zblorb", "58eef72aada351e7e059202ab00342c4", 588800, Common::SE_SWE),
-	ENTRY1("vanyar_zcode", "030613", "abbc2b2fa0f5e922b45a3f8698ba9ad1", 110080, Common::SE_SWE),
+	ENTRY1("aventyr", "071029", "fff0eb351b418ada4010d56c4298d6ac", 133632, Common::SV_SWE),
+	ENTRY1("drakmagi_zcode", "080419", "12739044930fc939b0adf0efd5432713", 98304, Common::SV_SWE),
+	ENTRY1("hotellet", "041212", "efb166d12edc19b19dd1d6e99d67800e", 109056, Common::SV_SWE),
+	ENTRY1("pangnyheten", "040916", "2049135115dff02b2baf1b7bfb59606c", 185856, Common::SV_SWE),
+	ENTRY1("storforsen", "041212", "5e3c06b6b0650f938d2831b2aac98153", 103936, Common::SV_SWE),
+	ENTRY1("stuga", "090712/z5", "c9be7126299f47dfd395af5b951233ff", 122368, Common::SV_SWE),
+	ENTRY1("stuga", "090712/zblorb", "58eef72aada351e7e059202ab00342c4", 588800, Common::SV_SWE),
+	ENTRY1("vanyar_zcode", "030613", "abbc2b2fa0f5e922b45a3f8698ba9ad1", 110080, Common::SV_SWE),
 
 	// Playfic games
 	ENTRY0("1hour52min15sec", "190319", "9b6b06de44936164c6ebb2cc0e52bbb6", 179712),

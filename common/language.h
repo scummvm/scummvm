@@ -74,7 +74,7 @@ enum Language : int8 {
 	PT_BRA,
 	PT_PRT,
 	RU_RUS,
-	SE_SWE,
+	SV_SWE,
 	SK_SVK,
 	SR_SRB,
 	TR_TUR,
