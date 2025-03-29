@@ -670,7 +670,7 @@ static char *trimTrailing(char *start, char *end) {
 
 void World::loadLocalizedNames() {
 	loadEncryptedFile("Textos/OBJETOS.nkr", _namesChunk);
-	char *lineStart = _namesChunk.begin(), *fileEnd = _namesChunk.end();
+	char *lineStart = _namesChunk.begin(), *fileEnd = _namesChunk.end() - 1;
 	while (lineStart < fileEnd) {
 		char *lineEnd = find(lineStart, fileEnd, '\n');
 		char *keyEnd = find(lineStart, lineEnd, '#');
