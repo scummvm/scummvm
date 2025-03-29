@@ -260,6 +260,7 @@ public:
 	bool tick() override;
 
 	void drawInventory(Graphics::ManagedSurface &s);
+	void drawInventory2(Graphics::ManagedSurface &s);
 	GameObject *getClickedInventoryItem(const Common::Point &p);
 
 	void setStringBox(const Common::StringArray& sa);

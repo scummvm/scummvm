@@ -344,7 +344,7 @@ public:
 	
 	AnimFrame _stick;
 	
-
+	Common::Array<uint16> inventoryIconIndices;
 	
 	void RunScriptExecutor(bool firstRun = false) {
 		_scriptExecutor->Run(firstRun);
