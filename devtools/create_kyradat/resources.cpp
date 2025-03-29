@@ -52,6 +52,7 @@
 #include "resources/lok_dos_cd_spanish.h"
 #include "resources/lok_dos_cd_russian.h"
 #include "resources/lok_dos_cd_hebrew.h"
+#include "resources/lok_dos_cd_czech.h"
 #include "resources/lok_dos_cddemo.h"
 #include "resources/lok_dos_cddemo_english.h"
 
@@ -96,6 +97,7 @@
 #include "resources/hof_dos_cd_russian.h"
 #include "resources/hof_dos_cd_spanish.h"
 #include "resources/hof_dos_cd_hebrew.h"
+#include "resources/hof_dos_cd_czech.h"
 
 #include "resources/hof_fmtowns.h"
 #include "resources/hof_fmtowns_english.h"
@@ -114,6 +116,7 @@
 #include "resources/mr_dos_cd_spanish.h"
 #include "resources/mr_dos_cd_russian.h"
 #include "resources/mr_dos_cd_hebrew.h"
+#include "resources/mr_dos_cd_czech.h"
 #include "resources/mr_dos_cd_chinese_simplified.h"
 #include "resources/mr_dos_cd_chinese_trad.h"
 
@@ -865,6 +868,28 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1GUIStrings, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1GUIStringsDOSCDHebrewProvider },
 	{ k1NewGameString, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1NewGameStringDOSCDHebrewProvider },
 	{ k1ConfigStrings, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1ConfigStringsDOSCDHebrewProvider },
+	{ k1IntroStrings, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1IntroStringsDOSCDCzechProvider },
+	{ k1ItemNames, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1ItemNamesDOSCDCzechProvider },
+	{ k1TakenStrings, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1TakenStringsDOSCDCzechProvider },
+	{ k1PlacedStrings, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1PlacedStringsDOSCDCzechProvider },
+	{ k1DroppedStrings, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1DroppedStringsDOSCDCzechProvider },
+	{ k1NoDropStrings, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1NoDropStringsDOSCDCzechProvider },
+	{ k1PutDownString, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1PutDownStringDOSCDCzechProvider },
+	{ k1WaitAmuletString, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1WaitAmuletStringDOSCDCzechProvider },
+	{ k1BlackJewelString, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1BlackJewelStringDOSCDCzechProvider },
+	{ k1HealingTipString, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1HealingTipStringDOSCDCzechProvider },
+	{ k1PoisonGoneString, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1PoisonGoneStringDOSCDCzechProvider },
+	{ k1ThePoisonStrings, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1ThePoisonStringsDOSCDCzechProvider },
+	{ k1FluteStrings, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1FluteStringsDOSCDCzechProvider },
+	{ k1WispJewelStrings, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1WispJewelStringsDOSCDCzechProvider },
+	{ k1MagicJewelStrings, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1MagicJewelStringsDOSCDCzechProvider },
+	{ k1FlaskFullString, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1FlaskFullStringDOSCDCzechProvider },
+	{ k1FullFlaskString, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1FullFlaskStringDOSCDCzechProvider },
+	{ k1OutroHomeString, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1OutroHomeStringDOSCDCzechProvider },
+	{ k1VeryCleverString, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1VeryCleverStringDOSCDCzechProvider },
+	{ k1GUIStrings, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1GUIStringsDOSCDCzechProvider },
+	{ k1NewGameString, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1NewGameStringDOSCDCzechProvider },
+	{ k1ConfigStrings, kKyra1, kPlatformDOS, kTalkieVersion, CS_CZE, &k1ConfigStringsDOSCDCzechProvider },
 	{ k1KallakWritingSeq, kKyra1, kPlatformFMTowns, kNoSpecial, UNK_LANG, &k1KallakWritingSeqFMTownsProvider },
 	{ k1MalcolmTreeSeq, kKyra1, kPlatformFMTowns, kNoSpecial, UNK_LANG, &k1MalcolmTreeSeqFMTownsProvider },
 	{ k1WestwoodLogoSeq, kKyra1, kPlatformFMTowns, kNoSpecial, UNK_LANG, &k1WestwoodLogoSeqFMTownsProvider },
@@ -1347,6 +1372,8 @@ static const ResourceProvider resourceProviders[] = {
 	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, RU_RUS, &k2SeqplayTlkFilesDOSCDRussianProvider },*/
 	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kTalkieVersion, ES_ESP, &k2SeqplayStringsDOSCDSpanishProvider },
 	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, ES_ESP, &k2SeqplayTlkFilesDOSCDSpanishProvider },
+	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kTalkieVersion, CS_CZE, &k2SeqplayStringsDOSCDCzechProvider },
+	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, CS_CZE, &k2SeqplayTlkFilesDOSCDCzechProvider },
 	{ k2SeqplayPakFiles, kKyra2, kPlatformFMTowns, kNoSpecial, UNK_LANG, &k2SeqplayPakFilesFMTownsProvider },
 	{ k2SeqplayStrings, kKyra2, kPlatformFMTowns, kNoSpecial, EN_ANY, &k2SeqplayStringsFMTownsEnglishProvider },
 	{ k2SeqplaySfxFiles, kKyra2, kPlatformFMTowns, kNoSpecial, UNK_LANG, &k2SeqplaySfxFilesFMTownsProvider },
@@ -1387,6 +1414,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k3MainMenuStrings, kKyra3, kPlatformDOS, kTalkieVersion, ES_ESP, &k3MainMenuStringsDOSCDSpanishProvider },
 	{ k3MainMenuStrings, kKyra3, kPlatformDOS, kTalkieVersion, RU_RUS, &k3MainMenuStringsDOSCDRussianProvider },
 	{ k3MainMenuStrings, kKyra3, kPlatformDOS, kTalkieVersion, HE_ISR, &k3MainMenuStringsDOSCDHebrewProvider },
+	{ k3MainMenuStrings, kKyra3, kPlatformDOS, kTalkieVersion, CS_CZE, &k3MainMenuStringsDOSCDCzechProvider },
 	{ k3MainMenuStrings, kKyra3, kPlatformDOS, kTalkieVersion, ZH_CHN, &k3MainMenuStringsDOSCDChineseSmplProvider },
 	{ k3MainMenuStrings, kKyra3, kPlatformDOS, kTalkieVersion, ZH_TWN, &k3MainMenuStringsDOSCDChineseTradProvider },
 	{ k3MusicFiles, kKyra3, kPlatformDOS, kTalkieVersion, UNK_LANG, &k3MusicFilesDOSCDProvider },
@@ -1403,6 +1431,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k2FontData, kKyra3, kPlatformDOS, kTalkieVersion, ES_ESP, &k3DummyDataDOSCDProvider },
 	{ k2FontData, kKyra3, kPlatformDOS, kTalkieVersion, RU_RUS, &k3DummyDataDOSCDProvider },
 	{ k2FontData, kKyra3, kPlatformDOS, kTalkieVersion, HE_ISR, &k3DummyDataDOSCDProvider },
+	{ k2FontData, kKyra3, kPlatformDOS, kTalkieVersion, CS_CZE, &k3DummyDataDOSCDProvider },
 	{ k2FontData, kKyra3, kPlatformDOS, kTalkieVersion, ZH_CHN, &k3FontDataDOSCDChineseSmplProvider },
 	{ k2FontData, kKyra3, kPlatformDOS, kTalkieVersion, ZH_TWN, &k3FontDataDOSCDChineseTradProvider },
 	{ k3VqaSubtitlesIntro, kKyra3, kPlatformDOS, kTalkieVersion, EN_ANY, &k3VqaSubtitlesIntroDOSCDEnglishProvider },
@@ -1412,6 +1441,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k3VqaSubtitlesIntro, kKyra3, kPlatformDOS, kTalkieVersion, ES_ESP, &k3VqaSubtitlesIntroDOSCDSpanishProvider },
 	{ k3VqaSubtitlesIntro, kKyra3, kPlatformDOS, kTalkieVersion, RU_RUS, &k3VqaSubtitlesIntroDOSCDRussianProvider },
 	{ k3VqaSubtitlesIntro, kKyra3, kPlatformDOS, kTalkieVersion, HE_ISR, &k3VqaSubtitlesIntroDOSCDHebrewProvider },
+	{ k3VqaSubtitlesIntro, kKyra3, kPlatformDOS, kTalkieVersion, CS_CZE, &k3VqaSubtitlesIntroDOSCDCzechProvider },
 	{ k3VqaSubtitlesIntro, kKyra3, kPlatformDOS, kTalkieVersion, ZH_CHN, &k3VqaSubtitlesIntroDOSCDChineseSmplProvider },
 	{ k3VqaSubtitlesIntro, kKyra3, kPlatformDOS, kTalkieVersion, ZH_TWN, &k3VqaSubtitlesIntroDOSCDChineseTradProvider },
 	{ k3VqaSubtitlesBoat, kKyra3, kPlatformDOS, kTalkieVersion, EN_ANY, &k3VqaSubtitlesBoatDOSCDEnglishProvider },
@@ -1421,6 +1451,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k3VqaSubtitlesBoat, kKyra3, kPlatformDOS, kTalkieVersion, ES_ESP, &k3VqaSubtitlesBoatDOSCDSpanishProvider },
 	{ k3VqaSubtitlesBoat, kKyra3, kPlatformDOS, kTalkieVersion, RU_RUS, &k3VqaSubtitlesBoatDOSCDRussianProvider },
 	{ k3VqaSubtitlesBoat, kKyra3, kPlatformDOS, kTalkieVersion, HE_ISR, &k3VqaSubtitlesBoatDOSCDHebrewProvider },
+	{ k3VqaSubtitlesBoat, kKyra3, kPlatformDOS, kTalkieVersion, CS_CZE, &k3VqaSubtitlesBoatDOSCDCzechProvider },
 	{ k3VqaSubtitlesBoat, kKyra3, kPlatformDOS, kTalkieVersion, ZH_CHN, &k3VqaSubtitlesBoatDOSCDChineseSmplProvider },
 	{ k3VqaSubtitlesBoat, kKyra3, kPlatformDOS, kTalkieVersion, ZH_TWN, &k3VqaSubtitlesBoatDOSCDChineseTradProvider },
 	{ kEoBBaseNpcPresetsNames, kEoB1, kPlatformDOS, kNoSpecial, EN_ANY, &kEoB1NpcPresetsNamesDOSEnglishProvider },

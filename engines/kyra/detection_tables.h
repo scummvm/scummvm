@@ -411,6 +411,19 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_CD_FLAGS
 	},
 
+	{ // Czech fan translation v1.2 for GOG
+		{
+			"kyra1",
+			"CD",
+			AD_ENTRY1("GEMCUT.PAK", "012c7cbff132e27d33d989c662086063"),
+			Common::CS_CZE,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA1_CD_FAN_FLAGS(Common::CS_CZE, Common::EN_ANY)
+	},
+
 	{ // Hebrew fan translation
 		{
 			"kyra1",
@@ -876,6 +889,19 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_FAN_FLAGS(Common::HE_ISR, Common::EN_ANY)
 	},
 
+	{ // Czech fan translation v1.0 for CD and GOG versions.
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"),
+			Common::CS_CZE,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA2_CD_FAN_FLAGS(Common::CS_CZE, Common::EN_ANY)
+	},
+
 	{ // Interactive Demo
 		{
 			"kyra2",
@@ -1019,6 +1045,45 @@ const KYRAGameDescription adGameDescs[] = {
 			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
 		},
 		KYRA3_CD_FLAGS
+	},
+
+	{ // Czech fan translation v1.2 for CD and GOG versions.
+		{
+			"kyra3",
+			0,
+			AD_ENTRY1s("ONETIME.PAK", "951620e6298843e328bc745634373db5", AD_NO_SIZE),
+			Common::CS_CZE,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_FAN_FLAGS(Common::CS_CZE, Common::FR_FRA)
+	},
+
+	{ // Czech fan translation v1.2 for CD and GOG versions.
+		{
+			"kyra3",
+			0,
+			AD_ENTRY1s("ONETIME.PAK", "951620e6298843e328bc745634373db5", AD_NO_SIZE),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_FAN_FLAGS(Common::CS_CZE, Common::FR_FRA)
+	},
+
+	{ // Czech fan translation v1.2 for CD and GOG versions.
+		{
+			"kyra3",
+			0,
+			AD_ENTRY1s("ONETIME.PAK", "951620e6298843e328bc745634373db5", AD_NO_SIZE),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_FAN_FLAGS(Common::CS_CZE, Common::FR_FRA)
 	},
 
 	{ // Hebrew fan translation
