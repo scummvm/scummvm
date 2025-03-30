@@ -34,7 +34,7 @@ class Backpack : public Dialog {
 private:
 	OkButton _okButton;
 	Common::Rect _scrollTopRect, _scrollBottomRect;
-	Common::Rect _titleRect;
+	Common::Rect _titleRect, _blurbRect;
 	int nFirstSlot = 0;
 	int nBackpack_DX = 0, nBackpack_DY = 0;
 	int nItemsPerRow = 0;
@@ -45,6 +45,7 @@ private:
 	CItem *_selectedItem = nullptr;
 
 	void updateContent();
+	Common::Rect getItemRect(int index) const;
 	void drawItems(GfxSurface &s);
 	void drawItem(GfxSurface &s, CItem *pItem, int nX, int nY);
 	void drawMore(GfxSurface &s);
@@ -52,7 +53,7 @@ private:
 		return nFirstSlot > 0;
 	}
 	bool hasNextPage() const;
-	int selectedItem(const Common::Point &point) const;
+	int getItemAtPos(const Common::Point &point) const;
 
 public:
 	Backpack();

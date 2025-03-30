@@ -72,6 +72,11 @@ bool Backpack::msgOpen(const OpenMessage &msg) {
 	_titleRect = RectWH(0,
 		DIALOG_TOP + BACKPACK_TITLEZONE_DY,
 		_bounds.width(), s.getStringHeight());
+	_blurbRect = RectWH(0,
+		_bounds.height() - DIALOG_BOTTOM -
+		s.getStringHeight() - 5,
+		_bounds.width(),
+		_bounds.height() - DIALOG_BOTTOM);
 
 	// Scroll rects will be compared against mouse pos,
 	// so we need to shift them to global screen co-ordinates
@@ -170,13 +175,10 @@ void Backpack::draw() {
 
 	// Handle displaying blurb for any highlighted item
 	if (_selectedItem) {
-		Common::Rect blurbRect(BACKPACK_TEXTZONE_DX,
-			BACKPACK_DY - BACKPACK_BORDER_DY - BACKPACK_TEXTZONE_DY + BACKPACK_TEXTZONE_DDY,
-			BACKPACK_DX - BACKPACK_TEXTZONE_DX,
-			BACKPACK_DY - BACKPACK_BORDER_DY + BACKPACK_TEXTZONE_DDY);
-
+		s.setFontSize(BACKPACK_FONT_SIZE);
 		s.writeString(_selectedItem->GetDescription(),
-			blurbRect, BACKPACK_TEXT_COLOR);
+			_blurbRect, BACKPACK_TEXT_COLOR,
+			Graphics::kTextAlignCenter);
 	}
 }
 
@@ -211,17 +213,26 @@ void Backpack::updateContent() {
 	}
 }
 
+Common::Rect Backpack::getItemRect(int index) const {
+	int x = (index % nItemsPerRow);
+	x *= (BACKPACK_BITMAP_DX + nItem_DDX);                      // ... allowing proper spacing between items
+	int y = (index / nItemsPerRow);                                 // calculate its vertical position
+	y *= (BACKPACK_BITMAP_DY + nItem_DDY);                      // ... allowing proper spacing between items
+
+	x += BACKPACK_BORDER_DX;
+	y += BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DY;
+
+	return Common::Rect(x, y, x + BACKPACK_BITMAP_DX,
+		y + BACKPACK_BITMAP_DY);
+}
+
 void Backpack::drawItems(GfxSurface &s) {
 	// Get first item on this page
 	auto pItem = (*pInventory).FetchItem(nFirstSlot);
-	int x, y;
 
 	for (int i = 0; (i < (nItemsPerRow * nItemsPerColumn)) && (pItem != nullptr); i++) {							// will thumb through all of them
-		x = (i % nItemsPerRow);                                 // calculate its horizontal position
-		x *= (BACKPACK_BITMAP_DX + nItem_DDX);                      // ... allowing proper spacing between items
-		y = (i / nItemsPerRow);                                 // calculate its vertical position
-		y *= (BACKPACK_BITMAP_DY + nItem_DDY);                      // ... allowing proper spacing between items
-		drawItem(s, pItem, x + BACKPACK_BORDER_DX, y + BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DY);		// now show the item
+		const Common::Rect r = getItemRect(i);
+		drawItem(s, pItem, r.left, r.top);
 		pItem = pItem->GetNext();
 	}
 }
@@ -264,7 +275,7 @@ bool Backpack::msgMouseMove(const MouseMoveMessage &msg) {
 				g_events->setCursor(IDC_RULES_ARROWDN);
 		} else {
 			// Check for highlighted item
-			index = selectedItem(msg._pos);
+			index = getItemAtPos(msg._pos);
 
 			if ((index >= 0) && ((index + nFirstSlot) < (*pInventory).ItemCount())) {
 				_selectedItem = (*pInventory).FetchItem(index + nFirstSlot);
@@ -328,24 +339,19 @@ void Backpack::drawItem(GfxSurface &s, CItem *pItem, int nX, int nY) {
 	}
 }
 
-int Backpack::selectedItem(const Common::Point &point) const {
-	int i = -1, x, y, col, row;
-	Common::Rect testRect(BACKPACK_BORDER_DX,
-		BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DY,
-		BACKPACK_DX - BACKPACK_BORDER_DX,
-		BACKPACK_DY - BACKPACK_TEXTZONE_DY - BACKPACK_BORDER_DY);
+int Backpack::getItemAtPos(const Common::Point &point) const {
+	Common::Point p(point.x - _bounds.left, point.y - _bounds.top);
+	const int itemCount = (*pInventory).ItemCount();
 
-	if (testRect.contains(point)) {
-		col = (point.x - BACKPACK_BORDER_DX) / (BACKPACK_BITMAP_DX + nItem_DDX);
-		row = (point.y - BACKPACK_BORDER_DY - BACKPACK_TITLEZONE_DY) / (BACKPACK_BITMAP_DY + nItem_DDY);
-		x = col * (BACKPACK_BITMAP_DX + nItem_DDX) + BACKPACK_BITMAP_DX + BACKPACK_BORDER_DX;
-		y = row * (BACKPACK_BITMAP_DY + nItem_DDY) + BACKPACK_BITMAP_DX + BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DY;
+	for (int i = 0; i < (nItemsPerRow * nItemsPerColumn) &&
+			(nFirstSlot + i) < itemCount; ++i) {
+		const Common::Rect r = getItemRect(i);
 
-		if ((point.x < x) && (point.y < y))
-			i = (row * nItemsPerRow) + col;
+		if (r.contains(p))
+			return i;
 	}
 
-	return i;
+	return -1;
 }
 
 } // namespace Metagame
