@@ -38,12 +38,38 @@
 
 namespace Playground3d {
 
+static const GLfloat offsetVertices[] = {
+	//  X      Y
+	// 1st triangle
+	-1.0f,  1.0f,
+	 1.0f,  1.0f,
+	 0.0f, -1.0f,
+	// 2nd triangle
+	-0.5f,  0.5f,
+	 0.5f,  0.5f,
+	 0.0f, -0.5f,
+};
+
 static const GLfloat dimRegionVertices[] = {
 	//  X      Y
 	-0.5f,  0.5f,
 	 0.5f,  0.5f,
 	-0.5f, -0.5f,
 	 0.5f, -0.5f,
+};
+
+static const GLfloat boxVertices[] = {
+	//  X      Y
+	// static green box
+	-1.0f,  1.0f,
+	 1.0f,  1.0f,
+	-1.0f, -1.0f,
+	 1.0f, -1.0f,
+	// moving red box
+	-0.1f,  0.1f,
+	 0.1f,  0.1f,
+	-0.1f, -0.1f,
+	 0.1f, -0.1f,
 };
 
 static const GLfloat bitmapVertices[] = {
@@ -62,20 +88,28 @@ ShaderRenderer::ShaderRenderer(OSystem *system) :
 		Renderer(system),
 		_currentViewport(kOriginalWidth, kOriginalHeight),
 		_cubeShader(nullptr),
+		_offsetShader(nullptr),
 		_fadeShader(nullptr),
+		_viewportShader(nullptr),
 		_bitmapShader(nullptr),
 		_cubeVBO(0),
+		_offsetVBO(0),
 		_fadeVBO(0),
+		_viewportVBO(0),
 		_bitmapVBO(0) {
 }
 
 ShaderRenderer::~ShaderRenderer() {
 	OpenGL::Shader::freeBuffer(_cubeVBO);
+	OpenGL::Shader::freeBuffer(_offsetVBO);
 	OpenGL::Shader::freeBuffer(_fadeVBO);
+	OpenGL::Shader::freeBuffer(_viewportVBO);
 	OpenGL::Shader::freeBuffer(_bitmapVBO);
 
 	delete _cubeShader;
+	delete _offsetShader;
 	delete _fadeShader;
+	delete _viewportShader;
 	delete _bitmapShader;
 }
 
@@ -92,10 +126,20 @@ void ShaderRenderer::init() {
 	_cubeShader->enableVertexAttribute("normal", _cubeVBO, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 20);
 	_cubeShader->enableVertexAttribute("color", _cubeVBO, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 32);
 
+	static const char *offsetAttributes[] = { "position", nullptr };
+	_offsetShader = OpenGL::Shader::fromFiles("playground3d_offset", offsetAttributes);
+	_offsetVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(offsetVertices), offsetVertices);
+	_offsetShader->enableVertexAttribute("position", _offsetVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+
 	static const char *fadeAttributes[] = { "position", nullptr };
 	_fadeShader = OpenGL::Shader::fromFiles("playground3d_fade", fadeAttributes);
 	_fadeVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(dimRegionVertices), dimRegionVertices);
 	_fadeShader->enableVertexAttribute("position", _fadeVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+
+	static const char *viewportAttributes[] = { "position", nullptr };
+	_viewportShader = OpenGL::Shader::fromFiles("playground3d_viewport", viewportAttributes);
+	_viewportVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices);
+	_viewportShader->enableVertexAttribute("position", _viewportVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 
 	static const char *bitmapAttributes[] = { "position", "texcoord", nullptr };
 	_bitmapShader = OpenGL::Shader::fromFiles("playground3d_bitmap", bitmapAttributes);
@@ -192,7 +236,26 @@ void ShaderRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &r
 }
 
 void ShaderRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) {
-	error("Polygon offset test not implemented yet");
+	glDisable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ZERO);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_TEXTURE_2D);
+
+	auto rotateMatrix = (Math::Quaternion::fromEuler(roll.x(), roll.y(), roll.z(), Math::EO_XYZ)).inverse().toMatrix();
+	_offsetShader->use();
+	_offsetShader->setUniform("mvpMatrix", _mvpMatrix);
+	_offsetShader->setUniform("rotateMatrix", rotateMatrix);
+	_offsetShader->setUniform("modelPos", pos);
+
+	_offsetShader->setUniform("triColor", Math::Vector3d(0.0f, 1.0f, 0.0f));
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	glPolygonOffset(-1.0f, 0.0f);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	_offsetShader->setUniform("triColor", Math::Vector3d(1.0f, 1.0f, 1.0f));
+	glDrawArrays(GL_TRIANGLES, 3, 3);
+	glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
 void ShaderRenderer::dimRegionInOut(float fade) {
@@ -200,6 +263,7 @@ void ShaderRenderer::dimRegionInOut(float fade) {
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
+	glDisable(GL_TEXTURE_2D);
 
 	_fadeShader->use();
 	_fadeShader->setUniform1f("alphaLevel", 1.0 - fade);
@@ -208,7 +272,31 @@ void ShaderRenderer::dimRegionInOut(float fade) {
 }
 
 void ShaderRenderer::drawInViewport() {
-	error("Draw in viewport test not implemented yet");
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+	glDisable(GL_TEXTURE_2D);
+
+	_viewportShader->use();
+	_viewportShader->setUniform("offset", Math::Vector2d(0.0f, 0.0f));
+	_viewportShader->setUniform("color", Math::Vector3d(0.0f, 1.0f, 0.0f));
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	_pos.setX(_pos.getX() + 0.01f);
+	_pos.setY(_pos.getY() + 0.01f);
+	if (_pos.getX() >= 1.0f) {
+		_pos.setX(-1.0f);
+		_pos.setY(-1.0f);
+	}
+
+	_viewportShader->setUniform("offset", _pos);
+	_viewportShader->setUniform("color", Math::Vector3d(1.0f, 0.0f, 0.0f));
+	glPolygonOffset(-1.0f, 0.0f);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glDrawArrays(GL_TRIANGLE_STRIP, 4, 4);
+	glDisable(GL_POLYGON_OFFSET_FILL);
+	_viewportShader->unbind();
 }
 
 void ShaderRenderer::drawRgbaTexture() {

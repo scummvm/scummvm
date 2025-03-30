@@ -1121,6 +1121,10 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 			files.push_back("engines/playground3d/shaders/playground3d_cube.vertex");
 			files.push_back("engines/playground3d/shaders/playground3d_fade.fragment");
 			files.push_back("engines/playground3d/shaders/playground3d_fade.vertex");
+			files.push_back("engines/playground3d/shaders/playground3d_offset.fragment");
+			files.push_back("engines/playground3d/shaders/playground3d_offset.vertex");
+			files.push_back("engines/playground3d/shaders/playground3d_viewport.fragment");
+			files.push_back("engines/playground3d/shaders/playground3d_viewport.vertex");
 		}
 		if (CONTAINS_DEFINE(setup.defines, "ENABLE_STARK")) {
 			files.push_back("engines/stark/shaders/stark_actor.fragment");

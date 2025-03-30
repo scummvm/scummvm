@@ -59,14 +59,19 @@ public:
 
 private:
 	OpenGL::Shader *_cubeShader;
+	OpenGL::Shader *_offsetShader;
 	OpenGL::Shader *_fadeShader;
+	OpenGL::Shader *_viewportShader;
 	OpenGL::Shader *_bitmapShader;
 
 	GLuint _cubeVBO;
+	GLuint _offsetVBO;
 	GLuint _fadeVBO;
+	GLuint _viewportVBO;
 	GLuint _bitmapVBO;
 
 	Common::Rect _currentViewport;
+	Math::Vector2d _pos;
 	GLuint _textureRgbaId[5];
 	GLuint _textureRgbId[5];
 	GLuint _textureRgb565Id[2];
