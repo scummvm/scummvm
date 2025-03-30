@@ -691,6 +691,20 @@ void ScummEngine_v5::o5_add() {
 	getResultPos();
 	a = getVarOrDirectWord(PARAM_1);
 
+	// WORKAROUND: In the Sega CD version of MI1, after you tell the Men of
+	// Low Moral Fiber (pirates) that the governor has been kidnapped, there
+	// is supposed to be three follow-up conversation options. But only the
+	// the first one ("Why are you jus standing around...") is actually
+	// visible. This is because where the script is supposed to add 8 pixels
+	// to the Y position of the text, it instead adds 8 lines. It was still
+	// possible to select them, you just couldn't see them.
+	//
+	// We fix this by changing Var[229] += 8 to Var[229] += 1 instead.
+
+	if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && vm.slot[_currentScript].number == 216 && _currentRoom == 35 && a == 8 && _resultVarNumber == 229 && enhancementEnabled(kEnhSubFmtCntChanges)) {
+		a = 1;
+	}
+
 	// WORKAROUND bug #994: This works around a script bug in LoomCD. To
 	// understand the reasoning behind this, compare script 210 and 218 in
 	// room 20. Apparently they made a mistake when converting the absolute
