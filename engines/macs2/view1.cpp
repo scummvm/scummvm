@@ -866,10 +866,13 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	uint16 height = (maxHeightInventoryIcon + 6 + 4) * 2 + maxHeightButtonIcon + 0x6 + 0x10; // [0FDAh]
 
 	// Position calculation - TODO: Proper position
-	uint16 x = 0; // [0FD4h]
-	uint16 y = 0; // [0FD6h]
+	uint16 x = s.w / 2 - width / 2; // [0FD4h]
+	uint16 y = s.h / 2 - height / 2; // [0FD6h]
 
 	DrawBorder(Common::Point(x, y), Common::Point(width, height), s);
+	Graphics::ManagedSurface* buffer = new Graphics::ManagedSurface;
+	buffer->create(s.w, s.h, s.format);
+	s.blendBlitTo(*buffer);
 }
 
 GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
