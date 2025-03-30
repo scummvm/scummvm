@@ -24,6 +24,7 @@
 
 #include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
 #include "bagel/hodjnpodj/metagame/bgen/note.h"
+#include "bagel/hodjnpodj/gfx/gfx_surface.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -74,6 +75,7 @@ public:
 	const char *GetSoundSpec() const {
 		return(m_pItemSoundPath[m_nID - MG_OBJ_BASE]);
 	}
+	const GfxSurface &getArt();
 
 	int	GetValue() const {
 		return m_nValue[m_nID - MG_OBJ_BASE];
@@ -104,14 +106,17 @@ public:
 	CItem *m_pPrev;			// Pointer to previous item in the list
 
 private:
+	static char	m_chTextBuffer[ITEM_BUFFER_LENGTH + 1];	// Place to construct item names
+
 #ifndef FRAME_EXE
 	static const char *m_pItemText[MG_OBJ_COUNT];		// Descriptive text for each item
 	static const char *m_pItemPluralText[MG_OBJ_COUNT];	// Pluralized descriptive text for each item
 	static const char *m_pItemBitmapPath[MG_OBJ_COUNT];	// Disk files specification for each item
 	static const char *m_pItemSoundPath[MG_OBJ_COUNT];	// Disk files specification for each item
 	static const int  m_nValue[MG_OBJ_COUNT];			// Value of each item
+
+	GfxSurface _bitmap;
 #endif
-	static char	m_chTextBuffer[ITEM_BUFFER_LENGTH + 1];	// Place to construct item names
 };
 
 } // namespace Metagame

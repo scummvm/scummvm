@@ -27,17 +27,35 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#define MORE_TEXT_BLURB		"[ More ]"				// actual text to display for "more" indicator
+#define BACKPACK_DX				502
+#define BACKPACK_DY				395
+#define	BACKPACK_CURL_DX		500
+#define	BACKPACK_CURL_DY		50
+#define BACKPACK_BORDER_DX		60
+#define BACKPACK_BORDER_DY		60
 
 #define BACKPACK_TITLEZONE_DY	10
-
 #define BACKPACK_TEXTZONE_DX	75
 #define BACKPACK_TEXTZONE_DY	30
 #define BACKPACK_TEXTZONE_DDY	10
 
+#define BACKPACK_BITMAP_DX		59
+#define BACKPACK_BITMAP_DY		59
+#define BACKPACK_BITMAP_DDX		10
+#define BACKPACK_BITMAP_DDY		10
+
+#define	BACKPACK_FONT_SIZE		14
+#define	BACKPACK_TEXT_COLOR		RGB(128,0,128)
+#define	BACKPACK_BLURB_COLOR	RGB(0,0,255)
+#define BACKPACK_MORE_COLOR		RGB(0,0,0)
+
+#define TEXT_MORE_DX		120						// offset of "more" indicator from right margin
+#define TEXT_MORE_DY		5                       // offset of "more" indicator bottom of scroll
+#define MORE_TEXT_BLURB		"[ More ]"				// actual text to display for "more" indicator
+
 Backpack::Backpack() : Dialog("Backpack"),
-		_okButton(Common::Rect(210, 355, 290, 380), this),
-		pInventory(lpMetaGame->m_cHodj.m_pInventory) {
+_okButton(Common::Rect(210, 355, 290, 380), this),
+pInventory(lpMetaGame->m_cHodj.m_pInventory) {
 }
 
 bool Backpack::msgOpen(const OpenMessage &msg) {
@@ -47,7 +65,7 @@ bool Backpack::msgOpen(const OpenMessage &msg) {
 	_scrollBottomRect = Common::Rect(0, 0, 501, 47);
 
 	GfxSurface s = getSurface();
-	s.setFontSize(14);
+	s.setFontSize(BACKPACK_FONT_SIZE);
 	_titleRect = RectWH(0,
 		DIALOG_TOP + BACKPACK_TITLEZONE_DY,
 		_bounds.width(), s.getStringHeight());
@@ -57,6 +75,8 @@ bool Backpack::msgOpen(const OpenMessage &msg) {
 	_scrollTopRect.moveTo(_bounds.left, _bounds.top);
 	_scrollBottomRect.moveTo(_bounds.left,
 		_bounds.bottom - _scrollBottomRect.height());
+
+	updateContent();
 
 	return true;
 }
@@ -139,9 +159,90 @@ void Backpack::draw() {
 	Dialog::draw();
 
 	GfxSurface s = getSurface();
-	s.setFontSize(14);
+	s.setFontSize(BACKPACK_FONT_SIZE);
 	s.writeString(pInventory->GetTitle(), _titleRect,
-		PURPLE, Graphics::kTextAlignCenter);
+		BACKPACK_TEXT_COLOR, Graphics::kTextAlignCenter);
+
+	drawItems(s);
+}
+
+void Backpack::updateContent() {
+	if ((*pInventory).ItemCount() <= 0)
+		return;
+
+	// Calculate the horizontal space we have available
+	nBackpack_DX = _bounds.width() - (BACKPACK_BORDER_DX << 1);
+	// Estimate number of items that will fit
+	nItemsPerRow = nBackpack_DX / BACKPACK_BITMAP_DX;
+
+	for (;;) {
+		nItem_DDX = (nBackpack_DX - (nItemsPerRow * BACKPACK_BITMAP_DX)) / (nItemsPerRow - 1);	// now evaluate the distance that would occur between
+		if ((nItem_DDX >= BACKPACK_BITMAP_DDX) ||               // ... items, and if is less than the minimum allowed
+			(nItemsPerRow == 1))
+			break;                                              // ... then reduce the count of items per row
+		nItemsPerRow -= 1;
+	}
+
+	// calculate the vertical space we have available
+	nBackpack_DY = BACKPACK_DY - BACKPACK_TEXTZONE_DY - (BACKPACK_BORDER_DY << 1) - BACKPACK_TITLEZONE_DY;
+	// Estimate number of items that will fit
+	nItemsPerColumn = nBackpack_DY / BACKPACK_BITMAP_DY;
+
+	for (;;) {
+		nItem_DDY = (nBackpack_DY - (nItemsPerColumn * BACKPACK_BITMAP_DY)) / (nItemsPerColumn - 1);    // now evaluate the distance that would occur between
+		if ((nItem_DDY >= BACKPACK_BITMAP_DDY) ||               // ... items, and if is less than the minimum allowed
+			(nItemsPerColumn == 1))
+			break;                                              // ... then reduce the count of items per column
+		nItemsPerColumn -= 1;
+	}
+}
+
+void Backpack::drawItems(GfxSurface &s) {
+	// Get first item on this page
+	auto pItem = (*pInventory).FetchItem(nFirstSlot);
+	int x, y;
+
+	for (int i = 0; (i < (nItemsPerRow * nItemsPerColumn)) && (pItem != NULL); i++) {							// will thumb through all of them
+		x = (i % nItemsPerRow);                                 // calculate its horizontal position
+		x *= (BACKPACK_BITMAP_DX + nItem_DDX);                      // ... allowing proper spacing between items
+		y = (i / nItemsPerRow);                                 // calculate its vertical position
+		y *= (BACKPACK_BITMAP_DY + nItem_DDY);                      // ... allowing proper spacing between items
+		drawItem(s, pItem, x + BACKPACK_BORDER_DX, y + BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DY);		// now show the item
+		pItem = (*pItem).GetNext();
+	}
+}
+
+void Backpack::drawMore(GfxSurface &s) {
+	if (!hasNextPage())
+		return;
+
+	int x = BACKPACK_DX - TEXT_MORE_DX;	                            // ... that can be scrolled through
+	int y = BACKPACK_DY -
+		BACKPACK_CURL_DY +
+		((BACKPACK_CURL_DY - s.getStringHeight()) >> 1) -
+		TEXT_MORE_DY;
+
+	s.writeString(MORE_TEXT_BLURB, Common::Point(x, y),
+		BACKPACK_MORE_COLOR);
+}
+
+bool Backpack::hasNextPage() const {
+	return (nFirstSlot +
+		(nItemsPerRow * nItemsPerColumn)) <
+		pInventory->ItemCount();
+}
+
+void Backpack::drawItem(GfxSurface &s, CItem *pItem, int nX, int nY) {
+	s.blitFrom((*pItem).getArt(), Common::Point(nX, nY));
+
+	if (((*pItem).m_nQuantity == 0) ||
+		((*pItem).m_nQuantity > 1)) {
+		Common::String qty = Common::String::format("%d",
+			(*pItem).m_nQuantity);
+
+		s.setFontSize(8);
+		s.writeString(qty, Common::Point(nX, nY), BACKPACK_BLURB_COLOR);
+	}
 }
 
 } // namespace Metagame

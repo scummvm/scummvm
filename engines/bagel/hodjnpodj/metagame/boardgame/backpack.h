@@ -36,9 +36,17 @@ private:
 	Common::Rect _scrollTopRect, _scrollBottomRect;
 	Common::Rect _titleRect;
 	int nFirstSlot = 0;
+	int nBackpack_DX = 0, nBackpack_DY = 0;
 	int nItemsPerRow = 0;
 	int nItemsPerColumn = 0;
 	CInventory *pInventory = nullptr;
+	int nItem_DDX = 0, nItem_DDY = 0;
+
+	void updateContent();
+	void drawItems(GfxSurface &s);
+	void drawItem(GfxSurface &s, CItem *pItem, int nX, int nY);
+	void drawMore(GfxSurface &s);
+	bool hasNextPage() const;
 
 public:
 	Backpack();

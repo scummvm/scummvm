@@ -242,6 +242,12 @@ CItem::~CItem() {
 }
 
 #ifndef FRAME_EXE
+const GfxSurface &CItem::getArt() {
+	if (_bitmap.empty())
+		_bitmap.loadBitmap(GetArtSpec());
+	return _bitmap;
+}
+
 const char *CItem::GetDescription(int nID, long nQuantity) {
 	if ((nID < MG_OBJ_BASE) ||
 		(nID >= MG_OBJ_BASE + MG_OBJ_COUNT))			// Return nullptr if invalid identifier
