@@ -351,7 +351,7 @@ private:
 	int32 _frameI;
 	Math::Vector3d _topLeft;
 	Math::Vector2d
-		_tiling,
+		_size,
 		_texOffset;
 	BlendMode _blendMode;
 };
