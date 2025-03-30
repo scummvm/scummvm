@@ -66,6 +66,35 @@ enum EfhDebugChannels {
 	kDebugFight,
 };
 
+// Lists of key actions within the EFH game engine itself.
+enum EfhAction {
+	kEfhActionUp,	// default <KEYCODE_UP> or <KEYCODE_KP8>
+	kEfhActionUpLeft,	// default <KEYCODE_KP7>
+	kEfhActionUpRight,	// default <KEYCODE_KP9>
+	kEfhActionDown,	// default <KEYCODE_DOWN> or <KEYCODE_KP2>
+	kEfhActionDownLeft,	// default <KEYCODE_KP1>
+	kEfhActionDownRight,	// default <KEYCODE_KP3>
+	kEfhActionLeft,	// default <KEYCODE_LEFT> or <KEYCODE_KP4>
+	kEfhActionRight,	// default <KEYCODE_RIGHT> or <KEYCODE_KP6>
+	kEfhActionCharacterSummaryOne,	// default <F1> or <1>
+	kEfhActionCharacterSummaryTwo,	// default <F2> or <2>
+	kEfhActionCharacterSummaryThree,	// default <F3> or <3>
+	kEfhActionSave,	// default <Ctrl+s>
+	kEfhActionLoad,	// default <Ctrl+l>
+	kEfhActionBuffer,	// default <Ctrl+b>
+	kEfhActionSound,	// default <Ctrl+o>
+	kEfhActionIncreaseCombatText,	// default <+>
+	kEfhActionDecreaseCombatText,	// default <->
+	kEfhActionA,	// default <A>
+	kEfhActionH,	// default <H>
+	kEfhActionD,	// default <D>
+	kEfhActionS,	// default <S>
+	kEfhActionR,	// default <R>
+	kEfhActionC,	// default <C>
+	kEfhActionT,	// default <T>
+	kEfhActionESC	// default <Esc>
+};
+
 class EfhGraphicsStruct {
 public:
 	EfhGraphicsStruct();
