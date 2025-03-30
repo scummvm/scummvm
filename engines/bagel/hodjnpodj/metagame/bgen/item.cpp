@@ -21,6 +21,7 @@
 
 #include "common/str.h"
 #include "bagel/hodjnpodj/metagame/bgen/item.h"
+#include "bagel/hodjnpodj/gfx/palette.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -243,8 +244,11 @@ CItem::~CItem() {
 
 #ifndef FRAME_EXE
 const GfxSurface &CItem::getArt() {
-	if (_bitmap.empty())
+	if (_bitmap.empty()) {
 		_bitmap.loadBitmap(GetArtSpec());
+		_bitmap.setTransparentColor(0xf0);
+	}
+
 	return _bitmap;
 }
 

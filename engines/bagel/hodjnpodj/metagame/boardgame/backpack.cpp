@@ -32,7 +32,7 @@ namespace Metagame {
 #define	BACKPACK_CURL_DX		500
 #define	BACKPACK_CURL_DY		50
 #define BACKPACK_BORDER_DX		60
-#define BACKPACK_BORDER_DY		60
+#define BACKPACK_BORDER_DY		80
 
 #define BACKPACK_TITLEZONE_DY	10
 #define BACKPACK_TEXTZONE_DX	75
@@ -45,9 +45,9 @@ namespace Metagame {
 #define BACKPACK_BITMAP_DDY		10
 
 #define	BACKPACK_FONT_SIZE		14
-#define	BACKPACK_TEXT_COLOR		RGB(128,0,128)
-#define	BACKPACK_BLURB_COLOR	RGB(0,0,255)
-#define BACKPACK_MORE_COLOR		RGB(0,0,0)
+#define	BACKPACK_TEXT_COLOR		PALETTERGB(128,0,128)
+#define	BACKPACK_BLURB_COLOR	PALETTERGB(0,0,255)
+#define BACKPACK_MORE_COLOR		PALETTERGB(0,0,0)
 
 #define TEXT_MORE_DX		120						// offset of "more" indicator from right margin
 #define TEXT_MORE_DY		5                       // offset of "more" indicator bottom of scroll
@@ -202,7 +202,7 @@ void Backpack::drawItems(GfxSurface &s) {
 	auto pItem = (*pInventory).FetchItem(nFirstSlot);
 	int x, y;
 
-	for (int i = 0; (i < (nItemsPerRow * nItemsPerColumn)) && (pItem != NULL); i++) {							// will thumb through all of them
+	for (int i = 0; (i < (nItemsPerRow * nItemsPerColumn)) && (pItem != nullptr); i++) {							// will thumb through all of them
 		x = (i % nItemsPerRow);                                 // calculate its horizontal position
 		x *= (BACKPACK_BITMAP_DX + nItem_DDX);                      // ... allowing proper spacing between items
 		y = (i / nItemsPerRow);                                 // calculate its vertical position
