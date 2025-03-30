@@ -10,7 +10,7 @@ MODULE_OBJS = \
 	global-ui.cpp \
 	graphics.cpp \
 	graphics-opengl.cpp \
-	Input.cpp \
+	input.cpp \
 	metaengine.o \
 	player.cpp \
 	rooms.cpp \
