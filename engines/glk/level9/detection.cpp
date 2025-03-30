@@ -708,6 +708,23 @@ void Level9MetaEngine::getSupportedGames(PlainGameList &games) {
 	}
 }
 
+const GlkDetectionEntry* Level9MetaEngine::getDetectionEntries() {
+	static Common::Array<GlkDetectionEntry> entries;
+	for (const gln_game_table_t *entry = GLN_GAME_TABLE; entry->gameId; ++entry) {
+		const char* crc = "";
+		GlkDetectionEntry detection = {
+			entry->gameId,
+			entry->extra,
+			crc,
+			entry->length,
+			Common::EN_ANY,
+			Common::kPlatformUnknown
+		};
+		entries.push_back(detection);
+	}
+	return entries.data();
+}
+
 GameDescriptor Level9MetaEngine::findGame(const char *gameId) {
 	for (const gln_game_table_t *pd = GLN_GAME_TABLE; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId)) {

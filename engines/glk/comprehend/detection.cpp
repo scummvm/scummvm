@@ -34,6 +34,22 @@ void ComprehendMetaEngine::getSupportedGames(PlainGameList &games) {
 		games.push_back(*pd);
 }
 
+const GlkDetectionEntry* ComprehendMetaEngine::getDetectionEntries() {
+	static Common::Array<GlkDetectionEntry> entries;
+	for (const ComprehendDetectionEntry *entry = COMPREHEND_GAMES; entry->_gameId; ++entry) {
+		GlkDetectionEntry detection = {
+			entry->_gameId,
+			entry->_filename,
+			entry->_md5,
+			0,
+			Common::EN_ANY,
+			Common::kPlatformUnknown
+		};
+		entries.push_back(detection);
+	}
+	return entries.data();
+}
+
 GameDescriptor ComprehendMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = COMPREHEND_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId)) {

@@ -35,6 +35,10 @@ void Alan3MetaEngine::getSupportedGames(PlainGameList &games) {
 	}
 }
 
+const GlkDetectionEntry* Alan3MetaEngine::getDetectionEntries() {
+	return ALAN3_GAMES;
+}
+
 GameDescriptor Alan3MetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = ALAN3_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))

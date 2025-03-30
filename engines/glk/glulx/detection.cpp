@@ -36,6 +36,10 @@ void GlulxMetaEngine::getSupportedGames(PlainGameList &games) {
 	}
 }
 
+const GlkDetectionEntry* GlulxMetaEngine::getDetectionEntries() {
+	return GLULXE_GAMES;
+}
+
 GameDescriptor GlulxMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = GLULXE_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId)) {

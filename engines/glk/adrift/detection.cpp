@@ -66,6 +66,10 @@ void AdriftMetaEngine::getSupportedGames(PlainGameList &games) {
 	}
 }
 
+const GlkDetectionEntry* AdriftMetaEngine::getDetectionEntries() {
+	return ADRIFT_GAMES;
+}
+
 GameDescriptor AdriftMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = ADRIFT_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))
