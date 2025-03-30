@@ -19,9 +19,6 @@
  *
  */
 
-#include "common/file.h"
-#include "common/memstream.h"
-#include "common/formats/winexe_ne.h"
 #include "bagel/hodjnpodj/views/minigame_view.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 
@@ -29,55 +26,14 @@ namespace Bagel {
 namespace HodjNPodj {
 
 MinigameView::MinigameView(const Common::String &name, const Common::String &resFilename) :
-		View(name), _resourceFilename(resFilename),
+		ResourceView(name, resFilename),
 		_settings(g_engine->_settings[name]) {
 }
 
-MinigameView::~MinigameView() {
-	delete _resources;
-}
-
 bool MinigameView::msgOpen(const OpenMessage &msg) {
-	SearchMan.add("Resources", this, 10, false);
-
-	if (!_resourceFilename.empty()) {
-		_resources = Common::NEResources::createFromEXE(Common::Path(_resourceFilename));
-
-		// Load the data for each mapped file
-		for (ResourceFiles::iterator it = _resourceFiles.begin();
-				it != _resourceFiles.end(); ++it) {
-			ResourceEntry &re = it->_value;
-			Common::SeekableReadStream *src =
-				_resources->getResource(re._type, re._id);
-			assert(src);
-
-			re.resize(src->size());
-			src->read(&re[0], re.size());
-
-			delete src;
-		}
-	}
-
-	g_events->setCursor(IDC_ARROW);
-
 	_showMenuCtr = pGameParams->bPlayingMetagame ? 0 : 2;
 
-	return View::msgOpen(msg);
-}
-
-bool MinigameView::msgClose(const CloseMessage &msg) {
-	SearchMan.remove("Resources");
-	delete _resources;
-	_resources = nullptr;
-
-	// Load the data for each mapped file
-	for (ResourceFiles::iterator it = _resourceFiles.begin();
-		it != _resourceFiles.end(); ++it) {
-		ResourceEntry &re = it->_value;
-		re.clear();
-	}
-
-	return View::msgClose(msg);
+	return ResourceView::msgOpen(msg);
 }
 
 bool MinigameView::msgFocus(const FocusMessage &msg) {
@@ -136,30 +92,6 @@ bool MinigameView::tick() {
 	}
 
 	return View::tick();
-}
-
-bool MinigameView::hasFile(const Common::Path &path) const {
-	return _resourceFiles.contains(path.toString());
-}
-
-int MinigameView::listMembers(Common::ArchiveMemberList &list) const {
-	return 0;
-}
-
-const Common::ArchiveMemberPtr MinigameView::getMember(const Common::Path &path) const {
-	return Common::ArchiveMemberPtr();
-}
-
-Common::SeekableReadStream *MinigameView::createReadStreamForMember(const Common::Path &path) const {
-	Common::NEResources winResources;
-	Common::String filename = path.toString();
-
-	// See if it's a filename that's been registered
-	if (!_resourceFiles.contains(filename))
-		return nullptr;
-
-	const ResourceEntry &re = _resourceFiles[filename];
-	return new Common::MemoryReadStream(&re[0], re.size());
 }
 
 void MinigameView::drawSprites() {

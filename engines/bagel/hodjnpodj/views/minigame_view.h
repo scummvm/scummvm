@@ -26,40 +26,23 @@
 #include "common/hashmap.h"
 #include "common/list.h"
 #include "common/formats/winexe_ne.h"
-#include "bagel/hodjnpodj/views/view.h"
+#include "bagel/hodjnpodj/views/resource_view.h"
 #include "bagel/hodjnpodj/libs/settings.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
-struct ResourceEntry : public Common::Array<byte> {
-	Common::WinResourceID _id;
-	Common::WinResourceID _type;
-};
-
 /**
  * Base view class for the main view for each minigame
  */
-class MinigameView : public View, public Common::Archive {
+class MinigameView : public ResourceView {
 	friend class Sprite;
 private:
-	Common::String _resourceFilename;
-	Common::WinResources *_resources = nullptr;
-	typedef Common::HashMap<Common::String, ResourceEntry,
-		Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ResourceFiles;
-	ResourceFiles _resourceFiles;
 	Common::List<Sprite *> _linkedSprites;
 	int _showMenuCtr = 0;
 
 protected:
 	Settings::Domain &_settings;
-
-	void addResource(const Common::String &filename,
-		const Common::WinResourceID &id,
-		const Common::WinResourceID &type = Common::kWinBitmap) {
-		_resourceFiles[filename]._id = id;
-		_resourceFiles[filename]._type = type;
-	}
 
 	void drawSprites();
 
@@ -67,25 +50,15 @@ protected:
 
 public:
 	MinigameView(const Common::String &name, const Common::String &resFilename);
-	virtual ~MinigameView();
+	virtual ~MinigameView() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgOpen(const OpenMessage &msg) override;
-	bool msgClose(const CloseMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override {
 		return true;
 	}
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool tick() override;
-
-	Common::WinResources *getResources() override {
-		return _resources;
-	}
-	// Archive methods
-	bool hasFile(const Common::Path &path) const override;
-	int listMembers(Common::ArchiveMemberList &list) const override;
-	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const;
 
 	void close();
 };
