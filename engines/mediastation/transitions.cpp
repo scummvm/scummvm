@@ -37,8 +37,8 @@ enum TransitionType {
 	kTransitionCircleOut = 328
 };
 
-void MediaStationEngine::effectTransition(Common::Array<Operand> &args) {
-	TransitionType transitionType = static_cast<TransitionType>(args[0].getInteger());
+void MediaStationEngine::effectTransition(Common::Array<ScriptValue> &args) {
+	TransitionType transitionType = static_cast<TransitionType>(args[0].asParamToken());
 	switch (transitionType) {
 	case kTransitionFadeToBlack:
 	case kTransitionSetToBlack: {
@@ -76,7 +76,7 @@ void MediaStationEngine::effectTransition(Common::Array<Operand> &args) {
 	}
 
 	case kTransitionSetToPercentOfPaletteObject: {
-		double percentComplete = args[1].getDouble();
+		double percentComplete = args[1].asFloat();
 
 		// TODO: Implement percent of palette transition.
 		warning("MediaStationEngine::effectTransition(): Setting to %f%% of palette not implemented, changing palette immediately", percentComplete);

@@ -27,7 +27,7 @@
 #include "mediastation/mediastation.h"
 #include "mediastation/datafile.h"
 #include "mediastation/mediascript/scriptconstants.h"
-#include "mediastation/mediascript/operand.h"
+#include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/assetheader.h"
 
 namespace MediaStation {
@@ -50,7 +50,7 @@ public:
 	}
 
 	// Runs built-in bytecode methods.
-	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) = 0;
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) = 0;
 	// Called to have the asset do any processing, like drawing new frames,
 	// handling time-based event handlers, and such. Some assets don't have any
 	// processing to do.

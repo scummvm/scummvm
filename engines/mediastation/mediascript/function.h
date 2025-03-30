@@ -34,7 +34,7 @@ public:
 	Function(Chunk &chunk);
 	~Function();
 
-	Operand execute(Common::Array<Operand> &args);
+	ScriptValue execute(Common::Array<ScriptValue> &args);
 
 	uint _fileId;
 	uint _id;

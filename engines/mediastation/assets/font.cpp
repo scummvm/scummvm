@@ -37,7 +37,7 @@ Font::~Font() {
 	_glyphs.clear();
 }
 
-Operand Font::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
+ScriptValue Font::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	error("Font::callMethod(): Font does not have any callable methods");
 }
 

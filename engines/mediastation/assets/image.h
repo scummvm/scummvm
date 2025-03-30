@@ -26,7 +26,7 @@
 #include "mediastation/datafile.h"
 #include "mediastation/bitmap.h"
 #include "mediastation/assetheader.h"
-#include "mediastation/mediascript/operand.h"
+#include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
@@ -42,7 +42,7 @@ public:
 
 	virtual void redraw(Common::Rect &rect) override;
 
-	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override;
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 
 private:
 	Bitmap *_bitmap = nullptr;

@@ -97,7 +97,7 @@ public:
 	virtual void readChunk(Chunk &chunk) override;
 	virtual void readSubfile(Subfile &subfile, Chunk &chunk) override;
 
-	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override;
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual void process() override;
 
 	virtual void redraw(Common::Rect &rect) override;

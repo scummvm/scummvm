@@ -32,17 +32,17 @@
 
 namespace MediaStation {
 
-class Operand;
+class ScriptValue;
 
-class Collection : public Common::Array<Operand> {
+class Collection : public Common::Array<ScriptValue> {
 public:
-	Operand callMethod(BuiltInMethod method, Common::Array<Operand> &args);
+	ScriptValue callMethod(BuiltInMethod method, Common::Array<ScriptValue> &args);
 };
 
 class Variable {
 public:
 	uint32 _id = 0;
-	VariableType _type = kVariableTypeEmpty;
+	ScriptValueType _type = kScriptValueTypeEmpty;
 	union {
 		Common::String *string;
 		uint functionId;
@@ -56,8 +56,8 @@ public:
 	Variable(Chunk &chunk, bool readId = true);
 	~Variable();
 
-	Operand getValue();
-	void putValue(Operand value);
+	ScriptValue getValue();
+	void putValue(ScriptValue value);
 
 private:
 	void clear();

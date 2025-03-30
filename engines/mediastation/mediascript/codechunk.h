@@ -27,7 +27,7 @@
 
 #include "mediastation/datafile.h"
 #include "mediastation/mediascript/variable.h"
-#include "mediastation/mediascript/operand.h"
+#include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
@@ -37,23 +37,23 @@ public:
 	CodeChunk(Common::SeekableReadStream &chunk);
 	~CodeChunk();
 
-	Operand execute(Common::Array<Operand> *args = nullptr, Common::Array<Operand> *locals = nullptr);
+	ScriptValue execute(Common::Array<ScriptValue> *args = nullptr, Common::Array<ScriptValue> *locals = nullptr);
 
-	static Operand callBuiltInMethod(BuiltInMethod method, Operand &self, Common::Array<Operand> &args);
+	static ScriptValue callBuiltInMethod(BuiltInMethod method, ScriptValue &self, Common::Array<ScriptValue> &args);
 
 private:
-	Operand evaluateExpression();
-	Operand evaluateOperation();
-	Operand evaluateValue();
-	Operand evaluateVariable();
+	ScriptValue evaluateExpression();
+	ScriptValue evaluateOperation();
+	ScriptValue evaluateValue();
+	ScriptValue evaluateVariable();
 
-	Operand callFunction(uint functionId, uint parameterCount);
-	Operand getVariable(uint32 id, VariableScope scope);
-	void putVariable(uint32 id, VariableScope scope, Operand &value);
+	ScriptValue callFunction(uint functionId, uint parameterCount);
+	ScriptValue getVariable(uint32 id, VariableScope scope);
+	void putVariable(uint32 id, VariableScope scope, ScriptValue &value);
 
 	bool _weOwnLocals = false;
-	Common::Array<Operand> *_locals = nullptr;
-	Common::Array<Operand> *_args = nullptr;
+	Common::Array<ScriptValue> *_locals = nullptr;
+	Common::Array<ScriptValue> *_args = nullptr;
 	Common::SeekableReadStream *_bytecode = nullptr;
 };
 

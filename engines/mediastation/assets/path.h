@@ -24,7 +24,7 @@
 
 #include "mediastation/assetheader.h"
 #include "mediastation/asset.h"
-#include "mediastation/mediascript/operand.h"
+#include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
@@ -36,7 +36,7 @@ public:
 
 	virtual void process() override;
 
-	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override;
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 
 private:
 	double _percentComplete = 0.0;

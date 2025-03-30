@@ -186,77 +186,77 @@ Movie::~Movie() {
 	_footers.clear();
 }
 
-Operand Movie::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
+ScriptValue Movie::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	switch (methodId) {
 	case kTimePlayMethod: {
 		assert(args.empty());
 		timePlay();
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kSpatialShowMethod: {
 		assert(args.empty());
 		spatialShow();
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kTimeStopMethod: {
 		assert(args.empty());
 		timeStop();
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kSpatialHideMethod: {
 		assert(args.empty());
 		spatialHide();
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kIsVisibleMethod: {
 		assert(args.empty());
-		Operand returnValue(kOperandTypeBool);
-		returnValue.putInteger(_isShowing);
+		ScriptValue returnValue(kOperandTypeBool);
+		returnValue.setToParamToken(_isShowing);
 		return returnValue;
 	}
 
 	case kSpatialCenterMoveToMethod: {
 		assert(args.size() == 2);
-		spatialCenterMoveTo(args[0].getInteger(), args[1].getInteger());
-		return Operand();
+		spatialCenterMoveTo(args[0].asParamToken(), args[1].asParamToken());
+		return ScriptValue();
 	}
 
 	case kSpatialMoveToMethod: {
 		assert(args.size() == 2);
-		spatialMoveTo(args[0].getInteger(), args[1].getInteger());
-		return Operand();
+		spatialMoveTo(args[0].asParamToken(), args[1].asParamToken());
+		return ScriptValue();
 	}
 
 	case kIsPlayingMethod: {
 		assert(args.empty());
-		Operand returnValue(kOperandTypeBool);
-		returnValue.putInteger(static_cast<uint>(_isPlaying));
+		ScriptValue returnValue(kOperandTypeBool);
+		returnValue.setToParamToken(static_cast<uint>(_isPlaying));
 		return returnValue;
 	}
 
 	case kXPositionMethod: {
 		assert(args.empty());
-		Operand returnValue(kOperandTypeBool);
-		returnValue.putInteger(_header->_boundingBox->left);
+		ScriptValue returnValue(kOperandTypeBool);
+		returnValue.setToParamToken(_header->_boundingBox->left);
 		return returnValue;
 
 	}
 
 	case kYPositionMethod: {
 		assert(args.empty());
-		Operand returnValue(kOperandTypeBool);
-		returnValue.putInteger(_header->_boundingBox->top);
+		ScriptValue returnValue(kOperandTypeBool);
+		returnValue.setToParamToken(_header->_boundingBox->top);
 		return returnValue;
 	}
 
 	case kSetDissolveFactorMethod: {
 		assert(args.size() == 1);
 		warning("Movie::callMethod(): setDissolveFactor not implemented yet");
-		return Operand();
+		return ScriptValue();
 	}
 
 	default:

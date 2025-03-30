@@ -30,7 +30,7 @@ class Camera : public Asset {
 public:
 	Camera(AssetHeader *header) : Asset(header) {};
 
-	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override { error("CallMethod not implemented"); };
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override { error("CallMethod not implemented"); };
 	virtual void process() override {};
 };
 
@@ -38,7 +38,7 @@ class Stage : public Asset {
 public:
 	Stage(AssetHeader *header) : Asset(header) {};
 
-	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override { error("CallMethod not implemented"); };
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override { error("CallMethod not implemented"); };
 	virtual void process() override {};
 
 private:

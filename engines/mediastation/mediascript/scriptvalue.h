@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MEDIASTATION_MEDIASCRIPT_OPERAND_H
-#define MEDIASTATION_MEDIASCRIPT_OPERAND_H
+#ifndef MEDIASTATION_MEDIASCRIPT_SCRIPTVALUE_H
+#define MEDIASTATION_MEDIASCRIPT_SCRIPTVALUE_H
 
 #include "common/ptr.h"
 #include "common/str.h"
@@ -32,56 +32,54 @@ namespace MediaStation {
 
 class Asset;
 
-class Operand {
+class ScriptValue {
 public:
-	Operand() : _type(kOperandTypeEmpty) {}
-	Operand(OperandType type) : _type(type) {}
+	ScriptValue() : _type(kOperandTypeEmpty) {}
+	ScriptValue(OperandType type) : _type(type) {}
 
-	OperandType getType() const {
-		return _type;
-	}
+	OperandType getType() const { return _type; }
 
-	void putInteger(int i);
-	int getInteger();
+	void setToParamToken(int i);
+	int asParamToken();
 
-	void putDouble(double d);
-	double getDouble();
+	void setToFloat(double d);
+	double asFloat();
 
-	void putString(Common::String *string);
-	Common::String *getString();
+	void setToString(Common::String *string);
+	Common::String *asString();
 
 	void putVariable(Variable *variable);
 	Variable *getVariable();
 
-	void putFunctionId(uint functionId);
-	uint getFunctionId();
+	void setToFunctionId(uint functionId);
+	uint asFunctionId();
 
-	void putMethodId(BuiltInMethod methodId);
-	BuiltInMethod getMethodId();
+	void setToMethodId(BuiltInMethod methodId);
+	BuiltInMethod asMethodId();
 
-	void putAsset(uint32 assetId);
+	void setToAssetId(uint32 assetId);
 	Asset *getAsset();
-	uint32 getAssetId();
+	uint32 asAssetId();
 
-	void putCollection(Common::SharedPtr<Collection> collection);
-	Common::SharedPtr<Collection> getCollection();
+	void setToCollection(Common::SharedPtr<Collection> collection);
+	Common::SharedPtr<Collection> asCollection();
 
-	Operand getLiteralValue() const;
+	ScriptValue getLiteralValue() const;
 
-	bool operator==(const Operand &other) const;
-	bool operator<(const Operand &other) const;
-	bool operator>(const Operand &other) const;
+	bool operator==(const ScriptValue &other) const;
+	bool operator<(const ScriptValue &other) const;
+	bool operator>(const ScriptValue &other) const;
 
-	bool operator||(const Operand &other) const;
+	bool operator||(const ScriptValue &other) const;
 	bool operator!() const;
-	bool operator&&(const Operand &other) const;
+	bool operator&&(const ScriptValue &other) const;
 
-	Operand operator+(const Operand &other) const;
-	Operand operator-(const Operand &other) const;
-	Operand operator*(const Operand &other) const;
-	Operand operator/(const Operand &other) const;
-	Operand operator%(const Operand &other) const;
-	Operand operator-() const;
+	ScriptValue operator+(const ScriptValue &other) const;
+	ScriptValue operator-(const ScriptValue &other) const;
+	ScriptValue operator*(const ScriptValue &other) const;
+	ScriptValue operator/(const ScriptValue &other) const;
+	ScriptValue operator%(const ScriptValue &other) const;
+	ScriptValue operator-() const;
 
 private:
 	bool isInteger() { return getType() == kOperandTypeBool || getType() == kOperandTypeInt; };

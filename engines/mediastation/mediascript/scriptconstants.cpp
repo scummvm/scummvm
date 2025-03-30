@@ -326,7 +326,7 @@ const char *operandTypeToStr(OperandType type) {
 		return "Int";
 	case kOperandTypeString:
 		return "String";
-	case kOperandTypeDollarSignVariable:
+	case kOperandTypeParamToken:
 		return "DollarSignVariable";
 	case kOperandTypeAssetId:
 		return "AssetId";
@@ -345,26 +345,28 @@ const char *operandTypeToStr(OperandType type) {
 	}
 }
 
-const char *variableTypeToStr(VariableType type) {
+const char *scriptValueTypeToStr(ScriptValueType type) {
 	switch (type) {
-	case kVariableTypeEmpty:
+	case kScriptValueTypeEmpty:
 		return "Empty";
-	case kVariableTypeFunction:
-		return "Function";
-	case kVariableTypeCollection:
-		return "Collection";
-	case kVariableTypeString:
-		return "String";
-	case kVariableTypeAssetId:
-		return "AssetId";
-	case kVariableTypeInt:
+	case kScriptValueTypeFloat:
+		return "Float";
+	case kScriptValueTypeBool:
+		return "Bool";
+	case kScriptValueTypeTime:
+		return "Time";
+	case kScriptValueTypeParamToken:
 		return "Int";
-	case kVariableTypeUnk2:
-		return "Unknown2";
-	case kVariableTypeBoolean:
-		return "Boolean";
-	case kVariableTypeFloat:
-		return "Literal";
+	case kScriptValueTypeAssetId:
+		return "AssetId";
+	case kScriptValueTypeString:
+		return "String";
+	case kScriptValueTypeCollection:
+		return "Collection";
+	case kScriptValueTypeFunctionId:
+		return "FunctionId";
+	case kScriptValueTypeMethodId:
+		return "MethodId";
 	default:
 		return "UNKNOWN";
 	}

@@ -185,11 +185,11 @@ void Context::readParametersSection(Chunk &chunk) {
 			if (g_engine->_variables.contains(variable->_id)) {
 				// Don't overwrite the variable if it already exists. This can happen if we have
 				// unloaded a screen but are returning to it later.
-				debugC(5, kDebugScript, "ContextParameters::ContextParameters(): Skipping re-creation of existing global variable %d (type: %s)", variable->_id, variableTypeToStr(variable->_type));
+				debugC(5, kDebugScript, "ContextParameters::ContextParameters(): Skipping re-creation of existing global variable %d (type: %s)", variable->_id, scriptValueTypeToStr(variable->_type));
 				delete variable;
 			} else {
 				g_engine->_variables.setVal(variable->_id, variable);
-				debugC(5, kDebugScript, "ContextParameters::ContextParameters(): Created global variable %d (type: %s)", variable->_id, variableTypeToStr(variable->_type));
+				debugC(5, kDebugScript, "ContextParameters::ContextParameters(): Created global variable %d (type: %s)", variable->_id, scriptValueTypeToStr(variable->_type));
 			}
 			break;
 		}

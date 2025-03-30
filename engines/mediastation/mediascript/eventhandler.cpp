@@ -42,14 +42,14 @@ EventHandler::EventHandler(Chunk &chunk) {
 	_code = new CodeChunk(chunk);
 }
 
-Operand EventHandler::execute(uint assetId) {
+ScriptValue EventHandler::execute(uint assetId) {
 	// TODO: The assetId is only passed in for debug visibility, there should be
 	// a better way to handle that.
 	debugC(5, kDebugScript, "\n********** EVENT HANDLER %s **********", getDebugHeader(assetId).c_str());
 
 	// The only argument that can be provided to an
 	// event handler is the _argumentValue.
-	Operand returnValue = _code->execute();
+	ScriptValue returnValue = _code->execute();
 
 	debugC(5, kDebugScript, "********** END EVENT HANDLER %s **********", getDebugHeader(assetId).c_str());
 	return returnValue;

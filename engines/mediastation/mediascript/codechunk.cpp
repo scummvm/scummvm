@@ -34,12 +34,12 @@ CodeChunk::CodeChunk(Common::SeekableReadStream &chunk) {
 	_bytecode = chunk.readStream(lengthInBytes);
 }
 
-Operand CodeChunk::execute(Common::Array<Operand> *args, Common::Array<Operand> *locals) {
+ScriptValue CodeChunk::execute(Common::Array<ScriptValue> *args, Common::Array<ScriptValue> *locals) {
 	_locals = locals;
 	_args = args;
-	Operand returnValue;
+	ScriptValue returnValue;
 	while (_bytecode->pos() < _bytecode->size()) {
-		Operand instructionResult = evaluateExpression();
+		ScriptValue instructionResult = evaluateExpression();
 		if (instructionResult.getType() != kOperandTypeEmpty) {
 			returnValue = instructionResult;
 		}
@@ -60,7 +60,7 @@ Operand CodeChunk::execute(Common::Array<Operand> *args, Common::Array<Operand> 
 	return returnValue;
 }
 
-Operand CodeChunk::evaluateExpression() {
+ScriptValue CodeChunk::evaluateExpression() {
 	if (_bytecode->eos()) {
 		error("CodeChunk::evaluateExpression(): Attempt to read past end of bytecode chunk");
 	}
@@ -68,10 +68,10 @@ Operand CodeChunk::evaluateExpression() {
 	ExpressionType instructionType = static_cast<ExpressionType>(Datum(*_bytecode).u.i);
 	debugCN(5, kDebugScript, "(%s) ", expressionTypeToStr(instructionType));
 
-	Operand returnValue;
+	ScriptValue returnValue;
 	switch (instructionType) {
 	case kExpressionTypeEmpty: {
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kExpressionTypeOperation:
@@ -93,7 +93,7 @@ Operand CodeChunk::evaluateExpression() {
 	return returnValue;
 }
 
-Operand CodeChunk::evaluateOperation() {
+ScriptValue CodeChunk::evaluateOperation() {
 	Opcode opcode = static_cast<Opcode>(Datum(*_bytecode).u.i);
 	debugCN(5, kDebugScript, "%s ", opcodeToStr(opcode));
 	switch (opcode) {
@@ -102,10 +102,10 @@ Operand CodeChunk::evaluateOperation() {
 		VariableScope scope = static_cast<VariableScope>(Datum(*_bytecode).u.i);
 		debugC(5, kDebugScript, "%d (%s) ", id, variableScopeToStr(scope));
 		debugCN(5, kDebugScript, "  Value: ");
-		Operand newValue = evaluateExpression();
+		ScriptValue newValue = evaluateExpression();
 
 		putVariable(id, scope, newValue);
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kOpcodeCallFunction: {
@@ -124,14 +124,14 @@ Operand CodeChunk::evaluateOperation() {
 		uint32 parameterCount = Datum(*_bytecode).u.i;
 		debugC(5, kDebugScript, "%s (%d params)", builtInMethodToStr(methodId), parameterCount);
 		debugCN(5, kDebugScript, "  Self: ");
-		Operand selfObject = evaluateExpression();
-		Common::Array<Operand> args;
+		ScriptValue selfObject = evaluateExpression();
+		Common::Array<ScriptValue> args;
 		for (uint i = 0; i < parameterCount; i++) {
 			debugCN(5, kDebugScript, "  Param %d: ", i);
-			Operand arg = evaluateExpression();
+			ScriptValue arg = evaluateExpression();
 			args.push_back(arg);
 		}
-		Operand returnValue = callBuiltInMethod(methodId, selfObject, args);
+		ScriptValue returnValue = callBuiltInMethod(methodId, selfObject, args);
 		return returnValue;
 	}
 
@@ -139,187 +139,187 @@ Operand CodeChunk::evaluateOperation() {
 		uint32 localVariableCount = Datum(*_bytecode).u.i;
 		debugC(5, kDebugScript, "%d", localVariableCount);
 		assert(_locals == nullptr);
-		_locals = new Common::Array<Operand>(localVariableCount);
+		_locals = new Common::Array<ScriptValue>(localVariableCount);
 		_weOwnLocals = true;
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kOpcodeOr: {
 		debugCN(5, kDebugScript, "\n    lhs: ");
-		Operand value1 = evaluateExpression();
+		ScriptValue value1 = evaluateExpression();
 		debugCN(5, kDebugScript, "    rhs: ");
-		Operand value2 = evaluateExpression();
+		ScriptValue value2 = evaluateExpression();
 
-		Operand returnValue(kOperandTypeBool);
+		ScriptValue returnValue(kOperandTypeBool);
 		bool logicalOr = (value1 || value2);
-		returnValue.putInteger(static_cast<uint>(logicalOr));
+		returnValue.setToParamToken(static_cast<uint>(logicalOr));
 		return returnValue;
 	}
 
 	case kOpcodeNot: {
 		debugCN(5, kDebugScript, "\n    value: ");
-		Operand value = evaluateExpression();
+		ScriptValue value = evaluateExpression();
 
-		Operand returnValue(kOperandTypeBool);
-		bool logicalNot = !(static_cast<bool>(value.getInteger()));
-		returnValue.putInteger(static_cast<uint>(logicalNot));
+		ScriptValue returnValue(kOperandTypeBool);
+		bool logicalNot = !(static_cast<bool>(value.asParamToken()));
+		returnValue.setToParamToken(static_cast<uint>(logicalNot));
 		return returnValue;
 	}
 
 	case kOpcodeAnd: {
 		debugCN(5, kDebugScript, "\n    value: ");
-		Operand value1 = evaluateExpression();
+		ScriptValue value1 = evaluateExpression();
 		debugCN(5, kDebugScript, "    rhs: ");
-		Operand value2 = evaluateExpression();
+		ScriptValue value2 = evaluateExpression();
 
-		Operand returnValue(kOperandTypeBool);
+		ScriptValue returnValue(kOperandTypeBool);
 		bool logicalAnd = (value1 && value2);
-		returnValue.putInteger(static_cast<uint>(logicalAnd));
+		returnValue.setToParamToken(static_cast<uint>(logicalAnd));
 		return returnValue;
 	}
 
 	case kOpcodeIfElse: {
 		debugCN(5, kDebugScript, "\n    condition: ");
-		Operand condition = evaluateExpression();
+		ScriptValue condition = evaluateExpression();
 
 		CodeChunk ifBlock(*_bytecode);
 		CodeChunk elseBlock(*_bytecode);
 		// Doesn't seem like there is a real bool type for values,
 		// ao just get an integer.
-		if (condition.getInteger()) {
+		if (condition.asParamToken()) {
 			ifBlock.execute(_args, _locals);
 		} else {
 			elseBlock.execute(_args, _locals);
 		}
 
 		// If blocks themselves shouldn't return anything.
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kOpcodeEquals: {
 		debugCN(5, kDebugScript, "\n    lhs: ");
-		Operand value1 = evaluateExpression();
+		ScriptValue value1 = evaluateExpression();
 		debugCN(5, kDebugScript, "    rhs: ");
-		Operand value2 = evaluateExpression();
+		ScriptValue value2 = evaluateExpression();
 
-		Operand returnValue(kOperandTypeBool);
+		ScriptValue returnValue(kOperandTypeBool);
 		bool equal = (value1 == value2);
-		returnValue.putInteger(static_cast<uint>(equal));
+		returnValue.setToParamToken(static_cast<uint>(equal));
 		return returnValue;
 	}
 
 	case kOpcodeNotEquals: {
 		debugCN(5, kDebugScript, "\n    lhs: ");
-		Operand value1 = evaluateExpression();
+		ScriptValue value1 = evaluateExpression();
 		debugCN(5, kDebugScript, "    rhs: ");
-		Operand value2 = evaluateExpression();
+		ScriptValue value2 = evaluateExpression();
 
-		Operand returnValue(kOperandTypeBool);
+		ScriptValue returnValue(kOperandTypeBool);
 		bool notEqual = !(value1 == value2);
-		returnValue.putInteger(static_cast<uint>(notEqual));
+		returnValue.setToParamToken(static_cast<uint>(notEqual));
 		return returnValue;
 	}
 
 	case kOpcodeLessThan: {
 		debugCN(5, kDebugScript, "\n    lhs: ");
-		Operand value1 = evaluateExpression();
+		ScriptValue value1 = evaluateExpression();
 		debugCN(5, kDebugScript, "    rhs: ");
-		Operand value2 = evaluateExpression();
+		ScriptValue value2 = evaluateExpression();
 
-		Operand returnValue(kOperandTypeBool);
+		ScriptValue returnValue(kOperandTypeBool);
 		bool lessThan = (value1 < value2);
-		returnValue.putInteger(static_cast<uint>(lessThan));
+		returnValue.setToParamToken(static_cast<uint>(lessThan));
 		return returnValue;
 	}
 
 	case kOpcodeGreaterThan: {
 		debugCN(5, kDebugScript, "\n    lhs: ");
-		Operand value1 = evaluateExpression();
+		ScriptValue value1 = evaluateExpression();
 		debugCN(5, kDebugScript, "    rhs: ");
-		Operand value2 = evaluateExpression();
+		ScriptValue value2 = evaluateExpression();
 
-		Operand returnValue(kOperandTypeBool);
+		ScriptValue returnValue(kOperandTypeBool);
 		bool greaterThan = (value1 > value2);
-		returnValue.putInteger(static_cast<uint>(greaterThan));
+		returnValue.setToParamToken(static_cast<uint>(greaterThan));
 		return returnValue;
 	}
 
 	case kOpcodeLessThanOrEqualTo: {
 		debugCN(5, kDebugScript, "\n    lhs: ");
-		Operand value1 = evaluateExpression();
+		ScriptValue value1 = evaluateExpression();
 		debugCN(5, kDebugScript, "    rhs: ");
-		Operand value2 = evaluateExpression();
+		ScriptValue value2 = evaluateExpression();
 
-		Operand returnValue(kOperandTypeBool);
+		ScriptValue returnValue(kOperandTypeBool);
 		bool lessThanOrEqualTo = (value1 < value2) || (value1 == value2);
-		returnValue.putInteger(static_cast<uint>(lessThanOrEqualTo));
+		returnValue.setToParamToken(static_cast<uint>(lessThanOrEqualTo));
 		return returnValue;
 	}
 
 	case kOpcodeGreaterThanOrEqualTo: {
 		debugCN(5, kDebugScript, "\n    lhs: ");
-		Operand value1 = evaluateExpression();
+		ScriptValue value1 = evaluateExpression();
 		debugCN(5, kDebugScript, "    rhs: ");
-		Operand value2 = evaluateExpression();
+		ScriptValue value2 = evaluateExpression();
 
-		Operand returnValue(kOperandTypeBool);
+		ScriptValue returnValue(kOperandTypeBool);
 		bool greaterThanOrEqualTo = (value1 > value2) || (value1 == value2);
-		returnValue.putInteger(static_cast<uint>(greaterThanOrEqualTo));
+		returnValue.setToParamToken(static_cast<uint>(greaterThanOrEqualTo));
 		return returnValue;
 	}
 
 	case kOpcodeAdd: {
 		debugCN(5, kDebugScript, "\n    lhs: ");
-		Operand value1 = evaluateExpression();
+		ScriptValue value1 = evaluateExpression();
 		debugCN(5, kDebugScript, "    rhs: ");
-		Operand value2 = evaluateExpression();
+		ScriptValue value2 = evaluateExpression();
 
-		Operand returnValue = value1 + value2;
+		ScriptValue returnValue = value1 + value2;
 		return returnValue;
 	}
 
 	case kOpcodeSubtract: {
 		debugCN(5, kDebugScript, "\n    lhs: ");
-		Operand value1 = evaluateExpression();
+		ScriptValue value1 = evaluateExpression();
 		debugCN(5, kDebugScript, "    rhs: ");
-		Operand value2 = evaluateExpression();
+		ScriptValue value2 = evaluateExpression();
 
-		Operand returnValue = value1 - value2;
+		ScriptValue returnValue = value1 - value2;
 		return returnValue;
 	}
 
 	case kOpcodeMultiply: {
 		debugCN(5, kDebugScript, "\n    lhs: ");
-		Operand value1 = evaluateExpression();
+		ScriptValue value1 = evaluateExpression();
 		debugCN(5, kDebugScript, "    rhs: ");
-		Operand value2 = evaluateExpression();
+		ScriptValue value2 = evaluateExpression();
 
-		Operand returnValue = value1 * value2;
+		ScriptValue returnValue = value1 * value2;
 		return returnValue;
 	}
 
 	case kOpcodeDivide: {
 		debugCN(5, kDebugScript, "\n    lhs: ");
-		Operand value1 = evaluateExpression();
+		ScriptValue value1 = evaluateExpression();
 		debugCN(5, kDebugScript, "    rhs: ");
-		Operand value2 = evaluateExpression();
+		ScriptValue value2 = evaluateExpression();
 
-		Operand returnValue = value1 / value2;
+		ScriptValue returnValue = value1 / value2;
 		return returnValue;
 	}
 
 	case kOpcodeModulo: {
 		debugCN(5, kDebugScript, "\n    lhs: ");
-		Operand value1 = evaluateExpression();
+		ScriptValue value1 = evaluateExpression();
 		debugCN(5, kDebugScript, "    rhs: ");
-		Operand value2 = evaluateExpression();
+		ScriptValue value2 = evaluateExpression();
 
-		Operand returnValue = value1 % value2;
+		ScriptValue returnValue = value1 % value2;
 		return returnValue;
 	}
 
 	case kOpcodeNegate: {
-		Operand value = evaluateExpression();
+		ScriptValue value = evaluateExpression();
 		debugCN(5, kDebugScript, "    value: ");
 
 		return -value;
@@ -327,15 +327,15 @@ Operand CodeChunk::evaluateOperation() {
 
 	case kOpcodeReturn: {
 		debugCN(5, kDebugScript, "    return: ");
-		Operand value = evaluateExpression();
+		ScriptValue value = evaluateExpression();
 
 		return value;
 	}
 
 	case kOpcodeCallFunctionInVariable: {
 		uint parameterCount = Datum(*_bytecode).u.i;
-		Operand variable = evaluateExpression();
-		uint functionId = variable.getFunctionId();
+		ScriptValue variable = evaluateExpression();
+		uint functionId = variable.asFunctionId();
 		debugC(5, kDebugScript, "Variable %d [function %d] (%d params)", variable.getVariable()->_id, functionId, parameterCount);
 
 		return callFunction(functionId, parameterCount);
@@ -346,11 +346,11 @@ Operand CodeChunk::evaluateOperation() {
 	}
 }
 
-Operand CodeChunk::evaluateValue() {
+ScriptValue CodeChunk::evaluateValue() {
 	OperandType operandType = static_cast<OperandType>(Datum(*_bytecode).u.i);
 	debugCN(5, kDebugScript, "%s ", operandTypeToStr(operandType));
 
-	Operand operand(operandType);
+	ScriptValue returnValue(operandType);
 	switch (operandType) {
 	case kOperandTypeBool: {
 		int b = Datum(*_bytecode).u.i;
@@ -358,22 +358,22 @@ Operand CodeChunk::evaluateValue() {
 			error("Got invalid boolean value %d", b);
 		}
 		debugC(5, kDebugScript, "%d ", b);
-		operand.putInteger(b == 1 ? true : false);
-		return operand;
+		returnValue.setToParamToken(b == 1 ? true : false);
+		return returnValue;
 	}
 
 	case kOperandTypeFloat: {
 		double f = Datum(*_bytecode).u.f;
 		debugC(5, kDebugScript, "%f ", f);
-		operand.putDouble(f);
-		return operand;
+		returnValue.setToFloat(f);
+		return returnValue;
 	}
 
 	case kOperandTypeInt: {
 		int i = Datum(*_bytecode).u.i;
 		debugC(5, kDebugScript, "%d ", i);
-		operand.putInteger(i);
-		return operand;
+		returnValue.setToParamToken(i);
+		return returnValue;
 	}
 
 	case kOperandTypeString: {
@@ -385,30 +385,30 @@ Operand CodeChunk::evaluateValue() {
 		buffer[size] = '\0';
 		Common::String *string = new Common::String(buffer);
 		debugC(5, kDebugScript, "%s ", string->c_str());
-		operand.putString(string);
+		returnValue.setToString(string);
 		delete[] buffer;
-		return operand;
+		return returnValue;
 	}
 
-	case kOperandTypeDollarSignVariable: {
+	case kOperandTypeParamToken: {
 		uint literal = Datum(*_bytecode).u.i;
 		debugC(5, kDebugScript, "%d ", literal);
-		operand.putInteger(literal);
-		return operand;
+		returnValue.setToParamToken(literal);
+		return returnValue;
 	}
 
 	case kOperandTypeAssetId: {
 		uint assetId = Datum(*_bytecode).u.i;
 		debugC(5, kDebugScript, "%d ", assetId);
-		operand.putAsset(assetId);
-		return operand;
+		returnValue.setToAssetId(assetId);
+		return returnValue;
 	}
 
 	case kOperandTypeTime: {
 		double d = Datum(*_bytecode).u.f;
 		debugC(5, kDebugScript, "%f ", d);
-		operand.putDouble(d);
-		return operand;
+		returnValue.setToFloat(d);
+		return returnValue;
 	}
 
 	case kOperandTypeVariable: {
@@ -419,39 +419,39 @@ Operand CodeChunk::evaluateValue() {
 	case kOperandTypeFunctionId: {
 		uint functionId = Datum(*_bytecode).u.i;
 		debugC(5, kDebugScript, "%d ", functionId);
-		operand.putFunctionId(functionId);
-		return operand;
+		returnValue.setToFunctionId(functionId);
+		return returnValue;
 	}
 
 	case kOperandTypeMethodId: {
 		BuiltInMethod methodId = static_cast<BuiltInMethod>(Datum(*_bytecode).u.i);
 		debugC(5, kDebugScript, "%s ", builtInMethodToStr(methodId));
-		operand.putMethodId(methodId);
-		return operand;
+		returnValue.setToMethodId(methodId);
+		return returnValue;
 	}
 
 	default:
-		error("CodeChunk::getNextStatement(): Got unknown operand type %s (%d)", operandTypeToStr(operandType), static_cast<uint>(operandType));
+		error("Got unknown ScriptValue type %s (%d)", operandTypeToStr(operandType), static_cast<uint>(operandType));
 	}
 }
 
-Operand CodeChunk::evaluateVariable() {
+ScriptValue CodeChunk::evaluateVariable() {
 	uint32 id = Datum(*_bytecode).u.i;
 	VariableScope scope = static_cast<VariableScope>(Datum(*_bytecode).u.i);
 	debugC(5, kDebugScript, "Variable %d (%s)", id, variableScopeToStr(scope));
-	Operand variable = getVariable(id, scope);
+	ScriptValue variable = getVariable(id, scope);
 	return variable;
 }
 
-Operand CodeChunk::callFunction(uint functionId, uint parameterCount) {
-	Common::Array<Operand> args;
+ScriptValue CodeChunk::callFunction(uint functionId, uint parameterCount) {
+	Common::Array<ScriptValue> args;
 	for (uint i = 0; i < parameterCount; i++) {
 		debugCN(5, kDebugScript, "  Param %d: ", i);
-		Operand arg = evaluateExpression();
+		ScriptValue arg = evaluateExpression();
 		args.push_back(arg);
 	}
 
-	Operand returnValue;
+	ScriptValue returnValue;
 	Function *function = g_engine->getFunctionById(functionId);
 	if (function != nullptr) {
 		// This is a title-defined function.
@@ -466,10 +466,10 @@ Operand CodeChunk::callFunction(uint functionId, uint parameterCount) {
 	return returnValue;
 }
 
-Operand CodeChunk::getVariable(uint32 id, VariableScope scope) {
+ScriptValue CodeChunk::getVariable(uint32 id, VariableScope scope) {
 	switch (scope) {
 	case kVariableScopeGlobal: {
-		Operand returnValue(kOperandTypeVariable);
+		ScriptValue returnValue(kOperandTypeVariable);
 		Variable *variable = g_engine->_variables.getVal(id);
 		returnValue.putVariable(variable);
 		return returnValue;
@@ -493,7 +493,7 @@ Operand CodeChunk::getVariable(uint32 id, VariableScope scope) {
 	}
 }
 
-void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand &value) {
+void CodeChunk::putVariable(uint32 id, VariableScope scope, ScriptValue &value) {
 	switch (scope) {
 	case kVariableScopeGlobal: {
 		Variable *variable = g_engine->_variables.getVal(id);
@@ -520,43 +520,43 @@ void CodeChunk::putVariable(uint32 id, VariableScope scope, Operand &value) {
 	}
 }
 
-Operand CodeChunk::callBuiltInMethod(BuiltInMethod method, Operand &self, Common::Array<Operand> &args) {
-	Operand literalSelf = self.getLiteralValue();
+ScriptValue CodeChunk::callBuiltInMethod(BuiltInMethod method, ScriptValue &self, Common::Array<ScriptValue> &args) {
+	ScriptValue literalSelf = self.getLiteralValue();
 	OperandType literalType = literalSelf.getType();
 	switch (literalType) {
 	case kOperandTypeAssetId: {
-		if (self.getAssetId() == 1) {
+		if (self.asAssetId() == 1) {
 			// This is a "document" method that we need to handle specially.
 			// The document (@doc) accepts engine-level methods like changing the
 			// active screen.
 			// HACK: This is so we don't have to implement a separate document class
 			// just to house these methods. Rather, we just call in the engine.
-			Operand returnValue = g_engine->callMethod(method, args);
+			ScriptValue returnValue = g_engine->callMethod(method, args);
 			return returnValue;
-		} else if (self.getAssetId() == 0) {
+		} else if (self.asAssetId() == 0) {
 			// It seems to be valid to call a method on a null asset ID, in
 			// which case nothing happens. Still issue warning for traceability.
 			warning("CodeChunk::callBuiltInMethod(): Attempt to call method on a null asset ID");
-			return Operand();
+			return ScriptValue();
 		} else {
 			// This is a regular asset that we can process directly.
 			Asset *selfAsset = self.getAsset();
 			if (selfAsset == nullptr) {
-				error("CodeChunk::callBuiltInMethod(): Attempt to call method on asset ID %d, which isn't loaded", self.getAssetId());
+				error("CodeChunk::callBuiltInMethod(): Attempt to call method on asset ID %d, which isn't loaded", self.asAssetId());
 			}
-			Operand returnValue = selfAsset->callMethod(method, args);
+			ScriptValue returnValue = selfAsset->callMethod(method, args);
 			return returnValue;
 		}
 	}
 
 	case kOperandTypeCollection: {
-		Common::SharedPtr<Collection> collection = literalSelf.getCollection();
-		Operand returnValue = collection->callMethod(method, args);
+		Common::SharedPtr<Collection> collection = literalSelf.asCollection();
+		ScriptValue returnValue = collection->callMethod(method, args);
 		return returnValue;
 	}
 
 	default:
-		error("CodeChunk::callBuiltInMethod(): Attempt to call method on unimplemented operand type %s (%d)",
+		error("CodeChunk::callBuiltInMethod(): Attempt to call method on unimplemented ScriptValue type %s (%d)",
 			operandTypeToStr(literalType), static_cast<uint>(literalType));
 	}
 }

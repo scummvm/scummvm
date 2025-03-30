@@ -41,9 +41,9 @@ Function::~Function() {
 	_code = nullptr;
 }
 
-Operand Function::execute(Common::Array<Operand> &args) {
+ScriptValue Function::execute(Common::Array<ScriptValue> &args) {
 	debugC(5, kDebugScript, "\n********** FUNCTION %d **********", _id);
-	Operand returnValue = _code->execute(&args);
+	ScriptValue returnValue = _code->execute(&args);
 	debugC(5, kDebugScript, "********** END FUNCTION **********");
 	return returnValue;
 }

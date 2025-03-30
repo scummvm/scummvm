@@ -394,7 +394,7 @@ void MediaStationEngine::addPlayingAsset(Asset *assetToAdd) {
 	g_engine->_assetsPlaying.push_back(assetToAdd);
 }
 
-Operand MediaStationEngine::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
+ScriptValue MediaStationEngine::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	switch (methodId) {
 	case kBranchToScreenMethod: {
 		assert(args.size() >= 1);
@@ -402,16 +402,16 @@ Operand MediaStationEngine::callMethod(BuiltInMethod methodId, Common::Array<Ope
 			// TODO: Figure out what the rest of the args can be.
 			warning("MediaStationEngine::callMethod(): branchToScreen got more than one arg");
 		}
-		uint32 contextId = args[0].getAssetId();
+		uint32 contextId = args[0].asAssetId();
 		_requestedScreenBranchId = contextId;
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kReleaseContextMethod: {
 		assert(args.size() == 1);
-		uint32 contextId = args[0].getAssetId();
+		uint32 contextId = args[0].asAssetId();
 		_requestedContextReleaseId.push_back(contextId);
-		return Operand();
+		return ScriptValue();
 	}
 
 	default:
@@ -506,26 +506,26 @@ Asset *MediaStationEngine::findAssetToAcceptMouseEvents() {
 	return intersectingAsset;
 }
 
-Operand MediaStationEngine::callBuiltInFunction(BuiltInFunction function, Common::Array<Operand> &args) {
+ScriptValue MediaStationEngine::callBuiltInFunction(BuiltInFunction function, Common::Array<ScriptValue> &args) {
 	switch (function) {
 	case kEffectTransitionFunction:
 	case kEffectTransitionOnSyncFunction: {
 		// TODO: effectTransitionOnSync should be split out into its own function.
 		effectTransition(args);
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kDrawingFunction: {
 		// Not entirely sure what this function does, but it seems like a way to
 		// call into some drawing functions built into the IBM/Crayola executable.
 		warning("MediaStationEngine::callBuiltInFunction(): Built-in drawing function not implemented");
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kUnk1Function: {
 		warning("MediaStationEngine::callBuiltInFunction(): Function 10 not implemented");
-		Operand returnValue = Operand(kOperandTypeBool);
-		returnValue.putInteger(1);
+		ScriptValue returnValue = ScriptValue(kOperandTypeBool);
+		returnValue.setToParamToken(1);
 		return returnValue;
 	}
 

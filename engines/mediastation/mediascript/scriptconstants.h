@@ -242,7 +242,7 @@ enum OperandType {
 	kOperandTypeFloat = 152,
 	kOperandTypeInt = 153,
 	kOperandTypeString = 154,
-	kOperandTypeDollarSignVariable = 155,
+	kOperandTypeParamToken = 155,
 	kOperandTypeAssetId = 156,
 	kOperandTypeTime = 157,
 	kOperandTypeVariable = 158,
@@ -252,25 +252,19 @@ enum OperandType {
 };
 const char *operandTypeToStr(OperandType type);
 
-enum VariableType {
-	kVariableTypeEmpty = 0x0000,
-	kVariableTypeFunction = 0x0008,
-	kVariableTypeCollection = 0x0007,
-	kVariableTypeString = 0x0006,
-	kVariableTypeAssetId = 0x0005,
-	kVariableTypeInt = 0x0004,
-	// These seem to be constants of some sort? This is what some of these
-	// IDs look like in PROFILE._ST:
-	//  - $downEar 10026
-	//  - $sitDown 10027
-	// Seems like these can also reference variables:
-	//  - var_6c14_bool_FirstThingLev3 315
-	//  - var_6c14_NextEncouragementSound 316
-	kVariableTypeUnk2 = 0x0003,
-	kVariableTypeBoolean = 0x0002,
-	kVariableTypeFloat = 0x0001
+enum ScriptValueType {
+	kScriptValueTypeEmpty = 0,
+	kScriptValueTypeFloat = 1,
+	kScriptValueTypeBool = 2,
+	kScriptValueTypeTime = 3,
+	kScriptValueTypeParamToken = 4,
+	kScriptValueTypeAssetId = 5,
+	kScriptValueTypeString = 6,
+	kScriptValueTypeCollection = 7,
+	kScriptValueTypeFunctionId = 8,
+	kScriptValueTypeMethodId = 9
 };
-const char *variableTypeToStr(VariableType type);
+const char *scriptValueTypeToStr(ScriptValueType type);
 
 } // End of namespace MediaStation
 

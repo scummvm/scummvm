@@ -36,7 +36,7 @@ public:
 	EventHandler(Chunk &chunk);
 	~EventHandler();
 
-	Operand execute(uint assetId);
+	ScriptValue execute(uint assetId);
 	EventType _type;
 	EventHandlerArgumentType _argumentType;
 	Datum _argumentValue;

@@ -24,8 +24,8 @@ MODULE_OBJS = \
 	mediascript/codechunk.o \
 	mediascript/eventhandler.o \
 	mediascript/function.o \
-	mediascript/operand.o \
 	mediascript/scriptconstants.o \
+	mediascript/scriptvalue.o \
 	mediascript/variable.o \
 	mediastation.o \
 	metaengine.o \

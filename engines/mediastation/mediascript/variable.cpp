@@ -21,30 +21,30 @@
 
 #include "mediastation/mediastation.h"
 #include "mediastation/mediascript/variable.h"
-#include "mediastation/mediascript/operand.h"
+#include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/codechunk.h"
 #include "mediastation/datum.h"
 #include "mediastation/debugchannels.h"
 
 namespace MediaStation {
 
-Operand Collection::callMethod(BuiltInMethod method, Common::Array<Operand> &args) {
+ScriptValue Collection::callMethod(BuiltInMethod method, Common::Array<ScriptValue> &args) {
 	switch (method) {
 	case kIsEmptyMethod: {
-		Operand returnValue(kOperandTypeBool);
-		returnValue.putInteger(static_cast<uint>(empty()));
+		ScriptValue returnValue(kOperandTypeBool);
+		returnValue.setToParamToken(static_cast<uint>(empty()));
 		return returnValue;
 	}
 
 	case kAppendMethod: {
-		for (Operand arg : args) {
+		for (ScriptValue arg : args) {
 			push_back(arg);
 		}
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kDeleteFirstMethod: {
-		Operand returnValue = remove_at(0);
+		ScriptValue returnValue = remove_at(0);
 		return returnValue;
 	}
 
@@ -53,36 +53,36 @@ Operand Collection::callMethod(BuiltInMethod method, Common::Array<Operand> &arg
 		assert(args.size() == 1);
 		for (uint i = 0; i < size(); i++) {
 			if (args[0] == operator[](i)) {
-				Operand returnValue = remove_at(i);
+				ScriptValue returnValue = remove_at(i);
 				return returnValue;
 			}
 		}
 
 		// The item wasn't found.
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kCountMethod: {
-		Operand returnValue = Operand(kOperandTypeBool);
-		returnValue.putInteger(size());
+		ScriptValue returnValue = ScriptValue(kOperandTypeBool);
+		returnValue.setToParamToken(size());
 		return returnValue;
 	}
 
 	case kGetAtMethod: {
 		assert(args.size() == 1);
-		Operand returnValue = operator[](args[0].getInteger());
+		ScriptValue returnValue = operator[](args[0].asParamToken());
 		return returnValue;
 	}
 
 	case kSendMethod: {
 		// Call a method on each item in the collection.
-		BuiltInMethod methodToSend = static_cast<BuiltInMethod>(args[0].getMethodId());
-		Common::Array<Operand> sendArgs;
+		BuiltInMethod methodToSend = static_cast<BuiltInMethod>(args[0].asMethodId());
+		Common::Array<ScriptValue> sendArgs;
 		for (uint i = 0; i < size(); i++) {
-			Operand self = operator[](i);
+			ScriptValue self = operator[](i);
 			CodeChunk::callBuiltInMethod(methodToSend, self, sendArgs);
 		}
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kSeekMethod: {
@@ -95,8 +95,8 @@ Operand Collection::callMethod(BuiltInMethod method, Common::Array<Operand> &arg
 		}
 
 		// The item wasn't found.
-		Operand returnValue(kOperandTypeBool);
-		returnValue.putInteger(-1);
+		ScriptValue returnValue(kOperandTypeBool);
+		returnValue.setToParamToken(-1);
 		return returnValue;
 	}
 
@@ -106,18 +106,18 @@ Operand Collection::callMethod(BuiltInMethod method, Common::Array<Operand> &arg
 			uint j = g_engine->_randomSource.getRandomNumber(size() - 1);
 			SWAP(operator[](i), operator[](j));
 		}
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kSortMethod: {
 		assert(args.empty());
 		Common::sort(begin(), end());
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kEmptyMethod: {
 		clear();
-		return Operand();
+		return ScriptValue();
 	}
 
 	default:
@@ -130,22 +130,22 @@ Variable::Variable(Chunk &chunk, bool readId) {
 		_id = Datum(chunk).u.i;
 	}
 
-	_type = static_cast<VariableType>(Datum(chunk).u.i);
+	_type = static_cast<ScriptValueType>(Datum(chunk).u.i);
 	debugC(7, kDebugScript, "Variable::Variable(): id = %d, type %s (%d) (@0x%llx)",
-		_id, variableTypeToStr(_type), static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
+		_id, scriptValueTypeToStr(_type), static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
 	switch (_type) {
-	case kVariableTypeCollection: {
+	case kScriptValueTypeCollection: {
 		uint totalItems = Datum(chunk).u.i;
 		_c = Common::SharedPtr<Collection>(new Collection);
 		for (uint i = 0; i < totalItems; i++) {
-			debugC(7, kDebugLoading, "Variable::Variable(): %s: Value %d of %d", variableTypeToStr(_type), i, totalItems);
+			debugC(7, kDebugLoading, "Variable::Variable(): %s: Value %d of %d", scriptValueTypeToStr(_type), i, totalItems);
 			Variable variable = Variable(chunk, readId = false);
 			_c->push_back(variable.getValue());
 		}
 		break;
 	}
 
-	case kVariableTypeString: {
+	case kScriptValueTypeString: {
 		// TODO: This copies the string. Can we read it directly from the chunk?
 		int size = Datum(chunk).u.i;
 		char *buffer = new char[size + 1];
@@ -153,41 +153,41 @@ Variable::Variable(Chunk &chunk, bool readId) {
 		buffer[size] = '\0';
 		_value.string = new Common::String(buffer);
 		delete[] buffer;
-		debugC(7, kDebugLoading, "Variable::Variable(): %s: %s", variableTypeToStr(_type), _value.string->c_str());
+		debugC(7, kDebugLoading, "Variable::Variable(): %s: %s", scriptValueTypeToStr(_type), _value.string->c_str());
 		break;
 	}
 
-	case kVariableTypeAssetId: {
+	case kScriptValueTypeAssetId: {
 		_value.assetId = Datum(chunk, kDatumTypeUint16_1).u.i;
-		debugC(7, kDebugLoading, "Variable::Variable(): %s: %d", variableTypeToStr(_type), _value.assetId);
+		debugC(7, kDebugLoading, "Variable::Variable(): %s: %d", scriptValueTypeToStr(_type), _value.assetId);
 		break;
 	}
 
-	case kVariableTypeBoolean: {
+	case kScriptValueTypeBool: {
 		uint rawValue = Datum(chunk, kDatumTypeUint8).u.i;
-		debugC(7, kDebugLoading, " Variable::Variable(): %s: %d", variableTypeToStr(_type), rawValue);
+		debugC(7, kDebugLoading, " Variable::Variable(): %s: %d", scriptValueTypeToStr(_type), rawValue);
 		_value.i = static_cast<int>(rawValue == 1);
 		break;
 	}
 
-	case kVariableTypeFloat: {
+	case kScriptValueTypeFloat: {
 		Datum datum = Datum(chunk);
 		if ((datum.t != kDatumTypeFloat64_1) && (datum.t != kDatumTypeFloat64_2)) {
 			error("Variable::Variable(): Got a non-float datum type 0x%x to put into a float variable", datum.t);
 		}
 		_value.d = datum.u.f;
-		debugC(7, kDebugLoading, "Variable::Variable(): %s: %f", variableTypeToStr(_type), _value.d);
+		debugC(7, kDebugLoading, "Variable::Variable(): %s: %f", scriptValueTypeToStr(_type), _value.d);
 		break;
 	}
 
-	case kVariableTypeInt: {
+	case kScriptValueTypeParamToken: {
 		_value.i = Datum(chunk).u.i;
-		debugC(7, kDebugLoading, "Variable::Variable(): %s: %d", variableTypeToStr(_type), _value.i);
+		debugC(7, kDebugLoading, "Variable::Variable(): %s: %d", scriptValueTypeToStr(_type), _value.i);
 		break;
 	}
 
 	default:
-		error("Variable::Variable(): Got unknown variable value type %s (%d)", variableTypeToStr(_type), static_cast<uint>(_type));
+		error("Variable::Variable(): Got unknown variable value type %s (%d)", scriptValueTypeToStr(_type), static_cast<uint>(_type));
 	}
 }
 
@@ -195,91 +195,91 @@ Variable::~Variable() {
 	clear();
 }
 
-Operand Variable::getValue() {
+ScriptValue Variable::getValue() {
 	switch (_type) {
-	case kVariableTypeEmpty: {
+	case kScriptValueTypeEmpty: {
 		error("Variable::getValue(): Attempt to get value from an empty variable");
 	}
 
-	case kVariableTypeCollection: {
-		Operand returnValue(kOperandTypeCollection);
-		returnValue.putCollection(_c);
+	case kScriptValueTypeCollection: {
+		ScriptValue returnValue(kOperandTypeCollection);
+		returnValue.setToCollection(_c);
 		return returnValue;
 	}
 
-	case kVariableTypeString: {
-		Operand returnValue(kOperandTypeString);
-		returnValue.putString(_value.string);
+	case kScriptValueTypeString: {
+		ScriptValue returnValue(kOperandTypeString);
+		returnValue.setToString(_value.string);
 		return returnValue;
 	}
 
-	case kVariableTypeAssetId: {
-		Operand returnValue(kOperandTypeAssetId);
-		returnValue.putAsset(_value.assetId);
+	case kScriptValueTypeAssetId: {
+		ScriptValue returnValue(kOperandTypeAssetId);
+		returnValue.setToAssetId(_value.assetId);
 		return returnValue;
 	}
 
-	case kVariableTypeBoolean: {
+	case kScriptValueTypeBool: {
 		// TODO: Is this value type correct?
 		// Shouldn't matter too much, though, since it's still an integer type.
-		Operand returnValue(kOperandTypeBool);
-		returnValue.putInteger(_value.i);
+		ScriptValue returnValue(kOperandTypeBool);
+		returnValue.setToParamToken(_value.i);
 		return returnValue;
 	}
 
-	case kVariableTypeInt: {
+	case kScriptValueTypeParamToken: {
 		// TODO: Is this value type correct?
 		// Shouldn't matter too much, though, since it's still an integer type.
-		Operand returnValue(kOperandTypeBool);
-		returnValue.putInteger(_value.i);
+		ScriptValue returnValue(kOperandTypeBool);
+		returnValue.setToParamToken(_value.i);
 		return returnValue;
 	}
 
-	case kVariableTypeFloat: {
+	case kScriptValueTypeFloat: {
 		// TODO: Is this value type correct?
 		// Shouldn't matter too much, though, since it's still a floating-point type.
-		Operand returnValue(kOperandTypeTime);
-		returnValue.putDouble(_value.d);
+		ScriptValue returnValue(kOperandTypeTime);
+		returnValue.setToFloat(_value.d);
 		return returnValue;
 	}
 
 	default:
-		error("Variable::getValue(): Attempt to get value from unknown variable type %s (%d)", variableTypeToStr(_type), static_cast<uint>(_type));
+		error("Variable::getValue(): Attempt to get value from unknown variable type %s (%d)", scriptValueTypeToStr(_type), static_cast<uint>(_type));
 	}
 }
 
-void Variable::putValue(Operand value) {
+void Variable::putValue(ScriptValue value) {
 	clear();
 
 	switch (value.getType()) {
 	case kOperandTypeEmpty: {
-		error("Variable::putValue(): Assigning an empty operand to a variable not supported");
+		error("Variable::putValue(): Assigning an empty ScriptValue to a variable not supported");
 	}
 
 	case kOperandTypeBool:
 	case kOperandTypeInt:
-	case kOperandTypeDollarSignVariable: {
-		_type = kVariableTypeInt;
-		_value.i = value.getInteger();
+	case kOperandTypeParamToken: {
+		_type = kScriptValueTypeParamToken;
+		_value.i = value.asParamToken();
 		break;
 	}
 
 	case kOperandTypeTime:
 	case kOperandTypeFloat: {
-		_type = kVariableTypeFloat;
-		_value.d = value.getDouble();
+		_type = kScriptValueTypeFloat;
+		_value.d = value.asFloat();
 		break;
 	}
 
 	case kOperandTypeString: {
-		_type = kVariableTypeString;
-		_value.string = value.getString();
+		_type = kScriptValueTypeString;
+		_value.string = value.asString();
 		break;
 	}
 
 	case kOperandTypeAssetId: {
-		_type = kVariableTypeAssetId;
-		_value.assetId = value.getAssetId();
+		_type = kScriptValueTypeAssetId;
+		_value.assetId = value.asAssetId();
 		break;
 	}
 
@@ -289,31 +289,31 @@ void Variable::putValue(Operand value) {
 	}
 
 	case kOperandTypeFunctionId: {
-		_type = kVariableTypeFunction;
-		_value.functionId = value.getFunctionId();
+		_type = kScriptValueTypeFunctionId;
+		_value.functionId = value.asFunctionId();
 		break;
 	}
 
 	case kOperandTypeCollection: {
-		_type = kVariableTypeCollection;
-		_c = value.getCollection();
+		_type = kScriptValueTypeCollection;
+		_c = value.asCollection();
 		break;
 	}
 
 	default:
-		error("Variable::putValue(): Assigning an unknown operand type %s (%d) to a variable not supported",
+		error("Variable::putValue(): Assigning an unknown ScriptValue type %s (%d) to a variable not supported",
 			operandTypeToStr(value.getType()), static_cast<uint>(value.getType()));
 	}
 }
 
 void Variable::clear() {
 	switch (_type) {
-	case kVariableTypeCollection: {
+	case kScriptValueTypeCollection: {
 		_c.reset();
 		break;
 	}
 
-	case kVariableTypeString: {
+	case kScriptValueTypeString: {
 		delete _value.string;
 		_value.string = nullptr;
 		break;
@@ -323,7 +323,7 @@ void Variable::clear() {
 		break;
 	}
 
-	_type = kVariableTypeEmpty;
+	_type = kScriptValueTypeEmpty;
 }
 
 } // End of namespace MediaStation

@@ -24,7 +24,7 @@
 
 #include "mediastation/asset.h"
 #include "mediastation/assetheader.h"
-#include "mediastation/mediascript/operand.h"
+#include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
@@ -33,7 +33,7 @@ class Canvas : public Asset {
 public:
 	Canvas(AssetHeader *header) : Asset(header) {};
 
-	virtual Operand callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) override;
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 };
 
 } // End of namespace MediaStation

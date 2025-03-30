@@ -23,7 +23,7 @@
 
 namespace MediaStation {
 
-Operand Text::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
+ScriptValue Text::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	switch (methodId) {
 	case kTextMethod: {
 		assert(args.empty());
@@ -39,14 +39,14 @@ Operand Text::callMethod(BuiltInMethod methodId, Common::Array<Operand> &args) {
 		assert(args.empty());
 		_isActive = true;
 		warning("Text::callMethod(): spatialShow method not implemented yet");
-		return Operand();
+		return ScriptValue();
 	}
 
 	case kSpatialHideMethod: {
 		assert(args.empty());
 		_isActive = false;
 		warning("Text::callMethod(): spatialHide method not implemented yet");
-		return Operand();
+		return ScriptValue();
 	}
 
 	default:
