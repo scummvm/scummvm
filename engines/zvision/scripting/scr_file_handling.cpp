@@ -104,33 +104,54 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 			parseCriteria(stream, puzzle->criteriaList, puzzle->key);
 		else if (line.matchString("results {", true)) {
 			parseResults(stream, puzzle->resultActions, puzzle->key);
-
-			// WORKAROUND for a script bug in Zork Nemesis, room ve5e (tuning
-			// fork box closeup). If the player leaves the screen while the
-			// box is open, puzzle 19398 shows the animation where the box
-			// closes, but the box state (state variable 19397) is not updated.
-			// We insert the missing assignment for the box state here.
-			// Fixes bug #6803.
-			if (_engine->getGameId() == GID_NEMESIS && puzzle->key == 19398)
-				puzzle->resultActions.push_back(new ActionAssign(_engine, 11, "19397, 0"));
-
-			// WORKAROUND for bug #10604. If the player is looking at the
-			// cigar box when Antharia Jack returns to examine the lamp,
-			// pp1f_video_flag remains 1. Later, when the player returns
-			// to pick up the lantern, the game will try to play the
-			// cutscene again, but since that script has already been
-			// run the player gets stuck in a dark room instead. We have
-			// to add the assignment action to the front, or it won't be
-			// reached because changing the location terminates the script.
-			//
-			// Fixing it this way only keeps the bug from happening. It
-			// will not repair old savegames.
-			//
-			// Note that the bug only affects the DVD version. The CD
-			// version doesn't have a separate room for the cutscene.
-			else if (_engine->getGameId() == GID_GRANDINQUISITOR && (_engine->getFeatures() & ADGF_DVD) && puzzle->key == 10836)
-				puzzle->resultActions.push_front(new ActionAssign(_engine, 11, "10803, 0"));
-
+      //WORKAROUNDS:
+      switch(_engine->getGameId()) {
+        case GID_NEMESIS: {
+			      // WORKAROUND for a script bug in Zork Nemesis, room ve5e (tuning
+			      // fork box closeup). If the player leaves the screen while the
+			      // box is open, puzzle 19398 shows the animation where the box
+			      // closes, but the box state (state variable 19397) is not updated.
+			      // We insert the missing assignment for the box state here.
+			      // Fixes bug #6803.
+			      if (puzzle->key == 19398)
+				      puzzle->resultActions.push_back(new ActionAssign(_engine, 11, "19397, 0"));
+			    }
+          break;
+        case GID_GRANDINQUISITOR: {
+			      switch(puzzle->key) {
+			        case 10836:
+			          // WORKAROUND for bug #10604. If the player is looking at the
+			          // cigar box when Antharia Jack returns to examine the lamp,
+			          // pp1f_video_flag remains 1. Later, when the player returns
+			          // to pick up the lantern, the game will try to play the
+			          // cutscene again, but since that script has already been
+			          // run the player gets stuck in a dark room instead. We have
+			          // to add the assignment action to the front, or it won't be
+			          // reached because changing the location terminates the script.
+			          //
+			          // Fixing it this way only keeps the bug from happening. It
+			          // will not repair old savegames.
+			          //
+			          // Note that the bug only affects the DVD version. The CD
+			          // version doesn't have a separate room for the cutscene.
+			          if (_engine->getFeatures() & ADGF_DVD)
+				          puzzle->resultActions.push_front(new ActionAssign(_engine, 11, "10803, 0"));
+			          break;
+              // WORKAROUND for a script bug in Zork: Grand Inquisitor, room dc10.
+              // Background heartbeat sound effect never terminates upon location change.
+			        case 2341:
+			        case 2344:
+			        case 17545:
+      					puzzle->resultActions.push_front(new ActionKill(_engine, 11, "02310"));
+      					break;
+      				default:
+      				  break;
+			      }
+		      }
+          break;
+        default:
+          break;
+      }
 		} 
 		else if (line.matchString("flags {", true))
 			setStateFlag(puzzle->key, parseFlags(stream));
@@ -157,6 +178,7 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 	// Create a new List to hold the CriteriaEntries
 	criteriaList.push_back(Common::List<Puzzle::CriteriaEntry>());
 	
+	//WORKAROUNDS
   switch(_engine->getGameId()) {
     case GID_NEMESIS:
 	    // WORKAROUND for a script bug in Zork: Nemesis, room td9e (fist puzzle)
@@ -430,7 +452,14 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("ttytext", true)) {
 					actionList.push_back(new ActionTtyText(_engine, slot, args));
 				} else if (act.matchString("universe_music", true)) {
-					actionList.push_back(new ActionMusic(_engine, slot, args, true));
+          if (_engine->getGameId() == GID_GRANDINQUISITOR && slot == 2310 && false) { //DISABLED - not effective, sound stops on all zoom-ins for some reason?
+          // WORKAROUND for a script bug in Zork: Grand Inquisitor, room dc10.
+          // Background looping sound effect never terminates upon location change.
+          // Seems that it should have been "music" instead of "universe_music."
+			      actionList.push_back(new ActionMusic(_engine, slot, args, false));
+          }
+          else 
+				    actionList.push_back(new ActionMusic(_engine, slot, args, true));
 				} else if (act.matchString("copy_file", true)) {
 					// Not used. Purposely left empty
 				} else {
