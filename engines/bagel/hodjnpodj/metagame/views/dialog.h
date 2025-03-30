@@ -22,7 +22,7 @@
 #ifndef HODJNPODJ_METAGAME_VIEWS_DIALOG_H
 #define HODJNPODJ_METAGAME_VIEWS_DIALOG_H
 
-#include "bagel/hodjnpodj/views/view.h"
+#include "bagel/hodjnpodj/views/resource_view.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {
@@ -32,13 +32,13 @@ namespace Metagame {
 constexpr int DIALOG_TOP = 48;
 constexpr int DIALOG_BOTTOM = 47;
 
-class Dialog : public View {
+class Dialog : public ResourceView {
 private:
 	GfxSurface _background;
 
 public:
-	Dialog(const Common::String &name) :
-		View(name) {
+	Dialog(const Common::String &name, const char *resFilename = nullptr) :
+		ResourceView(name, resFilename ? resFilename : "") {
 	}
 
 	bool msgOpen(const OpenMessage &msg) override;

@@ -31,7 +31,7 @@ namespace Metagame {
 
 
 bool Dialog::msgOpen(const OpenMessage &msg) {
-	View::msgOpen(msg);
+	ResourceView::msgOpen(msg);
 	g_events->showCursor(true);
 
 	_background.loadBitmap(BACKGROUND_BMP);

@@ -32,7 +32,7 @@ namespace Bagel {
 namespace HodjNPodj {
 
 void Cursor::loadCursors() {
-	if (!_resources.loadFromEXE("meta/hodjpodj.exe"))
+	if (!_resources.loadFromEXE("meta/hnpmeta.dll"))
 		error("Could not load meta/hodjpodj.exe");
 }
 

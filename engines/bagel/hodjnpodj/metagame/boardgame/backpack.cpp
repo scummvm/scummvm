@@ -56,9 +56,9 @@ namespace Metagame {
 #define	IDC_NOTEBOOK_BOOK	    921
 #define	IDC_NOTEBOOK_SOUND	    922
 
-Backpack::Backpack() : Dialog("Backpack"),
-_okButton(Common::Rect(210, 355, 290, 380), this),
-pInventory(lpMetaGame->m_cHodj.m_pInventory) {
+Backpack::Backpack() : Dialog("Backpack", "meta/hnpmeta.dll"),
+		_okButton(Common::Rect(210, 355, 290, 380), this),
+		pInventory(lpMetaGame->m_cHodj.m_pInventory) {
 }
 
 bool Backpack::msgOpen(const OpenMessage &msg) {
