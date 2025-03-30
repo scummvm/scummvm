@@ -126,6 +126,10 @@ shaders/playground3d_cube.fragment      FILE    "engines/playground3d/shaders/pl
 shaders/playground3d_cube.vertex        FILE    "engines/playground3d/shaders/playground3d_cube.vertex"
 shaders/playground3d_fade.fragment      FILE    "engines/playground3d/shaders/playground3d_fade.fragment"
 shaders/playground3d_fade.vertex        FILE    "engines/playground3d/shaders/playground3d_fade.vertex"
+shaders/playground3d_offset.fragment    FILE    "engines/playground3d/shaders/playground3d_offset.fragment"
+shaders/playground3d_offset.vertex      FILE    "engines/playground3d/shaders/playground3d_offset.vertex"
+shaders/playground3d_viewport.fragment  FILE    "engines/playground3d/shaders/playground3d_viewport.fragment"
+shaders/playground3d_viewport.vertex    FILE    "engines/playground3d/shaders/playground3d_viewport.vertex"
 #endif
 #if PLUGIN_ENABLED_STATIC(HPL1)
 shaders/hpl1_Ambient_Color.fragment                    FILE   "engines/hpl1/engine/impl/shaders/hpl1_Ambient_Color.fragment"
