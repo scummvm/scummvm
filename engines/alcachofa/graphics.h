@@ -78,7 +78,7 @@ public:
 	virtual Common::ScopedPtr<ITexture> createTexture(int32 w, int32 h, bool withMipmaps = true) = 0;
 
 	virtual void begin() = 0;
-	virtual void setTexture(const ITexture *texture) = 0;
+	virtual void setTexture(ITexture *texture) = 0;
 	virtual void setBlendMode(BlendMode blendMode) = 0;
 	virtual void setLodBias(float lodBias) = 0;
 	virtual void quad(
