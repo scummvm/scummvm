@@ -343,38 +343,38 @@ void Animation::prerenderFrame(int32 frameI) {
 	_renderedFrameI = frameI;
 }
 
-void Animation::draw2D(int32 frameI, Vector2d center, float scale, BlendMode blendMode, Color color) {
+void Animation::draw2D(int32 frameI, Vector2d topLeft, float scale, BlendMode blendMode, Color color) {
 	prerenderFrame(frameI);
 	auto bounds = frameBounds(frameI);
 	Vector2d texMin(0, 0);
 	Vector2d texMax((float)bounds.width() / _renderedSurface.w, (float)bounds.height() / _renderedSurface.h);
 
 	Vector2d size(bounds.width(), bounds.height());
-	center += as2D(totalFrameOffset(frameI)) * scale;
+	topLeft += as2D(totalFrameOffset(frameI)) * scale;
 	size *= scale;
 
 	auto &renderer = g_engine->renderer();
 	renderer.setTexture(_renderedTexture.get());
 	renderer.setBlendMode(blendMode);
-	renderer.quad(center, size, color, Angle(), texMin, texMax);
+	renderer.quad(topLeft, size, color, Angle(), texMin, texMax);
 }
 
-void Animation::draw3D(int32 frameI, Vector3d center, float scale, BlendMode blendMode, Color color) {
+void Animation::draw3D(int32 frameI, Vector3d topLeft, float scale, BlendMode blendMode, Color color) {
 	prerenderFrame(frameI);
 	auto bounds = frameBounds(frameI);
 	Vector2d texMin(0, 0);
 	Vector2d texMax((float)bounds.width() / _renderedSurface.w, (float)bounds.height() / _renderedSurface.h);
 
-	center += as3D(totalFrameOffset(frameI)) * scale;
-	center = g_engine->camera().transform3Dto2D(center);
+	topLeft += as3D(totalFrameOffset(frameI)) * scale;
+	topLeft = g_engine->camera().transform3Dto2D(topLeft);
 	const auto rotation = -g_engine->camera().rotation();
 	Vector2d size(bounds.width(), bounds.height());
-	size *= scale * center.z();
+	size *= scale * topLeft.z();
 
 	auto &renderer = g_engine->renderer();
 	renderer.setTexture(_renderedTexture.get());
 	renderer.setBlendMode(blendMode);
-	renderer.quad(as2D(center), size, color, rotation, texMin, texMax);
+	renderer.quad(as2D(topLeft), size, color, rotation, texMin, texMax);
 }
 
 void Animation::drawEffect(int32 frameI, Vector3d topLeft, Vector2d size, Vector2d texOffset, BlendMode blendMode) {
@@ -473,8 +473,8 @@ Graphic::Graphic() {
 }
 
 Graphic::Graphic(ReadStream &stream) {
-	_center.x = stream.readSint16LE();
-	_center.y = stream.readSint16LE();
+	_topLeft.x = stream.readSint16LE();
+	_topLeft.y = stream.readSint16LE();
 	_scale = stream.readSint16LE();
 	_order = stream.readSByte();
 	auto animationName = readVarString(stream);
@@ -484,7 +484,7 @@ Graphic::Graphic(ReadStream &stream) {
 
 Graphic::Graphic(const Graphic &other)
 	: _animation(other._animation)
-	, _center(other._center)
+	, _topLeft(other._topLeft)
 	, _scale(other._scale)
 	, _order(other._order)
 	, _color(other._color)
@@ -556,7 +556,7 @@ void Graphic::setAnimation(Animation *animation) {
 }
 
 void Graphic::serializeSave(Serializer &serializer) {
-	syncPoint(serializer, _center);
+	syncPoint(serializer, _topLeft);
 	serializer.syncAsSint16LE(_scale);
 	serializer.syncAsUint32LE(_lastTime);
 	serializer.syncAsByte(_isPaused);
@@ -577,7 +577,7 @@ AnimationDrawRequest::AnimationDrawRequest(Graphic &graphic, bool is3D, BlendMod
 	, _is3D(is3D)
 	, _animation(&graphic.animation())
 	, _frameI(graphic._frameI)
-	, _center(graphic._center.x, graphic._center.y, graphic._scale)
+	, _topLeft(graphic._topLeft.x, graphic._topLeft.y, graphic._scale)
 	, _scale(graphic._scale * graphic._depthScale)
 	, _color(graphic.color())
 	, _blendMode(blendMode)
@@ -590,7 +590,7 @@ AnimationDrawRequest::AnimationDrawRequest(Animation *animation, int32 frameI, V
 	, _is3D(false)
 	, _animation(animation)
 	, _frameI(frameI)
-	, _center(as3D(center))
+	, _topLeft(as3D(center))
 	, _scale(kBaseScale)
 	, _color(kWhite)
 	, _blendMode(BlendMode::AdditiveAlpha)
@@ -601,9 +601,9 @@ AnimationDrawRequest::AnimationDrawRequest(Animation *animation, int32 frameI, V
 
 void AnimationDrawRequest::draw() {
 	if (_is3D)
-		_animation->draw3D(_frameI, _center, _scale * kInvBaseScale, _blendMode, _color);
+		_animation->draw3D(_frameI, _topLeft, _scale * kInvBaseScale, _blendMode, _color);
 	else
-		_animation->draw2D(_frameI, as2D(_center), _scale * kInvBaseScale, _blendMode, _color);
+		_animation->draw2D(_frameI, as2D(_topLeft), _scale * kInvBaseScale, _blendMode, _color);
 }
 
 SpecialEffectDrawRequest::SpecialEffectDrawRequest(Graphic &graphic, Point topLeft, Point bottomRight, Vector2d texOffset, BlendMode blendMode)

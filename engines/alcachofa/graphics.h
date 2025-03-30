@@ -251,7 +251,7 @@ public:
 	Graphic(Common::ReadStream &stream);
 	Graphic(const Graphic &other); // animation reference is taken, so keep other alive
 
-	inline Common::Point &center() { return _center; }
+	inline Common::Point &topLeft() { return _topLeft; }
 	inline int8 &order() { return _order; }
 	inline int16 &scale() { return _scale; }
 	inline float &depthScale() { return _depthScale; }
@@ -284,7 +284,7 @@ private:
 	friend class SpecialEffectDrawRequest;
 	Common::ScopedPtr<Animation> _ownedAnimation;
 	Animation *_animation = nullptr;
-	Common::Point _center;
+	Common::Point _topLeft;
 	int16 _scale = kBaseScale;
 	int8 _order = 0;
 	Color _color = kWhite;
@@ -328,7 +328,7 @@ private:
 	bool _is3D;
 	Animation *_animation;
 	int32 _frameI;
-	Math::Vector3d _center;
+	Math::Vector3d _topLeft;
 	float _scale;
 	Color _color;
 	BlendMode _blendMode;

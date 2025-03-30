@@ -182,7 +182,7 @@ void SpecialEffectObject::draw() {
 		: BlendMode::AdditiveAlpha;
 	Point topLeft = _topLeft, bottomRight = _bottomRight;
 	if (topLeft.x == bottomRight.x || topLeft.y == bottomRight.y) {
-		topLeft = _graphic.center();
+		topLeft = _graphic.topLeft();
 		bottomRight = topLeft + _graphic.animation().imageSize(0);
 	}
 

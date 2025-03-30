@@ -385,7 +385,7 @@ Item *Inventory::getHoveredItem() {
 		assert(graphic != nullptr);
 		auto bounds = graphic->animation().frameBounds(0);
 		auto totalOffset = graphic->animation().totalFrameOffset(0);
-		auto delta = mousePos - graphic->center() - totalOffset;
+		auto delta = mousePos - graphic->topLeft() - totalOffset;
 		if (delta.x >= 0 && delta.y >= 0 && delta.x <= bounds.width() && delta.y <= bounds.height())
 			return item;
 	}
@@ -418,14 +418,14 @@ void Inventory::drawAsOverlay(int32 scrollY) {
 		if (graphic == nullptr)
 			continue;
 
-		int16 oldY = graphic->center().y;
+		int16 oldY = graphic->topLeft().y;
 		int8 oldOrder = graphic->order();
-		graphic->center().y += scrollY;
+		graphic->topLeft().y += scrollY;
 		graphic->order() = -kForegroundOrderCount;
 		if (object->name().equalsIgnoreCase("Background"))
 			graphic->order()++;
 		object->draw();
-		graphic->center().y = oldY;
+		graphic->topLeft().y = oldY;
 		graphic->order() = oldOrder;
 	}
 }
