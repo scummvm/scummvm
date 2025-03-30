@@ -85,11 +85,10 @@ public:
 	Asset *getAssetById(uint assetId);
 	Asset *getAssetByChunkReference(uint chunkReference);
 	Function *getFunctionById(uint functionId);
+	ScriptValue *getVariable(uint variableId);
 
 	ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args);
 	ScriptValue callBuiltInFunction(BuiltInFunction function, Common::Array<ScriptValue> &args);
-	Common::HashMap<uint32, Variable *> _variables;
-
 	Common::RandomSource _randomSource;
 
 	Graphics::Screen *_screen = nullptr;

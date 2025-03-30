@@ -19,565 +19,527 @@
  *
  */
 
-#include "mediastation/mediastation.h"
+#include "mediastation/datum.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/function.h"
 
 namespace MediaStation {
 
-void ScriptValue::setToParamToken(int i) {
+ScriptValue::ScriptValue(Common::SeekableReadStream *stream) {
+	_type = static_cast<ScriptValueType>(Datum(*stream).u.i);
+
 	switch (_type) {
-	case kOperandTypeBool:
-	case kOperandTypeInt:
-	case kOperandTypeParamToken: {
-		_u.i = i;
+	case kScriptValueTypeEmpty:
+		break;
+
+	case kScriptValueTypeFloat: {
+		double d = Datum(*stream).u.f;
+		setToFloat(d);
 		break;
 	}
 
-	case kOperandTypeVariable: {
-		_u.variable->_value.i = i;
+	case kScriptValueTypeBool: {
+		uint rawValue = Datum(*stream, kDatumTypeUint8).u.i;
+		if (rawValue != 0 && rawValue != 1) {
+			error("Got invalid literal bool value %d", rawValue);
+		}
+		setToBool(rawValue);
+		break;
+	}
+
+	case kScriptValueTypeTime: {
+		double d = Datum(*stream).u.f;
+		setToFloat(d);
+		break;
+	}
+
+	case kScriptValueTypeParamToken: {
+		uint paramToken = Datum(*stream).u.i;
+		setToParamToken(paramToken);
+		break;
+	}
+
+	case kScriptValueTypeAssetId: {
+		uint assetId = Datum(*stream).u.i;
+		setToAssetId(assetId);
+		break;
+	}
+
+	case kScriptValueTypeString: {
+		uint size = Datum(*stream).u.i;
+		Common::String string = stream->readString('\0', size);
+		setToString(string);
+		break;
+	}
+
+	case kScriptValueTypeCollection: {
+		uint totalItems = Datum(*stream).u.i;
+		Common::SharedPtr<Collection> collection(new Collection);
+		for (uint i = 0; i < totalItems; i++) {
+			ScriptValue collectionValue = ScriptValue(stream);
+			collection->push_back(collectionValue);
+		}
+		setToCollection(collection);
+		break;
+	}
+
+	case kScriptValueTypeFunctionId: {
+		uint functionId = Datum(*stream).u.i;
+		setToFunctionId(functionId);
+		break;
+	}
+
+	case kScriptValueTypeMethodId: {
+		BuiltInMethod methodId = static_cast<BuiltInMethod>(Datum(*stream).u.i);
+		setToMethodId(methodId);
 		break;
 	}
 
 	default:
-		error("ScriptValue::putInteger(): Attempt to put integer into ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
-}
-
-int ScriptValue::asParamToken() {
-	switch (_type) {
-	case kOperandTypeBool:
-	case kOperandTypeInt:
-	case kOperandTypeParamToken: {
-		return _u.i;
-	}
-
-	case kOperandTypeTime: {
-		return static_cast<int>(_u.d);
-	}
-
-	case kOperandTypeVariable: {
-		return _u.variable->_value.i;
-	}
-
-	default:
-		error("ScriptValue::getInteger(): Attempt to get integer from ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
+		error("Got unknown script value type %s", scriptValueTypeToStr(_type));
 	}
 }
 
 void ScriptValue::setToFloat(double d) {
-	switch (_type) {
-	case kOperandTypeTime:
-	case kOperandTypeFloat: {
-		_u.d = d;
-		break;
-	}
-
-	case kOperandTypeVariable: {
-		// TODO: Add assertion.
-		_u.variable->_value.d = d;
-		break;
-	}
-
-	default:
-		error("ScriptValue::setToFloat(): Attempt to put double into ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
+	_type = kScriptValueTypeFloat;
+	_u.d = d;
 }
 
-double ScriptValue::asFloat() {
-	switch (_type) {
-	case kOperandTypeTime:
-	case kOperandTypeFloat: {
+double ScriptValue::asFloat() const {
+	if (_type == kScriptValueTypeFloat) {
 		return _u.d;
-	}
-
-	case kOperandTypeBool:
-	case kOperandTypeInt: {
-		return static_cast<double>(_u.i);
-	}
-
-	case kOperandTypeVariable: {
-		// TODO: Add assertion that this is the proper type.
-		return _u.variable->_value.d;
-	}
-
-	default:
-		error("ScriptValue::asFloat(): Attempt to get double from ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
+	} else {
+		issueValueMismatchWarning(kScriptValueTypeFloat);
+		return 0.0;
 	}
 }
 
-void ScriptValue::setToString(Common::String *string) {
-	switch (_type) {
-	case kOperandTypeString: {
-		_u.string = string;
-		break;
-	}
+void ScriptValue::setToBool(bool b) {
+	_type = kScriptValueTypeBool;
+	_u.b = b;
+}
 
-	case kOperandTypeVariable: {
-		assert(_u.variable->_type == kScriptValueTypeString);
-		_u.variable->_value.string = string;
-		break;
-	}
-
-	default:
-		error("ScriptValue::setToString(): Attempt to put string into ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
+bool ScriptValue::asBool() const {
+	if (_type == kScriptValueTypeBool) {
+		return _u.b;
+	} else {
+		issueValueMismatchWarning(kScriptValueTypeBool);
+		return false;
 	}
 }
 
-Common::String *ScriptValue::asString() {
-	switch (_type) {
-	case kOperandTypeString: {
-		return _u.string;
-	}
+void ScriptValue::setToTime(double d) {
+	_type = kScriptValueTypeTime;
+	_u.d = d;
+}
 
-	case kOperandTypeVariable: {
-		assert(_u.variable->_type == kScriptValueTypeString);
-		return _u.variable->_value.string;
-	}
-
-	default:
-		error("ScriptValue::asString(): Attempt to get string from ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
+double ScriptValue::asTime() const {
+	if (_type == kScriptValueTypeTime) {
+		return _u.d;
+	} else {
+		issueValueMismatchWarning(kScriptValueTypeTime);
+		return 0.0;
 	}
 }
 
-void ScriptValue::putVariable(Variable *variable) {
-	switch (_type) {
-	case kOperandTypeVariable: {
-		_u.variable = variable;
-		break;
-	}
+void ScriptValue::setToParamToken(uint paramToken) {
+	_type = kScriptValueTypeParamToken;
+	_u.paramToken = paramToken;
+}
 
-	default:
-		error("ScriptValue::putVariable(): Attempt to put variable into ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
+uint ScriptValue::asParamToken() const {
+	if (_type == kScriptValueTypeParamToken) {
+		return _u.paramToken;
+	} else {
+		issueValueMismatchWarning(kScriptValueTypeParamToken);
+		return 0;
 	}
 }
 
-Variable *ScriptValue::getVariable() {
-	switch (_type) {
-	case kOperandTypeVariable: {
-		return _u.variable;
-	}
-
-	default:
-		error("ScriptValue::getVariable(): Attempt to get variable from ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
+void ScriptValue::setToAssetId(uint assetId) {
+	_type = kScriptValueTypeAssetId;
+	_u.assetId = assetId;
 }
 
-void ScriptValue::setToFunctionId(uint functionId) {
-	switch (_type) {
-	case kOperandTypeFunctionId: {
-		_u.functionId = functionId;
-		break;
-	}
-
-	default:
-		error("ScriptValue::setToFunctionId(): Attempt to put function ID into ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
-}
-
-uint ScriptValue::asFunctionId() {
-	switch (_type) {
-	case kOperandTypeFunctionId: {
-		return _u.functionId;
-	}
-
-	case kOperandTypeVariable: {
-		assert(_u.variable->_type == kScriptValueTypeFunctionId);
-		return _u.variable->_value.functionId;
-	}
-
-	default:
-		error("ScriptValue::getFunction(): Attempt to get function ID from ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
-}
-
-void ScriptValue::setToMethodId(BuiltInMethod methodId) {
-	switch (_type) {
-	case kOperandTypeMethodId: {
-		_u.methodId = methodId;
-		break;
-	}
-
-	default:
-		error("ScriptValue::setToFunctionId(): Attempt to put method ID into ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
-}
-
-BuiltInMethod ScriptValue::asMethodId() {
-	switch (_type) {
-	case kOperandTypeMethodId: {
-		return _u.methodId;
-	}
-
-	default:
-		error("ScriptValue::getFunction(): Attempt to get method ID from ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
-}
-
-void ScriptValue::setToAssetId(uint32 assetId) {
-	switch (_type) {
-	case kOperandTypeAssetId: {
-		_u.assetId = assetId;
-		break;
-	}
-
-	case kOperandTypeVariable: {
-		assert(_u.variable->_type == kScriptValueTypeAssetId);
-		_u.variable->_value.assetId = assetId;
-		break;
-	}
-
-	default:
-		error("ScriptValue::setToAssetId(): Attempt to put asset ID into ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
-}
-
-Asset *ScriptValue::getAsset() {
-	switch (_type) {
-	case kOperandTypeAssetId: {
-		if (_u.assetId == 0) {
-			return nullptr;
-		} else {
-			return g_engine->getAssetById(_u.assetId);
-		}
-	}
-
-	case kOperandTypeVariable: {
-		assert(_u.variable->_type == kScriptValueTypeAssetId);
-		return g_engine->getAssetById(_u.variable->_value.assetId);
-	}
-
-	default:
-		error("ScriptValue::getAsset(): Attempt to get asset from ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
-}
-
-uint32 ScriptValue::asAssetId() {
-	switch (_type) {
-	case kOperandTypeAssetId: {
+uint ScriptValue::asAssetId() const {
+	if (_type == kScriptValueTypeAssetId) {
 		return _u.assetId;
+	} else {
+		issueValueMismatchWarning(kScriptValueTypeAssetId);
+		return 0;
 	}
+}
 
-	case kOperandTypeVariable: {
-		assert(_u.variable->_type == kScriptValueTypeAssetId);
-		return _u.variable->_value.assetId;
-	}
+void ScriptValue::setToString(const Common::String &string) {
+	_type = kScriptValueTypeString;
+	_string = string;
+}
 
-	default:
-		error("ScriptValue::getAssetId(): Attempt to get asset ID from ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
+Common::String ScriptValue::asString() const {
+	if (_type == kScriptValueTypeString) {
+		return _string;
+	} else {
+		return Common::String("");
 	}
 }
 
 void ScriptValue::setToCollection(Common::SharedPtr<Collection> collection) {
-	switch (_type) {
-	case kOperandTypeCollection: {
-		_collection = collection;
-		break;
-	}
-
-	case kOperandTypeVariable: {
-		assert(_u.variable->_type == kScriptValueTypeCollection);
-		_u.variable->_c = collection;
-		break;
-	}
-
-	default:
-		error("ScriptValue::setToCollection(): Attempt to put collection into ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
-	}
+	_type = kScriptValueTypeCollection;
+	_collection = collection;
 }
 
-Common::SharedPtr<Collection> ScriptValue::asCollection() {
-	switch (_type) {
-	case kOperandTypeCollection: {
+Common::SharedPtr<Collection> ScriptValue::asCollection() const {
+	if (_type == kScriptValueTypeCollection) {
 		return _collection;
-	}
-
-	case kOperandTypeVariable: {
-		assert(_u.variable->_type == kScriptValueTypeCollection);
-		return _u.variable->_c;
-	}
-
-	default:
-		error("ScriptValue::asCollection(): Attempt to get collection from ScriptValue type %s (%d)",
-			operandTypeToStr(_type), static_cast<uint>(_type));
+	} else {
+		issueValueMismatchWarning(kScriptValueTypeCollection);
+		return nullptr;
 	}
 }
 
-ScriptValue ScriptValue::getLiteralValue() const {
-	// This function dereferences any variable to get the actual
-	// "direct" value (a literal asset ID or otherwise).
-	if (_type == kOperandTypeVariable) {
-		return _u.variable->getValue();
+void ScriptValue::setToFunctionId(uint functionId) {
+	_type = kScriptValueTypeFunctionId;
+	_u.functionId = functionId;
+}
+
+uint ScriptValue::asFunctionId() const {
+	if (_type == kScriptValueTypeFunctionId) {
+		return _u.functionId;
 	} else {
-		return *this;
+		issueValueMismatchWarning(kScriptValueTypeFunctionId);
+		return 0;
+	}
+}
+
+void ScriptValue::setToMethodId(BuiltInMethod methodId) {
+	_type = kScriptValueTypeMethodId;
+	_u.methodId = methodId;
+}
+
+BuiltInMethod ScriptValue::asMethodId() const {
+	if (_type == kScriptValueTypeMethodId) {
+		return _u.methodId;
+	} else {
+		issueValueMismatchWarning(kScriptValueTypeMethodId);
+		return kInvalidMethod;
+	}
+}
+
+bool ScriptValue::compare(Opcode op, const ScriptValue &lhs, const ScriptValue &rhs) {
+	if (lhs.getType() != rhs.getType()) {
+		error("Attempt to compare mismatched types %s and %s",
+		      scriptValueTypeToStr(lhs.getType()), scriptValueTypeToStr(rhs.getType()));
+	}
+
+	switch (lhs.getType()) {
+	case kScriptValueTypeEmpty:
+		return compareEmptyValues(op);
+
+	case kScriptValueTypeFloat:
+		return compare(op, lhs.asFloat(), rhs.asFloat());
+		break;
+
+	case kScriptValueTypeBool:
+		return compare(op, lhs.asBool(), rhs.asBool());
+		break;
+
+	case kScriptValueTypeTime:
+		return compare(op, lhs.asTime(), rhs.asTime());
+		break;
+
+	case kScriptValueTypeParamToken:
+		return compare(op, lhs.asParamToken(), rhs.asParamToken());
+		break;
+
+	case kScriptValueTypeAssetId:
+		return compare(op, lhs.asAssetId(), rhs.asAssetId());
+		break;
+
+	case kScriptValueTypeString:
+		return compareStrings(op, lhs.asString(), rhs.asString());
+		break;
+
+	case kScriptValueTypeCollection:
+		return compare(op, lhs.asCollection(), rhs.asCollection());
+		break;
+
+	case kScriptValueTypeFunctionId:
+		return compare(op, lhs.asFunctionId(), rhs.asFunctionId());
+		break;
+
+	case kScriptValueTypeMethodId:
+		return compare(op, static_cast<uint>(lhs.asMethodId()), static_cast<uint>(rhs.asMethodId()));
+		break;
+
+	default:
+		error("Got unknown script value type %d", lhs.getType());
+	}
+}
+
+bool ScriptValue::compareEmptyValues(Opcode op) {
+	// Empty values are considered equal.
+	switch (op) {
+	case kOpcodeEquals:
+		return true;
+
+	case kOpcodeNotEquals:
+		return false;
+
+	default:
+		error("Got invalid empty value operation %s", opcodeToStr(op));
+	}
+}
+
+bool ScriptValue::compareStrings(Opcode op, const Common::String &left, const Common::String &right) {
+	switch (op) {
+	case kOpcodeEquals:
+		return (left == right);
+
+	case kOpcodeNotEquals:
+		return (left != right);
+
+	case kOpcodeLessThan:
+		return (left < right);
+
+	case kOpcodeGreaterThan:
+		return (left > right);
+
+	case kOpcodeLessThanOrEqualTo:
+		return (left <= right);
+
+	case kOpcodeGreaterThanOrEqualTo:
+		return (left >= right);
+
+	default:
+		error("Got invalid string operation %s", opcodeToStr(op));
+	}
+}
+
+bool ScriptValue::compare(Opcode op, uint left, uint right) {
+	switch (op) {
+	case kOpcodeEquals:
+		return (left == right);
+
+	case kOpcodeNotEquals:
+		return (left != right);
+
+	default:
+		error("Got invalid param token operation %s", opcodeToStr(op));
+	}
+}
+
+bool ScriptValue::compare(Opcode op, bool left, bool right) {
+	switch (op) {
+	case kOpcodeEquals:
+		return (left == right);
+
+	case kOpcodeNotEquals:
+		return (left != right);
+
+	default:
+		error("Got invalid bool operation %s", opcodeToStr(op));
+	}
+}
+
+bool ScriptValue::compare(Opcode op, double left, double right) {
+	switch (op) {
+	case kOpcodeEquals:
+		return (left == right);
+
+	case kOpcodeNotEquals:
+		return (left != right);
+
+	case kOpcodeLessThan:
+		return (left < right);
+
+	case kOpcodeGreaterThan:
+		return (left > right);
+
+	case kOpcodeLessThanOrEqualTo:
+		return (left <= right);
+
+	case kOpcodeGreaterThanOrEqualTo:
+		return (left >= right);
+
+	default:
+		error("Got invalid float operation %s", opcodeToStr(op));
+	}
+}
+
+bool ScriptValue::compare(Opcode op, Common::SharedPtr<Collection> left, Common::SharedPtr<Collection> right) {
+	switch (op) {
+	case kOpcodeEquals:
+		return (left == right);
+
+	case kOpcodeNotEquals:
+		return (left != right);
+
+	default:
+		error("Got invalid collection operation %s", opcodeToStr(op));
+	}
+}
+
+ScriptValue ScriptValue::evalMathOperation(Opcode op, const ScriptValue &left, const ScriptValue &right) {
+	ScriptValue returnValue;
+	double result = 0.0;
+
+	switch (left.getType()) {
+	case kScriptValueTypeFloat: {
+		if (right.getType() == kScriptValueTypeTime) {
+			result = binaryMathOperation(op, left.asFloat(), right.asTime());
+		} else if (right.getType() == kScriptValueTypeFloat) {
+			result = binaryMathOperation(op, left.asFloat(), right.asFloat());
+		} else {
+			error("Attempted to do math operation on unsupported value type %s", scriptValueTypeToStr(right.getType()));
+		}
+		returnValue.setToFloat(result);
+		break;
+	}
+
+	case kScriptValueTypeTime: {
+		if (right.getType() == kScriptValueTypeTime) {
+			result = binaryMathOperation(op, left.asTime(), right.asTime());
+		} else if (right.getType() == kScriptValueTypeFloat) {
+			result = binaryMathOperation(op, left.asTime(), right.asFloat());
+		} else {
+			error("Attempted to do math operation on unsupported value type %s", scriptValueTypeToStr(right.getType()));
+		}
+		returnValue.setToFloat(result);
+		break;
+	}
+
+	case kScriptValueTypeString: {
+		returnValue.setToString(left.asString() + right.asString());
+		break;
+	}
+
+	default:
+		error("Attempted to do math operation on unsupported value type %s", scriptValueTypeToStr(right.getType()));
+	}
+
+	return returnValue;
+}
+
+double ScriptValue::binaryMathOperation(Opcode op, double left, double right) {
+	switch (op) {
+	case kOpcodeAdd:
+		return left + right;
+
+	case kOpcodeSubtract:
+		return left - right;
+
+	case kOpcodeMultiply:
+		return left * right;
+
+	case kOpcodeDivide:
+		if (right != 0.0) {
+			return left / right;
+		} else {
+			error("Division by zero");
+		}
+
+	case kOpcodeModulo:
+		if (right != 0.0) {
+			return fmod(left, right);
+		} else {
+			error("Division by zero");
+		}
+
+	default:
+		error("Got unvalid binary math operation %s", opcodeToStr(op));
 	}
 }
 
 bool ScriptValue::operator==(const ScriptValue &other) const {
-	ScriptValue lhs = getLiteralValue();
-	ScriptValue rhs = other.getLiteralValue();
+	return compare(kOpcodeEquals, *this, other);
+}
 
-	if (lhs.isDouble() || rhs.isDouble()) {
-		// If either ScriptValue is a double, perform double comparison.
-		double lhsValue = lhs.isDouble() ? lhs.asFloat() : static_cast<double>(lhs.asParamToken());
-		double rhsValue = rhs.isDouble() ? rhs.asFloat() : static_cast<double>(rhs.asParamToken());
-		return lhsValue == rhsValue;
-	} else {
-		switch (lhs.getType()) {
-		case kOperandTypeBool:
-		case kOperandTypeInt:
-			return lhs.asParamToken() == rhs.asParamToken();
-
-		case kOperandTypeAssetId:
-			if (rhs.getType() == kOperandTypeInt) {
-				// This might happen if, for example, a given asset wasn't found
-				// in a collection and the script sets the return value to -1.
-				return static_cast<int>(lhs.asAssetId()) == rhs.asParamToken();
-			} else {
-				// If the types are incompatiable, rhs will raise the error.
-				return lhs.asAssetId() == rhs.asAssetId();
-			}
-
-		case kOperandTypeString:
-			return *lhs.asString() == *rhs.asString();
-
-		default:
-			error("ScriptValue::operator==(): Unimplemented ScriptValue types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
-		}
-	}
+bool ScriptValue::operator!=(const ScriptValue &other) const {
+	return compare(kOpcodeNotEquals, *this, other);
 }
 
 bool ScriptValue::operator<(const ScriptValue &other) const {
-	ScriptValue lhs = getLiteralValue();
-	ScriptValue rhs = other.getLiteralValue();
-
-	if (!lhs.isNumber() || !rhs.isNumber()) {
-		error("ScriptValue::operator<(): Unimplemented ScriptValue types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
-	}
-
-	if (lhs.isDouble() || rhs.isDouble()) {
-		// If either ScriptValue is a double, perform double comparison.
-		double lhsValue = lhs.isDouble() ? lhs.asFloat() : static_cast<double>(lhs.asParamToken());
-		double rhsValue = rhs.isDouble() ? rhs.asFloat() : static_cast<double>(rhs.asParamToken());
-		return lhsValue < rhsValue;
-	} else {
-		// Otherwise, perform integer comparison.
-		return lhs.asParamToken() < rhs.asParamToken();
-	}
+	return compare(kOpcodeLessThan, *this, other);
 }
 
 bool ScriptValue::operator>(const ScriptValue &other) const {
-	ScriptValue lhs = getLiteralValue();
-	ScriptValue rhs = other.getLiteralValue();
+	return compare(kOpcodeGreaterThan, *this, other);
+}
 
-	if (!lhs.isNumber() || !rhs.isNumber()) {
-		error("ScriptValue::operator>(): Unimplemented ScriptValue types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
-	}
+bool ScriptValue::operator<=(const ScriptValue &other) const {
+	return compare(kOpcodeLessThanOrEqualTo, *this, other);
+}
 
-	if (lhs.isDouble() || rhs.isDouble()) {
-		// If either ScriptValue is a double, perform double comparison.
-		double lhsValue = lhs.isDouble() ? lhs.asFloat() : static_cast<double>(lhs.asParamToken());
-		double rhsValue = rhs.isDouble() ? rhs.asFloat() : static_cast<double>(rhs.asParamToken());
-		return lhsValue > rhsValue;
-	} else {
-		// Otherwise, perform integer comparison.
-		return lhs.asParamToken() > rhs.asParamToken();
-	}
+bool ScriptValue::operator>=(const ScriptValue &other) const {
+	return compare(kOpcodeGreaterThanOrEqualTo, *this, other);
 }
 
 bool ScriptValue::operator||(const ScriptValue &other) const {
-	ScriptValue lhs = getLiteralValue();
-	ScriptValue rhs = other.getLiteralValue();
-
-	// If the types being compared end up being incompatible, the respective get
-	// method on the rhs will raise the error.
-	switch (lhs.getType()) {
-	case kOperandTypeBool:
-	case kOperandTypeInt:
-		return lhs.asParamToken() || rhs.asParamToken();
-
-	default:
-		error("ScriptValue::operator||(): Unimplemented ScriptValue types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
+	if (getType() != kScriptValueTypeBool || other.getType() != kScriptValueTypeBool) {
+		error("Expected bools for binary comparison, got %s and %s", scriptValueTypeToStr(getType()), scriptValueTypeToStr(other.getType()));
 	}
+
+	return asBool() || other.asBool();
 }
 
-bool ScriptValue::operator!() const {
-	ScriptValue literalValue = getLiteralValue();
-
-	// If the types being compared end up being incompatible, the respective get
-	// method will raise the error.
-	switch (literalValue.getType()) {
-	case kOperandTypeBool:
-	case kOperandTypeInt:
-		return !literalValue.asParamToken();
-
-	default:
-		error("ScriptValue::operator!(): Unimplemented ScriptValue type %s", operandTypeToStr(literalValue.getType()));
+bool ScriptValue::operator^(const ScriptValue &other) const {
+	if (getType() != kScriptValueTypeBool || other.getType() != kScriptValueTypeBool) {
+		error("Expected bools for binary comparison, got %s and %s", scriptValueTypeToStr(getType()), scriptValueTypeToStr(other.getType()));
 	}
+
+	return asBool() ^ other.asBool();
 }
 
 bool ScriptValue::operator&&(const ScriptValue &other) const {
-	ScriptValue lhs = getLiteralValue();
-	ScriptValue rhs = other.getLiteralValue();
-
-	// If the types being compared end up being incompatible, the respective get
-	// method will raise the error.
-	switch (lhs.getType()) {
-	case kOperandTypeBool:
-	case kOperandTypeInt:
-		return lhs.asParamToken() && rhs.asParamToken();
-
-	default:
-		error("ScriptValue::operator&&(): Unimplemented ScriptValue types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
+	if (getType() != kScriptValueTypeBool || other.getType() != kScriptValueTypeBool) {
+		error("Expected bools for binary comparison, got %s and %s", scriptValueTypeToStr(getType()), scriptValueTypeToStr(other.getType()));
 	}
+
+	return asBool() && other.asBool();
 }
 
 ScriptValue ScriptValue::operator+(const ScriptValue &other) const {
-	ScriptValue lhs = getLiteralValue();
-	ScriptValue rhs = other.getLiteralValue();
-	ScriptValue returnValue(lhs.getType());
-
-	if (!lhs.isNumber() || !rhs.isNumber()) {
-		error("ScriptValue::operator+(): Unimplemented ScriptValue types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
-	}
-
-	if (lhs.isDouble() || rhs.isDouble()) {
-		// If either ScriptValue is a double, perform double addition.
-		double lhsValue = lhs.isDouble() ? lhs.asFloat() : static_cast<double>(lhs.asParamToken());
-		double rhsValue = rhs.isDouble() ? rhs.asFloat() : static_cast<double>(rhs.asParamToken());
-		returnValue.setToFloat(lhsValue + rhsValue);
-	} else {
-		// Otherwise, perform integer addition.
-		returnValue.setToParamToken(lhs.asParamToken() + rhs.asParamToken());
-	}
-
-	return returnValue;
+	return evalMathOperation(kOpcodeAdd, *this, other);
 }
 
 ScriptValue ScriptValue::operator-(const ScriptValue &other) const {
-	ScriptValue lhs = getLiteralValue();
-	ScriptValue rhs = other.getLiteralValue();
-	ScriptValue returnValue(lhs.getType());
-
-	if (!lhs.isNumber() || !rhs.isNumber()) {
-		error("ScriptValue::operator-(): Unimplemented ScriptValue types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
-	}
-
-	if (lhs.isDouble() || rhs.isDouble()) {
-		// If either ScriptValue is a double, perform double subtraction.
-		double lhsValue = lhs.isDouble() ? lhs.asFloat() : static_cast<double>(lhs.asParamToken());
-		double rhsValue = rhs.isDouble() ? rhs.asFloat() : static_cast<double>(rhs.asParamToken());
-		returnValue.setToFloat(lhsValue - rhsValue);
-	} else {
-		// Otherwise, perform integer subtraction.
-		returnValue.setToParamToken(lhs.asParamToken() - rhs.asParamToken());
-	}
-
-	return returnValue;
+	return evalMathOperation(kOpcodeSubtract, *this, other);
 }
 
 ScriptValue ScriptValue::operator*(const ScriptValue &other) const {
-	ScriptValue lhs = getLiteralValue();
-	ScriptValue rhs = other.getLiteralValue();
-	ScriptValue returnValue(lhs.getType());
-
-	if (!lhs.isNumber() || !rhs.isNumber()) {
-		error("ScriptValue::operator*(): Unimplemented ScriptValue types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
-	}
-
-	if (lhs.isDouble() || rhs.isDouble()) {
-		// If either ScriptValue is a double, perform double multiplication.
-		double lhsValue = lhs.isDouble() ? lhs.asFloat() : static_cast<double>(lhs.asParamToken());
-		double rhsValue = rhs.isDouble() ? rhs.asFloat() : static_cast<double>(rhs.asParamToken());
-		returnValue.setToFloat(lhsValue * rhsValue);
-	} else {
-		// Otherwise, perform integer subtraction.
-		returnValue.setToParamToken(lhs.asParamToken() * rhs.asParamToken());
-	}
-
-	return returnValue;
+	return evalMathOperation(kOpcodeMultiply, *this, other);
 }
 
 ScriptValue ScriptValue::operator/(const ScriptValue &other) const {
-	ScriptValue lhs = getLiteralValue();
-	ScriptValue rhs = other.getLiteralValue();
-	ScriptValue returnValue(lhs.getType());
-
-	if (!lhs.isNumber() || !rhs.isNumber()) {
-		error("ScriptValue::operator/(): Unimplemented ScriptValue types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
-	}
-
-	if (lhs.isDouble() || rhs.isDouble()) {
-		// If either ScriptValue is a double, perform double division.
-		double lhsValue = lhs.isDouble() ? lhs.asFloat() : static_cast<double>(lhs.asParamToken());
-		double rhsValue = rhs.isDouble() ? rhs.asFloat() : static_cast<double>(rhs.asParamToken());
-		returnValue.setToFloat(lhsValue / rhsValue);
-	} else {
-		// Otherwise, perform integer division.
-		returnValue.setToParamToken(lhs.asParamToken() / rhs.asParamToken());
-	}
-
-	return returnValue;
-
+	return evalMathOperation(kOpcodeDivide, *this, other);
 }
 
 ScriptValue ScriptValue::operator%(const ScriptValue &other) const {
-	ScriptValue lhs = getLiteralValue();
-	ScriptValue rhs = other.getLiteralValue();
-	ScriptValue returnValue(lhs.getType());
-
-	// If the types being compared end up being incompatible, the respective get
-	// method on the rhs will raise the error.
-	switch (lhs.getType()) {
-	case kOperandTypeBool:
-	case kOperandTypeInt:
-		if (rhs.asParamToken() == 0) {
-			error("ScriptValue::operator%%(): Attempted mod by zero");
-		}
-		returnValue.setToParamToken(lhs.asParamToken() % rhs.asParamToken());
-		return returnValue;
-
-	default:
-		error("ScriptValue::operator/(): Unimplemented ScriptValue types %s and %s", operandTypeToStr(lhs.getType()), operandTypeToStr(rhs.getType()));
-	}
+	return evalMathOperation(kOpcodeModulo, *this, other);
 }
 
 ScriptValue ScriptValue::operator-() const {
-	ScriptValue literalValue = getLiteralValue();
-	ScriptValue returnValue(literalValue.getType());
+	ScriptValue returnValue;
+	switch (getType()) {
+	case kScriptValueTypeFloat:
+		returnValue.setToFloat(-asFloat());
+		break;
 
-	// If the types being compared end up being incompatible, the respective get
-	// method on the rhs will raise the error.
-	switch (literalValue.getType()) {
-	case kOperandTypeBool:
-	case kOperandTypeInt:
-		returnValue.setToParamToken(-literalValue.asParamToken());
-		return returnValue;
-
-	case kOperandTypeTime:
-	case kOperandTypeFloat:
-		returnValue.setToFloat(-literalValue.asFloat());
-		return returnValue;
+	case kScriptValueTypeTime:
+		returnValue.setToTime(-asTime());
+		break;
 
 	default:
-		error("ScriptValue::operator-(): Unimplemented ScriptValue type %s", operandTypeToStr(literalValue.getType()));
+		error("Attempted to negate type %s", scriptValueTypeToStr(getType()));
 	}
+	return returnValue;
+}
+
+void ScriptValue::issueValueMismatchWarning(ScriptValueType expectedType) const {
+	// The original just blithely returns 0 (or equivalent) when you call a
+	// getter for the wrong type (for instance, calling asFloat() on a bool),
+	// but for debugging purposes we'll issue a warning.
+	warning("Script value type mismatch: Expected %s, got %s", scriptValueTypeToStr(expectedType), scriptValueTypeToStr(_type));
 }
 
 } // End of namespace MediaStation

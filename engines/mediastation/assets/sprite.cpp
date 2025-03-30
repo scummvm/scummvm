@@ -86,35 +86,37 @@ Sprite::~Sprite() {
 }
 
 ScriptValue Sprite::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+	ScriptValue returnValue;
+
 	switch (methodId) {
 	case kSpatialShowMethod: {
 		assert(args.empty());
 		spatialShow();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kSpatialHideMethod: {
 		assert(args.empty());
 		spatialHide();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kTimePlayMethod: {
 		assert(args.empty());
 		timePlay();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kTimeStopMethod: {
 		assert(args.empty());
 		timeStop();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kMovieResetMethod: {
 		assert(args.empty());
 		movieReset();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kSetCurrentClipMethod: {
@@ -123,7 +125,7 @@ ScriptValue Sprite::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue
 			error("Sprite::callMethod(): (%d) setClip() called with unhandled arg: %d", _header->_id, args[0].asParamToken());
 		}
 		setCurrentClip();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kSetSpriteFrameByIdMethod: {
@@ -131,12 +133,11 @@ ScriptValue Sprite::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue
 		uint32 externalFrameId = args[0].asParamToken();
 		uint32 internalFrameId = _header->_spriteFrameMapping.getVal(externalFrameId);
 		showFrame(_frames[internalFrameId]);
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kIsPlayingMethod: {
-		ScriptValue returnValue(kOperandTypeBool);
-		returnValue.setToParamToken(static_cast<int>(_isPlaying));
+		returnValue.setToBool(_isPlaying);
 		return returnValue;
 	}
 
@@ -149,8 +150,8 @@ ScriptValue Sprite::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue
 		}
 
 		// Update the location and mark the new location dirty.
-		int newXAdjust = args[0].asParamToken();
-		int newYAdjust = args[1].asParamToken();
+		int newXAdjust = static_cast<int>(args[0].asFloat());
+		int newYAdjust = static_cast<int>(args[1].asFloat());
 		if (_xAdjust != newXAdjust || _yAdjust != newYAdjust) {
 			debugC(5, kDebugGraphics, "Sprite::callMethod(): (%d) Moving sprite to (%d, %d)", _header->_id, newXAdjust, newYAdjust);
 			_xAdjust = newXAdjust;
@@ -160,7 +161,7 @@ ScriptValue Sprite::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue
 			}
 		}
 
-		return ScriptValue();
+		return returnValue;
 	}
 
 	default:

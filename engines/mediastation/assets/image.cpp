@@ -41,23 +41,25 @@ Image::~Image() {
 }
 
 ScriptValue Image::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+	ScriptValue returnValue;
+
 	switch (methodId) {
 	case kSpatialShowMethod: {
 		assert(args.empty());
 		spatialShow();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kSpatialHideMethod: {
 		assert(args.empty());
 		spatialHide();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kSetDissolveFactorMethod: {
 		assert(args.size() == 1);
 		warning("Image::callMethod(): setDissolveFactor not implemented yet");
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kSpatialMoveToMethod: {
@@ -68,8 +70,8 @@ ScriptValue Image::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 		g_engine->_dirtyRects.push_back(bbox);
 
 		// Update location and mark new location dirty.
-		int newXAdjust = args[0].asParamToken();
-		int newYAdjust = args[1].asParamToken();
+		int newXAdjust = static_cast<int>(args[0].asFloat());
+		int newYAdjust = static_cast<int>(args[1].asFloat());
 		if (_xAdjust != newXAdjust || _yAdjust != newYAdjust) {
 			_xAdjust = newXAdjust;
 			_yAdjust = newYAdjust;
@@ -78,7 +80,7 @@ ScriptValue Image::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 			g_engine->_dirtyRects.push_back(bbox);
 		}
 
-		return ScriptValue();
+		return returnValue;
 	}
 
 	default:

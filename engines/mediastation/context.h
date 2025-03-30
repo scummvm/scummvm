@@ -30,7 +30,6 @@
 #include "mediastation/datafile.h"
 #include "mediastation/assetheader.h"
 #include "mediastation/mediascript/function.h"
-#include "mediastation/mediascript/variable.h"
 
 namespace MediaStation {
 
@@ -70,6 +69,7 @@ public:
 	Asset *getAssetById(uint assetId);
 	Asset *getAssetByChunkReference(uint chunkReference);
 	Function *getFunctionById(uint functionId);
+	ScriptValue *getVariable(uint variableId);
 	void registerActiveAssets();
 
 private:
@@ -82,8 +82,10 @@ private:
 	Common::HashMap<uint, Asset *> _assets;
 	Common::HashMap<uint, Function *> _functions;
 	Common::HashMap<uint, Asset *> _assetsByChunkReference;
+	Common::HashMap<uint, ScriptValue *> _variables;
 
 	void readParametersSection(Chunk &chunk);
+	void readVariable(Chunk &chunk);
 	void readOldStyleHeaderSections(Subfile &subfile, Chunk &chunk);
 	void readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk);
 	bool readHeaderSection(Subfile &subfile, Chunk &chunk);

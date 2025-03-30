@@ -187,76 +187,80 @@ Movie::~Movie() {
 }
 
 ScriptValue Movie::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+	ScriptValue returnValue;
+
 	switch (methodId) {
 	case kTimePlayMethod: {
 		assert(args.empty());
 		timePlay();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kSpatialShowMethod: {
 		assert(args.empty());
 		spatialShow();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kTimeStopMethod: {
 		assert(args.empty());
 		timeStop();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kSpatialHideMethod: {
 		assert(args.empty());
 		spatialHide();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kIsVisibleMethod: {
 		assert(args.empty());
-		ScriptValue returnValue(kOperandTypeBool);
-		returnValue.setToParamToken(_isShowing);
+		returnValue.setToBool(_isShowing);
 		return returnValue;
 	}
 
 	case kSpatialCenterMoveToMethod: {
 		assert(args.size() == 2);
-		spatialCenterMoveTo(args[0].asParamToken(), args[1].asParamToken());
-		return ScriptValue();
+		int x = static_cast<int>(args[0].asFloat());
+		int y = static_cast<int>(args[1].asFloat());
+		spatialCenterMoveTo(x, y);
+		return returnValue;
 	}
 
 	case kSpatialMoveToMethod: {
 		assert(args.size() == 2);
-		spatialMoveTo(args[0].asParamToken(), args[1].asParamToken());
-		return ScriptValue();
+		int x = static_cast<int>(args[0].asFloat());
+		int y = static_cast<int>(args[1].asFloat());
+		spatialMoveTo(x, y);
+		return returnValue;
 	}
 
 	case kIsPlayingMethod: {
 		assert(args.empty());
-		ScriptValue returnValue(kOperandTypeBool);
-		returnValue.setToParamToken(static_cast<uint>(_isPlaying));
+		returnValue.setToBool(_isPlaying);
 		return returnValue;
 	}
 
 	case kXPositionMethod: {
 		assert(args.empty());
-		ScriptValue returnValue(kOperandTypeBool);
-		returnValue.setToParamToken(_header->_boundingBox->left);
+		double left = static_cast<double>(_header->_boundingBox->left);
+		returnValue.setToFloat(left);
 		return returnValue;
 
 	}
 
 	case kYPositionMethod: {
 		assert(args.empty());
-		ScriptValue returnValue(kOperandTypeBool);
-		returnValue.setToParamToken(_header->_boundingBox->top);
+		double top = static_cast<double>(_header->_boundingBox->top);
+		returnValue.setToFloat(top);
 		return returnValue;
 	}
 
 	case kSetDissolveFactorMethod: {
 		assert(args.size() == 1);
 		warning("Movie::callMethod(): setDissolveFactor not implemented yet");
-		return ScriptValue();
+		return returnValue;
 	}
 
 	default:

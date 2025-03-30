@@ -26,7 +26,6 @@
 #include "common/stream.h"
 
 #include "mediastation/datafile.h"
-#include "mediastation/mediascript/variable.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
@@ -48,8 +47,9 @@ private:
 	ScriptValue evaluateVariable();
 
 	ScriptValue callFunction(uint functionId, uint parameterCount);
-	ScriptValue getVariable(uint32 id, VariableScope scope);
-	void putVariable(uint32 id, VariableScope scope, ScriptValue &value);
+	ScriptValue *readAndReturnVariable();
+
+	ScriptValue evaluateAssign();
 
 	bool _weOwnLocals = false;
 	Common::Array<ScriptValue> *_locals = nullptr;

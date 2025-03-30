@@ -29,23 +29,24 @@ Path::~Path() {
 }
 
 ScriptValue Path::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+	ScriptValue returnValue;
+
 	switch (methodId) {
 	case kTimePlayMethod: {
 		assert(args.size() == 0);
 		timePlay();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kSetDurationMethod: {
 		assert(args.size() == 1);
 		uint durationInMilliseconds = static_cast<uint>(args[0].asFloat() * 1000);
 		setDuration(durationInMilliseconds);
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kPercentCompleteMethod: {
 		assert(args.size() == 0);
-		ScriptValue returnValue(kOperandTypeTime);
 		returnValue.setToFloat(percentComplete());
 		return returnValue;
 	}
@@ -53,13 +54,12 @@ ScriptValue Path::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> 
 	case kSetDissolveFactorMethod: {
 		assert(args.size() == 1);
 		warning("Path::callMethod(): setDissolveFactor not implemented yet");
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kIsPlayingMethod: {
 		assert(args.empty());
-		ScriptValue returnValue(kOperandTypeBool);
-		returnValue.setToParamToken(_isActive);
+		returnValue.setToBool(_isActive);
 		return returnValue;
 	}
 

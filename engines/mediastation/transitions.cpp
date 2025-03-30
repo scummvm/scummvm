@@ -64,13 +64,13 @@ void MediaStationEngine::effectTransition(Common::Array<ScriptValue> &args) {
 	case kTransitionFadeToPaletteObject: {
 		// TODO: Implement transition.
 		warning("MediaStationEngine::effectTransition(): Fading to palette object not implemented, changing palette immediately");
-		Asset *asset = args[1].getAsset();
+		Asset *asset = g_engine->getAssetById(args[1].asAssetId());
 		g_engine->setPalette(asset);
 		break;
 	}
 
 	case kTransitionSetToPaletteObject: {
-		Asset *asset = args[1].getAsset();
+		Asset *asset = g_engine->getAssetById(args[1].asAssetId());
 		g_engine->setPalette(asset);
 		break;
 	}
@@ -80,7 +80,7 @@ void MediaStationEngine::effectTransition(Common::Array<ScriptValue> &args) {
 
 		// TODO: Implement percent of palette transition.
 		warning("MediaStationEngine::effectTransition(): Setting to %f%% of palette not implemented, changing palette immediately", percentComplete);
-		Asset *asset = args[2].getAsset();
+		Asset *asset = g_engine->getAssetById(args[2].asAssetId());
 		g_engine->setPalette(asset);
 		break;
 	}

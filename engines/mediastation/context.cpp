@@ -25,6 +25,7 @@
 #include "mediastation/debugchannels.h"
 
 #include "mediastation/bitmap.h"
+#include "mediastation/mediascript/collection.h"
 #include "mediastation/assets/canvas.h"
 #include "mediastation/assets/palette.h"
 #include "mediastation/assets/image.h"
@@ -127,6 +128,11 @@ Context::~Context() {
 		delete it->_value;
 	}
 	_functions.clear();
+
+	for (auto it = _variables.begin(); it != _variables.end(); ++it) {
+		delete it->_value;
+	}
+	_variables.clear();
 }
 
 Asset *Context::getAssetById(uint assetId) {
@@ -137,9 +143,12 @@ Asset *Context::getAssetByChunkReference(uint chunkReference) {
 	return _assetsByChunkReference.getValOrDefault(chunkReference);
 }
 
-
 Function *Context::getFunctionById(uint functionId) {
 	return _functions.getValOrDefault(functionId);
+}
+
+ScriptValue *Context::getVariable(uint variableId) {
+	return _variables.getValOrDefault(variableId);
 }
 
 void Context::registerActiveAssets() {
@@ -177,20 +186,7 @@ void Context::readParametersSection(Chunk &chunk) {
 		}
 
 		case kContextParametersVariable: {
-			uint repeatedFileNumber = Datum(chunk, kDatumTypeUint16_1).u.i;
-			if (repeatedFileNumber != _fileNumber) {
-				warning("ContextParameters::ContextParameters(): Repeated file number didn't match: %d != %d", repeatedFileNumber, _fileNumber);
-			}
-			Variable *variable = new Variable(chunk);
-			if (g_engine->_variables.contains(variable->_id)) {
-				// Don't overwrite the variable if it already exists. This can happen if we have
-				// unloaded a screen but are returning to it later.
-				debugC(5, kDebugScript, "ContextParameters::ContextParameters(): Skipping re-creation of existing global variable %d (type: %s)", variable->_id, scriptValueTypeToStr(variable->_type));
-				delete variable;
-			} else {
-				g_engine->_variables.setVal(variable->_id, variable);
-				debugC(5, kDebugScript, "ContextParameters::ContextParameters(): Created global variable %d (type: %s)", variable->_id, scriptValueTypeToStr(variable->_type));
-			}
+			readVariable(chunk);
 			break;
 		}
 
@@ -206,6 +202,23 @@ void Context::readParametersSection(Chunk &chunk) {
 
 		sectionType = static_cast<ContextParametersSectionType>(Datum(chunk, kDatumTypeUint16_1).u.i);
 	}
+}
+
+void Context::readVariable(Chunk &chunk) {
+	uint repeatedFileNumber = Datum(chunk, kDatumTypeUint16_1).u.i;
+	if (repeatedFileNumber != _fileNumber) {
+		warning("Context::readVariable(): Repeated file number didn't match: %d != %d", repeatedFileNumber, _fileNumber);
+	}
+
+	uint id = Datum(chunk).u.i;
+	if (g_engine->getVariable(id) != nullptr) {
+		error("Context::readVariable(): Global variable %d already exists", id);
+	}
+
+	ScriptValue *value = new ScriptValue(&chunk);
+	_variables.setVal(id, value);
+	debugC(5, kDebugScript, "Context::readVariable(): Created global variable %d (type: %s)",
+		id, scriptValueTypeToStr(value->getType()));
 }
 
 void Context::readOldStyleHeaderSections(Subfile &subfile, Chunk &chunk) {

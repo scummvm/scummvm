@@ -27,23 +27,24 @@
 namespace MediaStation {
 
 ScriptValue Timer::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+	ScriptValue returnValue;
+
 	switch (methodId) {
 	case kTimePlayMethod: {
 		assert(args.size() == 0);
 		timePlay();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kTimeStopMethod: {
 		assert(args.size() == 0);
 		timeStop();
-		return ScriptValue();
+		return returnValue;
 	}
 
 	case kIsPlayingMethod: {
 		assert(args.size() == 0);
-		ScriptValue returnValue(kOperandTypeBool);
-		returnValue.setToParamToken(static_cast<int>(_isActive));
+		returnValue.setToBool(_isActive);
 		return returnValue;
 	}
 

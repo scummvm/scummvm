@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MEDIASTATION_MEDIASCRIPT_VARIABLE_DECLARATION_H
-#define MEDIASTATION_MEDIASCRIPT_VARIABLE_DECLARATION_H
+#ifndef MEDIASTATION_MEDIASCRIPT_COLLECTION_H
+#define MEDIASTATION_MEDIASCRIPT_COLLECTION_H
 
 #include "common/ptr.h"
 #include "common/str.h"
@@ -37,30 +37,6 @@ class ScriptValue;
 class Collection : public Common::Array<ScriptValue> {
 public:
 	ScriptValue callMethod(BuiltInMethod method, Common::Array<ScriptValue> &args);
-};
-
-class Variable {
-public:
-	uint32 _id = 0;
-	ScriptValueType _type = kScriptValueTypeEmpty;
-	union {
-		Common::String *string;
-		uint functionId;
-		int i;
-		double d;
-		uint assetId;
-	} _value;
-	Common::SharedPtr<Collection> _c;
-
-	Variable();
-	Variable(Chunk &chunk, bool readId = true);
-	~Variable();
-
-	ScriptValue getValue();
-	void putValue(ScriptValue value);
-
-private:
-	void clear();
 };
 
 } // End of namespace MediaStation

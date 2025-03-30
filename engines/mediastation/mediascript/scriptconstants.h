@@ -36,7 +36,7 @@ enum Opcode {
 	kOpcodeIfElse = 202,
 	kOpcodeAssignVariable = 203,
 	kOpcodeOr = 204,
-	kOpcodeNot = 205,
+	kOpcodeXor = 205,
 	kOpcodeAnd = 206,
 	kOpcodeEquals = 207,
 	kOpcodeNotEquals = 208,
@@ -87,6 +87,7 @@ enum BuiltInFunction {
 const char *builtInFunctionToStr(BuiltInFunction function);
 
 enum BuiltInMethod {
+	kInvalidMethod = 0,
 	// TODO: What object types does CursorSet apply to?
 	// Currently it's only in var_7be1_cursor_currentTool in
 	// IBM/Crayola.

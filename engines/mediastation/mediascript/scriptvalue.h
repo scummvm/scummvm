@@ -24,9 +24,10 @@
 
 #include "common/ptr.h"
 #include "common/str.h"
+#include "common/stream.h"
 
 #include "mediastation/mediascript/scriptconstants.h"
-#include "mediastation/mediascript/variable.h"
+#include "mediastation/mediascript/collection.h"
 
 namespace MediaStation {
 
@@ -34,44 +35,47 @@ class Asset;
 
 class ScriptValue {
 public:
-	ScriptValue() : _type(kOperandTypeEmpty) {}
-	ScriptValue(OperandType type) : _type(type) {}
+	ScriptValue() : _type(kScriptValueTypeEmpty) {}
+	ScriptValue(Common::SeekableReadStream *stream);
 
-	OperandType getType() const { return _type; }
-
-	void setToParamToken(int i);
-	int asParamToken();
+	ScriptValueType getType() const { return _type; }
 
 	void setToFloat(double d);
-	double asFloat();
+	double asFloat() const;
 
-	void setToString(Common::String *string);
-	Common::String *asString();
+	void setToBool(bool b);
+	bool asBool() const;
 
-	void putVariable(Variable *variable);
-	Variable *getVariable();
+	void setToTime(double d);
+	double asTime() const;
 
-	void setToFunctionId(uint functionId);
-	uint asFunctionId();
+	void setToParamToken(uint paramToken);
+	uint asParamToken() const;
 
-	void setToMethodId(BuiltInMethod methodId);
-	BuiltInMethod asMethodId();
+	void setToAssetId(uint assetId);
+	uint asAssetId() const;
 
-	void setToAssetId(uint32 assetId);
-	Asset *getAsset();
-	uint32 asAssetId();
+	void setToString(const Common::String &string);
+	Common::String asString() const;
 
 	void setToCollection(Common::SharedPtr<Collection> collection);
-	Common::SharedPtr<Collection> asCollection();
+	Common::SharedPtr<Collection> asCollection() const;
 
-	ScriptValue getLiteralValue() const;
+	void setToFunctionId(uint functionId);
+	uint asFunctionId() const;
+
+	void setToMethodId(BuiltInMethod methodId);
+	BuiltInMethod asMethodId() const;
 
 	bool operator==(const ScriptValue &other) const;
+	bool operator!=(const ScriptValue &other) const;
 	bool operator<(const ScriptValue &other) const;
 	bool operator>(const ScriptValue &other) const;
+	bool operator<=(const ScriptValue &other) const;
+	bool operator>=(const ScriptValue &other) const;
 
 	bool operator||(const ScriptValue &other) const;
-	bool operator!() const;
+	bool operator^(const ScriptValue &other) const;
 	bool operator&&(const ScriptValue &other) const;
 
 	ScriptValue operator+(const ScriptValue &other) const;
@@ -82,21 +86,30 @@ public:
 	ScriptValue operator-() const;
 
 private:
-	bool isInteger() { return getType() == kOperandTypeBool || getType() == kOperandTypeInt; };
-	bool isDouble() { return getType() == kOperandTypeFloat || getType() == kOperandTypeTime; };
-	bool isNumber() { return isInteger() || isDouble(); };
-
-	OperandType _type = kOperandTypeEmpty;
+	ScriptValueType _type = kScriptValueTypeEmpty;
 	union {
-		uint assetId = 0;
+		double d = 0;
+		bool b;
+		uint paramToken;
+		uint assetId;
 		uint functionId;
 		BuiltInMethod methodId;
-		Common::String *string;
-		Variable *variable;
-		int i;
-		double d;
 	} _u;
+	Common::String _string;
 	Common::SharedPtr<Collection> _collection;
+
+	static bool compare(Opcode op, const ScriptValue &left, const ScriptValue &right);
+	static bool compareEmptyValues(Opcode op);
+	static bool compareStrings(Opcode op, const Common::String &left, const Common::String &right);
+	static bool compare(Opcode op, uint left, uint right);
+	static bool compare(Opcode op, bool left, bool right);
+	static bool compare(Opcode op, double left, double right);
+	static bool compare(Opcode op, Common::SharedPtr<Collection> left, Common::SharedPtr<Collection> right);
+
+	static ScriptValue evalMathOperation(Opcode op, const ScriptValue &left, const ScriptValue &right);
+	static double binaryMathOperation(Opcode op, double left, double right);
+
+	void issueValueMismatchWarning(ScriptValueType actualType) const;
 };
 
 } // End of namespace MediaStation
