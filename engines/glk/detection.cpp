@@ -60,6 +60,14 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 
+#include "engines/metaengine.h"
+#include "engines/engine.h"
+
+#include "common/hash-str.h"
+
+#include "common/gui_options.h"
+
+
 static const DebugChannelDef debugFlagList[] = {
 	{Glk::kDebugCore, "core", "Core engine debug level"},
 	{Glk::kDebugScripts, "scripts", "Game scripts"},
@@ -305,5 +313,92 @@ void GlkMetaEngineDetection::detectClashes() const {
 uint GlkMetaEngineDetection::getMD5Bytes() const {
 	return 5000;
 }
+
+// Add backslash before double quotes (") and backslashes themselves (\)
+static Common::String escapeString(const char *string) {
+	if (string == nullptr)
+		return "";
+
+	Common::String res = "";
+
+	for (int i = 0; string[i] != '\0'; i++) {
+		if (string[i] == '"' || string[i] == '\\')
+			res += "\\";
+
+		res += string[i];
+	}
+
+	return res;
+}
+
+void GlkMetaEngineDetection::dumpDetectionEntries() const {
+
+	enum class EngineName : uint8 {
+    	COMPREHEND,
+    	LEVEL9,
+    	OTHER
+	};
+
+	struct Detection {
+		const Glk::GlkDetectionEntry *entries;
+		EngineName engineName;
+	};
+
+	const Detection detectionEntries[] = {
+    	{ Glk::Adrift::AdriftMetaEngine::getDetectionEntries(), EngineName::OTHER },
+        { Glk::AdvSys::AdvSysMetaEngine::getDetectionEntries(), EngineName::OTHER },
+        { Glk::AGT::AGTMetaEngine::getDetectionEntries(), EngineName::OTHER },
+        { Glk::Alan2::Alan2MetaEngine::getDetectionEntries(), EngineName::OTHER },
+        { Glk::Alan3::Alan3MetaEngine::getDetectionEntries(), EngineName::OTHER },
+        { Glk::Archetype::ArchetypeMetaEngine::getDetectionEntries(), EngineName::OTHER },
+        { Glk::Comprehend::ComprehendMetaEngine::getDetectionEntries(), EngineName::COMPREHEND },
+        { Glk::Glulx::GlulxMetaEngine::getDetectionEntries(), EngineName::OTHER },
+        { Glk::Hugo::HugoMetaEngine::getDetectionEntries(), EngineName::OTHER },
+        { Glk::JACL::JACLMetaEngine::getDetectionEntries(), EngineName::OTHER },
+        { Glk::Level9::Level9MetaEngine::getDetectionEntries(), EngineName::LEVEL9 },
+        { Glk::Magnetic::MagneticMetaEngine::getDetectionEntries(), EngineName::OTHER },
+        { Glk::Quest::QuestMetaEngine::getDetectionEntries(), EngineName::OTHER },
+        { Glk::Scott::ScottMetaEngine::getDetectionEntries(), EngineName::OTHER },
+        { Glk::ZCode::ZCodeMetaEngine::getDetectionEntries(), EngineName::OTHER },
+        { Glk::TADS::TADSMetaEngine::getDetectionEntries(), EngineName::OTHER },
+        { nullptr, EngineName::OTHER }
+    };
+   
+	for (const Detection *detection = detectionEntries; detection->entries; ++detection) {
+		EngineName engineName =	detection->engineName;
+
+		for (const Glk::GlkDetectionEntry *entry = detection->entries; entry->_gameId; ++entry) {
+			PlainGameDescriptor pd = findGame(entry->_gameId);
+			const char *title = pd.description;
+			const char *extra = engineName == EngineName::COMPREHEND ? "" : entry->_extra;
+
+			debug("game (");
+			debug("\tname \"%s\"", escapeString(entry->_gameId).c_str());
+			debug("\ttitle \"%s\"", escapeString(title).c_str());
+			debug("\textra \"%s\"", escapeString(extra).c_str());
+			debug("\tlanguage \"%s\"", escapeString(getLanguageLocale(entry->_language)).c_str());
+			debug("\tplatform \"%s\"", escapeString(getPlatformCode(entry->_platform)).c_str());
+			debug("\tsourcefile \"%s\"", escapeString(getName()).c_str());
+			debug("\tengine \"%s\"", escapeString(getEngineName()).c_str());
+
+			Common::String checksum = entry->_md5;
+
+			//Filename for Comprehend Engine's md5 is stored in the extra field. 
+			//For other engines, filename is not available, so it has been kept as the gameId
+			const char *fname = engineName == EngineName::COMPREHEND ? entry->_extra : entry->_gameId;
+
+			//Level9 engine does not use md5 checksums, so checksums are not printed. 
+			if (engineName == EngineName::LEVEL9) {
+				debug("\trom ( name \"%s\" size %lld)", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize));
+			} else {
+				debug("\trom ( name \"%s\" size %lld md5-%d %s )", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize), getMD5Bytes(), checksum.c_str());
+			}
+			
+			debug(")\n");
+		}
+	}
+}
+
+
 
 REGISTER_PLUGIN_STATIC(GLK_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, GlkMetaEngineDetection);

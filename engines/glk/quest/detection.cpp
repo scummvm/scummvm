@@ -34,6 +34,10 @@ void QuestMetaEngine::getSupportedGames(PlainGameList &games) {
 		games.push_back(*pd);
 }
 
+const GlkDetectionEntry* QuestMetaEngine::getDetectionEntries() {
+	return QUEST_GAMES;
+}
+
 GameDescriptor QuestMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = QUEST_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))

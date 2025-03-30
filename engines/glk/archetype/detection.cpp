@@ -34,6 +34,10 @@ void ArchetypeMetaEngine::getSupportedGames(PlainGameList &games) {
 		games.push_back(*pd);
 }
 
+const GlkDetectionEntry* ArchetypeMetaEngine::getDetectionEntries() {
+	return ARCHETYPE_GAMES;
+}
+
 GameDescriptor ArchetypeMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = ARCHETYPE_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))

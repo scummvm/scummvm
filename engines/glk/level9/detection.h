@@ -168,6 +168,11 @@ public:
 	static void getSupportedGames(PlainGameList &games);
 
 	/**
+	 * Get the detection entries
+	 */
+	static const GlkDetectionEntry* getDetectionEntries();
+
+	/**
 	 * Returns a game description for the given game Id, if it's supported
 	 */
 	static GameDescriptor findGame(const char *gameId);

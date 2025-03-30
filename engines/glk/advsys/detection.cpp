@@ -35,6 +35,10 @@ void AdvSysMetaEngine::getSupportedGames(PlainGameList &games) {
 		games.push_back(*pd);
 }
 
+const GlkDetectionEntry* AdvSysMetaEngine::getDetectionEntries() {
+	return ADVSYS_GAMES;
+}
+
 GameDescriptor AdvSysMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = ADVSYS_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))
