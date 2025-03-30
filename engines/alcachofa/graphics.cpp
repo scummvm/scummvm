@@ -377,20 +377,17 @@ void Animation::draw3D(int32 frameI, Vector3d center, float scale, BlendMode ble
 	renderer.quad(as2D(center), size, color, rotation, texMin, texMax);
 }
 
-void Animation::drawEffect(int32 frameI, Vector3d topLeft, Vector2d tiling, Vector2d texOffset, BlendMode blendMode) {
+void Animation::drawEffect(int32 frameI, Vector3d topLeft, Vector2d size, Vector2d texOffset, BlendMode blendMode) {
 	prerenderFrame(frameI);
 	auto bounds = frameBounds(frameI);
 	Vector2d texMin(0, 0);
-	Vector2d texMax(tiling.getX() / _renderedSurface.w, tiling.getY() / _renderedSurface.h);
+	Vector2d texMax((float)bounds.width() / _renderedSurface.w, (float)bounds.height() / _renderedSurface.h);
 
 	topLeft += as3D(totalFrameOffset(frameI));
 	topLeft = g_engine->camera().transform3Dto2D(topLeft);
 	const auto rotation = -g_engine->camera().rotation();
-	Vector2d size(bounds.width(), bounds.height());
-	size *= topLeft.z();
-
-	if (abs(tiling.getX()) > epsilon)
-		size = size * texMax;
+	size(0, 0) *= bounds.width() * topLeft.z() / _renderedSurface.w;
+	size(1, 0) *= bounds.height() * topLeft.z() / _renderedSurface.h;
 
 	auto &renderer = g_engine->renderer();
 	renderer.setTexture(_renderedTexture.get());
@@ -614,14 +611,14 @@ SpecialEffectDrawRequest::SpecialEffectDrawRequest(Graphic &graphic, Point topLe
 	, _animation(&graphic.animation())
 	, _frameI(graphic._frameI)
 	, _topLeft(topLeft.x, topLeft.y, graphic._scale)
-	, _tiling(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y)
+	, _size(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y)
 	, _texOffset(texOffset)
 	, _blendMode(blendMode) {
 	assert(_frameI >= 0 && (uint)_frameI < _animation->frameCount());
 }
 
 void SpecialEffectDrawRequest::draw() {
-	_animation->drawEffect(_frameI, _topLeft, _tiling, _texOffset, _blendMode);
+	_animation->drawEffect(_frameI, _topLeft, _size, _texOffset, _blendMode);
 }
 
 static const byte *trimLeading(const byte *text, const byte *end) {
