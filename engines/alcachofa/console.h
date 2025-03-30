@@ -57,9 +57,9 @@ private:
 	bool cmdDebugMode(int argc, const char **args);
 	bool cmdTeleport(int argc, const char **args);
 
-	bool _showInteractables = true;
-	bool _showCharacters = true;
-	bool _showFloor = true;
+	bool _showInteractables = false;
+	bool _showCharacters = false;
+	bool _showFloor = false;
 	bool _showFloorEdges = false;
 	bool _showFloorColor = false;
 };
