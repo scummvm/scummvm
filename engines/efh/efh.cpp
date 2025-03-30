@@ -2404,6 +2404,26 @@ bool EfhEngine::checkMonsterCollision() {
 			Common::KeyCode input = waitForKey();
 
 			switch (input) {
+			if (input == kEfhActionA) { // I am not sure if this would be correct or not formatting within the code. This should let player to click on a to interact with Attack option.
+				handleFight(monsterId);
+				endLoop = true;
+				break;
+			} else if (input == kEfhActionESC) {	// Should be able to use both l and ESC to start Leave option.
+				endLoop = true;
+				break;
+			} else if (input == kEfhActionS) {	// Should let player to click on s to interact with Status option.
+				handleStatusMenu(1, _teamChar[0]._id);
+				endLoop = true;
+				_tempTextPtr = nullptr;
+				drawGameScreenAndTempText(true);
+				break;
+			} else if (input == kEfhActionT) {	// Should let player to click on t to interact with Talk option.
+				startTalkMenu(monsterId);
+				endLoop = true;
+				break;
+			}
+	
+			// Leaving this here to delete later once I understand more about how to implement Keymapping within this efh.cpp file.
 			case Common::KEYCODE_a: // Attack
 				handleFight(monsterId);
 				endLoop = true;
