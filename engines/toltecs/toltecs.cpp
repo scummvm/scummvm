@@ -362,19 +362,19 @@ void ToltecsEngine::updateInput() {
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			_keyState = event.kbd;
 
 			//debug("key: flags = %02X; keycode = %d", _keyState.flags, _keyState.keycode);
 
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_F5:
+			switch (event.customType) {
+			case kActionSaveGame:
 				showMenu(kMenuIdSave);
 				break;
-			case Common::KEYCODE_F7:
+			case kActionLoadGame:
 				showMenu(kMenuIdLoad);
 				break;
-			case Common::KEYCODE_SPACE:
+			case kActionSkip:
 				// Skip current dialog line, if a dialog is active
 				if (_screen->getTalkTextDuration() > 0) {
 					_sound->stopSpeech();
@@ -382,6 +382,8 @@ void ToltecsEngine::updateInput() {
 					_keyState.reset();	// event consumed
 				}
 				break;
+			case kActionPause:
+				showMenu(kMenuIdMain);
 			default:
 				break;
 			}

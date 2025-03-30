@@ -27,7 +27,9 @@
 #include "common/str-array.h"
 #include "common/system.h"
 #include "common/translation.h"
-
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 #include "toltecs/toltecs.h"
 #include "toltecs/detection.h"
 
@@ -75,8 +77,64 @@ public:
 	int getMaximumSaveSlot() const override;
 	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
+Common::KeymapArray ToltecsMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Toltecs;
 
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "toltecs-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMiddleClick, _("Middle Click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_MIDDLE");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SAVEGAME", _("Save game"));
+	act->setCustomEngineActionEvent(kActionSaveGame);
+	act->addDefaultInputMapping("F5");
+	gameKeyMap->addAction(act);
+
+	act = new Action("LOADGAME", _("Load game"));
+	act->setCustomEngineActionEvent(kActionLoadGame);
+	act->addDefaultInputMapping("F7");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SKIP", _("Skip dialogue"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("SPACE");
+	gameKeyMap->addAction(act);
+
+	act = new Action("ESCAPE", _("Exit / Skip Cutscene"));
+	act->setCustomEngineActionEvent(kActionExit);
+	act->addDefaultInputMapping("ESCAPE");
+	gameKeyMap->addAction(act);
+
+	act = new Action("PAUSE", _("Pause Game"));
+	act->setCustomEngineActionEvent(kActionPause);
+	act->addDefaultInputMapping("F10");
+	gameKeyMap->addAction(act);
+
+
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+
+	return keymaps;
+}
 bool ToltecsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
