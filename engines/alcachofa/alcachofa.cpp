@@ -70,8 +70,6 @@ Common::Error AlcachofaEngine::run() {
 	_player.reset(new Player());
 	_globalUI.reset(new GlobalUI());
 
-	//_script->createProcess(MainCharacterKind::None, "Inicializar_Variables");
-	//_player->changeRoom("HORCA", true);
 	_script->createProcess(MainCharacterKind::None, "CREDITOS_INICIALES");
 	_scheduler.run();
 
