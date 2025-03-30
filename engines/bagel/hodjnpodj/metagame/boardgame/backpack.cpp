@@ -20,6 +20,7 @@
  */
 
 #include "bagel/hodjnpodj/metagame/boardgame/backpack.h"
+#include "bagel/hodjnpodj/metagame/boardgame/notebook.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/metaengine.h"
 
@@ -277,8 +278,8 @@ bool Backpack::msgMouseMove(const MouseMoveMessage &msg) {
 			// Check for highlighted item
 			index = getItemAtPos(msg._pos);
 
-			if ((index >= 0) && ((index + nFirstSlot) < (*pInventory).ItemCount())) {
-				_selectedItem = (*pInventory).FetchItem(index + nFirstSlot);
+			if (index >= 0) {
+				_selectedItem = (*pInventory).FetchItem(index);
 				if (_selectedItem != nullptr) {
 					if (_selectedItem->m_nActionCode == ITEM_ACTION_NOTEBOOK) {
 						g_events->setCursor(IDC_NOTEBOOK_BOOK);
@@ -320,6 +321,33 @@ bool Backpack::msgMouseUp(const MouseUpMessage &msg) {
 			// Move to the next page
 			nFirstSlot += (nItemsPerRow * nItemsPerColumn);
 			redraw();
+		} else {
+			int index = getItemAtPos(msg._pos);                    // ... and if so, then show then dispatch
+			if (index >= 0) {
+				auto pItem = (*pInventory).FetchItem(index);
+				if (pItem != nullptr) {
+					switch ((*pItem).GetActionCode()) {
+					case ITEM_ACTION_NOTEBOOK:
+						// Open the notebook
+						pItem = (*pInventory).FindItem(MG_OBJ_HODJ_NOTEBOOK);
+						if (pItem == nullptr)
+							pItem = (*pInventory).FindItem(MG_OBJ_PODJ_NOTEBOOK);
+						if (pItem != nullptr) {
+							Notebook::show(pItem->GetFirstNote());
+						break;
+
+					case ITEM_ACTION_SOUND: {
+						CSound *pSound = new CSound(this, (*pItem).GetSoundSpec(), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
+						pSound->play();
+						break;
+					}
+
+					default:
+						break;
+					}
+				}
+				}
+			}
 		}
 	}
 
@@ -348,7 +376,7 @@ int Backpack::getItemAtPos(const Common::Point &point) const {
 		const Common::Rect r = getItemRect(i);
 
 		if (r.contains(p))
-			return i;
+			return nFirstSlot + i;
 	}
 
 	return -1;

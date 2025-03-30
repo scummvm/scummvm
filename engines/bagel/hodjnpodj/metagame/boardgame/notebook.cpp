@@ -30,6 +30,10 @@ namespace Metagame {
 Notebook::Notebook() : View("Notebook") {
 }
 
+void Notebook::show(CNote *note) {
+	error("TODO: show notebook");
+}
+
 bool Notebook::msgOpen(const OpenMessage &msg) {
 	return true;
 }

@@ -41,6 +41,8 @@ public:
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
+
+	static void show(CNote *note);
 };
 
 } // namespace Metagame
