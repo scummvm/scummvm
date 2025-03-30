@@ -76,8 +76,7 @@ public:
 		GL_CALL(glBindTexture(GL_TEXTURE_2D, _handle));
 		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
 		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+		setMirrorWrap(false);
 	}
 
 	virtual ~OpenGLTexture() override {
@@ -99,11 +98,26 @@ public:
 			GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0));
 	}
 
+	void setMirrorWrap(bool wrap) {
+		if (_mirrorWrap == wrap)
+			return;
+		_mirrorWrap = wrap;
+		GLint wrapMode;
+		if (wrap)
+			wrapMode = OpenGLContext.textureMirrorRepeatSupported ? GL_MIRRORED_REPEAT : GL_REPEAT;
+		else
+			wrapMode = OpenGLContext.textureEdgeClampSupported ? GL_CLAMP_TO_EDGE : GL_CLAMP;
+
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode));
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode));
+	}
+
 	inline GLuint handle() const { return _handle; }
 
 private:
 	GLuint _handle;
 	bool _withMipmaps;
+	bool _mirrorWrap = true;
 };
 
 class OpenGLRenderer : public IDebugRenderer {
@@ -118,6 +132,10 @@ public:
 		GL_CALL(glDisable(GL_CULL_FACE));
 		GL_CALL(glEnable(GL_BLEND));
 		GL_CALL(glDepthMask(GL_FALSE));
+
+		if (!OpenGLContext.NPOTSupported || !OpenGLContext.textureMirrorRepeatSupported) {
+			g_system->messageBox(LogMessageType::kWarning, "Old OpenGL detected, some graphical errors will occur.");
+		}
 	}
 
 	virtual ScopedPtr<ITexture> createTexture(int32 w, int32 h, bool withMipmaps) override {
@@ -145,23 +163,24 @@ public:
 		g_system->updateScreen();
 	}
 
-	virtual void setTexture(const ITexture *texture) override {
+	virtual void setTexture(ITexture *texture) override {
 		if (texture == _currentTexture)
 			return;
 		else if (texture == nullptr) {
 			GL_CALL(glDisable(GL_TEXTURE_2D));
 			GL_CALL(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
+			_currentTexture = nullptr;
 		}
 		else {
 			if (_currentTexture == nullptr) {
 				GL_CALL(glEnable(GL_TEXTURE_2D));
 				GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
 			}
-			auto glTexture = dynamic_cast<const OpenGLTexture *>(texture);
+			auto glTexture = dynamic_cast<OpenGLTexture *>(texture);
 			assert(glTexture != nullptr);
 			GL_CALL(glBindTexture(GL_TEXTURE_2D, glTexture->handle()));
+			_currentTexture = glTexture;
 		}
-		_currentTexture = texture;
 	}
 
 	virtual void setBlendMode(BlendMode blendMode) override {
@@ -251,6 +270,10 @@ public:
 			{ texMax.getX(), texMax.getY() },
 			{ texMax.getX(), texMin.getY() }
 		};
+		if (_currentTexture != nullptr) {
+			// float equality is fine here, if it was calculated it was not a normal graphic
+			_currentTexture->setMirrorWrap(texMin != Vector2d() || texMax != Vector2d(1, 1));
+		}
 
 		float colors[] = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f };
 
@@ -333,7 +356,7 @@ private:
 	}
 
 	Point _resolution;
-	const ITexture *_currentTexture = nullptr;
+	OpenGLTexture *_currentTexture = nullptr;
 	BlendMode _currentBlendMode = (BlendMode)-1;
 	float _currentLodBias = 0.0f;
 };
