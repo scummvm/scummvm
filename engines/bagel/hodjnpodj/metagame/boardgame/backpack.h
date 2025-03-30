@@ -41,12 +41,18 @@ private:
 	int nItemsPerColumn = 0;
 	CInventory *pInventory = nullptr;
 	int nItem_DDX = 0, nItem_DDY = 0;
+	int _selectedIndex = -1;
+	CItem *_selectedItem = nullptr;
 
 	void updateContent();
 	void drawItems(GfxSurface &s);
 	void drawItem(GfxSurface &s, CItem *pItem, int nX, int nY);
 	void drawMore(GfxSurface &s);
+	bool hasPriorPage() const {
+		return nFirstSlot > 0;
+	}
 	bool hasNextPage() const;
+	int selectedItem(const Common::Point &point) const;
 
 public:
 	Backpack();
@@ -56,7 +62,10 @@ public:
 	bool msgClose(const CloseMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg);
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgMouseMove(const MouseMoveMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
+
 	void draw() override;
 };
 

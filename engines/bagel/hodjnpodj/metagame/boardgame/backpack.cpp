@@ -53,6 +53,9 @@ namespace Metagame {
 #define TEXT_MORE_DY		5                       // offset of "more" indicator bottom of scroll
 #define MORE_TEXT_BLURB		"[ More ]"				// actual text to display for "more" indicator
 
+#define	IDC_NOTEBOOK_BOOK	    921
+#define	IDC_NOTEBOOK_SOUND	    922
+
 Backpack::Backpack() : Dialog("Backpack"),
 _okButton(Common::Rect(210, 355, 290, 380), this),
 pInventory(lpMetaGame->m_cHodj.m_pInventory) {
@@ -164,6 +167,17 @@ void Backpack::draw() {
 		BACKPACK_TEXT_COLOR, Graphics::kTextAlignCenter);
 
 	drawItems(s);
+
+	// Handle displaying blurb for any highlighted item
+	if (_selectedItem) {
+		Common::Rect blurbRect(BACKPACK_TEXTZONE_DX,
+			BACKPACK_DY - BACKPACK_BORDER_DY - BACKPACK_TEXTZONE_DY + BACKPACK_TEXTZONE_DDY,
+			BACKPACK_DX - BACKPACK_TEXTZONE_DX,
+			BACKPACK_DY - BACKPACK_BORDER_DY + BACKPACK_TEXTZONE_DDY);
+
+		s.writeString(_selectedItem->GetDescription(),
+			blurbRect, BACKPACK_TEXT_COLOR);
+	}
 }
 
 void Backpack::updateContent() {
@@ -208,7 +222,7 @@ void Backpack::drawItems(GfxSurface &s) {
 		y = (i / nItemsPerRow);                                 // calculate its vertical position
 		y *= (BACKPACK_BITMAP_DY + nItem_DDY);                      // ... allowing proper spacing between items
 		drawItem(s, pItem, x + BACKPACK_BORDER_DX, y + BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DY);		// now show the item
-		pItem = (*pItem).GetNext();
+		pItem = pItem->GetNext();
 	}
 }
 
@@ -232,17 +246,106 @@ bool Backpack::hasNextPage() const {
 		pInventory->ItemCount();
 }
 
-void Backpack::drawItem(GfxSurface &s, CItem *pItem, int nX, int nY) {
-	s.blitFrom((*pItem).getArt(), Common::Point(nX, nY));
+bool Backpack::msgMouseMove(const MouseMoveMessage &msg) {
+	int oldIndex = _selectedIndex;
+	int index = oldIndex;
+	_selectedItem = nullptr;
 
-	if (((*pItem).m_nQuantity == 0) ||
-		((*pItem).m_nQuantity > 1)) {
+	if (!Dialog::msgMouseMove(msg)) {
+		if (_scrollTopRect.contains(msg._pos)) {
+			if (nFirstSlot == 0)
+				g_events->setCursor(IDC_RULES_INVALID);
+			else
+				g_events->setCursor(IDC_RULES_ARROWUP);
+		} else if (_scrollBottomRect.contains(msg._pos)) {
+			if (!hasNextPage())
+				g_events->setCursor(IDC_RULES_INVALID);
+			else
+				g_events->setCursor(IDC_RULES_ARROWDN);
+		} else {
+			// Check for highlighted item
+			index = selectedItem(msg._pos);
+
+			if ((index >= 0) && ((index + nFirstSlot) < (*pInventory).ItemCount())) {
+				_selectedItem = (*pInventory).FetchItem(index + nFirstSlot);
+				if (_selectedItem != nullptr) {
+					if (_selectedItem->m_nActionCode == ITEM_ACTION_NOTEBOOK) {
+						g_events->setCursor(IDC_NOTEBOOK_BOOK);
+					} else {
+						if (_selectedItem->GetSoundSpec() != nullptr) {
+							g_events->setCursor(IDC_NOTEBOOK_SOUND);
+							_selectedItem->m_nActionCode = ITEM_ACTION_SOUND;
+						} else {
+							g_events->setCursor(IDC_ARROW);
+						}
+					}
+				}
+			} else {
+				g_events->setCursor(IDC_ARROW);
+			}
+		}
+	}
+
+	if (index != oldIndex)
+		redraw();
+	_selectedIndex = index;
+
+	return true;
+}
+
+bool Backpack::msgMouseUp(const MouseUpMessage &msg) {
+	if (View::msgMouseUp(msg))
+		return true;
+
+	if (msg._button == MouseUpMessage::MB_LEFT) {
+		if (_scrollTopRect.contains(msg._pos) && hasPriorPage()) {
+			// Move to prior page
+			nFirstSlot -= (nItemsPerRow * nItemsPerColumn);
+			if (nFirstSlot < 0)
+				nFirstSlot = 0;
+			redraw();
+
+		} else if (_scrollBottomRect.contains(msg._pos) && hasNextPage()) {
+			// Move to the next page
+			nFirstSlot += (nItemsPerRow * nItemsPerColumn);
+			redraw();
+		}
+	}
+
+	return true;
+}
+
+void Backpack::drawItem(GfxSurface &s, CItem *pItem, int nX, int nY) {
+	s.blitFrom(pItem->getArt(), Common::Point(nX, nY));
+
+	if ((pItem->m_nQuantity == 0) ||
+		(pItem->m_nQuantity > 1)) {
 		Common::String qty = Common::String::format("%d",
-			(*pItem).m_nQuantity);
+			pItem->m_nQuantity);
 
 		s.setFontSize(8);
 		s.writeString(qty, Common::Point(nX, nY), BACKPACK_BLURB_COLOR);
 	}
+}
+
+int Backpack::selectedItem(const Common::Point &point) const {
+	int i = -1, x, y, col, row;
+	Common::Rect testRect(BACKPACK_BORDER_DX,
+		BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DY,
+		BACKPACK_DX - BACKPACK_BORDER_DX,
+		BACKPACK_DY - BACKPACK_TEXTZONE_DY - BACKPACK_BORDER_DY);
+
+	if (testRect.contains(point)) {
+		col = (point.x - BACKPACK_BORDER_DX) / (BACKPACK_BITMAP_DX + nItem_DDX);
+		row = (point.y - BACKPACK_BORDER_DY - BACKPACK_TITLEZONE_DY) / (BACKPACK_BITMAP_DY + nItem_DDY);
+		x = col * (BACKPACK_BITMAP_DX + nItem_DDX) + BACKPACK_BITMAP_DX + BACKPACK_BORDER_DX;
+		y = row * (BACKPACK_BITMAP_DY + nItem_DDY) + BACKPACK_BITMAP_DX + BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DY;
+
+		if ((point.x < x) && (point.y < y))
+			i = (row * nItemsPerRow) + col;
+	}
+
+	return i;
 }
 
 } // namespace Metagame
