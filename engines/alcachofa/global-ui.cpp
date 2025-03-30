@@ -166,13 +166,13 @@ void GlobalUI::drawChangingButton() {
 		_changeButton.lastTime() = 42 * (anim->frameCount() - 1) + 1;
 	}
 
-	_changeButton.center() = { (int16)(g_system->getWidth() + 2), -2 };
+	_changeButton.topLeft() = { (int16)(g_system->getWidth() + 2), -2 };
 	if (isHoveringChangeButton() &&
 		g_engine->input().isMouseLeftDown() &&
 		player.pressedObject() == &_changeButton)
 	{
-		_changeButton.center().x -= 2;
-		_changeButton.center().y += 2;
+		_changeButton.topLeft().x -= 2;
+		_changeButton.topLeft().y += 2;
 	}
 
 	_changeButton.order() = -9;

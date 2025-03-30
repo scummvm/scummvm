@@ -171,7 +171,7 @@ void Character::update() {
 
 	Graphic *animateGraphic = graphicOf(_curAnimateObject);
 	if (animateGraphic != nullptr) {
-		animateGraphic->center() = Point(0, 0);
+		animateGraphic->topLeft() = Point(0, 0);
 		animateGraphic->update();
 	}
 	else if (_isTalking)
@@ -477,13 +477,13 @@ void WalkingCharacter::update() {
 		_currentPos = _sourcePos;
 	}
 
-	_graphicNormal.center() = _graphicTalking.center() = _currentPos;
+	_graphicNormal.topLeft() = _graphicTalking.topLeft() = _currentPos;
 	auto animateGraphic = graphicOf(_curAnimateObject);
 	auto talkingGraphic = graphicOf(_curTalkingObject);
 	if (animateGraphic != nullptr)
-		animateGraphic->center() = _currentPos;
+		animateGraphic->topLeft() = _currentPos;
 	if (talkingGraphic != nullptr)
-		talkingGraphic->center() = _currentPos;
+		talkingGraphic->topLeft() = _currentPos;
 	if (room() != &g_engine->world().globalRoom()) {
 		float depth = room()->depthAt(_currentPos);
 		int8 order = room()->orderAt(_currentPos);
@@ -566,7 +566,7 @@ void WalkingCharacter::updateWalking() {
 			_direction = _endWalkingDirection;
 		onArrived();
 	}
-	_graphicNormal.center() = _currentPos;
+	_graphicNormal.topLeft() = _currentPos;
 }
 
 void WalkingCharacter::updateWalkingAnimation()
