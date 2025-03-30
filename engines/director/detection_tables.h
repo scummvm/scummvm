@@ -1214,6 +1214,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sakuratoasobo",		"さくらとあそぼ" },								// Let's Play with "SAKURA"!
 	{ "schoolworld",		"A-L: Artificial Life: School World" },
 	{ "seesawc1",			"SeesawC1" },
+	{ "shikiotabisuru",		"四季を旅する" },
 	{ "smallhouse",			"Small House" },
 	{ "startover",			"Start Over ROM" },
 	{ "tantei",				"完全探偵マニュアル" },								// Perfect Detective Manual
@@ -3190,6 +3191,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("sfk", "", "More SFK Products!", "1ae45c23586b41997ba52e2e7c771c4c", 377667, 310),
 
 	MACGAME1_l("directorshokai", "", "Director Movie", "276bee761e48a6fd709df77d5c2f60dd", 395882, Common::JA_JPN, 313),
+
+	// Original filename is Station-四季を旅する
+	MACGAME1t_l("shikiotabisuru", "", "xn--Station--883ghrnc9646d4kmin9a", "rt:5ee55eaa551cd866da692454e0691f1d", 398904, Common::JA_JPN, 311),
 
 	// Found on The Cat Came Back
 	WINDEMO1("sitfarm", "Demo", "MOREFUN.EXE", "65d06b5fef155a2473434571aff5bc29", 4397800, 310),
