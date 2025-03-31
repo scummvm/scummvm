@@ -281,7 +281,7 @@ void EfhEngine::playIntro() {
 	loadImageSet(63, _circleImageBuf, _circleImageSubFileArray, _decompBuf);
 	readImpFile(100, false);
 	Common::KeyCode lastInput = getLastCharAfterAnimCount(8);
-	if (lastInput == Common::KEYCODE_ESCAPE)
+	if (lastInput == Efh::kEfhActionESC)
 		return;
 
 	// With GF on the bed
@@ -292,7 +292,7 @@ void EfhEngine::playIntro() {
 	drawText(_imp2PtrArray[0], 6, 150, 268, 186, false);
 
 	lastInput = getLastCharAfterAnimCount(80);
-	if (lastInput == Common::KEYCODE_ESCAPE)
+	if (lastInput == Efh::kEfhActionESC)
 		return;
 
 	// Poof
@@ -304,7 +304,7 @@ void EfhEngine::playIntro() {
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	drawText(_imp2PtrArray[1], 6, 150, 268, 186, false);
 	lastInput = getLastCharAfterAnimCount(80);
-	if (lastInput == Common::KEYCODE_ESCAPE)
+	if (lastInput == Efh::kEfhActionESC)
 		return;
 
 	// On the phone
@@ -316,7 +316,7 @@ void EfhEngine::playIntro() {
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	drawText(_imp2PtrArray[2], 6, 150, 268, 186, false);
 	lastInput = getLastCharAfterAnimCount(80);
-	if (lastInput == Common::KEYCODE_ESCAPE)
+	if (lastInput == Efh::kEfhActionESC)
 		return;
 
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
@@ -325,7 +325,7 @@ void EfhEngine::playIntro() {
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	drawText(_imp2PtrArray[3], 6, 150, 268, 186, false);
 	lastInput = getLastCharAfterAnimCount(80);
-	if (lastInput == Common::KEYCODE_ESCAPE)
+	if (lastInput == Efh::kEfhActionESC)
 		return;
 
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
@@ -334,7 +334,7 @@ void EfhEngine::playIntro() {
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	drawText(_imp2PtrArray[4], 6, 150, 268, 186, false);
 	lastInput = getLastCharAfterAnimCount(80);
-	if (lastInput == Common::KEYCODE_ESCAPE)
+	if (lastInput == Efh::kEfhActionESC)
 		return;
 
 	displayRawDataAtPos(_circleImageSubFileArray[3], 110, 16);
@@ -414,7 +414,7 @@ void EfhEngine::initEngine() {
 	if (_loadSaveSlot == -1)
 		lastInput = playSong(_titleSong);
 
-	if (lastInput != Common::KEYCODE_ESCAPE && _loadSaveSlot == -1)
+	if (lastInput != Efh::kEfhActionESC && _loadSaveSlot == -1)
 		playIntro();
 
 	loadImageSet(6, _circleImageBuf, _circleImageSubFileArray, _decompBuf);
@@ -833,35 +833,35 @@ void EfhEngine::handleWinSequence() {
 		displayFctFullScreen();
 		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
 		input = getInput(32);
-		if (input != Common::KEYCODE_ESCAPE) {
+		if (input != Efh::kEfhActionESC) {
 			displayRawDataAtPos(winSeqSubFilesArray2[10], 136, 72);
 			displayFctFullScreen();
 			displayRawDataAtPos(winSeqSubFilesArray2[10], 136, 72);
 			input = getInput(1);
 		}
 
-		if (input != Common::KEYCODE_ESCAPE) {
+		if (input != Efh::kEfhActionESC) {
 			displayRawDataAtPos(winSeqSubFilesArray2[11], 136, 72);
 			displayFctFullScreen();
 			displayRawDataAtPos(winSeqSubFilesArray2[11], 136, 72);
 			input = getInput(1);
 		}
 
-		if (input != Common::KEYCODE_ESCAPE) {
+		if (input != Efh::kEfhActionESC) {
 			displayRawDataAtPos(winSeqSubFilesArray2[12], 136, 72);
 			displayFctFullScreen();
 			displayRawDataAtPos(winSeqSubFilesArray2[12], 136, 72);
 			input = getInput(1);
 		}
 
-		if (input != Common::KEYCODE_ESCAPE) {
+		if (input != Efh::kEfhActionESC) {
 			displayRawDataAtPos(winSeqSubFilesArray2[13], 136, 72);
 			displayFctFullScreen();
 			displayRawDataAtPos(winSeqSubFilesArray2[13], 136, 72);
 			input = getInput(1);
 		}
 
-		if (input != Common::KEYCODE_ESCAPE) {
+		if (input != Efh::kEfhActionESC) {
 			displayRawDataAtPos(winSeqSubFilesArray2[14], 136, 72);
 			displayFctFullScreen();
 			displayRawDataAtPos(winSeqSubFilesArray2[14], 136, 72);
@@ -906,11 +906,11 @@ int16 EfhEngine::chooseCharacterToReplace() {
 	Common::KeyCode input;
 	for (;;) {
 		input = waitForKey();
-		if (input == Common::KEYCODE_ESCAPE || input == Common::KEYCODE_0 || (input > Common::KEYCODE_1 && input < maxVal))
+		if (input == Efh::kEfhActionESC || input == Common::KEYCODE_0 || (input > Common::KEYCODE_1 && input < maxVal))
 			break;
 	}
 
-	if (input == Common::KEYCODE_ESCAPE || input == Common::KEYCODE_0)
+	if (input == Efh::kEfhActionESC || input == Common::KEYCODE_0)
 		return 0x1B;
 
 	return (int16)input - (int16)Common::KEYCODE_1;
@@ -2307,11 +2307,11 @@ int16 EfhEngine::selectOtherCharFromTeam() {
 	Common::KeyCode input = Common::KEYCODE_INVALID;
 	for (;;) {
 		input = waitForKey();
-		if (input == Common::KEYCODE_ESCAPE || (input >= Common::KEYCODE_0 && input <= maxVal))
+		if (input == Efh::kEfhActionESC || (input >= Common::KEYCODE_0 && input <= maxVal))
 			break;
 	}
 
-	if (input == Common::KEYCODE_ESCAPE || input == Common::KEYCODE_0)
+	if (input == Efh::kEfhActionESC || input == Common::KEYCODE_0)
 		return 0x1B;
 
 	return (int16)input - (int16)Common::KEYCODE_1;
@@ -2404,46 +2404,24 @@ bool EfhEngine::checkMonsterCollision() {
 			Common::KeyCode input = waitForKey();
 
 			switch (input) {
-			if (input == kEfhActionA) { // I am not sure if this would be correct or not formatting within the code. This should let player to click on a to interact with Attack option.
-				handleFight(monsterId);
-				endLoop = true;
-				break;
-			} else if (input == kEfhActionESC) {	// Should be able to use both l and ESC to start Leave option.
-				endLoop = true;
-				break;
-			} else if (input == kEfhActionS) {	// Should let player to click on s to interact with Status option.
-				handleStatusMenu(1, _teamChar[0]._id);
-				endLoop = true;
-				_tempTextPtr = nullptr;
-				drawGameScreenAndTempText(true);
-				break;
-			} else if (input == kEfhActionT) {	// Should let player to click on t to interact with Talk option.
-				startTalkMenu(monsterId);
-				endLoop = true;
-				break;
-			}
-	
-			// Leaving this here to delete later once I understand more about how to implement Keymapping within this efh.cpp file.
-			case Common::KEYCODE_a: // Attack
-				handleFight(monsterId);
-				endLoop = true;
-				break;
-			case Common::KEYCODE_ESCAPE:
-			case Common::KEYCODE_l: // Leave
-				endLoop = true;
-				break;
-			case Common::KEYCODE_s: // Status
-				handleStatusMenu(1, _teamChar[0]._id);
-				endLoop = true;
-				_tempTextPtr = nullptr;
-				drawGameScreenAndTempText(true);
-				break;
-			case Common::KEYCODE_t: // Talk
-				startTalkMenu(monsterId);
-				endLoop = true;
-				break;
-			default:
-				break;
+				if (input == kEfhActionA) { // Attack
+					handleFight(monsterId);
+					endLoop = true;
+					break;
+				} else if (input == kEfhActionL || input == Efh::kEfhActionESC) {	// Leave
+					endLoop = true;
+					break;
+				} else if (input == kEfhActionS) {	// Status
+					handleStatusMenu(1, _teamChar[0]._id);
+					endLoop = true;
+					_tempTextPtr = nullptr;
+					drawGameScreenAndTempText(true);
+					break;
+				} else if (input == kEfhActionT) {	// Talk
+					startTalkMenu(monsterId);
+					endLoop = true;
+					break;
+				}
 			}
 		} while (!endLoop && !shouldQuit());
 		return false;
