@@ -111,6 +111,12 @@ public:
 		return _contour[pos];
 	}
 
+	void createMaskOld(int x0, int y0, int x1, int y1);
+
+	const byte *maskData() const {
+		return &*_mask.begin();
+	}
+
 	//! Возвращает размеры маски.
 	const Vect2s &mask_size() const {
 		return _size;
@@ -152,6 +158,8 @@ private:
 	Vect2s _size;
 
 	Vect2s _mask_pos;
+
+	Std::vector<byte> _mask;
 
 	//! Контур.
 	/**
