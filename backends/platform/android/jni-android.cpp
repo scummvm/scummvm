@@ -107,6 +107,8 @@ jmethodID JNI::_MID_eglVersion = 0;
 jmethodID JNI::_MID_getNewSAFTree = 0;
 jmethodID JNI::_MID_getSAFTrees = 0;
 jmethodID JNI::_MID_findSAFTree = 0;
+jmethodID JNI::_MID_exportBackup = 0;
+jmethodID JNI::_MID_importBackup = 0;
 
 jmethodID JNI::_MID_EGL10_eglSwapBuffers = 0;
 
@@ -782,6 +784,8 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	            "(ZLjava/lang/String;Ljava/lang/String;)Lorg/scummvm/scummvm/SAFFSTree;");
 	FIND_METHOD(, getSAFTrees, "()[Lorg/scummvm/scummvm/SAFFSTree;");
 	FIND_METHOD(, findSAFTree, "(Ljava/lang/String;)Lorg/scummvm/scummvm/SAFFSTree;");
+	FIND_METHOD(, exportBackup, "(Ljava/lang/String;)I");
+	FIND_METHOD(, importBackup, "(Ljava/lang/String;Ljava/lang/String;)I");
 
 	_jobj_egl = env->NewGlobalRef(egl);
 	_jobj_egl_display = env->NewGlobalRef(egl_display);
@@ -1139,4 +1143,54 @@ jobject JNI::findSAFTree(const Common::String &name) {
 	}
 
 	return tree;
+}
+
+int JNI::exportBackup(const Common::U32String &prompt) {
+	JNIEnv *env = JNI::getEnv();
+
+	jstring promptObj = convertToJString(env, prompt);
+
+	jint result = env->CallIntMethod(_jobj, _MID_exportBackup, promptObj);
+
+	env->DeleteLocalRef(promptObj);
+
+	if (env->ExceptionCheck()) {
+		LOGE("exportBackup: error");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		// BackupManager.ERROR_INVALID_BACKUP
+		return -1;
+	}
+
+	return result;
+}
+
+int JNI::importBackup(const Common::U32String &prompt, const Common::String &path) {
+	JNIEnv *env = JNI::getEnv();
+
+	jstring promptObj = convertToJString(env, prompt);
+
+	jstring pathObj = nullptr;
+	if (!path.empty()) {
+		pathObj = env->NewStringUTF(path.c_str());
+	}
+
+	jint result = env->CallIntMethod(_jobj, _MID_importBackup, promptObj, pathObj);
+
+	env->DeleteLocalRef(pathObj);
+	env->DeleteLocalRef(promptObj);
+
+	if (env->ExceptionCheck()) {
+		LOGE("importBackup: error");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		// BackupManager.ERROR_INVALID_BACKUP
+		return -1;
+	}
+
+	return result;
 }
