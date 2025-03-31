@@ -97,6 +97,7 @@ private:
 	void loadCredits();
 	void startVcrHelp();
 	void doVcrHelp(int16 button);
+	uint16 mapMenuNum(uint16 num) const;
 
 	void putMouseOnSelectedItem();
 	Gadget *getSelectedItem();

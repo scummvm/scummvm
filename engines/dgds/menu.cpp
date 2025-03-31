@@ -151,9 +151,26 @@ Menu::~Menu() {
 	_screenBuffer.free();
 }
 
+uint16 Menu::mapMenuNum(uint16 num) const {
+	// The DE version of Heart of China used different menu IDs for some things.
+	// Instead of putting mappings all through the game, just translate them on
+	// load to match the other game versions.
+	DgdsEngine *engine = DgdsEngine::getInstance();
+	if (engine->getGameId() == GID_HOC && engine->getGameLang() == Common::DE_DEU) {
+		switch (num) {
+		case 50: return kMenuMain;
+		case 80: return kMenuSkipPlayIntro;
+		case 82: return kMenuSkipArcade;
+		default: return num;
+		}
+	} else {
+		return num;
+	}
+}
+
 void Menu::setRequestData(const REQFileData &data) {
 	for (auto &req : data._requests) {
-		_menuRequests[req._fileNum] = req;
+		_menuRequests[mapMenuNum(req._fileNum)] = req;
 	}
 }
 
