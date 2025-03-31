@@ -257,6 +257,10 @@ void CDSTTMInterpreter::handleOperation(TTMEnviro &env_, TTMSeq &seq, uint16 op,
 	case 0xa510:   // DRAW SPRITE FLIP V x,y:int
 	case 0xa520:   // DRAW SPRITE FLIP H: x,y:int
 	case 0xa530: { // DRAW SPRITE FLIP HV: x,y,frameno,bmpno:int	[-n,+n]
+		if (!env._scriptShapes[0]) {
+			warning("CDS: Trying to draw after script shape freed");
+			break;
+		}
 		ImageFlipMode flip = Conversation::_lastHeadFrameFlipMode;
 		int16 x = ivals[0] + env._xOff;
 		int16 y = ivals[1] + env._yOff;
