@@ -32,13 +32,13 @@ static const byte EGA_PALETTE[16][3] = {
 };
 
 
-Palette::Palette(uint size) : _data(nullptr), _size(size) {
+Palette::Palette(uint size) : _data(nullptr), _size(size), _disposeAfterUse(DisposeAfterUse::YES) {
 	if (_size > 0) {
 		_data = new byte[_size * 3]();
 	}
 }
 
-Palette::Palette(const byte *data, uint size) : _data(nullptr), _size(0) {
+Palette::Palette(const byte *data, uint size) : _data(nullptr), _size(0), _disposeAfterUse(DisposeAfterUse::YES) {
 	if (data && size > 0) {
 		_size = size;
 		_data = new byte[_size * 3]();
@@ -46,7 +46,10 @@ Palette::Palette(const byte *data, uint size) : _data(nullptr), _size(0) {
 	}
 }
 
-Palette::Palette(const Palette &p) : _data(nullptr), _size(p._size) {
+Palette::Palette(byte *data, uint size, DisposeAfterUse::Flag disposeAfterUse) : _data(data), _size(size), _disposeAfterUse(disposeAfterUse) {
+}
+
+Palette::Palette(const Palette &p) : _data(nullptr), _size(p._size), _disposeAfterUse(DisposeAfterUse::YES) {
 	if (_size > 0) {
 		_data = new byte[_size * 3]();
 		memcpy(_data, p._data, _size * 3);
@@ -54,21 +57,23 @@ Palette::Palette(const Palette &p) : _data(nullptr), _size(p._size) {
 }
 
 Palette::~Palette() {
-	delete[] _data;
+	if (_disposeAfterUse == DisposeAfterUse::YES)
+		delete[] _data;
 }
 
-Palette Palette::createEGAPalette() {
-	return Palette(&EGA_PALETTE[0][0], 16);
+const Palette Palette::createEGAPalette() {
+	return Palette(const_cast<byte *>(&EGA_PALETTE[0][0]), 16, DisposeAfterUse::NO);
 }
-
 
 Palette &Palette::operator=(const Palette &rhs) {
-	delete[] _data;
+	if (_disposeAfterUse == DisposeAfterUse::YES)
+		delete[] _data;
 	_data = nullptr;
 	_size = rhs._size;
 
 	if (_size > 0) {
 		_data = new byte[_size * 3]();
+		_disposeAfterUse = DisposeAfterUse::YES;
 		memcpy(_data, rhs._data, _size * 3);
 	}
 
@@ -84,7 +89,8 @@ bool Palette::contains(const Palette& p) const {
 }
 
 void Palette::clear() {
-	delete[] _data;
+	if (_disposeAfterUse == DisposeAfterUse::YES)
+		delete[] _data;
 	_data = nullptr;
 	_size = 0;
 }
@@ -95,8 +101,10 @@ void Palette::resize(uint newSize, bool preserve) {
 		if (_size > 0 && preserve)
 			memcpy(newData, _data, _size * 3);
 
-		delete[] _data;
+		if (_disposeAfterUse == DisposeAfterUse::YES)
+			delete[] _data;
 		_data = newData;
+		_disposeAfterUse = DisposeAfterUse::YES;
 	}
 	_size = newSize;
 }

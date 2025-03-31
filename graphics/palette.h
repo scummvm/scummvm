@@ -23,6 +23,7 @@
 #define GRAPHICS_PALETTE_H
 
 #include "common/hashmap.h"
+#include "common/types.h"
 
 namespace Graphics {
 
@@ -51,6 +52,7 @@ constexpr int PALETTE_SIZE = (256 * 3);
 class Palette {
 	byte *_data;
 	uint16 _size;
+	DisposeAfterUse::Flag _disposeAfterUse;
 
 public:
 	static const uint16 npos = 0xFFFF;
@@ -63,12 +65,21 @@ public:
 	Palette(uint size);
 
 	/**
-	 * @brief Construct a new Palette object
+	 * @brief Construct a new Palette object with a copy of the palette data
 	 *
 	 * @param data   the palette data, in interleaved RGB format
 	 * @param size   the number of palette entries
 	 */
 	Palette(const byte *data, uint size);
+
+	/**
+	 * @brief Construct a new Palette object taking ownership of the palette data
+	 *
+	 * @param data   the palette data, in interleaved RGB format
+	 * @param size   the number of palette entries
+	 * @param disposeAfterUse    a flag indicating whether to dispose of the palette data
+	 */
+	Palette(byte *data, uint size, DisposeAfterUse::Flag disposeAfterUse);
 
 	Palette(const Palette &p);
 
@@ -77,7 +88,7 @@ public:
 	/**
 	 * Constructs a new palette containing the standarad EGA palette
 	 */
-	static Palette createEGAPalette();
+	static const Palette createEGAPalette();
 
 	Palette &operator=(const Palette &rhs);
 	bool operator==(const Palette &rhs) const { return equals(rhs); }
