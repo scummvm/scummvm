@@ -952,6 +952,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "tomlisaindiens",		"Tom et Lisa: les Indiens" },
 
 	// German titles
+	{ "advkal",				"Advents-Kalender: 24 Spiele & Geschichten" },
 	{ "albert4",			"Onkel Albert und der verschwundene Tempel" },
 	{ "albert5",			"Onkel Albert und der Fluch der Statue" },
 	{ "addybuschugarten",	"Addy Buschu: Im Zaubergarten" },  // AKA Ein toller Tag - Jonas im Zaubergarten
@@ -8789,6 +8790,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 // Macromedia Director v7
 //
 //////////////////////////////////////////////////
+
+	// Published by Online Multimedia GmbH (2000)
+	WINGAME2_l("advkal", "", "Advent.exe",		"t:f0187286b3aad2c24534f339eeaf4221", 1981844,
+							 "Shared/Tage.cxt", "t:9f152c3c977b84ef9c2b983c6b780cbd", 1481815, Common::DE_DEU, 702),
 
 	MACGAME2_l("affaires1", "", "Start Me", "0944b962ebb00f4b5d5149d220f8449b", 125495,
 								"Main - 7.dxr", "4fa7c071ea2e934eaf9d6f4ef3205ecf", 13068189, Common::FR_FRA, 702),
