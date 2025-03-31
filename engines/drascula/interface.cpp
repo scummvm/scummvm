@@ -22,6 +22,39 @@
 #include "drascula/drascula.h"
 #include "graphics/cursorman.h"
 
+#include "common/config-manager.h"
+#include "common/text-to-speech.h"
+
+static const char* verbNamesEnglish[] = {
+	"Walk",
+	"Look",
+	"Take",
+	"Open",
+	"Close",
+	"Talk",
+	"Push"
+};
+
+static const char* verbNamesSpanish[] = {
+	"Ir a",
+	"Mirar",
+	"Coger",
+	"Abrir",
+	"Cerrar",
+	"Hablar",
+	"Mover"
+};
+
+static const char* verbNamesItalian[] = {
+	"Vai",
+	"Guarda",
+	"Prendi",
+	"Apri",
+	"Chiudi",
+	"Parla",
+	"Premi"
+};
+
 namespace Drascula {
 
 void DrasculaEngine::setCursor(int cursor) {
@@ -94,6 +127,11 @@ bool DrasculaEngine::confirmExit() {
 	centerText(_textsys[1], 160, 87);
 	updateScreen();
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
+		ttsMan->say(_textsys[1]);
+	}
+
 	delay(100);
 	while (!shouldQuit()) {
 		key = getScan();
@@ -134,16 +172,52 @@ void DrasculaEngine::showMenu() {
 				OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
 	}
 
-	if (x < 7)
+	if (x < 7) {
+		if (iconName[x] != _previousSaid) {
+			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+			if (ConfMan.getBool("tts_enabled") && strlen(iconName[x]) > 0 && ttsMan != nullptr) {
+				ttsMan->say(iconName[x]);
+			}
+
+			_previousSaid = iconName[x];
+		}
+
 		print_abc(iconName[x], _itemLocations[x].x - 2, _itemLocations[x].y - 7);
+	}
 }
 
 void DrasculaEngine::clearMenu() {
 	int n, verbActivated = 1;
 
 	for (n = 0; n < 7; n++) {
-		if (_mouseX > _verbBarX[n] && _mouseX < _verbBarX[n + 1])
+		if (_mouseX > _verbBarX[n] && _mouseX < _verbBarX[n + 1]) {
 			verbActivated = 0;
+
+			if (ConfMan.getBool("tts_enabled")) {
+				const char **verbNames;
+
+				switch (_lang) {
+				case kSpanish:
+					verbNames = verbNamesSpanish;
+					break;
+				case kItalian:
+					verbNames = verbNamesItalian;
+					break;
+				default:	// Every other language uses the English verb names in the menu bar
+					verbNames = verbNamesEnglish;
+				}
+	
+				if (verbNames[n] != _previousSaid) {
+					Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	
+					if (ttsMan != nullptr) {
+						ttsMan->say(verbNames[n]);
+					}
+		
+					_previousSaid = verbNames[n];
+				}
+			}
+		}
 		copyRect(OBJWIDTH * n, OBJHEIGHT * verbActivated, _verbBarX[n], 2,
 						OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
 		verbActivated = 1;

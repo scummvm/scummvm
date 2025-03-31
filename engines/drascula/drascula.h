@@ -776,6 +776,7 @@ private:
 	RoomTalkAction *_roomActions;
 	TalkSequenceCommand *_talkSequences;
 	Common::String _saveNames[10];
+	Common::String _previousSaid;
 
 	char **loadTexts(Common::File &in);
 	void freeTexts(char **ptr);

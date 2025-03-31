@@ -23,6 +23,9 @@
 
 #include "drascula/drascula.h"
 
+#include "common/config-manager.h"
+#include "common/text-to-speech.h"
+
 namespace Drascula {
 
 void DrasculaEngine::playTalkSequence(int sequence) {
@@ -195,6 +198,14 @@ void DrasculaEngine::converse(int index) {
 	// from 1(top) to 31
 	color_abc(kColorLightGreen);
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
+		ttsMan->say(phrase1, Common::TextToSpeechManager::QUEUE);
+		ttsMan->say(phrase2, Common::TextToSpeechManager::QUEUE);
+		ttsMan->say(phrase3, Common::TextToSpeechManager::QUEUE);
+		ttsMan->say(phrase4, Common::TextToSpeechManager::QUEUE);
+	}
+
 	while (breakOut == 0 && !shouldQuit()) {
 		updateRoom();
 
@@ -223,6 +234,11 @@ void DrasculaEngine::converse(int index) {
 
 			print_abc_opc(phrase1, 2, kDialogOptionSelected);
 
+			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && phrase1 != _previousSaid) {
+				_previousSaid = phrase1;
+				ttsMan->say(phrase1);
+			}
+
 			if (_leftMouseButton == 1) {
 				delay(100);
 				game1 = kDialogOptionClicked;
@@ -236,6 +252,11 @@ void DrasculaEngine::converse(int index) {
 				color_abc(kColorLightGreen);
 
 			print_abc_opc(phrase2, phrase1_bottom + 2, kDialogOptionSelected);
+
+			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && phrase2 != _previousSaid) {
+				_previousSaid = phrase2;
+				ttsMan->say(phrase2);
+			}
 
 			if (_leftMouseButton == 1) {
 				delay(100);
@@ -251,6 +272,11 @@ void DrasculaEngine::converse(int index) {
 
 			print_abc_opc(phrase3, phrase2_bottom + 2, kDialogOptionSelected);
 
+			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && phrase3 != _previousSaid) {
+				_previousSaid = phrase3;
+				ttsMan->say(phrase3);
+			}
+
 			if (_leftMouseButton == 1) {
 				delay(100);
 				game3 = kDialogOptionClicked;
@@ -259,6 +285,11 @@ void DrasculaEngine::converse(int index) {
 			}
 		} else if (_mouseY > phrase3_bottom && _mouseY < phrase4_bottom) {
 			print_abc_opc(phrase4, phrase3_bottom + 2, kDialogOptionSelected);
+
+			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && phrase4 != _previousSaid) {
+				_previousSaid = phrase4;
+				ttsMan->say(phrase4);
+			}
 
 			if (_leftMouseButton == 1) {
 				delay(100);
