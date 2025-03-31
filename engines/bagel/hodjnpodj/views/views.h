@@ -29,7 +29,7 @@
 #include "bagel/hodjnpodj/metagame/boardgame/boardgame.h"
 #include "bagel/hodjnpodj/metagame/boardgame/minimap.h"
 #include "bagel/hodjnpodj/metagame/boardgame/notebook.h"
-#include "bagel/hodjnpodj/metagame/views/boardgame_options.h"
+#include "bagel/hodjnpodj/metagame/boardgame/boardgame_options.h"
 #include "bagel/hodjnpodj/metagame/views/credits.h"
 #include "bagel/hodjnpodj/metagame/views/grand_tour_options.h"
 #include "bagel/hodjnpodj/metagame/views/minigames.h"

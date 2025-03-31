@@ -22,7 +22,7 @@
 #ifndef HODJNPODJ_METAGAME_VIEWS_TOP_SCORES_H
 #define HODJNPODJ_METAGAME_VIEWS_TOP_SCORES_H
 
-#include "bagel/hodjnpodj/metagame/views/dialog.h"
+#include "bagel/hodjnpodj/views/dialog.h"
 #include "bagel/hodjnpodj/metagame/views/grand_tour_options.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 

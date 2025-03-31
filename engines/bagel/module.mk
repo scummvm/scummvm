@@ -116,6 +116,7 @@ MODULE_OBJS = \
 	hodjnpodj/gfx/palette.o \
 	hodjnpodj/libs/settings.o \
 	hodjnpodj/libs/vector.o \
+	hodjnpodj/views/dialog.o \
 	hodjnpodj/views/main_menu.o \
 	hodjnpodj/views/message_box.o \
 	hodjnpodj/views/minigame_view.o \
@@ -129,11 +130,10 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/bgen/note.o \
 	hodjnpodj/metagame/boardgame/backpack.o \
 	hodjnpodj/metagame/boardgame/boardgame.o \
+	hodjnpodj/metagame/boardgame/boardgame_options.o \
 	hodjnpodj/metagame/boardgame/minimap.o \
 	hodjnpodj/metagame/boardgame/notebook.o \
-	hodjnpodj/metagame/views/boardgame_options.o \
 	hodjnpodj/metagame/views/credits.o \
-	hodjnpodj/metagame/views/dialog.o \
 	hodjnpodj/metagame/views/grand_tour_options.o \
 	hodjnpodj/metagame/views/minigames.o \
 	hodjnpodj/metagame/views/movie.o \

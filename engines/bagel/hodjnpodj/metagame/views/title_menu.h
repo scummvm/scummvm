@@ -22,7 +22,7 @@
 #ifndef HODJNPODJ_METAGAME_VIEWS_TITLE_MENU_H
 #define HODJNPODJ_METAGAME_VIEWS_TITLE_MENU_H
 
-#include "bagel/hodjnpodj/metagame/views/dialog.h"
+#include "bagel/hodjnpodj/views/dialog.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 
 namespace Bagel {

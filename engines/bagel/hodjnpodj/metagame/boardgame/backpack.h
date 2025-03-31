@@ -22,7 +22,7 @@
 #ifndef HODJNPODJ_METAGAME_Backpack_H
 #define HODJNPODJ_METAGAME_Backpack_H
 
-#include "bagel/hodjnpodj/metagame/views/dialog.h"
+#include "bagel/hodjnpodj/views/dialog.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 #include "bagel/hodjnpodj/metagame/bgen/invent.h"
 

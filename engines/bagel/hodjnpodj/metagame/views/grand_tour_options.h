@@ -22,7 +22,7 @@
 #ifndef HODJNPODJ_METAGAME_VIEWS_GRAND_TOUR_H
 #define HODJNPODJ_METAGAME_VIEWS_GRAND_TOUR_H
 
-#include "bagel/hodjnpodj/metagame/views/dialog.h"
+#include "bagel/hodjnpodj/views/dialog.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 #include "bagel/hodjnpodj/libs/settings.h"
 

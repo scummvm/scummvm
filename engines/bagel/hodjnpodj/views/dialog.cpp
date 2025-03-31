@@ -21,7 +21,7 @@
 
 #include "common/file.h"
 #include "image/bmp.h"
-#include "bagel/hodjnpodj/metagame/views/dialog.h"
+#include "bagel/hodjnpodj/views/dialog.h"
 
 namespace Bagel {
 namespace HodjNPodj {

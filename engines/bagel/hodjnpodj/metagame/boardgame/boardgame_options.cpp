@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/hodjnpodj/metagame/views/boardgame_options.h"
+#include "bagel/hodjnpodj/metagame/boardgame/boardgame_options.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/metaengine.h"
 
