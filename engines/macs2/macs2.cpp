@@ -1336,6 +1336,7 @@ Common::String Macs2Engine::getGameId() const {
 
 Common::Error Macs2Engine::run() {
 
+	GameObjects::instance().Init();
 	readResourceFile();
 	readExecutable();
 
