@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -20,7 +20,7 @@ public class INIParser {
 	}
 
 	public static Map<String, Map<String, String>> parse(Reader reader) throws IOException {
-		Map<String, Map<String, String>> ret = new HashMap<>();
+		Map<String, Map<String, String>> ret = new LinkedHashMap<>();
 		BufferedReader lineReader = new BufferedReader(reader);
 		Map<String, String> domain = null;
 		int lineno = 0;
@@ -64,7 +64,7 @@ public class INIParser {
 				}
 
 				String domainName = line.substring(1, i);
-				domain = new HashMap<>();
+				domain = new LinkedHashMap<>();
 				ret.put(domainName, domain);
 
 				continue;
