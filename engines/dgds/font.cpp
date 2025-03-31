@@ -52,7 +52,7 @@ DgdsFont *DgdsFont::load(const Common::String &filename, ResourceManager *resour
 		if (chunk.isSection(ID_FNT)) {
 			byte magic = stream->readByte();
 			stream->seek(-1, SEEK_CUR);
-			debug(1, "    magic: %u", magic);
+			debug(10, "Load font %s magic: %u", filename.c_str(), magic);
 
 			if (magic != 0xFF)
 				font = FFont::load(*stream);
