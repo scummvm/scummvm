@@ -46,6 +46,8 @@ void MusicNodeBASE::setDirection(Math::Angle azimuth, uint8 magnitude) {
     _directionality = magnitude;
     _balance = ((int)(127*_azimuth.getSine())*_directionality)/255;
   }
+  else
+    setBalance(0);
 	updateMixer();
 }
 
@@ -58,9 +60,10 @@ void MusicNodeBASE::setBalance(int8 balance) {
 
 void MusicNodeBASE::updateMixer() {
   if(_engine->getScriptManager()->getStateValue(StateKey_Qsound) >= 1)
-    volumeOut = _engine->getVolumeManager()->convert(_volume, _azimuth, _directionality);  //Apply volume profile and then attenuate according to azimuth
+    volumeOut = _engine->getVolumeManager()->convert(_volume, _azimuth, _directionality);  //Apply game-specific volume profile and then attenuate according to azimuth
   else
-    volumeOut = _engine->getVolumeManager()->convert(_volume, kVolumeLinear);  //Apply linear volume profile and ignore azimuth
+//    volumeOut = _engine->getVolumeManager()->convert(_volume, kVolumeLinear);  //Apply linear volume profile and ignore azimuth
+    volumeOut = _engine->getVolumeManager()->convert(_volume);  //Apply game-specific volume profile and ignore azimuth
   outputMixer();
 }
 
