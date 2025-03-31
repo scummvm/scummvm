@@ -94,6 +94,7 @@ ActionAssign::~ActionAssign() {
 }
 
 bool ActionAssign::execute() {
+  debug(2,"[%d] = %d", _key, _value->getValue());
 	_scriptManager->setStateValue(_key, _value->getValue());
 	return true;
 }
@@ -110,13 +111,13 @@ ActionAttenuate::ActionAttenuate(ZVision *engine, int32 slotKey, const Common::S
 	_attenuation = 0;
 
 	sscanf(line.c_str(), "%u, %d", &_key, &_attenuation);
-  debug(1,"Created Action: Attenuate, slotKey %d", _slotKey);
-  debug(2,"Attenuate script: %s", line.c_str());
-  debug(2,"Attenuate parameters: key1 %d, attenuation %d", _key, _attenuation);
+  debug(3,"Created Action: Attenuate, slotKey %d", _slotKey);
+  debug(3,"Attenuate script: %s", line.c_str());
+  debug(3,"Attenuate parameters: key1 %d, attenuation %d", _key, _attenuation);
 }
 
 bool ActionAttenuate::execute() {
-  debug(1,"Executing Action: Attenuate, slotkey %d", _slotKey);
+  debug(3,"Executing Action: Attenuate, slotkey %d", _slotKey);
 	ScriptingEffect *fx = _scriptManager->getSideFX(_key);
 	if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
@@ -163,13 +164,13 @@ ActionCrossfade::ActionCrossfade(ZVision *engine, int32 slotKey, const Common::S
 	sscanf(line.c_str(),
 	       "%u %u %d %d %d %d %d",
 	       &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
-  debug(2,"Created Action: CrossFade, slotKey %d", _slotKey);
-  debug(2,"Crossfade script: %s", line.c_str());
-  debug(2,"Crossfade parameters: key1 %u, key2 %u, startVol1 %d, startVol2 %d, endVol1 %d, endVol2 %d, time %dms", _keyOne, _keyTwo, _oneStartVolume, _twoStartVolume, _oneEndVolume, _twoEndVolume, _timeInMillis);
+  debug(3,"Created Action: CrossFade, slotKey %d", _slotKey);
+  debug(3,"Crossfade script: %s", line.c_str());
+  debug(3,"Crossfade parameters: key1 %u, key2 %u, startVol1 %d, startVol2 %d, endVol1 %d, endVol2 %d, time %dms", _keyOne, _keyTwo, _oneStartVolume, _twoStartVolume, _oneEndVolume, _twoEndVolume, _timeInMillis);
 }
 
 bool ActionCrossfade::execute() {
-  debug(2,"Executing Action: CrossFade, slotkey %d", _slotKey);
+  debug(3,"Executing Action: CrossFade, slotkey %d", _slotKey);
 	if (_keyOne) {
 		ScriptingEffect *fx = _scriptManager->getSideFX(_keyOne);
 		if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
@@ -237,7 +238,7 @@ ActionDelayRender::ActionDelayRender(ZVision *engine, int32 slotKey, const Commo
 }
 
 bool ActionDelayRender::execute() {
-  debug(2,"Executing Action: DelayRender");
+  debug(3,"Executing Action: DelayRender");
 	_engine->setRenderDelay(_framesToDelay);
 	return true;
 }
@@ -285,11 +286,11 @@ bool ActionDisplayMessage::execute() {
 
 ActionDissolve::ActionDissolve(ZVision *engine) :
 	ResultAction(engine, 0) {
-  debug(1,"Created action: Dissolve");
+  debug(3,"Created action: Dissolve");
 }
 
 bool ActionDissolve::execute() {
-  debug(1,"Executing action: Dissolve");
+  debug(3,"Executing action: Dissolve");
 	// Cause black screen flick
 	// Not ideal.  Original engine used a softer dissolve effect; simply turning the screen black is jarring, so disabled for now.
 	//_engine->getRenderManager()->bkgFill(0, 0, 0); //TODO - reimplement this?  
@@ -317,7 +318,7 @@ ActionDistort::~ActionDistort() {
 }
 
 bool ActionDistort::execute() {
-  debug(2,"Executing Action: Distort");
+  debug(3,"Executing Action: Distort");
 	if (_scriptManager->getSideFX(_distSlot))
 		return true;
 
@@ -437,13 +438,16 @@ ActionKill::ActionKill(ZVision *engine, int32 slotKey, const Common::String &lin
 			_type = ScriptingEffect::SCRIPTING_EFFECT_ALL;
 	} else
 		_key = atoi(keytype);
+  debug(3,"Created Action: Kill, slotKey %d, type %s, target slotKey %d", _slotKey, keytype, _key);
 }
 
 bool ActionKill::execute() {
 	if (_type)
 		_scriptManager->killSideFxType((ScriptingEffect::ScriptingEffectType)_type);
-	else
+	else {
+    debug(2,"Executing Action: Kill, slotKey %d, target slotKey %d", _slotKey, _key);
 		_scriptManager->killSideFx(_key);
+	}
 	return true;
 }
 
@@ -515,7 +519,15 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 	// sound effect finishes. Fixes script bug #6794.
 	if (engine->getGameId() == GID_NEMESIS && _slotKey == 14822 && _scriptManager->getStateValue(_slotKey) == 2)
 		_scriptManager->setStateValue(_slotKey, 0);
-
+		
+	//Ensure MusicNodes that were active when game was saved are recreated when it is loaded.
+	//Certain game scripts can become locked-up if this is not the case.
+  if(_engine->getScriptManager()->getStateValue(_slotKey) == 1)
+    if(!_scriptManager->getSideFX(_slotKey)) {
+    debug(1, "Recreating missing musicnode, slotkey %d", _slotKey);
+    execute();
+  }
+      
   debug(2,"Created Action: Music, slotKey %d, type %u, file %24s, note %u, volume %d, %s", _slotKey, type, fileNameBuffer, _note, _volume->getValue(), _loop ? "looping" : "");
   debug(4,"Music script: %s", line.c_str());
 }
@@ -524,6 +536,7 @@ ActionMusic::~ActionMusic() {
 	if (!_universe)
 		_scriptManager->killSideFx(_slotKey);
 	delete _volume;
+  debug(2,"Destroyed Action: %sMusic, slotkey %d", _universe ? "Universe_" : "", _slotKey);
 }
 
 bool ActionMusic::execute() {
@@ -566,24 +579,24 @@ ActionPanTrack::ActionPanTrack(ZVision *engine, int32 slotKey, const Common::Str
 	_mag = mag;
 	if(_resetMusicNode) {
 	  if(_scriptManager->getStateValue(_musicSlot) != 2) {
-	    debug(2,"Forcing musicSlot %d to 2", _musicSlot);
+	    debug(3,"Forcing musicSlot %d to 2", _musicSlot);
       _scriptManager->setStateValue(_musicSlot, 2); //Not all original game pan_track scripts trigger correctly unless this is set!
     }
     else
-      debug(2,"musicSlot %d already set to 2", _musicSlot);
+      debug(3,"musicSlot %d already set to 2", _musicSlot);
   }
   else
-    debug(2,"NOT forcing musicSlot %d to 2", _musicSlot);
-  debug(2,"Created Action: PanTrack, slotkey %d, musicSlot %u, pos %d, mag %d", _slotKey, _musicSlot, _pos, _mag);
+    debug(3,"NOT forcing musicSlot %d to 2", _musicSlot);
+  debug(3,"Created Action: PanTrack, slotkey %d, musicSlot %u, pos %d, mag %d", _slotKey, _musicSlot, _pos, _mag);
 }
 
 ActionPanTrack::~ActionPanTrack() {
 	_scriptManager->killSideFx(_slotKey);
-  debug(2,"Destroyed Action: PanTrack, slotkey %d", _slotKey);
+  debug(3,"Destroyed Action: PanTrack, slotkey %d", _slotKey);
 }
 
 bool ActionPanTrack::execute() {
-  debug(2,"Executing Action: PanTrack, slotkey %d, musicSlot %u, pos %d, mag %d", _slotKey, _musicSlot, _pos, _mag);
+  debug(3,"Executing Action: PanTrack, slotkey %d, musicSlot %u, pos %d, mag %d", _slotKey, _musicSlot, _pos, _mag);
 	if (_scriptManager->getSideFX(_slotKey))
 		return true;
 	_scriptManager->addSideFX(new PanTrackNode(_engine, _slotKey, _musicSlot, _pos, _mag, _resetMixerOnDelete, _staticScreen));
@@ -945,7 +958,7 @@ ActionStop::ActionStop(ZVision *engine, int32 slotKey, const Common::String &lin
 }
 
 bool ActionStop::execute() {
-  debug(2,"Executing Action: Stop");
+  debug(2,"Executing Action: Stop, key %d", _key);
 	_scriptManager->stopSideFx(_key);
 	return true;
 }
@@ -969,11 +982,11 @@ ActionStreamVideo::ActionStreamVideo(ZVision *engine, int32 slotKey, const Commo
 }
 
 bool ActionStreamVideo::execute() {
-  debug(2,"Executing video stream");
+  debug(3,"Executing video stream");
 	Video::VideoDecoder *decoder;
 	Common::Rect destRect = Common::Rect(_x1, _y1, _x2 + 1, _y2 + 1);
 	Common::Rect srcRect = Common::Rect(0,0);
-  debug(2,"Streaming video original scripted destination left=%d, top=%d, right=%d, bottom=%d", destRect.left, destRect.top, destRect.right, destRect.bottom);
+  debug(3,"Streaming video original scripted destination left=%d, top=%d, right=%d, bottom=%d", destRect.left, destRect.top, destRect.right, destRect.bottom);
 	Common::String subname = _fileName.baseName();
 	subname.setChar('s', subname.size() - 3);
 	subname.setChar('u', subname.size() - 2);
@@ -1036,7 +1049,7 @@ bool ActionStreamVideo::execute() {
 	_engine->getCursorManager()->showMouse(true);
   _engine->getSubtitleManager()->destroy(sub);
   _engine->setRenderDelay(2); //Necessary for avoiding redraw of previous scene between sequential videos (eg totemization sequence in ZGI) & when changing location right after a video (e.g. opening temple door in Nemesis)
-  debug(2,"Completed executing video stream");
+  debug(3,"Completed executing video stream");
 	return true;
 }
 
@@ -1054,7 +1067,7 @@ ActionSyncSound::ActionSyncSound(ZVision *engine, int32 slotKey, const Common::S
 }
 
 bool ActionSyncSound::execute() {
-  debug(2,"Executing Action: SyncSound");
+  debug(3,"Executing Action: SyncSound");
 	ScriptingEffect *fx = _scriptManager->getSideFX(_syncto);
 	if (!fx)
 		return true;
