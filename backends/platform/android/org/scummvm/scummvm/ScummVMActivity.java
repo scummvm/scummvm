@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +20,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Process;
 import android.os.SystemClock;
 import android.provider.DocumentsContract;
@@ -53,7 +56,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -913,6 +918,61 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		@RequiresApi(api = Build.VERSION_CODES.N)
 		protected SAFFSTree findSAFTree(String name) {
 			return SAFFSTree.findTree(ScummVMActivity.this, name);
+		}
+
+		@Override
+		protected int exportBackup(String prompt) {
+			String filename = (new SimpleDateFormat("'ScummVM backup 'yyyyMMdd-HHmmss'.zip'")).format(new Date());
+			int ret;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+				Uri uri = selectWithNativeUI(false, true, null, prompt, "application/zip", filename);
+				if (uri == null) {
+					return BackupManager.ERROR_CANCELLED;
+				}
+				ret = BackupManager.exportBackup(ScummVMActivity.this, uri);
+				getContentResolver().releasePersistableUriPermission(uri,
+					Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+			} else {
+				File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+						filename);
+				ret = BackupManager.exportBackup(ScummVMActivity.this, path);
+			}
+			return ret;
+		}
+
+		@Override
+		protected int importBackup(String prompt, String path) {
+			int ret;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+				Uri uri = selectWithNativeUI(false, false, null, prompt, "application/zip", null);
+				if (uri == null) {
+					return BackupManager.ERROR_CANCELLED;
+				}
+				ret = BackupManager.importBackup(ScummVMActivity.this, uri);
+				getContentResolver().releasePersistableUriPermission(uri,
+					Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+			} else if (path != null) {
+				ret = BackupManager.importBackup(ScummVMActivity.this, new File(path));
+			} else {
+				return BackupManager.ERROR_CANCELLED;
+			}
+			if (ret != BackupManager.ERROR_INVALID_BACKUP) {
+				// Trigger a restart after letting the code return to display the status
+				// This is the same as runOnUiThread but allows to delay the restart
+				new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						Intent restartIntent = Intent.makeRestartActivityTask(new ComponentName(ScummVMActivity.this, SplashActivity.class));
+						restartIntent.setPackage(getPackageName());
+
+						ScummVMActivity.this.startActivity(restartIntent);
+
+						// Kill us to make sure we start from a clean state
+						System.exit(0);
+					}
+				}, 500);
+			}
+			return ret;
 		}
 	}
 
