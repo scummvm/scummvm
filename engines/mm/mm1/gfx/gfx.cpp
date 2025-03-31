@@ -33,7 +33,7 @@ namespace Gfx {
 byte EGA_INDEXES[EGA_PALETTE_COUNT];
 
 void GFX::setEgaPalette() {
-	Graphics::Palette ega = Graphics::Palette::createEGAPalette();
+	const Graphics::Palette ega = Graphics::Palette::createEGAPalette();
 	g_system->getPaletteManager()->setPalette(ega);
 
 	uint32 c = 0xffffffff;
@@ -45,7 +45,7 @@ void GFX::setEgaPalette() {
 }
 
 void GFX::findPalette(const byte palette[256 * 3]) {
-	Graphics::Palette ega = Graphics::Palette::createEGAPalette();
+	const Graphics::Palette ega = Graphics::Palette::createEGAPalette();
 	const byte *data = ega.data();
 
 	for (int col = 0; col < 16; ++col) {
