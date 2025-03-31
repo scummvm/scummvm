@@ -714,8 +714,8 @@ void View1::draw() {
 	// DrawSprite(100, 100, g_engine->_stick.Width, g_engine->_stick.Height, g_engine->_stick.Data, s);
 
 	if (_isShowingInventory) {
-		// drawInventory(s);
-		drawInventory2(s);
+		drawInventory(s);
+		// drawInventory2(s);
 	}
 
 	if (activeInventoryItem != nullptr) {
@@ -735,7 +735,13 @@ void View1::draw() {
 		// Show the ID of the hovered item
 		GameObject* hoveredObject = getClickedInventoryItem(mousePos);
 		if (hoveredObject != nullptr) {
-			renderString(mousePos.x + 20, mousePos.y + 20, Common::String::format("%2.x", hoveredObject->Index));
+			Common::String name = GameObjects::instance().ObjectNames[hoveredObject->Index];
+			if (!name.empty()) {
+				renderString(mousePos.x + 20, mousePos.y + 20, name);
+			}
+			else {
+				renderString(mousePos.x + 20, mousePos.y + 20, Common::String::format("%2.x", hoveredObject->Index));
+			}
 		}
 	} else {
 		// Draw the position next to it
