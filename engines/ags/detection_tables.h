@@ -4241,8 +4241,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("astroloco", "astroloco1.exe", "06e70a826fde73b3f86f974885d31abe", 42492070),
 	GAME_ENTRY("avcsurvivalguide", "CAV.exe", "42656cf777d07d4d35e978b233bb7aa8", 11001785),  // Eng-Esp itch.io 1.0
 	GAME_ENTRY_EN_STEAM("azazelxmas", "Azazels_Christmas_Fable.exe", "46fcfdc2aa113c05f3ba95ad356e1a63", 408594796),
-	GAME_ENTRY_EN("beekeeperpicnic", "beekeeperspicnic.exe", "031b525706d93c172a2329894d255feb", 250051066),
-	GAME_ENTRY_EN("beekeeperpicnic", "beekeeperspicnic.ags", "f98bc7b344c75e6ed5513cc4e04eeb44", 246874086),
+	GAME_ENTRY_EN("beekeeperpicnic", "beekeeperspicnic.exe", "031b525706d93c172a2329894d255feb", 250051066),  // Win v1.0
+	GAME_ENTRY_EN("beekeeperpicnic", "beekeeperspicnic.exe", "031b525706d93c172a2329894d255feb", 250052667),  // Win v1.1
+	GAME_ENTRY_EN("beekeeperpicnic", "beekeeperspicnic.ags", "f98bc7b344c75e6ed5513cc4e04eeb44", 246874086),  // Linux v1.0
+	GAME_ENTRY_EN("beekeeperpicnic", "beekeeperspicnic.ags", "523256421463b5660db305cf4db5d9cc", 246875687),  // Linux v1.1
 	GAME_ENTRY_EN_STEAM("beer", "beer!.exe", "6f201fd7a19869c85f49c7c471d0479a", 5055091), // Windows
 	GAME_ENTRY_EN_STEAM("beer", "beer!.ags", "4a751c43af8699aabdb0b9ebcc2024d3", 2145485), // Eng Win v1.5
 	GAME_ENTRY_EN_STEAM("beer", "Beer!.ags", "6f201fd7a19869c85f49c7c471d0479a", 5042748), // Linux
@@ -4828,6 +4830,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("rnrneverdies", "Rock 'n' Roll Will Never Die.exe", "28456c6a3a38874b833651c4433e22b4", 37725830),
 	GAME_ENTRY_EN_STEAM("rnrneverdies", "Rock 'n' Roll Will Never Die.exe", "28456c6a3a38874b833651c4433e22b4", 37729146),
 	DETECTION_ENTRY_GUIO("roguestate", "roguestate.exe", "981a1c4d5a64b8ebe300f9769acf0fe5", 895486573, Common::EN_ANY, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), ADGF_NO_FLAGS, 0),
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("rosewater", "Rosewater.ags", "9748c2a388a93061a1a480127493acb2", 3905499047, 0),
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("rosewater", "Rosewater.ags", "9748c2a388a93061a1a480127493acb2", 3905498635, 0),
 	GAME_ENTRY_GOG("samaritan", "samaritan.exe", "79dd677433bbb10d4970367eb68b243c", 78070237), // Groupees, v1.1 - GOG
 	GAME_ENTRY_STEAM("samaritan", "samaritan.exe", "5fb404a4a7c9cd1449dfdd3d23fa0250", 78753952),  // En-Fr-De-Es-It
 	GAME_ENTRY_STEAM("samaritan", "samaritan.exe", "6a3b669b7d34ec9356a665afe0c2c003", 78438375),
