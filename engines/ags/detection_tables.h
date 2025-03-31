@@ -2231,7 +2231,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "mmm99", "Maniac Mansion Mania Ep. 099: Die Premiere" },
 	{ "mmm100", "Maniac Mansion Mania Ep. 100: Money Mansion" },
 	{ "mmm101", "Maniac Mansion Mania Ep. 101: With Other Eyes / Mit anderen Augen" },
+	{ "mmm102", "Maniac Mansion Mania Ep. 102: Michaels Nacht" },
 	{ "mmmatman", "Maniac Mansion Mania: @-Man - The Dork Knight" },
+	{ "mmmcoll1", "Maniac Mansion Mania Ronmastered Collection (Ep. 1-9)" },
 	{ "mmmd1", "Maniac Dungeon Raum 01: The great Escape from Maniac Dungeon" },
 	{ "mmmd2", "Maniac Dungeon Raum 02: Der Bunker" },
 	{ "mmmd3", "Maniac Dungeon Raum 03: Der Verbindungstunnel" },
@@ -7850,6 +7852,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("mmm40", "MMM40.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 10990625),  // v3.01    Multi
 	GAME_ENTRY_LANG("mmm40", "MMM40.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 9385965, Common::DE_DEU),  // Talkie
 	GAME_ENTRY("mmm41", "mmm41.exe", "6d5a5284ed0403e75d64f42f415242a5", 8634455),  // De-It
+	GAME_ENTRY_LANG("mmm41", "DasNeueJugendschutzgesetz.exe", "07b6c61269775f714e681c3a184a8580", 9518761, Common::DE_DEU),  // De Talkie
 	GAME_ENTRY_LANG("mmm42", "psychobernie.exe", "0710e2ec71042617f565c01824f0cf3c", 6696188, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmm43", "Edna.exe", "0710e2ec71042617f565c01824f0cf3c", 5149386, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmm44", "Razor.exe", "0710e2ec71042617f565c01824f0cf3c", 4820839, Common::DE_DEU),
@@ -7920,6 +7923,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("mmm100", "money.exe", "91b1d125f9c818b8d2f376d24774377e", 52085746),  // En-De
 	GAME_ENTRY_LANG("mmm101", "MMM_MiAu.exe", "bc40ee6a0cf03a983f9fcaca906d12b8", 7696543, Common::DE_DEU),
 	GAME_ENTRY("mmm101", "MMM_MiAu.exe", "bc40ee6a0cf03a983f9fcaca906d12b8", 8192536),  // En-De + De speech
+	GAME_ENTRY_LANG("mmm102", "Michaels Nacht.exe", "c4a80b2e90a3b032ae370ee7329455ad", 9689363, Common::DE_DEU),
+	GAME_ENTRY_LANG("mmmcoll1", "mmm.ags", "9f9897dda68345bb0eeb4b506bcedf18", 15180588, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmmd1", "Starter.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 5174259, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmmd2", "002.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 5104718, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmmd3", "003.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 5275394, Common::DE_DEU),
@@ -7978,6 +7983,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("mmmmm4", "bertholdsreturn.exe", "ce5605f3f83c609b8ffce472936e6d83", 10292426),  // En-De
 	GAME_ENTRY_LANG("mmmmm5", "marcy.exe", "2ce63b8fabba844aaf06426814e3f40f", 10234949, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmmmm5", "marcy.exe", "2ce63b8fabba844aaf06426814e3f40f", 10234769, Common::DE_DEU),  // fireorange's itch.io
+	GAME_ENTRY_LANG("mmmmm5", "marcy.exe", "84c3450209ded54a68adc14cbc0cbcd0", 9459770, Common::DE_DEU),  // Talkie
 	GAME_ENTRY_LANG("mmmmovie1", "in da house1.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 10384508, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmmmovie2", "Doktor2.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 12675202, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmmmovie3", "Kochen mit Fred.exe", "465f972675db2da6040518221af5b0ba", 19068509, Common::DE_DEU),
