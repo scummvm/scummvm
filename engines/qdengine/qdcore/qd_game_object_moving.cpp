@@ -79,7 +79,7 @@ qdGameObjectMoving::qdGameObjectMoving() :
 	_is_selected = false;
 	set_flag(QD_OBJ_HAS_BOUND_FLAG);
 
-	if (g_engine->_gameVersion <= 20030919)
+	if (g_engine->_gameVersion <= 20040601)
 		_movement_mode = MOVEMENT_MODE_NONE_EARLY;
 	else
 		_movement_mode = MOVEMENT_MODE_STOP;
@@ -121,7 +121,7 @@ qdGameObjectMoving::qdGameObjectMoving(const qdGameObjectMoving &obj) : qdGameOb
 	_is_selected = false;
 	set_flag(QD_OBJ_HAS_BOUND_FLAG);
 
-	if (g_engine->_gameVersion <= 20030919)
+	if (g_engine->_gameVersion <= 20040601)
 		_movement_mode = MOVEMENT_MODE_NONE_EARLY;
 	else
 		_movement_mode = MOVEMENT_MODE_STOP;
@@ -535,7 +535,7 @@ bool qdGameObjectMoving::stop_movement() {
 		if (cur_state() == -1) return true;
 
 		qdGameObjectState *st = get_state(cur_state());
-		if (g_engine->_gameVersion <= 20030919) {
+		if (g_engine->_gameVersion <= 20040601) {
 			if (st->state_type() == qdGameObjectState::STATE_WALK) {
 				set_animation_info(static_cast<qdGameObjectStateWalk *>(st)->static_animation_info(_direction_angle));
 				st->stop_sound();
@@ -880,7 +880,7 @@ void qdGameObjectMoving::quant(float dt) {
 		start_auto_move();
 
 	if (check_flag(QD_OBJ_MOVING_FLAG)) {
-		if (g_engine->_gameVersion <= 20030919 || future_pos_correct(dt)) {
+		if (g_engine->_gameVersion <= 20040601 || future_pos_correct(dt)) {
 			bool end_movement = false;
 			Vect3f r = get_future_r(dt, end_movement, true);
 
@@ -898,7 +898,7 @@ void qdGameObjectMoving::quant(float dt) {
 					if (_target_angle >= 0.0f)
 						_direction_angle = _target_angle;
 
-					if (g_engine->_gameVersion <= 20030919) {
+					if (g_engine->_gameVersion <= 20040601) {
 						drop_flag(QD_OBJ_MOVING_FLAG);
 						set_direction(_direction_angle);
 
@@ -2092,7 +2092,7 @@ bool qdGameObjectMoving::movement_impulse() {
 	_impulse_direction = -1.0f;
 	_target_angle = -1.0f;
 
-	if (g_engine->_gameVersion <= 20030919)
+	if (g_engine->_gameVersion <= 20040601)
 		set_walk_animation();
 
 	if (_movement_mode == MOVEMENT_MODE_STOP || _movement_mode == MOVEMENT_MODE_END)
