@@ -359,10 +359,6 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 		}
 	}
 
-	// In theory, the ordering of the rendering should not matter,
-	// however, it seems that rendering the planar objects first
-	// triggers a bug in TinyGL where certain objects such as lines,
-	// are not rendered correctly. This is a workaround for that issue.
 	for (auto &obj : nonPlanarObjects) {
 		obj->draw(gfx);
 	}
