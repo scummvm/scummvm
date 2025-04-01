@@ -443,7 +443,7 @@ static int detectVersion(Common::String gameID) {
 	} else if (gameID == "3mice1" && (g_engine->getFeatures() & ADGF_DEMO)) {
 		return 20060129;		// QDSCR_SCREEN_TRANSFORM = 232
 	} else if (gameID == "3mice1") {
-		return 20060715;		// QDSCR_SCREEN_TRANSFORM = 232
+		return 20060715;		// QDSCR_SCREEN_TRANSFORM = 232, 54f9af2166
 	} else if (gameID == "shveik") {
 		return 20070503;		// QDSCR_GAME_TITLE = 231, QDSCR_RESOURCE_COMPRESSION = 243
 	} else if (gameID == "klepa") {
