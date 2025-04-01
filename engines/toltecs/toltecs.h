@@ -55,6 +55,14 @@ class Screen;
 class SegmentMap;
 class Sound;
 
+enum TOLTECSAction {
+	kActionNone,
+	kActionPause,
+	kActionExit,
+	kActionSaveGame,
+	kActionLoadGame,
+	kActionSkip
+};
 enum SysString {
 	kStrLoadingPleaseWait,
 	kStrWhatCanIDoForYou,
@@ -180,6 +188,7 @@ public:
 	int16 _walkSpeedY, _walkSpeedX;
 
 	Common::KeyState _keyState;
+	Common::CustomEventType _customType;
 	int16 _mouseX, _mouseY;
 	int16 _mouseDblClickTicks;
 	bool _mouseWaitForRelease;

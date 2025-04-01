@@ -271,10 +271,10 @@ bool MoviePlayer::handleInput() {
 	Common::EventManager *eventMan = g_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (event.customType == kActionExit)
 				return false;
-			if (event.kbd.keycode == Common::KEYCODE_F10) {
+			if (event.customType == kActionPause) {
 				// TODO: The original would bring up a stripped down
 				// main menu dialog, without the save/restore options.
 			}
