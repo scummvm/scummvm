@@ -3916,6 +3916,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// iOS App Store v1.3
+	// TRAC report #15827
+	{
+		{
+			"noah",
+			"",
+			AD_ENTRY1s("OUTLINE.TXT", "11e0a57b6d0dd9ced652c56376253c0e", 2028),
+			Common::EN_ANY,
+			Common::kPlatformIOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
 	// Dr. Seuss Reading Games
 	// Contains "Dr. Seuss's ABC" and "The Cat in the Hat"
 	{
