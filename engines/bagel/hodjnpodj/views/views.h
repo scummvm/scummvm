@@ -27,9 +27,11 @@
 #include "bagel/hodjnpodj/views/message_box.h"
 #include "bagel/hodjnpodj/metagame/boardgame/backpack.h"
 #include "bagel/hodjnpodj/metagame/boardgame/boardgame.h"
+#include "bagel/hodjnpodj/metagame/boardgame/boardgame_options.h"
+#include "bagel/hodjnpodj/metagame/boardgame/general_store.h"
 #include "bagel/hodjnpodj/metagame/boardgame/minimap.h"
 #include "bagel/hodjnpodj/metagame/boardgame/notebook.h"
-#include "bagel/hodjnpodj/metagame/boardgame/boardgame_options.h"
+#include "bagel/hodjnpodj/metagame/boardgame/pawn_shop.h"
 #include "bagel/hodjnpodj/metagame/views/credits.h"
 #include "bagel/hodjnpodj/metagame/views/grand_tour_options.h"
 #include "bagel/hodjnpodj/metagame/views/minigames.h"
@@ -50,8 +52,10 @@ struct Views {
 	Metagame::BoardgameOptions _boardgameOptions;
 	Metagame::Backpack _backpack;
 	Metagame::Boardgame _boardgame;
+	Metagame::GeneralStore _generalStore;
 	Metagame::Minimap _minimap;
 	Metagame::Notebook _notebook;
+	Metagame::PawnShop _pawnShop;
 	Metagame::Credits _credits;
 	Metagame::GrandTourOptions _grandTour;
 	Metagame::Minigames _minigames;
