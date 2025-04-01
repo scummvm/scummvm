@@ -38,17 +38,20 @@ public:
   
   float fX, fY, fTL, fTR, fBL, fBR;
   
-  bool _printDebug = false;
+//  bool _printDebug = false;
   
   FilterPixel() {};
-  FilterPixel(float x, float y, bool highQuality=false, bool printDebug=false) {
+//  FilterPixel(float x, float y, bool highQuality=false, bool printDebug=false) {
+  FilterPixel(float x, float y, bool highQuality=false) {
     Src.left = int16(floor(x));
     Src.right = int16(ceil(x));
 	  Src.top = int16(floor(y));
 	  Src.bottom = int16(ceil(y));
+/*
 	  _printDebug = printDebug;
     if(_printDebug)
-      debug(1,"\tTarget pixel offset: %f, %f", x, y);
+      debug(5,"\tTarget pixel offset: %f, %f", x, y);
+*/
     if(highQuality) {
       fX = x-(float)Src.left;
       fY = y-(float)Src.top;
@@ -56,15 +59,19 @@ public:
       fTR = fX*(1-fY);
       fBL = (1-fX)*fY;
       fBR = fX*fY;
+/*
       if(_printDebug)
-        debug(1,"fX: %f, fY: %f, fTL:%f, fTR:%f, fBL:%f, fBR:%f", fX, fY, fTL, fTR, fBL, fBR);
+        debug(5,"fX: %f, fY: %f, fTL:%f, fTR:%f, fBL:%f, fBR:%f", fX, fY, fTL, fTR, fBL, fBR);
+*/
     }
 	  else {
       //Nearest neighbour
 		  xDir = (x-Src.left) > 0.5f;
 		  yDir = (y-Src.top) > 0.5f;
+/*
       if(_printDebug)
-        debug(1,"\tNearest neighbour, xDir: 0x%X, yDir: 0x%X", xDir, yDir);
+        debug(5,"\tNearest neighbour, xDir: 0x%X, yDir: 0x%X", xDir, yDir);
+*/
 	  }
   };
   ~FilterPixel() {};
@@ -83,7 +90,7 @@ public:
 	RenderTable(ZVision *engine, uint numRows, uint numColumns, const Graphics::PixelFormat pixelFormat);
 	~RenderTable();
 	
-	Common::Point testPixel = Common::Point(255,0);
+//	Common::Point testPixel = Common::Point(255,0);
 
 public:
 	enum RenderState {

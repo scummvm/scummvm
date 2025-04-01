@@ -200,8 +200,8 @@ void RenderTable::generateRenderTable() {
 
 void RenderTable::generateLookupTable(bool tilt) {
   debug(1,"Generating %s lookup table.", tilt ? "tilt" : "panorama");
-	debug(1,"halfWidth %f, halfHeight %f", halfWidth, halfHeight);
-	debug(1,"halfRows %d, halfColumns %d", halfRows, halfColumns);
+	debug(5,"halfWidth %f, halfHeight %f", halfWidth, halfHeight);
+	debug(5,"halfRows %d, halfColumns %d", halfRows, halfColumns);
   uint32 generationTime = _system->getMillis();
 	float alpha, cosAlpha, polarCoordInCylinderCoords, linearCoordInCylinderCoords, cylinderRadius, xOffset, yOffset;
 	uint32 indexTL, indexBL, indexTR, indexBR;
@@ -223,13 +223,16 @@ void RenderTable::generateLookupTable(bool tilt) {
 		linearCoordInCylinderCoords = halfLinearSize + ((float)linearCoord - halfLinearSize) * cosAlpha;
 		linearOffset = linearCoordInCylinderCoords - linearCoord;
     polarOffset = polarCoordInCylinderCoords - polarCoord;
+/*
     bool _printDebug = (Common::Point(x,y)==testPixel);
     if(_printDebug) {
-      debug(2,"\tGenerating test pixel %d, %d", x, y);
-      debug(2,"\tOffsets %f,%f", xOffset, yOffset);
-    } 
+      debug(5,"\tGenerating test pixel %d, %d", x, y);
+      debug(5,"\tOffsets %f,%f", xOffset, yOffset);
+    }
+*/ 
 		// Only store the (x,y) offsets instead of the absolute positions
-		_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality, _printDebug);
+//		_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality, _printDebug);
+		_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality);
     //Transformation is both horizontally and vertically symmetrical about the camera axis,
     //We can thus save on trigonometric calculations by computing one quarter of the transformation matrix and then mirroring it in both X & Y:
 		_internalBuffer[indexBL] = _internalBuffer[indexTL];
