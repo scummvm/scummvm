@@ -146,7 +146,7 @@ void PierianPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const
 	registrar->registerPlugInModifier("WasteMod", &_wasteModifierFactory);
 }
 
-} // End of namespace MLine
+} // End of namespace Pierian
 
 namespace PlugIns {
 
