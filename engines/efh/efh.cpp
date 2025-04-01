@@ -2404,20 +2404,27 @@ bool EfhEngine::checkMonsterCollision() {
 			Common::KeyCode input = waitForKey();
 
 			switch (input) {
-				if (input == kEfhActionA) { // Attack
+				// Attack
+				if (input == Efh::kEfhActionA) {
 					handleFight(monsterId);
 					endLoop = true;
 					break;
-				} else if (input == kEfhActionL || input == Efh::kEfhActionESC) {	// Leave
+
+				// Leave
+				} else if (input == kEfhActionL || input == Efh::kEfhActionESC) {
 					endLoop = true;
 					break;
-				} else if (input == kEfhActionS) {	// Status
+
+				// Status
+				} else if (input == Efh::kEfhActionS) {
 					handleStatusMenu(1, _teamChar[0]._id);
 					endLoop = true;
 					_tempTextPtr = nullptr;
 					drawGameScreenAndTempText(true);
 					break;
-				} else if (input == kEfhActionT) {	// Talk
+
+				// Talk
+				} else if (input == Efh::kEfhActionT) {
 					startTalkMenu(monsterId);
 					endLoop = true;
 					break;
