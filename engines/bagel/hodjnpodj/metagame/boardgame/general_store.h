@@ -24,7 +24,7 @@
 
 #include "bagel/hodjnpodj/views/dialog.h"
 #include "bagel/hodjnpodj/gfx/button.h"
-#include "bagel/hodjnpodj/metagame/bgen/invent.h"
+#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -39,10 +39,11 @@ private:
 	int nDialog_DX = 0, nDialog_DY = 0;
 	int nItemsPerRow = 0;
 	int nItemsPerColumn = 0;
-	CInventory *pInventory = nullptr;
 	int nItem_DDX = 0, nItem_DDY = 0;
 	int _selectedIndex = -1;
 	CItem *_selectedItem = nullptr;
+	CInventory *pGeneralStore = nullptr;
+	CInventory *pInventory = nullptr;
 
 	void updateContent();
 	Common::Rect getItemRect(int index) const;
@@ -68,6 +69,8 @@ public:
 	bool msgMouseUp(const MouseUpMessage &msg) override;
 
 	void draw() override;
+
+	static void show(CInventory *pStore, CInventory *pInvent);
 };
 
 } // namespace Metagame

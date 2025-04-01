@@ -42,7 +42,7 @@ namespace Metagame {
 #define DIALOG_BITMAP_DX		59
 #define DIALOG_BITMAP_DY		59
 #define DIALOG_BITMAP_DDX		10
-#define DIALOG_BITMAP_DDY		10
+#define DIALOG_BITMAP_DDY		9
 
 #define	DIALOG_FONT_SIZE		14
 #define	DIALOG_TEXT_COLOR		PALETTERGB(128,0,128)
@@ -53,16 +53,29 @@ namespace Metagame {
 #define TEXT_MORE_DY		5                       // offset of "more" indicator bottom of scroll
 #define MORE_TEXT_BLURB		"[ More ]"				// actual text to display for "more" indicator
 
-#define	IDC_NOTEBOOK_BOOK	    921
-#define	IDC_NOTEBOOK_SOUND	    922
+#define IDC_STORE_DOLLAR		931
 
 GeneralStore::GeneralStore() : Dialog("GeneralStore", "meta/hnpmeta.dll"),
 		_okButton(Common::Rect(210, 355, 290, 380), this),
 		pInventory(lpMetaGame->m_cHodj.m_pInventory) {
 }
 
+void GeneralStore::show(CInventory *pStore, CInventory *pInvent) {
+	GeneralStore *view = dynamic_cast<GeneralStore *>(
+		g_events->findView("GeneralStore"));
+	view->pGeneralStore = pStore;
+	view->pInventory = pInvent;
+	view->addView();
+}
+
 bool GeneralStore::msgOpen(const OpenMessage &msg) {
 	Dialog::msgOpen(msg);
+
+	if (!pGeneralStore) {
+		// For debug purposes
+		pGeneralStore = lpMetaGame->m_cHodj.m_pGenStore;
+		pInventory = lpMetaGame->m_cHodj.m_pInventory;
+	}
 
 	_scrollTopRect = Common::Rect(0, 0, 501, 48);
 	_scrollBottomRect = Common::Rect(0, 0, 501, 47);
@@ -106,7 +119,7 @@ bool GeneralStore::msgAction(const ActionMessage &msg) {
 		break;
 
 	case KEYBIND_DOWN:
-		if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < (*pInventory).ItemCount()) {
+		if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < pGeneralStore->ItemCount()) {
 			nFirstSlot += (nItemsPerRow * nItemsPerColumn);
 			redraw();
 		}
@@ -150,7 +163,7 @@ bool GeneralStore::msgKeypress(const KeypressMessage &msg) {
 		break;
 
 	case Common::KEYCODE_END:								// go to last page of text
-		nFirstSlot = (*pInventory).ItemCount() - (nItemsPerRow * nItemsPerColumn);
+		nFirstSlot = pGeneralStore->ItemCount() - (nItemsPerRow * nItemsPerColumn);
 		if (nFirstSlot < 0)
 			nFirstSlot = 0;
 		redraw();
@@ -168,7 +181,7 @@ void GeneralStore::draw() {
 
 	GfxSurface s = getSurface();
 	s.setFontSize(DIALOG_FONT_SIZE);
-	s.writeString(pInventory->GetTitle(), _titleRect,
+	s.writeString(pGeneralStore->GetTitle(), _titleRect,
 		DIALOG_TEXT_COLOR, Graphics::kTextAlignCenter);
 
 	drawItems(s);
@@ -183,7 +196,7 @@ void GeneralStore::draw() {
 }
 
 void GeneralStore::updateContent() {
-	if ((*pInventory).ItemCount() <= 0)
+	if (pGeneralStore->ItemCount() <= 0)
 		return;
 
 	// Calculate the horizontal space we have available
@@ -228,7 +241,7 @@ Common::Rect GeneralStore::getItemRect(int index) const {
 
 void GeneralStore::drawItems(GfxSurface &s) {
 	// Get first item on this page
-	auto pItem = (*pInventory).FetchItem(nFirstSlot);
+	auto pItem = pGeneralStore->FetchItem(nFirstSlot);
 
 	for (int i = 0; (i < (nItemsPerRow * nItemsPerColumn)) && (pItem != nullptr); i++) {							// will thumb through all of them
 		const Common::Rect r = getItemRect(i);
@@ -254,7 +267,7 @@ void GeneralStore::drawMore(GfxSurface &s) {
 bool GeneralStore::hasNextPage() const {
 	return (nFirstSlot +
 		(nItemsPerRow * nItemsPerColumn)) <
-		pInventory->ItemCount();
+		pGeneralStore->ItemCount();
 }
 
 bool GeneralStore::msgMouseMove(const MouseMoveMessage &msg) {
@@ -264,32 +277,17 @@ bool GeneralStore::msgMouseMove(const MouseMoveMessage &msg) {
 
 	if (!Dialog::msgMouseMove(msg)) {
 		if (_scrollTopRect.contains(msg._pos)) {
-			if (nFirstSlot == 0)
-				g_events->setCursor(IDC_RULES_INVALID);
-			else
-				g_events->setCursor(IDC_RULES_ARROWUP);
+			g_events->setCursor(IDC_RULES_INVALID);
 		} else if (_scrollBottomRect.contains(msg._pos)) {
-			if (!hasNextPage())
-				g_events->setCursor(IDC_RULES_INVALID);
-			else
-				g_events->setCursor(IDC_RULES_ARROWDN);
+			g_events->setCursor(IDC_RULES_INVALID);
 		} else {
 			// Check for highlighted item
 			index = getItemAtPos(msg._pos);
 
 			if (index >= 0) {
-				_selectedItem = (*pInventory).FetchItem(index);
+				_selectedItem = pGeneralStore->FetchItem(index);
 				if (_selectedItem != nullptr) {
-					if (_selectedItem->m_nActionCode == ITEM_ACTION_NOTEBOOK) {
-						g_events->setCursor(IDC_NOTEBOOK_BOOK);
-					} else {
-						if (_selectedItem->GetSoundSpec() != nullptr) {
-							g_events->setCursor(IDC_NOTEBOOK_SOUND);
-							_selectedItem->m_nActionCode = ITEM_ACTION_SOUND;
-						} else {
-							g_events->setCursor(IDC_ARROW);
-						}
-					}
+					g_events->setCursor(IDC_STORE_DOLLAR);
 				}
 			} else {
 				g_events->setCursor(IDC_ARROW);
@@ -323,7 +321,7 @@ bool GeneralStore::msgMouseUp(const MouseUpMessage &msg) {
 		} else {
 			int index = getItemAtPos(msg._pos);                    // ... and if so, then show then dispatch
 			if (index >= 0) {
-				auto pItem = (*pInventory).FetchItem(index);
+				auto pItem = pGeneralStore->FetchItem(index);
 				if (pItem != nullptr) {
 					// TODO
 				}
@@ -349,7 +347,7 @@ void GeneralStore::drawItem(GfxSurface &s, CItem *pItem, int nX, int nY) {
 
 int GeneralStore::getItemAtPos(const Common::Point &point) const {
 	Common::Point p(point.x - _bounds.left, point.y - _bounds.top);
-	const int itemCount = (*pInventory).ItemCount();
+	const int itemCount = pGeneralStore->ItemCount();
 
 	for (int i = 0; i < (nItemsPerRow * nItemsPerColumn) &&
 			(nFirstSlot + i) < itemCount; ++i) {
