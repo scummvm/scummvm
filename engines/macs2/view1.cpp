@@ -869,7 +869,8 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	uint16 x = s.w / 2 - width / 2; // [0FD4h]
 	uint16 y = s.h / 2 - height / 2; // [0FD6h]
 
-	DrawBorder(Common::Point(x, y), Common::Point(width, height), s);
+	DrawBorderSide(Common::Point(x, y), Common::Point(width, height), s);
+	DrawBorderOuterHighlights(Common::Point(x, y), Common::Point(width, height), s);
 	Graphics::ManagedSurface* buffer = new Graphics::ManagedSurface;
 	buffer->create(s.w, s.h, s.format);
 	s.blendBlitTo(*buffer);
@@ -1125,7 +1126,6 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	// TODO: Not sure what cmp	word ptr [2026h],1h does
 	// Draw the background
 	drawDarkRectangle(pos.x + 1, pos.y + 1, size.x - 1, size.y - 1);
-	// TODO: Continue here
 
 	// Left side
 	DrawBorderSide(pos, Common::Point(width, size.y), s);
@@ -1147,30 +1147,32 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	// Draw the texture enough times in x and y to fill the clipping rect
 
 	// Draw the highlights and shadows
-	
+	// TODO: Compare with the code at l0037_A6FA: especially what
+	// the skipped (image argument 0) calls do or if I took care of them
+	// 
 	// Top side highlight
-	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x5, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1012, s);
 
 	// Left side highlight
-	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x5, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1012, s);
 
 	// Bottom shadow
-	DrawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x6, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1011, s);
 
 	// Right side shadow
-	DrawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x6, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
 	
 	// Top shadow
-	DrawHorizontalBorderHighlight(pos + Common::Point(6, 6), size.x - 0xB, 0x6, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(6, 6), size.x - 0xB, 0x1011, s);
 
 	// Left shadow
-	DrawVerticalBorderHighlight(pos + Common::Point(6, 6), size.y - 0xB, 0x6, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(6, 6), size.y - 0xB, 0x1011, s);
 
 	// Bottom highlight
-	DrawHorizontalBorderHighlight(pos + Common::Point(6, size.y - width), size.x - 0xB, 0x5, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(6, size.y - width), size.x - 0xB, 0x1012, s);
 
 	// Right highlight
-	DrawVerticalBorderHighlight(pos + Common::Point(size.x - width, width), size.y - 0xB, 0x5, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(size.x - width, width), size.y - 0xB, 0x1012, s);
 
 
 
@@ -1228,6 +1230,7 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 
 }
 
+// TODO: Probably a misnomer
 void View1::DrawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
 	// 0037h:39B5h
 
@@ -1250,7 +1253,32 @@ void View1::DrawBorderSide(const Common::Point &pos, const Common::Point &size, 
 	}
 }
 
-void View1::DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width, uint8 unknown, Graphics::ManagedSurface &s) {
+void View1::DrawBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
+	
+	DrawHorizontalBorderHighlight(pos, size.x + 1, 0x1010, s);
+	DrawVerticalBorderHighlight(pos, size.y + 1, 0x1010, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(0, size.y), size.x + 1, 0x1010, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(size.x, 0), size.y + 1, 0x1010, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1012, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1012, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1011, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
+}
+
+Macs2::Sprite *View1::GetUISprite(uint32 offset) {
+	if (offset == 0x1012) {
+		return &g_engine->_borderHighlightSprite;
+	} else if (offset == 0x1011) {
+		return &g_engine->_borderShadowSprite;
+	} else if (offset == 0x1010) {
+		return nullptr;
+	}
+	// We should not get here
+	assert(false);
+	return nullptr;
+}
+
+void View1::DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width, uint32 spriteAddress, Graphics::ManagedSurface &s) {
 
 	// 0037:3AF5 (in fn0037_3AD4)
 
@@ -1262,15 +1290,18 @@ void View1::DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width,
 	// TODO: Check which area we actually fill
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
-	const Sprite &sprite = unknown == 0x5 ? g_engine->_borderHighlightSprite : g_engine->_borderShadowSprite;
-
+	
+	const Sprite *sprite = GetUISprite(spriteAddress);
+	if (sprite == nullptr) {
+		return;
+	}
 	while (currentX < clippingRect.right) {
-		DrawSpriteClipped(currentX, currentY, clippingRect, sprite, s);
-		currentX += sprite.Width;
+		DrawSpriteClipped(currentX, currentY, clippingRect, *sprite, s);
+		currentX += sprite->Width;
 	}
 }
 
-void View1::DrawVerticalBorderHighlight(const Common::Point &pos, int16 height, uint8 unknown, Graphics::ManagedSurface &s) {
+void View1::DrawVerticalBorderHighlight(const Common::Point &pos, int16 height, uint32 spriteAddress, Graphics::ManagedSurface &s) {
 	// TODO: Only copy&paste from horizontal so far, need to check original code
 	// TODO: Add the assembly location we are at
 
@@ -1282,12 +1313,15 @@ void View1::DrawVerticalBorderHighlight(const Common::Point &pos, int16 height, 
 	// TODO: Check which area we actually fill
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
-	const Sprite &sprite = unknown == 0x5 ? g_engine->_borderHighlightSprite : g_engine->_borderShadowSprite;
 
+	const Sprite *sprite = GetUISprite(spriteAddress);
+	if (sprite == nullptr) {
+		return;
+	}
 
 	while (currentY < clippingRect.bottom) {
-		DrawSpriteClipped(currentX, currentY, clippingRect, sprite, s);
-		currentY += sprite.Height;
+		DrawSpriteClipped(currentX, currentY, clippingRect, *sprite, s);
+		currentY += sprite->Height;
 	}
 }
 
