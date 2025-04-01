@@ -273,6 +273,50 @@ private:
 	const char *getDefaultName() const override;
 };
 
+class HotTextModifier : public Modifier {
+public:
+	HotTextModifier();
+	~HotTextModifier();
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Thereware::HotTextModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "HotText Modifier"; }
+	void debugInspect(IDebugInspectionReport *report) const override;
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+};
+
+class KeyScrollModifier : public Modifier {
+public:
+	KeyScrollModifier();
+	~KeyScrollModifier();
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Thereware::KeyScrollModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "KeyScroll Modifier"; }
+	void debugInspect(IDebugInspectionReport *report) const override;
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+};
+
 
 class TherewarePlugIn : public MTropolis::PlugIn {
 public:
@@ -293,6 +337,8 @@ private:
 	PlugInModifierFactory<GoThereModifier, Data::Thereware::GoThereModifier> _goThereModifierFactory;
 	PlugInModifierFactory<RandomizerModifier, Data::Thereware::RandomizerModifier> _randomizerModifierFactory;
 	PlugInModifierFactory<TimeLoopModifier, Data::Thereware::TimeLoopModifier> _timeLoopModifierFactory;
+	PlugInModifierFactory<HotTextModifier, Data::Thereware::HotTextModifier> _hotTextModifierFactory;
+	PlugInModifierFactory<KeyScrollModifier, Data::Thereware::KeyScrollModifier> _keyScrollModifierFactory;
 };
 
 } // End of namespace Thereware
