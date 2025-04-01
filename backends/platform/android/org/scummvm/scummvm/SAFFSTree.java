@@ -99,7 +99,7 @@ public class SAFFSTree {
 		}
 	}
 
-	public static void loadSAFTrees(Context context) {
+	private static void loadSAFTrees(Context context) {
 		final ContentResolver resolver = context.getContentResolver();
 
 		// As this function is called before starting to emit nodes,
@@ -142,6 +142,47 @@ public class SAFFSTree {
 			loadSAFTrees(context);
 		}
 		return _trees.get(name);
+	}
+
+	public static class PathResult {
+		public final SAFFSTree tree;
+		public final SAFFSNode node;
+
+		PathResult(SAFFSTree tree, SAFFSNode node) {
+			this.tree = tree;
+			this.node = node;
+		}
+	}
+
+	/**
+	 * Resolves a ScummVM virtual path to SAF objects if it's in the SAF domain.
+	 * Returns null otherwise and throws a FileNotFoundException if the SAF path doesn't exist.
+	 */
+	@RequiresApi(api = Build.VERSION_CODES.BASE)
+	public static PathResult fullPathToNode(Context context, String path, boolean createDirIfNotExists) throws FileNotFoundException {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N ||
+			!path.startsWith("/saf/")) {
+			return null;
+		}
+
+		// This is a SAF fake mount point
+		int slash = path.indexOf('/', 5);
+		if (slash == -1) {
+			slash = path.length();
+		}
+		String treeName = path.substring(5, slash);
+		String innerPath = path.substring(slash);
+
+		SAFFSTree tree = SAFFSTree.findTree(context, treeName);
+		if (tree == null) {
+			throw new FileNotFoundException();
+		}
+		SAFFSNode node = tree.pathToNode(innerPath, createDirIfNotExists);
+		if (node == null) {
+			throw new FileNotFoundException();
+		}
+
+		return new PathResult(tree, node);
 	}
 
 	@RequiresApi(api = Build.VERSION_CODES.BASE)
@@ -274,6 +315,12 @@ public class SAFFSTree {
 	public String getTreeId() {
 		return Uri.encode(DocumentsContract.getTreeDocumentId(_treeUri));
 	}
+	public String getTreeName() {
+		return _treeName;
+	}
+	public Uri getTreeDocumentUri() {
+		return DocumentsContract.buildDocumentUriUsingTree(_treeUri, _root._documentId);
+	}
 
 	private void clearCache() {
 		ArrayDeque<SAFFSNode> stack = new ArrayDeque<>();
@@ -293,7 +340,7 @@ public class SAFFSTree {
 		}
 	}
 
-	public SAFFSNode pathToNode(String path) {
+	public SAFFSNode pathToNode(String path, boolean createDirIfNotExists) {
 		String[] components = path.split("/");
 
 		SAFFSNode node = _root;
@@ -308,10 +355,14 @@ public class SAFFSTree {
 				continue;
 			}
 
-			node = getChild(node, component);
-			if (node == null) {
+			SAFFSNode newNode = getChild(node, component);
+			if (newNode == null && createDirIfNotExists) {
+				newNode = createDirectory(node, component);
+			}
+			if (newNode == null) {
 				return null;
 			}
+			node = newNode;
 		}
 		return node;
 	}

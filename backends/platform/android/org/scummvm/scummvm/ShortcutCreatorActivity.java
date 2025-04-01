@@ -176,8 +176,15 @@ public class ShortcutCreatorActivity extends Activity implements CompatHelpers.S
 	}
 
 	static private FileInputStream[] openFiles(Context context, File basePath, String regex) {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N ||
-			!basePath.getPath().startsWith("/saf/")) {
+		SAFFSTree.PathResult pr;
+		try {
+			pr = SAFFSTree.fullPathToNode(context, basePath.getPath(), false);
+		} catch (FileNotFoundException e) {
+			return new FileInputStream[0];
+		}
+
+		// This version check is only to make Android Studio linter happy
+		if (pr == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
 			// This is a standard filesystem path
 			File[] children = basePath.listFiles((dir, name) -> name.matches(regex));
 			if (children == null) {
@@ -192,24 +199,9 @@ public class ShortcutCreatorActivity extends Activity implements CompatHelpers.S
 			}
 			return ret;
 		}
-		// This is a SAF fake mount point
-		String baseName = basePath.getPath();
-		int slash = baseName.indexOf('/', 5);
-		if (slash == -1) {
-			slash = baseName.length();
-		}
-		String treeName = baseName.substring(5, slash);
-		String path = baseName.substring(slash);
 
-		SAFFSTree tree = SAFFSTree.findTree(context, treeName);
-		if (tree == null) {
-			return new FileInputStream[0];
-		}
-		SAFFSTree.SAFFSNode node = tree.pathToNode(path);
-		if (node == null) {
-			return new FileInputStream[0];
-		}
-		SAFFSTree.SAFFSNode[] children = tree.getChildren(node);
+		// This is a SAF fake mount point
+		SAFFSTree.SAFFSNode[] children = pr.tree.getChildren(pr.node);
 		if (children == null) {
 			return new FileInputStream[0];
 		}
@@ -224,7 +216,7 @@ public class ShortcutCreatorActivity extends Activity implements CompatHelpers.S
 			if (!component.matches(regex)) {
 				continue;
 			}
-			ParcelFileDescriptor pfd = tree.createFileDescriptor(child, "r");
+			ParcelFileDescriptor pfd = pr.tree.createFileDescriptor(child, "r");
 			if (pfd == null) {
 				continue;
 			}

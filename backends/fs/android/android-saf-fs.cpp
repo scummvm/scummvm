@@ -125,7 +125,7 @@ void AndroidSAFFilesystemNode::initJNI() {
 	FIND_STATIC_METHOD(, refToNode, "(J)" SAFFSNodeSig);
 
 	FIND_METHOD(, getTreeId, "()Ljava/lang/String;");
-	FIND_METHOD(, pathToNode, "(Ljava/lang/String;)" SAFFSNodeSig);
+	FIND_METHOD(, pathToNode, "(Ljava/lang/String;Z)" SAFFSNodeSig);
 	FIND_METHOD(, getChildren, "(J)[" SAFFSNodeSig);
 	FIND_METHOD(, getChild, "(JLjava/lang/String;)" SAFFSNodeSig);
 	FIND_METHOD(, createDirectory, "(JLjava/lang/String;)" SAFFSNodeSig);
@@ -287,7 +287,7 @@ AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromPath(const Common::S
 
 	jstring pathObj = env->NewStringUTF(realPath.c_str());
 
-	jobject node = env->CallObjectMethod(safTree, _MID_pathToNode, pathObj);
+	jobject node = env->CallObjectMethod(safTree, _MID_pathToNode, pathObj, false);
 
 	env->DeleteLocalRef(pathObj);
 
@@ -332,7 +332,7 @@ AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromPath(const Common::S
 
 	pathObj = env->NewStringUTF(realPath.c_str());
 
-	node = env->CallObjectMethod(safTree, _MID_pathToNode, pathObj);
+	node = env->CallObjectMethod(safTree, _MID_pathToNode, pathObj, false);
 
 	env->DeleteLocalRef(pathObj);
 
@@ -915,7 +915,7 @@ void AddSAFFakeNode::makeProxySAF() const {
 	}
 
 	// I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
-	jobject saftree = JNI::getNewSAFTree(true, true, "", _("Choose a new folder"));
+	jobject saftree = JNI::getNewSAFTree(true, "", _("Choose a new folder"));
 	if (!saftree) {
 		return;
 	}
