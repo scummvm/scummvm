@@ -289,8 +289,15 @@ public:
 	void ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide = false);
 	void DrawBorder(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
 	void DrawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
-	void DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width, uint8 unknown, Graphics::ManagedSurface &s);
-	void DrawVerticalBorderHighlight(const Common::Point &pos, int16 height, uint8 unknown, Graphics::ManagedSurface &s);
+	// fn0037_3AD4 proc
+	void DrawBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
+
+	Macs2::Sprite *GetUISprite(uint32 offset);
+
+	// fn0037_3737 proc
+	void DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width, uint32 spriteAddress, Graphics::ManagedSurface &s);
+	// 0037h:3876h
+	void DrawVerticalBorderHighlight(const Common::Point &pos, int16 height, uint32 spriteAddress, Graphics::ManagedSurface &s);
 
 	void DrawImageResources(Graphics::ManagedSurface &s);
 
