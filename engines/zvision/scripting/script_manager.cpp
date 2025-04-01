@@ -53,7 +53,11 @@ ScriptManager::~ScriptManager() {
 	_controlEvents.clear();
 }
 
-void ScriptManager::initialize() {
+void ScriptManager::initialize(bool restarted) {
+  if(restarted) {
+	  _globalState.clear();
+	  _globalStateFlags.clear();
+	}
 	cleanScriptScope(universe);
 	cleanScriptScope(world);
 	cleanScriptScope(room);
@@ -63,9 +67,31 @@ void ScriptManager::initialize() {
 	_currentLocation.room = 0;
 	_currentLocation.view = 0;
 	_changeLocationDelayCycles = 0;
+  if(restarted) {
+	  for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); iter++)
+		  delete(*iter);
+	  _activeSideFx.clear();
+	  _referenceTable.clear();
+	  switch(_engine->getGameId()) {
+      case GID_GRANDINQUISITOR:
+        //Bypass logo video
+        setStateValue(16966, 1);  
+        //Ensure post-logo screen redraw is not inhibited in CD version
+        setStateValue(5813, 1);
+        //Bypass additional logo videos in DVD version
+        setStateValue(19810, 1);
+        setStateValue(19848, 1);
+        break;
+      case GID_NEMESIS:
+      default:
+        break;
+    }
+	}
 	parseScrFile("universe.scr", universe);
 	changeLocation('g', 'a', 'r', 'y', 0);
 	_controlEvents.clear();
+	if(restarted)
+	  _engine->loadSettings();
 }
 
 void ScriptManager::update(uint deltaTimeMillis) {
