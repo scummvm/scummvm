@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-03-30 08:42+0000\n"
+"POT-Creation-Date: 2025-04-01 19:57+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -3455,7 +3455,7 @@ msgstr "~B~aşlatıcıya Dön"
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:746
 #: engines/sci/engine/kfile.cpp:1104 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3813
+#: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3813
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
 #: engines/wage/saveload.cpp:746 engines/zvision/file/save_manager.cpp:48
 msgid "Save game:"
@@ -3478,7 +3478,7 @@ msgstr "Oyun kaydet:"
 #: engines/sci/engine/guest_additions.cpp:747 engines/sci/engine/kfile.cpp:1104
 #: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/tinsel/metaengine.cpp:323 engines/toltecs/menu.cpp:302
+#: engines/tinsel/metaengine.cpp:323 engines/toltecs/menu.cpp:308
 #: engines/toon/toon.cpp:3813 engines/trecision/saveload.cpp:67
 #: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:746
 #: engines/zvision/file/save_manager.cpp:48 engines/zvision/metaengine.cpp:262
@@ -5539,7 +5539,7 @@ msgstr ""
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
 #: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:545
 #: engines/grim/grim.cpp:645 engines/hdb/metaengine.cpp:264
-#: engines/made/metaengine.cpp:156
+#: engines/made/metaengine.cpp:156 engines/toltecs/metaengine.cpp:252
 msgid "Menu"
 msgstr ""
 
@@ -5816,7 +5816,7 @@ msgstr ""
 #: engines/got/metaengine.cpp:35 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/neverhood/dialogs.cpp:47
 #: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:39
-#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:41
+#: engines/toltecs/metaengine.cpp:44 engines/trecision/metaengine.cpp:41
 #: engines/ultima/metaengine.cpp:52 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr ""
@@ -5828,7 +5828,7 @@ msgstr ""
 #: engines/got/metaengine.cpp:36 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/neverhood/dialogs.cpp:48
 #: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:40
-#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:42
+#: engines/toltecs/metaengine.cpp:45 engines/trecision/metaengine.cpp:42
 #: engines/ultima/metaengine.cpp:53 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
@@ -5935,7 +5935,7 @@ msgstr "Bu oyun, başlatıcısan kaydedilmiş oyun yüklemeyi desteklemiyor."
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:749
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3907
+#: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3907
 #: engines/zvision/file/save_manager.cpp:61
 #, fuzzy
 msgid "Restore game:"
@@ -5956,7 +5956,7 @@ msgstr "Oyun yükle:"
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:750
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3907
+#: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3907
 #: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:267
 msgid "Restore"
 msgstr ""
@@ -6414,9 +6414,9 @@ msgstr ""
 #: engines/illusions/metaengine.cpp:89 engines/lure/metaengine.cpp:168
 #: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
 #: engines/stark/metaengine.cpp:184 engines/sword1/metaengine.cpp:266
-#: engines/tinsel/metaengine.cpp:240 engines/toon/metaengine.cpp:81
-#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
-#: engines/tucker/metaengine.cpp:167
+#: engines/tinsel/metaengine.cpp:240 engines/toltecs/metaengine.cpp:212
+#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
+#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
 #, fuzzy
 msgid "Default keymappings"
 msgstr "A~y~arlar..."
@@ -6618,8 +6618,8 @@ msgstr "Altyazılar"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:1026 engines/twp/metaengine.cpp:162
-#: engines/zvision/metaengine.cpp:284
+#: engines/scumm/metaengine.cpp:1026 engines/toltecs/metaengine.cpp:246
+#: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr ""
 
@@ -6627,7 +6627,7 @@ msgstr ""
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SKIP PAST CURRENT LINE OF DIALOGUE
-#: engines/bladerunner/metaengine.cpp:242
+#: engines/bladerunner/metaengine.cpp:242 engines/toltecs/metaengine.cpp:228
 msgid "Skip dialogue"
 msgstr ""
 
@@ -6807,9 +6807,10 @@ msgstr ""
 #: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:128
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
 #: engines/mads/metaengine.cpp:305 engines/saga/metaengine.cpp:442
-#: engines/stark/metaengine.cpp:208 engines/toon/metaengine.cpp:112
-#: engines/trecision/metaengine.cpp:169 engines/tsage/metaengine.cpp:242
-#: engines/vcruise/metaengine.cpp:175 engines/wintermute/keymapper_tables.h:920
+#: engines/stark/metaengine.cpp:208 engines/toltecs/metaengine.cpp:234
+#: engines/toon/metaengine.cpp:112 engines/trecision/metaengine.cpp:169
+#: engines/tsage/metaengine.cpp:242 engines/vcruise/metaengine.cpp:175
+#: engines/wintermute/keymapper_tables.h:920
 #, fuzzy
 msgid "Save game"
 msgstr "Kaydetme Yolu:"
@@ -6818,9 +6819,9 @@ msgstr "Kaydetme Yolu:"
 #: engines/hopkins/metaengine.cpp:242 engines/made/metaengine.cpp:168
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:432
-#: engines/stark/metaengine.cpp:213 engines/toon/metaengine.cpp:118
-#: engines/trecision/metaengine.cpp:175 engines/vcruise/metaengine.cpp:180
-#: engines/wintermute/keymapper_tables.h:925
+#: engines/stark/metaengine.cpp:213 engines/toltecs/metaengine.cpp:240
+#: engines/toon/metaengine.cpp:118 engines/trecision/metaengine.cpp:175
+#: engines/vcruise/metaengine.cpp:180 engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 #, fuzzy
 msgid "Load game"
@@ -11693,6 +11694,20 @@ msgstr ""
 #: engines/tinsel/metaengine.cpp:359
 msgid "Go to end of save/load menu"
 msgstr ""
+
+#: engines/toltecs/metaengine.cpp:216
+#, fuzzy
+msgid "Move / Select"
+msgstr "Sol"
+
+#: engines/toltecs/metaengine.cpp:222
+msgid "Move / Perform Default Action"
+msgstr ""
+
+#: engines/toltecs/metaengine.cpp:258
+#, fuzzy
+msgid "Skip ride"
+msgstr "İptal"
 
 #: engines/tony/tony.cpp:248
 #, c-format
