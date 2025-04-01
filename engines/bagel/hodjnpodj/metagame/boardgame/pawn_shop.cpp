@@ -76,7 +76,7 @@ bool PawnShop::msgOpen(const OpenMessage &msg) {
 		_bounds.height() - DIALOG_BOTTOM -
 		s.getStringHeight() - 5,
 		_bounds.width(),
-		_bounds.height() - DIALOG_BOTTOM);
+		s.getStringHeight());
 
 	// Scroll rects will be compared against mouse pos,
 	// so we need to shift them to global screen co-ordinates

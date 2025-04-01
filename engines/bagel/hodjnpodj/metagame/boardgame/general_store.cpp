@@ -45,6 +45,7 @@ namespace Metagame {
 #define DIALOG_BITMAP_DDY		9
 
 #define	DIALOG_FONT_SIZE		14
+#define DIALOG_BLURB_SIZE		8
 #define	DIALOG_TEXT_COLOR		PALETTERGB(128,0,128)
 #define	DIALOG_BLURB_COLOR	PALETTERGB(0,0,255)
 #define DIALOG_MORE_COLOR		PALETTERGB(0,0,0)
@@ -85,11 +86,13 @@ bool GeneralStore::msgOpen(const OpenMessage &msg) {
 	_titleRect = RectWH(0,
 		DIALOG_TOP + DIALOG_TITLEZONE_DY,
 		_bounds.width(), s.getStringHeight());
+
+	s.setFontSize(DIALOG_BLURB_SIZE);
 	_blurbRect = RectWH(0,
 		_bounds.height() - DIALOG_BOTTOM -
-		s.getStringHeight() - 5,
+		(s.getStringHeight() + 5) * 2 - 5,
 		_bounds.width(),
-		_bounds.height() - DIALOG_BOTTOM);
+		(s.getStringHeight() + 5) * 2);
 
 	// Scroll rects will be compared against mouse pos,
 	// so we need to shift them to global screen co-ordinates
@@ -186,13 +189,8 @@ void GeneralStore::draw() {
 
 	drawItems(s);
 
-	// Handle displaying blurb for any highlighted item
-	if (_selectedItem) {
-		s.setFontSize(DIALOG_FONT_SIZE);
-		s.writeString(_selectedItem->GetDescription(),
-			_blurbRect, DIALOG_TEXT_COLOR,
-			Graphics::kTextAlignCenter);
-	}
+	if (_selectedItem)
+		drawBlurb(s);
 }
 
 void GeneralStore::updateContent() {
@@ -262,6 +260,36 @@ void GeneralStore::drawMore(GfxSurface &s) {
 
 	s.writeString(MORE_TEXT_BLURB, Common::Point(x, y),
 		DIALOG_MORE_COLOR);
+}
+
+void GeneralStore::drawBlurb(GfxSurface &s) {
+	s.setFontSize(DIALOG_BLURB_SIZE);
+	s.writeString(_selectedItem->GetDescription(),
+		_blurbRect, DIALOG_TEXT_COLOR,
+		Graphics::kTextAlignCenter);
+
+	Common::Rect costRect(_blurbRect.left,
+		(_blurbRect.top + _blurbRect.bottom) / 2,
+		_blurbRect.right, _blurbRect.bottom);
+	Common::String cost;
+	int nPrice = _selectedItem->GetValue();
+
+	if (_selectedItem->GetQuantity() == 1) {
+		if (nPrice == 1)
+			cost = "It can be bought for 1 Crown";
+		else
+			cost = Common::String::format(
+				"It can be bought for %d Crowns", nPrice);
+	} else {
+		if (nPrice == 1)
+			cost = "One can be bought for 1 Crown";
+		else
+			cost = Common::String::format(
+				"One can be bought for %d Crowns", nPrice);
+	}
+
+	s.writeString(cost, costRect, DIALOG_TEXT_COLOR,
+		Graphics::kTextAlignCenter);
 }
 
 bool GeneralStore::hasNextPage() const {

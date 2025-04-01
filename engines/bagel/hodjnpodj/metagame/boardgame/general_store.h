@@ -50,6 +50,7 @@ private:
 	void drawItems(GfxSurface &s);
 	void drawItem(GfxSurface &s, CItem *pItem, int nX, int nY);
 	void drawMore(GfxSurface &s);
+	void drawBlurb(GfxSurface &s);
 	bool hasPriorPage() const {
 		return nFirstSlot > 0;
 	}
