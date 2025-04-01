@@ -76,8 +76,8 @@ maniac	Maniac Mansion
 	ff678e9ef8e4af2a37ca8658833c795a	-1  	en	DOS	Remastered	Remastered	-	Filippos Karapetis
 	fb70a129635f91988e394738376bcb36	-1  	en	DOS	Remastered	Remastered	-	Filippos Karapetis
 	b250d0f9cc83f80ced56fe11a4fb057c	1988	en	DOS	V2	V2	alt?	Andrea Petrucci, Fingolfin
-	114acdc2659a273c220f86ee9edb24c1	-1	fr	DOS	V2	V2	-	Nicolas Sauz&egrave;de
-	99a3699f80b8f776efae592b44b9b991	1988	fr	DOS	V2	V2	from DOTT	Nicolas Sauz&egrave;de, Andrea Petrucci
+	114acdc2659a273c220f86ee9edb24c1	1988	fr	DOS	V2	V2	2 disk	Nicolas Sauz&egrave;de
+	99a3699f80b8f776efae592b44b9b991	1988	fr	DOS	V2	V2	1 disk, reused for DOTT	Nicolas Sauz&egrave;de, Andrea Petrucci
 	183d7464902d40d00800e8ee1f04117c	1988	de	DOS	V2	V2	-	Fingolfin
 	87f6e8037b7cc996e13474b491a7a98e	1988	it	DOS	V2	V2	from DOTT	Andrea Petrucci
 	0d1b69471605201ef2fa9cec1f5f02d2	1988	es	DOS	V2	V2	-	abnog, Andrea Petrucci
@@ -104,10 +104,10 @@ zak	Zak McKracken and the Alien Mindbenders
 	d55eff37c2100f5065cde9de428621fa	-1	en	Atari	V2	V2	-
 	613f64f78ea26c7353b2a5940eb61d6a	-1	fr	Atari	V2	V2	-	Andreas Bylund
 	ff05c07990061d97647f059c48c1d05a	-1	de	Atari	V2	V2	-
-	675d71151e9b5a968c8ce46d9fbf4cbf	1916	en	DOS	V2	V2	-	Kirben
-	debe337f73d660e951ece7c1f1c81add	1916	en	DOS	V2	V2	alt?	Andrea Petrucci
-	52a4bae0746a11d7b1e8554e91a6645c	1916	fr	DOS	V2	V2	-	Andrea Petrucci
-	c4787c3e8b5e2dfda90850ee800af00f	-1	fr	DOS	V2	V2	alt?	Qvist
+	675d71151e9b5a968c8ce46d9fbf4cbf	1916	en	DOS	V2	V2	2 disk	Kirben
+	debe337f73d660e951ece7c1f1c81add	1916	en	DOS	V2	V2	3 disk	Andrea Petrucci
+	52a4bae0746a11d7b1e8554e91a6645c	1916	fr	DOS	V2	V2	3 disk?	Andrea Petrucci
+	c4787c3e8b5e2dfda90850ee800af00f	1916	fr	DOS	V2	V2	2 disk	Qvist
 	cdd760228cf1010c2903f37e788ea31c	1916	de	DOS	V2	V2	-	Fingolfin
 	d06fbe28818fef7bfc45c2cdf0c0849d	1916	de	DOS	V2	V2	from 5.25\" floppies	Nicolas Sauz&egrave;de, Andrea Petrucci
 	1900e501a52fbf55bde6e4196f6d2aa6	-1	it	DOS	V2	V2	-	Andrea Petrucci
@@ -235,7 +235,7 @@ monkey	The Secret of Monkey Island
 	c7890e038806df2bb5c0c8c6f1986ea2	8357	en	DOS	VGA	VGA	8 disk	Andrea Petrucci
 	a01fab4a64d47b96e2e58e6b0f825cc7	8347	fr	DOS	VGA	VGA	8 disk v1.0, 6/4/91 II (incomplete MT-32)	Sebast26
 	93f436541c10ce1e8a72cb3878ec0347	8357	es	DOS	VGA	VGA	8 disk v1.0, 23.May.91	eientei95
-	15e03ffbfeddb9c2aebc13dcb2a4a8f4	8357	en	DOS	VGA	VGA	4 disk
+	15e03ffbfeddb9c2aebc13dcb2a4a8f4	8357	en	DOS	VGA	VGA	4 disk v1.0, 12/3/90
 	25a7ce1cda4c7181c33c1c87a7cf6c7a	8357	fr	DOS	VGA	VGA	4 disk v1.0, 6/4/91 II
 	66fd5ff9a810dfeb6d6bdada18221140	8357	it	DOS	VGA	VGA	4 disk	Andrea Petrucci
 	d0b531227a27c6662018d2bd05aac52a	8357	de	DOS	VGA	VGA	4 disk v1.1, 14.Feb.91	Fingolfin
@@ -356,8 +356,8 @@ tentacle	Day of the Tentacle
 	acad97ab1c6fc2a5b2d98abf6db4a190	-1	en	All?	Floppy	Floppy	Version A ?
 	2723fea3dae0cb47768c424b145ae0e7	7932	en	DOS	Floppy	Floppy	Version B ?	Andrej Sinicyn, Andrea Petrucci, Fingolfin
 	f0ccc12a8704bf57706b42a37f877128	-1	en	DOS	Floppy	Floppy	1.6	Paulo Vicente
-	92b078d9d6d9d751da9c26b8b3075779	-1	fr	DOS	Floppy	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
-	94aaedbb8f26d71ed3ad6dd34490e29e	-1	fr	DOS	Floppy	Floppy	alt?	Nicolas Joly
+	92b078d9d6d9d751da9c26b8b3075779	7932	fr	DOS	Floppy	Floppy	v1	Nicolas Sauz&egrave;de, Andrea Petrucci
+	94aaedbb8f26d71ed3ad6dd34490e29e	7932	fr	DOS	Floppy	Floppy	v1.1	Nicolas Joly
 	57b0d89af79befe1cabce3bece869e7f	-1	de	DOS	Floppy	Floppy	-	Andrej Sinicyn, Andrea Petrucci
 	50fcdc982a25063b78ad46bf389b8e8d	-1	it	DOS	Floppy	Floppy	-	Andrea Petrucci
 	ae94f110a14ce71fc515d5b648827a8f	7932	es	DOS	Floppy	Floppy	-	abnog, Andrea Petrucci
