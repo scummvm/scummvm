@@ -35,42 +35,58 @@ CodeChunk::CodeChunk(Common::SeekableReadStream &chunk) {
 	_bytecode = chunk.readStream(lengthInBytes);
 }
 
-ScriptValue CodeChunk::execute(Common::Array<ScriptValue> *args, Common::Array<ScriptValue> *locals) {
-	_locals = locals;
-	_args = args;
+ScriptValue CodeChunk::executeNextBlock() {
+	uint blockSize = Datum(*_bytecode, kDatumTypeUint32_1).u.i;
+	uint startingPos = _bytecode->pos();
+
 	ScriptValue returnValue;
-	while (_bytecode->pos() < _bytecode->size()) {
-		ScriptValue instructionResult = evaluateExpression();
-		if (instructionResult.getType() != kScriptValueTypeEmpty) {
-			returnValue = instructionResult;
+	ExpressionType expressionType = static_cast<ExpressionType>(Datum(*_bytecode).u.i);
+	while (expressionType != kExpressionTypeEmpty && !_returnImmediately) {
+		returnValue = evaluateExpression(expressionType);
+		expressionType = static_cast<ExpressionType>(Datum(*_bytecode).u.i);
+	}
+
+	// Verify we consumed the right number of script bytes.
+	if (!_returnImmediately) {
+		uint bytesRead = _bytecode->pos() - startingPos;
+		if (bytesRead != blockSize) {
+			error("Expected to have read %d script bytes, actually read %d", blockSize, bytesRead);
 		}
 	}
+	return returnValue;
+}
+
+void CodeChunk::skipNextBlock() {
+	uint lengthInBytes = Datum(*_bytecode, kDatumTypeUint32_1).u.i;
+	_bytecode->skip(lengthInBytes);
+}
+
+ScriptValue CodeChunk::execute(Common::Array<ScriptValue> *args) {
+	_args = args;
+	ScriptValue returnValue = executeNextBlock();
 
 	// Rewind the stream once we're finished, in case we need to execute
 	// this code again!
 	_bytecode->seek(0);
+	_locals.clear();
 	// We don't own the args, so we will prevent a potentially out-of-scope
 	// variable from being re-accessed.
 	_args = nullptr;
-
-	if (_weOwnLocals) {
-		delete _locals;
-	}
-	_locals = nullptr;
 
 	return returnValue;
 }
 
 ScriptValue CodeChunk::evaluateExpression() {
-	if (_bytecode->eos()) {
-		error("CodeChunk::evaluateExpression(): Attempt to read past end of bytecode chunk");
-	}
+	ExpressionType expressionType = static_cast<ExpressionType>(Datum(*_bytecode).u.i);
+	ScriptValue returnValue = evaluateExpression(expressionType);
+	return returnValue;
+}
 
-	ExpressionType instructionType = static_cast<ExpressionType>(Datum(*_bytecode).u.i);
-	debugCN(5, kDebugScript, "(%s) ", expressionTypeToStr(instructionType));
+ScriptValue CodeChunk::evaluateExpression(ExpressionType expressionType) {
+	debugCN(5, kDebugScript, "(%s) ", expressionTypeToStr(expressionType));
 
 	ScriptValue returnValue;
-	switch (instructionType) {
+	switch (expressionType) {
 	case kExpressionTypeEmpty: {
 		return returnValue;
 	}
@@ -88,7 +104,8 @@ ScriptValue CodeChunk::evaluateExpression() {
 		break;
 
 	default:
-		error("CodeChunk::getNextStatement(): Got unimplemented instruction type %s (%d)", expressionTypeToStr(instructionType), static_cast<uint>(instructionType));
+		error("Got unimplemented expression type %s (%d)",
+			expressionTypeToStr(expressionType), static_cast<uint>(expressionType));
 	}
 
 	return returnValue;
@@ -135,9 +152,8 @@ ScriptValue CodeChunk::evaluateOperation() {
 	case kOpcodeDeclareVariables: {
 		uint32 localVariableCount = Datum(*_bytecode).u.i;
 		debugC(5, kDebugScript, "%d", localVariableCount);
-		assert(_locals == nullptr);
-		_locals = new Common::Array<ScriptValue>(localVariableCount);
-		_weOwnLocals = true;
+		assert(_locals.empty());
+		_locals = Common::Array<ScriptValue>(localVariableCount);
 		return returnValue;
 	}
 
@@ -175,12 +191,16 @@ ScriptValue CodeChunk::evaluateOperation() {
 		debugCN(5, kDebugScript, "\n    condition: ");
 		ScriptValue condition = evaluateExpression();
 
-		CodeChunk ifBlock(*_bytecode);
-		CodeChunk elseBlock(*_bytecode);
+		if (condition.getType() != kScriptValueTypeBool) {
+			error("Expected bool, got %s", scriptValueTypeToStr(condition.getType()));
+		}
+
 		if (condition.asBool()) {
-			ifBlock.execute(_args, _locals);
+			executeNextBlock();
+			skipNextBlock();
 		} else {
-			elseBlock.execute(_args, _locals);
+			skipNextBlock();
+			executeNextBlock();
 		}
 
 		return returnValue;
@@ -454,7 +474,7 @@ ScriptValue *CodeChunk::readAndReturnVariable() {
 
 	case kVariableScopeLocal: {
 		uint index = id - 1;
-		return &_locals->operator[](index);
+		return &_locals.operator[](index);
 	}
 
 	case kVariableScopeIndirectParameter: {
@@ -538,13 +558,10 @@ ScriptValue CodeChunk::callBuiltInMethod(BuiltInMethod method, ScriptValue &self
 }
 
 CodeChunk::~CodeChunk() {
+	_locals.clear();
+
 	// We don't own the args, so we don't need to delete it.
 	_args = nullptr;
-
-	if (_weOwnLocals) {
-		delete _locals;
-	}
-	_locals = nullptr;
 
 	delete _bytecode;
 	_bytecode = nullptr;

@@ -31,8 +31,6 @@ Function::Function(Chunk &chunk) {
 	// with 19900 added, so function 100 would be reported as 20000. But in
 	// bytecode, the zero-based ID is used, so that's what we'll store here.
 	_id = Datum(chunk).u.i;
-	uint lengthInBytes = Datum(chunk, kDatumTypeUint32_1).u.i;
-	debugC(5, kDebugLoading, "Function::Function(): id = 0x%x, size = 0x%x bytes", _id, lengthInBytes);
 	_code = new CodeChunk(chunk);
 }
 

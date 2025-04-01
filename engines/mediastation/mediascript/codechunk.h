@@ -36,12 +36,16 @@ public:
 	CodeChunk(Common::SeekableReadStream &chunk);
 	~CodeChunk();
 
-	ScriptValue execute(Common::Array<ScriptValue> *args = nullptr, Common::Array<ScriptValue> *locals = nullptr);
+	ScriptValue executeNextBlock();
+	ScriptValue execute(Common::Array<ScriptValue> *args = nullptr);
 
 	static ScriptValue callBuiltInMethod(BuiltInMethod method, ScriptValue &self, Common::Array<ScriptValue> &args);
 
 private:
+	void skipNextBlock();
+
 	ScriptValue evaluateExpression();
+	ScriptValue evaluateExpression(ExpressionType expressionType);
 	ScriptValue evaluateOperation();
 	ScriptValue evaluateValue();
 	ScriptValue evaluateVariable();
@@ -51,8 +55,9 @@ private:
 
 	ScriptValue evaluateAssign();
 
-	bool _weOwnLocals = false;
-	Common::Array<ScriptValue> *_locals = nullptr;
+	static const uint MAX_LOOP_ITERATION_COUNT = 1000;
+	bool _returnImmediately = false;
+	Common::Array<ScriptValue> _locals;
 	Common::Array<ScriptValue> *_args = nullptr;
 	Common::SeekableReadStream *_bytecode = nullptr;
 };

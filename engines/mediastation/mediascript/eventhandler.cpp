@@ -30,9 +30,6 @@ EventHandler::EventHandler(Chunk &chunk) {
 		eventTypeToStr(_type), static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
 
 	_argumentValue = ScriptValue(&chunk);
-	uint lengthInBytes = Datum(chunk, kDatumTypeUint32_1).u.i;
-	debugC(5, kDebugLoading, "EventHandler::EventHandler(): length = 0x%x (@0x%llx)", lengthInBytes, static_cast<long long int>(chunk.pos()));
-
 	_code = new CodeChunk(chunk);
 }
 
