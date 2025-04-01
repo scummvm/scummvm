@@ -166,6 +166,7 @@ void RenderManager::initialize(bool hiRes) {
   //Set hardware/window resolution
   debug(1,"_screen.w = %d, _screen.h = %d", _screen.w, _screen.h);
   initGraphics(_screen.w, _screen.h, &_engine->_screenPixelFormat);
+  frameLimiter.initialize();
 	debug(1,"Render manager initialized");
 }
 
@@ -243,7 +244,7 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
     debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
     if(immediate) {
       frameLimiter.startFrame();
-      debug(5,"Updating screen");
+      debug(5,"Updating screen, immediate");
       _screen.update();
       debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
       debug(10,"~renderSceneToScreen, immediate");
@@ -252,7 +253,7 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
     else if (_engine->canRender()) {
       frameLimiter.delayBeforeSwap();
       frameLimiter.startFrame();
-      debug(5,"Updating screen");
+      debug(5,"Updating screen, frame limited");
       _screen.update();
       debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
       debug(10,"~renderSceneToScreen, frame limited");
@@ -1006,7 +1007,7 @@ void RenderManager::bkgFill(uint8 r, uint8 g, uint8 b) {
 void RenderManager::updateRotation() {
 	int16 _velocity = _engine->getMouseVelocity() + _engine->getKeyboardVelocity();
 	ScriptManager *scriptManager = _engine->getScriptManager();
-	if (_doubleFPS)
+	if (_doubleFPS | !frameLimiter.isEnabled()) //Assuming 60fps when in Vsync mode.
 		_velocity /= 2;
 	if (_velocity) {
 		switch(_renderTable.getRenderState()) {
