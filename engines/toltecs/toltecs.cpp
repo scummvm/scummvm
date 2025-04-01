@@ -363,7 +363,6 @@ void ToltecsEngine::updateInput() {
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-			_keyState = event.kbd;
 
 			//debug("key: flags = %02X; keycode = %d", _keyState.flags, _keyState.keycode);
 
