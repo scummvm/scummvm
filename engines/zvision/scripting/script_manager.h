@@ -197,7 +197,7 @@ private:
 	uint32 _currentlyFocusedControl;
 
 public:
-	void initialize();
+	void initialize(bool restarted = false);
 	void update(uint deltaTimeMillis);
 	void queuePuzzles(uint32 key);
 
