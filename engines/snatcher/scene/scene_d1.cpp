@@ -92,7 +92,7 @@ SH_IMP_CTOR(D1) {
 	SH_CTOR_MAKEPROCS(D1);
 
 	uint32 *t = new uint32[29];
-	const uint8 *in = _module->getData(0x2929A);
+	const uint8 *in = _module->getPtr(0x2929A)();
 	for (int i = 0; i < 29; ++i) {
 		t[i] = READ_BE_UINT32(in);
 		in += 6;
@@ -142,28 +142,28 @@ SH_IMPL_FRM(D1, 02) {
 
 SH_IMPL_FRM(D1, 04) {
 	_vm->gfx()->runScript(_module->getPtr(0), 2);
-	//_cmdState.word1C = 0x110;
-	_vm->gfx()->doCommand(1);
+	_vm->gfx()->setScrollStep(GraphicsEngine::kVertA | GraphicsEngine::kSingleStep, 0x110);
+	_vm->gfx()->scrollCommand(1);
 }
 
 SH_IMPL_FRM(D1, 05) {
-	_vm->gfx()->doCommand(8);
+	_vm->gfx()->scrollCommand(8);
 }
 
 SH_IMPL_FRM(D1, 06) {
-	_vm->gfx()->doCommand(9);
+	_vm->gfx()->scrollCommand(9);
 }
 
 SH_IMPL_FRM(D1, 07) {
-	_vm->gfx()->doCommand(10);
+	_vm->gfx()->scrollCommand(10);
 }
 
 SH_IMPL_FRM(D1, 08) {
-	_vm->gfx()->doCommand(11);
+	_vm->gfx()->scrollCommand(11);
 }
 
 SH_IMPL_FRM(D1, 09) {
-	_vm->gfx()->doCommand(12);
+	_vm->gfx()->scrollCommand(12);
 }
 
 SH_IMPL_FRM(D1, 11) {
@@ -209,7 +209,7 @@ SH_IMPL_FRM(D1, 27) {
 SH_IMPL_FRM(D1, 28) {
 	state.finish = 1;
 	state.frameNo = 0;
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 }
 
 } // End of namespace Snatcher

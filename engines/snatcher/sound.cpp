@@ -57,6 +57,10 @@ void SoundEngine::pcmDoCommand(int cmd, int arg) {
 	_dev->pcmDoCommand(cmd, arg);
 }
 
+void SoundEngine::pause(bool toggle) {
+	_dev->pause(toggle);
+}
+
 SoundDevice *SoundDevice::create(Common::Platform platform, int soundOptions) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(soundOptions);
 	MusicType musicType = MidiDriver::getMusicType(dev);

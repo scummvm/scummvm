@@ -32,6 +32,9 @@ extern uint32 decodeSCDData(const uint8 *src, uint8 *dst);
 
 extern uint32 makeBCDTimeStamp(uint32 msecs);
 
+extern void rngReset();
+extern uint16 rngMakeNumber();
+
 } // End of namespace Util
 } // End of namespace Snatcher
 

@@ -102,7 +102,7 @@ SH_IMP_CTOR(D0) {
 	SH_CTOR_MAKEPROCS(D0);
 
 	uint32 *t = new uint32[35];
-	const uint8 *in = _module->getData(0x2A85C);
+	const uint8 *in = _module->getPtr(0x2A85C)();
 	for (int i = 0; i < 35; ++i) {
 		t[i] = READ_BE_UINT32(in);
 		in += 6;
@@ -139,7 +139,7 @@ SH_IMPL_UPDT(D0) {
 }
 
 SH_IMPL_FRM(D0, 00) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 0);
 }
 
@@ -164,12 +164,12 @@ SH_IMPL_FRM(D0, 04) {
 }
 
 SH_IMPL_FRM(D0, 05) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 1);
 }
 
 SH_IMPL_FRM(D0, 07) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 2);
 }
 
@@ -178,7 +178,7 @@ SH_IMPL_FRM(D0, 08) {
 }
 
 SH_IMPL_FRM(D0, 09) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 3);
 }
 
@@ -187,62 +187,62 @@ SH_IMPL_FRM(D0, 10) {
 }
 
 SH_IMPL_FRM(D0, 11) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 4);
 }
 
 SH_IMPL_FRM(D0, 12) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 5);
 }
 
 SH_IMPL_FRM(D0, 14) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 6);
 }
 
 SH_IMPL_FRM(D0, 16) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 7);
 }
 
 SH_IMPL_FRM(D0, 18) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 8);
 }
 
 SH_IMPL_FRM(D0, 20) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 9);
 }
 
 SH_IMPL_FRM(D0, 22) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 10);
 }
 
 SH_IMPL_FRM(D0, 24) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 11);
 }
 
 SH_IMPL_FRM(D0, 26) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 12);
 }
 
 SH_IMPL_FRM(D0, 28) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 13);
 }
 
 SH_IMPL_FRM(D0, 30) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 14);
 }
 
 SH_IMPL_FRM(D0, 31) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 15);
 }
 
@@ -253,7 +253,7 @@ SH_IMPL_FRM(D0, 32) {
 SH_IMPL_FRM(D0, 34) {
 	state.finish = 1;
 	state.frameNo = 0;
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 }
 
 } // End of namespace Snatcher

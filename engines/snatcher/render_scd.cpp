@@ -20,23 +20,25 @@
 */
 
 
+#include "common/debug.h"
 #include "common/endian.h"
 #include "graphics/segagfx.h"
 #include "snatcher/graphics.h"
+#include "snatcher/palette.h"
 #include "snatcher/render.h"
 #include "snatcher/resource.h"
+#include "snatcher/scroll.h"
 #include "snatcher/util.h"
 
 namespace Snatcher {
 
-struct Sprite {
-	Sprite() : enable(0), delay(0), f4(0), drawFlags(0), posX(0), posY(0), fe(0), f10(0), f11(0), f12(0), f13(0), f14(0), f15(0), f16(0), f18(0), f1c(0), f20(0), f24(0), controlFlags(0), f26(0), f27(0), frame(0), f2a(0), f2c(0), f2d(0), offs_2e(0), res(), animData(0), spriteData(0), speedX(0), speedY(0), prev(0), next(0), next2(0), f4e(0), f4f(0) {}
+struct AnimObject {
+	AnimObject() : enable(0), delay(0), drawFlags(0), posX(0), posY(0), speedXa(0), speedYa(0), f16(0), f18(0), f1c(0), timeStamp(0), f24(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), f2c(0), f2d(0), spriteTableLocation(0), res(), scriptData(), spriteData(0), speedX(0), speedY(0), parent(0), children(0), next(0), f4e(0), f4f(0) {}
 
 	void clear() {
-		*this = Common::move(Sprite());
+		*this = Common::move(AnimObject());
 		/*enable = 0;
 		delay = 0;
-		f4 = 0;
 		drawFlags = 0;
 		posX = 0;
 		posY = 0;
@@ -51,6 +53,9 @@ struct Sprite {
 		f18 = 0;
 		f1c = 0;
 		f20 = 0;
+		f21 = 0;
+		f22 = 0;
+		f23 = 0;
 		f24 = 0;
 		controlFlags = 0;
 		f26 = 0;
@@ -74,41 +79,35 @@ struct Sprite {
 
 	uint16 enable;
 	uint16 delay;
-	uint8 f4;
-	uint8 drawFlags;
+	uint16 drawFlags;
 	uint32 posX;
 	uint32 posY;
 
-	uint16 fe;
-	uint8 f10;
-	uint8 f11;
-	uint16 f12;
-	uint8 f13;
-	uint8 f14;
-	uint8 f15;
+	uint32 speedXa;
+	uint32 speedYa;
 	uint8 f16;
 	uint16 f18;
 	uint8 f1c;
-	uint32 f20;
+	uint8 timeStamp;
 	uint8 f24;
 	uint8 controlFlags;
-	uint8 f26;
-	uint8 f27;
+	uint8 allowFrameDrop;
+	uint8 frameSeqCounter;
 	uint16 frame;
-	int16 f2a;
+	int16 frameDelay;
 	uint8 f2c;
 	uint8 f2d;
 
-	uint32 offs_2e;
+	uint32 spriteTableLocation;
 	ResourcePointer res;
-	const uint8 *animData;
+	ResourcePointer scriptData;
 	const uint16 *spriteData;
 
-	int32 speedX;
-	int32 speedY;
-	uint16 prev;
+	uint32 speedX;
+	uint32 speedY;
+	uint16 parent;
+	uint16 children;
 	uint16 next;
-	uint16 next2;
 	uint8 f4e;
 	uint8 f4f;
 };
@@ -116,20 +115,25 @@ struct Sprite {
 class GraphicsEngine;
 class Renderer_SCD : public Renderer {
 public:
-	Renderer_SCD(GraphicsEngine::State &state);
+	Renderer_SCD(GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr);
 	~Renderer_SCD() override;
 
-	void enqueueCopyCommands(ResourcePointer &res) override;
-	void doCommand(uint8 cmd) override;
+	bool enqueueCopyCommands(ResourcePointer &res) override;
 	void clearCopyCommands() override;
 	void initData(ResourcePointer &res, uint8 mode) override;
-	void initSprites(ResourcePointer &res, uint16 len) override;
-	void linkSprites(ResourcePointer &res, uint16 len) override;
-	void clearSprites(int mode = 0) override;
+	void initAnimations(ResourcePointer &res, uint16 len) override;
+	void linkAnimations(ResourcePointer &res, uint16 len) override;
+	void clearAnimations(int mode = 0) override;
 	void setPlaneMode(uint16 mode) override;
 
 	void updateScreen(uint8 *screen) override;
 	void updateAnimations() override;
+
+	void anim_setControlFlags(uint8 animObjId, int flags) override;
+	void anim_clearControlFlags(uint8 animObjId, int flags) override;
+	void anim_setFrame(uint8 animObjId, uint16 frameNo) override;
+	uint16 anim_getCurFrameNo(uint8 animObjId) const override;
+	bool anim_isEnabled(uint8 animObjId) const override;
 
 	uint16 screenWidth() const override { return _screenWidth; }
 	uint16 screenHeight() const override { return _screenHeight; }
@@ -138,14 +142,13 @@ private:
 	void loadDataFromGfxScript();
 	void executeCopyCommands();
 	void drawSprites();
-	void executeGfxCommands();
 	void reconfigPlanes();
 	void updateScrollState();
 
-	void drawSprite(Sprite &a);
-	void updateAnim32Spec(Sprite &s);
-	bool updateAnimationsFlag4(Sprite &s);
-	void runAnimScript(Sprite &s);
+	void drawSprite(AnimObject &a);
+	void updateAnim32Spec(AnimObject &a);
+	bool reachedAudioTimeStamp(AnimObject &a) const;
+	void runAnimScript(AnimObject &a);
 
 	const uint16 _screenWidth, _screenHeight;
 
@@ -157,19 +160,12 @@ private:
 	uint16 _clearFlags;
 	uint8 _mode;
 	uint8 _modeChange;
-	int16 _vScrollStateA;
-	int16 _vScrollStateB;
-	int16 _hScrollStateA;
-	int16 _hScrollStateB;
-	uint16 *_hScrollTable;
-	uint16 _hScrollTableLen;
-	bool _scrollStateChanged;
-	bool _vScrollDisable;
-
 	Graphics::SegaRenderer *_sr;
+	Palette *_pal;
+	ScrollManager *_scroll;
 
 private:
-	Sprite *_sprites;
+	AnimObject *_animations;
 
 	struct CopyCommand {
 		CopyCommand() : cmd(0), progress(0), ptr(0), res(), c(0), d(0) {}
@@ -192,60 +188,61 @@ private:
 	CopyCommand *_copyCommands;
 
 private:
-	typedef Common::Functor2Mem<Sprite&, const uint8*, int, Renderer_SCD> GfxAnimFunc;
+	typedef Common::Functor2Mem<AnimObject&, const uint8*, int, Renderer_SCD> GfxAnimFunc;
 	Common::Array<GfxAnimFunc*> _animProcs;
 
 	void makeAnimFunctions();
 
-	int anim_00(Sprite &s, const uint8 *data);
-	int anim_01(Sprite &s, const uint8 *data);
-	int anim_02(Sprite &s, const uint8 *data);
-	int anim_03(Sprite &s, const uint8 *data);
-	int anim_04(Sprite &s, const uint8 *data);
-	int anim_05(Sprite &s, const uint8 *data);
-	int anim_06(Sprite &s, const uint8 *data);
-	int anim_07(Sprite &s, const uint8 *data);
-	int anim_08(Sprite &s, const uint8 *data);
-	int anim_09(Sprite &s, const uint8 *data);
-	int anim_10(Sprite &s, const uint8 *data);
-	int anim_11(Sprite &s, const uint8 *data);
-	int anim_12(Sprite &s, const uint8 *data);
-	int anim_13(Sprite &s, const uint8 *data);
-	int anim_14(Sprite &s, const uint8 *data);
-	int anim_15(Sprite &s, const uint8 *data);
-	int anim_16(Sprite &s, const uint8 *data);
-	int anim_20(Sprite &s, const uint8 *data);
-	int anim_21(Sprite &s, const uint8 *data);
-	int anim_22(Sprite &s, const uint8 *data);
-	int anim_23(Sprite &s, const uint8 *data);
-	int anim_24(Sprite &s, const uint8 *data);
-	int anim_25(Sprite &s, const uint8 *data);
-	int anim_27(Sprite &s, const uint8 *data);
-	int anim_28(Sprite &s, const uint8 *data);
-	int anim_29(Sprite &s, const uint8 *data);
-	int anim_30(Sprite &s, const uint8 *data);
-	int anim_31(Sprite &s, const uint8 *data);
-	int anim_32(Sprite &s, const uint8 *data);
-	int anim_34(Sprite &s, const uint8 *data);
-	int anim_35(Sprite &s, const uint8 *data);
-	int anim_36(Sprite &s, const uint8 *data);
-	int anim_37(Sprite &s, const uint8 *data);
-	int anim_38(Sprite &s, const uint8 *data);
-	int anim_39(Sprite &s, const uint8 *data);
-	int anim_40(Sprite &s, const uint8 *data);
-	int anim_41(Sprite &s, const uint8 *data);
-	int anim_42(Sprite &s, const uint8 *data);
-	int anim_43(Sprite &s, const uint8 *data);
-	int anim_44(Sprite &s, const uint8 *data);
-	int anim_45(Sprite &s, const uint8 *data);
-	int anim_46(Sprite &s, const uint8 *data);
-	int anim_47(Sprite &s, const uint8 *data);
-	int anim_99(Sprite &s, const uint8 *data);
+	int anim_remove(AnimObject &a, const uint8 *data);
+	int anim_setFrame(AnimObject &a, const uint8 *data);
+	int anim_seqSetFrame(AnimObject &a, const uint8 *data);
+	int anim_rndSeqSetFrame(AnimObject &a, const uint8 *data);
+	int anim_setX(AnimObject &a, const uint8 *data);
+	int anim_setY(AnimObject &a, const uint8 *data);
+	int anim_06(AnimObject &a, const uint8 *data);
+	int anim_07(AnimObject &a, const uint8 *data);
+	int anim_palEvent(AnimObject &a, const uint8 *data);
+	int anim_palReset(AnimObject &a, const uint8 *data);
+	int anim_copyCmds(AnimObject &a, const uint8 *data);
+	int anim_11(AnimObject &a, const uint8 *data);
+	int anim_12(AnimObject &a, const uint8 *data);
+	int anim_13(AnimObject &a, const uint8 *data);
+	int anim_14(AnimObject &a, const uint8 *data);
+	int anim_15(AnimObject &a, const uint8 *data);
+	int anim_pause(AnimObject &a, const uint8 *data);
+	int anim_resumeAndUnsyncOther(AnimObject &a, const uint8 *data);
+	int anim_removeOther(AnimObject &a, const uint8 *data);
+	int anim_pauseAndHideOther(AnimObject &a, const uint8 *data);
+	int anim_hide(AnimObject &a, const uint8 *data);
+	int anim_24(AnimObject &a, const uint8 *data);
+	int anim_audioSync(AnimObject &a, const uint8 *data);
+	int anim_27(AnimObject &a, const uint8 *data);
+	int anim_28(AnimObject &a, const uint8 *data);
+	int anim_29(AnimObject &a, const uint8 *data);
+	int anim_30(AnimObject &a, const uint8 *data);
+	int anim_31(AnimObject &a, const uint8 *data);
+	int anim_setDrawFlags(AnimObject &a, const uint8 *data);
+	int anim_34(AnimObject &a, const uint8 *data);
+	int anim_35(AnimObject &a, const uint8 *data);
+	int anim_36(AnimObject &a, const uint8 *data);
+	int anim_37(AnimObject &a, const uint8 *data);
+	int anim_38(AnimObject &a, const uint8 *data);
+	int anim_39(AnimObject &a, const uint8 *data);
+	int anim_40(AnimObject &a, const uint8 *data);
+	int anim_41(AnimObject &a, const uint8 *data);
+	int anim_42(AnimObject &a, const uint8 *data);
+	int anim_43(AnimObject &a, const uint8 *data);
+	int anim_allowFrameDrop(AnimObject &a, const uint8 *data);
+	int anim_45(AnimObject &a, const uint8 *data);
+	int anim_46(AnimObject &a, const uint8 *data);
+	int anim_47(AnimObject &a, const uint8 *data);
+
+	int anim_updateFrameDelay(AnimObject &a, const uint8 *data);
+	void anim_setGroupParameter(AnimObject &a, int pata, uint16 val = 0, bool recursive = false);
 };
 
-Renderer_SCD::Renderer_SCD(GraphicsEngine::State &state) : Renderer(state), _screenWidth(256), _screenHeight(224), _transferData(), _transferMode(0),
-	_transferDelay(0), _clearFlags(0), _mode(1), _modeChange(0), _tempBuffer(nullptr), _spriteBuffer(nullptr), _sr(nullptr), _sprites(nullptr), _copyCommands(nullptr),
-	_vScrollStateA(0), _vScrollStateB(0), _hScrollStateA(0), _hScrollStateB(0), _hScrollTable(nullptr), _hScrollTableLen(0), _vScrollDisable(false), _scrollStateChanged(false) {
+Renderer_SCD::Renderer_SCD(GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr) : Renderer(state), _pal(pal), _scroll(scr), _screenWidth(256), _screenHeight(224), _transferData(), _transferMode(0),
+	_transferDelay(0), _clearFlags(0), _mode(1), _modeChange(0), _tempBuffer(nullptr), _spriteBuffer(nullptr), _sr(nullptr), _animations(nullptr), _copyCommands(nullptr) {
 
 	makeAnimFunctions();
 
@@ -258,14 +255,11 @@ Renderer_SCD::Renderer_SCD(GraphicsEngine::State &state) : Renderer(state), _scr
 	_spriteBuffer = new uint16[0x100]();
 	assert(_spriteBuffer);
 
-	_sprites = new Sprite[64];
-	assert(_sprites);
+	_animations = new AnimObject[64];
+	assert(_animations);
 
 	_copyCommands = new CopyCommand[7];
 	assert(_copyCommands);
-
-	_hScrollTable = new uint16[0x200]();
-	assert(_hScrollTable);
 
 	_sr->setResolution(_screenWidth, _screenHeight);
 	_sr->setupWindowPlane(0, 0, Graphics::SegaRenderer::kWinToLeft, Graphics::SegaRenderer::kWinToTop);
@@ -280,15 +274,14 @@ Renderer_SCD::~Renderer_SCD() {
 	delete _sr;
 	delete[] _tempBuffer;
 	delete[] _spriteBuffer;
-	delete[] _sprites;
+	delete[] _animations;
 	delete[] _copyCommands;
-	delete[] _hScrollTable;
 
 	for (uint i = 0; i < _animProcs.size(); ++i) \
 		delete _animProcs[i];
 }
 
-void Renderer_SCD::enqueueCopyCommands(ResourcePointer &res) {
+bool Renderer_SCD::enqueueCopyCommands(ResourcePointer &res) {
 	for (CopyCommand *it = _copyCommands; it < &_copyCommands[7]; ++it) {
 		if (it->cmd != 0)
 			continue;
@@ -296,44 +289,9 @@ void Renderer_SCD::enqueueCopyCommands(ResourcePointer &res) {
 		it->cmd = *res++;
 		it->progress = 0;
 		it->ptr = ++res;
-		break;
+		return true;
 	}
-}
-
-void Renderer_SCD::doCommand(uint8 cmd) {
-	struct CmdState {
-		bool needScroll;
-		uint16 word1;
-		uint16 word2;
-		uint16 word3;
-		uint16 word4;
-		uint8 cmd_7orabove;
-		uint8 cmd_0to6;
-		uint8 cmd_FF_or_FC;
-		uint16 word18;
-		uint16 word1C;
-		uint16 word28;
-		uint16 word2C;
-		uint16 word30;
-		uint16 word34;
-		uint16 word38;
-		uint16 word3C;
-	} _cmdState;
-
-	_gfxState.setVar(3, 1);
-
-	if (cmd == 0xFF || cmd == 0xFC) {
-		memset(&_cmdState, 0, sizeof(_cmdState));
-		_hScrollStateA = _hScrollStateB = _vScrollStateA = _vScrollStateB = 0;
-		_cmdState.cmd_FF_or_FC = cmd;
-	} else {
-		if (cmd >= 7 && cmd != 0xFD) {
-			_cmdState.cmd_7orabove = cmd;
-		} else {
-			_cmdState.cmd_0to6 = cmd;
-			_cmdState.needScroll = (cmd < 3) ? cmd : 0;
-		}
-	}
+	return false;
 }
 
 void Renderer_SCD::clearCopyCommands() {
@@ -346,68 +304,66 @@ void Renderer_SCD::initData(ResourcePointer &res, uint8 mode) {
 	_transferMode = mode;
 }
 
-void Renderer_SCD::initSprites(ResourcePointer &res, uint16 len) {
-	const uint8 *next = res + len;
-	const uint8 *data = res();
-	while (data < next) {
-		assert(*data < (64 * sizeof(Sprite)));
-		Sprite *s = &_sprites[*data++];
-		if (s->enable)
+void Renderer_SCD::initAnimations(ResourcePointer &res, uint16 len) {
+	ResourcePointer next = res + len;
+	ResourcePointer in = res;
+	while (in < next) {
+		assert(in[0] < 64);
+		AnimObject *a = &_animations[*in++];
+		if (a->enable)
 			return;
 
-		s->clear();
-		s->enable = 1;
-		s->res = res;
-		s->controlFlags = *data++;
-		s->posX = READ_BE_UINT16(data);
-		data += 2;
-		s->posY = READ_BE_UINT16(data);
-		data += 2;
-		s->offs_2e = READ_BE_UINT32(data);
-		data += 4;
-		s->animData = data + READ_BE_UINT16(data) + 2;
-		data += 2;
-		s->frame = 0xFFFF;
+		a->clear();
+		a->enable = 1;
+		a->res = res;
+		a->controlFlags = *in++;
+		a->posX = in.readIncrSINT16() << 16;
+		a->posY = in.readIncrSINT16() << 16;
+		a->spriteTableLocation = in.readIncrUINT32();
+		int16 offs = in.readIncrSINT16();
+		a->scriptData = in + offs;
+		a->frame = 0xFFFF;
 
-		uint8 v = *s->animData;
+		uint8 cmd = a->scriptData[0];
 		for (bool l = true; l; ) {
-			if (v == 0xA1 || v == 0xA7) {
-				s->f16 = s->animData[1];
-				v = s->animData[4];
+			if (cmd == 0xA1 || cmd == 0xA7) {
+				a->f16 = a->scriptData[1];
+				cmd = a->scriptData[4];
+				assert(cmd != 0xA1 && cmd != 0xA7); // The original code would theoretically allow a deadlock here.
 			} else {
-				if (!(v & 0x80))
-					s->spriteData = reinterpret_cast<const uint16*>(res.makeAbsPtr(s->offs_2e).getDataFromTable(v)());
+				if (!(cmd & 0x80))
+					a->spriteData = reinterpret_cast<const uint16*>(res.makeAbsPtr(a->spriteTableLocation).getDataFromTable(cmd)());
 				l = false;
 			}
 		}
 	}
 }
 
-void Renderer_SCD::linkSprites(ResourcePointer &res, uint16 len) {
-	const uint8 *next = res + len;
-	const uint8 *data = res();
-	while (data < next) {
-		uint16 i1 = *data++;
-		uint16 i2 = *data++;
-		assert(i1 < ARRAYSIZE(_sprites) && i2 < ARRAYSIZE(_sprites));
-		Sprite *s1 = &_sprites[i1];
-		Sprite *s2 = &_sprites[i2];
-		s2->next2 = s1->next;
-		s1->next = i2;
-		s2->prev = i1;
+void Renderer_SCD::linkAnimations(ResourcePointer &res, uint16 len) {
+	ResourcePointer next = res + len;
+	ResourcePointer in = res;
+	while (in < next) {
+		uint16 p = *in++;
+		uint16 c = *in++;
+		assert(p < 64 && c < 64);
+		AnimObject *pPr = &_animations[p];
+		AnimObject *pCh = &_animations[c];
+		pCh->next = pPr->children;
+		pPr->children = c;
+		pCh->parent = p;
 	}
 }
 
-void Renderer_SCD::clearSprites(int mode) {
+void Renderer_SCD::clearAnimations(int mode) {
 	if (mode) {
 		for (int i = 1; i < 64; ++i) {
-			Sprite *s = &_sprites[i];
+			AnimObject *s = &_animations[i];
 			if (s->enable && !(s->f4e & 1))
 				s->clear();
 		}
 	} else {
 		for (int i = 1; i < 64; ++i)
-			_sprites[i].clear();
+			_animations[i].clear();
 	}
 }
 void Renderer_SCD::setPlaneMode(uint16 mode) {
@@ -433,50 +389,75 @@ void Renderer_SCD::updateScreen(uint8 *screen) {
 	loadDataFromGfxScript();
 	executeCopyCommands();
 	drawSprites();
-	executeGfxCommands();
+	updateScrollState();
 
 	_sr->render(screen);
 }
 
-uint16 _anima_a1 = 0;
-uint16 _anima_a2 = 0;
-uint16 _anima_a3 = 0;
 void Renderer_SCD::updateAnimations() {
-	for (Sprite *s = _sprites; s < &_sprites[64]; ++s) {
-		_anima_a2 = _anima_a1;
-		if ((s->f1c || s->f26) && _anima_a3)
+	for (AnimObject *s = _animations; s < &_animations[64]; ++s) {
+		int16 dropFrames = _gfxState.getDropFrames();
+		if ((s->f1c || s->allowFrameDrop) && _gfxState.getVar(10))
 			continue;
-
+		if (dropFrames)
+			debug("%s(): Dropping %d frames for anim %d", __FUNCTION__, dropFrames, s - _animations);
 		do {
 			if (!s->enable)
 				break;
-			if (s->controlFlags & 4) {
-				if (updateAnimationsFlag4(*s))
+			if (s->controlFlags & GraphicsEngine::kAnimAudioSync) {
+				if (!reachedAudioTimeStamp(*s))
 					break;
-				s->controlFlags &= ~4;
+				s->controlFlags &= ~GraphicsEngine::kAnimAudioSync;
 			}
-			runAnimScript(*s);
-			if (--_anima_a2 < 0)
+			if (s->controlFlags & GraphicsEngine::kAnimPause)
 				break;
-		} while (s->f26);
+
+			runAnimScript(*s);
+
+		} while (--dropFrames >= 0 && s->allowFrameDrop);
 	}
 
-	for (Sprite *s = _sprites; s < &_sprites[64]; ++s) {
-		if (!s->enable || (s->f1c & _anima_a3))
+	for (AnimObject *s = _animations; s < &_animations[64]; ++s) {
+		if (!s->enable || (s->f1c & _gfxState.getVar(10)))
 			continue;
 
-		uint16 offs = s->frame == 0xFFFF ? 0 : s->frame;
-		const uint8 *in = &s->animData[offs << 2];
-		if (!(*in & 0x80))
-			s->spriteData = reinterpret_cast<const uint16*>(s->res.makeAbsPtr(s->offs_2e).getDataFromTable(*in)());
+		uint8 cmd = s->scriptData[(s->frame == 0xFFFF ? 0 : s->frame) << 2];
+		if (!(cmd & 0x80))
+			s->spriteData = reinterpret_cast<const uint16*>(s->res.makeAbsPtr(s->spriteTableLocation).getDataFromTable(cmd)());
 
-		if (s->controlFlags & 1) {
+		if (!(s->controlFlags & GraphicsEngine::kAnimPause)) {
 			s->posX += s->speedX;
 			s->posY += s->speedY;
 		}
 	}
-
 }
+
+void Renderer_SCD::anim_setControlFlags(uint8 animObjId, int flags) {
+	assert(animObjId < 64);
+	flags &= 7;
+	_animations[animObjId].controlFlags |= flags;
+}
+
+void Renderer_SCD::anim_clearControlFlags(uint8 animObjId, int flags) {
+	assert(animObjId < 64);
+	_animations[animObjId].controlFlags &= ~flags;
+}
+
+void Renderer_SCD::anim_setFrame(uint8 animObjId, uint16 frameNo) {
+	assert(animObjId < 64);
+	_animations[animObjId].frame = frameNo;
+}
+
+uint16 Renderer_SCD::anim_getCurFrameNo(uint8 animObjId) const {
+	assert(animObjId < 64);
+	return _animations[animObjId].frame;
+}
+
+bool Renderer_SCD::anim_isEnabled(uint8 animObjId) const {
+	assert(animObjId < 64);
+	return _animations[animObjId].enable != 0;
+}
+
 void Renderer_SCD::loadDataFromGfxScript() {
 	if (_gfxState.getVar(0)) {
 		if (_gfxState.getVar(0) == 1) {
@@ -496,17 +477,16 @@ void Renderer_SCD::loadDataFromGfxScript() {
 		return;
 	}
 
-	if (*reinterpret_cast<const uint16*>(_transferData()) == 0xFFFF) {
+	if (_transferData.readUINT16() == 0xFFFF) {
 		_gfxState.setVar(8, 0);
 		return;
 	}
 
-	_transferDelay = READ_BE_UINT16(_transferData() + 4);
-	const byte *src = _transferData.makeAbsPtr(READ_BE_UINT32(_transferData()) & 0xFFFFFF)();
-	uint16 addr = READ_BE_UINT16(_transferData() + 6);
+	const byte *src = _transferData.makeAbsPtr(_transferData.readIncrUINT32() & 0xFFFFFF)();
+	_transferDelay = _transferData.readIncrUINT16();
+	uint16 addr = _transferData.readIncrUINT16();
 
 	if (!_transferMode) {
-		_transferData += 8;
 		uint32 len = READ_BE_UINT16(src);
 		if (len != Util::decodeSCDData(src + 2, _tempBuffer))
 			error("%s(): Decode size mismatch", __FUNCTION__);
@@ -560,14 +540,15 @@ void Renderer_SCD::executeCopyCommands() {
 		uint8 b = 0;
 
 		if ((it->cmd & 0x0F) < 4 && (it->cmd & 0x0F) != 1 && !(it->cmd & 0x80)) {
-			uint32 len = READ_BE_UINT16(it->ptr);
-			if (len != Util::decodeSCDData(it->ptr + 2, s))
+			const uint8 *cmp = it->res.makeAbsPtr(READ_BE_UINT32(it->ptr))();
+			uint32 len = READ_BE_UINT16(cmp);
+			if (len != Util::decodeSCDData(cmp + 2, s))
 				error("%s(): Decode size mismatch", __FUNCTION__);
 		}
 
 		switch (it->cmd & 0x0F) {
 		case 0:
-			_sr->loadToVRAM(s + READ_BE_UINT16(it->ptr + 6), READ_BE_UINT16(it->ptr + 8), READ_BE_UINT16(it->ptr + 4));
+			_sr->loadToVRAM(s + READ_BE_INT16(it->ptr + 6), READ_BE_UINT16(it->ptr + 8), READ_BE_UINT16(it->ptr + 4));
 			it->ptr += 10;
 			if (READ_BE_UINT16(it->ptr) == 0xFFFF) {
 				it->cmd = 0;
@@ -576,8 +557,8 @@ void Renderer_SCD::executeCopyCommands() {
 			break;
 		case 1:
 			for (bool rept = true; rept; ) {
-				memcpy(s + READ_BE_UINT16(it->ptr + 6), it->res.makeAbsPtr(READ_BE_UINT32(it->ptr))(), READ_BE_UINT16(it->ptr + 8));
-				_sr->loadToVRAM(s + READ_BE_UINT16(it->ptr + 6), READ_BE_UINT16(it->ptr + 8), READ_BE_UINT16(it->ptr + 4));
+				memcpy(s + READ_BE_INT16(it->ptr + 6), it->res.makeAbsPtr(READ_BE_UINT32(it->ptr))(), READ_BE_UINT16(it->ptr + 8));
+				_sr->loadToVRAM(s + READ_BE_INT16(it->ptr + 6), READ_BE_UINT16(it->ptr + 8), READ_BE_UINT16(it->ptr + 4));
 				it->ptr += 10;
 				if (READ_BE_UINT16(it->ptr) == 0xFFFF) {
 					it->cmd = 0;
@@ -588,7 +569,7 @@ void Renderer_SCD::executeCopyCommands() {
 		case 2:
 			it->cmd |= 0x80;
 			for (bool rept = true; rept; ) {
-				_sr->loadToVRAM(s + READ_BE_UINT16(it->ptr + 6), READ_BE_UINT16(it->ptr + 8), READ_BE_UINT16(it->ptr + 4));
+				_sr->loadToVRAM(s + READ_BE_INT16(it->ptr + 6), READ_BE_UINT16(it->ptr + 8), READ_BE_UINT16(it->ptr + 4));
 				if (bptr)
 					it->ptr = bptr;
 				it->ptr += 10;
@@ -601,10 +582,11 @@ void Renderer_SCD::executeCopyCommands() {
 			}
 			break;
 		case 3:
+			it->cmd |= 0x80;
 			a = it->progress & 7;
 			b = (a + (((it->progress >> 3) * 5) & 7)) & 7;
 			a = (a << 2) + offs[b];
-			s += (a + READ_BE_UINT16(it->ptr + 6));
+			s += (a + READ_BE_INT16(it->ptr + 6));
 			b = mask[b];
 			a = READ_BE_UINT16(it->ptr + 8) >> 5;
 			while (a--) {
@@ -612,7 +594,7 @@ void Renderer_SCD::executeCopyCommands() {
 				s += 32;
 			}
 			s = _tempBuffer + section * 0x2000;
-			_sr->loadToVRAM(s + READ_BE_UINT16(it->ptr + 6), READ_BE_UINT16(it->ptr + 8), READ_BE_UINT16(it->ptr + 4));
+			_sr->loadToVRAM(s + READ_BE_INT16(it->ptr + 6), READ_BE_UINT16(it->ptr + 8), READ_BE_UINT16(it->ptr + 4));
 			if (++it->progress == 65)
 				it->cmd = 0;
 			break;
@@ -640,16 +622,12 @@ void Renderer_SCD::executeCopyCommands() {
 
 void Renderer_SCD::drawSprites() {
 	for (int i = 63; i >= 0; --i) {
-		Sprite &s = _sprites[i];
-		if (s.enable && s.spriteData != nullptr && !(s.controlFlags & 2) && s.delay != 0xFFFF && !(s.delay & _gfxState.frameCount()))
-			drawSprite(s);
+		AnimObject &a = _animations[i];
+		if (a.enable && a.spriteData != nullptr && !(a.controlFlags & GraphicsEngine::kAnimHide) && a.delay != 0xFFFF && !(a.delay & _gfxState.frameCount()))
+			drawSprite(a);
 		if (i == 32)
-			updateAnim32Spec(s);
+			updateAnim32Spec(a);
 	}
-}
-
-void Renderer_SCD::executeGfxCommands() {
-
 }
 
 static const uint8 src0000[] = {
@@ -1098,64 +1076,67 @@ void Renderer_SCD::reconfigPlanes() {
 }
 
 void Renderer_SCD::updateScrollState() {
-	if (!_scrollStateChanged)
+	if (!_scroll->nextFrame())
 		return;
 
-	if (!_vScrollDisable) {
-		_sr->writeUint16VSRAM(0, TO_BE_16((uint16)(-_vScrollStateA) & 0x3FF));
-		_sr->writeUint16VSRAM(2, TO_BE_16((uint16)(-_vScrollStateB) & 0x3FF));
+	const ScrollManager::ScrollState &s = _scroll->getState();
+
+	if (!s.disableVScroll) {
+		_sr->writeUint16VSRAM(0, TO_BE_16(s.offsets[ScrollManager::kVertA] & 0x3FF));
+		_sr->writeUint16VSRAM(2, TO_BE_16(s.offsets[ScrollManager::kVertB] & 0x3FF));
 	}
 
-	if (_hScrollTableLen) {
-		_sr->loadToVRAM(_hScrollTable, 0x400, 0xF800);
+	if (s.lineScrollMode) {
+		for (int i = 0; i < s.hScrollTableNumEntries; ++i)
+			_sr->writeUint16VRAM(0xF822 + i * 4, TO_BE_16(s.hScrollTable[i] & 0x3FF));
 	} else {
 		uint16 addr = _mode ? 0xF800 : 0xB800;
-		_sr->writeUint16VRAM(addr, TO_BE_16((uint16)_hScrollStateA & 0x3FF));
-		_sr->writeUint16VRAM(addr + 2, TO_BE_16((uint16)_hScrollStateB & 0x3FF));
+		_sr->writeUint16VRAM(addr, TO_BE_16(s.offsets[ScrollManager::kHorzA] & 0x3FF));
+		_sr->writeUint16VRAM(addr + 2, TO_BE_16(s.offsets[ScrollManager::kHorzB] & 0x3FF));
 	}
-
-	_scrollStateChanged = false;
 }
 
-void Renderer_SCD::drawSprite(Sprite &s) {
-	const uint16 *in = s.spriteData;
+void Renderer_SCD::drawSprite(AnimObject &a) {
+	const uint16 *in = a.spriteData;
 	uint16 num = FROM_BE_16(*in++);
 	uint16 *d = _spriteBuffer;
 	memset(d, 0, 8);
 	int nxt = 1;
 
-	uint32 curY = s.posY + 0x800000;
-	uint32 curX = s.posX + 0x800000;
+	uint32 curY = a.posY + 0x800000;
+	uint32 curX = a.posX + 0x800000;
 
-	if (s.drawFlags & 4) {
-		curX += _hScrollStateA;
-		curY += _vScrollStateA;
+	if (a.drawFlags & 4) {
+		const ScrollManager::ScrollState &s = _scroll->getState();
+		curX += s.offsets[ScrollManager::kHorzA];
+		curY += s.offsets[ScrollManager::kVertA];
 	}
 
-	if (s.drawFlags & 8) {
-		curX += _hScrollStateB;
-		curY += _vScrollStateB;
+	if (a.drawFlags & 8) {
+		const ScrollManager::ScrollState &s = _scroll->getState();
+		curX += s.offsets[ScrollManager::kHorzB];
+		curY += s.offsets[ScrollManager::kVertB];
 	}
 
-	uint16 flip = (s.drawFlags & 3) << 11;
-	uint16 p = ((s.f18 & 4) << 13) | ((s.f18 & 0xF8) >> 3);
+	uint16 flip = (a.drawFlags & 3) << 11;
+	uint16 p = ((a.f18 & 4) << 13) | ((a.f18 & 0xF8) >> 3);
 
 	for (int i = 0; i < num && nxt < 65; ++i) {
 		uint16 origY = FROM_BE_16(*in++);
 		uint16 hw = FROM_BE_16(*in++);
 
-		if (s.drawFlags & 2)
+		if (a.drawFlags & 2)
 			origY = -origY - (((hw >> 5) & 0x18) + 8);
 
 		uint16 tl = FROM_BE_16(*in++);
 		uint16 origX = FROM_BE_16(*in++);
 
-		if (s.drawFlags & 1)
+		if (a.drawFlags & 1)
 			origX = -origX - (((hw >> 7) & 0x18) + 8);
 
 		tl = (tl | p) ^ flip;
-		if (s.f16 & 0x80) {
-			uint16 v = (s.f16 & 3) << 13;
+		if (a.f16 & 0x80) {
+			uint16 v = (a.f16 & 3) << 13;
 			tl = (tl & 0x9FFF) | v;
 		}
 
@@ -1171,77 +1152,80 @@ void Renderer_SCD::drawSprite(Sprite &s) {
 	_sr->loadToVRAM(_spriteBuffer, (d - _spriteBuffer) * sizeof(uint16), 0xFE00);
 }
 
-void Renderer_SCD::updateAnim32Spec(Sprite &s) {
+void Renderer_SCD::updateAnim32Spec(AnimObject &a) {
 
 }
 
-bool Renderer_SCD::updateAnimationsFlag4(Sprite &s) {
-	return false;
+bool Renderer_SCD::reachedAudioTimeStamp(AnimObject &a) const {
+	return _gfxState.getAudioSync() >= a.timeStamp;
 }
 
-void Renderer_SCD::runAnimScript(Sprite &s) {
-	if (--s.f2a > 0) {
-		if (s.animData[s.frame << 2] != 0x97)
-			s.controlFlags &= ~2;
+void Renderer_SCD::runAnimScript(AnimObject &a) {
+	if (--a.frameDelay > 0) {
+		if (a.scriptData[a.frame << 2] != 0x97)
+			a.controlFlags &= ~GraphicsEngine::kAnimHide;
 		return;
 	}
 
-	int incr = (s.f4f == 0) ? 1 : 0;
+	int incr = (a.f4f == 0) ? 1 : 0;
 
 	while (incr != -1) {
-		s.frame += incr;
-		s.controlFlags &= ~2;
-		const uint8 *in = &s.animData[s.frame << 2];
-		uint8 op = *in;
-		if (op < 0x80) {
-			incr = anim_99(s, in + 1);
+		a.frame += incr;
+		a.controlFlags &= ~GraphicsEngine::kAnimHide;
+		const uint8 *in = a.scriptData() + (a.frame << 2);
+		uint8 opcode = *in++;
+		if (opcode & 0x80) {
+			opcode -= 0x80;
+			debug("%s(): anim: %d, opcode %d", __FUNCTION__, &a - _animations, opcode);
+			assert(opcode < _animProcs.size());
+			if (_animProcs[opcode]->isValid())
+				incr = (*_animProcs[opcode])(a, in);
+			else
+				error("%s(): Invalid opcode %d", __FUNCTION__, opcode);
 		} else {
-			op -= 0x80;
-			assert(op < _animProcs.size());
-			if (_animProcs[op]->isValid())
-				incr = (*_animProcs[op])(s, in + 1);
+			incr = anim_updateFrameDelay(a, in);
 		}
 	}
 }
 
 #define ANM(x) &Renderer_SCD::anim_##x
 void Renderer_SCD::makeAnimFunctions() {
-	typedef int (Renderer_SCD::*AnimFunc)(Sprite&, const uint8*);
+	typedef int (Renderer_SCD::*AnimFunc)(AnimObject&, const uint8*);
 	static const AnimFunc funcTbl[] = {
-		ANM(00),
-		ANM(01),
-		ANM(02),
-		ANM(03),
-		ANM(04),
-		ANM(05),
+		ANM(remove),
+		ANM(setFrame),
+		ANM(seqSetFrame),
+		ANM(rndSeqSetFrame),
+		ANM(setX),
+		ANM(setY),
 		ANM(06),
 		ANM(07),
-		ANM(08),
-		ANM(09),
-		ANM(10),
+		ANM(palEvent),
+		ANM(palReset),
+		ANM(copyCmds),
 		ANM(11),
 		ANM(12),
 		ANM(13),
 		ANM(14),
 		ANM(15),
-		ANM(16),
-		ANM(16),
-		ANM(16),
-		ANM(16),
-		ANM(20),
-		ANM(21),
-		ANM(22),
-		ANM(23),
+		ANM(pause),
+		ANM(pause),
+		ANM(pause),
+		ANM(pause),
+		ANM(resumeAndUnsyncOther),
+		ANM(removeOther),
+		ANM(pauseAndHideOther),
+		ANM(hide),
 		ANM(24),
-		ANM(25),
-		ANM(25),
+		ANM(audioSync),
+		ANM(audioSync),
 		ANM(27),
 		ANM(28),
 		ANM(29),
 		ANM(30),
 		ANM(31),
-		ANM(32),
-		ANM(32),
+		ANM(setDrawFlags),
+		ANM(setDrawFlags),
 		ANM(34),
 		ANM(35),
 		ANM(36),
@@ -1252,7 +1236,7 @@ void Renderer_SCD::makeAnimFunctions() {
 		ANM(41),
 		ANM(42),
 		ANM(43),
-		ANM(44),
+		ANM(allowFrameDrop),
 		ANM(45),
 		ANM(46),
 		ANM(47)
@@ -1263,217 +1247,303 @@ void Renderer_SCD::makeAnimFunctions() {
 }
 #undef ANM
 
-int Renderer_SCD::anim_00(Sprite &s, const uint8 *data) {
-	s.clear();
+uint16 animRand(uint16 a, uint16 b) {
+	return ((b * Util::rngMakeNumber()) >> 16) + a;
+}
+
+int Renderer_SCD::anim_remove(AnimObject &a, const uint8 *data) {
+	a.clear();
 	return -1;
 }
 
-int Renderer_SCD::anim_01(Sprite &s, const uint8 *data) {
+int Renderer_SCD::anim_setFrame(AnimObject &a, const uint8 *data) {
+	a.frame = *data;
 	return 0;
 }
 
-int Renderer_SCD::anim_02(Sprite &s, const uint8 *data) {
-	return 0;
-//	return 1;
-}
-
-int Renderer_SCD::anim_03(Sprite &s, const uint8 *data) {
-	return 0;
-	//	return 1;
-}
-
-int Renderer_SCD::anim_04(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_05(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_06(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_07(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_08(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_09(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_10(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_11(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_12(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_13(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_14(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_15(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_16(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_20(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_21(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_22(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_23(Sprite &s, const uint8 *data) {
-	//pl
-	return -1;
-}
-
-int Renderer_SCD::anim_24(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_25(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_27(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_28(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_29(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_30(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_31(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_32(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_34(Sprite &s, const uint8 *data) {
-	return 1;
-	//return -1;
-}
-
-int Renderer_SCD::anim_35(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_36(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_37(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_38(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_39(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_40(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_41(Sprite &s, const uint8 *data) {
-	return 1;
-	//return -1;
-}
-
-int Renderer_SCD::anim_42(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_43(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_44(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_45(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_46(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-int Renderer_SCD::anim_47(Sprite &s, const uint8 *data) {
-	return 1;
-}
-
-uint16 _rand_o_1 = 0;
-uint16 _rand_o_2 = 0;
-
-uint16 arand() {
-	_rand_o_1 += ((_rand_o_1 & 0xFF) << 8);
-	_rand_o_1 += _rand_o_2;
-	_rand_o_1 += ((_rand_o_2 << 8) | (_rand_o_2 >> 8));
-	if ((_rand_o_2 & 0xFF) + (_rand_o_2 >> 8) > 0xFF)
-		_rand_o_1++;
-	_rand_o_2 = (((_rand_o_2 & 0xFF) + (_rand_o_2 >> 8)) & 0xFF) | (_rand_o_2 & 0xFF00);
-	if (_rand_o_2 + 1 > 0xFFFF);
-		_rand_o_1++;
-	_rand_o_2++;
-	return _rand_o_1;
-}
-
-int16 subai(int16 a, int16 b) {
-	return ((b * arand()) >> 16) + a;
-}
-
-int Renderer_SCD::anim_99(Sprite &s, const uint8 *data) {
-	if (*data++) {
-		int d3 = *data++;
-		int d4 = *data++ - d3;
-		s.f2a = subai(d3, d4);
-	} else {
-		s.f2a = READ_BE_INT16(data);
+int Renderer_SCD::anim_seqSetFrame(AnimObject &a, const uint8 *data) {
+	if (a.frameSeqCounter == *data++) {
+		a.frameSeqCounter = 0;
+		return 1;
 	}
+	++a.frameSeqCounter;
+	a.frame = *++data;
+	return 0;
+}
+
+int Renderer_SCD::anim_rndSeqSetFrame(AnimObject &a, const uint8 *data) {
+	if (a.frameSeqCounter == 0)
+		a.frameSeqCounter = animRand(2, (uint16)data[1] - data[0]) & 0xFF;
+	if (a.frameSeqCounter == data[1]) {
+		a.frameSeqCounter = 0;
+		return 1;
+	}
+	++a.frameSeqCounter;
+	a.frame = data[2];
+	return 0;
+}
+
+int Renderer_SCD::anim_setX(AnimObject &a, const uint8 *data) {
+	uint16 xdiff = READ_BE_UINT16(data + 1) - (a.posX >> 16);
+	a.frameDelay = -1;
+	anim_setGroupParameter(a, 0, xdiff);
+	return 1;
+}
+
+int Renderer_SCD::anim_setY(AnimObject &a, const uint8 *data) {
+	uint16 ydiff = READ_BE_UINT16(data + 1) - (a.posY >> 16);
+	a.frameDelay = -1;
+	anim_setGroupParameter(a, 1, ydiff);
+	return 1;
+}
+
+int Renderer_SCD::anim_06(AnimObject &a, const uint8 *data) {
+	a.speedXa = (READ_BE_UINT16(data + 1) << 16) | (*data << 8);
+	anim_setGroupParameter(a, 2);
+	return 1;
+}
+
+int Renderer_SCD::anim_07(AnimObject &a, const uint8 *data) {
+	a.speedYa = (READ_BE_UINT16(data + 1) << 16) | (*data << 8);
+	anim_setGroupParameter(a, 3);
+	return 1;
+}
+
+int Renderer_SCD::anim_palEvent(AnimObject &a, const uint8 *data) {
+	if (_gfxState.getVar(2))
+		return 1;
+	ResourcePointer r = a.scriptData + READ_BE_INT16(data + 1);
+	_pal->enqueueEvent(r);
+	_gfxState.setVar(3, 1);
+	return 1;
+}
+
+int Renderer_SCD::anim_palReset(AnimObject &a, const uint8 *data) {
+	_pal->clearEvents();
+	return 1;
+}
+
+int Renderer_SCD::anim_copyCmds(AnimObject &a, const uint8 *data) {
+	ResourcePointer r = a.scriptData + READ_BE_INT16(data + 1);
+	return enqueueCopyCommands(r) ? 1 : -1;
+}
+
+int Renderer_SCD::anim_11(AnimObject &a, const uint8 *data) {
+	return 1;
+}
+
+int Renderer_SCD::anim_12(AnimObject &a, const uint8 *data) {
+	_scroll->doCommand(1);
+	_scroll->setSingleStep(*data ? ScrollManager::kHorzB : ScrollManager::kHorzA, READ_BE_INT16(data + 1));
+	return 1;
+}
+
+int Renderer_SCD::anim_13(AnimObject &a, const uint8 *data) {
+	_scroll->doCommand(1);
+	_scroll->setSingleStep(*data ? ScrollManager::kVertB : ScrollManager::kVertA, READ_BE_INT16(data + 1));
+	return 1;
+}
+
+int Renderer_SCD::anim_14(AnimObject &a, const uint8 *data) {
+	_scroll->doCommand(2);
+	_scroll->setDirectionAndSpeed(*data ? ScrollManager::kHorzB : ScrollManager::kHorzA, READ_BE_INT16(data + 1));
+	return 1;
+}
+
+int Renderer_SCD::anim_15(AnimObject &a, const uint8 *data) {
+	_scroll->doCommand(2);
+	_scroll->setDirectionAndSpeed(*data ? ScrollManager::kVertB : ScrollManager::kVertA, READ_BE_INT16(data + 1));
+	return 1;
+}
+
+int Renderer_SCD::anim_pause(AnimObject &a, const uint8 *data) {
+	anim_setGroupParameter(a, 5);
+	return 1;
+}
+
+int Renderer_SCD::anim_resumeAndUnsyncOther(AnimObject &a, const uint8 *data) {
+	assert(*data < 64);
+	anim_setGroupParameter(_animations[*data], 4);
+	return 1;
+}
+
+int Renderer_SCD::anim_removeOther(AnimObject &a, const uint8 *data) {
+	assert(*data < 64);
+	_animations[*data].clear();
+	return 1;
+}
+
+int Renderer_SCD::anim_pauseAndHideOther(AnimObject &a, const uint8 *data) {
+	assert(*data < 64);
+	_animations[*data].controlFlags = GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide;
+	return 1;
+}
+
+int Renderer_SCD::anim_hide(AnimObject &a, const uint8 *data) {
+	a.controlFlags |= GraphicsEngine::kAnimHide;
+	return anim_updateFrameDelay(a, data);
+}
+
+int Renderer_SCD::anim_24(AnimObject &a, const uint8 *data) {
+	return 1;
+}
+
+int Renderer_SCD::anim_audioSync(AnimObject &a, const uint8 *data) {
+	a.timeStamp = data[0] << 24 | data[1] << 16 | data[2] << 8;
+	a.controlFlags |= GraphicsEngine::kAnimAudioSync;
+	return 1;
+}
+
+int Renderer_SCD::anim_27(AnimObject &a, const uint8 *data) {
+	return 1;
+}
+
+int Renderer_SCD::anim_28(AnimObject &a, const uint8 *data) {
+	return 1;
+}
+
+int Renderer_SCD::anim_29(AnimObject &a, const uint8 *data) {
+	return 1;
+}
+
+int Renderer_SCD::anim_30(AnimObject &a, const uint8 *data) {
+	return 1;
+}
+
+int Renderer_SCD::anim_31(AnimObject &a, const uint8 *data) {
+	return 1;
+}
+
+int Renderer_SCD::anim_setDrawFlags(AnimObject &a, const uint8 *data) {
+	a.drawFlags = READ_BE_UINT16(data + 1);
+	return 1;
+}
+
+int Renderer_SCD::anim_34(AnimObject &a, const uint8 *data) {
+	a.f4f = 0;
+	if (_gfxState.getVar(8) == 0)
+		return 1;
+	a.f4f = 1;
 	return -1;
 }
 
-Renderer *Renderer::createSegaRenderer(GraphicsEngine::State &state) {
-	return new Renderer_SCD(state);
+int Renderer_SCD::anim_35(AnimObject &a, const uint8 *data) {
+	_gfxState.setVar(5, 1);
+	return 1;
+}
+
+int Renderer_SCD::anim_36(AnimObject &a, const uint8 *data) {
+	_gfxState.setFlag(1, 0);
+	return 1;
+}
+
+int Renderer_SCD::anim_37(AnimObject &a, const uint8 *data) {
+	static const uint8 cmd[] = { 0x25, 0x00 };
+	ResourcePointer r(data, 0);
+	enqueueCopyCommands(r);
+	return 1;
+}
+
+int Renderer_SCD::anim_38(AnimObject &a, const uint8 *data) {
+	return 1;
+}
+
+int Renderer_SCD::anim_39(AnimObject &a, const uint8 *data) {
+	return 1;
+}
+
+int Renderer_SCD::anim_40(AnimObject &a, const uint8 *data) {
+	//gfxDoCommand_D0(*data);
+	return 1;
+}
+
+int Renderer_SCD::anim_41(AnimObject &a, const uint8 *data) {
+	return 1;
+	//return -1;
+}
+
+int Renderer_SCD::anim_42(AnimObject &a, const uint8 *data) {
+	return 1;
+}
+
+int Renderer_SCD::anim_43(AnimObject &a, const uint8 *data) {
+	return 1;
+}
+
+int Renderer_SCD::anim_allowFrameDrop(AnimObject &a, const uint8 *data) {
+	a.allowFrameDrop = 1;
+	return 1;
+}
+
+int Renderer_SCD::anim_45(AnimObject &a, const uint8 *data) {
+	return 1;
+}
+
+int Renderer_SCD::anim_46(AnimObject &a, const uint8 *data) {
+	_gfxState.setFlag(1, 1);
+	return 1;
+}
+
+int Renderer_SCD::anim_47(AnimObject &a, const uint8 *data) {
+	a.f1c = *data;
+	return 1;
+}
+
+int Renderer_SCD::anim_updateFrameDelay(AnimObject &a, const uint8 *data) {
+	if (*data++) {
+		uint16 v1 = *data++;
+		uint16 v2 = *data - v1;
+		a.frameDelay = animRand(v1, v2);
+	} else {
+		a.frameDelay = READ_BE_INT16(data);
+	}
+	debug("%s(): anim: %d, setting delay %d", __FUNCTION__,  &a - _animations, a.frameDelay);
+	return -1;
+}
+
+void Renderer_SCD::anim_setGroupParameter(AnimObject &a, int para, uint16 val, bool recursive) {
+	AnimObject *ta = &a;
+	for (int n = ta->children; n || !recursive; n = recursive ? ta->next : 0) {
+		if (recursive)
+			ta = &_animations[n];
+		switch (para) {
+		case 0:
+			ta->posX += (val << 16);
+			break;
+		case 1:
+			ta->posY += (val << 16);
+			break;
+		case 2:
+			a.speedX = a.speedXa;
+			if (ta->parent)
+				a.speedX += _animations[ta->parent].speedX;
+			break;
+		case 3:
+			a.speedY = a.speedYa;
+			if (ta->parent)
+				a.speedY += _animations[ta->parent].speedY;
+			break;
+		case 4:
+			ta->controlFlags &= GraphicsEngine::kAnimHide;
+			break;
+		case 5:
+			ta->controlFlags |= GraphicsEngine::kAnimPause;
+			break;
+		case 6:
+			ta->controlFlags = GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide;
+			break;
+		default:
+			error("%s(): unhandled para %d", __FUNCTION__, para);
+			break;
+
+		}
+		recursive = true;
+		anim_setGroupParameter(*ta, para, val, true);
+	}
+}
+
+Renderer *Renderer::createSegaRenderer(GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr) {
+	return new Renderer_SCD(state, pal, scr);
 }
 
 } // End of namespace Snatcher

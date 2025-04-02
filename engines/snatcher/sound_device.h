@@ -39,6 +39,8 @@ public:
 	virtual void pcmPlayEffect(int track) = 0;
 	virtual void pcmDoCommand(int cmd, int arg) = 0;
 
+	virtual void pause(bool toggle) = 0;
+
 protected:
 	SoundDevice() : _musicStartTime(0) {}
 

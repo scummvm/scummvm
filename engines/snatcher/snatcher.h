@@ -23,7 +23,7 @@
 #define SNATCHER_H
 
 #include "snatcher/detection.h"
-
+#include "snatcher/info.h"
 #include "engines/engine.h"
 
 class SnatcherMetaEngine;
@@ -57,7 +57,7 @@ private:
 	void updateEvents();
 
 	bool runInitSequence(GameState &state);
-	void updateScene(GameState &state);
+	void updateModuleState(GameState &state);
 
 	// ConfigManager sync
 	void registerDefaultSettings();
@@ -76,9 +76,11 @@ private:
 
 	// Graphics
 	GraphicsEngine *_gfx;
+	VMInfo _gfxInfo;
 
 	// Sound
 	SoundEngine *_snd;
+
 public:
 	// Input
 	byte _commandsFromMain;
