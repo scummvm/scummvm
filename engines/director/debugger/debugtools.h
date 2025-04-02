@@ -27,6 +27,7 @@ namespace DT {
 void onImGuiInit();
 void onImGuiRender();
 void onImGuiCleanup();
+int getSelectedChannel();
 } // namespace DT
 } // namespace Director
 
