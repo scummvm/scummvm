@@ -2506,11 +2506,12 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 
 	// WORKAROUND: In the French VGA floppy version of MI1, the easter egg
 	// poking fun at Sierra has a dark blue background instead of white,
-	// which causes similar legibility issues (the other VGA floppy
-	// translations are fine, and the French VGA Amiga and CD releases
-	// fixed this).
-
-	else if (_vm->_game.id == GID_MONKEY_VGA &&
+	// which causes legibility issues (similar to the ones with the sign
+	// about the dogs "only sleeping", which we already fix elsewhere).
+	//
+	// The other VGA floppy translations are fine, and the issue was
+	// fixed in the French VGA Amiga and CD releases.
+	if (_vm->_game.id == GID_MONKEY_VGA &&
 			_vm->_language == Common::FR_FRA &&
 			_vm->_game.platform != Common::kPlatformAmiga &&
 			_vm->_currentRoom == 11 &&

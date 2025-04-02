@@ -3342,7 +3342,7 @@ void ScummEngine_v5::decodeParseString() {
 			// requires changing the color of the background, not the
 			// text.
 			//
-			// See also the related Gdi::drawStrip() workaround.
+			// See also the related ScummEngine::startScene() workaround.
 
 			else if (_game.id == GID_MONKEY &&
 					!(_game.features & GF_ULTIMATE_TALKIE) &&
