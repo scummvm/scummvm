@@ -22,9 +22,10 @@
 #ifndef HODJNPODJ_METAGAME_PAWN_SHOP_H
 #define HODJNPODJ_METAGAME_PAWN_SHOP_H
 
+#include "bagel/boflib/sound.h"
 #include "bagel/hodjnpodj/views/dialog.h"
 #include "bagel/hodjnpodj/gfx/button.h"
-#include "bagel/hodjnpodj/metagame/bgen/invent.h"
+#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -39,21 +40,28 @@ private:
 	int nDialog_DX = 0, nDialog_DY = 0;
 	int nItemsPerRow = 0;
 	int nItemsPerColumn = 0;
-	CInventory *pInventory = nullptr;
 	int nItem_DDX = 0, nItem_DDY = 0;
 	int _selectedIndex = -1;
 	CItem *_selectedItem = nullptr;
+	CInventory *pPawnShop = nullptr;
+	CInventory *pInventory = nullptr;
+	int _buyMessageCtr = 0;
+	Common::String _buyMessage;
+	CBofSound *_buySound = nullptr;
+	bool bPlayingHodj = false;
 
 	void updateContent();
 	Common::Rect getItemRect(int index) const;
 	void drawItems(GfxSurface &s);
 	void drawItem(GfxSurface &s, CItem *pItem, int nX, int nY);
 	void drawMore(GfxSurface &s);
+	void drawBlurb(GfxSurface &s);
 	bool hasPriorPage() const {
 		return nFirstSlot > 0;
 	}
 	bool hasNextPage() const;
 	int getItemAtPos(const Common::Point &point) const;
+	void purchaseItem();
 
 public:
 	PawnShop();
@@ -66,8 +74,11 @@ public:
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgMouseMove(const MouseMoveMessage &msg) override;
 	bool msgMouseUp(const MouseUpMessage &msg) override;
+	bool tick() override;
 
 	void draw() override;
+
+	static void show(CInventory *pStore, CInventory *pInvent);
 };
 
 } // namespace Metagame
