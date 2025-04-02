@@ -372,7 +372,8 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine,
 	//
 	// One such example is a French translation of Indy3 VGA (ca. 2001-2002),
 	// known as "ryf's Indy3act", which contains corrupted opcodes in at least
-	// 07.LFL, 34.LFL and 72.LFL.
+	// 07.LFL, 34.LFL and 72.LFL. See bug #5597 as an example of the fatal
+	// errors it introduced.
 	if (res.md5 == "1875b90fade138c9253a8e967007031a" && !strcmp(res.game.gameid, "indy3") && res.game.platform == Common::kPlatformDOS && (res.game.features & GF_OLD256)) {
 		Common::String md5OtherRes;
 		Common::FSNode resFile;
