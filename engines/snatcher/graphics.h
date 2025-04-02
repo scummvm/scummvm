@@ -23,6 +23,7 @@
 #define SNATCHER_GRAPHICS_H
 
 #include "common/platform.h"
+#include "snatcher/info.h"
 #include "snatcher/resource.h"
 
 class OSystem;
@@ -30,44 +31,68 @@ class OSystem;
 namespace Snatcher {
 
 class Palette;
+class ScrollManager;
 class Renderer;
 class SceneModule;
 
 class GraphicsEngine {
 public:
-	GraphicsEngine(OSystem *system, Common::Platform platform);
+	GraphicsEngine(OSystem *system, Common::Platform platform, const VMInfo &vmstate);
 	~GraphicsEngine();
 
 	void runScript(ResourcePointer res, int func);
 	void enqueuePaletteEvent(ResourcePointer res);
-	void enqueueCopyCommands(ResourcePointer res);
-	void doCommand(uint8 cmd);
+	bool enqueueCopyCommands(ResourcePointer res);
+
+	enum ScrollMode : uint8 {
+		kHorzA		= 0,
+		kVertA		= 1,
+		kHorzB		= 2,
+		kVertB		= 3,
+		kSingleStep = 4
+	};
+
+	void setScrollStep(uint8 mode, int16 step);
+	void scrollCommand(uint8 cmd);
 
 	void updateAnimations();
 	void nextFrame();
 
 	enum ResetType : uint16 {
-		kClearPalEvents			=	1 << 0,
-		kRestoreDefaults		=	1 << 1,
-		kRestoreDefaultsExt		=	1 << 2,
-		kResetGfxStructs6		=	1 << 3,
-		kClearSprites			=	1 << 4
+		kResetPalEvents			=	1 << 0,
+		kResetSetDefaults		=	1 << 1,
+		kResetSetDefaultsExt	=	1 << 2,
+		kResetCopyCmds			=	1 << 3,
+		kResetSprites			=	1 << 4,
+		kResetScrollState		=	1 << 5
 	};
 
 	void reset(int mode);
 
 	void setVar(uint8 var, uint8 val);
 
+	enum AnimFlags : int {
+		kAnimPause				=	1 << 0,
+		kAnimHide				=	1 << 1,
+		kAnimAudioSync			=	1 << 2
+	};
+
+	void setAnimControlFlags(uint8 animObjId, int flags);
+	void clearAnimControlFlags(uint8 animObjId, int flags);
+	void setAnimFrame(uint8 animObjId, uint16 frameNo);
+	uint16 getAnimCurFrame(uint8 animObjId) const;
+	bool isAnimEnabled(uint8 animObjId) const;
+
 	uint16 screenWidth() const;
 	uint16 screenHeight() const;
 
-	bool busy() const;
+	bool busy(int type) const;
 
 public:
-	struct State {
-		State() {
+	struct GfxState {
+		GfxState(const VMInfo &vminfo) : vm(vminfo) {
 			memset(vars, 0, sizeof(vars));
-			_frameCounter = 0;
+			frameCounter = 0;
 		}
 
 		uint8 getVar(uint8 var) const {
@@ -96,29 +121,39 @@ public:
 		}
 
 		uint16 frameCount() const {
-			return _frameCounter;
+			return frameCounter;
 		}
 
 		void nextFrame() {
-			++_frameCounter;
+			++frameCounter;
+		}
+
+		uint32 getAudioSync() const {
+			return vm.audioSync;
+		}
+
+		uint16 getDropFrames() const {
+			return vm.dropFrames;
 		}
 	
 	private:
-		uint8 vars[10];
-		uint16 _frameCounter;
+		uint8 vars[11];
+		uint16 frameCounter;
+		const VMInfo &vm;
 	};
 
 private:
 	void restoreDefaultsExt();
 	void restoreDefaults();
 
-	State _state;
+	GfxState _state;
 	uint8 _dataMode;
 	uint8 _flags;
 
 	byte *_screen;
 	Renderer *_renderer;
 	Palette *_palette;
+	ScrollManager *_scroll;
 	OSystem *_system;
 };
 

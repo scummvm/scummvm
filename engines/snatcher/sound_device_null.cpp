@@ -37,6 +37,8 @@ public:
 
 	void pcmPlayEffect(int track) override;
 	void pcmDoCommand(int cmd, int arg) override;
+
+	void pause(bool toggle) override;
 private:
 	bool _playing;
 };
@@ -54,6 +56,10 @@ void NullSoundDevice::pcmPlayEffect(int track) {
 }
 
 void NullSoundDevice::pcmDoCommand(int cmd, int arg) {
+}
+
+void NullSoundDevice::pause(bool toggle) {
+
 }
 
 SoundDevice *SoundDevice::createNullSoundDevice() {

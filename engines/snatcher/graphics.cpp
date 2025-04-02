@@ -20,21 +20,23 @@
 */
 
 
+#include "snatcher/graphics.h"
 #include "snatcher/palette.h"
 #include "snatcher/render.h"
 #include "snatcher/resource.h"
-#include "snatcher/graphics.h"
+#include "snatcher/scroll.h"
 #include "common/endian.h"
 #include "common/system.h"
 
 namespace Snatcher {
 
-GraphicsEngine::GraphicsEngine(OSystem *system, Common::Platform platform) : _system(system), _renderer(0), _dataMode(0), _screen(nullptr), _flags(0) {
-	_renderer = Renderer::create(platform, _state);
+GraphicsEngine::GraphicsEngine(OSystem *system, Common::Platform platform, const VMInfo &vmstate) : _system(system), _state(vmstate), _renderer(0), _dataMode(0), _screen(nullptr), _flags(0) {
 	_palette = Palette::create(_system->getPaletteManager(), platform, _state);
-	_screen = new uint8[_renderer->screenWidth() * _renderer->screenHeight()]();
-	assert(_renderer);
 	assert(_palette);
+	_scroll = ScrollManager::create(platform, _state);
+	_renderer = Renderer::create(platform, _state, _palette, _scroll);
+	assert(_renderer);
+	_screen = new uint8[_renderer->screenWidth() * _renderer->screenHeight()]();
 	assert(_screen);
 }
 
@@ -44,26 +46,14 @@ GraphicsEngine::~GraphicsEngine() {
 	delete[] _screen;
 }
 
-//uint8 _vc1_var_788A_flags;
-//bool _var_7886;
 uint8 _gfxScript_byte_3;
-
-//int16 _wordRAM__TABLE48__03;
-//int16 _gg_A__, _gg_A__cntDwn;
-
-
-//uint8 _gg_B;
-//uint32 _gg_dword_787A;
-//bool gfx1_sub1() { return true; }
-//void gfx1_sub2() {}
-//
 
 void GraphicsEngine::runScript(ResourcePointer res, int func) {
 	ResourcePointer sc = ResourcePointer(res.dataStart, READ_BE_UINT32(res.dataStart + 4)).getDataFromTable(func);
 
 	for (uint8 cmd = *sc++; cmd != 0xFF; cmd = *sc++) {
 		uint8 len = *sc++;
-		const uint8 *next = sc + len;
+		ResourcePointer next = sc + len;
 
 		switch (cmd) {
 		case 0:
@@ -76,11 +66,11 @@ void GraphicsEngine::runScript(ResourcePointer res, int func) {
 			_state.setVar(8, 1);
 			break;
 		case 2:
-			_renderer->initSprites(sc, len);
+			_renderer->initAnimations(sc, len);
 			break;
 		case 3: 
 		case 4:
-			_renderer->linkSprites(sc, len);
+			_renderer->linkAnimations(sc, len);
 			break;
 
 		case 5:
@@ -89,7 +79,7 @@ void GraphicsEngine::runScript(ResourcePointer res, int func) {
 			_gfxScript_byte_3 = sc[1];
 			break;
 		case 8:
-			_renderer->setPlaneMode(READ_BE_UINT16(sc()));
+			_renderer->setPlaneMode(sc.readUINT16());
 			break;
 		case 9:
 			_dataMode = sc[1];
@@ -108,12 +98,19 @@ void GraphicsEngine::enqueuePaletteEvent(ResourcePointer res) {
 	_palette->enqueueEvent(res);
 }
 
-void GraphicsEngine::enqueueCopyCommands(ResourcePointer res) {
-	_renderer->enqueueCopyCommands(res);
+bool GraphicsEngine::enqueueCopyCommands(ResourcePointer res) {
+	return _renderer->enqueueCopyCommands(res);
 }
 
-void GraphicsEngine::doCommand(uint8 cmd) {
-	_renderer->doCommand(cmd);
+void GraphicsEngine::setScrollStep(uint8 mode, int16 step) {
+	if (mode < 4)
+		_scroll->setDirectionAndSpeed(mode, step);
+	else
+		_scroll->setSingleStep(mode & 3, step);
+}
+
+void GraphicsEngine::scrollCommand(uint8 cmd) {
+	_scroll->doCommand(cmd);
 }
 
 void GraphicsEngine::updateAnimations() {
@@ -121,22 +118,10 @@ void GraphicsEngine::updateAnimations() {
 }
 
 void GraphicsEngine::nextFrame() {
-	//if (!_skipManyEvents) {
-		//_renderer->processEventQueue();
-	//}
-
-	//if (!_skipManyEvents) {
-		//_blockPalEvent = false;
-
-	// update_vint_tables_8F00_
-	//vram_updt1();
 	_palette->processEventQueue();
-	//vintUpdateGfxStructs6();
 	_renderer->updateScreen(_screen);
+
 	_system->copyRectToScreen(_screen, _renderer->screenWidth(), 0, 0, _renderer->screenWidth(), _renderer->screenHeight());
-	//if (_doSCriptBuff)
-	//
-		//}
 	_palette->updateSystemPalette();
 	_system->updateScreen();
 
@@ -144,20 +129,42 @@ void GraphicsEngine::nextFrame() {
 }
 
 void GraphicsEngine::reset(int mode) {
-	if (mode & kRestoreDefaultsExt)
+	if (mode & kResetSetDefaultsExt)
 		restoreDefaultsExt();
-	if (mode & kRestoreDefaults)
+	if (mode & kResetSetDefaults)
 		restoreDefaults();
-	if (mode & kClearPalEvents)
+	if (mode & kResetPalEvents)
 		_palette->clearEvents();
-	if (mode & kClearSprites)
-		_renderer->clearSprites();
-	if (mode & kResetGfxStructs6)
+	if (mode & kResetSprites)
+		_renderer->clearAnimations();
+	if (mode & kResetCopyCmds)
 		_renderer->clearCopyCommands();
+	if (mode & kResetScrollState)
+		_scroll->clear();
 }
 
 void GraphicsEngine::setVar(uint8 var, uint8 val) {
 	_state.setVar(var, val);
+}
+
+void GraphicsEngine::setAnimControlFlags(uint8 animObjId, int flags) {
+	_renderer->anim_setControlFlags(animObjId, flags);
+}
+
+void GraphicsEngine::clearAnimControlFlags(uint8 animObjId, int flags) {
+	_renderer->anim_clearControlFlags(animObjId, flags);
+}
+
+void GraphicsEngine::setAnimFrame(uint8 animObjId, uint16 frameNo) {
+	_renderer->anim_setFrame(animObjId, frameNo);
+}
+
+uint16 GraphicsEngine::getAnimCurFrame(uint8 animObjId) const {
+	return _renderer->anim_getCurFrameNo(animObjId);
+}
+
+bool GraphicsEngine::isAnimEnabled(uint8 animObjId) const {
+	return _renderer->anim_isEnabled(animObjId);
 }
 
 uint16 GraphicsEngine::screenWidth() const {
@@ -168,8 +175,12 @@ uint16 GraphicsEngine::screenHeight() const {
 	return _renderer ? _renderer->screenHeight() : 0;
 }
 
-bool GraphicsEngine::busy() const {
-	return ((_state.getVar(0) != 0) || (_state.getVar(8) != 0));
+bool GraphicsEngine::busy(int type) const {
+	if (type == 0)
+		return ((_state.getVar(0) != 0) || (_state.getVar(8) != 0));
+	if (type == 1)
+		return _state.getVar(3);
+	return false;
 }
 
 void GraphicsEngine::restoreDefaultsExt() {
@@ -183,8 +194,8 @@ void GraphicsEngine::restoreDefaultsExt() {
 	}
 
 	_renderer->clearCopyCommands();
-	//withD0_FF_FD_FC(0xFC);
-	_renderer->clearSprites();
+	_scroll->doCommand(0xFC);
+	_renderer->clearAnimations();
 
 	if (!(_state.testFlag(4, 1)))
 		_state.setVar(0, 1);

@@ -23,6 +23,7 @@
 #include "snatcher/resource.h"
 #include "snatcher/snatcher.h"
 #include "snatcher/sound.h"
+#include "snatcher/util.h"
 
 #include "common/endian.h"
 #include "common/events.h"
@@ -32,7 +33,7 @@
 
 namespace Snatcher {
 
-SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _gfx(nullptr), _snd(nullptr), _commandsFromMain(0) {
+SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _gfx(nullptr), _snd(nullptr), _commandsFromMain(0), _gfxInfo() {
 }
 
 SnatcherEngine::~SnatcherEngine() {
@@ -62,7 +63,7 @@ bool SnatcherEngine::initResource() {
 }
 
 bool SnatcherEngine::initGfx(Common::Platform platform) {
-	if (_gfx = new GraphicsEngine(_system, platform)) {
+	if (_gfx = new GraphicsEngine(_system, platform, _gfxInfo)) {
 		initGraphics(_gfx->screenWidth(), _gfx->screenHeight());
 		return true;
 	}
@@ -74,11 +75,15 @@ bool SnatcherEngine::initSound(Common::Platform platform, int soundOptions) {
 }
 
 bool SnatcherEngine::start() {
+	Util::rngReset();
 	GameState state;
 	memset(&state, 0, sizeof(GameState));
 
-	uint32 frameLen = (1000 << 16) / 60;
+	const uint32 frameLen = (1000 << 16) / 60;
 	uint32 frameTimer = 0;
+
+	int16 countTo5 = 0;
+	int16 runspeed = 0;
 
 	while (!shouldQuit()) {
 		frameTimer += frameLen;
@@ -90,20 +95,41 @@ bool SnatcherEngine::start() {
 		if (runInitSequence(state))
 			continue;
 
-		if (!_gfx->busy()) {
-			//subVintSub_2();
-			bool blockedUpdt = _sub_doMainScript;
-			if (_sub_doMainScript) {
-				//subVint_mainScriptRun__36Cases();
-				blockedUpdt = _gfx->busy();
+		_gfxInfo.audioSync = _snd->musicIsPlaying() ? _snd->musicGetTime() : 0;
+		Util::rngMakeNumber();
+
+		_gfx->setVar(3, 0);
+		_gfx->setVar(10, 0);
+		countTo5 += runspeed;
+		int numLoops = (countTo5 == 5) ? 2 : 1;
+
+		for (int i = 0; i < numLoops; ++i) {
+			if (!_gfx->busy(0)) {
+				//subVintSub_2();
+				bool blockedUpdt = _sub_doMainScript;
+				if (_sub_doMainScript) {
+					//subVint_mainScriptRun__36Cases();
+					blockedUpdt = _gfx->busy(0);
+				}
+				if (!blockedUpdt) {
+					updateModuleState(state);
+					_gfx->updateAnimations();
+				}
 			}
-			if (!blockedUpdt) {
-				updateScene(state);
-				_gfx->updateAnimations();
+
+			if (numLoops == 2) {
+				if (_gfx->busy(1)) {
+					--countTo5;
+					numLoops = 1;
+				} else {
+					countTo5 = 0;
+					_gfx->setVar(10, 1);
+				}
 			}
 		}
 
 		_gfx->nextFrame();
+		updateEvents();
 		delayUntil(nextFrame);
 	}
 
@@ -111,13 +137,11 @@ bool SnatcherEngine::start() {
 }
 
 void SnatcherEngine::delayUntil(uint32 end) {
+	const uint32 frameLen = (1000 << 16) / 60;
 	uint32 cur = _system->getMillis();
-	while (!shouldQuit() && cur < end) {
-		updateEvents();
-		int ms = MIN<int>(end - cur, 4);
-		_system->delayMillis(ms);
-		cur = _system->getMillis();
-	} 
+	_gfxInfo.dropFrames = /*cur > end ? ((cur - end) << 16) / frameLen :*/ 0;
+	if (cur < end)
+		_system->delayMillis(end - cur);
 }
 
 void SnatcherEngine::updateEvents() {
@@ -143,20 +167,17 @@ bool SnatcherEngine::runInitSequence(GameState &gameState) {
 	return true;
 }
 
-void SnatcherEngine::updateScene(GameState &state) {
+void SnatcherEngine::updateModuleState(GameState &state) {
 	int _main_switch_1_0_orM1_postIntr = 0;
 	uint16 _word_unk_Flags = 0;
 	int _word_unk_11 = 0;
 	int _sub_val_2 = 0;
 	int _unlCDREadSeekWord = 0;
-	uint8 _uniobyte_7891 = 0;
+	uint8 _triggerPalFlag7Etc = 0;
 	bool _sub_bool_5 = false;
 
 	uint8 _wordRAM__TABLE48__word_B6400[48];
 	memset(_wordRAM__TABLE48__word_B6400, 0, 48);
-
-	uint16 _word_8F00_table_00[16];
-	memset(_word_8F00_table_00, 0, 16 * sizeof(uint16));
 
 	switch (state.progressMain) {
 	case -1:
@@ -247,14 +268,14 @@ void SnatcherEngine::updateScene(GameState &state) {
 				state.finish = 0;
 				state.counter = 10;
 				++state.progressSub;
-				static byte data[] = { 0x83,  0x0,  0x00, 0x3F };
+				static byte data[] = { 0x83, 0x00, 0x00, 0x3F };
 				_gfx->enqueuePaletteEvent(ResourcePointer(data, 0));
 			} else if (state.finish) {
 				if (state.modIndex == 0) {
 					++state.modIndex;
 					state.finish = 0;
 				}
-				_gfx->reset(GraphicsEngine::kClearSprites);
+				_gfx->reset(GraphicsEngine::kResetSprites);
 				state.progressSub = 0;
 			}
 			break;
@@ -269,7 +290,7 @@ void SnatcherEngine::updateScene(GameState &state) {
 			} else if (state.counter == 0) {
 				state.finish = -1;
 				state.progressSub = 0;
-				_gfx->reset(GraphicsEngine::kRestoreDefaultsExt);
+				_gfx->reset(GraphicsEngine::kResetSetDefaultsExt);
 			}
 			break;
 		default:
@@ -279,9 +300,9 @@ void SnatcherEngine::updateScene(GameState &state) {
 			state.finish = 0;
 			state.progressMain = 7;
 			state.progressSub = 0;
-			//withD0_FF_FD_FC(0xFF);
+			_gfx->scrollCommand(0xFF);
 			_gfx->setVar(9, 1);
-			_gfx->reset(GraphicsEngine::kClearPalEvents | GraphicsEngine::kClearSprites);
+			_gfx->reset(GraphicsEngine::kResetPalEvents | GraphicsEngine::kResetSprites);
 		}
 		break;
 	case 3:
@@ -289,7 +310,7 @@ void SnatcherEngine::updateScene(GameState &state) {
 		state.finish = 0;
 		state.progressMain = 0;
 		state.progressSub = 0;
-		memset(_word_8F00_table_00, 0, 16 * sizeof(uint16));
+		_gfx->reset(GraphicsEngine::kResetScrollState);
 		break;
 	case 5:
 		if (state.finish) {
@@ -301,13 +322,13 @@ void SnatcherEngine::updateScene(GameState &state) {
 	case 6:
 		switch (state.progressSub) {
 		case 0:
-			//if (_s80[31].cmd == 0) {
-				_gfx->reset(GraphicsEngine::kRestoreDefaults | GraphicsEngine::kClearSprites);
-				_uniobyte_7891 = 0xFF;
+			if (!_gfx->isAnimEnabled(31)) {
+				_gfx->reset(GraphicsEngine::kResetSetDefaults | GraphicsEngine::kResetSprites);
+				_triggerPalFlag7Etc = 0xFF;
 				++state.progressSub;
 				state.frameNo = -1;
 				state.frameState = 0;
-			//}
+			}
 			break;
 		case 1:
 			if (!_snd->musicIsPlaying()) {
@@ -372,7 +393,7 @@ void SnatcherEngine::syncSoundSettings() {
 }
 
 void SnatcherEngine::pauseEngineIntern(bool pause) {
-
+	_snd->pause(pause);
 }
 
 } // End of namespace Snatcher

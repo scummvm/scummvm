@@ -108,77 +108,15 @@ SceneModule::SceneModule(SnatcherEngine *vm, FIO *fio, const char *resFile, int 
 	assert(!_resFile.empty());
 	_data = _fio->fileData(_resFile, &_dataSize);
 	_updateHandler = _shList[_resIndex] ? (_shList[_resIndex])(_vm, this, _fio) : 0;
-
-	/*Common::SeekableReadStreamEndian *s = _fio->readStreamEndian(_resFile);
-	if (!s)
-		error("SceneResource::loadData(): Failed to load file '%s', _resFile");
-	_data = _fio->*/
-
-	//s->skip(4);
-
-	/*uint32 tableStart = s->readUint32();
-	assert(tableStart > 0x28000);
-	tableStart -= 0x28000;
-	s->seek(tableStart);
-
-	uint16 dataStart = 0xFFFF;
-	uint16 pos = 0;
-	while (pos < dataStart) {
-		uint16 val = s->readUint16();
-		if (val < pos || (val + tableStart) >= s->size())
-			break;
-		pos += 2;
-		dataStart = MIN<int>(val, dataStart);
-	}
-	_tableSize = pos >> 1;
-	_table = new const uint8*[_tableSize];
-	*/
-	/*for (int i = 0; i < _tableSize; ++i) {
-		s->seek(tableStart + (i << 1));
-		s->seek(tableStart + s->readUint16());
-
-		int32 cmdStart = s->pos();
-
-		for (bool checkLen = (s->readSByte() >= 0); checkLen; checkLen = (s->readSByte() >= 0))
-			s->skip(s->readByte());
-
-		uint32 size = s->pos() - cmdStart + 1;
-		uint8 *data = new uint8[size];
-
-		s->seek(cmdStart);
-		s->read(data, size);
-		_table[i] = data;
-	}*/
-
-	//delete s;
 }
 
 SceneModule::~SceneModule() {
-	/*if (_table) {
-		for (uint16 i = 0; i < _tableSize; ++i)
-			delete _table[i];
-		delete[] _table;
-		_table = 0;
-		_tableSize = 0;
-	}*/
-
 	delete[] _data;
 	delete _updateHandler;
 }
 
-const uint8 *SceneModule::getData(int offset) const {
-	assert(offset >= 0x28000);
-	return _data + offset - 0x28000;
-}
-
-/*const uint8 *SceneModule::getDataFromMainTable(int tableEntry) const {
-	return getDataFromTable(READ_BE_UINT32(getData(0x28004)), tableEntry);
-}*/
-
 ResourcePointer SceneModule::getPtr(int offset) const {
-	if (offset > 0x28000)
-		offset -= 0x28000;
-	return ResourcePointer(getData(0x28000), offset);
+	return ResourcePointer(_data, offset);
 }
 
 void SceneModule::run(GameState &state) {

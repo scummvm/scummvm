@@ -91,5 +91,26 @@ uint32 makeBCDTimeStamp(uint32 msecs) {
 	return ((min & 0xFF) << 24) | ((sec & 0xFF) << 16) | ((frm & 0xFF) << 8);
 }
 
+uint16 rndC1 = 0;
+uint16 rndC2 = 0;
+
+void rngReset() {
+	rndC1 = 0;
+	rndC2 = 0;
+}
+
+uint16 rngMakeNumber() {
+	rndC1 += ((rndC1 & 0xFF) << 8);
+	rndC1 += rndC2;
+	rndC1 += ((rndC2 << 8) | (rndC2 >> 8));
+	if ((rndC2 & 0xFF) + (rndC2 >> 8) > 0xFF)
+		rndC1++;
+	rndC2 = (((rndC2 & 0xFF) + (rndC2 >> 8)) & 0xFF) | (rndC2 & 0xFF00);
+	if (rndC2 + 1 > 0xFFFF);
+		rndC1++;
+	rndC2++;
+	return rndC1;
+}
+
 } // End of namespace Util
 } // End of namespace Snatcher
