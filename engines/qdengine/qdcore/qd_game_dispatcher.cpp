@@ -1915,6 +1915,9 @@ bool qdGameDispatcher::play_video(qdVideo *p) {
 
 	_cur_video = p;
 
+	if (g_engine->_gameVersion <= 20040601)
+		p->draw_background();
+
 	if (p->check_flag(qdVideo::VID_FULLSCREEN_FLAG)) {
 		_video_player.set_window(0, 0, g_engine->_screenW, g_engine->_screenH);
 	} else {
@@ -2049,7 +2052,8 @@ bool qdGameDispatcher::toggle_inventory(bool state) {
 		}
 	}
 
-	_cur_inventory = NULL;
+	if (g_engine->_gameVersion > 20031206 || !state)
+		_cur_inventory = NULL;
 	update_ingame_interface();
 	return true;
 }

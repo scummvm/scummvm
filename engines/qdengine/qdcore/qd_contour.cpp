@@ -33,7 +33,8 @@ qdContour::qdContour(qdContourType tp) : _contour_type(tp),
 
 qdContour::qdContour(const qdContour &ct) : _contour_type(ct._contour_type),
 	_size(ct._size),
-	_contour(ct._contour) {
+	_contour(ct._contour),
+	_mask(ct._mask) {
 	_mask_pos = ct._mask_pos;
 }
 
@@ -47,6 +48,8 @@ qdContour &qdContour::operator = (const qdContour &ct) {
 	_contour_type = ct._contour_type;
 	_size = ct._size;
 	_mask_pos = ct._mask_pos;
+
+	_mask = ct._mask;
 
 	_contour = ct._contour;
 
@@ -82,6 +85,73 @@ bool qdContour::update_contour_point(const Vect2s &pt, int pos) {
 	return false;
 }
 
+void qdContour::createMaskOld(int x0, int y0, int x1, int y1) {
+	_mask.resize(_size.x * _size.y);
+	Common::fill(_mask.begin(), _mask.end(), 0);
+
+	Std::vector<int> intersections;
+	intersections.reserve(_contour.size());
+
+	Std::vector<byte>::iterator it = _mask.begin();
+	for (int y = y0; y <= y1; y++) {
+		byte *ptr = &*it;
+
+		for (int i = 0; i < _contour.size(); i++) {
+			Vect2s p0 = _contour[i];
+			Vect2s p1 = (i < _contour.size() - 1) ? _contour[i + 1] : _contour[0];
+
+			if (p0.y != p1.y) {
+				if (((p0.y << 2) <= (y << 2) + 2 && (p1.y << 2) >= (y << 2) + 2) || ((p0.y << 2) >= (y << 2) + 2 && (p1.y << 2) <= (y << 2) + 2))
+					intersections.push_back((y - p0.y) * (p1.x - p0.x) / (p1.y - p0.y) + p0.x);
+			}
+		}
+
+		if (intersections.size() > 1) {
+			Common::sort(intersections.begin(), intersections.end());
+			for (int i = 0; i < intersections.size() - 1; i += 2) {
+				int xl = intersections[i];
+				int xr = intersections[i + 1];
+
+				if (xr > xl) {
+					byte *p = ptr + xl - x0;
+					for (int col = xl; col <= xr; col++)
+						*p++ = true;
+				}
+			}
+		}
+
+		intersections.clear();
+
+		for (int i = 0; i < _contour.size(); i++) {
+			Vect2s p0 = _contour[i];
+			Vect2s p1 = (i < _contour.size() - 1) ? _contour[i + 1] : _contour[0];
+
+			if (p0.y != p1.y) {
+				if (((p0.y << 2) <= (y << 2) - 2 && (p1.y << 2) >= (y << 2) - 2) || ((p0.y << 2) >= (y << 2) - 2 && (p1.y << 2) <= (y << 2) - 2))
+					intersections.push_back((y - p0.y) * (p1.x - p0.x) / (p1.y - p0.y) + p0.x);
+			}
+		}
+
+		if (intersections.size() > 1) {
+			Common::sort(intersections.begin(), intersections.end());
+			for (int i = 0; i < intersections.size() - 1; i += 2) {
+				int xl = intersections[i];
+				int xr = intersections[i + 1];
+
+				if (xr > xl) {
+					byte *p = ptr + xl - x0;
+					for (int col = xl; col <= xr; col++)
+						*p++ = true;
+				}
+			}
+		}
+
+		intersections.clear();
+
+		it += _size.x;
+	}
+}
+
 bool qdContour::update_contour() {
 	if (_contour_type != CONTOUR_POLYGON) return false;
 
@@ -103,6 +173,9 @@ bool qdContour::update_contour() {
 	_size = Vect2s(x1 - x0 + 1, y1 - y0 + 1);
 	_mask_pos = Vect2s(x0 + _size.x / 2, y0 + _size.y / 2);
 
+	if (g_engine->_gameVersion <= 20040601)
+		createMaskOld(x0, y0, x1, y1);
+
 	return true;
 }
 
@@ -117,52 +190,62 @@ bool qdContour::is_inside(const Vect2s &pos) const {
 			return true;
 		break;
 	case CONTOUR_POLYGON: {
-		Vect2s p = pos;
-		int intersections_lt0 = 0;
-		int intersections_gt0 = 0;
-		int intersections_lt1 = 0;
-		int intersections_gt1 = 0;
-		for (uint i = 0; i < _contour.size(); i ++) {
-			Vect2s p0 = _contour[i];
-			Vect2s p1 = (i < _contour.size() - 1) ? _contour[i + 1] : _contour[0];
-			if (p0.y != p1.y) {
-				if ((p0.y < p.y && p1.y >= p.y) || (p0.y >= p.y && p1.y < p.y)) {
-					if (p0.x < p.x && p1.x < p.x)
-						intersections_lt0++;
-					else if (p0.x > p.x && p1.x > p.x)
-						intersections_gt0++;
-					else {
-						int x = (p.y - p0.y) * (p1.x - p0.x) / (p1.y - p0.y) + p0.x;
-
-						if (x == p.x)
-							return true;
-						else if (x > p.x)
-							intersections_gt0++;
-						else
+		if (g_engine->_gameVersion > 20040601) {
+			Vect2s p = pos;
+			int intersections_lt0 = 0;
+			int intersections_gt0 = 0;
+			int intersections_lt1 = 0;
+			int intersections_gt1 = 0;
+			for (uint i = 0; i < _contour.size(); i ++) {
+				Vect2s p0 = _contour[i];
+				Vect2s p1 = (i < _contour.size() - 1) ? _contour[i + 1] : _contour[0];
+				if (p0.y != p1.y) {
+					if ((p0.y < p.y && p1.y >= p.y) || (p0.y >= p.y && p1.y < p.y)) {
+						if (p0.x < p.x && p1.x < p.x)
 							intersections_lt0++;
-					}
-				}
-				if ((p0.y <= p.y && p1.y > p.y) || (p0.y > p.y && p1.y <= p.y)) {
-					if (p0.x < p.x && p1.x < p.x)
-						intersections_lt1++;
-					else if (p0.x > p.x && p1.x > p.x)
-						intersections_gt1++;
-					else {
-						int x = (p.y - p0.y) * (p1.x - p0.x) / (p1.y - p0.y) + p0.x;
+						else if (p0.x > p.x && p1.x > p.x)
+							intersections_gt0++;
+						else {
+							int x = (p.y - p0.y) * (p1.x - p0.x) / (p1.y - p0.y) + p0.x;
 
-						if (x == p.x)
-							return true;
-						else if (x > p.x)
-							intersections_gt1++;
-						else
+							if (x == p.x)
+								return true;
+							else if (x > p.x)
+								intersections_gt0++;
+							else
+								intersections_lt0++;
+						}
+					}
+					if ((p0.y <= p.y && p1.y > p.y) || (p0.y > p.y && p1.y <= p.y)) {
+						if (p0.x < p.x && p1.x < p.x)
 							intersections_lt1++;
+						else if (p0.x > p.x && p1.x > p.x)
+							intersections_gt1++;
+						else {
+							int x = (p.y - p0.y) * (p1.x - p0.x) / (p1.y - p0.y) + p0.x;
+
+							if (x == p.x)
+								return true;
+							else if (x > p.x)
+								intersections_gt1++;
+							else
+								intersections_lt1++;
+						}
 					}
 				}
 			}
-		}
 
-		return ((intersections_lt0 & 1) && intersections_gt0 != 0) ||
-		       ((intersections_lt1 & 1) && intersections_gt1 != 0);
+			return ((intersections_lt0 & 1) && intersections_gt0 != 0) ||
+				   ((intersections_lt1 & 1) && intersections_gt1 != 0);
+		} else {
+			Vect2s p = pos - _mask_pos;
+			p.x += _size.x / 2;
+			p.y += _size.y / 2;
+			if (p.x >= 0 && p.x < _size.x && p.y >= 0 && p.y < _size.y) {
+				if (_mask[p.x + p.y * _size.x])
+					return true;
+			}
+		}
 		break;
 	}
 }
