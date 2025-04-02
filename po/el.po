@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-01 19:57+0000\n"
+"POT-Creation-Date: 2025-04-02 13:41+0000\n"
 "PO-Revision-Date: 2024-12-25 11:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -1030,7 +1030,7 @@ msgstr "Αλληλεπίδραση"
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
 #: engines/got/metaengine.cpp:55 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:481 engines/grim/grim.cpp:563 engines/icb/icb.cpp:68
-#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:1000
+#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:1001
 #: engines/twine/metaengine.cpp:430 engines/twine/metaengine.cpp:497
 #: engines/twp/metaengine.cpp:154 engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -1045,7 +1045,7 @@ msgstr "Πάνω"
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
 #: engines/got/metaengine.cpp:56 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:486 engines/grim/grim.cpp:568 engines/icb/icb.cpp:73
-#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:967
+#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:968
 #: engines/twine/metaengine.cpp:437 engines/twine/metaengine.cpp:505
 #: engines/twp/metaengine.cpp:155 engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -1060,7 +1060,7 @@ msgstr "Κάτω"
 #: engines/dragons/metaengine.cpp:171 engines/got/metaengine.cpp:57
 #: engines/griffon/metaengine.cpp:133 engines/grim/grim.cpp:491
 #: engines/grim/grim.cpp:573 engines/icb/icb.cpp:78 engines/icb/icb.cpp:162
-#: engines/scumm/metaengine.cpp:980 engines/twine/metaengine.cpp:452
+#: engines/scumm/metaengine.cpp:981 engines/twine/metaengine.cpp:452
 #: engines/twine/metaengine.cpp:520 engines/twp/metaengine.cpp:152
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -1076,7 +1076,7 @@ msgstr "Αριστερά"
 #: engines/dragons/metaengine.cpp:177 engines/got/metaengine.cpp:58
 #: engines/griffon/metaengine.cpp:139 engines/grim/grim.cpp:496
 #: engines/grim/grim.cpp:578 engines/icb/icb.cpp:83 engines/icb/icb.cpp:167
-#: engines/scumm/metaengine.cpp:987 engines/twine/metaengine.cpp:444
+#: engines/scumm/metaengine.cpp:988 engines/twine/metaengine.cpp:444
 #: engines/twine/metaengine.cpp:513 engines/twp/metaengine.cpp:153
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -6447,7 +6447,7 @@ msgstr "Προσθήκη ενός μενού ταχύτητας (παρόμοι�
 #: engines/dreamweb/metaengine.cpp:36 engines/gob/metaengine.cpp:42
 #: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
-#: engines/scumm/dialogs.cpp:1202 engines/scumm/metaengine.cpp:817
+#: engines/scumm/dialogs.cpp:1202 engines/scumm/metaengine.cpp:818
 msgid "Enable copy protection"
 msgstr "Ενεργοποίηση προστασίας από αντίγραφα"
 
@@ -6455,7 +6455,7 @@ msgstr "Ενεργοποίηση προστασίας από αντίγραφα"
 #: engines/dreamweb/metaengine.cpp:37 engines/gob/metaengine.cpp:43
 #: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
-#: engines/scumm/dialogs.cpp:1203 engines/scumm/metaengine.cpp:818
+#: engines/scumm/dialogs.cpp:1203 engines/scumm/metaengine.cpp:819
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
 "Ενεργοποιεί τους μηχανισμούς προστασίας από πειρατικά αντίγραφα (copy "
@@ -7215,7 +7215,7 @@ msgstr "Εναλλαγή Ετοιμότητας για Μάχη"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:1026 engines/toltecs/metaengine.cpp:246
+#: engines/scumm/metaengine.cpp:1027 engines/toltecs/metaengine.cpp:246
 #: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Παράλειψη ταινίας"
@@ -7674,7 +7674,7 @@ msgstr "Μίλα/Αλληλεπίδρασε"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1013
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1014
 msgid "Attack"
 msgstr "Επίθεση"
 
@@ -10922,11 +10922,11 @@ msgstr ""
 "οθόνης φόρτωσης ήχου στο Sam&Max, και τη βελτίωση αποκρισιμότητας των παλιών "
 "μενού αποθήκευσης."
 
-#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:778
+#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:779
 msgid "Enable the original GUI and Menu"
 msgstr "Χρήση αρχικού Μενού και Γραφικής Διεπαφής Χρήστη (GUI)"
 
-#: engines/scumm/dialogs.cpp:1182 engines/scumm/metaengine.cpp:779
+#: engines/scumm/dialogs.cpp:1182 engines/scumm/metaengine.cpp:780
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
@@ -10937,13 +10937,13 @@ msgstr ""
 "επιλογή \"Να ζητείται επιβεβαίωση κατά την έξοδο\" προσφέρει μια πιο "
 "ολοκληρωμένη εμπειρία."
 
-#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:788
+#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:789
 #, fuzzy
 #| msgid "Enabled aspect ratio correction"
 msgid "Enable gamma correction"
 msgstr "Ενεργοποιήθηκε η διόρθωση αναλογίας διαστάσεων"
 
-#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:789
+#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:790
 msgid "Brighten the graphics to simulate a Macintosh monitor."
 msgstr ""
 
@@ -11071,11 +11071,11 @@ msgstr ""
 "Χρησιμοποιήστε το αν η μουσική κόβεται, ή αν ακούτε μέρος της προηγούμενης "
 "μουσικής."
 
-#: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:769
+#: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:770
 msgid "Load modded audio"
 msgstr "Φόρτωση τροποποιημένου ήχου"
 
-#: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:770
+#: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:771
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -11612,13 +11612,13 @@ msgstr "Ένταση μουσικής: "
 msgid "Subtitle speed: "
 msgstr "Ταχύτητα υπότιτλων: "
 
-#: engines/scumm/metaengine.cpp:395
+#: engines/scumm/metaengine.cpp:396
 msgid ""
 "This fan-made translation is not supported, because it is known to contain\n"
 "corrupted resources that might make it crash or seriously misbehave."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:403
+#: engines/scumm/metaengine.cpp:404
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -11628,7 +11628,7 @@ msgstr ""
 "αποφυγή πειρατείας.\n"
 "Η πλήρης έκδοση είναι διαθέσιμη για αγορά από το Κατάστημα iTunes."
 
-#: engines/scumm/metaengine.cpp:414
+#: engines/scumm/metaengine.cpp:415
 msgid ""
 "Warning: this re-release version contains patched game scripts,\n"
 "and therefore it might crash or not work properly for the time being."
@@ -11638,37 +11638,37 @@ msgstr ""
 "και αυτό μπορεί να οδηγήσει σε απότομο τερματισμό (crash) ή λαθασμένη "
 "λειτουργία προς το παρόν."
 
-#: engines/scumm/metaengine.cpp:517
+#: engines/scumm/metaengine.cpp:518
 msgid "HE v71+ support is not compiled in"
 msgstr "Η υποστήριξη του HE v71+ δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
-#: engines/scumm/metaengine.cpp:541
+#: engines/scumm/metaengine.cpp:542
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "Η υποστήριξη για SCUMM v7-8 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
-#: engines/scumm/metaengine.cpp:698
+#: engines/scumm/metaengine.cpp:699
 msgid "Show Object Line"
 msgstr "Προβολή Γραμμής Αντικειμένων"
 
-#: engines/scumm/metaengine.cpp:699
+#: engines/scumm/metaengine.cpp:700
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Παρουσίαση των ονομάτων των αντικειμένων στο κάτω μέρος της οθόνης"
 
-#: engines/scumm/metaengine.cpp:707
+#: engines/scumm/metaengine.cpp:708
 msgid "Use NES Classic Palette"
 msgstr "Χρήση NES Classic Παλέτας"
 
-#: engines/scumm/metaengine.cpp:708
+#: engines/scumm/metaengine.cpp:709
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 "Χρήσης μια παλέτας πιο ουδέτερων χρωμάτων που προσομοιώνει καλύτερα το NES "
 "Classic"
 
-#: engines/scumm/metaengine.cpp:716
+#: engines/scumm/metaengine.cpp:717
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "Περικοπή παιχνιδιών FM-TOWNS σε ύψος 200 πίξελ"
 
-#: engines/scumm/metaengine.cpp:717
+#: engines/scumm/metaengine.cpp:718
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
@@ -11677,11 +11677,11 @@ msgstr ""
 "ακολουθεί το πρότυπο των 200 πίξελ, επιτρέποντας τη χρήση της 'διόρθωσης "
 "αναλογίας διαστάσεων'"
 
-#: engines/scumm/metaengine.cpp:725
+#: engines/scumm/metaengine.cpp:726
 msgid "Run in original 640 x 480 resolution"
 msgstr "Εκτέλεση στην ανάλυση 640 x 480 του πρωτότυπου"
 
-#: engines/scumm/metaengine.cpp:726
+#: engines/scumm/metaengine.cpp:727
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
@@ -11689,29 +11689,29 @@ msgstr ""
 "Επιτρέπει πιο ακριβή πάνελ για παύση/συνέχιση, αλλά μπορεί να επηρεάσει τις "
 "επιδόσεις ή τη χρήση σκιαστή/κλιμακωτή."
 
-#: engines/scumm/metaengine.cpp:733
+#: engines/scumm/metaengine.cpp:734
 msgid "Play simplified music"
 msgstr "Αναπαραγωγή απλοποιημένης μουσικής"
 
-#: engines/scumm/metaengine.cpp:734
+#: engines/scumm/metaengine.cpp:735
 msgid "This music was intended for low-end Macs, and uses only one channel."
 msgstr ""
 "Αυτή η μουσική προοριζόταν για Macs χαμηλών δυνατοτήτων, και χρησιμοποιεί "
 "μόνο ένα κανάλι ήχου."
 
-#: engines/scumm/metaengine.cpp:742
+#: engines/scumm/metaengine.cpp:743
 msgid "Enable smooth scrolling"
 msgstr "Ενεργοποίηση ομαλής κύλισης"
 
-#: engines/scumm/metaengine.cpp:743
+#: engines/scumm/metaengine.cpp:744
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(αντί της κανονικής κύλισης σε βήματα των 8-πίξελ)"
 
-#: engines/scumm/metaengine.cpp:751
+#: engines/scumm/metaengine.cpp:752
 msgid "Allow semi-smooth scrolling"
 msgstr "Να επιτρέπεται ημι-ομαλή κύλιση"
 
-#: engines/scumm/metaengine.cpp:752
+#: engines/scumm/metaengine.cpp:753
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
@@ -11719,11 +11719,11 @@ msgstr ""
 "Επιτρέπει την χρήση λιγότερο ομαλής κύλισης κατά τη διάρκεια της γρήγορης "
 "κάμερας στην εισαγωγή."
 
-#: engines/scumm/metaengine.cpp:797
+#: engines/scumm/metaengine.cpp:798
 msgid "Enable low latency audio mode"
 msgstr "Ενεργοποίηση γρήγορης απόκρισης ήχου"
 
-#: engines/scumm/metaengine.cpp:798
+#: engines/scumm/metaengine.cpp:799
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. It "
 "is recommended to enable this feature only if you incur in audio latency "
@@ -11734,11 +11734,11 @@ msgstr ""
 "ενεργοποιήσετε αυτή τη δυνατότητα μόνο αν αντιμετωπίζετε θέματα καθυστέρησης "
 "του ήχου όσο παίζετε το κυρίως παιχνίδι."
 
-#: engines/scumm/metaengine.cpp:807
+#: engines/scumm/metaengine.cpp:808
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Χρήση του τραγουδιού \"A Pirate I Was Meant To Be\""
 
-#: engines/scumm/metaengine.cpp:808
+#: engines/scumm/metaengine.cpp:809
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", which was cut in international releases. Beware though: "
@@ -11748,58 +11748,58 @@ msgstr ""
 "Pirate I Was Meant To Be\", που είχε αφαιρεθεί από τις διεθνείς εκδόσεις. "
 "Προσοχή: οι υπότιτλοι μπορεί να μην είναι πλήρως μεταφρασμένοι."
 
-#: engines/scumm/metaengine.cpp:826
+#: engines/scumm/metaengine.cpp:827
 msgid "Enable demo/kiosk mode"
 msgstr "Ενεργοποίηση λειτουργίας demo/βιτρίνας"
 
-#: engines/scumm/metaengine.cpp:827
+#: engines/scumm/metaengine.cpp:828
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
 msgstr ""
 "Ενεργοποιεί τη λειτουργία demo/παρουσίασης για \"βιτρίνα\" (kiosk) στην "
 "πλήρη έκδοση του Maniac Mansion."
 
-#: engines/scumm/metaengine.cpp:835
+#: engines/scumm/metaengine.cpp:836
 msgid "Use remastered audio"
 msgstr "Χρήση remastered ήχου"
 
-#: engines/scumm/metaengine.cpp:836
+#: engines/scumm/metaengine.cpp:837
 msgid "Use the remastered speech and sound effects."
 msgstr "Χρησιμοποιεί τις remastered ομιλίες και ηχητικά εφέ."
 
-#: engines/scumm/metaengine.cpp:848
+#: engines/scumm/metaengine.cpp:849
 #, fuzzy
 #| msgid "Enable sound"
 msgid "Enable ambience sounds"
 msgstr "Ενεργοποίηση ήχου"
 
-#: engines/scumm/metaengine.cpp:849
+#: engines/scumm/metaengine.cpp:850
 #, fuzzy
 #| msgid "Enable sound"
 msgid "Enable ambience sounds."
 msgstr "Ενεργοποίηση ήχου"
 
-#: engines/scumm/metaengine.cpp:961
+#: engines/scumm/metaengine.cpp:962
 msgid "Down Left"
 msgstr "Κάτω Αριστερά"
 
-#: engines/scumm/metaengine.cpp:974
+#: engines/scumm/metaengine.cpp:975
 msgid "Down Right"
 msgstr "Κάτω Δεξιά"
 
-#: engines/scumm/metaengine.cpp:994
+#: engines/scumm/metaengine.cpp:995
 msgid "Up Left"
 msgstr "Πάνω Αριστερά"
 
-#: engines/scumm/metaengine.cpp:1007
+#: engines/scumm/metaengine.cpp:1008
 msgid "Up Right"
 msgstr "Πάνω Δεξιά"
 
-#: engines/scumm/metaengine.cpp:1019
+#: engines/scumm/metaengine.cpp:1020
 msgid "Switch weapon"
 msgstr "Αλλαγή όπλου"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:1033
+#: engines/scumm/metaengine.cpp:1034
 msgid "Win the bike fight cheat"
 msgstr "Κόλπο για νίκη στη μάχη με τις μηχανές"
 
