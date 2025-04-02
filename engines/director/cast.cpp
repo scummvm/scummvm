@@ -1302,26 +1302,28 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 			debugC(9, kDebugCompile, "[%d/%d] %s", it->second->castID, it->first, it->second->scriptText("\n", false).c_str());
 		}
 
-		for (auto it = _lingodec->scripts.begin(); it != _lingodec->scripts.end(); ++it) {
-            Common::DumpFile out;
-            ScriptType scriptType = kMovieScript; 
-    
-            if (_loadedCast->contains(it->second->castID)) {
-                CastMember *member = _loadedCast->getVal(it->second->castID);
-                if (member && member->_type == kCastLingoScript) {
-                    scriptType = ((ScriptCastMember *)member)->_scriptType;
-                }
-            }
-
-            Common::Path lingoPath(dumpScriptName(encodePathForDump(_macName).c_str(), scriptType, it->second->castID, "lingo"));
-
-            if (out.open(lingoPath, true)) {
-                Common::String decompiled = it->second->scriptText("\n", true);
-                out.writeString(decompiled);
-                out.flush();
-                out.close();
-            }
-        }
+		if (ConfMan.getBool("dump_scripts")) {
+			for (auto it = _lingodec->scripts.begin(); it != _lingodec->scripts.end(); ++it) {
+				Common::DumpFile out;
+				ScriptType scriptType = kMovieScript; 
+		
+				if (_loadedCast->contains(it->second->castID)) {
+					CastMember *member = _loadedCast->getVal(it->second->castID);
+					if (member && member->_type == kCastLingoScript) {
+						scriptType = ((ScriptCastMember *)member)->_scriptType;
+					}
+				}
+	
+				Common::Path lingoPath(dumpScriptName(encodePathForDump(_macName).c_str(), scriptType, it->second->castID, "lingo"));
+	
+				if (out.open(lingoPath, true)) {
+					Common::String decompiled = it->second->scriptText("\n", true);
+					out.writeString(decompiled);
+					out.flush();
+					out.close();
+				}
+			}
+		}
 	}
 }
 
