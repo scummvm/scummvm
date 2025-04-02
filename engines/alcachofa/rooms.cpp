@@ -129,33 +129,32 @@ ObjectBase *Room::getObjectByName(const Common::String &name) const {
 }
 
 void Room::update() {
-	if (!g_engine->isDebugModeActive())
-	{
-		updateScripts();
-
-		if (g_engine->player().currentRoom() == this) {
-			updateRoomBounds();
-			g_engine->globalUI().updateClosingInventory();
-			if (!updateInput())
-				return;
-		}
-		if (!g_engine->player().isOptionsMenuOpen() &&
-			g_engine->player().currentRoom() != &g_engine->world().inventory())
-			world().globalRoom().updateObjects();
-		if (g_engine->player().currentRoom() == this)
-			updateObjects();
-	}
+	if (g_engine->isDebugModeActive())
+		return;
+	updateScripts();
 
 	if (g_engine->player().currentRoom() == this) {
-		g_engine->camera().update();
-		drawObjects();
-		world().globalRoom().drawObjects();
-		// TODO: Draw black borders
-		g_engine->player().drawScreenStates();
-		g_engine->drawQueue().draw();
-		drawDebug();
-		world().globalRoom().drawDebug();
+		updateRoomBounds();
+		g_engine->globalUI().updateClosingInventory();
+		if (!updateInput())
+			return;
 	}
+	if (!g_engine->player().isOptionsMenuOpen() &&
+		g_engine->player().currentRoom() != &g_engine->world().inventory())
+		world().globalRoom().updateObjects();
+	if (g_engine->player().currentRoom() == this)
+		updateObjects();
+}
+
+void Room::draw() {
+	g_engine->camera().update();
+	drawObjects();
+	world().globalRoom().drawObjects();
+	// TODO: Draw black borders
+	g_engine->player().drawScreenStates();
+	g_engine->drawQueue().draw();
+	drawDebug();
+	world().globalRoom().drawDebug();
 }
 
 void Room::updateScripts() {

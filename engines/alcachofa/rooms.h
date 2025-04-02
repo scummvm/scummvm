@@ -54,6 +54,7 @@ public:
 	inline ObjectIterator endObjects() const { return _objects.end(); }
 
 	void update();
+	void draw();
 	virtual bool updateInput();
 	virtual void loadResources();
 	virtual void freeResources();
