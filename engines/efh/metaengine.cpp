@@ -29,9 +29,11 @@
 #include "common/translation.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
+
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
+
 #include "efh/efh.h"
 
 namespace Efh {
