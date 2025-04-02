@@ -68,28 +68,28 @@ enum EfhDebugChannels {
 
 // Lists of custom key actions within the EFH game engine itself.
 enum EfhAction {
-	kEfhActionUp,	// default <KEYCODE_UP> or <KEYCODE_KP8>
-	kEfhActionUpLeft,	// default <KEYCODE_KP7>
-	kEfhActionUpRight,	// default <KEYCODE_KP9>
-	kEfhActionDown,	// default <KEYCODE_DOWN> or <KEYCODE_KP2>
-	kEfhActionDownLeft,	// default <KEYCODE_KP1>
-	kEfhActionDownRight,	// default <KEYCODE_KP3>
-	kEfhActionLeft,	// default <KEYCODE_LEFT> or <KEYCODE_KP4>
-	kEfhActionRight,	// default <KEYCODE_RIGHT> or <KEYCODE_KP6>
-	kEfhActionCharacterSummaryOne,	// default <F1> or <1>
-	kEfhActionCharacterSummaryTwo,	// default <F2> or <2>
-	kEfhActionCharacterSummaryThree,	// default <F3> or <3>
-	kEfhActionSave,	// default <Ctrl+s>
-	kEfhActionLoad,	// default <Ctrl+l>
-	kEfhActionA,    // default <A>
-    kEfhActionH,    // default <H>
-    kEfhActionD,    // default <D>
-    kEfhActionS,    // default <S>
-    kEfhActionR,    // default <R>
-    kEfhActionC,    // default <C>
-    kEfhActionT,    // default <T>
-    kEfhActionL,    // default <L>
-    kEfhActionESC   // default <Esc>
+	kEfhActionUp = 273, // default <KEYCODE_UP> or <KEYCODE_KP8>
+    kEfhActionUpLeft = 278,    // default <KEYCODE_KP7>
+    kEfhActionUpRight = 280,   // default <KEYCODE_KP9>
+    kEfhActionDown = 274,  // default <KEYCODE_DOWN> or <KEYCODE_KP2>
+    kEfhActionDownLeft = 279,  // default <KEYCODE_KP1>
+    kEfhActionDownRight = 281, // default <KEYCODE_KP3>
+    kEfhActionLeft = 276,  // default <KEYCODE_LEFT> or <KEYCODE_KP4>
+    kEfhActionRight = 275, // default <KEYCODE_RIGHT> or <KEYCODE_KP6>
+    kEfhActionCharacterSummaryOne = 282,   // default <F1> or <1>
+    kEfhActionCharacterSummaryTwo = 283,   // default <F2> or <2>
+    kEfhActionCharacterSummaryThree = 284, // default <F3> or <3>
+    kEfhActionSave = 286,  // default <F5>
+    kEfhActionLoad = 228,  // default <F7>
+    kEfhActionA = 97,    // default <A>
+    kEfhActionH = 104,    // default <H>
+    kEfhActionD = 100,    // default <D>
+    kEfhActionS = 115,    // default <S>
+    kEfhActionR = 114,    // default <R>
+    kEfhActionC = 99,    // default <C>
+    kEfhActionT = 116,    // default <T>
+    kEfhActionL = 108,    // default <L>
+    kEfhActionESC =  27  // default <Esc>
 };
 
 class EfhGraphicsStruct {
