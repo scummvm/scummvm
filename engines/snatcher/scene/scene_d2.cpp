@@ -79,15 +79,12 @@ SH_IMPL_UPDT(D2) {
 
 bool hasRAMCart = true; 
 int _state_ua_1 = 0;
-bool hasSaveFiles = false;
+bool hasSaveFiles = true;
 bool hasFreeBuram = true;
-uint8 _bua1 = 0;
-uint8 _bua2 = 0;
 uint8 _bua3 = 0;
 uint8 _buram_0 = 0;
 bool _buram_2 = true;
 uint8 wordA = 0;
-uint8 wordB = 0;
 int16 _moduleWord = -1;
 
 // functions
@@ -105,14 +102,14 @@ SH_IMPL_FRM(D2, 00) {
 			++state.frameNo;
 			state.frameState = 0;
 		} else {
-			_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+			_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 			_vm->gfx()->runScript(_module->getPtr(0), 1); // RAM Cart select screen
 			++state.frameState;
 		}
 		break;
 	case 2:
 		if (_vm->_commandsFromMain & 3) {
-			_bua2 &= 2;
+			_vm->gfx()->clearAnimControlFlags(16, ~GraphicsEngine::kAnimHide);
 			_buram_0 ^= 1;
 		}
 		if (_vm->_commandsFromMain & 0x80) {
@@ -143,9 +140,9 @@ SH_IMPL_FRM(D2, 01) {
 }
 
 SH_IMPL_FRM(D2, 02) {
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
-	_vm->gfx()->doCommand(1);
-	//__unk_8F1C = 0x100;
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
+	_vm->gfx()->scrollCommand(1);
+	_vm->gfx()->setScrollStep(GraphicsEngine::kVertA | GraphicsEngine::kSingleStep, 0x100);
 	_vm->gfx()->runScript(_module->getPtr(0), 0);
 	state.counter = 24;
 	++state.frameNo;
@@ -155,7 +152,7 @@ SH_IMPL_FRM(D2, 02) {
 SH_IMPL_FRM(D2, 03) {
 	if (--state.counter)
 		return;
-	_vm->gfx()->doCommand(7);
+	_vm->gfx()->scrollCommand(7);
 	state.counter = 4;
 	++state.frameNo;
 	state.frameState = 0;
@@ -192,7 +189,7 @@ SH_IMPL_FRM(D2, 06) {
 	case 1:
 		if (--state.counter)
 			return;
-		_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+		_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 		_vm->gfx()->runScript(_module->getPtr(0), 2);
 		++state.frameState;
 		break;
@@ -237,7 +234,7 @@ SH_IMPL_FRM(D2, 08) {
 	case 2:
 		if (--state.counter)
 			return;
-		_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+		_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 		_vm->gfx()->runScript(_module->getPtr(0), 3);
 		++state.frameState;
 		break;
@@ -249,20 +246,19 @@ SH_IMPL_FRM(D2, 08) {
 }
 
 SH_IMPL_FRM(D2, 09) {
-	uint8 &b = hasSaveFiles ? _bua1 : _bua2;
 	switch (state.frameState) {
 	case 0:
-		_vm->gfx()->doCommand(0xFF);
+		_vm->gfx()->scrollCommand(0xFF);
+		_vm->gfx()->clearAnimControlFlags(hasSaveFiles ? 17 : 16, ~GraphicsEngine::kAnimHide);
 		state.frameState += (hasSaveFiles ? 1 : 2);
-		b &= 2;
 		break;
 	case 1:
 		if (_vm->_commandsFromMain & 3)
-			_bua2 &= 2;
+			_vm->gfx()->clearAnimControlFlags(17, ~GraphicsEngine::kAnimHide);
 		if (_vm->_commandsFromMain & 0x80) {
-			_bua1 = 3;
+			_vm->gfx()->setAnimControlFlags(17, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
 			wordA = 1;
-			if (wordB == 3) {
+			if (_vm->gfx()->getAnimCurFrame(17) == 3) {
 				wordA = 0;
 				++state.frameNo;
 			}
@@ -270,7 +266,8 @@ SH_IMPL_FRM(D2, 09) {
 			state.frameState = 0;
 			_bua3 = 56;
 			//enqueueCommunicationStatus2Command(0);
-			_bua2 = _bua1 = 3;
+			_vm->gfx()->setAnimControlFlags(16, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
+			_vm->gfx()->setAnimControlFlags(17, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
 			_moduleWord = 0;
 		}
 		break;
@@ -296,6 +293,16 @@ SH_IMPL_FRM(D2, 10) {
 			++state.counter;
 			return;
 		}
+		_vm->gfx()->clearAnimControlFlags(24, 0xFF);
+		_vm->gfx()->clearAnimControlFlags(25, 0xFF);
+
+
+
+		_vm->gfx()->setAnimControlFlags(24, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
+		_vm->gfx()->setAnimControlFlags(25, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
+		++state.frameState;
+		state.counter = 0;
+
 		++state.frameNo;
 		state.frameState = 0;
 		break;
@@ -315,6 +322,12 @@ SH_IMPL_FRM(D2, 10) {
 		}
 		break;
 	case 2:
+		if (--state.counter)
+			return;
+		--state.frameNo;
+		state.frameState = 1;
+		_vm->gfx()->setAnimControlFlags(17, GraphicsEngine::kAnimPause);
+		_vm->gfx()->setAnimFrame(17, 0);
 		break;
 	case 3:
 		break;
@@ -348,7 +361,7 @@ SH_IMPL_FRM(D2, 11) {
 	case 1:
 		if (--state.counter)
 			return;
-		_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+		_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 		_vm->gfx()->runScript(_module->getPtr(0), 7);
 		++state.frameState;
 		break;
@@ -396,7 +409,7 @@ SH_IMPL_FRM(D2, 11) {
 	case 4:
 		if (--state.counter)
 			return;
-		_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+		_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 		_vm->gfx()->runScript(_module->getPtr(0), 8);
 		state.frameState = 0;
 		break;
@@ -411,7 +424,7 @@ SH_IMPL_FRM(D2, 12) {
 	state.finish = 1;
 	state.frameNo = 0;
 	state.frameState = 0;
-	_vm->gfx()->reset(GraphicsEngine::kRestoreDefaultsExt);
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 }
 
 } // End of namespace Snatcher

@@ -62,18 +62,30 @@ protected:
 };
 
 struct ResourcePointer {
-	ResourcePointer() : dataStart(0), offset(0) {}
-	ResourcePointer(const uint8 *data, uint32 offs) : dataStart(data), offset(offs >= 0x28000 ? offs - 0x28000 : offs) {}
+	ResourcePointer() : dataStart(0), offset(0), startAddr(0x28000) {}
+	ResourcePointer(const uint8 *data, uint32 offs) : dataStart(data), offset(offs), startAddr(0x28000) { if (offset >= startAddr) offset -= startAddr; }
 	const uint8 *dataStart;
 	uint32 offset;
+	uint32 startAddr;
 	const uint8 *operator()() const { return dataStart + offset; }
 	const uint8 *operator++(int) { return dataStart + (offset++); }
 	const uint8 *operator++() { return dataStart + (++offset); }
-	const uint8 *operator+(int inc) const { return dataStart + offset + inc; }
+	uint16 readUINT16() { return READ_BE_UINT16(dataStart + offset); }
+	uint16 readSINT16() { return READ_BE_INT16(dataStart + offset); }
+	uint32 readUINT32() { return READ_BE_UINT32(dataStart + offset); }
+	uint32 readSINT32() { return READ_BE_INT32(dataStart + offset); }
+	uint16 readIncrUINT16() { uint16 r = READ_BE_UINT16(dataStart + offset); offset += 2; return r; }
+	uint16 readIncrSINT16() { int16 r = READ_BE_INT16(dataStart + offset); offset += 2; return r; }
+	uint32 readIncrUINT32() { uint32 r = READ_BE_UINT32(dataStart + offset); offset += 4; return r; }
+	uint32 readIncrSINT32() { int32 r = READ_BE_INT32(dataStart + offset); offset += 4; return r; }
+	ResourcePointer operator+(int inc) const { return ResourcePointer(dataStart, offset + startAddr + inc); }
+	bool operator<(const ResourcePointer &ptr) const { assert(dataStart == ptr.dataStart); return offset < ptr.offset; }
+	bool operator>(const ResourcePointer &ptr) const { assert(dataStart == ptr.dataStart); return offset > ptr.offset; }
+	bool operator==(const ResourcePointer &ptr) const { return dataStart == ptr.dataStart && offset == ptr.offset; }
 	void operator+=(int inc) { offset += inc; }
 	void operator=(const uint8 *ptr) { offset = ptr - dataStart; }
 	uint8 operator[](int index) const { return dataStart[offset + index]; }
-	ResourcePointer getDataFromTable(int tableEntry) const { return ResourcePointer(dataStart, offset + READ_BE_UINT16(dataStart + offset + (tableEntry << 1))); }
+	ResourcePointer getDataFromTable(int tableEntry) const { return ResourcePointer(dataStart, offset + startAddr + READ_BE_UINT16(dataStart + offset + (tableEntry << 1))); }
 	ResourcePointer makeAbsPtr(uint32 offs) const { return ResourcePointer(dataStart, offs); }
 };
 
@@ -82,7 +94,6 @@ class SceneModule {
 public:
 	~SceneModule();
 
-	const uint8 *getData(int offset) const;
 	ResourcePointer getPtr(int offset) const;
 
 	void run(GameState &state);
@@ -92,9 +103,6 @@ private:
 
 	const uint8 *_data;
 	uint32 _dataSize;
-	//const uint8 **_table;
-	//uint16 _tableSize;
-
 	SnatcherEngine *_vm;
 	FIO *_fio;
 	const int _resIndex;

@@ -32,32 +32,37 @@ class Renderer {
 public:
 	virtual ~Renderer() {}
 
-	virtual void enqueueCopyCommands(ResourcePointer &res) = 0;
-	virtual void doCommand(uint8 cmd) = 0;
+	virtual bool enqueueCopyCommands(ResourcePointer &res) = 0;
 	virtual void clearCopyCommands() = 0;
 	virtual void initData(ResourcePointer &res, uint8 mode) = 0;
-	virtual void initSprites(ResourcePointer &res, uint16 len) = 0;
-	virtual void linkSprites(ResourcePointer &res, uint16 len) = 0;
-	virtual void clearSprites(int mode = 0) = 0;
+	virtual void initAnimations(ResourcePointer &res, uint16 len) = 0;
+	virtual void linkAnimations(ResourcePointer &res, uint16 len) = 0;
+	virtual void clearAnimations(int mode = 0) = 0;
 	virtual void setPlaneMode(uint16 mode) = 0;
 	virtual void updateScreen(uint8 *screen) = 0;
 	virtual void updateAnimations() = 0;
+
+	virtual void anim_setControlFlags(uint8 animObjId, int flags) = 0;
+	virtual void anim_clearControlFlags(uint8 animObjId, int flags) = 0;
+	virtual void anim_setFrame(uint8 animObjId, uint16 frameNo) = 0;
+	virtual uint16 anim_getCurFrameNo(uint8 animObjId) const = 0;
+	virtual bool anim_isEnabled(uint8 animObjId) const = 0;
 
 	virtual uint16 screenWidth() const = 0;
 	virtual uint16 screenHeight() const = 0;
 
 protected:
-	Renderer(GraphicsEngine::State &state) : _gfxState(state) {}
-	GraphicsEngine::State &_gfxState;
+	Renderer(GraphicsEngine::GfxState &state) : _gfxState(state) {}
+	GraphicsEngine::GfxState &_gfxState;
 
 private:
-	static Renderer *createSegaRenderer(GraphicsEngine::State &state);
+	static Renderer *createSegaRenderer(GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr);
 
 public:
-	static Renderer *create(Common::Platform platform, GraphicsEngine::State &state) {
+	static Renderer *create(Common::Platform platform, GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr) {
 		switch (platform) {
 		case Common::kPlatformSegaCD:
-			return createSegaRenderer(state);
+			return createSegaRenderer(state, pal, scr);
 		default:
 			break;
 		};

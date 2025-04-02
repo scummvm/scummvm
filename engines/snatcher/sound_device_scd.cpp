@@ -41,20 +41,27 @@ public:
 	void pcmPlayEffect(int track) override;
 	void pcmDoCommand(int cmd, int arg) override;
 
+	void pause(bool toggle) override;
+
 private:
+	int _lastTrack;
+	uint32 _pauseStartTime;
 };
 
-SegaSoundDevice::SegaSoundDevice() : SoundDevice() {
+SegaSoundDevice::SegaSoundDevice() : SoundDevice(), _lastTrack(-1), _pauseStartTime(0) {
 
 }
 
 void SegaSoundDevice::musicPlay(int track) {
+	assert(track > 0);
 	g_system->getAudioCDManager()->play(track - 1, 1, 0, 0);
+	_lastTrack = track;
 	_musicStartTime = g_system->getMillis();
 }
 
 void SegaSoundDevice::musicStop() {
 	g_system->getAudioCDManager()->stop();
+	_lastTrack = -1;
 }
 
 bool SegaSoundDevice::musicIsPlaying() const {
@@ -70,6 +77,29 @@ void SegaSoundDevice::pcmPlayEffect(int track) {
 }
 
 void SegaSoundDevice::pcmDoCommand(int cmd, int arg) {
+}
+
+
+void SegaSoundDevice::pause(bool toggle) {
+	if (toggle) {
+		if (_pauseStartTime == 0) {
+			if (musicIsPlaying()) {
+				_pauseStartTime = g_system->getMillis();
+				g_system->getAudioCDManager()->stop();
+			} else {
+				_lastTrack = -1;
+				_pauseStartTime = 0;
+			}
+		}
+	} else {
+		if (_pauseStartTime != 0) {
+			if (_lastTrack != -1)
+				g_system->getAudioCDManager()->play(_lastTrack - 1, 1, (_pauseStartTime - _musicStartTime) / (1000 / 75), 0);
+			int pauseDuration = g_system->getMillis() - _pauseStartTime;
+			_musicStartTime += (pauseDuration - (pauseDuration % (1000 / 75)));
+			_pauseStartTime = 0;
+		}
+	}
 }
 
 SoundDevice *SoundDevice::createSegaSoundDevice() {

@@ -25,6 +25,7 @@
 
 #include "common/algorithm.h"
 #include "common/array.h"
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/func.h"
 #include "common/textconsole.h"
@@ -35,7 +36,7 @@ namespace Snatcher {
 class GraphicsEngine;
 class SCDPalette : public Palette {
 public:
-	SCDPalette(PaletteManager *pm, GraphicsEngine::State &state);
+	SCDPalette(PaletteManager *pm, GraphicsEngine::GfxState &state);
 	~SCDPalette() override;
 
 	bool enqueueEvent(ResourcePointer &res) override;
@@ -71,7 +72,7 @@ private:
 	uint8 *_sysPalette;
 };
 
-SCDPalette::SCDPalette(PaletteManager *pm, GraphicsEngine::State &state) : Palette(pm, state), _eventProcs(), _eventQueue(nullptr), _eventCurPos(nullptr), _colors(nullptr), _colors2(nullptr), _sysPalette(nullptr) {
+SCDPalette::SCDPalette(PaletteManager *pm, GraphicsEngine::GfxState &state) : Palette(pm, state), _eventProcs(), _eventQueue(nullptr), _eventCurPos(nullptr), _colors(nullptr), _colors2(nullptr), _sysPalette(nullptr) {
 #define P_OP(a)	_eventProcs.push_back(new EventProc(this, &SCDPalette::event_##a));
 	_eventProcs.push_back(nullptr);
 	P_OP(palSet);
@@ -114,10 +115,12 @@ bool SCDPalette::enqueueEvent(ResourcePointer &res) {
 		_eventCurPos->delay = *res++;
 		_eventCurPos->countDown = 0;
 		_eventCurPos->destFlag = (*res() & 0x80);
-		_eventCurPos->destOffset = (*res++ & 0x7F) >> 1;
+		_eventCurPos->destOffset = (*res++) >> 1;
 		_eventCurPos->len = (*res++) + 1;
 		_eventCurPos->srcOffsets = _eventCurPos->srcOffsetCur = reinterpret_cast<const uint32*>(res());
 		_eventCurPos->progress = 0;
+
+		debug("%s(): Changing color range %d to %d", __FUNCTION__, _eventCurPos->destOffset, _eventCurPos->destOffset + _eventCurPos->len);
 
 		if (_eventCurPos->cmd & 0x80) {
 			_eventCurPos->cmd &= ~0x80;
@@ -164,6 +167,7 @@ void SCDPalette::setDefaults(int mode) {
 	if (mode == 0) {
 		int cnt = (_gfxState.testFlag(1, 1) || _gfxState.getVar(5)) ? 64 : 48;
 		_gfxState.clearFlag(1, 1);
+		debug("%s(): Clearing palette range %d to %d", __FUNCTION__, 64 - cnt, 64);
 		Common::fill<uint16*, uint16>(&_colors[64 - cnt], &_colors[cnt], 0);
 		if (_gfxState.testFlag(1, 2)) {
 			_gfxState.clearFlag(1, 2);
@@ -212,19 +216,6 @@ void SCDPalette::updateSystemPalette() {
 	const uint16 *src = &_colors2[0 << 6];
 	uint8 *dst = _sysPalette;
 
-	/*uint8 rgbColors[48];
-	uint8 *dst = rgbColors;
-
-	if (srcPalID >= 31 && srcPalID <= 38) {
-		src = &_segaCustomPalettes[(srcPalID - 31) << 4];
-	} else if (srcPalID >= 0) {
-		int temp = 0;
-		const uint16 *palettes = _vm->staticres()->loadRawDataBe16(kEoB1PalettesSega, temp);
-		if (!palettes)
-			return;
-		src = &palettes[srcPalID << 4];
-	}
-	*/
 	// R: bits 1, 2, 3   G: bits 5, 6, 7   B: bits 9, 10, 11
 	for (int i = 0; i < 64; ++i) {
 		uint16 in = *src++;
@@ -241,17 +232,6 @@ void SCDPalette::updateSystemPalette() {
 #endif
 	}
 
-	/*getPalette(0).copy(rgbColors, 0, 16, dstPalID << 4);
-
-	if (_specialColorReplace) {
-		const uint8 swapColors[6] = { 0x08, 0x09, 0x0C, 0x0D, 0x0E, 0x0F };
-		for (int i = 0; i < 6; ++i)
-			getPalette(0).copy(getPalette(0), 0x10 | swapColors[i], 1, swapColors[i]);
-	}
-
-	if (set)
-		setScreenPalette(getPalette(0));
-		*/
 	_palMan->setPalette(_sysPalette, 0, 256);
 }
 
@@ -395,7 +375,7 @@ void SCDPalette::event_palFadeToPal(PalEventSCD *evt) {
 void SCDPalette::event_palClear(PalEventSCD *evt) {
 	if (updateDelay(evt))
 		return;
-
+	debug("%s(): Clearing color range %d to %d", __FUNCTION__, evt->destOffset, evt->destOffset + evt->len);
 	uint16 *dst = &_colors[evt->destOffset];
 	Common::fill<uint16*, uint16>(dst, &dst[evt->len], 0);
 	evt->cmd = 0;
@@ -435,7 +415,7 @@ void SCDPalette::fadeStep(uint16 *modColor, uint16 toR, uint16 toG, uint16 toB) 
 	*modColor = (r | g | b);
 }
 
-Palette *Palette::createSegaPalette(PaletteManager *pm, GraphicsEngine::State &state) {
+Palette *Palette::createSegaPalette(PaletteManager *pm, GraphicsEngine::GfxState &state) {
 	return new SCDPalette(pm, state);
 }
 

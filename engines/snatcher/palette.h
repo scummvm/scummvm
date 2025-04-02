@@ -31,7 +31,7 @@ namespace Snatcher {
 
 class Palette {
 public:
-	Palette(PaletteManager *pm, GraphicsEngine::State &state) : _palMan(pm), _gfxState(state) {}
+	Palette(PaletteManager *pm, GraphicsEngine::GfxState &state) : _palMan(pm), _gfxState(state) {}
 	virtual ~Palette() {}
 
 	virtual bool enqueueEvent(ResourcePointer &res) { return true; }
@@ -42,13 +42,13 @@ public:
 
 protected:
 	PaletteManager *_palMan;
-	GraphicsEngine::State &_gfxState;
+	GraphicsEngine::GfxState &_gfxState;
 
 private:
-	static Palette *createSegaPalette(PaletteManager *pm, GraphicsEngine::State &state);
+	static Palette *createSegaPalette(PaletteManager *pm, GraphicsEngine::GfxState &state);
 
 public:
-	static Palette *create(PaletteManager *pm, Common::Platform platform, GraphicsEngine::State &state) {
+	static Palette *create(PaletteManager *pm, Common::Platform platform, GraphicsEngine::GfxState &state) {
 		switch (platform) {
 		case Common::kPlatformSegaCD:
 			return createSegaPalette(pm, state);

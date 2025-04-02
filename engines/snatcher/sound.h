@@ -41,6 +41,8 @@ public:
 	void pcmPlayEffect(int track);
 	void pcmDoCommand(int cmd, int arg);
 
+	void pause(bool toggle);
+
 private:
 	SoundDevice *_dev;
 };
