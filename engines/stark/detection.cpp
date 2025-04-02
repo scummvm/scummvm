@@ -398,6 +398,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO_NONE
 	},
 
+	// The Longest Journey
+	// Hebrew fan-made
+	{
+		"tlj", "Fanmade",
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
+				   "chapters.ini",	"53c9b6087044be0ba05f8d7b39c8ae48", 367),
+		Common::HE_ISR,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
 	AD_TABLE_END_MARKER
 };
 
