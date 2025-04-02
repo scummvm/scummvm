@@ -11,7 +11,7 @@ static const char *const k1IntroStringsDOSCDCzech[51] = {
 	"Vl""\xA0""dnu t""\x82""to zemi!",
 	"Tvoje chab""\xA0"" kledba m""\xEC"" neomezuje.",
 	"Tak m""\xEC"" zabij hned!",
-	"Mnoho magie my ji""\x9E"" nezbylo.",
+	"Mnoho magie mi ji""\x9E"" nezbylo.",
 	"Chci ti ubl""\xA1""""\x9E""it, o tom v""\xF9""bec nepochybuj...",
 	"...Te""\xEF"" je z tebe k""\xA0""men...",
 	"...Zat""\xA1""m ti nech""\xA0""m tvoje o""\xE8""i.",
