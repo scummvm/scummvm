@@ -1,140 +1,140 @@
 static const char *const k1IntroStringsDOSCDCzech[51] = {
 	"This is a text test - 1",
 	"This is a text test - 2",
-	"Zdrav""\xC3\xAD""m, Kallaku...",
-	"...Mocn""\xC3\xBD"" v""\xC5\xAF""dce Kr""\xC3\xA1""lovsk""\xC3\xBD""ch mystik""\xC5\xAF""!",
-	"Vystra""\xC5\xA1""il jsem t""\xC4\x9B""?",
+	"Zdrav""\xA1""m, Kallaku...",
+	"...Mocn""\xFD"" v""\xF9""dce Kr""\xA0""lovsk""\xFD""ch mystik""\xF9""!",
+	"Vystra""\x9A""il jsem t""\xEC""?",
 	"Malcolm!",
-	"V""\xC4\x8D""era jsem se doslechl, o tv""\xC3\xA9""m ""\xC3\xBA""t""\xC4\x9B""ku.",
-	"O""\xC4\x8D""ek""\xC3\xA1""val jsem t""\xC4\x9B"" d""\xC5\x99""""\xC3\xAD""ve.",
-	"Pro""\xC4\x8D"" bych m""\xC4\x9B""l sp""\xC4\x9B""chat?",
-	"Vl""\xC3\xA1""dnu t""\xC3\xA9""to zemi!",
-	"Tvoje chab""\xC3\xA1"" kledba m""\xC4\x9B"" neomezuje.",
-	"Tak m""\xC4\x9B"" zabij hned!",
-	"Mnoho magie my ji""\xC5\xBE"" nezbylo.",
-	"Chci ti ubl""\xC3\xAD""""\xC5\xBE""it, o tom v""\xC5\xAF""bec nepochybuj...",
-	"...Te""\xC4\x8F"" je z tebe k""\xC3\xA1""men...",
-	"...Zat""\xC3\xAD""m ti nech""\xC3\xA1""m tvoje o""\xC4\x8D""i.",
-	"J""\xC3\xA1"" pro Kyrandii ronit slzy nebudu...",
-	"...Ale tvoje ti neodep""\xC5\x99""u.",
-	"""\xC5\xA0""a""\xC5\xA1""ek Malcolm se osvobodil!",
-	"Nyn""\xC3\xAD"" ovl""\xC3\xA1""d""\xC3\xA1"" Kyragem...",
-	"...zdroj ve""\xC5\xA1""ker""\xC3\xA9"" magie v Kyrandii!",
+	"V""\xE8""era jsem se doslechl, o tv""\x82""m ""\xFA""t""\xEC""ku.",
+	"O""\xE8""ek""\xA0""val jsem t""\xEC"" d""\xF8""""\xA1""ve.",
+	"Pro""\xE8"" bych m""\xEC""l sp""\xEC""chat?",
+	"Vl""\xA0""dnu t""\x82""to zemi!",
+	"Tvoje chab""\xA0"" kledba m""\xEC"" neomezuje.",
+	"Tak m""\xEC"" zabij hned!",
+	"Mnoho magie my ji""\x9E"" nezbylo.",
+	"Chci ti ubl""\xA1""""\x9E""it, o tom v""\xF9""bec nepochybuj...",
+	"...Te""\xEF"" je z tebe k""\xA0""men...",
+	"...Zat""\xA1""m ti nech""\xA0""m tvoje o""\xE8""i.",
+	"J""\xA0"" pro Kyrandii slzy ronit nebudu...",
+	"...Ale tvoje ti neodep""\xF8""u.",
+	"""\x8A""a""\x9A""ek Malcolm se osvobodil!",
+	"Nyn""\xA1"" ovl""\xA0""d""\xA0"" Kyragem...",
+	"...zdroj ve""\x9A""ker""\x82"" magie v Kyrandii!",
 	"",
-	"Jak se opova""\xC5\xBE""uje""\xC5\xA1"" podrazit MI nohy!",
-	"Ale ne, m""\xC3\xA1""m pro tebe n""\xC4\x9B""co speci""\xC3\xA1""ln""\xC3\xAD""ho...",
-	"Takov""\xC3\xA9"" humorn""\xC3\xA9"" kouzlo!",
-	"Ale mus""\xC3\xAD""m t""\xC4\x9B"" d""\xC5\xAF""sledn""\xC4\x9B"" varovat.",
-	"Nesk""\xC3\xA1""kej na TEN strom!",
-	"Nelez po TOM strom""\xC4\x9B"" veverko!",
+	"Jak se opova""\x9E""uje""\x9A"" podrazit MI nohy!",
+	"Ale ne, m""\xA0""m pro tebe n""\xEC""co speci""\xA0""ln""\xA1""ho...",
+	"Takov""\x82"" humorn""\x82"" kouzlo!",
+	"Ale mus""\xA1""m t""\xEC"" d""\xF9""sledn""\xEC"" varovat.",
+	"Nesk""\xA0""kej na TEN strom!",
+	"Nelez po TOM strom""\xEC"" veverko!",
 	"Baf!",
-	"Tak je to z""\xC3\xA1""bavn""\xC4\x9B""j""\xC5\xA1""""\xC3\xAD""...",
-	"...""\xC5\xBD""e ano?",
+	"Tak je to z""\xA0""bavn""\xEC""j""\x9A""""\xA1""...",
+	"...""\x8E""e ano?",
 	"Ha ha ha...",
-	"Nejsou prsty b""\xC3\xA1""je""\xC4\x8D""n""\xC3\xA9""?",
-	"Je skv""\xC4\x9B""l""\xC3\xA9"" b""\xC3\xBD""t ""\xC5\xBE""iv""\xC3\xBD""!",
+	"Nejsou prsty b""\xA0""je""\xE8""n""\x82""?",
+	"Je skv""\xEC""l""\x82"" b""\xFD""t ""\x9E""iv""\xFD""!",
 	"Brandone!",
-	"D""\xC4\x9B""de""\xC4\x8D""ku! Dok""\xC3\xA1""zali jsme to!",
-	"Ne! TY jsi to dok""\xC3\xA1""zal!",
-	"A""\xC5\xA5"" ""\xC5\xBE""ije kr""\xC3\xA1""l Brandon!",
-	"A""\xC5\xA5"" ""\xC5\xBE""ij""\xC3\xAD"" Kr""\xC3\xA1""lov""\xC5\xA1""t""\xC3\xAD"" mystikov""\xC3\xA9""!",
-	"Poj""\xC4\x8F""me te""\xC4\x8F"" d""\xC3\xA1""t Kyrandii do po""\xC5\x99""\xC3\xA1""dku!",
-	"Skv""\xC4\x9B""l""\xC3\xBD"" n""\xC3\xA1""pad!",
-	"Jako sv""\xC3\xA9"" prvn""\xC3\xAD"" kr""\xC3\xA1""lovsk""\xC3\xA9"" na""\xC5\x99""""\xC3\xAD""zen""\xC3\xAD""...",
-	"Jmenuji sand""\xC3\xA1""ly ofici""\xC3\xA1""ln""\xC3\xAD"" obuv""\xC3\xAD"" Kyrandie!",
-	"V""\xC3\xBD""born""\xC4\x9B"", Brandone!",
-	"Kraj ji""\xC5\xBE"" v""\xC3\xAD""ce nepl""\xC3\xA1""""\xC4\x8D""e...",
-	"A tv""\xC3\xAD"" p""\xC5\x99""""\xC3\xA1""tel""\xC3\xA9"" byli obnoveni!",
-	"Drah""\xC3\xA1"" Brynn...",
+	"D""\xEC""de""\xE8""ku! Dok""\xA0""zali jsme to!",
+	"Ne! TY jsi to dok""\xA0""zal!",
+	"A""\x9D"" ""\x9E""ije kr""\xA0""l Brandon!",
+	"A""\x9D"" ""\x9E""ij""\xA1"" Kr""\xA0""lov""\x9A""t""\xA1"" mystikov""\x82""!",
+	"Poj""\xEF""me te""\xEF"" d""\xA0""t Kyrandii do po""\xF8""\xA0""dku!",
+	"Skv""\xEC""l""\xFD"" n""\xA0""pad!",
+	"Jako sv""\x82"" prvn""\xA1"" kr""\xA0""lovsk""\x82"" na""\xF8""""\xA1""zen""\xA1""...",
+	"Jmenuji sand""\xA0""ly ofici""\xA0""ln""\xA1"" obuv""\xA1"" Kyrandie!",
+	"V""\xFD""born""\xEC"", Brandone!",
+	"Kraj ji""\x9E"" v""\xA1""ce nepl""\xA0""""\xE8""e...",
+	"A tv""\xA1"" p""\xF8""""\xA0""tel""\x82"" byli obnoveni!",
+	"Drah""\xA0"" Brynn...",
 	"Malcolm se osvobodil!",
-	"Brzy si pro m""\xC4\x9B"" p""\xC5\x99""""\xC3\xAD""jde.",
-	"Pros""\xC3\xAD""m, pomoz Brandonovi...",
+	"Brzy si pro m""\xEC"" p""\xF8""""\xA1""jde.",
+	"Pros""\xA1""m, pomoz Brandonovi...",
 	""
 };
 
 static const StringListProvider k1IntroStringsDOSCDCzechProvider = { ARRAYSIZE(k1IntroStringsDOSCDCzech), k1IntroStringsDOSCDCzech };
 
 static const char *const k1ItemNamesDOSCDCzech[107] = {
-	"Gran""\xC3\xA1""t",
+	"Gran""\xA0""t",
 	"Ametyst",
-	"Akvamar""\xC3\xAD""n",
+	"Akvamar""\xA1""n",
 	"Diamant",
 	"Smaragd",
 	"Perla",
-	"Rub""\xC3\xAD""n",
-	"Oliv""\xC3\xAD""n",
-	"Saf""\xC3\xAD""r",
-	"Op""\xC3\xA1""l",
+	"Rub""\xA1""n",
+	"Oliv""\xA1""n",
+	"Saf""\xA1""r",
+	"Op""\xA0""l",
 	"Topaz",
 	"Onyx",
-	"Slune""\xC4\x8D""n""\xC3\xAD"" k""\xC3\xA1""men",
-	"M""\xC4\x9B""s""\xC3\xAD""""\xC4\x8D""n""\xC3\xAD"" k""\xC3\xA1""men",
-	"Duhov""\xC3\xBD"" k""\xC3\xA1""men",
+	"Slune""\xE8""n""\xA1"" k""\xA0""men",
+	"M""\xEC""s""\xA1""""\xE8""n""\xA1"" k""\xA0""men",
+	"Duhov""\xFD"" k""\xA0""men",
 	"Magnetit",
-	"R""\xC5\xAF""""\xC5\xBE""e",
-	"Tulip""\xC3\xA1""n",
+	"R""\xF9""""\x9E""e",
+	"Tulip""\xA0""n",
 	"Orchidej",
-	"St""\xC5\x99""""\xC3\xAD""brn""\xC3\xA1"" r""\xC5\xAF""""\xC5\xBE""e",
-	"St""\xC5\x99""""\xC3\xAD""brn""\xC3\xA1"" so""\xC5\xA1""ka",
-	"St""\xC5\x99""""\xC3\xAD""brn""\xC3\xA1"" mince",
-	"Zlat""\xC3\xA1"" mince",
-	"Zlat""\xC3\xBD"" prsten",
-	"Kr""\xC3\xA1""lovsk""\xC3\xBD"" kalich",
-	"""\xC5\xA0""i""\xC5\xA1""ka",
-	"""\xC5\xBD""alud",
-	"O""\xC5\x99""ech",
-	"Z""\xC3\xA1""""\xC5\x99""""\xC3\xAD""c""\xC3\xAD"" ohnivky",
+	"St""\xF8""""\xA1""brn""\xA0"" r""\xF9""""\x9E""e",
+	"St""\xF8""""\xA1""brn""\xA0"" so""\x9A""ka",
+	"St""\xF8""""\xA1""brn""\xA0"" mince",
+	"Zlat""\xA0"" mince",
+	"Zlat""\xFD"" prsten",
+	"Kr""\xA0""lovsk""\xFD"" kalich",
+	"""\x8A""i""\x9A""ka",
+	"""\x8E""alud",
+	"O""\xF8""ech",
+	"Z""\xA0""""\xF8""""\xA1""c""\xA1"" ohnivky",
 	"Ohnivky",
 	"Ohnivky",
 	"Ohnivky",
 	"Ohnivky",
 	"Ohnivky",
 	"Ryba",
-	"Ryb""\xC3\xAD"" kost",
-	"Skopov""\xC3\xA1"" noha",
+	"Ryb""\xA1"" kost",
+	"Skopov""\xA0"" noha",
 	"Kost",
 	"Jablko",
-	"Jad""\xC3\xA9""rko z jablka",
-	"Bor""\xC5\xAF""vky",
+	"Jad""\x82""rko z jablka",
+	"Bor""\xF9""vky",
 	"Houba",
 	"Dopis",
 	"Mramor",
 	"Pila",
 	"Ankh",
-	"P""\xC3\xAD""rko",
+	"P""\xA1""rko",
 	"Vejce",
 	"List",
-	"Trojl""\xC3\xAD""stek",
-	"Spadl""\xC3\xA1"" hv""\xC4\x9B""zda",
-	"K""\xC5\x99""i""\xC5\xA1""""\xC5\xA5""""\xC3\xA1""lov""\xC3\xA1"" koule",
+	"Trojl""\xA1""stek",
+	"Spadl""\xA0"" hv""\xEC""zda",
+	"K""\xF8""i""\x9A""""\x9D""""\xA0""lov""\xA0"" koule",
 	"Slza",
 	"Zrcadlo",
 	"Rampouch",
-	"Fl""\xC3\xA9""tna",
-	"P""\xC5\x99""es""\xC3\xBD""pac""\xC3\xAD"" hodiny",
-	"""\xC5\xBD""elezn""\xC3\xBD"" kl""\xC3\xAD""""\xC4\x8D""",
-	"Nefritov""\xC3\xBD"" kl""\xC3\xAD""""\xC4\x8D""",
-	"Obsidi""\xC3\xA1""nov""\xC3\xBD"" kl""\xC3\xAD""""\xC4\x8D""",
-	"""\xC4\x8C""erven""\xC3\xBD"" lektvar",
-	"""\xC4\x8C""erven""\xC3\xBD"" lektvar",
-	"Modr""\xC3\xBD"" lektvar",
-	"Modr""\xC3\xBD"" lektvar",
-	"""\xC5\xBD""lut""\xC3\xBD"" lektvar",
-	"""\xC5\xBD""lut""\xC3\xBD"" lektvar",
-	"Zelen""\xC3\xBD"" lektvar",
-	"Oran""\xC5\xBE""ov""\xC3\xBD"" lektvar",
-	"Fialov""\xC3\xBD"" lektvar",
+	"Fl""\x82""tna",
+	"P""\xF8""es""\xFD""pac""\xA1"" hodiny",
+	"""\x8E""elezn""\xFD"" kl""\xA1""""\xE8""",
+	"Nefritov""\xFD"" kl""\xA1""""\xE8""",
+	"Obsidi""\xA0""nov""\xFD"" kl""\xA1""""\xE8""",
+	"""\xC8""erven""\xFD"" lektvar",
+	"""\xC8""erven""\xFD"" lektvar",
+	"Modr""\xFD"" lektvar",
+	"Modr""\xFD"" lektvar",
+	"""\x8E""lut""\xFD"" lektvar",
+	"""\x8E""lut""\xFD"" lektvar",
+	"Zelen""\xFD"" lektvar",
+	"Oran""\x9E""ov""\xFD"" lektvar",
+	"Fialov""\xFD"" lektvar",
 	"Lektvar Duhy",
-	"""\xC4\x8C""erstv""\xC3\xA1"" voda",
-	"""\xC4\x8C""erstv""\xC3\xA1"" voda",
-	"Slan""\xC3\xA1"" voda",
-	"Slan""\xC3\xA1"" voda",
-	"Miner""\xC3\xA1""ln""\xC3\xAD"" voda",
-	"Miner""\xC3\xA1""ln""\xC3\xAD"" voda",
-	"Magick""\xC3\xA1"" voda",
-	"agick""\xC3\xA1"" voda",
-	"Pr""\xC3\xA1""zdn""\xC3\xA1"" ba""\xC5\x88""ka",
-	"Pr""\xC3\xA1""zdn""\xC3\xA1"" ba""\xC5\x88""ka",
+	"""\xC8""erstv""\xA0"" voda",
+	"""\xC8""erstv""\xA0"" voda",
+	"Slan""\xA0"" voda",
+	"Slan""\xA0"" voda",
+	"Miner""\xA0""ln""\xA1"" voda",
+	"Miner""\xA0""ln""\xA1"" voda",
+	"Magick""\xA0"" voda",
+	"agick""\xA0"" voda",
+	"Pr""\xA0""zdn""\xA0"" ba""\xF2""ka",
+	"Pr""\xA0""zdn""\xA0"" ba""\xF2""ka",
 	"Svitek",
 	"Svitek",
 	"Svitek",
@@ -150,31 +150,31 @@ static const char *const k1ItemNamesDOSCDCzech[107] = {
 	"Kousek pergamenu",
 	"Kousek pergamenu",
 	"Kousek pergamenu",
-	"""\xC4\x8C""erven""\xC3\xBD"" ""\xC4\x8C""arok""\xC3\xA1""men",
-	"Oran""\xC5\xBE""ov""\xC3\xBD"" ""\xC4\x8C""arok""\xC3\xA1""men",
-	"""\xC5\xBD""lut""\xC3\xBD"" ""\xC4\x8C""arok""\xC3\xA1""men",
-	"Zelen""\xC3\xBD"" ""\xC4\x8C""arok""\xC3\xA1""men",
-	"Modro-Zelen""\xC3\xBD"" ""\xC4\x8C""arok""\xC3\xA1""men",
-	"Modr""\xC3\xBD"" ""\xC4\x8C""arok""\xC3\xA1""men",
-	"Fialov""\xC3\xBD"" ""\xC4\x8C""arok""\xC3\xA1""men",
-	"T""\xC4\x9B""""\xC5\xBE""k""\xC3\xBD"" k""\xC3\xA1""men",
-	"Kr""\xC3\xA1""lovsk""\xC3\xA1"" koruna",
-	"Kr""\xC3\xA1""lovsk""\xC3\xA9"" ""\xC5\xBE""ezlo",
-	"Zlat""\xC3\xBD"" kl""\xC3\xAD""""\xC4\x8D""",
-	"Nezn""\xC3\xA1""m""\xC3\xBD"" p""\xC5\x99""edm""\xC4\x9B""t"
+	"""\xC8""erven""\xFD"" ""\xC8""arok""\xA0""men",
+	"Oran""\x9E""ov""\xFD"" ""\xC8""arok""\xA0""men",
+	"""\x8E""lut""\xFD"" ""\xC8""arok""\xA0""men",
+	"Zelen""\xFD"" ""\xC8""arok""\xA0""men",
+	"Modro-Zelen""\xFD"" ""\xC8""arok""\xA0""men",
+	"Modr""\xFD"" ""\xC8""arok""\xA0""men",
+	"Fialov""\xFD"" ""\xC8""arok""\xA0""men",
+	"T""\xEC""""\x9E""k""\xFD"" k""\xA0""men",
+	"Kr""\xA0""lovsk""\xA0"" koruna",
+	"Kr""\xA0""lovsk""\x82"" ""\x9E""ezlo",
+	"Zlat""\xFD"" kl""\xA1""""\xE8""",
+	"Nezn""\xA0""m""\xFD"" p""\xF8""edm""\xEC""t"
 };
 
 static const StringListProvider k1ItemNamesDOSCDCzechProvider = { ARRAYSIZE(k1ItemNamesDOSCDCzech), k1ItemNamesDOSCDCzech };
 
 static const char *const k1TakenStringsDOSCDCzech[2] = {
-	" sebr""\xC3\xA1""n.",
-	" sebr""\xC3\xA1""n."
+	" sebr""\xA0""n.",
+	" sebr""\xA0""n."
 };
 
 static const StringListProvider k1TakenStringsDOSCDCzechProvider = { ARRAYSIZE(k1TakenStringsDOSCDCzech), k1TakenStringsDOSCDCzech };
 
 static const char *const k1PlacedStringsDOSCDCzech[1] = {
-	" ulo""\xC5\xBE""en."
+	" ulo""\x9E""en."
 };
 
 static const StringListProvider k1PlacedStringsDOSCDCzechProvider = { ARRAYSIZE(k1PlacedStringsDOSCDCzech), k1PlacedStringsDOSCDCzech };
@@ -186,26 +186,26 @@ static const char *const k1DroppedStringsDOSCDCzech[1] = {
 static const StringListProvider k1DroppedStringsDOSCDCzechProvider = { ARRAYSIZE(k1DroppedStringsDOSCDCzech), k1DroppedStringsDOSCDCzech };
 
 static const char *const k1NoDropStringsDOSCDCzech[2] = {
-	"V t""\xC3\xA9""to sc""\xC3\xA9""n""\xC4\x9B"" u""\xC5\xBE"" dal""\xC5\xA1""""\xC3\xAD"" v""\xC4\x9B"" nelze polo""\xC5\xBE""it.",
-	"To tam nejde d""\xC3\xA1""t."
+	"V t""\x82""to sc""\x82""n""\xEC"" u""\x9E"" dal""\x9A""""\xA1"" v""\xEC"" nelze polo""\x9E""it.",
+	"To tam nejde d""\xA0""t."
 };
 
 static const StringListProvider k1NoDropStringsDOSCDCzechProvider = { ARRAYSIZE(k1NoDropStringsDOSCDCzech), k1NoDropStringsDOSCDCzech };
 
 static const char *const k1PutDownStringDOSCDCzech[1] = {
-	"Mo""\xC5\xBE""n""\xC3\xA1"" bych to m""\xC4\x9B""l nejd""\xC5\x99""""\xC3\xAD""v polo""\xC5\xBE""it."
+	"Mo""\x9E""n""\xA0"" bych to m""\xEC""l nejd""\xF8""""\xA1""v polo""\x9E""it."
 };
 
 static const StringListProvider k1PutDownStringDOSCDCzechProvider = { ARRAYSIZE(k1PutDownStringDOSCDCzech), k1PutDownStringDOSCDCzech };
 
 static const char *const k1WaitAmuletStringDOSCDCzech[1] = {
-	"Asi budu muset po""\xC4\x8D""kat, a""\xC5\xBE"" m""\xC5\xAF""j amulet znovu z""\xC3\xAD""sk""\xC3\xA1"" s""\xC3\xAD""lu."
+	"Asi budu muset po""\xE8""kat, a""\x9E"" m""\xF9""j amulet znovu z""\xA1""sk""\xA0"" s""\xA1""lu."
 };
 
 static const StringListProvider k1WaitAmuletStringDOSCDCzechProvider = { ARRAYSIZE(k1WaitAmuletStringDOSCDCzech), k1WaitAmuletStringDOSCDCzech };
 
 static const char *const k1BlackJewelStringDOSCDCzech[1] = {
-	"Je to drahokam, ale pro""\xC4\x8D"" je ""\xC4\x8D""ern""\xC3\xBD""?"
+	"Je to drahokam, ale pro""\xE8"" je ""\xE8""ern""\xFD""?"
 };
 
 static const StringListProvider k1BlackJewelStringDOSCDCzechProvider = { ARRAYSIZE(k1BlackJewelStringDOSCDCzech), k1BlackJewelStringDOSCDCzech };
@@ -217,52 +217,52 @@ static const char *const k1HealingTipStringDOSCDCzech[1] = {
 static const StringListProvider k1HealingTipStringDOSCDCzechProvider = { ARRAYSIZE(k1HealingTipStringDOSCDCzech), k1HealingTipStringDOSCDCzech };
 
 static const char *const k1PoisonGoneStringDOSCDCzech[2] = {
-	"""\xC3\x9A""""\xC5\xBE""asn""\xC3\xA9""!",
-	"""\xC3\x9A""""\xC4\x8D""inky jedu jsou pry""\xC4\x8D""!"
+	"""\xDA""""\x9E""asn""\x82""!",
+	"""\xDA""""\xE8""inky jedu jsou pry""\xE8""!"
 };
 
 static const StringListProvider k1PoisonGoneStringDOSCDCzechProvider = { ARRAYSIZE(k1PoisonGoneStringDOSCDCzech), k1PoisonGoneStringDOSCDCzech };
 
 static const char *const k1ThePoisonStringsDOSCDCzech[4] = {
 	"Jed...",
-	"Nem""\xC5\xAF""""\xC5\xBE""u d""\xC3\xBD""chat...",
-	"Nec""\xC3\xAD""t""\xC3\xAD""m se dob""\xC5\x99""e...",
-	"Ten had musel b""\xC3\xBD""t\rjedovat""\xC3\xBD""!"
+	"Nem""\xF9""""\x9E""u d""\xFD""chat...",
+	"Nec""\xA1""t""\xA1""m se dob""\xF8""e...",
+	"Ten had musel b""\xFD""t\rjedovat""\xFD""!"
 };
 
 static const StringListProvider k1ThePoisonStringsDOSCDCzechProvider = { ARRAYSIZE(k1ThePoisonStringsDOSCDCzech), k1ThePoisonStringsDOSCDCzech };
 
 static const char *const k1FluteStringsDOSCDCzech[2] = {
 	"Zvuk nic moc.",
-	"Ta posledn""\xC3\xAD"" nota byla ur""\xC4\x8D""it""\xC4\x9B"" vysoko!"
+	"Ta posledn""\xA1"" nota byla ur""\xE8""it""\xEC"" vysoko!"
 };
 
 static const StringListProvider k1FluteStringsDOSCDCzechProvider = { ARRAYSIZE(k1FluteStringsDOSCDCzech), k1FluteStringsDOSCDCzech };
 
 static const char *const k1WispJewelStringsDOSCDCzech[2] = {
-	"Te""\xC4\x8F"" se na to opravdu nec""\xC3\xAD""t""\xC3\xAD""m.",
-	"Asi bych to m""\xC4\x9B""l nejd""\xC5\x99""""\xC3\xAD""ve odlo""\xC5\xBE""it."
+	"Te""\xEF"" se na to opravdu nec""\xA1""t""\xA1""m.",
+	"Asi bych to m""\xEC""l nejd""\xF8""""\xA1""ve odlo""\x9E""it."
 };
 
 static const StringListProvider k1WispJewelStringsDOSCDCzechProvider = { ARRAYSIZE(k1WispJewelStringsDOSCDCzech), k1WispJewelStringsDOSCDCzech };
 
 static const char *const k1MagicJewelStringsDOSCDCzech[1] = {
-	"To bylo zvl""\xC3\xA1""""\xC5\xA1""tn""\xC3\xAD""."
+	"To bylo zvl""\xA0""""\x9A""tn""\xA1""."
 };
 
 static const StringListProvider k1MagicJewelStringsDOSCDCzechProvider = { ARRAYSIZE(k1MagicJewelStringsDOSCDCzech), k1MagicJewelStringsDOSCDCzech };
 
 static const char *const k1FlaskFullStringDOSCDCzech[1] = {
-	"Tato ba""\xC5\x88""ka je u""\xC5\xBE"" pln""\xC3\xA1""."
+	"Tato ba""\xF2""ka je u""\x9E"" pln""\xA0""."
 };
 
 static const StringListProvider k1FlaskFullStringDOSCDCzechProvider = { ARRAYSIZE(k1FlaskFullStringDOSCDCzech), k1FlaskFullStringDOSCDCzech };
 
 static const char *const k1FullFlaskStringDOSCDCzech[4] = {
-	"Ba""\xC5\x88""ka je nyn""\xC3\xAD"" napln""\xC4\x9B""na\r""\xC4\x8D""erstvou, perlivou vodou.",
-	"Ba""\xC5\x88""ka je nyn""\xC3\xAD"" napln""\xC4\x9B""na\rslanou vodou.",
-	"Ba""\xC5\x88""ka je nyn""\xC3\xAD"" napln""\xC4\x9B""na\rminer""\xC3\xA1""ln""\xC3\xAD"" vodou.",
-	"""\xC5\xBD""iv""\xC3\xA1"" voda."
+	"Ba""\xF2""ka je nyn""\xA1"" napln""\xEC""na\r""\xE8""erstvou, perlivou vodou.",
+	"Ba""\xF2""ka je nyn""\xA1"" napln""\xEC""na\rslanou vodou.",
+	"Ba""\xF2""ka je nyn""\xA1"" napln""\xEC""na\rminer""\xA0""ln""\xA1"" vodou.",
+	"""\x8E""iv""\xA0"" voda."
 };
 
 static const StringListProvider k1FullFlaskStringDOSCDCzechProvider = { ARRAYSIZE(k1FullFlaskStringDOSCDCzech), k1FullFlaskStringDOSCDCzech };
@@ -274,27 +274,27 @@ static const char *const k1OutroHomeStringDOSCDCzech[1] = {
 static const StringListProvider k1OutroHomeStringDOSCDCzechProvider = { ARRAYSIZE(k1OutroHomeStringDOSCDCzech), k1OutroHomeStringDOSCDCzech };
 
 static const char *const k1VeryCleverStringDOSCDCzech[1] = {
-	"Velmi chytr""\xC3\xA9""! Ale tvoje chab""\xC3\xA9"" ""\xC3\xBA""sil""\xC3\xAD"" je marn""\xC3\xA9""."
+	"Velmi chytr""\x82""! Ale tvoje chab""\x82"" ""\xFA""sil""\xA1"" je marn""\x82""."
 };
 
 static const StringListProvider k1VeryCleverStringDOSCDCzechProvider = { ARRAYSIZE(k1VeryCleverStringDOSCDCzech), k1VeryCleverStringDOSCDCzech };
 
 static const char *const k1GUIStringsDOSCDCzech[81] = {
 	"Legenda o Kyrandii",
-	"Nahr""\xC3\xA1""t pozici",
-	"Ulo""\xC5\xBE""it pozici",
+	"Nahr""\xA0""t pozici",
+	"Ulo""\x9E""it pozici",
 	"Nastavit hru",
-	"Ukon""\xC4\x8D""it hru",
-	"Pokra""\xC4\x8D""ovat ve h""\xC5\x99""e",
-	"Nastaven""\xC3\xAD"" hry",
-	"Kterou pozici chce""\xC5\xA1"" nahr""\xC3\xA1""t?",
-	"Vyber pozici pro ulo""\xC5\xBE""en""\xC3\xAD"" hry:",
-	"[ PR""\xC3\x81""ZDN""\xC3\x9D"" SLOT ]",
-	"Zru""\xC5\xA1""it",
-	"Zadej popis sv""\xC3\xA9"" ulo""\xC5\xBE""en""\xC3\xA9"" pozice:",
-	"Ulo""\xC5\xBE""it",
-	"Odpo""\xC4\x8D""""\xC3\xAD""vej v pokoji, Brandone.",
-	"Ur""\xC4\x8D""it""\xC4\x9B"" chce""\xC5\xA1"" ukon""\xC4\x8D""it hru?",
+	"Ukon""\xE8""it hru",
+	"Pokra""\xE8""ovat ve h""\xF8""e",
+	"Nastaven""\xA1"" hry",
+	"Kterou pozici chce""\x9A"" nahr""\xA0""t?",
+	"Vyber pozici pro ulo""\x9E""en""\xA1"" hry:",
+	"[ PR""\xC1""ZDN""\xDD"" SLOT ]",
+	"Zru""\x9A""it",
+	"Zadej popis sv""\x82"" ulo""\x9E""en""\x82"" pozice:",
+	"Ulo""\x9E""it",
+	"Odpo""\xE8""""\xA1""vej v pokoji, Brandone.",
+	"Ur""\xE8""it""\xEC"" chce""\x9A"" ukon""\xE8""it hru?",
 	"XXX",
 	"",
 	"",
@@ -351,12 +351,12 @@ static const char *const k1GUIStringsDOSCDCzech[81] = {
 	"",
 	"",
 	"",
-	"Hlavn""\xC3\xAD"" nab""\xC3\xAD""dka",
+	"Hlavn""\xA1"" nab""\xA1""dka",
 	"Zapnuto",
 	"Vypnuto",
 	"Ano",
 	"Ne",
-	"Rychlost ch""\xC5\xAF""ze ",
+	"Rychlost ch""\xF9""ze ",
 	"Rychlost textu ",
 	"Hudba je ",
 	"Zvuky jsou ",
@@ -366,24 +366,25 @@ static const char *const k1GUIStringsDOSCDCzech[81] = {
 static const StringListProvider k1GUIStringsDOSCDCzechProvider = { ARRAYSIZE(k1GUIStringsDOSCDCzech), k1GUIStringsDOSCDCzech };
 
 static const char *const k1NewGameStringDOSCDCzech[1] = {
-	"[ ZAH""\xC3\x81""JIT NOVOU HRU ]"
+	"[ ZAH""\xC1""JIT NOVOU HRU ]"
 };
 
 static const StringListProvider k1NewGameStringDOSCDCzechProvider = { ARRAYSIZE(k1NewGameStringDOSCDCzech), k1NewGameStringDOSCDCzech };
 
 static const char *const k1ConfigStringsDOSCDCzech[12] = {
 	"nejpomaleji",
-	"polmalu",
-	"norm""\xC3\xA1""ln""\xC4\x9B""",
+	"pomalu",
+	"norm""\xA0""ln""\xA1""",
 	"rychle",
 	"nejrychleji",
 	"Jen Text",
 	"Jen Hlas",
 	"Hlas & Text",
 	"nejpomaleji",
-	"norm""\xC3\xA1""ln""\xC4\x9B""",
+	"norm""\xA0""ln""\xA1""",
 	"rychle",
-	"kliknut""\xC3\xAD"""
+	"kliknut""\xA1"""
 };
 
 static const StringListProvider k1ConfigStringsDOSCDCzechProvider = { ARRAYSIZE(k1ConfigStringsDOSCDCzech), k1ConfigStringsDOSCDCzech };
+
