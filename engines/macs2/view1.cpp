@@ -714,8 +714,8 @@ void View1::draw() {
 	// DrawSprite(100, 100, g_engine->_stick.Width, g_engine->_stick.Height, g_engine->_stick.Data, s);
 
 	if (_isShowingInventory) {
-		drawInventory(s);
-		// drawInventory2(s);
+		// drawInventory(s);
+		drawInventory2(s);
 	}
 
 	if (activeInventoryItem != nullptr) {
@@ -880,6 +880,15 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	Graphics::ManagedSurface* buffer = new Graphics::ManagedSurface;
 	buffer->create(s.w, s.h, s.format);
 	s.blendBlitTo(*buffer);
+
+	uint16 buttonX = (s.w / 2) - (maxWidthButtonIcon + 4) * 3 + 2;
+	uint16 buttonY = y + height - 4 - maxHeightButtonIcon;
+
+	// Draw the buttons at the bottom
+	for (int i = 0; i < 6; i++) {
+		DrawBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(maxWidthButtonIcon, maxHeightButtonIcon), s);
+		buttonX += maxWidthButtonIcon + 4;
+	}
 }
 
 GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
