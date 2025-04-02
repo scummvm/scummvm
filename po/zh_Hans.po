@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-02 13:41+0000\n"
+"POT-Creation-Date: 2025-04-02 20:15+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -8348,12 +8348,12 @@ msgstr "缺失此粉丝翻译的特定语言游戏代码和/或资源。"
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr "演示版不使用 Westwood 的引擎即可播放简单动画。"
 
-#: engines/kyra/detection_tables.h:1369
+#: engines/kyra/detection_tables.h:1434
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr "你错误地添加了游戏。请添加游戏的根目录。"
 
 #. I18N: The file in the game directory needs to be extracted
-#: engines/kyra/detection_tables.h:1385
+#: engines/kyra/detection_tables.h:1450
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
