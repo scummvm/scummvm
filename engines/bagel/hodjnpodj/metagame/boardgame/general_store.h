@@ -22,6 +22,7 @@
 #ifndef HODJNPODJ_METAGAME_GENERAL_STORE_H
 #define HODJNPODJ_METAGAME_GENERAL_STORE_H
 
+#include "bagel/boflib/sound.h"
 #include "bagel/hodjnpodj/views/dialog.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
@@ -44,6 +45,10 @@ private:
 	CItem *_selectedItem = nullptr;
 	CInventory *pGeneralStore = nullptr;
 	CInventory *pInventory = nullptr;
+	int _buyMessageCtr = 0;
+	Common::String _buyMessage;
+	CBofSound *_buySound = nullptr;
+	bool bPlayingHodj = false;
 
 	void updateContent();
 	Common::Rect getItemRect(int index) const;
@@ -56,6 +61,7 @@ private:
 	}
 	bool hasNextPage() const;
 	int getItemAtPos(const Common::Point &point) const;
+	void purchaseItem();
 
 public:
 	GeneralStore();
@@ -68,6 +74,7 @@ public:
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgMouseMove(const MouseMoveMessage &msg) override;
 	bool msgMouseUp(const MouseUpMessage &msg) override;
+	bool tick() override;
 
 	void draw() override;
 

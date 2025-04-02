@@ -53,12 +53,12 @@ namespace Metagame {
 #define TEXT_MORE_DX		120						// offset of "more" indicator from right margin
 #define TEXT_MORE_DY		5                       // offset of "more" indicator bottom of scroll
 #define MORE_TEXT_BLURB		"[ More ]"				// actual text to display for "more" indicator
-
-#define IDC_STORE_DOLLAR		931
+#define BUY_MESSAGE_TIMEOUT	100
+#define IDC_STORE_DOLLAR	931
 
 GeneralStore::GeneralStore() : Dialog("GeneralStore", "meta/hnpmeta.dll"),
-		_okButton(Common::Rect(210, 355, 290, 380), this),
-		pInventory(lpMetaGame->m_cHodj.m_pInventory) {
+_okButton(Common::Rect(210, 355, 290, 380), this),
+pInventory(lpMetaGame->m_cHodj.m_pInventory) {
 }
 
 void GeneralStore::show(CInventory *pStore, CInventory *pInvent) {
@@ -77,6 +77,8 @@ bool GeneralStore::msgOpen(const OpenMessage &msg) {
 		pGeneralStore = lpMetaGame->m_cHodj.m_pGenStore;
 		pInventory = lpMetaGame->m_cHodj.m_pInventory;
 	}
+
+	bPlayingHodj = pInventory->FindItem(MG_OBJ_HODJ_NOTEBOOK) != nullptr;
 
 	_scrollTopRect = Common::Rect(0, 0, 501, 48);
 	_scrollBottomRect = Common::Rect(0, 0, 501, 47);
@@ -179,6 +181,17 @@ bool GeneralStore::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
+bool GeneralStore::tick() {
+	Dialog::tick();
+
+	if (_buyMessageCtr && !--_buyMessageCtr) {
+		_buyMessage.clear();
+		redraw();
+	}
+
+	return true;
+}
+
 void GeneralStore::draw() {
 	Dialog::draw();
 
@@ -189,8 +202,14 @@ void GeneralStore::draw() {
 
 	drawItems(s);
 
-	if (_selectedItem)
+	s.setFontSize(DIALOG_BLURB_SIZE);
+
+	if (!_buyMessage.empty()) {
+		s.writeString(_buyMessage, _blurbRect, DIALOG_TEXT_COLOR,
+			Graphics::kTextAlignCenter);
+	} else if (_selectedItem) {
 		drawBlurb(s);
+	}
 }
 
 void GeneralStore::updateContent() {
@@ -263,7 +282,6 @@ void GeneralStore::drawMore(GfxSurface &s) {
 }
 
 void GeneralStore::drawBlurb(GfxSurface &s) {
-	s.setFontSize(DIALOG_BLURB_SIZE);
 	s.writeString(_selectedItem->GetDescription(),
 		_blurbRect, DIALOG_TEXT_COLOR,
 		Graphics::kTextAlignCenter);
@@ -346,14 +364,8 @@ bool GeneralStore::msgMouseUp(const MouseUpMessage &msg) {
 			// Move to the next page
 			nFirstSlot += (nItemsPerRow * nItemsPerColumn);
 			redraw();
-		} else {
-			int index = getItemAtPos(msg._pos);                    // ... and if so, then show then dispatch
-			if (index >= 0) {
-				auto pItem = pGeneralStore->FetchItem(index);
-				if (pItem != nullptr) {
-					// TODO
-				}
-			}
+		} else if (_selectedItem) {
+			purchaseItem();
 		}
 	}
 
@@ -386,6 +398,47 @@ int GeneralStore::getItemAtPos(const Common::Point &point) const {
 	}
 
 	return -1;
+}
+
+void GeneralStore::purchaseItem() {
+	int nPrice = _selectedItem->GetValue();
+	CItem *pCrowns = pInventory->FindItem(MG_OBJ_CROWN);
+	CSound *pSound;
+
+	_buyMessageCtr = BUY_MESSAGE_TIMEOUT;
+
+	if ((pCrowns == nullptr) || (pCrowns->GetQuantity() < nPrice)) {
+		_buyMessage = "Not have enough crowns to buy that!";
+
+		pSound = new CSound(this, (bPlayingHodj ? "meta/sound/gsps5.wav" : "meta/sound/gsps6.wav"),
+			SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);
+		pSound->play();
+
+	} else {
+		_buyMessage = "Thanks for the purchase!";
+
+		if (getRandomNumber(1) == 1)
+			pSound = new CSound(this,
+				(bPlayingHodj ? "meta/sound/gsps1.wav" : "meta/sound/gsps2.wav"),
+				SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);
+		else
+			pSound = new CSound(this,
+				(bPlayingHodj ? "meta/sound/gsps3.wav" : "meta/sound/gsps4.wav"),
+				SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);
+
+		pSound->play();
+		pInventory->DiscardItem(pCrowns, nPrice);
+
+		if (_selectedItem->GetQuantity() > 1) {
+			pGeneralStore->DiscardItem(_selectedItem, 1);
+			pInventory->AddItem(_selectedItem->GetID(), 1);
+		} else {
+			(*pGeneralStore).RemoveItem(_selectedItem);
+			pInventory->AddItem(_selectedItem);
+		}
+	}
+
+	redraw();
 }
 
 } // namespace Metagame
