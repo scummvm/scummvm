@@ -88,6 +88,8 @@ Common::Error AlcachofaEngine::run() {
 		_camera.shake() = Vector2d();
 		_player->preUpdate();
 		_player->currentRoom()->update();
+		if (_player->currentRoom() != nullptr)
+			_player->currentRoom()->draw();
 		_player->postUpdate();
 		if (_debugHandler != nullptr)
 			_debugHandler->update();

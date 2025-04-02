@@ -61,6 +61,7 @@ void GlobalUI::startClosingInventory() {
 	_isOpeningInventory = false;
 	_isClosingInventory = true;
 	_timeForInventory = g_system->getMillis();
+	updateClosingInventory(); // prevents the first frame of closing to not render the inventory overlay
 }
 
 void GlobalUI::updateClosingInventory() {
