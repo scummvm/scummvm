@@ -43,11 +43,10 @@ private:
 	int nItem_DDX = 0, nItem_DDY = 0;
 	int _selectedIndex = -1;
 	CItem *_selectedItem = nullptr;
-	CInventory *pPawnShop = nullptr;
+	CInventory *pGeneralStore = nullptr;
 	CInventory *pInventory = nullptr;
-	int _buyMessageCtr = 0;
-	Common::String _buyMessage;
-	CBofSound *_buySound = nullptr;
+	int _sellMessageCtr = 0;
+	Common::String _sellMessage;
 	bool bPlayingHodj = false;
 
 	void updateContent();
@@ -56,12 +55,13 @@ private:
 	void drawItem(GfxSurface &s, CItem *pItem, int nX, int nY);
 	void drawMore(GfxSurface &s);
 	void drawBlurb(GfxSurface &s);
+	void drawFinances(GfxSurface &s);
 	bool hasPriorPage() const {
 		return nFirstSlot > 0;
 	}
 	bool hasNextPage() const;
 	int getItemAtPos(const Common::Point &point) const;
-	void purchaseItem();
+	void sellItem();
 
 public:
 	PawnShop();

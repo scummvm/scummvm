@@ -54,17 +54,16 @@ namespace Metagame {
 #define TEXT_MORE_DY		5                       // offset of "more" indicator bottom of scroll
 #define MORE_TEXT_BLURB		"[ More ]"				// actual text to display for "more" indicator
 #define BUY_MESSAGE_TIMEOUT	100
-#define IDC_STORE_DOLLAR	931
+#define IDC_PAWN_DOLLAR		941
 
 PawnShop::PawnShop() : Dialog("PawnShop", "meta/hnpmeta.dll"),
-		_okButton(Common::Rect(210, 355, 290, 380), this),
-		pInventory(lpMetaGame->m_cHodj.m_pInventory) {
+		_okButton(Common::Rect(210, 355, 290, 380), this) {
 }
 
 void PawnShop::show(CInventory *pStore, CInventory *pInvent) {
 	PawnShop *view = dynamic_cast<PawnShop *>(
 		g_events->findView("PawnShop"));
-	view->pPawnShop = pStore;
+	view->pGeneralStore = pStore;
 	view->pInventory = pInvent;
 	view->addView();
 }
@@ -72,9 +71,9 @@ void PawnShop::show(CInventory *pStore, CInventory *pInvent) {
 bool PawnShop::msgOpen(const OpenMessage &msg) {
 	Dialog::msgOpen(msg);
 
-	if (!pPawnShop) {
+	if (!pGeneralStore) {
 		// For debug purposes
-		pPawnShop = lpMetaGame->m_cHodj.m_pBlackMarket;
+		pGeneralStore = lpMetaGame->m_cHodj.m_pBlackMarket;
 		pInventory = lpMetaGame->m_cHodj.m_pInventory;
 	}
 
@@ -124,7 +123,7 @@ bool PawnShop::msgAction(const ActionMessage &msg) {
 		break;
 
 	case KEYBIND_DOWN:
-		if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < pPawnShop->ItemCount()) {
+		if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < pInventory->ItemCount()) {
 			nFirstSlot += (nItemsPerRow * nItemsPerColumn);
 			redraw();
 		}
@@ -168,7 +167,7 @@ bool PawnShop::msgKeypress(const KeypressMessage &msg) {
 		break;
 
 	case Common::KEYCODE_END:								// go to last page of text
-		nFirstSlot = pPawnShop->ItemCount() - (nItemsPerRow * nItemsPerColumn);
+		nFirstSlot = pInventory->ItemCount() - (nItemsPerRow * nItemsPerColumn);
 		if (nFirstSlot < 0)
 			nFirstSlot = 0;
 		redraw();
@@ -184,8 +183,8 @@ bool PawnShop::msgKeypress(const KeypressMessage &msg) {
 bool PawnShop::tick() {
 	Dialog::tick();
 
-	if (_buyMessageCtr && !--_buyMessageCtr) {
-		_buyMessage.clear();
+	if (_sellMessageCtr && !--_sellMessageCtr) {
+		_sellMessage.clear();
 		redraw();
 	}
 
@@ -197,23 +196,25 @@ void PawnShop::draw() {
 
 	GfxSurface s = getSurface();
 	s.setFontSize(DIALOG_FONT_SIZE);
-	s.writeString(pPawnShop->GetTitle(), _titleRect,
+	s.writeString("Pawn Shop", _titleRect,
 		DIALOG_TEXT_COLOR, Graphics::kTextAlignCenter);
 
 	drawItems(s);
 
 	s.setFontSize(DIALOG_BLURB_SIZE);
 
-	if (!_buyMessage.empty()) {
-		s.writeString(_buyMessage, _blurbRect, DIALOG_TEXT_COLOR,
+	if (!_sellMessage.empty()) {
+		s.writeString(_sellMessage, _blurbRect, DIALOG_TEXT_COLOR,
 			Graphics::kTextAlignCenter);
 	} else if (_selectedItem) {
 		drawBlurb(s);
+	} else {
+		drawFinances(s);
 	}
 }
 
 void PawnShop::updateContent() {
-	if (pPawnShop->ItemCount() <= 0)
+	if (pInventory->ItemCount() <= 0)
 		return;
 
 	// Calculate the horizontal space we have available
@@ -258,7 +259,7 @@ Common::Rect PawnShop::getItemRect(int index) const {
 
 void PawnShop::drawItems(GfxSurface &s) {
 	// Get first item on this page
-	auto pItem = pPawnShop->FetchItem(nFirstSlot);
+	auto pItem = pInventory->FetchItem(nFirstSlot);
 
 	for (int i = 0; (i < (nItemsPerRow * nItemsPerColumn)) && (pItem != nullptr); i++) {							// will thumb through all of them
 		const Common::Rect r = getItemRect(i);
@@ -289,31 +290,60 @@ void PawnShop::drawBlurb(GfxSurface &s) {
 	Common::Rect costRect(_blurbRect.left,
 		(_blurbRect.top + _blurbRect.bottom) / 2,
 		_blurbRect.right, _blurbRect.bottom);
-	Common::String cost;
+	Common::String msg;
 	int nPrice = _selectedItem->GetValue();
 
-	if (_selectedItem->GetQuantity() == 1) {
-		if (nPrice == 1)
-			cost = "It can be bought for 1 Crown";
-		else
-			cost = Common::String::format(
-				"It can be bought for %d Crowns", nPrice);
-	} else {
-		if (nPrice == 1)
-			cost = "One can be bought for 1 Crown";
-		else
-			cost = Common::String::format(
-				"One can be bought for %d Crowns", nPrice);
+	if (nPrice == 0)
+		msg = "That can't be sold here";
+	else {
+		if (_selectedItem->GetQuantity() == 1) {
+			if (nPrice == 1)
+				msg = "It can be sold for 1 Crown";
+			else
+				msg = Common::String::format(
+					"It can be sold for %d Crowns", nPrice);
+		} else {
+			if (nPrice == 1)
+				msg = "One can be sold for 1 Crown";
+			else
+				msg = Common::String::format(
+					"One can be sold for %d Crowns", nPrice);
+		}
 	}
 
-	s.writeString(cost, costRect, DIALOG_TEXT_COLOR,
+	s.writeString(msg, costRect, DIALOG_TEXT_COLOR,
+		Graphics::kTextAlignCenter);
+}
+
+void PawnShop::drawFinances(GfxSurface &s) {
+	Common::Rect msgRect(_blurbRect.left,
+		(_blurbRect.top + _blurbRect.bottom) / 2,
+		_blurbRect.right, _blurbRect.bottom);
+	CItem *pItem = pInventory->FindItem(MG_OBJ_CROWN);
+	Common::String msg;
+
+	if ((pItem == nullptr) || ((*pItem).GetQuantity() < 1)) {
+		if (bPlayingHodj)
+			msg = "Hodj has no Crowns";
+		else
+			msg = "Podj has no Crowns";
+	} else {
+		if (bPlayingHodj)
+			msg = Common::String::format("Hodj has %ld Crowns",
+				pItem->GetQuantity());
+		else
+			msg = Common::String::format("Podj has %ld Crowns",
+				pItem->GetQuantity());
+	}
+
+	s.writeString(msg, msgRect, DIALOG_TEXT_COLOR,
 		Graphics::kTextAlignCenter);
 }
 
 bool PawnShop::hasNextPage() const {
 	return (nFirstSlot +
 		(nItemsPerRow * nItemsPerColumn)) <
-		pPawnShop->ItemCount();
+		pInventory->ItemCount();
 }
 
 bool PawnShop::msgMouseMove(const MouseMoveMessage &msg) {
@@ -328,15 +358,15 @@ bool PawnShop::msgMouseMove(const MouseMoveMessage &msg) {
 			g_events->setCursor(IDC_RULES_INVALID);
 		} else {
 			// Check for highlighted item
-			index = getItemAtPos(msg._pos);
+			g_events->setCursor(IDC_ARROW);
 
+			index = getItemAtPos(msg._pos);
 			if (index >= 0) {
-				_selectedItem = pPawnShop->FetchItem(index);
-				if (_selectedItem != nullptr) {
-					g_events->setCursor(IDC_STORE_DOLLAR);
+				_selectedItem = pInventory->FetchItem(index);
+				if (_selectedItem != nullptr &&
+						_selectedItem->GetValue() != 0) {
+					g_events->setCursor(IDC_PAWN_DOLLAR);
 				}
-			} else {
-				g_events->setCursor(IDC_ARROW);
 			}
 		}
 	}
@@ -364,8 +394,8 @@ bool PawnShop::msgMouseUp(const MouseUpMessage &msg) {
 			// Move to the next page
 			nFirstSlot += (nItemsPerRow * nItemsPerColumn);
 			redraw();
-		} else if (_selectedItem) {
-			purchaseItem();
+		} else if (_selectedItem && _selectedItem->GetValue() != 0) {
+			sellItem();
 		}
 	}
 
@@ -387,7 +417,7 @@ void PawnShop::drawItem(GfxSurface &s, CItem *pItem, int nX, int nY) {
 
 int PawnShop::getItemAtPos(const Common::Point &point) const {
 	Common::Point p(point.x - _bounds.left, point.y - _bounds.top);
-	const int itemCount = pPawnShop->ItemCount();
+	const int itemCount = pInventory->ItemCount();
 
 	for (int i = 0; i < (nItemsPerRow * nItemsPerColumn) &&
 			(nFirstSlot + i) < itemCount; ++i) {
@@ -400,44 +430,25 @@ int PawnShop::getItemAtPos(const Common::Point &point) const {
 	return -1;
 }
 
-void PawnShop::purchaseItem() {
+void PawnShop::sellItem() {
 	int nPrice = _selectedItem->GetValue();
-	CItem *pCrowns = pInventory->FindItem(MG_OBJ_CROWN);
-	CSound *pSound;
+	CSound *pSound = new CSound(this,
+		(bPlayingHodj ? "meta/sound/gsps7.wav" : "meta/sound/gsps8.wav"),
+		SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);
+	pSound->play();
 
-	_buyMessageCtr = BUY_MESSAGE_TIMEOUT;
+	pInventory->AddItem(MG_OBJ_CROWN, nPrice);
 
-	if ((pCrowns == nullptr) || (pCrowns->GetQuantity() < nPrice)) {
-		_buyMessage = "Not have enough crowns to buy that!";
-
-		pSound = new CSound(this, (bPlayingHodj ? "meta/sound/gsps5.wav" : "meta/sound/gsps6.wav"),
-			SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);
-		pSound->play();
-
+	if (_selectedItem->GetQuantity() > 1) {
+		(*pInventory).DiscardItem(_selectedItem, 1);
+		pGeneralStore->AddItem(_selectedItem->GetID(), 1);
 	} else {
-		_buyMessage = "Thanks for the purchase!";
-
-		if (getRandomNumber(1) == 1)
-			pSound = new CSound(this,
-				(bPlayingHodj ? "meta/sound/gsps1.wav" : "meta/sound/gsps2.wav"),
-				SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);
-		else
-			pSound = new CSound(this,
-				(bPlayingHodj ? "meta/sound/gsps3.wav" : "meta/sound/gsps4.wav"),
-				SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);
-
-		pSound->play();
-		pInventory->DiscardItem(pCrowns, nPrice);
-
-		if (_selectedItem->GetQuantity() > 1) {
-			pPawnShop->DiscardItem(_selectedItem, 1);
-			pInventory->AddItem(_selectedItem->GetID(), 1);
-		} else {
-			(*pPawnShop).RemoveItem(_selectedItem);
-			pInventory->AddItem(_selectedItem);
-		}
+		(*pInventory).RemoveItem(_selectedItem);
+		pGeneralStore->AddItem(_selectedItem);
 	}
 
+	_sellMessageCtr = BUY_MESSAGE_TIMEOUT;
+	_sellMessage = "Thank you!!!";
 	redraw();
 }
 

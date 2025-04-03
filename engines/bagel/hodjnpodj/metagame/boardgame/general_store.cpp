@@ -57,8 +57,7 @@ namespace Metagame {
 #define IDC_STORE_DOLLAR	931
 
 GeneralStore::GeneralStore() : Dialog("GeneralStore", "meta/hnpmeta.dll"),
-_okButton(Common::Rect(210, 355, 290, 380), this),
-pInventory(lpMetaGame->m_cHodj.m_pInventory) {
+		_okButton(Common::Rect(210, 355, 290, 380), this) {
 }
 
 void GeneralStore::show(CInventory *pStore, CInventory *pInvent) {
