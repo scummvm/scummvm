@@ -587,6 +587,12 @@ void Channel::setPosition(int x, int y, bool force) {
 		newPos.y = MIN(constraintBbox.bottom, MAX(constraintBbox.top, newPos.y));
 	}
 	_sprite->setPosition(newPos.x, newPos.y);
+	// Update the dimensons on the widget
+	if (_widget) {
+		Common::Rect dims = _widget->getDimensions();
+		dims.translate(newPos.x - dims.left, newPos.y - dims.top);
+		_widget->setDimensions(dims);
+	}
 }
 
 // here is the place for deciding whether the widget can be keep or not
