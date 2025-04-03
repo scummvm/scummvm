@@ -61,10 +61,10 @@ Common::Error Window::loadInitialMovie() {
 	if (movie.empty())
 		return Common::kPathNotFile;
 
-	loadINIStream();
 	if (g_director->getVersion() >= 500) {
 		loadXtrasFromPath();
 	}
+	loadINIStream();
 	Common::Path path = findPath(movie);
 	Archive *mainArchive = g_director->openArchive(path);
 
