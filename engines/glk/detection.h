@@ -74,7 +74,7 @@ public:
 
 	uint getMD5Bytes() const override;
 
-	void dumpDetectionEntries() const override final {}
+	void dumpDetectionEntries() const override final;
 };
 
 namespace Glk {
