@@ -437,6 +437,7 @@ void Score::updateCurrentFrame() {
 	}
 
 	_nextFrame = 0;
+	_vm->_skipFrameAdvance = false;
 
 	if (nextFrameNumberToLoad >= getFramesNum()) {
 		Window *window = _vm->getCurrentWindow();
@@ -581,8 +582,6 @@ void Score::update() {
 			_exitFrameCalled = true;
 		}
 	}
-
-	_vm->_skipFrameAdvance = false;
 
 	// Check for delay
 	if (g_system->getMillis() < _nextFrameDelay) {
