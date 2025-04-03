@@ -886,8 +886,14 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 
 	// Draw the buttons at the bottom
 	for (int i = 0; i < 6; i++) {
+		uint16 index = g_engine->inventoryIconIndices[i];
+		AnimFrame &currentFrame = g_engine->imageResources[index];
 		DrawBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(maxWidthButtonIcon, maxHeightButtonIcon), s);
 		buttonX += maxWidthButtonIcon + 4;
+		
+		uint16 iconX = (maxHeightButtonIcon / 2 + buttonX) - currentFrame.Width / 2;
+		uint16 iconY = (maxWidthButtonIcon / 2 + buttonY) - currentFrame.Height / 2;
+		DrawSprite(iconX, iconY, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
 	}
 }
 
