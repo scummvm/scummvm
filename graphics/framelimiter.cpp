@@ -37,11 +37,14 @@ FrameLimiter::FrameLimiter(OSystem *system, const uint framerate, const bool def
   initialize(framerate);
 }
 
-void FrameLimiter::initialize(const uint framerate) {
-	_enabled =  (framerate != 0) && !(_deferToVsync && _system->getFeatureState(OSystem::kFeatureVSync));
-	if (_enabled)
-		frameLimit = 1000.0f / CLIP<uint>(framerate, 1, 100);
+void FrameLimiter::initialize() {
+	_enabled =  (frameLimit != 0) && !(_deferToVsync && _system->getFeatureState(OSystem::kFeatureVSync));
 	frameDuration = frameLimit;
+};
+
+void FrameLimiter::initialize(const uint framerate) {
+	frameLimit = (framerate > 0) ? 1000.0f / CLIP<uint>(framerate, 1, 100) : 0;
+  initialize();
 };
 
 uint FrameLimiter::startFrame() {

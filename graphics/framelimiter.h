@@ -43,6 +43,7 @@ public:
 /**
  * Always call this after instantiating Screen & calling initGraphics(), to ensure Vsync status is detected correctly!
  */
+  void initialize();
 	void initialize(const uint framerate);
 
 /**
