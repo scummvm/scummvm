@@ -134,8 +134,8 @@ indy3	Indiana Jones and the Last Crusade
 	5fbe557049892eb4b709d90916ec97ca	5361	en	DOS	EGA	EGA	v1.0, 7/09/89	Fingolfin
 	6b3ec67da214f558dc5ceaa2acd47453	5361	en	DOS	EGA	EGA	v1.3, 14 Aug 89	tsuteiuQ, Andrea Petrucci, Peter Eckerlein
 	6508fd55530e6915507e1cc37f7f045d	5361	en	DOS	EGA	EGA	v1.3, 8/14/89 (5.25\")	Zer02
-	66236cd1aec24e1d4aff4c4cc93b7e18	5361	fr	DOS	EGA	EGA	?? v1.3, 25 Aug 89	Andrea Petrucci, Peter Eckerlein
-	89cfc425566003ff74b7dc7b3e6fd469	5361	fr	DOS	EGA	EGA	?? v1.3, 25 Aug 89	Jorpho
+	66236cd1aec24e1d4aff4c4cc93b7e18	5361	fr	DOS	EGA	EGA	6 disk, v1.3, 25 Aug 89	Andrea Petrucci, Peter Eckerlein
+	89cfc425566003ff74b7dc7b3e6fd469	5361	fr	DOS	EGA	EGA	2 disk, v1.3, 25 Aug 89	Jorpho
 	69d70269fafc4445adbb0d223e4f9a3f	5361	en	DOS	EGA	EGA	v1.4, 11/07/89 (5.25\")	Petr Maruska
 	56e8c37a0a08c3a7076f82417461a877	-1	en	DOS	EGA	EGA	v1.4, 7 Nov 89 (3.5\")	Paulo Vicente
 	6f6ef668c608c7f534fea6e6d3878dde	5361	de	DOS	EGA	EGA	v1.4 from 19 Oct 89	dhewg, Peter Eckerlein
@@ -190,7 +190,7 @@ loom	Loom
 	5d88b9d6a88e6f8e90cded9d01b7f082	8307	en	DOS	VGA	VGA	CD Version v1.0 from 10. Feb 92 (Talkie)	Peter Eckerlein, Fingolfin
 	0354ee0d14cde1264ec762261c04c14a	585728	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
 	b4a677bf27c010a747975705108ff1e6	393572	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
-	c7689be9f82426f9a7c8906f62e64ab1	592280	en	Windows	Steam	Amazon	Amazon Games Launcher	Fancy2209
+	c7689be9f82426f9a7c8906f62e64ab1	592280	en	Windows	Steam	Amazon	Amazon Games Launcher, LimitedRunGames	Fancy2209
 
 	c5d10e190d4b4d59114b824f2fdbd00e	7540	en	FM-TOWNS	FM-TOWNS	-	v1.00 14 Mar 91	dhewg, Andrea Petrucci
 	1ba1f030ad387be3d7e8d278006bdfde	7540	he	FM-TOWNS	FM-TOWNS	-	-	phcoder
@@ -324,7 +324,7 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	1fbebd7b2b692df5297870447a80cfed	12030	de	DOS	Floppy	Floppy	-	Fingolfin
 	8f3758ff98c9c5d78e5d635222cad026	12030	it	DOS	Floppy	Floppy	-	Andrea Petrucci
 	9bd2a8f72613e715c199246dd511e10f	12030	es	DOS	Floppy	Floppy	-	abnog, Andrea Petrucci
-	06b187468113f9ae5a400b148a847fac	12075	en	Mac	Mac Floppy	Floppy	six data files	Lars N sbye Christensen
+	06b187468113f9ae5a400b148a847fac	12075	en	Mac	Mac Floppy	Floppy	six data files	Lars N&aelig;sbye Christensen
 	d6dd0646404768a63e963891a96daadd	12035	en	Mac	Mac Floppy	Floppy	two data files	Fingolfin
 
 	182344899c2e2998fca0bebcd82aa81a	12035	en	DOS	-	CD	V1.0 10/9/92	Fingolfin
