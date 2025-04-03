@@ -114,8 +114,8 @@ zak	Zak McKracken and the Alien Mindbenders
 	75ba23fff4fd63fa446c02864f2a5a4b	1916	it	DOS	V2	V2	alt?	Antti Leimi, Andrea Petrucci
 
 	2d4536a56e01da4b02eb021e7770afa2	7520	en	FM-TOWNS	FM-TOWNS	-	-
-	1ca86e2cf9aaa2068738a1e5ba477e60	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
-	ce3edc99cd4f478c5b37104d70c68ca5	-1	jp	FM-TOWNS	FM-TOWNS	-	-	raziel-
+	1ca86e2cf9aaa2068738a1e5ba477e60	-1	ja	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
+	ce3edc99cd4f478c5b37104d70c68ca5	-1	ja	FM-TOWNS	FM-TOWNS	-	-	raziel-
 
 	8299d9b8a1b0e7b881bae7a9971dc5e2	1916	en	Atari	V2	Demo	non-interactive	Fingolfin
 
@@ -155,7 +155,7 @@ indy3	Indiana Jones and the Last Crusade
 	60f4faa74d802b700f6748bf136e5361	6295	ru	DOS	VGA	VGA	VGA
 
 	04687cdf7f975a89d2474929f7b80946	7552	en	FM-TOWNS	FM-TOWNS	-	v1.00 1/23/91	Fingolfin
-	3a0c35f3c147b98a2bdf8d400cfc4ab5	7552	jp	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
+	3a0c35f3c147b98a2bdf8d400cfc4ab5	7552	ja	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
 
 	b597e0403cc0002f69170e6caba7edd9	5361	en	DOS	EGA	EGA Demo	non-interactive	Fingolfin
 
@@ -194,10 +194,10 @@ loom	Loom
 
 	c5d10e190d4b4d59114b824f2fdbd00e	7540	en	FM-TOWNS	FM-TOWNS	-	v1.00 14 Mar 91	dhewg, Andrea Petrucci
 	1ba1f030ad387be3d7e8d278006bdfde	7540	he	FM-TOWNS	FM-TOWNS	-	-	phcoder
-	31b8fda4c8c7413fa6b39997e776eba4	7540	jp	FM-TOWNS	FM-TOWNS	-	v1.00 14 Mar 91	khalek, Andrea Petrucci
+	31b8fda4c8c7413fa6b39997e776eba4	7540	ja	FM-TOWNS	FM-TOWNS	-	v1.00 14 Mar 91	khalek, Andrea Petrucci
 
 	0aa050f4ad79402fbe9c4f78fb8ac494	6532	en	PC-Engine	PC-Engine	-	-	Kirben
-	79b05f628586837e7166e82b2279bb50	6532	jp	PC-Engine	PC-Engine	-	-	clone2727
+	79b05f628586837e7166e82b2279bb50	6532	ja	PC-Engine	PC-Engine	-	-	clone2727
 
 	5a35e36fd777e9c37a49c5b2faca52f9	6108	en	DOS	Demo	EGA Demo	Demo - 02/01/90, non-interactive	Fingolfin
 	a00554c31d623fdb9fcb0f924b89b42b	5748	en	DOS	Demo	EGA Demo	Demo IBM - 03/20/90, non-interactive	Adrian C. Fruehwirth
@@ -254,10 +254,10 @@ monkey	The Secret of Monkey Island
 	b9ba19ce376efc69be78ef3baef8d2b9	8955	en	Mac	Mac	-	alt?	Grant Yeager
 
 	c13225cb1bbd3bc9fe578301696d8021	9465	en	SEGA	SEGA	-	-
-	057c9b456dedcc4d71b991a3072a20b3	9465	jp	SEGA	SEGA	-	-	GloKidd
+	057c9b456dedcc4d71b991a3072a20b3	9465	ja	SEGA	SEGA	-	-	GloKidd
 
 	8eb84cee9b429314c7f0bdcf560723eb	9925	en	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
-	e17db1ddf91b39ca6bbc8ad3ed19e883	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
+	e17db1ddf91b39ca6bbc8ad3ed19e883	-1	ja	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
 
 	71523b539491527d9860f4407faf0411	7607	en	DOS	Demo	EGA Demo	-	Fingolfin
 	5cac06e42db6037ea491572682c4a004	7607	en	DOS	Demo	EGA Demo	non-contest demo	eientei95
@@ -301,7 +301,7 @@ monkey2	Monkey Island 2: LeChuck's Revenge
 	e246e02db9630533a40d99c9f54a8e01	10740	en	Mac	Mac	-	v1.0 11/5/92 alt?	Lars N&aelig;sbye Christensen
 
 	da09e666fc8f5b78d7b0ac65d1a3b56e	11135	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
-	430bc518017b6fac046f58bab6baad5d	11135	jp	FM-TOWNS	FM-TOWNS	-	-	Antti Leimi, Andrea Petrucci
+	430bc518017b6fac046f58bab6baad5d	11135	ja	FM-TOWNS	FM-TOWNS	-	-	Antti Leimi, Andrea Petrucci
 
 	387a544b8b10b26912d8413bab63a853	9770	en	DOS	Demo	Demo	non-interactive, v2.5.1 9/30/91	khalek
 
@@ -333,20 +333,20 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	6a8133b63d46f6663fbcbb49d5a2edb1	520548	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
 	1a6e5ae2777a6a33f06ffc0226210934	11885	en	Mac	Mac	CD	V1.0 10/9/92	Scott Summers
 	2d9d46f23cb07bbc90b8ad464d3e4ff8	-1	en	Mac	Mac	CD	Mac bundle	Joachim Eberhard
-	8e9417564f33790815445b2136efa667	11915	jp	Mac	-	CD	-	Petr Maruska
-	e8d0697906e53fee8b7e9f5652696da8	11915	jp	DOS	-	CD	-	Petr Maruska, tracker #4900
+	8e9417564f33790815445b2136efa667	11915	ja	Mac	-	CD	-	Petr Maruska
+	e8d0697906e53fee8b7e9f5652696da8	11915	ja	DOS	-	CD	-	Petr Maruska, tracker #4900
 	55b4494051b06e95bcaa0d6d8f6fb757	286720	en	Windows	Steam	Humble	Actually Humble version - Mataniko
 	986691371756f3be570bd8c10df82990	290816	en	Windows	Steam	Discord	Actually Discord version - Mataniko
 
 	c7be10f775404fd9785a8b92a06d240c	12030	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
-	4d34042713958b971cb139fba4658586	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
+	4d34042713958b971cb139fba4658586	-1	ja	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
 
 	035deab53b47bc43abc763560d0f8d4b	12030	en	DOS	Floppy	Demo	-
 	98744fe66ff730e8c2b3b1f58803ab0b	12030	en	DOS	Floppy	Demo	-	Simon Krumrein, sev
 	12cdc256eae5a461bcc9a49975999841	12030	en	DOS	Floppy	Demo	-	Paulo Vicente
 	99b6f822b0b2612415407865438697d6	11105	en	DOS	-	Demo	non-interactive
 	591bb98948d277f6c91e65db3f26c829	11210	en	Mac	-	Demo	-	einstein95
-	28d24a33448fab6795850bc9f159a4a2	11170	jp	FM-TOWNS	FM-TOWNS	Demo	non-interactive	khalek, Fingolfin
+	28d24a33448fab6795850bc9f159a4a2	11170	ja	FM-TOWNS	FM-TOWNS	Demo	non-interactive	khalek, Fingolfin
 
 	32765851cd5ed099f8da36a4a6144c7e	-1	ko	DOS	-	CD	Fan translation	ScummVM-Kor
 	add05fa3f50d9264f47638516c9496dd	12035	ru	DOS	-	CD	Fan translation	PRCA RuSCUMM v1.00 23/12/2007
@@ -439,7 +439,7 @@ dig	The Dig
 	ebdd2fbc995a321605375dc57766db79	16304	ru	All	-	With Subtitles	-	sev
 	35a2d3040fa512f8232d9e443319d84d	659335495	en	Mac	-	-	Mac bundle	Fingolfin
 	21a6592322f92550f144f68a8a4e685e	661316652	fr	Mac	-	-	Mac bundle, v1.0	kaminari
-	92887c157dc7e5d637937c1069481f55	659863292	jp	Mac	-	-	Max bundle	sev
+	92887c157dc7e5d637937c1069481f55	659863292	ja	Mac	-	-	Max bundle	sev
 
 	362c1d281fb9899254cda66ad246c66a	3472	en	All	Demo	Demo	-	Fingolfin
 	cd9c05e755d7bf8e9b9590ad1ebe273e	45156007	en	Mac	Demo	Demo	Mac bundle	Fingolfin
@@ -545,7 +545,7 @@ BluesTreasureHunt	Blue's Treasure Hunt
 fbear	Fatty Bear's Birthday Surprise
 	13d2a86a7290813a1c386490447d72db	-1	en	3DO	HE 62	-	-	George Kormendi
 	5b08000a9c47b2887df6506ac767ca68	-1	en	3DO	HE 62	-	-	sev
-	6bca7a1a96d16e52b8f3c42b50dbdca3	-1	jp	3DO	HE 62	-	-	George Kormendi
+	6bca7a1a96d16e52b8f3c42b50dbdca3	-1	ja	3DO	HE 62	-	-	George Kormendi
 	3824e60cdf639d22f6df92a03dc4b131	7732	en	DOS	HE 62	-	-	khalek
 	4f1d6f8b38343dba405472538b5037ed	7717	en	DOS	HE 62	-	-	George Kormendi
 	ef74d9071d4e564b037cb44bd6774de7	-1	he	DOS	HE 62	-	-	sev
@@ -558,10 +558,10 @@ fbear	Fatty Bear's Birthday Surprise
 
 fbpack	Fatty Bear's Fun Pack
 	e01acc8c12ef44e8f778fe87e5f90f4e	-1	en	3DO	-	-	-	sev
-	c9717ee6059f1e43b768b464493d2fba	-1	jp	3DO	-	-	-	clone2727
+	c9717ee6059f1e43b768b464493d2fba	-1	ja	3DO	-	-	-	clone2727
 	4cfd3fda4a4e6e64a1fc488eba973b7a	-1	en	DOS	-	-	-	velocity37
 	f06e66fd45b2f8b0f4a2833ff4476050	-1	he	DOS	-	-	-	sev
-	bd9c287382310426b8bca0ac19d7d4c9	5182	jp	Mac	-	-	-	Retrodude
+	bd9c287382310426b8bca0ac19d7d4c9	5182	ja	Mac	-	-	-	Retrodude
 
 freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	d4cccb5af88f3e77f370896e9ba8c5f9	26078 	en	Windows	HE 71	-	-	sev
@@ -573,7 +573,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	5ebb57234b2fe5c5dff641e00184ad81	26654	fr	Windows	HE 73	-	-	gist974
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	26618	de	Windows	HE 73	-	-	Oncer
 	1f2e62b5a9c50589fc342285a6bb3a27	-1	he	Windows	HE 73	-	-	e_orz
-	64a22be96d679018696e5c8d3ca8b71d	26375	jp	Windows	HE 73	-	-	sev
+	64a22be96d679018696e5c8d3ca8b71d	26375	ja	Windows	HE 73	-	-	sev
 	507bb360688dc4180fdf0d7597352a69	26402	sv	Windows	HE 73	-	-	Sven Arvidsson
 	df047cc4792150f601290357566d36a6	-1	en	All	HE 90	Updated	-	khalek
 	e44ea295a3f8fe4f41983080dab1e9ce	-1	fr	Mac	HE 90	Updated	-	ThierryFR
@@ -597,7 +597,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	566165a7338fa11029e7c14d94fa70d0	9800	en	Windows	HE 73	Demo	-	khalek
 	f5228b0cc1c19e6ea8268ba2eeb61f60	9800	fr	Windows	HE 73	Demo	-	Mevi
 	cf4ef315214c7d8cdab6302cdb7e50db	9800	de	Windows	HE 73	Demo	-	Joachim Eberhard
-	b6b286246b05c147e3f8b15505b1648c	9800	jp	Windows	HE 73	Demo	-	Sarah Onfy
+	b6b286246b05c147e3f8b15505b1648c	9800	ja	Windows	HE 73	Demo	-	Sarah Onfy
 
 freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	0a295b80f9a9edf818e8e161a0e83830	65305	fr	All	HE 80	-	-	gist974, ThierryFR
@@ -610,7 +610,7 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	9c0ee9c252785e9fca0143e42ac4b256	-1	de	Windows	HE 99	Updated	-	George Kormendi
 	8ee63cafb1fe9d62aa0d5a23117e70e7	-1	en	All	HE 100	Updated	-	Kirben
 	e41de1c2a15abbcdbf9977e2d7e8a340	65489	ru	Windows	HE 100	Updated	-	sev
-	b6a7f83e77e33879f669d4cc5f28403c	65305	jp	Windows	HE 80	-	-	Sarah Onfy
+	b6a7f83e77e33879f669d4cc5f28403c	65305	ja	Windows	HE 80	-	-	Sarah Onfy
 
 	c20848f53c2d48bfacdc840993843765	27298	nl	All	HE 80	Demo	-	DarthBo
 	fc8d197a22146e74766e9cb0cfcaf1da	27298	en	All	HE 80	Demo	-	khalek, sev
@@ -877,8 +877,8 @@ puttputt	Putt-Putt Joins the Parade
 	7766c9487f9d53a8cb0edabda5119c3d	8022	en	DOS	HE 60	-	-	George Kormendi
 	0b3222aaa7efcf283eb621e0cefd26cc	-1	ru	DOS	HE 60	-	-	sev
 	7e151c17adf624f1966c8fc5827c95e9	-1	en	3DO	HE 61	-	-	khalek
-	be2abe172f58db170de3a037daa1dd27	-1	jp	3DO	HE 61	-	-	clone2727
-	ee41f6afbc5b26fa475754b56fe92048	8032	jp	3DO	HE 61	-	-	George Kormendi
+	be2abe172f58db170de3a037daa1dd27	-1	ja	3DO	HE 61	-	-	clone2727
+	ee41f6afbc5b26fa475754b56fe92048	8032	ja	3DO	HE 61	-	-	George Kormendi
 	9708cf716ed8bcc9ff3fcfc69413b746	8117	en	DOS	HE 62	-	-	khalek
 	e361a7058ed8e8ebb462663c0a3ae8d6	-1	he	DOS	HE 62	-	-	sev
 	684732efb5799c0f78804c99d8de9aba	-1	en	Mac	HE 62	-	-	khalek
@@ -957,11 +957,11 @@ activity	Putt-Putt & Fatty Bear's Activity Pack
 
 funpack	Putt-Putt's Fun Pack
 	8afb3cf9f95abf208358e984f0c9e738	-1	en	3DO	-	-	-	sev
-	e95cf980719c0be078fb68a67af97b4a	-1	jp	3DO	-	-	-	clone2727
+	e95cf980719c0be078fb68a67af97b4a	-1	ja	3DO	-	-	-	clone2727
 	3d219e7546039543307b55a91282bf18	-1	en	DOS	-	-	-	iziku
 	46b53fd430adcfbed791b48a0d4b079f	-1	en	DOS	-	-	-	khalek
 	90a329d8ad5b7ce0690429e98cfbb32f	-1	he	DOS	-	-	-
-	61fa2dd4dc9e58347c4de5f4243a3ba6	5798	jp	Mac	-	-	-	HerbFargus
+	61fa2dd4dc9e58347c4de5f4243a3ba6	5798	ja	Mac	-	-	-	HerbFargus
 
 PuttsFunShop	Putt-Putt's One-Stop Fun Shop
 	5262a27afcaee04e5c4900220bd463e7	35741	us	All	-	-	-	Kirben

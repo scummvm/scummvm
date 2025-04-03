@@ -105,7 +105,7 @@ static const StringMap langMap[] = {
 	{ "it",		"IT_ITA" },
 	{ "br",		"PT_BRA" },
 	{ "es",		"ES_ESP" },
-	{ "jp",		"JA_JPN" },
+	{ "ja",		"JA_JPN" },
 	{ "zh",		"ZH_TWN" },
 	{ "ko",		"KO_KOR" },
 	{ "sv",		"SV_SWE" },
