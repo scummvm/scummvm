@@ -24,6 +24,7 @@
 
 #include "common/str.h"
 #include "graphics/surface.h"
+#include "dialog.h"
 
 namespace GUI {
 
