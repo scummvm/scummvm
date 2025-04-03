@@ -62,23 +62,15 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
 	debug(1,"creating render manager");
   //Define graphics modes & screen subarea geometry
 	Graphics::ModeList modes;
-  if (_widescreen) {
-    _workingArea.moveTo(0,0);
-    _screenArea = _workingArea;
-    _screenCenter = _screenArea.center();
-    _menuArea.moveTo(_workingArea.origin());
-    _menuLetterbox.moveTo(_menuArea.origin());
-    _textArea.moveTo(_workingArea.left, _workingArea.bottom - _textArea.height());
-    _textLetterbox.moveTo(_textArea.origin());
-  }
-  
   _textOffset = _layout.workingArea.origin() - _layout.textArea.origin();
-  debug(2,"working area: %d,%d,%d,%d", _workingArea.left, _workingArea.top, _workingArea.bottom, _workingArea.right);
-  debug(2,"text area: %d,%d,%d,%d", _textArea.left, _textArea.top, _textArea.bottom, _textArea.right);
   modes.push_back(Graphics::Mode(_screenArea.width(), _screenArea.height()));
 #if defined(USE_MPEG2) && defined(USE_A52)
-	if (_engine->getGameId() == GID_GRANDINQUISITOR && (_engine->getFeatures() & ADGF_DVD))
-		modes.push_back(Graphics::Mode(HIRES_WINDOW_WIDTH, HIRES_WINDOW_HEIGHT));
+	if (_engine->getGameId() == GID_GRANDINQUISITOR && (_engine->getFeatures() & ADGF_DVD)) {
+	  if(_widescreen)
+  		modes.push_back(Graphics::Mode(_HDscreenAreaWide.width(), _HDscreenAreaWide.height()));
+		else
+  		modes.push_back(Graphics::Mode(_HDscreenArea.width(), _HDscreenArea.height()));
+  }
 #endif
 	initGraphicsModes(modes);
   //Create backbuffers
@@ -106,28 +98,44 @@ RenderManager::~RenderManager() {
 void RenderManager::initialize(bool hiRes) {
   debug(1,"Initializing render manager");
   _hiRes = hiRes;
+  
+  _screenArea = _layout.screenArea;
+  _workingArea =_layout.workingArea;
+  _textArea = _layout.textArea;
+  _menuArea = _layout.menuArea;
+  
+  if (_widescreen) {
+    _workingArea.moveTo(0,0);
+    _screenArea = _workingArea;
+    _menuArea.moveTo(_workingArea.origin());
+    _menuLetterbox.moveTo(_menuArea.origin());
+    _textArea.moveTo(_workingArea.left, _workingArea.bottom - _textArea.height());
+    _textLetterbox.moveTo(_textArea.origin());
+  }
+  
   //Screen
-  if(_hiRes)
-    _screen.create(HIRES_WINDOW_WIDTH, HIRES_WINDOW_HEIGHT, _pixelFormat);
+#if defined(USE_MPEG2) && defined(USE_A52)
+  if(_hiRes) {
+    debug(1,"Switching to high resolution");
+    upscaleRect(_screenArea);
+    upscaleRect(_workingArea);
+    upscaleRect(_textArea);
+  }
   else
-    _screen.create(_screenArea.width(), _screenArea.height(), _pixelFormat);
+    debug(1,"Switching to standard resolution");
+#endif
+  _screen.create(_screenArea.width(), _screenArea.height(), _pixelFormat);
 	_screen.setTransparentColor(-1);
 	_screen.clear();
+  _screenCenter = _screenArea.center();
+  
 	//Managed screen subsurfaces
-	if(_hiRes) {
-	  Common::Rect hiResWorkingArea = _workingArea;
-  	upscaleRect(hiResWorkingArea);
-  	_workingManagedSurface.create(_screen, hiResWorkingArea);
-	  Common::Rect hiResTextArea = _textArea;
-  	upscaleRect(hiResTextArea);
-  	_textManagedSurface.create(_screen, hiResTextArea);
-	}
-	else {
-    debug("_menuArea %d, %d, %d, %d", _menuArea.left, _menuArea.top, _menuArea.right, _menuArea.bottom);
-  	_workingManagedSurface.create(_screen, _workingArea);
-	  _menuManagedSurface.create(_screen, _menuArea);
-  	_textManagedSurface.create(_screen, _textArea);
-	}
+	_workingManagedSurface.create(_screen, _workingArea);
+  _menuManagedSurface.create(_screen, _menuArea);
+	_textManagedSurface.create(_screen, _textArea);
+  debug(2,"screen area: %d,%d,%d,%d", _screenArea.left, _screenArea.top, _screenArea.bottom, _screenArea.right);
+  debug(2,"working area: %d,%d,%d,%d", _workingArea.left, _workingArea.top, _workingArea.bottom, _workingArea.right);
+  debug(2,"text area: %d,%d,%d,%d", _textArea.left, _textArea.top, _textArea.bottom, _textArea.right);
 	
   //Menu & text area dirty rectangles
   _menuOverlay = _menuArea.findIntersectingRect(_workingArea);
@@ -139,6 +147,7 @@ void RenderManager::initialize(bool hiRes) {
   _menuLetterbox.translate(-_menuArea.left, -_menuArea.top);
   _menuOverlay.translate(-_menuArea.left, -_menuArea.top);
     
+  //TODO - add upscaling for HD mode!
   _textOverlay = _textArea.findIntersectingRect(_workingArea);
   if(!_textOverlay.isEmpty() && _textArea.left >= _workingArea.left && _textArea.right <= _workingArea.right)
     _textLetterbox = Common::Rect(_textArea.left, _workingArea.bottom, _textArea.right, _textArea.bottom);
@@ -148,12 +157,15 @@ void RenderManager::initialize(bool hiRes) {
   _textOverlay.translate(-_textArea.left, -_textArea.top);
   _textLetterbox.translate(-_textArea.left, -_textArea.top);
 	
+  debug(2,"Clearing backbuffers");
 	//Clear backbuffer surfaces
 	clearMenuSurface(true);
   clearTextSurface(true);
+  debug(2,"Backbuffers cleared");
   
   //Set hardware/window resolution
-  initGraphics(_screen.w, _screen.h, &_engine->_screenPixelFormat); 
+  debug(1,"_screen.w = %d, _screen.h = %d", _screen.w, _screen.h);
+  initGraphics(_screen.w, _screen.h, &_engine->_screenPixelFormat);
 	debug(1,"Render manager initialized");
 }
 
@@ -233,7 +245,7 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly) {
 
 Graphics::ManagedSurface &RenderManager::getVidSurface(Common::Rect &dstRect) {
   Common::Rect _dstRect = dstRect;
-  _dstRect.translate(_workingArea.left, _workingArea.top);
+  _dstRect.translate(_workingArea.left, _workingArea.top);  //Error here??
 	_vidManagedSurface.create(_screen, _dstRect);
 	debug(1,"Obtaining managed video surface at %d,%d,%d,%d", _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
 	return _vidManagedSurface;
@@ -547,7 +559,6 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 
 //SIMPLIFIED FUNCTION
 //TODO - find bug that breaks panorama rotation.  Suspect problem with negative arguments of some sort.
-//*
 void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y) {
 	Common::Rect srcRect = _srcRect;
 	Common::Point dstPos = Common::Point(_x,_y);
@@ -1134,10 +1145,13 @@ void RenderManager::rotateTo(int16 _toPos, int16 _time) {
 }
 
 void RenderManager::upscaleRect(Common::Rect &rect) {
-	rect.top = rect.top * HIRES_WINDOW_HEIGHT / WINDOW_HEIGHT;
-	rect.left = rect.left * HIRES_WINDOW_WIDTH / WINDOW_WIDTH;
-	rect.bottom = rect.bottom * HIRES_WINDOW_HEIGHT / WINDOW_HEIGHT;
-	rect.right = rect.right * HIRES_WINDOW_WIDTH / WINDOW_WIDTH;
+  Common::Rect _HDscreen = _widescreen ? _HDscreenAreaWide : _HDscreenArea;
+  Common::Rect _SDscreen = _widescreen ? _layout.workingArea : _layout.screenArea;
+  _SDscreen.moveTo(0,0);
+	rect.top = rect.top * _HDscreen.height() / _SDscreen.height();
+	rect.left = rect.left * _HDscreen.width() / _SDscreen.width();
+	rect.bottom = rect.bottom * _HDscreen.height() / _SDscreen.height();
+	rect.right = rect.right * _HDscreen.width() / _SDscreen.width();
 }
 
 } // End of namespace ZVision

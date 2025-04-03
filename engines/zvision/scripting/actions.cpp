@@ -963,8 +963,11 @@ ActionStreamVideo::ActionStreamVideo(ZVision *engine, int32 slotKey, const Commo
 }
 
 bool ActionStreamVideo::execute() {
+  debug(2,"Executing video stream");
 	Video::VideoDecoder *decoder;
 	Common::Rect destRect = Common::Rect(_x1, _y1, _x2 + 1, _y2 + 1);
+	Common::Rect srcRect = Common::Rect(0,0);
+  debug(2,"Streaming video original scripted destination left=%d, top=%d, right=%d, bottom=%d", destRect.left, destRect.top, destRect.right, destRect.bottom);
 	Common::String subname = _fileName.baseName();
 	subname.setChar('s', subname.size() - 3);
 	subname.setChar('u', subname.size() - 2);
@@ -995,15 +998,16 @@ bool ActionStreamVideo::execute() {
 #endif
 
 	decoder = _engine->loadAnimation(_fileName);
-	uint16 sub = (subtitleExists) ? _engine->getSubtitleManager()->create(subpath) : 0;
+	uint16 sub = (subtitleExists) ? _engine->getSubtitleManager()->create(subpath, switchToHires) : 0;
 	
 	_engine->getCursorManager()->showMouse(false);
 
 	if (switchToHires) {
 		_engine->getRenderManager()->initialize(true);
-		destRect = Common::Rect(40, -40, 760, 440); //Placed relative to working window origin, of course.
-		//ZGI hi-res video resolution = 720x480, with baked-in letterboxing around video at 720x387 resolution (at origin 0,77) conforming to playfield aspect ratio 0f 1.86
-		//At 800x600 screen resolution, with original video origin position of (40,-40), the letterboxed are will play at position 40,37.  Weird.
+    srcRect = Common::Rect(Common::Point(0,69),720, 344);
+		//ZGI hi-res video resolution = 720x480, with baked-in letterboxing around video at 720x344 resolution (at origin 0,69) conforming to playfield vertical resolution of 344
+		destRect = _engine->getRenderManager()->getWorkingArea(); //Game scripts only give destRect for normal resolution; we must manually override them for HD videos
+		destRect.moveTo(0,0);
 	}
 
 	// WORKAROUND for what appears to be a script bug. When riding with
@@ -1019,16 +1023,14 @@ bool ActionStreamVideo::execute() {
 	bool pauseBackgroundMusic = _engine->getGameId() == GID_GRANDINQUISITOR && (_fileName == "hp3ea021.avi" || _fileName == "hp4ea051.avi");
 	if (pauseBackgroundMusic)
 		_engine->_mixer->pauseAll(true);
-	_engine->playVideo(*decoder, destRect, _skippable, sub);
+	_engine->playVideo(*decoder, destRect, _skippable, sub, srcRect);
 	if (pauseBackgroundMusic)
 		_engine->_mixer->pauseAll(false);
-
 	if (switchToHires)
 		_engine->getRenderManager()->initialize(false);
 	_engine->getCursorManager()->showMouse(true);
-
   _engine->getSubtitleManager()->destroy(sub);
-
+  debug(2,"Completed executing video stream");
 	return true;
 }
 
