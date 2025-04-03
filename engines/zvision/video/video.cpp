@@ -34,7 +34,7 @@
 #include "zvision/core/clock.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
-#include "zvision/text/subtitles.h"
+#include "zvision/text/subtitle_manager.h"
 #include "zvision/video/rlf_decoder.h"
 #include "zvision/video/zork_avi_decoder.h"
 
@@ -79,7 +79,7 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
    * @param sub       Subtitle associated with video
    */	
 	 
-void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, bool skippable, Subtitle *sub) {
+void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, bool skippable, uint16 sub) {
 	Common::Rect dst = dstRect;
 	Common::Rect _workingArea = _renderManager->getWorkingArea();
 	// If dstRect is empty, no specific scaling was requested. However, we may choose to do scaling anyway
@@ -132,17 +132,17 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 
 		if (vid.needsUpdate()) {
 			const Graphics::Surface *frame = vid.decodeNextFrame();
-			if (sub && showSubs)
-				sub->process(vid.getCurFrame());
+			if (showSubs && sub > 0)
+				_subtitleManager->update(vid.getCurFrame(), sub);
 			if (frame) {
 				if (scaled) {
 					_renderManager->scaleBuffer(frame->getPixels(), scaled->getPixels(), frame->w, frame->h, frame->format.bytesPerPixel, scaled->w, scaled->h);
-					frame = scaled; 
+					frame = scaled;
 				}
 				Common::Rect rect = Common::Rect(finalWidth, finalHeight);
-				debug(2,"Blitting from area %d x %d to video output surface at area %d, %d", frame->w, frame->h, dst.left, dst.top);
-				outSurface.simpleBlitFrom(*frame, rect, Common::Point(0,0));
-				_renderManager->processSubtitles(0);
+				debug(8,"Blitting from area %d x %d to video output surface at area %d, %d", frame->w, frame->h, dst.left, dst.top);
+				outSurface.simpleBlitFrom(*frame, rect, Common::Point(0,0));				
+				_subtitleManager->process(0);
 			}
 		}
 		// Always update the screen so the mouse continues to render & video does not skip

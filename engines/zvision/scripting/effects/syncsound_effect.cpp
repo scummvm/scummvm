@@ -37,7 +37,7 @@ namespace ZVision {
 SyncSoundNode::SyncSoundNode(ZVision *engine, uint32 key, Common::Path &filename, int32 syncto)
 	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_AUDIO) {
 	_syncto = syncto;
-	_sub = NULL;
+	_sub = 0;
 
 	Audio::RewindableAudioStream *audioStream = NULL;
 
@@ -59,25 +59,23 @@ SyncSoundNode::SyncSoundNode(ZVision *engine, uint32 key, Common::Path &filename
 
 	Common::Path subpath(filename.getParent().appendComponent(subname));
 	if (_engine->getSearchManager()->hasFile(subpath))
-		_sub = new Subtitle(_engine, subpath);
+		_sub = _engine->getSubtitleManager()->create(subpath);
 }
 
 SyncSoundNode::~SyncSoundNode() {
 	_engine->_mixer->stopHandle(_handle);
 	if (_sub)
-		delete _sub;
+		_engine->getSubtitleManager()->destroy(_sub);
 }
 
 bool SyncSoundNode::process(uint32 deltaTimeInMillis) {
 	if (! _engine->_mixer->isSoundHandleActive(_handle))
 		return stop();
 	else {
-
 		if (_engine->getScriptManager()->getSideFX(_syncto) == NULL)
 			return stop();
-
 		if (_sub && _engine->getScriptManager()->getStateValue(StateKey_Subtitles) == 1)
-			_sub->process(_engine->_mixer->getSoundElapsedTime(_handle) / 100);
+			_engine->getSubtitleManager()->update(_engine->_mixer->getSoundElapsedTime(_handle) / 100, _sub);
 	}
 	return false;
 }

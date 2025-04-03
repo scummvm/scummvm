@@ -50,16 +50,15 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
 	  _screenArea(_layout.screenArea),
 	  _screenCenter(_screenArea.center()),
 	  _workingArea(_layout.workingArea),
-	  _menuArea(_layout.menuArea),
 	  _textArea(_layout.textArea),
+	  _menuArea(_layout.menuArea),
 	  _pixelFormat(pixelFormat),
 	  _backgroundWidth(0),
 	  _backgroundHeight(0),
 	  _backgroundOffset(0),
 	  _renderTable(_layout.workingArea.width(), _layout.workingArea.height()),
 	  _doubleFPS(doubleFPS),
-	  _widescreen(widescreen),
-	  _subid(0) {
+	  _widescreen(widescreen) {
 	debug(1,"creating render manager");
   //Define graphics modes & screen subarea geometry
 	Graphics::ModeList modes;
@@ -68,12 +67,14 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
     _screenArea = _workingArea;
     _screenCenter = _screenArea.center();
     _menuArea.moveTo(_workingArea.origin());
+    _menuLetterbox.moveTo(_menuArea.origin());
     _textArea.moveTo(_workingArea.left, _workingArea.bottom - _textArea.height());
+    _textLetterbox.moveTo(_textArea.origin());
   }
+  
   _textOffset = _layout.workingArea.origin() - _layout.textArea.origin();
   debug(2,"working area: %d,%d,%d,%d", _workingArea.left, _workingArea.top, _workingArea.bottom, _workingArea.right);
   debug(2,"text area: %d,%d,%d,%d", _textArea.left, _textArea.top, _textArea.bottom, _textArea.right);
-  debug(2,"text offset: %d,%d", _textOffset.x, _textOffset.y);
   modes.push_back(Graphics::Mode(_screenArea.width(), _screenArea.height()));
 #if defined(USE_MPEG2) && defined(USE_A52)
 	if (_engine->getGameId() == GID_GRANDINQUISITOR && (_engine->getFeatures() & ADGF_DVD))
@@ -127,9 +128,29 @@ void RenderManager::initialize(bool hiRes) {
 	  _menuManagedSurface.create(_screen, _menuArea);
   	_textManagedSurface.create(_screen, _textArea);
 	}
+	
+  //Menu & text area dirty rectangles
+  _menuOverlay = _menuArea.findIntersectingRect(_workingArea);
+  if(!_menuOverlay.isEmpty() && _menuArea.left >= _workingArea.left && _menuArea.right <= _workingArea.right)
+    _menuLetterbox = Common::Rect(_menuArea.left, _menuArea.top, _menuArea.right, _workingArea.top);
+  else
+    _menuLetterbox = _menuArea;
+  //Convert to menuArea coordinates
+  _menuLetterbox.translate(-_menuArea.left, -_menuArea.top);
+  _menuOverlay.translate(-_menuArea.left, -_menuArea.top);
+    
+  _textOverlay = _textArea.findIntersectingRect(_workingArea);
+  if(!_textOverlay.isEmpty() && _textArea.left >= _workingArea.left && _textArea.right <= _workingArea.right)
+    _textLetterbox = Common::Rect(_textArea.left, _workingArea.bottom, _textArea.right, _textArea.bottom);
+  else
+    _textLetterbox = _textArea;
+  //Convert to textArea coordinates
+  _textOverlay.translate(-_textArea.left, -_textArea.top);
+  _textLetterbox.translate(-_textArea.left, -_textArea.top);
+	
 	//Clear backbuffer surfaces
-	clearMenuSurface();
-  clearTextSurface();
+	clearMenuSurface(true);
+  clearTextSurface(true);
   
   //Set hardware/window resolution
   initGraphics(_screen.w, _screen.h, &_engine->_screenPixelFormat); 
@@ -138,7 +159,6 @@ void RenderManager::initialize(bool hiRes) {
 
 bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly) {
   debug(10,"renderSceneToScreen");
-  //TODO - add functionality to blank sidebars or letterbox bars as appropriate
   if(!overlayOnly) {
 	  Graphics::Surface *out = &_warpedSceneSurface;
 	  Graphics::Surface *in = &_backgroundSurface;
@@ -343,6 +363,7 @@ const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &
   debug(9,"screenSpaceToImageSpace()");
 	if (_workingArea.contains(point)) {
 		// Convert from screen space to working window space
+		//TODO - find & fix bug that causes frame not to be aligned with movement direction in Nemesis when not in widescreen mode.
 		Common::Point newPoint(point - Common::Point(_workingArea.left, _workingArea.top));
 
 		RenderTable::RenderState state = _renderTable.getRenderState();
@@ -576,7 +597,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 		return;
 
 	Graphics::Surface *srcAdapted = src.convertTo(dst.format);
-	uint32 keycolor = colorkey & ((1 << (src.format.bytesPerPixel << 3)) - 1);  //TODO - figure out what the crap is going on here.
+	uint32 keycolor = colorkey & ((1 << (src.format.bytesPerPixel << 3)) - 1);
 
 	// Copy srcRect from src surface to dst surface
 	const byte *srcBuffer = (const byte *)srcAdapted->getBasePtr(srcRect.left, srcRect.top);
@@ -628,14 +649,55 @@ void RenderManager::blitSurfaceToBkgScaled(const Graphics::Surface &src, const C
 void RenderManager::blitSurfaceToMenu(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey) {
 	Common::Rect empt;
 	blitSurfaceToSurface(src, empt, _menuSurface, x, y, colorkey);
-  //*/
 	Common::Rect dirty(src.w, src.h);
 	dirty.moveTo(x, y);
 	if (_menuSurfaceDirtyRect.isEmpty())
 		_menuSurfaceDirtyRect = dirty;
 	else
 		_menuSurfaceDirtyRect.extend(dirty);
-	//*/
+}
+
+void RenderManager::clearMenuSurface(bool force, int32 colorkey) {
+  if(force)
+    _menuSurfaceDirtyRect = Common::Rect(_menuArea.width(), _menuArea.height());
+  if(!_menuSurfaceDirtyRect.isEmpty()) {
+	  Common::Rect _menuLetterboxDirty = _menuSurfaceDirtyRect.findIntersectingRect(_menuLetterbox);
+    if(!_menuLetterboxDirty.isEmpty())
+      _menuSurface.fillRect(_menuLetterboxDirty, 0);
+	  Common::Rect _menuOverlayDirty = _menuSurfaceDirtyRect.findIntersectingRect(_menuOverlay);
+    if(!_menuOverlayDirty.isEmpty()) {
+	    _menuSurface.fillRect(_menuOverlayDirty, colorkey);
+      //TODO - mark working window dirty here so that it will redraw & blank overlaid residue on next frame
+    }
+    _menuSurfaceDirtyRect = Common::Rect(0,0);
+  }
+}
+
+void RenderManager::blitSurfaceToText(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey) {
+	Common::Rect empt;
+	blitSurfaceToSurface(src, empt, _textSurface, x, y, colorkey);
+	Common::Rect dirty(src.w, src.h);
+	dirty.moveTo(x, y);
+	if (_textSurfaceDirtyRect.isEmpty())
+		_textSurfaceDirtyRect = dirty;
+	else
+		_textSurfaceDirtyRect.extend(dirty);
+}
+
+void RenderManager::clearTextSurface(bool force, int32 colorkey) {
+  if(force)
+    _textSurfaceDirtyRect = Common::Rect(_textArea.width(),_textArea.height());
+  if(!_textSurfaceDirtyRect.isEmpty()) {
+	  Common::Rect _textLetterboxDirty = _textSurfaceDirtyRect.findIntersectingRect(_textLetterbox);
+    if(!_textLetterboxDirty.isEmpty())
+      _textSurface.fillRect(_textLetterboxDirty, 0);
+	  Common::Rect _textOverlayDirty = _textSurfaceDirtyRect.findIntersectingRect(_textOverlay);
+    if(!_textOverlayDirty.isEmpty()) {
+	    _textSurface.fillRect(_textOverlayDirty, colorkey);
+      //TODO - mark working window dirty here so that it will redraw & blank overlaid residue on next frame
+    }
+    _textSurfaceDirtyRect = Common::Rect(0,0);
+  }
 }
 
 Graphics::Surface *RenderManager::getBkgRect(Common::Rect &rect) {
@@ -741,102 +803,6 @@ void RenderManager::prepareBackground() {
 	_backgroundSurfaceDirtyRect.clip(_workingArea.width(), _workingArea.height());
 	
   debug(11,"~prepareBackground()");
-}
-
-void RenderManager::clearMenuSurface(int32 colorkey) {
-  //TODO - reinstate more efficient dirtyrect system
-  //TODO - blank upper letterbox area when NOT in widescreen mode.
-	_menuSurfaceDirtyRect = Common::Rect(0, 0, _menuSurface.w, _menuSurface.h);
-	_menuSurface.fillRect(_menuSurfaceDirtyRect, colorkey);
-}
-
-void RenderManager::clearTextSurface(int32 colorkey) {
-  //TODO - reinstate more efficient dirtyrect system
-  //TODO - blank lower letterbox area when NOT in widescreen mode.
-	_textSurfaceDirtyRect = Common::Rect(0, 0, _textSurface.w, _textSurface.h);
-	_textSurface.fillRect(_textSurfaceDirtyRect, colorkey);
-}
-
-uint16 RenderManager::registerSubtitle(const Common::Rect &area) {
-	_subid++;
-	OneSubtitle sub;
-	sub.redraw = false;
-	sub.timer = -1;
-	sub.todelete = false;
-	sub.r = area;
-	//Original game subtitle scripts appear to define subtitle rectangles relative to origin of working area.
-	//To allow arbitrary aspect ratios, we need to instead place these relative to origin of text area.
-	//This will allow the managed text area to then be arbitrarily placed on the screen to suit different aspect ratios.
-	sub.r.translate(_textOffset.x, _textOffset.y);  //Convert working area coordinates to text area coordinates
-  debug(1,"Registering subtitle area %d, dimenisions %dx%d, position within text area x%d,y%d", _subid, sub.r.width(), sub.r.height(), sub.r.left, sub.r.top);
-	_subsList[_subid] = sub;
-	return _subid;
-}
-
-uint16 RenderManager::registerSubtitle() {
-  //TODO - double check validity of this geometry
-	Common::Rect r(_textArea.left, _textArea.top, _textArea.right, _textArea.bottom);
-	r.translate(-_workingArea.left, -_workingArea.top);
-	return registerSubtitle(r);
-}
-
-void RenderManager::deregisterSubtitle(uint16 id) {
-	if (_subsList.contains(id))
-		_subsList[id].todelete = true;
-}
-
-void RenderManager::deregisterSubtitle(uint16 id, int16 delay) {
-	if (_subsList.contains(id))
-		_subsList[id].timer = delay;
-}
-
-void RenderManager::updateSubtitle(uint16 id, const Common::String &txt) {
-	if (_subsList.contains(id)) {
-		OneSubtitle *sub = &_subsList[id];
-		sub->txt = txt;
-		sub->redraw = true;
-	}
-}
-
-void RenderManager::processSubtitles(uint16 deltatime) {
-  debug(5,"processSubtitles()");
-	bool redraw = false;
-	
-	//Update all subtitles' respective timers; delete expired subtitles.
-	for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
-		if (it->_value.timer != -1) {
-			it->_value.timer -= deltatime;
-			if (it->_value.timer <= 0)
-				it->_value.todelete = true;
-		}
-		if (it->_value.todelete) {
-			_subsList.erase(it);
-			redraw = true;
-		} else if (it->_value.redraw) {
-			redraw = true;
-		}
-	}
-
-	if (redraw) {
-	  //Blank subtitle buffer
-	  clearTextSurface();
-
-    //Cycle through all extant subtitles, if subtitle contains text then render it to an auxiliary buffer within a rectangle specified by that subtitle & blit into main subtitle buffer
-		for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
-			OneSubtitle *sub = &it->_value;
-			if (sub->txt.size()) {
-				Graphics::Surface textSurface;
-				textSurface.create(sub->r.width(), sub->r.height(), _engine->_resourcePixelFormat);
-				textSurface.fillRect(Common::Rect(sub->r.width(), sub->r.height()), -1); //TODO Unnecessary operation?  Check later.
-				_engine->getTextRenderer()->drawTextWithWordWrapping(sub->txt, textSurface, _engine->isWidescreen());
-				Common::Rect empty;
-				blitSurfaceToSurface(textSurface, empty, _textSurface, sub->r.left, sub->r.top, -1);
-				textSurface.free();
-			}
-			sub->redraw = false;
-		}
-	}
-  debug(5,"~processSubtitles()");
 }
 
 Common::Point RenderManager::getBkgSize() {
@@ -1033,117 +999,6 @@ void RenderManager::bkgFill(uint8 r, uint8 g, uint8 b) {
 	markDirty();
 }
 #endif
-
-void RenderManager::timedMessage(const Common::String &str, uint16 milsecs) {
-  //TODO - rework to use new renderscene system
-	uint16 msgid = registerSubtitle();
-	updateSubtitle(msgid, str);
-	deregisterSubtitle(msgid, milsecs);
-}
-
-bool RenderManager::askQuestion(const Common::String &str) {
-	Graphics::Surface backuptextSurface;
-	backuptextSurface.copyFrom(_textSurface);
-	_engine->getTextRenderer()->drawTextWithWordWrapping(str, _textSurface, _engine->isWidescreen());
-	renderSceneToScreen(true); 
-
-	_engine->stopClock();
-
-	int result = 0;
-
-	while (result == 0) {
-		Common::Event evnt;
-		while (_engine->getEventManager()->pollEvent(evnt)) {
-			if (evnt.type == Common::EVENT_KEYDOWN) {
-				// English: yes/no
-				// German: ja/nein
-				// Spanish: si/no
-				// French Nemesis: F4/any other key
-				// French ZGI: oui/non
-				// TODO: Handle this using the keymapper
-				switch (evnt.kbd.keycode) {
-				case Common::KEYCODE_y:
-					if (_engine->getLanguage() == Common::EN_ANY)
-						result = 2;
-					break;
-				case Common::KEYCODE_j:
-					if (_engine->getLanguage() == Common::DE_DEU)
-						result = 2;
-					break;
-				case Common::KEYCODE_s:
-					if (_engine->getLanguage() == Common::ES_ESP)
-						result = 2;
-					break;
-				case Common::KEYCODE_o:
-					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_GRANDINQUISITOR)
-						result = 2;
-					break;
-				case Common::KEYCODE_F4:
-					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_NEMESIS)
-						result = 2;
-					break;
-				case Common::KEYCODE_n:
-					result = 1;
-					break;
-				default:
-					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_NEMESIS)
-						result = 1;
-					break;
-				}
-			}
-		}
-	  renderSceneToScreen(true); 
-		if (_doubleFPS)
-			_system->delayMillis(33);
-		else
-			_system->delayMillis(66);
-	}
-
-  //Clear question graphics by restoring saved subtitle buffer
-  _textSurface.copyFrom(backuptextSurface);
-
-	// Free the surface
-	backuptextSurface.free();
-
-	_engine->startClock();
-	return result == 2;
-}
-
-void RenderManager::delayedMessage(const Common::String &str, uint16 milsecs) {
-  //TODO - find bug in current render system; shows up with widescreen disabled, but not with it enabled.
-	uint16 msgid = registerSubtitle();
-	updateSubtitle(msgid, str);
-  debug(1,"initiating delayed message: %s to subtitle id %d", str.c_str(), msgid);
-	processSubtitles(0);
-	renderSceneToScreen(true);
-	_engine->stopClock();
-
-	uint32 stopTime = _system->getMillis() + milsecs;
-	while (_system->getMillis() < stopTime) {
-		Common::Event evnt;
-		while (_engine->getEventManager()->pollEvent(evnt)) {
-			if (evnt.type == Common::EVENT_KEYDOWN &&
-			        (evnt.kbd.keycode == Common::KEYCODE_SPACE ||
-			         evnt.kbd.keycode == Common::KEYCODE_RETURN ||
-			         evnt.kbd.keycode == Common::KEYCODE_ESCAPE))
-				break;
-		}
-	  renderSceneToScreen(true);
-		if (_doubleFPS)
-			_system->delayMillis(33);
-		else
-			_system->delayMillis(66);
-	}
-	deregisterSubtitle(msgid);
-	_engine->startClock();
-}
-
-void RenderManager::showDebugMsg(const Common::String &msg, int16 delay) {
-	uint16 msgid = registerSubtitle();
-	updateSubtitle(msgid, msg);
-  debug(1,"initiating in-game debug message: %s to subtitle id %d", msg.c_str(), msgid);
-	deregisterSubtitle(msgid, delay);
-}
 
 void RenderManager::updateRotation() {
 	int16 _velocity = _engine->getMouseVelocity() + _engine->getKeyboardVelocity();

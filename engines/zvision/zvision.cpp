@@ -25,6 +25,7 @@
 #include "zvision/core/console.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/text/subtitle_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/file/save_manager.h"
 #include "zvision/text/string_manager.h"
@@ -98,6 +99,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _midiManager(nullptr),
 	  _rnd(nullptr),
 	  _menu(nullptr),
+	  _subtitleManager(nullptr),
 	  _searchManager(nullptr),
 	  _textRenderer(nullptr),
 	  _doubleFPS(false),
@@ -123,6 +125,7 @@ ZVision::~ZVision() {
 	delete _saveManager;
 	delete _scriptManager;
 	delete _renderManager;	// should be deleted after the script manager
+	delete _subtitleManager;	
 	delete _rnd;
 	delete _midiManager;
 	getTimerManager()->removeTimerProc(&fpsTimerCallback);
@@ -204,10 +207,12 @@ void ZVision::initialize() {
     case GID_NEMESIS:
       _renderManager = new RenderManager(this, nemesisLayout, _resourcePixelFormat, _doubleFPS, _widescreen);
 	    _menu = new MenuNemesis(this, _renderManager->getMenuArea());
+      _subtitleManager = new SubtitleManager(this, nemesisLayout, _resourcePixelFormat, _doubleFPS);
 	    break;
     case GID_GRANDINQUISITOR:
       _renderManager = new RenderManager(this, zgiLayout, _resourcePixelFormat, _doubleFPS, _widescreen);
 		  _menu = new MenuZGI(this, _renderManager->getMenuArea());
+      _subtitleManager = new SubtitleManager(this, zgiLayout, _resourcePixelFormat, _doubleFPS);
 		  break;
 	  case GID_NONE:
 	  default:
@@ -336,10 +341,11 @@ Common::Error ZVision::run() {
 		_scriptManager->update(deltaTime);
     debug(5,"Menu");
 		_menu->process(deltaTime);
+    debug(5,"Subtitles");
+		_subtitleManager->process(deltaTime);
 	  debug(5,"Render");
 		// Render the backBuffer to the screen
 		_renderManager->prepareBackground();
-		_renderManager->processSubtitles(deltaTime);
 		if(_renderManager->renderSceneToScreen())
 			_renderedFrameCount++;
 		else

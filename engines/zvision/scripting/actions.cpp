@@ -995,7 +995,8 @@ bool ActionStreamVideo::execute() {
 #endif
 
 	decoder = _engine->loadAnimation(_fileName);
-	Subtitle *sub = (subtitleExists) ? new Subtitle(_engine, subpath, switchToHires) : NULL;
+	uint16 sub = (subtitleExists) ? _engine->getSubtitleManager()->create(subpath) : 0;
+	
 	_engine->getCursorManager()->showMouse(false);
 
 	if (switchToHires) {
@@ -1026,8 +1027,7 @@ bool ActionStreamVideo::execute() {
 		_engine->getRenderManager()->initialize(false);
 	_engine->getCursorManager()->showMouse(true);
 
-	delete decoder;
-	delete sub;
+  _engine->getSubtitleManager()->destroy(sub);
 
 	return true;
 }
