@@ -183,11 +183,11 @@ void MenuManager::process(uint32 deltatime) {
   	redrawAll();
   	redraw = false;
   }
-};
+}
 
 void MenuNemesis::redrawAll() {
   redrawMain();
-};
+}
 
 void MenuManager::redrawMain() {
   //Draw menu background
@@ -410,7 +410,7 @@ int MenuZGI::mouseOverItem(const Common::Point &Pos, int itemCount) {
 	  itemHotspot.translate(itemWidth,0);
   }
   return -1;
-};
+}
 
 int MenuZGI::mouseOverMagic(const Common::Point &Pos) {
   Common::Rect magicHotspot(28,hSideMenu);
@@ -422,7 +422,7 @@ int MenuZGI::mouseOverMagic(const Common::Point &Pos) {
   magicHotspot.translate(magicWidth,0);
   }
   return -1;
-};
+}
 
 void MenuZGI::process(uint32 deltatime) {
 	if(itemsScroller.update(deltatime)) {
@@ -456,7 +456,7 @@ void MenuZGI::redrawAll() {
         default:
 	        break;
       }
-};
+}
 
 void MenuZGI::redrawMagic() {
   const int16 yOrigin = _menuArea.width();
