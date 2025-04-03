@@ -83,43 +83,24 @@ struct ScreenLayout {
 static const ScreenLayout nemesisLayout {
   Common::Rect(640,480),  //Screen
   Common::Rect(Common::Point(64,0), 512, 32), //Menu
-  Common::Rect(Common::Point(64,40), 512, 320), //Working
+  Common::Rect(Common::Point(64,40), 512, 320), //Working; aspect ratio 1.6
   Common::Rect(Common::Point(64,380), 512, 100) //Text
 };
 
 static const ScreenLayout zgiLayout {
   Common::Rect(640,480),  //Screen
   Common::Rect(Common::Point(0,0), 640, 32), //Menu
-  Common::Rect(Common::Point(0,40), 640, 344), //Working
+  Common::Rect(Common::Point(0,40), 640, 344), //Working; aspect ratio 1.86
   Common::Rect(Common::Point(0,400), 640, 80) //Text
 };
 
 enum {
 	WINDOW_WIDTH = 640,//Original 640,
 	WINDOW_HEIGHT = 480,//Original 480,
-	WINDOW_WIDTH_WIDE = 854,
-	WINDOW_HEIGHT_WIDE = 480,
-
 	HIRES_WINDOW_WIDTH = 800, //Original 800
 	HIRES_WINDOW_HEIGHT = 600,  //Original 600
-
-	// Zork Nemesis working window size (original aspect ratio 1.6)
-	ZNM_WORKING_WINDOW_WIDTH = 512, //Original 512
-	ZNM_WORKING_WINDOW_HEIGHT = 320,  //Original 320
-	
-	ZNM_SUBTITLE_HEIGHT = 80, //Original 80
-	ZNM_MENU_HEIGHT = 32,  //Original 80
-
-	// ZGI working window size (original aspect ratio 1.86)
-	ZGI_WORKING_WINDOW_WIDTH = 640, //Original 640
-	ZGI_WORKING_WINDOW_HEIGHT = 344,  //Original 344
-	
-  ZGI_SUBTITLE_HEIGHT = 68, //Original 68
-	ZGI_MENU_HEIGHT = 32,  //Original 68
-
 	ROTATION_SCREEN_EDGE_OFFSET = 60,
 	MAX_ROTATION_SPEED = 400, // Pixels per second
-
 	KEYBUF_SIZE = 20
 };
 
@@ -135,7 +116,6 @@ enum ZVisionAction {
 	kZVisionActionPreferences,
 	kZVisionActionShowFPS,
 	kZVisionActionSkipCutscene,
-
 	kZVisionActionCount
 };
 
@@ -268,7 +248,6 @@ public:
 	}
 
 	void initScreen(bool hiRes=false);
-	void initHiresScreen();
 
 	/**
 	 * Play a video until it is finished. This is a blocking call. It will call

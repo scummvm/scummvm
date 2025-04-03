@@ -79,7 +79,9 @@ private:
 	 */	
 	Common::Rect _screenArea;
 	
-	Common::Point _screenCentre; //Centre of the screen at current resolution
+	Common::Point _screenCenter; //Center of the screen at current resolution
+	
+	Common::Point _textOffset;  //Position vector of text area origin relative to working window origin
 
 	/**
 	 * A Rectangle placed inside _screenArea All in-game coordinates
@@ -115,8 +117,8 @@ private:
 	Common::Rect _backgroundSurfaceDirtyRect;
 
 	// Buffer for subtitles
-	Graphics::Surface _subSurface;
-	Common::Rect _subSurfaceDirtyRect;
+	Graphics::Surface _textSurface;
+	Common::Rect _textSurfaceDirtyRect;
 
 	// Rectangle for subtitles & other messages
 	Graphics::ManagedSurface _textManagedSurface;
@@ -165,8 +167,12 @@ public:
 	
 	Graphics::ManagedSurface &getVidSurface(Common::Rect &dstRect);  //dstRect is defined relative to working window origin
 	
-	Common::Rect getMenuArea() {return _menuArea;}
-	Common::Rect getWorkingArea() {return _workingArea;}
+	Common::Rect getMenuArea() {
+	  return _menuArea;
+  }  
+	Common::Rect getWorkingArea() {
+	  return _workingArea;
+  }
 
 	/**
 	 * Blits the image or a portion of the image to the background.
@@ -218,8 +224,6 @@ public:
 	 */
 	void setBackgroundPosition(int offset);
 
-
-
 	/**
 	 * Converts a point in screen coordinate space to image coordinate space
 	 *
@@ -270,22 +274,19 @@ public:
 	// Blitting surface-to-menu methods
 	void blitSurfaceToMenu(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey = 0);
 
-	// Subtitles methods
-	//void initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect workingArea);
+	// Create subtitle graphics object and return ID
+	uint16 registerSubtitle(const Common::Rect &area);
+	uint16 registerSubtitle();
 
-	// Create subtitle area and return ID
-	uint16 createSubArea(const Common::Rect &area);
-	uint16 createSubArea();
+	// Delete subtitle graphics object by ID
+	void deregisterSubtitle(uint16 id);
+	void deregisterSubtitle(uint16 id, int16 delay);
 
-	// Delete subtitle by ID
-	void deleteSubArea(uint16 id);
-	void deleteSubArea(uint16 id, int16 delay);
-
-	// Update subtitle area
-	void updateSubArea(uint16 id, const Common::String &txt);
+	// Update subtitle graphics object string content
+	void updateSubtitle(uint16 id, const Common::String &txt);
 
 	// Processing subtitles
-	void processSubs(uint16 deltatime);
+	void processSubtitles(uint16 deltatime);
 
 	// Return background size
 	Common::Point getBkgSize();
@@ -301,7 +302,7 @@ public:
 	void clearMenuSurface(int32 colorkey = -1);
 	
 	// Clear whole/area of subtitle surface
-	void clearSubSurface(int32 colorkey = -1);
+	void clearTextSurface(int32 colorkey = -1);
 
 	// Copy needed portion of background surface to workingArea surface
 	void prepareBackground();
@@ -361,11 +362,9 @@ public:
 	void delayedMessage(const Common::String &str, uint16 milsecs);
 	void timedMessage(const Common::String &str, uint16 milsecs);
 	void showDebugMsg(const Common::String &msg, int16 delay = 3000);
-
 	void checkBorders();
 	void rotateTo(int16 to, int16 time);
 	void updateRotation();
-
 	void upscaleRect(Common::Rect &rect);
 };
 

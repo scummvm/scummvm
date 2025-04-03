@@ -117,7 +117,6 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 
 ZVision::~ZVision() {
 	debug(1, "ZVision::~ZVision");
-
 	// Dispose of resources
 	delete _cursorManager;
 	delete _stringManager;
@@ -126,7 +125,6 @@ ZVision::~ZVision() {
 	delete _renderManager;	// should be deleted after the script manager
 	delete _rnd;
 	delete _midiManager;
-
 	getTimerManager()->removeTimerProc(&fpsTimerCallback);
 }
 
@@ -144,11 +142,9 @@ void ZVision::registerDefaultSettings() {
 void ZVision::loadSettings() {
 	int16 value = 0;
 	bool boolValue = false;
-
 	for (int i = 0; i < ZVISION_SETTINGS_KEYS_COUNT; i++) {
-		if (settingsKeys[i].defaultValue >= 0) {
+		if (settingsKeys[i].defaultValue >= 0)
 			value = (settingsKeys[i].allowEditing) ? ConfMan.getInt(settingsKeys[i].name) : settingsKeys[i].defaultValue;
-		} 
 		else {
 			boolValue = (settingsKeys[i].allowEditing) ? ConfMan.getBool(settingsKeys[i].name) : settingsKeys[i].defaultBoolValue;
 			value = (boolValue) ? 1 : 0;
@@ -307,6 +303,19 @@ Common::Error ZVision::run() {
 		quitGame();
 		return Common::kUnknownError;
 	}
+	if(getGameId() == GID_NEMESIS && !_midiManager->isAvailable()) {
+		GUI::MessageDialog MIDIdialog(_(
+	      "MIDI playback is not available, or else improperly configured. "
+	      "Zork Nemesis contains several music puzzles which require "
+	      "MIDI audio in order to be solved.  These puzzles may alternatively "
+	      "be solved using subtitles, if supported. Continue launching game?" 
+      ),
+	    _("Yes"),
+	    _("No")
+    );
+	  if (MIDIdialog.runModal() != GUI::kMessageOK)
+		  quitGame();
+  }
 
 	// Main loop
 	while (!shouldQuit()) {
@@ -330,7 +339,7 @@ Common::Error ZVision::run() {
 	  debug(5,"Render");
 		// Render the backBuffer to the screen
 		_renderManager->prepareBackground();
-		_renderManager->processSubs(deltaTime);
+		_renderManager->processSubtitles(deltaTime);
 		if(_renderManager->renderSceneToScreen())
 			_renderedFrameCount++;
 		else
@@ -340,9 +349,8 @@ Common::Error ZVision::run() {
 		int delay = _desiredFrameTime - int32(_system->getMillis() - currentTime);
 		// Ensure non-negative
 		delay = delay < 0 ? 0 : delay;
-		if (_doubleFPS) {
+		if (_doubleFPS)
 			delay >>= 1;
-		}
 		_system->delayMillis(delay);
 	}
 	return Common::kNoError;
@@ -350,11 +358,10 @@ Common::Error ZVision::run() {
 
 void ZVision::pauseEngineIntern(bool pause) {
 	_mixer->pauseAll(pause);
-	if (pause) {
+	if (pause)
 		_clock.stop();
-	} else {
+  else
 		_clock.start();
-	}
 }
 
 void ZVision::setRenderDelay(uint delay) {
@@ -368,7 +375,6 @@ bool ZVision::canRender() {
 
 void ZVision::syncSoundSettings() {
 	Engine::syncSoundSettings();
-
 	_scriptManager->setStateValue(StateKey_Subtitles, ConfMan.getBool("subtitles") ? 1 : 0);
 }
 
