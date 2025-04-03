@@ -77,33 +77,39 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
    * @param dstRect   Rectangle to play video into, defined relative to working window origin; video will scale to rectangle automatically.
  	 * @param skippable Allow video to be skipped
    * @param sub       Subtitle associated with video
+   * @param srcRect   Rectangle within video frame, defined relative to frame origin, to blit to output.  Only used for removing baked-in letterboxing in ZGI DVD HD videos
    */	
 	 
-void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, bool skippable, uint16 sub) {
-	Common::Rect dst = dstRect;
+void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, bool skippable, uint16 sub, const Common::Rect &srcRect) {
+	Common::Rect _dstRect = dstRect;
+	Common::Rect _srcRect = srcRect;
+	Common::Rect _frameArea = Common::Rect(vid.getWidth(), vid.getHeight());
 	Common::Rect _workingArea = _renderManager->getWorkingArea();
 	// If dstRect is empty, no specific scaling was requested. However, we may choose to do scaling anyway
-	if (dst.isEmpty())
-		dst = Common::Rect(vid.getWidth(), vid.getHeight());
+	bool scaled=false;
+	_workingArea.moveTo(0,0); //Set local origin system in this scope to origin of working area
+	if (_dstRect.isEmpty())
+		_dstRect = _frameArea;
+	_dstRect.clip(_workingArea);
+  Common::Point _dstPos = _dstRect.origin();
+	
+	if (_srcRect.isEmpty())
+		_srcRect = _frameArea;
+	else
+	  _srcRect.clip(_frameArea);
 
-	Graphics::ManagedSurface &outSurface = _renderManager->getVidSurface(dst);
-  debug(1, "Playing video, size %d x %d, at working window offset %d, %d", outSurface.w, outSurface.h, dst.left, dst.top);
-
-	Graphics::Surface *scaled = NULL;
-
-	if (vid.getWidth() != dst.width() || vid.getHeight() != dst.height()) {
-		scaled = new Graphics::Surface;
-		scaled->create(dst.width(), dst.height(), vid.getPixelFormat());
+	Graphics::ManagedSurface &outSurface = _renderManager->getVidSurface(_dstRect);
+	_dstRect.clip(Common::Rect(outSurface.w, outSurface.h));
+	
+  debug(1, "Playing video, size %d x %d, at working window offset %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
+	if (_srcRect.width() != _dstRect.width() || _srcRect.height() != _dstRect.height()) {
+	  debug(1,"Video will be scaled from %dx%d to %dx%d", _srcRect.width(), _srcRect.height(), _dstRect.width(), _dstRect.height());
+	  scaled = true;
 	}
-
-	uint16 finalWidth = dst.width() < _workingArea.width() ? dst.width() : _workingArea.width();
-	uint16 finalHeight = dst.height() < _workingArea.height() ? dst.height() : _workingArea.height();
 	bool showSubs = (_scriptManager->getStateValue(StateKey_Subtitles) == 1);
-
 	_clock.stop();
 	vid.start();
 	_videoIsPlaying = true;
-
 	_cutscenesKeymap->setEnabled(true);
 	_gameKeymap->setEnabled(false);
 
@@ -136,12 +142,13 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 				_subtitleManager->update(vid.getCurFrame(), sub);
 			if (frame) {
 				if (scaled) {
-					_renderManager->scaleBuffer(frame->getPixels(), scaled->getPixels(), frame->w, frame->h, frame->format.bytesPerPixel, scaled->w, scaled->h);
-					frame = scaled;
-				}
-				Common::Rect rect = Common::Rect(finalWidth, finalHeight);
-				debug(8,"Blitting from area %d x %d to video output surface at area %d, %d", frame->w, frame->h, dst.left, dst.top);
-				outSurface.simpleBlitFrom(*frame, rect, Common::Point(0,0));				
+				  debug(8,"Scaled blit from area %d x %d to video output surface at position %d, %d", _srcRect.width(), _srcRect.height(), _dstPos.x, _dstPos.y);
+					outSurface.blitFrom(*frame, _srcRect, _dstRect);
+					}
+        else {
+				  debug(8,"Simple blit from area %d x %d to video output surface at position %d, %d", _srcRect.width(), _srcRect.height(), _dstPos.x, _dstPos.y);
+				  outSurface.simpleBlitFrom(*frame, _srcRect, _dstRect.origin());
+			  }
 				_subtitleManager->process(0);
 			}
 		}
@@ -149,17 +156,11 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 		_renderManager->renderSceneToScreen(true,true);
 		_system->delayMillis(vid.getTimeToNextFrame() / 2); //Exponentially decaying delay
 	}
-
 	_cutscenesKeymap->setEnabled(false);
 	_gameKeymap->setEnabled(true);
-
 	_videoIsPlaying = false;
 	_clock.start();
-
-	if (scaled) {
-		scaled->free();
-		delete scaled;
-	}
+  debug(1, "Video playback complete");
 }
 
 double ZVision::getVobAmplification(Common::String fileName) const {

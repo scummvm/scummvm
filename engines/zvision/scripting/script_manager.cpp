@@ -89,6 +89,7 @@ void ScriptManager::update(uint deltaTimeMillis) {
 	}
 
 	updateNodes(deltaTimeMillis);
+	debug(5,"Script nodes updated");
 	if (!execScope(nodeview)) {
 		return;
 	}
