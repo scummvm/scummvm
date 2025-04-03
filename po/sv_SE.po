@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-02 20:15+0000\n"
-"PO-Revision-Date: 2025-03-30 16:18+0000\n"
+"PO-Revision-Date: 2025-04-03 08:51+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -12205,20 +12205,16 @@ msgid "Go to end of save/load menu"
 msgstr "Gå till slutet av spara/läs in-meny"
 
 #: engines/toltecs/metaengine.cpp:216
-#, fuzzy
-#| msgid "Move left"
 msgid "Move / Select"
-msgstr "Flytta åt vänster"
+msgstr "Flytta / Välj"
 
 #: engines/toltecs/metaengine.cpp:222
 msgid "Move / Perform Default Action"
-msgstr ""
+msgstr "Flytta / Genomför standardåtgärd"
 
 #: engines/toltecs/metaengine.cpp:258
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip ride"
-msgstr "Hoppa över video"
+msgstr "Hoppa över åktur"
 
 #: engines/tony/tony.cpp:248
 #, c-format
