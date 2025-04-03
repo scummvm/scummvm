@@ -31,6 +31,7 @@
 #include "director/picture.h"
 #include "director/score.h"
 #include "director/sprite.h"
+#include "director/util.h"
 #include "director/window.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/text.h"
@@ -1403,9 +1404,9 @@ int Datum::equalTo(const Datum &d, bool ignoreCase) const {
 	case STRING:
 	case SYMBOL:
 		if (ignoreCase) {
-			return g_lingo->normalizeString(asString()).equals(g_lingo->normalizeString(d.asString()));
+			return compareStringEquality(g_lingo->normalizeString(asString()), g_lingo->normalizeString(d.asString()));
 		} else {
-			return asString().equals(d.asString());
+			return compareStringEquality(asString(), d.asString());
 		}
 	case OBJECT:
 		return u.obj == d.u.obj;
@@ -1483,14 +1484,23 @@ uint32 Datum::compareTo(const Datum &d) const {
 			return kCompareGreater;
 		}
 	} else if (alignType == STRING || alignType == SYMBOL) {
-		int res = compareStrings(asString(), d.asString());
+		uint32 result = 0;
+		// Strings can be equal and less/greater than at the same time.
+		// Equality is determined by whether the characters
+		// match based on the equality table, whereas less/greater
+		// than status is determined by the order of the characters
+		// in the order table.
+		if (compareStringEquality(asString(), d.asString()))
+			result |= kCompareEqual;
+		int res = compareStringOrder(asString(), d.asString());
 		if (res < 0) {
-			return kCompareLess;
+			result |= kCompareLess;
 		} else if (res == 0) {
-			return kCompareEqual;
+			result |= kCompareEqual;
 		} else {
-			return kCompareGreater;
+			result |= kCompareGreater;
 		}
+		return result;
 	} else {
 		warning("Datum::compareTo(): Invalid comparison between types %s and %s", type2str(), d.type2str());
 		return kCompareError;

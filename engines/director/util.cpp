@@ -1586,7 +1586,7 @@ const byte orderTableD8win[256] = {
 // The tables below contain the first instance of the letter that is
 // comparable in the given position.
 //
-// e.g. for D5 win character 159 and 255 are equal. Item 159 is equal to 159 and item 
+// e.g. for D5 win character 159 and 255 are equal. Item 159 is equal to 159 and item
 // 255 is equal to 159 as well.
 //
 // The tools to recreate these tables is available in the director tests repository
@@ -1697,19 +1697,20 @@ static int getCharOrder(Common::u32char_type_t ch) {
 	return num;
 }
 
-int compareStrings(const Common::String &s1, const Common::String &s2) {
+int compareStringOrder(const Common::String &s1, const Common::String &s2) {
 	Common::U32String u32S1 = s1.decode(Common::kUtf8);
 	Common::U32String u32S2 = s2.decode(Common::kUtf8);
 	const Common::u32char_type_t *p1 = u32S1.c_str();
 	const Common::u32char_type_t *p2 = u32S2.c_str();
 
-	uint32 c1, c2;
+	int c1, c2;
 	do {
 		c1 = getCharOrder(*p1);
 		c2 = getCharOrder(*p2);
 		p1++;
 		p2++;
-	} while (c1 == c2 && c1);
+	} while (c1 == c2 && (c1 || c2));
+
 	return c1 - c2;
 }
 
@@ -1734,6 +1735,23 @@ static int getCharEquality(Common::u32char_type_t ch) {
 
 	warning("BUILDBOT: No equality table for Director version: %d", humanVersion(version));
 	return num;
+}
+
+bool compareStringEquality(const Common::String &s1, const Common::String &s2) {
+	Common::U32String u32S1 = s1.decode(Common::kUtf8);
+	Common::U32String u32S2 = s2.decode(Common::kUtf8);
+	const Common::u32char_type_t *p1 = u32S1.c_str();
+	const Common::u32char_type_t *p2 = u32S2.c_str();
+
+	int c1, c2;
+	do {
+		c1 = getCharEquality(*p1);
+		c2 = getCharEquality(*p2);
+		p1++;
+		p2++;
+	} while (c1 == c2 && (c1 || c2));
+
+	return (c1 == 0) && (c2 == 0);
 }
 
 const char *d_strstr(const char *str, const char *substr) {
