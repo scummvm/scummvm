@@ -64,6 +64,7 @@ class StringManager;
 class SaveManager;
 class RLFDecoder;
 class MenuManager;
+class SubtitleManager;
 class TextRenderer;
 class Subtitle;
 class MidiManager;
@@ -165,6 +166,7 @@ private:
 	MidiManager *_midiManager;
 	SaveManager *_saveManager;
 	MenuManager *_menu;
+  SubtitleManager *_subtitleManager;
 
 	// Clock
 	Clock _clock;
@@ -223,6 +225,9 @@ public:
 	MenuManager *getMenuManager() const {
 		return _menu;
 	}
+	SubtitleManager *getSubtitleManager() const {
+		return _subtitleManager;
+	}
 
 	Common::Keymap *getGameKeymap() const {
 		return _gameKeymap;
@@ -258,7 +263,7 @@ public:
 	 * @param destRect        Where to put the video. (In working window coords)
 	 * @param skippable       If true, the video can be skipped at any time using [Spacebar]
 	 */
-	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, Subtitle *sub = NULL);
+	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, uint16 sub = 0);
 	Video::VideoDecoder *loadAnimation(const Common::Path &fileName);
 
 	void setRenderDelay(uint);

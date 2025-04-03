@@ -64,7 +64,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 	_crossfade = false;
 	_crossfadeTarget = 0;
 	_crossfadeTime = 0;
-	_sub = NULL;
+	_sub = 0;
 	_stereo = false;
 	_loaded = false;
 
@@ -98,10 +98,10 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 		subname.setChar('u', subname.size() - 2);
 		subname.setChar('b', subname.size() - 1);
 
+
 		Common::Path subpath(filename.getParent().appendComponent(subname));
 		if (_engine->getSearchManager()->hasFile(subpath))
-			_sub = new Subtitle(_engine, subpath);
-
+		  _sub = _engine->getSubtitleManager()->create(subpath);
 		_loaded = true;
 	}
 }
@@ -112,7 +112,7 @@ MusicNode::~MusicNode() {
 	if (_key != StateKey_NotSet)
 		_engine->getScriptManager()->setStateValue(_key, 2);
 	if (_sub)
-		delete _sub;
+		_engine->getSubtitleManager()->destroy(_sub);
 	debug(2, "MusicNode: %d destroyed", _key);
 }
 
@@ -152,9 +152,8 @@ bool MusicNode::process(uint32 deltaTimeInMillis) {
 
 		if (_volume != _newvol)
 			setVolume(_newvol);
-
 		if (_sub && _engine->getScriptManager()->getStateValue(StateKey_Subtitles) == 1)
-			_sub->process(_engine->_mixer->getSoundElapsedTime(_handle) / 100);
+			_engine->getSubtitleManager()->update(_engine->_mixer->getSoundElapsedTime(_handle) / 100, _sub);
 	}
 	return false;
 }
