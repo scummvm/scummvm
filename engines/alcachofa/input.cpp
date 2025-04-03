@@ -34,6 +34,7 @@ void Input::nextFrame() {
 	_wasMouseRightPressed = false;
 	_wasMouseLeftReleased = false;
 	_wasMouseRightReleased = false;
+	updateMousePos3D(); // camera transformation might have changed
 }
 
 bool Input::handleEvent(const Common::Event &event) {
@@ -64,8 +65,7 @@ bool Input::handleEvent(const Common::Event &event) {
 		return true;
 	case EVENT_MOUSEMOVE: {
 		_mousePos2D = event.mouse;
-		auto pos3D = g_engine->camera().transform2Dto3D({ (float)_mousePos2D.x, (float)_mousePos2D.y, kBaseScale });
-		_mousePos3D = { (int16)pos3D.x(), (int16)pos3D.y() };
+		updateMousePos3D();
 		return true;
 	}
 	default:
@@ -82,6 +82,11 @@ void Input::toggleDebugInput(bool debugMode) {
 	_isMouseLeftDown = _isMouseRightDown = false;
 	if (_debugInput == nullptr)
 		_debugInput.reset(new Input());
+}
+
+void Input::updateMousePos3D() {
+	auto pos3D = g_engine->camera().transform2Dto3D({ (float)_mousePos2D.x, (float)_mousePos2D.y, kBaseScale });
+	_mousePos3D = { (int16)pos3D.x(), (int16)pos3D.y() };
 }
 
 }

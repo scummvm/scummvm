@@ -47,6 +47,8 @@ public:
 	void toggleDebugInput(bool debugMode); ///< Toggles input debug mode which blocks any input not retrieved with debugInput
 
 private:
+	void updateMousePos3D();
+
 	bool
 		_wasMouseLeftPressed = false,
 		_wasMouseRightPressed = false,
