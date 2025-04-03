@@ -88,20 +88,29 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 	// If dstRect is empty, no specific scaling was requested. However, we may choose to do scaling anyway
 	bool scaled=false;
 	_workingArea.moveTo(0,0); //Set local origin system in this scope to origin of working area
+	
+  debug(1, "Playing video, source %d,%d,%d,%d, at destination %d,%d,%d,%d", _srcRect.left, _srcRect.top, _srcRect.right, _srcRect.bottom, _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
+	
 	if (_dstRect.isEmpty())
 		_dstRect = _frameArea;
 	_dstRect.clip(_workingArea);
-  Common::Point _dstPos = _dstRect.origin();
+  
+  debug(2, "Clipped dstRect = %d,%d,%d,%d", _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
 	
 	if (_srcRect.isEmpty())
 		_srcRect = _frameArea;
 	else
 	  _srcRect.clip(_frameArea);
+	  
+  debug(2, "Clipped srcRect = %d,%d,%d,%d", _srcRect.left, _srcRect.top, _srcRect.right, _srcRect.bottom);
 
 	Graphics::ManagedSurface &outSurface = _renderManager->getVidSurface(_dstRect);
+	_dstRect.moveTo(0,0);
 	_dstRect.clip(Common::Rect(outSurface.w, outSurface.h));
+
+  debug(2, "dstRect clipped with outSurface = %d,%d,%d,%d", _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
 	
-  debug(1, "Playing video, size %d x %d, at working window offset %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
+  debug(1, "Final size %d x %d, at working window coordinates %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
 	if (_srcRect.width() != _dstRect.width() || _srcRect.height() != _dstRect.height()) {
 	  debug(1,"Video will be scaled from %dx%d to %dx%d", _srcRect.width(), _srcRect.height(), _dstRect.width(), _dstRect.height());
 	  scaled = true;
@@ -142,11 +151,11 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 				_subtitleManager->update(vid.getCurFrame(), sub);
 			if (frame) {
 				if (scaled) {
-				  debug(8,"Scaled blit from area %d x %d to video output surface at position %d, %d", _srcRect.width(), _srcRect.height(), _dstPos.x, _dstPos.y);
+				  debug(8,"Scaled blit from area %d x %d to video output surface at output surface position %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
 					outSurface.blitFrom(*frame, _srcRect, _dstRect);
 					}
         else {
-				  debug(8,"Simple blit from area %d x %d to video output surface at position %d, %d", _srcRect.width(), _srcRect.height(), _dstPos.x, _dstPos.y);
+				  debug(8,"Simple blit from area %d x %d to video output surface at output surface position %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
 				  outSurface.simpleBlitFrom(*frame, _srcRect, _dstRect.origin());
 			  }
 				_subtitleManager->process(0);
