@@ -81,25 +81,38 @@ struct ScreenLayout {
 //TODO Need to make a decision how to handle this.  Should be irrelevant for widescreen mode anyway, & purists will want original appearance for 4:3 ratio.
 //Figures below currently have playfield offset to fit subtitles entirely in lower bar
 
+/*/
+//Vertically offset values
 static const ScreenLayout nemesisLayout {
   Common::Rect(640,480),  //Screen
   Common::Rect(Common::Point(64,0), 512, 32), //Menu
   Common::Rect(Common::Point(64,40), 512, 320), //Working; aspect ratio 1.6
   Common::Rect(Common::Point(64,380), 512, 100) //Text
 };
-
 static const ScreenLayout zgiLayout {
   Common::Rect(640,480),  //Screen
   Common::Rect(Common::Point(0,0), 640, 32), //Menu
   Common::Rect(Common::Point(0,40), 640, 344), //Working; aspect ratio 1.86
   Common::Rect(Common::Point(0,400), 640, 80) //Text
 };
+//*/
+//*/
+//Central values
+static const ScreenLayout nemesisLayout {
+  Common::Rect(640,480),  //Screen
+  Common::Rect(Common::Point(64,0), 512, 32), //Menu
+  Common::Rect(Common::Point(64,80), 512, 320), //Working; aspect ratio 1.6
+  Common::Rect(Common::Point(64,420), 512, 60) //Text
+};
 
+static const ScreenLayout zgiLayout {
+  Common::Rect(640,480),  //Screen
+  Common::Rect(Common::Point(0,0), 640, 32), //Menu
+  Common::Rect(Common::Point(0,68), 640, 344), //Working; aspect ratio 1.86
+  Common::Rect(Common::Point(0,412), 640, 68) //Text
+};
+//*/
 enum {
-	WINDOW_WIDTH = 640,//Original 640,
-	WINDOW_HEIGHT = 480,//Original 480,
-	HIRES_WINDOW_WIDTH = 800, //Original 800
-	HIRES_WINDOW_HEIGHT = 600,  //Original 600
 	ROTATION_SCREEN_EDGE_OFFSET = 60,
 	MAX_ROTATION_SPEED = 400, // Pixels per second
 	KEYBUF_SIZE = 20
@@ -261,9 +274,10 @@ public:
 	 *
 	 * @param videoDecoder    The video to play
 	 * @param destRect        Where to put the video. (In working window coords)
+	 * @param clipRect        What subset of video to blit to destRect (In video frame coords)  //TODO implement
 	 * @param skippable       If true, the video can be skipped at any time using [Spacebar]
 	 */
-	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, uint16 sub = 0);
+	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, uint16 sub = 0, const Common::Rect &srcRect = Common::Rect(0, 0, 0, 0));
 	Video::VideoDecoder *loadAnimation(const Common::Path &fileName);
 
 	void setRenderDelay(uint);

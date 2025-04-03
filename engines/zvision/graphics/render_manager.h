@@ -66,6 +66,9 @@ private:
 	 */	
 	Common::Rect _screenArea;
 	
+	Common::Rect _HDscreenArea = Common::Rect(800,600);
+	Common::Rect _HDscreenAreaWide = Common::Rect(720,377);
+	
 	Common::Point _screenCenter; //Center of the screen at current resolution
 	
 	Common::Point _textOffset;  //Position vector of text area origin relative to working window origin

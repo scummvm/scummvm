@@ -284,8 +284,10 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 					if (sb <= (int32)_lines.size()) {
 						if (vob) {
 							// Convert frame number from 15FPS (AVI) to 29.97FPS (VOB) to synchronise with video
-							st = st * 2997 / 1500;
-							en = en * 2997 / 1500;
+							//st = st * 2997 / 1500;
+							//en = en * 2997 / 1500;
+							st = st * 2900 / 1500;  //TODO: Subtitles only synchronise correctly at 29fps, but vob files should be 29.97fps; check if video codec is rounding this value down!
+							en = en * 2900 / 1500;
 						}
 						_lines[sb].start = st;
 						_lines[sb].stop = en;
@@ -293,7 +295,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 				}
 			}
 		}
-    subFile.close();  //NB - this was missing in the original code; suspect a bug, but double check for a reason.
+    subFile.close();
   }
   else {
     //TODO - add error message here
