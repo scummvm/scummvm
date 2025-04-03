@@ -31,6 +31,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool upscaleToH
 	_areaId(-1),
 	_subId(-1) {
 	Common::File file;
+	//Parse subtitle parameters from script
 	if (_engine->getSearchManager()->openFile(file, subname)) {
 		while (!file.eos()) {
 			Common::String str = file.readLine();
@@ -45,7 +46,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool upscaleToH
 				Common::Rect rct = Common::Rect(x1, y1, x2, y2);
 				if (upscaleToHires)
 					_engine->getRenderManager()->upscaleRect(rct);
-				_areaId = _engine->getRenderManager()->createSubArea(rct);
+				_areaId = _engine->getRenderManager()->registerSubtitle(rct);
 				debug(1,"Original subtitle script rectangle coordinates: l%d, t%d, r%d, b%d", x1, y1, x2, y2);
 			} 
 			else if (str.matchString("*TextFile*", true)) {
@@ -87,7 +88,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool upscaleToH
 
 Subtitle::~Subtitle() {
 	if (_areaId != -1)
-		_engine->getRenderManager()->deleteSubArea(_areaId);
+		_engine->getRenderManager()->deregisterSubtitle(_areaId);
 	_subs.clear();
 }
 
@@ -101,14 +102,14 @@ void Subtitle::process(int32 time) {
 
 	if (j == -1 && _subId != -1) {
 		if (_areaId != -1)
-			_engine->getRenderManager()->updateSubArea(_areaId, "");
+			_engine->getRenderManager()->updateSubtitle(_areaId, "");
 		_subId = -1;
 	}
 
 	if (j != -1 && j != _subId) {
 		if (_subs[j].subStr.size())
 			if (_areaId != -1)
-				_engine->getRenderManager()->updateSubArea(_areaId, _subs[j].subStr);
+				_engine->getRenderManager()->updateSubtitle(_areaId, _subs[j].subStr);
 		_subId = j;
 	}
 }
