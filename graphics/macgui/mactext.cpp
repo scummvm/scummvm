@@ -1540,13 +1540,18 @@ int MacText::getMouseChar(int x, int y) {
 
 	int dx, dy, row, col;
 	getRowCol(x, y, &dx, &dy, &row, &col);
+	debug(5, "mouseChar: x: %d, y: %d, row: %d, col: %d", x, y, row, col);
 
-	int index = 0;
-	for (int r = 0; r < row; r++)
+	int index = 1;
+	for (int r = 0; r < row; r++) {
+		debug(5, "mouseChar: char %d: \"%s\"", index, _canvas.getTextChunk(r, 0, r, _canvas.getLineCharWidth(r)).encode().c_str());
 		index += _canvas.getLineCharWidth(r);
+		index++; // linebreak
+	}
+	debug(5, "mouseChar: char %d: \"%s\"", index, _canvas.getTextChunk(row, 0, row, col).encode().c_str());
 	index += col;
 
-	return index + 1;
+	return index;
 }
 
 int MacText::getMouseWord(int x, int y) {
@@ -1567,19 +1572,30 @@ int MacText::getMouseWord(int x, int y) {
 	// - trailing whitespace or empty space at the end of a line
 	//   counts as part of the word on the next line
 	// - empty space at the end of the text counts as a word
+	debug(5, "mouseWord: x: %d, y: %d, row: %d, col: %d", x, y, row, col);
 	for (int i = 0; i < row; i++) {
 		for (uint j = 0; j < _canvas._text[i].chunks.size(); j++) {
 			if (_canvas._text[i].chunks[j].text.empty())
 				continue;
 			Common::String data = _canvas._text[i].chunks[j].getEncodedText();
-			for (auto it : data) {
+			int oldIdx = 0;
+			for (int k = 0; k < data.size(); k++) {
+				char it = data[k];
 				if (it == ' ' && !inWhitespace) {
+					debug(5, "mouseWord: word %d: %s", index, data.substr(oldIdx, k-oldIdx).c_str());
+					oldIdx = k;
 					index++;
 					inWhitespace = true;
 				} else if (it != ' ' && inWhitespace) {
 					inWhitespace = false;
 				}
 			}
+		}
+		// Reached the end of a line, if we're in a word that's the end of it
+		if (!inWhitespace) {
+			debug(5, "mouseWord: word %d: <redacted>", index);
+			index++;
+			inWhitespace = true;
 		}
 	}
 
@@ -1588,9 +1604,13 @@ int MacText::getMouseWord(int x, int y) {
 		if (_canvas._text[row].chunks[j].text.empty())
 			continue;
 		Common::String data = _canvas._text[row].chunks[j].getEncodedText();
-		for (auto it : data) {
+		int oldIdx = 0;
+		for (int k = 0; k < data.size(); k++) {
+			char it = data[k];
 			cur++;
 			if (it == ' ' && !inWhitespace) {
+				debug(5, "mouseWord: word %d: %s", index, data.substr(oldIdx, k-oldIdx).c_str());
+				oldIdx = k;
 				index++;
 				inWhitespace = true;
 			} else if (it != ' ' && inWhitespace) {
