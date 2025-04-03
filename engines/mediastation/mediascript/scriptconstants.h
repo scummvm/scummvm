@@ -33,6 +33,7 @@ enum ExpressionType {
 const char *expressionTypeToStr(ExpressionType type);
 
 enum Opcode {
+	kOpcodeIf = 201,
 	kOpcodeIfElse = 202,
 	kOpcodeAssignVariable = 203,
 	kOpcodeOr = 204,
@@ -52,16 +53,12 @@ enum Opcode {
 	kOpcodeNegate = 218,
 	kOpcodeCallFunction = 219,
 	kOpcodeCallMethod = 220,
-	// This seems to appear at the start of a function to declare the number of
-	// local variables used in the function. It seems to be the `Declare`
-	// keyword. In the observed examples, the number of variables to create is
-	// given, then the next instructions are variable assignments for that number
-	// of variables.
-	kOpcodeDeclareVariables = 221,
-	kOpcodeWhile = 224,
+	kOpcodeDeclareLocals = 221,
 	kOpcodeReturn = 222,
-	kOpcodeUnk1 = 223,
-	kOpcodeCallFunctionInVariable = 225
+	kOpcodeReturnNoValue = 223,
+	kOpcodeWhile = 224,
+	kOpcodeCallFunctionInVariable = 225, // IndirectCall
+	kOpcodeCallMethodInVariable = 226 // IndirectMsg
 };
 const char *opcodeToStr(Opcode opcode);
 

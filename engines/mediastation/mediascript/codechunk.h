@@ -39,8 +39,6 @@ public:
 	ScriptValue executeNextBlock();
 	ScriptValue execute(Common::Array<ScriptValue> *args = nullptr);
 
-	static ScriptValue callBuiltInMethod(BuiltInMethod method, ScriptValue &self, Common::Array<ScriptValue> &args);
-
 private:
 	void skipNextBlock();
 
@@ -50,10 +48,21 @@ private:
 	ScriptValue evaluateValue();
 	ScriptValue evaluateVariable();
 
-	ScriptValue callFunction(uint functionId, uint parameterCount);
 	ScriptValue *readAndReturnVariable();
 
+	void evaluateIf();
+	void evaluateIfElse();
 	ScriptValue evaluateAssign();
+	ScriptValue evaluateBinaryOperation(Opcode op);
+	ScriptValue evaluateUnaryOperation();
+	ScriptValue evaluateFunctionCall(bool isIndirect = false);
+	ScriptValue evaluateFunctionCall(uint functionId, uint paramCount);
+	ScriptValue evaluateMethodCall(bool isIndirect = false);
+	ScriptValue evaluateMethodCall(BuiltInMethod method, uint paramCount);
+	void evaluateDeclareLocals();
+	ScriptValue evaluateReturn();
+	void evaluateReturnNoValue();
+	void evaluateWhileLoop();
 
 	static const uint MAX_LOOP_ITERATION_COUNT = 1000;
 	bool _returnImmediately = false;

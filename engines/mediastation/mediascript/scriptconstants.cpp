@@ -40,6 +40,8 @@ const char *expressionTypeToStr(ExpressionType type) {
 
 const char *opcodeToStr(Opcode opcode) {
 	switch (opcode) {
+	case kOpcodeIf:
+		return "If";
 	case kOpcodeIfElse:
 		return "IfElse";
 	case kOpcodeAssignVariable:
@@ -78,16 +80,18 @@ const char *opcodeToStr(Opcode opcode) {
 		return "CallFunction";
 	case kOpcodeCallMethod:
 		return "CallMethod";
-	case kOpcodeDeclareVariables:
-		return "DeclareVariables";
+	case kOpcodeDeclareLocals:
+		return "DeclareLocals";
 	case kOpcodeReturn:
 		return "Return";
-	case kOpcodeUnk1:
-		return "UNKNOWN (Unk1)";
-	case kOpcodeCallFunctionInVariable:
-		return "CallFunctionInVariable";
+	case kOpcodeReturnNoValue:
+		return "ReturnNoValue";
 	case kOpcodeWhile:
 		return "While";
+	case kOpcodeCallFunctionInVariable:
+		return "CallFunctionInVariable";
+	case kOpcodeCallMethodInVariable:
+		return "CallMethodInVariable";
 	default:
 		return "UNKNOWN";
 	}

@@ -87,9 +87,8 @@ ScriptValue CodeChunk::evaluateExpression(ExpressionType expressionType) {
 
 	ScriptValue returnValue;
 	switch (expressionType) {
-	case kExpressionTypeEmpty: {
-		return returnValue;
-	}
+	case kExpressionTypeEmpty:
+		break;
 
 	case kExpressionTypeOperation:
 		returnValue = evaluateOperation();
@@ -107,7 +106,6 @@ ScriptValue CodeChunk::evaluateExpression(ExpressionType expressionType) {
 		error("Got unimplemented expression type %s (%d)",
 			expressionTypeToStr(expressionType), static_cast<uint>(expressionType));
 	}
-
 	return returnValue;
 }
 
@@ -117,231 +115,75 @@ ScriptValue CodeChunk::evaluateOperation() {
 
 	ScriptValue returnValue;
 	switch (opcode) {
-	case kOpcodeAssignVariable: {
+	case kOpcodeIf:
+		evaluateIf();
+		break;
+
+	case kOpcodeIfElse:
+		evaluateIfElse();
+		break;
+
+	case kOpcodeAssignVariable:
 		evaluateAssign();
-		return returnValue;
-	}
+		break;
 
-	case kOpcodeCallFunction: {
-		uint functionId = Datum(*_bytecode).u.i;
-		uint32 parameterCount = Datum(*_bytecode).u.i;
-		debugC(5, kDebugScript, "%d (%d params)", functionId, parameterCount);
-		return callFunction(functionId, parameterCount);
-	}
+	case kOpcodeOr:
+	case kOpcodeXor:
+	case kOpcodeAnd:
+	case kOpcodeEquals:
+	case kOpcodeNotEquals:
+	case kOpcodeLessThan:
+	case kOpcodeGreaterThan:
+	case kOpcodeLessThanOrEqualTo:
+	case kOpcodeGreaterThanOrEqualTo:
+	case kOpcodeAdd:
+	case kOpcodeSubtract:
+	case kOpcodeMultiply:
+	case kOpcodeDivide:
+	case kOpcodeModulo:
+		returnValue = evaluateBinaryOperation(opcode);
+		break;
 
-	case kOpcodeCallMethod: {
-		// In Media Station, all methods seem be built-in - there don't
-		// seem to be custom objects or methods individual titles can
-		// define. Functions, however, CAN be title-defined.
-		// But here, we're only looking for built-in methods.
-		BuiltInMethod methodId = static_cast<BuiltInMethod>(Datum(*_bytecode).u.i);
-		uint32 parameterCount = Datum(*_bytecode).u.i;
-		debugC(5, kDebugScript, "%s (%d params)", builtInMethodToStr(methodId), parameterCount);
-		debugCN(5, kDebugScript, "  Self: ");
-		ScriptValue selfObject = evaluateExpression();
-		Common::Array<ScriptValue> args;
-		for (uint i = 0; i < parameterCount; i++) {
-			debugCN(5, kDebugScript, "  Param %d: ", i);
-			ScriptValue arg = evaluateExpression();
-			args.push_back(arg);
-		}
-		returnValue = callBuiltInMethod(methodId, selfObject, args);
-		return returnValue;
-	}
+	case kOpcodeNegate:
+		returnValue = evaluateUnaryOperation();
+		break;
 
-	case kOpcodeDeclareVariables: {
-		uint32 localVariableCount = Datum(*_bytecode).u.i;
-		debugC(5, kDebugScript, "%d", localVariableCount);
-		assert(_locals.empty());
-		_locals = Common::Array<ScriptValue>(localVariableCount);
-		return returnValue;
-	}
+	case kOpcodeCallFunction:
+		returnValue = evaluateFunctionCall();
+		break;
 
-	case kOpcodeOr: {
-		debugCN(5, kDebugScript, "\n    lhs: ");
-		ScriptValue value1 = evaluateExpression();
-		debugCN(5, kDebugScript, "    rhs: ");
-		ScriptValue value2 = evaluateExpression();
+	case kOpcodeCallMethod:
+		returnValue = evaluateMethodCall();
+		break;
 
-		returnValue.setToBool(value1 || value2);
-		return returnValue;
-	}
+	case kOpcodeDeclareLocals:
+		evaluateDeclareLocals();
+		break;
 
-	case kOpcodeXor: {
-		debugCN(5, kDebugScript, "\n    lhs: ");
-		ScriptValue value1 = evaluateExpression();
-		debugCN(5, kDebugScript, "    rhs: ");
-		ScriptValue value2 = evaluateExpression();
+	case kOpcodeReturn:
+		returnValue = evaluateReturn();
+		break;
 
-		returnValue.setToBool(value1 ^ value2);
-		return returnValue;
-	}
+	case kOpcodeReturnNoValue:
+		evaluateReturnNoValue();
+		break;
 
-	case kOpcodeAnd: {
-		debugCN(5, kDebugScript, "\n    value: ");
-		ScriptValue value1 = evaluateExpression();
-		debugCN(5, kDebugScript, "    rhs: ");
-		ScriptValue value2 = evaluateExpression();
+	case kOpcodeWhile:
+		evaluateWhileLoop();
+		break;
 
-		returnValue.setToBool(value1 && value2);
-		return returnValue;
-	}
+	case kOpcodeCallFunctionInVariable:
+		returnValue = evaluateFunctionCall(true);
+		break;
 
-	case kOpcodeIfElse: {
-		debugCN(5, kDebugScript, "\n    condition: ");
-		ScriptValue condition = evaluateExpression();
-
-		if (condition.getType() != kScriptValueTypeBool) {
-			error("Expected bool, got %s", scriptValueTypeToStr(condition.getType()));
-		}
-
-		if (condition.asBool()) {
-			executeNextBlock();
-			skipNextBlock();
-		} else {
-			skipNextBlock();
-			executeNextBlock();
-		}
-
-		return returnValue;
-	}
-
-	case kOpcodeEquals: {
-		debugCN(5, kDebugScript, "\n    lhs: ");
-		ScriptValue value1 = evaluateExpression();
-		debugCN(5, kDebugScript, "    rhs: ");
-		ScriptValue value2 = evaluateExpression();
-
-		returnValue.setToBool(value1 == value2);
-		return returnValue;
-	}
-
-	case kOpcodeNotEquals: {
-		debugCN(5, kDebugScript, "\n    lhs: ");
-		ScriptValue value1 = evaluateExpression();
-		debugCN(5, kDebugScript, "    rhs: ");
-		ScriptValue value2 = evaluateExpression();
-
-		returnValue.setToBool(!(value1 == value2));
-		return returnValue;
-	}
-
-	case kOpcodeLessThan: {
-		debugCN(5, kDebugScript, "\n    lhs: ");
-		ScriptValue value1 = evaluateExpression();
-		debugCN(5, kDebugScript, "    rhs: ");
-		ScriptValue value2 = evaluateExpression();
-
-		returnValue.setToBool(value1 < value2);
-		return returnValue;
-	}
-
-	case kOpcodeGreaterThan: {
-		debugCN(5, kDebugScript, "\n    lhs: ");
-		ScriptValue value1 = evaluateExpression();
-		debugCN(5, kDebugScript, "    rhs: ");
-		ScriptValue value2 = evaluateExpression();
-
-		returnValue.setToBool(value1 > value2);
-		return returnValue;
-	}
-
-	case kOpcodeLessThanOrEqualTo: {
-		debugCN(5, kDebugScript, "\n    lhs: ");
-		ScriptValue value1 = evaluateExpression();
-		debugCN(5, kDebugScript, "    rhs: ");
-		ScriptValue value2 = evaluateExpression();
-
-		returnValue.setToBool((value1 < value2) || (value1 == value2));
-		return returnValue;
-	}
-
-	case kOpcodeGreaterThanOrEqualTo: {
-		debugCN(5, kDebugScript, "\n    lhs: ");
-		ScriptValue value1 = evaluateExpression();
-		debugCN(5, kDebugScript, "    rhs: ");
-		ScriptValue value2 = evaluateExpression();
-
-		returnValue.setToBool((value1 > value2) || (value1 == value2));
-		return returnValue;
-	}
-
-	case kOpcodeAdd: {
-		debugCN(5, kDebugScript, "\n    lhs: ");
-		ScriptValue value1 = evaluateExpression();
-		debugCN(5, kDebugScript, "    rhs: ");
-		ScriptValue value2 = evaluateExpression();
-
-		returnValue = value1 + value2;
-		return returnValue;
-	}
-
-	case kOpcodeSubtract: {
-		debugCN(5, kDebugScript, "\n    lhs: ");
-		ScriptValue value1 = evaluateExpression();
-		debugCN(5, kDebugScript, "    rhs: ");
-		ScriptValue value2 = evaluateExpression();
-
-		returnValue = value1 - value2;
-		return returnValue;
-	}
-
-	case kOpcodeMultiply: {
-		debugCN(5, kDebugScript, "\n    lhs: ");
-		ScriptValue value1 = evaluateExpression();
-		debugCN(5, kDebugScript, "    rhs: ");
-		ScriptValue value2 = evaluateExpression();
-
-		returnValue = value1 * value2;
-		return returnValue;
-	}
-
-	case kOpcodeDivide: {
-		debugCN(5, kDebugScript, "\n    lhs: ");
-		ScriptValue value1 = evaluateExpression();
-		debugCN(5, kDebugScript, "    rhs: ");
-		ScriptValue value2 = evaluateExpression();
-
-		returnValue = value1 / value2;
-		return returnValue;
-	}
-
-	case kOpcodeModulo: {
-		debugCN(5, kDebugScript, "\n    lhs: ");
-		ScriptValue value1 = evaluateExpression();
-		debugCN(5, kDebugScript, "    rhs: ");
-		ScriptValue value2 = evaluateExpression();
-
-		returnValue = value1 % value2;
-		return returnValue;
-	}
-
-	case kOpcodeNegate: {
-		ScriptValue value = evaluateExpression();
-		debugCN(5, kDebugScript, "    value: ");
-
-		return -value;
-	}
-
-	case kOpcodeReturn: {
-		debugCN(5, kDebugScript, "    return: ");
-		ScriptValue value = evaluateExpression();
-
-		return value;
-	}
-
-	case kOpcodeCallFunctionInVariable: {
-		uint parameterCount = Datum(*_bytecode).u.i;
-		ScriptValue variable = evaluateExpression();
-		uint functionId = variable.asFunctionId();
-		debugC(5, kDebugScript, "[Indirect function %d] (%d params)", functionId, parameterCount);
-
-		return callFunction(functionId, parameterCount);
-	}
+	case kOpcodeCallMethodInVariable:
+		returnValue = evaluateMethodCall(true);
+		break;
 
 	default:
 		error("Got unimplemented opcode %s (%d)", opcodeToStr(opcode), static_cast<uint>(opcode));
 	}
+	return returnValue;
 }
 
 ScriptValue CodeChunk::evaluateValue() {
@@ -434,29 +276,6 @@ ScriptValue CodeChunk::evaluateVariable() {
 	return *variable;
 }
 
-ScriptValue CodeChunk::callFunction(uint functionId, uint parameterCount) {
-	Common::Array<ScriptValue> args;
-	for (uint i = 0; i < parameterCount; i++) {
-		debugCN(5, kDebugScript, "  Param %d: ", i);
-		ScriptValue arg = evaluateExpression();
-		args.push_back(arg);
-	}
-
-	ScriptValue returnValue;
-	Function *function = g_engine->getFunctionById(functionId);
-	if (function != nullptr) {
-		// This is a title-defined function.
-		returnValue = function->execute(args);
-	} else {
-		// This is a function built in (and global to) the engine.
-		BuiltInFunction builtInFunctionId = static_cast<BuiltInFunction>(functionId);
-		debugC(5, kDebugScript, "  Function Name: %s ", builtInFunctionToStr(builtInFunctionId));
-		returnValue = g_engine->callBuiltInFunction(builtInFunctionId, args);
-	}
-
-	return returnValue;
-}
-
 ScriptValue *CodeChunk::readAndReturnVariable() {
 	uint id = Datum(*_bytecode).u.i;
 	VariableScope scope = static_cast<VariableScope>(Datum(*_bytecode).u.i);
@@ -496,6 +315,36 @@ ScriptValue *CodeChunk::readAndReturnVariable() {
 	}
 }
 
+void CodeChunk::evaluateIf() {
+	debugCN(5, kDebugScript, "\n    condition: ");
+	ScriptValue condition = evaluateExpression();
+	if (condition.getType() != kScriptValueTypeBool) {
+		error("evaluateIf: Expected bool condition, got %s", scriptValueTypeToStr(condition.getType()));
+	}
+
+	if (condition.asBool()) {
+		executeNextBlock();
+	} else {
+		skipNextBlock();
+	}
+}
+
+void CodeChunk::evaluateIfElse() {
+	debugCN(5, kDebugScript, "\n    condition: ");
+	ScriptValue condition = evaluateExpression();
+	if (condition.getType() != kScriptValueTypeBool) {
+		error("evaluateIfElse: Expected bool condition, got %s", scriptValueTypeToStr(condition.getType()));
+	}
+
+	if (condition.asBool()) {
+		executeNextBlock();
+		skipNextBlock();
+	} else {
+		skipNextBlock();
+		executeNextBlock();
+	}
+}
+
 ScriptValue CodeChunk::evaluateAssign() {
 	debugCN(5, kDebugScript, "Variable ");
 	ScriptValue *targetVariable = readAndReturnVariable();
@@ -515,12 +364,157 @@ ScriptValue CodeChunk::evaluateAssign() {
 	}
 }
 
-ScriptValue CodeChunk::callBuiltInMethod(BuiltInMethod method, ScriptValue &self, Common::Array<ScriptValue> &args) {
-	ScriptValue returnValue;
+ScriptValue CodeChunk::evaluateBinaryOperation(Opcode op) {
+	debugCN(5, kDebugScript, "\n    lhs: ");
+	ScriptValue value1 = evaluateExpression();
+	debugCN(5, kDebugScript, "    rhs: ");
+	ScriptValue value2 = evaluateExpression();
 
-	switch (self.getType()) {
+	ScriptValue returnValue;
+	switch (op) {
+	case kOpcodeOr:
+		returnValue.setToBool(value1 || value2);
+		break;
+
+	case kOpcodeXor:
+		returnValue.setToBool(value1 ^ value2);
+		break;
+
+	case kOpcodeAnd:
+		returnValue.setToBool(value1 && value2);
+		break;
+
+	case kOpcodeEquals:
+		returnValue.setToBool(value1 == value2);
+		break;
+
+	case kOpcodeNotEquals:
+		returnValue.setToBool(value1 != value2);
+		break;
+
+	case kOpcodeLessThan:
+		returnValue.setToBool(value1 < value2);
+		break;
+
+	case kOpcodeGreaterThan:
+		returnValue.setToBool(value1 > value2);
+		break;
+
+	case kOpcodeLessThanOrEqualTo:
+		returnValue.setToBool(value1 <= value2);
+		break;
+
+	case kOpcodeGreaterThanOrEqualTo:
+		returnValue.setToBool(value1 >= value2);
+		break;
+
+	case kOpcodeAdd:
+		returnValue = value1 + value2;
+		break;
+
+	case kOpcodeSubtract:
+		returnValue = value1 - value2;
+		break;
+
+	case kOpcodeMultiply:
+		returnValue = value1 * value2;
+		break;
+
+	case kOpcodeDivide:
+		returnValue = value1 / value2;
+		break;
+
+	case kOpcodeModulo:
+		returnValue = value1 % value2;
+		break;
+
+	default:
+		error("Got unknown binary operation opcode %s", opcodeToStr(op));
+	}
+	return returnValue;
+}
+
+ScriptValue CodeChunk::evaluateUnaryOperation() {
+	// The only supported unary operation seems to be negation.
+	ScriptValue value = evaluateExpression();
+	debugCN(5, kDebugScript, "    value: ");
+	return -value;
+}
+
+ScriptValue CodeChunk::evaluateFunctionCall(bool isIndirect) {
+	uint functionId, paramCount = 0;
+	if (isIndirect) {
+		paramCount = Datum(*_bytecode).u.i;
+		ScriptValue value = evaluateExpression();
+		functionId = value.asFunctionId();
+	} else {
+		functionId = Datum(*_bytecode).u.i;
+		paramCount = Datum(*_bytecode).u.i;
+	}
+
+	return evaluateFunctionCall(functionId, paramCount);
+}
+
+ScriptValue CodeChunk::evaluateFunctionCall(uint functionId, uint paramCount) {
+	debugC(5, kDebugScript, "%d (%d params)", functionId, paramCount);
+
+	Common::Array<ScriptValue> args;
+	for (uint i = 0; i < paramCount; i++) {
+		debugCN(5, kDebugScript, "  Param %d: ", i);
+		ScriptValue arg = evaluateExpression();
+		args.push_back(arg);
+	}
+
+	ScriptValue returnValue;
+	Function *function = g_engine->getFunctionById(functionId);
+	if (function != nullptr) {
+		// This is a title-defined function.
+		returnValue = function->execute(args);
+	} else {
+		// This is a function built in (and global to) the engine.
+		BuiltInFunction builtInFunctionId = static_cast<BuiltInFunction>(functionId);
+		debugC(5, kDebugScript, "  Function Name: %s ", builtInFunctionToStr(builtInFunctionId));
+		returnValue = g_engine->callBuiltInFunction(builtInFunctionId, args);
+	}
+
+	return returnValue;
+}
+
+ScriptValue CodeChunk::evaluateMethodCall(bool isIndirect) {
+	BuiltInMethod method;
+	uint paramCount = 0;
+	if (isIndirect) {
+		paramCount = Datum(*_bytecode).u.i;
+		ScriptValue value = evaluateExpression();
+		method = value.asMethodId();
+	} else {
+		method = static_cast<BuiltInMethod>(Datum(*_bytecode).u.i);
+		paramCount = Datum(*_bytecode).u.i;
+	}
+
+	return evaluateMethodCall(method, paramCount);
+}
+
+ScriptValue CodeChunk::evaluateMethodCall(BuiltInMethod method, uint paramCount) {
+	// In Media Station, all methods are built-in - there aren't
+	// custom objects or methods individual titles can
+	// define. Functions, however, CAN be title-defined.
+	// But here, we're only looking for built-in methods.
+	debugC(5, kDebugScript, "%s (%d params)", builtInMethodToStr(method), paramCount);
+	debugCN(5, kDebugScript, "  Self: ");
+
+	ScriptValue target = evaluateExpression();
+	Common::Array<ScriptValue> args;
+	for (uint i = 0; i < paramCount; i++) {
+		debugCN(5, kDebugScript, "  Param %d: ", i);
+		ScriptValue arg = evaluateExpression();
+		args.push_back(arg);
+	}
+
+	ScriptValue returnValue;
+	switch (target.getType()) {
 	case kScriptValueTypeAssetId: {
-		if (self.asAssetId() == 1) {
+		if (target.asAssetId() == 1) {
 			// This is a "document" method that we need to handle specially.
 			// The document (@doc) accepts engine-level methods like changing the
 			// active screen.
@@ -528,32 +522,76 @@ ScriptValue CodeChunk::callBuiltInMethod(BuiltInMethod method, ScriptValue &self
 			// just to house these methods. Rather, we just call in the engine.
 			returnValue = g_engine->callMethod(method, args);
 			return returnValue;
-		} else if (self.asAssetId() == 0) {
+		} else if (target.asAssetId() == 0) {
 			// It seems to be valid to call a method on a null asset ID, in
 			// which case nothing happens. Still issue warning for traceability.
-			warning("CodeChunk::callBuiltInMethod(): Attempt to call method on a null asset ID");
+			warning("Attempt to call method on a null asset ID");
 			return returnValue;
 		} else {
 			// This is a regular asset that we can process directly.
-			uint assetId = self.asAssetId();
-			Asset *selfAsset = g_engine->getAssetById(assetId);
-			if (selfAsset == nullptr) {
-				error("CodeChunk::callBuiltInMethod(): Attempt to call method on asset ID %d, which isn't loaded", self.asAssetId());
+			uint assetId = target.asAssetId();
+			Asset *targetAsset = g_engine->getAssetById(assetId);
+			if (targetAsset == nullptr) {
+				error("Attempt to call method on asset ID %d, which isn't loaded", target.asAssetId());
 			}
-			returnValue = selfAsset->callMethod(method, args);
+			returnValue = targetAsset->callMethod(method, args);
 			return returnValue;
 		}
 	}
 
 	case kScriptValueTypeCollection: {
-		Common::SharedPtr<Collection> collection = self.asCollection();
+		Common::SharedPtr<Collection> collection = target.asCollection();
 		returnValue = collection->callMethod(method, args);
 		return returnValue;
 	}
 
 	default:
-		error("CodeChunk::callBuiltInMethod(): Attempt to call method on unimplemented ScriptValue type %s (%d)",
-			scriptValueTypeToStr(self.getType()), static_cast<uint>(self.getType()));
+		error("Attempt to call method on unimplemented value type %s (%d)",
+			scriptValueTypeToStr(target.getType()), static_cast<uint>(target.getType()));
+	}
+}
+
+void CodeChunk::evaluateDeclareLocals() {
+	uint localVariableCount = Datum(*_bytecode).u.i;
+	if (localVariableCount <= 0) {
+		error("Got non-positive local variable count");
+	}
+	debugC(5, kDebugScript, "%d", localVariableCount);
+	_locals = Common::Array<ScriptValue>(localVariableCount);
+}
+
+ScriptValue CodeChunk::evaluateReturn() {
+	ScriptValue returnValue = evaluateExpression();
+	_returnImmediately = true;
+	return returnValue;
+}
+
+void CodeChunk::evaluateReturnNoValue() {
+	_returnImmediately = true;
+}
+
+void CodeChunk::evaluateWhileLoop() {
+	uint loopStartPosition = _bytecode->pos();
+	uint iterationCount = 0;
+
+	while (true) {
+		// Seek to the top of the loop bytecode.
+		_bytecode->seek(loopStartPosition);
+		ScriptValue condition = evaluateExpression();
+		if (condition.getType() != kScriptValueTypeBool) {
+			error("Expected loop condition to be bool, not %s", scriptValueTypeToStr(condition.getType()));
+		}
+
+		if (++iterationCount >= MAX_LOOP_ITERATION_COUNT) {
+			error("Exceeded max loop iteration count");
+		}
+
+		if (condition.asBool()) {
+			executeNextBlock();
+		} else {
+			skipNextBlock();
+			break;
+		}
 	}
 }
 

@@ -82,7 +82,13 @@ ScriptValue Collection::callMethod(BuiltInMethod method, Common::Array<ScriptVal
 		Common::Array<ScriptValue> sendArgs;
 		for (uint i = 0; i < size(); i++) {
 			ScriptValue self = operator[](i);
-			CodeChunk::callBuiltInMethod(methodToSend, self, sendArgs);
+
+			uint assetId = self.asAssetId();
+			Asset *selfAsset = g_engine->getAssetById(assetId);
+			if (selfAsset != nullptr) {
+				Common::Array<ScriptValue> emptyArgs;
+				returnValue = selfAsset->callMethod(methodToSend, emptyArgs);
+			}
 		}
 		return returnValue;
 	}
