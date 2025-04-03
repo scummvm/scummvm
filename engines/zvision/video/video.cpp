@@ -142,7 +142,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 				Common::Rect rect = Common::Rect(finalWidth, finalHeight);
 				debug(2,"Blitting from area %d x %d to video output surface at area %d, %d", frame->w, frame->h, dst.left, dst.top);
 				outSurface.simpleBlitFrom(*frame, rect, Common::Point(0,0));
-				_renderManager->processSubs(0);
+				_renderManager->processSubtitles(0);
 			}
 		}
 		// Always update the screen so the mouse continues to render & video does not skip
