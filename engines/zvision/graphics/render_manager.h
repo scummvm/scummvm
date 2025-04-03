@@ -50,23 +50,10 @@ namespace ZVision {
 
 class RenderManager {
 public:
-  //TODO - eliminate this; old system
-//	RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingArea, const Common::Rect menuArea, const Graphics::PixelFormat pixelFormat, bool doubleFPS);
 	RenderManager(ZVision *engine, const ScreenLayout layout, const Graphics::PixelFormat pixelFormat, bool doubleFPS, bool widescreen = false);
 	~RenderManager();
 
-private:
-	struct OneSubtitle {
-		Common::Rect r;
-		Common::String txt;
-		int16  timer;
-		bool todelete;
-		bool redraw;
-	};
-
-	typedef Common::HashMap<uint16, OneSubtitle> SubtitleMap;
 	typedef Common::List<GraphicsEffect *> EffectsList;
-
 private:
 	ZVision *_engine;
 	OSystem *_system;
@@ -116,24 +103,31 @@ private:
 	Graphics::ManagedSurface _workingManagedSurface;
 	Common::Rect _backgroundSurfaceDirtyRect;
 
-	// Buffer for subtitles
+//TODO: Migrate this functionality to SubtitleManager to improve encapsulation
+//*
+	// Buffer for drawing subtitles & other messages
 	Graphics::Surface _textSurface;
+	Graphics::ManagedSurface _textManagedSurface;
 	Common::Rect _textSurfaceDirtyRect;
+//*/
 
 	// Rectangle for subtitles & other messages
-	Graphics::ManagedSurface _textManagedSurface;
 	Common::Rect _textArea;
+	Common::Rect _textLetterbox;  //Section of text area to be filled with black when blanked
+	Common::Rect _textOverlay;	//Section of text area to be filled with colorkey when blanked (may potentially intersect text letterbox area if screen/window is wider than working area!)
 
-	// Buffer for menu drawing
+	// Buffer for drawing menu
 	Graphics::Surface _menuSurface;
 	Graphics::ManagedSurface _menuManagedSurface;
-	Common::Rect _menuSurfaceDirtyRect;
-	
-	//Buffer for video playback (render directly for speed; no backbuffer)
-	Graphics::ManagedSurface _vidManagedSurface;
+	Common::Rect _menuSurfaceDirtyRect;  //subrectangle of menu area outside working area
 
 	// Rectangle for menu area
 	Common::Rect _menuArea;
+	Common::Rect _menuLetterbox; //Section of menu area to be filled with black when blanked
+	Common::Rect _menuOverlay;	//Section of menu area to be filled with colorkey when blanked (may potentially intersect menu letterbox area if screen/window is wider than working area!)
+
+	//Buffer for video playback (render directly for speed; no backbuffer)
+	Graphics::ManagedSurface _vidManagedSurface;
 
 	// A buffer used for apply graphics effects
 	Graphics::Surface _effectSurface;
@@ -143,12 +137,6 @@ private:
 
 	/** Used to warp the background image */
 	RenderTable _renderTable;
-
-	// Internal subtitles counter
-	uint16 _subid;
-
-	// Subtitle list
-	SubtitleMap _subsList;
 
 	// Visual effects list
 	EffectsList _effects;
@@ -271,22 +259,23 @@ public:
 	// Blitting surface-to-background methods with scale
 	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, int32 colorkey = -1);
 
-	// Blitting surface-to-menu methods
+	/**
+	 * Blit from source surface to menu area
+	 *
+	 * @param src       Source surface
+ 	 * @param x         x coordinate relative to menu area origin
+	 * @param y         y coordinate relative to menu area origin
+	 */	
 	void blitSurfaceToMenu(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey = 0);
 
-	// Create subtitle graphics object and return ID
-	uint16 registerSubtitle(const Common::Rect &area);
-	uint16 registerSubtitle();
-
-	// Delete subtitle graphics object by ID
-	void deregisterSubtitle(uint16 id);
-	void deregisterSubtitle(uint16 id, int16 delay);
-
-	// Update subtitle graphics object string content
-	void updateSubtitle(uint16 id, const Common::String &txt);
-
-	// Processing subtitles
-	void processSubtitles(uint16 deltatime);
+	/**
+	 * Blit from source surface to text area
+	 *
+	 * @param src       Source surface
+ 	 * @param x         x coordinate relative to text area origin
+	 * @param y         y coordinate relative to text area origin
+	 */	
+	void blitSurfaceToText(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey = 0);
 
 	// Return background size
 	Common::Point getBkgSize();
@@ -298,11 +287,11 @@ public:
 	Graphics::Surface *loadImage(const Common::Path &file);
 	Graphics::Surface *loadImage(const Common::Path &file, bool transposed);
 
-	// Clear whole/area of menu surface
-	void clearMenuSurface(int32 colorkey = -1);
+	// Clear whole/area of menu backbuffer
+	void clearMenuSurface(bool force=false, int32 colorkey = -1);
 	
-	// Clear whole/area of subtitle surface
-	void clearTextSurface(int32 colorkey = -1);
+	// Clear whole/area of subtitle backbuffer
+	void clearTextSurface(bool force=false, int32 colorkey = -1);
 
 	// Copy needed portion of background surface to workingArea surface
 	void prepareBackground();
@@ -357,11 +346,7 @@ public:
 	// Fill background surface by color
 	void bkgFill(uint8 r, uint8 g, uint8 b);
 #endif
-
-	bool askQuestion(const Common::String &str);
-	void delayedMessage(const Common::String &str, uint16 milsecs);
-	void timedMessage(const Common::String &str, uint16 milsecs);
-	void showDebugMsg(const Common::String &msg, int16 delay = 3000);
+	
 	void checkBorders();
 	void rotateTo(int16 to, int16 time);
 	void updateRotation();

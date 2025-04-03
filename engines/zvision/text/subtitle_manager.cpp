@@ -1,0 +1,359 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "zvision/graphics/render_manager.h"
+#include "zvision/text/subtitle_manager.h"
+#include "zvision/file/search_manager.h"
+#include "zvision/text/text.h"
+#include "common/system.h"
+
+namespace ZVision {
+
+SubtitleManager::SubtitleManager(ZVision *engine, const ScreenLayout layout, const Graphics::PixelFormat pixelFormat, bool doubleFPS) :
+  _engine(engine),
+  _system(engine->_system),
+  _renderManager(engine->getRenderManager()),
+	_pixelFormat(pixelFormat),
+  _textOffset( layout.workingArea.origin() - layout.textArea.origin() ),
+  _textArea( layout.textArea.width(), layout.textArea.height() ),
+  redraw(false),
+	_doubleFPS(doubleFPS),
+  _subId(0)
+  {
+}
+
+SubtitleManager::~SubtitleManager() {
+  //Delete all subtitles referenced in subslist
+  for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
+    delete it->_value;
+		_subsList.erase(it);
+		_subsFocus.clear();
+  }
+}
+
+void SubtitleManager::process(int32 deltatime) {
+	//Update all subtitles' respective deletion timers
+  for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
+		if (it->_value->process(deltatime)) {
+      debug(2,"Deleting subtitle, subId=%d", it->_key);
+			_subsFocus.remove(it->_key);			
+		  delete it->_value;
+			_subsList.erase(it);
+			redraw = true;
+	  }
+  }
+	if(_subsList.size() == 0)
+	  if(_subId != 0) {
+      debug(1,"Resetting subId to 0");
+	    _subId = 0;
+      _subsFocus.clear();
+    }
+	if (redraw) {
+    debug(2,"Redrawing subtitles");
+	  //Blank subtitle buffer
+	  _renderManager->clearTextSurface();
+    //Render just the most recent subtitle
+  	if(_subsFocus.size()) {
+  	  uint16 curSub = _subsFocus.get();
+      debug(2,"Rendering subtitle %d", curSub);     
+      Subtitle *sub = _subsList[curSub];
+		  if (sub->lineId >= 0) { 
+			  Graphics::Surface textSurface;
+			  textSurface.create(sub->r.width(), sub->r.height(), _engine->_resourcePixelFormat);
+			  textSurface.fillRect(Common::Rect(sub->r.width(), sub->r.height()), -1); //TODO Unnecessary operation?  Check later.
+			  _engine->getTextRenderer()->drawTextWithWordWrapping(sub->_lines[sub->lineId].subStr, textSurface, _engine->isWidescreen());
+			  _renderManager->blitSurfaceToText(textSurface, sub->r.left, sub->r.top, -1);
+			  textSurface.free();
+			  sub->redraw = false;
+		  }
+	  }
+	redraw = false;
+	}
+}
+
+
+void SubtitleManager::update(int32 count, uint16 subid) {
+	if (_subsList.contains(subid))
+    if( _subsList[subid]->update(count) ) {
+      //_subsFocus.set(subid);
+      redraw = true;
+    }
+}
+
+uint16 SubtitleManager::create(const Common::Path &subname, bool vob) {
+  _subId++;
+  debug(2,"Creating scripted subtitle, subId=%d", _subId);
+  _subsList[_subId] = new Subtitle(_engine, subname, vob);
+  _subsFocus.set(_subId);
+  return _subId;
+}
+
+uint16 SubtitleManager::create(const Common::String &str) {
+  _subId++;
+  debug(2,"Creating simple subtitle, subId=%d, message %s", _subId, str.c_str());
+  _subsList[_subId] = new Subtitle(_engine, str, _textArea);
+  _subsFocus.set(_subId);
+  return _subId;
+}
+
+void SubtitleManager::destroy(uint16 id) {
+	if (_subsList.contains(id)) {
+    debug(2,"Marking subtitle %d for immediate deletion", id);
+		_subsList[id]->todelete = true;
+		}
+}
+
+void SubtitleManager::destroy(uint16 id, int16 delay) {
+	if (_subsList.contains(id)) {
+    debug(2,"Marking subtitle %d for deletion in %dms", id, delay);	  
+		_subsList[id]->timer = delay;
+		}
+}
+
+void SubtitleManager::timedMessage(const Common::String &str, uint16 milsecs) {
+	uint16 msgid = create(str);
+  debug(1,"initiating timed message: %s to subtitle id %d, time %d", str.c_str(), msgid, milsecs);
+	update(0,msgid);
+	process(0);
+	destroy(msgid, milsecs);
+}
+
+bool SubtitleManager::askQuestion(const Common::String &str) {
+	uint16 msgid = create(str);
+  debug(1,"initiating user question: %s to subtitle id %d", str.c_str(), msgid);
+	update(0,msgid);
+	process(0);
+	_renderManager->renderSceneToScreen(true);
+	_engine->stopClock();
+	int result = 0;
+	while (result == 0) {
+		Common::Event evnt;
+		while (_engine->getEventManager()->pollEvent(evnt)) {
+			if (evnt.type == Common::EVENT_KEYDOWN) {
+				// English: yes/no
+				// German: ja/nein
+				// Spanish: si/no
+				// French Nemesis: F4/any other key  _engine(engine),
+				// French ZGI: oui/non
+				// TODO: Handle this using the keymapper
+				switch (evnt.kbd.keycode) {
+				case Common::KEYCODE_y:
+					if (_engine->getLanguage() == Common::EN_ANY)
+						result = 2;
+					break;
+				case Common::KEYCODE_j:
+					if (_engine->getLanguage() == Common::DE_DEU)
+						result = 2;
+					break;
+				case Common::KEYCODE_s:
+					if (_engine->getLanguage() == Common::ES_ESP)
+						result = 2;
+					break;
+				case Common::KEYCODE_o:
+					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_GRANDINQUISITOR)
+						result = 2;
+					break;
+				case Common::KEYCODE_F4:
+					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_NEMESIS)
+						result = 2;
+					break;
+				case Common::KEYCODE_n:
+					result = 1;
+					break;
+				default:
+					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_NEMESIS)
+						result = 1;
+					break;
+				}
+			}
+		}
+	  _renderManager->renderSceneToScreen(true); 
+		if (_doubleFPS)
+			_system->delayMillis(33);
+		else
+			_system->delayMillis(66);
+	}
+	destroy(msgid);
+	_engine->startClock();
+	return result == 2;
+}
+
+void SubtitleManager::delayedMessage(const Common::String &str, uint16 milsecs) {
+	uint16 msgid = create(str);
+  debug(1,"initiating delayed message: %s to subtitle id %d, delay %dms", str.c_str(), msgid, milsecs);
+	update(0,msgid);
+	process(0);
+	_renderManager->renderSceneToScreen(true);
+	_engine->stopClock();
+
+	uint32 stopTime = _system->getMillis() + milsecs;
+	while (_system->getMillis() < stopTime) {
+		Common::Event evnt;
+		while (_engine->getEventManager()->pollEvent(evnt)) {
+			if (evnt.type == Common::EVENT_KEYDOWN &&
+			        (evnt.kbd.keycode == Common::KEYCODE_SPACE ||
+			         evnt.kbd.keycode == Common::KEYCODE_RETURN ||
+			         evnt.kbd.keycode == Common::KEYCODE_ESCAPE))
+				break;
+		}
+	  _renderManager->renderSceneToScreen(true);
+		if (_doubleFPS)
+			_system->delayMillis(33);
+		else
+			_system->delayMillis(66);
+	}
+	destroy(msgid);
+	_engine->startClock();
+}
+
+void SubtitleManager::showDebugMsg(const Common::String &msg, int16 delay) {
+	uint16 msgid = create(msg);
+  debug(1,"initiating in-game debug message: %s to subtitle id %d, delay %dms", msg.c_str(), msgid, delay);
+	update(0,msgid);
+	process(0);
+	destroy(msgid, delay);
+}
+
+Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
+  _engine(engine),
+	lineId(-1),
+	timer(-1),
+	todelete(false),
+	redraw(false) {
+	Common::File subFile;
+  Common::Point _textOffset = _engine->getSubtitleManager()->getTextOffset();
+	if (_engine->getSearchManager()->openFile(subFile, subname)) {
+	  //Parse subtitle parameters from script
+		while (!subFile.eos()) {
+			Common::String str = subFile.readLine();
+			if (str.lastChar() == '~')
+				str.deleteLastChar();
+			if (str.matchString("*Initialization*", true)) {
+				// Not used
+			} 
+			else if (str.matchString("*Rectangle*", true)) {
+				int32 x1, y1, x2, y2;
+				sscanf(str.c_str(), "%*[^:]:%d %d %d %d", &x1, &y1, &x2, &y2);
+				r = Common::Rect(x1, y1, x2, y2);
+				debug(1,"Original subtitle script rectangle coordinates: l%d, t%d, r%d, b%d", x1, y1, x2, y2);				
+	      //Original game subtitle scripts appear to define subtitle rectangles relative to origin of working area.
+	      //To allow arbitrary aspect ratios, we need to instead place these relative to origin of text area.
+	      //This will allow the managed text area to then be arbitrarily placed on the screen to suit different aspect ratios.
+	      r.translate(_textOffset.x, _textOffset.y);  //Convert working area coordinates to text area coordinates
+				debug(1,"Text area coordinates: l%d, t%d, r%d, b%d", r.left, r.top, r.right, r.bottom);	
+			} 
+			else if (str.matchString("*TextFile*", true)) {
+				char filename[64];
+				sscanf(str.c_str(), "%*[^:]:%s", filename);
+				Common::File txtFile;
+				if (_engine->getSearchManager()->openFile(txtFile, Common::Path(filename))) {
+					while (!txtFile.eos()) {
+						Common::String txtline = readWideLine(txtFile).encode();
+						line curLine;
+						curLine.start = -1;
+						curLine.stop = -1;
+						curLine.subStr = txtline;
+						_lines.push_back(curLine);
+					}
+					txtFile.close();
+				}
+			} 
+			else {
+				int32 st; //Line start time
+				int32 en; //Line end time
+				int32 sb; //Line number
+				if (sscanf(str.c_str(), "%*[^:]:(%d,%d)=%d", &st, &en, &sb) == 3) {
+					if (sb <= (int32)_lines.size()) {
+						if (vob) {
+							// Convert frame number from 15FPS (AVI) to 29.97FPS (VOB) to synchronise with video
+							st = st * 2997 / 1500;
+							en = en * 2997 / 1500;
+						}
+						_lines[sb].start = st;
+						_lines[sb].stop = en;
+					}
+				}
+			}
+		}
+    subFile.close();  //NB - this was missing in the original code; suspect a bug, but double check for a reason.
+  }
+  else {
+    //TODO - add error message here
+    todelete = true;
+  }
+}
+
+Subtitle::Subtitle(ZVision *engine, const Common::String &str, const Common::Rect &textArea) :
+  _engine(engine),
+	lineId(-1),
+	timer(-1),
+	todelete(false),
+	redraw(false) {
+	r = textArea;
+	debug(1,"Text area coordinates: l%d, t%d, r%d, b%d", r.left, r.top, r.right, r.bottom);	
+	line curLine;
+	curLine.start = -1;
+	curLine.stop = 0;
+	curLine.subStr = str;
+	_lines.push_back(curLine);
+}
+
+Subtitle::~Subtitle() {
+	_lines.clear();
+}
+
+bool Subtitle::process(int32 deltatime) {
+	if (timer != -1) {
+		timer -= deltatime;
+		if (timer <= 0)
+			todelete = true;
+	}
+	return todelete;
+}
+
+bool Subtitle::update(int32 count) {
+  int16 j = -1;
+  //Search all lines to find first line that encompasses current time/framecount, set j to this
+  for (uint16 i = (lineId >= 0 ? lineId : 0); i < _lines.size(); i++)
+	  if (count >= _lines[i].start && count <= _lines[i].stop) {
+		  j = i;
+		  break;
+	  }
+  if (j == -1) {
+    //No line exists for current time/framecount
+    if(lineId != -1) {
+      //Line is set
+	    lineId = -1; //Unset line
+	    redraw = true;
+    }
+  }
+  else {
+    //Line exists for current time/framecount
+    if (j != lineId && _lines[j].subStr.size()) {
+      //Set line is not equal to current line & current line is not blank
+      lineId = j;  //Set line to current
+      redraw = true;
+    }
+  }
+  return redraw;
+}
+
+} // End of namespace ZVision

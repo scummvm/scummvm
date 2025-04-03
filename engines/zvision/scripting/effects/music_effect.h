@@ -24,7 +24,7 @@
 
 #include "audio/mixer.h"
 #include "zvision/scripting/scripting_effect.h"
-#include "zvision/text/subtitles.h"
+#include "zvision/text/subtitle_manager.h"
 
 namespace Common {
 class String;
@@ -85,7 +85,7 @@ private:
 	int32 _crossfadeTime;
 	bool _stereo;
 	Audio::SoundHandle _handle;
-	Subtitle *_sub;
+	uint16 _sub;
 	bool _loaded;
 };
 

@@ -26,6 +26,7 @@
 #include "zvision/core/console.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/text/subtitle_manager.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/scripting/menu.h"
 #include "zvision/sound/zork_raw.h"
@@ -78,11 +79,11 @@ void ZVision::cheatCodes(uint8 key) {
 	if (getGameId() == GID_GRANDINQUISITOR) {
 		if (checkCode("IMNOTDEAF")) {
 			// Unknown cheat
-			_renderManager->showDebugMsg(Common::String::format("IMNOTDEAF cheat or debug, not implemented"));
+			_subtitleManager->showDebugMsg(Common::String::format("IMNOTDEAF cheat or debug, not implemented"));
 		}
 
 		if (checkCode("3100OPB")) {
-			_renderManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
+			_subtitleManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
 			                                    _scriptManager->getStateValue(StateKey_World),
 			                                    _scriptManager->getStateValue(StateKey_Room),
 			                                    _scriptManager->getStateValue(StateKey_Node),
@@ -109,7 +110,7 @@ void ZVision::cheatCodes(uint8 key) {
 		}
 
 		if (checkCode("77MASSAVE")) {
-			_renderManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
+			_subtitleManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
 			                                    _scriptManager->getStateValue(StateKey_World),
 			                                    _scriptManager->getStateValue(StateKey_Room),
 			                                    _scriptManager->getStateValue(StateKey_Node),
@@ -139,11 +140,11 @@ void ZVision::cheatCodes(uint8 key) {
 
 	if (checkCode("FRAME")) {
 		Common::String fpsStr = Common::String::format("FPS: %d", getFPS());
-		_renderManager->showDebugMsg(fpsStr);
+		_subtitleManager->showDebugMsg(fpsStr);
 	}
 
 	if (checkCode("COMPUTERARCH"))
-		_renderManager->showDebugMsg("COMPUTERARCH: var-viewer not implemented");
+		_subtitleManager->showDebugMsg("COMPUTERARCH: var-viewer not implemented");
 
 	// This cheat essentially toggles the GOxxxx cheat below
 	if (checkCode("XYZZY"))
@@ -248,7 +249,7 @@ void ZVision::processEvents() {
 
 			case kZVisionActionShowFPS: {
 				Common::String fpsStr = Common::String::format("FPS: %d", getFPS());
-				_renderManager->showDebugMsg(fpsStr);
+				_subtitleManager->showDebugMsg(fpsStr);
 				}
 				break;
 			default:
@@ -502,7 +503,7 @@ uint8 ZVision::getZvisionKey(Common::KeyCode scummKeyCode) {
 }
 
 bool ZVision::ifQuit() {
-	if (_renderManager->askQuestion(_stringManager->getTextLine(StringManager::ZVISION_STR_EXITPROMT))) {
+	if (_subtitleManager->askQuestion(_stringManager->getTextLine(StringManager::ZVISION_STR_EXITPROMT))) {
 		quitGame();
 		return true;
 	}
