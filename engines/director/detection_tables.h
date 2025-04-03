@@ -5245,12 +5245,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("negi1", "", "NEGI.EXE",		   "t:295224cdc826db343629e7741f5163af", 751189, Common::JA_JPN, 400),
 
 	// Rest of screensavers are D5
-	MACGAME1("nekojiruudonss", "Ashi", "ASHI", "bc1822fcc8cf27e2ffb1028c691fb06d", 395020, 402),
-	MACGAME1("nekojiruudonss", "Chin", "CHIN", "bc1822fcc8cf27e2ffb1028c691fb06d", 395020, 402),
-	MACGAME1("nekojiruudonss", "Doga", "DOGA", "bc1822fcc8cf27e2ffb1028c691fb06d", 395020, 402),
-	MACGAME1("nekojiruudonss", "Guruguru", "GURUGURU", "bc1822fcc8cf27e2ffb1028c691fb06d", 395020, 402),
-	MACGAME1("nekojiruudonss", "Nezumi", "NEZUMI", "bc1822fcc8cf27e2ffb1028c691fb06d", 395020, 402),
-	MACGAME1("nekojiruudonss", "Zikansa", "ZIKANSA", "bc1822fcc8cf27e2ffb1028c691fb06d", 395020, 402),
+	MACGAME1("nekojiruudonss", "Ashi", "MAC_SS/ASHI", "rt:d0e486f0886a5e7c7e922f6c048c3b21", 395020, 402),
+	MACGAME1("nekojiruudonss", "Chin", "MAC_SS/CHIN", "rt:7991380065db7c920eb0fc8266b0bc1d", 395020, 402),
+	MACGAME1("nekojiruudonss", "Doga", "MAC_SS/DOGA", "rt:e7a7804546f048604e69de5e994c2db2", 395020, 402),
+	MACGAME1("nekojiruudonss", "Guruguru", "MAC_SS/GURUGURU", "rt:9a73c0c58eeb1c18d3c89bf602956233", 395020, 402),
+	MACGAME1("nekojiruudonss", "Nezumi", "MAC_SS/NEZUMI", "rt:861825b02fd52f36edb668ddda5e131a", 395020, 402),
+	MACGAME1("nekojiruudonss", "Zikansa", "MAC_SS/ZIKANSA", "rt:f69037c2120c87454157d5bf29af6dd5", 395020, 402),
 
 	// Main app isn't Director.
 	// Original filename 'Nendo デモムービー'
@@ -7141,45 +7141,45 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("negi3", "", "NEGI_3.EXE", "da9cee84ee984174c52d359132ad4ac6", 929342, Common::JA_JPN, 501),
 
 	// Other screensavers are D4
-	MACGAME1("nekojiruudonss", "Diginya", "DIGINYA", "82def1f3b9980018ed9b662893884546", 873267, 501),
-	MACGAME1("nekojiruudonss", "Firekoro", "FIREKORO", "82def1f3b9980018ed9b662893884546", 873268, 501),
-	MACGAME1("nekojiruudonss", "Indozin", "INDOZIN", "82def1f3b9980018ed9b662893884546", 873267, 501),
-	MACGAME1("nekojiruudonss", "Itachi", "ITACHI", "82def1f3b9980018ed9b662893884546", 873266, 501),
-	MACGAME1("nekojiruudonss", "Koma", "KOMA", "82def1f3b9980018ed9b662893884546", 873265, 501),
-	MACGAME1("nekojiruudonss", "Komatta", "KOMATTA", "82def1f3b9980018ed9b662893884546", 873267, 501),
-	MACGAME1("nekojiruudonss", "Koropeta", "KOROPETA", "82def1f3b9980018ed9b662893884546", 873308, 501),
-	MACGAME1("nekojiruudonss", "N_N", "N_N", "82def1f3b9980018ed9b662893884546", 873263, 501),
-	MACGAME1("nekojiruudonss", "Noguchi", "NOGUCHI", "82def1f3b9980018ed9b662893884546", 873267, 501),
-	MACGAME1("nekojiruudonss", "Saru", "SARU", "82def1f3b9980018ed9b662893884546", 873264, 501),
-	MACGAME1("nekojiruudonss", "Taikyoku", "TAIKYOKU", "82def1f3b9980018ed9b662893884546", 873308, 501),
-	WINGAME1t("nekojiruudonss", "Diginya", "DIGINYA.EXE", "f8ffb68095f80fd385f1ba9d4c76ec26", 1601138, 501),
-	WINGAME1t("nekojiruudonss", "Firekoro", "FIREKORO.EXE", "af297fb6a0f204af5ef1e47c9b9b7830", 1541948, 501),
-	WINGAME1t("nekojiruudonss", "Indo", "INDO.EXE", "88212f81d6ed89d66666c647f483020f", 1613050, 501),  // Indozin?
-	WINGAME1t("nekojiruudonss", "Install1", "INSTALL1.EXE", "8a9fb7cd79b396bf0a4a915e60e629c3", 1857700, 501),  // Ashi?
-	WINGAME1t("nekojiruudonss", "Install2", "INSTALL2.EXE", "9f7c7d17c44c4baeaf26d03803236f12", 1827410, 501),  // Chin?
-	WINGAME1t("nekojiruudonss", "Install3", "INSTALL3.EXE", "e088934cd3f7324c7290b34c0c8e8a96", 1834716, 501),  // Doga?
-	WINGAME1t("nekojiruudonss", "Install4", "INSTALL4.EXE", "d49af229d14bbe19cb4b16134dd21e72", 1861494, 501),  // Guruguru?
-	WINGAME1t("nekojiruudonss", "Install5", "INSTALL5.EXE", "5a98fe24a8920fe304111958c10cebf6", 1791866, 501),  // Nezumi?
-	WINGAME1t("nekojiruudonss", "Install6", "INSTALL6.EXE", "e0813c040f52a3697bf985d4d0ff44aa", 2560174, 501),  // Zikansa?
-	WINGAME1t("nekojiruudonss", "Itachi", "ITACHI.EXE", "a12d5ae1b9080b9c573e867b5033ce6d", 1897196, 501),
-	WINGAME1t("nekojiruudonss", "Koma", "KOMA.EXE", "78f7d8806360e12c04cc508ae7d063ab", 1674152, 501),
-	WINGAME1t("nekojiruudonss", "Komatta", "KOMATTA.EXE", "1060c4d7606374365bd937519ec6f71f", 1741794, 501),
-	WINGAME1t("nekojiruudonss", "Koropeta", "KOROPETA.EXE", "9d7ee4a0ab7b822e476fb597f6a32155", 1893820, 501),
-	WINGAME1t("nekojiruudonss", "N_N", "N_N.EXE", "a02a23cbe6b3079592ecebce8107ac39", 1539396, 501),
-	WINGAME1t("nekojiruudonss", "Noguchi", "NOGUCHI.EXE", "ff9d22ae7dbcf5a19dc40736dc98a322", 1789020, 501),
-	WINGAME1t("nekojiruudonss", "Saru", "SARU.EXE", "11300003a98cede0fdde607aba6212ec", 1556846, 501),
-	WINGAME1t("nekojiruudonss", "Taikyoku", "TAIKYOKU.EXE", "37352ac6d45277dbe9ed0beb05e680df", 1660674, 501),
-	MACDEMO1("nekojiruudonss", "Diginya sample", "DIGINYA", "82def1f3b9980018ed9b662893884546", 717613, 501),
-	MACDEMO1("nekojiruudonss", "Firekoro sample", "FIREKORO", "82def1f3b9980018ed9b662893884546", 717613, 501),
-	MACDEMO1("nekojiruudonss", "Indozin sample", "INDOZIN", "82def1f3b9980018ed9b662893884546", 717613, 501),
-	MACDEMO1("nekojiruudonss", "Itachi sample", "ITACHI", "82def1f3b9980018ed9b662893884546", 717613, 501),
-	MACDEMO1("nekojiruudonss", "Koma sample", "KOMA", "82def1f3b9980018ed9b662893884546", 717613, 501),
-	MACDEMO1("nekojiruudonss", "Komatta sample", "KOMATTA", "82def1f3b9980018ed9b662893884546", 717613, 501),
-	MACDEMO1("nekojiruudonss", "Koropeta sample", "KOROPETA", "82def1f3b9980018ed9b662893884546", 717613, 501),
-	MACDEMO1("nekojiruudonss", "N_N sample", "N_N", "82def1f3b9980018ed9b662893884546", 717613, 501),
-	MACDEMO1("nekojiruudonss", "Noguchi sample", "NOGUCHI", "82def1f3b9980018ed9b662893884546", 717613, 501),
-	MACDEMO1("nekojiruudonss", "Saru sample", "SARU", "82def1f3b9980018ed9b662893884546", 717613, 501),
-	MACDEMO1("nekojiruudonss", "Taikyoku sample", "TAIKYOKU", "82def1f3b9980018ed9b662893884546", 717613, 501),
+	MACGAME1("nekojiruudonss", "Diginya", "MAC_SS/DIGINYA", "rt:d9117b4d69af46ec9812dd0cddaa3e9d", 873267, 501),
+	MACGAME1("nekojiruudonss", "Firekoro", "MAC_SS/FIREKORO", "rt:fab38676dcae25a5ef580aa78590528f", 873268, 501),
+	MACGAME1("nekojiruudonss", "Indozin", "MAC_SS/INDOZIN", "rt:405675dce0f6bc140d7d1cc15981d5f0", 873267, 501),
+	MACGAME1("nekojiruudonss", "Itachi", "MAC_SS/ITACHI", "rt:b7879aad3aaf516c035d0a18ece05445", 873266, 501),
+	MACGAME1("nekojiruudonss", "Koma", "MAC_SS/KOMA", "rt:7b51bf156a3dedd0e879f8a3f970c6c4", 873265, 501),
+	MACGAME1("nekojiruudonss", "Komatta", "MAC_SS/KOMATTA", "rt:cd20f7159cfd4d3028ebbed7875a07a7", 873267, 501),
+	MACGAME1("nekojiruudonss", "Koropeta", "MAC_SS/KOROPETA", "rt:f337ad7ee6124175145d6a92377a400f", 873308, 501),
+	MACGAME1("nekojiruudonss", "N_N", "MAC_SS/N_N", "rt:9b6ba37a8b3f89008f5600f7d0448221", 873263, 501),
+	MACGAME1("nekojiruudonss", "Noguchi", "MAC_SS/NOGUCHI", "rt:5fcb696b34f950438ded5a30c98211c4", 873267, 501),
+	MACGAME1("nekojiruudonss", "Saru", "MAC_SS/SARU", "rt:4c6410e22f3d9add2315a8a1bfb61f84", 873264, 501),
+	MACGAME1("nekojiruudonss", "Taikyoku", "MAC_SS/TAIKYOKU", "rt:6b29bf0ec09d66b6bc523f532d14191f", 873308, 501),
+	WINGAME1("nekojiruudonss", "Diginya", "WIN_SS/DIGINYA.EXE", "t:f8ffb68095f80fd385f1ba9d4c76ec26", 1601138, 501),
+	WINGAME1("nekojiruudonss", "Firekoro", "WIN_SS/FIREKORO.EXE", "t:af297fb6a0f204af5ef1e47c9b9b7830", 1541948, 501),
+	WINGAME1("nekojiruudonss", "Indo", "WIN_SS/INDO.EXE", "t:88212f81d6ed89d66666c647f483020f", 1613050, 501),  // Indozin?
+	WINGAME1("nekojiruudonss", "Install1", "WIN_SS/INSTALL1.EXE", "t:8a9fb7cd79b396bf0a4a915e60e629c3", 1857700, 501),  // Ashi?
+	WINGAME1("nekojiruudonss", "Install2", "WIN_SS/INSTALL2.EXE", "t:9f7c7d17c44c4baeaf26d03803236f12", 1827410, 501),  // Chin?
+	WINGAME1("nekojiruudonss", "Install3", "WIN_SS/INSTALL3.EXE", "t:e088934cd3f7324c7290b34c0c8e8a96", 1834716, 501),  // Doga?
+	WINGAME1("nekojiruudonss", "Install4", "WIN_SS/INSTALL4.EXE", "t:d49af229d14bbe19cb4b16134dd21e72", 1861494, 501),  // Guruguru?
+	WINGAME1("nekojiruudonss", "Install5", "WIN_SS/INSTALL5.EXE", "t:5a98fe24a8920fe304111958c10cebf6", 1791866, 501),  // Nezumi?
+	WINGAME1("nekojiruudonss", "Install6", "WIN_SS/INSTALL6.EXE", "t:e0813c040f52a3697bf985d4d0ff44aa", 2560174, 501),  // Zikansa?
+	WINGAME1("nekojiruudonss", "Itachi", "WIN_SS/ITACHI.EXE", "t:a12d5ae1b9080b9c573e867b5033ce6d", 1897196, 501),
+	WINGAME1("nekojiruudonss", "Koma", "WIN_SS/KOMA.EXE", "t:78f7d8806360e12c04cc508ae7d063ab", 1674152, 501),
+	WINGAME1("nekojiruudonss", "Komatta", "WIN_SS/KOMATTA.EXE", "t:1060c4d7606374365bd937519ec6f71f", 1741794, 501),
+	WINGAME1("nekojiruudonss", "Koropeta", "WIN_SS/KOROPETA.EXE", "t:9d7ee4a0ab7b822e476fb597f6a32155", 1893820, 501),
+	WINGAME1("nekojiruudonss", "N_N", "WIN_SS/N_N.EXE", "t:a02a23cbe6b3079592ecebce8107ac39", 1539396, 501),
+	WINGAME1("nekojiruudonss", "Noguchi", "WIN_SS/NOGUCHI.EXE", "t:ff9d22ae7dbcf5a19dc40736dc98a322", 1789020, 501),
+	WINGAME1("nekojiruudonss", "Saru", "WIN_SS/SARU.EXE", "t:11300003a98cede0fdde607aba6212ec", 1556846, 501),
+	WINGAME1("nekojiruudonss", "Taikyoku", "WIN_SS/TAIKYOKU.EXE", "t:37352ac6d45277dbe9ed0beb05e680df", 1660674, 501),
+	MACDEMO1("nekojiruudonss", "Diginya sample", "SAMPLE/DIGINYA", "r:82def1f3b9980018ed9b662893884546", 717613, 501),
+	MACDEMO1("nekojiruudonss", "Firekoro sample", "SAMPLE/FIREKORO", "r:82def1f3b9980018ed9b662893884546", 717613, 501),
+	MACDEMO1("nekojiruudonss", "Indozin sample", "SAMPLE/INDOZIN", "r:82def1f3b9980018ed9b662893884546", 717613, 501),
+	MACDEMO1("nekojiruudonss", "Itachi sample", "SAMPLE/ITACHI", "r:82def1f3b9980018ed9b662893884546", 717613, 501),
+	MACDEMO1("nekojiruudonss", "Koma sample", "SAMPLE/KOMA", "r:82def1f3b9980018ed9b662893884546", 717613, 501),
+	MACDEMO1("nekojiruudonss", "Komatta sample", "SAMPLE/KOMATTA", "r:82def1f3b9980018ed9b662893884546", 717613, 501),
+	MACDEMO1("nekojiruudonss", "Koropeta sample", "SAMPLE/KOROPETA", "r:82def1f3b9980018ed9b662893884546", 717613, 501),
+	MACDEMO1("nekojiruudonss", "N_N sample", "SAMPLE/N_N", "r:82def1f3b9980018ed9b662893884546", 717613, 501),
+	MACDEMO1("nekojiruudonss", "Noguchi sample", "SAMPLE/NOGUCHI", "r:82def1f3b9980018ed9b662893884546", 717613, 501),
+	MACDEMO1("nekojiruudonss", "Saru sample", "SAMPLE/SARU", "r:82def1f3b9980018ed9b662893884546", 717613, 501),
+	MACDEMO1("nekojiruudonss", "Taikyoku sample", "SAMPLE/TAIKYOKU", "r:82def1f3b9980018ed9b662893884546", 717613, 501),
 
 	// Found on PC World (Czechia) Sept 2003
 	WINGAME2_l("nemcina", "", "START_32.EXE",	  "t:8f4c8e7a2872fd933018a2727c70cbb8",  1710313,
