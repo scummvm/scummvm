@@ -94,6 +94,8 @@ static const StringMap platformMap[] = {
 	{ nullptr,			"kPlatformUnknown" }
 };
 
+// Note: if renaming any value here, update scumm-md5.txt as well, and run
+// `make md5scumm` again
 static const StringMap langMap[] = {
 	{ "en",		"EN_ANY" },
 	{ "us",		"EN_USA" },

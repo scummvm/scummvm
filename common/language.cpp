@@ -92,6 +92,7 @@ const LanguageDescription g_languages[] = {
 	{ "tr", "tr_TR", "Turkish", TR_TUR },
 	{ "uk", "uk_UA", "Ukrainian", UA_UKR },
 	{ nullptr, nullptr, nullptr, UNK_LANG }
+	// Note: if fixing a value here, adjust g_obsoleteLanguages below
 };
 
 const LanguageDescription g_obsoleteLanguages[] = {
