@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-02 20:15+0000\n"
-"PO-Revision-Date: 2025-03-29 13:18+0000\n"
+"PO-Revision-Date: 2025-04-03 17:18+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -5689,21 +5689,6 @@ msgid "Libretro playlist"
 msgstr "Libretro-Playlist"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:236
-#, fuzzy
-#| msgid ""
-#| "## Libretro playlists for ScummVM core\n"
-#| "Playlists used in Libretro frontends (e.g. Retroarch) are plain text "
-#| "lists used to directly launch a game with a specific core from the user "
-#| "interface. Those lists are structured to pass to the core the path of a "
-#| "specific content file to be loaded (e.g. ROM).\n"
-#| "\n"
-#| "ScummVM core can accept as content the path to any of the files inside a "
-#| "valid game folder, the detection system will try to autodetect the game "
-#| "from the content file parent folder and run the game with default ScummVM "
-#| "options.\n"
-#| "\n"
-#| "The core also supports dedicated per game **hook** plain text files with "
-#| "**."
 msgid ""
 "## Libretro playlists for ScummVM core\n"
 "Playlists used in Libretro frontends (e.g. Retroarch) are plain text lists "
@@ -5725,8 +5710,9 @@ msgstr ""
 "Pfad zu einem bestimmten Inhalt (z.B. ROM) einem Core übergeben wird.\n"
 "\n"
 "Der ScummVM-Core unterstützt Pfade zu Verzeichnissen mit gültigen "
-"Spieldaten. Das Erkennungs-System wird versuchen, das Spiel automatisch zu "
-"erkennen und mit den Standard-Einstellungen von ScummVM starten.\n"
+"Spieldaten. Das Erkennungs-System wird versuchen, das Spiel automatisch auf "
+"Basis der Einträge in der Playliste zu erkennen und mit den Standard-"
+"Einstellungen von ScummVM starten.\n"
 "\n"
 "Der Core unterstützt auch **Hook**-Dateien mit **."
 
@@ -12398,20 +12384,16 @@ msgid "Go to end of save/load menu"
 msgstr "Gehe zum Ende des Speichern-/Laden-Menüs"
 
 #: engines/toltecs/metaengine.cpp:216
-#, fuzzy
-#| msgid "Move left"
 msgid "Move / Select"
-msgstr "Nach links bewegen"
+msgstr "Bewegen / Auswählen"
 
 #: engines/toltecs/metaengine.cpp:222
 msgid "Move / Perform Default Action"
-msgstr ""
+msgstr "Bewegen / Standard-Aktion ausführen"
 
 #: engines/toltecs/metaengine.cpp:258
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip ride"
-msgstr "Video überspringen"
+msgstr "Fahrt überspringen"
 
 #: engines/tony/tony.cpp:248
 #, c-format
