@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-02 20:15+0000\n"
-"PO-Revision-Date: 2025-03-31 09:27+0000\n"
+"PO-Revision-Date: 2025-04-03 08:51+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6797,14 +6797,14 @@ msgstr "Ouvrir l'inventaire du personnage"
 #: engines/cine/metaengine.cpp:364 engines/hdb/metaengine.cpp:213
 #: engines/nancy/input.cpp:195 engines/tinsel/metaengine.cpp:263
 msgid "Move up"
-msgstr "Déplacement haut"
+msgstr "Se déplacer vers le haut"
 
 #. I18N: Move Actor to downwards direction
 #: engines/asylum/metaengine.cpp:177 engines/asylum/metaengine.cpp:205
 #: engines/cine/metaengine.cpp:371 engines/hdb/metaengine.cpp:219
 #: engines/nancy/input.cpp:201 engines/tinsel/metaengine.cpp:269
 msgid "Move down"
-msgstr "Déplacement bas"
+msgstr "Se déplacer vers le bas"
 
 #. I18N: Move Actor to left direction
 #. I18N: Move actor left during fight
@@ -6813,7 +6813,7 @@ msgstr "Déplacement bas"
 #: engines/lure/metaengine.cpp:218 engines/nancy/input.cpp:207
 #: engines/tinsel/metaengine.cpp:275
 msgid "Move left"
-msgstr "Déplacement gauche"
+msgstr "Se déplacer vers la gauche"
 
 #. I18N: Move Actor to right direction
 #. I18N: Move actor right during fight
@@ -6822,7 +6822,7 @@ msgstr "Déplacement gauche"
 #: engines/lure/metaengine.cpp:226 engines/nancy/input.cpp:213
 #: engines/tinsel/metaengine.cpp:281
 msgid "Move right"
-msgstr "Déplacement droite"
+msgstr "Se déplacer vers la droite"
 
 #: engines/asylum/metaengine.cpp:226
 msgid "Toggle animation on/off"
@@ -7513,30 +7513,30 @@ msgstr "Afficher les collisions"
 #. I18N: Move Actor to top-left direction
 #: engines/cine/metaengine.cpp:392
 msgid "Move up-left"
-msgstr "Déplacement haut-gauche"
+msgstr "Se déplacer vers le haut-gauche"
 
 #. I18N: Move Actor to top-right direction
 #: engines/cine/metaengine.cpp:398
 msgid "Move up-right"
-msgstr "Déplacement haut-droite"
+msgstr "Se déplacer vers le haut-droite"
 
 #. I18N: Move Actor to bottom-left direction
 #: engines/cine/metaengine.cpp:404
 msgid "Move down-left"
-msgstr "Déplacement bas-gauche"
+msgstr "Se déplacer vers le bas-gauche"
 
 #. I18N: Move Actor to bottom-right direction
 #: engines/cine/metaengine.cpp:410
 msgid "Move down-right"
-msgstr "Déplacement bas-droite"
+msgstr "Se déplacer vers le bas-droite"
 
 #: engines/cine/metaengine.cpp:415
 msgid "Menu option up"
-msgstr "Option du menu haut"
+msgstr "Menu Option sup."
 
 #: engines/cine/metaengine.cpp:420
 msgid "Menu option down"
-msgstr "Option du menu bas"
+msgstr "Menu Option inf."
 
 #: engines/cine/saveload.cpp:854
 msgid ""
@@ -7546,7 +7546,7 @@ msgid ""
 msgstr ""
 "ATTENTION : La sauvegarde que vous chargez utilise un format temporaire "
 "défectueux. Certaines choses ne fonctionneront pas. Veuillez envisager de "
-"démarrer Operation Stealth depuis le début en utilisant de nouvelles "
+"redémarrer Operation Stealth depuis le début en utilisant de nouvelles "
 "sauvegardes."
 
 #: engines/crab/input/input.cpp:119
@@ -8549,42 +8549,42 @@ msgstr "Mode Turbo"
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
 msgid "Move to top"
-msgstr "Déplacer vers le haut"
+msgstr "Se déplacer vers le haut"
 
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:175
 msgid "Move to bottom"
-msgstr "Déplacer vers le bas"
+msgstr "Se déplacer vers le bas"
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
 msgid "Move to left"
-msgstr "Déplacer vers la gauche"
+msgstr "Se déplacer vers la gauche"
 
 #. I18N: Move actor in the right direction
 #: engines/hugo/metaengine.cpp:191
 msgid "Move to right"
-msgstr "Déplacer vers la droite"
+msgstr "Se déplacer vers la droite"
 
 #. I18N: Move actor in the top-left direction
 #: engines/hugo/metaengine.cpp:199
 msgid "Move to top left"
-msgstr "Déplacer vers le haut-gauche"
+msgstr "Se déplacer vers le haut-gauche"
 
 #. I18N: Move actor in the top-right direction
 #: engines/hugo/metaengine.cpp:205
 msgid "Move to top right"
-msgstr "Déplacer vers le haut-droite"
+msgstr "Se déplacer vers le haut-droite"
 
 #. I18N: Move actor in the bottom-left direction
 #: engines/hugo/metaengine.cpp:211
 msgid "Move to bottom left"
-msgstr "Déplacer vers le bas-gauche"
+msgstr "Se déplacer vers le bas-gauche"
 
 #. I18N: Move actor in the bottom-right direction
 #: engines/hugo/metaengine.cpp:217
 msgid "Move to bottom right"
-msgstr "Déplacer vers le bas-droite"
+msgstr "Se déplacer vers le bas-droite"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -9615,11 +9615,11 @@ msgstr ""
 
 #: engines/mohawk/riven.cpp:887
 msgid "Move forward left"
-msgstr "Bouger en avant gauche"
+msgstr "Avancer vers la gauche"
 
 #: engines/mohawk/riven.cpp:891
 msgid "Move forward right"
-msgstr "Bouger en avant droite"
+msgstr "Avancer vers la droite"
 
 #: engines/mohawk/riven.cpp:913
 msgid "Look up"
@@ -12429,20 +12429,16 @@ msgid "Go to end of save/load menu"
 msgstr "Fin dans le menu sauvegarder/charger"
 
 #: engines/toltecs/metaengine.cpp:216
-#, fuzzy
-#| msgid "Move left"
 msgid "Move / Select"
-msgstr "Déplacement gauche"
+msgstr "Se déplacer / Sélectionner"
 
 #: engines/toltecs/metaengine.cpp:222
 msgid "Move / Perform Default Action"
-msgstr ""
+msgstr "Se déplacer / Exécuter l'action par défaut"
 
 #: engines/toltecs/metaengine.cpp:258
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip ride"
-msgstr "Passer les vidéos"
+msgstr "Passer les trajets à cheval"
 
 #: engines/tony/tony.cpp:248
 #, c-format
