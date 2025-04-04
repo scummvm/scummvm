@@ -1,3 +1,21 @@
+scummvmAssert(VOID = VOID)
+scummvmAssert(not(VOID < VOID))
+scummvmAssert(VOID <= VOID)
+scummvmAssert(not(VOID > VOID))
+scummvmAssert(VOID >= VOID)
+
+scummvmAssert(VOID = 0)
+scummvmAssert(VOID < 0)
+scummvmAssert(VOID <= 0)
+scummvmAssert(not(VOID > 0))
+scummvmAssert(not(VOID >= 0))
+
+scummvmAssert(not(0 = VOID))
+scummvmAssert(0 > VOID)
+scummvmAssert(0 >= VOID)
+scummvmAssert(not(0 < VOID))
+scummvmAssert(not(0 <= VOID))
+
 scummvmAssert(1 = 1)
 scummvmAssert(1 = "1")
 scummvmAssert(1 = 1.0)
@@ -51,12 +69,57 @@ scummvmAssert(not (#test <= 0))
 -- scummvmAssert(a <> a)
 -- scummvmAssert(a <> the picture of cast 1)   -- always false
 
+
 -- String comparison
+scummvmAssert("a" = "A")
+scummvmAssert(not("a" < "A"))
+scummvmAssert(not("a" <= "A"))
 scummvmAssert("a" > "A")
+scummvmAssert("a" >= "A")
+
+scummvmAssert(not("a" = "Z"))
+scummvmAssert("a" < "Z")
 scummvmAssert("a" <= "Z")
+scummvmAssert(not("a" > "Z"))
+scummvmAssert(not("a" >= "Z"))
+
+scummvmAssert(not("Z" = "a"))
+scummvmAssert(not("Z" < "a"))
+scummvmAssert(not("Z" <= "a"))
+scummvmAssert("Z" > "a")
+scummvmAssert("Z" >= "a")
+
+scummvmAssert(not("a" = "Bubba"))
+scummvmAssert("a" < "Bubba")
 scummvmAssert("a" <= "Bubba")
+scummvmAssert(not("a" > "Bubba"))
+scummvmAssert(not("a" >= "Bubba"))
+
+scummvmAssert("z" = "Z")
+scummvmAssert(not("z" < "Z"))
+scummvmAssert(not("z" <= "Z"))
 scummvmAssert("z" > "Z")
+scummvmAssert("z" >= "Z")
+
+scummvmAssert("abba" = "Abba")
+scummvmAssert(not("abba" < "Abba"))
+scummvmAssert(not("abba" <= "Abba"))
 scummvmAssert("abba" > "Abba")
+scummvmAssert("abba" >= "Abba")
+
+scummvmAssert("Erwin's Catalyst" = "Erwin's Catalyst")
+scummvmAssert(not("Erwin's Catalyst" < "Erwin's Catalyst"))
+scummvmAssert("Erwin's Catalyst" <= "Erwin's Catalyst")
+scummvmAssert(not("Erwin's Catalyst" > "Erwin's Catalyst"))
+scummvmAssert("Erwin's Catalyst" >= "Erwin's Catalyst")
+
+-- Char 213 resolves to U+2018 LEFT SINGLE QUOTATION MARK under D4-mac
+scummvmAssert("Erwin's Catalyst" = ("Erwin" & numToChar(213) & "s Catalyst"))
+scummvmAssert("Erwin's Catalyst" < ("Erwin" & numToChar(213) & "s Catalyst"))
+scummvmAssert("Erwin's Catalyst" <= ("Erwin" & numToChar(213) & "s Catalyst"))
+scummvmAssert(not("Erwin's Catalyst" > ("Erwin" & numToChar(213) & "s Catalyst")))
+scummvmAssert(not("Erwin's Catalyst" >= ("Erwin" & numToChar(213) & "s Catalyst")))
+
 
 -- Array comparison with coercion
 scummvmAssert([] = [])
