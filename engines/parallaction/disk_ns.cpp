@@ -763,15 +763,11 @@ void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
 	info.width = info.bg.w;
 	info.height = info.bg.h;
 
-	const byte *p = decoder.getPalette();
+	const Graphics::Palette &p = decoder.getPalette();
 	for (uint i = 0; i < 32; i++) {
-		byte r = *p >> 2;
-		p++;
-		byte g = *p >> 2;
-		p++;
-		byte b = *p >> 2;
-		p++;
-		info.palette.setEntry(i, r, g, b);
+		byte r, g, b;
+		p.get(i, r, g, b);
+		info.palette.setEntry(i, r >> 2, g >> 2, b >> 2);
 	}
 
 	const Common::Array<Image::IFFDecoder::PaletteRange> &paletteRanges = decoder.getPaletteRanges();
@@ -803,12 +799,10 @@ void AmigaDisk_ns::loadMask_internal(BackgroundInfo& info, const char *name) {
 	decoder.setPixelPacking(true); // pack 4 2bit pixels into 1 byte
 	decoder.loadStream(*s);
 
-	const byte *p = decoder.getPalette();
-	byte r, g, b;
+	const Graphics::Palette &p = decoder.getPalette();
 	for (uint i = 0; i < 4; i++) {
-		r = p[i*3];
-		g = p[i*3+1];
-		b = p[i*3+2];
+		byte r, g, b;
+		p.get(i, r, g, b);
 		info.layers[i] = (((r << 4) & 0xF00) | (g & 0xF0) | (b >> 4)) & 0xFF;
 	}
 

@@ -319,9 +319,8 @@ bool ImageTests::testImageDecoder(Common::Path &filepath, Image::ImageDecoder &d
 	g_system->endGFXTransaction();
 
 	Graphics::Screen screen;
-	if (decoder.getPaletteColorCount() > 0) {
-		Graphics::Palette palette(decoder.getPalette(), decoder.getPaletteColorCount());
-		screen.simpleBlitFrom(*pSurface, &palette);
+	if (decoder.hasPalette()) {
+		screen.simpleBlitFrom(*pSurface, &decoder.getPalette());
 	} else {
 		screen.simpleBlitFrom(*pSurface);
 	}

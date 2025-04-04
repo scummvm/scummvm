@@ -22,6 +22,7 @@
 #ifndef IMAGE_XBM_H
 #define IMAGE_XBM_H
 
+#include "graphics/palette.h"
 #include "image/image_decoder.h"
 
 namespace Image {
@@ -46,8 +47,7 @@ public:
 	void destroy() override;
 	bool loadStream(Common::SeekableReadStream &stream) override;
 	const Graphics::Surface *getSurface() const override { return _surface; }
-	const byte *getPalette() const override { return _palette; }
-	uint16 getPaletteColorCount() const override { return 2; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 
 	/**
 	 * Load an image from an embedded XBM file.
@@ -67,7 +67,7 @@ public:
 
 private:
 	Graphics::Surface *_surface;
-	static const byte _palette[2 * 3];
+	Graphics::Palette _palette;
 };
 
 /** @} */

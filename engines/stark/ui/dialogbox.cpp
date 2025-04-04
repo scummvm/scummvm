@@ -254,7 +254,7 @@ Gfx::Bitmap *DialogBox::loadBackground(Gfx::Driver *gfx) {
 
 	delete[] bitmapWithHeader;
 
-	return gfx->createBitmap(decoder.getSurface(), decoder.getPalette());
+	return gfx->createBitmap(decoder.getSurface(), decoder.getPalette().data());
 }
 
 void DialogBox::onRender() {

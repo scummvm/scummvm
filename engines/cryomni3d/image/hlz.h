@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "graphics/palette.h"
 #include "image/image_decoder.h"
 
 namespace Common {
@@ -46,13 +47,12 @@ public:
 	void destroy() override;
 	bool loadStream(Common::SeekableReadStream &stream) override;
 	const Graphics::Surface *getSurface() const override { return _surface; }
-	const byte *getPalette() const override { return _palette; }
-	uint16 getPaletteColorCount() const override { return 256; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 
 private:
 	HLZDecoder *_codec;
 	const Graphics::Surface *_surface;
-	byte _palette[256 * 3];
+	Graphics::Palette _palette;
 };
 
 } // End of namespace Image

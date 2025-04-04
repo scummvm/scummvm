@@ -373,7 +373,7 @@ byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor,
 	if (blendTable[pixelColor] != 255) {
 		currColor = blendTable[pixelColor];
 	} else {
-		const byte *originalPalette = _vm->_roomBmp->getPalette();
+		const byte *originalPalette = _vm->_roomBmp->getPalette().data();
 
 		int redFirstOrg = originalPalette[pixelColor * 3] * _vm->_mst_shadow / 256;
 		redFirstOrg = CLIP(redFirstOrg, 0, 255);
@@ -434,7 +434,7 @@ byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor,
 
 void GraphicsMan::makeShadowTable(int brightness, byte *shadowPalette) {
 	int shadow =  brightness * 256 / 100;
-	const byte *originalPalette = _vm->_roomBmp->getPalette();
+	const byte *originalPalette = _vm->_roomBmp->getPalette().data();
 
 	for (int i = 0; i < 256; i++) {
 		int redFirstOrg = originalPalette[3 * i] * shadow / 256;

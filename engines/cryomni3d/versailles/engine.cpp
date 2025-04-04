@@ -643,9 +643,9 @@ void CryOmni3DEngine_Versailles::loadCursorsPalette() {
 		error("Failed to load BMP file");
 	}
 
-	_cursorPalette = new byte[3 * bmpDecoder.getPaletteColorCount()]();
-	memcpy(_cursorPalette, bmpDecoder.getPalette(),
-	       3 * bmpDecoder.getPaletteColorCount());
+	const Graphics::Palette &palette = bmpDecoder.getPalette();
+	_cursorPalette = new byte[3 * palette.size()]();
+	palette.grab(_cursorPalette, 0, palette.size());
 }
 
 void CryOmni3DEngine_Versailles::setupPalette(const byte *palette, uint start, uint num,
@@ -1208,8 +1208,8 @@ void CryOmni3DEngine_Versailles::doPlaceChange() {
 				_currentPlace->setupWarpConstraints(_omni3dMan);
 				_omni3dMan.setSourceSurface(_currentWarpImage->getSurface());
 
-				setupPalette(_currentWarpImage->getPalette(), 0,
-				             _currentWarpImage->getPaletteColorCount(), !_fadedPalette);
+				setupPalette(_currentWarpImage->getPalette().data(), 0,
+				             _currentWarpImage->getPalette().size(), !_fadedPalette);
 
 				setMousePos(Common::Point(320, 240)); // Center of screen
 
@@ -1647,8 +1647,8 @@ void CryOmni3DEngine_Versailles::animateWarpTransition(const Transition *transit
 }
 
 void CryOmni3DEngine_Versailles::redrawWarp() {
-	setupPalette(_currentWarpImage->getPalette(), 0,
-	             _currentWarpImage->getPaletteColorCount(), true);
+	setupPalette(_currentWarpImage->getPalette().data(), 0,
+	             _currentWarpImage->getPalette().size(), true);
 	if (_forceRedrawWarp) {
 		const Graphics::Surface *result = _omni3dMan.getSurface();
 		g_system->copyRectToScreen(result->getPixels(), result->pitch, 0, 0, result->w, result->h);
@@ -1720,8 +1720,8 @@ void CryOmni3DEngine_Versailles::displayObject(const Common::String &imgName,
 
 	if (imageDecoder->hasPalette()) {
 		// We don't need to calculate transparency but it's simpler to call this function
-		setupPalette(imageDecoder->getPalette(), 0,
-		             imageDecoder->getPaletteColorCount());
+		setupPalette(imageDecoder->getPalette().data(), 0,
+		             imageDecoder->getPalette().size());
 	}
 
 	const Graphics::Surface *image = imageDecoder->getSurface();

@@ -7,9 +7,7 @@
 
 namespace Image {
 
-DoodleDecoder::DoodleDecoder(const byte *palette) : _surface(nullptr), _palette(nullptr) {
-	// Copy the pointer to the provided palette
-	_palette = palette;
+DoodleDecoder::DoodleDecoder(const byte *palette) : _surface(nullptr), _palette(palette, 16) {
 }
 
 DoodleDecoder::~DoodleDecoder() {

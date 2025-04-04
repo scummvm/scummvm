@@ -124,7 +124,7 @@ static bool loadImageDelayViaDecoder(TwinEEngine *engine, const Common::Path &fi
 	}
 	Graphics::ManagedSurface &target = engine->_frontVideoBuffer;
 	Common::Rect rect(src->w, src->h);
-	if (decoder.getPaletteColorCount() == 0) {
+	if (!decoder.hasPalette()) {
 		uint8 pal[Graphics::PALETTE_SIZE];
 		engine->_frontVideoBuffer.getPalette(pal, 0, 256);
 		Graphics::Surface *source = decoder.getSurface()->convertTo(target.format, nullptr, 0, pal, 256);
@@ -132,7 +132,7 @@ static bool loadImageDelayViaDecoder(TwinEEngine *engine, const Common::Path &fi
 		source->free();
 		delete source;
 	} else {
-		engine->setPalette(0, decoder.getPaletteColorCount(), decoder.getPalette());
+		engine->setPalette(0, decoder.getPalette().size(), decoder.getPalette().data());
 		target.blitFrom(*src, rect, target.getBounds());
 	}
 	if (engine->delaySkip(1000 * seconds)) {

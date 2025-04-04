@@ -47,8 +47,7 @@ public:
 	void destroy() override;
 	bool loadStream(Common::SeekableReadStream &stream) override;
 	const Graphics::Surface *getSurface() const override { return _surface; }
-	const byte *getPalette() const override { return _palette.data(); }
-	uint16 getPaletteColorCount() const override { return _palette.size(); }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 	const Graphics::Surface *getMask() const override { return _mask; }
 
 private:

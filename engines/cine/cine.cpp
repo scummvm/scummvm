@@ -299,9 +299,8 @@ void CineEngine::showSplashScreen() {
 	if (surface->w == 640 && surface->h == 480) {
 		initGraphics(640, 480);
 
-		const byte *palette = decoder.getPalette();
-		int paletteColorCount = decoder.getPaletteColorCount();
-		g_system->getPaletteManager()->setPalette(palette, 0, paletteColorCount);
+		const Graphics::Palette &palette = decoder.getPalette();
+		g_system->getPaletteManager()->setPalette(palette.data(), 0, palette.size());
 
 		g_system->copyRectToScreen(surface->getPixels(), 640, 0, 0, 640, 480);
 		g_system->updateScreen();

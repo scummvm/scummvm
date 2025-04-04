@@ -28,8 +28,7 @@
 
 namespace Image {
 
-ScrDecoder::ScrDecoder() {
-	_surface = nullptr;
+ScrDecoder::ScrDecoder() : _surface(nullptr), _palette(0) {
 }
 
 ScrDecoder::~ScrDecoder() {

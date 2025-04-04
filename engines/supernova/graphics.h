@@ -23,6 +23,7 @@
 #define SUPERNOVA_GRAPHICS_H
 
 #include "common/scummsys.h"
+#include "graphics/palette.h"
 #include "image/image_decoder.h"
 #include "supernova/supernova.h"
 
@@ -45,7 +46,7 @@ public:
 	void destroy() override;
 	bool loadStream(Common::SeekableReadStream &stream) override;
 	const Graphics::Surface *getSurface() const override { return _sectionSurfaces[0]; }
-	const byte *getPalette() const override { return _palette; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 
 	bool init(int filenumber);
 
@@ -58,7 +59,7 @@ public:
 	int _numSections;
 	int _numClickFields;
 	Common::Array<Graphics::Surface *> _sectionSurfaces;
-	byte *_palette;
+	Graphics::Palette _palette;
 	byte *_encodedImage;
 
 	struct Section {

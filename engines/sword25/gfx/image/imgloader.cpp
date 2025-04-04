@@ -46,7 +46,7 @@ bool ImgLoader::decodePNGImage(const byte *fileDataPtr, uint fileSize, Graphics:
 		error("Error while reading PNG image");
 
 	const Graphics::Surface *sourceSurface = png.getSurface();
-	Graphics::Surface *pngSurface = sourceSurface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), png.getPalette(), png.getPaletteColorCount());
+	Graphics::Surface *pngSurface = sourceSurface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), png.getPalette().data(), png.getPalette().size());
 
 	dest->copyFrom(*pngSurface);
 

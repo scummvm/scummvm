@@ -105,7 +105,7 @@ bool Surface::getImageFromPICTStream(Common::SeekableReadStream *stream) {
 	if (!pict.loadStream(*stream))
 		return false;
 
-	_surface = pict.getSurface()->convertTo(g_system->getScreenFormat(), pict.getPalette());
+	_surface = pict.getSurface()->convertTo(g_system->getScreenFormat(), pict.getPalette().data(), pict.getPalette().size());
 	_ownsSurface = true;
 	_bounds = Common::Rect(0, 0, _surface->w, _surface->h);
 	return true;

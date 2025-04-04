@@ -22,6 +22,7 @@
 #ifndef ULTIMA4_GFX_IMAGELOADER_H
 #define ULTIMA4_GFX_IMAGELOADER_H
 
+#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "image/image_decoder.h"
 
@@ -43,13 +44,11 @@ public:
 	// ImageDecoder API
 	void destroy() override;
 	const Graphics::Surface *getSurface() const override { return _surface; }
-	const byte *getPalette() const override { return _palette; }
-	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 
 protected:
 	Graphics::Surface *_surface;
-	const byte *_palette;
-	uint16 _paletteColorCount;
+	Graphics::Palette _palette;
 	int _width, _height, _bpp;
 
 	/**

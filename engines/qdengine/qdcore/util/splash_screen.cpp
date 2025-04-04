@@ -47,10 +47,10 @@ bool SplashScreen::create(int bitmapResID) {
 		if (stream && decoder.loadStream(*stream)) {
 			_splash = new Graphics::Surface();
 			_splash->copyFrom(*decoder.getSurface());
-			_paletteCount = decoder.getPaletteColorCount();
+			_paletteCount = decoder.getPalette().size();
 			_palette = new byte[_paletteCount * 3];
 
-			memcpy(_palette, decoder.getPalette(), _paletteCount * 3);
+			memcpy(_palette, decoder.getPalette().data(), _paletteCount * 3);
 		}
 	} else {
 		warning("SplashScreen::create(): Cannot load splash screen from file %s", g_engine->getExeName());

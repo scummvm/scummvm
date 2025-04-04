@@ -160,7 +160,7 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 		if (!cicn.loadStream(*cicnStream))
 			error("Failed to decode cursor cicn %d", cursorInfo.tag);
 
-		cursorInfo.surface = cicn.getSurface()->convertTo(g_system->getScreenFormat(), cicn.getPalette(), cicn.getPaletteColorCount());
+		cursorInfo.surface = cicn.getSurface()->convertTo(g_system->getScreenFormat(), cicn.getPalette().data(), cicn.getPalette().size());
 		delete cicnStream;
 		return;
 	}

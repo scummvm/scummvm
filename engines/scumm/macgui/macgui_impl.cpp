@@ -628,9 +628,9 @@ bool MacGuiImpl::loadIcon(int id, Graphics::Surface **icon, Graphics::Surface **
 		result = true;
 		const Graphics::Surface *s1 = iconDecoder.getSurface();
 		const Graphics::Surface *s2 = iconDecoder.getMask();
-		const byte *palette = iconDecoder.getPalette();
+		const Graphics::Palette &palette = iconDecoder.getPalette();
 
-		*icon = createRemappedSurface(s1, palette, iconDecoder.getPaletteColorCount());
+		*icon = createRemappedSurface(s1, palette.data(), palette.size());
 		*mask = new Graphics::Surface();
 		(*mask)->copyFrom(*s2);
 	}
@@ -657,9 +657,9 @@ Graphics::Surface *MacGuiImpl::loadPict(int id) {
 
 	if (res && pictDecoder.loadStream(*res)) {
 		const Graphics::Surface *surface = pictDecoder.getSurface();
-		const byte *palette = pictDecoder.getPalette();
+		const Graphics::Palette &palette = pictDecoder.getPalette();
 
-		s = createRemappedSurface(surface, palette, pictDecoder.getPaletteColorCount());
+		s = createRemappedSurface(surface, palette.data(), palette.size());
 	}
 
 	delete res;
@@ -815,9 +815,6 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 			Image::PICTDecoder pictDecoder;
 			Image::CicnDecoder iconDecoder;
 
-			const byte *palette = nullptr;
-			int paletteColorCount = 0;
-
 			Common::SeekableReadStream *imageRes = nullptr;
 			Image::ImageDecoder *decoder = nullptr;
 
@@ -838,10 +835,11 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 			}
 
 			if (imageRes && decoder->loadStream(*imageRes)) {
-				palette = decoder->getPalette();
-				paletteColorCount = decoder->getPaletteColorCount();
-				for (int j = 0; j < paletteColorCount; j++) {
-					uint32 color = (palette[3 * j] << 16) | (palette[3 * j + 1] << 8) | palette[3 * j + 2];
+				const Graphics::Palette &palette = decoder->getPalette();
+				for (uint j = 0; j < palette.size(); j++) {
+					byte r, g, b;
+					palette.get(j, r, g, b);
+					uint32 color = (r << 16) | (g << 8) | b;
 					if (!paletteMap.contains(color))
 						paletteMap[color] = numWindowColors++;
 				}

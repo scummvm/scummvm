@@ -25,7 +25,7 @@
 
 namespace Glk {
 
-RawDecoder::RawDecoder() : Image::ImageDecoder(), _palette(nullptr), _paletteColorCount(0),
+RawDecoder::RawDecoder() : Image::ImageDecoder(), _palette(0),
 	_transColor(0) {
 }
 
@@ -35,8 +35,7 @@ RawDecoder::~RawDecoder() {
 
 void RawDecoder::destroy() {
 	_surface.free();
-	delete[] _palette;
-	_palette = nullptr;
+	_palette.clear();
 }
 
 bool RawDecoder::loadStream(Common::SeekableReadStream &stream) {
@@ -45,24 +44,29 @@ bool RawDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	uint width = stream.readUint16LE();
 	uint height = stream.readUint16LE();
-	_paletteColorCount = stream.readUint16LE();
-	assert(_paletteColorCount == 0 || _paletteColorCount <= 0x100);
+	uint paletteColorCount = stream.readUint16LE();
+	assert(paletteColorCount == 0 || paletteColorCount <= 0x100);
 
-	if (_paletteColorCount != 0) {
+	if (paletteColorCount != 0) {
 		// Read in the palette
-		_palette = new byte[_paletteColorCount * 3];
-		stream.read(_palette, _paletteColorCount * 3);
+		_palette.resize(paletteColorCount, false);
+		for (uint16 i = 0; i < paletteColorCount; i++) {
+			byte r = stream.readByte();
+			byte g = stream.readByte();
+			byte b = stream.readByte();
+			_palette.set(i, r, g, b);
+		}
 
 		// Get the transparent color
 		byte transColor = stream.readByte();
-		if (transColor < _paletteColorCount)
+		if (transColor < paletteColorCount)
 			_transColor = transColor;
 	} else {
 		_transColor = 0;
 	}
 
 	// Set up the surface
-	_surface.create(width, height, (_paletteColorCount == 0) ?
+	_surface.create(width, height, (paletteColorCount == 0) ?
 	    Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0) :
 		Graphics::PixelFormat::createFormatCLUT8());
 
@@ -71,11 +75,11 @@ bool RawDecoder::loadStream(Common::SeekableReadStream &stream) {
 	byte *pixels = (byte *)_surface.getPixels();
 	stream.read(pixels, width * height * _surface.format.bytesPerPixel);
 
-	if (_palette) {
+	if (paletteColorCount > 0) {
 		for (uint idx = 0; idx < width * height; ++idx, ++pixels) {
 			assert(*pixels != 0xff);
-			if (*pixels >= _paletteColorCount)
-				*pixels = _paletteColorCount - 1;
+			if (*pixels >= paletteColorCount)
+				*pixels = paletteColorCount - 1;
 		}
 	}
 
