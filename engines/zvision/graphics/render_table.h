@@ -65,7 +65,7 @@ public:
 	}
 	void setRenderState(RenderState newState);
 
-	const Common::Point convertWarpedCoordToFlatCoord(const Common::Point &point);
+	const Common::Point convertWarpedCoordToFlatCoord(const Common::Point &point);  //input point in working area coordinates
 
 	void mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect);
 	void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf);

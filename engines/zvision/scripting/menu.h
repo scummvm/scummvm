@@ -141,7 +141,7 @@ class MenuZGI: public MenuManager {
 public:
 	MenuZGI(ZVision *engine, Common::Rect menuArea);
 	~MenuZGI() override;
-	void onMouseMove(const Common::Point &Pos) override;
+	void onMouseMove(const Common::Point &Pos) override;  //NB Pos is in screen coordinates
 	void onMouseUp(const Common::Point &Pos) override;
 	void process(uint32 deltaTimeInMillis) override;
   bool inMenu(const Common::Point &Pos) override;

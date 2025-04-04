@@ -48,8 +48,8 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
 	  _system(engine->_system),
 	  _layout(layout),
 	  _screenArea(_layout.screenArea),
-	  _screenCenter(_screenArea.center()),
 	  _workingArea(_layout.workingArea),
+	  _workingAreaCenter(Common::Point(_workingArea.width()/2, _workingArea.height()/2)),
 	  _textArea(_layout.textArea),
 	  _menuArea(_layout.menuArea),
 	  _pixelFormat(pixelFormat),
@@ -80,6 +80,7 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
 	_menuSurface.create(_menuArea.width(), _menuArea.height(), _pixelFormat);
 	_textSurface.create(_textArea.width(), _textArea.height(), _pixelFormat);
 	debug(1,"render manager created");
+  initialize(false);
 }
 
 RenderManager::~RenderManager() {
@@ -127,8 +128,9 @@ void RenderManager::initialize(bool hiRes) {
   _screen.create(_screenArea.width(), _screenArea.height(), _pixelFormat);
 	_screen.setTransparentColor(-1);
 	_screen.clear();
-  _screenCenter = _screenArea.center();
   
+  debug(1,"_workingAreaCenter = %d,%d", _workingAreaCenter.x, _workingAreaCenter.y);
+
 	//Managed screen subsurfaces
 	_workingManagedSurface.create(_screen, _workingArea);
   _menuManagedSurface.create(_screen, _menuArea);
@@ -375,8 +377,7 @@ const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &
   debug(9,"screenSpaceToImageSpace()");
 	if (_workingArea.contains(point)) {
 		// Convert from screen space to working window space
-		//TODO - find & fix bug that causes frame not to be aligned with movement direction in Nemesis when not in widescreen mode.
-		Common::Point newPoint(point - Common::Point(_workingArea.left, _workingArea.top));
+		Common::Point newPoint(point - _workingArea.origin());
 
 		RenderTable::RenderState state = _renderTable.getRenderState();
 		if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
@@ -384,9 +385,9 @@ const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &
 		}
 
 		if (state == RenderTable::PANORAMA) {
-			newPoint += (Common::Point(_backgroundOffset - _screenCenter.x, 0));
+			newPoint += (Common::Point(_backgroundOffset - _workingAreaCenter.x, 0));
 		} else if (state == RenderTable::TILT) {
-			newPoint += (Common::Point(0, _backgroundOffset - _screenCenter.y));
+			newPoint += (Common::Point(0, _backgroundOffset - _workingAreaCenter.y));
 		}
 
 		if (_backgroundWidth)
@@ -747,44 +748,44 @@ void RenderManager::prepareBackground() {
 	if (state == RenderTable::PANORAMA) {
 		// Calculate the visible portion of the background
 		Common::Rect viewPort(_workingArea.width(), _workingArea.height());
-		viewPort.translate(-(_screenCenter.x - _backgroundOffset), 0);
+		viewPort.translate(-(_workingAreaCenter.x - _backgroundOffset), 0);
 		Common::Rect drawRect = _backgroundDirtyRect;
 		drawRect.clip(viewPort);
 
 		// Render the visible portion
 		if (!drawRect.isEmpty()) {
-			blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, _screenCenter.x - _backgroundOffset + drawRect.left, drawRect.top);
+			blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, _workingAreaCenter.x - _backgroundOffset + drawRect.left, drawRect.top);
 		}
 
 		// Mark the dirty portion of the surface
 		_backgroundSurfaceDirtyRect = _backgroundDirtyRect;
-		_backgroundSurfaceDirtyRect.translate(_screenCenter.x - _backgroundOffset, 0);
+		_backgroundSurfaceDirtyRect.translate(_workingAreaCenter.x - _backgroundOffset, 0);
 
 		// Panorama mode allows the user to spin in circles. Therefore, we need to render
 		// the portion of the image that wrapped to the other side of the screen
-		if (_backgroundOffset < _screenCenter.x) {
-			viewPort.moveTo(-(_screenCenter.x - (_backgroundOffset + _backgroundWidth)), 0);
+		if (_backgroundOffset < _workingAreaCenter.x) {
+			viewPort.moveTo(-(_workingAreaCenter.x - (_backgroundOffset + _backgroundWidth)), 0);
 			drawRect = _backgroundDirtyRect;
 			drawRect.clip(viewPort);
 
 			if (!drawRect.isEmpty())
-				blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, _screenCenter.x - (_backgroundOffset + _backgroundWidth) + drawRect.left, drawRect.top);
+				blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, _workingAreaCenter.x - (_backgroundOffset + _backgroundWidth) + drawRect.left, drawRect.top);
 
 			Common::Rect tmp = _backgroundDirtyRect;
-			tmp.translate(_screenCenter.x - (_backgroundOffset + _backgroundWidth), 0);
+			tmp.translate(_workingAreaCenter.x - (_backgroundOffset + _backgroundWidth), 0);
 			if (!tmp.isEmpty())
 				_backgroundSurfaceDirtyRect.extend(tmp);
 
-		} else if (_backgroundWidth - _backgroundOffset < _screenCenter.x) {
-			viewPort.moveTo(-(_screenCenter.x + _backgroundWidth - _backgroundOffset), 0);
+		} else if (_backgroundWidth - _backgroundOffset < _workingAreaCenter.x) {
+			viewPort.moveTo(-(_workingAreaCenter.x + _backgroundWidth - _backgroundOffset), 0);
 			drawRect = _backgroundDirtyRect;
 			drawRect.clip(viewPort);
 
 			if (!drawRect.isEmpty())
-				blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, _screenCenter.x + _backgroundWidth - _backgroundOffset + drawRect.left, drawRect.top);
+				blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, _workingAreaCenter.x + _backgroundWidth - _backgroundOffset + drawRect.left, drawRect.top);
 
 			Common::Rect tmp = _backgroundDirtyRect;
-			tmp.translate(_screenCenter.x + _backgroundWidth - _backgroundOffset, 0);
+			tmp.translate(_workingAreaCenter.x + _backgroundWidth - _backgroundOffset, 0);
 			if (!tmp.isEmpty())
 				_backgroundSurfaceDirtyRect.extend(tmp);
 
@@ -792,15 +793,15 @@ void RenderManager::prepareBackground() {
 	} else if (state == RenderTable::TILT) {
 		// Tilt doesn't allow wrapping, so we just do a simple clip
 		Common::Rect viewPort(_workingArea.width(), _workingArea.height());
-		viewPort.translate(0, -(_screenCenter.y - _backgroundOffset));
+		viewPort.translate(0, -(_workingAreaCenter.y - _backgroundOffset));
 		Common::Rect drawRect = _backgroundDirtyRect;
 		drawRect.clip(viewPort);
 		if (!drawRect.isEmpty())
-			blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, drawRect.left, _screenCenter.y - _backgroundOffset + drawRect.top);
+			blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, drawRect.left, _workingAreaCenter.y - _backgroundOffset + drawRect.top);
 
 		// Mark the dirty portion of the surface
 		_backgroundSurfaceDirtyRect = _backgroundDirtyRect;
-		_backgroundSurfaceDirtyRect.translate(0, _screenCenter.y - _backgroundOffset);
+		_backgroundSurfaceDirtyRect.translate(0, _workingAreaCenter.y - _backgroundOffset);
 
 	} else {
 		if (!_backgroundDirtyRect.isEmpty())
@@ -839,33 +840,33 @@ Common::Rect RenderManager::transformBackgroundSpaceRectToScreenSpace(const Comm
 	RenderTable::RenderState state = _renderTable.getRenderState();
 
 	if (state == RenderTable::PANORAMA) {
-		if (_backgroundOffset < _screenCenter.x) {
-			Common::Rect rScreen(_screenCenter.x + _backgroundOffset, _workingArea.height());
+		if (_backgroundOffset < _workingAreaCenter.x) {
+			Common::Rect rScreen(_workingAreaCenter.x + _backgroundOffset, _workingArea.height());
 			Common::Rect lScreen(_workingArea.width() - rScreen.width(), _workingArea.height());
 			lScreen.translate(_backgroundWidth - lScreen.width(), 0);
 			lScreen.clip(src);
 			rScreen.clip(src);
 			if (rScreen.width() < lScreen.width()) {
-				tmp.translate(_screenCenter.x - _backgroundOffset - _backgroundWidth, 0);
+				tmp.translate(_workingAreaCenter.x - _backgroundOffset - _backgroundWidth, 0);
 			} else {
-				tmp.translate(_screenCenter.x - _backgroundOffset, 0);
+				tmp.translate(_workingAreaCenter.x - _backgroundOffset, 0);
 			}
-		} else if (_backgroundWidth - _backgroundOffset < _screenCenter.x) {
-			Common::Rect rScreen(_screenCenter.x - (_backgroundWidth - _backgroundOffset), _workingArea.height());
+		} else if (_backgroundWidth - _backgroundOffset < _workingAreaCenter.x) {
+			Common::Rect rScreen(_workingAreaCenter.x - (_backgroundWidth - _backgroundOffset), _workingArea.height());
 			Common::Rect lScreen(_workingArea.width() - rScreen.width(), _workingArea.height());
 			lScreen.translate(_backgroundWidth - lScreen.width(), 0);
 			lScreen.clip(src);
 			rScreen.clip(src);
 			if (lScreen.width() < rScreen.width()) {
-				tmp.translate(_screenCenter.x + (_backgroundWidth - _backgroundOffset), 0);
+				tmp.translate(_workingAreaCenter.x + (_backgroundWidth - _backgroundOffset), 0);
 			} else {
-				tmp.translate(_screenCenter.x - _backgroundOffset, 0);
+				tmp.translate(_workingAreaCenter.x - _backgroundOffset, 0);
 			}
 		} else {
-			tmp.translate(_screenCenter.x - _backgroundOffset, 0);
+			tmp.translate(_workingAreaCenter.x - _backgroundOffset, 0);
 		}
 	} else if (state == RenderTable::TILT) {
-		tmp.translate(0, (_screenCenter.y - _backgroundOffset));
+		tmp.translate(0, (_workingAreaCenter.y - _backgroundOffset));
 	}
 
 	return tmp;
