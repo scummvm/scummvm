@@ -323,7 +323,7 @@ void TuckerEngine::loadImage(const char *fname, uint8 *dst, int type) {
 		memcpy(dst + y * 320, pcxSurface->getBasePtr(0, y), pcxSurface->w);
 
 	if (type != 0) {
-		memcpy(_currentPalette, pcx.getPalette(), 3 * 256);
+		pcx.getPalette().grab(_currentPalette, 0, pcx.getPalette().size());
 		setBlackPalette();
 	}
 }

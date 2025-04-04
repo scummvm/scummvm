@@ -28,13 +28,11 @@ namespace Ultima {
 namespace Ultima4 {
 
 /*-------------------------------------------------------------------*/
-U4ImageDecoder::U4ImageDecoder(int width, int height, int bpp) {
+U4ImageDecoder::U4ImageDecoder(int width, int height, int bpp) : _palette(0) {
 	_width = width;
 	_height = height;
 	_bpp = bpp;
 	_surface = nullptr;
-	_palette = nullptr;
-	_paletteColorCount = 0;
 }
 
 U4ImageDecoder::~U4ImageDecoder() {
@@ -48,9 +46,7 @@ void U4ImageDecoder::destroy() {
 		_surface = nullptr;
 	}
 
-	// _palette is owned by U4PaletteLoader
-	_palette = nullptr;
-	_paletteColorCount = 0;
+	_palette.clear();
 }
 
 void U4ImageDecoder::setFromRawData(const byte *rawData) {

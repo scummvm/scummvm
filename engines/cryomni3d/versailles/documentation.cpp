@@ -326,8 +326,8 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 	// No box for 6
 	boxes.setupBox(7, 0, 480 - _sprites->getCursor(225).getHeight(), 640, 480);
 
-	_engine->setupPalette(imageDecoder->getPalette(), 0,
-	                      imageDecoder->getPaletteColorCount());
+	_engine->setupPalette(imageDecoder->getPalette().data(), 0,
+	                      imageDecoder->getPalette().size());
 
 	_engine->setCursor(181);
 	_engine->showMouse(true);
@@ -445,8 +445,8 @@ Common::String Versailles_Documentation::docAreaHandleTimeline() {
 	_fontManager->setCharSpacing(1);
 	_fontManager->setSurface(&docSurface);
 
-	_engine->setupPalette(imageDecoder->getPalette(), 0,
-	                      imageDecoder->getPaletteColorCount());
+	_engine->setupPalette(imageDecoder->getPalette().data(), 0,
+	                      imageDecoder->getPalette().size());
 
 	_fontManager->displayStr(78, 10, (*_messages)[73]);
 	docSurface.hLine(0, 39, 171, 241); // minus 1 because hLine draws inclusive
@@ -956,8 +956,8 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 
 	_fontManager->setSurface(&mapSurface);
 
-	_engine->setupPalette(imageDecoder->getPalette(), 0,
-	                      imageDecoder->getPaletteColorCount());
+	_engine->setupPalette(imageDecoder->getPalette().data(), 0,
+	                      imageDecoder->getPalette().size());
 
 	_engine->setCursor(181);
 	_engine->showMouse(true);
@@ -1178,8 +1178,8 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 
 	_fontManager->setSurface(&mapSurface);
 
-	_engine->setupPalette(imageDecoder->getPalette(), 0,
-	                      imageDecoder->getPaletteColorCount());
+	_engine->setupPalette(imageDecoder->getPalette().data(), 0,
+	                      imageDecoder->getPalette().size());
 
 	_engine->setCursor(181);
 	_engine->showMouse(true);
@@ -1472,8 +1472,8 @@ void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
 	Image::ImageDecoder *imageDecoder = _engine->loadHLZ(backgroundPath);
 	const Graphics::Surface *bgFrame = imageDecoder->getSurface();
 
-	_engine->setupPalette(imageDecoder->getPalette(), 0,
-	                      imageDecoder->getPaletteColorCount());
+	_engine->setupPalette(imageDecoder->getPalette().data(), 0,
+	                      imageDecoder->getPalette().size());
 
 	surface.create(bgFrame->w, bgFrame->h, bgFrame->format);
 	surface.blitFrom(*bgFrame);

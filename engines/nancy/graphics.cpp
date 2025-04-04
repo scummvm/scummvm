@@ -219,7 +219,7 @@ void GraphicsManager::loadSurfacePalette(Graphics::ManagedSurface &inSurf, const
 	if (f.open(paletteFilename.append(".bmp"))) {
 		Image::BitmapDecoder dec;
 		if (dec.loadStream(f)) {
-			inSurf.setPalette(dec.getPalette(), paletteStart, paletteSize);
+			inSurf.setPalette(dec.getPalette().data(), paletteStart, paletteSize);
 		}
 	}
 }

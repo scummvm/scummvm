@@ -91,7 +91,7 @@ bool ImgLoader::loadPNGImage(Common::SeekableReadStream *stream, Graphics::Surfa
 	}
 
 	const Graphics::Surface *sourceSurface = png.getSurface();
-	Graphics::Surface *pngSurface = sourceSurface->convertTo(*g_sludge->getScreenPixelFormat(), png.getPalette());
+	Graphics::Surface *pngSurface = sourceSurface->convertTo(*g_sludge->getScreenPixelFormat(), png.getPalette().data(), png.getPalette().size());
 	dest->copyFrom(*pngSurface);
 	pngSurface->free();
 	delete pngSurface;

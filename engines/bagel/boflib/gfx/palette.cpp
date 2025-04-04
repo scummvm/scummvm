@@ -91,9 +91,9 @@ ErrorCode CBofPalette::loadPalette(const char *pszFileName, uint16 nFlags) {
 
 	if (f.open(pszFileName) && decoder.loadStream(f)) {
 		// Copy the palette
-		_palette._numColors = decoder.getPaletteColorCount();
-		const byte *src = decoder.getPalette();
-		Common::copy(src, src + _palette._numColors * 3, _palette._data);
+		const Graphics::Palette &pal = decoder.getPalette();
+		_palette._numColors = pal.size();
+		pal.grab(_palette._data, 0, pal.size());
 
 		_errCode = ERR_NONE;
 

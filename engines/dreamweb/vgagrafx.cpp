@@ -171,7 +171,7 @@ void DreamWebEngine::showPCX(const Common::String &suffix) {
 	// Read the 16-color palette into the 'maingamepal' buffer. Note that
 	// the color components have to be adjusted from 8 to 6 bits.
 	memset(_mainPal, 0xff, 256 * 3);
-	memcpy(_mainPal, pcx.getPalette(), 48);
+	memcpy(_mainPal, pcx.getPalette().data(), 48);
 	for (int i = 0; i < 48; i++) {
 		_mainPal[i] >>= 2;
 	}

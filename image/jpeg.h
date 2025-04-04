@@ -22,6 +22,7 @@
 #ifndef IMAGE_JPEG_H
 #define IMAGE_JPEG_H
 
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "image/image_decoder.h"
 #include "image/codecs/codec.h"
@@ -55,6 +56,7 @@ public:
 	void destroy() override;
 	bool loadStream(Common::SeekableReadStream &str) override;
 	const Graphics::Surface *getSurface() const override;
+	const Graphics::Palette &getPalette() const override { return _palette; }
 
 	// Codec API
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
@@ -104,6 +106,7 @@ public:
 
 private:
 	Graphics::Surface _surface;
+	Graphics::Palette _palette;
 	ColorSpace _colorSpace;
 	Graphics::PixelFormat _requestedPixelFormat;
 	CodecAccuracy _accuracy;

@@ -56,8 +56,7 @@ public:
 
 	bool loadStream(Common::SeekableReadStream &stream) override;
 	void destroy() override;
-	const byte *getPalette() const override { return _palette.data(); }
-	uint16 getPaletteColorCount() const override { return _palette.size(); }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 	const Graphics::Surface *getSurface() const override { return _outputSurface; }
 	bool hasTransparentColor() const override { return _hasTransparentColor; }
 	uint32 getTransparentColor() const override { return _transparentColor; }

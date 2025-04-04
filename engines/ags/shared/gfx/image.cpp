@@ -52,12 +52,10 @@ BITMAP *decodeImageStream(Common::SeekableReadStream &stream, color *pal) {
 		dest->blitFrom(*src);
 
 		// Copy the palette
-		const byte *palP = decoder.getPalette();
-		if (palP && pal) {
-			for (int idx = 0; idx < 256; ++idx, palP += 3) {
-				pal[idx].r = palP[0];
-				pal[idx].g = palP[1];
-				pal[idx].b = palP[2];
+		const Graphics::Palette &palP = decoder.getPalette();
+		if (pal) {
+			for (uint idx = 0; idx < palP.size(); ++idx) {
+				palP.get(idx, pal[idx].r, pal[idx].g, pal[idx].b);
 				pal[idx].filler = 0xff;
 			}
 		}

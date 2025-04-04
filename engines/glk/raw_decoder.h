@@ -22,6 +22,7 @@
 #ifndef GLK_RAW_DECODER_H
 #define GLK_RAW_DECODER_H
 
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "image/image_decoder.h"
 
@@ -42,8 +43,7 @@ namespace Glk {
 class RawDecoder : public Image::ImageDecoder {
 private:
 	Graphics::Surface _surface;
-	byte *_palette;
-	uint16 _paletteColorCount;
+	Graphics::Palette _palette;
 	uint32 _transColor;
 public:
 	RawDecoder();
@@ -52,8 +52,7 @@ public:
 	bool loadStream(Common::SeekableReadStream &stream) override;
 	void destroy() override;
 	const Graphics::Surface *getSurface() const override { return &_surface; }
-	const byte *getPalette() const override { return _palette; }
-	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 	bool hasTransparentColor() const override { return true; }
 	uint32 getTransparentColor() const override { return _transColor; }
 };

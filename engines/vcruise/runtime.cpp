@@ -159,7 +159,7 @@ Common::SharedPtr<Graphics::Surface> AD2044Graphics::loadGraphic(const Common::S
 
 	const Graphics::Surface *bmpSurf = decoder.getSurface();
 
-	Common::SharedPtr<Graphics::Surface> surf(bmpSurf->convertTo(_pixFmt, decoder.getPalette(), decoder.getPaletteColorCount()), Graphics::SurfaceDeleter());
+	Common::SharedPtr<Graphics::Surface> surf(bmpSurf->convertTo(_pixFmt, decoder.getPalette().data(), decoder.getPalette().size()), Graphics::SurfaceDeleter());
 	return surf;
 }
 
@@ -6194,7 +6194,7 @@ Common::SharedPtr<Graphics::ManagedSurface> Runtime::loadGraphicFromPath(const C
 	Common::SharedPtr<Graphics::ManagedSurface> surf(new Graphics::ManagedSurface());
 	if (bmpDecoder.hasPalette()) {
 		surf->copyFrom(*bmpDecoder.getSurface());
-		surf->setPalette(bmpDecoder.getPalette(), 0, bmpDecoder.getPaletteColorCount());
+		surf->setPalette(bmpDecoder.getPalette().data(), 0, bmpDecoder.getPalette().size());
 	} else {
 		surf->convertFrom(*bmpDecoder.getSurface(), _system->getScreenFormat());
 	}

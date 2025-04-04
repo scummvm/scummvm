@@ -418,8 +418,8 @@ void KingdomGame::showPic(int reznum) {
 
 	delete stream;
 
-	const byte *palette = decoder.getPalette();
-	int paletteColorCount = decoder.getPaletteColorCount();
+	const byte *palette = decoder.getPalette().data();
+	int paletteColorCount = decoder.getPalette().size();
 	g_system->getPaletteManager()->setPalette(palette, 0, paletteColorCount);
 
 	const Graphics::Surface *surface = decoder.getSurface();

@@ -81,8 +81,8 @@ static void loadImage(Image::ImageDecoder *decoder, Texture *t) {
 	if (decoder->hasPalette()) {
 		uint32 map[256];
 		Graphics::convertPaletteToMap(map,
-		                              decoder->getPalette(),
-		                              decoder->getPaletteColorCount(),
+		                              decoder->getPalette().data(),
+		                              decoder->getPalette().size(),
 		                              format_3bpp);
 		Graphics::crossBlitMap(t->_data, (const byte *)surface->getPixels(),
 		                       t->_width * t->_bpp, surface->pitch,

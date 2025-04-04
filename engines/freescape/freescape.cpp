@@ -1114,7 +1114,7 @@ byte *FreescapeEngine::getPaletteFromNeoImage(Common::SeekableReadStream *stream
 	Image::NeoDecoder decoder;
 	decoder.loadStream(*stream);
 	byte *palette = (byte *)malloc(16 * 3 * sizeof(byte));
-	memcpy(palette, decoder.getPalette(), 16 * 3 * sizeof(byte));
+	decoder.getPalette().grab(palette, 0, 16);
 	return palette;
 }
 
@@ -1124,7 +1124,7 @@ Graphics::ManagedSurface *FreescapeEngine::loadAndConvertNeoImage(Common::Seekab
 	decoder.loadStream(*stream);
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->copyFrom(*decoder.getSurface());
-	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette(), decoder.getPaletteColorCount());
+	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette().data(), decoder.getPalette().size());
 	return surface;
 }
 
@@ -1133,7 +1133,7 @@ Graphics::ManagedSurface *FreescapeEngine::loadAndConvertDoodleImage(Common::See
 	decoder.loadStreams(*bitmap, *color1, *color2);
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->copyFrom(*decoder.getSurface());
-	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette(), decoder.getPaletteColorCount());
+	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette().data(), decoder.getPalette().size());
 	return surface;
 }
 
