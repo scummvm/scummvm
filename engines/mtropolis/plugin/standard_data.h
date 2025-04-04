@@ -178,6 +178,19 @@ protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
+struct OpenAppModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue unknown1Null;
+	PlugInTypeTaggedValue unknown2Null;
+	PlugInTypeTaggedValue unknown3Event;
+	PlugInTypeTaggedValue unknown4String;
+	PlugInTypeTaggedValue unknown5Integer;
+	PlugInTypeTaggedValue unknown6Integer;
+	PlugInTypeTaggedValue unknown7Bool;
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
 } // End of namespace Standard
 
 } // End of namespace Data

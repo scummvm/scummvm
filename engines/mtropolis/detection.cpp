@@ -81,6 +81,9 @@ static const PlainGameDescriptor mTropolisGames[] = {
 	{"c9sampler", "Cloud 9 CD Sampler Volume 2"},
 	{"adobe24", "Adobe 24 Hours Tools Sampler"},
 	{"byzantine", "Byzantine: The Betrayal"},
+	{"od_living_science", "An Odyssey of Discovery: Living Science"},
+	{"food_genes_compendium", "The Facts about Genes and our Food - A Compendium"},
+	{"uts_shadow_warrior", "Unlock the Secrets: Shadow Warrior"},
 
 
 	{"mtropolis", "mTropolis Title"},

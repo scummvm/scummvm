@@ -411,6 +411,76 @@ const char *AlphaMaticModifier::getDefaultName() const {
 	return "AlphaMatic Modifier"; // ???
 }
 
+HotTextModifier::HotTextModifier() {
+}
+
+HotTextModifier::~HotTextModifier() {
+}
+
+bool HotTextModifier::load(const PlugInModifierLoaderContext &context, const Data::Thereware::HotTextModifier &data) {
+	return true;
+}
+
+bool HotTextModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState HotTextModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void HotTextModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void HotTextModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> HotTextModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new HotTextModifier(*this));
+}
+
+const char *HotTextModifier::getDefaultName() const {
+	return "HotText Modifier"; // ???
+}
+
+KeyScrollModifier::KeyScrollModifier() {
+}
+
+KeyScrollModifier::~KeyScrollModifier() {
+}
+
+bool KeyScrollModifier::load(const PlugInModifierLoaderContext &context, const Data::Thereware::KeyScrollModifier &data) {
+	return true;
+}
+
+bool KeyScrollModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState KeyScrollModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void KeyScrollModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void KeyScrollModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> KeyScrollModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new KeyScrollModifier(*this));
+}
+
+const char *KeyScrollModifier::getDefaultName() const {
+	return "KeyScroll Modifier"; // ???
+}
+
 TherewarePlugIn::TherewarePlugIn()
 	: _conductorModifierFactory(this)
 	, _alphaMaticModifierFactory(this)
@@ -422,7 +492,9 @@ TherewarePlugIn::TherewarePlugIn()
 	, _easyScrollerModifierFactory(this)
 	, _goThereModifierFactory(this)
 	, _randomizerModifierFactory(this)
-	, _timeLoopModifierFactory(this) {
+	, _timeLoopModifierFactory(this)
+	, _hotTextModifierFactory(this)
+	, _keyScrollModifierFactory(this) {
 }
 
 TherewarePlugIn::~TherewarePlugIn() {
@@ -451,6 +523,10 @@ void TherewarePlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) con
 	//Quick Kit
 	registrar->registerPlugInModifier("Randomizer", &_randomizerModifierFactory);
 	registrar->registerPlugInModifier("Conductor", &_conductorModifierFactory);
+
+	//HotText Kit
+	registrar->registerPlugInModifier("HotText", &_hotTextModifierFactory);
+	registrar->registerPlugInModifier("KeyScroll", &_keyScrollModifierFactory);
 }
 
 } // End of namespace Thereware

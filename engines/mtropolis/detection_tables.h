@@ -2163,6 +2163,66 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_BYZANTINE_DEMO_WIN_EN,
 	},
 
+	{ // An Odyssey Of Discovery: Living Science (English, Windows)
+	  // Published by Pierian Spring Software, 19981997
+		{
+			"od_living_science",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "LS95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
+				{ "DATA.MPL", 0, "e097668f2befa4b249968f125e3c19b3", 27787067 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_OD_LIVINGSCIENCE,
+		0,
+		MTBOOT_OD_LIVING_WIN_EN,
+	},
+
+	{ // The Facts about Genes & our Food: A Compendium (English, Windows)
+	  // Published by GENIUS Biotechnology GmbH, 1999
+		{
+			"food_genes_compendium",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "Compendium.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				{ "st.mfw", 0, "66a26a2cf461b32a670114e293818ff3", 2287085 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_FOOD_GENES_COMPENDIUM,
+		0,
+		MTBOOT_FOODGENES_WIN_EN,
+	},
+
+	{ // Unlock the Secrets: Shadow Warrior (English, Windows)
+	  // Published by  WizardWorks Group Inc., 1997
+		{
+			"uts_shadow_warrior",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "GWPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
+				{ "GW_SW.MPL", 0, "9064c6271d0b83a408cdffadbb0602ec", 38120214 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_UTS_SHADOWWARRIOR,
+		0,
+		MTBOOT_UTS_SHADOW_WARRIOR_WIN_EN,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, MTBOOT_INVALID }
 };
 

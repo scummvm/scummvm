@@ -35,6 +35,8 @@ MODULE_OBJS = \
 	plugin/mti_data.o \
 	plugin/obsidian.o \
 	plugin/obsidian_data.o \
+	plugin/pierian.o \
+	plugin/pierian_data.o \
 	plugin/rwc.o \
 	plugin/rwc_data.o \
 	plugin/standard.o \
