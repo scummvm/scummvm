@@ -58,6 +58,11 @@ static const KeybindingRecord MINIMAL_KEYS[] = {
 	{ KEYBIND_DOWN, "DOWN", _s("Down"), "DOWN", nullptr, "JOY_DOWN"},
 	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", nullptr, "JOY_LEFT"},
 	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", nullptr, "JOY_RIGHT"},
+	{ KEYBIND_PAGEUP, "PAGEUP", _s("Page Up"), "PAGEUP", "KP9", "JOY_RIGHT"},
+	{ KEYBIND_PAGEDOWN, "PAGEDOWN", _s("Page Down"), "PAGEDOWN", "KP3", "JOY_RIGHT"},
+	{ KEYBIND_HOME, "HOME", _s("Home"), "HOME", "KP7", "JOY_RIGHT"},
+	{ KEYBIND_END, "END", _s("End"), "END", "KP2", "JOY_RIGHT"},
+
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 

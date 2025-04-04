@@ -43,6 +43,8 @@ private:
 	bool hasNextNote() const;
 	void priorNote();
 	void nextNote();
+	void firstNote();
+	void lastNote();
 
 public:
 	Notebook();
@@ -54,7 +56,6 @@ public:
 	void draw() override;
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	bool msgMouseUp(const MouseUpMessage &msg) override;
 

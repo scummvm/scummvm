@@ -101,31 +101,21 @@ bool Notebook::msgAction(const ActionMessage &msg) {
 		break;
 
 	case KEYBIND_UP:
+	case KEYBIND_PAGEUP:
 		priorNote();
 		break;
 
 	case KEYBIND_DOWN:
+	case KEYBIND_PAGEDOWN:
 		nextNote();
 		break;
 
-	default:
-		return false;
-	}
-
-	return true;
-}
-
-bool Notebook::msgKeypress(const KeypressMessage &msg) {
-	if (Dialog::msgKeypress(msg))
-		return true;
-
-	switch (msg.keycode) {
-	case Common::KEYCODE_PAGEUP:
-		priorNote();
+	case KEYBIND_HOME:
+		firstNote();
 		break;
 
-	case Common::KEYCODE_PAGEDOWN:
-		nextNote();
+	case KEYBIND_END:
+		lastNote();
 		break;
 
 	default:
@@ -229,6 +219,24 @@ void Notebook::priorNote() {
 void Notebook::nextNote() {
 	if (hasNextNote()) {
 		pNoteList = pNoteList->m_pNext;
+		redraw();
+	}
+}
+
+void Notebook::firstNote() {
+	if (hasPriorNote()) {
+		while (pNoteList->m_pPrev)
+			pNoteList = pNoteList->m_pPrev;
+
+		redraw();
+	}
+}
+
+void Notebook::lastNote() {
+	if (hasNextNote()) {
+		while (pNoteList->m_pNext)
+			pNoteList = pNoteList->m_pNext;
+
 		redraw();
 	}
 }
