@@ -114,6 +114,7 @@ bool GeneralStore::msgClose(const CloseMessage &msg) {
 bool GeneralStore::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
 	case KEYBIND_UP:
+	case KEYBIND_PAGEUP:
 		if (nFirstSlot > 0) {
 			nFirstSlot -= (nItemsPerRow * nItemsPerColumn);
 			if (nFirstSlot < 0)
@@ -123,10 +124,27 @@ bool GeneralStore::msgAction(const ActionMessage &msg) {
 		break;
 
 	case KEYBIND_DOWN:
+	case KEYBIND_PAGEDOWN:
 		if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < pGeneralStore->ItemCount()) {
 			nFirstSlot += (nItemsPerRow * nItemsPerColumn);
 			redraw();
 		}
+		break;
+
+	case KEYBIND_HOME:
+		// Go to first page
+		if (nFirstSlot != 0) {
+			nFirstSlot = 0;
+			redraw();
+		}
+		break;
+
+	case KEYBIND_END:
+		// Go to last page
+		nFirstSlot = pGeneralStore->ItemCount() - (nItemsPerRow * nItemsPerColumn);
+		if (nFirstSlot < 0)
+			nFirstSlot = 0;
+		redraw();
 		break;
 
 	case KEYBIND_SELECT:
@@ -154,30 +172,6 @@ bool GeneralStore::msgGame(const GameMessage &msg) {
 	}
 
 	return false;
-}
-
-bool GeneralStore::msgKeypress(const KeypressMessage &msg) {
-	switch (msg.keycode) {
-	case Common::KEYCODE_HOME:
-		// Go to first item
-		if (nFirstSlot != 0) {
-			nFirstSlot = 0;
-			redraw();
-		}
-		break;
-
-	case Common::KEYCODE_END:								// go to last page of text
-		nFirstSlot = pGeneralStore->ItemCount() - (nItemsPerRow * nItemsPerColumn);
-		if (nFirstSlot < 0)
-			nFirstSlot = 0;
-		redraw();
-		break;
-
-	default:
-		return false;
-	}
-
-	return true;
 }
 
 bool GeneralStore::tick() {
