@@ -29,8 +29,14 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
+// Values for the area taken up by the scroll image from
+// the edge to the start of the drawable area
 constexpr int DIALOG_TOP = 48;
 constexpr int DIALOG_BOTTOM = 47;
+constexpr int DIALOG_LEFT = 60;
+constexpr int DIALOG_RIGHT = 60;
+constexpr int DIALOG_WIDTH = 502;
+constexpr int DIALOG_HEIGHT = 395;
 
 class Dialog : public ResourceView {
 private:

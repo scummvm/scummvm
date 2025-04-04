@@ -29,30 +29,37 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#if 0
-#define COLOR_BUTTONS		TRUE
-#define SCROLL_PIECES		6						// number of mid-scroll segments
-#define WHITE               255
+#define NOTEBOOK_BORDER_DX		DIALOG_LEFT
+#define NOTEBOOK_BORDER_DY		DIALOG_TOP
+#define NOTEBOOK_DX				DIALOG_WIDTH
+#define NOTEBOOK_DY				DIALOG_HEIGHT
 
-#define BUTTON_DY			15						// offset for Okay button from scroll baseBUTTON_DY
-#define	SCROLL_STRIP_WIDTH	10						// width of scroll middle to reveal per interval 
-#define	SCROLL_STRIP_DELAY	1000					// delay to wait after each partial scroll unfurling
+#define NOTE_BITMAPS_PER_LINE	6
+#define NOTE_BITMAP_DX			59
+#define NOTE_BITMAP_DY			59
+#define NOTE_BITMAP_DDX			25
+#define NOTE_BITMAP_DDY			10
+#define NOTE_SMALL_BITMAP_DX	50
+#define NOTE_SMALL_BITMAP_DY	50
 
-#define TEXT_SIZE           8
-#define	TEXT_BUFFER_SIZE	512						// # characters in the text input buffer
-#define	TEXT_LEFT_MARGIN	55						// left margin offset for display of text
-#define	TEXT_RIGHT_MARGIN	45						// right margin offset for display of text
-#define	TEXT_TOP_MARGIN		5                       // top margin offset for display of text
-#define	TEXT_BOTTOM_MARGIN	20                      // bottom margin offset for display of text
-#define	TEXT_WIDTH			(490-TEXT_LEFT_MARGIN-TEXT_RIGHT_MARGIN)	// Width of text display area
-#define TEXT_MORE_DX		120						// offset of "more" indicator from right margin
-#define TEXT_MORE_DY		10                      // offset of "more" indicator bottom of scroll
-#define MORE_TEXT_BLURB		"[ More ]"				// actual text to display for "more" indicator
-#define MORE_TEXT_LENGTH	8                       // # characters in "more" indicator string
-#define TEXT_NEWLINE		'\\'                    // character that indicates enforced line break
-#endif
+#define NOTE_PERSON_DX			NOTEBOOK_BORDER_DX
+#define NOTE_PERSON_DY			NOTEBOOK_BORDER_DY - 2
+#define NOTE_PLACE_DX			NOTEBOOK_DX - NOTEBOOK_BORDER_DX - NOTE_BITMAP_DX - 5			
+#define NOTE_PLACE_DY			NOTEBOOK_BORDER_DY - 2
+#define NOTE_ICON_DY			NOTEBOOK_DY - NOTEBOOK_BORDER_DY - NOTE_BITMAP_DY + 2
+#define NOTE_ICON_DDX			50
 
-Notebook::Notebook() : Dialog("Notebook") {
+#define NOTE_TEXT_DX			NOTEBOOK_BORDER_DX
+#define NOTE_TEXT_DY			NOTEBOOK_BORDER_DY + NOTE_BITMAP_DY + NOTE_BITMAP_DDY - 4
+#define NOTE_TEXT_DDX			NOTEBOOK_DX - (NOTEBOOK_BORDER_DX << 1)
+#define NOTE_TEXT_DDY			NOTEBOOK_DY - (NOTEBOOK_BORDER_DY << 1) - (NOTE_BITMAP_DY << 1) - NOTE_BITMAP_DDY + 4
+#define	NOTE_TEXT_CHARSPERLINE	30
+#define NOTE_TEXT_COLOR			PURPLE
+#define NOTE_MORE_COLOR			BLACK
+
+Notebook::Notebook() : Dialog("Notebook"),
+	_personRect(RectWH(NOTE_PERSON_DX, NOTE_PERSON_DY, NOTE_BITMAP_DX, NOTE_BITMAP_DY)),
+	_placeRect(RectWH(NOTE_PLACE_DX, NOTE_PLACE_DY, NOTE_BITMAP_DX, NOTE_BITMAP_DY)) {
 }
 
 void Notebook::show(CNote *pNotes, CNote *pNote) {
@@ -153,50 +160,51 @@ bool Notebook::msgMouseUp(const MouseUpMessage &msg) {
 void Notebook::draw() {
 	Dialog::draw();
 
-#if TODO
-	int scrollHeight = _scroll.h - _scrollTop.h - _scrollBottom.h;
 	GfxSurface s = getSurface();
-	s.setFontSize(TEXT_SIZE);
-	s.blitFrom(_background);
+	CNote *pNote;
+	int nDeltaX, nDeltaY;
+	int x, y, dx, dy;
 
-	if (_scrollY < scrollHeight) {
-		// Unfurling scroll
-		// Top scroll
-		int y = (s.h - _scrollTop.h - _scrollY - _scrollBottom.h) / 2;
-		s.blitFrom(_scrollTop, Common::Point(0, y));
-
-		// Bottom scroll
-		s.blitFrom(_scrollBottom,
-			Common::Point(0, y + _scrollTop.h + _scrollY));
-
-		// Partial content of the scroll middle
-		const Graphics::ManagedSurface content(_scrollContent,
-			Common::Rect(0, _scrollTop.h, _scrollContent.w,
-				_scrollContent.h - _scrollBottom.h));
-
-		s.blitFrom(content,
-			Common::Rect(0, content.h / 2 - (_scrollY / 2),
-				content.w, content.h / 2 + (_scrollY / 2)),
-			Common::Point(0, y + _scrollTop.h)
-		);
-
+	if (pNoteList == nullptr) {
+		// Empty notebook
+		if (pKeyNote == nullptr) {
+			// ... so just say so and leave
+			RectWH emptyRect(NOTE_TEXT_DX, NOTE_TEXT_DY,
+				NOTE_TEXT_DDX, NOTE_TEXT_DDY);
+			s.writeString("The log is empty ...",
+				emptyRect, PURPLE);
+			return;
+		} else {
+			// Show the requested note
+			pNote = pKeyNote;
+		}
 	} else {
-		// The scroll is completely unfurled
-		s.blitFrom(_scrollContent);
-
-		// Add the Ok button if not already
-		if (_children.empty())
-			_okButton.setParent(this);
-
-		// Show the more buttons
-		if (_helpPage > 0) {
-			s.writeString(_more, _moreTop, BLACK);
-		}
-		if ((_helpPage + 1) < _lines.size()) {
-			s.writeString(_more, _moreBottom, BLACK);
-		}
+		// Show the one note list points to
+		pNote = pNoteList;
 	}
-#endif
+
+	s.blitFrom(_person, Common::Point(NOTE_PERSON_DX, NOTE_PERSON_DY));
+	s.blitFrom(_place, Common::Point(NOTE_PLACE_DX, NOTE_PLACE_DY));
+
+	if (pNote->GetRepeatCount() <= NOTE_BITMAPS_PER_LINE) {	// shrink the bitmaps a little if
+		nDeltaX = NOTE_BITMAP_DX;                               // ... the number of repetitions
+		nDeltaY = NOTE_BITMAP_DY;                               // ... would force them off the page
+	} else {
+		nDeltaX = NOTE_SMALL_BITMAP_DX;
+		nDeltaY = NOTE_SMALL_BITMAP_DY;
+	}
+	dx = (pNote->GetRepeatCount() * nDeltaX) + ((pNote->GetRepeatCount() - 1) * (NOTE_BITMAP_DDX / pNote->GetRepeatCount()));
+	x = ((NOTEBOOK_DX - (NOTEBOOK_BORDER_DX << 1)) - dx) >> 1;  // establish left most position
+	for (int i = 0; i < pNote->GetRepeatCount(); i++)
+		// Loop till all icons displayed
+		s.blitFrom(_clue, Common::Rect(0, 0, _clue.w, _clue.h),
+			RectWH(x + (i * (nDeltaX + (NOTE_BITMAP_DDX / pNote->GetRepeatCount()))) +
+				NOTEBOOK_BORDER_DX, NOTE_ICON_DY,
+				nDeltaX, nDeltaY));
+
+	s.setTextColor(NOTE_TEXT_COLOR);
+
+	// TODO: Render note text
 }
 
 bool Notebook::hasPriorNote() const {
@@ -239,6 +247,35 @@ void Notebook::lastNote() {
 
 		redraw();
 	}
+}
+
+void Notebook::updateContent() {
+	CNote *pNote;
+	const char *pFileSpec;
+
+	if (pNoteList == nullptr) {
+		if (pKeyNote == nullptr)
+			// Empty log
+			return;
+		pNote = pKeyNote;
+	} else {
+		pNote = pNoteList;
+	}
+
+	lpsPersonSoundSpec = pNote->GetPersonSoundSpec();
+	lpsPlaceSoundSpec = pNote->GetPlaceSoundSpec();
+
+	pFileSpec = pNote->GetPersonArtSpec();
+	assert(pFileSpec);
+	_person.loadBitmap(pFileSpec);
+
+	pFileSpec = pNote->GetPlaceArtSpec();
+	assert(pFileSpec);
+	_place.loadBitmap(pFileSpec);
+
+	pFileSpec = pNote->GetClueArtSpec();
+	assert(pFileSpec);
+	_clue.loadBitmap(pFileSpec);
 }
 
 } // namespace Metagame

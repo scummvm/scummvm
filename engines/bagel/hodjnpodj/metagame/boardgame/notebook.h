@@ -36,8 +36,12 @@ private:
 	OkButton _okButton;
 	Common::Rect _scrollTopRect, _scrollBottomRect;
 	Common::Point _moreTop, _moreBottom;
+	Common::Rect _personRect, _placeRect;
 	CNote *pNoteList = nullptr;	// Pointer to notebook note list
 	CNote *pKeyNote = nullptr;	// Single note to be shown
+	const char *lpsPersonSoundSpec = nullptr;
+	const char *lpsPlaceSoundSpec = nullptr;
+	GfxSurface _person, _place, _clue;
 
 	bool hasPriorNote() const;
 	bool hasNextNote() const;
@@ -45,6 +49,7 @@ private:
 	void nextNote();
 	void firstNote();
 	void lastNote();
+	void updateContent();
 
 public:
 	Notebook();
