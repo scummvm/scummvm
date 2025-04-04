@@ -329,9 +329,9 @@ void TinyGLRenderer::drawInViewport() {
 	tglPushMatrix();
 	_pos.x() += 0.01f;
 	_pos.y() += 0.01f;
-	if (_pos.x() >= 1.0f) {
-		_pos.x() = -1.0;
-		_pos.y() = -1.0;
+	if (_pos.x() >= 1.1f) {
+		_pos.x() = -1.1;
+		_pos.y() = -1.1;
 	}
 	tglTranslatef(_pos.x(), _pos.y(), 0);
 

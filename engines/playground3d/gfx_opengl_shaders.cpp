@@ -285,9 +285,9 @@ void ShaderRenderer::drawInViewport() {
 
 	_pos.setX(_pos.getX() + 0.01f);
 	_pos.setY(_pos.getY() + 0.01f);
-	if (_pos.getX() >= 1.0f) {
-		_pos.setX(-1.0f);
-		_pos.setY(-1.0f);
+	if (_pos.getX() >= 1.1f) {
+		_pos.setX(-1.1f);
+		_pos.setY(-1.1f);
 	}
 
 	_viewportShader->setUniform("offset", _pos);

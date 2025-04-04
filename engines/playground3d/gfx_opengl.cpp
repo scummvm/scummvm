@@ -283,9 +283,9 @@ void OpenGLRenderer::drawInViewport() {
 	glPushMatrix();
 	_pos.x() += 0.01f;
 	_pos.y() += 0.01f;
-	if (_pos.x() >= 1.0f) {
-		_pos.x() = -1.0f;
-		_pos.y() = -1.0f;
+	if (_pos.x() >= 1.1f) {
+		_pos.x() = -1.1f;
+		_pos.y() = -1.1f;
 	}
 	glTranslatef(_pos.x(), _pos.y(), 0);
 
