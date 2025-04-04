@@ -39,7 +39,7 @@ MenuManager::MenuManager(ZVision *engine, const Common::Rect menuArea, const Men
   _params(params),
 	menuBarFlag(0xFFFF),
 	_menuArea(menuArea),
-  menuOrigin(menuArea.left,menuArea.top),
+  menuOrigin(menuArea.origin()),
   menuTriggerArea(menuOrigin,_menuArea.width(),_params.triggerHeight),
   mainScroller(params.activePos, params.idlePos, params.period) {
 	
@@ -168,7 +168,7 @@ void MenuManager::process(uint32 deltatime) {
 	if(mainScroller.update(deltatime)) {
 	  mainArea.moveTo(menuOrigin+mainScroller.Pos);
     for (int i = 0; i < 4; i++)
-      menuHotspots[i].moveTo(_menuArea.left + _params.wxButs[i][1], _menuArea.top + mainScroller.Pos.y);
+      menuHotspots[i].moveTo(menuOrigin + Common::Point(_params.wxButs[i][1], mainScroller.Pos.y));
 		redraw = true;
 	}
   //Update button highlight animation frame
@@ -203,7 +203,6 @@ void MenuManager::redrawMain() {
     }
   clean = false;
 }
-
 
 void MenuManager::setFocus(int8 currentFocus) {
   menuFocus.set(currentFocus);
