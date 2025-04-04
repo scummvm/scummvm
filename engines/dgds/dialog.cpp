@@ -60,15 +60,18 @@ void Dialog::draw(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 
 
 const DgdsFont *Dialog::getDlgTextFont() const {
-	const FontManager *fontman = DgdsEngine::getInstance()->getFontMan();
+	DgdsEngine *engine = DgdsEngine::getInstance();
+	const FontManager *fontman = engine->getFontMan();
 	FontManager::FontType fontType = FontManager::kGameDlgFont;
 	if (_fontSize == 1)
 		fontType = FontManager::k8x8Font;
 	else if (_fontSize == 3)
 		fontType = FontManager::k4x5Font;
-	else if (_fontSize == 4 && DgdsEngine::getInstance()->getGameId() == GID_WILLY)
+	else if (_fontSize == 4 && engine->getGameId() == GID_WILLY)
 		fontType = FontManager::kGameDlgFont;
-	else if (_fontSize == 5 && DgdsEngine::getInstance()->getGameId() == GID_HOC)
+	else if (_fontSize == 4 && engine->getGameId() == GID_HOC && engine->getGameLang() == Common::DE_DEU)
+		fontType = FontManager::kGameFont;
+	else if (_fontSize == 5 && engine->getGameId() == GID_HOC)
 		fontType = FontManager::kChinaFont;
 	return fontman->getFont(fontType);
 }
