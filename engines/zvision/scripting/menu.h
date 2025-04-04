@@ -164,6 +164,8 @@ private:
 	static const uint16 wSideMenuTab = 20;
   static const int16 magicWidth = 47;
 
+  const int16 sideMenuPeriod = 300;
+
   Scroller itemsScroller, magicScroller;
 
   const Common::Point magicOrigin;

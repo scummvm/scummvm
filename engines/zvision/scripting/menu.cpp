@@ -212,8 +212,8 @@ void MenuManager::setFocus(int8 currentFocus) {
 
 MenuZGI::MenuZGI(ZVision *engine, const Common::Rect menuArea) :
 	MenuManager(engine, menuArea, zgiParams),
-	itemsScroller(Common::Point(0,0), Common::Point(wSideMenuTab-wSideMenu,0), 1000),
-	magicScroller(Common::Point(-wSideMenu,0), Common::Point(-wSideMenuTab,0), 1000),
+	itemsScroller(Common::Point(0,0), Common::Point(wSideMenuTab-wSideMenu,0), sideMenuPeriod),
+	magicScroller(Common::Point(-wSideMenu,0), Common::Point(-wSideMenuTab,0), sideMenuPeriod),
 	itemsOrigin(menuArea.left, menuArea.top),
 	magicOrigin(menuArea.right, menuArea.top) {
 
