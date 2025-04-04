@@ -23,6 +23,9 @@
 #define COMMON_MD5_H
 
 #include "common/scummsys.h"
+#include "gui/integrity-dialog.h"
+
+typedef bool (* ProgressUpdateCallback)(GUI::IntegrityDialog *, int);
 
 namespace Common {
 
@@ -48,7 +51,7 @@ class String;
  * @param[in] length	the number of bytes for which to compute the checksum; 0 means all
  * @return true on success, false if an error occurred
  */
-bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length = 0);
+bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length = 0, ProgressUpdateCallback progressUpdateCallback = nullptr, GUI::IntegrityDialog *dialog = nullptr);
 
 /**
  * Compute the MD5 checksum of the content of the given ReadStream.
@@ -60,7 +63,7 @@ bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length = 0);
  * @param[in] length	the number of bytes for which to compute the checksum; 0 means all
  * @return the MD5 as a hex string on success, and an empty string if an error occurred
  */
-String computeStreamMD5AsString(ReadStream &stream, uint32 length = 0);
+String computeStreamMD5AsString(ReadStream &stream, uint32 length = 0, ProgressUpdateCallback progressUpdateCallback = nullptr, GUI::IntegrityDialog *dialog = nullptr);
 
 /** @} */
 
