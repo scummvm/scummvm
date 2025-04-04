@@ -919,7 +919,7 @@ void RequestData::drawInvType(Graphics::ManagedSurface *dst) {
 	}
 
 	for (const auto &textItem : _textItemList) {
-		if (!textItem._txt.empty())
+		if (!textItem._txt.empty() && textItem._txt != " ")
 			error("TODO: RequestData::drawInvType: Implement support for drawing text item.");
 	}
 
