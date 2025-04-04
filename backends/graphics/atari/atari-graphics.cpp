@@ -915,22 +915,22 @@ void AtariGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, 
 bool AtariGraphicsManager::showMouse(bool visible) {
 	//atari_debug("showMouse: %d", visible);
 
-	bool last;
+	bool lastOverlay, lastFront, lastBack1 = false;
 
-	if (isOverlayVisible()) {
-		last = _screen[kOverlayBuffer]->cursor.setVisible(visible);
-	} else if (_currentState.mode <= kSingleBuffering) {
-		last = _screen[kFrontBuffer]->cursor.setVisible(visible);
-	} else {
-		last = _screen[kBackBuffer1]->cursor.setVisible(visible);
+	lastOverlay = _screen[kOverlayBuffer]->cursor.setVisible(visible);
+	lastFront   = _screen[kFrontBuffer]->cursor.setVisible(visible);
+
+	if (_currentState.mode == kTripleBuffering) {
+		lastBack1 = _screen[kBackBuffer1]->cursor.setVisible(visible);
 		_screen[kBackBuffer2]->cursor.setVisible(visible);
-		_screen[kFrontBuffer]->cursor.setVisible(visible);
 	}
 
-	// don't rely on engines to call it (if they don't it confuses the cursor restore logic)
-	updateScreen();
-
-	return last;
+	if (isOverlayVisible())
+		return lastOverlay;
+	else if (_currentState.mode <= kSingleBuffering)
+		return lastFront;
+	else
+		return lastBack1;
 }
 
 void AtariGraphicsManager::warpMouse(int x, int y) {
@@ -957,24 +957,20 @@ void AtariGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int h
 	if (format)
 		assert(*format == PIXELFORMAT_CLUT8);
 
-	if (isOverlayVisible()) {
-		_screen[kOverlayBuffer]->cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
-	} else if (_currentState.mode <= kSingleBuffering) {
-		_screen[kFrontBuffer]->cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
-	} else {
+	_screen[kOverlayBuffer]->cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
+	_screen[kFrontBuffer]->cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
+
+	if (_currentState.mode == kTripleBuffering) {
 		_screen[kBackBuffer1]->cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
 		_screen[kBackBuffer2]->cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
-		_screen[kFrontBuffer]->cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
 	}
 }
 
 void AtariGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
 	atari_debug("setCursorPalette: %d, %d", start, num);
 
-	if (isOverlayVisible()) {
-		// cursor palette is supported only in the overlay
-		_screen[kOverlayBuffer]->cursor.setPalette(colors, start, num);
-	}
+	// cursor palette is supported only in the overlay
+	_screen[kOverlayBuffer]->cursor.setPalette(colors, start, num);
 }
 
 void AtariGraphicsManager::updateMousePosition(int deltaX, int deltaY) {

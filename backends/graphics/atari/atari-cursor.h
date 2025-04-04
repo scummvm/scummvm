@@ -129,6 +129,10 @@ private:
 	int _hotspotY;
 	uint32 _keycolor;
 
+	// TODO: make all surface-related variables and functions static, similar to _palette/
+	// but there's a catch: we still need _surfaceChanged instantiated and convertTo may
+	// be called when clipping changes. Perhaps Cursor should be a singleton and those
+	// flags moved to Screen...
 	Graphics::Surface _surface;
 	Graphics::Surface _surfaceMask;
 	int _rShift, _gShift, _bShift;
