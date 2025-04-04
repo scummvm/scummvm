@@ -24,6 +24,8 @@
 
 #include "graphics/surface.h"
 #include "common/rect.h"
+#include "common/array.h"
+#include "common/bitarray.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
@@ -31,44 +33,110 @@
 
 namespace ZVision {
 
-enum menuBar {
-	kMenubarExit = 0x1,
-	kMenubarSettings = 0x2,
-	kMenubarRestore = 0x4,
-	kMenubarSave = 0x8,
-	kMenubarItems = 0x100,
-	kMenubarMagic = 0x200
+enum {
+	kMainMenuSave = 0,
+	kMainMenuLoad = 1,
+	kMainMenuPrefs = 2,
+	kMainMenuExit = 3,
+	kItemsMenu = 4,
+	kMagicMenu = 5
+};
+
+struct MenuParams {
+  int16 wxButs[4][2];   //Widths & X positions of main menu buttons; {Save, Restore, Prefs, Quit}
+  int16 wMain;  //Widths & X position of main menu background
+  int8 idleFrame; //Frame to display of unselected main menu button
+  int8 activeFrame; //Frame to display of selected main menu button when mouse is down
+  int8 clickedFrame; //Frame to display of selected main menu button when mouse is down
+  Common::Point activePos;  //Fully scrolled main menu position, relative to origin of menu area
+  Common::Point idlePos;  //Fully retracted main menu position, relative to origin of menu area
+  int16 period; //Duration of main menu scrolldown
+  int16 triggerHeight;  //Height of menu trigger area when inactive
+  int16 buttonPeriod; //Duration of main menu button animation
+};
+
+//NB - menu area is same width as working window.
+
+static const MenuParams nemesisParams {
+  { {120 , -1}, {144, 120}, {128, 264}, {120, 392} },
+  512,
+  -1,
+  4,
+  5,
+  Common::Point(0,0),
+  Common::Point(0,-32),
+  500,
+  2,
+  500
+};
+
+static const MenuParams zgiParams {
+  { {135 , 50}, {135, 185}, {135, 320}, {135, 455} },
+  580,
+  0,
+  1,
+  1,
+  Common::Point(30,0),
+  Common::Point(30,-20),
+  250,
+  32,
+  0
 };
 
 class MenuHandler {
 public:
-	MenuHandler(ZVision *engine, Common::Rect menuArea);
-	virtual ~MenuHandler() {};
-	virtual void onMouseMove(const Common::Point &Pos) {};
-	virtual void onMouseDown(const Common::Point &Pos) {};
-	virtual void onMouseUp(const Common::Point &Pos) {};
-	virtual void process(uint32 deltaTimeInMillis) {};
-  bool isInMenu() {return inMenu;}; //For widescreen mod; used to suspend panning, tilting & scripting triggers when the mouse is within the working window but also in the menu.
-  //NB former boolean flag inMenu has been renamed to menuActive.
+	MenuHandler(ZVision *engine, const Common::Rect menuArea, const MenuParams params);
+	virtual ~MenuHandler();
+	virtual void onMouseMove(const Common::Point &Pos);
+	virtual void onMouseDown(const Common::Point &Pos);
+	virtual void onMouseUp(const Common::Point &Pos);
+	virtual void process(uint32 deltaTimeInMillis);
+  bool inMenu() {return prevInMenu;};
+  virtual bool inMenu(const Common::Point &Pos) {return false;}; //For widescreen mod; used to suspend panning, tilting & scripting triggers when the mouse is within the working window but also in the menu.
 
-	void setEnable(uint16 flags) {
-		menuBarFlag = flags;
-	}
+	void mainMouseDown(const Common::Point &Pos); //Show clicked graphic under selected button
+	bool mainMouseMove(const Common::Point &Pos); //return true if selected button has changed
+
+	void setEnable(uint16 flags);
 	uint16 getEnable() {
 		return menuBarFlag;
 	}
+	bool getEnable(uint8 flag) {
+	  return enableFlags.get(flag);
+	}
+	
 protected:
-	uint16 menuBarFlag;
-	ZVision *_engine;
-  Common::Rect _menuArea;	
-  Common::Rect _menuTriggerArea;
-	bool menuActive;  //True if mouse is in menu area
-	bool inMenu = false;  //True if mouse is over scrolled menu graphics, regardless of menuActive
+  virtual void redrawAll() {};
+  void redrawMain();
+	int mouseOverMain(const Common::Point &Pos);
+	void setFocus(int8 currentFocus);
+	
+//	bool inMenu = false;  //True if menus are currently visible
+	bool prevInMenu = false;
 	bool redraw = true;
-	int mouseOnItem;
-	int32 colorkey = -1;  //Transparency color for compositing menu over playfield
-};
+	int mouseOnItem = -1;
+	static const int32 colorkey = -1;  //Transparency color for compositing menu over playfield
+	static const uint8 hMainMenu = 32;
+  int8 mainClicked = -1;
 
+	ZVision *_engine;
+  const MenuParams _params;
+	uint16 menuBarFlag;
+  const Common::Rect _menuArea;
+	const Common::Point menuOrigin;
+  const Common::Rect menuTriggerArea;
+	Graphics::Surface mainBack;
+	Graphics::Surface mainButtons[4][6];
+	Common::BitArray enableFlags;
+  Common::Rect mainArea;
+	Common::Rect menuHotspots[4];
+  int8 mainFrames[4]; //Frame to display of each main menu button; first row is currently displayed, 2nd row is backbuffer for idle animations
+  Scroller mainScroller;
+	Common::Array<int8> menuFocus; //Order in which menus have most recently had focus; determines current mouse focus & order in which to redraw them.
+	bool clean = false; //Whether or not to blank
+  LinearScroller* buttonAnim[4];
+};
+ 
 class MenuZGI: public MenuHandler {
 public:
 	MenuZGI(ZVision *engine, Common::Rect menuArea);
@@ -76,21 +144,33 @@ public:
 	void onMouseMove(const Common::Point &Pos) override;
 	void onMouseUp(const Common::Point &Pos) override;
 	void process(uint32 deltaTimeInMillis) override;
+  bool inMenu(const Common::Point &Pos) override;
 private:
-	Graphics::Surface menuBack[3][2];
-	Graphics::Surface menuBar[4][2];
+  void redrawAll() override;
+	Graphics::Surface menuBack[3];
 	Graphics::Surface *items[50][2];
 	uint itemId[50];
 
 	Graphics::Surface *magic[12][2];
 	uint magicId[12];
+//  void redrawMain(bool hasFocus) override;
+	void redrawItems();
+	void redrawMagic();
+	int mouseOverItem(const Common::Point &Pos, int itemCount);
+	int mouseOverMagic(const Common::Point &Pos);
+	
+	static const uint16 hSideMenu = 32;
+	static const uint16 wSideMenu = 600;
+	static const uint16 wSideMenuTab = 20;
+  static const int16 magicWidth = 47;
 
-	int menuMouseFocus;
+  Scroller itemsScroller, magicScroller;
 
-	bool scrolled[3];
-	int16 scrollPos[3];
+  const Common::Point magicOrigin;
+  const Common::Point itemsOrigin;
 
-	bool clean;
+  Common::Rect magicArea;
+  Common::Rect itemsArea;
 };
 
 class MenuNemesis: public MenuHandler {
@@ -98,22 +178,9 @@ public:
 	MenuNemesis(ZVision *engine, Common::Rect menuArea);
 	~MenuNemesis() override;
 	void onMouseMove(const Common::Point &Pos) override;
-	void onMouseUp(const Common::Point &Pos) override;
-	void process(uint32 deltaTimeInMillis) override;
+  bool inMenu(const Common::Point &Pos) override;
 private:
-	Graphics::Surface but[4][6];
-	Graphics::Surface menuBar;
-	Common::Rect hotspots[4];
-	
-  //Widths & X positions of buttons; {Save, Restore, Prefs, Exit}
-  //X positions relative to left of menu area
-  //const int16 wxButs[4][2] = { {120 , 64}, {144, 184}, {128, 328}, {120, 456} };  //Originals
-  const int16 wxButs[4][2] = { {120 , 0}, {144, 120}, {128, 264}, {120, 392} };
-	
-  Scroller menuScroller;
-
-	int frm;
-	int16 delay;
+  void redrawAll() override;
 };
 
 } // End of namespace ZVision

@@ -168,7 +168,7 @@ void ZVision::processEvents() {
 		case Common::EVENT_LBUTTONDOWN:
 			_cursorManager->cursorDown(true);
 			_menu->onMouseDown(_event.mouse);
-			if(!_menu->isInMenu() || !_widescreen) {
+			if(!_menu->inMenu() || !_widescreen) {
 			  _scriptManager->setStateValue(StateKey_LMouse, 1);
 			  _scriptManager->addEvent(_event);
 		  }
@@ -177,7 +177,7 @@ void ZVision::processEvents() {
 		case Common::EVENT_LBUTTONUP:
 			_cursorManager->cursorDown(false);
 			_menu->onMouseUp(_event.mouse);
-			if(!_menu->isInMenu() || !_widescreen) {
+			if(!_menu->inMenu() || !_widescreen) {
 			  _scriptManager->setStateValue(StateKey_LMouse, 0);
 			  _scriptManager->addEvent(_event);
       }
@@ -185,7 +185,7 @@ void ZVision::processEvents() {
 
 		case Common::EVENT_RBUTTONDOWN:
 			_cursorManager->cursorDown(true);
-			if(!_menu->isInMenu() || !_widescreen) {
+			if(!_menu->inMenu() || !_widescreen) {
 			  _scriptManager->setStateValue(StateKey_RMouse, 1);
 
 			  if (getGameId() == GID_NEMESIS)
@@ -195,7 +195,7 @@ void ZVision::processEvents() {
 
 		case Common::EVENT_RBUTTONUP:
 			_cursorManager->cursorDown(false);
-			if(!_menu->isInMenu() || !_widescreen) {
+			if(!_menu->inMenu() || !_widescreen) {
   			_scriptManager->setStateValue(StateKey_RMouse, 0);
 			}
 			break;
@@ -223,22 +223,26 @@ void ZVision::processEvents() {
 				break;
 
 			case kZVisionActionSave:
-				if (_menu->getEnable() & kMenubarSave)
+				//if (_menu->getEnable() & kMenubarSave)
+				if (_menu->getEnable(kMainMenuSave))		
 					_scriptManager->changeLocation('g', 'j', 's', 'e', 0);
 				break;
 
 			case kZVisionActionRestore:
-				if (_menu->getEnable() & kMenubarRestore)
+				//if (_menu->getEnable() & kMenubarRestore)
+				if (_menu->getEnable(kMainMenuLoad))		
 					_scriptManager->changeLocation('g', 'j', 'r', 'e', 0);
 				break;
 
 			case kZVisionActionPreferences:
-				if (_menu->getEnable() & kMenubarSettings)
+				//if (_menu->getEnable() & kMenubarSettings)
+				if (_menu->getEnable(kMainMenuPrefs))		
 					_scriptManager->changeLocation('g', 'j', 'p', 'e', 0);
 				break;
 
 			case kZVisionActionQuit:
-				if (_menu->getEnable() & kMenubarExit)
+				//if (_menu->getEnable() & kMenubarExit)
+				if (_menu->getEnable(kMainMenuExit))				
 					ifQuit();
 				break;
 
@@ -327,7 +331,7 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 	Common::Point clippedPos = pos;
 	clippedPos.x = CLIP<int16>(pos.x, _workingWindow.left + 1, _workingWindow.right - 1);
 
-	if (_workingWindow.contains(clippedPos) && !_menu->isInMenu()) {
+	if (_workingWindow.contains(clippedPos) && !_menu->inMenu()) {
 		cursorWasChanged = _scriptManager->onMouseMove(clippedPos, imageCoord);
 
 		RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
