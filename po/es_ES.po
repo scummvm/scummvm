@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-02 20:15+0000\n"
-"PO-Revision-Date: 2025-03-30 16:18+0000\n"
+"PO-Revision-Date: 2025-04-04 15:18+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -12386,20 +12386,16 @@ msgid "Go to end of save/load menu"
 msgstr "Final del menú de guardado/carga"
 
 #: engines/toltecs/metaengine.cpp:216
-#, fuzzy
-#| msgid "Move left"
 msgid "Move / Select"
-msgstr "Mover hacia la izquierda"
+msgstr "Mover/Seleccionar"
 
 #: engines/toltecs/metaengine.cpp:222
 msgid "Move / Perform Default Action"
-msgstr ""
+msgstr "Mover/Acción predeterminada"
 
 #: engines/toltecs/metaengine.cpp:258
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip ride"
-msgstr "Omitir vídeo"
+msgstr "Omitir atracción"
 
 #: engines/tony/tony.cpp:248
 #, c-format
