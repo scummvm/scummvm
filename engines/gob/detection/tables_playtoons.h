@@ -209,7 +209,7 @@
 {
 	{
 		"playtoons2",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"c5ca2a288cdaefca9556cd9ae4b579cf", 25158926,
 				   "spirou.stk",	"91080dc148de1bbd6a97321c1a1facf3", 9817086),
 		DE_DEU,
