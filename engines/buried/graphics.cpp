@@ -214,12 +214,12 @@ Graphics::Surface *GraphicsManager::getBitmap(Common::SeekableReadStream *stream
 	// Convert to the screen format, if required
 	if (decoder.getSurface()->format != g_system->getScreenFormat()) {
 		assert(_vm->isTrueColor());
-		return decoder.getSurface()->convertTo(g_system->getScreenFormat(), decoder.getPalette());
+		return decoder.getSurface()->convertTo(g_system->getScreenFormat(), decoder.getPalette().data(), decoder.getPalette().size());
 	}
 
 	// Remap the palette, if required
-	if (!_vm->isTrueColor() && memcmp(decoder.getPalette() + 3, getDefaultPalette() + 3, 256 - 6) != 0)
-		return remapPalettedFrame(decoder.getSurface(), decoder.getPalette());
+	if (!_vm->isTrueColor() && memcmp(decoder.getPalette().data() + 3, getDefaultPalette() + 3, 256 - 6) != 0)
+		return remapPalettedFrame(decoder.getSurface(), decoder.getPalette().data());
 
 	// Just copy the frame
 	Graphics::Surface *surface = new Graphics::Surface();

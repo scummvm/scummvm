@@ -68,9 +68,8 @@ public:
 	TGADecoder();
 	virtual ~TGADecoder();
 	virtual void destroy();
-	virtual const Graphics::Surface *getSurface() const { return &_surface; }
-	virtual const byte *getPalette() const { return _colorMap.data(); }
-	virtual uint16 getPaletteColorCount() const { return _colorMap.size(); }
+	const Graphics::Surface *getSurface() const override { return &_surface; }
+	const Graphics::Palette &getPalette() const override { return _colorMap; }
 	virtual bool loadStream(Common::SeekableReadStream &stream);
 private:
 	// Format-spec from:

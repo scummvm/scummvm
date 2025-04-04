@@ -22,6 +22,7 @@
 #ifndef IMAGE_SCR_H
 #define IMAGE_SCR_H
 
+#include "graphics/palette.h"
 #include "image/image_decoder.h"
 
 /**
@@ -52,8 +53,10 @@ public:
 	void destroy();
 	virtual bool loadStream(Common::SeekableReadStream &stream);
 	virtual const Graphics::Surface *getSurface() const { return _surface; }
+	const Graphics::Palette &getPalette() const { return _palette; }
 private:
 	Graphics::Surface *_surface;
+	Graphics::Palette _palette;
 	uint32 getPixelAddress(int x, int y);
 	uint32 getAttributeAddress(int x, int y);
 };

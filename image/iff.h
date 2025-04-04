@@ -85,10 +85,9 @@ public:
 	void destroy();
 	bool loadStream(Common::SeekableReadStream &stream);
 	const Header *getHeader() const { return &_header; }
-	const Graphics::Surface *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette.data(); }
+	const Graphics::Surface *getSurface() const override { return _surface; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 	const Common::Array<PaletteRange> &getPaletteRanges() const { return _paletteRanges; }
-	uint16 getPaletteColorCount() const { return _palette.size(); }
 
 	/**
 	* The number of planes to decode, also determines the pixel packing if _packPixels is true.

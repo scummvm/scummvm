@@ -190,8 +190,8 @@ bool CryOmni3DEngine::displayHLZ(const Common::Path &filepath, uint32 timeout) {
 		return false;
 	}
 
-	if (imageDecoder->hasPalette()) {
-		setPalette(imageDecoder->getPalette(), 0, imageDecoder->getPaletteColorCount());
+	if (imageDecoder->getPalette().size() > 0) {
+		setPalette(imageDecoder->getPalette().data(), 0, imageDecoder->getPalette().size());
 	}
 
 	const Graphics::Surface *frame = imageDecoder->getSurface();

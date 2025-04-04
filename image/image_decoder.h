@@ -30,6 +30,7 @@ class SeekableReadStream;
 }
 
 namespace Graphics {
+class Palette;
 struct Surface;
 }
 
@@ -94,20 +95,9 @@ public:
 	 * until destroy() or loadStream() is called, or until the destructor of
 	 * this ImageDecoder is called.
 	 *
-	 * The format of the palette is the same as that of the PaletteManager's palette.
-	 * (interleaved RGB values).
-	 *
-	 * @return The decoded palette, or undefined if no palette is present.
+	 * @return The decoded palette, or empty if no palette is present.
 	 */
-	virtual const byte *getPalette() const { return 0; }
-
-	/**
-	 * Query whether the decoded image has a palette.
-	 */
-	virtual bool hasPalette() const { return getPaletteColorCount() != 0; }
-
-	/** Return the number of colors in the palette. */
-	virtual uint16 getPaletteColorCount() const { return 0; }
+	virtual const Graphics::Palette &getPalette() const = 0;
 
 	/** Query whether the decoded image has a transparent color. */
 	virtual bool hasTransparentColor() const { return false; }

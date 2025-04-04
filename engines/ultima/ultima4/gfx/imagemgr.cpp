@@ -565,10 +565,9 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 				unscaled = Image::create(surface->w, surface->h, surface->format);
 				unscaled->blitFrom(*surface);
 
-				if (decoder->hasPalette()) {
-					int palCount = decoder->getPaletteColorCount();
-					const byte *pal = decoder->getPalette();
-					unscaled->setPalette(pal, palCount);
+				const Graphics::Palette &pal = decoder->getPalette();
+				if (pal.size() > 0) {
+					unscaled->setPalette(pal.data(), pal.size());
 				}
 
 				if (info->_width == -1) {

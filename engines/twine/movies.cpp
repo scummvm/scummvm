@@ -311,7 +311,7 @@ void Movies::prepareGIF(int index) {
 		return;
 	}
 	const Graphics::Surface *surface = decoder.getSurface();
-	_engine->setPalette(0, decoder.getPaletteColorCount(), decoder.getPalette());
+	_engine->setPalette(0, decoder.getPalette().size(), decoder.getPalette().data());
 	Graphics::ManagedSurface& target = _engine->_frontVideoBuffer;
 	const Common::Rect surfaceBounds(0, 0, surface->w, surface->h);
 	target.blitFrom(*surface, surfaceBounds, target.getBounds());

@@ -62,10 +62,8 @@ public:
 	// ImageDecoder API
 	bool loadStream(Common::SeekableReadStream &stream);
 	void destroy();
-	const Graphics::Surface *getSurface() const { return _outputSurface; }
-	const byte *getPalette() const { return _palette.data(); }
-	int getPaletteSize() const { return 256; }
-	uint16 getPaletteColorCount() const { return _palette.size(); }
+	const Graphics::Surface *getSurface() const override { return _outputSurface; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 
 	struct PixMap {
 		uint32 baseAddr;

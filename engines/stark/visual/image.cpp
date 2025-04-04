@@ -81,7 +81,7 @@ bool VisualImageXMG::loadPNG(Common::SeekableReadStream *stream) {
 		return false;
 	}
 
-	if (pngDecoder.getPalette()) {
+	if (pngDecoder.getPalette().size() > 0) {
 		warning("Indexed colors PNG images are not supported");
 		return false;
 	}

@@ -186,7 +186,7 @@ Graphics::Surface *QManager::loadBitmapSurface(Common::SeekableReadStream &strea
 		Image::BitmapDecoder decoder;
 		if (!decoder.loadStream(stream))
 			return nullptr;
-		return decoder.getSurface()->convertTo(g_system->getScreenFormat(), decoder.getPalette());
+		return decoder.getSurface()->convertTo(g_system->getScreenFormat(), decoder.getPalette().data(), decoder.getPalette().size());
 	}
 	else if (bitsPerPixel == 1) {
 		Graphics::Surface *s = new Graphics::Surface;
@@ -218,7 +218,7 @@ Graphics::Surface *QManager::loadBitmapSurface(Common::SeekableReadStream &strea
 	if (!decoder.loadStream(convBmpStream))
 		return nullptr;
 
-	return decoder.getSurface()->convertTo(g_system->getScreenFormat(), decoder.getPalette());
+	return decoder.getSurface()->convertTo(g_system->getScreenFormat(), decoder.getPalette().data(), decoder.getPalette().size());
 }
 
 QManager::QResource::~QResource() {

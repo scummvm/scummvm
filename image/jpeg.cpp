@@ -46,6 +46,7 @@ namespace Image {
 
 JPEGDecoder::JPEGDecoder() :
 		_surface(),
+		_palette(0),
 		_colorSpace(kColorSpaceRGB),
 		_accuracy(CodecAccuracy::Default),
 		_requestedPixelFormat(getByteOrderRgbPixelFormat()) {
