@@ -27,22 +27,40 @@
 
 namespace ZVision {
 
+class LinearScroller {
+public:
+  LinearScroller(const int16 activePos, const int16 idlePos, const int16 period = 500);
+  ~LinearScroller();
+  void reset();
+  bool update(uint32 deltatime);  //Calculate updated position of scrolled graphics; return true if redraw is necessary.
+  void setActive(bool active);
+  bool isMoving();
+  int16 getPos();
+
+	int16 Pos;
+	int16 prevPos;
+
+private:
+  bool _active = false;
+  bool moving = false;
+  const int16 _activePos;
+  const int16 _idlePos;
+	const int16 deltaPos;
+  const int16 _period;
+};
+
 class Scroller {
 public:
   Scroller(const Common::Point &activePos, const Common::Point &idlePos, const int16 period = 500);
   ~Scroller();
+  void reset();
   bool update(uint32 deltatime);  //Calculate updated position of scrolled graphics; return true if redraw is necessary.
-
+  void setActive(bool active);
+  bool isMoving();
 	Common::Point Pos;
-	Common::Point prevPos;
 
-  bool active = false;
-	bool scrolled = false;  //True when menu is in full active position
 private:
-  const Common::Point _activePos;
-  const Common::Point _idlePos;
-	Common::Point deltaPos;
-  const int16 _period;
+  LinearScroller Xscroller, Yscroller;
 };
 
 } // End of namespace ZVision
