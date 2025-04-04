@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-02 20:15+0000\n"
-"PO-Revision-Date: 2025-03-12 17:18+0000\n"
+"PO-Revision-Date: 2025-04-05 05:03+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -11488,20 +11488,16 @@ msgid "Go to end of save/load menu"
 msgstr "Ves al final del menú de desar/carregar"
 
 #: engines/toltecs/metaengine.cpp:216
-#, fuzzy
-#| msgid "Move left"
 msgid "Move / Select"
-msgstr "Mou a l'esquerra"
+msgstr "Mou / Selecciona"
 
 #: engines/toltecs/metaengine.cpp:222
 msgid "Move / Perform Default Action"
 msgstr ""
 
 #: engines/toltecs/metaengine.cpp:258
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip ride"
-msgstr "Omet el vídeo"
+msgstr "Omet l'atracció"
 
 #: engines/tony/tony.cpp:248
 #, c-format
@@ -11807,11 +11803,11 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:360
 msgid "Use Protopack"
-msgstr ""
+msgstr "Utilitza Protopack"
 
 #: engines/twine/metaengine.cpp:365
 msgid "Open Holomap"
-msgstr ""
+msgstr "Obre l'Holomapa"
 
 #: engines/twine/metaengine.cpp:378
 msgid "Special Action"
@@ -11819,7 +11815,7 @@ msgstr "Acció especial"
 
 #: engines/twine/metaengine.cpp:384
 msgid "Scenery Zoom"
-msgstr ""
+msgstr "Amplia l'escenari"
 
 #: engines/twine/metaengine.cpp:527
 msgid "Previous location"
@@ -11836,7 +11832,7 @@ msgstr "Vídeo:"
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
 msgid "Toilet paper over"
-msgstr ""
+msgstr "Paper de vàter per davant"
 
 #: engines/twp/dialogs.cpp:38
 msgid ""
