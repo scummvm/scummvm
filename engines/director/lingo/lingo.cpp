@@ -1386,13 +1386,13 @@ const char *Datum::type2str(bool ilk) const {
 }
 
 int Datum::equalTo(const Datum &d, bool ignoreCase) const {
-	// VOID can only be equal to VOID and INT 0
+	// VOID can only be equal to VOID and INT 0 (on the right)
 	if (type == VOID && d.type == VOID) {
 		return 1;
 	} else if (type == VOID) {
 		return d.type == INT && d.u.i == 0;
 	} else if (d.type == VOID) {
-		return type == INT && u.i == 0;
+		return 0;
 	}
 	int alignType = g_lingo->getAlignedType(*this, d, true);
 
@@ -1435,13 +1435,11 @@ bool Datum::operator<(const Datum &d) const {
 }
 
 bool Datum::operator>=(const Datum &d) const {
-	uint32 res = compareTo(d);
-	return res & kCompareGreater || res & kCompareEqual;
+	return compareTo(d) & kCompareGreaterEqual;
 }
 
 bool Datum::operator<=(const Datum &d) const {
-	uint32 res = compareTo(d);
-	return res & kCompareLess || res & kCompareEqual;
+	return compareTo(d) & kCompareLessEqual;
 }
 
 uint32 Datum::compareTo(const Datum &d) const {
@@ -1450,15 +1448,13 @@ uint32 Datum::compareTo(const Datum &d) const {
 	// - less than -and- equal to INT 0 (yes, really)
 	// - less than any other type
 	if (type == VOID && d.type == VOID) {
-		return kCompareEqual;
+		return kCompareEqual | kCompareLessEqual | kCompareGreaterEqual;
 	} else if (type == VOID && d.type == INT && d.u.i == 0) {
-		return kCompareLess | kCompareEqual;
-	} else if (d.type == VOID && type == INT && u.i == 0) {
-		return kCompareLess | kCompareEqual;
+		return kCompareLess | kCompareEqual | kCompareLessEqual;
 	} else if (type == VOID) {
-		return kCompareLess;
+		return kCompareLess | kCompareLessEqual;
 	} else if (d.type == VOID) {
-		return kCompareGreater;
+		return kCompareGreater | kCompareGreaterEqual;
 	}
 
 	int alignType = g_lingo->getAlignedType(*this, d, true);
@@ -1467,21 +1463,21 @@ uint32 Datum::compareTo(const Datum &d) const {
 		double f1 = asFloat();
 		double f2 = d.asFloat();
 		if (f1 < f2) {
-			return kCompareLess;
+			return kCompareLess | kCompareLessEqual;
 		} else if (f1 == f2) {
-			return kCompareEqual;
+			return kCompareEqual | kCompareLessEqual | kCompareGreaterEqual;
 		} else {
-			return kCompareGreater;
+			return kCompareGreater | kCompareGreaterEqual;
 		}
 	} else if (alignType == INT) {
 		double i1 = asInt();
 		double i2 = d.asInt();
 		if (i1 < i2) {
-			return kCompareLess;
+			return kCompareLess | kCompareLessEqual;
 		} else if (i1 == i2) {
-			return kCompareEqual;
+			return kCompareEqual | kCompareLessEqual | kCompareGreaterEqual;
 		} else {
-			return kCompareGreater;
+			return kCompareGreater | kCompareGreaterEqual;
 		}
 	} else if (alignType == STRING || alignType == SYMBOL) {
 		uint32 result = 0;
@@ -1490,15 +1486,20 @@ uint32 Datum::compareTo(const Datum &d) const {
 		// match based on the equality table, whereas less/greater
 		// than status is determined by the order of the characters
 		// in the order table.
-		if (compareStringEquality(asString(), d.asString()))
-			result |= kCompareEqual;
+		bool eq = compareStringEquality(asString(), d.asString());
 		int res = compareStringOrder(asString(), d.asString());
 		if (res < 0) {
-			result |= kCompareLess;
+			result = kCompareLess | kCompareLessEqual;
+			if (eq) {
+				result |= kCompareEqual;
+			}
 		} else if (res == 0) {
-			result |= kCompareEqual;
+			result = kCompareEqual | kCompareLessEqual | kCompareGreaterEqual;
 		} else {
-			result |= kCompareGreater;
+			result = kCompareGreater | kCompareGreaterEqual;
+			if (eq) {
+				result |= kCompareEqual;
+			}
 		}
 		return result;
 	} else {
