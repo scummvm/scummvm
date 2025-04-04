@@ -333,7 +333,7 @@ bool Backpack::msgMouseUp(const MouseUpMessage &msg) {
 						if (pItem == nullptr)
 							pItem = (*pInventory).FindItem(MG_OBJ_PODJ_NOTEBOOK);
 						if (pItem != nullptr) {
-							Notebook::show(pItem->GetFirstNote());
+							Notebook::show(pItem->GetFirstNote(), nullptr);
 						break;
 
 					case ITEM_ACTION_SOUND: {

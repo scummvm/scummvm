@@ -19,30 +19,46 @@
  *
  */
 
-#ifndef HODJNPODJ_METAGAME_NOTEBOOK_H
-#define HODJNPODJ_METAGAME_NOTEBOOK_H
+#ifndef HODJNPODJ_VIEWS_NOTEBOOK_H
+#define HODJNPODJ_VIEWS_NOTEBOOK_H
 
-#include "bagel/hodjnpodj/views/view.h"
+#include "bagel/hodjnpodj/views/dialog.h"
 #include "bagel/hodjnpodj/gfx/button.h"
+#include "bagel/hodjnpodj/metagame/bgen/note.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-class Notebook : public View {
+class Notebook : public Dialog {
 private:
+	OkButton _okButton;
+	Common::Rect _scrollTopRect, _scrollBottomRect;
+	Common::Point _moreTop, _moreBottom;
+	CNote *pNoteList = nullptr;	// Pointer to notebook note list
+	CNote *pKeyNote = nullptr;	// Single note to be shown
+
+	bool hasPriorNote() const;
+	bool hasNextNote() const;
+	void priorNote();
+	void nextNote();
 
 public:
 	Notebook();
-	~Notebook() override {}
-
-	bool msgOpen(const OpenMessage &msg) override;
-	bool msgClose(const CloseMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-	void draw() override;
+	virtual ~Notebook() {
+	}
 
 	static void show(CNote *note);
+
+	void draw() override;
+	bool msgOpen(const OpenMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
+
+	static void show(CNote *pNotes, CNote *pNote);
 };
 
 } // namespace Metagame
