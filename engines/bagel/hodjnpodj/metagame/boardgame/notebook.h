@@ -42,6 +42,7 @@ private:
 	const char *lpsPersonSoundSpec = nullptr;
 	const char *lpsPlaceSoundSpec = nullptr;
 	GfxSurface _person, _place, _clue;
+	Common::String _description;
 
 	bool hasPriorNote() const;
 	bool hasNextNote() const;

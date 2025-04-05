@@ -56,6 +56,7 @@ namespace Metagame {
 #define	NOTE_TEXT_CHARSPERLINE	30
 #define NOTE_TEXT_COLOR			PURPLE
 #define NOTE_MORE_COLOR			BLACK
+#define MORE_TEXT_BLURB			"[ More ]"				// actual text to display for "more" indicator
 
 Notebook::Notebook() : Dialog("Notebook"),
 	_personRect(RectWH(NOTE_PERSON_DX, NOTE_PERSON_DY, NOTE_BITMAP_DX, NOTE_BITMAP_DY)),
@@ -163,7 +164,8 @@ void Notebook::draw() {
 	GfxSurface s = getSurface();
 	CNote *pNote;
 	int nDeltaX, nDeltaY;
-	int x, y, dx, dy;
+	int x, dx, dy;
+	Common::Rect textRect;
 
 	if (pNoteList == nullptr) {
 		// Empty notebook
@@ -171,8 +173,9 @@ void Notebook::draw() {
 			// ... so just say so and leave
 			RectWH emptyRect(NOTE_TEXT_DX, NOTE_TEXT_DY,
 				NOTE_TEXT_DDX, NOTE_TEXT_DDY);
+			s.setFontSize(14);
 			s.writeString("The log is empty ...",
-				emptyRect, PURPLE);
+				emptyRect, PURPLE, Graphics::kTextAlignCenter);
 			return;
 		} else {
 			// Show the requested note
@@ -204,7 +207,33 @@ void Notebook::draw() {
 
 	s.setTextColor(NOTE_TEXT_COLOR);
 
-	// TODO: Render note text
+	dy = s.getStringHeight() * _description.size() / NOTE_TEXT_CHARSPERLINE;
+	if (dy < NOTE_TEXT_DDY)                                     // use the estimated number of lines
+		textRect = Common::Rect(NOTE_TEXT_DX,                            // ... of text to see if we can fit into
+			NOTE_TEXT_DY + ((NOTE_TEXT_DDY - dy) >> 1),	// ... a smaller rectangle, and thus
+			NOTE_TEXT_DX + NOTE_TEXT_DDX,                // ... center the text vertically as well
+			NOTE_TEXT_DY + ((NOTE_TEXT_DDY - dy) >> 1) + dy);
+	else
+		textRect = Common::Rect(NOTE_TEXT_DX,							// nope, so just use the default rectangle
+			NOTE_TEXT_DY,
+			NOTE_TEXT_DX + NOTE_TEXT_DDX,
+			NOTE_TEXT_DY + NOTE_TEXT_DDY);
+
+	GfxSurface textSurface(s, textRect, this);
+	Common::StringArray lines;
+	textSurface.wordWrapText(_description, lines);
+
+	for (uint i = 0; i < lines.size();
+			++i, textRect.top += textSurface.getStringHeight()) {
+		textSurface.writeString(lines[i], textRect);
+	}
+
+	// Handle More labels for scrolling
+	s.setTextColor(NOTE_MORE_COLOR);
+	if (hasPriorNote())
+		s.writeString(MORE_TEXT_BLURB, _moreTop);
+	if (hasNextNote())
+		s.writeString(MORE_TEXT_BLURB, _moreBottom);
 }
 
 bool Notebook::hasPriorNote() const {
@@ -276,6 +305,9 @@ void Notebook::updateContent() {
 	pFileSpec = pNote->GetClueArtSpec();
 	assert(pFileSpec);
 	_clue.loadBitmap(pFileSpec);
+
+	_description = pNote->GetDescription();
+	assert(!_description.empty());
 }
 
 } // namespace Metagame

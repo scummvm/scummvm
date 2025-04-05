@@ -261,7 +261,7 @@ void Rules::draw() {
 		if (_children.empty())
 			_okButton.setParent(this);
 
-		// Show the more buttons
+		// Show the More labels
 		if (_helpPage > 0) {
 			s.writeString(_more, _moreTop, BLACK);
 		}
