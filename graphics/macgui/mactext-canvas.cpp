@@ -81,7 +81,6 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 	int w = getLineWidth(curLine, true);
 	D(9, "** chopChunk before wrap \"%s\"", Common::toPrintable(str.encode()).c_str());
 
-	
 	chunk->getFont()->wordWrapText(str, maxWidth, text, lineContinuations, w);
 
 	for (int i = 0; i < (int)text.size(); i++) {
@@ -141,7 +140,6 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 		_text[curLine].indent = indent;
 		_text[curLine].firstLineIndent = 0;
 		_text[curLine].wordContinuation = lineContinuations[i];
-
 
 		D(9, "** chopChunk, added line (firstIndent: %d): \"%s\"", _text[curLine].firstLineIndent, toPrintable(text[i].encode()).c_str());
 	}
@@ -763,6 +761,10 @@ void MacTextCanvas::render(int from, int to) {
 }
 
 int getStringMaxWordWidth(MacFontRun &format, const Common::U32String &str) {
+	if (str.empty()) 
+		return 0;
+	
+
 	if (format.plainByteMode()) {
 		Common::StringTokenizer tok(Common::convertFromU32String(str, format.getEncoding()));
 		int maxW = 0;
