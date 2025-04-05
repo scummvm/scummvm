@@ -104,8 +104,6 @@ bool LibretroOpenGLGraphics::hasFeature(OSystem::Feature f) const {
 #ifdef SCUMMVM_NEON
 	(f == OSystem::kFeatureCpuNEON) ||
 #endif
-	(f == OSystem::kFeatureOpenGLForGame) ||
-	(f == OSystem::kFeatureShadersForGame) ||
 	OpenGL::OpenGLGraphicsManager::hasFeature(f);
 }
 
