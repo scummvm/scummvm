@@ -165,6 +165,7 @@ void DialogPanel::updateSubtitleVisual() {
 
 	_subtitleVisual = new VisualText(_gfx);
 	_subtitleVisual->setText(_currentSpeech->getPhrase());
+	_subtitleVisual->setAlign(Graphics::TextAlign::kTextAlignStart);
 	_subtitleVisual->setColor(color);
 	_subtitleVisual->setFont(FontProvider::kBigFont);
 	_subtitleVisual->setTargetWidth(600);
