@@ -533,7 +533,6 @@ void AGOSEngine::delay(uint amount) {
 								missingHitArea, getGameId(), getLanguage());
 					}
 				}
-				
 
 				if (getGameType() == GType_PP) {
 					if (event.kbd.hasFlags(Common::KBD_SHIFT))
