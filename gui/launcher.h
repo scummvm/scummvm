@@ -230,6 +230,29 @@ public:
 	void selectLauncher();
 };
 
+class LauncherSimple : public LauncherDialog {
+public:
+	LauncherSimple(const Common::String &title);
+	~LauncherSimple() override;
+
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleKeyDown(Common::KeyState state) override;
+
+	LauncherDisplayType getType() const override { return kLauncherDisplayList; }
+
+protected:
+	void updateListing(int selPos = -1) override;
+	int getNextPos(int item) override;
+	void groupEntries(const Common::Array<LauncherEntry> &metadata);
+	void updateButtons() override;
+	void selectTarget(const Common::String &target) override;
+	int getSelected() override;
+	void build() override;
+
+private:
+	GroupedListWidget *_list;
+};
+
 } // End of namespace GUI
 
 #endif
