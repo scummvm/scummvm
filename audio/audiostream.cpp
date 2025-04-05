@@ -97,7 +97,7 @@ LoopingAudioStream::LoopingAudioStream(Common::DisposablePtr<RewindableAudioStre
 	assert(_parent);
 
 	if (rewind && !_parent->rewind()) {
-		// TODO: Properly indicate error
+		error("LoopingAudioStream::LoopingAudioStream: stream could not be rewound");
 		_loops = _completeIterations = 1;
 	}
 	if (_parent->endOfStream()) {
@@ -123,7 +123,7 @@ int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 		const int remainingSamples = numSamples - samplesRead;
 
 		if (!_parent->rewind()) {
-			// TODO: Properly indicate error
+			error("LoopingAudioStream::readBuffer: stream could not be rewound");
 			_loops = _completeIterations;
 			return samplesRead;
 		}
@@ -199,7 +199,7 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	_pos = _pos.addFrames(framesRead);
 
 	if (framesRead < framesLeft && _parent->endOfStream()) {
-		// TODO: Proper error indication.
+		error("SubLoopingAudioStream::readBuffer: Parent stream ended prematurely");
 		if (!_completeIterations)
 			_completeIterations = 1;
 		_loops = _completeIterations;
@@ -210,7 +210,7 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			return framesRead;
 
 		if (!_parent->seek(_loopStart)) {
-			// TODO: Proper error indication.
+			error("SubLoopingAudioStream::readBuffer: Failed to seek to loop start");
 			_loops = _completeIterations;
 			return framesRead;
 		}
