@@ -66,6 +66,32 @@ enum EfhDebugChannels {
 	kDebugFight,
 };
 
+// Lists of custom key actions within the EFH game engine itself.
+enum EfhAction {
+	kEfhActionUp = 273,
+	kEfhActionUpLeft = 278,
+	kEfhActionUpRight = 280,
+	kEfhActionDown = 274,
+	kEfhActionDownLeft = 279,
+	kEfhActionDownRight = 281,
+	kEfhActionLeft = 276,
+	kEfhActionRight = 275,
+	kEfhActionCharacterSummaryOne = 282,
+	kEfhActionCharacterSummaryTwo = 283,
+	kEfhActionCharacterSummaryThree = 284,
+	kEfhActionSave = 286,
+	kEfhActionLoad = 228,
+	kEfhActionAttack = 97,
+	kEfhActionHide = 104,
+	kEfhActionDefend = 100,
+	kEfhActionStatus = 115,
+	kEfhActionRun = 114,
+	kEfhActionCombat = 99,
+	kEfhActionTalk = 116,
+	kEfhActionLeave = 108,
+	kEfhActionESC =  27
+};
+
 class EfhGraphicsStruct {
 public:
 	EfhGraphicsStruct();

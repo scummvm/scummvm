@@ -27,6 +27,10 @@
 
 #include "efh/efh.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "common/config-manager.h"
 #include "efh/constants.h"
 
@@ -96,149 +100,139 @@ Common::Error EfhEngine::run() {
 		Common::Event event;
 		Common::KeyCode retVal = getLastCharAfterAnimCount(4);
 
-		switch (retVal) {
-		case Common::KEYCODE_DOWN:
-		case Common::KEYCODE_KP2:
-			goSouth();
-			_imageSetSubFilesIdx = 144;
-			break;
-		case Common::KEYCODE_UP:
-		case Common::KEYCODE_KP8:
-			goNorth();
-			_imageSetSubFilesIdx = 145;
-			break;
-		case Common::KEYCODE_RIGHT:
-		case Common::KEYCODE_KP6:
-			goEast();
-			_imageSetSubFilesIdx = 146;
-			break;
-		case Common::KEYCODE_LEFT:
-		case Common::KEYCODE_KP4:
-			goWest();
-			_imageSetSubFilesIdx = 147;
-			break;
-		case Common::KEYCODE_PAGEUP:
-		case Common::KEYCODE_KP9:
-			goNorthEast();
-			_imageSetSubFilesIdx = 146;
-			break;
-		case Common::KEYCODE_PAGEDOWN:
-		case Common::KEYCODE_KP3:
-			goSouthEast();
-			_imageSetSubFilesIdx = 146;
-			break;
-		case Common::KEYCODE_END:
-		case Common::KEYCODE_KP1:
-			goSouthWest();
-			_imageSetSubFilesIdx = 147;
-			break;
-		case Common::KEYCODE_HOME:
-		case Common::KEYCODE_KP7:
-			goNorthWest();
-			_imageSetSubFilesIdx = 147;
-			break;
-		case Common::KEYCODE_1:
-		case Common::KEYCODE_F1:
-			if (_teamChar[0]._id != -1) {
-				handleStatusMenu(1, _teamChar[0]._id);
-				_tempTextPtr = nullptr;
-				drawGameScreenAndTempText(true);
-				_redrawNeededFl = true;
+		switch (event.type) {
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				switch (event.customType) {
+				case Efh::kEfhActionDown:
+					goSouth();
+					_imageSetSubFilesIdx = 144;
+					break;
+				case Efh::kEfhActionUp:
+					goNorth();
+					_imageSetSubFilesIdx = 145;
+					break;
+				case Efh::kEfhActionRight:
+					goEast();
+					_imageSetSubFilesIdx = 146;
+					break;
+				case Efh::kEfhActionLeft:
+					goWest();
+					_imageSetSubFilesIdx = 147;
+					break;
+				case Efh::kEfhActionUpRight:
+					goNorthEast();
+					_imageSetSubFilesIdx = 146;
+					break;
+				case Efh::kEfhActionDownRight:
+					goSouthEast();
+					_imageSetSubFilesIdx = 146;
+					break;
+				case Efh::kEfhActionDownLeft:
+					goSouthWest();
+					_imageSetSubFilesIdx = 147;
+					break;
+				case Efh::kEfhActionUpLeft:
+					goNorthWest();
+					_imageSetSubFilesIdx = 147;
+					break;
+				case Efh::kEfhActionCharacterSummaryOne:
+					if (_teamChar[0]._id != -1) {
+						handleStatusMenu(1, _teamChar[0]._id);
+						_tempTextPtr = nullptr;
+						drawGameScreenAndTempText(true);
+						_redrawNeededFl = true;
+					} break;
+				case Efh::kEfhActionCharacterSummaryTwo:
+					if (_teamChar[1]._id != -1) {
+						handleStatusMenu(1, _teamChar[1]._id);
+						_tempTextPtr = nullptr;
+						drawGameScreenAndTempText(true);
+						_redrawNeededFl = true;
+					} break;
+				case Efh::kEfhActionCharacterSummaryThree:
+					if (_teamChar[2]._id != -1) {
+						handleStatusMenu(1, _teamChar[2]._id);
+						_tempTextPtr = nullptr;
+						drawGameScreenAndTempText(true);
+						_redrawNeededFl = true;
+					} break;
+				case Efh::kEfhActionSave: {
+					for (uint counter = 0; counter < 2; ++counter) {
+						clearBottomTextZone(0);
+						displayCenteredString("Are You Sure You Want To Save?", 24, 296, 160);
+						if (counter == 0)
+							displayFctFullScreen();
+					}
+					Common::KeyCode input = waitForKey();
+					if (input == Common::KEYCODE_y) {
+						displayMenuAnswerString("-> Yes <-", 24, 296, 169);
+						getInput(2);
+						saveGameDialog();
+					} else {
+						displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
+						getInput(2);
+					}
+					clearBottomTextZone_2(0);
+					displayLowStatusScreen(true);
+				} break;
+				case Efh::kEfhActionLoad: {
+					for (uint counter = 0; counter < 2; ++counter) {
+						clearBottomTextZone(0);
+						displayCenteredString("Are You Sure You Want To Load?", 24, 296, 160);
+						if (counter == 0)
+							displayFctFullScreen();
+					}
+					Common::KeyCode input = waitForKey();
+					if (input == Common::KEYCODE_y) {
+						displayMenuAnswerString("-> Yes <-", 24, 296, 169);
+						getInput(2);
+						loadGameDialog();
+					} else {
+						displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
+						getInput(2);
+					}
+					clearBottomTextZone_2(0);
+					displayLowStatusScreen(true);
+				} break;
+				default:
+					break;
 			}
-			break;
-		case Common::KEYCODE_2:
-		case Common::KEYCODE_F2:
-			if (_teamChar[1]._id != -1) {
-				handleStatusMenu(1, _teamChar[1]._id);
-				_tempTextPtr = nullptr;
-				drawGameScreenAndTempText(true);
-				_redrawNeededFl = true;
-			}
-			break;
-		case Common::KEYCODE_3:
-		case Common::KEYCODE_F3:
-			if (_teamChar[2]._id != -1) {
-				handleStatusMenu(1, _teamChar[2]._id);
-				_tempTextPtr = nullptr;
-				drawGameScreenAndTempText(true);
-				_redrawNeededFl = true;
-			}
-			break;
-		case Common::KEYCODE_F5: { // Original is using CTRL-S, which is mapped to F5 in utils
-			for (uint counter = 0; counter < 2; ++counter) {
-				clearBottomTextZone(0);
-				displayCenteredString("Are You Sure You Want To Save?", 24, 296, 160);
-				if (counter == 0)
-					displayFctFullScreen();
-			}
-			Common::KeyCode input = waitForKey();
-			if (input == Common::KEYCODE_y) {
-				displayMenuAnswerString("-> Yes <-", 24, 296, 169);
-				getInput(2);
-				saveGameDialog();
-			} else {
-				displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
-				getInput(2);
-			}
-			clearBottomTextZone_2(0);
-			displayLowStatusScreen(true);
 
-			}
-			break;
-		case Common::KEYCODE_F7: { // Original is using CTRL-L, which is mapped to F7 in utils
-			for (uint counter = 0; counter < 2; ++counter) {
-				clearBottomTextZone(0);
-				displayCenteredString("Are You Sure You Want To Load?", 24, 296, 160);
-				if (counter == 0)
-					displayFctFullScreen();
-			}
-			Common::KeyCode input = waitForKey();
-			if (input == Common::KEYCODE_y) {
-				displayMenuAnswerString("-> Yes <-", 24, 296, 169);
-				getInput(2);
-				loadGameDialog();
-			} else {
-				displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
-				getInput(2);
-			}
-			clearBottomTextZone_2(0);
-			displayLowStatusScreen(true);
-
-		} break;
-
-		// debug cases to test sound
-		case Common::KEYCODE_4:
-			if (ConfMan.getBool("dump_scripts"))
-				generateSound(13);
-			break;
-		case Common::KEYCODE_5:
-			if (ConfMan.getBool("dump_scripts"))
-				generateSound(14);
-			break;
-		case Common::KEYCODE_6:
-			if (ConfMan.getBool("dump_scripts"))
-				generateSound(15);
-			break;
-		case Common::KEYCODE_7:
-			if (ConfMan.getBool("dump_scripts"))
-				generateSound(5);
-			break;
-		case Common::KEYCODE_8:
-			if (ConfMan.getBool("dump_scripts"))
-				generateSound(10);
-			break;
-		case Common::KEYCODE_9:
-			if (ConfMan.getBool("dump_scripts"))
-				generateSound(9);
-			break;
-		case Common::KEYCODE_0:
-			if (ConfMan.getBool("dump_scripts"))
-				generateSound(16);
-			break;
-		default:
-			if (retVal != Common::KEYCODE_INVALID)
-				warning("Main Loop: Unhandled input %d", retVal);
-			break;
+				switch (retVal) {
+				// debug cases to test sound
+				case Common::KEYCODE_4:
+					if (ConfMan.getBool("dump_scripts"))
+						generateSound(13);
+					break;
+				case Common::KEYCODE_5:
+					if (ConfMan.getBool("dump_scripts"))
+						generateSound(14);
+					break;
+				case Common::KEYCODE_6:
+					if (ConfMan.getBool("dump_scripts"))
+						generateSound(15);
+					break;
+				case Common::KEYCODE_7:
+					if (ConfMan.getBool("dump_scripts"))
+						generateSound(5);
+					break;
+				case Common::KEYCODE_8:
+					if (ConfMan.getBool("dump_scripts"))
+						generateSound(10);
+					break;
+				case Common::KEYCODE_9:
+					if (ConfMan.getBool("dump_scripts"))
+						generateSound(9);
+					break;
+				case Common::KEYCODE_0:
+					if (ConfMan.getBool("dump_scripts"))
+						generateSound(16);
+					break;
+				default:
+					if (retVal != Common::KEYCODE_INVALID)
+						warning("Main Loop: Unhandled input %d", retVal);
+					break;
+				}
 		}
 
 		if ((_mapPosX != _oldMapPosX || _mapPosY != _oldMapPosY) && !shouldQuitGame()) {
@@ -2421,29 +2415,31 @@ bool EfhEngine::checkMonsterCollision() {
 					displayFctFullScreen();
 			}
 
+			Common::Event event;
 			Common::KeyCode input = mapInputCode(waitForKey());
 
 			switch (input) {
-			case Common::KEYCODE_a: // Attack
-				handleFight(monsterId);
-				endLoop = true;
-				break;
-			case Common::KEYCODE_ESCAPE:
-			case Common::KEYCODE_l: // Leave
-				endLoop = true;
-				break;
-			case Common::KEYCODE_s: // Status
-				handleStatusMenu(1, _teamChar[0]._id);
-				endLoop = true;
-				_tempTextPtr = nullptr;
-				drawGameScreenAndTempText(true);
-				break;
-			case Common::KEYCODE_t: // Talk
-				startTalkMenu(monsterId);
-				endLoop = true;
-				break;
-			default:
-				break;
+			case Common::EVENT_CUSTOM_BACKEND_ACTION_START:
+				switch (event.customType) {
+				case Efh::kEfhActionAttack:
+					handleFight(monsterId);
+					endLoop = true;
+					break;
+				case Efh::kEfhActionLeave:
+				case Efh::kEfhActionESC:
+					endLoop = true;
+					break;
+				case Efh::kEfhActionStatus:
+					handleStatusMenu(1, _teamChar[0]._id);
+					endLoop = true;
+					_tempTextPtr = nullptr;
+					drawGameScreenAndTempText(true);
+					break;
+				case Efh::kEfhActionTalk:
+					startTalkMenu(monsterId);
+					endLoop = true;
+					break;
+				}	
 			}
 		} while (!endLoop && !shouldQuitGame());
 		return false;
