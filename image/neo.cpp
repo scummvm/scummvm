@@ -53,7 +53,7 @@ void NeoDecoder::destroy() {
 bool NeoDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
 
-	if (_palette.size() == 0) {
+	if (_palette.empty()) {
 		int start = stream.pos();
 
 		if (stream.readUint16LE() != 0x00)

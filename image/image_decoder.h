@@ -102,7 +102,7 @@ public:
 	/**
 	 * Query whether the decoded image has a palette.
 	 */
-	virtual bool hasPalette() const { return getPalette().size() != 0; }
+	virtual bool hasPalette() const { return !getPalette().empty(); }
 
 	/** Query whether the decoded image has a transparent color. */
 	virtual bool hasTransparentColor() const { return false; }
