@@ -139,10 +139,10 @@ void Room703::pre_parser() {
 }
 
 void Room703::parser() {
-	bool lookFl = player_said_any("look", "look at");
-	bool talkFl = player_said_any("talk", "talk to");
-	bool takeFl = player_said("take");
-	bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
+	const bool lookFl = player_said_any("look", "look at");
+	const bool talkFl = player_said_any("talk", "talk to");
+	const bool takeFl = player_said("take");
+	const bool gearFl = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("conv703a")) {
 		if (_G(kernel).trigger == 90)
@@ -372,7 +372,7 @@ void Room703::parser() {
 
 			case 3:
 			case 9:
-				_ripLooksDownSeries = series_load("RIP LOOKS DOWN POS3", -1, nullptr);
+				_ripLooksDownSeries = series_load("RIP TREK LOOK DOWN POS3", -1, nullptr);
 				keyValue = 22;
 
 				break;

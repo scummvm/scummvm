@@ -348,7 +348,7 @@ void Room706::parser() {
 
 			case 3:
 			case 9:
-				_ripLooksDownSeries = series_load("RIP LOOKS DOWN POS3", -1, nullptr);
+				_ripLooksDownSeries = series_load("RIP TREK LOOK DOWN POS3", -1, nullptr);
 				setGlobals1(_ripLooksDownSeries, 1, 11, 11, 11, 0, 11, 22, 22, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 				sendWSMessage_110000(_G(my_walker), 2);
 
