@@ -31,6 +31,8 @@ public:
 
 	void initBackend() override;
 
+	void engineInit() override;
+
 	Common::MutexInternal *createMutex() override;
 	uint32 getMillis(bool skipRecord = false) override;
 	void delayMillis(uint msecs) override;

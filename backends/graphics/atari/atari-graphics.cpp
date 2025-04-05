@@ -43,7 +43,6 @@
 
 #define SCREEN_ACTIVE
 
-bool g_unalignedPitch = false;
 mspace g_mspace = nullptr;
 
 static const Graphics::PixelFormat PIXELFORMAT_CLUT8 = Graphics::PixelFormat::createFormatCLUT8();
@@ -473,7 +472,6 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 		_pendingScreenChanges.queuePalette();
 
 		if (_overlayState == kOverlayIgnoredHide) {
-			_checkUnalignedPitch = true;
 			_overlayState = kOverlayHidden;
 			_ignoreHideOverlay = false;
 			_pendingScreenChanges.queueAll();
@@ -601,36 +599,6 @@ void AtariGraphicsManager::updateScreen() {
 
 	// avoid falling into the atari_debugger (screen may not not initialized yet)
 	Common::setErrorHandler(nullptr);
-
-	if (_checkUnalignedPitch) {
-		const Common::ConfigManager::Domain *activeDomain = ConfMan.getActiveDomain();
-		if (activeDomain) {
-			// FIXME: Some engines are too bound to linear surfaces that it is very
-			// hard to repair them. So instead of polluting the engine with
-			// Surface::init() & delete[] Surface::getPixels() just use this hack.
-			const Common::String engineId = activeDomain->getValOrDefault("engineid");
-			const Common::String gameId = activeDomain->getValOrDefault("gameid");
-
-			atari_debug("checking %s/%s", engineId.c_str(), gameId.c_str());
-
-			if (engineId == "composer"
-				|| engineId == "hypno"
-				|| engineId == "mohawk"
-				|| engineId == "parallaction"
-				|| engineId == "private"
-				|| (engineId == "sci"
-					&& (gameId == "phantasmagoria" || gameId == "shivers"))
-				|| engineId == "sherlock"
-				|| engineId == "teenagent"
-				|| engineId == "tsage") {
-				g_unalignedPitch = true;
-			} else {
-				g_unalignedPitch = false;
-			}
-		}
-
-		_checkUnalignedPitch = false;
-	}
 
 	Screen *workScreen = nullptr;
 	Graphics::Surface *srcSurface = nullptr;

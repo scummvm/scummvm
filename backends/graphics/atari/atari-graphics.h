@@ -177,7 +177,6 @@ private:
 
 	bool _vgaMonitor = true;
 	bool _tt = false;
-	bool _checkUnalignedPitch = false;
 
 	struct GraphicsState {
 		GraphicsState()
