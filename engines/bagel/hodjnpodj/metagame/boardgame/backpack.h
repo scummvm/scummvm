@@ -65,8 +65,9 @@ public:
 	bool msgGame(const GameMessage &msg) override;
 	bool msgMouseMove(const MouseMoveMessage &msg) override;
 	bool msgMouseUp(const MouseUpMessage &msg) override;
-
 	void draw() override;
+
+	static void show(CInventory *invent);
 };
 
 } // namespace Metagame

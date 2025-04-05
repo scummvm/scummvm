@@ -20,6 +20,10 @@
  */
 
 #include "bagel/hodjnpodj/metagame/boardgame/boardgame.h"
+#include "bagel/hodjnpodj/metagame/boardgame/backpack.h"
+#include "bagel/hodjnpodj/metagame/boardgame/general_store.h"
+#include "bagel/hodjnpodj/metagame/boardgame/notebook.h"
+#include "bagel/hodjnpodj/metagame/boardgame/pawn_shop.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/metaengine.h"
 
@@ -54,6 +58,45 @@ bool Boardgame::msgGame(const GameMessage &msg) {
 void Boardgame::draw() {
 	GfxSurface s = getSurface();
 	s.clear();
+}
+
+void Boardgame::showClue(CNote *note) {
+	Notebook::show(NULL, note);
+}
+
+void Boardgame::showInventory(int nWhichDlg) {
+	CHodjPodj *pPlayer;
+
+	// which player
+	pPlayer = &lpMetaGame->m_cPodj;
+	if (lpMetaGame->m_cHodj.m_bMoving)
+		pPlayer = &lpMetaGame->m_cHodj;
+
+	switch (nWhichDlg) {
+	case 4:
+		// Black market
+		GeneralStore::show(pPlayer->m_pBlackMarket,
+			pPlayer->m_pInventory);
+		break;
+
+	case 3:
+		// Pawn shop
+		PawnShop::show(getRandomNumber(1) == 1 ?
+				pPlayer->m_pGenStore : pPlayer->m_pBlackMarket,
+			pPlayer->m_pInventory);
+		break;
+
+	case 2:
+		// General store
+		GeneralStore::show(pPlayer->m_pGenStore,
+			pPlayer->m_pInventory);
+		break;
+
+	case 1:
+	default:
+		Backpack::show(pPlayer->m_pInventory);
+		break;
+	}
 }
 
 /*------------------------------------------------------------------------*/

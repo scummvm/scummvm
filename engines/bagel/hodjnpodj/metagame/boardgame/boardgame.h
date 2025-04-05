@@ -55,6 +55,9 @@ class Boardgame : public View, public BoardgameVars {
 private:
 	bool bJustReturned = false;
 
+	void showClue(CNote *note);
+	void showInventory(int nWhichDlg);
+
 public:
 	Boardgame();
 	~Boardgame() override {}

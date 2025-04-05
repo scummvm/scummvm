@@ -58,12 +58,23 @@ namespace Metagame {
 #define	IDC_NOTEBOOK_SOUND	    922
 
 Backpack::Backpack() : Dialog("Backpack", "meta/hnpmeta.dll"),
-		_okButton(Common::Rect(210, 355, 290, 380), this),
-		pInventory(lpMetaGame->m_cHodj.m_pInventory) {
+		_okButton(Common::Rect(210, 355, 290, 380), this) {
+}
+
+void Backpack::show(CInventory *invent) {
+	Backpack *view = dynamic_cast<Backpack *>(
+		g_events->findView("Backpack"));
+	view->pInventory = invent;
+	view->addView();
 }
 
 bool Backpack::msgOpen(const OpenMessage &msg) {
 	Dialog::msgOpen(msg);
+
+	if (!pInventory) {
+		// For debug purposes
+		pInventory = lpMetaGame->m_cHodj.m_pInventory;
+	}
 
 	_scrollTopRect = Common::Rect(0, 0, 501, 48);
 	_scrollBottomRect = Common::Rect(0, 0, 501, 47);
@@ -143,13 +154,7 @@ bool Backpack::msgAction(const ActionMessage &msg) {
 }
 
 bool Backpack::msgGame(const GameMessage &msg) {
-	if (msg._name == "SHOW") {
-		auto &player = msg._value ?
-			lpMetaGame->m_cHodj : lpMetaGame->m_cPodj;
-		pInventory = player.m_pInventory;
-		addView();
-		return true;
-	} else if (msg._name == "BUTTON" && msg._stringValue == "OK") {
+	if (msg._name == "BUTTON" && msg._stringValue == "OK") {
 		close();
 		return true;
 	}

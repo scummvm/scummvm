@@ -57,8 +57,6 @@ public:
 	virtual ~Notebook() {
 	}
 
-	static void show(CNote *note);
-
 	void draw() override;
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
