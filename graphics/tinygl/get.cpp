@@ -672,9 +672,11 @@ void GLContext::gl_get_pname(TGLenum pname, union uglValue *data, eDataType &dat
 		dataType = kIntType;
 		break;
 	case TGL_SCISSOR_BOX:
-		// fall through
+		error("gl_get_pname: TGL_SCISSOR_BOX option not implemented");
+		break;
 	case TGL_SCISSOR_TEST:
-		error("gl_get_pname: TGL_SCISSOR_x option not implemented");
+		data->_int = (TGLint)scissor_test_enabled;
+		dataType = kIntType;
 		break;
 	case TGL_SELECTION_BUFFER_SIZE:
 		error("gl_get_pname: TGL_SELECTION_BUFFER_SIZE option not implemented");

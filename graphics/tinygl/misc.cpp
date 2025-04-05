@@ -102,6 +102,9 @@ void GLContext::glopEnableDisable(GLParam *p) {
 	case TGL_BLEND:
 		blending_enabled = v != 0;
 		break;
+	case TGL_SCISSOR_TEST:
+		scissor_test_enabled = v != 0;
+		break;
 	case TGL_POLYGON_OFFSET_FILL:
 		if (v)
 			offset_states |= TGL_OFFSET_FILL;
@@ -198,6 +201,16 @@ void GLContext::glopPolygonMode(GLParam *p) {
 	default:
 		assert(0);
 	}
+}
+
+void GLContext::glopScissor(GLParam *p) {
+	// top left corner
+	_scissorTestRect.top = p[2].i;
+	_scissorTestRect.left = p[1].i;
+
+	// bottom right corner
+	_scissorTestRect.bottom = p[4].i;
+	_scissorTestRect.right = p[3].i;
 }
 
 void GLContext::glopHint(GLParam *) {
