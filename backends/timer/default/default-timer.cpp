@@ -133,11 +133,10 @@ bool DefaultTimerManager::installTimerProc(TimerProc callback, int32 interval, v
 			error("Different callbacks are referred by same name (%s)", id.c_str());
 		}
 	}
-	TimerSlotMap::const_iterator i;
 
-	for (i = _callbacks.begin(); i != _callbacks.end(); ++i) {
-		if (i->_value == callback) {
-			error("Same callback added twice (old name: %s, new name: %s)", i->_key.c_str(), id.c_str());
+	for (const auto &curCallback : _callbacks) {
+		if (curCallback._value == callback) {
+			error("Same callback added twice (old name: %s, new name: %s)", curCallback._key.c_str(), id.c_str());
 		}
 	}
 	_callbacks[id] = callback;

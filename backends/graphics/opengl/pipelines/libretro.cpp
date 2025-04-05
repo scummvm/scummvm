@@ -270,8 +270,8 @@ void LibRetroPipeline::finishScaling() {
 	 * we can do the render through all libretro passes */
 
 	// Now we can actually draw the texture with the setup passes.
-	for (PassArray::const_iterator i = _passes.begin(), end = _passes.end(); i != end; ++i) {
-		renderPass(*i);
+	for (const auto &pass : _passes) {
+		renderPass(pass);
 	}
 
 	// Prepare for the next frame
@@ -394,18 +394,16 @@ void LibRetroPipeline::close() {
 }
 
 bool LibRetroPipeline::loadTextures(Common::SearchSet &archSet) {
-	for (LibRetro::ShaderPreset::TextureArray::const_iterator
-		 i = _shaderPreset->textures.begin(), end = _shaderPreset->textures.end();
-		 i != end; ++i) {
-		LibRetroTexture texture = loadTexture(_shaderPreset->basePath.join(i->fileName).normalize(), _shaderPreset->container, archSet);
-		texture.id = i->id;
+	for (const auto &curTexture : _shaderPreset->textures) {
+		LibRetroTexture texture = loadTexture(_shaderPreset->basePath.join(curTexture.fileName).normalize(), _shaderPreset->container, archSet);
+		texture.id = curTexture.id;
 
 		if (!texture.textureData || !texture.glTexture) {
 			return false;
 		}
 
-		texture.glTexture->enableLinearFiltering(i->filteringMode == LibRetro::kFilteringModeLinear);
-		texture.glTexture->setWrapMode(i->wrapMode);
+		texture.glTexture->enableLinearFiltering(curTexture.filteringMode == LibRetro::kFilteringModeLinear);
+		texture.glTexture->setWrapMode(curTexture.wrapMode);
 		_textures.push_back(texture);
 	}
 	return true;
@@ -443,12 +441,10 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 	Common::StringArray aliases;
 
 	aliases.reserve(_shaderPreset->passes.size());
-	for (LibRetro::ShaderPreset::PassArray::const_iterator
-		 i = _shaderPreset->passes.begin(), end = _shaderPreset->passes.end();
-		 i != end; ++i) {
-		aliases.push_back(i->alias);
-		if (!i->alias.empty()) {
-			aliasesDefines += Common::String::format("#define %s_ALIAS\n", i->alias.c_str());
+	for (const auto &pass : _shaderPreset->passes) {
+		aliases.push_back(pass.alias);
+		if (!pass.alias.empty()) {
+			aliasesDefines += Common::String::format("#define %s_ALIAS\n", pass.alias.c_str());
 		}
 	}
 
@@ -457,10 +453,8 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 
 	// parameters are shared among all passes so we load them first and apply them to all shaders
 	UniformsMap uniformParams;
-	for (LibRetro::ShaderPreset::PassArray::const_iterator
-		 i = _shaderPreset->passes.begin(), end = _shaderPreset->passes.end();
-		 i != end; ++i) {
-		Common::Path fileName(_shaderPreset->basePath.join(i->fileName).normalize());
+	for (const auto &curPass : _shaderPreset->passes) {
+		Common::Path fileName(_shaderPreset->basePath.join(curPass.fileName).normalize());
 		Common::SeekableReadStream *stream = nullptr;
 
 		if (_shaderPreset->container) {
@@ -566,7 +560,7 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 		// TODO: float and sRGB FBO handling.
 		target = new TextureTarget();
 
-		_passes.push_back(Pass(i, shader, target));
+		_passes.push_back(Pass(&curPass, shader, target));
 		Pass &pass = _passes[_passes.size() - 1];
 		const uint passId = _passes.size() - 1;
 
@@ -578,8 +572,8 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 		pass.buildTexSamplers(passId, _textures, aliases);
 		if (passId > 0) {
 			Texture *const texture = _passes[passId - 1].target->getTexture();
-			texture->enableLinearFiltering(i->filteringMode == LibRetro::kFilteringModeLinear);
-			texture->setWrapMode(i->wrapMode);
+			texture->enableLinearFiltering(curPass.filteringMode == LibRetro::kFilteringModeLinear);
+			texture->setWrapMode(curPass.wrapMode);
 			pass.inputTexture = texture;
 		}
 
@@ -589,14 +583,14 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 	}
 
 	// Apply preset parameters last to override all others
-	for(UniformsMap::iterator it = _shaderPreset->parameters.begin(); it != _shaderPreset->parameters.end(); it++) {
-		uniformParams[it->_key] = it->_value;
+	for (const auto &param : _shaderPreset->parameters) {
+		uniformParams[param._key] = param._value;
 	}
 
 	// Finally apply parameters to all shaders as uniforms
-	for(PassArray::iterator i = _passes.begin(); i != _passes.end(); i++) {
-		for(UniformsMap::iterator it = uniformParams.begin(); it != uniformParams.end(); it++) {
-			i->shader->setUniform1f(it->_key, it->_value);
+	for (auto &pass : _passes) {
+		for (auto &uniformParam : uniformParams) {
+			pass.shader->setUniform1f(uniformParam._key, uniformParam._value);
 		}
 	}
 
@@ -852,9 +846,9 @@ bool LibRetroPipeline::Pass::addTexSampler(const Common::String &prefix, uint *u
 	const Common::String id = prefixIsId ? prefix : (prefix + "Texture");
 
 	/* Search in the samplers if we already have one for the texture */
-	for(TextureSamplerArray::iterator it = texSamplers.begin(); it != texSamplers.end(); it++) {
-		if (it->type == type && it->index == index) {
-			return shader->setUniform(id, it->unit);
+	for (auto &texSampler : texSamplers) {
+		if (texSampler.type == type && texSampler.index == index) {
+			return shader->setUniform(id, texSampler.unit);
 		}
 	}
 
@@ -901,17 +895,16 @@ void LibRetroPipeline::renderPass(const Pass &pass) {
 void LibRetroPipeline::renderPassSetupCoordinates(const Pass &pass) {
 	pass.shader->enableVertexAttribute("VertexCoord", 2, GL_FLOAT, GL_FALSE, 0, pass.vertexCoord);
 
-	for (Pass::TexCoordAttributeArray::const_iterator i = pass.texCoords.begin(), end = pass.texCoords.end();
-		 i != end; ++i) {
+	for (const auto &texCoord : pass.texCoords) {
 		const GLfloat *texCoords = nullptr;
 
-		switch (i->type) {
+		switch (texCoord.type) {
 		case Pass::TexCoordAttribute::kTypeTexture:
-			texCoords = _textures[i->index].glTexture->getTexCoords();
+			texCoords = _textures[texCoord.index].glTexture->getTexCoords();
 			break;
 
 		case Pass::TexCoordAttribute::kTypePass:
-			texCoords = _passes[i->index].inputTexture->getTexCoords();
+			texCoords = _passes[texCoord.index].inputTexture->getTexCoords();
 			break;
 
 		case Pass::TexCoordAttribute::kTypePrev:
@@ -924,7 +917,7 @@ void LibRetroPipeline::renderPassSetupCoordinates(const Pass &pass) {
 			continue;
 		}
 
-		pass.shader->enableVertexAttribute(i->name.c_str(), 2, GL_FLOAT, GL_FALSE, 0, texCoords);
+		pass.shader->enableVertexAttribute(texCoord.name.c_str(), 2, GL_FLOAT, GL_FALSE, 0, texCoords);
 	}
 }
 
@@ -938,22 +931,21 @@ void LibRetroPipeline::renderPassSetupTextures(const Pass &pass) {
 		GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
 	}
 
-	for (Pass::TextureSamplerArray::const_iterator i = pass.texSamplers.begin(), end = pass.texSamplers.end();
-		 i != end; ++i) {
+	for (const auto &texSampler : pass.texSamplers) {
 		const Texture *texture = nullptr;
 
-		switch (i->type) {
+		switch (texSampler.type) {
 		case Pass::TextureSampler::kTypeTexture:
-			texture = _textures[i->index].glTexture;
+			texture = _textures[texSampler.index].glTexture;
 			break;
 
 		case Pass::TextureSampler::kTypePass:
-			texture = _passes[i->index].inputTexture;
+			texture = _passes[texSampler.index].inputTexture;
 			break;
 
 		case Pass::TextureSampler::kTypePrev: {
-			assert(i->index < _inputTargets.size() - 1);
-			texture = _inputTargets[(_currentTarget - i->index - 1
+			assert(texSampler.index < _inputTargets.size() - 1);
+			texture = _inputTargets[(_currentTarget - texSampler.index - 1
 					+ _inputTargets.size()) % _inputTargets.size()].getTexture();
 			break;
 		}
@@ -963,7 +955,7 @@ void LibRetroPipeline::renderPassSetupTextures(const Pass &pass) {
 			continue;
 		}
 
-		GL_CALL(glActiveTexture(GL_TEXTURE0 + i->unit));
+		GL_CALL(glActiveTexture(GL_TEXTURE0 + texSampler.unit));
 		texture->bind();
 	}
 }

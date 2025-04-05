@@ -112,8 +112,10 @@ bool DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int du
 		fillPotentialTrackNames(trackNames, track);
 		Audio::SeekableAudioStream *stream = nullptr;
 
-		for (Common::Array<Common::String>::iterator i = trackNames.begin(); !stream && i != trackNames.end(); ++i) {
-			stream = Audio::SeekableAudioStream::openStreamFile(Common::Path(*i, '/'));
+		for (auto &trackName : trackNames) {
+			stream = Audio::SeekableAudioStream::openStreamFile(Common::Path(trackName, '/'));
+			if (stream)
+				break;
 		}
 
 		if (stream != nullptr) {

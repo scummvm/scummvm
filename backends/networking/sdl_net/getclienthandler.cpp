@@ -112,8 +112,8 @@ void GetClientHandler::prepareHeaders() {
 		setHeader("Content-Length", Common::String::format("%u", unsigned(_stream->size())));
 
 	_headers = Common::String::format("HTTP/1.1 %ld %s\r\n", _responseCode, responseMessage(_responseCode));
-	for (Common::HashMap<Common::String, Common::String>::iterator i = _specialHeaders.begin(); i != _specialHeaders.end(); ++i)
-		_headers += i->_key + ": " + i->_value + "\r\n";
+	for (auto &specialHeader : _specialHeaders)
+		_headers += specialHeader._key + ": " + specialHeader._value + "\r\n";
 	_headers += "\r\n";
 
 	_headersPrepared = true;

@@ -78,14 +78,14 @@ Common::StringArray DefaultSaveFileManager::listSavefiles(const Common::String &
 		return Common::StringArray();
 
 	Common::HashMap<Common::String, bool> locked;
-	for (Common::StringArray::const_iterator i = _lockedFiles.begin(), end = _lockedFiles.end(); i != end; ++i) {
-		locked[*i] = true;
+	for (const auto &lockedFile : _lockedFiles) {
+		locked[lockedFile] = true;
 	}
 
 	Common::StringArray results;
-	for (SaveFileCache::const_iterator file = _saveFileCache.begin(), end = _saveFileCache.end(); file != end; ++file) {
-		if (!locked.contains(file->_key) && file->_key.matchString(pattern, true)) {
-			results.push_back(file->_key);
+	for (const auto &file : _saveFileCache) {
+		if (!locked.contains(file._key) && file._key.matchString(pattern, true)) {
+			results.push_back(file._key);
 		}
 	}
 	return results;
@@ -113,9 +113,9 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const Common::String 
 	if (getError().getCode() != Common::kNoError)
 		return nullptr;
 
-	for (Common::StringArray::const_iterator i = _lockedFiles.begin(), end = _lockedFiles.end(); i != end; ++i) {
-		if (filename == *i) {
-			return nullptr; //file is locked, no loading available
+	for (const auto &lockedFile : _lockedFiles) {
+		if (filename == lockedFile) {
+			return nullptr; // file is locked, no loading available
 		}
 	}
 
@@ -136,9 +136,9 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String 
 	if (getError().getCode() != Common::kNoError)
 		return nullptr;
 
-	for (Common::StringArray::const_iterator i = _lockedFiles.begin(), end = _lockedFiles.end(); i != end; ++i) {
-		if (filename == *i) {
-			return nullptr; //file is locked, no saving available
+	for (const auto &lockedFile : _lockedFiles) {
+		if (filename == lockedFile) {
+			return nullptr; // file is locked, no saving available
 		}
 	}
 
@@ -225,8 +225,8 @@ bool DefaultSaveFileManager::exists(const Common::String &filename) {
 	if (getError().getCode() != Common::kNoError)
 		return false;
 
-	for (Common::StringArray::const_iterator i = _lockedFiles.begin(), end = _lockedFiles.end(); i != end; ++i) {
-		if (filename == *i)
+	for (const auto &lockedFile : _lockedFiles) {
+		if (filename == lockedFile)
 			return true;
 	}
 
@@ -283,11 +283,11 @@ void DefaultSaveFileManager::assureCached(const Common::Path &savePathName) {
 	}
 
 	// Build the savefile name cache.
-	for (Common::FSList::const_iterator file = children.begin(), end = children.end(); file != end; ++file) {
-		if (_saveFileCache.contains(file->getName())) {
-			warning("DefaultSaveFileManager::assureCached: Name clash when building cache, ignoring file '%s'", file->getName().c_str());
+	for (const auto &file : children) {
+		if (_saveFileCache.contains(file.getName())) {
+			warning("DefaultSaveFileManager::assureCached: Name clash when building cache, ignoring file '%s'", file.getName().c_str());
 		} else {
-			_saveFileCache[file->getName()] = *file;
+			_saveFileCache[file.getName()] = file;
 		}
 	}
 
@@ -366,11 +366,11 @@ void DefaultSaveFileManager::saveTimestamps(Common::HashMap<Common::String, uint
 		return;
 	}
 
-	for (Common::HashMap<Common::String, uint32>::iterator i = timestamps.begin(); i != timestamps.end(); ++i) {
-		uint32 v = i->_value;
+	for (auto &timestamp : timestamps) {
+		uint32 v = timestamp._value;
 		if (v < 1) v = 1; // 0 timestamp is treated as EOF up there, so we should never save zeros
 
-		Common::String data = i->_key + Common::String::format(" %u\n", v);
+		Common::String data = timestamp._key + Common::String::format(" %u\n", v);
 		if (f.write(data.c_str(), data.size()) != data.size()) {
 			warning("DefaultSaveFileManager: failed to write timestamps data into '%s'", filename.toString(Common::Path::kNativeSeparator).c_str());
 			return;
