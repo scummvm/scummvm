@@ -82,8 +82,16 @@ Common::String MacFontRun::getEncodedText() {
 }
 
 uint MacTextLine::getChunkNum(int *col) {
+	if (!col)
+		return 0;
+
 	int pos = *col;
 	uint i;
+
+	if (chunks.empty()) {
+		*col = 0;
+		return 0;
+	}
 
 	for (i = 0; i < chunks.size(); i++) {
 		if (pos >= (int)chunks[i].text.size()) {
@@ -97,6 +105,9 @@ uint MacTextLine::getChunkNum(int *col) {
 		i--;	// touch the last chunk
 		pos = chunks[i].text.size();
 	}
+
+	if (pos < 0)
+		pos = 0;
 
 	*col = pos;
 
@@ -303,24 +314,31 @@ void MacText::setMaxWidth(int maxWidth) {
 		}
 	}
 
-	// keep the cursor pos
-	int ppos = 0;
-	for (int i = 0; i < _cursorRow; i++)
-		ppos += _canvas.getLineCharWidth(i);
-	ppos += _cursorCol;
+	int absoluteCharOffset = 0;
+	for (int i = 0; i < _cursorRow; ++i)
+		absoluteCharOffset += _canvas.getLineCharWidth(i);
+	absoluteCharOffset += _cursorCol;
 
+	
 	_canvas.setMaxWidth(maxWidth, _defaultFormatting);
 
 	// restore the cursor pos
 	_cursorRow = 0;
-	while (ppos > _canvas.getLineCharWidth(_cursorRow, true)) {
-		ppos -= _canvas.getLineCharWidth(_cursorRow, true);
-
-		if (_cursorRow >= (int)_canvas._text.size() - 1)
+	while (_cursorRow < (int)_canvas._text.size() - 1) {
+		int lineWidth = _canvas.getLineCharWidth(_cursorRow, true);
+		if (absoluteCharOffset <= lineWidth)
 			break;
 
-		_cursorRow++;
+		absoluteCharOffset -= lineWidth;
+		++_cursorRow;
 	}
+	
+	int ppos = 0;
+	if (absoluteCharOffset > _canvas.getLineCharWidth(_cursorRow, true))
+		ppos = _canvas.getLineCharWidth(_cursorRow, true);
+	else
+		ppos = absoluteCharOffset;
+
 	_cursorCol = ppos;
 
 	// after we set maxWidth, we reset the selection
