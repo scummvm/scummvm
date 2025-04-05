@@ -691,18 +691,26 @@ void ScummEngine_v5::o5_add() {
 	getResultPos();
 	a = getVarOrDirectWord(PARAM_1);
 
-	// WORKAROUND: In the Sega CD version of MI1, after you tell the Men of
-	// Low Moral Fiber (pirates) that the governor has been kidnapped, there
-	// is supposed to be three follow-up conversation options. But only the
-	// the first one ("Why are you just standing around...") is actually
-	// visible. This is because where the script is supposed to add 8 pixels
-	// to the Y position of the text, it instead adds 8 lines. It was still
-	// possible to select them, you just couldn't see them.
+	// WORKAROUND: In the Sega CD version of MI1, there are some cases
+	// where conversation options are invisible. This is because where it
+	// thinks it's increasing Var[229] by a number of pixels, it's actually
+	// increasing it by a number of lines, pushing the text off-screen.
 	//
-	// We fix this by changing Var[229] += 8 to Var[229] += 1 instead.
+	// We fix this by changing Var[229] += 8 to Var[229] += 1.
 
-	if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && vm.slot[_currentScript].number == 216 && _currentRoom == 35 && a == 8 && _resultVarNumber == 229 && enhancementEnabled(kEnhSubFmtCntChanges)) {
-		a = 1;
+	if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && _resultVarNumber == 229 && a == 8 && enhancementEnabled(kEnhSubFmtCntChanges)) {
+		int scriptNr = vm.slot[_currentScript].number;
+
+		// Room 35 - Talking to the Men of Low Moral Fiber (pirates),
+		// telling them that the governor has been kidnapped. Two of
+		// the conversation options are off-screen.
+		//
+		// Room 19 - Talking to your crew aboard the ship. The last
+		// conversation option is off-screen.
+
+		if ((scriptNr == 216 && _currentRoom == 35) ||
+		    (scriptNr == 204 && _currentRoom == 19))
+			a = 1;
 	}
 
 	// WORKAROUND bug #994: This works around a script bug in LoomCD. To
