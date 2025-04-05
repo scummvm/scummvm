@@ -732,6 +732,12 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	if (nullptr == ConfMan.getActiveDomain())
 		launcherDialog();
 
+	{
+		Common::Event event;
+		event.type = Common::EVENT_EXIT_FROM_LAUNCHER;
+		g_system->getEventManager()->pushEvent(event);
+	}
+
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
 	// cleanly, so this is now enabled to encourage people to fix bits :)

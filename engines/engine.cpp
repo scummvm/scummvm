@@ -405,7 +405,7 @@ int initGraphicsAny(const Graphics::ModeWithFormatList &modes, int start) {
 		message = Common::U32String::format(_("Could not switch to resolution '%dx%d'."), last_width, last_height);
 
 		GUIErrorMessage(message);
-		error("Could not switch to resolution '%dx%d'.", last_width, last_height);
+		error("Could not switch to resolution '%dx%d'", last_width, last_height);
 	}
 
 	// Just show warnings then these occur:
