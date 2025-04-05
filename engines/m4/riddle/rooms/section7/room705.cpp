@@ -1306,35 +1306,35 @@ void Room705::useWheelOnLeftNiche(int32 trigger, int val1) {
 				inv_move_object("PEACE WHEEL", 705);
 				_G(flags)[V220] = 1;
 				digi_play("950_S40A", 2, 255, -1, 950);
-				_rightWheelMach = series_place_sprite("705 LEFT PEACE WHEEL", 0, 0, 0, 100, 1280);
+				_leftWheelMach = series_place_sprite("705 LEFT PEACE WHEEL", 0, 0, 0, 100, 1280);
 				break;
 
 			case 2:
 				inv_move_object("INSIGHT WHEEL", 705);
 				_G(flags)[V220] = 2;
 				digi_play("950_S40A", 2, 255, -1, 950);
-				_rightWheelMach = series_place_sprite("705 LEFT INSIGHT WHEEL", 0, 0, 0, 100, 1280);
+				_leftWheelMach = series_place_sprite("705 LEFT INSIGHT WHEEL", 0, 0, 0, 100, 1280);
 				break;
 
 			case 3:
 				inv_move_object("SERENITY WHEEL", 705);
 				_G(flags)[V220] = 3;
 				digi_play("950_S40A", 2, 255, -1, 950);
-				_rightWheelMach = series_place_sprite("705 LEFT SERENITY WHEEL", 0, 0, 0, 100, 1280);
+				_leftWheelMach = series_place_sprite("705 LEFT SERENITY WHEEL", 0, 0, 0, 100, 1280);
 				break;
 
 			case 4:
 				inv_move_object("TRUTH WHEEL", 705);
 				_G(flags)[V220] = 4;
 				digi_play("950_S40A", 2, 255, -1, 950);
-				_rightWheelMach = series_place_sprite("705 LEFT TRUTH WHEEL", 0, 0, 0, 100, 1280);
+				_leftWheelMach = series_place_sprite("705 LEFT TRUTH WHEEL", 0, 0, 0, 100, 1280);
 				break;
 
 			case 5:
 				inv_move_object("WISDOM WHEEL", 705);
 				_G(flags)[V220] = 5;
 				digi_play("950_S40A", 2, 255, -1, 950);
-				_rightWheelMach = series_place_sprite("705 LEFT WISDOM WHEEL", 0, 0, 0, 100, 1280);
+				_leftWheelMach = series_place_sprite("705 LEFT WISDOM WHEEL", 0, 0, 0, 100, 1280);
 
 				break;
 
