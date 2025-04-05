@@ -96,6 +96,11 @@ public:
 	void clear();
 
 	/**
+	 * Check whether the palette is empty.
+	 */
+	bool empty() const { return _size == 0; }
+
+	/**
 	 * Changes the number of palette entries.
 	 * 
 	 * @param newSize the new number of palette entries

@@ -108,7 +108,7 @@ void Debugger::saveRawPicture(const RawDecoder &rd, Common::WriteStream &ws) {
 	uint32 transColor = rd.getTransparentColor();
 
 	// If the image doesn't have a palette, we can directly write out the image
-	if (palette.size() == 0) {
+	if (palette.empty()) {
 		Image::writePNG(ws, *surface);
 		return;
 	}
