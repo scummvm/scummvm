@@ -330,8 +330,8 @@ void TinyGLRenderer::drawInViewport() {
 	_pos.x() += 0.01f;
 	_pos.y() += 0.01f;
 	if (_pos.x() >= 1.1f) {
-		_pos.x() = -1.1;
-		_pos.y() = -1.1;
+		_pos.x() = -1.1f;
+		_pos.y() = -1.1f;
 	}
 	tglTranslatef(_pos.x(), _pos.y(), 0);
 
