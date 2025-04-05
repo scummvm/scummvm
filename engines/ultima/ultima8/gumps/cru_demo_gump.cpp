@@ -54,7 +54,7 @@ CruDemoGump::CruDemoGump(Common::SeekableReadStream *bmprs, uint32 flags, int32 
 		const Graphics::Surface *bmpsurf = decoder.getSurface();
 		Graphics::ManagedSurface ms;
 		ms.copyFrom(*bmpsurf);
-		ms.setPalette(decoder.getPalette(), 0, decoder.getPaletteColorCount());
+		ms.setPalette(decoder.getPalette().data(), 0, decoder.getPalette().size());
 		Common::Rect srcRect(640, 480);
 		_background->Blit(ms, srcRect, 0, 0);
 	} else {

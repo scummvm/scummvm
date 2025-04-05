@@ -55,7 +55,7 @@ void PlumbersGameWindows::loadImage(const Common::String &name) {
 		_compositeSurface = new Graphics::Surface();
 		const Graphics::Surface *inSurf = _image->getSurface();
 		_compositeSurface->create(_screenW, _screenH, inSurf->format);
-		Graphics::downscaleSurfaceByHalf(_compositeSurface, inSurf, _image->getPalette());
+		Graphics::downscaleSurfaceByHalf(_compositeSurface, inSurf, _image->getPalette().data());
 	}
 }
 

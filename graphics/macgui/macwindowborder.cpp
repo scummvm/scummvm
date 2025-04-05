@@ -230,18 +230,14 @@ void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags,
 
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->copyFrom(*bmpDecoder.getSurface());
-	surface->setPalette(bmpDecoder.getPalette(), 0,
-	                    bmpDecoder.getPaletteColorCount());
+	surface->setPalette(bmpDecoder.getPalette().data(), 0,
+	                    bmpDecoder.getPalette().size());
 
 	if (surface->format.isCLUT8()) {
-		const byte *palette = bmpDecoder.getPalette();
-		for (int i = 0; i < bmpDecoder.getPaletteColorCount(); i++) {
-			if (palette[0] == 255 && palette[1] == 0 && palette[2] == 255) {
-				surface->setTransparentColor(i);
-				break;
-			}
-			palette += 3;
-		}
+		const Graphics::Palette &palette = bmpDecoder.getPalette();
+		uint i = palette.find(255, 0, 255);
+		if (i < palette.size())
+			surface->setTransparentColor(i);
 	} else {
 		const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 24, 16, 8, 0);
 		surface->convertToInPlace(requiredFormat_4byte);

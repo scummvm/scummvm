@@ -180,7 +180,7 @@ ErrorCode CBofBitmap::loadBitmap(const char *pszFileName, CBofPalette *pPalette)
 		_bitmap.copyFrom(*decoder.getSurface());
 
 		// Load the bitmap palette
-		_bitmap.setPalette(decoder.getPalette(), 0, Graphics::PALETTE_COUNT);
+		_bitmap.setPalette(decoder.getPalette().data(), 0, decoder.getPalette().size());
 
 		_nDX = _bitmap.w;
 		_nDY = _bitmap.h;

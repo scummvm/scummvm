@@ -62,14 +62,14 @@ bool U4RawImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	U4PaletteLoader paletteLoader;
 	if (_bpp == 8) {
-		_palette = paletteLoader.loadVgaPalette();
-		_paletteColorCount = 256;
+		_palette.resize(256, false);
+		_palette.set(paletteLoader.loadVgaPalette(), 0, 256);
 	} else if (_bpp == 4) {
-		_palette = paletteLoader.loadEgaPalette();
-		_paletteColorCount = 16;
+		_palette.resize(16, false);
+		_palette.set(paletteLoader.loadEgaPalette(), 0, 16);
 	} else if (_bpp == 1) {
-		_palette = paletteLoader.loadBWPalette();
-		_paletteColorCount = 2;
+		_palette.resize(2, false);
+		_palette.set(paletteLoader.loadBWPalette(), 0, 2);
 	}
 
 	setFromRawData(raw);
@@ -109,14 +109,14 @@ bool U4RleImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	U4PaletteLoader paletteLoader;
 	if (_bpp == 8) {
-		_palette = paletteLoader.loadVgaPalette();
-		_paletteColorCount = 256;
+		_palette.resize(256, false);
+		_palette.set(paletteLoader.loadVgaPalette(), 0, 256);
 	} else if (_bpp == 4) {
-		_palette = paletteLoader.loadEgaPalette();
-		_paletteColorCount = 16;
+		_palette.resize(16, false);
+		_palette.set(paletteLoader.loadEgaPalette(), 0, 16);
 	} else if (_bpp == 1) {
-		_palette = paletteLoader.loadBWPalette();
-		_paletteColorCount = 2;
+		_palette.resize(2, false);
+		_palette.set(paletteLoader.loadBWPalette(), 0, 2);
 	}
 
 	setFromRawData(raw);
@@ -156,14 +156,14 @@ bool U4LzwImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	U4PaletteLoader paletteLoader;
 	if (_bpp == 8) {
-		_palette = paletteLoader.loadVgaPalette();
-		_paletteColorCount = 256;
+		_palette.resize(256, false);
+		_palette.set(paletteLoader.loadVgaPalette(), 0, 256);
 	} else if (_bpp == 4) {
-		_palette = paletteLoader.loadEgaPalette();
-		_paletteColorCount = 16;
+		_palette.resize(16, false);
+		_palette.set(paletteLoader.loadEgaPalette(), 0, 16);
 	} else if (_bpp == 1) {
-		_palette = paletteLoader.loadBWPalette();
-		_paletteColorCount = 2;
+		_palette.resize(2, false);
+		_palette.set(paletteLoader.loadBWPalette(), 0, 2);
 	}
 
 	setFromRawData(raw);

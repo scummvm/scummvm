@@ -1497,10 +1497,10 @@ Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte *
 	const Graphics::Surface *oldImage = _image->getSurface();
 	Graphics::Surface *newImage;
 
-	const byte *oldPalette = _image->getPalette();
+	const byte *oldPalette = _image->getPalette().data();
 	byte *currentPalette;
 
-	uint16 ncolors = _image->getPaletteColorCount();
+	uint16 ncolors = _image->getPalette().size();
 	if (ncolors < 256 || path.toString('/').hasPrefix("intro")) { // For some reason, requires color remapping
 		currentPalette = (byte *) malloc(3*256);
 		drawScreen();

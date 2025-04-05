@@ -20,6 +20,7 @@
  */
 
 #include "common/textconsole.h"
+#include "graphics/palette.h"
 #include "image/image_decoder.h"
 #include "director/picture.h"
 
@@ -27,7 +28,7 @@ namespace Director {
 
 Picture::Picture(Image::ImageDecoder &img) {
 	_surface.copyFrom(*img.getSurface());
-	copyPalette(img.getPalette(), img.getPaletteColorCount());
+	copyPalette(img.getPalette().data(), img.getPalette().size());
 }
 
 Picture::Picture(Picture &picture) {

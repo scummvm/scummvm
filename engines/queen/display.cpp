@@ -827,7 +827,7 @@ void Display::decodePCX(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dst
 	*h = pcxSurface->h;
 
 	assert(palStart <= palEnd && palEnd <= 256);
-	memcpy(pal, pcx.getPalette() + palStart * 3, (palEnd - palStart) * 3);
+	memcpy(pal, pcx.getPalette().data() + palStart * 3, (palEnd - palStart) * 3);
 	for (uint16 y = 0; y < pcxSurface->h; y++)
 		memcpy(dst + y * dstPitch, pcxSurface->getBasePtr(0, y), pcxSurface->w);
 }
@@ -844,7 +844,7 @@ void Display::decodeIFF(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dst
 	*h	= iffSurface->h;
 
 	assert(palStart <= palEnd && palEnd <= 256);
-	memcpy(pal, iff.getPalette() + palStart * 3, (palEnd - palStart) * 3);
+	memcpy(pal, iff.getPalette().data() + palStart * 3, (palEnd - palStart) * 3);
 	for (uint16 y = 0; y < iffSurface->h; y++)
 		for(uint16 x = 0; x < iffSurface->w; x++)
 			dst[(y * dstPitch) + x] = *(const byte *)iffSurface->getBasePtr(x, y) + colorBase;

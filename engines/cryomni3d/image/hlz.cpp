@@ -32,9 +32,7 @@
 
 namespace Image {
 
-HLZFileDecoder::HLZFileDecoder() {
-	_surface = nullptr;
-	_codec = nullptr;
+HLZFileDecoder::HLZFileDecoder() : _codec(nullptr), _surface(nullptr), _palette(256) {
 }
 
 HLZFileDecoder::~HLZFileDecoder() {
@@ -50,7 +48,13 @@ void HLZFileDecoder::destroy() {
 bool HLZFileDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
 
-	stream.read(_palette, sizeof(_palette));
+	for (uint16 i = 0; i < 256; i++) {
+		byte r = stream.readByte();
+		byte g = stream.readByte();
+		byte b = stream.readByte();
+		_palette.set(i, r, g, b);
+	}
+
 	uint16 width = stream.readUint16LE();
 	uint16 height = stream.readUint16LE();
 

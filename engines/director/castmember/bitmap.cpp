@@ -600,11 +600,11 @@ void BitmapCastMember::load() {
 				delete file;
 
 				if (res) {
-					setPicture(*decoder, decoder->hasPalette());
+					setPicture(*decoder, !decoder->getPalette().empty());
 					_external = true;
 
 					const Graphics::Surface *surf = decoder->getSurface();
-					if (decoder->hasPalette()) {
+					if (!decoder->getPalette().empty()) {
 						// For BMPs this sometimes gets set to 16 in the cast record,
 						// we should go with what the target image has.
 						_bitsPerPixel = 8;
@@ -619,7 +619,7 @@ void BitmapCastMember::load() {
 						Common::DumpFile bitmapFile;
 
 						bitmapFile.open(Common::Path(filename), true);
-						Image::writePNG(bitmapFile, *decoder->getSurface(), decoder->getPalette());
+						Image::writePNG(bitmapFile, *decoder->getSurface(), decoder->getPalette().data());
 
 						bitmapFile.close();
 					}
@@ -691,7 +691,7 @@ void BitmapCastMember::load() {
 		Common::DumpFile bitmapFile;
 
 		bitmapFile.open(Common::Path(filename), true);
-		Image::writePNG(bitmapFile, *img->getSurface(), img->getPalette());
+		Image::writePNG(bitmapFile, *img->getSurface(), img->getPalette().data());
 
 		bitmapFile.close();
 	}

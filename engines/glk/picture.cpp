@@ -135,8 +135,8 @@ Picture *Pictures::load(const Common::String &name) {
 		png.setKeepTransparencyPaletted(true);
 		png.loadStream(f);
 		img = png.getSurface();
-		palette = png.getPalette();
-		palCount = png.getPaletteColorCount();
+		palette = png.getPalette().data();
+		palCount = png.getPalette().size();
 		hasTransColor = png.hasTransparentColor();
 		transColor = png.getTransparentColor();
 	} else if (
@@ -152,8 +152,8 @@ Picture *Pictures::load(const Common::String &name) {
 			f.open(Common::Path(Common::String::format("pic%s.raw", name.c_str())))) {
 		raw.loadStream(f);
 		img = raw.getSurface();
-		palette = raw.getPalette();
-		palCount = raw.getPaletteColorCount();
+		palette = raw.getPalette().data();
+		palCount = raw.getPalette().size();
 		hasTransColor = raw.hasTransparentColor();
 		transColor = raw.getTransparentColor();
 	} else if (f.open(Common::Path(Common::String::format("pic%s.rect", name.c_str())))) {

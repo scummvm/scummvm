@@ -85,7 +85,7 @@ void PrinceEngine::changeCursor(uint16 curId) {
 		break;
 	}
 
-	CursorMan.replaceCursorPalette(_roomBmp->getPalette(), 0, 255);
+	CursorMan.replaceCursorPalette(_roomBmp->getPalette().data(), 0, 255);
 	CursorMan.replaceCursor(
 		curSurface->getBasePtr(0, 0),
 		curSurface->w, curSurface->h,

@@ -321,7 +321,7 @@ void splashScreen() {
 	screen.free();
 
 	// Draw logo
-	Graphics::Surface *logo = bitmap.getSurface()->convertTo(g_system->getOverlayFormat(), bitmap.getPalette());
+	Graphics::Surface *logo = bitmap.getSurface()->convertTo(g_system->getOverlayFormat(), bitmap.getPalette().data(), bitmap.getPalette().size());
 	if (scaleFactor != 1.0f) {
 		Graphics::Surface *tmp = logo->scale(int16(logo->w * scaleFactor), int16(logo->h * scaleFactor), true);
 		logo->free();

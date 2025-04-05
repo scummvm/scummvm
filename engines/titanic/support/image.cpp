@@ -43,8 +43,8 @@ void Image::loadBitmap(Common::SeekableReadStream &s) {
 		blitFrom(*src);
 	} else {
 		// Convert the loaded surface to the screen surface format
-		const byte *palette = decoder.getPalette();
-		Graphics::Surface *surface = src->convertTo(scrFormat, palette);
+		const Graphics::Palette &palette = decoder.getPalette();
+		Graphics::Surface *surface = src->convertTo(scrFormat, palette.data(), palette.size());
 		create(surface->w, surface->h, scrFormat);
 		blitFrom(*surface);
 

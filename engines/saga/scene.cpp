@@ -434,7 +434,6 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 	if (_vm->_hasITESceneSubstitutes) {
 		for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++) {
 			if (sceneSubstitutes[i].sceneId == sceneNumber) {
-				const byte *pal;
 				Common::File file;
 				Rect rect;
 				PalEntry cPal[PAL_ENTRIES];
@@ -444,14 +443,12 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 				if (file.open(sceneSubstitutes[i].image)) {
 					Image::IFFDecoder decoder;
 					decoder.loadStream(file);
-					pal = decoder.getPalette();
+					const Graphics::Palette &pal = decoder.getPalette();
 					rect.setWidth(decoder.getSurface()->w);
 					rect.setHeight(decoder.getSurface()->h);
 					_vm->_gfx->drawRegion(rect, (const byte *)decoder.getSurface()->getPixels());
 					for (int j = 0; j < PAL_ENTRIES; j++) {
-						cPal[j].red = *pal++;
-						cPal[j].green = *pal++;
-						cPal[j].blue = *pal++;
+						pal.get(j, cPal[j].red, cPal[j].green, cPal[j].blue);
 					}
 					_vm->_gfx->setPalette(cPal);
 

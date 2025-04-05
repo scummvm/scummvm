@@ -931,12 +931,12 @@ void Inter_v7::o7_loadIFFPalette() {
 
 	Image::IFFDecoder decoder;
 	decoder.loadStream(*iffFile);
-	if (!decoder.getPalette() || decoder.getPaletteColorCount() != 256) {
+	if (decoder.getPalette().size() != 256) {
 		warning("o7_loadIFFPalette(): Failed reading palette from IFF \"%s\"", file.c_str());
 		return;
 	}
 
-	const byte *palette = decoder.getPalette();
+	const byte *palette = decoder.getPalette().data();
 
 	startIndex *= 3;
 	stopIndex  *= 3;
