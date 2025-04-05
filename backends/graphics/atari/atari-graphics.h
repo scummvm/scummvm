@@ -31,6 +31,7 @@
 #include "graphics/surface.h"
 
 #include "atari-cursor.h"
+#include "atari-graphics-superblitter.h"
 #include "atari-pendingscreenchanges.h"
 #include "atari-screen.h"
 
@@ -117,6 +118,7 @@ protected:
 	typedef void* (*AtariMemAlloc)(size_t bytes);
 	typedef void (*AtariMemFree)(void *ptr);
 
+	int getBitsPerPixel(const Graphics::PixelFormat &format) const;
 	void allocateSurfaces();
 	void freeSurfaces();
 
@@ -147,9 +149,14 @@ private:
 								  const void *buf, int pitch, int x, int y, int w, int h,
 								  const Graphics::PixelFormat &format, bool directRendering);
 
-	int getBitsPerPixel(const Graphics::PixelFormat &format) const;
-
 	bool isOverlayDirectRendering() const;
+
+	Common::Rect alignRect(int x, int y, int w, int h) const {
+		// make non-virtual for performance reasons
+		return hasSuperVidel()
+				   ? Common::Rect(x, y, x + w, y + h)
+				   : Common::Rect(x & (-16), y, (x + w + 15) & (-16), y + h);
+	}
 
 	virtual AtariMemAlloc getStRamAllocFunc() const {
 		return [](size_t bytes) { return (void*)Mxalloc(bytes, MX_STRAM); };
@@ -158,22 +165,16 @@ private:
 		return [](void *ptr) { Mfree(ptr); };
 	}
 
-	virtual void copyRectToSurface(Graphics::Surface &dstSurface, int dstBitsPerPixel, const Graphics::Surface &srcSurface,
+	virtual void copyRectToSurface(Graphics::Surface &dstSurface, const Graphics::Surface &srcSurface,
 								   int destX, int destY,
 								   const Common::Rect &subRect) const {
 		dstSurface.copyRectToSurface(srcSurface, destX, destY, subRect);
 	}
 
-	virtual void drawMaskedSprite(Graphics::Surface &dstSurface, int dstBitsPerPixel,
+	virtual void drawMaskedSprite(Graphics::Surface &dstSurface,
 								  const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
 								  int destX, int destY,
 								  const Common::Rect &subRect) = 0;
-
-	virtual Common::Rect alignRect(int x, int y, int w, int h) const = 0;
-
-	Common::Rect alignRect(const Common::Rect &rect) const {
-		return alignRect(rect.left, rect.top, rect.width(), rect.height());
-	}
 
 	bool _vgaMonitor = true;
 	bool _tt = false;

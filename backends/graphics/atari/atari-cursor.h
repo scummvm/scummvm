@@ -85,7 +85,7 @@ struct Cursor {
 	// surface
 	void setSurface(const void *buf, int w, int h, int hotspotX, int hotspotY, uint32 keycolor);
 	void setPalette(const byte *colors, uint start, uint num);
-	void convertTo(const Graphics::PixelFormat &format);
+	void convertSurfaceTo(const Graphics::PixelFormat &format);
 
 	bool isVisible() const {
 		return !_outOfScreen && _visible;
@@ -98,9 +98,9 @@ struct Cursor {
 		return rect.intersects(_dstRect);
 	}
 
-	void flushBackground(const Graphics::Surface &srcSurface, const Common::Rect &rect);
-	bool restoreBackground(const Graphics::Surface &srcSurface, bool force);
-	bool draw(bool directRendering, bool force);
+	void flushBackground(const Graphics::Surface &srcSurface, const Common::Rect &rect, bool directRendering);
+	bool restoreBackground(const Graphics::Surface &srcSurface, bool force, bool directRendering);
+	bool draw(bool force, bool directRendering);
 
 private:
 	static byte _palette[256*3];

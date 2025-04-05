@@ -711,7 +711,8 @@ void AtariGraphicsManager::showOverlay(bool inGUI) {
 	}
 
 	if (_currentState.mode == kDirectRendering) {
-		_screen[kFrontBuffer]->cursor.restoreBackground(Graphics::Surface(), true);
+		// one could also use *lockScren() but it's useless
+		_screen[kFrontBuffer]->cursor.restoreBackground(Graphics::Surface(), true, true);
 	}
 
 	_pendingScreenChanges.setScreenSurface(&_screen[kOverlayBuffer]->surf);
@@ -1007,6 +1008,10 @@ Common::Keymap *AtariGraphicsManager::getKeymap() const {
 	return keymap;
 }
 
+int AtariGraphicsManager::getBitsPerPixel(const Graphics::PixelFormat &format) const {
+	return format == PIXELFORMAT_RGB121 ? 4 : 8;
+}
+
 void AtariGraphicsManager::allocateSurfaces() {
 	for (int i : { kFrontBuffer, kBackBuffer1, kBackBuffer2 }) {
 		_screen[i] = new Screen(this, getMaximumScreenWidth(), getMaximumScreenHeight(), PIXELFORMAT_CLUT8, &_palette);
@@ -1046,7 +1051,6 @@ bool AtariGraphicsManager::updateScreenInternal(Screen *dstScreen, const Graphic
 	Cursor &cursor                       = dstScreen->cursor;
 
 	const bool directRendering           = srcSurface.getPixels() == nullptr;
-	const int dstBitsPerPixel            = getBitsPerPixel(dstSurface->format);
 
 	bool updated = false;
 
@@ -1060,16 +1064,16 @@ bool AtariGraphicsManager::updateScreenInternal(Screen *dstScreen, const Graphic
 			forceCursorDraw = cursor.intersects(*it);
 
 		if (!directRendering) {
-			copyRectToSurface(*dstSurface, dstBitsPerPixel, srcSurface, it->left, it->top, *it);
+			copyRectToSurface(*dstSurface, srcSurface, it->left, it->top, *it);
 			updated |= true;
 		}
 	}
 
-	updated |= cursor.restoreBackground(srcSurface, false);
+	updated |= cursor.restoreBackground(srcSurface, false, directRendering);
 
 	unlockSuperBlitter();
 
-	updated |= cursor.draw(directRendering, forceCursorDraw);
+	updated |= cursor.draw(forceCursorDraw, directRendering);
 
 	return updated;
 }
@@ -1087,16 +1091,12 @@ void AtariGraphicsManager::copyRectToScreenInternal(Graphics::Surface &dstSurfac
 		srcSurface.init(rect.width(), rect.height(), pitch, srcBuf, format);
 
 		copyRectToSurface(
-			dstSurface, getBitsPerPixel(format), srcSurface,
+			dstSurface, srcSurface,
 			rect.left, rect.top,
 			Common::Rect(rect.width(), rect.height()));
 	} else {
 		dstSurface.copyRectToSurface(buf, pitch, x, y, w, h);
 	}
-}
-
-int AtariGraphicsManager::getBitsPerPixel(const Graphics::PixelFormat &format) const {
-	return format == PIXELFORMAT_RGB121 ? 4 : 8;
 }
 
 bool AtariGraphicsManager::isOverlayDirectRendering() const {

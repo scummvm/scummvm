@@ -101,11 +101,11 @@ private:
 		return [](void *ptr) { Mfree((uintptr)ptr & 0x00FFFFFF); };
 	}
 
-	void drawMaskedSprite(Graphics::Surface &dstSurface, int dstBitsPerPixel,
+	void drawMaskedSprite(Graphics::Surface &dstSurface,
 						  const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
 						  int destX, int destY,
 						  const Common::Rect &subRect) override {
-		assert(dstBitsPerPixel == 8);
+		assert(dstSurface.format == Graphics::PixelFormat::createFormatCLUT8());
 		assert(subRect.width() % 16 == 0);
 		assert(subRect.width() == srcSurface.w);
 
@@ -122,7 +122,7 @@ private:
 				const uint16 m = *mask;
 
 				if (m == 0xFFFF) {
-					// all 16 pixels transparentm6
+					// all 16 pixels transparent
 					src += 16;
 					dst += 16;
 					continue;
@@ -143,10 +143,6 @@ private:
 
 			dst += dstOffset;
 		}
-	}
-
-	Common::Rect alignRect(int x, int y, int w, int h) const override {
-		return Common::Rect(x, y, x + w, y + h);
 	}
 
 	static long hasSvRamBoosted() {

@@ -152,6 +152,6 @@ void Screen::addDirtyRect(const Graphics::Surface &srcSurface, const Common::Rec
 		dirtyRects.insert(rect);
 
 		// do it now to avoid checking in AtariGraphicsManager::updateScreenInternal()
-		cursor.flushBackground(directRendering ? Graphics::Surface() : srcSurface, rect);
+		cursor.flushBackground(srcSurface, rect, directRendering);
 	}
 }

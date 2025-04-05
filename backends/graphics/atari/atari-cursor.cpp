@@ -97,7 +97,7 @@ void Cursor::setPalette(const byte *colors, uint start, uint num) {
 	_surfaceChanged = true;
 }
 
-void Cursor::convertTo(const Graphics::PixelFormat &format) {
+void Cursor::convertSurfaceTo(const Graphics::PixelFormat &format) {
 	const int cursorWidth = (_srcRect.width() + 15) & (-16);
 	const int cursorHeight = _height;
 	const bool isCLUT8 = format.isCLUT8();
@@ -169,48 +169,50 @@ void Cursor::convertTo(const Graphics::PixelFormat &format) {
 	}
 }
 
-void Cursor::flushBackground(const Graphics::Surface &srcSurface, const Common::Rect &rect) {
+void Cursor::flushBackground(const Graphics::Surface &srcSurface, const Common::Rect &rect, bool directRendering) {
 	if (_savedRect.isEmpty())
 		return;
 
-	if (rect.contains(_savedRect)) {
+	const int dstBitsPerPixel       = _manager->getBitsPerPixel(srcSurface.format);
+	const Common::Rect adjustedRect = Common::Rect(
+		rect.left * dstBitsPerPixel / 8,
+		rect.top,
+		rect.right * dstBitsPerPixel / 8,
+		rect.bottom);
+
+	if (adjustedRect.contains(_savedRect)) {
 		_savedRect = Common::Rect();
-	} else if (rect.intersects(_savedRect)) {
-		restoreBackground(srcSurface, true);
+	} else if (adjustedRect.intersects(_savedRect)) {
+		restoreBackground(srcSurface, true, directRendering);
 	}
 }
 
-bool Cursor::restoreBackground(const Graphics::Surface &srcSurface, bool force) {
+bool Cursor::restoreBackground(const Graphics::Surface &srcSurface, bool force, bool directRendering) {
 	if (_savedRect.isEmpty() || (!force && !isChanged()))
 		return false;
 
 	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
-	const int dstBitsPerPixel     = _manager->getBitsPerPixel(dstSurface.format);
 
 	//atari_debug("Cursor::restoreBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
 
-	if (srcSurface.getPixels()) {
+	if (directRendering) {
+		// restore native pixels (i.e. bitplanes)
+		dstSurface.copyRectToSurface(
+			_savedBackground,
+			_savedRect.left, _savedRect.top,
+			Common::Rect(_savedBackground.w, _savedBackground.h));
+	} else {
 		_manager->copyRectToSurface(
-			dstSurface, dstBitsPerPixel, srcSurface,
+			dstSurface, srcSurface,
 			_savedRect.left, _savedRect.top,
 			_savedRect);
-	} else {
-		const int bytesPerPixel = dstSurface.format.bytesPerPixel;
-
-		// restore native pixels (i.e. bitplanes)
-		Graphics::copyBlit(
-			(byte *)dstSurface.getPixels() + _savedRect.top * dstSurface.pitch + _savedRect.left * dstBitsPerPixel / 8,
-			(const byte *)_savedBackground.getPixels(),
-			dstSurface.pitch, _savedBackground.pitch,
-			_savedRect.width() * dstBitsPerPixel / 8, _savedRect.height(),	// fake 4bpp by 8bpp's width/2
-			bytesPerPixel);
 	}
 
 	_savedRect = Common::Rect();
 	return true;
 }
 
-bool Cursor::draw(bool directRendering, bool force) {
+bool Cursor::draw(bool force, bool directRendering) {
 	if (!isVisible() || (!force && !isChanged()))
 		return false;
 
@@ -219,13 +221,17 @@ bool Cursor::draw(bool directRendering, bool force) {
 
 	//atari_debug("Cursor::draw: %d %d %d %d", _dstRect.left, _dstRect.top, _dstRect.width(), _dstRect.height());
 
-	// always work with aligned rect
-	_savedRect = _manager->alignRect(_dstRect);
+	// non-direct rendering never uses 4bpp but maybe in the future...
+	_savedRect = _manager->alignRect(
+		_dstRect.left * dstBitsPerPixel / 8,	// fake 4bpp by 8bpp's x/2
+		_dstRect.top,
+		_dstRect.width() * dstBitsPerPixel / 8,	// fake 4bpp by 8bpp's width/2
+		_dstRect.height());
 
 	if (_surfaceChanged || _width != _srcRect.width()) {
-		// TODO: check for change, not just different width so it's not called over and over again ...
-		// TODO: some sort of in-place C2P directly into convertTo() ...
-		convertTo(dstSurface.format);
+		// TODO: check for change, not just different width so it's not called over and over again when clipped ...
+		// TODO: some sort of in-place C2P directly into convertSurfaceTo() ...
+		convertSurfaceTo(dstSurface.format);
 		{
 			// c2p in-place (will do nothing on regular Surface::copyRectToSurface)
 			Graphics::Surface surf;
@@ -236,33 +242,28 @@ bool Cursor::draw(bool directRendering, bool force) {
 				_surface.getPixels(),
 				_surface.format);
 			_manager->copyRectToSurface(
-				surf, dstBitsPerPixel, _surface,
+				surf, _surface,
 				0, 0,
 				Common::Rect(_surface.w, _surface.h));
 		}
 	}
 
 	if (directRendering) {
-		// store native pixels (i.e. bitplanes)
+		// save native pixels (i.e. bitplanes)
 		if (_savedBackground.w != _savedRect.width()
 			|| _savedBackground.h != _savedRect.height()
 			|| _savedBackground.format != dstSurface.format) {
 			_savedBackground.create(_savedRect.width(), _savedRect.height(), dstSurface.format);
-			_savedBackground.pitch = _savedBackground.pitch * dstBitsPerPixel / 8;
 		}
 
-		Graphics::copyBlit(
-			(byte *)_savedBackground.getPixels(),
-			(const byte *)dstSurface.getPixels() + _savedRect.top * dstSurface.pitch + _savedRect.left * dstBitsPerPixel / 8,
-			_savedBackground.pitch, dstSurface.pitch,
-			_savedRect.width() * dstBitsPerPixel / 8, _savedRect.height(),	// fake 4bpp by 8bpp's width/2
-			dstSurface.format.bytesPerPixel);
+		_savedBackground.copyRectToSurface(dstSurface, 0, 0, _savedRect);
 	}
 
 	// don't use _srcRect.right as 'x2' as this must be aligned first
-	// (_surface.w is recalculated thanks to convertTo())
+	// (_surface.w is recalculated thanks to convertSurfaceTo())
 	_manager->drawMaskedSprite(
-		dstSurface, dstBitsPerPixel, _surface, _surfaceMask,
+		dstSurface,
+		_surface, _surfaceMask,
 		_dstRect.left, _dstRect.top,
 		Common::Rect(0, _srcRect.top, _surface.w, _srcRect.bottom));
 
