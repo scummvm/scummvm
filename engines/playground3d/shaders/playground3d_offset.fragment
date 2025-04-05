@@ -1,0 +1,8 @@
+
+OUTPUT
+
+uniform vec3 triColor;
+
+void main() {
+	outColor = vec4(triColor, 1.0);
+}

@@ -54,6 +54,26 @@ bool Playground3dEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsArbitraryResolutions && !softRenderer);
 }
 
+void Playground3dEngine::genTextures() {
+#if defined(SCUMM_LITTLE_ENDIAN)
+	Graphics::PixelFormat pixelFormatRGBA(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	Graphics::PixelFormat pixelFormatRGB(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#else
+	Graphics::PixelFormat pixelFormatRGBA(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	Graphics::PixelFormat pixelFormatRGB(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#endif
+	Graphics::PixelFormat pixelFormatRGB565(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	Graphics::PixelFormat pixelFormatRGB5551(2, 5, 5, 5, 1, 11, 6, 1, 0);
+	Graphics::PixelFormat pixelFormatRGB4444(2, 4, 4, 4, 4, 12, 8, 4, 0);
+	_rgbaTexture = generateRgbaTexture(120, 120, pixelFormatRGBA);
+	_rgbTexture = _rgbaTexture->convertTo(pixelFormatRGB);
+	_rgb565Texture = generateRgbaTexture(120, 120, pixelFormatRGB565);
+	_rgba5551Texture = generateRgbaTexture(120, 120, pixelFormatRGB5551);
+	_rgba4444Texture = generateRgbaTexture(120, 120, pixelFormatRGB4444);
+}
+
+static int testId;
+static bool texturesGenerated;
 Playground3dEngine::Playground3dEngine(OSystem *syst)
 		: Engine(syst), _system(syst), _gfx(nullptr), _frameLimiter(nullptr),
 		_rotateAngleX(0), _rotateAngleY(0), _rotateAngleZ(0), _fogEnable(false),
@@ -76,12 +96,14 @@ Common::Error Playground3dEngine::run() {
 
 	_system->showMouse(true);
 
+	texturesGenerated = false;
+
 	// 1 - rotated colorfull cube
 	// 2 - rotated two triangles with depth offset
 	// 3 - fade in/out
 	// 4 - moving filled rectangle in viewport
 	// 5 - drawing RGBA pattern texture to check endian correctness
-	int testId = 1;
+	testId = 1;
 	_fogEnable = false;
 
 	if (_fogEnable) {
@@ -104,21 +126,8 @@ Common::Error Playground3dEngine::run() {
 			break;
 		case 5: {
 			_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
-#if defined(SCUMM_LITTLE_ENDIAN)
-			Graphics::PixelFormat pixelFormatRGBA(4, 8, 8, 8, 8, 0, 8, 16, 24);
-			Graphics::PixelFormat pixelFormatRGB(3, 8, 8, 8, 0, 0, 8, 16, 0);
-#else
-			Graphics::PixelFormat pixelFormatRGBA(4, 8, 8, 8, 8, 24, 16, 8, 0);
-			Graphics::PixelFormat pixelFormatRGB(3, 8, 8, 8, 0, 16, 8, 0, 0);
-#endif
-			Graphics::PixelFormat pixelFormatRGB565(2, 5, 6, 5, 0, 11, 5, 0, 0);
-			Graphics::PixelFormat pixelFormatRGB5551(2, 5, 5, 5, 1, 11, 6, 1, 0);
-			Graphics::PixelFormat pixelFormatRGB4444(2, 4, 4, 4, 4, 12, 8, 4, 0);
-			_rgbaTexture = generateRgbaTexture(120, 120, pixelFormatRGBA);
-			_rgbTexture = _rgbaTexture->convertTo(pixelFormatRGB);
-			_rgb565Texture = generateRgbaTexture(120, 120, pixelFormatRGB565);
-			_rgba5551Texture = generateRgbaTexture(120, 120, pixelFormatRGB5551);
-			_rgba4444Texture = generateRgbaTexture(120, 120, pixelFormatRGB4444);
+			genTextures();
+			texturesGenerated = true;
 			break;
 		}
 		default:
@@ -147,6 +156,36 @@ void Playground3dEngine::processInput() {
 	while (getEventManager()->pollEvent(event)) {
 		if (event.type == Common::EVENT_SCREEN_CHANGED) {
 			_gfx->computeScreenViewport();
+		}
+		if (event.type == Common::EVENT_LBUTTONUP) {
+			testId++;
+			if (testId > 5)
+				testId = 1;
+			switch (testId) {
+				case 1:
+					_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
+					_rotateAngleX = 45, _rotateAngleY = 45, _rotateAngleZ = 10;
+					break;
+				case 2:
+					_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
+					break;
+				case 3:
+					_clearColor = Math::Vector4d(1.0f, 0.0f, 0.0f, 1.0f);
+					break;
+				case 4:
+					_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
+					break;
+				case 5: {
+					_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
+					if (!texturesGenerated) {
+						genTextures();
+						texturesGenerated = true;
+					}
+					break;
+				}
+				default:
+					assert(false);
+			}
 		}
 	}
 }
@@ -218,7 +257,7 @@ void Playground3dEngine::drawRgbaTexture() {
 	_gfx->drawRgbaTexture();
 }
 
-void Playground3dEngine::drawFrame(int testId) {
+void Playground3dEngine::drawFrame(int id) {
 	_gfx->clear(_clearColor);
 
 	float pitch = 0.0f;
@@ -229,7 +268,7 @@ void Playground3dEngine::drawFrame(int testId) {
 	Common::Rect vp = _gfx->viewport();
 	_gfx->setupViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
 
-	switch (testId) {
+	switch (id) {
 		case 1:
 			if (_fogEnable) {
 				_gfx->enableFog(_fogColor);

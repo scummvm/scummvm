@@ -1,0 +1,12 @@
+in vec2 position;
+
+uniform mat4 mvpMatrix;
+uniform mat4 projMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 rotateMatrix;
+uniform vec3 modelPos;
+
+void main() {
+	vec4 pos = rotateMatrix * vec4(position, 0.0, 1.0);
+	gl_Position = mvpMatrix * (pos + vec4(modelPos, 1.0));
+}
