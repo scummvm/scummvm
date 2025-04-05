@@ -504,7 +504,6 @@ void AGOSEngine::delay(uint amount) {
 						aboutDialog.runModal();
 					}
 				} else if (event.kbd.keycode == Common::KEYCODE_f && getGameId() == GID_WAXWORKS) {
-
 					// Check if the necessary HitAreas exist.
 					HitArea *fightButton = findBox(117);
 					HitArea *walkButton = findBox(119);
