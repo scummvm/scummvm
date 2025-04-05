@@ -1572,9 +1572,9 @@ bool PrintModifierImageSupplier::loadImageSlot(uint slot, const Graphics::Surfac
 	dataStream.reset();
 
 	outSurface = _decoder->getSurface();
-	outHasPalette = _decoder->getPalette().size() > 0;
+	outHasPalette = !_decoder->getPalette().empty();
 
-	if (_decoder->getPalette().size() > 0)
+	if (!_decoder->getPalette().empty())
 		outPalette.set(_decoder->getPalette(), 0, _decoder->getPalette().size());
 
 	outMetadata = GUI::ImageAlbumImageMetadata();

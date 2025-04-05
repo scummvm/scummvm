@@ -638,7 +638,7 @@ void Screen::paletteBrightness() {
 	}
 	for (uint i = 0; i < 717; ++i) {
 		const byte *imagePalette;
-		if (_currentImage && _currentImage->getPalette().size() > 0) {
+		if (_currentImage && !_currentImage->getPalette().empty()) {
 			imagePalette = _currentImage->getPalette().data();
 		} else {
 			imagePalette = palette + 48;

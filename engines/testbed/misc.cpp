@@ -244,8 +244,8 @@ bool ImageAlbumImageSupplier::loadImageSlot(uint slot, const Graphics::Surface *
 		return false;
 
 	outSurface = fi._decoder->getSurface();
-	outHasPalette = fi._decoder->getPalette().size() > 0;
-	if (fi._decoder->getPalette().size() > 0)
+	outHasPalette = !fi._decoder->getPalette().empty();
+	if (!fi._decoder->getPalette().empty())
 		outPalette.set(fi._decoder->getPalette(), 0, fi._decoder->getPalette().size());
 	outMetadata = GUI::ImageAlbumImageMetadata();
 

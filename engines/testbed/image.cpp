@@ -319,7 +319,7 @@ bool ImageTests::testImageDecoder(Common::Path &filepath, Image::ImageDecoder &d
 	g_system->endGFXTransaction();
 
 	Graphics::Screen screen;
-	if (decoder.getPalette().size() > 0) {
+	if (!decoder.getPalette().empty()) {
 		screen.simpleBlitFrom(*pSurface, &decoder.getPalette());
 	} else {
 		screen.simpleBlitFrom(*pSurface);

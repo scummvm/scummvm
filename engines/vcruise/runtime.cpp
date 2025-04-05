@@ -6192,7 +6192,7 @@ Common::SharedPtr<Graphics::ManagedSurface> Runtime::loadGraphicFromPath(const C
 
 	// Preserve the palette if it has one, otherwise convert it to the current screen format.
 	Common::SharedPtr<Graphics::ManagedSurface> surf(new Graphics::ManagedSurface());
-	if (bmpDecoder.getPalette().size() > 0) {
+	if (!bmpDecoder.getPalette().empty()) {
 		surf->copyFrom(*bmpDecoder.getSurface());
 		surf->setPalette(bmpDecoder.getPalette().data(), 0, bmpDecoder.getPalette().size());
 	} else {

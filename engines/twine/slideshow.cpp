@@ -62,7 +62,7 @@ private:
 		Graphics::ManagedSurface &target = _engine->_frontVideoBuffer;
 		target.blitFrom(*src);
 
-		if (decoder.getPalette().size() > 0) {
+		if (!decoder.getPalette().empty()) {
 			setPalette(decoder.getPalette().data(), decoder.getPalette().size());
 		}
 		return true;

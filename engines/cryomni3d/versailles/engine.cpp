@@ -1718,7 +1718,7 @@ void CryOmni3DEngine_Versailles::displayObject(const Common::String &imgName,
 		error("Can't display object");
 	}
 
-	if (imageDecoder->getPalette().size() > 0) {
+	if (!imageDecoder->getPalette().empty()) {
 		// We don't need to calculate transparency but it's simpler to call this function
 		setupPalette(imageDecoder->getPalette().data(), 0,
 		             imageDecoder->getPalette().size());

@@ -65,7 +65,7 @@ static void loadImage(Image::ImageDecoder *decoder, Texture *t) {
 	t->_texture = nullptr;
 
 	int bpp = surface->format.bytesPerPixel;
-	assert(decoder->getPalette().size() > 0 || bpp == 3 || bpp == 4); // Assure we have 8/24/32 bpp
+	assert(!decoder->getPalette().empty() || bpp == 3 || bpp == 4); // Assure we have 8/24/32 bpp
 
 	// Allocate room for the texture.
 	if (bpp == 4) {
@@ -78,7 +78,7 @@ static void loadImage(Image::ImageDecoder *decoder, Texture *t) {
 	t->_data = new uint8[t->_width * t->_height * t->_bpp];
 
 	// Copy the texture data, as the decoder owns the current copy.
-	if (decoder->getPalette().size() > 0) {
+	if (!decoder->getPalette().empty()) {
 		uint32 map[256];
 		Graphics::convertPaletteToMap(map,
 		                              decoder->getPalette().data(),

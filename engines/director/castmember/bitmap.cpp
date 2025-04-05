@@ -600,11 +600,11 @@ void BitmapCastMember::load() {
 				delete file;
 
 				if (res) {
-					setPicture(*decoder, decoder->getPalette().size() > 0);
+					setPicture(*decoder, !decoder->getPalette().empty());
 					_external = true;
 
 					const Graphics::Surface *surf = decoder->getSurface();
-					if (decoder->getPalette().size() > 0) {
+					if (!decoder->getPalette().empty()) {
 						// For BMPs this sometimes gets set to 16 in the cast record,
 						// we should go with what the target image has.
 						_bitsPerPixel = 8;

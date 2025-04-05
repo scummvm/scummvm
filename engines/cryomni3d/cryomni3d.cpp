@@ -190,7 +190,7 @@ bool CryOmni3DEngine::displayHLZ(const Common::Path &filepath, uint32 timeout) {
 		return false;
 	}
 
-	if (imageDecoder->getPalette().size() > 0) {
+	if (!imageDecoder->getPalette().empty()) {
 		setPalette(imageDecoder->getPalette().data(), 0, imageDecoder->getPalette().size());
 	}
 

@@ -566,7 +566,7 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 				unscaled->blitFrom(*surface);
 
 				const Graphics::Palette &pal = decoder->getPalette();
-				if (pal.size() > 0) {
+				if (!pal.empty()) {
 					unscaled->setPalette(pal.data(), pal.size());
 				}
 
