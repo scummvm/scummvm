@@ -116,8 +116,6 @@ void UCProcess::freeOnTerminate(uint16 index, int type) {
 }
 
 void UCProcess::terminate() {
-	Std::list<Common::Pair<uint16, int> >::iterator i;
-
 	for (auto &i : _freeOnTerminate) {
 		uint16 index = i.first;
 		int typeNum = i.second;
