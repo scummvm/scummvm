@@ -23,10 +23,9 @@
 
 #include <cassert>
 
-#include "graphics/blit.h"
-
 #include "atari-graphics.h"
 #include "atari-screen.h"
+#include "backends/platform/atari/atari-debug.h"
 
 extern bool g_unalignedPitch;
 
@@ -35,6 +34,7 @@ byte Cursor::_palette[256*3] = {};
 void Cursor::update() {
 	if (!_buf) {
 		_outOfScreen = true;
+		_savedRect = _alignedDstRect = Common::Rect();
 		return;
 	}
 
@@ -51,8 +51,27 @@ void Cursor::update() {
 
 	_outOfScreen = !_parentScreen->offsettedSurf->clip(_srcRect, _dstRect);
 
-	assert(_srcRect.width() == _dstRect.width());
-	assert(_srcRect.height() == _dstRect.height());
+	if (!_outOfScreen) {
+		assert(_srcRect.width() == _dstRect.width());
+		assert(_srcRect.height() == _dstRect.height());
+
+		Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
+		const int dstBitsPerPixel     = _manager->getBitsPerPixel(dstSurface.format);
+
+		// non-direct rendering never uses 4bpp but maybe in the future ...
+		_savedRect = _manager->alignRect(
+			_dstRect.left * dstBitsPerPixel / 8,	// fake 4bpp by 8bpp's x/2
+			_dstRect.top,
+			_dstRect.width() * dstBitsPerPixel / 8,	// fake 4bpp by 8bpp's width/2
+			_dstRect.height());
+
+		// save also version for comparisons with outside world ...
+		_alignedDstRect = _manager->alignRect(
+			_dstRect.left,
+			_dstRect.top,
+			_dstRect.width(),
+			_dstRect.height());
+	}
 }
 
 void Cursor::updatePosition(int deltaX, int deltaY) {
@@ -169,50 +188,42 @@ void Cursor::convertSurfaceTo(const Graphics::PixelFormat &format) {
 	}
 }
 
-void Cursor::flushBackground(const Graphics::Surface &srcSurface, const Common::Rect &rect, bool directRendering) {
+Common::Rect Cursor::flushBackground(const Common::Rect &rect, bool directRendering) {
+	if (_savedRect.isEmpty())
+		return _savedRect;
+
+	if (!rect.isEmpty() && rect.contains(_alignedDstRect)) {
+		_savedRect = Common::Rect();
+	} else if (rect.isEmpty() || rect.intersects(_alignedDstRect)) {
+		if (directRendering) {
+			restoreBackground();
+		} else {
+			return _alignedDstRect;
+		}
+	}
+
+	return Common::Rect();
+}
+
+void Cursor::saveBackground() {
 	if (_savedRect.isEmpty())
 		return;
 
-	const int dstBitsPerPixel       = _manager->getBitsPerPixel(srcSurface.format);
-	const Common::Rect adjustedRect = Common::Rect(
-		rect.left * dstBitsPerPixel / 8,
-		rect.top,
-		rect.right * dstBitsPerPixel / 8,
-		rect.bottom);
-
-	if (adjustedRect.contains(_savedRect)) {
-		_savedRect = Common::Rect();
-	} else if (adjustedRect.intersects(_savedRect)) {
-		restoreBackground(srcSurface, true, directRendering);
-	}
-}
-
-bool Cursor::restoreBackground(const Graphics::Surface &srcSurface, bool force, bool directRendering) {
-	if (_savedRect.isEmpty() || (!force && !isChanged()))
-		return false;
-
 	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
 
-	//atari_debug("Cursor::restoreBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
+	//atari_debug("Cursor::saveBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
 
-	if (directRendering) {
-		// restore native pixels (i.e. bitplanes)
-		dstSurface.copyRectToSurface(
-			_savedBackground,
-			_savedRect.left, _savedRect.top,
-			Common::Rect(_savedBackground.w, _savedBackground.h));
-	} else {
-		_manager->copyRectToSurface(
-			dstSurface, srcSurface,
-			_savedRect.left, _savedRect.top,
-			_savedRect);
+	// save native pixels (i.e. bitplanes)
+	if (_savedBackground.w != _savedRect.width()
+		|| _savedBackground.h != _savedRect.height()
+		|| _savedBackground.format != dstSurface.format) {
+		_savedBackground.create(_savedRect.width(), _savedRect.height(), dstSurface.format);
 	}
 
-	_savedRect = Common::Rect();
-	return true;
+	_savedBackground.copyRectToSurface(dstSurface, 0, 0, _savedRect);
 }
 
-bool Cursor::draw(bool force, bool directRendering) {
+bool Cursor::draw(bool force) {
 	if (!isVisible() || (!force && !isChanged()))
 		return false;
 
@@ -220,13 +231,6 @@ bool Cursor::draw(bool force, bool directRendering) {
 	const int dstBitsPerPixel     = _manager->getBitsPerPixel(dstSurface.format);
 
 	//atari_debug("Cursor::draw: %d %d %d %d", _dstRect.left, _dstRect.top, _dstRect.width(), _dstRect.height());
-
-	// non-direct rendering never uses 4bpp but maybe in the future...
-	_savedRect = _manager->alignRect(
-		_dstRect.left * dstBitsPerPixel / 8,	// fake 4bpp by 8bpp's x/2
-		_dstRect.top,
-		_dstRect.width() * dstBitsPerPixel / 8,	// fake 4bpp by 8bpp's width/2
-		_dstRect.height());
 
 	if (_surfaceChanged || _width != _srcRect.width()) {
 		// TODO: check for change, not just different width so it's not called over and over again when clipped ...
@@ -248,17 +252,6 @@ bool Cursor::draw(bool force, bool directRendering) {
 		}
 	}
 
-	if (directRendering) {
-		// save native pixels (i.e. bitplanes)
-		if (_savedBackground.w != _savedRect.width()
-			|| _savedBackground.h != _savedRect.height()
-			|| _savedBackground.format != dstSurface.format) {
-			_savedBackground.create(_savedRect.width(), _savedRect.height(), dstSurface.format);
-		}
-
-		_savedBackground.copyRectToSurface(dstSurface, 0, 0, _savedRect);
-	}
-
 	// don't use _srcRect.right as 'x2' as this must be aligned first
 	// (_surface.w is recalculated thanks to convertSurfaceTo())
 	_manager->drawMaskedSprite(
@@ -269,4 +262,23 @@ bool Cursor::draw(bool force, bool directRendering) {
 
 	_visibilityChanged = _positionChanged = _surfaceChanged = false;
 	return true;
+}
+
+void Cursor::restoreBackground() {
+	if (_savedRect.isEmpty())
+		return;
+
+	assert(_savedBackground.getPixels());
+
+	//atari_debug("Cursor::restoreBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
+
+	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
+
+	// restore native pixels (i.e. bitplanes)
+	dstSurface.copyRectToSurface(
+		_savedBackground,
+		_savedRect.left, _savedRect.top,
+		Common::Rect(_savedBackground.w, _savedBackground.h));
+
+	_savedRect = Common::Rect();
 }

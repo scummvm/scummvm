@@ -25,6 +25,7 @@
 
 #include "atari-graphics.h"
 #include "atari-graphics-superblitter.h"
+#include "backends/platform/atari/atari-debug.h"
 
 Screen::Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format, const Palette *palette_)
 	: _manager(manager)
@@ -44,6 +45,7 @@ Screen::Screen(AtariGraphicsManager *manager, int width, int height, const Graph
 		error("Failed to allocate memory in ST RAM");
 	}
 
+	// TODO: use mspace_calloc similar as what we do with SuperVidel
 	surf.setPixels((void *)(((uintptr)pixelsUnaligned + sizeof(uintptr) + ALIGN - 1) & (-ALIGN)));
 
 	// store the unaligned pointer for later release
@@ -134,24 +136,31 @@ void Screen::reset(int width, int height, int bitsPerPixel, bool resetCursorPosi
 		surf.format);
 }
 
-void Screen::addDirtyRect(const Graphics::Surface &srcSurface, const Common::Rect &rect, bool directRendering) {
+void Screen::addDirtyRect(const Graphics::Surface &srcSurface, int x, int y, int w, int h, bool directRendering) {
 	if (fullRedraw)
 		return;
 
-	if ((rect.width() == srcSurface.w && rect.height() == srcSurface.h)
+	if ((w == srcSurface.w && h == srcSurface.h)
 		|| dirtyRects.size() == 128) {	// 320x200 can hold at most 250 16x16 rectangles
 		//atari_debug("addDirtyRect[%d]: purge %d x %d", (int)dirtyRects.size(), srcSurface.w, srcSurface.h);
 
 		dirtyRects.clear();
-		dirtyRects.emplace(srcSurface.w, srcSurface.h);
+		// don't use x/y/w/h, the 2nd expression may be true
+		dirtyRects.insert(_manager->alignRect(0, 0, srcSurface.w, srcSurface.h));
 
 		cursor.reset();
 
 		fullRedraw = true;
 	} else {
+		Common::Rect rect = _manager->alignRect(x, y, w, h);
 		dirtyRects.insert(rect);
 
-		// do it now to avoid checking in AtariGraphicsManager::updateScreenInternal()
-		cursor.flushBackground(srcSurface, rect, directRendering);
+		// this takes care of a dirty rect touching the cursor background; however there's still
+		// the case when a dirty rect touches the cursor itself: in such case the cursor background
+		// will be restored one more time while iterating over dirty rects
+		Common::Rect cursorBackgroundRect = cursor.flushBackground(rect, directRendering);
+		if (!cursorBackgroundRect.isEmpty()) {
+			dirtyRects.insert(cursorBackgroundRect);
+		}
 	}
 }

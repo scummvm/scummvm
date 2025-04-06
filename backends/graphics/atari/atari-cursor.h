@@ -46,7 +46,7 @@ struct Cursor {
 		_surfaceChanged = true;
 		_visibilityChanged = false;
 
-		_savedRect = Common::Rect();
+		_savedRect = _alignedDstRect = Common::Rect();
 	}
 
 	// updates outOfScreen OR srcRect/dstRect (only if visible/needed)
@@ -98,11 +98,13 @@ struct Cursor {
 		return rect.intersects(_dstRect);
 	}
 
-	void flushBackground(const Graphics::Surface &srcSurface, const Common::Rect &rect, bool directRendering);
-	bool restoreBackground(const Graphics::Surface &srcSurface, bool force, bool directRendering);
-	bool draw(bool force, bool directRendering);
+	Common::Rect flushBackground(const Common::Rect &rect, bool directRendering);
+	void saveBackground();
+	bool draw(bool force);
 
 private:
+	void restoreBackground();
+
 	static byte _palette[256*3];
 
 	AtariGraphicsManager *_manager;
@@ -120,6 +122,7 @@ private:
 
 	Graphics::Surface _savedBackground;	// used by direct rendering
 	Common::Rect _savedRect;
+	Common::Rect _alignedDstRect;
 
 	// related to 'surface'
 	const byte *_buf = nullptr;

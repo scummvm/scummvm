@@ -65,7 +65,7 @@ struct Screen {
 
 	void reset(int width, int height, int bitsPerPixel, bool resetCursorPosition);
 	// must be called before any rectangle drawing
-	void addDirtyRect(const Graphics::Surface &srcSurface, const Common::Rect &rect, bool directRendering);
+	void addDirtyRect(const Graphics::Surface &srcSurface, int x, int y, int w, int h, bool directRendering);
 
 	void clearDirtyRects() {
 		dirtyRects.clear();

@@ -540,14 +540,14 @@ void AtariGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, i
 
 	Graphics::Surface &dstSurface = *lockScreen();
 
+	addDirtyRectToScreens(
+		dstSurface,
+		x, y, w, h);
+
 	copyRectToScreenInternal(
 		dstSurface,
 		buf, pitch, x, y, w, h,
 		_currentState.format, _currentState.mode == kDirectRendering);
-
-	unlockScreenInternal(
-		dstSurface,
-		x, y, w, h);
 }
 
 Graphics::Surface *AtariGraphicsManager::lockScreen() {
@@ -563,7 +563,7 @@ void AtariGraphicsManager::unlockScreen() {
 
 	//atari_debug("unlockScreen: %d x %d", dstSurface.w, dstSurface.h);
 
-	unlockScreenInternal(
+	addDirtyRectToScreens(
 		dstSurface,
 		0, 0, dstSurface.w, dstSurface.h);
 }
@@ -625,11 +625,8 @@ void AtariGraphicsManager::updateScreen() {
 	}
 
 	assert(workScreen);
-	workScreen->cursor.update();
 
 	bool screenUpdated = updateScreenInternal(workScreen, srcSurface ? *srcSurface : Graphics::Surface());
-
-	workScreen->clearDirtyRects();
 
 #ifdef SCREEN_ACTIVE
 	// this assume that the screen surface is not going to be used yet
@@ -711,8 +708,7 @@ void AtariGraphicsManager::showOverlay(bool inGUI) {
 	}
 
 	if (_currentState.mode == kDirectRendering) {
-		// one could also use *lockScren() but it's useless
-		_screen[kFrontBuffer]->cursor.restoreBackground(Graphics::Surface(), true, true);
+		_screen[kFrontBuffer]->cursor.flushBackground(Common::Rect(), true);
 	}
 
 	_pendingScreenChanges.setScreenSurface(&_screen[kOverlayBuffer]->surf);
@@ -842,7 +838,7 @@ void AtariGraphicsManager::clearOverlay() {
 	// right rect
 	_overlaySurface.fillRect(Common::Rect(_overlaySurface.w - hzOffset, vOffset, _overlaySurface.w, _overlaySurface.h - vOffset), 0);
 
-	_screen[kOverlayBuffer]->addDirtyRect(_overlaySurface, Common::Rect(_overlaySurface.w, _overlaySurface.h), false);
+	_screen[kOverlayBuffer]->addDirtyRect(_overlaySurface, 0, 0, _overlaySurface.w, _overlaySurface.h, false);
 }
 
 void AtariGraphicsManager::grabOverlay(Graphics::Surface &surface) const {
@@ -871,14 +867,13 @@ void AtariGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, 
 		? *_screen[kOverlayBuffer]->offsettedSurf
 		: _overlaySurface;
 
+	_screen[kOverlayBuffer]->addDirtyRect(dstSurface, x, y, w, h, directRendering);
+
 	copyRectToScreenInternal(
 		dstSurface,
 		buf, pitch, x, y, w, h,
 		getOverlayFormat(),
 		directRendering);
-
-	const Common::Rect rect = alignRect(x, y, w, h);
-	_screen[kOverlayBuffer]->addDirtyRect(dstSurface, rect, directRendering);
 }
 
 bool AtariGraphicsManager::showMouse(bool visible) {
@@ -886,6 +881,7 @@ bool AtariGraphicsManager::showMouse(bool visible) {
 
 	bool lastOverlay, lastFront, lastBack1 = false;
 
+	// TODO: cursor.flushBackground() if !visible
 	lastOverlay = _screen[kOverlayBuffer]->cursor.setVisible(visible);
 	lastFront   = _screen[kFrontBuffer]->cursor.setVisible(visible);
 
@@ -1032,14 +1028,14 @@ void AtariGraphicsManager::freeSurfaces() {
 	_overlaySurface.free();
 }
 
-void AtariGraphicsManager::unlockScreenInternal(const Graphics::Surface &dstSurface, int x, int y, int w, int h) {
+void AtariGraphicsManager::addDirtyRectToScreens(const Graphics::Surface &dstSurface, int x, int y, int w, int h) {
 	const bool directRendering = _currentState.mode == kDirectRendering;
-	const Common::Rect rect = alignRect(x, y, w, h);
-	_screen[kFrontBuffer]->addDirtyRect(dstSurface, rect, directRendering);
+
+	_screen[kFrontBuffer]->addDirtyRect(dstSurface, x, y, w, h, directRendering);
 
 	if (_currentState.mode > kSingleBuffering) {
-		_screen[kBackBuffer1]->addDirtyRect(dstSurface, rect, directRendering);
-		_screen[kBackBuffer2]->addDirtyRect(dstSurface, rect, directRendering);
+		_screen[kBackBuffer1]->addDirtyRect(dstSurface, x, y, w, h, directRendering);
+		_screen[kBackBuffer2]->addDirtyRect(dstSurface, x, y, w, h, directRendering);
 	}
 }
 
@@ -1054,14 +1050,36 @@ bool AtariGraphicsManager::updateScreenInternal(Screen *dstScreen, const Graphic
 
 	bool updated = false;
 
+	lockSuperBlitter();
+
+	if (cursor.isChanged()) {
+		Common::Rect rect = cursor.flushBackground(Common::Rect(), directRendering);
+		// 'updated' is skipped in direct drawing but in such case there's never triple-buffering active
+		if (!directRendering && !rect.isEmpty()) {
+			copyRectToSurface(*dstSurface, srcSurface, rect.left, rect.top, rect);
+			updated |= true;
+		}
+	}
+
+	// update cursor rects and visibility flag (if out of screen)
+	cursor.update();
+
 	const bool cursorDrawEnabled = cursor.isVisible();
 	bool forceCursorDraw = cursorDrawEnabled && (dstScreen->fullRedraw || cursor.isChanged());
 
-	lockSuperBlitter();
-
 	for (auto it = dirtyRects.begin(); it != dirtyRects.end(); ++it) {
-		if (cursorDrawEnabled && !forceCursorDraw)
+		if (cursorDrawEnabled && !forceCursorDraw) {
 			forceCursorDraw = cursor.intersects(*it);
+			// any '*it' shall never intersect cursor background; that was handled in addDirtyRect()
+			if (forceCursorDraw) {
+				Common::Rect rect = cursor.flushBackground(*it, directRendering);
+				// 'updated' is skipped in direct drawing but in such case there's never triple-buffering active
+				if (!directRendering && !rect.isEmpty()) {
+					copyRectToSurface(*dstSurface, srcSurface, rect.left, rect.top, rect);
+					updated |= true;
+				}
+			}
+		}
 
 		if (!directRendering) {
 			copyRectToSurface(*dstSurface, srcSurface, it->left, it->top, *it);
@@ -1069,11 +1087,15 @@ bool AtariGraphicsManager::updateScreenInternal(Screen *dstScreen, const Graphic
 		}
 	}
 
-	updated |= cursor.restoreBackground(srcSurface, false, directRendering);
+	if (directRendering && (forceCursorDraw || cursor.isChanged()))
+		cursor.saveBackground();
 
+	// unlock here because cursor.draw() is a software blit
 	unlockSuperBlitter();
 
-	updated |= cursor.draw(forceCursorDraw, directRendering);
+	updated |= cursor.draw(forceCursorDraw);
+
+	dstScreen->clearDirtyRects();
 
 	return updated;
 }
@@ -1081,9 +1103,9 @@ bool AtariGraphicsManager::updateScreenInternal(Screen *dstScreen, const Graphic
 void AtariGraphicsManager::copyRectToScreenInternal(Graphics::Surface &dstSurface,
 													const void *buf, int pitch, int x, int y, int w, int h,
 													const Graphics::PixelFormat &format, bool directRendering) {
-	const Common::Rect rect = alignRect(x, y, w, h);
-
 	if (directRendering) {
+		const Common::Rect rect = alignRect(x, y, w, h);
+
 		// TODO: mask the unaligned parts and copy the rest
 		Graphics::Surface srcSurface;
 		byte *srcBuf = (byte *)const_cast<void *>(buf);

@@ -142,8 +142,8 @@ private:
 	int16 getMaximumScreenWidth() const { return _tt ? 320 : (_vgaMonitor ? 320 : 320*1.2); }
 #endif
 
-	void unlockScreenInternal(const Graphics::Surface &dstSurface,
-							  int x, int y, int w, int h);
+	void addDirtyRectToScreens(const Graphics::Surface &dstSurface,
+							   int x, int y, int w, int h);
 	bool updateScreenInternal(Screen *dstScreen, const Graphics::Surface &srcSurface);
 	void copyRectToScreenInternal(Graphics::Surface &dstSurface,
 								  const void *buf, int pitch, int x, int y, int w, int h,
