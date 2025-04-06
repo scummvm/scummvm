@@ -336,7 +336,7 @@ void Inventory::mouseUpdate(const Common::Point &pt) {
 			close();
 		}
 	} else {
-		engine->setMouseCursor(kDgdsMouseGameDefault);
+		engine->getScene()->mouseUpdate(pt);
 	}
 }
 
@@ -463,6 +463,8 @@ void Inventory::mouseLUp(const Common::Point &pt) {
 				break;
 			}
 		}
+	} else {
+		engine->getScene()->mouseLUp(pt);
 	}
 }
 
