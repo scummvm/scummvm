@@ -384,7 +384,7 @@ void Room705::parser() {
 			_field60_mode = 134;
 			_field64_should = 135;
 			_G(kernel).trigger_mode = KT_DAEMON;
-			kernel_timing_trigger(10, 177, nullptr);
+			kernel_timing_trigger(10, 137, nullptr);
 			_G(kernel).trigger_mode = KT_PARSE;
 
 			break;
