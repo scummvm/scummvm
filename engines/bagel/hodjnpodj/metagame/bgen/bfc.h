@@ -75,6 +75,7 @@ struct GAMESTRUCT {
 		bPlayingHodj = true;
 	}
 };
+typedef GAMESTRUCT *LPGAMESTRUCT;
 
 struct NOTE_LIST {
 	CNote *pNote = nullptr;

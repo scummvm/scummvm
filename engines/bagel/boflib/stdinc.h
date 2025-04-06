@@ -24,6 +24,7 @@
 #define BAGEL_BOFLIB_STDINC_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 
 namespace Bagel {
 
@@ -89,6 +90,20 @@ struct WindowPos {
 #endif
 
 #define MAX_DIRPATH 256
+
+#define PDFT(VALUE) = VALUE
+
+typedef void *CWnd;
+typedef void *CDialog;
+typedef void *CDC;
+typedef Common::Point CSize;
+class CBrush {};
+class CPen {};
+class CView {};
+class CPalette {};
+
+/* Brush Styles */
+#define BS_SOLID            0
 
 } // namespace Bagel
 

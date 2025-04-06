@@ -123,7 +123,12 @@ MODULE_OBJS = \
 	hodjnpodj/views/resource_view.o \
 	hodjnpodj/views/rules.o \
 	hodjnpodj/views/view.o \
+	hodjnpodj/metagame/bgen/bbt.o \
 	hodjnpodj/metagame/bgen/bfc.o \
+	hodjnpodj/metagame/bgen/bgb.o \
+	hodjnpodj/metagame/bgen/bgen_util.o \
+	hodjnpodj/metagame/bgen/bs_util.o \
+	hodjnpodj/metagame/bgen/gtl_view.o \
 	hodjnpodj/metagame/bgen/invent.o \
 	hodjnpodj/metagame/bgen/item.o \
 	hodjnpodj/metagame/bgen/mgstat.o \
@@ -131,6 +136,7 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/boardgame/backpack.o \
 	hodjnpodj/metagame/boardgame/boardgame.o \
 	hodjnpodj/metagame/boardgame/boardgame_options.o \
+	hodjnpodj/metagame/boardgame/data.o \
 	hodjnpodj/metagame/boardgame/general_store.o \
 	hodjnpodj/metagame/boardgame/minimap.o \
 	hodjnpodj/metagame/boardgame/notebook.o \
