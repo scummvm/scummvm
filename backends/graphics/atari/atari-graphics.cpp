@@ -1120,13 +1120,3 @@ void AtariGraphicsManager::copyRectToScreenInternal(Graphics::Surface &dstSurfac
 		dstSurface.copyRectToSurface(buf, pitch, x, y, w, h);
 	}
 }
-
-bool AtariGraphicsManager::isOverlayDirectRendering() const {
-	// overlay is direct rendered if in the launcher or if game is directly rendered
-	// (on SuperVidel we always want to use shading/transparency but its direct rendering is fine and supported)
-	return !hasSuperVidel()
-#ifndef DISABLE_FANCY_THEMES
-		   && (ConfMan.getActiveDomain() == nullptr || _currentState.mode == kDirectRendering)
-#endif
-		;
-}

@@ -67,6 +67,7 @@
 #include "backends/fs/posix/posix-fs-factory.h"
 
 bool g_unalignedPitch = false;
+bool g_gameEngineActive = false;
 
 extern "C" void atari_kbdvec(void *);
 extern "C" void atari_mousevec(void *);
@@ -350,31 +351,37 @@ void OSystem_Atari::initBackend() {
 }
 
 void OSystem_Atari::engineInit() {
+	g_gameEngineActive = true;
+
 	const Common::ConfigManager::Domain *activeDomain = ConfMan.getActiveDomain();
-	if (activeDomain) {
-		// FIXME: Some engines are too bound to linear surfaces that it is very
-		// hard to repair them. So instead of polluting the engine with
-		// Surface::init() & delete[] Surface::getPixels() just use this hack.
-		const Common::String engineId = activeDomain->getValOrDefault("engineid");
-		const Common::String gameId = activeDomain->getValOrDefault("gameid");
+	assert(activeDomain);
 
-		atari_debug("checking %s/%s", engineId.c_str(), gameId.c_str());
+	// FIXME: Some engines are too bound to linear surfaces that it is very
+	// hard to repair them. So instead of polluting the engine with
+	// Surface::init() & delete[] Surface::getPixels() just use this hack.
+	const Common::String engineId = activeDomain->getValOrDefault("engineid");
+	const Common::String gameId = activeDomain->getValOrDefault("gameid");
 
-		if (engineId == "composer"
-			|| engineId == "hypno"
-			|| engineId == "mohawk"
-			|| engineId == "parallaction"
-			|| engineId == "private"
-			|| (engineId == "sci"
-				&& (gameId == "phantasmagoria" || gameId == "shivers"))
-			|| engineId == "sherlock"
-			|| engineId == "teenagent"
-			|| engineId == "tsage") {
-			g_unalignedPitch = true;
-		} else {
-			g_unalignedPitch = false;
-		}
+	atari_debug("checking %s/%s", engineId.c_str(), gameId.c_str());
+
+	if (engineId == "composer"
+		|| engineId == "hypno"
+		|| engineId == "mohawk"
+		|| engineId == "parallaction"
+		|| engineId == "private"
+		|| (engineId == "sci"
+			&& (gameId == "phantasmagoria" || gameId == "shivers"))
+		|| engineId == "sherlock"
+		|| engineId == "teenagent"
+		|| engineId == "tsage") {
+		g_unalignedPitch = true;
+	} else {
+		g_unalignedPitch = false;
 	}
+}
+
+void OSystem_Atari::engineDone() {
+	g_gameEngineActive = false;
 }
 
 Common::MutexInternal *OSystem_Atari::createMutex() {
@@ -498,6 +505,8 @@ void OSystem_Atari::update() {
 		inTimer = false;
 	} else {
 		const Common::ConfigManager::Domain *activeDomain = ConfMan.getActiveDomain();
+		assert(activeDomain);
+
 		warning("%s/%s calls update() from timer",
 			activeDomain->getValOrDefault("engineid").c_str(),
 			activeDomain->getValOrDefault("gameid").c_str());

@@ -32,6 +32,7 @@ public:
 	void initBackend() override;
 
 	void engineInit() override;
+	void engineDone() override;
 
 	Common::MutexInternal *createMutex() override;
 	uint32 getMillis(bool skipRecord = false) override;

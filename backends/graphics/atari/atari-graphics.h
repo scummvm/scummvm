@@ -149,7 +149,18 @@ private:
 								  const void *buf, int pitch, int x, int y, int w, int h,
 								  const Graphics::PixelFormat &format, bool directRendering);
 
-	bool isOverlayDirectRendering() const;
+	bool isOverlayDirectRendering() const {
+		// see osystem_atari.cpp
+		extern bool g_gameEngineActive;
+
+		// overlay is direct rendered if in the launcher or if game is directly rendered
+		// (on SuperVidel we always want to use shading/transparency but its direct rendering is fine and supported)
+		return !hasSuperVidel()
+#ifndef DISABLE_FANCY_THEMES
+			&& (!g_gameEngineActive || _currentState.mode == kDirectRendering)
+#endif
+			;
+	}
 
 	Common::Rect alignRect(int x, int y, int w, int h) const {
 		// make non-virtual for performance reasons
