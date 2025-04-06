@@ -1738,7 +1738,17 @@ void ScummEngine_v5::o5_notEqualZero() {
 			}
 		}
 	} else {
-		a = getVar();
+		int var = fetchScriptWord();
+		a = readVar(var);
+
+		// WORKAROUND: There is a message for when Guybrush first
+		// enters the hold where he remarks that the whole thing reeks
+		// of monkeys. But the way it's scripted, the message is only
+		// shown if it has already been shown.
+
+		if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY_VGA || _game.id == GID_MONKEY_EGA) && _roomResource == 8 && vm.slot[_currentScript].number == 10002 && var == 0x8000 + 321 && enhancementEnabled(kEnhRestoredContent)) {
+			a = !a;
+		}
 	}
 
 	jumpRelative(a != 0);
