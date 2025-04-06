@@ -63,6 +63,17 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		GUIO0()
 	},
 
+	// Penumbra: Overture (Steam)
+	{
+		"penumbraoverture",
+		nullptr,
+		AD_ENTRY1s("Penumbra.exe", "384e33ddc55f51debca07b6538087e75", 3104768),
+		Common::Language::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+
 	// Penumbra: Black Plague (GOG v1.0)
 	{
 		"penumbrablackplague",
