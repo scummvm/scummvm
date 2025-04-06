@@ -846,7 +846,7 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	uint16 maxWidthButtonIcon = 0; // [0FE0h]
 	uint16 maxHeightButtonIcon = 0; // [0FE2h]
 	for (uint16 index : g_engine->inventoryIconIndices) {
-		AnimFrame& currentFrame = g_engine->imageResources[index];
+		AnimFrame& currentFrame = g_engine->imageResources[index-1];
 		maxWidthButtonIcon = MAX(maxWidthButtonIcon, currentFrame.Width);
 		// TODO: Not sure if this one is needed
 		maxHeightButtonIcon = MAX(maxHeightButtonIcon, currentFrame.Height);
@@ -875,11 +875,13 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	uint16 x = s.w / 2 - width / 2; // [0FD4h]
 	uint16 y = s.h / 2 - height / 2; // [0FD6h]
 
+	Graphics::ManagedSurface *buffer = new Graphics::ManagedSurface(s.w, s.h, s.format);
+	buffer->rawBlitFrom(s, Common::Rect(0, 0, s.w, s.h), Common::Point(0, 0));
+	
+
 	DrawBorderSide(Common::Point(x, y), Common::Point(width, height), s);
 	DrawBorderOuterHighlights(Common::Point(x, y), Common::Point(width, height), s);
-	Graphics::ManagedSurface* buffer = new Graphics::ManagedSurface;
-	buffer->create(s.w, s.h, s.format);
-	s.blendBlitTo(*buffer);
+	
 
 	uint16 buttonX = (s.w / 2) - (maxWidthButtonIcon + 4) * 3 + 2;
 	uint16 buttonY = y + height - 4 - maxHeightButtonIcon;
@@ -887,14 +889,24 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	// Draw the buttons at the bottom
 	for (int i = 0; i < 6; i++) {
 		uint16 index = g_engine->inventoryIconIndices[i];
-		AnimFrame &currentFrame = g_engine->imageResources[index];
-		DrawBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(maxWidthButtonIcon, maxHeightButtonIcon), s);
-		buttonX += maxWidthButtonIcon + 4;
-		
-		uint16 iconX = (maxHeightButtonIcon / 2 + buttonX) - currentFrame.Width / 2;
-		uint16 iconY = (maxWidthButtonIcon / 2 + buttonY) - currentFrame.Height / 2;
+		AnimFrame &currentFrame = g_engine->imageResources[index - 1];
+		DrawBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(maxWidthButtonIcon, maxHeightButtonIcon), s);	
+		uint16 iconX = (maxWidthButtonIcon / 2 + buttonX) - currentFrame.Width / 2;
+		uint16 iconY = (maxHeightButtonIcon / 2 + buttonY) - currentFrame.Height / 2;
 		DrawSprite(iconX, iconY, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
+		buttonX += maxWidthButtonIcon + 4;
 	}
+	Common::Rect sourceRect(Common::Point((s.w / 2) - ((maxWidthInventoryIcon + 4) * 5 + 4) / 2 + 1, y + 5),
+		(maxWidthInventoryIcon + 4) * 5 + 2, (maxHeightInventoryIcon + 4) * 2 + 2);
+	s.rawBlitFrom(*buffer, sourceRect, Common::Point(sourceRect.left, sourceRect.top));
+
+	DrawBorderOuterHighlights(Common::Point(
+								  (s.w / 2) - ((maxWidthInventoryIcon + 4) * 5 + 4) / 2,
+								  y + 4),
+							  Common::Point(
+								  (maxWidthInventoryIcon + 4) * 5 + 4,
+								  (maxHeightInventoryIcon + 4) * 2 + 4),
+							  s);
 }
 
 GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
