@@ -75,7 +75,9 @@ void Room703::init() {
 		break;
 
 	case 706:
-		player_first_walk(0, 300, 9, 130, 318, 8, true);
+		// Strangerke - Original code use a final direction of 9, but it looks wrong (looking down left).
+		// I changed it to 3 (just like in the room 706 for example) so it doesn't look weird
+		player_first_walk(0, 300, 3, 130, 318, 3, true);
 		break;
 
 	case 707:
