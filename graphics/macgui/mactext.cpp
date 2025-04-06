@@ -109,7 +109,6 @@ uint MacTextLine::getChunkNum(int *col) {
 
 	if (pos < 0)
 		pos = 0;
-
 	*col = pos;
 
 	return i;
@@ -373,8 +372,6 @@ void MacText::setMaxWidth(int maxWidth) {
 	for (int i = 0; i < _cursorRow; ++i)
 		absoluteCharOffset += _canvas.getLineCharWidth(i);
 	absoluteCharOffset += _cursorCol;
-
-	
 	_canvas.setMaxWidth(maxWidth, _defaultFormatting);
 
 	// restore the cursor pos
