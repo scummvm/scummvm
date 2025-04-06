@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-02 20:15+0000\n"
+"POT-Creation-Date: 2025-04-06 11:05+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -6663,7 +6663,7 @@ msgid "Use"
 msgstr "使用"
 
 #: engines/bbvs/metaengine.cpp:142
-#: engines/freescape/games/castle/castle.cpp:288 engines/scumm/help.cpp:225
+#: engines/freescape/games/castle/castle.cpp:284 engines/scumm/help.cpp:225
 #: engines/tsage/metaengine.cpp:201
 msgid "Walk"
 msgstr "行走"
@@ -6869,7 +6869,7 @@ msgstr "开关线索隐私"
 #: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:73
 #: engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
-#: engines/freescape/games/driller/driller.cpp:132
+#: engines/freescape/games/driller/driller.cpp:133
 #: engines/freescape/games/eclipse/eclipse.cpp:204
 #: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
@@ -6882,7 +6882,7 @@ msgstr "保存游戏"
 #: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:72
 #: engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:191
-#: engines/freescape/games/driller/driller.cpp:137
+#: engines/freescape/games/driller/driller.cpp:138
 #: engines/freescape/games/eclipse/eclipse.cpp:209
 #: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
@@ -6920,7 +6920,7 @@ msgstr "线索数据库"
 #: engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/castle/castle.cpp:259
 #: engines/freescape/games/dark/dark.cpp:196
-#: engines/freescape/games/driller/driller.cpp:142
+#: engines/freescape/games/driller/driller.cpp:143
 #: engines/freescape/games/eclipse/eclipse.cpp:214
 #: engines/sword1/metaengine.cpp:295
 msgid "Quit Game"
@@ -7638,63 +7638,63 @@ msgstr "选择王子"
 msgid "Select Princess"
 msgstr "选择公主"
 
-#: engines/freescape/games/castle/castle.cpp:268
+#: engines/freescape/games/castle/castle.cpp:264
 #: engines/freescape/games/dark/dark.cpp:206
-#: engines/freescape/games/driller/driller.cpp:150
+#: engines/freescape/games/driller/driller.cpp:151
 #: engines/freescape/games/eclipse/eclipse.cpp:222
 msgid "Toggle Sound"
 msgstr "开关声音"
 
-#: engines/freescape/games/castle/castle.cpp:273
+#: engines/freescape/games/castle/castle.cpp:269
 #: engines/freescape/games/dark/dark.cpp:212
-#: engines/freescape/games/driller/driller.cpp:156
+#: engines/freescape/games/driller/driller.cpp:157
 #: engines/freescape/games/eclipse/eclipse.cpp:227
 msgid "Rotate Left"
 msgstr "向左转"
 
-#: engines/freescape/games/castle/castle.cpp:278
+#: engines/freescape/games/castle/castle.cpp:274
 #: engines/freescape/games/dark/dark.cpp:217
-#: engines/freescape/games/driller/driller.cpp:161
+#: engines/freescape/games/driller/driller.cpp:162
 #: engines/freescape/games/eclipse/eclipse.cpp:232
 msgid "Rotate Right"
 msgstr "向右转"
 
 #. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
-#: engines/freescape/games/castle/castle.cpp:283 engines/grim/grim.cpp:501
+#: engines/freescape/games/castle/castle.cpp:279 engines/grim/grim.cpp:501
 #: engines/grim/grim.cpp:596 engines/hpl1/metaengine.cpp:82
 #: engines/icb/icb.cpp:131 engines/icb/icb.cpp:197
 msgid "Run"
 msgstr "跑步"
 
-#: engines/freescape/games/castle/castle.cpp:294
+#: engines/freescape/games/castle/castle.cpp:290
 msgid "Crawl"
 msgstr "爬行"
 
-#: engines/freescape/games/castle/castle.cpp:300
+#: engines/freescape/games/castle/castle.cpp:296
 #: engines/freescape/games/eclipse/eclipse.cpp:259
 msgid "Face Forward"
 msgstr "面向前"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:223
-#: engines/freescape/games/driller/driller.cpp:167
+#: engines/freescape/games/driller/driller.cpp:168
 msgid "Increase Step Size"
 msgstr "增大步长大小"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:229
-#: engines/freescape/games/driller/driller.cpp:173
+#: engines/freescape/games/driller/driller.cpp:174
 msgid "Decrease Step Size"
 msgstr "减小步长大小"
 
 #: engines/freescape/games/dark/dark.cpp:234
-#: engines/freescape/games/driller/driller.cpp:178
+#: engines/freescape/games/driller/driller.cpp:179
 msgid "Rise/Fly up"
 msgstr "上升/向上飞"
 
 #: engines/freescape/games/dark/dark.cpp:240
-#: engines/freescape/games/driller/driller.cpp:184
+#: engines/freescape/games/driller/driller.cpp:185
 msgid "Lower/Fly down"
 msgstr "下降/向下飞"
 
@@ -7703,12 +7703,12 @@ msgid "Enable/Disable Jetpack"
 msgstr "启用/禁用喷气背包"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:191
+#: engines/freescape/games/driller/driller.cpp:192
 msgid "Deploy drilling rig"
 msgstr "部署钻井平台"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:198
+#: engines/freescape/games/driller/driller.cpp:199
 msgid "Collect drilling rig"
 msgstr "收集钻井平台"
 

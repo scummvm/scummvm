@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-02 20:15+0000\n"
+"POT-Creation-Date: 2025-04-06 11:05+0000\n"
 "PO-Revision-Date: 2025-04-03 17:18+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -6899,7 +6899,7 @@ msgid "Use"
 msgstr "Benutze"
 
 #: engines/bbvs/metaengine.cpp:142
-#: engines/freescape/games/castle/castle.cpp:288 engines/scumm/help.cpp:225
+#: engines/freescape/games/castle/castle.cpp:284 engines/scumm/help.cpp:225
 #: engines/tsage/metaengine.cpp:201
 msgid "Walk"
 msgstr "Gehe"
@@ -7125,7 +7125,7 @@ msgstr "Hinweis-Geheimhaltung umschalten"
 #: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:73
 #: engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
-#: engines/freescape/games/driller/driller.cpp:132
+#: engines/freescape/games/driller/driller.cpp:133
 #: engines/freescape/games/eclipse/eclipse.cpp:204
 #: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
@@ -7138,7 +7138,7 @@ msgstr "Spiel speichern"
 #: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:72
 #: engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:191
-#: engines/freescape/games/driller/driller.cpp:137
+#: engines/freescape/games/driller/driller.cpp:138
 #: engines/freescape/games/eclipse/eclipse.cpp:209
 #: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
@@ -7176,7 +7176,7 @@ msgstr "Hinweis-Menü"
 #: engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/castle/castle.cpp:259
 #: engines/freescape/games/dark/dark.cpp:196
-#: engines/freescape/games/driller/driller.cpp:142
+#: engines/freescape/games/driller/driller.cpp:143
 #: engines/freescape/games/eclipse/eclipse.cpp:214
 #: engines/sword1/metaengine.cpp:295
 msgid "Quit Game"
@@ -7911,63 +7911,63 @@ msgstr "Prinz auswählen"
 msgid "Select Princess"
 msgstr "Prinzessin auswählen"
 
-#: engines/freescape/games/castle/castle.cpp:268
+#: engines/freescape/games/castle/castle.cpp:264
 #: engines/freescape/games/dark/dark.cpp:206
-#: engines/freescape/games/driller/driller.cpp:150
+#: engines/freescape/games/driller/driller.cpp:151
 #: engines/freescape/games/eclipse/eclipse.cpp:222
 msgid "Toggle Sound"
 msgstr "Sound umschalten"
 
-#: engines/freescape/games/castle/castle.cpp:273
+#: engines/freescape/games/castle/castle.cpp:269
 #: engines/freescape/games/dark/dark.cpp:212
-#: engines/freescape/games/driller/driller.cpp:156
+#: engines/freescape/games/driller/driller.cpp:157
 #: engines/freescape/games/eclipse/eclipse.cpp:227
 msgid "Rotate Left"
 msgstr "Nach links drehen"
 
-#: engines/freescape/games/castle/castle.cpp:278
+#: engines/freescape/games/castle/castle.cpp:274
 #: engines/freescape/games/dark/dark.cpp:217
-#: engines/freescape/games/driller/driller.cpp:161
+#: engines/freescape/games/driller/driller.cpp:162
 #: engines/freescape/games/eclipse/eclipse.cpp:232
 msgid "Rotate Right"
 msgstr "Nach rechts drehen"
 
 #. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
-#: engines/freescape/games/castle/castle.cpp:283 engines/grim/grim.cpp:501
+#: engines/freescape/games/castle/castle.cpp:279 engines/grim/grim.cpp:501
 #: engines/grim/grim.cpp:596 engines/hpl1/metaengine.cpp:82
 #: engines/icb/icb.cpp:131 engines/icb/icb.cpp:197
 msgid "Run"
 msgstr "Laufe"
 
-#: engines/freescape/games/castle/castle.cpp:294
+#: engines/freescape/games/castle/castle.cpp:290
 msgid "Crawl"
 msgstr "Kriechen"
 
-#: engines/freescape/games/castle/castle.cpp:300
+#: engines/freescape/games/castle/castle.cpp:296
 #: engines/freescape/games/eclipse/eclipse.cpp:259
 msgid "Face Forward"
 msgstr "Nach vorne blicken"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:223
-#: engines/freescape/games/driller/driller.cpp:167
+#: engines/freescape/games/driller/driller.cpp:168
 msgid "Increase Step Size"
 msgstr "Schrittgröße vergrößern"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:229
-#: engines/freescape/games/driller/driller.cpp:173
+#: engines/freescape/games/driller/driller.cpp:174
 msgid "Decrease Step Size"
 msgstr "Schrittgröße verkleinern"
 
 #: engines/freescape/games/dark/dark.cpp:234
-#: engines/freescape/games/driller/driller.cpp:178
+#: engines/freescape/games/driller/driller.cpp:179
 msgid "Rise/Fly up"
 msgstr "Nach oben fliegen"
 
 #: engines/freescape/games/dark/dark.cpp:240
-#: engines/freescape/games/driller/driller.cpp:184
+#: engines/freescape/games/driller/driller.cpp:185
 msgid "Lower/Fly down"
 msgstr "Nach unten fliegen"
 
@@ -7976,12 +7976,12 @@ msgid "Enable/Disable Jetpack"
 msgstr "Jetpack aktivieren/deaktivieren"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:191
+#: engines/freescape/games/driller/driller.cpp:192
 msgid "Deploy drilling rig"
 msgstr "Bohr-Plattform einsetzen"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:198
+#: engines/freescape/games/driller/driller.cpp:199
 msgid "Collect drilling rig"
 msgstr "Bohr-Plattform aufnehmen"
 

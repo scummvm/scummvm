@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-02 20:15+0000\n"
+"POT-Creation-Date: 2025-04-06 11:05+0000\n"
 "PO-Revision-Date: 2025-02-26 12:46+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -6771,7 +6771,7 @@ msgid "Use"
 msgstr "사용하기"
 
 #: engines/bbvs/metaengine.cpp:142
-#: engines/freescape/games/castle/castle.cpp:288 engines/scumm/help.cpp:225
+#: engines/freescape/games/castle/castle.cpp:284 engines/scumm/help.cpp:225
 #: engines/tsage/metaengine.cpp:201
 msgid "Walk"
 msgstr "걷기"
@@ -6983,7 +6983,7 @@ msgstr "단서 개인 정보 보호 전환"
 #: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:73
 #: engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
-#: engines/freescape/games/driller/driller.cpp:132
+#: engines/freescape/games/driller/driller.cpp:133
 #: engines/freescape/games/eclipse/eclipse.cpp:204
 #: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
@@ -6996,7 +6996,7 @@ msgstr "게임 저장"
 #: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:72
 #: engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:191
-#: engines/freescape/games/driller/driller.cpp:137
+#: engines/freescape/games/driller/driller.cpp:138
 #: engines/freescape/games/eclipse/eclipse.cpp:209
 #: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
@@ -7034,7 +7034,7 @@ msgstr "단서 데이터베이스"
 #: engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/castle/castle.cpp:259
 #: engines/freescape/games/dark/dark.cpp:196
-#: engines/freescape/games/driller/driller.cpp:142
+#: engines/freescape/games/driller/driller.cpp:143
 #: engines/freescape/games/eclipse/eclipse.cpp:214
 #: engines/sword1/metaengine.cpp:295
 msgid "Quit Game"
@@ -7759,63 +7759,63 @@ msgstr "왕자 선택"
 msgid "Select Princess"
 msgstr "공주 선택"
 
-#: engines/freescape/games/castle/castle.cpp:268
+#: engines/freescape/games/castle/castle.cpp:264
 #: engines/freescape/games/dark/dark.cpp:206
-#: engines/freescape/games/driller/driller.cpp:150
+#: engines/freescape/games/driller/driller.cpp:151
 #: engines/freescape/games/eclipse/eclipse.cpp:222
 msgid "Toggle Sound"
 msgstr "사운드 전환"
 
-#: engines/freescape/games/castle/castle.cpp:273
+#: engines/freescape/games/castle/castle.cpp:269
 #: engines/freescape/games/dark/dark.cpp:212
-#: engines/freescape/games/driller/driller.cpp:156
+#: engines/freescape/games/driller/driller.cpp:157
 #: engines/freescape/games/eclipse/eclipse.cpp:227
 msgid "Rotate Left"
 msgstr "왼쪽으로 회전"
 
-#: engines/freescape/games/castle/castle.cpp:278
+#: engines/freescape/games/castle/castle.cpp:274
 #: engines/freescape/games/dark/dark.cpp:217
-#: engines/freescape/games/driller/driller.cpp:161
+#: engines/freescape/games/driller/driller.cpp:162
 #: engines/freescape/games/eclipse/eclipse.cpp:232
 msgid "Rotate Right"
 msgstr "오른쪽으로 회전"
 
 #. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
-#: engines/freescape/games/castle/castle.cpp:283 engines/grim/grim.cpp:501
+#: engines/freescape/games/castle/castle.cpp:279 engines/grim/grim.cpp:501
 #: engines/grim/grim.cpp:596 engines/hpl1/metaengine.cpp:82
 #: engines/icb/icb.cpp:131 engines/icb/icb.cpp:197
 msgid "Run"
 msgstr "달리기"
 
-#: engines/freescape/games/castle/castle.cpp:294
+#: engines/freescape/games/castle/castle.cpp:290
 msgid "Crawl"
 msgstr "기어가다"
 
-#: engines/freescape/games/castle/castle.cpp:300
+#: engines/freescape/games/castle/castle.cpp:296
 #: engines/freescape/games/eclipse/eclipse.cpp:259
 msgid "Face Forward"
 msgstr "얼굴 앞으로"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:223
-#: engines/freescape/games/driller/driller.cpp:167
+#: engines/freescape/games/driller/driller.cpp:168
 msgid "Increase Step Size"
 msgstr "단계 크기 증가"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:229
-#: engines/freescape/games/driller/driller.cpp:173
+#: engines/freescape/games/driller/driller.cpp:174
 msgid "Decrease Step Size"
 msgstr "단계 크기 감소"
 
 #: engines/freescape/games/dark/dark.cpp:234
-#: engines/freescape/games/driller/driller.cpp:178
+#: engines/freescape/games/driller/driller.cpp:179
 msgid "Rise/Fly up"
 msgstr "상승/급상승"
 
 #: engines/freescape/games/dark/dark.cpp:240
-#: engines/freescape/games/driller/driller.cpp:184
+#: engines/freescape/games/driller/driller.cpp:185
 msgid "Lower/Fly down"
 msgstr "하강/급강하"
 
@@ -7824,12 +7824,12 @@ msgid "Enable/Disable Jetpack"
 msgstr "제트팩 활성화/비활성화"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:191
+#: engines/freescape/games/driller/driller.cpp:192
 msgid "Deploy drilling rig"
 msgstr "드릴링 장비 배치"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:198
+#: engines/freescape/games/driller/driller.cpp:199
 msgid "Collect drilling rig"
 msgstr "드릴링 장비를 수집"
 
