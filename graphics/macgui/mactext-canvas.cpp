@@ -115,7 +115,6 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 		_text[curLine].wordContinuation = lineContinuations[0];
 
 	}
-	
 
 	// Recalc dims
 	getLineWidth(curLine, true);
@@ -129,8 +128,6 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 	// Now add rest of the chunks
 	MacFontRun newchunk = *chunk;
 	
-
-
 	for (uint i = 1; i < text.size(); i++) {
 		newchunk.text = text[i];
 
@@ -263,7 +260,6 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 	int indentSize = 0;
 	int firstLineIndent = 0;
 	bool inTable = false;
-
 
 	bool lineBreakOnLineEnd = false;
 
@@ -950,7 +946,6 @@ int MacTextCanvas::getLineWidth(int lineNum, bool enforce, int col) {
 
 		height = MAX(height, line->chunks[i].getFont()->getFontHeight());
 	}
-
 
 	line->width = width;
 	line->minWidth = minWidth;
