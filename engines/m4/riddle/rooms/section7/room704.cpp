@@ -223,7 +223,7 @@ void Room704::parser() {
 
 	else if (talkFl && player_said("MONK #6")) {
 		switch (_G(kernel).trigger) {
-		case 1:
+		case -1:
 			player_set_commands_allowed(false);
 			digi_play("com081", 1, 255, 2, -1);
 			break;
