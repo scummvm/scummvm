@@ -225,7 +225,7 @@ protected:
 	void clickInHotspot(const Input &, const Hotspot *) override;
 	void activateHotspots(void) override;
 
-	void updateCursor(const Common::Point, const Hotspot *) override;
+	void updateCursor(const Common::Point &, const Hotspot *) override;
 	bool wantsCursor() override;
 
 private:

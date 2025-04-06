@@ -181,7 +181,7 @@ void Events::clearViews() {
 	_views.clear();
 }
 
-void Events::addKeypress(const Common::KeyCode kc) {
+void Events::addKeypress(const Common::KeyCode &kc) {
 	Common::KeyState ks;
 	ks.keycode = kc;
 	if (kc >= Common::KEYCODE_SPACE && kc <= Common::KEYCODE_TILDE)

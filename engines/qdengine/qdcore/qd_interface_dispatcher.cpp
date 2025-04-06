@@ -186,11 +186,11 @@ bool qdInterfaceDispatcher::select_ingame_screen(bool inventory_state) {
 	return select_screen(NULL);
 }
 
-qdResource *qdInterfaceDispatcher::add_resource(const Common::Path file_name, const qdInterfaceElementState *owner) {
+qdResource *qdInterfaceDispatcher::add_resource(const Common::Path &file_name, const qdInterfaceElementState *owner) {
 	return _resources.add_resource(file_name, owner);
 }
 
-bool qdInterfaceDispatcher::remove_resource(const Common::Path file_name, const qdInterfaceElementState *owner) {
+bool qdInterfaceDispatcher::remove_resource(const Common::Path &file_name, const qdInterfaceElementState *owner) {
 	return _resources.remove_resource(file_name, owner);
 }
 

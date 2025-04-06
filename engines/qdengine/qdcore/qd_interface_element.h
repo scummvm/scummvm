@@ -188,9 +188,9 @@ public:
 	bool set_state(const qdInterfaceElementState *p);
 
 	//! Добавляет ресурс file_name с владельцем owner.
-	qdResource *add_resource(const Common::Path file_name, const qdInterfaceElementState *res_owner);
+	qdResource *add_resource(const Common::Path &file_name, const qdInterfaceElementState *res_owner);
 	//! Удаляет ресурс file_name с владельцем owner.
-	bool remove_resource(const Common::Path file_name, const qdInterfaceElementState *res_owner);
+	bool remove_resource(const Common::Path &file_name, const qdInterfaceElementState *res_owner);
 
 	//! Возвращает true, если точка с экранными координатами (x,у) попадает в элемент.
 	virtual bool hit_test(int x, int y) const;

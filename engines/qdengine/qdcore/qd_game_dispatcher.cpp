@@ -2995,7 +2995,7 @@ void qdGameDispatcher::request_file_package(const qdFileOwner &file_owner) const
 	error("Requested file package is not available");
 }
 
-Common::Path qdGameDispatcher::find_file(const Common::Path file_name, const qdFileOwner &file_owner) const {
+Common::Path qdGameDispatcher::find_file(const Common::Path &file_name, const qdFileOwner &file_owner) const {
 	debugC(4, kDebugLoad, "qdGameDispatcher::find_file(%s)", file_name.toString().c_str());
 
 	return file_name;

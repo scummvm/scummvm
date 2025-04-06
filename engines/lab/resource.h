@@ -96,12 +96,12 @@ public:
 	Resource(LabEngine *vm);
 	~Resource() {}
 
-	Common::File *openDataFile(const Common::String filename, uint32 fileHeader = 0);
-	void readRoomData(const Common::String fileName);
-	InventoryData *readInventory(const Common::String fileName);
+	Common::File *openDataFile(const Common::String &filename, uint32 fileHeader = 0);
+	void readRoomData(const Common::String &fileName);
+	InventoryData *readInventory(const Common::String &fileName);
 	void readViews(uint16 roomNum);
-	TextFont *getFont(const Common::String fileName);
-	Common::String getText(const Common::String fileName);
+	TextFont *getFont(const Common::String &fileName);
+	Common::String getText(const Common::String &fileName);
 	Common::String getStaticText(byte index) const { return _staticText[index]; }
 
 private:

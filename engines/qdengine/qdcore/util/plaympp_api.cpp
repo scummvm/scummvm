@@ -43,7 +43,7 @@ mpegPlayer::mpegPlayer() : _is_enabled(true),
 mpegPlayer::~mpegPlayer() {
 }
 
-bool mpegPlayer::play(const Common::Path file, bool loop, int vol) {
+bool mpegPlayer::play(const Common::Path &file, bool loop, int vol) {
 	bool isOGG = file.baseName().hasSuffixIgnoreCase(".ogg");
 
 	debugC(1, kDebugSound, "mpegPlayer::play(%s, %d, %d)", file.toString().c_str(), loop, vol);

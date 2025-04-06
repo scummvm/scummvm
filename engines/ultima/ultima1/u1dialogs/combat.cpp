@@ -35,7 +35,7 @@ BEGIN_MESSAGE_MAP(Combat, Dialog)
 END_MESSAGE_MAP()
 
 Combat::Combat(Ultima1Game *game, Shared::Maps::Direction direction, int weaponType,
-	const Common::String weaponName) : FullScreenDialog(game), _direction(direction) {
+	const Common::String &weaponName) : FullScreenDialog(game), _direction(direction) {
 }
 
 bool Combat::KeypressMsg(CKeypressMsg *msg) {

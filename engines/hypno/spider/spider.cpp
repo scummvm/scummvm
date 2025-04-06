@@ -1155,7 +1155,7 @@ Common::String SpiderEngine::findNextLevel(const Transition *trans) {
 	return trans->nextLevel;
 }
 
-void SpiderEngine::loadFonts(const Common::String prefix) {
+void SpiderEngine::loadFonts(const Common::String &prefix) {
 	HypnoEngine::loadFonts(prefix);
 	// Additional fonts
 	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);

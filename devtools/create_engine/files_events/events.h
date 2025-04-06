@@ -368,7 +368,7 @@ public:
 	/**
 	 * Add a keypress to the event queue
 	 */
-	void addKeypress(const Common::KeyCode kc);
+	void addKeypress(const Common::KeyCode &kc);
 
 	/**
 	 * Events manager doesn't have any intrinsic drawing

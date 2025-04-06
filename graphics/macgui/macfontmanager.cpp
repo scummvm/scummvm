@@ -121,7 +121,7 @@ static const char *const fontStyleSuffixes[] = {
 	"Extend"
 };
 
-int parseSlant(const Common::String fontname) {
+int parseSlant(const Common::String &fontname) {
 	int res = 0;
 
 	for (int i = 1; i < 7; i++)
@@ -131,7 +131,7 @@ int parseSlant(const Common::String fontname) {
 	return res;
 }
 
-Common::String cleanFontName(const Common::String fontname) {
+Common::String cleanFontName(const Common::String &fontname) {
 	const char *pos;
 	Common::String f = fontname;
 	for (int i = 0; i < 7; i++) {

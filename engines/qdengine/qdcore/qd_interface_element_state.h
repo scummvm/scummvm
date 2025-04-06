@@ -180,7 +180,7 @@ public:
 	/**
 	Если надо убрать звук - передать NULL в качестве имени файла.
 	*/
-	void set_sound_file(const Common::Path str, state_mode_t snd_id = DEFAULT_MODE);
+	void set_sound_file(const Common::Path &str, state_mode_t snd_id = DEFAULT_MODE);
 	//! Возвращает имя файла звукового эффекта, привязанного к состоянию.
 	const Common::Path sound_file(state_mode_t snd_id = DEFAULT_MODE) const {
 		return _modes[snd_id].sound_file();
@@ -198,7 +198,7 @@ public:
 	/**
 	Если надо убрать анимацию - передать NULL в качестве имени файла.
 	*/
-	void set_animation_file(const Common::Path name, state_mode_t anm_id = DEFAULT_MODE);
+	void set_animation_file(const Common::Path &name, state_mode_t anm_id = DEFAULT_MODE);
 	//! Возвращает имя файла для анимации.
 	const Common::Path animation_file(state_mode_t anm_id = DEFAULT_MODE) const {
 		return _modes[anm_id].animation_file();

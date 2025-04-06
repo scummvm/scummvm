@@ -452,7 +452,7 @@ public:
 */
 	}
 
-	void handleUnclick(const Common::String &name, const Common::Point pnt) override {
+	void handleUnclick(const Common::String &name, const Common::Point &pnt) override {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		if (_clickTimer >= 0) {
 			g_vm->cancelTimer(24012);

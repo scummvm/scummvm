@@ -59,7 +59,7 @@ public:
 	int _strip;
 	int _frame;
 public:
-	InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String description);
+	InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String &description);
 	InvObject(int visage, int strip, int frame);
 	InvObject(int visage, int strip);
 

@@ -42,7 +42,7 @@ namespace TsAGE {
 
 /*--------------------------------------------------------------------------*/
 
-InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String description) :
+InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String &description) :
 		_sceneNumber(sceneNumber), _rlbNum(rlbNum), _cursorNum(cursorNum), _cursorId(cursorId),
 		_description(description) {
 	_displayResNum = 3;

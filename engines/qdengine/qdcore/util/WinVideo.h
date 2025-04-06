@@ -52,7 +52,7 @@ public:
 	static bool init(); // initialize DirectShow Lib
 	static bool done(); // uninitialize DirectShow Lib
 
-	bool open_file(const Common::Path fname);
+	bool open_file(const Common::Path &fname);
 	void close_file();
 
 	bool play();

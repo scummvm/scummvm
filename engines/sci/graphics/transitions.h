@@ -73,7 +73,7 @@ private:
 	void doTransition(int16 number, bool blackout);
 	void setNewPalette(bool blackoutFlag);
 	void setNewScreen(bool blackoutFlag);
-	void copyRectToScreen(const Common::Rect rect, bool blackoutFlag);
+	void copyRectToScreen(const Common::Rect &rect, bool blackoutFlag);
 	void fadeOut();
 	void fadeIn();
 	void pixelation(bool blackoutFlag);

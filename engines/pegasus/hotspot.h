@@ -96,11 +96,11 @@ public:
 	void getCenter(CoordType&, CoordType&) const;
 
 	void moveSpotTo(const CoordType, const CoordType);
-	void moveSpotTo(const Common::Point);
+	void moveSpotTo(const Common::Point &);
 	void moveSpot(const CoordType, const CoordType);
-	void moveSpot(const Common::Point);
+	void moveSpot(const Common::Point &);
 
-	bool pointInSpot(const Common::Point) const;
+	bool pointInSpot(const Common::Point &) const;
 
 	void setActive();
 	void setInactive();
@@ -123,8 +123,8 @@ public:
 
 	void deleteHotspots();
 
-	Hotspot *findHotspot(const Common::Point);
-	HotSpotID findHotspotID(const Common::Point);
+	Hotspot *findHotspot(const Common::Point &);
+	HotSpotID findHotspotID(const Common::Point &);
 	Hotspot *findHotspotByID(const HotSpotID);
 	Hotspot *findHotspotByMask(const HotSpotFlags);
 

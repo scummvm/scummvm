@@ -100,7 +100,7 @@ void qdFileManager::Finit() {
 	delete mgr;
 }
 
-bool qdFileManager::open_file(Common::SeekableReadStream **fh, const Common::Path file_name, bool err_message) {
+bool qdFileManager::open_file(Common::SeekableReadStream **fh, const Common::Path &file_name, bool err_message) {
 	debugC(4, kDebugLoad, "qdFileManager::open_file(%s)", transCyrillic(file_name.toString()));
 
 	if (SearchMan.hasFile((char *)transCyrillic(file_name.toString()))) {

@@ -203,7 +203,7 @@ void Window::onMouseMove(int32 x, int32 y) {
 void Window::onMouseUp(int32 x, int32 y, int mouseButton) {
 }
 
-void Window::onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
+void Window::onKeyboardEvent(const Common::EventType &evtType, bool repeat, const Common::KeyState &keyEvt) {
 }
 
 void Window::onAction(Actions::Action action) {
@@ -430,7 +430,7 @@ static void runDissolveTransition(Graphics::ManagedSurface &surface, const Graph
 	}
 }
 
-static void safeCopyRectToSurface(Graphics::ManagedSurface &surface, const Graphics::ManagedSurface &srcSurface, int destX, int destY, const Common::Rect subRect) {
+static void safeCopyRectToSurface(Graphics::ManagedSurface &surface, const Graphics::ManagedSurface &srcSurface, int destX, int destY, const Common::Rect &subRect) {
 	if (subRect.width() == 0 || subRect.height() == 0)
 		return;
 

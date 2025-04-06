@@ -199,7 +199,7 @@ void DialogBox::onClick(const Common::Point &pos) {
 	}
 }
 
-void DialogBox::onKeyPress(const Common::CustomEventType customType) {
+void DialogBox::onKeyPress(const Common::CustomEventType &customType) {
 	if (customType == kActionSkip) {
 		close();
 	}

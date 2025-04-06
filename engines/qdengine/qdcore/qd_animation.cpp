@@ -630,7 +630,7 @@ bool qdAnimation::hit(int x, int y, float scale) const {
 	return false;
 }
 
-bool qdAnimation::qda_load(Common::Path fpath) {
+bool qdAnimation::qda_load(const Common::Path &fpath) {
 	clear_frames();
 
 	debugC(3, kDebugLoad, "qdAnimation::qda_load(%s)", transCyrillic(fpath.toString()));
@@ -711,7 +711,7 @@ bool qdAnimation::qda_load(Common::Path fpath) {
 	return true;
 }
 
-void qdAnimation::qda_set_file(Common::Path fname) {
+void qdAnimation::qda_set_file(const Common::Path &fname) {
 	_qda_file = fname;
 }
 

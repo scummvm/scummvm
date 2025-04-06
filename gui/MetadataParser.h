@@ -38,8 +38,8 @@ struct MetadataGame {
 	Common::String series_id;
 
 	MetadataGame() {}
-	MetadataGame(const Common::String i, const Common::String n, const Common::String eid, const Common::String cid,
-		const Common::String mid, const Common::String df, const Common::String sid, const Common::String zid, const Common::String yr)
+	MetadataGame(const Common::String &i, const Common::String &n, const Common::String &eid, const Common::String &cid,
+		const Common::String &mid, const Common::String &df, const Common::String &sid, const Common::String &zid, const Common::String &yr)
 		: id(i), name(n), engine_id(eid), company_id(cid), year(yr), moby_id(mid), datafiles(df), zoom_id(zid), series_id(sid) {}
 };
 
@@ -50,7 +50,7 @@ struct MetadataEngine {
 	bool enabled;
 
 	MetadataEngine() : enabled(false) {}
-	MetadataEngine(const Common::String i, const Common::String n, const Common::String altn, bool e)
+	MetadataEngine(const Common::String &i, const Common::String &n, const Common::String &altn, bool e)
 		: id(i), name(n), alt_name(altn), enabled(e) {}
 };
 
@@ -59,7 +59,7 @@ struct MetadataSeries {
 	Common::String name;
 
 	MetadataSeries() {}
-	MetadataSeries(const Common::String i, const Common::String n) : id(i), name(n) {}
+	MetadataSeries(const Common::String &i, const Common::String &n) : id(i), name(n) {}
 };
 
 struct MetadataCompany {
@@ -68,7 +68,7 @@ struct MetadataCompany {
 	Common::String alt_name;
 
 	MetadataCompany() {}
-	MetadataCompany(const Common::String i, const Common::String n, const Common::String altn)
+	MetadataCompany(const Common::String &i, const Common::String &n, const Common::String &altn)
 		: id(i), name(n), alt_name(altn) {}
 };
 

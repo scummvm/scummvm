@@ -1656,7 +1656,7 @@ public:
 	void onMouseDown(int32 x, int32 y, Actions::MouseButton mButton);
 	void onMouseMove(int32 x, int32 y);
 	void onMouseUp(int32 x, int32 y, Actions::MouseButton mButton);
-	void onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
+	void onKeyboardEvent(const Common::EventType &evtType, bool repeat, const Common::KeyState &keyEvt);
 	void onAction(MTropolis::Actions::Action action);
 
 	const Common::Point &getCachedMousePosition() const;

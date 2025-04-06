@@ -189,7 +189,7 @@ void Hotspot::moveSpotTo(const CoordType h, const CoordType v) {
 	_spotArea.moveTo(h, v);
 }
 
-void Hotspot::moveSpotTo(const Common::Point pt) {
+void Hotspot::moveSpotTo(const Common::Point &pt) {
 	_spotArea.moveTo(pt);
 }
 
@@ -197,11 +197,11 @@ void Hotspot::moveSpot(const CoordType h, const CoordType v) {
 	_spotArea.translate(h, v);
 }
 
-void Hotspot::moveSpot(const Common::Point pt) {
+void Hotspot::moveSpot(const Common::Point &pt) {
 	_spotArea.translate(pt.x, pt.y);
 }
 
-bool Hotspot::pointInSpot(const Common::Point where) const {
+bool Hotspot::pointInSpot(const Common::Point &where) const {
 	return _spotActive && _spotArea.pointInRegion(where);
 }
 
@@ -223,7 +223,7 @@ void HotspotList::deleteHotspots() {
 	clear();
 }
 
-Hotspot *HotspotList::findHotspot(const Common::Point where) {
+Hotspot *HotspotList::findHotspot(const Common::Point &where) {
 	for (HotspotIterator it = begin(); it != end(); it++)
 		if ((*it)->pointInSpot(where))
 			return *it;
@@ -231,7 +231,7 @@ Hotspot *HotspotList::findHotspot(const Common::Point where) {
 	return nullptr;
 }
 
-HotSpotID HotspotList::findHotspotID(const Common::Point where) {
+HotSpotID HotspotList::findHotspotID(const Common::Point &where) {
 	Hotspot *hotspot = findHotspot(where);
 	return hotspot ? hotspot->getObjectID() : kNoHotSpotID;
 }

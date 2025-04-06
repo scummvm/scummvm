@@ -50,7 +50,7 @@ public:
 	const Common::Path config_file_name() const {
 		return _config_file_name;
 	}
-	void set_config_file_name(const Common::Path file_name) {
+	void set_config_file_name(const Common::Path &file_name) {
 		_config_file_name = file_name;
 	}
 	bool has_config_file() const {

@@ -382,7 +382,7 @@ void GraphicsManager::rotateBlit(const Graphics::ManagedSurface &src, Graphics::
 	}
 }
 
-void GraphicsManager::crossDissolve(const Graphics::ManagedSurface &from, const Graphics::ManagedSurface &to, byte alpha, const Common::Rect rect, Graphics::ManagedSurface &inResult) {
+void GraphicsManager::crossDissolve(const Graphics::ManagedSurface &from, const Graphics::ManagedSurface &to, byte alpha, const Common::Rect &rect, Graphics::ManagedSurface &inResult) {
 	assert(from.getBounds() == to.getBounds());
 	inResult.blitFrom(from, rect, Common::Point());
 	inResult.transBlitFrom(to, rect, Common::Point(), (uint32)-1, false, alpha);

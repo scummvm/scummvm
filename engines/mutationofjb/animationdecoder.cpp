@@ -111,7 +111,7 @@ bool AnimationDecoder::decode(AnimationDecoderCallback *callback) {
 	return true;
 }
 
-void AnimationDecoder::setPartialMode(int fromFrame, int toFrame, const Common::Rect area, uint8 threshold) {
+void AnimationDecoder::setPartialMode(int fromFrame, int toFrame, const Common::Rect &area, uint8 threshold) {
 	_fromFrame = fromFrame;
 	_toFrame = toFrame;
 	_area = area;

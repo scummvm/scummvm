@@ -235,7 +235,7 @@ void SpecialLocks::doTile(bool showsolution) {
 	}
 }
 
-void SpecialLocks::showTileLock(const Common::String filename, bool showSolution) {
+void SpecialLocks::showTileLock(const Common::String &filename, bool showSolution) {
 	_vm->_anim->_doBlack = true;
 	_vm->_anim->_noPalChange = true;
 	_vm->_graphics->readPict(filename);
@@ -348,7 +348,7 @@ void SpecialLocks::changeCombination(uint16 number) {
 		_vm->_conditions->exclElement(COMBINATIONUNLOCKED);
 }
 
-void SpecialLocks::showCombinationLock(const Common::String filename) {
+void SpecialLocks::showCombinationLock(const Common::String &filename) {
 	_vm->_anim->_doBlack = true;
 	_vm->_anim->_noPalChange = true;
 	_vm->_graphics->readPict(filename);

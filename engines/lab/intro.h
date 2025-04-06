@@ -52,9 +52,9 @@ private:
 	/**
 	 * Reads in a picture.
 	 */
-	void doPictText(const Common::String filename, bool isScreen = false);
+	void doPictText(const Common::String &filename, bool isScreen = false);
 
-	void nReadPict(const Common::String filename, bool playOnce = true, bool noPalChange = false, bool doBlack = false, int wait = 0);
+	void nReadPict(const Common::String &filename, bool playOnce = true, bool noPalChange = false, bool doBlack = false, int wait = 0);
 
 	LabEngine *_vm;
 	bool _quitIntro;

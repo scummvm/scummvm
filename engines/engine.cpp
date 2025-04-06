@@ -114,7 +114,7 @@ void ChainedGamesManager::clear() {
 	_chainedGames.clear();
 }
 
-void ChainedGamesManager::push(const Common::String target, const int slot) {
+void ChainedGamesManager::push(const Common::String &target, const int slot) {
 	Game game;
 	game.target = target;
 	game.slot = slot;

@@ -47,7 +47,7 @@ enum ViewType {
 
 class GameState {
 public:
-	GameState(const Common::Platform platform, Database *database);
+	GameState(const Common::Platform &platform, Database *database);
 	virtual ~GameState();
 
 	void newGame();

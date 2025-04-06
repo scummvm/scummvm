@@ -220,7 +220,7 @@ void OpenGLShaderRenderer::positionCamera(const Math::Vector3d &pos, const Math:
 	_mvpMatrix = proj * model;
 	_mvpMatrix.transpose();
 }
-void OpenGLShaderRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d target, const Common::Rect viewArea) {
+void OpenGLShaderRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d target, const Common::Rect &viewArea) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 	useColor(255, 255, 255);
@@ -245,7 +245,7 @@ float remap(float f, float s) {
 	return 2. * f / s - 1;
 }
 
-void OpenGLShaderRenderer::renderPlayerShootBall(byte color, const Common::Point _position, int frame, const Common::Rect viewArea) {
+void OpenGLShaderRenderer::renderPlayerShootBall(byte color, const Common::Point &_position, int frame, const Common::Rect &viewArea) {
 	uint8 r, g, b;
 
 	Math::Matrix4 identity;
@@ -299,7 +299,7 @@ void OpenGLShaderRenderer::renderPlayerShootBall(byte color, const Common::Point
 	glDepthMask(GL_TRUE);
 }
 
-void OpenGLShaderRenderer::renderPlayerShootRay(byte color, const Common::Point position, const Common::Rect viewArea) {
+void OpenGLShaderRenderer::renderPlayerShootRay(byte color, const Common::Point &position, const Common::Rect &viewArea) {
 	uint8 r, g, b;
 
 	Math::Matrix4 identity;
@@ -402,7 +402,7 @@ void OpenGLShaderRenderer::drawCelestialBody(Math::Vector3d position, float radi
 	//_mvpMatrix = mvpMatrix;
 }
 
-void OpenGLShaderRenderer::renderCrossair(const Common::Point crossairPosition) {
+void OpenGLShaderRenderer::renderCrossair(const Common::Point &crossairPosition) {
 	Math::Matrix4 identity;
 	identity(0, 0) = 1.0;
 	identity(1, 1) = 1.0;
