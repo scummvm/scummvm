@@ -269,15 +269,14 @@ bool RollingThunderProcess::fireDistance(Direction dir, int32 x, int32 y, int32 
 			const int32 dims[3] = {2, 2, 2};
 
 			Std::list<CurrentMap::SweepItem> collisions;
-			Std::list<CurrentMap::SweepItem>::iterator it;
 			cm->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
 						 _itemNum, false, &collisions);
-			for (it = collisions.begin(); it != collisions.end(); it++) {
-				if (it->_item == _itemNum)
+			for (const auto &collision : collisions) {
+				if (collision._item == _itemNum)
 					continue;
-				if (it->_item != target->getObjId())
+				if (collision._item != target->getObjId())
 					break;
-				Point3 out = it->GetInterpolatedCoords(start, end);
+				Point3 out = collision.GetInterpolatedCoords(start, end);
 				dist = MAX(abs(x - out.x), abs(y - out.y));
 				break;
 			}

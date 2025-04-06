@@ -189,7 +189,6 @@ public:
 
 private:
 	MenuItemList _items;
-	MenuItemList::iterator _current;
 	MenuItemList::iterator _selected;
 	bool _closed;
 	Common::String _title;

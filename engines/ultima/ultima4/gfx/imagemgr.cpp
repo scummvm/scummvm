@@ -72,8 +72,8 @@ ImageMgr::ImageMgr() : _baseSet(nullptr), _abyssData(nullptr) {
 ImageMgr::~ImageMgr() {
 	settings.deleteObserver(this);
 
-	for (Common::HashMap<Common::String, ImageSet *>::iterator i = _imageSets.begin(); i != _imageSets.end(); i++)
-		delete i->_value;
+	for (auto &i : _imageSets)
+		delete i._value;
 
 	delete[] _abyssData;
 }
@@ -103,9 +103,9 @@ void ImageMgr::init() {
 	 */
 	const Config *config = Config::getInstance();
 	Std::vector<ConfigElement> graphicsConf = config->getElement("graphics").getChildren();
-	for (Std::vector<ConfigElement>::iterator conf = graphicsConf.begin(); conf != graphicsConf.end(); conf++) {
-		if (conf->getName() == "imageset") {
-			ImageSet *set = loadImageSetFromConf(*conf);
+	for (const auto &conf : graphicsConf) {
+		if (conf.getName() == "imageset") {
+			ImageSet *set = loadImageSetFromConf(conf);
 			_imageSets[set->_name] = set;
 
 			// all image sets include the "screen" image
@@ -114,8 +114,8 @@ void ImageMgr::init() {
 	}
 
 	_imageSetNames.clear();
-	for (Common::HashMap<Common::String, ImageSet *>::const_iterator set = _imageSets.begin(); set != _imageSets.end(); set++)
-		_imageSetNames.push_back(set->_key);
+	for (const auto &set : _imageSets)
+		_imageSetNames.push_back(set._key);
 
 	update(&settings);
 }
@@ -129,9 +129,9 @@ ImageSet *ImageMgr::loadImageSetFromConf(const ConfigElement &conf) {
 	set->_extends = conf.getString("extends");
 
 	Std::vector<ConfigElement> children = conf.getChildren();
-	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
-		if (i->getName() == "image") {
-			ImageInfo *info = loadImageInfoFromConf(*i);
+	for (const auto &i : children) {
+		if (i.getName() == "image") {
+			ImageInfo *info = loadImageInfoFromConf(i);
 			if (set->_info.contains(info->_name))
 				delete set->_info[info->_name];
 			set->_info[info->_name] = info;
@@ -162,9 +162,9 @@ ImageInfo *ImageMgr::loadImageInfoFromConf(const ConfigElement &conf) {
 	info->_image = nullptr;
 
 	Std::vector<ConfigElement> children = conf.getChildren();
-	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
-		if (i->getName() == "subimage") {
-			SubImage *subimage = loadSubImageFromConf(info, *i);
+	for (const auto &i : children) {
+		if (i.getName() == "subimage") {
+			SubImage *subimage = loadSubImageFromConf(info, i);
 			info->_subImages[subimage->_name] = subimage;
 		}
 	}
@@ -663,8 +663,8 @@ SubImage *ImageMgr::getSubImage(const Common::String &name) {
 	ImageSet *set = _baseSet;
 
 	while (set != nullptr) {
-		for (Common::HashMap<Common::String, ImageInfo *>::iterator i = set->_info.begin(); i != set->_info.end(); i++) {
-			ImageInfo *info = (ImageInfo *) i->_value;
+		for (auto &i : set->_info) {
+			ImageInfo *info = (ImageInfo *) i._value;
 			Common::HashMap<Common::String, SubImage *>::iterator j = info->_subImages.find(name);
 			if (j != info->_subImages.end())
 				return j->_value;
@@ -677,10 +677,10 @@ SubImage *ImageMgr::getSubImage(const Common::String &name) {
 }
 
 void ImageMgr::freeIntroBackgrounds() {
-	for (Common::HashMap<Common::String, ImageSet *>::iterator i = _imageSets.begin(); i != _imageSets.end(); i++) {
-		ImageSet *set = i->_value;
-		for (Common::HashMap<Common::String, ImageInfo *>::iterator j = set->_info.begin(); j != set->_info.end(); j++) {
-			ImageInfo *info = j->_value;
+	for (const auto &i : _imageSets) {
+		ImageSet *set = i._value;
+		for (auto &j : set->_info) {
+			ImageInfo *info = j._value;
 			if (info->_image != nullptr && info->_introOnly) {
 				delete info->_image;
 				info->_image = nullptr;
@@ -716,16 +716,16 @@ void ImageMgr::update(Settings *newSettings) {
 }
 
 ImageSet::~ImageSet() {
-	for (Common::HashMap<Common::String, ImageInfo *>::iterator i = _info.begin(); i != _info.end(); i++) {
-		ImageInfo *imageInfo = i->_value;
+	for (const auto &i : _info) {
+		ImageInfo *imageInfo = i._value;
 		if (imageInfo->_name != "screen")
 			delete imageInfo;
 	}
 }
 
 ImageInfo::~ImageInfo() {
-	for (Common::HashMap<Common::String, SubImage *>::iterator i = _subImages.begin(); i != _subImages.end(); i++)
-		delete i->_value;
+	for (auto &i : _subImages)
+		delete i._value;
 	if (_image != nullptr)
 		delete _image;
 }

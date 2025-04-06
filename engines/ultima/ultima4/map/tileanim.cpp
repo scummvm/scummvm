@@ -49,9 +49,9 @@ TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 			conf.getInt("x"), conf.getInt("y"));
 
 		Std::vector<ConfigElement> children = conf.getChildren();
-		for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
-			if (i->getName() == "color") {
-				RGBA *rgba = loadColorFromConf(*i);
+		for (const auto &i : children) {
+			if (i.getName() == "color") {
+				RGBA *rgba = loadColorFromConf(i);
 				((TileAnimPixelTransform *)transform)->_colors.push_back(rgba);
 			}
 		}
@@ -240,9 +240,9 @@ TileAnimContext *TileAnimContext::create(const ConfigElement &conf) {
 	if (context) {
 		Std::vector<ConfigElement> children = conf.getChildren();
 
-		for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
-			if (i->getName() == "transform") {
-				TileAnimTransform *transform = TileAnimTransform::create(*i);
+		for (const auto &i : children) {
+			if (i.getName() == "transform") {
+				TileAnimTransform *transform = TileAnimTransform::create(i);
 				context->add(transform);
 			}
 		}
@@ -273,17 +273,17 @@ TileAnimSet::TileAnimSet(const ConfigElement &conf) {
 	_name = conf.getString("name");
 
 	Std::vector<ConfigElement> children = conf.getChildren();
-	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
-		if (i->getName() == "tileanim") {
-			TileAnim *anim = new TileAnim(*i);
+	for (const auto &i : children) {
+		if (i.getName() == "tileanim") {
+			TileAnim *anim = new TileAnim(i);
 			_tileAnims[anim->_name] = anim;
 		}
 	}
 }
 
 TileAnimSet::~TileAnimSet() {
-	for (TileAnimMap::iterator it = _tileAnims.begin(); it != _tileAnims.end(); ++it)
-		delete it->_value;
+	for (auto &t : _tileAnims)
+		delete t._value;
 }
 
 TileAnim *TileAnimSet::getByName(const Common::String &name) {
@@ -301,13 +301,13 @@ TileAnim::TileAnim(const ConfigElement &conf) : _random(0) {
 		_random = conf.getInt("random");
 
 	Std::vector<ConfigElement> children = conf.getChildren();
-	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
-		if (i->getName() == "transform") {
-			TileAnimTransform *transform = TileAnimTransform::create(*i);
+	for (const auto &i : children) {
+		if (i.getName() == "transform") {
+			TileAnimTransform *transform = TileAnimTransform::create(i);
 
 			_transforms.push_back(transform);
-		} else if (i->getName() == "context") {
-			TileAnimContext *context = TileAnimContext::create(*i);
+		} else if (i.getName() == "context") {
+			TileAnimContext *context = TileAnimContext::create(i);
 
 			_contexts.push_back(context);
 		}

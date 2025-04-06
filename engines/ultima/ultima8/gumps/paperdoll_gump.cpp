@@ -122,11 +122,7 @@ void PaperdollGump::Close(bool no_del) {
 	Container *c = getContainer(_owner);
 	if (!c) return; // Container gone!?
 
-	Std::list<Item *> &contents = c->_contents;
-	Std::list<Item *>::iterator iter = contents.begin();
-	while (iter != contents.end()) {
-		Item *item = *iter;
-		++iter;
+	for (auto *item : c->_contents) {
 		item->leaveFastArea();  // Can destroy the item
 	}
 

@@ -110,8 +110,8 @@ CruCreditsGump::CruCreditsGump(Common::SeekableReadStream *txtrs,
 CruCreditsGump::~CruCreditsGump() {
 	delete _background;
 
-	for (Common::Array<RenderedText *>::iterator iter = _currentLines.begin(); iter != _currentLines.end(); iter++) {
-		delete *iter;
+	for (auto *line : _currentLines) {
+		delete line;
 	}
 }
 
@@ -154,9 +154,8 @@ void CruCreditsGump::run() {
 	}
 
 	_nextScreenStart += _screens[_screenNo]._delay;
-	for (Common::Array<RenderedText *>::iterator iter = _currentLines.begin();
-		 iter != _currentLines.end(); iter++) {
-		delete *iter;
+	for (auto *line : _currentLines) {
+		delete line;
 	}
 	_currentLines.clear();
 
@@ -173,17 +172,16 @@ void CruCreditsGump::run() {
 	if (pal && nameshapefont)
 		nameshapefont->setPalette(pal);
 
-	for (Common::Array<CredLine>::const_iterator iter = lines.begin();
-		 iter != lines.end(); iter++) {
-		Font *linefont = (iter->_lineType == kCredTitle) ? titlefont : namefont;
+	for (const auto &line : lines) {
+		Font *linefont = (line._lineType == kCredTitle) ? titlefont : namefont;
 		if (!linefont) {
 			// shouldn't happen.. just to be sure?
-			warning("can't render credits line type %d, font is null", iter->_lineType);
+			warning("can't render credits line type %d, font is null", line._lineType);
 			break;
 		}
 
 		unsigned int remaining;
-		RenderedText *rendered = linefont->renderText(iter->_text, remaining, 640, 0, Font::TEXT_CENTER);
+		RenderedText *rendered = linefont->renderText(line._text, remaining, 640, 0, Font::TEXT_CENTER);
 		_currentLines.push_back(rendered);
 	}
 }
@@ -203,9 +201,8 @@ void CruCreditsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scal
 	int total = nlines * (height + vlead);
 	int yoffset = 240 - total / 2;
 
-	for (Common::Array<RenderedText *>::iterator iter = _currentLines.begin();
-		 iter != _currentLines.end(); iter++) {
-		(*iter)->draw(surf, 0, yoffset);
+	for (auto *line : _currentLines) {
+		line->draw(surf, 0, yoffset);
 		yoffset += (height + vlead);
 	}
 }

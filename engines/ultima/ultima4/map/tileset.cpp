@@ -48,9 +48,9 @@ void TileRules::load() {
 	const Config *config = Config::getInstance();
 	Std::vector<ConfigElement> rules = config->getElement("tileRules").getChildren();
 
-	for (Std::vector<ConfigElement>::iterator i = rules.begin(); i != rules.end(); i++) {
+	for (const auto &i : rules) {
 		TileRule *rule = new TileRule();
-		rule->initFromConf(*i);
+		rule->initFromConf(i);
 		(*this)[rule->_name] = rule;
 	}
 
@@ -91,11 +91,11 @@ void TileSets::loadAll() {
 		g_tileRules->load();
 
 	// Load all of the tilesets
-	for (Std::vector<ConfigElement>::iterator i = conf.begin(); i != conf.end(); i++) {
-		if (i->getName() == "tileset") {
+	for (const auto &i : conf) {
+		if (i.getName() == "tileset") {
 
 			Tileset *tileset = new Tileset();
-			tileset->load(*i);
+			tileset->load(i);
 
 			(*this)[tileset->_name] = tileset;
 		}
@@ -258,12 +258,12 @@ void Tileset::load(const ConfigElement &tilesetConf) {
 
 	int index = 0;
 	Std::vector<ConfigElement> children = tilesetConf.getChildren();
-	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
-		if (i->getName() != "tile")
+	for (const auto &i : children) {
+		if (i.getName() != "tile")
 			continue;
 
 		Tile *tile = new Tile(this);
-		tile->loadProperties(*i);
+		tile->loadProperties(i);
 
 		// Add the tile to our tileset
 		_tiles[tile->getId()] = tile;

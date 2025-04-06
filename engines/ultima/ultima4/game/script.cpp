@@ -129,11 +129,8 @@ Script::~Script() {
 	// Smart pointers anyone?
 
 	// Clean variables
-	Common::HashMap<Common::String, Script::Variable *>::iterator variableItem = _variables.begin();
-	Common::HashMap<Common::String, Script::Variable *>::iterator variablesEnd = _variables.end();
-	while (variableItem != variablesEnd) {
-		delete variableItem->_value;
-		++variableItem;
+	for (auto &item : _variables) {
+		delete item._value;
 	}
 }
 

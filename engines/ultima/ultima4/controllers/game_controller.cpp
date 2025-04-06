@@ -784,8 +784,7 @@ bool GameController::createBalloon(Map *map) {
 	ObjectDeque::iterator i;
 
 	/* see if the balloon has already been created (and not destroyed) */
-	for (i = map->_objects.begin(); i != map->_objects.end(); i++) {
-		Object *obj = *i;
+	for (auto *obj : map->_objects) {
 		if (obj->getTile().getTileType()->isBalloon())
 			return false;
 	}
@@ -814,8 +813,8 @@ void GameController::attack(Direction dir) {
 	Std::vector<Coords> path = gameGetDirectionalActionPath(
 		MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
 		1, 1, nullptr, true);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (attackAt(*i))
+	for (const auto &coords : path) {
+		if (attackAt(coords))
 			return;
 	}
 

@@ -95,8 +95,7 @@ void Screen::init() {
 
 	/* find the tile animations for our tileset */
 	_tileAnims = nullptr;
-	for (Std::vector<TileAnimSet *>::const_iterator i = _tileAnimSets.begin(); i != _tileAnimSets.end(); i++) {
-		TileAnimSet *set = *i;
+	for (auto *set : _tileAnimSets) {
 		if (set->_name == settings._videoType)
 			_tileAnims = set;
 	}
@@ -131,9 +130,8 @@ void Screen::clear() {
 	// Clear any pending updates for the current screen
 	update();
 
-	Std::vector<Layout *>::const_iterator i;
-	for (i = _layouts.begin(); i != _layouts.end(); ++i)
-		delete (*i);
+	for (auto *layout : _layouts)
+		delete layout;
 	_layouts.clear();
 
 	ImageMgr::destroy();
@@ -345,18 +343,16 @@ void Screen::screenLoadGraphicsFromConf() {
 	const Config *config = Config::getInstance();
 
 	Std::vector<ConfigElement> graphicsConf = config->getElement("graphics").getChildren();
-	for (Std::vector<ConfigElement>::iterator conf = graphicsConf.begin(); conf != graphicsConf.end(); conf++) {
+	for (const auto &conf : graphicsConf) {
 
-		if (conf->getName() == "layout")
-			_layouts.push_back(screenLoadLayoutFromConf(*conf));
-		else if (conf->getName() == "tileanimset")
-			_tileAnimSets.push_back(new TileAnimSet(*conf));
+		if (conf.getName() == "layout")
+			_layouts.push_back(screenLoadLayoutFromConf(conf));
+		else if (conf.getName() == "tileanimset")
+			_tileAnimSets.push_back(new TileAnimSet(conf));
 	}
 
 	_gemLayoutNames.clear();
-	Std::vector<Layout *>::const_iterator i;
-	for (i = _layouts.begin(); i != _layouts.end(); i++) {
-		Layout *layout = *i;
+	for (const auto *layout : _layouts) {
 		if (layout->_type == LAYOUT_GEM) {
 			_gemLayoutNames.push_back(layout->_name);
 		}
@@ -365,9 +361,7 @@ void Screen::screenLoadGraphicsFromConf() {
 	/*
 	 * Find gem layout to use.
 	 */
-	for (i = _layouts.begin(); i != _layouts.end(); i++) {
-		Layout *layout = *i;
-
+	for (auto *layout : _layouts) {
 		if (layout->_type == LAYOUT_GEM && layout->_name == settings._gemLayout) {
 			_gemLayout = layout;
 			break;
@@ -386,15 +380,15 @@ Layout *Screen::screenLoadLayoutFromConf(const ConfigElement &conf) {
 	layout->_type = static_cast<LayoutType>(conf.getEnum("type", typeEnumStrings));
 
 	Std::vector<ConfigElement> children = conf.getChildren();
-	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
-		if (i->getName() == "tileshape") {
-			layout->_tileShape.x = i->getInt("width");
-			layout->_tileShape.y = i->getInt("height");
-		} else if (i->getName() == "viewport") {
-			layout->_viewport.left = i->getInt("x");
-			layout->_viewport.top = i->getInt("y");
-			layout->_viewport.setWidth(i->getInt("width"));
-			layout->_viewport.setHeight(i->getInt("height"));
+	for (const auto &i : children) {
+		if (i.getName() == "tileshape") {
+			layout->_tileShape.x = i.getInt("width");
+			layout->_tileShape.y = i.getInt("height");
+		} else if (i.getName() == "viewport") {
+			layout->_viewport.left = i.getInt("x");
+			layout->_viewport.top = i.getInt("y");
+			layout->_viewport.setWidth(i.getInt("width"));
+			layout->_viewport.setHeight(i.getInt("height"));
 		}
 	}
 
@@ -1191,10 +1185,7 @@ void Screen::screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus,
 
 Layout *Screen::screenGetGemLayout(const Map *map) {
 	if (map->_type == Map::DUNGEON) {
-		Std::vector<Layout *>::const_iterator i;
-		for (i = _layouts.begin(); i != _layouts.end(); i++) {
-			Layout *layout = *i;
-
+		for (auto *layout : _layouts) {
 			if (layout->_type == LAYOUT_DUNGEONGEM)
 				return layout;
 		}

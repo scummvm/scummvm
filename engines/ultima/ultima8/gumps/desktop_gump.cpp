@@ -48,13 +48,7 @@ void DesktopGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 }
 
 void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	// Iterate all children
-	Std::list<Gump *>::iterator it = _children.begin();
-	Std::list<Gump *>::iterator end = _children.end();
-
-	while (it != end) {
-		Gump *g = *it;
-
+	for (auto *g : _children) {
 		// Paint if not closing
 		if (!g->IsClosing()) {
 			// If background blanking on modal is enabled...
@@ -65,8 +59,6 @@ void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sca
 
 			g->Paint(surf, lerp_factor, scaled);
 		}
-
-		++it;
 	}
 }
 

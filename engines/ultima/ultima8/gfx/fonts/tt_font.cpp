@@ -206,14 +206,13 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 	Graphics::ManagedSurface *texture = new Graphics::ManagedSurface(resultWidth, resultHeight, _PF_RGBA);
 	uint32 *texBuf = (uint32 *)texture->getPixels();
 
-	Std::list<PositionedText>::const_iterator iter;
-	for (iter = lines.begin(); iter != lines.end(); ++iter) {
+	for (const auto &line : lines) {
 		// convert to unicode
 		Common::U32String unicodeText;
 		if (!_SJIS)
-			unicodeText = toUnicode<Traits>(iter->_text, _bullet);
+			unicodeText = toUnicode<Traits>(line._text, _bullet);
 		else
-			unicodeText = toUnicode<SJISTraits>(iter->_text, _bullet);
+			unicodeText = toUnicode<SJISTraits>(line._text, _bullet);
 
 		// Create a surface and render the text
 		Graphics::ManagedSurface textSurf;
@@ -231,16 +230,16 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 
 		// Add border within radius. Pixels on the edge are alpha blended if antialiased
 		if (_borderSize > 0) {
-			addTextBorder(textSurf, texBuf, iter->_dims, resultWidth, resultHeight, borderColor);
+			addTextBorder(textSurf, texBuf, line._dims, resultWidth, resultHeight, borderColor);
 		}
 
 		// render the text surface into our texture buffer
 		for (int y = 0; y < textSurf.h; y++) {
 			const byte *surfrow = (const byte *)textSurf.getBasePtr(0, y);
 
-			int ty = iter->_dims.top + y + _borderSize;
+			int ty = line._dims.top + y + _borderSize;
 			for (int x = 0; x < textSurf.w; x++) {
-				int tx = iter->_dims.left + x + _borderSize;
+				int tx = line._dims.left + x + _borderSize;
 				if (_antiAliased) {
 					uint32 sColor = *((const uint32 *)(surfrow + x * 4));
 					uint8 sR, sG, sB, sA;
@@ -273,15 +272,15 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			}
 		}
 
-		if (iter->_cursor != Std::string::npos) {
-			assert(iter->_cursor <= iter->_text.size());
-			unicodeText = unicodeText.substr(0, iter->_cursor);
+		if (line._cursor != Std::string::npos) {
+			assert(line._cursor <= line._text.size());
+			unicodeText = unicodeText.substr(0, line._cursor);
 
 			int w = _ttfFont->getStringWidth(unicodeText);
 
-			for (int y = 0; y < iter->_dims.height(); y++) {
-				int tx = iter->_dims.left + w + _borderSize;
-				int ty = iter->_dims.top + y;
+			for (int y = 0; y < line._dims.height(); y++) {
+				int tx = line._dims.left + w + _borderSize;
+				int ty = line._dims.top + y;
 				texBuf[ty * resultWidth + tx] = borderColor;
 			}
 		}

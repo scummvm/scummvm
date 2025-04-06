@@ -341,21 +341,20 @@ Std::list<PositionedText> typesetText(Font *font,
 	totalheight += font->getHeight();
 
 	// fixup x coordinates of lines
-	Std::list<PositionedText>::iterator lineiter;
-	for (lineiter = lines.begin(); lineiter != lines.end(); ++lineiter) {
+	for (auto &l : lines) {
 		switch (align) {
 		case Font::TEXT_LEFT:
 			break;
 		case Font::TEXT_RIGHT:
-			lineiter->_dims.moveTo(totalwidth - lineiter->_dims.width(), lineiter->_dims.top);
+			l._dims.moveTo(totalwidth - l._dims.width(), l._dims.top);
 			break;
 		case Font::TEXT_CENTER:
-			lineiter->_dims.moveTo((totalwidth - lineiter->_dims.width()) / 2, lineiter->_dims.top);
+			l._dims.moveTo((totalwidth - l._dims.width()) / 2, l._dims.top);
 			break;
 		}
 
-		debugC(kDebugGraphics, "%d, %d, %d, %d: %s", lineiter->_dims.left, lineiter->_dims.top,
-			lineiter->_dims.width(), lineiter->_dims.height(), lineiter->_text.c_str());
+		debugC(kDebugGraphics, "%d, %d, %d, %d: %s", l._dims.left, l._dims.top,
+			l._dims.width(), l._dims.height(), l._text.c_str());
 	}
 
 	resultwidth = totalwidth;

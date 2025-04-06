@@ -56,13 +56,11 @@ SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
 	_sounds.resize(SOUND_MAX);
 
 	Std::vector<ConfigElement> soundConfs = config->getElement("sound").getChildren();
-	Std::vector<ConfigElement>::const_iterator i = soundConfs.begin();
-	Std::vector<ConfigElement>::const_iterator theEnd = soundConfs.end();
-	for (; i != theEnd; ++i) {
-		if (i->getName() != "track")
+	for (const auto &s : soundConfs) {
+		if (s.getName() != "track")
 			continue;
 
-		_soundFilenames.push_back(Common::Path(i->getString("file")));
+		_soundFilenames.push_back(Common::Path(s.getString("file")));
 	}
 }
 

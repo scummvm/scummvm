@@ -34,8 +34,8 @@ Menu::Menu() :
 }
 
 Menu::~Menu() {
-	for (MenuItemList::iterator i = _items.begin(); i != _items.end(); i++)
-		delete *i;
+	for (auto *i : _items)
+		delete i;
 }
 
 void Menu::removeAll() {
@@ -55,18 +55,18 @@ MenuItem *Menu::add(int id, MenuItem *item) {
 }
 
 void Menu::addShortcutKey(int id, int shortcutKey) {
-	for (MenuItemList::iterator i = _items.begin(); i != _items.end(); i++) {
-		if ((*i)->getId() == id) {
-			(*i)->addShortcutKey(shortcutKey);
+	for (auto *i : _items) {
+		if (i->getId() == id) {
+			i->addShortcutKey(shortcutKey);
 			break;
 		}
 	}
 }
 
 void Menu::setClosesMenu(int id) {
-	for (MenuItemList::iterator i = _items.begin(); i != _items.end(); i++) {
-		if ((*i)->getId() == id) {
-			(*i)->setClosesMenu(true);
+	for (auto *i : _items) {
+		if (i->getId() == id) {
+			i->setClosesMenu(true);
 			break;
 		}
 	}
@@ -93,9 +93,7 @@ void Menu::show(TextView *view) {
 	if (_title.size() > 0)
 		view->textAt(_titleX, _titleY, "%s", _title.c_str());
 
-	for (_current = _items.begin(); _current != _items.end(); _current++) {
-		MenuItem *mi = *_current;
-
+	for (auto *mi : _items) {
 		if (mi->isVisible()) {
 			Common::String text(mi->getText());
 
@@ -119,8 +117,8 @@ void Menu::show(TextView *view) {
 bool Menu::isVisible() {
 	bool visible = false;
 
-	for (_current = _items.begin(); _current != _items.end(); _current++) {
-		if ((*_current)->isVisible())
+	for (const auto *mi : _items) {
+		if (mi->isVisible())
 			visible = true;
 	}
 
@@ -159,8 +157,9 @@ void Menu::prev() {
 
 void Menu::highlight(MenuItem *item) {
 	// unhighlight all menu items first
-	for (_current = _items.begin(); _current != _items.end(); _current++)
-		(*_current)->setHighlighted(false);
+	for (auto *mi : _items) {
+		mi->setHighlighted(false);
+	}
 	if (item)
 		item->setHighlighted(true);
 }
@@ -177,11 +176,12 @@ Menu::MenuItemList::iterator Menu::begin_visible() {
 	if (!isVisible())
 		return _items.end();
 
-	_current = _items.begin();
-	while (!(*_current)->isVisible() && _current != _items.end())
-		_current++;
+	for (Menu::MenuItemList::iterator it = _items.begin(); it != _items.end(); it++) {
+		if (!(*it)->isVisible())
+			return it;
+	}
 
-	return _current;
+	return _items.end();
 }
 
 void Menu::reset(bool highlightFirst) {
@@ -191,9 +191,9 @@ void Menu::reset(bool highlightFirst) {
 	_selected = begin_visible();
 
 	/* un-highlight and deselect each menu item */
-	for (_current = _items.begin(); _current != _items.end(); _current++) {
-		(*_current)->setHighlighted(false);
-		(*_current)->setSelected(false);
+	for (auto *mi : _items) {
+		mi->setHighlighted(false);
+		mi->setSelected(false);
 	}
 
 	/* highlight the first visible menu item */
@@ -209,17 +209,17 @@ Menu::MenuItemList::iterator Menu::getById(int id) {
 	if (id == -1)
 		return getCurrent();
 
-	for (_current = _items.begin(); _current != _items.end(); _current++) {
-		if ((*_current)->getId() == id)
-			return _current;
+	for (Menu::MenuItemList::iterator it = _items.begin(); it != _items.end(); it++) {
+		if ((*it)->getId() == id)
+			return it;
 	}
 	return _items.end();
 }
 
 MenuItem *Menu::getItemById(int id) {
-	_current = getById(id);
-	if (_current != _items.end())
-		return *_current;
+	Menu::MenuItemList::iterator it = getById(id);
+	if (it != _items.end())
+		return *it;
 
 	return nullptr;
 }
@@ -259,13 +259,13 @@ void Menu::activateItem(int id, MenuEvent::Type action) {
 }
 
 bool Menu::activateItemByShortcut(int key, MenuEvent::Type action) {
-	for (MenuItemList::iterator i = _items.begin(); i != _items.end(); ++i) {
-		const Std::set<int> &shortcuts = (*i)->getShortcutKeys();
+	for (auto *i : _items) {
+		const Std::set<int> &shortcuts = i->getShortcutKeys();
 		if (shortcuts.find(key) != shortcuts.end()) {
-			activateItem((*i)->getId(), action);
+			activateItem(i->getId(), action);
 			// if the selection doesn't close the menu, highlight the selection
-			if (!(*i)->getClosesMenu())
-				setCurrent((*i)->getId());
+			if (!i->getClosesMenu())
+				setCurrent(i->getId());
 			return true;
 		}
 	}

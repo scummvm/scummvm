@@ -138,9 +138,8 @@ void UCMachine::reset() {
 	}
 
 	// clear strings, lists
-	Common::HashMap<uint16, UCList *>::iterator iter;
-	for (iter = _listHeap.begin(); iter != _listHeap.end(); ++iter)
-		delete(iter->_value);
+	for (auto &i : _listHeap)
+		delete i._value;
 	_listHeap.clear();
 	_stringHeap.clear();
 }
@@ -2263,29 +2262,27 @@ void UCMachine::usecodeStats() const {
 	g_debugger->debugPrintf("Usecode Machine memory stats:\n");
 	g_debugger->debugPrintf("Strings    : %u/65534\n", _stringHeap.size());
 #ifdef DUMPHEAP
-	Common::HashMap<uint16, Std::string>::const_iterator iter;
-	for (iter = _stringHeap.begin(); iter != _stringHeap.end(); ++iter)
-		g_debugger->debugPrintf("%d:%s\n", iter->_key << ":" << iter->_value.c_str());
+	for (const auto &i : _stringHeap)
+		g_debugger->debugPrintf("%d:%s\n", i._key << ":" << i._value.c_str());
 #endif
 	g_debugger->debugPrintf("Lists      : %u/65534\n", _listHeap.size());
 #ifdef DUMPHEAP
-	Common::HashMap<uint16, UCList *>::const_iterator iterl;
-	for (iterl = _listHeap.begin(); iterl != _listHeap.end(); ++iterl) {
-		if (!iterl->_value) {
-			g_debugger->debugPrintf("%d: <null>\n", iterl->_key);
+	for (const auto &l : _listHeap) {
+		if (!l._value) {
+			g_debugger->debugPrintf("%d: <null>\n", l._key);
 			continue;
 		}
-		if (iterl->_value->getElementSize() == 2) {
-			g_debugger->debugPrintf("%d:", iterl->_key);
+		if (l._value->getElementSize() == 2) {
+			g_debugger->debugPrintf("%d:", l._key);
 
-			for (unsigned int i = 0; i < iterl->_value->getSize(); ++i) {
+			for (unsigned int i = 0; i < l._value->getSize(); ++i) {
 				if (i > 0) g_debugger->debugPrintf(",");
-				g_debugger->debugPrintf("%d", iterl->_value->getuint16(i));
+				g_debugger->debugPrintf("%d", l._value->getuint16(i));
 			}
 			g_debugger->debugPrintf("\n");
 		} else {
 			g_debugger->debugPrintf("%d: %u elements of size %u\n",
-				iterl->_key, iterl->_value->getSize(), iterl->_value->getElementSize());
+				l._key, l._value->getSize(), l._value->getElementSize());
 		}
 	}
 #endif
@@ -2299,11 +2296,10 @@ void UCMachine::saveStrings(Common::WriteStream *ws) const {
 	_stringIDs->save(ws);
 	ws->writeUint32LE(static_cast<uint32>(_stringHeap.size()));
 
-	Common::HashMap<uint16, Std::string>::const_iterator iter;
-	for (iter = _stringHeap.begin(); iter != _stringHeap.end(); ++iter) {
-		ws->writeUint16LE((*iter)._key);
-		ws->writeUint32LE((*iter)._value.size());
-		ws->write((*iter)._value.c_str(), (*iter)._value.size());
+	for (const auto &i : _stringHeap) {
+		ws->writeUint16LE(i._key);
+		ws->writeUint32LE(i._value.size());
+		ws->write(i._value.c_str(), i._value.size());
 	}
 }
 
@@ -2311,10 +2307,9 @@ void UCMachine::saveLists(Common::WriteStream *ws) const {
 	_listIDs->save(ws);
 	ws->writeUint32LE(_listHeap.size());
 
-	Common::HashMap<uint16, UCList *>::const_iterator iter;
-	for (iter = _listHeap.begin(); iter != _listHeap.end(); ++iter) {
-		ws->writeUint16LE((*iter)._key);
-		(*iter)._value->save(ws);
+	for (const auto &i : _listHeap) {
+		ws->writeUint16LE(i._key);
+		i._value->save(ws);
 	}
 }
 

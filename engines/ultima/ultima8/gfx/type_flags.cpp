@@ -184,9 +184,7 @@ void TypeFlags::loadWeaponInfo() {
 	Std::vector<Std::string> weaponkeys;
 	Std::string category = "weapons";
 	weaponkeys = config->listSections(category);
-	for (Std::vector<Std::string>::const_iterator iter = weaponkeys.begin();
-	        iter != weaponkeys.end(); ++iter) {
-		const Std::string &section = *iter;
+	for (const auto &section : weaponkeys) {
 		WeaponInfo *wi = new WeaponInfo;
 
 		int val = 0;
@@ -306,9 +304,7 @@ void TypeFlags::loadArmourInfo() {
 	Std::vector<Std::string> armourkeys;
 	Std::string category = "armour";
 	armourkeys = config->listSections(category);
-	for (Std::vector<Std::string>::const_iterator iter = armourkeys.begin();
-	        iter != armourkeys.end(); ++iter) {
-		const Std::string &section = *iter;
+	for (const auto &section : armourkeys) {
 		ArmourInfo ai;
 
 		int val;
@@ -364,9 +360,7 @@ void TypeFlags::loadMonsterInfo() {
 	Std::vector<Std::string> monsterkeys;
 	Std::string category = "monsters";
 	monsterkeys = config->listSections(category);
-	for (Std::vector<Std::string>::const_iterator iter = monsterkeys.begin();
-	        iter != monsterkeys.end(); ++iter) {
-		const Std::string section = *iter;
+	for (const auto &section : monsterkeys) {
 		MonsterInfo *mi = new MonsterInfo;
 
 		int val;

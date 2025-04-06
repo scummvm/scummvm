@@ -73,9 +73,8 @@ void SnapProcess::run() {
 void SnapProcess::addEgg(Item *item) {
 	assert(item);
 	ObjId id = item->getObjId();
-	for (Std::list<ObjId>::const_iterator iter = _snapEggs.begin();
-		 iter != _snapEggs.end(); iter++) {
-		if (*iter == id)
+	for (const auto &eggId : _snapEggs) {
+		if (eggId == id)
 			return;
 	}
 	_snapEggs.push_back(id);
@@ -96,16 +95,15 @@ void SnapProcess::updateCurrentEgg() {
 	a->getFootpadWorld(axd, ayd, azd);
 	Rect arect(pta.x, pta.y, pta.x + axd, pta.y + ayd);
 
-	for (Std::list<ObjId>::const_iterator iter = _snapEggs.begin();
-		 iter != _snapEggs.end(); iter++) {
-		const Item *egg = getItem(*iter);
+	for (const auto &eggId : _snapEggs) {
+		const Item *egg = getItem(eggId);
 		if (!egg)
 			continue;
 		Rect r;
 		Point3 pte = egg->getLocation();
 		getSnapEggRange(egg, r);
 		if (r.intersects(arect) && (pta.z <= pte.z + 0x30 && pta.z >= pte.z - 0x30)) {
-			_currentSnapEgg = *iter;
+			_currentSnapEgg = eggId;
 			_currentSnapEggRange = r;
 			CameraProcess::SetCameraProcess(new CameraProcess(_currentSnapEgg));
 		}
@@ -181,9 +179,8 @@ void SnapProcess::saveData(Common::WriteStream *ws) {
 
 	ws->writeUint16LE(_currentSnapEgg);
 	ws->writeUint16LE(_snapEggs.size());
-	for (Std::list<ObjId>::const_iterator iter = _snapEggs.begin();
-		 iter != _snapEggs.end(); iter++) {
-		ws->writeUint16LE(*iter);
+	for (const auto &eggId : _snapEggs) {
+		ws->writeUint16LE(eggId);
 	}
 }
 

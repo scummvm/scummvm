@@ -119,17 +119,16 @@ uint32 MsgLine::length() {
 
 // gets the MsgText object that contains the text at line position pos
 MsgText *MsgLine::get_text_at_pos(uint16 pos) {
-	uint16 i;
-	Std::list<MsgText *>::iterator iter;
+	uint16 i = 0;
 
 	if (pos > total_length)
 		return nullptr;
 
-	for (i = 0, iter = text.begin(); iter != text.end(); iter++) {
-		if (i + (*iter)->s.length() >= pos)
-			return (*iter);
+	for (auto *t : text) {
+		if (i + t->s.length() >= pos)
+			return t;
 
-		i += (*iter)->s.length();
+		i += t->s.length();
 	}
 
 	return nullptr;

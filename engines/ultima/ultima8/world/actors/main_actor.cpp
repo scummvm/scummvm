@@ -98,10 +98,9 @@ bool MainActor::CanAddItem(Item *item, bool checkwghtvol) {
 		// valid item type?
 		if (equiptype == ShapeInfo::SE_NONE && !backpack) return false;
 
-		Std::list<Item *>::iterator iter;
-		for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-			uint32 cet = (*iter)->getShapeInfo()->_equipType;
-			bool cbackpack = ((*iter)->getShape() == backpack_shape);
+		for (const auto *i : _contents) {
+			uint32 cet = i->getShapeInfo()->_equipType;
+			bool cbackpack = (i->getShape() == backpack_shape);
 
 			// already have an item with the same equiptype
 			if (cet == equiptype || (cbackpack && backpack)) return false;
@@ -433,10 +432,9 @@ void MainActor::teleport(int mapNum, int teleport_id) {
 uint16 MainActor::getDefenseType() const {
 	uint16 type = 0;
 
-	Std::list<Item *>::const_iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		uint32 frameNum = (*iter)->getFrame();
-		const ShapeInfo *si = (*iter)->getShapeInfo();
+	for (const auto *i : _contents) {
+		uint32 frameNum = i->getFrame();
+		const ShapeInfo *si = i->getShapeInfo();
 		if (si->_armourInfo) {
 			type |= si->_armourInfo[frameNum]._defenseType;
 		}
@@ -448,10 +446,9 @@ uint16 MainActor::getDefenseType() const {
 uint32 MainActor::getArmourClass() const {
 	uint32 armour = 0;
 
-	Std::list<Item *>::const_iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		uint32 frameNum = (*iter)->getFrame();
-		const ShapeInfo *si = (*iter)->getShapeInfo();
+	for (const auto *i : _contents) {
+		uint32 frameNum = i->getFrame();
+		const ShapeInfo *si = i->getShapeInfo();
 		if (si->_armourInfo) {
 			armour += si->_armourInfo[frameNum]._armourClass;
 		}

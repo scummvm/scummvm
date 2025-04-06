@@ -66,8 +66,8 @@ WeaselDat::WeaselDat(Common::ReadStream *rs) {
 
 uint16 WeaselDat::getNumOfType(WeaselType type) const {
 	int count = 0;
-	for (Std::vector<WeaselEntry>::const_iterator iter = _items.begin(); iter != _items.end(); iter++) {
-		if (iter->_type == type)
+	for (const auto &item : _items) {
+		if (item._type == type)
 			count++;
 	}
 	return count;

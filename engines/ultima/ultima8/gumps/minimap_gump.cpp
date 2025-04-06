@@ -50,9 +50,8 @@ MiniMapGump::MiniMapGump() : ResizableGump(), _minimaps(), _ax(0), _ay(0) {
 }
 
 MiniMapGump::~MiniMapGump(void) {
-	Common::HashMap<uint32, MiniMap *>::iterator iter;
-	for (iter = _minimaps.begin(); iter != _minimaps.end(); ++iter) {
-		delete iter->_value;
+	for (auto &i : _minimaps) {
+		delete i._value;
 	}
 }
 
@@ -102,9 +101,8 @@ void MiniMapGump::generate() {
 }
 
 void MiniMapGump::clear() {
-	Common::HashMap<uint32, MiniMap *>::iterator iter;
-	for (iter = _minimaps.begin(); iter != _minimaps.end(); ++iter) {
-		delete iter->_value;
+	for (auto &i : _minimaps) {
+		delete i._value;
 	}
 	_minimaps.clear();
 }
@@ -208,10 +206,9 @@ void MiniMapGump::saveData(Common::WriteStream *ws) {
 	Gump::saveData(ws);
 
 	ws->writeUint32LE(static_cast<uint32>(_minimaps.size()));
-	Common::HashMap<uint32, MiniMap *>::const_iterator iter;
-	for (iter = _minimaps.begin(); iter != _minimaps.end(); ++iter) {
-		const MiniMap *minimap = iter->_value;
-		ws->writeUint32LE(iter->_key);
+	for (const auto &i : _minimaps) {
+		const MiniMap *minimap = i._value;
+		ws->writeUint32LE(i._key);
 		minimap->save(ws);
 	}
 }

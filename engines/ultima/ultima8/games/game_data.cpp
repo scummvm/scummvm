@@ -369,12 +369,11 @@ void GameData::setupJPOverrides() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 	FontManager *fontmanager = FontManager::get_instance();
 	KeyMap jpkeyvals;
-	KeyMap::const_iterator iter;
 
 	jpkeyvals = config->listKeyValues("language", "jpfonts");
-	for (iter = jpkeyvals.begin(); iter != jpkeyvals.end(); ++iter) {
-		int fontnum = atoi(iter->_key.c_str());
-		const Std::string &fontdesc = iter->_value;
+	for (const auto &i : jpkeyvals) {
+		int fontnum = atoi(i._key.c_str());
+		const Std::string &fontdesc = i._value;
 
 		Std::vector<Std::string> vals;
 		SplitString(fontdesc, ',', vals);
@@ -398,15 +397,14 @@ void GameData::setupTTFOverrides(const char *category, bool SJIS) {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 	FontManager *fontmanager = FontManager::get_instance();
 	KeyMap ttfkeyvals;
-	KeyMap::const_iterator iter;
 
 	bool overridefonts = ConfMan.getBool("font_override");
 	if (!overridefonts) return;
 
 	ttfkeyvals = config->listKeyValues(category, "fontoverride");
-	for (iter = ttfkeyvals.begin(); iter != ttfkeyvals.end(); ++iter) {
-		int fontnum = atoi(iter->_key.c_str());
-		const Std::string &fontdesc = iter->_value;
+	for (const auto &i : ttfkeyvals) {
+		int fontnum = atoi(i._key.c_str());
+		const Std::string &fontdesc = i._value;
 
 		Std::vector<Std::string> vals;
 		SplitString(fontdesc, ',', vals);
@@ -464,10 +462,7 @@ const NPCDat *GameData::getNPCData(uint16 entry) const {
 }
 
 const NPCDat *GameData::getNPCDataForShape(uint16 shapeno) const {
-	for (Std::vector<NPCDat *>::const_iterator it = _npcTable.begin();
-		 it != _npcTable.end();
-		 it++) {
-		const NPCDat *npcdat = *it;
+	for (const auto *npcdat : _npcTable) {
 		if (npcdat->getShapeNo() == shapeno)
 			return npcdat;
 	}

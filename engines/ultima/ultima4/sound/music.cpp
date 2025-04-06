@@ -63,13 +63,11 @@ Music::Music(Audio::Mixer *mixer) :
 	const Config *config = Config::getInstance();
 
 	Std::vector<ConfigElement> musicConfs = config->getElement("music").getChildren();
-	Std::vector<ConfigElement>::const_iterator i = musicConfs.begin();
-	Std::vector<ConfigElement>::const_iterator theEnd = musicConfs.end();
-	for (; i != theEnd; ++i) {
-		if (i->getName() != "track")
+	for (const auto &m : musicConfs) {
+		if (m.getName() != "track")
 			continue;
 
-		_filenames.push_back(i->getString("file"));
+		_filenames.push_back(m.getString("file"));
 	}
 }
 

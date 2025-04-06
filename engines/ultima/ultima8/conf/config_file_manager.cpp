@@ -65,9 +65,8 @@ bool ConfigFileManager::readConfigFile(const Common::Path &fname, const Std::str
 }
 
 void ConfigFileManager::clear() {
-	Std::vector<ConfigFile*>::iterator i;
-	for (i = _configFiles.begin(); i != _configFiles.end(); ++i) {
-		delete(*i);
+	for (auto *i : _configFiles) {
+		delete i;
 	}
 	_configFiles.clear();
 }
@@ -119,14 +118,11 @@ bool ConfigFileManager::get(const Std::string &category, const Std::string &sect
 
 Std::vector<Std::string> ConfigFileManager::listSections(const Std::string &category) const {
 	Std::vector<Std::string> sections;
-	Std::vector<ConfigFile*>::const_iterator i;
-
-	for ( i = _configFiles.begin(); i != _configFiles.end(); ++i) {
-		if (category.equalsIgnoreCase((*i)->_category)) {
-			Common::INIFile::SectionList sectionList = (*i)->_iniFile.getSections();
-			Common::INIFile::SectionList::const_iterator j;
-			for (j = sectionList.begin(); j != sectionList.end(); ++j) {
-				sections.push_back(j->name);
+	for (const auto *i : _configFiles) {
+		if (category.equalsIgnoreCase(i->_category)) {
+			Common::INIFile::SectionList sectionList = i->_iniFile.getSections();
+			for (const auto &j : sectionList) {
+				sections.push_back(j.name);
 			}
 		}
 	}
@@ -136,15 +132,11 @@ Std::vector<Std::string> ConfigFileManager::listSections(const Std::string &cate
 
 KeyMap ConfigFileManager::listKeyValues(const Std::string &category, const Std::string &section) const {
 	KeyMap values;
-	Std::vector<ConfigFile*>::const_iterator i;
-
-	for (i = _configFiles.begin(); i != _configFiles.end(); ++i) {
-		const ConfigFile *c = *i;
-		if (category.equalsIgnoreCase((*i)->_category) && c->_iniFile.hasSection(section)) {
+	for (const auto *c : _configFiles) {
+		if (category.equalsIgnoreCase(c->_category) && c->_iniFile.hasSection(section)) {
 			Common::INIFile::SectionKeyList keys = c->_iniFile.getKeys(section);
-			Common::INIFile::SectionKeyList::const_iterator j;
-			for (j = keys.begin(); j != keys.end(); ++j) {
-				values[j->key] = j->value;
+			for (const auto &j : keys) {
+				values[j.key] = j.value;
 			}
 		}
 	}

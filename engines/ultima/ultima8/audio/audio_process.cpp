@@ -154,18 +154,17 @@ void AudioProcess::saveData(Common::WriteStream *ws) {
 
 	ws->writeByte(static_cast<uint8>(_sampleInfo.size()));
 
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		ws->writeUint16LE(it->_sfxNum);
-		ws->writeUint16LE(it->_priority);
-		ws->writeUint16LE(it->_objId);
-		ws->writeUint16LE(it->_loops);
-		ws->writeUint32LE(it->_pitchShift);
-		ws->writeUint16LE(it->_volume);
+	for (const auto &si : _sampleInfo) {
+		ws->writeUint16LE(si._sfxNum);
+		ws->writeUint16LE(si._priority);
+		ws->writeUint16LE(si._objId);
+		ws->writeUint16LE(si._loops);
+		ws->writeUint32LE(si._pitchShift);
+		ws->writeUint16LE(si._volume);
 
-		if (it->_sfxNum == -1) { // Speech
-			ws->writeUint32LE(static_cast<uint32>(it->_barked.size()));
-			ws->write(it->_barked.c_str(), static_cast<uint32>(it->_barked.size()));
+		if (si._sfxNum == -1) { // Speech
+			ws->writeUint32LE(static_cast<uint32>(si._barked.size()));
+			ws->write(si._barked.c_str(), static_cast<uint32>(si._barked.size()));
 		}
 	}
 }
@@ -286,9 +285,8 @@ void AudioProcess::stopSFX(int sfxNum, ObjId objId) {
 
 bool AudioProcess::isSFXPlaying(int sfxNum) {
 	AudioMixer *mixer = AudioMixer::get_instance();
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		if (it->_sfxNum == sfxNum && mixer->isPlaying(it->_channel))
+	for (const auto &si : _sampleInfo) {
+		if (si._sfxNum == sfxNum && mixer->isPlaying(si._channel))
 			return true;
 	}
 
@@ -297,9 +295,8 @@ bool AudioProcess::isSFXPlaying(int sfxNum) {
 
 bool AudioProcess::isSFXPlayingForObject(int sfxNum, ObjId objId) {
 	AudioMixer *mixer = AudioMixer::get_instance();
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		if ((it->_sfxNum == sfxNum || sfxNum == -1) && (objId == it->_objId) && mixer->isPlaying(it->_channel))
+	for (const auto &si : _sampleInfo) {
+		if ((si._sfxNum == sfxNum || sfxNum == -1) && (objId == si._objId) && mixer->isPlaying(si._channel))
 			return true;
 	}
 
@@ -308,28 +305,24 @@ bool AudioProcess::isSFXPlayingForObject(int sfxNum, ObjId objId) {
 
 void AudioProcess::setVolumeSFX(int sfxNum, uint8 volume) {
 	AudioMixer *mixer = AudioMixer::get_instance();
+	for (auto &si : _sampleInfo) {
+		if (si._sfxNum == sfxNum && si._sfxNum != -1) {
+			si._volume = volume;
 
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		if (it->_sfxNum == sfxNum && it->_sfxNum != -1) {
-			it->_volume = volume;
-
-			calculateSoundVolume(it->_objId, it->_calcVol, it->_balance);
-			mixer->setVolume(it->_channel, (it->_calcVol * it->_volume) / 256, it->_balance);
+			calculateSoundVolume(si._objId, si._calcVol, si._balance);
+			mixer->setVolume(si._channel, (si._calcVol * si._volume) / 256, si._balance);
 		}
 	}
 }
 
 void AudioProcess::setVolumeForObjectSFX(ObjId objId, int sfxNum, uint8 volume) {
 	AudioMixer *mixer = AudioMixer::get_instance();
+	for (auto &si : _sampleInfo) {
+		if (si._sfxNum == sfxNum && si._sfxNum != -1 && objId == si._objId) {
+			si._volume = volume;
 
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		if (it->_sfxNum == sfxNum && it->_sfxNum != -1 && objId == it->_objId) {
-			it->_volume = volume;
-
-			calculateSoundVolume(it->_objId, it->_calcVol, it->_balance);
-			mixer->setVolume(it->_channel, (it->_calcVol * it->_volume) / 256, it->_balance);
+			calculateSoundVolume(si._objId, si._calcVol, si._balance);
+			mixer->setVolume(si._channel, (si._calcVol * si._volume) / 256, si._balance);
 		}
 	}
 }
@@ -408,9 +401,9 @@ void AudioProcess::stopSpeech(const Std::string &barked, int shapenum, ObjId obj
 
 bool AudioProcess::isSpeechPlaying(const Std::string &barked, int shapeNum) {
 	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		if (it->_sfxNum == -1 && it->_priority == shapeNum &&
-		        it->_barked == barked) {
+	for (auto &si : _sampleInfo) {
+		if (si._sfxNum == -1 && si._priority == shapeNum &&
+		        si._barked == barked) {
 			return true;
 		}
 	}

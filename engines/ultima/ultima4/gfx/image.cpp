@@ -294,11 +294,9 @@ void Image::performTransparencyHack(uint colorValue, uint numFrames,
 		}
 	}
 	int ox, oy;
-	for (Common::List<Common::Pair<uint, uint> >::iterator xy = opaqueXYs.begin();
-	        xy != opaqueXYs.end();
-	        ++xy) {
-		ox = xy->first;
-		oy = xy->second;
+	for (const auto &xy : opaqueXYs) {
+		ox = xy.first;
+		oy = xy.second;
 		int span = int(haloWidth);
 		int x_start = MAX(0, ox - span);
 		int x_finish = MIN(int(_surface->w), ox + span + 1);

@@ -671,11 +671,9 @@ void gameDestroyAllCreatures(void) {
 		for (i = 0; i < AREA_CREATURES; i++) {
 			CombatMap *cm = getCombatMap();
 			CreatureVector creatures = cm->getCreatures();
-			CreatureVector::iterator obj;
-
-			for (obj = creatures.begin(); obj != creatures.end(); obj++) {
-				if ((*obj)->getId() != LORDBRITISH_ID)
-					cm->removeObject(*obj);
+			for (const auto *obj : creatures) {
+				if (obj->getId() != LORDBRITISH_ID)
+					cm->removeObject(obj);
 			}
 		}
 	} else {

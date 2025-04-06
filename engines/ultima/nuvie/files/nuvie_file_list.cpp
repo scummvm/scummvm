@@ -96,13 +96,9 @@ void NuvieFileList::close() {
 
 Std::set<Std::string> NuvieFileList::get_filenames() const {
 	Std::set<Std::string> filenames;
-	Std::list<NuvieFileDesc>::const_iterator iter = file_list.begin();
-
-	while (iter != file_list.end()) {
-		filenames.insert((*iter).filename);
-		iter++;
+	for (const auto &desc : file_list) {
+		filenames.insert(desc.filename);
 	}
-
 	return filenames;
 }
 

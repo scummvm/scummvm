@@ -335,8 +335,8 @@ bool Creature::specialAction() {
 		if (mapdist <= 3 && xu4_random(2) == 0 && (g_context->_location->_context & CTX_CITY) == 0) {
 			Std::vector<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, _coords,
 			                           1, 3, nullptr, false);
-			for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-				if (creatureRangeAttack(*i, this))
+			for (const auto &coords : path) {
+				if (creatureRangeAttack(coords, this))
 					break;
 			}
 		}
@@ -356,8 +356,8 @@ bool Creature::specialAction() {
 			// nothing (not even mountains!) can block cannonballs
 			Std::vector<Coords> path = gameGetDirectionalActionPath(dir, broadsidesDirs, _coords,
 			                           1, 3, nullptr, false);
-			for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-				if (fireAt(*i, false))
+			for (const auto &coords : path) {
+				if (fireAt(coords, false))
 					break;
 			}
 		} else
@@ -547,11 +547,9 @@ void Creature::act(CombatController *controller) {
 		/* Apply the sleep spell to party members still in combat */
 		if (!isPartyMember(this)) {
 			PartyMemberVector party = controller->getMap()->getPartyMembers();
-			PartyMemberVector::iterator j;
-
-			for (j = party.begin(); j != party.end(); j++) {
+			for (auto *member : party) {
 				if (xu4_random(2) == 0)
-					(*j)->putToSleep();
+					member->putToSleep();
 			}
 		}
 		break;
@@ -600,8 +598,8 @@ void Creature::act(CombatController *controller) {
 		Std::vector<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, m_coords,
 		                           1, 11, &Tile::canAttackOverTile, false);
 		bool hit = false;
-		for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-			if (controller->rangedAttack(*i, this)) {
+		for (const auto &coords : path) {
+			if (controller->rangedAttack(coords, this)) {
 				hit = true;
 				break;
 			}
@@ -757,22 +755,21 @@ bool Creature::hideOrShow() {
 Creature *Creature::nearestOpponent(int *dist, bool ranged) {
 	Creature *opponent = nullptr;
 	int d, leastDist = 0xFFFF;
-	ObjectDeque::iterator i;
 	bool jinx = (*g_context->_aura == Aura::JINX);
 	Map *map = getMap();
 
-	for (i = map->_objects.begin(); i != map->_objects.end(); ++i) {
-		if (!isCreature(*i))
+	for (auto *obj : map->_objects) {
+		if (!isCreature(obj))
 			continue;
 
 		bool amPlayer = isPartyMember(this);
-		bool fightingPlayer = isPartyMember(*i);
+		bool fightingPlayer = isPartyMember(obj);
 
 		/* if a party member, find a creature. If a creature, find a party member */
 		/* if jinxed is false, find anything that isn't self */
 		if ((amPlayer != fightingPlayer) ||
-		        (jinx && !amPlayer && *i != this)) {
-			MapCoords objCoords = (*i)->getCoords();
+		        (jinx && !amPlayer && obj != this)) {
+			MapCoords objCoords = obj->getCoords();
 
 			/* if ranged, get the distance using diagonals, otherwise get movement distance */
 			if (ranged)
@@ -781,7 +778,7 @@ Creature *Creature::nearestOpponent(int *dist, bool ranged) {
 
 			/* skip target 50% of time if same distance */
 			if (d < leastDist || (d == leastDist && xu4_random(2) == 0)) {
-				opponent = dynamic_cast<Creature *>(*i);
+				opponent = dynamic_cast<Creature *>(obj);
 				leastDist = d;
 			}
 		}
@@ -896,12 +893,12 @@ void CreatureMgr::loadAll() {
 	const Config *config = Config::getInstance();
 	Std::vector<ConfigElement> creatureConfs = config->getElement("creatures").getChildren();
 
-	for (Std::vector<ConfigElement>::iterator i = creatureConfs.begin(); i != creatureConfs.end(); i++) {
-		if (i->getName() != "creature")
+	for (const auto &i : creatureConfs) {
+		if (i.getName() != "creature")
 			continue;
 
 		Creature *m = new Creature(0);
-		m->load(*i);
+		m->load(i);
 
 		/* add the creature to the list */
 		_creatures[m->getId()] = m;
@@ -909,11 +906,9 @@ void CreatureMgr::loadAll() {
 }
 
 Creature *CreatureMgr::getByTile(MapTile tile) {
-	CreatureMap::const_iterator i;
-
-	for (i = _creatures.begin(); i != _creatures.end(); i++) {
-		if (i->_value->getTile() == tile)
-			return i->_value;
+	for (const auto &c : _creatures) {
+		if (c._value->getTile() == tile)
+			return c._value;
 	}
 
 //    if (tile.id)
@@ -930,10 +925,9 @@ Creature *CreatureMgr::getById(CreatureId id) {
 }
 
 Creature *CreatureMgr::getByName(Common::String name) {
-	CreatureMap::const_iterator i;
-	for (i = _creatures.begin(); i != _creatures.end(); i++) {
-		if (scumm_stricmp(i->_value->getName().c_str(), name.c_str()) == 0)
-			return i->_value;
+	for (const auto &c : _creatures) {
+		if (scumm_stricmp(c._value->getName().c_str(), name.c_str()) == 0)
+			return c._value;
 	}
 	return nullptr;
 }
@@ -984,13 +978,12 @@ Creature *CreatureMgr::randomForDungeon(int dngLevel) {
 }
 
 Creature *CreatureMgr::randomAmbushing() {
-	CreatureMap::const_iterator i;
 	int numAmbushingCreatures = 0,
 	    randCreature;
 
 	/* first, find out how many creatures exist that might ambush you */
-	for (i = _creatures.begin(); i != _creatures.end(); i++) {
-		if (i->_value->ambushes())
+	for (const auto &c : _creatures) {
+		if (c._value->ambushes())
 			numAmbushingCreatures++;
 	}
 
@@ -1000,11 +993,11 @@ Creature *CreatureMgr::randomAmbushing() {
 		numAmbushingCreatures = 0;
 
 		/* now, find the one we selected */
-		for (i = _creatures.begin(); i != _creatures.end(); i++) {
-			if (i->_value->ambushes()) {
+		for (const auto &c : _creatures) {
+			if (c._value->ambushes()) {
 				/* found the creature - return it! */
 				if (numAmbushingCreatures == randCreature)
-					return i->_value;
+					return c._value;
 				/* move on to the next creature */
 				else
 					numAmbushingCreatures++;

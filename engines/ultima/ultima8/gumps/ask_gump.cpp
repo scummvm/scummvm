@@ -124,11 +124,12 @@ bool AskGump::loadData(Common::ReadStream *rs, uint32 version) {
 
 		ButtonWidget *child = nullptr;
 
-		Std::list<Gump *>::iterator it;
-		for (it = _children.begin(); it != _children.end(); ++it) {
-			if ((*it)->GetIndex() != (int)i) continue;
-			child = dynamic_cast<ButtonWidget *>(*it);
-			if (!child) continue;
+		for (auto *g : _children) {
+			if (g->GetIndex() != (int)i)
+				continue;
+			child = dynamic_cast<ButtonWidget *>(g);
+			if (!child)
+				continue;
 		}
 
 		if (!child) return false;

@@ -50,11 +50,11 @@ void TileMaps::loadAll() {
 	conf = config->getElement("tilesets").getChildren();
 
 	// Load all of the tilemaps
-	for (Std::vector<ConfigElement>::iterator i = conf.begin(); i != conf.end(); i++) {
-		if (i->getName() == "tilemap") {
+	for (const auto &i : conf) {
+		if (i.getName() == "tilemap") {
 
 			// Load the tilemap !
-			load(*i);
+			load(i);
 		}
 	}
 }
@@ -77,24 +77,24 @@ void TileMaps::load(const ConfigElement &tilemapConf) {
 
 	int index = 0;
 	Std::vector<ConfigElement> children = tilemapConf.getChildren();
-	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
-		if (i->getName() != "mapping")
+	for (const auto &i : children) {
+		if (i.getName() != "mapping")
 			continue;
 
 		// We assume tiles have already been loaded at this point,
 		// so let's do some translations!
 		int frames = 1;
-		Common::String tile = i->getString("tile");
+		Common::String tile = i.getString("tile");
 
 		// Find the tile this references
 		Tile *t = g_tileSets->get(tileset)->getByName(tile);
 		if (!t)
 			error("Error: tile '%s' from '%s' was not found in tileset %s", tile.c_str(), name.c_str(), tileset.c_str());
 
-		if (i->exists("index"))
-			index = i->getInt("index");
-		if (i->exists("frames"))
-			frames = i->getInt("frames");
+		if (i.exists("index"))
+			index = i.getInt("index");
+		if (i.exists("frames"))
+			frames = i.getInt("frames");
 
 		// Insert the tile into the tile map
 		for (int idx = 0; idx < frames; idx++) {
@@ -128,9 +128,9 @@ MapTile TileMap::translate(uint index) {
 uint TileMap::untranslate(MapTile &tile) {
 	uint index = 0;
 
-	for (Common::HashMap<uint, MapTile>::iterator i = _tileMap.begin(); i != _tileMap.end(); i++) {
-		if (i->_value == tile) {
-			index = i->_key;
+	for (const auto &i : _tileMap) {
+		if (i._value == tile) {
+			index = i._key;
 			break;
 		}
 	}

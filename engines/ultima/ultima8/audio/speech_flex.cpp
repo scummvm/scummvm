@@ -65,7 +65,6 @@ SpeechFlex::~SpeechFlex(void) {
 
 int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 								  uint32 start, uint32 &end) const {
-	Std::vector<Std::string>::const_iterator it;
 	int i = 1;
 
 	Std::string text = phrase.substr(start);
@@ -80,10 +79,10 @@ int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 
 	debug(6, "Looking for string: \"%s\"", text.c_str());
 
-	for (it = _phrases.begin(); it != _phrases.end(); ++it) {
-		if (!it->empty() && text.hasPrefixIgnoreCase(*it)) {
+	for (const auto &p : _phrases) {
+		if (!p.empty() && text.hasPrefixIgnoreCase(p)) {
 			debug(6, "Found: %d", i);
-			end = (*it).size() + start + pos1;
+			end = p.size() + start + pos1;
 			if (end >= start + pos2)
 				end = phrase.size();
 			return i;

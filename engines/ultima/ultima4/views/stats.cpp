@@ -353,15 +353,14 @@ void StatsArea::showItems() {
 void StatsArea::showReagents(bool active) {
 	setTitle("Reagents");
 
-	Menu::MenuItemList::iterator i;
 	int line = 0,
 	    r = REAG_ASH;
 	Common::String shortcut("A");
 
 	_reagentsMixMenu.show(&_mainArea);
 
-	for (i = _reagentsMixMenu.begin(); i != _reagentsMixMenu.end(); i++, r++) {
-		if ((*i)->isVisible()) {
+	for (const auto *item : _reagentsMixMenu) {
+		if (item->isVisible()) {
 			// Insert the reagent menu item shortcut character
 			shortcut.setChar('A' + r, 0);
 			if (active)
@@ -369,6 +368,7 @@ void StatsArea::showReagents(bool active) {
 			else
 				_mainArea.textAt(0, line++, "%s", shortcut.c_str());
 		}
+		r++;
 	}
 }
 
@@ -394,15 +394,15 @@ void StatsArea::showMixtures() {
 }
 
 void StatsArea::resetReagentsMenu() {
-	Menu::MenuItemList::iterator current;
-	int i = 0,
-	    row = 0;
+	int i = 0, row = 0;
 
-	for (current = _reagentsMixMenu.begin(); current != _reagentsMixMenu.end(); current++) {
+	for (auto *item : _reagentsMixMenu) {
 		if (g_ultima->_saveGame->_reagents[i++] > 0) {
-			(*current)->setVisible(true);
-			(*current)->setY(row++);
-		} else (*current)->setVisible(false);
+			item->setVisible(true);
+			item->setY(row++);
+		} else {
+			item->setVisible(false);
+		}
 	}
 
 	_reagentsMixMenu.reset(false);

@@ -90,9 +90,9 @@ ShapeViewerGump::ShapeViewerGump(int x, int y, int width, int height,
 }
 
 ShapeViewerGump::~ShapeViewerGump() {
-	for (Common::Array<ShapeArchiveEntry>::iterator it = _archives.begin(); it != _archives.end(); it++) {
-		if (it->_disposeAfterUse == DisposeAfterUse::YES) {
-			delete it->_archive;
+	for (auto &entry : _archives) {
+		if (entry._disposeAfterUse == DisposeAfterUse::YES) {
+			delete entry._archive;
 		}
 	}
 }

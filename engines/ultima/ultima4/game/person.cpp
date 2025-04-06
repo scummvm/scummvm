@@ -352,15 +352,15 @@ Common::String Person::getIntro(Conversation *cnv) {
 Common::String Person::processResponse(Conversation *cnv, Response *response) {
 	Common::String text;
 	const Std::vector<ResponsePart> &parts = response->getParts();
-	for (Std::vector<ResponsePart>::const_iterator i = parts.begin(); i != parts.end(); i++) {
+	for (const auto &i : parts) {
 
 		// check for command triggers
-		if (i->isCommand())
-			runCommand(cnv, *i);
+		if (i.isCommand())
+			runCommand(cnv, i);
 
 		// otherwise, append response part to reply
 		else
-			text += *i;
+			text += i;
 	}
 	return text;
 }

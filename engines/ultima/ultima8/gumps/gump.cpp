@@ -57,12 +57,7 @@ Gump::~Gump() {
 	_focusChild = nullptr;
 
 	// Delete all children
-	Std::list<Gump *>::iterator it = _children.begin();
-	Std::list<Gump *>::iterator end = _children.end();
-
-	while (it != end) {
-		Gump *g = *it;
-		it = _children.erase(it);
+	for (auto *g : _children) {
 		delete g;
 	}
 }
@@ -260,17 +255,10 @@ void Gump::PaintThis(RenderSurface *surf, int32 /*lerp_factor*/, bool /*scaled*/
 }
 
 void Gump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	// Iterate all children
-	Std::list<Gump *>::iterator it = _children.begin();
-	Std::list<Gump *>::iterator end = _children.end();
-
-	while (it != end) {
-		Gump *g = *it;
+	for (auto *g : _children) {
 		// Paint if not closing
 		if (!(g->_flags & FLAG_CLOSING))
 			g->Paint(surf, lerp_factor, scaled);
-
-		++it;
 	}
 }
 
@@ -531,13 +519,7 @@ Gump *Gump::FindGump(const FindGumpPredicate predicate, bool recursive) {
 	if (predicate(this))
 		return this;
 
-	// Iterate all children
-	Std::list<Gump *>::iterator  it = _children.begin();
-	Std::list<Gump *>::iterator  end = _children.end();
-
-	for (; it != end; ++it) {
-		Gump *g = *it;
-
+	for (auto *g : _children) {
 		// Not if closing
 		if (g->_flags & FLAG_CLOSING)
 			continue;
@@ -550,20 +532,15 @@ Gump *Gump::FindGump(const FindGumpPredicate predicate, bool recursive) {
 		return nullptr;
 
 	// Recursive Iterate all children
-	it = _children.begin();
-	end = _children.end();
-
-	for (; it != end; ++it) {
-		Gump *g = (*it);
-
+	for (auto *g : _children) {
 		// Not if closing
 		if (g->_flags & FLAG_CLOSING)
 			continue;
 
-		g = g->FindGump(predicate, recursive);
+		Gump *match = g->FindGump(predicate, recursive);
 
-		if (g)
-			return g;
+		if (match)
+			return match;
 	}
 
 	return nullptr;
@@ -814,18 +791,19 @@ void Gump::saveData(Common::WriteStream *ws) {
 	ws->writeUint32LE(_processResult);
 
 	unsigned int childcount = 0;
-	Std::list<Gump *>::iterator it;
-	for (it = _children.begin(); it != _children.end(); ++it) {
-		if (!(*it)->mustSave(false)) continue;
+	for (auto *g : _children) {
+		if (!g->mustSave(false))
+			continue;
 		childcount++;
 	}
 
 	// write children:
 	ws->writeUint32LE(childcount);
-	for (it = _children.begin(); it != _children.end(); ++it) {
-		if (!(*it)->mustSave(false)) continue;
+	for (auto *g : _children) {
+		if (!g->mustSave(false))
+			continue;
 
-		ObjectManager::get_instance()->saveObject(ws, *it);
+		ObjectManager::get_instance()->saveObject(ws, g);
 	}
 }
 

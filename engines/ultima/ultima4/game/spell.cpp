@@ -354,8 +354,8 @@ void Spells::spellMagicAttack(const Common::String &tilename, Direction dir, int
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, (*party)[controller->getFocus()]->getCoords(),
 	                           1, 11, Tile::canAttackOverTile, false);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (spellMagicAttackAt(*i, tile, attackDamage))
+	for (const auto &coords : path) {
+		if (spellMagicAttackAt(coords, tile, attackDamage))
 			return;
 	}
 }
@@ -480,16 +480,15 @@ int Spells::spellDispel(int dir) {
 	 */
 	Annotation::List a = g_context->_location->_map->_annotations->allAt(field);
 	if (a.size() > 0) {
-		Annotation::List::iterator i;
-		for (i = a.begin(); i != a.end(); i++) {
-			if (i->getTile().getTileType()->canDispel()) {
+		for (auto &i : a) {
+			if (i.getTile().getTileType()->canDispel()) {
 
 				/*
 				 * get a replacement tile for the field
 				 */
-				MapTile newTile(g_context->_location->getReplacementTile(field, i->getTile().getTileType()));
+				MapTile newTile(g_context->_location->getReplacementTile(field, i.getTile().getTileType()));
 
-				g_context->_location->_map->_annotations->remove(*i);
+				g_context->_location->_map->_annotations->remove(i);
 				g_context->_location->_map->_annotations->add(field, newTile, false, true);
 				return 1;
 			}
@@ -563,10 +562,9 @@ int Spells::spellEField(int param) {
 		/* Get rid of old field, if any */
 		Annotation::List a = g_context->_location->_map->_annotations->allAt(coords);
 		if (a.size() > 0) {
-			Annotation::List::iterator i;
-			for (i = a.begin(); i != a.end(); i++) {
-				if (i->getTile().getTileType()->canDispel())
-					g_context->_location->_map->_annotations->remove(*i);
+			for (auto &i : a) {
+				if (i.getTile().getTileType()->canDispel())
+					g_context->_location->_map->_annotations->remove(i);
 			}
 		}
 
@@ -655,12 +653,10 @@ int Spells::spellQuick(int unused) {
 int Spells::spellSleep(int unused) {
 	CombatMap *cm = getCombatMap();
 	CreatureVector creatures = cm->getCreatures();
-	CreatureVector::iterator i;
 
 	/* try to put each creature to sleep */
 
-	for (i = creatures.begin(); i != creatures.end(); i++) {
-		Creature *m = *i;
+	for (auto *m : creatures) {
 		Coords coords = m->getCoords();
 		GameController::flashTile(coords, "wisp", 1);
 		if ((m->getResists() != EFFECT_SLEEP) &&
@@ -678,12 +674,7 @@ int Spells::spellSleep(int unused) {
 int Spells::spellTremor(int unused) {
 	CombatController *ct = spellCombatController();
 	CreatureVector creatures = ct->getMap()->getCreatures();
-	CreatureVector::iterator i;
-
-	for (i = creatures.begin(); i != creatures.end(); i++) {
-		Creature *m = *i;
-
-
+	for (auto *m : creatures) {
 		Coords coords = m->getCoords();
 		//GameController::flashTile(coords, "rocks", 1);
 
@@ -716,10 +707,8 @@ int Spells::spellTremor(int unused) {
 int Spells::spellUndead(int unused) {
 	CombatController *ct = spellCombatController();
 	CreatureVector creatures = ct->getMap()->getCreatures();
-	CreatureVector::iterator i;
 
-	for (i = creatures.begin(); i != creatures.end(); i++) {
-		Creature *m = *i;
+	for (auto *m : creatures) {
 		if (m && m->isUndead() && xu4_random(2) == 0)
 			m->setHp(23);
 	}

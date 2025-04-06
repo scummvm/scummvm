@@ -141,9 +141,8 @@ void ObjectManager::objectTypes() {
 		objecttypes[o->GetClassType()._className]++;
 	}
 
-	Common::HashMap<Common::String, unsigned int>::const_iterator iter;
-	for (iter = objecttypes.begin(); iter != objecttypes.end(); ++iter) {
-		g_debugger->debugPrintf("%s: %u\n", (*iter)._key.c_str(), (*iter)._value);
+	for (const auto &i : objecttypes) {
+		g_debugger->debugPrintf("%s: %u\n", i._key.c_str(), i._value);
 	}
 }
 

@@ -266,12 +266,10 @@ ConfigNode *Configuration::getNode(const Std::string &key) {
 
 Std::set<Std::string> Configuration::listKeys(const Std::string &key, bool longformat) const {
 	Std::set<Std::string> keys;
-	for (Common::Array<Shared::XMLTree *>::const_iterator i = _trees.begin();
-	        i != _trees.end(); ++i) {
-		Common::Array<Common::String> k = (*i)->listKeys(key, longformat);
-		for (Common::Array<Common::String>::const_iterator iter = k.begin();
-		        iter != k.end(); ++iter) {
-			keys.insert(*iter);
+	for (auto *tree : _trees) {
+		Common::Array<Common::String> treeKeys = tree->listKeys(key, longformat);
+		for (const auto &k : treeKeys) {
+			keys.insert(k);
 		}
 	}
 	return keys;
@@ -282,20 +280,18 @@ void Configuration::getSubkeys(KeyTypeList &ktl, const Std::string &basekey) {
 		Shared::XMLTree::KeyTypeList l;
 		tree->getSubkeys(l, basekey);
 
-		for (Shared::XMLTree::KeyTypeList::iterator i = l.begin();
-		        i != l.end(); ++i) {
+		for (const auto &i : l) {
 			bool found = false;
-			for (KeyTypeList::iterator j = ktl.begin();
-			        j != ktl.end() && !found; ++j) {
-				if (j->first == i->first) {
+			for (auto &j : ktl) {
+				if (j.first == i.first) {
 					// already have this subkey, so just replace the value
-					j->second = i->second;
+					j.second = i.second;
 					found = true;
 				}
 			}
 			if (!found) {
 				// new subkey
-				ktl.push_back(*i);
+				ktl.push_back(i);
 			}
 		}
 	}

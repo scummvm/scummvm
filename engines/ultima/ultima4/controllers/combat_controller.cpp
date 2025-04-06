@@ -269,10 +269,7 @@ void CombatController::initDungeonRoom(int room, Direction from) {
 
 void CombatController::applyCreatureTileEffects() {
 	CreatureVector creatures = _map->getCreatures();
-	CreatureVector::iterator i;
-
-	for (i = creatures.begin(); i != creatures.end(); i++) {
-		Creature *m = *i;
+	for (auto *m : creatures) {
 		TileEffect effect = _map->tileTypeAt(m->getCoords(), WITH_GROUND_OBJECTS)->getEffect();
 		m->applyTileEffect(effect);
 	}
@@ -921,11 +918,11 @@ void CombatController::attack(Direction dir, int distance) {
 		targetCoords = path.back();
 
 	distance = 1;
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (attackAt(*i, attacker, MASK_DIR(dir), range, distance)) {
+	for (const auto &coords : path) {
+		if (attackAt(coords, attacker, MASK_DIR(dir), range, distance)) {
 			foundTarget = true;
 			targetDistance = distance;
-			targetCoords = *i;
+			targetCoords = coords;
 			break;
 		}
 		distance++;
@@ -965,43 +962,37 @@ void CombatController::update(Party *party, PartyEvent &event) {
 CombatMap::CombatMap() : Map(), _dungeonRoom(false), _altarRoom(VIRT_NONE), _contextual(false) {}
 
 CreatureVector CombatMap::getCreatures() {
-	ObjectDeque::iterator i;
 	CreatureVector creatures;
-	for (i = _objects.begin(); i != _objects.end(); i++) {
-		if (isCreature(*i) && !isPartyMember(*i))
-			creatures.push_back(dynamic_cast<Creature *>(*i));
+	for (auto *obj : _objects) {
+		if (isCreature(obj) && !isPartyMember(obj))
+			creatures.push_back(dynamic_cast<Creature *>(obj));
 	}
 	return creatures;
 }
 
 PartyMemberVector CombatMap::getPartyMembers() {
-	ObjectDeque::iterator i;
 	PartyMemberVector party;
-	for (i = _objects.begin(); i != _objects.end(); i++) {
-		if (isPartyMember(*i))
-			party.push_back(dynamic_cast<PartyMember *>(*i));
+	for (auto *obj : _objects) {
+		if (isPartyMember(obj))
+			party.push_back(dynamic_cast<PartyMember *>(obj));
 	}
 	return party;
 }
 
 PartyMember *CombatMap::partyMemberAt(Coords coords) {
 	PartyMemberVector party = getPartyMembers();
-	PartyMemberVector::iterator i;
-
-	for (i = party.begin(); i != party.end(); i++) {
-		if ((*i)->getCoords() == coords)
-			return *i;
+	for (auto *member : party) {
+		if (member->getCoords() == coords)
+			return member;
 	}
 	return nullptr;
 }
 
 Creature *CombatMap::creatureAt(Coords coords) {
 	CreatureVector creatures = getCreatures();
-	CreatureVector::iterator i;
-
-	for (i = creatures.begin(); i != creatures.end(); i++) {
-		if ((*i)->getCoords() == coords)
-			return *i;
+	for (auto *c : creatures) {
+		if (c->getCoords() == coords)
+			return c;
 	}
 	return nullptr;
 }

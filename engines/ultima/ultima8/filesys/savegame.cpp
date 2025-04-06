@@ -80,8 +80,8 @@ bool FileEntryArchive::hasFile(const Common::Path &path) const {
 
 int FileEntryArchive::listMembers(Common::ArchiveMemberList &list) const {
 	list.clear();
-	for (IndexMap::const_iterator it = _index.begin(); it != _index.end(); ++it)
-		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(it->_key, *this)));
+	for (const auto &member : _index)
+		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(member._key, *this)));
 
 	return list.size();
 }

@@ -78,9 +78,8 @@ CurrentMap::~CurrentMap() {
 void CurrentMap::clear() {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS; j++) {
-			item_list::iterator iter;
-			for (iter = _items[i][j].begin(); iter != _items[i][j].end(); ++iter)
-				delete *iter;
+			for (auto *item : _items[i][j])
+				delete item;
 			_items[i][j].clear();
 		}
 		memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
@@ -118,10 +117,7 @@ void CurrentMap::writeback() {
 
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS; j++) {
-			item_list::iterator iter;
-			for (iter = _items[i][j].begin(); iter != _items[i][j].end(); ++iter) {
-				Item *item = *iter;
-
+			for (auto *item : _items[i][j]) {
 				// item is being removed from the CurrentMap item lists
 				item->clearExtFlag(Item::EXT_INCURMAP);
 
@@ -161,10 +157,7 @@ void CurrentMap::writeback() {
 }
 
 void CurrentMap::loadItems(const Std::list<Item *> &itemlist, bool callCacheIn) {
-	item_list::const_iterator iter;
-	for (iter = itemlist.begin(); iter != itemlist.end(); ++iter) {
-		Item *item = *iter;
-
+	for (auto *item : itemlist) {
 		item->assignObjId();
 
 		// No fast area for you!
@@ -245,10 +238,8 @@ void CurrentMap::addItem(Item *item) {
 #ifdef VALIDATE_CHUNKS
 	for (int32 ccy = 0; ccy < MAP_NUM_CHUNKS; ccy++) {
 		for (int32 ccx = 0; ccx < MAP_NUM_CHUNKS; ccx++) {
-			item_list::const_iterator iter;
-			for (iter = _items[ccx][ccy].begin();
-					iter != _items[ccx][ccy].end(); ++iter) {
-				if (*iter == item) {
+			for (const auto *existing : _items[ccx][ccy])
+				if (existing == item) {
 					warning("item %d already exists in map chunk (%d, %d)", item->getObjId(), ccx, ccy);
 				}
 			}
@@ -282,10 +273,8 @@ void CurrentMap::addItemToEnd(Item *item) {
 #ifdef VALIDATE_CHUNKS
 	for (int32 ccy = 0; ccy < MAP_NUM_CHUNKS; ccy++) {
 		for (int32 ccx = 0; ccx < MAP_NUM_CHUNKS; ccx++) {
-			item_list::const_iterator iter;
-			for (iter = _items[ccx][ccy].begin();
-					iter != _items[ccx][ccy].end(); ++iter) {
-				if (*iter == item) {
+			for (const auto *existing : _items[ccx][ccy])
+				if (existing == item) {
 					warning("item %d already exists in map chunk (%d, %d)", item->getObjId(), ccx, ccy);
 				}
 			}
@@ -517,10 +506,8 @@ void CurrentMap::updateFastArea(const Point3 &from, const Point3 &to) {
 void CurrentMap::setChunkFast(int32 cx, int32 cy) {
 	_fast[cy][cx / 32] |= 1 << (cx & 31);
 
-	item_list::iterator iter;
-	for (iter = _items[cx][cy].begin();
-	        iter != _items[cx][cy].end(); ++iter) {
-		(*iter)->enterFastArea();
+	for (auto *item : _items[cx][cy]) {
+		item->enterFastArea();
 	}
 }
 
@@ -592,12 +579,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 	//
 	for (int cy = miny; cy <= maxy; cy++) {
 		for (int cx = minx; cx <= maxx; cx++) {
-			item_list::const_iterator iter;
-			for (iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
-
-				const Item *item = *iter;
-
+			for (const auto *item : _items[cx][cy]) {
 				if (item->hasExtFlags(Item::EXT_SPRITE))
 					continue;
 
@@ -639,12 +621,7 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 
 	for (int cy = miny; cy <= maxy; cy++) {
 		for (int cx = minx; cx <= maxx; cx++) {
-			item_list::const_iterator iter;
-			for (iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
-
-				const Item *item = *iter;
-
+			for (const auto *item : _items[cx][cy]) {
 				if (item->getObjId() == check->getObjId())
 					continue;
 				if (item->hasExtFlags(Item::EXT_SPRITE))
@@ -685,10 +662,8 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 TeleportEgg *CurrentMap::findDestination(uint16 id) {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS; j++) {
-			item_list::iterator iter;
-			for (iter = _items[i][j].begin();
-			        iter != _items[i][j].end(); ++iter) {
-				TeleportEgg *egg = dynamic_cast<TeleportEgg *>(*iter);
+			for (auto *item : _items[i][j]) {
+				TeleportEgg *egg = dynamic_cast<TeleportEgg *>(item);
 				if (egg) {
 					if (!egg->isTeleporter() && egg->getTeleportId() == id)
 						return egg;
@@ -738,10 +713,7 @@ PositionInfo CurrentMap::getPositionInfo(const Box &target, const Box &start, ui
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
-			item_list::const_iterator iter;
-			for (iter = _items[cx][cy].begin();
-				 iter != _items[cx][cy].end(); ++iter) {
-				const Item *item = *iter;
+			for (const auto *item : _items[cx][cy]) {
 				if (item->getObjId() == id)
 					continue;
 				if (item->hasExtFlags(Item::EXT_SPRITE))
@@ -852,9 +824,7 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
-			for (item_list::const_iterator iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
-				const Item *citem = *iter;
+			for (const auto *citem : _items[cx][cy]) {
 				if (citem->getObjId() == item->getObjId())
 					continue;
 				if (citem->hasExtFlags(Item::EXT_SPRITE))
@@ -1036,10 +1006,7 @@ bool CurrentMap::sweepTest(const Point3 &start, const Point3 &end,
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
-			item_list::const_iterator iter;
-			for (iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
-				const Item *other_item = *iter;
+			for (const auto *other_item : _items[cx][cy]) {
 				if (other_item->getObjId() == item)
 					continue;
 				if (other_item->hasExtFlags(Item::EXT_SPRITE))

@@ -43,9 +43,8 @@ PagedGump::~PagedGump(void) {
 
 void PagedGump::Close(bool no_del) {
 	Mouse::get_instance()->popMouseCursor();
-	Std::vector<Gump *>::iterator iter;
-	for (iter = _gumps.begin(); iter != _gumps.end(); ++iter) {
-		(*iter)->Close(no_del); // CHECKME: no_del?
+	for (auto *g : _gumps) {
+		g->Close(no_del); // CHECKME: no_del?
 	}
 
 	ModalGump::Close(no_del);

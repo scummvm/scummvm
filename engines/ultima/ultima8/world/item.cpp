@@ -754,17 +754,13 @@ int Item::getRangeIfVisible(const Item &item2) const {
 
 	map->sweepTest(start, end, dims, getShapeInfo()->_flags, _objId, true, &hitItems);
 
-	if (hitItems.size() > 0) {
-		for (Std::list<CurrentMap::SweepItem>::const_iterator it = hitItems.begin();
-			 it != hitItems.end();
-			 it++) {
-			int objId = it->_item;
-			if (it->_blocking && objId != _objId && objId != item2.getObjId()) {
-				//int out[3];
-				//it->GetInterpolatedCoords(out, start, end);
-				//warning("found blocking item %d at %d %d %d.", objId, out[0], out[1], out[2]);
-				return 0;
-			}
+	for (const auto &hit : hitItems) {
+		int objId = hit._item;
+		if (hit._blocking && objId != _objId && objId != item2.getObjId()) {
+			//int out[3];
+			//hit.GetInterpolatedCoords(out, start, end);
+			//warning("found blocking item %d at %d %d %d.", objId, out[0], out[1], out[2]);
+			return 0;
 		}
 	}
 
@@ -1066,7 +1062,6 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 
 	// Do the sweep test
 	Std::list<CurrentMap::SweepItem> collisions;
-	Std::list<CurrentMap::SweepItem>::iterator it;
 	map->sweepTest(start, end, dims, getShapeInfo()->_flags, _objId, false, &collisions);
 
 	// Ok, now to work out what to do
@@ -1085,11 +1080,13 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 	if (teleport || _parent) {
 		// If teleporting and not force, work out if we can reach the end
 		if (!force) {
-			for (it = collisions.begin(); it != collisions.end(); it++) {
+			for (const auto &collision : collisions) {
 				// Uh oh, we hit something, can't move
-				if (it->_endTime == 0x4000 && !it->_touching && it->_blocking) {
-					if (hititem) *hititem = it->_item;
-					if (dirs) *dirs = it->_dirs;
+				if (collision._endTime == 0x4000 && !collision._touching && collision._blocking) {
+					if (hititem)
+						*hititem = collision._item;
+					if (dirs)
+						*dirs = collision._dirs;
 					return 0;
 				}
 			}
@@ -1097,18 +1094,18 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 
 		// Trigger all the required events
 		bool we_were_released = false;
-		for (it = collisions.begin(); it != collisions.end(); it++) {
-			Item *item = getItem(it->_item);
+		for (const auto &collision : collisions) {
+			Item *item = getItem(collision._item);
 			if (!item)
 				continue; // shouldn't happen..
 
 			// Hitting us at the start and end, don't do anything
-			if (!_parent && it->_hitTime == 0x0000 &&
-			        it->_endTime == 0x4000) {
+			if (!_parent && collision._hitTime == 0x0000 &&
+				collision._endTime == 0x4000) {
 				continue;
 			}
 			// Hitting us at the end (call hit on us, got hit on them)
-			else if (it->_endTime == 0x4000) {
+			else if (collision._endTime == 0x4000) {
 				if (_objId == kMainActorId && guiapp->isShowTouchingItems())
 					item->setExtFlag(Item::EXT_HIGHLIGHT);
 
@@ -1116,7 +1113,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 				callUsecodeEvent_hit(item->getObjId(), hitforce);
 			}
 			// Hitting us at the start (call release on us and them)
-			else if (!_parent && it->_hitTime == 0x0000) {
+			else if (!_parent && collision._hitTime == 0x0000) {
 				if (_objId == kMainActorId)
 					item->clearExtFlag(Item::EXT_HIGHLIGHT);
 				we_were_released = true;
@@ -1139,15 +1136,19 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 		// if not, need to do 'stuff'
 		// We don't care about items hitting us at the start
 		if (!force) {
+			Std::list<CurrentMap::SweepItem>::iterator it;
 			for (it = collisions.begin(); it != collisions.end(); it++) {
 				if (it->_blocking && !it->_touching) {
-					if (hititem) *hititem = it->_item;
-					if (dirs) *dirs = it->_dirs;
+					if (hititem)
+						*hititem = it->_item;
+					if (dirs)
+						*dirs = it->_dirs;
 					hit = it->_hitTime;
 					break;
 				}
 			}
-			if (hit < 0) hit = 0;
+			if (hit < 0)
+				hit = 0;
 
 			if (hit != 0x4000) {
 				debugC(kDebugCollision, "Hit time: %d; Start: %d, %d, %d; End: %d, %d, %d",
@@ -1161,12 +1162,12 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 
 		// Trigger all the required events
 		bool we_were_released = false;
-		for (it = collisions.begin(); it != collisions.end(); it++) {
-			Item *item = getItem(it->_item);
+		for (const auto &collision : collisions) {
+			Item *item = getItem(collision._item);
 			if (!item) continue;
 
 			// Did we go past the endpoint of the move?
-			if (it->_hitTime > hit) break;
+			if (collision._hitTime > hit) break;
 
 			uint16 proc_gothit = 0, proc_rel = 0;
 
@@ -1174,8 +1175,8 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			// called gotHit and hit.  In Crusader we call
 			// hit for every hitting frame to make sickbays
 			// and teleporters work.
-			bool call_hit = it->_hitTime >= 0 || GAME_IS_CRUSADER;
-			if ((!it->_touching || it->_touchingFloor) && call_hit) {
+			bool call_hit = collision._hitTime >= 0 || GAME_IS_CRUSADER;
+			if ((!collision._touching || collision._touchingFloor) && call_hit) {
 				if (_objId == kMainActorId && guiapp->isShowTouchingItems())
 					item->setExtFlag(Item::EXT_HIGHLIGHT);
 
@@ -1184,7 +1185,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			}
 
 			// If not hitting at end, we will need to call release
-			if (it->_endTime < hit) {
+			if (collision._endTime < hit) {
 				if (_objId == kMainActorId)
 					item->clearExtFlag(Item::EXT_HIGHLIGHT);
 				we_were_released = true;
@@ -1455,17 +1456,16 @@ uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yo
 			const int32 dims[3] = {2, 2, 2};
 
 			Std::list<CurrentMap::SweepItem> collisions;
-			Std::list<CurrentMap::SweepItem>::iterator it;
 			cm->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
 						   _objId, true, &collisions);
-			for (it = collisions.begin(); it != collisions.end(); it++) {
-				if (it->_item == getObjId())
+			for (const auto &collision : collisions) {
+				if (collision._item == getObjId())
 					continue;
-				if (it->_touching)
+				if (collision._touching)
 					continue;
-				if (it->_item != other->getObjId())
+				if (collision._item != other->getObjId())
 					break;
-				Point3 out = it->GetInterpolatedCoords(start, end);
+				Point3 out = collision.GetInterpolatedCoords(start, end);
 				dist = MAX(abs(_x - out.x), abs(_y - out.y));
 				break;
 			}
@@ -2414,23 +2414,24 @@ int Item::getThrowRange() const {
 static bool checkLineOfSightCollisions(
 	const Std::list<CurrentMap::SweepItem> &collisions,
 	bool usingAlternatePos, ObjId item, ObjId other) {
-	Std::list<CurrentMap::SweepItem>::const_iterator it;
 	int32 other_hit_time = 0x4000;
 	int32 blocked_time = 0x4000;
-	for (it = collisions.begin(); it != collisions.end(); it++) {
+	for (const auto &collision : collisions) {
 		// ignore self and other
-		if (it->_item == item) continue;
-		if (it->_item == other && !usingAlternatePos) {
-			other_hit_time = it->_hitTime;
+		if (collision._item == item)
+			continue;
+		if (collision._item == other && !usingAlternatePos) {
+			other_hit_time = collision._hitTime;
 			continue;
 		}
 
 		// only touching?
-		if (it->_touching) continue;
+		if (collision._touching)
+			continue;
 
 		// hit something
-		if (it->_blocking && it->_hitTime < blocked_time) {
-			blocked_time = it->_hitTime;
+		if (collision._blocking && collision._hitTime < blocked_time) {
+			blocked_time = collision._hitTime;
 		}
 	}
 
@@ -3629,9 +3630,8 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 	CurrentMap *map = World::get_instance()->getCurrentMap();
 	map->sweepTest(start, end, dims, item->getShapeInfo()->_flags,
 				   item->getObjId(), true, &collisions);
-	for (Std::list<CurrentMap::SweepItem>::iterator it = collisions.begin();
-		 it != collisions.end(); it++) {
-		if (it->_blocking && !it->_touching && it->_endTime > 0) {
+	for (const auto &collision : collisions) {
+		if (collision._blocking && !collision._touching && collision._endTime > 0) {
 			if (abort_if_blocked)
 				return 0;
 			retval = 0;

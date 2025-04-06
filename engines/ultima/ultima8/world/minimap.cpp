@@ -93,9 +93,8 @@ uint32 MiniMap::sampleAtPoint(const CurrentMap &map, int x, int y) {
 	uint32 shflags = ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA;
 	Std::list<CurrentMap::SweepItem> collisions;
 	if (map.sweepTest(start, end, dims, shflags, 0, false, &collisions)) {
-		Std::list<CurrentMap::SweepItem>::const_iterator it;
-		for (it = collisions.begin(); it != collisions.end(); it++) {
-			const Item *item = getItem(it->_item);
+		for (const auto &collision : collisions) {
+			const Item *item = getItem(collision._item);
 			if (item) {
 				const ShapeInfo *si = item->getShapeInfo();
 				if (!(si->_flags & shflags) || si->is_editor() || si->is_translucent())

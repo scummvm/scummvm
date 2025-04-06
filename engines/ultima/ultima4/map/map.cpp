@@ -237,8 +237,8 @@ Map::Map() : _id(0), _type(WORLD), _width(0), _height(0), _levels(1),
 }
 
 Map::~Map() {
-	for (PortalList::iterator i = _portals.begin(); i != _portals.end(); i++)
-		delete *i;
+	for (auto *i : _portals)
+		delete i;
 	delete _annotations;
 }
 

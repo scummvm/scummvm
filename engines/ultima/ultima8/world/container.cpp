@@ -47,9 +47,8 @@ Container::~Container() {
 
 	// if we don't have an _objId, we _must_ delete children
 	if (_objId == 0xFFFF) {
-		Std::list<Item *>::iterator iter;
-		for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-			delete(*iter);
+		for (auto *item : _contents) {
+			delete item;
 		}
 	}
 }
@@ -58,10 +57,9 @@ Container::~Container() {
 ObjId Container::assignObjId() {
 	ObjId id = Item::assignObjId();
 
-	Std::list<Item *>::iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		(*iter)->assignObjId();
-		(*iter)->setParent(id);
+	for (auto *item : _contents) {
+		item->assignObjId();
+		item->setParent(id);
 	}
 
 	return id;
@@ -70,12 +68,11 @@ ObjId Container::assignObjId() {
 void Container::clearObjId() {
 	Item::clearObjId();
 
-	Std::list<Item *>::iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
+	for (auto *item : _contents) {
 		// make sure we don't clear the ObjId of an Actor
-		assert((*iter)->getObjId() >= 256);
+		assert(item->getObjId() >= 256);
 
-		(*iter)->clearObjId();
+		item->clearObjId();
 	}
 }
 
@@ -208,10 +205,9 @@ void Container::destroyContents() {
 void Container::setFlagRecursively(uint32 mask) {
 	setFlag(mask);
 
-	Std::list<Item *>::iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		(*iter)->setFlag(mask);
-		Container *cont = dynamic_cast<Container *>(*iter);
+	for (auto *item : _contents) {
+		item->setFlag(mask);
+		Container *cont = dynamic_cast<Container *>(item);
 		if (cont) cont->setFlagRecursively(mask);
 	}
 }
@@ -240,10 +236,8 @@ uint32 Container::getTotalWeight() const {
 		weight = 300;
 	}
 
-	Std::list<Item *>::const_iterator iter;
-
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		weight += (*iter)->getTotalWeight();
+	for (const auto *item : _contents) {
+		weight += item->getTotalWeight();
 	}
 
 	return weight;
@@ -258,10 +252,8 @@ uint32 Container::getCapacity() const {
 uint32 Container::getContentVolume() const {
 	uint32 volume = 0;
 
-	Std::list<Item *>::const_iterator iter;
-
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		volume += (*iter)->getVolume();
+	for (const auto *item : _contents) {
+		volume += item->getVolume();
 	}
 
 	return volume;
@@ -269,18 +261,17 @@ uint32 Container::getContentVolume() const {
 
 void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
 								uint32 scriptsize, bool recurse) const {
-	Std::list<Item *>::const_iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
+	for (auto *item : _contents) {
 		// check item against loopscript
-		if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
+		if (item->checkLoopScript(loopscript, scriptsize)) {
 			assert(itemlist->getElementSize() == 2);
-			uint16 oId = (*iter)->getObjId();
+			uint16 oId = item->getObjId();
 			itemlist->appenduint16(oId);
 		}
 
 		if (recurse) {
 			// recurse into child-containers
-			Container *container = dynamic_cast<Container *>(*iter);
+			Container *container = dynamic_cast<Container *>(item);
 			if (container)
 				container->containerSearch(itemlist, loopscript,
 				                           scriptsize, recurse);
@@ -289,14 +280,13 @@ void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
 }
 
 Item *Container::getFirstItemWithShape(uint16 shapeno, bool recurse) {
-	Std::list<Item *>::const_iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		if ((*iter)->getShape() == shapeno)
-			return *iter;
+	for (auto *item : _contents) {
+		if (item->getShape() == shapeno)
+			return item;
 
 		if (recurse) {
 			// recurse into child-containers
-			Container *container = dynamic_cast<Container *>(*iter);
+			Container *container = dynamic_cast<Container *>(item);
 			if (container) {
 				Item *result = container->getFirstItemWithShape(shapeno, recurse);
 				if (result)
@@ -309,14 +299,13 @@ Item *Container::getFirstItemWithShape(uint16 shapeno, bool recurse) {
 }
 
 void Container::getItemsWithShapeFamily(Std::vector<Item *> &itemlist, uint16 family, bool recurse) {
-	Std::list<Item *>::const_iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		if ((*iter)->getShapeInfo()->_family == family)
-			itemlist.push_back(*iter);
+	for (auto *item : _contents) {
+		if (item->getShapeInfo()->_family == family)
+			itemlist.push_back(item);
 
 		if (recurse) {
 			// recurse into child-containers
-			Container *container = dynamic_cast<Container *>(*iter);
+			Container *container = dynamic_cast<Container *>(item);
 			if (container) {
 				container->getItemsWithShapeFamily(itemlist, family, recurse);
 			}
@@ -334,9 +323,8 @@ Common::String Container::dumpInfo() const {
 void Container::saveData(Common::WriteStream *ws) {
 	Item::saveData(ws);
 	ws->writeUint32LE(static_cast<uint32>(_contents.size()));
-	Std::list<Item *>::iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		ObjectManager::get_instance()->saveObject(ws, *iter);
+	for (auto *item : _contents) {
+		ObjectManager::get_instance()->saveObject(ws, item);
 	}
 }
 

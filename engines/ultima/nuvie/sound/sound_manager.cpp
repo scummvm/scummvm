@@ -124,12 +124,12 @@ SoundManager::~SoundManager() {
 
 	delete opl;
 
-	for (IntCollectionMap::iterator it = m_ObjectSampleMap.begin(); it != m_ObjectSampleMap.end(); ++it)
-		delete it->_value;
-	for (IntCollectionMap::iterator it = m_TileSampleMap.begin(); it != m_TileSampleMap.end(); ++it)
-		delete it->_value;
-	for (StringCollectionMap::iterator it = m_MusicMap.begin(); it != m_MusicMap.end(); ++it)
-		delete it->_value;
+	for (auto &i : m_ObjectSampleMap)
+		delete i._value;
+	for (auto &i : m_TileSampleMap)
+		delete i._value;
+	for (auto &i : m_MusicMap)
+		delete i._value;
 
 	delete m_SfxManager;
 }

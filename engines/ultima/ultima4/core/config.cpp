@@ -116,9 +116,8 @@ Std::vector<ConfigElement> ConfigElement::getChildren() const {
 	const Common::Array<Shared::XMLNode *> &children = _node->children();
 	Std::vector<ConfigElement> result;
 
-	for (Common::Array<Shared::XMLNode *>::const_iterator it = children.begin();
-	        it != children.end(); ++it)
-		result.push_back(*it);
+	for (const auto &c : children)
+		result.push_back(c);
 
 	return result;
 }

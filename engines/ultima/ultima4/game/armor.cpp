@@ -68,12 +68,12 @@ void Armors::loadConf() {
 	const Config *config = Config::getInstance();
 
 	Std::vector<ConfigElement> armorConfs = config->getElement("armors").getChildren();
-	for (Std::vector<ConfigElement>::iterator i = armorConfs.begin(); i != armorConfs.end(); i++) {
-		if (i->getName() != "armor")
+	for (const auto &i : armorConfs) {
+		if (i.getName() != "armor")
 			continue;
 
 		ArmorType armorType = static_cast<ArmorType>(size());
-		push_back(new Armor(armorType, *i));
+		push_back(new Armor(armorType, i));
 	}
 }
 
@@ -85,23 +85,23 @@ Armor::Armor(ArmorType armorType, const ConfigElement &conf) :
 	_defense = conf.getInt("defense");
 
 	Std::vector<ConfigElement> contraintConfs = conf.getChildren();
-	for (Std::vector<ConfigElement>::iterator i = contraintConfs.begin(); i != contraintConfs.end(); i++) {
+	for (const auto &i : contraintConfs) {
 		byte useMask = 0;
 
-		if (i->getName() != "constraint")
+		if (i.getName() != "constraint")
 			continue;
 
 		for (int cl = 0; cl < 8; cl++) {
-			if (scumm_stricmp(i->getString("class").c_str(), getClassName(static_cast<ClassType>(cl))) == 0)
+			if (scumm_stricmp(i.getString("class").c_str(), getClassName(static_cast<ClassType>(cl))) == 0)
 				useMask = (1 << cl);
 		}
-		if (useMask == 0 && scumm_stricmp(i->getString("class").c_str(), "all") == 0)
+		if (useMask == 0 && scumm_stricmp(i.getString("class").c_str(), "all") == 0)
 			useMask = 0xFF;
 		if (useMask == 0) {
 			error("malformed armor.xml file: constraint has unknown class %s",
-			           i->getString("class").c_str());
+			           i.getString("class").c_str());
 		}
-		if (i->getBool("canuse"))
+		if (i.getBool("canuse"))
 			_canUse |= useMask;
 		else
 			_canUse &= ~useMask;

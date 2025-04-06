@@ -125,9 +125,8 @@ Pathfinder::~Pathfinder() {
 		_cleanupNodes.size(), _visited.size(), expandednodes, _expandTime);
 
 	// clean up _nodes
-	Std::vector<PathNode *>::iterator iter;
-	for (iter = _cleanupNodes.begin(); iter != _cleanupNodes.end(); ++iter)
-		delete *iter;
+	for (auto *node : _cleanupNodes)
+		delete node;
 	_cleanupNodes.clear();
 }
 
@@ -179,9 +178,8 @@ bool Pathfinder::alreadyVisited(const Point3 &pt) const {
 	//
 	// Linear search of an array is just as fast, or slightly faster.
 	//
-	Common::Array<PathfindingState>::const_iterator iter;
-	for (iter = _visited.begin(); iter != _visited.end(); iter++) {
-		if (iter->checkPoint(pt, 8*8))
+	for (const auto &i : _visited) {
+		if (i.checkPoint(pt, 8*8))
 			return true;
 	}
 

@@ -40,18 +40,13 @@ void TreasureLoader::loadDefaults() {
 
 	// load default treasure types
 	lootkeyvals = config->listKeyValues("game", "treasure");
-	KeyMap::const_iterator defaultiter;
-
-	for (defaultiter = lootkeyvals.begin();
-	        defaultiter != lootkeyvals.end(); ++defaultiter) {
+	for (const auto &i : lootkeyvals) {
 		TreasureInfo ti;
-		const Std::string &key = defaultiter->_key;
-		const Std::string &val = defaultiter->_value;
-		bool ok = internalParse(val, ti, true);
+		bool ok = internalParse(i._value, ti, true);
 		if (ok) {
-			_defaultTreasure[key] = ti;
+			_defaultTreasure[i._key] = ti;
 		} else {
-			warning("Failed to parse treasure type '%s': %s", key.c_str(), val.c_str());
+			warning("Failed to parse treasure type '%s': %s", i._key.c_str(), i._value.c_str());
 		}
 	}
 }

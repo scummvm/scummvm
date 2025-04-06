@@ -398,9 +398,8 @@ void WeaselGump::completePurchase() {
 	Item *item = av->getFirstItemWithShape(0x4ed, true);
 	if (item)
 		item->setQuality(_credits);
-	for (Std::vector<uint16>::const_iterator iter = _purchases.begin();
-		 iter != _purchases.end(); iter++) {
-		Item *newitem = ItemFactory::createItem(*iter, 0, 0, 0, 0, mapno, 0, true);
+	for (const auto &purchase : _purchases) {
+		Item *newitem = ItemFactory::createItem(purchase, 0, 0, 0, 0, mapno, 0, true);
 		av->addItemCru(newitem, false);
 	}
 	_state = kWeaselCompletedPurchase;
@@ -473,9 +472,8 @@ void WeaselGump::abortPurchase() {
 
 int WeaselGump::purchasedCount(uint16 shape) const {
 	int count = 0;
-	for (Std::vector<uint16>::const_iterator iter = _purchases.begin();
-		 iter != _purchases.end(); iter++) {
-		 if (*iter == shape)
+	for (const auto &purchase : _purchases) {
+		 if (purchase == shape)
 			 count++;
 	}
 	return count;

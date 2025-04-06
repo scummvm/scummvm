@@ -80,12 +80,10 @@ public:
 		// is used to prevent problems if the observer removes itself (or
 		// otherwise changes the observer list)
 		typename Std::vector< Observer<O, A> *> tmp = _observers;
-		typename Std::vector< Observer<O, A> *>::iterator i;
 
 		clearChanged();
 
-		for (i = tmp.begin(); i != tmp.end(); i++) {
-			Observer<O, A> *observer = *i;
+		for (auto *observer : tmp) {
 			observer->update(static_cast<O>(this), arg);
 		}
 	}

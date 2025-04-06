@@ -149,9 +149,9 @@ void Debugger::printN(const char *fmt, ...) {
 		// Strip off any color special characters that aren't
 		// relevant for showing the text in the debugger
 		Common::String s;
-		for (Common::String::iterator it = str.begin(); it != str.end(); ++it) {
-			if (*it >= ' ' || *it == '\n')
-				s += *it;
+		for (const auto &c : str) {
+			if (c >= ' ' || c == '\n')
+				s += c;
 		}
 
 		debugPrintf("%s", s.c_str());
@@ -586,8 +586,8 @@ bool Debugger::cmdFire(int argc, const char **argv) {
 	// nothing (not even mountains!) can block cannonballs
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), broadsidesDirs, g_context->_location->_coords,
 		1, 3, nullptr, false);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (fireAt(*i, true))
+	for (const auto &coords : path) {
+		if (fireAt(coords, true))
 			return isDebuggerActive();
 	}
 
@@ -746,8 +746,8 @@ bool Debugger::cmdJimmy(int argc, const char **argv) {
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
 		1, 1, nullptr, true);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (jimmyAt(*i))
+	for (const auto &coords : path) {
+		if (jimmyAt(coords))
 			return isDebuggerActive();
 	}
 
@@ -889,8 +889,8 @@ bool Debugger::cmdOpenDoor(int argc, const char **argv) {
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
 		1, 1, nullptr, true);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (openAt(*i))
+	for (const auto &coords : path) {
+		if (openAt(coords))
 			return isDebuggerActive();
 	}
 
@@ -1143,8 +1143,8 @@ bool Debugger::cmdTalk(int argc, const char **argv) {
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
 		1, 2, &Tile::canTalkOverTile, true);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (talkAt(*i))
+	for (const auto &coords : path) {
+		if (talkAt(coords))
 			return isDebuggerActive();
 	}
 
@@ -1300,8 +1300,8 @@ bool Debugger::cmdDestroy(int argc, const char **argv) {
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir),
 		MASK_DIR_ALL, g_context->_location->_coords, 1, 1, nullptr, true);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (destroyAt(*i)) {
+	for (const auto &coords : path) {
+		if (destroyAt(coords)) {
 			return false;
 		}
 	}

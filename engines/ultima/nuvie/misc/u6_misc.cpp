@@ -97,14 +97,10 @@ int mkdir_recursive(const Common::Path &path, int mode) {
 
 	Tokenise(path, directories, U6PATH_DELIMITER);
 
-	Std::vector<string>::iterator dir_iter;
-
 	if (path.find(U6PATH_DELIMITER) == 0)
 		tmp_path += U6PATH_DELIMITER;
 
-	for (dir_iter = directories.begin(); dir_iter != directories.end();) {
-		string dir = *dir_iter;
-
+	for (const auto &dir : directories) {
 		debug("%s, ", dir.c_str());
 
 		tmp_path += dir;
@@ -118,7 +114,6 @@ int mkdir_recursive(const Common::Path &path, int mode) {
 			if (ret != 0)
 				return ret;
 		}
-		dir_iter++;
 	}
 
 	return 0;
@@ -703,8 +698,8 @@ sint8 get_wrapped_rel_dir(sint16 p1, sint16 p2, uint8 level) {
 Std::string encode_xml_entity(const Std::string &s) {
 	string  ret;
 
-	for (string::const_iterator it = s.begin(); it != s.end(); ++it) {
-		switch (*it) {
+	for (const auto &c : s) {
+		switch (c) {
 		case '<':
 			ret += "&lt;";
 			break;
@@ -721,7 +716,7 @@ Std::string encode_xml_entity(const Std::string &s) {
 			ret += "&amp;";
 			break;
 		default:
-			ret += *it;
+			ret += c;
 		}
 	}
 	return ret;

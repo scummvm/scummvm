@@ -65,8 +65,8 @@ const Std::vector<ResponsePart> &Response::getParts() const {
 
 Response::operator Common::String() const {
 	Common::String result;
-	for (Std::vector<ResponsePart>::const_iterator i = _parts.begin(); i != _parts.end(); i++) {
-		result += *i;
+	for (const auto &i : _parts) {
+		result += i;
 	}
 	return result;
 }
@@ -178,8 +178,8 @@ Dialogue::Dialogue()
 }
 
 Dialogue::~Dialogue() {
-	for (KeywordMap::iterator i = _keywords.begin(); i != _keywords.end(); i++) {
-		delete i->_value;
+	for (auto &i : _keywords) {
+		delete i._value;
 	}
 }
 
@@ -224,8 +224,8 @@ Common::String Dialogue::dump(const Common::String &arg) {
 	Common::String result;
 	if (arg == "") {
 		result = "keywords:\n";
-		for (KeywordMap::iterator i = _keywords.begin(); i != _keywords.end(); i++) {
-			result += i->_key + "\n";
+		for (const auto &i : _keywords) {
+			result += i._key + "\n";
 		}
 	} else {
 		if (_keywords.find(arg) != _keywords.end())

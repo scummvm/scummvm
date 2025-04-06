@@ -38,9 +38,8 @@ DialogueLoaders::DialogueLoaders() {
 }
 
 DialogueLoaders::~DialogueLoaders() {
-	for (Common::HashMap<Common::String, DialogueLoader *>::iterator it = _loaders.begin();
-			it != _loaders.end(); ++it)
-		delete it->_value;
+	for (auto &l : _loaders)
+		delete l._value;
 	g_loaders = nullptr;
 }
 
