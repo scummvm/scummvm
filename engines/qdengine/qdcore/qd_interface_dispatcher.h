@@ -96,11 +96,11 @@ public:
 	}
 
 	//! Добавляет ресурс file_name с владельцем owner.
-	qdResource *add_resource(const Common::Path file_name, const qdInterfaceElementState *owner);
+	qdResource *add_resource(const Common::Path &file_name, const qdInterfaceElementState *owner);
 	//! Удаляет ресурс file_name с владельцем owner.
-	bool remove_resource(const Common::Path file_name, const qdInterfaceElementState *owner);
+	bool remove_resource(const Common::Path &file_name, const qdInterfaceElementState *owner);
 	//! Возвращает указатель на ресурс file_name.
-	qdResource *get_resource(const Common::Path file_name) const {
+	qdResource *get_resource(const Common::Path &file_name) const {
 		return _resources.get_resource(file_name);
 	}
 

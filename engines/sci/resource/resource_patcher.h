@@ -89,7 +89,7 @@ struct GameResourcePatch {
  */
 class ResourcePatcher : public ResourceSource {
 public:
-	ResourcePatcher(const SciGameId gameId, const bool isCD, const Common::Platform platform, const Common::Language gameLanguage);
+	ResourcePatcher(const SciGameId gameId, const bool isCD, const Common::Platform &platform, const Common::Language &gameLanguage);
 
 	~ResourcePatcher() override {}
 

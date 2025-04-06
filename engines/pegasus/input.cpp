@@ -313,7 +313,7 @@ InputBits InputHandler::getClickFilter() {
 	return kFilterNoInput;
 }
 
-void InputHandler::updateCursor(const Common::Point cursorLocation, const Hotspot *cursorSpot) {
+void InputHandler::updateCursor(const Common::Point &cursorLocation, const Hotspot *cursorSpot) {
 	if (_nextHandler)
 		_nextHandler->updateCursor(cursorLocation, cursorSpot);
 }

@@ -195,14 +195,14 @@ bool qdInterfaceElement::load_script(const xml::tag *p) {
 	return load_script_body(p);
 }
 
-qdResource *qdInterfaceElement::add_resource(const Common::Path file_name, const qdInterfaceElementState *res_owner) {
+qdResource *qdInterfaceElement::add_resource(const Common::Path &file_name, const qdInterfaceElementState *res_owner) {
 	if (qdInterfaceScreen * p = dynamic_cast<qdInterfaceScreen * >(owner()))
 		return p->add_resource(file_name, res_owner);
 
 	return NULL;
 }
 
-bool qdInterfaceElement::remove_resource(const Common::Path file_name, const qdInterfaceElementState *res_owner) {
+bool qdInterfaceElement::remove_resource(const Common::Path &file_name, const qdInterfaceElementState *res_owner) {
 	if (qdInterfaceScreen * p = dynamic_cast<qdInterfaceScreen * >(owner()))
 		return p->remove_resource(file_name, res_owner);
 

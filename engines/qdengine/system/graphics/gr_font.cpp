@@ -43,7 +43,7 @@ grFont::~grFont() {
 	delete[] _alpha_buffer;
 }
 
-bool grFont::load(const Common::Path fname) {
+bool grFont::load(const Common::Path &fname) {
 	Common::String str(fname.toString());
 	str += ".tga";
 

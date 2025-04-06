@@ -65,7 +65,7 @@ public:
 	 * @param numColors Number of colors
 	 * @note For the default constructed object (i.e. no parameters given) this will hold: empty() && !isValid()
 	 */
-	Palette(const Graphics::PixelFormat format = Graphics::PixelFormat(), const uint numColors = 0);
+	Palette(const Graphics::PixelFormat &format = Graphics::PixelFormat(), const uint numColors = 0);
 	Palette(const Palette& other);
 	Palette& operator=(const Palette& other);
 
@@ -83,7 +83,7 @@ public:
 	 * @param numColors Number of colors to load
 	 * @param endian The endianness of the colors in the input buffer
 	 */
-	Palette &load(const byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian);
+	Palette &load(const byte *buf, const uint size, const Graphics::PixelFormat &format, const uint numColors, const EndianType endian);
 
 	/**
 	 * Save the whole palette to buffer in original color format using defined endianness.
@@ -100,7 +100,7 @@ public:
 	 * @param format Output color format
 	 * @param endian The endian type to use
 	 */
-	byte *save(byte *buf, const uint size, const Graphics::PixelFormat format, const EndianType endian) const;
+	byte *save(byte *buf, const uint size, const Graphics::PixelFormat &format, const EndianType endian) const;
 
 	/**
 	 * Save (partial) palette to buffer in given color format using defined endianness.
@@ -111,7 +111,7 @@ public:
 	 * @param endian The endian type to use
 	 * @param firstIndex Starting color index (from which onwards to save the colors)
 	 */
-	byte *save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian, const byte firstIndex = 0) const;
+	byte *save(byte *buf, const uint size, const Graphics::PixelFormat &format, const uint numColors, const EndianType endian, const byte firstIndex = 0) const;
 
 	/**
 	 * Rotate the palette in color range [firstIndex, lastIndex] to the right by one.
@@ -177,7 +177,7 @@ public:
 private:
 	int findMinBrightnessColorIndex(uint minColorIndex = 1);
 	byte brightness(byte colorIndex);
-	void setColorFormat(const Graphics::PixelFormat format);
+	void setColorFormat(const Graphics::PixelFormat &format);
 	void saturatedAddColor(Color &result, const Color &baseColor, signed r, signed g, signed b) const;
 
 private:

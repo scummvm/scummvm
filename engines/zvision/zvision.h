@@ -264,7 +264,7 @@ private:
 	void initialize();
 	void initFonts();
 
-	void parseStrFile(const Common::String fileName);
+	void parseStrFile(const Common::String &fileName);
 
 	/** Called every frame from ZVision::run() to process any events from EventMan */
 	void processEvents();

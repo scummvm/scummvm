@@ -176,9 +176,9 @@ public:
 	const Common::Path qda_file() const {
 		return _qda_file;
 	}
-	void qda_set_file(const Common::Path fname);
+	void qda_set_file(const Common::Path &fname);
 
-	bool qda_load(const Common::Path fname);
+	bool qda_load(const Common::Path &fname);
 
 	bool load_resources();
 	void free_resources();
@@ -230,7 +230,7 @@ public:
 	bool load_resource();
 	bool free_resource();
 	//! Устанавливает имя файла, в котором хранятся данные ресурса.
-	void set_resource_file(const Common::Path file_name) {
+	void set_resource_file(const Common::Path &file_name) {
 		qda_set_file(file_name);
 	}
 	//! Возвращает имя файла, в котором хранится анимация.

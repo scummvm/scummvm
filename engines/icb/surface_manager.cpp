@@ -364,7 +364,7 @@ static void copyRectToSurface(void *dstBuffer, const void *srcBuffer, int32 srcP
 }
 
 static void copyRectToSurface(Graphics::Surface *dstSurface, Graphics::Surface *srcSurface,
-							  int32 destX, int32 destY, const Common::Rect subRect,
+							  int32 destX, int32 destY, const Common::Rect &subRect,
 							  bool8 colorKeyEnable, uint32 colorKey) {
 	assert(srcSurface->format == dstSurface->format);
 	assert(srcSurface->format.bytesPerPixel == 4);

@@ -204,7 +204,7 @@ bool qdInterfaceElementState::quant(float dt) {
 	return false;
 }
 
-void qdInterfaceElementState::set_sound_file(const Common::Path str, state_mode_t snd_id) {
+void qdInterfaceElementState::set_sound_file(const Common::Path &str, state_mode_t snd_id) {
 	if (has_sound(snd_id)) {
 		if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
 			p->remove_resource(sound_file(snd_id), this);
@@ -219,7 +219,7 @@ void qdInterfaceElementState::set_sound_file(const Common::Path str, state_mode_
 	}
 }
 
-void qdInterfaceElementState::set_animation_file(const Common::Path name, state_mode_t anm_id) {
+void qdInterfaceElementState::set_animation_file(const Common::Path &name, state_mode_t anm_id) {
 	if (has_animation(anm_id)) {
 		if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
 			p->remove_resource(animation_file(anm_id), this);

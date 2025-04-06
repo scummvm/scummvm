@@ -75,7 +75,7 @@ public:
 	virtual bool handleCheat(const Common::String &cheat) {
 		return false;
 	}
-	virtual void handleUnclick(const Common::String &name, Common::Point pnt) {}
+	virtual void handleUnclick(const Common::String &name, const Common::Point &pnt) {}
 	virtual ~Handler() {}
 };
 

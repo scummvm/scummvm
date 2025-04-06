@@ -38,7 +38,7 @@
 
 namespace ZVision {
 
-RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat, bool doubleFPS)
+RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect &workingWindow, const Graphics::PixelFormat &pixelFormat, bool doubleFPS)
 	: _engine(engine),
 	  _system(engine->_system),
 	  _screenCenterX(_workingWindow.width() / 2),
@@ -681,7 +681,7 @@ void RenderManager::renderMenuToScreen() {
 	}
 }
 
-void RenderManager::initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow) {
+void RenderManager::initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect &workingWindow) {
 	_workingWindow = workingWindow;
 
 	_subtitleSurface.free();

@@ -222,7 +222,7 @@ public:
 	void updateActorMovement(uint32 deltaTime);
 	void refreshSequenceCode();
 	void getActorFrameDimensions(WidthHeight &dimensions);
-	void drawActorRect(const Common::Rect r, byte color);
+	void drawActorRect(const Common::Rect &r, byte color);
 	void fillActor(byte color);
 	bool isPixelCollision(Common::Point &pt);
 public:

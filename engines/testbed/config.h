@@ -46,15 +46,15 @@ enum {
 
 class TestbedConfigManager {
 public:
-	TestbedConfigManager(Common::Array<Testsuite *> &tList, const Common::String fName) : _testsuiteList(tList), _configFileName(fName) {}
+	TestbedConfigManager(Common::Array<Testsuite *> &tList, const Common::String &fName) : _testsuiteList(tList), _configFileName(fName) {}
 	~TestbedConfigManager() {}
 	void selectTestsuites();
-	void setConfigFile(const Common::String fName) { _configFileName = fName; }
+	void setConfigFile(const Common::String &fName) { _configFileName = fName; }
 	Common::SeekableReadStream *getConfigReadStream() const;
 	Common::WriteStream *getConfigWriteStream() const;
 	void writeTestbedConfigToStream(Common::WriteStream *ws);
 	Testsuite *getTestsuiteByName(const Common::String &name);
-	bool stringToBool(const Common::String str) { return str.equalsIgnoreCase("true") ? true : false; }
+	bool stringToBool(const Common::String &str) { return str.equalsIgnoreCase("true") ? true : false; }
 	Common::String boolToString(bool val) { return val ? "true" : "false"; }
 	void initDefaultConfiguration();
 	int getNumSuitesEnabled();
@@ -92,9 +92,9 @@ public:
 	TestbedInteractionDialog(uint x, uint y, uint w, uint h) : GUI::Dialog(x, y, w, h, true), _xOffset(0), _yOffset(0) {}
 	~TestbedInteractionDialog() override {}
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
-	void addButton(uint w, uint h, const Common::String name, uint32 cmd, uint xOffset = 0, uint yPadding = 8);
-	void addButtonXY(uint x, uint y, uint w, uint h, const Common::String name, uint32 cmd);
-	void addText(uint w, uint h, const Common::String text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding = 8);
+	void addButton(uint w, uint h, const Common::String &name, uint32 cmd, uint xOffset = 0, uint yPadding = 8);
+	void addButtonXY(uint x, uint y, uint w, uint h, const Common::String &name, uint32 cmd);
+	void addText(uint w, uint h, const Common::String &text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding = 8);
 	void addList(uint x, uint y, uint w, uint h, const Common::Array<Common::U32String> &strArray, uint yPadding = 8);
 protected:
 	Common::Array<GUI::ButtonWidget *> _buttonArray;

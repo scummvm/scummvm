@@ -47,7 +47,7 @@ namespace ZVision {
 
 class RenderManager {
 public:
-	RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat, bool doubleFPS);
+	RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect &workingWindow, const Graphics::PixelFormat &pixelFormat, bool doubleFPS);
 	~RenderManager();
 
 private:
@@ -236,7 +236,7 @@ public:
 
 	// Subtitles methods
 
-	void initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow);
+	void initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect &workingWindow);
 
 	// Create subtitle area and return ID
 	uint16 createSubArea(const Common::Rect &area);

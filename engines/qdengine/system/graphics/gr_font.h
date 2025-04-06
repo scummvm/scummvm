@@ -36,7 +36,7 @@ public:
 	grFont();
 	~grFont();
 
-	bool load(const Common::Path fname);
+	bool load(const Common::Path &fname);
 
 	bool load_index(Common::SeekableReadStream *fh);
 	bool load_alpha(Common::SeekableReadStream *fh);

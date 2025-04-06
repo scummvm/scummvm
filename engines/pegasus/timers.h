@@ -72,7 +72,7 @@ public:
 	virtual void setScale(const TimeScale scale) { _preferredScale = scale; }
 	virtual TimeScale getScale() const { return _preferredScale; }
 
-	virtual void setRate(const Common::Rational);
+	virtual void setRate(const Common::Rational &);
 	virtual Common::Rational getRate() const { return _rate; }
 
 	virtual void start();

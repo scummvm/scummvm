@@ -60,7 +60,7 @@ public:
 		_type = tp;
 	}
 
-	void set_font_file_name(const Common::Path fname) {
+	void set_font_file_name(const Common::Path &fname) {
 		_font_file_name = fname;
 	}
 	const Common::Path font_file_name() const {

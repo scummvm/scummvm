@@ -489,14 +489,14 @@ void FreescapeEngine::resetInput() {
 	rotate(0, 0);
 }
 
-Common::Point FreescapeEngine::crossairPosToMousePos(const Common::Point crossairPos) {
+Common::Point FreescapeEngine::crossairPosToMousePos(const Common::Point &crossairPos) {
 	Common::Point mousePos;
 	mousePos.x = g_system->getWidth() * crossairPos.x / _screenW;
 	mousePos.y = g_system->getHeight() * crossairPos.y / _screenH;
 	return mousePos;
 }
 
-Common::Point FreescapeEngine::mousePosToCrossairPos(const Common::Point mousePos) {
+Common::Point FreescapeEngine::mousePosToCrossairPos(const Common::Point &mousePos) {
 	Common::Point crossairPos;
 	crossairPos.x = _screenW * mousePos.x / g_system->getWidth();
 	crossairPos.y = _screenH * mousePos.y / g_system->getHeight();
@@ -1088,7 +1088,7 @@ Common::Error FreescapeEngine::loadGameStreamExtended(Common::SeekableReadStream
 	return Common::kNoError;
 }
 
-void FreescapeEngine::insertTemporaryMessage(const Common::String message, int deadline) {
+void FreescapeEngine::insertTemporaryMessage(const Common::String &message, int deadline) {
 	_temporaryMessages.insert_at(0, message);
 	_temporaryMessageDeadlines.insert_at(0, deadline);
 }

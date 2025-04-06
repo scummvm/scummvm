@@ -24,7 +24,7 @@
 
 namespace Wintermute {
 
-BlankListing::BlankListing(const Common::Path filename) : _filename(filename.toString(Common::Path::kNativeSeparator)) {}
+BlankListing::BlankListing(const Common::Path &filename) : _filename(filename.toString(Common::Path::kNativeSeparator)) {}
 
 uint BlankListing::getLength() const { return UINT_MAX_VALUE; }
 

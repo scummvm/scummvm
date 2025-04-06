@@ -195,7 +195,7 @@ void qdSprite::free() {
 	drop_flag(ALPHA_FLAG);
 }
 
-bool qdSprite::load(const Common::Path fpath) {
+bool qdSprite::load(const Common::Path &fpath) {
 	set_file(fpath);
 
 	return load();
@@ -316,7 +316,7 @@ bool qdSprite::load() {
 	return true;
 }
 
-void qdSprite::save(const Common::Path fname) {
+void qdSprite::save(const Common::Path &fname) {
 	if (_format != GR_RGB888 && _format != GR_ARGB8888) return;
 
 	const Common::Path out_file = !fname.empty() ? fname : _file;

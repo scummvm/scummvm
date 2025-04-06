@@ -708,7 +708,7 @@ const int idTagVersionAll[490] = {
 void cleanup_XML_Parser();
 xml::parser &qdscr_XML_Parser();
 const char *qdscr_XML_string(const char *p);
-const char *qdscr_XML_string(const Common::String s);
+const char *qdscr_XML_string(const Common::String &s);
 
 } // namespace QDEngine
 

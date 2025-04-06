@@ -323,7 +323,7 @@ void WetEngine::showDemoScore() {
 	dialog.runModal();
 }
 
-Common::String WetEngine::getLocalizedString(const Common::String name) {
+Common::String WetEngine::getLocalizedString(const Common::String &name) {
 	if (name == "name") {
 		switch (_language) {
 		case Common::FR_FRA:

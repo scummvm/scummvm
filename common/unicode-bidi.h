@@ -50,7 +50,7 @@ public:
 
 	UnicodeBiDiText(const Common::U32String &str, BiDiParagraph dir = BIDI_PAR_ON);
 	/* This constructor shouldn't be used outside of unicode-bidi.cpp file */
-	UnicodeBiDiText(const Common::String &str, const Common::CodePage page, uint32 *pbase_dir);
+	UnicodeBiDiText(const Common::String &str, const Common::CodePage &page, uint32 *pbase_dir);
 	~UnicodeBiDiText();
 
 	/**
@@ -65,11 +65,11 @@ public:
 
 /* just call the constructor for convenience */
 UnicodeBiDiText convertBiDiU32String(const U32String &input, BiDiParagraph dir = BIDI_PAR_ON);
-String convertBiDiString(const String &input, const Common::Language lang, BiDiParagraph dir = BIDI_PAR_ON);
-String convertBiDiString(const String &input, const Common::CodePage page, BiDiParagraph dir = BIDI_PAR_ON);
+String convertBiDiString(const String &input, const Common::Language &lang, BiDiParagraph dir = BIDI_PAR_ON);
+String convertBiDiString(const String &input, const Common::CodePage &page, BiDiParagraph dir = BIDI_PAR_ON);
 
 // calls convertBiDiString for each line in isolation
-String convertBiDiStringByLines(const String &input, const Common::CodePage page, BiDiParagraph dir = BIDI_PAR_ON);
+String convertBiDiStringByLines(const String &input, const Common::CodePage &page, BiDiParagraph dir = BIDI_PAR_ON);
 
 } // End of namespace Common
 

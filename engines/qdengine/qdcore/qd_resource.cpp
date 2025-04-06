@@ -46,7 +46,7 @@ qdResource &qdResource::operator = (const qdResource &res) {
 qdResource::~qdResource() {
 }
 
-qdResource::file_format_t qdResource::file_format(const Common::Path path) {
+qdResource::file_format_t qdResource::file_format(const Common::Path &path) {
 	Common::String file_name(path.baseName());
 
 	if (file_name.size() < 4)

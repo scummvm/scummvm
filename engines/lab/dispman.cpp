@@ -66,12 +66,12 @@ DisplayMan::~DisplayMan() {
 	delete[] _displayBuffer;
 }
 
-void DisplayMan::loadPict(const Common::String filename) {
+void DisplayMan::loadPict(const Common::String &filename) {
 	freePict();
 	_curBitmap = _vm->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
 }
 
-void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
+void DisplayMan::loadBackPict(const Common::String &fileName, uint16 *highPal) {
 	_fadePalette = highPal;
 	_vm->_anim->_noPalChange = true;
 	readPict(fileName);
@@ -85,7 +85,7 @@ void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
 	_vm->_anim->_noPalChange = false;
 }
 
-void DisplayMan::readPict(const Common::String filename, bool playOnce, bool onlyDiffData, byte *memoryBuffer) {
+void DisplayMan::readPict(const Common::String &filename, bool playOnce, bool onlyDiffData, byte *memoryBuffer) {
 	_vm->_anim->stopDiff();
 	loadPict(filename);
 	_vm->_anim->setOutputBuffer(memoryBuffer);
@@ -511,7 +511,7 @@ void DisplayMan::freeFont(TextFont **font) {
 	}
 }
 
-uint16 DisplayMan::textLength(TextFont *font, const Common::String text) {
+uint16 DisplayMan::textLength(TextFont *font, const Common::String &text) {
 	uint16 length = 0;
 
 	if (font) {
@@ -528,7 +528,7 @@ uint16 DisplayMan::textHeight(TextFont *tf) {
 	return (tf) ? tf->_height : 0;
 }
 
-void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const Common::String text) {
+void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const Common::String &text) {
 	byte *vgaTop = getCurrentDrawingBuffer();
 	int numChars = text.size();
 
@@ -652,7 +652,7 @@ void DisplayMan::copyPage(uint16 width, uint16 height, uint16 nheight, uint16 st
 	}
 }
 
-void DisplayMan::doScrollWipe(const Common::String filename) {
+void DisplayMan::doScrollWipe(const Common::String &filename) {
 	_vm->_event->mouseHide();
 	uint16 width = _vm->_utils->vgaScaleX(320);
 	uint16 height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
@@ -731,7 +731,7 @@ void DisplayMan::doScrollBounce() {
 	_vm->_event->mouseShow();
 }
 
-void DisplayMan::doTransWipe(const Common::String filename) {
+void DisplayMan::doTransWipe(const Common::String &filename) {
 	uint16 lastY, linesLast;
 
 	if (_vm->_isHiRes) {
@@ -816,7 +816,7 @@ void DisplayMan::doTransWipe(const Common::String filename) {
 	// bitMapBuffer will be deleted by the Image destructor
 }
 
-void DisplayMan::doTransition(TransitionType transitionType, const Common::String filename) {
+void DisplayMan::doTransition(TransitionType transitionType, const Common::String &filename) {
 	switch (transitionType) {
 	case kTransitionWipe:
 	case kTransitionTransporter:

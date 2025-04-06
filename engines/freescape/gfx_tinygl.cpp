@@ -170,7 +170,7 @@ void TinyGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 	tglTranslatef(-pos.x(), -pos.y(), -pos.z());
 }
 
-void TinyGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d player, const Common::Rect viewArea) {
+void TinyGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d player, const Common::Rect &viewArea) {
 	tglEnable(TGL_BLEND);
 	tglBlendFunc(TGL_ONE_MINUS_DST_COLOR, TGL_ZERO);
 	tglColor3ub(255, 255, 255);
@@ -185,7 +185,7 @@ void TinyGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, 
 	tglDisable(TGL_BLEND);
 }
 
-void TinyGLRenderer::renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewArea) {
+void TinyGLRenderer::renderPlayerShootBall(byte color, const Common::Point &position, int frame, const Common::Rect &viewArea) {
 	/*uint8 r, g, b;
 
 	tglMatrixMode(TGL_PROJECTION);
@@ -232,7 +232,7 @@ void TinyGLRenderer::renderPlayerShootBall(byte color, const Common::Point posit
 }
 
 
-void TinyGLRenderer::renderPlayerShootRay(byte color, const Common::Point position, const Common::Rect viewArea) {
+void TinyGLRenderer::renderPlayerShootRay(byte color, const Common::Point &position, const Common::Rect &viewArea) {
 	uint8 r, g, b;
 	readFromPalette(color, r, g, b); // TODO: should use opposite color
 
@@ -278,7 +278,7 @@ void TinyGLRenderer::renderPlayerShootRay(byte color, const Common::Point positi
 	tglDepthMask(TGL_TRUE);
 }
 
-void TinyGLRenderer::renderCrossair(const Common::Point crossairPosition) {
+void TinyGLRenderer::renderCrossair(const Common::Point &crossairPosition) {
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
 	tglOrtho(0, _screenW, _screenH, 0, 0, 1);

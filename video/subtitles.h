@@ -66,7 +66,7 @@ public:
 	void loadSRTFile(const Common::Path &fname);
 	void close() { _loaded = false; _subtitle.clear(); _fname.clear(); _srtParser.cleanup(); }
 	void setFont(const char *fontname, int height = 18);
-	void setBBox(const Common::Rect bbox);
+	void setBBox(const Common::Rect &bbox);
 	void setColor(byte r, byte g, byte b);
 	void setPadding(uint16 horizontal, uint16 vertical);
 	bool drawSubtitle(uint32 timestamp, bool force = false) const;

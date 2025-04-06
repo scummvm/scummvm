@@ -613,7 +613,7 @@ MusicEntry *EMISound::initMusicTableDemo(const Common::String &filename) {
 	return musicTable;
 }
 
-void EMISound::initMusicTableRetail(MusicEntry *musicTable, const Common::String filename) {
+void EMISound::initMusicTableRetail(MusicEntry *musicTable, const Common::String &filename) {
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
 
 	// Remember to check, in case we forgot to copy over those files from the CDs.
