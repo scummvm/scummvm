@@ -98,6 +98,7 @@ enum FreescapeAction {
 	kActionCrawlMode,
 	kActionSelectPrince,
 	kActionSelectPrincess,
+	kActionQuit,
 };
 
 typedef Common::HashMap<uint16, Area *> AreaMap;

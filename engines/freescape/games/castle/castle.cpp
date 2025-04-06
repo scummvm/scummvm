@@ -257,12 +257,8 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 	infoScreenKeyMap->addAction(act);
 
 	act = new Common::Action("QUIT", _("Quit Game"));
-	act->setCustomEngineActionEvent(kActionEscape);
-	if (isDOS() || isCPC())
-		act->addDefaultInputMapping("ESCAPE");
-	else if (isSpectrum())
-		act->addDefaultInputMapping("q");
-
+	act->setCustomEngineActionEvent(kActionQuit);
+	act->addDefaultInputMapping("q");
 	infoScreenKeyMap->addAction(act);
 
 	act = new Common::Action("TOGGLESOUND", _("Toggle Sound"));
@@ -639,7 +635,7 @@ void CastleEngine::drawInfoMenu() {
 					_gfx->setViewport(_viewArea);
 				} else if (isDOS() && event.customType == kActionToggleSound) {
 					// TODO
-				} else if ((isCPC() || isSpectrum()) && event.customType == kActionEscape) {
+				} else if (event.customType == kActionQuit) {
 					_forceEndGame = true;
 					cont = false;
 				} else
