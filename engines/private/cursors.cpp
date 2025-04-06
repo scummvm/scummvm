@@ -55,29 +55,41 @@ void PrivateEngine::loadCursors() {
 			{ nullptr, nullptr,   0  }
 		};
 
-		if (_installerArchive.open("SUPPORT/PVTEYE.Z")) {
-			Common::SharedPtr<Common::WinResources> exe(Common::WinResources::createFromEXE(_installerArchive.createReadStreamForMember("PVTEYE.EXE")));
-			
-			if (exe == nullptr) {
-				error("Executable not found");
+		Common::WinResources *exe = nullptr;
+		Common::ArchiveMemberList members;
+		if (_installerArchive.open("SUPPORT/PVTEYE.Z"))
+			if (_language == Common::JA_JPN)
+				exe = Common::WinResources::createFromEXE(_installerArchive.createReadStreamForMember("PvteyeJ.EXE"));
+			else
+				exe = Common::WinResources::createFromEXE(_installerArchive.createReadStreamForMember("PVTEYE.EXE"));
+		else  {
+			Common::File file;
+			if (!file.open("SUPPORT/PVTEYE.EX_")) {
+				error("PVTEYE.EX_ not found");
 			}
-	
-			const Common::Array<Common::WinResourceID> cursorIDs = exe->getIDList(Common::kWinGroupCursor);
-	
-			_cursors.resize(cursorIDs.size());
-			for (uint i = 0; i < cursorIDs.size(); i++) {
-				_cursors[i].winCursorGroup = Graphics::WinCursorGroup::createCursorGroup(exe.get(), cursorIDs[i]);
-				_cursors[i].cursor = _cursors[i].winCursorGroup->cursors[0].cursor;
-	
-				const CursorEntry *entry = cursorIDReference;
-				while (entry->name != nullptr) {
-					if (entry->id == _cursors[i].winCursorGroup->cursors[0].id.getID()) {
-						_cursors[i].name = entry->name;
-						_cursors[i].aname = entry->aname;
-						break;
-					}
-					entry++;
+			exe = Common::WinResources::createFromEXE(file.readStream(file.size()));
+		}
+
+		if (exe == nullptr) {
+			error("Executable not found");
+		}
+
+		const Common::Array<Common::WinResourceID> cursorIDs = exe->getIDList(Common::kWinGroupCursor);
+
+		_cursors.resize(cursorIDs.size());
+		assert(cursorIDs.size() > 0);
+		for (uint i = 0; i < cursorIDs.size(); i++) {
+			_cursors[i].winCursorGroup = Graphics::WinCursorGroup::createCursorGroup(exe, cursorIDs[i]);
+			_cursors[i].cursor = _cursors[i].winCursorGroup->cursors[0].cursor;
+
+			const CursorEntry *entry = cursorIDReference;
+			while (entry->name != nullptr) {
+				if (entry->id == _cursors[i].winCursorGroup->cursors[0].id.getID()) {
+					_cursors[i].name = entry->name;
+					_cursors[i].aname = entry->aname;
+					break;
 				}
+				entry++;
 			}
 		}
 	} else {
