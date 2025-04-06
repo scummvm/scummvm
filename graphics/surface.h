@@ -314,7 +314,7 @@ public:
 	 * @param destY       The y coordinate of the destination rectangle.
 	 * @param subRect     The subRect of the surface to be blitted.
 	 */
-	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect);
+	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect &subRect);
 
 	/**
 	 * Copy a bitmap to the internal buffer of the surface.
@@ -342,7 +342,7 @@ public:
 	 * @param subRect     The subRect of the surface to be blitted.
 	 * @param key
 	 */
-	void copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect, uint32 key);
+	void copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect &subRect, uint32 key);
 
 	/**
 	 * Convert the data to another pixel format.

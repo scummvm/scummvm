@@ -62,11 +62,11 @@ qdInterfaceElementStateMode &qdInterfaceElementStateMode::operator = (const qdIn
 	return *this;
 }
 
-void qdInterfaceElementStateMode::set_sound_file(const Common::Path name) {
+void qdInterfaceElementStateMode::set_sound_file(const Common::Path &name) {
 	_sound_file = name;
 }
 
-void qdInterfaceElementStateMode::set_animation_file(const Common::Path name) {
+void qdInterfaceElementStateMode::set_animation_file(const Common::Path &name) {
 	_animation_file = name;
 }
 

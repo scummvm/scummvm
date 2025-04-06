@@ -119,7 +119,7 @@ public:
 	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из .ini файла.
-	bool load_ini(const Common::Path ini_file, const char *ini_section);
+	bool load_ini(const Common::Path &ini_file, const char *ini_section);
 
 private:
 

@@ -281,7 +281,7 @@ void GfxTransitions::setNewScreen(bool blackoutFlag) {
 	}
 }
 
-void GfxTransitions::copyRectToScreen(const Common::Rect rect, bool blackoutFlag) {
+void GfxTransitions::copyRectToScreen(const Common::Rect &rect, bool blackoutFlag) {
 	if (!blackoutFlag) {
 		_screen->copyRectToScreen(rect);
 	} else {

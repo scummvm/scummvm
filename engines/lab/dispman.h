@@ -85,7 +85,7 @@ private:
 	/**
 	 * Scrolls the display to a new picture from a black screen.
 	 */
-	void doScrollWipe(const Common::String filename);
+	void doScrollWipe(const Common::String &filename);
 
 	/**
 	 * Does the scroll bounce.  Assumes bitmap already in memory.
@@ -95,7 +95,7 @@ private:
 	/**
 	 * Does the transporter wipe.
 	 */
-	void doTransWipe(const Common::String filename);
+	void doTransWipe(const Common::String &filename);
 
 	/**
 	 * Draws a vertical line.
@@ -110,7 +110,7 @@ private:
 	/**
 	 * Draws the text to the screen.
 	 */
-	void drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const Common::String text);
+	void drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const Common::String &text);
 
 	/**
 	 * Gets a line of text for flowText; makes sure that its length is less than
@@ -121,7 +121,7 @@ private:
 	/**
 	 * Returns the length of a text in the specified font.
 	 */
-	uint16 textLength(TextFont *font, const Common::String text);
+	uint16 textLength(TextFont *font, const Common::String &text);
 
 	bool _actionMessageShown;
 	Common::File *_curBitmap;
@@ -132,19 +132,19 @@ public:
 	DisplayMan(LabEngine *lab);
 	virtual ~DisplayMan();
 
-	void loadPict(const Common::String filename);
-	void loadBackPict(const Common::String fileName, uint16 *highPal);
+	void loadPict(const Common::String &filename);
+	void loadBackPict(const Common::String &fileName, uint16 *highPal);
 
 	/**
 	 * Reads in a picture into the display bitmap.
 	 */
-	void readPict(const Common::String filename, bool playOnce = true, bool onlyDiffData = false, byte *memoryBuffer = nullptr);
+	void readPict(const Common::String &filename, bool playOnce = true, bool onlyDiffData = false, byte *memoryBuffer = nullptr);
 	void freePict();
 
 	/**
 	 * Does a certain number of pre-programmed wipes.
 	 */
-	void doTransition(TransitionType transitionType, const Common::String filename);
+	void doTransition(TransitionType transitionType, const Common::String &filename);
 
 	/**
 	 * Changes the front screen to black.

@@ -710,7 +710,7 @@ static void addPathToConf(const Common::String &key, const Common::Path &value, 
 		ConfMan.setPath(key, value, domain);
 }
 
-Common::String EngineManager::generateUniqueDomain(const Common::String gameId) {
+Common::String EngineManager::generateUniqueDomain(const Common::String &gameId) {
 	Common::String domainName(gameId);
 	int suffixN = 1;
 	while (ConfMan.hasGameDomain(domainName)) {

@@ -64,7 +64,7 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 	copyRectToSurface(srcSurface.getBasePtr(0, 0), srcSurface.pitch, srcSurface.w, 0, destX, destY, srcSurface.w, srcSurface.h, false, NONE);
 }
 
-void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect, bool flipX, AlphaBlendMode alpha) {
+void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect &srcRect, bool flipX, AlphaBlendMode alpha) {
 	Common::Rect clipRect = clipRectToScreen(destX,  destY, srcRect);
 	if (clipRect.width() == 0 || clipRect.height() == 0) {
 		return;
@@ -80,7 +80,7 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 	copyRectToSurface(srcSurface.getBasePtr(clipRect.left, clipRect.top), srcSurface.pitch, srcSurface.w, clipRect.left, destX, destY, clipRect.width(), clipRect.height(), flipX, alpha);
 }
 
-void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, const byte *palette, int destX, int destY, const Common::Rect srcRect, bool flipX, AlphaBlendMode alpha, uint16 scale) {
+void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, const byte *palette, int destX, int destY, const Common::Rect &srcRect, bool flipX, AlphaBlendMode alpha, uint16 scale) {
 	if (scale != DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) {
 		drawScaledSprite(_backSurface, (const byte *)srcSurface.getBasePtr(0, 0),
 				srcRect.width(), srcRect.height(),
@@ -264,11 +264,11 @@ void Screen::drawScaledSprite(Graphics::Surface *destSurface, const byte *source
 	}
 }
 
-Common::Rect Screen::clipRectToScreen(int destX, int destY, const Common::Rect rect) {
+Common::Rect Screen::clipRectToScreen(int destX, int destY, const Common::Rect &rect) {
 	return clipRectToRect(destX, destY, rect, Common::Rect(320, 200));
 }
 
-Common::Rect Screen::clipRectToRect(int destX, int destY, const Common::Rect rect, const Common::Rect containerRect) {
+Common::Rect Screen::clipRectToRect(int destX, int destY, const Common::Rect &rect, const Common::Rect &containerRect) {
 	int16 x, y, w, h;
 	x = rect.left;
 	y = rect.top;
@@ -414,7 +414,7 @@ void Screen::copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, 
 	}
 }
 
-void Screen::copyRectToSurface8bppWrappedX(const Graphics::Surface &srcSurface, const byte *palette, Common::Rect srcRect,
+void Screen::copyRectToSurface8bppWrappedX(const Graphics::Surface &srcSurface, const byte *palette, const Common::Rect &srcRect,
 										   AlphaBlendMode alpha) {
 	// Copy buffer data to internal buffer
 	const byte *src = (const byte *)srcSurface.getBasePtr(0, 0);

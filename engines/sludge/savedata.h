@@ -38,7 +38,7 @@ private:
 	static char _encode1;
 	static char _encode2;
 
-	static void writeStringEncoded(const Common::String checker, Common::WriteStream *stream);
+	static void writeStringEncoded(const Common::String &checker, Common::WriteStream *stream);
 	static Common::String readStringEncoded(Common::SeekableReadStream *fp);
 	static char *readTextPlain(Common::SeekableReadStream *fp);
 

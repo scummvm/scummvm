@@ -35,7 +35,7 @@ namespace Illusions {
 
 // MenuItem
 
-MenuItem::MenuItem(const Common::String text, BaseMenuAction *action)
+MenuItem::MenuItem(const Common::String &text, BaseMenuAction *action)
 	: _text(text), _action(action) {
 }
 
@@ -63,7 +63,7 @@ BaseMenu::~BaseMenu() {
 	}
 }
 
-void BaseMenu::addText(const Common::String text) {
+void BaseMenu::addText(const Common::String &text) {
 	_text.push_back(text);
 }
 

@@ -51,7 +51,7 @@ void Resource::readStaticText() {
 	delete labTextFile;
 }
 
-TextFont *Resource::getFont(const Common::String fileName) {
+TextFont *Resource::getFont(const Common::String &fileName) {
 	// TODO: Add support for the font format of the Amiga version
 	Common::File *dataFile = openDataFile(fileName, MKTAG('V', 'G', 'A', 'F'));
 
@@ -73,7 +73,7 @@ TextFont *Resource::getFont(const Common::String fileName) {
 	return textfont;
 }
 
-Common::String Resource::getText(const Common::String fileName) {
+Common::String Resource::getText(const Common::String &fileName) {
 	Common::File *dataFile = openDataFile(fileName);
 
 	uint32 count = dataFile->size();
@@ -92,7 +92,7 @@ Common::String Resource::getText(const Common::String fileName) {
 	return str;
 }
 
-void Resource::readRoomData(const Common::String fileName) {
+void Resource::readRoomData(const Common::String &fileName) {
 	Common::File *dataFile = openDataFile(fileName, MKTAG('D', 'O', 'R', '1'));
 
 	_vm->_manyRooms = dataFile->readUint16LE();
@@ -111,7 +111,7 @@ void Resource::readRoomData(const Common::String fileName) {
 	delete dataFile;
 }
 
-InventoryData *Resource::readInventory(const Common::String fileName) {
+InventoryData *Resource::readInventory(const Common::String &fileName) {
 	Common::File *dataFile = openDataFile(fileName, MKTAG('I', 'N', 'V', '1'));
 
 	_vm->_numInv = dataFile->readUint16LE();
@@ -216,7 +216,7 @@ Common::Path Resource::translateFileName(const Common::String &filename) {
 	return Common::Path(fileNameStrFinal);
 }
 
-Common::File *Resource::openDataFile(const Common::String filename, uint32 fileHeader) {
+Common::File *Resource::openDataFile(const Common::String &filename, uint32 fileHeader) {
 	Common::File *dataFile = new Common::File();
 	dataFile->open(translateFileName(filename));
 

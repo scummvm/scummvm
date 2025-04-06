@@ -49,7 +49,7 @@ public:
 	bool load_resource();
 	bool free_resource();
 	//! Устанавливает имя файла, в котором хранятся данные ресурса.
-	void set_resource_file(const Common::Path file_name) {
+	void set_resource_file(const Common::Path &file_name) {
 		set_file_name(file_name);
 	}
 	//! Возвращает имя файла, в котором хранится анимация.
@@ -67,7 +67,7 @@ public:
 		return _file_name;
 	}
 	//! Устанавливает имя файла, в котором хранится звук.
-	void set_file_name(const Common::Path fname) {
+	void set_file_name(const Common::Path &fname) {
 		_file_name = fname;
 	}
 

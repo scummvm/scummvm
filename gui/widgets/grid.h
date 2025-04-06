@@ -178,7 +178,7 @@ public:
 	const Graphics::ManagedSurface *filenameToSurface(const Common::String &name);
 	const Graphics::ManagedSurface *languageToSurface(Common::Language languageCode, Graphics::AlphaType &alphaType);
 	const Graphics::ManagedSurface *platformToSurface(Common::Platform platformCode, Graphics::AlphaType &alphaType);
-	const Graphics::ManagedSurface *demoToSurface(const Common::String extraString, Graphics::AlphaType &alphaType);
+	const Graphics::ManagedSurface *demoToSurface(const Common::String &extraString, Graphics::AlphaType &alphaType);
 	const Graphics::ManagedSurface *disabledThumbnail();
 
 	/// Update _visibleEntries from _allEntries and returns true if reload is required.

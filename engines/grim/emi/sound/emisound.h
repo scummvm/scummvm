@@ -136,7 +136,7 @@ private:
 	void saveTrack(SoundTrack *track, SaveGame *savedState);
 	SoundTrack *restoreTrack(SaveGame *savedState);
 	MusicEntry *initMusicTableDemo(const Common::String &filename);
-	void initMusicTableRetail(MusicEntry *table, const Common::String filename);
+	void initMusicTableRetail(MusicEntry *table, const Common::String &filename);
 };
 
 extern EMISound *g_emiSound;

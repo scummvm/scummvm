@@ -76,7 +76,7 @@ public:
 	 *
 	 * The last file tried is ScummVM's SJIS.FNT file.
 	 */
-	static FontSJIS *createFont(const Common::Platform platform = Common::kPlatformUnknown);
+	static FontSJIS *createFont(const Common::Platform &platform = Common::kPlatformUnknown);
 
 	/**
 	 * Load the font data.
@@ -293,7 +293,7 @@ private:
  */
 class FontSjisSVM : public FontSJISBase {
 public:
-	FontSjisSVM(const Common::Platform platform);
+	FontSjisSVM(const Common::Platform &platform);
 	~FontSjisSVM();
 
 	/**

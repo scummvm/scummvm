@@ -70,7 +70,7 @@ public:
 
 	void enable_packages() {}
 
-	bool open_file(Common::SeekableReadStream **fh, const Common::Path file_name, bool err_message = true);
+	bool open_file(Common::SeekableReadStream **fh, const Common::Path &file_name, bool err_message = true);
 
 	int last_CD_id() const {
 		return 1;

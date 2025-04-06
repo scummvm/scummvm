@@ -44,7 +44,7 @@ public:
 
 	~mpegPlayer();
 
-	bool play(const Common::Path file, bool loop = false, int vol = 256);
+	bool play(const Common::Path &file, bool loop = false, int vol = 256);
 	bool stop();
 	bool pause();
 	bool resume();

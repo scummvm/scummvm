@@ -26,7 +26,7 @@
 
 namespace QDEngine {
 
-bool enumerateIniSections(const Common::Path fname, Common::INIFile::SectionList &sectionList) {
+bool enumerateIniSections(const Common::Path &fname, Common::INIFile::SectionList &sectionList) {
 
 	Common::INIFile ini;
 	Common::Path iniFilePath(fname);
@@ -42,7 +42,7 @@ bool enumerateIniSections(const Common::Path fname, Common::INIFile::SectionList
 	return true;
 }
 
-const Common::String getIniKey(const Common::Path fname, const char *section, const char *key) {
+const Common::String getIniKey(const Common::Path &fname, const char *section, const char *key) {
 	Common::INIFile ini;
 	Common::String buf;
 

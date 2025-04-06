@@ -280,7 +280,7 @@ void Subtitles::loadSRTFile(const Common::Path &fname) {
 	_loaded = _srtParser.parseFile(fname);
 }
 
-void Subtitles::setBBox(const Common::Rect bbox) {
+void Subtitles::setBBox(const Common::Rect &bbox) {
 	_requestedBBox = bbox;
 
 	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();

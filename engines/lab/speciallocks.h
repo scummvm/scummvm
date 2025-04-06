@@ -48,14 +48,14 @@ public:
 	SpecialLocks(LabEngine *vm);
 	~SpecialLocks();
 
-	void showTileLock(const Common::String filename, bool showSolution);
+	void showTileLock(const Common::String &filename, bool showSolution);
 
 	/**
 	 * Processes mouse clicks and changes tile positions.
 	 */
 	void tileClick(Common::Point pos);
 
-	void showCombinationLock(const Common::String filename);
+	void showCombinationLock(const Common::String &filename);
 
 	/**
 	 * Processes mouse clicks and changes the door combination.

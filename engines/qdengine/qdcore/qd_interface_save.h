@@ -122,7 +122,7 @@ public:
 	/**
 	Если надо убрать анимацию - передать NULL в качестве имени файла.
 	*/
-	void set_frame_animation_file(const Common::Path name, qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) {
+	void set_frame_animation_file(const Common::Path &name, qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) {
 		_frame.set_animation_file(name, mode);
 	}
 	//! Возвращает имя файла для анимации.

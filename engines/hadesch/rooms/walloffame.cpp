@@ -1000,7 +1000,7 @@ private:
 			v += Common::Point(166 * _philWalkPhase, -2 * _philWalkPhase);
 		return v;
 	}
-	void playPhilVideo(const Common::String &name, int callback, const Common::Point videoOffset) {
+	void playPhilVideo(const Common::String &name, int callback, const Common::Point &videoOffset) {
 		Persistent *persistent = g_vm->getPersistent();
 		cancelAllPhils();
 		if (persistent->_quest == kRescuePhilQuest)

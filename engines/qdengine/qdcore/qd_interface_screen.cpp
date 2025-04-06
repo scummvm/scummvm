@@ -270,7 +270,7 @@ bool qdInterfaceScreen::char_input_handler(int vkey) {
 	return false;
 }
 
-qdResource *qdInterfaceScreen::add_resource(const Common::Path file_name, const qdInterfaceElementState *res_owner) {
+qdResource *qdInterfaceScreen::add_resource(const Common::Path &file_name, const qdInterfaceElementState *res_owner) {
 	if (qdInterfaceDispatcher *dp = dynamic_cast<qdInterfaceDispatcher * >(owner())) {
 		if (qdResource *p = dp->add_resource(file_name, res_owner)) {
 			_resources.register_resource(p, res_owner);
@@ -284,7 +284,7 @@ qdResource *qdInterfaceScreen::add_resource(const Common::Path file_name, const 
 	return NULL;
 }
 
-bool qdInterfaceScreen::remove_resource(const Common::Path file_name, const qdInterfaceElementState *res_owner) {
+bool qdInterfaceScreen::remove_resource(const Common::Path &file_name, const qdInterfaceElementState *res_owner) {
 	if (qdInterfaceDispatcher *dp = dynamic_cast<qdInterfaceDispatcher * >(owner())) {
 		if (qdResource *p = dp->get_resource(file_name)) {
 			_resources.unregister_resource(p, res_owner);

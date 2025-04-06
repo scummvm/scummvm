@@ -57,7 +57,7 @@ public:
 	virtual bool free_resource() = 0;
 
 	//! Устанавливает имя файла, в котором хранятся данные ресурса.
-	virtual void set_resource_file(const Common::Path file_name) = 0;
+	virtual void set_resource_file(const Common::Path &file_name) = 0;
 	//! Возвращает имя файла, в котором хранятся данные ресурса.
 	/**
 	Если оно не задано, должна возвращаеть NULL.
@@ -69,7 +69,7 @@ public:
 		return _is_loaded;
 	}
 
-	static file_format_t file_format(const Common::Path file_name);
+	static file_format_t file_format(const Common::Path &file_name);
 
 #ifdef __QD_DEBUG_ENABLE__
 	virtual uint32 resource_data_size() const = 0;

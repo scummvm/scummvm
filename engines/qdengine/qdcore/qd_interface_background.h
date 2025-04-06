@@ -58,7 +58,7 @@ public:
 	/**
 	Если надо убрать анимацию - передать NULL в качестве имени файла.
 	*/
-	void set_animation_file(const Common::Path name) {
+	void set_animation_file(const Common::Path &name) {
 		_state.set_animation_file(name);
 	}
 	//! Возвращает имя файла для анимации.

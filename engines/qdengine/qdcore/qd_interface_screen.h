@@ -84,9 +84,9 @@ public:
 	bool char_input_handler(int vkey);
 
 	//! Добавляет ресурс file_name с владельцем owner.
-	qdResource *add_resource(const Common::Path file_name, const qdInterfaceElementState *res_owner);
+	qdResource *add_resource(const Common::Path &file_name, const qdInterfaceElementState *res_owner);
 	//! Удаляет ресурс file_name с владельцем owner.
-	bool remove_resource(const Common::Path file_name, const qdInterfaceElementState *res_owner);
+	bool remove_resource(const Common::Path &file_name, const qdInterfaceElementState *res_owner);
 	//! Возвращает true, если на ресурс есть ссылки.
 	bool has_references(const qdResource *p) const {
 		return _resources.is_registered(p);

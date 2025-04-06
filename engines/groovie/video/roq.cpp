@@ -321,7 +321,7 @@ void ROQPlayer::redrawRestoreArea(int screenOffset, bool force) {
 	_restoreArea->right = 0;
 }
 
-void writeImage(const Common::String filename, Graphics::Surface &surface) {
+void writeImage(const Common::String &filename, Graphics::Surface &surface) {
 	if (surface.h == 0 || surface.w == 0) {
 		return;
 	}
@@ -345,7 +345,7 @@ void writeImage(const Common::String filename, Graphics::Surface &surface) {
 #endif
 }
 
-void ROQPlayer::dumpAllSurfaces(const Common::String funcname) {
+void ROQPlayer::dumpAllSurfaces(const Common::String &funcname) {
 	TimeDate date;
 	int curMonth;
 	g_system->getTimeAndDate(date, true);
@@ -1039,7 +1039,7 @@ void ROQPlayer::createAudioStream(bool stereo) {
 	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, _audioStream);
 }
 
-void ROQPlayer::drawString(Graphics::Surface *surface, const Common::String text, int posx, int posy, uint32 color, bool blackBackground) {
+void ROQPlayer::drawString(Graphics::Surface *surface, const Common::String &text, int posx, int posy, uint32 color, bool blackBackground) {
 	// TODO: fix redraw
 #if 0
 	int screenOffset = 0;

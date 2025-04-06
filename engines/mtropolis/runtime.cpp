@@ -96,7 +96,7 @@ public:
 	void onMouseDown(int32 x, int32 y, int mouseButton) override;
 	void onMouseMove(int32 x, int32 y) override;
 	void onMouseUp(int32 x, int32 y, int mouseButton) override;
-	void onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) override;
+	void onKeyboardEvent(const Common::EventType &evtType, bool repeat, const Common::KeyState &keyEvt) override;
 	void onAction(MTropolis::Actions::Action action) override;
 
 private:
@@ -132,7 +132,7 @@ void MainWindow::onMouseUp(int32 x, int32 y, int mouseButton) {
 	}
 }
 
-void MainWindow::onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
+void MainWindow::onKeyboardEvent(const Common::EventType &evtType, bool repeat, const Common::KeyState &keyEvt) {
 	_runtime->queueOSEvent(Common::SharedPtr<OSEvent>(new KeyboardInputEvent(kOSEventTypeKeyboard, evtType, repeat, keyEvt)));
 }
 
@@ -6699,7 +6699,7 @@ void Runtime::onMouseUp(int32 x, int32 y, Actions::MouseButton mButton) {
 		_mouseFocusWindow.reset();
 }
 
-void Runtime::onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
+void Runtime::onKeyboardEvent(const Common::EventType &evtType, bool repeat, const Common::KeyState &keyEvt) {
 	Common::SharedPtr<Window> focusWindow = _keyFocusWindow.lock();
 	if (focusWindow)
 		focusWindow->onKeyboardEvent(evtType, repeat, keyEvt);

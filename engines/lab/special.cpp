@@ -438,7 +438,7 @@ void LabEngine::processMonitor(const Common::String &ntext, TextFont *monitorFon
 	}	// while
 }
 
-void LabEngine::doMonitor(const Common::String background, const Common::String textfile, bool isinteractive, Common::Rect textRect) {
+void LabEngine::doMonitor(const Common::String &background, const Common::String &textfile, bool isinteractive, Common::Rect textRect) {
 	Common::Rect scaledRect = _utils->vgaRectScale(textRect.left, textRect.top, textRect.right, textRect.bottom);
 	_monitorTextFilename = textfile;
 

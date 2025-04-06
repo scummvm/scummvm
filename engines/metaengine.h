@@ -632,7 +632,7 @@ public:
 	void upgradeTargetIfNecessary(const Common::String &target) const;
 
 	/** Generate valid, non-repeated domainName for game*/
-	Common::String generateUniqueDomain(const Common::String gameId);
+	Common::String generateUniqueDomain(const Common::String &gameId);
 
 private:
 	/** Find a game across all loaded plugins. */

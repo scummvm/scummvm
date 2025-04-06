@@ -65,7 +65,7 @@ public:
 	/**
 	 * Changes the background music to something else.
 	 */
-	void changeMusic(const Common::String filename, bool storeCurPos, bool seektoStoredPos);
+	void changeMusic(const Common::String &filename, bool storeCurPos, bool seektoStoredPos);
 
 	void resetMusic(bool seekToStoredPos);
 
@@ -85,7 +85,7 @@ public:
 	/**
 	 * Reads in a sound effect file.  Ignores any graphics.
 	 */
-	void loadSoundEffect(const Common::String filename, bool loop, bool waitTillFinished);
+	void loadSoundEffect(const Common::String &filename, bool loop, bool waitTillFinished);
 
 	void stopSoundEffect();
 };

@@ -55,7 +55,7 @@ void SavePoints::push(EntityIndex entity2, EntityIndex entity1, ActionIndex acti
 	_savepoints.push_back(point);
 }
 
-void SavePoints::push(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const Common::String param) {
+void SavePoints::push(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const Common::String &param) {
 	if (_savepoints.size() >= _savePointsMaxSize)
 		return;
 
@@ -155,7 +155,7 @@ void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex acti
 	}
 }
 
-void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const Common::String param) const {
+void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const Common::String &param) const {
 	SavePoint point;
 	point.entity1 = entity1;
 	point.action = action;

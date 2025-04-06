@@ -68,7 +68,7 @@ void Intro::introEatMessages() {
 	}
 }
 
-void Intro::doPictText(const Common::String filename, bool isScreen) {
+void Intro::doPictText(const Common::String &filename, bool isScreen) {
 	Common::String path = Common::String("Lab:rooms/Intro/") + filename;
 
 	uint timeDelay = (isScreen) ? 35 : 7;
@@ -191,7 +191,7 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 	}	// while(1)
 }
 
-void Intro::nReadPict(const Common::String filename, bool playOnce, bool noPalChange, bool doBlack, int wait) {
+void Intro::nReadPict(const Common::String &filename, bool playOnce, bool noPalChange, bool doBlack, int wait) {
 	Common::String finalFileName = Common::String("P:Intro/") + filename;
 
 	_vm->updateEvents();

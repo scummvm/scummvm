@@ -35,7 +35,7 @@ uint16 CustomSaveHelper::_saveEncoding = false;
 char CustomSaveHelper::_encode1 = 0;
 char CustomSaveHelper::_encode2 = 0;
 
-void CustomSaveHelper::writeStringEncoded(const Common::String checker, Common::WriteStream *stream) {
+void CustomSaveHelper::writeStringEncoded(const Common::String &checker, Common::WriteStream *stream) {
 	int len = checker.size();
 
 	stream->writeUint16BE(len);

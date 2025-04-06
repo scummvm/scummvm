@@ -124,7 +124,7 @@ WARN_UNUSED_RESULT bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeade
 	return true;
 }
 
-bool LabEngine::saveGame(int slot, const Common::String desc) {
+bool LabEngine::saveGame(int slot, const Common::String &desc) {
 	Common::String fileName = getSaveStateName(slot);
 	Common::SaveFileManager *saveFileManager = _system->getSavefileManager();
 	Common::OutSaveFile *file = saveFileManager->openForSaving(fileName);

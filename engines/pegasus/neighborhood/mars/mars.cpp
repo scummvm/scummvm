@@ -4207,7 +4207,7 @@ void Mars::decreaseRobotShuttleEnergy(const int delta, Common::Point impactPoint
 	}
 }
 
-void Mars::updateCursor(const Common::Point cursorLocation, const Hotspot *cursorSpot) {
+void Mars::updateCursor(const Common::Point &cursorLocation, const Hotspot *cursorSpot) {
 	if (cursorSpot && cursorSpot->getObjectID() == kShuttleViewSpotID) {
 		if (_weaponSelection != kNoWeapon)
 			_vm->_cursor->setCurrentFrameIndex(6);

@@ -491,7 +491,7 @@ const Graphics::ManagedSurface *GridWidget::platformToSurface(Common::Platform p
 	return _platformIcons[platformCode];
 }
 
-const Graphics::ManagedSurface *GridWidget::demoToSurface(const Common::String extraString, Graphics::AlphaType &alphaType) {
+const Graphics::ManagedSurface *GridWidget::demoToSurface(const Common::String &extraString, Graphics::AlphaType &alphaType) {
 	if (! extraString.contains("Demo") )
 		return nullptr;
 	alphaType = _extraIconsAlpha[0];

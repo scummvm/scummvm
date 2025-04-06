@@ -52,7 +52,7 @@ public:
 		return QD_NAMED_OBJECT_MUSIC_TRACK;
 	}
 
-	void set_file_name(const Common::Path fname) {
+	void set_file_name(const Common::Path &fname) {
 		_file_name = fname;
 	}
 	const Common::Path file_name() const {

@@ -96,7 +96,7 @@ public:
 	~CommandButton() {}
 
 	void draw(Graphics::ManagedSurface &surface) const;
-	bool isInsideBounds(const Common::Point point) const;
+	bool isInsideBounds(const Common::Point &point) const;
 	const ControlData &getData() const;
 	void select();
 	void unselect();

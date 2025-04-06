@@ -43,19 +43,19 @@ public:
 	virtual ~qdResourceContainer();
 
 	//! Добавляет ресурс из файла file_name и возвращает указатель на него.
-	qdResource *add_resource(const Common::Path file_name, const T *owner);
+	qdResource *add_resource(const Common::Path &file_name, const T *owner);
 
 	//! Удаляет ресурс, если он нужен только для объекта owner.
 	/**
 	Если на данный ресурс есть еще ссылки, то он не будет удален.
 	*/
-	bool remove_resource(const Common::Path file_name, const T *owner);
+	bool remove_resource(const Common::Path &file_name, const T *owner);
 
 	//! Возвращает указатель на ресурс, соответствующий файлу с именем file_name.
 	/**
 	Если такой ресурс не найден, возвращает NULL.
 	*/
-	qdResource *get_resource(const Common::Path file_name) const;
+	qdResource *get_resource(const Common::Path &file_name) const;
 
 	typedef Std::list<qdResource *> resource_list_t;
 	//! Возвращает список ресурсов.
@@ -88,7 +88,7 @@ qdResourceContainer<T>::~qdResourceContainer() {
 }
 
 template<class T>
-qdResource *qdResourceContainer<T>::add_resource(const Common::Path file_name, const T *owner) {
+qdResource *qdResourceContainer<T>::add_resource(const Common::Path &file_name, const T *owner) {
 	typename resource_map_t::iterator it = _resource_map.find(file_name.toString());
 	if (it != _resource_map.end()) {
 		_resource_dispatcher.register_resource(it->_value, owner);
@@ -129,7 +129,7 @@ qdResource *qdResourceContainer<T>::add_resource(const Common::Path file_name, c
 }
 
 template<class T>
-bool qdResourceContainer<T>::remove_resource(const Common::Path file_name, const T *owner) {
+bool qdResourceContainer<T>::remove_resource(const Common::Path &file_name, const T *owner) {
 	typename resource_map_t::iterator it = _resource_map.find(file_name.toString());
 
 	if (it == _resource_map.end()) return false;
@@ -153,7 +153,7 @@ bool qdResourceContainer<T>::remove_resource(const Common::Path file_name, const
 }
 
 template<class T>
-qdResource *qdResourceContainer<T>::get_resource(const Common::Path file_name) const {
+qdResource *qdResourceContainer<T>::get_resource(const Common::Path &file_name) const {
 	if (file_name.empty()) return NULL;
 
 	typename resource_map_t::const_iterator it = _resource_map.find(file_name.toString());

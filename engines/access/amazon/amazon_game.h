@@ -117,7 +117,7 @@ public:
 	*/
 	void freeInactivePlayer();
 
-	void drawHelp(const Common::String str);
+	void drawHelp(const Common::String &str);
 
 	void establish(int esatabIndex, int sub) override;
 

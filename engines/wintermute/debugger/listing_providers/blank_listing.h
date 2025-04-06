@@ -29,7 +29,7 @@ namespace Wintermute {
 class BlankListing : public Listing {
 	const Common::String _filename;
 public:
-	BlankListing(const Common::Path filename);
+	BlankListing(const Common::Path &filename);
 	~BlankListing() override;
 	uint getLength() const override;
 	Common::String getLine(uint n) override;

@@ -32,7 +32,7 @@ using namespace std;
 
 VGMItem::VGMItem() : _dwOffset(0), _unLength(0), _vgmfile(nullptr) {}
 
-VGMItem::VGMItem(VGMFile *thevgmfile, uint32 theOffset, uint32 theLength, const Common::String theName)
+VGMItem::VGMItem(VGMFile *thevgmfile, uint32 theOffset, uint32 theLength, const Common::String &theName)
 		: _vgmfile(thevgmfile),
 		  _name(theName),
 		  _dwOffset(theOffset),
@@ -66,7 +66,7 @@ VGMContainerItem::VGMContainerItem() : VGMItem() {
 }
 
 VGMContainerItem::VGMContainerItem(VGMFile *thevgmfile, uint32 theOffset, uint32 theLength,
-								   const Common::String theName)
+								   const Common::String &theName)
 		: VGMItem(thevgmfile, theOffset, theLength, theName) {
 	AddContainer(_headers);
 	AddContainer(_localitems);
