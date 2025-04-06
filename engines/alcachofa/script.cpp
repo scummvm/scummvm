@@ -691,8 +691,11 @@ private:
 			Character *_character = strcmp(characterName, "AMBOS") == 0
 				? &relatedCharacter()
 				: getObjectArg<Character>(0);
-			if (_character == nullptr)
+			if (_character == nullptr) {
+				if (strcmp(characterName, "OFELIA") == 0 && dialogId == 3737)
+					return TaskReturn::finish(1);
 				error("Invalid character for sayText: %s", characterName);
+			}
 			return TaskReturn::waitFor(_character->sayText(process(), dialogId));
 		};
 		case ScriptKernelTask::SetDialogLineReturn:
