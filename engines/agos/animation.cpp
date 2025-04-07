@@ -102,7 +102,7 @@ void MoviePlayer::handleNextFrame() {
 	Common::EventManager *eventMan = _vm->_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_CUSTOM_BACKEND_ACTION_START:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			if (event.customType == kActionExitCutscene) {
 				_leftButtonDown = true;
 				_rightButtonDown = true;
