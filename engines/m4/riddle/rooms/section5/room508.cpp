@@ -469,7 +469,7 @@ void Room508::parser() {
 		case 2:
 			if (inv_player_has("CRYSTAL SKULL")) {
 				digi_play("508R05A", 1);
-			} else if (inv_object_is_here("CRYSTALL SKULL")) {
+			} else if (inv_object_is_here("CRYSTAL SKULL")) {
 				digi_play("508R05B", 1);
 			} else {
 				digi_play("508R05", 1);
