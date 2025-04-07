@@ -70,11 +70,6 @@ static inline void *alignToBuffer(void *buffer) {
 
 } // End of namespace ADDynamicDescription
 
-class ADUtils {
-	public:
-		static Common::String sanitizeName(const char *name, int maxLen);
-};
-
 /**
  * A record describing a file to be matched for detecting a specific game
  * variant. A list of such records is used inside every ADGameDescription to
@@ -249,6 +244,11 @@ struct ADGameDescription {
 		buffer = ADDynamicDescription::strToBuffer(buffer, guiOptions);
 		return buffer;
 	}
+
+	/**
+	 * Sanitizes a string to be usable by gameId
+	 */
+	static Common::String sanitizeName(const char *name, int maxLen);
 };
 
 /**

@@ -80,7 +80,7 @@ private:
 	const AdvancedMetaEngineDetectionBase::FileMap &_fileMap;
 };
 
-Common::String ADUtils::sanitizeName(const char *name, int maxLen) {
+Common::String ADGameDescription::sanitizeName(const char *name, int maxLen) {
 	Common::String res;
 	Common::String word;
 	Common::String lastWord;
@@ -133,7 +133,7 @@ static Common::String generatePreferredTarget(const ADGameDescription *desc, int
 	if (!targetID.empty()) {
 		res = targetID;
 	} else if (desc->flags & ADGF_AUTOGENTARGET && desc->extra && *desc->extra) {
-		res = ADUtils::sanitizeName(desc->extra, maxLen);
+		res = ADGameDescription::sanitizeName(desc->extra, maxLen);
 	} else {
 		res = desc->gameId;
 	}

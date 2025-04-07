@@ -290,7 +290,7 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 						*extraInfo = new ADDetectedGameExtraInfo;
 						(*extraInfo)->gameName = fileDescription;
 
-					sanitized = ADUtils::sanitizeName(fileDescription.c_str(), fileDescription.size());
+					sanitized = ADGameDescription::sanitizeName(fileDescription.c_str(), fileDescription.size());
 					desc->desc.gameId = sanitized.c_str();
 					}
 				}
