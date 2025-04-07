@@ -471,6 +471,16 @@ void AGOSEngine::delay(uint amount) {
 				_action = (AGOSAction)event.customType;
 				if (event.customType == kActionToggleFastMode) {
 					_fastMode = !_fastMode;
+				} else if (event.customType == kActionToggleFightMode && getGameId() == GID_WAXWORKS) {
+					HitArea *fightButton = findBox(117);
+
+					if (fightButton && !(fightButton->flags & kBFBoxDead)) {
+						_needHitAreaRecalc++;
+						_lastHitArea = fightButton;
+
+						// Switch between normal cursor (0) and fighting mode (3)
+						_mouseCursor = (_mouseCursor == 3) ? 0 : 3;
+					}
 				}
 				break;
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_END:

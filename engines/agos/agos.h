@@ -94,6 +94,7 @@ enum AGOSAction {
 	kActionToggleHitboxName,
 	kActionToggleSoundEffects,
 	kActionToggleBackgroundSound,
+	kActionToggleFightMode,
 	kActionShowObjects,
 	kActionTextSpeedFast,
 	kActionTextSpeedMedium,

@@ -310,6 +310,14 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("RIGHT");
 		act->addDefaultInputMapping("JOY_RIGHT");
 		gameKeyMap->addAction(act);
+
+		if (gameId == "waxworks") {
+			act = new Action("TOGGLEFIGHTMODE", _("Toggle fight mode")); // KEYCODE_F
+			act->setCustomEngineActionEvent(kActionToggleFightMode);
+			act->addDefaultInputMapping("f");
+			act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+			gameKeyMap->addAction(act);
+		}
 	}
 
 	if (gameId == "simon1" || gameId == "simon2") {
