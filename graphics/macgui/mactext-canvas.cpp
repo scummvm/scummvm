@@ -84,9 +84,7 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 	chunk->getFont()->wordWrapText(str, maxWidth, text, lineContinuations, w);
 
 	for (int i = 0; i < (int)text.size(); i++) {
-
 		D(9, "Line Continuations [%d] : %d", i, lineContinuations[i]);
-
 	}
 
 	if (text.empty()) {
@@ -102,18 +100,14 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 	}
 
 	for (int i = 0; i < (int)text.size(); i++) {
-
 		D(9, "** chopChunk result %d \"%s\"", i, toPrintable(text[i].encode()).c_str());
-
 	}
 
 	chunk->text += text[0];
 
 	//Ensure line continuations is valid before accesing index 0
 	if (!lineContinuations.empty()) {
-
 		_text[curLine].wordContinuation = lineContinuations[0];
-
 	}
 
 	// Recalc dims
@@ -127,7 +121,6 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 
 	// Now add rest of the chunks
 	MacFontRun newchunk = *chunk;
-	
 	for (uint i = 1; i < text.size(); i++) {
 		newchunk.text = text[i];
 
@@ -760,7 +753,6 @@ int getStringMaxWordWidth(MacFontRun &format, const Common::U32String &str) {
 	if (str.empty()) 
 		return 0;
 	
-
 	if (format.plainByteMode()) {
 		Common::StringTokenizer tok(Common::convertFromU32String(str, format.getEncoding()));
 		int maxW = 0;
