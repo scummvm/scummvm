@@ -133,6 +133,8 @@ public:
 
 	Common::Error run() override;
 
+	Common::Language getLanguage() const;
+
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
@@ -219,6 +221,9 @@ public:
 	void updateSoundTimerForScene(Scene *scene, bool firstTime);
 	void setMenu(Common::String soundName);
 	void appendText(const char *str);
+	void sayText(const Common::String str);
+	void sayText(const Common::String str, Common::TextToSpeechManager::Action action);
+	void stopTextSpeech();
 	void gameOver();
 	bool saveDialog();
 	void aboutDialog();

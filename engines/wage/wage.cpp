@@ -50,9 +50,11 @@
 #include "common/events.h"
 #include "common/punycode.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
 
 #include "engines/engine.h"
 #include "engines/util.h"
+#include "engines/advancedDetector.h"
 
 #include "graphics/macgui/macdialog.h"
 
@@ -116,6 +118,12 @@ Common::Error WageEngine::run() {
 	} else if (getFeatures() & GF_RES1024) {
 		width = 1024;
 		height = 768;
+	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan) {
+		ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
 	}
 
 	initGraphics(width, height);
@@ -268,8 +276,25 @@ void WageEngine::appendText(const char *str) {
 	s += '\n';
 
 	_gui->appendText(s.c_str());
-
+	sayText(str, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+	
 	_inputText.clear();
+}
+
+void WageEngine::sayText(const Common::String str) {
+	sayText(str, Common::TextToSpeechManager::INTERRUPT_NO_REPEAT);
+}
+
+void WageEngine::sayText(const Common::String str, Common::TextToSpeechManager::Action action) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled"))
+		ttsMan->say(str, action);
+}
+
+void WageEngine::stopTextSpeech() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking())
+		ttsMan->stop();
 }
 
 void WageEngine::gameOver() {
@@ -535,6 +560,7 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 		_temporarilyHidden = true;
 		_gui->clearOutput();
 		_gui->_consoleWindow->setTextWindowFont(_world->_player->_currentScene->getFont());
+		stopTextSpeech();
 		regen();
 		Common::String input("look");
 		processTurnInternal(&input, NULL);
@@ -605,5 +631,8 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 	_inputText.clear();
 }
 
+Common::Language WageEngine::getLanguage() const {
+	return _gameDescription->language;
+}
 
 } // End of namespace Wage
