@@ -320,7 +320,7 @@ Archive *DirectorEngine::loadEXE(const Common::Path &movie) {
 				debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): Loading Game <%s>", gameName.c_str());
 			}
 
-			debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): File Version Info: %s", versionInfo.c_str());
+			debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): Executable version: %s", versionInfo.c_str());
 
 			for (Common::WinResources::VersionHash::const_iterator it = info->hash.begin(); it != info->hash.end(); ++it)
 				debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): info <%s>: <%s>", it->_key.c_str(), it->_value.encode().c_str());
