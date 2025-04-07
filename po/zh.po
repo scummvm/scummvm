@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-06 11:05+0000\n"
+"POT-Creation-Date: 2025-04-07 11:16+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -5880,59 +5880,65 @@ msgstr ""
 msgid "Turn right"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:316
+#: engines/agos/metaengine.cpp:315
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Toggle fight mode"
+msgstr "特殊音效音量"
+
+#: engines/agos/metaengine.cpp:324
 msgid "Text speed - Fast"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:321
+#: engines/agos/metaengine.cpp:329
 msgid "Text speed - Medium"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:326
+#: engines/agos/metaengine.cpp:334
 msgid "Text speed - Slow"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:331
+#: engines/agos/metaengine.cpp:339
 msgid "Show objects to interact"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:338
+#: engines/agos/metaengine.cpp:346
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Toggle background sounds on/off"
 msgstr "特殊音效音量"
 
 #. I18N: Characters are game actors
-#: engines/agos/metaengine.cpp:347
+#: engines/agos/metaengine.cpp:355
 #, fuzzy
 #| msgid "Switch to Sarah"
 msgid "Switch characters"
 msgstr "切換至Sarah"
 
-#: engines/agos/metaengine.cpp:353
+#: engines/agos/metaengine.cpp:361
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Toggle hitbox names on/off"
 msgstr "特殊音效音量"
 
-#: engines/agos/metaengine.cpp:360
+#: engines/agos/metaengine.cpp:368
 msgid "Switches between speech only and combined speech and subtitles"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:366
+#: engines/agos/metaengine.cpp:374
 msgid "Switches between subtitles only and combined speech and subtitles"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:376
+#: engines/agos/metaengine.cpp:384
 msgid "High speed mode on/off in Swampy Adventures"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
+#: engines/agos/metaengine.cpp:390 engines/lure/metaengine.cpp:295
 #: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
+#: engines/agos/metaengine.cpp:395 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
 msgstr ""
 

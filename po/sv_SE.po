@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-06 11:05+0000\n"
+"POT-Creation-Date: 2025-04-07 11:16+0000\n"
 "PO-Revision-Date: 2025-04-03 08:51+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -6470,53 +6470,59 @@ msgstr "Sväng vänster"
 msgid "Turn right"
 msgstr "Sväng höger"
 
-#: engines/agos/metaengine.cpp:316
+#: engines/agos/metaengine.cpp:315
+#, fuzzy
+#| msgid "Toggle fast mode"
+msgid "Toggle fight mode"
+msgstr "Växla snabbläge"
+
+#: engines/agos/metaengine.cpp:324
 msgid "Text speed - Fast"
 msgstr "Texthastighet - Snabb"
 
-#: engines/agos/metaengine.cpp:321
+#: engines/agos/metaengine.cpp:329
 msgid "Text speed - Medium"
 msgstr "Texthastighet - Medel"
 
-#: engines/agos/metaengine.cpp:326
+#: engines/agos/metaengine.cpp:334
 msgid "Text speed - Slow"
 msgstr "Texthastighet - Långsam"
 
-#: engines/agos/metaengine.cpp:331
+#: engines/agos/metaengine.cpp:339
 msgid "Show objects to interact"
 msgstr "Visa objekt för att interagera"
 
-#: engines/agos/metaengine.cpp:338
+#: engines/agos/metaengine.cpp:346
 msgid "Toggle background sounds on/off"
 msgstr "Växla bakgrundsljud på/av"
 
 #. I18N: Characters are game actors
-#: engines/agos/metaengine.cpp:347
+#: engines/agos/metaengine.cpp:355
 msgid "Switch characters"
 msgstr "Växla karaktärer"
 
-#: engines/agos/metaengine.cpp:353
+#: engines/agos/metaengine.cpp:361
 msgid "Toggle hitbox names on/off"
 msgstr "Växla hitbox-namn på/av"
 
-#: engines/agos/metaengine.cpp:360
+#: engines/agos/metaengine.cpp:368
 msgid "Switches between speech only and combined speech and subtitles"
 msgstr "Växlar mellan endast tal och kombinerat tal och undertexter"
 
-#: engines/agos/metaengine.cpp:366
+#: engines/agos/metaengine.cpp:374
 msgid "Switches between subtitles only and combined speech and subtitles"
 msgstr "Växlar mellan endast undertexter och kombinerat tal och undertexter"
 
-#: engines/agos/metaengine.cpp:376
+#: engines/agos/metaengine.cpp:384
 msgid "High speed mode on/off in Swampy Adventures"
 msgstr "Högt hastighetsläge på/av i Swampy Adventures"
 
-#: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
+#: engines/agos/metaengine.cpp:390 engines/lure/metaengine.cpp:295
 #: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
 msgstr "Tryck på \"Ja\"-tangenten"
 
-#: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
+#: engines/agos/metaengine.cpp:395 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
 msgstr "Tryck på \"Nej\"-tangenten"
 

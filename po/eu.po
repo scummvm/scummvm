@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-06 11:05+0000\n"
+"POT-Creation-Date: 2025-04-07 11:16+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -6266,64 +6266,69 @@ msgstr "Ezkerrera biratu"
 msgid "Turn right"
 msgstr "Eskuinera biratu"
 
-#: engines/agos/metaengine.cpp:316
+#: engines/agos/metaengine.cpp:315
+#, fuzzy
+msgid "Toggle fight mode"
+msgstr "Modu bizkorra"
+
+#: engines/agos/metaengine.cpp:324
 #, fuzzy
 #| msgid "Text speed slower / faster"
 msgid "Text speed - Fast"
 msgstr "Testu-abiadura astiroago / bizkorrago"
 
-#: engines/agos/metaengine.cpp:321
+#: engines/agos/metaengine.cpp:329
 msgid "Text speed - Medium"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:326
+#: engines/agos/metaengine.cpp:334
 #, fuzzy
 #| msgid "Text speed slower / faster"
 msgid "Text speed - Slow"
 msgstr "Testu-abiadura astiroago / bizkorrago"
 
-#: engines/agos/metaengine.cpp:331
+#: engines/agos/metaengine.cpp:339
 #, fuzzy
 msgid "Show objects to interact"
 msgstr "Erakutsi objektuen etiketak"
 
-#: engines/agos/metaengine.cpp:338
+#: engines/agos/metaengine.cpp:346
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Toggle background sounds on/off"
 msgstr "Soinu efektu berezien bolumena"
 
 #. I18N: Characters are game actors
-#: engines/agos/metaengine.cpp:347
+#: engines/agos/metaengine.cpp:355
 #, fuzzy
 #| msgid "Switching characters:"
 msgid "Switch characters"
 msgstr "Pertsonaia aldatu:"
 
-#: engines/agos/metaengine.cpp:353
+#: engines/agos/metaengine.cpp:361
 #, fuzzy
 #| msgid "Toggle fullscreen"
 msgid "Toggle hitbox names on/off"
 msgstr "Txandakatu pantaila osoa"
 
-#: engines/agos/metaengine.cpp:360
+#: engines/agos/metaengine.cpp:368
 msgid "Switches between speech only and combined speech and subtitles"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:366
+#: engines/agos/metaengine.cpp:374
 msgid "Switches between subtitles only and combined speech and subtitles"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:376
+#: engines/agos/metaengine.cpp:384
 msgid "High speed mode on/off in Swampy Adventures"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
+#: engines/agos/metaengine.cpp:390 engines/lure/metaengine.cpp:295
 #: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
+#: engines/agos/metaengine.cpp:395 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
 msgstr ""
 
