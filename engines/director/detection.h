@@ -23,7 +23,6 @@
 #define DIRECTOR_DETECTION_H
 
 #include "engines/advancedDetector.h"
-#include "common/debug.h"
 
 namespace Director {
 
@@ -40,21 +39,6 @@ struct DirectorGameDescription {
 
 	DirectorGameGID gameGID;
 	uint16 version;
-};
-
-
-class FallbackBlacklist {
-	public:
-		typedef Common::Array<Common::String> BlacklistedNamesArray;
-		static bool contains(const Common::String &key) {
-			BlacklistedNamesArray names = {"Macromedia Projector", "Projector Skeleton"};
-			for (BlacklistedNamesArray::const_iterator i = names.begin(); i != names.end(); ++i) {
-				if (key.equalsIgnoreCase(*i)) {
-					return true;
-				}
-			}
-			return false;
-		}
 };
 
 extern const char *const directoryGlobs[];

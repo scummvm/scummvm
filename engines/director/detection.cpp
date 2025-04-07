@@ -285,7 +285,7 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 			Common::WinResources::VersionInfo *versionInfo = exe->getVersionResource(1);
 			if (versionInfo) {
 				Common::String fileDescription = versionInfo->hash["FileDescription"].encode();
-				if (!Director::FallbackBlacklist::contains(fileDescription)) {
+				if (!_fallback_blacklisted_names.contains(fileDescription)) {
 					if (extraInfo != nullptr) {
 						*extraInfo = new ADDetectedGameExtraInfo;
 						(*extraInfo)->gameName = fileDescription;

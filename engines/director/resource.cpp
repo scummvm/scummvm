@@ -316,10 +316,7 @@ Archive *DirectorEngine::loadEXE(const Common::Path &movie) {
 			Common::String gameName = info->hash["FileDescription"];
 			Common::String versionInfo = Common::String::format("v%d.%d.%dr%d", info->fileVersion[0], info->fileVersion[1], info->fileVersion[2], info->fileVersion[3]);
 
-			if (!Director::FallbackBlacklist::contains(gameName)) {
-				debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): Loading Game <%s>", gameName.c_str());
-			}
-
+			debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): Loading Game <%s>", gameName.c_str());
 			debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): Executable version: %s", versionInfo.c_str());
 
 			for (Common::WinResources::VersionHash::const_iterator it = info->hash.begin(); it != info->hash.end(); ++it)
