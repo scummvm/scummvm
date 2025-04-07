@@ -454,8 +454,13 @@ void SCDRenderer::renderToPage(int destPageNum, int renderBlockX, int renderBloc
 	if (renderBlockHeight == -1)
 		renderBlockHeight = _blocksH;
 
-	_screen->addDirtyRect(renderBlockX << 3, renderBlockY << 3, ((renderBlockX + renderBlockWidth) << 3) - 1, ((renderBlockY + renderBlockHeight) << 3) - 1);
-	Graphics::SegaRenderer::render(_screen->getPagePtr(destPageNum), renderBlockX, renderBlockY, renderBlockWidth, renderBlockHeight, spritesOnly);
+	if (spritesOnly) {
+		renderSprites(_screen->getPagePtr(destPageNum), nullptr);
+	} else {
+		if (destPageNum == 0)
+			_screen->addDirtyRect(renderBlockX << 3, renderBlockY << 3, renderBlockWidth << 3, renderBlockHeight << 3);
+		render(_screen->getPagePtr(destPageNum), renderBlockX << 3, renderBlockY << 3, renderBlockWidth << 3, renderBlockHeight << 3);
+	}
 }
 
 SegaAnimator::SegaAnimator(SCDRenderer *renderer) : _renderer(renderer), _needUpdate(false) {

@@ -20,50 +20,28 @@
 */
 
 
+#include "graphics/pixelformat.h"
 #include "graphics/segagfx.h"
 #include "graphics/surface.h"
 #include "common/rect.h"
 
 namespace Graphics {
 
-#if SEGA_PERFORMANCE
-#define mRenderLineFragment(hFlip, oddStart, oddEnd, useMask, dst, mask, src, start, end, pal) \
-{ \
-	int rlfOffs = 0; \
-	if (hFlip) \
-		rlfOffs |= 4; \
-	if (oddStart) \
-		rlfOffs |= 2; \
-	if (oddEnd) \
-		rlfOffs |= 1; \
-	if (useMask) \
-		(this->*_renderLineFragmentM[rlfOffs])(dst, mask, src, start, end, pal); \
-	else \
-		(this->*_renderLineFragmentD[rlfOffs])(dst, src, start, end, pal); \
-}
-#else
-#define mRenderLineFragment(hFlip, oddStart, oddEnd, useMask, dst, mask, src, start, end, pal) \
-{ \
-	if (hFlip) \
-		renderLineFragment<true>(dst, mask, src, start, end, pal); \
-	else \
-		renderLineFragment<false>(dst, mask, src, start, end, pal); \
-}
-#endif
+SegaRenderer::SegaRenderer(const PixelFormat *systemPixelFormat) : _pixelFormat(systemPixelFormat ? *systemPixelFormat : PixelFormat::createFormatCLUT8()),	_pitch(64), _hScrollMode(0),
+	_hScrollTable(0), _vScrollMode(0), _spriteTable(0), _numSpritesMax(0), _spriteMask(0), _spriteMaskPrio(0), _backgroundColor(0), _planes{SegaPlane(), SegaPlane(), SegaPlane()},
+	_vram(nullptr), _vsram(nullptr), _tempBufferSprites(nullptr), _tempBufferSpritesPrio(nullptr), _tempBufferPlanes(nullptr), _tempBufferPlanesPrio(nullptr), _renderColorTable(nullptr),
+	_rr(kUnspecified), _renderLineFragmentD(0), _renderLineFragmentM(0), _hINTEnable(false), _hINTCounter(0), _hINTCounterNext(0), _hINTHandler(nullptr), _destPitch(0), _displayEnabled(true) {
 
-SegaRenderer::SegaRenderer() : _prioChainStart(0), _prioChainEnd(0), _pitch(64), _hScrollMode(0), _hScrollTable(0), _vScrollMode(0), _spriteTable(0), _numSpritesMax(0), _spriteMask(0), _backgroundColor(0)
-#if SEGA_PERFORMANCE
-, _renderLineFragmentD(0), _renderLineFragmentM(0)
-#endif
-{
-	_vram = new uint8[0x10000];
+	_vram = new uint8[0x10000]();
 	assert(_vram);
-	memset(_vram, 0, 0x10000 * sizeof(uint8));
-	_vsram = new uint16[40];
+	_vsram = new uint16[40]();
 	assert(_vsram);
-	memset(_vsram, 0, 40 * sizeof(uint16));
 
-#if SEGA_PERFORMANCE
+	if (_pixelFormat.bytesPerPixel > 1) {
+		_renderColorTable = new uint32[0x100]();
+		assert(_renderColorTable);
+	}
+
 	static const SegaRenderer::renderFuncD funcD[8] = {
 		&SegaRenderer::renderLineFragmentD<false, false, false>,
 		&SegaRenderer::renderLineFragmentD<false, false, true>,
@@ -88,7 +66,6 @@ SegaRenderer::SegaRenderer() : _prioChainStart(0), _prioChainEnd(0), _pitch(64),
 
 	_renderLineFragmentD = funcD;
 	_renderLineFragmentM = funcM;
-#endif
 
 	setResolution(320, 224);
 }
@@ -97,6 +74,11 @@ SegaRenderer::~SegaRenderer() {
 	delete[] _vram;
 	delete[] _vsram;
 	delete[] _spriteMask;
+	delete[] _spriteMaskPrio;
+	delete[] _tempBufferSprites;
+	delete[] _tempBufferSpritesPrio;
+	delete[] _tempBufferPlanes;
+	delete[] _tempBufferPlanesPrio;
 }
 
 void SegaRenderer::setResolution(int w, int h) {
@@ -105,14 +87,32 @@ void SegaRenderer::setResolution(int w, int h) {
 
 	_screenW = w;
 	_screenH = h;
+	_destPitch = w * _pixelFormat.bytesPerPixel;
 	_blocksW = w >> 3;
 	_blocksH = h >> 3;
 	_numSpritesMax = w >> 2;
 
+	delete[] _tempBufferSprites;
+	delete[] _tempBufferSpritesPrio;
+	delete[] _tempBufferPlanes;
+	delete[] _tempBufferPlanesPrio;
 	delete[] _spriteMask;
-	_spriteMask = new uint8[w * h];
+	delete[] _spriteMaskPrio;
+
+	if (_pixelFormat.bytesPerPixel > 1) {
+		_tempBufferPlanes = new uint8[_screenW * _screenH]();
+		assert(_tempBufferPlanes);
+	}
+	_tempBufferSprites = new uint8[_screenW * _screenH]();
+	assert(_tempBufferSprites);
+	_tempBufferSpritesPrio = new uint8[_screenW * _screenH]();
+	assert(_tempBufferSpritesPrio);
+	_tempBufferPlanesPrio = new uint8[_screenW]();
+	assert(_tempBufferPlanesPrio);
+	_spriteMask = new uint8[_screenW * _screenH]();
 	assert(_spriteMask);
-	memset(_spriteMask, 0, w * h * sizeof(uint8));
+	_spriteMaskPrio = new uint8[_screenW * _screenH]();
+	assert(_spriteMaskPrio);
 }
 
 void SegaRenderer::setPlaneTableLocation(int plane, uint16 addr) {
@@ -129,17 +129,20 @@ void SegaRenderer::setupPlaneAB(int pixelWidth, int pixelHeigth) {
 		_planes[i].mod = _planes[i].h;
 		_planes[i].nameTableSize = _planes[i].w * _planes[i].h;
 	}
+	_pitch = pixelWidth >> 3;
 }
 
-void SegaRenderer::setupWindowPlane(int blockX, int blockY, int horizontalMode, int verticalMode) {
-	if (blockX != -1)
-		_planes[kWindowPlane].blockX = horizontalMode ? blockX : 0;
-	if (blockY != -1)
-		_planes[kWindowPlane].blockY = verticalMode ? blockY : 0;
-	_planes[kWindowPlane].w = horizontalMode ? _blocksW - blockX : blockX;
-	_planes[kWindowPlane].h = verticalMode ? _blocksH - blockY : blockY;
-	_planes[kWindowPlane].mod = _planes[kWindowPlane].blockY + _planes[kWindowPlane].h;
-	_planes[kWindowPlane].nameTableSize = _planes[kWindowPlane].w * _planes[kWindowPlane].h;
+void SegaRenderer::setupWindowPlane(int baseX, int baseY, int horizontalMode, int verticalMode) {
+	if (baseX != -1) {
+		baseX <<= 1; // The column unit size is 2 tiles (16 pixels)
+		_planes[kWindowPlane].blockX = horizontalMode ? baseX : 0;
+	}
+	if (baseY != -1) // The line unit size is 1 tile (8 pixels)
+		_planes[kWindowPlane].blockY = verticalMode ? baseY : 0;
+	_planes[kWindowPlane].w = horizontalMode ? _blocksW - baseX : baseX;
+	_planes[kWindowPlane].h = verticalMode ? _blocksH - baseY : baseY;
+	_planes[kWindowPlane].mod = _blocksH;
+	_planes[kWindowPlane].nameTableSize = (_planes[kWindowPlane].w || _planes[kWindowPlane].h) ? _blocksH * _pitch : 0;
 }
 
 void SegaRenderer::setHScrollTableLocation(int addr) {
@@ -152,16 +155,16 @@ void SegaRenderer::setSpriteTableLocation(int addr) {
 	_spriteTable = (uint16*)(&_vram[addr]);
 }
 
-void SegaRenderer::setPitch(int pitch) {
-	_pitch = pitch;
-}
-
 void SegaRenderer::setHScrollMode(int mode) {
 	_hScrollMode = mode;
 }
 
 void SegaRenderer::setVScrollMode(int mode) {
 	_vScrollMode = mode;
+}
+
+void SegaRenderer::enableDisplay(bool enable) {
+	_displayEnabled = enable;
 }
 
 void SegaRenderer::loadToVRAM(const void *data, uint16 len, uint16 addr) {
@@ -198,59 +201,172 @@ void SegaRenderer::clearPlanes() {
 	}
 }
 
-void SegaRenderer::render(Surface *surf, int renderBlockX, int renderBlockY, int renderBlockWidth, int renderBlockHeight, bool spritesOnly) {
-	if ((_screenW != surf->w) || (_screenH != surf->h))
-		error("SegaRenderer::render(): Render target surface needs to be have the same width and height as passed to SegaRenderer::setResolution().");
+void SegaRenderer::render(void *dst, int x, int y, int w, int h) {
+	if (x == -1)
+		x = 0;
+	if (y == -1)
+		y = 0;
+	if (w == -1)
+		w = _screenW;
+	if (h == -1)
+		h = _screenH;
 
-	if (surf->format.bpp() > 1)
-		error("SegaRenderer::render(): Unsupported color mode in render target surface.");
+	_rr = kUnspecified;
+	int y2 = y + h;
 
-	render((uint8*)surf->getPixels(), renderBlockX, renderBlockY, renderBlockWidth, renderBlockHeight, spritesOnly);
-}
+	assert(dst);
+	assert(x >= 0 && x + w <= _screenW);
+	assert(w > 0);
+	assert(y >= 0 && y2 <= _screenH);
+	assert(h > 0);
 
-void SegaRenderer::render(uint8 *dest, int renderBlockX, int renderBlockY, int renderBlockWidth, int renderBlockHeight, bool spritesOnly) {
-	if (renderBlockX == -1)
-		renderBlockX = 0;
-	if (renderBlockY == -1)
-		renderBlockY = 0;
-	if (renderBlockWidth == -1)
-		renderBlockWidth = _blocksW;
-	if (renderBlockHeight == -1)
-		renderBlockHeight = _blocksH;
+	memset(_tempBufferSprites, _backgroundColor, _screenW * _screenH);
+	memset(_tempBufferSpritesPrio, _backgroundColor, _screenW * _screenH);
+	renderSprites(_tempBufferSprites, _tempBufferSpritesPrio, x, y, w, h);
 
-	assert(dest);
-	uint8 *renderBuffer = dest;
+	MergeLinesProc ml = getLineHandler();
 
-	fillBackground(dest, renderBlockX, renderBlockY, renderBlockWidth, renderBlockHeight);
+	uint8 *rd1 = _pixelFormat.bytesPerPixel == 1 ? reinterpret_cast<uint8*>(dst) : _tempBufferPlanes;
+	uint8 *rd2 = _tempBufferSprites;
+	uint8 *rd3 = _tempBufferSpritesPrio;
 
-	// Plane B
-	if (!spritesOnly)
-		renderPlanePart(kPlaneB, renderBuffer, renderBlockX, renderBlockY, renderBlockX + renderBlockWidth, renderBlockY + renderBlockHeight);
+	int16 wY1 = _planes[kWindowPlane].blockY << 3;
+	int16 wY2 = wY1 + (_planes[kWindowPlane].h << 3);
+	int16 wX1 = _planes[kWindowPlane].blockX << 3;
+	int16 wX2 = wX1 + (_planes[kWindowPlane].w << 3);
 
-	// Plane A (only draw if the nametable is not identical to that of plane B)
-	if (_planes[kPlaneA].nameTable != _planes[kPlaneB].nameTable && !spritesOnly) {
-		// If the window plane is active the rendering of plane A becomes more tedious because the window plane
-		// kind of replaces plane A in the space that is covered by it.
-		if (_planes[kWindowPlane].nameTableSize) {
-			SegaPlane *p = &_planes[kWindowPlane];
-			renderPlanePart(kPlaneA, renderBuffer, MAX<int>(0, renderBlockX), MAX<int>(0, renderBlockY), MIN<int>(p->blockX, renderBlockX + renderBlockWidth), MIN<int>(_blocksH, renderBlockY + renderBlockHeight));
-			renderPlanePart(kPlaneA, renderBuffer, MAX<int>(0, renderBlockX), MAX<int>(0, renderBlockY), MIN<int>(_blocksW, renderBlockX + renderBlockWidth), MIN<int>(p->blockY, renderBlockY + renderBlockHeight));
-			renderPlanePart(kPlaneA, renderBuffer, MAX<int>(p->blockX + p->w, renderBlockX), MAX<int>(0, renderBlockY), MIN<int>(_blocksW, renderBlockX + renderBlockWidth), MIN<int>(_blocksH, renderBlockY + renderBlockHeight));
-			renderPlanePart(kPlaneA, renderBuffer, MAX<int>(0, renderBlockX), MAX<int>(p->blockY + p->h, renderBlockY), MIN<int>(_blocksW, renderBlockX + renderBlockWidth), MIN<int>(_blocksH, renderBlockY + renderBlockHeight));
-		} else {
-			renderPlanePart(kPlaneA, renderBuffer, renderBlockX, renderBlockY, renderBlockX + renderBlockWidth, renderBlockY + renderBlockHeight);
+	rd1 += (y * _screenW + x);
+	rd2 += (y * _screenW + x);
+	rd3 += (y * _screenW + x);
+	uint8 *d = reinterpret_cast<uint8*>(dst) + (y * _destPitch + x * _pixelFormat.bytesPerPixel);
+
+	if (x == 0 && y == 0 && w == _screenW && h == _screenH) {
+		memset(rd1, _backgroundColor, _screenW * _screenH);
+	} else {
+		uint8 *rd4 = rd1;
+		for (int y1 = y; y1 < y2; ++y1) {
+			memset(rd4, _backgroundColor, w);
+			rd4 += _screenW;
 		}
 	}
 
-	// Window Plane
-	if (_planes[kWindowPlane].nameTableSize && !spritesOnly) {
-		SegaPlane *p = &_planes[kWindowPlane];
-		renderPlanePart(kWindowPlane, renderBuffer, MIN<int>(p->blockX, renderBlockX + renderBlockWidth), MIN<int>(p->blockY, renderBlockY + renderBlockHeight), MAX<int>(p->blockX + p->w, renderBlockX), MAX<int>(p->blockY + p->h, renderBlockY));
+	_hINTCounter = 0;
+	for (int i = 0; i <= y; ++i) {
+		hINTUpdate();
+		ml = getLineHandler();
 	}
 
-	// Sprites
-	memset(_spriteMask, 0xFF, (uint32)_screenW * (uint32)_screenH * sizeof(uint8));
+	if (_planes[kPlaneA].nameTable != _planes[kPlaneB].nameTable) {
+		// Include plane A (only draw if the nametable is not identical to that of plane B)
+		if (_planes[kWindowPlane].nameTableSize != 0) {
+			// With window plane, if available
+			for (int y1 = y; y1 < y2; ++y1) {
+				memset (_tempBufferPlanesPrio, 0, _screenW);
+				if (_displayEnabled) {					
+					renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneB, y1, x, w);
+					if (y1 >= wY1 && y1 < wY2) {
+						renderPlaneLine<true>(rd1, _tempBufferPlanesPrio, kWindowPlane, y1, x, w);
+					} else {
+						int tmpX = (x > wX1) ? x : wX1;
+						int tmpW = (x + w < wX2) ? w : wX2 - tmpX;
+						if (tmpW > 0)
+							renderPlaneLine<true>(rd1, _tempBufferPlanesPrio, kWindowPlane, y1, tmpX, tmpW);
+						if (x < wX1)
+							renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneA, y1, x, wX1 - x);
+						else if (x + w > wX2)
+							renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneA, y1, wX2, x + w - wX2);
+					}
+				}
+
+				(this->*ml)(d, rd1, rd2, _tempBufferPlanesPrio, rd3, x, w);
+				rd1 += _screenW;
+				rd2 += _screenW;
+				rd3 += _screenW;
+				d += _destPitch;
+
+				hINTUpdate();
+				ml = getLineHandler();
+			}
+		} else {
+			// Without window plane
+			for (int y1 = y; y1 < y2; ++y1) {
+				memset (_tempBufferPlanesPrio, 0, _screenW);
+				if (_displayEnabled) {	
+					renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneB, y1, x, w);
+					renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneA, y1, x, w);
+				}
+
+				(this->*ml)(d, rd1, rd2, _tempBufferPlanesPrio, rd3, x, w);
+				rd1 += _screenW;
+				rd2 += _screenW;
+				rd3 += _screenW;
+				d += _destPitch;
+
+				hINTUpdate();
+				ml = getLineHandler();
+			}
+		}
+	} else if (_planes[kWindowPlane].nameTableSize != 0) {
+		// Include window plane if available
+		for (int y1 = y; y1 < y2; ++y1) {
+			memset (_tempBufferPlanesPrio, 0, _screenW);
+			if (_displayEnabled) {
+				renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneB, y1, x, w);
+				if (y1 >= wY1 && y1 < wY2) {
+					renderPlaneLine<true>(rd1, _tempBufferPlanesPrio, kWindowPlane, y1, x, w);
+				} else {
+					int tmpX = (x > wX1) ? x : wX1;
+					int tmpW = (x + w < wX2) ? w : wX2 - tmpX;
+					if (tmpW > 0)
+						renderPlaneLine<true>(rd1, _tempBufferPlanesPrio, kWindowPlane, y1, tmpX, tmpW);
+				}
+			}
+
+			(this->*ml)(d, rd1, rd2, _tempBufferPlanesPrio, rd3, x, w);
+			rd1 += _screenW;
+			rd2 += _screenW;
+			rd3 += _screenW;
+			d += _destPitch;
+
+			hINTUpdate();
+			ml = getLineHandler();
+		}
+	} else {
+		// Only plane B
+		for (int y1 = y; y1 < y2; ++y1) {
+			memset (_tempBufferPlanesPrio, 0, _screenW);
+			if (_displayEnabled)
+				renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneB, y1, x, w);
+
+			(this->*ml)(d, rd1, rd2, _tempBufferPlanesPrio, rd3, x, w);
+			rd1 += _screenW;
+			rd2 += _screenW;
+			rd3 += _screenW;
+			d += _destPitch;
+
+			hINTUpdate();
+			ml = getLineHandler();
+		}
+	}
+}
+
+void SegaRenderer::renderSprites(uint8 *dst, uint8 *dstPrio, int clipX, int clipY, int clipW, int clipH) {
+	if (clipX == -1)
+		clipX = 0;
+	if (clipY == -1)
+		clipY = 0;
+	if (clipW == -1)
+		clipW = _screenW;
+	if (clipH == -1)
+		clipH = _screenH;
+
+	memset(_spriteMask, 0xFF, _screenW * _screenH);
+	memset(_spriteMaskPrio, 0xFF, _screenW * _screenH);
 	const uint16 *pos = _spriteTable;
+
+	int clipX2 = clipX + clipW;
+	int clipY2 = clipY + clipH;
+
 	for (int i = 0; i < _numSpritesMax && pos; ++i) {
 		int y = FROM_BE_16(*pos++) & 0x3FF;
 		uint16 in = FROM_BE_16(*pos++);
@@ -264,30 +380,24 @@ void SegaRenderer::render(uint8 *dest, int renderBlockX, int renderBlockY, int r
 		bool vflip = (in & 0x1000);
 		uint16 tile = in++ & 0x7FF;
 		int x = FROM_BE_16(*pos) & 0x3FF;
+		uint16 pres = dstPrio != nullptr && prio ? kHasPrioSprites : kHasSprites;
+		bool renderedSomething = false;
+		bool spriteMasking = (x == 0 && (y & 0x1FF) >= 128);
 
-		// Sprite masking. Can't happen in EOB at least, since the animator automatically adds 128 to x and y coords for all sprites.
-		// Same in Snatcher. If this triggers anywhere else it will need to be added...
-		assert(!(x == 0 && y >= 128));
+		x = (x & 0x1FF) - 128;
+		y = (y & 0x1FF) - 128;
 
-		x -= 128;
-		y -= 128;
+		uint8 *d = (dstPrio != nullptr && prio ? dstPrio : dst) + y * _screenW + x;
+		uint8 *msk = (dstPrio != nullptr && prio ? _spriteMaskPrio : _spriteMask) + y * _screenW + x;
 
-		/*if ((x >> 3) < renderBlockX) {
-			bW = MIN<int>(0, (int)bW - (renderBlockX - (x >> 3)));
-			x = (renderBlockX << 3);
-
+		if (spriteMasking) {
+			int mH = MIN<int>(bH << 3, _screenH - y);
+			if (mH > 0)
+				memset(msk + 128, 0,  mH * _screenW);
+			pos = next ? &_spriteTable[next << 2] : 0;
+			continue;
 		}
 
-		if ((y >> 3) < renderBlockY) {
-			bH = MIN<int>(0, (int)bH - (renderBlockY - (y >> 3)));
-			y = (renderBlockY << 3);
-		}
-
-		bW = MIN<int>(bW, renderBlockWidth);
-		bH = MIN<int>(bH, renderBlockHeight);*/
-
-		uint8 *dst = renderBuffer + y * _screenW + x;
-		uint8 *msk = _spriteMask + y * _screenW + x;
 		int8 hstep = 0;
 		int8 vstep = 1;
 
@@ -302,32 +412,93 @@ void SegaRenderer::render(uint8 *dest, int renderBlockX, int renderBlockY, int r
 			hstep = hflip ? -2 * bH : 0;
 		}
 
+		int spitch = _screenW << 3;
 
 		for (int blX = 0; blX < bW; ++blX) {
-			uint8 *dst2 = dst;
+			if (x >= clipX2)
+				break;
+
+			uint8 *dst2 = d;
 			uint8 *msk2 = msk;
-			for (int blY = 0; blY < bH; ++blY) {
-				renderSpriteTile(dst, msk, x + (blX << 3), y + (blY << 3), tile, pal, vflip, hflip, prio);
-				tile += vstep;
-				dst += (_screenW << 3);
-				msk += (_screenW << 3);
+			
+			if (x > clipX - 8) {
+				SprTileProc tr = (x < 0 || x > _screenW - 8) ? &SegaRenderer::renderSpriteTileXClipped : &SegaRenderer::renderSpriteTileDef;
+				int y2 = y;
+
+				for (int blY = 0; blY < bH; ++blY) {
+					if (y >= clipY2)
+						break;
+
+					if (y > clipY - 8) {
+						(this->*tr)(d, msk, x, y, tile, pal, vflip, hflip);
+						renderedSomething = true;
+					}
+
+					tile += vstep;
+					d += spitch;
+					msk += spitch;
+					y += 8;
+				}
+				y = y2;
+			} else {
+				tile += (vstep * bH);
 			}
+
 			tile += hstep;
-			dst = dst2 + 8;
+			x += 8;
+			d = dst2 + 8;
 			msk = msk2 + 8;
 		}
 
+		if (renderedSomething)
+			_rr |= pres;
+
 		pos = next ? &_spriteTable[next << 2] : 0;
 	}
+}
 
-	// Priority Tiles
-	// Instead of going through all rendering passes for all planes again (only now drawing the
-	// prio tiles instead of the non-priority tiles) I have collected the data for the priority
-	// tiles on the way and put that data into a chain. Should be faster...
-	for (const PrioTileRenderObj *e = _prioChainStart; e; e = e->_next)
-		mRenderLineFragment(e->_hflip, e->_start & 1, e->_end & 1, e->_mask, e->_dst, e->_mask, e->_src, e->_start, e->_end, e->_pal)
+template<typename T> void SegaRenderer::refresh(T *dst, int x, int y, int w, int h) {
+	if (sizeof(T) == 1)
+		return;
 
-	clearPrioChain();
+	uint8 *rd1 = tempBufferPlanes + (y * _screenW + x);
+	dst += (y * _screenW + x);
+
+	if (x == 0 && y == 0 && w == _screenW && h == _screenH) {
+		for (uint32 s = w * h; s; --s)
+			*dst++ = _renderColorTable[*rd1++];
+	} else {
+		uint16 pitch = _screenW - w;
+		while (h--) {
+			for (int x1 = x; x1 < x + w; ++x1)
+				*dst++ = _renderColorTable[*rd1++];
+			rd1 += pitch;
+			dst += pitch;
+		}
+	}
+}
+
+void SegaRenderer::setRenderColorTable(const uint8 *colors, uint16 first, uint16 num) {
+	if (_renderColorTable == nullptr)
+		return;
+
+	uint32 *dst = _renderColorTable + first; 
+	while (num--) {
+		*dst++ = _pixelFormat.RGBToColor(colors[0], colors[1], colors[2]);
+		colors += 3;
+	}
+}
+
+void SegaRenderer::hINT_enable(bool enable) {
+	_hINTEnable = enable;
+}
+
+void SegaRenderer::hINT_setCounter(uint8 counter) {
+	_hINTCounterNext = counter;
+}
+
+void SegaRenderer::hINT_setHandler(const HINTHandler *hdl) {
+	_hINTHandler = hdl;
 }
 
 void SegaRenderer::fillBackground(uint8 *dst, int blockX, int blockY, int blockW, int blockH) {
@@ -345,99 +516,185 @@ void SegaRenderer::fillBackground(uint8 *dst, int blockX, int blockY, int blockW
 	}
 }
 
-void SegaRenderer::renderPlanePart(int plane, uint8 *dstBuffer, int x1, int y1, int x2, int y2) {
-	SegaPlane *p = &_planes[plane];
-	uint8 *dst = dstBuffer + (y1 << 3) * _screenW + (x1 << 3);
+template<bool isWindow> void SegaRenderer::renderPlaneLine(uint8 *planeBuffPos, uint8 *planePrioBuffPos, int srcPlane, int y, int clipX, int clipW) {
+	SegaPlane *p = &_planes[isWindow ? kWindowPlane : srcPlane];
 
-	for (int y = y1; y < y2; ++y) {
-		int hScrollTableIndex = (plane == kWindowPlane) ? -1 : (_hScrollMode == kHScrollFullScreen) ? plane : (y1 << 4) + plane;
-		uint8 *dst2 = dst;
-		for (int x = x1; x < x2; ++x) {
-			int vScrollTableIndex = (plane == kWindowPlane) ? -1 : (_vScrollMode == kVScrollFullScreen) ? plane : (x & ~1) + plane;
-			uint16 vscrNt = 0;
-			uint16 vscrPxStart = 0;
-			uint16 vscrPxEnd = 8;
+	int16 vbX = clipX >> 3;
+	uint16 hscrNt = vbX;
+	uint16 hscrPxFirst = clipX & 7;
+	uint16 hscrPxLast = MIN<uint16>(clipW, 8);
+	uint16 oddFlag = 0;
+	uint16 hStep = hscrPxLast;
+	uint16 vscrNt = y >> 3;
+	uint16 vscrPxStart = y & 7;
+	uint8 *d1 = planeBuffPos;
+	uint8 *d2 = planePrioBuffPos;
 
-			if (vScrollTableIndex != -1) {
-				vscrNt = FROM_BE_16(_vsram[vScrollTableIndex]) & 0x3FF;
-				vscrPxStart = vscrNt & 7;
-				vscrNt >>= 3;
-			}
-
-			int ty = (vscrNt + y) % p->mod;
-
-			renderPlaneTile(dst, x, &p->nameTable[ty * _pitch], vscrPxStart, vscrPxEnd, hScrollTableIndex, _pitch);
-
-			if (vscrPxStart) {
-				ty = (ty + 1) % p->mod;
-				uint16 dstOffs = (vscrPxEnd - vscrPxStart) * _screenW;
-				vscrPxEnd = vscrPxStart;
-				vscrPxStart = 0;
-				renderPlaneTile(dst + dstOffs, x, &p->nameTable[ty * _pitch], vscrPxStart, vscrPxEnd, hScrollTableIndex, _pitch);
-			}
-			dst += 8;
+	if (!isWindow) {
+		hscrNt = clipX + (-FROM_BE_16(_hScrollTable[_hScrollMode == kHScrollFullScreen ? srcPlane : ((_hScrollMode == kHScroll1PixelRows ? y : (y & ~7)) << 1) + srcPlane]) & 0x3FF);
+		hscrPxFirst = hscrNt & 7;
+		hscrNt >>= 3;
+		oddFlag = (hscrPxFirst & 1) << 1;
+		hStep -= hscrPxFirst;
+		if (_vScrollMode == kVScrollFullScreen) {
+			vscrNt = y + (FROM_BE_16(_vsram[srcPlane]) & 0x3FF);
+			vscrPxStart = vscrNt & 7;
+			vscrNt >>= 3;
 		}
-		dst = dst2 + (_screenW << 3);
 	}
-}
 
-void SegaRenderer::renderPlaneTile(uint8 *dst, int ntblX, const uint16 *ntblLine, int vScrollLSBStart, int vScrollLSBEnd, int hScrollTableIndex, uint16 pitch) {
-	for (int bY = vScrollLSBStart; bY < vScrollLSBEnd; ++bY) {
-		uint8 *dst2 = dst;
-		uint16 hscrNt = 0;
-		uint16 hscrPx = 0;
-
-		if (hScrollTableIndex != -1) {
-			hscrNt = (-(FROM_BE_16(_hScrollTable[hScrollTableIndex]))) & 0x3FF;
-			hscrPx = hscrNt & 7;
-			hscrNt >>= 3;
+	while (clipW) {
+		if (!isWindow && _vScrollMode == kVScroll16PixelStrips) {
+			vscrNt = y + (FROM_BE_16(_vsram[((vbX % _blocksW) & ~1) + srcPlane]) & 0x3FF);
+			vscrPxStart = vscrNt & 7;
+			vscrNt >>= 3;
 		}
 
-		const uint16 *pNt = &ntblLine[(ntblX + hscrNt) % pitch];
+		const uint16 *pNt = &p->nameTable[(vscrNt % p->mod) * _pitch + (hscrNt % _pitch)];
+
 		if (pNt < (const uint16*)(&_vram[0x10000])) {
 			uint16 nt = FROM_BE_16(*pNt);
 			uint16 pal = ((nt >> 13) & 3) << 4;
 			bool hflip = (nt & 0x800);
-			int y = bY % 8;
-			if (nt & 0x1000) // vflip
-				y = 7 - y;
+			int yl = (nt & 0x1000) ? 7 - vscrPxStart : vscrPxStart;
 
-			// We skip the priority tiles here and draw them later
-			if (nt & 0x8000)
-				initPrioRenderTask(dst, 0, &_vram[((nt & 0x7FF) << 5) + (y << 2) + (hscrPx >> 1)], hscrPx, 8, pal, hflip);
-			else
-				mRenderLineFragment(hflip, hscrPx & 1, 0, 0, dst, 0, &_vram[((nt & 0x7FF) << 5) + (y << 2) + (hscrPx >> 1)], hscrPx, 8, pal);
+			renderFuncD proc = _renderLineFragmentD[(hflip ? 4 : 0) | oddFlag];
+			(this->*proc)((nt &0x8000) ? d2 : d1, &_vram[((nt & 0x7FF) << 5) + (yl << 2) + (hscrPxFirst >> 1)], hscrPxFirst, hscrPxLast, pal);
 		}
 
-		if (hscrPx) {
-			dst += (8 - hscrPx);
-			pNt = &ntblLine[(ntblX + hscrNt + 1) % pitch];
-			if (pNt < (const uint16*)(&_vram[0x10000])) {
-				uint16 nt = FROM_BE_16(*pNt);
-				uint16 pal = ((nt >> 13) & 3) << 4;
-				bool hflip = (nt & 0x800);
-				int y = bY % 8;
-				if (nt & 0x1000) // vflip
-					y = 7 - y;
+		++vbX;
+		++hscrNt;
+		d1 += hStep;
+		d2 += hStep;
+		clipW -= hStep;
+		hscrPxFirst = 0;
 
-				// We skip the priority tiles here and draw them later
-				if (nt & 0x8000)
-					initPrioRenderTask(dst, 0, &_vram[((nt & 0x7FF) << 5) + (y << 2)], 0, hscrPx, pal, hflip);
-				else
-					mRenderLineFragment(hflip, 0, hscrPx & 1, 0, dst, 0, &_vram[((nt & 0x7FF) << 5) + (y << 2)], 0, hscrPx, pal)
-			}
+		if (clipW >= 8) {
+			hStep = 8;
+			oddFlag = 0;
+			continue;
 		}
 
-		if (hScrollTableIndex != -1 && _hScrollMode == kHScroll1PixelRows)
-			hScrollTableIndex += 2;
-		dst = dst2 + _screenW;
+		hscrPxLast = hStep = clipW;
+		oddFlag = hscrPxLast & 1;
 	}
 }
 
-void SegaRenderer::renderSpriteTile(uint8 *dst, uint8 *mask, int x, int y, uint16 tile, uint8 pal, bool vflip, bool hflip, bool prio) {
-	if (y <= -8 || y >= _screenH || x <= -8 || x >= _screenW)
-		return;
+template<typename T, bool withSprites, bool withPrioSprites> void SegaRenderer::mergeLines(void *dst, uint8 *bottomLayer, const uint8 *spriteLayer, const uint8 *prioLayer, const uint8 *prioSpriteLayer, int clipX, int clipW) {
+	T *d = reinterpret_cast<T*>(dst);
 
+	if (sizeof(T) == 1) {
+		if (!bottomLayer)
+			bottomLayer = reinterpret_cast<uint8*>(dst);
+		assert(bottomLayer);
+	}
+
+	if (withPrioSprites) {
+		if (withSprites) {
+			while (clipW--) {
+				if (*prioSpriteLayer)
+					*bottomLayer = *prioSpriteLayer;
+				else if (*prioLayer)
+					*bottomLayer = *prioLayer;
+				else if (*spriteLayer)
+					*bottomLayer = *spriteLayer;
+
+				if (sizeof(T) > 1)
+					*d++ = _renderColorTable[*bottomLayer];
+
+				++bottomLayer;
+				++spriteLayer;
+				++prioLayer;
+				++prioSpriteLayer;
+			}
+		} else {
+			while (clipW--) {
+				if (*prioSpriteLayer)
+					*bottomLayer = *prioSpriteLayer;
+				else if (*prioLayer)
+					*bottomLayer = *prioLayer;
+
+				if (sizeof(T) > 1)
+					*d++ = _renderColorTable[*bottomLayer];
+
+				++bottomLayer;
+				++prioLayer;
+				++prioSpriteLayer;
+			}
+		}
+	} else if (withSprites) {
+		while (clipW--) {
+			if (*prioLayer)
+				*bottomLayer = *prioLayer;
+			else if (*spriteLayer)
+				*bottomLayer = *spriteLayer;
+
+			if (sizeof(T) > 1)
+				*d++ = _renderColorTable[*bottomLayer];
+
+			++bottomLayer;
+			++spriteLayer;
+			++prioLayer;
+		}
+	} else {
+		while (clipW--) {
+			if (*prioLayer)
+				*bottomLayer = *prioLayer;
+
+			if (sizeof(T) > 1)
+				*d++ = _renderColorTable[*bottomLayer];
+
+			++bottomLayer;
+			++prioLayer;
+		}
+	}
+}
+
+SegaRenderer::MergeLinesProc SegaRenderer::getLineHandler() const {
+	static const MergeLinesProc mpc[] = {
+		nullptr,
+		&SegaRenderer::mergeLines<uint8, false, false>,
+		&SegaRenderer::mergeLines<uint16, false, false>,
+		nullptr,
+		&SegaRenderer::mergeLines<uint32, false, false>,
+		&SegaRenderer::mergeLines<uint8, true, false>,
+		&SegaRenderer::mergeLines<uint16, true, false>,
+		nullptr,
+		&SegaRenderer::mergeLines<uint32, true, false>,
+		&SegaRenderer::mergeLines<uint8, false, true>,
+		&SegaRenderer::mergeLines<uint16, false, true>,
+		nullptr,
+		&SegaRenderer::mergeLines<uint32, false, true>,
+		&SegaRenderer::mergeLines<uint8, true, true>,
+		&SegaRenderer::mergeLines<uint16, true, true>,
+		nullptr,
+		&SegaRenderer::mergeLines<uint32, true, true>
+	};
+
+	uint index = _pixelFormat.bytesPerPixel;
+	if (_displayEnabled) {
+		if (_rr & kHasSprites)
+			index += 4;
+		if (_rr & kHasPrioSprites)
+			index += 8;
+	}
+
+	assert(index < ARRAYSIZE(mpc));
+	MergeLinesProc res = mpc[index];
+	assert(res);
+
+	return res;
+}
+
+void SegaRenderer::hINTUpdate() {
+	if (!_hINTCounter--) {
+		if (_hINTEnable && _hINTHandler && _hINTHandler->isValid())
+			(*_hINTHandler)(this);
+		_hINTCounter = _hINTCounterNext;
+	}
+}
+
+void SegaRenderer::renderSpriteTileXClipped(uint8 *dst, uint8 *mask, int x, int y, uint16 tile, uint8 pal, bool vflip, bool hflip) {
 	const uint8 *src = &_vram[tile << 5];
 
 	if (y < 0) {
@@ -457,14 +714,13 @@ void SegaRenderer::renderSpriteTile(uint8 *dst, uint8 *mask, int x, int y, uint1
 	src += ((vflip ? (7 - ystart) : ystart) << 2);
 	int incr = vflip ? -4 : 4;
 
+	renderFuncM proc = _renderLineFragmentM[(hflip ? 4 : 0) | ((xstart & 1) ? 2 : 0) | ((xend & 1) ? 1 : 0)];
+
 	for (int bY = ystart; bY < yend; ++bY) {
 		uint8 *dst2 = dst;
 		uint8 *msk2 = mask;
 
-		if (prio)
-			initPrioRenderTask(dst, mask, src, xstart, xend, pal, hflip);
-		else
-			mRenderLineFragment(hflip, xstart & 1, xend & 1, 1, dst, mask, src, xstart, xend, pal);
+		(this->*proc)(dst, mask, src, xstart, xend, pal);
 
 		src += incr;
 		dst = dst2 + _screenW;
@@ -472,7 +728,33 @@ void SegaRenderer::renderSpriteTile(uint8 *dst, uint8 *mask, int x, int y, uint1
 	}
 }
 
-#if SEGA_PERFORMANCE
+void SegaRenderer::renderSpriteTileDef(uint8 *dst, uint8 *mask, int x, int y, uint16 tile, uint8 pal, bool vflip, bool hflip) {
+	const uint8 *src = &_vram[tile << 5];
+
+	if (y < 0) {
+		dst -= (y * _screenW);
+		mask -= (y * _screenW);
+	}
+
+	int ystart = CLIP<int>(-y, 0, 7);
+	int yend = CLIP<int>(_screenH - y, 0, 8);
+	src += ((vflip ? (7 - ystart) : ystart) << 2);
+	int incr = vflip ? -4 : 4;
+
+	renderFuncM proc = _renderLineFragmentM[hflip ? 4 : 0];
+
+	for (int bY = ystart; bY < yend; ++bY) {
+		uint8 *dst2 = dst;
+		uint8 *msk2 = mask;
+
+		(this->*proc)(dst, mask, src, 0, 8, pal);
+
+		src += incr;
+		dst = dst2 + _screenW;
+		mask = msk2 + _screenW;
+	}
+}
+
 template<bool hflip, bool oddStart, bool oddEnd> void SegaRenderer::renderLineFragmentM(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal) {
 	if (hflip)
 		src += ((end - 1 - start) >> 1);
@@ -499,8 +781,6 @@ template<bool hflip, bool oddStart, bool oddEnd> void SegaRenderer::renderLineFr
 			*dst = pal | col;
 			*mask = 0;
 		}
-		dst++;
-		mask++;
 	}
 }
 
@@ -522,64 +802,7 @@ template<bool hflip, bool oddStart, bool oddEnd> void SegaRenderer::renderLineFr
 		uint8 col = hflip ? (oddEnd ? *src-- >> 4 : *src & 0x0F) : (oddStart ? *src++ & 0x0F : *src >> 4);
 		if (col)
 			*dst = pal | col;
-		dst++;
 	}
-}
-#else
-template<bool hflip> void SegaRenderer::renderLineFragment(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal) {
-	if (hflip) {
-		src += ((end - 1 - start) >> 1);
-		if (end & 1) {
-			start++;
-			end++;
-		}
-	}
-
-	if (mask) {
-		for (int bX = start; bX < end; ++bX) {
-			uint8 col = hflip ? ((bX & 1) ? *src-- >> 4 : *src & 0x0F) : ((bX & 1) ? *src++ & 0x0F : *src >> 4);
-			if (col & *mask) {
-				*dst = pal | col;
-				*mask = 0;
-			}
-			dst++;
-			mask++;
-		}
-	} else {
-		for (int bX = start; bX < end; ++bX) {
-			uint8 col = hflip ? ((bX & 1) ? *src-- >> 4 : *src & 0x0F) : ((bX & 1) ? *src++ & 0x0F : *src >> 4);
-			if (col)
-				*dst = pal | col;
-			dst++;
-		}
-	}
-}
-#endif
-
-#undef mRenderLineFragment
-
-void SegaRenderer::initPrioRenderTask(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal, bool hflip) {
-#if SEGA_USE_MEMPOOL
-	_prioChainEnd =	new (_prioRenderMemPool) PrioTileRenderObj(_prioChainEnd, dst, mask, src, start, end, pal, hflip);
-#else
-	_prioChainEnd = new PrioTileRenderObj(_prioChainEnd, dst, mask, src, start, end, pal, hflip);
-#endif
-	if (!_prioChainStart)
-		_prioChainStart = _prioChainEnd;
-}
-
-void SegaRenderer::clearPrioChain() {
-	while (_prioChainEnd) {
-		_prioChainEnd->_next = 0;
-		PrioTileRenderObj *e = _prioChainEnd->_pred;
-#if SEGA_USE_MEMPOOL
-		_prioRenderMemPool.deleteChunk(_prioChainEnd);
-#else
-		delete _prioChainEnd;
-#endif
-		_prioChainEnd = e;
-	}
-	_prioChainStart = 0;
 }
 
 } // End of namespace Graphics
