@@ -50,6 +50,7 @@
 #include "common/events.h"
 #include "common/punycode.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
 
 #include "engines/engine.h"
 #include "engines/util.h"
@@ -147,6 +148,13 @@ Common::Error WageEngine::run() {
 
 	_gui->_consoleWindow->setTextWindowFont(_world->_player->_currentScene->getFont());
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan) {
+		ttsMan->setLanguage(ConfMan.get("language"));
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+		_gui->_wm->setTTSEnabled(ConfMan.getBool("tts_enabled"));
+	}
+
 	Common::String input("look");
 	processTurn(&input, NULL);
 	_temporarilyHidden = false;
@@ -233,6 +241,8 @@ void WageEngine::processEvents() {
 					_inputText = Common::convertFromU32String(_gui->_consoleWindow->getInput());
 					Common::String inp = _inputText + '\n';
 
+					sayText(_inputText, Common::TextToSpeechManager::INTERRUPT);
+
 					_gui->appendText(inp.c_str());
 
 					_gui->_consoleWindow->clearInput();
@@ -270,9 +280,26 @@ void WageEngine::appendText(const char *str) {
 		s += '\n';
 
 		_gui->appendText(s.c_str());
+		sayText(str, Common::TextToSpeechManager::QUEUE);
 	}
 
 	_inputText.clear();
+}
+
+void WageEngine::sayText(const Common::String &str) {
+	sayText(str, Common::TextToSpeechManager::INTERRUPT_NO_REPEAT);
+}
+
+void WageEngine::sayText(const Common::String &str, Common::TextToSpeechManager::Action action) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	// _previousSaid is used to prevent the TTS from looping when sayText is called inside a loop,
+	// for example when the cursor stays on a command. Without it when the text ends it would speak
+	// the same text again.
+	// _previousSaid is cleared when appropriate to allow for repeat requests
+	if (ttsMan && ConfMan.getBool("tts_enabled") && _previousSaid != str) {
+		ttsMan->say(str, action);
+		_previousSaid = str;
+	}
 }
 
 void WageEngine::gameOver() {
@@ -284,6 +311,8 @@ void WageEngine::gameOver() {
 
 	Graphics::MacText gameOverMessage(*_world->_gameOverMessage, _gui->_wm, &font, Graphics::kColorBlack,
 									  Graphics::kColorWhite, 199, Graphics::kTextAlignCenter);
+
+	sayText(*_world->_gameOverMessage, Common::TextToSpeechManager::QUEUE);
 
 	Graphics::MacDialog gameOverDialog(&_gui->_screen, _gui->_wm,  199, &gameOverMessage, 199, &buttons, 0);
 
@@ -310,6 +339,8 @@ bool WageEngine::saveDialog() {
 	Graphics::MacText saveBeforeCloseMessage(*_world->_saveBeforeCloseMessage, _gui->_wm, &font, Graphics::kColorBlack,
 									  Graphics::kColorWhite, 291, Graphics::kTextAlignCenter);
 
+	sayText(*_world->_saveBeforeCloseMessage);
+
 	Graphics::MacDialog save(&_gui->_screen, _gui->_wm, 291, &saveBeforeCloseMessage, 291, &buttons, 1);
 
 	int button = save.run();
@@ -335,6 +366,9 @@ void WageEngine::aboutDialog() {
 											 Graphics::kColorWhite, 400, Graphics::kTextAlignCenter);
 
 	Common::U32String disclaimer("\n\n\n\nThis adventure was produced with World Builder\xAA\nthe adventure game creation system.\n© Copyright 1986 by William C. Appleton, All Right Reserved\nPublished by Silicon Beach Software, Inc.");
+
+	sayText(_world->_aboutMessage);
+	sayText(disclaimer, Common::TextToSpeechManager::QUEUE);
 
 	aboutMessage.appendText(disclaimer, 3, 9, 0, false);
 
@@ -410,6 +444,8 @@ void WageEngine::performInitialSetup() {
 	if (!playerPlaced) {
 		_world->move(_world->_player, _world->getRandomScene());
 	}
+
+	sayText(_world->_player->_currentScene->_name);
 
 	// Set the console window's dimensions early here because
 	// flowText() that needs them gets called before they're set
@@ -539,6 +575,7 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 		_gui->clearOutput();
 		_gui->_consoleWindow->setTextWindowFont(_world->_player->_currentScene->getFont());
 		regen();
+		sayText(playerScene->_name, Common::TextToSpeechManager::QUEUE);
 		Common::String input("look");
 		processTurnInternal(&input, NULL);
 

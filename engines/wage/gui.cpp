@@ -252,6 +252,32 @@ bool Gui::processEvent(Common::Event &event) {
 		_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
 	}
 
+	if (event.type == Common::EVENT_MOUSEMOVE) {
+		bool mouseOnItem = false;
+		for (int i = 0; i < _menu->numberOfMenus(); i++) {
+			Graphics::MacMenuItem *menuItem = _menu->getMenuItem(i);
+
+			if (menuItem->enabled && menuItem->bbox.contains(event.mouse.x, event.mouse.y)) {
+				_engine->sayText(menuItem->text, Common::TextToSpeechManager::INTERRUPT);
+				mouseOnItem = true;
+				break;
+			}
+		}
+
+		if (!mouseOnItem) {
+			Designed *obj = _scene->lookUpEntity(event.mouse.x, event.mouse.y);
+
+			if (obj && obj->_name != "scene") {
+				_engine->sayText(obj->_name, Common::TextToSpeechManager::INTERRUPT);
+				mouseOnItem = true;
+			}
+		}
+
+		if (!mouseOnItem) {
+			_engine->_previousSaid.clear();
+		}
+	}
+
 	return _wm->processEvent(event);
 }
 
@@ -325,6 +351,9 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 	case kMenuActionCommand: {
 			_engine->_inputText = text;
 			Common::String inp = text + '\n';
+
+			_engine->_previousSaid.clear();
+			_engine->sayText(text, Common::TextToSpeechManager::QUEUE);
 
 			appendText(inp.c_str());
 
