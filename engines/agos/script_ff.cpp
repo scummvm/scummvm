@@ -448,9 +448,9 @@ void AGOSEngine_Feeble::off_setTime() {
 void AGOSEngine_Feeble::off_saveUserGame() {
 	// 132: save game
 	_noOracleScroll = 0;
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+	enterSaveLoadScreen(true);
 	saveUserGame(countSaveGames() + 1 - readVariable(55));
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	enterSaveLoadScreen(false);
 }
 
 void AGOSEngine_Feeble::off_loadUserGame() {

@@ -35,8 +35,7 @@ void AGOSEngine_PN::handleKeyboard() {
 		return;
 
 	if (_keymapEnabled) {
-		Common::Keymapper *keymapper = AGOSEngine::getEventManager()->getKeymapper();
-		keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+		getEventManager()->getKeymapper()->getKeymap("game-shortcuts")->setEnabled(false);
 		_keymapEnabled = false;
 	}
 
@@ -84,8 +83,7 @@ void AGOSEngine_PN::handleKeyboard() {
 		_mousePrintFG = 0;
 		_inputReady = false;
 		if (!_keymapEnabled) {
-			Common::Keymapper *keymapper = AGOSEngine::getEventManager()->getKeymapper();
-			keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+			getEventManager()->getKeymapper()->getKeymap("game-shortcuts")->setEnabled(true);
 			_keymapEnabled = true;
 		}
 	}

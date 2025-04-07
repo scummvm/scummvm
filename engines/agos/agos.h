@@ -1371,6 +1371,7 @@ protected:
 	int countSaveGames();
 
 	virtual Common::String genSaveName(int slot) const;
+	void enterSaveLoadScreen(bool entering);
 };
 
 class AGOSEngine_PN : public AGOSEngine {

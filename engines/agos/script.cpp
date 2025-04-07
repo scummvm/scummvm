@@ -811,9 +811,9 @@ void AGOSEngine::o_saveUserGame() {
 			fileError(_windowArray[5], true);
 		}
 	} else {
-		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		enterSaveLoadScreen(true);
 		userGame(false);
-		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		enterSaveLoadScreen(false);
 	}
 }
 
@@ -826,9 +826,9 @@ void AGOSEngine::o_loadUserGame() {
 			fileError(_windowArray[5], false);
 		}
 	} else {
-		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		enterSaveLoadScreen(true);
 		userGame(true);
-		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		enterSaveLoadScreen(false);
 	}
 }
 
