@@ -50,6 +50,7 @@
 #include "common/events.h"
 #include "common/punycode.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
 
 #include "engines/engine.h"
 #include "engines/util.h"
@@ -116,6 +117,12 @@ Common::Error WageEngine::run() {
 	} else if (getFeatures() & GF_RES1024) {
 		width = 1024;
 		height = 768;
+	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
 	}
 
 	initGraphics(width, height);
@@ -264,12 +271,26 @@ void WageEngine::setMenu(Common::String menu) {
 
 void WageEngine::appendText(const char *str) {
 	Common::String s(str);
+	
 
 	s += '\n';
 
 	_gui->appendText(s.c_str());
-
+	sayText(str, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+	
 	_inputText.clear();
+}
+
+void WageEngine::sayText(const Common::String str, Common::TextToSpeechManager::Action action) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+		ttsMan->say(str, action);
+}
+
+void WageEngine::stopTextSpeech() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking())
+		ttsMan->stop();
 }
 
 void WageEngine::gameOver() {
@@ -535,6 +556,7 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 		_temporarilyHidden = true;
 		_gui->clearOutput();
 		_gui->_consoleWindow->setTextWindowFont(_world->_player->_currentScene->getFont());
+		stopTextSpeech();
 		regen();
 		Common::String input("look");
 		processTurnInternal(&input, NULL);
@@ -574,7 +596,7 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 	processTurnInternal(&input, clickInput);
 	Scene *playerScene = _world->_player->_currentScene;
 
-	if (prevScene != playerScene && playerScene != _world->_storageScene) {
+ 	if (prevScene != playerScene && playerScene != _world->_storageScene) {
 		if (prevMonster != NULL) {
 			bool followed = false;
 			if (getMonster() == NULL) {
@@ -605,5 +627,9 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 	_inputText.clear();
 }
 
+Common::Language WageEngine::getLanguage() const{
+
+	return _gameDescription->language;
+}
 
 } // End of namespace Wage

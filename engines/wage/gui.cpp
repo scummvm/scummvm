@@ -197,6 +197,14 @@ bool Gui::processSceneEvents(WindowClick click, Common::Event &event) {
 
 		return true;
 	}
+	if (event.type = Common::EVENT_MOUSEMOVE) {
+		Designed *obj = _scene->lookUpEntity(event.mouse.x, event.mouse.y);
+
+		if (obj != nullptr)
+			_engine->sayText(obj->_name);
+
+		return true;
+	}
 
 	return false;
 }
