@@ -136,48 +136,6 @@ static Director::DirectorGameDescription s_fallbackDesc = {
 static char s_fallbackFileNameBuffer[51];
 static char s_fallbackExtraBuf[256];
 
-// Borrowed from engines/advancedDectector.cpp
-static Common::String sanitizeName(const char *name, int maxLen) {
-	Common::String res;
-	Common::String word;
-	Common::String lastWord;
-	const char *origname = name;
-
-	do {
-		if (Common::isAlnum(*name)) {
-			word += tolower(*name);
-		} else {
-			// Skipping short words and "the"
-			if ((word.size() > 2 && !word.equals("the")) || (!word.empty() && Common::isDigit(word[0]))) {
-				// Adding first word, or when word fits
-				if (res.empty() || (int)word.size() < maxLen)
-					res += word;
-
-				maxLen -= word.size();
-			}
-
-			if ((*name && *(name + 1) == 0) || !*name) {
-				if (res.empty()) // Make sure that we add at least something
-					res += word.empty() ? lastWord : word;
-
-				break;
-			}
-
-			if (!word.empty())
-				lastWord = word;
-
-			word.clear();
-		}
-		if (*name)
-			name++;
-	} while (maxLen > 0);
-
-	if (res.empty())
-		error("DirectorMetaEngineDetection: Incorrect extra in WinResourcs FileDescription: \"%s\"", origname);
-
-	return res;
-}
-
 
 ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extraInfo) const {
 	// TODO: Handle Mac fallback
@@ -327,14 +285,14 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 			Common::WinResources::VersionInfo *versionInfo = exe->getVersionResource(1);
 			if (versionInfo) {
 				Common::String fileDescription = versionInfo->hash["FileDescription"].encode();
-				if (!_fallback_blacklisted_names.contains(fileDescription)) {
+				if (!Director::FallbackBlacklist::contains(fileDescription)) {
 					if (extraInfo != nullptr) {
 						*extraInfo = new ADDetectedGameExtraInfo;
 						(*extraInfo)->gameName = fileDescription;
-					}
 
-					sanitized = sanitizeName(fileDescription.c_str(), fileDescription.size());
+					sanitized = ADUtils::sanitizeName(fileDescription.c_str(), fileDescription.size());
 					desc->desc.gameId = sanitized.c_str();
+					}
 				}
 				extra = Common::String::format("v%d.%d.%dr%d", versionInfo->fileVersion[0], versionInfo->fileVersion[1], versionInfo->fileVersion[2], versionInfo->fileVersion[3]);
 				delete versionInfo;

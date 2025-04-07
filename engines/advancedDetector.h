@@ -70,6 +70,11 @@ static inline void *alignToBuffer(void *buffer) {
 
 } // End of namespace ADDynamicDescription
 
+class ADUtils {
+	public:
+		static Common::String sanitizeName(const char *name, int maxLen);
+};
+
 /**
  * A record describing a file to be matched for detecting a specific game
  * variant. A list of such records is used inside every ADGameDescription to
@@ -759,11 +764,11 @@ public:
 			return;
 
 		Common::Path filename = node.getPath();
-		
+
 		if (archiveHashMap.contains(filename)) {
 			delete archiveHashMap[filename];
 		}
-		
+
 		archiveHashMap.setVal(filename, archivePtr);
 	}
 
