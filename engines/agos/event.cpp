@@ -504,33 +504,16 @@ void AGOSEngine::delay(uint amount) {
 						aboutDialog.runModal();
 					}
 				} else if (event.kbd.keycode == Common::KEYCODE_f && getGameId() == GID_WAXWORKS) {
-					// Check if the necessary HitAreas exist.
 					HitArea *fightButton = findBox(117);
-					HitArea *walkButton = findBox(119);
 
-					if (fightButton && walkButton) {
-						// Hotkey is supported (HitAreas exist)
+					if (fightButton && !(fightButton->flags & kBFBoxDead)) {
 						_needHitAreaRecalc++;
-
-						if (_mouseCursor == 3) {
-							// If already in fighting mode, switch to a default non-fighting cursor (0)
-							_mouseCursor = 0;
-							_lastHitArea = walkButton;
-						} else {
-							// If not in fighting mode, switch to fighting mode
-							_mouseCursor = 3;
-							_lastHitArea = fightButton;
-						}
-					} else {
-						// Hotkey is NOT supported (HitAreas missing)
-						const char *missingHitArea =
-							(!fightButton && !walkButton) ? "HitAreas 117 and 119 are missing."
-							: (!fightButton)              ? "HitArea 117 is missing."
-														  : "HitArea 119 is missing.";
-
-						warning("Fighting mode hotkey (F) is not supported for this version of Waxworks. "
-								"%s GameID: %d, Language: %d",
-								missingHitArea, getGameId(), getLanguage());
+						_lastHitArea = fightButton;
+						
+						if (_mouseCursor == 3)
+							_mouseCursor = 0; // Switch to default cursor
+						else
+							_mouseCursor = 3;	// Switch to fighting mode
 					}
 				}
 
