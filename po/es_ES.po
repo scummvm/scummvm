@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-07 11:16+0000\n"
-"PO-Revision-Date: 2025-04-04 15:18+0000\n"
+"PO-Revision-Date: 2025-04-07 14:56+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -6560,10 +6560,8 @@ msgid "Turn right"
 msgstr "Girar a la derecha"
 
 #: engines/agos/metaengine.cpp:315
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fight mode"
-msgstr "Modo rápido"
+msgstr "Alternar modo de combate"
 
 #: engines/agos/metaengine.cpp:324
 msgid "Text speed - Fast"
