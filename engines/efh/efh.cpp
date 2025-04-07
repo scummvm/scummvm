@@ -100,8 +100,7 @@ Common::Error EfhEngine::run() {
 		Common::Event event;
 		Common::KeyCode retVal = getLastCharAfterAnimCount(4);
 
-		switch (event.type) {
-		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 			switch (event.customType) {
 			case Efh::kEfhMoveDown:
 				goSouth();
@@ -196,7 +195,7 @@ Common::Error EfhEngine::run() {
 			} break;
 			default:
 				break;
-		}
+			}
 
 			switch (retVal) {
 			// debug cases to test sound
@@ -2416,10 +2415,8 @@ bool EfhEngine::checkMonsterCollision() {
 			}
 
 			Common::Event event;
-			Common::KeyCode input = mapInputCode(waitForKey());
 
-			switch (input) {
-			case Common::EVENT_CUSTOM_BACKEND_ACTION_START:
+			if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 				switch (event.customType) {
 				case Efh::kEfhAttack:
 					handleFight(monsterId);
