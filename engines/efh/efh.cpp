@@ -102,60 +102,60 @@ Common::Error EfhEngine::run() {
 
 		if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 			switch (event.customType) {
-			case Efh::kEfhMoveDown:
+			case kEfhMoveDown:
 				goSouth();
 				_imageSetSubFilesIdx = 144;
 				break;
-			case Efh::kEfhMoveUp:
+			case kEfhMoveUp:
 				goNorth();
 				_imageSetSubFilesIdx = 145;
 				break;
-			case Efh::kEfhMoveRight:
+			case kEfhMoveRight:
 				goEast();
 				_imageSetSubFilesIdx = 146;
 				break;
-			case Efh::kEfhMoveLeft:
+			case kEfhMoveLeft:
 				goWest();
 				_imageSetSubFilesIdx = 147;
 				break;
-			case Efh::kEfhMoveUpRight:
+			case kEfhMoveUpRight:
 				goNorthEast();
 				_imageSetSubFilesIdx = 146;
 				break;
-			case Efh::kEfhMoveDownRight:
+			case kEfhMoveDownRight:
 				goSouthEast();
 				_imageSetSubFilesIdx = 146;
 				break;
-			case Efh::kEfhMoveDownLeft:
+			case kEfhMoveDownLeft:
 				goSouthWest();
 				_imageSetSubFilesIdx = 147;
 				break;
-			case Efh::kEfhMoveUpLeft:
+			case kEfhMoveUpLeft:
 				goNorthWest();
 				_imageSetSubFilesIdx = 147;
 				break;
-			case Efh::kEfhShowCharacterPortraitsOne:
+			case kEfhShowCharacterPortraitsOne:
 				if (_teamChar[0]._id != -1) {
 					handleStatusMenu(1, _teamChar[0]._id);
 					_tempTextPtr = nullptr;
 					drawGameScreenAndTempText(true);
 					_redrawNeededFl = true;
 				} break;
-			case Efh::kEfhShowCharacterPortraitsTwo:
+			case kEfhShowCharacterPortraitsTwo:
 				if (_teamChar[1]._id != -1) {
 					handleStatusMenu(1, _teamChar[1]._id);
 					_tempTextPtr = nullptr;
 					drawGameScreenAndTempText(true);
 					_redrawNeededFl = true;
 				} break;
-			case Efh::kEfhShowCharacterPortraitsThree:
+			case kEfhShowCharacterPortraitsThree:
 				if (_teamChar[2]._id != -1) {
 					handleStatusMenu(1, _teamChar[2]._id);
 					_tempTextPtr = nullptr;
 					drawGameScreenAndTempText(true);
 					_redrawNeededFl = true;
 				} break;
-			case Efh::kEfhSave: {
+			case kEfhSave: {
 				for (uint counter = 0; counter < 2; ++counter) {
 					clearBottomTextZone(0);
 					displayCenteredString("Are You Sure You Want To Save?", 24, 296, 160);
@@ -174,7 +174,7 @@ Common::Error EfhEngine::run() {
 				clearBottomTextZone_2(0);
 				displayLowStatusScreen(true);
 			} break;
-			case Efh::kEfhLoad: {
+			case kEfhLoad: {
 				for (uint counter = 0; counter < 2; ++counter) {
 					clearBottomTextZone(0);
 					displayCenteredString("Are You Sure You Want To Load?", 24, 296, 160);
@@ -2418,21 +2418,21 @@ bool EfhEngine::checkMonsterCollision() {
 
 			if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 				switch (event.customType) {
-				case Efh::kEfhAttack:
+				case kEfhAttack:
 					handleFight(monsterId);
 					endLoop = true;
 					break;
-				case Efh::kEfhExit:
-				case Efh::kEfhEscape:
+				case kEfhExit:
+				case kEfhEscape:
 					endLoop = true;
 					break;
-				case Efh::kEfhStatus:
+				case kEfhStatus:
 					handleStatusMenu(1, _teamChar[0]._id);
 					endLoop = true;
 					_tempTextPtr = nullptr;
 					drawGameScreenAndTempText(true);
 					break;
-				case Efh::kEfhTalk:
+				case kEfhTalk:
 					startTalkMenu(monsterId);
 					endLoop = true;
 					break;
