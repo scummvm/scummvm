@@ -708,6 +708,8 @@ Common::Error WageEngine::loadGameState(int slot) {
 			_gui->enableSave();
 		}
 
+		sayText(_world->_player->_currentScene->_name, Common::TextToSpeechManager::QUEUE);
+
 		return Common::kNoError;
 	} else {
 		return Common::kUnknownError;
