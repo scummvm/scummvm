@@ -22,15 +22,12 @@
 #ifndef GRAPHICS_SEGAGFX_H
 #define GRAPHICS_SEGAGFX_H
 
-#define SEGA_PERFORMANCE		true
-#define SEGA_USE_MEMPOOL		true
-
-#if SEGA_USE_MEMPOOL
-#include "common/memorypool.h"
-#endif
+#include "common/func.h"
+#include "graphics/pixelformat.h"
 
 namespace Graphics {
 
+struct PixelFormat;
 struct Surface;
 
 /**
@@ -71,7 +68,7 @@ public:
 	};
 
 public:
-	SegaRenderer();
+	SegaRenderer(const PixelFormat *systemPixelFormat = nullptr);
 	~SegaRenderer();
 
 	/**
@@ -101,16 +98,16 @@ public:
 
 	/**
 	 * Set pixel width and/or height and drawing mode for the window plane.
-	 * @param pixelWidth:		1024, 512 or 256 allowed
-	 * @param pixelHeight:		1024, 512 or 256 allowed
-	 * @param horizontalMode:	kWinToLeft or kWinToRight
-	 * @param verticalMode:		kWinToTop or kWinToBottom
+	 * @param baseX:				base x coordinate (in 16 px units)
+	 * @param baseY:				base y coordinate (in  8 px units)
+	 * @param horizontalMode:		kWinToLeft or kWinToRight (window is either from the left of the screen to base x or from base x to the right of the screen)
+	 * @param verticalMode:			kWinToTop or kWinToBottom (window is either from the top of the screen to base y or from base y to the bottom of the screen)
 	 *
 	 * The hardware allows/demands separate modification of the vertical and horizontal properties.
 	 * To allow this without making another function one of the pixelWidth/pixelHeight parameters
 	 * can be set to -1 which will keep the existing value for that property.
 	 */
-	void setupWindowPlane(int blockX, int blockY, int horizontalMode, int verticalMode);
+	void setupWindowPlane(int baseX, int baseY, int horizontalMode, int verticalMode);
 
 	/**
 	 * Set address for the horizontal scroll table.
@@ -125,12 +122,6 @@ public:
 	void setSpriteTableLocation(int addr);
 
 	/**
-	 * Set plane pitch in (8 pixels wide) blocks.
-	 * @param pitch:	pitch
-	 */
-	void setPitch(int pitch);
-
-	/**
 	 * Set horizontal scroll mode.
 	 * @param mode:		see enum HScrollMode
 	 */
@@ -141,6 +132,12 @@ public:
 	 * @param mode:		see enum VScrollMode
 	 */
 	void setVScrollMode(int mode);
+
+	/**
+	 * Enable display or fill with background color.
+	 * @param enable:	true = display, false = fill with background color
+	 */
+	void enableDisplay(bool enable);
 
 	/**
 	 * Load data from a buffer to a vram address.
@@ -191,38 +188,88 @@ public:
 								block (8x8 pixels) coordinates of target render area. Values of -1 for maximum range / full screen rendering.
 	 * @param spritesOnly:		skip rendering of the planes and only render the sprites.
 	 */
-	void render(Surface *surf, int renderBlockX = -1, int renderBlockY = -1, int renderBlockWidth = -1, int renderBlockHeight = -1, bool spritesOnly = false);
-	void render(uint8 *dest, int renderBlockX = -1, int renderBlockY = -1, int renderBlockWidth = -1, int renderBlockHeight = -1, bool spritesOnly = false);
+	//void render(Surface *surf, int renderBlockX = -1, int renderBlockY = -1, int renderBlockWidth = -1, int renderBlockHeight = -1, bool spritesOnly = false);
+	//void render(uint8 *dest, int renderBlockX = -1, int renderBlockY = -1, int renderBlockWidth = -1, int renderBlockHeight = -1, bool spritesOnly = false);
+
+	/**
+	 * Render vram in its current state to the target buffer/surface.
+	 * @param surf/dst:		Target surface or buffer.
+	 * @param x, y, w, h:		Pixel coordinates of source and target render area. Values of -1 for maximum range / full screen rendering.
+	 */
+	void render(void *dst, int x = -1, int y = -1, int w = -1, int h = -1);
+
+	/**
+	 * Render sprites only
+	 * @param dst:								Target buffer for non-prio sprites.
+	 * @param dstPrio:							Target buffer for prio sprites.
+	 * @param clipX, clipY, clipW, clipH:		Pixel coordinates of source and target render area. Values of -1 for maximum range / full screen rendering.
+	 */
+	void renderSprites(uint8 *dst, uint8 *dstPrio, int clipX = -1, int clipY = -1, int clipW = -1, int clipH = -1);
+
+	/**
+	 * Refresh a part of the target buffer/surface with the latest render() result.
+	 * The only purpose of this function (at least for me) is to convert the pixels of non-8bit dest buffers/surfaces to a changed palette.
+	 * @param dst:				Target surface or buffer.
+	 * @param x, y, w, h:		Pixel coordinates of target render area. Values of -1 for maximum range / full screen refresh.
+	 */
+	template<typename T> void refresh(T *dest, int x = -1, int y = -1, int w = -1, int h = -1);
+
+	/**
+	 * Set palette for render operations on non-8bit dest buffers/surfaces
+	 * @param colors:			8bit palette for the final color conversion of the rendered surface/buffer.
+	 * @param numColors:		Number of colors in the palette.
+	 */
+	void setRenderColorTable(const uint8 *colors, uint16 first, uint16 num);
+
+public:
+	class HINTClient {
+	public:
+		virtual ~HINTClient() {}
+		virtual void hINTCallback(SegaRenderer *sr) = 0;
+	};
+	typedef Common::Functor1Mem<SegaRenderer*, void, HINTClient> HINTHandler;
+
+	/**
+	 * Horizontal Interrupt
+	 * @hINT_enable:			enable/disable
+	 * @hINT_setCounter			number of scan lines between hINT handler invocation
+	 * @hINT_setHandler			set hINT handler callback
+	 */
+	void hINT_enable(bool enable);
+	void hINT_setCounter(uint8 counter);
+	void hINT_setHandler(const HINTHandler *hdl);
 
 protected:
 	uint16 _screenW, _screenH, _blocksW, _blocksH;
+	uint16 _destPitch;
 	uint8 *_vram;
 	uint16 *_vsram;
 	uint16 _pitch;
 
 private:
 	void fillBackground(uint8 *dst, int x, int y, int w, int h);
-	void renderPlanePart(int plane, uint8 *dstBuffer, int x1, int y1, int x2, int y2);
-	void renderPlaneTile(uint8 *dst, int destX, const uint16 *nameTable, int vScrollLSBStart, int vScrollLSBEnd, int hScrollTableIndex, uint16 pitch);
-	void renderSpriteTile(uint8 *dst, uint8 *mask, int x, int y, uint16 tile, uint8 pal, bool vflip, bool hflip, bool prio);
-#if SEGA_PERFORMANCE
+	template<bool isWindow> void renderPlaneLine(uint8 *planeBuffPos, uint8 *planePrioBuffPos, int srcPlane, int y, int clipX, int clipW);
+	template<typename T, bool withSprites, bool withPrioSprites> void mergeLines(void *dst, uint8 *bottomLayer, const uint8 *spriteLayer, const uint8 *prioLayer, const uint8 *prioSpriteLayer, int clipX, int clipW);
+
+	typedef void (SegaRenderer::*MergeLinesProc)(void*, uint8*, const uint8*, const uint8*, const uint8*, int, int);
+	MergeLinesProc getLineHandler() const;
+	void hINTUpdate();
+
+	void renderSpriteTileXClipped(uint8 *dst, uint8 *mask, int x, int y, uint16 tile, uint8 pal, bool vflip, bool hflip);
+	void renderSpriteTileDef(uint8 *dst, uint8 *mask, int x, int y, uint16 tile, uint8 pal, bool vflip, bool hflip);
+	typedef void (SegaRenderer::*SprTileProc)(uint8*, uint8*, int, int, uint16, uint8, bool, bool);
+
 	template<bool hflip, bool oddStart, bool oddEnd> void renderLineFragmentM(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal);
 	template<bool hflip, bool oddStart, bool oddEnd> void renderLineFragmentD(uint8 *dst, const uint8 *src, int start, int end, uint8 pal);
 	typedef void(SegaRenderer::*renderFuncM)(uint8*, uint8*, const uint8*, int, int, uint8);
 	typedef void(SegaRenderer::*renderFuncD)(uint8*, const uint8*, int, int, uint8);
 	const renderFuncM *_renderLineFragmentM;
 	const renderFuncD *_renderLineFragmentD;
-#else
-	template<bool hflip> void renderLineFragment(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal);
-#endif
-
-	void initPrioRenderTask(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal, bool hflip);
-	void clearPrioChain();
 
 	struct SegaPlane {
 		SegaPlane() : blockX(0), blockY(0), w(0), h(0), mod(0), nameTable(0), nameTableSize(0) {}
 		int blockX, blockY;
-		uint16 w, h, mod;
+		uint16 w, h, mod, pitch;
 		uint16 *nameTable;
 		uint16 nameTableSize;
 	};
@@ -231,32 +278,33 @@ private:
 	uint16 *_hScrollTable;
 	uint16 *_spriteTable;
 	uint8 *_spriteMask;
+	uint8 *_spriteMaskPrio;
 	uint8 _hScrollMode;
 	uint8 _vScrollMode;
 	uint16 _numSpritesMax;
 	uint8 _backgroundColor;
 
-	struct PrioTileRenderObj {
-		PrioTileRenderObj(PrioTileRenderObj *chainEnd, uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal, bool hflip) :
-			_pred(chainEnd), _next(0), _dst(dst), _mask(mask), _src(src), _start(start), _end(end), _pal(pal), _hflip(hflip) {
-			if (_pred)
-				_pred->_next = this;
-		}
-		uint8 *_dst;
-		uint8 *_mask;
-		const uint8 *_src;
-		int _start;
-		int _end;
-		uint8 _pal;
-		bool _hflip;
-		PrioTileRenderObj *_pred;
-		PrioTileRenderObj *_next;
+	uint8 *_tempBufferSprites;
+	uint8 *_tempBufferSpritesPrio;
+	uint8 *_tempBufferPlanes;
+	uint8 *_tempBufferPlanesPrio;
+	uint32 *_renderColorTable;
+
+	const PixelFormat _pixelFormat;
+	bool _displayEnabled;
+
+	enum RenderResult : uint16 {
+		kUnspecified		=		0,
+		kHasSprites			=		1	<<	0,
+		kHasPrioSprites		=		1	<<	1
 	};
 
-#if SEGA_USE_MEMPOOL
-	Common::ObjectPool<PrioTileRenderObj> _prioRenderMemPool;
-#endif
-	PrioTileRenderObj *_prioChainStart, *_prioChainEnd;
+	uint16 _rr;
+
+	bool _hINTEnable;
+	uint8 _hINTCounterNext;
+	uint8 _hINTCounter;
+	const HINTHandler *_hINTHandler;
 };
 
 } // End of namespace Graphics

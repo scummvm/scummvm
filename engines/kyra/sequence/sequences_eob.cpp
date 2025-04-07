@@ -2463,7 +2463,6 @@ void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 	uint16 *scrollTable = new uint16[0x200]();
 	SCDRenderer *r = _screen->sega_getRenderer();
 
-	r->setPitch(128);
 	r->setPlaneTableLocation(SCDRenderer::kPlaneA, 0xE000);
 	r->setupPlaneAB(1024, 256);
 	r->setHScrollMode(SCDRenderer::kHScroll1PixelRows);
@@ -2540,7 +2539,6 @@ void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 	r->setupPlaneAB(512, 512);
 	r->setHScrollMode(SCDRenderer::kHScrollFullScreen);
 	r->memsetVRAM(0xD800, 0, 0x400);
-	r->setPitch(64);
 	_screen->sega_selectPalette(0, 0);
 	in = containerAlt ? new Common::SeekableReadStreamEndianWrapper(new Common::SeekableSubReadStream(containerAlt, last * 35840, (last + 1) * 35840), true, DisposeAfterUse::YES) : _sres->resStreamEndian(last);
 	r->loadStreamToVRAM(in, 32, !containerAlt);
@@ -2791,7 +2789,7 @@ void EoBEngine::seq_segaSetupSequence(int sequenceId) {
 	_screen->clearPage(0);
 
 	// transposeScreenOutputY(0);
-	_screen->sega_getRenderer()->setupWindowPlane(0, (sequenceId == 53 || sequenceId == 54) ? 23 : 18, SCDRenderer::kWinToRight, SCDRenderer::kWinToBottom);
+	_screen->sega_getRenderer()->setupWindowPlane(0, (sequenceId == 53 || sequenceId == 54) ? 23 : 18, SCDRenderer::kWinToLeft, SCDRenderer::kWinToBottom);
 	_screen->sega_getRenderer()->memsetVRAM(0xD840, 0xEE, 512);
 	_screen->sega_getAnimator()->clearSprites();
 	_screen->setScreenDim(2);
