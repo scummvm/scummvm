@@ -171,6 +171,8 @@ private:
 
 	int _commandsMenuId;
 	int _weaponsMenuId;
+
+	int _selectedMenuItem;
 };
 
 } // End of namespace Wage

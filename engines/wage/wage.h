@@ -55,6 +55,7 @@
 #include "common/macresman.h"
 #include "common/random.h"
 #include "common/timer.h"
+#include "common/text-to-speech.h"
 
 #include "wage/debugger.h"
 
@@ -219,6 +220,8 @@ public:
 	void updateSoundTimerForScene(Scene *scene, bool firstTime);
 	void setMenu(Common::String soundName);
 	void appendText(const char *str);
+	void sayText(const Common::U32String &str, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT_NO_REPEAT) const;
+	void sayText(const Common::String &str, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT_NO_REPEAT) const;
 	void gameOver();
 	bool saveDialog();
 	void aboutDialog();
