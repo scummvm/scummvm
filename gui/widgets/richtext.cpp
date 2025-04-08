@@ -23,7 +23,7 @@
 #include "common/unicode-bidi.h"
 
 #include "graphics/macgui/mactext.h"
-
+#include "graphics/macgui/macfontmanager.h"
 #include "gui/gui-manager.h"
 
 #include "gui/ThemeEngine.h"
