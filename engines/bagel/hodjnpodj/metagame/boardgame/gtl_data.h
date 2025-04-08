@@ -421,7 +421,8 @@ private: int ListingOutput(int iIndent, const char *lpszOut);
 	   // gtlcpl.cpp -- compiler for graphics utility
 
 	   //- Compile -- compile .gtl file to internal objects
-public: int Compile(const char *xpszPathName);
+public:
+	int compile(const char *xpszPathName);
 	  //- ParseLine -- parse input line
 private: bool ParseLine(void);
 	   //- ParseInteger -- parse integer, store into node structure

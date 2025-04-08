@@ -20,12 +20,22 @@
  */
 
 #include "bagel/hodjnpodj/metagame/boardgame/gtl_app.h"
+#include "bagel/hodjnpodj/globals.h"
 #include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
+void CGtlApp::initInstance() {
+	setDialogBkColor();        // Set dialog background color to gray
+
+	// Initialize dimensions
+	m_iWidth = GAME_WIDTH;
+	m_iHeight = GAME_HEIGHT;
+	m_iX = 0;
+	m_iY = 0;
+}
 
 } // namespace Metagame
 } // namespace HodjNPodj

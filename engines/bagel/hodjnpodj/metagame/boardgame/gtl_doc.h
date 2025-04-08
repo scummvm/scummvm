@@ -38,6 +38,8 @@ private:
 		return _app;
 	}
 	void initDocument(const char *xpszPathName);
+	void onChangedViewList();
+	void fixChecks() {}
 
 public:
 	CGtlDoc(CGtlApp *app) : _app(app) {

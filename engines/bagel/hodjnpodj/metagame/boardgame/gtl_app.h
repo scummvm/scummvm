@@ -28,8 +28,28 @@ namespace Metagame {
 
 class CGtlApp {
 public:
-	int m_iNumOpens = 0;
-	const char *m_szFilename = "meta/meta.gtl";
+	int  m_iNumOpens = 0;		// number of document opens (including "New")
+	const char *m_szFilename = "meta/meta.gtl";	// input file name
+
+	bool m_bTitle = false;				// flag -- use window with title bar
+	int  m_iX = 0, m_iY = 0;			// position of screen
+	int  m_iHeight = 0, m_iWidth = 0;	// height/width of screen
+	bool m_bControlDialog = false;		// display control dialog box
+	bool m_bMenuDialog = false;			// display menu dialog box
+	bool m_bInfoDialog = false;			// display info dialog box
+	bool m_bNodeDialog = false;			// display node dialog box
+	bool m_bShowNodes = false;			// show nodes on map
+	bool m_bPaintBackground = false;	// paint background on map paint
+	bool m_bStartMetaGame = false;		// start meta game automatically
+	bool m_bDumpGamePlay = false;		// dump game play
+
+	void initInstance();
+	void setDialogBkColor() {}
+
+public:
+	CGtlApp() {
+		initInstance();
+	}
 };
 
 } // namespace Metagame

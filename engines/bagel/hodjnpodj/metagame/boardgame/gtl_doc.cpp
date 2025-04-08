@@ -41,7 +41,23 @@ bool CGtlDoc::onNewDocument() {
 }
 
 void CGtlDoc::initDocument(const char *xpszPathName) {
+	CGtlApp *xpGtlApp = afxGetApp();
 
+	m_xpGtlData = new CGtlData();
+	m_xpGtlData->m_xpcGtlDoc = this;
+	m_xpGtlData->m_bShowNodes = xpGtlApp->m_bShowNodes;
+	m_xpGtlData->m_bPaintBackground = xpGtlApp->m_bPaintBackground;
+
+	onChangedViewList();
+	fixChecks();
+
+	if (xpszPathName && *xpszPathName)
+		m_xpGtlData->compile(xpszPathName);
+
+	// TODO: More stuff
+}
+
+void CGtlDoc::onChangedViewList() {
 }
 
 } // namespace Metagame
