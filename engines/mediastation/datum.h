@@ -32,31 +32,26 @@
 namespace MediaStation {
 
 enum DatumType {
-	// This type isn't a type we see in data files; it is just a
-	// default initialization value.
-	kDatumTypeInvalid = 0x0000,
-
-	kDatumTypeUint8 = 0x0002,
-	// TODO: Understand why there are different (u)int16 type codes.
-	kDatumTypeUint16_1 = 0x0003,
-	kDatumTypeUint16_2 = 0x0013,
-	kDatumTypeInt16_1 = 0x0006,
-	kDatumTypeInt16_2 = 0x0010,
-	// TODO: Understand why there are two different uint32 type codes.
-	kDatumTypeUint32_1 = 0x0004,
-	kDatumTypeUint32_2 = 0x0007,
-	// TODO: Understand why there are two different float64 type codes.
-	kDatumTypeFloat64_1 = 0x0011,
-	kDatumTypeFloat64_2 = 0x0009,
-	kDatumTypeString = 0x0012,
-	kDatumTypeFilename = 0x000a,
-	kDatumTypePoint1 = 0x000f,
-	kDatumTypePoint2 = 0x000e,
-	kDatumTypeBoundingBox = 0x000d,
-	kDatumTypePolygon = 0x001d,
-	// These are other types.
-	kDatumTypePalette = 0x05aa,
-	kDatumTypeReference = 0x001b
+	kDatumTypeEmpty = 0x00,
+	kDatumTypeUint8 = 0x02,
+	kDatumTypeUint16 = 0x03,
+	kDatumTypeUint32 = 0x04,
+	kDatumTypeInt8 = 0x05,
+	kDatumTypeInt16 = 0x06,
+	kDatumTypeInt32 = 0x07,
+	kDatumTypeFloat = 0x08,
+	kDatumTypeDouble = 0x09,
+	kDatumTypeFilename = 0x0a,
+	kDatumTypeRect = 0x0d,
+	kDatumTypePoint = 0x0e,
+	kDatumTypeGraphicSize = 0x0f,
+	kDatumTypeGraphicUnit = 0x10,
+	kDatumTypeTime = 0x11,
+	kDatumTypeString = 0x12,
+	kDatumTypeVersion = 0x13,
+	kDatumTypeChunkReference = 0x1b,
+	kDatumTypePolygon = 0x1d,
+	kDatumTypePalette = 0x05aa
 };
 
 // It is the caller's responsibility to delete any heap items

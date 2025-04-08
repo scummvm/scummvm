@@ -167,29 +167,29 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 		//  - They might be in the same RIFF subfile as this header,
 		//  - They might be in a different RIFF subfile in the same CXT file,
 		//  - They might be in a different CXT file entirely.
-		_chunkReference = Datum(chunk, kDatumTypeReference).u.i;
+		_chunkReference = Datum(chunk, kDatumTypeChunkReference).u.i;
 		break;
 	}
 
 	case kAssetHeaderMovieAudioChunkReference: {
-		_audioChunkReference = Datum(chunk, kDatumTypeReference).u.i;
+		_audioChunkReference = Datum(chunk, kDatumTypeChunkReference).u.i;
 		break;
 	}
 
 	case kAssetHeaderMovieAnimationChunkReference: {
-		_animationChunkReference = Datum(chunk, kDatumTypeReference).u.i;
+		_animationChunkReference = Datum(chunk, kDatumTypeChunkReference).u.i;
 		break;
 	}
 
 	case kAssetHeaderBoundingBox: {
-		_boundingBox = Datum(chunk, kDatumTypeBoundingBox).u.bbox;
+		_boundingBox = Datum(chunk, kDatumTypeRect).u.bbox;
 		break;
 	}
 
 	case kAssetHeaderMouseActiveArea: {
-		uint16 total_points = Datum(chunk, kDatumTypeUint16_1).u.i;
+		uint16 total_points = Datum(chunk, kDatumTypeUint16).u.i;
 		for (int i = 0; i < total_points; i++) {
-			Common::Point *point = Datum(chunk, kDatumTypePoint2).u.point;
+			Common::Point *point = Datum(chunk, kDatumTypePoint).u.point;
 			_mouseActiveArea.push_back(point);
 		}
 		break;
@@ -226,7 +226,7 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 	}
 
 	case kAssetHeaderFrameRate: {
-		_frameRate = static_cast<uint32>(Datum(chunk, kDatumTypeFloat64_2).u.f);
+		_frameRate = static_cast<uint32>(Datum(chunk, kDatumTypeDouble).u.f);
 		break;
 	}
 
@@ -279,17 +279,17 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 	}
 
 	case kAssetHeaderStartPoint: {
-		_startPoint = Datum(chunk, kDatumTypePoint2).u.point;
+		_startPoint = Datum(chunk, kDatumTypePoint).u.point;
 		break;
 	}
 
 	case kAssetHeaderEndPoint: {
-		_endPoint = Datum(chunk, kDatumTypePoint2).u.point;
+		_endPoint = Datum(chunk, kDatumTypePoint).u.point;
 		break;
 	}
 
 	case kAssetHeaderStepRate: {
-		double _stepRateFloat = Datum(chunk, kDatumTypeFloat64_2).u.f;
+		double _stepRateFloat = Datum(chunk, kDatumTypeDouble).u.f;
 		// This should always be an integer anyway,
 		// so we'll cast away any fractional part.
 		_stepRate = static_cast<uint32>(_stepRateFloat);
@@ -373,7 +373,7 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 }
 
 AssetHeaderSectionType AssetHeader::getSectionType(Chunk &chunk) {
-	Datum datum = Datum(chunk, kDatumTypeUint16_1);
+	Datum datum = Datum(chunk, kDatumTypeUint16);
 	AssetHeaderSectionType sectionType = static_cast<AssetHeaderSectionType>(datum.u.i);
 	return sectionType;
 }

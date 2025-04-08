@@ -160,20 +160,20 @@ void Context::registerActiveAssets() {
 }
 
 void Context::readParametersSection(Chunk &chunk) {
-	_fileNumber = Datum(chunk, kDatumTypeUint16_1).u.i;
+	_fileNumber = Datum(chunk, kDatumTypeUint16).u.i;
 
-	ContextParametersSectionType sectionType = static_cast<ContextParametersSectionType>(Datum(chunk, kDatumTypeUint16_1).u.i);
+	ContextParametersSectionType sectionType = static_cast<ContextParametersSectionType>(Datum(chunk, kDatumTypeUint16).u.i);
 	while (sectionType != kContextParametersEmptySection) {
 		debugC(5, kDebugLoading, "ContextParameters::ContextParameters: sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 		switch (sectionType) {
 		case kContextParametersName: {
-			uint repeatedFileNumber = Datum(chunk, kDatumTypeUint16_1).u.i;
+			uint repeatedFileNumber = Datum(chunk, kDatumTypeUint16).u.i;
 			if (repeatedFileNumber != _fileNumber) {
 				warning("ContextParameters::ContextParameters(): Repeated file number didn't match: %d != %d", repeatedFileNumber, _fileNumber);
 			}
 			_contextName = Datum(chunk, kDatumTypeString).u.string;
 
-			uint endingFlag = Datum(chunk, kDatumTypeUint16_1).u.i;
+			uint endingFlag = Datum(chunk, kDatumTypeUint16).u.i;
 			if (endingFlag != 0) {
 				warning("ContextParameters::ContextParameters(): Got non-zero ending flag 0x%x", endingFlag);
 			}
@@ -200,12 +200,12 @@ void Context::readParametersSection(Chunk &chunk) {
 			error("ContextParameters::ContextParameters(): Unknown section type 0x%x", static_cast<uint>(sectionType));
 		}
 
-		sectionType = static_cast<ContextParametersSectionType>(Datum(chunk, kDatumTypeUint16_1).u.i);
+		sectionType = static_cast<ContextParametersSectionType>(Datum(chunk, kDatumTypeUint16).u.i);
 	}
 }
 
 void Context::readVariable(Chunk &chunk) {
-	uint repeatedFileNumber = Datum(chunk, kDatumTypeUint16_1).u.i;
+	uint repeatedFileNumber = Datum(chunk, kDatumTypeUint16).u.i;
 	if (repeatedFileNumber != _fileNumber) {
 		warning("Context::readVariable(): Repeated file number didn't match: %d != %d", repeatedFileNumber, _fileNumber);
 	}
@@ -234,7 +234,7 @@ void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 	while (moreSectionsToRead) {
 		// Verify this chunk is a header.
 		// TODO: What are the situations when it's not?
-		uint16 sectionType = Datum(chunk, kDatumTypeUint16_1).u.i;
+		uint16 sectionType = Datum(chunk, kDatumTypeUint16).u.i;
 		debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 		bool chunkIsHeader = (sectionType == 0x000d);
 		if (!chunkIsHeader) {
@@ -291,7 +291,7 @@ void Context::readAssetFromLaterSubfile(Subfile &subfile) {
 }
 
 bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
-	uint16 sectionType = Datum(chunk, kDatumTypeUint16_1).u.i;
+	uint16 sectionType = Datum(chunk, kDatumTypeUint16).u.i;
 	debugC(5, kDebugLoading, "Context::readHeaderSection(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 	switch (sectionType) {
 	case kContextParametersSection: {
@@ -318,7 +318,7 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 		delete[] buffer;
 		debugC(5, kDebugLoading, "Context::readHeaderSection(): Read palette");
 		// This is likely just an ending flag that we expect to be zero.
-		uint endingFlag = Datum(chunk, kDatumTypeUint16_1).u.i;
+		uint endingFlag = Datum(chunk, kDatumTypeUint16).u.i;
 		if (endingFlag != 0) {
 			warning("Context::readHeaderSection(): Got non-zero ending flag 0x%x", endingFlag);
 		}

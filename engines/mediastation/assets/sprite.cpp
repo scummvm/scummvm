@@ -29,7 +29,7 @@ namespace MediaStation {
 SpriteFrameHeader::SpriteFrameHeader(Chunk &chunk) : BitmapHeader(chunk) {
 	_index = Datum(chunk).u.i;
 	debugC(5, kDebugLoading, "SpriteFrameHeader::SpriteFrameHeader(): _index = 0x%x (@0x%llx)", _index, static_cast<long long int>(chunk.pos()));
-	_boundingBox = Datum(chunk, kDatumTypePoint2).u.point;
+	_boundingBox = Datum(chunk, kDatumTypePoint).u.point;
 	debugC(5, kDebugLoading, "SpriteFrameHeader::SpriteFrameHeader(): _boundingBox (@0x%llx)", static_cast<long long int>(chunk.pos()));
 }
 

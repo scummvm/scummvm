@@ -27,9 +27,9 @@ namespace MediaStation {
 
 #pragma region VersionInfo
 VersionInfo::VersionInfo(Chunk &chunk) {
-	_majorVersion = Datum(chunk, kDatumTypeUint16_1).u.i;
-	_minorVersion = Datum(chunk, kDatumTypeUint16_1).u.i;
-	_revision = Datum(chunk, kDatumTypeUint16_1).u.i;
+	_majorVersion = Datum(chunk, kDatumTypeUint16).u.i;
+	_minorVersion = Datum(chunk, kDatumTypeUint16).u.i;
+	_revision = Datum(chunk, kDatumTypeUint16).u.i;
 	string = Datum(chunk, kDatumTypeString).u.string;
 }
 
@@ -108,7 +108,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 }
 
 ContextDeclarationSectionType ContextDeclaration::getSectionType(Chunk &chunk) {
-	Datum datum = Datum(chunk, kDatumTypeUint16_1);
+	Datum datum = Datum(chunk, kDatumTypeUint16);
 	ContextDeclarationSectionType sectionType = static_cast<ContextDeclarationSectionType>(datum.u.i);
 	return sectionType;
 }
@@ -133,13 +133,13 @@ UnknownDeclaration::UnknownDeclaration(Chunk &chunk) {
 
 	sectionType = getSectionType(chunk);
 	if (kUnknownDeclarationUnk1 == sectionType) {
-		_unk = Datum(chunk, kDatumTypeUint16_1).u.i;
+		_unk = Datum(chunk, kDatumTypeUint16).u.i;
 	} else {
 		error("UnknownDeclaration(): Expected section type UNK_1, got 0x%x", static_cast<uint>(sectionType));
 	}
 	sectionType = getSectionType(chunk);
 	if (kUnknownDeclarationUnk2 == sectionType) {
-		uint16 repeatedUnk = Datum(chunk, kDatumTypeUint16_1).u.i;
+		uint16 repeatedUnk = Datum(chunk, kDatumTypeUint16).u.i;
 		if (repeatedUnk != _unk) {
 			warning("UnknownDeclaration(): Expected unknown values to match, but 0x%x != 0x%x", _unk, repeatedUnk);
 		}
@@ -149,7 +149,7 @@ UnknownDeclaration::UnknownDeclaration(Chunk &chunk) {
 }
 
 UnknownDeclarationSectionType UnknownDeclaration::getSectionType(Chunk &chunk) {
-	Datum datum = Datum(chunk, kDatumTypeUint16_1);
+	Datum datum = Datum(chunk, kDatumTypeUint16);
 	UnknownDeclarationSectionType sectionType = static_cast<UnknownDeclarationSectionType>(datum.u.i);
 	return sectionType;
 }
@@ -170,7 +170,7 @@ FileDeclaration::FileDeclaration(Chunk &chunk) {
 	// Read the file ID.
 	sectionType = getSectionType(chunk);
 	if (kFileDeclarationFileId == sectionType) {
-		_id = Datum(chunk, kDatumTypeUint16_1).u.i;
+		_id = Datum(chunk, kDatumTypeUint16).u.i;
 	} else {
 		error("FileDeclaration(): Expected section type FILE_ID, got 0x%x", static_cast<uint>(sectionType));
 	}
@@ -178,7 +178,7 @@ FileDeclaration::FileDeclaration(Chunk &chunk) {
 	// Read the intended file location.
 	sectionType = getSectionType(chunk);
 	if (kFileDeclarationFileNameAndType == sectionType) {
-		Datum datum = Datum(chunk, kDatumTypeUint16_1);
+		Datum datum = Datum(chunk, kDatumTypeUint16);
 		// TODO: Verify we actually read a valid enum member.
 		_intendedLocation = static_cast<IntendedFileLocation>(datum.u.i);
 	} else {
@@ -192,7 +192,7 @@ FileDeclaration::FileDeclaration(Chunk &chunk) {
 }
 
 FileDeclarationSectionType FileDeclaration::getSectionType(Chunk &chunk) {
-	Datum datum = Datum(chunk, kDatumTypeUint16_1);
+	Datum datum = Datum(chunk, kDatumTypeUint16);
 	FileDeclarationSectionType sectionType = static_cast<FileDeclarationSectionType>(datum.u.i);
 	return sectionType;
 }
@@ -218,7 +218,7 @@ SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
 	// Read the asset ID.
 	sectionType = getSectionType(chunk);
 	if (kSubfileDeclarationAssetId == sectionType) {
-		_assetId = Datum(chunk, kDatumTypeUint16_1).u.i;
+		_assetId = Datum(chunk, kDatumTypeUint16).u.i;
 	} else {
 		error("SubfileDeclaration(): Expected section type ASSET_ID, got 0x%x", static_cast<uint>(sectionType));
 	}
@@ -226,7 +226,7 @@ SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
 	// Read the file ID.
 	sectionType = getSectionType(chunk);
 	if (kSubfileDeclarationFileId == sectionType) {
-		_fileId = Datum(chunk, kDatumTypeUint16_1).u.i;
+		_fileId = Datum(chunk, kDatumTypeUint16).u.i;
 	} else {
 		error("SubfileDeclaration(): Expected section type FILE_ID, got 0x%x", static_cast<uint>(sectionType));
 	}
@@ -234,14 +234,14 @@ SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
 	// Read the start offset from the absolute start of the file.
 	sectionType = getSectionType(chunk);
 	if (kSubfileDeclarationStartOffset == sectionType) {
-		_startOffsetInFile = Datum(chunk, kDatumTypeUint32_1).u.i;
+		_startOffsetInFile = Datum(chunk, kDatumTypeUint32).u.i;
 	} else {
 		error("SubfileDeclaration(): Expected section type START_OFFSET, got 0x%x", static_cast<uint>(sectionType));
 	}
 }
 
 SubfileDeclarationSectionType SubfileDeclaration::getSectionType(Chunk &chunk) {
-	Datum datum = Datum(chunk, kDatumTypeUint16_1);
+	Datum datum = Datum(chunk, kDatumTypeUint16);
 	SubfileDeclarationSectionType sectionType = static_cast<SubfileDeclarationSectionType>(datum.u.i);
 	return sectionType;
 }
@@ -249,9 +249,9 @@ SubfileDeclarationSectionType SubfileDeclaration::getSectionType(Chunk &chunk) {
 
 #pragma region CursorDeclaration
 CursorDeclaration::CursorDeclaration(Chunk& chunk) {
-	uint16 unk1 = Datum(chunk, kDatumTypeUint16_1).u.i; // Always 0x0001
-	_id = Datum(chunk, kDatumTypeUint16_1).u.i;
-	_unk = Datum(chunk, kDatumTypeUint16_1).u.i;
+	uint16 unk1 = Datum(chunk, kDatumTypeUint16).u.i; // Always 0x0001
+	_id = Datum(chunk, kDatumTypeUint16).u.i;
+	_unk = Datum(chunk, kDatumTypeUint16).u.i;
 	_name = Datum(chunk, kDatumTypeFilename).u.string;
 	debugC(5, kDebugLoading, " - CursorDeclaration(): unk1 = 0x%x, id = 0x%x, unk = 0x%x, name = %s", unk1, _id, _unk, _name->c_str());
 }
@@ -276,7 +276,7 @@ Boot::Boot(const Common::Path &path) : Datafile(path){
 	Subfile subfile = getNextSubfile();
 	Chunk chunk = subfile.nextChunk();
 
-	uint32 beforeSectionTypeUnk = Datum(chunk, kDatumTypeUint16_1).u.i; // Usually 0x0001
+	uint32 beforeSectionTypeUnk = Datum(chunk, kDatumTypeUint16).u.i; // Usually 0x0001
 	debugC(5, kDebugLoading, "Boot::Boot(): unk1 = 0x%x", beforeSectionTypeUnk);
 
 	BootSectionType sectionType = getSectionType(chunk);
@@ -419,7 +419,7 @@ Boot::Boot(const Common::Path &path) : Datafile(path){
 }
 
 BootSectionType Boot::getSectionType(Chunk &chunk) {
-	Datum datum = Datum(chunk, kDatumTypeUint16_1);
+	Datum datum = Datum(chunk, kDatumTypeUint16);
 	BootSectionType sectionType = static_cast<BootSectionType>(datum.u.i);
 	return sectionType;
 }

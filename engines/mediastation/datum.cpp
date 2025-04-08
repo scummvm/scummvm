@@ -25,7 +25,7 @@
 namespace MediaStation {
 
 Datum::Datum() {
-	t = kDatumTypeInvalid;
+	t = kDatumTypeEmpty;
 	u.i = 0;
 }
 
@@ -47,43 +47,43 @@ void Datum::readWithType(Common::SeekableReadStream &chunk) {
 	if (kDatumTypeUint8 == t) {
 		u.i = chunk.readByte();
 
-	} else if (kDatumTypeUint16_1 == t || kDatumTypeUint16_2 == t) {
+	} else if (kDatumTypeUint16 == t || kDatumTypeVersion == t) {
 		u.i = chunk.readUint16LE();
 
-	} else if (kDatumTypeInt16_1 == t || kDatumTypeInt16_2 == t) {
+	} else if (kDatumTypeInt16 == t || kDatumTypeGraphicUnit == t) {
 		u.i = chunk.readSint16LE();
 
-	} else if (kDatumTypeUint32_1 == t || kDatumTypeUint32_2 == t) {
+	} else if (kDatumTypeUint32 == t || kDatumTypeInt32 == t) {
 		u.i = chunk.readUint32LE();
 
-	} else if (kDatumTypeFloat64_1 == t || kDatumTypeFloat64_2 == t) {
+	} else if (kDatumTypeTime == t || kDatumTypeDouble == t) {
 		u.f = chunk.readDoubleLE();
 
 	} else if (kDatumTypeString == t || kDatumTypeFilename == t) {
 		// TODO: This copies the string. Can we read it directly from the chunk?
-		int size = Datum(chunk, kDatumTypeUint32_1).u.i;
+		int size = Datum(chunk, kDatumTypeUint32).u.i;
 		char *buffer = new char[size + 1];
 		chunk.read(buffer, size);
 		buffer[size] = '\0';
 		u.string = new Common::String(buffer);
 		delete[] buffer;
 
-	} else if (kDatumTypePoint1 == t || kDatumTypePoint2 == t) {
-		uint16 x = Datum(chunk, kDatumTypeInt16_2).u.i;
-		uint16 y = Datum(chunk, kDatumTypeInt16_2).u.i;
+	} else if (kDatumTypeGraphicSize == t || kDatumTypePoint == t) {
+		uint16 x = Datum(chunk, kDatumTypeGraphicUnit).u.i;
+		uint16 y = Datum(chunk, kDatumTypeGraphicUnit).u.i;
 		u.point = new Common::Point(x, y);
 
-	} else if (kDatumTypeBoundingBox == t) {
-		Common::Point *leftTop = Datum(chunk, kDatumTypePoint2).u.point;
-		Common::Point *dimensions = Datum(chunk, kDatumTypePoint1).u.point;
+	} else if (kDatumTypeRect == t) {
+		Common::Point *leftTop = Datum(chunk, kDatumTypePoint).u.point;
+		Common::Point *dimensions = Datum(chunk, kDatumTypeGraphicSize).u.point;
 		u.bbox = new Common::Rect(*leftTop, dimensions->x, dimensions->y);
 		delete leftTop;
 		delete dimensions;
 
 	} else if (kDatumTypePolygon == t) {
-		uint16 totalPoints = Datum(chunk, kDatumTypeUint16_1).u.i;
+		uint16 totalPoints = Datum(chunk, kDatumTypeUint16).u.i;
 		for (int i = 0; i < totalPoints; i++) {
-			Common::Point *point = Datum(chunk, kDatumTypePoint1).u.point;
+			Common::Point *point = Datum(chunk, kDatumTypeGraphicSize).u.point;
 			u.polygon->push_back(point);
 		}
 
@@ -91,7 +91,7 @@ void Datum::readWithType(Common::SeekableReadStream &chunk) {
 		u.palette = new unsigned char[0x300];
 		chunk.read(u.palette, 0x300);
 
-	} else if (kDatumTypeReference == t) {
+	} else if (kDatumTypeChunkReference == t) {
 		u.chunkRef = chunk.readUint32BE();
 
 	} else {

@@ -30,13 +30,13 @@
 namespace MediaStation {
 
 CodeChunk::CodeChunk(Common::SeekableReadStream &chunk) {
-	uint lengthInBytes = Datum(chunk, kDatumTypeUint32_1).u.i;
+	uint lengthInBytes = Datum(chunk, kDatumTypeUint32).u.i;
 	debugC(5, kDebugLoading, "CodeChunk::CodeChunk(): Length 0x%x (@0x%llx)", lengthInBytes, static_cast<long long int>(chunk.pos()));
 	_bytecode = chunk.readStream(lengthInBytes);
 }
 
 ScriptValue CodeChunk::executeNextBlock() {
-	uint blockSize = Datum(*_bytecode, kDatumTypeUint32_1).u.i;
+	uint blockSize = Datum(*_bytecode, kDatumTypeUint32).u.i;
 	uint startingPos = _bytecode->pos();
 
 	ScriptValue returnValue;
@@ -57,7 +57,7 @@ ScriptValue CodeChunk::executeNextBlock() {
 }
 
 void CodeChunk::skipNextBlock() {
-	uint lengthInBytes = Datum(*_bytecode, kDatumTypeUint32_1).u.i;
+	uint lengthInBytes = Datum(*_bytecode, kDatumTypeUint32).u.i;
 	_bytecode->skip(lengthInBytes);
 }
 
@@ -219,7 +219,7 @@ ScriptValue CodeChunk::evaluateValue() {
 
 	case kOperandTypeString: {
 		// This is indeed a raw string, not a string wrapped in a datum!
-		uint size = Datum(*_bytecode, kDatumTypeUint16_1).u.i;
+		uint size = Datum(*_bytecode, kDatumTypeUint16).u.i;
 		Common::String string = _bytecode->readString('\0', size);
 		debugC(5, kDebugScript, "%s ", string.c_str());
 		returnValue.setToString(string);
