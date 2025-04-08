@@ -131,6 +131,8 @@
 #define GUIO11(a,b,c,d,e,f,g,h,i,j,k) (a b c d e f g h i j k)
 #define GUIO12(a,b,c,d,e,f,g,h,i,j,k,l) (a b c d e f g h i j k l)
 
+#define GUIO_PLATFORM(a) (Common::getGameGUIOptionsPlatformCode(a))
+
 namespace Common {
 
 /**
