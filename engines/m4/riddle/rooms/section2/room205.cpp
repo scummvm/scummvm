@@ -176,9 +176,9 @@ void Room205::pre_parser() {
 }
 
 void Room205::parser() {
-	bool lookFl = player_said_any("look", "look at");
-	bool takeFl = player_said("take");
-	bool gearFl = player_said("gear");
+	const bool lookFl = player_said_any("look", "look at");
+	const bool takeFl = player_said("take");
+	const bool gearFl = player_said("gear");
 
 	if (player_said("GONG", "BRAZIER") || player_said("GONG", "GUN")) {
 		if (!_G(flags)[V024]) {
@@ -1732,7 +1732,7 @@ void Room205::daemon() {
 			series_unload(_205Fite4Series);
 			_205all7Series = series_load("205ALL7", -1, nullptr);
 			_fieldDC = 0;
-			ws_walk(_G(my_walker), 482, 351, 0, 1016, 3, true);
+			ws_walk(_G(my_walker), 482, 351, nullptr, 1016, 3, true);
 		}
 		break;
 
