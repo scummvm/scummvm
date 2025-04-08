@@ -24,6 +24,7 @@
 #include "bagel/hodjnpodj/metagame/boardgame/general_store.h"
 #include "bagel/hodjnpodj/metagame/boardgame/notebook.h"
 #include "bagel/hodjnpodj/metagame/boardgame/pawn_shop.h"
+#include "bagel/hodjnpodj/views/rules.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/metaengine.h"
 
@@ -38,7 +39,6 @@ Boardgame::Boardgame() : View("Boardgame") {
 }
 
 bool Boardgame::msgOpen(const OpenMessage &msg) {
-	clearVars();
 
 	return true;
 }
@@ -48,7 +48,38 @@ bool Boardgame::msgClose(const CloseMessage &msg) {
 }
 
 bool Boardgame::msgAction(const ActionMessage &msg) {
+	if (!isInputAllowed())
+		return false;
+
 	return false;
+}
+
+bool Boardgame::msgKeypress(const KeypressMessage &msg) {
+	if (!isInputAllowed())
+		return false;
+
+	switch (msg.keycode) {
+	case Common::KEYCODE_F1:
+		Rules::show("meta/metarule.txt", nullptr);
+		break;
+
+	case Common::KEYCODE_F2:
+		addView("BoardgameOptions");
+		break;
+
+	case Common::KEYCODE_m:
+		addView("Minimap");
+		break;
+
+	case Common::KEYCODE_i:
+		showInventory(kDialogInventory);
+		break;
+
+	default:
+		return false;
+	}
+
+	return true;
 }
 
 bool Boardgame::msgGame(const GameMessage &msg) {
@@ -73,49 +104,34 @@ void Boardgame::showInventory(int nWhichDlg) {
 		pPlayer = &lpMetaGame->m_cHodj;
 
 	switch (nWhichDlg) {
-	case 4:
+	case kDialogBlackMarket:
 		// Black market
 		GeneralStore::show(pPlayer->m_pBlackMarket,
 			pPlayer->m_pInventory);
 		break;
 
-	case 3:
+	case kDialogPawnShop:
 		// Pawn shop
 		PawnShop::show(getRandomNumber(1) == 1 ?
 				pPlayer->m_pGenStore : pPlayer->m_pBlackMarket,
 			pPlayer->m_pInventory);
 		break;
 
-	case 2:
+	case kDialogGeneralStore:
 		// General store
 		GeneralStore::show(pPlayer->m_pGenStore,
 			pPlayer->m_pInventory);
 		break;
 
-	case 1:
+	case kDialogInventory:
 	default:
 		Backpack::show(pPlayer->m_pInventory);
 		break;
 	}
 }
 
-/*------------------------------------------------------------------------*/
-
-void BoardgameVars::clearVars() {
-	m_szIniFilename[0] = '\0';
-	m_szIniSectionname[0] = '\0';
-	m_bDebug = false;
-	m_bDebugMessages = false;
-	m_bTimeMessage = false;
-	m_bTrack = m_bTrace = false;
-	m_bTraceError = false;
-	m_iConstructorMsgLevel = 0;
-	m_bVerifyDc = false;
-	Common::fill(m_iDebugValues, m_iDebugValues + 100, 0);
-	m_iTraceObjectCount = 0;
-	m_lpTraceObjects = nullptr;
-	m_iTraceObjectCurrent = 0;
-	m_iErrorCount = 0;
+bool Boardgame::isInputAllowed() const {
+	return true;
 }
 
 } // namespace Metagame
