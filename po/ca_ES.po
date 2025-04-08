@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-07 11:16+0000\n"
+"POT-Creation-Date: 2025-04-08 19:53+0000\n"
 "PO-Revision-Date: 2025-04-05 05:03+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -417,8 +417,8 @@ msgstr "Baixa"
 msgid "Select directory where to download game data"
 msgstr "Seleccioneu el directori on baixar les dades del joc"
 
-#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
-#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:579 gui/launcher.cpp:314
+#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:117
+#: gui/dump-all-dialogs.cpp:140 gui/editgamedialog.cpp:579 gui/launcher.cpp:314
 msgid "Select directory with game data"
 msgstr "Seleccioneu el directori amb les dades del joc"
 
@@ -547,15 +547,15 @@ msgstr ""
 msgid "Proceed"
 msgstr "Continua"
 
-#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3363
+#: gui/dump-all-dialogs.cpp:121 gui/options.cpp:3363
 msgid "icon packs"
 msgstr "paquets d'icones"
 
-#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3374
+#: gui/dump-all-dialogs.cpp:125 gui/options.cpp:3374
 msgid "shader packs"
 msgstr "paquets de shaders"
 
-#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:713
+#: gui/dump-all-dialogs.cpp:144 gui/launcher.cpp:713
 msgid "Pick the game:"
 msgstr "Seleccioneu el joc:"
 
@@ -1477,77 +1477,77 @@ msgstr "Vista de llistat"
 msgid "Grid view"
 msgstr "Vista de quadrícula"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1081
 msgid "~S~tart"
 msgstr "~I~nicia"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1081
 msgid "Start selected game"
 msgstr "Iniciant el joc seleccionat"
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1084
 msgid "~L~oad..."
 msgstr "~C~arrega..."
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1084
 msgid "Load saved game for selected game"
 msgstr "Carrega una partida pel joc seleccionat"
 
-#: gui/launcher.cpp:1108
+#: gui/launcher.cpp:1086
 msgid "Record..."
 msgstr "Enregistra..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1092
 msgid "~G~ame Options..."
 msgstr "~O~pcions del jocs..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1092
 msgid "Change game options"
 msgstr "Canvia les opcions del joc"
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1092
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "Opcs. del ~j~oc..."
 
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1212 gui/launcher.cpp:1408
+#: gui/launcher.cpp:1190 gui/launcher.cpp:1386
 msgid "Unknown Engine"
 msgstr "Motor desconegut"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1229 gui/launcher.cpp:1425
+#: gui/launcher.cpp:1207 gui/launcher.cpp:1403
 msgid "Unknown Publisher"
 msgstr "Distribuïdora desconeguda"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1246 gui/launcher.cpp:1442
+#: gui/launcher.cpp:1224 gui/launcher.cpp:1420
 msgid "No Series"
 msgstr "Sense sèrie"
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1260 gui/launcher.cpp:1456
+#: gui/launcher.cpp:1238 gui/launcher.cpp:1434
 msgid "Language not detected"
 msgstr "No s'ha detectat l'idioma"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1274 gui/launcher.cpp:1470
+#: gui/launcher.cpp:1252 gui/launcher.cpp:1448
 msgid "Platform not detected"
 msgstr "No s'ha detectat la plataforma"
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1291 gui/launcher.cpp:1487
+#: gui/launcher.cpp:1269 gui/launcher.cpp:1465
 msgid "Unknown Year"
 msgstr "Any desconegut"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1494 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1472 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "Tots"
 
-#: gui/launcher.cpp:1649
+#: gui/launcher.cpp:1627
 msgid "Icons per row:"
 msgstr "Icones per línia:"
 
@@ -2865,7 +2865,7 @@ msgstr ""
 "Podeu canviar aquest paràmetre més tard a la\n"
 "pestanya Diversos en el diàleg d'Opcions."
 
-#: gui/widget.cpp:456 gui/widget.cpp:458 gui/widget.cpp:463 gui/widget.cpp:465
+#: gui/widget.cpp:466 gui/widget.cpp:468 gui/widget.cpp:473 gui/widget.cpp:475
 msgid "Clear value"
 msgstr "Neteja el valor"
 

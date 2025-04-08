@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-07 11:16+0000\n"
+"POT-Creation-Date: 2025-04-08 19:53+0000\n"
 "PO-Revision-Date: 2025-04-03 17:18+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -421,8 +421,8 @@ msgstr ""
 "Wählen Sie das Verzeichnis, in welches die Spieldaten heruntergeladen werden "
 "sollen"
 
-#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
-#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:579 gui/launcher.cpp:314
+#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:117
+#: gui/dump-all-dialogs.cpp:140 gui/editgamedialog.cpp:579 gui/launcher.cpp:314
 msgid "Select directory with game data"
 msgstr "Verzeichnis mit Spieldateien auswählen"
 
@@ -551,15 +551,15 @@ msgstr ""
 msgid "Proceed"
 msgstr "Fortfahren"
 
-#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3363
+#: gui/dump-all-dialogs.cpp:121 gui/options.cpp:3363
 msgid "icon packs"
 msgstr "Icon-Packs"
 
-#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3374
+#: gui/dump-all-dialogs.cpp:125 gui/options.cpp:3374
 msgid "shader packs"
 msgstr "Shader-Packs"
 
-#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:713
+#: gui/dump-all-dialogs.cpp:144 gui/launcher.cpp:713
 msgid "Pick the game:"
 msgstr "Spiel auswählen:"
 
@@ -1571,77 +1571,77 @@ msgstr "Listenansicht"
 msgid "Grid view"
 msgstr "Rasteransicht"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1081
 msgid "~S~tart"
 msgstr "~S~tarten"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1081
 msgid "Start selected game"
 msgstr "Ausgewähltes Spiel starten"
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1084
 msgid "~L~oad..."
 msgstr "~L~aden..."
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1084
 msgid "Load saved game for selected game"
 msgstr "Spielstand für ausgewähltes Spiel laden"
 
-#: gui/launcher.cpp:1108
+#: gui/launcher.cpp:1086
 msgid "Record..."
 msgstr "Aufzeichnen..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1092
 msgid "~G~ame Options..."
 msgstr "Spiel-~O~ptionen..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1092
 msgid "Change game options"
 msgstr "Spieloptionen ändern"
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1092
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "~S~piel-Opts..."
 
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1212 gui/launcher.cpp:1408
+#: gui/launcher.cpp:1190 gui/launcher.cpp:1386
 msgid "Unknown Engine"
 msgstr "Unbekannte Engine"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1229 gui/launcher.cpp:1425
+#: gui/launcher.cpp:1207 gui/launcher.cpp:1403
 msgid "Unknown Publisher"
 msgstr "Unbekannter Publisher"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1246 gui/launcher.cpp:1442
+#: gui/launcher.cpp:1224 gui/launcher.cpp:1420
 msgid "No Series"
 msgstr "Keine Serie"
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1260 gui/launcher.cpp:1456
+#: gui/launcher.cpp:1238 gui/launcher.cpp:1434
 msgid "Language not detected"
 msgstr "Sprache nicht erkannt"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1274 gui/launcher.cpp:1470
+#: gui/launcher.cpp:1252 gui/launcher.cpp:1448
 msgid "Platform not detected"
 msgstr "Plattform nicht erkannt"
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1291 gui/launcher.cpp:1487
+#: gui/launcher.cpp:1269 gui/launcher.cpp:1465
 msgid "Unknown Year"
 msgstr "Unbekanntes Jahr"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1494 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1472 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "Alle"
 
-#: gui/launcher.cpp:1649
+#: gui/launcher.cpp:1627
 msgid "Icons per row:"
 msgstr "Icons pro Reihe:"
 
@@ -2953,7 +2953,7 @@ msgstr ""
 "Sie können diese Einstellung später im Reiter \"Sonstiges\"\n"
 "im Optionsfenster ändern."
 
-#: gui/widget.cpp:456 gui/widget.cpp:458 gui/widget.cpp:463 gui/widget.cpp:465
+#: gui/widget.cpp:466 gui/widget.cpp:468 gui/widget.cpp:473 gui/widget.cpp:475
 msgid "Clear value"
 msgstr "Wert löschen"
 

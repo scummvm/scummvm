@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-07 11:16+0000\n"
+"POT-Creation-Date: 2025-04-08 19:53+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -415,8 +415,8 @@ msgstr "下載"
 msgid "Select directory where to download game data"
 msgstr "选择下载保存游戏数据的目录"
 
-#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
-#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:579 gui/launcher.cpp:314
+#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:117
+#: gui/dump-all-dialogs.cpp:140 gui/editgamedialog.cpp:579 gui/launcher.cpp:314
 msgid "Select directory with game data"
 msgstr "选择包含游戏数据的目录"
 
@@ -539,15 +539,15 @@ msgstr "你将要删除 %s %S 数据，这会删除之前下载的所有 %S。�
 msgid "Proceed"
 msgstr "開始執行"
 
-#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3363
+#: gui/dump-all-dialogs.cpp:121 gui/options.cpp:3363
 msgid "icon packs"
 msgstr "图标包"
 
-#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3374
+#: gui/dump-all-dialogs.cpp:125 gui/options.cpp:3374
 msgid "shader packs"
 msgstr ""
 
-#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:713
+#: gui/dump-all-dialogs.cpp:144 gui/launcher.cpp:713
 msgid "Pick the game:"
 msgstr "选择游戏："
 
@@ -1444,77 +1444,77 @@ msgstr "列表樣式"
 msgid "Grid view"
 msgstr "網格樣式"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1081
 msgid "~S~tart"
 msgstr "开始游戏(S)"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1081
 msgid "Start selected game"
 msgstr "开始选定的游戏"
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1084
 msgid "~L~oad..."
 msgstr "载入游戏(L)..."
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1084
 msgid "Load saved game for selected game"
 msgstr "为选定的游戏载入存档"
 
-#: gui/launcher.cpp:1108
+#: gui/launcher.cpp:1086
 msgid "Record..."
 msgstr "记录..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1092
 msgid "~G~ame Options..."
 msgstr "遊戲选项(G)..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1092
 msgid "Change game options"
 msgstr "改变游戏设置"
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1092
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "遊戲選項(G)..."
 
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1212 gui/launcher.cpp:1408
+#: gui/launcher.cpp:1190 gui/launcher.cpp:1386
 msgid "Unknown Engine"
 msgstr "…未知的引擎"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1229 gui/launcher.cpp:1425
+#: gui/launcher.cpp:1207 gui/launcher.cpp:1403
 msgid "Unknown Publisher"
 msgstr "未知的發行者"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1246 gui/launcher.cpp:1442
+#: gui/launcher.cpp:1224 gui/launcher.cpp:1420
 msgid "No Series"
 msgstr "無系列"
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1260 gui/launcher.cpp:1456
+#: gui/launcher.cpp:1238 gui/launcher.cpp:1434
 msgid "Language not detected"
 msgstr "無偵測到此語言"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1274 gui/launcher.cpp:1470
+#: gui/launcher.cpp:1252 gui/launcher.cpp:1448
 msgid "Platform not detected"
 msgstr "無偵測到此平台"
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1291 gui/launcher.cpp:1487
+#: gui/launcher.cpp:1269 gui/launcher.cpp:1465
 msgid "Unknown Year"
 msgstr "未知年份"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1494 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1472 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "全部"
 
-#: gui/launcher.cpp:1649
+#: gui/launcher.cpp:1627
 msgid "Icons per row:"
 msgstr "每列圖標數:"
 
@@ -2766,7 +2766,7 @@ msgid ""
 "in the Options dialog."
 msgstr ""
 
-#: gui/widget.cpp:456 gui/widget.cpp:458 gui/widget.cpp:463 gui/widget.cpp:465
+#: gui/widget.cpp:466 gui/widget.cpp:468 gui/widget.cpp:473 gui/widget.cpp:475
 msgid "Clear value"
 msgstr ""
 

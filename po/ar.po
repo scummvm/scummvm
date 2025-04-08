@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-07 11:16+0000\n"
+"POT-Creation-Date: 2025-04-08 19:53+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -441,8 +441,8 @@ msgstr "تحميل"
 msgid "Select directory where to download game data"
 msgstr "حدد المجلد حيث سيتم تنزيل بيانات اللعبة"
 
-#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
-#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:579 gui/launcher.cpp:314
+#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:117
+#: gui/dump-all-dialogs.cpp:140 gui/editgamedialog.cpp:579 gui/launcher.cpp:314
 msgid "Select directory with game data"
 msgstr "حدد المجلد الذي يحتوي على بيانات اللعبة"
 
@@ -571,15 +571,15 @@ msgstr ""
 msgid "Proceed"
 msgstr "واصل"
 
-#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3363
+#: gui/dump-all-dialogs.cpp:121 gui/options.cpp:3363
 msgid "icon packs"
 msgstr "حزم الرموز"
 
-#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3374
+#: gui/dump-all-dialogs.cpp:125 gui/options.cpp:3374
 msgid "shader packs"
 msgstr "حزم تظليل"
 
-#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:713
+#: gui/dump-all-dialogs.cpp:144 gui/launcher.cpp:713
 msgid "Pick the game:"
 msgstr "اختر اللعبة:"
 
@@ -1496,79 +1496,79 @@ msgstr "عرض القائمة"
 msgid "Grid view"
 msgstr "عرض شبكي"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1081
 msgid "~S~tart"
 msgstr "~ا~بدأ"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1081
 msgid "Start selected game"
 msgstr "ابدأ اللعبة المختارة"
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1084
 msgid "~L~oad..."
 msgstr "~ح~مل..."
 
-#: gui/launcher.cpp:1106
+#: gui/launcher.cpp:1084
 msgid "Load saved game for selected game"
 msgstr "تحميل اللعبة المحفوظة للعبة المحددة"
 
-#: gui/launcher.cpp:1108
+#: gui/launcher.cpp:1086
 msgid "Record..."
 msgstr "سِجِلّ..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1092
 msgid "~G~ame Options..."
 msgstr "~خ~يارات اللعبة..."
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1092
 msgid "Change game options"
 msgstr "تغيير إعدادات اللعبة"
 
-#: gui/launcher.cpp:1114
+#: gui/launcher.cpp:1092
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "~خ~يارات اللعبة..."
 
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1212 gui/launcher.cpp:1408
+#: gui/launcher.cpp:1190 gui/launcher.cpp:1386
 msgid "Unknown Engine"
 msgstr "محرك غير معروف"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1229 gui/launcher.cpp:1425
+#: gui/launcher.cpp:1207 gui/launcher.cpp:1403
 msgid "Unknown Publisher"
 msgstr "ناشر غير معروف"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1246 gui/launcher.cpp:1442
+#: gui/launcher.cpp:1224 gui/launcher.cpp:1420
 msgid "No Series"
 msgstr "لا توجد سلسلة"
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1260 gui/launcher.cpp:1456
+#: gui/launcher.cpp:1238 gui/launcher.cpp:1434
 msgid "Language not detected"
 msgstr "لم يتم الكشف عن اللغة"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1274 gui/launcher.cpp:1470
+#: gui/launcher.cpp:1252 gui/launcher.cpp:1448
 msgid "Platform not detected"
 msgstr "النظام الأساسي غير مكتشف"
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1291 gui/launcher.cpp:1487
+#: gui/launcher.cpp:1269 gui/launcher.cpp:1465
 #, fuzzy
 #| msgid "Unknown error"
 msgid "Unknown Year"
 msgstr "خطأ غير معروف"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1494 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1472 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "الجميع"
 
-#: gui/launcher.cpp:1649
+#: gui/launcher.cpp:1627
 msgid "Icons per row:"
 msgstr "الرموز لكل صف:"
 
@@ -2885,7 +2885,7 @@ msgstr ""
 "يمكنك تغيير هذا الإعداد لاحقًا في علامة تبويب المتفرقات\n"
 "في مربع حوار الخيارات."
 
-#: gui/widget.cpp:456 gui/widget.cpp:458 gui/widget.cpp:463 gui/widget.cpp:465
+#: gui/widget.cpp:466 gui/widget.cpp:468 gui/widget.cpp:473 gui/widget.cpp:475
 msgid "Clear value"
 msgstr "قيمة واضحة"
 
