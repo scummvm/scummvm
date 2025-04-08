@@ -54,6 +54,7 @@
 
 #include "engines/engine.h"
 #include "engines/util.h"
+#include "engines/advancedDetector.h"
 
 #include "graphics/macgui/macdialog.h"
 
@@ -120,7 +121,7 @@ Common::Error WageEngine::run() {
 	}
 
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr) {
+	if (ttsMan) {
 		ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
 		ttsMan->enable(ConfMan.getBool("tts_enabled"));
 	}
@@ -271,7 +272,6 @@ void WageEngine::setMenu(Common::String menu) {
 
 void WageEngine::appendText(const char *str) {
 	Common::String s(str);
-	
 
 	s += '\n';
 
@@ -281,15 +281,19 @@ void WageEngine::appendText(const char *str) {
 	_inputText.clear();
 }
 
+void WageEngine::sayText(const Common::String str) {
+	sayText(str, Common::TextToSpeechManager::INTERRUPT_NO_REPEAT);
+}
+
 void WageEngine::sayText(const Common::String str, Common::TextToSpeechManager::Action action) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+	if (ttsMan && ConfMan.getBool("tts_enabled"))
 		ttsMan->say(str, action);
 }
 
 void WageEngine::stopTextSpeech() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking())
+	if (ttsMan && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking())
 		ttsMan->stop();
 }
 
@@ -596,7 +600,7 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 	processTurnInternal(&input, clickInput);
 	Scene *playerScene = _world->_player->_currentScene;
 
- 	if (prevScene != playerScene && playerScene != _world->_storageScene) {
+	if (prevScene != playerScene && playerScene != _world->_storageScene) {
 		if (prevMonster != NULL) {
 			bool followed = false;
 			if (getMonster() == NULL) {
@@ -627,8 +631,7 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 	_inputText.clear();
 }
 
-Common::Language WageEngine::getLanguage() const{
-
+Common::Language WageEngine::getLanguage() const {
 	return _gameDescription->language;
 }
 
