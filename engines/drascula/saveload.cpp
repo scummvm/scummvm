@@ -21,6 +21,8 @@
 
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/config-manager.h"
+#include "common/text-to-speech.h"
 
 #include "engines/savestate.h"
 #include "graphics/thumbnail.h"
@@ -420,12 +422,19 @@ bool DrasculaEngine::saveLoadScreen() {
 	setCursor(kCursorCrosshair);
 	loadSaveNames();
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+
 	while (!shouldQuit()) {
 		copyBackground();
 		for (n = 0; n < NUM_SAVES; n++) {
 			print_abc(_saveNames[n].c_str(), 116, 27 + 9 * n);
 		}
 		print_abc(selectedName.c_str(), 117, 15);
+
+		if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && _previousSaid != selectedName && selectedName.size() > 0) {
+			ttsMan->say(selectedName.c_str());
+			_previousSaid = selectedName;
+		}
 
 		updateScreen();
 		updateEvents();
@@ -456,6 +465,10 @@ bool DrasculaEngine::saveLoadScreen() {
 			if (_mouseX > 208 && _mouseY > 123 && _mouseX < 282 && _mouseY < 149) {
 				// "Save" button
 				if (selectedName.empty()) {
+					if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
+						ttsMan->say("Please select a slot");
+					}
+
 					print_abc("Please select a slot", 117, 15);
 					updateScreen();
 					delay(200);
@@ -472,6 +485,10 @@ bool DrasculaEngine::saveLoadScreen() {
 			} else if (_mouseX > 125 && _mouseY > 123 && _mouseX < 199 && _mouseY < 149) {
 				// "Load" button
 				if (selectedName.empty()) {
+					if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
+						ttsMan->say("Please select a slot");
+					}
+
 					print_abc("Please select a slot", 117, 15);
 					updateScreen();
 					delay(200);
