@@ -438,7 +438,7 @@ void Room205::parser() {
 				_fieldDC = 1;
 				digi_preload("205_S30", -1);
 				digi_preload("205R34", -1);
-				ws_unhide_walker(_G(my_walker));
+				ws_hide_walker(_G(my_walker));
 				series_stream("205RTEST", 7, 0, 7);
 				kernel_timing_trigger(240, 5, nullptr);
 			} else if (!_G(flags)[V024]) {
