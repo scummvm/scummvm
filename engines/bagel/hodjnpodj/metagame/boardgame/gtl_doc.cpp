@@ -19,48 +19,31 @@
  *
  */
 
-#ifndef HODJNPODJ_METAGAME_BOARDGAME_H
-#define HODJNPODJ_METAGAME_BOARDGAME_H
-
-#include "bagel/hodjnpodj/views/view.h"
-#include "bagel/hodjnpodj/metagame/boardgame/gtl_app.h"
 #include "bagel/hodjnpodj/metagame/boardgame/gtl_doc.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-enum DialogId {
-	kDialogInventory = 1,
-	kDialogGeneralStore = 2,
-	kDialogPawnShop = 3,
-	kDialogBlackMarket = 4
-};
+bool CGtlDoc::onNewDocument() {
+	CGtlApp *xpGtlApp = afxGetApp();
+	
+	// TODO: add reinitialization code here
+	// (SDI documents will reuse this document)
 
-class Boardgame : public View {
-private:
-	CGtlApp _app;
-	CGtlDoc _doc;
-	bool bJustReturned = false;
+	if (++xpGtlApp->m_iNumOpens == 1 && xpGtlApp->m_szFilename[0])
+		initDocument(xpGtlApp->m_szFilename);
+	else
+		initDocument("default.gtl");
 
-	void showClue(CNote *note);
-	void showInventory(int nWhichDlg);
-	bool isInputAllowed() const;
+	return true;
+}
 
-public:
-	Boardgame();
-	~Boardgame() override {}
+void CGtlDoc::initDocument(const char *xpszPathName) {
 
-	bool msgOpen(const OpenMessage &msg) override;
-	bool msgClose(const CloseMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-	void draw() override;
-};
+}
 
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif

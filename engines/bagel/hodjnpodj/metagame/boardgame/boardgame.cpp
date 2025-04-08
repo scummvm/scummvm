@@ -32,10 +32,8 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-static const char *m_szFilename = "meta/meta.gtl";
-
-
-Boardgame::Boardgame() : View("Boardgame") {
+Boardgame::Boardgame() : View("Boardgame"),
+		_doc(&_app) {
 }
 
 bool Boardgame::msgOpen(const OpenMessage &msg) {

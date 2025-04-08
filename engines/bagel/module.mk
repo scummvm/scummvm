@@ -136,8 +136,10 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/boardgame/backpack.o \
 	hodjnpodj/metagame/boardgame/boardgame.o \
 	hodjnpodj/metagame/boardgame/boardgame_options.o \
-	hodjnpodj/metagame/boardgame/data.o \
 	hodjnpodj/metagame/boardgame/general_store.o \
+	hodjnpodj/metagame/boardgame/gtl_app.o \
+	hodjnpodj/metagame/boardgame/gtl_data.o \
+	hodjnpodj/metagame/boardgame/gtl_doc.o \
 	hodjnpodj/metagame/boardgame/minimap.o \
 	hodjnpodj/metagame/boardgame/notebook.o \
 	hodjnpodj/metagame/boardgame/pawn_shop.o \

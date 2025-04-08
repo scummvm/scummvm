@@ -19,44 +19,17 @@
  *
  */
 
-#ifndef HODJNPODJ_METAGAME_BOARDGAME_H
-#define HODJNPODJ_METAGAME_BOARDGAME_H
-
-#include "bagel/hodjnpodj/views/view.h"
-#include "bagel/hodjnpodj/metagame/boardgame/gtl_app.h"
-#include "bagel/hodjnpodj/metagame/boardgame/gtl_doc.h"
+#ifndef HODJNPODJ_METAGAME_GTL_APP_H
+#define HODJNPODJ_METAGAME_GTL_APP_H
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-enum DialogId {
-	kDialogInventory = 1,
-	kDialogGeneralStore = 2,
-	kDialogPawnShop = 3,
-	kDialogBlackMarket = 4
-};
-
-class Boardgame : public View {
-private:
-	CGtlApp _app;
-	CGtlDoc _doc;
-	bool bJustReturned = false;
-
-	void showClue(CNote *note);
-	void showInventory(int nWhichDlg);
-	bool isInputAllowed() const;
-
+class CGtlApp {
 public:
-	Boardgame();
-	~Boardgame() override {}
-
-	bool msgOpen(const OpenMessage &msg) override;
-	bool msgClose(const CloseMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-	void draw() override;
+	int m_iNumOpens = 0;
+	const char *m_szFilename = "meta/meta.gtl";
 };
 
 } // namespace Metagame

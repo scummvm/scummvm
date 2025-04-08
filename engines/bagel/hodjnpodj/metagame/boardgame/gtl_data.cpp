@@ -19,48 +19,38 @@
  *
  */
 
-#ifndef HODJNPODJ_METAGAME_BOARDGAME_H
-#define HODJNPODJ_METAGAME_BOARDGAME_H
-
-#include "bagel/hodjnpodj/views/view.h"
-#include "bagel/hodjnpodj/metagame/boardgame/gtl_app.h"
-#include "bagel/hodjnpodj/metagame/boardgame/gtl_doc.h"
+#include "bagel/hodjnpodj/metagame/boardgame/gtl_data.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-enum DialogId {
-	kDialogInventory = 1,
-	kDialogGeneralStore = 2,
-	kDialogPawnShop = 3,
-	kDialogBlackMarket = 4
-};
+CMap::CMap() {
+	m_bPositionDetermined = false;
+	m_bSprite = false;
+	m_bPalette = false;
+	m_bOverlay = false;
+	m_bMasked = false;
+	m_bMetaGame = false;
+	m_bRelocatable = false;
+	m_bPositionSpecified = false;
+	m_bSpecialPaint = false;
+}
 
-class Boardgame : public View {
-private:
-	CGtlApp _app;
-	CGtlDoc _doc;
-	bool bJustReturned = false;
+CGtlData::CGtlData() {
+	TimeDate *td[2] = { &m_stAcceptClickActive, &m_stLDownTime };
 
-	void showClue(CNote *note);
-	void showInventory(int nWhichDlg);
-	bool isInputAllowed() const;
-
-public:
-	Boardgame();
-	~Boardgame() override {}
-
-	bool msgOpen(const OpenMessage &msg) override;
-	bool msgClose(const CloseMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-	void draw() override;
-};
+	for (TimeDate *d : td) {
+		d->tm_sec = 0;
+		d->tm_min = 0;
+		d->tm_hour = 0;
+		d->tm_mday = 0;
+		d->tm_mon = 0;
+		d->tm_year = 0;
+		d->tm_wday = 0;
+	}
+}
 
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif

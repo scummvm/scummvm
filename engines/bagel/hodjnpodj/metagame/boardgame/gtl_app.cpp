@@ -19,37 +19,13 @@
  *
  */
 
-#include "bagel/hodjnpodj/metagame/boardgame/data.h"
+#include "bagel/hodjnpodj/metagame/boardgame/gtl_app.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-CMap::CMap() {
-	m_bPositionDetermined = false;
-	m_bSprite = false;
-	m_bPalette = false;
-	m_bOverlay = false;
-	m_bMasked = false;
-	m_bMetaGame = false;
-	m_bRelocatable = false;
-	m_bPositionSpecified = false;
-	m_bSpecialPaint = false;
-}
-
-CGtlData::CGtlData() {
-	TimeDate *td[2] = { &m_stAcceptClickActive, &m_stLDownTime };
-
-	for (TimeDate *d : td) {
-		d->tm_sec = 0;
-		d->tm_min = 0;
-		d->tm_hour = 0;
-		d->tm_mday = 0;
-		d->tm_mon = 0;
-		d->tm_year = 0;
-		d->tm_wday = 0;
-	}
-}
 
 } // namespace Metagame
 } // namespace HodjNPodj
