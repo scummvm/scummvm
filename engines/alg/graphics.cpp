@@ -49,9 +49,7 @@ Graphics::Surface *AlgGraphics::loadVgaBackground(const Common::Path &path, uint
 	}
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	uint8 *pixels = new uint8[width * height]();
-	vgaFile.read(pixels, width * height);
-	surface->setPixels(pixels);
+	vgaFile.read(surface->getPixels(), width * height);
 	Common::Rect backgroundRect = Common::Rect(0, 0, width, height);
 	surface->flipVertical(backgroundRect);
 	vgaFile.close();
@@ -179,22 +177,7 @@ void AlgGraphics::drawImage(Graphics::Surface *dst, Graphics::Surface *src, int3
 void AlgGraphics::drawImageCentered(Graphics::Surface *dst, Graphics::Surface *src, int32 x, int32 y) {
 	int32 dstX = x - (src->w / 2);
 	int32 dstY = y - (src->h / 2);
-	Common::Rect subRect = Common::Rect(0, 0, src->w, src->h);
-	if (dstX < 0) {
-		subRect.left -= dstX;
-		dstX = 0;
-	}
-	if (dstY < 0) {
-		subRect.top -= dstY;
-		dstY = 0;
-	}
-	if (dstX + src->w > dst->w) {
-		subRect.right -= dstX + src->w - dst->w;
-	}
-	if (dstY + src->h > dst->h) {
-		subRect.bottom -= dstY + src->h - dst->h;
-	}
-	dst->copyRectToSurfaceWithKey(src->getBasePtr(subRect.left, subRect.top), src->pitch, dstX, dstY, subRect.width(), subRect.height(), 0x00);
+	drawImage(dst, src, dstX, dstY);
 }
 
 } // End of namespace Alg

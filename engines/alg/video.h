@@ -23,6 +23,7 @@
 #define ALG_VIDEO_H
 
 #include "audio/audiostream.h"
+#include "common/file.h"
 #include "common/stream.h"
 #include "graphics/surface.h"
 
@@ -35,7 +36,7 @@ public:
 	void getNextFrame();
 	void loadVideoFromStream(uint32 offset);
 	void skipNumberOfFrames(uint32 num);
-	void setReadStream(Common::SeekableReadStream *stream);
+	void setInputFile(Common::File *input) { _input = input; }
 	bool isFinished() { return _bytesLeft == 0; }
 	Audio::PacketizedAudioStream *getAudioStream() { return _audioStream; }
 	Graphics::Surface *getVideoFrame() { return _frame; }
@@ -46,7 +47,7 @@ public:
 	uint32 getCurrentFrame() { return _currentFrame; }
 
 private:
-	Common::SeekableReadStream *_stream;
+	Common::File *_input;
 	Graphics::Surface *_frame;
 	Audio::PacketizedAudioStream *_audioStream;
 	uint8 *_palette;
