@@ -65,30 +65,14 @@ Game::~Game() {
 			delete item;
 		}
 	}
-	if (_saveSound != nullptr) {
-		delete _saveSound;
-	}
-	if (_loadSound != nullptr) {
-		delete _loadSound;
-	}
-	if (_easySound != nullptr) {
-		delete _easySound;
-	}
-	if (_avgSound != nullptr) {
-		delete _avgSound;
-	}
-	if (_hardSound != nullptr) {
-		delete _hardSound;
-	}
-	if (_skullSound != nullptr) {
-		delete _skullSound;
-	}
-	if (_shotSound != nullptr) {
-		delete _shotSound;
-	}
-	if (_emptySound != nullptr) {
-		delete _emptySound;
-	}
+	delete _saveSound;
+	delete _loadSound;
+	delete _easySound;
+	delete _avgSound;
+	delete _hardSound;
+	delete _skullSound;
+	delete _shotSound;
+	delete _emptySound;
 }
 
 void Game::init() {
@@ -159,7 +143,7 @@ void Game::loadLibArchive(const Common::Path &path) {
 		_libFileEntries[entryName] = entryOffset;
 	}
 	_libFile.seek(0);
-	_videoDecoder->setReadStream(_libFile.readStream(_libFile.size()));
+	_videoDecoder->setInputFile(&_libFile);
 }
 
 bool Game::loadScene(Scene *scene) {
@@ -338,7 +322,7 @@ Audio::SeekableAudioStream *Game::loadSoundFile(const Common::Path &path) {
 		delete file;
 		return nullptr;
 	}
-	return Audio::makeRawStream(file, 8000, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
+	return Audio::makeRawStream(file, 8000, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 }
 
 void Game::playSound(Audio::SeekableAudioStream *stream) {

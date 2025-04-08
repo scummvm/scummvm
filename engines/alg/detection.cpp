@@ -27,20 +27,21 @@
 #include "alg/detection_tables.h"
 
 static const PlainGameDescriptor algGames[] = {
-	{ "cpatrol", "Crime Patrol" },
-	{ "dwars", "Drug Wars" },
-	{ "johnroc", "Who Shot Johnny Rock?" },
-	{ "lbhunter", "The Last Bounty Hunter" },
 	{ "maddog", "Mad Dog McCree" },
-	{ "maddog2", "Mad Dog II: The Lost Gold" },
+	{ "johnroc", "Who Shot Johnny Rock?" },
 	{ "spirates", "Space Pirates" },
+	{ "maddog2", "Mad Dog II: The Lost Gold" },
+	{ "cpatrol", "Crime Patrol" },
+	{ "dwars", "Crime Patrol 2: Drug Wars" },
+	{ "lbhunter", "The Last Bounty Hunter" },
 	{ nullptr, nullptr }
 };
 
 static const DebugChannelDef debugFlagList[] = {
-	{Alg::kAlgDebugGeneral, "general", "General"},
-	{Alg::kAlgDebugGraphics, "graphics", "Graphics"},
-	DEBUG_CHANNEL_END};
+	{ Alg::kAlgDebugGeneral, "general", "General" },
+	{ Alg::kAlgDebugGraphics, "graphics", "Graphics" },
+	DEBUG_CHANNEL_END
+};
 
 class AlgMetaEngineDetection : public AdvancedMetaEngineDetection<Alg::AlgGameDescription> {
 public:

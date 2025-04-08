@@ -88,9 +88,7 @@ GameBountyHunter::~GameBountyHunter() {
 		item->free();
 		delete item;
 	}
-	if (_shotgunSound != nullptr) {
-		delete _shotgunSound;
-	}
+	delete _shotgunSound;
 }
 
 void GameBountyHunter::init() {
