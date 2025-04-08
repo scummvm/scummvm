@@ -196,7 +196,7 @@ void Room205::parser() {
 				series_unload(_205FireInBrazierSeries);
 				series_show("205GONG", 1025, 16, -1, -1, 0, 100, 0, 0);
 				digi_play_loop("205_s34", 3, 25, -1, -1);
-				digi_play_loop("205_S23", 1, 255, -1, -1);
+				digi_play("205_S23", 1, 255, -1, -1);
 				hotspot_set_active(_G(currentSceneDef).hotspots, "GONG ", true);
 				hotspot_set_active(_G(currentSceneDef).hotspots, "GUN", false);
 				inv_move_object("GONG", 999);
