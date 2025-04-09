@@ -27,43 +27,43 @@ namespace ZVision {
 
 //Power law with exponent 1.5.
 static constexpr uint8 powerLaw[256] = {
-    0,  0,  0,  0,  1,  1,  1,  1,  1,  2,  2,  2,  3,  3,  3,  4, 
-    4,  4,  5,  5,  6,  6,  6,  7,  7,  8,  8,  9,  9, 10, 10, 11,
-   11, 12, 12, 13, 14, 14, 15, 15, 16, 16, 17, 18, 18, 19, 20, 20,
-   21, 21, 22, 23, 23, 24, 25, 26, 26, 27, 28, 28, 29, 30, 31, 31,
-   32, 33, 34, 34, 35, 36, 37, 37, 38, 39, 40, 41, 41, 42, 43, 44,
-   45, 46, 46, 47, 48, 49, 50, 51, 52, 53, 53, 54, 55, 56, 57, 58,
-   59, 60, 61, 62, 63, 64, 65, 65, 66, 67, 68, 69, 70, 71, 72, 73,
-   74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 88, 89, 90,
-   91, 92, 93, 94, 95, 96, 97, 98, 99,100,102,103,104,105,106,107,
-  108,109,110,112,113,114,115,116,117,119,120,121,122,123,124,126,
-  127,128,129,130,132,133,134,135,136,138,139,140,141,142,144,145,
-  146,147,149,150,151,152,154,155,156,158,159,160,161,163,164,165,
-  167,168,169,171,172,173,174,176,177,178,180,181,182,184,185,187,
-  188,189,191,192,193,195,196,197,199,200,202,203,204,206,207,209,
-  210,211,213,214,216,217,218,220,221,223,224,226,227,228,230,231,
-  233,234,236,237,239,240,242,243,245,246,248,249,251,252,254,255
-  };
-  
+  0,  0,  0,  0,  1,  1,  1,  1,  1,  2,  2,  2,  3,  3,  3,  4, 
+  4,  4,  5,  5,  6,  6,  6,  7,  7,  8,  8,  9,  9, 10, 10, 11,
+ 11, 12, 12, 13, 14, 14, 15, 15, 16, 16, 17, 18, 18, 19, 20, 20,
+ 21, 21, 22, 23, 23, 24, 25, 26, 26, 27, 28, 28, 29, 30, 31, 31,
+ 32, 33, 34, 34, 35, 36, 37, 37, 38, 39, 40, 41, 41, 42, 43, 44,
+ 45, 46, 46, 47, 48, 49, 50, 51, 52, 53, 53, 54, 55, 56, 57, 58,
+ 59, 60, 61, 62, 63, 64, 65, 65, 66, 67, 68, 69, 70, 71, 72, 73,
+ 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 88, 89, 90,
+ 91, 92, 93, 94, 95, 96, 97, 98, 99,100,102,103,104,105,106,107,
+108,109,110,112,113,114,115,116,117,119,120,121,122,123,124,126,
+127,128,129,130,132,133,134,135,136,138,139,140,141,142,144,145,
+146,147,149,150,151,152,154,155,156,158,159,160,161,163,164,165,
+167,168,169,171,172,173,174,176,177,178,180,181,182,184,185,187,
+188,189,191,192,193,195,196,197,199,200,202,203,204,206,207,209,
+210,211,213,214,216,217,218,220,221,223,224,226,227,228,230,231,
+233,234,236,237,239,240,242,243,245,246,248,249,251,252,254,255
+};
+
 static constexpr uint8 logPower[256] = {
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-    1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,
-    3,  4,  4,  4,  4,  5,  5,  5,  5,  6,  6,  6,  7,  7,  7,  8,
-    8,  9,  9, 10, 10, 11, 11, 12, 13, 13, 14, 15, 16, 17, 18, 19,
-   20, 21, 22, 23, 24, 26, 27, 29, 30, 32, 34, 36, 38, 40, 42, 45,
-   47, 50, 52, 55, 58, 62, 65, 69, 73, 77, 81, 86, 90, 96,101,107,
-  113,119,126,133,140,148,156,165,174,184,194,205,217,229,241,255
-  };
-  
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,
+  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,
+  3,  4,  4,  4,  4,  5,  5,  5,  5,  6,  6,  6,  7,  7,  7,  8,
+  8,  9,  9, 10, 10, 11, 11, 12, 13, 13, 14, 15, 16, 17, 18, 19,
+ 20, 21, 22, 23, 24, 26, 27, 29, 30, 32, 34, 36, 38, 40, 42, 45,
+ 47, 50, 52, 55, 58, 62, 65, 69, 73, 77, 81, 86, 90, 96,101,107,
+113,119,126,133,140,148,156,165,174,184,194,205,217,229,241,255
+};
+
 //*/
 static constexpr uint8 logAmplitude[256] = {
   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  
@@ -132,59 +132,60 @@ static constexpr uint8 directionalAmplitude[181] = {
 };
 
 VolumeManager::VolumeManager(ZVision *engine, volumeScaling mode) :
-  _engine(engine),
-  _mode(mode) {
+	_engine(engine),
+	_mode(mode) {
 };
-  
+
 uint8 VolumeManager::convert(uint8 inputValue) {
-  return convert(inputValue, _mode);
+	return convert(inputValue, _mode);
 };
-  
+
 uint8 VolumeManager::convert(uint8 inputValue, Math::Angle azimuth, uint8 directionality) {
-  return convert(inputValue, _mode, azimuth, directionality);
+	return convert(inputValue, _mode, azimuth, directionality);
 };
 
 uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode, Math::Angle azimuth, uint8 directionality) {
-  uint8 index = abs(round(azimuth.getDegrees(-180)));
-  uint32 output = convert(inputValue, mode);
-  uint32 directionalOutput = (output * directionalAmplitude[index]) * directionality;
-  directionalOutput /= 255;
-  output *= (255-directionality);
-  output = (output + directionalOutput)/255;
-  debug(4,"Directionally converted output %d", output);
-  return output;
+	uint8 index = abs(round(azimuth.getDegrees(-180)));
+	uint32 output = convert(inputValue, mode);
+	uint32 directionalOutput = (output * directionalAmplitude[index]) * directionality;
+	directionalOutput /= 255;
+	output *= (255 - directionality);
+	output = (output + directionalOutput) / 255;
+	debug(4, "Directionally converted output %d", output);
+	return output;
 };
 
 uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode) {
-  uint16 scaledInput = inputValue * 255;
-  scaledInput /= scriptScale;
-  uint8 output = 0;
-  switch(mode) {
-    case kVolumeLogPower:
-      output = logPower[scaledInput];
-      break;
-    case kVolumeLogAmplitude:
-      output = logAmplitude[scaledInput];
-      break;
-    case kVolumePowerLaw:
-      output = powerLaw[scaledInput];
-      break;
-    case kVolumeParabolic:
-      output = pow(scaledInput,2)/255;
-      break;
-    case kVolumeCubic:
-      output = pow(scaledInput,3)/pow(255,2);
-      break;
-    case kVolumeQuartic:
-      output = pow(scaledInput,4)/pow(255,3);
-      break;
-    case kVolumeLinear:
-    default:
-      output = scaledInput;
-      break;
-  }
-  debug(4,"Scripted volume %d, scaled volume %d, converted output %d", inputValue, scaledInput, output);
-  return output;
+	uint16 scaledInput = inputValue * 255;
+	scaledInput /= scriptScale;
+	uint8 output = 0;
+	switch (mode) {
+	case kVolumeLogPower:
+		output = logPower[scaledInput];
+		break;
+	case kVolumeLogAmplitude:
+		output = logAmplitude[scaledInput];
+		break;
+	case kVolumePowerLaw:
+		output = powerLaw[scaledInput];
+		break;
+	case kVolumeParabolic:
+		output = pow(scaledInput, 2) / 255;
+		break;
+	case kVolumeCubic:
+		output = pow(scaledInput, 3) / pow(255, 2);
+		break;
+	case kVolumeQuartic:
+		output = pow(scaledInput, 4) / pow(255, 3);
+		break;
+	case kVolumeLinear:
+	// fall through
+	default:
+		output = scaledInput;
+		break;
+	}
+	debug(4, "Scripted volume %d, scaled volume %d, converted output %d", inputValue, scaledInput, output);
+	return output;
 };
 
 } // End of namespace ZVision

@@ -114,63 +114,62 @@ void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::S
 Common::Error SaveManager::loadGame(int slot) {
 	Common::SeekableReadStream *saveFile = NULL;
 	if (slot < 0) {
-  //Restart game, used by ZGI death screen only
-/*
-		saveFile = _engine->getSearchManager()->openFile("r.svr");
-		if (!saveFile) {
-			Common::File *restoreFile = new Common::File();
-			if (!restoreFile->open("r.svr")) {
-				delete restoreFile;
-				return Common::kPathDoesNotExist;
-			}
-			saveFile = restoreFile;
-		}
-/*/
-    _engine->getScriptManager()->initialize(true);
+		//Restart game, used by ZGI death screen only
+		/*
+		        saveFile = _engine->getSearchManager()->openFile("r.svr");
+		        if (!saveFile) {
+		            Common::File *restoreFile = new Common::File();
+		            if (!restoreFile->open("r.svr")) {
+		                delete restoreFile;
+		                return Common::kPathDoesNotExist;
+		            }
+		            saveFile = restoreFile;
+		        }
+		/*/
+		_engine->getScriptManager()->initialize(true);
 //*/
-	  return Common::kNoError;
-  }
-	else {
-	  saveFile = getSlotFile(slot);
-	  if (!saveFile)
-		  return Common::kPathDoesNotExist;
-	  // Read the header
-	  SaveGameHeader header;
-	  if (!readSaveGameHeader(saveFile, header))
-		  return Common::kUnknownError;
-	  ScriptManager *scriptManager = _engine->getScriptManager();
-	  // Update the state table values
-	  scriptManager->deserialize(saveFile);
-	  delete saveFile;
-	  if (_engine->getGameId() == GID_NEMESIS)  {
-      //Zork Nemesis has no in-game option to select panorama quality or animation options
-      //We set them here to ensure loaded games don't override current game configuration
-      scriptManager->setStateValue(StateKey_HighQuality, ConfMan.getBool("highquality"));
-      scriptManager->setStateValue(StateKey_NoTurnAnim, ConfMan.getBool("noanimwhileturning"));
-	    if(scriptManager->getCurrentLocation() == "tv2f") {
-		    // WORKAROUND for script bug #6793: location tv2f (stairs) has two states:
-		    // one at the top of the stairs, and one at the bottom. When the player
-		    // goes to the bottom of the stairs, the screen changes, and hotspot
-		    // 4652 (exit opposite the stairs) is enabled. However, the variable that
-		    // controls the state (2408) is reset when the player goes down the stairs.
-		    // Furthermore, the room's initialization script disables the stair exit
-		    // control (4652). This leads to an impossible situation, where all the
-		    // exit controls are disabled, and the player can't more anywhere. Thus,
-		    // when loading a game in that room, we check for that impossible
-		    // situation, which only occurs after the player has moved down the stairs,
-		    // and fix it here by setting the correct background, and enabling the
-		    // stair exit hotspot.
-		    if ((scriptManager->getStateFlag(2411) & Puzzle::DISABLED) &&
-			    (scriptManager->getStateFlag(2408) & Puzzle::DISABLED) &&
-			    (scriptManager->getStateFlag(4652) & Puzzle::DISABLED)) {
-			    _engine->getRenderManager()->setBackgroundImage("tv2fb21c.tga");
-			    scriptManager->unsetStateFlag(4652, Puzzle::DISABLED);
-		    }
-	    }
-	  }
-	  g_engine->setTotalPlayTime(header.playTime * 1000);
-	  return Common::kNoError;
-  }
+		return Common::kNoError;
+	} else {
+		saveFile = getSlotFile(slot);
+		if (!saveFile)
+			return Common::kPathDoesNotExist;
+		// Read the header
+		SaveGameHeader header;
+		if (!readSaveGameHeader(saveFile, header))
+			return Common::kUnknownError;
+		ScriptManager *scriptManager = _engine->getScriptManager();
+		// Update the state table values
+		scriptManager->deserialize(saveFile);
+		delete saveFile;
+		if (_engine->getGameId() == GID_NEMESIS)  {
+			//Zork Nemesis has no in-game option to select panorama quality or animation options
+			//We set them here to ensure loaded games don't override current game configuration
+			scriptManager->setStateValue(StateKey_HighQuality, ConfMan.getBool("highquality"));
+			scriptManager->setStateValue(StateKey_NoTurnAnim, ConfMan.getBool("noanimwhileturning"));
+			if (scriptManager->getCurrentLocation() == "tv2f") {
+				// WORKAROUND for script bug #6793: location tv2f (stairs) has two states:
+				// one at the top of the stairs, and one at the bottom. When the player
+				// goes to the bottom of the stairs, the screen changes, and hotspot
+				// 4652 (exit opposite the stairs) is enabled. However, the variable that
+				// controls the state (2408) is reset when the player goes down the stairs.
+				// Furthermore, the room's initialization script disables the stair exit
+				// control (4652). This leads to an impossible situation, where all the
+				// exit controls are disabled, and the player can't more anywhere. Thus,
+				// when loading a game in that room, we check for that impossible
+				// situation, which only occurs after the player has moved down the stairs,
+				// and fix it here by setting the correct background, and enabling the
+				// stair exit hotspot.
+				if ((scriptManager->getStateFlag(2411) & Puzzle::DISABLED) &&
+				        (scriptManager->getStateFlag(2408) & Puzzle::DISABLED) &&
+				        (scriptManager->getStateFlag(4652) & Puzzle::DISABLED)) {
+					_engine->getRenderManager()->setBackgroundImage("tv2fb21c.tga");
+					scriptManager->unsetStateFlag(4652, Puzzle::DISABLED);
+				}
+			}
+		}
+		g_engine->setTotalPlayTime(header.playTime * 1000);
+		return Common::kNoError;
+	}
 }
 
 bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header, bool skipThumbnail) {
@@ -204,12 +203,12 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 	if (header.version > SAVE_VERSION) {
 		uint tempVersion = header.version;
 		GUI::MessageDialog dialog(
-			Common::U32String::format(
-				_("This saved game uses version %u, but this engine only "
-				  "supports up to version %d. You will need an updated version "
-				  "of the engine to use this saved game."), tempVersion, SAVE_VERSION
-			),
-		_("OK"));
+		    Common::U32String::format(
+		        _("This saved game uses version %u, but this engine only "
+		          "supports up to version %d. You will need an updated version "
+		          "of the engine to use this saved game."), tempVersion, SAVE_VERSION
+		    ),
+		    _("OK"));
 		dialog.runModal();
 	}
 

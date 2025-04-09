@@ -54,9 +54,9 @@ ScriptManager::~ScriptManager() {
 }
 
 void ScriptManager::initialize(bool restarted) {
-  if(restarted) {
-	  _globalState.clear();
-	  _globalStateFlags.clear();
+	if (restarted) {
+		_globalState.clear();
+		_globalStateFlags.clear();
 	}
 	cleanScriptScope(universe);
 	cleanScriptScope(world);
@@ -67,31 +67,32 @@ void ScriptManager::initialize(bool restarted) {
 	_currentLocation.room = 0;
 	_currentLocation.view = 0;
 	_changeLocationDelayCycles = 0;
-  if(restarted) {
-	  for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); iter++)
-		  delete(*iter);
-	  _activeSideFx.clear();
-	  _referenceTable.clear();
-	  switch(_engine->getGameId()) {
-      case GID_GRANDINQUISITOR:
-        //Bypass logo video
-        setStateValue(16966, 1);  
-        //Ensure post-logo screen redraw is not inhibited in CD version
-        setStateValue(5813, 1);
-        //Bypass additional logo videos in DVD version
-        setStateValue(19810, 1);
-        setStateValue(19848, 1);
-        break;
-      case GID_NEMESIS:
-      default:
-        break;
-    }
+	if (restarted) {
+		for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); iter++)
+			delete (*iter);
+		_activeSideFx.clear();
+		_referenceTable.clear();
+		switch (_engine->getGameId()) {
+		case GID_GRANDINQUISITOR:
+			//Bypass logo video
+			setStateValue(16966, 1);
+			//Ensure post-logo screen redraw is not inhibited in CD version
+			setStateValue(5813, 1);
+			//Bypass additional logo videos in DVD version
+			setStateValue(19810, 1);
+			setStateValue(19848, 1);
+			break;
+		case GID_NEMESIS:
+		// fall through
+		default:
+			break;
+		}
 	}
 	parseScrFile("universe.scr", universe);
 	changeLocation('g', 'a', 'r', 'y', 0);
 	_controlEvents.clear();
-	if(restarted)
-	  _engine->loadSettings();
+	if (restarted)
+		_engine->loadSettings();
 }
 
 void ScriptManager::update(uint deltaTimeMillis) {
@@ -109,7 +110,7 @@ void ScriptManager::update(uint deltaTimeMillis) {
 			ChangeLocationReal(false);
 	}
 	updateNodes(deltaTimeMillis);
-	debug(5,"Script nodes updated");
+	debug(5, "Script nodes updated");
 	if (!execScope(nodeview))
 		return;
 	if (!execScope(room))
@@ -136,8 +137,7 @@ bool ScriptManager::execScope(ScriptScope &scope) {
 			if (!checkPuzzleCriteria(*PuzzleIter, scope.procCount))
 				return false;
 		}
-	} 
-	else {
+	} else {
 		for (PuzzleList::iterator PuzzleIter = scope.execQueue->begin(); PuzzleIter != scope.execQueue->end(); ++PuzzleIter) {
 			if (!checkPuzzleCriteria(*PuzzleIter, scope.procCount))
 				return false;
@@ -179,10 +179,9 @@ void ScriptManager::updateNodes(uint deltaTimeMillis) {
 	// If process() returns true, it means the node can be deleted
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end();) {
 		if ((*iter)->process(deltaTimeMillis)) {
-			delete(*iter);  // Remove the node
+			delete (*iter); // Remove the node
 			iter = _activeSideFx.erase(iter);
-		} 
-		else
+		} else
 			++iter;
 	}
 }
@@ -195,22 +194,22 @@ void ScriptManager::updateControls(uint deltaTimeMillis) {
 		Common::Event _event = _controlEvents.front();
 		Common::Point imageCoord;
 		switch (_event.type) {
-		  case Common::EVENT_LBUTTONDOWN:
-			  imageCoord = _engine->getRenderManager()->screenSpaceToImageSpace(_event.mouse);
-			  onMouseDown(_event.mouse, imageCoord);
-			  break;
-		  case Common::EVENT_LBUTTONUP:
-			  imageCoord = _engine->getRenderManager()->screenSpaceToImageSpace(_event.mouse);
-			  onMouseUp(_event.mouse, imageCoord);
-			  break;
-		  case Common::EVENT_KEYDOWN:
-			  onKeyDown(_event.kbd);
-			  break;
-		  case Common::EVENT_KEYUP:
-			  onKeyUp(_event.kbd);
-			  break;
-		  default:
-			  break;
+		case Common::EVENT_LBUTTONDOWN:
+			imageCoord = _engine->getRenderManager()->screenSpaceToImageSpace(_event.mouse);
+			onMouseDown(_event.mouse, imageCoord);
+			break;
+		case Common::EVENT_LBUTTONUP:
+			imageCoord = _engine->getRenderManager()->screenSpaceToImageSpace(_event.mouse);
+			onMouseUp(_event.mouse, imageCoord);
+			break;
+		case Common::EVENT_KEYDOWN:
+			onKeyDown(_event.kbd);
+			break;
+		case Common::EVENT_KEYUP:
+			onKeyUp(_event.kbd);
+			break;
+		default:
+			break;
 		}
 		_controlEvents.pop_front();
 	}
@@ -244,20 +243,20 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 				argumentValue = entryIter->argument;
 			// Do the comparison
 			switch (entryIter->criteriaOperator) {
-			  case Puzzle::EQUAL_TO:
-				  criteriaMet = getStateValue(entryIter->key) == argumentValue;
-				  break;
-			  case Puzzle::NOT_EQUAL_TO:
-				  criteriaMet = getStateValue(entryIter->key) != argumentValue;
-				  break;
-			  case Puzzle::GREATER_THAN:
-				  criteriaMet = getStateValue(entryIter->key) > argumentValue;
-				  break;
-			  case Puzzle::LESS_THAN:
-				  criteriaMet = getStateValue(entryIter->key) < argumentValue;
-				  break;
-			  default:
-				  break;
+			case Puzzle::EQUAL_TO:
+				criteriaMet = getStateValue(entryIter->key) == argumentValue;
+				break;
+			case Puzzle::NOT_EQUAL_TO:
+				criteriaMet = getStateValue(entryIter->key) != argumentValue;
+				break;
+			case Puzzle::GREATER_THAN:
+				criteriaMet = getStateValue(entryIter->key) > argumentValue;
+				break;
+			case Puzzle::LESS_THAN:
+				criteriaMet = getStateValue(entryIter->key) < argumentValue;
+				break;
+			default:
+				break;
 			}
 			// If one check returns false, don't keep checking
 			if (!criteriaMet)
@@ -295,10 +294,10 @@ void ScriptManager::cleanScriptScope(ScriptScope &scope) {
 	scope.scopeQueue = &scope.privQueueOne;
 	scope.execQueue = &scope.privQueueTwo;
 	for (PuzzleList::iterator iter = scope.puzzles.begin(); iter != scope.puzzles.end(); ++iter)
-		delete(*iter);
+		delete (*iter);
 	scope.puzzles.clear();
 	for (ControlList::iterator iter = scope.controls.begin(); iter != scope.controls.end(); ++iter)
-		delete(*iter);
+		delete (*iter);
 	scope.controls.clear();
 	scope.procCount = 0;
 }
@@ -306,7 +305,7 @@ void ScriptManager::cleanScriptScope(ScriptScope &scope) {
 int ScriptManager::getStateValue(uint32 key) {
 	if (_globalState.contains(key))
 		return _globalState[key];
-  else
+	else
 		return 0;
 }
 
@@ -407,7 +406,7 @@ ScriptingEffect *ScriptManager::getSideFX(uint32 key) {
 void ScriptManager::deleteSideFx(uint32 key) {
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
 		if ((*iter)->getKey() == key) {
-			delete(*iter);
+			delete (*iter);
 			_activeSideFx.erase(iter);
 			break;
 		}
@@ -419,7 +418,7 @@ void ScriptManager::stopSideFx(uint32 key) {
 		if ((*iter)->getKey() == key) {
 			bool ret = (*iter)->stop();
 			if (ret) {
-				delete(*iter);
+				delete (*iter);
 				_activeSideFx.erase(iter);
 			}
 			break;
@@ -431,7 +430,7 @@ void ScriptManager::killSideFx(uint32 key) {
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
 		if ((*iter)->getKey() == key) {
 			(*iter)->kill();
-			delete(*iter);
+			delete (*iter);
 			_activeSideFx.erase(iter);
 			break;
 		}
@@ -442,16 +441,15 @@ void ScriptManager::killSideFxType(ScriptingEffect::ScriptingEffectType type) {
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end();) {
 		if ((*iter)->getType() & type) {
 			(*iter)->kill();
-			delete(*iter);
+			delete (*iter);
 			iter = _activeSideFx.erase(iter);
-		} 
-		else
+		} else
 			++iter;
 	}
 }
 
 void ScriptManager::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-  debug(1,"Mouse panorama/script coordinates %d x %d", backgroundImageSpacePos.x, backgroundImageSpacePos.y);
+	debug(1, "Mouse panorama/script coordinates %d x %d", backgroundImageSpacePos.x, backgroundImageSpacePos.y);
 	if (!_activeControls)
 		return;
 	for (ControlList::iterator iter = _activeControls->reverse_begin(); iter != _activeControls->end(); iter--) {
@@ -498,7 +496,7 @@ void ScriptManager::onKeyUp(Common::KeyState keyState) {
 }
 
 void ScriptManager::changeLocation(const Location &_newLocation) {
-  
+
 	changeLocation(_newLocation.world, _newLocation.room, _newLocation.node, _newLocation.view, _newLocation.offset);
 }
 
@@ -517,8 +515,7 @@ void ScriptManager::changeLocation(char _world, char _room, char _node, char _vi
 			_nextLocation.node = getStateValue(StateKey_LastNode);
 			_nextLocation.view = getStateValue(StateKey_LastView);
 			_nextLocation.offset = getStateValue(StateKey_LastViewPos);
-		} 
-		else {
+		} else {
 			_nextLocation.world = getStateValue(StateKey_Menu_LastWorld);
 			_nextLocation.room = getStateValue(StateKey_Menu_LastRoom);
 			_nextLocation.node = getStateValue(StateKey_Menu_LastNode);
@@ -547,8 +544,7 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 				_nextLocation.view = _currentLocation.view;
 				_nextLocation.offset = _currentLocation.offset;
 				return;
-			} 
-			else {
+			} else {
 				_currentLocation.world = 'g';
 				_currentLocation.room = '0';
 				_currentLocation.node = '0';
@@ -565,8 +561,7 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 			setStateValue(StateKey_LastNode, getStateValue(StateKey_Node));
 			setStateValue(StateKey_LastView, getStateValue(StateKey_View));
 			setStateValue(StateKey_LastViewPos, getStateValue(StateKey_ViewPos));
-		} 
-		else {
+		} else {
 			setStateValue(StateKey_Menu_LastWorld, getStateValue(StateKey_World));
 			setStateValue(StateKey_Menu_LastRoom, getStateValue(StateKey_Room));
 			setStateValue(StateKey_Menu_LastNode, getStateValue(StateKey_Node));
@@ -578,8 +573,7 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 	if (enteringMenu) {
 		if (isSaveScreen && !leavingMenu)
 			_engine->getSaveManager()->prepareSaveBuffer();
-	} 
-	else if (leavingMenu)
+	} else if (leavingMenu)
 		_engine->getSaveManager()->flushSaveBuffer();
 
 	setStateValue(StateKey_World, _nextLocation.world);
@@ -606,8 +600,7 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 		fileName = Common::Path(Common::String::format("%c.scr", _nextLocation.world));
 		parseScrFile(fileName, world);
 		addPuzzlesToReferenceTable(world);
-	} 
-	else if (_nextLocation.room != _currentLocation.room) {
+	} else if (_nextLocation.room != _currentLocation.room) {
 		cleanScriptScope(nodeview);
 		cleanScriptScope(room);
 		addPuzzlesToReferenceTable(world);
@@ -617,8 +610,7 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 		fileName = Common::Path(Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room));
 		parseScrFile(fileName, room);
 		addPuzzlesToReferenceTable(room);
-	} 
-	else if (_nextLocation.node != _currentLocation.node || _nextLocation.view != _currentLocation.view) {
+	} else if (_nextLocation.node != _currentLocation.node || _nextLocation.view != _currentLocation.view) {
 		cleanScriptScope(nodeview);
 		addPuzzlesToReferenceTable(room);
 		addPuzzlesToReferenceTable(world);
@@ -670,7 +662,7 @@ void ScriptManager::serialize(Common::WriteStream *stream) {
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter)
 		(*iter)->serialize(stream);
 	stream->writeUint32BE(MKTAG('F', 'L', 'A', 'G'));
-	int32 slots = _engine->getGameId() == GID_NEMESIS ? 31000 : 21000;  
+	int32 slots = _engine->getGameId() == GID_NEMESIS ? 31000 : 21000;
 	//Original games use key values up to 29500 and 19737, respectively
 	//Values 30001~31000 and 20001~21000 are now set aside for auxiliary scripting to add extra directional audio effects.
 	stream->writeUint32LE(slots * 2);
@@ -694,7 +686,7 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 	_currentLocation.room = 0;
 	_currentLocation.view = 0;
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); iter++)
-		delete(*iter);
+		delete (*iter);
 	_activeSideFx.clear();
 	_referenceTable.clear();
 	if (stream->readUint32BE() != MKTAG('Z', 'N', 'S', 'G') || stream->readUint32LE() != 4) {
@@ -716,27 +708,27 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 		uint32 tag = stream->readUint32BE();
 		uint32 tagSize = stream->readUint32LE();
 		switch (tag) {
-		  case MKTAG('T', 'I', 'M', 'R'): {
-			  uint32 key = stream->readUint32LE();
-			  uint32 time = stream->readUint32LE();
-			  if (_engine->getGameId() == GID_GRANDINQUISITOR)
-				  time /= 100;
-			  else if (_engine->getGameId() == GID_NEMESIS)
-				  time /= 1000;
-			  addSideFX(new TimerNode(_engine, key, time));
-			  }
-		    break;
-		  case MKTAG('F', 'L', 'A', 'G'):
-			  for (uint32 i = 0; i < tagSize / 2; i++)
-				  setStateFlagSilent(i, stream->readUint16LE());
-			  break;
-		  case MKTAG('P', 'U', 'Z', 'Z'):
-			  for (uint32 i = 0; i < tagSize / 2; i++)
-				  setStateValueSilent(i, stream->readUint16LE());
-			  break;
-		  default:
-			  stream->seek(tagSize, SEEK_CUR);
-			  break;
+		case MKTAG('T', 'I', 'M', 'R'): {
+			uint32 key = stream->readUint32LE();
+			uint32 time = stream->readUint32LE();
+			if (_engine->getGameId() == GID_GRANDINQUISITOR)
+				time /= 100;
+			else if (_engine->getGameId() == GID_NEMESIS)
+				time /= 1000;
+			addSideFX(new TimerNode(_engine, key, time));
+		}
+		break;
+		case MKTAG('F', 'L', 'A', 'G'):
+			for (uint32 i = 0; i < tagSize / 2; i++)
+				setStateFlagSilent(i, stream->readUint16LE());
+			break;
+		case MKTAG('P', 'U', 'Z', 'Z'):
+			for (uint32 i = 0; i < tagSize / 2; i++)
+				setStateValueSilent(i, stream->readUint16LE());
+			break;
+		default:
+			stream->seek(tagSize, SEEK_CUR);
+			break;
 		}
 	}
 	_nextLocation = nextLocation;
@@ -802,8 +794,7 @@ ValueSlot::ValueSlot(ScriptManager *scriptManager, const char *slotValue):
 	if (isSlot) {
 		slot = true;
 		value = atoi(isSlot + 1);
-	} 
-	else {
+	} else {
 		slot = false;
 		value = atoi(slotValue);
 	}
@@ -814,8 +805,7 @@ int16 ValueSlot::getValue() {
 			return _scriptManager->getStateValue(value);
 		else
 			return 0;
-	}
-	else
+	} else
 		return value;
 }
 

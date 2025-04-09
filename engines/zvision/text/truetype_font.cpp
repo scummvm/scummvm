@@ -38,15 +38,15 @@
 namespace ZVision {
 
 const FontStyle systemFonts[] = {
-	{ "*times new roman*",	  "times",   "LiberationSerif"  },
-	{ "*times*",		  "times",   "LiberationSerif"  },
+	{ "*times new roman*",    "times",   "LiberationSerif"  },
+	{ "*times*",          "times",   "LiberationSerif"  },
 	{ "*century schoolbook*", "censcbk", "LiberationSerif"  },
-	{ "*garamond*", 	  "gara",    "LiberationSerif"  },
-	{ "*courier new*",	  "cour",    "LiberationMono" },
-	{ "*courier*",		  "cour",    "LiberationMono" },
-	{ "*ZorkDeath*",	  "cour",    "LiberationMono" },
-	{ "*arial*",		  "arial",   "LiberationSans" },
-	{ "*ZorkNormal*",	  "arial",   "LiberationSans" }
+	{ "*garamond*",       "gara",    "LiberationSerif"  },
+	{ "*courier new*",    "cour",    "LiberationMono" },
+	{ "*courier*",        "cour",    "LiberationMono" },
+	{ "*ZorkDeath*",      "cour",    "LiberationMono" },
+	{ "*arial*",          "arial",   "LiberationSans" },
+	{ "*ZorkNormal*",     "arial",   "LiberationSans" }
 };
 
 const FontStyle getSystemFont(int fontIndex) {
@@ -112,7 +112,7 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint st
 	Common::File *file = new Common::File();
 	Graphics::Font *newFont;
 	if (!file->open(Common::Path(newFontName)) && !_engine->getSearchManager()->openFile(*file, Common::Path(newFontName)) &&
-		!file->open(Common::Path(liberationFontName)) && !_engine->getSearchManager()->openFile(*file, Common::Path(liberationFontName))) {
+	        !file->open(Common::Path(liberationFontName)) && !_engine->getSearchManager()->openFile(*file, Common::Path(liberationFontName))) {
 		newFont = Graphics::loadTTFFontFromArchive(liberationFontName, point, Graphics::kTTFSizeModeCell, 0, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
 		delete file;
 	} else {

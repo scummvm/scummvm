@@ -77,24 +77,24 @@ bool DistortNode::process(uint32 deltaTimeInMillis) {
 
 void DistortNode::setParams(float angl, float linScale) {
 	RenderTable *table = _engine->getRenderManager()->getRenderTable();
-	switch(table->getRenderState()) {
-	  case RenderTable::PANORAMA: {
-		  table->setPanoramaFoV(angl);
-		  table->setPanoramaScale(linScale);
-		  table->generateRenderTable();
-		  _engine->getRenderManager()->markDirty();
-		  break;
-	  }
-	  case RenderTable::TILT: {
-		  table->setTiltFoV(angl);
-		  table->setTiltScale(linScale);
-		  table->generateRenderTable();
-		  _engine->getRenderManager()->markDirty();
-		  break;
-	  }
-	  default:
-	    break;
-	}    
+	switch (table->getRenderState()) {
+	case RenderTable::PANORAMA: {
+		table->setPanoramaFoV(angl);
+		table->setPanoramaScale(linScale);
+		table->generateRenderTable();
+		_engine->getRenderManager()->markDirty();
+		break;
+	}
+	case RenderTable::TILT: {
+		table->setTiltFoV(angl);
+		table->setTiltScale(linScale);
+		table->generateRenderTable();
+		_engine->getRenderManager()->markDirty();
+		break;
+	}
+	default:
+		break;
+	}
 }
 
 } // End of namespace ZVision

@@ -29,29 +29,33 @@
 namespace ZVision {
 
 enum volumeScaling {
-  kVolumeLinear,
-  kVolumePowerLaw,
-  kVolumeParabolic,
-  kVolumeCubic,
-  kVolumeQuartic,
-  kVolumeLogPower,
-  kVolumeLogAmplitude
+	kVolumeLinear,
+	kVolumePowerLaw,
+	kVolumeParabolic,
+	kVolumeCubic,
+	kVolumeQuartic,
+	kVolumeLogPower,
+	kVolumeLogAmplitude
 };
 
 class VolumeManager {
 public:
-  VolumeManager(ZVision *engine, volumeScaling mode);
-  ~VolumeManager() {};
-  volumeScaling getMode() {return _mode;};
-  void setMode(volumeScaling mode) {_mode = mode;};
-  uint8 convert(uint8 inputValue);
-  uint8 convert(uint8 inputValue, volumeScaling mode);
-  uint8 convert(uint8 inputValue, Math::Angle azimuth, uint8 directionality=255);
-  uint8 convert(uint8 inputValue, volumeScaling mode, Math::Angle azimuth, uint8 directionality=255);
+	VolumeManager(ZVision *engine, volumeScaling mode);
+	~VolumeManager() {};
+	volumeScaling getMode() {
+		return _mode;
+	};
+	void setMode(volumeScaling mode) {
+		_mode = mode;
+	};
+	uint8 convert(uint8 inputValue);
+	uint8 convert(uint8 inputValue, volumeScaling mode);
+	uint8 convert(uint8 inputValue, Math::Angle azimuth, uint8 directionality = 255);
+	uint8 convert(uint8 inputValue, volumeScaling mode, Math::Angle azimuth, uint8 directionality = 255);
 private:
 	ZVision *_engine;
-  uint scriptScale = 100; //Z-Vision scripts internally use a volume scale of 0-100; ScummVM uses a scale of 0-255.
-  volumeScaling _mode = kVolumeLinear;
+	uint scriptScale = 100; //Z-Vision scripts internally use a volume scale of 0-100; ScummVM uses a scale of 0-255.
+	volumeScaling _mode = kVolumeLinear;
 };
 
 } // End of namespace ZVision

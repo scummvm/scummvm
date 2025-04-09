@@ -64,7 +64,7 @@ AnimationEffect::~AnimationEffect() {
 
 		if ((*it)._scaled) {
 			(*it)._scaled->free();
-			delete(*it)._scaled;
+			delete (*it)._scaled;
 		}
 	}
 
@@ -203,7 +203,7 @@ bool AnimationEffect::stop() {
 		_engine->getScriptManager()->setStateValue((*it).slot, 2);
 		if ((*it)._scaled) {
 			(*it)._scaled->free();
-			delete(*it)._scaled;
+			delete (*it)._scaled;
 		}
 	}
 

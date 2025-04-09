@@ -23,7 +23,7 @@
 #include "common/system.h"
 #include "video/video_decoder.h"
 #if defined(USE_MPEG2) && defined(USE_A52)
-#include "video/mpegps_decoder.h"
+	#include "video/mpegps_decoder.h"
 #endif
 #include "engines/util.h"
 #include "graphics/surface.h"
@@ -44,19 +44,19 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
 	Common::String tmpFileName = fileName.baseName();
 	tmpFileName.toLowercase();
 	Video::VideoDecoder *animation = NULL;
-	
- debug(1, "Loading animation %s", fileName.toString().c_str());
+
+	debug(1, "Loading animation %s", fileName.toString().c_str());
 
 	if (tmpFileName.hasSuffix(".rlf"))
 		animation = new RLFDecoder();
 	else if (tmpFileName.hasSuffix(".avi"))
 		animation = new ZorkAVIDecoder();
-#if defined(USE_MPEG2) && defined(USE_A52)
+	#if defined(USE_MPEG2) && defined(USE_A52)
 	else if (tmpFileName.hasSuffix(".vob")) {
- 		double amplification = getVobAmplification(tmpFileName);
+		double amplification = getVobAmplification(tmpFileName);
 		animation = new Video::MPEGPSDecoder(amplification);
 	}
-#endif
+	#endif
 	else
 		error("Unknown suffix for animation %s", fileName.toString().c_str());
 	Common::File *_file = getSearchManager()->openFile(fileName);
@@ -68,52 +68,52 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
 	return animation;
 }
 
-  /**
-   * Play video at specified location.
-   *
-   * Pauses clock & normal game loop for duration of video; will still update & render subtitles & cursor.
-   *
-   * @param vid       Source video
-   * @param dstRect   Rectangle to play video into, defined relative to working window origin; video will scale to rectangle automatically.
- 	 * @param skippable Allow video to be skipped
-   * @param sub       Subtitle associated with video
-   * @param srcRect   Rectangle within video frame, defined relative to frame origin, to blit to output.  Only used for removing baked-in letterboxing in ZGI DVD HD videos
-   */	
-	 
+/**
+ * Play video at specified location.
+ *
+ * Pauses clock & normal game loop for duration of video; will still update & render subtitles & cursor.
+ *
+ * @param vid       Source video
+ * @param dstRect   Rectangle to play video into, defined relative to working window origin; video will scale to rectangle automatically.
+ * @param skippable Allow video to be skipped
+ * @param sub       Subtitle associated with video
+ * @param srcRect   Rectangle within video frame, defined relative to frame origin, to blit to output.  Only used for removing baked-in letterboxing in ZGI DVD HD videos
+ */
+
 void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, bool skippable, uint16 sub, const Common::Rect &srcRect) {
 	Common::Rect _dstRect = dstRect;
 	Common::Rect _srcRect = srcRect;
 	Common::Rect _frameArea = Common::Rect(vid.getWidth(), vid.getHeight());
 	Common::Rect _workingArea = _renderManager->getWorkingArea();
 	// If dstRect is empty, no specific scaling was requested. However, we may choose to do scaling anyway
-	bool scaled=false;
-	_workingArea.moveTo(0,0); //Set local origin system in this scope to origin of working area
-	
-  debug(1, "Playing video, source %d,%d,%d,%d, at destination %d,%d,%d,%d", _srcRect.left, _srcRect.top, _srcRect.right, _srcRect.bottom, _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
-	
+	bool scaled = false;
+	_workingArea.moveTo(0, 0); //Set local origin system in this scope to origin of working area
+
+	debug(1, "Playing video, source %d,%d,%d,%d, at destination %d,%d,%d,%d", _srcRect.left, _srcRect.top, _srcRect.right, _srcRect.bottom, _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
+
 	if (_dstRect.isEmpty())
 		_dstRect = _frameArea;
 	_dstRect.clip(_workingArea);
-  
-  debug(2, "Clipped dstRect = %d,%d,%d,%d", _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
-	
+
+	debug(2, "Clipped dstRect = %d,%d,%d,%d", _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
+
 	if (_srcRect.isEmpty())
 		_srcRect = _frameArea;
 	else
-	  _srcRect.clip(_frameArea);
-	  
-  debug(2, "Clipped srcRect = %d,%d,%d,%d", _srcRect.left, _srcRect.top, _srcRect.right, _srcRect.bottom);
+		_srcRect.clip(_frameArea);
+
+	debug(2, "Clipped srcRect = %d,%d,%d,%d", _srcRect.left, _srcRect.top, _srcRect.right, _srcRect.bottom);
 
 	Graphics::ManagedSurface &outSurface = _renderManager->getVidSurface(_dstRect);
-	_dstRect.moveTo(0,0);
+	_dstRect.moveTo(0, 0);
 	_dstRect.clip(Common::Rect(outSurface.w, outSurface.h));
 
-  debug(2, "dstRect clipped with outSurface = %d,%d,%d,%d", _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
-	
-  debug(1, "Final size %d x %d, at working window coordinates %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
+	debug(2, "dstRect clipped with outSurface = %d,%d,%d,%d", _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
+
+	debug(1, "Final size %d x %d, at working window coordinates %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
 	if (_srcRect.width() != _dstRect.width() || _srcRect.height() != _dstRect.height()) {
-	  debug(1,"Video will be scaled from %dx%d to %dx%d", _srcRect.width(), _srcRect.height(), _dstRect.width(), _dstRect.height());
-	  scaled = true;
+		debug(1, "Video will be scaled from %dx%d to %dx%d", _srcRect.width(), _srcRect.height(), _dstRect.width(), _dstRect.height());
+		scaled = true;
 	}
 	bool showSubs = (_scriptManager->getStateValue(StateKey_Subtitles) == 1);
 	_clock.stop();
@@ -149,27 +149,26 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 			if (showSubs && sub > 0)
 				_subtitleManager->update(vid.getCurFrame(), sub);
 			if (frame) {
-		    _renderManager->renderSceneToScreen(true,true,true);  //Redraw text area to clean background of subtitles for videos that don't fill entire working area, e.g, Nemesis sarcophagi
+				_renderManager->renderSceneToScreen(true, true, true); //Redraw text area to clean background of subtitles for videos that don't fill entire working area, e.g, Nemesis sarcophagi
 				if (scaled) {
-				  debug(8,"Scaled blit from area %d x %d to video output surface at output surface position %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
+					debug(8, "Scaled blit from area %d x %d to video output surface at output surface position %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
 					outSurface.blitFrom(*frame, _srcRect, _dstRect);
-					}
-        else {
-				  debug(8,"Simple blit from area %d x %d to video output surface at output surface position %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
-				  outSurface.simpleBlitFrom(*frame, _srcRect, _dstRect.origin());
-			  }
+				} else {
+					debug(8, "Simple blit from area %d x %d to video output surface at output surface position %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
+					outSurface.simpleBlitFrom(*frame, _srcRect, _dstRect.origin());
+				}
 				_subtitleManager->process(0);
 			}
 		}
 		// Always update the screen so the mouse continues to render & video does not skip
-		_renderManager->renderSceneToScreen(true,true,false);
+		_renderManager->renderSceneToScreen(true, true, false);
 		_system->delayMillis(vid.getTimeToNextFrame() / 2); //Exponentially decaying delay
 	}
 	_cutscenesKeymap->setEnabled(false);
 	_gameKeymap->setEnabled(true);
 	_videoIsPlaying = false;
 	_clock.start();
-  debug(1, "Video playback complete");
+	debug(1, "Video playback complete");
 }
 
 double ZVision::getVobAmplification(Common::String fileName) const {

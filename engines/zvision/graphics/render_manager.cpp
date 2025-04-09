@@ -38,7 +38,6 @@
 
 #include "graphics/blit.h"
 
-//FOR BUG TEST ONLY
 #include "common/debug.h"
 
 namespace ZVision {
@@ -49,7 +48,7 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
 	  _layout(layout),
 	  _screenArea(_layout.screenArea),
 	  _workingArea(_layout.workingArea),
-	  _workingAreaCenter(Common::Point(_workingArea.width()/2, _workingArea.height()/2)),
+	  _workingAreaCenter(Common::Point(_workingArea.width() / 2, _workingArea.height() / 2)),
 	  _textArea(_layout.textArea),
 	  _menuArea(_layout.menuArea),
 	  _pixelFormat(pixelFormat),
@@ -60,28 +59,28 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
 	  _doubleFPS(doubleFPS),
 	  _widescreen(widescreen),
 	  frameLimiter(engine->_system, doubleFPS ? 60 : 30) {
-	debug(1,"creating render manager");
-  //Define graphics modes & screen subarea geometry
+	debug(1, "creating render manager");
+	//Define graphics modes & screen subarea geometry
 	Graphics::ModeList modes;
-  _textOffset = _layout.workingArea.origin() - _layout.textArea.origin();
-  modes.push_back(Graphics::Mode(_screenArea.width(), _screenArea.height()));
-#if defined(USE_MPEG2) && defined(USE_A52)
+	_textOffset = _layout.workingArea.origin() - _layout.textArea.origin();
+	modes.push_back(Graphics::Mode(_screenArea.width(), _screenArea.height()));
+	#if defined(USE_MPEG2) && defined(USE_A52)
 	if (_engine->getGameId() == GID_GRANDINQUISITOR && (_engine->getFeatures() & ADGF_DVD)) {
-	  if(_widescreen)
-  		modes.push_back(Graphics::Mode(_HDscreenAreaWide.width(), _HDscreenAreaWide.height()));
+		if (_widescreen)
+			modes.push_back(Graphics::Mode(_HDscreenAreaWide.width(), _HDscreenAreaWide.height()));
 		else
-  		modes.push_back(Graphics::Mode(_HDscreenArea.width(), _HDscreenArea.height()));
-  }
-#endif
+			modes.push_back(Graphics::Mode(_HDscreenArea.width(), _HDscreenArea.height()));
+	}
+	#endif
 	initGraphicsModes(modes);
-  //Create backbuffers
+	//Create backbuffers
 	_backgroundSurface.create(_workingArea.width(), _workingArea.height(), _pixelFormat);
 	_effectSurface.create(_workingArea.width(), _workingArea.height(), _pixelFormat);
 	_warpedSceneSurface.create(_workingArea.width(), _workingArea.height(), _pixelFormat);
 	_menuSurface.create(_menuArea.width(), _menuArea.height(), _pixelFormat);
 	_textSurface.create(_textArea.width(), _textArea.height(), _pixelFormat);
-	debug(1,"render manager created");
-  initialize(false);
+	debug(1, "render manager created");
+	initialize(false);
 }
 
 RenderManager::~RenderManager() {
@@ -98,179 +97,175 @@ RenderManager::~RenderManager() {
 }
 
 void RenderManager::initialize(bool hiRes) {
-  debug(1,"Initializing render manager");
-  _hiRes = hiRes;
-  
-  _screenArea = _layout.screenArea;
-  _workingArea =_layout.workingArea;
-  _textArea = _layout.textArea;
-  _menuArea = _layout.menuArea;
-  
-  if (_widescreen) {
-    _workingArea.moveTo(0,0);
-    _screenArea = _workingArea;
-    _menuArea.moveTo(_workingArea.origin());
-    _menuLetterbox.moveTo(_menuArea.origin());
-    _textArea.moveTo(_workingArea.left, _workingArea.bottom - _textArea.height());
-    _textLetterbox.moveTo(_textArea.origin());
-  }
-  
-  //Screen
-#if defined(USE_MPEG2) && defined(USE_A52)
-  if(_hiRes) {
-    debug(1,"Switching to high resolution");
-    upscaleRect(_screenArea);
-    upscaleRect(_workingArea);
-    upscaleRect(_textArea);
-  }
-  else
-    debug(1,"Switching to standard resolution");
-#endif
-  _screen.create(_screenArea.width(), _screenArea.height(), _pixelFormat);
+	debug(1, "Initializing render manager");
+	_hiRes = hiRes;
+
+	_screenArea = _layout.screenArea;
+	_workingArea = _layout.workingArea;
+	_textArea = _layout.textArea;
+	_menuArea = _layout.menuArea;
+
+	if (_widescreen) {
+		_workingArea.moveTo(0, 0);
+		_screenArea = _workingArea;
+		_menuArea.moveTo(_workingArea.origin());
+		_menuLetterbox.moveTo(_menuArea.origin());
+		_textArea.moveTo(_workingArea.left, _workingArea.bottom - _textArea.height());
+		_textLetterbox.moveTo(_textArea.origin());
+	}
+
+	//Screen
+	#if defined(USE_MPEG2) && defined(USE_A52)
+	if (_hiRes) {
+		debug(1, "Switching to high resolution");
+		upscaleRect(_screenArea);
+		upscaleRect(_workingArea);
+		upscaleRect(_textArea);
+	} else
+		debug(1, "Switching to standard resolution");
+	#endif
+	_screen.create(_screenArea.width(), _screenArea.height(), _pixelFormat);
 	_screen.setTransparentColor(-1);
 	_screen.clear();
-  
-  debug(1,"_workingAreaCenter = %d,%d", _workingAreaCenter.x, _workingAreaCenter.y);
+
+	debug(1, "_workingAreaCenter = %d,%d", _workingAreaCenter.x, _workingAreaCenter.y);
 
 	//Managed screen subsurfaces
 	_workingManagedSurface.create(_screen, _workingArea);
-  _menuManagedSurface.create(_screen, _menuArea);
+	_menuManagedSurface.create(_screen, _menuArea);
 	_textManagedSurface.create(_screen, _textArea);
-  debug(2,"screen area: %d,%d,%d,%d", _screenArea.left, _screenArea.top, _screenArea.bottom, _screenArea.right);
-  debug(2,"working area: %d,%d,%d,%d", _workingArea.left, _workingArea.top, _workingArea.bottom, _workingArea.right);
-  debug(2,"text area: %d,%d,%d,%d", _textArea.left, _textArea.top, _textArea.bottom, _textArea.right);
-	
-  //Menu & text area dirty rectangles
-  _menuOverlay = _menuArea.findIntersectingRect(_workingArea);
-  if(!_menuOverlay.isEmpty() && _menuArea.left >= _workingArea.left && _menuArea.right <= _workingArea.right)
-    _menuLetterbox = Common::Rect(_menuArea.left, _menuArea.top, _menuArea.right, _workingArea.top);
-  else
-    _menuLetterbox = _menuArea;
-    
-  //TODO - add upscaling for HD mode!
-  _textOverlay = _textArea.findIntersectingRect(_workingArea);
-  if(!_textOverlay.isEmpty() && _textArea.left >= _workingArea.left && _textArea.right <= _workingArea.right)
-    _textLetterbox = Common::Rect(_textArea.left, _workingArea.bottom, _textArea.right, _textArea.bottom);
-  else
-    _textLetterbox = _textArea;
-  
-  debug(2,"text overlay area: %d,%d,%d,%d", _textOverlay.left, _textOverlay.top, _textOverlay.bottom, _textOverlay.right);
-  debug(2,"menu overlay area: %d,%d,%d,%d", _menuOverlay.left, _menuOverlay.top, _menuOverlay.bottom, _menuOverlay.right);
-	
-  debug(2,"Clearing backbuffers");
+	debug(2, "screen area: %d,%d,%d,%d", _screenArea.left, _screenArea.top, _screenArea.bottom, _screenArea.right);
+	debug(2, "working area: %d,%d,%d,%d", _workingArea.left, _workingArea.top, _workingArea.bottom, _workingArea.right);
+	debug(2, "text area: %d,%d,%d,%d", _textArea.left, _textArea.top, _textArea.bottom, _textArea.right);
+
+	//Menu & text area dirty rectangles
+	_menuOverlay = _menuArea.findIntersectingRect(_workingArea);
+	if (!_menuOverlay.isEmpty() && _menuArea.left >= _workingArea.left && _menuArea.right <= _workingArea.right)
+		_menuLetterbox = Common::Rect(_menuArea.left, _menuArea.top, _menuArea.right, _workingArea.top);
+	else
+		_menuLetterbox = _menuArea;
+
+	_textOverlay = _textArea.findIntersectingRect(_workingArea);
+	if (!_textOverlay.isEmpty() && _textArea.left >= _workingArea.left && _textArea.right <= _workingArea.right)
+		_textLetterbox = Common::Rect(_textArea.left, _workingArea.bottom, _textArea.right, _textArea.bottom);
+	else
+		_textLetterbox = _textArea;
+
+	debug(2, "text overlay area: %d,%d,%d,%d", _textOverlay.left, _textOverlay.top, _textOverlay.bottom, _textOverlay.right);
+	debug(2, "menu overlay area: %d,%d,%d,%d", _menuOverlay.left, _menuOverlay.top, _menuOverlay.bottom, _menuOverlay.right);
+
+	debug(2, "Clearing backbuffers");
 	//Clear backbuffer surfaces
 	clearMenuSurface(true);
-  clearTextSurface(true);
-  debug(2,"Backbuffers cleared");
-  
-  //Set hardware/window resolution
-  debug(1,"_screen.w = %d, _screen.h = %d", _screen.w, _screen.h);
-  initGraphics(_screen.w, _screen.h, &_engine->_screenPixelFormat);
-  frameLimiter.initialize();
-	debug(1,"Render manager initialized");
+	clearTextSurface(true);
+	debug(2, "Backbuffers cleared");
+
+	//Set hardware/window resolution
+	debug(1, "_screen.w = %d, _screen.h = %d", _screen.w, _screen.h);
+	initGraphics(_screen.w, _screen.h, &_engine->_screenPixelFormat);
+	frameLimiter.initialize();
+	debug(1, "Render manager initialized");
 }
 
 bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool preStream) {
-  debug(5,"\nrenderSceneToScreen%s%s%s", immediate ? ", immediate" : "", overlayOnly ? ", overlay only" : "", preStream ? ", pre-stream" : "");
-  uint32 startTime = _system->getMillis();
-  if(!overlayOnly) {
-	  Graphics::Surface *inputSurface = &_backgroundSurface;
-	  Common::Rect outWndDirtyRect;
-	  //Apply graphical effects to temporary effects buffer and/or directly to current background image, as appropriate
-	  if (!_effects.empty()) {
-	    debug(6,"Rendering effects");
-		  bool copied = false;
-		  const Common::Rect windowRect(_workingArea.width(), _workingArea.height());
-		  for (EffectsList::iterator it = _effects.begin(); it != _effects.end(); it++) {
-			  Common::Rect rect = (*it)->getRegion();
-			  Common::Rect screenSpaceLocation = rect;
-			  if ((*it)->isPort())
-				  screenSpaceLocation = transformBackgroundSpaceRectToScreenSpace(screenSpaceLocation);
-			  if (windowRect.intersects(screenSpaceLocation)) {
-				  if (!copied) {
-					  copied = true;
-					  _effectSurface.copyFrom(_backgroundSurface);
-					  inputSurface = &_effectSurface;
-				  }
-				  const Graphics::Surface *post;
-				  if ((*it)->isPort())
-					  post = (*it)->draw(_currentBackgroundImage.getSubArea(rect));
-				  else
-					  post = (*it)->draw(_effectSurface.getSubArea(rect));
-				  Common::Rect empty;
-				  blitSurfaceToSurface(*post, empty, _effectSurface, screenSpaceLocation.left, screenSpaceLocation.top);
-				  debug(1,"windowRect %d,%d,%d,%d, screenSpaceLocation %d,%d,%d,%d", windowRect.left, windowRect.top, windowRect.bottom, windowRect.right, screenSpaceLocation.left, screenSpaceLocation.top, screenSpaceLocation.bottom, screenSpaceLocation.right);
-				  screenSpaceLocation.clip(windowRect);
-				  if (_backgroundSurfaceDirtyRect .isEmpty())
-					  _backgroundSurfaceDirtyRect = screenSpaceLocation;
-				  else
-					  _backgroundSurfaceDirtyRect.extend(screenSpaceLocation);
-			  }
-		  }
-	    debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
-	  }
-    //Apply panorama/tilt warp to background image
-	  switch(_renderTable.getRenderState()) {
-	    case RenderTable::PANORAMA:
-	    case RenderTable::TILT:
-	      debug(5,"Rendering panorama");
-		    if (!_backgroundSurfaceDirtyRect.isEmpty()) {
-			    _renderTable.mutateImage(&_warpedSceneSurface, inputSurface, _engine->getScriptManager()->getStateValue(StateKey_HighQuality));
-			    outputSurface = &_warpedSceneSurface;
-			    outWndDirtyRect = Common::Rect(_workingArea.width(), _workingArea.height());
-		    }
-	      break;
-	    default:
-		    outputSurface = inputSurface;
-		    outWndDirtyRect = _backgroundSurfaceDirtyRect;
-		    break;
-      debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
-    }
-    debug(5,"Rendering working area");
-	  _workingManagedSurface.simpleBlitFrom(*outputSurface); //TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
-    debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
+	debug(5, "\nrenderSceneToScreen%s%s%s", immediate ? ", immediate" : "", overlayOnly ? ", overlay only" : "", preStream ? ", pre-stream" : "");
+	uint32 startTime = _system->getMillis();
+	if (!overlayOnly) {
+		Graphics::Surface *inputSurface = &_backgroundSurface;
+		Common::Rect outWndDirtyRect;
+		//Apply graphical effects to temporary effects buffer and/or directly to current background image, as appropriate
+		if (!_effects.empty()) {
+			debug(6, "Rendering effects");
+			bool copied = false;
+			const Common::Rect windowRect(_workingArea.width(), _workingArea.height());
+			for (EffectsList::iterator it = _effects.begin(); it != _effects.end(); it++) {
+				Common::Rect rect = (*it)->getRegion();
+				Common::Rect screenSpaceLocation = rect;
+				if ((*it)->isPort())
+					screenSpaceLocation = transformBackgroundSpaceRectToScreenSpace(screenSpaceLocation);
+				if (windowRect.intersects(screenSpaceLocation)) {
+					if (!copied) {
+						copied = true;
+						_effectSurface.copyFrom(_backgroundSurface);
+						inputSurface = &_effectSurface;
+					}
+					const Graphics::Surface *post;
+					if ((*it)->isPort())
+						post = (*it)->draw(_currentBackgroundImage.getSubArea(rect));
+					else
+						post = (*it)->draw(_effectSurface.getSubArea(rect));
+					Common::Rect empty;
+					blitSurfaceToSurface(*post, empty, _effectSurface, screenSpaceLocation.left, screenSpaceLocation.top);
+					debug(1, "windowRect %d,%d,%d,%d, screenSpaceLocation %d,%d,%d,%d", windowRect.left, windowRect.top, windowRect.bottom, windowRect.right, screenSpaceLocation.left, screenSpaceLocation.top, screenSpaceLocation.bottom, screenSpaceLocation.right);
+					screenSpaceLocation.clip(windowRect);
+					if (_backgroundSurfaceDirtyRect .isEmpty())
+						_backgroundSurfaceDirtyRect = screenSpaceLocation;
+					else
+						_backgroundSurfaceDirtyRect.extend(screenSpaceLocation);
+				}
+			}
+			debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
+		}
+		//Apply panorama/tilt warp to background image
+		switch (_renderTable.getRenderState()) {
+		case RenderTable::PANORAMA:
+		// fall through
+		case RenderTable::TILT:
+			debug(5, "Rendering panorama");
+			if (!_backgroundSurfaceDirtyRect.isEmpty()) {
+				_renderTable.mutateImage(&_warpedSceneSurface, inputSurface, _engine->getScriptManager()->getStateValue(StateKey_HighQuality));
+				outputSurface = &_warpedSceneSurface;
+				outWndDirtyRect = Common::Rect(_workingArea.width(), _workingArea.height());
+			}
+			break;
+		default:
+			outputSurface = inputSurface;
+			outWndDirtyRect = _backgroundSurfaceDirtyRect;
+			break;
+			debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
+		}
+		debug(5, "Rendering working area");
+		_workingManagedSurface.simpleBlitFrom(*outputSurface); //TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
+		debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
 	}
-  if(preStream) {
-    debug(5,"Pre-rendering text area for video stream");    
-	  _workingManagedSurface.simpleBlitFrom(*outputSurface, _textOverlay, _textOverlay.origin()); //Prevents subtitle visual corruption when streaming videos that don't fully overlap them, e.g. Nemesis sarcophagi
-    return false;
-  }
-  else {
-    debug(5,"Rendering menu");
-	  _menuManagedSurface.transBlitFrom(_menuSurface, -1);
-    debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
-    debug(5,"Rendering text");
-    _textManagedSurface.transBlitFrom(_textSurface, -1);
-    debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
-    if(immediate) {
-      frameLimiter.startFrame();
-      debug(5,"Updating screen, immediate");
-      _screen.update();
-      debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
-      debug(10,"~renderSceneToScreen, immediate");
-      return true;
-    }
-    else if (_engine->canRender()) {
-      frameLimiter.delayBeforeSwap();
-      frameLimiter.startFrame();
-      debug(5,"Updating screen, frame limited");
-      _screen.update();
-      debug(5,"\tNett render time %d ms", _system->getMillis() - startTime);
-      debug(10,"~renderSceneToScreen, frame limited");
-      return true;
-    }
-    else {
-      debug(2,"Skipping screen update; engine forbids rendering at this time.");
-      return false;
-    };
-  };
+	if (preStream) {
+		debug(5, "Pre-rendering text area for video stream");
+		_workingManagedSurface.simpleBlitFrom(*outputSurface, _textOverlay, _textOverlay.origin()); //Prevents subtitle visual corruption when streaming videos that don't fully overlap them, e.g. Nemesis sarcophagi
+		return false;
+	} else {
+		debug(5, "Rendering menu");
+		_menuManagedSurface.transBlitFrom(_menuSurface, -1);
+		debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
+		debug(5, "Rendering text");
+		_textManagedSurface.transBlitFrom(_textSurface, -1);
+		debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
+		if (immediate) {
+			frameLimiter.startFrame();
+			debug(5, "Updating screen, immediate");
+			_screen.update();
+			debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
+			debug(10, "~renderSceneToScreen, immediate");
+			return true;
+		} else if (_engine->canRender()) {
+			frameLimiter.delayBeforeSwap();
+			frameLimiter.startFrame();
+			debug(5, "Updating screen, frame limited");
+			_screen.update();
+			debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
+			debug(10, "~renderSceneToScreen, frame limited");
+			return true;
+		} else {
+			debug(2, "Skipping screen update; engine forbids rendering at this time.");
+			return false;
+		};
+	};
 }
 
 Graphics::ManagedSurface &RenderManager::getVidSurface(Common::Rect &dstRect) {
-  Common::Rect _dstRect = dstRect;
-  _dstRect.translate(_workingArea.left, _workingArea.top);  //Convert to screen coordinates
+	Common::Rect _dstRect = dstRect;
+	_dstRect.translate(_workingArea.left, _workingArea.top);  //Convert to screen coordinates
 	_vidManagedSurface.create(_screen, _dstRect);
-	debug(1,"Obtaining managed video surface at %d,%d,%d,%d", _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
+	debug(1, "Obtaining managed video surface at %d,%d,%d,%d", _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
 	return _vidManagedSurface;
 }
 
@@ -328,12 +323,11 @@ void RenderManager::readImageToSurface(const Common::Path &fileName, Graphics::S
 		LzssReadStream lzssStream(&file);
 		buffer = (uint16 *)(new uint16[decompressedSize]);
 		lzssStream.read(buffer, 2 * decompressedSize);
-#ifndef SCUMM_LITTLE_ENDIAN
+		#ifndef SCUMM_LITTLE_ENDIAN
 		for (uint32 i = 0; i < decompressedSize; ++i)
 			buffer[i] = FROM_LE_16(buffer[i]);
-#endif
-	} 
-	else {
+		#endif
+	} else {
 		isTGZ = false;
 		// Reset the cursor
 		file.seek(0);
@@ -365,33 +359,32 @@ void RenderManager::readImageToSurface(const Common::Path &fileName, Graphics::S
 				dest[columnIndex + x] = buffer[x * imageHeight + y];
 			}
 		}
-	} 
-	else
+	} else
 		memcpy(destination.getPixels(), buffer, imageWidth * imageHeight * destination.format.bytesPerPixel);
 	// Cleanup
 	if (isTGZ)
 		delete[] buffer;
-  else
+	else
 		tga.destroy();
 }
 
 const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &point) {
-  debug(9,"screenSpaceToImageSpace()");
+	debug(9, "screenSpaceToImageSpace()");
 	if (_workingArea.contains(point)) {
 		// Convert from screen space to working image space, i.e. panoramic background image or static image
 		Common::Point newPoint(point - _workingArea.origin());
-		switch(_renderTable.getRenderState()) {
-		  case RenderTable::PANORAMA:
-			  newPoint = _renderTable.convertWarpedCoordToFlatCoord(newPoint);		  
-			  newPoint += (Common::Point(_backgroundOffset - _workingAreaCenter.x, 0));
-			  break;
-		  case RenderTable::TILT:
-			  newPoint = _renderTable.convertWarpedCoordToFlatCoord(newPoint);
-			  newPoint += (Common::Point(0, _backgroundOffset - _workingAreaCenter.y));
-			  break;
-		  default:
-		    break;
-	  }
+		switch (_renderTable.getRenderState()) {
+		case RenderTable::PANORAMA:
+			newPoint = _renderTable.convertWarpedCoordToFlatCoord(newPoint);
+			newPoint += (Common::Point(_backgroundOffset - _workingAreaCenter.x, 0));
+			break;
+		case RenderTable::TILT:
+			newPoint = _renderTable.convertWarpedCoordToFlatCoord(newPoint);
+			newPoint += (Common::Point(0, _backgroundOffset - _workingAreaCenter.y));
+			break;
+		default:
+			break;
+		}
 		if (_backgroundWidth)
 			newPoint.x %= _backgroundWidth;
 		if (_backgroundHeight)
@@ -400,11 +393,10 @@ const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &
 			newPoint.x += _backgroundWidth;
 		if (newPoint.y < 0)
 			newPoint.y += _backgroundHeight;
-    debug(9,"~screenSpaceToImageSpace()");
+		debug(9, "~screenSpaceToImageSpace()");
 		return newPoint;
-	} 
-	else {
-    debug(9,"~screenSpaceToImageSpace()");
+	} else {
+		debug(9, "~screenSpaceToImageSpace()");
 		return Common::Point(0, 0);
 	}
 }
@@ -421,26 +413,28 @@ void RenderManager::setBackgroundImage(const Common::Path &fileName) {
 }
 
 void RenderManager::setBackgroundPosition(int offset) {
-	switch(_renderTable.getRenderState()) {
-	  case RenderTable::PANORAMA :	
-	  case RenderTable::TILT :
-		  if (_backgroundOffset != offset)
-			  _backgroundDirtyRect = Common::Rect(_backgroundWidth, _backgroundHeight);
-		  break;
-	  default :
-	    break;
+	switch (_renderTable.getRenderState()) {
+	case RenderTable::PANORAMA :
+	// fall through
+	case RenderTable::TILT :
+		if (_backgroundOffset != offset)
+			_backgroundDirtyRect = Common::Rect(_backgroundWidth, _backgroundHeight);
+		break;
+	default :
+		break;
 	}
- 	_backgroundOffset = offset;
+	_backgroundOffset = offset;
 	_engine->getScriptManager()->setStateValue(StateKey_ViewPos, offset);
 }
 
 uint32 RenderManager::getCurrentBackgroundOffset() {
-	switch(_renderTable.getRenderState()) {
-	  case RenderTable::PANORAMA :
-	  case RenderTable::TILT :
-  		return _backgroundOffset;
-		default :
-		  return 0;
+	switch (_renderTable.getRenderState()) {
+	case RenderTable::PANORAMA :
+	// fall through
+	case RenderTable::TILT :
+		return _backgroundOffset;
+	default :
+		return 0;
 	}
 }
 
@@ -470,8 +464,7 @@ void RenderManager::scaleBuffer(const void *src, void *dst, uint32 srcWidth, uin
 				dstPtr++;
 			}
 		}
-	} 
-	else if (bytesPerPixel == 2) {
+	} else if (bytesPerPixel == 2) {
 		const uint16 *srcPtr = (const uint16 *)src;
 		uint16 *dstPtr = (uint16 *)dst;
 		for (uint32 y = 0; y < dstHeight; ++y) {
@@ -486,73 +479,73 @@ void RenderManager::scaleBuffer(const void *src, void *dst, uint32 srcWidth, uin
 
 //ORIGINAL FUNCTION
 //*
-void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y) {
-  debug(9,"blitSurfaceToSurface");
+void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect, Graphics::Surface &dst, int _x, int _y) {
+	debug(9, "blitSurfaceToSurface");
 	Common::Rect srcRect = _srcRect;
-	Common::Point dstPos = Common::Point(_x,_y);
+	Common::Point dstPos = Common::Point(_x, _y);
 	//Default to using whole source surface
 	if (srcRect.isEmpty())
 		srcRect = Common::Rect(src.w, src.h);
-  //Clip source rectangle to within bounds of source buffer
-	srcRect.clip(src.w, src.h); 
-	
+	//Clip source rectangle to within bounds of source buffer
+	srcRect.clip(src.w, src.h);
+
 	//CODE IDENTICAL TO HERE
-	
+
 	//BUG TEST CODE
 	//Common::Point dstPos2 = dstPos;
 	//Common::Rect srcRect2 = srcRect;
 	//Common::Rect::getBlitRect(dstPos2, srcRect2, Common::Rect(dst.w,dst.h));
-	
+
 	//Generate destination rectangle
 	Common::Rect dstRect = Common::Rect(dst.w, dst.h);
 	//Translate destination rectangle to its position relative to source rectangle
-	dstRect.translate(srcRect.left-_x,srcRect.top-_y);
+	dstRect.translate(srcRect.left - _x, srcRect.top - _y);
 	//clip source rectangle to within bounds of offset destination rectangle
 	srcRect.clip(dstRect);
-	
+
 	//BUG TEST
 	/*
 	if(srcRect.left != srcRect2.left) {
-	   debug("srcRect.left = %i, srcRect2.left = %i", srcRect.left, srcRect2.left);	   	   
+	   debug("srcRect.left = %i, srcRect2.left = %i", srcRect.left, srcRect2.left);
 	}
 	if(srcRect.top != srcRect2.top) {
 	   debug("srcRect.top = %i, srcRect2.top = %i", srcRect.top, srcRect2.top);
-  } 
+	}
 	if(srcRect.right != srcRect2.right) {
 	   debug("srcRect.right = %i, srcRect2.right = %i", srcRect.right, srcRect2.right);
-  }
+	}
 	if(srcRect.bottom != srcRect2.bottom) {
-	   debug("srcRect.bottom = %i, srcRect2.bottom = %i", srcRect.bottom, srcRect2.bottom);	   
-  }
-*/
+	   debug("srcRect.bottom = %i, srcRect2.bottom = %i", srcRect.bottom, srcRect2.bottom);
+	}
+	*/
 
-  //CODE IDENTICAL FROM HERE  
+	//CODE IDENTICAL FROM HERE
 
-  //Abort if nothing to blit
+	//Abort if nothing to blit
 	if (!srcRect.isEmpty()) {
-    //Convert pixel format of source to match destination
-	  Graphics::Surface *srcAdapted = src.convertTo(dst.format);
-	  //Get pointer for source buffer blit rectangle origin
-	  const byte *srcBuffer = (const byte *)srcAdapted->getBasePtr(srcRect.left, srcRect.top);
+		//Convert pixel format of source to match destination
+		Graphics::Surface *srcAdapted = src.convertTo(dst.format);
+		//Get pointer for source buffer blit rectangle origin
+		const byte *srcBuffer = (const byte *)srcAdapted->getBasePtr(srcRect.left, srcRect.top);
 
-    //Default to blitting into origin of target surface if negative valued
-	  if (dstPos.x < 0)
-		  dstPos.x = 0;
-	  if (dstPos.y < 0)
-		  dstPos.y = 0;
-		  
-	  //BUG TEST
-	  //assert(dstPos == dstPos2);
-    
-    //If _x & _y lie within destination surface
-    if (dstPos.x < dst.w && dstPos.y < dst.h) {
-      //Get pointer for destination buffer blit rectangle origin
-	    byte *dstBuffer = (byte *)dst.getBasePtr(dstPos.x, dstPos.y);
-	    Graphics::copyBlit(dstBuffer,srcBuffer,dst.pitch,srcAdapted->pitch,srcRect.width(),srcRect.height(),srcAdapted->format.bytesPerPixel);
-    }
-    srcAdapted->free();
-    delete srcAdapted;
-  }
+		//Default to blitting into origin of target surface if negative valued
+		if (dstPos.x < 0)
+			dstPos.x = 0;
+		if (dstPos.y < 0)
+			dstPos.y = 0;
+
+		//BUG TEST
+		//assert(dstPos == dstPos2);
+
+		//If _x & _y lie within destination surface
+		if (dstPos.x < dst.w && dstPos.y < dst.h) {
+			//Get pointer for destination buffer blit rectangle origin
+			byte *dstBuffer = (byte *)dst.getBasePtr(dstPos.x, dstPos.y);
+			Graphics::copyBlit(dstBuffer, srcBuffer, dst.pitch, srcAdapted->pitch, srcRect.width(), srcRect.height(), srcAdapted->format.bytesPerPixel);
+		}
+		srcAdapted->free();
+		delete srcAdapted;
+	}
 
 }
 /*/
@@ -560,50 +553,50 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 //SIMPLIFIED FUNCTION
 //TODO - find bug that breaks panorama rotation.  Suspect problem with negative arguments of some sort.
 void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y) {
-	Common::Rect srcRect = _srcRect;
-	Common::Point dstPos = Common::Point(_x,_y);
-	//Default to using whole source surface
-	if (srcRect.isEmpty())
-		srcRect = Common::Rect(src.w, src.h);
+    Common::Rect srcRect = _srcRect;
+    Common::Point dstPos = Common::Point(_x,_y);
+    //Default to using whole source surface
+    if (srcRect.isEmpty())
+        srcRect = Common::Rect(src.w, src.h);
   //Ensure source rectangle does not read beyond bounds of source surface
-	srcRect.clip(src.w, src.h);
+    srcRect.clip(src.w, src.h);
 
-	//CODE IDENTICAL TO HERE
-	
-	//Ensure source rectangle does not write beyond bounds of destination surface & is valid
-	  //NB alters dstPos & srcRect!
-	Common::Rect::getBlitRect(dstPos, srcRect, Common::Rect(dst.w,dst.h));
+    //CODE IDENTICAL TO HERE
+
+    //Ensure source rectangle does not write beyond bounds of destination surface & is valid
+      //NB alters dstPos & srcRect!
+    Common::Rect::getBlitRect(dstPos, srcRect, Common::Rect(dst.w,dst.h));
 
   //CODE IDENTICAL FROM HERE
-  
-	//Abort if nothing to blit
-	if(!srcRect.isEmpty()) {
+
+    //Abort if nothing to blit
+    if(!srcRect.isEmpty()) {
     //Convert pixel format of source to match destination
-	  Graphics::Surface *srcAdapted = src.convertTo(dst.format);
-	  //Get pointer for source buffer blit rectangle origin
-	  const byte *srcBuffer = (const byte *)srcAdapted->getBasePtr(srcRect.left, srcRect.top); 
+      Graphics::Surface *srcAdapted = src.convertTo(dst.format);
+      //Get pointer for source buffer blit rectangle origin
+      const byte *srcBuffer = (const byte *)srcAdapted->getBasePtr(srcRect.left, srcRect.top);
     //If _x & _y lie within destination surface
     if (dstPos.x < dst.w && dstPos.y < dst.h) {
       //Get pointer for destination buffer blit rectangle origin
-	    byte *dstBuffer = (byte *)dst.getBasePtr(dstPos.x, dstPos.y);
-	    Graphics::copyBlit(dstBuffer,srcBuffer,dst.pitch,srcAdapted->pitch,srcRect.width(),srcRect.height(),srcAdapted->format.bytesPerPixel);
+        byte *dstBuffer = (byte *)dst.getBasePtr(dstPos.x, dstPos.y);
+        Graphics::copyBlit(dstBuffer,srcBuffer,dst.pitch,srcAdapted->pitch,srcRect.width(),srcRect.height(),srcAdapted->format.bytesPerPixel);
     }
-	  srcAdapted->free();
-	  delete srcAdapted;
+      srcAdapted->free();
+      delete srcAdapted;
   }
 }
 //*/
 
-void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y, uint32 colorkey) {
-  debug(9,"blitSurfaceToSurface");
+void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect, Graphics::Surface &dst, int _x, int _y, uint32 colorkey) {
+	debug(9, "blitSurfaceToSurface");
 	Common::Rect srcRect = _srcRect;
 	if (srcRect.isEmpty())
 		srcRect = Common::Rect(src.w, src.h);
 	srcRect.clip(src.w, src.h);
-	Common::Rect dstRect = Common::Rect(-_x + srcRect.left , -_y + srcRect.top, -_x + srcRect.left + dst.w, -_y + srcRect.top + dst.h);
+	Common::Rect dstRect = Common::Rect(-_x + srcRect.left, -_y + srcRect.top, -_x + srcRect.left + dst.w, -_y + srcRect.top + dst.h);
 	srcRect.clip(dstRect);
 
-  //Abort if nothing to blit
+	//Abort if nothing to blit
 	if (srcRect.isEmpty() || !srcRect.isValidRect())
 		return;
 
@@ -622,9 +615,9 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 		yy = 0;
 
 	if (_x < dst.w && _y < dst.h) {
-	  byte *dstBuffer = (byte *)dst.getBasePtr(xx, yy);
-    Graphics::keyBlit(dstBuffer,srcBuffer,dst.pitch,srcAdapted->pitch,srcRect.width(),srcRect.height(),srcAdapted->format.bytesPerPixel,keycolor);
-  }
+		byte *dstBuffer = (byte *)dst.getBasePtr(xx, yy);
+		Graphics::keyBlit(dstBuffer, srcBuffer, dst.pitch, srcAdapted->pitch, srcRect.width(), srcRect.height(), srcAdapted->format.bytesPerPixel, keycolor);
+	}
 	srcAdapted->free();
 	delete srcAdapted;
 }
@@ -668,24 +661,24 @@ void RenderManager::blitSurfaceToMenu(const Graphics::Surface &src, int16 x, int
 }
 
 void RenderManager::clearMenuSurface(bool force, int32 colorkey) {
-  if(force)
-    _menuSurfaceDirtyRect = Common::Rect(_menuArea.width(), _menuArea.height());
-  if(!_menuSurfaceDirtyRect.isEmpty()) {
-    //Convert to local menuArea coordinates
-    Common::Rect letterbox = _menuLetterbox;
-    Common::Rect overlay =_menuOverlay;
-    letterbox.translate(-_menuArea.left, -_menuArea.top);
-    overlay.translate(-_menuArea.left, -_menuArea.top);
-	  Common::Rect _menuLetterboxDirty = _menuSurfaceDirtyRect.findIntersectingRect(letterbox);
-    if(!_menuLetterboxDirty.isEmpty())
-      _menuSurface.fillRect(_menuLetterboxDirty, 0);
-	  Common::Rect _menuOverlayDirty = _menuSurfaceDirtyRect.findIntersectingRect(overlay);
-    if(!_menuOverlayDirty.isEmpty()) {
-	    _menuSurface.fillRect(_menuOverlayDirty, colorkey);
-      //TODO - mark working window dirty here so that it will redraw & blank overlaid residue on next frame
-    }
-    _menuSurfaceDirtyRect = Common::Rect(0,0);
-  }
+	if (force)
+		_menuSurfaceDirtyRect = Common::Rect(_menuArea.width(), _menuArea.height());
+	if (!_menuSurfaceDirtyRect.isEmpty()) {
+		//Convert to local menuArea coordinates
+		Common::Rect letterbox = _menuLetterbox;
+		Common::Rect overlay = _menuOverlay;
+		letterbox.translate(-_menuArea.left, -_menuArea.top);
+		overlay.translate(-_menuArea.left, -_menuArea.top);
+		Common::Rect _menuLetterboxDirty = _menuSurfaceDirtyRect.findIntersectingRect(letterbox);
+		if (!_menuLetterboxDirty.isEmpty())
+			_menuSurface.fillRect(_menuLetterboxDirty, 0);
+		Common::Rect _menuOverlayDirty = _menuSurfaceDirtyRect.findIntersectingRect(overlay);
+		if (!_menuOverlayDirty.isEmpty()) {
+			_menuSurface.fillRect(_menuOverlayDirty, colorkey);
+			//TODO - mark working window dirty here so that it will redraw & blank overlaid residue on next frame
+		}
+		_menuSurfaceDirtyRect = Common::Rect(0, 0);
+	}
 }
 
 void RenderManager::blitSurfaceToText(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey) {
@@ -700,28 +693,28 @@ void RenderManager::blitSurfaceToText(const Graphics::Surface &src, int16 x, int
 }
 
 void RenderManager::clearTextSurface(bool force, int32 colorkey) {
-  if(force)
-    _textSurfaceDirtyRect = Common::Rect(_textArea.width(),_textArea.height());
-  if(!_textSurfaceDirtyRect.isEmpty()) {
-    //Convert to local textArea coordinates
-    Common::Rect letterbox = _textLetterbox;
-    Common::Rect overlay =_textOverlay;
-    letterbox.translate(-_textArea.left, -_textArea.top);
-    overlay.translate(-_textArea.left, -_textArea.top);
-	  Common::Rect _textLetterboxDirty = _textSurfaceDirtyRect.findIntersectingRect(letterbox);
-    if(!_textLetterboxDirty.isEmpty())
-      _textSurface.fillRect(_textLetterboxDirty, 0);
-	  Common::Rect _textOverlayDirty = _textSurfaceDirtyRect.findIntersectingRect(overlay);
-    if(!_textOverlayDirty.isEmpty()) {
-	    _textSurface.fillRect(_textOverlayDirty, colorkey);
-      //TODO - mark working window dirty here so that it will redraw & blank overlaid residue on next frame
-    }
-    _textSurfaceDirtyRect = Common::Rect(0,0);
-  }
+	if (force)
+		_textSurfaceDirtyRect = Common::Rect(_textArea.width(), _textArea.height());
+	if (!_textSurfaceDirtyRect.isEmpty()) {
+		//Convert to local textArea coordinates
+		Common::Rect letterbox = _textLetterbox;
+		Common::Rect overlay = _textOverlay;
+		letterbox.translate(-_textArea.left, -_textArea.top);
+		overlay.translate(-_textArea.left, -_textArea.top);
+		Common::Rect _textLetterboxDirty = _textSurfaceDirtyRect.findIntersectingRect(letterbox);
+		if (!_textLetterboxDirty.isEmpty())
+			_textSurface.fillRect(_textLetterboxDirty, 0);
+		Common::Rect _textOverlayDirty = _textSurfaceDirtyRect.findIntersectingRect(overlay);
+		if (!_textOverlayDirty.isEmpty()) {
+			_textSurface.fillRect(_textOverlayDirty, colorkey);
+			//TODO - mark working window dirty here so that it will redraw & blank overlaid residue on next frame
+		}
+		_textSurfaceDirtyRect = Common::Rect(0, 0);
+	}
 }
 
 Graphics::Surface *RenderManager::getBkgRect(Common::Rect &rect) {
-  debug(11,"getBkgRect()");
+	debug(11, "getBkgRect()");
 	Common::Rect dst = rect;
 	dst.clip(_backgroundWidth, _backgroundHeight);
 	if (dst.isEmpty() || !dst.isValidRect())
@@ -745,79 +738,78 @@ Graphics::Surface *RenderManager::loadImage(const Common::Path &file, bool trans
 }
 
 void RenderManager::prepareBackground() {
-  debug(5,"prepareBackground()");
+	debug(5, "prepareBackground()");
 	_backgroundDirtyRect.clip(_backgroundWidth, _backgroundHeight);
-  switch(_renderTable.getRenderState()) {
-	  case RenderTable::PANORAMA: {
-		  // Calculate the visible portion of the background
-		  Common::Rect viewPort(_workingArea.width(), _workingArea.height());
-		  viewPort.translate(-(_workingAreaCenter.x - _backgroundOffset), 0);
-		  Common::Rect drawRect = _backgroundDirtyRect;
-		  drawRect.clip(viewPort);
+	switch (_renderTable.getRenderState()) {
+	case RenderTable::PANORAMA: {
+		// Calculate the visible portion of the background
+		Common::Rect viewPort(_workingArea.width(), _workingArea.height());
+		viewPort.translate(-(_workingAreaCenter.x - _backgroundOffset), 0);
+		Common::Rect drawRect = _backgroundDirtyRect;
+		drawRect.clip(viewPort);
 
-		  // Render the visible portion
-		  if (!drawRect.isEmpty())
-			  blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, _workingAreaCenter.x - _backgroundOffset + drawRect.left, drawRect.top);
+		// Render the visible portion
+		if (!drawRect.isEmpty())
+			blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, _workingAreaCenter.x - _backgroundOffset + drawRect.left, drawRect.top);
 
-		  // Mark the dirty portion of the surface
-		  _backgroundSurfaceDirtyRect = _backgroundDirtyRect;
-		  _backgroundSurfaceDirtyRect.translate(_workingAreaCenter.x - _backgroundOffset, 0);
+		// Mark the dirty portion of the surface
+		_backgroundSurfaceDirtyRect = _backgroundDirtyRect;
+		_backgroundSurfaceDirtyRect.translate(_workingAreaCenter.x - _backgroundOffset, 0);
 
-		  // Panorama mode allows the user to spin in circles. Therefore, we need to render
-		  // the portion of the image that wrapped to the other side of the screen
-		  if (_backgroundOffset < _workingAreaCenter.x) {
-			  viewPort.moveTo(-(_workingAreaCenter.x - (_backgroundOffset + _backgroundWidth)), 0);
-			  drawRect = _backgroundDirtyRect;
-			  drawRect.clip(viewPort);
+		// Panorama mode allows the user to spin in circles. Therefore, we need to render
+		// the portion of the image that wrapped to the other side of the screen
+		if (_backgroundOffset < _workingAreaCenter.x) {
+			viewPort.moveTo(-(_workingAreaCenter.x - (_backgroundOffset + _backgroundWidth)), 0);
+			drawRect = _backgroundDirtyRect;
+			drawRect.clip(viewPort);
 
-			  if (!drawRect.isEmpty())
-				  blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, _workingAreaCenter.x - (_backgroundOffset + _backgroundWidth) + drawRect.left, drawRect.top);
+			if (!drawRect.isEmpty())
+				blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, _workingAreaCenter.x - (_backgroundOffset + _backgroundWidth) + drawRect.left, drawRect.top);
 
-			  Common::Rect tmp = _backgroundDirtyRect;
-			  tmp.translate(_workingAreaCenter.x - (_backgroundOffset + _backgroundWidth), 0);
-			  if (!tmp.isEmpty())
-				  _backgroundSurfaceDirtyRect.extend(tmp);
+			Common::Rect tmp = _backgroundDirtyRect;
+			tmp.translate(_workingAreaCenter.x - (_backgroundOffset + _backgroundWidth), 0);
+			if (!tmp.isEmpty())
+				_backgroundSurfaceDirtyRect.extend(tmp);
 
-		  } 
-		  else if (_backgroundWidth - _backgroundOffset < _workingAreaCenter.x) {
-			  viewPort.moveTo(-(_workingAreaCenter.x + _backgroundWidth - _backgroundOffset), 0);
-			  drawRect = _backgroundDirtyRect;
-			  drawRect.clip(viewPort);
+		} else if (_backgroundWidth - _backgroundOffset < _workingAreaCenter.x) {
+			viewPort.moveTo(-(_workingAreaCenter.x + _backgroundWidth - _backgroundOffset), 0);
+			drawRect = _backgroundDirtyRect;
+			drawRect.clip(viewPort);
 
-			  if (!drawRect.isEmpty())
-				  blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, _workingAreaCenter.x + _backgroundWidth - _backgroundOffset + drawRect.left, drawRect.top);
+			if (!drawRect.isEmpty())
+				blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, _workingAreaCenter.x + _backgroundWidth - _backgroundOffset + drawRect.left, drawRect.top);
 
-			  Common::Rect tmp = _backgroundDirtyRect;
-			  tmp.translate(_workingAreaCenter.x + _backgroundWidth - _backgroundOffset, 0);
-			  if (!tmp.isEmpty())
-				  _backgroundSurfaceDirtyRect.extend(tmp);
-		  }
-	    break;
-	  }
-	  case RenderTable::TILT: {
-		  // Tilt doesn't allow wrapping, so we just do a simple clip
-		  Common::Rect viewPort(_workingArea.width(), _workingArea.height());
-		  viewPort.translate(0, -(_workingAreaCenter.y - _backgroundOffset));
-		  Common::Rect drawRect = _backgroundDirtyRect;
-		  drawRect.clip(viewPort);
-		  if (!drawRect.isEmpty())
-			  blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, drawRect.left, _workingAreaCenter.y - _backgroundOffset + drawRect.top);
-		  // Mark the dirty portion of the surface
-		  _backgroundSurfaceDirtyRect = _backgroundDirtyRect;
-		  _backgroundSurfaceDirtyRect.translate(0, _workingAreaCenter.y - _backgroundOffset);
-		  break;
-	  } 
-	  default: {
-		  if (!_backgroundDirtyRect.isEmpty())
-			  blitSurfaceToSurface(_currentBackgroundImage, _backgroundDirtyRect, _backgroundSurface, _backgroundDirtyRect.left, _backgroundDirtyRect.top);
-		  _backgroundSurfaceDirtyRect = _backgroundDirtyRect;
-		  break;
-	  }
+			Common::Rect tmp = _backgroundDirtyRect;
+			tmp.translate(_workingAreaCenter.x + _backgroundWidth - _backgroundOffset, 0);
+			if (!tmp.isEmpty())
+				_backgroundSurfaceDirtyRect.extend(tmp);
+		}
+		break;
+	}
+	case RenderTable::TILT: {
+		// Tilt doesn't allow wrapping, so we just do a simple clip
+		Common::Rect viewPort(_workingArea.width(), _workingArea.height());
+		viewPort.translate(0, -(_workingAreaCenter.y - _backgroundOffset));
+		Common::Rect drawRect = _backgroundDirtyRect;
+		drawRect.clip(viewPort);
+		if (!drawRect.isEmpty())
+			blitSurfaceToSurface(_currentBackgroundImage, drawRect, _backgroundSurface, drawRect.left, _workingAreaCenter.y - _backgroundOffset + drawRect.top);
+		// Mark the dirty portion of the surface
+		_backgroundSurfaceDirtyRect = _backgroundDirtyRect;
+		_backgroundSurfaceDirtyRect.translate(0, _workingAreaCenter.y - _backgroundOffset);
+		break;
+	}
+	default: {
+		if (!_backgroundDirtyRect.isEmpty())
+			blitSurfaceToSurface(_currentBackgroundImage, _backgroundDirtyRect, _backgroundSurface, _backgroundDirtyRect.left, _backgroundDirtyRect.top);
+		_backgroundSurfaceDirtyRect = _backgroundDirtyRect;
+		break;
+	}
 	}
 	// Clear the dirty rect since everything is clean now
 	_backgroundDirtyRect = Common::Rect();
 	_backgroundSurfaceDirtyRect.clip(_workingArea.width(), _workingArea.height());
-  debug(11,"~prepareBackground()");
+	debug(11, "~prepareBackground()");
 }
 
 Common::Point RenderManager::getBkgSize() {
@@ -838,41 +830,39 @@ void RenderManager::deleteEffect(uint32 ID) {
 }
 
 Common::Rect RenderManager::transformBackgroundSpaceRectToScreenSpace(const Common::Rect &src) {
-  debug(10,"transformBackgroundSpaceRectToScreenSpace");
+	debug(10, "transformBackgroundSpaceRectToScreenSpace");
 	Common::Rect tmp = src;
-  switch(_renderTable.getRenderState()) {
-	  case RenderTable::PANORAMA: {
-		  if (_backgroundOffset < _workingAreaCenter.x) {
-			  Common::Rect rScreen(_workingAreaCenter.x + _backgroundOffset, _workingArea.height());
-			  Common::Rect lScreen(_workingArea.width() - rScreen.width(), _workingArea.height());
-			  lScreen.translate(_backgroundWidth - lScreen.width(), 0);
-			  lScreen.clip(src);
-			  rScreen.clip(src);
-			  if (rScreen.width() < lScreen.width())
-				  tmp.translate(_workingAreaCenter.x - _backgroundOffset - _backgroundWidth, 0);
-			  else
-				  tmp.translate(_workingAreaCenter.x - _backgroundOffset, 0);
-		  } 
-		  else if (_backgroundWidth - _backgroundOffset < _workingAreaCenter.x) {
-			  Common::Rect rScreen(_workingAreaCenter.x - (_backgroundWidth - _backgroundOffset), _workingArea.height());
-			  Common::Rect lScreen(_workingArea.width() - rScreen.width(), _workingArea.height());
-			  lScreen.translate(_backgroundWidth - lScreen.width(), 0);
-			  lScreen.clip(src);
-			  rScreen.clip(src);
-			  if (lScreen.width() < rScreen.width())
-				  tmp.translate(_workingAreaCenter.x + (_backgroundWidth - _backgroundOffset), 0);
-			  else
-				  tmp.translate(_workingAreaCenter.x - _backgroundOffset, 0);
-		  } 
-		  else
-			  tmp.translate(_workingAreaCenter.x - _backgroundOffset, 0);
-	    break;
-	  }
-    case RenderTable::TILT:
-		  tmp.translate(0, (_workingAreaCenter.y - _backgroundOffset));
-		  break;
-	  default:
-	    break;
+	switch (_renderTable.getRenderState()) {
+	case RenderTable::PANORAMA: {
+		if (_backgroundOffset < _workingAreaCenter.x) {
+			Common::Rect rScreen(_workingAreaCenter.x + _backgroundOffset, _workingArea.height());
+			Common::Rect lScreen(_workingArea.width() - rScreen.width(), _workingArea.height());
+			lScreen.translate(_backgroundWidth - lScreen.width(), 0);
+			lScreen.clip(src);
+			rScreen.clip(src);
+			if (rScreen.width() < lScreen.width())
+				tmp.translate(_workingAreaCenter.x - _backgroundOffset - _backgroundWidth, 0);
+			else
+				tmp.translate(_workingAreaCenter.x - _backgroundOffset, 0);
+		} else if (_backgroundWidth - _backgroundOffset < _workingAreaCenter.x) {
+			Common::Rect rScreen(_workingAreaCenter.x - (_backgroundWidth - _backgroundOffset), _workingArea.height());
+			Common::Rect lScreen(_workingArea.width() - rScreen.width(), _workingArea.height());
+			lScreen.translate(_backgroundWidth - lScreen.width(), 0);
+			lScreen.clip(src);
+			rScreen.clip(src);
+			if (lScreen.width() < rScreen.width())
+				tmp.translate(_workingAreaCenter.x + (_backgroundWidth - _backgroundOffset), 0);
+			else
+				tmp.translate(_workingAreaCenter.x - _backgroundOffset, 0);
+		} else
+			tmp.translate(_workingAreaCenter.x - _backgroundOffset, 0);
+		break;
+	}
+	case RenderTable::TILT:
+		tmp.translate(0, (_workingAreaCenter.y - _backgroundOffset));
+		break;
+	default:
+		break;
 	}
 	return tmp;
 }
@@ -918,8 +908,7 @@ EffectMap *RenderManager::makeEffectMap(const Common::Point &xy, int16 depth, co
 				        (cC2 - stC2 < depth8) &&
 				        (cC3 - stC3 < depth8))
 					use = true;
-			} 
-			else { /* if (curClr < color) */
+			} else { /* if (curClr < color) */
 				if ((stC1 - cC1 < depth8) &&
 				        (stC2 - cC2 < depth8) &&
 				        (stC3 - cC3 < depth8))
@@ -1010,77 +999,77 @@ void RenderManager::updateRotation() {
 	if (_doubleFPS | !frameLimiter.isEnabled()) //Assuming 60fps when in Vsync mode.
 		_velocity /= 2;
 	if (_velocity) {
-		switch(_renderTable.getRenderState()) {
-		  case RenderTable::PANORAMA : {
-  			int16 startPosition = scriptManager->getStateValue(StateKey_ViewPos);
-		    int16 newPosition = startPosition + (_renderTable.getPanoramaReverse() ? -_velocity : _velocity);
-		    int16 zeroPoint = _renderTable.getPanoramaZeroPoint();
-		    if (startPosition >= zeroPoint && newPosition < zeroPoint)
-			    scriptManager->setStateValue(StateKey_Rounds, scriptManager->getStateValue(StateKey_Rounds) - 1);
-		    if (startPosition <= zeroPoint && newPosition > zeroPoint)
-			    scriptManager->setStateValue(StateKey_Rounds, scriptManager->getStateValue(StateKey_Rounds) + 1);
-		    int16 screenWidth = getBkgSize().x;
-		    if (screenWidth)
-			    newPosition %= screenWidth;
-		    if (newPosition < 0)
-			    newPosition += screenWidth;
-		    setBackgroundPosition(newPosition);
-		    break;
-	    }
-	    case RenderTable::TILT : {
-  			int16 startPosition = scriptManager->getStateValue(StateKey_ViewPos);
-			  int16 newPosition = startPosition + _velocity;
-			  int16 screenHeight = getBkgSize().y;
-			  int16 tiltGap = (int16)_renderTable.getTiltGap();
-			  if (newPosition >= (screenHeight - tiltGap))
-				  newPosition = screenHeight - tiltGap;
-			  if (newPosition <= tiltGap)
-				  newPosition = tiltGap;
-			  setBackgroundPosition(newPosition);
-			  break;
-		  }
-		  default:
-		    break;
+		switch (_renderTable.getRenderState()) {
+		case RenderTable::PANORAMA : {
+			int16 startPosition = scriptManager->getStateValue(StateKey_ViewPos);
+			int16 newPosition = startPosition + (_renderTable.getPanoramaReverse() ? -_velocity : _velocity);
+			int16 zeroPoint = _renderTable.getPanoramaZeroPoint();
+			if (startPosition >= zeroPoint && newPosition < zeroPoint)
+				scriptManager->setStateValue(StateKey_Rounds, scriptManager->getStateValue(StateKey_Rounds) - 1);
+			if (startPosition <= zeroPoint && newPosition > zeroPoint)
+				scriptManager->setStateValue(StateKey_Rounds, scriptManager->getStateValue(StateKey_Rounds) + 1);
+			int16 screenWidth = getBkgSize().x;
+			if (screenWidth)
+				newPosition %= screenWidth;
+			if (newPosition < 0)
+				newPosition += screenWidth;
+			setBackgroundPosition(newPosition);
+			break;
+		}
+		case RenderTable::TILT : {
+			int16 startPosition = scriptManager->getStateValue(StateKey_ViewPos);
+			int16 newPosition = startPosition + _velocity;
+			int16 screenHeight = getBkgSize().y;
+			int16 tiltGap = (int16)_renderTable.getTiltGap();
+			if (newPosition >= (screenHeight - tiltGap))
+				newPosition = screenHeight - tiltGap;
+			if (newPosition <= tiltGap)
+				newPosition = tiltGap;
+			setBackgroundPosition(newPosition);
+			break;
+		}
+		default:
+			break;
 		}
 	}
 }
 
 void RenderManager::checkBorders() {
-	switch(_renderTable.getRenderState()) {
-	  case RenderTable::PANORAMA: {
-		  int16 startPosition = _engine->getScriptManager()->getStateValue(StateKey_ViewPos);
-		  int16 newPosition = startPosition;
-		  int16 screenWidth = getBkgSize().x;
-		  if (screenWidth)
-			  newPosition %= screenWidth;
-		  if (newPosition < 0)
-			  newPosition += screenWidth;
-		  if (startPosition != newPosition)
-			  setBackgroundPosition(newPosition);
-	    break;
-	  } 
-	  case RenderTable::TILT: {
-		  int16 startPosition = _engine->getScriptManager()->getStateValue(StateKey_ViewPos);
-		  int16 newPosition = startPosition;
-		  int16 screenHeight = getBkgSize().y;
-		  int16 tiltGap = (int16)_renderTable.getTiltGap();
-		  if (newPosition >= (screenHeight - tiltGap))
-			  newPosition = screenHeight - tiltGap;
-		  if (newPosition <= tiltGap)
-			  newPosition = tiltGap;
-		  if (startPosition != newPosition)
-			  setBackgroundPosition(newPosition);
-		  break;
-	  }
-	  default: 
-	    break;
+	switch (_renderTable.getRenderState()) {
+	case RenderTable::PANORAMA: {
+		int16 startPosition = _engine->getScriptManager()->getStateValue(StateKey_ViewPos);
+		int16 newPosition = startPosition;
+		int16 screenWidth = getBkgSize().x;
+		if (screenWidth)
+			newPosition %= screenWidth;
+		if (newPosition < 0)
+			newPosition += screenWidth;
+		if (startPosition != newPosition)
+			setBackgroundPosition(newPosition);
+		break;
+	}
+	case RenderTable::TILT: {
+		int16 startPosition = _engine->getScriptManager()->getStateValue(StateKey_ViewPos);
+		int16 newPosition = startPosition;
+		int16 screenHeight = getBkgSize().y;
+		int16 tiltGap = (int16)_renderTable.getTiltGap();
+		if (newPosition >= (screenHeight - tiltGap))
+			newPosition = screenHeight - tiltGap;
+		if (newPosition <= tiltGap)
+			newPosition = tiltGap;
+		if (startPosition != newPosition)
+			setBackgroundPosition(newPosition);
+		break;
+	}
+	default:
+		break;
 	}
 }
 
 void RenderManager::rotateTo(int16 _toPos, int16 _time) {
 	if (_renderTable.getRenderState() != RenderTable::PANORAMA)
 		return;
-  debug(1,"Rotating panorama to %d", _toPos);
+	debug(1, "Rotating panorama to %d", _toPos);
 	if (_time == 0)
 		_time = 1;
 	int32 maxX = getBkgSize().x;
@@ -1093,8 +1082,7 @@ void RenderManager::rotateTo(int16 _toPos, int16 _time) {
 			dx = (_toPos + (maxX - curX)) / _time;
 		else
 			dx = -(curX - _toPos) / _time;
-	} 
-	else {
+	} else {
 		if (_toPos - curX > maxX / 2)
 			dx = -((maxX - _toPos) + curX) / _time;
 		else
@@ -1109,7 +1097,7 @@ void RenderManager::rotateTo(int16 _toPos, int16 _time) {
 		if (curX < 0)
 			curX = maxX - curX;
 		else if (curX >= maxX)
-			curX %= maxX;	
+			curX %= maxX;
 		setBackgroundPosition(curX);
 		prepareBackground();
 		renderSceneToScreen();
@@ -1119,9 +1107,9 @@ void RenderManager::rotateTo(int16 _toPos, int16 _time) {
 }
 
 void RenderManager::upscaleRect(Common::Rect &rect) {
-  Common::Rect _HDscreen = _widescreen ? _HDscreenAreaWide : _HDscreenArea;
-  Common::Rect _SDscreen = _widescreen ? _layout.workingArea : _layout.screenArea;
-  _SDscreen.moveTo(0,0);
+	Common::Rect _HDscreen = _widescreen ? _HDscreenAreaWide : _HDscreenArea;
+	Common::Rect _SDscreen = _widescreen ? _layout.workingArea : _layout.screenArea;
+	_SDscreen.moveTo(0, 0);
 	rect.top = rect.top * _HDscreen.height() / _SDscreen.height();
 	rect.left = rect.left * _HDscreen.width() / _SDscreen.width();
 	rect.bottom = rect.bottom * _HDscreen.height() / _SDscreen.height();

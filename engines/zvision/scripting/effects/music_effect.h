@@ -49,18 +49,20 @@ public:
 	bool process(uint32 deltaTimeInMillis) override = 0;
 
 	virtual void setVolume(uint8 volume) = 0;
-	uint8 getVolume() {return _volume;};
+	uint8 getVolume() {
+		return _volume;
+	};
 	virtual void setFade(int32 time, uint8 target) = 0;
 	virtual void setBalance(int8 balance);  //NB Overrides effects of setDirection()
 	void setDirection(Math::Angle azimuth, uint8 magnitude = 255);  //NB Overrides effects of setBalance()
 protected:
-  void updateMixer();
-  virtual void outputMixer() = 0;
-  
-  uint8 _volume = 0;
+	void updateMixer();
+	virtual void outputMixer() = 0;
+
+	uint8 _volume = 0;
 	int8 _balance = 0;
-  Math::Angle _azimuth;
-  uint8 _directionality;  //0 = fully ambient, 255 = fully directional
+	Math::Angle _azimuth;
+	uint8 _directionality;  //0 = fully ambient, 255 = fully directional
 	uint8 volumeOut = 0;
 };
 
@@ -81,7 +83,7 @@ public:
 	void setFade(int32 time, uint8 target) override;
 
 private:
-  void outputMixer() override;
+	void outputMixer() override;
 	bool _loop;
 	bool _fade;
 	uint8 fadeStartVol;
@@ -112,7 +114,7 @@ public:
 	void setFade(int32 time, uint8 target) override;
 
 private:
-  void outputMixer() override;
+	void outputMixer() override;
 	int8 _chan;
 	uint8 _noteNumber;
 	int8 _pan;
@@ -121,14 +123,14 @@ private:
 
 class PanTrackNode : public ScriptingEffect {
 public:
-	PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos, uint8 mag=255, bool resetMixerOnDelete=false, bool staticScreen=false);
+	PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos, uint8 mag = 255, bool resetMixerOnDelete = false, bool staticScreen = false);
 	~PanTrackNode() override;
 	bool process(uint32 deltaTimeInMillis) override;
 
 private:
 	uint32 _slot;
 	int16 _width, _pos;
-  Math::Angle sourcePos, viewPos;
+	Math::Angle sourcePos, viewPos;
 	uint8 _mag;
 	bool _resetMixerOnDelete;
 	bool _staticScreen;

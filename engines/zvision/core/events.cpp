@@ -80,10 +80,10 @@ void ZVision::cheatCodes(uint8 key) {
 
 		if (checkCode("3100OPB")) {
 			_subtitleManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
-			                                    _scriptManager->getStateValue(StateKey_World),
-			                                    _scriptManager->getStateValue(StateKey_Room),
-			                                    _scriptManager->getStateValue(StateKey_Node),
-			                                    _scriptManager->getStateValue(StateKey_View)));
+			                               _scriptManager->getStateValue(StateKey_World),
+			                               _scriptManager->getStateValue(StateKey_Room),
+			                               _scriptManager->getStateValue(StateKey_Node),
+			                               _scriptManager->getStateValue(StateKey_View)));
 		}
 
 		if (checkCode("KILLMENOW")) {
@@ -107,10 +107,10 @@ void ZVision::cheatCodes(uint8 key) {
 
 		if (checkCode("77MASSAVE")) {
 			_subtitleManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
-			                                    _scriptManager->getStateValue(StateKey_World),
-			                                    _scriptManager->getStateValue(StateKey_Room),
-			                                    _scriptManager->getStateValue(StateKey_Node),
-			                                    _scriptManager->getStateValue(StateKey_View)));
+			                               _scriptManager->getStateValue(StateKey_World),
+			                               _scriptManager->getStateValue(StateKey_Room),
+			                               _scriptManager->getStateValue(StateKey_Node),
+			                               _scriptManager->getStateValue(StateKey_View)));
 		}
 
 		if (checkCode("IDKFA")) {
@@ -165,34 +165,34 @@ void ZVision::processEvents() {
 		case Common::EVENT_LBUTTONDOWN:
 			_cursorManager->cursorDown(true);
 			_menu->onMouseDown(_event.mouse);
-			if(!_menu->inMenu() || !_widescreen) {
-			  _scriptManager->setStateValue(StateKey_LMouse, 1);
-			  _scriptManager->addEvent(_event);
-		  }
+			if (!_menu->inMenu() || !_widescreen) {
+				_scriptManager->setStateValue(StateKey_LMouse, 1);
+				_scriptManager->addEvent(_event);
+			}
 			break;
 
 		case Common::EVENT_LBUTTONUP:
 			_cursorManager->cursorDown(false);
 			_menu->onMouseUp(_event.mouse);
-			if(!_menu->inMenu() || !_widescreen) {
-			  _scriptManager->setStateValue(StateKey_LMouse, 0);
-			  _scriptManager->addEvent(_event);
-      }
+			if (!_menu->inMenu() || !_widescreen) {
+				_scriptManager->setStateValue(StateKey_LMouse, 0);
+				_scriptManager->addEvent(_event);
+			}
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
 			_cursorManager->cursorDown(true);
-			if(!_menu->inMenu() || !_widescreen) {
-			  _scriptManager->setStateValue(StateKey_RMouse, 1);
-			  if (getGameId() == GID_NEMESIS)
-				  _scriptManager->inventoryCycle();
+			if (!_menu->inMenu() || !_widescreen) {
+				_scriptManager->setStateValue(StateKey_RMouse, 1);
+				if (getGameId() == GID_NEMESIS)
+					_scriptManager->inventoryCycle();
 			}
 			break;
 
 		case Common::EVENT_RBUTTONUP:
 			_cursorManager->cursorDown(false);
-			if(!_menu->inMenu() || !_widescreen)
-  			_scriptManager->setStateValue(StateKey_RMouse, 0);
+			if (!_menu->inMenu() || !_widescreen)
+				_scriptManager->setStateValue(StateKey_RMouse, 0);
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
@@ -202,6 +202,7 @@ void ZVision::processEvents() {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			switch ((ZVisionAction)_event.customType) {
 			case kZVisionActionLeft:
+			// fall through
 			case kZVisionActionRight:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
 					_keyboardVelocity = (_event.customType == kZVisionActionLeft ?
@@ -210,6 +211,7 @@ void ZVision::processEvents() {
 				break;
 
 			case kZVisionActionUp:
+			// fall through
 			case kZVisionActionDown:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::TILT)
 					_keyboardVelocity = (_event.customType == kZVisionActionUp ?
@@ -219,33 +221,33 @@ void ZVision::processEvents() {
 
 			case kZVisionActionSave:
 				//if (_menu->getEnable() & kMenubarSave)
-				if (_menu->getEnable(kMainMenuSave))		
+				if (_menu->getEnable(kMainMenuSave))
 					_scriptManager->changeLocation('g', 'j', 's', 'e', 0);
 				break;
 
 			case kZVisionActionRestore:
 				//if (_menu->getEnable() & kMenubarRestore)
-				if (_menu->getEnable(kMainMenuLoad))		
+				if (_menu->getEnable(kMainMenuLoad))
 					_scriptManager->changeLocation('g', 'j', 'r', 'e', 0);
 				break;
 
 			case kZVisionActionPreferences:
 				//if (_menu->getEnable() & kMenubarSettings)
-				if (_menu->getEnable(kMainMenuPrefs))		
+				if (_menu->getEnable(kMainMenuPrefs))
 					_scriptManager->changeLocation('g', 'j', 'p', 'e', 0);
 				break;
 
 			case kZVisionActionQuit:
 				//if (_menu->getEnable() & kMenubarExit)
-				if (_menu->getEnable(kMainMenuExit))				
+				if (_menu->getEnable(kMainMenuExit))
 					ifQuit();
 				break;
 
 			case kZVisionActionShowFPS: {
 				Common::String fpsStr = Common::String::format("FPS: %d", getFPS());
 				_subtitleManager->showDebugMsg(fpsStr);
-				}
-				break;
+			}
+			break;
 			default:
 				break;
 			}
@@ -254,11 +256,13 @@ void ZVision::processEvents() {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 			switch ((ZVisionAction)_event.customType) {
 			case kZVisionActionLeft:
+			// fall through
 			case kZVisionActionRight:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
 					_keyboardVelocity = 0;
 				break;
 			case kZVisionActionUp:
+			// fall through
 			case kZVisionActionDown:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::TILT)
 					_keyboardVelocity = 0;
@@ -285,7 +289,7 @@ void ZVision::processEvents() {
 }
 
 void ZVision::onMouseMove(const Common::Point &pos) {
-  debug(6,"ZVision::onMouseMove()");
+	debug(6, "ZVision::onMouseMove()");
 	_menu->onMouseMove(pos);
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
 	Common::Rect _workingArea = _renderManager->getWorkingArea();
@@ -322,60 +326,56 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 	//               ^
 
 	// Clip the horizontal mouse position to the working window
-	debug(6,"Mouse pos.x, %d, clipping with %d+1, %d+1", pos.x, _workingArea.left, _workingArea.right);
+	debug(6, "Mouse pos.x, %d, clipping with %d+1, %d+1", pos.x, _workingArea.left, _workingArea.right);
 	Common::Point clippedPos = pos;
 	clippedPos.x = CLIP<int16>(pos.x, _workingArea.left + 1, _workingArea.right - 1);
 	if (_workingArea.contains(clippedPos) && !_menu->inMenu()) {
 		cursorWasChanged = _scriptManager->onMouseMove(clippedPos, imageCoord);
 		RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
-		switch(renderState) {
-		  case RenderTable::PANORAMA:
-			  if (clippedPos.x >= _workingArea.left && clippedPos.x < _workingArea.left + ROTATION_SCREEN_EDGE_OFFSET) {
-				  int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-				  if (mspeed <= 0)
-					  mspeed = 25;
-				  _mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingArea.left)) - mspeed).toInt(), -1);
-				  _cursorManager->changeCursor(CursorIndex_Left);
-				  cursorWasChanged = true;
-			  } 
-			  else if (clippedPos.x <= _workingArea.right && clippedPos.x > _workingArea.right - ROTATION_SCREEN_EDGE_OFFSET) {
-				  int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-				  if (mspeed <= 0)
-					  mspeed = 25;
-				  _mouseVelocity  = MAX((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingArea.right + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
-				  _cursorManager->changeCursor(CursorIndex_Right);
-				  cursorWasChanged = true;
-			  } 
-			  else
-				  _mouseVelocity = 0;
-	      break;
-      case RenderTable::TILT:
-		    if (clippedPos.y >= _workingArea.top && clippedPos.y < _workingArea.top + ROTATION_SCREEN_EDGE_OFFSET) {
-			    int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-			    if (mspeed <= 0)
-				    mspeed = 25;
-			    _mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingArea.top)) - mspeed).toInt(), -1);
-			    _cursorManager->changeCursor(CursorIndex_UpArr);
-			    cursorWasChanged = true;
-		    } 
-		    else if (clippedPos.y <= _workingArea.bottom && clippedPos.y > _workingArea.bottom - ROTATION_SCREEN_EDGE_OFFSET) {
-			    int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-			    if (mspeed <= 0)
-				    mspeed = 25;
-			    _mouseVelocity = MAX((Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingArea.bottom + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
-			    _cursorManager->changeCursor(CursorIndex_DownArr);
-			    cursorWasChanged = true;
-		    } 
-		    else
-			    _mouseVelocity = 0;
-		    break;
-      case RenderTable::FLAT:
-		  default:
-			  _mouseVelocity = 0;
-		    break;
-    }
-	} 
-	else
+		switch (renderState) {
+		case RenderTable::PANORAMA:
+			if (clippedPos.x >= _workingArea.left && clippedPos.x < _workingArea.left + ROTATION_SCREEN_EDGE_OFFSET) {
+				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
+				if (mspeed <= 0)
+					mspeed = 25;
+				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingArea.left)) - mspeed).toInt(), -1);
+				_cursorManager->changeCursor(CursorIndex_Left);
+				cursorWasChanged = true;
+			} else if (clippedPos.x <= _workingArea.right && clippedPos.x > _workingArea.right - ROTATION_SCREEN_EDGE_OFFSET) {
+				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
+				if (mspeed <= 0)
+					mspeed = 25;
+				_mouseVelocity  = MAX((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingArea.right + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
+				_cursorManager->changeCursor(CursorIndex_Right);
+				cursorWasChanged = true;
+			} else
+				_mouseVelocity = 0;
+			break;
+		case RenderTable::TILT:
+			if (clippedPos.y >= _workingArea.top && clippedPos.y < _workingArea.top + ROTATION_SCREEN_EDGE_OFFSET) {
+				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
+				if (mspeed <= 0)
+					mspeed = 25;
+				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingArea.top)) - mspeed).toInt(), -1);
+				_cursorManager->changeCursor(CursorIndex_UpArr);
+				cursorWasChanged = true;
+			} else if (clippedPos.y <= _workingArea.bottom && clippedPos.y > _workingArea.bottom - ROTATION_SCREEN_EDGE_OFFSET) {
+				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
+				if (mspeed <= 0)
+					mspeed = 25;
+				_mouseVelocity = MAX((Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingArea.bottom + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
+				_cursorManager->changeCursor(CursorIndex_DownArr);
+				cursorWasChanged = true;
+			} else
+				_mouseVelocity = 0;
+			break;
+		case RenderTable::FLAT:
+		// fall through
+		default:
+			_mouseVelocity = 0;
+			break;
+		}
+	} else
 		_mouseVelocity = 0;
 	if (!cursorWasChanged)
 		_cursorManager->changeCursor(CursorIndex_Idle);
