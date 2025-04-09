@@ -73,7 +73,6 @@ protected:
 	Audio::SeekableAudioStream *_emptySound = nullptr;
 
 	Audio::SoundHandle _sfxAudioHandle;
-	Audio::SoundHandle _sceneAudioHandle;
 
 	Zone *_menuzone;
 	Zone *_submenzone;

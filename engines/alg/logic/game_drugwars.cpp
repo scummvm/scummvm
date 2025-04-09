@@ -268,9 +268,6 @@ Common::Error GameDrugWars::run() {
 			error("GameDrugWars::run(): Cannot find scene %s in libfile", scene->_name.c_str());
 		}
 		_sceneSkipped = false;
-		Audio::PacketizedAudioStream *audioStream = _videoDecoder->getAudioStream();
-		g_system->getMixer()->stopHandle(_sceneAudioHandle);
-		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_sceneAudioHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 		_paletteDirty = true;
 		_nextFrameTime = getMsTime() + 100;
 		callScriptFunctionScene(PREOP, scene->_preop, scene);
@@ -325,9 +322,9 @@ Common::Error GameDrugWars::run() {
 			displayShotsLeft();
 			moveMouse();
 			if (_pauseTime > 0) {
-				g_system->getMixer()->pauseHandle(_sceneAudioHandle, true);
+				_videoDecoder->pauseAudio(true);
 			} else {
-				g_system->getMixer()->pauseHandle(_sceneAudioHandle, false);
+				_videoDecoder->pauseAudio(false);
 			}
 			if (_videoDecoder->getCurrentFrame() == 0) {
 				_videoDecoder->getNextFrame();
@@ -381,7 +378,7 @@ void GameDrugWars::doMenu() {
 	updateCursor();
 	_inMenu = true;
 	moveMouse();
-	g_system->getMixer()->pauseHandle(_sceneAudioHandle, true);
+	_videoDecoder->pauseAudio(true);
 	_screen->copyRectToSurface(_background->getBasePtr(_videoPosX, _videoPosY), _background->pitch, _videoPosX, _videoPosY, _videoDecoder->getWidth(), _videoDecoder->getHeight());
 	showDifficulty(_difficulty, false);
 	while (_inMenu && !_vm->shouldQuit()) {
@@ -399,7 +396,7 @@ void GameDrugWars::doMenu() {
 		g_system->delayMillis(15);
 	}
 	updateCursor();
-	g_system->getMixer()->pauseHandle(_sceneAudioHandle, false);
+	_videoDecoder->pauseAudio(false);
 	if (_hadPause) {
 		uint32 endTime = getMsTime();
 		uint32 timeDiff = endTime - startTime;

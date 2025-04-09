@@ -84,6 +84,8 @@ void AlgVideoDecoder::loadVideoFromStream(uint32 offset) {
 	_frame = new Graphics::Surface();
 	_frame->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
 	_audioStream = makePacketizedRawStream(8000, Audio::FLAG_UNSIGNED);
+	g_system->getMixer()->stopHandle(_audioHandle);
+	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audioHandle, _audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 }
 
 void AlgVideoDecoder::skipNumberOfFrames(uint32 num) {
@@ -215,23 +217,16 @@ void AlgVideoDecoder::decodeIntraFrame(uint32 size, uint8 hh, uint8 hv) {
 			color = _input->readByte();
 			bytesRemaining -= 2;
 		}
-		while (runLength > 0) {
-			if (color > 0) {
-				_frame->setPixel(x, y, color);
-				if (hh) {
-					_frame->setPixel(x + 1, y, color);
-				}
-				if (hv) {
-					_frame->setPixel(x, y + 1, color);
-					_frame->setPixel(x + 1, y + 1, color);
-				}
+		if (color > 0) {
+			memset(_frame->getBasePtr(x, y), color, runLength * (1 + hh));
+			if (hv) {
+				memset(_frame->getBasePtr(x, y + 1), color, runLength * (1 + hh));
 			}
-			x += 1 + hh;
-			runLength--;
-			if (x >= _width) {
-				x = 0;
-				y += 1 + hv;
-			}
+		}
+		x += runLength + (hh * runLength);
+		if (x >= _width) {
+			x = 0;
+			y += 1 + hv;
 		}
 	}
 	assert(bytesRemaining == 0);
@@ -263,13 +258,9 @@ void AlgVideoDecoder::decodeInterFrame(uint32 size, uint8 hh, uint8 hv) {
 				if (replaceArray & j) {
 					uint8 color = _input->readByte();
 					bytesRead++;
-					_frame->setPixel(x, y, color);
-					if (hh) {
-						_frame->setPixel(x + 1, y, color);
-					}
+					memset(_frame->getBasePtr(x, y), color, (1 + hh));
 					if (hv) {
-						_frame->setPixel(x, y + 1, color);
-						_frame->setPixel(x + 1, y + 1, color);
+						memset(_frame->getBasePtr(x, y + 1), color, (1 + hh));
 					}
 				}
 				x += 1 + hh;
