@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-08 19:53+0000\n"
-"PO-Revision-Date: 2025-04-05 05:03+0000\n"
+"PO-Revision-Date: 2025-04-09 20:18+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -6081,10 +6081,8 @@ msgid "Turn right"
 msgstr "Gira a la dreta"
 
 #: engines/agos/metaengine.cpp:315
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fight mode"
-msgstr "Commuta el mode ràpid"
+msgstr "Commuta el mode de lluita"
 
 #: engines/agos/metaengine.cpp:324
 msgid "Text speed - Fast"
@@ -7277,6 +7275,10 @@ msgid ""
 "%s for details on how to properly extract the DTSPEECH.XA and *.STR files "
 "from your game disc."
 msgstr ""
+"Error: el fitxer '%s' no s'ha extret correctament.\n"
+"Consulteu la pàgina wiki\n"
+"%s per als detalls sobre com extreure correctament els fitxers DTSPEECH.XA i "
+"*.STR del vostre disc del joc."
 
 #: engines/dragons/metaengine.cpp:121
 #, c-format
@@ -7288,6 +7290,12 @@ msgid ""
 "\n"
 " See %s"
 msgstr ""
+"Error: Sembla que els fitxers de dades del joc s'han extret incorrectament.\n"
+"\n"
+"Només heu d'extreure els fitxers STR i XA utilitzant el mètode especial. La "
+"resta s'ha de copiar normalment des del CD del joc.\n"
+"\n"
+" Vegeu %s"
 
 #: engines/dragons/metaengine.cpp:219
 msgid "Debug Graphics"
@@ -7682,6 +7690,10 @@ msgid ""
 "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
 "Do you still want to run %s?"
 msgstr ""
+"ScummVM ha trobat alguns problemes amb els fitxers de dades del joc.\n"
+"No obstant això es pot executar ScummVM però pot causar errors de joc o fins "
+"i tot fallades.\n"
+"Encara voleu executar %s?"
 
 #: engines/grim/grim.cpp:511 engines/grim/grim.cpp:611
 msgid "Use/Talk"
@@ -7730,6 +7742,11 @@ msgid ""
 "version (i.e. dvd-box or jewelcase):\n"
 "%s"
 msgstr ""
+"El fitxer de dades del joc %s pot estar malmès.\n"
+"Si esteu segur que no ho està, si us plau, proporcioneu a l'equip de ScummVM "
+"el següent codi, juntament amb el nom del fitxer, l'idioma i una descripció "
+"de la vostra versió del joc (és a dir, en caixa de DVD o de CD):\n"
+"%s"
 
 #: engines/grim/md5check.cpp:618
 #, c-format
@@ -7738,6 +7755,9 @@ msgid ""
 "It may be missing or you may not have the rights to open it.\n"
 "Go to %s to see a list of the needed files."
 msgstr ""
+"No s'ha pogut obrir el fitxer %s per comprovar-lo.\n"
+"Pot ser que falti o pot ser que no tinguis els permisos per obrir-lo.\n"
+"Aneu a %s per veure una llista dels fitxers necessaris."
 
 #: engines/grim/md5checkdialog.cpp:41
 msgid ""
@@ -7746,6 +7766,10 @@ msgid ""
 "This may take a while, please wait.\n"
 "Successive runs will not check them again."
 msgstr ""
+"ScummVM ara verificarà els arxius de dades del joc, per assegurar-se que "
+"teniu la millor experiència de joc.\n"
+"Això pot trigar una estona, si us plau, espereu.\n"
+"Les properes execucions no ho tornaran a comprovar."
 
 #: engines/grim/metaengine.cpp:37
 msgid "Load user patch (unsupported)"
@@ -7771,6 +7795,10 @@ msgid ""
 "%s\n"
 "and put it in the game data files directory"
 msgstr ""
+"El pegat original de Grim Fandango\n"
+"falta. Baixeu-lo des de\n"
+"%s\n"
+"i poseu-lo al directori de fitxers de dades del joc"
 
 #: engines/grim/resource.cpp:107
 #, c-format
@@ -7781,6 +7809,10 @@ msgid ""
 "Pay attention to download the correct version according to the game's "
 "language!"
 msgstr ""
+"Falta el pegat original d'Escape from Monkey Island. \n"
+"Baixeu-lo de %s\n"
+"i poseu-lo al directori de fitxers de dades del joc.\n"
+"Pareu atenció a descarregar la versió correcta segons l'idioma del joc!"
 
 #: engines/grim/emi/sound/emisound.cpp:655
 msgid ""
@@ -7793,6 +7825,15 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
+"ERROR: No s'han trobat suficients pistes de música!\n"
+"Escape from Monkey Island té dues versions de FullMonkeyMap.imt,\n"
+"heu de copiar els dos fitxers des d'ambdós CD a Textures/, i canviar-los\n"
+"el nom de la següent manera per obtenir suport de música en el joc: \n"
+"CD 1: \"FullMonkeyMap.imt\" -\" \"FullMonkeyMap1.imt\"\n"
+"CD 2: \"FullMonkeyMap.imt\" -\" \"FullMonkeyMap2.imt\"\n"
+"\n"
+"Alternativament, les versions d'Steam o de GOG tenen l'arxiu "
+"FullMonkeyMap.imt combinat"
 
 #: engines/groovie/metaengine.cpp:41
 msgid "Fast movie speed"
@@ -7849,7 +7890,7 @@ msgstr "Motor Groovie"
 
 #: engines/groovie/metaengine.cpp:217
 msgid "Skip or fast forward scene"
-msgstr ""
+msgstr "Omet o avança ràpidament l'escena"
 
 #: engines/groovie/saveload.cpp:52
 msgid "Reserved"
@@ -8004,7 +8045,7 @@ msgstr "Mou cap amunt"
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:175
 msgid "Move to bottom"
-msgstr ""
+msgstr "Mou a la part inferior"
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
@@ -8113,7 +8154,7 @@ msgstr "Mou el cursor a la dreta"
 #: engines/illusions/metaengine.cpp:136 engines/twine/metaengine.cpp:422
 #: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:490
 msgid "Abort"
-msgstr ""
+msgstr "Interromp"
 
 #: engines/kyra/detection_tables.h:75
 msgid "Missing language specific game code and/or resources."
@@ -8220,13 +8261,15 @@ msgstr "Botó esquerre per atacar, botó dret per recollir objectes"
 
 #: engines/kyra/metaengine.cpp:159
 msgid "Faithful AD&D rules"
-msgstr ""
+msgstr "Regles fidels d'AD&D"
 
 #: engines/kyra/metaengine.cpp:160
 msgid ""
 "Make implementation of AD&D rules more compliant with the AD&D 2nd edition "
 "handbook"
 msgstr ""
+"Fer que la implementació de les normes d'AD&D sigui més compatible amb el "
+"manual de la 2a edició d'AD&D"
 
 #: engines/kyra/metaengine.cpp:251
 msgid "Lands of Lore support is not compiled in"
@@ -8237,6 +8280,8 @@ msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
 msgstr ""
+"EOB II FM-TOWNS requereix suport de modes de color de 16 bits que no s'ha "
+"activat en la vostra compilació d'ScummVM"
 
 #: engines/kyra/metaengine.cpp:267
 msgid "Eye of Beholder support is not compiled in"
@@ -8299,11 +8344,11 @@ msgstr "Obre/Tanca l'inventari"
 
 #: engines/kyra/engine/eobcommon.cpp:376
 msgid "Switch Inventory/Character screen"
-msgstr ""
+msgstr "Commuta la pantalla d'inventari/personatge"
 
 #: engines/kyra/engine/eobcommon.cpp:377
 msgid "Camp"
-msgstr ""
+msgstr "Campa"
 
 #: engines/kyra/engine/eobcommon.cpp:378 engines/mm/mm1/metaengine.cpp:102
 msgid "Cast Spell"
@@ -8311,27 +8356,27 @@ msgstr "Llança l'encanteri"
 
 #: engines/kyra/engine/eobcommon.cpp:381
 msgid "Spell Level 1"
-msgstr ""
+msgstr "Encanteri nivell 1"
 
 #: engines/kyra/engine/eobcommon.cpp:382
 msgid "Spell Level 2"
-msgstr ""
+msgstr "Encanteri nivell 2"
 
 #: engines/kyra/engine/eobcommon.cpp:383
 msgid "Spell Level 3"
-msgstr ""
+msgstr "Encanteri nivell 3"
 
 #: engines/kyra/engine/eobcommon.cpp:384
 msgid "Spell Level 4"
-msgstr ""
+msgstr "Encanteri nivell 4"
 
 #: engines/kyra/engine/eobcommon.cpp:385
 msgid "Spell Level 5"
-msgstr ""
+msgstr "Encanteri nivell 5"
 
 #: engines/kyra/engine/eobcommon.cpp:387
 msgid "Spell Level 6"
-msgstr ""
+msgstr "Encanteri nivell 6"
 
 #: engines/kyra/engine/lol.cpp:506
 msgid "Attack 1"
@@ -8375,6 +8420,13 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
+"S'ha trobat el següent fitxer de partida desada original al vostre directori "
+"del joc:\n"
+"\n"
+"%s %S\n"
+"\n"
+"Voleu utilitzar aquest fitxer de partida desada amb ScummVM?\n"
+"\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:644
 #, c-format
@@ -8382,6 +8434,9 @@ msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
+"S'ha trobat un fitxer de partida desada a la ranura especificada %d. "
+"Sobreescriure?\n"
+"\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:677
 #, c-format
@@ -8392,6 +8447,11 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
+"S'han importat amb èxit %d partides desades originals a ScummVM. \n"
+"Si voleu importar manualment una partida desada original més tard\n"
+"cal obrir la consola de depuració d'ScummVM i utilitzar l'ordre 'import."
+"savefile'.\n"
+"\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:279
 msgid ""
@@ -8406,6 +8466,17 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
+"Aquesta versió d'AMIGA requereix els següents fitxers de tipus de lletra:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Si heu utilitzat l'instal·lador original per a la instal·lació d'aquests "
+"fitxers\n"
+"hauria d'estar ubicat a la carpeta 'Fonts/' del sistema AmigaDOS.\n"
+"Si us plau, copieu-los al directori de dades del joc EOB.\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:287
 msgid ""
@@ -8428,6 +8499,25 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
+"Aquesta versió d'AMIGA requereix els següents fitxers de tipus de lletra:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Aquesta és una versió localitzada (no anglesa) de l'EOB II que utilitza "
+"caràcters específics del llenguatge\n"
+"contingut només en els fitxers de tipus de lletra específics que venen amb "
+"el vostre joc. No podeu utilitzar el fitxers\n"
+"de tipus de lletra de la versió anglesa o de qualsevol joc EOB I que sembla "
+"ser el que estàs fent.\n"
+"\n"
+"El joc continuarà, però no es mostraran els caràcters específics de l'idioma."
+"\n"
+"Si us plau, copieu els fitxers de tipus de lletra correctes al vostre "
+"directori de dades del joc EOB II.\n"
+"\n"
 
 #: engines/lab/engine.cpp:124
 msgid ""
