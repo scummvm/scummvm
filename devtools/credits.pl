@@ -1047,7 +1047,7 @@ begin_credits("Credits");
 				add_person("Sean Terrell", "", "");
 				add_person("Hugues Valois", "", "Game selection menu");
 				add_person("Jordi Vilalta", "", "Numerous code and website clean-up patches");
-				add_person("Petr Vyhnak", "", "The DCL-INFLATE algorithm, many Win32 improvements");
+				add_person("Petr Vyhnak", "", "The DCL-IMPLODE algorithm, many Win32 improvements");
 				add_person("Bas Zoetekouw", "", "Man pages, debian package management, CVS maintenance");
 			end_persons();
 			add_paragraph("Special thanks to Prof. Dr. Gary Nutt ".
