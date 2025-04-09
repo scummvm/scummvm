@@ -34,6 +34,10 @@ void JACLMetaEngine::getSupportedGames(PlainGameList &games) {
 		games.push_back(*pd);
 }
 
+const GlkDetectionEntry* JACLMetaEngine::getDetectionEntries() {
+	return JACL_GAMES;
+}
+
 GameDescriptor JACLMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = JACL_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))

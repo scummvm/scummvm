@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "base/plugins.h"
 #include "common/md5.h"
 #include "common/memstream.h"
@@ -59,6 +61,14 @@
 #include "graphics/surface.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+
+#include "engines/metaengine.h"
+#include "engines/engine.h"
+
+#include "common/hash-str.h"
+
+#include "common/gui_options.h"
+
 
 static const DebugChannelDef debugFlagList[] = {
 	{Glk::kDebugCore, "core", "Core engine debug level"},
@@ -123,24 +133,24 @@ GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common:
 
 PlainGameList GlkMetaEngineDetection::getSupportedGames() const {
 	PlainGameList list;
-	Glk::Adrift::AdriftMetaEngine::getSupportedGames(list);
-	Glk::AdvSys::AdvSysMetaEngine::getSupportedGames(list);
-	Glk::AGT::AGTMetaEngine::getSupportedGames(list);
-	Glk::Alan2::Alan2MetaEngine::getSupportedGames(list);
-	Glk::Alan3::Alan3MetaEngine::getSupportedGames(list);
-	Glk::Archetype::ArchetypeMetaEngine::getSupportedGames(list);
-	Glk::Comprehend::ComprehendMetaEngine::getSupportedGames(list);
-	Glk::Glulx::GlulxMetaEngine::getSupportedGames(list);
-	Glk::Hugo::HugoMetaEngine::getSupportedGames(list);
+	// Glk::Adrift::AdriftMetaEngine::getSupportedGames(list);
+	// Glk::AdvSys::AdvSysMetaEngine::getSupportedGames(list);
+	// Glk::AGT::AGTMetaEngine::getSupportedGames(list);
+	// Glk::Alan2::Alan2MetaEngine::getSupportedGames(list);
+	// Glk::Alan3::Alan3MetaEngine::getSupportedGames(list);
+	// Glk::Archetype::ArchetypeMetaEngine::getSupportedGames(list);
+	// Glk::Comprehend::ComprehendMetaEngine::getSupportedGames(list);
+	// Glk::Glulx::GlulxMetaEngine::getSupportedGames(list);
+	// Glk::Hugo::HugoMetaEngine::getSupportedGames(list);
 	Glk::JACL::JACLMetaEngine::getSupportedGames(list);
-	Glk::Level9::Level9MetaEngine::getSupportedGames(list);
-	Glk::Magnetic::MagneticMetaEngine::getSupportedGames(list);
-	Glk::Quest::QuestMetaEngine::getSupportedGames(list);
-	Glk::Scott::ScottMetaEngine::getSupportedGames(list);
-	Glk::ZCode::ZCodeMetaEngine::getSupportedGames(list);
-#ifndef RELEASE_BUILD
-	Glk::TADS::TADSMetaEngine::getSupportedGames(list);
-#endif
+// 	Glk::Level9::Level9MetaEngine::getSupportedGames(list);
+// 	Glk::Magnetic::MagneticMetaEngine::getSupportedGames(list);
+// 	Glk::Quest::QuestMetaEngine::getSupportedGames(list);
+// 	Glk::Scott::ScottMetaEngine::getSupportedGames(list);
+// 	Glk::ZCode::ZCodeMetaEngine::getSupportedGames(list);
+// #ifndef RELEASE_BUILD
+// 	Glk::TADS::TADSMetaEngine::getSupportedGames(list);
+// #endif
 
 	return list;
 }
@@ -305,5 +315,59 @@ void GlkMetaEngineDetection::detectClashes() const {
 uint GlkMetaEngineDetection::getMD5Bytes() const {
 	return 5000;
 }
+
+// Add backslash before double quotes (") and backslashes themselves (\)
+static Common::String escapeString(const char *string) {
+	if (string == nullptr)
+		return "";
+
+	Common::String res = "";
+
+	for (int i = 0; string[i] != '\0'; i++) {
+		if (string[i] == '"' || string[i] == '\\')
+			res += "\\";
+
+		res += string[i];
+	}
+
+	return res;
+}
+
+void GlkMetaEngineDetection::dumpDetectionEntries() const {
+	PlainGameList list = getSupportedGames();
+	
+	for (int i = 0; i < list.size(); ++i) {
+		PlainGameDescriptor pd = list[i];
+		const char *gameId = pd.gameId;
+		const char *title = pd.description;
+		
+		const Glk::GlkDetectionEntry *detectionEntries = Glk::JACL::JACLMetaEngine::getDetectionEntries();
+
+		if (!detectionEntries)
+			continue;
+			
+		for (const Glk::GlkDetectionEntry *entry = detectionEntries; entry->_gameId; ++entry) {
+			if (scumm_stricmp(entry->_gameId, gameId) == 0) {
+				const Glk::GlkDetectionEntry *p = entry;
+				// if (!p)
+				// continue;
+				printf("game (\n");
+				printf("\tname \"%s\"\n", escapeString(p->_gameId).c_str());
+				printf("\ttitle \"%s\"\n", escapeString(title).c_str());
+				printf("\textra \"%s\"\n", escapeString(p->_extra).c_str());
+				printf("\tlanguage \"%s\"\n", escapeString(getLanguageLocale(p->_language)).c_str());
+				printf("\tplatform \"%s\"\n", escapeString(getPlatformCode(p->_platform)).c_str());
+				printf("\tsourcefile \"%s\"\n", escapeString(getName()).c_str());
+				printf("\tengine \"%s\"\n", escapeString(getEngineName()).c_str());
+		
+				Common::String md5 = p->_md5;
+				printf("\trom ( name \"%s\" size %lld md5-%d %s )\n", escapeString(p->_gameId).c_str(), static_cast<long long int>(p->_filesize), getMD5Bytes(), md5.c_str());
+		
+				printf(")\n\n");
+			}
+		}	
+	}
+}
+
 
 REGISTER_PLUGIN_STATIC(GLK_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, GlkMetaEngineDetection);
