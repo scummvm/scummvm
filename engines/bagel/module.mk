@@ -128,7 +128,6 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/bgen/bgb.o \
 	hodjnpodj/metagame/bgen/bgen_util.o \
 	hodjnpodj/metagame/bgen/bs_util.o \
-	hodjnpodj/metagame/bgen/gtl_view.o \
 	hodjnpodj/metagame/bgen/invent.o \
 	hodjnpodj/metagame/bgen/item.o \
 	hodjnpodj/metagame/bgen/mgstat.o \
@@ -142,6 +141,7 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/boardgame/gtl_data_compiler.o \
 	hodjnpodj/metagame/boardgame/gtl_data_lexical.o \
 	hodjnpodj/metagame/boardgame/gtl_doc.o \
+	hodjnpodj/metagame/boardgame/gtl_view.o \
 	hodjnpodj/metagame/boardgame/minimap.o \
 	hodjnpodj/metagame/boardgame/notebook.o \
 	hodjnpodj/metagame/boardgame/pawn_shop.o \

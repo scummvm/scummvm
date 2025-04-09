@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/hodjnpodj/metagame/bgen/gtl_view.h"
+#include "bagel/hodjnpodj/metagame/boardgame/gtl_view.h"
 
 namespace Bagel {
 namespace HodjNPodj {

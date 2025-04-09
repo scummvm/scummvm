@@ -27,9 +27,8 @@ namespace Metagame {
 
 CBgbMgr *gpBgbMgr;
 
-CBgbMgr::CBgbMgr(void) {
+CBgbMgr::CBgbMgr() {
 	gpBgbMgr = this;
-	m_bAnimationsPaused = true;
 }
 
 /*------------------------------------------------------------------------*/

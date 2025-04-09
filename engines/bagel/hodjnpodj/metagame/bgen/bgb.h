@@ -46,32 +46,30 @@ public:
 
 	// Following should be in view-specific block
 	//
-	char        m_cStartData;
-	CView *m_xpcView;                 // current window, when non-null
-	CDC *m_xpDc;                    // current device context
-	COLORREF    m_cPenColor, m_cBrushColor;
-	int         m_iPenWidth, m_iBrushStyle;
-	CBrush *m_xpOldBrush;
-	CPen *m_xpOldPen;
-	bool        m_bCreatePen, m_bCreateBrush;
-	bool        m_bReleaseDc;               // flag: release DC when done
-	int         m_iLockCount;               // if positive, don't release DC
+	CView *m_xpcView = nullptr;		// current window, when non-null
+	CDC *m_xpDc = nullptr;			// current device context
+	COLORREF m_cPenColor = 0, m_cBrushColor = 0;
+	int m_iPenWidth = 0, m_iBrushStyle = 0;
+	CBrush *m_xpOldBrush = nullptr;
+	CPen *m_xpOldPen = nullptr;
+	bool m_bCreatePen = false, m_bCreateBrush = false;
+	bool m_bReleaseDc = false;               // flag: release DC when done
+	int m_iLockCount = 0;               // if positive, don't release DC
 
-	CBsuSet *m_xpBsuSet;                 // scroll bar set, if any
+	CBsuSet *m_xpBsuSet = nullptr;                 // scroll bar set, if any
 
-	CPalette *m_xpGamePalette;            // game pallet
-	CPalette *m_xpOldPalette;
+	CPalette *m_xpGamePalette = nullptr;            // game pallet
+	CPalette *m_xpOldPalette = nullptr;
 
-	CBgbObject *m_lpBgbChain;               // chain of bgb objects
+	CBgbObject *m_lpBgbChain = nullptr;               // chain of bgb objects
 
-	CLList *m_pFXList;                  // Special Effects list
+	CLList *m_pFXList = nullptr;                  // Special Effects list
 
-	bool        m_bInMenu;                  // within options menu
-	char        m_szDataDirectory[100];     // directory for data files
-	char        m_cEndData;
+	bool m_bInMenu = false;                  // within options menu
+	char m_szDataDirectory[100] = { 0 };     // directory for data files
 
 private:
-	bool        m_bAnimationsPaused;        // Animations Paused/UnPaused
+	bool m_bAnimationsPaused = true;        // Animations Paused/UnPaused
 
 	// methods
 public:

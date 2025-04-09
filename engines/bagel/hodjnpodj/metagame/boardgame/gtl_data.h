@@ -30,7 +30,7 @@
 #include "bagel/hodjnpodj/metagame/bgen/bgen_util.h"
 #include "bagel/hodjnpodj/metagame/bgen/bs_util.h"
 #include "bagel/hodjnpodj/metagame/bgen/bgb.h"
-#include "bagel/hodjnpodj/metagame/bgen/gtl_view.h"
+#include "bagel/hodjnpodj/metagame/boardgame/gtl_view.h"
 #include "bagel/boflib/sound.h"
 
 namespace Bagel {
