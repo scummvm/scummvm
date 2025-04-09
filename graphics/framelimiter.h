@@ -40,61 +40,69 @@ namespace Graphics {
 class FrameLimiter {
 public:
 	FrameLimiter(OSystem *system, const uint framerate, const bool deferToVsync = true);
-/**
- * Always call this after instantiating Screen & calling initGraphics(), to ensure Vsync status is detected correctly!
- */
-  void initialize();
+	/**
+	 * Always call this after instantiating Screen & calling initGraphics(), to ensure Vsync status is detected correctly!
+	 */
+	void initialize();
 	void initialize(const uint framerate);
 
-/**
- * Call immediately before starting game logic cycle, and immediately after previous screen->update(), if any.
- * Returns last frame duration.
- */
+	/**
+	 * Call immediately before starting game logic cycle, and immediately after previous screen->update(), if any.
+	 * Returns last frame duration.
+	 */
 	uint startFrame();
-	
-/**
- * Call immediately after game logic cycle is completed, and immediately before screen->update().
- * If Vsync is inactive, will wait and return at the appropriate moment to call screen->update() in order to maintain the specified FPS.
- * If Vsync is active, will return immediately as screen->update() should automatically wait for the right moment.
- * Returns true if next frame is expected to be late.
- */
+
+	/**
+	 * Call immediately after game logic cycle is completed, and immediately before screen->update().
+	 * If Vsync is inactive, will wait and return at the appropriate moment to call screen->update() in order to maintain the specified FPS.
+	 * If Vsync is active, will return immediately as screen->update() should automatically wait for the right moment.
+	 * Returns true if next frame is expected to be late.
+	 */
 	bool delayBeforeSwap();
 	void pause(bool pause);
-/**
- * Return duration of last whole frame, including game logic, frame limiter or Vsync delay (if any), and screen redraw time.
- * Specifically, this is the time between the last two successive startFrame() calls.
- */
-	uint getLastFrameDuration() const {return _frameDuration;};
-/**
- * Return duration of last screen update
- * If Vsync is inactive, this value will just be the duration of the redraw process itself;
- * If Vsync is active, this value will encompass both the redraw time AND the delay between presenting the frame to redraw and the screen redraw actually starting.
- */
- 	uint getLastDrawDuration() const {return _drawDuration;}; 
-/**
- * Return duration of last game logic loop
- * Specifically, this is the time from when startFrame() was last called to when delayBeforeSwap() was last called
- */
-	uint getLastLoopDuration() const {return _loopDuration;};
-/**
- * If true, framelimiter is active and applying _system->delayMillis(delay) to maintain the specified FPS, if valid.
- * If false, framelimiter is inactive, either because supplied FPS was invalid or because Vsync is active.
- * delayBeforeSwap() should still be called even if inactive, in order to ensure timers are updated correctly.
- */
-	bool isEnabled() const {return _enabled;};
-	
+	/**
+	 * Return duration of last whole frame, including game logic, frame limiter or Vsync delay (if any), and screen redraw time.
+	 * Specifically, this is the time between the last two successive startFrame() calls.
+	 */
+	uint getLastFrameDuration() const {
+		return _frameDuration;
+	};
+	/**
+	 * Return duration of last screen update
+	 * If Vsync is inactive, this value will just be the duration of the redraw process itself;
+	 * If Vsync is active, this value will encompass both the redraw time AND the delay between presenting the frame to redraw and the screen redraw actually starting.
+	 */
+	uint getLastDrawDuration() const {
+		return _drawDuration;
+	};
+	/**
+	 * Return duration of last game logic loop
+	 * Specifically, this is the time from when startFrame() was last called to when delayBeforeSwap() was last called
+	 */
+	uint getLastLoopDuration() const {
+		return _loopDuration;
+	};
+	/**
+	 * If true, framelimiter is active and applying _system->delayMillis(delay) to maintain the specified FPS, if valid.
+	 * If false, framelimiter is inactive, either because supplied FPS was invalid or because Vsync is active.
+	 * delayBeforeSwap() should still be called even if inactive, in order to ensure timers are updated correctly.
+	 */
+	bool isEnabled() const {
+		return _enabled;
+	};
+
 private:
 	OSystem *_system;
 	bool _enabled;
 	bool _deferToVsync;
 	uint _frameStart;  //Time at which screen update completed and startFrame() was called; start of next cycle of game logic
-  uint _frameLimit;  //Target frame duration to achieve specified FPS
-  uint _frameDuration; //Duration of previous frame between successive startFrame() calls; total game logic, delay (if any) and screen update time
-  uint _drawStart;  //Time at which delayBeforeSwap() returns
-  uint _drawDuration;  //Measured screen update time
-  uint _loopDuration;  //Duration of last game logic cycle, from when startFrame() was called to when delayBeforeSwap() was called
-  int _delay; //Time to delay before returning from delayBeforeSwap()
-  uint _now; //Current time
+	uint _frameLimit;  //Target frame duration to achieve specified FPS
+	uint _frameDuration; //Duration of previous frame between successive startFrame() calls; total game logic, delay (if any) and screen update time
+	uint _drawStart;  //Time at which delayBeforeSwap() returns
+	uint _drawDuration;  //Measured screen update time
+	uint _loopDuration;  //Duration of last game logic cycle, from when startFrame() was called to when delayBeforeSwap() was called
+	int _delay; //Time to delay before returning from delayBeforeSwap()
+	uint _now; //Current time
 };
 
 } // End of namespace Graphics
