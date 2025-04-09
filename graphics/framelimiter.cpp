@@ -25,46 +25,46 @@
 namespace Graphics {
 
 FrameLimiter::FrameLimiter(OSystem *system, const uint framerate, const bool deferToVsync) :
-		_system(system),
-		_deferToVsync(deferToVsync),
-		_frameStart(0),
-		_frameLimit(0),
-		_frameDuration(0),
-		_drawStart(0),
-		_drawDuration(0),
-		_loopDuration(0),
-		_delay(0) {
-  initialize(framerate);
+	_system(system),
+	_deferToVsync(deferToVsync),
+	_frameStart(0),
+	_frameLimit(0),
+	_frameDuration(0),
+	_drawStart(0),
+	_drawDuration(0),
+	_loopDuration(0),
+	_delay(0) {
+	initialize(framerate);
 }
 
 void FrameLimiter::initialize() {
-	_enabled =  (_frameLimit != 0) && !(_deferToVsync && _system->getFeatureState(OSystem::kFeatureVSync));
+	_enabled = (_frameLimit != 0) && !(_deferToVsync && _system->getFeatureState(OSystem::kFeatureVSync));
 	_frameDuration = _frameLimit;
-};
+}
 
 void FrameLimiter::initialize(const uint framerate) {
 	_frameLimit = (framerate > 0) ? 1000.0f / CLIP<uint>(framerate, 1, 100) : 0;
-  initialize();
-};
+	initialize();
+}
 
 uint FrameLimiter::startFrame() {
 	_now = _system->getMillis();
 	if (_frameStart != 0) {
-	  _frameDuration = _now - _frameStart;
-    _drawDuration = _now - _drawStart;
-  }
+		_frameDuration = _now - _frameStart;
+		_drawDuration = _now - _drawStart;
+	}
 	_frameStart = _now;
 	return _frameDuration;
 }
 
 bool FrameLimiter::delayBeforeSwap() {
-  _now = _system->getMillis();
-  _loopDuration = _now - _frameStart;
-	if(_enabled) {
-	  //delay = frameLimit - loopDuration;  //Original functionality, will tend to undershoot target framerate slightly due to finite screen.update() time.
-  	_delay = _frameLimit - (_now - _drawStart); //Ensure EXACTLY the specified frame duration has elapsed since last screen.update() was called.
-    if(_delay > 0)
-  	  _system->delayMillis(_delay);
+	_now = _system->getMillis();
+	_loopDuration = _now - _frameStart;
+	if (_enabled) {
+		//delay = frameLimit - loopDuration;  //Original functionality, will tend to undershoot target framerate slightly due to finite screen.update() time.
+		_delay = _frameLimit - (_now - _drawStart); //Ensure EXACTLY the specified frame duration has elapsed since last screen.update() was called.
+		if (_delay > 0)
+			_system->delayMillis(_delay);
 	}
 	_drawStart = _system->getMillis();
 	return (_delay < 0); //Check if frame is late
