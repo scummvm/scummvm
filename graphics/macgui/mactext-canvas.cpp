@@ -68,7 +68,7 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 		return;
 	}
 
-	 // If maxWidth is not restricted (-1 means possibly invalid width), just append and return
+	// If maxWidth is not restricted (-1 means possibly invalid width), just append and return
 	if (maxWidth == -1) {
 		chunk->text += str;
 
@@ -91,7 +91,7 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 		D(5, "chopChunk: too narrow width, >%d", maxWidth);
 
 		if (w < maxWidth) {
-			chunk->text += str;	//Only append if within bounds
+			chunk->text += str;	// Only append if within bounds
 		}
 		
 		getLineCharWidth(curLine, true);
@@ -105,7 +105,7 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 
 	chunk->text += text[0];
 
-	//Ensure line continuations is valid before accesing index 0
+	// Ensure line continuations is valid before accesing index 0
 	if (!lineContinuations.empty()) {
 		_text[curLine].wordContinuation = lineContinuations[0];
 	}
