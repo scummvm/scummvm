@@ -25,6 +25,15 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
+CBgbMgr *gpBgbMgr;
+
+CBgbMgr::CBgbMgr(void) {
+	gpBgbMgr = this;
+	m_bAnimationsPaused = true;
+}
+
+/*------------------------------------------------------------------------*/
+
 CBgbObject::CBgbObject() {
 	m_bChained = false;
 	m_bNoDelete = false;

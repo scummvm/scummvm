@@ -31,6 +31,12 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+#define SPRITE_TOPMOST		0
+#define SPRITE_FOREGROUND	64
+#define SPRITE_MIDDLE		128
+#define SPRITE_BACKGROUND	192
+#define SPRITE_HINDMOST		255
+
 class UIElement;
 class MinigameView;
 

@@ -96,7 +96,6 @@ struct WindowPos {
 typedef void *CWnd;
 typedef void *CDialog;
 typedef void *CDC;
-typedef Common::Point CSize;
 class CBrush {};
 class CPen {};
 class CView {};

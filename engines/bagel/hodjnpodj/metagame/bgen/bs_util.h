@@ -68,6 +68,24 @@ class CRRect ;
 class CObject {
 };
 
+struct CSize {
+	int cx;
+	int cy;
+
+	CSize(int xv = 0, int yv = 0) : cx(xv), cy(yv) {
+	}
+};
+
+struct CPoint {
+	int cx;
+	int cy;
+
+	CPoint(int xv = 0, int yv = 0) : cx(xv), cy(yv) {
+	}
+	CPoint(const Common::Point &pt) : cx(pt.x), cy(pt.y) {
+	}
+};
+
 // CBsuSet -- boffo scroll utility set
 class CBsuSet {
 public:
@@ -183,7 +201,7 @@ public:
 };
 
 // CRPoint -- relocatable point
-class CRPoint : public Common::Point {
+class CRPoint : public CPoint {
 public:
     bool m_bRelocatable;
 
@@ -192,11 +210,11 @@ public:
 	}
 
     CRPoint(const Common::Point &cPt,
-		bool bRelocatable = true) : Common::Point(cPt),
+		bool bRelocatable = true) : CPoint(cPt),
 		m_bRelocatable(bRelocatable) {
 	}
 
-    CRPoint(int iX, int iY, bool bRelocatable = true) : Common::Point(iX, iY),
+    CRPoint(int iX, int iY, bool bRelocatable = true) : CPoint(iX, iY),
 		m_bRelocatable(bRelocatable) {
 	}
 
@@ -205,7 +223,7 @@ public:
 	}
 
     CRPoint Offset(const Common::Point &cPt) {
-		return CRPoint(x+cPt.x, y+cPt.y, m_bRelocatable);
+		return CRPoint(cx+cPt.x, cy+cPt.y, m_bRelocatable);
 	}
 };
 
@@ -223,7 +241,7 @@ public:
 	}
 
     CRRect(const CRPoint &cPt, const CSize &cSz) :
-		Common::Rect(cPt, cSz),
+		Common::Rect(cPt.cx, cPt.cy, cPt.cx + cSz.cx, cPt.cy + cSz.cy),
 		m_bRelocatable(cPt.m_bRelocatable) {
 	}
 
@@ -238,7 +256,7 @@ public:
 
     bool PtInRect(const CRPoint &crPoint) {
 		return m_bRelocatable == crPoint.m_bRelocatable
-			&& Common::Rect::contains(crPoint);
+			&& Common::Rect::contains(crPoint.cx, crPoint.cy);
 	}
 };
 

@@ -34,6 +34,7 @@ namespace Metagame {
 
 Boardgame::Boardgame() : View("Boardgame"),
 		_doc(&_app) {
+	_doc.onNewDocument();
 }
 
 bool Boardgame::msgOpen(const OpenMessage &msg) {

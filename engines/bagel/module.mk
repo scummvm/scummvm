@@ -139,6 +139,8 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/boardgame/general_store.o \
 	hodjnpodj/metagame/boardgame/gtl_app.o \
 	hodjnpodj/metagame/boardgame/gtl_data.o \
+	hodjnpodj/metagame/boardgame/gtl_data_compiler.o \
+	hodjnpodj/metagame/boardgame/gtl_data_lexical.o \
 	hodjnpodj/metagame/boardgame/gtl_doc.o \
 	hodjnpodj/metagame/boardgame/minimap.o \
 	hodjnpodj/metagame/boardgame/notebook.o \

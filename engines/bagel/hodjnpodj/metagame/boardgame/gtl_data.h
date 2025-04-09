@@ -22,6 +22,8 @@
 #ifndef HODJNPODJ_METAGAME_BOARDGAME_DATA_H
 #define HODJNPODJ_METAGAME_BOARDGAME_DATA_H
 
+#include "common/file.h"
+#include "common/savefile.h"
 #include "bagel/hodjnpodj/views/view.h"
 #include "bagel/hodjnpodj/gfx/button.h"
 #include "bagel/hodjnpodj/metagame/bgen/bbt.h"
@@ -315,6 +317,77 @@ public:
 
 // CGtlData -- data class for graphics utility
 class CGtlData {
+private:
+	/**
+	 * Parse input line
+	 * @returns		TRUE if error, FALSE otherwise
+
+	 */
+	bool parseLine();
+
+	/**
+	 * Parse integer, store into node structure
+	 * @param xpLxel	Pointer to previous lexeme
+	 * @param iPrevType	Type of previous lexeme
+	 * @param iValue	Where integer value is to be stored
+	 * @returns			Pointer to next lexeme
+	 */
+	CLexElement *ParseInteger(CLexElement *xpLxel,
+		int iPrevType, int &iValue);
+
+	/**
+	 * Parse string, store into node structure
+	 * Note: Accepts identifier as well as string
+	 * @param xpLxel        Pointer to previous lexeme
+	 * @param iPrevType     Type of previous lexeme
+	 * @param lpszValue     Where string is to be stored, or NULL if not stored
+	 * @param xpiValue      Where to store keyword value, or NULL if not stored
+	 * @returns             Pointer to next lexeme
+	 */
+	CLexElement *ParseString(CLexElement *xpLxel,
+		int iPrevType, char *lpszValue, int *xpiValue);
+
+	/**
+	 * Get bitmap or node label
+	 */
+	bool GetLabel(CLexElement *xpLxel,
+		bool bNode, int &iIndex);
+
+	/**
+	 * Get bitmap or node label
+	 */
+	bool GetLabel(char *lpszLabel,
+		bool bNode, int &iIndex);
+
+	/**
+	 * Link together a pair of nodes
+	 */
+	bool AddLink(CNode *lpNode1, CNode *lpNode2);
+
+	/**
+	 * Add link to one node
+	 */
+	bool AddLink(CNode *lpNode, int iLink);
+
+	/**
+	 * Find keyword, given tree node type
+	 * @param iType		KT_xxxx -- tree node type
+	 * @returns			String pointer to keyword, or to "????"
+	 */
+	const char *FindKeyword(int iType);
+
+	/**
+	 * Read input line
+	 * true if error, false otherwise
+	 */
+	bool ReadLine(void);
+
+	/**
+	 * Publish error message
+	 * @returns		true if error, false otherwise
+	 */
+	bool ErrorMsg(const CLexElement *xpLxel, const char *szMessage);
+
 public:
 	class CGtlDoc *m_xpcGtlDoc = nullptr; // document pointer
 
@@ -333,8 +406,8 @@ private:
 	char m_szBmpDirectory[MAX_FILENAME_LENGTH] = { 0 }; // bitmap file director
 	char m_szGtlFile[MAX_FILENAME_LENGTH] = { 0 }; // gtl file name
 	char m_szListFile[MAX_FILENAME_LENGTH] = { 0 }; // List file name
-	Common::SeekableReadStream *m_xpGtlFile = nullptr;        // ptr to file structure for .GTL file
-	Common::SeekableReadStream *m_xpListFile = nullptr;       // ptr to file structure for .LST file
+	Common::File m_xpGtlFile;        // ptr to file structure for .GTL file
+	Common::OutSaveFile *m_xpListFile = nullptr;       // ptr to file structure for .LST file
 	bool m_bListing = false;           // listing file flag
 	int m_iIndent = 0;             // current indent (decompile only)
 	int m_iLineNumber = 0;         // line number in input file
@@ -420,47 +493,19 @@ private: int ListingOutput(int iIndent, const char *lpszOut);
 
 	   // gtlcpl.cpp -- compiler for graphics utility
 
-	   //- Compile -- compile .gtl file to internal objects
 public:
+	/**
+	 * Compile .gtl file to internal objects
+	 */
 	int compile(const char *xpszPathName);
-	  //- ParseLine -- parse input line
-private: bool ParseLine(void);
-	   //- ParseInteger -- parse integer, store into node structure
-private: CLexElement *ParseInteger(CLexElement *xpLxel,
-	int iPrevType, int &iValue);
-	   //- ParseString -- parse string, store into node structure
-	   //      Note: Accepts identifier as well as string
-private: CLexElement *ParseString(CLexElement *xpLxel,
-	int iPrevType, const char *lpszValue, int *xpiValue);
-	   //- GetLabel -- get bitmap or node label
-private: bool GetLabel(CLexElement *xpLxel,
-	bool bNode, int &iIndex);
-	   //- GetLabel -- get bitmap or node label
-private: bool GetLabel(const char *lpszLabel,
-	bool bNode, int &iIndex);
-	   //- AddLink -- link together a pair of nodes
-private: bool AddLink(CNode *lpNode1, CNode *lpNode2);
-	   //- AddLink -- add link to one node
-private: bool AddLink(CNode *lpNode, int iLink);
-
-
-
-	   // gtllex -- lexical analysis for graphics utility
-
-	   //- FindKeyword -- find keyword, given tree node type
-private: const char *FindKeyword(int iType);
-	   //- ReadLine -- read input line
-private: bool ReadLine(void);
-	   //- ErrorMsg -- publish error message
-private: bool ErrorMsg(CLexElement *xpLxel, const char *szMessage);
-
 
 
 	   // gtlui.cpp -- data interface to Windows
 
 	   //- CGtlData -- constructor -- zero out all fields, allocate
 	   //      arrays, and set colors
-public: CGtlData(void);
+public:
+	CGtlData(void);
 	  //- ~CGtlData -- destructor
 public:
 	~CGtlData(void);
