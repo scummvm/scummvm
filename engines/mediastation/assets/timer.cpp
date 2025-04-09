@@ -69,9 +69,8 @@ void Timer::timePlay() {
 	// through each of the timer event handlers to figure it out?
 	_duration = 0;
 	for (EventHandler *timeEvent : _header->_timeHandlers) {
-		// TODO: Centralize this converstion to milliseconds, as the same logic
-		// is being used in several places.
-		double timeEventInFractionalSeconds = timeEvent->_argumentValue.u.f;
+		// Indeed float, not time.
+		double timeEventInFractionalSeconds = timeEvent->_argumentValue.asFloat();
 		uint timeEventInMilliseconds = timeEventInFractionalSeconds * 1000;
 		if (timeEventInMilliseconds > _duration) {
 			_duration = timeEventInMilliseconds;

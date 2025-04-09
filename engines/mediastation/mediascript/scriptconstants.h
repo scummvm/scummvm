@@ -225,18 +225,6 @@ enum EventType {
 };
 const char *eventTypeToStr(EventType type);
 
-enum EventHandlerArgumentType {
-	kNullEventHandlerArgument = 0,
-	kAsciiCodeEventHandlerArgument = 1,
-	kTimeEventHandlerArgument = 3,
-	// TODO: This argument type Appears to happen with MovieStart
-	// and nowhere else. However, this event handler shouldn't even need an
-	// argument...
-	kUnk1EventHandlerArgument = 4,
-	kContextEventHandlerArgument = 5
-};
-const char *eventHandlerArgumentTypeToStr(EventHandlerArgumentType type);
-
 enum OperandType {
 	kOperandTypeEmpty = 0,
 	kOperandTypeBool = 151,

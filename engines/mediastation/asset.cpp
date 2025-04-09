@@ -72,7 +72,8 @@ void Asset::processTimeEventHandlers() {
 	// TODO: Replace with a queue.
 	uint currentTime = g_system->getMillis();
 	for (EventHandler *timeEvent : _header->_timeHandlers) {
-		double timeEventInFractionalSeconds = timeEvent->_argumentValue.u.f;
+ 		// Indeed float, not time.
+		double timeEventInFractionalSeconds = timeEvent->_argumentValue.asFloat();
 		uint timeEventInMilliseconds = timeEventInFractionalSeconds * 1000;
 		bool timeEventAlreadyProcessed = timeEventInMilliseconds < _lastProcessedTime;
 		bool timeEventNeedsToBeProcessed = timeEventInMilliseconds <= currentTime - _startTime;

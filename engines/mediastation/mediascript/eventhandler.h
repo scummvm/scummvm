@@ -38,11 +38,10 @@ public:
 
 	ScriptValue execute(uint assetId);
 	EventType _type;
-	EventHandlerArgumentType _argumentType;
-	Datum _argumentValue;
+	ScriptValue _argumentValue;
 
 private:
-	Common::String getDebugHeader(uint assetId);
+	Common::String getDebugHeader();
 
 	CodeChunk *_code = nullptr;
 };

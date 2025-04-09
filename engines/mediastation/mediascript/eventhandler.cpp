@@ -29,15 +29,9 @@ EventHandler::EventHandler(Chunk &chunk) {
 	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Type %s (%d) (@0x%llx)",
 		eventTypeToStr(_type), static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
 
-	_argumentType = static_cast<EventHandlerArgumentType>(Datum(chunk).u.i);
-	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Argument type %s (%d) (@0x%llx)",
-		eventHandlerArgumentTypeToStr(_argumentType), static_cast<uint>(_argumentType), static_cast<long long int>(chunk.pos()));
-
-	_argumentValue = Datum(chunk);
-	if (_argumentType != kNullEventHandlerArgument) {
-		uint lengthInBytes = Datum(chunk, kDatumTypeUint32_1).u.i;
-		debugC(5, kDebugLoading, "EventHandler::EventHandler(): Null argument type, length = 0x%x (@0x%llx)", lengthInBytes, static_cast<long long int>(chunk.pos()));
-	}
+	_argumentValue = ScriptValue(&chunk);
+	uint lengthInBytes = Datum(chunk, kDatumTypeUint32_1).u.i;
+	debugC(5, kDebugLoading, "EventHandler::EventHandler(): length = 0x%x (@0x%llx)", lengthInBytes, static_cast<long long int>(chunk.pos()));
 
 	_code = new CodeChunk(chunk);
 }
@@ -45,13 +39,15 @@ EventHandler::EventHandler(Chunk &chunk) {
 ScriptValue EventHandler::execute(uint assetId) {
 	// TODO: The assetId is only passed in for debug visibility, there should be
 	// a better way to handle that.
-	debugC(5, kDebugScript, "\n********** EVENT HANDLER %s **********", getDebugHeader(assetId).c_str());
+	Common::String assetAndType = Common::String::format("(asset %d) (type = %s)", assetId, eventTypeToStr(_type));
+	Common::String argValue = getDebugHeader();
+	debugC(5, kDebugScript, "\n********** EVENT HANDLER %s %s **********", assetAndType.c_str(), argValue.c_str());
 
 	// The only argument that can be provided to an
 	// event handler is the _argumentValue.
 	ScriptValue returnValue = _code->execute();
 
-	debugC(5, kDebugScript, "********** END EVENT HANDLER %s **********", getDebugHeader(assetId).c_str());
+	debugC(5, kDebugScript, "********** END EVENT HANDLER %s %s **********", assetAndType.c_str(), argValue.c_str());
 	return returnValue;
 }
 
@@ -60,27 +56,25 @@ EventHandler::~EventHandler() {
 	_code = nullptr;
 }
 
-Common::String EventHandler::getDebugHeader(uint assetId) {
-	switch (_argumentType) {
-	case kNullEventHandlerArgument:
-		return Common::String::format("(asset %d) (type = %s) (no argument)", assetId, eventTypeToStr(_type));
+Common::String EventHandler::getDebugHeader() {
+	switch (_argumentValue.getType()) {
+	case kScriptValueTypeEmpty:
+		return "(no argument)";
 
-	case kAsciiCodeEventHandlerArgument: {
-		// Not sure why the ASCII code isn't just stored as an integer, but it's not.
-		uint asciiCode = static_cast<uint>(_argumentValue.u.f);
-		return Common::String::format("(asset %d) (type = %s) (ASCII code = %d)", assetId, eventTypeToStr(_type), asciiCode);
-	}
+	case kScriptValueTypeFloat:
+		return Common::String::format("(float = %f)", _argumentValue.asFloat());
 
-	case kContextEventHandlerArgument:
-		return Common::String::format("(asset %d) (type = %s) (context = %d)", assetId, eventTypeToStr(_type), _argumentValue.u.i);
+	case kScriptValueTypeAssetId:
+		return Common::String::format("(context = %d)", _argumentValue.asAssetId());
 
-	case kTimeEventHandlerArgument:
-	case kUnk1EventHandlerArgument:
-		return Common::String::format("(asset %d) (type = %s) (time = %f)", assetId, eventTypeToStr(_type), _argumentValue.u.f);
+	case kScriptValueTypeTime:
+		return Common::String::format("(time = %f)", _argumentValue.asTime());
+
+	case kScriptValueTypeParamToken:
+		return Common::String::format("(token = %d)", _argumentValue.asParamToken());
 
 	default:
-		error("EventHandler::getDebugHeader(): Unimplemented argument type %s (%d)",
-			eventHandlerArgumentTypeToStr(_argumentType), static_cast<uint>(_argumentType));
+		return Common::String::format("(arg type %s)", scriptValueTypeToStr(_argumentValue.getType()));
 	}
 }
 

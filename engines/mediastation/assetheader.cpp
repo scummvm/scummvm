@@ -109,13 +109,10 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 		}
 
 		case kKeyDownEvent: {
-			if (eventHandler->_argumentType != kAsciiCodeEventHandlerArgument) {
+			if (eventHandler->_argumentValue.getType() != kScriptValueTypeFloat) {
 				error("Keydown event handler doesn't have correct argument type");
 			}
-			if (eventHandler->_argumentValue.t != kDatumTypeFloat64_2) {
-				error("Keydown event handler doesn't have correct argument value type");
-			}
-			uint asciiCode = static_cast<uint>(eventHandler->_argumentValue.u.f);
+			uint asciiCode = static_cast<uint>(eventHandler->_argumentValue.asFloat());
 			_keyDownHandlers.setVal(asciiCode, eventHandler);
 			break;
 		}
@@ -131,10 +128,10 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 		}
 
 		default: {
-			if (eventHandler->_argumentType != kNullEventHandlerArgument && \
-				eventHandler->_argumentType != kUnk1EventHandlerArgument) {
+			if (eventHandler->_argumentValue.getType() != kScriptValueTypeEmpty && \
+				eventHandler->_argumentValue.getType() != kScriptValueTypeParamToken) {
 				error("AssetHeader::readSection(): Event handler of type %s has a non-null argument type %s",
-					eventTypeToStr(eventHandler->_type), eventHandlerArgumentTypeToStr(eventHandler->_argumentType));
+					eventTypeToStr(eventHandler->_type), scriptValueTypeToStr(eventHandler->_argumentValue.getType()));
 			}
 
 			if (_eventHandlers.contains(eventHandler->_type)) {

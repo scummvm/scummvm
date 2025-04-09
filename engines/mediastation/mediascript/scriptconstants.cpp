@@ -297,23 +297,6 @@ const char *eventTypeToStr(EventType type) {
 	}
 }
 
-const char *eventHandlerArgumentTypeToStr(EventHandlerArgumentType type) {
-	switch (type) {
-	case kNullEventHandlerArgument:
-		return "Null";
-	case kAsciiCodeEventHandlerArgument:
-		return "AsciiCode";
-	case kTimeEventHandlerArgument:
-		return "Time";
-	case kUnk1EventHandlerArgument:
-		return "Unk1";
-	case kContextEventHandlerArgument:
-		return "Context";
-	default:
-		return "UNKNOWN";
-	}
-}
-
 const char *operandTypeToStr(OperandType type) {
 	switch (type) {
 	case kOperandTypeEmpty:
