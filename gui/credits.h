@@ -1329,7 +1329,7 @@ static const char *const credits[] = {
 "C0""Jordi Vilalta",
 "C2""Numerous code and website clean-up patches",
 "C0""Petr Vyhnak",
-"C2""The DCL-INFLATE algorithm, many Win32 improvements",
+"C2""The DCL-IMPLODE algorithm, many Win32 improvements",
 "C0""Bas Zoetekouw",
 "C2""Man pages, debian package management, CVS maintenance",
 "C0""Special thanks to Prof. Dr. Gary Nutt for allowing the FreeSCI VM extension as a course project in his Advanced OS course.",

@@ -51,7 +51,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{Sci::kDebugLevelTime, "Time", "Time debugging"},
 	{Sci::kDebugLevelRoom, "Room", "Room number debugging"},
 	{Sci::kDebugLevelAvoidPath, "Pathfinding", "Pathfinding debugging"},
-	{Sci::kDebugLevelDclInflate, "DCL", "DCL inflate debugging"},
+	{Sci::kDebugLevelDclImplode, "DCL", "DCL implode debugging"},
 	{Sci::kDebugLevelVM, "VM", "VM debugging"},
 	{Sci::kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded"},
 	{Sci::kDebugLevelPatcher, "Patcher", "Notifies when scripts or resources are patched"},

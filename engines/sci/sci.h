@@ -106,7 +106,7 @@ enum kDebugLevels {
 	kDebugLevelTime,
 	kDebugLevelRoom,
 	kDebugLevelAvoidPath,
-	kDebugLevelDclInflate,
+	kDebugLevelDclImplode,
 	kDebugLevelVM,
 	kDebugLevelScripts,
 	kDebugLevelGC,

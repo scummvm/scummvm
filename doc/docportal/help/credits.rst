@@ -2663,7 +2663,7 @@ FreeSCI Contributors
    * - Jordi Vilalta
      - Numerous code and website clean-up patches
    * - Petr Vyhnak
-     - The DCL-INFLATE algorithm, many Win32 improvements
+     - The DCL-IMPLODE algorithm, many Win32 improvements
    * - Bas Zoetekouw
      - Man pages, debian package management, CVS maintenance
 
