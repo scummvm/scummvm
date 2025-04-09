@@ -130,9 +130,9 @@ public:
  * @return           The new SeekableAudioStream (or 0 on failure).
  */
 Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
-		int rate,
-		bool stereo,
-		DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+        int rate,
+        bool stereo,
+        DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 Audio::RewindableAudioStream *makeRawZorkStream(const Common::Path &filePath, ZVision *engine);
 

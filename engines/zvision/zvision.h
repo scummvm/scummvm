@@ -71,10 +71,10 @@ class MidiManager;
 class VolumeManager;
 
 struct ScreenLayout {
-  Common::Rect screenArea;  //Original screen resolution
-  Common::Rect menuArea;  //Menu display area, relative to original screen
-  Common::Rect workingArea;   //Playfield & video playback area, relative to original screen
-  Common::Rect textArea;  //Subtitle & message area, relative to original screen
+	Common::Rect screenArea;  //Original screen resolution
+	Common::Rect menuArea;  //Menu display area, relative to original screen
+	Common::Rect workingArea;   //Playfield & video playback area, relative to original screen
+	Common::Rect textArea;  //Subtitle & message area, relative to original screen
 };
 
 //NB Footage of original DOS Nemesis engine indicates playfield was centrally placed on screen.
@@ -100,17 +100,17 @@ static const ScreenLayout zgiLayout {
 //*/
 //Central values
 static const ScreenLayout nemesisLayout {
-  Common::Rect(640,480),  //Screen
-  Common::Rect(Common::Point(64,0), 512, 32), //Menu
-  Common::Rect(Common::Point(64,80), 512, 320), //Working; aspect ratio 1.6
-  Common::Rect(Common::Point(64,420), 512, 60) //Text
+	Common::Rect(640, 480), //Screen
+	Common::Rect(Common::Point(64, 0), 512, 32), //Menu
+	Common::Rect(Common::Point(64, 80), 512, 320), //Working; aspect ratio 1.6
+	Common::Rect(Common::Point(64, 420), 512, 60) //Text
 };
 
 static const ScreenLayout zgiLayout {
-  Common::Rect(640,480),  //Screen
-  Common::Rect(Common::Point(0,0), 640, 32), //Menu
-  Common::Rect(Common::Point(0,68), 640, 344), //Working; aspect ratio 1.86
-  Common::Rect(Common::Point(0,412), 640, 68) //Text
+	Common::Rect(640, 480), //Screen
+	Common::Rect(Common::Point(0, 0), 640, 32), //Menu
+	Common::Rect(Common::Point(0, 68), 640, 344), //Working; aspect ratio 1.86
+	Common::Rect(Common::Point(0, 412), 640, 68) //Text
 };
 //*/
 enum {
@@ -151,7 +151,7 @@ public:
 	 */
 //	Common::Rect _workingArea;
 	/**
-	 * A Rectangle in which the menu will be rendered.  
+	 * A Rectangle in which the menu will be rendered.
 	 * In the original game, this is always separate from the working window,
 	 * and thus may be rendered completely independently.
 	 * In the widescreen mod, this window may intersect the working window,
@@ -164,7 +164,7 @@ public:
 
 private:
 	const ZVisionGameDescription *_gameDescription;
-	
+
 	// We need random numbers
 	Common::RandomSource *_rnd;
 
@@ -178,8 +178,8 @@ private:
 	MidiManager *_midiManager;
 	SaveManager *_saveManager;
 	MenuManager *_menu;
-  SubtitleManager *_subtitleManager;
-  VolumeManager *_volumeManager;
+	SubtitleManager *_subtitleManager;
+	VolumeManager *_volumeManager;
 
 	// Clock
 	Clock _clock;
@@ -267,7 +267,7 @@ public:
 		_clock.stop();
 	}
 
-	void initScreen(bool hiRes=false);
+	void initScreen(bool hiRes = false);
 
 	/**
 	 * Play a video until it is finished. This is a blocking call. It will call
@@ -289,9 +289,9 @@ public:
 	int getFPS() const {
 		return _fps;
 	}
-	
+
 	bool isWidescreen() {
-	  return _widescreen;
+		return _widescreen;
 	}
 
 	void syncSoundSettings() override;

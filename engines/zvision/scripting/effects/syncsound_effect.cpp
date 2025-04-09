@@ -74,10 +74,10 @@ bool SyncSoundNode::process(uint32 deltaTimeInMillis) {
 	else {
 		if (_engine->getScriptManager()->getSideFX(_syncto) == NULL)
 			return stop();
-  /*  //Redundant with switch to automatic subtitles
-		if (_sub && _engine->getScriptManager()->getStateValue(StateKey_Subtitles) == 1)
-			_engine->getSubtitleManager()->update(_engine->_mixer->getSoundElapsedTime(_handle) / 100, _sub);
-	//*/
+		/*  //Redundant with switch to automatic subtitles
+		  if (_sub && _engine->getScriptManager()->getStateValue(StateKey_Subtitles) == 1)
+		      _engine->getSubtitleManager()->update(_engine->_mixer->getSoundElapsedTime(_handle) / 100, _sub);
+		//*/
 	}
 	return false;
 }
