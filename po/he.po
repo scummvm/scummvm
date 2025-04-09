@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-08 19:53+0000\n"
-"PO-Revision-Date: 2024-10-10 12:33+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2025-04-09 20:18+0000\n"
+"Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
 "Language: he\n"
@@ -841,19 +841,16 @@ msgstr ""
 
 #: gui/integrity-dialog.cpp:120
 msgid "Launch Email Client"
-msgstr ""
+msgstr "הפעלת לקוח דואר אלקטרוני"
 
 #: gui/integrity-dialog.cpp:174
-#, fuzzy
-#| msgid "Scan complete!"
 msgid "Calculation complete"
-msgstr "הסריקה הושלמה!"
+msgstr "החישוב הסתיים!"
 
 #: gui/integrity-dialog.cpp:263
-#, fuzzy, c-format
-#| msgid "Downloaded %s %S / %s %S"
+#, c-format
 msgid "Calculated %s %S / %s %S"
-msgstr "ירדו %s %S / %s %S"
+msgstr "חושבו %s %S / %s %S"
 
 #: gui/integrity-dialog.cpp:509
 msgid ""
@@ -7177,10 +7174,8 @@ msgstr "תקיפה"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:130 engines/mm/mm1/metaengine.cpp:67
-#, fuzzy
-#| msgid "Unlock"
 msgid "Block"
-msgstr "לבטל נעילה"
+msgstr "חסימה"
 
 #: engines/crab/input/input.cpp:169 engines/twine/metaengine.cpp:414
 msgid "Accept"
@@ -7862,7 +7857,7 @@ msgstr "מחיקת הקובץ נכשלה."
 #. I18N: Action in In Cold Blood
 #: engines/got/metaengine.cpp:59 engines/icb/icb.cpp:89
 msgid "Fire"
-msgstr ""
+msgstr "יריה"
 
 #: engines/got/metaengine.cpp:60
 msgid "Magic"
@@ -8094,7 +8089,7 @@ msgstr "דלג על מסכי לוח הסיפור של היכל העדויות"
 #, fuzzy
 #| msgid "Run server"
 msgid "Reserved"
-msgstr "הפעל את השרת"
+msgstr "משבצת שמורה"
 
 #: engines/groovie/script.cpp:665
 msgid "Failed to save game"
@@ -8147,16 +8142,12 @@ msgid "Option dialog"
 msgstr "דילוג על שיחה"
 
 #: engines/hpl1/metaengine.cpp:76
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forward"
-msgstr "להתקדם"
+msgstr "קדימה"
 
 #: engines/hpl1/metaengine.cpp:77
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backward"
-msgstr "תזוזה לאחור"
+msgstr "אחורה"
 
 #: engines/hpl1/metaengine.cpp:80
 #, fuzzy
@@ -8170,15 +8161,13 @@ msgstr "החלק ימינה"
 
 #: engines/hpl1/metaengine.cpp:83
 msgid "Jump"
-msgstr ""
+msgstr "קפיצה"
 
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:84 engines/icb/icb.cpp:119
 #: engines/icb/icb.cpp:185
-#, fuzzy
-#| msgid "Touch"
 msgid "Crouch"
-msgstr "מגע"
+msgstr "כריעה"
 
 #: engines/hpl1/metaengine.cpp:87
 #, fuzzy
@@ -8198,7 +8187,7 @@ msgstr ""
 
 #: engines/hpl1/metaengine.cpp:95 engines/tinsel/metaengine.cpp:318
 msgid "Notebook"
-msgstr ""
+msgstr "פנקס"
 
 #: engines/hpl1/metaengine.cpp:96
 msgid "Personal Notes"
@@ -8210,7 +8199,7 @@ msgstr "פנס"
 
 #: engines/hpl1/metaengine.cpp:98
 msgid "Glowstick"
-msgstr ""
+msgstr "מקלור"
 
 #: engines/hugo/metaengine.cpp:111
 #, fuzzy
@@ -8358,7 +8347,7 @@ msgstr "הוספת תוכן נוסף שלא מאופשר במימוש המקור
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
 msgid "Arm"
-msgstr ""
+msgstr "חימוש"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:113
@@ -10402,7 +10391,7 @@ msgstr "שמכם:"
 #. I18N: Button, start hosting online multiplayer game
 #: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4206
 msgid "Host"
-msgstr ""
+msgstr "אירוח"
 
 #. I18N: Retrieving list of online multiplayer games
 #: engines/scumm/dialog-sessionselector.cpp:51
@@ -10414,7 +10403,7 @@ msgstr "שומר משחק ..."
 #. I18N: Join online multiplayer game
 #: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4206
 msgid "Join"
-msgstr ""
+msgstr "הצטרפות"
 
 #. I18N: Online multiplayer games were found
 #: engines/scumm/dialog-sessionselector.cpp:118
