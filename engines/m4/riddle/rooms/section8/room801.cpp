@@ -463,6 +463,7 @@ void Room801::parser() {
 		}
 	}
 
+	// This blocks is when opening the cellar door
 	else if (gearFl && player_said("root cellar  ")) {
 		switch (_G(kernel).trigger) {
 		case -1:
@@ -503,6 +504,7 @@ void Room801::parser() {
 
 	else if (gearFl && player_said("root cellar ")) {
 	// Not the same as the previous one : there's one space instead of two at the end
+	// This blocks is when closing the cellar door which was previously opened
 		switch (_G(kernel).trigger) {
 		case -1:
 			if (_cellarOpenFl) {
@@ -820,7 +822,7 @@ void Room801::daemon() {
 		break;
 
 	case 32:
-		_cellarOpenFl = true;
+		_unkFlag3 = true;
 		break;
 
 	case 33:
@@ -828,8 +830,8 @@ void Room801::daemon() {
 		break;
 
 	case 34:
-		if (_cellarOpenFl) {
-			_cellarOpenFl = false;
+		if (_unkFlag3) {
+			_unkFlag3 = false;
 			sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 42, 42, 0, _meiPrattleLoopSeries, 42, 42, 0);
 			sendWSMessage_10000(1, _farmerDisplacementMach, _farmerTalkLoopSeries, 1, 4, 0, _farmerTalkLoopSeries, 5, 7, 4);
 			digi_play("801f01", 1, 255, 13, -1);
@@ -845,7 +847,7 @@ void Room801::daemon() {
 		break;
 
 	case 36:
-		if (_cellarOpenFl) {
+		if (_unkFlag3) {
 			sendWSMessage_10000(1, _mcTrekMach, _meiPrattleLoopSeries, 42, 42, -1, _meiPrattleLoopSeries, 42, 42, 0);
 		} else {
 			kernel_timing_trigger(15, 36, nullptr);
@@ -900,7 +902,7 @@ void Room801::daemon() {
 		break;
 
 	case 52:
-		if (_unkFlag2 && _unkFlag1 && _cellarOpenFl) {
+		if (_unkFlag2 && _unkFlag1 && _unkFlag3) {
 			terminateMachine(_mcTrekMach);
 			terminateMachine(_farmerDisplacementMach);
 			terminateMachine(_ripAnimationMach);
@@ -918,7 +920,7 @@ void Room801::daemon() {
 			digi_play("801m01", 1, 255, 34, -1);
 			_unkFlag1 = false;
 			_unkFlag2 = false;
-			_cellarOpenFl = false;
+			_unkFlag3 = false;
 		} else {
 			kernel_timing_trigger(15, 52, nullptr);
 		}

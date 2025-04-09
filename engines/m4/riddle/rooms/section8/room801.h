@@ -79,6 +79,7 @@ private:
 
 	bool _unkFlag1 = false;
 	bool _unkFlag2 = false;
+	bool _unkFlag3 = false;
 	bool _cellarOpenFl = false;
 
 	machine *_cellarDoorClosedMach = nullptr;
