@@ -232,7 +232,7 @@ void Room803::parser() {
 
 		ws_demand_facing(_G(my_walker), 3);
 		_ripTalkerPos5 = series_load("RIP TREK TALKER POS3", -1, nullptr);
-		setGlobals1(_ripTalkerPos5, 1, 5, 1, 6, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		setGlobals1(_ripTalkerPos5, 1, 5, 1, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		sendWSMessage_110000(_G(my_walker), -1);
 	}
 
