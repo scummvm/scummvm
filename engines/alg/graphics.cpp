@@ -89,9 +89,7 @@ Common::Array<Graphics::Surface *> *AlgGraphics::loadAniImage(const Common::Path
 			aniImage->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 			for (uint16 y = 0; y < height; y++) {
 				aniFile.skip(4);
-				for (uint16 x = 0; x < width; x++) {
-					aniImage->setPixel(x, y, aniFile.readByte());
-				}
+				aniFile.read(aniImage->getBasePtr(0, y), width);
 			}
 			images->push_back(aniImage);
 		}
@@ -131,12 +129,9 @@ Common::Array<Graphics::Surface *> *AlgGraphics::loadScreenCoordAniImage(const C
 			}
 			offset = aniFile.readSint16LE();
 			dest = centerOffset + offset;
-			for (uint16 i = 0; i < length; i++) {
-				y = dest / renderTarget->w;
-				x = dest - (y * renderTarget->w);
-				renderTarget->setPixel(x, y, aniFile.readByte());
-				dest++;
-			}
+			y = dest / renderTarget->w;
+			x = dest - (y * renderTarget->w);
+			aniFile.read(renderTarget->getBasePtr(x, y), length);
 		}
 		Graphics::Surface *aniImage = new Graphics::Surface();
 		aniImage->create(96, 96, Graphics::PixelFormat::createFormatCLUT8());
