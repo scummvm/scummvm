@@ -140,33 +140,22 @@ int16 DecompressorHuffman::getc2() {
 //-------------------------------
 // LZW Decompressor for SCI0/01/1
 //-------------------------------
-void DecompressorLZW::init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
-	Decompressor::init(src, dest, nPacked, nUnpacked);
 
-	_numbits = 9;
-	_curtoken = 0x102;
-	_endtoken = 0x1ff;
-}
-
-int DecompressorLZW::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
-								uint32 nUnpacked) {
+int DecompressorLZW::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
 	byte *buffer = nullptr;
 
 	switch (_compression) {
 	case kCompLZW:	// SCI0 LZW compression
-		return unpackLZW(src, dest, nPacked, nUnpacked);
-		break;
 	case kCompLZW1: // SCI01/1 LZW compression
-		return unpackLZW1(src, dest, nPacked, nUnpacked);
-		break;
+		return unpackLZW(src, dest, nPacked, nUnpacked);
 	case kCompLZW1View:
 		buffer = new byte[nUnpacked];
-		unpackLZW1(src, buffer, nPacked, nUnpacked);
+		unpackLZW(src, buffer, nPacked, nUnpacked);
 		reorderView(buffer, dest);
 		break;
 	case kCompLZW1Pic:
 		buffer = new byte[nUnpacked];
-		unpackLZW1(src, buffer, nPacked, nUnpacked);
+		unpackLZW(src, buffer, nPacked, nUnpacked);
 		reorderPic(buffer, dest, nUnpacked);
 		break;
 	default:
@@ -176,172 +165,80 @@ int DecompressorLZW::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
 	return 0;
 }
 
-int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPacked,
-								uint32 nUnpacked) {
+// Decompresses SCI0 LZW and SCI01/1 LZW, depending on _compression value.
+//
+// SCI0:    LSB-first.
+// SCI01/1: MSB-first, code size is increased one code earlier than necessary.
+//          This is known as an "early change" bug in LZW implementations.
+int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
 
-	uint16 token; // The last received value
-	uint16 tokenlastlength = 0;
+	uint16 codeBitLength = 9;
+	uint16 tableSize = 258;
+	uint16 codeLimit = (_compression == kCompLZW) ? 512 : 511;
 
-	uint16 *tokenlist = (uint16 *)malloc(4096 * sizeof(uint16)); // pointers to dest[]
-	uint16* tokenlengthlist = (uint16 *)malloc(4096 * sizeof(uint16)); // char length of each token
-	if (!tokenlist || !tokenlengthlist) {
-		free(tokenlist);
-		free(tokenlengthlist);
-
-		error("[DecompressorLZW::unpackLZW] Cannot allocate token memory buffers");
-	}
+	// LZW table
+	uint16 *stringOffsets = new uint16[4096]; // 0-257: unused
+	uint16 *stringLengths = new uint16[4096]; // 0-257: unused
 
 	while (!isFinished()) {
-		token = getBitsLSB(_numbits);
+		uint16 code = (_compression == kCompLZW) ?
+		              getBitsLSB(codeBitLength) :
+		              getBitsMSB(codeBitLength);
 
-		if (token == 0x101) {
-			free(tokenlist);
-			free(tokenlengthlist);
-
-			return 0; // terminator
+		if (code >= tableSize) {
+			warning("LZW code %x exceeds table size %x", code, tableSize);
+			break;
 		}
 
-		if (token == 0x100) { // reset command
-			_numbits = 9;
-			_endtoken = 0x1FF;
-			_curtoken = 0x0102;
+		if (code == 257) { // terminator
+			break;
+		}
+
+		if (code == 256) { // reset command
+			codeBitLength = 9;
+			tableSize = 258;
+			codeLimit = (_compression == kCompLZW) ? 512 : 511;
+			continue;
+		}
+
+		uint16 newStringOffset = _dwWrote;
+		if (code <= 255) {
+			// Code is a literal byte
+			putByte(code);
 		} else {
-			if (token > 0xff) {
-				if (token >= _curtoken) {
-					warning("unpackLZW: Bad token %x", token);
+			// Code is a table index
 
-					free(tokenlist);
-					free(tokenlengthlist);
-
-					return SCI_ERROR_DECOMPRESSION_ERROR;
-				}
-				tokenlastlength = tokenlengthlist[token] + 1;
-				if (_dwWrote + tokenlastlength > _szUnpacked) {
-					// For me this seems a normal situation, It's necessary to handle it
-					warning("unpackLZW: Trying to write beyond the end of array(len=%d, destctr=%d, tok_len=%d)",
-					        _szUnpacked, _dwWrote, tokenlastlength);
-					for (int i = 0; _dwWrote < _szUnpacked; i++)
-						putByte(dest[tokenlist[token] + i]);
-				} else
-					for (int i = 0; i < tokenlastlength; i++)
-						putByte(dest[tokenlist[token] + i]);
-			} else {
-				tokenlastlength = 1;
-				if (_dwWrote >= _szUnpacked)
-					warning("unpackLZW: Try to write single byte beyond end of array");
-				else
-					putByte(token);
+			// Boundary check included because the previous decompressor had a
+			// comment saying it's "a normal situation" for a string to attempt
+			// to write beyond the destination. I have not seen this occur.
+			for (int i = 0; i < stringLengths[code] && !isFinished(); i++) {
+				putByte(dest[stringOffsets[code] + i]);
 			}
-			if (_curtoken > _endtoken && _numbits < 12) {
-				_numbits++;
-				_endtoken = (_endtoken << 1) + 1;
-			}
-			if (_curtoken <= _endtoken) {
-				tokenlist[_curtoken] = _dwWrote - tokenlastlength;
-				tokenlengthlist[_curtoken] = tokenlastlength;
-				_curtoken++;
-			}
-
 		}
-	}
 
-	free(tokenlist);
-	free(tokenlengthlist);
-
-	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
-}
-
-int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPacked,
-								uint32 nUnpacked) {
-	init(src, dest, nPacked, nUnpacked);
-
-	byte *stak = (byte *)malloc(0x1014);
-	uint32 tokensSize = 0x1004 * sizeof(Tokenlist);
-	Tokenlist *tokens = (Tokenlist *)malloc(tokensSize);
-	if (!stak || !tokens) {
-		free(stak);
-		free(tokens);
-
-		error("[DecompressorLZW::unpackLZW1] Cannot allocate decompression buffers");
-	}
-
-	memset(tokens, 0, tokensSize);
-
-	byte lastchar = 0;
-	uint16 stakptr = 0, lastbits = 0;
-
-	byte decryptstart = 0;
-	uint16 bitstring;
-	uint16 token;
-	bool bExit = false;
-
-	while (!isFinished() && !bExit) {
-		switch (decryptstart) {
-		case 0:
-			bitstring = getBitsMSB(_numbits);
-			if (bitstring == 0x101) {// found end-of-data signal
-				bExit = true;
-				continue;
-			}
-			putByte(bitstring);
-			lastbits = bitstring;
-			lastchar = (bitstring & 0xff);
-			decryptstart = 1;
-			break;
-
-		case 1:
-			bitstring = getBitsMSB(_numbits);
-			if (bitstring == 0x101) { // found end-of-data signal
-				bExit = true;
-				continue;
-			}
-			if (bitstring == 0x100) { // start-over signal
-				_numbits = 9;
-				_curtoken = 0x102;
-				_endtoken = 0x1ff;
-				decryptstart = 0;
-				continue;
-			}
-
-			token = bitstring;
-			if (token >= _curtoken) { // index past current point
-				token = lastbits;
-				stak[stakptr++] = lastchar;
-			}
-			while ((token > 0xff) && (token < 0x1004)) { // follow links back in data
-				stak[stakptr++] = tokens[token].data;
-				token = tokens[token].next;
-			}
-			lastchar = stak[stakptr++] = token & 0xff;
-			// put stack in buffer
-			while (stakptr > 0) {
-				putByte(stak[--stakptr]);
-				if (_dwWrote == _szUnpacked) {
-					bExit = true;
-					continue;
-				}
-			}
-			// put token into record
-			if (_curtoken <= _endtoken) {
-				tokens[_curtoken].data = lastchar;
-				tokens[_curtoken].next = lastbits;
-				_curtoken++;
-				if (_curtoken == _endtoken && _numbits < 12) {
-					_numbits++;
-					_endtoken = (_endtoken << 1) + 1;
-				}
-			}
-			lastbits = bitstring;
-			break;
-
-		default:
-			break;
+		// Stop adding to the table once it is full
+		if (tableSize >= 4096) {
+			continue;
 		}
+
+		// Increase code size once a bit limit has been reached
+		if (tableSize == codeLimit && codeBitLength < 12) {
+			codeBitLength++;
+			codeLimit = 1 << codeBitLength;
+			if (_compression != kCompLZW) {
+				codeLimit--;
+			}
+		}
+
+		// Append code to table
+		stringOffsets[tableSize] = newStringOffset;
+		stringLengths[tableSize] = _dwWrote - newStringOffset + 1;
+		tableSize++;
 	}
 
-	free(stak);
-	free(tokens);
+	delete[] stringOffsets;
+	delete[] stringLengths;
 
 	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
 }
@@ -413,6 +310,12 @@ int DecompressorLZW::getRLEsize(byte *rledata, int dsize) {
 
 	return size;
 }
+
+enum {
+	PIC_OPX_EMBEDDED_VIEW = 1,
+	PIC_OPX_SET_PALETTE = 2,
+	PIC_OP_OPX = 0xfe
+};
 
 void DecompressorLZW::reorderPic(byte *src, byte *dest, int dsize) {
 	uint16 view_size, view_start, cdata_size;

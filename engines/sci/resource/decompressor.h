@@ -142,26 +142,15 @@ protected:
 };
 
 /**
- * LZW-like decompressor for SCI01/SCI1.
- * TODO: Needs clean-up of post-processing fncs
+ * LZW decompressor for SCI0/01/1
+ * TODO: Clean-up post-processing functions
  */
 class DecompressorLZW : public Decompressor {
 public:
-	DecompressorLZW(int nCompression) : _numbits(0), _curtoken(0), _endtoken(0) {
-		_compression = nCompression;
-	}
-	void init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) override;
+	DecompressorLZW(ResourceCompression compression) : _compression(compression) {}
 	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) override;
 
 protected:
-	enum {
-		PIC_OPX_EMBEDDED_VIEW = 1,
-		PIC_OPX_SET_PALETTE = 2,
-		PIC_OP_OPX = 0xfe
-	};
-	// unpacking procedures
-	// TODO: unpackLZW and unpackLZW1 are similar and should be merged
-	int unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 	int unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 
 	// functions to post-process view and pic resources
@@ -171,14 +160,7 @@ protected:
 	int getRLEsize(byte *rledata, int dsize);
 	void buildCelHeaders(byte **seeker, byte **writer, int celindex, int *cc_lengths, int max);
 
-	// decompressor data
-	struct Tokenlist {
-		byte data;
-		uint16 next;
-	};
-	uint16 _numbits;
-	uint16 _curtoken, _endtoken;
-	int _compression;
+	ResourceCompression _compression;
 };
 
 /**
