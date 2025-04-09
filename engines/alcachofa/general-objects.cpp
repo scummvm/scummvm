@@ -105,7 +105,7 @@ void GraphicObject::draw() {
 	if (!isEnabled() || !_graphic.hasAnimation())
 		return;
 	const BlendMode blendMode = _type == GraphicObjectType::Effect
-		? BlendMode::Alpha
+		? BlendMode::Additive
 		: BlendMode::AdditiveAlpha;
 	const bool is3D = room() != &g_engine->world().inventory();
 	_graphic.update();
