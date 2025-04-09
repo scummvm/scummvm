@@ -64,18 +64,18 @@ public:
  * Return duration of last whole frame, including game logic, frame limiter or Vsync delay (if any), and screen redraw time.
  * Specifically, this is the time between the last two successive startFrame() calls.
  */
-	uint getLastFrameDuration() const {return frameDuration;};
+	uint getLastFrameDuration() const {return _frameDuration;};
 /**
  * Return duration of last screen update
  * If Vsync is inactive, this value will just be the duration of the redraw process itself;
  * If Vsync is active, this value will encompass both the redraw time AND the delay between presenting the frame to redraw and the screen redraw actually starting.
  */
- 	uint getLastDrawDuration() const {return drawDuration;}; 
+ 	uint getLastDrawDuration() const {return _drawDuration;}; 
 /**
  * Return duration of last game logic loop
  * Specifically, this is the time from when startFrame() was last called to when delayBeforeSwap() was last called
  */
-	uint getLastLoopDuration() const {return loopDuration;};
+	uint getLastLoopDuration() const {return _loopDuration;};
 /**
  * If true, framelimiter is active and applying _system->delayMillis(delay) to maintain the specified FPS, if valid.
  * If false, framelimiter is inactive, either because supplied FPS was invalid or because Vsync is active.
@@ -87,14 +87,14 @@ private:
 	OSystem *_system;
 	bool _enabled;
 	bool _deferToVsync;
-	uint frameStart;  //Time at which screen update completed and startFrame() was called; start of next cycle of game logic
-  uint frameLimit;  //Target frame duration to achieve specified FPS
-  uint frameDuration; //Duration of previous frame between successive startFrame() calls; total game logic, delay (if any) and screen update time
-  uint drawStart;  //Time at which delayBeforeSwap() returns
-  uint drawDuration;  //Measured screen update time
-  uint loopDuration;  //Duration of last game logic cycle, from when startFrame() was called to when delayBeforeSwap() was called
-  int delay; //Time to delay before returning from delayBeforeSwap()
-  uint now; //Current time
+	uint _frameStart;  //Time at which screen update completed and startFrame() was called; start of next cycle of game logic
+  uint _frameLimit;  //Target frame duration to achieve specified FPS
+  uint _frameDuration; //Duration of previous frame between successive startFrame() calls; total game logic, delay (if any) and screen update time
+  uint _drawStart;  //Time at which delayBeforeSwap() returns
+  uint _drawDuration;  //Measured screen update time
+  uint _loopDuration;  //Duration of last game logic cycle, from when startFrame() was called to when delayBeforeSwap() was called
+  int _delay; //Time to delay before returning from delayBeforeSwap()
+  uint _now; //Current time
 };
 
 } // End of namespace Graphics
