@@ -2157,6 +2157,11 @@ void Room205::daemon() {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "FALLEN TABLETS", true);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "GLASSES", true);
 		hotspot_set_active(_G(currentSceneDef).hotspots, "MASTER LU'S TABLET", true);
+		// Note - The original was not disabling this hotspot, but it's weird the crushed enemy is still active of course...
+		// Furthermore, it you exit and re-enter the room, the init properly disables the hotspot.
+		// Thus, the hotspot is now disabled in ScummVM too...
+		hotspot_set_active(_G(currentSceneDef).hotspots, "SHEN GUO", false);
+
 		player_set_commands_allowed(true);
 		_fieldDC = 0;
 		break;
