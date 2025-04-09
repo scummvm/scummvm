@@ -63,8 +63,8 @@ static const ZVisionGameDescription gameDescriptions[] = {
 		{
 			"znemesis",
 			0,
-			AD_ENTRY2s("CSCR.ZFS",		"f04113357b4748c13efcb58b4629887c", 2577873,
-					   "NEMESIS.STR",	"333bcb17bbb7f57cae742fbbe44f56f3", 9219),
+			AD_ENTRY2s("CSCR.ZFS",      "f04113357b4748c13efcb58b4629887c", 2577873,
+			           "NEMESIS.STR",   "333bcb17bbb7f57cae742fbbe44f56f3", 9219),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -78,8 +78,8 @@ static const ZVisionGameDescription gameDescriptions[] = {
 		{
 			"znemesis",
 			0,
-			AD_ENTRY2s("CSCR.ZFS",		"f04113357b4748c13efcb58b4629887c", 2577873,
-					   "NEMESIS.STR",	"3d1a12b907751653866cffc6d4dfb331", 9505),
+			AD_ENTRY2s("CSCR.ZFS",      "f04113357b4748c13efcb58b4629887c", 2577873,
+			           "NEMESIS.STR",   "3d1a12b907751653866cffc6d4dfb331", 9505),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -93,8 +93,8 @@ static const ZVisionGameDescription gameDescriptions[] = {
 		{
 			"znemesis",
 			0,
-			AD_ENTRY2s("CSCR.ZFS",		"f04113357b4748c13efcb58b4629887c", 2577873,
-					   "NEMESIS.STR",	"7c568feca8d9f9ae855c47183612c305", 9061),
+			AD_ENTRY2s("CSCR.ZFS",      "f04113357b4748c13efcb58b4629887c", 2577873,
+			           "NEMESIS.STR",   "7c568feca8d9f9ae855c47183612c305", 9061),
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -216,7 +216,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			"zgi",
 			"CD",
 			AD_ENTRY2s("SCRIPTS.ZFS",  "81efd40ecc3d22531e211368b779f17f", 8336944,
-					   "G0LPH10P.RAW", "c0b1f28b1cd1aaeb83c1a3985401bb14", 24462),
+			           "G0LPH10P.RAW", "c0b1f28b1cd1aaeb83c1a3985401bb14", 24462),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
@@ -234,11 +234,11 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DVD,
-#if defined(USE_MPEG2) && defined(USE_A52)
+			#if defined(USE_MPEG2) && defined(USE_A52)
 			GUIO6(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING, GAMEOPTION_USE_HIRES_MPEG_MOVIES, GAMEOPTION_ENABLE_WIDESCREEN, GAMEOPTION_HQ_PANORAMA)
-#else
+			#else
 			GUIO5(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING, GAMEOPTION_ENABLE_WIDESCREEN, GAMEOPTION_HQ_PANORAMA)
-#endif
+			#endif
 		},
 		GID_GRANDINQUISITOR
 	},

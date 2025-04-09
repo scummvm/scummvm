@@ -42,17 +42,31 @@ private:
 		RLFVideoTrack(Common::SeekableReadStream *stream);
 		~RLFVideoTrack() override;
 
-		uint16 getWidth() const override { return _width; }
-		uint16 getHeight() const override { return _height; }
-		Graphics::PixelFormat getPixelFormat() const override { return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); /* RGB 555 */ }
-		int getCurFrame() const override { return _displayedFrame; }
-		int getFrameCount() const override { return _frameCount; }
+		uint16 getWidth() const override {
+			return _width;
+		}
+		uint16 getHeight() const override {
+			return _height;
+		}
+		Graphics::PixelFormat getPixelFormat() const override {
+			return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); /* RGB 555 */
+		}
+		int getCurFrame() const override {
+			return _displayedFrame;
+		}
+		int getFrameCount() const override {
+			return _frameCount;
+		}
 		const Graphics::Surface *decodeNextFrame() override;
-		bool isSeekable() const override { return true; }
+		bool isSeekable() const override {
+			return true;
+		}
 		bool seek(const Audio::Timestamp &time) override;
 
 	protected:
-		Common::Rational getFrameRate() const override { return Common::Rational(1000, _frameTime); }
+		Common::Rational getFrameRate() const override {
+			return Common::Rational(1000, _frameTime);
+		}
 
 	private:
 		enum EncodingType {
@@ -125,7 +139,7 @@ private:
 		uint32 _frameBufferByteSize;
 
 		Common::SeekableReadStream *_readStream;
-	};	// RLFVideoTrack
+	};  // RLFVideoTrack
 };
 
 } // End of namespace ZVision

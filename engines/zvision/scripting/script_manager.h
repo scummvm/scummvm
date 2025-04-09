@@ -111,25 +111,25 @@ struct Location {
 	uint32 offset;
 };
 
-inline bool operator==(const Location& lhs, const Location& rhs) {
+inline bool operator==(const Location &lhs, const Location &rhs) {
 	return (
-		lhs.world == rhs.world &&
-		lhs.room == rhs.room &&
-		lhs.node == rhs.node &&
-		lhs.view == rhs.view
-	);
+	           lhs.world == rhs.world &&
+	           lhs.room == rhs.room &&
+	           lhs.node == rhs.node &&
+	           lhs.view == rhs.view
+	       );
 }
 
-inline bool operator==(const Location& lhs, const char* rhs) {
+inline bool operator==(const Location &lhs, const char *rhs) {
 	Common::String lhsStr = Common::String::format("%c%c%c%c", lhs.world, lhs.room, lhs.node, lhs.view);
 	return lhsStr == rhs;
 }
 
-inline bool operator!=(const Location& lhs, const Location& rhs) {
+inline bool operator!=(const Location &lhs, const Location &rhs) {
 	return !(lhs == rhs);
 }
 
-inline bool operator!=(const Location& lhs, const char* rhs) {
+inline bool operator!=(const Location &lhs, const char *rhs) {
 	return !(lhs == rhs);
 }
 
@@ -366,16 +366,16 @@ private:
 	Control *parseControl(Common::String &line, Common::SeekableReadStream &stream);
 };
 
-	/**
-	 * Instances of this polymorphic class function either as a store of a single value, or as a "slot" that returns a StateValue
-	 *
-	 * @param line      The line initially read
-	 * @param slotValue A text string containing a number, which may be enclosed within square braces.
-	 *  If square braces are not present, getValue() will return slotValue.
-   *  If square braces are present, getValue() will return the StateValue to which slotValue is the key.
-   *
-   * Once instantiated, the value and nature of slotValue may not be changed.
-	 */
+/**
+ * Instances of this polymorphic class function either as a store of a single value, or as a "slot" that returns a StateValue
+ *
+ * @param line      The line initially read
+ * @param slotValue A text string containing a number, which may be enclosed within square braces.
+ *  If square braces are not present, getValue() will return slotValue.
+*  If square braces are present, getValue() will return the StateValue to which slotValue is the key.
+*
+* Once instantiated, the value and nature of slotValue may not be changed.
+ */
 class ValueSlot {
 public:
 	ValueSlot(ScriptManager *scriptManager, const char *slotValue);

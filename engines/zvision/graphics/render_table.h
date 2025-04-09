@@ -31,65 +31,64 @@ namespace ZVision {
 
 class FilterPixel {
 public:
-  //Bitfields representing sequential direction of contraction
-  bool xDir = 0; //0 left, 1 right
-  bool yDir = 0; //0 up, 1 down
-  Common::Rect Src = Common::Rect(0,0);  //Coordinates of four panorama image pixels around actual working window pixel
-  
-  float fX, fY, fTL, fTR, fBL, fBR;
-  
+	//Bitfields representing sequential direction of contraction
+	bool xDir = 0; //0 left, 1 right
+	bool yDir = 0; //0 up, 1 down
+	Common::Rect Src = Common::Rect(0, 0); //Coordinates of four panorama image pixels around actual working window pixel
+
+	float fX, fY, fTL, fTR, fBL, fBR;
+
 //  bool _printDebug = false;
-  
-  FilterPixel() {};
+
+	FilterPixel() {};
 //  FilterPixel(float x, float y, bool highQuality=false, bool printDebug=false) {
-  FilterPixel(float x, float y, bool highQuality=false) {
-    Src.left = int16(floor(x));
-    Src.right = int16(ceil(x));
-	  Src.top = int16(floor(y));
-	  Src.bottom = int16(ceil(y));
-/*
-	  _printDebug = printDebug;
-    if(_printDebug)
-      debug(5,"\tTarget pixel offset: %f, %f", x, y);
-*/
-    if(highQuality) {
-      fX = x-(float)Src.left;
-      fY = y-(float)Src.top;
-      fTL = (1-fX)*(1-fY);
-      fTR = fX*(1-fY);
-      fBL = (1-fX)*fY;
-      fBR = fX*fY;
-/*
-      if(_printDebug)
-        debug(5,"fX: %f, fY: %f, fTL:%f, fTR:%f, fBL:%f, fBR:%f", fX, fY, fTL, fTR, fBL, fBR);
-*/
-    }
-	  else {
-      //Nearest neighbour
-		  xDir = (x-Src.left) > 0.5f;
-		  yDir = (y-Src.top) > 0.5f;
-/*
-      if(_printDebug)
-        debug(5,"\tNearest neighbour, xDir: 0x%X, yDir: 0x%X", xDir, yDir);
-*/
-	  }
-  };
-  ~FilterPixel() {};
-  inline void flipH() {
-    Src.left = -Src.left;
-    Src.right = -Src.right;
-  };
-  inline void flipV() {
-    Src.top = -Src.top;
-    Src.bottom = -Src.bottom;
-  };
+	FilterPixel(float x, float y, bool highQuality = false) {
+		Src.left = int16(floor(x));
+		Src.right = int16(ceil(x));
+		Src.top = int16(floor(y));
+		Src.bottom = int16(ceil(y));
+		/*
+		      _printDebug = printDebug;
+		    if(_printDebug)
+		      debug(5,"\tTarget pixel offset: %f, %f", x, y);
+		*/
+		if (highQuality) {
+			fX = x - (float)Src.left;
+			fY = y - (float)Src.top;
+			fTL = (1 - fX) * (1 - fY);
+			fTR = fX * (1 - fY);
+			fBL = (1 - fX) * fY;
+			fBR = fX * fY;
+			/*
+			      if(_printDebug)
+			        debug(5,"fX: %f, fY: %f, fTL:%f, fTR:%f, fBL:%f, fBR:%f", fX, fY, fTL, fTR, fBL, fBR);
+			*/
+		} else {
+			//Nearest neighbour
+			xDir = (x - Src.left) > 0.5f;
+			yDir = (y - Src.top) > 0.5f;
+			/*
+			      if(_printDebug)
+			        debug(5,"\tNearest neighbour, xDir: 0x%X, yDir: 0x%X", xDir, yDir);
+			*/
+		}
+	};
+	~FilterPixel() {};
+	inline void flipH() {
+		Src.left = -Src.left;
+		Src.right = -Src.right;
+	};
+	inline void flipV() {
+		Src.top = -Src.top;
+		Src.bottom = -Src.bottom;
+	};
 };
 
 class RenderTable {
 public:
 	RenderTable(ZVision *engine, uint numRows, uint numColumns, const Graphics::PixelFormat pixelFormat);
 	~RenderTable();
-	
+
 //	Common::Point testPixel = Common::Point(255,0);
 
 public:
@@ -104,28 +103,28 @@ private:
 	OSystem *_system;
 	uint _numRows, _numColumns, halfRows, halfColumns; //Working area width, height; half width, half height, in whole pixels
 	float halfWidth, halfHeight;  //Centre axis to midpoint of outermost pixel
-  FilterPixel *_internalBuffer;
+	FilterPixel *_internalBuffer;
 	RenderState _renderState;
 	bool _highQuality = false;
 	const Graphics::PixelFormat _pixelFormat;
-	
+
 	uint32 index;
-  uint32 sourceOffset, destOffset;
-  uint32 srcIndexXL, srcIndexXR, srcIndexYT, srcIndexYB;
-  uint32 rTL,rTR,rBL,rBR,rF;
-  uint32 gTL,gTR,gBL,gBR,gF;
-  uint32 bTL,bTR,bBL,bBR,bF;
-	
-  inline void splitColor(uint16 &color, uint32 &r, uint32 &g, uint32 &b) {
-    //NB Left & right shifting unnecessary for interpolating & recombining, so not bothering in order to save cycles
-    r = color & 0x001f;
-    g = color & 0x03e0;
-    b = color & 0x7c00;
-  };
-  inline uint16 mergeColor(uint32 &r, uint32 &g, uint32 &b) const {
-    //NB Red uses the lowest bits in RGB555 and so doesn't need its fractional bits masked away after averaging
-    return r | (g & 0x03e0) | (b & 0x7c00);
-  };
+	uint32 sourceOffset, destOffset;
+	uint32 srcIndexXL, srcIndexXR, srcIndexYT, srcIndexYB;
+	uint32 rTL, rTR, rBL, rBR, rF;
+	uint32 gTL, gTR, gBL, gBR, gF;
+	uint32 bTL, bTR, bBL, bBR, bF;
+
+	inline void splitColor(uint16 &color, uint32 &r, uint32 &g, uint32 &b) {
+		//NB Left & right shifting unnecessary for interpolating & recombining, so not bothering in order to save cycles
+		r = color & 0x001f;
+		g = color & 0x03e0;
+		b = color & 0x7c00;
+	};
+	inline uint16 mergeColor(uint32 &r, uint32 &g, uint32 &b) const {
+		//NB Red uses the lowest bits in RGB555 and so doesn't need its fractional bits masked away after averaging
+		return r | (g & 0x03e0) | (b & 0x7c00);
+	};
 
 
 	struct {
@@ -152,23 +151,23 @@ public:
 	const Common::Point convertWarpedCoordToFlatCoord(const Common::Point &point);  //input point in working area coordinates
 
 //	void mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect);
-  void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool filter=false);
-	
+	void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool filter = false);
+
 	template <typename I>
-	Common::String pixelToBinary(I &pixel, bool splitColors=true) {
-	  uint8 bits = sizeof(pixel) << 3;
-    Common::String str("0b");
-    I spaceMask = 0;
-    for(uint8 i = 0; i < 3; i++)
-      spaceMask = (spaceMask << 5) + 0x10;
-	  for(I mask = 0x01 << (bits-1); mask; mask >>= 1) {
-	    if(splitColors && (spaceMask & mask))
-	      str += " ";
-      str += mask & pixel ? "1" : "0";
-    }
-    return str;
+	Common::String pixelToBinary(I &pixel, bool splitColors = true) {
+		uint8 bits = sizeof(pixel) << 3;
+		Common::String str("0b");
+		I spaceMask = 0;
+		for (uint8 i = 0; i < 3; i++)
+			spaceMask = (spaceMask << 5) + 0x10;
+		for (I mask = 0x01 << (bits - 1); mask; mask >>= 1) {
+			if (splitColors && (spaceMask & mask))
+				str += " ";
+			str += mask & pixel ? "1" : "0";
+		}
+		return str;
 	}
-	
+
 	void generateRenderTable();
 
 	void setPanoramaFoV(float fov); //Degrees
@@ -187,7 +186,7 @@ public:
 	float getLinscale();
 
 private:
-  void generateLookupTable(bool tilt = false);
+	void generateLookupTable(bool tilt = false);
 	void generatePanoramaLookupTable();
 //	Common::Point generatePanoramaLookupPoint();
 	void generateTiltLookupTable();

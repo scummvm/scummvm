@@ -140,10 +140,10 @@ bool Console::cmdRawToWav(int argc, const char **argv) {
 	output.writeUint32LE(file.size() * 2);
 	int16 *buffer = new int16[file.size()];
 	audioStream->readBuffer(buffer, file.size());
-#ifndef SCUMM_LITTLE_ENDIAN
+	#ifndef SCUMM_LITTLE_ENDIAN
 	for (int i = 0; i < file.size(); ++i)
 		buffer[i] = TO_LE_16(buffer[i]);
-#endif
+	#endif
 	output.write(buffer, file.size() * 2);
 
 	delete[] buffer;
@@ -204,7 +204,7 @@ bool Console::cmdLocation(int argc, const char **argv) {
 	Location curLocation = _engine->getScriptManager()->getCurrentLocation();
 	Common::String scrFile = Common::String::format("%c%c%c%c.scr", curLocation.world, curLocation.room, curLocation.node, curLocation.view);
 	debugPrintf("Current location: world '%c', room '%c', node '%c', view '%c', offset %d, script %s\n",
-				curLocation.world, curLocation.room, curLocation.node, curLocation.view, curLocation.offset, scrFile.c_str());
+	            curLocation.world, curLocation.room, curLocation.node, curLocation.view, curLocation.offset, scrFile.c_str());
 
 	if (argc != 6) {
 		debugPrintf("Use %s <char: world> <char: room> <char:node> <char:view> <int: x offset> to change your location\n", argv[0]);

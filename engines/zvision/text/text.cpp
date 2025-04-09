@@ -42,16 +42,16 @@ TextStyleState::TextStyleState() {
 	_green = 255;
 	_red = 255;
 	_bold = false;
-#if 0
+	#if 0
 	_newline = false;
 	_escapement = 0;
-#endif
+	#endif
 	_italic = false;
 	_justification = TEXT_JUSTIFY_LEFT;
 	_size = 12;
-#if 0
+	#if 0
 	_skipcolor = false;
-#endif
+	#endif
 	_strikeout = false;
 	_underline = false;
 	_statebox = 0;
@@ -117,12 +117,12 @@ TextChange TextStyleState::parseStyle(const Common::String &str, int16 len) {
 				}
 			}
 		} else if (token.matchString("newline", true)) {
-#if 0
+			#if 0
 			if ((retval & TXT_RET_NEWLN) == 0)
 				_newline = 0;
 
 			_newline++;
-#endif
+			#endif
 			retval |= TEXT_CHANGE_NEWLINE;
 		} else if (token.matchString("point", true)) {
 			if (!tokenizer.empty()) {
@@ -136,10 +136,10 @@ TextChange TextStyleState::parseStyle(const Common::String &str, int16 len) {
 		} else if (token.matchString("escapement", true)) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
-#if 0
+				#if 0
 				int32 tmp = atoi(token.c_str());
 				_escapement = tmp;
-#endif
+				#endif
 			}
 		} else if (token.matchString("italic", true)) {
 			if (!tokenizer.empty()) {
@@ -204,13 +204,13 @@ TextChange TextStyleState::parseStyle(const Common::String &str, int16 len) {
 		} else if (token.matchString("skipcolor", true)) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
-#if 0
+				#if 0
 				if (token.matchString("on", true)) {
 					_skipcolor = true;
 				} else if (token.matchString("off", true)) {
 					_skipcolor = false;
 				}
-#endif
+				#endif
 			}
 		} else if (token.matchString("image", true)) {
 			// Not used
@@ -273,16 +273,16 @@ void TextStyleState::updateFontWithTextState(StyledTTFont &font) {
 }
 
 void TextRenderer::drawTextWithJustification(const Common::String &text, StyledTTFont &font, uint32 color, Graphics::Surface &dest, int lineY, TextJustification justify) {
-  switch(justify) {
-  case TEXT_JUSTIFY_LEFT :
-	  font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignLeft);
-	  break;
-  case TEXT_JUSTIFY_CENTER :
-	  font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignCenter);
-	  break;
-  case TEXT_JUSTIFY_RIGHT :
-	  font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignRight);
-    break;
+	switch (justify) {
+	case TEXT_JUSTIFY_LEFT :
+		font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignLeft);
+		break;
+	case TEXT_JUSTIFY_CENTER :
+		font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignCenter);
+		break;
+	case TEXT_JUSTIFY_RIGHT :
+		font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignRight);
+		break;
 	}
 }
 
@@ -336,9 +336,9 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 	uint i = 0u;
 	uint stringlen = text.size();
 
-  //Parse entirety of supplied text
+	//Parse entirety of supplied text
 	while (i < stringlen) {
-	  //Style tag encountered?
+		//Style tag encountered?
 		if (text[i] == '<') {
 			// Flush the currentWord to the currentSentence
 			currentSentence += currentWord;
@@ -479,7 +479,7 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 	// Render out any remaining words/sentences
 	if (!currentWord.empty() || !currentSentence.empty()) {
 		currentSentence += currentWord;
-		sentenceWidth += wordWidth;		
+		sentenceWidth += wordWidth;
 		textSurfaces.push_back(TextSurface(font.renderSolidText(currentSentence, currentState.getTextColor(_engine)), sentencePixelOffset, currentLineNumber));
 	}
 	lineWidths.push_back(lineWidth + sentenceWidth);
@@ -487,20 +487,20 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 	for (Common::Array<TextSurface>::iterator iter = textSurfaces.begin(); iter != textSurfaces.end(); ++iter) {
 		Common::Rect empty;
 		int16 Xpos = iter->_surfaceOffset.x;
-    switch (lineJustifications[iter->_lineNumber]) {
-      case TEXT_JUSTIFY_LEFT :
-	      break;
-      case TEXT_JUSTIFY_CENTER :
-        Xpos += ((dest.w - lineWidths[iter->_lineNumber]) / 2);
-	      break;
-      case TEXT_JUSTIFY_RIGHT :
-        Xpos += dest.w - lineWidths[iter->_lineNumber];
-	      break;
-    }
-    if(blackFrame)
-      _engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, Xpos, iter->_surfaceOffset.y);
-    else
-      _engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, Xpos, iter->_surfaceOffset.y, 0);
+		switch (lineJustifications[iter->_lineNumber]) {
+		case TEXT_JUSTIFY_LEFT :
+			break;
+		case TEXT_JUSTIFY_CENTER :
+			Xpos += ((dest.w - lineWidths[iter->_lineNumber]) / 2);
+			break;
+		case TEXT_JUSTIFY_RIGHT :
+			Xpos += dest.w - lineWidths[iter->_lineNumber];
+			break;
+		}
+		if (blackFrame)
+			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, Xpos, iter->_surfaceOffset.y);
+		else
+			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, Xpos, iter->_surfaceOffset.y, 0);
 		// Release memory
 		iter->_surface->free();
 		delete iter->_surface;

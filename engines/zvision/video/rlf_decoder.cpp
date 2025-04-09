@@ -233,11 +233,10 @@ void RLFDecoder::RLFVideoTrack::decodeMaskedRunLengthEncoding(int8 *source, int8
 			}
 			// If numberOfSamples is >= 0, move destOffset forward ((numberOfSamples * 2) + 2)
 			// This function assumes the dest buffer has been memset with 0's.
-		} 
-		else {
+		} else {
 			if (sourceOffset + 1 >= sourceSize)
 				return;
-      else if (destOffset + 1 >= destSize) {
+			else if (destOffset + 1 >= destSize) {
 				debug(3, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 				return;
 			}
@@ -271,8 +270,7 @@ void RLFDecoder::RLFVideoTrack::decodeSimpleRunLengthEncoding(int8 *source, int8
 			}
 			// If numberOfSamples is >= 0, copy one sample from source to the
 			// next (numberOfSamples + 2) dest spots
-		} 
-		else {
+		} else {
 			if (sourceOffset + 1 >= sourceSize)
 				return;
 			uint16 sampleColor = READ_LE_UINT16(source + sourceOffset);

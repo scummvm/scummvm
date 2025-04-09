@@ -48,13 +48,13 @@ public:
 		return _region;
 	}
 
-  //If true, effect is applied to the current background image prior to panoramic warping
-  //If false, effect is applied to the effects buffer, which corresponds directly to the working window
+	//If true, effect is applied to the current background image prior to panoramic warping
+	//If false, effect is applied to the effects buffer, which corresponds directly to the working window
 	bool isPort() {
 		return _ported;
 	}
 
-  //Make a copy of supplied surface, draw effect on it, then return that altered surface
+	//Make a copy of supplied surface, draw effect on it, then return that altered surface
 	virtual const Graphics::Surface *draw(const Graphics::Surface &srcSubRect) {
 		return &_surface;
 	}
