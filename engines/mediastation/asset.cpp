@@ -46,7 +46,7 @@ int Asset::zIndex() const {
 	return _header->_zIndex;
 }
 
-Common::Rect *Asset::getBbox() {
+Common::Rect Asset::getBbox() const {
 	return _header->_boundingBox;
 }
 

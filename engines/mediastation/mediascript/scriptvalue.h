@@ -24,8 +24,8 @@
 
 #include "common/ptr.h"
 #include "common/str.h"
-#include "common/stream.h"
 
+#include "mediastation/datafile.h"
 #include "mediastation/mediascript/scriptconstants.h"
 #include "mediastation/mediascript/collection.h"
 
@@ -36,7 +36,7 @@ class Asset;
 class ScriptValue {
 public:
 	ScriptValue() : _type(kScriptValueTypeEmpty) {}
-	ScriptValue(Common::SeekableReadStream *stream);
+	ScriptValue(ParameterReadStream *stream);
 
 	ScriptValueType getType() const { return _type; }
 

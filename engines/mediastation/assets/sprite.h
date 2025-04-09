@@ -37,10 +37,9 @@ namespace MediaStation {
 class SpriteFrameHeader : public BitmapHeader {
 public:
 	SpriteFrameHeader(Chunk &chunk);
-	virtual ~SpriteFrameHeader() override;
 
 	uint _index;
-	Common::Point *_boundingBox;
+	Common::Point _boundingBox;
 };
 
 class SpriteFrame : public Bitmap {

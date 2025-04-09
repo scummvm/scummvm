@@ -25,7 +25,7 @@
 namespace MediaStation {
 
 EventHandler::EventHandler(Chunk &chunk) {
-	_type = static_cast<EventType>(Datum(chunk).u.i);
+	_type = static_cast<EventType>(chunk.readTypedUint16());
 	debugC(5, kDebugLoading, "EventHandler::EventHandler(): Type %s (%d) (@0x%llx)",
 		eventTypeToStr(_type), static_cast<uint>(_type), static_cast<long long int>(chunk.pos()));
 

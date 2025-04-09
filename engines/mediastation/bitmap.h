@@ -40,11 +40,10 @@ enum BitmapCompressionType {
 class BitmapHeader {
 public:
 	BitmapHeader(Chunk &chunk);
-	virtual ~BitmapHeader();
 
 	bool isCompressed();
 
-	Common::Point *_dimensions = nullptr;
+	Common::Point _dimensions;
 	BitmapCompressionType _compressionType;
 	uint unk2;
 };

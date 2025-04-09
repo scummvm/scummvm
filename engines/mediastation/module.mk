@@ -20,7 +20,6 @@ MODULE_OBJS = \
 	context.o \
 	cursors.o \
 	datafile.o \
-	datum.o \
 	mediascript/codechunk.o \
 	mediascript/collection.o \
 	mediascript/eventhandler.o \

@@ -19,28 +19,22 @@
  *
  */
 
-#include "mediastation/datum.h"
 #include "mediastation/bitmap.h"
 #include "mediastation/debugchannels.h"
 
 namespace MediaStation {
 
 BitmapHeader::BitmapHeader(Chunk &chunk) {
-	uint headerSizeInBytes = Datum(chunk, kDatumTypeUint16).u.i;
+	uint headerSizeInBytes = chunk.readTypedUint16();
 	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): headerSize = 0x%x", headerSizeInBytes);
-	_dimensions = Datum(chunk).u.point;
-	_compressionType = static_cast<BitmapCompressionType>(Datum(chunk, kDatumTypeUint16).u.i);
+	_dimensions = chunk.readTypedGraphicSize();
+	_compressionType = static_cast<BitmapCompressionType>(chunk.readTypedUint16());
 	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): _compressionType = 0x%x", static_cast<uint>(_compressionType));
 	// TODO: Figure out what this is.
 	// This has something to do with the width of the bitmap but is always
 	// a few pixels off from the width. And in rare cases it seems to be
 	// the true width!
-	unk2 = Datum(chunk, kDatumTypeUint16).u.i;
-}
-
-BitmapHeader::~BitmapHeader() {
-	delete _dimensions;
-	_dimensions = nullptr;
+	unk2 = chunk.readTypedUint16();
 }
 
 bool BitmapHeader::isCompressed() {
@@ -50,8 +44,8 @@ bool BitmapHeader::isCompressed() {
 Bitmap::Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader) :
 	_bitmapHeader(bitmapHeader) {
 	// The header must be constructed beforehand.
-	uint16 width = _bitmapHeader->_dimensions->x;
-	uint16 height = _bitmapHeader->_dimensions->y;
+	uint16 width = _bitmapHeader->_dimensions.x;
+	uint16 height = _bitmapHeader->_dimensions.y;
 	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_surface.setTransparentColor(0);
 	uint8 *pixels = (uint8 *)_surface.getPixels();
@@ -77,11 +71,11 @@ Bitmap::~Bitmap() {
 }
 
 uint16 Bitmap::width() {
-	return _bitmapHeader->_dimensions->x;
+	return _bitmapHeader->_dimensions.x;
 }
 
 uint16 Bitmap::height() {
-	return _bitmapHeader->_dimensions->y;
+	return _bitmapHeader->_dimensions.y;
 }
 
 void Bitmap::decompress(Chunk &chunk) {

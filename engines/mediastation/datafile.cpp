@@ -24,6 +24,121 @@
 
 namespace MediaStation {
 
+void ParameterReadStream::readAndVerifyType(DatumType type) {
+	DatumType actualType = static_cast<DatumType>(readUint16LE());
+	if (actualType != type) {
+		error("Expected datum type %d, got %d (@0x%llx)", type, actualType, static_cast<long long int>(pos()));
+	}
+}
+
+byte ParameterReadStream::readTypedByte() {
+	readAndVerifyType(kDatumTypeUint8);
+	return readByte();
+}
+
+uint16 ParameterReadStream::readTypedUint16() {
+	readAndVerifyType(kDatumTypeUint16);
+	return readUint16LE();
+}
+
+uint32 ParameterReadStream::readTypedUint32() {
+	readAndVerifyType(kDatumTypeUint32);
+	return readUint32LE();
+}
+
+int8 ParameterReadStream::readTypedSByte() {
+	readAndVerifyType(kDatumTypeInt8);
+	return readSByte();
+}
+
+int16 ParameterReadStream::readTypedSint16() {
+	readAndVerifyType(kDatumTypeInt16);
+	return readSint16LE();
+}
+
+int32 ParameterReadStream::readTypedSint32() {
+	readAndVerifyType(kDatumTypeInt32);
+	return readSint32LE();
+}
+
+float ParameterReadStream::readTypedFloat() {
+	readAndVerifyType(kDatumTypeFloat);
+	return readFloatLE();
+}
+
+double ParameterReadStream::readTypedDouble() {
+	readAndVerifyType(kDatumTypeDouble);
+	return readDoubleLE();
+}
+
+Common::String ParameterReadStream::readTypedFilename() {
+	readAndVerifyType(kDatumTypeFilename);
+	uint size = readTypedUint32();
+	return readString('\0', size);
+}
+
+Common::Rect ParameterReadStream::readTypedRect() {
+	readAndVerifyType(kDatumTypeRect);
+	Common::Point leftTop = readTypedPoint();
+	Common::Point dimensions = readTypedGraphicSize();
+	return Common::Rect(leftTop, dimensions.x, dimensions.y);
+}
+
+Common::Point ParameterReadStream::readTypedPoint() {
+	readAndVerifyType(kDatumTypePoint);
+	int16 x = readTypedGraphicUnit();
+	int16 y = readTypedGraphicUnit();
+	return Common::Point(x, y);
+}
+
+Common::Point ParameterReadStream::readTypedGraphicSize() {
+	readAndVerifyType(kDatumTypeGraphicSize);
+	int16 width = readTypedGraphicUnit();
+	int16 height = readTypedGraphicUnit();
+	return Common::Point(width, height);
+}
+
+int16 ParameterReadStream::readTypedGraphicUnit() {
+	readAndVerifyType(kDatumTypeGraphicUnit);
+	return readSint16LE();
+}
+
+double ParameterReadStream::readTypedTime() {
+	readAndVerifyType(kDatumTypeTime);
+	return readDoubleLE();
+}
+
+Common::String ParameterReadStream::readTypedString() {
+	readAndVerifyType(kDatumTypeString);
+	uint size = readTypedUint32();
+	return readString('\0', size);
+}
+
+VersionInfo ParameterReadStream::readTypedVersion() {
+	readAndVerifyType(kDatumTypeVersion);
+	VersionInfo version;
+	version.major = readTypedUint16();
+	version.minor = readTypedUint16();
+	version.patch = readTypedUint16();
+	return version;
+}
+
+uint32 ParameterReadStream::readTypedChunkReference() {
+	readAndVerifyType(kDatumTypeChunkReference);
+	// This one is always BE.
+	return readUint32BE();
+}
+
+Polygon ParameterReadStream::readTypedPolygon() {
+	Polygon polygon;
+	uint totalPoints = readTypedUint16();
+	for (uint i = 0; i < totalPoints; ++i) {
+		Common::Point point = readTypedGraphicSize();
+		polygon.push_back(point);
+	}
+	return polygon;
+}
+
 Chunk::Chunk(Common::SeekableReadStream *stream) : _parentStream(stream) {
 	_id = _parentStream->readUint32BE();
 	_length = _parentStream->readUint32LE();

@@ -31,27 +31,6 @@
 
 namespace MediaStation {
 
-// Contains information about the engine (also called
-//  "title compiler") used in this particular game.
-// Engine version information is not present in early games.
-class VersionInfo {
-public:
-	VersionInfo(Chunk &chunk);
-	~VersionInfo();
-
-	// The version number of this engine,
-	// in the form 4.0r8 (major . minor r revision).
-	uint32 _majorVersion = 0;
-	uint32 _minorVersion = 0;
-	uint32 _revision = 0;
-
-	// A textual description of this engine.
-	// Example: "Title Compiler T4.0r8 built Feb 13 1998 10:16:52"
-	//           ^^^^^^^^^^^^^^  ^^^^^
-	//           | Engine name   | Version number
-	Common::String *string = nullptr;
-};
-
 enum ContextDeclarationSectionType {
 	kContextDeclarationEmptySection = 0x0000,
 	kContextDeclarationPlaceholder = 0x0003,
@@ -64,11 +43,10 @@ enum ContextDeclarationSectionType {
 class ContextDeclaration {
 public:
 	ContextDeclaration(Chunk &chunk);
-	~ContextDeclaration();
 
 	Common::Array<uint32> _fileReferences;
 	uint32 _fileNumber = 0;
-	Common::String *_contextName = nullptr;
+	Common::String _contextName;
 	// Signal that there are no more declarations to read.
 	bool _isLast = false;
 
@@ -115,11 +93,10 @@ enum IntendedFileLocation {
 class FileDeclaration {
 public:
 	FileDeclaration(Chunk &chunk);
-	~FileDeclaration();
 
 	uint32 _id = 0;
 	IntendedFileLocation _intendedLocation;
-	Common::String *_name = nullptr;
+	Common::String _name;
 	// Signal that there are no more declarations to read.
 	bool _isLast = false;
 
@@ -152,20 +129,18 @@ private:
 class CursorDeclaration {
 public:
 	CursorDeclaration(Chunk &chunk);
-	~CursorDeclaration();
 
 	uint16 _id = 0;
 	uint16 _unk = 0;
-	Common::String *_name = nullptr;
+	Common::String _name;
 };
 
 class EngineResourceDeclaration {
 public:
-	Common::String *_resourceName = nullptr;
+	Common::String _resourceName;
 	int _resourceId = 0;
 
-	EngineResourceDeclaration(Common::String *resourceName, int resourceId);
-	~EngineResourceDeclaration();
+	EngineResourceDeclaration(Common::String resourceName, int resourceId) : _resourceName(resourceName), _resourceId(resourceId) {};
 };
 
 enum BootSectionType {
@@ -194,9 +169,10 @@ private:
 	BootSectionType getSectionType(Chunk &chunk);
 
 public:
-	Common::String *_gameTitle = nullptr;
-	VersionInfo *_versionInfo = nullptr;
-	Common::String *_sourceString = nullptr;
+	Common::String _gameTitle;
+	VersionInfo _versionInfo;
+	Common::String _engineInfo;
+	Common::String _sourceString;
 	Common::HashMap<uint32, ContextDeclaration *> _contextDeclarations;
 	Common::Array<UnknownDeclaration *> _unknownDeclarations;
 	Common::HashMap<uint32, FileDeclaration *> _fileDeclarations;

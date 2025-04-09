@@ -19,27 +19,26 @@
  *
  */
 
-#include "mediastation/datum.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/function.h"
 
 namespace MediaStation {
 
-ScriptValue::ScriptValue(Common::SeekableReadStream *stream) {
-	_type = static_cast<ScriptValueType>(Datum(*stream).u.i);
+ScriptValue::ScriptValue(ParameterReadStream *stream) {
+	_type = static_cast<ScriptValueType>(stream->readTypedByte());
 
 	switch (_type) {
 	case kScriptValueTypeEmpty:
 		break;
 
 	case kScriptValueTypeFloat: {
-		double d = Datum(*stream).u.f;
+		double d = stream->readTypedDouble();
 		setToFloat(d);
 		break;
 	}
 
 	case kScriptValueTypeBool: {
-		uint rawValue = Datum(*stream, kDatumTypeUint8).u.i;
+		uint rawValue = stream->readTypedByte();
 		if (rawValue != 0 && rawValue != 1) {
 			error("Got invalid literal bool value %d", rawValue);
 		}
@@ -48,32 +47,32 @@ ScriptValue::ScriptValue(Common::SeekableReadStream *stream) {
 	}
 
 	case kScriptValueTypeTime: {
-		double d = Datum(*stream).u.f;
+		double d = stream->readTypedTime();
 		setToFloat(d);
 		break;
 	}
 
 	case kScriptValueTypeParamToken: {
-		uint paramToken = Datum(*stream).u.i;
+		uint paramToken = stream->readTypedUint16();
 		setToParamToken(paramToken);
 		break;
 	}
 
 	case kScriptValueTypeAssetId: {
-		uint assetId = Datum(*stream).u.i;
+		uint assetId = stream->readTypedUint16();
 		setToAssetId(assetId);
 		break;
 	}
 
 	case kScriptValueTypeString: {
-		uint size = Datum(*stream).u.i;
+		uint size = stream->readTypedUint16();
 		Common::String string = stream->readString('\0', size);
 		setToString(string);
 		break;
 	}
 
 	case kScriptValueTypeCollection: {
-		uint totalItems = Datum(*stream).u.i;
+		uint totalItems = stream->readTypedUint16();
 		Common::SharedPtr<Collection> collection(new Collection);
 		for (uint i = 0; i < totalItems; i++) {
 			ScriptValue collectionValue = ScriptValue(stream);
@@ -84,13 +83,13 @@ ScriptValue::ScriptValue(Common::SeekableReadStream *stream) {
 	}
 
 	case kScriptValueTypeFunctionId: {
-		uint functionId = Datum(*stream).u.i;
+		uint functionId = stream->readTypedUint16();
 		setToFunctionId(functionId);
 		break;
 	}
 
 	case kScriptValueTypeMethodId: {
-		BuiltInMethod methodId = static_cast<BuiltInMethod>(Datum(*stream).u.i);
+		BuiltInMethod methodId = static_cast<BuiltInMethod>(stream->readTypedUint16());
 		setToMethodId(methodId);
 		break;
 	}

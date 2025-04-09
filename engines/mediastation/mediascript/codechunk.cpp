@@ -24,26 +24,25 @@
 #include "mediastation/mediastation.h"
 #include "mediastation/mediascript/codechunk.h"
 #include "mediastation/mediascript/collection.h"
-#include "mediastation/datum.h"
 #include "mediastation/debugchannels.h"
 
 namespace MediaStation {
 
-CodeChunk::CodeChunk(Common::SeekableReadStream &chunk) {
-	uint lengthInBytes = Datum(chunk, kDatumTypeUint32).u.i;
+CodeChunk::CodeChunk(Chunk &chunk) {
+	uint lengthInBytes = chunk.readTypedUint32();
 	debugC(5, kDebugLoading, "CodeChunk::CodeChunk(): Length 0x%x (@0x%llx)", lengthInBytes, static_cast<long long int>(chunk.pos()));
-	_bytecode = chunk.readStream(lengthInBytes);
+	_bytecode = static_cast<ParameterReadStream *>(chunk.readStream(lengthInBytes));
 }
 
 ScriptValue CodeChunk::executeNextBlock() {
-	uint blockSize = Datum(*_bytecode, kDatumTypeUint32).u.i;
+	uint blockSize = _bytecode->readTypedUint32();
 	uint startingPos = _bytecode->pos();
 
 	ScriptValue returnValue;
-	ExpressionType expressionType = static_cast<ExpressionType>(Datum(*_bytecode).u.i);
+	ExpressionType expressionType = static_cast<ExpressionType>(_bytecode->readTypedUint16());
 	while (expressionType != kExpressionTypeEmpty && !_returnImmediately) {
 		returnValue = evaluateExpression(expressionType);
-		expressionType = static_cast<ExpressionType>(Datum(*_bytecode).u.i);
+		expressionType = static_cast<ExpressionType>(_bytecode->readTypedUint16());
 	}
 
 	// Verify we consumed the right number of script bytes.
@@ -57,7 +56,7 @@ ScriptValue CodeChunk::executeNextBlock() {
 }
 
 void CodeChunk::skipNextBlock() {
-	uint lengthInBytes = Datum(*_bytecode, kDatumTypeUint32).u.i;
+	uint lengthInBytes = _bytecode->readTypedUint32();
 	_bytecode->skip(lengthInBytes);
 }
 
@@ -77,7 +76,7 @@ ScriptValue CodeChunk::execute(Common::Array<ScriptValue> *args) {
 }
 
 ScriptValue CodeChunk::evaluateExpression() {
-	ExpressionType expressionType = static_cast<ExpressionType>(Datum(*_bytecode).u.i);
+	ExpressionType expressionType = static_cast<ExpressionType>(_bytecode->readTypedUint16());
 	ScriptValue returnValue = evaluateExpression(expressionType);
 	return returnValue;
 }
@@ -110,7 +109,7 @@ ScriptValue CodeChunk::evaluateExpression(ExpressionType expressionType) {
 }
 
 ScriptValue CodeChunk::evaluateOperation() {
-	Opcode opcode = static_cast<Opcode>(Datum(*_bytecode).u.i);
+	Opcode opcode = static_cast<Opcode>(_bytecode->readTypedUint16());
 	debugCN(5, kDebugScript, "%s ", opcodeToStr(opcode));
 
 	ScriptValue returnValue;
@@ -187,13 +186,13 @@ ScriptValue CodeChunk::evaluateOperation() {
 }
 
 ScriptValue CodeChunk::evaluateValue() {
-	OperandType operandType = static_cast<OperandType>(Datum(*_bytecode).u.i);
+	OperandType operandType = static_cast<OperandType>(_bytecode->readTypedUint16());
 	debugCN(5, kDebugScript, "%s ", operandTypeToStr(operandType));
 
 	ScriptValue returnValue;
 	switch (operandType) {
 	case kOperandTypeBool: {
-		int b = Datum(*_bytecode).u.i;
+		int b = _bytecode->readTypedByte();
 		if (b != 0 && b != 1) {
 			error("Got invalid literal bool value %d", b);
 		}
@@ -203,14 +202,14 @@ ScriptValue CodeChunk::evaluateValue() {
 	}
 
 	case kOperandTypeFloat: {
-		double f = Datum(*_bytecode).u.f;
+		double f = _bytecode->readTypedDouble();
 		debugC(5, kDebugScript, "%f ", f);
 		returnValue.setToFloat(f);
 		return returnValue;
 	}
 
 	case kOperandTypeInt: {
-		int i = Datum(*_bytecode).u.i;
+		int i = _bytecode->readTypedSint32();
 		debugC(5, kDebugScript, "%d ", i);
 		// Ints are stored internally as doubles.
 		returnValue.setToFloat(static_cast<double>(i));
@@ -219,7 +218,7 @@ ScriptValue CodeChunk::evaluateValue() {
 
 	case kOperandTypeString: {
 		// This is indeed a raw string, not a string wrapped in a datum!
-		uint size = Datum(*_bytecode, kDatumTypeUint16).u.i;
+		uint size = _bytecode->readTypedUint16();
 		Common::String string = _bytecode->readString('\0', size);
 		debugC(5, kDebugScript, "%s ", string.c_str());
 		returnValue.setToString(string);
@@ -227,21 +226,21 @@ ScriptValue CodeChunk::evaluateValue() {
 	}
 
 	case kOperandTypeParamToken: {
-		uint literal = Datum(*_bytecode).u.i;
+		uint literal = _bytecode->readTypedUint16();
 		debugC(5, kDebugScript, "%d ", literal);
 		returnValue.setToParamToken(literal);
 		return returnValue;
 	}
 
 	case kOperandTypeAssetId: {
-		uint assetId = Datum(*_bytecode).u.i;
+		uint assetId = _bytecode->readTypedUint16();
 		debugC(5, kDebugScript, "%d ", assetId);
 		returnValue.setToAssetId(assetId);
 		return returnValue;
 	}
 
 	case kOperandTypeTime: {
-		double d = Datum(*_bytecode).u.f;
+		double d = _bytecode->readTypedTime();
 		debugC(5, kDebugScript, "%f ", d);
 		returnValue.setToTime(d);
 		return returnValue;
@@ -253,14 +252,14 @@ ScriptValue CodeChunk::evaluateValue() {
 	}
 
 	case kOperandTypeFunctionId: {
-		uint functionId = Datum(*_bytecode).u.i;
+		uint functionId = _bytecode->readTypedUint16();
 		debugC(5, kDebugScript, "%d ", functionId);
 		returnValue.setToFunctionId(functionId);
 		return returnValue;
 	}
 
 	case kOperandTypeMethodId: {
-		BuiltInMethod methodId = static_cast<BuiltInMethod>(Datum(*_bytecode).u.i);
+		BuiltInMethod methodId = static_cast<BuiltInMethod>(_bytecode->readTypedUint16());
 		debugC(5, kDebugScript, "%s ", builtInMethodToStr(methodId));
 		returnValue.setToMethodId(methodId);
 		return returnValue;
@@ -277,8 +276,8 @@ ScriptValue CodeChunk::evaluateVariable() {
 }
 
 ScriptValue *CodeChunk::readAndReturnVariable() {
-	uint id = Datum(*_bytecode).u.i;
-	VariableScope scope = static_cast<VariableScope>(Datum(*_bytecode).u.i);
+	uint id = _bytecode->readTypedUint16();
+	VariableScope scope = static_cast<VariableScope>(_bytecode->readTypedUint16());
 	debugC(5, kDebugScript, "%d (%s)", id, variableScopeToStr(scope));
 
 	ScriptValue returnValue;
@@ -444,12 +443,12 @@ ScriptValue CodeChunk::evaluateUnaryOperation() {
 ScriptValue CodeChunk::evaluateFunctionCall(bool isIndirect) {
 	uint functionId, paramCount = 0;
 	if (isIndirect) {
-		paramCount = Datum(*_bytecode).u.i;
+		paramCount = _bytecode->readTypedUint16();
 		ScriptValue value = evaluateExpression();
 		functionId = value.asFunctionId();
 	} else {
-		functionId = Datum(*_bytecode).u.i;
-		paramCount = Datum(*_bytecode).u.i;
+		functionId = _bytecode->readTypedUint16();
+		paramCount = _bytecode->readTypedUint16();
 	}
 
 	return evaluateFunctionCall(functionId, paramCount);
@@ -484,12 +483,12 @@ ScriptValue CodeChunk::evaluateMethodCall(bool isIndirect) {
 	BuiltInMethod method;
 	uint paramCount = 0;
 	if (isIndirect) {
-		paramCount = Datum(*_bytecode).u.i;
+		paramCount = _bytecode->readTypedUint16();
 		ScriptValue value = evaluateExpression();
 		method = value.asMethodId();
 	} else {
-		method = static_cast<BuiltInMethod>(Datum(*_bytecode).u.i);
-		paramCount = Datum(*_bytecode).u.i;
+		method = static_cast<BuiltInMethod>(_bytecode->readTypedUint16());
+		paramCount = _bytecode->readTypedUint16();
 	}
 
 	return evaluateMethodCall(method, paramCount);
@@ -552,7 +551,7 @@ ScriptValue CodeChunk::evaluateMethodCall(BuiltInMethod method, uint paramCount)
 }
 
 void CodeChunk::evaluateDeclareLocals() {
-	uint localVariableCount = Datum(*_bytecode).u.i;
+	uint localVariableCount = _bytecode->readTypedUint16();
 	if (localVariableCount <= 0) {
 		error("Got non-positive local variable count");
 	}

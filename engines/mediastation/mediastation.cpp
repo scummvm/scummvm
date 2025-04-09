@@ -125,7 +125,7 @@ bool MediaStationEngine::isFirstGenerationEngine() {
 	if (_boot == nullptr) {
 		error("Attempted to get engine version before BOOT.STM was read");
 	} else {
-		return (_boot->_versionInfo == nullptr);
+		return (_boot->_versionInfo.major == 0);
 	}
 }
 
@@ -264,7 +264,7 @@ void MediaStationEngine::setCursor(uint id) {
 		if (cursorDeclaration == nullptr) {
 			error("MediaStationEngine::setCursor(): Cursor %d not declared", id);
 		}
-		_cursor->setCursor(*cursorDeclaration->_name);
+		_cursor->setCursor(cursorDeclaration->_name);
 	}
 }
 
@@ -303,9 +303,9 @@ void MediaStationEngine::redraw() {
 
 	for (Common::Rect dirtyRect : _dirtyRects) {
 		for (Asset *asset : _assetsPlaying) {
-			Common::Rect *bbox = asset->getBbox();
-			if (bbox != nullptr) {
-				if (dirtyRect.intersects(*bbox)) {
+			Common::Rect bbox = asset->getBbox();
+			if (!bbox.isEmpty()) {
+				if (dirtyRect.intersects(bbox)) {
 					asset->redraw(dirtyRect);
 				}
 			}
@@ -347,7 +347,7 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 		warning("MediaStationEngine::loadContext(): Couldn't find file declaration with ID 0x%x", fileId);
 		return nullptr;
 	}
-	Common::Path entryCxtFilepath(*fileDeclaration->_name);
+	Common::Path entryCxtFilepath(fileDeclaration->_name);
 
 	// Load any child contexts before we actually load this one. The child
 	// contexts must be unloaded explicitly later.

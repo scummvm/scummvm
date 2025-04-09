@@ -19,7 +19,6 @@
  *
  */
 
-#include "mediastation/datum.h"
 #include "mediastation/assets/sprite.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/mediastation.h"
@@ -27,15 +26,10 @@
 namespace MediaStation {
 
 SpriteFrameHeader::SpriteFrameHeader(Chunk &chunk) : BitmapHeader(chunk) {
-	_index = Datum(chunk).u.i;
+	_index = chunk.readTypedUint16();
 	debugC(5, kDebugLoading, "SpriteFrameHeader::SpriteFrameHeader(): _index = 0x%x (@0x%llx)", _index, static_cast<long long int>(chunk.pos()));
-	_boundingBox = Datum(chunk, kDatumTypePoint).u.point;
+	_boundingBox = chunk.readTypedPoint();
 	debugC(5, kDebugLoading, "SpriteFrameHeader::SpriteFrameHeader(): _boundingBox (@0x%llx)", static_cast<long long int>(chunk.pos()));
-}
-
-SpriteFrameHeader::~SpriteFrameHeader() {
-	delete _boundingBox;
-	_boundingBox = nullptr;
 }
 
 SpriteFrame::SpriteFrame(Chunk &chunk, SpriteFrameHeader *header) : Bitmap(chunk, header) {
@@ -47,11 +41,11 @@ SpriteFrame::~SpriteFrame() {
 }
 
 uint32 SpriteFrame::left() {
-	return _bitmapHeader->_boundingBox->x;
+	return _bitmapHeader->_boundingBox.x;
 }
 
 uint32 SpriteFrame::top() {
-	return _bitmapHeader->_boundingBox->y;
+	return _bitmapHeader->_boundingBox.y;
 }
 
 Common::Point SpriteFrame::topLeft() {
@@ -325,7 +319,7 @@ void Sprite::redraw(Common::Rect &rect) {
 	Common::Rect areaToRedraw = bbox.findIntersectingRect(rect);
 	if (!areaToRedraw.isEmpty()) {
 		Common::Point originOnScreen(areaToRedraw.left, areaToRedraw.top);
-		areaToRedraw.translate(-_activeFrame->left() - _header->_boundingBox->left - _xAdjust, -_activeFrame->top() - _header->_boundingBox->top - _yAdjust);
+		areaToRedraw.translate(-_activeFrame->left() - _header->_boundingBox.left - _xAdjust, -_activeFrame->top() - _header->_boundingBox.top - _yAdjust);
 		areaToRedraw.clip(Common::Rect(0, 0, _activeFrame->width(), _activeFrame->height()));
 		g_engine->_screen->simpleBlitFrom(_activeFrame->_surface, areaToRedraw, originOnScreen);
 	}
@@ -348,7 +342,7 @@ Common::Rect Sprite::getActiveFrameBoundingBox() {
 	// The frame dimensions are relative to those of the sprite movie.
 	// So we must get the absolute coordinates.
 	Common::Rect bbox = _activeFrame->boundingBox();
-	bbox.translate(_header->_boundingBox->left + _xAdjust, _header->_boundingBox->top + _yAdjust);
+	bbox.translate(_header->_boundingBox.left + _xAdjust, _header->_boundingBox.top + _yAdjust);
 	return bbox;
 }
 

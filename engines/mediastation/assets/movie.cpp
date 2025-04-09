@@ -24,46 +24,45 @@
 
 #include "mediastation/mediastation.h"
 #include "mediastation/assets/movie.h"
-#include "mediastation/datum.h"
 #include "mediastation/debugchannels.h"
 
 namespace MediaStation {
 
 MovieFrameHeader::MovieFrameHeader(Chunk &chunk) : BitmapHeader(chunk) {
-	_index = Datum(chunk).u.i;
+	_index = chunk.readTypedUint32();
 	debugC(5, kDebugLoading, "MovieFrameHeader::MovieFrameHeader(): _index = 0x%x (@0x%llx)", _index, static_cast<long long int>(chunk.pos()));
-	_keyframeEndInMilliseconds = Datum(chunk).u.i;
+	_keyframeEndInMilliseconds = chunk.readTypedUint32();
 }
 
 MovieFrameFooter::MovieFrameFooter(Chunk &chunk) {
-	_unk1 = Datum(chunk).u.i;
-	_unk2 = Datum(chunk).u.i;
-	if (g_engine->isFirstGenerationEngine()) { // TODO: Add the version number check.
-		_startInMilliseconds = Datum(chunk).u.i;
-		_endInMilliseconds = Datum(chunk).u.i;
-		_left = Datum(chunk).u.i;
-		_top = Datum(chunk).u.i;
-		_unk3 = Datum(chunk).u.i;
-		_unk4 = Datum(chunk).u.i;
-		_index = Datum(chunk).u.i;
+	_unk1 = chunk.readTypedUint16();
+	_unk2 = chunk.readTypedUint32();
+	if (g_engine->isFirstGenerationEngine()) {
+		_startInMilliseconds = chunk.readTypedUint32();
+		_endInMilliseconds = chunk.readTypedUint32();
+		_left = chunk.readTypedUint16();
+		_top = chunk.readTypedUint16();
+		_unk3 = chunk.readTypedUint16();
+		_unk4 = chunk.readTypedUint16();
+		_index = chunk.readTypedUint16();
 	} else {
-		_unk4 = Datum(chunk).u.i;
-		_startInMilliseconds = Datum(chunk).u.i;
-		_endInMilliseconds = Datum(chunk).u.i;
-		_left = Datum(chunk).u.i;
-		_top = Datum(chunk).u.i;
-		_zIndex = Datum(chunk).u.i;
+		_unk4 = chunk.readTypedUint16();
+		_startInMilliseconds = chunk.readTypedUint32();
+		_endInMilliseconds = chunk.readTypedUint32();
+		_left = chunk.readTypedUint16();
+		_top = chunk.readTypedUint16();
+		_zIndex = chunk.readTypedSint16();
 		// This represents the difference between the left coordinate of the
 		// keyframe (if applicable) and the left coordinate of this frame. Zero
 		// if there is no keyframe.
-		_diffBetweenKeyframeAndFrameX = Datum(chunk).u.i;
+		_diffBetweenKeyframeAndFrameX = chunk.readTypedSint16();
 		// This represents the difference between the top coordinate of the
 		// keyframe (if applicable) and the top coordinate of this frame. Zero
 		// if there is no keyframe.
-		_diffBetweenKeyframeAndFrameY = Datum(chunk).u.i;
-		_index = Datum(chunk).u.i;
-		_keyframeIndex = Datum(chunk).u.i;
-		_unk9 = Datum(chunk).u.i;
+		_diffBetweenKeyframeAndFrameY = chunk.readTypedSint16();
+		_index = chunk.readTypedUint32();
+		_keyframeIndex = chunk.readTypedUint32();
+		_unk9 = chunk.readTypedByte();
 		debugC(5, kDebugLoading, "MovieFrameFooter::MovieFrameFooter(): _startInMilliseconds = %d, _endInMilliseconds = %d, _left = %d, _top = %d, _index = %d, _keyframeIndex = %d (@0x%llx)",
 			_startInMilliseconds, _endInMilliseconds, _left, _top, _index, _keyframeIndex, static_cast<long long int>(chunk.pos()));
 		debugC(5, kDebugLoading, "MovieFrameFooter::MovieFrameFooter(): _zIndex = %d, _diffBetweenKeyframeAndFrameX = %d, _diffBetweenKeyframeAndFrameY = %d, _unk4 = %d, _unk9 = %d",
@@ -244,7 +243,7 @@ ScriptValue Movie::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 
 	case kXPositionMethod: {
 		assert(args.empty());
-		double left = static_cast<double>(_header->_boundingBox->left);
+		double left = static_cast<double>(_header->_boundingBox.left);
 		returnValue.setToFloat(left);
 		return returnValue;
 
@@ -252,7 +251,7 @@ ScriptValue Movie::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 
 	case kYPositionMethod: {
 		assert(args.empty());
-		double top = static_cast<double>(_header->_boundingBox->top);
+		double top = static_cast<double>(_header->_boundingBox.top);
 		returnValue.setToFloat(top);
 		return returnValue;
 	}
@@ -382,14 +381,14 @@ void Movie::spatialCenterMoveTo(int x, int y) {
 	}
 
 	// Calculate the center of the movie, and update location.
-	int frameWidth = _header->_boundingBox->width();
-	int frameHeight = _header->_boundingBox->height();
+	int frameWidth = _header->_boundingBox.width();
+	int frameHeight = _header->_boundingBox.height();
 	int centerX = x - frameWidth / 2;
 	int centerY = y - frameHeight / 2;
 
 	debugC(5, kDebugScript, "Movie::callMethod(): (%d) Moving movie center to (%d, %d)", _header->_id, x, y);
 	// Unlike the sprites, movie bounding boxes must be moved too.
-	_header->_boundingBox->moveTo(centerX, centerY);
+	_header->_boundingBox.moveTo(centerX, centerY);
 
 	// Mark the new location dirty.
 	for (MovieFrame *frame : _framesOnScreen) {
@@ -408,7 +407,7 @@ void Movie::spatialMoveTo(int x, int y) {
 	// Update the location and mark the new location dirty.
 	debugC(5, kDebugGraphics, "Movie::callMethod(): (%d) Moving movie to (%d, %d)", _header->_id, x, y);
 	// Unlike the sprites, movie bounding boxes must be moved too.
-	_header->_boundingBox->moveTo(x, y);
+	_header->_boundingBox.moveTo(x, y);
 
 	for (MovieFrame *frame : _framesOnScreen) {
 		Common::Rect bbox = getFrameBoundingBox(frame);
@@ -518,7 +517,7 @@ void Movie::redraw(Common::Rect &rect) {
 		Common::Rect areaToRedraw = bbox.findIntersectingRect(rect);
 		if (!areaToRedraw.isEmpty()) {
 			Common::Point originOnScreen(areaToRedraw.left, areaToRedraw.top);
-			areaToRedraw.translate(-frame->left() - _header->_boundingBox->left, -frame->top() - _header->_boundingBox->top);
+			areaToRedraw.translate(-frame->left() - _header->_boundingBox.left, -frame->top() - _header->_boundingBox.top);
 			areaToRedraw.clip(Common::Rect(0, 0, frame->width(), frame->height()));
 			g_engine->_screen->simpleBlitFrom(frame->_surface, areaToRedraw, originOnScreen);
 		}
@@ -527,13 +526,13 @@ void Movie::redraw(Common::Rect &rect) {
 
 Common::Rect Movie::getFrameBoundingBox(MovieFrame *frame) {
 	Common::Rect bbox = frame->boundingBox();
-	bbox.translate(_header->_boundingBox->left, _header->_boundingBox->top);
+	bbox.translate(_header->_boundingBox.left, _header->_boundingBox.top);
 	return bbox;
 }
 
 void Movie::readChunk(Chunk &chunk) {
 	// Individual chunks are "stills" and are stored in the first subfile.
-	uint sectionType = Datum(chunk).u.i;
+	uint sectionType = chunk.readTypedUint16();
 	switch ((MovieSectionType)sectionType) {
 	case kMovieFrameSection: {
 		debugC(5, kDebugLoading, "Movie::readStill(): Reading frame");
@@ -557,20 +556,18 @@ void Movie::readChunk(Chunk &chunk) {
 
 void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 	// READ THE METADATA FOR THE WHOLE MOVIE.
-	uint expectedRootSectionType = Datum(chunk).u.i;
+	uint expectedRootSectionType = chunk.readTypedUint16();
 	debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(expectedRootSectionType), static_cast<long long int>(chunk.pos()));
 	if (kMovieRootSection != (MovieSectionType)expectedRootSectionType) {
 		error("Expected ROOT section type, got 0x%x", expectedRootSectionType);
 	}
-	uint chunkCount = Datum(chunk).u.i;
-	debugC(5, kDebugLoading, "Movie::readSubfile(): chunkCount = 0x%x (@0x%llx)", chunkCount, static_cast<long long int>(chunk.pos()));
-
-	uint dataStartOffset = Datum(chunk).u.i;
-	debugC(5, kDebugLoading, "Movie::readSubfile(): dataStartOffset = 0x%x (@0x%llx)", dataStartOffset, static_cast<long long int>(chunk.pos()));
+	uint chunkCount = chunk.readTypedUint16();
+	double unk1 = chunk.readTypedDouble();
+	debugC(5, kDebugLoading, "Movie::readSubfile(): chunkCount = 0x%x, unk1 = %f (@0x%llx)", chunkCount, unk1, static_cast<long long int>(chunk.pos()));
 
 	Common::Array<uint> chunkLengths;
 	for (uint i = 0; i < chunkCount; i++) {
-		uint chunkLength = Datum(chunk).u.i;
+		uint chunkLength = chunk.readTypedUint32();
 		debugC(5, kDebugLoading, "Movie::readSubfile(): chunkLength = 0x%x (@0x%llx)", chunkLength, static_cast<long long int>(chunk.pos()));
 		chunkLengths.push_back(chunkLength);
 	}
@@ -587,7 +584,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 			warning("Movie::readSubfile(): (Frameset %d of %d) No animation chunks found (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		}
 		while (isAnimationChunk) {
-			uint sectionType = Datum(chunk).u.i;
+			uint sectionType = chunk.readTypedUint16();
 			debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 			switch (MovieSectionType(sectionType)) {
 			case kMovieFrameSection: {

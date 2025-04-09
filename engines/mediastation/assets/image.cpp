@@ -118,7 +118,7 @@ void Image::spatialHide() {
 }
 
 Common::Point Image::getLeftTop() {
-	return Common::Point(_header->_x + _header->_boundingBox->left + _xAdjust, _header->_y + _header->_boundingBox->top + _yAdjust);
+	return Common::Point(_header->_x + _header->_boundingBox.left + _xAdjust, _header->_y + _header->_boundingBox.top + _yAdjust);
 }
 
 void Image::readChunk(Chunk &chunk) {

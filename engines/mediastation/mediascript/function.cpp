@@ -19,18 +19,17 @@
  *
  */
 
-#include "mediastation/datum.h"
 #include "mediastation/mediascript/function.h"
 #include "mediastation/debugchannels.h"
 
 namespace MediaStation {
 
 Function::Function(Chunk &chunk) {
-	_fileId = Datum(chunk).u.i;
+	_fileId = chunk.readTypedUint16();
 	// In PROFILE._ST (only present in some titles), the function ID is reported
 	// with 19900 added, so function 100 would be reported as 20000. But in
 	// bytecode, the zero-based ID is used, so that's what we'll store here.
-	_id = Datum(chunk).u.i;
+	_id = chunk.readTypedUint16();
 	_code = new CodeChunk(chunk);
 }
 

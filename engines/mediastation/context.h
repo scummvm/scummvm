@@ -77,7 +77,7 @@ private:
 	// as it appears in the filename. For instance, the context in
 	// "100.cxt" would have file number 100.
 	uint _fileNumber = 0;
-	Common::String *_contextName = nullptr;
+	Common::String _contextName;
 
 	Common::HashMap<uint, Asset *> _assets;
 	Common::HashMap<uint, Function *> _functions;

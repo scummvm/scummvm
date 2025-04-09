@@ -25,8 +25,20 @@
 #include "common/file.h"
 #include "common/stream.h"
 #include "common/path.h"
+#include "common/rect.h"
+#include "common/str.h"
 
 namespace MediaStation {
+
+// The version number of this engine,
+// in the form 4.0r8 (major . minor r revision).
+struct VersionInfo {
+	uint16 major = 0;
+	uint16 minor = 0;
+	uint16 patch = 0;
+};
+
+typedef Common::Array<Common::Point> Polygon;
 
 // A Media Station datafile consists of one or more RIFF-style "subfiles". Aside
 // from some oddness at the start of the subfile, each subfile is basically
@@ -36,7 +48,62 @@ namespace MediaStation {
 //  - a000, where 000 is a string that represents a 3-digit hexadecimal number.
 //          Indicates a chunk that contains actor data (sounds and bitmaps).
 
-class Chunk : public Common::SeekableReadStream {
+enum DatumType {
+	kDatumTypeEmpty = 0x00,
+	kDatumTypeUint8 = 0x02,
+	kDatumTypeUint16 = 0x03,
+	kDatumTypeUint32 = 0x04,
+	kDatumTypeInt8 = 0x05,
+	kDatumTypeInt16 = 0x06,
+	kDatumTypeInt32 = 0x07,
+	kDatumTypeFloat = 0x08,
+	kDatumTypeDouble = 0x09,
+	kDatumTypeFilename = 0x0a,
+	kDatumTypeRect = 0x0d,
+	kDatumTypePoint = 0x0e,
+	kDatumTypeGraphicSize = 0x0f,
+	kDatumTypeGraphicUnit = 0x10,
+	kDatumTypeTime = 0x11,
+	kDatumTypeString = 0x12,
+	kDatumTypeVersion = 0x13,
+	kDatumTypeChunkReference = 0x1b,
+	kDatumTypePolygon = 0x1d,
+	kDatumTypePalette = 0x05aa
+};
+
+class ParameterReadStream : public Common::SeekableReadStream {
+public:
+	// Data files are internally little-endian, even on game versions targeting
+	// big-endian systems. The original engine has code for swapping byte order
+	// at runtime when needed. All of these internally assume the data files are
+	// stored little-endian on disk.
+	byte readTypedByte();
+	uint16 readTypedUint16();
+	uint32 readTypedUint32();
+	int8 readTypedSByte();
+	int16 readTypedSint16();
+	int32 readTypedSint32();
+	float readTypedFloat();
+	double readTypedDouble();
+	Common::String readTypedFilename();
+	Common::Rect readTypedRect();
+	Common::Point readTypedPoint();
+	Common::Point readTypedGraphicSize();
+	int16 readTypedGraphicUnit();
+	double readTypedTime();
+	Common::String readTypedString();
+	VersionInfo readTypedVersion();
+	uint32 readTypedChunkReference();
+	Polygon readTypedPolygon();
+	// PALETTE:
+	// u.palette = new unsigned char[0x300];
+	// chunk.read(u.palette, 0x300);
+
+private:
+	void readAndVerifyType(DatumType type);
+};
+
+class Chunk : public ParameterReadStream {
 public:
 	Chunk() = default;
 	Chunk(Common::SeekableReadStream *stream);

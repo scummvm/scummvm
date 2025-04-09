@@ -23,7 +23,6 @@
 #define MEDIASTATION_MEDIASCRIPT_CODECHUNK_H
 
 #include "common/array.h"
-#include "common/stream.h"
 
 #include "mediastation/datafile.h"
 #include "mediastation/mediascript/scriptvalue.h"
@@ -33,7 +32,7 @@ namespace MediaStation {
 
 class CodeChunk {
 public:
-	CodeChunk(Common::SeekableReadStream &chunk);
+	CodeChunk(Chunk &chunk);
 	~CodeChunk();
 
 	ScriptValue executeNextBlock();
@@ -68,7 +67,7 @@ private:
 	bool _returnImmediately = false;
 	Common::Array<ScriptValue> _locals;
 	Common::Array<ScriptValue> *_args = nullptr;
-	Common::SeekableReadStream *_bytecode = nullptr;
+	ParameterReadStream *_bytecode = nullptr;
 };
 
 } // End of namespace MediaStation

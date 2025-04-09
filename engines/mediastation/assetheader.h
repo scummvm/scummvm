@@ -172,8 +172,8 @@ public:
 	// These two are only used in movies.
 	ChunkReference _audioChunkReference = 0;
 	ChunkReference _animationChunkReference = 0;
-	Common::Rect *_boundingBox = nullptr;
-	Common::Array<Common::Point *> _mouseActiveArea;
+	Common::Rect _boundingBox;
+	Common::Array<Common::Point> _mouseActiveArea;
 	int _zIndex = 0;
 	uint32 _assetReference = 0;
 	uint32 _startup = 0;
@@ -188,7 +188,7 @@ public:
 	bool _getOffstageEvents = 0;
 	uint32 _x = 0; // Image only.
 	uint32 _y = 0; // Image only.
-	Common::String *_name = nullptr;
+	Common::String _name;
 	uint32 _stageId = 0;
 	SoundEncoding _soundEncoding;
 	uint32 _chunkCount = 0;
@@ -196,8 +196,8 @@ public:
 
 	// PATH FIELDS.
 	uint32 _dissolveFactor = 0;
-	Common::Point *_startPoint = nullptr;
-	Common::Point *_endPoint = nullptr;
+	Common::Point _startPoint;
+	Common::Point _endPoint;
 	uint32 _stepRate = 0;
 	uint32 _duration = 0;
 	uint _totalSteps = 0;
@@ -210,7 +210,7 @@ public:
 	Common::Array<EventHandler *> _loadCompleteHandlers;
 
 	// TEXT FIELDS.
-	Common::String *_text = nullptr;
+	Common::String _text;
 	uint _maxTextLength = 0;
 	uint _fontAssetId = 0;
 	TextJustification _justification;
@@ -219,7 +219,6 @@ public:
 
 private:
 	void readSection(AssetHeaderSectionType sectionType, Chunk &chunk);
-	AssetHeaderSectionType getSectionType(Chunk &chunk);
 };
 
 } // End of namespace MediaStation

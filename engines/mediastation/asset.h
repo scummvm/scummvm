@@ -71,10 +71,10 @@ public:
 
 	AssetType type() const;
 	int zIndex() const;
+	Common::Rect getBbox() const;
 	AssetHeader *getHeader() const {
 		return _header;
 	}
-	Common::Rect *getBbox();
 
 protected:
 	AssetHeader *_header = nullptr;

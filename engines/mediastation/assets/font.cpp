@@ -43,9 +43,9 @@ ScriptValue Font::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> 
 
 void Font::readChunk(Chunk &chunk) {
 	debugC(5, kDebugLoading, "Font::readChunk(): Reading font glyph (@0x%llx)", static_cast<long long int>(chunk.pos()));
-	uint asciiCode = Datum(chunk).u.i;
-	int unk1 = Datum(chunk).u.i;
-	int unk2 = Datum(chunk).u.i;
+	uint asciiCode = chunk.readTypedUint16();
+	int unk1 = chunk.readTypedUint16();
+	int unk2 = chunk.readTypedUint16();
 	BitmapHeader *header = new BitmapHeader(chunk);
 	FontGlyph *glyph = new FontGlyph(chunk, asciiCode, unk1, unk2, header);
 	if (_glyphs.getValOrDefault(asciiCode) != nullptr) {

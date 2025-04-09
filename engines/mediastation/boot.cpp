@@ -20,25 +20,9 @@
  */
 
 #include "mediastation/boot.h"
-#include "mediastation/datum.h"
 #include "mediastation/debugchannels.h"
 
 namespace MediaStation {
-
-#pragma region VersionInfo
-VersionInfo::VersionInfo(Chunk &chunk) {
-	_majorVersion = Datum(chunk, kDatumTypeUint16).u.i;
-	_minorVersion = Datum(chunk, kDatumTypeUint16).u.i;
-	_revision = Datum(chunk, kDatumTypeUint16).u.i;
-	string = Datum(chunk, kDatumTypeString).u.string;
-}
-
-VersionInfo::~VersionInfo() {
-	if (string != nullptr) {
-		delete string;
-	}
-}
-#pragma endregion
 
 #pragma region ContextDeclaration
 ContextDeclaration::ContextDeclaration(Chunk &chunk) {
@@ -56,7 +40,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 		// Read the file number.
 		sectionType = getSectionType(chunk);
 		if (kContextDeclarationFileNumber1 == sectionType) {
-			_fileNumber = Datum(chunk).u.i;
+			_fileNumber = chunk.readTypedUint16();
 		} else {
 			error("ContextDeclaration(): Expected section type FILE_NUMBER_1, got 0x%x", static_cast<uint>(sectionType));
 		}
@@ -64,7 +48,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 		// Is it just for data integrity, or is there some other reason?
 		sectionType = getSectionType(chunk);
 		if (kContextDeclarationFileNumber2 == sectionType) {
-			uint32 repeatedFileNumber = Datum(chunk).u.i;
+			uint32 repeatedFileNumber = chunk.readTypedUint16();
 			if (repeatedFileNumber != _fileNumber) {
 				warning("ContextDeclaration(): Expected file numbers to match, but 0x%d != 0x%d", _fileNumber, repeatedFileNumber);
 			}
@@ -81,7 +65,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 		int rewindOffset = chunk.pos();
 		sectionType = getSectionType(chunk);
 		if (kContextDeclarationName == sectionType) {
-			_contextName = Datum(chunk, kDatumTypeString).u.string;
+			_contextName = chunk.readTypedString();
 		} else {
 			// There is no context name.
 			// We have instead read into the next declaration, so let's undo that.
@@ -99,7 +83,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 	int rewindOffset = 0;
 	sectionType = getSectionType(chunk);
 	while (kContextDeclarationFileReference == sectionType) {
-		int fileReference = Datum(chunk).u.i;
+		int fileReference = chunk.readTypedUint16();
 		_fileReferences.push_back(fileReference);
 		rewindOffset = chunk.pos();
 		sectionType = getSectionType(chunk);
@@ -108,14 +92,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 }
 
 ContextDeclarationSectionType ContextDeclaration::getSectionType(Chunk &chunk) {
-	Datum datum = Datum(chunk, kDatumTypeUint16);
-	ContextDeclarationSectionType sectionType = static_cast<ContextDeclarationSectionType>(datum.u.i);
-	return sectionType;
-}
-
-ContextDeclaration::~ContextDeclaration() {
-	delete _contextName;
-	_contextName = nullptr;
+	return static_cast<ContextDeclarationSectionType>(chunk.readTypedUint16());
 }
 #pragma endregion
 
@@ -133,13 +110,13 @@ UnknownDeclaration::UnknownDeclaration(Chunk &chunk) {
 
 	sectionType = getSectionType(chunk);
 	if (kUnknownDeclarationUnk1 == sectionType) {
-		_unk = Datum(chunk, kDatumTypeUint16).u.i;
+		_unk = chunk.readTypedUint16();
 	} else {
 		error("UnknownDeclaration(): Expected section type UNK_1, got 0x%x", static_cast<uint>(sectionType));
 	}
 	sectionType = getSectionType(chunk);
 	if (kUnknownDeclarationUnk2 == sectionType) {
-		uint16 repeatedUnk = Datum(chunk, kDatumTypeUint16).u.i;
+		uint16 repeatedUnk = chunk.readTypedUint16();
 		if (repeatedUnk != _unk) {
 			warning("UnknownDeclaration(): Expected unknown values to match, but 0x%x != 0x%x", _unk, repeatedUnk);
 		}
@@ -149,9 +126,7 @@ UnknownDeclaration::UnknownDeclaration(Chunk &chunk) {
 }
 
 UnknownDeclarationSectionType UnknownDeclaration::getSectionType(Chunk &chunk) {
-	Datum datum = Datum(chunk, kDatumTypeUint16);
-	UnknownDeclarationSectionType sectionType = static_cast<UnknownDeclarationSectionType>(datum.u.i);
-	return sectionType;
+	return static_cast<UnknownDeclarationSectionType>(chunk.readTypedUint16());
 }
 #pragma endregion
 
@@ -170,7 +145,7 @@ FileDeclaration::FileDeclaration(Chunk &chunk) {
 	// Read the file ID.
 	sectionType = getSectionType(chunk);
 	if (kFileDeclarationFileId == sectionType) {
-		_id = Datum(chunk, kDatumTypeUint16).u.i;
+		_id = chunk.readTypedUint16();
 	} else {
 		error("FileDeclaration(): Expected section type FILE_ID, got 0x%x", static_cast<uint>(sectionType));
 	}
@@ -178,9 +153,7 @@ FileDeclaration::FileDeclaration(Chunk &chunk) {
 	// Read the intended file location.
 	sectionType = getSectionType(chunk);
 	if (kFileDeclarationFileNameAndType == sectionType) {
-		Datum datum = Datum(chunk, kDatumTypeUint16);
-		// TODO: Verify we actually read a valid enum member.
-		_intendedLocation = static_cast<IntendedFileLocation>(datum.u.i);
+		_intendedLocation = static_cast<IntendedFileLocation>(chunk.readTypedUint16());
 	} else {
 		error("FileDeclaration(): Expected section type FILE_NAME_AND_TYPE, got 0x%x", static_cast<uint>(sectionType));
 	}
@@ -188,18 +161,11 @@ FileDeclaration::FileDeclaration(Chunk &chunk) {
 	// Since the platforms that Media Station originally targeted were case-insensitive,
 	// the case of these filenames might not match the case of the files actually in
 	// the directory. All files should be matched case-insensitively.
-	_name = Datum(chunk, kDatumTypeFilename).u.string;
+	_name = chunk.readTypedFilename();
 }
 
 FileDeclarationSectionType FileDeclaration::getSectionType(Chunk &chunk) {
-	Datum datum = Datum(chunk, kDatumTypeUint16);
-	FileDeclarationSectionType sectionType = static_cast<FileDeclarationSectionType>(datum.u.i);
-	return sectionType;
-}
-
-FileDeclaration::~FileDeclaration() {
-	delete _name;
-	_name = nullptr;
+	return static_cast<FileDeclarationSectionType>(chunk.readTypedUint16());
 }
 #pragma endregion
 
@@ -218,7 +184,7 @@ SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
 	// Read the asset ID.
 	sectionType = getSectionType(chunk);
 	if (kSubfileDeclarationAssetId == sectionType) {
-		_assetId = Datum(chunk, kDatumTypeUint16).u.i;
+		_assetId = chunk.readTypedUint16();
 	} else {
 		error("SubfileDeclaration(): Expected section type ASSET_ID, got 0x%x", static_cast<uint>(sectionType));
 	}
@@ -226,7 +192,7 @@ SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
 	// Read the file ID.
 	sectionType = getSectionType(chunk);
 	if (kSubfileDeclarationFileId == sectionType) {
-		_fileId = Datum(chunk, kDatumTypeUint16).u.i;
+		_fileId = chunk.readTypedUint16();
 	} else {
 		error("SubfileDeclaration(): Expected section type FILE_ID, got 0x%x", static_cast<uint>(sectionType));
 	}
@@ -234,40 +200,24 @@ SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
 	// Read the start offset from the absolute start of the file.
 	sectionType = getSectionType(chunk);
 	if (kSubfileDeclarationStartOffset == sectionType) {
-		_startOffsetInFile = Datum(chunk, kDatumTypeUint32).u.i;
+		_startOffsetInFile = chunk.readTypedUint32();
 	} else {
 		error("SubfileDeclaration(): Expected section type START_OFFSET, got 0x%x", static_cast<uint>(sectionType));
 	}
 }
 
 SubfileDeclarationSectionType SubfileDeclaration::getSectionType(Chunk &chunk) {
-	Datum datum = Datum(chunk, kDatumTypeUint16);
-	SubfileDeclarationSectionType sectionType = static_cast<SubfileDeclarationSectionType>(datum.u.i);
-	return sectionType;
+	return static_cast<SubfileDeclarationSectionType>(chunk.readTypedUint16());
 }
 #pragma endregion
 
 #pragma region CursorDeclaration
 CursorDeclaration::CursorDeclaration(Chunk& chunk) {
-	uint16 unk1 = Datum(chunk, kDatumTypeUint16).u.i; // Always 0x0001
-	_id = Datum(chunk, kDatumTypeUint16).u.i;
-	_unk = Datum(chunk, kDatumTypeUint16).u.i;
-	_name = Datum(chunk, kDatumTypeFilename).u.string;
-	debugC(5, kDebugLoading, " - CursorDeclaration(): unk1 = 0x%x, id = 0x%x, unk = 0x%x, name = %s", unk1, _id, _unk, _name->c_str());
-}
-
-CursorDeclaration::~CursorDeclaration() {
-	delete _name;
-	_name = nullptr;
-}
-#pragma endregion
-
-#pragma region Engine Resource Declaration
-EngineResourceDeclaration::EngineResourceDeclaration(Common::String *resourceName, int resourceId) : _resourceName(resourceName), _resourceId(resourceId) {}
-
-EngineResourceDeclaration::~EngineResourceDeclaration() {
-	delete _resourceName;
-	_resourceName = nullptr;
+	uint16 unk1 = chunk.readTypedUint16(); // Always 0x0001
+	_id = chunk.readTypedUint16();
+	_unk = chunk.readTypedUint16();
+	_name = chunk.readTypedFilename();
+	debugC(5, kDebugLoading, " - CursorDeclaration(): unk1 = 0x%x, id = 0x%x, unk = 0x%x, name = %s", unk1, _id, _unk, _name.c_str());
 }
 #pragma endregion
 
@@ -276,7 +226,7 @@ Boot::Boot(const Common::Path &path) : Datafile(path){
 	Subfile subfile = getNextSubfile();
 	Chunk chunk = subfile.nextChunk();
 
-	uint32 beforeSectionTypeUnk = Datum(chunk, kDatumTypeUint16).u.i; // Usually 0x0001
+	uint32 beforeSectionTypeUnk = chunk.readTypedUint16(); // Usually 0x0001
 	debugC(5, kDebugLoading, "Boot::Boot(): unk1 = 0x%x", beforeSectionTypeUnk);
 
 	BootSectionType sectionType = getSectionType(chunk);
@@ -285,36 +235,36 @@ Boot::Boot(const Common::Path &path) : Datafile(path){
 		debugC(5, kDebugLoading, "Boot::Boot(): sectionType = 0x%x", static_cast<uint>(sectionType));
 		switch (sectionType) {
 		case kBootVersionInformation: {
-			_gameTitle = Datum(chunk, kDatumTypeString).u.string;
-			debugC(5, kDebugLoading, " - gameTitle = %s", _gameTitle->c_str());
-			uint32 unk = chunk.readUint16LE();
-			debugC(5, kDebugLoading, " - unk = 0x%x", unk);
-			_versionInfo = new VersionInfo(chunk);
-			debugC(5, kDebugLoading, " - versionInfo = %d.%d.%d (%s)", _versionInfo->_majorVersion, _versionInfo->_minorVersion, _versionInfo->_revision, _versionInfo->string->c_str());
-			_sourceString = Datum(chunk, kDatumTypeString).u.string;
-			debugC(5, kDebugLoading, " - sourceString = %s", _sourceString->c_str());
+			_gameTitle = chunk.readTypedString();
+			debugC(5, kDebugLoading, " - gameTitle = %s", _gameTitle.c_str());
+			_versionInfo = chunk.readTypedVersion();
+			_engineInfo = chunk.readTypedString();
+			debugC(5, kDebugLoading, " - versionInfo = %d.%d.%d (%s)",
+				_versionInfo.major, _versionInfo.minor, _versionInfo.patch, _engineInfo.c_str());
+			_sourceString = chunk.readTypedString();
+			debugC(5, kDebugLoading, " - sourceString = %s", _sourceString.c_str());
 			break;
 		}
 
 		case kBootUnk1:
 		case kBootUnk2:
 		case kBootUnk3: {
-			uint32 unk = Datum(chunk).u.i;
+			uint unk = chunk.readTypedUint16();
 			debugC(5, kDebugLoading, " - unk = 0x%x", unk);
 			break;
 		}
 
 		case kBootUnk4: {
-			double unk = Datum(chunk).u.f;
+			double unk = chunk.readTypedTime();
 			debugC(5, kDebugLoading, " - unk = %f", unk);
 			break;
 		}
 
 		case kBootEngineResource: {
-			Common::String *resourceName = Datum(chunk, kDatumTypeString).u.string;
+			Common::String resourceName = chunk.readTypedString();
 			sectionType = getSectionType(chunk);
 			if (sectionType == kBootEngineResourceId) {
-				int resourceId = Datum(chunk).u.i;
+				int resourceId = chunk.readTypedUint16();
 				EngineResourceDeclaration *resourceDeclaration = new EngineResourceDeclaration(resourceName, resourceId);
 				_engineResourceDeclarations.setVal(resourceId, resourceDeclaration);
 			} else {
@@ -385,26 +335,26 @@ Boot::Boot(const Common::Path &path) : Datafile(path){
 		}
 
 		case kBootEntryScreen: {
-			_entryContextId = Datum(chunk).u.i;
+			_entryContextId = chunk.readTypedUint16();
 			debugC(5, kDebugLoading, " - _entryContextId = %d", _entryContextId);
 			break;
 		}
 
 		case kBootAllowMultipleSounds: {
-			_allowMultipleSounds = (Datum(chunk).u.i == 1);
+			_allowMultipleSounds = (chunk.readTypedByte() == 1);
 			debugC(5, kDebugLoading, " - _allowMultipleSounds = %d", _allowMultipleSounds);
 			break;
 		}
 
 		case kBootAllowMultipleStreams: {
-			_allowMultipleStreams = (Datum(chunk).u.i == 1);
+			_allowMultipleStreams = (chunk.readTypedByte() == 1);
 			debugC(5, kDebugLoading, " - _allowMultipleStreams = %d", _allowMultipleStreams);
 			break;
 		}
 
 		case kBootUnk5: {
-			uint32 unk1 = Datum(chunk).u.i;
-			uint32 unk2 = Datum(chunk).u.i;
+			uint32 unk1 = chunk.readTypedUint16();
+			uint32 unk2 = chunk.readTypedUint16();
 			debugC(5, kDebugLoading, " - unk1 = 0x%x, unk2 = 0x%x", unk1, unk2);
 			break;
 		}
@@ -419,21 +369,10 @@ Boot::Boot(const Common::Path &path) : Datafile(path){
 }
 
 BootSectionType Boot::getSectionType(Chunk &chunk) {
-	Datum datum = Datum(chunk, kDatumTypeUint16);
-	BootSectionType sectionType = static_cast<BootSectionType>(datum.u.i);
-	return sectionType;
+	return static_cast<BootSectionType>(chunk.readTypedUint16());
 }
 
 Boot::~Boot() {
-	delete _gameTitle;
-	_gameTitle = nullptr;
-
-	delete _versionInfo;
-	_versionInfo = nullptr;
-
-	delete _sourceString;
-	_sourceString = nullptr;
-
 	for (auto it = _contextDeclarations.begin(); it != _contextDeclarations.end(); ++it) {
 		delete it->_value;
 	}

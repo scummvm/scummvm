@@ -56,11 +56,11 @@ ScriptValue Text::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> 
 	}
 }
 
-Common::String *Text::text() const {
+Common::String Text::text() const {
 	return _header->_text;
 }
 
-void Text::setText(Common::String *text) {
+void Text::setText(Common::String text) {
 	error("Text::setText(): Setting text not implemented yet");
 }
 
