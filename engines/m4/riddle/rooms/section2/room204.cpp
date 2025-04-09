@@ -993,7 +993,6 @@ done:
 }
 
 void Room204::daemon() {
-	warning("Trigger %d", _G(kernel).trigger);
 	switch (_G(kernel).trigger) {
 	case 5:
 		digi_play("204r47", 1, 255, -1, -1);
