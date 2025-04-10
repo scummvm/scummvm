@@ -45,7 +45,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 } // End of namespace Awe
 
 const char *AweMetaEngine::getName() const {
-	return "xyzzy";
+	return "awe";
 }
 
 const ADExtraGuiOptionsMap *AweMetaEngine::getAdvancedExtraGuiOptions() const {
