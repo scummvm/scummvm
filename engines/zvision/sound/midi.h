@@ -41,22 +41,22 @@ public:
 
 	int8 getFreeChannel();  //Negative if none available
 	bool isAvailable() {
-		return available;
+		return _available;
 	};
 
 protected:
-	bool available = false;
-	bool mt32workaround = false;
+	bool _available = false;
+	bool _mt32 = false;
 	struct chan {
 		bool playing;
 		uint8 note;
 		chan() : playing(false), note(0) {};
 	};
 	void send(uint8 status, uint8 data1 = 0x00, uint8 data2 = 0x00);
-	uint8 startChannel = 0;
-	uint8 maxChannels = 16;
+	uint8 _startChannel = 0;
+	uint8 _maxChannels = 16;
 	MidiDriver *_driver;
-	chan activeChannels[16];
+	chan _activeChannels[16];
 };
 
 }

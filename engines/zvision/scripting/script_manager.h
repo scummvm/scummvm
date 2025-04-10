@@ -182,10 +182,10 @@ private:
 
 	EventList _controlEvents;
 
-	ScriptScope universe;
-	ScriptScope world;
-	ScriptScope room;
-	ScriptScope nodeview;
+	ScriptScope _universe;
+	ScriptScope _world;
+	ScriptScope _room;
+	ScriptScope _nodeview;
 
 	/** Holds the currently active timers, musics, other */
 	SideFXList _activeSideFx;
@@ -381,8 +381,8 @@ public:
 	ValueSlot(ScriptManager *scriptManager, const char *slotValue);
 	int16 getValue();
 private:
-	int16 value;
-	bool slot;
+	int16 _value;
+	bool _slot;
 	ScriptManager *_scriptManager;
 };
 

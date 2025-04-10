@@ -32,55 +32,55 @@ namespace ZVision {
 class FilterPixel {
 public:
 	//Bitfields representing sequential direction of contraction
-	bool xDir = 0; //0 left, 1 right
-	bool yDir = 0; //0 up, 1 down
-	Common::Rect Src = Common::Rect(0, 0); //Coordinates of four panorama image pixels around actual working window pixel
+	bool _xDir = 0; //0 left, 1 right
+	bool _yDir = 0; //0 up, 1 down
+	Common::Rect _Src = Common::Rect(0, 0); //Coordinates of four panorama image pixels around actual working window pixel
 
-	float fX, fY, fTL, fTR, fBL, fBR;
+	float _fX, _fY, _fTL, _fTR, _fBL, _fBR;
 
 //  bool _printDebug = false;
 
 	FilterPixel() {};
 //  FilterPixel(float x, float y, bool highQuality=false, bool printDebug=false) {
 	FilterPixel(float x, float y, bool highQuality = false) {
-		Src.left = int16(floor(x));
-		Src.right = int16(ceil(x));
-		Src.top = int16(floor(y));
-		Src.bottom = int16(ceil(y));
+		_Src.left = int16(floor(x));
+		_Src.right = int16(ceil(x));
+		_Src.top = int16(floor(y));
+		_Src.bottom = int16(ceil(y));
 		/*
 		      _printDebug = printDebug;
 		    if(_printDebug)
 		      debug(5,"\tTarget pixel offset: %f, %f", x, y);
 		*/
 		if (highQuality) {
-			fX = x - (float)Src.left;
-			fY = y - (float)Src.top;
-			fTL = (1 - fX) * (1 - fY);
-			fTR = fX * (1 - fY);
-			fBL = (1 - fX) * fY;
-			fBR = fX * fY;
+			_fX = x - (float)_Src.left;
+			_fY = y - (float)_Src.top;
+			_fTL = (1 - _fX) * (1 - _fY);
+			_fTR = _fX * (1 - _fY);
+			_fBL = (1 - _fX) * _fY;
+			_fBR = _fX * _fY;
 			/*
 			      if(_printDebug)
-			        debug(5,"fX: %f, fY: %f, fTL:%f, fTR:%f, fBL:%f, fBR:%f", fX, fY, fTL, fTR, fBL, fBR);
+			        debug(5,"_fX: %f, _fY: %f, _fTL:%f, _fTR:%f, _fBL:%f, _fBR:%f", _fX, _fY, _fTL, _fTR, _fBL, _fBR);
 			*/
 		} else {
 			//Nearest neighbour
-			xDir = (x - Src.left) > 0.5f;
-			yDir = (y - Src.top) > 0.5f;
+			_xDir = (x - _Src.left) > 0.5f;
+			_yDir = (y - _Src.top) > 0.5f;
 			/*
 			      if(_printDebug)
-			        debug(5,"\tNearest neighbour, xDir: 0x%X, yDir: 0x%X", xDir, yDir);
+			        debug(5,"\tNearest neighbour, _xDir: 0x%X, _yDir: 0x%X", _xDir, _yDir);
 			*/
 		}
 	};
 	~FilterPixel() {};
 	inline void flipH() {
-		Src.left = -Src.left;
-		Src.right = -Src.right;
+		_Src.left = -_Src.left;
+		_Src.right = -_Src.right;
 	};
 	inline void flipV() {
-		Src.top = -Src.top;
-		Src.bottom = -Src.bottom;
+		_Src.top = -_Src.top;
+		_Src.bottom = -_Src.bottom;
 	};
 };
 
@@ -101,19 +101,19 @@ public:
 private:
 	ZVision *_engine;
 	OSystem *_system;
-	uint _numRows, _numColumns, halfRows, halfColumns; //Working area width, height; half width, half height, in whole pixels
-	float halfWidth, halfHeight;  //Centre axis to midpoint of outermost pixel
+	uint _numRows, _numColumns, _halfRows, _halfColumns; //Working area width, height; half width, half height, in whole pixels
+	float _halfWidth, _halfHeight;  //Centre axis to midpoint of outermost pixel
 	FilterPixel *_internalBuffer;
 	RenderState _renderState;
 	bool _highQuality = false;
 	const Graphics::PixelFormat _pixelFormat;
 
-	uint32 index;
-	uint32 sourceOffset, destOffset;
-	uint32 srcIndexXL, srcIndexXR, srcIndexYT, srcIndexYB;
-	uint32 rTL, rTR, rBL, rBR, rF;
-	uint32 gTL, gTR, gBL, gBR, gF;
-	uint32 bTL, bTR, bBL, bBR, bF;
+	uint32 _index;
+	uint32 _sourceOffset, _destOffset;
+	uint32 _srcIndexXL, _srcIndexXR, _srcIndexYT, _srcIndexYB;
+	uint32 _rTL, _rTR, _rBL, _rBR, _rF;
+	uint32 _gTL, _gTR, _gBL, _gBR, _gF;
+	uint32 _bTL, _bTR, _bBL, _bBR, _bF;
 
 	inline void splitColor(uint16 &color, uint32 &r, uint32 &g, uint32 &b) {
 		//NB Left & right shifting unnecessary for interpolating & recombining, so not bothering in order to save cycles
