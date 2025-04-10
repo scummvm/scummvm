@@ -2392,7 +2392,9 @@ bool qdGameDispatcher::keyboard_handler(Common::KeyCode vkey, bool event) {
 	}
 
 	if (event) {
-		if (_interface_dispatcher.keyboard_handler(vkey))
+		// TODO
+		// Find and check against the real cutoff date
+		if (g_engine->_gameVersion > 20060715 && _interface_dispatcher.keyboard_handler(vkey))
 			return true;
 
 		switch (vkey) {
