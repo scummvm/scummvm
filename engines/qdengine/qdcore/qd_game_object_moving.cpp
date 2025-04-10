@@ -2309,10 +2309,8 @@ bool qdGameObjectMoving::del_coll_pts(Std::list<Vect2i> &path) const {
 }
 
 // Вспомогательная функция - пытается спрямить отрезок пути из четырех точек, начиная с cur
-/*
-bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> path,
-                                                     const Std::list<Vect2i>::iterator cur) const
-{
+
+bool qdGameObjectMoving::four_pts_eight_dir_straight_old(Std::list<Vect2i> path, const Std::list<Vect2i>::iterator cur) const {
     // Извлекаем четыре точки
     Vect2i pts[4];
     Std::list<Vect2i>::iterator buf = cur;
@@ -2323,6 +2321,9 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> path,
         ++buf;
     }
     // Проверяем - является ли четверка точек "вытянутым зигзагом"
+
+	const double SQRT_2_DIV_2 = 0.7071067811865475244;
+
     if ((fabs(vec_cos(pts[1] - pts[0], pts[2] - pts[1]) - SQRT_2_DIV_2) > 0.0001) ||
         (fabs(vec_cos(pts[2] - pts[1], pts[3] - pts[2]) - SQRT_2_DIV_2) > 0.0001) ||
         !coll(pts[1] - pts[0], pts[3] - pts[2]))
@@ -2353,7 +2354,6 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> path,
 
     return false;
 }
-*/
 
 bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> &path, Std::list<Vect2i>::reverse_iterator cur) const {
 	// Извлекаем четыре точки
