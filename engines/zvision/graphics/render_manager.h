@@ -62,7 +62,7 @@ private:
 	const Graphics::PixelFormat _pixelFormat;
 	const ScreenLayout _layout;
 	bool _hiRes = false;
-	Graphics::FrameLimiter frameLimiter;
+	Graphics::FrameLimiter _frameLimiter;
 
 	/**
 	 * A Rectangle representing the screen/window resolution.
@@ -155,7 +155,7 @@ private:
 	EffectsList _effects;
 
 	//Pointer to currently active backbuffer output surface
-	Graphics::Surface *outputSurface;
+	Graphics::Surface *_outputSurface;
 
 	bool _doubleFPS;
 	bool _widescreen;

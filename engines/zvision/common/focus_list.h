@@ -27,60 +27,60 @@
 template<typename T>
 class FocusList {
 private:
-	Common::Array<T> focus;
-	typedef uint _size_type;  //TODO - find a way to make this typedef inherit from the definition in Common::Array
+	Common::Array<T> _focus;
+	typedef uint SizeType;  //TODO - find a way to make this typedef inherit from the definition in Common::Array
 public:
 	void set(T currentFocus) {
-		if (!focus.size())
-			focus.push_back(currentFocus);
+		if (!_focus.size())
+			_focus.push_back(currentFocus);
 		else {
-			if (focus.front() != currentFocus) {
+			if (_focus.front() != currentFocus) {
 				Common::Array<T> buffer;
-				while (focus.size() > 0) {
-					if (focus.back() != currentFocus)
-						buffer.push_back(focus.back());
-					focus.pop_back();
+				while (_focus.size() > 0) {
+					if (_focus.back() != currentFocus)
+						buffer.push_back(_focus.back());
+					_focus.pop_back();
 				}
-				focus.push_back(currentFocus);
+				_focus.push_back(currentFocus);
 				while (buffer.size() > 0) {
-					focus.push_back(buffer.back());
+					_focus.push_back(buffer.back());
 					buffer.pop_back();
 				}
 			}
 		}
 	}
 
-	T get(_size_type idx = 0) {
-		return focus[idx];
+	T get(SizeType idx = 0) {
+		return _focus[idx];
 	}
 
 	T front() {
-		return focus.front();
+		return _focus.front();
 	}
 
-	T &operator[](_size_type idx) {
-		assert(idx < focus.size());
-		return focus[idx];
+	T &operator[](SizeType idx) {
+		assert(idx < _focus.size());
+		return _focus[idx];
 	}
 
-	_size_type size() {
-		return focus.size();
+	SizeType size() {
+		return _focus.size();
 	}
 
 	void clear() {
-		focus.clear();
+		_focus.clear();
 	}
 
 	void remove(T value) {
-		if (focus.size()) {
+		if (_focus.size()) {
 			Common::Array<T> buffer;
-			while (focus.size() > 0) {
-				if (focus.back() != value)
-					buffer.push_back(focus.back());
-				focus.pop_back();
+			while (_focus.size() > 0) {
+				if (_focus.back() != value)
+					buffer.push_back(_focus.back());
+				_focus.pop_back();
 			}
 			while (buffer.size() > 0) {
-				focus.push_back(buffer.back());
+				_focus.push_back(buffer.back());
 				buffer.pop_back();
 			}
 		}

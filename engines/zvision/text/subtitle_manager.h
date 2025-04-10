@@ -44,14 +44,14 @@ public:
 protected:
 	virtual bool process(int32 deltatime);  //Return true if to be deleted
 	ZVision *_engine;
-	Common::Rect r;
-	Common::String txt;
-	int16  timer; //Always in milliseconds; countdown to deletion
-	bool todelete;
-	bool redraw;
+	Common::Rect _textArea;
+	//Common::String _txt;
+	int16 _timer; //Always in milliseconds; countdown to deletion
+	bool _toDelete;
+	bool _redraw;
 
-	int16 lineId;
-	struct line {
+	int16 _lineId;
+	struct Line {
 		int start;
 		int stop;
 		Common::String subStr;
@@ -62,7 +62,7 @@ protected:
 	//AVI videos run at 15fps and can have frames counted directly
 	//DVD videos in VOB format run at 29.97 fps and must be converted to work with the subtitle files, which were made for AVI.
 
-	Common::Array<line> _lines;
+	Common::Array<Line> _lines;
 };
 
 class AutomaticSubtitle : public Subtitle {
@@ -87,7 +87,7 @@ private:
 	const Graphics::PixelFormat _pixelFormat;
 	const Common::Point _textOffset;  //Position vector of text area origin relative to working window origin
 	const Common::Rect _textArea;
-	bool redraw;
+	bool _redraw;
 	bool _doubleFPS;
 	// Internal subtitle ID counter
 	uint16 _subId;

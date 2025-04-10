@@ -37,15 +37,15 @@ public:
 	bool isMoving();
 	int16 getPos();
 
-	int16 Pos;
-	int16 prevPos;
+	int16 _pos;
+	int16 _prevPos;
 
 private:
 	bool _active = false;
-	bool moving = false;
+	bool _moving = false;
 	const int16 _activePos;
 	const int16 _idlePos;
-	const int16 deltaPos;
+	const int16 _deltaPos;
 	const int16 _period;
 };
 
@@ -57,10 +57,11 @@ public:
 	bool update(uint32 deltatime);  //Calculate updated position of scrolled graphics; return true if redraw is necessary.
 	void setActive(bool active);
 	bool isMoving();
-	Common::Point Pos;
+	
+	Common::Point _pos;
 
 private:
-	LinearScroller Xscroller, Yscroller;
+	LinearScroller _xScroller, _yScroller;
 };
 
 } // End of namespace ZVision

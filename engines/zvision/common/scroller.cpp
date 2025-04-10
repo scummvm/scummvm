@@ -24,11 +24,11 @@
 namespace ZVision {
 
 LinearScroller::LinearScroller(const int16 activePos, const int16 idlePos, const int16 period) :
-	Pos(idlePos),
-	prevPos(idlePos),
+	_pos(idlePos),
+	_prevPos(idlePos),
 	_activePos(activePos),
 	_idlePos(idlePos),
-	deltaPos((int16)(activePos - idlePos)),
+	_deltaPos((int16)(activePos - idlePos)),
 	_period(period) {
 }
 
@@ -36,7 +36,7 @@ LinearScroller::~LinearScroller() {
 }
 
 bool LinearScroller::update(uint32 deltatime) {
-	prevPos = Pos;
+	_prevPos = _pos;
 	if (_period != 0) {
 		int16 targetPos;
 		float dPos = 0;
@@ -44,10 +44,10 @@ bool LinearScroller::update(uint32 deltatime) {
 			targetPos = _activePos;
 		else
 			targetPos = _idlePos;
-		if (Pos != targetPos) {
-			dPos = (float)((int32)deltatime * (int32)deltaPos) / _period;
+		if (_pos != targetPos) {
+			dPos = (float)((int32)deltatime * (int32)_deltaPos) / _period;
 			if ((int16)dPos == 0) {
-				if (deltaPos > 0)
+				if (_deltaPos > 0)
 					dPos = 1;
 				else
 					dPos = -1;
@@ -55,23 +55,23 @@ bool LinearScroller::update(uint32 deltatime) {
 		}
 		if (!_active)
 			dPos = -dPos;
-		Pos += (int16)dPos;
-		if ((dPos == 0) || ((dPos > 0) && (Pos > targetPos)) || ((dPos < 0) && (Pos < targetPos)))
-			Pos = targetPos;
-		moving = (Pos != targetPos);
+		_pos += (int16)dPos;
+		if ((dPos == 0) || ((dPos > 0) && (_pos > targetPos)) || ((dPos < 0) && (_pos < targetPos)))
+			_pos = targetPos;
+		_moving = (_pos != targetPos);
 	} else {
 		if (_active)
-			Pos = _activePos;
+			_pos = _activePos;
 		else
-			Pos = _idlePos;
-		moving = false;
+			_pos = _idlePos;
+		_moving = false;
 	}
-	return (Pos != prevPos);  //True if redraw necessary
+	return (_pos != _prevPos);  //True if redraw necessary
 }
 
 void LinearScroller::reset() {
 	setActive(false);
-	Pos = _idlePos;
+	_pos = _idlePos;
 }
 
 void LinearScroller::setActive(bool active) {
@@ -79,43 +79,43 @@ void LinearScroller::setActive(bool active) {
 }
 
 bool LinearScroller::isMoving() {
-	return moving;
+	return _moving;
 }
 
 
 Scroller::Scroller(const Common::Point &activePos, const Common::Point &idlePos, int16 period) :
-	Xscroller(activePos.x, idlePos.x, period),
-	Yscroller(activePos.y, idlePos.y, period) {
-	Pos.x = Xscroller.Pos;
-	Pos.y = Yscroller.Pos;
+	_xScroller(activePos.x, idlePos.x, period),
+	_yScroller(activePos.y, idlePos.y, period) {
+	_pos.x = _xScroller._pos;
+	_pos.y = _yScroller._pos;
 }
 
 Scroller::~Scroller() {
 }
 
 void Scroller::reset() {
-	Xscroller.reset();
-	Yscroller.reset();
+	_xScroller.reset();
+	_yScroller.reset();
 };
 
 
 void Scroller::setActive(bool active) {
-	Xscroller.setActive(active);
-	Yscroller.setActive(active);
+	_xScroller.setActive(active);
+	_yScroller.setActive(active);
 }
 
 bool Scroller::isMoving() {
-	return Xscroller.isMoving() | Yscroller.isMoving();
+	return _xScroller.isMoving() | _yScroller.isMoving();
 }
 
 bool Scroller::update(uint32 deltatime) {
 	bool redraw = false;
-	if (Xscroller.update(deltatime))
+	if (_xScroller.update(deltatime))
 		redraw = true;
-	if (Yscroller.update(deltatime))
+	if (_yScroller.update(deltatime))
 		redraw = true;
-	Pos.x = Xscroller.Pos;
-	Pos.y = Yscroller.Pos;
+	_pos.x = _xScroller._pos;
+	_pos.y = _yScroller._pos;
 	return (redraw);
 }
 

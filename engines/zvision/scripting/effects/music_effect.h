@@ -63,7 +63,7 @@ protected:
 	int8 _balance = 0;
 	Math::Angle _azimuth;
 	uint8 _directionality;  //0 = fully ambient, 255 = fully directional
-	uint8 volumeOut = 0;
+	uint8 _volumeOut = 0;
 };
 
 class MusicNode : public MusicNodeBASE {
@@ -86,10 +86,10 @@ private:
 	void outputMixer() override;
 	bool _loop;
 	bool _fade;
-	uint8 fadeStartVol;
-	uint8 fadeEndVol;
-	uint32 fadeTime;
-	uint32 fadeElapsed; //Cumulative time since fade start
+	uint8 _fadeStartVol;
+	uint8 _fadeEndVol;
+	uint32 _fadeTime;
+	uint32 _fadeElapsed; //Cumulative time since fade start
 	bool _stereo;
 	Audio::SoundHandle _handle;
 	uint16 _sub;
@@ -130,7 +130,7 @@ public:
 private:
 	uint32 _slot;
 	int16 _width, _pos;
-	Math::Angle sourcePos, viewPos;
+	Math::Angle _sourcePos, _viewPos;
 	uint8 _mag;
 	bool _resetMixerOnDelete;
 	bool _staticScreen;

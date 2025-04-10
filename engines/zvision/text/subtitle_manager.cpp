@@ -35,7 +35,7 @@ SubtitleManager::SubtitleManager(ZVision *engine, const ScreenLayout layout, con
 	_pixelFormat(pixelFormat),
 	_textOffset(layout.workingArea.origin() - layout.textArea.origin()),
 	_textArea(layout.textArea.width(), layout.textArea.height()),
-	redraw(false),
+	_redraw(false),
 	_doubleFPS(doubleFPS),
 	_subId(0) {
 }
@@ -53,14 +53,14 @@ void SubtitleManager::process(int32 deltatime) {
 	for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
 		//Update all automatic subtitles
 		if (it->_value->selfUpdate())
-			redraw = true;
+			_redraw = true;
 		//Update all subtitles' respective deletion timers
 		if (it->_value->process(deltatime)) {
 			debug(4, "Deleting subtitle, subId=%d", it->_key);
 			_subsFocus.remove(it->_key);
 			delete it->_value;
 			_subsList.erase(it);
-			redraw = true;
+			_redraw = true;
 		}
 	}
 	if (_subsList.size() == 0)
@@ -69,7 +69,7 @@ void SubtitleManager::process(int32 deltatime) {
 			_subId = 0;
 			_subsFocus.clear();
 		}
-	if (redraw) {
+	if (_redraw) {
 		debug(4, "Redrawing subtitles");
 		//Blank subtitle buffer
 		_renderManager->clearTextSurface();
@@ -78,17 +78,17 @@ void SubtitleManager::process(int32 deltatime) {
 			uint16 curSub = _subsFocus.get();
 			debug(4, "Rendering subtitle %d", curSub);
 			Subtitle *sub = _subsList[curSub];
-			if (sub->lineId >= 0) {
+			if (sub->_lineId >= 0) {
 				Graphics::Surface textSurface;
-				textSurface.create(sub->r.width(), sub->r.height(), _engine->_resourcePixelFormat);
-				textSurface.fillRect(Common::Rect(sub->r.width(), sub->r.height()), -1); //TODO Unnecessary operation?  Check later.
-				_engine->getTextRenderer()->drawTextWithWordWrapping(sub->_lines[sub->lineId].subStr, textSurface, _engine->isWidescreen());
-				_renderManager->blitSurfaceToText(textSurface, sub->r.left, sub->r.top, -1);
+				textSurface.create(sub->_textArea.width(), sub->_textArea.height(), _engine->_resourcePixelFormat);
+				textSurface.fillRect(Common::Rect(sub->_textArea.width(), sub->_textArea.height()), -1); //TODO Unnecessary operation?  Check later.
+				_engine->getTextRenderer()->drawTextWithWordWrapping(sub->_lines[sub->_lineId].subStr, textSurface, _engine->isWidescreen());
+				_renderManager->blitSurfaceToText(textSurface, sub->_textArea.left, sub->_textArea.top, -1);
 				textSurface.free();
-				sub->redraw = false;
+				sub->_redraw = false;
 			}
 		}
-		redraw = false;
+		_redraw = false;
 	}
 }
 
@@ -96,7 +96,7 @@ void SubtitleManager::update(int32 count, uint16 subid) {
 	if (_subsList.contains(subid))
 		if (_subsList[subid]->update(count)) {
 			//_subsFocus.set(subid);
-			redraw = true;
+			_redraw = true;
 		}
 }
 
@@ -127,14 +127,14 @@ uint16 SubtitleManager::create(const Common::String &str) {
 void SubtitleManager::destroy(uint16 id) {
 	if (_subsList.contains(id)) {
 		debug(2, "Marking subtitle %d for immediate deletion", id);
-		_subsList[id]->todelete = true;
+		_subsList[id]->_toDelete = true;
 	}
 }
 
 void SubtitleManager::destroy(uint16 id, int16 delay) {
 	if (_subsList.contains(id)) {
 		debug(2, "Marking subtitle %d for deletion in %dms", id, delay);
-		_subsList[id]->timer = delay;
+		_subsList[id]->_timer = delay;
 	}
 }
 
@@ -244,10 +244,10 @@ void SubtitleManager::showDebugMsg(const Common::String &msg, int16 delay) {
 
 Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 	_engine(engine),
-	lineId(-1),
-	timer(-1),
-	todelete(false),
-	redraw(false) {
+	_lineId(-1),
+	_timer(-1),
+	_toDelete(false),
+	_redraw(false) {
 	Common::File subFile;
 	Common::Point _textOffset = _engine->getSubtitleManager()->getTextOffset();
 	if (_engine->getSearchManager()->openFile(subFile, subname)) {
@@ -261,13 +261,13 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 			} else if (str.matchString("*Rectangle*", true)) {
 				int32 x1, y1, x2, y2;
 				sscanf(str.c_str(), "%*[^:]:%d %d %d %d", &x1, &y1, &x2, &y2);
-				r = Common::Rect(x1, y1, x2, y2);
+				_textArea = Common::Rect(x1, y1, x2, y2);
 				debug(1, "Original subtitle script rectangle coordinates: l%d, t%d, r%d, b%d", x1, y1, x2, y2);
 				//Original game subtitle scripts appear to define subtitle rectangles relative to origin of working area.
 				//To allow arbitrary aspect ratios, we need to instead place these relative to origin of text area.
 				//This will allow the managed text area to then be arbitrarily placed on the screen to suit different aspect ratios.
-				r.translate(_textOffset.x, _textOffset.y);  //Convert working area coordinates to text area coordinates
-				debug(1, "Text area coordinates: l%d, t%d, r%d, b%d", r.left, r.top, r.right, r.bottom);
+				_textArea.translate(_textOffset.x, _textOffset.y);  //Convert working area coordinates to text area coordinates
+				debug(1, "Text area coordinates: l%d, t%d, r%d, b%d", _textArea.left, _textArea.top, _textArea.right, _textArea.bottom);
 			} else if (str.matchString("*TextFile*", true)) {
 				char filename[64];
 				sscanf(str.c_str(), "%*[^:]:%s", filename);
@@ -275,7 +275,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 				if (_engine->getSearchManager()->openFile(txtFile, Common::Path(filename))) {
 					while (!txtFile.eos()) {
 						Common::String txtline = readWideLine(txtFile).encode();
-						line curLine;
+						Line curLine;
 						curLine.start = -1;
 						curLine.stop = -1;
 						curLine.subStr = txtline;
@@ -305,19 +305,19 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 		subFile.close();
 	} else {
 		//TODO - add error message here
-		todelete = true;
+		_toDelete = true;
 	}
 }
 
 Subtitle::Subtitle(ZVision *engine, const Common::String &str, const Common::Rect &textArea) :
 	_engine(engine),
-	lineId(-1),
-	timer(-1),
-	todelete(false),
-	redraw(false) {
-	r = textArea;
-	debug(1, "Text area coordinates: l%d, t%d, r%d, b%d", r.left, r.top, r.right, r.bottom);
-	line curLine;
+	_lineId(-1),
+	_timer(-1),
+	_toDelete(false),
+	_redraw(false) {
+	_textArea = textArea;
+	debug(1, "Text area coordinates: l%d, t%d, r%d, b%d", _textArea.left, _textArea.top, _textArea.right, _textArea.bottom);
+	Line curLine;
 	curLine.start = -1;
 	curLine.stop = 0;
 	curLine.subStr = str;
@@ -329,38 +329,38 @@ Subtitle::~Subtitle() {
 }
 
 bool Subtitle::process(int32 deltatime) {
-	if (timer != -1) {
-		timer -= deltatime;
-		if (timer <= 0)
-			todelete = true;
+	if (_timer != -1) {
+		_timer -= deltatime;
+		if (_timer <= 0)
+			_toDelete = true;
 	}
-	return todelete;
+	return _toDelete;
 }
 
 bool Subtitle::update(int32 count) {
 	int16 j = -1;
 	//Search all lines to find first line that encompasses current time/framecount, set j to this
-	for (uint16 i = (lineId >= 0 ? lineId : 0); i < _lines.size(); i++)
+	for (uint16 i = (_lineId >= 0 ? _lineId : 0); i < _lines.size(); i++)
 		if (count >= _lines[i].start && count <= _lines[i].stop) {
 			j = i;
 			break;
 		}
 	if (j == -1) {
 		//No line exists for current time/framecount
-		if (lineId != -1) {
+		if (_lineId != -1) {
 			//Line is set
-			lineId = -1; //Unset line
-			redraw = true;
+			_lineId = -1; //Unset line
+			_redraw = true;
 		}
 	} else {
 		//Line exists for current time/framecount
-		if (j != lineId && _lines[j].subStr.size()) {
+		if (j != _lineId && _lines[j].subStr.size()) {
 			//Set line is not equal to current line & current line is not blank
-			lineId = j;  //Set line to current
-			redraw = true;
+			_lineId = j;  //Set line to current
+			_redraw = true;
 		}
 	}
-	return redraw;
+	return _redraw;
 }
 
 AutomaticSubtitle::AutomaticSubtitle(ZVision *engine, const Common::Path &subname, Audio::SoundHandle handle) :
@@ -372,7 +372,7 @@ bool AutomaticSubtitle::selfUpdate() {
 	if (_engine->_mixer->isSoundHandleActive(_handle) && _engine->getScriptManager()->getStateValue(StateKey_Subtitles) == 1)
 		return update(_engine->_mixer->getSoundElapsedTime(_handle) / 100);
 	else {
-		todelete = true;
+		_toDelete = true;
 		return false;
 	}
 }
@@ -380,8 +380,8 @@ bool AutomaticSubtitle::selfUpdate() {
 bool AutomaticSubtitle::process(int32 deltatime) {
 	Subtitle::process(deltatime);
 	if (!_engine->_mixer->isSoundHandleActive(_handle))
-		todelete = true;
-	return todelete;
+		_toDelete = true;
+	return _toDelete;
 }
 
 } // End of namespace ZVision
