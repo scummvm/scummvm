@@ -239,6 +239,9 @@ void Section8Room::parser() {
 				break;
 
 			case 30:
+				// The original wasn't terminating the machine before starting a new, leading in a double animation during the duration of this second animation.
+				// This call has been added to fix the issue
+				terminateMachine(_ripPushMach);
 				switch (_currentRoom) {
 				case 804:
 					_ripPushMach = series_plain_play("RIP ATTEMPTS CHAR PUSH", 1, 2, 100, 0, 5, 40, true);
