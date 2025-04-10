@@ -870,7 +870,10 @@ void Section8Room::daemon() {
 			series_unload(_ripLooksAround);
 			series_unload(_mctdSerie);
 			_meiHandsBehindBack = series_load("MEI CHIEN HANDS BEHIND BACK", -1, nullptr);
-			setGlobals3(_mctdSerie, 17, 17);
+			// The original was calling setGlobals3 using _mctdSerie, which has just been unloaded
+			// Using the other series (often used with frame 17 in other calls) avoids the crash and improve the animation,
+			// which is a good sign it's what was supposed to be done
+			setGlobals3(_meiHandsBehindBack, 17, 17);
 			sendWSMessage_3840000(_mcTrekMach, -1);
 			kernel_timing_trigger(imath_ranged_rand(7200, 14400), 5, nullptr);
 		}
