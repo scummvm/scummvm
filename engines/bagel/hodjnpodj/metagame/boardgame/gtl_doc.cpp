@@ -20,6 +20,7 @@
  */
 
 #include "bagel/hodjnpodj/metagame/boardgame/gtl_doc.h"
+#include "bagel/hodjnpodj/metagame/boardgame/boardgame.h"
 #include "bagel/metaengine.h"
 
 namespace Bagel {
@@ -27,7 +28,7 @@ namespace HodjNPodj {
 namespace Metagame {
 
 bool CGtlDoc::onNewDocument() {
-	CGtlApp *xpGtlApp = afxGetApp();
+	CGtlApp *xpGtlApp = AfxGetApp();
 	
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)
@@ -41,7 +42,7 @@ bool CGtlDoc::onNewDocument() {
 }
 
 void CGtlDoc::initDocument(const char *xpszPathName) {
-	CGtlApp *xpGtlApp = afxGetApp();
+	CGtlApp *xpGtlApp = AfxGetApp();
 
 	m_xpGtlData = new CGtlData();
 	m_xpGtlData->m_xpcGtlDoc = this;

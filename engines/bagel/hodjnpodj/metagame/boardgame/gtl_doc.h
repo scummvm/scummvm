@@ -31,19 +31,14 @@ namespace Metagame {
 
 class CGtlDoc {
 private:
-	CGtlApp *_app;
 	CGtlData *m_xpGtlData = nullptr;
 
-	CGtlApp *afxGetApp() const {
-		return _app;
-	}
 	void initDocument(const char *xpszPathName);
 	void onChangedViewList();
 	void fixChecks() {}
 
 public:
-	CGtlDoc(CGtlApp *app) : _app(app) {
-	}
+	CGtlDoc() {}
 
 	bool onNewDocument();
 };

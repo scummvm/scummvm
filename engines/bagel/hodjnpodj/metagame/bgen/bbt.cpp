@@ -25,6 +25,11 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
+CBbtMgr::~CBbtMgr() {
+}
+
+/*------------------------------------------------------------------------*/
+
 CBbutton::CBbutton(int iId) {
 	m_iBbtId = iId;
 

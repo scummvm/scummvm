@@ -140,6 +140,7 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/boardgame/gtl_data.o \
 	hodjnpodj/metagame/boardgame/gtl_data_compiler.o \
 	hodjnpodj/metagame/boardgame/gtl_data_lexical.o \
+	hodjnpodj/metagame/boardgame/gtl_data_move.o \
 	hodjnpodj/metagame/boardgame/gtl_doc.o \
 	hodjnpodj/metagame/boardgame/gtl_view.o \
 	hodjnpodj/metagame/boardgame/minimap.o \

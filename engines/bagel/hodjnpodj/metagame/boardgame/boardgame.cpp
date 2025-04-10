@@ -32,8 +32,14 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-Boardgame::Boardgame() : View("Boardgame"),
-		_doc(&_app) {
+CGtlApp *AfxGetApp() {
+	Boardgame *view = dynamic_cast<Boardgame *>(
+		g_events->findView("Boardgame"));
+	assert(view);
+	return &view->_app;
+}
+
+Boardgame::Boardgame() : View("Boardgame") {
 	_doc.onNewDocument();
 }
 

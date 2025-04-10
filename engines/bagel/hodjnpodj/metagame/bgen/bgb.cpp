@@ -31,6 +31,98 @@ CBgbMgr::CBgbMgr() {
 	gpBgbMgr = this;
 }
 
+CBgbMgr::~CBgbMgr(void) {
+	ReleaseResources();
+
+	delete m_xpGamePalette;
+}
+
+bool CBgbMgr::ReleaseResources() {
+	int iError = 0;			// error code
+	CBgbObject *pBgbObject;	// objects to be freed
+
+	// stop all animations
+	m_bAnimationsPaused = true;
+
+	// flush the special effects list
+	m_pFXList->FlushList();
+	delete m_pFXList;
+	m_pFXList = nullptr;
+
+	while ((pBgbObject = m_lpBgbChain) != nullptr) {
+
+		m_lpBgbChain = pBgbObject->m_xpcNext;
+		pBgbObject->m_xpcNext = nullptr;     // out of habit
+		ClearBitmapObject(pBgbObject);    // free resources
+
+		if (!pBgbObject->m_bNoDelete)     // if on the heap
+			delete pBgbObject;
+	}
+
+	return iError != 0;
+}
+
+bool CBgbMgr::ClearBitmapObject(CBgbObject *pBgbObject) {
+	pBgbObject->m_bLocked = false;
+	CacheReleaseObject(pBgbObject);
+
+	// object no longer initialized
+	pBgbObject->m_bInit = false;
+
+	return false;
+}
+
+void CBgbMgr::CacheReleaseObject(CBgbObject *pBgbObject) {
+	// can't access a null pointer
+	assert(pBgbObject != nullptr);
+
+	// object must have already been Initialized
+	assert(pBgbObject->m_bInit);
+
+	if (pBgbObject->m_bLoaded && !pBgbObject->m_bLocked) {
+		// make sure the object is valid
+		assert(pBgbObject->m_pObject != nullptr);
+
+		//ErrorLog("DEBUG.LOG", "Releasing %s", pBgbObject->m_szFileName);
+
+		switch (pBgbObject->m_iBgbType) {
+		// Object is a sprite
+		//
+		case BGBT_SPRITE:
+			if (pBgbObject->m_pObject != nullptr) {
+
+				// remove from sprite chain
+				((Sprite *)pBgbObject->m_pObject)->unlinkSprite();
+
+				// free it
+				delete (Sprite *)pBgbObject->m_pObject;
+
+				// no more pointer
+				pBgbObject->m_pObject = nullptr;
+			}
+			break;
+
+		// Object is a bitmap
+		//
+		case BGBT_DIB:
+			if (pBgbObject->m_pObject != nullptr) {
+				delete pBgbObject->m_pObject;
+				pBgbObject->m_pObject = nullptr;
+			}
+			break;
+
+		// Invalid ID
+		//
+		default:
+			assert(0);
+			break;
+		}
+
+		// this object is now loaded
+		pBgbObject->m_bLoaded = false;
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 CBgbObject::CBgbObject() {

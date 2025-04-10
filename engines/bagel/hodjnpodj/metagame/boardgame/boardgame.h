@@ -39,13 +39,15 @@ enum DialogId {
 
 class Boardgame : public View {
 private:
-	CGtlApp _app;
-	CGtlDoc _doc;
 	bool bJustReturned = false;
 
 	void showClue(CNote *note);
 	void showInventory(int nWhichDlg);
 	bool isInputAllowed() const;
+
+public:
+	CGtlApp _app;
+	CGtlDoc _doc;
 
 public:
 	Boardgame();
@@ -58,6 +60,8 @@ public:
 	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 };
+
+extern CGtlApp *AfxGetApp();
 
 } // namespace Metagame
 } // namespace HodjNPodj
