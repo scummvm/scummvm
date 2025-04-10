@@ -3165,25 +3165,82 @@ static const uint16 gk1Day5DrumBookDialoguePatch[] = {
 	PATCH_END
 };
 
-// When Gabriel goes to the phone, the script softlocks at
-// `startOfDay5::changeState(32)`.
+// When day 5 starts, the game can lockup after the phone rings. All versions
+//  are affected, but the bug depends on combinations of machine speed, game
+//  version, and the game speed setting. This is a bug in the original game.
 //
-// Applies to at least: English PC-CD, German PC-CD, English Mac
-static const uint16 gk1Day5PhoneFreezeSignature[] = {
-	0x4a,                             // send ...
-	SIG_MAGICDWORD, SIG_UINT16(0x0c), // ... $c
-	0x35, 0x03,                       // ldi 3
-	0x65, SIG_ADDTOOFFSET(+1),        // aTop cycles
-	0x32, SIG_ADDTOOFFSET(+2),        // jmp [end]
-	0x3c,                             // dup
-	0x35, 0x21,                       // ldi $21
+// After the phone rings, Gabriel is supposed to say "I got it!" while walking
+//  to the phone. The script sets ego's motion, waits 3 game cycles, and then
+//  says the message. bookStoreNarrator animates ego when one of his messages is
+//  said, but only when ego is standing still, otherwise movement would stop.
+//  bookStoreNarrator checks for this by testing if ego's loop is standing (8).
+//  When the phone script sets ego's motion, there is a delay before ego's loop
+//  changes from standing to walking. The delay depends on the game speed
+//  setting and game version; the CD version added a GKEgo:setHeading method
+//  that skips redundant turns. All of this is independent of the 3 cycle delay
+//  that it is based on machine speed. If "I got it!" starts before ego's loop
+//  changes, then bookStoreNarrator animates ego talking, the walk movement is
+//  interrupted, and the game is stuck waiting for ego to walk to the phone.
+//
+// We fix this by signaling bookStoreNarrator that it should not animate ego
+//  when displaying the "I got it!" message. We do this by setting an unused
+//  global in startOfDay5:changeState(32) and getTheVeve:changeState(24).
+//  In bookStoreNarrator:display, we test the global and reset it. We make room
+//  for this by overwriting a duplicated ego:view test.
+//
+// This patch is designed to be compatible with NRS patches. The NRS technique
+//  changes delays in cycles to ticks, which fixes the CD version but not the
+//  floppy versions when the game speed is lowered. The timing is different due
+//  to the CD version's GKEgo:setHeading method. Our patch does not depend on
+//  timing, so it is compatible with both types of delays.
+//
+// Applies to: All versions
+// Responsible methods: bookStoreNarrator:display, startOfDay5:changeState(32),
+//                      getTheVeve:changeState(24)
+// Fixes bug: #15857
+static const uint16 gk1Day5PhoneLockupSignature1[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x08,                         // ldi 08
+	0x1a,                               // eq? [ GKEgo:loop == 8 ]
+	0x30, SIG_ADDTOOFFSET(+2),          // bnt [ skip talk animation ]
+	0x39, SIG_SELECTOR8(view),          // pushi view
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ GKEgo view: ]
+	0x36,                               // push
+	0x34, SIG_UINT16(0x0385),           // ldi 0385
+	0x1a,                               // eq? [ GKEgo:view == 901 (duplicated test from earlier) ]
+	0x2f,                               // bt [ talk animation ]
 	SIG_END
 };
 
-static const uint16 gk1Day5PhoneFreezePatch[] = {
-	PATCH_ADDTOOFFSET(+3),                     // send $c
-	0x35, 0x06,                                // ldi 6
-	0x65, PATCH_GETORIGINALBYTEADJUST(+6, +6), // aTop ticks
+static const uint16 gk1Day5PhoneLockupPatch1[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x81, 0xd1,                         // lag d1 [ read global. acc = 0 to animate, 1 to skip ]
+	0x38, PATCH_UINT16(0x0000),         // pushi 0000
+	0xa9, 0xd1,                         // ssg d1 [ reset global to 0 ]
+	0x2e, PATCH_GETORIGINALUINT16ADJUST(4, -10), // bt [ skip talk animation if global is set ]
+	0x34, PATCH_UINT16(0x0001),         // ldi 0001 [ acc = 1 to branch to talk animation ]
+	PATCH_END
+};
+
+// startOfDay5:changeState(32), getTheVeve:changeState(24)
+static const uint16 gk1Day5PhoneLockupSignature2[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0115),           // pushi 0115
+	0x39, 0x6a,                         // pushi 6a
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x000c),           // send 0c [ GKEgo setMotion: PolyPath 277 106 self ]
+	SIG_ADDTOOFFSET(+4),                // [ cycles = 3, NRS patch: ticks = 6 ]
+	0x32,                               // jmp [ end of switch ]
+	SIG_END
+};
+
+static const uint16 gk1Day5PhoneLockupPatch2[] = {
+	PATCH_ADDTOOFFSET(+15),
+	0x78,                               // push1
+	0xa9, 0xd1,                         // ssg d1 [ global209 = 1 (skip talk animation) ]
 	PATCH_END
 };
 
@@ -4489,10 +4546,11 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  false,   24, "mac: fix missing talisman view",              1, gk1MacTalismanInsetSignature,     gk1MacTalismanInsetPatch },
 	{  true,    51, "fix interrogation bug",                       1, gk1InterrogationBugSignature,     gk1InterrogationBugPatch },
 	{  true,    93, "fix inventory on restart",                    1, gk1RestartInventorySignature,     gk1RestartInventoryPatch },
+	{  true,   210, "fix day 5 phone lockup (1/2)",                1, gk1Day5PhoneLockupSignature1,     gk1Day5PhoneLockupPatch1 },
+	{  true,   212, "fix day 5 phone lockup (2/2)",                2, gk1Day5PhoneLockupSignature2,     gk1Day5PhoneLockupPatch2 },
 	{  true,   210, "fix day 6 envelope lockup",                   2, gk1Day6EnvelopeSignature,         gk1Day6EnvelopePatch },
 	{  true,   211, "fix day 1 grace phone speech timing",         1, gk1Day1GracePhoneSignature,       gk1Day1GracePhonePatch },
 	{  true,   212, "fix day 5 drum book dialogue error",          1, gk1Day5DrumBookDialogueSignature, gk1Day5DrumBookDialoguePatch },
-	{  true,   212, "fix day 5 phone softlock",                    1, gk1Day5PhoneFreezeSignature,      gk1Day5PhoneFreezePatch },
 	{  true,   220, "fix ego phone position",                      2, gk1EgoPhonePositionSignature,     gk1EgoPhonePositionPatch },
 	{  true,   230, "fix day 6 police beignet timer issue (1/2)",  1, gk1Day6PoliceBeignetSignature1,   gk1Day6PoliceBeignetPatch1 },
 	{  true,   230, "fix day 6 police beignet timer issue (2/2)",  1, gk1Day6PoliceBeignetSignature2,   gk1Day6PoliceBeignetPatch2 },
