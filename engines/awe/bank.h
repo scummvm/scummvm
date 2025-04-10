@@ -1,0 +1,56 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef AWE_BANK_H
+#define AWE_BANK_H
+
+#include "awe/intern.h"
+
+namespace Awe {
+
+struct MemEntry;
+
+struct UnpackContext {
+	uint16 size;
+	uint32 crc;
+	uint32 chk;
+	int32 datasize;
+};
+
+struct Bank {
+	UnpackContext _unpCtx;
+	const char *_dataDir;
+	uint8 *_iBuf, *_oBuf, *_startBuf;
+
+	Bank(const char *dataDir);
+
+	bool read(const MemEntry *me, uint8 *buf);
+	void decUnk1(uint8 numChunks, uint8 addCount);
+	void decUnk2(uint8 numChunks);
+	bool unpack();
+	uint16 getCode(uint8 numChunks);
+	bool nextChunk();
+	bool rcr(bool CF);
+};
+
+} // namespace Awe
+
+#endif
