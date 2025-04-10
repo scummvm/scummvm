@@ -59,7 +59,7 @@ namespace ZVision {
 
 #define ZVISION_SETTINGS_KEYS_COUNT 12
 
-struct zvisionIniSettings {
+struct ZvisionIniSettings {
 	const char *name;
 	int16 slot;
 	int16 defaultValue; // -1: use the bool value

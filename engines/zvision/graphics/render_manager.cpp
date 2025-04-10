@@ -46,19 +46,19 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
 	: _engine(engine),
 	  _system(engine->_system),
 	  _layout(layout),
-	  _screenArea(_layout.screenArea),
-	  _workingArea(_layout.workingArea),
+	  _screenArea(layout.screenArea),
+	  _workingArea(layout.workingArea),
 	  _workingAreaCenter(Common::Point(_workingArea.width() / 2, _workingArea.height() / 2)),
-	  _textArea(_layout.textArea),
-	  _menuArea(_layout.menuArea),
+	  _textArea(layout.textArea),
+	  _menuArea(layout.menuArea),
 	  _pixelFormat(pixelFormat),
 	  _backgroundWidth(0),
 	  _backgroundHeight(0),
 	  _backgroundOffset(0),
-	  _renderTable(engine, _layout.workingArea.width(), _layout.workingArea.height(), pixelFormat),
+	  _renderTable(engine, layout.workingArea.width(), layout.workingArea.height(), pixelFormat),
 	  _doubleFPS(doubleFPS),
 	  _widescreen(widescreen),
-	  frameLimiter(engine->_system, doubleFPS ? 60 : 30) {
+	  _frameLimiter(engine->_system, doubleFPS ? 60 : 30) {
 	debug(1, "creating render manager");
 	//Define graphics modes & screen subarea geometry
 	Graphics::ModeList modes;
@@ -163,7 +163,7 @@ void RenderManager::initialize(bool hiRes) {
 	//Set hardware/window resolution
 	debug(1, "_screen.w = %d, _screen.h = %d", _screen.w, _screen.h);
 	initGraphics(_screen.w, _screen.h, &_engine->_screenPixelFormat);
-	frameLimiter.initialize();
+	_frameLimiter.initialize();
 	debug(1, "Render manager initialized");
 }
 
@@ -214,23 +214,23 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 			debug(5, "Rendering panorama");
 			if (!_backgroundSurfaceDirtyRect.isEmpty()) {
 				_renderTable.mutateImage(&_warpedSceneSurface, inputSurface, _engine->getScriptManager()->getStateValue(StateKey_HighQuality));
-				outputSurface = &_warpedSceneSurface;
+				_outputSurface = &_warpedSceneSurface;
 				outWndDirtyRect = Common::Rect(_workingArea.width(), _workingArea.height());
 			}
 			break;
 		default:
-			outputSurface = inputSurface;
+			_outputSurface = inputSurface;
 			outWndDirtyRect = _backgroundSurfaceDirtyRect;
 			break;
 			debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
 		}
 		debug(5, "Rendering working area");
-		_workingManagedSurface.simpleBlitFrom(*outputSurface); //TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
+		_workingManagedSurface.simpleBlitFrom(*_outputSurface); //TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
 		debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
 	}
 	if (preStream) {
 		debug(5, "Pre-rendering text area for video stream");
-		_workingManagedSurface.simpleBlitFrom(*outputSurface, _textOverlay, _textOverlay.origin()); //Prevents subtitle visual corruption when streaming videos that don't fully overlap them, e.g. Nemesis sarcophagi
+		_workingManagedSurface.simpleBlitFrom(*_outputSurface, _textOverlay, _textOverlay.origin()); //Prevents subtitle visual corruption when streaming videos that don't fully overlap them, e.g. Nemesis sarcophagi
 		return false;
 	} else {
 		debug(5, "Rendering menu");
@@ -240,15 +240,15 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 		_textManagedSurface.transBlitFrom(_textSurface, -1);
 		debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
 		if (immediate) {
-			frameLimiter.startFrame();
+			_frameLimiter.startFrame();
 			debug(5, "Updating screen, immediate");
 			_screen.update();
 			debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
 			debug(10, "~renderSceneToScreen, immediate");
 			return true;
 		} else if (_engine->canRender()) {
-			frameLimiter.delayBeforeSwap();
-			frameLimiter.startFrame();
+			_frameLimiter.delayBeforeSwap();
+			_frameLimiter.startFrame();
 			debug(5, "Updating screen, frame limited");
 			_screen.update();
 			debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
@@ -996,7 +996,7 @@ void RenderManager::bkgFill(uint8 r, uint8 g, uint8 b) {
 void RenderManager::updateRotation() {
 	int16 _velocity = _engine->getMouseVelocity() + _engine->getKeyboardVelocity();
 	ScriptManager *scriptManager = _engine->getScriptManager();
-	if (_doubleFPS | !frameLimiter.isEnabled()) //Assuming 60fps when in Vsync mode.
+	if (_doubleFPS | !_frameLimiter.isEnabled()) //Assuming 60fps when in Vsync mode.
 		_velocity /= 2;
 	if (_velocity) {
 		switch (_renderTable.getRenderState()) {

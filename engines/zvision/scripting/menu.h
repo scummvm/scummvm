@@ -93,7 +93,7 @@ public:
 	virtual void onMouseUp(const Common::Point &Pos);
 	virtual void process(uint32 deltaTimeInMillis);
 	bool inMenu() {
-		return prevInMenu;
+		return _prevInMenu;
 	};
 	virtual bool inMenu(const Common::Point &Pos) {
 		return false;
@@ -104,10 +104,10 @@ public:
 
 	void setEnable(uint16 flags);
 	uint16 getEnable() {
-		return menuBarFlag;
+		return _menuBarFlag;
 	}
 	bool getEnable(uint8 flag) {
-		return enableFlags.get(flag);
+		return _enableFlags.get(flag);
 	}
 
 protected:
@@ -116,29 +116,28 @@ protected:
 	int mouseOverMain(const Common::Point &Pos);
 	void setFocus(int8 currentFocus);
 
-//	bool inMenu = false;  //True if menus are currently visible
-	bool prevInMenu = false;
-	bool redraw = true;
-	int mouseOnItem = -1;
-	static const uint8 hMainMenu = 32;
-	int8 mainClicked = -1;
+	bool _prevInMenu = false;
+	bool _redraw = true;
+	int _mouseOnItem = -1;
+	static const uint8 _hMainMenu = 32;
+	int8 _mainClicked = -1;
 
 	ZVision *_engine;
 	const MenuParams _params;
-	uint16 menuBarFlag;
+	uint16 _menuBarFlag;
 	const Common::Rect _menuArea;
-	const Common::Point menuOrigin;
-	const Common::Rect menuTriggerArea;
-	Graphics::Surface mainBack;
-	Graphics::Surface mainButtons[4][6];
-	Common::BitArray enableFlags;
-	Common::Rect mainArea;
-	Common::Rect menuHotspots[4];
-	int8 mainFrames[4]; //Frame to display of each main menu button; first row is currently displayed, 2nd row is backbuffer for idle animations
-	Scroller mainScroller;
-	FocusList<int8> menuFocus;  //Order in which menus have most recently had focus; determines current mouse focus & order in which to redraw them.
-	bool clean = false; //Whether or not to blank
-	LinearScroller *buttonAnim[4];
+	const Common::Point _menuOrigin;
+	const Common::Rect _menuTriggerArea;
+	Graphics::Surface _mainBack;
+	Graphics::Surface _mainButtons[4][6];
+	Common::BitArray _enableFlags;
+	Common::Rect _mainArea;
+	Common::Rect _menuHotspots[4];
+	int8 _mainFrames[4]; //Frame to display of each main menu button; first row is currently displayed, 2nd row is backbuffer for idle animations
+	Scroller _mainScroller;
+	FocusList<int8> _menuFocus;  //Order in which menus have most recently had focus; determines current mouse focus & order in which to redraw them.
+	bool _clean = false; //Whether or not to blank
+	LinearScroller *_buttonAnim[4];
 };
 
 class MenuZGI: public MenuManager {
@@ -151,32 +150,32 @@ public:
 	bool inMenu(const Common::Point &Pos) override;
 private:
 	void redrawAll() override;
-	Graphics::Surface menuBack[3];
-	Graphics::Surface *items[50][2];
-	uint itemId[50];
+	Graphics::Surface _menuBack[3];
+	Graphics::Surface *_items[50][2];
+	uint _itemId[50];
 
-	Graphics::Surface *magic[12][2];
-	uint magicId[12];
+	Graphics::Surface *_magic[12][2];
+	uint _magicId[12];
 //  void redrawMain(bool hasFocus) override;
 	void redrawItems();
 	void redrawMagic();
 	int mouseOverItem(const Common::Point &Pos, int itemCount);
 	int mouseOverMagic(const Common::Point &Pos);
 
-	static const uint16 hSideMenu = 32;
-	static const uint16 wSideMenu = 600;
-	static const uint16 wSideMenuTab = 20;
-	static const int16 magicWidth = 47;
+	static const uint16 _hSideMenu = 32;
+	static const uint16 _wSideMenu = 600;
+	static const uint16 _wSideMenuTab = 20;
+	static const int16 _magicWidth = 47;
 
-	const int16 sideMenuPeriod = 300;
+	const int16 _sideMenuPeriod = 300;
 
-	Scroller itemsScroller, magicScroller;
+	Scroller _itemsScroller, _magicScroller;
 
-	const Common::Point magicOrigin;
-	const Common::Point itemsOrigin;
+	const Common::Point _magicOrigin;
+	const Common::Point _itemsOrigin;
 
-	Common::Rect magicArea;
-	Common::Rect itemsArea;
+	Common::Rect _magicArea;
+	Common::Rect _itemsArea;
 };
 
 class MenuNemesis: public MenuManager {

@@ -157,7 +157,7 @@ uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode, Math::Angle a
 
 uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode) {
 	uint16 scaledInput = inputValue * 255;
-	scaledInput /= scriptScale;
+	scaledInput /= _scriptScale;
 	uint8 output = 0;
 	switch (mode) {
 	case kVolumeLogPower:

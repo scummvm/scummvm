@@ -41,10 +41,10 @@ RenderTable::RenderTable(ZVision *engine, uint numColumns, uint numRows, const G
 	_internalBuffer = new FilterPixel[numRows * numColumns];
 	memset(&_panoramaOptions, 0, sizeof(_panoramaOptions));
 	memset(&_tiltOptions, 0, sizeof(_tiltOptions));
-	halfRows = floor((_numRows - 1) / 2);
-	halfColumns = floor((_numColumns - 1) / 2);
-	halfWidth = (float)_numColumns / 2.0f - 0.5f;
-	halfHeight = (float)_numRows / 2.0f - 0.5f;
+	_halfRows = floor((_numRows - 1) / 2);
+	_halfColumns = floor((_numColumns - 1) / 2);
+	_halfWidth = (float)_numColumns / 2.0f - 0.5f;
+	_halfHeight = (float)_numRows / 2.0f - 0.5f;
 }
 
 RenderTable::~RenderTable() {
@@ -80,10 +80,10 @@ const Common::Point RenderTable::convertWarpedCoordToFlatCoord(const Common::Poi
 		int16 y = CLIP<int16>(point.y, 0, (int16)_numRows);
 		return Common::Point(x, y);
 	}
-	index = point.y * _numColumns + point.x;
+	_index = point.y * _numColumns + point.x;
 	Common::Point newPoint(point);
-	newPoint.x += (_internalBuffer[index].xDir ? _internalBuffer[index].Src.right : _internalBuffer[index].Src.left);
-	newPoint.y += (_internalBuffer[index].yDir ? _internalBuffer[index].Src.bottom : _internalBuffer[index].Src.top);
+	newPoint.x += (_internalBuffer[_index]._xDir ? _internalBuffer[_index]._Src.right : _internalBuffer[_index]._Src.left);
+	newPoint.y += (_internalBuffer[_index]._yDir ? _internalBuffer[_index]._Src.bottom : _internalBuffer[_index]._Src.top);
 	return newPoint;
 }
 
@@ -100,8 +100,8 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 d
               uint32 normalizedX = x - subRect.left;
               uint32 index = sourceOffset + x;
               // RenderTable only stores offsets from the original coordinates
-              sourceYIndex = y + _internalBuffer[index].Src.top;
-              sourceXIndex = x + _internalBuffer[index].Src.left;
+              sourceYIndex = y + _internalBuffer[index]._Src.top;
+              sourceXIndex = x + _internalBuffer[index]._Src.left;
               destBuffer[destOffset + normalizedX] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
           }
           destOffset += destWidth;
@@ -114,8 +114,8 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 d
               uint32 normalizedX = x - subRect.left;
               uint32 index = sourceOffset + x;
               // RenderTable only stores offsets from the original coordinates
-              sourceYIndex = y + _internalBuffer[index].Src.top;
-              sourceXIndex = x + _internalBuffer[index].Src.left;
+              sourceYIndex = y + _internalBuffer[index]._Src.top;
+              sourceXIndex = x + _internalBuffer[index]._Src.left;
               destBuffer[destOffset + normalizedX] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
           }
           destOffset += destWidth;
@@ -125,7 +125,7 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 d
 //*/
 
 void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool highQuality) {
-	destOffset = 0;
+	_destOffset = 0;
 	uint16 *sourceBuffer = (uint16 *)srcBuf->getPixels();
 	uint16 *destBuffer = (uint16 *)dstBuf->getPixels();
 	if (highQuality != _highQuality) {
@@ -137,27 +137,27 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 		//Apply bilinear interpolation
 		FilterPixel _curP;
 		for (int16 y = 0; y < srcBuf->h; ++y) {
-			sourceOffset = y * _numColumns;
+			_sourceOffset = y * _numColumns;
 			for (int16 x = 0; x < srcBuf->w; ++x) {
-				_curP = _internalBuffer[sourceOffset + x];
-				srcIndexYT = y + _curP.Src.top;
-				srcIndexYB = y + _curP.Src.bottom;
-				srcIndexXL = x + _curP.Src.left;
-				srcIndexXR = x + _curP.Src.right;
-				splitColor(sourceBuffer[srcIndexYT * _numColumns + srcIndexXL], rTL, gTL, bTL);
-				splitColor(sourceBuffer[srcIndexYT * _numColumns + srcIndexXR], rTR, gTR, bTR);
-				splitColor(sourceBuffer[srcIndexYB * _numColumns + srcIndexXL], rBL, gBL, bBL);
-				splitColor(sourceBuffer[srcIndexYB * _numColumns + srcIndexXR], rBR, gBR, bBR);
-				rF = _curP.fTL * rTL + _curP.fTR * rTR + _curP.fBL * rBL + _curP.fBR * rBR;
-				gF = _curP.fTL * gTL + _curP.fTR * gTR + _curP.fBL * gBL + _curP.fBR * gBR;
-				bF = _curP.fTL * bTL + _curP.fTR * bTR + _curP.fBL * bBL + _curP.fBR * bBR;
-				destBuffer[destOffset] = mergeColor(rF, gF, bF);
-				destOffset++;
+				_curP = _internalBuffer[_sourceOffset + x];
+				_srcIndexYT = y + _curP._Src.top;
+				_srcIndexYB = y + _curP._Src.bottom;
+				_srcIndexXL = x + _curP._Src.left;
+				_srcIndexXR = x + _curP._Src.right;
+				splitColor(sourceBuffer[_srcIndexYT * _numColumns + _srcIndexXL], _rTL, _gTL, _bTL);
+				splitColor(sourceBuffer[_srcIndexYT * _numColumns + _srcIndexXR], _rTR, _gTR, _bTR);
+				splitColor(sourceBuffer[_srcIndexYB * _numColumns + _srcIndexXL], _rBL, _gBL, _bBL);
+				splitColor(sourceBuffer[_srcIndexYB * _numColumns + _srcIndexXR], _rBR, _gBR, _bBR);
+				_rF = _curP._fTL * _rTL + _curP._fTR * _rTR + _curP._fBL * _rBL + _curP._fBR * _rBR;
+				_gF = _curP._fTL * _gTL + _curP._fTR * _gTR + _curP._fBL * _gBL + _curP._fBR * _gBR;
+				_bF = _curP._fTL * _bTL + _curP._fTR * _bTR + _curP._fBL * _bBL + _curP._fBR * _bBR;
+				destBuffer[_destOffset] = mergeColor(_rF, _gF, _bF);
+				_destOffset++;
 				/*/
 				if(Common::Point(x,y)==testPixel) {
 				debug(2,"\tMutated test pixel %d, %d", x, y);
-				debug(2,"\tfX: %f, fY: %f", _curP.fX, _curP.fY);
-				debug(2,"\tYT: %d, YB: %d, XL: %d XR: %d", srcIndexYT, srcIndexYB, srcIndexXL, srcIndexXR);
+				debug(2,"\t_fX: %f, _fY: %f", _curP._fX, _curP._fY);
+				debug(2,"\tYT: %d, YB: %d, XL: %d XR: %d", _srcIndexYT, _srcIndexYB, _srcIndexXL, _srcIndexXR);
 				}
 				//*/
 			}
@@ -165,14 +165,14 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 	} else {
 		//Apply nearest-neighbour interpolation
 		for (int16 y = 0; y < srcBuf->h; ++y) {
-			sourceOffset = y * _numColumns;
+			_sourceOffset = y * _numColumns;
 			for (int16 x = 0; x < srcBuf->w; ++x) {
-				index = sourceOffset + x;
+				_index = _sourceOffset + x;
 				// RenderTable only stores offsets from the original coordinates
-				srcIndexXL = x + (_internalBuffer[index].xDir ? _internalBuffer[index].Src.right : _internalBuffer[index].Src.left);
-				srcIndexYT = y + (_internalBuffer[index].yDir ? _internalBuffer[index].Src.bottom : _internalBuffer[index].Src.top);
-				destBuffer[destOffset] = sourceBuffer[srcIndexYT * _numColumns + srcIndexXL];
-				destOffset++;
+				_srcIndexXL = x + (_internalBuffer[_index]._xDir ? _internalBuffer[_index]._Src.right : _internalBuffer[_index]._Src.left);
+				_srcIndexYT = y + (_internalBuffer[_index]._yDir ? _internalBuffer[_index]._Src.bottom : _internalBuffer[_index]._Src.top);
+				destBuffer[_destOffset] = sourceBuffer[_srcIndexYT * _numColumns + _srcIndexXL];
+				_destOffset++;
 			}
 		}
 	}
@@ -199,8 +199,8 @@ void RenderTable::generateRenderTable() {
 
 void RenderTable::generateLookupTable(bool tilt) {
 	debug(1, "Generating %s lookup table.", tilt ? "tilt" : "panorama");
-	debug(5, "halfWidth %f, halfHeight %f", halfWidth, halfHeight);
-	debug(5, "halfRows %d, halfColumns %d", halfRows, halfColumns);
+	debug(5, "_halfWidth %f, _halfHeight %f", _halfWidth, _halfHeight);
+	debug(5, "_halfRows %d, _halfColumns %d", _halfRows, _halfColumns);
 	uint32 generationTime = _system->getMillis();
 	float alpha, cosAlpha, polarCoordInCylinderCoords, linearCoordInCylinderCoords, cylinderRadius, xOffset, yOffset;
 	uint32 indexTL, indexBL, indexTR, indexBR;
@@ -243,37 +243,37 @@ void RenderTable::generateLookupTable(bool tilt) {
 	};
 	if (tilt) {
 		uint32 columnIndexTL, columnIndexBL, columnIndexTR, columnIndexBR;
-		cylinderRadius = (halfWidth + 0.5f) / tan(_tiltOptions.verticalFOV);
-		_tiltOptions.gap = cylinderRadius * atan2((float)(halfHeight / cylinderRadius), 1.0f) * _tiltOptions.linearScale;
-		for (y = 0; y <= halfRows; ++y) {
-			outerLoop(y, halfHeight, _tiltOptions.linearScale);
+		cylinderRadius = (_halfWidth + 0.5f) / tan(_tiltOptions.verticalFOV);
+		_tiltOptions.gap = cylinderRadius * atan2((float)(_halfHeight / cylinderRadius), 1.0f) * _tiltOptions.linearScale;
+		for (y = 0; y <= _halfRows; ++y) {
+			outerLoop(y, _halfHeight, _tiltOptions.linearScale);
 			columnIndexTL = y * _numColumns;
 			columnIndexBL = (_numRows - (y + 1)) * _numColumns;
 			columnIndexTR = columnIndexTL + (_numColumns - 1);
 			columnIndexBR = columnIndexBL + (_numColumns - 1);
-			for (x = 0; x <= halfColumns; ++x) {
+			for (x = 0; x <= _halfColumns; ++x) {
 				indexTL = columnIndexTL + x;
 				indexBL = columnIndexBL + x;
 				indexTR = columnIndexTR - x;
 				indexBR = columnIndexBR - x;
-				innerLoop(y, x, halfWidth, yOffset, xOffset);
+				innerLoop(y, x, _halfWidth, yOffset, xOffset);
 			}
 		}
 	} else {
 		uint32 rowIndexT, rowIndexB, columnIndexL, columnIndexR;
-		cylinderRadius = (halfHeight + 0.5f) / tan(_panoramaOptions.verticalFOV);
-		for (x = 0; x <= halfColumns; ++x) {
+		cylinderRadius = (_halfHeight + 0.5f) / tan(_panoramaOptions.verticalFOV);
+		for (x = 0; x <= _halfColumns; ++x) {
 			columnIndexL = x;
 			columnIndexR = (_numColumns - 1) - x;
 			rowIndexT = 0;
 			rowIndexB = _numColumns * (_numRows - 1);
-			outerLoop(x, halfWidth, _panoramaOptions.linearScale);
-			for (y = 0; y <= halfRows; ++y) {
+			outerLoop(x, _halfWidth, _panoramaOptions.linearScale);
+			for (y = 0; y <= _halfRows; ++y) {
 				indexTL = rowIndexT + columnIndexL;
 				indexBL = rowIndexB + columnIndexL;
 				indexTR = rowIndexT + columnIndexR;
 				indexBR = rowIndexB + columnIndexR;
-				innerLoop(x, y, halfHeight, xOffset, yOffset);
+				innerLoop(x, y, _halfHeight, xOffset, yOffset);
 				rowIndexT += _numColumns;
 				rowIndexB -= _numColumns;
 			}

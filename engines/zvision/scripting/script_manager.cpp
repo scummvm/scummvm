@@ -46,10 +46,10 @@ ScriptManager::ScriptManager(ZVision *engine)
 }
 
 ScriptManager::~ScriptManager() {
-	cleanScriptScope(universe);
-	cleanScriptScope(world);
-	cleanScriptScope(room);
-	cleanScriptScope(nodeview);
+	cleanScriptScope(_universe);
+	cleanScriptScope(_world);
+	cleanScriptScope(_room);
+	cleanScriptScope(_nodeview);
 	_controlEvents.clear();
 }
 
@@ -58,10 +58,10 @@ void ScriptManager::initialize(bool restarted) {
 		_globalState.clear();
 		_globalStateFlags.clear();
 	}
-	cleanScriptScope(universe);
-	cleanScriptScope(world);
-	cleanScriptScope(room);
-	cleanScriptScope(nodeview);
+	cleanScriptScope(_universe);
+	cleanScriptScope(_world);
+	cleanScriptScope(_room);
+	cleanScriptScope(_nodeview);
 	_currentLocation.node = 0;
 	_currentLocation.world = 0;
 	_currentLocation.room = 0;
@@ -88,7 +88,7 @@ void ScriptManager::initialize(bool restarted) {
 			break;
 		}
 	}
-	parseScrFile("universe.scr", universe);
+	parseScrFile("universe.scr", _universe);
 	changeLocation('g', 'a', 'r', 'y', 0);
 	_controlEvents.clear();
 	if (restarted)
@@ -111,13 +111,13 @@ void ScriptManager::update(uint deltaTimeMillis) {
 	}
 	updateNodes(deltaTimeMillis);
 	debug(5, "Script nodes updated");
-	if (!execScope(nodeview))
+	if (!execScope(_nodeview))
 		return;
-	if (!execScope(room))
+	if (!execScope(_room))
 		return;
-	if (!execScope(world))
+	if (!execScope(_world))
 		return;
-	if (!execScope(universe))
+	if (!execScope(_universe))
 		return;
 	updateControls(deltaTimeMillis);
 }
@@ -500,12 +500,12 @@ void ScriptManager::changeLocation(const Location &_newLocation) {
 	changeLocation(_newLocation.world, _newLocation.room, _newLocation.node, _newLocation.view, _newLocation.offset);
 }
 
-void ScriptManager::changeLocation(char _world, char _room, char _node, char _view, uint32 offset) {
+void ScriptManager::changeLocation(char world, char room, char node, char view, uint32 offset) {
 	_changeLocationDelayCycles = 1;
-	_nextLocation.world = _world;
-	_nextLocation.room = _room;
-	_nextLocation.node = _node;
-	_nextLocation.view = _view;
+	_nextLocation.world = world;
+	_nextLocation.room = room;
+	_nextLocation.node = node;
+	_nextLocation.view = view;
 	_nextLocation.offset = offset;
 	// If next location is 0000, return to the previous location.
 	if (_nextLocation == "0000") {
@@ -583,43 +583,43 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 	setStateValue(StateKey_ViewPos, _nextLocation.offset);
 
 	_referenceTable.clear();
-	addPuzzlesToReferenceTable(universe);
+	addPuzzlesToReferenceTable(_universe);
 
 	_engine->getMenuManager()->setEnable(0xFFFF);
 
 	if (_nextLocation.world != _currentLocation.world) {
-		cleanScriptScope(nodeview);
-		cleanScriptScope(room);
-		cleanScriptScope(world);
+		cleanScriptScope(_nodeview);
+		cleanScriptScope(_room);
+		cleanScriptScope(_world);
 		Common::Path fileName(Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view));
-		parseScrFile(fileName, nodeview);
-		addPuzzlesToReferenceTable(nodeview);
+		parseScrFile(fileName, _nodeview);
+		addPuzzlesToReferenceTable(_nodeview);
 		fileName = Common::Path(Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room));
-		parseScrFile(fileName, room);
-		addPuzzlesToReferenceTable(room);
+		parseScrFile(fileName, _room);
+		addPuzzlesToReferenceTable(_room);
 		fileName = Common::Path(Common::String::format("%c.scr", _nextLocation.world));
-		parseScrFile(fileName, world);
-		addPuzzlesToReferenceTable(world);
+		parseScrFile(fileName, _world);
+		addPuzzlesToReferenceTable(_world);
 	} else if (_nextLocation.room != _currentLocation.room) {
-		cleanScriptScope(nodeview);
-		cleanScriptScope(room);
-		addPuzzlesToReferenceTable(world);
+		cleanScriptScope(_nodeview);
+		cleanScriptScope(_room);
+		addPuzzlesToReferenceTable(_world);
 		Common::Path fileName(Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view));
-		parseScrFile(fileName, nodeview);
-		addPuzzlesToReferenceTable(nodeview);
+		parseScrFile(fileName, _nodeview);
+		addPuzzlesToReferenceTable(_nodeview);
 		fileName = Common::Path(Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room));
-		parseScrFile(fileName, room);
-		addPuzzlesToReferenceTable(room);
+		parseScrFile(fileName, _room);
+		addPuzzlesToReferenceTable(_room);
 	} else if (_nextLocation.node != _currentLocation.node || _nextLocation.view != _currentLocation.view) {
-		cleanScriptScope(nodeview);
-		addPuzzlesToReferenceTable(room);
-		addPuzzlesToReferenceTable(world);
+		cleanScriptScope(_nodeview);
+		addPuzzlesToReferenceTable(_room);
+		addPuzzlesToReferenceTable(_world);
 		Common::Path fileName(Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view));
-		parseScrFile(fileName, nodeview);
-		addPuzzlesToReferenceTable(nodeview);
+		parseScrFile(fileName, _nodeview);
+		addPuzzlesToReferenceTable(_nodeview);
 	}
 
-	_activeControls = &nodeview.controls;
+	_activeControls = &_nodeview.controls;
 
 	// Revert to the idle cursor
 	_engine->getCursorManager()->changeCursor(CursorIndex_Idle);
@@ -629,20 +629,20 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 
 	if (_currentLocation == "0000") {
 		_currentLocation = _nextLocation;
-		execScope(world);
-		execScope(room);
-		execScope(nodeview);
+		execScope(_world);
+		execScope(_room);
+		execScope(_nodeview);
 	} else if (_nextLocation.world != _currentLocation.world) {
 		_currentLocation = _nextLocation;
-		execScope(room);
-		execScope(nodeview);
+		execScope(_room);
+		execScope(_nodeview);
 	} else if (_nextLocation.room != _currentLocation.room) {
 		_currentLocation = _nextLocation;
-		execScope(room);
-		execScope(nodeview);
+		execScope(_room);
+		execScope(_nodeview);
 	} else if (_nextLocation.node != _currentLocation.node || _nextLocation.view != _currentLocation.view) {
 		_currentLocation = _nextLocation;
-		execScope(nodeview);
+		execScope(_nodeview);
 	}
 
 	_engine->getRenderManager()->checkBorders();
@@ -678,9 +678,9 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 	// Clear out the current table values
 	_globalState.clear();
 	_globalStateFlags.clear();
-	cleanScriptScope(nodeview);
-	cleanScriptScope(room);
-	cleanScriptScope(world);
+	cleanScriptScope(_nodeview);
+	cleanScriptScope(_room);
+	cleanScriptScope(_world);
 	_currentLocation.node = 0;
 	_currentLocation.world = 0;
 	_currentLocation.room = 0;
@@ -788,25 +788,25 @@ void ScriptManager::trimCommentsAndWhiteSpace(Common::String *string) const {
 
 ValueSlot::ValueSlot(ScriptManager *scriptManager, const char *slotValue):
 	_scriptManager(scriptManager) {
-	value = 0;
-	slot = false;
+	_value = 0;
+	_slot = false;
 	const char *isSlot = strstr(slotValue, "[");
 	if (isSlot) {
-		slot = true;
-		value = atoi(isSlot + 1);
+		_slot = true;
+		_value = atoi(isSlot + 1);
 	} else {
-		slot = false;
-		value = atoi(slotValue);
+		_slot = false;
+		_value = atoi(slotValue);
 	}
 }
 int16 ValueSlot::getValue() {
-	if (slot) {
-		if (value >= 0)
-			return _scriptManager->getStateValue(value);
+	if (_slot) {
+		if (_value >= 0)
+			return _scriptManager->getStateValue(_value);
 		else
 			return 0;
 	} else
-		return value;
+		return _value;
 }
 
 } // End of namespace ZVision
