@@ -101,6 +101,11 @@ class CPen {};
 class CView {};
 class CPalette {};
 
+class CObject {
+public:
+	virtual ~CObject() {}
+};
+
 /* Brush Styles */
 #define BS_SOLID            0
 

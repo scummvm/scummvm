@@ -65,9 +65,6 @@ class CBsuInfo ;
 class CRPoint ;
 class CRRect ;
 
-class CObject {
-};
-
 struct CSize {
 	int cx;
 	int cy;

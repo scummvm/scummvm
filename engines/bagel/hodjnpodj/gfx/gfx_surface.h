@@ -27,6 +27,7 @@
 #include "graphics/font.h"
 #include "graphics/palette.h"
 #include "bagel/boflib/palette.h"
+#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -46,7 +47,8 @@ struct RectWH : public Common::Rect {
 		Common::Rect(x, y, x + w, y + h) {}
 };
 
-class GfxSurface : public Graphics::ManagedSurface {
+class GfxSurface : public Graphics::ManagedSurface,
+		public CObject {
 private:
 	Graphics::ManagedSurface _cellsSource; // Used with loadCels
 	const UIElement *_owner = nullptr;

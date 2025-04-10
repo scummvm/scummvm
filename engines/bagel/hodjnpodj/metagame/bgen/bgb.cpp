@@ -90,12 +90,13 @@ void CBgbMgr::CacheReleaseObject(CBgbObject *pBgbObject) {
 		//
 		case BGBT_SPRITE:
 			if (pBgbObject->m_pObject != nullptr) {
-
 				// remove from sprite chain
-				((Sprite *)pBgbObject->m_pObject)->unlinkSprite();
+				Sprite *spr = dynamic_cast<Sprite *>(pBgbObject->m_pObject);
+				assert(spr);
+				spr->unlinkSprite();
 
 				// free it
-				delete (Sprite *)pBgbObject->m_pObject;
+				delete spr;
 
 				// no more pointer
 				pBgbObject->m_pObject = nullptr;
