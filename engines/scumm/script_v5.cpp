@@ -549,16 +549,27 @@ void ScummEngine_v5::o5_actorOps() {
 			// CD animation uses colors 1-3, where the floppy
 			// version uses 2, 3, and 9.
 			//
-			// We don't touch the colours in general - the Special
-			// edition have pretty much made them canon anyway -
-			// but for the Smirk close-up we want the same colors
-			// as the floppy version.
+			// So we have to adjust which colors are remapped. We
+			// also need to make sure they are remapped to the
+			// correct colors, because not only does the GUI occupy
+			// some colors, apparently the FM Towns version has a
+			// different palette altogether. So we look up the
+			// closest available color to the ones we want.
+			//
+			// We could use this to get back the original smoke
+			// colors for other scenes as well, but we currently do
+			// not. The Special Edition kept the new colors too.
 
 			if (_game.id == GID_MONKEY && _currentRoom == 76 && enhancementEnabled(kEnhVisualChanges)) {
 				if (i == 3)
 					i = 1;
 				else if (i == 9)
 					i = 3;
+
+				if (j == 3)
+					j = findClosestPaletteColor(_currentPalette, 256, 0, 171, 171);
+				else if (j == 7)
+					j = findClosestPaletteColor(_currentPalette, 256, 171, 171, 171);
 			}
 
 			// WORKAROUND for original bug. The original interpreter has a color fix for CGA mode which can be seen
@@ -2360,11 +2371,12 @@ void ScummEngine_v5::o5_roomOps() {
 			_opcode = fetchScriptByte();
 			d = getVarOrDirectByte(PARAM_1);
 
-			// WORKAROUND: The CD version of Monkey Island 1 will
-			// set a couple of default colors, presumably for the
-			// GUI to use. But in the close-up of captain Smirk,
-			// we want the original color 3 for the cigar smoke. It
-			// should be ok since there is no GUI in this scene.
+			// WORKAROUND: The CD versions of Monkey Island 1 may
+			// set a few colors, presumably for the GUI. But this is
+			// the close-up of captain Smirk, so it doesn't need all
+			// of those colors. Only the ones used by the dialog
+			// boxes and such. The others we may need for the cigar
+			// smoke.
 
 			if (_game.id == GID_MONKEY && _currentRoom == 76 && d == 3 && enhancementEnabled(kEnhVisualChanges)) {
 				// Do nothing
