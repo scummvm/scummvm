@@ -944,7 +944,14 @@ private:
 			const Datum &val = g_lingo->_globalvars.getVal(varName);
 			ImGui::BeginTooltip();
 			ImGui::Text("Click to add to watches.");
-			ImGui::Text("= %s", val.asString(true).c_str());
+			Common::String s = val.asString(true);
+			s.wordWrap(150);
+			if (s.size() > 4000) {
+				uint chop = s.size() - 4000;
+				s.chop(s.size() - 4000);
+				s += Common::String::format("... [chopped %d chars]", chop);
+			}
+			ImGui::Text("= %s", s.c_str());
 			ImGui::EndTooltip();
 		}
 		if (ImGui::IsItemClicked()) {
