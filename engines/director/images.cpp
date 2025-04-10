@@ -29,10 +29,8 @@
 
 namespace Director {
 
-DIBDecoder::DIBDecoder() {
+DIBDecoder::DIBDecoder() : _palette(0) {
 	_surface = nullptr;
-	_palette = nullptr;
-	_paletteColorCount = 0;
 	_bitsPerPixel = 0;
 	_codec = nullptr;
 }
@@ -44,9 +42,7 @@ DIBDecoder::~DIBDecoder() {
 void DIBDecoder::destroy() {
 	_surface = nullptr;	// It is deleted by BitmapRawDecoder
 
-	delete[] _palette;
-	_palette = nullptr;
-	_paletteColorCount = 0;
+	_palette.clear();
 
 	delete _codec;
 	_codec = nullptr;
@@ -54,20 +50,18 @@ void DIBDecoder::destroy() {
 
 void DIBDecoder::loadPalette(Common::SeekableReadStream &stream) {
 	uint16 steps = stream.size() / 6;
-	uint16 index = 0;
-	_paletteColorCount = steps;
-	_palette = new byte[steps * 3];
+	_palette.resize(steps, false);
 
 	for (uint8 i = 0; i < steps; i++) {
-		_palette[index] = stream.readByte();
+		byte r = stream.readByte();
 		stream.readByte();
 
-		_palette[index + 1] = stream.readByte();
+		byte g = stream.readByte();
 		stream.readByte();
 
-		_palette[index + 2] = stream.readByte();
+		byte b = stream.readByte();
 		stream.readByte();
-		index += 3;
+		_palette.set(i, r, g, b);
 	}
 }
 
@@ -88,10 +82,11 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	/* uint32 imageSize = */ stream.readUint32LE();
 	/* int32 pixelsPerMeterX = */ stream.readSint32LE();
 	/* int32 pixelsPerMeterY = */ stream.readSint32LE();
-	_paletteColorCount = stream.readUint32LE();
+	uint32 paletteColorCount = stream.readUint32LE();
 	/* uint32 colorsImportant = */ stream.readUint32LE();
 
-	_paletteColorCount = (_paletteColorCount == 0) ? 255: _paletteColorCount;
+	paletteColorCount = (paletteColorCount == 0) ? 255: paletteColorCount;
+	_palette.resize(paletteColorCount, false);
 
 	Common::SeekableSubReadStream subStream(&stream, 40, stream.size());
 
@@ -130,7 +125,7 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 * BITD
 ****************************/
 
-BITDDecoder::BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch, const byte *palette, uint16 version) {
+BITDDecoder::BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch, const byte *palette, uint16 version) : _palette(0) {
 	_surface = new Graphics::Surface();
 	_pitch = pitch;
 	_version = version;
@@ -164,10 +159,9 @@ BITDDecoder::BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch, const 
 
 	_surface->create(w, h, format);
 
-	_palette = palette;
-
 	// TODO: Bring this in from the main surface?
-	_paletteColorCount = 255;
+	_palette.resize(255, false);
+	_palette.set(palette, 0, 255);
 
 	_bitsPerPixel = bitsPerPixel;
 }
@@ -180,8 +174,6 @@ void BITDDecoder::destroy() {
 	_surface->free();
 	delete _surface;
 	_surface = nullptr;
-
-	_paletteColorCount = 0;
 }
 
 void BITDDecoder::loadPalette(Common::SeekableReadStream &stream) {

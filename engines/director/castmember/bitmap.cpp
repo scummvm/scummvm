@@ -619,7 +619,7 @@ void BitmapCastMember::load() {
 						Common::DumpFile bitmapFile;
 
 						bitmapFile.open(Common::Path(filename), true);
-						Image::writePNG(bitmapFile, *decoder->getSurface(), decoder->getPalette());
+						Image::writePNG(bitmapFile, *decoder->getSurface(), decoder->getPalette().data());
 
 						bitmapFile.close();
 					}
@@ -691,7 +691,7 @@ void BitmapCastMember::load() {
 		Common::DumpFile bitmapFile;
 
 		bitmapFile.open(Common::Path(filename), true);
-		Image::writePNG(bitmapFile, *img->getSurface(), img->getPalette());
+		Image::writePNG(bitmapFile, *img->getSurface(), img->getPalette().data());
 
 		bitmapFile.close();
 	}

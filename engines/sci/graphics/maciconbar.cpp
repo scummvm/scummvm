@@ -263,7 +263,7 @@ Graphics::Surface *GfxMacIconBar::loadPict(ResourceId id) {
 
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->copyFrom(*pictDecoder.getSurface());
-	remapColors(surface, pictDecoder.getPalette());
+	remapColors(surface, pictDecoder.getPalette().data());
 
 	return surface;
 }

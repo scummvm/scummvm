@@ -63,7 +63,7 @@ private:
 		target.blitFrom(*src);
 
 		if (decoder.hasPalette()) {
-			setPalette(decoder.getPalette(), decoder.getPaletteColorCount());
+			setPalette(decoder.getPalette().data(), decoder.getPalette().size());
 		}
 		return true;
 	}

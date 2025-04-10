@@ -2414,7 +2414,7 @@ void LB::b_importFileInto(int nargs) {
 	movie->createOrReplaceCastMember(memberID, bitmapCast);
 	bitmapCast->setModified(true);
 	const Graphics::Surface *surf = img->getSurface();
-	bitmapCast->_size = surf->pitch * surf->h + img->getPaletteColorCount() * 3;
+	bitmapCast->_size = surf->pitch * surf->h + img->getPalette().size() * 3;
 	score->refreshPointersForCastMemberID(dst.asMemberID());
 }
 

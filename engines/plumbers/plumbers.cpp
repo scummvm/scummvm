@@ -267,8 +267,8 @@ void PlumbersGame::drawScreen() {
 			_showScoreFl = false;
 		}
 
-		if (_image->getPalette() != nullptr)
-			g_system->getPaletteManager()->setPalette(_image->getPalette(), 0, 256);
+		if (_image->hasPalette())
+			g_system->getPaletteManager()->setPalette(_image->getPalette().data(), 0, _image->getPalette().size());
 		g_system->updateScreen();
 	}
 }

@@ -669,7 +669,7 @@ MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	byte *newPal = nullptr;
 
 	if (bitmapDecoder.hasPalette()) {
-		const byte *palette = bitmapDecoder.getPalette();
+		const byte *palette = bitmapDecoder.getPalette().data();
 		newPal = (byte *)malloc(256 * 3);
 		memcpy(newPal, palette, 256 * 3);
 	}

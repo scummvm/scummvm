@@ -77,14 +77,15 @@ static Graphics::Surface *loadViaImageDecoder(const Common::Path &fileName, Comm
 		return nullptr;
 	}
 
+	// Use a cast to resolve ambiguities in JPEGDecoder
+	const Graphics::Palette & palette = static_cast<Image::ImageDecoder &>(decoder).getPalette();
 	return decoder.getSurface()->convertTo(
 #ifdef SCUMM_LITTLE_ENDIAN
 										   Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
 #else
 										   Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
 #endif
-										   // Use a cast to resolve ambiguities in JPEGDecoder
-										   static_cast<Image::ImageDecoder &>(decoder).getPalette());
+										   palette.data(), palette.size());
 }
 
 struct ImageLoader {

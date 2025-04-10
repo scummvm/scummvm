@@ -1575,7 +1575,7 @@ bool PrintModifierImageSupplier::loadImageSlot(uint slot, const Graphics::Surfac
 	outHasPalette = _decoder->hasPalette();
 
 	if (_decoder->hasPalette())
-		outPalette.set(_decoder->getPalette(), 0, _decoder->getPaletteColorCount());
+		outPalette.set(_decoder->getPalette(), 0, _decoder->getPalette().size());
 
 	outMetadata = GUI::ImageAlbumImageMetadata();
 	outMetadata._orientation = GUI::kImageAlbumImageOrientationLandscape;

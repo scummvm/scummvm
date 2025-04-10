@@ -84,8 +84,8 @@ bool BaseImage::loadFile(const Common::String &filename) {
 
 	_decoder->loadStream(*file);
 	_surface = _decoder->getSurface();
-	_palette = _decoder->getPalette();
-	_paletteCount = _decoder->getPaletteColorCount();
+	_palette = _decoder->getPalette().data();
+	_paletteCount = _decoder->getPalette().size();
 	_fileManager->closeFile(file);
 
 	return true;

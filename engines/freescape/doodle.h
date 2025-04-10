@@ -3,6 +3,7 @@
 
 #include "image/image_decoder.h"
 #include "common/stream.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 namespace Image {
@@ -20,8 +21,7 @@ public:
 	bool loadStream(Common::SeekableReadStream &stream) override;
 	void destroy() override;
 	const Graphics::Surface *getSurface() const override { return _surface; }
-	const byte *getPalette() const override { return _palette; }
-	uint16 getPaletteColorCount() const override { return 16; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 
 	/**
 	 * Load a C64 doodle image from its component streams
@@ -41,7 +41,7 @@ private:
 	static const int kColorDataSize = 1000;  // 40x25 color cells
 
 	Graphics::Surface *_surface;
-	const byte *_palette;
+	Graphics::Palette _palette;
 
 	/**
 	 * Process an 8x8 cell of the image

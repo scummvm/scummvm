@@ -450,7 +450,7 @@ void Screen::renderImage(int section) {
 
 bool Screen::setCurrentImage(int filenumber) {
 	_currentImage = _resMan->getImage(filenumber);
-	_vm->_system->getPaletteManager()->setPalette(_currentImage->getPalette(), 16, 239);
+	_vm->_system->getPaletteManager()->setPalette(_currentImage->getPalette().data(), 16, 239);
 	paletteBrightness();
 
 	return true;
@@ -638,8 +638,8 @@ void Screen::paletteBrightness() {
 	}
 	for (uint i = 0; i < 717; ++i) {
 		const byte *imagePalette;
-		if (_currentImage && _currentImage->getPalette()) {
-			imagePalette = _currentImage->getPalette();
+		if (_currentImage && _currentImage->hasPalette()) {
+			imagePalette = _currentImage->getPalette().data();
 		} else {
 			imagePalette = palette + 48;
 		}
