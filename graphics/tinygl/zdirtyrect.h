@@ -130,6 +130,11 @@ private:
 		bool alphaTestEnabled;
 		int alphaFunc;
 		int alphaRefValue;
+
+		// scissor test
+		bool scissorTestEnabled;
+		Common::Rect scissorRect;
+
 		bool stencilTestEnabled;
 		int stencilTestFunc;
 		int stencilValue;
@@ -191,6 +196,8 @@ private:
 		bool alphaTest;
 		int alphaFunc, alphaRefValue;
 		int depthTestEnabled;
+		bool scissorTestEnabled;
+		Common::Rect scissorRect;
 
 		bool operator==(const BlittingState &other) const {
 			return
@@ -200,7 +207,10 @@ private:
 				alphaTest == other.alphaTest &&
 				alphaFunc == other.alphaFunc &&
 				alphaRefValue == other.alphaRefValue &&
-				depthTestEnabled == other.depthTestEnabled;
+				depthTestEnabled == other.depthTestEnabled &&
+				// should scissor test be compared here?
+				scissorTestEnabled == other.scissorTestEnabled &&
+				scissorRect == other.scissorRect;
 		}
 	};
 
