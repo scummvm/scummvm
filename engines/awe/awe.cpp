@@ -29,7 +29,7 @@
 namespace Awe {
 
 AweEngine::AweEngine(OSystem *syst, const ADGameDescription *gameDesc)
-	: Engine(syst) {
+	: Engine(syst), _gameDescription(gameDesc) {
 }
 
 Common::Error AweEngine::run() {

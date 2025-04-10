@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "graphics/paletteman.h"
 #include "graphics/screen.h"
 #include "awe/awe.h"
 #include "awe/systemstub.h"
@@ -46,11 +47,10 @@ struct SDLStub : SystemStub {
 
 	uint8 *_offscreen;
 	Graphics::Screen *_screen;
-	//SDL_Surface *_sclscreen;
 	bool _fullscreen;
 	uint8 _scaler;
 	Graphics::PaletteLookup _palLookup;
-	uint16 _pal[16];
+	byte _pal[16];
 
 	virtual ~SDLStub() {}
 	virtual void init(const char *title);
@@ -104,14 +104,15 @@ void SDLStub::setPalette(uint8 s, uint8 n, const uint8 *buf) {
 			c[j] =  (col << 2) | (col & 3);
 		}
 
-		
-		_pal[i] = _palLookup.findBestColor(c[0], c[1], c[2]);
+		g_system->getPaletteManager()->setPalette(
+			c, i, 1);
+		_pal[i] = i;
 	}	
 }
 
 void SDLStub::copyRect(uint16 x, uint16 y, uint16 w, uint16 h, const uint8 *buf, uint32 pitch) {
 	buf += y * pitch + x;
-	uint16 *p = (uint16 *)_offscreen;
+	byte *p = (byte *)_offscreen;
 	while (h--) {
 		for (int i = 0; i < w / 2; ++i) {
 			uint8 p1 = *(buf + i) >> 4;
