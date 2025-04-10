@@ -30,13 +30,25 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"anotherworld",
 		nullptr,
-		AD_ENTRY1s("bank", "30fb99cb4cbd812273d0b54b7b4a18ca", 987462),
+		AD_ENTRY1s("memlist.bin", "f2bf61fe20c98108b2256e96d57d3fe0", 2940),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 
+#if 0
+	// Unsupported release that doesn't have a memlist.bin
+	{
+		"anotherworld",
+		nullptr,
+		AD_ENTRY1s("bank", "30fb99cb4cbd812273d0b54b7b4a18ca", 987462),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+#endif
 	AD_TABLE_END_MARKER
 };
 
