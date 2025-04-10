@@ -2394,13 +2394,29 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> &path, St
 }
 
 void qdGameObjectMoving::optimize_path_eight_dirs(Std::list<Vect2i> &path) const {
-	// Спрямляем, пока спрямляется, но не более чем EIGHT_DIRS_OPT_ITER_MAX раз
+	// TODO
+	// Find and check against the real cutoff date
+	if (g_engine->_gameVersion <= 20040601) {
+		bool changed;
+		int step = 0;
+		do {
+			step++;
+			del_coll_pts(path); // Для успешного спрямления путь не должен содержать более
+								// двух последовательных точек, лежащих на одной прямой
+			changed = false;
+			for (Std::list<Vect2i>::iterator it = path.begin(); it != path.end(); ++it)
+				if (four_pts_eight_dir_straight_old(path, it) && !changed)
+					changed = true;
+		} while (changed && (step < EIGHT_DIRS_OPT_ITER_MAX));
+	} else {
+		// Спрямляем, пока спрямляется, но не более чем EIGHT_DIRS_OPT_ITER_MAX раз
 
-	for (int i = 0; i < EIGHT_DIRS_OPT_ITER_MAX; i++) {
-		for (Std::list<Vect2i>::reverse_iterator it = path.rbegin(); it != path.rend(); ++it)
-			four_pts_eight_dir_straight(path, it);
+		for (int i = 0; i < EIGHT_DIRS_OPT_ITER_MAX; i++) {
+			for (Std::list<Vect2i>::reverse_iterator it = path.rbegin(); it != path.rend(); ++it)
+				four_pts_eight_dir_straight(path, it);
 
-		if (!del_coll_pts(path)) break;
+			if (!del_coll_pts(path)) break;
+		}
 	}
 }
 
