@@ -502,11 +502,10 @@ bool CGtlData::GetLabel(char *lpszLabel, bool bNode, int &iIndex)
 
 	// if looking for node label
 	if (bNode) {
-
 		// loop through nodes, searching for label
 		for (iIndex = 0; iIndex < m_iNodes &&
-			(strcmp(m_lpNodes[iIndex].m_szLabel, lpszLabel) || m_lpNodes[iIndex].m_bDeleted); ++iIndex)
-			;   // null loop body
+			(strcmp(m_lpNodes[iIndex].m_szLabel, lpszLabel) || m_lpNodes[iIndex].m_bDeleted); ++iIndex) {
+		}
 
 		if (iIndex >= m_iNodes) {
 			iError = 101;

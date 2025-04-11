@@ -44,7 +44,7 @@ namespace Metagame {
 #define MAX_HANDLE_LENGTH 200           // max length of handle name
 #define MAX_STRINGLIST 512              // max total length of all strings in line
 #define MAX_LEXELTS 100                 // max # of CLexElement objects
-#define MAX_LABEL_LENGTH 12             // max length of node/bitmap
+#define MAX_LABEL_LENGTH 32             // max length of node/bitmap label
 // label/action
 #define MAX_BITMAPS 130
 
