@@ -63,9 +63,9 @@ struct Screen {
 	Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format, const Palette *palette);
 	~Screen();
 
-	void reset(int width, int height, int bitsPerPixel, bool resetCursorPosition);
+	void reset(int width, int height, int bitsPerPixel, const Graphics::Surface &boundingSurf, int xOffset, bool resetCursorPosition);
 	// must be called before any rectangle drawing
-	void addDirtyRect(const Graphics::Surface &srcSurface, const Common::Rect &rect, bool directRendering);
+	void addDirtyRect(const Graphics::Surface &srcSurface, int x, int y, int w, int h, bool directRendering);
 
 	void clearDirtyRects() {
 		dirtyRects.clear();
@@ -98,6 +98,7 @@ private:
 	const AtariGraphicsManager *_manager;
 
 	Graphics::Surface _offsettedSurf;
+	int _xOffset = 0;
 };
 
 #endif // BACKENDS_GRAPHICS_ATARI_SCREEN_H

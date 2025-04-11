@@ -25,10 +25,11 @@
 
 #include "atari-graphics.h"
 #include "atari-graphics-superblitter.h"
+#include "backends/platform/atari/atari-debug.h"
 
 Screen::Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format, const Palette *palette_)
 	: _manager(manager)
-	, cursor(manager, this)
+	, cursor(manager, this, width / 2, height / 2)
 	, palette(palette_) {
 	const AtariGraphicsManager::AtariMemAlloc &allocFunc = _manager->getStRamAllocFunc();
 
@@ -44,6 +45,7 @@ Screen::Screen(AtariGraphicsManager *manager, int width, int height, const Graph
 		error("Failed to allocate memory in ST RAM");
 	}
 
+	// TODO: use mspace_calloc similar as what we do with SuperVidel
 	surf.setPixels((void *)(((uintptr)pixelsUnaligned + sizeof(uintptr) + ALIGN - 1) & (-ALIGN)));
 
 	// store the unaligned pointer for later release
@@ -63,11 +65,13 @@ Screen::~Screen() {
 	freeFunc((void *)*((uintptr *)surf.getPixels() - 1));
 }
 
-void Screen::reset(int width, int height, int bitsPerPixel, bool resetCursorPosition) {
+void Screen::reset(int width, int height, int bitsPerPixel, const Graphics::Surface &boundingSurf, int xOffset, bool resetCursorPosition) {
+	_xOffset = xOffset;
+
 	clearDirtyRects();
-	cursor.reset();
+	cursor.reset(&boundingSurf, xOffset);
 	if (resetCursorPosition)
-		cursor.setPosition(width / 2, height / 2);
+		cursor.setPosition(boundingSurf.w / 2, boundingSurf.h / 2);
 	rez = -1;
 	mode = -1;
 
@@ -134,24 +138,34 @@ void Screen::reset(int width, int height, int bitsPerPixel, bool resetCursorPosi
 		surf.format);
 }
 
-void Screen::addDirtyRect(const Graphics::Surface &srcSurface, const Common::Rect &rect, bool directRendering) {
+void Screen::addDirtyRect(const Graphics::Surface &srcSurface, int x, int y, int w, int h, bool directRendering) {
 	if (fullRedraw)
 		return;
 
-	if ((rect.width() == srcSurface.w && rect.height() == srcSurface.h)
+	if ((w == srcSurface.w && h == srcSurface.h)
 		|| dirtyRects.size() == 128) {	// 320x200 can hold at most 250 16x16 rectangles
 		//atari_debug("addDirtyRect[%d]: purge %d x %d", (int)dirtyRects.size(), srcSurface.w, srcSurface.h);
 
 		dirtyRects.clear();
-		dirtyRects.emplace(srcSurface.w, srcSurface.h);
+		// don't use x/y/w/h, the 2nd expression may be true
+		// also, it's ok if e.g. w = 630 gets aligned to w = 640, nothing is drawn in 630~639
+		dirtyRects.insert(_manager->alignRect(_xOffset, 0, _xOffset + srcSurface.w, srcSurface.h));
 
-		cursor.reset();
+		cursor.reset(&srcSurface, _xOffset);
 
 		fullRedraw = true;
 	} else {
-		dirtyRects.insert(rect);
+		const Common::Rect alignedRect = _manager->alignRect(x + _xOffset, y, x + _xOffset + w, y + h);
 
-		// do it now to avoid checking in AtariGraphicsManager::updateScreenInternal()
-		cursor.flushBackground(directRendering ? Graphics::Surface() : srcSurface, rect);
+		dirtyRects.insert(alignedRect);
+
+		// Check whether the cursor background intersects the dirty rect. Has to be done here,
+		// before the actual drawing (especially in case of direct rendering). There's one more
+		// check in AtariGraphicsManager::updateScreenInternal for the case when there are no
+		// dirty rectangles but the cursor itself has changed.
+		const Common::Rect cursorBackgroundRect = cursor.flushBackground(alignedRect, directRendering);
+		if (!cursorBackgroundRect.isEmpty()) {
+			dirtyRects.insert(cursorBackgroundRect);
+		}
 	}
 }

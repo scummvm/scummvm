@@ -41,9 +41,16 @@ public:
 	}
 
 private:
-	void copyRectToSurface(Graphics::Surface &dstSurface, int dstBitsPerPixel, const Graphics::Surface &srcSurface,
+	void copyRectToSurface(Graphics::Surface &dstSurface, const Graphics::Surface &srcSurface,
 						   int destX, int destY,
 						   const Common::Rect &subRect) const override {
+		assert(subRect.left % 16 == 0);
+		assert(subRect.width() % 16 == 0);
+		assert(destX % 16 == 0);
+		assert(srcSurface.format == dstSurface.format);
+
+		const int bitsPerPixel = getBitsPerPixel(dstSurface.format);
+
 		// 'pChunkyEnd' is a delicate parameter: the c2p routine compares it to the address register
 		// used for pixel reading; two common mistakes:
 		// 1. (subRect.left, subRect.bottom) = beginning of the next line *including the offset*
@@ -51,9 +58,9 @@ private:
 		const byte *pChunky    = (const byte *)srcSurface.getBasePtr(subRect.left, subRect.top);
 		const byte *pChunkyEnd = (const byte *)srcSurface.getBasePtr(subRect.right, subRect.bottom-1);
 
-        byte *pScreen = (byte *)dstSurface.getPixels() + destY * dstSurface.pitch + destX * dstBitsPerPixel/8;
+		byte *pScreen = (byte *)dstSurface.getPixels() + destY * dstSurface.pitch + destX * bitsPerPixel/8;
 
-		if (dstBitsPerPixel == 8) {
+		if (bitsPerPixel == 8) {
 			if (srcSurface.pitch == subRect.width()) {
 				if (srcSurface.pitch == dstSurface.pitch) {
 					asm_c2p1x1_8(pChunky, pChunkyEnd, pScreen);
@@ -85,27 +92,29 @@ private:
 		}
 	}
 
-	void drawMaskedSprite(Graphics::Surface &dstSurface, int dstBitsPerPixel,
+	void drawMaskedSprite(Graphics::Surface &dstSurface,
 						  const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
 						  int destX, int destY,
-						  const Common::Rect &subRect) override {
-		if (dstBitsPerPixel == 4) {
+						  const Common::Rect &subRect) const override {
+		assert(subRect.width() % 16 == 0);
+		assert(subRect.width() == srcSurface.w);
+		assert(srcSurface.format == dstSurface.format);
+
+		const int bitsPerPixel = getBitsPerPixel(dstSurface.format);
+
+		if (bitsPerPixel == 4) {
 			asm_draw_4bpl_sprite(
 				(uint16 *)dstSurface.getPixels(), (const uint16 *)srcSurface.getBasePtr(subRect.left, subRect.top),
 				(const uint16 *)srcMask.getBasePtr(subRect.left, subRect.top),
 				destX, destY,
 				dstSurface.pitch, subRect.width(), subRect.height());
-		} else if (dstBitsPerPixel == 8) {
+		} else if (bitsPerPixel == 8) {
 			asm_draw_8bpl_sprite(
 				(uint16 *)dstSurface.getPixels(), (const uint16 *)srcSurface.getBasePtr(subRect.left, subRect.top),
 				(const uint16 *)srcMask.getBasePtr(subRect.left, subRect.top),
 				destX, destY,
 				dstSurface.pitch, subRect.width(), subRect.height());
 		}
-	}
-
-	Common::Rect alignRect(int x, int y, int w, int h) const override {
-		return Common::Rect(x & (-16), y, (x + w + 15) & (-16), y + h);
 	}
 };
 

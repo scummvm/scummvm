@@ -25,6 +25,7 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "graphics/surface.h"
+//#include "backends/platform/atari/atari-debug.h"
 
 class AtariGraphicsManager;
 struct Screen;
@@ -36,17 +37,17 @@ struct Screen;
 // These always get updates by ScummVM, no need to differentiate between engines and the overlay.
 
 struct Cursor {
-	Cursor(AtariGraphicsManager *manager, Screen *screen)
-		: _manager(manager)
-		, _parentScreen(screen) {
-	}
+	Cursor(const AtariGraphicsManager *manager, const Screen *screen, int x, int y);
 
-	void reset() {
+	void reset(const Graphics::Surface *boundingSurf, int xOffset) {
+		_boundingSurf = boundingSurf;
+		_xOffset = xOffset;
+
 		_positionChanged = true;
 		_surfaceChanged = true;
 		_visibilityChanged = false;
 
-		_savedRect = Common::Rect();
+		_savedRect = _previousSrcRect = _alignedDstRect = Common::Rect();
 	}
 
 	// updates outOfScreen OR srcRect/dstRect (only if visible/needed)
@@ -72,6 +73,8 @@ struct Cursor {
 		return Common::Point(_x, _y);
 	}
 	void setPosition(int x, int y) {
+		//atari_debug("Cursor::setPosition: %d, %d", x, y);
+
 		if (_x == x && _y == y)
 			return;
 
@@ -85,7 +88,7 @@ struct Cursor {
 	// surface
 	void setSurface(const void *buf, int w, int h, int hotspotX, int hotspotY, uint32 keycolor);
 	void setPalette(const byte *colors, uint start, uint num);
-	void convertTo(const Graphics::PixelFormat &format);
+	void convertSurfaceTo(const Graphics::PixelFormat &format);
 
 	bool isVisible() const {
 		return !_outOfScreen && _visible;
@@ -94,32 +97,35 @@ struct Cursor {
 		return _positionChanged || _surfaceChanged || _visibilityChanged;
 	}
 
-	bool intersects(const Common::Rect &rect) const {
-		return rect.intersects(_dstRect);
-	}
-
-	void flushBackground(const Graphics::Surface &srcSurface, const Common::Rect &rect);
-	bool restoreBackground(const Graphics::Surface &srcSurface, bool force);
-	bool draw(bool directRendering, bool force);
+	Common::Rect flushBackground(const Common::Rect &alignedRect, bool directRendering);
+	void saveBackground();
+	void draw();
 
 private:
+	void restoreBackground();
+
 	static byte _palette[256*3];
 
-	AtariGraphicsManager *_manager;
-	Screen *_parentScreen;
+	const AtariGraphicsManager *_manager;
+	const Screen *_parentScreen;
+	const Graphics::Surface *_boundingSurf;
+	int _xOffset = 0;
 
 	bool _positionChanged = true;
 	bool _surfaceChanged = true;
 	bool _visibilityChanged = false;
 
 	bool _visible = false;
-	int _x = -1, _y = -1;
+	int _x;
+	int _y;
 	bool _outOfScreen = true;
 	Common::Rect _srcRect;
 	Common::Rect _dstRect;
 
-	Graphics::Surface _savedBackground;	// used by direct rendering
+	Graphics::Surface _savedBackground;
 	Common::Rect _savedRect;
+	Common::Rect _previousSrcRect;
+	Common::Rect _alignedDstRect;
 
 	// related to 'surface'
 	const byte *_buf = nullptr;
@@ -129,6 +135,10 @@ private:
 	int _hotspotY;
 	uint32 _keycolor;
 
+	// TODO: make all surface-related variables and functions static, similar to _palette/
+	// but there's a catch: we still need _surfaceChanged instantiated and convertTo may
+	// be called when clipping changes. Perhaps Cursor should be a singleton and those
+	// flags moved to Screen...
 	Graphics::Surface _surface;
 	Graphics::Surface _surfaceMask;
 	int _rShift, _gShift, _bShift;

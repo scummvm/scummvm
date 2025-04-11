@@ -84,8 +84,9 @@ void unlockSuperBlitter() {
 #endif
 }
 
-// see atari-graphics.cpp
+// see osystem-atari.cpp
 extern bool g_unalignedPitch;
+// see atari-graphics.cpp
 extern mspace g_mspace;
 
 namespace Graphics {
