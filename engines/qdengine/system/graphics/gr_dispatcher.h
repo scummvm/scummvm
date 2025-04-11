@@ -241,6 +241,7 @@ public:
 	void surfaceOverride(Graphics::ManagedSurface *target);
 	void resetSurfaceOverride();
 
+	void getPixel(int x, int y, uint32 &col);
 	void getPixel(int x, int y, uint16 &col);
 	void getPixel(int x, int y, byte &r, byte &g, byte &b);
 

@@ -2834,16 +2834,16 @@ bool qdGameDispatcher::game_screenshot(Graphics::Surface &thumb) const {
 	int w = g_engine->_screenW;
 	int h = g_engine->_screenH;
 
-	thumb.create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	thumb.create(w, h, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
 	if (qdGameScene *sp = get_active_scene()) {
-		qdSprite sprite(w, h, GR_RGB565);
+		qdSprite sprite(w, h, GR_RGB888);
 
 		sp->redraw();
 
-		uint16 col;
+		uint32 col;
 		for (int i = 0; i < h; i++) {
-			uint16 *dst = (uint16 *)thumb.getBasePtr(0, i);
+			uint32 *dst = (uint32 *)thumb.getBasePtr(0, i);
 			for (int j = 0; j < w; j++) {
 				grDispatcher::instance()->getPixel(j, i, col);
 				*dst = col;
