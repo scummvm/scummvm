@@ -83,6 +83,7 @@ public:
 	// QTVR stuff
 	////////////////
 	void setTargetSize(uint16 w, uint16 h);
+	void setOrigin(int left, int top) { _origin = Common::Point(left, top); }
 
 	void handleMouseMove(int16 x, int16 y);
 	void handleMouseButton(bool isDown, int16 x = -1, int16 y = -1, bool repeat = false);
@@ -95,6 +96,7 @@ public:
 	float getTiltAngle() const { return _tiltAngle; }
 	void setTiltAngle(float tiltAngle);
 	float getFOV() const { return _fov; }
+	float getHFOV() const { return _hfov; }
 	bool setFOV(float fov);
 	int getCurrentNodeID() { return _currentSample == -1 ? 0 : _panoTrack->panoSamples[_currentSample].hdr.nodeID; }
 	Common::String getCurrentNodeName();
@@ -181,6 +183,10 @@ private:
 	void computeInteractivityZones();
 
 	uint16 _width, _height;
+	// Will need to get these from the director engine whichever engine is using
+	// qtvr panorama at this moment which will 
+	// top left corner of the panorama in the entire frame
+	Common::Point _origin;
 
 public:
 	int _currentSample = -1;
@@ -206,6 +212,10 @@ public:
 		kUpdateModeOffscreenOnly,
 		kUpdateModeFromOffscreen,
 		kUpdateModeDirectToScreen,
+
+		kScaleFactorOne = 1,
+		kScaleFactorTwo = 2,
+		kScaleFactorThree = 3,
 	};
 
 private:
@@ -408,8 +418,9 @@ private:
 		QuickTimeDecoder *_decoder;
 		Common::QuickTimeParser::Track *_parent;
 
-		void projectPanorama();
-
+		void projectPanorama(int scaleFactor, float fov, float hfov, float panAngle, float tiltAngle);
+		void swingTransitionHandler();
+		void boxAverage(Graphics::Surface *sourceSurface, int scaleFactor);
 		const Graphics::Surface *bufferNextFrame();
 
 	public:
@@ -418,10 +429,17 @@ private:
 		Graphics::Surface *_projectedPano;
 		Graphics::Surface *_planarProjection;
 
+		// Defining these for the sake of making the swing transition happen
+		// This will be the start point of the transition
+		float _currentFOV = 0;
+		float _currentHFOV = 0;
+		float _currentPanAngle = 0;
+		float _currentTiltAngle = 0;
+
 	private:
 		bool _isPanoConstructed;
-
 		bool _dirty;
+		short _counter = 10;
 	};
 };
 
