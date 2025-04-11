@@ -50,24 +50,40 @@ Sprite::~Sprite() {
 }
 
 void Sprite::create(uint16 width, uint16 height, const GfxMode3DS *mode, bool vram) {
-	free();
+	int16 wPow = MAX<uint16>(Common::nextHigher2(width), 64u);
+	int16 hPow = MAX<uint16>(Common::nextHigher2(height), 64u);
+
+	bool pwrW_hChanged = (wPow != w) || (hPow != h);
+	bool sfcBppChanged = (mode->surfaceFormat.bytesPerPixel != format.bytesPerPixel);
+	bool texFmtChanged = (mode->textureFormat != texture.fmt);
+
+	bool srfDataReinitNeeded = (pwrW_hChanged || sfcBppChanged || !pixels);
+	bool textureReinitNeeded = (pwrW_hChanged || texFmtChanged || !texture.data);
 
 	actualWidth = width;
 	actualHeight = height;
 	format = mode->surfaceFormat;
 	textureTransferFlags = mode->textureTransferFlags;
-	w = MAX<uint16>(Common::nextHigher2(width), 64u);
-	h = MAX<uint16>(Common::nextHigher2(height), 64u);
+	w = wPow;
+	h = hPow;
 	pitch = w * format.bytesPerPixel;
 	dirtyPixels = true;
 
 	if (width && height) {
-		pixels = linearAlloc(h * pitch);
-		if (vram) {
-			if (!C3D_TexInitVRAM(&texture, w, h, mode->textureFormat))
+		// Don't needlessly reinitialize surface pixels.
+		if (srfDataReinitNeeded) {
+			linearFree(pixels);
+			pixels = linearAlloc(h * pitch);
+		}
+		// Don't needlessly reinitialize C3D_Tex data.
+		if (textureReinitNeeded) {
+			C3D_TexDelete(&texture);
+			if (vram) {
+				if (!C3D_TexInitVRAM(&texture, w, h, mode->textureFormat))
+					C3D_TexInit(&texture, w, h, mode->textureFormat);
+			} else
 				C3D_TexInit(&texture, w, h, mode->textureFormat);
-		} else
-			C3D_TexInit(&texture, w, h, mode->textureFormat);
+		}
 		assert(pixels && texture.data);
 		clear();
 	}
