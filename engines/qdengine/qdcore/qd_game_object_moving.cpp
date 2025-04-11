@@ -79,7 +79,7 @@ qdGameObjectMoving::qdGameObjectMoving() :
 	_is_selected = false;
 	set_flag(QD_OBJ_HAS_BOUND_FLAG);
 
-	if (g_engine->_gameVersion <= 20030919)
+	if (g_engine->_gameVersion <= 20060129)
 		_movement_mode = MOVEMENT_MODE_NONE_EARLY;
 	else
 		_movement_mode = MOVEMENT_MODE_STOP;
@@ -121,7 +121,7 @@ qdGameObjectMoving::qdGameObjectMoving(const qdGameObjectMoving &obj) : qdGameOb
 	_is_selected = false;
 	set_flag(QD_OBJ_HAS_BOUND_FLAG);
 
-	if (g_engine->_gameVersion <= 20030919)
+	if (g_engine->_gameVersion <= 20060129)
 		_movement_mode = MOVEMENT_MODE_NONE_EARLY;
 	else
 		_movement_mode = MOVEMENT_MODE_STOP;
@@ -493,7 +493,9 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 	debugC(3, kDebugLog, "Optimised Path");
 	dump_vect(path_vect);
 
-	if (path_vect.size() >= 2 && (movement_type() == qdGameObjectStateWalk::MOVEMENT_FOUR_DIRS || movement_type() == qdGameObjectStateWalk::MOVEMENT_EIGHT_DIRS)) {
+	// TODO
+	// Find and check against the real cutoff date
+	if (g_engine->_gameVersion > 20040601 && path_vect.size() >= 2 && (movement_type() == qdGameObjectStateWalk::MOVEMENT_FOUR_DIRS || movement_type() == qdGameObjectStateWalk::MOVEMENT_EIGHT_DIRS)) {
 		Std::vector<Vect3f> final_path;
 		finalize_path(R(), trg, path_vect, final_path);
 
@@ -510,10 +512,13 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 			_path[idx] = qdCamera::current_camera()->get_cell_coords(it->x, it->y);
 			idx ++;
 		}
-		_path[idx - 1] = trg;
+		if (g_engine->_gameVersion <= 20040601)
+			_path[idx] = trg;
+		else
+			_path[idx - 1] = trg;
 	}
 
-	_cur_path_index = (idx > 1) ? 1 : 0;
+	_cur_path_index = (g_engine->_gameVersion <= 20040601 || idx > 1) ? 1 : 0;
 	_path_length = idx;
 	move2position(_path[_cur_path_index++]);
 
@@ -532,7 +537,7 @@ bool qdGameObjectMoving::stop_movement() {
 		if (cur_state() == -1) return true;
 
 		qdGameObjectState *st = get_state(cur_state());
-		if (g_engine->_gameVersion <= 20030919) {
+		if (g_engine->_gameVersion <= 20060129) {
 			if (st->state_type() == qdGameObjectState::STATE_WALK) {
 				set_animation_info(static_cast<qdGameObjectStateWalk *>(st)->static_animation_info(_direction_angle));
 				st->stop_sound();
@@ -734,7 +739,7 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 			}
 		}
 		return R();
-	case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20030919
+	case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20060129
 	default:
 		break;
 	}
@@ -877,7 +882,9 @@ void qdGameObjectMoving::quant(float dt) {
 		start_auto_move();
 
 	if (check_flag(QD_OBJ_MOVING_FLAG)) {
-		if (g_engine->_gameVersion <= 20030919 || future_pos_correct(dt)) {
+		// TODO
+		// Find and check against the real cutoff date
+		if (g_engine->_gameVersion <= 20040601 || future_pos_correct(dt)) {
 			bool end_movement = false;
 			Vect3f r = get_future_r(dt, end_movement, true);
 
@@ -895,7 +902,7 @@ void qdGameObjectMoving::quant(float dt) {
 					if (_target_angle >= 0.0f)
 						_direction_angle = _target_angle;
 
-					if (g_engine->_gameVersion <= 20030919) {
+					if (g_engine->_gameVersion <= 20060129) {
 						drop_flag(QD_OBJ_MOVING_FLAG);
 						set_direction(_direction_angle);
 
@@ -1082,7 +1089,7 @@ bool qdGameObjectMoving::update_screen_pos() {
 				case MOVEMENT_MODE_END:
 					offs_type = qdGameObjectStateWalk::OFFSET_END;
 					break;
-				case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20030919
+				case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20060129
 					if (!check_flag(QD_OBJ_MOVING_FLAG))
 						offs_type = qdGameObjectStateWalk::OFFSET_STATIC;
 				}
@@ -2042,7 +2049,7 @@ bool qdGameObjectMoving::set_walk_animation() {
 				}
 			}
 			break;
-		case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20030919
+		case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20060129
 		default:
 			break;
 		}
@@ -2089,7 +2096,7 @@ bool qdGameObjectMoving::movement_impulse() {
 	_impulse_direction = -1.0f;
 	_target_angle = -1.0f;
 
-	if (g_engine->_gameVersion <= 20030919)
+	if (g_engine->_gameVersion <= 20060129)
 		set_walk_animation();
 
 	if (_movement_mode == MOVEMENT_MODE_STOP || _movement_mode == MOVEMENT_MODE_END)
@@ -2302,10 +2309,8 @@ bool qdGameObjectMoving::del_coll_pts(Std::list<Vect2i> &path) const {
 }
 
 // Вспомогательная функция - пытается спрямить отрезок пути из четырех точек, начиная с cur
-/*
-bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> path,
-                                                     const Std::list<Vect2i>::iterator cur) const
-{
+
+bool qdGameObjectMoving::four_pts_eight_dir_straight_old(Std::list<Vect2i> path, const Std::list<Vect2i>::iterator cur) const {
     // Извлекаем четыре точки
     Vect2i pts[4];
     Std::list<Vect2i>::iterator buf = cur;
@@ -2316,6 +2321,9 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> path,
         ++buf;
     }
     // Проверяем - является ли четверка точек "вытянутым зигзагом"
+
+	const double SQRT_2_DIV_2 = 0.7071067811865475244;
+
     if ((fabs(vec_cos(pts[1] - pts[0], pts[2] - pts[1]) - SQRT_2_DIV_2) > 0.0001) ||
         (fabs(vec_cos(pts[2] - pts[1], pts[3] - pts[2]) - SQRT_2_DIV_2) > 0.0001) ||
         !coll(pts[1] - pts[0], pts[3] - pts[2]))
@@ -2346,7 +2354,6 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> path,
 
     return false;
 }
-*/
 
 bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> &path, Std::list<Vect2i>::reverse_iterator cur) const {
 	// Извлекаем четыре точки
@@ -2387,13 +2394,29 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> &path, St
 }
 
 void qdGameObjectMoving::optimize_path_eight_dirs(Std::list<Vect2i> &path) const {
-	// Спрямляем, пока спрямляется, но не более чем EIGHT_DIRS_OPT_ITER_MAX раз
+	// TODO
+	// Find and check against the real cutoff date
+	if (g_engine->_gameVersion <= 20040601) {
+		bool changed;
+		int step = 0;
+		do {
+			step++;
+			del_coll_pts(path); // Для успешного спрямления путь не должен содержать более
+								// двух последовательных точек, лежащих на одной прямой
+			changed = false;
+			for (Std::list<Vect2i>::iterator it = path.begin(); it != path.end(); ++it)
+				if (four_pts_eight_dir_straight_old(path, it) && !changed)
+					changed = true;
+		} while (changed && (step < EIGHT_DIRS_OPT_ITER_MAX));
+	} else {
+		// Спрямляем, пока спрямляется, но не более чем EIGHT_DIRS_OPT_ITER_MAX раз
 
-	for (int i = 0; i < EIGHT_DIRS_OPT_ITER_MAX; i++) {
-		for (Std::list<Vect2i>::reverse_iterator it = path.rbegin(); it != path.rend(); ++it)
-			four_pts_eight_dir_straight(path, it);
+		for (int i = 0; i < EIGHT_DIRS_OPT_ITER_MAX; i++) {
+			for (Std::list<Vect2i>::reverse_iterator it = path.rbegin(); it != path.rend(); ++it)
+				four_pts_eight_dir_straight(path, it);
 
-		if (!del_coll_pts(path)) break;
+			if (!del_coll_pts(path)) break;
+		}
 	}
 }
 

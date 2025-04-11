@@ -1719,7 +1719,9 @@ void qdGameScene::create_minigame_objects() {
 }
 
 bool qdGameScene::set_camera_mode(const qdCameraMode &mode, qdGameObjectAnimated *object) {
-	if (!_camera.can_change_mode())
+	// TODO
+	// Find and check against the real cutoff date
+	if (g_engine->_gameVersion > 20040601 && !_camera.can_change_mode())
 		return false;
 
 	if (object && object->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ && object != _selected_object)

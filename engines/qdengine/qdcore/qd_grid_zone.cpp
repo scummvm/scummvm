@@ -192,14 +192,13 @@ bool qdGridZone::apply_zone() const {
 	pos.x -= mask_size().x / 2;
 	pos.y -= mask_size().y / 2;
 
-//	const byte* mask_ptr = mask_data();
+	const byte* mask_ptr = maskData();
 
 	if (_state) {
 		for (int y = 0; y < mask_size().y; y++) {
 			for (int x = 0; x < mask_size().x; x++) {
-				if (is_inside(pos + Vect2s(x, y))) {
-//				if(*mask_ptr++){
-					if (sGridCell * p = camera->get_cell(pos + Vect2s(x, y))) {
+				if ((g_engine->_gameVersion <= 20050101 && *mask_ptr++) || is_inside(pos + Vect2s(x, y))) {
+					if (sGridCell *p = camera->get_cell(pos + Vect2s(x, y))) {
 						p->make_walkable();
 						p->set_height(_height);
 					}
@@ -209,8 +208,7 @@ bool qdGridZone::apply_zone() const {
 	} else {
 		for (int y = 0; y < mask_size().y; y++) {
 			for (int x = 0; x < mask_size().x; x++) {
-				if (is_inside(pos + Vect2s(x, y))) {
-//				if(*mask_ptr++){
+				if ((g_engine->_gameVersion <= 20050101 && *mask_ptr++) || is_inside(pos + Vect2s(x, y))) {
 					if (sGridCell * p = camera->get_cell(pos + Vect2s(x, y))) {
 						p->make_impassable();
 						p->set_height(0);
@@ -248,14 +246,13 @@ bool qdGridZone::select(qdCamera *camera, bool bSelect) const {
 	pos.x -= mask_size().x / 2;
 	pos.y -= mask_size().y / 2;
 
-//	const byte* mask_ptr = mask_data();
+	const byte* mask_ptr = maskData();
 
 	if (bSelect) {
 		for (int y = 0; y < mask_size().y; y++) {
 			for (int x = 0; x < mask_size().x; x++) {
-				if (is_inside(pos + Vect2s(x, y))) {
-//				if(*mask_ptr++){
-					if (sGridCell * p = camera->get_cell(pos + Vect2s(x, y)))
+				if ((g_engine->_gameVersion <= 20050101 && *mask_ptr++) || is_inside(pos + Vect2s(x, y))) {
+					if (sGridCell *p = camera->get_cell(pos + Vect2s(x, y)))
 						p->select();
 				}
 			}
@@ -263,8 +260,7 @@ bool qdGridZone::select(qdCamera *camera, bool bSelect) const {
 	} else {
 		for (int y = 0; y < mask_size().y; y++) {
 			for (int x = 0; x < mask_size().x; x++) {
-				if (is_inside(pos + Vect2s(x, y))) {
-//				if(*mask_ptr++){
+				if ((g_engine->_gameVersion <= 20050101 && *mask_ptr++) || is_inside(pos + Vect2s(x, y))) {
 					if (sGridCell * p = camera->get_cell(pos + Vect2s(x, y)))
 						p->deselect();
 				}
