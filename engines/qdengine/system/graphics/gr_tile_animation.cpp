@@ -624,10 +624,11 @@ Graphics::ManagedSurface *grTileAnimation::dumpFrameTiles(int frame_index, float
 			const byte *src = (const byte *)getTile(_frameIndex[idx++]).data();
 
 			for (int yy = 0; yy < GR_TILE_SPRITE_SIZE_Y; yy++) {
-				uint16 *dst = (uint16 *)dstSurf->getBasePtr(j * (GR_TILE_SPRITE_SIZE_X + 1), i * (GR_TILE_SPRITE_SIZE_Y + 1) + yy);
+				uint32 *dst = (uint32 *)dstSurf->getBasePtr(j * (GR_TILE_SPRITE_SIZE_X + 1), i * (GR_TILE_SPRITE_SIZE_Y + 1) + yy);
 
 				for (int xx = 0; xx < GR_TILE_SPRITE_SIZE_X; xx++) {
-					*dst = grDispatcher::instance()->make_rgb565u(src[2], src[1], src[0]);
+					uint32 col = (src[2] << 24) | (src[1] << 16) | (src[0] << 8);
+					*dst = col;
 					dst++;
 					src += 4;
 				}
