@@ -421,13 +421,17 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 	}
 
 	if (_pendingState.width > 0 && _pendingState.height > 0) {
+		extern bool g_unalignedPitch;
+
 		if (_pendingState.width > getMaximumScreenWidth() || _pendingState.height > getMaximumScreenHeight()) {
 			error |= OSystem::TransactionError::kTransactionSizeChangeFailed;
 		} else if (((hasPendingGraphicsMode && _pendingState.mode == kDirectRendering)
 				|| (!hasPendingGraphicsMode && _currentState.mode == kDirectRendering))
-			&& _pendingState.width % 16 != 0
+			&& (_pendingState.width % 16 != 0 || g_unalignedPitch)
 			&& !hasSuperVidel()) {
-			atari_warning("Requested width not divisible by 16, aborting");
+			atari_warning("Engine surfaces not divisible by 16, aborting");
+			// engineDone is not called
+			g_unalignedPitch = false;
 			error |= OSystem::TransactionError::kTransactionSizeChangeFailed;
 		} else if (_overlayState == kOverlayIgnoredHide || _currentState.width != _pendingState.width || _currentState.height != _pendingState.height) {
 			// if kOverlayIgnoredHide and with valid w/h, force a video mode reset

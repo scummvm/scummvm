@@ -382,6 +382,7 @@ void OSystem_Atari::engineInit() {
 
 void OSystem_Atari::engineDone() {
 	g_gameEngineActive = false;
+	g_unalignedPitch = false;
 }
 
 Common::MutexInternal *OSystem_Atari::createMutex() {

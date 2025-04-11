@@ -27,8 +27,6 @@
 #include "atari-screen.h"
 //#include "backends/platform/atari/atari-debug.h"
 
-extern bool g_unalignedPitch;
-
 byte Cursor::_palette[256*3] = {};
 
 Cursor::Cursor(const AtariGraphicsManager *manager, const Screen *screen)
@@ -139,6 +137,7 @@ void Cursor::convertSurfaceTo(const Graphics::PixelFormat &format) {
 
 		_surface.create(cursorWidth, cursorHeight, format);
 
+		extern bool g_unalignedPitch;
 		const bool old_unalignedPitch = g_unalignedPitch;
 		g_unalignedPitch = true;
 		_surfaceMask.create(_surface.w / 8, _surface.h, format);	// 1 bpl
