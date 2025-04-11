@@ -407,6 +407,7 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 	atari_debug("endGFXTransaction");
 
 	_pendingState.inTransaction = false;
+	_ignoreCursorChanges = false;
 
 	int error = OSystem::TransactionError::kTransactionSuccess;
 	bool hasPendingGraphicsMode = false;
@@ -914,7 +915,10 @@ Graphics::Surface *AtariGraphicsManager::lockOverlay() {
 }
 
 bool AtariGraphicsManager::showMouse(bool visible) {
-	//atari_debug("showMouse: %d", visible);
+	//atari_debug("showMouse: %d; ignored: %d", visible, _ignoreCursorChanges);
+
+	if (_ignoreCursorChanges)
+		return visible;
 
 	bool lastOverlay, lastFront, lastBack1 = false;
 
@@ -951,7 +955,11 @@ void AtariGraphicsManager::warpMouse(int x, int y) {
 
 void AtariGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor,
 										  bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
-	//atari_debug("setMouseCursor: %d, %d, %d, %d, %d, %d", w, h, hotspotX, hotspotY, keycolor, format ? format->bytesPerPixel : 1);
+	//atari_debug("setMouseCursor: %d, %d, %d, %d, %d, %d; ignored: %d",
+	//	w, h, hotspotX, hotspotY, keycolor, format ? format->bytesPerPixel : 1, _ignoreCursorChanges);
+
+	if (_ignoreCursorChanges)
+		return;
 
 	if (mask)
 		atari_warning("AtariGraphicsManager::setMouseCursor: Masks are not supported");
@@ -1001,6 +1009,8 @@ bool AtariGraphicsManager::notifyEvent(const Common::Event &event) {
 			surf.fillRect(Common::Rect(surf.w, surf.h), 0);
 
 			_ignoreHideOverlay = true;
+			// gui manager would want to hide overlay, set game cursor etc
+			_ignoreCursorChanges = true;
 			return false;
 		}
 		break;
@@ -1092,10 +1102,9 @@ bool AtariGraphicsManager::updateScreenInternal(Screen *dstScreen, const Graphic
 	lockSuperBlitter();
 
 	if (cursor.isChanged()) {
-		const Common::Rect rect = cursor.flushBackground(Common::Rect(), directRendering);
-		// 'updated' is skipped in direct drawing but in such case there's never triple-buffering active
-		if (!directRendering && !rect.isEmpty()) {
-			copyRectToSurface(*dstSurface, srcSurface, rect.left, rect.top, rect);
+		const Common::Rect cursorBackgroundRect = cursor.flushBackground(Common::Rect(), directRendering);
+		if (!cursorBackgroundRect.isEmpty()) {
+			copyRectToSurface(*dstSurface, srcSurface, cursorBackgroundRect.left, cursorBackgroundRect.top, cursorBackgroundRect);
 			updated |= true;
 		}
 	}
@@ -1103,36 +1112,24 @@ bool AtariGraphicsManager::updateScreenInternal(Screen *dstScreen, const Graphic
 	// update cursor rects and visibility flag (if out of screen)
 	cursor.update();
 
-	const bool cursorDrawEnabled = cursor.isVisible();
-	bool forceCursorDraw = cursorDrawEnabled && (dstScreen->fullRedraw || cursor.isChanged());
+	const bool drawCursor = cursor.isVisible() && (dstScreen->fullRedraw || cursor.isChanged());
 
-	for (auto it = dirtyRects.begin(); it != dirtyRects.end(); ++it) {
-		if (cursorDrawEnabled && !forceCursorDraw) {
-			forceCursorDraw = cursor.intersects(*it);
-			// any '*it' shall never intersect cursor background; that was handled in addDirtyRect()
-			if (forceCursorDraw) {
-				const Common::Rect rect = cursor.flushBackground(*it, directRendering);
-				// 'updated' is skipped in direct drawing but in such case there's never triple-buffering active
-				if (!directRendering && !rect.isEmpty()) {
-					copyRectToSurface(*dstSurface, srcSurface, rect.left, rect.top, rect);
-					updated |= true;
-				}
-			}
-		}
-
-		if (!directRendering) {
+	if (!directRendering) {
+		for (auto it = dirtyRects.begin(); it != dirtyRects.end(); ++it) {
 			copyRectToSurface(*dstSurface, srcSurface, it->left, it->top, *it);
-			updated |= true;
 		}
-	}
-
-	if (directRendering && (forceCursorDraw || cursor.isChanged()))
+		updated |= !dirtyRects.empty();
+	} else if (drawCursor) {
 		cursor.saveBackground();
+	}
 
 	// unlock here because cursor.draw() is a software blit
 	unlockSuperBlitter();
 
-	updated |= cursor.draw(forceCursorDraw);
+	if (drawCursor) {
+		cursor.draw();
+		updated |= true;
+	}
 
 	dstScreen->clearDirtyRects();
 

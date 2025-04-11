@@ -159,9 +159,10 @@ void Screen::addDirtyRect(const Graphics::Surface &srcSurface, int x, int y, int
 
 		dirtyRects.insert(alignedRect);
 
-		// this takes care of a dirty rect touching the cursor background; however there's still
-		// the case when a dirty rect touches the cursor itself: in such case the cursor background
-		// will be restored one more time while iterating over dirty rects
+		// Check whether the cursor background intersects the dirty rect. Has to be done here,
+		// before the actual drawing (especially in case of direct rendering). There's one more
+		// check in AtariGraphicsManager::updateScreenInternal for the case when there are no
+		// dirty rectangles but the cursor itself has changed.
 		const Common::Rect cursorBackgroundRect = cursor.flushBackground(alignedRect, directRendering);
 		if (!cursorBackgroundRect.isEmpty()) {
 			dirtyRects.insert(cursorBackgroundRect);

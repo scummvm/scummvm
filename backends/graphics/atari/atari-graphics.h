@@ -245,6 +245,7 @@ private:
 	int _overlayState = kOverlayHidden;
 	bool _ignoreHideOverlay = true;
 	Graphics::Surface _overlaySurface;
+	bool _ignoreCursorChanges = false;
 
 	Palette _palette;
 	Palette _overlayPalette;

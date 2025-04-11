@@ -351,6 +351,8 @@ void OSystem_Atari::initBackend() {
 }
 
 void OSystem_Atari::engineInit() {
+	//atari_debug("engineInit");
+
 	g_gameEngineActive = true;
 
 	const Common::ConfigManager::Domain *activeDomain = ConfMan.getActiveDomain();
@@ -381,6 +383,8 @@ void OSystem_Atari::engineInit() {
 }
 
 void OSystem_Atari::engineDone() {
+	//atari_debug("engineDone");
+
 	g_gameEngineActive = false;
 	g_unalignedPitch = false;
 }

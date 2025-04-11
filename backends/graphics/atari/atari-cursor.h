@@ -47,7 +47,7 @@ struct Cursor {
 		_surfaceChanged = true;
 		_visibilityChanged = false;
 
-		_savedRect = _alignedDstRect = Common::Rect();
+		_savedRect = _previousSrcRect = _alignedDstRect = Common::Rect();
 	}
 
 	// updates outOfScreen OR srcRect/dstRect (only if visible/needed)
@@ -97,13 +97,9 @@ struct Cursor {
 		return _positionChanged || _surfaceChanged || _visibilityChanged;
 	}
 
-	bool intersects(const Common::Rect &alignedRect) const {
-		return alignedRect.intersects(_alignedDstRect);
-	}
-
 	Common::Rect flushBackground(const Common::Rect &alignedRect, bool directRendering);
 	void saveBackground();
-	bool draw(bool force);
+	void draw();
 
 private:
 	void restoreBackground();
@@ -126,8 +122,9 @@ private:
 	Common::Rect _srcRect;
 	Common::Rect _dstRect;
 
-	Graphics::Surface _savedBackground;	// used by direct rendering
+	Graphics::Surface _savedBackground;
 	Common::Rect _savedRect;
+	Common::Rect _previousSrcRect;
 	Common::Rect _alignedDstRect;
 
 	// related to 'surface'

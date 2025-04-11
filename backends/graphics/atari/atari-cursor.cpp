@@ -70,7 +70,7 @@ void Cursor::update() {
 			_dstRect.right * dstBitsPerPixel / 8,	// fake 4bpp by 8bpp's width/2
 			_dstRect.bottom);
 
-		// this is used only in intersects() and flushBackground()
+		// this is used only in flushBackground()
 		_alignedDstRect = _manager->alignRect(
 			_dstRect.left + _xOffset,
 			_dstRect.top,
@@ -201,8 +201,14 @@ Common::Rect Cursor::flushBackground(const Common::Rect &alignedRect, bool direc
 		return _savedRect;
 
 	if (!alignedRect.isEmpty() && alignedRect.contains(_alignedDstRect)) {
+		// better would be _visibilityChanged but update() ignores it
+		_positionChanged = true;
+
 		_savedRect = Common::Rect();
 	} else if (alignedRect.isEmpty() || alignedRect.intersects(_alignedDstRect)) {
+		// better would be _visibilityChanged but update() ignores it
+		_positionChanged = true;
+
 		if (directRendering)
 			restoreBackground();
 		else
@@ -232,17 +238,15 @@ void Cursor::saveBackground() {
 	_savedBackground.copyRectToSurface(dstSurface, 0, 0, _savedRect);
 }
 
-bool Cursor::draw(bool force) {
-	if (!isVisible() || (!force && !isChanged()))
-		return false;
-
+void Cursor::draw() {
 	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
 	const int dstBitsPerPixel     = _manager->getBitsPerPixel(dstSurface.format);
 
 	//atari_debug("Cursor::draw: %d %d %d %d", _dstRect.left, _dstRect.top, _dstRect.width(), _dstRect.height());
 
-	if (_surfaceChanged || _width != _srcRect.width()) {
-		// TODO: check for change, not just different width so it's not called over and over again when clipped ...
+	if (_surfaceChanged || _srcRect != _previousSrcRect) {
+		_previousSrcRect = _srcRect;
+
 		// TODO: some sort of in-place C2P directly into convertSurfaceTo() ...
 		convertSurfaceTo(dstSurface.format);
 		{
@@ -270,7 +274,6 @@ bool Cursor::draw(bool force) {
 		Common::Rect(0, _srcRect.top, _surface.w, _srcRect.bottom));
 
 	_visibilityChanged = _positionChanged = _surfaceChanged = false;
-	return true;
 }
 
 void Cursor::restoreBackground() {
