@@ -78,7 +78,7 @@ const char *CGtlData::FindKeyword(int iType) {
 bool CGtlData::ReadLine() {
 	int iError = 0;		// error code
 	Common::String line;
-	char szLine[100];	// input line
+	char szLine[255];	// input line
 	const char *xpStart;	// ptr to first char of element
 	int iElementLength;		// length of current lexical element
 	int iStringListPos = 0;	// current position in string list

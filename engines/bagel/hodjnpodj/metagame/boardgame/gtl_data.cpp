@@ -41,10 +41,7 @@ CMap::CMap() {
 
 /*------------------------------------------------------------------------*/
 
-CNode::CNode(void) {
-	// the node table must stay under 32k
-	assert((uint)sizeof(CNode) * MAX_NODES < (uint)0x7FFF);
-
+CNode::CNode() {
 	memset(&m_szLabel, 0, sizeof(char) * MAX_LABEL_LENGTH);
 	memset(&m_iLinks, 0, sizeof(int) * MAX_LINKS_PER_NODE);
 	m_iLocationCode = 0;
