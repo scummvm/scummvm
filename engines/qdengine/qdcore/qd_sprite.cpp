@@ -216,18 +216,26 @@ bool qdSprite::load() {
 			_size = _picture_size = Vect2i(g_engine->_thumbSizeX, g_engine->_thumbSizeY);
 			_picture_offset = Vect2i(0, 0);
 
-			_format = GR_RGB565;
+			_format = GR_RGB888;
 
-			_data = new byte[_size.x * _size.y * 2];
+			_data = new byte[_size.x * _size.y * 3];
 
 			// Scale image down
 			float rx = static_cast<float>(g_engine->_screenW) / g_engine->_thumbSizeX;
 			float ry = static_cast<float>(g_engine->_screenH) / g_engine->_thumbSizeY;
 
 			for (int i = 0; i < _size.y; i++) {
-				uint16 *dst = (uint16 *)&_data[2 * _size.x * i];
+				byte *dst = (byte *)&_data[3 * _size.x * i];
 				for (int j = 0; j < _size.x; j++) {
-					*dst++ = *(uint16 *)saveHeader.thumbnail->getBasePtr(rx * j, ry * i);
+					uint16 col = *(uint16 *)saveHeader.thumbnail->getBasePtr(rx * j, ry * i);
+					byte r, g, b;
+					grDispatcher::split_rgb565u(col, r, g, b);
+
+					dst[0] = b;
+					dst[1] = g;
+					dst[2] = r;
+
+					dst += 3;
 				}
 			}
 		}
