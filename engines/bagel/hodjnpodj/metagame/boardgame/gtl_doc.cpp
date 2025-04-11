@@ -27,18 +27,13 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-bool CGtlDoc::onNewDocument() {
+void CGtlDoc::onNewDocument() {
 	CGtlApp *xpGtlApp = AfxGetApp();
 	
-	// TODO: add reinitialization code here
-	// (SDI documents will reuse this document)
-
 	if (++xpGtlApp->m_iNumOpens == 1 && xpGtlApp->m_szFilename[0])
 		initDocument(xpGtlApp->m_szFilename);
 	else
 		initDocument("default.gtl");
-
-	return true;
 }
 
 void CGtlDoc::initDocument(const char *xpszPathName) {
@@ -55,10 +50,16 @@ void CGtlDoc::initDocument(const char *xpszPathName) {
 	if (xpszPathName && *xpszPathName)
 		m_xpGtlData->compile(xpszPathName);
 
-	// TODO: More stuff
+	m_xpGtlData->m_bStartMetaGame = xpGtlApp->m_bStartMetaGame;
+	UpdateAllViews(nullptr, 0L, nullptr);
 }
 
 void CGtlDoc::onChangedViewList() {
+}
+
+void CGtlDoc::deleteContents() {
+	delete m_xpGtlData;
+	m_xpGtlData = nullptr;
 }
 
 } // namespace Metagame

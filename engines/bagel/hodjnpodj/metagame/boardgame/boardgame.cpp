@@ -40,7 +40,13 @@ CGtlApp *AfxGetApp() {
 }
 
 Boardgame::Boardgame() : View("Boardgame") {
+	// TODO: Move this to msgOpen
 	_doc.onNewDocument();
+}
+
+Boardgame::~Boardgame() {
+	// TODO: Move this to msgClose
+	_doc.deleteContents();
 }
 
 bool Boardgame::msgOpen(const OpenMessage &msg) {

@@ -51,7 +51,7 @@ public:
 
 public:
 	Boardgame();
-	~Boardgame() override {}
+	~Boardgame() override;
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;

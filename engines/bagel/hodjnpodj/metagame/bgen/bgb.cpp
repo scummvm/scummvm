@@ -45,12 +45,13 @@ bool CBgbMgr::ReleaseResources() {
 	m_bAnimationsPaused = true;
 
 	// flush the special effects list
-	m_pFXList->FlushList();
-	delete m_pFXList;
-	m_pFXList = nullptr;
+	if (m_pFXList) {
+		m_pFXList->FlushList();
+		delete m_pFXList;
+		m_pFXList = nullptr;
+	}
 
 	while ((pBgbObject = m_lpBgbChain) != nullptr) {
-
 		m_lpBgbChain = pBgbObject->m_xpcNext;
 		pBgbObject->m_xpcNext = nullptr;     // out of habit
 		ClearBitmapObject(pBgbObject);    // free resources
