@@ -104,7 +104,7 @@ private:
 	void drawMaskedSprite(Graphics::Surface &dstSurface,
 						  const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
 						  int destX, int destY,
-						  const Common::Rect &subRect) override {
+						  const Common::Rect &subRect) const override {
 		assert(dstSurface.format == Graphics::PixelFormat::createFormatCLUT8());
 		assert(subRect.width() % 16 == 0);
 		assert(subRect.width() == srcSurface.w);

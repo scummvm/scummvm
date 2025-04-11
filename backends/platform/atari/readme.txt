@@ -479,6 +479,10 @@ Known issues
   - point the extra path to the folder with *.wav files (or copy its content
     where monkey.00? files are located)
 
+- Phantasmagoria, KQ7 (and other SCI32 games) require Single buffering (or
+  Direct rendering with SuperVidel) due to its unusual cursor rendering
+  approach.
+
 - following engines have been explicitly disabled:
   - Cine (2 games)
     - incompatible with other engines / prone to freezes

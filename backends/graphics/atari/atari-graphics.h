@@ -143,7 +143,7 @@ private:
 #endif
 
 	void addDirtyRectToScreens(const Graphics::Surface &dstSurface,
-							   int x, int y, int w, int h);
+							   int x, int y, int w, int h, bool directRendering);
 	bool updateScreenInternal(Screen *dstScreen, const Graphics::Surface &srcSurface);
 	void copyRectToScreenInternal(Graphics::Surface &dstSurface,
 								  const void *buf, int pitch, int x, int y, int w, int h,
@@ -162,11 +162,19 @@ private:
 			;
 	}
 
-	Common::Rect alignRect(int x, int y, int w, int h) const {
+	Graphics::Surface *lockOverlay();
+
+	Common::Rect alignRect(int x1, int y1, int x2, int y2) const {
 		// make non-virtual for performance reasons
 		return hasSuperVidel()
-				   ? Common::Rect(x, y, x + w, y + h)
-				   : Common::Rect(x & (-16), y, (x + w + 15) & (-16), y + h);
+				   ? Common::Rect(x1, y1, x2, y2)
+				   : Common::Rect(x1 & (-16), y1, (x2 + 15) & (-16), y2);
+	}
+	Common::Rect alignRect(const Common::Rect &rect) const {
+		// make non-virtual for performance reasons
+		return hasSuperVidel()
+				   ? rect
+				   : Common::Rect(rect.left & (-16), rect.top, (rect.right + 15) & (-16), rect.bottom);
 	}
 
 	virtual AtariMemAlloc getStRamAllocFunc() const {
@@ -185,7 +193,7 @@ private:
 	virtual void drawMaskedSprite(Graphics::Surface &dstSurface,
 								  const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
 								  int destX, int destY,
-								  const Common::Rect &subRect) = 0;
+								  const Common::Rect &subRect) const = 0;
 
 	bool _vgaMonitor = true;
 	bool _tt = false;
@@ -227,6 +235,7 @@ private:
 	Screen *_screen[kBufferCount] = {};
 
 	Graphics::Surface _chunkySurface;
+	Graphics::Surface _chunkySurfaceOffsetted;
 
 	enum {
 		kOverlayVisible,

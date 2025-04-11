@@ -65,11 +65,13 @@ Screen::~Screen() {
 	freeFunc((void *)*((uintptr *)surf.getPixels() - 1));
 }
 
-void Screen::reset(int width, int height, int bitsPerPixel, bool resetCursorPosition) {
+void Screen::reset(int width, int height, int bitsPerPixel, const Graphics::Surface &boundingSurf, int xOffset, bool resetCursorPosition) {
+	_xOffset = xOffset;
+
 	clearDirtyRects();
-	cursor.reset();
+	cursor.reset(&boundingSurf, xOffset);
 	if (resetCursorPosition)
-		cursor.setPosition(width / 2, height / 2);
+		cursor.setPosition(boundingSurf.w / 2, boundingSurf.h / 2);
 	rez = -1;
 	mode = -1;
 
@@ -146,19 +148,21 @@ void Screen::addDirtyRect(const Graphics::Surface &srcSurface, int x, int y, int
 
 		dirtyRects.clear();
 		// don't use x/y/w/h, the 2nd expression may be true
-		dirtyRects.insert(_manager->alignRect(0, 0, srcSurface.w, srcSurface.h));
+		// also, it's ok if e.g. w = 630 gets aligned to w = 640, nothing is drawn in 630~639
+		dirtyRects.insert(_manager->alignRect(_xOffset, 0, _xOffset + srcSurface.w, srcSurface.h));
 
-		cursor.reset();
+		cursor.reset(&srcSurface, _xOffset);
 
 		fullRedraw = true;
 	} else {
-		Common::Rect rect = _manager->alignRect(x, y, w, h);
-		dirtyRects.insert(rect);
+		const Common::Rect alignedRect = _manager->alignRect(x + _xOffset, y, x + _xOffset + w, y + h);
+
+		dirtyRects.insert(alignedRect);
 
 		// this takes care of a dirty rect touching the cursor background; however there's still
 		// the case when a dirty rect touches the cursor itself: in such case the cursor background
 		// will be restored one more time while iterating over dirty rects
-		Common::Rect cursorBackgroundRect = cursor.flushBackground(rect, directRendering);
+		const Common::Rect cursorBackgroundRect = cursor.flushBackground(alignedRect, directRendering);
 		if (!cursorBackgroundRect.isEmpty()) {
 			dirtyRects.insert(cursorBackgroundRect);
 		}

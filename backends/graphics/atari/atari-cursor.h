@@ -36,12 +36,12 @@ struct Screen;
 // These always get updates by ScummVM, no need to differentiate between engines and the overlay.
 
 struct Cursor {
-	Cursor(AtariGraphicsManager *manager, Screen *screen)
-		: _manager(manager)
-		, _parentScreen(screen) {
-	}
+	Cursor(const AtariGraphicsManager *manager, const Screen *screen);
 
-	void reset() {
+	void reset(const Graphics::Surface *boundingSurf, int xOffset) {
+		_boundingSurf = boundingSurf;
+		_xOffset = xOffset;
+
 		_positionChanged = true;
 		_surfaceChanged = true;
 		_visibilityChanged = false;
@@ -94,11 +94,11 @@ struct Cursor {
 		return _positionChanged || _surfaceChanged || _visibilityChanged;
 	}
 
-	bool intersects(const Common::Rect &rect) const {
-		return rect.intersects(_dstRect);
+	bool intersects(const Common::Rect &alignedRect) const {
+		return alignedRect.intersects(_alignedDstRect);
 	}
 
-	Common::Rect flushBackground(const Common::Rect &rect, bool directRendering);
+	Common::Rect flushBackground(const Common::Rect &alignedRect, bool directRendering);
 	void saveBackground();
 	bool draw(bool force);
 
@@ -107,8 +107,10 @@ private:
 
 	static byte _palette[256*3];
 
-	AtariGraphicsManager *_manager;
-	Screen *_parentScreen;
+	const AtariGraphicsManager *_manager;
+	const Screen *_parentScreen;
+	const Graphics::Surface *_boundingSurf;
+	int _xOffset = 0;
 
 	bool _positionChanged = true;
 	bool _surfaceChanged = true;

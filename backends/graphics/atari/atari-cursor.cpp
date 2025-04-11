@@ -25,11 +25,17 @@
 
 #include "atari-graphics.h"
 #include "atari-screen.h"
-#include "backends/platform/atari/atari-debug.h"
+//#include "backends/platform/atari/atari-debug.h"
 
 extern bool g_unalignedPitch;
 
 byte Cursor::_palette[256*3] = {};
+
+Cursor::Cursor(const AtariGraphicsManager *manager, const Screen *screen)
+		: _manager(manager)
+		, _parentScreen(screen)
+		, _boundingSurf(screen->offsettedSurf) {
+}
 
 void Cursor::update() {
 	if (!_buf) {
@@ -49,28 +55,27 @@ void Cursor::update() {
 		_x - _hotspotX + _width,	// right
 		_y - _hotspotY + _height);	// bottom
 
-	_outOfScreen = !_parentScreen->offsettedSurf->clip(_srcRect, _dstRect);
+	_outOfScreen = !_boundingSurf->clip(_srcRect, _dstRect);
 
 	if (!_outOfScreen) {
 		assert(_srcRect.width() == _dstRect.width());
 		assert(_srcRect.height() == _dstRect.height());
 
-		Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
-		const int dstBitsPerPixel     = _manager->getBitsPerPixel(dstSurface.format);
+		const int dstBitsPerPixel = _manager->getBitsPerPixel(_parentScreen->offsettedSurf->format);
 
 		// non-direct rendering never uses 4bpp but maybe in the future ...
 		_savedRect = _manager->alignRect(
 			_dstRect.left * dstBitsPerPixel / 8,	// fake 4bpp by 8bpp's x/2
 			_dstRect.top,
-			_dstRect.width() * dstBitsPerPixel / 8,	// fake 4bpp by 8bpp's width/2
-			_dstRect.height());
+			_dstRect.right * dstBitsPerPixel / 8,	// fake 4bpp by 8bpp's width/2
+			_dstRect.bottom);
 
-		// save also version for comparisons with outside world ...
+		// this is used only in intersects() and flushBackground()
 		_alignedDstRect = _manager->alignRect(
-			_dstRect.left,
+			_dstRect.left + _xOffset,
 			_dstRect.top,
-			_dstRect.width(),
-			_dstRect.height());
+			_dstRect.right + _xOffset,
+			_dstRect.bottom);
 	}
 }
 
@@ -83,13 +88,13 @@ void Cursor::updatePosition(int deltaX, int deltaY) {
 
 	if (_x < 0)
 		_x = 0;
-	else if (_x >= _parentScreen->offsettedSurf->w)
-		_x = _parentScreen->offsettedSurf->w - 1;
+	else if (_x >= _boundingSurf->w)
+		_x = _boundingSurf->w - 1;
 
 	if (_y < 0)
 		_y = 0;
-	else if (_y >= _parentScreen->offsettedSurf->h)
-		_y = _parentScreen->offsettedSurf->h - 1;
+	else if (_y >= _boundingSurf->h)
+		_y = _boundingSurf->h - 1;
 
 	_positionChanged = true;
 }
@@ -188,18 +193,17 @@ void Cursor::convertSurfaceTo(const Graphics::PixelFormat &format) {
 	}
 }
 
-Common::Rect Cursor::flushBackground(const Common::Rect &rect, bool directRendering) {
+Common::Rect Cursor::flushBackground(const Common::Rect &alignedRect, bool directRendering) {
 	if (_savedRect.isEmpty())
 		return _savedRect;
 
-	if (!rect.isEmpty() && rect.contains(_alignedDstRect)) {
+	if (!alignedRect.isEmpty() && alignedRect.contains(_alignedDstRect)) {
 		_savedRect = Common::Rect();
-	} else if (rect.isEmpty() || rect.intersects(_alignedDstRect)) {
-		if (directRendering) {
+	} else if (alignedRect.isEmpty() || alignedRect.intersects(_alignedDstRect)) {
+		if (directRendering)
 			restoreBackground();
-		} else {
+		else
 			return _alignedDstRect;
-		}
 	}
 
 	return Common::Rect();
@@ -209,6 +213,8 @@ void Cursor::saveBackground() {
 	if (_savedRect.isEmpty())
 		return;
 
+	// as this is used only for direct rendering, we don't need to worry about offsettedSurf
+	// having different dimensions than the source surface
 	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
 
 	//atari_debug("Cursor::saveBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
@@ -257,7 +263,7 @@ bool Cursor::draw(bool force) {
 	_manager->drawMaskedSprite(
 		dstSurface,
 		_surface, _surfaceMask,
-		_dstRect.left, _dstRect.top,
+		_dstRect.left + _xOffset, _dstRect.top,
 		Common::Rect(0, _srcRect.top, _surface.w, _srcRect.bottom));
 
 	_visibilityChanged = _positionChanged = _surfaceChanged = false;
@@ -272,6 +278,8 @@ void Cursor::restoreBackground() {
 
 	//atari_debug("Cursor::restoreBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
 
+	// as this is used only for direct rendering, we don't need to worry about offsettedSurf
+	// having different dimensions than the source surface
 	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
 
 	// restore native pixels (i.e. bitplanes)
