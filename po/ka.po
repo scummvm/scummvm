@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-08 19:53+0000\n"
-"PO-Revision-Date: 2025-04-11 10:18+0000\n"
+"PO-Revision-Date: 2025-04-12 06:18+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -5600,7 +5600,7 @@ msgstr ""
 
 #: engines/agi/metaengine.cpp:159
 msgid "Use Hercules hires font"
-msgstr ""
+msgstr "ფონტის Hercules გამოყენება"
 
 #: engines/agi/metaengine.cpp:160
 msgid "Uses Hercules hires font, when font file is available."
@@ -5608,7 +5608,7 @@ msgstr ""
 
 #: engines/agi/metaengine.cpp:171
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "დაყოვნება ბრძანებების შეყვანისას"
 
 #: engines/agi/metaengine.cpp:172
 msgid ""
@@ -5754,7 +5754,7 @@ msgstr ""
 
 #: engines/agos/metaengine.cpp:88 engines/sci/detection_options.h:95
 msgid "Prefer digital sound effects"
-msgstr ""
+msgstr "უპირატესობის მინიჭება ციფრული ხმის ეფექტებისთვის"
 
 #: engines/agos/metaengine.cpp:89 engines/sci/detection_options.h:96
 msgid "Prefer digital sound effects instead of synthesized ones"
@@ -6352,7 +6352,7 @@ msgstr "KIA-ის მონაცემთა ბაზის გახსნ�
 #. and allows submitting a selected existing save game for deletion.
 #: engines/bladerunner/metaengine.cpp:282
 msgid "Delete Selected Saved Game"
-msgstr ""
+msgstr "მონიშნული შენახული თამაშის წაშლა"
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:296
@@ -6995,7 +6995,7 @@ msgstr ""
 
 #: engines/dreamweb/metaengine.cpp:60
 msgid "Use bright palette mode"
-msgstr ""
+msgstr "კაშკაშა პალიტრის რეჟიმის გამოყენება"
 
 #: engines/dreamweb/metaengine.cpp:61
 msgid "Display graphics using the game's bright palette"
@@ -7035,7 +7035,7 @@ msgstr "დემო რეჟიმის გამორთვა"
 
 #: engines/freescape/metaengine.cpp:76
 msgid "Never activate demo mode"
-msgstr ""
+msgstr "დემო რეჟიმი არასდროს გააქტიურდეს"
 
 #: engines/freescape/metaengine.cpp:86
 msgid "Disable sensors"
@@ -7055,11 +7055,11 @@ msgstr "მოთამაშე ვერ გადავარდება"
 
 #: engines/freescape/metaengine.cpp:108
 msgid "Invert Y-axis on mouse"
-msgstr ""
+msgstr "Y ღერძის ინვერსია თაგუნაზე"
 
 #: engines/freescape/metaengine.cpp:109
 msgid "Use alternative camera controls"
-msgstr ""
+msgstr "კამერის ალტერნატიული კონტროლის გამოყენება"
 
 #: engines/freescape/metaengine.cpp:119
 msgid "Authentic graphics"
@@ -7429,7 +7429,7 @@ msgstr ""
 
 #: engines/grim/metaengine.cpp:37
 msgid "Load user patch (unsupported)"
-msgstr ""
+msgstr "მომხმარებლის პაჩის გამოყენება (მხარდაჭერილი არაა)"
 
 #: engines/grim/metaengine.cpp:38
 msgid ""
@@ -7720,7 +7720,7 @@ msgstr ""
 
 #: engines/hypno/metaengine.cpp:44
 msgid "Enable infinite health cheat"
-msgstr ""
+msgstr "უსასრულო სიცოცხლის ჩიტის ჩართვა"
 
 #: engines/hypno/metaengine.cpp:45
 msgid "Player health will never decrease (except for game over scenes)."
@@ -7728,7 +7728,7 @@ msgstr ""
 
 #: engines/hypno/metaengine.cpp:55
 msgid "Enable infinite ammo cheat"
-msgstr ""
+msgstr "უსასრულო ტყვიების ჩიტის ჩართვა"
 
 #: engines/hypno/metaengine.cpp:56
 msgid "Player ammo will never decrease."
@@ -7877,7 +7877,7 @@ msgstr ""
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/metaengine.cpp:147
 msgid "Fight Button L/R Swap"
-msgstr ""
+msgstr "მარჯვენა/მარცხენა ბრძოლის ღილაკების მიმოცვლა"
 
 #: engines/kyra/metaengine.cpp:148
 msgid "Left button to attack, right button to pick up items"
