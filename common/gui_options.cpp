@@ -166,6 +166,12 @@ String parseGameGUIOptions(const String &str) {
 			ii = c_end;
 		}
 	}
+	// Check for Additional Platforms
+	for (int i = 0; i < str.size(); ++i) {
+		if (str[i] == '\x34') {
+			res += String(str[i]) + String(str[i + 1]);
+		}
+	}
 
 	return res;
 }
@@ -176,6 +182,13 @@ const String getGameGUIOptionsDescription(const String &options) {
 	for (int i = 0; g_gameOptions[i].desc; i++)
 		if (options.contains(g_gameOptions[i].option[0]))
 			res += String(g_gameOptions[i].desc) + " ";
+
+	// Check for Additional Platforms
+	for (int i = 0; i < options.size(); ++i) {
+		if (options[i] == '\x34') {
+			res += String(options[i]) + String(options[i + 1]) + " ";
+		}
+	}
 
 	res.trim();
 
