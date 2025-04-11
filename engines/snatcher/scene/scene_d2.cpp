@@ -108,11 +108,11 @@ SH_IMPL_FRM(D2, 00) {
 		}
 		break;
 	case 2:
-		if (_vm->_commandsFromMain & 3) {
+		if (_vm->inputFlag() & 3) {
 			_vm->gfx()->clearAnimControlFlags(16, ~GraphicsEngine::kAnimHide);
 			_buram_0 ^= 1;
 		}
-		if (_vm->_commandsFromMain & 0x80) {
+		if (_vm->inputFlag() & 0x80) {
 			state.counter = 10;
 			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x10F2));
 			++state.frameState;
@@ -253,9 +253,9 @@ SH_IMPL_FRM(D2, 09) {
 		state.frameState += (hasSaveFiles ? 1 : 2);
 		break;
 	case 1:
-		if (_vm->_commandsFromMain & 3)
+		if (_vm->inputFlag() & 3)
 			_vm->gfx()->clearAnimControlFlags(17, ~GraphicsEngine::kAnimHide);
-		if (_vm->_commandsFromMain & 0x80) {
+		if (_vm->inputFlag() & 0x80) {
 			_vm->gfx()->setAnimControlFlags(17, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
 			wordA = 1;
 			if (_vm->gfx()->getAnimCurFrame(17) == 3) {
@@ -272,7 +272,7 @@ SH_IMPL_FRM(D2, 09) {
 		}
 		break;
 	default:
-		if (_vm->_commandsFromMain & 0x80) {
+		if (_vm->inputFlag() & 0x80) {
 			++state.frameNo;
 			state.frameState = 0;
 		}
@@ -371,7 +371,7 @@ SH_IMPL_FRM(D2, 11) {
 		++state.frameState;
 		break;
 	case 3:
-		if (_vm->_commandsFromMain & 0x80) {
+		if (_vm->inputFlag() & 0x80) {
 			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x10F2));
 			state.counter = 10;
 			state.frameState = 0;

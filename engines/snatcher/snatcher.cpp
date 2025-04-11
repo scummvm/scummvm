@@ -27,13 +27,23 @@
 
 #include "common/endian.h"
 #include "common/events.h"
+#include "common/list.h"
 #include "common/system.h"
+
+#include "graphics/pixelformat.h"
 
 #include "engines/util.h"
 
+// Snatcher makes use of horizontal interrupts. These can be invoked after any given count of rendered scan lines.
+// These interrupts are mostly used for changing vertical scroll offsets, but some effects also change the colors.
+// In ScummVM, this can only work if we use at least 16bit color depth. 8 bit rendering will not allow the already
+// rendered pixels to keep their colors. So the following setting may cause color glitches and is just there for
+// backends that can't handle the required color depth.
+#define			SNATCHER_GFXMODE_8BIT			false
+
 namespace Snatcher {
 
-SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _gfx(nullptr), _snd(nullptr), _commandsFromMain(0), _gfxInfo() {
+SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _gfx(nullptr), _snd(nullptr), _keyInput(0), _lastKey(0), _gfxInfo() {
 }
 
 SnatcherEngine::~SnatcherEngine() {
@@ -52,7 +62,7 @@ Common::Error SnatcherEngine::run() {
 	if (!initSound(_game.platform, _game.soundOptions))
 		return Common::Error(Common::kAudioDeviceInitFailed);
 
-	if (!initGfx(_game.platform))
+	if (!initGfx(_game.platform, SNATCHER_GFXMODE_8BIT))
 		return Common::Error(Common::kUnknownError);
 
 	return Common::Error(start() ? Common::kNoError : Common::kUnknownError);
@@ -62,11 +72,33 @@ bool SnatcherEngine::initResource() {
 	return (_fio = new FIO(this, _game.isBigEndian));
 }
 
-bool SnatcherEngine::initGfx(Common::Platform platform) {
-	if (_gfx = new GraphicsEngine(_system, platform, _gfxInfo)) {
-		initGraphics(_gfx->screenWidth(), _gfx->screenHeight());
+bool SnatcherEngine::initGfx(Common::Platform platform, bool use8BitColorMode) {
+	Graphics::PixelFormat pxf;
+
+	if (use8BitColorMode) {
+		pxf = Graphics::PixelFormat::createFormatCLUT8();
+	} else {
+		Graphics::PixelFormat pxf16bit;
+		Common::List<Graphics::PixelFormat> modes = _system->getSupportedFormats();
+		for (Common::List<Graphics::PixelFormat>::const_iterator g = modes.begin(); g != modes.end() && pxf.bytesPerPixel == 0; ++g) {
+			if (g->aBits())
+				continue;
+			if (g->bytesPerPixel == 4)
+				pxf = *g;
+			else if (g->bytesPerPixel == 2)
+				pxf16bit = *g;
+		}
+		if (pxf.bytesPerPixel == 0)
+			pxf = pxf16bit;
+		if (pxf.bytesPerPixel == 0)
+			error("%s(): No suitable color mode found", __FUNCTION__);
+	}
+
+	if (_gfx = new GraphicsEngine(&pxf, _system, platform, _gfxInfo)) {
+		initGraphics(_gfx->screenWidth(), _gfx->screenHeight(), &pxf);
 		return true;
 	}
+
 	return false;
 }
 
@@ -137,24 +169,74 @@ bool SnatcherEngine::start() {
 }
 
 void SnatcherEngine::delayUntil(uint32 end) {
-	const uint32 frameLen = (1000 << 16) / 60;
 	uint32 cur = _system->getMillis();
 	_gfxInfo.dropFrames = /*cur > end ? ((cur - end) << 16) / frameLen :*/ 0;
 	if (cur < end)
 		_system->delayMillis(end - cur);
 }
 
+struct InputEvent {
+	Common::EventType pressType;
+	Common::EventType releaseType;
+	Common::KeyCode kc;
+	uint16 kFlag;
+	uint16 internalEvent;
+};
+
+static const InputEvent _inputEvents[] = {
+	{ Common::EVENT_LBUTTONDOWN, Common::EVENT_LBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x80 },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_UP, 0x00, 0x01 },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP8, Common::KBD_NUM, 0x01 },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_DOWN, 0x00, 0x02 },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP2, Common::KBD_NUM, 0x02 },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_LEFT, 0x00, 0x04 },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP4, Common::KBD_NUM, 0x04 },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_RIGHT, 0x00, 0x08 },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP6, Common::KBD_NUM, 0x08 }
+};
+
 void SnatcherEngine::updateEvents() {
 	Common::Event evt;
+	_keyInput = 0;
 	while (_eventMan->pollEvent(evt)) {
-		switch (evt.type) {
+		for (const InputEvent &k : _inputEvents) {
+			if (evt.type == k.pressType && (k.kc == Common::KEYCODE_INVALID || evt.kbd.keycode == k.kc) && (k.kFlag == 0 || (evt.kbd.flags & k.kFlag))) {
+				if (!(_lastKey & k.internalEvent)) {
+					_keyInput |= k.internalEvent;
+					_lastKey |= k.internalEvent;
+				}
+			} else if (evt.type == k.releaseType && (k.kc == Common::KEYCODE_INVALID || evt.kbd.keycode == k.kc) && (k.kFlag == 0 || (evt.kbd.flags & k.kFlag))) {
+				_lastKey &= ~k.internalEvent;
+			}
+		}
+
+		/*switch (evt.type) {
 		case Common::EVENT_LBUTTONDOWN:
-			_commandsFromMain |= (1 << 7);
+			_keyPressed |= (1 << 7);
+			break;
+		case Common::EVENT_LBUTTONUP:
+			_commandsFromMain |= _keyPressed;
+			break;
+		case Common::EVENT_KEYDOWN:
+			switch (evt.kbd.keycode) {
+			case Common::KEYCODE_LEFT:
+				break;
+			case Common::KEYCODE_RIGHT:
+				break;
+			case Common::KEYCODE_DOWN:
+			case Common::KEYCODE_KP2:
+				_keyPressed |= 2;
+				break;
+
+			if (!_keyPressed && (evt.kbd.keycode == Common::KEYCODE_DOWN || evt.kbd.keycode == Common::KEYCODE_UP || (evt.kbd.keycode == Common::KEYCODE_KP8 && (evt.kbd.flags & Common::KBD_NUM)) || (evt.kbd.keycode == Common::KEYCODE_KP2 && (evt.kbd.flags & Common::KBD_NUM))))
+				_keyPressed |= 3;
+		case Common::EVENT_KEYUP:
+			_commandsFromMain |= _keyPressed;
 			break;
 		default:
-			_commandsFromMain = 0;
+			_keyPressed = 0;
 			break;
-		}
+		}*/
 	}
 }
 
