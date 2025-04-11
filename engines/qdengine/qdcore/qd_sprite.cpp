@@ -224,18 +224,34 @@ bool qdSprite::load() {
 			float rx = static_cast<float>(g_engine->_screenW) / g_engine->_thumbSizeX;
 			float ry = static_cast<float>(g_engine->_screenH) / g_engine->_thumbSizeY;
 
-			for (int i = 0; i < _size.y; i++) {
-				byte *dst = (byte *)&_data[3 * _size.x * i];
-				for (int j = 0; j < _size.x; j++) {
-					uint16 col = *(uint16 *)saveHeader.thumbnail->getBasePtr(rx * j, ry * i);
-					byte r, g, b;
-					grDispatcher::split_rgb565u(col, r, g, b);
+			if (saveHeader.thumbnail->format.bytesPerPixel == 2) {
+				for (int i = 0; i < _size.y; i++) {
+					byte *dst = (byte *)&_data[3 * _size.x * i];
+					for (int j = 0; j < _size.x; j++) {
+						uint16 col = *(uint16 *)saveHeader.thumbnail->getBasePtr(rx * j, ry * i);
+						byte r, g, b;
+						grDispatcher::split_rgb565u(col, r, g, b);
 
-					dst[0] = b;
-					dst[1] = g;
-					dst[2] = r;
+						dst[0] = b;
+						dst[1] = g;
+						dst[2] = r;
 
-					dst += 3;
+						dst += 3;
+					}
+				}
+			} else {
+				// bytes per pixel is 4
+				for (int i = 0; i < _size.y; i++) {
+					byte *dst = (byte *)&_data[3 * _size.x * i];
+					for (int j = 0; j < _size.x; j++) {
+						byte *col_buf = (byte *)saveHeader.thumbnail->getBasePtr(rx * j, ry * i);
+
+						dst[0] = col_buf[1];
+						dst[1] = col_buf[2];
+						dst[2] = col_buf[3];
+
+						dst += 3;
+					}
 				}
 			}
 		}
