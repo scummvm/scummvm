@@ -48,7 +48,7 @@ private:
 	// Startup
 	Common::Error run() override;
 	bool initResource();
-	bool initGfx(Common::Platform platform);
+	bool initGfx(Common::Platform platform, bool use8BitColorMode);
 	bool initSound(Common::Platform platform, int soundOptions);
 
 	// Main loop
@@ -81,9 +81,11 @@ private:
 	// Sound
 	SoundEngine *_snd;
 
-public:
 	// Input
-	byte _commandsFromMain;
+	uint8 _lastKey;
+	uint8 _keyInput;
+public:
+	uint8 inputFlag() const { return _keyInput; }
 };
 
 } // End of namespace Snatcher

@@ -22,11 +22,16 @@
 #ifndef SNATCHER_GRAPHICS_H
 #define SNATCHER_GRAPHICS_H
 
+#include "common/func.h"
 #include "common/platform.h"
 #include "snatcher/info.h"
 #include "snatcher/resource.h"
 
 class OSystem;
+
+namespace Graphics {
+	struct PixelFormat;
+}
 
 namespace Snatcher {
 
@@ -37,7 +42,7 @@ class SceneModule;
 
 class GraphicsEngine {
 public:
-	GraphicsEngine(OSystem *system, Common::Platform platform, const VMInfo &vmstate);
+	GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate);
 	~GraphicsEngine();
 
 	void runScript(ResourcePointer res, int func);
@@ -147,6 +152,7 @@ private:
 	void restoreDefaults();
 
 	GfxState _state;
+	const uint8 _bpp;
 	uint8 _dataMode;
 	uint8 _flags;
 

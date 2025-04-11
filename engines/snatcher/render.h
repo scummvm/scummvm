@@ -56,13 +56,13 @@ protected:
 	GraphicsEngine::GfxState &_gfxState;
 
 private:
-	static Renderer *createSegaRenderer(GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr);
+	static Renderer *createSegaRenderer(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr);
 
 public:
-	static Renderer *create(Common::Platform platform, GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr) {
+	static Renderer *create(const Graphics::PixelFormat *pxf, Common::Platform platform, GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr) {
 		switch (platform) {
 		case Common::kPlatformSegaCD:
-			return createSegaRenderer(state, pal, scr);
+			return createSegaRenderer(pxf, state, pal, scr);
 		default:
 			break;
 		};
