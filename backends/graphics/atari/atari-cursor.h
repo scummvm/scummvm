@@ -25,6 +25,7 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "graphics/surface.h"
+//#include "backends/platform/atari/atari-debug.h"
 
 class AtariGraphicsManager;
 struct Screen;
@@ -36,7 +37,7 @@ struct Screen;
 // These always get updates by ScummVM, no need to differentiate between engines and the overlay.
 
 struct Cursor {
-	Cursor(const AtariGraphicsManager *manager, const Screen *screen);
+	Cursor(const AtariGraphicsManager *manager, const Screen *screen, int x, int y);
 
 	void reset(const Graphics::Surface *boundingSurf, int xOffset) {
 		_boundingSurf = boundingSurf;
@@ -72,6 +73,8 @@ struct Cursor {
 		return Common::Point(_x, _y);
 	}
 	void setPosition(int x, int y) {
+		//atari_debug("Cursor::setPosition: %d, %d", x, y);
+
 		if (_x == x && _y == y)
 			return;
 
@@ -117,7 +120,8 @@ private:
 	bool _visibilityChanged = false;
 
 	bool _visible = false;
-	int _x = -1, _y = -1;
+	int _x;
+	int _y;
 	bool _outOfScreen = true;
 	Common::Rect _srcRect;
 	Common::Rect _dstRect;

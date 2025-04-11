@@ -737,7 +737,7 @@ void AtariGraphicsManager::showOverlay(bool inGUI) {
 
 	_pendingScreenChanges.setScreenSurface(&_screen[kOverlayBuffer]->surf);
 
-	// do not cache dirtyRects and saved cursor position
+	// do not cache dirtyRects and saved cursor rect
 	_screen[kOverlayBuffer]->reset(
 		getOverlayWidth(), getOverlayHeight(),
 		getBitsPerPixel(getOverlayFormat()),
@@ -976,6 +976,8 @@ void AtariGraphicsManager::setCursorPalette(const byte *colors, uint start, uint
 }
 
 void AtariGraphicsManager::updateMousePosition(int deltaX, int deltaY) {
+	//atari_debug("updateMousePosition: %d, %d", deltaX, deltaY);
+
 	if (isOverlayVisible()) {
 		_screen[kOverlayBuffer]->cursor.updatePosition(deltaX, deltaY);
 	} else if (_currentState.mode <= kSingleBuffering) {

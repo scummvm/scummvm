@@ -29,10 +29,12 @@
 
 byte Cursor::_palette[256*3] = {};
 
-Cursor::Cursor(const AtariGraphicsManager *manager, const Screen *screen)
+Cursor::Cursor(const AtariGraphicsManager *manager, const Screen *screen, int x, int y)
 		: _manager(manager)
 		, _parentScreen(screen)
-		, _boundingSurf(screen->offsettedSurf) {
+		, _boundingSurf(screen->offsettedSurf)
+		, _x(x)
+		, _y(y) {
 }
 
 void Cursor::update() {
@@ -78,6 +80,8 @@ void Cursor::update() {
 }
 
 void Cursor::updatePosition(int deltaX, int deltaY) {
+	//atari_debug("Cursor::updatePosition: %d, %d", deltaX, deltaX);
+
 	if (deltaX == 0 && deltaY == 0)
 		return;
 

@@ -29,7 +29,7 @@
 
 Screen::Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format, const Palette *palette_)
 	: _manager(manager)
-	, cursor(manager, this)
+	, cursor(manager, this, width / 2, height / 2)
 	, palette(palette_) {
 	const AtariGraphicsManager::AtariMemAlloc &allocFunc = _manager->getStRamAllocFunc();
 
