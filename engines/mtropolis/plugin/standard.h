@@ -442,6 +442,32 @@ private:
 	bool _addToReturnList;
 };
 
+class OpenAppModifier : public Modifier {
+public:
+	OpenAppModifier();
+	~OpenAppModifier();
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::OpenAppModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Open App Modifier"; }
+	void debugInspect(IDebugInspectionReport *report) const override;
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+
+	Event _executeWhen;
+	Common::String _pathOrUrl;
+	bool _addToReturnList;
+};
+
 class StandardPlugIn : public MTropolis::PlugIn {
 public:
 	StandardPlugIn();
@@ -464,6 +490,7 @@ private:
 	PlugInModifierFactory<PrintModifier, Data::Standard::PrintModifier> _printModifierFactory;
 	PlugInModifierFactory<NavigateModifier, Data::Standard::NavigateModifier> _navigateModifierFactory;
 	PlugInModifierFactory<OpenTitleModifier, Data::Standard::OpenTitleModifier> _openTitleModifierFactory;
+	PlugInModifierFactory<OpenAppModifier, Data::Standard::OpenAppModifier> _openAppModifierFactory;
 
 	StandardPlugInHacks _hacks;
 };

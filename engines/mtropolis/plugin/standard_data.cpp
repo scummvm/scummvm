@@ -228,6 +228,19 @@ DataReadErrorCode OpenTitleModifier::load(PlugIn &plugIn, const PlugInModifier &
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode OpenAppModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!unknown1Null.load(reader) || !unknown2Null.load(reader) || !unknown3Event.load(reader) || !unknown4String.load(reader))
+		return kDataReadErrorReadFailed;
+
+	if (!unknown5Integer.load(reader) || !unknown6Integer.load(reader) || !unknown7Bool.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 } // End of namespace Standard
 
 } // End of namespace Data

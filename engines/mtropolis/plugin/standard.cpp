@@ -1803,6 +1803,41 @@ const char *OpenTitleModifier::getDefaultName() const {
 	return "Open Title Modifier"; // ???
 }
 
+OpenAppModifier::OpenAppModifier() {
+}
+
+OpenAppModifier::~OpenAppModifier() {
+}
+
+bool OpenAppModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::OpenAppModifier &data) {
+	return true;
+}
+
+bool OpenAppModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState OpenAppModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void OpenAppModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void OpenAppModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> OpenAppModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new OpenAppModifier(*this));
+}
+
+const char *OpenAppModifier::getDefaultName() const {
+	return "Open App Modifier"; // ???
+}
+
 StandardPlugInHacks::StandardPlugInHacks() : allowGarbledListModData(false) {
 }
 
@@ -1817,7 +1852,8 @@ StandardPlugIn::StandardPlugIn()
 	, _fadeModifierFactory(this)
 	, _printModifierFactory(this)
 	, _navigateModifierFactory(this)
-	, _openTitleModifierFactory(this) {
+	, _openTitleModifierFactory(this)
+	, _openAppModifierFactory(this) {
 }
 
 StandardPlugIn::~StandardPlugIn() {
@@ -1836,6 +1872,7 @@ void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) cons
 	registrar->registerPlugInModifier("fade", &_fadeModifierFactory);
 	registrar->registerPlugInModifier("Navigate", &_navigateModifierFactory);
 	registrar->registerPlugInModifier("OpenTitle", &_openTitleModifierFactory);
+	registrar->registerPlugInModifier("openApp", &_openAppModifierFactory);
 }
 
 const StandardPlugInHacks &StandardPlugIn::getHacks() const {

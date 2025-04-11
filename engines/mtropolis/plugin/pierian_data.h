@@ -19,41 +19,46 @@
  *
  */
 
-#ifndef MTROPOLIS_PLUGINS_H
-#define MTROPOLIS_PLUGINS_H
+#ifndef MTROPOLIS_PLUGIN_PIERIAN_DATA_H
+#define MTROPOLIS_PLUGIN_PIERIAN_DATA_H
 
-#include "common/ptr.h"
-
-class MidiDriver;
+#include "mtropolis/data.h"
 
 namespace MTropolis {
 
-namespace Obsidian {
+namespace Data {
 
-class WordGameData;
+namespace Pierian {
 
-} // End of namespace Obsidian
+// Known Pierian Spring custom modifiers:
+// * FlattenMod
+// * SaveFileMod
+// * WasteMod: A wrapper around the "TE Edit Control" text editor widget
+//
 
-class PlugIn;
 
-namespace PlugIns {
+struct WasteModifier : public PlugInModifierData {
 
-Common::SharedPtr<PlugIn> createMIDI();
-Common::SharedPtr<PlugIn> createStandard();
-Common::SharedPtr<PlugIn> createObsidian(const Common::SharedPtr<Obsidian::WordGameData> &wgData);
-Common::SharedPtr<PlugIn> createMTI();
-Common::SharedPtr<PlugIn> createFTTS();
-Common::SharedPtr<PlugIn> createRWC();
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
 
-Common::SharedPtr<PlugIn> createKnowWonder();
+struct SaveFileModifier : public PlugInModifierData {
 
-Common::SharedPtr<PlugIn> createAXLogic();
-Common::SharedPtr<PlugIn> createHoologic();
-Common::SharedPtr<PlugIn> createMLine();
-Common::SharedPtr<PlugIn> createThereware();
-Common::SharedPtr<PlugIn> createPierian();
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
 
-} // End of namespace PlugIns
+struct FlattenModifier : public PlugInModifierData {
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
+
+} // End of namespace Pierian
+
+} // End of namespace Data
 
 } // End of namespace MTropolis
 

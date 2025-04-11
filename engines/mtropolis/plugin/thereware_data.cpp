@@ -176,6 +176,24 @@ DataReadErrorCode AlphaMaticModifier::load(PlugIn &plugIn, const PlugInModifier 
 }
 
 
+DataReadErrorCode HotTextModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 2)
+		return kDataReadErrorUnsupportedRevision;
+
+	error("Data structure loading for the HotText modifier is not implemented.");
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode KeyScrollModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 2)
+		return kDataReadErrorUnsupportedRevision;
+
+	error("Data structure loading for the KeyScroll modifier is not implemented.");
+
+	return kDataReadErrorNone;
+}
+
 } // End of namespace Thereware
 
 } // End of namespace Data

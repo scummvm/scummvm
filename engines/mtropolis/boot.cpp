@@ -1089,6 +1089,7 @@ public:
 		kPlugInHoologic,
 		kPlugInMLine,
 		kPlugInThereware,
+		kPlugInPierian,
 	};
 
 	enum BitDepth {
@@ -1152,6 +1153,8 @@ public:
 	void bootHerculesWin();
 	void bootMindGymWin();
 	void bootStarTrekWin();
+	void bootODLivingWin();
+	void bootOTSSWWin();
 
 
 	void bootGeneric();
@@ -1656,6 +1659,19 @@ void BootScriptContext::bootStarTrekWin() {
 	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
 }
 
+void BootScriptContext::bootODLivingWin() {
+	addPlugIn(kPlugInStandard);
+	addPlugIn(kPlugInPierian);
+	// Force V112 mode for PlugInModifier::load
+	// Autodetected V100 causes error there
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
+}
+
+void BootScriptContext::bootOTSSWWin() {
+	addPlugIn(kPlugInStandard);
+	addPlugIn(kPlugInThereware);
+}
+
 void BootScriptContext::bootGeneric() {
 	addPlugIn(kPlugInStandard);
 }
@@ -1721,7 +1737,8 @@ void BootScriptContext::executeFunction(const Common::String &functionName, cons
 									  ENUM_BINDING(kPlugInAxLogic),
 									  ENUM_BINDING(kPlugInHoologic),
 									  ENUM_BINDING(kPlugInMLine),
-									  ENUM_BINDING(kPlugInThereware),};
+									  ENUM_BINDING(kPlugInThereware),
+									  ENUM_BINDING(kPlugInPierian),};
 
 	const EnumBinding bitDepthEnum[] = {ENUM_BINDING(kBitDepthAuto),
 										ENUM_BINDING(kBitDepth8),
@@ -2345,6 +2362,21 @@ const Game games[] = {
 		MTBOOT_BYZANTINE_DEMO_WIN_EN,
 		&BootScriptContext::bootGeneric
 	},
+	// An Odyssey Of Discovery: Living Science - Windows - English
+	{
+		MTBOOT_OD_LIVING_WIN_EN,
+	 &BootScriptContext::bootODLivingWin
+	},
+	// The Facts about Genes & our Food: A Compendium - Windows - English
+	{
+		MTBOOT_FOODGENES_WIN_EN,
+	 &BootScriptContext::bootGeneric
+	},
+	// Unlock the Secrets: Shadow Warrior - Windows - English
+	{
+		MTBOOT_UTS_SHADOW_WARRIOR_WIN_EN,
+	 &BootScriptContext::bootOTSSWWin
+	},
 };
 
 } // End of namespace Games
@@ -2406,6 +2438,11 @@ Common::SharedPtr<MTropolis::PlugIn> loadMLinePlugIn(const MTropolisGameDescript
 Common::SharedPtr<MTropolis::PlugIn> loadTherewarePlugIn(const MTropolisGameDescription &gameDesc) {
 	Common::SharedPtr<MTropolis::PlugIn> twPlugIn(PlugIns::createThereware());
 	return twPlugIn;
+}
+
+Common::SharedPtr<MTropolis::PlugIn> loadPierianPlugIn(const MTropolisGameDescription &gameDesc) {
+	Common::SharedPtr<MTropolis::PlugIn> pPlugIn(PlugIns::createPierian());
+	return pPlugIn;
 }
 
 enum PlayerType {
@@ -3301,6 +3338,9 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 			break;
 		case Boot::BootScriptContext::kPlugInThereware:
 			plugIns.push_back(Boot::loadTherewarePlugIn(gameDesc));
+			break;
+		case Boot::BootScriptContext::kPlugInPierian:
+			plugIns.push_back(Boot::loadPierianPlugIn(gameDesc));
 			break;
 		default:
 			error("Unknown plug-in ID");
