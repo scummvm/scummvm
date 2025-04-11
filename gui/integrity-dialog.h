@@ -62,6 +62,8 @@ class IntegrityDialog : public Dialog, public CommandSender {
 	ButtonWidget *_copyEmailButton;
 
 	bool _close;
+	uint32 _lastEventPoll;
+
 
 	Common::U32String getSizeLabelText();
 	void refreshWidgets();
@@ -69,6 +71,13 @@ class IntegrityDialog : public Dialog, public CommandSender {
 public:
 	IntegrityDialog(Common::String endpoint, Common::String gameConfig);
 	~IntegrityDialog();
+
+
+	/**
+	 * Updates the progress bar every 500ms
+	 * Includes polling to avoid freezing when processing files
+	 */
+	bool progressUpdate(int bytesProcessed);
 
 	void sendJSON();
 	void checksumResponseCallback(const Common::JSONValue *r);
