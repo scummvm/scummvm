@@ -589,11 +589,6 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 				_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
 				if (_glContext) {
 					clear = true;
-
-#ifdef USE_IMGUI
-					// Setup Dear ImGui
-					initImGui(nullptr, _glContext);
-#endif
 				}
 			}
 
@@ -632,6 +627,14 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 		return false;
 
 	initializeOpenGLContext();
+
+#ifdef USE_IMGUI
+	if (clear && _glContext) {
+		// Setup Dear ImGui
+		initImGui(nullptr, _glContext);
+	}
+#endif
+
 
 	if (clear)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
