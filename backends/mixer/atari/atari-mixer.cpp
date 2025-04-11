@@ -107,8 +107,8 @@ void AtariMixerManager::init() {
 	}
 
 	// don't use the recommended number of samples
-	obtained.samples = desired.samples;
 	obtained.size = obtained.size * desired.samples / obtained.samples;
+	obtained.samples = desired.samples;
 
 	_outputRate = obtained.frequency;
 	_outputChannels = obtained.channels;
