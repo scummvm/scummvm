@@ -23,8 +23,13 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "efh/efh.h"
 
@@ -70,6 +75,7 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	bool removeSaveState(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 Common::Error EfhMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
@@ -190,6 +196,129 @@ SaveStateDescriptor EfhMetaEngine::querySaveMetaInfos(const char *target, int sl
 bool EfhMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	return g_system->getSavefileManager()->removeSavefile(fileName);
+}
+
+Common::KeymapArray EfhMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Efh;
+
+	Keymap *engineKeymap = new Keymap(Keymap::kKeymapTypeGame, "efh-default", _("Default keymappings"));
+
+	Action *act;
+
+	act = new Action("F1", _("Display Character Summary One"));
+	act->setCustomEngineActionEvent(Efh::kEfhShowCharacterPortraitsOne);
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("1");
+	engineKeymap->addAction(act);
+
+	act = new Action("F2", _("Display Character Summary Two"));
+	act->setCustomEngineActionEvent(Efh::kEfhShowCharacterPortraitsTwo);
+	act->addDefaultInputMapping("F2");
+	act->addDefaultInputMapping("2");
+	engineKeymap->addAction(act);
+
+	act = new Action("F3", _("Display Character Summary Three"));
+	act->setCustomEngineActionEvent(Efh::kEfhShowCharacterPortraitsThree);
+	act->addDefaultInputMapping("F3");
+	act->addDefaultInputMapping("3");
+	engineKeymap->addAction(act);
+
+	act = new Action("SAVE", _("Save game"));
+	act->setCustomEngineActionEvent(Efh::kEfhSave);
+	act->addDefaultInputMapping("F5");
+	engineKeymap->addAction(act);
+
+	act = new Action("LOAD", _("Load game"));
+	act->setCustomEngineActionEvent(Efh::kEfhLoad);
+	act->addDefaultInputMapping("F7");
+	engineKeymap->addAction(act);
+
+	act = new Action("A", _("Attack"));
+	act->setCustomEngineActionEvent(Efh::kEfhAttack);
+	act->addDefaultInputMapping("a");
+	engineKeymap->addAction(act);
+
+	act = new Action("H",_( "Hide"));
+	act->setCustomEngineActionEvent(Efh::kEfhHide);
+	act->addDefaultInputMapping("h");
+	engineKeymap->addAction(act);
+
+	act = new Action("D", _("Defend"));
+	act->setCustomEngineActionEvent(Efh::kEfhBlock);
+	act->addDefaultInputMapping("d");
+	engineKeymap->addAction(act);
+
+	act = new Action("R", _("Run"));
+	act->setCustomEngineActionEvent(Efh::kEfhRun);
+	act->addDefaultInputMapping("r");
+	engineKeymap->addAction(act);
+
+	act = new Action("S", _("Status"));
+	act->setCustomEngineActionEvent(Efh::kEfhStatus);
+	act->addDefaultInputMapping("s");
+	engineKeymap->addAction(act);
+
+	act = new Action("T", _("Talk"));
+	act->setCustomEngineActionEvent(Efh::kEfhTalk);
+	act->addDefaultInputMapping("t");
+	engineKeymap->addAction(act);
+
+	act = new Action("L", _("Leave"));
+	act->setCustomBackendActionAxisEvent(Efh::kEfhExit);
+	act->addDefaultInputMapping("l");
+	engineKeymap->addAction(act);
+
+	act = new Action("ESC", _("ESC"));
+	act->setCustomEngineActionEvent(Efh::kEfhEscape);
+	act->addDefaultInputMapping("KEYCODE_ESCAPE");
+	engineKeymap->addAction(act);
+
+	act = new Action("Movement down", _("goSouth"));
+	act->setCustomEngineActionEvent(Efh::kEfhMoveDown);
+	act->addDefaultInputMapping("KEYCODE_DOWN");
+	act->addDefaultInputMapping("KEYCODE_KP2");
+	engineKeymap->addAction(act);
+
+	act = new Action("Movement Down left", _("goSouthEast"));
+	act->setCustomEngineActionEvent(Efh::kEfhMoveDownLeft);
+	act->addDefaultInputMapping("KEYCODE_END");
+	engineKeymap->addAction(act);
+
+	act = new Action("Movement Down Right", _("goSouthWest"));
+	act->setCustomEngineActionEvent(Efh::kEfhMoveDownRight);
+	act->addDefaultInputMapping("KEYCODE_PAGEDOWN");
+	engineKeymap->addAction(act);
+
+	act = new Action("Movement up", _("goNorth"));
+	act->setCustomEngineActionEvent(Efh::kEfhMoveUp);
+	act->addDefaultInputMapping("KEYCODE_UP");
+	act->addDefaultInputMapping("KEYCODE_KP8");
+	engineKeymap->addAction(act);
+
+	act = new Action("Movement Up left", _("goNorthEast"));
+	act->setCustomEngineActionEvent(Efh::kEfhMoveUpLeft);
+	act->addDefaultInputMapping("KEYCODE_HOME");
+	engineKeymap->addAction(act);
+
+	act = new Action("Movement Up Right", _("goNorthWest"));
+	act->setCustomEngineActionEvent(Efh::kEfhMoveUpRight);
+	act->addDefaultInputMapping("KEYCODE_PAGEUP");
+	engineKeymap->addAction(act);
+
+	act = new Action("Movement right", _("goEast"));
+	act->setCustomEngineActionEvent(Efh::kEfhMoveRight);
+	act->addDefaultInputMapping("KEYCODE_RIGHT");
+	act->addDefaultInputMapping("KEYCODE_KP6");
+	engineKeymap->addAction(act);
+
+	act = new Action("Movement left", _("goWest"));
+	act->setCustomEngineActionEvent(Efh::kEfhMoveLeft);
+	act->addDefaultInputMapping("KEYCODE_LEFT");
+	act->addDefaultInputMapping("KEYCODE_KP4");
+	engineKeymap->addAction(act);
+	
+	return Keymap::arrayOf(engineKeymap);
 }
 
 } // End of namespace Efh
