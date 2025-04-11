@@ -85,12 +85,15 @@ static const DebugChannelDef debugFlagList[] = {
 class DirectorMetaEngineDetection : public AdvancedMetaEngineDetection<Director::DirectorGameDescription> {
 private:
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _customTarget;
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _fallback_blacklisted_names;
 
 public:
 	DirectorMetaEngineDetection() : AdvancedMetaEngineDetection(Director::gameDescriptions, directorGames) {
 		_maxScanDepth = 5;
 		_directoryGlobs = Director::directoryGlobs;
 		_flags = kADFlagMatchFullPaths | kADFlagCanPlayUnknownVariants;
+
+		_fallback_blacklisted_names["Macromedia Projector"] = true;
 
 		// initialize customTarget hashmap here
 		for (int i = 0; customTargetList[i].name != nullptr; i++)
@@ -132,6 +135,7 @@ static Director::DirectorGameDescription s_fallbackDesc = {
 
 static char s_fallbackFileNameBuffer[51];
 static char s_fallbackExtraBuf[256];
+
 
 ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extraInfo) const {
 	// TODO: Handle Mac fallback
@@ -275,10 +279,21 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 		desc->desc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
 
 		Common::String extra;
+		Common::String sanitized;
 		Common::WinResources *exe = Common::WinResources::createFromEXE(&f);
 		if (exe) {
 			Common::WinResources::VersionInfo *versionInfo = exe->getVersionResource(1);
 			if (versionInfo) {
+				Common::String fileDescription = versionInfo->hash["FileDescription"].encode();
+				if (!_fallback_blacklisted_names.contains(fileDescription)) {
+					if (extraInfo != nullptr) {
+						*extraInfo = new ADDetectedGameExtraInfo;
+						(*extraInfo)->gameName = fileDescription;
+
+					sanitized = ADGameDescription::sanitizeName(fileDescription.c_str(), fileDescription.size());
+					desc->desc.gameId = sanitized.c_str();
+					}
+				}
 				extra = Common::String::format("v%d.%d.%dr%d", versionInfo->fileVersion[0], versionInfo->fileVersion[1], versionInfo->fileVersion[2], versionInfo->fileVersion[3]);
 				delete versionInfo;
 			}

@@ -244,6 +244,11 @@ struct ADGameDescription {
 		buffer = ADDynamicDescription::strToBuffer(buffer, guiOptions);
 		return buffer;
 	}
+
+	/**
+	 * Sanitizes a string to be usable by gameId
+	 */
+	static Common::String sanitizeName(const char *name, int maxLen);
 };
 
 /**
@@ -759,11 +764,11 @@ public:
 			return;
 
 		Common::Path filename = node.getPath();
-		
+
 		if (archiveHashMap.contains(filename)) {
 			delete archiveHashMap[filename];
 		}
-		
+
 		archiveHashMap.setVal(filename, archivePtr);
 	}
 
