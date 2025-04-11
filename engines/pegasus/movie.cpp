@@ -162,7 +162,7 @@ void Movie::setTime(const TimeValue time, const TimeScale scale) {
 	}
 }
 
-void Movie::setRate(const Common::Rational rate) {
+void Movie::setRate(const Common::Rational &rate) {
 	if (_video) {
 		_video->setRate(rate);
 

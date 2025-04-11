@@ -2574,7 +2574,7 @@ Common::Path Caldoria::getHintMovie(uint hintNum) {
 	return movieName;
 }
 
-void Caldoria::updateCursor(const Common::Point where, const Hotspot *cursorSpot) {
+void Caldoria::updateCursor(const Common::Point &where, const Hotspot *cursorSpot) {
 	if (cursorSpot) {
 		switch (cursorSpot->getObjectID()) {
 		case kCa4DEnvironCloseSpotID:

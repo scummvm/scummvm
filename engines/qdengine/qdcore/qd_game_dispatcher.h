@@ -94,7 +94,7 @@ public:
 	}
 
 	void request_file_package(const qdFileOwner &file_owner) const;
-	Common::Path find_file(const Common::Path file_name, const qdFileOwner &file_owner) const;
+	Common::Path find_file(const Common::Path &file_name, const qdFileOwner &file_owner) const;
 	void startup_check() const;
 
 	qdLoadingProgressFnc set_scene_loading_progress_callback(qdLoadingProgressFnc p, void *dp = 0) {
@@ -491,7 +491,7 @@ public:
 		return _game_title.c_str();
 	}
 
-	void set_texts_database(const Common::Path file_name) {
+	void set_texts_database(const Common::Path &file_name) {
 		_texts_database = file_name;
 	}
 	const Common::Path texts_database() const {

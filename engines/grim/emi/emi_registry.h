@@ -33,8 +33,8 @@ public:
 	EmiRegistry();
 	~EmiRegistry() { }
 
-	bool Get(const Common::String key, float &res) const;
-	void Set(const Common::String key, float &value);
+	bool Get(const Common::String &key, float &res) const;
+	void Set(const Common::String &key, float &value);
 
 private:
 	uint convertVolumeToMixer(uint volume) const;

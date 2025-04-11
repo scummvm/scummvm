@@ -1175,7 +1175,7 @@ void SpiderEngine::runGiveUp() {
 	_nextLevel = "mainmenu.mi_";
 }
 
-void SpiderEngine::showScore(const Common::String prefix) {
+void SpiderEngine::showScore(const Common::String &prefix) {
 	Common::String fmessage = "%s\nYou finished the ";
 	fmessage = fmessage + (isDemo() ? "demo" : "game") + " with a score of %d points";
 	Common::String message = Common::String::format(fmessage.c_str(), prefix.c_str(), _score);

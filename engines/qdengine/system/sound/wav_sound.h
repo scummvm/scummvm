@@ -37,7 +37,7 @@ public:
 	//! Returns sound length in seconds
 	float length() const { return _length; }
 
-	bool wav_file_load(const Common::Path fname);
+	bool wav_file_load(const Common::Path &fname);
 
 	Audio::SeekableAudioStream *_audioStream = nullptr;
 	Common::Path _fname;

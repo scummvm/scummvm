@@ -303,7 +303,7 @@ void HypnoEngine::loadGame(const Common::String &nextLevel, int score, int puzzl
 	error("Function \"%s\" not implemented", __FUNCTION__);
 }
 
-void HypnoEngine::loadFonts(const Common::String prefix) {
+void HypnoEngine::loadFonts(const Common::String &prefix) {
 	Common::File file;
 	Common::Path path = Common::Path(prefix).append("block05.fgx");
 

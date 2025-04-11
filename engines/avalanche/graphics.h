@@ -66,8 +66,8 @@ public:
 	Common::Point drawScreenArc(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawPieSlice(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawTriangle(Common::Point *p, Color color);
-	void drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
-	void drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawNormalText(const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawScrollText(const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawDigit(int index, int x, int y);
 	void drawDirection(int index, int x, int y);
 	void drawScrollShadow(int16 x1, int16 y1, int16 x2, int16 y2);
@@ -104,7 +104,7 @@ public:
 	// Help's function:
 	void helpDrawButton(int y, byte which);
 	void helpDrawHighlight(byte which, Color color);
-	void helpDrawBigText(const Common::String text, int16 x, int16 y, Color color);
+	void helpDrawBigText(const Common::String &text, int16 x, int16 y, Color color);
 
 	// Shoot em' up's functions:
 	void seuDrawTitle();
@@ -196,9 +196,9 @@ private:
 	Graphics::Surface loadPictureGraphic(Common::File &file); // Reads Graphic-planar EGA data.
 	Graphics::Surface loadPictureSign(Common::File &file, uint16 width, uint16 height); // Reads a tricky type of picture used for the "game over"/"about" scrolls and in the mini-game Nim.
 
-	void drawText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
-	void drawBigText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
-	void drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY);
+	void drawText(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawBigText(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawPicture(Graphics::Surface &target, const Graphics::Surface &picture, uint16 destX, uint16 destY);
 
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.
 	// Returns the end point of the arc. (Needed in Clock.)

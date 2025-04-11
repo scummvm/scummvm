@@ -335,7 +335,7 @@ void GraphicManager::drawTriangle(Common::Point *p, Color color) {
 	_scrolls.drawLine(p[2].x, p[2].y, p[0].x, p[0].y, color);
 }
 
-void GraphicManager::drawText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+void GraphicManager::drawText(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	for (uint i = 0; i < text.size(); i++) {
 		for (int j = 0; j < fontHeight; j++) {
 			byte pixel = font[(byte)text[i]][j];
@@ -348,14 +348,14 @@ void GraphicManager::drawText(Graphics::Surface &surface, const Common::String t
 	}
 }
 
-void GraphicManager::drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+void GraphicManager::drawNormalText(const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	drawText(_surface, text, font, fontHeight, x, y, color);
 }
 
 /**
  * Draws text double the size of the normal.
  */
-void GraphicManager::drawBigText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+void GraphicManager::drawBigText(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	for (uint i = 0; i < text.size(); i++) {
 		for (int j = 0; j < fontHeight; j++) {
 			byte pixel = font[(byte)text[i]][j];
@@ -371,7 +371,7 @@ void GraphicManager::drawBigText(Graphics::Surface &surface, const Common::Strin
 	}
 }
 
-void GraphicManager::drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+void GraphicManager::drawScrollText(const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	drawText(_scrolls, text, font, fontHeight, x, y, color);
 }
 
@@ -695,7 +695,7 @@ void GraphicManager::helpDrawHighlight(byte which, Color color) {
 	drawRectangle(Common::Rect(466, 38 + which * 27, 556, 63 + which * 27), color);
 }
 
-void GraphicManager::helpDrawBigText(const Common::String text, int16 x, int16 y, Color color) {
+void GraphicManager::helpDrawBigText(const Common::String &text, int16 x, int16 y, Color color) {
 	drawBigText(_surface, text, _vm->_font, 8, x, y, color);
 }
 
@@ -1058,7 +1058,7 @@ void GraphicManager::drawSprite(AnimationType *sprite, byte picnum, int16 x, int
 	}
 }
 
-void GraphicManager::drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY) {
+void GraphicManager::drawPicture(Graphics::Surface &target, const Graphics::Surface &picture, uint16 destX, uint16 destY) {
 	// Copy the picture to the given place on the screen.
 	uint16 maxX = picture.w;
 	uint16 maxY = picture.h;

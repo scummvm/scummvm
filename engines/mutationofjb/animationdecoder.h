@@ -64,7 +64,7 @@ public:
 	 * @param area Output surface will be confined to this area.
 	 * @param threshold Source pixels with color index above this threshold will not be replaced.
 	 */
-	void setPartialMode(int fromFrame, int toFrame, const Common::Rect area = Common::Rect(), uint8 threshold = 0xFF);
+	void setPartialMode(int fromFrame, int toFrame, const Common::Rect &area = Common::Rect(), uint8 threshold = 0xFF);
 
 private:
 	void loadPalette(Common::SeekableReadStream &stream);

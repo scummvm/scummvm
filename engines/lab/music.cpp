@@ -58,7 +58,7 @@ byte Music::getSoundFlags() {
 	return soundFlags;
 }
 
-void Music::loadSoundEffect(const Common::String filename, bool loop, bool waitTillFinished) {
+void Music::loadSoundEffect(const Common::String &filename, bool loop, bool waitTillFinished) {
 	stopSoundEffect();
 
 	Common::File *file = _vm->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
@@ -131,7 +131,7 @@ bool Music::isSoundEffectActive() const {
 	return _vm->_mixer->isSoundHandleActive(_sfxHandle);
 }
 
-void Music::changeMusic(const Common::String filename, bool storeCurPos, bool seektoStoredPos) {
+void Music::changeMusic(const Common::String &filename, bool storeCurPos, bool seektoStoredPos) {
 	if (storeCurPos)
 		_storedPos = _musicFile->pos();
 

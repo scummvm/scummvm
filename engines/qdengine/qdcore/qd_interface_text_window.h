@@ -82,7 +82,7 @@ public:
 	const Common::Path border_background_file() const {
 		return _border_background.animation_file();
 	}
-	void set_border_background_file(const Common::Path file_name) {
+	void set_border_background_file(const Common::Path &file_name) {
 		_border_background.set_animation_file(file_name);
 	}
 

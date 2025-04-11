@@ -132,8 +132,8 @@ public:
 	 * Returns true if search is 'finished'
 	 */
 	bool searchPairs(KeyTypeList &ktl, const Common::String &basekey,
-		const Common::String currkey, const unsigned int pos);
-	void selectPairs(KeyTypeList &ktl, const Common::String currkey);
+		const Common::String &currkey, const unsigned int pos);
+	void selectPairs(KeyTypeList &ktl, const Common::String &currkey);
 
 	Common::String dump(int depth = 0);
 

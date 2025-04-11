@@ -45,7 +45,7 @@ public:
 	/**
 	Если надо убрать звук - передать NULL в качестве имени файла.
 	*/
-	void set_sound_file(const Common::Path name);
+	void set_sound_file(const Common::Path &name);
 	//! Возвращает имя файла звука.
 	const Common::Path sound_file() const {
 		return _sound_file;
@@ -67,7 +67,7 @@ public:
 	/**
 	Если надо убрать анимацию - передать NULL в качестве имени файла.
 	*/
-	void set_animation_file(const Common::Path name);
+	void set_animation_file(const Common::Path &name);
 	//! Возвращает имя файла для анимации.
 	const Common::Path animation_file() const {
 		return _animation_file;

@@ -34,7 +34,7 @@ namespace Graphics {
 		float y;
 		FloatPoint() : x(0), y(0) {}
 		FloatPoint(float x1, float y1) : x(x1), y(y1) {}
-		FloatPoint(const Common::Point p) : x(p.x), y(p.y) {}
+		FloatPoint(const Common::Point &p) : x(p.x), y(p.y) {}
 		bool operator==(const FloatPoint &p) const { return fabs(x - p.x) < kEpsilon && fabs(y - p.y) < kEpsilon; }
 		bool operator!=(const FloatPoint  &p) const { return fabs(x - p.x) > kEpsilon || fabs(y - p.y) > kEpsilon; }
 		FloatPoint operator+(const FloatPoint &delta) const { return FloatPoint (x + delta.x, y + delta.y);     }

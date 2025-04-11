@@ -74,7 +74,7 @@ void winVideo::set_window(int x, int y, int xsize, int ysize) {
 		_tempSurf = new Graphics::ManagedSurface(xsize, ysize, g_engine->_pixelformat);
 }
 
-bool winVideo::open_file(const Common::Path fname) {
+bool winVideo::open_file(const Common::Path &fname) {
 	Common::String filename = (char *)transCyrillic(fname.toString());
 	debugC(3, kDebugLoad, "winVideo::open_file(%s)", filename.c_str());
 

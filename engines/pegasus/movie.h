@@ -53,7 +53,7 @@ public:
 
 	void setTime(const TimeValue, const TimeScale = 0) override;
 
-	void setRate(const Common::Rational) override;
+	void setRate(const Common::Rational &) override;
 
 	void start() override;
 	void stop() override;

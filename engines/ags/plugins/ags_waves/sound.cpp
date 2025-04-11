@@ -181,7 +181,7 @@ void AGSWaves::SFX_Filter(ScriptMethodParams &params) {
 	SFX[sfxNum]._filter = enable;
 }
 
-Audio::AudioStream *AGSWaves::loadOGG(const Common::ArchiveMemberPtr member) {
+Audio::AudioStream *AGSWaves::loadOGG(const Common::ArchiveMemberPtr &member) {
 #ifdef USE_VORBIS
 	if (member) {
 		Audio::AudioStream *stream = Audio::makeVorbisStream(member->createReadStream(), DisposeAfterUse::YES);

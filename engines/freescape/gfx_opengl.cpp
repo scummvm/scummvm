@@ -224,7 +224,7 @@ void OpenGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 	glTranslatef(_shakeOffset.x, _shakeOffset.y, 0);
 }
 
-void OpenGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d target, const Common::Rect viewArea) {
+void OpenGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d target, const Common::Rect &viewArea) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 	glColor3ub(255, 255, 255);
@@ -242,7 +242,7 @@ void OpenGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, 
 	glDepthMask(GL_TRUE);
 }
 
-void OpenGLRenderer::renderCrossair(const Common::Point crossairPosition) {
+void OpenGLRenderer::renderCrossair(const Common::Point &crossairPosition) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, _screenW, _screenH, 0, 0, 1);
@@ -281,7 +281,7 @@ void OpenGLRenderer::renderCrossair(const Common::Point crossairPosition) {
 	glDepthMask(GL_TRUE);
 }
 
-void OpenGLRenderer::renderPlayerShootRay(byte color, const Common::Point position, const Common::Rect viewArea) {
+void OpenGLRenderer::renderPlayerShootRay(byte color, const Common::Point &position, const Common::Rect &viewArea) {
 	uint8 r, g, b;
 
 	glMatrixMode(GL_PROJECTION);
@@ -397,7 +397,7 @@ void OpenGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 	glPopMatrix();
 }
 
-void OpenGLRenderer::renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewArea) {
+void OpenGLRenderer::renderPlayerShootBall(byte color, const Common::Point &position, int frame, const Common::Rect &viewArea) {
 	uint8 r, g, b;
 
 	glMatrixMode(GL_PROJECTION);

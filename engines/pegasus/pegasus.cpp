@@ -1972,7 +1972,7 @@ bool PegasusEngine::wantsCursor() {
 	return _gameMenu == nullptr;
 }
 
-void PegasusEngine::updateCursor(const Common::Point, const Hotspot *cursorSpot) {
+void PegasusEngine::updateCursor(const Common::Point &, const Hotspot *cursorSpot) {
 	if (_itemDragger.isTracking()) {
 		_cursor->setCurrentFrameIndex(5);
 	} else {

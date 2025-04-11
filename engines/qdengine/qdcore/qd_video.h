@@ -58,12 +58,12 @@ public:
 	const Common::Path file_name() const {
 		return _file_name;
 	}
-	void set_file_name(const Common::Path fname) {
+	void set_file_name(const Common::Path &fname) {
 		_file_name = fname;
 	}
 
 	// Фон, на котором будет проигрываться видео
-	void set_background_file_name(const Common::Path fname) {
+	void set_background_file_name(const Common::Path &fname) {
 		_background.set_file(fname);
 	}
 	const Common::Path background_file_name() const {

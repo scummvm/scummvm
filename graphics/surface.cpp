@@ -251,7 +251,7 @@ void Surface::copyRectToSurface(const void *buffer, int srcPitch, int destX, int
 	copyBlit(dst, src, pitch, srcPitch, width, height, format.bytesPerPixel);
 }
 
-void Surface::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect) {
+void Surface::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect &subRect) {
 	assert(srcSurface.format == format);
 
 	copyRectToSurface(srcSurface.getBasePtr(subRect.left, subRect.top), srcSurface.pitch, destX, destY, subRect.width(), subRect.height());
@@ -271,7 +271,7 @@ void Surface::copyRectToSurfaceWithKey(const void *buffer, int srcPitch, int des
 	Graphics::keyBlit(dst, src, pitch, srcPitch, width, height, format.bytesPerPixel, key);
 }
 
-void Surface::copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect, uint32 key) {
+void Surface::copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect &subRect, uint32 key) {
 	assert(srcSurface.format == format);
 
 	copyRectToSurfaceWithKey(srcSurface.getBasePtr(subRect.left, subRect.top), srcSurface.pitch, destX, destY, subRect.width(), subRect.height(), key);

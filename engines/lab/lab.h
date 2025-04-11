@@ -281,7 +281,7 @@ private:
 	/**
 	 * Does what's necessary for the monitor.
 	 */
-	void doMonitor(const Common::String background, const Common::String textfile, bool isinteractive, Common::Rect textRect);
+	void doMonitor(const Common::String &background, const Common::String &textfile, bool isinteractive, Common::Rect textRect);
 
 	/**
 	 * Does the things to properly set up the detective notes.
@@ -483,7 +483,7 @@ private:
 	/**
 	 * Writes the game out to disk.
 	 */
-	bool saveGame(int slot, const Common::String desc);
+	bool saveGame(int slot, const Common::String &desc);
 
 	/**
 	 * Reads the game from disk.

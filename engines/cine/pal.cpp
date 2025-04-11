@@ -281,7 +281,7 @@ uint8 Palette::getB(byte index) const {
 	return _colors[index].b;
 }
 
-void Palette::setColorFormat(const Graphics::PixelFormat format) {
+void Palette::setColorFormat(const Graphics::PixelFormat &format) {
 	_format = format;
 }
 
@@ -322,7 +322,7 @@ void Palette::saturatedAddColor(Color &result, const Color &baseColor, signed r,
 	result.b = CLIP<int>(baseColor.b + b, 0, _format.bMax());
 }
 
-Palette::Palette(const Graphics::PixelFormat format, const uint numColors) : _format(format), _colors() {
+Palette::Palette(const Graphics::PixelFormat &format, const uint numColors) : _format(format), _colors() {
 	_colors.resize(numColors);
 	fillWithBlack();
 }
@@ -346,7 +346,7 @@ Palette &Palette::clear() {
 	return *this;
 }
 
-Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian) {
+Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFormat &format, const uint numColors, const EndianType endian) {
 	assert(format.bytesPerPixel * numColors <= size); // Make sure there's enough input space
 	assert(format.aLoss == 8); // No alpha
 	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, format.rBits() - 1)) / 8); // R must be inside one byte
@@ -376,11 +376,11 @@ byte *Palette::save(byte *buf, const uint size, const EndianType endian) const {
 	return save(buf, size, colorFormat(), colorCount(), endian);
 }
 
-byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat format, const EndianType endian) const {
+byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat &format, const EndianType endian) const {
 	return save(buf, size, format, colorCount(), endian);
 }
 
-byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian, const byte firstIndex) const {
+byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat &format, const uint numColors, const EndianType endian, const byte firstIndex) const {
 	assert(format.bytesPerPixel * numColors <= size); // Make sure there's enough output space
 	assert(format.aLoss == 8); // No alpha
 	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, format.rBits() - 1)) / 8); // R must be inside one byte

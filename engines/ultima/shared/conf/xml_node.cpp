@@ -455,7 +455,7 @@ XMLNode *XMLNode::xmlParseFile(XMLTree *tree, const Common::Path &fname) {
 }
 
 bool XMLNode::searchPairs(KeyTypeList &ktl, const Common::String &basekey,
-						  const Common::String currkey, const unsigned int pos) {
+						  const Common::String &currkey, const unsigned int pos) {
 	/* If our 'current key' is longer then the key we're serching for
 	    we've obviously gone too deep in this branch, and we won't find
 	    it here. */
@@ -481,7 +481,7 @@ bool XMLNode::searchPairs(KeyTypeList &ktl, const Common::String &basekey,
 }
 
 /* Just adds every key->value pair under the this node to the ktl */
-void XMLNode::selectPairs(KeyTypeList &ktl, const Common::String currkey) {
+void XMLNode::selectPairs(KeyTypeList &ktl, const Common::String &currkey) {
 	ktl.push_back(KeyType(currkey + _id, currkey));
 
 	for (auto *node : _nodeList) {

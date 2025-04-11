@@ -451,7 +451,7 @@ const AgeData Database::_ages[] = {
 	{ 11, 0, 1, roomsLOGO, 0 }
 };
 
-Database::Database(const Common::Platform platform, const Common::Language language, const uint32 localizationType) :
+Database::Database(const Common::Platform &platform, const Common::Language &language, const uint32 localizationType) :
 		_platform(platform),
 		_language(language),
 		_localizationType(localizationType),

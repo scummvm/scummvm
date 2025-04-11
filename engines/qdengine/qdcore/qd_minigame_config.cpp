@@ -92,7 +92,7 @@ bool qdMinigameConfigParameter::validate_data() {
 	return true;
 }
 
-bool qdMinigameConfigParameter::load_ini(const Common::Path ini_file, const char *ini_section) {
+bool qdMinigameConfigParameter::load_ini(const Common::Path &ini_file, const char *ini_section) {
 	set_name(ini_section);
 	Common::String str = getIniKey(ini_file, ini_section, "type");
 	if (!str.empty()) {

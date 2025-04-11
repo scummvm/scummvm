@@ -619,7 +619,7 @@ void WetEngine::showCredits() {
 	}
 }
 
-void WetEngine::loadFonts(const Common::String prefix) {
+void WetEngine::loadFonts(const Common::String &prefix) {
 	HypnoEngine::loadFonts(prefix);
 	if (_language == Common::KO_KOR) {
 		Common::File file;

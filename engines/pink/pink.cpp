@@ -186,7 +186,7 @@ void PinkEngine::load(Archive &archive) {
 	_modules.deserialize(archive);
 }
 
-void PinkEngine::initModule(const Common::String moduleName, const Common::String pageName, Archive *saveFile) {
+void PinkEngine::initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile) {
 	if (_module)
 		removeModule();
 

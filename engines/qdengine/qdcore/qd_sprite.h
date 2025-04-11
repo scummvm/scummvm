@@ -92,7 +92,7 @@ public:
 	}
 	uint32 data_size() const;
 
-	void set_file(const Common::Path fname) {
+	void set_file(const Common::Path &fname) {
 		_file = fname;
 	}
 	const Common::Path file() const {
@@ -102,9 +102,9 @@ public:
 		return !_file.empty();
 	}
 
-	bool load(const Common::Path fname);
+	bool load(const Common::Path &fname);
 	bool load();
-	void save(const Common::Path fname);
+	void save(const Common::Path &fname);
 	void free();
 
 	virtual void qda_load(Common::SeekableReadStream *fh, int version = 100);
@@ -174,7 +174,7 @@ public:
 	}
 
 	//! Устанавливает имя файла, в котором хранятся данные ресурса.
-	void set_resource_file(const Common::Path filename) {
+	void set_resource_file(const Common::Path &filename) {
 		set_file(filename);
 	}
 	//! Возвращает имя файла, в котором хранятся данные ресурса.

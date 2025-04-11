@@ -388,8 +388,8 @@ public:
 	int _playerStepIndex;
 	Common::Array<int> _playerSteps;
 
-	Common::Point crossairPosToMousePos(const Common::Point crossairPos);
-	Common::Point mousePosToCrossairPos(const Common::Point mousePos);
+	Common::Point crossairPosToMousePos(const Common::Point &crossairPos);
+	Common::Point mousePosToCrossairPos(const Common::Point &mousePos);
 	void warpMouseToCrossair(void);
 
 	// Effects
@@ -499,7 +499,7 @@ public:
 	float _farClipPlane;
 
 	// Text messages and Fonts
-	void insertTemporaryMessage(const Common::String message, int deadline);
+	void insertTemporaryMessage(const Common::String &message, int deadline);
 	void getLatestMessages(Common::String &message, int &deadline);
 	void clearTemporalMessages();
 	Common::StringArray _temporaryMessages;
