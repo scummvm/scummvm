@@ -23,15 +23,22 @@
 #define SNATCHER_PALETTE_H
 
 #include "common/platform.h"
+#include "graphics/pixelformat.h"
 #include "snatcher/graphics.h"
 
 class PaletteManager;
+
+namespace Graphics {
+	struct PixelFormat;
+}
 
 namespace Snatcher {
 
 class Palette {
 public:
-	Palette(PaletteManager *pm, GraphicsEngine::GfxState &state) : _palMan(pm), _gfxState(state) {}
+	Palette(const Graphics::PixelFormat *pxf, PaletteManager *pm, GraphicsEngine::GfxState &state) : _pixelFormat(pxf ? *pxf : Graphics::PixelFormat::createFormatCLUT8()), _palMan(pm), _gfxState(state) {
+		assert(pm);
+	}
 	virtual ~Palette() {}
 
 	virtual bool enqueueEvent(ResourcePointer &res) { return true; }
@@ -39,19 +46,23 @@ public:
 	virtual void clearEvents() {}
 	virtual void setDefaults(int mode) {}
 	virtual void updateSystemPalette() {}
+	virtual void hINTCallback(void*) {}
+
+	virtual const uint8 *getSystemPalette() const { return nullptr; }
 
 protected:
+	const Graphics::PixelFormat _pixelFormat;
 	PaletteManager *_palMan;
 	GraphicsEngine::GfxState &_gfxState;
 
 private:
-	static Palette *createSegaPalette(PaletteManager *pm, GraphicsEngine::GfxState &state);
+	static Palette *createSegaPalette(const Graphics::PixelFormat *pxf, PaletteManager *pm, GraphicsEngine::GfxState &state);
 
 public:
-	static Palette *create(PaletteManager *pm, Common::Platform platform, GraphicsEngine::GfxState &state) {
+	static Palette *create(const Graphics::PixelFormat *pxf, PaletteManager *pm, Common::Platform platform, GraphicsEngine::GfxState &state) {
 		switch (platform) {
 		case Common::kPlatformSegaCD:
-			return createSegaPalette(pm, state);
+			return createSegaPalette(pxf, pm, state);
 		default:
 			break;
 		};

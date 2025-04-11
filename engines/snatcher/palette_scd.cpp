@@ -29,22 +29,26 @@
 #include "common/endian.h"
 #include "common/func.h"
 #include "common/textconsole.h"
+
 #include "graphics/paletteman.h"
+#include "graphics/pixelformat.h"
+#include "graphics/segagfx.h"
 
 namespace Snatcher {
 
 class GraphicsEngine;
 class SCDPalette : public Palette {
 public:
-	SCDPalette(PaletteManager *pm, GraphicsEngine::GfxState &state);
+	SCDPalette(const Graphics::PixelFormat *pxf, PaletteManager *pm, GraphicsEngine::GfxState &state);
 	~SCDPalette() override;
 
 	bool enqueueEvent(ResourcePointer &res) override;
 	void processEventQueue() override;
 	void clearEvents() override;
 	void setDefaults(int mode) override;
-
 	void updateSystemPalette() override;
+	void hINTCallback(void *segaRenderer) override;
+	const uint8 *getSystemPalette() const override { return _sysPalette; }
 
 private:
 	typedef Common::Functor1Mem<PalEventSCD*, void, SCDPalette> EventProc;
@@ -70,9 +74,21 @@ private:
 	uint16 *_colors;
 	uint16 *_colors2;
 	uint8 *_sysPalette;
+
+private:
+	typedef Common::Functor1Mem<Graphics::SegaRenderer*, void, SCDPalette> HINTFunc;
+	Common::Array<HINTFunc*> _hINTProcs;
+	const HINTFunc *_hINTHandler;
+
+	void setHINTHandler(uint8 num);
+
+	void hIntHandler_00(Graphics::SegaRenderer *sr);
+	void hIntHandler_23(Graphics::SegaRenderer *sr);
 };
 
-SCDPalette::SCDPalette(PaletteManager *pm, GraphicsEngine::GfxState &state) : Palette(pm, state), _eventProcs(), _eventQueue(nullptr), _eventCurPos(nullptr), _colors(nullptr), _colors2(nullptr), _sysPalette(nullptr) {
+SCDPalette::SCDPalette(const Graphics::PixelFormat *pxf, PaletteManager *pm, GraphicsEngine::GfxState &state) : Palette(pxf, pm, state), _eventProcs(),
+	_eventQueue(nullptr), _eventCurPos(nullptr), _colors(nullptr), _colors2(nullptr), _sysPalette(nullptr), _hINTHandler(nullptr) {
+
 #define P_OP(a)	_eventProcs.push_back(new EventProc(this, &SCDPalette::event_##a));
 	_eventProcs.push_back(nullptr);
 	P_OP(palSet);
@@ -87,6 +103,10 @@ SCDPalette::SCDPalette(PaletteManager *pm, GraphicsEngine::GfxState &state) : Pa
 	P_OP(palClear);
 #undef P_OP
 
+	_hINTProcs.resize(24);
+	_hINTProcs[0] = new HINTFunc(this, &SCDPalette::hIntHandler_00);
+	_hINTProcs[23] = new HINTFunc(this, &SCDPalette::hIntHandler_23);
+
 	_eventQueue = _eventCurPos = new PalEventSCD[12];
 	_colors = new uint16[128]();
 	_colors2 = new uint16[128]();
@@ -99,7 +119,9 @@ SCDPalette::~SCDPalette() {
 	delete[] _colors2;
 	delete[] _sysPalette;
 
-	for (Common::Array<EventProc*>::iterator i = _eventProcs.begin(); i != _eventProcs.end(); ++i)
+	for (Common::Array<EventProc*>::const_iterator i = _eventProcs.begin(); i != _eventProcs.end(); ++i)
+		delete *i;
+	for (Common::Array<HINTFunc*>::const_iterator i = _hINTProcs.begin(); i != _hINTProcs.end(); ++i)
 		delete *i;
 }
 
@@ -119,8 +141,6 @@ bool SCDPalette::enqueueEvent(ResourcePointer &res) {
 		_eventCurPos->len = (*res++) + 1;
 		_eventCurPos->srcOffsets = _eventCurPos->srcOffsetCur = reinterpret_cast<const uint32*>(res());
 		_eventCurPos->progress = 0;
-
-		debug("%s(): Changing color range %d to %d", __FUNCTION__, _eventCurPos->destOffset, _eventCurPos->destOffset + _eventCurPos->len);
 
 		if (_eventCurPos->cmd & 0x80) {
 			_eventCurPos->cmd &= ~0x80;
@@ -167,7 +187,6 @@ void SCDPalette::setDefaults(int mode) {
 	if (mode == 0) {
 		int cnt = (_gfxState.testFlag(1, 1) || _gfxState.getVar(5)) ? 64 : 48;
 		_gfxState.clearFlag(1, 1);
-		debug("%s(): Clearing palette range %d to %d", __FUNCTION__, 64 - cnt, 64);
 		Common::fill<uint16*, uint16>(&_colors[64 - cnt], &_colors[cnt], 0);
 		if (_gfxState.testFlag(1, 2)) {
 			_gfxState.clearFlag(1, 2);
@@ -232,7 +251,15 @@ void SCDPalette::updateSystemPalette() {
 #endif
 	}
 
-	_palMan->setPalette(_sysPalette, 0, 256);
+	if (_pixelFormat.bytesPerPixel == 1)
+		_palMan->setPalette(_sysPalette, 0, 256);
+}
+
+void SCDPalette::hINTCallback(void *segaRenderer) {
+	Graphics::SegaRenderer *sr = static_cast<Graphics::SegaRenderer *>(segaRenderer);
+
+
+	sr->setRenderColorTable(_sysPalette, 0, 64);
 }
 
 void SCDPalette::event_palSet(PalEventSCD *evt) {
@@ -375,7 +402,6 @@ void SCDPalette::event_palFadeToPal(PalEventSCD *evt) {
 void SCDPalette::event_palClear(PalEventSCD *evt) {
 	if (updateDelay(evt))
 		return;
-	debug("%s(): Clearing color range %d to %d", __FUNCTION__, evt->destOffset, evt->destOffset + evt->len);
 	uint16 *dst = &_colors[evt->destOffset];
 	Common::fill<uint16*, uint16>(dst, &dst[evt->len], 0);
 	evt->cmd = 0;
@@ -415,8 +441,23 @@ void SCDPalette::fadeStep(uint16 *modColor, uint16 toR, uint16 toG, uint16 toB) 
 	*modColor = (r | g | b);
 }
 
-Palette *Palette::createSegaPalette(PaletteManager *pm, GraphicsEngine::GfxState &state) {
-	return new SCDPalette(pm, state);
+void SCDPalette::setHINTHandler(uint8 num) {
+	if (num < _hINTProcs.size())
+		_hINTHandler = _hINTProcs[num];
+	 else
+		error("%s(): Invalid HINT handler %d", __FUNCTION__, num);
+}
+
+void SCDPalette::hIntHandler_00(Graphics::SegaRenderer *segaRenderer) {
+	
+}
+
+void SCDPalette::hIntHandler_23(Graphics::SegaRenderer *segaRenderer) {
+	
+}
+
+Palette *Palette::createSegaPalette(const Graphics::PixelFormat *pxf, PaletteManager *pm, GraphicsEngine::GfxState &state) {
+	return new SCDPalette(pxf, pm, state);
 }
 
 } // End of namespace Snatcher

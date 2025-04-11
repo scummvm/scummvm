@@ -132,7 +132,7 @@ SH_IMPL_UPDT(D0) {
 	} else if (_vm->sound()->musicGetTime() >= _timeStamp[state.frameNo]) {
 		(*_frameProcs[state.frameNo])(state);
 		++state.frameNo;
-	} else if (_vm->_commandsFromMain & 0x80) {
+	} else if (_vm->inputFlag() & 0x80) {
 		state.finish = -1;
 		state.frameNo = 0;
 	}

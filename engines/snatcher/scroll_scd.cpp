@@ -22,12 +22,13 @@
 
 #include "snatcher/graphics.h"
 #include "snatcher/scroll.h"
+#include "graphics/segagfx.h"
 
 namespace Snatcher {
 
 class ScrollInternalState {
 public:
-	ScrollInternalState() : _offsSingle(0), _offsRep(0), _curPos(0), _curResult(0), _factor(1) {}
+	ScrollInternalState() : _offsSingle(0), _offsRep(0), _curPos(0), _curResult(0), _factor(1), _override(0) {}
 
 	void singleStep(int16 step) {
 		_offsSingle = step << 16;
@@ -39,6 +40,10 @@ public:
 
 	void setFactor(int16 factor) {
 		_factor = factor;
+	}
+
+	void setNextOffset(int16 offs) {
+		_override = offs;
 	}
 
 	void clear() {
@@ -59,8 +64,8 @@ public:
 		return changed;
 	}
 
-	int16 getOffset() const {
-		return _curResult * _factor;
+	int16 getOffset(bool override) const {
+		return override ? _override : _curResult * _factor;
 	}
 
 private:
@@ -69,9 +74,10 @@ private:
 	int32 _curPos;
 	int16 _curResult;
 	int16 _factor;
+	int16 _override;
 };
 
-class ScrollManager_SCD : public ScrollManager {
+class ScrollManager_SCD final : public ScrollManager {
 public:
 	enum {
 		kHorzA = 0,
@@ -98,9 +104,12 @@ public:
 	void clear() override;
 	bool nextFrame() override;
 
+	void hINTCallback(void *segaRenderer) override;
+
 private:
-	bool processCmdInternal();
-	void startTransition();
+	void processCmdInternal();
+	void processTransition();
+	void resetVars(int groupFlags);
 
 	GraphicsEngine::GfxState &_gfxState;
 	ScrollInternalState *_internalState;
@@ -117,18 +126,17 @@ private:
 	uint8 _scrollCmd_0xff_0xfd_0xfc_or0to6_last;
 	uint8 _nextStepExt;
 	uint8 _lastStepExt;
-	int16 _lastVScrollOffset;
-	int16 _lastHScrollOffset;
 	int16 _scrollFlagttt;
 	int16 _scrollu_7;
 	int16 _hint_proc;
 	int16 _transitionType;
 	int16 _transitionState;
+	int16 _transitionStep;
 	int16 _scrollu_5;
 	int16 _subPara;
 	uint32 _scroll__DA;
 	uint16 _scroll__DB;
-	bool _needRefresh;
+	bool useEngineScrollOffsets;
 
 private:
 	typedef Common::Functor1Mem<int, void, ScrollManager_SCD> ScrollFunc;
@@ -138,13 +146,13 @@ private:
 	void doCommandIntern(int cmd, int arg);
 
 	void scrUpdt_dummy(int arg);
-	void scrUpdt_setHScrollFullScreen(int arg);
+	void scrUpdt_engineScroll(int arg);
 	void scrUpdt_03(int arg);
 	void scrUpdt_04(int arg);
 	void scrUpdt_05(int arg);
 	void scrUpdt_06(int arg);
-	void scrUpdt_07(int arg);
-	void scrUpdt_08(int arg);
+	void scrUpdt_screenShutter(int arg);
+	void scrUpdt_revealShutter(int arg);
 	void scrUpdt_13(int arg);
 	void scrUpdt_14(int arg);
 	void scrUpdt_15(int arg);
@@ -162,12 +170,20 @@ private:
 	void scrUpdt_27(int arg);
 	void scrUpdt_28(int arg);
 	void scrUpdt_29(int arg);
+
+	typedef Common::Functor1Mem<Graphics::SegaRenderer*, void, ScrollManager_SCD> HINTFunc;
+	Common::Array<HINTFunc*> _hINTProcs;
+	const HINTFunc *_hINTHandler;
+
+	void setHINTHandler(uint8 num);
+
+	void hIntHandler_screenShutter(Graphics::SegaRenderer *sr);
+	void hIntHandler_revealShutter(Graphics::SegaRenderer *sr);
 };
 
-
-ScrollManager_SCD::ScrollManager_SCD(GraphicsEngine::GfxState &state) : _gfxState(state), _hScrollTable(nullptr), _hScrollTableLen(0), _internalState(nullptr), _scrollType(0), _hint_proc(0),
-	_scrollCommandExt(0), _scrollCommand(0), _resetCommand(0), _nextStepExt(0), _nextStep(0), _lastStepExt(0), _lastStep(0), _scroll__DA(0), _scroll__DB(0), _scrollCmd_0xff_0xfd_0xfc_or0to6_last(0),
-	_lastVScrollOffset(0), _scrollFlagttt(0), _scrollu_7(0), _transitionType(0), _transitionState(0), _scrollu_5(0), _subPara(0), _lastHScrollOffset(0), _needRefresh(false) {
+ScrollManager_SCD::ScrollManager_SCD(GraphicsEngine::GfxState &state) : _gfxState(state), _hScrollTable(nullptr), _hScrollTableLen(0), _internalState(nullptr), _scrollType(0), _hint_proc(0), _transitionStep(0),
+	_scrollCommandExt(0), _scrollCommand(0), _resetCommand(0), _nextStepExt(0), _nextStep(0), _lastStepExt(0), _lastStep(0), _scroll__DA(0), _scroll__DB(0), _scrollCmd_0xff_0xfd_0xfc_or0to6_last(0), _scrollFlagttt(0),
+	_scrollu_7(0), _transitionType(0), _transitionState(0), _scrollu_5(0), _subPara(0), useEngineScrollOffsets(false), _hINTHandler(nullptr) {
 	_internalState = new ScrollInternalState[4];
 	assert(_internalState);
 	_internalState[kVertA].setFactor(-1);
@@ -180,8 +196,10 @@ ScrollManager_SCD::ScrollManager_SCD(GraphicsEngine::GfxState &state) : _gfxStat
 ScrollManager_SCD::~ScrollManager_SCD() {
 	delete[] _internalState;
 	delete[] _hScrollTable;
-	for (uint i = 0; i < _scrollProcs.size(); ++i) \
-		delete _scrollProcs[i];
+	for (Common::Array<ScrollFunc*>::const_iterator i = _scrollProcs.begin(); i != _scrollProcs.end(); ++i)
+		delete *i;
+	for (Common::Array<HINTFunc*>::const_iterator i = _hINTProcs.begin(); i != _hINTProcs.end(); ++i)
+		delete *i;
 }
 
 void ScrollManager_SCD::doCommand(int cmd) {
@@ -216,7 +234,7 @@ bool ScrollManager_SCD::nextFrame() {
 			_nextStepExt = _scrollCommandExt;
 		if (_scrollCommand)
 			_nextStep = _scrollCommand;
-		_scrollCommandExt = 0;
+		_scrollCommand = _scrollCommandExt = 0;
 	} else {
 		_nextStep = _resetCommand;
 		_resetCommand = 0;
@@ -227,37 +245,36 @@ bool ScrollManager_SCD::nextFrame() {
 
 	if (_nextStepExt != _lastStepExt || _lastStepExt == 0) {
 		if (_nextStepExt == 0xFE) {
-			_scrollu_7 = 0;
-			_transitionType = 0;
-			_nextStepExt = 0;
 			if (_lastStepExt == 23) {
-				_lastVScrollOffset = 0;
+				_internalState[kVertA].setNextOffset(0);
+				_internalState[kVertB].setNextOffset(0);
 				if (_scrollFlagttt) {
-					_scrollFlagttt = 0;
+					resetVars(0x30);
 					_nextStepExt = _lastStepExt = 15;
+				} else {
+					resetVars(0x18);
 				}
 			}
 		} else if (_nextStepExt != 0 && (_nextStepExt != 15 || _lastStepExt != 23)) {
 			_lastStepExt = _nextStepExt;
-			_transitionState = _scrollu_5 = _subPara = 0;
-
+			resetVars(0x40);
 		} else if (_nextStepExt != 0) {
 			_nextStepExt = 23;
 			_scrollFlagttt = 1;
 		}
 	}
 
-	startTransition();
+	processTransition();
 
 	bool changed = false;
 	bool reset = _nextStep == 0xFF || _nextStep == 0xFC;
-	bool needRefresh = processCmdInternal();
 
-	if (needRefresh && _scrollType != 0 && !reset) {
+	if (_scrollType != 0 && !reset) {
 		for (int i = 0; i < 4; ++i) {
 			if (_internalState[i].recalc(_scrollType & 0x10))
 				changed = true;
-			_result.offsets[i] = _internalState[i].getOffset();
+			_result.offsets[i] = _internalState[i].getOffset(!(changed || useEngineScrollOffsets));
+			_internalState[i].setNextOffset(_result.offsets[i]);
 		}
 		_result.hScrollTable = _hScrollTable;
 		_result.hScrollTableNumEntries = _hScrollTableLen;
@@ -265,37 +282,27 @@ bool ScrollManager_SCD::nextFrame() {
 		_scrollType &= ~0x10;
 	}
 
-	return changed || reset;
+	processCmdInternal();
+
+	return changed || reset || _result.hInt.needUpdate;
 }
 
-bool ScrollManager_SCD::processCmdInternal() {
+void ScrollManager_SCD::hINTCallback(void *segaRenderer) {
+	if (_hINTHandler && _hINTHandler->isValid())
+		(*_hINTHandler)(static_cast<Graphics::SegaRenderer *>(segaRenderer));
+}
+
+void ScrollManager_SCD::processCmdInternal() {
 	if ((_nextStep != _lastStep || _lastStep == 0) && _nextStep != 0) {
 		if (_nextStep == 0xFF || _nextStep == 0xFC) {
-			if (_nextStep == 0xFF)
-				_result.hINTEnable = false;
-			_nextStep = _lastStep = 0;
-			_nextStepExt = 0;
-			_transitionType = 0;
-			_transitionState = _scrollu_5 = _subPara = _scrollu_7 = 0;
-			_scrollFlagttt = 0;
-			_scroll__DA = 0;
-			_scroll__DB = 0;
-			_lastHScrollOffset = 0;
-			_lastVScrollOffset = 0;
-			_needRefresh = false;
-			_scrollCmd_0xff_0xfd_0xfc_or0to6_last = 0;
-			_result.lineScrollMode = false;
-			//_scrolloa = 0;
-			//_scrollob = 0;
-			return _needRefresh;
+			resetVars(_nextStep == 0xFF ? 0x0F : 0x0E);
+			return;
 		} else if (_nextStep == 0xFD) {
 			_scrollCmd_0xff_0xfd_0xfc_or0to6_last |= 0x80;
 		} else {
 			_lastStep = _nextStep;
 			if (_nextStep < 3) {
-				_needRefresh = false;
-				//_scrolloa = 0;
-				//_scrollob = 0;
+				resetVars(0x08);
 			} else {
 				_scroll__DA = 0;
 				_scrollCmd_0xff_0xfd_0xfc_or0to6_last = 0;
@@ -315,76 +322,107 @@ bool ScrollManager_SCD::processCmdInternal() {
 		doCommandIntern(_nextStep, _subPara);
 
 	doCommandIntern(_nextStepExt, _subPara);
-
-	return _needRefresh;
 }
 
-void ScrollManager_SCD::startTransition() {
+void ScrollManager_SCD::processTransition() {
+	_result.hInt.enable = false;
 	if (_transitionType == 0)
 		return;
 
+	_transitionStep = 0;
+
 	switch (_transitionType) {
 	case 1:
-		_result.hINTCounter = 15;
-		//_result.hINTProc = (void *)_hint_proc7;
-		if (--_transitionState <= 0)
+		_result.hInt.counter = 15;
+		if (--_transitionState <= 0) {
+			_internalState[kVertA].setNextOffset(0);
+			_internalState[kVertB].setNextOffset(0);
 			return;
-		_result.offsets[kVertA] = _result.offsets[kVertB] = (_transitionState > 1) ? 0x30 : 0x10;
+		}
+		_internalState[kVertA].setNextOffset(_transitionState > 1 ? 0x30 : 0x10);
+		_internalState[kVertB].setNextOffset(_transitionState > 1 ? 0x30 : 0x10);
 		break;
-	case 2:
-	case 3:
-	case 4:
-	case 5:
-	case 6:
-		_result.hINTCounter = 7;
+	case 2: case 3: case 4: case 5: case 6:
+		_result.hInt.counter = 7;
 		break;
-	case 7:
-	case 8:
+	case 7: case 8:
 		break;
 	case 9:
 		break;
-	case 10:
-	case 11:
+	case 10: case 11:
 		break;
-	case 12:
-	case 13:
-	case 14:
-	case 15:
-	case 16:
+	case 12: case 13: case 14: case 15: case 16:
 		break;
 	case 17:
 		break;
-	case 18:
-	case 19:
-	case 20:
-	case 21:
+	case 18: case 19: case 20: case 21:
 		break;
-	case 22:
-	case 23:
+	case 22: case 23:
 		break;
 	default:
 		break;
 	}
-	_result.hINTEnable = true;
+	_result.hInt.enable = true;
+	_result.hInt.needUpdate = true;
+}
+
+void ScrollManager_SCD::resetVars(int groupFlags) {
+	if (groupFlags & 0x01) {
+		_result.hInt.enable = false;
+		_result.hInt.needUpdate = true;
+	}
+	if (groupFlags & 0x02) {
+		_scrollCmd_0xff_0xfd_0xfc_or0to6_last = 0;
+		_scroll__DA = 0;
+		_scroll__DB = 0;
+		_nextStepExt = 0;
+		_transitionType = _transitionState = _scrollu_5 = _subPara = _scrollu_7 = 0;
+		_scrollFlagttt = 0;
+
+	}
+	if (groupFlags & 0x04) {
+		_nextStep = _lastStep = 0;
+		_result.lineScrollMode = false;
+		for (int i = 0; i < 4; ++i)
+			_internalState[i].setNextOffset(0);
+	}
+	if (groupFlags & 0x08) {
+		useEngineScrollOffsets = false;
+		//_scrolloa = 0;
+		//_scrollob = 0;
+	}
+	if (groupFlags & 0x10) {
+		_nextStepExt = _lastStepExt = 0;
+		_transitionType = _scrollu_7 = 0;
+	}
+	if (groupFlags & 0x20) {
+		_scrollFlagttt = 0;
+		_internalState[kVertA].setNextOffset(0);
+		_internalState[kVertB].setNextOffset(0);
+	}
+	if (groupFlags & 0x40) {
+		_transitionState = _scrollu_5 = _subPara = 0;
+	}
 }
 
 #define SF(x) &ScrollManager_SCD::scrUpdt_##x
+#define HF(x) &ScrollManager_SCD::hIntHandler_##x
 void ScrollManager_SCD::makeFunctions() {
 	typedef void (ScrollManager_SCD::*ScrFunc)(int);
 	static const ScrFunc funcTbl[] = {
 		SF(dummy),
-		SF(setHScrollFullScreen),
-		SF(setHScrollFullScreen),
+		SF(engineScroll),
+		SF(engineScroll),
 		SF(03),
 		SF(04),
 		SF(05),
 		SF(06),
-		SF(07),
-		SF(08),
-		SF(08),
-		SF(08),
-		SF(08),
-		SF(08),
+		SF(screenShutter),
+		SF(revealShutter),
+		SF(revealShutter),
+		SF(revealShutter),
+		SF(revealShutter),
+		SF(revealShutter),
 		SF(13),
 		SF(14),
 		SF(15),
@@ -406,7 +444,26 @@ void ScrollManager_SCD::makeFunctions() {
 
 	for (uint i = 0; i < ARRAYSIZE(funcTbl); ++i) \
 		_scrollProcs.push_back(new ScrollFunc(this, funcTbl[i]));
+
+	typedef void (ScrollManager_SCD::*HIFunc)(Graphics::SegaRenderer*);
+	static const HIFunc funcTbl2[] = {
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		HF(screenShutter),
+		HF(revealShutter),
+		nullptr,
+		nullptr
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(funcTbl2); ++i) \
+		_hINTProcs.push_back(new HINTFunc(this, funcTbl2[i]));
 }
+#undef HF
 #undef SF
 
 void ScrollManager_SCD::doCommandIntern(int cmd, int arg) {
@@ -419,9 +476,9 @@ void ScrollManager_SCD::doCommandIntern(int cmd, int arg) {
 void ScrollManager_SCD::scrUpdt_dummy(int arg) {
 }
 
-void ScrollManager_SCD::scrUpdt_setHScrollFullScreen(int arg) {
-	_result.lineScrollMode  = false;
-	_needRefresh = true;
+void ScrollManager_SCD::scrUpdt_engineScroll(int arg) {
+	_result.lineScrollMode = false;
+	useEngineScrollOffsets = true;
 }
 
 void ScrollManager_SCD::scrUpdt_03(int arg) {
@@ -436,41 +493,39 @@ void ScrollManager_SCD::scrUpdt_05(int arg) {
 void ScrollManager_SCD::scrUpdt_06(int arg) {
 }
 
-void ScrollManager_SCD::scrUpdt_07(int arg) {
+void ScrollManager_SCD::scrUpdt_screenShutter(int arg) {
 	if (arg == 0) {
 		_transitionType = 1;
-		_hint_proc = 3278;
+		setHINTHandler(7);
 		_transitionState = 5;
 		++_subPara;
-		_nextStep = 0;
-		_lastHScrollOffset = 0;
-		_lastVScrollOffset = 0;
-		_needRefresh = false;
-		//_scrolloa = 0;
-		//_scrollob = 0;
+		resetVars(0x0C);
 	} else if (arg == 1) {
-		if (_transitionState < 0) {
-			_nextStep = _lastStep = 0;
-			_nextStepExt = 0;
-			_transitionType = 0;
-			_transitionState = _scrollu_5 = _subPara = _scrollu_7 = 0;
-			_scrollFlagttt = 0;
-			_scroll__DA = 0;
-			_scroll__DB = 0;
-			_lastHScrollOffset = 0;
-			_lastVScrollOffset = 0;
-			_needRefresh = false;
-			_scrollCmd_0xff_0xfd_0xfc_or0to6_last = 0;
-			_result.lineScrollMode = false;
-			//_scrolloa = 0;
-			//_scrollob = 0;
-		}
+		if (_transitionState < 0)
+			resetVars(0x0F);
 	} else {
 		error("%s(): Invalid arg %d", __FUNCTION__, arg);
 	}
 }
 
-void ScrollManager_SCD::scrUpdt_08(int arg) {
+void ScrollManager_SCD::scrUpdt_revealShutter(int arg) {
+	if (arg == 0) {
+		_transitionType = _nextStepExt - 6;
+		setHINTHandler(8);
+		_transitionState = 23;
+		++_subPara;
+		resetVars(0x0C);
+		_transitionState |= ((_transitionState & 0xFC) << 6);
+	} else {
+		_transitionState = (--_transitionState) & 0xFF;
+		if ((int8)(_transitionState) >= 0) {
+			_transitionState |= ((_transitionState & 0xFC) << 6);
+		} else {
+			_transitionState = 0;
+			if (_nextStepExt == 12)
+				resetVars(0x0F);
+		}
+	}
 }
 
 void ScrollManager_SCD::scrUpdt_13(int arg) {
@@ -522,6 +577,69 @@ void ScrollManager_SCD::scrUpdt_28(int arg) {
 }
 
 void ScrollManager_SCD::scrUpdt_29(int arg) {
+}
+
+void ScrollManager_SCD::setHINTHandler(uint8 num) {
+	if (num < _hINTProcs.size())
+		_hINTHandler = _hINTProcs[num];
+	 else
+		error("%s(): Invalid HINT handler %d", __FUNCTION__, num);
+}
+
+void ScrollManager_SCD::hIntHandler_screenShutter(Graphics::SegaRenderer *sr) {
+	if (_transitionState <= 0 || _transitionStep == (_transitionState == 1 ? 8 : 10)) {
+		_result.hInt.enable = false;
+		sr->hINT_enable(false);
+		sr->enableDisplay(true);
+	} else if (_transitionStep == (_transitionState == 1 ? 6 : 4)) {
+		sr->enableDisplay(false);
+	} else if (_transitionStep == 7) {
+		sr->writeUint16VSRAM(0, TO_BE_16(_transitionState == 1 ? 0x3F0 : 0x3D0));
+	}
+	++_transitionStep;
+}
+
+void ScrollManager_SCD::hIntHandler_revealShutter(Graphics::SegaRenderer *sr) {
+	static const int8 actions[5][8] = {
+		{  0,  0,  7,  1,  8,  2, -1, -1 },
+		{  0,  4,  9,  3, 10,  1, 11,  2 },
+		{  0,  4, 12,  3, 13,  1, 14,  2 },
+		{  0,  4, 15,  3, 16,  1, 17,  2 },
+		{  0,  4, 18,  3, 19,  1, 20,  2 }
+	};
+
+	if (_transitionType < 2 || _transitionType > 6)
+		error("%s(): Invalid transition type %d", __FUNCTION__, _transitionType);
+
+	int a = -1;
+	for (const int8 *it = actions[_transitionType - 2]; it < &actions[_transitionType - 2][8] && a == -1; it += 2) {
+		if (_transitionStep == it[0])
+			a = it[1];
+	}
+
+	switch (a) {
+	case 0:
+	case 4:
+		sr->enableDisplay(true);
+		if (a == 4)
+			break;
+	// fall through
+	case 3:
+		sr->writeUint16VSRAM(0, TO_BE_16(-(_transitionState >> 8)));
+		break;
+	case 1:
+		sr->writeUint16VSRAM(0, TO_BE_16(_transitionState >> 8));
+		break;
+	case 2:
+		sr->enableDisplay(false);
+		sr->hINT_enable(false);
+		_result.hInt.enable = false;
+		break;
+	default:
+		break;
+	}
+
+	++_transitionStep;
 }
 
 ScrollManager *ScrollManager::createSegaScrollManager(GraphicsEngine::GfxState &state) {

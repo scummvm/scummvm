@@ -22,6 +22,7 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
+#include "graphics/pixelformat.h"
 #include "graphics/segagfx.h"
 #include "snatcher/graphics.h"
 #include "snatcher/palette.h"
@@ -33,7 +34,7 @@
 namespace Snatcher {
 
 struct AnimObject {
-	AnimObject() : enable(0), delay(0), drawFlags(0), posX(0), posY(0), speedXa(0), speedYa(0), f16(0), f18(0), f1c(0), timeStamp(0), f24(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), f2c(0), f2d(0), spriteTableLocation(0), res(), scriptData(), spriteData(0), speedX(0), speedY(0), parent(0), children(0), next(0), f4e(0), f4f(0) {}
+	AnimObject() : enable(0), slowDown(0), drawFlags(0), posX(0), posY(0), speedXa(0), speedYa(0), f16(0), f18(0), f1c(0), timeStamp(0), f24(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), f2c(0), f2d(0), spriteTableLocation(0), res(), scriptData(), spriteData(0), speedX(0), speedY(0), parent(0), children(0), next(0), f4e(0), f4f(0) {}
 
 	void clear() {
 		*this = Common::move(AnimObject());
@@ -78,7 +79,7 @@ struct AnimObject {
 	}
 
 	uint16 enable;
-	uint16 delay;
+	uint16 slowDown;
 	uint16 drawFlags;
 	uint32 posX;
 	uint32 posY;
@@ -113,9 +114,9 @@ struct AnimObject {
 };
 
 class GraphicsEngine;
-class Renderer_SCD : public Renderer {
+class Renderer_SCD : public Renderer, public Graphics::SegaRenderer::HINTClient {
 public:
-	Renderer_SCD(GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr);
+	Renderer_SCD(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr);
 	~Renderer_SCD() override;
 
 	bool enqueueCopyCommands(ResourcePointer &res) override;
@@ -137,6 +138,8 @@ public:
 
 	uint16 screenWidth() const override { return _screenWidth; }
 	uint16 screenHeight() const override { return _screenHeight; }
+
+	void hINTCallback(Graphics::SegaRenderer *sr) override;
 
 private:
 	void loadDataFromGfxScript();
@@ -163,6 +166,7 @@ private:
 	Graphics::SegaRenderer *_sr;
 	Palette *_pal;
 	ScrollManager *_scroll;
+	const Graphics::SegaRenderer::HINTHandler _hINTClientProc;
 
 private:
 	AnimObject *_animations;
@@ -241,12 +245,14 @@ private:
 	void anim_setGroupParameter(AnimObject &a, int pata, uint16 val = 0, bool recursive = false);
 };
 
-Renderer_SCD::Renderer_SCD(GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr) : Renderer(state), _pal(pal), _scroll(scr), _screenWidth(256), _screenHeight(224), _transferData(), _transferMode(0),
-	_transferDelay(0), _clearFlags(0), _mode(1), _modeChange(0), _tempBuffer(nullptr), _spriteBuffer(nullptr), _sr(nullptr), _animations(nullptr), _copyCommands(nullptr) {
+Renderer_SCD::Renderer_SCD(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr) : Renderer(state), _pal(pal), _scroll(scr), _mode(1),
+	_modeChange(0), _screenWidth(256), _screenHeight(224), _transferData(), _transferMode(0), _transferDelay(0), _clearFlags(0), _tempBuffer(nullptr), _spriteBuffer(nullptr), _sr(nullptr),
+		_animations(nullptr), _copyCommands(nullptr), _hINTClientProc(Graphics::SegaRenderer::HINTHandler(this, &Graphics::SegaRenderer::HINTClient::hINTCallback)) {
 
 	makeAnimFunctions();
 
-	_sr = new Graphics::SegaRenderer();
+	assert(pxf);
+	_sr = new Graphics::SegaRenderer(pxf);
 	assert(_sr);
 
 	_tempBuffer = new uint8[0x10000]();
@@ -265,7 +271,7 @@ Renderer_SCD::Renderer_SCD(GraphicsEngine::GfxState &state, Palette *pal, Scroll
 	_sr->setupWindowPlane(0, 0, Graphics::SegaRenderer::kWinToLeft, Graphics::SegaRenderer::kWinToTop);
 	_sr->setVScrollMode(Graphics::SegaRenderer::kVScrollFullScreen);
 	_sr->setHScrollMode(Graphics::SegaRenderer::kHScrollFullScreen);
-	_sr->setPitch(64);
+	_sr->hINT_setHandler(&_hINTClientProc);
 
 	reconfigPlanes();
 }
@@ -391,6 +397,7 @@ void Renderer_SCD::updateScreen(uint8 *screen) {
 	drawSprites();
 	updateScrollState();
 
+	_sr->setRenderColorTable(_pal->getSystemPalette(), 0, 64);
 	_sr->render(screen);
 }
 
@@ -456,6 +463,13 @@ uint16 Renderer_SCD::anim_getCurFrameNo(uint8 animObjId) const {
 bool Renderer_SCD::anim_isEnabled(uint8 animObjId) const {
 	assert(animObjId < 64);
 	return _animations[animObjId].enable != 0;
+}
+
+void Renderer_SCD::hINTCallback(Graphics::SegaRenderer *sr) {
+	if (_pal)
+		_pal->hINTCallback(sr);
+	if (_scroll)
+		_scroll->hINTCallback(sr);
 }
 
 void Renderer_SCD::loadDataFromGfxScript() {
@@ -623,7 +637,7 @@ void Renderer_SCD::executeCopyCommands() {
 void Renderer_SCD::drawSprites() {
 	for (int i = 63; i >= 0; --i) {
 		AnimObject &a = _animations[i];
-		if (a.enable && a.spriteData != nullptr && !(a.controlFlags & GraphicsEngine::kAnimHide) && a.delay != 0xFFFF && !(a.delay & _gfxState.frameCount()))
+		if (a.enable && a.spriteData != nullptr && !(a.controlFlags & GraphicsEngine::kAnimHide) && a.slowDown != 0xFFFF && !(a.slowDown & _gfxState.frameCount()))
 			drawSprite(a);
 		if (i == 32)
 			updateAnim32Spec(a);
@@ -1017,7 +1031,6 @@ void Renderer_SCD::reconfigPlanes() {
 	};
 
 	_sr->setupPlaneAB(dimCfgData[_mode][0], dimCfgData[_mode][1]);
-	_sr->setPitch(dimCfgData[_mode][0] >> 3);
 
 	const uint16 *in = memCfgData[_mode];
 	_sr->setPlaneTableLocation(Graphics::SegaRenderer::kPlaneA, *in++);
@@ -1081,6 +1094,13 @@ void Renderer_SCD::updateScrollState() {
 
 	const ScrollManager::ScrollState &s = _scroll->getState();
 
+	if (s.hInt.needUpdate) {
+		_sr->hINT_enable(s.hInt.enable);
+		_sr->hINT_setCounter(s.hInt.counter);
+		if (!s.hInt.enable)
+			_sr->enableDisplay(true);
+	}
+
 	if (!s.disableVScroll) {
 		_sr->writeUint16VSRAM(0, TO_BE_16(s.offsets[ScrollManager::kVertA] & 0x3FF));
 		_sr->writeUint16VSRAM(2, TO_BE_16(s.offsets[ScrollManager::kVertB] & 0x3FF));
@@ -1100,7 +1120,7 @@ void Renderer_SCD::drawSprite(AnimObject &a) {
 	const uint16 *in = a.spriteData;
 	uint16 num = FROM_BE_16(*in++);
 	uint16 *d = _spriteBuffer;
-	memset(d, 0, 8);
+	memset(d, 0, 4 * sizeof(uint16));
 	int nxt = 1;
 
 	uint32 curY = a.posY + 0x800000;
@@ -1542,8 +1562,8 @@ void Renderer_SCD::anim_setGroupParameter(AnimObject &a, int para, uint16 val, b
 	}
 }
 
-Renderer *Renderer::createSegaRenderer(GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr) {
-	return new Renderer_SCD(state, pal, scr);
+Renderer *Renderer::createSegaRenderer(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr) {
+	return new Renderer_SCD(pxf, state, pal, scr);
 }
 
 } // End of namespace Snatcher

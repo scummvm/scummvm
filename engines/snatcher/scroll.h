@@ -44,9 +44,11 @@ public:
 		uint16 hScrollTableNumEntries;
 		bool disableVScroll;
 		bool lineScrollMode;
-		bool hINTEnable;
-		int hINTCounter;
-		void *hINTProc;
+		struct HINT {
+			bool needUpdate;
+			bool enable;
+			uint8 counter;
+		} hInt;
 	};
 
 	ScrollManager() {
@@ -59,10 +61,8 @@ public:
 	virtual void setDirectionAndSpeed(int mode, int16 incr) = 0;
 	virtual void clear() = 0;
 	virtual bool nextFrame() = 0;
-
-	const ScrollState &getState() const {
-		return _result;
-	}
+	virtual void hINTCallback(void*) {}
+	const ScrollState &getState() const { return _result; }
 
 protected:
 	ScrollState _result;

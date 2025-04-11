@@ -27,22 +27,26 @@
 #include "snatcher/scroll.h"
 #include "common/endian.h"
 #include "common/system.h"
+#include "graphics/pixelformat.h"
 
 namespace Snatcher {
 
-GraphicsEngine::GraphicsEngine(OSystem *system, Common::Platform platform, const VMInfo &vmstate) : _system(system), _state(vmstate), _renderer(0), _dataMode(0), _screen(nullptr), _flags(0) {
-	_palette = Palette::create(_system->getPaletteManager(), platform, _state);
+GraphicsEngine::GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate) : _system(system), _state(vmstate),
+	_renderer(0), _dataMode(0), _screen(nullptr), _bpp(pxf ? pxf->bytesPerPixel : 1), _flags(0) {
+
+	_palette = Palette::create(pxf, _system->getPaletteManager(), platform, _state);
 	assert(_palette);
 	_scroll = ScrollManager::create(platform, _state);
-	_renderer = Renderer::create(platform, _state, _palette, _scroll);
+	_renderer = Renderer::create(pxf, platform, _state, _palette, _scroll);
 	assert(_renderer);
-	_screen = new uint8[_renderer->screenWidth() * _renderer->screenHeight()]();
+	_screen = new uint8[_renderer->screenWidth() * _renderer->screenHeight() * pxf->bytesPerPixel]();
 	assert(_screen);
 }
 
 GraphicsEngine::~GraphicsEngine() {
 	delete _renderer;
 	delete _palette;
+	delete _scroll;
 	delete[] _screen;
 }
 
@@ -119,10 +123,10 @@ void GraphicsEngine::updateAnimations() {
 
 void GraphicsEngine::nextFrame() {
 	_palette->processEventQueue();
+	_palette->updateSystemPalette();
 	_renderer->updateScreen(_screen);
 
-	_system->copyRectToScreen(_screen, _renderer->screenWidth(), 0, 0, _renderer->screenWidth(), _renderer->screenHeight());
-	_palette->updateSystemPalette();
+	_system->copyRectToScreen(_screen, _renderer->screenWidth() * _bpp, 0, 0, _renderer->screenWidth(), _renderer->screenHeight());
 	_system->updateScreen();
 
 	_state.nextFrame();
