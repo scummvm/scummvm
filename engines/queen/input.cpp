@@ -27,6 +27,11 @@
 #include "queen/queen.h"
 #include "queen/input.h"
 
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 namespace Queen {
 
 const char *const Input::_commandKeys[] = {
@@ -56,32 +61,34 @@ Input::Input(Common::Language language, OSystem *system) :
 	_quickSave(false), _quickLoad(false), _inKey(Common::KEYCODE_INVALID),
 	_mouseButton(0), _idleTime(0) {
 
+	Common::Keymapper *keymapper = _eventMan->getKeymapper();
 	switch (language) {
 	case Common::EN_ANY:
 	case Common::EL_GRC:
 	case Common::RU_RUS:
-		_currentCommandKeys = _commandKeys[0];
+		keymapper->getKeymap("English")->setEnabled(true);
 		break;
 	case Common::DE_DEU:
-		_currentCommandKeys = _commandKeys[1];
+		keymapper->getKeymap("German")->setEnabled(true);
 		break;
 	case Common::FR_FRA:
-		_currentCommandKeys = _commandKeys[2];
+		keymapper->getKeymap("French")->setEnabled(true);
 		break;
 	case Common::IT_ITA:
-		_currentCommandKeys = _commandKeys[3];
+		keymapper->getKeymap("Italian")->setEnabled(true);
 		break;
 	case Common::HE_ISR:
-		_currentCommandKeys = _commandKeys[4];
+		keymapper->getKeymap("Hebrew")->setEnabled(true);
 		break;
 	case Common::ES_ESP:
-		_currentCommandKeys = _commandKeys[5];
+		keymapper->getKeymap("Spanish")->setEnabled(true);
 		break;
 	default:
 		error("Unknown language");
 		break;
 	}
 }
+
 
 void Input::delay(uint amount) {
 	if (_fastMode && amount > DELAY_SHORT) {
@@ -123,6 +130,67 @@ void Input::delay(uint amount) {
 				if (_dialogueRunning)
 					_talkQuit = true;
 				return;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				switch (event.customType) {
+				case VERB_USE_JOURNAL:
+					if (_cutawayRunning) {
+						if (_canQuit) {
+							_keyVerb = VERB_USE_JOURNAL;
+							_cutawayQuit = _talkQuit = true;
+						}
+					} else {
+						_keyVerb = VERB_USE_JOURNAL;
+						if (_canQuit)
+							_talkQuit = true;
+					}
+					break;
+				case VERB_SKIP_TEXT:
+					_keyVerb = VERB_SKIP_TEXT;
+					break;
+				case Common::KEYCODE_COMMA:
+					_keyVerb = VERB_SCROLL_UP;
+					break;
+				case Common::KEYCODE_PERIOD:
+					_keyVerb = VERB_SCROLL_DOWN;
+					break;
+				case VERB_DIGIT_1:
+					_keyVerb = VERB_DIGIT_1;
+					break;
+				case VERB_DIGIT_2:
+					_keyVerb = VERB_DIGIT_2;
+					break;
+				case VERB_DIGIT_3:
+					_keyVerb = VERB_DIGIT_3;
+					break;
+				case VERB_DIGIT_4:
+					_keyVerb = VERB_DIGIT_4;
+					break;
+				case VERB_OPEN:
+					_keyVerb = VERB_OPEN;
+					break;
+				case VERB_CLOSE:
+					_keyVerb = VERB_CLOSE;
+					break;
+				case VERB_MOVE:
+					_keyVerb = VERB_MOVE;
+					break;
+				case VERB_GIVE:
+					_keyVerb = VERB_GIVE;
+					break;
+				case VERB_LOOK_AT:
+					_keyVerb = VERB_LOOK_AT;
+					break;
+				case VERB_USE:
+					_keyVerb = VERB_USE;
+					break;
+				case VERB_PICK_UP:
+					_keyVerb = VERB_PICK_UP;
+					break;
+				case VERB_TALK_TO:
+					_keyVerb = VERB_TALK_TO;
+					break;
+				}
+
 
 			default:
 				break;
@@ -144,27 +212,7 @@ void Input::checkKeys() {
 		debug(6, "[Input::checkKeys] _inKey = %i", _inKey);
 
 	switch (_inKey) {
-	case Common::KEYCODE_SPACE:
-		_keyVerb = VERB_SKIP_TEXT;
-		break;
-	case Common::KEYCODE_COMMA:
-		_keyVerb = VERB_SCROLL_UP;
-		break;
-	case Common::KEYCODE_PERIOD:
-		_keyVerb = VERB_SCROLL_DOWN;
-		break;
-	case Common::KEYCODE_1:
-		_keyVerb = VERB_DIGIT_1;
-		break;
-	case Common::KEYCODE_2:
-		_keyVerb = VERB_DIGIT_2;
-		break;
-	case Common::KEYCODE_3:
-		_keyVerb = VERB_DIGIT_3;
-		break;
-	case Common::KEYCODE_4:
-		_keyVerb = VERB_DIGIT_4;
-		break;
+
 	case Common::KEYCODE_ESCAPE: // skip cutaway / dialogue
 		if (_canQuit) {
 			if (_cutawayRunning) {
@@ -175,19 +223,7 @@ void Input::checkKeys() {
 				_talkQuit = true;
 		}
 		break;
-	case Common::KEYCODE_F1: // use Journal
-	case Common::KEYCODE_F5:
-		if (_cutawayRunning) {
-			if (_canQuit) {
-				_keyVerb = VERB_USE_JOURNAL;
-				_cutawayQuit = _talkQuit = true;
-			}
-		} else {
-			_keyVerb = VERB_USE_JOURNAL;
-			if (_canQuit)
-				_talkQuit = true;
-		}
-		break;
+
 	case Common::KEYCODE_F11: // quicksave
 		_quickSave = true;
 		break;
@@ -195,16 +231,11 @@ void Input::checkKeys() {
 		_quickLoad = true;
 		break;
 	default:
-		for (int i = 0; i < ARRAYSIZE(_verbKeys); ++i) {
-			if (_inKey == _currentCommandKeys[i]) {
-				_keyVerb = _verbKeys[i];
-				break;
-			}
-		}
+
 		break;
 	}
 
-	_inKey = Common::KEYCODE_INVALID;	// reset
+
 }
 
 Common::Point Input::getMousePos() const {
