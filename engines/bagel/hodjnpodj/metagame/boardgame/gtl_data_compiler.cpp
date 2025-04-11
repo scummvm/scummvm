@@ -27,8 +27,8 @@ namespace HodjNPodj {
 namespace Metagame {
 
 int CGtlData::compile(const char *xpszPathName) {
-	int iError = 0;		// error code
-	bool bDone;			// loop termination variable
+	int iError = 0;		// Error code
+	bool bDone;			// Loop termination variable
 	char szOut[100];
 
 	Common::strcpy_s(m_szGtlFile, xpszPathName);
@@ -38,10 +38,10 @@ int CGtlData::compile(const char *xpszPathName) {
 		goto cleanup;
 	}
 
-	bDone = false;		// not done yet
+	bDone = false;		// Not done yet
 
 	while (!bDone) {
-		if (!CGtlData::ReadLine())  // read line, check for error
+		if (!CGtlData::ReadLine())  // Read line, check for error
 			(void)CGtlData::parseLine();
 
 		if (m_bEof)
@@ -63,52 +63,47 @@ cleanup:
 
 bool CGtlData::parseLine() {
 	char szBuf[MAX_LABEL_LENGTH];
-	int iError = 0;		// error code
-	CLexElement *xpLxel;		// lexical element block
-	CNode *lpNode, *lpLinkNode;  // ptrs to node objects
-	CMap *lpMap;	// bitmap pointer
+	int iError = 0;				// Error code
+	CLexElement *xpLxel;		// Lexical element block
+	CNode *lpNode, *lpLinkNode;	// Ptrs to node objects
+	CMap *lpMap;	// Bitmap pointer
 	CSectorTable *pSectorEntry;
 	char *xpStr;
-	int iLink;		// index of link node
+	int iLink;		// Index of link node
 	int iTmp;
 
-	m_xpLexLabel = NULL;		// no label yet
+	m_xpLexLabel = NULL;		// No label yet
 
-	xpLxel = &m_cLexElts[0];	// point to first lex element
+	xpLxel = &m_cLexElts[0];	// Point to first lex element
 
-	// save label pointer, move past colon
+	// Save label pointer, move past colon
 	if (xpLxel->m_iType == LXT_IDENT && (xpLxel + 1)->m_iType == LXT_COLON)
 		m_xpLexLabel = xpLxel, xpLxel += 2;
 
-	// if not a recognized identifer
+	// If not a recognized identifer
 	if (xpLxel->m_iType != LXT_IDENT || xpLxel->m_iVal == 0) {
-
 		iError = 101;
 		CGtlData::ErrorMsg(xpLxel, "Unrecognized statement type.");
 		goto cleanup;
 	}
 
 	switch (xpLxel->m_iVal) {
-
-	case KT_DIRECTORY:      // specify bitmap director
-
-		// if there's a label
+	// Specify bitmap directory
+	case KT_DIRECTORY:
+		// If there's a label
 		if (m_xpLexLabel)
 			ErrorMsg(xpLxel, "Label ignored.");
 
 		xpLxel = ParseString(xpLxel, LXT_IDENT, m_szBmpDirectory, NULL);
 
-		// if there's a directory
-		//
+		// If there's a directory
 		if (m_szBmpDirectory[0]) {
-
-			// point to last char
+			// Point to last char
 			xpStr = m_szBmpDirectory + (strlen(m_szBmpDirectory) - 1);
 
-			// if it's not a backslash
+			// If it's not a backslash
 			if (*xpStr != '\\') {
-
-				// insert backslash
+				// Insert backslash
 				*++xpStr = '\\';
 				*++xpStr = 0;
 			}
@@ -122,19 +117,18 @@ bool CGtlData::parseLine() {
 			goto cleanup;
 		}
 
-		// point to first/next bitmap
+		// Point to first/next bitmap
 		lpMap = m_lpMaps + m_iMaps++;
 
 		if (!lpMap->m_lpcBgbObject && ((lpMap->m_lpcBgbObject = new CBgbObject) == NULL)) {
 			ErrorMsg(xpLxel, "Can't allocate BGB");
-			iError = 131;  // can't allocate
+			iError = 131;  // Can't allocate
 			goto cleanup;
 		}
 
-		// if there's a label
+		// If there's a label
 		if (m_xpLexLabel) {
-
-			// copy label
+			// Copy label
 			Common::strcpy_s(lpMap->m_szLabel, MAX_LABEL_LENGTH - 1, &m_szStringList[m_xpLexLabel->m_iStringListPos]);
 		}
 
@@ -156,7 +150,7 @@ bool CGtlData::parseLine() {
 				if ((++xpLxel)->m_iType == LXT_IDENT && xpLxel->m_iVal == KT_PREVIOUS) {
 					lpMap->m_iRelation = m_iMaps - 2;
 
-					// search for label, and test
+				// Search for label, and test
 				} else if (GetLabel(xpLxel, false, lpMap->m_iRelation)) {
 					goto cleanup;
 				}
@@ -172,7 +166,7 @@ bool CGtlData::parseLine() {
 				}
 				lpMap->m_iRelationType = xpLxel->m_iVal;
 
-				// search for label, and test
+				// Search for label, and test
 				if (GetLabel(++xpLxel, true, lpMap->m_iRelation))
 					goto cleanup;
 				++xpLxel;
@@ -239,7 +233,7 @@ bool CGtlData::parseLine() {
 				++xpLxel;
 				break;
 
-			case KT_SPRITE: // sprite implies overlay
+			case KT_SPRITE: // Sprite implies overlay
 				lpMap->m_bSprite = lpMap->m_bOverlay = true;
 				++xpLxel;
 				break;
@@ -272,23 +266,20 @@ bool CGtlData::parseLine() {
 			goto cleanup;
 		}
 
-		// point to first/next node
+		// Point to first/next node
 		lpNode = m_lpNodes + m_iNodes++;
 
-		// if there's a label
+		// If there's a label
 		if (m_xpLexLabel) {
-
-			// copy label
+			// Copy label
 			Common::strcpy_s(lpNode->m_szLabel, MAX_LABEL_LENGTH - 1, &m_szStringList[m_xpLexLabel->m_iStringListPos]);
 		}
 
 		++xpLxel;
-		lpNode->m_bRelocatable = true; // default
+		lpNode->m_bRelocatable = true; // Default
 
 		while (xpLxel->m_iType == LXT_IDENT) {
-
 			switch (xpLxel->m_iVal) {
-
 			case KT_BMP:
 				if (lpNode->m_bRelative) {
 					iError = 701;  // ****
@@ -297,7 +288,7 @@ bool CGtlData::parseLine() {
 				}
 				lpNode->m_bRelative = true;
 				if (GetLabel(++xpLxel, false, lpNode->m_iBitmap)) {
-					// search for label, and test
+					// Search for label, and test
 					goto cleanup;
 				}
 
@@ -352,8 +343,7 @@ bool CGtlData::parseLine() {
 
 				xpLxel = ParseString(xpLxel, LXT_IDENT, szBuf, NULL);
 
-				// find this node's sector
-				//
+				// Find this node's sector
 				lpNode->m_iSector = MG_SECTOR_ANY;
 				pSectorEntry = CMgStatic::cSectorTable;
 				while (pSectorEntry->m_iSectorCode != 0) {
@@ -373,23 +363,22 @@ bool CGtlData::parseLine() {
 			}
 		}
 		if (!lpNode->m_bWgtSpec)
-			lpNode->m_iWeight = 1; // default weight is 1
-		m_lpLastNode = lpNode; // that's new last node
+			lpNode->m_iWeight = 1; // Default weight is 1
+		m_lpLastNode = lpNode; // That's new last node
 		break;
 
 	case KT_LINK:
-
-		// get last node
+		// Get last node
 		if ((lpNode = m_lpLastNode) == NULL) {
 			iError = 101;
 			goto cleanup;
 		}
 
-		// if there's a label
+		// If there's a label
 		if (m_xpLexLabel)
 			ErrorMsg(xpLxel, "Label ignored.");
 
-		// search for label, and test
+		// Search for label, and test
 		if (GetLabel(++xpLxel, true, iLink))
 			goto cleanup;
 
@@ -419,7 +408,7 @@ bool CGtlData::parseLine() {
 cleanup:
 
 	if (iError) {
-		char szMsg[100];   // error message text
+		char szMsg[100];   // Error message text
 		Common::sprintf_s(szMsg, "CGtlData::parseLine -- Error code %i.", iError);
 		CGtlData::ErrorMsg(xpLxel, szMsg);
 	}
@@ -446,11 +435,10 @@ CLexElement *CGtlData::ParseInteger(CLexElement *xpLxel, int iPrevType, int &iVa
 
 CLexElement *CGtlData::ParseString(CLexElement *xpLxel, int iPrevType, char *lpszValue, int *xpiValue) {
 	if (xpiValue)
-		*xpiValue = 0;		// default -- zero keyword value
+		*xpiValue = 0;	// Default -- zero keyword value
 
 	if (xpLxel->m_iType == iPrevType && ((++xpLxel)->m_iType == LXT_IDENT || xpLxel->m_iType == LXT_STRING)) {
-
-		// copy over the text string
+		// Copy over the text string
 		if (lpszValue)
 			Common::strcpy_s(lpszValue, 255, &m_szStringList[xpLxel->m_iStringListPos]);
 
@@ -491,18 +479,12 @@ cleanup:
 }
 
 
-//* CGtlData::GetLabel -- get bitmap or node label
-bool CGtlData::GetLabel(char *lpszLabel, bool bNode, int &iIndex)
-// lpszLabel -- pointer to label string for bitmap/node being sought
-// bNode -- false for bitmaps, true for nodes
-// iIndex -- output: index of bitmap or node for label
-// returns: true if error (label not found), false otherwise
-{
-	int iError = 0;		// error code
+bool CGtlData::GetLabel(char *lpszLabel, bool bNode, int &iIndex) {
+	int iError = 0;		// Error code
 
-	// if looking for node label
+	// If looking for node label
 	if (bNode) {
-		// loop through nodes, searching for label
+		// Loop through nodes, searching for label
 		for (iIndex = 0; iIndex < m_iNodes &&
 			(strcmp(m_lpNodes[iIndex].m_szLabel, lpszLabel) || m_lpNodes[iIndex].m_bDeleted); ++iIndex) {
 		}
@@ -512,13 +494,12 @@ bool CGtlData::GetLabel(char *lpszLabel, bool bNode, int &iIndex)
 			goto cleanup;
 		}
 
-		// looking for a bitmap label
-		//
 	} else {
+		// Looking for a bitmap label
 
-		// loop through bitmaps, searching for label
-		for (iIndex = 0; iIndex < m_iMaps && strcmp(m_lpMaps[iIndex].m_szLabel, lpszLabel); ++iIndex)
-			;   // null loop body
+		// Loop through bitmaps, searching for label
+		for (iIndex = 0; iIndex < m_iMaps && strcmp(m_lpMaps[iIndex].m_szLabel, lpszLabel); ++iIndex) {
+		}
 
 		if (iIndex >= m_iMaps) {
 			iError = 102;
@@ -530,13 +511,8 @@ cleanup:
 	return iError != 0;
 }
 
-
-//* CGtlData::AddLink -- link together a pair of nodes
-bool CGtlData::AddLink(CNode *lpNode1, CNode *lpNode2)
-// lpNode1, lpNode2 -- nodes to be linked
-// returns: true if error, false otherwise
-{
-	int iError = 0;		// error code
+bool CGtlData::AddLink(CNode *lpNode1, CNode *lpNode2) {
+	int iError = 0;		// Error code
 
 	AddLink(lpNode1, lpNode2 - m_lpNodes);
 	AddLink(lpNode2, lpNode1 - m_lpNodes);
@@ -544,16 +520,10 @@ bool CGtlData::AddLink(CNode *lpNode1, CNode *lpNode2)
 	return iError != 0;
 }
 
-
-//* CGtlData::AddLink -- add link to one node
-bool CGtlData::AddLink(CNode *lpNode, int iLink)
-// lpNode -- node to add link to
-// int iLink -- index of linked node
-// returns: true if error, false otherwise
-{
-	int iError = 0;		// error code
-	bool bFound = false;	// if true, link already exists
-	int iK;		// loop variable
+bool CGtlData::AddLink(CNode *lpNode, int iLink) {
+	int iError = 0;			// Error code
+	bool bFound = false;	// If true, link already exists
+	int iK;					// Loop variable
 
 	assert(iLink >= 0 && iLink < MAX_NODES);
 

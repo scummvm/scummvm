@@ -152,6 +152,12 @@ class CLexElement {
 	int m_iVal = 0;          // integer or char or keyword code
 	int m_iStringListPos = 0;      // string position
 	int m_iLineNumber = 0, m_iColumn = 0;      // for error messages
+
+	void clear() {
+		m_iType = m_iVal = 0;
+		m_iStringListPos = 0;
+		m_iLineNumber = m_iColumn = 0;
+	}
 };
 
 // CKeyTab -- keyword table element
@@ -355,17 +361,27 @@ private:
 
 	/**
 	 * Get bitmap or node label
+	 * @param lpszLabel		Pointer to label string for bitmap/node being sought
+	 * @param bNode		False for bitmaps, true for nodes
+	 * @param iIndex	Output: index of bitmap or node for label
+	 * @returns			true if error (label not found), false otherwise
 	 */
 	bool GetLabel(char *lpszLabel,
 		bool bNode, int &iIndex);
 
 	/**
 	 * Link together a pair of nodes
+	 * @param lpNode1	Node to be linked
+	 * @param lpNode2	Node to be linked
+	 * @returns			True if error, false otherwise
 	 */
 	bool AddLink(CNode *lpNode1, CNode *lpNode2);
 
 	/**
 	 * Add link to one node
+	 * @param lpNode	node to add link to
+	 * @param iLink		Index of linked node
+	 * @returns			True if error, false otherwise
 	 */
 	bool AddLink(CNode *lpNode, int iLink);
 

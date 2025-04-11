@@ -135,7 +135,6 @@ bool CGtlData::SetColors() {
 	return false;
 }
 
-
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

@@ -27,47 +27,47 @@ namespace HodjNPodj {
 namespace Metagame {
 
 
-static char st_szIdentChars[] =
+static char IDENT_CHARS[] =
 "abcdefghijklmnopqrstuvwxyz"
 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 "0123456789_.";
 
-static const CKeyTab st_cKytbs[] = {
-	{KT_BMP, "BITMAP"},
-	{KT_NODE, "NODE"},
-	{KT_LINK, "LINK"},
-	{KT_ABOVE, "ABOVE"},
-	{KT_BELOW, "BELOW"},
-	{KT_LEFT, "LEFT"},
-	{KT_RIGHT, "RIGHT"},
-	{KT_PALETTE, "PALETTE"},
-	{KT_OVERLAY, "OVERLAY"},
-	{KT_MASKED, "MASKED"},
-	{KT_METAGAME, "METAGAME"},
-	{KT_SPRITE, "SPRITE"},
-	{KT_PASSTHRU, "PASSTHRU"},
-	{KT_WEIGHT, "WEIGHT"},
-	{KT_SENSITIVITY, "SENSITIVITY"},
-	{KT_SECTOR, "SECTOR"},
-	{KT_BORDER, "BORDER"},
-	{KT_PREVIOUS, "PREVIOUS"},
-	{KT_LINKPREV, "LINKPREV"},
-	{KT_POSITION, "POSITION"},
-	{KT_DIRECTORY, "DIRECTORY"},
-	{KT_FOREGROUND, "FOREGROUND"},
-	{KT_BACKGROUND, "BACKGROUND"},
-	{KT_ANIMATED, "ANIMATED"},
-	{KT_SIZE, "SIZE"},
-	{KT_MIDDLE, "MIDDLE"},
-	{KT_FREQUENCY, "FREQ"},
-	{KT_EOF, "END"},
-	{0, "????"}
+static const CKeyTab KEYWORDS[] = {
+	{ KT_BMP, "BITMAP" },
+	{ KT_NODE, "NODE" },
+	{ KT_LINK, "LINK" },
+	{ KT_ABOVE, "ABOVE" },
+	{ KT_BELOW, "BELOW" },
+	{ KT_LEFT, "LEFT" },
+	{ KT_RIGHT, "RIGHT" },
+	{ KT_PALETTE, "PALETTE" },
+	{ KT_OVERLAY, "OVERLAY" },
+	{ KT_MASKED, "MASKED" },
+	{ KT_METAGAME, "METAGAME" },
+	{ KT_SPRITE, "SPRITE" },
+	{ KT_PASSTHRU, "PASSTHRU" },
+	{ KT_WEIGHT, "WEIGHT" },
+	{ KT_SENSITIVITY, "SENSITIVITY" },
+	{ KT_SECTOR, "SECTOR" },
+	{ KT_BORDER, "BORDER" },
+	{ KT_PREVIOUS, "PREVIOUS" },
+	{ KT_LINKPREV, "LINKPREV" },
+	{ KT_POSITION, "POSITION" },
+	{ KT_DIRECTORY, "DIRECTORY" },
+	{ KT_FOREGROUND, "FOREGROUND" },
+	{ KT_BACKGROUND, "BACKGROUND" },
+	{ KT_ANIMATED, "ANIMATED" },
+	{ KT_SIZE, "SIZE" },
+	{ KT_MIDDLE, "MIDDLE" },
+	{ KT_FREQUENCY, "FREQ" },
+	{ KT_EOF, "END" },
+	{ 0, "????" }
 };
 
 const char *CGtlData::FindKeyword(int iType) {
 	const CKeyTab *xpKytb;	// ptr to keyword table entry
 
-	for (xpKytb = &st_cKytbs[0]; xpKytb->m_iKeyValue &&
+	for (xpKytb = &KEYWORDS[0]; xpKytb->m_iKeyValue &&
 		xpKytb->m_iKeyValue != iType; ++xpKytb) {
 	}
 
@@ -76,40 +76,39 @@ const char *CGtlData::FindKeyword(int iType) {
 }
 
 bool CGtlData::ReadLine() {
-	int iError = 0;		// error code
+	int iError = 0;			// Error code
 	Common::String line;
-	char szLine[255];	// input line
-	const char *xpStart;	// ptr to first char of element
-	int iElementLength;		// length of current lexical element
-	int iStringListPos = 0;	// current position in string list
-	int iNumLxels = 0;		// number of lexical elements so far
-	char *xpStr;			// string pointer
-	XPSTR xpszIdent;		// identifier string pointer
-	const CKeyTab *xpKytb;	// pointer to keyword table
-	CLexElement *xpLxel, *xpLastLxel = NULL;	// last lexical element on line
-	bool bDone;	// loop variable
+	char szLine[255];		// Input line
+	const char *xpStart;	// Ptr to first char of element
+	int iElementLength;		// Length of current lexical element
+	int iStringListPos = 0;	// Current position in string list
+	int iNumLxels = 0;		// Number of lexical elements so far
+	char *xpStr;			// String pointer
+	XPSTR xpszIdent;		// Identifier string pointer
+	const CKeyTab *xpKytb;	// Pointer to keyword table
+	CLexElement *xpLxel, *xpLastLxel = nullptr;	// last lexical element on line
+	bool bDone;				// Loop variable
 
-	// zero out the lexical blocks
-	memset((byte *)&m_cLexElts[0], 0, MAX_LEXELTS * sizeof(class CLexElement));
+	// Zero out the lexical blocks
+	for (int i = 0; i < MAX_LEXELTS; ++i)
+		m_cLexElts[i].clear();
 
 	bDone = false;
 	while (!bDone) {
-
-		// read line and test for EOF
-
+		// Read line and test for EOF
 		if (m_xpGtlFile.eos()) {
-			bDone = true;	// last loop iteration
+			bDone = true;		// Last loop iteration
 			iError = 100;
-			m_bEof = true;	// end of file
-			szLine[0] = '\0';	// process empty line
+			m_bEof = true;		// End of file
+			szLine[0] = '\0';	// Process empty line
 		} else {
 			line = m_xpGtlFile.readLine();
 			Common::strcpy_s(szLine, line.c_str());
 		}
 
-		++m_iLineNumber;   // increment line number
+		++m_iLineNumber;		// Increment line number
 
-		// if there's a listing file
+		// If there's a listing file
 		if (m_xpListFile) {
 			m_xpListFile->writeString(szLine);
 			m_xpListFile->writeByte('\n');
@@ -121,59 +120,56 @@ bool CGtlData::ReadLine() {
 			xpLxel->m_iLineNumber = m_iLineNumber;
 			xpLxel->m_iColumn = xpStr - xpStart;
 
-			// test for blank, tab, line feed (newline)
+			// Test for blank, tab, line feed (newline)
 			//  or carriage return
 			if ((*xpStr == CCHBL) || (*xpStr == CCHTAB)
 				|| (*xpStr == CCHLF) || (*xpStr == CCHCR))
-				++xpStr;       // just skip it
+				++xpStr;       // Just skip it
 
 			else if ((*xpStr >= '0') && (*xpStr <= '9')) {
 				xpLxel->m_iType = LXT_INTEGER;
 
-				// loop thru digits, adding to value
+				// Loop thru digits, adding to value
 				while (*xpStr >= '0' && *xpStr <= '9')
 					xpLxel->m_iVal = 10 * xpLxel->m_iVal + *xpStr++ - '0';
 
-				// it's an identifier
-			} else if ((iElementLength = strspn(xpStr, st_szIdentChars)) > 0) {
-
+			// It's an identifier
+			} else if ((iElementLength = strspn(xpStr, IDENT_CHARS)) > 0) {
 				xpLxel->m_iType = LXT_IDENT;
 				xpLxel->m_iStringListPos = iStringListPos;
 
-				// store position in string list
+				// Store position in string list
 				if (iStringListPos + iElementLength + 2 > MAX_STRINGLIST) {
-					iError = 100;  // string list overflow
+					iError = 100;  // String list overflow
 					CGtlData::ErrorMsg(xpLxel, "ReadLine - String List overflow");
 					goto cleanup;
 				}
 
-				// copy string into string list
+				// Copy string into string list
 				strncpy((xpszIdent = &m_szStringList[iStringListPos]), xpStr, iElementLength);
 
 				iStringListPos += iElementLength;  // new position
 
 				xpStr += iElementLength;           // skip input string
 
-				// null terminator on string
+				// Null terminator on string
 				m_szStringList[iStringListPos++] = 0;
 
-				for (xpKytb = &st_cKytbs[0]; xpKytb->m_iKeyValue &&
+				for (xpKytb = &KEYWORDS[0]; xpKytb->m_iKeyValue &&
 					scumm_stricmp(xpKytb->m_xpszKeyString, xpszIdent)
 					!= 0;  ++xpKytb) {
 				}
 
-				// copy keyword value (zero if none)
+				// Copy keyword value (zero if none)
 				xpLxel->m_iVal = xpKytb->m_iKeyValue;
 
-				// check for string beginning with quote char
-				//
+			// check for string beginning with quote char
 			} else if (*xpStr == CCHQUO) {
-
-				// store position in string list
+				// Store position in string list
 				xpLxel->m_iType = LXT_STRING;
 				xpLxel->m_iStringListPos = iStringListPos;
 
-				// find closing quote
+				// Find closing quote
 				while (*++xpStr && *xpStr != CCHQUO) {
 					if (*xpStr == '\\')
 						++xpStr;
@@ -184,21 +180,19 @@ bool CGtlData::ReadLine() {
 						goto cleanup;
 					}
 				}
-				// if no closing quote
+				// If no closing quote
 				if (*xpStr++ != CCHQUO) {
-					iError = 102;  // unterminated quote
+					iError = 102;	// Unterminated quote
 					CGtlData::ErrorMsg(xpLxel, "ReadLine - Unterminated quoted string");
 					goto cleanup;
 				}
 				m_szStringList[iStringListPos++] = 0;
 
-				// comment
-				//
+			// Comment
 			} else if (*xpStr == '/' && *(xpStr + 1) == '/') {
-				*xpStr = 0;    // insert null, loop will terminate
+				*xpStr = 0;    // Insert null, loop will terminate
 
 			} else if (strchr(",()=+-;:", *xpStr)) {
-
 				xpLxel->m_iType = (*xpStr == ',') ? LXT_COMMA :
 					(*xpStr == '(') ? LXT_LPR :
 					(*xpStr == ')') ? LXT_RPR :
@@ -209,26 +203,24 @@ bool CGtlData::ReadLine() {
 					(*xpStr == ':') ? LXT_COLON : 0;
 				xpLxel->m_iVal = *xpStr++; // save char as val
 
-				// char not recognized
-				//
+			// Char not recognized
 			} else {
-
 				iError = 103;
 				CGtlData::ErrorMsg(xpLxel, "Invalid char in input");
 				goto cleanup;
 			}
 
-			if (xpLxel->m_iType)        // if we used this lex element
+			if (xpLxel->m_iType)	// If we used this lex element
 				xpLastLxel = xpLxel, ++iNumLxels; // skip to next one
 		}
 
-		// we're done if there was at least one lexical element,
+		// We're done if there was at least one lexical element,
 		//  and the last one is not a comma
 		if (xpLastLxel && xpLastLxel->m_iType != LXT_COMMA)
 			bDone = true;
 	}
 
-	// end of statement
+	// End of statement
 	m_cLexElts[iNumLxels].m_iType = LXT_EOX;
 
 cleanup:
@@ -236,8 +228,8 @@ cleanup:
 }
 
 bool CGtlData::ErrorMsg(const CLexElement *xpLxel, const char *szMessage) {
-	char szLine[200];	// output line
-	char szTitle[40];	// message box title
+	char szLine[200];	// Output line
+	char szTitle[40];	// Message box title
 
 	Common::sprintf_s(szLine, "Error: %s.", szMessage);
 
