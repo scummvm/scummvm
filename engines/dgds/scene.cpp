@@ -1809,14 +1809,20 @@ bool GDSScene::load(const Common::String &filename, ResourceManager *resourceMan
 	return result;
 }
 
+
 bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
+	// TODO: RST file format is also the original save game format, so this
+	// function could be used to load saves from the original games.
+	// The only thing to change would be supporting loading of sound bank
+	// and game time (which would need converting to our game time)
+
 	Common::SeekableReadStream *file = resourceManager->getResource(filename);
 	if (!file)
-		error("Restart data %s not found", filename.c_str());
+		error("Game state data %s not found", filename.c_str());
 
 	uint32 magic = file->readUint32LE();
 	if (magic != _magic)
-		error("Restart file magic doesn't match (%04X vs %04X)", magic, _magic);
+		error("%s file magic doesn't match game (%04X vs %04X)", filename.c_str(), magic, _magic);
 
 	uint16 num = file->readUint16LE();
 	// Find matching game item and load its values
@@ -1836,15 +1842,18 @@ bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *reso
 			}
 		}
 		if (!found)
-			error("Reset file references unknown item %d", num);
+			error("%s file references unknown item %d", filename.c_str(), num);
 		num = file->readUint16LE();
 	}
 	initIconSizes();
 
 	DgdsEngine *engine = DgdsEngine::getInstance();
-	Common::Array<Global *> &globs = engine->getGameGlobals()->getAllGlobals();
 
-	if (engine->getGameId() == GID_DRAGON || engine->getGameId() == GID_HOC) {
+	// From here the data format varies by game
+	const DgdsGameId gameId = engine->getGameId();
+
+	// Per scene globals are stored with scene+val in Dragon and HOC
+	if (gameId == GID_DRAGON || gameId == GID_HOC) {
 		num = file->readUint16LE();
 		while (num && !file->eos()) {
 			uint16 scene = file->readUint16LE();
@@ -1858,43 +1867,12 @@ bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *reso
 				}
 			}
 			if (!found)
-				error("Reset file references unknown scene global %d", num);
+				error("%s file references unknown scene global %d", filename.c_str(), num);
 			num = file->readUint16LE();
 		}
 
-		/*uint32 unk = */ file->readUint32LE();
-
-		if (globs.size() > 50)
-			error("Too many globals to load from RST file");
-
-		int g = 0;
-		for (Global *glob : globs) {
-			int16 val = file->readUint16LE();
-			glob->setRaw(val);
-			g++;
-		}
-		// Always 50 int16s worth of globals in the file, skip any unused.
-		if (g < 50)
-			file->skip(2 * (50 - g));
-
-		uint16 triggers[100];
-		for (int i = 0; i < ARRAYSIZE(triggers); i++) {
-			triggers[i] = file->readUint16LE();
-		}
-
-		engine->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		// TODO: FIXME: What should this scene num be? For now hacked to work with Dragon.
-		engine->changeScene(3);
-		SDSScene *scene = engine->getScene();
-		int t = 0;
-		num = triggers[t++];
-		while (num) {
-			uint16 val = triggers[t++];
-			scene->enableTrigger(0, num, (bool)val);
-			num = triggers[t++];
-		}
 	} else {
-		// Willy Beamish stores the globals differently
+		// Willy Beamish stores the Per-scene globals differently
 		num = file->readUint16LE();
 		while (num && !file->eos()) {
 			int16 val = file->readSint16LE();
@@ -1907,12 +1885,40 @@ bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *reso
 				}
 			}
 			if (!found)
-				error("Reset file references unknown scene global %d", num);
+				error("%s file references unknown scene global %d", filename.c_str(), num);
 			num = file->readUint16LE();
 		}
+	}
 
-		/*uint32 unk = */ file->readUint32LE();
+	// Game time in original save games - ignore when we're doing a reset.
+	/*uint32 gameTime = */ file->readUint32LE();
 
+	Common::Array<Global *> &globs = engine->getGameGlobals()->getAllGlobals();
+
+	uint16 triggers[256];
+	ARRAYCLEAR(triggers);
+
+	if (gameId == GID_DRAGON) {
+		// Dragon has a fixed length section for game globals and triggers
+		if (globs.size() > 50)
+			error("Too many globals to load from file %s", filename.c_str());
+
+		int g = 0;
+		for (Global *glob : globs) {
+			int16 val = file->readUint16LE();
+			glob->setRaw(val);
+			g++;
+		}
+		// Always 50 int16s worth of globals in the file, skip any unused.
+		if (g < 50)
+			file->skip(2 * (50 - g));
+
+		// Always 100 uint16s of trigger config.
+		for (int i = 0; i < 100; i++) {
+			triggers[i] = file->readUint16LE();
+		}
+	} else {
+		// HOC and Willy both have number+val lists for game globals
 		num = file->readUint16LE();
 		while (num && !file->eos()) {
 			bool found = false;
@@ -1925,27 +1931,53 @@ bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *reso
 				}
 			}
 			if (!found)
-				error("Reset file references unknown game global %d", num);
+				error("%s references unknown game global %d", filename.c_str(), num);
 			num = file->readUint16LE();
 		}
 
-		//
-		// TODO: What is this block of data?  In practice there is only one of them
-		//
-		while (!file->eos()) {
-			num = file->readUint16LE();
-			if (!num)
-				break;
-			/*int16 val1 = */ file->readUint16LE();
-			/*int16 val2 = */ file->readUint16LE();
-			/*int16 val3 = */ file->readUint16LE();
+		if (gameId == GID_HOC) {
+			// Triggers are stored
+			for (int i = 0; i < ARRAYSIZE(triggers); i += 2) {
+				triggers[i] = file->readUint16LE();
+				if (triggers[i] == 0 || file->eos())
+					break;
+				triggers[i + 1] = file->readUint16LE();
+			}
+		} else {
+			// Willy Beamish has an unknown block of 1 item long, probably trigger-related?
+
+			//
+			// TODO: What is this block of data?
+			//
+			while (!file->eos()) {
+				num = file->readUint16LE();
+				if (!num)
+					break;
+				// Probably enabled, timesToCheckBeforeRunning, checksUntilRun
+				/*int16 x = */ file->readUint16LE();
+				/*int16 y = */ file->readUint16LE();
+				/*int16 z = */ file->readUint16LE();
+			}
 		}
 
+		// Sound bank number is in original save files.
 		/*uint16 soundBankNum = */ file->readUint16LE();
+	}
 
-		engine->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		// TODO: FIXME: What should this scene num be?
-		engine->changeScene(3);
+	engine->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+
+	int16 targetScene = engine->getGameGlobals()->getLastSceneNum();
+	engine->changeScene(targetScene);
+
+	if (gameId == GID_DRAGON || gameId == GID_HOC) {
+		SDSScene *scene = engine->getScene();
+		int t = 0;
+		num = triggers[t++];
+		while (num) {
+			uint16 val = triggers[t++];
+			scene->enableTrigger(0, num, (bool)val);
+			num = triggers[t++];
+		}
 	}
 
 	return true;
