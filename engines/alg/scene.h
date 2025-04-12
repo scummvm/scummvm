@@ -150,7 +150,6 @@ private:
 	Common::Array<Scene *> _scenes;
 	Common::Array<Zone *> _zones;
 
-	void parseStart(Common::String sceneName);
 	void parseScene(Common::String sceneName, uint32 startFrame, uint32 endFrame);
 	void parseZone(Common::String zoneName, uint32 startFrame, uint32 endFrame);
 	void addZonesToScenes();
