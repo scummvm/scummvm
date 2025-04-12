@@ -84,6 +84,8 @@ View1::View1() : UIElement("View1") {
 		characters.push_back(protagonist);
 
 		// inventoryItems.push_back(GameObjects::instance().Objects[0x8 - 1]);
+
+		inventoryButtonLocations.resize(6);
 	}
 
 	AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
@@ -893,6 +895,7 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 		DrawBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(maxWidthButtonIcon, maxHeightButtonIcon), s);	
 		uint16 iconX = (maxWidthButtonIcon / 2 + buttonX) - currentFrame.Width / 2;
 		uint16 iconY = (maxHeightButtonIcon / 2 + buttonY) - currentFrame.Height / 2;
+		inventoryButtonLocations[i] = Common::Rect(Common::Point(buttonX, buttonY), maxWidthButtonIcon, maxHeightButtonIcon);
 		DrawSprite(iconX, iconY, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
 		buttonX += maxWidthButtonIcon + 4;
 	}
@@ -907,6 +910,26 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 								  (maxWidthInventoryIcon + 4) * 5 + 4,
 								  (maxHeightInventoryIcon + 4) * 2 + 4),
 							  s);
+
+	uint16 itemX = x + 8;
+	uint16 itemY = x + 8;
+	// TODO: Align with original code's pagingation and ordering logic
+	uint16 itemIndex = 0;
+	// Now the inventory icons themselves
+	for (int iy = 0; iy < 2; iy++) {
+		for (int ix = 0; ix < 5; ix++) {
+			AnimFrame *icon = GetInventoryIcon(inventoryItems[itemIndex]);
+			// ;; x = slotWidth / 2 + currentX - imageWidth / 2
+			//  ;; y = slotHeight / 2 + currentY - imageHeight / 2
+			DrawSprite(maxWidthInventoryIcon / 2 + itemX - icon->Width / 2,
+					   maxHeightInventoryIcon / 2 + itemY - icon->Height / 2,
+					   icon->Width, icon->Height, icon->Data, s, false);
+			itemX += maxWidthInventoryIcon + 4;
+		}
+		itemX = x + 8;
+		itemY += maxHeightInventoryIcon + 4;
+	}
+	
 }
 
 GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
