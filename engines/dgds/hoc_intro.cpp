@@ -169,6 +169,7 @@ void HocIntro::clean2(int16 xoff) {
 }
 
 void HocIntro::draw1(int16 xoff) {
+	assert(_noMaskImg && _noMaskImg->isLoaded() && _maskImg && _maskImg->isLoaded());
 	Graphics::ManagedSurface &dst = DgdsEngine::getInstance()->_compositionBuffer;
 	_noMaskImg->drawBitmap(1, xoff + 0xcc, 0x33, _drawWin, dst);
 	_noMaskImg->drawBitmap(0, xoff + 0xf8, 0x14, _drawWin, dst);
@@ -182,6 +183,7 @@ void HocIntro::draw1(int16 xoff) {
 }
 
 void HocIntro::draw2(int16 xoff) {
+	assert(_noMaskImg && _noMaskImg->isLoaded() && _maskImg && _maskImg->isLoaded());
 	Graphics::ManagedSurface &dst = DgdsEngine::getInstance()->_compositionBuffer;
 
 	if (8 < xoff)
