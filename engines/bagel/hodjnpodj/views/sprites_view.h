@@ -19,51 +19,28 @@
  *
  */
 
-#ifndef HODJNPODJ_METAGAME_BOARDGAME_H
-#define HODJNPODJ_METAGAME_BOARDGAME_H
+#ifndef HODJNPODJ_VIEWS_SPRITES_VIEW_H
+#define HODJNPODJ_VIEWS_SPRITES_VIEW_H
 
-#include "bagel/hodjnpodj/views/sprites_view.h"
-#include "bagel/hodjnpodj/metagame/boardgame/gtl_app.h"
-#include "bagel/hodjnpodj/metagame/boardgame/gtl_doc.h"
+#include "common/list.h"
+#include "bagel/hodjnpodj/views/resource_view.h"
 
 namespace Bagel {
 namespace HodjNPodj {
-namespace Metagame {
 
-enum DialogId {
-	kDialogInventory = 1,
-	kDialogGeneralStore = 2,
-	kDialogPawnShop = 3,
-	kDialogBlackMarket = 4
-};
-
-class Boardgame : public SpritesView {
+class SpritesView : public ResourceView {
+	friend class Sprite;
 private:
-	bool bJustReturned = false;
+	Common::List<Sprite *> _linkedSprites;
 
-	void showClue(CNote *note);
-	void showInventory(int nWhichDlg);
-	bool isInputAllowed() const;
-
-public:
-	CGtlApp _app;
-	CGtlDoc _doc;
+protected:
+	void drawSprites();
 
 public:
-	Boardgame();
-	~Boardgame() override;
-
-	bool msgOpen(const OpenMessage &msg) override;
-	bool msgClose(const CloseMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-	void draw() override;
+	SpritesView(const Common::String &name, const Common::String &resFilename);
+	virtual ~SpritesView() {}
 };
 
-extern CGtlApp *AfxGetApp();
-
-} // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel
 

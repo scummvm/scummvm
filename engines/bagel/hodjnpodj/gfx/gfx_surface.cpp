@@ -310,8 +310,8 @@ void GfxSurface::circle(const Common::Point &center,
 /*------------------------------------------------------------------------*/
 
 bool Sprite::isLinked() const {
-	for (auto it = _minigame->_linkedSprites.begin();
-		it != _minigame->_linkedSprites.end(); ++it) {
+	for (auto it = _view->_linkedSprites.begin();
+		it != _view->_linkedSprites.end(); ++it) {
 		if (*it == this)
 			return true;
 	}
@@ -321,11 +321,11 @@ bool Sprite::isLinked() const {
 
 void Sprite::linkSprite() {
 	if (!isLinked())
-		_minigame->_linkedSprites.push_back(this);
+		_view->_linkedSprites.push_back(this);
 }
 
 void Sprite::unlinkSprite() {
-	_minigame->_linkedSprites.remove(this);
+	_view->_linkedSprites.remove(this);
 }
 
 Sprite &Sprite::operator=(const GfxSurface &surf) {

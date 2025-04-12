@@ -26,7 +26,7 @@ namespace Bagel {
 namespace HodjNPodj {
 
 MinigameView::MinigameView(const Common::String &name, const Common::String &resFilename) :
-		ResourceView(name, resFilename),
+		SpritesView(name, resFilename),
 		_settings(g_engine->_settings[name]) {
 }
 
@@ -92,17 +92,6 @@ bool MinigameView::tick() {
 	}
 
 	return View::tick();
-}
-
-void MinigameView::drawSprites() {
-	GfxSurface s = getSurface();
-
-	for (auto it = _linkedSprites.begin();
-			it != _linkedSprites.end(); ++it) {
-		Sprite &sprite = **it;
-
-		s.blitFrom(sprite, sprite);
-	}
 }
 
 } // namespace HodjNPodj

@@ -26,7 +26,7 @@
 #include "common/hashmap.h"
 #include "common/list.h"
 #include "common/formats/winexe_ne.h"
-#include "bagel/hodjnpodj/views/resource_view.h"
+#include "bagel/hodjnpodj/views/sprites_view.h"
 #include "bagel/hodjnpodj/libs/settings.h"
 
 namespace Bagel {
@@ -35,16 +35,12 @@ namespace HodjNPodj {
 /**
  * Base view class for the main view for each minigame
  */
-class MinigameView : public ResourceView {
-	friend class Sprite;
+class MinigameView : public SpritesView {
 private:
-	Common::List<Sprite *> _linkedSprites;
 	int _showMenuCtr = 0;
 
 protected:
 	Settings::Domain &_settings;
-
-	void drawSprites();
 
 	virtual void showMainMenu() = 0;
 

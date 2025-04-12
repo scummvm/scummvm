@@ -122,6 +122,7 @@ MODULE_OBJS = \
 	hodjnpodj/views/minigame_view.o \
 	hodjnpodj/views/resource_view.o \
 	hodjnpodj/views/rules.o \
+	hodjnpodj/views/sprites_view.o \
 	hodjnpodj/views/view.o \
 	hodjnpodj/metagame/bgen/bbt.o \
 	hodjnpodj/metagame/bgen/bfc.o \

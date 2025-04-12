@@ -284,12 +284,12 @@ VOID CBgbMgr::CacheLoadObject(CBgbObject *pBgbObject) {
 		switch (pBgbObject->m_iBgbType) {
 		// Object is a Sprite
 		case BGBT_SPRITE:
-			// palette must be valid
-			assert(m_xpGamePalette != nullptr);
+			// Palette and view must be valid
+			assert(m_xpGamePalette != nullptr &&
+				m_xpcView != nullptr);
 
-			// alloc sprite and test
-// TODO: Fix null sprite minigame pointer
-			if ((pSprite = new Sprite(nullptr)) != nullptr) {
+			// Alloc sprite and test
+			if ((pSprite = new Sprite(m_xpcView)) != nullptr) {
 				// set its palette to be the same as the game's
 				pSprite->SharePalette(m_xpGamePalette);
 

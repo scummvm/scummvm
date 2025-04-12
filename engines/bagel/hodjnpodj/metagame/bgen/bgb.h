@@ -24,6 +24,7 @@
 
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/llist.h"
+#include "bagel/hodjnpodj/views/sprites_view.h"
 #include "bagel/hodjnpodj/metagame/bgen/bgen.h"
 #include "bagel/hodjnpodj/metagame/bgen/bs_util.h"
 
@@ -47,8 +48,8 @@ public:
 
 	// Following should be in view-specific block
 	//
-	CView *m_xpcView = nullptr;		// current window, when non-null
-	CDC *m_xpDc = nullptr;			// current device context
+	SpritesView *m_xpcView = nullptr;	// Current window, when non-null
+	CDC *m_xpDc = nullptr;				// Current device context
 	COLORREF m_cPenColor = 0, m_cBrushColor = 0;
 	int m_iPenWidth = 0, m_iBrushStyle = 0;
 	CBrush *m_xpOldBrush = nullptr;

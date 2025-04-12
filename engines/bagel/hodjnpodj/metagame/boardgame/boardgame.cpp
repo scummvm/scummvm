@@ -39,7 +39,7 @@ CGtlApp *AfxGetApp() {
 	return &view->_app;
 }
 
-Boardgame::Boardgame() : View("Boardgame") {
+Boardgame::Boardgame() : SpritesView("Boardgame", "") {
 	// TODO: Move this to msgOpen
 	_doc.onNewDocument();
 }

@@ -39,7 +39,7 @@ namespace HodjNPodj {
 #define SPRITE_HINDMOST		255
 
 class UIElement;
-class MinigameView;
+class SpritesView;
 
 struct RectWH : public Common::Rect {
 	RectWH() : Common::Rect() {}
@@ -114,12 +114,12 @@ public:
 
 class Sprite : public GfxSurface, public Common::Point {
 private:
-	MinigameView *_minigame = nullptr;
+	SpritesView *_view = nullptr;
 
 public:
-	Sprite(MinigameView *minigame) : GfxSurface(),
-			_minigame(minigame) {
-		assert(_minigame);
+	Sprite(SpritesView *view) : GfxSurface(),
+			_view(view) {
+		assert(_view);
 	}
 
 	bool isLinked() const;
