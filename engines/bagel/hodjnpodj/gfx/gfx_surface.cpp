@@ -333,5 +333,13 @@ Sprite &Sprite::operator=(const GfxSurface &surf) {
 	return *this;
 }
 
+/*------------------------------------------------------------------------*/
+
+GfxSurface *FetchBitmap(void *dc, void *palette, const char *filename) {
+	GfxSurface *result = new GfxSurface();
+	result->loadBitmap(filename);
+	return result;
+}
+
 } // namespace HodjNPodj
 } // namespace Bagel

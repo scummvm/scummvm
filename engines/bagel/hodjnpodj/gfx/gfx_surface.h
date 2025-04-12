@@ -140,7 +140,20 @@ public:
 	 * the surface without affecting the position
 	 */
 	Sprite &operator=(const GfxSurface &surf);
+
+	void SharePalette(void *pal) {
+	}
+	void SetAnimated(bool val) {
+	}
+	void SetMasked(bool val) {
+	}
+	void SetZOrder(int zOrder) {
+	}
+	void SetMobile(bool val) {
+	}
 };
+
+extern GfxSurface *FetchBitmap(void *dc, void *palette, const char *filename);
 
 } // namespace HodjNPodj
 } // namespace Bagel

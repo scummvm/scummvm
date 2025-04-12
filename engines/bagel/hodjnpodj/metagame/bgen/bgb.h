@@ -24,6 +24,7 @@
 
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/llist.h"
+#include "bagel/hodjnpodj/metagame/bgen/bgen.h"
 #include "bagel/hodjnpodj/metagame/bgen/bs_util.h"
 
 namespace Bagel {
@@ -78,7 +79,12 @@ public:
 
 	// bgb.cpp -- Boffo Game Objects handling routines
 	//
-	bool InitBitmapObject(CBgbObject *, const char *);
+
+	/**
+	 * Set up file access in object
+	 */
+	bool InitBitmapObject(CBgbObject *, XPSTR);
+
 	bool SetPosition(CBgbObject *, CRPoint);
 	bool PaintBitmapObject(CBgbObject *, bool bPaint PDFT(false), Common::Rect *p = NULL);
 	bool AnimateSprite(CBgbObject *, Common::Point, Common::Point);
@@ -101,7 +107,11 @@ public:
 		return !m_bAnimationsPaused;
 	}
 
+	/**
+	 * Loads specified object into memory if not already loaded
+	 */
 	void CacheLoadObject(CBgbObject *);
+
 	void CacheReleaseObject(CBgbObject *);
 	void CacheFlush();
 	void CacheOptimize(uint32);
