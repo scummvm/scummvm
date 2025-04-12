@@ -661,19 +661,19 @@ bool Image::loadSCN(Graphics::ManagedSurface *surf, Common::SeekableReadStream *
 
 int16 Image::width(uint frameno) const {
 	if (frameno >= _frames.size())
-		error("Invalid frameno %d", frameno);
+		error("Image::width: Invalid frameno %d requested from shape '%s'", frameno, _filename.c_str());
 	return _frames[frameno]->w;
 }
 
 int16 Image::height(uint frameno) const {
 	if (frameno >= _frames.size())
-		error("Invalid frameno %d", frameno);
+		error("Image::height: Invalid frameno %d requested from shape '%s'", frameno, _filename.c_str());
 	return _frames[frameno]->h;
 }
 
 Common::SharedPtr<Graphics::ManagedSurface> Image::getSurface(uint frameno) const {
 	if (frameno >= _frames.size())
-		error("Invalid frameno %d", frameno);
+		error("Image::getSurface: Invalid frameno %d requested from shape '%s'", frameno, _filename.c_str());
 	return _frames[frameno];
 }
 
