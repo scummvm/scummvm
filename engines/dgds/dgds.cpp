@@ -356,6 +356,8 @@ void DgdsEngine::init(bool restarting) {
 		delete _hocIntro;
 		delete _chinaTank;
 		delete _chinaTrain;
+		delete _gameGlobals;
+		_gameGlobals = nullptr; // This will be recreated in loadGameFiles
 	}
 
 	_gamePals = new GamePalettes(_resource, _decompressor);
