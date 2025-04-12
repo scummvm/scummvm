@@ -202,7 +202,7 @@ void GameDrugWars::verifyScriptFunctions() {
 DWScriptFunctionRect GameDrugWars::getScriptFunctionRectHit(Common::String name) {
 	auto it = _rectHitFuncs.find(name);
 	if (it != _rectHitFuncs.end()) {
-		return (*(*it)._value);
+		return *it->_value;
 	} else {
 		error("GameDrugWars::getScriptFunctionRectHit(): Could not find rectHit function: %s", name.c_str());
 	}
@@ -239,7 +239,7 @@ DWScriptFunctionScene GameDrugWars::getScriptFunctionScene(SceneFuncType type, C
 	DWScriptFunctionSceneMap::iterator it;
 	it = functionMap->find(name);
 	if (it != functionMap->end()) {
-		return (*(*it)._value);
+		return *it->_value;
 	} else {
 		error("GameDrugWars::getScriptFunctionScene(): Could not find scene type %u function: %s", type, name.c_str());
 	}
@@ -984,7 +984,7 @@ void GameDrugWars::debugWarpTo(int val) {
 }
 
 // Debugger methods
-DebuggerDrugWars::DebuggerDrugWars(GameDrugWars *game) : GUI::Debugger() {
+DebuggerDrugWars::DebuggerDrugWars(GameDrugWars *game) {
 	_game = game;
 	registerVar("drawRects", &game->_debug_drawRects);
 	registerVar("godMode", &game->_debug_godMode);

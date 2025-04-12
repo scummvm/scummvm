@@ -269,7 +269,7 @@ void GameMaddog2::verifyScriptFunctions() {
 MD2ScriptFunctionPoint GameMaddog2::getScriptFunctionZonePtrFb(Common::String name) {
 	auto it = _zonePtrFb.find(name);
 	if (it != _zonePtrFb.end()) {
-		return (*(*it)._value);
+		return *it->_value;
 	} else {
 		error("GameMaddog2::getScriptFunctionZonePtrFb(): Could not find zonePtrFb function: %s", name.c_str());
 	}
@@ -278,7 +278,7 @@ MD2ScriptFunctionPoint GameMaddog2::getScriptFunctionZonePtrFb(Common::String na
 MD2ScriptFunctionRect GameMaddog2::getScriptFunctionRectHit(Common::String name) {
 	auto it = _rectHitFuncs.find(name);
 	if (it != _rectHitFuncs.end()) {
-		return (*(*it)._value);
+		return *it->_value;
 	} else {
 		error("GameMaddog2::getScriptFunctionRectHit(): Could not find rectHit function: %s", name.c_str());
 	}
@@ -315,7 +315,7 @@ MD2ScriptFunctionScene GameMaddog2::getScriptFunctionScene(SceneFuncType type, C
 	MD2ScriptFunctionSceneMap::iterator it;
 	it = functionMap->find(name);
 	if (it != functionMap->end()) {
-		return (*(*it)._value);
+		return *it->_value;
 	} else {
 		error("GameMaddog2::getScriptFunctionScene(): Could not find scene type %u function: %s", type, name.c_str());
 	}

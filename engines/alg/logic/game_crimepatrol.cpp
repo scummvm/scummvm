@@ -254,7 +254,7 @@ void GameCrimePatrol::verifyScriptFunctions() {
 CPScriptFunctionRect GameCrimePatrol::getScriptFunctionRectHit(Common::String name) {
 	auto it = _rectHitFuncs.find(name);
 	if (it != _rectHitFuncs.end()) {
-		return (*(*it)._value);
+		return *it->_value;
 	} else {
 		error("GameCrimePatrol::getScriptFunctionRectHit(): Could not find rectHit function: %s", name.c_str());
 	}
@@ -291,7 +291,7 @@ CPScriptFunctionScene GameCrimePatrol::getScriptFunctionScene(SceneFuncType type
 	CPScriptFunctionSceneMap::iterator it;
 	it = functionMap->find(name);
 	if (it != functionMap->end()) {
-		return (*(*it)._value);
+		return *it->_value;
 	} else {
 		error("GameCrimePatrol::getScriptFunctionScene(): Could not find scene type %u function: %s", type, name.c_str());
 	}

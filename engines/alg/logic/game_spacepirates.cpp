@@ -272,7 +272,7 @@ void GameSpacePirates::verifyScriptFunctions() {
 SPScriptFunctionRect GameSpacePirates::getScriptFunctionRectHit(Common::String name) {
 	auto it = _rectHitFuncs.find(name);
 	if (it != _rectHitFuncs.end()) {
-		return (*(*it)._value);
+		return *it->_value;
 	} else {
 		error("GameSpacePirates::getScriptFunctionRectHit(): Could not find rectHit function: %s", name.c_str());
 	}
@@ -312,7 +312,7 @@ SPScriptFunctionScene GameSpacePirates::getScriptFunctionScene(SceneFuncType typ
 	SPScriptFunctionSceneMap::iterator it;
 	it = functionMap->find(name);
 	if (it != functionMap->end()) {
-		return (*(*it)._value);
+		return *it->_value;
 	} else {
 		error("GameSpacePirates::getScriptFunctionScene(): Could not find scene type %u function: %s", type, name.c_str());
 	}

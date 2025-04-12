@@ -238,7 +238,7 @@ void GameJohnnyRock::verifyScriptFunctions() {
 JRScriptFunctionPoint GameJohnnyRock::getScriptFunctionZonePtrFb(Common::String name) {
 	auto it = _zonePtrFb.find(name);
 	if (it != _zonePtrFb.end()) {
-		return (*(*it)._value);
+		return *it->_value;
 	} else {
 		error("GameJohnnyRock::getScriptFunctionZonePtrFb(): Could not find zonePtrFb function: %s", name.c_str());
 	}
@@ -247,7 +247,7 @@ JRScriptFunctionPoint GameJohnnyRock::getScriptFunctionZonePtrFb(Common::String 
 JRScriptFunctionRect GameJohnnyRock::getScriptFunctionRectHit(Common::String name) {
 	auto it = _rectHitFuncs.find(name);
 	if (it != _rectHitFuncs.end()) {
-		return (*(*it)._value);
+		return *it->_value;
 	} else {
 		error("GameJohnnyRock::getScriptFunctionRectHit(): Could not find rectHit function: %s", name.c_str());
 	}
@@ -284,7 +284,7 @@ JRScriptFunctionScene GameJohnnyRock::getScriptFunctionScene(SceneFuncType type,
 	JRScriptFunctionSceneMap::iterator it;
 	it = functionMap->find(name);
 	if (it != functionMap->end()) {
-		return (*(*it)._value);
+		return *it->_value;
 	} else {
 		error("GameJohnnyRock::getScriptFunctionScene(): Could not find scene type %u function: %s", type, name.c_str());
 	}
