@@ -375,11 +375,6 @@ void Game::removeCursorTimer() {
 }
 
 void Game::runCursorTimer() {
-	if (_gameTimer & 1) {
-		_gameTimer++;
-	} else {
-		_gameTimer += 3;
-	}
 	_thisGameTimer += 2;
 	if (_whichGun == 9) {
 		if (_emptyCount > 0) {
@@ -497,7 +492,6 @@ void Game::sceneIsoPause(Scene *scene) {
 		uint32 pauseStart = atoi(scene->_insopParam.c_str());
 		uint32 pauseEnd = atoi(scene->_insopParam.c_str()) + _videoFrameSkip + 1;
 		if (_currentFrame >= pauseStart && _currentFrame < pauseEnd && !_hadPause) {
-			_gameTimer = 0;
 			uint32 pauseDuration = scene->_dataParam1 * 0x90FF / 1000;
 			_pauseTime = pauseDuration;
 			_nextFrameTime += pauseDuration;

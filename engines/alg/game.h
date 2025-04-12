@@ -150,7 +150,6 @@ protected:
 	bool _fired = 0;
 	uint32 _currentFrame;
 	bool _gameInProgress = false;
-	uint32 _gameTimer = 0;
 	uint32 _thisGameTimer = 0;
 	bool _hadPause = false;
 	bool _holster = false;
