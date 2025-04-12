@@ -308,6 +308,8 @@ public:
 	uint16 CalculateCharacterScaling(uint16 characterY, bool updateDebugValues = false);
 
 	uint16 GetHitObjectID(const Common::Point &pos) const;
+
+	Common::Array<Common::Rect> inventoryButtonLocations;
 };
 
 } // namespace Macs2
