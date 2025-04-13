@@ -23,7 +23,6 @@
 #include "awe/awe.h"
 #include "awe/resource.h"
 #include "awe/bank.h"
-#include "awe/file.h"
 #include "awe/serializer.h"
 #include "awe/video.h"
 

@@ -5,7 +5,6 @@ MODULE_OBJS = \
 	awe.o \
 	bank.o \
 	engine.o \
-	file.o \
 	logic.o \
 	resource.o \
 	sdlstub.o \

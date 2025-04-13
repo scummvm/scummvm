@@ -20,7 +20,6 @@
  */
 
 #include "awe/serializer.h"
-#include "awe/file.h"
 #include "awe/util.h"
 
 namespace Awe {
