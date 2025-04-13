@@ -24,7 +24,7 @@
 #include "awe/resource.h"
 #include "awe/video.h"
 #include "awe/serializer.h"
-#include "awe/systemstub.h"
+#include "awe/system_stub.h"
 
 namespace Awe {
 

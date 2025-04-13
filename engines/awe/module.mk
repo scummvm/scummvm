@@ -6,9 +6,9 @@ MODULE_OBJS = \
 	bank.o \
 	logic.o \
 	resource.o \
-	sdlstub.o \
 	serializer.o \
 	staticres.o \
+	system_stub.o \
 	util.o \
 	video.o
 

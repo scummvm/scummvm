@@ -28,7 +28,7 @@
 #include "awe/intern.h"
 #include "awe/logic.h"
 #include "awe/resource.h"
-#include "awe/systemstub.h"
+#include "awe/system_stub.h"
 #include "awe/video.h"
 
 namespace Awe {
