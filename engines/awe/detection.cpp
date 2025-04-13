@@ -30,7 +30,10 @@
 #include "awe/detection_tables.h"
 
 const DebugChannelDef AweMetaEngineDetection::debugFlagList[] = {
-	{ Awe::kDebugGraphics, "Graphics", "Graphics debug level" },
+	{ Awe::kDebugLogic, "Logic", "Logic debug level" },
+	{ Awe::kDebugBank, "Bank", "Bank debug level" },
+	{ Awe::kDebugVideo, "Video", "Video debug level" },
+	{ Awe::kDebugInfo, "Info", "Info debug level" },
 	DEBUG_CHANNEL_END
 };
 

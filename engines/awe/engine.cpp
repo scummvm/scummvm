@@ -77,7 +77,7 @@ void Engine::processInput() {
 		int8 slot = _stateSlot + _stub->_pi.stateSlot;
 		if (slot >= 0 && slot < MAX_SAVE_SLOTS) {
 			_stateSlot = slot;
-			debug(DBG_INFO, "Current game state slot is %d", _stateSlot);
+			debugC(kDebugInfo, "Current game state slot is %d", _stateSlot);
 		}
 		_stub->_pi.stateSlot = 0;
 	}
@@ -110,7 +110,7 @@ void Engine::saveGameState(uint8 slot, const char *desc) {
 		if (f.ioErr()) {
 			::warning("I/O error when saving game state");
 		} else {
-			debug(DBG_INFO, "Saved state to slot %d", _stateSlot);
+			debugC(kDebugInfo, "Saved state to slot %d", _stateSlot);
 		}
 	}
 #endif
@@ -141,7 +141,7 @@ void Engine::loadGameState(uint8 slot) {
 		if (f.ioErr()) {
 			::warning("I/O error when loading game state");
 		} else {
-			debug(DBG_INFO, "Loaded state from slot %d", _stateSlot);
+			debugC(kDebugInfo, "Loaded state from slot %d", _stateSlot);
 		}
 	}
 #endif

@@ -27,15 +27,6 @@
 
 namespace Awe {
 
-enum {
-	DBG_LOGIC = 1 << 0,
-	DBG_BANK  = 1 << 1,
-	DBG_VIDEO = 1 << 2,
-	DBG_INFO  = 1 << 3
-};
-
-extern uint16 g_debugMask;
-
 extern void string_lower(char *p);
 extern void string_upper(char *p);
 

@@ -163,7 +163,7 @@ void Video::drawShapeParts(uint16 zoom, const Point &pgc) {
 	pt.x -= _pData.fetchByte() * zoom / 64;
 	pt.y -= _pData.fetchByte() * zoom / 64;
 	int16 n = _pData.fetchByte();
-	debug(DBG_VIDEO, "Video::drawShapeParts n=%d", n);
+	debugC(kDebugVideo, "Video::drawShapeParts n=%d", n);
 	for ( ; n >= 0; --n) {
 		uint16 off = _pData.fetchWord();
 		Point po(pt);
@@ -191,7 +191,7 @@ int32 Video::calcStep(const Point &p1, const Point &p2, uint16 &dy) {
 void Video::drawString(uint8 color, uint16 x, uint16 y, uint16 strId) {
 	const StrEntry *se = _stringsTableEng;
 	while (se->id != 0xFFFF && se->id != strId) ++se;
-	debug(DBG_VIDEO, "drawString(%d, %d, %d, '%s')", color, x, y, se->str);
+	debugC(kDebugVideo, "drawString(%d, %d, %d, '%s')", color, x, y, se->str);
 	uint16 xx = x;
 	int len = strlen(se->str);
 	for (int i = 0; i < len; ++i) {
@@ -233,7 +233,7 @@ void Video::drawChar(uint8 c, uint16 x, uint16 y, uint8 color, uint8 *buf) {
 }
 
 void Video::drawPoint(uint8 color, int16 x, int16 y) {
-	debug(DBG_VIDEO, "drawPoint(%d, %d, %d)", color, x, y);
+	debugC(kDebugVideo, "drawPoint(%d, %d, %d)", color, x, y);
 	if (x >= 0 && x <= 319 && y >= 0 && y <= 199) {
 		uint16 off = y * 160 + x / 2;
 	
@@ -260,7 +260,7 @@ void Video::drawPoint(uint8 color, int16 x, int16 y) {
 }
 
 void Video::drawLineT(int16 x1, int16 x2, uint8 color) {
-	debug(DBG_VIDEO, "drawLineT(%d, %d, %d)", x1, x2, color);
+	debugC(kDebugVideo, "drawLineT(%d, %d, %d)", x1, x2, color);
 	int16 xmax = MAX(x1, x2);
 	int16 xmin = MIN(x1, x2);
 	uint8 *p = _curPagePtr1 + _hliney * 160 + xmin / 2;
@@ -292,7 +292,7 @@ void Video::drawLineT(int16 x1, int16 x2, uint8 color) {
 }
 
 void Video::drawLineN(int16 x1, int16 x2, uint8 color) {
-	debug(DBG_VIDEO, "drawLineN(%d, %d, %d)", x1, x2, color);
+	debugC(kDebugVideo, "drawLineN(%d, %d, %d)", x1, x2, color);
 	int16 xmax = MAX(x1, x2);
 	int16 xmin = MIN(x1, x2);
 	uint8 *p = _curPagePtr1 + _hliney * 160 + xmin / 2;
@@ -324,7 +324,7 @@ void Video::drawLineN(int16 x1, int16 x2, uint8 color) {
 }
 
 void Video::drawLineP(int16 x1, int16 x2, uint8 color) {
-	debug(DBG_VIDEO, "drawLineP(%d, %d, %d)", x1, x2, color);
+	debugC(kDebugVideo, "drawLineP(%d, %d, %d)", x1, x2, color);
 	int16 xmax = MAX(x1, x2);
 	int16 xmin = MIN(x1, x2);
 	uint16 off = _hliney * 160 + xmin / 2;
@@ -380,19 +380,19 @@ uint8 *Video::getPagePtr(uint8 page) {
 }
 
 void Video::changePagePtr1(uint8 page) {
-	debug(DBG_VIDEO, "Video::changePagePtr1(%d)", page);
+	debugC(kDebugVideo, "Video::changePagePtr1(%d)", page);
 	_curPagePtr1 = getPagePtr(page);
 }
 
 void Video::fillPage(uint8 page, uint8 color) {
-	debug(DBG_VIDEO, "Video::fillPage(%d, %d)", page, color);
+	debugC(kDebugVideo, "Video::fillPage(%d, %d)", page, color);
 	uint8 *p = getPagePtr(page);
 	uint8 c = (color << 4) | color;
 	memset(p, c, VID_PAGE_SIZE);
 }
 
 void Video::copyPage(uint8 src, uint8 dst, int16 vscroll) {
-	debug(DBG_VIDEO, "Video::copyPage(%d, %d)", src, dst);
+	debugC(kDebugVideo, "Video::copyPage(%d, %d)", src, dst);
 	if (src >= 0xFE || !((src &= 0xBF) & 0x80)) {
 		uint8 *p = getPagePtr(src);
 		uint8 *q = getPagePtr(dst);
@@ -417,7 +417,7 @@ void Video::copyPage(uint8 src, uint8 dst, int16 vscroll) {
 }
 
 void Video::copyPagePtr(const uint8 *src) {
-	debug(DBG_VIDEO, "Video::copyPagePtr()");
+	debugC(kDebugVideo, "Video::copyPagePtr()");
 	uint8 *dst = _pagePtrs[0];
 	int h = 200;
 	while (h--) {
@@ -467,7 +467,7 @@ void Video::changePal(uint8 palNum) {
 }
 
 void Video::updateDisplay(uint8 page) {
-	debug(DBG_VIDEO, "Video::updateDisplay(%d)", page);
+	debugC(kDebugVideo, "Video::updateDisplay(%d)", page);
 	if (page != 0xFE) {
 		if (page == 0xFF) {
 			SWAP(_curPagePtr2, _curPagePtr3);
