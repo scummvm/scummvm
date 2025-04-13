@@ -315,11 +315,16 @@ void grDispatcher::rectangleAlpha(int x, int y, int sx, int sy, uint32 color, in
 	int psy = sy;
 
 	if (!clip_rectangle(x, y, px, py, psx, psy)) return;
-	int dx = 1;
+	int dx = 2;
 	int dy = 1;
 
 	byte mr, mg, mb;
-	split_rgb565u(color, mr, mg, mb);
+	if (_pixel_format == GR_RGB565) {
+		split_rgb565u(color, mr, mg, mb);
+	} else {
+		dx *= 2;
+		split_rgb888(color, mr, mg, mb);
+	}
 
 	mr = (mr * (255 - alpha)) >> 8;
 	mg = (mg * (255 - alpha)) >> 8;
@@ -328,10 +333,16 @@ void grDispatcher::rectangleAlpha(int x, int y, int sx, int sy, uint32 color, in
 	uint32 mcl = make_rgb565u(mr, mg, mb);
 
 	for (int i = 0; i < psy; i++) {
-		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
+		byte *scr_buf = reinterpret_cast<byte *>(_screenBuf->getBasePtr(x, y));
 
 		for (int j = 0; j < psx; j++) {
-			*scr_buf = alpha_blend_565(mcl, *scr_buf, alpha);
+			if (_pixel_format == GR_RGB565) {
+				*(uint16 *)scr_buf = alpha_blend_565(mcl, *(uint16 *)scr_buf, alpha);
+			} else {
+				scr_buf[3] = mr + ((alpha * scr_buf[3]) >> 8);
+				scr_buf[2] = mg + ((alpha * scr_buf[2]) >> 8);
+				scr_buf[1] = mb + ((alpha * scr_buf[1]) >> 8);
+			}
 			scr_buf += dx;
 		}
 
@@ -359,25 +370,64 @@ void grDispatcher::resetSurfaceOverride() {
 void grDispatcher::setPixel(int x, int y, int col) {
 	if (_clipMode && !clipCheck(x, y)) return;
 
-	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
-	*p = col;
+	if (_pixel_format == GR_RGB565) {
+		uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
+		*p = col;
+	} else {
+		uint32 *p = (uint32 *)(_screenBuf->getBasePtr(x, y));
+		*p = col << 8;
+	}
+}
+
+void grDispatcher::setPixelFast(byte* buf, uint32 col) {
+	if (_pixel_format == GR_RGB565) {
+		uint16 *p = (uint16 *)buf;
+		*p = col;
+	} else {
+		uint32 *p = (uint32 *)buf;
+		*p = col << 8;
+	}
 }
 
 void grDispatcher::setPixelFast(int x, int y, int col) {
-	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
-	*p = col;
+	if (_pixel_format == GR_RGB565) {
+		uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
+		*p = col;
+	} else {
+		// NOTE
+		// The original had blue and red colors swapped in this method
+		uint32 *p = (uint32 *)(_screenBuf->getBasePtr(x, y));
+		*p = col << 8;
+	}
 }
 
 void grDispatcher::setPixelFast(int x, int y, int r, int g, int b) {
-	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
-	*p = (((r >> 3) << 11) + ((g >> 2) << 5) + ((b >> 3) << 0));
+	if (_pixel_format == GR_RGB565) {
+		uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
+		*p = (((r >> 3) << 11) + ((g >> 2) << 5) + ((b >> 3) << 0));
+	} else {
+		uint32 *p = (uint32 *)(_screenBuf->getBasePtr(x, y));
+		*p = ((r << 24) | (g << 16) | (b << 8));
+	}
 }
 
 void grDispatcher::setPixel(int x, int y, int r, int g, int b) {
 	if (_clipMode && !clipCheck(x, y)) return;
 
-	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x * 2, y));
-	*p = (((r >> 3) << 11) + ((g >> 2) << 5) + ((b >> 3) << 0));
+	if (_pixel_format == GR_RGB565) {
+		uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x * 2, y));
+		*p = (((r >> 3) << 11) + ((g >> 2) << 5) + ((b >> 3) << 0));
+	} else {
+		uint32 *p = (uint32 *)(_screenBuf->getBasePtr(x, y));
+		*p = ((r << 24) + (g << 16) + (b << 8));
+	}
+}
+
+void grDispatcher::getPixel(int x, int y, uint32 &col) {
+	if (_pixel_format == GR_RGB565)
+		col = *(uint16 *)(_screenBuf->getBasePtr(x, y));
+	else
+		col = *(uint32 *)(_screenBuf->getBasePtr(x, y));
 }
 
 void grDispatcher::getPixel(int x, int y, uint16 &col) {
@@ -385,8 +435,15 @@ void grDispatcher::getPixel(int x, int y, uint16 &col) {
 }
 
 void grDispatcher::getPixel(int x, int y, byte &r, byte &g, byte &b) {
-	uint16 col = *(uint16 *)(_screenBuf->getBasePtr(x, y));
-	split_rgb565u(col, r, g, b);
+	if (_pixel_format == GR_RGB565) {
+		uint16 col = *(uint16 *)(_screenBuf->getBasePtr(x, y));
+		split_rgb565u(col, r, g, b);
+	} else {
+		byte *p = (byte *)(_screenBuf->getBasePtr(x, y));
+		r = p[3];
+		g = p[2];
+		b = p[1];
+	}
 }
 
 bool grDispatcher::clip_line(int &x0, int &y0, int &x1, int &y1) const {
