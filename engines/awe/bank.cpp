@@ -26,8 +26,7 @@
 
 namespace Awe {
 
-Bank::Bank(const char *dataDir)
-	: _dataDir(dataDir) {
+Bank::Bank() {
 }
 
 bool Bank::read(const MemEntry *me, uint8 *buf) {

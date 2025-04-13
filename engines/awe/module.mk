@@ -4,7 +4,6 @@ MODULE_OBJS = \
 	metaengine.o \
 	awe.o \
 	bank.o \
-	engine.o \
 	logic.o \
 	resource.o \
 	sdlstub.o \

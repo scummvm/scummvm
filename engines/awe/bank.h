@@ -37,10 +37,9 @@ struct UnpackContext {
 
 struct Bank {
 	UnpackContext _unpCtx;
-	const char *_dataDir;
 	uint8 *_iBuf, *_oBuf, *_startBuf;
 
-	Bank(const char *dataDir);
+	Bank();
 
 	bool read(const MemEntry *me, uint8 *buf);
 	void decUnk1(uint8 numChunks, uint8 addCount);

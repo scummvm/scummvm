@@ -28,8 +28,7 @@
 
 namespace Awe {
 
-Resource::Resource(Video *vid, const char *dataDir) 
-	: _vid(vid), _dataDir(dataDir) {
+Resource::Resource(Video *vid) : _vid(vid) {
 }
 
 void Resource::readBank(const MemEntry *me, uint8 *dstBuf) {
@@ -44,7 +43,7 @@ void Resource::readBank(const MemEntry *me, uint8 *dstBuf) {
 	}
 	f.read(dstBuf, me->unpackedSize);
 #else
-	Bank bk(_dataDir);
+	Bank bk;
 	if (!bk.read(me, dstBuf)) {
 		::error("Resource::readBank() unable to unpack entry %d\n", n);
 	}
