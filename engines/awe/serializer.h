@@ -72,8 +72,11 @@ struct Serializer {
 	Mode _mode;
 	uint8 *_ptrBlock;
 	uint16 _saveVer;
-	
-	Serializer(Common::Stream *stream, Mode mode, uint8 *ptrBlock, uint16 saveVer = CUR_VER);
+
+	Serializer(Common::WriteStream *stream,
+		uint8 *ptrBlock, uint16 saveVer = CUR_VER);
+	Serializer(Common::SeekableReadStream *stream,
+		uint8 *ptrBlock, uint16 saveVer = CUR_VER);
 
 	void saveOrLoadEntries(Entry *entry);
 

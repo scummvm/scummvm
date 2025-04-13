@@ -21,9 +21,11 @@
 
 #include "audio/mixer.h"
 #include "common/config-manager.h"
+#include "common/stream.h"
 #include "engines/util.h"
-#include "awe/util.h"
 #include "awe/awe.h"
+#include "awe/serializer.h"
+#include "awe/util.h"
 
 namespace Awe {
 
@@ -99,6 +101,51 @@ void AweEngine::processInput() {
 			debugC(kDebugInfo, "Current game state slot is %d", _stateSlot);
 		}
 		_stub->_pi.stateSlot = 0;
+	}
+}
+
+Common::Error AweEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	// Header
+	stream->writeUint32BE(MKTAG('A', 'W', 'S', 'V'));
+	stream->writeUint16BE(Serializer::CUR_VER);
+	stream->writeUint16BE(0);
+
+	// Contents
+	Serializer s(stream, _res._memPtrStart);
+	_log.saveOrLoad(s);
+	_res.saveOrLoad(s);
+	_vid.saveOrLoad(s);
+	if (stream->err()) {
+		warning("I/O error when saving game state");
+		return Common::kUnknownError;
+	} else {
+		debugC(kDebugInfo, "Saved state to slot %d", _stateSlot);
+		return Common::kNoError;
+	}
+}
+
+Common::Error AweEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	uint32 id = stream->readUint32BE();
+	if (id != MKTAG('A', 'W', 'S', 'V')) {
+		warning("Bad savegame format");
+		return Common::kUnknownError;
+	}
+
+	uint16 ver = stream->readUint16BE();
+	(void)stream->readUint16BE();
+
+	// Contents
+	Serializer s(stream, _res._memPtrStart, ver);
+	_log.saveOrLoad(s);
+	_res.saveOrLoad(s);
+	_vid.saveOrLoad(s);
+
+	if (stream->err()) {
+		warning("I/O error when loading game state");
+		return Common::kUnknownError;
+	} else {
+		debugC(kDebugInfo, "Loaded state from slot %d", _stateSlot);
+		return Common::kNoError;
 	}
 }
 

@@ -35,10 +35,6 @@ namespace Awe {
 
 #define BYPASS_PROTECTION
 
-enum AWEGameId {
-	GID_WORLDE
-};
-
 class AweEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
@@ -60,6 +56,9 @@ public:
 	~AweEngine() override;
 
 	Common::Error run() override;
+
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 };
 
 } // namespace Awe

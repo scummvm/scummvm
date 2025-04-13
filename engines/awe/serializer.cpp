@@ -24,8 +24,12 @@
 
 namespace Awe {
 
-Serializer::Serializer(Common::Stream *stream, Mode mode, uint8 *ptrBlock, uint16 saveVer)
-	: _stream(stream), _mode(mode), _ptrBlock(ptrBlock), _saveVer(saveVer) {
+Serializer::Serializer(Common::WriteStream *stream, uint8 *ptrBlock, uint16 saveVer)
+	: _stream(stream), _mode(SM_SAVE), _ptrBlock(ptrBlock), _saveVer(saveVer) {
+}
+
+Serializer::Serializer(Common::SeekableReadStream *stream, uint8 *ptrBlock, uint16 saveVer)
+	: _stream(stream), _mode(SM_LOAD), _ptrBlock(ptrBlock), _saveVer(saveVer) {
 }
 
 void Serializer::saveOrLoadEntries(Entry *entry) {
