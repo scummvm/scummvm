@@ -473,7 +473,7 @@ int32 HolomapV1::searchPrevArrow(int32 num) const {
 
 void HolomapV1::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 	int nbobjets = 0;
-	DrawListStruct listTri[MAX_HOLO_POS_2];
+	DrawListStruct listTri[MAX_HOLO_POS];
 	const int numCube = _engine->_scene->_numCube;
 	const int maxHoloPos = _engine->numHoloPos();
 	for (int n = 0; n < maxHoloPos; ++n) {
