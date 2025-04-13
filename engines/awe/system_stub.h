@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AWE_SYSTEMSTUB_H
-#define AWE_SYSTEMSTUB_H
+#ifndef AWE_SYSTEM_STUB_H
+#define AWE_SYSTEM_STUB_H
 
 #include "awe/intern.h"
 
@@ -61,7 +61,7 @@ struct SystemStub {
 	virtual uint32 getTimeStamp() = 0;
 };
 
-extern SystemStub *SystemStub_SDL_create();
+extern SystemStub *SystemStub_create();
 
 } // namespace Awe
 

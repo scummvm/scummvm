@@ -24,13 +24,13 @@
 #include "graphics/paletteman.h"
 #include "graphics/screen.h"
 #include "awe/awe.h"
-#include "awe/systemstub.h"
+#include "awe/system_stub.h"
 #include "awe/util.h"
 
 namespace Awe {
 
-struct SDLStub : SystemStub {
-	typedef void (SDLStub::*ScaleProc)(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h);
+struct ScummVMStub : SystemStub {
+	typedef void (ScummVMStub::*ScaleProc)(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h);
 
 	enum {
 		SCREEN_W = 320,
@@ -52,7 +52,7 @@ struct SDLStub : SystemStub {
 	Graphics::PaletteLookup _palLookup;
 	byte _pal[16];
 
-	virtual ~SDLStub() {}
+	virtual ~ScummVMStub() {}
 	virtual void init(const char *title);
 	virtual void destroy();
 	virtual void setPalette(uint8 s, uint8 n, const uint8 *buf);
@@ -70,17 +70,17 @@ struct SDLStub : SystemStub {
 	void point3x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h);
 };
 
-const SDLStub::Scaler SDLStub::_scalers[] = {
-	{ "Point1x", &SDLStub::point1x, 1 },
-	{ "Point2x", &SDLStub::point2x, 2 },
-	{ "Point3x", &SDLStub::point3x, 3 }
+const ScummVMStub::Scaler ScummVMStub::_scalers[] = {
+	{ "Point1x", &ScummVMStub::point1x, 1 },
+	{ "Point2x", &ScummVMStub::point2x, 2 },
+	{ "Point3x", &ScummVMStub::point3x, 3 }
 };
 
-SystemStub *SystemStub_SDL_create() {
-	return new SDLStub();
+SystemStub *SystemStub_create() {
+	return new ScummVMStub();
 }
 
-void SDLStub::init(const char *title) {
+void ScummVMStub::init(const char *title) {
 	memset(&_pi, 0, sizeof(_pi));
 	_offscreen = (uint8 *)malloc(SCREEN_W * SCREEN_H * 2);
 	if (!_offscreen) {
@@ -91,11 +91,11 @@ void SDLStub::init(const char *title) {
 	prepareGfxMode();
 }
 
-void SDLStub::destroy() {
+void ScummVMStub::destroy() {
 	cleanupGfxMode();
 }
 
-void SDLStub::setPalette(uint8 s, uint8 n, const uint8 *buf) {
+void ScummVMStub::setPalette(uint8 s, uint8 n, const uint8 *buf) {
 	assert(s + n <= 16);
 	for (int i = s; i < s + n; ++i) {
 		uint8 c[3];
@@ -110,7 +110,7 @@ void SDLStub::setPalette(uint8 s, uint8 n, const uint8 *buf) {
 	}	
 }
 
-void SDLStub::copyRect(uint16 x, uint16 y, uint16 w, uint16 h, const uint8 *buf, uint32 pitch) {
+void ScummVMStub::copyRect(uint16 x, uint16 y, uint16 w, uint16 h, const uint8 *buf, uint32 pitch) {
 	buf += y * pitch + x;
 	byte *p = (byte *)_offscreen;
 	while (h--) {
@@ -129,7 +129,7 @@ void SDLStub::copyRect(uint16 x, uint16 y, uint16 w, uint16 h, const uint8 *buf,
 	_screen->update();
 }
 
-void SDLStub::processEvents() {
+void ScummVMStub::processEvents() {
 	Common::Event ev;
 
 	while (!g_engine->shouldQuit() &&
@@ -223,21 +223,21 @@ void SDLStub::processEvents() {
 	}
 }
 
-void SDLStub::sleep(uint32 duration) {
+void ScummVMStub::sleep(uint32 duration) {
 	g_system->delayMillis(duration);
 }
 
-uint32 SDLStub::getTimeStamp() {
+uint32 ScummVMStub::getTimeStamp() {
 	return g_system->getMillis();	
 }
 
-void SDLStub::prepareGfxMode() {
+void ScummVMStub::prepareGfxMode() {
 //	int w = SCREEN_W * _scalers[_scaler].factor;
 //	int h = SCREEN_H * _scalers[_scaler].factor;
 	_screen = new Graphics::Screen();
 }
 
-void SDLStub::cleanupGfxMode() {
+void ScummVMStub::cleanupGfxMode() {
 	if (_offscreen) {
 		free(_offscreen);
 		_offscreen = nullptr;
@@ -249,7 +249,7 @@ void SDLStub::cleanupGfxMode() {
 	}
 }
 
-void SDLStub::switchGfxMode(bool fullscreen, uint8 scaler) {
+void ScummVMStub::switchGfxMode(bool fullscreen, uint8 scaler) {
 #ifdef DEPRECATED
 	SDL_Surface *prev_sclscreen = _sclscreen;
 	SDL_FreeSurface(_screen); 	
@@ -261,7 +261,7 @@ void SDLStub::switchGfxMode(bool fullscreen, uint8 scaler) {
 #endif
 }
 
-void SDLStub::point1x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h) {
+void ScummVMStub::point1x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h) {
 	dstPitch >>= 1;
 	while (h--) {
 		memcpy(dst, src, w * 2);
@@ -270,7 +270,7 @@ void SDLStub::point1x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 sr
 	}
 }
 
-void SDLStub::point2x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h) {
+void ScummVMStub::point2x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h) {
 	dstPitch >>= 1;
 	while (h--) {
 		uint16 *p = dst;
@@ -286,7 +286,7 @@ void SDLStub::point2x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 sr
 	}
 }
 
-void SDLStub::point3x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h) {
+void ScummVMStub::point3x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h) {
 	dstPitch >>= 1;
 	while (h--) {
 		uint16 *p = dst;

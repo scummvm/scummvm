@@ -29,7 +29,7 @@ namespace Awe {
 
 AweEngine::AweEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst), _gameDescription(gameDesc),
-	_stub(SystemStub_SDL_create()),
+	_stub(SystemStub_create()),
 	_res(&_vid),
 	_vid(&_res, _stub),
 	_log(&_res, &_vid, _stub) {
