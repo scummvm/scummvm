@@ -47,7 +47,7 @@ bool Bank::read(const MemEntry *me, uint8 *buf) {
 			ret = unpack();
 		}
 	} else {
-		::error("Bank::read() unable to open '%s'", bankName);
+		error("Bank::read() unable to open '%s'", bankName);
 	}
 
 	return ret;
