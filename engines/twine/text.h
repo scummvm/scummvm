@@ -143,19 +143,19 @@ private:
 	/** Dialogue text buffer size for cross coloring dialogues */
 	int32 _nbDegrade = 0;
 
-	// Dial_X1, Dial_Y1
-	Common::Rect _dialTextBox { 0, 0, 0, 0};
-
 	int32 _maxLineDial = 0;
 	int32 _dialMaxSize = 0;
 
 	bool _isShiftJIS = false;
 	bool _isVisualRTL = false;
 
-	bool displayText(TextId index, bool showText, bool playVox, bool loop); // MyDial
 public:
 	Text(TwinEEngine *engine);
 	~Text();
+
+	// Dial_X1, Dial_Y1
+	Common::Rect _dialTextBox { 0, 0, 0, 0};
+	bool displayText(TextId index, bool showText, bool playVox, bool loop); // MyDial
 
 	static const int32 lineHeight = INTER_LINE;
 

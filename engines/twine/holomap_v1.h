@@ -24,6 +24,7 @@
 
 #include "twine/holomap.h"
 #include "twine/shared.h"
+#include "twine/text.h"
 
 #define NUM_HOLOMAPCOLORS 32
 #define HOLOMAP_PALETTE_INDEX (12*16)
@@ -111,6 +112,7 @@ public:
 	bool _flagredraw = false;
 	bool _dialstat = false;
 	bool _flagpal = false;
+	ProgressiveTextState _textState = ProgressiveTextState::End;
 
 	/**
 	 * Set Holomap location position

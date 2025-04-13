@@ -690,8 +690,22 @@ void HolomapV1::holoMap() {
 		}
 
 		if (_dialstat) {
-			_engine->_text->drawHolomapLocation(_listHoloPos[_current].mess);
+			_engine->_text->normalWinDial();
+			_engine->_text->setFontCrossColor(COLOR_WHITE);
+			_engine->_interface->box(_engine->_text->_dialTextBox, COLOR_BLACK);
+			_engine->saveFrontBuffer();
+			_engine->_text->commonOpenDial(_listHoloPos[_current].mess);
+			_engine->_text->initDialWindow();
+			_textState = ProgressiveTextState::ContinueRunning;
 			_dialstat = false;
+		}
+
+		if (_textState == ProgressiveTextState::ContinueRunning) {
+			_textState = _engine->_text->nextDialChar();
+			if (_textState != ProgressiveTextState::ContinueRunning) {
+				_engine->_text->fadeInRemainingChars();
+				_engine->_text->closeDial();
+			}
 		}
 
 		++_engine->timerRef;
