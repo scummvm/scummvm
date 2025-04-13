@@ -27,17 +27,17 @@
 namespace Awe {
 
 struct MemEntry {
-	uint8 valid;         // 0x0
-	uint8 type;          // 0x1, Resource::ResType
-	uint8 *bufPtr;       // 0x2
-	uint16 unk4;         // 0x4, unused ?
-	uint8 rankNum;       // 0x6
-	uint8 bankNum;       // 0x7
-	uint32 bankPos;      // 0x8 0xA
-	uint16 unkC;         // 0xC, unused ?
-	uint16 packedSize;   // 0xE
-	uint16 unk10;        // 0x10, unused ?
-	uint16 unpackedSize; // 0x12
+	uint8 valid = 0;			// 0x0
+	uint8 type = 0;				// 0x1, Resource::ResType
+	uint8 *bufPtr = nullptr;	// 0x2
+	uint16 unk4 = 0;			// 0x4, unused ?
+	uint8 rankNum = 0;			// 0x6
+	uint8 bankNum = 0;			// 0x7
+	uint32 bankPos = 0;			// 0x8 0xA
+	uint16 unkC = 0;			// 0xC, unused ?
+	uint16 packedSize = 0;		// 0xE
+	uint16 unk10 = 0;			// 0x10, unused ?
+	uint16 unpackedSize = 0;	// 0x12
 };
 
 struct Serializer;
@@ -60,17 +60,21 @@ struct Resource {
 	static const uint16 _memListAudio[];
 	static const uint16 _memListParts[][4];
 	
-	Video *_vid;
-	const char *_dataDir;
+	Video *_vid = nullptr;
+	const char *_dataDir = nullptr;
 	MemEntry _memList[150];
-	uint16 _numMemList;
-	uint16 _curPtrsId, _newPtrsId;
-	uint8 *_memPtrStart, *_scriptBakPtr, *_scriptCurPtr, *_vidBakPtr, *_vidCurPtr;
-	bool _useSegVideo2;
-	uint8 *_segVideoPal;
-	uint8 *_segCode;
-	uint8 *_segVideo1;
-	uint8 *_segVideo2;
+	uint16 _numMemList = 0;
+	uint16 _curPtrsId = 0, _newPtrsId = 0;
+	uint8 *_memPtrStart = nullptr,
+		*_scriptBakPtr = nullptr,
+		*_scriptCurPtr = nullptr,
+		*_vidBakPtr = nullptr,
+		*_vidCurPtr = nullptr;
+	bool _useSegVideo2 = false;
+	uint8 *_segVideoPal = nullptr;
+	uint8 *_segCode = nullptr;
+	uint8 *_segVideo1 = nullptr;
+	uint8 *_segVideo2 = nullptr;
 
 	Resource(Video *vid, const char *dataDir);
 	
