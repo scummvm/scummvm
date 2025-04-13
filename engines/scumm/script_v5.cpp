@@ -2922,6 +2922,30 @@ void ScummEngine_v5::o5_startScript() {
 	// Save on IQ increment (= script 125 was executed).
 	if (_game.id == GID_INDY3 && script == 125)
 		((ScummEngine_v4 *)this)->updateIQPoints();
+
+	// WORKAROUND: In the CD version of Monkey Island 1, and the EGA
+	// version before it, there is animated smoke in parts of the lava maze
+	// beneath the monkey head. The VGA floppy version still calls the
+	// script to add the smoke, but the script is empty. We repliacte what
+	// the script did manually.
+
+	if (_game.id == GID_MONKEY_VGA && _roomResource == 39 && script == 211 && enhancementEnabled(kEnhRestoredContent)) {
+		Actor *a = derefActorSafe(12, "o5_startScript");
+
+		if (a) {
+			a->initActor(0);
+			a->setActorCostume(76);
+			a->setPalette(3, 8);
+			a->setPalette(2, 12);
+			a->setPalette(9, 4);
+			a->_ignoreBoxes = 1;
+			a->_forceClip = 1;
+			a->animateActor(250);
+			a->_room = _roomResource;
+			a->putActor(data[0], data[1]);
+			a->animateActor(6);
+		}
+	}
 }
 
 void ScummEngine_v5::o5_stopObjectCode() {
