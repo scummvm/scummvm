@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-08 19:53+0000\n"
+"POT-Creation-Date: 2025-04-13 06:56+0000\n"
 "PO-Revision-Date: 2025-04-09 20:18+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -6422,7 +6422,7 @@ msgstr "Tecla Escapa"
 msgid "Open inventory"
 msgstr "Obre l'inventari"
 
-#: engines/bbvs/metaengine.cpp:124 engines/dgds/metaengine.cpp:81
+#: engines/bbvs/metaengine.cpp:124 engines/dgds/metaengine.cpp:83
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:231
 #: engines/tinsel/metaengine.cpp:300 engines/tsage/metaengine.cpp:206
 msgid "Look"
@@ -6664,7 +6664,7 @@ msgstr "Commuta la privadesa de la pista"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
-#: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:73
+#: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:75
 #: engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:133
@@ -6677,7 +6677,7 @@ msgstr "Desa la partida"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
-#: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:72
+#: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:74
 #: engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:138
@@ -7190,39 +7190,39 @@ msgstr "Canvia l'ordre"
 msgid "Time Advance"
 msgstr "Avanç del temps"
 
-#: engines/dgds/metaengine.cpp:74
+#: engines/dgds/metaengine.cpp:76
 msgid "Toggle Menu"
 msgstr "Commuta el menú"
 
-#: engines/dgds/metaengine.cpp:75
+#: engines/dgds/metaengine.cpp:77
 msgid "Toggle Clock"
 msgstr "Commuta el rellotge"
 
-#: engines/dgds/metaengine.cpp:76
+#: engines/dgds/metaengine.cpp:78
 msgid "Next dialog / menu item"
 msgstr "Següent diàleg / element de menú"
 
-#: engines/dgds/metaengine.cpp:77
+#: engines/dgds/metaengine.cpp:79
 msgid "Previous dialog / menu item"
 msgstr "Diàleg / element de menú anterior"
 
-#: engines/dgds/metaengine.cpp:78
+#: engines/dgds/metaengine.cpp:80
 msgid "Next object"
 msgstr "Objecte següent"
 
-#: engines/dgds/metaengine.cpp:79
+#: engines/dgds/metaengine.cpp:81
 msgid "Previous object"
 msgstr "Objecte anterior"
 
-#: engines/dgds/metaengine.cpp:80
+#: engines/dgds/metaengine.cpp:82
 msgid "Pick up / Operate"
 msgstr "Recull / Opera"
 
-#: engines/dgds/metaengine.cpp:82
+#: engines/dgds/metaengine.cpp:84
 msgid "Activate Inventory Object"
 msgstr "Activa l'objecte de l'inventari"
 
-#: engines/dgds/metaengine.cpp:85 engines/got/metaengine.cpp:90
+#: engines/dgds/metaengine.cpp:87 engines/got/metaengine.cpp:90
 msgid "Game Keys"
 msgstr "Tecles de joc"
 
@@ -7832,8 +7832,8 @@ msgstr ""
 "CD 1: \"FullMonkeyMap.imt\" -\" \"FullMonkeyMap1.imt\"\n"
 "CD 2: \"FullMonkeyMap.imt\" -\" \"FullMonkeyMap2.imt\"\n"
 "\n"
-"Alternativament, les versions d'Steam o de GOG tenen l'arxiu "
-"FullMonkeyMap.imt combinat"
+"Alternativament, les versions d'Steam o de GOG tenen l'arxiu FullMonkeyMap."
+"imt combinat"
 
 #: engines/groovie/metaengine.cpp:41
 msgid "Fast movie speed"
@@ -8513,8 +8513,8 @@ msgstr ""
 "de tipus de lletra de la versió anglesa o de qualsevol joc EOB I que sembla "
 "ser el que estàs fent.\n"
 "\n"
-"El joc continuarà, però no es mostraran els caràcters específics de l'idioma."
-"\n"
+"El joc continuarà, però no es mostraran els caràcters específics de "
+"l'idioma.\n"
 "Si us plau, copieu els fitxers de tipus de lletra correctes al vostre "
 "directori de dades del joc EOB II.\n"
 "\n"

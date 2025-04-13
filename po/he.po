@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-08 19:53+0000\n"
+"POT-Creation-Date: 2025-04-13 06:56+0000\n"
 "PO-Revision-Date: 2025-04-09 20:18+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -6500,7 +6500,7 @@ msgstr "בריחה"
 msgid "Open inventory"
 msgstr "מלאי פתוח / סגור"
 
-#: engines/bbvs/metaengine.cpp:124 engines/dgds/metaengine.cpp:81
+#: engines/bbvs/metaengine.cpp:124 engines/dgds/metaengine.cpp:83
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:231
 #: engines/tinsel/metaengine.cpp:300 engines/tsage/metaengine.cpp:206
 msgid "Look"
@@ -6733,7 +6733,7 @@ msgstr "מיתוג פרטיות רמזים"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
-#: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:73
+#: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:75
 #: engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:133
@@ -6746,7 +6746,7 @@ msgstr "שמירת משחק"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
-#: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:72
+#: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:74
 #: engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:138
@@ -7318,53 +7318,53 @@ msgstr "החלפת פקודה"
 msgid "Time Advance"
 msgstr "קוצב זמן פעיל"
 
-#: engines/dgds/metaengine.cpp:74
+#: engines/dgds/metaengine.cpp:76
 #, fuzzy
 #| msgid "Toggle mute"
 msgid "Toggle Menu"
 msgstr "מיתוג השתקה"
 
-#: engines/dgds/metaengine.cpp:75
+#: engines/dgds/metaengine.cpp:77
 #, fuzzy
 #| msgid "Toggle Combat"
 msgid "Toggle Clock"
 msgstr "מיתוג קרבות"
 
-#: engines/dgds/metaengine.cpp:76
+#: engines/dgds/metaengine.cpp:78
 msgid "Next dialog / menu item"
 msgstr ""
 
-#: engines/dgds/metaengine.cpp:77
+#: engines/dgds/metaengine.cpp:79
 #, fuzzy
 #| msgid "Previous page"
 msgid "Previous dialog / menu item"
 msgstr "הדף הקודם"
 
-#: engines/dgds/metaengine.cpp:78
+#: engines/dgds/metaengine.cpp:80
 #, fuzzy
 #| msgid "Go to setup menu"
 msgid "Next object"
 msgstr "מעבר לתפריט התקנה"
 
-#: engines/dgds/metaengine.cpp:79
+#: engines/dgds/metaengine.cpp:81
 #, fuzzy
 #| msgid "Go to previous directory level"
 msgid "Previous object"
 msgstr "חזרה אל רמת התיקיה הקודמת"
 
-#: engines/dgds/metaengine.cpp:80
+#: engines/dgds/metaengine.cpp:82
 #, fuzzy
 #| msgid "Previous action"
 msgid "Pick up / Operate"
 msgstr "פעולה קודמת"
 
-#: engines/dgds/metaengine.cpp:82
+#: engines/dgds/metaengine.cpp:84
 #, fuzzy
 #| msgid "Animated inventory items"
 msgid "Activate Inventory Object"
 msgstr "פריטי מלאי מונפשים"
 
-#: engines/dgds/metaengine.cpp:85 engines/got/metaengine.cpp:90
+#: engines/dgds/metaengine.cpp:87 engines/got/metaengine.cpp:90
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game Keys"
