@@ -30,9 +30,22 @@ const SnatcherGameDescription adGameDescs[] = {
 	{
 		{
 			"snatcher",
-			0,
+			"US",
 			AD_ENTRY2s(	"DATA_B0.BIN",	"63170d11da5ebc3a66ecf0fc2d23e78a", 24176,
-						"DATA_J0.BIN",	"4cd2c1d16b116c1cf1f38f8114c9c2ff", 43004),
+						"SP05.BIN",		"e0486f6c73778cddd11f9618776125f4", 35756),
+			Common::EN_ANY,
+			Common::kPlatformSegaCD,
+			ADGF_TESTING,
+			GUIO2(GUIO_NOSPEECHVOLUME, GUIO_MIDISEGACD)
+		},
+		SNATCHER_FLAGS(MDT_SEGACD, true)
+	},
+	{
+		{
+			"snatcher",
+			"EU",
+			AD_ENTRY2s(	"DATA_B0.BIN",	"63170d11da5ebc3a66ecf0fc2d23e78a", 24176,
+						"SP05.BIN",		"a4ee2ea44629f64bd5d04e0d3160d7a5", 35756),
 			Common::EN_ANY,
 			Common::kPlatformSegaCD,
 			ADGF_TESTING,
