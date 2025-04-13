@@ -677,14 +677,14 @@ bool qdCamera::draw_grid() const {
 			if (_grid[cnt].height() || _grid[cnt].attributes()) {
 				color = 0;
 				if (_grid[cnt].attributes() & sGridCell::CELL_IMPASSABLE)
-					color = grDispatcher::make_rgb565u(0xff, 0x00, 0x00);
+					color = grDispatcher::instance()->make_rgb(0xff, 0x00, 0x00);
 				else if (_grid[cnt].attributes() & sGridCell::CELL_PERSONAGE_OCCUPIED)
-					color = grDispatcher::make_rgb565u(0xff, 0xff, 0x00);
+					color = grDispatcher::instance()->make_rgb(0xff, 0xff, 0x00);
 				else if (_grid[cnt].height())
-					color = grDispatcher::make_rgb565u(0xff, 0xff, 0xff);
+					color = grDispatcher::instance()->make_rgb(0xff, 0xff, 0xff);
 
 				if (_grid[cnt].attributes() & sGridCell::CELL_OCCUPIED)
-					color = grDispatcher::make_rgb565u(0x00, 0x00, 0xff);
+					color = grDispatcher::instance()->make_rgb(0x00, 0x00, 0xff);
 				if (_grid[cnt].attributes() & sGridCell::CELL_PERSONAGE_PATH)
 					warning("path");
 
