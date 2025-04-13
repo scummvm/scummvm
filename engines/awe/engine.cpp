@@ -38,7 +38,7 @@ void Engine::run() {
 	setup();
 	// XXX
 	_log.restartAt(0x3E80); // demo starts at 0x3E81
-	while (!_stub->_pi.quit) {
+	while (!_stub->_pi.quit && !g_engine->shouldQuit()) {
 		_log.setupScripts();
 		_log.inp_updatePlayer();
 		processInput();
