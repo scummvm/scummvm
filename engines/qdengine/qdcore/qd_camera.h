@@ -56,7 +56,7 @@ public:
 	~sGridCell() { }
 
 	bool is_walkable() const {
-		return check_attribute(CELL_IMPASSABLE);
+		return !check_attribute(CELL_IMPASSABLE);
 	}
 	void make_impassable() {
 		set_attribute(CELL_IMPASSABLE);
