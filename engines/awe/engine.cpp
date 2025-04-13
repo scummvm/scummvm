@@ -22,7 +22,6 @@
 #include "common/str.h"
 #include "awe/awe.h"
 #include "awe/engine.h"
-#include "awe/file.h"
 #include "awe/serializer.h"
 #include "awe/systemstub.h"
 
