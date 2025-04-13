@@ -26,65 +26,35 @@ namespace MediaStation {
 
 #pragma region ContextDeclaration
 ContextDeclaration::ContextDeclaration(Chunk &chunk) {
-	// Make sure this declaration isn't empty.
+	// Read the file number.
 	ContextDeclarationSectionType sectionType = getSectionType(chunk);
-	if (kContextDeclarationEmptySection == sectionType) {
-		_isLast = true;
-		return;
-	} else {
-		// There may be more declarations in the stream.
-		_isLast = false;
+	if (kContextDeclarationContextId != sectionType) {
+		error("Got unexpected section type %d", static_cast<uint>(sectionType));
 	}
+	_contextId = chunk.readTypedUint16();
 
-	if (kContextDeclarationPlaceholder == sectionType) {
-		// Read the file number.
-		sectionType = getSectionType(chunk);
-		if (kContextDeclarationFileNumber1 == sectionType) {
-			_fileNumber = chunk.readTypedUint16();
-		} else {
-			error("ContextDeclaration(): Expected section type FILE_NUMBER_1, got 0x%x", static_cast<uint>(sectionType));
-		}
-		// I don't know why the file number is always repeated.
-		// Is it just for data integrity, or is there some other reason?
-		sectionType = getSectionType(chunk);
-		if (kContextDeclarationFileNumber2 == sectionType) {
-			uint32 repeatedFileNumber = chunk.readTypedUint16();
-			if (repeatedFileNumber != _fileNumber) {
-				warning("ContextDeclaration(): Expected file numbers to match, but 0x%d != 0x%d", _fileNumber, repeatedFileNumber);
-			}
-		} else {
-			error("ContextDeclaration(): Expected section type FILE_NUMBER_2, got 0x%x", static_cast<uint>(sectionType));
-		}
-
-		// Read the context name.
-		// Only some titles have context names, and unfortunately we can't
-		// determine which just by relying on the title compiler version
-		// number.
-		// TODO: Find a better way to read the context name without relying
-		// on reading and rewinding.
-		int rewindOffset = chunk.pos();
-		sectionType = getSectionType(chunk);
-		if (kContextDeclarationName == sectionType) {
-			_contextName = chunk.readTypedString();
-		} else {
-			// There is no context name.
-			// We have instead read into the next declaration, so let's undo that.
-			chunk.seek(rewindOffset);
-		}
-	} else if (kContextDeclarationEmptySection == sectionType) {
-		_isLast = true;
-	} else {
-		error("ContextDeclaration::ContextDeclaration(): Unknown section type 0x%x", static_cast<uint>(sectionType));
-	}
-
-	// Read the file references.
-	// We don't know how many file references there are beforehand, so we'll
-	// just read until we get something else.
-	int rewindOffset = 0;
 	sectionType = getSectionType(chunk);
-	while (kContextDeclarationFileReference == sectionType) {
+	if (kContextDeclarationStreamId != sectionType) {
+		error("Got unexpected section type %d", static_cast<uint>(sectionType));
+	}
+	_streamId = chunk.readTypedUint16();
+
+	// Read the context name. Only some titles have context names,
+	// and unfortunately we can't determine which just by relying
+	// on the title compiler version number.
+	sectionType = getSectionType(chunk);
+	if (kContextDeclarationName == sectionType) {
+		_name = chunk.readTypedString();
+		sectionType = getSectionType(chunk);
+	}
+
+	// Read the parent context IDs. We don't know how many file
+	// references there are beforehand, so we'll just read until
+	// we get something else.
+	uint rewindOffset = chunk.pos();
+	while (kContextDeclarationParentContextId == sectionType) {
 		int fileReference = chunk.readTypedUint16();
-		_fileReferences.push_back(fileReference);
+		_parentContextIds.push_back(fileReference);
 		rewindOffset = chunk.pos();
 		sectionType = getSectionType(chunk);
 	}
@@ -96,67 +66,42 @@ ContextDeclarationSectionType ContextDeclaration::getSectionType(Chunk &chunk) {
 }
 #pragma endregion
 
-#pragma region UnknownDeclaration
-UnknownDeclaration::UnknownDeclaration(Chunk &chunk) {
+#pragma region ScreenDeclaration
+ScreenDeclaration::ScreenDeclaration(Chunk &chunk) {
 	// Make sure this declaration isn't empty.
-	UnknownDeclarationSectionType sectionType = getSectionType(chunk);
-	if (kUnknownDeclarationEmptySection == sectionType) {
-		_isLast = true;
-		return;
-	} else {
-		// There may be more declarations in the stream.
-		_isLast = false;
+	ScreenDeclarationSectionType sectionType = getSectionType(chunk);
+	if (kScreenDeclarationAssetId != sectionType) {
+		error("Got unexpected section type %d", static_cast<uint>(sectionType));
 	}
+	_assetId = chunk.readTypedUint16();
 
 	sectionType = getSectionType(chunk);
-	if (kUnknownDeclarationUnk1 == sectionType) {
-		_unk = chunk.readTypedUint16();
-	} else {
-		error("UnknownDeclaration(): Expected section type UNK_1, got 0x%x", static_cast<uint>(sectionType));
+	if (kScreenDeclarationScreenId != sectionType) {
+		error("Got unexpected section type %d", static_cast<uint>(sectionType));
 	}
-	sectionType = getSectionType(chunk);
-	if (kUnknownDeclarationUnk2 == sectionType) {
-		uint16 repeatedUnk = chunk.readTypedUint16();
-		if (repeatedUnk != _unk) {
-			warning("UnknownDeclaration(): Expected unknown values to match, but 0x%x != 0x%x", _unk, repeatedUnk);
-		}
-	} else {
-		error("UnknownDeclaration(): Expected section type UNK_2, got 0x%x", static_cast<uint>(sectionType));
-	}
+	_screenId = chunk.readTypedUint16();
 }
 
-UnknownDeclarationSectionType UnknownDeclaration::getSectionType(Chunk &chunk) {
-	return static_cast<UnknownDeclarationSectionType>(chunk.readTypedUint16());
+ScreenDeclarationSectionType ScreenDeclaration::getSectionType(Chunk &chunk) {
+	return static_cast<ScreenDeclarationSectionType>(chunk.readTypedUint16());
 }
 #pragma endregion
 
 #pragma region FileDeclaration
 FileDeclaration::FileDeclaration(Chunk &chunk) {
-	// Make sure this declaration isn't empty.
-	FileDeclarationSectionType sectionType = getSectionType(chunk);
-	if (kFileDeclarationEmptySection == sectionType) {
-		_isLast = true;
-		return;
-	} else {
-		// There may be more declarations in the stream.
-		_isLast = false;
-	}
-
 	// Read the file ID.
-	sectionType = getSectionType(chunk);
-	if (kFileDeclarationFileId == sectionType) {
-		_id = chunk.readTypedUint16();
-	} else {
-		error("FileDeclaration(): Expected section type FILE_ID, got 0x%x", static_cast<uint>(sectionType));
+	FileDeclarationSectionType sectionType = getSectionType(chunk);
+	if (kFileDeclarationFileId != sectionType) {
+		error("Got unexpected section type %d", static_cast<uint>(sectionType));
 	}
+	_id = chunk.readTypedUint16();
 
 	// Read the intended file location.
 	sectionType = getSectionType(chunk);
-	if (kFileDeclarationFileNameAndType == sectionType) {
-		_intendedLocation = static_cast<IntendedFileLocation>(chunk.readTypedUint16());
-	} else {
-		error("FileDeclaration(): Expected section type FILE_NAME_AND_TYPE, got 0x%x", static_cast<uint>(sectionType));
+	if (kFileDeclarationFileNameAndType != sectionType) {
+		error("Got unexpected section type %d", static_cast<uint>(sectionType));
 	}
+	_intendedLocation = static_cast<IntendedFileLocation>(chunk.readTypedUint16());
 
 	// Since the platforms that Media Station originally targeted were case-insensitive,
 	// the case of these filenames might not match the case of the files actually in
@@ -171,39 +116,26 @@ FileDeclarationSectionType FileDeclaration::getSectionType(Chunk &chunk) {
 
 #pragma region SubfileDeclaration
 SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
-	// Make sure this declaration isn't empty.
-	SubfileDeclarationSectionType sectionType = getSectionType(chunk);
-	if (kSubfileDeclarationEmptySection == sectionType) {
-		_isLast = true;
-		return;
-	} else {
-		// There may be more declarations in the stream.
-		_isLast = false;
-	}
-
 	// Read the asset ID.
-	sectionType = getSectionType(chunk);
-	if (kSubfileDeclarationAssetId == sectionType) {
-		_assetId = chunk.readTypedUint16();
-	} else {
-		error("SubfileDeclaration(): Expected section type ASSET_ID, got 0x%x", static_cast<uint>(sectionType));
+	SubfileDeclarationSectionType sectionType = getSectionType(chunk);
+	if (kSubfileDeclarationAssetId != sectionType) {
+		error("Got unexpected section type %d", static_cast<uint>(sectionType));
 	}
+	_assetId = chunk.readTypedUint16();
 
 	// Read the file ID.
 	sectionType = getSectionType(chunk);
-	if (kSubfileDeclarationFileId == sectionType) {
-		_fileId = chunk.readTypedUint16();
-	} else {
+	if (kSubfileDeclarationFileId != sectionType) {
 		error("SubfileDeclaration(): Expected section type FILE_ID, got 0x%x", static_cast<uint>(sectionType));
 	}
+	_fileId = chunk.readTypedUint16();
 
 	// Read the start offset from the absolute start of the file.
 	sectionType = getSectionType(chunk);
-	if (kSubfileDeclarationStartOffset == sectionType) {
-		_startOffsetInFile = chunk.readTypedUint32();
-	} else {
+	if (kSubfileDeclarationStartOffset != sectionType) {
 		error("SubfileDeclaration(): Expected section type START_OFFSET, got 0x%x", static_cast<uint>(sectionType));
 	}
+	_startOffsetInFile = chunk.readTypedUint32();
 }
 
 SubfileDeclarationSectionType SubfileDeclaration::getSectionType(Chunk &chunk) {
@@ -265,7 +197,7 @@ Boot::Boot(const Common::Path &path) : Datafile(path){
 			sectionType = getSectionType(chunk);
 			if (sectionType == kBootEngineResourceId) {
 				int resourceId = chunk.readTypedUint16();
-				EngineResourceDeclaration *resourceDeclaration = new EngineResourceDeclaration(resourceName, resourceId);
+				EngineResourceDeclaration resourceDeclaration = EngineResourceDeclaration(resourceName, resourceId);
 				_engineResourceDeclarations.setVal(resourceId, resourceDeclaration);
 			} else {
 				error("Boot::Boot(): Got section type 0x%x when expecting ENGINE_RESOURCE_ID", static_cast<uint>(sectionType));
@@ -274,56 +206,48 @@ Boot::Boot(const Common::Path &path) : Datafile(path){
 		}
 
 		case kBootContextDeclaration: {
-			ContextDeclaration *contextDeclaration = new ContextDeclaration(chunk);
-			while (!contextDeclaration->_isLast) {
-				_contextDeclarations.setVal(contextDeclaration->_fileNumber, contextDeclaration);
-				contextDeclaration = new ContextDeclaration(chunk);
+			uint flag = chunk.readTypedUint16();
+			while (flag != 0) {
+				ContextDeclaration contextDeclaration = ContextDeclaration(chunk);
+				_contextDeclarations.setVal(contextDeclaration._contextId, contextDeclaration);
+				flag = chunk.readTypedUint16();
 			}
-			// The very last declaration is just an empty flag, so delete it
-			// since it's not put in the map.
-			delete contextDeclaration;
 			break;
 		}
 
-		case kBootUnknownDeclaration: {
-			UnknownDeclaration *unknownDeclaration = new UnknownDeclaration(chunk);
-			while (!unknownDeclaration->_isLast) {
-				_unknownDeclarations.push_back(unknownDeclaration);
-				unknownDeclaration = new UnknownDeclaration(chunk);
+		case kBootScreenDeclaration: {
+			uint flag = chunk.readTypedUint16();
+			while (flag != 0) {
+				ScreenDeclaration screenDeclaration = ScreenDeclaration(chunk);
+				_screenDeclarations.setVal(screenDeclaration._assetId, screenDeclaration);
+				flag = chunk.readTypedUint16();
 			}
-			// The very last declaration is just an empty flag, so delete it
-			// since it's not put in the map.
-			delete unknownDeclaration;
 			break;
 		}
 
 		case kBootFileDeclaration: {
-			FileDeclaration *fileDeclaration = new FileDeclaration(chunk);
-			while (!fileDeclaration->_isLast) {
-				_fileDeclarations.setVal(fileDeclaration->_id, fileDeclaration);
-				fileDeclaration = new FileDeclaration(chunk);
-			}
-			// The very last declaration is just an empty flag, so delete it
-			// since it's not put in the map.
-			delete fileDeclaration;
+			uint flag = chunk.readTypedUint16();
+			while (flag != 0) {
+				FileDeclaration fileDeclaration = FileDeclaration(chunk);
+				_fileDeclarations.setVal(fileDeclaration._id, fileDeclaration);
+				flag = chunk.readTypedUint16();
+			};
 			break;
 		}
 
 		case kBootSubfileDeclaration: {
-			SubfileDeclaration *subfileDeclaration = new SubfileDeclaration(chunk);
-			while (!subfileDeclaration->_isLast) {
-				_subfileDeclarations.setVal(subfileDeclaration->_assetId, subfileDeclaration);
-				subfileDeclaration = new SubfileDeclaration(chunk);
+			uint flag = chunk.readTypedUint16();
+			while (flag != 0) {
+				SubfileDeclaration subfileDeclaration = SubfileDeclaration(chunk);
+				_subfileDeclarations.setVal(subfileDeclaration._assetId, subfileDeclaration);
+				flag = chunk.readTypedUint16();
 			}
-			// The very last declaration is just an empty flag, so delete it
-			// since it's not put in the map.
-			delete subfileDeclaration;
 			break;
 		}
 
 		case kBootCursorDeclaration: {
-			CursorDeclaration *cursorDeclaration = new CursorDeclaration(chunk);
-			_cursorDeclarations.setVal(cursorDeclaration->_id, cursorDeclaration);
+			CursorDeclaration cursorDeclaration = CursorDeclaration(chunk);
+			_cursorDeclarations.setVal(cursorDeclaration._id, cursorDeclaration);
 			break;
 		}
 
@@ -373,34 +297,11 @@ BootSectionType Boot::getSectionType(Chunk &chunk) {
 }
 
 Boot::~Boot() {
-	for (auto it = _contextDeclarations.begin(); it != _contextDeclarations.end(); ++it) {
-		delete it->_value;
-	}
 	_contextDeclarations.clear();
-
-	for (auto it = _subfileDeclarations.begin(); it != _subfileDeclarations.end(); ++it) {
-		delete it->_value;
-	}
 	_subfileDeclarations.clear();
-
-	for (auto it = _cursorDeclarations.begin(); it != _cursorDeclarations.end(); ++it) {
-		delete it->_value;
-	}
 	_cursorDeclarations.clear();
-
-	for (auto it = _engineResourceDeclarations.begin(); it != _engineResourceDeclarations.end(); ++it) {
-		delete it->_value;
-	}
 	_engineResourceDeclarations.clear();
-
-	for (auto unknownDeclaration : _unknownDeclarations) {
-		delete unknownDeclaration;
-	}
-	_unknownDeclarations.clear();
-
-	for (auto it = _fileDeclarations.begin(); it != _fileDeclarations.end(); ++it) {
-		delete it->_value;
-	}
+	_screenDeclarations.clear();
 	_fileDeclarations.clear();
 }
 #pragma endregion

@@ -260,11 +260,8 @@ void MediaStationEngine::setCursor(uint id) {
 	// that's a lookup into BOOT.STM, which gives actual name the name of the
 	// resource in the executable.
 	if (id != 0) {
-		CursorDeclaration *cursorDeclaration = _boot->_cursorDeclarations.getValOrDefault(id);
-		if (cursorDeclaration == nullptr) {
-			error("MediaStationEngine::setCursor(): Cursor %d not declared", id);
-		}
-		_cursor->setCursor(cursorDeclaration->_name);
+		const CursorDeclaration &cursorDeclaration = _boot->_cursorDeclarations.getVal(id);
+		_cursor->setCursor(cursorDeclaration._name);
 	}
 }
 
@@ -328,31 +325,23 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 	}
 
 	// Get the file ID.
-	SubfileDeclaration *subfileDeclaration = _boot->_subfileDeclarations.getValOrDefault(contextId);
-	if (subfileDeclaration == nullptr) {
-		error("MediaStationEngine::loadContext(): Couldn't find subfile declaration with ID %d", contextId);
-		return nullptr;
-	}
+	const SubfileDeclaration &subfileDeclaration = _boot->_subfileDeclarations.getVal(contextId);
 	// There are other assets in a subfile too, so we need to make sure we're
 	// referencing the screen asset, at the start of the file.
-	if (subfileDeclaration->_startOffsetInFile != 16) {
+	if (subfileDeclaration._startOffsetInFile != 16) {
 		warning("MediaStationEngine::loadContext(): Requested ID wasn't for a context.");
 		return nullptr;
 	}
-	uint32 fileId = subfileDeclaration->_fileId;
+	uint fileId = subfileDeclaration._fileId;
 
 	// Get the filename.
-	FileDeclaration *fileDeclaration = _boot->_fileDeclarations.getValOrDefault(fileId);
-	if (fileDeclaration == nullptr) {
-		warning("MediaStationEngine::loadContext(): Couldn't find file declaration with ID 0x%x", fileId);
-		return nullptr;
-	}
-	Common::Path entryCxtFilepath(fileDeclaration->_name);
+	const FileDeclaration &fileDeclaration = _boot->_fileDeclarations.getVal(fileId);
+	Common::Path entryCxtFilepath(fileDeclaration._name);
 
 	// Load any child contexts before we actually load this one. The child
 	// contexts must be unloaded explicitly later.
-	ContextDeclaration *contextDeclaration = _boot->_contextDeclarations.getValOrDefault(contextId);
-	for (uint32 childContextId : contextDeclaration->_fileReferences) {
+	ContextDeclaration contextDeclaration = _boot->_contextDeclarations.getVal(contextId);
+	for (uint childContextId : contextDeclaration._parentContextIds) {
 		// The root context is referred to by an ID of 0, regardless of what its
 		// actual ID is. The root context is already always loaded.
 		if (childContextId != 0) {
@@ -469,8 +458,8 @@ void MediaStationEngine::releaseContext(uint32 contextId) {
 	// Make sure nothing is still using this context.
 	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
 		uint id = it->_key;
-		ContextDeclaration *contextDeclaration = _boot->_contextDeclarations.getValOrDefault(id);
-		for (uint32 childContextId : contextDeclaration->_fileReferences) {
+		ContextDeclaration contextDeclaration = _boot->_contextDeclarations.getVal(id);
+		for (uint32 childContextId : contextDeclaration._parentContextIds) {
 			if (childContextId == contextId) {
 				return;
 			}

@@ -34,42 +34,42 @@ namespace MediaStation {
 enum ContextDeclarationSectionType {
 	kContextDeclarationEmptySection = 0x0000,
 	kContextDeclarationPlaceholder = 0x0003,
-	kContextDeclarationFileNumber1 = 0x0004,
-	kContextDeclarationFileNumber2 = 0x0005,
-	kContextDeclarationFileReference = 0x0006,
+	kContextDeclarationContextId = 0x0004,
+	kContextDeclarationStreamId = 0x0005,
+	kContextDeclarationParentContextId = 0x0006,
 	kContextDeclarationName = 0x0bb8
 };
 
 class ContextDeclaration {
 public:
 	ContextDeclaration(Chunk &chunk);
+	ContextDeclaration() {};
 
-	Common::Array<uint32> _fileReferences;
-	uint32 _fileNumber = 0;
-	Common::String _contextName;
-	// Signal that there are no more declarations to read.
-	bool _isLast = false;
+	uint _contextId = 0;
+	uint _streamId = 0;
+	Common::String _name;
+	Common::Array<uint> _parentContextIds;
 
 private:
 	ContextDeclarationSectionType getSectionType(Chunk &chunk);
 };
 
-enum UnknownDeclarationSectionType {
-	kUnknownDeclarationEmptySection = 0x0000,
-	kUnknownDeclarationUnk1 = 0x0009,
-	kUnknownDeclarationUnk2 = 0x0004
+enum ScreenDeclarationSectionType {
+	kScreenDeclarationEmpty = 0x0000,
+	kScreenDeclarationAssetId = 0x0009,
+	kScreenDeclarationScreenId = 0x0004
 };
 
-class UnknownDeclaration {
+class ScreenDeclaration {
 public:
-	uint16 _unk = 0;
-	// Signal that there are no more declarations to read.
-	bool _isLast = false;
+	ScreenDeclaration(Chunk &chunk);
+	ScreenDeclaration() {};
 
-	UnknownDeclaration(Chunk &chunk);
+	uint _assetId = 0;
+	uint _screenId = 0;
 
 private:
-	UnknownDeclarationSectionType getSectionType(Chunk& chunk);
+	ScreenDeclarationSectionType getSectionType(Chunk& chunk);
 };
 
 enum FileDeclarationSectionType {
@@ -81,6 +81,7 @@ enum FileDeclarationSectionType {
 // Indicates where a file is intended to be stored.
 // NOTE: This might not be correct and this might be a more general "file type".
 enum IntendedFileLocation {
+	kFileLocationEmpty = 0x0000,
 	// Usually all files that have numbers remain on the CD-ROM.
 	kFileIntendedOnCdRom = 0x0007,
 	// These UNKs only appear in George Shrinks.
@@ -93,12 +94,11 @@ enum IntendedFileLocation {
 class FileDeclaration {
 public:
 	FileDeclaration(Chunk &chunk);
+	FileDeclaration() {};
 
-	uint32 _id = 0;
-	IntendedFileLocation _intendedLocation;
+	uint _id = 0;
+	IntendedFileLocation _intendedLocation = kFileLocationEmpty;
 	Common::String _name;
-	// Signal that there are no more declarations to read.
-	bool _isLast = false;
 
 private:
 	FileDeclarationSectionType getSectionType(Chunk &chunk);
@@ -114,12 +114,11 @@ enum SubfileDeclarationSectionType {
 class SubfileDeclaration {
 public:
 	SubfileDeclaration(Chunk &chunk);
+	SubfileDeclaration() {};
 
-	uint16 _assetId = 0;
-	uint16 _fileId = 0;
-	uint32 _startOffsetInFile = 0;
-	// Signal that there are no more context declarations to read.
-	bool _isLast = false;
+	uint _assetId = 0;
+	uint _fileId = 0;
+	uint _startOffsetInFile = 0;
 
 private:
 	SubfileDeclarationSectionType getSectionType(Chunk &chunk);
@@ -129,18 +128,20 @@ private:
 class CursorDeclaration {
 public:
 	CursorDeclaration(Chunk &chunk);
+	CursorDeclaration() {};
 
-	uint16 _id = 0;
-	uint16 _unk = 0;
+	uint _id = 0;
+	uint _unk = 0;
 	Common::String _name;
 };
 
 class EngineResourceDeclaration {
 public:
-	Common::String _resourceName;
-	int _resourceId = 0;
+	EngineResourceDeclaration(Common::String resourceName, int resourceId) : _name(resourceName), _id(resourceId) {};
+	EngineResourceDeclaration() {};
 
-	EngineResourceDeclaration(Common::String resourceName, int resourceId) : _resourceName(resourceName), _resourceId(resourceId) {};
+	Common::String _name;
+	int _id = 0;
 };
 
 enum BootSectionType {
@@ -153,7 +154,7 @@ enum BootSectionType {
 	kBootUnk3 = 0x0193,
 	kBootEngineResource = 0x0bba,
 	kBootEngineResourceId = 0x0bbb,
-	kBootUnknownDeclaration = 0x0007,
+	kBootScreenDeclaration = 0x0007,
 	kBootFileDeclaration = 0x000a,
 	kBootSubfileDeclaration = 0x000b,
 	kBootUnk5 = 0x000c,
@@ -173,12 +174,12 @@ public:
 	VersionInfo _versionInfo;
 	Common::String _engineInfo;
 	Common::String _sourceString;
-	Common::HashMap<uint32, ContextDeclaration *> _contextDeclarations;
-	Common::Array<UnknownDeclaration *> _unknownDeclarations;
-	Common::HashMap<uint32, FileDeclaration *> _fileDeclarations;
-	Common::HashMap<uint32, SubfileDeclaration *> _subfileDeclarations;
-	Common::HashMap<uint32, CursorDeclaration *> _cursorDeclarations;
-	Common::HashMap<uint32, EngineResourceDeclaration *> _engineResourceDeclarations;
+	Common::HashMap<uint32, ContextDeclaration> _contextDeclarations;
+	Common::HashMap<uint32, ScreenDeclaration> _screenDeclarations;
+	Common::HashMap<uint32, FileDeclaration> _fileDeclarations;
+	Common::HashMap<uint32, SubfileDeclaration> _subfileDeclarations;
+	Common::HashMap<uint32, CursorDeclaration> _cursorDeclarations;
+	Common::HashMap<uint32, EngineResourceDeclaration> _engineResourceDeclarations;
 
 	uint32 _entryContextId = 0;
 	bool _allowMultipleSounds = false;
