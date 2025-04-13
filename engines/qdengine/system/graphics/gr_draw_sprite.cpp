@@ -279,6 +279,8 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 	int sin_a = round(sn * float(1 << F_PREC));
 	int cos_a = round(cs * float(1 << F_PREC));
 
+	warning("STUB: grDispatcher::putSpr_rot");
+
 	if (has_alpha) {
 		for (int y = 0; y <= sy; y++) {
 			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
@@ -370,6 +372,8 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 	Vect2i iscale = Vect2i(scale.x * float(1 << F_PREC), scale.y * float(1 << F_PREC));
 	Vect2i scaled_size = Vect2i(iscale.x * size.x, iscale.y * size.y);
 
+	warning("STUB: grDispatcher::putSpr_rot (scaled)");
+
 	if (has_alpha) {
 		for (int y = 0; y <= sy; y++) {
 			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
@@ -456,6 +460,8 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 
 	int sin_a = round(sn * float(1 << F_PREC));
 	int cos_a = round(cs * float(1 << F_PREC));
+
+	warning("STUB: grDispatcher::putSprMask_rot");
 
 	if (has_alpha) {
 		byte mr, mg, mb;
@@ -566,6 +572,8 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 
 	Vect2i iscale = Vect2i(scale.x * float(1 << F_PREC), scale.y * float(1 << F_PREC));
 	Vect2i scaled_size = Vect2i(iscale.x * size.x, iscale.y * size.y);
+
+	warning("STUB: grDispatcher::putSprMask_rot (scaled)");
 
 	if (has_alpha) {
 		byte mr, mg, mb;
@@ -1191,6 +1199,8 @@ void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint3
 	uint32 mcl = make_rgb565u(mr, mg, mb);
 
 	sx *= 3;
+
+	warning("STUB: grDispatcher::putSprMask (scaled)");
 
 	for (int i = y0; i != y1; i += iy) {
 		const byte *line_src = p + ((fy >> 16) * sx);
