@@ -36,8 +36,8 @@ struct Polygon {
 		MAX_POINTS = 50
 	};
 
-	uint16 bbw, bbh;
-	uint8 numPoints;
+	uint16 bbw = 0, bbh = 0;
+	uint8 numPoints = 0;
 	Point points[MAX_POINTS];
 
 	void init(const uint8 *p, uint16 zoom);
@@ -61,14 +61,16 @@ struct Video {
 	Resource *_res;
 	SystemStub *_stub;
 
-	uint8 _newPal, _curPal;
-	uint8 *_pagePtrs[4];
-	uint8 *_curPagePtr1, *_curPagePtr2, *_curPagePtr3;
+	uint8 _newPal = 0, _curPal = 0;
+	uint8 *_pagePtrs[4] = { nullptr };
+	uint8 *_curPagePtr1 = nullptr,
+		*_curPagePtr2 = nullptr,
+		*_curPagePtr3 = nullptr;
 	Polygon _pg;
-	int16 _hliney;
-	uint16 _interpTable[0x400];
+	int16 _hliney = 0;
+	uint16 _interpTable[0x400] = { 0 };
 	Ptr _pData;
-	uint8 *_dataBuf;
+	uint8 *_dataBuf = nullptr;
 
 	Video(Resource *res, SystemStub *stub);
 	void init();
