@@ -36,6 +36,7 @@
 #include "scumm/detection_tables.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
+#include "scumm/scumm-md5.h"
 
 #pragma mark -
 #pragma mark --- Detection code ---
@@ -95,11 +96,51 @@ public:
 		return entries;
 	}
 
-	void dumpDetectionEntries() const override final {}
+	void dumpDetectionEntries() const override final;
 };
 
 PlainGameList ScummMetaEngineDetection::getSupportedGames() const {
 	return PlainGameList(gameDescriptions);
+}
+
+// Add backslash before double quotes (") and backslashes themselves (\)
+static Common::String escapeString(const char *string) {
+	if (string == nullptr)
+		return "";
+
+	Common::String res = "";
+
+	for (int i = 0; string[i] != '\0'; i++) {
+		if (string[i] == '"' || string[i] == '\\')
+			res += "\\";
+
+		res += string[i];
+	}
+
+	return res;
+}
+
+void ScummMetaEngineDetection::dumpDetectionEntries() const {
+	for (const MD5Table *entry = md5table; entry->gameid != 0; ++entry) {
+		PlainGameDescriptor pd = findGame(entry->gameid);
+		const char *title = pd.description;
+
+		debug("game (");
+		debug("\tname \"%s\"", escapeString(pd.gameId).c_str());
+		debug("\ttitle \"%s\"", escapeString(title).c_str());
+		debug("\textra \"%s\"", escapeString(entry->extra).c_str());
+		debug("\tlanguage \"%s\"", escapeString(getLanguageLocale(entry->language)).c_str());
+		debug("\tplatform \"%s\"", escapeString(getPlatformCode(entry->platform)).c_str());
+		debug("\tsourcefile \"%s\"", escapeString(getName()).c_str());
+		debug("\tengine \"%s\"", escapeString(getEngineName()).c_str());
+
+		Common::String md5 = entry->md5;
+
+		debug("\trom ( name \"%s\" size %lld md5-%d %s )", escapeString(entry->gameid).c_str(), static_cast<long long int>(entry->filesize), getMD5Bytes(), md5.c_str());
+
+		debug(")\n");
+
+	}
 }
 
 PlainGameDescriptor ScummMetaEngineDetection::findGame(const char *gameid) const {
