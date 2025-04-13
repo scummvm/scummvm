@@ -39,13 +39,13 @@ void Resource::readBank(const MemEntry *me, uint8 *dstBuf) {
 	sprintf(bankEntryName, "ootw-%02X-%d.dump", n, me->type);
 	File f;
 	if (!f.open(bankEntryName, _dataDir)) {
-		::error("Resource::readBank() unable to open '%s' file\n", bankEntryName);
+		error("Resource::readBank() unable to open '%s' file\n", bankEntryName);
 	}
 	f.read(dstBuf, me->unpackedSize);
 #else
 	Bank bk;
 	if (!bk.read(me, dstBuf)) {
-		::error("Resource::readBank() unable to unpack entry %d\n", n);
+		error("Resource::readBank() unable to unpack entry %d\n", n);
 	}
 #endif
 }
@@ -53,7 +53,7 @@ void Resource::readBank(const MemEntry *me, uint8 *dstBuf) {
 void Resource::readEntries() {	
 	Common::File f;
 	if (!f.open("memlist.bin")) {
-		::error("Resource::readEntries() unable to open 'memlist.bin' file\n");
+		error("Resource::readEntries() unable to open 'memlist.bin' file\n");
 	}
 	_numMemList = 0;
 	MemEntry *me = _memList;
@@ -188,7 +188,7 @@ void Resource::setupPtrs(uint16 ptrId) {
 			ivd1 = _memListParts[part][2];
 			ivd2 = _memListParts[part][3];
 		} else {
-			::error("Resource::setupPtrs() ec=0x%X invalid ptrId", 0xF07);
+			error("Resource::setupPtrs() ec=0x%X invalid ptrId", 0xF07);
 		}
 		invalidateAll();
 		_memList[ipal].valid = 2;

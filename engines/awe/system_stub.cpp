@@ -84,7 +84,7 @@ void ScummVMStub::init(const char *title) {
 	memset(&_pi, 0, sizeof(_pi));
 	_offscreen = (uint8 *)malloc(SCREEN_W * SCREEN_H * 2);
 	if (!_offscreen) {
-		::error("Unable to allocate offscreen buffer");
+		error("Unable to allocate offscreen buffer");
 	}
 	_fullscreen = false;
 	_scaler = 1;

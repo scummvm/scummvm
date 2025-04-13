@@ -424,7 +424,7 @@ void Logic::executeScript() {
 			_vid->drawShape(0xFF, zoom, Point(x, y));
 		} else {
 			if (opcode > 0x1A) {
-				::error("Logic::executeScript() ec=0x%X invalid opcode=0x%X", 0xFFF, opcode);
+				error("Logic::executeScript() ec=0x%X invalid opcode=0x%X", 0xFFF, opcode);
 			} else {
 				(this->*_opTable[opcode])();
 			}
