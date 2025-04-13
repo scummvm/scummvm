@@ -345,7 +345,7 @@ void Logic::setupScripts() {
 }
 
 void Logic::runScripts() {
-	for (int i = 0; i < 0x40; ++i) {
+	for (int i = 0; i < 0x40 && !g_engine->shouldQuit(); ++i) {
 		if (_scriptPaused[0][i] == 0) {
 			uint16 n = _scriptPos[0][i];
 			if (n != 0xFFFF) {
@@ -365,7 +365,7 @@ void Logic::runScripts() {
 }
 
 void Logic::executeScript() {
-	while (!_scriptHalted) {
+	while (!_scriptHalted && !g_engine->shouldQuit()) {
 		uint8 opcode = _scriptPtr.fetchByte();
 		if (opcode & 0x80) {
 			uint16 off = ((opcode << 8) | _scriptPtr.fetchByte()) * 2;

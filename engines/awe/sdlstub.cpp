@@ -132,7 +132,7 @@ void SDLStub::copyRect(uint16 x, uint16 y, uint16 w, uint16 h, const uint8 *buf,
 void SDLStub::processEvents() {
 	Common::Event ev;
 
-	while (g_engine->shouldQuit() &&
+	while (!g_engine->shouldQuit() &&
 			g_system->getEventManager()->pollEvent(ev)) {
 		switch (ev.type) {
 		case Common::EVENT_KEYUP:
