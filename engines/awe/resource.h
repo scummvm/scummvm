@@ -61,7 +61,6 @@ struct Resource {
 	static const uint16 _memListParts[][4];
 	
 	Video *_vid = nullptr;
-	const char *_dataDir = nullptr;
 	MemEntry _memList[150];
 	uint16 _numMemList = 0;
 	uint16 _curPtrsId = 0, _newPtrsId = 0;
@@ -76,7 +75,7 @@ struct Resource {
 	uint8 *_segVideo1 = nullptr;
 	uint8 *_segVideo2 = nullptr;
 
-	Resource(Video *vid, const char *dataDir);
+	Resource(Video *vid);
 	
 	void readBank(const MemEntry *me, uint8 *dstBuf);
 	void readEntries();

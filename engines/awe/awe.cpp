@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+/* ScummVM - Graphic Adventure AweEngine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -22,14 +22,21 @@
 #include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "engines/util.h"
+#include "awe/util.h"
 #include "awe/awe.h"
-#include "awe/engine.h"
-#include "awe/systemstub.h"
 
 namespace Awe {
 
 AweEngine::AweEngine(OSystem *syst, const ADGameDescription *gameDesc)
-	: Engine(syst), _gameDescription(gameDesc) {
+	: Engine(syst), _gameDescription(gameDesc),
+	_stub(SystemStub_SDL_create()),
+	_res(&_vid),
+	_vid(&_res, _stub),
+	_log(&_res, &_vid, _stub) {
+}
+
+AweEngine::~AweEngine() {
+	delete _stub;
 }
 
 Common::Error AweEngine::run() {
@@ -41,14 +48,58 @@ Common::Error AweEngine::run() {
 	// Initialize backend
 	initGraphics(320, 200);
 
+	// Setup
+	_stub->init("Out Of This World");
+	setup();
+
 	// Run the game
-	SystemStub *stub = SystemStub_SDL_create();
-	Awe::Engine *e = new Awe::Engine(stub, nullptr, nullptr);
-	e->run();
-	delete e;
-	delete stub;
+	_log.restartAt(0x3E80); // demo starts at 0x3E81
+	while (!_stub->_pi.quit && !g_engine->shouldQuit()) {
+		_log.setupScripts();
+		_log.inp_updatePlayer();
+		processInput();
+		_log.runScripts();
+	}
+
+	finish();
+	_stub->destroy();
 
 	return Common::kNoError;
+}
+
+void AweEngine::setup() {
+	_vid.init();
+	_res.allocMemBlock();
+	_res.readEntries();
+	_log.init();
+}
+
+void AweEngine::finish() {
+	// XXX
+	_res.freeMemBlock();
+}
+
+void AweEngine::processInput() {
+	if (_stub->_pi.load) {
+		loadGameState(_stateSlot);
+		_stub->_pi.load = false;
+	}
+	if (_stub->_pi.save) {
+		saveGameState(_stateSlot, "Quicksave");
+		_stub->_pi.save = false;
+	}
+	if (_stub->_pi.fastMode) {
+		_log._fastMode = !_log._fastMode;
+		_stub->_pi.fastMode = false;
+	}
+	if (_stub->_pi.stateSlot != 0) {
+		int8 slot = _stateSlot + _stub->_pi.stateSlot;
+		if (slot >= 0 && slot < 999) {
+			_stateSlot = slot;
+			debugC(kDebugInfo, "Current game state slot is %d", _stateSlot);
+		}
+		_stub->_pi.stateSlot = 0;
+	}
 }
 
 } // namespace Awe

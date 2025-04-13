@@ -25,6 +25,11 @@
 #include "common/scummsys.h"
 #include "engines/engine.h"
 #include "awe/detection.h"
+#include "awe/intern.h"
+#include "awe/logic.h"
+#include "awe/resource.h"
+#include "awe/systemstub.h"
+#include "awe/video.h"
 
 namespace Awe {
 
@@ -38,12 +43,23 @@ class AweEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 
+private:
+	void setup();
+	void finish();
+	void processInput();
+
+public:
+	SystemStub *_stub;
+	Logic _log;
+	Resource _res;
+	Video _vid;
+	int _stateSlot = 0;
+
 public:
 	AweEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	virtual ~AweEngine() {}
+	~AweEngine() override;
 
 	Common::Error run() override;
-
 };
 
 } // namespace Awe
