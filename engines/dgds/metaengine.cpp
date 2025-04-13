@@ -24,6 +24,7 @@
 #include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "common/savefile.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
@@ -40,6 +41,7 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool DgdsMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -95,6 +97,44 @@ Common::KeymapArray DgdsMetaEngine::initKeymaps(const char *target) const {
 
 	return Common::Keymap::arrayOf(map);
 }
+
+//
+// Used for detecting original game saves
+//
+// Ideally save file magic should be compared to the one in the GDS file,
+// but when loading from the launcher the game engine isn't created,
+// so use a static list.
+//
+static const uint32 GAME_MAGICS[] {
+	0x53E83426, // Rise of the Dragon
+	0xFF553726, // Heart of China
+	0x7ADA2628, // Adventures of Willy Beamish
+};
+
+SaveStateDescriptor DgdsMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	SaveStateDescriptor desc = AdvancedMetaEngine::querySaveMetaInfos(target, slot);
+	if (!desc.isValid() && slot > 0) {
+		const Common::String filename = getSavegameFile(slot, target);
+		Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(filename));
+
+		if (f) {
+			uint16 origSlotNum = f->readUint16LE();
+			const Common::String origName = f->readString();
+			uint32 magic = f->readUint32BE();
+
+			for (uint32 game_magic : GAME_MAGICS) {
+				if (magic == game_magic && origSlotNum < 4096 && !origName.empty()) {
+					desc.setDescription(origName);
+					desc.setSaveSlot(slot);
+					break;
+				}
+			}
+		}
+	}
+
+	return desc;
+}
+
 
 #if PLUGIN_ENABLED_DYNAMIC(DGDS)
 	REGISTER_PLUGIN_DYNAMIC(DGDS, PLUGIN_TYPE_ENGINE, DgdsMetaEngine);

@@ -1811,11 +1811,6 @@ bool GDSScene::load(const Common::String &filename, ResourceManager *resourceMan
 
 
 bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
-	// TODO: RST file format is also the original save game format, so this
-	// function could be used to load saves from the original games.
-	// The only thing to change would be supporting loading of sound bank
-	// and game time (which would need converting to our game time)
-
 	Common::SeekableReadStream *file = resourceManager->getResource(filename);
 	if (!file)
 		error("Game state data %s not found", filename.c_str());
@@ -1824,6 +1819,14 @@ bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *reso
 	if (magic != _magic)
 		error("%s file magic doesn't match game (%04X vs %04X)", filename.c_str(), magic, _magic);
 
+	loadGameStateFromFile(file, filename);
+
+	delete file;
+
+	return true;
+}
+
+void GDSScene::loadGameStateFromFile(Common::SeekableReadStream *file, const Common::String &filename) {
 	uint16 num = file->readUint16LE();
 	// Find matching game item and load its values
 	while (num && !file->eos()) {
@@ -1979,9 +1982,8 @@ bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *reso
 			num = triggers[t++];
 		}
 	}
-
-	return true;
 }
+
 
 void GDSScene::initIconSizes() {
 	const Common::SharedPtr<Image> icons = DgdsEngine::getInstance()->getIcons();

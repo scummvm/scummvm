@@ -216,6 +216,7 @@ public:
 
 	bool load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor);
 	bool loadRestart(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor);
+	void loadGameStateFromFile(Common::SeekableReadStream *file, const Common::String &filename);
 	bool parse(Common::SeekableReadStream *s) override;
 	bool parseInf(Common::SeekableReadStream *s);
 	const Common::String &getIconFile() const { return _iconFile; }
