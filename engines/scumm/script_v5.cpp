@@ -1749,16 +1749,22 @@ void ScummEngine_v5::o5_notEqualZero() {
 			}
 		}
 	} else {
-		int var = fetchScriptWord();
-		a = readVar(var);
-
 		// WORKAROUND: There is a message for when Guybrush first
 		// enters the hold where he remarks that the whole thing reeks
 		// of monkeys. But the way it's scripted, the message is only
 		// shown if it has already been shown.
 
-		if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY_VGA || _game.id == GID_MONKEY_EGA) && _roomResource == 8 && vm.slot[_currentScript].number == 10002 && var == 0x8000 + 321 && enhancementEnabled(kEnhRestoredContent)) {
-			a = !a;
+		if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY_VGA || _game.id == GID_MONKEY_EGA) && _roomResource == 8 && vm.slot[_currentScript].number == 10002) {
+			// A local getVar(), where the var number can be examined first.
+			// Taking take to limit this to Monkey1, so that the proper getVar()
+			// implementation still gets called for v2 and below.
+			int var = fetchScriptWord();
+			a = readVar(var);
+
+			if (var == 0x8000 + 321 && enhancementEnabled(kEnhRestoredContent))
+				a = !a;
+		} else {
+			a = getVar();
 		}
 	}
 
