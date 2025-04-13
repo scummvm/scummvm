@@ -56,7 +56,7 @@ bool Bank::read(const MemEntry *me, uint8 *buf) {
 
 void Bank::decUnk1(uint8 numChunks, uint8 addCount) {
 	uint16 count = getCode(numChunks) + addCount + 1;
-	debug(DBG_BANK, "Bank::decUnk1(%d, %d) count=%d", numChunks, addCount, count);
+	debugC(kDebugBank, "Bank::decUnk1(%d, %d) count=%d", numChunks, addCount, count);
 	_unpCtx.datasize -= count;
 	while (count--) {
 		assert(_oBuf >= _iBuf && _oBuf >= _startBuf);
@@ -68,7 +68,7 @@ void Bank::decUnk1(uint8 numChunks, uint8 addCount) {
 void Bank::decUnk2(uint8 numChunks) {
 	uint16 i = getCode(numChunks);
 	uint16 count = _unpCtx.size + 1;
-	debug(DBG_BANK, "Bank::decUnk2(%d) i=%d count=%d", numChunks, i, count);
+	debugC(kDebugBank, "Bank::decUnk2(%d) i=%d count=%d", numChunks, i, count);
 	_unpCtx.datasize -= count;
 	while (count--) {
 		assert(_oBuf >= _iBuf && _oBuf >= _startBuf);

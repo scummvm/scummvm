@@ -27,7 +27,10 @@
 namespace Awe {
 
 enum AweDebugChannels {
-	kDebugGraphics = 1
+	kDebugLogic = 1 << 0,
+	kDebugBank = 1 << 1,
+	kDebugVideo = 1 << 2,
+	kDebugInfo = 1 << 3
 };
 
 extern const PlainGameDescriptor aweGames[];

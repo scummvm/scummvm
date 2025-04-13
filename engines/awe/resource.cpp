@@ -35,7 +35,7 @@ Resource::Resource(Video *vid, const char *dataDir)
 
 void Resource::readBank(const MemEntry *me, uint8 *dstBuf) {
 	uint16 n = me - _memList;
-	debug(DBG_BANK, "Resource::readBank(%d)", n);
+	debugC(kDebugBank, "Resource::readBank(%d)", n);
 #ifdef USE_UNPACKED
 	char bankEntryName[64];
 	sprintf(bankEntryName, "ootw-%02X-%d.dump", n, me->type);
@@ -118,7 +118,7 @@ void Resource::load() {
 			::warning("Resource::load() ec=0x%X (me->bankNum == 0)", 0xF00);
 			me->valid = 0;
 		} else {
-			debug(DBG_BANK, "Resource::load() bufPos=%X size=%X type=%X pos=%X bankNum=%X", memPtr - _memPtrStart, me->packedSize, me->type, me->bankPos, me->bankNum);
+			debugC(kDebugBank, "Resource::load() bufPos=%X size=%X type=%X pos=%X bankNum=%X", memPtr - _memPtrStart, me->packedSize, me->type, me->bankPos, me->bankNum);
 			readBank(me, memPtr);
 			if(me->type == 2) {
 				_vid->copyPagePtr(_vidCurPtr);

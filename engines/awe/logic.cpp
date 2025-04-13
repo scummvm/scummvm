@@ -45,68 +45,68 @@ void Logic::init() {
 void Logic::op_movConst() {
 	uint8 i = _scriptPtr.fetchByte();
 	int16 n = _scriptPtr.fetchWord();
-	debug(DBG_LOGIC, "Logic::op_movConst(0x%02X, %d)", i, n);
+	debugC(kDebugLogic, "Logic::op_movConst(0x%02X, %d)", i, n);
 	_scriptVars[i] = n;
 }
 
 void Logic::op_mov() {
 	uint8 i = _scriptPtr.fetchByte();
 	uint8 j = _scriptPtr.fetchByte();	
-	debug(DBG_LOGIC, "Logic::op_mov(0x%02X, 0x%02X)", i, j);
+	debugC(kDebugLogic, "Logic::op_mov(0x%02X, 0x%02X)", i, j);
 	_scriptVars[i] = _scriptVars[j];
 }
 
 void Logic::op_add() {
 	uint8 i = _scriptPtr.fetchByte();
 	uint8 j = _scriptPtr.fetchByte();
-	debug(DBG_LOGIC, "Logic::op_add(0x%02X, 0x%02X)", i, j);
+	debugC(kDebugLogic, "Logic::op_add(0x%02X, 0x%02X)", i, j);
 	_scriptVars[i] += _scriptVars[j];
 }
 
 void Logic::op_addConst() {
 	uint8 i = _scriptPtr.fetchByte();
 	int16 n = _scriptPtr.fetchWord();
-	debug(DBG_LOGIC, "Logic::op_addConst(0x%02X, %d)", i, n);
+	debugC(kDebugLogic, "Logic::op_addConst(0x%02X, %d)", i, n);
 	_scriptVars[i] += n;
 }
 
 void Logic::op_call() {
 	uint16 off = _scriptPtr.fetchWord();
 	uint8 sp = _stackPtr;
-	debug(DBG_LOGIC, "Logic::op_call(0x%X)", off);
+	debugC(kDebugLogic, "Logic::op_call(0x%X)", off);
 	_scriptStackCalls[sp] = _scriptPtr.pc - _res->_segCode;
 	++_stackPtr;
 	_scriptPtr.pc = _res->_segCode + off;
 }
 
 void Logic::op_ret() {
-	debug(DBG_LOGIC, "Logic::op_ret()");
+	debugC(kDebugLogic, "Logic::op_ret()");
 	--_stackPtr;
 	uint8 sp = _stackPtr;
 	_scriptPtr.pc = _res->_segCode + _scriptStackCalls[sp];
 }
 
 void Logic::op_break() {
-	debug(DBG_LOGIC, "Logic::op_break()");
+	debugC(kDebugLogic, "Logic::op_break()");
 	_scriptHalted = true;
 }
 
 void Logic::op_jmp() {
 	uint16 off = _scriptPtr.fetchWord();
-	debug(DBG_LOGIC, "Logic::op_jmp(0x%02X)", off);
+	debugC(kDebugLogic, "Logic::op_jmp(0x%02X)", off);
 	_scriptPtr.pc = _res->_segCode + off;	
 }
 
 void Logic::op_setScriptPos() {
 	uint8 i = _scriptPtr.fetchByte();
 	uint16 n = _scriptPtr.fetchWord();
-	debug(DBG_LOGIC, "Logic::op_setScriptPos(0x%X, 0x%X)", i, n);
+	debugC(kDebugLogic, "Logic::op_setScriptPos(0x%X, 0x%X)", i, n);
 	_scriptPos[1][i] = n;
 }
 
 void Logic::op_jnz() {
 	uint8 i = _scriptPtr.fetchByte();
-	debug(DBG_LOGIC, "Logic::op_jnz(0x%02X)", i);
+	debugC(kDebugLogic, "Logic::op_jnz(0x%02X)", i);
 	--_scriptVars[i];
 	if (_scriptVars[i] != 0) {
 		op_jmp();
@@ -138,7 +138,7 @@ void Logic::op_condJmp() {
 			a = (a << 8) | _scriptPtr.fetchByte();
 		}
 	}
-	debug(DBG_LOGIC, "Logic::op_condJmp(%d, 0x%02X, 0x%02X)", op, b, a);
+	debugC(kDebugLogic, "Logic::op_condJmp(%d, 0x%02X, 0x%02X)", op, b, a);
 	bool expr = false;
 	switch (op & 7) {
 	case 0:	// jz
@@ -172,7 +172,7 @@ void Logic::op_condJmp() {
 
 void Logic::op_setPalette() {
 	uint16 i = _scriptPtr.fetchWord();
-	debug(DBG_LOGIC, "Logic::op_changePalette(%d)", i);
+	debugC(kDebugLogic, "Logic::op_changePalette(%d)", i);
 	_vid->_newPal = i >> 8;
 }
 
@@ -187,7 +187,7 @@ void Logic::op_resetScript() {
 	++n;
 	uint8 _al = _scriptPtr.fetchByte();
 
-	debug(DBG_LOGIC, "Logic::op_resetScript(%d, %d, %d)", j, i, _al);
+	debugC(kDebugLogic, "Logic::op_resetScript(%d, %d, %d)", j, i, _al);
 
 	if (_al == 2) {
 		uint16 *_si = &_scriptPos[1][j];
@@ -206,27 +206,27 @@ void Logic::op_resetScript() {
 
 void Logic::op_selectPage() {
 	uint8 i = _scriptPtr.fetchByte();
-	debug(DBG_LOGIC, "Logic::op_selectPage(%d)", i);
+	debugC(kDebugLogic, "Logic::op_selectPage(%d)", i);
 	_vid->changePagePtr1(i);
 }
 
 void Logic::op_fillPage() {
 	uint8 screen = _scriptPtr.fetchByte();
 	uint8 color = _scriptPtr.fetchByte();
-	debug(DBG_LOGIC, "Logic::op_fillPage(%d, %d)", screen, color);
+	debugC(kDebugLogic, "Logic::op_fillPage(%d, %d)", screen, color);
 	_vid->fillPage(screen, color);
 }
 
 void Logic::op_copyPage() {
 	uint8 i = _scriptPtr.fetchByte();
 	uint8 j = _scriptPtr.fetchByte();
-	debug(DBG_LOGIC, "Logic::op_copyPage(%d, %d)", i, j);
+	debugC(kDebugLogic, "Logic::op_copyPage(%d, %d)", i, j);
 	_vid->copyPage(i, j, _scriptVars[VAR_SCROLL_Y]);
 }
 
 void Logic::op_updateDisplay() {
 	uint8 page = _scriptPtr.fetchByte();
-	debug(DBG_LOGIC, "Logic::op_updateDisplay(%d)", page);
+	debugC(kDebugLogic, "Logic::op_updateDisplay(%d)", page);
 	inp_handleSpecialKeys();
 	if (_res->_curPtrsId == 0x3E80 && _scriptVars[0x67] == 1) {
 		_scriptVar_0xBF = _scriptVars[0xBF];
@@ -249,7 +249,7 @@ void Logic::op_updateDisplay() {
 }
 
 void Logic::op_halt() {
-	debug(DBG_LOGIC, "Logic::op_halt()");
+	debugC(kDebugLogic, "Logic::op_halt()");
 	_scriptPtr.pc = _res->_segCode + 0xFFFF;
 	_scriptHalted = true;
 }
@@ -259,42 +259,42 @@ void Logic::op_drawString() {
 	uint16 x = _scriptPtr.fetchByte();
 	uint16 y = _scriptPtr.fetchByte();
 	uint16 col = _scriptPtr.fetchByte();
-	debug(DBG_LOGIC, "Logic::op_drawString(0x%03X, %d, %d, %d)", strId, x, y, col);
+	debugC(kDebugLogic, "Logic::op_drawString(0x%03X, %d, %d, %d)", strId, x, y, col);
 	_vid->drawString(col, x, y, strId);
 }
 
 void Logic::op_sub() {
 	uint8 i = _scriptPtr.fetchByte();
 	uint8 j = _scriptPtr.fetchByte();
-	debug(DBG_LOGIC, "Logic::op_sub(0x%02X, 0x%02X)", i, j);
+	debugC(kDebugLogic, "Logic::op_sub(0x%02X, 0x%02X)", i, j);
 	_scriptVars[i] -= _scriptVars[j];
 }
 
 void Logic::op_and() {
 	uint8 i = _scriptPtr.fetchByte();
 	uint16 n = _scriptPtr.fetchWord();
-	debug(DBG_LOGIC, "Logic::op_and(0x%02X, %d)", i, n);
+	debugC(kDebugLogic, "Logic::op_and(0x%02X, %d)", i, n);
 	_scriptVars[i] = (uint16)_scriptVars[i] & n;
 }
 
 void Logic::op_or() {
 	uint8 i = _scriptPtr.fetchByte();
 	uint16 n = _scriptPtr.fetchWord();
-	debug(DBG_LOGIC, "Logic::op_or(0x%02X, %d)", i, n);
+	debugC(kDebugLogic, "Logic::op_or(0x%02X, %d)", i, n);
 	_scriptVars[i] = (uint16)_scriptVars[i] | n;
 }
 
 void Logic::op_shl() {
 	uint8 i = _scriptPtr.fetchByte();
 	uint16 n = _scriptPtr.fetchWord();
-	debug(DBG_LOGIC, "Logic::op_shl(0x%02X, %d)", i, n);
+	debugC(kDebugLogic, "Logic::op_shl(0x%02X, %d)", i, n);
 	_scriptVars[i] = (uint16)_scriptVars[i] << n;
 }
 
 void Logic::op_shr() {
 	uint8 i = _scriptPtr.fetchByte();
 	uint16 n = _scriptPtr.fetchWord();
-	debug(DBG_LOGIC, "Logic::op_shr(0x%02X, %d)", i, n);
+	debugC(kDebugLogic, "Logic::op_shr(0x%02X, %d)", i, n);
 	_scriptVars[i] = (uint16)_scriptVars[i] >> n;
 }
 
@@ -302,13 +302,13 @@ void Logic::op_soundUnk1() {
 	uint16 b = _scriptPtr.fetchWord();
 	uint16 c = _scriptPtr.fetchWord();
 	uint8 a = _scriptPtr.fetchByte();
-	debug(DBG_LOGIC, "Logic::op_soundUnk1(0x%X, 0x%X, %d)", b, c, a);
+	debugC(kDebugLogic, "Logic::op_soundUnk1(0x%X, 0x%X, %d)", b, c, a);
 	// XXX
 }
 
 void Logic::op_updateMemList() {
 	uint16 num = _scriptPtr.fetchWord();
-	debug(DBG_LOGIC, "Logic::op_updateMemList(%d)", num);
+	debugC(kDebugLogic, "Logic::op_updateMemList(%d)", num);
 	_res->update(num);
 }
 
@@ -316,7 +316,7 @@ void Logic::op_soundUnk2() {
 	uint16 b = _scriptPtr.fetchWord();
 	uint16 c = _scriptPtr.fetchWord();
 	uint8 a = _scriptPtr.fetchByte();
-	debug(DBG_LOGIC, "Logic::op_soundUnk2(0x%X, 0x%X, %d)", b, c, a);
+	debugC(kDebugLogic, "Logic::op_soundUnk2(0x%X, 0x%X, %d)", b, c, a);
 	// XXX
 }
 
@@ -352,10 +352,10 @@ void Logic::runScripts() {
 				_scriptPtr.pc = _res->_segCode + n;
 				_stackPtr = 0;
 				_scriptHalted = false;
-				debug(DBG_LOGIC, "Logic::runScripts() i=0x%02X n=0x%02X *p=0x%02X", i, n, *_scriptPtr.pc);
+				debugC(kDebugLogic, "Logic::runScripts() i=0x%02X n=0x%02X *p=0x%02X", i, n, *_scriptPtr.pc);
 				executeScript();
 				_scriptPos[0][i] = _scriptPtr.pc - _res->_segCode;
-				debug(DBG_LOGIC, "Logic::runScripts() i=0x%02X pos=0x%X", i, _scriptPos[0][i]);
+				debugC(kDebugLogic, "Logic::runScripts() i=0x%02X pos=0x%X", i, _scriptPos[0][i]);
 				if (_stub->_pi.quit) {
 					break;
 				}
@@ -377,7 +377,7 @@ void Logic::executeScript() {
 				y = 199;
 				x += h;
 			}
-			debug(DBG_VIDEO, "vid_opcd_0x80 : opcode=0x%X off=0x%X x=%d y=%d", opcode, off, x, y);
+			debugC(kDebugVideo, "vid_opcd_0x80 : opcode=0x%X off=0x%X x=%d y=%d", opcode, off, x, y);
 			_vid->setDataBuffer(_res->_segVideo1, off);
 			_vid->drawShape(0xFF, 0x40, Point(x,y));
 		} else if (opcode & 0x40) {
@@ -419,7 +419,7 @@ void Logic::executeScript() {
 					zoom = 0x40;
 				}
 			}
-			debug(DBG_VIDEO, "vid_opcd_0x40 : off=0x%X x=%d y=%d", off, x, y);
+			debugC(kDebugVideo, "vid_opcd_0x40 : off=0x%X x=%d y=%d", off, x, y);
 			_vid->setDataBuffer(_res->_useSegVideo2 ? _res->_segVideo2 : _res->_segVideo1, off);
 			_vid->drawShape(0xFF, zoom, Point(x, y));
 		} else {
