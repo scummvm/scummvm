@@ -126,6 +126,7 @@ void SDLStub::copyRect(uint16 x, uint16 y, uint16 w, uint16 h, const uint8 *buf,
 
 	_screen->copyRectToSurface(_offscreen, SCREEN_W,
 		0, 0, SCREEN_W, SCREEN_H);
+	_screen->update();
 }
 
 void SDLStub::processEvents() {
