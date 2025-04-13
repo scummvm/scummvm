@@ -1755,8 +1755,8 @@ void ScummEngine_v5::o5_notEqualZero() {
 		// shown if it has already been shown.
 
 		if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY_VGA || _game.id == GID_MONKEY_EGA) && _roomResource == 8 && vm.slot[_currentScript].number == 10002) {
-			// A local getVar(), where the var number can be examined first.
-			// Taking take to limit this to Monkey1, so that the proper getVar()
+			// A local getVar(), where the var number can be examined.
+			// Taking care to limit this to Monkey1, so that the proper getVar()
 			// implementation still gets called for v2 and below.
 			int var = fetchScriptWord();
 			a = readVar(var);
