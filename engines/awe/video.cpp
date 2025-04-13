@@ -73,11 +73,11 @@ void Video::drawShape(uint8 color, uint16 zoom, const Point &pt) {
 	} else {
 		i &= 0x3F;
 		if (i == 1) {
-			::warning("Video::drawShape() ec=0x%X (i != 2)", 0xF80);
+			warning("Video::drawShape() ec=0x%X (i != 2)", 0xF80);
 		} else if (i == 2) {
 			drawShapeParts(zoom, pt);
 		} else {
-			::warning("Video::drawShape() ec=0x%X (i != 2)", 0xFBB);
+			warning("Video::drawShape() ec=0x%X (i != 2)", 0xFBB);
 		}
 	}
 }
@@ -372,7 +372,7 @@ uint8 *Video::getPagePtr(uint8 page) {
 			break;
 		default:
 			p = _pagePtrs[0]; // XXX check
-			::warning("Video::getPagePtr() p != [0,1,2,3,0xFF,0xFE] == 0x%X", page);
+			warning("Video::getPagePtr() p != [0,1,2,3,0xFF,0xFE] == 0x%X", page);
 			break;
 		}
 	}

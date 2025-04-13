@@ -107,13 +107,13 @@ void Resource::load() {
 		} else {
 			memPtr = _scriptCurPtr;
 			if (me->unpackedSize > _vidBakPtr - _scriptCurPtr) {
-				::warning("Resource::load() not enough memory");
+				warning("Resource::load() not enough memory");
 				me->valid = 0;
 				continue;
 			}
 		}
 		if (me->bankNum == 0) {
-			::warning("Resource::load() ec=0x%X (me->bankNum == 0)", 0xF00);
+			warning("Resource::load() ec=0x%X (me->bankNum == 0)", 0xF00);
 			me->valid = 0;
 		} else {
 			debugC(kDebugBank, "Resource::load() bufPos=%X size=%X type=%X pos=%X bankNum=%X", memPtr - _memPtrStart, me->packedSize, me->type, me->bankPos, me->bankNum);

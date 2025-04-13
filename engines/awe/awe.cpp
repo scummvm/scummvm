@@ -44,7 +44,7 @@ AweEngine::~AweEngine() {
 Common::Error AweEngine::run() {
 	// Setup mixer
 	if (!_mixer->isReady()) {
-		::warning("Sound initialization failed.");
+		warning("Sound initialization failed.");
 	}
 
 	// Initialize backend
