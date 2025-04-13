@@ -28,7 +28,7 @@
 #include "common/endian.h"
 #include "common/stream.h"
 
-#define AUDIO_MIDIPARSER_MAXIMUM_SUBTRACKS 20
+#define AUDIO_MIDIPARSER_MAXIMUM_SUBTRACKS 35
 
 class MidiDriver_BASE;
 

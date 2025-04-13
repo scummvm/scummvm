@@ -156,8 +156,12 @@ bool MidiParser_SMF::loadMusic(byte *data, uint32 size) {
 	}
 
 	// Now we identify and store the location for each track.
-	if (_numTracks > ARRAYSIZE(_tracks)) {
-		warning("Can only handle %d tracks but was handed %d", (int)ARRAYSIZE(_tracks), (int)_numTracks);
+	if (_numTracks > MAXIMUM_TRACKS) {
+		warning("Can only handle %d tracks but was handed %d", (int)MAXIMUM_TRACKS, (int)_numTracks);
+		return false;
+	}
+	if (midiType == 1 && numTrackChunks > MAXIMUM_SUBTRACKS) {
+		warning("Can only handle MIDI type 1 with %d subtracks but was handed %d", (int)MAXIMUM_SUBTRACKS, (int)numTrackChunks);
 		return false;
 	}
 
