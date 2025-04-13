@@ -36,9 +36,6 @@ void Logic::init() {
 	memset(_scriptVars, 0, sizeof(_scriptVars));
 	_scriptVars[0x54] = 0x81;
 	_scriptVars[VAR_RANDOM_SEED] = 0;
-#ifdef DEPRECATED
-	time(0);
-#endif
 	_fastMode = false;
 }
 
@@ -125,12 +122,13 @@ void Logic::op_condJmp() {
 		// (0x0D4E) condJmp(0x4, VAR(50), 6, 0xDBC)		
 		*(_scriptPtr.pc + 0x99) = 0x0D;
 		*(_scriptPtr.pc + 0x9A) = 0x5A;
-		::warning("Logic::op_condJmp() bypassing protection");	
+		warning("Logic::op_condJmp() bypassing protection");
 	}
 #endif
 	uint8 op = _scriptPtr.fetchByte();
 	int16 b = _scriptVars[_scriptPtr.fetchByte()];
-	int16 a = _scriptPtr.fetchByte();	
+	int16 a = _scriptPtr.fetchByte();
+
 	if (op & 0x80) {
 		a = _scriptVars[a];
 	} else {
@@ -138,8 +136,10 @@ void Logic::op_condJmp() {
 			a = (a << 8) | _scriptPtr.fetchByte();
 		}
 	}
+
 	debugC(kDebugLogic, "Logic::op_condJmp(%d, 0x%02X, 0x%02X)", op, b, a);
 	bool expr = false;
+
 	switch (op & 7) {
 	case 0:	// jz
 		expr = (b == a);
@@ -160,7 +160,7 @@ void Logic::op_condJmp() {
 		expr = (b <= a);
 		break;
 	default:
-		::warning("Logic::op_condJmp() invalid condition %d", (op & 7));
+		warning("Logic::op_condJmp() invalid condition %d", (op & 7));
 		break;
 	}
 	if (expr) {
@@ -181,7 +181,7 @@ void Logic::op_resetScript() {
 	uint8 i = _scriptPtr.fetchByte();
 	int8 n = (i & 0x3F) - j;
 	if (n < 0) {
-		::warning("Logic::op_resetScript() ec=0x%X (n < 0)", 0x880);
+		warning("Logic::op_resetScript() ec=0x%X (n < 0)", 0x880);
 		return;
 	}
 	++n;
@@ -495,7 +495,7 @@ void Logic::inp_handleSpecialKeys() {
 	}
 	// XXX
 	if (_scriptVars[0xC9] == 1) {
-		::warning("Logic::inp_handleSpecialKeys() unhandled case (_scriptVars[0xC9] == 1)");
+		warning("Logic::inp_handleSpecialKeys() unhandled case (_scriptVars[0xC9] == 1)");
 	}
 }
 
