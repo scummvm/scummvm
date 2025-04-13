@@ -274,7 +274,7 @@ void SoundClipWaveBase::set_speed(int new_speed) {
 }
 
 void SoundClipWaveBase::adjust_volume() {
-	_mixer->setChannelVolume(_soundHandle, _vol255);
+	_mixer->setChannelVolume(_soundHandle, get_final_volume());
 }
 
 } // namespace AGS3
