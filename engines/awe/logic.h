@@ -56,15 +56,15 @@ struct Logic {
 	Video *_vid;
 	SystemStub *_stub;
 
-	int16 _scriptVar_0xBF;
-	int16 _scriptVars[0x100];
-	uint16 _scriptStackCalls[0x40];
-	uint16 _scriptPos[2][0x40];
-	uint8 _scriptPaused[2][0x40];
+	int16 _scriptVar_0xBF = { 0 };
+	int16 _scriptVars[0x100] = { 0 };
+	uint16 _scriptStackCalls[0x40] = { 0 };
+	uint16 _scriptPos[2][0x40] = { 0 };
+	uint8 _scriptPaused[2][0x40] = { 0 };
 	Ptr _scriptPtr;
-	uint8 _stackPtr;
-	bool _scriptHalted;
-	bool _fastMode;
+	uint8 _stackPtr = 0;
+	bool _scriptHalted = false;
+	bool _fastMode = false;
 
 	Logic(Resource *res, Video *vid, SystemStub *stub);
 	void init();

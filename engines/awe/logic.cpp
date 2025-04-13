@@ -366,7 +366,9 @@ void Logic::runScripts() {
 
 void Logic::executeScript() {
 	while (!_scriptHalted && !g_engine->shouldQuit()) {
+		
 		uint8 opcode = _scriptPtr.fetchByte();
+
 		if (opcode & 0x80) {
 			uint16 off = ((opcode << 8) | _scriptPtr.fetchByte()) * 2;
 			_res->_useSegVideo2 = false;
