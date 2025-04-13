@@ -56,10 +56,14 @@ public:
 	~AweEngine() override;
 
 	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
+	bool isDemo() const;
 
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 };
+
+extern AweEngine *g_engine;
 
 } // namespace Awe
 

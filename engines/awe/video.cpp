@@ -189,7 +189,9 @@ int32 Video::calcStep(const Point &p1, const Point &p2, uint16 &dy) {
 }
 
 void Video::drawString(uint8 color, uint16 x, uint16 y, uint16 strId) {
-	const StrEntry *se = _stringsTableEng;
+	const StrEntry *se = g_engine->isDemo() ?
+		_stringsTableDemo : _stringsTableEng;
+
 	while (se->id != 0xFFFF && se->id != strId) ++se;
 	debugC(kDebugVideo, "drawString(%d, %d, %d, '%s')", color, x, y, se->str);
 	uint16 xx = x;

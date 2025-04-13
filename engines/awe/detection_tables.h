@@ -36,6 +36,15 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
+	{
+		"anotherworld",
+		"Demo",
+		AD_ENTRY1s("memlist.bin", "11e0cc58aeb47ad1dfc1c4dae8dcd9ee", 2940),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_DEMO | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
 
 #if 0
 	// Unsupported release that doesn't have a memlist.bin

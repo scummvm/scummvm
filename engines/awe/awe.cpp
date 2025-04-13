@@ -29,12 +29,15 @@
 
 namespace Awe {
 
+AweEngine *g_engine;
+
 AweEngine::AweEngine(OSystem *syst, const ADGameDescription *gameDesc)
-	: Engine(syst), _gameDescription(gameDesc),
-	_stub(SystemStub_create()),
-	_res(&_vid),
-	_vid(&_res, _stub),
-	_log(&_res, &_vid, _stub) {
+		: Engine(syst), _gameDescription(gameDesc),
+		_stub(SystemStub_create()),
+		_res(&_vid),
+		_vid(&_res, _stub),
+		_log(&_res, &_vid, _stub) {
+	g_engine = this;
 }
 
 AweEngine::~AweEngine() {
@@ -55,7 +58,8 @@ Common::Error AweEngine::run() {
 	setup();
 
 	// Run the game
-	_log.restartAt(0x3E80); // demo starts at 0x3E81
+	_log.restartAt(isDemo() ? 0x3e81 : 0x3e80);
+
 	while (!_stub->_pi.quit && !g_engine->shouldQuit()) {
 		_log.setupScripts();
 		_log.inp_updatePlayer();
@@ -148,5 +152,15 @@ Common::Error AweEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		return Common::kNoError;
 	}
 }
+
+bool AweEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsReturnToLauncher);
+}
+
+bool AweEngine::isDemo() const {
+	return (_gameDescription->flags & ADGF_DEMO) != 0;
+}
+
 
 } // namespace Awe
