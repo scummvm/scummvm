@@ -72,7 +72,11 @@ static void qd_show_load_progress(int percents_loaded, void *p);
 QDEngineEngine::QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("QDEngine") {
 	g_engine = this;
-	_pixelformat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+
+	if (syst->getSupportedFormats().front().bytesPerPixel == 4)
+		_pixelformat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	else
+		_pixelformat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
 	_screenW = 640;
 	_screenH = 480;
@@ -467,7 +471,10 @@ void QDEngineEngine::init_graphics() {
 
 	grDispatcher::set_instance(_grD);
 
-	grDispatcher::instance()->init(g_engine->_screenW, g_engine->_screenH, GR_RGB565);
+	if (g_engine->_pixelformat.bytesPerPixel == 4)
+		grDispatcher::instance()->init(g_engine->_screenW, g_engine->_screenH, GR_RGBA8888);
+	else
+		grDispatcher::instance()->init(g_engine->_screenW, g_engine->_screenH, GR_RGB565);
 
 	grDispatcher::instance()->setClip();
 	grDispatcher::instance()->setClipMode(1);

@@ -106,14 +106,17 @@ void grDispatcher::putTileSpr(int x, int y, const grTileSprite &sprite, bool has
 	if (clip && !clip_rectangle(x, y, px, py, psx, psy))
 		return;
 
-	int dx = -1;
+	int dx = -2;
 	int dy = -1;
 
 	if (mode & GR_FLIP_HORIZONTAL) {
 		x += psx - 1;
 		px = GR_TILE_SPRITE_SIZE_X - px - psx;
 	} else
-		dx = 1;
+		dx = 2;
+
+	if (_pixel_format == GR_RGBA8888)
+		dx *= 2;
 
 	if (mode & GR_FLIP_VERTICAL) {
 		y += psy - 1;
@@ -127,16 +130,28 @@ void grDispatcher::putTileSpr(int x, int y, const grTileSprite &sprite, bool has
 	const byte *data_ptr = (const byte *)(sprite.data() + px + py * GR_TILE_SPRITE_SIZE_X);
 
 	for (int i = 0; i < psy; i++) {
-		uint16 *scr_buf = reinterpret_cast<uint16 *>(surf->getBasePtr(x, y));
+		byte *scr_buf = reinterpret_cast<byte *>(surf->getBasePtr(x, y));
 		const byte *data_line = data_ptr;
 
 		for (int j = 0; j < psx; j++) {
 			uint32 a = data_line[3];
 			if (a != 255) {
-				if (a)
-					*scr_buf = alpha_blend_565(make_rgb565u(data_line[2], data_line[1], data_line[0]), *scr_buf, a);
-				else
-					*scr_buf = make_rgb565u(data_line[2], data_line[1], data_line[0]);
+				if (_pixel_format == GR_RGB565) {
+					if (a)
+						setPixelFast(scr_buf, alpha_blend_565(make_rgb565u(data_line[2], data_line[1], data_line[0]), *(uint16 *)scr_buf, a));
+					else
+						setPixelFast(scr_buf, make_rgb565u(data_line[2], data_line[1], data_line[0]));
+				} else {
+					if (a) {
+						scr_buf[1] = data_line[0] + ((a * scr_buf[1]) >> 8);
+						scr_buf[2] = data_line[1] + ((a * scr_buf[2]) >> 8);
+						scr_buf[3] = data_line[2] + ((a * scr_buf[3]) >> 8);
+					} else {
+						scr_buf[1] = data_line[0];
+						scr_buf[2] = data_line[1];
+						scr_buf[3] = data_line[2];
+					}
+				}
 			}
 			scr_buf += dx;
 			data_line += 4;

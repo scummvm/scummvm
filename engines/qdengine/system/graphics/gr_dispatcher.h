@@ -73,7 +73,8 @@ enum grPixelFormat {
 	GR_RGB565 = 0,
 	GR_ARGB1555,
 	GR_RGB888,
-	GR_ARGB8888
+	GR_ARGB8888,
+	GR_RGBA8888
 };
 
 class grFont;
@@ -233,6 +234,7 @@ public:
 	void erase(int x, int y, int sx, int sy, int r, int g, int b);
 
 	void setPixel(int x, int y, int col);
+	void setPixelFast(byte *buf, uint32 col);
 	void setPixelFast(int x, int y, int col);
 	void setPixelFast(int x, int y, int r, int g, int b);
 
@@ -241,6 +243,7 @@ public:
 	void surfaceOverride(Graphics::ManagedSurface *target);
 	void resetSurfaceOverride();
 
+	void getPixel(int x, int y, uint32 &col);
 	void getPixel(int x, int y, uint16 &col);
 	void getPixel(int x, int y, byte &r, byte &g, byte &b);
 
@@ -287,6 +290,7 @@ public:
 			return make_rgb555u((color >> 0) & 0xFF, (color >> 8) & 0xFF, (color >> 16) & 0xFF);
 		case GR_RGB888:
 		case GR_ARGB8888:
+		case GR_RGBA8888:
 			return color;
 		}
 
@@ -302,6 +306,8 @@ public:
 		case GR_RGB888:
 		case GR_ARGB8888:
 			return ((b << 16) | (g << 8) | r);
+		case GR_RGBA8888:
+			return ((r << 16) | (g << 8) | b);
 		}
 
 		return 0;
@@ -343,7 +349,7 @@ public:
 		b = ((col & mask_555_b) >> 0) << 3;
 	}
 
-	static inline void split_rgb888(uint32 col, uint32 &r, uint32 &g, uint32 &b) {
+	static inline void split_rgb888(uint32 col, byte &r, byte &g, byte &b) {
 		r = (col >>  0) & 0xFF;
 		g = (col >>  8) & 0xFF;
 		b = (col >> 16) & 0xFF;
