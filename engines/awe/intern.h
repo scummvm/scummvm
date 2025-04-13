@@ -32,7 +32,7 @@ namespace Awe {
 using Common::Point;
 
 struct Ptr {
-	uint8 *pc;
+	uint8 *pc = nullptr;
 	
 	uint8 fetchByte() {
 		return *pc++;
