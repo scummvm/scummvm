@@ -65,6 +65,8 @@ struct Logic {
 	uint8 _stackPtr = 0;
 	bool _scriptHalted = false;
 	bool _fastMode = false;
+	int _lastOpcodeOffset = 0;
+	uint32 _lastTimestamp = 0;
 
 	Logic(Resource *res, Video *vid, SystemStub *stub);
 	void init();
