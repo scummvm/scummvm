@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef focus_list_H
-#define focus_list_H
+#ifndef ZVISION_FOCUS_LIST_H
+#define ZVISION_FOCUS_LIST_H
 
 #include "common/array.h"
 
