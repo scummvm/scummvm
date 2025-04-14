@@ -2390,7 +2390,8 @@ if test "$have_gcc" = yes; then
 					append_var CXXFLAGS "-Wno-array-bounds"
 				fi
 
-				if test $_cxx_minor -le 8; then
+				# Many false positives with Common::Serializer
+				if test $_cxx_minor -le 9; then
 					append_var CXXFLAGS "-Wno-maybe-uninitialized"
 				fi
 			fi
