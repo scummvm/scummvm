@@ -493,7 +493,7 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 	debugC(3, kDebugLog, "Optimised Path");
 	dump_vect(path_vect);
 
-	if (path_vect.size() >= 2 && (movement_type() == qdGameObjectStateWalk::MOVEMENT_FOUR_DIRS || movement_type() == qdGameObjectStateWalk::MOVEMENT_EIGHT_DIRS)) {
+	if (g_engine->_gameVersion > 20041201 && path_vect.size() >= 2 && (movement_type() == qdGameObjectStateWalk::MOVEMENT_FOUR_DIRS || movement_type() == qdGameObjectStateWalk::MOVEMENT_EIGHT_DIRS)) {
 		Std::vector<Vect3f> final_path;
 		finalize_path(R(), trg, path_vect, final_path);
 
@@ -510,10 +510,13 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 			_path[idx] = qdCamera::current_camera()->get_cell_coords(it->x, it->y);
 			idx ++;
 		}
-		_path[idx - 1] = trg;
+		if (g_engine->_gameVersion <= 20041201)
+			_path[idx] = trg;
+		else
+			_path[idx - 1] = trg;
 	}
 
-	_cur_path_index = (idx > 1) ? 1 : 0;
+	_cur_path_index = (g_engine->_gameVersion <= 20041201 || idx > 1) ? 1 : 0;
 	_path_length = idx;
 	move2position(_path[_cur_path_index++]);
 
