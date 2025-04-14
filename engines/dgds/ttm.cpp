@@ -371,6 +371,7 @@ static void _doScroll(Graphics::ManagedSurface &compBuf, int16 dir, int16 steps,
 		screen = g_system->lockScreen();
 	}
 	g_system->unlockScreen();
+	screenCopy.free();
 }
 
 void TTMInterpreter::doWipeOp(uint16 code, const TTMEnviro &env, const TTMSeq &seq, const Common::Rect &r) {
