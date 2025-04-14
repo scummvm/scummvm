@@ -20,6 +20,7 @@
  */
 
 #include "graphics/framelimiter.h"
+
 #include "common/util.h"
 
 namespace Graphics {
@@ -61,7 +62,7 @@ bool FrameLimiter::delayBeforeSwap() {
 	_now = _system->getMillis();
 	_loopDuration = _now - _frameStart;
 	if (_enabled) {
-		//delay = frameLimit - loopDuration;  //Original functionality, will tend to undershoot target framerate slightly due to finite screen.update() time.
+		//_delay = _frameLimit - _loopDuration;  //Original functionality, will tend to undershoot target framerate slightly due to finite screen.update() time.
 		_delay = _frameLimit - (_now - _drawStart); //Ensure EXACTLY the specified frame duration has elapsed since last screen.update() was called.
 		if (_delay > 0)
 			_system->delayMillis(_delay);
