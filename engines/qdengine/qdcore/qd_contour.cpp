@@ -190,52 +190,62 @@ bool qdContour::is_inside(const Vect2s &pos) const {
 			return true;
 		break;
 	case CONTOUR_POLYGON: {
-		Vect2s p = pos;
-		int intersections_lt0 = 0;
-		int intersections_gt0 = 0;
-		int intersections_lt1 = 0;
-		int intersections_gt1 = 0;
-		for (uint i = 0; i < _contour.size(); i ++) {
-			Vect2s p0 = _contour[i];
-			Vect2s p1 = (i < _contour.size() - 1) ? _contour[i + 1] : _contour[0];
-			if (p0.y != p1.y) {
-				if ((p0.y < p.y && p1.y >= p.y) || (p0.y >= p.y && p1.y < p.y)) {
-					if (p0.x < p.x && p1.x < p.x)
-						intersections_lt0++;
-					else if (p0.x > p.x && p1.x > p.x)
-						intersections_gt0++;
-					else {
-						int x = (p.y - p0.y) * (p1.x - p0.x) / (p1.y - p0.y) + p0.x;
-
-						if (x == p.x)
-							return true;
-						else if (x > p.x)
-							intersections_gt0++;
-						else
+		if (g_engine->_gameVersion > 20050101) {
+			Vect2s p = pos;
+			int intersections_lt0 = 0;
+			int intersections_gt0 = 0;
+			int intersections_lt1 = 0;
+			int intersections_gt1 = 0;
+			for (uint i = 0; i < _contour.size(); i ++) {
+				Vect2s p0 = _contour[i];
+				Vect2s p1 = (i < _contour.size() - 1) ? _contour[i + 1] : _contour[0];
+				if (p0.y != p1.y) {
+					if ((p0.y < p.y && p1.y >= p.y) || (p0.y >= p.y && p1.y < p.y)) {
+						if (p0.x < p.x && p1.x < p.x)
 							intersections_lt0++;
-					}
-				}
-				if ((p0.y <= p.y && p1.y > p.y) || (p0.y > p.y && p1.y <= p.y)) {
-					if (p0.x < p.x && p1.x < p.x)
-						intersections_lt1++;
-					else if (p0.x > p.x && p1.x > p.x)
-						intersections_gt1++;
-					else {
-						int x = (p.y - p0.y) * (p1.x - p0.x) / (p1.y - p0.y) + p0.x;
+						else if (p0.x > p.x && p1.x > p.x)
+							intersections_gt0++;
+						else {
+							int x = (p.y - p0.y) * (p1.x - p0.x) / (p1.y - p0.y) + p0.x;
 
-						if (x == p.x)
-							return true;
-						else if (x > p.x)
-							intersections_gt1++;
-						else
+							if (x == p.x)
+								return true;
+							else if (x > p.x)
+								intersections_gt0++;
+							else
+								intersections_lt0++;
+						}
+					}
+					if ((p0.y <= p.y && p1.y > p.y) || (p0.y > p.y && p1.y <= p.y)) {
+						if (p0.x < p.x && p1.x < p.x)
 							intersections_lt1++;
+						else if (p0.x > p.x && p1.x > p.x)
+							intersections_gt1++;
+						else {
+							int x = (p.y - p0.y) * (p1.x - p0.x) / (p1.y - p0.y) + p0.x;
+
+							if (x == p.x)
+								return true;
+							else if (x > p.x)
+								intersections_gt1++;
+							else
+								intersections_lt1++;
+						}
 					}
 				}
 			}
-		}
 
-		return ((intersections_lt0 & 1) && intersections_gt0 != 0) ||
-		       ((intersections_lt1 & 1) && intersections_gt1 != 0);
+			return ((intersections_lt0 & 1) && intersections_gt0 != 0) ||
+				   ((intersections_lt1 & 1) && intersections_gt1 != 0);
+		} else {
+			Vect2s p = pos - _mask_pos;
+			p.x += _size.x / 2;
+			p.y += _size.y / 2;
+			if (p.x >= 0 && p.x < _size.x && p.y >= 0 && p.y < _size.y) {
+				if (_mask[p.x + p.y * _size.x])
+					return true;
+			}
+		}
 		break;
 	}
 }
