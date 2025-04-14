@@ -1300,7 +1300,7 @@ bool qdCamera::is_walkable(const Vect2s &center_pos, const Vect2s &size, bool ig
 	debugC(3, kDebugMovement, "qdCamera::is_walkable(): attr: %d [%d, %d] size: [%d, %d], ignore_personages: %d", cells->attributes(), x0, y0, size.x, size.y, ignore_personages);
 
 	int attr = sGridCell::CELL_IMPASSABLE | sGridCell::CELL_OCCUPIED;
-	if (!ignore_personages) {
+	if (g_engine->_gameVersion > 20031206 && !ignore_personages) {
 		attr |= sGridCell::CELL_PERSONAGE_OCCUPIED;
 	 }
 
