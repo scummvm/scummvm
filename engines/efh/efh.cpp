@@ -2408,36 +2408,28 @@ bool EfhEngine::checkMonsterCollision() {
 			Common::KeyCode input = waitForKey();
 
 			switch (input) {
-				case Common::EVENT_CUSTOM_BACKEND_ACTION_START:
-					switch (_customAction) {
-					// Attack
-					case Efh::kEfhActionA:
-						handleFight(monsterId);
-						endLoop = true;
-						break;
-
-					// Leave
-					case Efh::kEfhActionL:
-					case Efh::kEfhActionESC:
-							endLoop = true;
-							break;
-
-					// Status
-					case Efh::kEfhActionS:
-							handleStatusMenu(1, _teamChar[0]._id);
-							endLoop = true;
-							_tempTextPtr = nullptr;
-							drawGameScreenAndTempText(true);
-							break;
-
-					// Talk
-					case Efh::kEfhActionT:
-						startTalkMenu(monsterId);
-						endLoop = true;
-						break;
-				}
+				case Common::KEYCODE_a: // Attack
+					handleFight(monsterId);
+					endLoop = true;
+					break;
+				case Common::KEYCODE_ESCAPE:
+				case Common::KEYCODE_l: // Leave
+					endLoop = true;
+					break;
+				case Common::KEYCODE_s: // Status
+					handleStatusMenu(1, _teamChar[0]._id);
+					endLoop = true;
+					_tempTextPtr = nullptr;
+					drawGameScreenAndTempText(true);
+					break;
+				case Common::KEYCODE_t: // Talk
+					startTalkMenu(monsterId);
+					endLoop = true;
+					break;
+				default:
+					break;
 			}
-		} while (!endLoop && !shouldQuit());
+		} while (!endLoop && !shouldQuitGame());
 		return false;
 	}
 
