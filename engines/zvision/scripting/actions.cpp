@@ -797,6 +797,7 @@ bool ActionRegion::execute() {
 
 		EffectMap *_map = _engine->getRenderManager()->makeEffectMap(tempMask, 0);
 		effect = new FogFx(_engine, _slotKey, _rect, _unk1, _map, buf);
+		tempMask.free();
 	}
 	break;
 	default:
