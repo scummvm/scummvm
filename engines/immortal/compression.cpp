@@ -49,6 +49,11 @@ Common::SeekableReadStream *ImmortalEngine::unCompress(Common::File *source, int
 	 * Stack contains the currently being recreated string before it gets sent to the output
 	 */
 
+	// If the source data has no length, we certainly do not want to decompress it
+	if (lSource == 0) {
+		return nullptr;
+	}
+
 	// In the source, the data allocated here is a pointer passed to the function, but it's only used by this anyway
 	uint16 *pCodes = (uint16 *)malloc(k8K);		// The Codes stack has 8 * 1024 bytes allocated
 	uint16 *pTk    = (uint16 *)malloc(k8K);		// The Tk has 8 * 1024 bytes allocated
@@ -62,11 +67,6 @@ Common::SeekableReadStream *ImmortalEngine::unCompress(Common::File *source, int
 	uint16 inCode    = 0;
 	uint16 findEmpty = 0;
 	uint16 index     = 0;
-
-	// If the source data has no length, we certainly do not want to decompress it
-	if (lSource == 0) {
-		return nullptr;
-	}
 
 	/* This will be the dynamically re-allocated writeable memory stream.
 	 * We do not want it to be deleted from scope, as this location is where
@@ -145,6 +145,9 @@ Common::SeekableReadStream *ImmortalEngine::unCompress(Common::File *source, int
 		// Set up the current code as the old code for the next code
 		oldCode = inCode;
 	}
+
+	free(pCodes);
+	free(pTk);
 
 	/* Return a readstream with a pointer to the data in the write stream.
 	 * This one we do want to dispose after using, because it will be in the scope of the engine itself
