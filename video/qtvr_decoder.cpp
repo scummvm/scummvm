@@ -575,6 +575,8 @@ Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::constructMosaic(VideoTrac
 		Common::DumpFile bitmapFile;
 		if (!bitmapFile.open(path, true)) {
 			warning("Cannot dump panorama into file '%s'", path.toString().c_str());
+			target->free();
+			delete target;
 			return nullptr;
 		}
 
