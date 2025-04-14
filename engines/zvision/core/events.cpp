@@ -202,7 +202,6 @@ void ZVision::processEvents() {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			switch ((ZVisionAction)_event.customType) {
 			case kZVisionActionLeft:
-			// fall through
 			case kZVisionActionRight:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
 					_keyboardVelocity = (_event.customType == kZVisionActionLeft ?
@@ -211,7 +210,6 @@ void ZVision::processEvents() {
 				break;
 
 			case kZVisionActionUp:
-			// fall through
 			case kZVisionActionDown:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::TILT)
 					_keyboardVelocity = (_event.customType == kZVisionActionUp ?
@@ -256,13 +254,11 @@ void ZVision::processEvents() {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 			switch ((ZVisionAction)_event.customType) {
 			case kZVisionActionLeft:
-			// fall through
 			case kZVisionActionRight:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
 					_keyboardVelocity = 0;
 				break;
 			case kZVisionActionUp:
-			// fall through
 			case kZVisionActionDown:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::TILT)
 					_keyboardVelocity = 0;
@@ -370,7 +366,6 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				_mouseVelocity = 0;
 			break;
 		case RenderTable::FLAT:
-		// fall through
 		default:
 			_mouseVelocity = 0;
 			break;

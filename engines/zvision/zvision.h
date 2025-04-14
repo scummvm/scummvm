@@ -114,8 +114,10 @@ static const ScreenLayout zgiLayout {
 };
 //*/
 enum {
+
 	ROTATION_SCREEN_EDGE_OFFSET = 60,
 	MAX_ROTATION_SPEED = 400, // Pixels per second
+
 	KEYBUF_SIZE = 20
 };
 
@@ -131,6 +133,7 @@ enum ZVisionAction {
 	kZVisionActionPreferences,
 	kZVisionActionShowFPS,
 	kZVisionActionSkipCutscene,
+
 	kZVisionActionCount
 };
 
@@ -144,26 +147,12 @@ public:
 	~ZVision() override;
 
 public:
-	/**
-	 * A Rectangle centered inside the game window. All in-game coordinates
-	 * are given in this coordinate space. Also, all images are clipped to the
-	 * edges of this Rectangle
-	 */
-//	Common::Rect _workingArea;
-	/**
-	 * A Rectangle in which the menu will be rendered.
-	 * In the original game, this is always separate from the working window,
-	 * and thus may be rendered completely independently.
-	 * In the widescreen mod, this window may intersect the working window,
-	 * and thus must be composited and rendered within renderSceneToScreen().
-	 */
-//	Common::Rect _menuArea;
-//	Common::Rect _textArea;
 	const Graphics::PixelFormat _resourcePixelFormat;
 	const Graphics::PixelFormat _screenPixelFormat;
 
 private:
 	const ZVisionGameDescription *_gameDescription;
+
 
 	// We need random numbers
 	Common::RandomSource *_rnd;
@@ -276,7 +265,7 @@ public:
 	 *
 	 * @param videoDecoder    The video to play
 	 * @param destRect        Where to put the video. (In working window coords)
-	 * @param clipRect        What subset of video to blit to destRect (In video frame coords)  //TODO implement
+	 * @param srcRect         What subset of video to blit to destRect (In video frame coords)  //TODO implement
 	 * @param skippable       If true, the video can be skipped at any time using [Spacebar]
 	 */
 	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, uint16 sub = 0, const Common::Rect &srcRect = Common::Rect(0, 0, 0, 0));

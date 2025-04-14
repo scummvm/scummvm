@@ -23,7 +23,7 @@
 #include "common/system.h"
 #include "video/video_decoder.h"
 #if defined(USE_MPEG2) && defined(USE_A52)
-	#include "video/mpegps_decoder.h"
+#include "video/mpegps_decoder.h"
 #endif
 #include "engines/util.h"
 #include "graphics/surface.h"
@@ -51,20 +51,23 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
 		animation = new RLFDecoder();
 	else if (tmpFileName.hasSuffix(".avi"))
 		animation = new ZorkAVIDecoder();
-	#if defined(USE_MPEG2) && defined(USE_A52)
+#if defined(USE_MPEG2) && defined(USE_A52)
 	else if (tmpFileName.hasSuffix(".vob")) {
-		double amplification = getVobAmplification(tmpFileName);
+ 		double amplification = getVobAmplification(tmpFileName);
 		animation = new Video::MPEGPSDecoder(amplification);
 	}
-	#endif
+#endif
 	else
 		error("Unknown suffix for animation %s", fileName.toString().c_str());
+
 	Common::File *_file = getSearchManager()->openFile(fileName);
 	if (!_file)
 		error("Error opening %s", fileName.toString().c_str());
+
 	bool loaded = animation->loadStream(_file);
 	if (!loaded)
 		error("Error loading animation %s", fileName.toString().c_str());
+
 	return animation;
 }
 
@@ -115,10 +118,13 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 		debug(1, "Video will be scaled from %dx%d to %dx%d", _srcRect.width(), _srcRect.height(), _dstRect.width(), _dstRect.height());
 		scaled = true;
 	}
+
 	bool showSubs = (_scriptManager->getStateValue(StateKey_Subtitles) == 1);
+
 	_clock.stop();
 	vid.start();
 	_videoIsPlaying = true;
+
 	_cutscenesKeymap->setEnabled(true);
 	_gameKeymap->setEnabled(false);
 
@@ -133,8 +139,9 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 					quitGame();
 					break;
 				case kZVisionActionSkipCutscene:
-					if (skippable)
+					if (skippable) {
 						vid.stop();
+					}
 					break;
 				default:
 					break;
@@ -148,6 +155,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 			const Graphics::Surface *frame = vid.decodeNextFrame();
 			if (showSubs && sub > 0)
 				_subtitleManager->update(vid.getCurFrame(), sub);
+
 			if (frame) {
 				_renderManager->renderSceneToScreen(true, true, true); //Redraw text area to clean background of subtitles for videos that don't fill entire working area, e.g, Nemesis sarcophagi
 				if (scaled) {
@@ -160,14 +168,19 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 				_subtitleManager->process(0);
 			}
 		}
+
 		// Always update the screen so the mouse continues to render & video does not skip
 		_renderManager->renderSceneToScreen(true, true, false);
+
 		_system->delayMillis(vid.getTimeToNextFrame() / 2); //Exponentially decaying delay
 	}
+
 	_cutscenesKeymap->setEnabled(false);
 	_gameKeymap->setEnabled(true);
+
 	_videoIsPlaying = false;
 	_clock.start();
+
 	debug(1, "Video playback complete");
 }
 

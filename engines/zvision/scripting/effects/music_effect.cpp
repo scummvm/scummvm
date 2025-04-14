@@ -30,14 +30,12 @@
 #include "zvision/sound/zork_raw.h"
 
 #include "zvision/sound/volume_manager.h"
-
 #include "common/stream.h"
 #include "common/file.h"
 #include "audio/decoders/wave.h"
 
 #include "math/utils.h"
 #include "math/angle.h"
-
 namespace ZVision {
 
 void MusicNodeBASE::setDirection(Math::Angle azimuth, uint8 magnitude) {
@@ -84,18 +82,23 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 
 	if (filename.baseName().contains(".wav")) {
 		Common::File *file = new Common::File();
-		if (_engine->getSearchManager()->openFile(*file, filename))
+		if (_engine->getSearchManager()->openFile(*file, filename)) {
 			audioStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
-	} else
+		}
+	} else {
 		audioStream = makeRawZorkStream(filename, _engine);
+	}
 
 	if (audioStream) {
 		_stereo = audioStream->isStereo();
+
 		if (_loop) {
 			Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
 			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, loopingAudioStream, -1, _volume);
-		} else
+		} else {
 			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audioStream, -1, _volume);
+		}
+
 		if (_key != StateKey_NotSet) {
 			debug(3, "setting musicnode state value to 1");
 			_engine->getScriptManager()->setStateValue(_key, 1);
@@ -110,6 +113,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 		Common::Path subpath(filename.getParent().appendComponent(subname));
 		if (_engine->getSearchManager()->hasFile(subpath))
 			_sub = _engine->getSubtitleManager()->create(subpath, _handle); //NB automatic subtitle!
+
 		_loaded = true;
 		updateMixer();
 	}
@@ -160,6 +164,7 @@ bool MusicNode::process(uint32 deltaTimeInMillis) {
 				setVolume(_newvol);
 		}
 		/*  //Redundant with switch to automatic subtitles
+
 		if (_sub && _engine->getScriptManager()->getStateValue(StateKey_Subtitles) == 1)
 		  _engine->getSubtitleManager()->update(_engine->_mixer->getSoundElapsedTime(_handle) / 100, _sub);
 		//*/
@@ -223,9 +228,7 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 				}
 				break;
 			case RenderTable::FLAT :
-			// fall through
 			case RenderTable::TILT :
-			// fall through
 			default :
 				debug(3, "PanTrackNode in FLAT/TILT mode");
 				_sourcePos.setDegrees(0);
@@ -251,19 +254,23 @@ MusicMidiNode::MusicMidiNode(ZVision *engine, uint32 key, uint8 program, uint8 n
 	_prog = program;
 	_noteNumber = note;
 	_pan = 0;
+
 	_chan = _engine->getMidiManager()->getFreeChannel();
+
 	if (_chan >= 0) {
 		updateMixer();
 		_engine->getMidiManager()->setProgram(_chan, _prog);
 		_engine->getMidiManager()->noteOn(_chan, _noteNumber, _volume);
 	}
+
 	if (_key != StateKey_NotSet)
 		_engine->getScriptManager()->setStateValue(_key, 1);
 }
 
 MusicMidiNode::~MusicMidiNode() {
-	if (_chan >= 0)
+	if (_chan >= 0) {
 		_engine->getMidiManager()->noteOff(_chan);
+	}
 	if (_key != StateKey_NotSet)
 		_engine->getScriptManager()->setStateValue(_key, 2);
 }

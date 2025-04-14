@@ -22,6 +22,7 @@
 #ifndef ZVISION_RENDER_MANAGER_H
 #define ZVISION_RENDER_MANAGER_H
 
+#include "zvision/graphics/render_table.h"
 #include "zvision/text/truetype_font.h"
 
 #include "common/rect.h"
@@ -33,9 +34,6 @@
 #include "graphics/framelimiter.h"
 
 #include "zvision/graphics/graphics_effect.h"
-
-#include "zvision/graphics/render_table.h"
-
 
 class OSystem;
 
@@ -55,7 +53,9 @@ public:
 	RenderManager(ZVision *engine, const ScreenLayout layout, const Graphics::PixelFormat pixelFormat, bool doubleFPS, bool widescreen = false);
 	~RenderManager();
 
+
 	typedef Common::List<GraphicsEffect *> EffectsList;
+
 private:
 	ZVision *_engine;
 	OSystem *_system;
@@ -148,15 +148,17 @@ private:
 	// A buffer to store the result of the panorama / tilt warps
 	Graphics::Surface _warpedSceneSurface;
 
+
 	/** Used to warp the background image */
 	RenderTable _renderTable;
+
+
 
 	// Visual effects list
 	EffectsList _effects;
 
 	//Pointer to currently active backbuffer output surface
 	Graphics::Surface *_outputSurface;
-
 	bool _doubleFPS;
 	bool _widescreen;
 

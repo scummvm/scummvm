@@ -161,21 +161,21 @@ public:
 
 bool ZVisionMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate) ||
-	    (f == kSavesSupportPlayTime) ||
-	    (f == kSimpleSavesNames);
+		(f == kSupportsListSaves) ||
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
+		(f == kSimpleSavesNames);
 }
 
 bool ZVision::ZVision::hasFeature(EngineFeature f) const {
 	return
-	    (f == kSupportsReturnToLauncher) ||
-	    (f == kSupportsLoadingDuringRuntime) ||
-	    (f == kSupportsSavingDuringRuntime);
+		(f == kSupportsReturnToLauncher) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 Common::Error ZVision::ZVision::loadGameState(int slot) {
@@ -325,7 +325,7 @@ Common::KeymapArray ZVisionMetaEngine::initKeymaps(const char *target) const {
 }
 
 Common::Error ZVisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ZVision::ZVisionGameDescription *desc) const {
-	*engine = new ZVision::ZVision(syst, desc);
+	*engine = new ZVision::ZVision(syst,desc);
 	return Common::kNoError;
 }
 

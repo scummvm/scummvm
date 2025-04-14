@@ -41,7 +41,7 @@ Video::AVIDecoder::AVIAudioTrack *ZorkAVIDecoder::createAudioTrack(Video::AVIDec
 }
 
 ZorkAVIDecoder::ZorkAVIAudioTrack::ZorkAVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType) :
-	Video::AVIDecoder::AVIAudioTrack(streamHeader, waveFormat, soundType), _queueStream(0), _decoder(waveFormat.channels == 2) {
+		Video::AVIDecoder::AVIAudioTrack(streamHeader, waveFormat, soundType), _queueStream(0), _decoder(waveFormat.channels == 2) {
 }
 
 void ZorkAVIDecoder::ZorkAVIAudioTrack::createAudioStream() {
@@ -57,10 +57,10 @@ void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *s
 		byte flags = Audio::FLAG_16BITS;
 		if (_wvInfo.channels == 2)
 			flags |= Audio::FLAG_STEREO;
-		#ifdef SCUMM_LITTLE_ENDIAN
+#ifdef SCUMM_LITTLE_ENDIAN
 		// RawChunkStream produces native endianness int16
 		flags |= Audio::FLAG_LITTLE_ENDIAN;
-		#endif
+#endif
 		_queueStream->queueBuffer((byte *)chunk.data, chunk.size, DisposeAfterUse::YES, flags);
 	}
 
