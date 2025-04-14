@@ -211,6 +211,9 @@ void QTVR::m_mouseOver(int nargs) {
 			dither->getPixels(), dither->pitch, me->_rect.left, me->_rect.top, dither->w, dither->h
 		);
 
+		dither->free();
+		delete dither;
+
 		g_director->getCurrentWindow()->setDirty(true);
 
 		Common::Event event;
@@ -430,6 +433,9 @@ void QTVR::m_update(int nargs) {
 	g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
 		dither->getPixels(), dither->pitch, me->_rect.left, me->_rect.top, dither->w, dither->h
 	);
+
+	dither->free();
+	delete dither;
 }
 
 
