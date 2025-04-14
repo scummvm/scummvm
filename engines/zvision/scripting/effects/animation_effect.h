@@ -32,7 +32,7 @@ struct Surface;
 }
 
 namespace Video {
-class VideoDecoder;
+	class VideoDecoder;
 }
 
 namespace ZVision {

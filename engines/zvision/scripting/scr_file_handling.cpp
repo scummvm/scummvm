@@ -97,10 +97,11 @@ void ScriptManager::parseScrFile(const Common::Path &fileName, ScriptScope &scop
 void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stream) {
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
+
 	while (!stream.eos() && !line.contains('}')) {
-		if (line.matchString("criteria {", true))
+		if (line.matchString("criteria {", true)) {
 			parseCriteria(stream, puzzle->criteriaList, puzzle->key);
-		else if (line.matchString("results {", true)) {
+		} else if (line.matchString("results {", true)) {
 			parseResults(stream, puzzle->resultActions, puzzle->key);
 			//WORKAROUNDS:
 			switch (_engine->getGameId()) {
@@ -138,9 +139,7 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 				// WORKAROUND for a script bug in Zork: Grand Inquisitor, room dc10.
 				// Background heartbeat sound effect never terminates upon location change.
 				case 2341:
-				// fall through
 				case 2344:
-				// fall through
 				case 17545:
 					puzzle->resultActions.push_front(new ActionKill(_engine, 11, "02310"));
 					break;
@@ -152,11 +151,14 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 			default:
 				break;
 			}
-		} else if (line.matchString("flags {", true))
+		} else if (line.matchString("flags {", true)) {
 			setStateFlag(puzzle->key, parseFlags(stream));
+		}
+
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
+
 	puzzle->addedBySetState = false;
 }
 
@@ -171,9 +173,12 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
+
 	// Criteria can be empty
-	if (line.contains('}'))
+	if (line.contains('}')) {
 		return false;
+	}
+
 	// Create a new List to hold the CriteriaEntries
 	criteriaList.push_back(Common::List<Puzzle::CriteriaEntry>());
 
@@ -191,6 +196,7 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 			entry.criteriaOperator = Puzzle::NOT_EQUAL_TO;
 			entry.argumentIsAKey = false;
 			entry.argument = 1;
+
 			criteriaList.back().push_back(entry);
 		}
 		break;
@@ -207,6 +213,7 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 			entry.criteriaOperator = Puzzle::EQUAL_TO;
 			entry.argumentIsAKey = false;
 			entry.argument = 0;
+
 			criteriaList.back().push_back(entry);
 		}
 		break;
@@ -246,10 +253,11 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 		// There are supposed to be three tokens, but there is no
 		// guarantee that there will be a space between the second and
 		// the third one (bug #6774)
-		if (token.size() == 1)
+		if (token.size() == 1) {
 			token = tokenizer.nextToken();
-		else
+		} else {
 			token.deleteChar(0);
+		}
 
 		// First determine if the last token is an id or a value
 		// Then parse it into 'argument'
@@ -276,15 +284,19 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 			entry0.criteriaOperator = Puzzle::GREATER_THAN;
 			entry0.argumentIsAKey = false;
 			entry0.argument = 0;
+
 			criteriaList.back().push_back(entry0);
+
 			entry.criteriaOperator = Puzzle::NOT_EQUAL_TO;
 			entry.argument = 2;
 		}
 
 		criteriaList.back().push_back(entry);
+
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
+
 	return true;
 }
 
@@ -329,13 +341,16 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			for (pos = startpos; pos < line.size(); pos++)
 				if (chrs[pos] == ':' || chrs[pos] == '(')
 					break;
+
 			debug(4, "startpos %d, pos %d, line.size %d", startpos, pos, line.size());
 			int32 slot = 11;  //Non-setting default slot
 			Common::String args = "";
 			Common::String act(chrs + startpos, chrs + pos);
 			//Extract arguments, if any
 			if (pos < line.size()) {
+
 				startpos = pos + 1;
+
 				if (chrs[pos] == ':') {
 					for (pos = startpos; pos < line.size(); pos++)
 						if (chrs[pos] == '(')
@@ -343,30 +358,33 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 					//Extract slotkey, if specified
 					Common::String strSlot(chrs + startpos, chrs + pos);
 					slot = atoi(strSlot.c_str());
+
 					startpos = pos + 1;
 				}
+
 				if (pos < line.size()) {
 					for (pos = startpos; pos < line.size(); pos++)
 						if (chrs[pos] == ')')
 							break;
+
 					args = Common::String(chrs + startpos, chrs + pos);
 				}
 			}
 			debug(4, "Action string: '%s', slot %d, arguments string '%s'", act.c_str(), slot, args.c_str());
 
-			// Parse for the action type
-			if (act.matchString("add", true)) {
-				actionList.push_back(new ActionAdd(_engine, slot, args));
-			} else if (act.matchString("animplay", true)) {
-				actionList.push_back(new ActionPlayAnimation(_engine, slot, args));
-			} else if (act.matchString("animpreload", true)) {
-				actionList.push_back(new ActionPreloadAnimation(_engine, slot, args));
-			} else if (act.matchString("animunload", true)) {
-				// Only used by ZGI (locations cd6e, cd6k, dg2f, dg4e, dv1j)
-				actionList.push_back(new ActionUnloadAnimation(_engine, slot, args));
-			} else if (act.matchString("attenuate", true)) {
-				actionList.push_back(new ActionAttenuate(_engine, slot, args));
-			} else if (act.matchString("assign", true)) {
+				// Parse for the action type
+				if (act.matchString("add", true)) {
+					actionList.push_back(new ActionAdd(_engine, slot, args));
+				} else if (act.matchString("animplay", true)) {
+					actionList.push_back(new ActionPlayAnimation(_engine, slot, args));
+				} else if (act.matchString("animpreload", true)) {
+					actionList.push_back(new ActionPreloadAnimation(_engine, slot, args));
+				} else if (act.matchString("animunload", true)) {
+					// Only used by ZGI (locations cd6e, cd6k, dg2f, dg4e, dv1j)
+					actionList.push_back(new ActionUnloadAnimation(_engine, slot, args));
+				} else if (act.matchString("attenuate", true)) {
+					actionList.push_back(new ActionAttenuate(_engine, slot, args));
+				} else if (act.matchString("assign", true)) {
 				if (_engine->getGameId() == GID_GRANDINQUISITOR && key == 17761) {
 					// WORKAROUND for a script bug in Zork: Grand Inquisitor, room tp1e.
 					// Background looping sound effect continuously restarts on every game cycle.
@@ -374,116 +392,114 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 					// Simple fix is to simply not generate this result assignment action at all.
 				} else
 					actionList.push_back(new ActionAssign(_engine, slot, args));
-			} else if (act.matchString("change_location", true)) {
-				actionList.push_back(new ActionChangeLocation(_engine, slot, args));
-			} else if (act.matchString("crossfade", true)) {
-				actionList.push_back(new ActionCrossfade(_engine, slot, args));
-//					debug(1,"\tpush.ActionCrossFade, script line: %s", line.c_str());
-			} else if (act.matchString("cursor", true)) {
-				actionList.push_back(new ActionCursor(_engine, slot, args));
-			} else if (act.matchString("debug", true)) {
-				// Not used. Purposely left empty
-			} else if (act.matchString("delay_render", true)) {
-				actionList.push_back(new ActionDelayRender(_engine, slot, args));
-			} else if (act.matchString("disable_control", true)) {
-				actionList.push_back(new ActionDisableControl(_engine, slot, args));
-			} else if (act.matchString("disable_venus", true)) {
-				// Not used. Purposely left empty
-			} else if (act.matchString("display_message", true)) {
-				actionList.push_back(new ActionDisplayMessage(_engine, slot, args));
-			} else if (act.matchString("dissolve", true)) {
-				actionList.push_back(new ActionDissolve(_engine));
-			} else if (act.matchString("distort", true)) {
-				// Only used by Zork: Nemesis for the "treatment" puzzle in the Sanitarium (aj30)
-				actionList.push_back(new ActionDistort(_engine, slot, args));
-			} else if (act.matchString("enable_control", true)) {
-				actionList.push_back(new ActionEnableControl(_engine, slot, args));
-			} else if (act.matchString("flush_mouse_events", true)) {
-				actionList.push_back(new ActionFlushMouseEvents(_engine, slot));
-			} else if (act.matchString("inventory", true)) {
-				actionList.push_back(new ActionInventory(_engine, slot, args));
-			} else if (act.matchString("kill", true)) {
-				// Only used by ZGI
-				actionList.push_back(new ActionKill(_engine, slot, args));
-			} else if (act.matchString("menu_bar_enable", true)) {
-				actionList.push_back(new ActionMenuBarEnable(_engine, slot, args));
-			} else if (act.matchString("music", true)) {
-				actionList.push_back(new ActionMusic(_engine, slot, args, false));
-//					debug(1,"\tpush.ActionMusic, script line: %s", line.c_str());
-			} else if (act.matchString("pan_track", true)) {
-				actionList.push_back(new ActionPanTrack(_engine, slot, args));
-//					debug(1,"\tpush.ActionPanTrack, script line: %s", line.c_str());
-			} else if (act.matchString("playpreload", true)) {
-				actionList.push_back(new ActionPlayPreloadAnimation(_engine, slot, args));
-			} else if (act.matchString("preferences", true)) {
-				actionList.push_back(new ActionPreferences(_engine, slot, args));
-			} else if (act.matchString("quit", true)) {
-				actionList.push_back(new ActionQuit(_engine, slot));
-			} else if (act.matchString("random", true)) {
-				actionList.push_back(new ActionRandom(_engine, slot, args));
-			} else if (act.matchString("region", true)) {
-				// Only used by Zork: Nemesis
-				actionList.push_back(new ActionRegion(_engine, slot, args));
-			} else if (act.matchString("restore_game", true)) {
-				// Only used by ZGI to load the restart game slot, r.svr.
-				// Used by the credits screen.
-				actionList.push_back(new ActionRestoreGame(_engine, slot, args));
-			} else if (act.matchString("rotate_to", true)) {
-				actionList.push_back(new ActionRotateTo(_engine, slot, args));
-			} else if (act.matchString("save_game", true)) {
-				// Not used. Purposely left empty
-			} else if (act.matchString("set_partial_screen", true)) {
-				actionList.push_back(new ActionSetPartialScreen(_engine, slot, args));
-			} else if (act.matchString("set_screen", true)) {
-				actionList.push_back(new ActionSetScreen(_engine, slot, args));
-			} else if (act.matchString("set_venus", true)) {
-				// Not used. Purposely left empty
-			} else if (act.matchString("stop", true)) {
-				actionList.push_back(new ActionStop(_engine, slot, args));
-			} else if (act.matchString("streamvideo", true)) {
-				actionList.push_back(new ActionStreamVideo(_engine, slot, args));
-			} else if (act.matchString("syncsound", true)) {
-				actionList.push_back(new ActionSyncSound(_engine, slot, args));
-			} else if (act.matchString("timer", true)) {
-				actionList.push_back(new ActionTimer(_engine, slot, args));
-			} else if (act.matchString("ttytext", true)) {
-				actionList.push_back(new ActionTtyText(_engine, slot, args));
-			} else if (act.matchString("universe_music", true)) {
-				if (_engine->getGameId() == GID_GRANDINQUISITOR && slot == 2310 && false) { //DISABLED - not effective, sound stops on all zoom-ins for some reason?
-					// WORKAROUND for a script bug in Zork: Grand Inquisitor, room dc10.
-					// Background looping sound effect never terminates upon location change.
-					// Seems that it should have been "music" instead of "universe_music."
+				} else if (act.matchString("change_location", true)) {
+					actionList.push_back(new ActionChangeLocation(_engine, slot, args));
+				} else if (act.matchString("crossfade", true)) {
+					actionList.push_back(new ActionCrossfade(_engine, slot, args));
+				} else if (act.matchString("cursor", true)) {
+					actionList.push_back(new ActionCursor(_engine, slot, args));
+				} else if (act.matchString("debug", true)) {
+					// Not used. Purposely left empty
+				} else if (act.matchString("delay_render", true)) {
+					actionList.push_back(new ActionDelayRender(_engine, slot, args));
+				} else if (act.matchString("disable_control", true)) {
+					actionList.push_back(new ActionDisableControl(_engine, slot, args));
+				} else if (act.matchString("disable_venus", true)) {
+					// Not used. Purposely left empty
+				} else if (act.matchString("display_message", true)) {
+					actionList.push_back(new ActionDisplayMessage(_engine, slot, args));
+				} else if (act.matchString("dissolve", true)) {
+					actionList.push_back(new ActionDissolve(_engine));
+				} else if (act.matchString("distort", true)) {
+					// Only used by Zork: Nemesis for the "treatment" puzzle in the Sanitarium (aj30)
+					actionList.push_back(new ActionDistort(_engine, slot, args));
+				} else if (act.matchString("enable_control", true)) {
+					actionList.push_back(new ActionEnableControl(_engine, slot, args));
+				} else if (act.matchString("flush_mouse_events", true)) {
+					actionList.push_back(new ActionFlushMouseEvents(_engine, slot));
+				} else if (act.matchString("inventory", true)) {
+					actionList.push_back(new ActionInventory(_engine, slot, args));
+				} else if (act.matchString("kill", true)) {
+					// Only used by ZGI
+					actionList.push_back(new ActionKill(_engine, slot, args));
+				} else if (act.matchString("menu_bar_enable", true)) {
+					actionList.push_back(new ActionMenuBarEnable(_engine, slot, args));
+				} else if (act.matchString("music", true)) {
 					actionList.push_back(new ActionMusic(_engine, slot, args, false));
-				} else
+				} else if (act.matchString("pan_track", true)) {
+					actionList.push_back(new ActionPanTrack(_engine, slot, args));
+				} else if (act.matchString("playpreload", true)) {
+					actionList.push_back(new ActionPlayPreloadAnimation(_engine, slot, args));
+				} else if (act.matchString("preferences", true)) {
+					actionList.push_back(new ActionPreferences(_engine, slot, args));
+				} else if (act.matchString("quit", true)) {
+					actionList.push_back(new ActionQuit(_engine, slot));
+				} else if (act.matchString("random", true)) {
+					actionList.push_back(new ActionRandom(_engine, slot, args));
+				} else if (act.matchString("region", true)) {
+					// Only used by Zork: Nemesis
+					actionList.push_back(new ActionRegion(_engine, slot, args));
+				} else if (act.matchString("restore_game", true)) {
+					// Only used by ZGI to load the restart game slot, r.svr.
+					// Used by the credits screen.
+					actionList.push_back(new ActionRestoreGame(_engine, slot, args));
+				} else if (act.matchString("rotate_to", true)) {
+					actionList.push_back(new ActionRotateTo(_engine, slot, args));
+				} else if (act.matchString("save_game", true)) {
+					// Not used. Purposely left empty
+				} else if (act.matchString("set_partial_screen", true)) {
+					actionList.push_back(new ActionSetPartialScreen(_engine, slot, args));
+				} else if (act.matchString("set_screen", true)) {
+					actionList.push_back(new ActionSetScreen(_engine, slot, args));
+				} else if (act.matchString("set_venus", true)) {
+					// Not used. Purposely left empty
+				} else if (act.matchString("stop", true)) {
+					actionList.push_back(new ActionStop(_engine, slot, args));
+				} else if (act.matchString("streamvideo", true)) {
+					actionList.push_back(new ActionStreamVideo(_engine, slot, args));
+				} else if (act.matchString("syncsound", true)) {
+					actionList.push_back(new ActionSyncSound(_engine, slot, args));
+				} else if (act.matchString("timer", true)) {
+					actionList.push_back(new ActionTimer(_engine, slot, args));
+				} else if (act.matchString("ttytext", true)) {
+					actionList.push_back(new ActionTtyText(_engine, slot, args));
+				} else if (act.matchString("universe_music", true)) {
 					actionList.push_back(new ActionMusic(_engine, slot, args, true));
-			} else if (act.matchString("copy_file", true)) {
-				// Not used. Purposely left empty
-			} else {
-				warning("Unhandled result action type: %s", line.c_str());
+				} else if (act.matchString("copy_file", true)) {
+					// Not used. Purposely left empty
+				} else {
+					warning("Unhandled result action type: %s", line.c_str());
 			}
 		}
+
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 		line.toLowercase();
 	}
+
 	return;
 }
 
 uint ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
 	uint flags = 0;
+
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
+
 	while (!stream.eos() && !line.contains('}')) {
-		if (line.matchString("ONCE_PER_INST", true))
+		if (line.matchString("ONCE_PER_INST", true)) {
 			flags |= Puzzle::ONCE_PER_INST;
-		else if (line.matchString("DO_ME_NOW", true))
+		} else if (line.matchString("DO_ME_NOW", true)) {
 			flags |= Puzzle::DO_ME_NOW;
-		else if (line.matchString("DISABLED", true))
+		} else if (line.matchString("DISABLED", true)) {
 			flags |= Puzzle::DISABLED;
+		}
+
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
+
 	return flags;
 }
 

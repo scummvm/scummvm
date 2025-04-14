@@ -232,9 +232,9 @@ bool RawZorkStream::rewind() {
 }
 
 Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
-        int rate,
-        bool stereo,
-        DisposeAfterUse::Flag disposeAfterUse) {
+		int rate,
+		bool stereo,
+		DisposeAfterUse::Flag disposeAfterUse) {
 	if (stereo)
 		assert(stream->size() % 2 == 0);
 

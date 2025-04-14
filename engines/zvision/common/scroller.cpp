@@ -19,7 +19,7 @@
  *
  */
 
-#include "./scroller.h"
+#include "zvision/common/scroller.h"
 
 namespace ZVision {
 

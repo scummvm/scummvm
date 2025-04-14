@@ -64,6 +64,7 @@ void MidiManager::stop() {
 
 void MidiManager::noteOn(uint8 channel, uint8 note, uint8 velocity) {
 	assert(channel <= 15);
+
 	_activeChannels[channel].playing = true;
 	_activeChannels[channel].note = note;
 	send(0x90 | channel, note, velocity);
@@ -72,6 +73,7 @@ void MidiManager::noteOn(uint8 channel, uint8 note, uint8 velocity) {
 
 void MidiManager::noteOff(uint8 channel) {
 	assert(channel <= 15);
+
 	if (_activeChannels[channel].playing) {
 		_activeChannels[channel].playing = false;
 		send(0x80 | channel, _activeChannels[channel].note);

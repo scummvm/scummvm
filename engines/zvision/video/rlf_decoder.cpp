@@ -196,50 +196,60 @@ bool RLFDecoder::RLFVideoTrack::seek(const Audio::Timestamp &time) {
 const Graphics::Surface *RLFDecoder::RLFVideoTrack::decodeNextFrame() {
 	if (_displayedFrame >= (int)_frameCount)
 		return NULL;
+
 	_displayedFrame++;
 	applyFrameToCurrent(_displayedFrame);
+
 	return &_currentFrameBuffer;
 }
 
 void RLFDecoder::RLFVideoTrack::applyFrameToCurrent(uint frameNumber) {
-	if (_frames[frameNumber].type == Masked)
+	if (_frames[frameNumber].type == Masked) {
 		decodeMaskedRunLengthEncoding(_frames[frameNumber].encodedData, (int8 *)_currentFrameBuffer.getPixels(), _frames[frameNumber].encodedSize, _frameBufferByteSize);
-	else if (_frames[frameNumber].type == Simple)
+	} else if (_frames[frameNumber].type == Simple) {
 		decodeSimpleRunLengthEncoding(_frames[frameNumber].encodedData, (int8 *)_currentFrameBuffer.getPixels(), _frames[frameNumber].encodedSize, _frameBufferByteSize);
+	}
 }
 
 void RLFDecoder::RLFVideoTrack::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const {
 	uint32 sourceOffset = 0;
 	uint32 destOffset = 0;
 	int16 numberOfCopy = 0;
+
 	while (sourceOffset < sourceSize) {
 		int8 numberOfSamples = source[sourceOffset];
 		sourceOffset++;
+
 		// If numberOfSamples is negative, the next abs(numberOfSamples) samples should
 		// be copied directly from source to dest
 		if (numberOfSamples < 0) {
 			numberOfCopy = -numberOfSamples;
+
 			while (numberOfCopy > 0) {
-				if (sourceOffset + 1 >= sourceSize)
+				if (sourceOffset + 1 >= sourceSize) {
 					return;
-				else if (destOffset + 1 >= destSize) {
+				} else if (destOffset + 1 >= destSize) {
 					debug(3, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 					return;
 				}
+
 				WRITE_UINT16(dest + destOffset, READ_LE_UINT16(source + sourceOffset));
+
 				sourceOffset += 2;
 				destOffset += 2;
 				numberOfCopy--;
 			}
+
 			// If numberOfSamples is >= 0, move destOffset forward ((numberOfSamples * 2) + 2)
 			// This function assumes the dest buffer has been memset with 0's.
 		} else {
-			if (sourceOffset + 1 >= sourceSize)
+			if (sourceOffset + 1 >= sourceSize) {
 				return;
-			else if (destOffset + 1 >= destSize) {
+			} else if (destOffset + 1 >= destSize) {
 				debug(3, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 				return;
 			}
+
 			destOffset += (numberOfSamples * 2) + 2;
 		}
 	}
@@ -249,13 +259,16 @@ void RLFDecoder::RLFVideoTrack::decodeSimpleRunLengthEncoding(int8 *source, int8
 	uint32 sourceOffset = 0;
 	uint32 destOffset = 0;
 	int16 numberOfCopy = 0;
+
 	while (sourceOffset < sourceSize) {
 		int8 numberOfSamples = source[sourceOffset];
 		sourceOffset++;
+
 		// If numberOfSamples is negative, the next abs(numberOfSamples) samples should
 		// be copied directly from source to dest
 		if (numberOfSamples < 0) {
 			numberOfCopy = -numberOfSamples;
+
 			while (numberOfCopy > 0) {
 				if (sourceOffset + 1 >= sourceSize) {
 					return;
@@ -263,24 +276,31 @@ void RLFDecoder::RLFVideoTrack::decodeSimpleRunLengthEncoding(int8 *source, int8
 					debug(3, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 					return;
 				}
+
 				WRITE_UINT16(dest + destOffset, READ_LE_UINT16(source + sourceOffset));
+
 				sourceOffset += 2;
 				destOffset += 2;
 				numberOfCopy--;
 			}
+
 			// If numberOfSamples is >= 0, copy one sample from source to the
 			// next (numberOfSamples + 2) dest spots
 		} else {
-			if (sourceOffset + 1 >= sourceSize)
+			if (sourceOffset + 1 >= sourceSize) {
 				return;
+			}
+
 			uint16 sampleColor = READ_LE_UINT16(source + sourceOffset);
 			sourceOffset += 2;
+
 			numberOfCopy = numberOfSamples + 2;
 			while (numberOfCopy > 0) {
 				if (destOffset + 1 >= destSize) {
 					debug(3, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 					return;
 				}
+
 				WRITE_UINT16(dest + destOffset, sampleColor);
 				destOffset += 2;
 				numberOfCopy--;

@@ -22,9 +22,6 @@
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/menu.h"
 
-//FOR BUG TEST ONLY
-//#include "common/debug.h"
-
 namespace ZVision {
 
 enum {
@@ -254,13 +251,13 @@ MenuZGI::MenuZGI(ZVision *engine, const Common::Rect menuArea) :
 }
 
 MenuZGI::~MenuZGI() {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++) {
 		_menuBack[i].free();
-
-	for (int i = 0; i < 4; i++)
+	}
+	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 2; j++)
 			_mainButtons[i][j].free();
-
+	}
 	for (int i = 0; i < 50; i++) {
 		if (_items[i][0]) {
 			_items[i][0]->free();
@@ -308,10 +305,12 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 				}
 			}
 			break;
+
 		case kFocusMagic:
 			if (_enableFlags.get(kMagicMenu)) {
 				int i = mouseOverMagic(Pos);
 				if (i != -1) {
+
 					uint itemnum = _engine->getScriptManager()->getStateValue(StateKey_Spell_1 + i);
 					if (itemnum != 0) {
 						if (_engine->getScriptManager()->getStateValue(StateKey_Reversed_Spellbooc) == 1)
@@ -323,11 +322,14 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 						if (_engine->getScriptManager()->getStateValue(StateKey_InventoryItem) == 0 || _engine->getScriptManager()->getStateValue(StateKey_InventoryItem) >= 0xE0)
 							_engine->getScriptManager()->setStateValue(StateKey_Active_Spell, itemnum);
 				}
+
 			}
 			break;
+
 		case kFocusMain:
 			MenuManager::onMouseUp(Pos);
 			break;
+
 		default:
 			break;
 		}
@@ -384,13 +386,16 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 						_redraw = true;
 			}
 			break;
+
 		case kFocusMagic:
 			if (_enableFlags.get(kMagicMenu)) {
 				int lastItem = _mouseOnItem;
 				_mouseOnItem = mouseOverMagic(Pos);
+
 				if (lastItem != _mouseOnItem)
 					if (_engine->getScriptManager()->getStateValue(StateKey_Spell_1 + _mouseOnItem) || _engine->getScriptManager()->getStateValue(StateKey_Spell_1 + lastItem))
 						_redraw = true;
+
 			}
 			break;
 		case kFocusMain:
@@ -554,20 +559,20 @@ MenuNemesis::MenuNemesis(ZVision *engine, const Common::Rect menuArea) :
 	_engine->getRenderManager()->readImageToSurface("bar.tga", _mainBack, false);
 
 	char buf[24];
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++)
 		//Buffer menu buttons
 		for (int j = 0; j < 6; j++) {
 			Common::sprintf_s(buf, "butfrm%d%d.tga", i + 1, j);
 			_engine->getRenderManager()->readImageToSurface(buf, _mainButtons[i][j], false);
 		}
-	}
+
 }
 
 MenuNemesis::~MenuNemesis() {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 6; j++)
 			_mainButtons[i][j].free();
-	};
+
 }
 
 bool MenuNemesis::inMenu(const Common::Point &Pos) {

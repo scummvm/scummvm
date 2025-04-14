@@ -22,11 +22,11 @@
 #ifndef ZVISION_RENDER_TABLE_H
 #define ZVISION_RENDER_TABLE_H
 
+#include "zvision/zvision.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
 
 class OSystem;
-
 namespace ZVision {
 
 class FilterPixel {
@@ -90,7 +90,6 @@ public:
 	~RenderTable();
 
 //	Common::Point testPixel = Common::Point(255,0);
-
 public:
 	enum RenderState {
 		PANORAMA,
@@ -152,7 +151,6 @@ public:
 
 //	void mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect);
 	void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool filter = false);
-
 	template <typename I>
 	Common::String pixelToBinary(I &pixel, bool splitColors = true) {
 		uint8 bits = sizeof(pixel) << 3;
@@ -167,7 +165,6 @@ public:
 		}
 		return str;
 	}
-
 	void generateRenderTable();
 
 	void setPanoramaFoV(float fov); //Degrees

@@ -38,15 +38,15 @@
 namespace ZVision {
 
 const FontStyle systemFonts[] = {
-	{ "*times new roman*",    "times",   "LiberationSerif"  },
-	{ "*times*",          "times",   "LiberationSerif"  },
+	{ "*times new roman*",	  "times",   "LiberationSerif"  },
+	{ "*times*",		  "times",   "LiberationSerif"  },
 	{ "*century schoolbook*", "censcbk", "LiberationSerif"  },
-	{ "*garamond*",       "gara",    "LiberationSerif"  },
-	{ "*courier new*",    "cour",    "LiberationMono" },
-	{ "*courier*",        "cour",    "LiberationMono" },
-	{ "*ZorkDeath*",      "cour",    "LiberationMono" },
-	{ "*arial*",          "arial",   "LiberationSans" },
-	{ "*ZorkNormal*",     "arial",   "LiberationSans" }
+	{ "*garamond*", 	  "gara",    "LiberationSerif"  },
+	{ "*courier new*",	  "cour",    "LiberationMono" },
+	{ "*courier*",		  "cour",    "LiberationMono" },
+	{ "*ZorkDeath*",	  "cour",    "LiberationMono" },
+	{ "*arial*",		  "arial",   "LiberationSans" },
+	{ "*ZorkNormal*",	  "arial",   "LiberationSans" }
 };
 
 const FontStyle getSystemFont(int fontIndex) {
