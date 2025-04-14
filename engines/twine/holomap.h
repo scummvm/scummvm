@@ -39,7 +39,7 @@ struct AnimTimerDataStruct;
 
 /**
  * The Holomap shows the hero position. The arrows (@c RESSHQR_HOLOARROWMDL) represent important places in your quest - they automatically disappear once that part of
- * the quest is done (@c clearHolomapPosition()). You can rotate the holoamp by pressing ctrl+cursor keys - but only using the cursor keys, you can scroll through the
+ * the quest is done (@c clrHoloPos()). You can rotate the holoamp by pressing ctrl+cursor keys - but only using the cursor keys, you can scroll through the
  * text for the visible arrows.
  */
 class Holomap {
