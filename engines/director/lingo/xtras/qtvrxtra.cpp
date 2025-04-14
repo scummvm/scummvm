@@ -449,6 +449,9 @@ void QtvrxtraXtra::m_QTVRIdle(int nargs) {
 	g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
 		dither->getPixels(), dither->pitch, me->_rect.left, me->_rect.top, dither->w, dither->h
 	);
+
+	dither->free();
+	delete dither;
 }
 
 void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
@@ -483,6 +486,9 @@ void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
 		g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
 			dither->getPixels(), dither->pitch, me->_rect.left, me->_rect.top, dither->w, dither->h
 		);
+
+		dither->free();
+		delete dither;
 
 		g_director->getCurrentWindow()->setDirty(true);
 
@@ -571,6 +577,9 @@ void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
 		g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
 			dither->getPixels(), dither->pitch, me->_rect.left, me->_rect.top, dither->w, dither->h
 		);
+
+		dither->free();
+		delete dither;
 
 		g_director->getCurrentWindow()->setDirty(true);
 
