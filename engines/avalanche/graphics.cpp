@@ -621,11 +621,11 @@ void GraphicManager::ghostDrawBackgroundItems(Common::File &file) {
 		int height = cb._height + 1;
 
 		Graphics::Surface picture;
-		picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 		// Load the picture according to it's type.
 		switch (cb._flavour) {
 		case kFlavourOne: // There is only one plane.
+			picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 			for (uint16 y = 0; y < height; y++) {
 				for (uint16 x = 0; x < width; x += 8) {
 					byte pixel = file.readByte();
@@ -640,6 +640,7 @@ void GraphicManager::ghostDrawBackgroundItems(Common::File &file) {
 			picture = loadPictureRaw(file, width, height);
 			break;
 		default:
+			picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 			break;
 		}
 
