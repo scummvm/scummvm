@@ -332,15 +332,13 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const RLEBuffer 
 		else
 			split_rgb888(mask_color, mr, mg, mb);
 
-		if (_pixel_format == GR_RGB565) {
+		if (!alpha_flag) {
 			mr = (mr * (255 - mask_alpha)) >> 8;
 			mg = (mg * (255 - mask_alpha)) >> 8;
 			mb = (mb * (255 - mask_alpha)) >> 8;
-		}
 
-		uint32 cl = make_rgb(mr, mg, mb);
+			uint32 cl = make_rgb(mr, mg, mb);
 
-		if (!alpha_flag) {
 			while (j < psx) {
 				if (count > 0) {
 					while (count && j < psx) {
@@ -348,9 +346,9 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const RLEBuffer 
 							if (_pixel_format == GR_RGB565) {
 								setPixelFast(scr_buf, cl);
 							} else {
-								scr_buf[3] = ((mr * (255 - mask_alpha)) >> 8) + ((mask_alpha * scr_buf[3]) >> 8);
-								scr_buf[2] = ((mg * (255 - mask_alpha)) >> 8) + ((mask_alpha * scr_buf[2]) >> 8);
-								scr_buf[1] = ((mb * (255 - mask_alpha)) >> 8) + ((mask_alpha * scr_buf[1]) >> 8);
+								scr_buf[3] = mr + ((mask_alpha * scr_buf[3]) >> 8);
+								scr_buf[2] = mg + ((mask_alpha * scr_buf[2]) >> 8);
+								scr_buf[1] = mb + ((mask_alpha * scr_buf[1]) >> 8);
 							}
 						}
 						scr_buf += dx;
@@ -366,9 +364,9 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const RLEBuffer 
 								if (_pixel_format == GR_RGB565) {
 									setPixelFast(scr_buf, cl);
 								} else {
-									scr_buf[3] = ((mr * (255 - mask_alpha)) >> 8) + ((mask_alpha * scr_buf[3]) >> 8);
-									scr_buf[2] = ((mg * (255 - mask_alpha)) >> 8) + ((mask_alpha * scr_buf[2]) >> 8);
-									scr_buf[1] = ((mb * (255 - mask_alpha)) >> 8) + ((mask_alpha * scr_buf[1]) >> 8);
+									scr_buf[3] = mr + ((mask_alpha * scr_buf[3]) >> 8);
+									scr_buf[2] = mg + ((mask_alpha * scr_buf[2]) >> 8);
+									scr_buf[1] = mb + ((mask_alpha * scr_buf[1]) >> 8);
 								}
 							}
 							scr_buf += dx;
@@ -395,7 +393,7 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const RLEBuffer 
 							uint32 b = (mb * (255 - a)) >> 8;
 
 							if (_pixel_format == GR_RGB565) {
-								cl = make_rgb565u(r, g, b);
+								uint16 cl = make_rgb565u(r, g, b);
 								*(uint16 *)scr_buf = alpha_blend_565(cl, *(uint16 *)scr_buf, a);
 							} else {
 								scr_buf[1] = b + ((a * scr_buf[1]) >> 8);
@@ -424,7 +422,7 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const RLEBuffer 
 								uint32 b = (mb * (255 - a)) >> 8;
 
 								if (_pixel_format == GR_RGB565) {
-									cl = make_rgb565u(r, g, b);
+									uint16 cl = make_rgb565u(r, g, b);
 									*(uint16 *)scr_buf = alpha_blend_565(cl, *(uint16 *)scr_buf, a);
 								} else {
 									scr_buf[1] = b + ((a * scr_buf[1]) >> 8);
