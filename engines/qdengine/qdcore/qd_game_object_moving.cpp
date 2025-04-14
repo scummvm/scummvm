@@ -79,7 +79,7 @@ qdGameObjectMoving::qdGameObjectMoving() :
 	_is_selected = false;
 	set_flag(QD_OBJ_HAS_BOUND_FLAG);
 
-	if (g_engine->_gameVersion <= 20030919)
+	if (g_engine->_gameVersion <= 20060129)
 		_movement_mode = MOVEMENT_MODE_NONE_EARLY;
 	else
 		_movement_mode = MOVEMENT_MODE_STOP;
@@ -121,7 +121,7 @@ qdGameObjectMoving::qdGameObjectMoving(const qdGameObjectMoving &obj) : qdGameOb
 	_is_selected = false;
 	set_flag(QD_OBJ_HAS_BOUND_FLAG);
 
-	if (g_engine->_gameVersion <= 20030919)
+	if (g_engine->_gameVersion <= 20060129)
 		_movement_mode = MOVEMENT_MODE_NONE_EARLY;
 	else
 		_movement_mode = MOVEMENT_MODE_STOP;
@@ -532,7 +532,7 @@ bool qdGameObjectMoving::stop_movement() {
 		if (cur_state() == -1) return true;
 
 		qdGameObjectState *st = get_state(cur_state());
-		if (g_engine->_gameVersion <= 20030919) {
+		if (g_engine->_gameVersion <= 20060129) {
 			if (st->state_type() == qdGameObjectState::STATE_WALK) {
 				set_animation_info(static_cast<qdGameObjectStateWalk *>(st)->static_animation_info(_direction_angle));
 				st->stop_sound();
@@ -734,7 +734,7 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 			}
 		}
 		return R();
-	case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20030919
+	case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20060129
 	default:
 		break;
 	}
@@ -877,7 +877,7 @@ void qdGameObjectMoving::quant(float dt) {
 		start_auto_move();
 
 	if (check_flag(QD_OBJ_MOVING_FLAG)) {
-		if (g_engine->_gameVersion <= 20030919 || future_pos_correct(dt)) {
+		if (g_engine->_gameVersion <= 20041201 || future_pos_correct(dt)) {
 			bool end_movement = false;
 			Vect3f r = get_future_r(dt, end_movement, true);
 
@@ -895,7 +895,7 @@ void qdGameObjectMoving::quant(float dt) {
 					if (_target_angle >= 0.0f)
 						_direction_angle = _target_angle;
 
-					if (g_engine->_gameVersion <= 20030919) {
+					if (g_engine->_gameVersion <= 20060129) {
 						drop_flag(QD_OBJ_MOVING_FLAG);
 						set_direction(_direction_angle);
 
@@ -1082,7 +1082,7 @@ bool qdGameObjectMoving::update_screen_pos() {
 				case MOVEMENT_MODE_END:
 					offs_type = qdGameObjectStateWalk::OFFSET_END;
 					break;
-				case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20030919
+				case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20060129
 					if (!check_flag(QD_OBJ_MOVING_FLAG))
 						offs_type = qdGameObjectStateWalk::OFFSET_STATIC;
 				}
@@ -2042,7 +2042,7 @@ bool qdGameObjectMoving::set_walk_animation() {
 				}
 			}
 			break;
-		case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20030919
+		case MOVEMENT_MODE_NONE_EARLY: // _gameVersion <= 20060129
 		default:
 			break;
 		}
@@ -2089,7 +2089,7 @@ bool qdGameObjectMoving::movement_impulse() {
 	_impulse_direction = -1.0f;
 	_target_angle = -1.0f;
 
-	if (g_engine->_gameVersion <= 20030919)
+	if (g_engine->_gameVersion <= 20060129)
 		set_walk_animation();
 
 	if (_movement_mode == MOVEMENT_MODE_STOP || _movement_mode == MOVEMENT_MODE_END)
