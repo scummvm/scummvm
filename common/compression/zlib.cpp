@@ -68,8 +68,10 @@ bool inflateZlibHeaderless(byte *dst, uint *dstLen, const byte *src, uint srcLen
 	// Set the dictionary, if provided
 	if (dict != nullptr) {
 		err = inflateSetDictionary(&stream, const_cast<byte *>(dict), dictLen);
-		if (err != Z_OK)
+		if (err != Z_OK) {
+			inflateEnd(&stream);
 			return false;
+		}
 	}
 
 	err = inflate(&stream, Z_SYNC_FLUSH);
