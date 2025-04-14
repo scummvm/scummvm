@@ -418,7 +418,7 @@ static void boss3CheckHit() {
 		if (!_G(actor[3])._temp2) {
 			actorDamaged(&_G(actor[3]), 10);
 
-			if (_G(cheat) && _G(keyFlag[_Z]))
+			if (_G(cheat) && _G(keyFlag[GOT_Z]))
 				_G(actor[3])._health -= 50;
 			else
 				_G(actor[3])._health -= 10;

@@ -45,8 +45,8 @@ struct Header {
 #define MAX_ENEMIES 16
 #define STAMINA 20
 
-#define _Z 44
-#define _B 48
+#define GOT_Z 44
+#define GOT_B 48
 #define TMP_SIZE 5800
 
 #define GAME1 (_G(area) == 1)

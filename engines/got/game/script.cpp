@@ -141,7 +141,7 @@ void Scripts::runScript(bool firstTime) {
 
 void Scripts::scriptLoop() {
 	while (_paused == SCRIPT_READY) {
-		if (_G(cheat) && _G(keyFlag[_B]))
+		if (_G(cheat) && _G(keyFlag[GOT_B]))
 			break;
 
 		int ret = getCommand();
