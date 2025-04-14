@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-13 06:56+0000\n"
-"PO-Revision-Date: 2025-02-26 12:46+0000\n"
+"PO-Revision-Date: 2025-04-14 21:19+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -5576,21 +5576,6 @@ msgid "Libretro playlist"
 msgstr "Libretro 재생목록"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:236
-#, fuzzy
-#| msgid ""
-#| "## Libretro playlists for ScummVM core\n"
-#| "Playlists used in Libretro frontends (e.g. Retroarch) are plain text "
-#| "lists used to directly launch a game with a specific core from the user "
-#| "interface. Those lists are structured to pass to the core the path of a "
-#| "specific content file to be loaded (e.g. ROM).\n"
-#| "\n"
-#| "ScummVM core can accept as content the path to any of the files inside a "
-#| "valid game folder, the detection system will try to autodetect the game "
-#| "from the content file parent folder and run the game with default ScummVM "
-#| "options.\n"
-#| "\n"
-#| "The core also supports dedicated per game **hook** plain text files with "
-#| "**."
 msgid ""
 "## Libretro playlists for ScummVM core\n"
 "Playlists used in Libretro frontends (e.g. Retroarch) are plain text lists "
@@ -5606,14 +5591,14 @@ msgid ""
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
 "## ScummVM 코어용 Libretro 재생목록\n"
-"Libretro 프런트엔드(예: Retroarch)에서 사용되는 재생목록은 사용자 인터페이스"
-"에서 특정 코어로 게임을 직접 시작하는 데 사용되는 일반 텍스트 목록입니다. 이"
-"러한 목록은 불러올 특정 콘텐츠 파일(예: ROM)의 경로를 코어에 전달하도록 구조"
-"화되어 있습니다.\n"
+"Libretro 프런트엔드(예: Retroarch)에서 사용되는 재생목록은 사용자 "
+"인터페이스에서 특정 코어로 게임을 직접 시작하는 데 사용되는 일반 텍스트 "
+"목록입니다. 이러한 목록은 불러올 특정 콘텐츠 파일(예: ROM)의 경로를 코어에 "
+"전달하도록 구조화되어 있습니다.\n"
 "\n"
-"ScummVM 코어는 유효한 게임 폴더 내의 모든 파일에 대한 경로를 콘텐츠로 허용할 "
-"수 있으며, 감지 시스템은 콘텐츠 파일 부모 폴더에서 게임을 자동으로 감지하고 "
-"기본 ScummVM 옵션으로 게임을 실행합니다.\n"
+"ScummVM 코어는 유효한 게임 폴더 내의 모든 파일에 대한 재생 목록 제공 경로를 "
+"콘텐츠로 허용할 수 있으며, 감지 시스템은 콘텐츠 파일 상위 폴더에서 게임을 "
+"자동으로 감지하고 기본 ScummVM 옵션으로 게임을 실행합니다.\n"
 "\n"
 "코어는 또한 **를 포함한 게임별 **후크** 일반 텍스트 파일을 지원합니다."
 
@@ -6416,10 +6401,8 @@ msgid "Turn right"
 msgstr "오른쪽으로"
 
 #: engines/agos/metaengine.cpp:315
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fight mode"
-msgstr "빠른 모드 전환"
+msgstr "전투 모드 전환"
 
 #: engines/agos/metaengine.cpp:324
 msgid "Text speed - Fast"
@@ -11161,6 +11144,8 @@ msgid ""
 "This fan-made translation is not supported, because it is known to contain\n"
 "corrupted resources that might make it crash or seriously misbehave."
 msgstr ""
+"이 팬이 만든 번역은 손상된 리소스가 포함되어 충돌이나 심각한 오작동을\n"
+"일으킬 수 있는 것으로 알려져 있기 때문에 지원되지 않습니다."
 
 #: engines/scumm/metaengine.cpp:404
 msgid ""
@@ -12056,20 +12041,16 @@ msgid "Go to end of save/load menu"
 msgstr "저장/불러오기 메뉴 끝으로 이동"
 
 #: engines/toltecs/metaengine.cpp:216
-#, fuzzy
-#| msgid "Move left"
 msgid "Move / Select"
-msgstr "왼쪽으로 이동"
+msgstr "이동 / 선택"
 
 #: engines/toltecs/metaengine.cpp:222
 msgid "Move / Perform Default Action"
-msgstr ""
+msgstr "이동 / 기본 작업 수행"
 
 #: engines/toltecs/metaengine.cpp:258
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip ride"
-msgstr "비디오 건너뛰기"
+msgstr "타는 것 건너뛰기"
 
 #: engines/tony/tony.cpp:248
 #, c-format
