@@ -2049,7 +2049,8 @@ bool qdGameDispatcher::toggle_inventory(bool state) {
 		}
 	}
 
-	_cur_inventory = NULL;
+	if (g_engine->_gameVersion > 20031206 || !state)
+		_cur_inventory = NULL;
 	update_ingame_interface();
 	return true;
 }
