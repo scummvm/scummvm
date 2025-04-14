@@ -72,8 +72,8 @@ public:
 	virtual ~BitmapDecoder();
 
 	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
+	void destroy() override;
+	virtual bool loadStream(Common::SeekableReadStream &stream) override;
 	const Graphics::Surface *getSurface() const override { return _surface; }
 	const Graphics::Palette &getPalette() const override { return _palette; }
 

@@ -60,8 +60,8 @@ public:
 	~PICTDecoder();
 
 	// ImageDecoder API
-	bool loadStream(Common::SeekableReadStream &stream);
-	void destroy();
+	bool loadStream(Common::SeekableReadStream &stream) override;
+	void destroy() override;
 	const Graphics::Surface *getSurface() const override { return _outputSurface; }
 	const Graphics::Palette &getPalette() const override { return _palette; }
 
