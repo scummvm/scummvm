@@ -189,6 +189,7 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 		} else
 			str[i++] = c;
 		if (imgFile.eof()) {
+			imgFile.close();
 			printf("Unexpected end of file in '%s' while reading pbm header! This image will be skipped.\n", fileName);
 			return;
 		}

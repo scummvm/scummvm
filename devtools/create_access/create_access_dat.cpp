@@ -201,8 +201,10 @@ void writeMartianCommonData(int argc, char *argv[]) {
 				outputFile->write(exeFile, FONT_DATA_SIZE[fontNum]);
 			}
 
+			exeFile.close();
 			return;
 		}
+		exeFile.close();
 	}
 
 	// No executable found, so store 0 size fonts
@@ -334,6 +336,7 @@ bool processExecutable(int exeIdx, const char *name) {
 		// Martian Memorandum English packed
 		printf("Martian Memorandum provided that's packed with EXEPACK.\n");
 		printf("It needs to be first unpacked before it can be used with this tool.\n");
+		exeFile.close();
 		return false;
 
 	case 10454:
