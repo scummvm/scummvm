@@ -179,7 +179,6 @@ uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode) {
 		output = pow(scaledInput, 4) / pow(255, 3);
 		break;
 	case kVolumeLinear:
-	// fall through
 	default:
 		output = scaledInput;
 		break;

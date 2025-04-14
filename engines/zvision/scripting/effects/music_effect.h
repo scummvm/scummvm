@@ -79,7 +79,9 @@ public:
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
 	bool process(uint32 deltaTimeInMillis) override;
+
 	void setVolume(uint8 volume) override;
+
 	void setFade(int32 time, uint8 target) override;
 
 private:
@@ -110,7 +112,9 @@ public:
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
 	bool process(uint32 deltaTimeInMillis) override;
+
 	void setVolume(uint8 volume) override;
+
 	void setFade(int32 time, uint8 target) override;
 
 private:
@@ -125,6 +129,7 @@ class PanTrackNode : public ScriptingEffect {
 public:
 	PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos, uint8 mag = 255, bool resetMixerOnDelete = false, bool staticScreen = false);
 	~PanTrackNode() override;
+
 	bool process(uint32 deltaTimeInMillis) override;
 
 private:

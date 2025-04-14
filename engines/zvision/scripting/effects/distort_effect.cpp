@@ -34,21 +34,27 @@ namespace ZVision {
 
 DistortNode::DistortNode(ZVision *engine, uint32 key, int16 speed, float startAngle, float endAngle, float startLineScale, float endLineScale)
 	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_DISTORT) {
+
 	_angle = _engine->getRenderManager()->getRenderTable()->getAngle();
 	_linScale = _engine->getRenderManager()->getRenderTable()->getLinscale();
+
 	_speed = speed;
 	_incr = true;
 	_startAngle = startAngle;
 	_endAngle = endAngle;
 	_startLineScale = startLineScale;
 	_endLineScale = endLineScale;
+
 	_curFrame = 1.0;
+
 	_diffAngle = endAngle - startAngle;
 	_diffLinScale = endLineScale - startLineScale;
+
 	_frmSpeed = (float)speed / 15.0;
 	_frames = (int)ceil((5.0 - _frmSpeed * 2.0) / _frmSpeed);
 	if (_frames <= 0)
 		_frames = 1;
+
 	if (_key != StateKey_NotSet)
 		_engine->getScriptManager()->setStateValue(_key, 1);
 }
@@ -59,10 +65,12 @@ DistortNode::~DistortNode() {
 
 bool DistortNode::process(uint32 deltaTimeInMillis) {
 	float updTime = deltaTimeInMillis / (1000.0 / 60.0);
+
 	if (_incr)
 		_curFrame += updTime;
 	else
 		_curFrame -= updTime;
+
 	if (_curFrame < 1.0) {
 		_curFrame = 1.0;
 		_incr = true;
@@ -70,8 +78,10 @@ bool DistortNode::process(uint32 deltaTimeInMillis) {
 		_curFrame = _frames;
 		_incr = false;
 	}
+
 	float diff = (1.0 / (5.0 - (_curFrame * _frmSpeed))) / (5.0 - _frmSpeed);
 	setParams(_startAngle + diff * _diffAngle, _startLineScale + diff * _diffLinScale);
+
 	return false;
 }
 

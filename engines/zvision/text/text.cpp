@@ -42,16 +42,16 @@ TextStyleState::TextStyleState() {
 	_green = 255;
 	_red = 255;
 	_bold = false;
-	#if 0
+#if 0
 	_newline = false;
 	_escapement = 0;
-	#endif
+#endif
 	_italic = false;
 	_justification = TEXT_JUSTIFY_LEFT;
 	_size = 12;
-	#if 0
+#if 0
 	_skipcolor = false;
-	#endif
+#endif
 	_strikeout = false;
 	_underline = false;
 	_statebox = 0;
@@ -117,12 +117,12 @@ TextChange TextStyleState::parseStyle(const Common::String &str, int16 len) {
 				}
 			}
 		} else if (token.matchString("newline", true)) {
-			#if 0
+#if 0
 			if ((retval & TXT_RET_NEWLN) == 0)
 				_newline = 0;
 
 			_newline++;
-			#endif
+#endif
 			retval |= TEXT_CHANGE_NEWLINE;
 		} else if (token.matchString("point", true)) {
 			if (!tokenizer.empty()) {
@@ -136,10 +136,10 @@ TextChange TextStyleState::parseStyle(const Common::String &str, int16 len) {
 		} else if (token.matchString("escapement", true)) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
-				#if 0
+#if 0
 				int32 tmp = atoi(token.c_str());
 				_escapement = tmp;
-				#endif
+#endif
 			}
 		} else if (token.matchString("italic", true)) {
 			if (!tokenizer.empty()) {
@@ -204,13 +204,13 @@ TextChange TextStyleState::parseStyle(const Common::String &str, int16 len) {
 		} else if (token.matchString("skipcolor", true)) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
-				#if 0
+#if 0
 				if (token.matchString("on", true)) {
 					_skipcolor = true;
 				} else if (token.matchString("off", true)) {
 					_skipcolor = false;
 				}
-				#endif
+#endif
 			}
 		} else if (token.matchString("image", true)) {
 			// Not used
@@ -238,6 +238,7 @@ TextChange TextStyleState::parseStyle(const Common::String &str, int16 len) {
 void TextStyleState::readAllStyles(const Common::String &txt) {
 	int16 startTextPosition = -1;
 	int16 endTextPosition = -1;
+
 	for (uint16 i = 0; i < txt.size(); i++) {
 		if (txt[i] == '<')
 			startTextPosition = i;
@@ -249,11 +250,13 @@ void TextStyleState::readAllStyles(const Common::String &txt) {
 				}
 			}
 		}
+
 	}
 }
 
 void TextStyleState::updateFontWithTextState(StyledTTFont &font) {
 	uint tempStyle = 0;
+
 	if (_bold) {
 		tempStyle |= StyledTTFont::TTF_STYLE_BOLD;
 	}
@@ -269,6 +272,7 @@ void TextStyleState::updateFontWithTextState(StyledTTFont &font) {
 	if (_sharp) {
 		tempStyle |= StyledTTFont::TTF_STYLE_SHARP;
 	}
+
 	font.loadFont(_fontname, _size, tempStyle);
 }
 
@@ -289,8 +293,10 @@ void TextRenderer::drawTextWithJustification(const Common::String &text, StyledT
 int32 TextRenderer::drawText(const Common::String &text, TextStyleState &state, Graphics::Surface &dest) {
 	StyledTTFont font(_engine);
 	state.updateFontWithTextState(font);
+
 	uint32 color = _engine->_resourcePixelFormat.RGBToColor(state._red, state._green, state._blue);
 	drawTextWithJustification(text, font, color, dest, 0, state._justification);
+
 	return font.getStringWidth(text);
 }
 
@@ -343,6 +349,7 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 			// Flush the currentWord to the currentSentence
 			currentSentence += currentWord;
 			sentenceWidth += wordWidth;
+
 			// Reset the word variables
 			currentWord.clear();
 			wordWidth = 0;
@@ -480,10 +487,13 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 	if (!currentWord.empty() || !currentSentence.empty()) {
 		currentSentence += currentWord;
 		sentenceWidth += wordWidth;
+
 		textSurfaces.push_back(TextSurface(font.renderSolidText(currentSentence, currentState.getTextColor(_engine)), sentencePixelOffset, currentLineNumber));
 	}
+
 	lineWidths.push_back(lineWidth + sentenceWidth);
 	lineJustifications.push_back(currentState._justification);
+
 	for (Common::Array<TextSurface>::iterator iter = textSurfaces.begin(); iter != textSurfaces.end(); ++iter) {
 		Common::Rect empty;
 		int16 Xpos = iter->_surfaceOffset.x;
@@ -521,6 +531,7 @@ Common::U32String readWideLine(Common::SeekableReadStream &stream) {
 			// End of the line. Break
 			break;
 		}
+
 		asciiString += value;
 	}
 	return asciiString;

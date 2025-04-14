@@ -72,6 +72,7 @@ bool SyncSoundNode::process(uint32 deltaTimeInMillis) {
 	if (! _engine->_mixer->isSoundHandleActive(_handle))
 		return stop();
 	else {
+
 		if (_engine->getScriptManager()->getSideFX(_syncto) == NULL)
 			return stop();
 		/*  //Redundant with switch to automatic subtitles

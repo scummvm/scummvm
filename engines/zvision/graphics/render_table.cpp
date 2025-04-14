@@ -19,13 +19,12 @@
  *
  */
 
+#include "zvision/graphics/render_table.h"
+
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "math/utils.h"
-#include "zvision/zvision.h"
 #include "common/system.h"
-
-#include "zvision/graphics/render_table.h"
 #include "zvision/scripting/script_manager.h"
 
 namespace ZVision {
@@ -38,7 +37,9 @@ RenderTable::RenderTable(ZVision *engine, uint numColumns, uint numRows, const G
 	  _renderState(FLAT),
 	  _pixelFormat(pixelFormat) {
 	assert(numRows != 0 && numColumns != 0);
+
 	_internalBuffer = new FilterPixel[numRows * numColumns];
+
 	memset(&_panoramaOptions, 0, sizeof(_panoramaOptions));
 	memset(&_tiltOptions, 0, sizeof(_tiltOptions));
 	_halfRows = floor((_numRows - 1) / 2);
@@ -53,6 +54,7 @@ RenderTable::~RenderTable() {
 
 void RenderTable::setRenderState(RenderState newState) {
 	_renderState = newState;
+
 	switch (newState) {
 	case PANORAMA:
 		_panoramaOptions.verticalFOV = Math::deg2rad<float>(27.0f);
@@ -80,10 +82,13 @@ const Common::Point RenderTable::convertWarpedCoordToFlatCoord(const Common::Poi
 		int16 y = CLIP<int16>(point.y, 0, (int16)_numRows);
 		return Common::Point(x, y);
 	}
+
 	_index = point.y * _numColumns + point.x;
+
 	Common::Point newPoint(point);
 	newPoint.x += (_internalBuffer[_index]._xDir ? _internalBuffer[_index]._Src.right : _internalBuffer[_index]._Src.left);
 	newPoint.y += (_internalBuffer[_index]._yDir ? _internalBuffer[_index]._Src.bottom : _internalBuffer[_index]._Src.top);
+
 	return newPoint;
 }
 
@@ -126,6 +131,7 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 d
 
 void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool highQuality) {
 	_destOffset = 0;
+
 	uint16 *sourceBuffer = (uint16 *)srcBuf->getPixels();
 	uint16 *destBuffer = (uint16 *)dstBuf->getPixels();
 	if (highQuality != _highQuality) {
@@ -286,11 +292,13 @@ void RenderTable::generateLookupTable(bool tilt) {
 
 void RenderTable::setPanoramaFoV(float fov) {
 	assert(fov > 0.0f);
+
 	_panoramaOptions.verticalFOV = Math::deg2rad<float>(fov);
 }
 
 void RenderTable::setPanoramaScale(float scale) {
 	assert(scale > 0.0f);
+
 	_panoramaOptions.linearScale = scale;
 }
 
@@ -312,11 +320,13 @@ uint16 RenderTable::getPanoramaZeroPoint() {
 
 void RenderTable::setTiltFoV(float fov) {
 	assert(fov > 0.0f);
+
 	_tiltOptions.verticalFOV = Math::deg2rad<float>(fov);
 }
 
 void RenderTable::setTiltScale(float scale) {
 	assert(scale > 0.0f);
+
 	_tiltOptions.linearScale = scale;
 }
 

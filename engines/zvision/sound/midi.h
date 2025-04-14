@@ -50,6 +50,7 @@ protected:
 	struct chan {
 		bool playing;
 		uint8 note;
+
 		chan() : playing(false), note(0) {};
 	};
 	void send(uint8 status, uint8 data1 = 0x00, uint8 data2 = 0x00);
