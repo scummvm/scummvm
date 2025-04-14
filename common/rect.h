@@ -43,8 +43,8 @@ namespace Common {
  * Simple class for handling both 2D position and size.
  */
 struct Point {
-	int16 x;    /*!< The horizontal position of the point. */
-	int16 y;    /*!< The vertical position of the point. */
+	int16 x;	/*!< The horizontal position of the point. */
+	int16 y;	/*!< The vertical position of the point. */
 
 	constexpr Point() : x(0), y(0) {}
 
@@ -55,51 +55,35 @@ struct Point {
 	/**
 	 * Determine whether the position of two points is the same.
 	 */
-	bool  operator==(const Point &p)    const {
-		return x == p.x && y == p.y;
-	}
+	bool  operator==(const Point &p)    const { return x == p.x && y == p.y; }
 	/**
 	 * Determine whether the position of two points is not the same.
 	 */
-	bool  operator!=(const Point &p)    const {
-		return x != p.x || y != p.y;
-	}
+	bool  operator!=(const Point &p)    const { return x != p.x || y != p.y; }
 	/**
 	 * Create a point by adding the @p delta value to a point.
 	 */
-	Point operator+(const Point &delta) const {
-		return Point(x + delta.x, y + delta.y);
-	}
+	Point operator+(const Point &delta) const { return Point(x + delta.x, y + delta.y); }
 	/**
 	 * Create a point by subtracting the @p delta value from a point.
 	 */
-	Point operator-(const Point &delta) const {
-		return Point(x - delta.x, y - delta.y);
-	}
+	Point operator-(const Point &delta) const { return Point(x - delta.x, y - delta.y); }
 	/**
 	 * Create a point by dividing a point by the (int) @p divisor value.
 	 */
-	Point operator/(int divisor) const {
-		return Point(x / divisor, y / divisor);
-	}
+	Point operator/(int divisor) const { return Point(x / divisor, y / divisor); }
 	/**
 	 * Create a point by multiplying a point by the (int) @p multiplier value.
 	 */
-	Point operator*(int multiplier) const {
-		return Point(x * multiplier, y * multiplier);
-	}
+	Point operator*(int multiplier) const { return Point(x * multiplier, y * multiplier); }
 	/**
 	 * Create a point by dividing a point by the (double) @p divisor value.
 	 */
-	Point operator/(double divisor) const {
-		return Point((int16)(x / divisor), (int16)(y / divisor));
-	}
+	Point operator/(double divisor) const { return Point((int16)(x / divisor), (int16)(y / divisor)); }
 	/**
 	 * Create a point by multiplying a point by the (double) @p multiplier value.
 	 */
-	Point operator*(double multiplier) const {
-		return Point((int16)(x * multiplier), (int16)(y * multiplier));
-	}
+	Point operator*(double multiplier) const { return Point((int16)(x * multiplier), (int16)(y * multiplier)); }
 
 	/**
 	 * Change a point's position by adding @p delta to its x and y coordinates.
@@ -120,7 +104,7 @@ struct Point {
 	/**
 	 * Return the square of the distance between this point and the point @p p.
 	 *
-	 * @param p     The other point.
+	 * @param p		The other point.
 	 * @return      The distance between this and @p p.
 	 */
 	uint sqrDist(const Point &p) const {
@@ -136,12 +120,8 @@ struct Point {
 	}
 };
 
-static inline Point operator*(int multiplier, const Point &p) {
-	return Point(p.x * multiplier, p.y * multiplier);
-}
-static inline Point operator*(double multiplier, const Point &p) {
-	return Point((int16)(p.x * multiplier), (int16)(p.y * multiplier));
-}
+static inline Point operator*(int multiplier, const Point &p) { return Point(p.x * multiplier, p.y * multiplier); }
+static inline Point operator*(double multiplier, const Point &p) { return Point((int16)(p.x * multiplier), (int16)(p.y * multiplier)); }
 
 /**
  * Simple class for handling a rectangular zone.
@@ -162,8 +142,8 @@ static inline Point operator*(double multiplier, const Point &p) {
  * When writing code using our Rect class, always keep this principle in mind!
 */
 struct Rect {
-	int16 top, left;        /*!< The point at the top left of the rectangle (part of the Rect). */
-	int16 bottom, right;    /*!< The point at the bottom right of the rectangle (not part of the Rect). */
+	int16 top, left;		/*!< The point at the top left of the rectangle (part of the Rect). */
+	int16 bottom, right;	/*!< The point at the bottom right of the rectangle (not part of the Rect). */
 
 	constexpr Rect() : top(0), left(0), bottom(0), right(0) {}
 	/**
@@ -200,27 +180,17 @@ struct Rect {
 	 *
 	 * @return True if the rectangles are identical, false otherwise.
 	 */
-	bool operator==(const Rect &rhs) const {
-		return equals(rhs);
-	}
+	bool operator==(const Rect &rhs) const { return equals(rhs); }
 	/**
 	 * Check if two rectangles are different.
 	 *
 	 * @return True if the rectangles are different, false otherwise.
 	 */
-	bool operator!=(const Rect &rhs) const {
-		return !equals(rhs);
-	}
+	bool operator!=(const Rect &rhs) const { return !equals(rhs); }
 
-	Common::Point origin() const {
-		return Common::Point(left, top);    /*!< Return the origin of a rectangle. */
-	}
-	int16 width() const {
-		return right - left;    /*!< Return the width of a rectangle. */
-	}
-	int16 height() const {
-		return bottom - top;    /*!< Return the height of a rectangle. */
-	}
+	Common::Point origin() const { return Common::Point(left, top); } /*!< Return the origin of a rectangle. */
+	int16 width() const { return right - left; }                      /*!< Return the width of a rectangle. */
+	int16 height() const { return bottom - top; }                     /*!< Return the height of a rectangle. */
 
 	void setWidth(int16 aWidth) {   /*!< Set the width to @p aWidth value. */
 		right = left + aWidth;
@@ -345,14 +315,14 @@ struct Rect {
 		else if (right < r.left) right = r.left;
 	}
 
-	/**
+   	/**
 	 * Reduce the dimensions of this rectangle by setting max width and max height.
 	 */
 	void clip(int16 maxw, int16 maxh) {
 		clip(Rect(0, 0, maxw, maxh));
 	}
 
-	/**
+   	/**
 	 * Check if the rectangle is empty (its width or length is 0) or invalid (its width or length are negative).
 	 *
 	 * @retval true  The rectangle is empty or invalid.
@@ -383,10 +353,8 @@ struct Rect {
 	 * Move the rectangle by the given delta x and y values.
 	 */
 	void translate(int16 dx, int16 dy) {
-		left += dx;
-		right += dx;
-		top += dy;
-		bottom += dy;
+		left += dx; right += dx;
+		top += dy; bottom += dy;
 	}
 
 	/**
@@ -396,24 +364,24 @@ struct Rect {
 		moveTo(p.x, p.y);
 	}
 
-	/**
-	* Print debug messages related to this class.
-	*/
+	 /**
+	 * Print debug messages related to this class.
+	 */
 	void debugPrint(int debuglevel = 0, const char *caption = "Rect:") const {
 		debug(debuglevel, "%s %d, %d, %d, %d", caption, left, top, right, bottom);
 	}
 
-	/**
-	* Print debug messages related to this class.
-	*/
+	 /**
+	 * Print debug messages related to this class.
+	 */
 	void debugPrintC(int debuglevel, uint32 debugChannel, const char *caption = "Rect:") const {
 		debugC(debuglevel, debugChannel, "%s %d, %d, %d, %d", caption, left, top, right, bottom);
 	}
 
 	/**
-	* Create a rectangle around the given center.
-	* @note The center point is rounded up and left when given an odd width and height.
-	*/
+	 * Create a rectangle around the given center.
+	 * @note The center point is rounded up and left when given an odd width and height.
+	 */
 	static Rect center(int16 cx, int16 cy, int16 w, int16 h) {
 		int x = cx - w / 2, y = cy - h / 2;
 		return Rect(x, y, x + w, y + h);
