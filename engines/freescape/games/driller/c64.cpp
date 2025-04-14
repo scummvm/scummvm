@@ -145,6 +145,8 @@ void DrillerEngine::loadAssetsC64FullGame() {
 		surf->convertToInPlace(_gfx->_texturePixelFormat);
 		_border = new Graphics::ManagedSurface();
 		_border->copyFrom(*surf);
+		surf->free();
+		delete surf;
 
 		/*file.close();
 		file.open("driller.c64.title.bitmap");

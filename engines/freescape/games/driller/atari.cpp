@@ -84,7 +84,7 @@ void DrillerEngine::loadAssetsAtariFullGame() {
 
 		if (isSpaceStationOblivion()) {
 			_border = loadAndConvertNeoImage(&file, 0x13544);
-			byte *palette = (byte *)malloc(16 * 3);
+			byte palette[16 * 3];
 			for (int i = 0; i < 16; i++) { // gray scale palette
 				palette[i * 3 + 0] = i * (255 / 16);
 				palette[i * 3 + 1] = i * (255 / 16);

@@ -44,6 +44,8 @@ void DarkEngine::loadAssetsC64FullGame() {
     surf->convertToInPlace(_gfx->_texturePixelFormat);
     _border = new Graphics::ManagedSurface();
     _border->copyFrom(*surf);
+	surf->free();
+	delete surf;
 }
 
 
