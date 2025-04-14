@@ -93,6 +93,7 @@ public:
 
 private:
 	OSystem *_system;
+
 	bool _enabled;
 	bool _deferToVsync;
 	uint _frameStart;  //Time at which screen update completed and startFrame() was called; start of next cycle of game logic
