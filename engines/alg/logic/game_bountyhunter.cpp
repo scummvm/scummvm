@@ -843,6 +843,7 @@ void GameBountyHunter::rectStart(Rect *rect) {
 	_gameInProgress = true;
 	_restartScene = 0;
 	if (_vm->isDemo()) {
+		debug(5, "FIXME: Demo Next Scene is 0x45?");
 		setNextScene(0x45); // TODO fix
 	} else {
 		setNextScene(0x45);
