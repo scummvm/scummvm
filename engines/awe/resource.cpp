@@ -181,12 +181,19 @@ void Resource::setupPtrs(uint16 ptrId) {
 		uint8 icod = 0;
 		uint8 ivd1 = 0;
 		uint8 ivd2 = 0;
+
+		static const auto &parts = g_engine->isDemo() ?
+			MEM_LIST_DEMO_PARTS : MEM_LIST_PARTS;
+
 		if (ptrId >= 0x3E80 && ptrId <= 0x3E89) {
 			uint16 part = ptrId - 0x3E80;
-			ipal = _memListParts[part][0];
-			icod = _memListParts[part][1];
-			ivd1 = _memListParts[part][2];
-			ivd2 = _memListParts[part][3];
+			ipal = MEM_LIST_PARTS[part][0];
+			icod = MEM_LIST_PARTS[part][1];
+			ivd1 = MEM_LIST_PARTS[part][2];
+			ivd2 = MEM_LIST_PARTS[part][3];
+
+			if (g_engine->isDemo() && ptrId == 0x3e82) {
+			}
 		} else {
 			error("Resource::setupPtrs() ec=0x%X invalid ptrId", 0xF07);
 		}

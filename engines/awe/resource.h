@@ -58,8 +58,9 @@ struct Resource {
 	};
 	
 	static const uint16 _memListAudio[];
-	static const uint16 _memListParts[][4];
-	
+	static const uint16 MEM_LIST_PARTS[][4];
+	static const uint16 MEM_LIST_DEMO_PARTS[][4];
+
 	Video *_vid = nullptr;
 	MemEntry _memList[150];
 	uint16 _numMemList = 0;
