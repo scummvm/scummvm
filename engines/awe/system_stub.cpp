@@ -37,19 +37,8 @@ struct ScummVMStub : SystemStub {
 		SCREEN_H = 200
 	};
 
-	struct Scaler {
-		const char *name;
-		ScaleProc proc;
-		uint8 factor;
-	};
-	
-	static const Scaler _scalers[];
-
 	uint8 *_offscreen;
 	Graphics::Screen *_screen;
-	bool _fullscreen;
-	uint8 _scaler;
-	Graphics::PaletteLookup _palLookup;
 	byte _pal[16];
 
 	virtual ~ScummVMStub() {}
@@ -63,17 +52,6 @@ struct ScummVMStub : SystemStub {
 
 	void prepareGfxMode();
 	void cleanupGfxMode();
-	void switchGfxMode(bool fullscreen, uint8 scaler);
-
-	void point1x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h);
-	void point2x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h);
-	void point3x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h);
-};
-
-const ScummVMStub::Scaler ScummVMStub::_scalers[] = {
-	{ "Point1x", &ScummVMStub::point1x, 1 },
-	{ "Point2x", &ScummVMStub::point2x, 2 },
-	{ "Point3x", &ScummVMStub::point3x, 3 }
 };
 
 SystemStub *SystemStub_create() {
@@ -86,8 +64,7 @@ void ScummVMStub::init(const char *title) {
 	if (!_offscreen) {
 		error("Unable to allocate offscreen buffer");
 	}
-	_fullscreen = false;
-	_scaler = 1;
+
 	prepareGfxMode();
 }
 
@@ -159,19 +136,7 @@ void ScummVMStub::processEvents() {
 			break;
 		case Common::EVENT_KEYDOWN:
 			if (ev.kbd.flags & Common::KBD_ALT) {
-				if (ev.kbd.keycode == Common::KEYCODE_RETURN) {
-					switchGfxMode(!_fullscreen, _scaler);
-				} else if (ev.kbd.keycode == Common::KEYCODE_KP_PLUS) {
-					uint8 s = _scaler + 1;
-					if (s < ARRAYSIZE(_scalers)) {
-						switchGfxMode(_fullscreen, s);
-					}
-				} else if (ev.kbd.keycode == Common::KEYCODE_KP_MINUS) {
-					int8 s = _scaler - 1;
-					if (_scaler > 0) {
-						switchGfxMode(_fullscreen, s);
-					}
-				} else if (ev.kbd.keycode == Common::KEYCODE_x) {
+				if (ev.kbd.keycode == Common::KEYCODE_x) {
 					_pi.quit = true;
 				}
 				break;
@@ -246,64 +211,6 @@ void ScummVMStub::cleanupGfxMode() {
 	if (_screen) {
 		delete _screen;
 		_screen = nullptr;
-	}
-}
-
-void ScummVMStub::switchGfxMode(bool fullscreen, uint8 scaler) {
-#ifdef DEPRECATED
-	SDL_Surface *prev_sclscreen = _sclscreen;
-	SDL_FreeSurface(_screen); 	
-	_fullscreen = fullscreen;
-	_scaler = scaler;
-	prepareGfxMode();
-	SDL_BlitSurface(prev_sclscreen, NULL, _sclscreen, NULL);
-	SDL_FreeSurface(prev_sclscreen);
-#endif
-}
-
-void ScummVMStub::point1x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h) {
-	dstPitch >>= 1;
-	while (h--) {
-		memcpy(dst, src, w * 2);
-		dst += dstPitch;
-		src += dstPitch;
-	}
-}
-
-void ScummVMStub::point2x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h) {
-	dstPitch >>= 1;
-	while (h--) {
-		uint16 *p = dst;
-		for (int i = 0; i < w; ++i, p += 2) {
-			uint16 c = *(src + i);
-			*(p + 0) = c;
-			*(p + 1) = c;
-			*(p + 0 + dstPitch) = c;
-			*(p + 1 + dstPitch) = c;
-		}
-		dst += dstPitch * 2;
-		src += srcPitch;
-	}
-}
-
-void ScummVMStub::point3x(uint16 *dst, uint16 dstPitch, const uint16 *src, uint16 srcPitch, uint16 w, uint16 h) {
-	dstPitch >>= 1;
-	while (h--) {
-		uint16 *p = dst;
-		for (int i = 0; i < w; ++i, p += 3) {
-			uint16 c = *(src + i);
-			*(p + 0) = c;
-			*(p + 1) = c;
-			*(p + 2) = c;
-			*(p + 0 + dstPitch) = c;
-			*(p + 1 + dstPitch) = c;
-			*(p + 2 + dstPitch) = c;
-			*(p + 0 + dstPitch * 2) = c;
-			*(p + 1 + dstPitch * 2) = c;
-			*(p + 2 + dstPitch * 2) = c;
-		}
-		dst += dstPitch * 3;
-		src += srcPitch;
 	}
 }
 
