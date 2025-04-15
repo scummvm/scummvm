@@ -568,7 +568,7 @@ void TextCastMember::setTextStyle(const Common::String &textStyle, int start, in
 }
 
 void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
-	if (widget && _editable) {
+	if (widget) {
 		Common::String content = ((Graphics::MacText *)widget)->getEditedString();
 		content.replace('\n', '\r');
 		_ptext = content;
