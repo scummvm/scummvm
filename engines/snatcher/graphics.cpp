@@ -24,7 +24,7 @@
 #include "snatcher/palette.h"
 #include "snatcher/render.h"
 #include "snatcher/resource.h"
-#include "snatcher/scroll.h"
+#include "snatcher/transition.h"
 #include "common/endian.h"
 #include "common/system.h"
 #include "graphics/pixelformat.h"
@@ -32,25 +32,25 @@
 namespace Snatcher {
 
 GraphicsEngine::GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate) : _system(system), _state(vmstate),
-	_renderer(0), _dataMode(0), _screen(nullptr), _bpp(pxf ? pxf->bytesPerPixel : 1), _flags(0) {
-
+	_renderer(nullptr), _dataMode(0), _screen(nullptr), _bpp(pxf ? pxf->bytesPerPixel : 1), _flags(0) {
+	assert(system);
 	_palette = Palette::create(pxf, _system->getPaletteManager(), platform, _state);
 	assert(_palette);
-	_scroll = ScrollManager::create(platform, _state);
-	_renderer = Renderer::create(pxf, platform, _state, _palette, _scroll);
+	_trs = TransitionManager::create(platform, _state);
+	_renderer = Renderer::create(pxf, platform, _state, _palette, _trs);
 	assert(_renderer);
-	_screen = new uint8[_renderer->screenWidth() * _renderer->screenHeight() * pxf->bytesPerPixel]();
+	_screen = new uint8[_renderer->screenWidth() * _renderer->screenHeight() * (pxf ? pxf->bytesPerPixel : 1)]();
 	assert(_screen);
 }
 
 GraphicsEngine::~GraphicsEngine() {
 	delete _renderer;
 	delete _palette;
-	delete _scroll;
+	delete _trs;
 	delete[] _screen;
 }
 
-uint8 _gfxScript_byte_3;
+uint8 _transitionType;
 
 void GraphicsEngine::runScript(ResourcePointer res, int func) {
 	ResourcePointer sc = ResourcePointer(res.dataStart, READ_BE_UINT32(res.dataStart + 4)).getDataFromTable(func);
@@ -80,7 +80,7 @@ void GraphicsEngine::runScript(ResourcePointer res, int func) {
 		case 5:
 		case 6:
 		case 7:
-			_gfxScript_byte_3 = sc[1];
+			_transitionType = sc[1];
 			break;
 		case 8:
 			_renderer->setPlaneMode(sc.readUINT16());
@@ -102,19 +102,19 @@ void GraphicsEngine::enqueuePaletteEvent(ResourcePointer res) {
 	_palette->enqueueEvent(res);
 }
 
-bool GraphicsEngine::enqueueCopyCommands(ResourcePointer res) {
-	return _renderer->enqueueCopyCommands(res);
+bool GraphicsEngine::enqueueDrawCommands(ResourcePointer res) {
+	return _renderer->enqueueDrawCommands(res);
 }
 
 void GraphicsEngine::setScrollStep(uint8 mode, int16 step) {
 	if (mode < 4)
-		_scroll->setDirectionAndSpeed(mode, step);
+		_trs->scroll_setDirectionAndSpeed(mode, step);
 	else
-		_scroll->setSingleStep(mode & 3, step);
+		_trs->scroll_setSingleStep(mode & 3, step);
 }
 
 void GraphicsEngine::scrollCommand(uint8 cmd) {
-	_scroll->doCommand(cmd);
+	_trs->doCommand(cmd);
 }
 
 void GraphicsEngine::updateAnimations() {
@@ -139,12 +139,12 @@ void GraphicsEngine::reset(int mode) {
 		restoreDefaults();
 	if (mode & kResetPalEvents)
 		_palette->clearEvents();
-	if (mode & kResetSprites)
+	if (mode & kResetAnimations)
 		_renderer->clearAnimations();
 	if (mode & kResetCopyCmds)
-		_renderer->clearCopyCommands();
+		_renderer->clearDrawCommands();
 	if (mode & kResetScrollState)
-		_scroll->clear();
+		_trs->clear();
 }
 
 void GraphicsEngine::setVar(uint8 var, uint8 val) {
@@ -153,6 +153,10 @@ void GraphicsEngine::setVar(uint8 var, uint8 val) {
 
 void GraphicsEngine::setAnimControlFlags(uint8 animObjId, int flags) {
 	_renderer->anim_setControlFlags(animObjId, flags);
+}
+
+void GraphicsEngine::addAnimControlFlags(uint8 animObjId, int flags) {
+	_renderer->anim_addControlFlags(animObjId, flags);
 }
 
 void GraphicsEngine::clearAnimControlFlags(uint8 animObjId, int flags) {
@@ -187,6 +191,13 @@ bool GraphicsEngine::busy(int type) const {
 	return false;
 }
 
+int GraphicsEngine::displayBootSequenceFrame(int frameNo) {
+	int res = _renderer->drawBootSequenceFrame(_screen, frameNo);
+	_system->copyRectToScreen(_screen, _renderer->screenWidth() * _bpp, 0, 0, _renderer->screenWidth(), _renderer->screenHeight());
+	_system->updateScreen();
+	return res;
+}
+
 void GraphicsEngine::restoreDefaultsExt() {
 	if (!_state.getVar(4))
 		restoreDefaults();
@@ -197,9 +208,9 @@ void GraphicsEngine::restoreDefaultsExt() {
 		_state.setVar(5, 0);
 	}
 
-	_renderer->clearCopyCommands();
-	_scroll->doCommand(0xFC);
-	_renderer->clearAnimations();
+	_renderer->clearDrawCommands();
+	_trs->doCommand(0xFC);
+	_renderer->clearAnimations(1);
 
 	if (!(_state.testFlag(4, 1)))
 		_state.setVar(0, 1);

@@ -10,10 +10,10 @@ MODULE_OBJS := \
 	scene/scene_d1.o \
 	scene/scene_d2.o \
 	snatcher.o \
-	scroll_scd.o \
 	sound.o \
-	sound_device_null.o \
 	sound_device_scd.o \
+	statires.o \
+	transition_scd.o \
 	util.o
 
 # This module can be built as a plugin

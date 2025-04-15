@@ -50,14 +50,17 @@ private:
 	bool initResource();
 	bool initGfx(Common::Platform platform, bool use8BitColorMode);
 	bool initSound(Common::Platform platform, int soundOptions);
+	void playBootSequence();
 
 	// Main loop
 	bool start();
 	void delayUntil(uint32 end);
-	void updateEvents();
+	void checkEvents();
 
-	bool runInitSequence(GameState &state);
+	void updateTopLevelState(GameState &state);
 	void updateModuleState(GameState &state);
+
+	const uint32 _frameLen;
 
 	// ConfigManager sync
 	void registerDefaultSettings();
@@ -81,11 +84,16 @@ private:
 	// Sound
 	SoundEngine *_snd;
 
-	// Input
-	uint8 _lastKey;
-	uint8 _keyInput;
 public:
+	// Input
 	uint8 inputFlag() const { return _keyInput; }
+	void toggleKeyRepeat(bool enableRepeat) { _keyRepeat = enableRepeat; }
+
+private:
+	uint8 _lastKeys;
+	uint8 _keyInput;
+	uint8 _releaseKeys;
+	bool _keyRepeat;
 };
 
 } // End of namespace Snatcher

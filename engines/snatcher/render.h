@@ -32,8 +32,8 @@ class Renderer {
 public:
 	virtual ~Renderer() {}
 
-	virtual bool enqueueCopyCommands(ResourcePointer &res) = 0;
-	virtual void clearCopyCommands() = 0;
+	virtual bool enqueueDrawCommands(ResourcePointer &res) = 0;
+	virtual void clearDrawCommands() = 0;
 	virtual void initData(ResourcePointer &res, uint8 mode) = 0;
 	virtual void initAnimations(ResourcePointer &res, uint16 len) = 0;
 	virtual void linkAnimations(ResourcePointer &res, uint16 len) = 0;
@@ -43,6 +43,7 @@ public:
 	virtual void updateAnimations() = 0;
 
 	virtual void anim_setControlFlags(uint8 animObjId, int flags) = 0;
+	virtual void anim_addControlFlags(uint8 animObjId, int flags) = 0;
 	virtual void anim_clearControlFlags(uint8 animObjId, int flags) = 0;
 	virtual void anim_setFrame(uint8 animObjId, uint16 frameNo) = 0;
 	virtual uint16 anim_getCurFrameNo(uint8 animObjId) const = 0;
@@ -51,15 +52,20 @@ public:
 	virtual uint16 screenWidth() const = 0;
 	virtual uint16 screenHeight() const = 0;
 
+	// This is special code from the CD-ROM boot sectors that does not
+	// share anything with the rest of the game. So it makes sense to
+	// keep it separate.
+	virtual int drawBootSequenceFrame(uint8 *screen, int frameNo) = 0;
+
 protected:
 	Renderer(GraphicsEngine::GfxState &state) : _gfxState(state) {}
 	GraphicsEngine::GfxState &_gfxState;
 
 private:
-	static Renderer *createSegaRenderer(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr);
+	static Renderer *createSegaRenderer(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr);
 
 public:
-	static Renderer *create(const Graphics::PixelFormat *pxf, Common::Platform platform, GraphicsEngine::GfxState &state, Palette *pal, ScrollManager *scr) {
+	static Renderer *create(const Graphics::PixelFormat *pxf, Common::Platform platform, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr) {
 		switch (platform) {
 		case Common::kPlatformSegaCD:
 			return createSegaRenderer(pxf, state, pal, scr);
