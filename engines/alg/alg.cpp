@@ -38,43 +38,43 @@ namespace Alg {
 AlgEngine::AlgEngine(OSystem *syst, const AlgGameDescription *gd)
 	: Engine(syst), _gameDescription(gd) {
 	switch (gd->gameType) {
-	case Alg::GType_CRIME_PATROL: {
+	case GType_CRIME_PATROL: {
 		GameCrimePatrol *game = new GameCrimePatrol(this, gd);
 		_debugger = new DebuggerCrimePatrol(game);
 		_game = game;
 		break;
 	}
-	case Alg::GType_DRUG_WARS: {
+	case GType_DRUG_WARS: {
 		GameDrugWars *game = new GameDrugWars(this, gd);
 		_debugger = new DebuggerDrugWars(game);
 		_game = game;
 		break;
 	}
-	case Alg::GType_WSJR: {
+	case GType_WSJR: {
 		GameJohnnyRock *game = new GameJohnnyRock(this, gd);
 		_debugger = new DebuggerJohnnyRock(game);
 		_game = game;
 		break;
 	}
-	case Alg::GType_LAST_BOUNTY_HUNTER: {
+	case GType_LAST_BOUNTY_HUNTER: {
 		GameBountyHunter *game = new GameBountyHunter(this, gd);
 		_debugger = new DebuggerBountyHunter(game);
 		_game = game;
 		break;
 	}
-	case Alg::GType_MADDOG: {
+	case GType_MADDOG: {
 		GameMaddog *game = new GameMaddog(this, gd);
 		_debugger = new DebuggerMaddog(game);
 		_game = game;
 		break;
 	}
-	case Alg::GType_MADDOG2: {
+	case GType_MADDOG2: {
 		GameMaddog2 *game = new GameMaddog2(this, gd);
 		_debugger = new DebuggerMaddog2(game);
 		_game = game;
 		break;
 	}
-	case Alg::GType_SPACE_PIRATES: {
+	case GType_SPACE_PIRATES: {
 		GameSpacePirates *game = new GameSpacePirates(this, gd);
 		_debugger = new DebuggerSpacePirates(game);
 		_game = game;
