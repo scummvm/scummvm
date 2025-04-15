@@ -29,6 +29,7 @@
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/score.h"
+#include "director/types.h"
 #include "director/util.h"
 #include "director/window.h"
 #include "director/lingo/lingo.h"
@@ -89,6 +90,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("c", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("windows", WRAP_METHOD(Debugger, cmdWindows));
 	registerCmd("w", WRAP_METHOD(Debugger, cmdWindows));
+	registerCmd("xlibs", WRAP_METHOD(Debugger, cmdXLibs));
+	registerCmd("xl", WRAP_METHOD(Debugger, cmdXLibs));
 
 	registerCmd("bpset", WRAP_METHOD(Debugger, cmdBpSet));
 	registerCmd("b", WRAP_METHOD(Debugger, cmdBpSet));
@@ -168,6 +171,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" finish / fin - Steps until the current stack frame returns\n");
 	debugPrintf(" continue / c - Continues execution\n");
 	debugPrintf(" windows / w - Lists all of the windows\n");
+	debugPrintf(" xlibs / xl - Lists all of the Lingo XObject/Xtras loaded\n");
 	debugPrintf("\n");
 	debugPrintf("Breakpoints:\n");
 	debugPrintf(" bpset / b - Creates a breakpoint at the current Lingo function and offset\n");
@@ -679,6 +683,16 @@ bool Debugger::cmdWindows(int argc, const char **argv) {
 	for (auto &it : *g_director->getWindowList()) {
 		debugPrintf("%s\n", it->formatWindowInfo().c_str());
 	}
+	debugPrintf("\n");
+	return true;
+}
+
+bool Debugger::cmdXLibs(int argc, const char **argv) {
+	debugPrintf("XLibs:\n");
+	for (auto &it : g_lingo->_openXLibs) {
+		debugPrintf("%s: %s\n", it._key.c_str(), it._value == kXObj ? "XObj" : (it._value == kXtraObj ? "Xtra" : "unknown"));
+	}
+
 	debugPrintf("\n");
 	return true;
 }

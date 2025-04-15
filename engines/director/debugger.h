@@ -107,6 +107,7 @@ private:
 	bool cmdNext(int argc, const char **argv);
 	bool cmdFinish(int argc, const char **argv);
 	bool cmdWindows(int argc, const char **argv);
+	bool cmdXLibs(int argc, const char **argv);
 
 	bool cmdBpSet(int argc, const char **argv);
 	bool cmdBpMovie(int argc, const char **argv);
