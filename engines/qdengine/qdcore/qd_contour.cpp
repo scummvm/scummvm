@@ -96,7 +96,7 @@ void qdContour::createMaskOld(int x0, int y0, int x1, int y1) {
 	for (int y = y0; y <= y1; y++) {
 		byte *ptr = &*it;
 
-		for (int i = 0; i < _contour.size(); i++) {
+		for (uint i = 0; i < _contour.size(); i++) {
 			Vect2s p0 = _contour[i];
 			Vect2s p1 = (i < _contour.size() - 1) ? _contour[i + 1] : _contour[0];
 
@@ -108,7 +108,7 @@ void qdContour::createMaskOld(int x0, int y0, int x1, int y1) {
 
 		if (intersections.size() > 1) {
 			Common::sort(intersections.begin(), intersections.end());
-			for (int i = 0; i < intersections.size() - 1; i += 2) {
+			for (uint i = 0; i < intersections.size() - 1; i += 2) {
 				int xl = intersections[i];
 				int xr = intersections[i + 1];
 
@@ -122,7 +122,7 @@ void qdContour::createMaskOld(int x0, int y0, int x1, int y1) {
 
 		intersections.clear();
 
-		for (int i = 0; i < _contour.size(); i++) {
+		for (uint i = 0; i < _contour.size(); i++) {
 			Vect2s p0 = _contour[i];
 			Vect2s p1 = (i < _contour.size() - 1) ? _contour[i + 1] : _contour[0];
 
@@ -134,7 +134,7 @@ void qdContour::createMaskOld(int x0, int y0, int x1, int y1) {
 
 		if (intersections.size() > 1) {
 			Common::sort(intersections.begin(), intersections.end());
-			for (int i = 0; i < intersections.size() - 1; i += 2) {
+			for (uint i = 0; i < intersections.size() - 1; i += 2) {
 				int xl = intersections[i];
 				int xr = intersections[i + 1];
 
