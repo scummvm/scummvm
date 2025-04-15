@@ -91,25 +91,52 @@ uint32 makeBCDTimeStamp(uint32 msecs) {
 	return ((min & 0xFF) << 24) | ((sec & 0xFF) << 16) | ((frm & 0xFF) << 8);
 }
 
-uint16 rndC1 = 0;
-uint16 rndC2 = 0;
+union RNDC {
+	RNDC() : b(0) {}
+	uint8 a[2];
+	uint16 b;
+};
+
+RNDC rndC1;
+RNDC rndC2;
+
+uint8 rndH = 0;
+uint8 rndL = 1;
+
+//uint16 rndC1q = 0;
+//uint16 rndC2q = 0;
 
 void rngReset() {
-	rndC1 = 0;
-	rndC2 = 0;
+	rndC1.b = 0;
+	rndC2.b = 0;
+	//rndC1q = 0;
+	//rndC2q = 0;
+	rndH = FROM_BE_16(0x100) & 0xFF;
+	rndL = rndH ^ 1;
 }
 
 uint16 rngMakeNumber() {
-	rndC1 += ((rndC1 & 0xFF) << 8);
-	rndC1 += rndC2;
-	rndC1 += ((rndC2 << 8) | (rndC2 >> 8));
-	if ((rndC2 & 0xFF) + (rndC2 >> 8) > 0xFF)
-		rndC1++;
-	rndC2 = (((rndC2 & 0xFF) + (rndC2 >> 8)) & 0xFF) | (rndC2 & 0xFF00);
-	if (rndC2 + 1 > 0xFFFF);
-		rndC1++;
-	rndC2++;
-	return rndC1;
+	rndC1.a[rndH] += rndC1.a[rndL];
+	rndC1.b += rndC2.b;
+	rndC1.b += SWAP_BYTES_16(rndC2.b);
+	if (rndC2.a[rndH] + rndC2.a[rndL] > 0xFF)
+		rndC1.b++;
+	rndC2.a[rndH] += rndC2.a[rndL];
+	if (rndC2.b + 1 > 0xFFFF)
+		rndC1.b++;
+	rndC2.b++;
+
+	/*rndC1q += ((rndC1q & 0xFF) << 8);
+	rndC1q += rndC2q;
+	rndC1q += ((rndC2q << 8) | (rndC2q >> 8));
+	if ((rndC2q & 0xFF) + (rndC2q >> 8) > 0xFF)
+		rndC1q++;
+	rndC2q = (((rndC2q & 0xFF) + (rndC2q >> 8)) & 0xFF) | (rndC2q & 0xFF00);
+	if (rndC2q + 1 > 0xFFFF)
+		rndC1q++;
+	rndC2q++;
+		assert(rndC1q == rndC1.b);*/
+	return rndC1.b;
 }
 
 } // End of namespace Util

@@ -43,11 +43,13 @@ struct GameState {
 	int16 frameNo;
 	int16 frameState;
 	int16 finish;
-	int16 progressMain;
-	int16 progressSub;
+	int16 modProcessTop;
+	int16 modProcessSub;
 	int16 counter;
 	int16 modIndex;
-	int16 initState;
+	int16 menuSelect;
+	int16 main_switch_1_0_orM1_postIntr;
+	int16 topLevelState;
 };
 
 class SceneHandler {

@@ -50,6 +50,12 @@ public:
 
 	virtual const uint8 *getSystemPalette() const { return nullptr; }
 
+	virtual void selectPalettes(uint32) {}
+	virtual void getPresetColor(int pal, int index, uint8 &r, uint8 &g, uint8 &b) const {}
+	virtual void setColor(int index, uint8 r, uint8 g, uint8 b) {}
+	virtual void getColor(int index, uint8 &r, uint8 &g, uint8 &b) const {}
+	virtual void adjustColor(int index, int8 r, int8 g, int8 b) {}
+
 protected:
 	const Graphics::PixelFormat _pixelFormat;
 	PaletteManager *_palMan;

@@ -36,6 +36,8 @@ public:
 	virtual bool musicIsPlaying() const = 0;
 	virtual uint32 musicGetTime() const = 0;
 
+	virtual void fmStartSound(int track) = 0;
+
 	virtual void pcmPlayEffect(int track) = 0;
 	virtual void pcmDoCommand(int cmd, int arg) = 0;
 
@@ -47,7 +49,6 @@ protected:
 	uint32 _musicStartTime;
 
 private:
-	static SoundDevice *createNullSoundDevice();
 	static SoundDevice *createSegaSoundDevice();
 
 public:

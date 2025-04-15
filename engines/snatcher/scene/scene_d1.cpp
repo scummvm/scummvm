@@ -129,6 +129,7 @@ SH_IMPL_UPDT(D1) {
 }
 
 SH_IMPL_FRM(D1, 00) {
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 0);
 }
 
@@ -137,10 +138,12 @@ SH_IMPL_FRM(D1, 01) {
 }
 
 SH_IMPL_FRM(D1, 02) {
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 1);
 }
 
 SH_IMPL_FRM(D1, 04) {
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 2);
 	_vm->gfx()->setScrollStep(GraphicsEngine::kVertA | GraphicsEngine::kSingleStep, 0x110);
 	_vm->gfx()->scrollCommand(1);
@@ -167,26 +170,32 @@ SH_IMPL_FRM(D1, 09) {
 }
 
 SH_IMPL_FRM(D1, 11) {
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 3);
 }
 
 SH_IMPL_FRM(D1, 13) {
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 4);
 }
 
 SH_IMPL_FRM(D1, 15) {
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 5);
 }
 
 SH_IMPL_FRM(D1, 17) {
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 6);
 }
 
 SH_IMPL_FRM(D1, 19) {
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 7);
 }
 
 SH_IMPL_FRM(D1, 21) {
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 8);
 }
 
@@ -195,14 +204,17 @@ SH_IMPL_FRM(D1, 22) {
 }
 
 SH_IMPL_FRM(D1, 23) {
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 9);
 }
 
 SH_IMPL_FRM(D1, 25) {
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 10);
 }
 
 SH_IMPL_FRM(D1, 27) {
+	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 11);
 }
 

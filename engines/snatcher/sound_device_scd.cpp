@@ -38,6 +38,8 @@ public:
 	bool musicIsPlaying() const override;
 	uint32 musicGetTime() const override;
 
+	void fmStartSound(int track) override;
+
 	void pcmPlayEffect(int track) override;
 	void pcmDoCommand(int cmd, int arg) override;
 
@@ -71,6 +73,10 @@ bool SegaSoundDevice::musicIsPlaying() const {
 uint32 SegaSoundDevice::musicGetTime() const {
 	uint32 relTime = musicIsPlaying() ? g_system->getMillis() - _musicStartTime : 0;
 	return Util::makeBCDTimeStamp(relTime);
+}
+
+void SegaSoundDevice::fmStartSound(int track) {
+
 }
 
 void SegaSoundDevice::pcmPlayEffect(int track) {
