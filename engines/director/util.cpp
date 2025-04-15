@@ -1640,7 +1640,7 @@ const byte equalityTableD5win[256] = {
 };
 
 //
-// Director 3 and 4 Mac MacRoman
+// Director 3, 4, 5 Mac MacRoman
 //
 
 const byte equalityTableD3mac[256] = {
@@ -1724,7 +1724,7 @@ static int getCharEquality(Common::u32char_type_t ch) {
 	Common::Language lang = g_director->getLanguage();
 	int version = g_director->getVersion();
 
-	if (pl == Common::kPlatformMacintosh && lang != Common::JA_JPN && version < 500)
+	if (pl == Common::kPlatformMacintosh && lang != Common::JA_JPN && version < 600)
 		return equalityTableD3mac[num];
 
 	if (pl == Common::kPlatformWindows && lang != Common::JA_JPN && version < 500)
@@ -1733,7 +1733,7 @@ static int getCharEquality(Common::u32char_type_t ch) {
 	if (pl == Common::kPlatformWindows && lang != Common::JA_JPN && version < 600)
 		return equalityTableD5win[num];
 
-	warning("BUILDBOT: No equality table for Director version: %d", humanVersion(version));
+	warning("BUILDBOT: No equality table for Director version: %d", version);
 	return num;
 }
 
