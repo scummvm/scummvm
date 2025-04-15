@@ -91,12 +91,9 @@ void Palette::clear() {
 
 void Palette::resize(uint newSize, bool preserve) {
 	if (newSize > _size) {
-		byte *newData = nullptr;
-		if (newSize > 0) {
-			newData = new byte[newSize * 3]();
-			if (_size > 0 && preserve)
-				memcpy(newData, _data, _size * 3);
-		}
+		byte *newData = new byte[newSize * 3]();
+		if (_size > 0 && preserve)
+			memcpy(newData, _data, _size * 3);
 
 		delete[] _data;
 		_data = newData;
