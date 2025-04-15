@@ -231,7 +231,7 @@ void OSystem_3DS::updateSize() {
 	// Initialize _overlay here so that it can be reinitialized when _screen is changed.
 
 	// Overlay sprite must have a width matching or exceeding that of the screen to
-	//	which it's set to render, otherwise porrtions of the screen will not render.
+	//	which it's set to render, otherwise portions of the screen will not render.
 	// _screen == kScreenTop
 	//	>>> overlay renders to top screen
 	//	>>> top screen is 400 pixels wide
