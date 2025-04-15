@@ -98,6 +98,11 @@ struct CachedFile {
 		"INSTALL.INF",
 			(const byte *)"CDDrive=D:\\\r\nSourcePath=D:\\\r\nDestPath=C:\\", -1
 	},
+	{"tkkg1", Common::kPlatformWindows,
+		// TKKG1 checks a file to determine the location of the CD.
+		"PATH.INI",
+		(const byte *)"[cd-path]\r\npath=d:\\", -1
+	},
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr, 0 }
 };
 
