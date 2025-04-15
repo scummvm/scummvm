@@ -108,7 +108,7 @@ void OSystem_3DS::init3DSGraphics() {
 	C3D_DepthTest(false, GPU_GEQUAL, GPU_WRITE_ALL);
 	C3D_CullFace(GPU_CULL_NONE);
 
-	_overlay.create(320, 240, &DEFAULT_MODE, true);
+	// _overlay initialized in updateSize()
 }
 
 void OSystem_3DS::destroy3DSGraphics() {
@@ -228,6 +228,18 @@ void OSystem_3DS::initSize(uint width, uint height,
 }
 
 void OSystem_3DS::updateSize() {
+	// Initialize _overlay here so that it can be reinitialized when _screen is changed.
+
+	// Overlay sprite must have a width matching or exceeding that of the screen to
+	//	which it's set to render, otherwise portions of the screen will not render.
+	// _screen == kScreenTop
+	//	>>> overlay renders to top screen
+	//	>>> top screen is 400 pixels wide
+	// _screen == (kScreenBottom | kScreenBoth)
+	//	>>> overlay renders to bottom screen
+	//	>>> bottom screen is 320 pixels wide
+	_overlay.create(_screen == kScreenTop ? 400 : 320, 240, &DEFAULT_MODE, true);
+
 	if (_stretchToFit) {
 		_gameTopX = _gameTopY = _gameBottomX = _gameBottomY = 0;
 		_gameTopTexture.setScale(400.f / _gameWidth, 240.f / _gameHeight);
