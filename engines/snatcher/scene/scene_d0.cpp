@@ -178,6 +178,7 @@ SH_IMPL_FRM(D0, 08) {
 }
 
 SH_IMPL_FRM(D0, 09) {
+	_vm->gfx()->setVar(9, 0xFF);
 	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 3);
 }
@@ -187,6 +188,7 @@ SH_IMPL_FRM(D0, 10) {
 }
 
 SH_IMPL_FRM(D0, 11) {
+	_vm->gfx()->setVar(9, 1);
 	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 4);
 }
@@ -247,7 +249,7 @@ SH_IMPL_FRM(D0, 31) {
 }
 
 SH_IMPL_FRM(D0, 32) {
-	//_sprites[16].controlFlags = 1;
+	_vm->gfx()->setAnimControlFlags(16, GraphicsEngine::kAnimPause);
 }
 
 SH_IMPL_FRM(D0, 34) {

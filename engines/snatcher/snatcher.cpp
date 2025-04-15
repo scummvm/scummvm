@@ -43,7 +43,8 @@
 
 namespace Snatcher {
 
-SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _gfx(nullptr), _snd(nullptr), _keyInput(0), _lastKey(0), _gfxInfo() {
+SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _gfx(nullptr), _snd(nullptr), _keyInput(0), _lastKeys(0),
+	_releaseKeys(0), _keyRepeat(false), _gfxInfo(), _frameLen((100000 << 14) / (6000000 / 1001)) {
 }
 
 SnatcherEngine::~SnatcherEngine() {
@@ -106,26 +107,54 @@ bool SnatcherEngine::initSound(Common::Platform platform, int soundOptions) {
 	return (_snd = new SoundEngine(platform, soundOptions));
 }
 
+void SnatcherEngine::playBootSequence() {
+	uint32 frameTimer = 0;
+	int curFrame = 0;
+
+	while (curFrame != -1 && !shouldQuit()) {
+		frameTimer += _frameLen;
+		uint32 nextFrame = _system->getMillis() + (frameTimer >> 14);
+		frameTimer &= 0x3FFF;
+
+		curFrame = _gfx->displayBootSequenceFrame(curFrame);
+
+		switch (curFrame) {
+		case 0:
+		case -1:
+			_snd->fmStartSound(242);
+			break;
+		case 7:
+			_snd->fmStartSound(63);
+			break;
+		default:
+			break;
+		}
+
+		checkEvents();
+		delayUntil(nextFrame);
+	}
+}
+
 bool SnatcherEngine::start() {
+	playBootSequence();
+
 	Util::rngReset();
 	GameState state;
 	memset(&state, 0, sizeof(GameState));
 
-	const uint32 frameLen = (1000 << 16) / 60;
 	uint32 frameTimer = 0;
 
 	int16 countTo5 = 0;
 	int16 runspeed = 0;
 
 	while (!shouldQuit()) {
-		frameTimer += frameLen;
-		uint32 nextFrame = _system->getMillis() + (frameTimer >> 16);
-		frameTimer &= 0xFFFF;
+		frameTimer += _frameLen;
+		uint32 nextFrame = _system->getMillis() + (frameTimer >> 14);
+		frameTimer &= 0x3FFF;
 
 		int _sub_doMainScript = 0;
 
-		if (runInitSequence(state))
-			continue;
+		updateTopLevelState(state);
 
 		_gfxInfo.audioSync = _snd->musicIsPlaying() ? _snd->musicGetTime() : 0;
 		Util::rngMakeNumber();
@@ -161,7 +190,7 @@ bool SnatcherEngine::start() {
 		}
 
 		_gfx->nextFrame();
-		updateEvents();
+		checkEvents();
 		delayUntil(nextFrame);
 	}
 
@@ -170,7 +199,7 @@ bool SnatcherEngine::start() {
 
 void SnatcherEngine::delayUntil(uint32 end) {
 	uint32 cur = _system->getMillis();
-	_gfxInfo.dropFrames = /*cur > end ? ((cur - end) << 16) / frameLen :*/ 0;
+	_gfxInfo.dropFrames = /*cur > end ? ((cur - end) << 14) / _frameLen :*/ 0;
 	if (cur < end)
 		_system->delayMillis(end - cur);
 }
@@ -183,8 +212,8 @@ struct InputEvent {
 	uint16 internalEvent;
 };
 
-static const InputEvent _inputEvents[] = {
-	{ Common::EVENT_LBUTTONDOWN, Common::EVENT_LBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x80 },
+static const InputEvent _defaultKeyEvents[] = {
+	// Arrow buttons
 	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_UP, 0x00, 0x01 },
 	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP8, Common::KBD_NUM, 0x01 },
 	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_DOWN, 0x00, 0x02 },
@@ -192,67 +221,69 @@ static const InputEvent _inputEvents[] = {
 	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_LEFT, 0x00, 0x04 },
 	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP4, Common::KBD_NUM, 0x04 },
 	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_RIGHT, 0x00, 0x08 },
-	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP6, Common::KBD_NUM, 0x08 }
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP6, Common::KBD_NUM, 0x08},
+	{ Common::EVENT_WHEELUP, Common::EVENT_INVALID, Common::KEYCODE_INVALID, 0x00, 0x01 },
+	{ Common::EVENT_WHEELDOWN, Common::EVENT_INVALID, Common::KEYCODE_INVALID, 0x00, 0x02 },
+
+	// A, B, C buttons
+	{ Common::EVENT_LBUTTONDOWN, Common::EVENT_LBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x10 },
+	{ Common::EVENT_MBUTTONDOWN, Common::EVENT_MBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x20 },
+	{ Common::EVENT_RBUTTONDOWN, Common::EVENT_RBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x40 },
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_a, 0x00, 0x10},
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_b, 0x00, 0x20},
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_c, 0x00, 0x40},
+
+	// Start button
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_RETURN, 0x00, 0x80},
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_SPACE, 0x00, 0x80},
 };
 
-void SnatcherEngine::updateEvents() {
+void SnatcherEngine::checkEvents() {
 	Common::Event evt;
-	_keyInput = 0;
+	_lastKeys &= ~_releaseKeys;
+	_keyInput = _releaseKeys = 0;
+
 	while (_eventMan->pollEvent(evt)) {
-		for (const InputEvent &k : _inputEvents) {
+		for (const InputEvent &k : _defaultKeyEvents) {
 			if (evt.type == k.pressType && (k.kc == Common::KEYCODE_INVALID || evt.kbd.keycode == k.kc) && (k.kFlag == 0 || (evt.kbd.flags & k.kFlag))) {
-				if (!(_lastKey & k.internalEvent)) {
+				if (!(_lastKeys & k.internalEvent)) {
 					_keyInput |= k.internalEvent;
-					_lastKey |= k.internalEvent;
+					_lastKeys |= k.internalEvent;
+					if (_keyRepeat || k.releaseType == Common::EVENT_INVALID)
+						_releaseKeys |= k.internalEvent;
 				}
-			} else if (evt.type == k.releaseType && (k.kc == Common::KEYCODE_INVALID || evt.kbd.keycode == k.kc) && (k.kFlag == 0 || (evt.kbd.flags & k.kFlag))) {
-				_lastKey &= ~k.internalEvent;
+			} else if ((evt.type == k.releaseType) && (k.kc == Common::KEYCODE_INVALID || evt.kbd.keycode == k.kc) && (k.kFlag == 0 || (evt.kbd.flags & k.kFlag))) {
+				_lastKeys &= ~k.internalEvent;
 			}
 		}
-
-		/*switch (evt.type) {
-		case Common::EVENT_LBUTTONDOWN:
-			_keyPressed |= (1 << 7);
-			break;
-		case Common::EVENT_LBUTTONUP:
-			_commandsFromMain |= _keyPressed;
-			break;
-		case Common::EVENT_KEYDOWN:
-			switch (evt.kbd.keycode) {
-			case Common::KEYCODE_LEFT:
-				break;
-			case Common::KEYCODE_RIGHT:
-				break;
-			case Common::KEYCODE_DOWN:
-			case Common::KEYCODE_KP2:
-				_keyPressed |= 2;
-				break;
-
-			if (!_keyPressed && (evt.kbd.keycode == Common::KEYCODE_DOWN || evt.kbd.keycode == Common::KEYCODE_UP || (evt.kbd.keycode == Common::KEYCODE_KP8 && (evt.kbd.flags & Common::KBD_NUM)) || (evt.kbd.keycode == Common::KEYCODE_KP2 && (evt.kbd.flags & Common::KBD_NUM))))
-				_keyPressed |= 3;
-		case Common::EVENT_KEYUP:
-			_commandsFromMain |= _keyPressed;
-			break;
-		default:
-			_keyPressed = 0;
-			break;
-		}*/
 	}
 }
 
-bool SnatcherEngine::runInitSequence(GameState &gameState) {
-	if (gameState.initState == -1)
-		return false;
-
-	gameState.initState = -1;
-
-	return true;
+void SnatcherEngine::updateTopLevelState(GameState &state) {
+	switch (state.topLevelState) {
+	case 0:
+		if (state.main_switch_1_0_orM1_postIntr == -1) {
+			++state.topLevelState;
+		}
+		break;
+	case 1:
+		break;
+	case 2:
+		break;
+	case 3:
+		break;
+	case 4:
+		break;
+	case 5:
+		break;
+	default:
+		error("%s(): Invalid state %d", __FUNCTION__, state.topLevelState);
+		break;
+	}
 }
 
 void SnatcherEngine::updateModuleState(GameState &state) {
-	int _main_switch_1_0_orM1_postIntr = 0;
 	uint16 _word_unk_Flags = 0;
-	int _word_unk_11 = 0;
 	int _sub_val_2 = 0;
 	int _unlCDREadSeekWord = 0;
 	uint8 _triggerPalFlag7Etc = 0;
@@ -261,32 +292,32 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 	uint8 _wordRAM__TABLE48__word_B6400[48];
 	memset(_wordRAM__TABLE48__word_B6400, 0, 48);
 
-	switch (state.progressMain) {
+	switch (state.modProcessTop) {
 	case -1:
 		_snd->musicStop();
-		state.progressMain = 0;
+		state.modProcessTop = 0;
 		break;
 	case 0:
-		switch (state.progressSub) {
+		switch (state.modProcessSub) {
 		case 0:
-			++state.progressSub;
+			++state.modProcessSub;
 			break;
 		case 1:
 			if (!_snd->musicIsPlaying()) {
 				delete _module;
 				_module = _fio->loadModule(4);
 				assert(_module);
-				++state.progressSub;
+				++state.modProcessSub;
 			}
 			break;
 		case 2:
-			++state.progressSub;
+			++state.modProcessSub;
 			break;
 		case 3:
 			//if (*(uint16*)(&_wordRAM__TABLE48__word_B6400[0])) {
-				state.progressSub = 0;
+				state.modProcessSub = 0;
 				state.finish = 0;
-				++state.progressMain;
+				++state.modProcessTop;
 			//}
 			break;
 		default:
@@ -294,25 +325,25 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 		}
 		break;
 	case 1:
-		switch (state.progressSub) {
+		switch (state.modProcessSub) {
 		case 0:
 			state.frameNo = 0;
-			++state.progressSub;
+			++state.modProcessSub;
 			_snd->pcmPlayEffect(30);
 			break;
 		case 1:
 			if (!(_word_unk_Flags & 0x0F))
-				++state.progressSub;
+				++state.modProcessSub;
 			break;
 		case 2:
 			if (_module)
 				_module->run(state);
 			if (state.finish) {
-				state.progressSub = 0;
+				state.modProcessSub = 0;
 				state.finish = 0;
-				state.progressMain = _word_unk_11 ? 7 : state.progressMain + 1;
+				state.modProcessTop = state.menuSelect ? 7 : state.modProcessTop + 1;
 				state.modIndex = 0;
-				_main_switch_1_0_orM1_postIntr = 1;
+				state.main_switch_1_0_orM1_postIntr = 1;
 			}
 			break;
 		default:
@@ -320,16 +351,16 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 		}
 		break;
 	case 2:
-		switch (state.progressSub) {
+		switch (state.modProcessSub) {
 		case 0:
 			if (!(_sub_val_2 & 0x1F)) {
 				if (!_snd->musicIsPlaying()) {
-					uint8 scids[] = { 3, 2 };
+					static const uint8 scids[] = { 3, 2 };
 					delete _module;
 					assert(state.modIndex < ARRAYSIZE(scids));
 					_module = _fio->loadModule(scids[state.modIndex]);
 					assert(_module);
-					++state.progressSub;
+					++state.modProcessSub;
 				} else {
 					_snd->musicStop();
 				}
@@ -340,7 +371,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 				// startup__runWithFileFunc(2)
 				_unlCDREadSeekWord = 0;
 				state.frameNo = -1;
-				++state.progressSub;
+				++state.modProcessSub;
 			}
 			break;
 		case 2:
@@ -349,7 +380,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			if (state.finish < 0) {
 				state.finish = 0;
 				state.counter = 10;
-				++state.progressSub;
+				++state.modProcessSub;
 				static byte data[] = { 0x83, 0x00, 0x00, 0x3F };
 				_gfx->enqueuePaletteEvent(ResourcePointer(data, 0));
 			} else if (state.finish) {
@@ -357,8 +388,8 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 					++state.modIndex;
 					state.finish = 0;
 				}
-				_gfx->reset(GraphicsEngine::kResetSprites);
-				state.progressSub = 0;
+				_gfx->reset(GraphicsEngine::kResetAnimations);
+				state.modProcessSub = 0;
 			}
 			break;
 		case 3:
@@ -368,10 +399,10 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 				};
-				_gfx->enqueueCopyCommands(ResourcePointer(cmd, 0));
+				_gfx->enqueueDrawCommands(ResourcePointer(cmd, 0));
 			} else if (state.counter == 0) {
 				state.finish = -1;
-				state.progressSub = 0;
+				state.modProcessSub = 0;
 				_gfx->reset(GraphicsEngine::kResetSetDefaultsExt);
 			}
 			break;
@@ -380,34 +411,36 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 		}
 		if (state.finish) {
 			state.finish = 0;
-			state.progressMain = 7;
-			state.progressSub = 0;
+			state.modProcessTop = 7;
+			state.modProcessSub = 0;
 			_gfx->scrollCommand(0xFF);
 			_gfx->setVar(9, 1);
-			_gfx->reset(GraphicsEngine::kResetPalEvents | GraphicsEngine::kResetSprites);
+			_gfx->reset(GraphicsEngine::kResetPalEvents | GraphicsEngine::kResetAnimations);
 		}
 		break;
 	case 3:
 		_wordRAM__TABLE48__word_B6400[2] = 1;
 		state.finish = 0;
-		state.progressMain = 0;
-		state.progressSub = 0;
+		state.modProcessTop = 0;
+		state.modProcessSub = 0;
 		_gfx->reset(GraphicsEngine::kResetScrollState);
 		break;
 	case 5:
+		// bset    #3,(GA_SUB__COMMUNICATION_FLAG+1).
 		if (state.finish) {
-			++state.progressMain;
-			state.progressSub = 0;
+			// bclr    #3,(GA_SUB__COMMUNICATION_FLAG+1).l
+			++state.modProcessTop;
+			state.modProcessSub = 0;
 			state.finish = 0;
 		}
 		break;
 	case 6:
-		switch (state.progressSub) {
+		switch (state.modProcessSub) {
 		case 0:
 			if (!_gfx->isAnimEnabled(31)) {
-				_gfx->reset(GraphicsEngine::kResetSetDefaults | GraphicsEngine::kResetSprites);
+				_gfx->reset(GraphicsEngine::kResetSetDefaults | GraphicsEngine::kResetAnimations);
 				_triggerPalFlag7Etc = 0xFF;
-				++state.progressSub;
+				++state.modProcessSub;
 				state.frameNo = -1;
 				state.frameState = 0;
 			}
@@ -417,46 +450,46 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 				delete _module;
 				_module = _fio->loadModule(52);
 				assert(_module);
-				++state.progressSub;
+				++state.modProcessSub;
 			}
 			break;
 		case 2:
 			// startup__runWithFileFunc(2)
 			_unlCDREadSeekWord = 0;
-			++state.progressSub;
+			++state.modProcessSub;
 			break;
 		case 3:
 			if (_module)
 				_module->run(state);
 			if (state.finish) {
 				_sub_bool_5 = true;
-				++state.progressSub;
+				++state.modProcessSub;
 			}
 			break;
 		default:
 			break;
 		}
 	case 7:
-		switch (state.progressSub) {
+		switch (state.modProcessSub) {
 		case 0:
 			_snd->musicStop();
 			//loadFile56 PCMLT_01.BIN
-			++state.progressSub;
+			++state.modProcessSub;
 			break;
 		case 1:
 		case 3:
 			// startup__runWithFileFunc(2)
 			_unlCDREadSeekWord = 0;
-			++state.progressSub;
+			++state.modProcessSub;
 			break;
 		case 2:
 			//loadFile54 PCMDRMDT.BIN
-			++state.progressSub;
+			++state.modProcessSub;
 			break;
 		case 4:
-			state.progressMain = 5;
-			state.progressSub = 0;
-			_main_switch_1_0_orM1_postIntr = -1;
+			state.modProcessTop = 5;
+			state.modProcessSub = 0;
+			state.main_switch_1_0_orM1_postIntr = -1;
 			break;
 		default:
 			break;

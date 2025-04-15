@@ -36,7 +36,7 @@ namespace Graphics {
 namespace Snatcher {
 
 class Palette;
-class ScrollManager;
+class TransitionManager;
 class Renderer;
 class SceneModule;
 
@@ -47,7 +47,7 @@ public:
 
 	void runScript(ResourcePointer res, int func);
 	void enqueuePaletteEvent(ResourcePointer res);
-	bool enqueueCopyCommands(ResourcePointer res);
+	bool enqueueDrawCommands(ResourcePointer res);
 
 	enum ScrollMode : uint8 {
 		kHorzA		= 0,
@@ -68,7 +68,7 @@ public:
 		kResetSetDefaults		=	1 << 1,
 		kResetSetDefaultsExt	=	1 << 2,
 		kResetCopyCmds			=	1 << 3,
-		kResetSprites			=	1 << 4,
+		kResetAnimations		=	1 << 4,
 		kResetScrollState		=	1 << 5
 	};
 
@@ -77,12 +77,14 @@ public:
 	void setVar(uint8 var, uint8 val);
 
 	enum AnimFlags : int {
+		kAnimNone 				=	0,
 		kAnimPause				=	1 << 0,
 		kAnimHide				=	1 << 1,
 		kAnimAudioSync			=	1 << 2
 	};
 
 	void setAnimControlFlags(uint8 animObjId, int flags);
+	void addAnimControlFlags(uint8 animObjId, int flags);
 	void clearAnimControlFlags(uint8 animObjId, int flags);
 	void setAnimFrame(uint8 animObjId, uint16 frameNo);
 	uint16 getAnimCurFrame(uint8 animObjId) const;
@@ -92,6 +94,8 @@ public:
 	uint16 screenHeight() const;
 
 	bool busy(int type) const;
+
+	int displayBootSequenceFrame(int frameNo);
 
 public:
 	struct GfxState {
@@ -159,7 +163,7 @@ private:
 	byte *_screen;
 	Renderer *_renderer;
 	Palette *_palette;
-	ScrollManager *_scroll;
+	TransitionManager *_trs;
 	OSystem *_system;
 };
 

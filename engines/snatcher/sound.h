@@ -38,6 +38,8 @@ public:
 	bool musicIsPlaying() const;
 	uint32 musicGetTime() const;
 
+	void fmStartSound(int track);
+
 	void pcmPlayEffect(int track);
 	void pcmDoCommand(int cmd, int arg);
 

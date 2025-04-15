@@ -19,17 +19,14 @@
 *
 */
 
-#ifndef SNATCHER_SCROLL_H
-#define SNATCHER_SCROLL_H
+#ifndef SNATCHER_TRANSITION_H
+#define SNATCHER_TRANSITION_H
 
-//#include "common/platform.h"
-//#include "snatcher/graphics.h"
-//#include "snatcher/resource.h"
 #include "common/scummsys.h"
 
 namespace Snatcher {
 
-class ScrollManager {
+class TransitionManager {
 public:
 	enum {
 		kHorzA = 0,
@@ -39,7 +36,8 @@ public:
 	};
 
 	struct ScrollState {
-		int16 offsets[4];
+		int16 realOffsets[4];
+		int16 unmodifiedOffsets[4];
 		const int16 *hScrollTable;
 		uint16 hScrollTableNumEntries;
 		bool disableVScroll;
@@ -51,30 +49,30 @@ public:
 		} hInt;
 	};
 
-	ScrollManager() {
+	TransitionManager() {
 		memset(&_result, 0, sizeof(_result));
 	}
 
-	virtual ~ScrollManager() {}
+	virtual ~TransitionManager() {}
 	virtual void doCommand(int cmd) = 0;
-	virtual void setSingleStep(int mode, int16 step) = 0;
-	virtual void setDirectionAndSpeed(int mode, int16 incr) = 0;
+	virtual void scroll_setSingleStep(int mode, int16 step) = 0;
+	virtual void scroll_setDirectionAndSpeed(int mode, int16 incr) = 0;
 	virtual void clear() = 0;
 	virtual bool nextFrame() = 0;
 	virtual void hINTCallback(void*) {}
-	const ScrollState &getState() const { return _result; }
+	const ScrollState &scroll_getState() const { return _result; }
 
 protected:
 	ScrollState _result;
 
 private:
-	static ScrollManager *createSegaScrollManager(GraphicsEngine::GfxState &state);
+	static TransitionManager *createSegaTransitionManager(GraphicsEngine::GfxState &state);
 
 public:
-	static ScrollManager *create(Common::Platform platform, GraphicsEngine::GfxState &state) {
+	static TransitionManager *create(Common::Platform platform, GraphicsEngine::GfxState &state) {
 		switch (platform) {
 		case Common::kPlatformSegaCD:
-			return createSegaScrollManager(state);
+			return createSegaTransitionManager(state);
 		default:
 			break;
 		};

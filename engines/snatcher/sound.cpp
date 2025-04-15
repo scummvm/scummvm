@@ -49,6 +49,10 @@ uint32 SoundEngine::musicGetTime() const {
 	return _dev->musicGetTime();
 }
 
+void SoundEngine::fmStartSound(int track) {
+	_dev->fmStartSound(track);
+}
+
 void SoundEngine::pcmPlayEffect(int track) {
 	_dev->pcmPlayEffect(track);
 }
@@ -65,8 +69,13 @@ SoundDevice *SoundDevice::create(Common::Platform platform, int soundOptions) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(soundOptions);
 	MusicType musicType = MidiDriver::getMusicType(dev);
 
-	if (musicType == MT_INVALID || musicType == MT_NULL)
-		return createNullSoundDevice();
+	if (musicType == MT_INVALID)
+		return nullptr;
+
+	// TODO: We still need to create the appropriate sound device, since the game
+	// heavily relies on audio sync for its animations. We'll just have to handle
+	// it via volume settings.
+	// if (musicType == MT_NULL)
 
 	switch (platform) {
 	case Common::kPlatformSegaCD:
@@ -75,7 +84,7 @@ SoundDevice *SoundDevice::create(Common::Platform platform, int soundOptions) {
 		break;
 	};
 
-	return 0;
+	return nullptr;
 }
 
 } // End of namespace Snatcher
