@@ -44,26 +44,22 @@ Sound::Sound() {
 
 Sound::~Sound() {
 	delete[] _soundData;
-	for (int i = 0; i < 3; i++) {
-		delete(_bossSounds[i]);
+	for (int i = 0; i < ARRAYSIZE(_bossSounds); i++) {
+		delete[] _bossSounds[i];
 	}
 
-	musicStop();
+	if (_musicParser != nullptr) {
+		musicStop();
+	}
 
 	if (_musicDriver != nullptr) {
 		_musicDriver->setTimerCallback(nullptr, nullptr);
 		_musicDriver->close();
 	}
 
-	if (_musicParser != nullptr) {
-		delete _musicParser;
-	}
-	if (_musicDriver != nullptr) {
-		delete _musicDriver;
-	}
-
-	if (_musicData != nullptr)
-		delete[] _musicData;
+	delete _musicParser;
+	delete _musicDriver;
+	delete[] _musicData;
 }
 
 void Sound::load() {
