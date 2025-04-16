@@ -188,7 +188,7 @@ void Logic::op_condJmp() {
 
 void Logic::op_setPalette() {
 	uint16 i = _scriptPtr.fetchWord();
-	debugC(kDebugLogic, "%.4x - op_changePalette(%d)", _lastOpcodeOffset, i);
+	debugC(kDebugLogic, "%.4x - op_setPalette(%d)", _lastOpcodeOffset, i);
 	_vid->_newPal = i >> 8;
 }
 
