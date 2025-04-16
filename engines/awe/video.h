@@ -54,9 +54,9 @@ struct Video {
 		VID_PAGE_SIZE  = 320 * 200 / 2
 	};
 
-	static const uint8 _font[];
-	static const StrEntry _stringsTableEng[];
-	static const StrEntry _stringsTableDemo[];
+	static const uint8 FONT[];
+	static const StrEntry STRINGS_TABLE_ENG[];
+	static const StrEntry STRINGS_TABLE_DEMO[];
 
 	Resource *_res;
 	SystemStub *_stub;

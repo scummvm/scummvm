@@ -161,7 +161,7 @@ void Resource::update(uint16 num) {
 			_newPtrsId = num;
 		} else {
 			if (false) { // XXX (_audio_use_pro_or_adlib == 1 || _audio_use_spk == 1) {
-				for (const uint16 *ml = _memListAudio; *ml != 0xFFFF; ++ml) {
+				for (const uint16 *ml = MEMLIST_AUDIO; *ml != 0xFFFF; ++ml) {
 					if (*ml == num)
 						return;
 				}

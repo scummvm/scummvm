@@ -25,7 +25,7 @@
 
 namespace Awe {
 
-const Logic::OpcodeStub Logic::_opTable[] = {
+const Logic::OpcodeStub Logic::OPCODE_TABLE[] = {
 	/* 0x00 */
 	&Logic::op_movConst,
 	&Logic::op_mov,
@@ -62,7 +62,7 @@ const Logic::OpcodeStub Logic::_opTable[] = {
 	&Logic::op_soundUnk2
 };
 
-const uint16 Resource::_memListAudio[] = { 
+const uint16 Resource::MEMLIST_AUDIO[] = { 
 	8, 0x10, 0x61, 0x66, 0xFFFF
 };
 
@@ -92,7 +92,7 @@ const uint16 Resource::MEM_LIST_DEMO_PARTS[][4] = {
 	{ 0x7D, 0x7E, 0x7F, 0x00 }
 };
 
-const uint8 Video::_font[] = {
+const uint8 Video::FONT[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x10, 0x10, 0x10, 0x10, 0x00, 0x10, 0x00,
 	0x28, 0x28, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24, 0x7E, 0x24, 0x24, 0x7E, 0x24, 0x00,
 	0x08, 0x3E, 0x48, 0x3C, 0x12, 0x7C, 0x10, 0x00, 0x42, 0xA4, 0x48, 0x10, 0x24, 0x4A, 0x84, 0x00,
@@ -143,7 +143,7 @@ const uint8 Video::_font[] = {
 	0x38, 0x44, 0x82, 0x82, 0x44, 0x28, 0xEE, 0x00, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA
 };
 
-const StrEntry Video::_stringsTableEng[] = {
+const StrEntry Video::STRINGS_TABLE_ENG[] = {
 	{ 0x001, "P E A N U T  3000" },
 	{ 0x002, "Copyright  } 1990 Peanut Computer, Inc.\nAll rights reserved.\n\nCDOS Version 5.01" },
 	{ 0x003, "2" },
@@ -287,7 +287,7 @@ const StrEntry Video::_stringsTableEng[] = {
 	{ 0xFFFF, "" }
 };
 
-const StrEntry Video::_stringsTableDemo[] = {
+const StrEntry Video::STRINGS_TABLE_DEMO[] = {
 	{ 0x001, "P E A N U T  3000" },
 	{ 0x002, "Copyright  } 1990 Peanut Computer, Inc.\nAll rights reserved.\n\nCDOS Version 5.01" },
 	{ 0x003, "2" },

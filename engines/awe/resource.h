@@ -57,7 +57,7 @@ struct Resource {
 		MEM_BLOCK_SIZE = 600 * 1024
 	};
 	
-	static const uint16 _memListAudio[];
+	static const uint16 MEMLIST_AUDIO[];
 	static const uint16 MEM_LIST_PARTS[][4];
 	static const uint16 MEM_LIST_DEMO_PARTS[][4];
 
