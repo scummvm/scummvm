@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-13 06:56+0000\n"
-"PO-Revision-Date: 2025-04-12 06:18+0000\n"
+"PO-Revision-Date: 2025-04-16 07:18+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -8683,7 +8683,7 @@ msgstr ""
 
 #: engines/mtropolis/metaengine.cpp:75
 msgid "Autosave at progress points"
-msgstr ""
+msgstr "ავტოშენახვა ჩატვირთვის წერტილებში"
 
 #: engines/mtropolis/metaengine.cpp:76
 msgid "Automatically saves the game after completing puzzles and chapters."
@@ -9215,7 +9215,7 @@ msgstr ""
 
 #: engines/sci/detection_options.h:45
 msgid "Enable high resolution graphics"
-msgstr ""
+msgstr "მაღალი გარჩევადობის გრაფიკის ჩართვა"
 
 #: engines/sci/detection_options.h:46
 msgid "Enable high resolution graphics/content"
