@@ -24,12 +24,28 @@
 
 #include "common/array.h"
 
+/**
+ * FILO list of unique members
+ * 
+ * Tracks redraw order of layered graphical elements.
+ * When an element has current focus, it is reshuffled to the top of the pile.
+ * When redrawing, start with last (bottom) element of list and finish with first (top)
+ * Used to: 
+ *	ensure scrolling menus are drawn in the order in which they last had mouse focus.
+ * 	ensure most recently updated subtitle is drawn atop all others.
+ * Provides limited Common::Array functionality
+ */
+
 template<typename T>
 class FocusList {
 private:
 	Common::Array<T> _focus;
 	typedef uint SizeType;  //TODO - find a way to make this typedef inherit from the definition in Common::Array
 public:
+/**
+ * Move unique entry to front of list; add to list if not already present.
+ * Sequence of all remaining members remains unchanged.
+ */
 	void set(T currentFocus) {
 		if (!_focus.size())
 			_focus.push_back(currentFocus);
@@ -71,6 +87,10 @@ public:
 		_focus.clear();
 	}
 
+/**
+ * Remove unique entry, if present.
+ * Sequence of all remaining members remains unchanged.
+ */
 	void remove(T value) {
 		if (_focus.size()) {
 			Common::Array<T> buffer;

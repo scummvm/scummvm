@@ -27,13 +27,21 @@
 
 namespace ZVision {
 
+/**
+ * Automatically scroll a GUI menu or similar graphical element between an active and an idle position
+ * Movement in one dimension; idle & active positions specified as int16.
+ * Movement is at constant speed determined by period, specified in ms.
+ * If active/idle status is changed mid-transition, will scroll from current position to the appropriate position.
+ * LinearScroller also be used to reversibly scroll animation frames.
+ */
+
 class LinearScroller {
 public:
 	LinearScroller(const int16 activePos, const int16 idlePos, const int16 period = 500);
 	~LinearScroller();
-	void reset();
-	bool update(uint32 deltatime);  //Calculate updated position of scrolled graphics; return true if redraw is necessary.
-	void setActive(bool active);
+	void reset();  ///< Set idle and immediately jump to idle position
+	bool update(uint32 deltatime);  ///< Calculate updated position of scrolled graphics; return true if redraw is necessary.
+	void setActive(bool active);	  ///< Set active or idle & scroll at set speed from current position to that position.
 	bool isMoving();
 	int16 getPos();
 
@@ -49,13 +57,20 @@ private:
 	const int16 _period;
 };
 
+/**
+ * Automatically scroll a GUI menu or similar graphical element between an active and an idle position
+ * Movement in two dimensions; idle & active positions specified as Common::Point
+ * Movement is at constant speed determined by period, specified in ms.
+ * If active/idle status is changed mid-transition, will scroll from current position to the appropriate position.
+ */
+
 class Scroller {
 public:
 	Scroller(const Common::Point &activePos, const Common::Point &idlePos, const int16 period = 500);
 	~Scroller();
-	void reset();
-	bool update(uint32 deltatime);  //Calculate updated position of scrolled graphics; return true if redraw is necessary.
-	void setActive(bool active);
+	void reset();  ///< Set idle and immediately jump to idle position
+	bool update(uint32 deltatime);  ///< Calculate updated position of scrolled graphics; return true if redraw is necessary.
+	void setActive(bool active);  ///< Set active or idle & scroll at set speed from current position to that position.
 	bool isMoving();
 	
 	Common::Point _pos;
