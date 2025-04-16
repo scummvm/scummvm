@@ -20,10 +20,9 @@
  */
 
 #include "common/textconsole.h"
-
-#include "alg/video.h"
-
+#include "graphics/surface.h"
 #include "audio/decoders/raw.h"
+#include "alg/video.h"
 
 namespace Alg {
 
@@ -37,9 +36,8 @@ AlgVideoDecoder::~AlgVideoDecoder() {
 		_frame->free();
 		delete _frame;
 	}
-	if (_audioStream) {
-		delete _audioStream;
-	}
+
+	delete _audioStream;
 }
 
 void AlgVideoDecoder::loadVideoFromStream(uint32 offset) {
@@ -78,9 +76,7 @@ void AlgVideoDecoder::loadVideoFromStream(uint32 offset) {
 		_frame->free();
 		delete _frame;
 	}
-	if (_audioStream) {
-		delete _audioStream;
-	}
+	delete _audioStream;
 	_frame = new Graphics::Surface();
 	_frame->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
 	_audioStream = makePacketizedRawStream(8000, Audio::FLAG_UNSIGNED);
