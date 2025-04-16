@@ -26,9 +26,6 @@
 #include "audio/mixer.h"
 
 #include "common/file.h"
-#include "common/stream.h"
-
-#include "graphics/surface.h"
 
 namespace Alg {
 
@@ -40,14 +37,14 @@ public:
 	void loadVideoFromStream(uint32 offset);
 	void skipNumberOfFrames(uint32 num);
 	void setInputFile(Common::File *input) { _input = input; }
-	bool isFinished() { return _bytesLeft == 0; }
-	Graphics::Surface *getVideoFrame() { return _frame; }
+	bool isFinished() const { return _bytesLeft == 0; }
+	Graphics::Surface *getVideoFrame() const { return _frame; }
 	void setPalette(uint8 *palette) { _palette = palette; }
-	bool isPaletteDirty() { return _paletteDirty; }
-	void pauseAudio(bool pause) { g_system->getMixer()->pauseHandle(_audioHandle, pause); }
-	uint16 getWidth() { return _width; }
-	uint16 getHeight() { return _height; }
-	uint32 getCurrentFrame() { return _currentFrame; }
+	bool isPaletteDirty() const { return _paletteDirty; }
+	void pauseAudio(bool pause) const { g_system->getMixer()->pauseHandle(_audioHandle, pause); }
+	uint16 getWidth() const { return _width; }
+	uint16 getHeight() const { return _height; }
+	uint32 getCurrentFrame() const { return _currentFrame; }
 
 private:
 	Common::File *_input;
