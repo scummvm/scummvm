@@ -31,6 +31,8 @@ public:
 	TransitionCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	TransitionCastMember(Cast *cast, uint16 castId, TransitionCastMember &source);
 
+	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new TransitionCastMember(cast, castId, *this)); }
+
 	bool hasField(int field) override;
 	Datum getField(int field) override;
 	bool setField(int field, const Datum &value) override;

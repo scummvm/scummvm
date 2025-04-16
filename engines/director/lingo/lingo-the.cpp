@@ -1962,6 +1962,13 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		return d;
 	}
 
+	if (field == kTheMedia) {
+		// every time "the media" is invoked, a new copy is made.
+		member->load();
+		d = Datum(member->duplicate(nullptr, 0));
+		return d;
+	}
+
 	if (!member->hasField(field)) {
 		warning("Lingo::getTheCast(): %s has no property '%s'", id.asString().c_str(), field2str(field));
 		return d;
@@ -1984,6 +1991,17 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	CastMember *member = movie->getCastMember(id);
 	if (!member) {
 		g_lingo->lingoError("Lingo::setTheCast(): %s not found", id.asString().c_str());
+		return;
+	}
+
+	if (field == kTheMedia) {
+		if (d.type != MEDIA) {
+			warning("Lingo::setTheCast(): setting the media with a non-MEDIA object, ignoring");
+			return;
+		}
+		CastMember *replacement = (CastMember *)d.u.obj;
+		Cast *cast = movie->getCast(id);
+		cast->duplicateCastMember(replacement, nullptr, id.member);
 		return;
 	}
 
@@ -2361,6 +2379,14 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 			return;
 		}
 
+		if (propName.equals("media")) {
+			// every time "the media" is invoked, a new copy is made.
+			member->load();
+			d = Datum(member->duplicate(nullptr, 0));
+			g_lingo->push(d);
+			return;
+		}
+
 		if (member->hasProp(propName)) {
 			d = member->getProp(propName);
 		} else {
@@ -2470,6 +2496,17 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 				return;
 			}
 			g_lingo->lingoError("Lingo::setObjectProp(): %s not found", id.asString().c_str());
+			return;
+		}
+
+		if (propName.equals("media")) {
+			if (val.type != MEDIA) {
+				warning("Lingo::setObjectProp(): setting the media with a non-MEDIA object, ignoring");
+				return;
+			}
+			CastMember *replacement = (CastMember *)val.u.obj;
+			Cast *cast = movie->getCast(id);
+			cast->duplicateCastMember(replacement, nullptr, id.member);
 			return;
 		}
 

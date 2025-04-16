@@ -98,7 +98,7 @@ Cast::~Cast() {
 	if (_loadedCast)
 		for (auto &it : *_loadedCast)
 			if (it._value) {
-				delete it._value;
+				it._value->decRefCount();
 				it._value = nullptr;
 			}
 
@@ -236,10 +236,8 @@ void Cast::setCastMemberModified(int castId) {
 }
 
 CastMember *Cast::setCastMember(int castId, CastMember *cast) {
-	if (_loadedCast->contains(castId)) {
-		_loadedCast->erase(castId);
-	}
-
+	eraseCastMember(castId);
+	cast->incRefCount();
 	_loadedCast->setVal(castId, cast);
 	return cast;
 }
@@ -252,43 +250,7 @@ bool Cast::duplicateCastMember(CastMember *source, CastMemberInfo *info, int tar
 	// is the same as deleting the target
 	if (!source)
 		return true;
-	CastMember *target = nullptr;
-	switch (source->_type) {
-	case kCastBitmap:
-		target = (CastMember *)(new BitmapCastMember(this, targetId, *(BitmapCastMember *)source));
-		break;
-	case kCastDigitalVideo:
-		target = (CastMember *)(new DigitalVideoCastMember(this, targetId, *(DigitalVideoCastMember *)source));
-		break;
-	case kCastFilmLoop:
-		target = (CastMember *)(new FilmLoopCastMember(this, targetId, *(FilmLoopCastMember *)source));
-		break;
-	case kCastMovie:
-		target = (CastMember *)(new MovieCastMember(this, targetId, *(MovieCastMember *)source));
-		break;
-	case kCastPalette:
-		target = (CastMember *)(new PaletteCastMember(this, targetId, *(PaletteCastMember *)source));
-		break;
-	case kCastLingoScript:
-		target = (CastMember *)(new ScriptCastMember(this, targetId, *(ScriptCastMember *)source));
-		break;
-	case kCastShape:
-		target = (CastMember *)(new ShapeCastMember(this, targetId, *(ShapeCastMember *)source));
-		break;
-	case kCastText:
-		target = (CastMember *)(new TextCastMember(this, targetId, *(TextCastMember *)source));
-		break;
-	case kCastRichText:
-		target = (CastMember *)(new RichTextCastMember(this, targetId, *(RichTextCastMember *)source));
-		break;
-	case kCastTransition:
-		target = (CastMember *)(new TransitionCastMember(this, targetId, *(TransitionCastMember *)source));
-		break;
-	default:
-		warning("Cast::duplicateCastMember(): unsupported cast type %s", castType2str(source->_type));
-		return false;
-		break;
-	}
+	CastMember *target = source->duplicate(this, targetId);
 
 	if (info) {
 		CastMemberInfo *newInfo = new CastMemberInfo(*info);
@@ -304,7 +266,7 @@ bool Cast::duplicateCastMember(CastMember *source, CastMemberInfo *info, int tar
 bool Cast::eraseCastMember(int castId) {
 	if (_loadedCast->contains(castId)) {
 		CastMember *member = _loadedCast->getVal(castId);
-		delete member;
+		member->decRefCount();
 		_loadedCast->erase(castId);
 
 		if (_castsInfo.contains(castId)) {
@@ -896,6 +858,7 @@ void Cast::loadCastDataVWCR(Common::SeekableReadStreamEndian &stream) {
 		}
 
 		int returnPos = stream.pos() + size;
+		CastMember *target = nullptr;
 		switch (castType) {
 		case kCastBitmap:
 			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) BitmapCastMember", id, numToCastNum(id));
@@ -908,42 +871,44 @@ void Cast::loadCastDataVWCR(Common::SeekableReadStreamEndian &stream) {
 				break;
 			}
 
-			_loadedCast->setVal(id, new BitmapCastMember(this, id, stream, tag, _version, flags1));
+			target = new BitmapCastMember(this, id, stream, tag, _version, flags1);
 			break;
 		case kCastText:
 			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) TextCastMember", id, numToCastNum(id));
-			_loadedCast->setVal(id, new TextCastMember(this, id, stream, _version, flags1));
+			target = new TextCastMember(this, id, stream, _version, flags1);
 			break;
 		case kCastShape:
 			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) ShapeCastMember", id, numToCastNum(id));
-			_loadedCast->setVal(id, new ShapeCastMember(this, id, stream, _version));
+			target = new ShapeCastMember(this, id, stream, _version);
 			break;
 		case kCastButton:
 			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) ButtonCast", id, numToCastNum(id));
-			_loadedCast->setVal(id, new TextCastMember(this, id, stream, _version, flags1, true));
+			target =new TextCastMember(this, id, stream, _version, flags1, true);
 			break;
 		case kCastSound:
 			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) SoundCastMember", id, numToCastNum(id));
-			_loadedCast->setVal(id, new SoundCastMember(this, id, stream, _version));
+			target = new SoundCastMember(this, id, stream, _version);
 			break;
 		case kCastDigitalVideo:
 			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) DigitalVideoCastMember", id, numToCastNum(id));
-			_loadedCast->setVal(id, new DigitalVideoCastMember(this, id, stream, _version));
+			target = new DigitalVideoCastMember(this, id, stream, _version);
 			break;
 		case kCastPalette:
 			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) PaletteCastMember", id, numToCastNum(id));
-			_loadedCast->setVal(id, new PaletteCastMember(this, id, stream, _version));
+			target = new PaletteCastMember(this, id, stream, _version);
 			// load the palette now, as there are no CastInfo structs
-			_loadedCast->getVal(id)->load();
+			target->load();
 			break;
 		case kCastFilmLoop:
 			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) FilmLoopCastMember", id, numToCastNum(id));
-			_loadedCast->setVal(id, new FilmLoopCastMember(this, id, stream, _version));
+			target = new FilmLoopCastMember(this, id, stream, _version);
 			break;
 		default:
 			warning("Cast::loadCastDataVWCR(): Unhandled cast id: %d(%s), type: %d, %d bytes", id, numToCastNum(id), castType, size);
 			break;
 		}
+		if (target)
+			setCastMember(id, target);
 		stream.seek(returnPos);
 	}
 }
@@ -1049,50 +1014,50 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 
 	if (_loadedCast->contains(id)) {
 		warning("Cast::loadCastData(): Multiple cast members with ID %d, overwriting", id);
-		delete _loadedCast->getVal(id);
-		_loadedCast->erase(id);
+		eraseCastMember(id);
 	}
 
+	CastMember *target = nullptr;
 	switch (castType) {
 	case kCastBitmap:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastBitmap (%d children)", res->children.size());
-		_loadedCast->setVal(id, new BitmapCastMember(this, id, castStream, res->tag, _version, flags1));
+		target = new BitmapCastMember(this, id, castStream, res->tag, _version, flags1);
 		break;
 	case kCastSound:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastSound (%d children)", res->children.size());
-		_loadedCast->setVal(id, new SoundCastMember(this, id, castStream, _version));
+		target = new SoundCastMember(this, id, castStream, _version);
 		break;
 	case kCastText:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastText (%d children)", res->children.size());
-		_loadedCast->setVal(id, new TextCastMember(this, id, castStream, _version, flags1));
+		target = new TextCastMember(this, id, castStream, _version, flags1);
 		break;
 	case kCastShape:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastShape (%d children)", res->children.size());
-		_loadedCast->setVal(id, new ShapeCastMember(this, id, castStream, _version));
+		target = new ShapeCastMember(this, id, castStream, _version);
 		break;
 	case kCastButton:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastButton (%d children)", res->children.size());
-		_loadedCast->setVal(id, new TextCastMember(this, id, castStream, _version, flags1, true));
+		target = new TextCastMember(this, id, castStream, _version, flags1, true);
 		break;
 	case kCastLingoScript:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastLingoScript");
-		_loadedCast->setVal(id, new ScriptCastMember(this, id, castStream, _version));
+		target = new ScriptCastMember(this, id, castStream, _version);
 		break;
 	case kCastRichText:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastRichText (%d children)", res->children.size());
-		_loadedCast->setVal(id, new RichTextCastMember(this, id, castStream, _version));
+		target = new RichTextCastMember(this, id, castStream, _version);
 		break;
 	case kCastDigitalVideo:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastDigitalVideo (%d children)", res->children.size());
-		_loadedCast->setVal(id, new DigitalVideoCastMember(this, id, castStream, _version));
+		target = new DigitalVideoCastMember(this, id, castStream, _version);
 		break;
 	case kCastFilmLoop:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastFilmLoop (%d children)", res->children.size());
-		_loadedCast->setVal(id, new FilmLoopCastMember(this, id, castStream, _version));
+		target = new FilmLoopCastMember(this, id, castStream, _version);
 		break;
 	case kCastPalette:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastPalette (%d children)", res->children.size());
-		_loadedCast->setVal(id, new PaletteCastMember(this, id, castStream, _version));
+		target = new PaletteCastMember(this, id, castStream, _version);
 		break;
 	case kCastPicture:
 		warning("BUILDBOT: STUB: Cast::loadCastData(): kCastPicture (id=%d, %d children)! This will be missing from the movie and may cause problems", id, res->children.size());
@@ -1100,17 +1065,20 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		break;
 	case kCastMovie:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastMovie (id=%d, %d children)",  id, res->children.size());
-		_loadedCast->setVal(id, new MovieCastMember(this, id, castStream, _version));
+		target = new MovieCastMember(this, id, castStream, _version);
 		break;
 	case kCastTransition:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastTransition (id=%d, %d children)",  id, res->children.size());
-		_loadedCast->setVal(id, new TransitionCastMember(this, id, castStream, _version));
+		target = new TransitionCastMember(this, id, castStream, _version);
 		break;
 	default:
 		warning("BUILDBOT: STUB: Cast::loadCastData(): Unhandled cast type: %d [%s] (id=%d, %d children)! This will be missing from the movie and may cause problems", castType, tag2str(castType), id, res->children.size());
 		// also don't try and read the strings... we don't know what this item is.
 		castInfoSize = 0;
 		break;
+	}
+	if (target) {
+		setCastMember(id, target);
 	}
 	if (castStream.eos()) {
 		warning("BUILDBOT: Read past dataStream for id: %d type: %s", id, castType2str((CastType) castType));
@@ -1120,11 +1088,11 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 	if (leftOver > 0)
 		warning("BUILDBOT: Left over bytes: %d in dataStream for id: %d type: %s", leftOver, id, castType2str((CastType) castType));
 
-	if (_loadedCast->contains(id)) { // Skip unhandled casts
+	if (target) { // Skip unhandled casts
 		debugCN(3, kDebugLoading, "Children: ");
 		for (uint child = 0; child < res->children.size(); child++) {
 			debugCN(3, kDebugLoading, "%d ", res->children[child].index);
-			_loadedCast->getVal(id)->_children.push_back(res->children[child]);
+			target->_children.push_back(res->children[child]);
 		}
 		debugCN(3, kDebugLoading, "\n");
 	}

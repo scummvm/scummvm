@@ -38,6 +38,8 @@ public:
 	FilmLoopCastMember(Cast *cast, uint16 castId, FilmLoopCastMember &source);
 	~FilmLoopCastMember();
 
+	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new FilmLoopCastMember(cast, castId, *this)); }
+
 	bool isModified() override;
 	//Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 

@@ -42,6 +42,8 @@ public:
 	DigitalVideoCastMember(Cast *cast, uint16 castId, DigitalVideoCastMember &source);
 	~DigitalVideoCastMember();
 
+	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new DigitalVideoCastMember(cast, castId, *this)); }
+
 	bool isModified() override;
 	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 

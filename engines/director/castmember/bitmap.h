@@ -37,6 +37,8 @@ public:
 	BitmapCastMember(Cast *cast, uint16 castId, BitmapCastMember &source);
 	~BitmapCastMember();
 
+	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new BitmapCastMember(cast, castId, *this)); }
+
 	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
 	bool isModified() override;

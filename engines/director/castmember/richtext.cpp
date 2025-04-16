@@ -64,6 +64,9 @@ RichTextCastMember::RichTextCastMember(Cast *cast, uint16 castId, RichTextCastMe
 	_initialRect = source._initialRect;
 	_boundingRect = source._boundingRect;
 	_bgColor = source._bgColor;
+	if (cast == source._cast)
+		_children = source._children;
+
 }
 
 RichTextCastMember::~RichTextCastMember() {
