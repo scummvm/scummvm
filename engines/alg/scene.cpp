@@ -94,7 +94,7 @@ void SceneInfo::loadScnFile(const Common::Path &path) {
 	addZonesToScenes();
 }
 
-void SceneInfo::parseScene(Common::String sceneName, uint32 startFrame, uint32 endFrame) {
+void SceneInfo::parseScene(const Common::String &sceneName, uint32 startFrame, uint32 endFrame) {
 	Scene *scene = new Scene(sceneName, startFrame, endFrame);
 	bool done = false;
 	while (_scnFile.pos() < _scnFile.size() && !done) {
@@ -176,7 +176,7 @@ void SceneInfo::parseScene(Common::String sceneName, uint32 startFrame, uint32 e
 	_scenes.push_back(scene);
 }
 
-void SceneInfo::parseZone(Common::String zoneName, uint32 startFrame, uint32 endFrame) {
+void SceneInfo::parseZone(const Common::String &zoneName, uint32 startFrame, uint32 endFrame) {
 	Zone *zone = new Zone(zoneName, startFrame, endFrame);
 	bool done = false;
 	while (_scnFile.pos() < _scnFile.size() && !done) {
@@ -246,8 +246,7 @@ void SceneInfo::parseZone(Common::String zoneName, uint32 startFrame, uint32 end
 }
 
 void SceneInfo::addZonesToScenes() {
-	for (uint32 i = 0; i < _scenes.size(); i++) {
-		Scene *scene = _scenes[i];
+	for (auto &scene : _scenes) {
 		if (!scene->_zonesStart.empty()) {
 			Zone *zone = findZone(scene->_zonesStart);
 			scene->_zones.push_back(zone);
@@ -288,26 +287,26 @@ void SceneInfo::addScene(Scene *scene) {
 	_scenes.push_back(scene);
 }
 
-Zone *SceneInfo::findZone(Common::String zoneName) {
-	for (uint32 i = 0; i < _zones.size(); i++) {
-		if (_zones[i]->_name.equalsIgnoreCase(zoneName)) {
-			return _zones[i];
+Zone *SceneInfo::findZone(const Common::String &zoneName) {
+	for (auto &zone : _zones) {
+		if (zone->_name.equalsIgnoreCase(zoneName)) {
+			return zone;
 		}
 	}
 	warning("SceneInfo::findZone(): Cannot find zone %s", zoneName.c_str());
 	return nullptr;
 }
 
-Scene *SceneInfo::findScene(Common::String sceneName) {
-	for (uint32 i = 0; i < _scenes.size(); i++) {
-		if (_scenes[i]->_name.equalsIgnoreCase(sceneName)) {
-			return _scenes[i];
+Scene *SceneInfo::findScene(const Common::String &sceneName) {
+	for (auto &scene : _scenes) {
+		if (scene->_name.equalsIgnoreCase(sceneName)) {
+			return scene;
 		}
 	}
 	error("SceneInfo::findScene(): Cannot find scene %s", sceneName.c_str());
 }
 
-int8 SceneInfo::getToken(const struct TokenEntry *tokenList, Common::String token) {
+int8 SceneInfo::getToken(const TokenEntry *tokenList, const Common::String &token) {
 	for (int i = 0; tokenList[i].name != nullptr; i++) {
 		if (token == tokenList[i].name) {
 			return tokenList[i].value;
@@ -316,8 +315,8 @@ int8 SceneInfo::getToken(const struct TokenEntry *tokenList, Common::String toke
 	return -1;
 }
 
-bool SceneInfo::ignoreScriptLine(Common::String line) {
-	if (line.size() == 0) {
+bool SceneInfo::ignoreScriptLine(const Common::String &line) {
+	if (line.empty()) {
 		return true; // empty line
 	} else if (line.hasPrefix("//")) {
 		return true; // comment
@@ -333,7 +332,7 @@ bool SceneInfo::ignoreScriptLine(Common::String line) {
 	return false;
 }
 
-Scene::Scene(Common::String name, uint32 startFrame, uint32 endFrame) {
+Scene::Scene(const Common::String &name, uint32 startFrame, uint32 endFrame) {
 	_preop = "DEFAULT";
 	_insop = "DEFAULT";
 	_scnmsg = "DEFAULT";
@@ -355,15 +354,12 @@ Scene::Scene(Common::String name, uint32 startFrame, uint32 endFrame) {
 	_difficultyMod = 0;
 }
 
-Scene::~Scene() {
-}
-
-Zone::Zone(Common::String name, Common::String ptrfb) {
+Zone::Zone(const Common::String &name, const Common::String &ptrfb) {
 	_name = name;
 	_ptrfb = ptrfb;
 }
 
-Zone::Zone(Common::String name, uint32 startFrame, uint32 endFrame) {
+Zone::Zone(const Common::String &name, uint32 startFrame, uint32 endFrame) {
 	_name = name;
 	_startFrame = startFrame;
 	_endFrame = endFrame;
@@ -375,7 +371,7 @@ Zone::~Zone() {
 	}
 }
 
-void Zone::addRect(int16 left, int16 top, int16 right, int16 bottom, Common::String scene, uint32 score, Common::String rectHit, Common::String unknown) {
+void Zone::addRect(int16 left, int16 top, int16 right, int16 bottom, const Common::String &scene, uint32 score, const Common::String &rectHit, const Common::String &unknown) {
 	Rect *rect = new Rect();
 	rect->left = left;
 	rect->top = top;

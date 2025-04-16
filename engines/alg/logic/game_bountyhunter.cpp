@@ -1008,10 +1008,10 @@ void GameBountyHunter::sceneIsoGivemoney(Scene *scene) {
 					int bonus = (2 ^ _numLevelsDone) * 100;
 					_playerScore[i] += bonus;
 				}
-				_wounded = 0;
-				_given = 1;
+				_wounded = false;
+				_given = true;
 			} else if (moneyFrame != _currentFrame) {
-				_given = 0;
+				_given = false;
 			}
 		}
 		displayScores(i);
@@ -1315,7 +1315,7 @@ void GameBountyHunter::debugWarpTo(int val) {
 }
 
 // Debugger methods
-DebuggerBountyHunter::DebuggerBountyHunter(GameBountyHunter *game) : GUI::Debugger() {
+DebuggerBountyHunter::DebuggerBountyHunter(GameBountyHunter *game) {
 	_game = game;
 	registerVar("drawRects", &game->_debug_drawRects);
 	registerVar("godMode", &game->_debug_godMode);

@@ -1524,7 +1524,7 @@ void GameMaddog::debugWarpTo(int val) {
 }
 
 // Debugger methods
-DebuggerMaddog::DebuggerMaddog(GameMaddog *game) : GUI::Debugger() {
+DebuggerMaddog::DebuggerMaddog(GameMaddog *game) {
 	_game = game;
 	registerVar("drawRects", &game->_debug_drawRects);
 	registerVar("godMode", &game->_debug_godMode);

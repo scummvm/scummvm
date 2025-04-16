@@ -122,7 +122,7 @@ Common::Array<Graphics::Surface *> *AlgGraphics::loadScreenCoordAniImage(const C
 		Graphics::Surface *renderTarget = new Graphics::Surface();
 		renderTarget->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 		uint32 centerOffset = (renderTarget->w * renderTarget->h / 2) + (renderTarget->w / 2);
-		while (1) {
+		while (true) {
 			length = aniFile.readUint16LE();
 			if (length == 0) {
 				break;

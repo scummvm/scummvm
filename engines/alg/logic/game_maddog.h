@@ -101,17 +101,17 @@ private:
 	// gamestate
 	uint8 _badMen = 0;
 	uint8 _badMenBits = 0;
-	bool _bartenderAlive = 0;
+	bool _bartenderAlive = false;
 	uint16 _beenTo = 0;
 	uint8 _bottles = 0;
 	uint8 _bottlesMask = 0;
 	bool _gotClue = false;
 	uint16 _gotInto = 0;
 	uint8 _gunTime = 0;
-	bool _hadSkull = 0;
-	bool _hadLantern = 0;
-	bool _hideOutFront = 0;
-	bool _inShootout = 0;
+	bool _hadSkull = false;
+	bool _hadLantern = false;
+	bool _hideOutFront = false;
+	bool _inShootout = false;
 	int8 _map0 = 0;
 	int8 _map1 = 0;
 	int8 _map2 = 0;

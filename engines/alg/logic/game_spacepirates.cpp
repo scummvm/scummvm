@@ -443,9 +443,9 @@ void GameSpacePirates::resetParams() {
 		_randomCountAsteroids = 0;
 		_sceneBeforeFlyingSkulls = 0;
 		_miscRoomsCount = 0;
-		_playerDied = 0;
+		_playerDied = false;
 		_gotTo = 0;
-		_selectedAWorld = 0;
+		_selectedAWorld = false;
 		_selectedWorldStart = 0;
 		_currentWorld = -1;
 		_worldGotTo[0] = 0x91;
@@ -818,7 +818,7 @@ uint16 GameSpacePirates::sceneToNumber(Scene *scene) {
 }
 
 uint16 GameSpacePirates::randomUnusedScene(uint8 max) {
-	bool found = 0;
+	bool found = false;
 	uint8 randomNum = 0;
 	for (int i = 0; i < max && !found; i++) {
 		randomNum = _rnd->getRandomNumber(max - 1);
@@ -1322,10 +1322,10 @@ void GameSpacePirates::scenePsoSetWorldGotTo(Scene *scene) {
 void GameSpacePirates::sceneIsoPickAWorld(Scene *scene) {
 	Zone *zone = scene->_zones[0];
 	uint8 world = 3;
-	for (size_t i = 0; i < zone->_rects.size(); i++) {
+	for (auto &rect : zone->_rects) {
 		if (_worldDone[world]) {
-			uint16 centerX = zone->_rects[i]->left + (zone->_rects[i]->width() / 2);
-			uint16 centerY = zone->_rects[i]->top + (zone->_rects[i]->height() / 2);
+			uint16 centerX = rect->left + (rect->width() / 2);
+			uint16 centerY = rect->top + (rect->height() / 2);
 			AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), (*_gun)[2], centerX - 16, centerY - 24);
 		}
 		world--;
@@ -1402,7 +1402,7 @@ void GameSpacePirates::sceneNxtscnMiscRooms1(Scene *scene) {
 	uint16 picked = 0;
 	if (_miscRoomsCount == 0) {
 		_pickedMiscRooms = 0;
-		while (1) {
+		while (true) {
 			uint8 randomNum = _rnd->getRandomNumber(9);
 			if (randomNum <= 5) {
 				picked = 0x1F;
@@ -1937,7 +1937,7 @@ void GameSpacePirates::debugWarpTo(int val) {
 }
 
 // Debugger methods
-DebuggerSpacePirates::DebuggerSpacePirates(GameSpacePirates *game) : GUI::Debugger() {
+DebuggerSpacePirates::DebuggerSpacePirates(GameSpacePirates *game) {
 	_game = game;
 	registerVar("drawRects", &game->_debug_drawRects);
 	registerVar("godMode", &game->_debug_godMode);

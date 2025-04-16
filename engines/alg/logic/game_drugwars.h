@@ -59,10 +59,10 @@ private:
 	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
-	DWScriptFunctionRect getScriptFunctionRectHit(Common::String name);
-	DWScriptFunctionScene getScriptFunctionScene(SceneFuncType type, Common::String name);
-	void callScriptFunctionRectHit(Common::String name, Rect *rect);
-	void callScriptFunctionScene(SceneFuncType type, Common::String name, Scene *scene);
+	DWScriptFunctionRect getScriptFunctionRectHit(const Common::String &name);
+	DWScriptFunctionScene getScriptFunctionScene(SceneFuncType type, const Common::String &name);
+	void callScriptFunctionRectHit(const Common::String &name, Rect *rect);
+	void callScriptFunctionScene(SceneFuncType type, const Common::String &name, Scene *scene);
 
 	DWScriptFunctionRectMap _rectHitFuncs;
 	DWScriptFunctionSceneMap _scenePreOps;

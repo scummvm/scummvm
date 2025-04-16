@@ -77,8 +77,8 @@ protected:
 	Zone *_menuzone;
 	Zone *_submenzone;
 
-	bool _leftDown = 0;
-	bool _rightDown = 0;
+	bool _leftDown = false;
+	bool _rightDown = false;
 	Common::Point _mousePos;
 
 	const uint32 _pauseDiffScale[3] = {0x10000, 0x8000, 0x4000};
@@ -147,7 +147,7 @@ protected:
 	bool _buttonDown = false;
 	uint8 _difficulty = 1;
 	uint8 _emptyCount = 0;
-	bool _fired = 0;
+	bool _fired = false;
 	uint32 _currentFrame;
 	bool _gameInProgress = false;
 	uint32 _thisGameTimer = 0;

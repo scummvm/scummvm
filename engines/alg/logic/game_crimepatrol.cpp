@@ -1307,7 +1307,7 @@ void GameCrimePatrol::debugDrawPracticeRects() {
 }
 
 // Debugger methods
-DebuggerCrimePatrol::DebuggerCrimePatrol(GameCrimePatrol *game) : GUI::Debugger() {
+DebuggerCrimePatrol::DebuggerCrimePatrol(GameCrimePatrol *game) {
 	_game = game;
 	registerVar("drawRects", &game->_debug_drawRects);
 	registerVar("godMode", &game->_debug_godMode);

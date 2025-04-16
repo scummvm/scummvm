@@ -467,8 +467,8 @@ void GameMaddog2::resetParams() {
 	_thisGuide = -1;
 	_doneGuide = 0;
 	_totalDies = 0;
-	_hadSkull = 0;
-	_inShootout = 0;
+	_hadSkull = false;
+	_inShootout = false;
 	updateStat();
 }
 
@@ -790,7 +790,7 @@ uint16 GameMaddog2::pickBits(uint16 *bits, uint8 max) {
 	}
 	uint16 randomNum = _rnd->getRandomNumber(max - 1);
 	// find an unused bit
-	while (1) {
+	while (true) {
 		uint16 bitMask = 1 << randomNum;
 		// if bit is already used or matches _lastPick, try next position
 		if ((*bits & bitMask) || randomNum == _lastPick) {
@@ -1377,7 +1377,7 @@ void GameMaddog2::sceneNxtscnShootSkull(Scene *scene) {
 	if (_hadSkull) {
 		return;
 	}
-	_hadSkull = 1;
+	_hadSkull = true;
 	doSkullSound();
 	_shots = 12;
 	_score += 1000;
@@ -1684,7 +1684,7 @@ void GameMaddog2::debugWarpTo(int val) {
 }
 
 // Debugger methods
-DebuggerMaddog2::DebuggerMaddog2(GameMaddog2 *game) : GUI::Debugger() {
+DebuggerMaddog2::DebuggerMaddog2(GameMaddog2 *game) {
 	_game = game;
 	registerVar("drawRects", &game->_debug_drawRects);
 	registerVar("godMode", &game->_debug_godMode);

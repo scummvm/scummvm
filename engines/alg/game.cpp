@@ -239,17 +239,14 @@ Zone *Game::checkZonesV2(Scene *scene, Rect *&hitRect, Common::Point *point) {
 // only used by earlier games
 void Game::adjustDifficulty(uint8 newDifficulty, uint8 oldDifficulty) {
 	Common::Array<Scene *> *scenes = _sceneInfo->getScenes();
-	for (size_t i = 0; i < scenes->size(); i++) {
-		Scene *scene = (*scenes)[i];
+	for (const auto &scene : *scenes) {
 		if (!(scene->_diff & 0x01)) {
 			if (scene->_preop == "PAUSE" || scene->_preop == "PAUSFI" || scene->_preop == "PAUSPR") {
 				scene->_dataParam1 = (scene->_dataParam1 * _pauseDiffScale[newDifficulty - 1]) / _pauseDiffScale[oldDifficulty - 1];
 			}
 		}
-		for (size_t j = 0; j < scene->_zones.size(); j++) {
-			Zone *zone = scene->_zones[j];
-			for (size_t k = 0; k < zone->_rects.size(); k++) {
-				Rect *rect = zone->_rects[k];
+		for (const auto &zone : scene->_zones) {
+			for (const auto &rect : zone->_rects) {
 				if (!(scene->_diff & 0x02)) {
 					int16 cx = (rect->left + rect->right) / 2;
 					int16 cy = (rect->top + rect->bottom) / 2;
@@ -301,7 +298,7 @@ uint16 Game::randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude) {
 	}
 	uint16 randomNum = 0;
 	// find an unused random number
-	while (1) {
+	while (true) {
 		randomNum = _rnd->getRandomNumber(max - 1);
 		// check if bit is already used
 		uint16 bit = 1 << randomNum;

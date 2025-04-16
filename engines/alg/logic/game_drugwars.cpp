@@ -199,7 +199,7 @@ void GameDrugWars::verifyScriptFunctions() {
 	}
 }
 
-DWScriptFunctionRect GameDrugWars::getScriptFunctionRectHit(Common::String name) {
+DWScriptFunctionRect GameDrugWars::getScriptFunctionRectHit(const Common::String &name) {
 	auto it = _rectHitFuncs.find(name);
 	if (it != _rectHitFuncs.end()) {
 		return *it->_value;
@@ -208,7 +208,7 @@ DWScriptFunctionRect GameDrugWars::getScriptFunctionRectHit(Common::String name)
 	}
 }
 
-DWScriptFunctionScene GameDrugWars::getScriptFunctionScene(SceneFuncType type, Common::String name) {
+DWScriptFunctionScene GameDrugWars::getScriptFunctionScene(SceneFuncType type, const Common::String &name) {
 	DWScriptFunctionSceneMap *functionMap;
 	switch (type) {
 	case PREOP:
@@ -245,12 +245,12 @@ DWScriptFunctionScene GameDrugWars::getScriptFunctionScene(SceneFuncType type, C
 	}
 }
 
-void GameDrugWars::callScriptFunctionRectHit(Common::String name, Rect *rect) {
+void GameDrugWars::callScriptFunctionRectHit(const Common::String &name, Rect *rect) {
 	DWScriptFunctionRect function = getScriptFunctionRectHit(name);
 	function(rect);
 }
 
-void GameDrugWars::callScriptFunctionScene(SceneFuncType type, Common::String name, Scene *scene) {
+void GameDrugWars::callScriptFunctionScene(SceneFuncType type, const Common::String &name, Scene *scene) {
 	DWScriptFunctionScene function = getScriptFunctionScene(type, name);
 	function(scene);
 }

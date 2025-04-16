@@ -917,8 +917,8 @@ void GameJohnnyRock::rectLoad(Rect *rect) {
 }
 
 void GameJohnnyRock::rectContinue(Rect *rect) {
-	_inMenu = 0;
-	_fired = 0;
+	_inMenu = false;
+	_fired = false;
 	if (_gameMoney < 0) {
 		newGame();
 		_retScene = "";
@@ -937,8 +937,8 @@ void GameJohnnyRock::rectContinue(Rect *rect) {
 }
 
 void GameJohnnyRock::rectStart(Rect *rect) {
-	_inMenu = 0;
-	_fired = 0;
+	_inMenu = false;
+	_fired = false;
 	_thisDifficulty = 0;
 	Scene *scene = _sceneInfo->findScene(_startScene);
 	if (scene->_nxtscn == "DRAWGUN") {
@@ -1528,7 +1528,7 @@ void GameJohnnyRock::sceneNxtscnPickMap(Scene *scene) {
 		_hadGoToMansion = 3;
 		nextScene = "scene166";
 	}
-	if (nextScene.size() > 0) {
+	if (!nextScene.empty()) {
 		_curScene = nextScene;
 	} else {
 		_curScene = numToScene(_thisMap + 174);
@@ -1730,7 +1730,7 @@ void GameJohnnyRock::debugWarpTo(int val) {
 }
 
 // Debugger methods
-DebuggerJohnnyRock::DebuggerJohnnyRock(GameJohnnyRock *game) : GUI::Debugger() {
+DebuggerJohnnyRock::DebuggerJohnnyRock(GameJohnnyRock *game) {
 	_game = game;
 	registerVar("drawRects", &game->_debug_drawRects);
 	registerVar("godMode", &game->_debug_godMode);

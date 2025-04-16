@@ -87,22 +87,22 @@ public:
 
 class Zone {
 public:
-	Zone(Common::String name, uint32 startFrame, uint32 endFrame);
-	Zone(Common::String name, Common::String ptrfb);
+	Zone(const Common::String &name, uint32 startFrame, uint32 endFrame);
+	Zone(const Common::String &name, const Common::String &ptrfb);
 	~Zone();
 	Common::String _name;
-	uint32 _startFrame;
-	uint32 _endFrame;
+	uint32 _startFrame = 0;
+	uint32 _endFrame = 0;
 	Common::String _ptrfb;
 	Common::Array<Rect *> _rects;
 	Common::String _next;
-	void addRect(int16 left, int16 top, int16 right, int16 bottom, Common::String scene, uint32 score, Common::String rectHit, Common::String unknown);
+	void addRect(int16 left, int16 top, int16 right, int16 bottom, const Common::String &scene, uint32 score, const Common::String &rectHit, const Common::String &unknown);
 };
 
 class Scene {
 public:
-	Scene(Common::String name, uint32 startFrame, uint32 endFrame);
-	~Scene();
+	Scene(const Common::String &name, uint32 startFrame, uint32 endFrame);
+	~Scene() = default;
 	Common::String _name;
 	uint32 _startFrame;
 	uint32 _endFrame;
@@ -141,7 +141,7 @@ public:
 	void loadScnFile(const Common::Path &path);
 	Common::String getStartScene() { return _startScene; }
 	Common::Array<Scene *> *getScenes() { return &_scenes; }
-	Scene *findScene(Common::String sceneName);
+	Scene *findScene(const Common::String &sceneName);
 	void addScene(Scene *scene);
 
 private:
@@ -150,12 +150,12 @@ private:
 	Common::Array<Scene *> _scenes;
 	Common::Array<Zone *> _zones;
 
-	void parseScene(Common::String sceneName, uint32 startFrame, uint32 endFrame);
-	void parseZone(Common::String zoneName, uint32 startFrame, uint32 endFrame);
+	void parseScene(const Common::String &sceneName, uint32 startFrame, uint32 endFrame);
+	void parseZone(const Common::String &zoneName, uint32 startFrame, uint32 endFrame);
 	void addZonesToScenes();
-	Zone *findZone(Common::String zoneName);
-	int8 getToken(const struct TokenEntry *tokenList, Common::String token);
-	bool ignoreScriptLine(Common::String line);
+	Zone *findZone(const Common::String &zoneName);
+	int8 getToken(const TokenEntry *tokenList, const Common::String &token);
+	bool ignoreScriptLine(const Common::String &line);
 };
 
 } // End of namespace Alg
