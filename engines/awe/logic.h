@@ -55,6 +55,7 @@ struct Logic {
 	Resource *_res;
 	Video *_vid;
 	SystemStub *_stub;
+	bool _copyProtection;
 
 	int16 _scriptVar_0xBF = { 0 };
 	int16 _scriptVars[0x100] = { 0 };

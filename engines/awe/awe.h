@@ -33,8 +33,6 @@
 
 namespace Awe {
 
-#define BYPASS_PROTECTION
-
 class AweEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
