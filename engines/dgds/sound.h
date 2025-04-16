@@ -80,6 +80,7 @@ public:
 private:
 	void loadSNGSoundData(const Common::String &filename, Common::Array<SoundData> &dataArray);
 	bool loadSXSoundData(const Common::String &filename, Common::Array<SoundData> &dataArray, Common::HashMap<uint16, uint16> &idMap);
+	void patchSoundData(const Common::String &filename, uint16 soundNumber, byte *data, uint32 size);
 
 	void playPCSound(int num, const Common::Array<SoundData> &dataArray, Audio::Mixer::SoundType soundType);
 

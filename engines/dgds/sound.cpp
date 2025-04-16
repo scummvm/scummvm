@@ -393,6 +393,7 @@ void Sound::loadSNGSoundData(const Common::String &filename, Common::Array<Sound
 
 	DgdsChunkReader chunk(resStream);
 
+	uint16 songNum = 0;
 	while (chunk.readNextHeader(EX_SNG, filename)) {
 		if (chunk.isContainer()) {
 			continue;
@@ -406,6 +407,7 @@ void Sound::loadSNGSoundData(const Common::String &filename, Common::Array<Sound
 			soundData._size = stream->size();
 			byte *data = new byte[soundData._size];
 			stream->read(data, soundData._size);
+			patchSoundData(filename, songNum++, data, soundData._size);
 			soundData._data = data;
 			dataArray.push_back(soundData);
 		} else if (chunk.isSection(ID_INF)) {
@@ -424,6 +426,51 @@ void Sound::loadSNGSoundData(const Common::String &filename, Common::Array<Sound
 	}
 
 	delete resStream;
+}
+
+void Sound::patchSoundData(const Common::String& filename, uint16 soundNumber, byte* data, uint32 size) {
+	// TODO Can we check here if the game that's currently playing is Heart of China?
+	if (filename.equalsC("SOUNDS1.SNG") && soundNumber == 59) {
+		// Heart of China running water sound effect. This is broken on MT-32.
+		// This is an original game bug.
+		//
+		// MT-32 sound effect MIDI data:
+		// ...
+		// 0x91 0x30 0x09	Note on 0x30 velocity 0x09
+		// 0x05				Delta 5
+		// 0x24 0x1B		Note on 0x24 velocity 0x1B (running status)
+		// 0x10				Delta 16
+		// 0x30 0x00		Note off 0x30 (running status)
+		// 0x00				Delta 0
+		// 0x24 0x00		Note off 0x24 (running status)
+		// ...
+		// The control channel sets the loop point at delta 11 and then ends.
+		// Because the MT-32 sound effect track has not ended yet, playback
+		// will continue and the notes will be turned off; the note offs are
+		// then looped. This is fixed by replacing the delta 16 and first note
+		// off by delta 6 and end of track (0xFC), which will end the sound
+		// effect track at delta 11 as well. The sound effect will then loop
+		// the last tick, effectively sustaining the two active notes.
+		if (size > 0x3B && data[0x39] == 0x10 && data[0x3A] == 0x30 && data[0x3B] == 0x00) {
+			data[0x39] = 0x06;
+			data[0x3A] = 0xFC;
+		}
+		// The original interpreter expects the first 3 events of every track
+		// to be program change, volume and panning. It will just read the
+		// values of these events (bytes 0x2, 0x6 and 0x9), use them to
+		// initialize the controllers, then start playback at offset 0xA.
+		// ScummVM does not do this and instead starts playback at offset 0.
+		// Usually this has the same effect. However, in this sound effect,
+		// the MT-32 control channel has a reverb (0x50) control change instead
+		// of a volume control change as the second event. This will cause
+		// ScummVM to change the reverb instead of the volume. This should be
+		// fixed by properly implementing the original behavior, but for now
+		// the data is patched by changing the reverb controller to the volume
+		// controller.
+		if (size > 0x49 && data[0x47] == 0xBF && data[0x48] == 0x50 && data[0x49] == 0x7F) {
+			data[0x48] = 0x07;
+		}
+	}
 }
 
 int Sound::mapSfxNum(int num) const {
