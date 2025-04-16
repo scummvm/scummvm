@@ -475,7 +475,9 @@ void ScummEngine_v5::o5_actorOps() {
 			// hard disk, I believe.
 			//
 			// Costume 0 doesn't have any cigar smoke, perhaps to
-			// cut down on disk access.
+			// cut down on disk access -- or, according to Aric
+			// Wilmunder, possibly because it "looked too 'cartoony'
+			// next to the higher-fidelity close-ups."
 			//
 			// But in the VGA CD version, only costume 0 is used
 			// and the close-up is missing the cigar smoke.
@@ -1753,6 +1755,9 @@ void ScummEngine_v5::o5_notEqualZero() {
 		// enters the hold where he remarks that the whole thing reeks
 		// of monkeys. But the way it's scripted, the message is only
 		// shown if it has already been shown.
+		//
+		// Ron Gilbert commented on this: "Not sure I'd call that a
+		// coding error. The lines were just cut. But what do I know."
 
 		if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY_VGA || _game.id == GID_MONKEY_EGA) && _roomResource == 8 && vm.slot[_currentScript].number == 10002) {
 			// A local getVar(), where the var number can be examined.
@@ -2060,7 +2065,8 @@ void ScummEngine_v5::o5_putActor() {
 
 	// WORKAROUND: When enabling the cigar smoke in the captain Smirk
 	// close-up, it turns out that the coordinates in the CD
-	// version's script were taken from the EGA version.
+	// version's script were taken from the EGA version. (This alignment
+	// problem was also remembered and mentionned by Aric Wilmunder.)
 	//
 	// The coordinates below are taken from the VGA floppy version. The
 	// "Ultimate Talkie" version also corrects the positions, but uses
@@ -2932,8 +2938,14 @@ void ScummEngine_v5::o5_startScript() {
 	// WORKAROUND: In the CD version of Monkey Island 1, and the EGA
 	// version before it, there is animated smoke in parts of the lava maze
 	// beneath the monkey head. The VGA floppy version still calls the
-	// script to add the smoke, but the script is empty. We repliacte what
-	// the script did manually.
+	// script to add the smoke, but the script is empty.
+	//
+	// According to Aric Wilmunder, this may have been done to avoid swapping
+	// floppy disks when exploring the maze (since the resource is stored in the
+	// fortune teller's room, and the Hellmaze being large, it was hard for the
+	// memory manager to keep it in memory).
+	//
+	// We replicate what the VGA CD script did manually.
 
 	if (_game.id == GID_MONKEY_VGA && _roomResource == 39 && script == 211 && enhancementEnabled(kEnhRestoredContent)) {
 		Actor *a = derefActorSafe(12, "o5_startScript");
