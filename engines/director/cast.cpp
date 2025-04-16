@@ -789,32 +789,13 @@ PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream, int id) {
 	if (debugChannelSet(5, kDebugLoading))
 		stream.hexdump(stream.size());
 
-	bool hasHeader = size != 6 * 256;
-	int steps = 256;
-	if (hasHeader) {
-		stream.skip(6);
-		steps = stream.readUint16();
-		int maxSteps = (size - 8) / 8;
-		if (steps > maxSteps) {
-			warning("Cast::loadPalette(): header says %d steps but there's only enough data for %d, reducing", steps, maxSteps);
-			steps = maxSteps;
-		}
-	}
+	int steps = size / 6;
 	debugC(3, kDebugLoading, "Cast::loadPalette(): %d steps", steps);
 
 	byte *palette = new byte[steps * 3];
 
-
 	int colorIndex = 0;
-
 	for (int i = 0; i < steps; i++) {
-		if (hasHeader) {
-			int index = stream.readUint16BE();
-			if (index != 0x8000) {
-				colorIndex = index;
-			}
-		}
-
 		if (colorIndex >= steps) {
 			warning("Cast::loadPalette(): attempted to set invalid color index %d, aborting", colorIndex);
 			break;
