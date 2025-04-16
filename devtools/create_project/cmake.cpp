@@ -165,8 +165,10 @@ endfunction()
 	for (const std::string &includeDir : setup.includeDirs)
 		includeDirsList += includeDir + ' ';
 
-	workspace << "include_directories(${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << " ${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << "/engines "
-			  << includeDirsList << "$ENV{"<<LIBS_DEFINE<<"}/include .)\n\n";
+	workspace << "include_directories(. ${"
+			  << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix
+			  << " ${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << "/engines "
+			  << includeDirsList << "$ENV{"<<LIBS_DEFINE<<"}/include)\n\n";
 
 	workspace << "# Libraries and features\n\n";
 	writeFeatureLibSearch(setup, workspace, "sdl");
