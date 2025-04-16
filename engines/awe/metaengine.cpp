@@ -29,15 +29,15 @@ namespace Awe {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
+		GAMEOPTION_COPY_PROTECTION,
 		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"original_menus",
+			_s("Enable copy protection"),
+			_s("Enable any copy protection that would otherwise be bypassed by default."),
+			"copy_protection",
 			false,
 			0,
 			0
-		}
+		},
 	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };

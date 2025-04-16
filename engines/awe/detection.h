@@ -37,7 +37,7 @@ extern const PlainGameDescriptor aweGames[];
 
 extern const ADGameDescription gameDescriptions[];
 
-#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
+#define GAMEOPTION_COPY_PROTECTION		GUIO_GAMEOPTIONS1
 
 } // namespace Awe
 

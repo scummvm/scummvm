@@ -34,7 +34,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_COPY_PROTECTION)
 	},
 	{
 		"anotherworld",
@@ -43,17 +43,18 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_DEMO | ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_COPY_PROTECTION)
 	},
 
 #if 0
-	// Unsupported release that doesn't have a memlist.bin
+	// Unsupported Windows release that doesn't have a memlist.bin
+	// Need to investigate further.. maybe an embedded resource?
 	{
 		"anotherworld",
 		nullptr,
 		AD_ENTRY1s("bank", "30fb99cb4cbd812273d0b54b7b4a18ca", 987462),
 		Common::EN_ANY,
-		Common::kPlatformDOS,
+		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
