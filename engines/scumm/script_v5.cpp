@@ -2938,26 +2938,26 @@ void ScummEngine_v5::o5_startScript() {
 	// WORKAROUND: In the CD version of Monkey Island 1, and the EGA
 	// version before it, there is animated smoke in parts of the lava maze
 	// beneath the monkey head. The VGA floppy version still calls the
-	// script to add the smoke, but the script is empty.
+	// script to add the smoke, but the script is empty (the Amiga release
+	// has it, though -- at least the 1.2 release does -- so that's what we
+	// replicate).
 	//
 	// According to Aric Wilmunder, this may have been done to avoid swapping
 	// floppy disks when exploring the maze (since the resource is stored in the
 	// fortune teller's room, and the Hellmaze being large, it was hard for the
 	// memory manager to keep it in memory).
-	//
-	// We replicate what the VGA CD script did manually.
 
 	if (_game.id == GID_MONKEY_VGA && _roomResource == 39 && script == 211 && enhancementEnabled(kEnhRestoredContent)) {
 		Actor *a = derefActorSafe(12, "o5_startScript");
 
-		if (a) {
+		if (a && (a->_room != _roomResource || a->_costume == 0)) {
 			a->initActor(0);
 			a->setActorCostume(76);
 			a->setPalette(3, 8);
 			a->setPalette(2, 12);
 			a->setPalette(9, 4);
-			a->_ignoreBoxes = 1;
-			a->_forceClip = 1;
+			putClass(12, 150, true);
+			putClass(12, 149, true);
 			a->animateActor(250);
 			a->_room = _roomResource;
 			a->putActor(data[0], data[1]);
