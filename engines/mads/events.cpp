@@ -211,6 +211,10 @@ bool EventsManager::checkForNextFrameCounter() {
 		// Do any palette cycling
 		_vm->_game->_scene.animatePalette();
 
+		// FIXME: Bodge to fix bug 15867: UI not updating
+		_vm->_screen->addDirtyRect(Common::Rect(
+			0, MADS_SCENE_HEIGHT, 320, 200));
+
 		// Display the frame
 		_vm->_screen->update();
 
