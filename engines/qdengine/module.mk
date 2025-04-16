@@ -3,6 +3,7 @@ MODULE := engines/qdengine
 MODULE_OBJS = \
 	qdengine.o \
 	console.o \
+	dialogs.o \
 	metaengine.o \
 	minigames/adv/common.o \
 	minigames/adv/EffectManager.o \
