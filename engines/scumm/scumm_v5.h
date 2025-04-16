@@ -164,6 +164,7 @@ protected:
 	void o5_loadRoomWithEgo();
 	void o5_matrixOps();
 	void o5_move();
+	void o5_move_segafix();
 	void o5_multiply();
 	void o5_notEqualZero();
 	void o5_or();
