@@ -463,7 +463,7 @@ void Logic::executeScript() {
 			if (opcode > 0x1A) {
 				error("Logic::executeScript() ec=0x%X invalid opcode=0x%X", 0xFFF, opcode);
 			} else {
-				(this->*_opTable[opcode])();
+				(this->*OPCODE_TABLE[opcode])();
 			}
 		}
 	}

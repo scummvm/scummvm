@@ -50,7 +50,7 @@ struct Logic {
 		VAR_PAUSE_SLICES         = 0xFF
 	};
 	
-	static const OpcodeStub _opTable[];
+	static const OpcodeStub OPCODE_TABLE[];
 
 	Resource *_res;
 	Video *_vid;
