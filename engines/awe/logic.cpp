@@ -132,6 +132,14 @@ void Logic::op_condJmp() {
 		warning("Logic::op_condJmp() bypassing protection");
 	}
 #endif
+	// Patch original interpreter triggers if code is wrong
+	if (_res->_curPtrsId == 0x3e80 && _lastOpcodeOffset == 0xc4b) {
+		byte *script = _scriptPtr.pc;
+		*script = 0x81;
+		WRITE_BE_UINT16(script + 3, 0xcb7);
+		WRITE_BE_UINT16(script + 153, 0xced);
+	}
+
 	uint8 op = _scriptPtr.fetchByte();
 	int16 b = _scriptVars[_scriptPtr.fetchByte()];
 	int16 a = _scriptPtr.fetchByte();
