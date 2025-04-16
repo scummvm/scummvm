@@ -440,12 +440,15 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine,
 		res.language = Common::parseLanguage(ConfMan.get("language"));
 
 	// V3 FM-TOWNS games *always* should use the corresponding music driver,
-	// anything else makes no sense for them. Same for Mac (but not limited to V3).
+	// anything else makes no sense for them. Same for Mac (but not limited to V3),
+	// except for the Steam macOS releases actually using DOS content.
 	// TODO: Maybe allow the null driver, too?
 	if (res.game.platform == Common::kPlatformFMTowns && res.game.version == 3)
 		res.game.midi = MDT_TOWNS;
-	else if (res.game.platform == Common::kPlatformMacintosh && res.game.version < 7 && res.game.heversion == 0)
-		res.game.midi = MDT_MACINTOSH;
+	else if (res.game.platform == Common::kPlatformMacintosh && res.game.version < 7 && res.game.heversion == 0) {
+		if (!(res.extra && strcmp(res.extra, "Steam") == 0))
+			res.game.midi = MDT_MACINTOSH;
+	}
 
 	// Finally, we have massaged the GameDescriptor to our satisfaction, and can
 	// instantiate the appropriate game engine. Hooray!

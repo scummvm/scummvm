@@ -1219,8 +1219,10 @@ Common::Error ScummEngine::init() {
 	// Steam Win and Mac versions share the same DOS data files. We show Windows or Mac
 	// for the platform the detector, but internally we force the platform to DOS, so that
 	// the code for handling the original DOS data files is used.
-	if (_filenamePattern.genMethod == kGenDiskNumSteam || _filenamePattern.genMethod == kGenRoomNumSteam)
+	if (_filenamePattern.genMethod == kGenDiskNumSteam || _filenamePattern.genMethod == kGenRoomNumSteam) {
 		_game.platform = Common::kPlatformDOS;
+		_game.midi = MDT_PCSPK | MDT_PCJR | MDT_CMS | MDT_ADLIB;
+	}
 
 	// Load CJK font, if present
 	// Load it earlier so _useCJKMode variable could be set
