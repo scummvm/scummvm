@@ -176,13 +176,28 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-	// Adventures of Willy Beamish (PC)
+	// Adventures of Willy Beamish (PC) German
 	{
 		"beamish",
 		0,
 		{
 			{"volume.rmf", 0, "e5c3ddb2700fe4b1a33363ef6393e635", 9896},
 			{"volume.001", 0, "48752f0f7798e81bc7f343c32325eaaa", 1317322},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Adventures of Willy Beamish (PC) German, reported by ns394 (#15873)
+	{
+		"beamish",
+		0,
+		{
+			{"volume.rmf", 0, "2fcb1f39b06f7d02fdcd92bbeb203b5a", 9926},
+			{"volume.001", 0, "35d96af752f1ec6741d7d9b3f7f0f24f", 1154849},
 			AD_LISTEND
 		},
 		Common::DE_DEU,
@@ -204,6 +219,21 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Adventures of Willy Beamish (PC FDD EGA), reported by ns394 (#15872)
+	{
+		"beamish",
+		"EGA",
+		{
+			{"volume.rmf", 0, "654e5e7d160b991baea10f127097cb62", 8901},
+			{"volume.001", 0, "9b1c60ab33b3515a6330a5aa49d8e99f", 684659},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE | ADGF_DGDS_EGA,
 		GUIO1(GUIO_NONE)
 	},
 
