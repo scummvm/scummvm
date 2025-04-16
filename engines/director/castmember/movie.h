@@ -31,6 +31,8 @@ public:
 	MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &source);
 
+	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new MovieCastMember(cast, castId, *this)); }
+
 	Common::Array<Channel> *getSubChannels(Common::Rect &bbox, Channel *channel) override;
 	void load() override;
 

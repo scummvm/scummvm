@@ -934,6 +934,20 @@ Datum::Datum(AbstractObject *val) {
 	ignoreGlobal = false;
 }
 
+Datum::Datum(CastMember *val) {
+	u.obj = val;
+	if (val) {
+		type = MEDIA;
+		refCount = val->getRefCount();
+		*refCount += 1;
+	} else {
+		type = VOID;
+		refCount = new int;
+		*refCount = 1;
+	}
+	ignoreGlobal = false;
+}
+
 Datum::Datum(const CastMemberID &val) {
 	u.cast = new CastMemberID(val);
 	type = CASTREF;
@@ -999,6 +1013,9 @@ void Datum::reset() {
 		case PARRAY:
 			delete u.parr;
 			break;
+		case MEDIA:
+			delete u.obj;
+			break;
 		case OBJECT:
 			if (u.obj->getObjType() == kWindowObj) {
 				// Window has an override for decRefCount, use it directly
@@ -1027,7 +1044,7 @@ void Datum::reset() {
 			warning("Datum::reset(): Unprocessed REF type %d", type);
 			break;
 		}
-		if (type != OBJECT) // object owns refCount
+		if (type != OBJECT && type != MEDIA) // object owns refCount
 			delete refCount;
 	}
 #endif
@@ -1143,6 +1160,9 @@ Common::String Datum::asString(bool printonly) const {
 		} else {
 			s = Common::String::format("#%s", u.s->c_str());
 		}
+		break;
+	case MEDIA:
+		s = Common::String::format("media %08x", ((uint32)(size_t)((void *)u.obj)) & 0xffffffff);
 		break;
 	case OBJECT:
 		if (!printonly) {
@@ -1359,6 +1379,8 @@ const char *Datum::type2str(bool ilk) const {
 		return "LOCALREF";
 	case MENUREF:
 		return "MENUREF";
+	case MEDIA:
+		return ilk ? "media" : "MEDIA";
 	case OBJECT:
 		return ilk ? "object" : "OBJECT";
 	case PARRAY:
@@ -1408,6 +1430,7 @@ int Datum::equalTo(const Datum &d, bool ignoreCase) const {
 		} else {
 			return compareStringEquality(asString(), d.asString());
 		}
+	case MEDIA:
 	case OBJECT:
 		return u.obj == d.u.obj;
 	case CASTREF:

@@ -50,6 +50,8 @@ public:
 	CastMember(Cast *cast, uint16 castId);
 	virtual ~CastMember() {}
 
+	virtual CastMember *duplicate(Cast *cast, uint16 castId);
+
 	Cast *getCast() { return _cast; }
 	uint16 getID() { return _castId; }
 	CastMemberInfo *getInfo();

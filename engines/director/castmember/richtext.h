@@ -33,6 +33,8 @@ public:
 	RichTextCastMember(Cast *cast, uint16 castId, RichTextCastMember &source);
 	~RichTextCastMember();
 
+	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new RichTextCastMember(cast, castId, *this)); }
+
 	void load() override;
 
 	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;

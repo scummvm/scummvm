@@ -40,6 +40,8 @@ SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, SoundCastMember &sou
 	_loaded = false;
 	_audio = nullptr;
 	_looping = source._looping;
+	if (cast == source._cast)
+		_children = source._children;
 	warning("SoundCastMember(): Duplicating source %d to target %d! This is unlikely to work properly, as the resource loader is based on the cast ID", source._castId, castId);
 }
 

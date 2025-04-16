@@ -88,7 +88,8 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, ShapeCastMember &sou
 
 	_initialRect = source._initialRect;
 	_boundingRect = source._boundingRect;
-	_children = source._children;
+	if (cast == source._cast)
+		_children = source._children;
 
 	_shapeType = source._shapeType;
 	_pattern = source._pattern;

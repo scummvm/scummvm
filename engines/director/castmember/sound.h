@@ -34,6 +34,8 @@ public:
 	SoundCastMember(Cast *cast, uint16 castId, SoundCastMember &source);
 	~SoundCastMember();
 
+	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new SoundCastMember(cast, castId, *this)); }
+
 	void load() override;
 	void unload() override;
 	Common::String formatInfo() override;

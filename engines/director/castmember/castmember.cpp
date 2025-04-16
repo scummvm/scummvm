@@ -66,6 +66,11 @@ CastMember::CastMember(Cast *cast, uint16 castId) : Object<CastMember>("CastMemb
 	_erase = false;
 }
 
+CastMember *CastMember::duplicate(Cast *cast, uint16 castId) {
+	warning("CastMember::duplicate(): unsupported cast type %s", castType2str(_type));
+	return nullptr;
+}
+
 void CastMember::setModified(bool modified) {
 	_modified = modified;
 	if (modified)

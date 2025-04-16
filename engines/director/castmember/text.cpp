@@ -167,7 +167,8 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, TextCastMember &source
 
 	_initialRect = source._initialRect;
 	_boundingRect = source._boundingRect;
-	_children = source._children;
+	if (cast == source._cast)
+		_children = source._children;
 
 	_borderSize = source._borderSize;
 	_gutterSize = source._gutterSize;

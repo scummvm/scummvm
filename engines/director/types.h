@@ -375,6 +375,7 @@ enum DatumType {
 	GLOBALREF,
 	INT,
 	LOCALREF,
+	MEDIA,
 	MENUREF,
 	OBJECT,
 	PARRAY,

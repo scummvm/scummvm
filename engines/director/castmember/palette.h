@@ -31,6 +31,9 @@ public:
 	PaletteCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	PaletteCastMember(Cast *cast, uint16 castId, PaletteCastMember &source);
 	~PaletteCastMember();
+
+	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new PaletteCastMember(cast, castId, *this)); }
+
 	CastMemberID getPaletteId();
 	void activatePalette();
 

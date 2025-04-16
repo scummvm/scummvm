@@ -67,7 +67,8 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, FilmLoopCastMe
 
 	_initialRect = source._initialRect;
 	_boundingRect = source._boundingRect;
-	_children = source._children;
+	if (cast == source._cast)
+		_children = source._children;
 
 	_enableSound = source._enableSound;
 	_crop = source._crop;
