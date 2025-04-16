@@ -358,6 +358,10 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xfd, o5_findInventory);
 	OPCODE(0xfe, o5_walkActorTo);
 	OPCODE(0xff, o5_drawBox);
+
+	if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && enhancementEnabled(kEnhMinorBugFixes)) {
+		OPCODE(0x1a, o5_move_segafix);
+	}
 }
 
 int ScummEngine_v5::getVar() {
@@ -1956,6 +1960,65 @@ void ScummEngine_v5::o5_matrixOps() {
 void ScummEngine_v5::o5_move() {
 	getResultPos();
 	setResult(getVarOrDirectWord(PARAM_1));
+}
+
+// WORKAROUND: MI1 uses bit flags for some sort of bookkeeping for its
+// conversation trees. These are assigned by "Bit[384 + Var[100]] = 1", or
+// "B.384[V.100] = 1" in NUTCracker syntax.
+//
+// Var[100] is supposed to be a value between 0 and 8, but it's also used for
+// the verb ID, which is between 120 and 128. In other versions, the scripts
+// subtract 120 before setting the bit, the the Sega CD version does not. This
+// means that the Sega version uses bits 504 through 512 instead of bits 384
+// through 392.
+//
+// While most conversations probably only clobber a few of these flags, the
+// following things may be impacted:
+//
+// 504 - Saying "Geeze, what an obvious sales pitch." to Cobb.
+// 505 - Saying "You know, you really should quit smoking." to Smirk.
+// 506 - Something unknown around the line "I give up!  You win!"
+// 507 - unused
+// 508 - Saying "I need a ship." / "Can you guys crew a ship?" to the cannibals.
+// 509 - Saying "Money.  I want money." to the cannibals.
+// 510 - Saying "What's in your standard potion of exorcism?" to the cannibals.
+// 511 - Saying "Where is he hiding it?" to the cannibals.
+// 512 - Saying "How do I get to these catacombs?" to the cannibals.
+//       This is also unavailable if Herman already told you.
+//
+// We're just lucky the bug didn't impact anything more important than this,
+// because the bug is literally in hundreds of places throughout the game. And
+// just to rub it in, the Sega version doesn't even seem to use these flags for
+// the conversation trees.
+//
+// Fortunately, this is the only places in the game where the bit variables are
+// set in this particular fashion, so we can detect and correct for it. Though
+// old savegames will of course still be impacted.
+
+void ScummEngine_v5::o5_move_segafix() {
+	int result;
+
+	// In most cases, this is identical to getResultPos()
+	_resultVarNumber = fetchScriptWord();
+	if (_resultVarNumber & 0x2000) {
+		int a = fetchScriptWord();
+		result = getVarOrDirectWord(PARAM_1);
+
+		if (a & 0x2000) {
+			int var = a & ~0x2000;
+			int value = readVar(var);
+			if (_resultVarNumber == 0xA000 + 384 && var == 100 && value >= 120 && value <= 128 && result == 1) {
+				value -= 120;
+			}
+			_resultVarNumber += value;
+		} else {
+			_resultVarNumber += a & 0xFFF;
+		}
+		_resultVarNumber &= ~0x2000;
+	} else {
+		result = getVarOrDirectWord(PARAM_1);
+	}
+	setResult(result);
 }
 
 void ScummEngine_v5::o5_multiply() {
