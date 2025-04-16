@@ -57,6 +57,7 @@ enum QDEngineDebugChannels {
 	kDebugMinigames,
 	kDebugMovement,
 	kDebugText,
+	kDebug16BppMode,
 };
 
 enum {

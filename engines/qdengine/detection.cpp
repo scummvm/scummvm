@@ -45,6 +45,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{ QDEngine::kDebugQuant, "quant", "Enable quant tracing"},
 	{ QDEngine::kDebugMinigames, "minigames", "Enable minigames tracing"},
 	{ QDEngine::kDebugText, "text", "Enable text tracing"},
+	{ QDEngine::kDebug16BppMode, "16bpp", "Enable 16bpp mode"},
 	DEBUG_CHANNEL_END
 };
 

@@ -19,6 +19,7 @@
  *
  */
 
+#include "qdengine/dialogs.h"
 #include "qdengine/metaengine.h"
 #include "qdengine/qdengine.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
@@ -30,6 +31,10 @@ const char *QDEngineMetaEngine::getName() const {
 Common::Error QDEngineMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new QDEngine::QDEngineEngine(syst, desc);
 	return Common::kNoError;
+}
+
+GUI::OptionsContainerWidget *QDEngineMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	return new QDEngine::QdOptionsWidget(boss, name, target);
 }
 
 bool QDEngineMetaEngine::hasFeature(MetaEngineFeature f) const {

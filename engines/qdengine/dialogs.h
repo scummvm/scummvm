@@ -19,28 +19,28 @@
  *
  */
 
+#ifndef QDENGINE_DIALOGS_H
+#define QDENGINE_DIALOGS_H
 
-#ifndef QDENGINE_METAENGINE_H
-#define QDENGINE_METAENGINE_H
+#include "gui/dialog.h"
+#include "gui/widget.h"
 
-#include "engines/advancedDetector.h"
+namespace QDEngine {
 
-class QDEngineMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
+class QdOptionsWidget : public GUI::OptionsContainerWidget {
 public:
-	const char *getName() const override;
+	QdOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
+	~QdOptionsWidget() override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	void load() override;
+	bool save() override;
 
-	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+private:
+	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 
-	/**
-	 * Determine whether the engine supports the specified MetaEngine feature.
-	 *
-	 * Used by e.g. the launcher to determine whether to enable the Load button.
-	 */
-	bool hasFeature(MetaEngineFeature f) const override;
-
-	virtual void getSavegameThumbnail(Graphics::Surface &thumb) override;
+	GUI::CheckboxWidget *_16bppModeCheckbox;
 };
 
-#endif // QDENGINE_METAENGINE_H
+} // End of namespace QDEngine
+
+#endif
