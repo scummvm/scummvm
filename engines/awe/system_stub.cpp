@@ -24,6 +24,7 @@
 #include "graphics/paletteman.h"
 #include "graphics/screen.h"
 #include "awe/awe.h"
+#include "awe/metaengine.h"
 #include "awe/system_stub.h"
 #include "awe/util.h"
 
@@ -112,28 +113,6 @@ void ScummVMStub::processEvents() {
 	while (!g_engine->shouldQuit() &&
 			g_system->getEventManager()->pollEvent(ev)) {
 		switch (ev.type) {
-		case Common::EVENT_KEYUP:
-			switch(ev.kbd.keycode) {
-			case Common::KEYCODE_LEFT:
-				_pi.dirMask &= ~PlayerInput::DIR_LEFT;
-				break;
-			case Common::KEYCODE_RIGHT:
-				_pi.dirMask &= ~PlayerInput::DIR_RIGHT;
-				break;
-			case Common::KEYCODE_UP:
-				_pi.dirMask &= ~PlayerInput::DIR_UP;
-				break;
-			case Common::KEYCODE_DOWN:
-				_pi.dirMask &= ~PlayerInput::DIR_DOWN;
-				break;
-			case Common::KEYCODE_SPACE:
-			case Common::KEYCODE_RETURN:
-				_pi.button = false;
-				break;
-			default:
-				break;
-			}
-			break;
 		case Common::EVENT_KEYDOWN:
 			if (ev.kbd.flags & Common::KBD_ALT) {
 				if (ev.kbd.keycode == Common::KEYCODE_x) {
@@ -156,25 +135,6 @@ void ScummVMStub::processEvents() {
 			}
 			_pi.lastChar = ev.kbd.keycode;
 			switch(ev.kbd.keycode) {
-			case Common::KEYCODE_LEFT:
-				_pi.dirMask |= PlayerInput::DIR_LEFT;
-				break;
-			case Common::KEYCODE_RIGHT:
-				_pi.dirMask |= PlayerInput::DIR_RIGHT;
-				break;
-			case Common::KEYCODE_UP:
-				_pi.dirMask |= PlayerInput::DIR_UP;
-				break;
-			case Common::KEYCODE_DOWN:
-				_pi.dirMask |= PlayerInput::DIR_DOWN;
-				break;
-			case Common::KEYCODE_SPACE:
-			case Common::KEYCODE_RETURN:
-				_pi.button = true;
-				break;
-			case Common::KEYCODE_c:
-				_pi.code = true;
-				break;
 			case Common::KEYCODE_p:
 				_pi.pause = true;
 				break;
@@ -182,6 +142,52 @@ void ScummVMStub::processEvents() {
 				break;
 			}
 			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			switch (ev.customType) {
+			case KEYBIND_LEFT:
+				_pi.dirMask |= PlayerInput::DIR_LEFT;
+				break;
+			case KEYBIND_RIGHT:
+				_pi.dirMask |= PlayerInput::DIR_RIGHT;
+				break;
+			case KEYBIND_UP:
+				_pi.dirMask |= PlayerInput::DIR_UP;
+				break;
+			case KEYBIND_DOWN:
+				_pi.dirMask |= PlayerInput::DIR_DOWN;
+				break;
+			case KEYBIND_SELECT:
+				_pi.button = true;
+				break;
+			case KEYBIND_CODE:
+				_pi.code = true;
+				break;
+			default:
+				break;
+			}
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			switch (ev.customType) {
+			case KEYBIND_LEFT:
+				_pi.dirMask &= ~PlayerInput::DIR_LEFT;
+				break;
+			case KEYBIND_RIGHT:
+				_pi.dirMask &= ~PlayerInput::DIR_RIGHT;
+				break;
+			case KEYBIND_UP:
+				_pi.dirMask &= ~PlayerInput::DIR_UP;
+				break;
+			case KEYBIND_DOWN:
+				_pi.dirMask &= ~PlayerInput::DIR_DOWN;
+				break;
+			case KEYBIND_SELECT:
+				_pi.button = false;
+				break;
+			default:
+				break;
+			}
+			break;
+
 		default:
 			break;
 		}
