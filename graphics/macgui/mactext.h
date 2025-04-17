@@ -159,6 +159,7 @@ public:
 
 	void getChunkPosFromIndex(int index, uint &lineNum, uint &chunkNum, uint &offset);
 	void getRowCol(int x, int y, int *sx, int *sy, int *row, int *col, int *chunk_ = nullptr);
+	void getLineCharacter(int x, int y, int *sx, int *sy, int *line, int *character, int *chunk_ = nullptr);
 	Common::U32String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true);
 
 	Common::U32String getSelection(bool formatted = false, bool newlines = true);
