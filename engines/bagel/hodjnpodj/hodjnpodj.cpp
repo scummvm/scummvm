@@ -78,6 +78,7 @@ Common::Error HodjNPodjEngine::run() {
 	Settings::Domain &meta = _settings["Meta"];
 	_bAnimationsEnabled = meta.getBool("Animations", true);
 	_bScrollingEnabled = meta.getBool("MapScrolling", false);
+	_gameId = getGameId();
 
 	// Run the game
 	runGame();

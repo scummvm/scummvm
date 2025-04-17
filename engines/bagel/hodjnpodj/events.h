@@ -320,6 +320,7 @@ private:
 
 protected:
 	GAMESTRUCT _gameInfo;
+	Common::String _gameId;
 
 	/**
 	 * Process an event

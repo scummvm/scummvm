@@ -25,6 +25,7 @@ const PlainGameDescriptor bagelGames[] = {
 	{ "bagel", "Bagel" },
 	{ "spacebar", "The Space Bar" },
 	{ "hodjnpodj", "Hodj'n'Podj" },
+	{ "mazeodoom", "Hodj'n'Podj - Maze O' Doom" },
 	{ 0, 0 }
 };
 
@@ -106,6 +107,15 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	{
+		"mazeodoom",
+		nullptr,
+		AD_ENTRY1s("art/modparts.bmp", "2d8fae58e0cb21cedc118b3a1bcf142b", 11998),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
 
 	AD_TABLE_END_MARKER
 };

@@ -58,8 +58,12 @@ void Events::runGame() {
 
 	// The minigames are specially designed so that
 	// they can be run independantly
-	Common::String minigame = ConfMan.hasKey("minigame") ?
-		ConfMan.get("minigame") : "";
+	Common::String minigame;
+	if (_gameId == "mazeodoom")
+		minigame = "MazeDoom";
+	else if (ConfMan.hasKey("minigame"))
+		minigame = ConfMan.get("minigame");
+
 	if (minigame.empty()) {
 		// Start the metagame
 		_gameInfo.bPlayingMetagame = true;

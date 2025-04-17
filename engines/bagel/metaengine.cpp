@@ -96,10 +96,8 @@ const ADExtraGuiOptionsMap *BagelMetaEngine::getAdvancedExtraGuiOptions() const 
 Common::Error BagelMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (!strcmp(desc->gameId, "spacebar"))
 		*engine = new Bagel::SpaceBar::SpaceBarEngine(syst, desc);
-	else if (!strcmp(desc->gameId, "hodjnpodj"))
-		*engine = new Bagel::HodjNPodj::HodjNPodjEngine(syst, desc);
 	else
-		return Common::kUnknownError;
+		*engine = new Bagel::HodjNPodj::HodjNPodjEngine(syst, desc);
 
 	return Common::kNoError;
 }
