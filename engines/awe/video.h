@@ -22,81 +22,84 @@
 #ifndef AWE_VIDEO_H
 #define AWE_VIDEO_H
 
-#include "intern.h"
+#include "awe/intern.h"
 
 namespace Awe {
 
 struct StrEntry {
-	uint16 id;
+	uint16_t id;
 	const char *str;
 };
 
-struct Polygon {
-	enum {
-		MAX_POINTS = 50
-	};
-
-	uint16 bbw = 0, bbh = 0;
-	uint8 numPoints = 0;
-	Point points[MAX_POINTS];
-
-	void init(const uint8 *p, uint16 zoom);
-};
-
+struct Graphics;
 struct Resource;
-struct Serializer;
+struct Scaler;
 struct SystemStub;
 
 struct Video {
-	typedef void (Video::*drawLine)(int16 x1, int16 x2, uint8 col);
 
 	enum {
-		VID_PAGE_SIZE  = 320 * 200 / 2
+		BITMAP_W = 320,
+		BITMAP_H = 200
 	};
 
-	static const uint8 FONT[];
-	static const StrEntry STRINGS_TABLE_ENG[];
-	static const StrEntry STRINGS_TABLE_DEMO[];
+	static const StrEntry _stringsTableFr[];
+	static const StrEntry _stringsTableEng[];
+	static const StrEntry _stringsTableDemo[];
+	static const uint16_t _stringsId15th[];
+	static const char *_stringsTable15th[];
+	static const char *_str0x194AtariDemo;
+	static const StrEntry _stringsTable3DO[];
+	static const char *_noteText3DO;
+	static const char *_endText3DO;
+	static const uint8_t *_vertices3DO[201];
+	static const uint8_t _paletteEGA[];
+
+	static bool _useEGA;
 
 	Resource *_res;
-	SystemStub *_stub;
+	Graphics *_graphics;
+	bool _hasHeadSprites;
+	bool _displayHead;
 
-	uint8 _newPal = 0, _curPal = 0;
-	uint8 *_pagePtrs[4] = { nullptr };
-	uint8 *_curPagePtr1 = nullptr,
-		*_curPagePtr2 = nullptr,
-		*_curPagePtr3 = nullptr;
-	Polygon _pg;
-	int16 _hliney = 0;
-	uint16 _interpTable[0x400] = { 0 };
+	uint8_t _nextPal, _currentPal;
+	uint8_t _buffers[3];
 	Ptr _pData;
-	uint8 *_dataBuf = nullptr;
+	uint8_t *_dataBuf;
+	const StrEntry *_stringsTable;
+	uint8_t _tempBitmap[BITMAP_W * BITMAP_H];
+	uint16_t _bitmap555[BITMAP_W * BITMAP_H];
+	const Scaler *_scaler;
+	int _scalerFactor;
+	uint8_t *_scalerBuffer;
 
-	Video(Resource *res, SystemStub *stub);
+	Video(Resource *res);
+	~Video();
 	void init();
 
-	void setDataBuffer(uint8 *dataBuf, uint16 offset);
-	void drawShape(uint8 color, uint16 zoom, const Point &pt);
-	void fillPolygon(uint16 color, uint16 zoom, const Point &pt);
-	void drawShapeParts(uint16 zoom, const Point &pt);
-	int32 calcStep(const Point &p1, const Point &p2, uint16 &dy);
-
-	void drawString(uint8 color, uint16 x, uint16 y, uint16 strId);
-	void drawChar(uint8 c, uint16 x, uint16 y, uint8 color, uint8 *buf);
-	void drawPoint(uint8 color, int16 x, int16 y);
-	void drawLineT(int16 x1, int16 x2, uint8 color);
-	void drawLineN(int16 x1, int16 x2, uint8 color);
-	void drawLineP(int16 x1, int16 x2, uint8 color);
-	uint8 *getPagePtr(uint8 page);
-	void changePagePtr1(uint8 page);
-	void fillPage(uint8 page, uint8 color);
-	void copyPage(uint8 src, uint8 dst, int16 vscroll);
-	void copyPagePtr(const uint8 *src);
-	uint8 *allocPage();
-	void changePal(uint8 pal);
-	void updateDisplay(uint8 page);
-	
-	void saveOrLoad(Serializer &ser);
+	void setScaler(const char *name, int factor);
+	void setDefaultFont();
+	void setFont(const uint8_t *font);
+	void setHeads(const uint8_t *src);
+	void setDataBuffer(uint8_t *dataBuf, uint16_t offset);
+	void drawShape(uint8_t color, uint16_t zoom, const Point *pt);
+	void drawShapePart3DO(int color, int part, const Point *pt);
+	void drawShape3DO(int color, int zoom, const Point *pt);
+	void fillPolygon(uint16_t color, uint16_t zoom, const Point *pt);
+	void drawShapeParts(uint16_t zoom, const Point *pt);
+	void drawString(uint8_t color, uint16_t x, uint16_t y, uint16_t strId);
+	uint8_t getPagePtr(uint8_t page);
+	void setWorkPagePtr(uint8_t page);
+	void fillPage(uint8_t page, uint8_t color);
+	void copyPage(uint8_t src, uint8_t dst, int16_t vscroll);
+	void scaleBitmap(const uint8_t *src, int fmt);
+	void copyBitmapPtr(const uint8_t *src, uint32_t size = 0);
+	void changePal(uint8_t pal);
+	void updateDisplay(uint8_t page, SystemStub *stub);
+	void captureDisplay();
+	void setPaletteColor(uint8_t color, int r, int g, int b);
+	void drawRect(uint8_t page, uint8_t color, int x1, int y1, int x2, int y2);
+	void drawBitmap3DO(const char *name, SystemStub *stub);
 };
 
 } // namespace Awe

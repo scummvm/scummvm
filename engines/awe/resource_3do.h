@@ -19,26 +19,34 @@
  *
  */
 
-#include "awe/util.h"
+#ifndef AWE_RESOURCE_3DO_H
+#define AWE_RESOURCE_3DO_H
+
+#include "awe/intern.h"
+#include "awe/file.h"
 
 namespace Awe {
 
-uint16_t g_debugMask;
+struct OperaIso;
 
-void string_lower(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'A' && *p <= 'Z') {
-			*p += 'a' - 'A';
-		}
-	}
-}
+struct Resource3do {
 
-void string_upper(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'a' && *p <= 'z') {
-			*p += 'A' - 'a';
-		}
-	}
-}
+	const char *_dataPath;
+	char _musicPath[32];
+	char _cpakPath[64];
+	OperaIso *_iso;
+
+	Resource3do(const char *dataPath);
+	~Resource3do();
+
+	bool readEntries();
+
+	uint8_t *loadFile(int num, uint8_t *dst, uint32_t *size);
+	uint16_t *loadShape555(const char *name, int *w, int *h);
+	const char *getMusicName(int num, uint32_t *offset);
+	const char *getCpak(const char *name, uint32_t *offset);
+};
 
 } // namespace Awe
+
+#endif

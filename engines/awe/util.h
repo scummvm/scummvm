@@ -27,6 +27,19 @@
 
 namespace Awe {
 
+enum {
+	DBG_SCRIPT = 1 << 0,
+	DBG_BANK = 1 << 1,
+	DBG_VIDEO = 1 << 2,
+	DBG_SND = 1 << 3,
+	DBG_SER = 1 << 4,
+	DBG_INFO = 1 << 5,
+	DBG_PAK = 1 << 6,
+	DBG_RESOURCE = 1 << 7,
+};
+
+extern uint16_t g_debugMask;
+
 extern void string_lower(char *p);
 extern void string_upper(char *p);
 

@@ -27,68 +27,150 @@
 namespace Awe {
 
 struct MemEntry {
-	uint8 valid = 0;			// 0x0
-	uint8 type = 0;				// 0x1, Resource::ResType
-	uint8 *bufPtr = nullptr;	// 0x2
-	uint16 unk4 = 0;			// 0x4, unused ?
-	uint8 rankNum = 0;			// 0x6
-	uint8 bankNum = 0;			// 0x7
-	uint32 bankPos = 0;			// 0x8 0xA
-	uint16 unkC = 0;			// 0xC, unused ?
-	uint16 packedSize = 0;		// 0xE
-	uint16 unk10 = 0;			// 0x10, unused ?
-	uint16 unpackedSize = 0;	// 0x12
+	uint8_t status;        // 0x0
+	uint8_t type;          // 0x1, Resource::ResType
+	uint8_t *bufPtr;       // 0x2
+	uint8_t rankNum;       // 0x6
+	uint8_t bankNum;       // 0x7
+	uint32_t bankPos;      // 0x8
+	uint32_t packedSize;   // 0xC
+	uint32_t unpackedSize; // 0x12
 };
 
-struct Serializer;
+struct AmigaMemEntry {
+	uint8_t type;
+	uint8_t bank;
+	uint32_t offset;
+	uint32_t packedSize;
+	uint32_t unpackedSize;
+};
+
+struct DemoJoy {
+	uint8_t keymask;
+	uint8_t counter;
+
+	uint8_t *bufPtr;
+	int bufPos, bufSize;
+
+	bool start() {
+		if (bufSize > 0) {
+			keymask = bufPtr[0];
+			counter = bufPtr[1];
+			bufPos = 2;
+			return true;
+		}
+		return false;
+	}
+
+	uint8_t update() {
+		if (bufPos >= 0 && bufPos < bufSize) {
+			if (counter == 0) {
+				keymask = bufPtr[bufPos++];
+				counter = bufPtr[bufPos++];
+			} else {
+				--counter;
+			}
+			return keymask;
+		}
+		return 0;
+	}
+};
+
+struct ResourceNth;
+struct ResourceWin31;
+struct Resource3do;
 struct Video;
 
+typedef void (*PreloadSoundProc)(void *userdata, int num, const uint8_t *data);
+
 struct Resource {
+
 	enum ResType {
-		RT_SOUND  = 0,
-		RT_MUSIC  = 1,
-		RT_VIDBUF = 2, // full screen video buffer, size=0x7D00
-		RT_PAL    = 3, // palette (1024=vga + 1024=ega), size=2048
-		RT_SCRIPT = 4,
-		RT_VBMP   = 5
+		RT_SOUND = 0,
+		RT_MUSIC = 1,
+		RT_BITMAP = 2, // full screen 4bpp video buffer, size=200*320/2
+		RT_PALETTE = 3, // palette (1024=vga + 1024=ega), size=2048
+		RT_BYTECODE = 4,
+		RT_SHAPE = 5,
+		RT_BANK = 6, // common part shapes (bank2.mat)
 	};
-	
+
+	enum DataType {
+		DT_DOS,
+		DT_AMIGA,
+		DT_ATARI,
+		DT_15TH_EDITION,
+		DT_20TH_EDITION,
+		DT_WIN31,
+		DT_3DO,
+		DT_ATARI_DEMO, // ST Action Issue44 Disk28
+	};
+
 	enum {
-		MEM_BLOCK_SIZE = 600 * 1024
+		MEM_BLOCK_SIZE = 1 * 1024 * 1024,
+		ENTRIES_COUNT = 146,
+		ENTRIES_COUNT_20TH = 178,
 	};
-	
-	static const uint16 MEMLIST_AUDIO[];
-	static const uint16 MEM_LIST_PARTS[][4];
-	static const uint16 MEM_LIST_DEMO_PARTS[][4];
 
-	Video *_vid = nullptr;
-	MemEntry _memList[150];
-	uint16 _numMemList = 0;
-	uint16 _curPtrsId = 0, _newPtrsId = 0;
-	uint8 *_memPtrStart = nullptr,
-		*_scriptBakPtr = nullptr,
-		*_scriptCurPtr = nullptr,
-		*_vidBakPtr = nullptr,
-		*_vidCurPtr = nullptr;
-	bool _useSegVideo2 = false;
-	uint8 *_segVideoPal = nullptr;
-	uint8 *_segCode = nullptr;
-	uint8 *_segVideo1 = nullptr;
-	uint8 *_segVideo2 = nullptr;
+	enum {
+		STATUS_NULL,
+		STATUS_LOADED,
+		STATUS_TOLOAD,
+	};
 
-	Resource(Video *vid);
-	
-	void readBank(const MemEntry *me, uint8 *dstBuf);
+	static const AmigaMemEntry _memListAmigaFR[ENTRIES_COUNT];
+	static const AmigaMemEntry _memListAmigaEN[ENTRIES_COUNT];
+	static const AmigaMemEntry _memListAtariEN[ENTRIES_COUNT];
+	static const uint8_t _memListParts[][4];
+
+	Video *_vid;
+	const char *_dataDir;
+	MemEntry _memList[ENTRIES_COUNT_20TH];
+	uint16_t _numMemList;
+	uint16_t _currentPart, _nextPart;
+	uint8_t *_memPtrStart, *_scriptBakPtr, *_scriptCurPtr, *_vidCurPtr;
+	bool _useSegVideo2;
+	uint8_t *_segVideoPal;
+	uint8_t *_segCode;
+	uint8_t *_segVideo1;
+	uint8_t *_segVideo2;
+	const char *_bankPrefix;
+	bool _hasPasswordScreen;
+	DataType _dataType;
+	ResourceNth *_nth;
+	ResourceWin31 *_win31;
+	Resource3do *_3do;
+	Language _lang;
+	const AmigaMemEntry *_amigaMemList;
+	DemoJoy _demo3Joy;
+
+	Resource(Video *vid, const char *dataDir);
+	~Resource();
+
+	DataType getDataType() const {
+		return _dataType;
+	}
+	void detectVersion();
+	const char *getGameTitle(Language lang) const;
+	bool readBank(const MemEntry *me, uint8_t *dstBuf);
 	void readEntries();
+	void readEntriesAmiga(const AmigaMemEntry *entries, int count);
+	void dumpEntries();
 	void load();
 	void invalidateAll();
-	void invalidateRes();	
-	void update(uint16 num);
-	void setupPtrs(uint16 ptrId);
+	void invalidateRes();
+	void update(uint16_t num, PreloadSoundProc, void *);
+	void loadBmp(int num);
+	uint8_t *loadDat(int num);
+	void loadFont();
+	void loadHeads();
+	uint8_t *loadWav(int num);
+	const char *getString(int num);
+	const char *getMusicPath(int num, char *buf, int bufSize, uint32_t *offset = 0);
+	void setupPart(int part);
 	void allocMemBlock();
 	void freeMemBlock();
-	
-	void saveOrLoad(Serializer &ser);
+	void readDemo3Joy();
 };
 
 } // namespace Awe

@@ -19,49 +19,32 @@
  *
  */
 
-#ifndef AWE_SYSTEM_STUB_H
-#define AWE_SYSTEM_STUB_H
+#ifndef AWE_AIFC_PLAYER_H
+#define AWE_AIFC_PLAYER_H
 
 #include "awe/intern.h"
+#include "awe/file.h"
 
 namespace Awe {
 
-struct PlayerInput {
-	enum {
-		DIR_LEFT  = 1 << 0,
-		DIR_RIGHT = 1 << 1,
-		DIR_UP    = 1 << 2,
-		DIR_DOWN  = 1 << 3
-	};
+struct AifcPlayer {
 
-	uint8 dirMask;
-	bool button;
-	bool code;
-	bool pause;
-	bool quit;
-	char lastChar;
-	bool save, load;
-	bool fastMode;
-	int8 stateSlot;
+	File _f;
+	uint32_t _ssndOffset;
+	uint32_t _ssndSize;
+	uint32_t _pos;
+	int16_t _sampleL, _sampleR;
+	Frac _rate;
+
+	AifcPlayer();
+
+	bool play(int mixRate, const char *path, uint32_t offset);
+	void stop();
+
+	int8_t readSampleData();
+	void decodeSamples();
+	void readSamples(int16_t *buf, int len);
 };
-
-struct SystemStub {
-	PlayerInput _pi;
-
-	virtual ~SystemStub() {}
-
-	virtual void init(const char *title) = 0;
-	virtual void destroy() = 0;
-
-	virtual void setPalette(uint8 s, uint8 n, const uint8 *buf) = 0;
-	virtual void copyRect(uint16 x, uint16 y, uint16 w, uint16 h, const uint8 *buf, uint32 pitch) = 0;
-
-	virtual void processEvents() = 0;
-	virtual void sleep(uint32 duration) = 0;
-	virtual uint32 getTimeStamp() = 0;
-};
-
-extern SystemStub *SystemStub_create();
 
 } // namespace Awe
 

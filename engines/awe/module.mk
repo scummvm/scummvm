@@ -3,12 +3,27 @@ MODULE := engines/awe
 MODULE_OBJS = \
 	metaengine.o \
 	awe.o \
-	bank.o \
-	logic.o \
+	aifcplayer.o \
+	bitmap.o \
+	detection.o \
+	engine.o \
+	file.o \
+	graphics_gl.o \
+	graphics_soft.o \
+	metaengine.o \
+	mixer.o \
+	pak.o \
 	resource.o \
-	serializer.o \
+	resource_3do.o \
+	resource_nth.o \
+	resource_win31.o \
+	scaler.o \
+	screenshot.o \
+	script.o \
+	sfxplayer.o \
 	staticres.o \
-	system_stub.o \
+	systemstub_sdl.o \
+	unpack.o \
 	util.o \
 	video.o
 

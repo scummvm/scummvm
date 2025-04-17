@@ -19,35 +19,36 @@
  *
  */
 
-#ifndef AWE_BANK_H
-#define AWE_BANK_H
+#ifndef AWE_PAK_H
+#define AWE_PAK_H
 
 #include "awe/intern.h"
+#include "awe/file.h"
 
 namespace Awe {
 
-struct MemEntry;
-
-struct UnpackContext {
-	uint16 size;
-	uint32 crc;
-	uint32 chk;
-	int32 datasize;
+struct PakEntry {
+	char name[32];
+	uint32_t offset;
+	uint32_t size;
 };
 
-struct Bank {
-	UnpackContext _unpCtx;
-	uint8 *_iBuf, *_oBuf, *_startBuf;
+struct Pak {
+	static const char *FILENAME;
 
-	Bank();
+	File _f;
+	PakEntry *_entries;
+	int _entriesCount;
 
-	bool read(const MemEntry *me, uint8 *buf);
-	void decUnk1(uint8 numChunks, uint8 addCount);
-	void decUnk2(uint8 numChunks);
-	bool unpack();
-	uint16 getCode(uint8 numChunks);
-	bool nextChunk();
-	bool rcr(bool CF);
+	Pak();
+	~Pak();
+
+	void open(const char *dataPath);
+	void close();
+
+	void readEntries();
+	const PakEntry *find(const char *name);
+	void loadData(const PakEntry *e, uint8_t *buf, uint32_t *size);
 };
 
 } // namespace Awe

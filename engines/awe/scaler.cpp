@@ -19,26 +19,12 @@
  *
  */
 
-#include "awe/util.h"
+#include "awe/scaler.h"
 
 namespace Awe {
 
-uint16_t g_debugMask;
-
-void string_lower(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'A' && *p <= 'Z') {
-			*p += 'a' - 'A';
-		}
-	}
-}
-
-void string_upper(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'a' && *p <= 'z') {
-			*p += 'A' - 'a';
-		}
-	}
+const Scaler *findScaler(const char *name) {
+	return 0;
 }
 
 } // namespace Awe

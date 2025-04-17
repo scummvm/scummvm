@@ -19,26 +19,31 @@
  *
  */
 
-#include "awe/util.h"
+#ifndef AWE_RESOURCE_NTH_H
+#define AWE_RESOURCE_NTH_H
+
+#include "awe/intern.h"
 
 namespace Awe {
 
-uint16_t g_debugMask;
-
-void string_lower(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'A' && *p <= 'Z') {
-			*p += 'a' - 'A';
-		}
+struct ResourceNth {
+	virtual ~ResourceNth() {
 	}
-}
 
-void string_upper(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'a' && *p <= 'z') {
-			*p += 'A' - 'a';
-		}
+	virtual bool init() = 0;
+	virtual uint8_t *load(const char *name) = 0;
+	virtual uint8_t *loadBmp(int num) = 0;
+	virtual void preloadDat(int part, int type, int num) {
 	}
-}
+	virtual uint8_t *loadDat(int num, uint8_t *dst, uint32_t *size) = 0;
+	virtual uint8_t *loadWav(int num, uint8_t *dst, uint32_t *size) = 0;
+	virtual const char *getString(Language lang, int num) = 0;
+	virtual const char *getMusicName(int num) = 0;
+	virtual void getBitmapSize(int *w, int *h) = 0;
+
+	static ResourceNth *create(int edition, const char *dataPath);
+};
 
 } // namespace Awe
+
+#endif

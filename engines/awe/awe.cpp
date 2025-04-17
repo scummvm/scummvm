@@ -24,24 +24,283 @@
 #include "common/stream.h"
 #include "engines/util.h"
 #include "awe/awe.h"
-#include "awe/serializer.h"
 #include "awe/util.h"
 
 namespace Awe {
 
 AweEngine *g_engine;
 
+#ifdef TODO
+static const char USAGE[] =
+"raw(gl) - Another World Interpreter\n"
+"Usage: %s [OPTIONS]...\n"
+"  --datapath=PATH   Path to data files (default '.')\n"
+"  --language=LANG   Language (fr,us,de,es,it)\n"
+"  --part=NUM        Game part to start from (0-35 or 16001-16009)\n"
+"  --render=NAME     Renderer (original,software,gl)\n"
+"  --window=WxH      Windowed display size (default '640x400')\n"
+"  --fullscreen      Fullscreen display (stretched)\n"
+"  --fullscreen-ar   Fullscreen display (16:10 aspect ratio)\n"
+"  --ega-palette     Use EGA palette with DOS version\n"
+"  --demo3-joy       Use inputs from 'demo3.joy' (DOS demo)\n"
+"  --difficulty=DIFF Difficulty (easy,normal,hard)\n"
+"  --audio=AUDIO     Audio (original,remastered)\n"
+;
+
+static const struct {
+	const char *name;
+	int lang;
+} LANGUAGES[] = {
+	{ "fr", LANG_FR },
+	{ "us", LANG_US },
+	{ "de", LANG_DE },
+	{ "es", LANG_ES },
+	{ "it", LANG_IT },
+	{ 0, -1 }
+};
+
+static const struct {
+	const char *name;
+	int type;
+} GRAPHICS[] = {
+	{ "original", GRAPHICS_ORIGINAL },
+	{ "software", GRAPHICS_SOFTWARE },
+	{ "gl", GRAPHICS_GL },
+	{ 0,  -1 }
+};
+
+static const struct {
+	const char *name;
+	int difficulty;
+} DIFFICULTIES[] = {
+	{ "easy", DIFFICULTY_EASY },
+	{ "normal", DIFFICULTY_NORMAL },
+	{ "hard", DIFFICULTY_HARD },
+	{ 0,  -1 }
+};
+
+bool Graphics::_is1991 = false;
+bool Graphics::_use555 = false;
+bool Video::_useEGA = false;
+Difficulty Script::_difficulty = DIFFICULTY_NORMAL;
+bool Script::_useRemasteredAudio = true;
+
+static Graphics *createGraphics(int type) {
+	switch (type) {
+	case GRAPHICS_ORIGINAL:
+		Graphics::_is1991 = true;
+		// fall-through
+	case GRAPHICS_SOFTWARE:
+		debug(DBG_INFO, "Using software graphics");
+		return GraphicsSoft_create();
+	case GRAPHICS_GL:
+		debug(DBG_INFO, "Using GL graphics");
+#ifdef USE_GL
+		return GraphicsGL_create();
+#endif
+	}
+	return 0;
+}
+
+static int getGraphicsType(Resource::DataType type) {
+	switch (type) {
+	case Resource::DT_15TH_EDITION:
+	case Resource::DT_20TH_EDITION:
+	case Resource::DT_3DO:
+		return GRAPHICS_GL;
+	default:
+		return GRAPHICS_ORIGINAL;
+	}
+}
+
+struct Scaler {
+	char name[32];
+	int factor;
+};
+
+static void parseScaler(char *name, Scaler *s) {
+	char *sep = strchr(name, '@');
+	if (sep) {
+		*sep = 0;
+		strncpy(s->name, name, sizeof(s->name) - 1);
+		s->name[sizeof(s->name) - 1] = 0;
+	}
+	if (sep) {
+		s->factor = atoi(sep + 1);
+	}
+}
+
+static const int DEFAULT_WINDOW_W = 640;
+static const int DEFAULT_WINDOW_H = 400;
+
+int main(int argc, char *argv[]) {
+	char *dataPath = 0;
+	int part = 16001;
+	Language lang = LANG_FR;
+	int graphicsType = GRAPHICS_GL;
+	DisplayMode dm;
+	dm.mode = DisplayMode::WINDOWED;
+	dm.width = DEFAULT_WINDOW_W;
+	dm.height = DEFAULT_WINDOW_H;
+	dm.opengl = (graphicsType == GRAPHICS_GL);
+	Scaler scaler;
+	scaler.name[0] = 0;
+	scaler.factor = 1;
+	bool defaultGraphics = true;
+	bool demo3JoyInputs = false;
+	if (argc == 2) {
+		// data path as the only command line argument
+		struct stat st;
+		if (stat(argv[1], &st) == 0 && S_ISDIR(st.st_mode)) {
+			dataPath = strdup(argv[1]);
+		}
+	}
+	while (1) {
+		static struct option options[] = {
+			{ "datapath", required_argument, 0, 'd' },
+			{ "language", required_argument, 0, 'l' },
+			{ "part",     required_argument, 0, 'p' },
+			{ "render",   required_argument, 0, 'r' },
+			{ "window",   required_argument, 0, 'w' },
+			{ "fullscreen", no_argument,     0, 'f' },
+			{ "fullscreen-ar", no_argument,  0, 'a' },
+			{ "scaler",   required_argument, 0, 's' },
+			{ "ega-palette", no_argument,    0, 'e' },
+			{ "demo3-joy",  no_argument,     0, 'j' },
+			{ "difficulty", required_argument, 0, 'i' },
+			{ "audio",    required_argument, 0, 'u' },
+			{ "help",       no_argument,     0, 'h' },
+			{ 0, 0, 0, 0 }
+		};
+		int index;
+		const int c = getopt_long(argc, argv, "", options, &index);
+		if (c == -1) {
+			break;
+		}
+		switch (c) {
+		case 'd':
+			dataPath = strdup(optarg);
+			break;
+		case 'l':
+			for (int i = 0; LANGUAGES[i].name; ++i) {
+				if (strcmp(optarg, LANGUAGES[i].name) == 0) {
+					lang = (Language)LANGUAGES[i].lang;
+					break;
+				}
+			}
+			break;
+		case 'p':
+			part = atoi(optarg);
+			break;
+		case 'r':
+			for (int i = 0; GRAPHICS[i].name; ++i) {
+				if (strcmp(optarg, GRAPHICS[i].name) == 0) {
+					graphicsType = GRAPHICS[i].type;
+					dm.opengl = (graphicsType == GRAPHICS_GL);
+					defaultGraphics = false;
+					break;
+				}
+			}
+			break;
+		case 'w':
+			sscanf(optarg, "%dx%d", &dm.width, &dm.height);
+			break;
+		case 'f':
+			dm.mode = DisplayMode::FULLSCREEN;
+			break;
+		case 'a':
+			dm.mode = DisplayMode::FULLSCREEN_AR;
+			break;
+		case 's':
+			parseScaler(optarg, &scaler);
+			break;
+		case 'e':
+			Video::_useEGA = true;
+			break;
+		case 'j':
+			demo3JoyInputs = true;
+			break;
+		case 'i':
+			for (int i = 0; DIFFICULTIES[i].name; ++i) {
+				if (strcmp(optarg, DIFFICULTIES[i].name) == 0) {
+					Script::_difficulty = (Difficulty)DIFFICULTIES[i].difficulty;
+					break;
+				}
+			}
+			break;
+		case 'u':
+			if (strcmp(optarg, "remastered") == 0) {
+				Script::_useRemasteredAudio = true;
+			} else if (strcmp(optarg, "original") == 0) {
+				Script::_useRemasteredAudio = false;
+			}
+			break;
+		case 'h':
+			// fall-through
+		default:
+			printf(USAGE, argv[0]);
+			return 0;
+		}
+	}
+	g_debugMask = DBG_INFO; // | DBG_VIDEO | DBG_SND | DBG_SCRIPT | DBG_BANK | DBG_SER;
+	Engine *e = new Engine(dataPath, part);
+	if (defaultGraphics) {
+		// if not set, use original software graphics for 199x editions and GL for the anniversary and 3DO versions
+		graphicsType = getGraphicsType(e->_res.getDataType());
+		dm.opengl = (graphicsType == GRAPHICS_GL);
+	}
+	if (graphicsType != GRAPHICS_GL && e->_res.getDataType() == Resource::DT_3DO) {
+		graphicsType = GRAPHICS_SOFTWARE;
+		Graphics::_use555 = true;
+	}
+	Graphics *graphics = createGraphics(graphicsType);
+	if (e->_res.getDataType() == Resource::DT_20TH_EDITION) {
+		switch (Script::_difficulty) {
+		case DIFFICULTY_EASY:
+			debug(DBG_INFO, "Using easy difficulty");
+			break;
+		case DIFFICULTY_NORMAL:
+			debug(DBG_INFO, "Using normal difficulty");
+			break;
+		case DIFFICULTY_HARD:
+			debug(DBG_INFO, "Using hard difficulty");
+			break;
+		}
+	}
+	if (e->_res.getDataType() == Resource::DT_15TH_EDITION || e->_res.getDataType() == Resource::DT_20TH_EDITION) {
+		if (Script::_useRemasteredAudio) {
+			debug(DBG_INFO, "Using remastered audio");
+		} else {
+			debug(DBG_INFO, "Using original audio");
+		}
+	}
+	SystemStub *stub = SystemStub_SDL_create();
+	stub->init(e->getGameTitle(lang), &dm);
+	e->setSystemStub(stub, graphics);
+	if (demo3JoyInputs && e->_res.getDataType() == Resource::DT_DOS) {
+		e->_res.readDemo3Joy();
+	}
+	e->setup(lang, graphicsType, scaler.name, scaler.factor);
+	while (!stub->_pi.quit) {
+		e->run();
+	}
+	e->finish();
+	delete e;
+	stub->fini();
+	delete stub;
+	return 0;
+}
+
+#endif
+
+
 AweEngine::AweEngine(OSystem *syst, const ADGameDescription *gameDesc)
 		: Engine(syst), _gameDescription(gameDesc),
-		_stub(SystemStub_create()),
-		_res(&_vid),
-		_vid(&_res, _stub),
-		_log(&_res, &_vid, _stub) {
+		_random("Awe") {
 	g_engine = this;
 }
 
 AweEngine::~AweEngine() {
-	delete _stub;
 }
 
 Common::Error AweEngine::run() {
@@ -53,114 +312,7 @@ Common::Error AweEngine::run() {
 	// Initialize backend
 	initGraphics(320, 200);
 
-	// Setup
-	_stub->init("Out Of This World");
-	setup();
-
-	// Run the game
-	_log.restartAt(isDemo() ? 0x3e81 : 0x3e80);
-
-	while (!_stub->_pi.quit && !g_engine->shouldQuit()) {
-		_log.setupScripts();
-		_log.inp_updatePlayer();
-		processInput();
-		_log.runScripts();
-	}
-
-	finish();
-	_stub->destroy();
-
 	return Common::kNoError;
 }
-
-void AweEngine::setup() {
-	_vid.init();
-	_res.allocMemBlock();
-	_res.readEntries();
-	_log.init();
-}
-
-void AweEngine::finish() {
-	// XXX
-	_res.freeMemBlock();
-}
-
-void AweEngine::processInput() {
-	if (_stub->_pi.load) {
-		loadGameState(_stateSlot);
-		_stub->_pi.load = false;
-	}
-	if (_stub->_pi.save) {
-		saveGameState(_stateSlot, "Quicksave");
-		_stub->_pi.save = false;
-	}
-	if (_stub->_pi.fastMode) {
-		_log._fastMode = !_log._fastMode;
-		_stub->_pi.fastMode = false;
-	}
-	if (_stub->_pi.stateSlot != 0) {
-		int8 slot = _stateSlot + _stub->_pi.stateSlot;
-		if (slot >= 0 && slot < 999) {
-			_stateSlot = slot;
-			debugC(kDebugInfo, "Current game state slot is %d", _stateSlot);
-		}
-		_stub->_pi.stateSlot = 0;
-	}
-}
-
-Common::Error AweEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-	// Header
-	stream->writeUint32BE(MKTAG('A', 'W', 'S', 'V'));
-	stream->writeUint16BE(Serializer::CUR_VER);
-	stream->writeUint16BE(0);
-
-	// Contents
-	Serializer s(stream, _res._memPtrStart);
-	_log.saveOrLoad(s);
-	_res.saveOrLoad(s);
-	_vid.saveOrLoad(s);
-	if (stream->err()) {
-		warning("I/O error when saving game state");
-		return Common::kUnknownError;
-	} else {
-		debugC(kDebugInfo, "Saved state to slot %d", _stateSlot);
-		return Common::kNoError;
-	}
-}
-
-Common::Error AweEngine::loadGameStream(Common::SeekableReadStream *stream) {
-	uint32 id = stream->readUint32BE();
-	if (id != MKTAG('A', 'W', 'S', 'V')) {
-		warning("Bad savegame format");
-		return Common::kUnknownError;
-	}
-
-	uint16 ver = stream->readUint16BE();
-	(void)stream->readUint16BE();
-
-	// Contents
-	Serializer s(stream, _res._memPtrStart, ver);
-	_log.saveOrLoad(s);
-	_res.saveOrLoad(s);
-	_vid.saveOrLoad(s);
-
-	if (stream->err()) {
-		warning("I/O error when loading game state");
-		return Common::kUnknownError;
-	} else {
-		debugC(kDebugInfo, "Loaded state from slot %d", _stateSlot);
-		return Common::kNoError;
-	}
-}
-
-bool AweEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher);
-}
-
-bool AweEngine::isDemo() const {
-	return (_gameDescription->flags & ADGF_DEMO) != 0;
-}
-
 
 } // namespace Awe
