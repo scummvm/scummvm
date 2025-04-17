@@ -151,16 +151,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
-	// Castle of Dr. Brain - Korean fan translation, based on English DOS Floppy 1.1
-	{"castlebrain", "", {
-		{"resource.map", 0, "f77728304c70017c54793eb6ca648174", 2745},
-		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 347071},
-		{"resource.001", 0, "13e81e1839cd7b216d2bb5615c1ca160", 796776},
-		{"resource.002", 0, "930e416bec196b9703a331d81b3d66f2", 1283812},
-		{"resource.msg", 0, "71c6f480e742a0dd3700ec7825962921", 49538},
-		AD_LISTEND},
-		Common::KO_KOR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
-
 	// Castle of Dr. Brain - English DOS Floppy 1.000
 	// Reported by graxer in bug report #5094
 	{"castlebrain", "", {
@@ -203,6 +193,31 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "7c3e82c390e934de9b7afcab6de9cec4", 1117317},
 		AD_LISTEND},
 		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO_STD16_HIRES	},
+
+	// Castle of Dr. Brain - French fan translation, based on English DOS Floppy 1.000
+	{"castlebrain", "", {
+		{"resource.map", 0, "dd994a1e509542ca7060680371961d8f", 2665},
+		{"resource.000", 0, "6e125f4ce3f4f5c35f2617c7b66c6e21", 58916},
+		{"resource.001", 0, "4891faa2f6594c622e482f0ddce24fb4", 126120},
+		{"resource.002", 0, "aebb56d5d005557ca0d122a03aa85386", 353483},
+		{"resource.003", 0, "278ec1e6132c7be844d433dd23beb318", 335156},
+		{"resource.004", 0, "fca1c3f2be660185206f004bda09f4fb", 333549},
+		{"resource.005", 0, "9294e55da1e83708ad3104b2a3963e18", 327537},
+		{"resource.006", 0, "1d778a0c65cac9ddbab65495e50a94ee", 416394},
+		{"resource.007", 0, "063bb8ce4157c778cf30d1c912c006f1", 469925},
+		{"resource.008", 0, "735be4e58957180cfc807d5e18fdffcd", 356863},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
+
+	// Castle of Dr. Brain - Korean fan translation, based on English DOS Floppy 1.1
+	{"castlebrain", "", {
+		{"resource.map", 0, "f77728304c70017c54793eb6ca648174", 2745},
+		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 347071},
+		{"resource.001", 0, "13e81e1839cd7b216d2bb5615c1ca160", 796776},
+		{"resource.002", 0, "930e416bec196b9703a331d81b3d66f2", 1283812},
+		{"resource.msg", 0, "71c6f480e742a0dd3700ec7825962921", 49538},
+		AD_LISTEND},
+		Common::KO_KOR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// Inside the Chest / Behind the Developer's Shield
 	// SCI interpreter version 2.000.000
