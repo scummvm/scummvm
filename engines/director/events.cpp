@@ -222,7 +222,7 @@ bool Movie::processEvent(Common::Event &event) {
 
 	case Common::EVENT_KEYDOWN:
 		_keyCode = _vm->_KeyCodes.contains(event.kbd.keycode) ? _vm->_KeyCodes[event.kbd.keycode] : 0;
-		_key = (unsigned char)(event.kbd.ascii & 0xff);
+		_key = event.kbd.ascii;
 		_keyFlags = event.kbd.flags;
 
 		if (event.kbd.keycode == Common::KEYCODE_LSHIFT || event.kbd.keycode == Common::KEYCODE_RSHIFT ||
