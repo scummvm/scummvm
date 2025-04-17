@@ -316,8 +316,10 @@ void Lingo::popContext(bool aborting) {
 
 	if (_state->stack.size() == fp->stackSizeBefore + 1) {
 		if (!fp->allowRetVal) {
-			debugC(5, kDebugLingoExec, "dropping return value");
-			pop();
+			debugC(5, kDebugLingoExec, "dropping return value, storing as the result");
+			Datum res = pop();
+			if (res.type != VOID)
+				g_lingo->_theResult = res;
 		}
 	} else if (_state->stack.size() == fp->stackSizeBefore) {
 		if (fp->allowRetVal) {
