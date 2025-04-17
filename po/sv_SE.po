@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-17 15:33+0000\n"
-"PO-Revision-Date: 2025-04-17 15:18+0000\n"
+"PO-Revision-Date: 2025-04-17 18:21+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -5176,19 +5176,19 @@ msgstr "I spel"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export backup"
-msgstr ""
+msgstr "Exportera säkerhetskopia"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export a backup of the configuration and save files"
-msgstr ""
+msgstr "Exportera en säkerhetskopia av konfigurationen och sparade filer"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import backup"
-msgstr ""
+msgstr "Importera säkerhetskopia"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import a previously exported backup file"
-msgstr ""
+msgstr "Importera en tidigare exporterad säkerhetskopiefil"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:196
@@ -5196,53 +5196,45 @@ msgid "Remove folder authorizations..."
 msgstr "Ta bort mappbehörigheter..."
 
 #: backends/platform/android/options.cpp:268
-#, fuzzy
-#| msgid "Select the orientation:"
 msgid "Select backup destination"
-msgstr "Välj orientering:"
+msgstr "Välj mål för säkerhetskopia"
 
 #: backends/platform/android/options.cpp:276
 msgid "The backup has been saved successfully."
-msgstr ""
+msgstr "Säkerhetskopian har sparats."
 
 #: backends/platform/android/options.cpp:278
 msgid "The backup has been saved successfully to the Downloads folder."
-msgstr ""
+msgstr "Säkerhetskopian har sparats till Hämtningar-mappen."
 
 #: backends/platform/android/options.cpp:280
 #: backends/platform/android/options.cpp:313
-#, fuzzy
-#| msgid "the shader could not be changed"
 msgid "The game saves couldn't be backed up"
-msgstr "shadern kunde inte ändras"
+msgstr "Sparade spel kunde inte säkerhetskopieras"
 
 #: backends/platform/android/options.cpp:282
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while saving the backup."
-msgstr "Ett fel inträffade vid skrivning av sparat spel"
+msgstr "Ett fel inträffade när säkerhetskopian sparades."
 
 #: backends/platform/android/options.cpp:289
 msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
 msgstr ""
+"Om du återställer en säkerhetskopia raderas den aktuella konfigurationen och "
+"befintliga sparade filer skrivs över. Vill du fortsätta?"
 
 #: backends/platform/android/options.cpp:294
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select backup file"
-msgstr "Välj ett tema"
+msgstr "Välj säkerhetskopiefil"
 
 #: backends/platform/android/options.cpp:311
 msgid "The backup has been restored successfully."
-msgstr ""
+msgstr "Säkerhetskopian har återställts."
 
 #: backends/platform/android/options.cpp:315
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while restoring the backup."
-msgstr "Ett fel inträffade vid skrivning av sparat spel"
+msgstr "Ett fel inträffade under återställningen av säkerhetskopian."
 
 #: backends/platform/android/options.cpp:559
 msgid "Remove"
