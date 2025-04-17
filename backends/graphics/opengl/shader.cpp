@@ -71,11 +71,12 @@ const char *const g_lookUpFragmentShader =
 	"uniform sampler2D shaderTexture;\n"
 	"uniform sampler2D palette;\n"
 	"\n"
-	"const float adjustFactor = 255.0 / 256.0 + 1.0 / (2.0 * 256.0);"
+	"const float scaleFactor = 255.0 / 256.0;\n"
+	"const float offsetFactor = 1.0 / (2.0 * 256.0);\n"
 	"\n"
 	"void main(void) {\n"
 	"\tvec4 index = texture2D(shaderTexture, texCoord);\n"
-	"\tgl_FragColor = blendColor * texture2D(palette, vec2(index.a * adjustFactor, 0.0));\n"
+	"\tgl_FragColor = blendColor * texture2D(palette, vec2(index.a * scaleFactor + offsetFactor, 0.0));\n"
 	"}\n";
 
 } // End of anonymous namespace
