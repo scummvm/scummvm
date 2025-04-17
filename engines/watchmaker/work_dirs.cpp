@@ -22,6 +22,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 
 #include "watchmaker/work_dirs.h"
+
+#include "watchmaker/3d/loader.h"
 #include "watchmaker/ll/ll_system.h"
 
 namespace Watchmaker {
@@ -65,7 +67,9 @@ static bool readKeyValuePair(Common::SeekableReadStream &stream, Common::String 
 }
 
 WorkDirs::WorkDirs(const Common::String &filename) {
-	_fastFile = Common::SharedPtr<FastFile>(new FastFile(WmGameDataPak_FilePath));
+	if (LoaderFlags & T3D_FASTFILE) {
+		_fastFile = Common::SharedPtr<FastFile>(new FastFile(WmGameDataPak_FilePath));
+	}
 	auto fcfg = openFile(filename.c_str());
 	if (fcfg) {
 
