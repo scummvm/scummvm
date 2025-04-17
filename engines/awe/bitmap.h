@@ -19,26 +19,15 @@
  *
  */
 
-#include "awe/util.h"
+#ifndef AWE_BITMAP_H
+#define AWE_BITMAP_H
+
+#include "intern.h"
 
 namespace Awe {
 
-uint16_t g_debugMask;
-
-void string_lower(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'A' && *p <= 'Z') {
-			*p += 'a' - 'A';
-		}
-	}
-}
-
-void string_upper(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'a' && *p <= 'z') {
-			*p += 'A' - 'a';
-		}
-	}
-}
+uint8_t *decode_bitmap(const uint8_t *src, bool alpha, int colorKey, int *w, int *h);
 
 } // namespace Awe
+
+#endif

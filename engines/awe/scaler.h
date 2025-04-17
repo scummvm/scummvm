@@ -19,26 +19,27 @@
  *
  */
 
-#include "awe/util.h"
+#ifndef AWE_SCALER_H
+#define AWE_SCALER_H
+
+#include "awe/intern.h"
 
 namespace Awe {
 
-uint16_t g_debugMask;
+typedef void (*ScaleProc)(int factor, int byteDepth, uint8_t *dst, int dstPitch, const uint8_t *src, int srcPitch, int w, int h);
 
-void string_lower(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'A' && *p <= 'Z') {
-			*p += 'a' - 'A';
-		}
-	}
-}
+#define SCALER_TAG 1
 
-void string_upper(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'a' && *p <= 'z') {
-			*p += 'A' - 'a';
-		}
-	}
-}
+struct Scaler {
+	uint32_t tag;
+	const char *name;
+	int factorMin, factorMax;
+	int bpp;
+	ScaleProc scale;
+};
+
+const Scaler *findScaler(const char *name);
 
 } // namespace Awe
+
+#endif

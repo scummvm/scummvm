@@ -23,42 +23,36 @@
 #define AWE_AWE_H
 
 #include "common/scummsys.h"
+#include "common/random.h"
 #include "engines/engine.h"
 #include "awe/detection.h"
-#include "awe/intern.h"
-#include "awe/logic.h"
-#include "awe/resource.h"
-#include "awe/system_stub.h"
-#include "awe/video.h"
 
 namespace Awe {
 
-class AweEngine : public Engine {
+class AweEngine : public ::Engine {
 private:
 	const ADGameDescription *_gameDescription;
-
-private:
-	void setup();
-	void finish();
-	void processInput();
-
-public:
-	SystemStub *_stub;
-	Logic _log;
-	Resource _res;
-	Video _vid;
-	int _stateSlot = 0;
+	Common::RandomSource _random;
 
 public:
 	AweEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~AweEngine() override;
 
 	Common::Error run() override;
+#ifdef TODO
 	bool hasFeature(EngineFeature f) const override;
 	bool isDemo() const;
 
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+#endif
+
+	int getRandomNumber(int max) {
+		return _random.getRandomNumber(max);
+	}
+	int getRandomNumber(int min, int max) {
+		return min + _random.getRandomNumber(max - min);
+	}
 };
 
 extern AweEngine *g_engine;

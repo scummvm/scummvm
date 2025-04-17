@@ -19,26 +19,16 @@
  *
  */
 
-#include "awe/util.h"
+
+#ifndef AWE_UNPACK_H
+#define AWE_UNPACK_H
+
+#include "awe/intern.h"
 
 namespace Awe {
 
-uint16_t g_debugMask;
-
-void string_lower(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'A' && *p <= 'Z') {
-			*p += 'a' - 'A';
-		}
-	}
-}
-
-void string_upper(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'a' && *p <= 'z') {
-			*p += 'A' - 'a';
-		}
-	}
-}
+extern bool bytekiller_unpack(uint8_t *dst, int dstSize, const uint8_t *src, int srcSize);
 
 } // namespace Awe
+
+#endif

@@ -19,26 +19,42 @@
  *
  */
 
-#include "awe/util.h"
+#ifndef AWE_RESOURCE_WIN31_H
+#define AWE_RESOURCE_WIN31_H
+
+#include "awe/intern.h"
+#include "awe/file.h"
 
 namespace Awe {
 
-uint16_t g_debugMask;
+struct Win31BankEntry {
+	char name[16];
+	uint8_t type;
+	uint32_t offset;
+	uint32_t size;
+	uint32_t packedSize;
+};
 
-void string_lower(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'A' && *p <= 'Z') {
-			*p += 'a' - 'A';
-		}
-	}
-}
+struct ResourceWin31 {
+	static const char *FILENAME;
 
-void string_upper(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'a' && *p <= 'z') {
-			*p += 'A' - 'a';
-		}
-	}
-}
+	File _f;
+	const char *_dataPath;
+	Win31BankEntry *_entries;
+	int _entriesCount;
+	uint8_t *_textBuf;
+	const char *_stringsTable[614];
+
+	ResourceWin31(const char *dataPath);
+	~ResourceWin31();
+
+	bool readEntries();
+	uint8_t *loadFile(int num, uint8_t *dst, uint32_t *size);
+	void readStrings();
+	const char *getString(int num) const;
+	const char *getMusicName(int num) const;
+};
 
 } // namespace Awe
+
+#endif

@@ -19,26 +19,16 @@
  *
  */
 
-#include "awe/util.h"
+#ifndef AWE_SCREENSHOT_H
+#define AWE_SCREENSHOT_H
+
+#include "common/scummsys.h"
 
 namespace Awe {
 
-uint16_t g_debugMask;
-
-void string_lower(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'A' && *p <= 'Z') {
-			*p += 'a' - 'A';
-		}
-	}
-}
-
-void string_upper(char *p) {
-	for (; *p; ++p) {
-		if (*p >= 'a' && *p <= 'z') {
-			*p += 'A' - 'a';
-		}
-	}
-}
+void saveTGA(const char *filename, const uint16_t *rgb, int w, int h);
+void saveBMP(const char *filename, const uint8_t *bits, const uint8_t *pal, int w, int h);
 
 } // namespace Awe
+
+#endif
