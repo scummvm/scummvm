@@ -82,13 +82,16 @@ public:
 
 	Common::SharedPtr<Common::SeekableReadStream> resolveFile(const char *path, bool noFastFile = false);
 
-	void configLoaderFlags() {
+	void configLoaderFlags(bool debugMode) {
 		// TODO: Add back some of the configurability from the argument parsing.
 		LoadChar = 3;
 		LoaderFlags = T3D_STATIC_SET0;
 		LoaderFlags |= T3D_OUTDOORLIGHTS;
 		LoaderFlags |= T3D_PRELOADBASE;
 		LoaderFlags |= T3D_STATIC_SET1;
+		if (debugMode) {
+			LoaderFlags |= T3D_DEBUGMODE;
+		}
 
 		if (!(LoaderFlags & T3D_DEBUGMODE)) {
 			LoadChar = 3;
