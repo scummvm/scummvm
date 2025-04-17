@@ -3550,8 +3550,6 @@ void LB::b_castLib(int nargs) {
 }
 
 void LB::b_member(int nargs) {
-	Movie *movie = g_director->getCurrentMovie();
-
 	CastMemberID res;
 	if (nargs == 1) {
 		Datum member = g_lingo->pop();
@@ -3562,8 +3560,8 @@ void LB::b_member(int nargs) {
 		res = g_lingo->toCastMemberID(member, library);
 	}
 
-	if (!movie->getCastMember(res)) {
-		g_lingo->lingoError("No match found for cast member");
+	if (res.member > g_lingo->getMembersNum(res.castLib)) {
+		g_lingo->lingoError("b_member: Cast member ID out of range");
 		return;
 	}
 	g_lingo->push(res);
