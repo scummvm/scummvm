@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-16 09:49+0000\n"
+"POT-Creation-Date: 2025-04-17 07:34+0000\n"
 "PO-Revision-Date: 2024-12-25 11:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -10183,6 +10183,16 @@ msgstr "Αυτή η επιλογή μενού δεν έχει υλοποιηθε
 #: engines/plumbers/metaengine.cpp:51
 msgid "3DO Plumbers requires RGB support."
 msgstr "Η έκδοση του Plumbers για 3DO απαιτεί υποστήριξη RGB."
+
+#: engines/qdengine/dialogs.cpp:32
+#, fuzzy
+#| msgid "Enable the debug mode"
+msgid "Enable 16 bits per pixel mode"
+msgstr "Ενεργοποίηση της λειτουργίας αποσφαλμάτωσης (debug)"
+
+#: engines/qdengine/dialogs.cpp:32
+msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
+msgstr ""
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"

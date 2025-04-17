@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-16 09:49+0000\n"
+"POT-Creation-Date: 2025-04-17 07:34+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -9708,6 +9708,15 @@ msgstr ""
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
 msgid "3DO Plumbers requires RGB support."
+msgstr ""
+
+#: engines/qdengine/dialogs.cpp:32
+#, fuzzy
+msgid "Enable 16 bits per pixel mode"
+msgstr "Ativa vozes com hélio"
+
+#: engines/qdengine/dialogs.cpp:32
+msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
 msgstr ""
 
 #: engines/queen/metaengine.cpp:36
