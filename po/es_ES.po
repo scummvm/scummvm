@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-17 15:33+0000\n"
-"PO-Revision-Date: 2025-04-17 17:13+0000\n"
-"Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
+"PO-Revision-Date: 2025-04-17 18:21+0000\n"
+"Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -4185,7 +4185,7 @@ msgstr "Escalado pixel-perfect"
 #: backends/graphics3d/ios/ios-graphics3d.cpp:358
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:273
 msgid "Even pixels scaling"
-msgstr "Escalado pixel-perfect (sin corregir relación de aspecto)"
+msgstr "Escalado por números enteros"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:261
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:129
@@ -5249,7 +5249,7 @@ msgstr "Exportar copia de seguridad"
 #: backends/platform/android/options.cpp:192
 msgid "Export a backup of the configuration and save files"
 msgstr ""
-"Exportar una copia de seguridad de la configuración y las partidas guardadas"
+"Exporta una copia de seguridad de la configuración y las partidas guardadas"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import backup"
@@ -5257,7 +5257,7 @@ msgstr "Importar copia de seguridad"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import a previously exported backup file"
-msgstr "Importar una copia de seguridad previamente exportada"
+msgstr "Importa una copia de seguridad previamente exportada"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:196
@@ -5292,8 +5292,8 @@ msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
 msgstr ""
-"Al restaurar una copia de seguridad se eliminará la configuración actual y "
-"se sobrescribirán las partidas guardadas. ¿Seguro que quieres continuar?"
+"Al restaurar una copia de seguridad, se eliminará la configuración actual y "
+"se sobrescribirán las partidas guardadas. ¿Quieres continuar?"
 
 #: backends/platform/android/options.cpp:294
 msgid "Select backup file"
@@ -10094,12 +10094,13 @@ msgstr "Plumbers para 3DO require soporte para RGB."
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable 16 bits per pixel mode"
-msgstr "Activa el modo 16 bits por pixel"
+msgstr "Activa el modo a 16 bits por píxel"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
 msgstr ""
-"Activa esto si el backend no soporta 32bpp y/o para depuración de gráficos"
+"Activa esta opción si el back-end no es compatible con el modo a 32 bpp o "
+"para depurar gráficos"
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
