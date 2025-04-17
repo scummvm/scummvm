@@ -1554,7 +1554,7 @@ int MacText::getMouseChar(int x, int y) {
 	y += _scrollPos;
 
 	int dx, dy, row, col;
-	getRowCol(x, y, &dx, &dy, &row, &col);
+	getLineCharacter(x, y, &dx, &dy, &row, &col);
 	debug(5, "mouseChar: x: %d, y: %d, row: %d, col: %d", x, y, row, col);
 
 	int index = 1;
@@ -1576,7 +1576,7 @@ int MacText::getMouseWord(int x, int y) {
 	y += _scrollPos;
 
 	int dx, dy, row, col;
-	getRowCol(x, y, &dx, &dy, &row, &col);
+	getLineCharacter(x, y, &dx, &dy, &row, &col);
 
 	int index = 1;
 	bool inWhitespace = true;
@@ -1648,7 +1648,7 @@ int MacText::getMouseItem(int x, int y) {
 	y += _scrollPos;
 
 	int dx, dy, row, col;
-	getRowCol(x, y, &dx, &dy, &row, &col);
+	getLineCharacter(x, y, &dx, &dy, &row, &col);
 
 	// getMouseItem
 	// - starts from index 1
@@ -1706,7 +1706,7 @@ int MacText::getMouseLine(int x, int y) {
 	y += _scrollPos;
 
 	int dx, dy, row, col;
-	getRowCol(x, y, &dx, &dy, &row, &col);
+	getLineCharacter(x, y, &dx, &dy, &row, &col);
 
 	return row + 1;
 }
@@ -1718,7 +1718,7 @@ Common::U32String MacText::getMouseLink(int x, int y) {
 	y += _scrollPos;
 
 	int row, chunk;
-	getRowCol(x, y, nullptr, nullptr, &row, nullptr, &chunk);
+	getLineCharacter(x, y, nullptr, nullptr, &row, nullptr, &chunk);
 
 	if (chunk < 0)
 		return Common::U32String();
@@ -1809,6 +1809,42 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col, int 
 	if (chunk_)
 		*chunk_ = (int)chunk;
 }
+
+void MacText::getLineCharacter(int x, int y, int *sx, int *sy, int *line, int *character, int *chunk_) {
+	int nsx = 0, nsy = 0, nrow = 0, ncol = 0;
+	getRowCol(x, y, &nsx, &nsy, &nrow, &ncol, chunk_);
+
+	int nline = 0, ncharacter = 0;
+	// Determine the position in character space, taking into account newlines.
+	for (int i = 0; i < nrow; i++) {
+		if (_canvas._text[i].paragraphEnd) {
+			nline += 1;
+			ncharacter = 0;
+		} else {
+			for (auto &it : _canvas._text[i].chunks) {
+				ncharacter += it.text.size();
+			}
+		}
+	}
+
+
+	for (int i = 0; i < _canvas._text[nrow].chunks.size(); i++) {
+		Common::U32String &text =  _canvas._text[nrow].chunks[i].text;
+		if (ncol > text.size()) {
+			ncol -= text.size();
+			ncharacter += text.size();
+		} else {
+			ncharacter += ncol;
+		}
+	}
+
+	if (line)
+		*line = nline;
+	if (character)
+		*character = ncharacter;
+}
+
+
 
 Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {
 	return _canvas.getTextChunk(startRow, startCol, endRow, endCol, formatted, newlines);
