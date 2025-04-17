@@ -216,6 +216,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "giggletour",			"The Gigglebone Gang World Tour" },
 	{ "gigglevania",		"Pantsylvania: The Kingdom of the Fancy Pants" },
 	{ "goferwinkel",		"Goferwinkel's Adventures: The Lavender Land" },
+	{ "goldendolphin",		"Search for the Golden Dolphin" },
 	{ "goldilocks",			"Goldilocks Gamebook" },
 	{ "gordak",				"Gord@k" },
 	{ "gothos",				"Gothos" },
@@ -8963,6 +8964,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("glitzerschuppen", "", "GLITZERSCHUPPEN",	 "r:dec72b4b6f8e97f1ea24361794bf0bdf", 116459, Common::DE_DEU, 702),
 	WINGAME1_l("glitzerschuppen", "", "Glitzerschuppen.exe", "t:b04230237024e1c8e7f4d3920acba08a", 1820762, Common::DE_DEU, 702),
+
+	WINGAME1("goldendolphin", "", "files/Golden Dolphin/dolphin.exe", "t:f7faf63f4a68592cc83206874a89b54b", 2148101, 702),
+	MACGAME1("goldendolphin", "", "files/macinstall/Dolphin", "tr:fea0a7666493192c59b2051dd8485fe5", 114553, 702),
 
 	// Found on アクティブマスコット・ハイジ (Heidi Desktop Mascot) software from Inner Brain, Shinjuku, Tokyo
 	// Installers for the screen savers and other applications also use Director
