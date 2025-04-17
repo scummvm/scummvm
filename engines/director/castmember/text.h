@@ -47,7 +47,7 @@ public:
 
 	bool isEditable() override { return _editable; }
 	void setEditable(bool editable) override { _editable = editable; }
-	void updateFromWidget(Graphics::MacWidget *widget) override;
+	void updateFromWidget(Graphics::MacWidget *widget, bool spriteEditable) override;
 	Graphics::TextAlign getAlignment();
 
 	uint32 getBackColor() override { return _bgcolor; }

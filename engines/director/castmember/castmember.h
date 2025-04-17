@@ -66,7 +66,7 @@ public:
 	void setModified(bool modified);
 	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) { return nullptr; }
 	virtual void updateWidget(Graphics::MacWidget *widget, Channel *channel) {}
-	virtual void updateFromWidget(Graphics::MacWidget *widget) {}
+	virtual void updateFromWidget(Graphics::MacWidget *widget, bool spriteEditable) {}
 	virtual Common::Rect getInitialRect() { return _initialRect; }
 
 	virtual void setColors(uint32 *fgcolor, uint32 *bgcolor) { return; }
