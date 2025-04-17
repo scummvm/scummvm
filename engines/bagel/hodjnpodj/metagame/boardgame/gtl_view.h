@@ -23,6 +23,8 @@
 #define HODJNPODJ_METAGAME_BGEN_GTL_VIEW_H
 
 #include "bagel/hodjnpodj/views/view.h"
+#include "bagel/hodjnpodj/metagame/bgen/bs_util.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -31,56 +33,42 @@ namespace Metagame {
 
 class CGtlView : public View {
 	friend class CGtlData;
-#ifdef TODO
-protected: // create from serialization only
-	CGtlView() : View() {}
 
 	// Attributes
 public:
-	CBsuSet m_cViewBsuSet;	// boffo scroll bar set for windows
+	CBsuSet m_cViewBsuSet;				// boffo scroll bar set for windows
 
 	Common::Point m_cCurrentPosition;	// current mouse position
 	bool m_bBsuInit = false;
+#ifdef TODO
 	CGtlFrame *m_xpFrame = false;	// pointer to frame window
-
-	// Operations
-public:
-	class CGtlDoc *GetDocument();
-	void UpdateDialogs(void);
-	void OnSoundNotify(CBofSound *);
-
-	//- OnUpdate -- called when document changes to update view
-	virtual void OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint);
-	//- OnDraw -- draw current view
-	virtual void OnDraw(CDC *xpDc);
+#endif
 
 private:
 	//- OnInitialUpdate -- 
 	void OnInitialUpdate(void);
 
-#ifdef NODEEDIT
-	//- CheckSize -- check window size, adjust if necessary
-	bool CheckSize(void);
-#endif
-
 protected:
 	//- PreCreateWindow -- change view window style
-	bool PreCreateWindow(CREATESTRUCT &cCs);
+	//bool PreCreateWindow(CREATESTRUCT &cCs);
 
-	// Implementation
 public:
+	CGtlView() : View("GtlView") {}
 	virtual ~CGtlView();
 
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext &dc) const;
-#endif
+	void FlushInputEvents(void);
 
-public: void FlushInputEvents(void);
+	class CGtlDoc *GetDocument();
+	void UpdateDialogs(void);
+	void OnSoundNotify(CBofSound *);
 
+	//- OnUpdate -- called when document changes to update view
+	virtual void OnUpdate(CView *xpSender, int lHint, CObject *xpHint);
+	//- OnDraw -- draw current view
+	virtual void OnDraw(CDC *xpDc);
 
-	  // Generated message map functions
-protected:
+	// Generated message map functions
+#ifdef TODO
 	//{{AFX_MSG(CGtlView)
 	void OnKeyDown(uint nChar, uint nRepCnt, uint nFlags);
 	void OnSysKeyDown(uint nChar, uint nRepCnt, uint nFlags);

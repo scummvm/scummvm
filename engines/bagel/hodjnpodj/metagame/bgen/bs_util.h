@@ -26,6 +26,7 @@
 #include "common/rect.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/hodjnpodj/gfx/scrollbar.h"
+#include "bagel/hodjnpodj/views/view.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -113,7 +114,7 @@ public:
 	~CBsuSet();
 //- InitWndBsuSet -- initialize bsu set for a window
 public:
-	bool InitWndBsuSet(CWnd *xpWnd,
+	bool InitWndBsuSet(View *xpWnd,
 		bool bScrollView PDFT(false), bool bScrollBars PDFT(false),
 	CBsuSet * xpLinkSet PDFT(nullptr)) ;
 //- InitDlgBsuSet -- initialize bsu set for dialog box
