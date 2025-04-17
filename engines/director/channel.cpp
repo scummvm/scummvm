@@ -663,7 +663,7 @@ bool Channel::updateWidget() {
 	}
 	if (_widget && _widget->needsRedraw()) {
 		if (_sprite->_cast) {
-			_sprite->_cast->updateFromWidget(_widget);
+			_sprite->_cast->updateFromWidget(_widget, _sprite->_editable);
 		}
 		_widget->draw();
 		return true;
