@@ -609,8 +609,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		}
 		break;
 	case kTheKey:
-		d.type = STRING;
-		d.u.s = new Common::String(movie->_key);
+		if (movie->_key < 0x80) {
+			d = Common::String::format("%c", (char)movie->_key);
+		} else {
+			d = Common::String();
+		}
 		break;
 	case kTheKeyCode:
 		d = movie->_keyCode;
@@ -621,6 +624,13 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 			d.u.s = new Common::String(mainArchive->primaryEventHandlers[kEventKeyDown]);
 		else
 			d.u.s = new Common::String();
+		break;
+	case kTheKeyPressed:
+		{
+			Common::U32String buf;
+			buf.insertChar(movie->_key, 0);
+			d = buf.encode();
+		}
 		break;
 	case kTheKeyUpScript:
 		d.type = STRING;

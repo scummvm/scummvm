@@ -173,7 +173,7 @@ public:
 	int _nextEventId;
 	Common::Queue<LingoEvent> _inputEventQueue;
 
-	unsigned char _key;
+	uint16 _key;
 	int _keyCode;
 	byte _keyFlags;
 
