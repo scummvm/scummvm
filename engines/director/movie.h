@@ -115,6 +115,7 @@ public:
 	bool duplicateCastMember(CastMemberID source, CastMemberID target);
 	CastMemberID getCastMemberIDByMember(int memberID);
 	int getCastLibIDByName(const Common::String &name);
+	void setCastLibName(const Common::String &name, int castLib);
 	CastMemberID getCastMemberIDByName(const Common::String &name);
 	CastMemberID getCastMemberIDByNameAndType(const Common::String &name, int castLib, CastType type);
 	CastMemberInfo *getCastMemberInfo(CastMemberID memberID);
