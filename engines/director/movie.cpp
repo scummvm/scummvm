@@ -557,6 +557,21 @@ int Movie::getCastLibIDByName(const Common::String &name) {
 	return -1;
 }
 
+void Movie::setCastLibName(const Common::String &name, int castLib) {
+	if (!_casts.contains(castLib)) {
+		warning("Movie::setCastLibName: castLib %d not found", castLib);
+		return;
+	}
+	for (auto &it : _castNames) {
+		if (it._value == castLib) {
+			_castNames.erase(it._key);
+		}
+	}
+
+	_castNames[name] = castLib;
+	_casts[castLib]->setCastName(name);
+}
+
 CastMemberID Movie::getCastMemberIDByName(const Common::String &name) {
 	return getCastMemberIDByNameAndType(name, 0, kCastTypeAny);
 }

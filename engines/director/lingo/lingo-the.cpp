@@ -2082,7 +2082,7 @@ void Lingo::setTheCastLib(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheName:
-		warning("STUB: Lingo::setTheCastLib(): name not implemented");
+		movie->setCastLibName(d.asString(), id1.u.i);
 		break;
 	case kTheNumber:
 		warning("Lingo::setTheCastLib(): number is read-only");
