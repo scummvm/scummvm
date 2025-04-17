@@ -438,6 +438,9 @@ void Window::updateBorderType() {
 }
 
 void Window::loadNewSharedCast(Cast *previousSharedCast) {
+	if (g_director->getVersion() >= 500)
+		return;
+
 	Common::Path previousSharedCastPath;
 	Common::Path newSharedCastPath = getSharedCastPath();
 	if (previousSharedCast && previousSharedCast->getArchive()) {
@@ -530,7 +533,8 @@ bool Window::loadNextMovie() {
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	g_director->setCurrentWindow(this);
-	loadNewSharedCast(previousSharedCast);
+	if (g_director->getVersion() < 500)
+		loadNewSharedCast(previousSharedCast);
 
 	return true;
 }
@@ -644,9 +648,6 @@ Common::Path Window::getSharedCastPath() {
 		}
 	} else if (_vm->getVersion() < 500) {
 		namesToTry.push_back("Shared.dir");
-	} else {
-		// TODO: Does D5 actually support D4-style shared cast?
-		namesToTry.push_back("Shared.cst");
 	}
 
 	Common::Path result;
@@ -732,11 +733,14 @@ void Window::moveLingoState(Window *target) {
 uint32 Window::frozenLingoRecursionCount() {
 	uint32 count = 0;
 
+	bool stepFrameCanRecurse = _vm->getVersion() < 500;
+
 	for (int i = (int)_frozenLingoStates.size() - 1; i >= 0; i--) {
 		LingoState *state = _frozenLingoStates[i];
 		CFrame *frame = state->callstack.front();
 		if (frame->sp.name->equalsIgnoreCase("enterFrame") ||
-				frame->sp.name->equalsIgnoreCase("stepMovie")) {
+				frame->sp.name->equalsIgnoreCase("stepMovie") ||
+				(!stepFrameCanRecurse && frame->sp.name->equalsIgnoreCase("stepFrame"))) {
 			count++;
 		} else {
 			break;

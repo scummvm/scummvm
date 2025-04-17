@@ -622,17 +622,20 @@ void Score::update() {
 
 	uint32 count = _window->frozenLingoStateCount();
 
-	// new frame, first call the perFrameHook (if one exists)
-	if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
-		// Call the perFrameHook as soon as a frame switch is done.
-		// If there is a transition, the perFrameHook is called
-		// after each transition subframe instead of here.
-		if (_currentFrame->_mainChannels.transType == 0 && _currentFrame->_mainChannels.trans.isNull()) {
-			_lingo->executePerFrameHook(_curFrameNumber, 0);
+	// Director 4 and below will allow infinite recursion via the perFrameHook.
+	if (_vm->getVersion() < 500) {
+		// new frame, first call the perFrameHook (if one exists)
+		if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
+			// Call the perFrameHook as soon as a frame switch is done.
+			// If there is a transition, the perFrameHook is called
+			// after each transition subframe instead of here.
+			if (_currentFrame->_mainChannels.transType == 0 && _currentFrame->_mainChannels.trans.isNull()) {
+				_lingo->executePerFrameHook(_curFrameNumber, 0);
+			}
 		}
+		if (_window->frozenLingoStateCount() > count)
+			return;
 	}
-	if (_window->frozenLingoStateCount() > count)
-		return;
 
 	// Check to see if we've hit the recursion limit
 	if (_vm->getVersion() >= 400 && _window->frozenLingoRecursionCount() >= 2) {
@@ -643,6 +646,21 @@ void Score::update() {
 		warning("Score::update(): Stopping runaway script recursion. By this point D3 will have run out of stack space");
 		processFrozenScripts();
 		return;
+	}
+
+	// Director 5 and above actually check for recursion for the perFrameHook.
+	if (_vm->getVersion() >= 500) {
+		// new frame, first call the perFrameHook (if one exists)
+		if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
+			// Call the perFrameHook as soon as a frame switch is done.
+			// If there is a transition, the perFrameHook is called
+			// after each transition subframe instead of here.
+			if (_currentFrame->_mainChannels.transType == 0 && _currentFrame->_mainChannels.trans.isNull()) {
+				_lingo->executePerFrameHook(_curFrameNumber, 0);
+			}
+		}
+		if (_window->frozenLingoStateCount() > count)
+			return;
 	}
 
 	if (_vm->getVersion() >= 600) {
