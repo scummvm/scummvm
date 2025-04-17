@@ -359,7 +359,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xfe, o5_walkActorTo);
 	OPCODE(0xff, o5_drawBox);
 
-	if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && enhancementEnabled(kEnhMinorBugFixes)) {
+	if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && _language == Common::EN_ANY && enhancementEnabled(kEnhMinorBugFixes)) {
 		OPCODE(0x1a, o5_move_segafix);
 	}
 }
