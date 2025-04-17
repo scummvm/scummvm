@@ -384,7 +384,11 @@ CollisionTest TextCastMember::isWithin(const Common::Rect &bbox, const Common::P
 	if (!bbox.contains(pos))
 		return kCollisionNo;
 
-	Graphics::MacWindowConstants::WindowClick result = getWidget()->isInScrollBar(pos.x, pos.y);
+	Graphics::MacText *target = getWidget();
+	if (!target)
+		return kCollisionYes;
+
+	Graphics::MacWindowConstants::WindowClick result = target->isInScrollBar(pos.x, pos.y);
 	if (result == Graphics::MacWindowConstants::kBorderScrollDown ||
 			result == Graphics::MacWindowConstants::kBorderScrollUp)
 		return kCollisionHole;
