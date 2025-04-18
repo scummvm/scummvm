@@ -1477,9 +1477,6 @@ void QuickTimeDecoder::cleanupCursors() {
 }
 
 void QuickTimeDecoder::setCursor(int curId) {
-	if (_currentQTVRCursor == curId)
-		return;
-
 	_currentQTVRCursor = curId;
 
 	if (!_dataBundle) {
