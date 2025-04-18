@@ -28,8 +28,8 @@ namespace Watchmaker {
 
 #define JParse_EOF()    (_stream->eos())
 
-int NLParser::MatchWord(char *token) {
-	char *str = token;
+int NLParser::MatchWord(const char *token) {
+	const char *str = token;
 	while (!JParse_EOF() && (*str) != 0) {
 		if (JParse_ReadByte() != *str)
 			str = token;

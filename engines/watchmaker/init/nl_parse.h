@@ -65,7 +65,7 @@ public:
 		return 1;
 	}
 
-	int MatchWord(char *token);
+	int MatchWord(const char *token);
 
 #define EOF_PARSED    -2
 };

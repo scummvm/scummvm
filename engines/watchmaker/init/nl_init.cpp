@@ -67,7 +67,7 @@ typedef struct {
 	unsigned int value;
 } TOKEN;                                // 32 bytes
 
-int SaveTextTable(char *name);
+int SaveTextTable(const char *name);
 
 #define AddSound2Room(inx,val)  \
 	{   \
@@ -1611,8 +1611,9 @@ int StructureInitializer::ParseCredits(char *s) {
 	return TRUE;
 }
 
-int SaveTextTable(char *name) {
+int SaveTextTable(const char *name) {
 	warning("TODO: Implement SaveTextTable(%s)", name);
+	return 0;
 }
 
 
