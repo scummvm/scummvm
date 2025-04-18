@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-17 22:19+0000\n"
-"PO-Revision-Date: 2025-04-07 14:56+0000\n"
+"PO-Revision-Date: 2025-04-18 20:18+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -5259,19 +5259,19 @@ msgstr "Dans les jeux"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export backup"
-msgstr ""
+msgstr "Exporter une sauvegarde"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export a backup of the configuration and save files"
-msgstr ""
+msgstr "Exporte une sauvegarde des fichiers de configuration et de sauvegarde"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import backup"
-msgstr ""
+msgstr "Importer une sauvegarde"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import a previously exported backup file"
-msgstr ""
+msgstr "Importe un fichier de sauvegarde précédemment exporté"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:196
@@ -5279,53 +5279,45 @@ msgid "Remove folder authorizations..."
 msgstr "Supprimer les autorisations des dossiers..."
 
 #: backends/platform/android/options.cpp:268
-#, fuzzy
-#| msgid "Select the orientation:"
 msgid "Select backup destination"
-msgstr "Choix de l'orientation :"
+msgstr "Sélectionner la destination de la sauvegarde"
 
 #: backends/platform/android/options.cpp:276
 msgid "The backup has been saved successfully."
-msgstr ""
+msgstr "La sauvegarde a été faite avec succès."
 
 #: backends/platform/android/options.cpp:278
 msgid "The backup has been saved successfully to the Downloads folder."
-msgstr ""
+msgstr "La sauvegarde a été faite avec succès dans le dossier Downloads."
 
 #: backends/platform/android/options.cpp:280
 #: backends/platform/android/options.cpp:313
-#, fuzzy
-#| msgid "the shader could not be changed"
 msgid "The game saves couldn't be backed up"
-msgstr "le shader n'a pu être changé"
+msgstr "Les parties sauvegardées n'ont pas pu être sauvées"
 
 #: backends/platform/android/options.cpp:282
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while saving the backup."
-msgstr "Une erreur s'est produite lors de l'écriture de la sauvegarde"
+msgstr "Une erreur s'est produite lors de la sauvegarde."
 
 #: backends/platform/android/options.cpp:289
 msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
 msgstr ""
+"Restaurer une sauvegarde efface la configuration actuelle et écrase les "
+"parties sauvegardées. Voulez-vous continuer ?"
 
 #: backends/platform/android/options.cpp:294
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select backup file"
-msgstr "Sélectionnez un Thème"
+msgstr "Sélectionnez une sauvegarde"
 
 #: backends/platform/android/options.cpp:311
 msgid "The backup has been restored successfully."
-msgstr ""
+msgstr "La sauvegarde a été restaurée avec succès."
 
 #: backends/platform/android/options.cpp:315
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while restoring the backup."
-msgstr "Une erreur s'est produite lors de l'écriture de la sauvegarde"
+msgstr "Une erreur s'est produite lors de la restauration de la sauvegarde."
 
 #: backends/platform/android/options.cpp:559
 msgid "Remove"
@@ -10123,14 +10115,14 @@ msgid "3DO Plumbers requires RGB support."
 msgstr "Plumbers 3DO nécessite le support du RGB."
 
 #: engines/qdengine/dialogs.cpp:32
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable 16 bits per pixel mode"
-msgstr "Active le mode de débogage"
+msgstr "Activer le mode 16 bits par pixel"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
 msgstr ""
+"Activez cette option si le backend ne supporte pas 32bpp et/ou pour déboguer "
+"les graphismes"
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
