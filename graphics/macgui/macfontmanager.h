@@ -232,7 +232,7 @@ private:
 	int parseFontSlant(Common::String slant);
 
 	/* Unicode font */
-	Common::HashMap<int, const Graphics::Font *> _uniFonts;
+	Common::HashMap<Common::String, const Graphics::Font *> _uniFontRegistry;
 
 	Common::HashMap<Common::String, Common::SeekableReadStream *> _ttfData;
 };

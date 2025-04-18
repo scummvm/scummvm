@@ -184,7 +184,7 @@ MacFontManager::MacFontManager(uint32 mode, Common::Language language) : _mode(m
 MacFontManager::~MacFontManager() {
 	for (auto &it: _fontInfo)
 		delete it._value;
-	for (auto &it: _uniFonts)
+	for (auto &it: _uniFontRegistry)
 		delete it._value;
 	for (auto &it: _ttfData)
 		delete it._value;
@@ -558,32 +558,26 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 
 #ifdef USE_FREETYPE2
 	if (!font && !(_mode & MacGUIConstants::kWMModeForceMacFonts)) {
-		if (_mode & kWMModeUnicode) {
+
+		if (_uniFontRegistry.contains(macFont->getName())) { 
+			return _uniFontRegistry[macFont->getName()];
+		}
+
+		// If font is not present in the registry, try to load and store it
+		int newId = macFont->getId();
+		int newSlant = macFont->getSlant();
+		int familyId = getFamilyId(newId, newSlant);
+
+		if ((_mode & kWMModeUnicode) && (_mode & kWMModeForceMacFontsInWin95)) {
 			if (macFont->getSize() <= 0) {
 				debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont() - Font size <= 0!");
 			}
-			Common::HashMap<int, const Graphics::Font *>::iterator pFont = _uniFonts.find(macFont->getSize());
-
-			if (pFont != _uniFonts.end()) {
-				font = pFont->_value;
-			} else {
-				int newId = macFont->getId();
-				int newSlant = macFont->getSlant();
-				int familyId = getFamilyId(newId, newSlant);
-				if (_fontInfo.contains(familyId) && !(_mode & kWMModeForceMacFontsInWin95)) {
-					font = Graphics::loadTTFFontFromArchive(_fontInfo[familyId]->name, macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
-					_uniFonts[macFont->getSize()] = font;
-				} else {
-					font = Graphics::loadTTFFontFromArchive("LiberationSans-Regular.ttf", macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
-					_uniFonts[macFont->getSize()] = font;
-				}
-			}
-		} else {
-			int newId = macFont->getId();
-			int newSlant = macFont->getSlant();
-			int familyId = getFamilyId(newId, newSlant);
+			font = Graphics::loadTTFFontFromArchive("LiberationSans-Regular.ttf", macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
+			_uniFontRegistry.setVal(macFont->getName(), font);
+		}
+		else if (_fontInfo.contains(familyId)) {
 			font = Graphics::loadTTFFontFromArchive(_fontInfo[familyId]->name, macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
-			_uniFonts[macFont->getSize()] = font;
+			_uniFontRegistry.setVal(macFont->getName(), font);
 		}
 	}
 #endif
