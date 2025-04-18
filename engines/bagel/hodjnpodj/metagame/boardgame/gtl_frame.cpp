@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/hodjnpodj/metagame/boardgame/boardgame.h"
+#include "bagel/hodjnpodj/metagame/boardgame/gtl_frame.h"
 #include "bagel/hodjnpodj/metagame/boardgame/backpack.h"
 #include "bagel/hodjnpodj/metagame/boardgame/general_store.h"
 #include "bagel/hodjnpodj/metagame/boardgame/notebook.h"
@@ -33,39 +33,39 @@ namespace HodjNPodj {
 namespace Metagame {
 
 CGtlApp *AfxGetApp() {
-	Boardgame *view = dynamic_cast<Boardgame *>(
+	CGtlFrame *view = dynamic_cast<CGtlFrame *>(
 		g_events->findView("Boardgame"));
 	assert(view);
 	return &view->_app;
 }
 
-Boardgame::Boardgame() : SpritesView("Boardgame", "") {
+CGtlFrame::CGtlFrame() : SpritesView("Boardgame", "") {
 	// TODO: Move this to msgOpen
 	_doc.onNewDocument();
 }
 
-Boardgame::~Boardgame() {
+CGtlFrame::~CGtlFrame() {
 	// TODO: Move this to msgClose
 	_doc.deleteContents();
 }
 
-bool Boardgame::msgOpen(const OpenMessage &msg) {
+bool CGtlFrame::msgOpen(const OpenMessage &msg) {
 
 	return true;
 }
 
-bool Boardgame::msgClose(const CloseMessage &msg) {
+bool CGtlFrame::msgClose(const CloseMessage &msg) {
 	return true;
 }
 
-bool Boardgame::msgAction(const ActionMessage &msg) {
+bool CGtlFrame::msgAction(const ActionMessage &msg) {
 	if (!isInputAllowed())
 		return false;
 
 	return false;
 }
 
-bool Boardgame::msgKeypress(const KeypressMessage &msg) {
+bool CGtlFrame::msgKeypress(const KeypressMessage &msg) {
 	if (!isInputAllowed())
 		return false;
 
@@ -93,20 +93,20 @@ bool Boardgame::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
-bool Boardgame::msgGame(const GameMessage &msg) {
+bool CGtlFrame::msgGame(const GameMessage &msg) {
 	return false;
 }
 
-void Boardgame::draw() {
+void CGtlFrame::draw() {
 	GfxSurface s = getSurface();
 	s.clear();
 }
 
-void Boardgame::showClue(CNote *note) {
+void CGtlFrame::showClue(CNote *note) {
 	Notebook::show(NULL, note);
 }
 
-void Boardgame::showInventory(int nWhichDlg) {
+void CGtlFrame::showInventory(int nWhichDlg) {
 	CHodjPodj *pPlayer;
 
 	// which player
@@ -141,7 +141,7 @@ void Boardgame::showInventory(int nWhichDlg) {
 	}
 }
 
-bool Boardgame::isInputAllowed() const {
+bool CGtlFrame::isInputAllowed() const {
 	return true;
 }
 

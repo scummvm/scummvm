@@ -26,7 +26,7 @@
 #include "bagel/hodjnpodj/views/main_menu.h"
 #include "bagel/hodjnpodj/views/message_box.h"
 #include "bagel/hodjnpodj/metagame/boardgame/backpack.h"
-#include "bagel/hodjnpodj/metagame/boardgame/boardgame.h"
+#include "bagel/hodjnpodj/metagame/boardgame/gtl_frame.h"
 #include "bagel/hodjnpodj/metagame/boardgame/boardgame_options.h"
 #include "bagel/hodjnpodj/metagame/boardgame/general_store.h"
 #include "bagel/hodjnpodj/metagame/boardgame/minimap.h"
@@ -51,7 +51,7 @@ struct Views {
 	Rules _rules;
 	Metagame::BoardgameOptions _boardgameOptions;
 	Metagame::Backpack _backpack;
-	Metagame::Boardgame _boardgame;
+	Metagame::CGtlFrame _boardgame;
 	Metagame::GeneralStore _generalStore;
 	Metagame::Minimap _minimap;
 	Metagame::Notebook _notebook;

@@ -20,7 +20,7 @@
  */
 
 #include "bagel/hodjnpodj/metagame/boardgame/gtl_data.h"
-#include "bagel/hodjnpodj/metagame/boardgame/boardgame.h"
+#include "bagel/hodjnpodj/metagame/boardgame/gtl_frame.h"
 #include "bagel/hodjnpodj/metagame/bgen/bgen.h"
 
 namespace Bagel {

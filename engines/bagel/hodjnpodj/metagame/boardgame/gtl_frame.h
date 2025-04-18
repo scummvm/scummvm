@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HODJNPODJ_METAGAME_BOARDGAME_H
-#define HODJNPODJ_METAGAME_BOARDGAME_H
+#ifndef HODJNPODJ_METAGAME_GTL_FRAME_H
+#define HODJNPODJ_METAGAME_GTL_FRAME_H
 
 #include "bagel/hodjnpodj/views/sprites_view.h"
 #include "bagel/hodjnpodj/metagame/boardgame/gtl_app.h"
@@ -37,7 +37,7 @@ enum DialogId {
 	kDialogBlackMarket = 4
 };
 
-class Boardgame : public SpritesView {
+class CGtlFrame : public SpritesView {
 private:
 	bool bJustReturned = false;
 
@@ -50,8 +50,8 @@ public:
 	CGtlDoc _doc;
 
 public:
-	Boardgame();
-	~Boardgame() override;
+	CGtlFrame();
+	~CGtlFrame() override;
 
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgClose(const CloseMessage &msg) override;
