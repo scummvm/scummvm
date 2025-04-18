@@ -1143,6 +1143,9 @@ QtvrxtraWidget::QtvrxtraWidget(QtvrxtraXtraObject *xtra, Graphics::MacWidget *pa
 }
 
 bool QtvrxtraWidget::processEvent(Common::Event &event) {
+	if (!_xtra->_visible)
+		return false;
+
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
 		if (_xtra->_mouseDownHandler.empty()) {
