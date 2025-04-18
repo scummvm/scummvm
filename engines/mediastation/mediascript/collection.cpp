@@ -29,105 +29,145 @@ namespace MediaStation {
 
 ScriptValue Collection::callMethod(BuiltInMethod method, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
-
 	switch (method) {
-	case kIsEmptyMethod: {
-		returnValue.setToBool(empty());
-		return returnValue;
-	}
-
-	case kAppendMethod: {
-		for (ScriptValue arg : args) {
-			push_back(arg);
+	case kAppendMethod:
+		for (ScriptValue value : args) {
+			push_back(value);
 		}
-		return returnValue;
-	}
+		break;
 
-	case kDeleteFirstMethod: {
+	case kApplyMethod:
+		apply(args);
+		break;
+
+	case kCountMethod:
+		assert(args.empty());
+		returnValue.setToFloat(size());
+		break;
+
+	case kDeleteFirstMethod:
+		assert(args.empty());
 		returnValue = remove_at(0);
-		return returnValue;
-	}
+		break;
 
-	case kDeleteAtMethod: {
-		// Find the item in the collection, then remove and return it.
-		assert(args.size() == 1);
-		for (uint i = 0; i < size(); i++) {
-			if (args[0] == operator[](i)) {
-				returnValue = remove_at(i);
-				return returnValue;
-			}
-		}
+	case kDeleteLastMethod:
+		assert(args.empty());
+		returnValue = remove_at(size() - 1);
+		break;
 
-		// The item wasn't found.
-		return returnValue;
-	}
-
-	case kCountMethod: {
-		double size = static_cast<double>(this->size());
-		returnValue.setToFloat(size);
-		return returnValue;
-	}
+	case kEmptyMethod:
+		assert(args.empty());
+		clear();
+		break;
 
 	case kGetAtMethod: {
 		assert(args.size() == 1);
 		uint index = static_cast<uint>(args[0].asFloat());
 		returnValue = operator[](index);
-		return returnValue;
+		break;
 	}
 
-	case kSendMethod: {
-		// Call a method on each item in the collection.
-		BuiltInMethod methodToSend = static_cast<BuiltInMethod>(args[0].asMethodId());
-		Common::Array<ScriptValue> sendArgs;
-		for (uint i = 0; i < size(); i++) {
-			ScriptValue self = operator[](i);
+	case kIsEmptyMethod:
+		assert(args.empty());
+		returnValue.setToBool(empty());
+		break;
 
-			uint assetId = self.asAssetId();
-			Asset *selfAsset = g_engine->getAssetById(assetId);
-			if (selfAsset != nullptr) {
-				Common::Array<ScriptValue> emptyArgs;
-				returnValue = selfAsset->callMethod(methodToSend, emptyArgs);
-			}
-		}
-		return returnValue;
-	}
+	case kJumbleMethod:
+		assert(args.empty());
+		jumble();
+		break;
 
 	case kSeekMethod: {
-		// Find the item in the collection if it exists.
 		assert(args.size() == 1);
-		for (uint i = 0; i < size(); i++) {
-			if (args[0] == operator[](i)) {
-				return operator[](i);
-			}
-		}
-
-		// The item wasn't found.
-		returnValue.setToFloat(-1.0);
-		return returnValue;
+		int index = seek(args[0]);
+		returnValue.setToFloat(index);
+		break;
 	}
 
-	case kJumbleMethod: {
-		// Scramble the items in the collection.
-		for (uint i = size() - 1; i > 0; --i) {
-			uint j = g_engine->_randomSource.getRandomNumber(size() - 1);
-			SWAP(operator[](i), operator[](j));
-		}
-		return returnValue;
+	case kSendMethod:
+		send(args);
+		break;
+
+	case kDeleteAtMethod: {
+		assert(args.size() == 1);
+		uint index = static_cast<uint>(args[0].asFloat());
+		returnValue = remove_at(index);
+		break;
 	}
 
-	case kSortMethod: {
+	case kInsertAtMethod: {
+		assert(args.size() == 2);
+		uint index = static_cast<uint>(args[1].asFloat());
+		insert_at(index, args[0]);
+		break;
+	}
+
+	case kReplaceAtMethod: {
+		assert(args.size() == 2);
+		uint index = static_cast<uint>(args[1].asFloat());
+		operator[](index) = args[0];
+		break;
+	}
+
+	case kPrependListMethod:
+		insert_at(0, args);
+		break;
+
+	case kSortMethod:
 		assert(args.empty());
 		Common::sort(begin(), end());
-		return returnValue;
-	}
-
-	case kEmptyMethod: {
-		clear();
-		return returnValue;
-	}
+		break;
 
 	default:
-		error("Collection::callMethod(): Attempt to call unimplemented method %s (%d)", builtInMethodToStr(method), static_cast<uint>(method));
+		error("Attempt to call unimplemented method %s (%d)", builtInMethodToStr(method), static_cast<uint>(method));
+	}
+	return returnValue;
+}
+
+void Collection::apply(const Common::Array<ScriptValue> &args) {
+	// Calls a function with each element of the collection as the first arg.
+	Common::Array<ScriptValue> argsToApply = args;
+	uint functionId = args[0].asFunctionId();
+	for (const ScriptValue &item : *this) {
+		argsToApply[0] = item;
+		// TODO: Need to create and call FunctionManager.
+		warning("Applying function %d not implemented", functionId);
+	}
+}
+
+void Collection::send(const Common::Array<ScriptValue> &args) {
+	Common::Array<ScriptValue> argsToSend(args.size() - 1);
+	if (argsToSend.size() > 0) {
+		for (uint i = 1; i < args.size(); i++) {
+			argsToSend[i - 1] = args[i];
+		}
+	}
+
+	BuiltInMethod methodToSend = static_cast<BuiltInMethod>(args[0].asMethodId());
+	Common::Array<ScriptValue> sendArgs;
+	for (const ScriptValue &item : *this) {
+		uint assetId = item.asAssetId();
+		Asset *targetAsset = g_engine->getAssetById(assetId);
+		if (targetAsset != nullptr) {
+			targetAsset->callMethod(methodToSend, argsToSend);
+		}
+	}
+}
+
+int Collection::seek(const ScriptValue &item) {
+	// Search from back to front.
+	for (int i = size() - 1; i >= 0; i--) {
+		if (item == operator[](i)) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+void Collection::jumble() {
+	for (uint i = size() - 1; i > 0; --i) {
+		uint j = g_engine->_randomSource.getRandomNumber(size() - 1);
+		SWAP(operator[](i), operator[](j));
 	}
 }
 

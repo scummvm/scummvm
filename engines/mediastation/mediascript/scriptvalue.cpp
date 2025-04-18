@@ -99,6 +99,14 @@ ScriptValue::ScriptValue(ParameterReadStream *stream) {
 	}
 }
 
+void ScriptValue::setToFloat(uint i) {
+	setToFloat(static_cast<double>(i));
+}
+
+void ScriptValue::setToFloat(int i) {
+	setToFloat(static_cast<double>(i));
+}
+
 void ScriptValue::setToFloat(double d) {
 	_type = kScriptValueTypeFloat;
 	_u.d = d;

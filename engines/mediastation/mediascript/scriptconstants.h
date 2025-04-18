@@ -147,22 +147,23 @@ enum BuiltInMethod {
 	kSetMaximumTextLengthMethod = 293, // PARAM: 1
 
 	// COLLECTION METHODS.
-	// These aren't assets but arrays used in Media Script.
-	kIsEmptyMethod = 254, // PARAMS: 0
-	kEmptyMethod = 252, // PARAMS: 0
+	// These are arrays used in Media Script.
 	kAppendMethod = 247, // PARAMS: 1+
-	kGetAtMethod = 253, // PARAMS: 1
+	kApplyMethod = 248, // PARAMS: 1+
 	kCountMethod = 249, // PARAMS: 0
-	// Looks like this lets you call a method on all the items in a collection.
-	// Examples look like : var_7be1_collect_shapes.send(spatialHide);
-	kSendMethod = 257, // PARAMS: 1+. Looks like the first param is the function,
-	// Seeking seems to be finding the index where a certain item is.
-	// and the next params are any arguments you want to send.
-	kSeekMethod = 256, // PARAMS: 1
-	kSortMethod = 266, // PARAMS: 0
-	kDeleteAtMethod = 258, // PARAMS: 1
-	kJumbleMethod = 255, // PARAMS: 0
 	kDeleteFirstMethod = 250, // PARAMS: 0
+	kDeleteLastMethod = 251, // PARAMS: 0
+	kEmptyMethod = 252, // PARAMS: 0
+	kGetAtMethod = 253, // PARAMS: 1
+	kIsEmptyMethod = 254, // PARAMS: 0
+	kJumbleMethod = 255, // PARAMS: 0
+	kSeekMethod = 256, // PARAMS: 1
+	kSendMethod = 257, // PARAMS: 1+
+	kDeleteAtMethod = 258, // PARAMS: 1
+	kInsertAtMethod = 259, // PARAMS: 2
+	kReplaceAtMethod = 260, // PARAMS: 2
+	kPrependListMethod = 261, // PARAMS: 1+
+	kSortMethod = 266, // PARAMS: 0
 
 	// PRINTER METHODS.
 	kOpenLensMethod = 346, // PARAMS: 0

@@ -40,8 +40,11 @@ public:
 
 	ScriptValueType getType() const { return _type; }
 
+	void setToFloat(uint i);
+	void setToFloat(int i);
 	void setToFloat(double d);
 	double asFloat() const;
+	int asIntFromFloat() const;
 
 	void setToBool(bool b);
 	bool asBool() const;

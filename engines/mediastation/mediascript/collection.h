@@ -36,6 +36,12 @@ class ScriptValue;
 class Collection : public Common::Array<ScriptValue> {
 public:
 	ScriptValue callMethod(BuiltInMethod method, Common::Array<ScriptValue> &args);
+
+private:
+	void apply(const Common::Array<ScriptValue> &values);
+	void send(const Common::Array<ScriptValue> &values);
+	int seek(const ScriptValue &itemToFind);
+	void jumble();
 };
 
 } // End of namespace MediaStation

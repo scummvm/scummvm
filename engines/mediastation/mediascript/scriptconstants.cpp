@@ -207,28 +207,38 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "SetText";
 	case kSetMaximumTextLengthMethod:
 		return "SetMaximumTextLength";
-	case kIsEmptyMethod:
-		return "IsEmpty";
-	case kEmptyMethod:
-		return "Empty";
 	case kAppendMethod:
 		return "Append";
-	case kGetAtMethod:
-		return "GetAt";
+	case kApplyMethod:
+		return "Apply";
 	case kCountMethod:
 		return "Count";
-	case kSendMethod:
-		return "Send";
-	case kSeekMethod:
-		return "Seek";
-	case kSortMethod:
-		return "Sort";
-	case kDeleteAtMethod:
-		return "DeleteAt";
-	case kJumbleMethod:
-		return "Jumble";
 	case kDeleteFirstMethod:
 		return "DeleteFirst";
+	case kDeleteLastMethod:
+		return "DeleteLast";
+	case kEmptyMethod:
+		return "Empty";
+	case kGetAtMethod:
+		return "GetAt";
+	case kIsEmptyMethod:
+		return "IsEmpty";
+	case kJumbleMethod:
+		return "Jumble";
+	case kSeekMethod:
+		return "Seek";
+	case kSendMethod:
+		return "Send";
+	case kDeleteAtMethod:
+		return "DeleteAt";
+	case kInsertAtMethod:
+		return "InsertAt";
+	case kReplaceAtMethod:
+		return "ReplaceAt";
+	case kPrependListMethod:
+		return "PrependList";
+	case kSortMethod:
+		return "Sort";
 	case kOpenLensMethod:
 		return "OpenLens";
 	case kCloseLensMethod:
