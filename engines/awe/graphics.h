@@ -90,7 +90,6 @@ struct Graphics {
 	virtual void drawBitmapOverlay(const uint8_t *data, int w, int h, int fmt, SystemStub *stub) = 0;
 };
 
-Graphics *GraphicsGL_create();
 Graphics *GraphicsSoft_create();
 
 } // namespace Awe
