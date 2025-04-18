@@ -1013,6 +1013,13 @@ void QuickTimeDecoder::setClickedHotSpot(int id) {
 // INTERACTIVITY
 //////////////////////////////
 
+void QuickTimeDecoder::handleQuit() {
+	if (_repeatTimerActive) {
+		_repeatTimerActive = false;
+		g_system->getTimerManager()->removeTimerProc(&repeatCallback);
+	}
+}
+
 void QuickTimeDecoder::handleMouseMove(int16 x, int16 y) {
 	if (_qtvrType == QTVRType::OBJECT)
 		handleObjectMouseMove(x, y);

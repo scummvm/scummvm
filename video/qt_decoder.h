@@ -87,6 +87,7 @@ public:
 	void handleMouseMove(int16 x, int16 y);
 	void handleMouseButton(bool isDown, int16 x = -1, int16 y = -1, bool repeat = false);
 	void handleKey(Common::KeyState &state, bool down, bool repeat = false);
+	void handleQuit();
 
 	Common::Point getLastClick() { return _mouseDrag; }
 
