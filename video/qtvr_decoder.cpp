@@ -796,15 +796,14 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama() {
 		float t = ((float)y + 0.5f) / (float)h;
 
 		float vector[3];
-		for (int v = 0; v < 3; v++) {
+		for (int v = 0; v < 3; v++)
 			vector[v] = cornerVectors[0][v] * (1.0f - t) + cornerVectors[1][v] * t;
 
-			float projectedX = vector[0] / vector[2];
-			float projectedY = vector[1] / vector[2];
+		float projectedX = vector[0] / vector[2];
+		float projectedY = vector[1] / vector[2];
 
-			sideEdgeXYInterpolators[y * 2 + 0] = projectedX / maxProjectedX;
-			sideEdgeXYInterpolators[y * 2 + 1] = (projectedY - minProjectedY) / (maxProjectedY - minProjectedY);
-		}
+		sideEdgeXYInterpolators[y * 2 + 0] = projectedX / maxProjectedX;
+		sideEdgeXYInterpolators[y * 2 + 1] = (projectedY - minProjectedY) / (maxProjectedY - minProjectedY);
 	}
 
 	const bool isWidthOdd = ((w % 2) == 1);
