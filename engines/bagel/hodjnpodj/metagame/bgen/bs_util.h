@@ -32,6 +32,9 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
+#define SB_HORZ 1
+#define SB_VERT 2
+
 // define scroll bar types (should not conflict with IDC_xxxx codes
 //	from resource.h)
 #define BSCT_GEN 1		/* general (no special type) */
@@ -86,84 +89,172 @@ struct CPoint {
 
 // CBsuSet -- boffo scroll utility set
 class CBsuSet {
-public:
-    CBsuBar *m_xpBarChain = nullptr;	// chain of scroll bar objects
-    bool m_bInUpdateBars = false;		// prevent UpdateBars recursion
-    CDialog *m_xpDlg = nullptr;			// dialog to be updated
-    CWnd *m_xpWnd = nullptr;			// window to be scrolled
-#ifdef NODEEDIT
-    int m_iScrollCount ;	// # of times scrolled
-#endif
-    bool m_bDebugMessages = false;
-    bool m_bPrimary = false;			// primary in linked sets
-    bool m_bScrollView = false;			// window uses CScrollView
-    bool m_bScrollBars = false;			// window to have windows scroll bars
-    CBsuSet *m_xpSetLink = nullptr;		// one alternate set of scroll bars
+private:
+	/**
+	 * Get bsu scroll bar object
+	 * @param iBarType	BSCT_xxxx -- scroll bar type
+	 * @returns			pointer to scroll bar object, or nullptr if not found
+	 */
+	CBsuBar *GetBar(int iBarType);
 
-// methods
+public:
+    CBsuBar *m_xpBarChain = nullptr;	// Chain of scroll bar objects
+    bool m_bInUpdateBars = false;		// Prevent UpdateBars recursion
+    CDialog *m_xpDlg = nullptr;			// Dialog to be updated
+    View *m_xpWnd = nullptr;			// Window to be scrolled
+
+    bool m_bDebugMessages = false;
+    bool m_bPrimary = false;			// Primary in linked sets
+    bool m_bScrollView = false;			// Window uses CScrollView
+    bool m_bScrollBars = false;			// Window to have windows scroll bars
+    CBsuSet *m_xpSetLink = nullptr;		// One alternate set of scroll bars
+
 public:
     CBsuSet() {}
-#ifdef NODEEDIT
-    int GetScrollCount(void) {return(m_iScrollCount) ;}
-#endif
-
-// bsutl.cpp : Boffo scroll bar utilities
-
-//- ~CBsuSet -- destructor
-public:
 	~CBsuSet();
-//- InitWndBsuSet -- initialize bsu set for a window
-public:
-	bool InitWndBsuSet(View *xpWnd,
-		bool bScrollView PDFT(false), bool bScrollBars PDFT(false),
-	CBsuSet * xpLinkSet PDFT(nullptr)) ;
-//- InitDlgBsuSet -- initialize bsu set for dialog box
-public: bool InitDlgBsuSet(CDialog * xpDlg,
-	CBsuSet * xpLinkSet PDFT(nullptr)) ;
-//- AddBarToSet -- add scroll bar to scroll bar set
-public: bool AddBarToSet(int iId, int iWndScrollCode,
-			int iBarType PDFT(0)) ;
-//- PrepareWndBsuSet -- prepare window scroll bar set
-//		by filling in the device fields
-public: bool PrepareWndBsuSet(CSize cDocSize, const Common::Rect &cScrollRect) ;
-//- UpdateWndDeviceExtents -- update window devices coordinates
-private: bool UpdateWndDeviceExtents(void);
-//- LinkWndBsuSet -- link window/dialog bsu sets
-public: bool LinkWndBsuSet(void) ;
-//- PrepareDc -- replace OnPrepareDC -- set the viewport and
-//	the clip rectangle to the specified region
-public: bool PrepareDc(CDC *xpDc, bool bRelocatable PDFT(true));
-//- OnScroll -- handle OnHScroll and OnVScroll messages
-public: bool OnScroll(uint nSBCode, uint nPos,
-		ScrollBar *xpScrollBar, int iBarType PDFT(0)) ;
-//- GetBar -- get bsu scroll bar object
-private: CBsuBar * GetBar(int iBarType) ;
-//- ScrollWindowToPoint -- scroll window to spec point
-public: bool ScrollWindowToPoint(const Common::Point &cScrollPosition,
-		bool bScrollWindow PDFT(true)) ;
-//- EdgeToCenter -- if point is on edge, scroll it to center
-public: bool EdgeToCenter(const Common::Point &cPoint, bool bScroll PDFT(false));
-//- SetSubWindowRect -- set rectangle to portion of window
-//		(logical coordinates)
-public: bool SetSubWindowRect(Common::Rect *lpRect, int iBsRegion);
-//- TestRect -- test whether rectangle is in window
-public: bool TestRect(CRRect crTestRect,
-       			bool & bPhysical, bool & bEdge) ;
-//- GetWindowBars -- set rectangle to portion of window
-//		(device coordinates)
-public: bool GetWindowBars(CBsuBar *& xpHBar,
-		CBsuBar *& xpVBar, bool bErrorRtn PDFT(true)) ;
-//- PointLogical -- convert device point to logical coords
-public: CRPoint PointLogical(const Common::Point &cPoint) ;
-//- GetInfo -- get information about scroll set
-public: bool GetInfo(CBsuInfo * xpBsuInfo) ;
-//- DumpInfo -- dump information about scroll set
-public: bool DumpInfo(const char *lpStart PDFT(nullptr)) ;
 
-} ;
+	/**
+	 * Initialize bsu set for a window
+	 * @param xpWnd		Window for which scroll bar set is to be initialized
+	 * @param bScrollView	true if window is derived from CScrollView
+	 * @param bScrollBars	true if window should have scroll bars
+	 * @param xpLinkSet -- bsu set for 2nd set of scroll bars for same window
+	 * @returns			true if error, false otherwise
+	 */
+	bool InitWndBsuSet(View *xpWnd, bool bScrollView = false,
+		bool bScrollBars = false, CBsuSet *xpLinkSet = nullptr);
 
+	/**
+	 * Initialize bsu set for dialog box
+	 */
+	bool InitDlgBsuSet(CDialog *xpDlg,
+		CBsuSet *xpLinkSet = nullptr) ;
 
-// CBsuBar -- scroll bar
+	/**
+	 * Add scroll bar to scroll bar set
+	 */
+	bool AddBarToSet(int iId, int iWndScrollCode,
+			int iBarType = 0) ;
+
+	/**
+	 * Prepare window scroll bar set by filling in
+	 * the device fields
+	 * @param cDocSize		Document size (logical units)
+	 * @param cScrollRect	The rectangle defining the interior scrolling
+	 * region in logical coordinates, with bottom/right being
+	 * positive values indicating margins (logical units)
+	 * @returns				true if error, false otherwise 
+	 */
+	bool PrepareWndBsuSet(CSize cDocSize, const Common::Rect &cScrollRect);
+
+	/**
+	 * Update window devices coordinates
+	 */
+	bool UpdateWndDeviceExtents();
+
+	/**
+	 * Link window/dialog bsu sets
+	 */
+	bool LinkWndBsuSet();
+
+	/**
+	 * Replace OnPrepareDC -- set the viewport and
+	 * the clip rectangle to the specified region
+	 * @param xpDc			Device context
+	 * @param bRelocatable	If false, set to whole window; if true,
+	 * set to the interior region, which is scrolled and might be remapped
+	 * @param lpClipRect	Pointer to clipping rectangle; if nullptr, use whole window
+	 * @param returns		true if error, false otherwise
+	 */
+	bool PrepareDc(CDC *xpDc, bool bRelocatable = true);
+
+	/**
+	 * Handle OnHScroll and OnVScroll messages
+	 * @param nSBCode		SB_xxxx -- Windows scroll code
+	 * @param nPos			Position on scroll bar (SB_THUMBTRACT/SB_THUMBPOSITION)
+	 * @param xpScrollBar	Pointer to scroll bar control
+	 * @param iBarType		BSCT_xxxx -- scroll bar type
+	 * @returns				true if error, false otherwise
+	 */
+	bool OnScroll(uint nSBCode, uint nPos,
+		ScrollBar *xpScrollBar, int iBarType = 0);
+
+	/**
+	 * Scroll window to spec point
+	 * @param cScrollPosition	Point to which window is to be scrolled
+	 * @param bScrollWindow		If true, then scroll window.  (If false, then just
+	 * set the variables and scroll bars)
+	 * @returns					true if error, false otherwise
+	 */
+	bool ScrollWindowToPoint(const Common::Point &cScrollPosition,
+		bool bScrollWindow = true);
+
+	/**
+	 * If point is on edge, scroll it to center
+	 * @param cPoint	The point to be tested
+	 * @returns			true if error, false otherwise
+	 */
+	bool EdgeToCenter(const Common::Point &cPoint, bool bScroll = false);
+
+	/**
+	 * Set rectangle to portion of window
+	 * (logical coordinates)
+	 * @param lpRect	Where results are to be stored
+	 * @param iBsRegion	Combination of BSCRn bits, based on the window margins,
+	 *	according to the following diagram:
+	 *		123
+	 *		456
+	 *		789
+	 *	Typical values are: "123" for the top margin, "5" for the
+	 *	interior scrolling region, and so forth.  Not all
+	 *	combinations are supported.
+	 * returns: true if error, false otherwise
+	 */
+	bool SetSubWindowRect(Common::Rect *lpRect, int iBsRegion);
+
+	/**
+	 * Test whether rectangle is in window
+	 * @param crTestRect		Relocatable rectangle to be tested
+	 * @param bPhysical			(output) -- if true, then rectangle lies at least
+	 * partially within physical window
+	 * @param bEdge (output)	if true, then rectangle is on the edge
+	 * (partially in window, partially outside window)
+	 * @returns					true if error, false otherwise
+	 */
+	bool TestRect(CRRect crTestRect,
+		bool &bPhysical, bool &bEdge);
+
+	/**
+	 * Set rectangle to portion of window
+	 * (device coordinates)
+	 * @param xpHBar, xpVBar	(output) -- horizontal/vertical scroll bar object
+	 * @param bErrorRtn			if false, don't generate "not allocated" error returns
+	 * @returns		true if error, false otherwise
+	 */
+	bool GetWindowBars(CBsuBar *&xpHBar,
+		CBsuBar *&xpVBar, bool bErrorRtn = true);
+
+	/**
+	 * Convert device point to logical coords
+	 * @param cPoint	Point in device coordinates
+	 * @returns			Relocatable point
+	 */
+	CRPoint PointLogical(const Common::Point &cPoint);
+
+	/**
+	 * Get information about scroll set
+	 */
+	bool GetInfo(CBsuInfo *xpBsuInfo);
+
+	/**
+	 * Dump information about scroll set
+	 */
+	bool DumpInfo(const char *lpStart = nullptr);
+};
+
+/**
+ * CBsuBar -- scroll bar
+ */
 class CBsuBar {
 public:
 	friend class CBsuSet;
@@ -186,19 +277,20 @@ public:
     int m_iDevMargin1 = 0, m_iDevMargin2 = 0;	// ditto (device units)
 } ;
 
-// CBsuInfo -- information returned by GetInfo
+/**
+ * CBsuInfo -- information returned by GetInfo
+ */
 class CBsuInfo {
 public:
     CSize m_cWndSize, m_cTotalSize;
     CSize m_cDevWndSize, cDevTotalSize;
     Common::Rect m_cScrollRangeRect;
     Common::Point m_cScrollPosition;
-#ifdef NODEEDIT
-    int m_iScrollCount ;
-#endif
 };
 
-// CRPoint -- relocatable point
+/**
+ * CRPoint -- relocatable point
+ */
 class CRPoint : public CPoint {
 public:
     bool m_bRelocatable;
@@ -225,7 +317,9 @@ public:
 	}
 };
 
-// CRRect -- relocatable rectangle
+/**
+ * CRRect -- relocatable rectangle
+ */
 class CRRect : public Common::Rect {
 public:
     bool m_bRelocatable;
@@ -264,8 +358,10 @@ public:
 #define HINT_SIZE 4
 #define HINT_SCROLL 5
 
-// class CGtlHint -- hints for updating views -- used in calls
-//		to CView::OnUpdate
+/**
+ * CGtlHint -- hints for updating views -- used in calls
+ * to CView::OnUpdate
+ */
 class CGtlHint : public CObject {
 public:
     bool m_bWmPaint = false;	// update with WM_PAINT message

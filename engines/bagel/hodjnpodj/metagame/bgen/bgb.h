@@ -32,7 +32,6 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-
 #define BGBT_DIB 1
 #define BGBT_SPRITE 2
 
@@ -84,7 +83,7 @@ public:
 	/**
 	 * Set up file access in object
 	 */
-	bool InitBitmapObject(CBgbObject *, XPSTR);
+	bool InitBitmapObject(CBgbObject *, char *);
 
 	bool SetPosition(CBgbObject *, CRPoint);
 	bool PaintBitmapObject(CBgbObject *, bool bPaint PDFT(false), Common::Rect *p = NULL);
