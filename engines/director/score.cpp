@@ -740,7 +740,7 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	playQueuedSound(); // this is currently only used in FPlayXObj
 
 	if (_cursorDirty) {
-		renderCursor(_movie->getWindow()->getMousePos());
+		renderCursor(_movie->getWindow()->getMousePos(), true);
 		_cursorDirty = false;
 	}
 	uint32 end = g_system->getMillis(false);
