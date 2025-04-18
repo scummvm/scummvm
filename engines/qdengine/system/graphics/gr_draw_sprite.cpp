@@ -715,7 +715,7 @@ void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode,
 			for (int j = 0; j < psx; j++) {
 				if (*data_line) {
 					byte r, g, b;
-					split_rgb565u(*(uint16 *)data_line, r, g, b);
+					split_rgb565u(*(const uint16 *)data_line, r, g, b);
 					setPixelFast(scr_buf, make_rgb(r, g, b));
 				}
 				scr_buf += dx;

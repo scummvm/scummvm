@@ -863,6 +863,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 		}
 		break;
 	case GR_ARGB8888:
+	case GR_RGBA8888:
 		if (src_fmt == GR_ARGB1555 || src_fmt == GR_RGB565) {
 			uint16 *p = reinterpret_cast<uint16 *>(data);
 			for (int i = 0; i < sx * sy; i++) {
@@ -882,9 +883,15 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 
 				p++;
 
-				dp[0] = b;
-				dp[1] = g;
-				dp[2] = r;
+				if (dest_fmt == GR_ARGB8888) {
+					dp[0] = b;
+					dp[1] = g;
+					dp[2] = r;
+				} else if (dest_fmt == GR_RGBA8888) {
+					dp[1] = b;
+					dp[2] = g;
+					dp[3] = r;
+				}
 
 				dp += 4;
 			}
