@@ -1,11 +1,28 @@
-
-/*
- * Another World engine rewrite
- * Copyright (C) 2004-2005 Gregory Montoir (cyx@users.sourceforge.net)
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
-#include "unpack.h"
-#include "util.h"
+#include "awe/unpack.h"
+#include "awe/util.h"
+
+namespace Awe {
 
 struct UnpackCtx {
 	int size;
@@ -104,3 +121,5 @@ bool bytekiller_unpack(uint8_t *dst, int dstSize, const uint8_t *src, int srcSiz
 	assert(uc.size == 0);
 	return uc.crc == 0;
 }
+
+} // namespace Awe
