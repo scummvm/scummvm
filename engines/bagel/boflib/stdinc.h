@@ -92,13 +92,13 @@ struct WindowPos {
 #define MAX_DIRPATH 256
 
 #define PDFT(VALUE) = VALUE
+#define CView View
 
 typedef void *CWnd;
 typedef void *CDialog;
 typedef void *CDC;
 class CBrush {};
 class CPen {};
-class CView {};
 class CPalette {};
 
 class CObject {

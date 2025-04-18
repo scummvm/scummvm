@@ -404,6 +404,15 @@ void CBgbMgr::CacheOptimize(uint32 lReqSpace) {
 #endif
 }
 
+bool CBgbMgr::SetPosition(CBgbObject *pBgbObject, CRPoint crPosition) {
+	// can't access a null pointer
+	assert(pBgbObject != NULL);
+
+	pBgbObject->m_crPosition = crPosition;
+
+	return false;
+}
+
 /*------------------------------------------------------------------------*/
 
 CBgbObject::CBgbObject() {

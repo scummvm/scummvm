@@ -78,12 +78,12 @@ struct CSize {
 };
 
 struct CPoint {
-	int cx;
-	int cy;
+	int x;
+	int y;
 
-	CPoint(int xv = 0, int yv = 0) : cx(xv), cy(yv) {
+	CPoint(int xv = 0, int yv = 0) : x(xv), y(yv) {
 	}
-	CPoint(const Common::Point &pt) : cx(pt.x), cy(pt.y) {
+	CPoint(const Common::Point &pt) : x(pt.x), y(pt.y) {
 	}
 };
 
@@ -313,7 +313,7 @@ public:
 	}
 
     CRPoint Offset(const Common::Point &cPt) {
-		return CRPoint(cx+cPt.x, cy+cPt.y, m_bRelocatable);
+		return CRPoint(x+cPt.x, y+cPt.y, m_bRelocatable);
 	}
 };
 
@@ -333,7 +333,7 @@ public:
 	}
 
     CRRect(const CRPoint &cPt, const CSize &cSz) :
-		Common::Rect(cPt.cx, cPt.cy, cPt.cx + cSz.cx, cPt.cy + cSz.cy),
+		Common::Rect(cPt.x, cPt.y, cPt.x + cSz.cx, cPt.y + cSz.cy),
 		m_bRelocatable(cPt.m_bRelocatable) {
 	}
 
@@ -348,7 +348,7 @@ public:
 
     bool PtInRect(const CRPoint &crPoint) {
 		return m_bRelocatable == crPoint.m_bRelocatable
-			&& Common::Rect::contains(crPoint.cx, crPoint.cy);
+			&& Common::Rect::contains(crPoint.x, crPoint.y);
 	}
 };
 

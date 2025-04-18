@@ -138,10 +138,11 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/boardgame/boardgame_options.o \
 	hodjnpodj/metagame/boardgame/general_store.o \
 	hodjnpodj/metagame/boardgame/gtl_app.o \
-	hodjnpodj/metagame/boardgame/gtl_data.o \
 	hodjnpodj/metagame/boardgame/gtl_data_compiler.o \
 	hodjnpodj/metagame/boardgame/gtl_data_lexical.o \
+	hodjnpodj/metagame/boardgame/gtl_data_mgm.o \
 	hodjnpodj/metagame/boardgame/gtl_data_move.o \
+	hodjnpodj/metagame/boardgame/gtl_data_ui.o \
 	hodjnpodj/metagame/boardgame/gtl_doc.o \
 	hodjnpodj/metagame/boardgame/gtl_frame.o \
 	hodjnpodj/metagame/boardgame/gtl_view.o \

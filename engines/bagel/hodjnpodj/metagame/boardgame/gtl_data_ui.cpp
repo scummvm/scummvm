@@ -27,6 +27,19 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
+#define	STARTING_LOCATION	"Castle"
+
+#define HODJS_WALKING_SOUND "meta/sound/HODJST.MID"
+#define HODJ_SOUND_START    2000
+#define HODJ_SOUND_END      63000
+#define HODJS_STARS_FILE    "meta/art/HSTAR.BMP"
+
+#define PODJS_WALKING_SOUND "meta/sound/PODJST.MID"
+#define PODJ_SOUND_START    1000
+#define PODJ_SOUND_END      64000
+#define PODJS_STARS_FILE    "meta/art/PSTAR.BMP"
+
+
 CMap::CMap() {
 	m_bPositionDetermined = false;
 	m_bSprite = false;
@@ -201,7 +214,7 @@ bool CGtlData::AdjustToView(CGtlView *xpGtlView) {
 			}
 #endif
 			for (xpLocEntry = xpLocTable; xpLocEntry->m_iLocCode && scumm_stricmp(lpNode->m_szLabel, xpLocEntry->m_lpszLabel); ++xpLocEntry)
-				;       // null loop body
+				;       // nullptr loop body
 
 			// if this location is in table
 			//
@@ -295,6 +308,234 @@ bool CGtlData::AdjustToView(CGtlView *xpGtlView) {
 		PositionCharacters();
 	}
 
+	return iError != 0;
+}
+
+CRPoint CGtlData::NodeToPoint(CNode *lpNode, CSize *lpcSize) {
+	CRPoint crPosition;                // output: position
+	CMap *lpMap;              // pointer to relative bitmap
+
+	crPosition = CRPoint(lpNode->m_iX, lpNode->m_iY, lpNode->m_bRelocatable);
+
+	if (lpNode->m_bRelative) {
+		lpMap = &m_lpMaps[lpNode->m_iBitmap];  // point to relative bitmap
+
+		if (lpMap->m_lpcBgbObject) {
+			crPosition.x += lpMap->m_lpcBgbObject->m_crPosition.x;
+			crPosition.y += lpMap->m_lpcBgbObject->m_crPosition.y;
+		}
+	}
+
+	if (lpcSize) {
+		crPosition.x -= lpcSize->cx / 2;
+		crPosition.y -= lpcSize->cy;
+	}
+
+	// cleanup:
+
+	return crPosition;
+}
+
+bool CGtlData::InitOverlay(CMap *lpMap) {
+	int iError = 0;            // error code
+	CXodj *xpXodj = nullptr;
+
+	for (xpXodj = m_xpXodjChain; xpXodj &&
+		scumm_stricmp(lpMap->m_szLabel, xpXodj->m_szName); xpXodj = xpXodj->m_xpXodjNext) {
+	}
+
+	if (!xpXodj) {              // existing character not found
+		if ((xpXodj = new CXodj) == nullptr) {
+			iError = 100;      // can't allocate character
+			goto cleanup;
+		}
+		xpXodj->m_xpXodjNext = m_xpXodjChain;
+		// put in front of chain
+		m_xpXodjChain = xpXodj;
+
+		strncpy(xpXodj->m_szName, lpMap->m_szLabel, sizeof(xpXodj->m_szName) - 1);
+		xpXodj->m_szName[0] = (char)toupper(xpXodj->m_szName[0]);
+
+		xpXodj->m_lpcCharSprite = lpMap->m_lpcBgbObject;
+		lpMap->m_bSpecialPaint = true;
+
+		CNode *pNode = m_lpNodes;
+		int nTemp = 0;
+		do {
+			if (strcmp(pNode->m_szLabel, STARTING_LOCATION) == 0) {
+				pNode = nullptr;
+				break;
+			} else {
+				pNode++;
+				nTemp++;
+			}
+
+		} while (pNode != nullptr);
+
+		xpXodj->m_iCharNode = nTemp;
+		xpXodj->m_bHodj = (scumm_stricmp(lpMap->m_szLabel, "Hodj") == 0);
+
+		// initialize theme music info
+		if (xpXodj->m_bHodj) {
+			xpXodj->m_pszThemeFile = HODJS_WALKING_SOUND;
+			xpXodj->m_nThemeStart = HODJ_SOUND_START;
+			xpXodj->m_nThemeEnd = HODJ_SOUND_END;
+			xpXodj->m_pszStarsFile = HODJS_STARS_FILE;
+		} else {
+			xpXodj->m_pszThemeFile = PODJS_WALKING_SOUND;
+			xpXodj->m_nThemeStart = PODJ_SOUND_START;
+			xpXodj->m_nThemeEnd = PODJ_SOUND_END;
+			xpXodj->m_pszStarsFile = PODJS_STARS_FILE;
+		}
+
+	}
+
+	if (!m_xpCurXodj)
+		m_xpCurXodj = xpXodj;
+
+cleanup:
+	return iError != 0;
+}
+
+bool CGtlData::NormalizeData(CGtlView *xpGtlView) {
+	int iError = 0;            // error code
+	int iK;                    // loop variable
+	CMap *lpMap, *lpPrevMap;
+	int iMinX = MAXPOSINT, iMinY = MAXPOSINT;  // min x,y coordinates
+	int iMaxX = MINNEGINT, iMaxY = MINNEGINT;  // max x,y coordinates
+	bool bPositionFound = false;
+	bool bChangeSize = false, bChangeOrigin = false;
+	CNode *lpNode;
+	CBgbObject *lpcBgbObject, *lpcPrevBgbObject;
+
+	for (iK = 0; iK < m_iMaps; ++iK) {
+		lpMap = m_lpMaps + iK;
+		lpPrevMap = NULL;
+		lpcPrevBgbObject = NULL;
+
+		if (lpMap->m_iRelation >= 0 && lpMap->m_iRelation < m_iMaps) {
+			lpPrevMap = m_lpMaps + lpMap->m_iRelation;
+			// get previous map pointer
+			lpcPrevBgbObject = lpPrevMap->m_lpcBgbObject;
+		}
+
+		if (!lpMap->m_bPositionDetermined && lpMap->m_iRelationType && ((lpcBgbObject = lpMap->m_lpcBgbObject) != NULL)) {
+
+			switch (lpMap->m_iRelationType) {
+
+			case KT_LEFT:
+				if (lpcPrevBgbObject) {
+					lpcBgbObject->m_crPosition.x = lpcPrevBgbObject->m_crPosition.x - lpcBgbObject->m_cSize.cx;
+					lpcBgbObject->m_crPosition.y = lpcPrevBgbObject->m_crPosition.y;
+					lpMap->m_bPositionDetermined = true;
+				}
+				break;
+
+			case KT_RIGHT:
+				if (lpcPrevBgbObject) {
+					lpcBgbObject->m_crPosition.x = lpcPrevBgbObject->m_crPosition.x + lpcPrevBgbObject->m_cSize.cx;
+					lpcBgbObject->m_crPosition.y = lpcPrevBgbObject->m_crPosition.y;
+					lpMap->m_bPositionDetermined = true;
+				}
+				break;
+
+			case KT_ABOVE:
+				if (lpcPrevBgbObject) {
+					lpcBgbObject->m_crPosition.x = lpcPrevBgbObject->m_crPosition.x;
+					lpcBgbObject->m_crPosition.y = lpcPrevBgbObject->m_crPosition.y - lpcBgbObject->m_cSize.cy;
+					lpMap->m_bPositionDetermined = true;
+				}
+				break;
+
+			case KT_BELOW:
+				if (lpcPrevBgbObject) {
+					lpcBgbObject->m_crPosition.x = lpcPrevBgbObject->m_crPosition.x;
+					lpcBgbObject->m_crPosition.y = lpcPrevBgbObject->m_crPosition.y + lpcPrevBgbObject->m_cSize.cy;
+					lpMap->m_bPositionDetermined = true;
+				}
+				break;
+
+			case KT_NODE:           // ignore
+				if (lpMap->m_iRelation < 0 || lpMap->m_iRelation >= m_iNodes || (lpNode = m_lpNodes + lpMap->m_iRelation)->m_bDeleted) {
+					iError = 200 + iK;     // bitmap node
+					// reference not found
+					goto cleanup;
+				}
+				lpcBgbObject->m_crPosition = NodeToPoint(lpNode);
+				break;
+
+			default:
+				iError = 100 + iK;         // invalid relationship
+				goto cleanup;
+				// break ;
+			}
+			bPositionFound = true;
+		}
+
+		if (!lpMap->m_bOverlay && lpMap->m_lpcBgbObject && lpMap->m_lpcBgbObject->m_crPosition.IfRelocatable()) {
+			if (iMinX > lpMap->m_lpcBgbObject->m_crPosition.x)
+				iMinX = lpMap->m_lpcBgbObject->m_crPosition.x;
+			if (iMinY > lpMap->m_lpcBgbObject->m_crPosition.y)
+				iMinY = lpMap->m_lpcBgbObject->m_crPosition.y;
+
+			if (iMaxX < lpMap->m_lpcBgbObject->m_crPosition.x + lpMap->m_lpcBgbObject->m_cSize.cx)
+				iMaxX = lpMap->m_lpcBgbObject->m_crPosition.x + lpMap->m_lpcBgbObject->m_cSize.cx;
+			if (iMaxY < lpMap->m_lpcBgbObject->m_crPosition.y + lpMap->m_lpcBgbObject->m_cSize.cy)
+				iMaxY = lpMap->m_lpcBgbObject->m_crPosition.y + lpMap->m_lpcBgbObject->m_cSize.cy;
+		}
+	}
+
+	for (iK = 0; iK < m_iNodes; ++iK) {
+		if (!(lpNode = m_lpNodes + iK)->m_bDeleted && !lpNode->m_bRelative && lpNode->IfRelocatable()) {
+			if (iMinX > lpNode->m_iX - NODERADIUS)
+				iMinX = lpNode->m_iX - NODERADIUS;
+			if (iMinY > lpNode->m_iY - NODERADIUS)
+				iMinY = lpNode->m_iY - NODERADIUS;
+			if (iMaxX < lpNode->m_iX + NODERADIUS)
+				iMaxX = lpNode->m_iX + NODERADIUS;
+			if (iMaxY < lpNode->m_iY + NODERADIUS)
+				iMaxY = lpNode->m_iY + NODERADIUS;
+		}
+	}
+
+	bChangeOrigin = (bPositionFound && (iMinX || iMinY));
+
+	if (bChangeOrigin) {
+
+		for (iK = 0; iK < m_iMaps; ++iK) {
+			lpMap = m_lpMaps + iK;
+
+			if (lpMap->m_lpcBgbObject && lpMap->m_lpcBgbObject->m_crPosition.IfRelocatable() && !lpMap->m_bPositionSpecified) {
+				lpMap->m_lpcBgbObject->m_crPosition.x -= iMinX;
+				lpMap->m_lpcBgbObject->m_crPosition.y -= iMinY;
+			}
+		}
+
+		for (iK = 0; iK < m_iNodes; ++iK) {
+			if (!(lpNode = m_lpNodes + iK)->m_bDeleted && !lpNode->m_bRelative && lpNode->IfRelocatable()) {
+				lpNode->m_iX -= iMinX;
+				lpNode->m_iY -= iMinY;
+			}
+		}
+	} else {
+		if (iMaxX < 0)
+			iMaxX = 1;
+		if (iMaxY < 0)
+			iMaxY = 1;
+		iMinX = iMinY = 0;
+	}
+
+	if (m_iSizeX != iMaxX - iMinX)
+		bChangeSize = true, m_iSizeX = iMaxX - iMinX;
+	if (m_iSizeY != iMaxY - iMinY)
+		bChangeSize = true, m_iSizeY = iMaxY - iMinY;
+
+	m_iMargin = 24;
+
+	if (bChangeSize)
+		m_xpcGtlDoc->UpdateAllViews(xpGtlView, HINT_SIZE, NULL);
+
+cleanup:
 	return iError != 0;
 }
 

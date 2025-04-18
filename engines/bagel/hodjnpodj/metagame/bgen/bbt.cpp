@@ -28,6 +28,26 @@ namespace Metagame {
 CBbtMgr::~CBbtMgr() {
 }
 
+bool CBbtMgr::LinkButton(CBbutton *lpBbt,
+		CBgbObject *lpcBgbObject1,
+		CBgbObject *lpcBgbObject2) {
+	int iError = 0;		// error code
+
+	if (lpcBgbObject1)
+		lpBbt->m_lpcBgbObject1 = lpcBgbObject1;
+	if (lpcBgbObject2)
+		lpBbt->m_lpcBgbObject2 = lpcBgbObject2;
+
+	if (!lpBbt->m_bChained)
+	{
+		lpBbt->m_lpBbtNext = m_lpBbtChain;
+		m_lpBbtChain = lpBbt;
+		lpBbt->m_bChained = true;
+	}
+
+	return iError != 0;
+}
+
 /*------------------------------------------------------------------------*/
 
 CBbutton::CBbutton(int iId) {

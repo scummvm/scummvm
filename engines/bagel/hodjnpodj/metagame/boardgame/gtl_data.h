@@ -471,9 +471,12 @@ private:
 	/**
 	 * Return relocatable coordinates of node
 	 * adjusted by optional size object
+	 * @param lpNode	Pointer to node
+	 * @param lpcSize	Pointer to size of bitmap sitting on node
+	 * @returns			true if error, false otherwise
 	 */
 	CRPoint NodeToPoint(CNode *lpNode,
-		CSize *lpcSize PDFT(nullptr));
+		CSize *lpcSize = nullptr);
 
 	/**
 	 * Update control dialog box

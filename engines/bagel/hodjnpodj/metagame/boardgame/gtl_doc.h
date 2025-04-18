@@ -36,13 +36,13 @@ private:
 	void initDocument(const char *xpszPathName);
 	void onChangedViewList();
 	void fixChecks() {}
-	void UpdateAllViews(CView *pSender, long lHint = 0L, CObject *pHint = nullptr) {}
 
 public:
 	CGtlDoc() {}
 
 	void onNewDocument();
 	void deleteContents();
+	void UpdateAllViews(View *pSender, long lHint = 0L, CObject *pHint = nullptr) {}
 };
 
 } // namespace Metagame

@@ -242,8 +242,8 @@ bool CGtlData::parseLine() {
 				lpMap->m_bPositionDetermined = true;
 				lpMap->m_bPositionSpecified = true;
 				lpMap->m_lpcBgbObject->m_bSpecial = true;
-				xpLxel = ParseInteger(++xpLxel, LXT_LPR, lpMap->m_lpcBgbObject->m_crPosition.cx);
-				xpLxel = ParseInteger(xpLxel, LXT_COMMA, lpMap->m_lpcBgbObject->m_crPosition.cy);
+				xpLxel = ParseInteger(++xpLxel, LXT_LPR, lpMap->m_lpcBgbObject->m_crPosition.x);
+				xpLxel = ParseInteger(xpLxel, LXT_COMMA, lpMap->m_lpcBgbObject->m_crPosition.y);
 				xpLxel = ParseInteger(xpLxel, LXT_COMMA, lpMap->m_lpcBgbObject->m_cSize.cx);
 				xpLxel = ParseInteger(xpLxel, LXT_COMMA, lpMap->m_lpcBgbObject->m_cSize.cy);
 				if (xpLxel->m_iType == LXT_RPR)

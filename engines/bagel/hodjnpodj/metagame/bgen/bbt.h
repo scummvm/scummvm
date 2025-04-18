@@ -32,6 +32,12 @@ class CBbutton;
 
 // CBbtMgr -- boffo games button manager
 class CBbtMgr {
+private:
+	/**
+	 * Move button down
+	 */
+	bool MoveDown(CBbutton *lpDownBbt = nullptr);
+
 public:
 	CBgbMgr *m_lpBgbMgr;
 	CBbutton *m_lpBbtChain = nullptr; // chain of bbt objects
@@ -42,29 +48,33 @@ public:
 	CBbtMgr(CBgbMgr *lpBgbMgr = nullptr) {
 		m_lpBgbMgr = lpBgbMgr;
 	}
-
-
-	// bbt.cpp -- Boffo button handling
-
-	//- CBbtMgr::~CBbtMgr -- destructor
-public:
 	~CBbtMgr();
-	  //- CBbtMgr::LinkButton -- link button into button manager
 
+	/**
+	 * Link button into button manager
+	 * @param lpBbt		Button object
+	 * @param lpcBgbObject1		Up graphic object
+	 * @param lpcBgbObject2		Down graphic objects
+	 * @returns			true if error, false otherwise
+	 */
 	bool LinkButton(CBbutton *lpBbt,
 		CBgbObject *lpcBgbObject1,
 		CBgbObject *lpcBgbObject2);
-	  //- CBbtMgr::AcceptClick -- process mouse click or mouse move
+
+	/**
+	 * Process mouse click or mouse move
+	 */
 	int AcceptClick(CRPoint crPoint, int iClickType);
-	  //- CBbtMgr::MoveDown -- move button down
-private:
-	bool MoveDown(CBbutton *lpDownBbt PDFT(NULL));
-	   //- CBbtMgr::GetCurrentBitmap -- get current bitmap for button
-public:
+
+	/**
+	 * Get current bitmap for button
+	 */
 	CBgbObject *GetCurrentBitmap(CBbutton *xpBbt);
 };
 
-// CBbutton -- Boffo button object
+/**
+ * Boffo button object
+ */
 class CBbutton {
 	friend class CBbtMgr;
 public:
