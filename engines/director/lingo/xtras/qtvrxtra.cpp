@@ -1163,6 +1163,9 @@ bool QtvrxtraWidget::processEvent(Common::Event &event) {
 	case Common::EVENT_MOUSEMOVE:
 		_xtra->_video->handleMouseMove(event.mouse.x - _xtra->_rect.left, event.mouse.y - _xtra->_rect.top);
 		return true;
+	case Common::EVENT_QUIT:
+		_xtra->_video->handleQuit();
+		return false;
 	case Common::EVENT_KEYDOWN:
 	case Common::EVENT_KEYUP: {
 		int zoomState = _xtra->_video->getZoomState();
