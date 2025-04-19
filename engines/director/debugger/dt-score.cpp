@@ -593,7 +593,7 @@ void showChannels() {
 				if (ImGui::Selectable(Common::String::format("%-3d", i + 1).c_str(), isSelected, ImGuiSelectableFlags_SpanAllColumns)) {
 					if (isSelected) {
 						_state->_selectedChannel = -1;
-						g_director->getCurrentWindow()->setDirty(true);
+						g_director->getCurrentWindow()->render(true);
 					 } else {
 						_state->_selectedChannel = i + 1;
 					 }
