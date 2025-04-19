@@ -105,6 +105,7 @@ public:
 		bool canceled; ///< Was the video canceled?
 
 		int slot; ///< Explicit slot index (-1 = auto).
+		bool reuseSlotWitSameFilename;
 
 		bool noWaitSound;
 

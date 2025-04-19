@@ -45,7 +45,7 @@ VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFront
 	startFrame(-1), lastFrame(-1), endFrame(-1), forceSeek(false),
 	breakKey(kShortKeyEscape), palCmd(8), palStart(0), palEnd(255), palFrame(-1),
 	noBlock(false), loop(false), fade(false), waitEndFrame(true),
-	hasSound(false), canceled(false), noWaitSound(false), slot(-1) {
+	hasSound(false), canceled(false), noWaitSound(false), slot(-1), reuseSlotWitSameFilename(false) {
 
 }
 
@@ -101,7 +101,7 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 	int slot = kPrimaryVideoSlot;
 
 	Video *video = nullptr;
-	if (_vm->getGameType() == kGameTypeAdibou2) {
+	if (properties.reuseSlotWitSameFilename) {
 		// Check whether a slot is already open for this file
 		for (int i = 0; i < kVideoSlotCount; i++) {
 			if (_videoSlots[i].isEmpty())
