@@ -22,6 +22,7 @@
 #ifndef AWE_GRAPHICS_H
 #define AWE_GRAPHICS_H
 
+#include "graphics/pixelformat.h"
 #include "awe/intern.h"
 
 namespace Awe {
@@ -61,7 +62,7 @@ struct SystemStub;
 struct Gfx {
 	static const uint8_t _font[];
 	static bool _is1991; // draw graphics as in the original 1991 game release
-	static bool _use555; // use 16bits graphics buffer (for 3DO)
+	static Graphics::PixelFormat _format;
 	static const uint16_t _shapesMaskOffset[];
 	static const int _shapesMaskCount;
 	static const uint8_t _shapesMaskData[];

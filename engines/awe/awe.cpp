@@ -58,7 +58,7 @@ static const struct {
 };
 
 bool Gfx::_is1991;
-bool Gfx::_use555;
+Graphics::PixelFormat Gfx::_format;
 bool Video::_useEGA;
 Difficulty Script::_difficulty;
 bool Script::_useRemasteredAudio;
@@ -97,7 +97,7 @@ AweEngine::AweEngine(OSystem *syst, const Awe::AweGameDescription *gameDesc)
 	g_engine = this;
 
 	Gfx::_is1991 = false;
-	Gfx::_use555 = false;
+	Gfx::_format = Graphics::PixelFormat::createFormatCLUT8();
 	Video::_useEGA = false;
 	Script::_difficulty = DIFFICULTY_NORMAL;
 	Script::_useRemasteredAudio = true;
@@ -136,7 +136,7 @@ Common::Error AweEngine::run() {
 
 	if (graphicsType != GRAPHICS_GL && dataType == DT_3DO) {
 		graphicsType = GRAPHICS_SOFTWARE;
-		Gfx::_use555 = true;
+		Gfx::_format = Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
 	}
 
 	Gfx *graphics = createGraphics(graphicsType);
