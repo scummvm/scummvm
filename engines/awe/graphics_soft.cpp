@@ -62,21 +62,21 @@ struct GraphicsSoft : public Gfx {
 	}
 	void setWorkPagePtr(uint8_t page);
 
-	virtual void init(int targetW, int targetH);
+	void init(int targetW, int targetH) override;
 
-	virtual void setFont(const uint8_t *src, int w, int h);
-	virtual void setPalette(const Color *colors, int count);
-	virtual void setSpriteAtlas(const uint8_t *src, int w, int h, int xSize, int ySize);
-	virtual void drawSprite(int buffer, int num, const Point *pt, uint8_t color);
-	virtual void drawBitmap(int buffer, const uint8_t *data, int w, int h, int fmt);
-	virtual void drawPoint(int buffer, uint8_t color, const Point *pt);
-	virtual void drawQuadStrip(int buffer, uint8_t color, const QuadStrip *qs);
-	virtual void drawStringChar(int buffer, uint8_t color, char c, const Point *pt);
-	virtual void clearBuffer(int num, uint8_t color);
-	virtual void copyBuffer(int dst, int src, int vscroll = 0);
-	virtual void drawBuffer(int num, SystemStub *stub);
-	virtual void drawRect(int num, uint8_t color, const Point *pt, int w, int h);
-	virtual void drawBitmapOverlay(const uint8_t *data, int w, int h, int fmt, SystemStub *stub);
+	void setFont(const uint8_t *src, int w, int h) override;
+	void setPalette(const Color *colors, int count) override;
+	void setSpriteAtlas(const uint8_t *src, int w, int h, int xSize, int ySize) override;
+	void drawSprite(int buffer, int num, const Point *pt, uint8_t color) override;
+	void drawBitmap(int buffer, const uint8_t *data, int w, int h, int fmt) override;
+	void drawPoint(int buffer, uint8_t color, const Point *pt) override;
+	void drawQuadStrip(int buffer, uint8_t color, const QuadStrip *qs) override;
+	void drawStringChar(int buffer, uint8_t color, char c, const Point *pt) override;
+	void clearBuffer(int num, uint8_t color) override;
+	void copyBuffer(int dst, int src, int vscroll = 0) override;
+	void drawBuffer(int num, SystemStub *stub) override;
+	void drawRect(int num, uint8_t color, const Point *pt, int w, int h) override;
+	void drawBitmapOverlay(const uint8_t *data, int w, int h, int fmt, SystemStub *stub) override;
 };
 
 
