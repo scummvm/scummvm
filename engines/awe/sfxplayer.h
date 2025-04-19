@@ -27,36 +27,36 @@
 namespace Awe {
 
 struct SfxInstrument {
-	uint8_t *data;
-	uint16_t volume;
+	uint8_t *data = nullptr;
+	uint16_t volume = 0;
 };
 
 struct SfxModule {
-	const uint8_t *data;
-	uint16_t curPos;
-	uint8_t curOrder;
-	uint8_t numOrder;
-	uint8_t *orderTable;
+	const uint8_t *data = nullptr;
+	uint16_t curPos = 0;
+	uint8_t curOrder = 0;
+	uint8_t numOrder = 0;
+	uint8_t *orderTable = nullptr;
 	SfxInstrument samples[15];
 };
 
 struct SfxPattern {
-	uint16_t note_1;
-	uint16_t note_2;
-	uint16_t sampleStart;
-	uint8_t *sampleBuffer;
-	uint16_t sampleLen;
-	uint16_t loopPos;
-	uint16_t loopLen;
-	uint16_t sampleVolume;
+	uint16_t note_1 = 0;
+	uint16_t note_2 = 0;
+	uint16_t sampleStart = 0;
+	uint8_t *sampleBuffer = nullptr;
+	uint16_t sampleLen = 0;
+	uint16_t loopPos = 0;
+	uint16_t loopLen = 0;
+	uint16_t sampleVolume = 0;
 };
 
 struct SfxChannel {
-	uint8_t *sampleData;
-	uint16_t sampleLen;
-	uint16_t sampleLoopPos;
-	uint16_t sampleLoopLen;
-	uint16_t volume;
+	uint8_t *sampleData = nullptr;
+	uint16_t sampleLen = 0;
+	uint16_t sampleLoopPos = 0;
+	uint16_t sampleLoopLen = 0;
+	uint16_t volume = 0;
 	Frac pos;
 };
 

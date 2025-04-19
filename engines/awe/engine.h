@@ -37,7 +37,6 @@ struct Graphics;
 struct SystemStub;
 
 struct Engine {
-
 	enum {
 		kStateLogo3DO,
 		kStateTitle3DO,
@@ -45,15 +44,15 @@ struct Engine {
 		kStateGame
 	};
 
-	int _state;
-	Graphics *_graphics;
-	SystemStub *_stub;
+	int _state = 0;
+	Graphics *_graphics = nullptr;
+	SystemStub *_stub = nullptr;
 	Script _script;
 	Audio::Mixer &_mix;
 	Resource _res;
 	SfxPlayer _ply;
 	Video _vid;
-	int _partNum;
+	int _partNum = 0;
 
 	Engine(Audio::Mixer &mixer, const char *dataDir, int partNum);
 

@@ -71,19 +71,19 @@ struct Script {
 	Resource *_res;
 	SfxPlayer *_ply;
 	Video *_vid;
-	SystemStub *_stub;
+	SystemStub *_stub = nullptr;
 
-	int16_t _scriptVars[256];
-	uint16_t _scriptStackCalls[64];
-	uint16_t _scriptTasks[2][64];
-	uint8_t _scriptStates[2][64];
+	int16_t _scriptVars[256] = { 0 };
+	uint16_t _scriptStackCalls[64] = { 0 };
+	uint16_t _scriptTasks[2][64] = { { 0 } };
+	uint8_t _scriptStates[2][64] = { { 0 } };
 	Ptr _scriptPtr;
-	uint8_t _stackPtr;
-	bool _scriptPaused;
-	bool _fastMode;
-	int _screenNum;
-	bool _is3DO;
-	uint32_t _startTime, _timeStamp;
+	uint8_t _stackPtr = 0;
+	bool _scriptPaused = false;
+	bool _fastMode = false;
+	int _screenNum = 0;
+	bool _is3DO = false;
+	uint32_t _startTime = 0, _timeStamp = 0;
 
 	Script(Audio::Mixer *mix, Resource *res, SfxPlayer *ply, Video *vid);
 	void init();

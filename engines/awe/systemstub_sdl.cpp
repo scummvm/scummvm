@@ -27,13 +27,12 @@
 namespace Awe {
 
 struct SystemStub_SDL : SystemStub {
-
 	static const int kJoystickIndex = 0;
 	static const int kJoystickCommitValue = 16384;
 	static const float kAspectRatio;
 
-	int _w, _h;
-	float _aspectRatio[4];
+	int _w = 0, _h = 0;
+	float _aspectRatio[4] = { 0.0 };
 #ifdef TODO
 	SDL_Window *_window;
 	SDL_Renderer *_renderer;
@@ -43,7 +42,7 @@ struct SystemStub_SDL : SystemStub {
 	SDL_Joystick *_joystick;
 	SDL_GameController *_controller;
 #endif
-	int _screenshot;
+	int _screenshot = 0;
 
 	SystemStub_SDL();
 	virtual ~SystemStub_SDL() {

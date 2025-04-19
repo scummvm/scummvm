@@ -27,8 +27,8 @@
 namespace Awe {
 
 struct StrEntry {
-	uint16_t id;
-	const char *str;
+	uint16_t id = 0;
+	const char *str = nullptr;
 };
 
 struct Graphics;
@@ -37,7 +37,6 @@ struct Scaler;
 struct SystemStub;
 
 struct Video {
-
 	enum {
 		BITMAP_W = 320,
 		BITMAP_H = 200
@@ -58,20 +57,20 @@ struct Video {
 	static bool _useEGA;
 
 	Resource *_res;
-	Graphics *_graphics;
-	bool _hasHeadSprites;
-	bool _displayHead;
+	Graphics *_graphics = nullptr;
+	bool _hasHeadSprites = false;
+	bool _displayHead = false;
 
-	uint8_t _nextPal, _currentPal;
-	uint8_t _buffers[3];
+	uint8_t _nextPal = 0, _currentPal = 0;
+	uint8_t _buffers[3] = { 0 };
 	Ptr _pData;
-	uint8_t *_dataBuf;
-	const StrEntry *_stringsTable;
-	uint8_t _tempBitmap[BITMAP_W * BITMAP_H];
-	uint16_t _bitmap555[BITMAP_W * BITMAP_H];
-	const Scaler *_scaler;
-	int _scalerFactor;
-	uint8_t *_scalerBuffer;
+	uint8_t *_dataBuf = nullptr;
+	const StrEntry *_stringsTable = nullptr;
+	uint8_t _tempBitmap[BITMAP_W * BITMAP_H] = { 0 };
+	uint16_t _bitmap555[BITMAP_W * BITMAP_H] = { 0 };
+	const Scaler *_scaler = nullptr;
+	int _scalerFactor = 0;
+	uint8_t *_scalerBuffer = nullptr;
 
 	Video(Resource *res);
 	~Video();

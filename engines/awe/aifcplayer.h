@@ -28,12 +28,11 @@
 namespace Awe {
 
 struct AifcPlayer {
-
 	File _f;
-	uint32_t _ssndOffset;
-	uint32_t _ssndSize;
-	uint32_t _pos;
-	int16_t _sampleL, _sampleR;
+	uint32_t _ssndOffset = 0;
+	uint32_t _ssndSize = 0;
+	uint32_t _pos = 0;
+	int16_t _sampleL = 0, _sampleR = 0;
 	Frac _rate;
 
 	AifcPlayer();

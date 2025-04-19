@@ -59,7 +59,6 @@ enum {
 struct SystemStub;
 
 struct Graphics {
-
 	static const uint8_t _font[];
 	static bool _is1991; // draw graphics as in the original 1991 game release
 	static bool _use555; // use 16bits graphics buffer (for 3DO)
@@ -67,8 +66,8 @@ struct Graphics {
 	static const int _shapesMaskCount;
 	static const uint8_t _shapesMaskData[];
 
-	int _fixUpPalette;
-	bool _screenshot;
+	int _fixUpPalette = 0;
+	bool _screenshot = false;
 
 	virtual ~Graphics() {};
 
