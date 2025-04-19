@@ -28,11 +28,11 @@
 namespace Awe {
 
 struct Win31BankEntry {
-	char name[16];
-	uint8_t type;
-	uint32_t offset;
-	uint32_t size;
-	uint32_t packedSize;
+	char name[16] = { '\0' };
+	uint8_t type = 0;
+	uint32_t offset = 0;
+	uint32_t size = 0;
+	uint32_t packedSize = 0;
 };
 
 struct ResourceWin31 {
@@ -40,10 +40,10 @@ struct ResourceWin31 {
 
 	File _f;
 	const char *_dataPath;
-	Win31BankEntry *_entries;
-	int _entriesCount;
-	uint8_t *_textBuf;
-	const char *_stringsTable[614];
+	Win31BankEntry *_entries = nullptr;
+	int _entriesCount = 0;
+	uint8_t *_textBuf = nullptr;
+	const char *_stringsTable[614] = { nullptr };
 
 	ResourceWin31(const char *dataPath);
 	~ResourceWin31();

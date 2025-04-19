@@ -31,64 +31,6 @@ namespace Awe {
 
 using Common::Language;
 
-#if 0
-#undef ARRAYSIZE
-#define ARRAYSIZE(a) (sizeof(a)/sizeof(a[0]))
-
-#undef ABS
-template<typename T>
-inline T ABS(T v) {
-	return (v < 0) ? -v : v;
-}
-
-#undef MIN
-template<typename T>
-inline T MIN(T v1, T v2) {
-	return (v1 < v2) ? v1 : v2;
-}
-
-#undef MAX
-template<typename T>
-inline T MAX(T v1, T v2) {
-	return (v1 > v2) ? v1 : v2;
-}
-
-template<typename T>
-inline void SWAP(T &a, T &b) {
-	T tmp = a;
-	a = b;
-	b = tmp;
-}
-
-inline uint16_t SWAP_UINT16(uint16_t n) {
-	return ((n >> 8) & 255) | ((n & 255) << 8);
-}
-
-inline uint16_t READ_BE_UINT16(const void *ptr) {
-	const uint8_t *b = (const uint8_t *)ptr;
-	return (b[0] << 8) | b[1];
-}
-
-inline uint16_t READ_LE_UINT16(const uint8_t *ptr) {
-	return (ptr[1] << 8) | ptr[0];
-}
-
-inline uint32_t READ_BE_UINT32(const void *ptr) {
-	const uint8_t *b = (const uint8_t *)ptr;
-	return (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3];
-}
-
-inline uint32_t READ_LE_UINT32(const uint8_t *ptr) {
-	return (ptr[3] << 24) | (ptr[2] << 16) | (ptr[1] << 8) | ptr[0];
-}
-
-inline void WRITE_LE_UINT32(uint8_t *ptr, uint32_t value) {
-	for (int i = 0; i < 4; ++i) {
-		ptr[i] = value & 255; value >>= 8;
-	}
-}
-#endif
-
 enum {
 	kPartCopyProtection = 16000,
 	kPartIntro = 16001,
@@ -106,8 +48,8 @@ enum {
 };
 
 struct Ptr {
-	uint8_t *pc;
-	bool byteSwap;
+	uint8_t *pc = nullptr;
+	bool byteSwap = false;
 
 	uint8_t fetchByte() {
 		return *pc++;
@@ -136,14 +78,14 @@ struct QuadStrip {
 		MAX_VERTICES = 70
 	};
 
-	uint8_t numVertices;
+	uint8_t numVertices = 0;
 	Point vertices[MAX_VERTICES];
 };
 
 struct Color {
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
+	uint8_t r = 0;
+	uint8_t g = 0;
+	uint8_t b = 0;
 
 	uint16_t rgb555() const {
 		return ((r >> 3) << 10) | ((g >> 3) << 5) | (b >> 3);
@@ -153,8 +95,8 @@ struct Color {
 struct Frac {
 	static const int BITS = 16;
 	static const int MASK = (1 << BITS) - 1;
-	uint32_t inc;
-	uint64_t offset;
+	uint32_t inc = 0;
+	uint64_t offset = 0;
 
 	void reset(int n, int d) {
 		inc = (((int64_t)n) << BITS) / d;

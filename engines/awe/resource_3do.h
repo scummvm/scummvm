@@ -30,10 +30,9 @@ namespace Awe {
 struct OperaIso;
 
 struct Resource3do {
-
 	const char *_dataPath;
-	char _musicPath[32];
-	char _cpakPath[64];
+	char _musicPath[32] = { '\0' };
+	char _cpakPath[64] = { '\0' };
 	OperaIso *_iso;
 
 	Resource3do(const char *dataPath);

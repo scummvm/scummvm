@@ -34,16 +34,16 @@ struct PlayerInput {
 		DIR_DOWN = 1 << 3
 	};
 
-	uint8_t dirMask;
-	bool action; // run,shoot
-	bool jump;
-	bool code;
-	bool pause;
-	bool quit;
-	bool back;
-	char lastChar;
-	bool fastMode;
-	bool screenshot;
+	uint8_t dirMask = 0;
+	bool action = false; // run,shoot
+	bool jump = false;
+	bool code = false;
+	bool pause = false;
+	bool quit = false;
+	bool back = false;
+	char lastChar = '\0';
+	bool fastMode = false;
+	bool screenshot = false;
 };
 
 struct DisplayMode {
@@ -52,8 +52,8 @@ struct DisplayMode {
 		FULLSCREEN,    // stretch
 		FULLSCREEN_AR, // 16:10 aspect ratio
 	} mode;
-	int width, height; // window dimensions
-	bool opengl;       // GL renderer
+	int width = 0, height = 0; // window dimensions
+	bool opengl = false;       // GL renderer
 };
 
 struct SystemStub {
@@ -62,11 +62,8 @@ struct SystemStub {
 	PlayerInput _pi;
 	DisplayMode _dm;
 
-	SystemStub() {
-		memset(&_pi, 0, sizeof(_pi));
-	}
-	virtual ~SystemStub() {
-	}
+	SystemStub() {}
+	virtual ~SystemStub() {}
 
 	virtual void init(const char *title, const DisplayMode *dm) = 0;
 	virtual void fini() = 0;

@@ -27,14 +27,14 @@
 namespace Awe {
 
 struct MemEntry {
-	uint8_t status;        // 0x0
-	uint8_t type;          // 0x1, Resource::ResType
-	uint8_t *bufPtr;       // 0x2
-	uint8_t rankNum;       // 0x6
-	uint8_t bankNum;       // 0x7
-	uint32_t bankPos;      // 0x8
-	uint32_t packedSize;   // 0xC
-	uint32_t unpackedSize; // 0x12
+	uint8_t status = 0;        // 0x0
+	uint8_t type = 0;          // 0x1, Resource::ResType
+	uint8_t *bufPtr = nullptr; // 0x2
+	uint8_t rankNum = 0;       // 0x6
+	uint8_t bankNum = 0;       // 0x7
+	uint32_t bankPos = 0;      // 0x8
+	uint32_t packedSize = 0;   // 0xC
+	uint32_t unpackedSize = 0; // 0x12
 };
 
 struct AmigaMemEntry {
@@ -46,11 +46,11 @@ struct AmigaMemEntry {
 };
 
 struct DemoJoy {
-	uint8_t keymask;
-	uint8_t counter;
+	uint8_t keymask = 0;
+	uint8_t counter = 0;
 
-	uint8_t *bufPtr;
-	int bufPos, bufSize;
+	uint8_t *bufPtr = nullptr;
+	int bufPos = 0, bufSize = 0;
 
 	bool start() {
 		if (bufSize > 0) {
@@ -84,7 +84,6 @@ struct Video;
 typedef void (*PreloadSoundProc)(void *userdata, int num, const uint8_t *data);
 
 struct Resource {
-
 	enum ResType {
 		RT_SOUND = 0,
 		RT_MUSIC = 1,

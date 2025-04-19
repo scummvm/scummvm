@@ -28,17 +28,17 @@
 namespace Awe {
 
 struct PakEntry {
-	char name[32];
-	uint32_t offset;
-	uint32_t size;
+	char name[32] = { '\0' };
+	uint32_t offset = 0;
+	uint32_t size = 0;
 };
 
 struct Pak {
 	static const char *FILENAME;
 
 	File _f;
-	PakEntry *_entries;
-	int _entriesCount;
+	PakEntry *_entries = nullptr;
+	int _entriesCount = 0;
 
 	Pak();
 	~Pak();
