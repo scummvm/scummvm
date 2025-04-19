@@ -117,9 +117,6 @@ jobs:
             buildFlags: -scheme ScummVM-iOS CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO
             configFlags: --use-xcframework --enable-faad --enable-gif --enable-mikmod --enable-mpeg2 --enable-vpx --disable-nasm --disable-taskbar --disable-tts
             packagesUrl: https://downloads.scummvm.org/frs/build/scummvm-ios7-libs-v3.zip
-    env:
-      BUILDCACHE_MAX_CACHE_SIZE: 2000000000
-      BUILDCACHE_HARD_LINKS: true
     defaults:
       run:
         # Must be explicit for proper pipefail support
@@ -147,9 +144,11 @@ jobs:
           ./devtools/create_project/xcode/build/Release/create_project . --xcode --enable-all-engines ${{ matrix.configFlags }}
           ls
       - name: Build cache
-        uses: mikehardy/buildcache-action@v2
+        uses: hendrikmuhs/ccache-action@v1.2
         with:
-          cache_key: ${{ matrix.platform }}
+          key: ${{ matrix.platform }}
+          max-size: 1G
+          create-symlink: true
       - name: Build scummvm
         run: |
           xcodebuild CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ build -project scummvm.xcodeproj ${{ matrix.buildFlags }} | awk '$1 !~ /^(export|cd|clang++)/'
