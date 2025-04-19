@@ -28,13 +28,7 @@
 
 namespace Awe {
 
-Engine::Engine(Audio::Mixer *mixer, DataType dataType, int partNum) :
-		_mix(mixer), _script(mixer, &_res, &_ply, &_vid),
-		_res(&_vid, dataType), _ply(&_res), _vid(&_res),
-		_partNum(partNum) {
-}
-
-static const int _restartPos[36 * 2] = {
+static const uint16 RESTART_POS[36 * 2] = {
 	16008,  0, 16001,  0, 16002, 10, 16002, 12, 16002, 14,
 	16003, 20, 16003, 24, 16003, 26, 16004, 30, 16004, 31,
 	16004, 32, 16004, 33, 16004, 34, 16004, 35, 16004, 36,
@@ -44,6 +38,12 @@ static const int _restartPos[36 * 2] = {
 	16006, 66, 16006, 67, 16006, 68, 16005, 50, 16006, 60,
 	16007, 0
 };
+
+Engine::Engine(Audio::Mixer *mixer, DataType dataType, int partNum) :
+		_mix(mixer), _script(mixer, &_res, &_ply, &_vid),
+		_res(&_vid, dataType), _ply(&_res), _vid(&_res),
+		_partNum(partNum) {
+}
 
 void Engine::setSystemStub(SystemStub *stub, Graphics *graphics) {
 	_stub = stub;
@@ -166,7 +166,7 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 		_state = kStateGame;
 		const int num = _partNum;
 		if (num < 36) {
-			_script.restartAt(_restartPos[num * 2], _restartPos[num * 2 + 1]);
+			_script.restartAt(RESTART_POS[num * 2], RESTART_POS[num * 2 + 1]);
 		} else {
 			_script.restartAt(num);
 		}
