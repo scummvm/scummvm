@@ -33,15 +33,11 @@ namespace Awe {
 
 static const char *atariDemo = "aw.tos";
 
-Resource::Resource(Video *vid, const char *dataDir)
-	: _vid(vid), _dataDir(dataDir), _currentPart(0), _nextPart(0), _dataType(DT_DOS), _nth(0), _win31(0), _3do(0) {
+Resource::Resource(Video *vid) : _vid(vid) {
 	_bankPrefix = "bank";
 	_hasPasswordScreen = true;
 	memset(_memList, 0, sizeof(_memList));
 	_numMemList = 0;
-	if (!_dataDir) {
-		_dataDir = ".";
-	}
 	_lang = Common::FR_FRA;
 	_amigaMemList = 0;
 	memset(&_demo3Joy, 0, sizeof(_demo3Joy));
@@ -59,7 +55,7 @@ bool Resource::readBank(const MemEntry *me, uint8_t *dstBuf) {
 	char name[10];
 	snprintf(name, sizeof(name), "%s%02x", _bankPrefix, me->bankNum);
 	File f;
-	if (f.open(name, _dataDir) || (_dataType == DT_ATARI_DEMO && f.open(atariDemo, _dataDir))) {
+	if (f.open(name) || (_dataType == DT_ATARI_DEMO && f.open(atariDemo))) {
 		f.seek(me->bankPos);
 		const size_t count = f.read(dstBuf, me->packedSize);
 		ret = (count == me->packedSize);

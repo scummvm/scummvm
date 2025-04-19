@@ -52,9 +52,9 @@ struct Engine {
 	Resource _res;
 	SfxPlayer _ply;
 	Video _vid;
-	int _partNum = 0;
+	int _partNum;
 
-	Engine(Audio::Mixer &mixer, const char *dataDir, int partNum);
+	Engine(Audio::Mixer &mixer, int partNum);
 
 	void setSystemStub(SystemStub *, Graphics *);
 

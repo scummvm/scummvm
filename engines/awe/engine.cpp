@@ -28,9 +28,10 @@
 
 namespace Awe {
 
-Engine::Engine(Audio::Mixer &mixer, const char *dataDir, int partNum)
-	: _mix(mixer), _graphics(0), _stub(0), _script(&_mix, &_res, &_ply, &_vid),
-	_res(&_vid, dataDir), _ply(&_res), _vid(&_res), _partNum(partNum) {
+Engine::Engine(Audio::Mixer &mixer, int partNum) : _mix(mixer),
+	_script(&_mix, &_res, &_ply, &_vid),
+	_res(&_vid), _ply(&_res), _vid(&_res),
+	_partNum(partNum) {
 	_res.detectVersion();
 }
 
