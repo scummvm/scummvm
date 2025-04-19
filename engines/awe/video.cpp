@@ -43,7 +43,7 @@ void Video::init() {
 	_buffers[2] = getPagePtr(1);
 	_buffers[1] = getPagePtr(2);
 	setWorkPagePtr(0xFE);
-	_pData.byteSwap = (_res->getDataType() == Resource::DT_3DO);
+	_pData.byteSwap = (_res->getDataType() == DT_3DO);
 	_scaler = 0;
 	_scalerBuffer = 0;
 }
@@ -53,7 +53,7 @@ void Video::setScaler(const char *name, int factor) {
 	if (!_scaler) {
 		warning("Scaler '%s' not found", name);
 	} else {
-		const int byteDepth = (_res->getDataType() == Resource::DT_3DO) ? 2 : 1;
+		const int byteDepth = (_res->getDataType() == DT_3DO) ? 2 : 1;
 		if ((_scaler->bpp & (byteDepth * 8)) == 0) {
 			warning("Scaler '%s' does not support %d bits per pixel", name, (byteDepth << 8));
 			_scaler = 0;
@@ -329,7 +329,7 @@ static const char *findString(const StrEntry *stringsTable, int id) {
 void Video::drawString(uint8_t color, uint16_t x, uint16_t y, uint16_t strId) {
 	bool escapedChars = false;
 	const char *str = 0;
-	if (_res->getDataType() == Resource::DT_15TH_EDITION || _res->getDataType() == Resource::DT_20TH_EDITION) {
+	if (_res->getDataType() == DT_15TH_EDITION || _res->getDataType() == DT_20TH_EDITION) {
 		for (int i = 0; i < NTH_EDITION_STRINGS_COUNT; ++i) {
 			if (Video::_stringsId15th[i] == strId) {
 				str = _res->getString(i);
@@ -341,15 +341,15 @@ void Video::drawString(uint8_t color, uint16_t x, uint16_t y, uint16_t strId) {
 				break;
 			}
 		}
-	} else if (_res->getDataType() == Resource::DT_WIN31) {
+	} else if (_res->getDataType() == DT_WIN31) {
 		str = _res->getString(strId);
-	} else if (_res->getDataType() == Resource::DT_3DO) {
+	} else if (_res->getDataType() == DT_3DO) {
 		str = findString(_stringsTable3DO, strId);
-	} else if (_res->getDataType() == Resource::DT_ATARI_DEMO && strId == 0x194) {
+	} else if (_res->getDataType() == DT_ATARI_DEMO && strId == 0x194) {
 		str = _str0x194AtariDemo;
 	} else {
 		str = findString(_stringsTable, strId);
-		if (!str && _res->getDataType() == Resource::DT_DOS) {
+		if (!str && _res->getDataType() == DT_DOS) {
 			str = findString(_stringsTableDemo, strId);
 		}
 	}
@@ -493,16 +493,16 @@ void Video::scaleBitmap(const uint8_t *src, int fmt) {
 }
 
 void Video::copyBitmapPtr(const uint8_t *src, uint32_t size) {
-	if (_res->getDataType() == Resource::DT_DOS || _res->getDataType() == Resource::DT_AMIGA) {
+	if (_res->getDataType() == DT_DOS || _res->getDataType() == DT_AMIGA) {
 		decode_amiga(src, _tempBitmap);
 		scaleBitmap(_tempBitmap, FMT_CLUT);
-	} else if (_res->getDataType() == Resource::DT_ATARI) {
+	} else if (_res->getDataType() == DT_ATARI) {
 		decode_atari(src, _tempBitmap);
 		scaleBitmap(_tempBitmap, FMT_CLUT);
-	} else if (_res->getDataType() == Resource::DT_WIN31) {
+	} else if (_res->getDataType() == DT_WIN31) {
 		yflip(src, BITMAP_W, BITMAP_H, _tempBitmap);
 		scaleBitmap(_tempBitmap, FMT_CLUT);
-	} else if (_res->getDataType() == Resource::DT_3DO) {
+	} else if (_res->getDataType() == DT_3DO) {
 		deinterlace555(src, BITMAP_W, BITMAP_H, _bitmap555);
 		scaleBitmap((const uint8_t *)_bitmap555, FMT_RGB555);
 	} else { // .BMP
@@ -586,11 +586,11 @@ static void readPaletteAmiga(const uint8_t *buf, int num, Color pal[16]) {
 void Video::changePal(uint8_t palNum) {
 	if (palNum < 32 && palNum != _currentPal) {
 		Color pal[16];
-		if (_res->getDataType() == Resource::DT_WIN31) {
+		if (_res->getDataType() == DT_WIN31) {
 			readPaletteWin31(_res->_segVideoPal, palNum, pal);
-		} else if (_res->getDataType() == Resource::DT_3DO) {
+		} else if (_res->getDataType() == DT_3DO) {
 			readPalette3DO(_res->_segVideoPal, palNum, pal);
-		} else if (_res->getDataType() == Resource::DT_DOS && _useEGA) {
+		} else if (_res->getDataType() == DT_DOS && _useEGA) {
 			readPaletteEGA(_res->_segVideoPal, palNum, pal);
 		} else {
 			readPaletteAmiga(_res->_segVideoPal, palNum, pal);
@@ -636,7 +636,7 @@ void Video::drawRect(uint8_t page, uint8_t color, int x1, int y1, int x2, int y2
 }
 
 void Video::drawBitmap3DO(const char *name, SystemStub *stub) {
-	assert(_res->getDataType() == Resource::DT_3DO);
+	assert(_res->getDataType() == DT_3DO);
 	int w, h;
 	uint16_t *data = _res->_3do->loadShape555(name, &w, &h);
 	if (data) {

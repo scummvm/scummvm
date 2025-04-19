@@ -31,11 +31,11 @@ namespace Awe {
 
 class AweEngine : public ::Engine {
 private:
-	const ADGameDescription *_gameDescription;
+	const AweGameDescription *_gameDescription;
 	Common::RandomSource _random;
 
 public:
-	AweEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	AweEngine(OSystem *syst, const AweGameDescription *gameDesc);
 	~AweEngine() override;
 
 	Common::Error run() override;
@@ -53,6 +53,9 @@ public:
 	int getRandomNumber(int min, int max) {
 		return min + _random.getRandomNumber(max - min);
 	}
+
+	DataType getDataType() const;
+	Common::Language getLanguage() const;
 };
 
 extern AweEngine *g_engine;

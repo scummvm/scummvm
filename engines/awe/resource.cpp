@@ -33,14 +33,13 @@ namespace Awe {
 
 static const char *atariDemo = "aw.tos";
 
-Resource::Resource(Video *vid) : _vid(vid) {
+Resource::Resource(Video *vid, DataType dataType) :
+		_vid(vid), _dataType(dataType) {
 	_bankPrefix = "bank";
 	_hasPasswordScreen = true;
-	memset(_memList, 0, sizeof(_memList));
 	_numMemList = 0;
-	_lang = Common::FR_FRA;
+	_lang = Common::EN_ANY;
 	_amigaMemList = 0;
-	memset(&_demo3Joy, 0, sizeof(_demo3Joy));
 }
 
 Resource::~Resource() {
@@ -66,29 +65,9 @@ bool Resource::readBank(const MemEntry *me, uint8_t *dstBuf) {
 	return ret;
 }
 
-static bool check15th(File &f, const char *dataDir) {
-	char path[MAXPATHLEN];
-	snprintf(path, sizeof(path), "%s/Data", dataDir);
-	return f.open(Pak::FILENAME, path);
-}
+static const AmigaMemEntry *detectAmigaAtari() {
+	Common::File f;
 
-static bool check20th(File &f, const char *dataDir) {
-	char path[MAXPATHLEN];
-	snprintf(path, sizeof(path), "%s/game/DAT", dataDir);
-	return f.open("FILE017.DAT", path);
-}
-
-static bool check3DO(File &f, const char *dataDir) {
-	const char *ext = strrchr(dataDir, '.');
-	if (ext && scumm_stricmp(ext, ".iso") == 0) {
-		return f.open(dataDir);
-	}
-	char path[MAXPATHLEN];
-	snprintf(path, sizeof(path), "%s/GameData", dataDir);
-	return f.open("File340", path);
-}
-
-static const AmigaMemEntry *detectAmigaAtari(File &f, const char *dataDir) {
 	static const struct {
 		uint32_t bank01Size;
 		const AmigaMemEntry *entries;
@@ -98,7 +77,7 @@ static const AmigaMemEntry *detectAmigaAtari(File &f, const char *dataDir) {
 		{ 227142, Resource::_memListAtariEN },
 		{ 0, 0 }
 	};
-	if (f.open("bank01", dataDir)) {
+	if (f.open("bank01")) {
 		const uint32_t size = f.size();
 		for (int i = 0; _files[i].entries; ++i) {
 			if (_files[i].bank01Size == size) {
@@ -106,39 +85,13 @@ static const AmigaMemEntry *detectAmigaAtari(File &f, const char *dataDir) {
 			}
 		}
 	}
-	return 0;
+
+	return nullptr;
 }
 
 void Resource::detectVersion() {
-	File f;
-	if (check15th(f, _dataDir)) {
-		_dataType = DT_15TH_EDITION;
-		debug(DBG_INFO, "Using 15th anniversary edition data files");
-	} else if (check20th(f, _dataDir)) {
-		_dataType = DT_20TH_EDITION;
-		debug(DBG_INFO, "Using 20th anniversary edition data files");
-	} else if (f.open("memlist.bin", _dataDir)) {
-		_dataType = DT_DOS;
-		debug(DBG_INFO, "Using DOS data files");
-	} else if ((_amigaMemList = detectAmigaAtari(f, _dataDir)) != 0) {
-		if (_amigaMemList == _memListAtariEN) {
-			_dataType = DT_ATARI;
-			debug(DBG_INFO, "Using Atari data files");
-		} else {
-			_dataType = DT_AMIGA;
-			debug(DBG_INFO, "Using Amiga data files");
-		}
-	} else if (f.open(ResourceWin31::FILENAME, _dataDir)) {
-		_dataType = DT_WIN31;
-		debug(DBG_INFO, "Using Win31 data files");
-	} else if (check3DO(f, _dataDir)) {
-		_dataType = DT_3DO;
-		debug(DBG_INFO, "Using 3DO data files");
-	} else if (f.open(atariDemo, _dataDir) && f.size() == 96513) {
-		_dataType = DT_ATARI_DEMO;
-		debug(DBG_INFO, "Using Atari demo file");
-	} else {
-		error("No data files found in '%s'", _dataDir);
+	if (_dataType == DT_ATARI) {
+		_amigaMemList = detectAmigaAtari();
 	}
 }
 

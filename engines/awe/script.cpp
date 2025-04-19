@@ -38,22 +38,22 @@ void Script::init() {
 	memset(_scriptVars, 0, sizeof(_scriptVars));
 	_fastMode = false;
 	_ply->_syncVar = &_scriptVars[VAR_MUSIC_SYNC];
-	_scriptPtr.byteSwap = _is3DO = (_res->getDataType() == Resource::DT_3DO);
+	_scriptPtr.byteSwap = _is3DO = (_res->getDataType() == DT_3DO);
 	if (_is3DO) {
 		_scriptVars[0xDB] = 1;
 		_scriptVars[0xE2] = 1;
 		_scriptVars[0xF2] = 6000;
-	} else if (_res->getDataType() != Resource::DT_15TH_EDITION && _res->getDataType() != Resource::DT_20TH_EDITION) {
+	} else if (_res->getDataType() != DT_15TH_EDITION && _res->getDataType() != DT_20TH_EDITION) {
 		_scriptVars[VAR_RANDOM_SEED] = 0; // time(0);
 #ifdef BYPASS_PROTECTION
 		// these 3 variables are set by the game code
 		_scriptVars[0xBC] = 0x10;
 		_scriptVars[0xC6] = 0x80;
-		_scriptVars[0xF2] = (_res->getDataType() == Resource::DT_AMIGA || _res->getDataType() == Resource::DT_ATARI) ? 6000 : 4000;
+		_scriptVars[0xF2] = (_res->getDataType() == DT_AMIGA || _res->getDataType() == DT_ATARI) ? 6000 : 4000;
 		// these 2 variables are set by the engine executable
 		_scriptVars[0xDC] = 33;
 #endif
-		if (_res->getDataType() == Resource::DT_DOS || _res->getDataType() == Resource::DT_WIN31) {
+		if (_res->getDataType() == DT_DOS || _res->getDataType() == DT_WIN31) {
 			_scriptVars[0xE4] = 20;
 		}
 	}
@@ -81,7 +81,7 @@ void Script::op_add() {
 }
 
 void Script::op_addConst() {
-	if (_res->getDataType() == Resource::DT_DOS || _res->getDataType() == Resource::DT_AMIGA || _res->getDataType() == Resource::DT_ATARI) {
+	if (_res->getDataType() == DT_DOS || _res->getDataType() == DT_AMIGA || _res->getDataType() == DT_ATARI) {
 		if (_res->_currentPart == 16006 && _scriptPtr.pc == _res->_segCode + 0x6D48) {
 			warning("Script::op_addConst() workaround for infinite looping gun sound");
 			// The script 0x27 slot 0x17 doesn't stop the gun sound from looping.
@@ -396,12 +396,12 @@ void Script::op_playMusic() {
 void Script::restartAt(int part, int pos) {
 	_ply->stop();
 	_mix->stopAll();
-	if (_res->getDataType() == Resource::DT_20TH_EDITION) {
+	if (_res->getDataType() == DT_20TH_EDITION) {
 		_scriptVars[0xBF] = _difficulty; // difficulty (0 to 2)
 		// _scriptVars[0xDB] = 1; // preload sounds (resnum >= 2000)
 		_scriptVars[0xDE] = _useRemasteredAudio ? 1 : 0; // playback remastered sounds (resnum >= 146)
 	}
-	if (_res->getDataType() == Resource::DT_DOS && part == kPartCopyProtection) {
+	if (_res->getDataType() == DT_DOS && part == kPartCopyProtection) {
 		// VAR(0x54) indicates if the "Out of this World" title screen should be presented
 		//
 		//   0084: jmpIf(VAR(0x54) < 128, @00C4)
@@ -648,7 +648,7 @@ void Script::updateInput() {
 			m |= 8; // jump
 		}
 	}
-	if (!(_res->getDataType() == Resource::DT_AMIGA || _res->getDataType() == Resource::DT_ATARI)) {
+	if (!(_res->getDataType() == DT_AMIGA || _res->getDataType() == DT_ATARI)) {
 		_scriptVars[VAR_HERO_POS_UP_DOWN] = ud;
 	}
 	_scriptVars[VAR_HERO_POS_JUMP_DOWN] = jd;
@@ -781,12 +781,12 @@ void Script::snd_playSound(uint16_t resNum, uint8_t freq, uint8_t vol, uint8_t c
 	}
 	channel &= 3;
 	switch (_res->getDataType()) {
-	case Resource::DT_20TH_EDITION:
+	case DT_20TH_EDITION:
 		if (freq != 0) {
 			--freq;
 		}
 		/* fall-through */
-	case Resource::DT_15TH_EDITION:
+	case DT_15TH_EDITION:
 		if (freq >= 32) {
 			// Anniversary editions do not have the 170 period
 			//
@@ -796,7 +796,7 @@ void Script::snd_playSound(uint16_t resNum, uint8_t freq, uint8_t vol, uint8_t c
 			++freq;
 		}
 		/* fall-through */
-	case Resource::DT_WIN31:
+	case DT_WIN31:
 	{
 #ifdef TODO
 		uint8_t *buf = _res->loadWav(resNum);
@@ -808,17 +808,17 @@ void Script::snd_playSound(uint16_t resNum, uint8_t freq, uint8_t vol, uint8_t c
 #endif
 	}
 	break;
-	case Resource::DT_3DO:
+	case DT_3DO:
 #ifdef TODO
 		_mix->playSoundAiff(channel, resNum, vol);
 #else
 		::error("TODO: play aiff");
 #endif
 		break;
-	case Resource::DT_AMIGA:
-	case Resource::DT_ATARI:
-	case Resource::DT_ATARI_DEMO:
-	case Resource::DT_DOS:
+	case DT_AMIGA:
+	case DT_ATARI:
+	case DT_ATARI_DEMO:
+	case DT_DOS:
 	{
 #ifdef TODO
 		MemEntry *me = &_res->_memList[resNum];
@@ -838,7 +838,7 @@ void Script::snd_playMusic(uint16_t resNum, uint16_t delay, uint8_t pos) {
 	debug(DBG_SND, "snd_playMusic(0x%X, %d, %d)", resNum, delay, pos);
 	uint8_t loop = 0;
 	switch (_res->getDataType()) {
-	case Resource::DT_20TH_EDITION:
+	case DT_20TH_EDITION:
 		if (resNum == 5000) {
 			_mix->stopMusic();
 			break;
@@ -847,8 +847,8 @@ void Script::snd_playMusic(uint16_t resNum, uint16_t delay, uint8_t pos) {
 			loop = 1;
 		}
 		/* fall-through */
-	case Resource::DT_15TH_EDITION:
-	case Resource::DT_WIN31:
+	case DT_15TH_EDITION:
+	case DT_WIN31:
 		if (resNum != 0) {
 			char path[MAXPATHLEN];
 			const char *p = _res->getMusicPath(resNum, path, sizeof(path));
@@ -857,7 +857,7 @@ void Script::snd_playMusic(uint16_t resNum, uint16_t delay, uint8_t pos) {
 			}
 		}
 		break;
-	case Resource::DT_3DO:
+	case DT_3DO:
 		if (resNum == 0) {
 			_mix->stopAifcMusic();
 		} else {
@@ -888,7 +888,7 @@ void Script::snd_playMusic(uint16_t resNum, uint16_t delay, uint8_t pos) {
 
 void Script::snd_preloadSound(uint16_t resNum, const uint8_t *data) {
 #ifdef TODO
-	if (_res->getDataType() == Resource::DT_3DO) {
+	if (_res->getDataType() == DT_3DO) {
 		_mix->preloadSoundAiff(resNum, data);
 	}
 #else

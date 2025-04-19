@@ -22,6 +22,7 @@
 #ifndef AWE_RESOURCE_H
 #define AWE_RESOURCE_H
 
+#include "awe/detection.h"
 #include "awe/intern.h"
 
 namespace Awe {
@@ -94,17 +95,6 @@ struct Resource {
 		RT_BANK = 6, // common part shapes (bank2.mat)
 	};
 
-	enum DataType {
-		DT_DOS,
-		DT_AMIGA,
-		DT_ATARI,
-		DT_15TH_EDITION,
-		DT_20TH_EDITION,
-		DT_WIN31,
-		DT_3DO,
-		DT_ATARI_DEMO, // ST Action Issue44 Disk28
-	};
-
 	enum {
 		MEM_BLOCK_SIZE = 1 * 1024 * 1024,
 		ENTRIES_COUNT = 146,
@@ -123,6 +113,7 @@ struct Resource {
 	static const uint8_t _memListParts[][4];
 
 	Video *_vid;
+	DataType _dataType;
 	MemEntry _memList[ENTRIES_COUNT_20TH];
 	uint16_t _numMemList = 0;
 	uint16_t _currentPart = 0, _nextPart = 0;
@@ -137,7 +128,6 @@ struct Resource {
 	uint8_t *_segVideo2 = nullptr;
 	const char *_bankPrefix = "bank";
 	bool _hasPasswordScreen = true;
-	DataType _dataType;
 	ResourceNth *_nth = nullptr;
 	ResourceWin31 *_win31 = nullptr;
 	Resource3do *_3do = nullptr;
@@ -146,7 +136,7 @@ struct Resource {
 	DemoJoy _demo3Joy;
 	const char *const _dataDir = ".";
 
-	Resource(Video *vid);
+	Resource(Video *vid, DataType dataType);
 	~Resource();
 
 	DataType getDataType() const {

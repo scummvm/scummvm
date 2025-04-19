@@ -54,7 +54,7 @@ struct Engine {
 	Video _vid;
 	int _partNum;
 
-	Engine(Audio::Mixer &mixer, int partNum);
+	Engine(Audio::Mixer &mixer, DataType dataType, int partNum);
 
 	void setSystemStub(SystemStub *, Graphics *);
 

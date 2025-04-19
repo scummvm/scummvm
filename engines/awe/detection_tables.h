@@ -26,40 +26,43 @@ const PlainGameDescriptor aweGames[] = {
 	{ 0, 0 }
 };
 
-const ADGameDescription gameDescriptions[] = {
+const AweGameDescription gameDescriptions[] = {
 	{
-		"anotherworld",
-		nullptr,
-		AD_ENTRY1s("memlist.bin", "f2bf61fe20c98108b2256e96d57d3fe0", 2940),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_COPY_PROTECTION)
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY1s("memlist.bin", "f2bf61fe20c98108b2256e96d57d3fe0", 2940),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
+		},
+		DT_DOS
 	},
 	{
-		"anotherworld",
-		"Demo",
-		AD_ENTRY1s("memlist.bin", "11e0cc58aeb47ad1dfc1c4dae8dcd9ee", 2940),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_DEMO | ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_COPY_PROTECTION)
+		{
+			"anotherworld",
+			"Demo",
+			AD_ENTRY1s("memlist.bin", "11e0cc58aeb47ad1dfc1c4dae8dcd9ee", 2940),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
+		},
+		DT_DOS
 	},
-
-#if 0
-	// Unsupported Windows release that doesn't have a memlist.bin
-	// Need to investigate further.. maybe an embedded resource?
 	{
-		"anotherworld",
-		nullptr,
-		AD_ENTRY1s("bank", "30fb99cb4cbd812273d0b54b7b4a18ca", 987462),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY1s("bank", "30fb99cb4cbd812273d0b54b7b4a18ca", 987462),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
 	},
-#endif
-	AD_TABLE_END_MARKER
+	{ AD_TABLE_END_MARKER, 0 }
 };
 
 } // End of namespace Awe

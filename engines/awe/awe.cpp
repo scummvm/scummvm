@@ -82,11 +82,11 @@ static Graphics *createGraphics(int type) {
 }
 
 
-static int getGraphicsType(Resource::DataType type) {
+static int getGraphicsType(DataType type) {
 	switch (type) {
-	case Resource::DT_15TH_EDITION:
-	case Resource::DT_20TH_EDITION:
-	case Resource::DT_3DO:
+	case DT_15TH_EDITION:
+	case DT_20TH_EDITION:
+	case DT_3DO:
 		return GRAPHICS_GL;
 	default:
 		return GRAPHICS_ORIGINAL;
@@ -232,12 +232,12 @@ int main(int argc, char *argv[]) {
 		graphicsType = getGraphicsType(e->_res.getDataType());
 		dm.opengl = (graphicsType == GRAPHICS_GL);
 	}
-	if (graphicsType != GRAPHICS_GL && e->_res.getDataType() == Resource::DT_3DO) {
+	if (graphicsType != GRAPHICS_GL && e->_res.getDataType() == DT_3DO) {
 		graphicsType = GRAPHICS_SOFTWARE;
 		Graphics::_use555 = true;
 	}
 	Graphics *graphics = createGraphics(graphicsType);
-	if (e->_res.getDataType() == Resource::DT_20TH_EDITION) {
+	if (e->_res.getDataType() == DT_20TH_EDITION) {
 		switch (Script::_difficulty) {
 		case DIFFICULTY_EASY:
 			debug(DBG_INFO, "Using easy difficulty");
@@ -250,7 +250,7 @@ int main(int argc, char *argv[]) {
 			break;
 		}
 	}
-	if (e->_res.getDataType() == Resource::DT_15TH_EDITION || e->_res.getDataType() == Resource::DT_20TH_EDITION) {
+	if (e->_res.getDataType() == DT_15TH_EDITION || e->_res.getDataType() == DT_20TH_EDITION) {
 		if (Script::_useRemasteredAudio) {
 			debug(DBG_INFO, "Using remastered audio");
 		} else {
@@ -260,7 +260,7 @@ int main(int argc, char *argv[]) {
 	SystemStub *stub = SystemStub_SDL_create();
 	stub->init(e->getGameTitle(lang), &dm);
 	e->setSystemStub(stub, graphics);
-	if (demo3JoyInputs && e->_res.getDataType() == Resource::DT_DOS) {
+	if (demo3JoyInputs && e->_res.getDataType() == DT_DOS) {
 		e->_res.readDemo3Joy();
 	}
 	e->setup(lang, graphicsType, scaler.name, scaler.factor);
@@ -277,7 +277,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 
-AweEngine::AweEngine(OSystem *syst, const ADGameDescription *gameDesc)
+AweEngine::AweEngine(OSystem *syst, const Awe::AweGameDescription *gameDesc)
 		: Engine(syst), _gameDescription(gameDesc),
 		_random("Awe") {
 	g_engine = this;
@@ -293,7 +293,8 @@ Common::Error AweEngine::run() {
 	}
 
 	int part = 16001;
-	Language lang = _gameDescription->language;
+	const Language lang = getLanguage();
+	const DataType dataType = getDataType();
 	int graphicsType = GRAPHICS_SOFTWARE;
 
 	DisplayMode dm;
@@ -308,18 +309,18 @@ Common::Error AweEngine::run() {
 	// Initialize backend
 	initGraphics(dm.width, dm.height);
 
-	Awe::Engine *e = new Awe::Engine(*_mixer, part);
+	Awe::Engine *e = new Awe::Engine(*_mixer, dataType, part);
 	if (defaultGraphics) {
 		// if not set, use original software graphics for 199x editions and GL for the anniversary and 3DO versions
 		graphicsType = getGraphicsType(e->_res.getDataType());
 		dm.opengl = (graphicsType == GRAPHICS_GL);
 	}
-	if (graphicsType != GRAPHICS_GL && e->_res.getDataType() == Resource::DT_3DO) {
+	if (graphicsType != GRAPHICS_GL && e->_res.getDataType() == DT_3DO) {
 		graphicsType = GRAPHICS_SOFTWARE;
 		Graphics::_use555 = true;
 	}
 	Graphics *graphics = createGraphics(graphicsType);
-	if (e->_res.getDataType() == Resource::DT_20TH_EDITION) {
+	if (e->_res.getDataType() == DT_20TH_EDITION) {
 		switch (Script::_difficulty) {
 		case DIFFICULTY_EASY:
 			debug(DBG_INFO, "Using easy difficulty");
@@ -332,7 +333,7 @@ Common::Error AweEngine::run() {
 			break;
 		}
 	}
-	if (e->_res.getDataType() == Resource::DT_15TH_EDITION || e->_res.getDataType() == Resource::DT_20TH_EDITION) {
+	if (e->_res.getDataType() == DT_15TH_EDITION || e->_res.getDataType() == DT_20TH_EDITION) {
 		if (Script::_useRemasteredAudio) {
 			debug(DBG_INFO, "Using remastered audio");
 		} else {
@@ -343,7 +344,7 @@ Common::Error AweEngine::run() {
 	SystemStub *stub = SystemStub_SDL_create();
 	stub->init(e->getGameTitle(lang), &dm);
 	e->setSystemStub(stub, graphics);
-	if (demo3JoyInputs && e->_res.getDataType() == Resource::DT_DOS) {
+	if (demo3JoyInputs && e->_res.getDataType() == DT_DOS) {
 		e->_res.readDemo3Joy();
 	}
 	e->setup(lang, graphicsType, nullptr, 1);
@@ -358,6 +359,14 @@ Common::Error AweEngine::run() {
 	delete stub;
 
 	return Common::kNoError;
+}
+
+DataType AweEngine::getDataType() const {
+	return (DataType)_gameDescription->_gameType;
+}
+
+Common::Language AweEngine::getLanguage() const {
+	return _gameDescription->desc.language;
 }
 
 } // namespace Awe
