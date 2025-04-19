@@ -123,27 +123,30 @@ struct Resource {
 	static const uint8_t _memListParts[][4];
 
 	Video *_vid;
-	const char *_dataDir;
 	MemEntry _memList[ENTRIES_COUNT_20TH];
-	uint16_t _numMemList;
-	uint16_t _currentPart, _nextPart;
-	uint8_t *_memPtrStart, *_scriptBakPtr, *_scriptCurPtr, *_vidCurPtr;
-	bool _useSegVideo2;
-	uint8_t *_segVideoPal;
-	uint8_t *_segCode;
-	uint8_t *_segVideo1;
-	uint8_t *_segVideo2;
-	const char *_bankPrefix;
-	bool _hasPasswordScreen;
+	uint16_t _numMemList = 0;
+	uint16_t _currentPart = 0, _nextPart = 0;
+	uint8_t *_memPtrStart = nullptr,
+		*_scriptBakPtr = nullptr,
+		*_scriptCurPtr = nullptr,
+		*_vidCurPtr = nullptr;
+	bool _useSegVideo2 = false;
+	uint8_t *_segVideoPal = nullptr;
+	uint8_t *_segCode = nullptr;
+	uint8_t *_segVideo1 = nullptr;
+	uint8_t *_segVideo2 = nullptr;
+	const char *_bankPrefix = "bank";
+	bool _hasPasswordScreen = true;
 	DataType _dataType;
-	ResourceNth *_nth;
-	ResourceWin31 *_win31;
-	Resource3do *_3do;
-	Language _lang;
+	ResourceNth *_nth = nullptr;
+	ResourceWin31 *_win31 = nullptr;
+	Resource3do *_3do = nullptr;
+	Language _lang = Language::EN_ANY;
 	const AmigaMemEntry *_amigaMemList;
 	DemoJoy _demo3Joy;
+	const char *const _dataDir = ".";
 
-	Resource(Video *vid, const char *dataDir);
+	Resource(Video *vid);
 	~Resource();
 
 	DataType getDataType() const {

@@ -292,7 +292,6 @@ Common::Error AweEngine::run() {
 		warning("Sound initialization failed.");
 	}
 
-	char *dataPath = 0;
 	int part = 16001;
 	Language lang = _gameDescription->language;
 	int graphicsType = GRAPHICS_SOFTWARE;
@@ -309,7 +308,7 @@ Common::Error AweEngine::run() {
 	// Initialize backend
 	initGraphics(dm.width, dm.height);
 
-	Awe::Engine *e = new Awe::Engine(*_mixer, dataPath, part);
+	Awe::Engine *e = new Awe::Engine(*_mixer, part);
 	if (defaultGraphics) {
 		// if not set, use original software graphics for 199x editions and GL for the anniversary and 3DO versions
 		graphicsType = getGraphicsType(e->_res.getDataType());
