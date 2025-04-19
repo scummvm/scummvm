@@ -62,21 +62,21 @@ void Script::init() {
 void Script::op_movConst() {
 	uint8_t i = _scriptPtr.fetchByte();
 	int16_t n = _scriptPtr.fetchWord();
-	debug(DBG_SCRIPT, "Script::op_movConst(0x%02X, %d)", i, n);
+	debugC(kDebugScript, "Script::op_movConst(0x%02X, %d)", i, n);
 	_scriptVars[i] = n;
 }
 
 void Script::op_mov() {
 	uint8_t i = _scriptPtr.fetchByte();
 	uint8_t j = _scriptPtr.fetchByte();
-	debug(DBG_SCRIPT, "Script::op_mov(0x%02X, 0x%02X)", i, j);
+	debugC(kDebugScript, "Script::op_mov(0x%02X, 0x%02X)", i, j);
 	_scriptVars[i] = _scriptVars[j];
 }
 
 void Script::op_add() {
 	uint8_t i = _scriptPtr.fetchByte();
 	uint8_t j = _scriptPtr.fetchByte();
-	debug(DBG_SCRIPT, "Script::op_add(0x%02X, 0x%02X)", i, j);
+	debugC(kDebugScript, "Script::op_add(0x%02X, 0x%02X)", i, j);
 	_scriptVars[i] += _scriptVars[j];
 }
 
@@ -99,13 +99,13 @@ void Script::op_addConst() {
 	}
 	uint8_t i = _scriptPtr.fetchByte();
 	int16_t n = _scriptPtr.fetchWord();
-	debug(DBG_SCRIPT, "Script::op_addConst(0x%02X, %d)", i, n);
+	debugC(kDebugScript, "Script::op_addConst(0x%02X, %d)", i, n);
 	_scriptVars[i] += n;
 }
 
 void Script::op_call() {
 	uint16_t off = _scriptPtr.fetchWord();
-	debug(DBG_SCRIPT, "Script::op_call(0x%X)", off);
+	debugC(kDebugScript, "Script::op_call(0x%X)", off);
 	if (_stackPtr == 0x40) {
 		error("Script::op_call() ec=0x%X stack overflow", 0x8F);
 	}
@@ -115,7 +115,7 @@ void Script::op_call() {
 }
 
 void Script::op_ret() {
-	debug(DBG_SCRIPT, "Script::op_ret()");
+	debugC(kDebugScript, "Script::op_ret()");
 	if (_stackPtr == 0) {
 		error("Script::op_ret() ec=0x%X stack underflow", 0x8F);
 	}
@@ -124,27 +124,27 @@ void Script::op_ret() {
 }
 
 void Script::op_yieldTask() {
-	debug(DBG_SCRIPT, "Script::op_yieldTask()");
+	debugC(kDebugScript, "Script::op_yieldTask()");
 	_scriptPaused = true;
 }
 
 void Script::op_jmp() {
 	uint16_t off = _scriptPtr.fetchWord();
-	debug(DBG_SCRIPT, "Script::op_jmp(0x%02X)", off);
+	debugC(kDebugScript, "Script::op_jmp(0x%02X)", off);
 	_scriptPtr.pc = _res->_segCode + off;
 }
 
 void Script::op_installTask() {
 	uint8_t i = _scriptPtr.fetchByte();
 	uint16_t n = _scriptPtr.fetchWord();
-	debug(DBG_SCRIPT, "Script::op_installTask(0x%X, 0x%X)", i, n);
+	debugC(kDebugScript, "Script::op_installTask(0x%X, 0x%X)", i, n);
 	assert(i < 0x40);
 	_scriptTasks[1][i] = n;
 }
 
 void Script::op_jmpIfVar() {
 	uint8_t i = _scriptPtr.fetchByte();
-	debug(DBG_SCRIPT, "Script::op_jmpIfVar(0x%02X)", i);
+	debugC(kDebugScript, "Script::op_jmpIfVar(0x%02X)", i);
 	--_scriptVars[i];
 	if (_scriptVars[i] != 0) {
 		op_jmp();
@@ -165,7 +165,7 @@ void Script::op_condJmp() {
 	} else {
 		a = _scriptPtr.fetchByte();
 	}
-	debug(DBG_SCRIPT, "Script::op_condJmp(%d, 0x%02X, 0x%02X) var=0x%02X", op, b, a, var);
+	debugC(kDebugScript, "Script::op_condJmp(%d, 0x%02X, 0x%02X) var=0x%02X", op, b, a, var);
 	bool expr = false;
 	switch (op & 7) {
 	case 0:
@@ -223,7 +223,7 @@ void Script::op_condJmp() {
 
 void Script::op_setPalette() {
 	uint16_t i = _scriptPtr.fetchWord();
-	debug(DBG_SCRIPT, "Script::op_changePalette(%d)", i);
+	debugC(kDebugScript, "Script::op_changePalette(%d)", i);
 	const int num = i >> 8;
 	if (_vid->_graphics->_fixUpPalette == FIXUP_PALETTE_REDRAW) {
 		if (_res->_currentPart == 16001) {
@@ -246,7 +246,7 @@ void Script::op_changeTasksState() {
 	}
 	uint8_t state = _scriptPtr.fetchByte();
 
-	debug(DBG_SCRIPT, "Script::op_changeTasksState(%d, %d, %d)", start, end, state);
+	debugC(kDebugScript, "Script::op_changeTasksState(%d, %d, %d)", start, end, state);
 
 	if (state == 2) {
 		for (; start <= end; ++start) {
@@ -261,27 +261,27 @@ void Script::op_changeTasksState() {
 
 void Script::op_selectPage() {
 	uint8_t i = _scriptPtr.fetchByte();
-	debug(DBG_SCRIPT, "Script::op_selectPage(%d)", i);
+	debugC(kDebugScript, "Script::op_selectPage(%d)", i);
 	_vid->setWorkPagePtr(i);
 }
 
 void Script::op_fillPage() {
 	uint8_t i = _scriptPtr.fetchByte();
 	uint8_t color = _scriptPtr.fetchByte();
-	debug(DBG_SCRIPT, "Script::op_fillPage(%d, %d)", i, color);
+	debugC(kDebugScript, "Script::op_fillPage(%d, %d)", i, color);
 	_vid->fillPage(i, color);
 }
 
 void Script::op_copyPage() {
 	uint8_t i = _scriptPtr.fetchByte();
 	uint8_t j = _scriptPtr.fetchByte();
-	debug(DBG_SCRIPT, "Script::op_copyPage(%d, %d)", i, j);
+	debugC(kDebugScript, "Script::op_copyPage(%d, %d)", i, j);
 	_vid->copyPage(i, j, _scriptVars[VAR_SCROLL_Y]);
 }
 
 void Script::op_updateDisplay() {
 	uint8_t page = _scriptPtr.fetchByte();
-	debug(DBG_SCRIPT, "Script::op_updateDisplay(%d)", page);
+	debugC(kDebugScript, "Script::op_updateDisplay(%d)", page);
 	inp_handleSpecialKeys();
 
 #ifndef BYPASS_PROTECTION
@@ -311,7 +311,7 @@ void Script::op_updateDisplay() {
 }
 
 void Script::op_removeTask() {
-	debug(DBG_SCRIPT, "Script::op_removeTask()");
+	debugC(kDebugScript, "Script::op_removeTask()");
 	_scriptPtr.pc = _res->_segCode + 0xFFFF;
 	_scriptPaused = true;
 }
@@ -321,42 +321,42 @@ void Script::op_drawString() {
 	uint16_t x = _scriptPtr.fetchByte();
 	uint16_t y = _scriptPtr.fetchByte();
 	uint16_t col = _scriptPtr.fetchByte();
-	debug(DBG_SCRIPT, "Script::op_drawString(0x%03X, %d, %d, %d)", strId, x, y, col);
+	debugC(kDebugScript, "Script::op_drawString(0x%03X, %d, %d, %d)", strId, x, y, col);
 	_vid->drawString(col, x, y, strId);
 }
 
 void Script::op_sub() {
 	uint8_t i = _scriptPtr.fetchByte();
 	uint8_t j = _scriptPtr.fetchByte();
-	debug(DBG_SCRIPT, "Script::op_sub(0x%02X, 0x%02X)", i, j);
+	debugC(kDebugScript, "Script::op_sub(0x%02X, 0x%02X)", i, j);
 	_scriptVars[i] -= _scriptVars[j];
 }
 
 void Script::op_and() {
 	uint8_t i = _scriptPtr.fetchByte();
 	uint16_t n = _scriptPtr.fetchWord();
-	debug(DBG_SCRIPT, "Script::op_and(0x%02X, %d)", i, n);
+	debugC(kDebugScript, "Script::op_and(0x%02X, %d)", i, n);
 	_scriptVars[i] = (uint16_t)_scriptVars[i] & n;
 }
 
 void Script::op_or() {
 	uint8_t i = _scriptPtr.fetchByte();
 	uint16_t n = _scriptPtr.fetchWord();
-	debug(DBG_SCRIPT, "Script::op_or(0x%02X, %d)", i, n);
+	debugC(kDebugScript, "Script::op_or(0x%02X, %d)", i, n);
 	_scriptVars[i] = (uint16_t)_scriptVars[i] | n;
 }
 
 void Script::op_shl() {
 	uint8_t i = _scriptPtr.fetchByte();
 	uint16_t n = _scriptPtr.fetchWord();
-	debug(DBG_SCRIPT, "Script::op_shl(0x%02X, %d)", i, n);
+	debugC(kDebugScript, "Script::op_shl(0x%02X, %d)", i, n);
 	_scriptVars[i] = (uint16_t)_scriptVars[i] << n;
 }
 
 void Script::op_shr() {
 	uint8_t i = _scriptPtr.fetchByte();
 	uint16_t n = _scriptPtr.fetchWord();
-	debug(DBG_SCRIPT, "Script::op_shr(0x%02X, %d)", i, n);
+	debugC(kDebugScript, "Script::op_shr(0x%02X, %d)", i, n);
 	_scriptVars[i] = (uint16_t)_scriptVars[i] >> n;
 }
 
@@ -365,7 +365,7 @@ void Script::op_playSound() {
 	uint8_t freq = _scriptPtr.fetchByte();
 	uint8_t vol = _scriptPtr.fetchByte();
 	uint8_t channel = _scriptPtr.fetchByte();
-	debug(DBG_SCRIPT, "Script::op_playSound(0x%X, %d, %d, %d)", resNum, freq, vol, channel);
+	debugC(kDebugScript, "Script::op_playSound(0x%X, %d, %d, %d)", resNum, freq, vol, channel);
 	snd_playSound(resNum, freq, vol, channel);
 }
 
@@ -375,7 +375,7 @@ static void preloadSoundCb(void *userdata, int soundNum, const uint8_t *data) {
 
 void Script::op_updateResources() {
 	uint16_t num = _scriptPtr.fetchWord();
-	debug(DBG_SCRIPT, "Script::op_updateResources(%d)", num);
+	debugC(kDebugScript, "Script::op_updateResources(%d)", num);
 	if (num == 0) {
 		_ply->stop();
 		_mix->stopAll();
@@ -389,7 +389,7 @@ void Script::op_playMusic() {
 	uint16_t resNum = _scriptPtr.fetchWord();
 	uint16_t delay = _scriptPtr.fetchWord();
 	uint8_t pos = _scriptPtr.fetchByte();
-	debug(DBG_SCRIPT, "Script::op_playMusic(0x%X, %d, %d)", resNum, delay, pos);
+	debugC(kDebugScript, "Script::op_playMusic(0x%X, %d, %d)", resNum, delay, pos);
 	snd_playMusic(resNum, delay, pos);
 }
 
@@ -455,10 +455,10 @@ void Script::runTasks() {
 				_scriptPtr.pc = _res->_segCode + n;
 				_stackPtr = 0;
 				_scriptPaused = false;
-				debug(DBG_SCRIPT, "Script::runTasks() i=0x%02X n=0x%02X", i, n);
+				debugC(kDebugScript, "Script::runTasks() i=0x%02X n=0x%02X", i, n);
 				executeTask();
 				_scriptTasks[0][i] = _scriptPtr.pc - _res->_segCode;
-				debug(DBG_SCRIPT, "Script::runTasks() i=0x%02X pos=0x%X", i, _scriptTasks[0][i]);
+				debugC(kDebugScript, "Script::runTasks() i=0x%02X pos=0x%X", i, _scriptTasks[0][i]);
 			}
 		}
 	}
@@ -478,7 +478,7 @@ void Script::executeTask() {
 				pt.y = 199;
 				pt.x += h;
 			}
-			debug(DBG_VIDEO, "vid_opcd_0x80 : opcode=0x%X off=0x%X x=%d y=%d", opcode, off, pt.x, pt.y);
+			debugC(kDebugVideo, "vid_opcd_0x80 : opcode=0x%X off=0x%X x=%d y=%d", opcode, off, pt.x, pt.y);
 			_vid->setDataBuffer(_res->_segVideo1, off);
 			if (_is3DO) {
 				_vid->drawShape3DO(0xFF, 64, &pt);
@@ -522,7 +522,7 @@ void Script::executeTask() {
 					zoom = _scriptPtr.fetchByte();
 				}
 			}
-			debug(DBG_VIDEO, "vid_opcd_0x40 : off=0x%X x=%d y=%d", off, pt.x, pt.y);
+			debugC(kDebugVideo, "vid_opcd_0x40 : off=0x%X x=%d y=%d", off, pt.x, pt.y);
 			_vid->setDataBuffer(_res->_useSegVideo2 ? _res->_segVideo2 : _res->_segVideo1, off);
 			if (_is3DO) {
 				_vid->drawShape3DO(0xFF, zoom, &pt);
@@ -535,7 +535,7 @@ void Script::executeTask() {
 				case 11:
 				{
 					const int num = _scriptPtr.fetchByte();
-					debug(DBG_SCRIPT, "Script::op11() setPalette %d", num);
+					debugC(kDebugScript, "Script::op11() setPalette %d", num);
 					_vid->changePal(num);
 				}
 				continue;
@@ -543,7 +543,7 @@ void Script::executeTask() {
 				{
 					const int var = _scriptPtr.fetchByte();
 					const int shift = _scriptPtr.fetchByte();
-					debug(DBG_SCRIPT, "Script::op22() VAR(0x%02X) <<= %d", var, shift);
+					debugC(kDebugScript, "Script::op22() VAR(0x%02X) <<= %d", var, shift);
 					_scriptVars[var] = (uint16_t)_scriptVars[var] << shift;
 				}
 				continue;
@@ -551,14 +551,14 @@ void Script::executeTask() {
 				{
 					const int var = _scriptPtr.fetchByte();
 					const int shift = _scriptPtr.fetchByte();
-					debug(DBG_SCRIPT, "Script::op23() VAR(0x%02X) >>= %d", var, shift);
+					debugC(kDebugScript, "Script::op23() VAR(0x%02X) >>= %d", var, shift);
 					_scriptVars[var] = (uint16_t)_scriptVars[var] >> shift;
 				}
 				continue;
 				case 26:
 				{
 					const int num = _scriptPtr.fetchByte();
-					debug(DBG_SCRIPT, "Script::op26() playMusic %d", num);
+					debugC(kDebugScript, "Script::op26() playMusic %d", num);
 					snd_playMusic(num, 0, 0);
 				}
 				continue;
@@ -574,7 +574,7 @@ void Script::executeTask() {
 				case 28:
 				{
 					const uint8_t var = _scriptPtr.fetchByte();
-					debug(DBG_SCRIPT, "Script::op28() jmpIf(VAR(0x%02X) == 0)");
+					debugC(kDebugScript, "Script::op28() jmpIf(VAR(0x%02X) == 0)");
 					if (_scriptVars[var] == 0) {
 						op_jmp();
 					} else {
@@ -585,7 +585,7 @@ void Script::executeTask() {
 				case 29:
 				{
 					const uint8_t var = _scriptPtr.fetchByte();
-					debug(DBG_SCRIPT, "Script::op29() jmpIf(VAR(0x%02X) != 0)");
+					debugC(kDebugScript, "Script::op29() jmpIf(VAR(0x%02X) != 0)");
 					if (_scriptVars[var] != 0) {
 						op_jmp();
 					} else {
@@ -764,7 +764,7 @@ static int getSoundFreq(uint8_t period) {
 }
 
 void Script::snd_playSound(uint16_t resNum, uint8_t freq, uint8_t vol, uint8_t channel) {
-	debug(DBG_SND, "snd_playSound(0x%X, %d, %d, %d)", resNum, freq, vol, channel);
+	debugC(kDebugSound, "snd_playSound(0x%X, %d, %d, %d)", resNum, freq, vol, channel);
 	if (vol == 0) {
 #ifdef TODO
 		_mix->stopSound(channel);
@@ -835,7 +835,7 @@ void Script::snd_playSound(uint16_t resNum, uint8_t freq, uint8_t vol, uint8_t c
 
 void Script::snd_playMusic(uint16_t resNum, uint16_t delay, uint8_t pos) {
 #ifdef TODO
-	debug(DBG_SND, "snd_playMusic(0x%X, %d, %d)", resNum, delay, pos);
+	debugC(kDebugSound, "snd_playMusic(0x%X, %d, %d)", resNum, delay, pos);
 	uint8_t loop = 0;
 	switch (_res->getDataType()) {
 	case DT_20TH_EDITION:
@@ -911,7 +911,7 @@ void Script::fixUpPalette_changeScreen(int part, int screen) {
 		break;
 	}
 	if (pal != -1) {
-		debug(DBG_SCRIPT, "Setting palette %d for part %d screen %d", pal, part, screen);
+		debugC(kDebugScript, "Setting palette %d for part %d screen %d", pal, part, screen);
 		_vid->changePal(pal);
 	}
 }

@@ -137,7 +137,7 @@ void Video::drawShapePart3DO(int color, int part, const Point *pt) {
 
 void Video::drawShape3DO(int color, int zoom, const Point *pt) {
 	const int code = _pData.fetchByte();
-	debug(DBG_VIDEO, "Video::drawShape3DO() code=0x%x pt=%d,%d", code, pt->x, pt->y);
+	debugC(kDebugVideo, "Video::drawShape3DO() code=0x%x pt=%d,%d", code, pt->x, pt->y);
 	if (color == 0xFF) {
 		color = code & 31;
 	}
@@ -272,7 +272,7 @@ void Video::drawShapeParts(uint16_t zoom, const Point *pgc) {
 	pt.x = pgc->x - _pData.fetchByte() * zoom / 64;
 	pt.y = pgc->y - _pData.fetchByte() * zoom / 64;
 	int16_t n = _pData.fetchByte();
-	debug(DBG_VIDEO, "Video::drawShapeParts n=%d", n);
+	debugC(kDebugVideo, "Video::drawShapeParts n=%d", n);
 	for (; n >= 0; --n) {
 		uint16_t offset = _pData.fetchWord();
 		Point po(pt);
@@ -357,7 +357,7 @@ void Video::drawString(uint8_t color, uint16_t x, uint16_t y, uint16_t strId) {
 		warning("Unknown string id %d", strId);
 		return;
 	}
-	debug(DBG_VIDEO, "drawString(%d, %d, %d, '%s')", color, x, y, str);
+	debugC(kDebugVideo, "drawString(%d, %d, %d, '%s')", color, x, y, str);
 	uint16_t xx = x;
 	int len = strlen(str);
 	for (int i = 0; i < len; ++i) {
@@ -404,17 +404,17 @@ uint8_t Video::getPagePtr(uint8_t page) {
 }
 
 void Video::setWorkPagePtr(uint8_t page) {
-	debug(DBG_VIDEO, "Video::setWorkPagePtr(%d)", page);
+	debugC(kDebugVideo, "Video::setWorkPagePtr(%d)", page);
 	_buffers[0] = getPagePtr(page);
 }
 
 void Video::fillPage(uint8_t page, uint8_t color) {
-	debug(DBG_VIDEO, "Video::fillPage(%d, %d)", page, color);
+	debugC(kDebugVideo, "Video::fillPage(%d, %d)", page, color);
 	_graphics->clearBuffer(getPagePtr(page), color);
 }
 
 void Video::copyPage(uint8_t src, uint8_t dst, int16_t vscroll) {
-	debug(DBG_VIDEO, "Video::copyPage(%d, %d)", src, dst);
+	debugC(kDebugVideo, "Video::copyPage(%d, %d)", src, dst);
 	if (src >= 0xFE || ((src &= ~0x40) & 0x80) == 0) { // no vscroll
 		_graphics->copyBuffer(getPagePtr(dst), getPagePtr(src));
 	} else {
@@ -601,7 +601,7 @@ void Video::changePal(uint8_t palNum) {
 }
 
 void Video::updateDisplay(uint8_t page, SystemStub *stub) {
-	debug(DBG_VIDEO, "Video::updateDisplay(%d)", page);
+	debugC(kDebugVideo, "Video::updateDisplay(%d)", page);
 	if (page != 0xFE) {
 		if (page == 0xFF) {
 			SWAP(_buffers[1], _buffers[2]);

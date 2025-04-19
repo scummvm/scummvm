@@ -440,7 +440,7 @@ static void dumpBuffer555(const uint16_t *src, int w, int h, int num) {
 	char name[32];
 	snprintf(name, sizeof(name), "screenshot-%d.tga", num);
 	saveTGA(name, src, w, h);
-	debug(DBG_INFO, "Written '%s'", name);
+	debugC(kDebugInfo, "Written '%s'", name);
 }
 
 static void dumpPalette555(uint16_t *dst, int w, const Color *pal) {

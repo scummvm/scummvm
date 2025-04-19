@@ -279,7 +279,7 @@ void Resource::load() {
 			warning("Resource::load() ec=0x%X (me->bankNum == 0)", 0xF00);
 			me->status = STATUS_NULL;
 		} else {
-			debug(DBG_BANK, "Resource::load() bufPos=0x%X size=%d type=%d pos=0x%X bankNum=%d", memPtr - _memPtrStart, me->packedSize, me->type, me->bankPos, me->bankNum);
+			debugC(kDebugBank, "Resource::load() bufPos=0x%X size=%d type=%d pos=0x%X bankNum=%d", memPtr - _memPtrStart, me->packedSize, me->type, me->bankPos, me->bankNum);
 			if (readBank(me, memPtr)) {
 				if (me->type == RT_BITMAP) {
 					_vid->copyBitmapPtr(_vidCurPtr, me->unpackedSize);

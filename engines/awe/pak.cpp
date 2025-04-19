@@ -79,7 +79,7 @@ void Pak::readEntries() {
 	_f.seek(entriesOffset);
 	const uint32_t entriesSize = READ_LE_UINT32(header + 8);
 	_entriesCount = entriesSize / 0x40;
-	debug(DBG_PAK, "Pak::readEntries() entries count %d", _entriesCount);
+	debugC(kDebugPak, "Pak::readEntries() entries count %d", _entriesCount);
 	_entries = (PakEntry *)calloc(_entriesCount, sizeof(PakEntry));
 	if (!_entries) {
 		_entriesCount = 0;
@@ -99,7 +99,7 @@ void Pak::readEntries() {
 		Common::strcpy_s(e->name, name + 4);
 		e->offset = READ_LE_UINT32(buf + 0x38);
 		e->size = READ_LE_UINT32(buf + 0x3C);
-		debug(DBG_PAK, "Pak::readEntries() buf '%s' size %d", e->name, e->size);
+		debugC(kDebugPak, "Pak::readEntries() buf '%s' size %d", e->name, e->size);
 	}
 	qsort(_entries, _entriesCount, sizeof(PakEntry), comparePakEntry);
 	// the original executable descrambles the (ke)y.txt file and check the last 4 bytes.
@@ -118,14 +118,14 @@ void Pak::readEntries() {
 }
 
 const PakEntry *Pak::find(const char *name) {
-	debug(DBG_PAK, "Pak::find() '%s'", name);
+	debugC(kDebugPak, "Pak::find() '%s'", name);
 	PakEntry tmp;
 	Common::strcpy_s(tmp.name, name);
 	return (const PakEntry *)bsearch(&tmp, _entries, _entriesCount, sizeof(PakEntry), comparePakEntry);
 }
 
 void Pak::loadData(const PakEntry *e, uint8_t *buf, uint32_t *size) {
-	debug(DBG_PAK, "Pak::loadData() %d bytes from 0x%x", e->size, e->offset);
+	debugC(kDebugPak, "Pak::loadData() %d bytes from 0x%x", e->size, e->offset);
 	_f.seek(e->offset);
 	if (_f.ioErr()) {
 		*size = 0;
@@ -134,7 +134,7 @@ void Pak::loadData(const PakEntry *e, uint8_t *buf, uint32_t *size) {
 	_f.read(buf, e->size);
 	if (e->size > 5 && memcmp(buf, "TooDC", 5) == 0) {
 		const int dataSize = e->size - 6;
-		debug(DBG_PAK, "Pak::loadData() encoded TooDC data, size %d", dataSize);
+		debugC(kDebugPak, "Pak::loadData() encoded TooDC data, size %d", dataSize);
 		if ((dataSize & 3) != 0) {
 			// descrambler operates on uint32_t
 			warning("Unexpected size %d for encoded TooDC data '%s'", dataSize, e->name);

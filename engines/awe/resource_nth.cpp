@@ -373,7 +373,7 @@ struct Resource20th : ResourceNth {
 			} else {
 				snprintf(_datName, sizeof(_datName), "%s2011.%s", names[part - 1], exts[type]);
 			}
-			debug(DBG_RESOURCE, "Loading '%s'", _datName);
+			debugC(kDebugResource, "Loading '%s'", _datName);
 		} else {
 			_datName[0] = 0;
 		}

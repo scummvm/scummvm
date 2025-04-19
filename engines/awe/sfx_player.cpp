@@ -33,18 +33,18 @@ SfxPlayer::SfxPlayer(Resource *res)
 }
 
 void SfxPlayer::setEventsDelay(uint16_t delay) {
-	debug(DBG_SND, "SfxPlayer::setEventsDelay(%d)", delay);
+	debugC(kDebugSound, "SfxPlayer::setEventsDelay(%d)", delay);
 	_delay = delay;
 }
 
 void SfxPlayer::loadSfxModule(uint16_t resNum, uint16_t delay, uint8_t pos) {
-	debug(DBG_SND, "SfxPlayer::loadSfxModule(0x%X, %d, %d)", resNum, delay, pos);
+	debugC(kDebugSound, "SfxPlayer::loadSfxModule(0x%X, %d, %d)", resNum, delay, pos);
 	MemEntry *me = &_res->_memList[resNum];
 	if (me->status == Resource::STATUS_LOADED && me->type == Resource::RT_MUSIC) {
 		memset(&_sfxMod, 0, sizeof(SfxModule));
 		_sfxMod.curOrder = pos;
 		_sfxMod.numOrder = me->bufPtr[0x3F];
-		debug(DBG_SND, "SfxPlayer::loadSfxModule() curOrder = 0x%X numOrder = 0x%X", _sfxMod.curOrder, _sfxMod.numOrder);
+		debugC(kDebugSound, "SfxPlayer::loadSfxModule() curOrder = 0x%X numOrder = 0x%X", _sfxMod.curOrder, _sfxMod.numOrder);
 		_sfxMod.orderTable = me->bufPtr + 0x40;
 		if (delay == 0) {
 			_delay = READ_BE_UINT16(me->bufPtr);
@@ -52,7 +52,7 @@ void SfxPlayer::loadSfxModule(uint16_t resNum, uint16_t delay, uint8_t pos) {
 			_delay = delay;
 		}
 		_sfxMod.data = me->bufPtr + 0xC0;
-		debug(DBG_SND, "SfxPlayer::loadSfxModule() eventDelay = %d ms", _delay);
+		debugC(kDebugSound, "SfxPlayer::loadSfxModule() eventDelay = %d ms", _delay);
 		prepareInstruments(me->bufPtr + 2);
 	} else {
 		warning("SfxPlayer::loadSfxModule() ec=0x%X", 0xF8);
@@ -69,7 +69,7 @@ void SfxPlayer::prepareInstruments(const uint8_t *p) {
 			MemEntry *me = &_res->_memList[resNum];
 			if (me->status == Resource::STATUS_LOADED && me->type == Resource::RT_SOUND) {
 				ins->data = me->bufPtr;
-				debug(DBG_SND, "Loaded instrument 0x%X n=%d volume=%d", resNum, i, ins->volume);
+				debugC(kDebugSound, "Loaded instrument 0x%X n=%d volume=%d", resNum, i, ins->volume);
 			} else {
 				error("Error loading instrument 0x%X", resNum);
 			}
@@ -150,12 +150,12 @@ void SfxPlayer::readSamples(int16_t *buf, int len) {
 }
 
 void SfxPlayer::start() {
-	debug(DBG_SND, "SfxPlayer::start()");
+	debugC(kDebugSound, "SfxPlayer::start()");
 	_sfxMod.curPos = 0;
 }
 
 void SfxPlayer::stop() {
-	debug(DBG_SND, "SfxPlayer::stop()");
+	debugC(kDebugSound, "SfxPlayer::stop()");
 	_playing = false;
 }
 
@@ -167,7 +167,7 @@ void SfxPlayer::handleEvents() {
 		patternData += 4;
 	}
 	_sfxMod.curPos += 4 * 4;
-	debug(DBG_SND, "SfxPlayer::handleEvents() order = 0x%X curPos = 0x%X", order, _sfxMod.curPos);
+	debugC(kDebugSound, "SfxPlayer::handleEvents() order = 0x%X curPos = 0x%X", order, _sfxMod.curPos);
 	if (_sfxMod.curPos >= 1024) {
 		_sfxMod.curPos = 0;
 		order = _sfxMod.curOrder + 1;
@@ -188,7 +188,7 @@ void SfxPlayer::handlePattern(uint8_t channel, const uint8_t *data) {
 		if (sample != 0) {
 			uint8_t *ptr = _sfxMod.samples[sample - 1].data;
 			if (ptr != 0) {
-				debug(DBG_SND, "SfxPlayer::handlePattern() preparing sample %d", sample);
+				debugC(kDebugSound, "SfxPlayer::handlePattern() preparing sample %d", sample);
 				pat.sampleVolume = _sfxMod.samples[sample - 1].volume;
 				pat.sampleStart = 8;
 				pat.sampleBuffer = ptr;
@@ -222,7 +222,7 @@ void SfxPlayer::handlePattern(uint8_t channel, const uint8_t *data) {
 		}
 	}
 	if (pat.note_1 == 0xFFFD) {
-		debug(DBG_SND, "SfxPlayer::handlePattern() _syncVar = 0x%X", pat.note_2);
+		debugC(kDebugSound, "SfxPlayer::handlePattern() _syncVar = 0x%X", pat.note_2);
 		*_syncVar = pat.note_2;
 	} else if (pat.note_1 == 0xFFFE) {
 		_channels[channel].sampleLen = 0;
@@ -230,7 +230,7 @@ void SfxPlayer::handlePattern(uint8_t channel, const uint8_t *data) {
 		assert(pat.note_1 >= 0x37 && pat.note_1 < 0x1000);
 		// convert Amiga period value to hz
 		const int freq = kPaulaFreq / (pat.note_1 * 2);
-		debug(DBG_SND, "SfxPlayer::handlePattern() adding sample freq = 0x%X", freq);
+		debugC(kDebugSound, "SfxPlayer::handlePattern() adding sample freq = 0x%X", freq);
 		SfxChannel *ch = &_channels[channel];
 		ch->sampleData = pat.sampleBuffer + pat.sampleStart;
 		ch->sampleLen = pat.sampleLen;
