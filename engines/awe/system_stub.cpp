@@ -20,6 +20,8 @@
  */
 
 #include "common/system.h"
+#include "engines/util.h"
+#include "graphics/screen.h"
 #include "awe/graphics.h"
 #include "awe/system_stub.h"
 #include "awe/util.h"
@@ -31,7 +33,7 @@ struct SystemStubScummVM : SystemStub {
 	static const int kJoystickCommitValue = 16384;
 	static const float kAspectRatio;
 
-	int _w = 0, _h = 0;
+	::Graphics::Screen *_screen = nullptr;
 	float _aspectRatio[4] = { 0.0 };
 #ifdef TODO
 	SDL_Window *_window;
@@ -44,139 +46,52 @@ struct SystemStubScummVM : SystemStub {
 #endif
 	int _screenshot = 0;
 
-	SystemStubScummVM();
-	virtual ~SystemStubScummVM() {
-	}
+	SystemStubScummVM() {}
+	~SystemStubScummVM() override;
 
-	virtual void init(const char *title, const DisplayMode *dm);
-	virtual void fini();
+	void init(const DisplayMode &dm) override;
+	void fini() override;
 
-	virtual void prepareScreen(int &w, int &h, float ar[4]);
-	virtual void updateScreen();
-	virtual void setScreenPixels555(const uint16_t *data, int w, int h);
+	void prepareScreen(int &w, int &h, float ar[4]) override;
+	void updateScreen() override;
+	void setScreenPixels555(const uint16_t *data, int w, int h) override;
 
-	virtual void processEvents();
-	virtual void sleep(uint32_t duration);
-	virtual uint32_t getTimeStamp();
+	void processEvents() override;
+	void sleep(uint32_t duration) override;
+	virtual uint32_t getTimeStamp() override;
 
 	void setAspectRatio(int w, int h);
 };
 
 const float SystemStubScummVM::kAspectRatio = 16.f / 10.f;
 
-SystemStubScummVM::SystemStubScummVM()
-	: _w(0), _h(0)
-#ifdef TODO
-	, _window(0), _renderer(0), _texW(0), _texH(0), _texture(0)
-#endif
-{
+SystemStubScummVM::~SystemStubScummVM() {
+	delete _screen;
 }
 
-void SystemStubScummVM::init(const char *title, const DisplayMode *dm) {
-#ifdef TODO
-	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER);
-	SDL_ShowCursor(SDL_DISABLE);
-	// SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+void SystemStubScummVM::init(const DisplayMode &dm) {
+	// Initialize backend
+	initGraphics(dm.width, dm.height);
+	_screen = new ::Graphics::Screen();
 
-	int windowW = 0;
-	int windowH = 0;
-	int flags = dm->opengl ? SDL_WINDOW_OPENGL : 0;
-	if (dm->mode == DisplayMode::WINDOWED) {
-		flags |= SDL_WINDOW_RESIZABLE;
-		windowW = dm->width;
-		windowH = dm->height;
-	} else {
-		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-	}
-	_window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowW, windowH, flags);
-	SDL_GetWindowSize(_window, &_w, &_h);
-
-	if (dm->opengl) {
-		_glcontext = SDL_GL_CreateContext(_window);
-	} else {
-		_glcontext = 0;
-		_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
-		SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-		SDL_RenderClear(_renderer);
-	}
-	_aspectRatio[0] = _aspectRatio[1] = 0.;
-	_aspectRatio[2] = _aspectRatio[3] = 1.;
-	if (dm->mode == DisplayMode::FULLSCREEN_AR) {
-		if (dm->opengl) {
-			setAspectRatio(_w, _h);
-		} else {
-			SDL_RenderSetLogicalSize(_renderer, 320, 200);
-		}
-	}
-	_joystick = 0;
-	_controller = 0;
-	if (SDL_NumJoysticks() > 0) {
-
-#if SDL_COMPILEDVERSION >= SDL_VERSIONNUM(2,0,2)
-		SDL_GameControllerAddMappingsFromFile("gamecontrollerdb.txt");
-#endif
-
-		if (SDL_IsGameController(kJoystickIndex)) {
-			_controller = SDL_GameControllerOpen(kJoystickIndex);
-		}
-		if (!_controller) {
-			_joystick = SDL_JoystickOpen(kJoystickIndex);
-		}
-	}
-#endif
 	_screenshot = 1;
-	_dm = *dm;
+	_dm = dm;
 }
 
 void SystemStubScummVM::fini() {
-#ifdef TODO
-	if (_texture) {
-		SDL_DestroyTexture(_texture);
-		_texture = 0;
-	}
-	if (_joystick) {
-		SDL_JoystickClose(_joystick);
-		_joystick = 0;
-	}
-	if (_controller) {
-		SDL_GameControllerClose(_controller);
-		_controller = 0;
-	}
-	if (_renderer) {
-		SDL_DestroyRenderer(_renderer);
-		_renderer = 0;
-	}
-	if (_glcontext) {
-		SDL_GL_DeleteContext(_glcontext);
-		_glcontext = 0;
-	}
-	SDL_DestroyWindow(_window);
-	SDL_Quit();
-#endif
 }
 
 void SystemStubScummVM::prepareScreen(int &w, int &h, float ar[4]) {
-	w = _w;
-	h = _h;
+	w = _screen->w;
+	h = _screen->h;
 	ar[0] = _aspectRatio[0];
 	ar[1] = _aspectRatio[1];
 	ar[2] = _aspectRatio[2];
 	ar[3] = _aspectRatio[3];
-#ifdef TODO
-	if (_renderer) {
-		SDL_RenderClear(_renderer);
-	}
-#endif
 }
 
 void SystemStubScummVM::updateScreen() {
-#ifdef TODO
-	if (_renderer) {
-		SDL_RenderPresent(_renderer);
-	} else {
-		SDL_GL_SwapWindow(_window);
-	}
-#endif
+	_screen->update();
 }
 
 void SystemStubScummVM::setScreenPixels555(const uint16_t *data, int w, int h) {
@@ -204,6 +119,8 @@ void SystemStubScummVM::setScreenPixels555(const uint16_t *data, int w, int h) {
 		SDL_UpdateTexture(_texture, &r, data, w * sizeof(uint16_t));
 		SDL_RenderCopy(_renderer, _texture, 0, 0);
 	}
+#else
+	error("TODO: setScreenPixels555");
 #endif
 }
 

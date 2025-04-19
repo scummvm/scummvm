@@ -22,7 +22,6 @@
 #include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "common/stream.h"
-#include "engines/util.h"
 #include "awe/awe.h"
 #include "awe/engine.h"
 #include "awe/graphics.h"
@@ -306,9 +305,6 @@ Common::Error AweEngine::run() {
 	bool defaultGraphics = true;
 	bool demo3JoyInputs = false;
 
-	// Initialize backend
-	initGraphics(dm.width, dm.height);
-
 	Awe::Engine *e = new Awe::Engine(*_mixer, dataType, part);
 	if (defaultGraphics) {
 		// if not set, use original software graphics for 199x editions and GL for the anniversary and 3DO versions
@@ -342,11 +338,13 @@ Common::Error AweEngine::run() {
 	}
 
 	SystemStub *stub = SystemStub_create();
-	stub->init(e->getGameTitle(lang), &dm);
+	stub->init(dm);
 	e->setSystemStub(stub, graphics);
+
 	if (demo3JoyInputs && e->_res.getDataType() == DT_DOS) {
 		e->_res.readDemo3Joy();
 	}
+
 	e->setup(lang, graphicsType, nullptr, 1);
 
 	while (!stub->_pi.quit) {
