@@ -78,7 +78,8 @@ void SystemStubScummVM::fini() {
 }
 
 void SystemStubScummVM::prepareScreen(int &w, int &h, float ar[4]) {
-	assert(w == _screen->w && h == _screen->h);
+	w = _screen->w;
+	h = _screen->h;
 
 	ar[0] = _aspectRatio[0];
 	ar[1] = _aspectRatio[1];
@@ -91,36 +92,12 @@ void SystemStubScummVM::updateScreen() {
 }
 
 void SystemStubScummVM::setScreenPixels555(const uint16_t *data, int w, int h) {
-#ifdef TODO
 	assert(_screen);
 
-	Graphics::Surface s;
-
-
-	if (_renderer) {
-		if (!_texture) {
-			_texture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB555, SDL_TEXTUREACCESS_STREAMING, w, h);
-			if (!_texture) {
-				return;
-			}
-			_texW = w;
-			_texH = h;
-		}
-		assert(w <= _texW && h <= _texH);
-		SDL_Rect r;
-		r.w = w;
-		r.h = h;
-		if (w != _texW && h != _texH) {
-			r.x = (_texW - w) / 2;
-			r.y = (_texH - h) / 2;
-		} else {
-			r.x = 0;
-			r.y = 0;
-		}
-		SDL_UpdateTexture(_texture, &r, data, w * sizeof(uint16_t));
-		SDL_RenderCopy(_renderer, _texture, 0, 0);
-	}
-#endif
+	assert(w == _screen->w && h == _screen->h);
+	uint16 *dest = (uint16 *)_screen->getPixels();
+	Common::copy(data, data + w * h, dest);
+	_screen->markAllDirty();
 }
 
 void SystemStubScummVM::processEvents() {
