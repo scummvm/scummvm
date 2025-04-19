@@ -358,9 +358,9 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 		case TYPE_VAR_STR:
 		case TYPE_ARRAY_STR:
 			if (srcType == TYPE_IMM_INT16)
-				WRITE_VARO_UINT8(dest, result);
+				WRITE_VARO_UINT8(dest + i * _vm->_global->_inter_animDataSize, result);
 			else
-				WRITE_VARO_STR(dest, _vm->_game->_script->getResultStr());
+				WRITE_VARO_STR(dest + i * _vm->_global->_inter_animDataSize, _vm->_game->_script->getResultStr());
 			break;
 
 		default:
