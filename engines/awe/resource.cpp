@@ -135,30 +135,26 @@ void Resource::readEntries() {
 	case DT_DOS:
 	{
 		_hasPasswordScreen = false; // DOS demo versions do not have the resources
-		File f;
-		if (f.open("demo01", _dataDir)) {
+		Common::File f;
+		if (Common::File::exists("demo01")) {
 			_bankPrefix = "demo";
 		}
-		if (f.open("memlist.bin", _dataDir)) {
+		if (f.open("memlist.bin")) {
 			MemEntry *me = _memList;
-			while (1) {
+
+			for (;;) {
 				assert(_numMemList < ARRAYSIZE(_memList));
-				me->status = f.readByte();
-				me->type = f.readByte();
-				me->bufPtr = 0; f.readUint32BE();
-				me->rankNum = f.readByte();
-				me->bankNum = f.readByte();
-				me->bankPos = f.readUint32BE();
-				me->packedSize = f.readUint32BE();
-				me->unpackedSize = f.readUint32BE();
+				me->load(&f);
+
 				if (me->status == 0xFF) {
 					const int num = _memListParts[8][1]; // 16008 bytecode
 					assert(num < _numMemList);
-					char bank[16];
-					snprintf(bank, sizeof(bank), "%s%02x", _bankPrefix, _memList[num].bankNum);
-					_hasPasswordScreen = f.open(bank, _dataDir);
+					Common::String bank = Common::String::format(
+						"%s%02x", _bankPrefix, _memList[num].bankNum);
+					_hasPasswordScreen = Common::File::exists(bank.c_str());
 					return;
 				}
+
 				++_numMemList;
 				++me;
 			}
@@ -664,6 +660,17 @@ void Resource::readDemo3Joy() {
 	} else {
 		warning("Unable to open '%s'", filename);
 	}
+}
+
+void MemEntry::load(Common::SeekableReadStream *src) {
+	status = src->readByte();
+	type = src->readByte();
+	bufPtr = nullptr; (void)src->readUint32BE();
+	rankNum = src->readByte();
+	bankNum = src->readByte();
+	bankPos = src->readUint32BE();
+	packedSize = src->readUint32BE();
+	unpackedSize = src->readUint32BE();
 }
 
 } // namespace Awe

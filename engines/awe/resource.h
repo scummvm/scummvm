@@ -36,6 +36,8 @@ struct MemEntry {
 	uint32_t bankPos = 0;      // 0x8
 	uint32_t packedSize = 0;   // 0xC
 	uint32_t unpackedSize = 0; // 0x12
+
+	void load(Common::SeekableReadStream *src);
 };
 
 struct AmigaMemEntry {

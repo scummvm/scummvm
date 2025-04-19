@@ -37,15 +37,6 @@ struct SystemStubScummVM : SystemStub {
 
 	::Graphics::Screen *_screen = nullptr;
 	float _aspectRatio[4] = { 0.0 };
-#ifdef TODO
-	SDL_Window *_window;
-	SDL_Renderer *_renderer;
-	SDL_GLContext _glcontext;
-	int _texW, _texH;
-	SDL_Texture *_texture;
-	SDL_Joystick *_joystick;
-	SDL_GameController *_controller;
-#endif
 	int _screenshot = 0;
 
 	SystemStubScummVM() {}
@@ -73,7 +64,8 @@ SystemStubScummVM::~SystemStubScummVM() {
 
 void SystemStubScummVM::init(const DisplayMode &dm) {
 	// Initialize backend
-	initGraphics(dm.width, dm.height);
+	::Graphics::PixelFormat format(2, 5, 5, 5, 1, 11, 6, 1, 0);
+	initGraphics(dm.width, dm.height, &format);
 	_screen = new ::Graphics::Screen();
 
 	_screenshot = 1;
@@ -84,8 +76,8 @@ void SystemStubScummVM::fini() {
 }
 
 void SystemStubScummVM::prepareScreen(int &w, int &h, float ar[4]) {
-	w = _screen->w;
-	h = _screen->h;
+	assert(w == _screen->w && h == _screen->h);
+
 	ar[0] = _aspectRatio[0];
 	ar[1] = _aspectRatio[1];
 	ar[2] = _aspectRatio[2];
@@ -98,6 +90,11 @@ void SystemStubScummVM::updateScreen() {
 
 void SystemStubScummVM::setScreenPixels555(const uint16_t *data, int w, int h) {
 #ifdef TODO
+	assert(_screen);
+
+	Graphics::Surface s;
+
+
 	if (_renderer) {
 		if (!_texture) {
 			_texture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB555, SDL_TEXTUREACCESS_STREAMING, w, h);
@@ -121,8 +118,6 @@ void SystemStubScummVM::setScreenPixels555(const uint16_t *data, int w, int h) {
 		SDL_UpdateTexture(_texture, &r, data, w * sizeof(uint16_t));
 		SDL_RenderCopy(_renderer, _texture, 0, 0);
 	}
-#else
-	error("TODO: setScreenPixels555");
 #endif
 }
 

@@ -298,8 +298,8 @@ Common::Error AweEngine::run() {
 
 	DisplayMode dm;
 	dm.mode = DisplayMode::WINDOWED;
-	dm.width = DEFAULT_WINDOW_W;
-	dm.height = DEFAULT_WINDOW_H;
+	dm.width = GFX_W;
+	dm.height = GFX_H;
 	dm.opengl = (graphicsType == GRAPHICS_GL);
 
 	bool defaultGraphics = true;
