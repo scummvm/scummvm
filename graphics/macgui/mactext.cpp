@@ -1578,8 +1578,8 @@ int MacText::getMouseWord(int x, int y) {
 			if (_canvas._text[i].chunks[j].text.empty())
 				continue;
 			Common::String data = _canvas._text[i].chunks[j].getEncodedText();
-			int oldIdx = 0;
-			for (int k = 0; k < data.size(); k++) {
+			uint oldIdx = 0;
+			for (uint k = 0; k < data.size(); k++) {
 				char it = data[k];
 				if (it == ' ' && !inWhitespace) {
 					debug(5, "mouseWord: word %d: %s", index, data.substr(oldIdx, k-oldIdx).c_str());
@@ -1604,8 +1604,8 @@ int MacText::getMouseWord(int x, int y) {
 		if (_canvas._text[row].chunks[j].text.empty())
 			continue;
 		Common::String data = _canvas._text[row].chunks[j].getEncodedText();
-		int oldIdx = 0;
-		for (int k = 0; k < data.size(); k++) {
+		uint oldIdx = 0;
+		for (uint k = 0; k < data.size(); k++) {
 			char it = data[k];
 			cur++;
 			if (it == ' ' && !inWhitespace) {
