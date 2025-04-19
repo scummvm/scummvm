@@ -19,14 +19,14 @@
  *
  */
 
-#include "awe/graphics.h"
+#include "awe/gfx.h"
 #include "awe/util.h"
 #include "awe/screenshot.h"
 #include "awe/system_stub.h"
 
 namespace Awe {
 
-struct GraphicsSoft : public Graphics {
+struct GraphicsSoft : public Gfx {
 	typedef void (GraphicsSoft:: *drawLine)(int16_t x1, int16_t x2, int16_t y, uint8_t col);
 
 	uint8_t *_pagePtrs[4] = { nullptr };
@@ -348,7 +348,7 @@ void GraphicsSoft::setWorkPagePtr(uint8_t page) {
 }
 
 void GraphicsSoft::init(int targetW, int targetH) {
-	Graphics::init(targetW, targetH);
+	Gfx::init(targetW, targetH);
 	setSize(targetW, targetH);
 }
 
@@ -516,7 +516,7 @@ void GraphicsSoft::drawBitmapOverlay(const uint8_t *data, int w, int h, int fmt,
 	}
 }
 
-Graphics *GraphicsSoft_create() {
+Gfx *GraphicsSoft_create() {
 	return new GraphicsSoft();
 }
 

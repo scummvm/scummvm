@@ -24,7 +24,7 @@
 #include "common/stream.h"
 #include "awe/awe.h"
 #include "awe/engine.h"
-#include "awe/graphics.h"
+#include "awe/gfx.h"
 #include "awe/resource.h"
 #include "awe/scaler.h"
 #include "awe/script.h"
@@ -57,16 +57,16 @@ static const struct {
 	{ 0,  -1 }
 };
 
-bool Graphics::_is1991 = false;
-bool Graphics::_use555 = false;
+bool Gfx::_is1991 = false;
+bool Gfx::_use555 = false;
 bool Video::_useEGA = false;
 Difficulty Script::_difficulty = DIFFICULTY_NORMAL;
 bool Script::_useRemasteredAudio = true;
 
-static Graphics *createGraphics(int type) {
+static Gfx *createGraphics(int type) {
 	switch (type) {
 	case GRAPHICS_ORIGINAL:
-		Graphics::_is1991 = true;
+		Gfx::_is1991 = true;
 		// fall-through
 	case GRAPHICS_SOFTWARE:
 		debugC(kDebugInfo, "Using software graphics");
@@ -313,9 +313,9 @@ Common::Error AweEngine::run() {
 	}
 	if (graphicsType != GRAPHICS_GL && dataType == DT_3DO) {
 		graphicsType = GRAPHICS_SOFTWARE;
-		Graphics::_use555 = true;
+		Gfx::_use555 = true;
 	}
-	Graphics *graphics = createGraphics(graphicsType);
+	Gfx *graphics = createGraphics(graphicsType);
 	if (dataType == DT_20TH_EDITION) {
 		switch (Script::_difficulty) {
 		case DIFFICULTY_EASY:

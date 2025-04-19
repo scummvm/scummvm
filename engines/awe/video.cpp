@@ -21,7 +21,7 @@
 
 #include "awe/video.h"
 #include "awe/bitmap.h"
-#include "awe/graphics.h"
+#include "awe/gfx.h"
 #include "awe/resource.h"
 #include "awe/resource_3do.h"
 #include "awe/scaler.h"
@@ -282,7 +282,7 @@ void Video::drawShapeParts(uint16_t zoom, const Point *pgc) {
 		if (offset & 0x8000) {
 			color = _pData.fetchByte();
 			const int num = _pData.fetchByte();
-			if (Graphics::_is1991) {
+			if (Gfx::_is1991) {
 				if (!_hasHeadSprites && (color & 0x80) != 0) {
 					_graphics->drawSprite(_buffers[0], num, &po, color & 0x7F);
 					continue;
@@ -506,7 +506,7 @@ void Video::copyBitmapPtr(const uint8_t *src, uint32_t size) {
 		deinterlace555(src, BITMAP_W, BITMAP_H, _bitmap555);
 		scaleBitmap((const uint8_t *)_bitmap555, FMT_RGB555);
 	} else { // .BMP
-		if (Graphics::_is1991) {
+		if (Gfx::_is1991) {
 			const int w = READ_LE_UINT32(src + 0x12);
 			const int h = READ_LE_UINT32(src + 0x16);
 			if (w == BITMAP_W && h == BITMAP_H) {

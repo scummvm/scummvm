@@ -31,7 +31,7 @@ struct StrEntry {
 	const char *str = nullptr;
 };
 
-struct Graphics;
+struct Gfx;
 struct Resource;
 struct Scaler;
 struct SystemStub;
@@ -57,7 +57,7 @@ struct Video {
 	static bool _useEGA;
 
 	Resource *_res;
-	Graphics *_graphics = nullptr;
+	Gfx *_graphics = nullptr;
 	bool _hasHeadSprites = false;
 	bool _displayHead = false;
 

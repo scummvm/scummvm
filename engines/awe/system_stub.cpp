@@ -23,7 +23,7 @@
 #include "common/events.h"
 #include "engines/util.h"
 #include "graphics/screen.h"
-#include "awe/graphics.h"
+#include "awe/gfx.h"
 #include "awe/metaengine.h"
 #include "awe/system_stub.h"
 #include "awe/util.h"
@@ -64,15 +64,17 @@ SystemStubScummVM::~SystemStubScummVM() {
 
 void SystemStubScummVM::init(const DisplayMode &dm) {
 	// Initialize backend
-	::Graphics::PixelFormat format(2, 5, 5, 5, 1, 11, 6, 1, 0);
+	Graphics::PixelFormat format(2, 5, 5, 5, 1, 11, 6, 1, 0);
 	initGraphics(dm.width, dm.height, &format);
-	_screen = new ::Graphics::Screen();
+	_screen = new Graphics::Screen();
 
 	_screenshot = 1;
 	_dm = dm;
 }
 
 void SystemStubScummVM::fini() {
+	delete _screen;
+	_screen = nullptr;
 }
 
 void SystemStubScummVM::prepareScreen(int &w, int &h, float ar[4]) {
