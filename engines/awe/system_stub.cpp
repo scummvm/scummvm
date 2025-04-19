@@ -64,8 +64,7 @@ SystemStubScummVM::~SystemStubScummVM() {
 
 void SystemStubScummVM::init(const DisplayMode &dm) {
 	// Initialize backend
-	Graphics::PixelFormat format(2, 5, 5, 5, 1, 11, 6, 1, 0);
-	initGraphics(dm.width, dm.height, &format);
+	initGraphics(dm.width, dm.height, &Gfx::_format);
 	_screen = new Graphics::Screen();
 
 	_screenshot = 1;
@@ -92,9 +91,9 @@ void SystemStubScummVM::updateScreen() {
 }
 
 void SystemStubScummVM::setScreenPixels555(const uint16_t *data, int w, int h) {
-	assert(_screen);
-
+	assert(_screen && Gfx::_format.bytesPerPixel == 2);
 	assert(w == _screen->w && h == _screen->h);
+
 	uint16 *dest = (uint16 *)_screen->getPixels();
 	Common::copy(data, data + w * h, dest);
 	_screen->markAllDirty();

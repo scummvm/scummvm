@@ -101,7 +101,7 @@ void GraphicsSoft::setSize(int w, int h) {
 	_v = (h << 16) / GFX_H;
 	_w = w;
 	_h = h;
-	_byteDepth = _use555 ? 2 : 1;
+	_byteDepth = _format.bytesPerPixel;
 	assert(_byteDepth == 1 || _byteDepth == 2);
 	_colorBuffer = (uint16_t *)realloc(_colorBuffer, _w * _h * sizeof(uint16_t));
 	if (!_colorBuffer) {
@@ -212,7 +212,9 @@ void GraphicsSoft::drawChar(uint8_t c, uint16_t x, uint16_t y, uint8_t color) {
 				}
 			}
 		} else if (_byteDepth == 2) {
-			const uint16_t rgbColor = _pal[color].rgb555();
+			const uint16_t rgbColor = _format.RGBToColor(
+				_pal[color].r, _pal[color].g, _pal[color].b);
+
 			for (int j = 0; j < 8; ++j) {
 				const uint8_t ch = ft[j];
 				for (int i = 0; i < 8; ++i) {
@@ -280,15 +282,21 @@ void GraphicsSoft::drawPoint(int16_t x, int16_t y, uint8_t color) {
 		}
 	} else if (_byteDepth == 2) {
 		switch (color) {
-		case COL_ALPHA:
-			blend_rgb555((uint16_t *)(_drawPagePtr + offset), _pal[ALPHA_COLOR_INDEX].rgb555());
+		case COL_ALPHA: {
+			const Color &c = _pal[ALPHA_COLOR_INDEX];
+			const uint16 rgbColor = _format.RGBToColor(c.r, c.g, c.b);
+			blend_rgb555((uint16_t *)(_drawPagePtr + offset), rgbColor);
 			break;
+		}
 		case COL_PAGE:
 			*(uint16_t *)(_drawPagePtr + offset) = *(uint16_t *)(_pagePtrs[0] + offset);
 			break;
-		default:
-			*(uint16_t *)(_drawPagePtr + offset) = _pal[color].rgb555();
+		default: {
+			const Color &c = _pal[color];
+			const uint16 rgbColor = _format.RGBToColor(c.r, c.g, c.b);
+			*(uint16_t *)(_drawPagePtr + offset) = rgbColor;
 			break;
+		}
 		}
 	}
 }
@@ -303,7 +311,9 @@ void GraphicsSoft::drawLineT(int16_t x1, int16_t x2, int16_t y, uint8_t color) {
 			_drawPagePtr[offset + i] |= 8;
 		}
 	} else if (_byteDepth == 2) {
-		const uint16_t rgbColor = _pal[ALPHA_COLOR_INDEX].rgb555();
+		const Color &c = _pal[ALPHA_COLOR_INDEX];
+		const uint16_t rgbColor = _format.RGBToColor(c.r, c.g, c.b);
+
 		uint16_t *p = (uint16_t *)(_drawPagePtr + offset);
 		for (int i = 0; i < w; ++i) {
 			blend_rgb555(p + i, rgbColor);
@@ -319,7 +329,8 @@ void GraphicsSoft::drawLineN(int16_t x1, int16_t x2, int16_t y, uint8_t color) {
 	if (_byteDepth == 1) {
 		memset(_drawPagePtr + offset, color, w);
 	} else if (_byteDepth == 2) {
-		const uint16_t rgbColor = _pal[color].rgb555();
+		const Color &c = _pal[color];
+		const uint16 rgbColor = _format.RGBToColor(c.r, c.g, c.b);
 		uint16_t *p = (uint16_t *)(_drawPagePtr + offset);
 		for (int i = 0; i < w; ++i) {
 			p[i] = rgbColor;
@@ -415,7 +426,8 @@ void GraphicsSoft::clearBuffer(int num, uint8_t color) {
 	if (_byteDepth == 1) {
 		memset(getPagePtr(num), color, getPageSize());
 	} else if (_byteDepth == 2) {
-		const uint16_t rgbColor = _pal[color].rgb555();
+		const Color &c = _pal[color];
+		const uint16 rgbColor = _format.RGBToColor(c.r, c.g, c.b);
 		uint16_t *p = (uint16_t *)getPagePtr(num);
 		for (int i = 0; i < _w * _h; ++i) {
 			p[i] = rgbColor;
@@ -443,14 +455,19 @@ static void dumpBuffer555(const uint16_t *src, int w, int h, int num) {
 	debugC(kDebugInfo, "Written '%s'", name);
 }
 
-static void dumpPalette555(uint16_t *dst, int w, const Color *pal) {
+static void dumpPalette555(uint16_t *dst, int w,
+		const Graphics::PixelFormat &format, const Color *pal) {
 	static const int SZ = 16;
 	for (int color = 0; color < 16; ++color) {
 		uint16_t *p = dst + (color & 7) * SZ;
 		for (int y = 0; y < SZ; ++y) {
 			for (int x = 0; x < SZ; ++x) {
-				p[x] = pal[color].rgb555();
+				const Color &c = pal[color];
+				const uint16 rgbColor = format.RGBToColor(c.r, c.g, c.b);
+
+				p[x] = rgbColor;
 			}
+
 			p += w;
 		}
 		if (color == 7) {
@@ -466,10 +483,12 @@ void GraphicsSoft::drawBuffer(int num, SystemStub *stub) {
 	if (_byteDepth == 1) {
 		const uint8_t *src = getPagePtr(num);
 		for (int i = 0; i < _w * _h; ++i) {
-			_colorBuffer[i] = _pal[src[i]].rgb555();
+			const Color &c = _pal[src[i]];
+			const uint16 rgbColor = _format.RGBToColor(c.r, c.g, c.b);
+			_colorBuffer[i] = rgbColor;
 		}
 		if (0) {
-			dumpPalette555(_colorBuffer, _w, _pal);
+			dumpPalette555(_colorBuffer, _w, _format, _pal);
 		}
 		stub->setScreenPixels555(_colorBuffer, _w, _h);
 		if (_screenshot) {
@@ -492,7 +511,9 @@ void GraphicsSoft::drawBuffer(int num, SystemStub *stub) {
 void GraphicsSoft::drawRect(int num, uint8_t color, const Point *pt, int w, int h) {
 	assert(_byteDepth == 2);
 	setWorkPagePtr(num);
-	const uint16_t rgbColor = _pal[color].rgb555();
+
+	const Color &c = _pal[color];
+	const uint16 rgbColor = _format.RGBToColor(c.r, c.g, c.b);
 	const int x1 = xScale(pt->x);
 	const int y1 = yScale(pt->y);
 	const int x2 = xScale(pt->x + w - 1);
