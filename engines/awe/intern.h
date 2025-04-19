@@ -24,9 +24,12 @@
 
 #include "common/algorithm.h"
 #include "common/endian.h"
+#include "common/language.h"
 #include "common/rect.h"
 
 namespace Awe {
+
+using Common::Language;
 
 #if 0
 #undef ARRAYSIZE
@@ -85,14 +88,6 @@ inline void WRITE_LE_UINT32(uint8_t *ptr, uint32_t value) {
 	}
 }
 #endif
-
-enum Language {
-	LANG_FR,
-	LANG_US,
-	LANG_DE,
-	LANG_ES,
-	LANG_IT
-};
 
 enum {
 	kPartCopyProtection = 16000,
