@@ -232,9 +232,11 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 		}
 	}
 
+#ifdef USE_IMGUI
 	int selectedChannel = DT::getSelectedChannel();
 	if (selectedChannel > 0)
 		Window::drawChannelBox(_currentMovie, blitTo, selectedChannel);
+#endif
 
 	if (g_director->_debugDraw & kDebugDrawCast) {
 		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
