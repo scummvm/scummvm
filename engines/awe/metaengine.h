@@ -22,6 +22,7 @@
 #ifndef AWE_METAENGINE_H
 #define AWE_METAENGINE_H
 
+#include "awe/detection.h"
 #include "engines/advancedDetector.h"
 
 namespace Awe {
@@ -38,11 +39,11 @@ enum KeybindingAction {
 
 } // namespace Awe
 
-class AweMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
+class AweMetaEngine : public AdvancedMetaEngine<Awe::AweGameDescription> {
 public:
 	const char *getName() const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Awe::AweGameDescription *desc) const override;
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.

@@ -28,10 +28,10 @@
 
 namespace Awe {
 
-Engine::Engine(Audio::Mixer &mixer, int partNum) : _mix(mixer),
-	_script(&_mix, &_res, &_ply, &_vid),
-	_res(&_vid), _ply(&_res), _vid(&_res),
-	_partNum(partNum) {
+Engine::Engine(Audio::Mixer &mixer, DataType dataType, int partNum) :
+		_mix(mixer), _script(&_mix, &_res, &_ply, &_vid),
+		_res(&_vid, dataType), _ply(&_res), _vid(&_res),
+		_partNum(partNum) {
 	_res.detectVersion();
 }
 
@@ -74,7 +74,7 @@ void Engine::run() {
 #if 0
 		_mix.update();
 #endif
-		if (_res.getDataType() == Resource::DT_3DO) {
+		if (_res.getDataType() == DT_3DO) {
 			switch (_res._nextPart) {
 			case 16009:
 				_state = kStateEnd3DO;
@@ -92,7 +92,7 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 	_vid._graphics = _graphics;
 	int w = GFX_W * scalerFactor;
 	int h = GFX_H * scalerFactor;
-	if (_res.getDataType() != Resource::DT_3DO) {
+	if (_res.getDataType() != DT_3DO) {
 		_vid._graphics->_fixUpPalette = FIXUP_PALETTE_REDRAW;
 	}
 	_vid.init();
@@ -103,7 +103,7 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 	_res.allocMemBlock();
 	_res.readEntries();
 	_res.dumpEntries();
-	const bool isNth = !Graphics::_is1991 && (_res.getDataType() == Resource::DT_15TH_EDITION || _res.getDataType() == Resource::DT_20TH_EDITION);
+	const bool isNth = !Graphics::_is1991 && (_res.getDataType() == DT_15TH_EDITION || _res.getDataType() == DT_20TH_EDITION);
 	if (isNth) {
 		// get HD background bitmaps resolution
 		_res._nth->getBitmapSize(&w, &h);
@@ -118,10 +118,10 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 	_script.init();
 	MixerType mixerType = kMixerTypeRaw;
 	switch (_res.getDataType()) {
-	case Resource::DT_DOS:
-	case Resource::DT_AMIGA:
-	case Resource::DT_ATARI:
-	case Resource::DT_ATARI_DEMO:
+	case DT_DOS:
+	case DT_AMIGA:
+	case DT_ATARI:
+	case DT_ATARI_DEMO:
 		mixerType = kMixerTypeRaw;
 		switch (lang) {
 		case Common::FR_FRA:
@@ -133,12 +133,12 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 			break;
 		}
 		break;
-	case Resource::DT_WIN31:
-	case Resource::DT_15TH_EDITION:
-	case Resource::DT_20TH_EDITION:
+	case DT_WIN31:
+	case DT_15TH_EDITION:
+	case DT_20TH_EDITION:
 		mixerType = kMixerTypeWav;
 		break;
-	case Resource::DT_3DO:
+	case DT_3DO:
 		mixerType = kMixerTypeAiff;
 		break;
 	}
@@ -147,21 +147,21 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 #endif
 #ifndef BYPASS_PROTECTION
 	switch (_res.getDataType()) {
-	case Resource::DT_DOS:
+	case DT_DOS:
 		if (!_res._hasPasswordScreen) {
 			break;
 		}
 		/* fall-through */
-	case Resource::DT_AMIGA:
-	case Resource::DT_ATARI:
-	case Resource::DT_WIN31:
+	case DT_AMIGA:
+	case DT_ATARI:
+	case DT_WIN31:
 		_partNum = kPartCopyProtection;
 		break;
 	default:
 		break;
 	}
 #endif
-	if (_res.getDataType() == Resource::DT_3DO && _partNum == kPartIntro) {
+	if (_res.getDataType() == DT_3DO && _partNum == kPartIntro) {
 		_state = kStateLogo3DO;
 	} else {
 		_state = kStateGame;

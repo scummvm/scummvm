@@ -33,15 +33,34 @@ enum AweDebugChannels {
 	kDebugInfo = 1 << 3
 };
 
+enum DataType {
+	DT_DOS,
+	DT_AMIGA,
+	DT_ATARI,
+	DT_15TH_EDITION,
+	DT_20TH_EDITION,
+	DT_WIN31,
+	DT_3DO,
+	DT_ATARI_DEMO, // ST Action Issue44 Disk28
+};
+
+struct AweGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
+	ADGameDescription desc;
+
+	int _gameType;
+};
+
 extern const PlainGameDescriptor aweGames[];
 
-extern const ADGameDescription gameDescriptions[];
+extern const AweGameDescription gameDescriptions[];
 
 #define GAMEOPTION_COPY_PROTECTION		GUIO_GAMEOPTIONS1
 
 } // namespace Awe
 
-class AweMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
+class AweMetaEngineDetection : public AdvancedMetaEngineDetection<Awe::AweGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:
