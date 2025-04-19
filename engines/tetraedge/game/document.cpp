@@ -43,7 +43,15 @@ void Document::load(const Common::String &name) {
 	TeITextLayout *txtLayout = _gui.textLayout("text");
 	if (!txtLayout)
 		error("can't find text layout in document");
-	Common::String header("<section style=\"center\" /><color r=\"255\" g=\"255\" b=\"255\"/><font file=\"Common/Fonts/arial.ttf\" size=\"16\" />");
+
+	const char *fontFile;
+	if (g_engine->gameIsAmerzone())
+		fontFile = "Arial_r_16.tef";
+	else
+		fontFile = "arial.ttf";
+
+	Common::String header = Common::String::format(
+		"<section style=\"center\" /><color r=\"255\" g=\"255\" b=\"255\"/><font file=\"Common/Fonts/%s\" />", fontFile);
 	txtLayout->setText(header + _browser->documentName(name));
 }
 
