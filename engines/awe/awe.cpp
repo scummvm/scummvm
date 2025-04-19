@@ -305,7 +305,7 @@ Common::Error AweEngine::run() {
 	bool defaultGraphics = true;
 	bool demo3JoyInputs = false;
 
-	Awe::Engine *e = new Awe::Engine(*_mixer, dataType, part);
+	Awe::Engine *e = new Awe::Engine(_mixer, dataType, part);
 	if (defaultGraphics) {
 		// if not set, use original software graphics for 199x editions and GL for the anniversary and 3DO versions
 		graphicsType = getGraphicsType(e->_res.getDataType());

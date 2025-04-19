@@ -48,13 +48,13 @@ struct Engine {
 	Graphics *_graphics = nullptr;
 	SystemStub *_stub = nullptr;
 	Script _script;
-	Audio::Mixer &_mix;
+	Audio::Mixer *_mix;
 	Resource _res;
 	SfxPlayer _ply;
 	Video _vid;
 	int _partNum;
 
-	Engine(Audio::Mixer &mixer, DataType dataType, int partNum);
+	Engine(Audio::Mixer *mixer, DataType dataType, int partNum);
 
 	void setSystemStub(SystemStub *, Graphics *);
 
