@@ -60,14 +60,14 @@ bool AifcPlayer::play(int mixRate, const char *path, uint32_t startOffset) {
 						warning("Unsupported compression");
 						break;
 					}
-					debug(DBG_SND, "AIFF-C channels %d rate %d bits %d", channels, rate, bits);
+					debugC(kDebugSound, "AIFF-C channels %d rate %d bits %d", channels, rate, bits);
 					_rate.reset(rate, mixRate);
 				} else if (memcmp(buf, "SSND", 4) == 0) {
 					_f.readUint32BE(); // block offset
 					_f.readUint32BE(); // block size
 					_ssndOffset = startOffset + offset + 8 + 8;
 					_ssndSize = sz;
-					debug(DBG_SND, "AIFF-C ssnd size %d", _ssndSize);
+					debugC(kDebugSound, "AIFF-C ssnd size %d", _ssndSize);
 					break;
 				} else if (memcmp(buf, "FVER", 4) == 0) {
 					const uint32_t version = _f.readUint32BE();

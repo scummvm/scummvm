@@ -388,7 +388,7 @@ struct Mixer_impl {
 		stopMusic();
 		stopSfxMusic();
 		for (std::map<int, Mix_Chunk *>::iterator it = _preloads.begin(); it != _preloads.end(); ++it) {
-			debug(DBG_SND, "Flush preload %d", it->first);
+			debugC(kDebugSound, "Flush preload %d", it->first);
 			Mix_FreeChunk(it->second);
 		}
 		_preloads.clear();
@@ -441,49 +441,49 @@ void Mixer::update() {
 }
 
 void Mixer::playSoundRaw(uint8_t channel, const uint8_t *data, uint16_t freq, uint8_t volume) {
-	debug(DBG_SND, "Mixer::playChannel(%d, %d, %d)", channel, freq, volume);
+	debugC(kDebugSound, "Mixer::playChannel(%d, %d, %d)", channel, freq, volume);
 	if (_impl) {
 		return _impl->playSoundRaw(channel, data, freq, volume);
 	}
 }
 
 void Mixer::playSoundWav(uint8_t channel, const uint8_t *data, uint16_t freq, uint8_t volume, uint8_t loop) {
-	debug(DBG_SND, "Mixer::playSoundWav(%d, %d, %d)", channel, volume, loop);
+	debugC(kDebugSound, "Mixer::playSoundWav(%d, %d, %d)", channel, volume, loop);
 	if (_impl) {
 		return _impl->playSoundWav(channel, data, freq, volume, loop);
 	}
 }
 
 void Mixer::stopSound(uint8_t channel) {
-	debug(DBG_SND, "Mixer::stopChannel(%d)", channel);
+	debugC(kDebugSound, "Mixer::stopChannel(%d)", channel);
 	if (_impl) {
 		return _impl->stopSound(channel);
 	}
 }
 
 void Mixer::setChannelVolume(uint8_t channel, uint8_t volume) {
-	debug(DBG_SND, "Mixer::setChannelVolume(%d, %d)", channel, volume);
+	debugC(kDebugSound, "Mixer::setChannelVolume(%d, %d)", channel, volume);
 	if (_impl) {
 		return _impl->setChannelVolume(channel, volume);
 	}
 }
 
 void Mixer::playMusic(const char *path, uint8_t loop) {
-	debug(DBG_SND, "Mixer::playMusic(%s, %d)", path, loop);
+	debugC(kDebugSound, "Mixer::playMusic(%s, %d)", path, loop);
 	if (_impl) {
 		return _impl->playMusic(path, (loop != 0) ? -1 : 0);
 	}
 }
 
 void Mixer::stopMusic() {
-	debug(DBG_SND, "Mixer::stopMusic()");
+	debugC(kDebugSound, "Mixer::stopMusic()");
 	if (_impl) {
 		return _impl->stopMusic();
 	}
 }
 
 void Mixer::playAifcMusic(const char *path, uint32_t offset) {
-	debug(DBG_SND, "Mixer::playAifcMusic(%s)", path);
+	debugC(kDebugSound, "Mixer::playAifcMusic(%s)", path);
 	if (!_aifc) {
 		_aifc = new AifcPlayer();
 	}
@@ -496,7 +496,7 @@ void Mixer::playAifcMusic(const char *path, uint32_t offset) {
 }
 
 void Mixer::stopAifcMusic() {
-	debug(DBG_SND, "Mixer::stopAifcMusic()");
+	debugC(kDebugSound, "Mixer::stopAifcMusic()");
 	if (_impl && _aifc) {
 		_aifc->stop();
 		_impl->stopAifcMusic();
@@ -504,35 +504,35 @@ void Mixer::stopAifcMusic() {
 }
 
 void Mixer::playSfxMusic(int num) {
-	debug(DBG_SND, "Mixer::playSfxMusic(%d)", num);
+	debugC(kDebugSound, "Mixer::playSfxMusic(%d)", num);
 	if (_impl && _sfx) {
 		return _impl->playSfxMusic(_sfx);
 	}
 }
 
 void Mixer::stopSfxMusic() {
-	debug(DBG_SND, "Mixer::stopSfxMusic()");
+	debugC(kDebugSound, "Mixer::stopSfxMusic()");
 	if (_impl && _sfx) {
 		return _impl->stopSfxMusic();
 	}
 }
 
 void Mixer::stopAll() {
-	debug(DBG_SND, "Mixer::stopAll()");
+	debugC(kDebugSound, "Mixer::stopAll()");
 	if (_impl) {
 		return _impl->stopAll();
 	}
 }
 
 void Mixer::preloadSoundAiff(uint8_t num, const uint8_t *data) {
-	debug(DBG_SND, "Mixer::preloadSoundAiff(num:%d, data:%p)", num, data);
+	debugC(kDebugSound, "Mixer::preloadSoundAiff(num:%d, data:%p)", num, data);
 	if (_impl) {
 		return _impl->preloadSoundAiff(num, data);
 	}
 }
 
 void Mixer::playSoundAiff(uint8_t channel, uint8_t num, uint8_t volume) {
-	debug(DBG_SND, "Mixer::playSoundAiff()");
+	debugC(kDebugSound, "Mixer::playSoundAiff()");
 	if (_impl) {
 		return _impl->playSoundAiff(channel, num, volume);
 	}

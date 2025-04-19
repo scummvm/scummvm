@@ -69,10 +69,10 @@ static Graphics *createGraphics(int type) {
 		Graphics::_is1991 = true;
 		// fall-through
 	case GRAPHICS_SOFTWARE:
-		debug(DBG_INFO, "Using software graphics");
+		debugC(kDebugInfo, "Using software graphics");
 		return GraphicsSoft_create();
 	case GRAPHICS_GL:
-		debug(DBG_INFO, "Using GL graphics");
+		debugC(kDebugInfo, "Using GL graphics");
 #ifdef USE_GL
 		return GraphicsGL_create();
 #endif
@@ -224,42 +224,42 @@ int main(int argc, char *argv[]) {
 			return 0;
 		}
 	}
-	g_debugMask = DBG_INFO; // | DBG_VIDEO | DBG_SND | DBG_SCRIPT | DBG_BANK | DBG_SER;
+
 	Engine *e = new Engine(dataPath, part);
 	if (defaultGraphics) {
 		// if not set, use original software graphics for 199x editions and GL for the anniversary and 3DO versions
-		graphicsType = getGraphicsType(e->_res.getDataType());
+		graphicsType = getGraphicsType(dataType);
 		dm.opengl = (graphicsType == GRAPHICS_GL);
 	}
-	if (graphicsType != GRAPHICS_GL && e->_res.getDataType() == DT_3DO) {
+	if (graphicsType != GRAPHICS_GL && dataType == DT_3DO) {
 		graphicsType = GRAPHICS_SOFTWARE;
 		Graphics::_use555 = true;
 	}
 	Graphics *graphics = createGraphics(graphicsType);
-	if (e->_res.getDataType() == DT_20TH_EDITION) {
+	if (dataType == DT_20TH_EDITION) {
 		switch (Script::_difficulty) {
 		case DIFFICULTY_EASY:
-			debug(DBG_INFO, "Using easy difficulty");
+			debugC(kDebugInfo, "Using easy difficulty");
 			break;
 		case DIFFICULTY_NORMAL:
-			debug(DBG_INFO, "Using normal difficulty");
+			debugC(kDebugInfo, "Using normal difficulty");
 			break;
 		case DIFFICULTY_HARD:
-			debug(DBG_INFO, "Using hard difficulty");
+			debugC(kDebugInfo, "Using hard difficulty");
 			break;
 		}
 	}
-	if (e->_res.getDataType() == DT_15TH_EDITION || e->_res.getDataType() == DT_20TH_EDITION) {
+	if (dataType == DT_15TH_EDITION || dataType == DT_20TH_EDITION) {
 		if (Script::_useRemasteredAudio) {
-			debug(DBG_INFO, "Using remastered audio");
+			debugC(kDebugInfo, "Using remastered audio");
 		} else {
-			debug(DBG_INFO, "Using original audio");
+			debugC(kDebugInfo, "Using original audio");
 		}
 	}
 	SystemStub *stub = SystemStub_SDL_create();
 	stub->init(e->getGameTitle(lang), &dm);
 	e->setSystemStub(stub, graphics);
-	if (demo3JoyInputs && e->_res.getDataType() == DT_DOS) {
+	if (demo3JoyInputs && dataType == DT_DOS) {
 		e->_res.readDemo3Joy();
 	}
 	e->setup(lang, graphicsType, scaler.name, scaler.factor);
@@ -308,32 +308,32 @@ Common::Error AweEngine::run() {
 	Awe::Engine *e = new Awe::Engine(_mixer, dataType, part);
 	if (defaultGraphics) {
 		// if not set, use original software graphics for 199x editions and GL for the anniversary and 3DO versions
-		graphicsType = getGraphicsType(e->_res.getDataType());
+		graphicsType = getGraphicsType(dataType);
 		dm.opengl = (graphicsType == GRAPHICS_GL);
 	}
-	if (graphicsType != GRAPHICS_GL && e->_res.getDataType() == DT_3DO) {
+	if (graphicsType != GRAPHICS_GL && dataType == DT_3DO) {
 		graphicsType = GRAPHICS_SOFTWARE;
 		Graphics::_use555 = true;
 	}
 	Graphics *graphics = createGraphics(graphicsType);
-	if (e->_res.getDataType() == DT_20TH_EDITION) {
+	if (dataType == DT_20TH_EDITION) {
 		switch (Script::_difficulty) {
 		case DIFFICULTY_EASY:
-			debug(DBG_INFO, "Using easy difficulty");
+			debugC(kDebugInfo, "Using easy difficulty");
 			break;
 		case DIFFICULTY_NORMAL:
-			debug(DBG_INFO, "Using normal difficulty");
+			debugC(kDebugInfo, "Using normal difficulty");
 			break;
 		case DIFFICULTY_HARD:
-			debug(DBG_INFO, "Using hard difficulty");
+			debugC(kDebugInfo, "Using hard difficulty");
 			break;
 		}
 	}
-	if (e->_res.getDataType() == DT_15TH_EDITION || e->_res.getDataType() == DT_20TH_EDITION) {
+	if (dataType == DT_15TH_EDITION || dataType == DT_20TH_EDITION) {
 		if (Script::_useRemasteredAudio) {
-			debug(DBG_INFO, "Using remastered audio");
+			debugC(kDebugInfo, "Using remastered audio");
 		} else {
-			debug(DBG_INFO, "Using original audio");
+			debugC(kDebugInfo, "Using original audio");
 		}
 	}
 
@@ -341,7 +341,7 @@ Common::Error AweEngine::run() {
 	stub->init(dm);
 	e->setSystemStub(stub, graphics);
 
-	if (demo3JoyInputs && e->_res.getDataType() == DT_DOS) {
+	if (demo3JoyInputs && dataType == DT_DOS) {
 		e->_res.readDemo3Joy();
 	}
 

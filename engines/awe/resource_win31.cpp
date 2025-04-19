@@ -263,7 +263,7 @@ bool ResourceWin31::readEntries() {
 	const int count = _f.read(buf, sizeof(buf));
 	if (count == 32 && memcmp(buf, "NL\00\00", 4) == 0) {
 		_entriesCount = READ_LE_UINT16(buf + 4);
-		debug(DBG_RESOURCE, "Read %d entries in win31 '%s'", _entriesCount, FILENAME);
+		debugC(kDebugResource, "Read %d entries in win31 '%s'", _entriesCount, FILENAME);
 		_entries = (Win31BankEntry *)calloc(_entriesCount, sizeof(Win31BankEntry));
 		if (_entries) {
 			uint16_t key = READ_LE_UINT16(buf + 0x14);
@@ -277,7 +277,7 @@ bool ResourceWin31::readEntries() {
 				e->size = READ_LE_UINT32(buf + 20);
 				e->offset = READ_LE_UINT32(buf + 24);
 				e->packedSize = READ_LE_UINT32(buf + 28);
-				debug(DBG_RESOURCE, "Res #%03d '%s' type %d size %d (%d) offset 0x%x", i, e->name, e->type, e->size, e->packedSize, e->offset);
+				debugC(kDebugResource, "Res #%03d '%s' type %d size %d (%d) offset 0x%x", i, e->name, e->type, e->size, e->packedSize, e->offset);
 				assert(e->size == 0 || flags == 0x80);
 			}
 			readStrings();
