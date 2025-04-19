@@ -29,14 +29,14 @@ namespace Awe {
 struct GraphicsSoft : public Graphics {
 	typedef void (GraphicsSoft:: *drawLine)(int16_t x1, int16_t x2, int16_t y, uint8_t col);
 
-	uint8_t *_pagePtrs[4];
-	uint8_t *_drawPagePtr;
-	int _u, _v;
-	int _w, _h;
-	int _byteDepth;
+	uint8_t *_pagePtrs[4] = { nullptr };
+	uint8_t *_drawPagePtr = { nullptr };
+	int _u = 0, _v = 0;
+	int _w = 0, _h = 0;
+	int _byteDepth = 0;
 	Color _pal[16];
-	uint16_t *_colorBuffer;
-	int _screenshotNum;
+	uint16_t *_colorBuffer = nullptr;
+	int _screenshotNum = 0;
 
 	GraphicsSoft();
 	~GraphicsSoft();

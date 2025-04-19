@@ -69,13 +69,13 @@ struct SfxPlayer {
 
 	Resource *_res;
 
-	uint16_t _delay;
-	uint16_t _resNum;
+	uint16_t _delay = 0;
+	uint16_t _resNum = 0;
 	SfxModule _sfxMod;
-	int16_t *_syncVar;
-	bool _playing;
-	int _rate;
-	int _samplesLeft;
+	int16_t *_syncVar = nullptr;
+	bool _playing = false;
+	int _rate = 0;
+	int _samplesLeft = 0;
 	SfxChannel _channels[NUM_CHANNELS];
 
 	SfxPlayer(Resource *res);
