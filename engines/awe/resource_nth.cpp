@@ -141,19 +141,19 @@ struct Resource15th : ResourceNth {
 		if (!_textBuf) {
 			const char *name = 0;
 			switch (lang) {
-			case LANG_FR:
+			case Common::FR_FRA:
 				name = "Francais.Txt";
 				break;
-			case LANG_US:
+			case Common::EN_ANY:
 				name = "English.Txt";
 				break;
-			case LANG_DE:
+			case Common::DE_DEU:
 				name = "German.Txt";
 				break;
-			case LANG_ES:
+			case Common::ES_ESP:
 				name = "Espanol.txt";
 				break;
-			case LANG_IT:
+			case Common::IT_ITA:
 				name = "Italian.Txt";
 				break;
 			default:
@@ -475,19 +475,19 @@ struct Resource20th : ResourceNth {
 		if (!_textBuf) {
 			const char *name = 0;
 			switch (lang) {
-			case LANG_FR:
+			case Common::FR_FRA:
 				name = "FR";
 				break;
-			case LANG_US:
+			case Common::EN_ANY:
 				name = "EN";
 				break;
-			case LANG_DE:
+			case Common::DE_DEU:
 				name = "DE";
 				break;
-			case LANG_ES:
+			case Common::ES_ESP:
 				name = "ES";
 				break;
-			case LANG_IT:
+			case Common::IT_ITA:
 				name = "IT";
 				break;
 			default:

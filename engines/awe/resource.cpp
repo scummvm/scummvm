@@ -42,7 +42,7 @@ Resource::Resource(Video *vid, const char *dataDir)
 	if (!_dataDir) {
 		_dataDir = ".";
 	}
-	_lang = LANG_FR;
+	_lang = Common::FR_FRA;
 	_amigaMemList = 0;
 	memset(&_demo3Joy, 0, sizeof(_demo3Joy));
 }
@@ -160,7 +160,7 @@ const char *Resource::getGameTitle(Language lang) const {
 	case DT_3DO:
 		return kGameTitleUS;
 	case DT_DOS:
-		if (lang == LANG_US) {
+		if (lang == Common::EN_ANY) {
 			return kGameTitleUS;
 		}
 		/* fall-through */

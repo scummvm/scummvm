@@ -123,10 +123,10 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 	case Resource::DT_ATARI_DEMO:
 		mixerType = kMixerTypeRaw;
 		switch (lang) {
-		case LANG_FR:
+		case Common::FR_FRA:
 			_vid._stringsTable = Video::_stringsTableFr;
 			break;
-		case LANG_US:
+		case Common::EN_ANY:
 		default:
 			_vid._stringsTable = Video::_stringsTableEng;
 			break;

@@ -114,23 +114,12 @@ static const char USAGE[] =
 "  --audio=AUDIO     Audio (original,remastered)\n"
 ;
 
-static const struct {
-	const char *name;
-	int lang;
-} LANGUAGES[] = {
-	{ "fr", LANG_FR },
-	{ "us", LANG_US },
-	{ "de", LANG_DE },
-	{ "es", LANG_ES },
-	{ "it", LANG_IT },
-	{ 0, -1 }
-};
 
 
 int main(int argc, char *argv[]) {
 	char *dataPath = 0;
 	int part = 16001;
-	Language lang = LANG_FR;
+	Language lang = Common::FR_FRA;
 	int graphicsType = GRAPHICS_GL;
 	DisplayMode dm;
 	dm.mode = DisplayMode::WINDOWED;
@@ -305,8 +294,8 @@ Common::Error AweEngine::run() {
 
 	char *dataPath = 0;
 	int part = 16001;
-	Language lang = LANG_FR;
-	int graphicsType = GRAPHICS_GL;
+	Language lang = _gameDescription->language;
+	int graphicsType = GRAPHICS_SOFTWARE;
 
 	DisplayMode dm;
 	dm.mode = DisplayMode::WINDOWED;
