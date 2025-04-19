@@ -25,7 +25,7 @@
 #include "awe/resource.h"
 #include "awe/resource_3do.h"
 #include "awe/scaler.h"
-#include "awe/systemstub.h"
+#include "awe/system_stub.h"
 #include "awe/util.h"
 
 namespace Awe {

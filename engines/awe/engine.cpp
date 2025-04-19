@@ -23,7 +23,7 @@
 #include "awe/file.h"
 #include "awe/graphics.h"
 #include "awe/resource_nth.h"
-#include "awe/systemstub.h"
+#include "awe/system_stub.h"
 #include "awe/util.h"
 
 namespace Awe {

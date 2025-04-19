@@ -19,10 +19,10 @@
  *
  */
 
-#include "awe/sfxplayer.h"
+#include "awe/sfx_player.h"
 #include "awe/mixer.h"
 #include "awe/resource.h"
-#include "awe/systemstub.h"
+#include "awe/system_stub.h"
 #include "awe/util.h"
 
 namespace Awe {

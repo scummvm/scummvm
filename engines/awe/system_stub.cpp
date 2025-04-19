@@ -21,12 +21,12 @@
 
 #include "common/system.h"
 #include "awe/graphics.h"
-#include "awe/systemstub.h"
+#include "awe/system_stub.h"
 #include "awe/util.h"
 
 namespace Awe {
 
-struct SystemStub_SDL : SystemStub {
+struct SystemStubScummVM : SystemStub {
 	static const int kJoystickIndex = 0;
 	static const int kJoystickCommitValue = 16384;
 	static const float kAspectRatio;
@@ -44,8 +44,8 @@ struct SystemStub_SDL : SystemStub {
 #endif
 	int _screenshot = 0;
 
-	SystemStub_SDL();
-	virtual ~SystemStub_SDL() {
+	SystemStubScummVM();
+	virtual ~SystemStubScummVM() {
 	}
 
 	virtual void init(const char *title, const DisplayMode *dm);
@@ -62,9 +62,9 @@ struct SystemStub_SDL : SystemStub {
 	void setAspectRatio(int w, int h);
 };
 
-const float SystemStub_SDL::kAspectRatio = 16.f / 10.f;
+const float SystemStubScummVM::kAspectRatio = 16.f / 10.f;
 
-SystemStub_SDL::SystemStub_SDL()
+SystemStubScummVM::SystemStubScummVM()
 	: _w(0), _h(0)
 #ifdef TODO
 	, _window(0), _renderer(0), _texW(0), _texH(0), _texture(0)
@@ -72,7 +72,7 @@ SystemStub_SDL::SystemStub_SDL()
 {
 }
 
-void SystemStub_SDL::init(const char *title, const DisplayMode *dm) {
+void SystemStubScummVM::init(const char *title, const DisplayMode *dm) {
 #ifdef TODO
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER);
 	SDL_ShowCursor(SDL_DISABLE);
@@ -128,7 +128,7 @@ void SystemStub_SDL::init(const char *title, const DisplayMode *dm) {
 	_dm = *dm;
 }
 
-void SystemStub_SDL::fini() {
+void SystemStubScummVM::fini() {
 #ifdef TODO
 	if (_texture) {
 		SDL_DestroyTexture(_texture);
@@ -155,7 +155,7 @@ void SystemStub_SDL::fini() {
 #endif
 }
 
-void SystemStub_SDL::prepareScreen(int &w, int &h, float ar[4]) {
+void SystemStubScummVM::prepareScreen(int &w, int &h, float ar[4]) {
 	w = _w;
 	h = _h;
 	ar[0] = _aspectRatio[0];
@@ -169,7 +169,7 @@ void SystemStub_SDL::prepareScreen(int &w, int &h, float ar[4]) {
 #endif
 }
 
-void SystemStub_SDL::updateScreen() {
+void SystemStubScummVM::updateScreen() {
 #ifdef TODO
 	if (_renderer) {
 		SDL_RenderPresent(_renderer);
@@ -179,7 +179,7 @@ void SystemStub_SDL::updateScreen() {
 #endif
 }
 
-void SystemStub_SDL::setScreenPixels555(const uint16_t *data, int w, int h) {
+void SystemStubScummVM::setScreenPixels555(const uint16_t *data, int w, int h) {
 #ifdef TODO
 	if (_renderer) {
 		if (!_texture) {
@@ -207,7 +207,7 @@ void SystemStub_SDL::setScreenPixels555(const uint16_t *data, int w, int h) {
 #endif
 }
 
-void SystemStub_SDL::processEvents() {
+void SystemStubScummVM::processEvents() {
 #ifdef TODO
 	SDL_Event ev;
 	while (SDL_PollEvent(&ev)) {
@@ -439,15 +439,15 @@ void SystemStub_SDL::processEvents() {
 #endif
 }
 
-void SystemStub_SDL::sleep(uint32_t duration) {
+void SystemStubScummVM::sleep(uint32_t duration) {
 	g_system->delayMillis(duration);
 }
 
-uint32_t SystemStub_SDL::getTimeStamp() {
+uint32_t SystemStubScummVM::getTimeStamp() {
 	return g_system->getMillis();
 }
 
-void SystemStub_SDL::setAspectRatio(int w, int h) {
+void SystemStubScummVM::setAspectRatio(int w, int h) {
 	const float currentAspectRatio = w / (float)h;
 	if (int(currentAspectRatio * 100) == int(kAspectRatio * 100)) {
 		_aspectRatio[0] = 0.f;
@@ -476,8 +476,8 @@ void SystemStub_SDL::setAspectRatio(int w, int h) {
 	}
 }
 
-SystemStub *SystemStub_SDL_create() {
-	return new SystemStub_SDL();
+SystemStub *SystemStub_create() {
+	return new SystemStubScummVM();
 }
 
 } // namespace Awe

@@ -20,9 +20,9 @@
  */
 
 //define MIX_INIT_FLUIDSYNTH MIX_INIT_MID // renamed with SDL2_mixer >= 2.0.2
-#include "awe/aifcplayer.h"
+#include "awe/aifc_player.h"
 #include "awe/mixer.h"
-#include "awe/sfxplayer.h"
+#include "awe/sfx_player.h"
 #include "awe/util.h"
 
 namespace Awe {

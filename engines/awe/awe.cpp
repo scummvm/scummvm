@@ -29,7 +29,7 @@
 #include "awe/resource.h"
 #include "awe/scaler.h"
 #include "awe/script.h"
-#include "awe/systemstub.h"
+#include "awe/system_stub.h"
 #include "awe/util.h"
 #include "awe/video.h"
 
@@ -341,7 +341,7 @@ Common::Error AweEngine::run() {
 		}
 	}
 
-	SystemStub *stub = SystemStub_SDL_create();
+	SystemStub *stub = SystemStub_create();
 	stub->init(e->getGameTitle(lang), &dm);
 	e->setSystemStub(stub, graphics);
 	if (demo3JoyInputs && e->_res.getDataType() == DT_DOS) {
