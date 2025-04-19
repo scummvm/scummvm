@@ -936,6 +936,9 @@ void QtvrxtraXtra::m_QTVRSetVisible(int nargs) {
 	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
 
 	me->_visible = (bool)g_lingo->pop().asInt();
+
+	if (!me->_visible)
+		g_director->getCurrentWindow()->render(true);
 }
 
 void QtvrxtraXtra::m_QTVRGetWarpMode(int nargs) {
