@@ -40,7 +40,7 @@ public:
 
 	void addLoc(TeILoc *loc);
 	void create();
-	TeICodec *createVideoCodec(const TetraedgeFSNode &node);
+	TeICodec *createVideoCodec(const TetraedgeFSNode &node, const Common::Path &origPath);
 	TeICodec *createVideoCodec(const Common::String &extn);
 	const Common::String &fileFlagSystemFlag(const Common::String &name) const;
 	bool fileFlagSystemFlagsContains(const Common::String &name) const;

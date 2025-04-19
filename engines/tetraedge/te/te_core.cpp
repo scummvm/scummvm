@@ -95,8 +95,12 @@ TeICodec *TeCore::createVideoCodec(const Common::String &extn) {
 	return nullptr;
 }
 
-TeICodec *TeCore::createVideoCodec(const TetraedgeFSNode &node) {
-	const Common::String filename = node.getPath().baseName();
+TeICodec *TeCore::createVideoCodec(const TetraedgeFSNode &node, const Common::Path &origPath) {
+	//
+	// Need to use the original requested path (not the node path) as
+	// it might include the #anim directive for animated pngs.
+	//
+	const Common::String filename = origPath.baseName();
 	if (!filename.contains('.'))
 		return nullptr;
 	Common::String extn = filename.substr(filename.findLastOf('.') + 1);

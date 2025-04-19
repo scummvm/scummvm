@@ -103,7 +103,7 @@ bool TeImage::isExtensionSupported(const Common::Path &path) {
 
 bool TeImage::load(const TetraedgeFSNode &node) {
 	TeCore *core = g_engine->getCore();
-	TeICodec *codec = core->createVideoCodec(node);
+	TeICodec *codec = core->createVideoCodec(node, node.getPath());
 	if (!node.exists() || !codec->load(node)) {
 		warning("TeImage::load: Failed to load %s.", node.toString().c_str());
 		delete codec;

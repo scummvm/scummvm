@@ -76,7 +76,7 @@ bool TeTiledSurface::load(const TetraedgeFSNode &node) {
 
 	if (!texture) {
 		TeCore *core = g_engine->getCore();
-		_codec = core->createVideoCodec(node);
+		_codec = core->createVideoCodec(node, _loadedPath);
 		if (!_codec)
 			return false;
 
