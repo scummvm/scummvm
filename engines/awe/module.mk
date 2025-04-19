@@ -3,7 +3,7 @@ MODULE := engines/awe
 MODULE_OBJS = \
 	metaengine.o \
 	awe.o \
-	aifcplayer.o \
+	aifc_player.o \
 	bitmap.o \
 	detection.o \
 	engine.o \
@@ -20,9 +20,9 @@ MODULE_OBJS = \
 	scaler.o \
 	screenshot.o \
 	script.o \
-	sfxplayer.o \
-	staticres.o \
-	systemstub_sdl.o \
+	sfx_player.o \
+	static_res.o \
+	system_stub.o \
 	unpack.o \
 	util.o \
 	video.o

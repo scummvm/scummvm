@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AWE_SFXPLAYER_H
-#define AWE_SFXPLAYER_H
+#ifndef AWE_SFX_PLAYER_H
+#define AWE_SFX_PLAYER_H
 
 #include "awe/intern.h"
 

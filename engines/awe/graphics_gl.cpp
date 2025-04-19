@@ -21,7 +21,7 @@
 
 #include "awe/graphics.h"
 #include "awe/util.h"
-#include "awe/systemstub.h"
+#include "awe/system_stub.h"
 
 namespace Awe {
 

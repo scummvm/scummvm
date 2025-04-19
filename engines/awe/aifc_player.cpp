@@ -19,7 +19,7 @@
  *
  */
 
-#include "awe/aifcplayer.h"
+#include "awe/aifc_player.h"
 #include "awe/util.h"
 
 namespace Awe {

@@ -27,7 +27,7 @@
 #include "awe/intern.h"
 #include "awe/script.h"
 #include "awe/mixer.h"
-#include "awe/sfxplayer.h"
+#include "awe/sfx_player.h"
 #include "awe/resource.h"
 #include "awe/video.h"
 
