@@ -28,11 +28,10 @@
 
 namespace Awe {
 
-Engine::Engine(Audio::Mixer &mixer, DataType dataType, int partNum) :
-		_mix(mixer), _script(&_mix, &_res, &_ply, &_vid),
+Engine::Engine(Audio::Mixer *mixer, DataType dataType, int partNum) :
+		_mix(mixer), _script(mixer, &_res, &_ply, &_vid),
 		_res(&_vid, dataType), _ply(&_res), _vid(&_res),
 		_partNum(partNum) {
-	_res.detectVersion();
 }
 
 static const int _restartPos[36 * 2] = {
@@ -177,7 +176,7 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 void Engine::finish() {
 	_graphics->fini();
 	_ply.stop();
-	_mix.stopAll();
+	_mix->stopAll();
 	_res.freeMemBlock();
 }
 

@@ -111,6 +111,7 @@ struct Resource {
 	static const AmigaMemEntry _memListAmigaEN[ENTRIES_COUNT];
 	static const AmigaMemEntry _memListAtariEN[ENTRIES_COUNT];
 	static const uint8_t _memListParts[][4];
+	static const AmigaMemEntry *detectAmigaAtari();
 
 	Video *_vid;
 	DataType _dataType;
@@ -142,7 +143,6 @@ struct Resource {
 	DataType getDataType() const {
 		return _dataType;
 	}
-	void detectVersion();
 	const char *getGameTitle(Language lang) const;
 	bool readBank(const MemEntry *me, uint8_t *dstBuf);
 	void readEntries();

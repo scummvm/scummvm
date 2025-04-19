@@ -33,13 +33,16 @@ namespace Awe {
 
 static const char *atariDemo = "aw.tos";
 
+static const char *kGameTitleEU = "Another World";
+static const char *kGameTitleUS = "Out Of This World";
+static const char *kGameTitle15thEdition = "Another World 15th anniversary edition";
+static const char *kGameTitle20thEdition = "Another World 20th anniversary edition";
+
 Resource::Resource(Video *vid, DataType dataType) :
 		_vid(vid), _dataType(dataType) {
-	_bankPrefix = "bank";
-	_hasPasswordScreen = true;
-	_numMemList = 0;
-	_lang = Common::EN_ANY;
-	_amigaMemList = 0;
+	if (_dataType == DT_ATARI) {
+		_amigaMemList = detectAmigaAtari();
+	}
 }
 
 Resource::~Resource() {
@@ -65,7 +68,7 @@ bool Resource::readBank(const MemEntry *me, uint8_t *dstBuf) {
 	return ret;
 }
 
-static const AmigaMemEntry *detectAmigaAtari() {
+const AmigaMemEntry *Resource::detectAmigaAtari() {
 	Common::File f;
 
 	static const struct {
@@ -88,17 +91,6 @@ static const AmigaMemEntry *detectAmigaAtari() {
 
 	return nullptr;
 }
-
-void Resource::detectVersion() {
-	if (_dataType == DT_ATARI) {
-		_amigaMemList = detectAmigaAtari();
-	}
-}
-
-static const char *kGameTitleEU = "Another World";
-static const char *kGameTitleUS = "Out Of This World";
-static const char *kGameTitle15thEdition = "Another World 15th anniversary edition";
-static const char *kGameTitle20thEdition = "Another World 20th anniversary edition";
 
 const char *Resource::getGameTitle(Language lang) const {
 	switch (_dataType) {
