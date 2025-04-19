@@ -21,7 +21,7 @@
 
 #include "awe/engine.h"
 #include "awe/file.h"
-#include "awe/graphics.h"
+#include "awe/gfx.h"
 #include "awe/resource_nth.h"
 #include "awe/system_stub.h"
 #include "awe/util.h"
@@ -45,7 +45,7 @@ Engine::Engine(Audio::Mixer *mixer, DataType dataType, int partNum) :
 		_partNum(partNum) {
 }
 
-void Engine::setSystemStub(SystemStub *stub, Graphics *graphics) {
+void Engine::setSystemStub(SystemStub *stub, Gfx *graphics) {
 	_stub = stub;
 	_script._stub = stub;
 	_graphics = graphics;
@@ -102,7 +102,7 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 	_res.allocMemBlock();
 	_res.readEntries();
 	_res.dumpEntries();
-	const bool isNth = !Graphics::_is1991 && (_res.getDataType() == DT_15TH_EDITION || _res.getDataType() == DT_20TH_EDITION);
+	const bool isNth = !Gfx::_is1991 && (_res.getDataType() == DT_15TH_EDITION || _res.getDataType() == DT_20TH_EDITION);
 	if (isNth) {
 		// get HD background bitmaps resolution
 		_res._nth->getBitmapSize(&w, &h);

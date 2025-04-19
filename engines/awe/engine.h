@@ -33,7 +33,7 @@
 
 namespace Awe {
 
-struct Graphics;
+struct Gfx;
 struct SystemStub;
 
 struct Engine {
@@ -45,7 +45,7 @@ struct Engine {
 	};
 
 	int _state = 0;
-	Graphics *_graphics = nullptr;
+	Gfx *_graphics = nullptr;
 	SystemStub *_stub = nullptr;
 	Script _script;
 	Audio::Mixer *_mix;
@@ -56,7 +56,7 @@ struct Engine {
 
 	Engine(Audio::Mixer *mixer, DataType dataType, int partNum);
 
-	void setSystemStub(SystemStub *, Graphics *);
+	void setSystemStub(SystemStub *, Gfx *);
 
 	const char *getGameTitle(Language lang) const {
 		return _res.getGameTitle(lang);

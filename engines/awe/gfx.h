@@ -58,7 +58,7 @@ enum {
 
 struct SystemStub;
 
-struct Graphics {
+struct Gfx {
 	static const uint8_t _font[];
 	static bool _is1991; // draw graphics as in the original 1991 game release
 	static bool _use555; // use 16bits graphics buffer (for 3DO)
@@ -69,7 +69,7 @@ struct Graphics {
 	int _fixUpPalette = 0;
 	bool _screenshot = false;
 
-	virtual ~Graphics() {};
+	virtual ~Gfx() {};
 
 	virtual void init(int targetW, int targetH) { _screenshot = false; }
 	virtual void fini() {}
@@ -89,7 +89,7 @@ struct Graphics {
 	virtual void drawBitmapOverlay(const uint8_t *data, int w, int h, int fmt, SystemStub *stub) = 0;
 };
 
-Graphics *GraphicsSoft_create();
+Gfx *GraphicsSoft_create();
 
 } // namespace Awe
 

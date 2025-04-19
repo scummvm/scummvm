@@ -19,7 +19,7 @@
  *
  */
 
-#include "awe/graphics.h"
+#include "awe/gfx.h"
 #include "awe/util.h"
 #include "awe/system_stub.h"
 
