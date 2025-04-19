@@ -186,7 +186,10 @@ void AmerzoneGame::enter() {
 
 	TeInputMgr *inputMgr = g_engine->getInputMgr();
 	inputMgr->_mouseMoveSignal.add(this, &AmerzoneGame::onMouseMove);
-	inputMgr->_mouseLUpSignal.add(this, &AmerzoneGame::onMouseLeftUp);
+	// Left up should be max priority to make sure drags are always finished even if event
+	// is over button.
+	inputMgr->_mouseLUpSignal.push_back(TeICallback1ParamPtr<const Common::Point &>(new TeCallback1Param<AmerzoneGame,
+			const Common::Point &>(this, &AmerzoneGame::onMouseLeftUp, FLT_MAX)));
 	inputMgr->_mouseLDownSignal.add(this, &AmerzoneGame::onMouseLeftDown);
 
 	_orientationX = 0;
