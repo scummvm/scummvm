@@ -760,6 +760,7 @@ void Inter_v7::o7_playVmdOrMusic() {
 	if (props.noBlock && (props.flags & VideoPlayer::kFlagNoVideo))
 		primary = false;
 
+	props.reuseSlotWitSameFilename = true;
 	int slot = _vm->_vidPlayer->openVideo(primary, file, props);
 	if (slot < 0) {
 		WRITE_VAR(11, (uint32) -1);
