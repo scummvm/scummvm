@@ -20,9 +20,11 @@
  */
 
 #include "common/system.h"
+#include "common/events.h"
 #include "engines/util.h"
 #include "graphics/screen.h"
 #include "awe/graphics.h"
+#include "awe/metaengine.h"
 #include "awe/system_stub.h"
 #include "awe/util.h"
 
@@ -125,235 +127,107 @@ void SystemStubScummVM::setScreenPixels555(const uint16_t *data, int w, int h) {
 }
 
 void SystemStubScummVM::processEvents() {
-#ifdef TODO
-	SDL_Event ev;
-	while (SDL_PollEvent(&ev)) {
+	Common::Event ev;
+	while (g_system->getEventManager()->pollEvent(ev)) {
 		switch (ev.type) {
-		case SDL_QUIT:
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			_pi.quit = true;
 			break;
-		case SDL_WINDOWEVENT:
-			if (ev.window.event == SDL_WINDOWEVENT_RESIZED) {
-				_w = _dm.width = ev.window.data1;
-				_h = _dm.height = ev.window.data2;
-			} else if (ev.window.event == SDL_WINDOWEVENT_CLOSE) {
-				_pi.quit = true;
-			}
-			break;
-		case SDL_KEYUP:
-			switch (ev.key.keysym.sym) {
-			case SDLK_LEFT:
-				_pi.dirMask &= ~PlayerInput::DIR_LEFT;
-				break;
-			case SDLK_RIGHT:
-				_pi.dirMask &= ~PlayerInput::DIR_RIGHT;
-				break;
-			case SDLK_UP:
-				_pi.dirMask &= ~PlayerInput::DIR_UP;
-				break;
-			case SDLK_DOWN:
-				_pi.dirMask &= ~PlayerInput::DIR_DOWN;
-				break;
-			case SDLK_SPACE:
-			case SDLK_RETURN:
-				_pi.action = false;
-				break;
-			case SDLK_LSHIFT:
-			case SDLK_RSHIFT:
-				_pi.jump = false;
-				break;
-			case SDLK_s:
-				_pi.screenshot = true;
-				break;
-			case SDLK_c:
-				_pi.code = true;
-				break;
-			case SDLK_p:
-				_pi.pause = true;
-				break;
-			case SDLK_ESCAPE:
-			case SDLK_AC_BACK:
-				_pi.back = true;
-				break;
-			case SDLK_AC_HOME:
-				_pi.quit = true;
-				break;
-			default:
-				break;
-			}
-			break;
-		case SDL_KEYDOWN:
-			if (ev.key.keysym.mod & KMOD_ALT) {
-				if (ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_KP_ENTER) {
-				} else if (ev.key.keysym.sym == SDLK_x) {
-					_pi.quit = true;
-				}
-				break;
-			} else if (ev.key.keysym.mod & KMOD_CTRL) {
-				if (ev.key.keysym.sym == SDLK_f) {
-					_pi.fastMode = true;
-				}
-				break;
-			}
-			_pi.lastChar = ev.key.keysym.sym;
-			switch (ev.key.keysym.sym) {
-			case SDLK_LEFT:
+
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			switch (ev.customType) {
+			case KEYBIND_LEFT:
 				_pi.dirMask |= PlayerInput::DIR_LEFT;
 				break;
-			case SDLK_RIGHT:
+			case KEYBIND_RIGHT:
 				_pi.dirMask |= PlayerInput::DIR_RIGHT;
 				break;
-			case SDLK_UP:
+			case KEYBIND_UP:
 				_pi.dirMask |= PlayerInput::DIR_UP;
 				break;
-			case SDLK_DOWN:
+			case KEYBIND_DOWN:
 				_pi.dirMask |= PlayerInput::DIR_DOWN;
 				break;
-			case SDLK_SPACE:
-			case SDLK_RETURN:
+			case KEYBIND_SELECT:
 				_pi.action = true;
 				break;
-			case SDLK_LSHIFT:
-			case SDLK_RSHIFT:
+			case KEYBIND_JUMP:
 				_pi.jump = true;
 				break;
 			default:
 				break;
 			}
 			break;
-		case SDL_JOYHATMOTION:
-			if (_joystick) {
-				_pi.dirMask = 0;
-				if (ev.jhat.value & SDL_HAT_UP) {
-					_pi.dirMask |= PlayerInput::DIR_UP;
-				}
-				if (ev.jhat.value & SDL_HAT_DOWN) {
-					_pi.dirMask |= PlayerInput::DIR_DOWN;
-				}
-				if (ev.jhat.value & SDL_HAT_LEFT) {
-					_pi.dirMask |= PlayerInput::DIR_LEFT;
-				}
-				if (ev.jhat.value & SDL_HAT_RIGHT) {
-					_pi.dirMask |= PlayerInput::DIR_RIGHT;
-				}
+
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			switch (ev.customType) {
+			case KEYBIND_LEFT:
+				_pi.dirMask &= ~PlayerInput::DIR_LEFT;
+				break;
+			case KEYBIND_RIGHT:
+				_pi.dirMask &= ~PlayerInput::DIR_RIGHT;
+				break;
+			case KEYBIND_UP:
+				_pi.dirMask &= ~PlayerInput::DIR_UP;
+				break;
+			case KEYBIND_DOWN:
+				_pi.dirMask &= ~PlayerInput::DIR_DOWN;
+				break;
+			case KEYBIND_SELECT:
+				_pi.action = false;
+				break;
+			case KEYBIND_JUMP:
+				_pi.jump = false;
+				break;
+			case KEYBIND_CODE:
+				_pi.code = false;
+				break;
+			default:
+				break;
 			}
 			break;
-		case SDL_JOYAXISMOTION:
-			if (_joystick) {
-				switch (ev.jaxis.axis) {
-				case 0:
-					_pi.dirMask &= ~(PlayerInput::DIR_RIGHT | PlayerInput::DIR_LEFT);
-					if (ev.jaxis.value > kJoystickCommitValue) {
-						_pi.dirMask |= PlayerInput::DIR_RIGHT;
-					} else if (ev.jaxis.value < -kJoystickCommitValue) {
-						_pi.dirMask |= PlayerInput::DIR_LEFT;
-					}
-					break;
-				case 1:
-					_pi.dirMask &= ~(PlayerInput::DIR_UP | PlayerInput::DIR_DOWN);
-					if (ev.jaxis.value > kJoystickCommitValue) {
-						_pi.dirMask |= PlayerInput::DIR_DOWN;
-					} else if (ev.jaxis.value < -kJoystickCommitValue) {
-						_pi.dirMask |= PlayerInput::DIR_UP;
-					}
-					break;
+
+		case Common::EVENT_KEYUP:
+			switch (ev.kbd.keycode) {
+			case Common::KEYCODE_s:
+				_pi.screenshot = true;
+				break;
+			case Common::KEYCODE_p:
+				_pi.pause = true;
+				break;
+			case Common::KEYCODE_ESCAPE:
+			case Common::KEYCODE_AC_BACK:
+				_pi.back = true;
+				break;
+			case Common::KEYCODE_AC_HOME:
+				_pi.quit = true;
+				break;
+			default:
+				break;
+			}
+			break;
+
+		case Common::EVENT_KEYDOWN:
+			if (ev.kbd.flags & Common::KBD_ALT) {
+				if (ev.kbd.keycode == Common::KEYCODE_x) {
+					_pi.quit = true;
 				}
-			}
-			break;
-		case SDL_JOYBUTTONDOWN:
-		case SDL_JOYBUTTONUP:
-			if (_joystick) {
-				_pi.action = (ev.jbutton.state == SDL_PRESSED);
-			}
-			break;
-		case SDL_CONTROLLERAXISMOTION:
-			if (_controller) {
-				switch (ev.caxis.axis) {
-				case SDL_CONTROLLER_AXIS_LEFTX:
-				case SDL_CONTROLLER_AXIS_RIGHTX:
-					if (ev.caxis.value < -kJoystickCommitValue) {
-						_pi.dirMask |= PlayerInput::DIR_LEFT;
-					} else {
-						_pi.dirMask &= ~PlayerInput::DIR_LEFT;
-					}
-					if (ev.caxis.value > kJoystickCommitValue) {
-						_pi.dirMask |= PlayerInput::DIR_RIGHT;
-					} else {
-						_pi.dirMask &= ~PlayerInput::DIR_RIGHT;
-					}
-					break;
-				case SDL_CONTROLLER_AXIS_LEFTY:
-				case SDL_CONTROLLER_AXIS_RIGHTY:
-					if (ev.caxis.value < -kJoystickCommitValue) {
-						_pi.dirMask |= PlayerInput::DIR_UP;
-					} else {
-						_pi.dirMask &= ~PlayerInput::DIR_UP;
-					}
-					if (ev.caxis.value > kJoystickCommitValue) {
-						_pi.dirMask |= PlayerInput::DIR_DOWN;
-					} else {
-						_pi.dirMask &= ~PlayerInput::DIR_DOWN;
-					}
-					break;
+				break;
+			} else if (ev.kbd.flags & Common::KBD_CTRL) {
+				if (ev.kbd.keycode == Common::KEYCODE_f) {
+					_pi.fastMode = true;
 				}
+				break;
 			}
+
+			_pi.lastChar = ev.kbd.keycode;
 			break;
-		case SDL_CONTROLLERBUTTONDOWN:
-		case SDL_CONTROLLERBUTTONUP:
-			if (_controller) {
-				const bool pressed = (ev.cbutton.state == SDL_PRESSED);
-				switch (ev.cbutton.button) {
-				case SDL_CONTROLLER_BUTTON_BACK:
-					_pi.back = pressed;
-					break;
-				case SDL_CONTROLLER_BUTTON_GUIDE:
-					_pi.code = pressed;
-					break;
-				case SDL_CONTROLLER_BUTTON_START:
-					_pi.pause = pressed;
-					break;
-				case SDL_CONTROLLER_BUTTON_DPAD_UP:
-					if (pressed) {
-						_pi.dirMask |= PlayerInput::DIR_UP;
-					} else {
-						_pi.dirMask &= ~PlayerInput::DIR_UP;
-					}
-					break;
-				case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
-					if (pressed) {
-						_pi.dirMask |= PlayerInput::DIR_DOWN;
-					} else {
-						_pi.dirMask &= ~PlayerInput::DIR_DOWN;
-					}
-					break;
-				case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
-					if (pressed) {
-						_pi.dirMask |= PlayerInput::DIR_LEFT;
-					} else {
-						_pi.dirMask &= ~PlayerInput::DIR_LEFT;
-					}
-					break;
-				case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
-					if (pressed) {
-						_pi.dirMask |= PlayerInput::DIR_RIGHT;
-					} else {
-						_pi.dirMask &= ~PlayerInput::DIR_RIGHT;
-					}
-					break;
-				case SDL_CONTROLLER_BUTTON_A:
-					_pi.action = pressed;
-					break;
-				case SDL_CONTROLLER_BUTTON_B:
-					_pi.jump = pressed;
-					break;
-				}
-			}
-			break;
+
 		default:
 			break;
 		}
 	}
-#endif
 }
 
 void SystemStubScummVM::sleep(uint32_t duration) {
