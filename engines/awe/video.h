@@ -27,8 +27,8 @@
 namespace Awe {
 
 struct StrEntry {
-	uint16_t id = 0;
-	const char *str = nullptr;
+	uint16_t id;
+	const char *str;
 };
 
 struct Gfx;
