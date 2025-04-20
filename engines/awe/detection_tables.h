@@ -63,6 +63,18 @@ const AweGameDescription gameDescriptions[] = {
 		},
 		DT_WIN31
 	},
+	{
+		{
+			"anotherworld",
+			"20th Anniversary",
+			AD_ENTRY1s("game/dat/file017.dat", "3c3e73a77d2cab00324c1affd3f2ef8c", 25108),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		DT_20TH_EDITION
+	},
 	{ AD_TABLE_END_MARKER, 0 }
 };
 

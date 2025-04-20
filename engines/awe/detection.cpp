@@ -41,7 +41,8 @@ const DebugChannelDef AweMetaEngineDetection::debugFlagList[] = {
 };
 
 AweMetaEngineDetection::AweMetaEngineDetection() : AdvancedMetaEngineDetection(
-	Awe::gameDescriptions, Awe::aweGames) {
+		Awe::gameDescriptions, Awe::aweGames) {
+	_flags = kADFlagMatchFullPaths;
 }
 
 REGISTER_PLUGIN_STATIC(AWE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, AweMetaEngineDetection);
