@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/tokenizer.h"
 #include "common/unicode-bidi.h"
 
@@ -1042,16 +1043,23 @@ Common::U32String MacTextCanvas::getTextChunk(int startRow, int startCol, int en
 					continue;
 				}
 
+				Common::U32String nextChunk;
 				if (startCol <= 0) {
-					ADDFORMATTING();
-
-					if (endCol >= (int)_text[i].chunks[chunk].text.size())
-						res += _text[i].chunks[chunk].text;
-					else
-						res += _text[i].chunks[chunk].text.substr(0, endCol);
+					if (endCol >= (int)_text[i].chunks[chunk].text.size()) {
+						nextChunk = _text[i].chunks[chunk].text;
+					} else {
+						nextChunk = _text[i].chunks[chunk].text.substr(0, endCol);
+					}
 				} else if ((int)_text[i].chunks[chunk].text.size() > startCol) {
+					nextChunk = _text[i].chunks[chunk].text.substr(startCol, endCol - startCol);
+				}
+
+				if (!nextChunk.empty()) {
 					ADDFORMATTING();
-					res += _text[i].chunks[chunk].text.substr(startCol, endCol - startCol);
+					res += nextChunk;
+					if (debugLevelSet(5)) {
+						debugN(5, "MacTextCanvas::getTextChunk: row %d, startCol %d, endCol %d - %s\n", i, startCol, endCol, nextChunk.encode().c_str());
+					}
 				}
 
 				startCol -= _text[i].chunks[chunk].text.size();
@@ -1066,12 +1074,20 @@ Common::U32String MacTextCanvas::getTextChunk(int startRow, int startCol, int en
 				if (_text[i].chunks[chunk].text.empty()) // skip empty chunks
 					continue;
 
+				Common::U32String nextChunk;
+
 				if (startCol <= 0) {
-					ADDFORMATTING();
-					res += _text[i].chunks[chunk].text;
+					nextChunk = _text[i].chunks[chunk].text;
 				} else if ((int)_text[i].chunks[chunk].text.size() > startCol) {
+					nextChunk = _text[i].chunks[chunk].text.substr(startCol);
+				}
+
+				if (!nextChunk.empty()) {
 					ADDFORMATTING();
-					res += _text[i].chunks[chunk].text.substr(startCol);
+					res += nextChunk;
+					if (debugLevelSet(5)) {
+						debugN(5, "MacTextCanvas::getTextChunk: (topline) row %d, startCol %d, endCol %d - %s\n", i, startCol, endCol, nextChunk.encode().c_str());
+					}
 				}
 
 				startCol -= _text[i].chunks[chunk].text.size();
@@ -1084,12 +1100,21 @@ Common::U32String MacTextCanvas::getTextChunk(int startRow, int startCol, int en
 				if (_text[i].chunks[chunk].text.empty()) // skip empty chunks
 					continue;
 
-				ADDFORMATTING();
+				Common::U32String nextChunk;
 
-				if (endCol >= (int)_text[i].chunks[chunk].text.size())
-					res += _text[i].chunks[chunk].text;
-				else
-					res += _text[i].chunks[chunk].text.substr(0, endCol);
+				if (endCol >= (int)_text[i].chunks[chunk].text.size()) {
+					nextChunk = _text[i].chunks[chunk].text;
+				} else {
+					nextChunk = _text[i].chunks[chunk].text.substr(0, endCol);
+				}
+
+				if (!nextChunk.empty()) {
+					ADDFORMATTING();
+					res += nextChunk;
+					if (debugLevelSet(5)) {
+						debugN(5, "MacTextCanvas::getTextChunk: (endline) row %d, startCol %d, endCol %d - %s\n", i, startCol, endCol, nextChunk.encode().c_str());
+					}
+				}
 
 				endCol -= _text[i].chunks[chunk].text.size();
 
@@ -1104,6 +1129,9 @@ Common::U32String MacTextCanvas::getTextChunk(int startRow, int startCol, int en
 
 				ADDFORMATTING();
 				res += _text[i].chunks[chunk].text;
+				if (debugLevelSet(5)) {
+					debugN(5, "MacTextCanvas::getTextChunk: (midline) row %d, startCol %d, endCol %d - %s\n", i, startCol, endCol, _text[i].chunks[chunk].text.encode().c_str());
+				}
 			}
 
 			if (newlines && _text[i].paragraphEnd)
