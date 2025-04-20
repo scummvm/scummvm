@@ -588,7 +588,7 @@ void Script::executeTask() {
 				case 28:
 				{
 					const uint8_t var = _scriptPtr.fetchByte();
-					debugC(kDebugScript, "Script::op28() jmpIf(VAR(0x%02X) == 0)");
+					debugC(kDebugScript, "Script::op28() jmpIf(VAR(0x%02x) == 0)");
 					if (_scriptVars[var] == 0) {
 						op_jmp();
 					} else {
@@ -599,7 +599,7 @@ void Script::executeTask() {
 				case 29:
 				{
 					const uint8_t var = _scriptPtr.fetchByte();
-					debugC(kDebugScript, "Script::op29() jmpIf(VAR(0x%02X) != 0)");
+					debugC(kDebugScript, "Script::op29() jmpIf(VAR(0x%02x) != 0)");
 					if (_scriptVars[var] != 0) {
 						op_jmp();
 					} else {

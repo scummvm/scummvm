@@ -343,7 +343,7 @@ void GraphicsSoft::drawLineP(int16_t x1, int16_t x2, int16_t y, uint8_t color) {
 }
 
 uint8_t *GraphicsSoft::getPagePtr(uint8_t page) {
-	assert(page >= 0 && page < 4);
+	assert(page < 4);
 	return _pagePtrs[page];
 }
 

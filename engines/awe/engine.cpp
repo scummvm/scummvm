@@ -115,13 +115,12 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 		_vid.setDefaultFont();
 	}
 	_script.init();
-	MixerType mixerType = kMixerTypeRaw;
+
 	switch (_res.getDataType()) {
 	case DT_DOS:
 	case DT_AMIGA:
 	case DT_ATARI:
 	case DT_ATARI_DEMO:
-		mixerType = kMixerTypeRaw;
 		switch (lang) {
 		case Common::FR_FRA:
 			_vid._stringsTable = Video::_stringsTableFr;
@@ -135,15 +134,10 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 	case DT_WIN31:
 	case DT_15TH_EDITION:
 	case DT_20TH_EDITION:
-		mixerType = kMixerTypeWav;
 		break;
 	case DT_3DO:
-		mixerType = kMixerTypeAiff;
 		break;
 	}
-#ifdef TODO
-	_mix.init(mixerType);
-#endif
 
 	if (_res._copyProtection) {
 		switch (_res.getDataType()) {

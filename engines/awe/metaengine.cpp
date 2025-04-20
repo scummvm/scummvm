@@ -75,7 +75,7 @@ const ADExtraGuiOptionsMap *AweMetaEngine::getAdvancedExtraGuiOptions() const {
 }
 
 Common::Error AweMetaEngine::createInstance(OSystem *syst, Engine **engine, const Awe::AweGameDescription *desc) const {
-	*engine = new Awe::AweEngine(syst, (Awe::AweGameDescription *)desc);
+	*engine = new Awe::AweEngine(syst, (const Awe::AweGameDescription *)desc);
 	return Common::kNoError;
 }
 

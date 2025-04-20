@@ -64,7 +64,7 @@ void Pak::close() {
 }
 
 static int comparePakEntry(const void *a, const void *b) {
-	return scumm_stricmp(((PakEntry *)a)->name, ((PakEntry *)b)->name);
+	return scumm_stricmp(((const PakEntry *)a)->name, ((const PakEntry *)b)->name);
 }
 
 void Pak::readEntries() {

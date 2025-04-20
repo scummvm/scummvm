@@ -29,12 +29,6 @@ namespace Awe {
 
 #define MAX_CHANNELS 8
 
-enum MixerType {
-	kMixerTypeRaw,
-	kMixerTypeWav,
-	kMixerTypeAiff
-};
-
 class Sound {
 private:
 	Audio::Mixer *_mixer;

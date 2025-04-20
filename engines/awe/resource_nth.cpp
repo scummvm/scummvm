@@ -410,8 +410,8 @@ struct Resource20th : ResourceNth {
 		char path[MAXPATHLEN];
 		if (!Script::_useRemasteredAudio) {
 			snprintf(path, sizeof(path), "%s/game/WGZ/original/file%03d.wgz", _dataPath, num);
-			struct stat s;
-			if (stat(path, &s) != 0) {
+
+			if (!Common::File::exists(path)) {
 				snprintf(path, sizeof(path), "%s/game/WGZ/original/file%03dB.wgz", _dataPath, num);
 			}
 			*size = 0;
@@ -457,11 +457,9 @@ struct Resource20th : ResourceNth {
 			snprintf(path, sizeof(path), "%s/game/WGZ/file163-%s-1.wgz", _dataPath, snd);
 		}
 		break;
-		default:
-		{
+		default: {
 			snprintf(path, sizeof(path), "%s/game/WGZ/file%03d.wgz", _dataPath, num);
-			struct stat s;
-			if (stat(path, &s) != 0) {
+			if (!Common::File::exists(path)) {
 				snprintf(path, sizeof(path), "%s/game/WGZ/file%03dB.wgz", _dataPath, num);
 			}
 		}
