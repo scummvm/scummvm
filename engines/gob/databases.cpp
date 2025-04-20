@@ -32,13 +32,13 @@
 
 namespace Gob {
 
-Databases::Databases() {
+TranslationDatabases::TranslationDatabases() {
 }
 
-Databases::~Databases() {
+TranslationDatabases::~TranslationDatabases() {
 }
 
-void Databases::setLanguage(Common::Language language) {
+void TranslationDatabases::setLanguage(Common::Language language) {
 	Common::String lang;
 
 	if      (language == Common::UNK_LANG)
@@ -54,31 +54,31 @@ void Databases::setLanguage(Common::Language language) {
 	else if (language == Common::FR_FRA)
 		lang = "F";
 	else
-		warning("Databases::setLanguage(): Language \"%s\" not supported",
+		warning("TranslationDatabases::setLanguage(): Language \"%s\" not supported",
 				Common::getLanguageDescription(language));
 
 	if (!_databases.empty() && (lang != _language))
-		warning("Databases::setLanguage(): \"%s\" != \"%s\" and there's still databases open!",
+		warning("TranslationDatabases::setLanguage(): \"%s\" != \"%s\" and there's still databases open!",
 				_language.c_str(), lang.c_str());
 
 	_language = lang;
 }
 
-bool Databases::open(const Common::String &id, const Common::Path &file) {
-	if (_databases.contains(id)) {
-		warning("Databases::open(): A database with the ID \"%s\" already exists", id.c_str());
-		return false;
-	}
+bool TranslationDatabases::open(const Common::String &id, const Common::Path &file) {
+		if (_databases.contains(id)) {
+			warning("TranslationDatabases::open(): A database with the ID \"%s\" already exists", id.c_str());
+			return false;
+		}
 
 	Common::File dbFile;
 	if (!dbFile.open(file)) {
-		warning("Databases::open(): No such file \"%s\"", file.toString().c_str());
+		warning("TranslationDatabases::open(): No such file \"%s\"", file.toString().c_str());
 		return false;
 	}
 
 	dBase db;
 	if (!db.load(dbFile)) {
-		warning("Databases::open(): Failed loading database file \"%s\"", file.toString().c_str());
+		warning("TranslationDatabases::open(): Failed loading database file \"%s\"", file.toString().c_str());
 		return false;
 	}
 
@@ -95,10 +95,10 @@ bool Databases::open(const Common::String &id, const Common::Path &file) {
 	return true;
 }
 
-bool Databases::close(const Common::String &id) {
+bool TranslationDatabases::close(const Common::String &id) {
 	DBMap::iterator db = _databases.find(id);
 	if (db == _databases.end()) {
-		warning("Databases::close(): A database with the ID \"%s\" does not exist", id.c_str());
+		warning("TranslationDatabases::close(): A database with the ID \"%s\" does not exist", id.c_str());
 		return false;
 	}
 
@@ -106,17 +106,17 @@ bool Databases::close(const Common::String &id) {
 	return true;
 }
 
-bool Databases::getString(const Common::String &id, Common::String group,
+bool TranslationDatabases::getString(const Common::String &id, Common::String group,
 		Common::String section, Common::String keyword, Common::String &result) const {
 
 	DBMap::iterator db = _databases.find(id);
 	if (db == _databases.end()) {
-		warning("Databases::getString(): A database with the ID \"%s\" does not exist", id.c_str());
+		warning("TranslationDatabases::getString(): A database with the ID \"%s\" does not exist", id.c_str());
 		return false;
 	}
 
 	if (_language.empty()) {
-		warning("Databases::getString(): No language set");
+		warning("TranslationDatabases::getString(): No language set");
 		return false;
 	}
 
@@ -130,7 +130,7 @@ bool Databases::getString(const Common::String &id, Common::String group,
 	return true;
 }
 
-int Databases::findField(const dBase &db, const Common::String &field,
+int TranslationDatabases::findField(const dBase &db, const Common::String &field,
 		dBase::Type type) const {
 
 	const Common::Array<dBase::Field> &fields = db.getFields();
@@ -148,7 +148,7 @@ int Databases::findField(const dBase &db, const Common::String &field,
 	return -1;
 }
 
-bool Databases::buildMap(const dBase &db, Common::StringMap &map) const {
+bool TranslationDatabases::buildMap(const dBase &db, Common::StringMap &map) const {
 	int fLanguage = findField(db, "Langage", dBase::kTypeString);
 	int fGroup    = findField(db, "Nom"    , dBase::kTypeString);
 	int fSection  = findField(db, "Section", dBase::kTypeString);
@@ -173,6 +173,87 @@ bool Databases::buildMap(const dBase &db, Common::StringMap &map) const {
 	}
 
 	return true;
+}
+
+Database::~Database() {
+	for (Common::HashMap<Common::String, dBase*>::Node &node : _tables)
+		delete node._value;
+}
+
+bool Database::openTable(const Common::String &id, const Common::Path &file) {
+	if (_tables.contains(id)) {
+		warning("Database::open(): A table with the ID \"%s\" already exists", id.c_str());
+		return false;
+	}
+
+	Common::File dbFile;
+	if (!dbFile.open(file)) {
+		warning("Database::open(): No such file \"%s\"", file.toString().c_str());
+		return false;
+	}
+
+	dBase *db = new dBase();
+	if (!db->load(dbFile)) {
+		warning("Database::open(): Failed loading database file \"%s\"", file.toString().c_str());
+		return false;
+	}
+
+	if (db->hasMemo()) {
+		Common::String memoPathString = file.toString();
+		if (!memoPathString.hasSuffixIgnoreCase(".DBF"))
+			return false;
+
+		memoPathString.replace(memoPathString.size() - 3, 3, "DBT");
+		Common::Path memoFilename(memoPathString);
+
+		Common::File memoFile;
+		if (!memoFile.open(memoFilename)) {
+			warning("Database::open(): No such file \"%s\"", memoPathString.c_str());
+			return false;
+		}
+
+		if (!db->loadMemo(memoFile)) {
+			warning("Database::open(): Failed loading memo file for database \"%s\"", file.toString().c_str());
+			return false;
+		}
+	}
+
+	Common::String mdxPathString = file.toString();
+	if (!mdxPathString.hasSuffixIgnoreCase(".DBF"))
+		return false;
+	mdxPathString.replace(mdxPathString.size() - 3, 3, "MDX");
+	Common::Path mdxFilename(mdxPathString);
+
+	Common::File mdxFile;
+	if (mdxFile.exists(mdxFilename)) {
+		mdxFile.open(mdxFilename);
+		db->loadMultipleIndex(mdxFile);
+	}
+
+	_tables.setVal(id, db);
+	return true;
+}
+
+bool Database::closeTable(const Common::String &id) {
+	if (!_tables.contains(id)) {
+		warning("Database::close(): A table with the ID \"%s\" does not exist", id.c_str());
+		return false;
+	}
+
+	dBase *db = _tables[id];
+	delete db;
+	_tables.erase(id);
+	return true;
+}
+
+dBase *Database::getTable(const Common::String &id) {
+	Common::HashMap<Common::String, dBase*>::iterator db = _tables.find(id);
+	if (db == _tables.end()) {
+		warning("Database::getTable(): A table with the ID \"%s\" does not exist", id.c_str());
+		return nullptr;
+	}
+
+	return db->_value;
 }
 
 } // End of namespace Gob
