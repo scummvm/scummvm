@@ -11,7 +11,6 @@ MODULE_OBJS = \
 	graphics_gl.o \
 	graphics_soft.o \
 	metaengine.o \
-	mixer.o \
 	pak.o \
 	resource.o \
 	resource_3do.o \
@@ -20,6 +19,7 @@ MODULE_OBJS = \
 	scaler.o \
 	script.o \
 	sfx_player.o \
+	sound.o \
 	static_res.o \
 	system_stub.o \
 	unpack.o \

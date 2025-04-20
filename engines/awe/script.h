@@ -27,7 +27,7 @@
 
 namespace Awe {
 
-struct Mixer;
+struct Sound;
 struct Resource;
 struct SfxPlayer;
 struct SystemStub;
@@ -67,7 +67,7 @@ struct Script {
 	static Difficulty _difficulty;
 	static bool _useRemasteredAudio;
 
-	Audio::Mixer *_mix;
+	Sound *_sound;
 	Resource *_res;
 	SfxPlayer *_ply;
 	Video *_vid;
@@ -85,7 +85,7 @@ struct Script {
 	bool _is3DO = false;
 	uint32_t _startTime = 0, _timeStamp = 0;
 
-	Script(Audio::Mixer *mix, Resource *res, SfxPlayer *ply, Video *vid);
+	Script(Sound *snd, Resource *res, SfxPlayer *ply, Video *vid);
 	void init();
 
 	void op_movConst();

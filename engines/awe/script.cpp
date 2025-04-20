@@ -21,17 +21,17 @@
 
 #include "awe/gfx.h"
 #include "awe/script.h"
-#include "awe/mixer.h"
 #include "awe/resource.h"
 #include "awe/video.h"
 #include "awe/sfx_player.h"
+#include "awe/sound.h"
 #include "awe/system_stub.h"
 #include "awe/util.h"
 
 namespace Awe {
 
-Script::Script(Audio::Mixer *mix, Resource *res, SfxPlayer *ply, Video *vid)
-	: _mix(mix), _res(res), _ply(ply), _vid(vid), _stub(0) {
+Script::Script(Sound *snd, Resource *res, SfxPlayer *ply, Video *vid)
+	: _sound(snd), _res(res), _ply(ply), _vid(vid), _stub(0) {
 }
 
 void Script::init() {
@@ -392,7 +392,7 @@ void Script::op_updateResources() {
 	debugC(kDebugScript, "Script::op_updateResources(%d)", num);
 	if (num == 0) {
 		_ply->stop();
-		_mix->stopAll();
+		_sound->stopAll();
 		_res->invalidateRes();
 	} else {
 		_res->update(num, preloadSoundCb, this);
@@ -409,7 +409,7 @@ void Script::op_playMusic() {
 
 void Script::restartAt(int part, int pos) {
 	_ply->stop();
-	_mix->stopAll();
+	_sound->stopAll();
 	if (_res->getDataType() == DT_20TH_EDITION) {
 		_scriptVars[0xBF] = _difficulty; // difficulty (0 to 2)
 		// _scriptVars[0xDB] = 1; // preload sounds (resnum >= 2000)
