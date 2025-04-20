@@ -37,10 +37,10 @@
 
 namespace Gob {
 
-class Databases {
+class TranslationDatabases {
 public:
-	Databases();
-	~Databases();
+	TranslationDatabases();
+	~TranslationDatabases();
 
 	void setLanguage(Common::Language language);
 
@@ -59,6 +59,20 @@ private:
 
 	int findField(const dBase &db, const Common::String &field, dBase::Type type) const;
 	bool buildMap(const dBase &db, Common::StringMap &map) const;
+};
+
+class Database {
+public:
+	Database() {}
+	~Database();
+
+	bool openTable(const Common::String &id, const Common::Path &file);
+	bool closeTable(const Common::String &id);
+
+	dBase *getTable(const Common::String &id);
+
+private:
+	Common::HashMap<Common::String, dBase*> _tables;
 };
 
 } // End of namespace Gob

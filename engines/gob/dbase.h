@@ -37,11 +37,52 @@
 namespace Gob {
 
 /**
+ * A class for reading Multiple Index (.mdx) files for dBase.
+ * Currently, we only read the key definitions, not the actual index data.
+ *
+ */
+class dbaseMultipeIndex {
+
+public:
+	dbaseMultipeIndex();
+	~dbaseMultipeIndex() {}
+
+	bool load(Common::SeekableReadStream &stream);
+	void clear();
+
+	class FieldReference {
+	public:
+		FieldReference() : _fieldName(""), _maxLength(0) {}
+		FieldReference(const Common::String &fieldName, size_t maxLength) : _fieldName(fieldName), _maxLength(maxLength) {}
+
+		const Common::String &getFieldName() const { return _fieldName; }
+		size_t getMaxLength() const { return _maxLength; }
+
+	private:
+		Common::String _fieldName;
+		size_t _maxLength;
+	};
+
+	static Common::Array<FieldReference> parseKeyDefinition(const Common::String &keyDefinition);
+
+	const Common::Array<FieldReference>* getTagKeyDefinition(Common::String tagName) const;
+
+private:
+	byte _version;
+	TimeDate _creationDate;
+	Common::String _dataFilename;
+	uint16 _nbrOfTagsInUse;
+	TimeDate _lastUpdate;
+
+	static const uint16 INDEX_PAGE_SIZE = 512;
+	Common::HashMap<Common::String, Common::Array<FieldReference>> _tagKeyDefinitions;
+};
+
+/**
  * A class for reading dBase files.
  *
  * Only dBase III files supported for now, and only field type
- * string is actually useful. Further missing is reading of MDX
- * index files and support for the external "Memo" data file.
+ * string is actually useful.
  */
 class dBase {
 public:
@@ -68,13 +109,22 @@ public:
 		Common::Array<const byte *> fields; ///< Raw field data.
 	};
 
+	struct FieldPattern {
+		size_t fieldIndex;
+		size_t maxLength;
+		Common::String pattern;
+	};
+
 	dBase();
 	~dBase();
 
 	bool load(Common::SeekableReadStream &stream);
+	bool loadMemo(Common::SeekableReadStream &stream);
+	bool loadMultipleIndex(Common::SeekableReadStream &stream);
 	void clear();
 
 	byte getVersion() const;
+	bool hasMemo() const;
 
 	/** Return the date the database was last updated. */
 	TimeDate getLastUpdate() const;
@@ -85,8 +135,16 @@ public:
 	/** Extract a string out of raw field data. */
 	Common::String getString(const Record &record, int field) const;
 
+	void setQuery(const Common::String &query);
+	void setCurrentIndex(const Common::String &tagName);
+	void findFirstMatchingRecord();
+	void findNextMatchingRecord();
+	bool hasMatchingRecord();
+	Common::String getFieldOfMatchingRecord(Common::String fieldName);
+
 private:
 	byte _version;
+	byte _versionMajor;
 	bool _hasMemo;
 
 	TimeDate _lastUpdate;
@@ -94,7 +152,18 @@ private:
 	Common::Array<Field>  _fields;
 	Common::Array<Record> _records;
 
+	int _currentRecordIndex;
+	Common::Array<FieldPattern> _currentFieldFilter;
+
 	byte *_recordData;
+
+	Common::Array<Common::String> _memoData;
+
+	Common::String _currentIndexTag;
+	bool _hasMultipleIndex;
+	dbaseMultipeIndex _multipleIndex;
+
+	static const uint16 MEMO_BLOCK_SIZE = 512;
 
 	static inline uint32 stringLength(const byte *data, uint32 max);
 	static inline Common::String readString(Common::SeekableReadStream &stream, int n);

@@ -731,17 +731,17 @@ protected:
 	void o7_getINIValue();
 	void o7_setINIValue();
 	void o7_loadIFFPalette();
-	void o7_draw0xAA();
-	void o7_draw0xAC();
-	void o7_draw0xAD();
+	void o7_openDatabase();
+	void o7_openDatabaseTable();
+	void o7_closeDatabaseTable();
 	void o7_draw0xAE();
-	void o7_draw0xAF();
-	void o7_draw0xB0();
-	void o7_draw0xB1();
-	void o7_draw0xB4();
-	void o7_draw0xB6();
-	void o7_opendBase();
-	void o7_closedBase();
+	void o7_openDatabaseIndex();
+	void o7_findDatabaseRecord();
+	void o7_findNextDatabaseRecord();
+	void o7_getDatabaseRecordValue();
+	void o7_checkAnyDatabaseRecordFound();
+	void o7_openTranlsationDB();
+	void o7_closeTranslationDB();
 	void o7_getDBString();
 	void o7_draw0xCC();
 	void o7_draw0xCD();
@@ -775,7 +775,8 @@ protected:
 
 private:
 	INIConfig _inis;
-	Databases _databases;
+	TranslationDatabases _translationDatabases;
+	Common::HashMap<Common::String, Database, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _databases;
 
 	Common::ArchiveMemberList _remainingFilesFromPreviousSearch;
 	Common::String _currentCDPath;

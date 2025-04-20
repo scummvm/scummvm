@@ -39,6 +39,7 @@
 
 #include "image/iff.h"
 
+#include "gob/dbase.h"
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/dataio.h"
@@ -93,17 +94,17 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0xA1, o7_getINIValue);
 	OPCODEDRAW(0xA2, o7_setINIValue);
 	OPCODEDRAW(0xA4, o7_loadIFFPalette);
-	OPCODEDRAW(0xAA, o7_draw0xAA);
-	OPCODEDRAW(0xAC, o7_draw0xAC);
-	OPCODEDRAW(0xAD, o7_draw0xAD);
+	OPCODEDRAW(0xAA, o7_openDatabase);
+	OPCODEDRAW(0xAC, o7_openDatabaseTable);
+	OPCODEDRAW(0xAD, o7_closeDatabaseTable);
 	OPCODEDRAW(0xAE, o7_draw0xAE);
-	OPCODEDRAW(0xAF, o7_draw0xAF);
-	OPCODEDRAW(0xB0, o7_draw0xB0);
-	OPCODEDRAW(0xB1, o7_draw0xB1);
-	OPCODEDRAW(0xB4, o7_draw0xB4);
-	OPCODEDRAW(0xB6, o7_draw0xB6);
-	OPCODEDRAW(0xC4, o7_opendBase);
-	OPCODEDRAW(0xC5, o7_closedBase);
+	OPCODEDRAW(0xAF, o7_openDatabaseIndex);
+	OPCODEDRAW(0xB0, o7_findDatabaseRecord);
+	OPCODEDRAW(0xB1, o7_findNextDatabaseRecord);
+	OPCODEDRAW(0xB4, o7_getDatabaseRecordValue);
+	OPCODEDRAW(0xB6, o7_checkAnyDatabaseRecordFound);
+	OPCODEDRAW(0xC4, o7_openTranlsationDB);
+	OPCODEDRAW(0xC5, o7_closeTranslationDB);
 	OPCODEDRAW(0xC6, o7_getDBString);
 	OPCODEDRAW(0xCC, o7_draw0xCC);
 	OPCODEDRAW(0xCD, o7_draw0xCD);
@@ -1074,23 +1075,41 @@ void Inter_v7::o7_loadIFFPalette() {
 	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 }
 
-void Inter_v7::o7_draw0xAA() {
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readValExpr();
-	warning("STUB: o7_draw0xAA (Adibou/Anglais)");
+void Inter_v7::o7_openDatabase() {
+	Common::String databaseName = _vm->_game->_script->evalString();
+	_vm->_game->_script->readValExpr(); // unknown, some kind of "open mode"
+
+	_databases.setVal(databaseName, Database());
 }
 
-void Inter_v7::o7_draw0xAC() {
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readValExpr();
-	warning("STUB: o7_draw0xAC (Adibou/Anglais)");
+void Inter_v7::o7_openDatabaseTable() {
+	Common::String databaseName = _vm->_game->_script->evalString();
+	Common::String tableName = _vm->_game->_script->evalString();
+	Common::String dbFile = getFile(_vm->_game->_script->evalString());
+
+	dbFile += ".DBF";
+
+	if (!_databases.contains(databaseName)) {
+		warning("o7_openDatabaseTable(): No such database \"%s\"", databaseName.c_str());
+		return;
+	}
+
+	Database &database = _databases.getVal(databaseName);
+
+	database.openTable(tableName, Common::Path(dbFile));
 }
 
-void Inter_v7::o7_draw0xAD() {
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readValExpr();
-	warning("STUB: o7_draw0xAD (Adibou/Anglais)");
+void Inter_v7::o7_closeDatabaseTable() {
+	Common::String databaseName = _vm->_game->_script->evalString();
+	Common::String tableName = _vm->_game->_script->evalString();
+
+	if (!_databases.contains(databaseName)) {
+		warning("o7_closeDatabaseTable(): No such database \"%s\"", databaseName.c_str());
+		return;
+	}
+
+	Database &database = _databases.getVal(databaseName);
+	database.closeTable(tableName);
 }
 
 void Inter_v7::o7_draw0xAE() {
@@ -1099,45 +1118,119 @@ void Inter_v7::o7_draw0xAE() {
 	warning("STUB: o7_draw0xAE (Adibou/Musique)");
 }
 
-void Inter_v7::o7_draw0xAF() {
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readValExpr();
-	warning("STUB: o7_draw0xAF (Adibou/Anglais)");
+void Inter_v7::o7_openDatabaseIndex() {
+	Common::String databaseName = _vm->_game->_script->evalString();
+	Common::String tableName = _vm->_game->_script->evalString();
+	Common::String indexName = _vm->_game->_script->evalString();
+
+	if (!_databases.contains(databaseName)) {
+		warning("o7_openDatabaseIndex(): No such database \"%s\"", databaseName.c_str());
+		return;
+	}
+
+	Database &database = _databases.getVal(databaseName);
+	dBase *db = database.getTable(tableName);
+
+	db->setCurrentIndex(indexName);
 }
 
-void Inter_v7::o7_draw0xB0() {
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readValExpr();
+void Inter_v7::o7_findDatabaseRecord() {
+	Common::String databaseName = _vm->_game->_script->evalString();
+	Common::String tableName = _vm->_game->_script->evalString();
+	Common::String query = _vm->_game->_script->evalString();
+	debugC(5, kDebugGameFlow, "o7_findDatabaseRecord: %s.%s: query=%s", databaseName.c_str(), tableName.c_str(), query.c_str());
+
+	if (!_databases.contains(databaseName)) {
+		warning("o7_findDatabaseRecord(): No such database \"%s\"", databaseName.c_str());
+		return;
+	}
+
+	Database &database = _databases.getVal(databaseName);
+	dBase *db = database.getTable(tableName);
+	if (!db) {
+		warning("o7_findDatabaseRecord(): No such table \"%s\"", tableName.c_str());
+		return;
+	}
+
+	db->setQuery(query);
+	db->findFirstMatchingRecord();
 }
 
-void Inter_v7::o7_draw0xB1() {
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readValExpr();
+void Inter_v7::o7_findNextDatabaseRecord() {
+	Common::String databaseName = _vm->_game->_script->evalString();
+	Common::String tableName = _vm->_game->_script->evalString();
+
+	Database &database = _databases.getVal(databaseName);
+	debugC(5, kDebugGameFlow, "o7_findNextDatabaseRecord: %s.%s", databaseName.c_str(), tableName.c_str());
+
+	if (!_databases.contains(databaseName)) {
+		warning("o7_findDatabaseRecord(): No such database \"%s\"", databaseName.c_str());
+		return;
+	}
+
+	dBase *db = database.getTable(tableName);
+	if (!db) {
+		warning("o7_findDatabaseRecord(): No such table \"%s\"", tableName.c_str());
+		return;
+	}
+
+	db->findNextMatchingRecord();
 }
 
-void Inter_v7::o7_draw0xB4() {
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readVarIndex();
+void Inter_v7::o7_getDatabaseRecordValue() {
+	Common::String databaseSetName = _vm->_game->_script->evalString();
+	Common::String tableName = _vm->_game->_script->evalString();
+	Common::String fieldName = _vm->_game->_script->evalString();
+	uint16 type;
+	uint16 varIndex = _vm->_game->_script->readVarIndex(nullptr, &type);
+
+	if (!_databases.contains(databaseSetName)) {
+		warning("o7_findDatabaseRecord(): No such database set \"%s\"", databaseSetName.c_str());
+		return;
+	}
+
+	Database &database = _databases.getVal(databaseSetName);
+	dBase *db = database.getTable(tableName);
+	if (!db) {
+		warning("o7_findDatabaseRecord(): No such database table \"%s\"", tableName.c_str());
+		return;
+	}
+
+	Common::String string = db->getFieldOfMatchingRecord(fieldName);
+	debugC(5, kDebugGameFlow, "o7_getDatabaseRecordValue: %s.%s.%s = %s", databaseSetName.c_str(), tableName.c_str(), fieldName.c_str(), string.c_str());
+	storeString(varIndex, type, string.c_str());
 }
 
-void Inter_v7::o7_draw0xB6() {
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readVarIndex();
+void Inter_v7::o7_checkAnyDatabaseRecordFound() {
+	Common::String databaseName = _vm->_game->_script->evalString();
+	Common::String tableName = _vm->_game->_script->evalString();
+	uint16 varIndex = _vm->_game->_script->readVarIndex();
+
+	if (!_databases.contains(databaseName)) {
+		warning("o7_findDatabaseRecord(): No such database set \"%s\"", databaseName.c_str());
+		return;
+	}
+
+	Database &database = _databases.getVal(databaseName);
+	dBase *db = database.getTable(tableName);
+	if (!db) {
+		warning("o7_findDatabaseRecord(): No such database table \"%s\"", tableName.c_str());
+		return;
+	}
+
+	debugC(5, kDebugGameFlow, "o7_checkAnyDatabaseRecordFound: %s.%s = %s", databaseName.c_str(), tableName.c_str(), db->hasMatchingRecord() ? "true" : "false");
+
+	WRITE_VAR_OFFSET(varIndex, db->hasMatchingRecord() ? 0 : 1);
 }
 
-void Inter_v7::o7_opendBase() {
+void Inter_v7::o7_openTranlsationDB() {
 	Common::String dbFile = getFile(_vm->_game->_script->evalString());
 	Common::String id     = _vm->_game->_script->evalString();
 
 	dbFile += ".DBF";
 
-	_databases.setLanguage(_vm->_language);
-	if (!_databases.open(id, Common::Path(dbFile))) {
+	_translationDatabases.setLanguage(_vm->_language);
+	if (!_translationDatabases.open(id, Common::Path(dbFile))) {
 		WRITE_VAR(27, 0); // Failure
 		return;
 	}
@@ -1145,10 +1238,10 @@ void Inter_v7::o7_opendBase() {
 	WRITE_VAR(27, 1); // Success
 }
 
-void Inter_v7::o7_closedBase() {
+void Inter_v7::o7_closeTranslationDB() {
 	Common::String id = _vm->_game->_script->evalString();
 
-	if (_databases.close(id))
+	if (_translationDatabases.close(id))
 		WRITE_VAR(27, 1); // Success
 	else
 		WRITE_VAR(27, 0); // Failure
@@ -1161,7 +1254,7 @@ void Inter_v7::o7_getDBString() {
 	Common::String keyword = _vm->_game->_script->evalString();
 
 	Common::String result;
-	if (!_databases.getString(id, group, section, keyword, result)) {
+	if (!_translationDatabases.getString(id, group, section, keyword, result)) {
 		WRITE_VAR(27, 0); // Failure
 		storeString("");
 		return;
