@@ -61,6 +61,7 @@ const AweGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
+		DT_WIN31
 	},
 	{ AD_TABLE_END_MARKER, 0 }
 };

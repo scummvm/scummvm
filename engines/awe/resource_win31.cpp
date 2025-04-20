@@ -247,9 +247,8 @@ struct LzHuffman {
 const char *ResourceWin31::FILENAME = "BANK";
 
 ResourceWin31::ResourceWin31() {
-	_f.open(FILENAME);
-	_textBuf = 0;
-	memset(_stringsTable, 0, sizeof(_stringsTable));
+	if (!_f.open(FILENAME))
+		error("Could not open BANK");
 }
 
 ResourceWin31::~ResourceWin31() {
@@ -260,6 +259,7 @@ ResourceWin31::~ResourceWin31() {
 bool ResourceWin31::readEntries() {
 	uint8_t buf[32];
 	const int count = _f.read(buf, sizeof(buf));
+
 	if (count == 32 && memcmp(buf, "NL\00\00", 4) == 0) {
 		_entriesCount = READ_LE_UINT16(buf + 4);
 		debugC(kDebugResource, "Read %d entries in win31 '%s'", _entriesCount, FILENAME);
