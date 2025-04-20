@@ -187,10 +187,6 @@ void Engine::processInput() {
 		_script._fastMode = !_script._fastMode;
 		_stub->_pi.fastMode = false;
 	}
-	if (_stub->_pi.screenshot) {
-		_vid.captureDisplay();
-		_stub->_pi.screenshot = false;
-	}
 }
 
 void Engine::doThreeScreens() {

@@ -169,9 +169,6 @@ void SystemStubScummVM::processEvents() {
 
 		case Common::EVENT_KEYUP:
 			switch (ev.kbd.keycode) {
-			case Common::KEYCODE_s:
-				_pi.screenshot = true;
-				break;
 			case Common::KEYCODE_p:
 				_pi.pause = true;
 				break;

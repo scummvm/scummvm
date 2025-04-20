@@ -43,7 +43,6 @@ struct PlayerInput {
 	bool back = false;
 	char lastChar = '\0';
 	bool fastMode = false;
-	bool screenshot = false;
 };
 
 struct DisplayMode {

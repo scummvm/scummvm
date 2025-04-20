@@ -68,11 +68,10 @@ struct Gfx {
 	static const uint8_t _shapesMaskData[];
 
 	int _fixUpPalette = 0;
-	bool _screenshot = false;
 
 	virtual ~Gfx() {};
 
-	virtual void init(int targetW, int targetH) { _screenshot = false; }
+	virtual void init(int targetW, int targetH) {}
 	virtual void fini() {}
 
 	virtual void setFont(const uint8_t *src, int w, int h) = 0;
