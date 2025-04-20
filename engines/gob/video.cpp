@@ -218,7 +218,7 @@ void Video::initPrimary(int16 mode) {
 	}
 }
 
-SurfacePtr Video::initSurfDesc(int16 width, int16 height, int16 flags) {
+SurfacePtr Video::initSurfDesc(int16 width, int16 height, int16 flags, byte bpp) {
 	SurfacePtr descPtr;
 
 	if (flags & PRIMARY_SURFACE)
@@ -237,7 +237,11 @@ SurfacePtr Video::initSurfDesc(int16 width, int16 height, int16 flags) {
 		if (!(flags & SCUMMVM_CURSOR) && _vm->getGameType() != kGameTypeAdibou2)
 			width = (width + 7) & 0xFFF8;
 
-		descPtr = SurfacePtr(new Surface(width, height, _vm->getPixelFormat().bytesPerPixel));
+		descPtr = SurfacePtr(new Surface(width,
+										 height,
+										 bpp ? bpp : _vm->getPixelFormat().bytesPerPixel,
+										 (byte*) nullptr,
+										 _vm->_global->_pPaletteDesc->highColorMap));
 	}
 	return descPtr;
 }
@@ -246,9 +250,9 @@ void Video::clearScreen() {
 	g_system->fillScreen(0);
 }
 
-void Video::setSize() {
+void Video::setSize(Graphics::PixelFormat *trueColorFormat) {
 	if (_vm->isTrueColor())
-		initGraphics(_vm->_width, _vm->_height, nullptr);
+		initGraphics(_vm->_width, _vm->_height, trueColorFormat);
 	else
 		initGraphics(_vm->_width, _vm->_height);
 }
@@ -333,8 +337,12 @@ void Video::drawPacked(byte *sprBuf, int16 width, int16 height,
 
 		for (unsigned int i = 0; i < repeat; ++i) {
 			if (curx < dest.getWidth() && cury < dest.getHeight())
-				if (!transp || val)
-					dst.set(val);
+				if (!transp || val) {
+					if (dest.getBPP() == 1)
+						dst.set(val);
+					else
+						dst.set(_vm->_draw->getColor(val));
+				}
 
 			++dst;
 			curx++;
@@ -384,6 +392,12 @@ void Video::setPalElem(int16 index, char red, char green, char blue,
 
 	if (_vm->getPixelFormat().bytesPerPixel == 1)
 		g_system->getPaletteManager()->setPalette(pal, index, 1);
+	else
+		Surface::computeHighColorMap(_vm->_global->_pPaletteDesc->highColorMap,
+									 pal,
+									 _vm->getPixelFormat(),
+									 _vm->getGameType() == kGameTypeAdibou2,
+									 index, 1, 0);
 }
 
 void Video::setPalette(PalDesc *palDesc) {
@@ -398,6 +412,12 @@ void Video::setPalette(PalDesc *palDesc) {
 
 	if (_vm->getPixelFormat().bytesPerPixel == 1)
 		g_system->getPaletteManager()->setPalette(pal, 0, numcolors);
+	else
+		Surface::computeHighColorMap(palDesc->highColorMap,
+									 pal,
+									 _vm->getPixelFormat(),
+									 _vm->getGameType() == kGameTypeAdibou2,
+									 0, numcolors);
 }
 
 void Video::setFullPalette(PalDesc *palDesc) {
@@ -414,6 +434,11 @@ void Video::setFullPalette(PalDesc *palDesc) {
 
 		if (_vm->getPixelFormat().bytesPerPixel == 1)
 			g_system->getPaletteManager()->setPalette(pal, 0, 256);
+		else
+			Surface::computeHighColorMap(palDesc->highColorMap,
+										 pal,
+										 _vm->getPixelFormat(),
+										 _vm->getGameType() == kGameTypeAdibou2);
 	} else
 		Video::setPalette(palDesc);
 }

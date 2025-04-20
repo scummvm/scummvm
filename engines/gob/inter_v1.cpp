@@ -1542,7 +1542,8 @@ void Inter_v1::o1_createSprite(OpFuncParams &params) {
 
 	_vm->_draw->adjustCoords(0, &width, &height);
 	flag = _vm->_game->_script->readInt16();
-	_vm->_draw->initSpriteSurf(index, width, height, flag ? 2 : 0);
+	byte bpp = (flag & 0x200) ? 1 : _vm->_pixelFormat.bytesPerPixel;
+	_vm->_draw->initSpriteSurf(index, width, height, flag ? 2 : 0, bpp);
 }
 
 void Inter_v1::o1_freeSprite(OpFuncParams &params) {

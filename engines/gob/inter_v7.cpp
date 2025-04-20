@@ -477,15 +477,19 @@ void Inter_v7::o7_moveFile() {
 
 
 void Inter_v7::o7_initScreen() {
-	// TODO: continue implementation
-	int16 offY;
 	int16 videoMode;
 	int16 width, height;
 
-	offY = _vm->_game->_script->readInt16();
+	videoMode = _vm->_game->_script->readInt16();
 
-	videoMode = offY & 0xFF;
-	offY = (offY >> 8) & 0xFF;
+	if (videoMode == 32000 || videoMode == 256) {
+		Graphics::PixelFormat format = Graphics::createPixelFormat<555>();
+		bool trueColor = videoMode == 32000;
+		_vm->setTrueColor(trueColor, false, &format);
+	}
+
+	videoMode &= 0xFF;
+	int16 offY = 0;
 
 	width = _vm->_game->_script->readValExpr();
 	height = _vm->_game->_script->readValExpr();
@@ -870,15 +874,13 @@ void Inter_v7::o7_loadImage() {
 		return;
 	}
 
-	SurfacePtr image = _vm->_video->initSurfDesc(1, 1);
-	if (!image->loadImage(*imageFile)) {
+	int16 right  = left + width  - 1;
+	int16 bottom = top  + height - 1;
+
+	if (!destSprite->loadImage(*imageFile, left, top, right, bottom, x, y, transp, _vm->getPixelFormat())) {
 		warning("o7_loadImage(): Failed to load image \"%s\"", file.c_str());
 		return;
 	}
-
-	int16 right  = left + width  - 1;
-	int16 bottom = top  + height - 1;
-	destSprite->blit(*image, left, top, right, bottom, x, y, (transp == 0) ? -1 : 0);
 }
 
 void Inter_v7::o7_setVolume() {
@@ -1140,7 +1142,8 @@ void Inter_v7::o7_fillRect(OpFuncParams &params) {
 			// if (_vm->_draw->_spritesArray[_vm->_draw->_destSurface].field_10  & 0x80)) {
 			SurfacePtr newSurface = _vm->_video->initSurfDesc(_vm->_draw->_spriteRight,
 															  _vm->_draw->_spriteBottom,
-															  8);
+															  8,
+															  _vm->_draw->_spritesArray[_vm->_draw->_destSurface]->getBPP());
 			newSurface->blit(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface],
 							 _vm->_draw->_destSpriteX,
 							 _vm->_draw->_destSpriteY,

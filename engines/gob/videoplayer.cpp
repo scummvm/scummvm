@@ -54,7 +54,7 @@ VideoPlayer::Video::Video() : decoder(0), live(false) {
 }
 
 bool VideoPlayer::Video::isEmpty() const {
-	return decoder == 0;
+	return decoder == nullptr;
 }
 
 void VideoPlayer::Video::close() {
@@ -124,12 +124,15 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 
 		if (video->decoder->hasVideo() && !(properties.flags & kFlagNoVideo) &&
 		    (video->decoder->isPaletted() != !_vm->isTrueColor())) {
-			if (!properties.switchColorMode)
-				return -1;
+			if (properties.switchColorMode) {
+				_vm->setTrueColor(!video->decoder->isPaletted(), true);
 
-			_vm->setTrueColor(!video->decoder->isPaletted());
-
-			video->decoder->colorModeChanged();
+				video->decoder->colorModeChanged();
+			}
+			else {
+				if (!video->decoder->isPaletted()) // Paletted to high color is supported
+					return -1;
+			}
 		}
 
 		// Set the filename
@@ -166,7 +169,7 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		}
 
 		if (!(properties.flags & kFlagNoVideo) && (properties.sprite >= 0)) {
-			bool ownSurf    = (properties.sprite != Draw::kFrontSurface) && (properties.sprite != Draw::kBackSurface);
+			bool ownSurf    = properties.sprite != Draw::kFrontSurface && properties.sprite != Draw::kBackSurface;
 			bool screenSize = properties.flags & kFlagScreenSurface;
 
 			if (ownSurf) {
@@ -176,7 +179,8 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 				if (height > 0 && width > 0) {
 					_vm->_draw->_spritesArray[properties.sprite] =
 						_vm->_video->initSurfDesc(screenSize ? _vm->_width  : video->decoder->getWidth(),
-												  screenSize ? _vm->_height : video->decoder->getHeight(), 0);
+												  screenSize ? _vm->_height : video->decoder->getHeight(), 0,
+												  0);
 				} else {
 					warning("VideoPlayer::openVideo() file=%s:"
 							"Invalid surface dimensions (%dx%d)", file.c_str(), width, height);
@@ -184,8 +188,8 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 			}
 
 			if (!_vm->_draw->_spritesArray[properties.sprite] &&
-			    (properties.sprite != Draw::kFrontSurface) &&
-			    (properties.sprite != Draw::kBackSurface)) {
+				 properties.sprite != Draw::kFrontSurface &&
+				 properties.sprite != Draw::kBackSurface) {
 				properties.sprite = -1;
 				video->surface.reset();
 				video->decoder->setSurfaceMemory();
@@ -197,10 +201,25 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 				if (properties.sprite == Draw::kBackSurface)
 					video->surface = _vm->_draw->_backSurface;
 
-				video->decoder->setSurfaceMemory(video->surface->getData(),
-						video->surface->getWidth(), video->surface->getHeight(), video->surface->getBPP());
+				if (video->decoder->isPaletted() && video->surface->getBPP() > 1) {
+					uint32 *highColorMap = new uint32[256];
+					Surface::computeHighColorMap(highColorMap,
+												 video->decoder->getPalette(),
+												 _vm->getPixelFormat(),
+												 _vm->getGameType() == kGameTypeAdibou2);
+					video->decoder->setSurfaceMemoryPalettedToHighColor(video->surface->getData(),
+																		video->surface->getWidth(),
+																		video->surface->getHeight(),
+																		_vm->getPixelFormat(),
+																		highColorMap);
+				} else {
+					video->decoder->setSurfaceMemory(video->surface->getData(),
+													 video->surface->getWidth(),
+													 video->surface->getHeight(),
+													 video->surface->getBPP());
+				}
 
-				if (!ownSurf || (ownSurf && screenSize)) {
+				if (!ownSurf || screenSize) {
 					if ((properties.x >= 0) || (properties.y >= 0)) {
 						properties.x = (properties.x < 0) ? 0xFFFF : properties.x;
 						properties.y = (properties.y < 0) ? 0xFFFF : properties.y;
@@ -796,9 +815,12 @@ bool VideoPlayer::copyFrame(int slot, Surface &dest,
 	// is only used read-only in this case (as far as I can tell). Not casting
 	// the const qualifier away will lead to an additional allocation and copy
 	// of the frame data which is undesirable.
-	Surface src(surface->w, surface->h, surface->format.bytesPerPixel, (byte *)const_cast<void *>(surface->getPixels()));
+	const Surface src(surface->w, surface->h, surface->format.bytesPerPixel,
+					  static_cast<byte*>(const_cast<void*>(surface->getPixels())),
+					  video->decoder->getHighColorMap());
 
 	dest.blit(src, left, top, left + width - 1, top + height - 1, x, y, transp, yAxisReflection);
+
 	return true;
 }
 
@@ -971,11 +993,14 @@ void VideoPlayer::copyPalette(const Video &video, int16 palStart, int16 palEnd) 
 	if (palEnd < 0)
 		palEnd = 255;
 
-	palStart =  palStart      * 3;
-	palEnd   = (palEnd   + 1) * 3;
-
-	for (int i = palStart; i < palEnd; i++)
+	for (int i = palStart * 3; i < (palEnd + 1) * 3; i++)
 		((char *)(_vm->_global->_pPaletteDesc->vgaPal))[i] = video.decoder->getPalette()[i] >> 2;
+
+	Surface::computeHighColorMap(_vm->_global->_pPaletteDesc->highColorMap,
+								 video.decoder->getPalette(),
+								 _vm->getPixelFormat(),
+								 _vm->getGameType() == kGameTypeAdibou2,
+								 palStart, palEnd - palStart + 1);
 }
 
 } // End of namespace Gob

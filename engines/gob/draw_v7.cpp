@@ -27,6 +27,7 @@
 
 #include "common/formats/winexe_ne.h"
 #include "common/formats/winexe_pe.h"
+#include "graphics/blit.h"
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
 
@@ -94,22 +95,63 @@ bool Draw_v7::loadCursorFromFile(Common::String cursorName) {
 
 	_scummvmCursor->clear();
 
-	Surface cursorSurf(cursor->getWidth(), cursor->getHeight(), 1, cursor->getSurface());
-	_scummvmCursor->blit(cursorSurf, 0, 0);
+	uint32 keyColor = cursor->getKeyColor();
+	if (_scummvmCursor->getBPP() == 1) {
+		Graphics::copyBlit(_scummvmCursor->getData(), cursor->getSurface(),
+						   _scummvmCursor->getWidth() *  _scummvmCursor->getBPP(),
+						   cursor->getWidth(),
+						   cursor->getWidth(),
+						   cursor->getHeight(),
+						   1);
+	} else {
+		uint32 map[256];
+		convertPaletteToMap(map + cursor->getPaletteStartIndex(), cursor->getPalette(), cursor->getPaletteCount(), _vm->getPixelFormat());
+		if (!cursor->getMask()) {
+			// Look for a RGB color in [0, 256] not in the map and use it as the new key color.
+			// At least one of this 257 colors is guaranteed to be free, since the map size is 256.
+			bool colorPresent[257] = {false};
+			for (uint32 i = cursor->getPaletteStartIndex();
+				 i < cursor->getPaletteStartIndex() + cursor->getPaletteCount();
+				 ++i) {
+				uint32 color = map[i];
+				if (color <= 256)
+					colorPresent[color] = true;
+			}
+
+			for (keyColor = 0; keyColor <= 256; ++keyColor) {
+				if (!colorPresent[keyColor])
+					break;
+			}
+		}
+
+		map[cursor->getKeyColor()] = keyColor;
+
+		Graphics::crossBlitMap(_scummvmCursor->getData(), cursor->getSurface(),
+							   _scummvmCursor->getWidth() * _scummvmCursor->getBPP(),
+							   cursor->getWidth(),
+							   cursor->getWidth(),
+							   cursor->getHeight(),
+							   _scummvmCursor->getBPP(),
+							   map);
+	}
 
 	CursorMan.replaceCursor(_scummvmCursor->getData(),
 							cursor->getWidth(),
 							cursor->getHeight(),
 							cursor->getHotspotX(),
 							cursor->getHotspotY(),
-							cursor->getKeyColor(),
+							keyColor,
 							false,
 							&_vm->getPixelFormat(),
 							cursor->getMask());
-	CursorMan.replaceCursorPalette(cursor->getPalette(),
-								   cursor->getPaletteStartIndex(),
-								   cursor->getPaletteCount());
-	CursorMan.disableCursorPalette(false);
+	if (_scummvmCursor->getBPP() != 1)
+		CursorMan.disableCursorPalette(true);
+	else {
+		CursorMan.replaceCursorPalette(cursor->getPalette(),
+									   cursor->getPaletteStartIndex(),
+									   cursor->getPaletteCount());
+		CursorMan.disableCursorPalette(false);
+	}
 
 	delete cursorGroup;
 	delete defaultCursor;
