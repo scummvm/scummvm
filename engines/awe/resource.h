@@ -159,7 +159,7 @@ struct Resource {
 	uint8_t *loadDat(int num);
 	void loadFont();
 	void loadHeads();
-	uint8_t *loadWav(int num);
+	uint8_t *loadWav(int num, uint32 *size = nullptr);
 	const char *getString(int num);
 	const char *getMusicPath(int num, char *buf, int bufSize, uint32_t *offset = 0);
 	void setupPart(int part);

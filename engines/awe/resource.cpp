@@ -490,28 +490,32 @@ void Resource::loadHeads() {
 	}
 }
 
-uint8_t *Resource::loadWav(int num) {
+uint8_t *Resource::loadWav(int num, uint32 *size) {
 	if (_memList[num].status == STATUS_LOADED) {
 		return _memList[num].bufPtr;
 	}
-	uint32_t size = 0;
+
+	uint32_t dummy = 0;
+	if (!size)
+		size = &dummy;
 	uint8_t *p = 0;
 	switch (_dataType) {
 	case DT_15TH_EDITION:
 	case DT_20TH_EDITION:
-		p = _nth->loadWav(num, _scriptCurPtr, &size);
+		p = _nth->loadWav(num, _scriptCurPtr, size);
 		break;
 	case DT_WIN31:
-		p = _win31->loadFile(num, _scriptCurPtr, &size);
+		p = _win31->loadFile(num, _scriptCurPtr, size);
 		break;
 	default:
 		break;
 	}
 	if (p && size != 0) {
-		_scriptCurPtr += size;
+		_scriptCurPtr += *size;
 		_memList[num].bufPtr = p;
 		_memList[num].status = STATUS_LOADED;
 	}
+
 	return p;
 }
 

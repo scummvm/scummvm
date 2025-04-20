@@ -27,6 +27,8 @@
 
 namespace Awe {
 
+#define MAX_CHANNELS 8
+
 enum MixerType {
 	kMixerTypeRaw,
 	kMixerTypeWav,
@@ -36,6 +38,7 @@ enum MixerType {
 class Sound {
 private:
 	Audio::Mixer *_mixer;
+	Audio::SoundHandle _channels[MAX_CHANNELS];
 
 public:
 	Sound(Audio::Mixer *mixer) : _mixer(mixer) {
@@ -44,9 +47,24 @@ public:
 	void stopAll() {
 		_mixer->stopAll();
 	}
+	void playMusic(const char *path, int loops);
+	void playAifcMusic(const char *path, uint32_t offset);
+	void playSfxMusic(int num);
+	void stopMusic();
+	void stopAifcMusic();
+	void stopSfxMusic();
+
+	void preloadSoundAiff(byte num, const byte *data);
+	void playSoundRaw(byte channel, const byte *data, size_t size,
+		int freq, byte volume);
+	void playSoundWav(byte channel, const byte *data, size_t size,
+		uint16_t freq, byte volume, byte loop);
+	void playSoundAiff(byte channel, byte num, byte volume);
+	void stopSound(byte channel);
 };
 
 #ifdef TODO
+
 struct AifcPlayer;
 struct SfxPlayer;
 struct Mixer_impl;
@@ -61,19 +79,19 @@ struct Mixer {
 	void quit();
 	void update();
 
-	void playSoundRaw(uint8_t channel, const uint8_t *data, uint16_t freq, uint8_t volume);
-	void playSoundWav(uint8_t channel, const uint8_t *data, uint16_t freq, uint8_t volume, uint8_t loop);
-	void stopSound(uint8_t channel);
-	void setChannelVolume(uint8_t channel, uint8_t volume);
-	void playMusic(const char *path, uint8_t loop);
+	void playSoundRaw(byte channel, const byte *data, uint16_t freq, byte volume);
+	void playSoundWav(byte channel, const byte *data, uint16_t freq, byte volume, byte loop);
+	void stopSound(byte channel);
+	void setChannelVolume(byte channel, byte volume);
+	void playMusic(const char *path, byte loop);
 	void stopMusic();
 	void playAifcMusic(const char *path, uint32_t offset);
 	void stopAifcMusic();
 	void playSfxMusic(int num);
 	void stopSfxMusic();
 	void stopAll();
-	void preloadSoundAiff(uint8_t num, const uint8_t *data);
-	void playSoundAiff(uint8_t channel, uint8_t num, uint8_t volume);
+	void preloadSoundAiff(byte num, const byte *data);
+	void playSoundAiff(byte channel, byte num, byte volume);
 };
 #endif
 

@@ -780,11 +780,7 @@ static int getSoundFreq(uint8_t period) {
 void Script::snd_playSound(uint16_t resNum, uint8_t freq, uint8_t vol, uint8_t channel) {
 	debugC(kDebugSound, "snd_playSound(0x%X, %d, %d, %d)", resNum, freq, vol, channel);
 	if (vol == 0) {
-#ifdef TODO
-		_mix->stopSound(channel);
-#else
-		::error("TODO: snd_playSound");
-#endif
+		_sound->stopSound(channel);
 		return;
 	}
 	if (vol > 63) {
@@ -799,7 +795,8 @@ void Script::snd_playSound(uint16_t resNum, uint8_t freq, uint8_t vol, uint8_t c
 		if (freq != 0) {
 			--freq;
 		}
-		/* fall-through */
+		// fall-through
+
 	case DT_15TH_EDITION:
 		if (freq >= 32) {
 			// Anniversary editions do not have the 170 period
@@ -809,77 +806,68 @@ void Script::snd_playSound(uint16_t resNum, uint8_t freq, uint8_t vol, uint8_t c
 			//  [33] dos=22372 20th=23704 amiga=22372 (period 160)
 			++freq;
 		}
-		/* fall-through */
-	case DT_WIN31:
-	{
-#ifdef TODO
-		uint8_t *buf = _res->loadWav(resNum);
+		// fall-through
+	case DT_WIN31: {
+		uint32 size = 0;
+		uint8_t *buf = _res->loadWav(resNum, &size);
 		if (buf) {
-			_mix->playSoundWav(channel, buf, getSoundFreq(freq), vol, getWavLooping(resNum));
+			_sound->playSoundWav(channel, buf, size,
+				getSoundFreq(freq), vol, getWavLooping(resNum));
 		}
-#else
-		::error("TODO: play wav");
-#endif
+		break;
 	}
-	break;
 	case DT_3DO:
-#ifdef TODO
-		_mix->playSoundAiff(channel, resNum, vol);
-#else
-		::error("TODO: play aiff");
-#endif
+		_sound->playSoundAiff(channel, resNum, vol);
 		break;
 	case DT_AMIGA:
 	case DT_ATARI:
 	case DT_ATARI_DEMO:
-	case DT_DOS:
-	{
-#ifdef TODO
+	case DT_DOS: {
 		MemEntry *me = &_res->_memList[resNum];
 		if (me->status == Resource::STATUS_LOADED) {
-			_mix->playSoundRaw(channel, me->bufPtr, getSoundFreq(freq), vol);
+			_sound->playSoundRaw(channel, me->bufPtr, me->unpackedSize, getSoundFreq(freq), vol);
 		}
-#else
-		::error("TODO: play sound raw");
-#endif
+		break;
 	}
-	break;
+
+	default:
+		break;
 	}
 }
 
 void Script::snd_playMusic(uint16_t resNum, uint16_t delay, uint8_t pos) {
-#ifdef TODO
 	debugC(kDebugSound, "snd_playMusic(0x%X, %d, %d)", resNum, delay, pos);
 	uint8_t loop = 0;
+
 	switch (_res->getDataType()) {
 	case DT_20TH_EDITION:
 		if (resNum == 5000) {
-			_mix->stopMusic();
+			_sound->stopMusic();
 			break;
 		}
 		if (resNum >= 5001 && resNum <= 5010) {
 			loop = 1;
 		}
-		/* fall-through */
+		// fall-through
 	case DT_15TH_EDITION:
 	case DT_WIN31:
 		if (resNum != 0) {
 			char path[MAXPATHLEN];
 			const char *p = _res->getMusicPath(resNum, path, sizeof(path));
 			if (p) {
-				_mix->playMusic(p, loop);
+				_sound->playMusic(p, loop);
 			}
 		}
 		break;
 	case DT_3DO:
 		if (resNum == 0) {
-			_mix->stopAifcMusic();
+			_sound->stopAifcMusic();
 		} else {
 			uint32_t offset = 0;
 			char path[MAXPATHLEN];
 			const char *p = _res->getMusicPath(resNum, path, sizeof(path), &offset);
 			if (p) {
-				_mix->playAifcMusic(p, offset);
+				_sound->playAifcMusic(p, offset);
 			}
 		}
 		break;
@@ -887,27 +875,20 @@ void Script::snd_playMusic(uint16_t resNum, uint16_t delay, uint8_t pos) {
 		if (resNum != 0) {
 			_ply->loadSfxModule(resNum, delay, pos);
 			_ply->start();
-			_mix->playSfxMusic(resNum);
+			_sound->playSfxMusic(resNum);
 		} else if (delay != 0) {
 			_ply->setEventsDelay(delay);
 		} else {
-			_mix->stopSfxMusic();
+			_sound->stopSfxMusic();
 		}
 		break;
 	}
-#else
-	::error("TODO: snd_playMusic");
-#endif
 }
 
 void Script::snd_preloadSound(uint16_t resNum, const uint8_t *data) {
-#ifdef TODO
 	if (_res->getDataType() == DT_3DO) {
-		_mix->preloadSoundAiff(resNum, data);
+		_sound->preloadSoundAiff(resNum, data);
 	}
-#else
-	::error("TODO: snd_preloadSound");
-#endif
 }
 
 void Script::fixUpPalette_changeScreen(int part, int screen) {

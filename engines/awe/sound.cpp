@@ -20,12 +20,82 @@
  */
 
 //define MIX_INIT_FLUIDSYNTH MIX_INIT_MID // renamed with SDL2_mixer >= 2.0.2
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/wave.h"
+#include "common/memstream.h"
 #include "awe/aifc_player.h"
 #include "awe/sound.h"
 #include "awe/sfx_player.h"
 #include "awe/util.h"
 
 namespace Awe {
+
+void Sound::playMusic(const char *path, int loops) {
+	warning("TODO: playMusic");
+}
+
+void Sound::playSfxMusic(int num) {
+	warning("TODO: playSfxMusic");
+}
+
+void Sound::playAifcMusic(const char *path, uint32_t offset) {
+	warning("TODO: playAifcMusic");
+}
+
+void Sound::stopMusic() {
+	warning("TODO: stopMusic");
+}
+
+void Sound::stopAifcMusic() {
+	warning("TODO: stopAifcMusic");
+}
+
+void Sound::stopSfxMusic() {
+	warning("TODO: stopSfxMusic");
+}
+
+void Sound::preloadSoundAiff(byte num, const byte *data) {
+	warning("TODO: preloadSoundAiff");
+}
+
+void Sound::playSoundRaw(byte channel, const byte *data, size_t size,
+		int freq, byte volume) {
+	assert(channel < MAX_CHANNELS);
+
+	Common::MemoryReadStream *stream =
+		new Common::MemoryReadStream(data, size);
+	Audio::AudioStream *sound =
+		Audio::makeRawStream(stream, freq,
+			Audio::FLAG_16BITS,
+			DisposeAfterUse::YES);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[channel],
+		sound, -1, 255, 0, DisposeAfterUse::YES);
+}
+
+void Sound::playSoundWav(byte channel, const byte *data, size_t size,
+		uint16_t freq, byte volume, byte loop) {
+	assert(channel < MAX_CHANNELS);
+
+	Common::MemoryReadStream *stream =
+		new Common::MemoryReadStream(data, size);
+	Audio::AudioStream *sound = Audio::makeWAVStream(
+		stream, DisposeAfterUse::YES);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[channel],
+		sound, -1, 255, 0, DisposeAfterUse::YES);
+}
+
+void Sound::playSoundAiff(byte channel, byte num, byte volume) {
+	warning("TODO: playSoundAiff");
+}
+
+void Sound::stopSound(byte channel) {
+	assert(channel < MAX_CHANNELS);
+	_mixer->stopHandle(_channels[channel]);
+}
 
 #ifdef TODO
 enum {
@@ -47,14 +117,14 @@ static int16_t mixS16(int sample1, int sample2) {
 }
 
 struct MixerChannel {
-	const uint8_t *_data;
+	const byte *_data;
 	Frac _pos;
 	uint32_t _len;
 	uint32_t _loopLen, _loopPos;
 	int _volume;
 	void (MixerChannel:: *_mixWav)(int16_t *sample, int count);
 
-	void initRaw(const uint8_t *data, int freq, int volume, int mixingFreq) {
+	void initRaw(const byte *data, int freq, int volume, int mixingFreq) {
 		_data = data + 8;
 		_pos.reset(freq, mixingFreq);
 
@@ -66,7 +136,7 @@ struct MixerChannel {
 		_volume = volume;
 	}
 
-	void initWav(const uint8_t *data, int freq, int volume, int mixingFreq, int len, bool bits16, bool stereo, bool loop) {
+	void initWav(const byte *data, int freq, int volume, int mixingFreq, int len, bool bits16, bool stereo, bool loop) {
 		_data = data;
 		_pos.reset(freq, mixingFreq);
 
@@ -137,7 +207,7 @@ struct MixerChannel {
 	}
 };
 
-static const uint8_t *loadWav(const uint8_t *data, int &freq, int &len, bool &bits16, bool &stereo) {
+static const byte *loadWav(const byte *data, int &freq, int &len, bool &bits16, bool &stereo) {
 	uint32_t riffMagic = READ_LE_UINT32(data);
 	if (riffMagic != TAG_RIFF) return 0;
 	uint32_t riffLength = READ_LE_UINT32(data + 4);
@@ -253,15 +323,15 @@ struct Mixer_impl {
 		}
 	}
 
-	void playSoundRaw(uint8_t channel, const uint8_t *data, int freq, uint8_t volume) {
+	void playSoundRaw(byte channel, const byte *data, int freq, byte volume) {
 		SDL_LockAudio();
 		_channels[channel].initRaw(data, freq, volume, kMixFreq);
 		SDL_UnlockAudio();
 	}
-	void playSoundWav(uint8_t channel, const uint8_t *data, int freq, uint8_t volume, bool loop) {
+	void playSoundWav(byte channel, const byte *data, int freq, byte volume, bool loop) {
 		int wavFreq, len;
 		bool bits16, stereo;
-		const uint8_t *wavData = loadWav(data, wavFreq, len, bits16, stereo);
+		const byte *wavData = loadWav(data, wavFreq, len, bits16, stereo);
 		if (!wavData) return;
 
 		if (wavFreq == 22050 || wavFreq == 44100 || wavFreq == 48000) {
@@ -272,7 +342,7 @@ struct Mixer_impl {
 		_channels[channel].initWav(wavData, freq, volume, kMixFreq, len, bits16, stereo, loop);
 		SDL_UnlockAudio();
 	}
-	void playSound(uint8_t channel, int volume, Mix_Chunk *chunk, int loops = 0) {
+	void playSound(byte channel, int volume, Mix_Chunk *chunk, int loops = 0) {
 		stopSound(channel);
 		if (chunk) {
 			Mix_PlayChannel(channel, chunk, loops);
@@ -280,7 +350,7 @@ struct Mixer_impl {
 		setChannelVolume(channel, volume);
 		_sounds[channel] = chunk;
 	}
-	void stopSound(uint8_t channel) {
+	void stopSound(byte channel) {
 		SDL_LockAudio();
 		_channels[channel]._data = 0;
 		SDL_UnlockAudio();
@@ -291,7 +361,7 @@ struct Mixer_impl {
 		Mix_FreeChunk(_sounds[channel]);
 		_sounds[channel] = 0;
 	}
-	void setChannelVolume(uint8_t channel, uint8_t volume) {
+	void setChannelVolume(byte channel, byte volume) {
 		SDL_LockAudio();
 		_channels[channel]._volume = volume;
 		SDL_UnlockAudio();
@@ -314,7 +384,7 @@ struct Mixer_impl {
 		_music = 0;
 	}
 
-	static void mixAifcPlayer(void *data, uint8_t *s16buf, int len) {
+	static void mixAifcPlayer(void *data, byte *s16buf, int len) {
 		((AifcPlayer *)data)->readSamples((int16_t *)s16buf, len / 2);
 	}
 	void playAifcMusic(AifcPlayer *aifc) {
@@ -359,7 +429,7 @@ struct Mixer_impl {
 		}
 	}
 
-	static void mixAudio(void *data, uint8_t *s16buf, int len) {
+	static void mixAudio(void *data, byte *s16buf, int len) {
 		memset(s16buf, 0, len);
 		Mixer_impl *mixer = (Mixer_impl *)data;
 		mixer->mixChannels((int16_t *)s16buf, len / sizeof(int16_t));
@@ -376,7 +446,7 @@ struct Mixer_impl {
 		}
 	}
 
-	static void mixAudioWav(void *data, uint8_t *s16buf, int len) {
+	static void mixAudioWav(void *data, byte *s16buf, int len) {
 		Mixer_impl *mixer = (Mixer_impl *)data;
 		mixer->mixChannelsWav((int16_t *)s16buf, len / sizeof(int16_t));
 	}
@@ -394,7 +464,7 @@ struct Mixer_impl {
 		_preloads.clear();
 	}
 
-	void preloadSoundAiff(int num, const uint8_t *data) {
+	void preloadSoundAiff(int num, const byte *data) {
 		if (_preloads.find(num) != _preloads.end()) {
 			warning("AIFF sound %d is already preloaded", num);
 		} else {
@@ -440,35 +510,35 @@ void Mixer::update() {
 	}
 }
 
-void Mixer::playSoundRaw(uint8_t channel, const uint8_t *data, uint16_t freq, uint8_t volume) {
+void Mixer::playSoundRaw(byte channel, const byte *data, uint16_t freq, byte volume) {
 	debugC(kDebugSound, "Mixer::playChannel(%d, %d, %d)", channel, freq, volume);
 	if (_impl) {
 		return _impl->playSoundRaw(channel, data, freq, volume);
 	}
 }
 
-void Mixer::playSoundWav(uint8_t channel, const uint8_t *data, uint16_t freq, uint8_t volume, uint8_t loop) {
+void Mixer::playSoundWav(byte channel, const byte *data, uint16_t freq, byte volume, byte loop) {
 	debugC(kDebugSound, "Mixer::playSoundWav(%d, %d, %d)", channel, volume, loop);
 	if (_impl) {
 		return _impl->playSoundWav(channel, data, freq, volume, loop);
 	}
 }
 
-void Mixer::stopSound(uint8_t channel) {
+void Mixer::stopSound(byte channel) {
 	debugC(kDebugSound, "Mixer::stopChannel(%d)", channel);
 	if (_impl) {
 		return _impl->stopSound(channel);
 	}
 }
 
-void Mixer::setChannelVolume(uint8_t channel, uint8_t volume) {
+void Mixer::setChannelVolume(byte channel, byte volume) {
 	debugC(kDebugSound, "Mixer::setChannelVolume(%d, %d)", channel, volume);
 	if (_impl) {
 		return _impl->setChannelVolume(channel, volume);
 	}
 }
 
-void Mixer::playMusic(const char *path, uint8_t loop) {
+void Mixer::playMusic(const char *path, byte loop) {
 	debugC(kDebugSound, "Mixer::playMusic(%s, %d)", path, loop);
 	if (_impl) {
 		return _impl->playMusic(path, (loop != 0) ? -1 : 0);
@@ -524,14 +594,14 @@ void Mixer::stopAll() {
 	}
 }
 
-void Mixer::preloadSoundAiff(uint8_t num, const uint8_t *data) {
+void Mixer::preloadSoundAiff(byte num, const byte *data) {
 	debugC(kDebugSound, "Mixer::preloadSoundAiff(num:%d, data:%p)", num, data);
 	if (_impl) {
 		return _impl->preloadSoundAiff(num, data);
 	}
 }
 
-void Mixer::playSoundAiff(uint8_t channel, uint8_t num, uint8_t volume) {
+void Mixer::playSoundAiff(byte channel, byte num, byte volume) {
 	debugC(kDebugSound, "Mixer::playSoundAiff()");
 	if (_impl) {
 		return _impl->playSoundAiff(channel, num, volume);
