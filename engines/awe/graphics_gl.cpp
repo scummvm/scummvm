@@ -335,7 +335,7 @@ struct GraphicsGL : Graphics {
 	virtual void copyBuffer(int dstListNum, int srcListNum, int vscroll = 0);
 	virtual void drawBuffer(int listNum, SystemStub *stub);
 	virtual void drawRect(int num, uint8_t color, const Point *pt, int w, int h);
-	virtual void drawBitmapOverlay(const uint8_t *data, int w, int h, int fmt, SystemStub *stub);
+	virtual void drawBitmapOverlay(const Graphics::Surface &src, int fmt, SystemStub *stub);
 
 	void initFbo();
 	void drawVerticesFlat(int count, const Point *vertices);
@@ -824,7 +824,7 @@ void GraphicsGL::drawRect(int num, uint8_t color, const Point *pt, int w, int h)
 	glEnd();
 }
 
-void GraphicsGL::drawBitmapOverlay(const uint8_t *data, int w, int h, int fmt, SystemStub *stub) {
+void GraphicsGL::drawBitmapOverlay(const Graphics::Surface &src, int fmt, SystemStub *stub) {
 	if (fmt == FMT_RGB555) {
 	}
 }

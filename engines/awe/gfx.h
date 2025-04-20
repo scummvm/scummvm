@@ -22,7 +22,7 @@
 #ifndef AWE_GRAPHICS_H
 #define AWE_GRAPHICS_H
 
-#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 #include "awe/intern.h"
 
 namespace Awe {
@@ -87,7 +87,7 @@ struct Gfx {
 	virtual void copyBuffer(int dst, int src, int vscroll = 0) = 0;
 	virtual void drawBuffer(int num, SystemStub *) = 0;
 	virtual void drawRect(int num, uint8_t color, const Point *pt, int w, int h) = 0;
-	virtual void drawBitmapOverlay(const uint8_t *data, int w, int h, int fmt, SystemStub *stub) = 0;
+	virtual void drawBitmapOverlay(const Graphics::Surface &src, int fmt, SystemStub *stub) = 0;
 };
 
 Gfx *GraphicsSoft_create();
