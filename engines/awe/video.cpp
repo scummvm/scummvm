@@ -19,6 +19,7 @@
  *
  */
 
+#include "graphics/surface.h"
 #include "awe/video.h"
 #include "awe/bitmap.h"
 #include "awe/gfx.h"
@@ -638,9 +639,15 @@ void Video::drawRect(uint8_t page, uint8_t color, int x1, int y1, int x2, int y2
 void Video::drawBitmap3DO(const char *name, SystemStub *stub) {
 	assert(_res->getDataType() == DT_3DO);
 	int w, h;
-	uint16_t *data = _res->_3do->loadShape555(name, &w, &h);
+	uint16 *data = _res->_3do->loadShape555(name, &w, &h);
 	if (data) {
-		_graphics->drawBitmapOverlay((const uint8_t *)data, w, h, FMT_RGB555, stub);
+		Graphics::Surface s;
+		s.setPixels(data);
+		s.w = s.pitch = w;
+		s.h = h;
+		s.format = Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
+
+		_graphics->drawBitmapOverlay(s, FMT_RGB555, stub);
 		free(data);
 	}
 }

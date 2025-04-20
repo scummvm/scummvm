@@ -19,6 +19,7 @@
  *
  */
 
+#include "graphics/managed_surface.h"
 #include "awe/gfx.h"
 #include "awe/util.h"
 #include "awe/screenshot.h"
@@ -35,7 +36,7 @@ struct GraphicsSoft : public Gfx {
 	int _w = 0, _h = 0;
 	int _byteDepth = 0;
 	Color _pal[16];
-	uint16_t *_colorBuffer = nullptr;
+	bool _palChanged = false;
 	int _screenshotNum = 0;
 
 	GraphicsSoft();
@@ -76,14 +77,13 @@ struct GraphicsSoft : public Gfx {
 	void copyBuffer(int dst, int src, int vscroll = 0) override;
 	void drawBuffer(int num, SystemStub *stub) override;
 	void drawRect(int num, uint8_t color, const Point *pt, int w, int h) override;
-	void drawBitmapOverlay(const uint8_t *data, int w, int h, int fmt, SystemStub *stub) override;
+	void drawBitmapOverlay(const Graphics::Surface &src, int fmt, SystemStub *stub) override;
 };
 
 
 GraphicsSoft::GraphicsSoft() {
 	_fixUpPalette = FIXUP_PALETTE_NONE;
 	memset(_pagePtrs, 0, sizeof(_pagePtrs));
-	_colorBuffer = 0;
 	memset(_pal, 0, sizeof(_pal));
 	_screenshotNum = 1;
 }
@@ -93,7 +93,6 @@ GraphicsSoft::~GraphicsSoft() {
 		free(_pagePtrs[i]);
 		_pagePtrs[i] = 0;
 	}
-	free(_colorBuffer);
 }
 
 void GraphicsSoft::setSize(int w, int h) {
@@ -103,10 +102,7 @@ void GraphicsSoft::setSize(int w, int h) {
 	_h = h;
 	_byteDepth = _format.bytesPerPixel;
 	assert(_byteDepth == 1 || _byteDepth == 2);
-	_colorBuffer = (uint16_t *)realloc(_colorBuffer, _w * _h * sizeof(uint16_t));
-	if (!_colorBuffer) {
-		error("Unable to allocate color buffer w %d h %d", _w, _h);
-	}
+
 	for (int i = 0; i < 4; ++i) {
 		_pagePtrs[i] = (uint8_t *)realloc(_pagePtrs[i], getPageSize());
 		if (!_pagePtrs[i]) {
@@ -370,7 +366,9 @@ void GraphicsSoft::setFont(const uint8_t *src, int w, int h) {
 }
 
 void GraphicsSoft::setPalette(const Color *colors, int count) {
-	memcpy(_pal, colors, sizeof(Color) * MIN(count, 16));
+	count = MIN(count, 16);
+	memcpy(_pal, colors, sizeof(Color) * count);
+	_palChanged = true;
 }
 
 void GraphicsSoft::setSpriteAtlas(const uint8_t *src, int w, int h, int xSize, int ySize) {
@@ -448,64 +446,32 @@ void GraphicsSoft::copyBuffer(int dst, int src, int vscroll) {
 	}
 }
 
-static void dumpBuffer555(const uint16_t *src, int w, int h, int num) {
-	char name[32];
-	snprintf(name, sizeof(name), "screenshot-%d.tga", num);
-	saveTGA(name, src, w, h);
-	debugC(kDebugInfo, "Written '%s'", name);
-}
-
-static void dumpPalette555(uint16_t *dst, int w,
-		const Graphics::PixelFormat &format, const Color *pal) {
-	static const int SZ = 16;
-	for (int color = 0; color < 16; ++color) {
-		uint16_t *p = dst + (color & 7) * SZ;
-		for (int y = 0; y < SZ; ++y) {
-			for (int x = 0; x < SZ; ++x) {
-				const Color &c = pal[color];
-				const uint16 rgbColor = format.RGBToColor(c.r, c.g, c.b);
-
-				p[x] = rgbColor;
-			}
-
-			p += w;
-		}
-		if (color == 7) {
-			dst += SZ * w;
-		}
-	}
-}
-
 void GraphicsSoft::drawBuffer(int num, SystemStub *stub) {
 	int w, h;
 	float ar[4];
 	stub->prepareScreen(w, h, ar);
-	if (_byteDepth == 1) {
-		const uint8_t *src = getPagePtr(num);
-		for (int i = 0; i < _w * _h; ++i) {
-			const Color &c = _pal[src[i]];
-			const uint16 rgbColor = _format.RGBToColor(c.r, c.g, c.b);
-			_colorBuffer[i] = rgbColor;
-		}
-		if (0) {
-			dumpPalette555(_colorBuffer, _w, _format, _pal);
-		}
-		stub->setScreenPixels555(_colorBuffer, _w, _h);
-		if (_screenshot) {
-			dumpBuffer555(_colorBuffer, _w, _h, _screenshotNum);
-			++_screenshotNum;
-			_screenshot = false;
-		}
-	} else if (_byteDepth == 2) {
-		const uint16_t *src = (uint16_t *)getPagePtr(num);
-		stub->setScreenPixels555(src, _w, _h);
-		if (_screenshot) {
-			dumpBuffer555(src, _w, _h, _screenshotNum);
-			++_screenshotNum;
-			_screenshot = false;
-		}
+
+	if (_palChanged) {
+		stub->setPalette(_pal);
+		_palChanged = false;
 	}
+
+	Graphics::Surface s;
+	s.setPixels(getPagePtr(num));
+	s.w = s.pitch = w;
+	s.h = h;
+	s.format = (_byteDepth == 1) ?
+		Graphics::PixelFormat::createFormatCLUT8() :
+		_format;
+
+	stub->setScreenPixels(s);
 	stub->updateScreen();
+
+	if (_screenshot) {
+		warning("TODO: take screenshot");
+		++_screenshotNum;
+		_screenshot = false;
+	}
 }
 
 void GraphicsSoft::drawRect(int num, uint8_t color, const Point *pt, int w, int h) {
@@ -530,9 +496,9 @@ void GraphicsSoft::drawRect(int num, uint8_t color, const Point *pt, int w, int 
 	}
 }
 
-void GraphicsSoft::drawBitmapOverlay(const uint8_t *data, int w, int h, int fmt, SystemStub *stub) {
+void GraphicsSoft::drawBitmapOverlay(const Graphics::Surface &src, int fmt, SystemStub *stub) {
 	if (fmt == FMT_RGB555) {
-		stub->setScreenPixels555((const uint16_t *)data, w, h);
+		stub->setScreenPixels(src);
 		stub->updateScreen();
 	}
 }

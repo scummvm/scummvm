@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "engines/util.h"
+#include "graphics/paletteman.h"
 #include "graphics/screen.h"
 #include "awe/gfx.h"
 #include "awe/metaengine.h"
@@ -47,7 +48,8 @@ struct SystemStubScummVM : SystemStub {
 
 	void prepareScreen(int &w, int &h, float ar[4]) override;
 	void updateScreen() override;
-	void setScreenPixels555(const uint16_t *data, int w, int h) override;
+	void setScreenPixels(const Graphics::Surface &src) override;
+	void setPalette(const Color pal[16]) override;
 
 	void processEvents() override;
 	void sleep(uint32_t duration) override;
@@ -90,14 +92,18 @@ void SystemStubScummVM::updateScreen() {
 	_screen->update();
 }
 
-void SystemStubScummVM::setScreenPixels555(const uint16_t *data, int w, int h) {
-	assert(_screen && Gfx::_format.bytesPerPixel == 2);
-	assert(w == _screen->w && h == _screen->h);
+void SystemStubScummVM::setScreenPixels(
+	const Graphics::Surface &src) {
+	assert(src.w == _screen->w && src.h == _screen->h);
 
-	uint16 *dest = (uint16 *)_screen->getPixels();
-	Common::copy(data, data + w * h, dest);
-	_screen->markAllDirty();
+	_screen->blitFrom(src);
 }
+
+void SystemStubScummVM::setPalette(const Color pal[16]) {
+	for (int i = 0; i < 16; ++i)
+		g_system->getPaletteManager()->setPalette(pal[i].rgb, i, 1);
+}
+
 
 void SystemStubScummVM::processEvents() {
 	Common::Event ev;

@@ -83,9 +83,10 @@ struct QuadStrip {
 };
 
 struct Color {
-	uint8_t r = 0;
-	uint8_t g = 0;
-	uint8_t b = 0;
+	byte rgb[3];
+	uint8_t &r = rgb[0];
+	uint8_t &g = rgb[1];
+	uint8_t &b = rgb[2];
 };
 
 struct Frac {
