@@ -45,14 +45,16 @@ void Script::init() {
 		_scriptVars[0xF2] = 6000;
 	} else if (_res->getDataType() != DT_15TH_EDITION && _res->getDataType() != DT_20TH_EDITION) {
 		_scriptVars[VAR_RANDOM_SEED] = 0; // time(0);
-#ifdef BYPASS_PROTECTION
-		// these 3 variables are set by the game code
-		_scriptVars[0xBC] = 0x10;
-		_scriptVars[0xC6] = 0x80;
-		_scriptVars[0xF2] = (_res->getDataType() == DT_AMIGA || _res->getDataType() == DT_ATARI) ? 6000 : 4000;
-		// these 2 variables are set by the engine executable
-		_scriptVars[0xDC] = 33;
-#endif
+
+		if (!_res->_copyProtection) {
+			// these 3 variables are set by the game code
+			_scriptVars[0xBC] = 0x10;
+			_scriptVars[0xC6] = 0x80;
+			_scriptVars[0xF2] = (_res->getDataType() == DT_AMIGA || _res->getDataType() == DT_ATARI) ? 6000 : 4000;
+			// these 2 variables are set by the engine executable
+			_scriptVars[0xDC] = 33;
+		}
+
 		if (_res->getDataType() == DT_DOS || _res->getDataType() == DT_WIN31) {
 			_scriptVars[0xE4] = 20;
 		}
@@ -181,26 +183,27 @@ void Script::op_condJmp() {
 	switch (op & 7) {
 	case 0:
 		expr = (b == a);
-#ifdef BYPASS_PROTECTION
-		if (_res->_currentPart == kPartCopyProtection) {
-			//
-			// 0CB8: jmpIf(VAR(0x29) == VAR(0x1E), @0CD3)
-			// ...
-			//
-			if (var == 0x29 && (op & 0x80) != 0) {
-				// 4 symbols
-				_scriptVars[0x29] = _scriptVars[0x1E];
-				_scriptVars[0x2A] = _scriptVars[0x1F];
-				_scriptVars[0x2B] = _scriptVars[0x20];
-				_scriptVars[0x2C] = _scriptVars[0x21];
-				// counters
-				_scriptVars[0x32] = 6;
-				_scriptVars[0x64] = 20;
-				warning("Script::op_condJmp() bypassing protection");
-				expr = true;
+
+		if (!_res->_copyProtection) {
+			if (_res->_currentPart == kPartCopyProtection) {
+				//
+				// 0CB8: jmpIf(VAR(0x29) == VAR(0x1E), @0CD3)
+				// ...
+				//
+				if (var == 0x29 && (op & 0x80) != 0) {
+					// 4 symbols
+					_scriptVars[0x29] = _scriptVars[0x1E];
+					_scriptVars[0x2A] = _scriptVars[0x1F];
+					_scriptVars[0x2B] = _scriptVars[0x20];
+					_scriptVars[0x2C] = _scriptVars[0x21];
+					// counters
+					_scriptVars[0x32] = 6;
+					_scriptVars[0x64] = 20;
+					warning("Script::op_condJmp() bypassing protection");
+					expr = true;
+				}
 			}
 		}
-#endif
 		break;
 	case 1:
 		expr = (b != a);
@@ -295,12 +298,12 @@ void Script::op_updateDisplay() {
 	debugC(kDebugScript, "Script::op_updateDisplay(%d)", page);
 	inp_handleSpecialKeys();
 
-#ifndef BYPASS_PROTECTION
-	// entered protection symbols match the expected values
-	if (_res->_currentPart == kPartCopyProtection && _scriptVars[0x67] == 1) {
-		_scriptVars[0xDC] = 33;
+	if (_res->_copyProtection) {
+		// entered protection symbols match the expected values
+		if (_res->_currentPart == kPartCopyProtection && _scriptVars[0x67] == 1) {
+			_scriptVars[0xDC] = 33;
+		}
 	}
-#endif
 
 	const int frameHz = _is3DO ? 60 : 50;
 	if (!_fastMode && _scriptVars[VAR_PAUSE_SLICES] != 0) {
