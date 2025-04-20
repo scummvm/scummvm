@@ -154,6 +154,17 @@ void Script::op_jmpIfVar() {
 }
 
 void Script::op_condJmp() {
+	// Script patch the original interpreter triggers
+	// if an incorrect code is entered at the start
+	if (_res->_currentPart == kPartCopyProtection &&
+			_res->_dataType == DT_DOS &&
+			(_scriptPtr.pc - _res->_segCode) == 0xc4c) {
+		byte *script = _scriptPtr.pc;
+		*script = 0x81;
+		WRITE_BE_UINT16(script + 3, 0xcb7);
+		WRITE_BE_UINT16(script + 153, 0xced);
+	}
+
 	uint8_t op = _scriptPtr.fetchByte();
 	const uint8_t var = _scriptPtr.fetchByte();
 	int16_t b = _scriptVars[var];
