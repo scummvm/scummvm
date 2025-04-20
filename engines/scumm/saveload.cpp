@@ -70,7 +70,7 @@ struct SaveInfoSection {
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
-#define CURRENT_VER 123
+#define CURRENT_VER 124
 #define INFOSECTION_VERSION 2
 
 #pragma mark -
@@ -566,7 +566,7 @@ Common::SeekableWriteStream *ScummEngine::openSaveFileForWriting(int slot, bool 
 	return _saveFileMan->openForSaving(fileName);
 }
 
-bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
+bool ScummEngine::saveState(Common::SeekableWriteStream *out, bool writeHeader) {
 	SaveGameHeader hdr;
 
 	if (writeHeader) {
@@ -582,7 +582,7 @@ bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
 #endif
 	saveInfos(out);
 
-	Common::Serializer ser(nullptr, out);
+	Serializer ser(nullptr, out);
 	ser.setVersion(CURRENT_VER);
 	saveLoadWithSerializer(ser);
 	return true;
@@ -602,7 +602,7 @@ bool ScummEngine::saveState(int slot, bool compat, Common::String &filename) {
 
 	_pauseSoundsDuringSave = true;
 
-	Common::WriteStream *out = openSaveFileForWriting(slot, compat, filename);
+	Common::SeekableWriteStream *out = openSaveFileForWriting(slot, compat, filename);
 	if (!out) {
 		saveFailed = true;
 	} else {
@@ -2050,20 +2050,79 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
+	// The following code tries to cope with the unfortunate fact that savegames
+	// vary in size/content depending on the sound setting. And historically, until
+	// version 124, it was not even possible to make a definite assumption about the
+	// size of the sound data block. Loading savegames that were made with a different
+	// sound setting than the current one would lead to a crash or to a corrupted
+	// engine state. Now, the engine should recover in most cases, but some issues
+	// still have to be addressed.
+	// TODO: identify the device for the saved sound data blocks (preferably even the
+	// old ones which are prone to have an unreliable VAR_SOUNDCARD value) and/or reset
+	// the sound state, so that even changes from AdLib to MT-32 or vice versa could
+	// eventually work.
+	Serializer *pSer = static_cast<Serializer*>(&s);
 
-	//
-	// Save/load the iMuse status
-	//
-	if (_imuse && (_saveSound || !_saveTemporaryState)) {
-		_imuse->saveLoadIMuse(s, this);
+	int32 sndDataBlockSize = 0;
+	if (s.isLoading()) {
+		if (s.getVersion() > VER(123))
+			s.syncAsSint32BE(sndDataBlockSize);
+		else if (_game.version < 7 && _game.heversion == 0)
+			sndDataBlockSize = checkSoundEngineSaveDataSize(*pSer);
 	}
 
+	int64 before = pSer->pos();
 
-	//
-	// Save/load music engine status
-	//
-	if (_musicEngine) {
-		_musicEngine->saveLoadWithSerializer(s);
+	// Unfortunately, it is not totally easy to write the size of the sound engine data before that data,
+	// because we cannot seek around in the compressed write stream. So, we write to a temp stream, first.
+	Common::MemoryWriteStreamDynamic *ws = nullptr;
+	if (s.isSaving()) {
+		ws = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+		pSer = new Serializer(nullptr, ws);
+		pSer->setVersion(s.getVersion());
+	}
+
+	// This sndDataBlockSize check catches e. g. MI1 saves with a CMS setting when trying to load with AdLib or MT-32.
+	// But it only works because CMS really saves nothing. If it were just a smaller data block, it would still load
+	// garbage data (and crash or corrupt the game state).
+	if (s.isSaving() || sndDataBlockSize > 0) {
+		//
+		// Save/load the iMuse status
+		if (_imuse && (_saveSound || !_saveTemporaryState))
+			_imuse->saveLoadIMuse(*pSer, this);
+		//
+		// Save/load music engine status
+		if (_musicEngine)
+			_musicEngine->saveLoadWithSerializer(*pSer);
+	}
+
+	if (s.isSaving()) {
+		// Write the sound data size, then the actual data from the temp stream.
+		ws->finalize();
+		sndDataBlockSize = ws->size();
+		s.syncAsSint32BE(sndDataBlockSize);
+		s.syncBytes(ws->getData(), sndDataBlockSize);
+		delete pSer;
+		delete ws;
+	} else {
+		// Check if the sound engine read the expected number of bytes from the save file.
+		// If not, then the sound device selection was probably changed after the save was made.
+		int64 now = pSer->pos();
+		if (s.err() || (before + sndDataBlockSize != now)) {
+			static const char wmsg1[] = "more than the %d bytes contained in the savegame";
+			static const char wmsg2[] = "%d bytes, savegame has %d bytes";
+			// For SegaCD, we don't need a warning, since nothing can glitch there. We have to compensate
+			// for the fact that there are old savegames that have an unused imuse state inside of them.
+			// But fixing that will not lead to glitches or other surprises. 
+			if (_game.platform == Common::kPlatformSegaCD) {
+				Common::String msg = s.err() ? Common::String::format(wmsg1, sndDataBlockSize) : Common::String::format(wmsg2, (int)(now - before), sndDataBlockSize);
+				warning("Savegame sound data mismatch (sound engine tried to read %s). \r\nAdjusting file read position. Sound might start up with glitches...", msg.c_str());
+			}
+			// This will save the day in cases that are the opposite from the ones mentioned above:
+			// When loading a MI1 savegame that was made with a MT-32 or AdLib setting in a CMS setup,
+			// we skip the sound data block here.
+			pSer->seek(before + sndDataBlockSize);
+		}
 	}
 
 	// At least from now on, VAR_SOUNDCARD will have a reliable value.
@@ -2392,6 +2451,82 @@ void ScummEngine::loadResource(Common::Serializer &ser, ResType type, ResId idx)
 			ser.syncAsUint16LE(_newNames[idx]);
 		}
 	}
+}
+
+int ScummEngine::checkSoundEngineSaveDataSize(Serializer &s) {
+	if (!s.isLoading())
+		return 0;
+
+	uint8 d8 = 0;
+	uint32 d32 = 0;
+	int64 start = s.pos();
+	// We just perform the steps we would do in the actual sync function, but on dummy vars.
+	s.syncAsByte(d8, VER(73), VER(73));
+	s.syncAsSint32LE(d32, VER(74));
+	s.syncAsByte(d8, VER(73));
+	if (s.getVersion() == VER(72))
+		s.syncAsByte(d8);
+	int64 diff = s.pos() - start;
+	s.seek(start);
+
+	return s.size() - diff - start;
+}
+
+int ScummEngine_v0::checkSoundEngineSaveDataSize(Serializer &s) {
+	if (!s.isLoading())
+		return 0;
+
+	uint8 d8 = 0;
+	uint16 d16 = 0;
+	// We just perform the steps we would do in the actual sync function, but on dummy vars.
+	int64 start = s.pos();
+	s.syncAsByte(d8, VER(78));
+	s.syncAsByte(d8, VER(78));
+	s.syncAsByte(d8, VER(92));
+	s.syncAsUint16LE(d16, VER(92));
+	s.syncAsUint16LE(d16, VER(92));
+	s.syncAsByte(d8, VER(92));
+	s.syncAsUint16LE(d16, VER(92));
+	s.syncAsUint16LE(d16, VER(92));
+	s.syncAsUint16LE(d16, VER(92));
+	s.syncAsByte(d8, VER(92));
+	int64 diff = s.pos() - start;
+	s.seek(start);
+
+	return ScummEngine_v2::checkSoundEngineSaveDataSize(s) - diff;
+}
+
+int ScummEngine_v2::checkSoundEngineSaveDataSize(Serializer &s) {
+	if (!s.isLoading())
+		return 0;
+
+	uint8 d8 = 0;
+	uint16 d16 = 0;
+	// We just perform the steps we would do in the actual sync function, but on dummy vars.
+	int64 start = s.pos();
+	s.syncAsUint16LE(d16, VER(79));
+	s.syncAsByte(d8, VER(99));
+	s.syncAsByte(d8, VER(99));
+	int64 diff = s.pos() - start;
+	s.seek(start);
+
+	return ScummEngine::checkSoundEngineSaveDataSize(s) - diff;
+}
+
+int ScummEngine_v5::checkSoundEngineSaveDataSize(Serializer &s) {
+	if (!s.isLoading())
+		return 0;
+
+	uint8 d[8] = { 0 };
+	int64 start = s.pos();
+	// We just perform the steps we would do in the actual sync function. I doesn't
+	// matter if we fill in a bit garbage data here, since it will be overwritten later.
+	sync2DArray(s, _cursorImages, 4, 16, Common::Serializer::Uint16LE, VER(44));
+	s.syncBytes(d, 8, VER(44));
+	int64 diff = s.pos() - start;
+	s.seek(start);
+
+	return ScummEngine::checkSoundEngineSaveDataSize(s) - diff;
 }
 
 } // End of namespace Scumm

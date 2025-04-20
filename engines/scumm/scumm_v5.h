@@ -68,6 +68,7 @@ protected:
 	void printPatchedMI1CannibalString(int textSlot, const byte *ptr);
 
 	void saveLoadWithSerializer(Common::Serializer &s) override;
+	int checkSoundEngineSaveDataSize(Serializer &s) override;
 
 	void readMAXS(int blockSize) override;
 

@@ -33,7 +33,6 @@
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/rendermode.h"
-#include "common/serializer.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
@@ -44,6 +43,7 @@
 #include "scumm/gfx.h"
 #include "scumm/detection.h"
 #include "scumm/script.h"
+#include "scumm/serializer.h"
 
 #ifdef __DS__
 /* This disables the dual layer mode which is used in FM-Towns versions
@@ -919,7 +919,7 @@ protected:
 	Common::String _saveLoadFileName;
 	Common::String _saveLoadDescription;
 
-	bool saveState(Common::WriteStream *out, bool writeHeader = true);
+	bool saveState(Common::SeekableWriteStream *out, bool writeHeader = true);
 	bool saveState(int slot, bool compat, Common::String &fileName);
 	bool loadState(int slot, bool compat);
 	bool loadState(int slot, bool compat, Common::String &fileName);
@@ -927,6 +927,8 @@ protected:
 	void saveResource(Common::Serializer &ser, ResType type, ResId idx);
 	void loadResource(Common::Serializer &ser, ResType type, ResId idx);
 	void loadResourceOLD(Common::Serializer &ser, ResType type, ResId idx);	// "Obsolete"
+
+	virtual int checkSoundEngineSaveDataSize(Serializer &s);
 
 	void copyHeapSaveGameToFile(int slot, const char *saveName);
 	bool changeSavegameName(int slot, char *newName);
