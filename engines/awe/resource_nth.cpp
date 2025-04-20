@@ -50,12 +50,12 @@ struct Resource15th : ResourceNth {
 	const char *_stringsTable[157];
 	bool _hasRemasteredMusic;
 
-	Resource15th(const char *dataPath) {
-		snprintf(_dataPath, sizeof(_dataPath), "%s/Music/AW/RmSnd", dataPath);
+	Resource15th() {
+		Common::strcpy_s(_dataPath, "Music/AW/RmSnd");
 
 		_hasRemasteredMusic = Common::FSNode(_dataPath).isDirectory();
-		snprintf(_dataPath, sizeof(_dataPath), "%s/Data", dataPath);
-		snprintf(_menuPath, sizeof(_menuPath), "%s/Menu", dataPath);
+		Common::strcpy_s(_dataPath, "Data");
+		Common::strcpy_s(_menuPath, "Menu");
 		_textBuf = 0;
 		memset(_stringsTable, 0, sizeof(_stringsTable));
 	}
@@ -279,7 +279,6 @@ static uint8_t *inflateGzip(const char *filepath) {
 }
 
 struct Resource20th : ResourceNth {
-	const char *_dataPath;
 	char *_textBuf;
 	const char *_stringsTable[192];
 	char _musicName[64];
@@ -287,12 +286,10 @@ struct Resource20th : ResourceNth {
 	char _datName[32];
 	const char *_bitmapSize;
 
-	Resource20th(const char *dataPath)
-		: _dataPath(dataPath), _textBuf(0) {
+	Resource20th() : _textBuf(0) {
 		memset(_stringsTable, 0, sizeof(_stringsTable));
 		_musicType = 0;
 		_datName[0] = 0;
-		//srand(time(NULL));
 	}
 
 	virtual ~Resource20th() {
@@ -303,7 +300,7 @@ struct Resource20th : ResourceNth {
 		static const char *dirs[] = { "BGZ", "DAT", "WGZ", 0 };
 		for (int i = 0; dirs[i]; ++i) {
 			char path[MAXPATHLEN];
-			snprintf(path, sizeof(path), "%s/game/%s", _dataPath, dirs[i]);
+			snprintf(path, sizeof(path), "game/%s", dirs[i]);
 			Common::FSNode f(path);
 
 			if (f.exists() && !f.isDirectory()) {
@@ -325,7 +322,7 @@ struct Resource20th : ResourceNth {
 		_bitmapSize = 0;
 		for (int i = 0; bmps[i]; ++i) {
 			char path[MAXPATHLEN];
-			snprintf(path, sizeof(path), "%s/game/BGZ/data%s", _dataPath, bmps[i]);
+			snprintf(path, sizeof(path), "game/BGZ/data%s", bmps[i]);
 			Common::FSNode f(path);
 
 			if (f.isDirectory()) {
@@ -338,24 +335,22 @@ struct Resource20th : ResourceNth {
 
 	virtual uint8_t *load(const char *name) {
 		if (strcmp(name, "font.bmp") == 0) {
-			char path[MAXPATHLEN];
-			snprintf(path, sizeof(path), "%s/game/BGZ/Font.bgz", _dataPath);
-			return inflateGzip(path);
+			return inflateGzip("game/BGZ/Font.bgz");
 		} else if (strcmp(name, "heads.bmp") == 0) {
-			char path[MAXPATHLEN];
-			snprintf(path, sizeof(path), "%s/game/BGZ/Heads.bgz", _dataPath);
-			return inflateGzip(path);
+			return inflateGzip("game/BGZ/Heads.bgz");
 		}
+
 		return 0;
 	}
 
 	virtual uint8_t *loadBmp(int num) {
 		char path[MAXPATHLEN];
 		if (num >= 3000 && _bitmapSize) {
-			snprintf(path, sizeof(path), "%s/game/BGZ/data%s/%s_e%04d.bgz", _dataPath, _bitmapSize, _bitmapSize, num);
+			snprintf(path, sizeof(path), "game/BGZ/data%s/%s_e%04d.bgz", _bitmapSize, _bitmapSize, num);
 		} else {
-			snprintf(path, sizeof(path), "%s/game/BGZ/file%03d.bgz", _dataPath, num);
+			snprintf(path, sizeof(path), "game/BGZ/file%03d.bgz", num);
 		}
+
 		return inflateGzip(path);
 	}
 
@@ -382,7 +377,8 @@ struct Resource20th : ResourceNth {
 	virtual uint8_t *loadDat(int num, uint8_t *dst, uint32_t *size) {
 		bool datOpen = false;
 		char path[MAXPATHLEN];
-		snprintf(path, sizeof(path), "%s/game/DAT", _dataPath);
+		Common::strcpy_s(path, "game/DAT");
+
 		File f;
 		if (_datName[0]) {
 			datOpen = f.open(_datName, path);
@@ -409,19 +405,21 @@ struct Resource20th : ResourceNth {
 	virtual uint8_t *loadWav(int num, uint8_t *dst, uint32_t *size) {
 		char path[MAXPATHLEN];
 		if (!Script::_useRemasteredAudio) {
-			snprintf(path, sizeof(path), "%s/game/WGZ/original/file%03d.wgz", _dataPath, num);
+			snprintf(path, sizeof(path), "game/WGZ/original/file%03d.wgz", num);
 
 			if (!Common::File::exists(path)) {
-				snprintf(path, sizeof(path), "%s/game/WGZ/original/file%03dB.wgz", _dataPath, num);
+				snprintf(path, sizeof(path), "game/WGZ/original/file%03dB.wgz", num);
 			}
+
 			*size = 0;
 			return inflateGzip(path);
 		}
+
 		switch (num) {
 		case 81:
 		{
 			const int r = g_engine->getRandomNumber(1, 3);
-			snprintf(path, sizeof(path), "%s/game/WGZ/file081-EX-%d.wgz", _dataPath, r);
+			snprintf(path, sizeof(path), "game/WGZ/file081-EX-%d.wgz", r);
 		}
 		break;
 		case 85:
@@ -431,7 +429,7 @@ struct Resource20th : ResourceNth {
 			if (_musicType == 1) {
 				snd = "EX";
 			}
-			snprintf(path, sizeof(path), "%s/game/WGZ/file085-%s-%d.wgz", _dataPath, snd, r);
+			snprintf(path, sizeof(path), "game/WGZ/file085-%s-%d.wgz", snd, r);
 		}
 		break;
 		case 96:
@@ -443,7 +441,7 @@ struct Resource20th : ResourceNth {
 			} else if (_musicType == 2) {
 				snd = "IN";
 			}
-			snprintf(path, sizeof(path), "%s/game/WGZ/file096-%s-%d.wgz", _dataPath, snd, r);
+			snprintf(path, sizeof(path), "game/WGZ/file096-%s-%d.wgz", snd, r);
 		}
 		break;
 		case 163:
@@ -454,13 +452,13 @@ struct Resource20th : ResourceNth {
 			} else if (_musicType == 2) {
 				snd = "IN";
 			}
-			snprintf(path, sizeof(path), "%s/game/WGZ/file163-%s-1.wgz", _dataPath, snd);
+			snprintf(path, sizeof(path), "game/WGZ/file163-%s-1.wgz", snd);
 		}
 		break;
 		default: {
-			snprintf(path, sizeof(path), "%s/game/WGZ/file%03d.wgz", _dataPath, num);
+			snprintf(path, sizeof(path), "game/WGZ/file%03d.wgz", num);
 			if (!Common::File::exists(path)) {
-				snprintf(path, sizeof(path), "%s/game/WGZ/file%03dB.wgz", _dataPath, num);
+				snprintf(path, sizeof(path), "game/WGZ/file%03dB.wgz", num);
 			}
 		}
 		break;
@@ -493,14 +491,14 @@ struct Resource20th : ResourceNth {
 			}
 			char path[MAXPATHLEN];
 			static const char *fmt[] = {
-				"%s/game/TXT/%s.txt",
-				"%s/game/TXT/Linux/%s.txt",
+				"game/TXT/%s.txt",
+				"game/TXT/Linux/%s.txt",
 				0
 			};
 			bool isOpen = false;
 			File f;
 			for (int i = 0; fmt[i] && !isOpen; ++i) {
-				snprintf(path, sizeof(path), fmt[i], _dataPath, name);
+				snprintf(path, sizeof(path), fmt[i], name);
 				isOpen = f.open(path);
 			}
 			if (isOpen) {
@@ -574,12 +572,12 @@ struct Resource20th : ResourceNth {
 	}
 };
 
-ResourceNth *ResourceNth::create(int edition, const char *dataPath) {
+ResourceNth *ResourceNth::create(int edition) {
 	switch (edition) {
 	case 15:
-		return new Resource15th(dataPath);
+		return new Resource15th();
 	case 20:
-		return new Resource20th(dataPath);
+		return new Resource20th();
 	}
 	return 0;
 }

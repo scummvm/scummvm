@@ -246,9 +246,8 @@ struct LzHuffman {
 
 const char *ResourceWin31::FILENAME = "BANK";
 
-ResourceWin31::ResourceWin31(const char *dataPath)
-	: _dataPath(dataPath), _entries(0), _entriesCount(0) {
-	_f.open(FILENAME, dataPath);
+ResourceWin31::ResourceWin31() {
+	_f.open(FILENAME);
 	_textBuf = 0;
 	memset(_stringsTable, 0, sizeof(_stringsTable));
 }
@@ -301,7 +300,7 @@ uint8_t *ResourceWin31::loadFile(int num, uint8_t *dst, uint32_t *size) {
 		char name[32];
 		snprintf(name, sizeof(name), "%03d_%s", num, e->name);
 		File f;
-		if (f.open(name, _dataPath) && f.size() == e->size) {
+		if (f.open(name) && f.size() == e->size) {
 			f.read(dst, e->size);
 			return dst;
 		}

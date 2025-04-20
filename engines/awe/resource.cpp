@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "awe/resource.h"
 #include "awe/file.h"
 #include "awe/pak.h"
@@ -115,14 +116,14 @@ void Resource::readEntries() {
 	switch (_dataType) {
 	case DT_15TH_EDITION:
 		_numMemList = ENTRIES_COUNT;
-		_nth = ResourceNth::create(15, _dataDir);
+		_nth = ResourceNth::create(15);
 		if (_nth && _nth->init()) {
 			return;
 		}
 		break;
 	case DT_20TH_EDITION:
 		_numMemList = ENTRIES_COUNT_20TH;
-		_nth = ResourceNth::create(20, _dataDir);
+		_nth = ResourceNth::create(20);
 		if (_nth && _nth->init()) {
 			return;
 		}
@@ -163,14 +164,14 @@ void Resource::readEntries() {
 	break;
 	case DT_WIN31:
 		_numMemList = ENTRIES_COUNT;
-		_win31 = new ResourceWin31(_dataDir);
+		_win31 = new ResourceWin31();
 		if (_win31->readEntries()) {
 			return;
 		}
 		break;
 	case DT_3DO:
 		_numMemList = ENTRIES_COUNT;
-		_3do = new Resource3do(_dataDir);
+		_3do = new Resource3do();
 		if (_3do->readEntries()) {
 			return;
 		}
@@ -178,7 +179,7 @@ void Resource::readEntries() {
 	case DT_ATARI_DEMO:
 	{
 		File f;
-		if (f.open(atariDemo, _dataDir)) {
+		if (f.open(atariDemo)) {
 			static const struct {
 				uint8_t type;
 				uint8_t num;
@@ -202,7 +203,8 @@ void Resource::readEntries() {
 	}
 	break;
 	}
-	error("No data files found in '%s'", _dataDir);
+
+	error("No data files found");
 }
 
 void Resource::readEntriesAmiga(const AmigaMemEntry *entries, int count) {
@@ -546,17 +548,22 @@ const char *Resource::getMusicPath(int num, char *buf, int bufSize, uint32_t *of
 	case DT_3DO:
 		assert(offset);
 		name = _3do->getMusicName(num, offset);
+#ifdef OPERA_ISO
 		if (*offset != 0) {
-			return _dataDir; // playing music from .ISO
+			// playing music from .ISO
+			return dataDir;
 		}
+#endif
 		break;
 	default:
 		break;
 	}
+
 	if (name) {
-		snprintf(buf, bufSize, "%s/%s", _dataDir, name);
+		snprintf(buf, bufSize, "%s", name);
 		return buf;
 	}
+
 	return 0;
 }
 
@@ -655,7 +662,7 @@ void Resource::freeMemBlock() {
 void Resource::readDemo3Joy() {
 	static const char *filename = "demo3.joy";
 	File f;
-	if (f.open(filename, _dataDir)) {
+	if (f.open(filename)) {
 		const uint32_t fileSize = f.size();
 		_demo3Joy.bufPtr = (uint8_t *)malloc(fileSize);
 		if (_demo3Joy.bufPtr) {

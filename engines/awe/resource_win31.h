@@ -39,13 +39,12 @@ struct ResourceWin31 {
 	static const char *FILENAME;
 
 	File _f;
-	const char *_dataPath;
 	Win31BankEntry *_entries = nullptr;
 	int _entriesCount = 0;
 	uint8_t *_textBuf = nullptr;
 	const char *_stringsTable[614] = { nullptr };
 
-	ResourceWin31(const char *dataPath);
+	ResourceWin31();
 	~ResourceWin31();
 
 	bool readEntries();

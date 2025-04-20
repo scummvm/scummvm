@@ -203,16 +203,14 @@ static uint16_t *decodeShapeCcb(File *f, int dataSize, int *w, int *h) {
 	return buffer;
 }
 
-Resource3do::Resource3do(const char *dataPath)
-	: _dataPath(dataPath) {
-
-	Common::FSNode f(dataPath);
-
+Resource3do::Resource3do() {
+#ifdef OPERA_ISO
 	if (f.exists()) {
 		_iso = new OperaIso(dataPath);
 	} else {
 		_iso = 0;
 	}
+#endif
 }
 
 Resource3do::~Resource3do() {
@@ -250,7 +248,7 @@ uint8_t *Resource3do::loadFile(int num, uint8_t *dst, uint32_t *size) {
 		}
 	} else {
 		char path[MAXPATHLEN];
-		snprintf(path, sizeof(path), "%s/GameData/File%d", _dataPath, num);
+		snprintf(path, sizeof(path), "GameData/File%d", num);
 		File f;
 		if (f.open(path)) {
 			const int sz = f.size();
@@ -297,7 +295,7 @@ uint16_t *Resource3do::loadShape555(const char *name, int *w, int *h) {
 		}
 	} else {
 		char path[MAXPATHLEN];
-		snprintf(path, sizeof(path), "%s/GameData/%s", _dataPath, name);
+		snprintf(path, sizeof(path), "GameData/%s", name);
 		File f;
 		if (f.open(path)) {
 			const uint32_t dataSize = f.size();
