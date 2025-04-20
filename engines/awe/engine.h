@@ -25,10 +25,10 @@
 
 #include "audio/mixer.h"
 #include "awe/intern.h"
-#include "awe/script.h"
-#include "awe/mixer.h"
-#include "awe/sfx_player.h"
 #include "awe/resource.h"
+#include "awe/script.h"
+#include "awe/sfx_player.h"
+#include "awe/sound.h"
 #include "awe/video.h"
 
 namespace Awe {
@@ -48,13 +48,13 @@ struct Engine {
 	Gfx *_graphics = nullptr;
 	SystemStub *_stub = nullptr;
 	Script _script;
-	Audio::Mixer *_mix;
+	Sound *_sound;
 	Resource _res;
 	SfxPlayer _ply;
 	Video _vid;
 	int _partNum;
 
-	Engine(Audio::Mixer *mixer, DataType dataType, int partNum);
+	Engine(Sound *sound, DataType dataType, int partNum);
 
 	void setSystemStub(SystemStub *, Gfx *);
 

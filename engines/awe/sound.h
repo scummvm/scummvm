@@ -19,9 +19,10 @@
  *
  */
 
-#ifndef AWE_MIXER_H
-#define AWE_MIXER_H
+#ifndef AWE_SOUND_H
+#define AWE_SOUND_H
 
+#include "audio/mixer.h"
 #include "awe/intern.h"
 
 namespace Awe {
@@ -30,6 +31,19 @@ enum MixerType {
 	kMixerTypeRaw,
 	kMixerTypeWav,
 	kMixerTypeAiff
+};
+
+class Sound {
+private:
+	Audio::Mixer *_mixer;
+
+public:
+	Sound(Audio::Mixer *mixer) : _mixer(mixer) {
+	}
+
+	void stopAll() {
+		_mixer->stopAll();
+	}
 };
 
 #ifdef TODO

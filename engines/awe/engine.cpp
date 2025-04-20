@@ -39,8 +39,8 @@ static const uint16 RESTART_POS[36 * 2] = {
 	16007, 0
 };
 
-Engine::Engine(Audio::Mixer *mixer, DataType dataType, int partNum) :
-		_mix(mixer), _script(mixer, &_res, &_ply, &_vid),
+Engine::Engine(Sound *sound, DataType dataType, int partNum) :
+		_sound(sound), _script(sound, &_res, &_ply, &_vid),
 		_res(&_vid, dataType), _ply(&_res), _vid(&_res),
 		_partNum(partNum) {
 }
@@ -178,7 +178,7 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 void Engine::finish() {
 	_graphics->fini();
 	_ply.stop();
-	_mix->stopAll();
+	_sound->stopAll();
 	_res.freeMemBlock();
 }
 
