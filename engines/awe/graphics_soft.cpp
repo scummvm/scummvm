@@ -22,7 +22,6 @@
 #include "graphics/managed_surface.h"
 #include "awe/gfx.h"
 #include "awe/util.h"
-#include "awe/screenshot.h"
 #include "awe/system_stub.h"
 
 namespace Awe {
@@ -37,7 +36,6 @@ struct GraphicsSoft : public Gfx {
 	int _byteDepth = 0;
 	Color _pal[16];
 	bool _palChanged = false;
-	int _screenshotNum = 0;
 
 	GraphicsSoft();
 	~GraphicsSoft();
@@ -85,7 +83,6 @@ GraphicsSoft::GraphicsSoft() {
 	_fixUpPalette = FIXUP_PALETTE_NONE;
 	memset(_pagePtrs, 0, sizeof(_pagePtrs));
 	memset(_pal, 0, sizeof(_pal));
-	_screenshotNum = 1;
 }
 
 GraphicsSoft::~GraphicsSoft() {
@@ -466,12 +463,6 @@ void GraphicsSoft::drawBuffer(int num, SystemStub *stub) {
 
 	stub->setScreenPixels(s);
 	stub->updateScreen();
-
-	if (_screenshot) {
-		warning("TODO: take screenshot");
-		++_screenshotNum;
-		_screenshot = false;
-	}
 }
 
 void GraphicsSoft::drawRect(int num, uint8_t color, const Point *pt, int w, int h) {

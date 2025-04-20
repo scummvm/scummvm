@@ -18,7 +18,6 @@ MODULE_OBJS = \
 	resource_nth.o \
 	resource_win31.o \
 	scaler.o \
-	screenshot.o \
 	script.o \
 	sfx_player.o \
 	static_res.o \
