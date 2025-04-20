@@ -33,6 +33,9 @@
 #include "common/rational.h"
 #include "common/rect.h"
 
+#include "image/image_decoder.h"
+#include "graphics/pixelformat.h"
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -99,8 +102,8 @@ private:
 
 class Surface {
 public:
-	Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem = 0);
-	Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem);
+	Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem = nullptr, const uint32 *highColorMap = nullptr, bool ownHighColorMap = false);
+	Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem, const uint32 *highColorMap = nullptr, bool ownHighColorMap = false);
 	~Surface();
 
 	uint16 getWidth () const;
@@ -145,10 +148,17 @@ public:
 
 	void blitToScreen(uint16 left, uint16 top, uint16 right, uint16 bottom, uint16 x, uint16 y) const;
 
-	bool loadImage(Common::SeekableReadStream &stream);
-	bool loadImage(Common::SeekableReadStream &stream, ImageType type);
+	bool loadImage(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom,
+				   int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
+	bool loadImage(Common::SeekableReadStream &stream, ImageType type, int16 left, int16 top, int16 right, int16 bottom,
+				   int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
 
 	static ImageType identifyImage(Common::SeekableReadStream &stream);
+	static void computeHighColorMap(uint32 *highColorMap, const byte *palette,
+									const Graphics::PixelFormat &format,
+									bool useSpecialBlackWhiteValues,
+									int16 startColor = 0, int16 colorCount = 256,
+									int16 startColorSrc = -1);
 
 private:
 	uint16 _width;
@@ -158,14 +168,20 @@ private:
 	bool  _ownVidMem;
 	byte *_vidMem;
 
+	bool _ownHighColorMap;
+	const uint32 *_highColorMap;
+
 	static bool clipBlitRect(int16 &left, int16 &top, int16 &right, int16 &bottom, int16 &x, int16 &y,
 	                         uint16 dWidth, uint16 dHeight, uint16 sWidth, uint16 sHeight);
 
-	bool loadTGA (Common::SeekableReadStream &stream);
-	bool loadIFF (Common::SeekableReadStream &stream);
-	bool loadBRC (Common::SeekableReadStream &stream);
-	bool loadBMP (Common::SeekableReadStream &stream);
-	bool loadJPEG(Common::SeekableReadStream &stream);
+	bool loadImage(Image::ImageDecoder &decoder, Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom,
+				   int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
+
+	bool loadTGA (Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
+	bool loadIFF (Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
+	bool loadBRC (Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
+	bool loadBMP (Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
+	bool loadJPEG(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
 };
 
 typedef Common::SharedPtr<Surface> SurfacePtr;

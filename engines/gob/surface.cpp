@@ -34,11 +34,13 @@
 #include "common/textconsole.h"
 #include "common/stack.h"
 
+#include "graphics/palette.h"
 #include "graphics/primitives.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
 #include "image/iff.h"
+#include "image/tga.h"
 
 namespace Gob {
 
@@ -202,8 +204,10 @@ bool ConstPixel::isValid() const {
 }
 
 
-Surface::Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem) :
-	_width(width), _height(height), _bpp(bpp), _vidMem(vidMem) {
+Surface::Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem, const uint32 *highColorMap, bool ownHighColorMap) :
+	_width(width), _height(height), _bpp(bpp), _vidMem(vidMem),
+	_ownHighColorMap(ownHighColorMap),
+	_highColorMap(highColorMap)  {
 
 	assert((_width > 0) && (_height > 0));
 	assert((_bpp == 1) || (_bpp == 2) || (_bpp == 4));
@@ -215,8 +219,10 @@ Surface::Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem) :
 		_ownVidMem = false;
 }
 
-Surface::Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem) :
-	_width(width), _height(height), _bpp(bpp), _vidMem(nullptr) {
+Surface::Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem, const uint32 *highColorMap, bool ownHighColorMap) :
+	_width(width), _height(height), _bpp(bpp), _vidMem(nullptr),
+	_ownHighColorMap(ownHighColorMap),
+	_highColorMap(highColorMap) {
 
 	assert((_width > 0) && (_height > 0));
 	assert((_bpp == 1) || (_bpp == 2) || (_bpp == 4));
@@ -230,6 +236,9 @@ Surface::Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem) :
 Surface::~Surface() {
 	if (_ownVidMem)
 		delete[] _vidMem;
+
+	if (_ownHighColorMap)
+		delete[] _highColorMap;
 }
 
 uint16 Surface::getWidth() const {
@@ -349,7 +358,7 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		int16 x, int16 y, int32 transp, bool yAxisReflection) {
 
 	// Color depths have to fit
-	assert(_bpp == from._bpp);
+	assert(_bpp == from._bpp || (from._bpp == 1 && from._highColorMap != nullptr));
 
 	// Clip
 	if (!clipBlitRect(left, top, right, bottom, x, y, _width, _height, from._width, from._height))
@@ -363,7 +372,7 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		// Nothing to do
 		return;
 
-	if ((left == 0) && (_width == from._width) && (_width == width) && (transp == -1) && !yAxisReflection) {
+	if ((left == 0) && (_width == from._width) && (_width == width) && (transp == -1) && !yAxisReflection && (from._bpp == _bpp)) {
 		// If these conditions are met, we can directly use memmove
 
 		// Pointers to the blit destination and source start points
@@ -374,7 +383,7 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		return;
 	}
 
-	if (transp == -1 && !yAxisReflection) {
+	if (transp == -1 && !yAxisReflection && from._bpp == _bpp && _bpp == 1) {
 		// We don't have to look for transparency => we can use memmove line-wise
 
 		// Pointers to the blit destination and source start points
@@ -403,14 +412,27 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 
 		if (yAxisReflection) {
 			srcRow += width - 1;
-			for (uint16 i = 0; i < width; i++, ++dstRow, --srcRow)
-				if (srcRow.get() != ((uint32) transp))
-					dstRow.set(srcRow.get());
-		}
-		else {
-			for (uint16 i = 0; i < width; i++, ++dstRow, ++srcRow)
-				if (srcRow.get() != ((uint32) transp))
-					dstRow.set(srcRow.get());
+			for (uint16 i = 0; i < width; i++, ++dstRow, --srcRow) {
+				if (srcRow.get() != ((uint32) transp)) {
+					if (_bpp == from._bpp)
+						dstRow.set(srcRow.get());
+					else {
+						uint32 index = srcRow.get();
+						dstRow.set(from._highColorMap[index]);
+					}
+				}
+			}
+		} else {
+			for (uint16 i = 0; i < width; i++, ++dstRow, ++srcRow) {
+				if (srcRow.get() != ((uint32) transp)) {
+					if (_bpp == from._bpp)
+						dstRow.set(srcRow.get());
+					else {
+						uint32 index = srcRow.get();
+						dstRow.set(from._highColorMap[index]);
+					}
+				}
+			}
 		}
 
 		dst +=      _width;
@@ -854,29 +876,31 @@ void Surface::blitToScreen(uint16 left, uint16 top, uint16 right, uint16 bottom,
 	g_system->copyRectToScreen(src, _width * _bpp, x, y, width, height);
 }
 
-bool Surface::loadImage(Common::SeekableReadStream &stream) {
+bool Surface::loadImage(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom,
+						int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
 	ImageType type = identifyImage(stream);
 	if (type == kImageTypeNone)
 		return false;
 
-	return loadImage(stream, type);
+	return loadImage(stream, type, left, top, right, bottom, x, y, transp, format);
 }
 
-bool Surface::loadImage(Common::SeekableReadStream &stream, ImageType type) {
+bool Surface::loadImage(Common::SeekableReadStream &stream, ImageType type, int16 left, int16 top, int16 right, int16 bottom,
+						int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
 	if (type == kImageTypeNone)
 		return false;
 
 	switch (type) {
 	case kImageTypeTGA:
-		return loadTGA(stream);
+		return loadTGA(stream, left, top, right, bottom, x, y, transp, format);
 	case kImageTypeIFF:
-		return loadIFF(stream);
+		return loadIFF(stream, left, top, right, bottom, x, y, transp, format);
 	case kImageTypeBRC:
-		return loadBRC(stream);
+		return loadBRC(stream, left, top, right, bottom, x, y, transp, format);
 	case kImageTypeBMP:
-		return loadBMP(stream);
+		return loadBMP(stream, left, top, right, bottom, x, y, transp, format);
 	case kImageTypeJPEG:
-		return loadJPEG(stream);
+		return loadJPEG(stream, left, top, right, bottom, x, y, transp, format);
 
 	default:
 		warning("Surface::loadImage(): Unknown image type: %d", (int)type);
@@ -926,38 +950,102 @@ ImageType Surface::identifyImage(Common::SeekableReadStream &stream) {
 	return kImageTypeTGA;
 }
 
-
-bool Surface::loadTGA(Common::SeekableReadStream &stream) {
-	warning("TODO: Surface::loadTGA()");
-	return false;
-}
-
-bool Surface::loadIFF(Common::SeekableReadStream &stream) {
-	Image::IFFDecoder decoder;
+bool Surface::loadImage(Image::ImageDecoder &decoder, Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom,
+						int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
 	decoder.loadStream(stream);
 
 	if (!decoder.getSurface())
 		return false;
 
-	resize(decoder.getSurface()->w, decoder.getSurface()->h);
-	memcpy(_vidMem, decoder.getSurface()->getPixels(), decoder.getSurface()->w * decoder.getSurface()->h);
+	const Graphics::Surface *st = decoder.getSurface();
+	bool needConversion = decoder.getSurface()->format.bpp() > 1 && decoder.getSurface()->format != format;
+	if (needConversion)
+		st = st->convertTo(format);
+
+	uint32 *colorMap = nullptr;
+	if (format.bytesPerPixel > 1) {
+		colorMap = new uint32[256];
+		computeHighColorMap(colorMap, decoder.getPalette().data(), format, true);
+	}
+
+	const Surface src(st->w, st->h, st->format.bytesPerPixel,
+					  static_cast<const byte *>(st->getPixels()),
+					  colorMap);
+
+	blit(src, left, top, right, bottom, x, y, (transp == 0) ? -1 : 0);
+	if (colorMap) {
+		if (_bpp == 1) {
+			// The destination must retain the source color map for further conversions
+			_highColorMap = colorMap;
+			_ownHighColorMap = true;
+		} else {
+			delete[] colorMap;
+		}
+	}
+
+	if (needConversion)
+		delete st;
 
 	return true;
 }
 
-bool Surface::loadBRC(Common::SeekableReadStream &stream) {
+bool Surface::loadTGA(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
+	Image::TGADecoder decoder;
+	return loadImage(decoder, stream, left, top, right, bottom, x, y, transp, format);
+}
+
+bool Surface::loadIFF(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
+	Image::IFFDecoder decoder;
+	return loadImage(decoder, stream, left, top, right, bottom, x, y, transp, format);
+}
+
+bool Surface::loadBRC(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
 	warning("TODO: Surface::loadBRC()");
 	return false;
 }
 
-bool Surface::loadBMP(Common::SeekableReadStream &stream) {
+bool Surface::loadBMP(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
 	warning("TODO: Surface::loadBMP()");
 	return false;
 }
 
-bool Surface::loadJPEG(Common::SeekableReadStream &stream) {
+bool Surface::loadJPEG(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
 	warning("TODO: Surface::loadJPEG()");
 	return false;
+}
+
+void Surface::computeHighColorMap(uint32 *highColorMap, const byte *palette,
+								  const Graphics::PixelFormat &format,
+								  bool useSpecialBlackWhiteValues,
+								  int16 startColor, int16 colorCount,
+								  int16 startColorSrc) {
+	if (!palette)
+		return;
+
+	if (startColorSrc < 0)
+		startColorSrc = startColor;
+
+	for (int16 i = 0; i < colorCount; i++) {
+		int indexSrc = (startColorSrc + i ) * 3;
+		byte red = palette[indexSrc];
+		byte green = palette[indexSrc + 1];
+		byte blue = palette[indexSrc + 2];
+
+		int indexDest = startColor + i;
+
+		if (!useSpecialBlackWhiteValues)
+			highColorMap[indexDest] = format.RGBToColor(red, green, blue);
+		else if (i == 0) // Trick from the original engine to handle transparency with high color surfaces
+			highColorMap[indexDest] = 0; // Palette index 0 is always mapped to high color value 0, possibly interpreted as the special transparent color.
+		else if (i == 255)
+			highColorMap[indexDest] = format.RGBToColor(0xFF, 0xFF, 0xFF); // Palette index 255 is always mapped to white.
+		else if (red == 0 && green == 0 && blue == 0)
+			highColorMap[indexDest] = format.RGBToColor((1 << format.rLoss),
+														(1 << format.gLoss),
+														(1 << format.bLoss)); // Blacks at other indexes are mapped to rgb(1, 1, 1) value to prevent interpreting them as transparent.
+		else
+			highColorMap[indexDest] = format.RGBToColor(red, green, blue);
+	}
 }
 
 } // End of namespace Gob
