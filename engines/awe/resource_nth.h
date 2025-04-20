@@ -41,7 +41,7 @@ struct ResourceNth {
 	virtual const char *getMusicName(int num) = 0;
 	virtual void getBitmapSize(int *w, int *h) = 0;
 
-	static ResourceNth *create(int edition, const char *dataPath);
+	static ResourceNth *create(int edition);
 };
 
 } // namespace Awe
