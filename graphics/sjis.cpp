@@ -34,7 +34,7 @@
 
 namespace Graphics {
 
-FontSJIS *FontSJIS::createFont(const Common::Platform &platform) {
+FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 	FontSJIS *ret = 0;
 
 	// Try the font ROM of the specified platform
@@ -661,7 +661,7 @@ bool FontPCEngine::hasFeature(int feat) const {
 
 // ScummVM SJIS font
 
-FontSjisSVM::FontSjisSVM(const Common::Platform &platform)
+FontSjisSVM::FontSjisSVM(const Common::Platform platform)
 	: _fontData16x16(0), _fontData16x16Size(0), _fontData8x16(0), _fontData8x16Size(0),
 	  _fontData12x12(0), _fontData12x12Size(0) {
 

@@ -503,7 +503,7 @@ static const GameResourcePatch resourcePatches[] = {
 #pragma mark -
 #pragma mark ResourcePatcher
 
-ResourcePatcher::ResourcePatcher(const SciGameId gameId, const bool isCD, const Common::Platform &platform, const Common::Language &gameLanguage) :
+ResourcePatcher::ResourcePatcher(const SciGameId gameId, const bool isCD, const Common::Platform platform, const Common::Language gameLanguage) :
 	ResourceSource(kSourceScummVM, "-scummvm-") {
 	for (int i = 0; i < ARRAYSIZE(resourcePatches); ++i) {
 		const GameResourcePatch &patch = resourcePatches[i];

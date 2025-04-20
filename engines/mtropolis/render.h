@@ -124,7 +124,7 @@ public:
 	virtual void onMouseDown(int32 x, int32 y, int mouseButton);
 	virtual void onMouseMove(int32 x, int32 y);
 	virtual void onMouseUp(int32 x, int32 y, int mouseButton);
-	virtual void onKeyboardEvent(const Common::EventType &evtType, bool repeat, const Common::KeyState &keyEvt);
+	virtual void onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
 	virtual void onAction(Actions::Action action);
 
 protected:

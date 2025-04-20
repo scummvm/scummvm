@@ -61,7 +61,7 @@ Common::Action *createKeyBoardAction(const char *id, const Common::U32String &de
 	return act;
 }
 
-Common::Action *createMouseAction(const char *id, const Common::U32String &desc, const char *defaultMap, const Common::EventType &type) {
+Common::Action *createMouseAction(const char *id, const Common::U32String &desc, const char *defaultMap, const Common::EventType type) {
 	Common::Action *act = new Common::Action(id, desc);
 	act->setEvent(type);
 	act->addDefaultInputMapping(defaultMap);

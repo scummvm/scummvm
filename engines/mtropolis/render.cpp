@@ -203,7 +203,7 @@ void Window::onMouseMove(int32 x, int32 y) {
 void Window::onMouseUp(int32 x, int32 y, int mouseButton) {
 }
 
-void Window::onKeyboardEvent(const Common::EventType &evtType, bool repeat, const Common::KeyState &keyEvt) {
+void Window::onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
 }
 
 void Window::onAction(Actions::Action action) {

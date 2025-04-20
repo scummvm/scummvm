@@ -80,7 +80,7 @@ GameState::StateData::StateData() {
 	isAutosave = false;
 }
 
-GameState::GameState(const Common::Platform &platform, Database *database):
+GameState::GameState(const Common::Platform platform, Database *database):
 		_platform(platform),
 		_db(database) {
 

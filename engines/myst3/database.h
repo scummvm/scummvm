@@ -161,7 +161,7 @@ class Myst3Engine;
 
 class Database {
 public:
-	Database(const Common::Platform &platform, const Common::Language &language, const uint32 localizationType);
+	Database(const Common::Platform platform, const Common::Language language, const uint32 localizationType);
 	~Database();
 
 	/**
