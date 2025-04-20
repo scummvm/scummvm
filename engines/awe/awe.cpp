@@ -170,6 +170,7 @@ Common::Error AweEngine::run() {
 		e->_res.readDemo3Joy();
 	}
 
+	e->_res._copyProtection = ConfMan.getBool("copy_protection");
 	e->setup(lang, graphicsType, nullptr, 1);
 
 	while (!stub->_pi.quit) {

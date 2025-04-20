@@ -138,6 +138,7 @@ struct Resource {
 	const AmigaMemEntry *_amigaMemList;
 	DemoJoy _demo3Joy;
 	const char *const _dataDir = ".";
+	bool _copyProtection = false;
 
 	Resource(Video *vid, DataType dataType);
 	~Resource();

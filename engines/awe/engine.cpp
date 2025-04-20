@@ -144,22 +144,24 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 #ifdef TODO
 	_mix.init(mixerType);
 #endif
-#ifndef BYPASS_PROTECTION
-	switch (_res.getDataType()) {
-	case DT_DOS:
-		if (!_res._hasPasswordScreen) {
+
+	if (_res._copyProtection) {
+		switch (_res.getDataType()) {
+		case DT_DOS:
+			if (!_res._hasPasswordScreen) {
+				break;
+			}
+			/* fall-through */
+		case DT_AMIGA:
+		case DT_ATARI:
+		case DT_WIN31:
+			_partNum = kPartCopyProtection;
+			break;
+		default:
 			break;
 		}
-		/* fall-through */
-	case DT_AMIGA:
-	case DT_ATARI:
-	case DT_WIN31:
-		_partNum = kPartCopyProtection;
-		break;
-	default:
-		break;
 	}
-#endif
+
 	if (_res.getDataType() == DT_3DO && _partNum == kPartIntro) {
 		_state = kStateLogo3DO;
 	} else {
