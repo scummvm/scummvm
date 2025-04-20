@@ -568,7 +568,8 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 		int newSlant = macFont->getSlant();
 		int familyId = getFamilyId(newId, newSlant);
 
-		if ((_mode & kWMModeUnicode) && (_mode & kWMModeForceMacFontsInWin95)) {
+		if ((_mode & kWMModeUnicode) && 
+			(((!_fontInfo.contains(familyId))) || (_mode & kWMModeForceMacFontsInWin95))) {
 			if (macFont->getSize() <= 0) {
 				debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont() - Font size <= 0!");
 			}
