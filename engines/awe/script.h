@@ -27,7 +27,7 @@
 
 namespace Awe {
 
-struct Sound;
+class Sound;
 struct Resource;
 struct SfxPlayer;
 struct SystemStub;
