@@ -817,6 +817,7 @@ void Menu::doVcrHelp(int16 button) {
 			helpText._x = msgAreaLeft + (msgAreaWidth - msgLen) / 2;
 			helpText._y = msgTop;
 			helpText._txt = line;
+			ARRAYCLEAR(helpText._vals);
 			msgTop += font->getFontHeight();
 			helpRequest._textItemList.push_back(helpText);
 		}
