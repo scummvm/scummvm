@@ -613,6 +613,7 @@ void TTMInterpreter::doDrawSpriteOp(const TTMEnviro &env, const TTMSeq &seq, uin
 
 void TTMInterpreter::doFadeOutOp(int16 colorno, int16 ncolors, int16 targetcol, int16 speed) {
 	if (speed == 0) {
+		// Immediately fade to black.
 		_vm->getGamePals()->clearPalette();
 	} else {
 		// The original tight-loops here with 640 steps and i/10 as the fade level..
