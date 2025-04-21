@@ -213,9 +213,11 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 		if (!actorIsScaled)
 			linesToSkip = compData.boundsRect.left - compData.x;
 		if (linesToSkip > 0) {
-			compData.skipWidth -= linesToSkip;
-			skipCelLines(compData, linesToSkip);
-			compData.x = compData.boundsRect.left;
+			if (!amiOrPcEngCost && !c64Cost) {
+				compData.skipWidth -= linesToSkip;
+				skipCelLines(compData, linesToSkip);
+				compData.x = compData.boundsRect.left;
+			}
 		} else {
 			linesToSkip = rect.right - compData.boundsRect.right;
 			if (linesToSkip <= 0) {
@@ -226,13 +228,19 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 		}
 	} else {
 		if (!actorIsScaled)
-			linesToSkip = rect.right - compData.boundsRect.right + 1;
+			linesToSkip = rect.right - compData.boundsRect.right;	// AkosRenderer had +1 here, weird
 		if (linesToSkip > 0) {
-			compData.skipWidth -= linesToSkip;
-			skipCelLines(compData, linesToSkip);
-			compData.x = compData.boundsRect.right - 1;
+			if (!amiOrPcEngCost && !c64Cost) {
+				compData.skipWidth -= linesToSkip;
+				skipCelLines(compData, linesToSkip);
+				compData.x = compData.boundsRect.right - 1;
+			}
 		} else {
-			linesToSkip = (compData.boundsRect.left - 1) - rect.left;
+			// V1 games uses 8 x 8 pixels for actors
+			if (c64Cost)
+				linesToSkip = (compData.boundsRect.left - 8) - rect.left;
+			else
+				linesToSkip = (compData.boundsRect.left - 1) - rect.left;
 			if (linesToSkip <= 0)
 				drawFlag = 2;
 			else
@@ -240,7 +248,7 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 		}
 	}
 
-	if (compData.skipWidth <= 0 || _height <= 0) {
+	if (compData.skipWidth <= 0 || _height <= 0) {	// AkosRenderer added the second check (|| _height <= 0)
 		decode = false;
 		return 0;
 	}
@@ -261,6 +269,11 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 		_drawTop = rect.top;
 	if (_drawBottom < rect.bottom)
 		_drawBottom = rect.bottom;
+
+	if (_height + rect.top >= 256) {	// AkosRenderer didn't do this check
+		decode = false;
+		return 2;
+	}
 
 	compData.width = _out.w;
 	compData.height = _out.h;

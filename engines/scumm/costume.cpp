@@ -151,229 +151,6 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 	return drawFlag;
 }
 
-byte ClassicCostumeRenderer::paintCelByleRLECommon(
-	int xMoveCur,
-	int yMoveCur,
-	int numColors,
-	int scaletableSize,
-	bool amiOrPcEngCost,
-	bool c64Cost,
-	ByleRLEData &compData,
-	std::function<void (const Common::Rect &)> markAsDirty,
-	bool &decode) {
-
-	bool actorIsScaled;
-	int i;
-	int linesToSkip = 0;
-	byte startScaleIndexX;
-	Common::Rect rect;
-	int step;
-	byte drawFlag = 1;
-
-	if (numColors == 32) {
-		compData.mask = 7;
-		compData.shr = 3;
-	} else {
-		compData.mask = 15;
-		compData.shr = 4;
-	}
-
-	actorIsScaled = (_scaleX != 0xFF) || (_scaleY != 0xFF);
-
-	compData.boundsRect.left = 0;
-	compData.boundsRect.top = 0;
-	compData.boundsRect.right = _out.w;
-	compData.boundsRect.bottom = _out.h;
-
-	if (actorIsScaled) {
-
-		/* Scale direction */
-		compData.scaleXStep = -1;
-		if (xMoveCur < 0) {
-			xMoveCur = -xMoveCur;
-			compData.scaleXStep = 1;
-		}
-
-		// It's possible that the scale indexes will overflow and wrap
-		// around to zero, so it's important that we use the same
-		// method of accessing it both when calculating the size of the
-		// scaled costume, and when drawing it. See bug #2729.
-
-		if (_mirror) {
-			/* Adjust X position */
-			startScaleIndexX = _scaleIndexX = scaletableSize - xMoveCur;
-			for (i = 0; i < xMoveCur; i++) {
-				if (compData.scaleTable[_scaleIndexX++] < _scaleX)
-					compData.x -= compData.scaleXStep;
-			}
-
-			rect.left = rect.right = compData.x;
-
-			_scaleIndexX = startScaleIndexX;
-			for (i = 0; i < _width; i++) {
-				if (rect.right < 0) {
-					linesToSkip++;
-					startScaleIndexX = _scaleIndexX;
-				}
-				if (compData.scaleTable[_scaleIndexX++] < _scaleX)
-					rect.right++;
-			}
-		} else {
-			/* No mirror */
-			/* Adjust X position */
-			startScaleIndexX = _scaleIndexX = scaletableSize + xMoveCur;
-			for (i = 0; i < xMoveCur; i++) {
-				if (compData.scaleTable[_scaleIndexX--] < _scaleX)
-					compData.x += compData.scaleXStep;
-			}
-
-			rect.left = rect.right = compData.x;
-
-			_scaleIndexX = startScaleIndexX;
-			for (i = 0; i < _width; i++) {
-				if (rect.left >= compData.boundsRect.right) {
-					startScaleIndexX = _scaleIndexX;
-					linesToSkip++;
-				}
-				if (compData.scaleTable[_scaleIndexX--] < _scaleX)
-					rect.left--;
-			}
-		}
-		_scaleIndexX = startScaleIndexX;
-
-		if (linesToSkip)
-			linesToSkip--;
-
-		step = -1;
-		if (yMoveCur < 0) {
-			yMoveCur = -yMoveCur;
-			step = -step;
-		}
-
-		_scaleIndexY = scaletableSize - yMoveCur;
-		for (i = 0; i < yMoveCur; i++) {
-			if (compData.scaleTable[_scaleIndexY++] < _scaleY)
-				compData.y -= step;
-		}
-
-		rect.top = rect.bottom = compData.y;
-		_scaleIndexY = scaletableSize - yMoveCur;
-		for (i = 0; i < _height; i++) {
-			if (compData.scaleTable[_scaleIndexY++] < _scaleY)
-				rect.bottom++;
-		}
-
-		_scaleIndexY = scaletableSize - yMoveCur;
-	} else {
-		if (!_mirror)
-			xMoveCur = -xMoveCur;
-
-		compData.x += xMoveCur;
-		compData.y += yMoveCur;
-
-		if (_mirror) {
-			rect.left = compData.x;
-			rect.right = compData.x + _width;
-		} else {
-			rect.left = compData.x - _width;
-			rect.right = compData.x;
-		}
-
-		rect.top = compData.y;
-		rect.bottom = rect.top + _height;
-
-	}
-
-	compData.skipWidth = _width;
-	compData.scaleXStep = _mirror ? 1 : -1;
-
-	markAsDirty(rect);
-
-	if (rect.top >= compData.boundsRect.bottom || rect.bottom <= compData.boundsRect.top) {
-		decode = false;
-		return 0;
-	}
-
-	if (rect.left >= compData.boundsRect.right || rect.right <= compData.boundsRect.left) {
-		decode = false;
-		return 0;
-	}
-
-	compData.repLen = 0;
-
-	if (_mirror) {
-		if (!actorIsScaled)
-			linesToSkip = compData.boundsRect.left - compData.x;
-		if (linesToSkip > 0) {
-			if (!amiOrPcEngCost && !c64Cost) {
-				compData.skipWidth -= linesToSkip;
-				skipCelLines(compData, linesToSkip);
-				compData.x = compData.boundsRect.left;
-			}
-		} else {
-			linesToSkip = rect.right - compData.boundsRect.right;
-			if (linesToSkip <= 0) {
-				drawFlag = 2;
-			} else {
-				compData.skipWidth -= linesToSkip;
-			}
-		}
-	} else {
-		if (!actorIsScaled)
-			linesToSkip = rect.right - compData.boundsRect.right;
-		if (linesToSkip > 0) {
-			if (!amiOrPcEngCost && !c64Cost) {
-				compData.skipWidth -= linesToSkip;
-				skipCelLines(compData, linesToSkip);
-				compData.x = compData.boundsRect.right - 1;
-			}
-		} else {
-			// V1 games uses 8 x 8 pixels for actors
-			if (c64Cost)
-				linesToSkip = (compData.boundsRect.left - 8) - rect.left;
-			else
-				linesToSkip = (compData.boundsRect.left - 1) - rect.left;
-			if (linesToSkip <= 0)
-				drawFlag = 2;
-			else
-				compData.skipWidth -= linesToSkip;
-		}
-	}
-
-	if (compData.skipWidth <= 0) {
-		decode = false;
-		return 0;
-	}
-
-	if (rect.left < compData.boundsRect.left)
-		rect.left = compData.boundsRect.left;
-
-	if (rect.top < compData.boundsRect.top)
-		rect.top = compData.boundsRect.top;
-
-	if (rect.top > compData.boundsRect.bottom)
-		rect.top = compData.boundsRect.bottom;
-
-	if (rect.bottom > compData.boundsRect.bottom)
-		rect.bottom = compData.boundsRect.bottom;
-
-	if (_drawTop > rect.top)
-		_drawTop = rect.top;
-	if (_drawBottom < rect.bottom)
-		_drawBottom = rect.bottom;
-
-	if (_height + rect.top >= 256) {
-		decode = false;
-		return 2;
-	}
-
-	compData.width = _out.w;
-	compData.height = _out.h;
-	compData.destPtr = (byte *)_out.getBasePtr(compData.x, compData.y);
-
-	return drawFlag;
-}
-
 // Skin colors
 static const int v1MMActorPalatte1[25] = {
 	8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
@@ -478,17 +255,18 @@ void ClassicCostumeRenderer::byleRLEDecode_C64(ByleRLEData &compData, int actor)
 #define ClassicProc3RendererShadowARM _ClassicProc3RendererShadowARM
 #endif
 
-extern "C" int ClassicProc3RendererShadowARM(int _scaleY,
-										ClassicCostumeRenderer::ByleRLEData *compData,
-										int pitch,
-										const byte *src,
-										int   height,
-										int _scaleX,
-										int _scaleIndexX,
-										byte *_shadowTable,
-										uint16 _palette[32],
-										int32 _numStrips,
-										int _scaleIndexY);
+extern "C" int ClassicProc3RendererShadowARM(
+	int _scaleY,
+	ClassicCostumeRenderer::ByleRLEData *compData,
+	int pitch,
+	const byte *src,
+	int height,
+	int _scaleX,
+	int _scaleIndexX,
+	byte *_shadowTable,
+	uint16 _palette[32],
+	int32 _numStrips,
+	int _scaleIndexY);
 #endif
 
 void ClassicCostumeRenderer::byleRLEDecode(ByleRLEData &compData) {
@@ -497,7 +275,7 @@ void ClassicCostumeRenderer::byleRLEDecode(ByleRLEData &compData) {
 	byte len, maskbit;
 	int y;
 	uint color, height, pcolor;
-	byte scaleIndexY;
+	int scaleIndexY;
 	bool masked;
 
 #ifdef USE_ARM_COSTUME_ASM
@@ -505,17 +283,18 @@ void ClassicCostumeRenderer::byleRLEDecode(ByleRLEData &compData) {
 	    (compData.maskPtr != NULL) &&
 	    (_shadowTable != NULL))
 	{
-		_scaleIndexX = ClassicProc3RendererShadowARM(_scaleY,
-		                                             &compData,
-		                                             _out.pitch,
-		                                             _srcPtr,
-		                                             _height,
-		                                             _scaleX,
-		                                             _scaleIndexX,
-		                                             _shadowTable,
-		                                             _palette,
-		                                             _numStrips,
-		                                             _scaleIndexY);
+		compData.scaleXIndex = (byte)ClassicProc3RendererShadowARM(
+			_scaleY,
+			&compData,
+			_out.pitch,
+			_srcPtr,
+			_height,
+			_scaleX,
+			compData.scaleXIndex,
+			_shadowTable,
+			_palette,
+			_numStrips,
+			compData.scaleYIndex);
 		return;
 	}
 #endif /* USE_ARM_COSTUME_ASM */
@@ -527,7 +306,7 @@ void ClassicCostumeRenderer::byleRLEDecode(ByleRLEData &compData) {
 	color = compData.repColor;
 	height = _height;
 
-	scaleIndexY = _scaleIndexY;
+	scaleIndexY = compData.scaleYIndex;
 	maskbit = revBitMask(compData.x & 7);
 	mask = compData.maskPtr + compData.x / 8;
 
@@ -543,7 +322,7 @@ void ClassicCostumeRenderer::byleRLEDecode(ByleRLEData &compData) {
 			len = *src++;
 
 		do {
-			if (_scaleY == 255 || compData.scaleTable[scaleIndexY++] < _scaleY) {
+			if (_scaleY == 255 || compData.scaleTable[scaleIndexY++ & compData.scaleIndexMask] < _scaleY) {
 				masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom)
 						 || (compData.x < compData.boundsRect.left || compData.x >= compData.boundsRect.right)
 						 || (compData.maskPtr && (*mask & maskbit));
@@ -568,9 +347,9 @@ void ClassicCostumeRenderer::byleRLEDecode(ByleRLEData &compData) {
 				height = _height;
 				y = compData.y;
 
-				scaleIndexY = _scaleIndexY;
+				scaleIndexY = compData.scaleYIndex;
 
-				if (_scaleX == 255 || compData.scaleTable[_scaleIndexX] < _scaleX) {
+				if (_scaleX == 255 || compData.scaleTable[compData.scaleXIndex] < _scaleX) {
 					compData.x += compData.scaleXStep;
 					if (compData.x < compData.boundsRect.left || compData.x >= compData.boundsRect.right)
 						return;
@@ -584,9 +363,9 @@ void ClassicCostumeRenderer::byleRLEDecode(ByleRLEData &compData) {
 				// Also valid for all other v4 games (this code is
 				// also in the executable for LOOM CD).
 				if (_vm->_game.version == 4) {
-					_scaleIndexX++;
+					compData.scaleXIndex = (compData.scaleXIndex + 1) & compData.scaleIndexMask;
 				} else {
-					_scaleIndexX += compData.scaleXStep;
+					compData.scaleXIndex = (compData.scaleXIndex + compData.scaleXStep) & compData.scaleIndexMask;
 				}
 
 				dst = compData.destPtr;
@@ -614,7 +393,7 @@ void ClassicCostumeRenderer::byleRLEDecode_ami(ByleRLEData &compData) {
 	maskbit = revBitMask(compData.x & 7);
 	y = compData.y;
 	oldXpos = compData.x;
-	oldScaleIndexX = _scaleIndexX;
+	oldScaleIndexX = compData.scaleXIndex;
 
 	// Indy4 Amiga always uses the room map to match colors to the currently
 	// setup palette in the actor code in the original, thus we need to do this
@@ -630,7 +409,7 @@ void ClassicCostumeRenderer::byleRLEDecode_ami(ByleRLEData &compData) {
 		if (!len)
 			len = *src++;
 		do {
-			if (_scaleY == 255 || compData.scaleTable[_scaleIndexY] < _scaleY) {
+			if (_scaleY == 255 || compData.scaleTable[compData.scaleYIndex] < _scaleY) {
 				masked = (y < 0 || y >= _out.h) || (compData.x < 0 || compData.x >= _out.w) || (compData.maskPtr && (mask[0] & maskbit));
 
 				if (color && !masked) {
@@ -640,12 +419,12 @@ void ClassicCostumeRenderer::byleRLEDecode_ami(ByleRLEData &compData) {
 						*dst = _palette[color];
 				}
 
-				if (_scaleX == 255 || compData.scaleTable[_scaleIndexX] < _scaleX) {
+				if (_scaleX == 255 || compData.scaleTable[compData.scaleXIndex] < _scaleX) {
 					compData.x += compData.scaleXStep;
 					dst += compData.scaleXStep;
 					maskbit = revBitMask(compData.x & 7);
 				}
-				_scaleIndexX += compData.scaleXStep;
+				compData.scaleXIndex = (compData.scaleXIndex + compData.scaleXStep) & compData.scaleIndexMask;
 				mask = compData.maskPtr + compData.x / 8;
 			}
 			if (!--width) {
@@ -664,8 +443,8 @@ void ClassicCostumeRenderer::byleRLEDecode_ami(ByleRLEData &compData) {
 				}
 				width = _width;
 				compData.x = oldXpos;
-				_scaleIndexX = oldScaleIndexX;
-				_scaleIndexY++;
+				compData.scaleXIndex = oldScaleIndexX;
+				compData.scaleYIndex = (compData.scaleYIndex + 1) & compData.scaleIndexMask;
 			}
 		} while (--len);
 	} while (1);

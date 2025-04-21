@@ -83,12 +83,10 @@ class ClassicCostumeRenderer : public BaseCostumeRenderer {
 protected:
 	ClassicCostumeLoader _loaded;
 
-	byte _scaleIndexX;						/* must wrap at 256 */
-	byte _scaleIndexY;
 	uint16 _palette[32];
 
 public:
-	ClassicCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm), _scaleIndexX(0), _scaleIndexY(0) {
+	ClassicCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {
 		memset(_palette, 0, sizeof(_palette));
 	}
 
@@ -100,16 +98,6 @@ protected:
 	byte drawLimb(const Actor *a, int limb) override;
 
 	byte paintCelByleRLE(int xMoveCur, int yMoveCur);
-	byte paintCelByleRLECommon(
-		int xMoveCur,
-		int yMoveCur,
-		int numColors,
-		int scaletableSize,
-		bool amiOrPcEngCost,
-		bool c64Cost,
-		ByleRLEData &compData,
-		std::function<void(const Common::Rect &)> markAsDirty,
-		bool &decode) override;
 
 	void byleRLEDecode_C64(ByleRLEData &compData, int actor);
 	void byleRLEDecode(ByleRLEData &compData);
