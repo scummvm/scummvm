@@ -515,7 +515,7 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &compData) {
 
 	scaleytab = &compData.scaleTable[MAX<int>(0, compData.scaleYIndex)]; // Avoid invalid mem reads in Basketball...
 	maskbit = revBitMask(compData.x & 7);
-	mask = _vm->getMaskBuffer(compData.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), compData.y, _zbuf);
+	mask = compData.maskPtr + compData.x / 8;
 
 	if (len)
 		goto StartPos;
@@ -537,7 +537,7 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &compData) {
 				} else {
 					masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom)
 							 || (compData.x < compData.boundsRect.left || compData.x >= compData.boundsRect.right)
-							 || (*mask & maskbit);
+							 || (compData.maskPtr && (*mask & maskbit));
 					bool skipColumn = false;
 
 					if (color && !masked) {
@@ -608,7 +608,7 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &compData) {
 
 				compData.scaleXIndex += compData.scaleXStep;
 				dst = compData.destPtr;
-				mask = _vm->getMaskBuffer(compData.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), compData.y, _zbuf);
+				mask = compData.maskPtr + compData.x / 8;
 			}
 		StartPos:;
 		} while (--len);
@@ -964,6 +964,8 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 	compData.width = _out.w;
 	compData.height = _out.h;
 	compData.destPtr = (byte *)_out.getBasePtr(compData.x, compData.y);
+
+	compData.maskPtr = _vm->getMaskBuffer(-(_vm->_virtscr[kMainVirtScreen].xstart & 7), compData.y, _zbuf);
 
 	byleRLEDecode(compData);
 
