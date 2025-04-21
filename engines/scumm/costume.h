@@ -83,12 +83,8 @@ class ClassicCostumeRenderer : public BaseCostumeRenderer {
 protected:
 	ClassicCostumeLoader _loaded;
 
-	uint16 _palette[32];
-
 public:
-	ClassicCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {
-		memset(_palette, 0, sizeof(_palette));
-	}
+	ClassicCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
 
 	void setPalette(uint16 *palette) override;
 	void setFacing(const Actor *a) override;
