@@ -525,7 +525,9 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &compData) {
 						return;
 					}
 				} else {
-					masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom) || (compData.x < 0 || compData.x >= compData.boundsRect.right) || (*mask & maskbit);
+					masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom)
+							 || (compData.x < compData.boundsRect.left || compData.x >= compData.boundsRect.right)
+							 || (*mask & maskbit);
 					bool skipColumn = false;
 
 					if (color && !masked) {
@@ -588,7 +590,7 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &compData) {
 
 				if (_scaleX == 255 || compData.scaleTable[compData.scaleXIndex] < _scaleX) {
 					compData.x += compData.scaleXStep;
-					if (compData.x < 0 || compData.x >= compData.boundsRect.right)
+					if (compData.x < compData.boundsRect.left || compData.x >= compData.boundsRect.right)
 						return;
 					maskbit = revBitMask(compData.x & 7);
 					compData.destPtr += compData.scaleXStep * _vm->_bytesPerPixel;
@@ -887,7 +889,6 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 		}
 	}
 
-
 	if (rect.top >= compData.boundsRect.bottom || rect.bottom <= compData.boundsRect.top)
 		return 0;
 
@@ -899,7 +900,6 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 	if (_mirror) {
 		if (!actorIsScaled)
 			linesToSkip = compData.boundsRect.left - compData.x;
-
 		if (linesToSkip > 0) {
 			compData.skipWidth -= linesToSkip;
 			skipCelLines(compData, linesToSkip);
@@ -917,11 +917,10 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 			linesToSkip = rect.right - compData.boundsRect.right + 1;
 		if (linesToSkip > 0) {
 			compData.skipWidth -= linesToSkip;
-			skipCelLines(compData, linesToSkip)	;
+			skipCelLines(compData, linesToSkip);
 			compData.x = compData.boundsRect.right - 1;
 		} else {
-			linesToSkip = (compData.boundsRect.left -1) - rect.left;
-
+			linesToSkip = (compData.boundsRect.left - 1) - rect.left;
 			if (linesToSkip <= 0)
 				drawFlag = 2;
 			else
