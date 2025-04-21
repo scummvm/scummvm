@@ -717,30 +717,85 @@ const byte bigCostumeScaleTable[768] = {
 };
 
 byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
-	int num_colors;
-	bool actorIsScaled;
-	int i, j;
-	int linesToSkip = 0, startScaleIndexX, startScaleIndexY;
-	Common::Rect rect;
-	int step;
-	byte drawFlag = 1;
 	ByleRLEData compData;
 
 	const int scaletableSize = (_vm->_game.heversion >= 61) ? 128 : 384;
-
-	/* implement custom scale table */
 
 	compData.scaleTable = (_vm->_game.heversion >= 61) ? smallCostumeScaleTable : bigCostumeScaleTable;
 	if (_vm->VAR_CUSTOMSCALETABLE != 0xFF && _vm->_res->isResourceLoaded(rtString, _vm->VAR(_vm->VAR_CUSTOMSCALETABLE))) {
 		compData.scaleTable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
 	}
 
+	compData.x = _actorX;
+	compData.y = _actorY;
+
+	bool decode = true;
+
+	const auto markAsDirty = [this, &compData, &decode](const Common::Rect &rect) {
+		if (_vm->_game.heversion >= 71) {
+			if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
+				compData.boundsRect = _clipOverride;
+				compData.boundsRect.right += 1;
+				compData.boundsRect.bottom += 1;
+
+				compData.boundsRect.right = CLIP<int16>(compData.boundsRect.right, 0, _vm->_screenWidth);
+				compData.boundsRect.bottom = CLIP<int16>(compData.boundsRect.bottom, 0, _vm->_screenHeight);
+			}
+		}
+
+		if (_actorHitMode) {
+			if (_actorHitX < rect.left || _actorHitX >= rect.right || _actorHitY < rect.top || _actorHitY >= rect.bottom)
+				decode = false;
+		} else {
+			markRectAsDirty(rect);
+
+			if (_vm->_game.heversion >= 71) {
+				ActorHE *a = (ActorHE *)_vm->derefActor(_actorID, "paintCelByleRLE");
+				a->setActorUpdateArea(rect.left, rect.top, rect.right, rect.bottom + 1);
+			}
+		}
+	};
+
+	byte drawFlag = paintCelByleRLECommon(
+		xMoveCur,
+		yMoveCur,
+		_vm->getResourceDataSize(_akpl),
+		scaletableSize,
+		compData,
+		markAsDirty,
+		decode);
+
+	if (!decode)
+		return drawFlag;
+
+	compData.maskPtr = _vm->getMaskBuffer(-(_vm->_virtscr[kMainVirtScreen].xstart & 7), compData.y, _zbuf);
+
+	byleRLEDecode(compData);
+
+	return drawFlag;
+}
+
+byte AkosRenderer::paintCelByleRLECommon(
+	int xMoveCur,
+	int yMoveCur,
+	int numColors,
+	int scaletableSize,
+	ByleRLEData &compData,
+	std::function<void(const Common::Rect &)> markAsDirty,
+	bool &decode) {
+
+	bool actorIsScaled;
+	int i, j;
+	int linesToSkip = 0, startScaleIndexX, startScaleIndexY;
+	Common::Rect rect;
+	int step;
+	byte drawFlag = 1;
+
 	// Setup color decoding variables
-	num_colors = _vm->getResourceDataSize(_akpl);
-	if (num_colors == 32) {
+	if (numColors == 32) {
 		compData.mask = 7;
 		compData.shr = 3;
-	} else if (num_colors == 64) {
+	} else if (numColors == 64) {
 		compData.mask = 3;
 		compData.shr = 2;
 	} else {
@@ -749,9 +804,6 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 	}
 
 	actorIsScaled = (_scaleX != 0xFF) || (_scaleY != 0xFF);
-
-	compData.x = _actorX;
-	compData.y = _actorY;
 
 	compData.boundsRect.left = 0;
 	compData.boundsRect.top = 0;
@@ -879,34 +931,19 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 	compData.skipWidth = _width;
 	compData.scaleXStep = _mirror ? 1 : -1;
 
-	if (_vm->_game.heversion >= 71) {
-		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
-			compData.boundsRect = _clipOverride;
-			compData.boundsRect.right += 1;
-			compData.boundsRect.bottom += 1;
-
-			compData.boundsRect.right = CLIP<int16>(compData.boundsRect.right, 0, _vm->_screenWidth);
-			compData.boundsRect.bottom = CLIP<int16>(compData.boundsRect.bottom, 0, _vm->_screenHeight);
-		}
-	}
-
-	if (_actorHitMode) {
-		if (_actorHitX < rect.left || _actorHitX >= rect.right || _actorHitY < rect.top || _actorHitY >= rect.bottom)
-			return 0;
-	} else {
-		markRectAsDirty(rect);
-
-		if (_vm->_game.heversion >= 71) {
-			ActorHE *a = (ActorHE *)_vm->derefActor(_actorID, "paintCelByleRLE");
-			a->setActorUpdateArea(rect.left, rect.top, rect.right, rect.bottom + 1);
-		}
-	}
-
-	if (rect.top >= compData.boundsRect.bottom || rect.bottom <= compData.boundsRect.top)
+	markAsDirty(rect);
+	if (!decode)
 		return 0;
 
-	if (rect.left >= compData.boundsRect.right || rect.right <= compData.boundsRect.left)
+	if (rect.top >= compData.boundsRect.bottom || rect.bottom <= compData.boundsRect.top) {
+		decode = false;
 		return 0;
+	}
+
+	if (rect.left >= compData.boundsRect.right || rect.right <= compData.boundsRect.left) {
+		decode = false;
+		return 0;
+	}
 
 	compData.repLen = 0;
 
@@ -941,8 +978,10 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 		}
 	}
 
-	if (compData.skipWidth <= 0 || _height <= 0)
+	if (compData.skipWidth <= 0 || _height <= 0) {
+		decode = false;
 		return 0;
+	}
 
 	if (rect.left < compData.boundsRect.left)
 		rect.left = compData.boundsRect.left;
@@ -964,10 +1003,6 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 	compData.width = _out.w;
 	compData.height = _out.h;
 	compData.destPtr = (byte *)_out.getBasePtr(compData.x, compData.y);
-
-	compData.maskPtr = _vm->getMaskBuffer(-(_vm->_virtscr[kMainVirtScreen].xstart & 7), compData.y, _zbuf);
-
-	byleRLEDecode(compData);
 
 	return drawFlag;
 }
