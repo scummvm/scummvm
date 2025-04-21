@@ -410,12 +410,17 @@ private:
 		QuickTimeDecoder *_decoder;
 		Common::QuickTimeParser::Track *_parent;
 
-		void projectPanorama();
+		void projectPanorama(int scaleFactor, float fov, float hfov, float panAngle, float tiltAngle);
+		void swingTransitionHandler();
+		void boxAverage(Graphics::Surface *sourceSurface, int scaleFactor);
+		Graphics::Surface* upscalePanorama(Graphics::Surface *sourceSurface, int8 level);
 
 		const Graphics::Surface *bufferNextFrame();
 
 	public:
 		Graphics::Surface *_constructedPano;
+		Graphics::Surface *_1DUpscaledConstructedPano;
+		Graphics::Surface *_2DUpscaledConstructedPano;
 		Graphics::Surface *_constructedHotspots;
 		Graphics::Surface *_projectedPano;
 		Graphics::Surface *_planarProjection;
