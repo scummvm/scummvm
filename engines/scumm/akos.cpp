@@ -776,7 +776,7 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 			rect.left = rect.right = compData.x;
 
 			j = startScaleIndexX;
-			for (i = 0, linesToSkip = 0; i < _width; i++) {
+			for (i = 0; i < _width; i++) {
 				if (rect.right < 0) {
 					linesToSkip++;
 					startScaleIndexX = j;

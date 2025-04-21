@@ -71,14 +71,15 @@ static const int v1MMNESLookup[25] = {
 	0x17, 0x00, 0x01, 0x05, 0x16
 };
 
-byte ClassicCostumeRenderer::paintCelByleRLE(int xmoveCur, int ymoveCur) {
-	int i, skip = 0;
-	byte drawFlag = 1;
-	bool use_scaling;
+byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
+	bool actorIsScaled;
+	int i;
+	int linesToSkip = 0;
 	byte startScaleIndexX;
 	int ex1, ex2;
 	Common::Rect rect;
 	int step;
+	byte drawFlag = 1;
 	ByleRLEData compData;
 
 	const int scaletableSize = 128;
@@ -111,7 +112,7 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xmoveCur, int ymoveCur) {
 		break;
 	}
 
-	use_scaling = (_scaleX != 0xFF) || (_scaleY != 0xFF);
+	actorIsScaled = (_scaleX != 0xFF) || (_scaleY != 0xFF);
 
 	compData.x = _actorX;
 	compData.y = _actorY;
@@ -120,12 +121,12 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xmoveCur, int ymoveCur) {
 	if (_vm->_game.version <= 1)
 		compData.y += 1;
 
-	if (use_scaling) {
+	if (actorIsScaled) {
 
 		/* Scale direction */
 		compData.scaleXStep = -1;
-		if (xmoveCur < 0) {
-			xmoveCur = -xmoveCur;
+		if (xMoveCur < 0) {
+			xMoveCur = -xMoveCur;
 			compData.scaleXStep = 1;
 		}
 
@@ -136,8 +137,8 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xmoveCur, int ymoveCur) {
 
 		if (_mirror) {
 			/* Adjust X position */
-			startScaleIndexX = _scaleIndexX = scaletableSize - xmoveCur;
-			for (i = 0; i < xmoveCur; i++) {
+			startScaleIndexX = _scaleIndexX = scaletableSize - xMoveCur;
+			for (i = 0; i < xMoveCur; i++) {
 				if (compData.scaleTable[_scaleIndexX++] < _scaleX)
 					compData.x -= compData.scaleXStep;
 			}
@@ -147,7 +148,7 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xmoveCur, int ymoveCur) {
 			_scaleIndexX = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
 				if (rect.right < 0) {
-					skip++;
+					linesToSkip++;
 					startScaleIndexX = _scaleIndexX;
 				}
 				if (compData.scaleTable[_scaleIndexX++] < _scaleX)
@@ -156,8 +157,8 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xmoveCur, int ymoveCur) {
 		} else {
 			/* No mirror */
 			/* Adjust X position */
-			startScaleIndexX = _scaleIndexX = xmoveCur + scaletableSize;
-			for (i = 0; i < xmoveCur; i++) {
+			startScaleIndexX = _scaleIndexX = scaletableSize + xMoveCur;
+			for (i = 0; i < xMoveCur; i++) {
 				if (compData.scaleTable[_scaleIndexX--] < _scaleX)
 					compData.x += compData.scaleXStep;
 			}
@@ -168,7 +169,7 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xmoveCur, int ymoveCur) {
 			for (i = 0; i < _width; i++) {
 				if (rect.left >= _out.w) {
 					startScaleIndexX = _scaleIndexX;
-					skip++;
+					linesToSkip++;
 				}
 				if (compData.scaleTable[_scaleIndexX--] < _scaleX)
 					rect.left--;
@@ -176,35 +177,35 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xmoveCur, int ymoveCur) {
 		}
 		_scaleIndexX = startScaleIndexX;
 
-		if (skip)
-			skip--;
+		if (linesToSkip)
+			linesToSkip--;
 
 		step = -1;
-		if (ymoveCur < 0) {
-			ymoveCur = -ymoveCur;
-			step = 1;
+		if (yMoveCur < 0) {
+			yMoveCur = -yMoveCur;
+			step = -step;
 		}
 
-		_scaleIndexY = scaletableSize - ymoveCur;
-		for (i = 0; i < ymoveCur; i++) {
+		_scaleIndexY = scaletableSize - yMoveCur;
+		for (i = 0; i < yMoveCur; i++) {
 			if (compData.scaleTable[_scaleIndexY++] < _scaleY)
 				compData.y -= step;
 		}
 
 		rect.top = rect.bottom = compData.y;
-		_scaleIndexY = scaletableSize - ymoveCur;
+		_scaleIndexY = scaletableSize - yMoveCur;
 		for (i = 0; i < _height; i++) {
 			if (compData.scaleTable[_scaleIndexY++] < _scaleY)
 				rect.bottom++;
 		}
 
-		_scaleIndexY = scaletableSize - ymoveCur;
+		_scaleIndexY = scaletableSize - yMoveCur;
 	} else {
 		if (!_mirror)
-			xmoveCur = -xmoveCur;
+			xMoveCur = -xMoveCur;
 
-		compData.x += xmoveCur;
-		compData.y += ymoveCur;
+		compData.x += xMoveCur;
+		compData.y += yMoveCur;
 
 		if (_mirror) {
 			rect.left = compData.x;
@@ -237,41 +238,41 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xmoveCur, int ymoveCur) {
 	compData.repLen = 0;
 
 	if (_mirror) {
-		if (!use_scaling)
-			skip = -compData.x;
-		if (skip > 0) {
+		if (!actorIsScaled)
+			linesToSkip = -compData.x;
+		if (linesToSkip > 0) {
 			if (!newAmiCost && !pcEngCost && _loaded._format != 0x57) {
-				compData.skipWidth -= skip;
-				skipCelLines(compData, skip);
+				compData.skipWidth -= linesToSkip;
+				skipCelLines(compData, linesToSkip);
 				compData.x = 0;
 			}
 		} else {
-			skip = rect.right - _out.w;
-			if (skip <= 0) {
+			linesToSkip = rect.right - _out.w;
+			if (linesToSkip <= 0) {
 				drawFlag = 2;
 			} else {
-				compData.skipWidth -= skip;
+				compData.skipWidth -= linesToSkip;
 			}
 		}
 	} else {
-		if (!use_scaling)
-			skip = rect.right - _out.w;
-		if (skip > 0) {
+		if (!actorIsScaled)
+			linesToSkip = rect.right - _out.w;
+		if (linesToSkip > 0) {
 			if (!newAmiCost && !pcEngCost && _loaded._format != 0x57) {
-				compData.skipWidth -= skip;
-				skipCelLines(compData, skip);
+				compData.skipWidth -= linesToSkip;
+				skipCelLines(compData, linesToSkip);
 				compData.x = _out.w - 1;
 			}
 		} else {
 			// V1 games uses 8 x 8 pixels for actors
 			if (_loaded._format == 0x57)
-				skip = -8 - rect.left;
+				linesToSkip = -8 - rect.left;
 			else
-				skip = -1 - rect.left;
-			if (skip <= 0)
+				linesToSkip = -1 - rect.left;
+			if (linesToSkip <= 0)
 				drawFlag = 2;
 			else
-				compData.skipWidth -= skip;
+				compData.skipWidth -= linesToSkip;
 		}
 	}
 
