@@ -23,7 +23,6 @@
 #define SCUMM_COSTUME_H
 
 #include "scumm/base-costume.h"
-#include <functional>
 
 namespace Scumm {
 class ClassicCostumeLoader : public BaseCostumeLoader {
@@ -110,7 +109,7 @@ protected:
 		bool c64Cost,
 		ByleRLEData &compData,
 		std::function<void(const Common::Rect &)> markAsDirty,
-		bool &decode);
+		bool &decode) override;
 
 	void byleRLEDecode_C64(ByleRLEData &compData, int actor);
 	void byleRLEDecode(ByleRLEData &compData);
