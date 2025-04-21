@@ -274,7 +274,7 @@ public:
 	 * This also sets the viewport
 	 */
 
-	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) = 0;
+	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float rollAngle = 0.0f) = 0;
 	virtual void updateProjectionMatrix(float fov, float aspectRatio, float nearClipPlane, float farClipPlane) = 0;
 
 	Math::Matrix4 getMvpMatrix() const { return _mvpMatrix; }

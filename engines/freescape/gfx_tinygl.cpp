@@ -162,11 +162,12 @@ void TinyGLRenderer::updateProjectionMatrix(float fov, float aspectRatio, float 
 	tglLoadIdentity();
 }
 
-void TinyGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) {
+void TinyGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float rollAngle) {
 	Math::Vector3d up_vec(0, 1, 0);
 
 	Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(pos, interest, up_vec);
 	tglMultMatrixf(lookMatrix.getData());
+	tglRotatef(rollAngle, 0.0f, 0.0f, 1.0f);
 	tglTranslatef(-pos.x(), -pos.y(), -pos.z());
 }
 

@@ -58,7 +58,7 @@ void FreescapeEngine::waitInLoop(int maxWait) {
 					_eventManager->purgeMouseEvents();
 				}
 
-				rotate(event.relMouse.x * _mouseSensitivity, event.relMouse.y * _mouseSensitivity);
+				rotate(event.relMouse.x * _mouseSensitivity, event.relMouse.y * _mouseSensitivity, 0);
 				break;
 
 			case Common::EVENT_SCREEN_CHANGED:

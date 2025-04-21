@@ -458,11 +458,7 @@ void EclipseEngine::drawInfoMenu() {
 }
 
 void EclipseEngine::pressedKey(const int keycode) {
-	if (keycode == kActionRotateLeft) {
-		rotate(-_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == kActionRotateRight) {
-		rotate(_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == kActionChangeAngle) {
+	if (keycode == kActionChangeAngle) {
 		changeAngle();
 	} else if (keycode == kActionChangeStepSize) {
 		changeStepSize();

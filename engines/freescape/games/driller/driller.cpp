@@ -71,6 +71,7 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_playerWidth = 12;
 	_playerDepth = 32;
 	_stepUpDistance = 64;
+	_roll = 0;
 
 	_initialTankEnergy = 48;
 	_initialTankShield = 50;
@@ -181,6 +182,16 @@ void DrillerEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *in
 	act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
 	act->addDefaultInputMapping("JOY_B");
 	act->addDefaultInputMapping("r");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("ROLL_LEFT", _("Roll left"));
+	act->setCustomEngineActionEvent(kActionRollLeft);
+	act->addDefaultInputMapping("n");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("ROLL_RIGHT", _("Roll right"));
+	act->setCustomEngineActionEvent(kActionRollRight);
+	act->addDefaultInputMapping("m");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("LOWER", _("Lower/Fly down"));
@@ -491,11 +502,7 @@ Math::Vector3d getProjectionToPlane(const Math::Vector3d &vect, const Math::Vect
 }
 
 void DrillerEngine::pressedKey(const int keycode) {
-	if (keycode == kActionRotateLeft) {
-		rotate(-_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == kActionRotateRight) {
-		rotate(_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == kActionIncreaseStepSize) {
+	if (keycode == kActionIncreaseStepSize) {
 		increaseStepSize();
 	} else if (keycode == kActionDecreaseStepSize) {
 		decreaseStepSize();
@@ -503,6 +510,10 @@ void DrillerEngine::pressedKey(const int keycode) {
 		rise();
 	} else if (keycode == kActionLowerOrFlyDown) {
 		lower();
+	} else if (keycode == kActionRollRight) {
+		rotate(0, 0, -_angleRotations[_angleRotationIndex]);
+	} else if (keycode == kActionRollLeft) {
+		rotate(0, 0, _angleRotations[_angleRotationIndex]);
 	} else if (keycode == kActionDeployDrillingRig) {
 		if (isDOS() && isDemo()) // No support for drilling here yet
 			return;

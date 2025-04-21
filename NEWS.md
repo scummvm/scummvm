@@ -9,6 +9,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for The Adventures of Willy Beamish.
    - Added support for Heart of China.
 
+ Freescape:
+   - Added roll rotation to Driller and Dark Side.
+
  Hopkins:
    - Fix crash using elevator to go to other floors.
 

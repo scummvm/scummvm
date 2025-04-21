@@ -90,6 +90,8 @@ enum FreescapeAction {
 	// Driller
 	kActionDeployDrillingRig,
 	kActionCollectDrillingRig,
+	kActionRollLeft,
+	kActionRollRight,
 	// Total Eclipse
 	kActionRest,
 	// Castle
@@ -352,7 +354,7 @@ public:
 	int _maxShield;
 	int _maxEnergy;
 
-	void rotate(float xoffset, float yoffset);
+	void rotate(float xoffset, float yoffset, float zoffset);
 	// Input state
 	float _lastFrame;
 
@@ -364,6 +366,7 @@ public:
 	// Euler Angles
 	float _yaw;
 	float _pitch;
+	int _roll;
 	int _angleRotationIndex;
 	Common::Array<float> _angleRotations;
 

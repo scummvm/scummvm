@@ -174,6 +174,8 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 			_yaw = y - 90;			// 180 to 270 maps to 90 to 0 (yaw should be 90 to 0)
 		else
 			_yaw = 360 + 90 - y;	// 270 to 360 maps to 90 to 180 (yaw should be 90 to 180)
+
+		_roll = rotation.z();
 	}
 
 	debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
@@ -443,6 +445,9 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 
 	if (fallen > _maxFallingDistance) {
 		_hasFallen = !_disableFalling;
+		_roll = -90;
+		_pitch = 0;
+		changePlayerHeight(0);
 		_avoidRenderingFrames = 60 * 3;
 		_endGameDelayTicks = 60 * 5;
 		if (isEclipse()) // No need for an variable index, since these are special types of sound

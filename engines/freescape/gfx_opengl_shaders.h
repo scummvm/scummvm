@@ -76,7 +76,7 @@ public:
 	virtual void clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport = false) override;
 	virtual void setViewport(const Common::Rect &rect) override;
 	virtual Common::Point nativeResolution() override;
-	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) override;
+	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float rollAngle = 0.0f) override;
 	virtual void updateProjectionMatrix(float fov, float aspectRatio, float nearClipPlane, float farClipPlane) override;
 
 	virtual void useColor(uint8 r, uint8 g, uint8 b) override;

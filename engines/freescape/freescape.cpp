@@ -105,6 +105,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_cameraRight = Math::Vector3d(0, 0, 0);
 	_yaw = 0;
 	_pitch = 0;
+	_roll = 0;
 	_upVector = Math::Vector3d(0, 1, 0);
 	_mouseSensitivity = 0.25f;
 	_demoMode = false;
@@ -419,7 +420,7 @@ void FreescapeEngine::drawFrame() {
 
 	float aspectRatio = isCastle() ? 1.6 : 2.18;
 	_gfx->updateProjectionMatrix(75.0, aspectRatio, _nearClipPlane, farClipPlane);
-	_gfx->positionCamera(_position, _position + _cameraFront);
+	_gfx->positionCamera(_position, _position + _cameraFront, _roll);
 
 	if (_underFireFrames > 0) {
 		int underFireColor = _currentArea->_underFireBackgroundColor;
@@ -488,7 +489,7 @@ void FreescapeEngine::resetInput() {
 	warpMouseToCrossair();
 	_eventManager->purgeMouseEvents();
 	_eventManager->purgeKeyboardEvents();
-	rotate(0, 0);
+	rotate(0, 0, 0);
 }
 
 Common::Point FreescapeEngine::crossairPosToMousePos(const Common::Point &crossairPos) {
@@ -560,13 +561,19 @@ void FreescapeEngine::processInput() {
 				shoot();
 				break;
 			case kActionRotateUp:
-				rotate(0, 5);
+				rotate(0, _angleRotations[_angleRotationIndex], 0);
 				break;
 			case kActionRotateDown:
-				rotate(0, -5);
+				rotate(0, -_angleRotations[_angleRotationIndex], 0);
+				break;
+			case kActionRotateLeft:
+				rotate(-_angleRotations[_angleRotationIndex], 0, 0);
+				break;
+			case kActionRotateRight:
+				rotate(_angleRotations[_angleRotationIndex], 0, 0);
 				break;
 			case kActionTurnBack:
-				rotate(180, 0);
+				rotate(180, 0, 0);
 				break;
 			case kActionToggleClipMode:
 				_noClipMode = !_noClipMode;
@@ -644,7 +651,7 @@ void FreescapeEngine::processInput() {
 					event.relMouse.y = -event.relMouse.y;
 
 				_eventManager->purgeMouseEvents();
-				rotate(event.relMouse.x * _mouseSensitivity, event.relMouse.y * _mouseSensitivity);
+				rotate(event.relMouse.x * _mouseSensitivity, event.relMouse.y * _mouseSensitivity, 0);
 			}
 			break;
 
@@ -956,6 +963,7 @@ void FreescapeEngine::initGameState() {
 	_avoidRenderingFrames = 0;
 	_yaw = 0;
 	_pitch = 0;
+	_roll = 0;
 	_endGameKeyPressed = false;
 	_endGamePlayerEndArea = false;
 
@@ -971,9 +979,10 @@ void FreescapeEngine::initGameState() {
 	_exploredAreas.clear();
 }
 
-void FreescapeEngine::rotate(float xoffset, float yoffset) {
+void FreescapeEngine::rotate(float xoffset, float yoffset, float zoffset) {
 	_yaw -= xoffset;
 	_pitch += yoffset;
+	_roll += zoffset;
 
 	// Make sure that when pitch is out of bounds, screen doesn't get flipped
 	if (_pitch > 360.0f)
@@ -985,6 +994,11 @@ void FreescapeEngine::rotate(float xoffset, float yoffset) {
 		_yaw -= 360.0f;
 	if (_yaw < 0.0f)
 		_yaw += 360.0f;
+
+	if (_roll > 360.0f)
+		_roll -= 360.0f;
+	if (_roll < 0.0f)
+		_roll += 360.0f;
 
 	updateCamera();
 }
