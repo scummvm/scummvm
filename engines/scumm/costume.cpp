@@ -525,6 +525,7 @@ void ClassicCostumeRenderer::byleRLEDecode(ByleRLEData &compData) {
 	maskbit = revBitMask(compData.x & 7);
 	mask = compData.maskPtr + compData.x / 8;
 
+	// see https://wiki.scummvm.org/index.php/SCUMM/Technical_Reference/Costume_resources#1.3_RLE_compression
 	if (len)
 		goto StartPos;
 
@@ -544,7 +545,7 @@ void ClassicCostumeRenderer::byleRLEDecode(ByleRLEData &compData) {
 				if (color && !masked) {
 					if (_shadowMode & 0x20) {
 						pcolor = _shadowTable[*dst];
-					} else {
+					} else {	// _shadowMode == 0
 						pcolor = _palette[color];
 						if (pcolor == 13 && _shadowTable)
 							pcolor = _shadowTable[*dst];

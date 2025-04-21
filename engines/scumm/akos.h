@@ -24,7 +24,6 @@
 
 #include "scumm/base-costume.h"
 #include "scumm/he/wiz_he.h"
-#include <functional>
 
 namespace Scumm {
 
@@ -125,15 +124,6 @@ protected:
 	void byleRLEDecode(ByleRLEData &compData);
 
 	byte paintCelByleRLE(int xMoveCur, int yMoveCur);
-	byte paintCelByleRLECommon(
-		int xMoveCur,
-		int yMoveCur,
-		int numColors,
-		int scaletableSize,
-		ByleRLEData &compData,
-		std::function<void(const Common::Rect &)> markAsDirty,
-		bool &decode);
-
 	byte paintCelCDATRLE(int xMoveCur, int yMoveCur);
 	byte paintCelMajMin(int xMoveCur, int yMoveCur);
 	byte paintCelTRLE(int actor, int drawToBack, int celX, int celY, int celWidth, int celHeight, byte tcolor, const byte *shadowTablePtr, int32 specialRenderFlags);

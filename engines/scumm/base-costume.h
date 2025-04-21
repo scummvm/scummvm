@@ -25,6 +25,8 @@
 #include "common/scummsys.h"
 #include "scumm/actor.h"		// for CostumeData
 
+#include <functional>
+
 namespace Scumm {
 
 #include "common/pack-start.h"	// START STRUCT PACKING
@@ -156,6 +158,17 @@ public:
 
 protected:
 	virtual byte drawLimb(const Actor *a, int limb) = 0;
+
+	virtual byte paintCelByleRLECommon(
+		int xMoveCur,
+		int yMoveCur,
+		int numColors,
+		int scaletableSize,
+		bool amiOrPcEngCost,
+		bool c64Cost,
+		ByleRLEData &compData,
+		std::function<void(const Common::Rect &)> markAsDirty,
+		bool &decode);
 
 	void skipCelLines(ByleRLEData &compData, int num);
 };
