@@ -550,12 +550,6 @@ const char *Resource::getMusicPath(int num, char *buf, int bufSize, uint32_t *of
 	case DT_3DO:
 		assert(offset);
 		name = _3do->getMusicName(num, offset);
-#ifdef OPERA_ISO
-		if (*offset != 0) {
-			// playing music from .ISO
-			return dataDir;
-		}
-#endif
 		break;
 	default:
 		break;

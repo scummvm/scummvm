@@ -27,15 +27,11 @@
 
 namespace Awe {
 
-struct OperaIso;
-
 struct Resource3do {
 	char _musicPath[32] = { '\0' };
 	char _cpakPath[64] = { '\0' };
-	OperaIso *_iso = nullptr;
 
-	Resource3do();
-	~Resource3do();
+	Resource3do() {}
 
 	bool readEntries();
 
