@@ -25,6 +25,7 @@
 #include "common/endian.h"
 #include "common/fs.h"
 #include "common/func.h"
+#include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 
@@ -39,7 +40,23 @@ class SnatcherEngine;
 class SceneModule;
 class FIO;
 
+struct Config {
+	Config() : volumeMusic(0), volumeSFX(0), volumeSpeech(0), lightGunAvailable(1), useLightGun(0), controllerSetup(0), disableStereo(0), hasRAMCart(1), hasFreeBuram(1), lightGunBias() {}
+	int16 volumeMusic;
+	int16 volumeSFX;
+	int16 volumeSpeech;
+	int16 lightGunAvailable;
+	int16 useLightGun;
+	int16 controllerSetup;
+	int16 disableStereo;
+	int16 hasRAMCart;
+	int16 hasFreeBuram;
+	Common::Point lightGunBias;
+};
+
 struct GameState {
+	GameState() : frameNo(0), frameState(0), finish(0), modProcessTop(0), modProcessSub(0), counter(0), modIndex(0), menuSelect(0),
+				  main_switch_1_0_orM1_postIntr(-1), topLevelState(0), conf(Config()) {}
 	int16 frameNo;
 	int16 frameState;
 	int16 finish;
@@ -50,6 +67,7 @@ struct GameState {
 	int16 menuSelect;
 	int16 main_switch_1_0_orM1_postIntr;
 	int16 topLevelState;
+	Config conf;
 };
 
 class SceneHandler {
@@ -120,21 +138,23 @@ public:
 	FIO(SnatcherEngine *vm, bool isBigEndian);
 	~FIO();
 
-	SceneModule *loadModule(int index);
-
 	enum EndianMode {
 		kPlatformEndianness = 0,
 		kForceLE,
 		kForceBE
 	};
 
-	Common::SeekableReadStream *readStream(const Common::Path &file);
-	Common::SeekableReadStreamEndian *readStreamEndian(const Common::Path &file, EndianMode em = kPlatformEndianness);
+	SceneModule *loadModule(int index);
+	const uint8 *fileData(int index, uint32 *fileSize);
 	uint8 *fileData(const Common::Path &file, uint32 *fileSize);
+	Common::SeekableReadStream *readStream(int index);
+	Common::SeekableReadStream *readStream(const Common::Path &file);
+	Common::SeekableReadStreamEndian *readStreamEndian(int index, EndianMode em = kPlatformEndianness);
+	Common::SeekableReadStreamEndian *readStreamEndian(const Common::Path &file, EndianMode em = kPlatformEndianness);
+	
 
 private:
 	Common::SearchSet _files;
-
 	SnatcherEngine *_vm;
 	bool _bigEndianTarget;
 

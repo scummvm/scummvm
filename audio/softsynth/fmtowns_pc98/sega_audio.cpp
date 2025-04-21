@@ -24,18 +24,30 @@
 #include "audio/softsynth/fmtowns_pc98/pcm_common.h"
 #include "common/mutex.h"
 
+
 class SegaPCMChannel final : public PCMChannel_Base {
 public:
-	SegaPCMChannel() : PCMChannel_Base(), _playing(false) {}
-	~SegaPCMChannel() override {}
+	SegaPCMChannel(SegaAudioInterfaceInternal *sai) : PCMChannel_Base(), _sai(sai), _playing(false), _stream(), _streamSamplesLeft(0), _streamFeedLen(0), _streamStartAddr(0), _streamTempBuff(nullptr) {}
+	~SegaPCMChannel() override;
 
-	void play(const int8 *data, uint16 dataSize, uint16 startAddress, uint16 loopStart, uint16 loopLen, uint16 pitch, uint8 pan, uint8 vol);
+	void play(const int8 *data, uint16 dataSize, uint16 startAddress, uint16 loopStart, uint16 loopLen, uint16 rate, uint8 pan, uint8 vol);
+	void playStream(Common::SharedPtr<Common::SeekableReadStream> &stream, const int8 *data, uint16 memAreaStartAddr, uint16 memAreaSize, uint16 rate, uint8 pan, uint8 vol);
 	void stop();
 	bool isPlaying() const override;
 
 private:
 	void stopInternal() override;
+	void dataEndHandler() override;
+	void feed();
 	bool _playing;
+
+	Common::SharedPtr<Common::SeekableReadStream> _stream;
+	uint8 *_streamTempBuff;
+	uint32 _streamSamplesLeft;
+	uint16 _streamStartAddr;
+	uint16 _streamFeedLen;
+	SegaAudioInterfaceInternal *_sai;
+	Common::Mutex _mutex2;
 };
 
 class SegaPSG {
@@ -91,8 +103,10 @@ public:
 	bool init() override;
 
 	void loadPCMData(uint16 address, const uint8 *data, uint16 dataLen);
-	void playPCMChannel(uint8 channel, uint8 dataStart, uint16 loopStart, uint16 pitch, uint8 pan, uint8 vol);
+	void playPCMChannel(uint8 channel, uint8 dataStart, uint16 loopStart, uint16 rate, uint8 pan, uint8 vol);
+	void playPCMStream(Common::SharedPtr<Common::SeekableReadStream> &stream, uint8 memStart, uint16 memAreaSize, uint8 channel, uint16 rate, uint8 pan, uint8 vol);
 	void stopPCMChannel(uint8 channel);
+	bool isPCMChannelPlaying(uint8 channel) const;
 
 	void psgWrite(uint8 data);
 
@@ -194,7 +208,7 @@ bool SegaAudioInterfaceInternal::init() {
 	_psgDev = new SegaPSG(7670454 / 72, 16);
 	_pcmDev = new PCMDevice_Base(33300, 16, 8);
 	for (int i = 0; i < 8; ++i) {
-		_pcmChan[i] = new SegaPCMChannel();
+		_pcmChan[i] = new SegaPCMChannel(this);
 		_pcmDev->assignChannel(i, _pcmChan[i]);
 	}
 
@@ -217,8 +231,19 @@ void SegaAudioInterfaceInternal::loadPCMData(uint16 address, const uint8 *data, 
 	if (!_ready)
 		return;
 	Common::StackLock lock(_mutex);
-	while (dataSize--)
-		_pcmBanks[address++] = (*data & 0x80) ? (*data++ & 0x7F) : -*data++;
+	// According to the manual, 0 is the minimum, 127 the center and 253 the maximum. 255 is the stop marker.
+	// We take that into account when converting the samples to our signed internal format.
+	while (dataSize--) {
+		uint8 val = *data++;
+		if (val == 0xFF) {
+			_pcmBanks[address++] = -128; // We use -128 as the stop marker.
+		} else if (val == 0xFE) {
+			_pcmBanks[address++] = 126; // Shouldn't occur.
+		} else {
+			++val;
+			_pcmBanks[address++] = val & 0x80 ? val & 0x7F : -val;
+		}
+	}
 }
 
 void SegaAudioInterfaceInternal::playPCMChannel(uint8 channel, uint8 dataStart, uint16 loopStart, uint16 rate, uint8 pan, uint8 vol) {
@@ -229,12 +254,27 @@ void SegaAudioInterfaceInternal::playPCMChannel(uint8 channel, uint8 dataStart, 
 	_pcmChan[channel]->play(_pcmBanks, pcmCountSamples(dataStart << 8), dataStart << 8, loopStart, pcmCountSamples(loopStart), rate, pan, vol);
 }
 
+void SegaAudioInterfaceInternal::playPCMStream(Common::SharedPtr<Common::SeekableReadStream> &stream, uint8 memStart, uint16 memAreaSize, uint8 channel, uint16 rate, uint8 pan, uint8 vol) {
+	if (!_ready)
+		return;
+	Common::StackLock lock(_mutex);
+	assert(channel < 8);
+	_pcmChan[channel]->playStream(stream, _pcmBanks, memStart << 8, memAreaSize, rate, pan, vol);
+}
+
 void SegaAudioInterfaceInternal::stopPCMChannel(uint8 channel) {
 	if (!_ready)
 		return;
 	Common::StackLock lock(_mutex);
 	assert(channel < 8);
 	_pcmChan[channel]->stop();
+}
+
+bool SegaAudioInterfaceInternal::isPCMChannelPlaying(uint8 channel) const {
+	if (!_ready)
+		return 0;
+	assert(channel < 8);
+	return _pcmChan[channel]->isPlaying();
 }
 
 void SegaAudioInterfaceInternal::psgWrite(uint8 data) {
@@ -326,20 +366,37 @@ uint16 SegaAudioInterfaceInternal::pcmCountSamples(uint16 address) const {
 	const int8 *end = &_pcmBanks[0xFFFF];
 	const int8 *pos = start;
 	for (; pos <= end; ++pos) {
-		if (*pos == 0x7F)
+		if (*pos == -128)
 			break;
 	}
 	return pos - start;
 }
 
+SegaPCMChannel::~SegaPCMChannel() {
+	delete[] _streamTempBuff;
+}
+
 void SegaPCMChannel::play(const int8 *data, uint16 dataSize, uint16 startAddress, uint16 loopStart, uint16 loopLen, uint16 rate, uint8 pan, uint8 vol) {
 	setData(data, (startAddress + dataSize) << 11, startAddress << 11);
-	setupLoop(loopLen ? loopStart : (startAddress + dataSize), loopLen);
+	if (_streamTempBuff != nullptr)
+		setupLoop(loopLen ? loopStart : (startAddress + dataSize), loopLen);
 	setRate(rate);
 	setPanPos(pan);
 	setVolume(vol);
 	activate();
+	Common::StackLock lock(_mutex2);
 	_playing = true;
+}
+
+void SegaPCMChannel::playStream(Common::SharedPtr<Common::SeekableReadStream> &stream, const int8 *data, uint16 memAreaStartAddr, uint16 memAreaSize, uint16 rate, uint8 pan, uint8 vol) {
+	_stream = stream;
+	_streamSamplesLeft = stream->size();
+	_streamFeedLen = memAreaSize;
+	delete[] _streamTempBuff;
+	_streamTempBuff = new uint8[memAreaSize]();
+	_streamStartAddr = memAreaStartAddr;
+	feed();
+	play(data, memAreaSize, memAreaStartAddr, 0, 0, rate, pan, vol);
 }
 
 void SegaPCMChannel::stop() {
@@ -347,11 +404,36 @@ void SegaPCMChannel::stop() {
 }
 
 bool SegaPCMChannel::isPlaying() const {
+	Common::StackLock lock(_mutex2);
 	return _playing;
 }
 
 void SegaPCMChannel::stopInternal() {
+	Common::StackLock lock(_mutex2);
 	_playing = false;
+	delete[] _streamTempBuff;
+	_streamTempBuff = nullptr;
+	_stream.reset();
+}
+
+void SegaPCMChannel::dataEndHandler() {
+	if (_stream.get() && _streamSamplesLeft)
+		feed();
+}
+
+void SegaPCMChannel::feed() {
+	uint32 readSize = MIN<uint32>(_streamFeedLen, _streamSamplesLeft);
+	if (readSize) {
+		_stream.get()->read(_streamTempBuff, readSize);
+		_streamSamplesLeft -= readSize;
+		_sai->loadPCMData(_streamStartAddr, _streamTempBuff, readSize);
+	} else {
+		delete[] _streamTempBuff;
+		_streamTempBuff = nullptr;
+		_stream.reset();
+	}
+	if (_playing)
+		setupLoop(_streamSamplesLeft ? _streamStartAddr : (_streamStartAddr + _streamFeedLen), readSize);
 }
 
 SegaPSG::SegaPSG(int samplingRate, int deviceVolume) : _intRate(3579545), _extRate(samplingRate), _deviceVolume(deviceVolume), _numChannels(3), _cr(-1),
@@ -450,8 +532,16 @@ void SegaAudioInterface::playPCMChannel(uint8 channel, uint8 dataStart, uint16 l
 	_internal->playPCMChannel(channel, dataStart, loopStart, rate, pan, vol);
 }
 
+void SegaAudioInterface::playPCMStream(Common::SharedPtr<Common::SeekableReadStream> &stream, uint8 memStart, uint16 memAreaSize, uint8 channel, uint16 rate, uint8 pan, uint8 vol) {
+	_internal->playPCMStream(stream, memStart, memAreaSize, channel, rate, pan, vol);
+}
+
 void SegaAudioInterface::stopPCMChannel(uint8 channel) {
 	_internal->stopPCMChannel(channel);
+}
+
+bool SegaAudioInterface::isPCMChannelPlaying(uint8 channel) const {
+	return _internal->isPCMChannelPlaying(channel);
 }
 
 void SegaAudioInterface::writeReg(uint8 part, uint8 regAddress, uint8 value) {

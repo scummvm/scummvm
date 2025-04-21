@@ -12,7 +12,7 @@ MODULE_OBJS := \
 	snatcher.o \
 	sound.o \
 	sound_device_scd.o \
-	statires.o \
+	staticres.o \
 	transition_scd.o \
 	util.o
 

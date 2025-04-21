@@ -48,9 +48,15 @@ public:
 	virtual void anim_setFrame(uint8 animObjId, uint16 frameNo) = 0;
 	virtual uint16 anim_getCurFrameNo(uint8 animObjId) const = 0;
 	virtual bool anim_isEnabled(uint8 animObjId) const = 0;
+	virtual void anim_gunTestUpdate() = 0;
 
 	virtual uint16 screenWidth() const = 0;
 	virtual uint16 screenHeight() const = 0;
+
+	// The original game does not have mouse control on any platform. But
+	// the Sega CD version supports a lightgun. So we do have some fundamentals
+	// on which we can set this this up...
+	virtual void createMouseCursor() = 0;
 
 	// This is special code from the CD-ROM boot sectors that does not
 	// share anything with the rest of the game. So it makes sense to

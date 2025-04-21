@@ -22,26 +22,40 @@
 #ifndef SNATCHER_SOUND_DEVICE_H
 #define SNATCHER_SOUND_DEVICE_H
 
-#include "audio//mididrv.h"
+#include "audio/mididrv.h"
 #include "common/platform.h"
 
+namespace Audio {
+class Mixer;
+}
+
 namespace Snatcher {
+
+class FIO;
 
 class SoundDevice {
 public:
 	virtual ~SoundDevice() {}
 
-	virtual void musicPlay(int track) = 0;
-	virtual void musicStop() = 0;
-	virtual bool musicIsPlaying() const = 0;
-	virtual uint32 musicGetTime() const = 0;
+	virtual bool init(Audio::Mixer *mixer) = 0;
 
-	virtual void fmStartSound(int track) = 0;
+	virtual void cdaPlay(int track) = 0;
+	virtual void cdaStop() = 0;
+	virtual bool cdaIsPlaying() const = 0;
+	virtual uint32 cdaGetTime() const = 0;
 
-	virtual void pcmPlayEffect(int track) = 0;
-	virtual void pcmDoCommand(int cmd, int arg) = 0;
+	virtual void fmSendCommand(int cmd, int arg) = 0;
+	virtual uint8 fmGetStatus() const = 0;
+
+	virtual void pcmSendCommand(int cmd, int arg) = 0;
+	virtual void pcmInitSound(int sndId) = 0;
+	virtual uint8 pcmGetStatus() const = 0;
 
 	virtual void pause(bool toggle) = 0;
+	virtual void update() = 0;
+
+	virtual void setMusicVolume(int vol) = 0;
+	virtual void setSoundEffectVolume(int vol) = 0;
 
 protected:
 	SoundDevice() : _musicStartTime(0) {}
@@ -49,10 +63,10 @@ protected:
 	uint32 _musicStartTime;
 
 private:
-	static SoundDevice *createSegaSoundDevice();
+	static SoundDevice *createSegaSoundDevice(FIO *fio);
 
 public:
-	static SoundDevice *create(Common::Platform platform, int soundOptions);
+	static SoundDevice *create(FIO *fio, Common::Platform platform, int soundOptions);
 };
 
 } // End of namespace Snatcher

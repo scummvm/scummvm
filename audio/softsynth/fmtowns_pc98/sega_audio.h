@@ -22,7 +22,9 @@
 #ifndef SEGA_AUDIO_H
 #define SEGA_AUDIO_H
 
+#include "common/ptr.h"
 #include "common/scummsys.h"
+#include "common/stream.h"
 
 namespace Audio {
 class Mixer;
@@ -46,9 +48,20 @@ public:
 	void reset();
 
 	void loadPCMData(uint16 address, const uint8 *data, uint16 dataSize);
-	void playPCMChannel(uint8 channel, uint8 dataStart, uint16 loopStart, uint16 rate, uint8 pan, uint8 env);
+	void playPCMChannel(uint8 channel, uint8 dataStart, uint16 loopStart, uint16 rate, uint8 pan, uint8 vol);
 	void stopPCMChannel(uint8 channel);
+	// Convenience function. The chip only allows to read out the data position and derive the state from that.
+	// But this wouldn't work with our stream play function, since it requires tracking the stream state, too.
+	// So, we just return the data that we actually want...
+	bool isPCMChannelPlaying(uint8 channel) const;
 
+	// Convenience function, since it is so much easier to implement this on this level than having the samples buffer
+	// invoke a callback into the engine
+	// @ memstart: same 8-bit format as dataStart (in playPCMChannel), begin of the buffer in the PCM memory area
+	// @ memAreaSize: byte size of the buffer in the PCM memory area
+	void playPCMStream(Common::SharedPtr<Common::SeekableReadStream> &stream, uint8 memStart, uint16 memAreaSize, uint8 channel, uint16 rate, uint8 pan, uint8 vol);
+
+	// OPN registers
 	void writeReg(uint8 part, uint8 regAddress, uint8 value);
 	uint8 readReg(uint8 part, uint8 regAddress);
 

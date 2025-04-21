@@ -61,41 +61,41 @@ const uint32 *_timeStamp;
 SH_HEAD_END(D0)
 
 SH_IMP_FRMTBL(D0) {
-	SH_FRM(00),
-	SH_FRM(01),
-	SH_FRM(02),
-	SH_FRM(03),
-	SH_FRM(04),
-	SH_FRM(05),
-	SH_FRM(01),
-	SH_FRM(07),
-	SH_FRM(08),
-	SH_FRM(09),
-	SH_FRM(10),
-	SH_FRM(11),
-	SH_FRM(12),
-	SH_FRM(08),
-	SH_FRM(14),
-	SH_FRM(08),
-	SH_FRM(16),
-	SH_FRM(08),
-	SH_FRM(18),
-	SH_FRM(08),
-	SH_FRM(20),
-	SH_FRM(08),
-	SH_FRM(22),
-	SH_FRM(08),
-	SH_FRM(24),
-	SH_FRM(08),
-	SH_FRM(26),
-	SH_FRM(08),
-	SH_FRM(28),
-	SH_FRM(08),
-	SH_FRM(30),
-	SH_FRM(31),
-	SH_FRM(32),
-	SH_FRM(01),
-	SH_FRM(34)
+	SH_FRM(D0, 00),
+	SH_FRM(D0, 01),
+	SH_FRM(D0, 02),
+	SH_FRM(D0, 03),
+	SH_FRM(D0, 04),
+	SH_FRM(D0, 05),
+	SH_FRM(D0, 01),
+	SH_FRM(D0, 07),
+	SH_FRM(D0, 08),
+	SH_FRM(D0, 09),
+	SH_FRM(D0, 10),
+	SH_FRM(D0, 11),
+	SH_FRM(D0, 12),
+	SH_FRM(D0, 08),
+	SH_FRM(D0, 14),
+	SH_FRM(D0, 08),
+	SH_FRM(D0, 16),
+	SH_FRM(D0, 08),
+	SH_FRM(D0, 18),
+	SH_FRM(D0, 08),
+	SH_FRM(D0, 20),
+	SH_FRM(D0, 08),
+	SH_FRM(D0, 22),
+	SH_FRM(D0, 08),
+	SH_FRM(D0, 24),
+	SH_FRM(D0, 08),
+	SH_FRM(D0, 26),
+	SH_FRM(D0, 08),
+	SH_FRM(D0, 28),
+	SH_FRM(D0, 08),
+	SH_FRM(D0, 30),
+	SH_FRM(D0, 31),
+	SH_FRM(D0, 32),
+	SH_FRM(D0, 01),
+	SH_FRM(D0, 34)
 };
 
 SH_IMP_CTOR(D0) {
@@ -118,9 +118,9 @@ SH_IMP_DTOR(D0)	{
 SH_IMPL_UPDT(D0) {
 	if (state.frameNo == -1) {
 		if (state.frameState == 0) {
-			_vm->sound()->musicPlay(5);
+			_vm->sound()->cdaPlay(5);
 			++state.frameState;
-		} else if (_vm->sound()->musicIsPlaying()) {
+		} else if (_vm->sound()->cdaIsPlaying()) {
 			state.frameNo = 0;
 			state.frameState = 0;
 		}
@@ -129,10 +129,10 @@ SH_IMPL_UPDT(D0) {
 
 	if (state.frameNo >= (int)_frameProcs.size() || !_frameProcs[state.frameNo]->isValid()) {
 		error("%s(): Invalid call to frame proc %d", __FUNCTION__, state.frameNo);
-	} else if (_vm->sound()->musicGetTime() >= _timeStamp[state.frameNo]) {
+	} else if (_vm->sound()->cdaGetTime() >= _timeStamp[state.frameNo]) {
 		(*_frameProcs[state.frameNo])(state);
 		++state.frameNo;
-	} else if (_vm->inputFlag() & 0x80) {
+	} else if (_vm->input().controllerFlags & 0x80) {
 		state.finish = -1;
 		state.frameNo = 0;
 	}
@@ -152,12 +152,12 @@ SH_IMPL_FRM(D0, 02) {
 }
 
 SH_IMPL_FRM(D0, 03) {
-	_vm->sound()->musicPlay(4);
+	_vm->sound()->cdaPlay(4);
 }
 
 SH_IMPL_FRM(D0, 04) {
 	--state.frameNo;
-	if (_vm->sound()->musicIsPlaying()) {
+	if (_vm->sound()->cdaIsPlaying()) {
 		++state.frameNo;
 		state.frameState = 0;
 	}
