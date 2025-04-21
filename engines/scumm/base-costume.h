@@ -106,6 +106,9 @@ protected:
 	// width and height of cel to decode
 	int _width, _height;
 
+	// actor _palette
+	uint16 _palette[256] = {};
+
 public:
 	struct ByleRLEData {
 		// Parameters for the original ("V1") costume codec.
@@ -170,6 +173,8 @@ protected:
 		ByleRLEData &compData,
 		std::function<void(const Common::Rect &)> markAsDirty,
 		bool &decode);
+
+	void byleRLEDecode(ByleRLEData &compData, int16 actorHitX = 0, int16 actorHitY = 0, bool *actorHitResult = nullptr, const uint8 *xmap = nullptr);
 
 	void skipCelLines(ByleRLEData &compData, int num);
 };

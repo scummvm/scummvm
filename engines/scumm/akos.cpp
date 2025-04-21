@@ -496,125 +496,6 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	return result;
 }
 
-void AkosRenderer::byleRLEDecode(ByleRLEData &compData) {
-	const byte *mask, *src;
-	byte *dst;
-	byte len, maskbit;
-	int lastColumnX, y;
-	uint16 color, height, pcolor;
-	int scaleIndexY;
-	bool masked;
-
-	lastColumnX = -1;
-	y = compData.y;
-	src = _srcPtr;
-	dst = compData.destPtr;
-	len = compData.repLen;
-	color = compData.repColor;
-	height = _height;
-
-	scaleIndexY = compData.scaleYIndex;
-	maskbit = revBitMask(compData.x & 7);
-	mask = compData.maskPtr + compData.x / 8;
-
-	if (len)
-		goto StartPos;
-
-	do {
-		len = *src++;
-		color = len >> compData.shr;
-		len &= compData.mask;
-		if (!len)
-			len = *src++;
-
-		do {
-			if (_scaleY == 255 || compData.scaleTable[scaleIndexY++ & compData.scaleIndexMask] < _scaleY) {
-				if (_actorHitMode) {
-					if (color && y == _actorHitY && compData.x == _actorHitX) {
-						_actorHitResult = true;
-						return;
-					}
-				} else {
-					masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom)
-							 || (compData.x < compData.boundsRect.left || compData.x >= compData.boundsRect.right)
-							 || (compData.maskPtr && (*mask & maskbit));
-					bool skipColumn = false;
-
-					if (color && !masked) {
-						pcolor = _palette[color];
-						if (_shadowMode == 1) {
-							if (pcolor == 13) {
-								// In shadow mode 1 skipColumn works more or less the same way as in shadow
-								// mode 3. It is only ever checked and applied if pcolor is 13.
-								skipColumn = (lastColumnX == compData.x);
-								pcolor = _shadowTable[*dst];
-							}
-						} else if (_shadowMode == 2) {
-							error("AkosRenderer::byleRLEDecode(): shadowMode 2 not implemented."); // TODO
-						} else if (_shadowMode == 3) {
-							if (_vm->_game.features & GF_16BIT_COLOR) {
-								// I add the column skip here, too, although I don't know whether it always
-								// applies. But this is the only way to prevent recursive shading of pixels.
-								// This might need more fine tuning...
-								skipColumn = (lastColumnX == compData.x);
-								uint16 srcColor = (pcolor >> 1) & 0x7DEF;
-								uint16 dstColor = (READ_UINT16(dst) >> 1) & 0x7DEF;
-								pcolor = srcColor + dstColor;
-							} else if (_vm->_game.heversion >= 90) {
-								// I add the column skip here, too, although I don't know whether it always
-								// applies. But this is the only way to prevent recursive shading of pixels.
-								// This might need more fine tuning...
-								skipColumn = (lastColumnX == compData.x);
-								pcolor = (pcolor << 8) + *dst;
-								pcolor = _xmap[pcolor];
-							} else if (pcolor < 8) {
-								// This mode is used in COMI. The column skip only takes place when the shading
-								// is actually applied (for pcolor < 8). The skip avoids shading of pixels that
-								// already have been shaded.
-								skipColumn = (lastColumnX == compData.x);
-								pcolor = (pcolor << 8) + *dst;
-								pcolor = _shadowTable[pcolor];
-							}
-						}
-						if (!skipColumn) {
-							if (_vm->_bytesPerPixel == 2) {
-								WRITE_UINT16(dst, pcolor);
-							} else {
-								*dst = pcolor;
-							}
-						}
-					}
-				}
-				dst += _out.pitch;
-				mask += _numStrips;
-				y++;
-			}
-			if (!--height) {
-				if (!--compData.skipWidth)
-					return;
-				height = _height;
-				y = compData.y;
-
-				scaleIndexY = compData.scaleYIndex;
-				lastColumnX = compData.x;
-
-				if (_scaleX == 255 || compData.scaleTable[compData.scaleXIndex] < _scaleX) {
-					compData.x += compData.scaleXStep;
-					if (compData.x < compData.boundsRect.left || compData.x >= compData.boundsRect.right)
-						return;
-					maskbit = revBitMask(compData.x & 7);
-					compData.destPtr += compData.scaleXStep * _vm->_bytesPerPixel;
-				}
-
-				compData.scaleXIndex = (compData.scaleXIndex + compData.scaleXStep) & compData.scaleIndexMask;
-				dst = compData.destPtr;
-				mask = compData.maskPtr + compData.x / 8;
-			}
-		StartPos:;
-		} while (--len);
-	} while (true);
-}
-
 const byte bigCostumeScaleTable[768] = {
 	0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0,
 	0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
@@ -775,7 +656,7 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 
 	compData.maskPtr = _vm->getMaskBuffer(-(_vm->_virtscr[kMainVirtScreen].xstart & 7), compData.y, _zbuf);
 
-	byleRLEDecode(compData);
+	byleRLEDecode(compData, _actorHitX, _actorHitY, _actorHitMode ? &_actorHitResult : nullptr, _xmap);
 
 	return drawFlag;
 }
