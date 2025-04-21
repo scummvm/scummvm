@@ -110,6 +110,7 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 
 	_borderExtra = nullptr;
 	_borderExtraTexture = nullptr;
+	_playerSid = nullptr;
 }
 
 DrillerEngine::~DrillerEngine() {
