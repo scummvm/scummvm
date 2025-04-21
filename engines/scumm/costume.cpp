@@ -71,7 +71,7 @@ static const int v1MMNESLookup[25] = {
 	0x17, 0x00, 0x01, 0x05, 0x16
 };
 
-byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
+byte ClassicCostumeRenderer::paintCelByleRLE(int xmoveCur, int ymoveCur) {
 	int i, skip = 0;
 	byte drawFlag = 1;
 	bool use_scaling;
@@ -308,13 +308,13 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	if (_loaded._format == 0x57) {
 		// The v1 costume renderer needs the actor number, which is
 		// the same thing as the costume renderer's _actorID.
-		procC64(compData, _actorID);
+		byleRLEDecode_C64(compData, _actorID);
 	} else if (newAmiCost)
-		proc3_ami(compData);
+		byleRLEDecode_ami(compData);
 	else if (pcEngCost)
-		procPCEngine(compData);
+		byleRLEDecode_PCEngine(compData);
 	else
-		proc3(compData);
+		byleRLEDecode(compData);
 
 	return drawFlag;
 }
@@ -339,7 +339,7 @@ static const int v1MMActorPalatte2[25] = {
 			dst[p + 1] = palette[pcolor]; \
 	}
 
-void ClassicCostumeRenderer::procC64(ByleRLEData &compData, int actor) {
+void ClassicCostumeRenderer::byleRLEDecode_C64(ByleRLEData &compData, int actor) {
 	const byte *mask, *src;
 	byte *dst;
 	byte len;
@@ -436,7 +436,7 @@ extern "C" int ClassicProc3RendererShadowARM(int _scaleY,
 										int _scaleIndexY);
 #endif
 
-void ClassicCostumeRenderer::proc3(ByleRLEData &compData) {
+void ClassicCostumeRenderer::byleRLEDecode(ByleRLEData &compData) {
 	const byte *mask, *src;
 	byte *dst;
 	byte len, maskbit;
@@ -539,7 +539,7 @@ void ClassicCostumeRenderer::proc3(ByleRLEData &compData) {
 	} while (1);
 }
 
-void ClassicCostumeRenderer::proc3_ami(ByleRLEData &compData) {
+void ClassicCostumeRenderer::byleRLEDecode_ami(ByleRLEData &compData) {
 	const byte *mask, *src;
 	byte *dst;
 	byte maskbit, len, height, width;
@@ -623,7 +623,7 @@ static void PCESetCostumeData(byte block[16][16], int index, byte value) {
 	}
 }
 
-void ClassicCostumeRenderer::procPCEngine(ByleRLEData &compData) {
+void ClassicCostumeRenderer::byleRLEDecode_PCEngine(ByleRLEData &compData) {
 	const byte *mask, *src;
 	byte *dst;
 	byte maskbit;
@@ -685,7 +685,7 @@ void ClassicCostumeRenderer::procPCEngine(ByleRLEData &compData) {
 
 					pcolor = block[row][col];
 					masked = (compData.y + yPos < 0 || compData.y + yPos >= _out.h) ||
-					         (compData.x + xPos < 0 || compData.x + xPos >= _out.w) ||
+							 (compData.x + xPos < 0 || compData.x + xPos >= _out.w) ||
 							 (compData.maskPtr && (mask[0] & maskbit));
 
 					if (pcolor && !masked) {
@@ -961,7 +961,7 @@ byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 				}
 			}
 
-			byte result = mainRoutine(xmoveCur, ymoveCur);
+			byte result = paintCelByleRLE(xmoveCur, ymoveCur);
 
 			_mirror = mirror;
 			return result;

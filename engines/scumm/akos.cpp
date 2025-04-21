@@ -496,7 +496,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	return result;
 }
 
-void AkosRenderer::byleRLEDecode(ByleRLEData &dataBlock) {
+void AkosRenderer::byleRLEDecode(ByleRLEData &compData) {
 	const byte *mask, *src;
 	byte *dst;
 	byte len, maskbit;
@@ -506,36 +506,36 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &dataBlock) {
 	bool masked;
 
 	lastColumnX = -1;
-	y = dataBlock.y;
+	y = compData.y;
 	src = _srcPtr;
-	dst = dataBlock.destPtr;
-	len = dataBlock.repLen;
-	color = dataBlock.repColor;
+	dst = compData.destPtr;
+	len = compData.repLen;
+	color = compData.repColor;
 	height = _height;
 
-	scaleytab = &dataBlock.scaleTable[MAX<int>(0, dataBlock.scaleYIndex)]; // Avoid invalid mem reads in Basketball...
-	maskbit = revBitMask(dataBlock.x & 7);
-	mask = _vm->getMaskBuffer(dataBlock.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), dataBlock.y, _zbuf);
+	scaleytab = &compData.scaleTable[MAX<int>(0, compData.scaleYIndex)]; // Avoid invalid mem reads in Basketball...
+	maskbit = revBitMask(compData.x & 7);
+	mask = _vm->getMaskBuffer(compData.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), compData.y, _zbuf);
 
 	if (len)
 		goto StartPos;
 
 	do {
 		len = *src++;
-		color = len >> dataBlock.shr;
-		len &= dataBlock.mask;
+		color = len >> compData.shr;
+		len &= compData.mask;
 		if (!len)
 			len = *src++;
 
 		do {
 			if (_scaleY == 255 || *scaleytab++ < _scaleY) {
 				if (_actorHitMode) {
-					if (color && y == _actorHitY && dataBlock.x == _actorHitX) {
+					if (color && y == _actorHitY && compData.x == _actorHitX) {
 						_actorHitResult = true;
 						return;
 					}
 				} else {
-					masked = (y < dataBlock.boundsRect.top || y >= dataBlock.boundsRect.bottom) || (dataBlock.x < 0 || dataBlock.x >= dataBlock.boundsRect.right) || (*mask & maskbit);
+					masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom) || (compData.x < 0 || compData.x >= compData.boundsRect.right) || (*mask & maskbit);
 					bool skipColumn = false;
 
 					if (color && !masked) {
@@ -544,7 +544,7 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &dataBlock) {
 							if (pcolor == 13) {
 								// In shadow mode 1 skipColumn works more or less the same way as in shadow
 								// mode 3. It is only ever checked and applied if pcolor is 13.
-								skipColumn = (lastColumnX == dataBlock.x);
+								skipColumn = (lastColumnX == compData.x);
 								pcolor = _shadowTable[*dst];
 							}
 						} else if (_shadowMode == 2) {
@@ -554,7 +554,7 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &dataBlock) {
 								// I add the column skip here, too, although I don't know whether it always
 								// applies. But this is the only way to prevent recursive shading of pixels.
 								// This might need more fine tuning...
-								skipColumn = (lastColumnX == dataBlock.x);
+								skipColumn = (lastColumnX == compData.x);
 								uint16 srcColor = (pcolor >> 1) & 0x7DEF;
 								uint16 dstColor = (READ_UINT16(dst) >> 1) & 0x7DEF;
 								pcolor = srcColor + dstColor;
@@ -562,14 +562,14 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &dataBlock) {
 								// I add the column skip here, too, although I don't know whether it always
 								// applies. But this is the only way to prevent recursive shading of pixels.
 								// This might need more fine tuning...
-								skipColumn = (lastColumnX == dataBlock.x);
+								skipColumn = (lastColumnX == compData.x);
 								pcolor = (pcolor << 8) + *dst;
 								pcolor = _xmap[pcolor];
 							} else if (pcolor < 8) {
 								// This mode is used in COMI. The column skip only takes place when the shading
 								// is actually applied (for pcolor < 8). The skip avoids shading of pixels that
 								// already have been shaded.
-								skipColumn = (lastColumnX == dataBlock.x);
+								skipColumn = (lastColumnX == compData.x);
 								pcolor = (pcolor << 8) + *dst;
 								pcolor = _shadowTable[pcolor];
 							}
@@ -588,25 +588,25 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &dataBlock) {
 				y++;
 			}
 			if (!--height) {
-				if (!--dataBlock.skipWidth)
+				if (!--compData.skipWidth)
 					return;
 				height = _height;
-				y = dataBlock.y;
+				y = compData.y;
 
-				scaleytab = &dataBlock.scaleTable[MAX<int>(0, dataBlock.scaleYIndex)]; // Avoid invalid mem reads in Basketball...
-				lastColumnX = dataBlock.x;
+				scaleytab = &compData.scaleTable[MAX<int>(0, compData.scaleYIndex)]; // Avoid invalid mem reads in Basketball...
+				lastColumnX = compData.x;
 
-				if (_scaleX == 255 || dataBlock.scaleTable[dataBlock.scaleXIndex] < _scaleX) {
-					dataBlock.x += dataBlock.scaleXStep;
-					if (dataBlock.x < 0 || dataBlock.x >= dataBlock.boundsRect.right)
+				if (_scaleX == 255 || compData.scaleTable[compData.scaleXIndex] < _scaleX) {
+					compData.x += compData.scaleXStep;
+					if (compData.x < 0 || compData.x >= compData.boundsRect.right)
 						return;
-					maskbit = revBitMask(dataBlock.x & 7);
-					dataBlock.destPtr += dataBlock.scaleXStep * _vm->_bytesPerPixel;
+					maskbit = revBitMask(compData.x & 7);
+					compData.destPtr += compData.scaleXStep * _vm->_bytesPerPixel;
 				}
 
-				dataBlock.scaleXIndex += dataBlock.scaleXStep;
-				dst = dataBlock.destPtr;
-				mask = _vm->getMaskBuffer(dataBlock.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), dataBlock.y, _zbuf);
+				compData.scaleXIndex += compData.scaleXStep;
+				dst = compData.destPtr;
+				mask = _vm->getMaskBuffer(compData.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), compData.y, _zbuf);
 			}
 		StartPos:;
 		} while (--len);
