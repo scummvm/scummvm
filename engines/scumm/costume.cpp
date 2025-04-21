@@ -72,29 +72,12 @@ static const int v1MMNESLookup[25] = {
 };
 
 byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
-	bool actorIsScaled;
-	int i;
-	int linesToSkip = 0;
-	byte startScaleIndexX;
 	int ex1, ex2;
-	Common::Rect rect;
-	int step;
-	byte drawFlag = 1;
 	ByleRLEData compData;
 
-	const int scaletableSize = 128;
+	const bool c64Cost = _loaded._format == 0x57;
 	const bool newAmiCost = (_vm->_game.version == 5) && (_vm->_game.platform == Common::kPlatformAmiga);
 	const bool pcEngCost = (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine);
-
-	compData.scaleTable = smallCostumeScaleTable;
-
-	if (_loaded._numColors == 32) {
-		compData.mask = 7;
-		compData.shr = 3;
-	} else {
-		compData.mask = 15;
-		compData.shr = 4;
-	}
 
 	switch (_loaded._format) {
 	case 0x60:
@@ -112,7 +95,7 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 		break;
 	}
 
-	actorIsScaled = (_scaleX != 0xFF) || (_scaleY != 0xFF);
+	compData.scaleTable = smallCostumeScaleTable;
 
 	compData.x = _actorX;
 	compData.y = _actorY;
@@ -120,6 +103,76 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 	// V0/V1 games are off by 1
 	if (_vm->_game.version <= 1)
 		compData.y += 1;
+
+	bool decode = true;
+
+	const auto markAsDirty = [this](const Common::Rect &rect) {
+		if (_vm->_game.version == 1) {
+			// V1 games uses 8 x 8 pixels for actors
+			_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 8, rect.top, rect.bottom, _actorID);
+		} else {
+			_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 1, rect.top, rect.bottom, _actorID);
+		}
+	};
+
+	byte drawFlag = paintCelByleRLECommon(
+		xMoveCur,
+		yMoveCur,
+		_loaded._numColors,
+		128,
+		newAmiCost || pcEngCost,
+		c64Cost,
+		compData,
+		markAsDirty,
+		decode);
+
+	if (!decode)
+		return drawFlag;
+
+	compData.maskPtr = _vm->getMaskBuffer(0, compData.y, _zbuf);
+
+	if (c64Cost) {
+		// The v1 costume renderer needs the actor number, which is
+		// the same thing as the costume renderer's _actorID.
+		byleRLEDecode_C64(compData, _actorID);
+	} else if (newAmiCost)
+		byleRLEDecode_ami(compData);
+	else if (pcEngCost)
+		byleRLEDecode_PCEngine(compData);
+	else
+		byleRLEDecode(compData);
+
+	return drawFlag;
+}
+
+byte ClassicCostumeRenderer::paintCelByleRLECommon(
+	int xMoveCur,
+	int yMoveCur,
+	int numColors,
+	int scaletableSize,
+	bool amiOrPcEngCost,
+	bool c64Cost,
+	ByleRLEData &compData,
+	std::function<void (const Common::Rect &)> markAsDirty,
+	bool &decode) {
+
+	bool actorIsScaled;
+	int i;
+	int linesToSkip = 0;
+	byte startScaleIndexX;
+	Common::Rect rect;
+	int step;
+	byte drawFlag = 1;
+
+	if (numColors == 32) {
+		compData.mask = 7;
+		compData.shr = 3;
+	} else {
+		compData.mask = 15;
+		compData.shr = 4;
+	}
+
+	actorIsScaled = (_scaleX != 0xFF) || (_scaleY != 0xFF);
 
 	compData.boundsRect.left = 0;
 	compData.boundsRect.top = 0;
@@ -228,17 +281,17 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 	compData.skipWidth = _width;
 	compData.scaleXStep = _mirror ? 1 : -1;
 
-	if (_vm->_game.version == 1)
-		// V1 games uses 8 x 8 pixels for actors
-		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 8, rect.top, rect.bottom, _actorID);
-	else
-		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 1, rect.top, rect.bottom, _actorID);
+	markAsDirty(rect);
 
-	if (rect.top >= compData.boundsRect.bottom || rect.bottom <= compData.boundsRect.top)
+	if (rect.top >= compData.boundsRect.bottom || rect.bottom <= compData.boundsRect.top) {
+		decode = false;
 		return 0;
+	}
 
-	if (rect.left >= compData.boundsRect.right || rect.right <= compData.boundsRect.left)
+	if (rect.left >= compData.boundsRect.right || rect.right <= compData.boundsRect.left) {
+		decode = false;
 		return 0;
+	}
 
 	compData.repLen = 0;
 
@@ -246,7 +299,7 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 		if (!actorIsScaled)
 			linesToSkip = compData.boundsRect.left - compData.x;
 		if (linesToSkip > 0) {
-			if (!newAmiCost && !pcEngCost && _loaded._format != 0x57) {
+			if (!amiOrPcEngCost && !c64Cost) {
 				compData.skipWidth -= linesToSkip;
 				skipCelLines(compData, linesToSkip);
 				compData.x = compData.boundsRect.left;
@@ -263,14 +316,14 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 		if (!actorIsScaled)
 			linesToSkip = rect.right - compData.boundsRect.right;
 		if (linesToSkip > 0) {
-			if (!newAmiCost && !pcEngCost && _loaded._format != 0x57) {
+			if (!amiOrPcEngCost && !c64Cost) {
 				compData.skipWidth -= linesToSkip;
 				skipCelLines(compData, linesToSkip);
 				compData.x = compData.boundsRect.right - 1;
 			}
 		} else {
 			// V1 games uses 8 x 8 pixels for actors
-			if (_loaded._format == 0x57)
+			if (c64Cost)
 				linesToSkip = (compData.boundsRect.left - 8) - rect.left;
 			else
 				linesToSkip = (compData.boundsRect.left - 1) - rect.left;
@@ -281,8 +334,10 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 		}
 	}
 
-	if (compData.skipWidth <= 0)
+	if (compData.skipWidth <= 0) {
+		decode = false;
 		return 0;
+	}
 
 	if (rect.left < compData.boundsRect.left)
 		rect.left = compData.boundsRect.left;
@@ -302,25 +357,13 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 		_drawBottom = rect.bottom;
 
 	if (_height + rect.top >= 256) {
+		decode = false;
 		return 2;
 	}
 
 	compData.width = _out.w;
 	compData.height = _out.h;
 	compData.destPtr = (byte *)_out.getBasePtr(compData.x, compData.y);
-
-	compData.maskPtr = _vm->getMaskBuffer(0, compData.y, _zbuf);
-
-	if (_loaded._format == 0x57) {
-		// The v1 costume renderer needs the actor number, which is
-		// the same thing as the costume renderer's _actorID.
-		byleRLEDecode_C64(compData, _actorID);
-	} else if (newAmiCost)
-		byleRLEDecode_ami(compData);
-	else if (pcEngCost)
-		byleRLEDecode_PCEngine(compData);
-	else
-		byleRLEDecode(compData);
 
 	return drawFlag;
 }
