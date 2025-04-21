@@ -83,6 +83,7 @@ public:
 	// QTVR stuff
 	////////////////
 	void setTargetSize(uint16 w, uint16 h);
+	void setOrigin(int left, int top) { _origin = Common::Point(left, top); }
 
 	void handleMouseMove(int16 x, int16 y);
 	void handleMouseButton(bool isDown, int16 x = -1, int16 y = -1, bool repeat = false);
@@ -183,6 +184,11 @@ private:
 	void computeInteractivityZones();
 
 	uint16 _width, _height;
+	// _origin is the top left corner point of the panorama video being played
+	// by director engine or whichever engine is using QTVR decoder currently
+	// decoder handles swing transitions (in QTVR xtra) internally
+	// Hence, it needs to know where to blit the projected panorama during transition
+	Common::Point _origin;
 
 public:
 	int _currentSample = -1;
@@ -425,6 +431,14 @@ private:
 		Graphics::Surface *_projectedPano;
 		Graphics::Surface *_planarProjection;
 
+		// Defining these to make the swing transition happen
+		// which requires storing the previous point during every change in FOV, Pan Angle and Tilt Angle
+		// If swing transition is called, this will be the start point of the transition
+		float _currentFOV = 0;
+		float _currentHFOV = 0;
+		float _currentPanAngle = 0;
+		float _currentTiltAngle = 0;
+		
 	private:
 		bool _isPanoConstructed;
 		bool _dirty;
