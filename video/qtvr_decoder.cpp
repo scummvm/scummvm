@@ -348,12 +348,18 @@ bool QuickTimeDecoder::setFOV(float fov) {
 	}
 
 	if (_fov != fov) {
-		_fov = fov;
-
-		_hfov = _fov * (float)_width / (float)_height;
-
 		PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
-		track->setDirty();
+
+ 		_fov = fov;
+ 
+ 		_hfov = _fov * (float)_width / (float)_height;
+ 
+		// We need to recalculate the pan angle and tilt angle to see if it has went 
+		// out of bound for the current value of FOV
+		// This solves the distortion that we got sometimes when we zoom out at Tilt Angle != 0
+		setPanAngle(_panAngle);
+		setTiltAngle(_tiltAngle);
+ 		track->setDirty();
 	}
 
 	return success;
