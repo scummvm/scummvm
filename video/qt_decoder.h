@@ -438,7 +438,7 @@ private:
 		float _currentHFOV = 0;
 		float _currentPanAngle = 0;
 		float _currentTiltAngle = 0;
-		
+
 	private:
 		bool _isPanoConstructed;
 		bool _dirty;
