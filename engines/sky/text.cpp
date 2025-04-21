@@ -395,8 +395,8 @@ DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, Graph
 				makeGameCharacter(line[i], _characterSet, curDest, color, pixelWidth);
 			}
 		} else {
-			for (auto it = line.begin(); it != line.end(); ++it) {
-				makeGameCharacter(*it, _characterSet, curDest, color, pixelWidth);
+			for (auto &c : line) {
+				makeGameCharacter(c, _characterSet, curDest, color, pixelWidth);
 			}
 		}
 
