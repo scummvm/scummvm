@@ -104,6 +104,12 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 	if (_vm->_game.version <= 1)
 		compData.y += 1;
 
+	// It's possible that the scale indexes will overflow and wrap
+	// around to zero, so it's important that we use the same
+	// method of accessing it both when calculating the size of the
+	// scaled costume, and when drawing it. See bug #2729.
+	compData.scaleIndexMask = 0xff;
+
 	bool decode = true;
 
 	const auto markAsDirty = [this](const Common::Rect &rect) {

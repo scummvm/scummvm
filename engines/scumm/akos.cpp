@@ -502,7 +502,7 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &compData) {
 	byte len, maskbit;
 	int lastColumnX, y;
 	uint16 color, height, pcolor;
-	const byte *scaleytab;
+	int scaleIndexY;
 	bool masked;
 
 	lastColumnX = -1;
@@ -513,7 +513,7 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &compData) {
 	color = compData.repColor;
 	height = _height;
 
-	scaleytab = &compData.scaleTable[MAX<int>(0, compData.scaleYIndex)]; // Avoid invalid mem reads in Basketball...
+	scaleIndexY = compData.scaleYIndex;
 	maskbit = revBitMask(compData.x & 7);
 	mask = compData.maskPtr + compData.x / 8;
 
@@ -528,7 +528,7 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &compData) {
 			len = *src++;
 
 		do {
-			if (_scaleY == 255 || *scaleytab++ < _scaleY) {
+			if (_scaleY == 255 || compData.scaleTable[scaleIndexY++ & compData.scaleIndexMask] < _scaleY) {
 				if (_actorHitMode) {
 					if (color && y == _actorHitY && compData.x == _actorHitX) {
 						_actorHitResult = true;
@@ -595,7 +595,7 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &compData) {
 				height = _height;
 				y = compData.y;
 
-				scaleytab = &compData.scaleTable[MAX<int>(0, compData.scaleYIndex)]; // Avoid invalid mem reads in Basketball...
+				scaleIndexY = compData.scaleYIndex;
 				lastColumnX = compData.x;
 
 				if (_scaleX == 255 || compData.scaleTable[compData.scaleXIndex] < _scaleX) {
@@ -606,7 +606,7 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &compData) {
 					compData.destPtr += compData.scaleXStep * _vm->_bytesPerPixel;
 				}
 
-				compData.scaleXIndex += compData.scaleXStep;
+				compData.scaleXIndex = (compData.scaleXIndex + compData.scaleXStep) & compData.scaleIndexMask;
 				dst = compData.destPtr;
 				mask = compData.maskPtr + compData.x / 8;
 			}
@@ -728,6 +728,9 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 
 	compData.x = _actorX;
 	compData.y = _actorY;
+
+	// see ClassicCostumeRenderer::paintCelByleRLE, for smallCostumeScaleTable the same wrapping applies
+	compData.scaleIndexMask = (_vm->_game.heversion >= 61) ? 0xff : -1;
 
 	bool decode = true;
 
