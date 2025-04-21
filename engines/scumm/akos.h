@@ -122,8 +122,9 @@ public:
 protected:
 	byte drawLimb(const Actor *a, int limb) override;
 
+	void byleRLEDecode(ByleRLEData &compData);
+
 	byte paintCelByleRLE(int xMoveCur, int yMoveCur);
-	void byleRLEDecode(ByleRLEData &v1);
 	byte paintCelCDATRLE(int xMoveCur, int yMoveCur);
 	byte paintCelMajMin(int xMoveCur, int yMoveCur);
 	byte paintCelTRLE(int actor, int drawToBack, int celX, int celY, int celWidth, int celHeight, byte tcolor, const byte *shadowTablePtr, int32 specialRenderFlags);
