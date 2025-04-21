@@ -447,6 +447,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		_hasFallen = !_disableFalling;
 		_roll = -90;
 		_pitch = 0;
+		_yaw = 0;
 		changePlayerHeight(0);
 		_avoidRenderingFrames = 60 * 3;
 		_endGameDelayTicks = 60 * 5;
