@@ -77,6 +77,7 @@ static Gfx *createGraphics(int type) {
 		return GraphicsGL_create();
 #endif
 	}
+
 	return 0;
 }
 
@@ -141,6 +142,8 @@ Common::Error AweEngine::run() {
 	}
 
 	Gfx *graphics = createGraphics(graphicsType);
+	assert(graphics);
+
 	if (dataType == DT_20TH_EDITION) {
 		switch (Script::_difficulty) {
 		case DIFFICULTY_EASY:
