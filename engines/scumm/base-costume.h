@@ -160,7 +160,7 @@ public:
 protected:
 	virtual byte drawLimb(const Actor *a, int limb) = 0;
 
-	virtual byte paintCelByleRLECommon(
+	byte paintCelByleRLECommon(
 		int xMoveCur,
 		int yMoveCur,
 		int numColors,
