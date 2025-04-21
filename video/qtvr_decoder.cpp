@@ -35,6 +35,7 @@
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/keyboard.h"
 #include "common/memstream.h"
@@ -181,8 +182,6 @@ void QuickTimeDecoder::setTransitionMode(Common::String mode) {
 	else
 		_transitionMode = kTransitionModeNormal;
 
-	warning("STUB: Transition mode set to '%s'", getTransitionMode().c_str());
-
 	// normal The new view is imaged and displayed. No transition effect is
 	//        used. The user sees a "cut" from the current view to the new
 	//        view.
@@ -198,8 +197,6 @@ void QuickTimeDecoder::setTransitionMode(Common::String mode) {
 
 void QuickTimeDecoder::setTransitionSpeed(float speed) {
 	_transitionSpeed = speed;
-
-	warning("STUB: Transition Speed set to %f", speed);
 
 	// The TransitionSpeed is a floating point quantity that provides the slowest swing transition
 	// at 1.0 and faster transitions at higher values. On mid-range computers, a rate of 4.0
@@ -306,10 +303,11 @@ void QuickTimeDecoder::setPanAngle(float angle) {
 	}
 
 	if (_panAngle != angle) {
-		_panAngle = angle;
-
 		PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
-		track->setDirty();
+		
+		track->_currentPanAngle = _panAngle;
+		_panAngle = angle;
+ 		track->setDirty();
 	}
 }
 
@@ -323,19 +321,17 @@ void QuickTimeDecoder::setTiltAngle(float angle) {
 		angle = desc->_vPanTop - _fov / 2;
 
 	if (_tiltAngle != angle) {
-		_tiltAngle = angle;
-
 		PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
-		track->setDirty();
+		
+		track->_currentTiltAngle = _tiltAngle;
+		_tiltAngle = angle;
+ 		track->setDirty();
 	}
 }
 
 bool QuickTimeDecoder::setFOV(float fov) {
 	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
 	bool success = true;
-
-	if (fov == 0.0f) // No change
-		return true;
 
 	if (fov <= desc->_minimumZoom) {
 		fov = desc->_minimumZoom;
@@ -350,10 +346,12 @@ bool QuickTimeDecoder::setFOV(float fov) {
 	if (_fov != fov) {
 		PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
 
+		track->_currentFOV = _fov;
  		_fov = fov;
  
+		track->_currentHFOV = _hfov;
  		_hfov = _fov * (float)_width / (float)_height;
- 
+
 		// We need to recalculate the pan angle and tilt angle to see if it has went 
 		// out of bound for the current value of FOV
 		// This solves the distortion that we got sometimes when we zoom out at Tilt Angle != 0
@@ -546,11 +544,104 @@ Common::Rational QuickTimeDecoder::PanoTrackHandler::getScaledHeight() const {
 	return Common::Rational(_parent->height) / _parent->scaleFactorY;
 }
 
+void QuickTimeDecoder::PanoTrackHandler::swingTransitionHandler() {
+	// The number of steps (the speed) of the transition is decided by the _transitionSpeed
+	const int NUM_STEPS = 300 / _decoder->_transitionSpeed;
+
+	// Calculate the step 
+	float stepFOV = (_decoder->_fov - _currentFOV) / NUM_STEPS;
+	float stepHFOV = (_decoder->_hfov - _currentHFOV) / NUM_STEPS;
+
+	float stepTiltAngle = (_decoder->_tiltAngle - _currentTiltAngle) / NUM_STEPS;
+
+	float targetPanAngle = _decoder->_panAngle;
+	float difference = ABS(_currentPanAngle - targetPanAngle);
+	float stepPanAngle;
+
+	// All of this is just because the panorama is supposed to take the smallest path
+	if (targetPanAngle > _currentPanAngle) {
+		if (difference <= 180) {
+			stepPanAngle = difference / NUM_STEPS;
+		} else {
+			stepPanAngle = (- (360 - difference)) / NUM_STEPS;	
+		}
+	} else {
+		if (difference <= 180) {
+			stepPanAngle = (- difference) / NUM_STEPS;
+		} else {
+			stepPanAngle = (360 - difference) / NUM_STEPS;
+		}
+	}
+
+	int16 rectLeft = _decoder->_origin.x;
+	int16 rectRight = _decoder->_origin.y;
+	Common::Point mouse;
+	int mw = _decoder->_width, mh = _decoder->_height;
+
+	for (int i = 0; i < NUM_STEPS; i++) {
+		projectPanorama(1,
+						_currentFOV + i * stepFOV, 
+						_currentHFOV + i * stepHFOV, 
+						_currentTiltAngle + i * stepTiltAngle, 
+						_currentPanAngle + i * stepPanAngle);
+
+		g_system->copyRectToScreen(_projectedPano->getPixels(), 
+									_projectedPano->pitch,
+									rectLeft, 
+									rectRight,
+									_projectedPano->w,
+									_projectedPano->h);
+
+		Common::Event event; 
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_QUIT) {
+				debugC(1, kDebugLevelGVideo, "EVENT_QUIT passed during the Swing Transition.");
+				g_system->quit();
+				return;
+			}
+
+			if (Common::isMouseEvent(event)) {
+				mouse = event.mouse;
+			}
+
+			// Referenced from video.cpp in testbed engine
+			if (mouse.x >= _decoder->_prevMouse.x && 
+				mouse.x < _decoder->_prevMouse.x + mw &&
+				mouse.y >= _decoder->_prevMouse.y && 
+				mouse.y < _decoder->_prevMouse.y + mh) {
+
+				switch (event.type) { 
+				case Common::EVENT_MOUSEMOVE: 
+					_decoder->handleMouseMove(event.mouse.x - _decoder->_prevMouse.x, event.mouse.y - _decoder->_prevMouse.y);
+					break;
+
+				default:
+					break;
+				}
+			}
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+
+	// This is so if we call swingTransitionHandler() twice
+	// The second time there will be no transition
+	_currentFOV = _decoder->_fov; 
+	_currentPanAngle = _decoder->_panAngle;
+	_currentHFOV = _decoder->_hfov;
+	_currentTiltAngle = _decoder->_tiltAngle;
+
+	// Due to floating point errors, we may end a few degrees here and there
+	// Make sure we reach the destination at the end of this loop
+	// Also we have to go back to our original quality
+	projectPanorama(3, _decoder->_fov, _decoder->_hfov, _decoder->_panAngle, _decoder->_panAngle);
+}
+
 const Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::decodeNextFrame() {
 	if (!_isPanoConstructed)
 		return nullptr;
 
-	if (_dirty) {
+	if (_dirty && _decoder->_transitionMode == kTransitionModeNormal) {
 		float quality = _decoder->getQuality();
 		float fov = _decoder->_fov;
 		float hfov = _decoder->_hfov;
@@ -582,6 +673,8 @@ const Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::decodeNextFrame() {
 			projectPanorama(3, fov, hfov, tiltAngle, panAngle);
 			break;
 		}
+	} else if (_decoder->_transitionMode == kTransitionModeSwing) {
+		swingTransitionHandler();
 	}
 
 	return _projectedPano;
