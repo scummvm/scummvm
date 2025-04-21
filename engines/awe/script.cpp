@@ -427,7 +427,7 @@ void Script::restartAt(int part, int pos) {
 		//   00CA: updateResources(res=71)
 
 		// Use "Another World" title screen if language is set to French
-		const bool awTitleScreen = (_vid->_stringsTable == Video::_stringsTableFr);
+		const bool awTitleScreen = (_vid->_stringsTable == Video::STRINGS_TABLE_FR);
 		_scriptVars[0x54] = awTitleScreen ? 0x1 : 0x81;
 	}
 	_res->setupPart(part);
@@ -617,7 +617,7 @@ void Script::executeTask() {
 			if (opcode > 0x1A) {
 				error("Script::executeTask() ec=0x%X invalid opcode=0x%X", 0xFFF, opcode);
 			} else {
-				(this->*_opTable[opcode])();
+				(this->*OPCODE_TABLE[opcode])();
 			}
 		}
 	}
@@ -774,7 +774,7 @@ static uint8_t getWavLooping(uint16_t resNum) {
 }
 
 static int getSoundFreq(uint8_t period) {
-	return kPaulaFreq / (Script::_periodTable[period] * 2);
+	return kPaulaFreq / (Script::PERIOD_TABLE[period] * 2);
 }
 
 void Script::snd_playSound(uint16_t resNum, uint8_t freq, uint8_t vol, uint8_t channel) {

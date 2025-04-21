@@ -193,7 +193,7 @@ void GraphicsSoft::drawChar(uint8_t c, uint16_t x, uint16_t y, uint8_t color) {
 	if (x <= GFX_W - 8 && y <= GFX_H - 8) {
 		x = xScale(x);
 		y = yScale(y);
-		const uint8_t *ft = _font + (c - 0x20) * 8;
+		const uint8_t *ft = FONT + (c - 0x20) * 8;
 		const int offset = (x + y * _w) * _byteDepth;
 		if (_byteDepth == 1) {
 			for (int j = 0; j < 8; ++j) {
@@ -376,9 +376,9 @@ void GraphicsSoft::setSpriteAtlas(const uint8_t *src, int w, int h, int xSize, i
 
 void GraphicsSoft::drawSprite(int buffer, int num, const Point *pt, uint8_t color) {
 	if (_is1991) {
-		if (num < _shapesMaskCount) {
+		if (num < SHAPES_MASK_COUNT) {
 			setWorkPagePtr(buffer);
-			const uint8_t *data = _shapesMaskData + _shapesMaskOffset[num];
+			const uint8_t *data = SHAPES_MASK_DATA + SHAPES_MASK_OFFSET[num];
 			drawSpriteMask(pt->x, pt->y, color, data);
 		}
 	}

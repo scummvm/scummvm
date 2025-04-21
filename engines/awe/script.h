@@ -62,8 +62,8 @@ struct Script {
 		VAR_PAUSE_SLICES = 0xFF
 	};
 
-	static const OpcodeStub _opTable[];
-	static const uint16_t _periodTable[];
+	static const OpcodeStub OPCODE_TABLE[];
+	static const uint16_t PERIOD_TABLE[];
 	static Difficulty _difficulty;
 	static bool _useRemasteredAudio;
 

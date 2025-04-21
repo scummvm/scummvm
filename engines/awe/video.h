@@ -42,17 +42,17 @@ struct Video {
 		BITMAP_H = 200
 	};
 
-	static const StrEntry _stringsTableFr[];
-	static const StrEntry _stringsTableEng[];
-	static const StrEntry _stringsTableDemo[];
-	static const uint16_t _stringsId15th[];
-	static const char *_stringsTable15th[];
+	static const StrEntry STRINGS_TABLE_FR[];
+	static const StrEntry STRINGS_TABLE_ENG[];
+	static const StrEntry STRINGS_TABLE_DEMO[];
+	static const uint16_t STRINGS_ID_15TH[];
+	static const char *STRINGS_TABLE_15TH[];
 	static const char *_str0x194AtariDemo;
-	static const StrEntry _stringsTable3DO[];
-	static const char *_noteText3DO;
-	static const char *_endText3DO;
-	static const uint8_t *_vertices3DO[201];
-	static const uint8_t _paletteEGA[];
+	static const StrEntry STRINGS_TABLE_3DO[];
+	static const char *NOTE_TEXT_3DO;
+	static const char *END_TEXT_3DO;
+	static const uint8_t *VERTICES_3DO[201];
+	static const uint8_t PALETTE_EGA[];
 
 	static bool _useEGA;
 

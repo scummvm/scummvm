@@ -60,12 +60,12 @@ enum {
 struct SystemStub;
 
 struct Gfx {
-	static const uint8_t _font[];
+	static const uint8_t FONT[];
 	static bool _is1991; // draw graphics as in the original 1991 game release
 	static Graphics::PixelFormat _format;
-	static const uint16_t _shapesMaskOffset[];
-	static const int _shapesMaskCount;
-	static const uint8_t _shapesMaskData[];
+	static const uint16_t SHAPES_MASK_OFFSET[];
+	static const int SHAPES_MASK_COUNT;
+	static const uint8_t SHAPES_MASK_DATA[];
 
 	int _fixUpPalette = 0;
 

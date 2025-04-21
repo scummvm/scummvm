@@ -109,10 +109,10 @@ struct Resource {
 		STATUS_TOLOAD,
 	};
 
-	static const AmigaMemEntry _memListAmigaFR[ENTRIES_COUNT];
-	static const AmigaMemEntry _memListAmigaEN[ENTRIES_COUNT];
-	static const AmigaMemEntry _memListAtariEN[ENTRIES_COUNT];
-	static const uint8_t _memListParts[][4];
+	static const AmigaMemEntry MEMLIST_AMIGA_FR[ENTRIES_COUNT];
+	static const AmigaMemEntry MEMLIST_AMIGA_EN[ENTRIES_COUNT];
+	static const AmigaMemEntry MEMLIST_ATARI_EN[ENTRIES_COUNT];
+	static const uint8_t MEMLIST_PARTS[][4];
 	static const AmigaMemEntry *detectAmigaAtari();
 
 	Video *_vid;

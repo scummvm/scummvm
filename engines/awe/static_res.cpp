@@ -26,7 +26,7 @@
 
 namespace Awe {
 
-const Script::OpcodeStub Script::_opTable[] = {
+const Script::OpcodeStub Script::OPCODE_TABLE[] = {
 	/* 0x00 */
 	&Script::op_movConst,
 	&Script::op_mov,
@@ -63,14 +63,14 @@ const Script::OpcodeStub Script::_opTable[] = {
 	&Script::op_playMusic
 };
 
-const uint16_t Script::_periodTable[] = {
+const uint16_t Script::PERIOD_TABLE[] = {
 	1076, 1016,  960,  906,  856,  808,  762,  720,  678,  640,
 	 604,  570,  538,  508,  480,  453,  428,  404,  381,  360,
 	 339,  320,  302,  285,  269,  254,  240,  226,  214,  202,
 	 190,  180,  170,  160,  151,  143,  135,  127,  120,  113
 };
 
-const uint8_t Gfx::_font[] = {
+const uint8_t Gfx::FONT[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x10, 0x10, 0x10, 0x10, 0x00, 0x10, 0x00,
 	0x28, 0x28, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24, 0x7E, 0x24, 0x24, 0x7E, 0x24, 0x00,
 	0x08, 0x3E, 0x48, 0x3C, 0x12, 0x7C, 0x10, 0x00, 0x42, 0xA4, 0x48, 0x10, 0x24, 0x4A, 0x84, 0x00,
@@ -121,7 +121,7 @@ const uint8_t Gfx::_font[] = {
 	0x38, 0x44, 0x82, 0x82, 0x44, 0x28, 0xEE, 0x00, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA
 };
 
-const StrEntry Video::_stringsTableFr[] = {
+const StrEntry Video::STRINGS_TABLE_FR[] = {
 	{ 0x001, "P E A N U T  3000" },
 	{ 0x002, "Copyright  } 1990 Peanut Computer, Inc.\nAll rights reserved.\n\nCDOS Version 5.01" },
 	{ 0x003, "2" },
@@ -265,7 +265,7 @@ const StrEntry Video::_stringsTableFr[] = {
 	{ 0xFFFF, 0 }
 };
 
-const StrEntry Video::_stringsTableEng[] = {
+const StrEntry Video::STRINGS_TABLE_ENG[] = {
 	{ 0x001, "P E A N U T  3000" },
 	{ 0x002, "Copyright  } 1990 Peanut Computer, Inc.\nAll rights reserved.\n\nCDOS Version 5.01" },
 	{ 0x003, "2" },
@@ -409,7 +409,7 @@ const StrEntry Video::_stringsTableEng[] = {
 	{ 0xFFFF, 0 }
 };
 
-const StrEntry Video::_stringsTableDemo[] = {
+const StrEntry Video::STRINGS_TABLE_DEMO[] = {
 	{ 0x1F4, "Over Two Years in the Making" },
 	{ 0x1F5, "   A New, State\nof the Art, Polygon\n  Graphics System" },
 	{ 0x1F6, "   Comes to the\nComputer With Full\n Screen Graphics" },
@@ -420,7 +420,7 @@ const StrEntry Video::_stringsTableDemo[] = {
 	{ 0xFFFF, 0 }
 };
 
-const uint16_t Video::_stringsId15th[] = {
+const uint16_t Video::STRINGS_ID_15TH[] = {
 	0x001, 0x002, 0x003, 0x004, 0x005, 0x006, 0x007, 0x008, 0x00A, 0x00B, 0x00C, 0x00D, 0x00E, 0x00F, 0x010, 0x011,
 	0x012, 0x013, 0x014, 0x015, 0x016, 0x017, 0x018, 0x019, 0x01A, 0x01B, 0x01C, 0x021, 0x022, 0x023, 0x024, 0x025,
 	0x026, 0x027, 0x028, 0x029, 0x02A, 0x02B, 0x02C, 0x031, 0x032, 0x033, 0x034, 0x035, 0x036, 0x037, 0x038, 0x039,
@@ -433,7 +433,7 @@ const uint16_t Video::_stringsId15th[] = {
 	0x16C, 0x16D, 0x16E, 0x16F, 0x170, 0x169, 0x172, 0x17F, 0x173, 0x17E, 0x174, 0x16A, 0x16B
 };
 
-const char *Video::_stringsTable15th[] = {
+const char *Video::STRINGS_TABLE_15TH[] = {
 	"P E A N U T  3000",
 	"Copyright  } 1990 Peanut Computer, Inc.\nAll rights reserved.\n\nCDOS Version 5.01",
 	"2",
@@ -595,7 +595,7 @@ const char *Video::_stringsTable15th[] = {
 
 const char *Video::_str0x194AtariDemo = "Je signale que Monsieur\na tout de meme 40 minutes\net 21 secondes de retard.";
 
-const StrEntry Video::_stringsTable3DO[] = {
+const StrEntry Video::STRINGS_TABLE_3DO[] = {
 	{ 1, "Copyright } 1997 Cortland Computer, Inc.\nAll rights reserved.\n\nGS/OS Version 7.03\nII Infinitum!" },
 	{ 2, "Copyright } 1997 Peanut Computer, Inc.\nAll rights reserved.\n\nOS/BH Version 7.03" },
 	{ 3, "2" },
@@ -706,7 +706,7 @@ const StrEntry Video::_stringsTable3DO[] = {
 	{ 0xFFFF, 0 }
 };
 
-const char *Video::_noteText3DO = {
+const char *Video::NOTE_TEXT_3DO = {
 	"From the diary of Lester Knight\n"
 	"Chaykin.\n"
 	"\n"
@@ -738,7 +738,7 @@ const char *Video::_noteText3DO = {
 	"moving along before I...\n"
 };
 
-const char *Video::_endText3DO = {
+const char *Video::END_TEXT_3DO = {
 	"Original Programming, Artwork, &\n"
 	"Design\n"
 	"Eric Chahi\n"
@@ -810,7 +810,7 @@ const char *Video::_endText3DO = {
 	"Bill \"Angus\" Guschwan at 3DO\n"
 };
 
-static const uint8_t _verticesData3DO[] = {
+static const uint8_t VERTICES_DATA_3DO[] = {
 	0x0f, 0x10, 0x05, 0x10, 0x05, 0x0f, 0x05, 0x0e, 0x04, 0x0e, 0x04, 0x0d, 0x03, 0x0c, 0x03, 0x0b,
 	0x02, 0x0b, 0x02, 0x0a, 0x01, 0x09, 0x01, 0x08, 0x01, 0x08, 0x01, 0x07, 0x01, 0x06, 0x01, 0x06,
 	0x01, 0x06, 0x00, 0x05, 0x0b, 0x17, 0x00, 0x07, 0x00, 0x07, 0x00, 0x07, 0x00, 0x07, 0x01, 0x07,
@@ -1206,211 +1206,211 @@ static const uint8_t _verticesData3DO[] = {
 	0x01, 0x02, 0x00, 0x00, 0x06, 0x04, 0x00, 0x03, 0x01, 0x04, 0x03, 0x04, 0x04, 0x05, 0x00, 0x00
 };
 
-const uint8_t *Video::_vertices3DO[201] = {
-	&_verticesData3DO[0],
-	&_verticesData3DO[36],
-	&_verticesData3DO[84],
-	&_verticesData3DO[112],
-	&_verticesData3DO[144],
-	&_verticesData3DO[208],
-	&_verticesData3DO[244],
-	&_verticesData3DO[296],
-	&_verticesData3DO[328],
-	&_verticesData3DO[368],
-	&_verticesData3DO[412],
-	&_verticesData3DO[444],
-	&_verticesData3DO[476],
-	&_verticesData3DO[540],
-	&_verticesData3DO[584],
-	&_verticesData3DO[628],
-	&_verticesData3DO[660],
-	&_verticesData3DO[688],
-	&_verticesData3DO[728],
-	&_verticesData3DO[768],
-	&_verticesData3DO[804],
-	&_verticesData3DO[844],
-	&_verticesData3DO[872],
-	&_verticesData3DO[936],
-	&_verticesData3DO[976],
-	&_verticesData3DO[1020],
-	&_verticesData3DO[1060],
-	&_verticesData3DO[1100],
-	&_verticesData3DO[1132],
-	&_verticesData3DO[1196],
-	&_verticesData3DO[1260],
-	&_verticesData3DO[1324],
-	&_verticesData3DO[1392],
-	&_verticesData3DO[1460],
-	&_verticesData3DO[1528],
-	&_verticesData3DO[1596],
-	&_verticesData3DO[1664],
-	&_verticesData3DO[1732],
-	&_verticesData3DO[1760],
-	&_verticesData3DO[1808],
-	&_verticesData3DO[1844],
-	&_verticesData3DO[1876],
-	&_verticesData3DO[1940],
-	&_verticesData3DO[1976],
-	&_verticesData3DO[2028],
-	&_verticesData3DO[2052],
-	&_verticesData3DO[2084],
-	&_verticesData3DO[2124],
-	&_verticesData3DO[2168],
-	&_verticesData3DO[2200],
-	&_verticesData3DO[2232],
-	&_verticesData3DO[2276],
-	&_verticesData3DO[2320],
-	&_verticesData3DO[2348],
-	&_verticesData3DO[2388],
-	&_verticesData3DO[2428],
-	&_verticesData3DO[2464],
-	&_verticesData3DO[2528],
-	&_verticesData3DO[2568],
-	&_verticesData3DO[2596],
-	&_verticesData3DO[2660],
-	&_verticesData3DO[2700],
-	&_verticesData3DO[2744],
-	&_verticesData3DO[2784],
-	&_verticesData3DO[2824],
-	&_verticesData3DO[2856],
-	&_verticesData3DO[2920],
-	&_verticesData3DO[2984],
-	&_verticesData3DO[3048],
-	&_verticesData3DO[3116],
-	&_verticesData3DO[3184],
-	&_verticesData3DO[3252],
-	&_verticesData3DO[3320],
-	&_verticesData3DO[3388],
-	&_verticesData3DO[3456],
-	&_verticesData3DO[3476],
-	&_verticesData3DO[3488],
-	&_verticesData3DO[3504],
-	&_verticesData3DO[3516],
-	&_verticesData3DO[3528],
-	&_verticesData3DO[3548],
-	&_verticesData3DO[3560],
-	&_verticesData3DO[3572],
-	&_verticesData3DO[3584],
-	&_verticesData3DO[3596],
-	&_verticesData3DO[3624],
-	&_verticesData3DO[3652],
-	&_verticesData3DO[3680],
-	&_verticesData3DO[3708],
-	&_verticesData3DO[3736],
-	&_verticesData3DO[3764],
-	&_verticesData3DO[3796],
-	&_verticesData3DO[3828],
-	&_verticesData3DO[3860],
-	&_verticesData3DO[3892],
-	&_verticesData3DO[3928],
-	&_verticesData3DO[3964],
-	&_verticesData3DO[4000],
-	&_verticesData3DO[4036],
-	&_verticesData3DO[4072],
-	&_verticesData3DO[4080],
-	&_verticesData3DO[4088],
-	&_verticesData3DO[4100],
-	&_verticesData3DO[4108],
-	&_verticesData3DO[4116],
-	&_verticesData3DO[4128],
-	&_verticesData3DO[4136],
-	&_verticesData3DO[4152],
-	&_verticesData3DO[4184],
-	&_verticesData3DO[4216],
-	&_verticesData3DO[4248],
-	&_verticesData3DO[4280],
-	&_verticesData3DO[4316],
-	&_verticesData3DO[4352],
-	&_verticesData3DO[4388],
-	&_verticesData3DO[4424],
-	&_verticesData3DO[4460],
-	&_verticesData3DO[4468],
-	&_verticesData3DO[4476],
-	&_verticesData3DO[4488],
-	&_verticesData3DO[4496],
-	&_verticesData3DO[4504],
-	&_verticesData3DO[4516],
-	&_verticesData3DO[4524],
-	&_verticesData3DO[4540],
-	&_verticesData3DO[4568],
-	&_verticesData3DO[4600],
-	&_verticesData3DO[4628],
-	&_verticesData3DO[4668],
-	&_verticesData3DO[4696],
-	&_verticesData3DO[4736],
-	&_verticesData3DO[4764],
-	&_verticesData3DO[4788],
-	&_verticesData3DO[4816],
-	&_verticesData3DO[4848],
-	&_verticesData3DO[4908],
-	&_verticesData3DO[4968],
-	&_verticesData3DO[4996],
-	&_verticesData3DO[5012],
-	&_verticesData3DO[5024],
-	&_verticesData3DO[5040],
-	&_verticesData3DO[5056],
-	&_verticesData3DO[5072],
-	&_verticesData3DO[5088],
-	&_verticesData3DO[5104],
-	&_verticesData3DO[5120],
-	&_verticesData3DO[5156],
-	&_verticesData3DO[5172],
-	&_verticesData3DO[5204],
-	&_verticesData3DO[5264],
-	&_verticesData3DO[5292],
-	&_verticesData3DO[5316],
-	&_verticesData3DO[5376],
-	&_verticesData3DO[5404],
-	&_verticesData3DO[5432],
-	&_verticesData3DO[5440],
-	&_verticesData3DO[5448],
-	&_verticesData3DO[5456],
-	&_verticesData3DO[5464],
-	&_verticesData3DO[5472],
-	&_verticesData3DO[5488],
-	&_verticesData3DO[5508],
-	&_verticesData3DO[5524],
-	&_verticesData3DO[5544],
-	&_verticesData3DO[5552],
-	&_verticesData3DO[5576],
-	&_verticesData3DO[5584],
-	&_verticesData3DO[5608],
-	&_verticesData3DO[5616],
-	&_verticesData3DO[5636],
-	&_verticesData3DO[5656],
-	&_verticesData3DO[5676],
-	&_verticesData3DO[5696],
-	&_verticesData3DO[5716],
-	&_verticesData3DO[5736],
-	&_verticesData3DO[5756],
-	&_verticesData3DO[5776],
-	&_verticesData3DO[5796],
-	&_verticesData3DO[5808],
-	&_verticesData3DO[5832],
-	&_verticesData3DO[5856],
-	&_verticesData3DO[5880],
-	&_verticesData3DO[5900],
-	&_verticesData3DO[5924],
-	&_verticesData3DO[5944],
-	&_verticesData3DO[5960],
-	&_verticesData3DO[5976],
-	&_verticesData3DO[5992],
-	&_verticesData3DO[6012],
-	&_verticesData3DO[6032],
-	&_verticesData3DO[6052],
-	&_verticesData3DO[6072],
-	&_verticesData3DO[6096],
-	&_verticesData3DO[6120],
-	&_verticesData3DO[6144],
-	&_verticesData3DO[6164],
-	&_verticesData3DO[6188],
-	&_verticesData3DO[6224],
-	&_verticesData3DO[6240],
-	&_verticesData3DO[6264],
-	&_verticesData3DO[6276],
+const uint8_t *Video::VERTICES_3DO[201] = {
+	&VERTICES_DATA_3DO[0],
+	&VERTICES_DATA_3DO[36],
+	&VERTICES_DATA_3DO[84],
+	&VERTICES_DATA_3DO[112],
+	&VERTICES_DATA_3DO[144],
+	&VERTICES_DATA_3DO[208],
+	&VERTICES_DATA_3DO[244],
+	&VERTICES_DATA_3DO[296],
+	&VERTICES_DATA_3DO[328],
+	&VERTICES_DATA_3DO[368],
+	&VERTICES_DATA_3DO[412],
+	&VERTICES_DATA_3DO[444],
+	&VERTICES_DATA_3DO[476],
+	&VERTICES_DATA_3DO[540],
+	&VERTICES_DATA_3DO[584],
+	&VERTICES_DATA_3DO[628],
+	&VERTICES_DATA_3DO[660],
+	&VERTICES_DATA_3DO[688],
+	&VERTICES_DATA_3DO[728],
+	&VERTICES_DATA_3DO[768],
+	&VERTICES_DATA_3DO[804],
+	&VERTICES_DATA_3DO[844],
+	&VERTICES_DATA_3DO[872],
+	&VERTICES_DATA_3DO[936],
+	&VERTICES_DATA_3DO[976],
+	&VERTICES_DATA_3DO[1020],
+	&VERTICES_DATA_3DO[1060],
+	&VERTICES_DATA_3DO[1100],
+	&VERTICES_DATA_3DO[1132],
+	&VERTICES_DATA_3DO[1196],
+	&VERTICES_DATA_3DO[1260],
+	&VERTICES_DATA_3DO[1324],
+	&VERTICES_DATA_3DO[1392],
+	&VERTICES_DATA_3DO[1460],
+	&VERTICES_DATA_3DO[1528],
+	&VERTICES_DATA_3DO[1596],
+	&VERTICES_DATA_3DO[1664],
+	&VERTICES_DATA_3DO[1732],
+	&VERTICES_DATA_3DO[1760],
+	&VERTICES_DATA_3DO[1808],
+	&VERTICES_DATA_3DO[1844],
+	&VERTICES_DATA_3DO[1876],
+	&VERTICES_DATA_3DO[1940],
+	&VERTICES_DATA_3DO[1976],
+	&VERTICES_DATA_3DO[2028],
+	&VERTICES_DATA_3DO[2052],
+	&VERTICES_DATA_3DO[2084],
+	&VERTICES_DATA_3DO[2124],
+	&VERTICES_DATA_3DO[2168],
+	&VERTICES_DATA_3DO[2200],
+	&VERTICES_DATA_3DO[2232],
+	&VERTICES_DATA_3DO[2276],
+	&VERTICES_DATA_3DO[2320],
+	&VERTICES_DATA_3DO[2348],
+	&VERTICES_DATA_3DO[2388],
+	&VERTICES_DATA_3DO[2428],
+	&VERTICES_DATA_3DO[2464],
+	&VERTICES_DATA_3DO[2528],
+	&VERTICES_DATA_3DO[2568],
+	&VERTICES_DATA_3DO[2596],
+	&VERTICES_DATA_3DO[2660],
+	&VERTICES_DATA_3DO[2700],
+	&VERTICES_DATA_3DO[2744],
+	&VERTICES_DATA_3DO[2784],
+	&VERTICES_DATA_3DO[2824],
+	&VERTICES_DATA_3DO[2856],
+	&VERTICES_DATA_3DO[2920],
+	&VERTICES_DATA_3DO[2984],
+	&VERTICES_DATA_3DO[3048],
+	&VERTICES_DATA_3DO[3116],
+	&VERTICES_DATA_3DO[3184],
+	&VERTICES_DATA_3DO[3252],
+	&VERTICES_DATA_3DO[3320],
+	&VERTICES_DATA_3DO[3388],
+	&VERTICES_DATA_3DO[3456],
+	&VERTICES_DATA_3DO[3476],
+	&VERTICES_DATA_3DO[3488],
+	&VERTICES_DATA_3DO[3504],
+	&VERTICES_DATA_3DO[3516],
+	&VERTICES_DATA_3DO[3528],
+	&VERTICES_DATA_3DO[3548],
+	&VERTICES_DATA_3DO[3560],
+	&VERTICES_DATA_3DO[3572],
+	&VERTICES_DATA_3DO[3584],
+	&VERTICES_DATA_3DO[3596],
+	&VERTICES_DATA_3DO[3624],
+	&VERTICES_DATA_3DO[3652],
+	&VERTICES_DATA_3DO[3680],
+	&VERTICES_DATA_3DO[3708],
+	&VERTICES_DATA_3DO[3736],
+	&VERTICES_DATA_3DO[3764],
+	&VERTICES_DATA_3DO[3796],
+	&VERTICES_DATA_3DO[3828],
+	&VERTICES_DATA_3DO[3860],
+	&VERTICES_DATA_3DO[3892],
+	&VERTICES_DATA_3DO[3928],
+	&VERTICES_DATA_3DO[3964],
+	&VERTICES_DATA_3DO[4000],
+	&VERTICES_DATA_3DO[4036],
+	&VERTICES_DATA_3DO[4072],
+	&VERTICES_DATA_3DO[4080],
+	&VERTICES_DATA_3DO[4088],
+	&VERTICES_DATA_3DO[4100],
+	&VERTICES_DATA_3DO[4108],
+	&VERTICES_DATA_3DO[4116],
+	&VERTICES_DATA_3DO[4128],
+	&VERTICES_DATA_3DO[4136],
+	&VERTICES_DATA_3DO[4152],
+	&VERTICES_DATA_3DO[4184],
+	&VERTICES_DATA_3DO[4216],
+	&VERTICES_DATA_3DO[4248],
+	&VERTICES_DATA_3DO[4280],
+	&VERTICES_DATA_3DO[4316],
+	&VERTICES_DATA_3DO[4352],
+	&VERTICES_DATA_3DO[4388],
+	&VERTICES_DATA_3DO[4424],
+	&VERTICES_DATA_3DO[4460],
+	&VERTICES_DATA_3DO[4468],
+	&VERTICES_DATA_3DO[4476],
+	&VERTICES_DATA_3DO[4488],
+	&VERTICES_DATA_3DO[4496],
+	&VERTICES_DATA_3DO[4504],
+	&VERTICES_DATA_3DO[4516],
+	&VERTICES_DATA_3DO[4524],
+	&VERTICES_DATA_3DO[4540],
+	&VERTICES_DATA_3DO[4568],
+	&VERTICES_DATA_3DO[4600],
+	&VERTICES_DATA_3DO[4628],
+	&VERTICES_DATA_3DO[4668],
+	&VERTICES_DATA_3DO[4696],
+	&VERTICES_DATA_3DO[4736],
+	&VERTICES_DATA_3DO[4764],
+	&VERTICES_DATA_3DO[4788],
+	&VERTICES_DATA_3DO[4816],
+	&VERTICES_DATA_3DO[4848],
+	&VERTICES_DATA_3DO[4908],
+	&VERTICES_DATA_3DO[4968],
+	&VERTICES_DATA_3DO[4996],
+	&VERTICES_DATA_3DO[5012],
+	&VERTICES_DATA_3DO[5024],
+	&VERTICES_DATA_3DO[5040],
+	&VERTICES_DATA_3DO[5056],
+	&VERTICES_DATA_3DO[5072],
+	&VERTICES_DATA_3DO[5088],
+	&VERTICES_DATA_3DO[5104],
+	&VERTICES_DATA_3DO[5120],
+	&VERTICES_DATA_3DO[5156],
+	&VERTICES_DATA_3DO[5172],
+	&VERTICES_DATA_3DO[5204],
+	&VERTICES_DATA_3DO[5264],
+	&VERTICES_DATA_3DO[5292],
+	&VERTICES_DATA_3DO[5316],
+	&VERTICES_DATA_3DO[5376],
+	&VERTICES_DATA_3DO[5404],
+	&VERTICES_DATA_3DO[5432],
+	&VERTICES_DATA_3DO[5440],
+	&VERTICES_DATA_3DO[5448],
+	&VERTICES_DATA_3DO[5456],
+	&VERTICES_DATA_3DO[5464],
+	&VERTICES_DATA_3DO[5472],
+	&VERTICES_DATA_3DO[5488],
+	&VERTICES_DATA_3DO[5508],
+	&VERTICES_DATA_3DO[5524],
+	&VERTICES_DATA_3DO[5544],
+	&VERTICES_DATA_3DO[5552],
+	&VERTICES_DATA_3DO[5576],
+	&VERTICES_DATA_3DO[5584],
+	&VERTICES_DATA_3DO[5608],
+	&VERTICES_DATA_3DO[5616],
+	&VERTICES_DATA_3DO[5636],
+	&VERTICES_DATA_3DO[5656],
+	&VERTICES_DATA_3DO[5676],
+	&VERTICES_DATA_3DO[5696],
+	&VERTICES_DATA_3DO[5716],
+	&VERTICES_DATA_3DO[5736],
+	&VERTICES_DATA_3DO[5756],
+	&VERTICES_DATA_3DO[5776],
+	&VERTICES_DATA_3DO[5796],
+	&VERTICES_DATA_3DO[5808],
+	&VERTICES_DATA_3DO[5832],
+	&VERTICES_DATA_3DO[5856],
+	&VERTICES_DATA_3DO[5880],
+	&VERTICES_DATA_3DO[5900],
+	&VERTICES_DATA_3DO[5924],
+	&VERTICES_DATA_3DO[5944],
+	&VERTICES_DATA_3DO[5960],
+	&VERTICES_DATA_3DO[5976],
+	&VERTICES_DATA_3DO[5992],
+	&VERTICES_DATA_3DO[6012],
+	&VERTICES_DATA_3DO[6032],
+	&VERTICES_DATA_3DO[6052],
+	&VERTICES_DATA_3DO[6072],
+	&VERTICES_DATA_3DO[6096],
+	&VERTICES_DATA_3DO[6120],
+	&VERTICES_DATA_3DO[6144],
+	&VERTICES_DATA_3DO[6164],
+	&VERTICES_DATA_3DO[6188],
+	&VERTICES_DATA_3DO[6224],
+	&VERTICES_DATA_3DO[6240],
+	&VERTICES_DATA_3DO[6264],
+	&VERTICES_DATA_3DO[6276],
 };
 
-const uint16_t Gfx::_shapesMaskOffset[] = {
+const uint16_t Gfx::SHAPES_MASK_OFFSET[] = {
 	0x0000, 0x0022, 0x0052, 0x006c, 0x008c, 0x00ca, 0x0110, 0x0142,
 	0x0180, 0x01a8, 0x01fe, 0x021c, 0x025a, 0x0298, 0x02c2, 0x0314,
 	0x0334, 0x034e, 0x0376, 0x039e, 0x03c0, 0x03e8, 0x0402, 0x0440,
@@ -1439,9 +1439,9 @@ const uint16_t Gfx::_shapesMaskOffset[] = {
 	0x1c16
 };
 
-const int Gfx::_shapesMaskCount = ARRAYSIZE(_shapesMaskOffset);
+const int Gfx::SHAPES_MASK_COUNT = ARRAYSIZE(SHAPES_MASK_OFFSET);
 
-const uint8_t Gfx::_shapesMaskData[] = {
+const uint8_t Gfx::SHAPES_MASK_DATA[] = {
 	0x0f, 0x10, 0x07, 0xff, 0x07, 0xfe, 0x0f, 0xfe, 0x0f, 0xfc, 0x1f, 0xf8, 0x1f, 0xf0, 0x3f, 0xf0,
 	0x3f, 0xe0, 0x7f, 0xc0, 0x7f, 0x80, 0x7f, 0x80, 0x7f, 0x00, 0x7e, 0x00, 0x7e, 0x00, 0x7e, 0x00,
 	0xfc, 0x00, 0x0b, 0x17, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0x7f, 0x00, 0x7f, 0x00,
@@ -1899,7 +1899,7 @@ const uint8_t Gfx::_shapesMaskData[] = {
 };
 
 // from https://en.wikipedia.org/wiki/Enhanced_Graphics_Adapter
-const uint8_t Video::_paletteEGA[] = {
+const uint8_t Video::PALETTE_EGA[] = {
         0x00, 0x00, 0x00, // black #0
         0x00, 0x00, 0xAA, // blue #1
         0x00, 0xAA, 0x00, // green #2
@@ -1918,7 +1918,7 @@ const uint8_t Video::_paletteEGA[] = {
         0xFF, 0xFF, 0xFF, // bright white #63
 };
 
-const AmigaMemEntry Resource::_memListAmigaFR[146] = {
+const AmigaMemEntry Resource::MEMLIST_AMIGA_FR[146] = {
 	{ 0, 0x1, 0x000000, 0x0000, 0x0000 },
 	{ 0, 0x1, 0x000000, 0x1A3C, 0x1A3C },
 	{ 0, 0x1, 0x001A3C, 0x2E34, 0x2E34 },
@@ -2067,7 +2067,7 @@ const AmigaMemEntry Resource::_memListAmigaFR[146] = {
 	{ 2, 0xB, 0x009882, 0x33C0, 0x7D00 },
 };
 
-const AmigaMemEntry Resource::_memListAmigaEN[146] = {
+const AmigaMemEntry Resource::MEMLIST_AMIGA_EN[146] = {
 	{ 0, 0x1, 0x000000, 0x0000, 0x0000 },
 	{ 0, 0x1, 0x000000, 0x1A3C, 0x1A3C },
 	{ 0, 0x1, 0x001A3C, 0x2E34, 0x2E34 },
@@ -2216,7 +2216,7 @@ const AmigaMemEntry Resource::_memListAmigaEN[146] = {
 	{ 2, 0xB, 0x009886, 0x33C0, 0X7D00 },
 };
 
-const AmigaMemEntry Resource::_memListAtariEN[146] = {
+const AmigaMemEntry Resource::MEMLIST_ATARI_EN[146] = {
 	{ 0, 0x1, 0x000000, 0x0000, 0x0000 },
 	{ 0, 0x1, 0x000000, 0x1A3C, 0x1A3C },
 	{ 0, 0x1, 0x001A3C, 0x2E34, 0x2E34 },
