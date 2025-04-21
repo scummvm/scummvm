@@ -755,7 +755,7 @@ void ScummEngine::writeVar(uint var, int value) {
 		// Any modifications here depend on knowing if the script will
 		// set the timer value back to something sensible afterwards.
 
-		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && var == VAR_TIMER_NEXT && enhancementEnabled(kEnhTimingChanges)) {
+		if (_game.id == GID_SAMNMAX && _currentScript != 0xFF && vm.slot[_currentScript].number == 65 && var == VAR_TIMER_NEXT && enhancementEnabled(kEnhTimingChanges)) {
 			// "Wirst Du brutzeln, wie eine grobe Bratwurst!"
 			if (value == 1 && _language == Common::DE_DEU)
 				value = 4;
