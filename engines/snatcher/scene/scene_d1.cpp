@@ -57,35 +57,35 @@ const uint32 *_timeStamp;
 SH_HEAD_END(D1)
 
 SH_IMP_FRMTBL(D1) {
-	SH_FRM(00),
-	SH_FRM(01),
-	SH_FRM(02),
-	SH_FRM(01),
-	SH_FRM(04),
-	SH_FRM(05),
-	SH_FRM(06),
-	SH_FRM(07),
-	SH_FRM(08),
-	SH_FRM(09),
-	SH_FRM(01),
-	SH_FRM(11),
-	SH_FRM(01),
-	SH_FRM(13),
-	SH_FRM(01),
-	SH_FRM(15),
-	SH_FRM(01),
-	SH_FRM(17),
-	SH_FRM(01),
-	SH_FRM(19),
-	SH_FRM(01),
-	SH_FRM(21),
-	SH_FRM(22),
-	SH_FRM(23),
-	SH_FRM(22),
-	SH_FRM(25),
-	SH_FRM(22),
-	SH_FRM(27),
-	SH_FRM(28)
+	SH_FRM(D1, 00),
+	SH_FRM(D1, 01),
+	SH_FRM(D1, 02),
+	SH_FRM(D1, 01),
+	SH_FRM(D1, 04),
+	SH_FRM(D1, 05),
+	SH_FRM(D1, 06),
+	SH_FRM(D1, 07),
+	SH_FRM(D1, 08),
+	SH_FRM(D1, 09),
+	SH_FRM(D1, 01),
+	SH_FRM(D1, 11),
+	SH_FRM(D1, 01),
+	SH_FRM(D1, 13),
+	SH_FRM(D1, 01),
+	SH_FRM(D1, 15),
+	SH_FRM(D1, 01),
+	SH_FRM(D1, 17),
+	SH_FRM(D1, 01),
+	SH_FRM(D1, 19),
+	SH_FRM(D1, 01),
+	SH_FRM(D1, 21),
+	SH_FRM(D1, 22),
+	SH_FRM(D1, 23),
+	SH_FRM(D1, 22),
+	SH_FRM(D1, 25),
+	SH_FRM(D1, 22),
+	SH_FRM(D1, 27),
+	SH_FRM(D1, 28)
 };
 
 SH_IMP_CTOR(D1) {
@@ -108,9 +108,9 @@ SH_IMP_DTOR(D1)	{
 SH_IMPL_UPDT(D1) {
 	if (state.frameNo == -1) {
 		if (state.frameState == 0) {
-			_vm->sound()->musicPlay(3);
+			_vm->sound()->cdaPlay(3);
 			++state.frameState;
-		} else if (_vm->sound()->musicIsPlaying()) {
+		} else if (_vm->sound()->cdaIsPlaying()) {
 			state.frameNo = 0;
 			state.frameState = 0;
 		}
@@ -119,10 +119,10 @@ SH_IMPL_UPDT(D1) {
 
 	if (state.frameNo >= (int)_frameProcs.size() || !_frameProcs[state.frameNo]->isValid()) {
 		error("%s(): Invalid call to frame proc %d", __FUNCTION__, state.frameNo);
-	} else if (_vm->sound()->musicGetTime() >= _timeStamp[state.frameNo]) {
+	} else if (_vm->sound()->cdaGetTime() >= _timeStamp[state.frameNo]) {
 		(*_frameProcs[state.frameNo])(state);
 		++state.frameNo;
-	} else if (_vm->inputFlag() & 0x80) {
+	} else if (_vm->input().controllerFlags & 0x80) {
 		state.finish = -1;
 		state.frameNo = 0;
 	}
@@ -146,27 +146,27 @@ SH_IMPL_FRM(D1, 04) {
 	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->runScript(_module->getPtr(0), 2);
 	_vm->gfx()->setScrollStep(GraphicsEngine::kVertA | GraphicsEngine::kSingleStep, 0x110);
-	_vm->gfx()->scrollCommand(1);
+	_vm->gfx()->transitionCommand(1);
 }
 
 SH_IMPL_FRM(D1, 05) {
-	_vm->gfx()->scrollCommand(8);
+	_vm->gfx()->transitionCommand(8);
 }
 
 SH_IMPL_FRM(D1, 06) {
-	_vm->gfx()->scrollCommand(9);
+	_vm->gfx()->transitionCommand(9);
 }
 
 SH_IMPL_FRM(D1, 07) {
-	_vm->gfx()->scrollCommand(10);
+	_vm->gfx()->transitionCommand(10);
 }
 
 SH_IMPL_FRM(D1, 08) {
-	_vm->gfx()->scrollCommand(11);
+	_vm->gfx()->transitionCommand(11);
 }
 
 SH_IMPL_FRM(D1, 09) {
-	_vm->gfx()->scrollCommand(12);
+	_vm->gfx()->transitionCommand(12);
 }
 
 SH_IMPL_FRM(D1, 11) {

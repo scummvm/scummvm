@@ -46,27 +46,28 @@ SH_DCL_FRM(12)
 
 // local vars
 int16 _option;
+uint16 _counter2;
 bool _loadCancelled;
 
 SH_HEAD_END(D2)
 
 SH_IMP_FRMTBL(D2) {
-	SH_FRM(00),
-	SH_FRM(01),
-	SH_FRM(02),
-	SH_FRM(03),
-	SH_FRM(04),
-	SH_FRM(05),
-	SH_FRM(06),
-	SH_FRM(07),
-	SH_FRM(08),
-	SH_FRM(09),
-	SH_FRM(10),
-	SH_FRM(11),
-	SH_FRM(12)
+	SH_FRM(D2, 00),
+	SH_FRM(D2, 01),
+	SH_FRM(D2, 02),
+	SH_FRM(D2, 03),
+	SH_FRM(D2, 04),
+	SH_FRM(D2, 05),
+	SH_FRM(D2, 06),
+	SH_FRM(D2, 07),
+	SH_FRM(D2, 08),
+	SH_FRM(D2, 09),
+	SH_FRM(D2, 10),
+	SH_FRM(D2, 11),
+	SH_FRM(D2, 12)
 };
 
-SH_IMP_CTOR(D2), _option(0), _loadCancelled(false) {
+SH_IMP_CTOR(D2), _option(0), _counter2(0), _loadCancelled(false) {
 	SH_CTOR_MAKEPROCS(D2);
 }
 
@@ -81,30 +82,24 @@ SH_IMPL_UPDT(D2) {
 		(*_frameProcs[state.frameNo])(state);
 }
 
-bool hasRAMCart = true; 
-int _state_ua_1 = 0;
 int _hasSaveSlotFlag = 15;
 int _saveFileCurID = 0;
-bool hasFreeBuram = true;
 uint8 _bua3 = 0;
 uint8 _buram_0 = 0;
 bool _buram_2 = true;
-
-int16 _sceneState_ua_2 = 0;
-int16 _sceneState_ua_3 = 0;
 
 // functions
 SH_IMPL_FRM(D2, 00) {
 	switch (state.frameState) {
 	case 0:
-		//enqueueCommunicationStatus2Command(_state_ua_1 ? 0xF3 : 0xF4, 0);
-		_vm->sound()->pcmDoCommand(_state_ua_1 ? 0xFC : 0xFD, -1);
+		_vm->sound()->fmSendCommand(state.conf.disableStereo ? 243 : 244, 0);
+		_vm->sound()->pcmSendCommand(state.conf.disableStereo ? 252 : 253, -1);
 		//_d2state = 0;
 		//buramCheck();
 		++state.frameState;
 		break;
 	case 1:
-		if (hasRAMCart) {
+		if (state.conf.hasRAMCart) {
 			++state.frameNo;
 			state.frameState = 0;
 		} else {
@@ -114,11 +109,11 @@ SH_IMPL_FRM(D2, 00) {
 		}
 		break;
 	case 2:
-		if (_vm->inputFlag() & 3) {
+		if (_vm->input().controllerFlags & 3) {
 			_vm->gfx()->clearAnimControlFlags(16, ~GraphicsEngine::kAnimHide);
 			_buram_0 ^= 1;
 		}
-		if (_vm->inputFlag() & 0x80) {
+		if (_vm->input().controllerFlags & 0x80) {
 			state.counter = 10;
 			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x10F2));
 			++state.frameState;
@@ -128,7 +123,7 @@ SH_IMPL_FRM(D2, 00) {
 		if (--state.counter)
 			return;
 		if (_buram_0)
-			hasRAMCart = _buram_2;
+			state.conf.hasRAMCart = _buram_2;
 		++state.frameNo;
 		state.frameState = 0;
 		break;
@@ -137,9 +132,9 @@ SH_IMPL_FRM(D2, 00) {
 
 SH_IMPL_FRM(D2, 01) {
 	if (!state.frameState) {
-		_vm->sound()->musicPlay(2);
+		_vm->sound()->cdaPlay(2);
 		++state.frameState;
-	} else if (_vm->sound()->musicIsPlaying()) {
+	} else if (_vm->sound()->cdaIsPlaying()) {
 		++state.frameNo;
 		state.frameState = 0;
 	}	
@@ -147,7 +142,7 @@ SH_IMPL_FRM(D2, 01) {
 
 SH_IMPL_FRM(D2, 02) {
 	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
-	_vm->gfx()->scrollCommand(1);
+	_vm->gfx()->transitionCommand(1);
 	_vm->gfx()->setScrollStep(GraphicsEngine::kVertA | GraphicsEngine::kSingleStep, 0x100);
 	_vm->gfx()->runScript(_module->getPtr(0), 0);
 	state.counter = 24;
@@ -158,7 +153,7 @@ SH_IMPL_FRM(D2, 02) {
 SH_IMPL_FRM(D2, 03) {
 	if (--state.counter)
 		return;
-	_vm->gfx()->scrollCommand(7);
+	_vm->gfx()->transitionCommand(7);
 	state.counter = 4;
 	++state.frameNo;
 	state.frameState = 0;
@@ -183,7 +178,7 @@ SH_IMPL_FRM(D2, 05) {
 SH_IMPL_FRM(D2, 06) {
 	switch (state.frameState) {
 	case 0:
-		if (hasRAMCart) {
+		if (state.conf.hasRAMCart) {
 			++state.frameNo;
 			state.frameState = 0;
 		} else {
@@ -228,7 +223,7 @@ SH_IMPL_FRM(D2, 08) {
 		++state.frameState;
 		break;
 	case 1:
-		if (hasFreeBuram) {
+		if (state.conf.hasFreeBuram) {
 			++state.frameNo;
 			state.frameState = 0;
 		} else {
@@ -255,14 +250,14 @@ SH_IMPL_FRM(D2, 09) {
 	bool fin = false;
 	switch (state.frameState) {
 	case 0:
-		_vm->gfx()->scrollCommand(0xFF);
+		_vm->gfx()->transitionCommand(0xFF);
 		_vm->gfx()->clearAnimControlFlags(_hasSaveSlotFlag ? 17 : 16, ~GraphicsEngine::kAnimHide);
 		state.frameState += (_hasSaveSlotFlag ? 1 : 2);
 		break;
 	case 1:
-		if (_vm->inputFlag() & 3)
+		if (_vm->input().controllerFlags & 3)
 			_vm->gfx()->clearAnimControlFlags(17, ~GraphicsEngine::kAnimHide);
-		if (_vm->inputFlag() & 0x80) {
+		if (_vm->input().controllerFlags & 0x80) {
 			_vm->gfx()->setAnimControlFlags(17, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
 			state.menuSelect = 1;
 			if (_vm->gfx()->getAnimCurFrame(17) == 3) {
@@ -273,7 +268,7 @@ SH_IMPL_FRM(D2, 09) {
 		}
 		break;
 	default:
-		if (_vm->inputFlag() & 0x80) {
+		if (_vm->input().controllerFlags & 0x80) {
 			++state.frameNo;
 			state.frameState = 0;
 			fin = true;
@@ -284,7 +279,7 @@ SH_IMPL_FRM(D2, 09) {
 		++state.frameNo;
 		state.frameState = 0;
 		_bua3 = 56;
-		//enqueueCommunicationStatus2Command(0);
+		_vm->sound()->fmSendCommand(56, 0);
 		_vm->gfx()->setAnimControlFlags(16, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
 		_vm->gfx()->setAnimControlFlags(17, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
 		_option = 0;
@@ -310,9 +305,9 @@ SH_IMPL_FRM(D2, 10) {
 		
 
 		do {
-			if (_vm->inputFlag() & 1)
+			if (_vm->input().controllerFlags & 1)
 				--_saveFileCurID;
-			if (_vm->inputFlag() & 2)
+			if (_vm->input().controllerFlags & 2)
 				++_saveFileCurID;
 			_saveFileCurID &= 3;
 		} while (!(_hasSaveSlotFlag & (1 << _saveFileCurID)));
@@ -320,11 +315,13 @@ SH_IMPL_FRM(D2, 10) {
 		_vm->gfx()->setAnimFrame(24, _saveFileCurID << 2);
 		_vm->gfx()->setAnimFrame(25, _saveFileCurID << 2);
 
-		if (_vm->inputFlag() & 0x80) {
-			_loadCancelled = 0;
+		if (_vm->input().controllerFlags & 0x80) {
+			_bua3 = 56;
+			_vm->sound()->fmSendCommand(56, 0);
+			_loadCancelled = false;
 			fin = true;
-		} else if (_vm->inputFlag() & 0x10) {
-			_loadCancelled = 1;
+		} else if (_vm->input().controllerFlags & 0x10) {
+			_loadCancelled = true;
 			fin = true;
 		}
 		if (fin) {
@@ -382,29 +379,46 @@ SH_IMPL_FRM(D2, 11) {
 			_vm->gfx()->clearAnimControlFlags(i, 0xFF);
 
 		do {
-		if (_vm->inputFlag() & 1)
+		if (_vm->input().controllerFlags & 1)
 			--_option;
-		if (_vm->inputFlag() & 2)
+		if (_vm->input().controllerFlags & 2)
 			++_option;
 		_option = (_option + 5) % 5;
 
-		} while (_option == 3 && !_sceneState_ua_2);
+		} while (_option == 3 && !state.conf.useLightGun);
 
-		//sub11_0_Do_sub_28F9C();
-		//sub11_0_dd();
+		if (!state.conf.lightGunAvailable) {
+			state.conf.useLightGun = 0;
+			if (_option == 3)
+				_option = 4;
+		}
+
+		if (_option == 0) {
+			if (state.conf.lightGunAvailable && _vm->input().controllerFlags & 0x0C)
+				state.conf.useLightGun ^= 1;
+		} else if (_option == 1) {
+			if (_vm->input().controllerFlags & 8)
+				++state.conf.controllerSetup;
+			if (_vm->input().controllerFlags & 4)
+				--state.conf.controllerSetup;
+			state.conf.controllerSetup = (state.conf.controllerSetup + 5) % 5;
+		} else if (_option == 2) {
+			if (_vm->input().controllerFlags & 0x0C)
+				state.conf.disableStereo ^= 1;
+		}		
 
 		_vm->gfx()->setAnimFrame(32, _option << 2);
-		_vm->gfx()->setAnimFrame(33, ((_option ? 2 : 0) + _sceneState_ua_2) << 1);
-		_vm->gfx()->setAnimFrame(36, _sceneState_ua_2 & 2);
-		_vm->gfx()->setAnimFrame(34, ((_option != 1 ? 6 : 0) + _sceneState_ua_3) << 1);
-		_vm->gfx()->setAnimFrame(35, ((_option != 2 ? 2 : 0) + _state_ua_1) << 1);
+		_vm->gfx()->setAnimFrame(33, ((_option ? 2 : 0) + state.conf.useLightGun) << 1);
+		_vm->gfx()->setAnimFrame(36, state.conf.useLightGun << 1);
+		_vm->gfx()->setAnimFrame(34, ((_option != 1 ? 6 : 0) + state.conf.controllerSetup) << 1);
+		_vm->gfx()->setAnimFrame(35, ((_option != 2 ? 2 : 0) + state.conf.disableStereo) << 1);
 		
-		if (_vm->inputFlag() & 0x80)
+		if (_vm->input().controllerFlags & 0x80)
 			fin = (_option != 3) ? 1 : 3;
-		else if (_vm->inputFlag() & 0x70)
+		else if (_vm->input().controllerFlags & 0x70)
 			fin = (_option == 4) ? 1 : (_option == 3 ? 3 : 0);
 		if (fin) {
-			_vm->sound()->pcmDoCommand(55 + fin, -1);
+			_vm->sound()->pcmSendCommand(55 + fin, -1);
 			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x290F2));
 			state.counter = 10;
 			if (fin == 1) {
@@ -424,11 +438,23 @@ SH_IMPL_FRM(D2, 11) {
 		break;
 	case 2:
 		state.counter  = 0;
-		//
+		_counter2 = 0;
+		_vm->gfx()->setAnimControlFlags(16, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
+		_vm->gfx()->setAnimFrame(16, 0);
+		_vm->gfx()->setAnimFrame(17, 0);
+		_vm->gfx()->setAnimFrame(18, 0);
+		_vm->gfx()->setAnimFrame(19, 0);
+		//anim17 3a:0
+		//anim17 absSpeedX:0
+		//anim18 3a:0
+		//anim18 absSpeedX:0
+		//anim19 3a:0
+		//anim19 absSpeedX:0
+
 		++state.frameState;
 		break;
 	case 3:
-		if (_vm->inputFlag() & 0x80) {
+		if (_vm->input().controllerFlags & 0x80) {
 			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x10F2));
 			state.counter = 10;
 			state.frameState = 0;
@@ -436,16 +462,28 @@ SH_IMPL_FRM(D2, 11) {
 			return;
 		}
 
-		//animDo:sub_2985E
+		_vm->gfx()->gunTestAnimUpdate();
 
 		switch (state.counter) {
 		case 0:
-			++state.counter;
+			if (_vm->input().controllerFlags & 0x70) {
+				//a18.f3a = 1;
+				//a18.speedX = 0x100;
+				++state.counter;
+			}
 			break;
 		case 1:
+			_vm->sound()->pcmSendCommand(57, -1);
+			//a18.f3a = 0;
+			//a18.speedX = 0;
+			//a19.f3a = 1;
+			//a19.speedX = 1;
 			++state.counter;
 			break;
 		case 2:
+			_vm->gfx()->setAnimControlFlags(16, GraphicsEngine::kAnimPause);
+			//a16: posX = 117;
+			//a16: posY = 93;
 			++state.counter;
 			break;
 		case 3:
@@ -455,6 +493,8 @@ SH_IMPL_FRM(D2, 11) {
 			--state.counter;
 			break;
 		case 5:
+			if (++_counter2 < 180)
+				return;
 			state.counter = 10;
 			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x10F2));
 			++state.frameState;

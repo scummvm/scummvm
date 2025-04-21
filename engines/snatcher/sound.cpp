@@ -24,8 +24,8 @@
 
 namespace Snatcher {
 
-SoundEngine::SoundEngine(Common::Platform platform, int soundOptions) : _dev(nullptr) {
-	_dev = SoundDevice::create(platform, soundOptions);
+SoundEngine::SoundEngine(FIO *fio, Common::Platform platform, int soundOptions) : _dev(nullptr) {
+	_dev = SoundDevice::create(fio, platform, soundOptions);
 	assert(_dev);
 }
 
@@ -33,39 +33,63 @@ SoundEngine::~SoundEngine() {
 	delete _dev;
 }
 
-void SoundEngine::musicPlay(int track) {
-	_dev->musicPlay(track);
+bool SoundEngine::init(Audio::Mixer *mixer) {
+	return _dev->init(mixer);
 }
 
-void SoundEngine::musicStop() {
-	_dev->musicStop();
+void SoundEngine::cdaPlay(int track) {
+	_dev->cdaPlay(track);
 }
 
-bool SoundEngine::musicIsPlaying() const {
-	return _dev->musicIsPlaying();
+void SoundEngine::cdaStop() {
+	_dev->cdaStop();
 }
 
-uint32 SoundEngine::musicGetTime() const {
-	return _dev->musicGetTime();
+bool SoundEngine::cdaIsPlaying() const {
+	return _dev->cdaIsPlaying();
 }
 
-void SoundEngine::fmStartSound(int track) {
-	_dev->fmStartSound(track);
+uint32 SoundEngine::cdaGetTime() const {
+	return _dev->cdaGetTime();
 }
 
-void SoundEngine::pcmPlayEffect(int track) {
-	_dev->pcmPlayEffect(track);
+void SoundEngine::fmSendCommand(int cmd, int arg) {
+	_dev->fmSendCommand(cmd, arg);
 }
 
-void SoundEngine::pcmDoCommand(int cmd, int arg) {
-	_dev->pcmDoCommand(cmd, arg);
+uint8 SoundEngine::fmGetStatus() const {
+	return _dev->fmGetStatus();
+}
+
+void SoundEngine::pcmSendCommand(int cmd, int arg) {
+	_dev->pcmSendCommand(cmd, arg);
+}
+
+void SoundEngine::pcmInitSound(int sndId) {
+	_dev->pcmInitSound(sndId);
+}
+
+uint8 SoundEngine::pcmGetStatus() const {
+	return _dev->pcmGetStatus();
 }
 
 void SoundEngine::pause(bool toggle) {
 	_dev->pause(toggle);
 }
 
-SoundDevice *SoundDevice::create(Common::Platform platform, int soundOptions) {
+void SoundEngine::update() {
+	_dev->update();
+}
+
+void SoundEngine::setMusicVolume(int vol) {
+	_dev->setMusicVolume(vol);
+}
+
+void SoundEngine::setSoundEffectVolume(int vol) {
+	_dev->setSoundEffectVolume(vol);
+}
+
+SoundDevice *SoundDevice::create(FIO *fio, Common::Platform platform, int soundOptions) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(soundOptions);
 	MusicType musicType = MidiDriver::getMusicType(dev);
 
@@ -79,7 +103,7 @@ SoundDevice *SoundDevice::create(Common::Platform platform, int soundOptions) {
 
 	switch (platform) {
 	case Common::kPlatformSegaCD:
-		return createSegaSoundDevice();
+		return createSegaSoundDevice(fio);
 	default:
 		break;
 	};

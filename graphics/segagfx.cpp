@@ -461,7 +461,7 @@ template<typename T> void SegaRenderer::refresh(T *dst, int x, int y, int w, int
 	if (sizeof(T) == 1)
 		return;
 
-	uint8 *rd1 = tempBufferPlanes + (y * _screenW + x);
+	uint8 *rd1 = _tempBufferPlanes + (y * _screenW + x);
 	dst += (y * _screenW + x);
 
 	if (x == 0 && y == 0 && w == _screenW && h == _screenH) {

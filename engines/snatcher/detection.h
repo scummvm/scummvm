@@ -31,7 +31,7 @@ enum {
 };
 
 struct GameDescription {
-	byte gameID;
+	uint8 gameID;
 	int soundOptions;
 	Common::Language lang;
 	Common::Platform platform;

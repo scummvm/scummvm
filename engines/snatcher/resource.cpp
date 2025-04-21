@@ -57,16 +57,11 @@ FIO::~FIO() {
 }
 
 SceneModule *FIO::loadModule(int index) {
-	return (index >= 0 && index < _resFileListSize)  ? new SceneModule(_vm, this, _resFileList[index], index) : 0;
+	return (index >= 0 && index < _resFileListSize) ? new SceneModule(_vm, this, _resFileList[index], index) : 0;
 }
 
-Common::SeekableReadStream *FIO::readStream(const Common::Path &file) {
-	return _files.createReadStreamForMember(file);
-}
-
-Common::SeekableReadStreamEndian *FIO::readStreamEndian(const Common::Path &file, EndianMode em) {
-	Common::SeekableReadStream *stream = readStream(file);
-	return stream ? new EndianWrapper(stream, (em == kForceBE) ? true : (em == kForceLE ? false : _bigEndianTarget)) : 0;
+const uint8 *FIO::fileData(int index, uint32 *fileSize) {
+	return (index >= 0 && index < _resFileListSize) ? fileData(_resFileList[index], fileSize) : nullptr;
 }
 
 uint8 *FIO::fileData(const Common::Path &file, uint32 *fileSize) {
@@ -76,14 +71,33 @@ uint8 *FIO::fileData(const Common::Path &file, uint32 *fileSize) {
 	if (fileSize)
 		*fileSize = size;
 
-	if (!s)
-		return 0;
+	if (!s) {
+		warning("%s(): Unable to open file %s", file.baseName().c_str());
+		return nullptr;
+	}
 
 	uint8 *data = new uint8[size];
 	s->read(data, size);
 	delete s;
 
 	return data;
+}
+
+Common::SeekableReadStream *FIO::readStream(int index) {
+	return (index >= 0 && index < _resFileListSize) ? readStream(_resFileList[index]) : nullptr;
+}
+
+Common::SeekableReadStream *FIO::readStream(const Common::Path &file) {
+	return _files.createReadStreamForMember(file);
+}
+
+Common::SeekableReadStreamEndian *FIO::readStreamEndian(int index, EndianMode em) {
+	return (index >= 0 && index < _resFileListSize) ? readStreamEndian(_resFileList[index], em) : nullptr;
+}
+
+Common::SeekableReadStreamEndian *FIO::readStreamEndian(const Common::Path &file, EndianMode em) {
+	Common::SeekableReadStream *stream = readStream(file);
+	return stream ? new EndianWrapper(stream, (em == kForceBE) ? true : (em == kForceLE ? false : _bigEndianTarget)) : nullptr;
 }
 
 const char *FIO::_resFileList[97] = {

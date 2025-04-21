@@ -24,26 +24,39 @@
 
 #include "common/platform.h"
 
+namespace Audio {
+class Mixer;
+}
+
 namespace Snatcher {
 
 class SoundDevice;
+class FIO;
 
 class SoundEngine {
 public:
-	SoundEngine(Common::Platform platform, int soundOptions);
+	SoundEngine(FIO *fio, Common::Platform platform, int soundOptions);
 	~SoundEngine();
 
-	void musicPlay(int track);
-	void musicStop();
-	bool musicIsPlaying() const;
-	uint32 musicGetTime() const;
+	bool init(Audio::Mixer *mixer);
 
-	void fmStartSound(int track);
+	void cdaPlay(int track);
+	void cdaStop();
+	bool cdaIsPlaying() const;
+	uint32 cdaGetTime() const;
 
-	void pcmPlayEffect(int track);
-	void pcmDoCommand(int cmd, int arg);
+	void fmSendCommand(int cmd, int arg);
+	uint8 fmGetStatus() const;
+
+	void pcmSendCommand(int cmd, int arg);
+	void pcmInitSound(int sndId);
+	uint8 pcmGetStatus() const;
 
 	void pause(bool toggle);
+	void update();
+
+	void setMusicVolume(int vol);
+	void setSoundEffectVolume(int vol);
 
 private:
 	SoundDevice *_dev;

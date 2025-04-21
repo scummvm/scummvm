@@ -38,8 +38,8 @@ namespace Snatcher {
 //#define		ANIM_DEBUG
 
 struct AnimObject {
-	AnimObject(int num) : id(num), enable(0), fadeLevel(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), f16(0), f18(0), f1c(0), timeStamp(0), f24(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), f2c(0), f2d(0), spriteTableLocation(0), res(), scriptData(), spriteData(0), absSpeedX(0), absSpeedY(0), parent(0), children(0), next(0), f4e(0), f4f(0) {}
-
+	AnimObject(int num) : id(num), enable(0), fadeLevel(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), f16(0), f18(0), f1c(0), timeStamp(0), f24(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), f2c(0), f2d(0), spriteTableLocation(0), res(), scriptData(), spriteData(0), absSpeedX(0), absSpeedY(0), parent(0), children(0), next(0), f4e(0), f4f(0), f3a(0), f3c(0), f3e(0) {}
+	
 	void clear() {
 		enable = fadeLevel = drawFlags = 0;
 		posX = posY = 0;
@@ -59,6 +59,7 @@ struct AnimObject {
 		absSpeedX = absSpeedY = 0;
 		parent = children = next = 0;
 		f4e = f4f = 0;
+		f3a = f3c = f3e = 0;
 	}
 
 	uint16 enable;
@@ -81,12 +82,13 @@ struct AnimObject {
 	int16 frameDelay;
 	uint8 f2c;
 	uint8 f2d;
-
 	uint32 spriteTableLocation;
 	ResourcePointer res;
 	ResourcePointer scriptData;
 	const uint16 *spriteData;
-
+	uint16 f3a;
+	uint16 f3c;
+	uint16 f3e;
 	int32 absSpeedX;
 	int32 absSpeedY;
 	uint16 parent;
@@ -121,9 +123,12 @@ public:
 	void anim_setFrame(uint8 animObjId, uint16 frameNo) override;
 	uint16 anim_getCurFrameNo(uint8 animObjId) const override;
 	bool anim_isEnabled(uint8 animObjId) const override;
+	void anim_gunTestUpdate() override;
 
 	uint16 screenWidth() const override { return _screenWidth; }
 	uint16 screenHeight() const override { return _screenHeight; }
+
+	void createMouseCursor() override;
 
 	void hINTCallback(Graphics::SegaRenderer *sr) override;
 
@@ -487,6 +492,23 @@ bool Renderer_SCD::anim_isEnabled(uint8 animObjId) const {
 	return _animations[animObjId]->enable != 0;
 }
 
+void Renderer_SCD::anim_gunTestUpdate() {
+	for (int i = 0; i < 3; ++i) {
+		AnimObject &a = *_animations[17 + i];
+		a.controlFlags = GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide;
+		if (a.absSpeedX)
+			a.controlFlags = GraphicsEngine::kAnimPause;
+		if (a.f3a == 1) {
+			if (++a.f3c >= 16) {
+				a.f3c = 0;
+				a.absSpeedX ^= 0x100;
+				if (++a.f3e >= 6)
+					a.f3a = 0;
+			}
+		}
+	}
+}
+
 void Renderer_SCD::hINTCallback(Graphics::SegaRenderer *sr) {
 	if (_pal)
 		_pal->hINTCallback(sr);
@@ -518,7 +540,7 @@ void Renderer_SCD::loadDataFromGfxScript() {
 		return;
 	}
 
-	const byte *src = _transferData.makeAbsPtr(_transferData.readIncrUINT32() & 0xFFFFFF)();
+	const uint8 *src = _transferData.makeAbsPtr(_transferData.readIncrUINT32() & 0xFFFFFF)();
 	_transferDelay = _transferData.readIncrUINT16();
 	uint16 addr = _transferData.readIncrUINT16();
 
@@ -1100,7 +1122,7 @@ int Renderer_SCD::anim_36(AnimObject &a, const uint8 *data) {
 
 int Renderer_SCD::anim_37(AnimObject &a, const uint8 *data) {
 	static const uint8 cmd[] = { 0x25, 0x00 };
-	ResourcePointer r(data, 0);
+	ResourcePointer r(cmd, 0);
 	enqueueDrawCommands(r);
 	return 1;
 }
@@ -1200,6 +1222,12 @@ void Renderer_SCD::anim_setGroupParameter(AnimObject &a, int para, int16 val, bo
 		recursive = true;
 		anim_setGroupParameter(*ta, para, val, true);
 	}
+}
+
+void Renderer_SCD::createMouseCursor() {
+	// This will obviously only work when the necessary animation has been loaded.
+	anim_setControlFlags(16, GraphicsEngine::kAnimPause);
+	//_sr->renderSprites(
 }
 
 // Boot logo sequence code. This has nothing to do with the engine graphics code, so I put it at the end, to keep the ugly mess out of sight...

@@ -24,12 +24,16 @@
 #define SNATCHER_STATICRES_H
 
 #include "common/scummsys.h"
+#include "snatcher/staticres_types.h"
 
 namespace Snatcher {
 
 namespace StaticRes_SCD {
 
-	extern const uint8 *const _bootSeqData[4];
+	extern const uint8 *const _bootSeqData[5];
+
+	extern const FMSoundTrackDef _fmSndTrackDefs[122];
+	extern const uint8 _fmSndPitchSpecialTable[512];
 
 } // End of namespace StaticRes
 
