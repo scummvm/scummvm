@@ -55,7 +55,7 @@ void Engine::run() {
 	switch (_state) {
 	case kStateLogo3DO:
 		doThreeScreens();
-		scrollText(0, 380, Video::_noteText3DO);
+		scrollText(0, 380, Video::NOTE_TEXT_3DO);
 		playCinepak("Logo.Cine");
 		playCinepak("Spintitle.Cine");
 		break;
@@ -123,11 +123,11 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 	case DT_ATARI_DEMO:
 		switch (lang) {
 		case Common::FR_FRA:
-			_vid._stringsTable = Video::_stringsTableFr;
+			_vid._stringsTable = Video::STRINGS_TABLE_FR;
 			break;
 		case Common::EN_ANY:
 		default:
-			_vid._stringsTable = Video::_stringsTableEng;
+			_vid._stringsTable = Video::STRINGS_TABLE_ENG;
 			break;
 		}
 		break;
@@ -185,9 +185,10 @@ void Engine::processInput() {
 
 void Engine::doThreeScreens() {
 	_script.snd_playMusic(1, 0, 0);
-	static const int bitmaps[] = { 67, 68, 69, -1 };
-	for (int i = 0; bitmaps[i] != -1 && !_stub->_pi.quit; ++i) {
-		_res.loadBmp(bitmaps[i]);
+	static const int BITMAPS[] = { 67, 68, 69, -1 };
+
+	for (int i = 0; BITMAPS[i] != -1 && !_stub->_pi.quit; ++i) {
+		_res.loadBmp(BITMAPS[i]);
 		_vid.updateDisplay(0, _stub);
 		while (!_stub->_pi.quit) {
 			_stub->processEvents();
@@ -202,7 +203,7 @@ void Engine::doThreeScreens() {
 }
 
 void Engine::doEndCredits() {
-	scrollText(0, 380, Video::_endText3DO);
+	scrollText(0, 380, Video::END_TEXT_3DO);
 	_script.snd_playMusic(0, 0, 0);
 	playCinepak("ootw2.cine");
 	_state = kStateTitle3DO;
@@ -218,11 +219,12 @@ void Engine::titlePage() {
 	_res.loadBmp(70);
 	static const int kCursorColor = 0;
 	_vid.setPaletteColor(kCursorColor, 255, 0, 0);
-	static const int yPos[] = { 97, 123, 149 };
+	static const uint16 YPOS[] = { 97, 123, 149 };
 	int y = 0;
+
 	while (!_stub->_pi.quit) {
 		_vid.copyPage(0, 1, 0);
-		_vid.drawRect(1, kCursorColor, 97, yPos[y], 210, yPos[y + 1]);
+		_vid.drawRect(1, kCursorColor, 97, YPOS[y], 210, YPOS[y + 1]);
 		_stub->processEvents();
 		if (_stub->_pi.dirMask & PlayerInput::DIR_DOWN) {
 			_stub->_pi.dirMask &= ~PlayerInput::DIR_DOWN;

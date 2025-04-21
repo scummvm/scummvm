@@ -118,8 +118,8 @@ void Video::drawShape(uint8_t color, uint16_t zoom, const Point *pt) {
 }
 
 void Video::drawShapePart3DO(int color, int part, const Point *pt) {
-	assert(part < (int)ARRAYSIZE(_vertices3DO));
-	const uint8_t *vertices = _vertices3DO[part];
+	assert(part < (int)ARRAYSIZE(VERTICES_3DO));
+	const uint8_t *vertices = VERTICES_3DO[part];
 	const int w = *vertices++;
 	const int h = *vertices++;
 	const int x = pt->x - w / 2;
@@ -332,12 +332,12 @@ void Video::drawString(uint8_t color, uint16_t x, uint16_t y, uint16_t strId) {
 	const char *str = 0;
 	if (_res->getDataType() == DT_15TH_EDITION || _res->getDataType() == DT_20TH_EDITION) {
 		for (int i = 0; i < NTH_EDITION_STRINGS_COUNT; ++i) {
-			if (Video::_stringsId15th[i] == strId) {
+			if (Video::STRINGS_ID_15TH[i] == strId) {
 				str = _res->getString(i);
 				if (str) {
 					escapedChars = true;
 				} else {
-					str = Video::_stringsTable15th[i];
+					str = Video::STRINGS_TABLE_15TH[i];
 				}
 				break;
 			}
@@ -345,13 +345,13 @@ void Video::drawString(uint8_t color, uint16_t x, uint16_t y, uint16_t strId) {
 	} else if (_res->getDataType() == DT_WIN31) {
 		str = _res->getString(strId);
 	} else if (_res->getDataType() == DT_3DO) {
-		str = findString(_stringsTable3DO, strId);
+		str = findString(STRINGS_TABLE_3DO, strId);
 	} else if (_res->getDataType() == DT_ATARI_DEMO && strId == 0x194) {
 		str = _str0x194AtariDemo;
 	} else {
 		str = findString(_stringsTable, strId);
 		if (!str && _res->getDataType() == DT_DOS) {
-			str = findString(_stringsTableDemo, strId);
+			str = findString(STRINGS_TABLE_DEMO, strId);
 		}
 	}
 	if (!str) {
@@ -556,7 +556,7 @@ static void readPaletteEGA(const uint8_t *buf, int num, Color pal[16]) {
 	for (int i = 0; i < 16; ++i) {
 		const uint16_t color = READ_BE_UINT16(p); p += 2;
 		if (1) {
-			const uint8_t *ega = &Video::_paletteEGA[3 * ((color >> 12) & 15)];
+			const uint8_t *ega = &Video::PALETTE_EGA[3 * ((color >> 12) & 15)];
 			pal[i].r = ega[0];
 			pal[i].g = ega[1];
 			pal[i].b = ega[2];

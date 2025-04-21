@@ -39,6 +39,10 @@ static const char *kGameTitleUS = "Out Of This World";
 static const char *kGameTitle15thEdition = "Another World 15th anniversary edition";
 static const char *kGameTitle20thEdition = "Another World 20th anniversary edition";
 
+static const int MEMLIST_BMP[] = {
+	145, 144, 73, 72, 70, 69, 68, 67, -1
+};
+
 Resource::Resource(Video *vid, DataType dataType) :
 		_vid(vid), _dataType(dataType) {
 	if (_dataType == DT_ATARI) {
@@ -75,17 +79,17 @@ const AmigaMemEntry *Resource::detectAmigaAtari() {
 	static const struct {
 		uint32_t bank01Size;
 		const AmigaMemEntry *entries;
-	} _files[] = {
-		{ 244674, Resource::_memListAmigaFR },
-		{ 244868, Resource::_memListAmigaEN },
-		{ 227142, Resource::_memListAtariEN },
+	} FILES[] = {
+		{ 244674, Resource::MEMLIST_AMIGA_FR },
+		{ 244868, Resource::MEMLIST_AMIGA_EN },
+		{ 227142, Resource::MEMLIST_ATARI_EN },
 		{ 0, 0 }
 	};
 	if (f.open("bank01")) {
 		const uint32_t size = f.size();
-		for (int i = 0; _files[i].entries; ++i) {
-			if (_files[i].bank01Size == size) {
-				return _files[i].entries;
+		for (int i = 0; FILES[i].entries; ++i) {
+			if (FILES[i].bank01Size == size) {
+				return FILES[i].entries;
 			}
 		}
 	}
@@ -148,7 +152,7 @@ void Resource::readEntries() {
 				me->load(&f);
 
 				if (me->status == 0xFF) {
-					const int num = _memListParts[8][1]; // 16008 bytecode
+					const int num = MEMLIST_PARTS[8][1]; // 16008 bytecode
 					assert(num < _numMemList);
 					Common::String bank = Common::String::format(
 						"%s%02x", _bankPrefix, _memList[num].bankNum);
@@ -185,18 +189,18 @@ void Resource::readEntries() {
 				uint8_t num;
 				uint32_t offset;
 				uint16_t size;
-			} data[] = {
+			} DATA[] = {
 				{ RT_SHAPE, 0x19, 0x50f0, 65146 },
 				{ RT_PALETTE, 0x17, 0x14f6a, 2048 },
 				{ RT_BYTECODE, 0x18, 0x1576a, 8368 }
 			};
 			_numMemList = ENTRIES_COUNT;
 			for (int i = 0; i < 3; ++i) {
-				MemEntry *entry = &_memList[data[i].num];
-				entry->type = data[i].type;
+				MemEntry *entry = &_memList[DATA[i].num];
+				entry->type = DATA[i].type;
 				entry->bankNum = 15;
-				entry->bankPos = data[i].offset;
-				entry->packedSize = entry->unpackedSize = data[i].size;
+				entry->bankPos = DATA[i].offset;
+				entry->packedSize = entry->unpackedSize = DATA[i].size;
 			}
 			return;
 		}
@@ -323,51 +327,50 @@ void Resource::invalidateAll() {
 }
 
 static const uint8_t *getSoundsList3DO(int num) {
-	static const uint8_t intro7[] = {
+	static const uint8_t INTRO7[] = {
 		0x33, 0xFF
 	};
-	static const uint8_t water7[] = {
+	static const uint8_t WATER7[] = {
 		0x08, 0x10, 0x2D, 0x30, 0x31, 0x32, 0x35, 0x39, 0x3A, 0x3C,
 		0x3D, 0x3E, 0x4A, 0x4B, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52,
 		0x54, 0xFF
 	};
-	static const uint8_t pri1[] = {
+	static const uint8_t PRI1[] = {
 		0x52, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5D,
 		0x5E, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
 		0x69, 0x70, 0x71, 0x72, 0x73, 0xFF
 	};
-	static const uint8_t cite1[] = {
+	static const uint8_t CITE1[] = {
 		0x02, 0x03, 0x52, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B,
 		0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x63, 0x66, 0x6A, 0x6B, 0x6C,
 		0x6D, 0x6E, 0x6F, 0x70, 0x72, 0x74, 0x75, 0x77, 0x78, 0x79,
 		0x7A, 0x7B, 0x7C, 0x88, 0xFF
 	};
-	static const uint8_t arene2[] = {
+	static const uint8_t ARENE2[] = {
 		0x52, 0x57, 0x58, 0x59, 0x5B, 0x84, 0x8B, 0x8C, 0x8E, 0xFF
 	};
-	static const uint8_t luxe2[] = {
+	static const uint8_t LUXE2[] = {
 		0x30, 0x52, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C,
 		0x5D, 0x5E, 0x5F, 0x60, 0x66, 0x67, 0x6B, 0x6C, 0x70, 0x74,
 		0x75, 0x79, 0x7A, 0x8D, 0xFF
 	};
-	static const uint8_t final3[] = {
+	static const uint8_t FINAL3[] = {
 		0x08, 0x0E, 0x0F, 0x57, 0xFF
 	};
+
 	switch (num) {
-	case 2001: return intro7;
-	case 2002: return water7;
-	case 2003: return pri1;
-	case 2004: return cite1;
-	case 2005: return arene2;
-	case 2006: return luxe2;
-	case 2007: return final3;
+	case 2001: return INTRO7;
+	case 2002: return WATER7;
+	case 2003: return PRI1;
+	case 2004: return CITE1;
+	case 2005: return ARENE2;
+	case 2006: return LUXE2;
+	case 2007: return FINAL3;
+	default: break;
 	}
+
 	return 0;
 }
-
-static const int _memListBmp[] = {
-	145, 144, 73, 72, 70, 69, 68, 67, -1
-};
 
 void Resource::update(uint16_t num, PreloadSoundProc preloadSound, void *data) {
 	if (num > 16000) {
@@ -389,8 +392,8 @@ void Resource::update(uint16_t num, PreloadSoundProc preloadSound, void *data) {
 			loadBmp(num);
 			break;
 		}
-		for (int i = 0; _memListBmp[i] != -1; ++i) {
-			if (num == _memListBmp[i]) {
+		for (int i = 0; MEMLIST_BMP[i] != -1; ++i) {
+			if (num == MEMLIST_BMP[i]) {
 				loadBmp(num);
 				return;
 			}
@@ -563,7 +566,7 @@ const char *Resource::getMusicPath(int num, char *buf, int bufSize, uint32_t *of
 	return 0;
 }
 
-const uint8_t Resource::_memListParts[][4] = {
+const uint8_t Resource::MEMLIST_PARTS[][4] = {
 	{ 0x14, 0x15, 0x16, 0x00 }, // 16000 - protection screens
 	{ 0x17, 0x18, 0x19, 0x00 }, // 16001 - introduction
 	{ 0x1A, 0x1B, 0x1C, 0x11 }, // 16002 - water
@@ -589,7 +592,7 @@ void Resource::setupPart(int ptrId) {
 			invalidateAll();
 			uint8_t **segments[4] = { &_segVideoPal, &_segCode, &_segVideo1, &_segVideo2 };
 			for (int i = 0; i < 4; ++i) {
-				const int num = _memListParts[ptrId - 16000][i];
+				const int num = MEMLIST_PARTS[ptrId - 16000][i];
 				if (num != 0) {
 					if (_dataType == DT_20TH_EDITION && 0) {
 						// HD assets
@@ -615,10 +618,10 @@ void Resource::setupPart(int ptrId) {
 			uint8_t ivd2 = 0;
 			if (ptrId >= 16000 && ptrId <= 16009) {
 				uint16_t part = ptrId - 16000;
-				ipal = _memListParts[part][0];
-				icod = _memListParts[part][1];
-				ivd1 = _memListParts[part][2];
-				ivd2 = _memListParts[part][3];
+				ipal = MEMLIST_PARTS[part][0];
+				icod = MEMLIST_PARTS[part][1];
+				ivd1 = MEMLIST_PARTS[part][2];
+				ivd2 = MEMLIST_PARTS[part][3];
 			} else {
 				error("Resource::setupPart() ec=0x%X invalid part", 0xF07);
 			}
