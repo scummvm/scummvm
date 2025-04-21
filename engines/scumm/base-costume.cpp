@@ -153,41 +153,40 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 			step = -step;
 		}
 
-		startScaleIndexY = scaletableSize - yMoveCur;
+		startScaleIndexY = j = scaletableSize - yMoveCur;
 		for (i = 0; i < yMoveCur; i++) {
 			// WORKAROUND: Backyard Basketball sends out yMoveCur values higher than 128!
 			// This triggers ASAN, because it tries to reach a negative index of compData.scaleTable[].
-			if (startScaleIndexY < 0) {
+			if (j < 0) {
 				debug(8, "AkosRenderer::paintCelByleRLE(): Negative startScaleIndexY: %d; actor (%d), scaletableSize (%d), yMoveCur (%d), working around it...",
-					_actorID, startScaleIndexY, scaletableSize, yMoveCur);
+					_actorID, j, scaletableSize, yMoveCur);
 				if (compData.scaleTable[0] < _scaleY)
 					compData.y -= step;
 
-				startScaleIndexY++;
+				j++;
 				continue;
 			}
 
-			if (compData.scaleTable[startScaleIndexY++] < _scaleY)
+			if (compData.scaleTable[j++] < _scaleY)
 				compData.y -= step;
 		}
 
 		rect.top = rect.bottom = compData.y;
-		startScaleIndexY = scaletableSize - yMoveCur;
+
+		j = startScaleIndexY;
 		for (i = 0; i < _height; i++) {
 			// WORKAROUND: See above...
-			if (startScaleIndexY < 0) {
+			if (j < 0) {
 				if (compData.scaleTable[0] < _scaleY)
 					rect.bottom++;
 
-				startScaleIndexY++;
+				j++;
 				continue;
 			}
 
-			if (compData.scaleTable[startScaleIndexY++] < _scaleY)
+			if (compData.scaleTable[j++] < _scaleY)
 				rect.bottom++;
 		}
-
-		startScaleIndexY = scaletableSize - yMoveCur;
 	} else {
 		if (!_mirror)
 			xMoveCur = -xMoveCur;
