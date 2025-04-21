@@ -444,6 +444,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	if (fallen > _maxFallingDistance) {
 		_hasFallen = !_disableFalling;
 		_avoidRenderingFrames = 60 * 3;
+		_endGameDelayTicks = 60 * 5;
 		if (isEclipse()) // No need for an variable index, since these are special types of sound
 			playSoundFx(0, true);
 	}

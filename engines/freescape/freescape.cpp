@@ -527,6 +527,7 @@ void FreescapeEngine::processInput() {
 			if (event.type == Common::EVENT_SCREEN_CHANGED)
 				; // Allow event
 			else if (_gameStateControl == kFreescapeGameStateEnd
+				     && _endGamePlayerEndArea
 			         && (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START)) {
 				_endGameKeyPressed = true;
 				continue;
