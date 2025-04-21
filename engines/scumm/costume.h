@@ -23,6 +23,7 @@
 #define SCUMM_COSTUME_H
 
 #include "scumm/base-costume.h"
+#include <functional>
 
 namespace Scumm {
 class ClassicCostumeLoader : public BaseCostumeLoader {
@@ -100,6 +101,16 @@ protected:
 	byte drawLimb(const Actor *a, int limb) override;
 
 	byte paintCelByleRLE(int xMoveCur, int yMoveCur);
+	byte paintCelByleRLECommon(
+		int xMoveCur,
+		int yMoveCur,
+		int numColors,
+		int scaletableSize,
+		bool amiOrPcEngCost,
+		bool c64Cost,
+		ByleRLEData &compData,
+		std::function<void(const Common::Rect &)> markAsDirty,
+		bool &decode);
 
 	void byleRLEDecode_C64(ByleRLEData &compData, int actor);
 	void byleRLEDecode(ByleRLEData &compData);
