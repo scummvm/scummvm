@@ -99,14 +99,12 @@ public:
 protected:
 	byte drawLimb(const Actor *a, int limb) override;
 
-	void proc3(ByleRLEData &v1);
-	void proc3_ami(ByleRLEData &v1);
+	byte paintCelByleRLE(int xmoveCur, int ymoveCur);
 
-	void procC64(ByleRLEData &v1, int actor);
-
-	void procPCEngine(ByleRLEData &v1);
-
-	byte mainRoutine(int xmoveCur, int ymoveCur);
+	void byleRLEDecode_C64(ByleRLEData &compData, int actor);
+	void byleRLEDecode(ByleRLEData &compData);
+	void byleRLEDecode_ami(ByleRLEData &compData);
+	void byleRLEDecode_PCEngine(ByleRLEData &compData);
 };
 
 class NESCostumeRenderer : public BaseCostumeRenderer {
