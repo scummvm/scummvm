@@ -96,6 +96,7 @@ public:
 	float getTiltAngle() const { return _tiltAngle; }
 	void setTiltAngle(float tiltAngle);
 	float getFOV() const { return _fov; }
+	float getHFOV() const { return _hfov; }
 	bool setFOV(float fov);
 	int getCurrentNodeID() { return _currentSample == -1 ? 0 : _panoTrack->panoSamples[_currentSample].hdr.nodeID; }
 	Common::String getCurrentNodeName();
@@ -421,7 +422,6 @@ private:
 
 	private:
 		bool _isPanoConstructed;
-
 		bool _dirty;
 	};
 };
