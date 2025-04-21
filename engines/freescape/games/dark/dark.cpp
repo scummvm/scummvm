@@ -761,15 +761,18 @@ void DarkEngine::drawBinaryClock(Graphics::Surface *surface, int xPosition, int 
 
 		if (_gameStateVars[kVariableDarkEnding] == 0)
 			number = (1 << 15) - 1;
-		else
-			number = 1 << (_ticks - _ticksFromEnd) / 15;
+		else {
+			int shift = (_ticks - _ticksFromEnd) / 15;
+			if (shift >= 15)
+				number = (1 << 15) - 1;
+			else
+				number = 1 << shift;
+		}
+
 	} else
 		return;
 
-	int maxBits = isAtariST() || isAmiga() ? 14 : 15;
-	/*if (number >= 1 << maxBits)
-		number = (1 << maxBits) - 1;*/
-
+	int maxBits = 14;
 	int bits = 0;
 	while (bits <= maxBits) {
 		int y = 0;
