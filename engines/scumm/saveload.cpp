@@ -132,7 +132,7 @@ bool ScummEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 		}
 
 		// Also deny persistence operations while the script opening the save menu is running...
-		isOriginalMenuActive = _currentRoom == saveRoom || vm.slot[_currentScript].number == saveMenuScript;
+		isOriginalMenuActive = _currentRoom == saveRoom || (_currentScript != 0xFF && vm.slot[_currentScript].number == saveMenuScript);
 	}
 
 	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0) && !isOriginalMenuActive;
