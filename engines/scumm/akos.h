@@ -66,8 +66,6 @@ class AkosRenderer : public BaseCostumeRenderer {
 protected:
 	uint16 _codec = 0;
 
-	// actor _palette
-	uint16 _palette[256] = {};
 	bool _useBompPalette;
 
 	// pointer to various parts of the costume resource
@@ -120,8 +118,6 @@ public:
 
 protected:
 	byte drawLimb(const Actor *a, int limb) override;
-
-	void byleRLEDecode(ByleRLEData &compData);
 
 	byte paintCelByleRLE(int xMoveCur, int yMoveCur);
 	byte paintCelCDATRLE(int xMoveCur, int yMoveCur);
