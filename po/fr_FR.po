@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-20 19:33+0000\n"
+"POT-Creation-Date: 2025-04-21 09:50+0000\n"
 "PO-Revision-Date: 2025-04-18 20:18+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -7222,7 +7222,7 @@ msgstr "Act./Désact. Indice Privé"
 #: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:75
 #: engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
-#: engines/freescape/games/driller/driller.cpp:133
+#: engines/freescape/games/driller/driller.cpp:134
 #: engines/freescape/games/eclipse/eclipse.cpp:204
 #: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
@@ -7235,7 +7235,7 @@ msgstr "Sauvegarder"
 #: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:74
 #: engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:191
-#: engines/freescape/games/driller/driller.cpp:138
+#: engines/freescape/games/driller/driller.cpp:139
 #: engines/freescape/games/eclipse/eclipse.cpp:209
 #: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
@@ -7273,7 +7273,7 @@ msgstr "Base de données Indices"
 #: engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/castle/castle.cpp:259
 #: engines/freescape/games/dark/dark.cpp:196
-#: engines/freescape/games/driller/driller.cpp:143
+#: engines/freescape/games/driller/driller.cpp:144
 #: engines/freescape/games/eclipse/eclipse.cpp:214
 #: engines/sword1/metaengine.cpp:295
 msgid "Quit Game"
@@ -8012,21 +8012,21 @@ msgstr "Sélectionner la Princesse"
 
 #: engines/freescape/games/castle/castle.cpp:264
 #: engines/freescape/games/dark/dark.cpp:206
-#: engines/freescape/games/driller/driller.cpp:151
+#: engines/freescape/games/driller/driller.cpp:152
 #: engines/freescape/games/eclipse/eclipse.cpp:222
 msgid "Toggle Sound"
 msgstr "Act./Désact. Son"
 
 #: engines/freescape/games/castle/castle.cpp:269
 #: engines/freescape/games/dark/dark.cpp:212
-#: engines/freescape/games/driller/driller.cpp:157
+#: engines/freescape/games/driller/driller.cpp:158
 #: engines/freescape/games/eclipse/eclipse.cpp:227
 msgid "Rotate Left"
 msgstr "Tourner à Gauche"
 
 #: engines/freescape/games/castle/castle.cpp:274
 #: engines/freescape/games/dark/dark.cpp:217
-#: engines/freescape/games/driller/driller.cpp:162
+#: engines/freescape/games/driller/driller.cpp:163
 #: engines/freescape/games/eclipse/eclipse.cpp:232
 msgid "Rotate Right"
 msgstr "Tourner à Droite"
@@ -8050,23 +8050,23 @@ msgstr "Marcher vers l'avant"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:223
-#: engines/freescape/games/driller/driller.cpp:168
+#: engines/freescape/games/driller/driller.cpp:169
 msgid "Increase Step Size"
 msgstr "Augmenter la taille des pas"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:229
-#: engines/freescape/games/driller/driller.cpp:174
+#: engines/freescape/games/driller/driller.cpp:175
 msgid "Decrease Step Size"
 msgstr "Diminuer la taille des pas"
 
 #: engines/freescape/games/dark/dark.cpp:234
-#: engines/freescape/games/driller/driller.cpp:179
+#: engines/freescape/games/driller/driller.cpp:180
 msgid "Rise/Fly up"
 msgstr "Monter/Voler vers le haut"
 
 #: engines/freescape/games/dark/dark.cpp:240
-#: engines/freescape/games/driller/driller.cpp:185
+#: engines/freescape/games/driller/driller.cpp:186
 msgid "Lower/Fly down"
 msgstr "Descendre/Voler vers le bas"
 
@@ -8075,12 +8075,12 @@ msgid "Enable/Disable Jetpack"
 msgstr "Jetpack activé/désactivé"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:192
+#: engines/freescape/games/driller/driller.cpp:193
 msgid "Deploy drilling rig"
 msgstr "Déployer la plateforme de forage"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:199
+#: engines/freescape/games/driller/driller.cpp:200
 msgid "Collect drilling rig"
 msgstr "Ramener la plateforme de forage"
 

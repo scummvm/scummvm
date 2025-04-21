@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-20 19:33+0000\n"
+"POT-Creation-Date: 2025-04-21 09:50+0000\n"
 "PO-Revision-Date: 2024-11-14 01:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -6818,7 +6818,7 @@ msgstr "Clue Privacy aan-/uitzetten"
 #: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:75
 #: engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
-#: engines/freescape/games/driller/driller.cpp:133
+#: engines/freescape/games/driller/driller.cpp:134
 #: engines/freescape/games/eclipse/eclipse.cpp:204
 #: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
@@ -6831,7 +6831,7 @@ msgstr "Spel Opslaan"
 #: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:74
 #: engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:191
-#: engines/freescape/games/driller/driller.cpp:138
+#: engines/freescape/games/driller/driller.cpp:139
 #: engines/freescape/games/eclipse/eclipse.cpp:209
 #: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
@@ -6869,7 +6869,7 @@ msgstr "Idee Data"
 #: engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/castle/castle.cpp:259
 #: engines/freescape/games/dark/dark.cpp:196
-#: engines/freescape/games/driller/driller.cpp:143
+#: engines/freescape/games/driller/driller.cpp:144
 #: engines/freescape/games/eclipse/eclipse.cpp:214
 #: engines/sword1/metaengine.cpp:295
 msgid "Quit Game"
@@ -7691,7 +7691,7 @@ msgstr "Selecteer shader"
 
 #: engines/freescape/games/castle/castle.cpp:264
 #: engines/freescape/games/dark/dark.cpp:206
-#: engines/freescape/games/driller/driller.cpp:151
+#: engines/freescape/games/driller/driller.cpp:152
 #: engines/freescape/games/eclipse/eclipse.cpp:222
 #, fuzzy
 #| msgid "Toggle mute"
@@ -7700,14 +7700,14 @@ msgstr "Dempen aan-/uitzetten"
 
 #: engines/freescape/games/castle/castle.cpp:269
 #: engines/freescape/games/dark/dark.cpp:212
-#: engines/freescape/games/driller/driller.cpp:157
+#: engines/freescape/games/driller/driller.cpp:158
 #: engines/freescape/games/eclipse/eclipse.cpp:227
 msgid "Rotate Left"
 msgstr "Draai Linksom"
 
 #: engines/freescape/games/castle/castle.cpp:274
 #: engines/freescape/games/dark/dark.cpp:217
-#: engines/freescape/games/driller/driller.cpp:162
+#: engines/freescape/games/driller/driller.cpp:163
 #: engines/freescape/games/eclipse/eclipse.cpp:232
 msgid "Rotate Right"
 msgstr "Draai Rechtsom"
@@ -7733,7 +7733,7 @@ msgstr "Beweeg Vooruit"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:223
-#: engines/freescape/games/driller/driller.cpp:168
+#: engines/freescape/games/driller/driller.cpp:169
 #, fuzzy
 #| msgid "Increase the scale factor"
 msgid "Increase Step Size"
@@ -7741,19 +7741,19 @@ msgstr "Verhoog de schalingsfactor"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:229
-#: engines/freescape/games/driller/driller.cpp:174
+#: engines/freescape/games/driller/driller.cpp:175
 #, fuzzy
 #| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
 msgstr "Verlaag de schalingsfactor"
 
 #: engines/freescape/games/dark/dark.cpp:234
-#: engines/freescape/games/driller/driller.cpp:179
+#: engines/freescape/games/driller/driller.cpp:180
 msgid "Rise/Fly up"
 msgstr "Sta op/Vlieg omhoog"
 
 #: engines/freescape/games/dark/dark.cpp:240
-#: engines/freescape/games/driller/driller.cpp:185
+#: engines/freescape/games/driller/driller.cpp:186
 msgid "Lower/Fly down"
 msgstr "Lager/Vlieg omlaag"
 
@@ -7762,14 +7762,14 @@ msgid "Enable/Disable Jetpack"
 msgstr "Jetpack Aan/Uit"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:192
+#: engines/freescape/games/driller/driller.cpp:193
 #, fuzzy
 #| msgid "Debug Apply Celling Grid"
 msgid "Deploy drilling rig"
 msgstr "Debug Toepassen Plafond Raster"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:199
+#: engines/freescape/games/driller/driller.cpp:200
 msgid "Collect drilling rig"
 msgstr ""
 
