@@ -1119,6 +1119,10 @@ static void syncWithSerializer(Common::Serializer &s, ParameterFader &pf) {
 		s.syncAsUint32LE(ct, VER(17));
 		int32 diff = end - start;
 		if (pf.param && diff && tt) {
+			if (tt < 10000) {
+				tt = 10000;
+				ct = tt - diff;
+			}
 			pf.dir = diff / ABS<int>(diff);
 			pf.incr = diff / (tt / 10000);
 			pf.ifrac = ABS<int>(diff) % (tt / 10000);
