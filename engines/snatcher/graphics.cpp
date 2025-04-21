@@ -113,7 +113,7 @@ void GraphicsEngine::setScrollStep(uint8 mode, int16 step) {
 		_trs->scroll_setSingleStep(mode & 3, step);
 }
 
-void GraphicsEngine::scrollCommand(uint8 cmd) {
+void GraphicsEngine::transitionCommand(uint8 cmd) {
 	_trs->doCommand(cmd);
 }
 
@@ -175,6 +175,10 @@ bool GraphicsEngine::isAnimEnabled(uint8 animObjId) const {
 	return _renderer->anim_isEnabled(animObjId);
 }
 
+void GraphicsEngine::gunTestAnimUpdate() {
+	_renderer->anim_gunTestUpdate();
+}
+
 uint16 GraphicsEngine::screenWidth() const {
 	return _renderer ? _renderer->screenWidth() : 0;
 }
@@ -189,6 +193,14 @@ bool GraphicsEngine::busy(int type) const {
 	if (type == 1)
 		return _state.getVar(3);
 	return false;
+}
+
+uint16 GraphicsEngine::frameCount() const {
+	return _state.frameCount();
+}
+
+void GraphicsEngine::createMouseCursor(bool show) {
+	_renderer->createMouseCursor();
 }
 
 int GraphicsEngine::displayBootSequenceFrame(int frameNo) {

@@ -522,7 +522,8 @@ void TransitionManager_SCD::trsUpdt_revealShutter(int arg) {
 		resetVars(0x0C);
 		_transitionState |= ((_transitionState & 0xFC) << 6);
 	} else {
-		_transitionState = (--_transitionState) & 0xFF;
+		--_transitionState;
+		_transitionState &= 0xFF;
 		if ((int8)(_transitionState) >= 0) {
 			_transitionState |= ((_transitionState & 0xFC) << 6);
 		} else {

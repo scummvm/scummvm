@@ -40,8 +40,8 @@ namespace Snatcher {
 	SceneHandler *createSceneHandler_##id(SnatcherEngine *vm, SceneModule *scn, FIO *fio) { return new Scene_##id(vm, scn, fio); }
 #define SH_IMP_FRMTBL(id) \
 	const Scene_##id::FrameProcTblEntry Scene_##id::frameProcTable[] =
-#define SH_FRM(no) \
-	&frameUpdate##no
+#define SH_FRM(id, no) \
+	&Scene_##id::frameUpdate##no
 #define SH_IMP_CTOR(id) \
 	Scene_##id::Scene_##id(SnatcherEngine *vm, SceneModule *scn, FIO *fio) : SceneHandler(vm, scn, fio)
 #define SH_CTOR_MAKEPROCS(id) \

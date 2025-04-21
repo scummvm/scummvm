@@ -58,7 +58,7 @@ public:
 	};
 
 	void setScrollStep(uint8 mode, int16 step);
-	void scrollCommand(uint8 cmd);
+	void transitionCommand(uint8 cmd);
 
 	void updateAnimations();
 	void nextFrame();
@@ -90,10 +90,15 @@ public:
 	uint16 getAnimCurFrame(uint8 animObjId) const;
 	bool isAnimEnabled(uint8 animObjId) const;
 
+	void gunTestAnimUpdate();
+
 	uint16 screenWidth() const;
 	uint16 screenHeight() const;
 
 	bool busy(int type) const;
+	uint16 frameCount() const;
+
+	void createMouseCursor(bool show);
 
 	int displayBootSequenceFrame(int frameNo);
 
@@ -160,7 +165,7 @@ private:
 	uint8 _dataMode;
 	uint8 _flags;
 
-	byte *_screen;
+	uint8 *_screen;
 	Renderer *_renderer;
 	Palette *_palette;
 	TransitionManager *_trs;

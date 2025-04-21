@@ -24,14 +24,12 @@
 #include "snatcher/snatcher.h"
 #include "snatcher/sound.h"
 #include "snatcher/util.h"
-
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/list.h"
 #include "common/system.h"
-
 #include "graphics/pixelformat.h"
-
 #include "engines/util.h"
 
 // Snatcher makes use of horizontal interrupts. These can be invoked after any given count of rendered scan lines.
@@ -43,8 +41,9 @@
 
 namespace Snatcher {
 
-SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _gfx(nullptr), _snd(nullptr), _keyInput(0), _lastKeys(0),
-	_releaseKeys(0), _keyRepeat(false), _gfxInfo(), _frameLen((100000 << 14) / (6000000 / 1001)) {
+SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _gfx(nullptr), _snd(nullptr), _input(), _lastKeys(0),
+	_releaseKeys(0), _keyRepeat(false), _gfxInfo(), _frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
+	assert(system);
 }
 
 SnatcherEngine::~SnatcherEngine() {
@@ -60,7 +59,7 @@ Common::Error SnatcherEngine::run() {
 	if (!initResource())
 		return Common::Error(Common::kReadingFailed);
 
-	if (!initSound(_game.platform, _game.soundOptions))
+	if (!initSound(_system->getMixer(),	_game.platform, _game.soundOptions))
 		return Common::Error(Common::kAudioDeviceInitFailed);
 
 	if (!initGfx(_game.platform, SNATCHER_GFXMODE_8BIT))
@@ -95,7 +94,8 @@ bool SnatcherEngine::initGfx(Common::Platform platform, bool use8BitColorMode) {
 			error("%s(): No suitable color mode found", __FUNCTION__);
 	}
 
-	if (_gfx = new GraphicsEngine(&pxf, _system, platform, _gfxInfo)) {
+	_gfx = new GraphicsEngine(&pxf, _system, platform, _gfxInfo);
+	if (_gfx) {
 		initGraphics(_gfx->screenWidth(), _gfx->screenHeight(), &pxf);
 		return true;
 	}
@@ -103,44 +103,39 @@ bool SnatcherEngine::initGfx(Common::Platform platform, bool use8BitColorMode) {
 	return false;
 }
 
-bool SnatcherEngine::initSound(Common::Platform platform, int soundOptions) {
-	return (_snd = new SoundEngine(platform, soundOptions));
+bool SnatcherEngine::initSound(Audio::Mixer *mixer, Common::Platform platform, int soundOptions) {
+	assert(_mixer);
+	assert(_fio);
+	_snd = new SoundEngine(_fio, platform, soundOptions);
+	return (_snd && _snd->init(mixer));
 }
 
-void SnatcherEngine::playBootSequence() {
+void SnatcherEngine::playBootSequence(const GameState &state) {
 	uint32 frameTimer = 0;
-	int curFrame = 0;
+	int curSeqState = 0;
+	_snd->fmSendCommand(242, -1);
 
-	while (curFrame != -1 && !shouldQuit()) {
+	while (curSeqState != -1 && !shouldQuit()) {
 		frameTimer += _frameLen;
 		uint32 nextFrame = _system->getMillis() + (frameTimer >> 14);
 		frameTimer &= 0x3FFF;
 
-		curFrame = _gfx->displayBootSequenceFrame(curFrame);
+		int nextState = _gfx->displayBootSequenceFrame(curSeqState);
+		if (curSeqState == 6 && nextState == 7)
+			_snd->fmSendCommand(101, -1);// 65, 76, 86, 88, 89, 94, 98, 100, 101 (pitch bend), 72 (pb special), 74 (vbr)
+		curSeqState = nextState;
 
-		switch (curFrame) {
-		case 0:
-		case -1:
-			_snd->fmStartSound(242);
-			break;
-		case 7:
-			_snd->fmStartSound(63);
-			break;
-		default:
-			break;
-		}
-
-		checkEvents();
+		checkEvents(state);
+		_snd->update();
 		delayUntil(nextFrame);
 	}
 }
 
 bool SnatcherEngine::start() {
-	playBootSequence();
-
 	Util::rngReset();
 	GameState state;
-	memset(&state, 0, sizeof(GameState));
+
+	playBootSequence(state);
 
 	uint32 frameTimer = 0;
 
@@ -156,7 +151,7 @@ bool SnatcherEngine::start() {
 
 		updateTopLevelState(state);
 
-		_gfxInfo.audioSync = _snd->musicIsPlaying() ? _snd->musicGetTime() : 0;
+		_gfxInfo.audioSync = _snd->cdaIsPlaying() ? _snd->cdaGetTime() : 0;
 		Util::rngMakeNumber();
 
 		_gfx->setVar(3, 0);
@@ -190,7 +185,8 @@ bool SnatcherEngine::start() {
 		}
 
 		_gfx->nextFrame();
-		checkEvents();
+		_snd->update();
+		checkEvents(state);
 		delayUntil(nextFrame);
 	}
 
@@ -210,47 +206,59 @@ struct InputEvent {
 	Common::KeyCode kc;
 	uint16 kFlag;
 	uint16 internalEvent;
+	bool updateCoords;
 };
 
 static const InputEvent _defaultKeyEvents[] = {
 	// Arrow buttons
-	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_UP, 0x00, 0x01 },
-	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP8, Common::KBD_NUM, 0x01 },
-	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_DOWN, 0x00, 0x02 },
-	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP2, Common::KBD_NUM, 0x02 },
-	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_LEFT, 0x00, 0x04 },
-	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP4, Common::KBD_NUM, 0x04 },
-	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_RIGHT, 0x00, 0x08 },
-	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP6, Common::KBD_NUM, 0x08},
-	{ Common::EVENT_WHEELUP, Common::EVENT_INVALID, Common::KEYCODE_INVALID, 0x00, 0x01 },
-	{ Common::EVENT_WHEELDOWN, Common::EVENT_INVALID, Common::KEYCODE_INVALID, 0x00, 0x02 },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_UP, 0x00, 0x01, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP8, Common::KBD_NUM, 0x01, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_DOWN, 0x00, 0x02, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP2, Common::KBD_NUM, 0x02, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_LEFT, 0x00, 0x04, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP4, Common::KBD_NUM, 0x04, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_RIGHT, 0x00, 0x08, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP6, Common::KBD_NUM, 0x08, false},
+	{ Common::EVENT_WHEELUP, Common::EVENT_INVALID, Common::KEYCODE_INVALID, 0x00, 0x01, false },
+	{ Common::EVENT_WHEELDOWN, Common::EVENT_INVALID, Common::KEYCODE_INVALID, 0x00, 0x02, false },
 
 	// A, B, C buttons
-	{ Common::EVENT_LBUTTONDOWN, Common::EVENT_LBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x10 },
-	{ Common::EVENT_MBUTTONDOWN, Common::EVENT_MBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x20 },
-	{ Common::EVENT_RBUTTONDOWN, Common::EVENT_RBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x40 },
-	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_a, 0x00, 0x10},
-	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_b, 0x00, 0x20},
-	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_c, 0x00, 0x40},
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_a, 0x00, 0x10, false},
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_b, 0x00, 0x20, false},
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_c, 0x00, 0x40, false},
+
+	{ Common::EVENT_MBUTTONDOWN, Common::EVENT_MBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x20, false },
+	{ Common::EVENT_RBUTTONDOWN, Common::EVENT_RBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x40, false },
+
+
+	// Lightgun
+	{ Common::EVENT_LBUTTONDOWN, Common::EVENT_LBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x100, true },
 
 	// Start button
-	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_RETURN, 0x00, 0x80},
-	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_SPACE, 0x00, 0x80},
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_RETURN, 0x00, 0x80, false},
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_SPACE, 0x00, 0x80, false},
 };
 
-void SnatcherEngine::checkEvents() {
+void SnatcherEngine::checkEvents(const GameState &state) {
 	Common::Event evt;
 	_lastKeys &= ~_releaseKeys;
-	_keyInput = _releaseKeys = 0;
+	_releaseKeys = 0;
+	_input.controllerFlags = 0;
+	Common::Point mouse;
 
 	while (_eventMan->pollEvent(evt)) {
 		for (const InputEvent &k : _defaultKeyEvents) {
 			if (evt.type == k.pressType && (k.kc == Common::KEYCODE_INVALID || evt.kbd.keycode == k.kc) && (k.kFlag == 0 || (evt.kbd.flags & k.kFlag))) {
 				if (!(_lastKeys & k.internalEvent)) {
-					_keyInput |= k.internalEvent;
+					_input.controllerFlags |= k.internalEvent;
 					_lastKeys |= k.internalEvent;
 					if (_keyRepeat || k.releaseType == Common::EVENT_INVALID)
 						_releaseKeys |= k.internalEvent;
+					if (k.updateCoords) {
+						_realLightGunPos = evt.mouse;
+						_input.lightGunPos.x = CLIP<int>(evt.mouse.x - state.conf.lightGunBias.x, 0, _gfx->screenWidth() - 1);
+						_input.lightGunPos.y = CLIP<int>(evt.mouse.y - state.conf.lightGunBias.y, 0, _gfx->screenHeight() - 1);
+					}
 				}
 			} else if ((evt.type == k.releaseType) && (k.kc == Common::KEYCODE_INVALID || evt.kbd.keycode == k.kc) && (k.kFlag == 0 || (evt.kbd.flags & k.kFlag))) {
 				_lastKeys &= ~k.internalEvent;
@@ -283,18 +291,13 @@ void SnatcherEngine::updateTopLevelState(GameState &state) {
 }
 
 void SnatcherEngine::updateModuleState(GameState &state) {
-	uint16 _word_unk_Flags = 0;
-	int _sub_val_2 = 0;
 	int _unlCDREadSeekWord = 0;
 	uint8 _triggerPalFlag7Etc = 0;
 	bool _sub_bool_5 = false;
 
-	uint8 _wordRAM__TABLE48__word_B6400[48];
-	memset(_wordRAM__TABLE48__word_B6400, 0, 48);
-
 	switch (state.modProcessTop) {
 	case -1:
-		_snd->musicStop();
+		_snd->cdaStop();
 		state.modProcessTop = 0;
 		break;
 	case 0:
@@ -303,7 +306,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			++state.modProcessSub;
 			break;
 		case 1:
-			if (!_snd->musicIsPlaying()) {
+			if (!_snd->cdaIsPlaying()) {
 				delete _module;
 				_module = _fio->loadModule(4);
 				assert(_module);
@@ -329,10 +332,10 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 		case 0:
 			state.frameNo = 0;
 			++state.modProcessSub;
-			_snd->pcmPlayEffect(30);
+			_snd->pcmInitSound(30);
 			break;
 		case 1:
-			if (!(_word_unk_Flags & 0x0F))
+			if (!(_snd->pcmGetStatus() & 0x0F))
 				++state.modProcessSub;
 			break;
 		case 2:
@@ -353,8 +356,8 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 	case 2:
 		switch (state.modProcessSub) {
 		case 0:
-			if (!(_sub_val_2 & 0x1F)) {
-				if (!_snd->musicIsPlaying()) {
+			if (!(_gfx->frameCount() & 0x1F)) {
+				if (!_snd->cdaIsPlaying()) {
 					static const uint8 scids[] = { 3, 2 };
 					delete _module;
 					assert(state.modIndex < ARRAYSIZE(scids));
@@ -362,12 +365,12 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 					assert(_module);
 					++state.modProcessSub;
 				} else {
-					_snd->musicStop();
+					_snd->cdaStop();
 				}
 			}
 			break;
 		case 1:
-			if (!(_sub_val_2 & 0x1F)) {
+			if (!(_gfx->frameCount() & 0x1F)) {
 				// startup__runWithFileFunc(2)
 				_unlCDREadSeekWord = 0;
 				state.frameNo = -1;
@@ -381,7 +384,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 				state.finish = 0;
 				state.counter = 10;
 				++state.modProcessSub;
-				static byte data[] = { 0x83, 0x00, 0x00, 0x3F };
+				static const uint8 data[] = { 0x83, 0x00, 0x00, 0x3F };
 				_gfx->enqueuePaletteEvent(ResourcePointer(data, 0));
 			} else if (state.finish) {
 				if (state.modIndex == 0) {
@@ -394,7 +397,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			break;
 		case 3:
 			if (--state.counter == 1) {
-				static const byte cmd[] = {
+				static const uint8 cmd[] = {
 					0x01, 0x00, 0x00, 0x00, 0x00, 0x0E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0xFF, 0xFF,
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
@@ -413,13 +416,13 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			state.finish = 0;
 			state.modProcessTop = 7;
 			state.modProcessSub = 0;
-			_gfx->scrollCommand(0xFF);
+			_gfx->transitionCommand(0xFF);
 			_gfx->setVar(9, 1);
 			_gfx->reset(GraphicsEngine::kResetPalEvents | GraphicsEngine::kResetAnimations);
 		}
 		break;
 	case 3:
-		_wordRAM__TABLE48__word_B6400[2] = 1;
+		//_wordRAM__TABLE48__word_B6400[2] = 1;
 		state.finish = 0;
 		state.modProcessTop = 0;
 		state.modProcessSub = 0;
@@ -446,7 +449,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			}
 			break;
 		case 1:
-			if (!_snd->musicIsPlaying()) {
+			if (!_snd->cdaIsPlaying()) {
 				delete _module;
 				_module = _fio->loadModule(52);
 				assert(_module);
@@ -469,10 +472,11 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 		default:
 			break;
 		}
+		break;
 	case 7:
 		switch (state.modProcessSub) {
 		case 0:
-			_snd->musicStop();
+			_snd->cdaStop();
 			//loadFile56 PCMLT_01.BIN
 			++state.modProcessSub;
 			break;
@@ -504,11 +508,38 @@ void SnatcherEngine::registerDefaultSettings() {
 }
 
 void SnatcherEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
 
+	if (!_snd)
+		return;
+
+	int volMusic = 192;
+	int volSFX = 192;
+	bool mute = false;
+
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+	if (!mute) {
+	if (ConfMan.hasKey("music_volume"))
+		volMusic = ConfMan.getInt("music_volume");
+	if (ConfMan.hasKey("sfx_volume"))
+		volSFX = ConfMan.getInt("sfx_volume");
+	} else {
+		volMusic = 0;
+		volSFX = 0;
+	}
+
+	_snd->setMusicVolume(volMusic);
+	_snd->setSoundEffectVolume(volSFX);
 }
 
 void SnatcherEngine::pauseEngineIntern(bool pause) {
 	_snd->pause(pause);
+}
+
+void SnatcherEngine::calibrateLightGun(GameState &state) {
+	state.conf.lightGunBias.x = _realLightGunPos.x - (_gfx->screenWidth() / 2);
+	state.conf.lightGunBias.y = _realLightGunPos.y - (_gfx->screenHeight() / 2);
 }
 
 } // End of namespace Snatcher

@@ -22,9 +22,11 @@
 #ifndef SNATCHER_H
 #define SNATCHER_H
 
+#include "common/rect.h"
+#include "engines/engine.h"
 #include "snatcher/detection.h"
 #include "snatcher/info.h"
-#include "engines/engine.h"
+
 
 class SnatcherMetaEngine;
 
@@ -49,13 +51,13 @@ private:
 	Common::Error run() override;
 	bool initResource();
 	bool initGfx(Common::Platform platform, bool use8BitColorMode);
-	bool initSound(Common::Platform platform, int soundOptions);
-	void playBootSequence();
+	bool initSound(Audio::Mixer *mixer, Common::Platform platform, int soundOptions);
+	void playBootSequence(const GameState &state);
 
 	// Main loop
 	bool start();
 	void delayUntil(uint32 end);
-	void checkEvents();
+	void checkEvents(const GameState &state);
 
 	void updateTopLevelState(GameState &state);
 	void updateModuleState(GameState &state);
@@ -86,14 +88,23 @@ private:
 
 public:
 	// Input
-	uint8 inputFlag() const { return _keyInput; }
+	struct Input {
+		Input() : controllerFlags(0), lightGunPos() {}
+		uint16 controllerFlags;
+		Common::Point lightGunPos;
+	};
+
+	const Input &input() const { return _input; }
+	void calibrateLightGun(GameState &state);
 	void toggleKeyRepeat(bool enableRepeat) { _keyRepeat = enableRepeat; }
 
 private:
-	uint8 _lastKeys;
-	uint8 _keyInput;
-	uint8 _releaseKeys;
+	uint16 _lastKeys;
+	uint16 _releaseKeys;
+	Common::Point _realLightGunPos;
 	bool _keyRepeat;
+	
+	Input _input;
 };
 
 } // End of namespace Snatcher
