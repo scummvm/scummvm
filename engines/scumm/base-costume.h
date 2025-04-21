@@ -125,6 +125,7 @@ public:
 		// These ones aren't accessed from ARM code.
 		Common::Rect boundsRect;
 		int scaleXIndex, scaleYIndex;
+		int scaleIndexMask;
 	};
 
 	BaseCostumeRenderer(ScummEngine *scumm) {

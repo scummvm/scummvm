@@ -105,9 +105,9 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 
 		if (_mirror) {
 			/* Adjust X position */
-			startScaleIndexX = j = scaletableSize - xMoveCur;
+			startScaleIndexX = j = (scaletableSize - xMoveCur) & compData.scaleIndexMask;
 			for (i = 0; i < xMoveCur; i++) {
-				if (compData.scaleTable[j++] < _scaleX)
+				if (compData.scaleTable[j++ & compData.scaleIndexMask] < _scaleX)
 					compData.x -= compData.scaleXStep;
 			}
 
@@ -119,15 +119,15 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 					linesToSkip++;
 					startScaleIndexX = j;
 				}
-				if (compData.scaleTable[j++] < _scaleX)
+				if (compData.scaleTable[j++ & compData.scaleIndexMask] < _scaleX)
 					rect.right++;
 			}
 		} else {
 			/* No mirror */
 			/* Adjust X position */
-			startScaleIndexX = j = scaletableSize + xMoveCur;
+			startScaleIndexX = j = (scaletableSize + xMoveCur) & compData.scaleIndexMask;
 			for (i = 0; i < xMoveCur; i++) {
-				if (compData.scaleTable[j--] < _scaleX)
+				if (compData.scaleTable[j-- & compData.scaleIndexMask] < _scaleX)
 					compData.x += compData.scaleXStep;
 			}
 
@@ -139,7 +139,7 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 					startScaleIndexX = j;
 					linesToSkip++;
 				}
-				if (compData.scaleTable[j--] < _scaleX)
+				if (compData.scaleTable[j-- & compData.scaleIndexMask] < _scaleX)
 					rect.left--;
 			}
 		}
@@ -153,21 +153,9 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 			step = -step;
 		}
 
-		startScaleIndexY = j = scaletableSize - yMoveCur;
+		startScaleIndexY = j = (scaletableSize - yMoveCur) & compData.scaleIndexMask;
 		for (i = 0; i < yMoveCur; i++) {
-			// WORKAROUND: Backyard Basketball sends out yMoveCur values higher than 128!
-			// This triggers ASAN, because it tries to reach a negative index of compData.scaleTable[].
-			if (j < 0) {
-				debug(8, "AkosRenderer::paintCelByleRLE(): Negative startScaleIndexY: %d; actor (%d), scaletableSize (%d), yMoveCur (%d), working around it...",
-					_actorID, j, scaletableSize, yMoveCur);
-				if (compData.scaleTable[0] < _scaleY)
-					compData.y -= step;
-
-				j++;
-				continue;
-			}
-
-			if (compData.scaleTable[j++] < _scaleY)
+			if (compData.scaleTable[j++ & compData.scaleIndexMask] < _scaleY)
 				compData.y -= step;
 		}
 
@@ -175,16 +163,7 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 
 		j = startScaleIndexY;
 		for (i = 0; i < _height; i++) {
-			// WORKAROUND: See above...
-			if (j < 0) {
-				if (compData.scaleTable[0] < _scaleY)
-					rect.bottom++;
-
-				j++;
-				continue;
-			}
-
-			if (compData.scaleTable[j++] < _scaleY)
+			if (compData.scaleTable[j++ & compData.scaleIndexMask] < _scaleY)
 				rect.bottom++;
 		}
 	} else {
