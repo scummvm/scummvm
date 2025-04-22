@@ -656,6 +656,9 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 
 	compData.maskPtr = _vm->getMaskBuffer(-(_vm->_virtscr[kMainVirtScreen].xstart & 7), compData.y, _zbuf);
 
+	// The 5th bit is set by ClassicCostumeRenderer so make sure that there's no collision in the shared code
+	assert(!(_shadowMode & 0x20));
+
 	byleRLEDecode(compData, _actorHitX, _actorHitY, _actorHitMode ? &_actorHitResult : nullptr, _xmap);
 
 	return drawFlag;

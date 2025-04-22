@@ -282,6 +282,26 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 	return drawFlag;
 }
 
+#ifdef USE_ARM_COSTUME_ASM
+
+#ifndef IPHONE
+#define ClassicProc3RendererShadowARM _ClassicProc3RendererShadowARM
+#endif
+
+extern "C" int ClassicProc3RendererShadowARM(
+	int _scaleY,
+	ClassicCostumeRenderer::ByleRLEData *compData,
+	int pitch,
+	const byte *src,
+	int height,
+	int _scaleX,
+	int _scaleIndexX,
+	byte *_shadowTable,
+	uint16 _palette[32],
+	int32 _numStrips,
+	int _scaleIndexY);
+#endif
+
 void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, int16 actorHitY, bool *actorHitResult, const uint8 *xmap) {
 	const byte *mask, *src;
 	byte *dst;
@@ -290,6 +310,27 @@ void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, 
 	uint16 color, height, pcolor;
 	int scaleIndexY;
 	bool masked;
+
+#ifdef USE_ARM_COSTUME_ASM
+	if ((_shadowMode == 0xff) &&
+		(compData.maskPtr != NULL) &&
+		(_shadowTable != NULL))
+	{
+		compData.scaleXIndex = (byte)ClassicProc3RendererShadowARM(
+			_scaleY,
+			&compData,
+			_out.pitch,
+			_srcPtr,
+			_height,
+			_scaleX,
+			compData.scaleXIndex,
+			_shadowTable,
+			_palette,
+			_numStrips,
+			compData.scaleYIndex);
+		return;
+	}
+#endif /* USE_ARM_COSTUME_ASM */
 
 	lastColumnX = -1;
 	y = compData.y;
@@ -328,7 +369,14 @@ void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, 
 
 					if (color && !masked) {
 						pcolor = _palette[color];
-						if (_shadowMode == 1) {
+						if (_shadowMode == 0xff) {
+							// classic costume, skipColumn = false
+							if (pcolor == 13 && _shadowTable)
+								pcolor = _shadowTable[*dst];
+						} else if (_shadowMode & 0x20) {
+							// classic costume, skipColumn = false
+							pcolor = _shadowTable[*dst];
+						} else if (_shadowMode == 1) {
 							if (pcolor == 13) {
 								// In shadow mode 1 skipColumn works more or less the same way as in shadow
 								// mode 3. It is only ever checked and applied if pcolor is 13.
@@ -392,7 +440,17 @@ void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, 
 					compData.destPtr += compData.scaleXStep * _vm->_bytesPerPixel;
 				}
 
-				compData.scaleXIndex = (compData.scaleXIndex + compData.scaleXStep) & compData.scaleIndexMask;
+				// From MONKEY1 EGA disasm: we only increment by 1.
+				// This accurately produces the original wonky scaling
+				// for the floppy editions of Monkey Island 1.
+				// Also valid for all other v4 games (this code is
+				// also in the executable for LOOM CD).
+				if (_vm->_game.version == 4) {
+					compData.scaleXIndex = (compData.scaleXIndex + 1) & compData.scaleIndexMask;
+				} else {
+					compData.scaleXIndex = (compData.scaleXIndex + compData.scaleXStep) & compData.scaleIndexMask;
+				}
+
 				dst = compData.destPtr;
 				mask = compData.maskPtr + compData.x / 8;
 			}

@@ -96,7 +96,6 @@ protected:
 	byte paintCelByleRLE(int xMoveCur, int yMoveCur);
 
 	void byleRLEDecode_C64(ByleRLEData &compData, int actor);
-	void byleRLEDecode(ByleRLEData &compData);
 	void byleRLEDecode_ami(ByleRLEData &compData);
 	void byleRLEDecode_PCEngine(ByleRLEData &compData);
 };

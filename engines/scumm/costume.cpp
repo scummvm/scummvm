@@ -137,6 +137,12 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 
 	compData.maskPtr = _vm->getMaskBuffer(0, compData.y, _zbuf);
 
+	// temporarily replace _shadowMode to distinguish from AkosRenderer's _shadowMode
+	byte oldShadowMode = _shadowMode;
+	if (!(_shadowMode & 0x20)) {
+		_shadowMode = 0xff;
+	}
+
 	if (c64Cost) {
 		// The v1 costume renderer needs the actor number, which is
 		// the same thing as the costume renderer's _actorID.
@@ -147,6 +153,8 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 		byleRLEDecode_PCEngine(compData);
 	else
 		byleRLEDecode(compData);
+
+	_shadowMode = oldShadowMode;
 
 	return drawFlag;
 }
@@ -248,133 +256,6 @@ void ClassicCostumeRenderer::byleRLEDecode_C64(ByleRLEData &compData, int actor)
 
 #undef LINE
 #undef MASK_AT
-
-#ifdef USE_ARM_COSTUME_ASM
-
-#ifndef IPHONE
-#define ClassicProc3RendererShadowARM _ClassicProc3RendererShadowARM
-#endif
-
-extern "C" int ClassicProc3RendererShadowARM(
-	int _scaleY,
-	ClassicCostumeRenderer::ByleRLEData *compData,
-	int pitch,
-	const byte *src,
-	int height,
-	int _scaleX,
-	int _scaleIndexX,
-	byte *_shadowTable,
-	uint16 _palette[32],
-	int32 _numStrips,
-	int _scaleIndexY);
-#endif
-
-void ClassicCostumeRenderer::byleRLEDecode(ByleRLEData &compData) {
-	const byte *mask, *src;
-	byte *dst;
-	byte len, maskbit;
-	int y;
-	uint color, height, pcolor;
-	int scaleIndexY;
-	bool masked;
-
-#ifdef USE_ARM_COSTUME_ASM
-	if (((_shadowMode & 0x20) == 0) &&
-	    (compData.maskPtr != NULL) &&
-	    (_shadowTable != NULL))
-	{
-		compData.scaleXIndex = (byte)ClassicProc3RendererShadowARM(
-			_scaleY,
-			&compData,
-			_out.pitch,
-			_srcPtr,
-			_height,
-			_scaleX,
-			compData.scaleXIndex,
-			_shadowTable,
-			_palette,
-			_numStrips,
-			compData.scaleYIndex);
-		return;
-	}
-#endif /* USE_ARM_COSTUME_ASM */
-
-	y = compData.y;
-	src = _srcPtr;
-	dst = compData.destPtr;
-	len = compData.repLen;
-	color = compData.repColor;
-	height = _height;
-
-	scaleIndexY = compData.scaleYIndex;
-	maskbit = revBitMask(compData.x & 7);
-	mask = compData.maskPtr + compData.x / 8;
-
-	// see https://wiki.scummvm.org/index.php/SCUMM/Technical_Reference/Costume_resources#1.3_RLE_compression
-	if (len)
-		goto StartPos;
-
-	do {
-		len = *src++;
-		color = len >> compData.shr;
-		len &= compData.mask;
-		if (!len)
-			len = *src++;
-
-		do {
-			if (_scaleY == 255 || compData.scaleTable[scaleIndexY++ & compData.scaleIndexMask] < _scaleY) {
-				masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom)
-						 || (compData.x < compData.boundsRect.left || compData.x >= compData.boundsRect.right)
-						 || (compData.maskPtr && (*mask & maskbit));
-
-				if (color && !masked) {
-					if (_shadowMode & 0x20) {
-						pcolor = _shadowTable[*dst];
-					} else {	// _shadowMode == 0
-						pcolor = _palette[color];
-						if (pcolor == 13 && _shadowTable)
-							pcolor = _shadowTable[*dst];
-					}
-					*dst = pcolor;
-				}
-				dst += _out.pitch;
-				mask += _numStrips;
-				y++;
-			}
-			if (!--height) {
-				if (!--compData.skipWidth)
-					return;
-				height = _height;
-				y = compData.y;
-
-				scaleIndexY = compData.scaleYIndex;
-
-				if (_scaleX == 255 || compData.scaleTable[compData.scaleXIndex] < _scaleX) {
-					compData.x += compData.scaleXStep;
-					if (compData.x < compData.boundsRect.left || compData.x >= compData.boundsRect.right)
-						return;
-					maskbit = revBitMask(compData.x & 7);
-					compData.destPtr += compData.scaleXStep;
-				}
-
-				// From MONKEY1 EGA disasm: we only increment by 1.
-				// This accurately produces the original wonky scaling
-				// for the floppy editions of Monkey Island 1.
-				// Also valid for all other v4 games (this code is
-				// also in the executable for LOOM CD).
-				if (_vm->_game.version == 4) {
-					compData.scaleXIndex = (compData.scaleXIndex + 1) & compData.scaleIndexMask;
-				} else {
-					compData.scaleXIndex = (compData.scaleXIndex + compData.scaleXStep) & compData.scaleIndexMask;
-				}
-
-				dst = compData.destPtr;
-				mask = compData.maskPtr + compData.x / 8;
-			}
-		StartPos:;
-		} while (--len);
-	} while (1);
-}
 
 void ClassicCostumeRenderer::byleRLEDecode_ami(ByleRLEData &compData) {
 	const byte *mask, *src;
