@@ -112,15 +112,6 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 
 	bool decode = true;
 
-	const auto markAsDirty = [this](const Common::Rect &rect) {
-		if (_vm->_game.version == 1) {
-			// V1 games uses 8 x 8 pixels for actors
-			_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 8, rect.top, rect.bottom, _actorID);
-		} else {
-			_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 1, rect.top, rect.bottom, _actorID);
-		}
-	};
-
 	byte drawFlag = paintCelByleRLECommon(
 		xMoveCur,
 		yMoveCur,
@@ -129,7 +120,6 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 		newAmiCost || pcEngCost,
 		c64Cost,
 		compData,
-		markAsDirty,
 		decode);
 
 	if (!decode)
@@ -157,6 +147,15 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 	_shadowMode = oldShadowMode;
 
 	return drawFlag;
+}
+
+void ClassicCostumeRenderer::markAsDirty(const Common::Rect &rect, ByleRLEData &compData, bool &decode) {
+	if (_vm->_game.version == 1) {
+		// V1 games uses 8 x 8 pixels for actors
+		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 8, rect.top, rect.bottom, _actorID);
+	} else {
+		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 1, rect.top, rect.bottom, _actorID);
+	}
 }
 
 // Skin colors

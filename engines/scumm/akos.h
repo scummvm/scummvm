@@ -132,9 +132,11 @@ protected:
 		int32 specialRenderFlags);
 #endif
 
+private:
 	void majMinCodecDecompress(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir, int32 numSkipBefore, int32 numSkipAfter, byte transparency, int maskLeft, int maskTop, int zBuf);
 
 	void markRectAsDirty(Common::Rect rect);
+	void markAsDirty(const Common::Rect &rect, ByleRLEData &compData, bool &decode) override;
 };
 
 enum AkosSequenceCodes {

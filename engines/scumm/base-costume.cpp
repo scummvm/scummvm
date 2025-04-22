@@ -65,7 +65,6 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 	bool amiOrPcEngCost,
 	bool c64Cost,
 	ByleRLEData &compData,
-	std::function<void(const Common::Rect &)> markAsDirty,
 	bool &decode) {
 
 	bool actorIsScaled;
@@ -193,7 +192,7 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 	compData.skipWidth = _width;
 	compData.scaleXStep = _mirror ? 1 : -1;
 
-	markAsDirty(rect);
+	markAsDirty(rect, compData, decode);
 	if (!decode)
 		return 0;
 

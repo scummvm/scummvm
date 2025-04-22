@@ -98,6 +98,9 @@ protected:
 	void byleRLEDecode_C64(ByleRLEData &compData, int actor);
 	void byleRLEDecode_ami(ByleRLEData &compData);
 	void byleRLEDecode_PCEngine(ByleRLEData &compData);
+
+private:
+	void markAsDirty(const Common::Rect &rect, ByleRLEData &compData, bool &decode) override;
 };
 
 class NESCostumeRenderer : public BaseCostumeRenderer {
