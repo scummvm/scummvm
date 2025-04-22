@@ -69,8 +69,22 @@ void FreescapeEngine::waitInLoop(int maxWait) {
 				break;
 			}
 		}
+		// This is a simplified version of the draw frame code
+		// that we used only for this loop in order to only allow the player to look around
 		_gfx->clear(0, 0, 0, true);
-		drawFrame();
+		int farClipPlane = _farClipPlane;
+		if (_currentArea->isOutside())
+			farClipPlane *= 100;
+
+		float aspectRatio = isCastle() ? 1.6 : 2.18;
+		_gfx->updateProjectionMatrix(75.0, aspectRatio, _nearClipPlane, farClipPlane);
+		_gfx->positionCamera(_position, _position + _cameraFront, _roll);
+
+		drawBackground();
+		_currentArea->draw(_gfx, _ticks / 10, _position, _cameraFront);
+		drawBorder();
+		drawUI();
+
 		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(15); // try to target ~60 FPS
