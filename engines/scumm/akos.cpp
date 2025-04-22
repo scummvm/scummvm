@@ -605,28 +605,6 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 
 	bool decode = true;
 
-	const auto markAsDirty = [this, &compData, &decode](const Common::Rect &rect) {
-		if (_vm->_game.heversion >= 71) {
-			if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
-				compData.boundsRect = _clipOverride;
-				compData.boundsRect.right += 1;
-				compData.boundsRect.bottom += 1;
-			}
-		}
-
-		if (_actorHitMode) {
-			if (_actorHitX < rect.left || _actorHitX >= rect.right || _actorHitY < rect.top || _actorHitY >= rect.bottom)
-				decode = false;
-		} else {
-			markRectAsDirty(rect);
-
-			if (_vm->_game.heversion >= 71) {
-				ActorHE *a = (ActorHE *)_vm->derefActor(_actorID, "paintCelByleRLE");
-				a->setActorUpdateArea(rect.left, rect.top, rect.right, rect.bottom + 1);
-			}
-		}
-	};
-
 	byte drawFlag = paintCelByleRLECommon(
 		xMoveCur,
 		yMoveCur,
@@ -635,7 +613,6 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 		false,
 		false,
 		compData,
-		markAsDirty,
 		decode);
 
 	if (!decode)
@@ -655,6 +632,28 @@ void AkosRenderer::markRectAsDirty(Common::Rect rect) {
 	rect.left -= _vm->_virtscr[kMainVirtScreen].xstart & 7;
 	rect.right -= _vm->_virtscr[kMainVirtScreen].xstart & 7;
 	_vm->markRectAsDirty(kMainVirtScreen, rect, _actorID);
+}
+
+void AkosRenderer::markAsDirty(const Common::Rect &rect, ByleRLEData &compData, bool &decode) {
+	if (_vm->_game.heversion >= 71) {
+		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
+			compData.boundsRect = _clipOverride;
+			compData.boundsRect.right += 1;
+			compData.boundsRect.bottom += 1;
+		}
+	}
+
+	if (_actorHitMode) {
+		if (_actorHitX < rect.left || _actorHitX >= rect.right || _actorHitY < rect.top || _actorHitY >= rect.bottom)
+			decode = false;
+	} else {
+		markRectAsDirty(rect);
+
+		if (_vm->_game.heversion >= 71) {
+			ActorHE *a = (ActorHE *)_vm->derefActor(_actorID, "paintCelByleRLE");
+			a->setActorUpdateArea(rect.left, rect.top, rect.right, rect.bottom + 1);
+		}
+	}
 }
 
 byte AkosRenderer::paintCelCDATRLE(int xmoveCur, int ymoveCur) {

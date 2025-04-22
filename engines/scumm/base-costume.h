@@ -25,8 +25,6 @@
 #include "common/scummsys.h"
 #include "scumm/actor.h"		// for CostumeData
 
-#include <functional>
-
 namespace Scumm {
 
 #include "common/pack-start.h"	// START STRUCT PACKING
@@ -171,12 +169,15 @@ protected:
 		bool amiOrPcEngCost,
 		bool c64Cost,
 		ByleRLEData &compData,
-		std::function<void(const Common::Rect &)> markAsDirty,
 		bool &decode);
 
 	void byleRLEDecode(ByleRLEData &compData, int16 actorHitX = 0, int16 actorHitY = 0, bool *actorHitResult = nullptr, const uint8 *xmap = nullptr);
 
 	void skipCelLines(ByleRLEData &compData, int num);
+
+private:
+	// helper function to be called from paintCelByleRLECommon
+	virtual void markAsDirty(const Common::Rect &rect, ByleRLEData &compData, bool &decode) {}
 };
 
 } // End of namespace Scumm
