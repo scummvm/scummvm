@@ -93,7 +93,7 @@ public:
 protected:
 	byte drawLimb(const Actor *a, int limb) override;
 
-	byte paintCelByleRLE(int xMoveCur, int xMoveCur);
+	byte paintCelByleRLE(int xMoveCur, int yMoveCur);
 
 	void byleRLEDecode_C64(ByleRLEData &compData, int actor);
 	void byleRLEDecode_ami(ByleRLEData &compData);
