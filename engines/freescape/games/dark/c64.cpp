@@ -35,8 +35,7 @@ void DarkEngine::loadAssetsC64FullGame() {
 	Common::File file;
     file.open("darkside.c64.data");
     loadMessagesFixedSize(&file, 0x1edf, 16, 27);
-    //loadFonts(&file, 0xae54);
-    //loadFonts(&file, 0x4ee);
+    loadFonts(&file, 0xc3e);
     loadGlobalObjects(&file, 0x20bd, 23);
     load8bitBinary(&file, 0x9b3e, 16);
 
@@ -50,13 +49,10 @@ void DarkEngine::loadAssetsC64FullGame() {
 
 
 void DarkEngine::drawC64UI(Graphics::Surface *surface) {
-    return;
 	uint8 r, g, b;
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xAA, 0xAA, 0xAA);
 
-	Common::Rect cover;
-
-	uint32 color = 0;
+	uint32 color = _currentArea->_usualBackgroundColor;
 	if (_gfx->_colorRemaps && _gfx->_colorRemaps->contains(color)) {
 		color = (*_gfx->_colorRemaps)[color];
 	}
@@ -65,63 +61,53 @@ void DarkEngine::drawC64UI(Graphics::Surface *surface) {
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	int score = _gameStateVars[k8bitVariableScore];
-	drawStringInSurface(_currentArea->_name, 200, 184, front, back, surface);
-	cover = Common::Rect(150, 143, 183, 167);
+	int ecds = _gameStateVars[kVariableActiveECDs];
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 206, 137 + 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 206, 145 + 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 206, 153 + 8, front, back, surface);
 
-	surface->fillRect(cover, back);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 150, 148 - 4, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 150, 156 - 4, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 150, 164 - 4, front, back, surface);
-	if (_playerHeightNumber >= 0)
-		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 54 + 6, 164 - 3, front, back, surface);
-	else
-		drawStringInSurface(Common::String::format("%s", "J"), 54 + 6, 164 - 3, front, back, surface);
-
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 46, 148 - 3, front, back, surface);
-	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 46, 156 - 3, front, back, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 239, 128, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 68 + 5 + 5, 168 + 9, front, back, surface);
+	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 70, 177 + 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 86, 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%3d%%", ecds), 198, 8, front, back, surface);
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
-	drawStringInSurface(Common::String::format("%02d", hours), 207, 8, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", minutes), 230, 8, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, front, back, surface);
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 191, 176, back, front, surface);
+		drawStringInSurface(message, 120, 185, back, front, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
-	} else {
-		/*if (_currentArea->_gasPocketRadius == 0)
-			message = _messagesList[2];
-		else if (_drillStatusByArea[_currentArea->getAreaID()])
-			message = _messagesList[0];
-		else*/
-        message = _messagesList[1];
-		drawStringInSurface(message, 191, 176, front, back, surface);
-	}
+	} else
+		drawStringInSurface(_currentArea->_name, 120, 185, front, back, surface);
 
-	uint32 green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x68, 0xa9, 0x41);
-	int energy = _gameStateVars[k8bitVariableEnergy];
+	int energy = _gameStateVars[k8bitVariableEnergy]; // called fuel in this game
 	int shield = _gameStateVars[k8bitVariableShield];
 
-	if (energy >= 0) {
-		Common::Rect backBar(21, 183, 85 - energy, 190);
-		surface->fillRect(backBar, back);
-		Common::Rect energyBar(84 - energy, 184, 84, 190);
-		surface->fillRect(energyBar, green);
-	}
+	_gfx->readFromPalette(_gfx->_inkColor, r, g, b);
+	uint32 inkColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	if (shield >= 0) {
-		Common::Rect backBar(25 - 4, 180 - 4, 89 - shield - 4, 186 - 4);
-		surface->fillRect(backBar, back);
+		Common::Rect shieldBar;
+		shieldBar = Common::Rect(72, 141 - 1, 143 - (_maxShield - shield), 146);
+		surface->fillRect(shieldBar, inkColor);
 
-		Common::Rect shieldBar(88 - 4  - shield, 180 - 4, 88 - 4, 186 - 4);
-		surface->fillRect(shieldBar, green);
+		shieldBar = Common::Rect(72, 143 - 1, 143 - (_maxShield - shield), 144);
+		surface->fillRect(shieldBar, front);
 	}
+
+	if (energy >= 0) {
+		Common::Rect energyBar;
+		energyBar = Common::Rect(72, 147 + 1, 143 - (_maxEnergy - energy), 155 - 1);
+		surface->fillRect(energyBar, inkColor);
+
+		energyBar = Common::Rect(72, 148 + 2, 143 - (_maxEnergy - energy), 154 - 2);
+		surface->fillRect(energyBar, front);
+	}
+	drawBinaryClock(surface, 304, 124, front, back);
 }
 
 } // End of namespace Freescape
