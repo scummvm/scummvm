@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-21 16:10+0000\n"
-"PO-Revision-Date: 2025-04-18 20:18+0000\n"
+"PO-Revision-Date: 2025-04-22 12:18+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -8050,17 +8050,13 @@ msgstr "Marcher vers l'avant"
 
 #: engines/freescape/games/dark/dark.cpp:222
 #: engines/freescape/games/driller/driller.cpp:187
-#, fuzzy
-#| msgid "Move left"
 msgid "Roll left"
-msgstr "Se déplacer vers la gauche"
+msgstr "Rouler à gauche"
 
 #: engines/freescape/games/dark/dark.cpp:227
 #: engines/freescape/games/driller/driller.cpp:192
-#, fuzzy
-#| msgid "Move right"
 msgid "Roll right"
-msgstr "Se déplacer vers la droite"
+msgstr "Rouler à droite"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:233
