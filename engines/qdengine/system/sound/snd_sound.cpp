@@ -91,6 +91,7 @@ void sndSound::pause() {
 void sndSound::resume() {
 	debugC(5, kDebugSound, "sndSound::resume(). this: %p",  (void *)this);
 
+	_flags &= ~SOUND_FLAG_PAUSED;
 	g_system->getMixer()->pauseHandle(_audHandle, false);
 }
 
