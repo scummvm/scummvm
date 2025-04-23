@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-23 07:56+0000\n"
-"PO-Revision-Date: 2025-04-09 20:18+0000\n"
+"PO-Revision-Date: 2025-04-23 07:59+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -5015,10 +5015,8 @@ msgstr ""
 
 #: backends/platform/android/options.cpp:280
 #: backends/platform/android/options.cpp:313
-#, fuzzy
-#| msgid "the shader could not be changed"
 msgid "The game saves couldn't be backed up"
-msgstr "no s'ha pogut canviar el shader"
+msgstr "No s'ha pogut fer una còpia de seguretat de les partides desades"
 
 #: backends/platform/android/options.cpp:282
 #, fuzzy
