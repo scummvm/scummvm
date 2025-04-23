@@ -1169,7 +1169,7 @@ void Room806::daemon() {
 
 	case 113:
 		terminateMachine(_candlemanShadow3Mach);
-		ws_unhide_walker(_G(my_walker));
+		ws_unhide_walker(_mcTrekMach);
 
 		break;
 
