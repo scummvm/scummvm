@@ -61,7 +61,7 @@ byte kHerculesPaletteGreen[2][3] = {
 	{0x00, 0xff, 0x00},
 };
 
-byte kDrillerC64Palette[16][3] = {
+byte kC64Palette[16][3] = {
 	{0x00, 0x00, 0x00},
 	{0xFF, 0xFF, 0xFF},
 	{0x68, 0x37, 0x2B},
@@ -131,7 +131,7 @@ void FreescapeEngine::loadColorPalette() {
 	if (_renderMode == Common::kRenderEGA) {
 		_gfx->_palette = (byte *)&kEGADefaultPalette;
 	} else if (_renderMode == Common::kRenderC64) {
-		_gfx->_palette = (byte *)&kDrillerC64Palette;
+		_gfx->_palette = (byte *)&kC64Palette;
 	} else if (_renderMode == Common::kRenderZX) {
 		_gfx->_palette = (byte *)kDrillerZXPalette;
 	} else if (_renderMode == Common::kRenderCPC) {

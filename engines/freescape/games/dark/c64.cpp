@@ -31,6 +31,8 @@ void DarkEngine::initC64() {
 	_viewArea = Common::Rect(32, 24, 288, 127);
 }
 
+extern byte kC64Palette[16][3];
+
 void DarkEngine::loadAssetsC64FullGame() {
 	Common::File file;
 	file.open("darkside.c64.data");
@@ -45,6 +47,16 @@ void DarkEngine::loadAssetsC64FullGame() {
 	_border->copyFrom(*surf);
 	surf->free();
 	delete surf;
+
+	file.close();
+	file.open("darkside.c64.title.bitmap");
+
+	Common::File colorFile1;
+	colorFile1.open("darkside.c64.title.colors1");
+	Common::File colorFile2;
+	colorFile2.open("darkside.c64.title.colors2");
+
+	_title = loadAndConvertDoodleImage(&file, &colorFile1, &colorFile2, (byte *)&kC64Palette);
 }
 
 
