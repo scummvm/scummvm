@@ -387,6 +387,10 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	properties << "\t\t\t<RuntimeTypeInfo>false</RuntimeTypeInfo>\n";
 #endif
 
+	// Print a bit more context for warnings, like modern GCC/Clang do
+	if (_msvcVersion.version >= 15)
+		properties << "\t\t\t<DiagnosticsFormat>Caret</DiagnosticsFormat>\n";
+
 	properties << "\t\t\t<WarningLevel>Level4</WarningLevel>\n"
 	           << "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n"
 	           << "\t\t\t<CompileAs>Default</CompileAs>\n"
