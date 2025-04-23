@@ -118,7 +118,7 @@ struct FrameInfo {
 	byte field_31;
 	byte soundAction;
 	byte field_33;
-	Position position;
+	PositionOld position;
 	byte field_35;
 	int16 field_36;
 	uint32 field_38;

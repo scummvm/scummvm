@@ -35,7 +35,7 @@
 
 namespace LastExpress {
 
-Rebecca::Rebecca(LastExpressEngine *engine) : Entity(engine, kEntityRebecca) {
+Rebecca::Rebecca(LastExpressEngine *engine) : Entity(engine, kCharacterRebecca) {
 	ADD_CALLBACK_FUNCTION(Rebecca, reset);
 	ADD_CALLBACK_FUNCTION_I(Rebecca, updateFromTime);
 	ADD_CALLBACK_FUNCTION_S(Rebecca, playSound);
@@ -104,11 +104,11 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(4, Rebecca, playSound16)
-	Entity::playSound(savepoint, false, getSound()->getSoundFlag(kEntityCoudert));
+	Entity::playSound(savepoint, false, getSound()->getSoundFlag(kCharacterCond2));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_SIIS(5, Rebecca, callSavepoint, EntityIndex, ActionIndex)
+IMPLEMENT_FUNCTION_SIIS(5, Rebecca, callSavepoint, CharacterIndex, CharacterActions)
 	Entity::callSavepoint(savepoint);
 IMPLEMENT_FUNCTION_END
 
@@ -129,7 +129,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(9, Rebecca, enterExitCompartment3, ObjectIndex)
-	if (savepoint.action == kAction4) {
+	if (savepoint.action == kCharacterAction4) {
 		getEntities()->exitCompartment(_entityIndex, (ObjectIndex)params->param4);
 		callbackAction();
 		return;
@@ -153,12 +153,12 @@ IMPLEMENT_FUNCTION_II(12, Rebecca, updateEntity, CarIndex, EntityPosition)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_SII(13, Rebecca, updatePosition, CarIndex, Position)
+IMPLEMENT_FUNCTION_SII(13, Rebecca, updatePosition, CarIndex, PositionOld)
 	Entity::updatePosition(savepoint);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_SSI(14, Rebecca, draw2, EntityIndex)
+IMPLEMENT_FUNCTION_SSI(14, Rebecca, draw2, CharacterIndex)
 	Entity::draw2(savepoint);
 IMPLEMENT_FUNCTION_END
 
@@ -168,7 +168,7 @@ IMPLEMENT_FUNCTION(15, Rebecca, function15)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		if (getEntities()->isOutsideAnnaWindow())
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 49);
 
@@ -176,11 +176,11 @@ IMPLEMENT_FUNCTION(15, Rebecca, function15)
 		setup_enterExitCompartment2("624Ae", kObjectCompartmentE);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1) {
-			getObjects()->update(kObjectOutsideBetweenCompartments, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+			getObjects()->update(kObjectOutsideBetweenCompartments, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityRebecca);
+			getEntities()->clearSequences(kCharacterRebecca);
 
 			callbackAction();
 		}
@@ -194,11 +194,11 @@ IMPLEMENT_FUNCTION_I(16, Rebecca, function16, bool)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!params->param2) {
-			if (getEntities()->isDistanceBetweenEntities(kEntityRebecca, kEntitySophie, 750)) {
-				if (!getEntities()->hasValidFrame(kEntitySophie)) {
-					getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction123668192);
+			if (getEntities()->isDistanceBetweenEntities(kCharacterRebecca, kCharacterSophie, 750)) {
+				if (!getEntities()->hasValidFrame(kCharacterSophie)) {
+					getSavePoints()->push(kCharacterRebecca, kCharacterSophie, kCharacterAction123668192);
 
 					setCallback(3);
 					setup_callbackActionRestaurantOrSalon();
@@ -207,28 +207,28 @@ IMPLEMENT_FUNCTION_I(16, Rebecca, function16, bool)
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_enterExitCompartment(params->param1 ? "624Be" : "623Ee", kObjectCompartmentE);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObject52, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentE, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject52, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 			getData()->location = kLocationOutsideCompartment;
-			getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction125242096);
+			getSavePoints()->push(kCharacterRebecca, kCharacterSophie, kCharacterAction125242096);
 
 			setCallback(2);
 			setup_updateEntity(kCarRestaurant, kPosition_850);
 			break;
 
 		case 2:
-			getEntities()->clearSequences(kEntityRebecca);
+			getEntities()->clearSequences(kCharacterRebecca);
 			break;
 
 		case 3:
@@ -240,28 +240,28 @@ IMPLEMENT_FUNCTION_I(16, Rebecca, function16, bool)
 			break;
 
 		case 4:
-			getEntities()->drawSequenceRight(kEntityRebecca, "012B");
-			if (getEntities()->isInSalon(kEntityPlayer))
-				getEntities()->updateFrame(kEntityRebecca);
+			getEntities()->drawSequenceRight(kCharacterRebecca, "012B");
+			if (getEntities()->isInSalon(kCharacterCath))
+				getEntities()->updateFrame(kCharacterRebecca);
 
 			setCallback(5);
 			setup_callbackActionOnDirection();
 			break;
 
 		case 5:
-			getEntities()->drawSequenceLeft(kEntityRebecca, "012A");
+			getEntities()->drawSequenceLeft(kCharacterRebecca, "012A");
 			if (getProgress().chapter == kChapter3)
-				getSound()->playSound(kEntityRebecca, "REB3000");
+				getSound()->playSound(kCharacterRebecca, "REB3000");
 
-			getSavePoints()->push(kEntityRebecca, kEntityPascale, kAction269479296);
+			getSavePoints()->push(kCharacterRebecca, kCharacterHeadWait, kCharacterAction269479296);
 
 			params->param2 = 1;
 			break;
 		}
 		break;
 
-	case kAction157370960:
-		getSavePoints()->push(kEntityRebecca, kEntityTables3, kAction136455232);
+	case kCharacterAction157370960:
+		getSavePoints()->push(kCharacterRebecca, kCharacterTableD, kCharacterAction136455232);
 		getData()->location = kLocationInsideCompartment;
 
 		callbackAction();
@@ -275,40 +275,40 @@ IMPLEMENT_FUNCTION_I(17, Rebecca, function17, bool)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->isDistanceBetweenEntities(kEntityRebecca, kEntitySophie, 750)
-		 && !getEntities()->hasValidFrame(kEntitySophie)) {
-			getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction123668192);
+	case kCharacterActionNone:
+		if (getEntities()->isDistanceBetweenEntities(kCharacterRebecca, kCharacterSophie, 750)
+		 && !getEntities()->hasValidFrame(kCharacterSophie)) {
+			getSavePoints()->push(kCharacterRebecca, kCharacterSophie, kCharacterAction123668192);
 
 			setCallback(3);
 			setup_updateFromTime(0);
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_enterExitCompartment("624Be", kObjectCompartmentE);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObject52, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentE, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject52, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
 			getData()->location = kLocationOutsideCompartment;
 
-			getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction125242096);
+			getSavePoints()->push(kCharacterRebecca, kCharacterSophie, kCharacterAction125242096);
 
 			setCallback(2);
 			setup_updateEntity(kCarRestaurant, kPosition_850);
 			break;
 
 		case 2:
-			getEntities()->clearSequences(kEntityRebecca);
+			getEntities()->clearSequences(kCharacterRebecca);
 			break;
 
 		case 3:
@@ -321,16 +321,16 @@ IMPLEMENT_FUNCTION_I(17, Rebecca, function17, bool)
 			getData()->location = kLocationOutsideCompartment;
 
 			if (getProgress().chapter == kChapter3)
-				getSound()->playSound(kEntityRebecca, "Reb3005", kSoundVolumeEntityDefault, 75);
+				getSound()->playSound(kCharacterRebecca, "Reb3005", kSoundVolumeEntityDefault, 75);
 
 			if (params->param1) {
 				setCallback(5);
 				setup_updatePosition("118A", kCarRestaurant, 52);
 			} else {
-				getEntities()->updatePositionEnter(kEntityRebecca, kCarRestaurant, 57);
+				getEntities()->updatePositionEnter(kCharacterRebecca, kCarRestaurant, 57);
 
 				setCallback(6);
-				setup_draw2("107A1", "107A2", kEntitySophie);
+				setup_draw2("107A1", "107A2", kCharacterSophie);
 			}
 			break;
 
@@ -341,8 +341,8 @@ IMPLEMENT_FUNCTION_I(17, Rebecca, function17, bool)
 			break;
 
 		case 6:
-			getEntities()->updatePositionExit(kEntityRebecca, kCarRestaurant, 57);
-			getEntities()->clearSequences(kEntitySophie);
+			getEntities()->updatePositionExit(kCharacterRebecca, kCarRestaurant, 57);
+			getEntities()->clearSequences(kCharacterSophie);
 
 			getData()->location = kLocationInsideCompartment;
 
@@ -359,42 +359,42 @@ IMPLEMENT_FUNCTION(18, Rebecca, function18)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->isDistanceBetweenEntities(kEntityRebecca, kEntitySophie, 750)
-		 || getEntities()->checkDistanceFromPosition(kEntitySophie, kPosition_4840, 500)) {
-			getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction123668192);
-			getEntities()->exitCompartment(kEntityRebecca, kObjectCompartmentE, true);
+	case kCharacterActionNone:
+		if (getEntities()->isDistanceBetweenEntities(kCharacterRebecca, kCharacterSophie, 750)
+		 || getEntities()->checkDistanceFromPosition(kCharacterSophie, kPosition_4840, 500)) {
+			getSavePoints()->push(kCharacterRebecca, kCharacterSophie, kCharacterAction123668192);
+			getEntities()->exitCompartment(kCharacterRebecca, kObjectCompartmentE, true);
 
 			setCallback(3);
 			setup_function15();
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->car = kCarRedSleeping;
 		getData()->entityPosition = kPosition_9270;
 		getData()->location = kLocationOutsideCompartment;
-		getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction136654208);
+		getSavePoints()->push(kCharacterRebecca, kCharacterSophie, kCharacterAction136654208);
 
 		setCallback(1);
 		setup_updateEntity(kCarRedSleeping, kPosition_4840);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			if (getEntities()->isDistanceBetweenEntities(kEntityRebecca, kEntitySophie, 750)
-			 || getEntities()->checkDistanceFromPosition(kEntitySophie, kPosition_4840, 500)) {
-				getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction123668192);
+			if (getEntities()->isDistanceBetweenEntities(kCharacterRebecca, kCharacterSophie, 750)
+			 || getEntities()->checkDistanceFromPosition(kCharacterSophie, kPosition_4840, 500)) {
+				getSavePoints()->push(kCharacterRebecca, kCharacterSophie, kCharacterAction123668192);
 
 				setCallback(2);
 				setup_function15();
 			} else {
-				getEntities()->drawSequenceLeft(kEntityRebecca, "623Ge");
-				getEntities()->enterCompartment(kEntityRebecca, kObjectCompartmentE, true);
+				getEntities()->drawSequenceLeft(kCharacterRebecca, "623Ge");
+				getEntities()->enterCompartment(kCharacterRebecca, kObjectCompartmentE, true);
 			}
 			break;
 
@@ -413,23 +413,23 @@ IMPLEMENT_FUNCTION(19, Rebecca, function19)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->isDistanceBetweenEntities(kEntityRebecca, kEntitySophie, 750)
-		 || getEntities()->checkDistanceFromPosition(kEntitySophie, kPosition_4840, 500)) {
-			getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction123668192);
-			getEntities()->exitCompartment(kEntityRebecca, kObjectCompartmentE, true);
+	case kCharacterActionNone:
+		if (getEntities()->isDistanceBetweenEntities(kCharacterRebecca, kCharacterSophie, 750)
+		 || getEntities()->checkDistanceFromPosition(kCharacterSophie, kPosition_4840, 500)) {
+			getSavePoints()->push(kCharacterRebecca, kCharacterSophie, kCharacterAction123668192);
+			getEntities()->exitCompartment(kCharacterRebecca, kObjectCompartmentE, true);
 
 			setCallback(6);
 			setup_function15();
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_callbackActionRestaurantOrSalon();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -438,14 +438,14 @@ IMPLEMENT_FUNCTION(19, Rebecca, function19)
 			getData()->location = kLocationOutsideCompartment;
 
 			setCallback(2);
-			setup_callSavepoint("012H", kEntityTables3, kActionDrawTablesWithChairs, "010M");
+			setup_callSavepoint("012H", kCharacterTableD, kCharacterActionDrawTablesWithChairs, "010M");
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityRebecca, kEntityWaiter1, kAction337548856);
-			getEntities()->drawSequenceRight(kEntityRebecca, "810DS");
-			if (getEntities()->isInRestaurant(kEntityPlayer))
-				getEntities()->updateFrame(kEntityRebecca);
+			getSavePoints()->push(kCharacterRebecca, kCharacterWaiter1, kCharacterAction337548856);
+			getEntities()->drawSequenceRight(kCharacterRebecca, "810DS");
+			if (getEntities()->isInRestaurant(kCharacterCath))
+				getEntities()->updateFrame(kCharacterRebecca);
 
 			setCallback(3);
 			setup_callbackActionOnDirection();
@@ -455,22 +455,22 @@ IMPLEMENT_FUNCTION(19, Rebecca, function19)
 			getData()->car = kCarRedSleeping;
 			getData()->entityPosition = kPosition_9270;
 			getData()->location = kLocationOutsideCompartment;
-			getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction136654208);
+			getSavePoints()->push(kCharacterRebecca, kCharacterSophie, kCharacterAction136654208);
 
 			setCallback(4);
 			setup_updateEntity(kCarRedSleeping, kPosition_4840);
 			break;
 
 		case 4:
-			if (getEntities()->isDistanceBetweenEntities(kEntityRebecca, kEntitySophie, 750)
-			 || getEntities()->checkDistanceFromPosition(kEntitySophie, kPosition_4840, 500)) {
-				getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction123668192);
+			if (getEntities()->isDistanceBetweenEntities(kCharacterRebecca, kCharacterSophie, 750)
+			 || getEntities()->checkDistanceFromPosition(kCharacterSophie, kPosition_4840, 500)) {
+				getSavePoints()->push(kCharacterRebecca, kCharacterSophie, kCharacterAction123668192);
 
 				setCallback(5);
 				setup_function15();
 			} else {
-				getEntities()->drawSequenceLeft(kEntityRebecca, "623Ge");
-				getEntities()->enterCompartment(kEntityRebecca, kObjectCompartmentE, true);
+				getEntities()->drawSequenceLeft(kCharacterRebecca, "623Ge");
+				getEntities()->enterCompartment(kCharacterRebecca, kObjectCompartmentE, true);
 			}
 			break;
 
@@ -489,12 +489,12 @@ IMPLEMENT_FUNCTION_I(20, Rebecca, function20, TimeValue)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param1 < getState()->time && !params->param5) {
 			params->param5 = 1;
 
-			getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObject52, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentE, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject52, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
 			callbackAction();
 			break;
@@ -506,8 +506,8 @@ IMPLEMENT_FUNCTION_I(20, Rebecca, function20, TimeValue)
 			if (Entity::updateParameter(params->param6, getState()->timeTicks, 75)) {
 				params->param2 = 0;
 				params->param3 = 1;
-				getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
-				getObjects()->update(kObject52, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+				getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+				getObjects()->update(kObject52, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
 
 				params->param6 = 0;
 			}
@@ -516,7 +516,7 @@ IMPLEMENT_FUNCTION_I(20, Rebecca, function20, TimeValue)
 		if (getProgress().chapter == kChapter1 && !ENTITY_PARAM(0, 3)) {
 			if (params->param7 != kTimeInvalid && getState()->time > kTime1174500) {
 				if (getState()->time <= kTime1183500) {
-					if (!getEntities()->isDistanceBetweenEntities(kEntityRebecca, kEntityPlayer, 2000) || getSoundQueue()->isBuffered("CON1210") || !params->param7)
+					if (!getEntities()->isDistanceBetweenEntities(kCharacterRebecca, kCharacterCath, 2000) || getSoundQueue()->isBuffered("CON1210") || !params->param7)
 						params->param7 = (uint)(getState()->time);
 
 					if (params->param7 >= getState()->time)
@@ -526,8 +526,8 @@ IMPLEMENT_FUNCTION_I(20, Rebecca, function20, TimeValue)
 				params->param7 = kTimeInvalid;
 				ENTITY_PARAM(0, 3) = 1;
 
-				getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
-				getObjects()->update(kObject52, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+				getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+				getObjects()->update(kObject52, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
 
 				setCallback(1);
 				setup_playSound("REB1205");
@@ -538,7 +538,7 @@ IMPLEMENT_FUNCTION_I(20, Rebecca, function20, TimeValue)
 
 		if (getProgress().chapter == kChapter3 && !ENTITY_PARAM(0, 4) && params->param8 != kTimeInvalid && getState()->time > kTime2097000) {
 			if (getState()->time <= kTime2106000) {
-				if (!getEntities()->isDistanceBetweenEntities(kEntityRebecca, kEntityPlayer, 1000) || !params->param8)
+				if (!getEntities()->isDistanceBetweenEntities(kCharacterRebecca, kCharacterCath, 1000) || !params->param8)
 					params->param8 = (uint)getState()->time;
 
 				if (params->param8 >= getState()->time)
@@ -548,8 +548,8 @@ IMPLEMENT_FUNCTION_I(20, Rebecca, function20, TimeValue)
 			params->param8 = kTimeInvalid;
 			ENTITY_PARAM(0, 4) = 1;
 
-			getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
-			getObjects()->update(kObject52, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject52, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
 
 			setCallback(2);
 			setup_playSound("REB3010");
@@ -557,20 +557,20 @@ IMPLEMENT_FUNCTION_I(20, Rebecca, function20, TimeValue)
 		}
 
 label_callback:
-		if (ENTITY_PARAM(0, 2) && getEntities()->isDistanceBetweenEntities(kEntityRebecca, kEntityPlayer, 1000)) {
-			getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
-			getObjects()->update(kObject52, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+		if (ENTITY_PARAM(0, 2) && getEntities()->isDistanceBetweenEntities(kCharacterRebecca, kCharacterCath, 1000)) {
+			getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject52, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
 
 			setCallback(3);
 			setup_playSound("REB1040");
 		}
 		break;
 
-	case kActionKnock:
-	case kActionOpenDoor:
+	case kCharacterActionKnock:
+	case kCharacterActionOpenDoor:
 		if (params->param2) {
-			getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
-			getObjects()->update(kObject52, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject52, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
 			if (savepoint.param.intValue == kObject52) {
 				setCallback(8);
 				setup_playSound(getSound()->justAMinuteCath());
@@ -587,30 +587,30 @@ label_callback:
 				setup_playSound(getSound()->wrongDoorCath());
 			}
 		} else {
-			getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
-			getObjects()->update(kObject52, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
-			setCallback(savepoint.action == kActionKnock ? 4 : 5);
-			setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
+			getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject52, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+			setCallback(savepoint.action == kCharacterActionKnock ? 4 : 5);
+			setup_playSound(savepoint.action == kCharacterActionKnock ? "LIB012" : "LIB013");
 		}
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject52, kEntityRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
+	case kCharacterActionDefault:
+		getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject52, kCharacterRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (params->param3 || params->param2) {
-			getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObject52, kEntityRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject52, kCharacterRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 			params->param2 = 0;
 			params->param3 = 0;
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -618,8 +618,8 @@ label_callback:
 		case 1:
 		case 2:
 		case 3:
-			getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObject52, kEntityRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject52, kCharacterRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 			if (getCallback() != 2)
 				ENTITY_PARAM(0, 2) = 0;
@@ -642,8 +642,8 @@ label_callback:
 		case 6:
 		case 7:
 			params->param4 = (getCallback() == 6 ? 0 : 1);
-			getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorTalk, kCursorNormal);
-			getObjects()->update(kObject52, kEntityRebecca, kObjectLocation1, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObject52, kCharacterRebecca, kObjectLocation1, kCursorTalk, kCursorNormal);
 			params->param2 = 1;
 			break;
 
@@ -661,15 +661,15 @@ label_callback:
 			break;
 
 		case 13:
-			getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObject52, kEntityRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject52, kCharacterRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
 			break;
 		}
 		break;
 
-	case kAction254915200:
-		getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
-		getObjects()->update(kObject52, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+	case kCharacterAction254915200:
+		getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+		getObjects()->update(kObject52, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
 
 		setCallback(12);
 		setup_playSound("REB1039A");
@@ -683,16 +683,16 @@ IMPLEMENT_FUNCTION(21, Rebecca, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Rebecca, setup_chapter1Handler));
 		break;
 
-	case kActionDefault:
-		getSavePoints()->addData(kEntityRebecca, kAction224253538, 0);
+	case kCharacterActionDefault:
+		getSavePoints()->addData(kCharacterRebecca, kCharacterAction224253538, 0);
 
-		getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject52, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectOutsideBetweenCompartments, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+		getObjects()->update(kObjectCompartmentE, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject52, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectOutsideBetweenCompartments, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
 		getObjects()->updateModel(kObject110, kObjectModel1);
 
@@ -711,7 +711,7 @@ IMPLEMENT_FUNCTION(22, Rebecca, chapter1Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (Entity::timeCheckCallback(kTime1084500, params->param3, 1, "REB1015", WRAP_SETUP_FUNCTION_S(Rebecca, setup_playSound)))
 			break;
 
@@ -721,14 +721,14 @@ IMPLEMENT_FUNCTION(22, Rebecca, chapter1Handler)
 		if (getState()->time > kTime1080000)
 			goto label_playConversation;
 
-		if (!getEntities()->isInSalon(kEntityPlayer) || !params->param4)
+		if (!getEntities()->isInSalon(kCharacterCath) || !params->param4)
 			params->param4 = (uint)(getState()->time + 150);
 
 		if (params->param4 >= getState()->time) {
 label_callback_4:
 			if (params->param1) {
 				if (Entity::updateParameterCheck(params->param5, getState()->time, 900)) {
-					if (getEntities()->isInSalon(kEntityPlayer)) {
+					if (getEntities()->isInSalon(kCharacterCath)) {
 						setCallback(5);
 						setup_playSound("REB1013");
 						break;
@@ -749,7 +749,7 @@ label_callback_5:
 label_playConversation:
 			params->param4 = kTimeInvalid;
 
-			if (getEntities()->isInSalon(kEntityPlayer))
+			if (getEntities()->isInSalon(kCharacterCath))
 				getProgress().field_B8 = 1;
 
 			setCallback(4);
@@ -757,15 +757,15 @@ label_playConversation:
 		}
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceLeft(kEntityRebecca, "107B");
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceLeft(kCharacterRebecca, "107B");
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		params->param2 = (getEntities()->isPlayerPosition(kCarRestaurant, 57) ? 1 : 0);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -803,7 +803,7 @@ IMPLEMENT_FUNCTION(23, Rebecca, function23)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->time > kTime1111500 && !params->param2) {
 			params->param2 = 1;
 			setCallback(3);
@@ -813,12 +813,12 @@ IMPLEMENT_FUNCTION(23, Rebecca, function23)
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_updateFromTime(900);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -829,13 +829,13 @@ IMPLEMENT_FUNCTION(23, Rebecca, function23)
 			break;
 
 		case 2:
-			getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocation2, kCursorNormal, kCursorNormal);
-			getEntities()->drawSequenceLeft(kEntityRebecca, "504");
+			getObjects()->update(kObjectCompartmentE, kCharacterCath, kObjectLocation2, kCursorNormal, kCursorNormal);
+			getEntities()->drawSequenceLeft(kCharacterRebecca, "504");
 			break;
 
 		case 3:
 		case 6:
-			getEntities()->clearSequences(kEntityRebecca);
+			getEntities()->clearSequences(kCharacterRebecca);
 			getData()->entityPosition = kPosition_4840;
 			getData()->location = kLocationInsideCompartment;
 
@@ -865,7 +865,7 @@ IMPLEMENT_FUNCTION(23, Rebecca, function23)
 		}
 		break;
 
-	case kAction285528346:
+	case kCharacterAction285528346:
 		setCallback(6);
 		setup_enterExitCompartment("623De", kObjectCompartmentE);
 		break;
@@ -878,8 +878,8 @@ IMPLEMENT_FUNCTION(24, Rebecca, function24)
 	default:
 		break;
 
-	case kActionNone:
-		Entity::timeCheckSavepoint(kTime1134000, params->param2, kEntityRebecca, kEntityWaiter1, kAction223712416);
+	case kCharacterActionNone:
+		Entity::timeCheckSavepoint(kTime1134000, params->param2, kCharacterRebecca, kCharacterWaiter1, kCharacterAction223712416);
 
 		if (!params->param1)
 			break;
@@ -889,7 +889,7 @@ IMPLEMENT_FUNCTION(24, Rebecca, function24)
 
 		if (params->param4 != kTimeInvalid) {
 			if (getState()->time <= kTime1161000) {
-				if (!getEntities()->isInRestaurant(kEntityPlayer) || !params->param4)
+				if (!getEntities()->isInRestaurant(kCharacterCath) || !params->param4)
 					params->param4 = (uint)getState()->time + 150;
 
 				if (params->param4 >= getState()->time)
@@ -903,25 +903,25 @@ IMPLEMENT_FUNCTION(24, Rebecca, function24)
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function16(true);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->drawSequenceLeft(kEntityRebecca, "012D");
+			getEntities()->drawSequenceLeft(kCharacterRebecca, "012D");
 
 			setCallback(2);
 			setup_playSound("REB1199");
 			break;
 
 		case 2:
-			if (getEntities()->isInRestaurant(kEntityPlayer)) {
+			if (getEntities()->isInRestaurant(kCharacterCath)) {
 				setCallback(3);
 				setup_playSound("REB1199A");
 				break;
@@ -932,7 +932,7 @@ IMPLEMENT_FUNCTION(24, Rebecca, function24)
 			if (getCallback() == 3)
 				getProgress().field_BC = 1;
 
-			if (getEntities()->isInRestaurant(kEntityAnna)) {
+			if (getEntities()->isInRestaurant(kCharacterAnna)) {
 				setCallback(4);
 				setup_playSound("REB1199B");
 				break;
@@ -949,16 +949,16 @@ IMPLEMENT_FUNCTION(24, Rebecca, function24)
 			break;
 
 		case 8:
-			getSavePoints()->push(kEntityRebecca, kEntityWaiter1, kAction136702400);
-			getEntities()->drawSequenceLeft(kEntityRebecca, "012G");
+			getSavePoints()->push(kCharacterRebecca, kCharacterWaiter1, kCharacterAction136702400);
+			getEntities()->drawSequenceLeft(kCharacterRebecca, "012G");
 			params->param1 = 1;
 			break;
 		}
 		break;
 
-	case kAction123712592:
-		getEntities()->drawSequenceLeft(kEntityWaiter1, "BLANK");
-		getEntities()->drawSequenceLeft(kEntityRebecca, "012E");
+	case kCharacterAction123712592:
+		getEntities()->drawSequenceLeft(kCharacterWaiter1, "BLANK");
+		getEntities()->drawSequenceLeft(kCharacterRebecca, "012E");
 
 		setCallback(8);
 		setup_playSound("REB1200");
@@ -972,12 +972,12 @@ IMPLEMENT_FUNCTION(25, Rebecca, function25)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function20(kTime1184400);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1001,7 +1001,7 @@ IMPLEMENT_FUNCTION(26, Rebecca, function26)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->time > kTime1224000 && !params->param2) {
 			params->param2 = 1;
 			setCallback(1);
@@ -1017,16 +1017,16 @@ IMPLEMENT_FUNCTION(26, Rebecca, function26)
 		}
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceLeft(kEntityRebecca, "118D");
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceLeft(kCharacterRebecca, "118D");
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		params->param1 = getEntities()->isPlayerPosition(kCarRestaurant, 52);
 		params->param3 = 0;
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1046,15 +1046,15 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Rebecca, function27)
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 		getData()->entityPosition = kPosition_4840;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject52, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentE, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject52, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
-		getEntities()->clearSequences(kEntityRebecca);
+		getEntities()->clearSequences(kCharacterRebecca);
 	}
 IMPLEMENT_FUNCTION_END
 
@@ -1064,12 +1064,12 @@ IMPLEMENT_FUNCTION(28, Rebecca, chapter2)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter2Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityRebecca);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterRebecca);
 
 		getData()->entityPosition = kPosition_4840;
 		getData()->location = kLocationInsideCompartment;
@@ -1077,8 +1077,8 @@ IMPLEMENT_FUNCTION(28, Rebecca, chapter2)
 		getData()->clothes = kClothesDefault;
 		getData()->inventoryItem = kItemNone;
 
-		getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject52, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentE, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject52, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 		getObjects()->updateModel(kObject110, kObjectModel2);
 
@@ -1093,12 +1093,12 @@ IMPLEMENT_FUNCTION(29, Rebecca, chapter2Handler)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function20(kTime1764000);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1122,17 +1122,17 @@ IMPLEMENT_FUNCTION(30, Rebecca, function30)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!params->param1 && params->param4 != kTimeInvalid) {
 
 			if (getState()->time <= kTimeEnd)
-				if (!getEntities()->isInSalon(kEntityPlayer) || !params->param4)
+				if (!getEntities()->isInSalon(kCharacterCath) || !params->param4)
 					params->param4 = (uint)getState()->time + 450;
 
 			if (params->param4 < getState()->time || getState()->time > kTimeEnd) {
 				params->param4 = kTimeInvalid;
 
-				getSound()->playSound(kEntityRebecca, "Reb2001");
+				getSound()->playSound(kCharacterRebecca, "Reb2001");
 				getProgress().field_B0 = 1;
 				params->param2 = 1;
 			}
@@ -1141,7 +1141,7 @@ IMPLEMENT_FUNCTION(30, Rebecca, function30)
 		if (params->param3 && !params->param2 && params->param5 != kTimeInvalid) {
 
 			if (getState()->time <= kTime10881000) {
-				if (!getEntities()->isInSalon(kEntityPlayer) || !params->param5)
+				if (!getEntities()->isInSalon(kCharacterCath) || !params->param5)
 					params->param5 = (uint)getState()->time + 450;
 
 				if (params->param5 >= getState()->time)
@@ -1150,33 +1150,33 @@ IMPLEMENT_FUNCTION(30, Rebecca, function30)
 
 			params->param5 = kTimeInvalid;
 
-			getSavePoints()->push(kEntityRebecca, kEntityAugust, kAction169358379);
+			getSavePoints()->push(kCharacterRebecca, kCharacterAugust, kCharacterAction169358379);
 		}
 		break;
 
-	case kActionEndSound:
+	case kCharacterActionEndSound:
 		params->param2 = 0;
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceLeft(kEntityRebecca, "107B");
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceLeft(kCharacterRebecca, "107B");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
 			setup_function31();
 		break;
 
-	case kAction125496184:
+	case kCharacterAction125496184:
 		setCallback(1);
 		setup_function18();
 		break;
 
-	case kAction155465152:
-		getEntities()->drawSequenceLeft(kEntityRebecca, "BLANK");
+	case kCharacterAction155465152:
+		getEntities()->drawSequenceLeft(kCharacterRebecca, "BLANK");
 		break;
 
-	case kAction155980128:
+	case kCharacterAction155980128:
 		params->param1 = 1;
 		params->param3 = 1;
 		break;
@@ -1189,12 +1189,12 @@ IMPLEMENT_FUNCTION(31, Rebecca, function31)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_updateFromTime(900);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1205,8 +1205,8 @@ IMPLEMENT_FUNCTION(31, Rebecca, function31)
 			break;
 
 		case 2:
-			getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocation2, kCursorNormal, kCursorNormal);
-			getEntities()->drawSequenceLeft(kEntityRebecca, "504");
+			getObjects()->update(kObjectCompartmentE, kCharacterCath, kObjectLocation2, kCursorNormal, kCursorNormal);
+			getEntities()->drawSequenceLeft(kCharacterRebecca, "504");
 			break;
 		}
 		break;
@@ -1219,12 +1219,12 @@ IMPLEMENT_FUNCTION(32, Rebecca, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter3Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityRebecca);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterRebecca);
 
 		getData()->entityPosition = kPosition_4840;
 		getData()->location = kLocationInsideCompartment;
@@ -1241,12 +1241,12 @@ IMPLEMENT_FUNCTION(33, Rebecca, chapter3Handler)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function20(kTime2016000);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
 			setup_function34();
 		break;
@@ -1259,10 +1259,10 @@ IMPLEMENT_FUNCTION(34, Rebecca, function34)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param2 != kTimeInvalid) {
 			if (getState()->time <= kTime1386000) {
-				if (!getEntities()->isInRestaurant(kEntityPlayer) || !params->param2)
+				if (!getEntities()->isInRestaurant(kCharacterCath) || !params->param2)
 					params->param2 = (uint)getState()->time;
 
 				if (params->param2 >= getState()->time) {
@@ -1275,7 +1275,7 @@ IMPLEMENT_FUNCTION(34, Rebecca, function34)
 
 			params->param2 = kTimeInvalid;
 
-			getSavePoints()->push(kEntityRebecca, kEntityWaiter1, kAction223712416);
+			getSavePoints()->push(kCharacterRebecca, kCharacterWaiter1, kCharacterAction223712416);
 		}
 
 		if (params->param1) {
@@ -1283,25 +1283,25 @@ IMPLEMENT_FUNCTION(34, Rebecca, function34)
 		}
 		break;
 
-	case kActionEndSound:
+	case kCharacterActionEndSound:
 		setCallback(5);
 		setup_playSound("Reb3004");
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->location = kLocationOutsideCompartment;
 
 		setCallback(1);
 		setup_function16(true);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->drawSequenceLeft(kEntityRebecca, "012D");
+			getEntities()->drawSequenceLeft(kCharacterRebecca, "012D");
 			getData()->location = kLocationInsideCompartment;
 
 			setCallback(2);
@@ -1313,16 +1313,16 @@ IMPLEMENT_FUNCTION(34, Rebecca, function34)
 			break;
 
 		case 4:
-			getSavePoints()->push(kEntityRebecca, kEntityWaiter1, kAction136702400);
-			getEntities()->drawSequenceLeft(kEntityRebecca, "012G");
+			getSavePoints()->push(kCharacterRebecca, kCharacterWaiter1, kCharacterAction136702400);
+			getEntities()->drawSequenceLeft(kCharacterRebecca, "012G");
 			params->param1 = 1;
 			break;
 		}
 		break;
 
-	case kAction123712592:
-		getEntities()->drawSequenceLeft(kEntityWaiter1, "BLANK");
-		getSound()->playSound(kEntityRebecca, "Reb3003");
+	case kCharacterAction123712592:
+		getEntities()->drawSequenceLeft(kCharacterWaiter1, "BLANK");
+		getSound()->playSound(kCharacterRebecca, "Reb3003");
 
 		setCallback(4);
 		setup_draw("012E");
@@ -1336,12 +1336,12 @@ IMPLEMENT_FUNCTION(35, Rebecca, function35)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function20(kTime2070000);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
 			setup_function36();
 		break;
@@ -1354,20 +1354,20 @@ IMPLEMENT_FUNCTION(36, Rebecca, function36)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!params->param2)
 			params->param2 = (uint)getState()->time + 1800;
 
 		if (params->param4 != kTimeInvalid && params->param2 < getState()->time) {
 
 			if (getState()->time <= kTime2083500) {
-				if (!getEntities()->isInSalon(kEntityPlayer) || !params->param4)
+				if (!getEntities()->isInSalon(kCharacterCath) || !params->param4)
 					params->param4 = (uint)getState()->time + 300;
 			}
 
 			if (params->param4 < getState()->time || getState()->time > kTime2083500) {
 				params->param4 = kTimeInvalid;
-				getSound()->playSound(kEntityRebecca, "Reb3007");
+				getSound()->playSound(kCharacterRebecca, "Reb3007");
 
 				setCallback(2);
 				setup_updatePosition("118E", kCarRestaurant, 52);
@@ -1387,7 +1387,7 @@ label_callback_2:
 			goto label_callback_3;
 
 		if (getState()->time <= kTime2092500) {
-			if (!getEntities()->isInSalon(kEntityPlayer) || !params->param5)
+			if (!getEntities()->isInSalon(kCharacterCath) || !params->param5)
 				params->param5 = (uint)getState()->time + 300;
 
 			if (params->param5 >= getState()->time) {
@@ -1406,44 +1406,44 @@ label_callback_3:
 		params->param5 = kTimeInvalid;
 
 		getData()->inventoryItem = kItemNone;
-		getSound()->playSound(kEntityRebecca, "Reb3008", kSoundVolumeEntityDefault, 60);
-		getEntities()->updatePositionEnter(kEntityRebecca, kCarRestaurant, 52);
+		getSound()->playSound(kCharacterRebecca, "Reb3008", kSoundVolumeEntityDefault, 60);
+		getEntities()->updatePositionEnter(kCharacterRebecca, kCarRestaurant, 52);
 
 		setCallback(3);
-		setup_draw2("118G1", "118G2", kEntitySophie);
+		setup_draw2("118G1", "118G2", kCharacterSophie);
 		break;
 
-	case kAction1:
+	case kCharacterAction1:
 		getData()->inventoryItem = kItemNone;
 
 		setCallback(6);
 		setup_playSound("SOP3008");
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function17(true);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->drawSequenceLeft(kEntityRebecca, "118D");
+			getEntities()->drawSequenceLeft(kCharacterRebecca, "118D");
 			break;
 
 		case 2:
 			params->param1 = 1;
 			getData()->inventoryItem = kItemInvalid;
-			getEntities()->drawSequenceLeft(kEntityRebecca, "118F");
+			getEntities()->drawSequenceLeft(kCharacterRebecca, "118F");
 			goto label_callback_2;
 
 		case 3:
-			getEntities()->clearSequences(kEntitySophie);
-			getEntities()->updatePositionExit(kEntityRebecca, kCarRestaurant, 52);
-			getEntities()->drawSequenceLeft(kEntityRebecca, "118D");
+			getEntities()->clearSequences(kCharacterSophie);
+			getEntities()->updatePositionExit(kCharacterRebecca, kCarRestaurant, 52);
+			getEntities()->drawSequenceLeft(kCharacterRebecca, "118D");
 			goto label_callback_3;
 
 		case 4:
@@ -1465,12 +1465,12 @@ IMPLEMENT_FUNCTION(37, Rebecca, function37)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function20(kTime2110500);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
 			setup_function38();
 		break;
@@ -1483,28 +1483,28 @@ IMPLEMENT_FUNCTION(38, Rebecca, function38)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->location = kLocationOutsideCompartment;
 
 		setCallback(1);
 		setup_enterExitCompartment3("624Be", kObjectCompartmentE);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-			getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction259921280);
+			getObjects()->update(kObjectCompartmentE, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getSavePoints()->push(kCharacterRebecca, kCharacterSophie, kCharacterAction259921280);
 
 			setCallback(2);
 			setup_updateEntity(kCarKronos, kPosition_9270);
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction123668192);
+			getSavePoints()->push(kCharacterRebecca, kCharacterSophie, kCharacterAction123668192);
 			setup_function39();
 			break;
 		}
@@ -1518,18 +1518,18 @@ IMPLEMENT_FUNCTION(39, Rebecca, function39)
 	default:
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityRebecca);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterRebecca);
 
-		getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject52, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentE, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject52, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
 		getData()->entityPosition = kPosition_6000;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarKronos;
 		break;
 
-	case kAction191668032:
+	case kCharacterAction191668032:
 		setup_function40();
 		break;
 	}
@@ -1541,31 +1541,31 @@ IMPLEMENT_FUNCTION(40, Rebecca, function40)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_9270;
 		setCallback(1);
 		setup_updateEntity(kCarGreenSleeping, kPosition_2740);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction292775040);
+			getSavePoints()->push(kCharacterRebecca, kCharacterSophie, kCharacterAction292775040);
 			setCallback(2);
 			setup_updateEntity(kCarRedSleeping, kPosition_2740);
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityRebecca, kEntityAnna, kAction191668032);
+			getSavePoints()->push(kCharacterRebecca, kCharacterAnna, kCharacterAction191668032);
 			setCallback(3);
 			setup_updateEntity(kCarRedSleeping, kPosition_4840);
 			break;
 
 		case 3:
-			getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction123668192);
+			getSavePoints()->push(kCharacterRebecca, kCharacterSophie, kCharacterAction123668192);
 			setCallback(4);
 			setup_function15();
 			break;
@@ -1580,7 +1580,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(41, Rebecca, function41)
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 		ENTITY_PARAM(0, 2) = 1;
 
 		setCallback(1);
@@ -1594,12 +1594,12 @@ IMPLEMENT_FUNCTION(42, Rebecca, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter4Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityRebecca);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterRebecca);
 
 		getData()->entityPosition = kPosition_4840;
 		getData()->location = kLocationInsideCompartment;
@@ -1621,12 +1621,12 @@ IMPLEMENT_FUNCTION(43, Rebecca, chapter4Handler)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function20(kTime2385000);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1 || getCallback() == 2) {
 			if (ENTITY_PARAM(0, 1)) {
 				setup_function44();
@@ -1645,10 +1645,10 @@ IMPLEMENT_FUNCTION(44, Rebecca, function44)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param3 != kTimeInvalid) {
 			if (getState()->time <= kTime2412000) {
-				if (!getEntities()->isInRestaurant(kEntityPlayer) || !params->param3)
+				if (!getEntities()->isInRestaurant(kCharacterCath) || !params->param3)
 					params->param3 = (uint)getState()->time;
 
 				if (params->param3 >= getState()->time)
@@ -1657,13 +1657,13 @@ IMPLEMENT_FUNCTION(44, Rebecca, function44)
 
 			params->param3 = kTimeInvalid;
 
-			getSavePoints()->push(kEntityRebecca, kEntityWaiter1, kAction223712416);
+			getSavePoints()->push(kCharacterRebecca, kCharacterWaiter1, kCharacterAction223712416);
 		}
 
 label_next:
 		if (params->param1 && params->param4 != kTimeInvalid) {
 			if (getState()->time <= kTime2430000) {
-				if (!getEntities()->isInRestaurant(kEntityPlayer) || !params->param4)
+				if (!getEntities()->isInRestaurant(kCharacterCath) || !params->param4)
 					params->param4 = (uint)getState()->time + 150;
 
 				if (params->param4 >= getState()->time)
@@ -1682,8 +1682,8 @@ label_callback_2:
 			Entity::timeCheckCallback(kTime2443500, params->param5, 3, WRAP_SETUP_FUNCTION(Rebecca, setup_function19));
 		break;
 
-	case kActionEndSound:
-		if (getEntities()->isInRestaurant(kEntityPlayer)) {
+	case kCharacterActionEndSound:
+		if (getEntities()->isInRestaurant(kCharacterCath)) {
 			setCallback(5);
 			setup_playSound("Reb4004");
 			break;
@@ -1692,20 +1692,20 @@ label_callback_2:
 		params->param1 = 1;
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->location = kLocationOutsideCompartment;
 
 		setCallback(1);
 		setup_function16(true);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->drawSequenceLeft(kEntityRebecca, "012D");
+			getEntities()->drawSequenceLeft(kCharacterRebecca, "012D");
 			getData()->location = kLocationInsideCompartment;
 			break;
 
@@ -1717,16 +1717,16 @@ label_callback_2:
 			break;
 
 		case 4:
-			getSavePoints()->push(kEntityRebecca, kEntityWaiter1, kAction136702400);
-			getEntities()->drawSequenceLeft(kEntityRebecca, "012G");
+			getSavePoints()->push(kCharacterRebecca, kCharacterWaiter1, kCharacterAction136702400);
+			getEntities()->drawSequenceLeft(kCharacterRebecca, "012G");
 			params->param2 = 1;
 			break;
 		}
 		break;
 
-	case kAction123712592:
-		getEntities()->drawSequenceLeft(kEntityWaiter1, "BLANK");
-		getSound()->playSound(kEntityRebecca, "Reb4003");
+	case kCharacterAction123712592:
+		getEntities()->drawSequenceLeft(kCharacterWaiter1, "BLANK");
+		getSound()->playSound(kCharacterRebecca, "Reb4003");
 
 		setCallback(4);
 		setup_draw("012E");
@@ -1740,23 +1740,23 @@ IMPLEMENT_FUNCTION(45, Rebecca, function45)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_4840;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject52, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentE, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject52, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
-		getEntities()->clearSequences(kEntityRebecca);
+		getEntities()->clearSequences(kCharacterRebecca);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
 			params->param1 = 1;
 		break;
 
-	case kAction205034665:
+	case kCharacterAction205034665:
 		if (!params->param1 && getState()->time < kTime2511000) {
 			setCallback(1);
 			setup_playSound("Reb6969");
@@ -1771,12 +1771,12 @@ IMPLEMENT_FUNCTION(46, Rebecca, chapter5)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter5Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityRebecca);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterRebecca);
 
 		getData()->entityPosition = kPosition_3969;
 		getData()->location = kLocationInsideCompartment;
@@ -1790,7 +1790,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(47, Rebecca, chapter5Handler)
-	if (savepoint.action == kActionProceedChapter5)
+	if (savepoint.action == kCharacterActionProceedChapter5)
 		setup_function48();
 IMPLEMENT_FUNCTION_END
 
@@ -1800,22 +1800,22 @@ IMPLEMENT_FUNCTION(48, Rebecca, function48)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param1) {
 			if (!Entity::updateParameter(params->param3, getState()->timeTicks, 75))
 				break;
 
 			params->param1 = 0;
 			params->param2 = 1;
-			getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
 		}
 
 		params->param3 = 0;
 		break;
 
-	case kActionKnock:
-	case kActionOpenDoor:
-		getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+	case kCharacterActionKnock:
+	case kCharacterActionOpenDoor:
+		getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
 
 		if (params->param1) {
 			params->param2 = 1;
@@ -1823,37 +1823,37 @@ IMPLEMENT_FUNCTION(48, Rebecca, function48)
 			setCallback(2);
 			setup_playSound(getSound()->justCheckingCath());
 		} else {
-			setCallback(savepoint.action == kActionKnock ? 3 : 4);
-			setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
+			setCallback(savepoint.action == kCharacterActionKnock ? 3 : 4);
+			setup_playSound(savepoint.action == kCharacterActionKnock ? "LIB012" : "LIB013");
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->car = kCarRedSleeping;
 
 		setCallback(1);
 		setup_enterExitCompartment("624AE", kObjectCompartmentE);
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (params->param1 || params->param2) {
 			params->param1 = 0;
 			params->param2 = 0;
 
-			getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->clearSequences(kEntityRebecca);
+			getEntities()->clearSequences(kCharacterRebecca);
 			getData()->location = kLocationInsideCompartment;
 			getData()->entityPosition = kPosition_4840;
-			getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
 			break;
 
 		case 3:
@@ -1864,17 +1864,17 @@ IMPLEMENT_FUNCTION(48, Rebecca, function48)
 
 		case 5:
 			params->param1 = 1;
-			getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorTalk, kCursorNormal);
 			break;
 		}
 		break;
 
-	case kAction135800432:
+	case kCharacterAction135800432:
 		setup_nullfunction();
 		break;
 
-	case kAction155604840:
-		getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
+	case kCharacterAction155604840:
+		getObjects()->update(kObjectCompartmentE, kCharacterRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		break;
 	}
 IMPLEMENT_FUNCTION_END

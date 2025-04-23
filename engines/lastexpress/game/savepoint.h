@@ -52,18 +52,18 @@ namespace LastExpress {
 class LastExpressEngine;
 
 struct SavePoint {
-	EntityIndex entity1;
-	ActionIndex action;
-	EntityIndex entity2;
+	CharacterIndex entity1;
+	CharacterActions action;
+	CharacterIndex entity2;
 	union {
 		uint32 intValue;
 		char charValue[7]; // "MUS%03d" with terminating zero
 	} param;
 
 	SavePoint() {
-		entity1 = kEntityPlayer;
-		action = kActionNone;
-		entity2 = kEntityPlayer;
+		entity1 = kCharacterCath;
+		action = kCharacterActionNone;
+		entity2 = kCharacterCath;
 		param.intValue = 0;
 		param.charValue[6] = 0;
 	}
@@ -79,15 +79,15 @@ class SavePoints : Common::Serializable {
 public:
 
 	struct SavePointData {
-		EntityIndex entity1;
-		ActionIndex action;
-		EntityIndex entity2;
+		CharacterIndex entity1;
+		CharacterActions action;
+		CharacterIndex entity2;
 		uint32 param;
 
 		SavePointData() {
-			entity1 = kEntityPlayer;
-			action = kActionNone;
-			entity2 = kEntityPlayer;
+			entity1 = kCharacterCath;
+			action = kCharacterActionNone;
+			entity2 = kCharacterCath;
 			param = 0;
 		}
 
@@ -100,20 +100,20 @@ public:
 	~SavePoints() override;
 
 	// Savepoints
-	void push(EntityIndex entity2, EntityIndex entity1, ActionIndex action, uint32 param = 0);
-	void push(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const Common::String &param);
-	void pushAll(EntityIndex entity, ActionIndex action, uint32 param = 0);
+	void push(CharacterIndex entity2, CharacterIndex entity1, CharacterActions action, uint32 param = 0);
+	void push(CharacterIndex entity2, CharacterIndex entity1, CharacterActions action, const Common::String param);
+	void pushAll(CharacterIndex entity, CharacterActions action, uint32 param = 0);
 	void process();
 	void reset();
 
 	// Data
-	void addData(EntityIndex entity, ActionIndex action, uint32 param);
+	void addData(CharacterIndex entity, CharacterActions action, uint32 param);
 
 	// Callbacks
-	void setCallback(EntityIndex index, Callback *callback);
-	Callback *getCallback(EntityIndex entity) const;
-	void call(EntityIndex entity2, EntityIndex entity1, ActionIndex action, uint32 param = 0) const;
-	void call(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const Common::String &param) const;
+	void setCallback(CharacterIndex index, Callback *callback);
+	Callback *getCallback(CharacterIndex entity) const;
+	void call(CharacterIndex entity2, CharacterIndex entity1, CharacterActions action, uint32 param = 0) const;
+	void call(CharacterIndex entity2, CharacterIndex entity1, CharacterActions action, const Common::String param) const;
 	void callAndProcess();
 
 	// Serializable

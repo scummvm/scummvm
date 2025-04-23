@@ -52,7 +52,6 @@ bool LastExpressEngine::isDemo() const {
 
 bool LastExpressMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return f == kSupportsListSaves
-	    || f == kSupportsLoadingDuringStartup
 	    || f == kSupportsDeleteSave;
 }
 

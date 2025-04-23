@@ -34,7 +34,7 @@ public:
 	~Max() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
@@ -46,7 +46,7 @@ public:
 	DECLARE_VFUNCTION_1(playSound, const char *filename)
 
 	/**
-	* Draws the entity
+	* Draws the character
 	*
 	* @param savepoint The savepoint
 	*                    - The sequence to draw

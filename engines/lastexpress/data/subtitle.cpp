@@ -31,17 +31,18 @@
 #include "common/debug.h"
 #include "common/rect.h"
 #include "common/stream.h"
+#include "subtitle.h"
 
 namespace LastExpress {
 
 //////////////////////////////////////////////////////////////////////////
 // Subtitle
 //////////////////////////////////////////////////////////////////////////
-class Subtitle {
+class SubtitleOld {
 public:
-	Subtitle() : _timeStart(0), _timeStop(0), _topLength(0), _topText(nullptr),
+	SubtitleOld() : _timeStart(0), _timeStop(0), _topLength(0), _topText(nullptr),
 		_bottomLength(0), _bottomText(nullptr) {}
-	~Subtitle() { reset(); }
+	~SubtitleOld() { reset(); }
 
 	bool load(Common::SeekableReadStream *in);
 	Common::Rect draw(Graphics::Surface *surface, Font *font);
@@ -62,7 +63,7 @@ private:
 	void reset();
 };
 
-void Subtitle::reset() {
+void SubtitleOld::reset() {
 	delete[] _topText;
 	delete[] _bottomText;
 	_topText = nullptr;
@@ -78,7 +79,7 @@ T *newArray(size_t n) {
 	return nullptr;
 }
 
-bool Subtitle::load(Common::SeekableReadStream *in) {
+bool SubtitleOld::load(Common::SeekableReadStream *in) {
 	reset();
 
 	if (!in)
@@ -123,7 +124,7 @@ bool Subtitle::load(Common::SeekableReadStream *in) {
 	return true;
 }
 
-Common::Rect Subtitle::draw(Graphics::Surface *surface, Font *font) {
+Common::Rect SubtitleOld::draw(Graphics::Surface *surface, Font *font) {
 	Common::Rect rectTop, rectBottom;
 
 	//FIXME find out proper subtitles coordinates (and hope it's hardcoded and not stored in the sequence or animation)
@@ -139,16 +140,16 @@ Common::Rect Subtitle::draw(Graphics::Surface *surface, Font *font) {
 //////////////////////////////////////////////////////////////////////////
 // SubtitleManager
 //////////////////////////////////////////////////////////////////////////
-SubtitleManager::SubtitleManager(Font *font) : _font(font), _maxTime(0), _currentIndex(-1), _lastIndex(-1) {}
+SubtitleManagerOld::SubtitleManagerOld(Font *font) : _font(font), _maxTime(0), _currentIndex(-1), _lastIndex(-1) {}
 
-SubtitleManager::~SubtitleManager() {
+SubtitleManagerOld::~SubtitleManagerOld() {
 	reset();
 
 	// Zero passed pointers
 	_font = nullptr;
 }
 
-void SubtitleManager::reset() {
+void SubtitleManagerOld::reset() {
 	for (uint i = 0; i < _subtitles.size(); i++)
 		delete _subtitles[i];
 
@@ -157,7 +158,7 @@ void SubtitleManager::reset() {
 	_lastIndex = -1;
 }
 
-bool SubtitleManager::load(Common::SeekableReadStream *stream) {
+bool SubtitleManagerOld::load(Common::SeekableReadStream *stream) {
 	if (!stream)
 		return false;
 
@@ -179,7 +180,7 @@ bool SubtitleManager::load(Common::SeekableReadStream *stream) {
 	// Read the list of subtitles
 	_maxTime = 0;
 	for (uint i = 0; i < numSubtitles; i++) {
-		Subtitle *subtitle = new Subtitle();
+		SubtitleOld *subtitle = new SubtitleOld();
 		if (!subtitle->load(stream)) {
 			// Failed to read this line
 			reset();
@@ -201,11 +202,11 @@ bool SubtitleManager::load(Common::SeekableReadStream *stream) {
 	return true;
 }
 
-uint16 SubtitleManager::getMaxTime() const {
+uint16 SubtitleManagerOld::getMaxTime() const {
 	return _maxTime;
 }
 
-void SubtitleManager::setTime(uint16 time) {
+void SubtitleManagerOld::setTime(uint16 time) {
 	_currentIndex = -1;
 
 	// Find the appropriate line to show
@@ -218,7 +219,7 @@ void SubtitleManager::setTime(uint16 time) {
 	}
 }
 
-bool SubtitleManager::hasChanged() const {
+bool SubtitleManagerOld::hasChanged() const {
 	// TODO: mark the old line rect as dirty
 	if (_currentIndex != _lastIndex)
 		return true;
@@ -226,7 +227,7 @@ bool SubtitleManager::hasChanged() const {
 		return false;
 }
 
-Common::Rect SubtitleManager::draw(Graphics::Surface *surface) {
+Common::Rect SubtitleManagerOld::draw(Graphics::Surface *surface) {
 	// Update the last drawn index
 	_lastIndex = _currentIndex;
 

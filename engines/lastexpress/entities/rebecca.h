@@ -34,7 +34,7 @@ public:
 	~Rebecca() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
@@ -63,14 +63,14 @@ public:
 	 * Call a savepoint (or draw sequence in default case)
 	 *
 	 * @param sequence1   The sequence to draw in the default case
-	 * @param entity      The entity
+	 * @param character      The character
 	 * @param action      The action
-	 * @param sequence2   The sequence name for the savepoint
+	 * @param sequence2   The sequence eraseData for the savepoint
 	 */
-	DECLARE_FUNCTION_4(callSavepoint, const char *sequence1, EntityIndex entity, ActionIndex action, const char *sequence2)
+	DECLARE_FUNCTION_4(callSavepoint, const char *sequence1, CharacterIndex entity, CharacterActions action, const char *sequence2)
 
 	/**
-	 * Draws the entity
+	 * Draws the character
 	 *
 	 * @param sequence The sequence to draw
 	 */
@@ -101,7 +101,7 @@ public:
 	DECLARE_FUNCTION_2(enterExitCompartment3, const char *sequence, ObjectIndex compartment)
 
 	/**
-	 * Process callback action when the entity direction is not kDirectionRight
+	 * Process callback action when the character direction is not kDirectionRight
 	 */
 	DECLARE_FUNCTION(callbackActionOnDirection)
 
@@ -111,10 +111,10 @@ public:
 	DECLARE_FUNCTION(callbackActionRestaurantOrSalon)
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_VFUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
@@ -126,16 +126,16 @@ public:
 	 * @param car            The car
 	 * @param position       The position
 	 */
-	DECLARE_FUNCTION_3(updatePosition, const char *sequence1, CarIndex car, Position position)
+	DECLARE_FUNCTION_3(updatePosition, const char *sequence1, CarIndex car, PositionOld position)
 
 	/**
-	 * Draws the entity along with another one
+	 * Draws the character along with another one
 	 *
 	 * @param sequence1   The sequence to draw
-	 * @param sequence2   The sequence to draw for the second entity
-	 * @param entity      The EntityIndex of the second entity
+	 * @param sequence2   The sequence to draw for the second character
+	 * @param character      The CharacterIndex of the second character
 	 */
-	DECLARE_FUNCTION_3(draw2, const char *sequence1, const char *sequence2, EntityIndex entity)
+	DECLARE_FUNCTION_3(draw2, const char *sequence1, const char *sequence2, CharacterIndex entity)
 
 	DECLARE_FUNCTION(function15)
 	DECLARE_FUNCTION_1(function16, bool)

@@ -65,7 +65,7 @@ void SoundQueue::addToQueue(SoundEntry *entry) {
 	_soundList.push_back(entry);
 }
 
-void SoundQueue::stop(EntityIndex entity) {
+void SoundQueue::stop(CharacterIndex entity) {
 	SoundEntry *entry = getEntry(entity);
 	if (entry)
 		entry->kill();
@@ -168,17 +168,17 @@ void SoundQueue::stopAll() {
 //////////////////////////////////////////////////////////////////////////
 // Entry management
 //////////////////////////////////////////////////////////////////////////
-void SoundQueue::assignNISLink(EntityIndex index) {
+void SoundQueue::assignNISLink(CharacterIndex index) {
 	SoundEntry *entry = getEntry(kSoundTagLink);
 	if (entry)
 		entry->setEntity(index);
 }
 
-void SoundQueue::fade(EntityIndex entity) {
+void SoundQueue::fade(CharacterIndex entity) {
 	SoundEntry *entry = getEntry(entity);
 	if (entry) {
 		entry->fade();
-		entry->setEntity(kEntityPlayer);
+		entry->setEntity(kCharacterCath);
 	}
 }
 
@@ -192,7 +192,7 @@ void SoundQueue::fade(Common::String filename) {
 	SoundEntry *entry = getEntry(filename);
 	if (entry) {
 		entry->fade();
-		entry->setEntity(kEntityPlayer);
+		entry->setEntity(kCharacterCath);
 	}
 }
 
@@ -203,7 +203,7 @@ void SoundQueue::endAmbient() {
 	fade(kSoundTagOldAmbient);
 }
 
-SoundEntry *SoundQueue::getEntry(EntityIndex index) {
+SoundEntry *SoundQueue::getEntry(CharacterIndex index) {
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
 		if ((*i)->getEntity() == index)
 			return *i;
@@ -233,7 +233,7 @@ SoundEntry *SoundQueue::getEntry(SoundTag tag) {
 	return nullptr;
 }
 
-uint32 SoundQueue::getEntryTime(EntityIndex index) {
+uint32 SoundQueue::getEntryTime(CharacterIndex index) {
 	SoundEntry *entry = getEntry(index);
 	if (entry)
 		return entry->getTime();
@@ -241,7 +241,7 @@ uint32 SoundQueue::getEntryTime(EntityIndex index) {
 	return 0;
 }
 
-bool SoundQueue::isBuffered(EntityIndex entity) {
+bool SoundQueue::isBuffered(CharacterIndex entity) {
 	return (getEntry(entity) != nullptr);
 }
 
@@ -249,7 +249,7 @@ bool SoundQueue::isBuffered(Common::String filename, bool testForEntity) {
 	SoundEntry *entry = getEntry(filename);
 
 	if (testForEntity)
-		return entry != nullptr && entry->getEntity() != kEntityPlayer;
+		return entry != nullptr && entry->getEntity() != kCharacterCath;
 
 	return (entry != nullptr);
 }

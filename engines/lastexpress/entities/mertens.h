@@ -43,7 +43,7 @@ public:
 	~Mertens() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
@@ -75,15 +75,15 @@ public:
 	 *
 	 * @param sequence        The sequence to draw
 	 * @param compartment     The compartment
-	 * @param entityPosition1 The entity position
-	 * @param entityPosition1 The entity position to check
+	 * @param entityPosition1 The character position
+	 * @param entityPosition1 The character position to check
 	 *
 	 * @note We are not using the shared function due to too many differences
 	 */
 	DECLARE_FUNCTION_4(enterExitCompartment3, const char *sequence, ObjectIndex compartment, EntityPosition entityPosition1, EntityPosition entityPosition2)
 
 	/**
-	 * Process callback action when the entity direction is not kDirectionRight
+	 * Process callback action when the character direction is not kDirectionRight
 	 */
 	DECLARE_FUNCTION(callbackActionOnDirection)
 
@@ -110,10 +110,10 @@ public:
 	DECLARE_VFUNCTION_2(savegame, SavegameType savegameType, uint32 param)
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_VFUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
@@ -122,11 +122,11 @@ public:
 	/**
 	* Says "Bonsoir" to another character
 	*
-	* @param entity The entity
+	* @param character The character
 	*/
-	DECLARE_FUNCTION_1(bonsoir, EntityIndex entity)
-	DECLARE_FUNCTION_2(function13, bool, EntityIndex entity)
-	DECLARE_FUNCTION_1(function14, EntityIndex entity)
+	DECLARE_FUNCTION_1(bonsoir, CharacterIndex entity)
+	DECLARE_FUNCTION_2(function13, bool, CharacterIndex entity)
+	DECLARE_FUNCTION_1(function14, CharacterIndex entity)
 	DECLARE_FUNCTION_1(function15, bool)
 	DECLARE_FUNCTION_1(function16, bool)
 	DECLARE_FUNCTION(function17)

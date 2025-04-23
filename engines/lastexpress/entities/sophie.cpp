@@ -30,7 +30,7 @@
 
 namespace LastExpress {
 
-Sophie::Sophie(LastExpressEngine *engine) : Entity(engine, kEntitySophie) {
+Sophie::Sophie(LastExpressEngine *engine) : Entity(engine, kCharacterSophie) {
 	ADD_CALLBACK_FUNCTION(Sophie, reset);
 	ADD_CALLBACK_FUNCTION_II(Sophie, updateEntity);
 	ADD_CALLBACK_FUNCTION(Sophie, chaptersHandler);
@@ -56,7 +56,7 @@ IMPLEMENT_FUNCTION_II(2, Sophie, updateEntity, CarIndex, EntityPosition)
 	default:
 		break;
 
-	case kActionNone: {
+	case kCharacterActionNone: {
 		params->param3 = 0;
 
 		// Sophie
@@ -65,10 +65,10 @@ IMPLEMENT_FUNCTION_II(2, Sophie, updateEntity, CarIndex, EntityPosition)
 		CarIndex car = getData()->car;
 
 		// Rebecca
-		EntityPosition rebecca_position = getEntityData(kEntityRebecca)->entityPosition;
-		CarIndex rebeccaCar = getEntityData(kEntityRebecca)->car;
+		EntityPosition rebecca_position = getEntityData(kCharacterRebecca)->entityPosition;
+		CarIndex rebeccaCar = getEntityData(kCharacterRebecca)->car;
 
-		if (getEntities()->isDistanceBetweenEntities(kEntitySophie, kEntityRebecca, 500)
+		if (getEntities()->isDistanceBetweenEntities(kCharacterSophie, kCharacterRebecca, 500)
 		|| (direction == kDirectionUp && (car > rebeccaCar || (car == rebeccaCar && position > rebecca_position)))
 		|| (direction == kDirectionDown && (car < rebeccaCar || (car == rebeccaCar && position < rebecca_position)))) {
 			 getData()->field_49B = 0;
@@ -76,24 +76,24 @@ IMPLEMENT_FUNCTION_II(2, Sophie, updateEntity, CarIndex, EntityPosition)
 		}
 
 		if (!params->param3)
-			getEntities()->updateEntity(kEntitySophie, (CarIndex)params->param1, (EntityPosition)params->param2);
+			getEntities()->updateEntity(kCharacterSophie, (CarIndex)params->param1, (EntityPosition)params->param2);
 
 		break;
 	}
 
-	case kActionExcuseMeCath:
+	case kCharacterActionExcuseMeCath:
 		getSound()->excuseMeCath();
 		break;
 
-	case kActionExcuseMe:
-		getSound()->excuseMe(kEntitySophie);
+	case kCharacterActionExcuseMe:
+		getSound()->excuseMe(kCharacterSophie);
 		break;
 
-	case kActionDefault:
-		getEntities()->updateEntity(kEntitySophie, (CarIndex)params->param1, (EntityPosition)params->param2);
+	case kCharacterActionDefault:
+		getEntities()->updateEntity(kCharacterSophie, (CarIndex)params->param1, (EntityPosition)params->param2);
 		break;
 
-	case kAction123668192:
+	case kCharacterAction123668192:
 		callbackAction();
 		break;
 	}
@@ -105,63 +105,63 @@ IMPLEMENT_FUNCTION(3, Sophie, chaptersHandler)
 	default:
 		break;
 
-	case kActionNone:
-		getData()->entityPosition = getEntityData(kEntityRebecca)->entityPosition;
-		getData()->location = getEntityData(kEntityRebecca)->location;
-		getData()->car = getEntityData(kEntityRebecca)->car;
+	case kCharacterActionNone:
+		getData()->entityPosition = getEntityData(kCharacterRebecca)->entityPosition;
+		getData()->location = getEntityData(kCharacterRebecca)->location;
+		getData()->car = getEntityData(kCharacterRebecca)->car;
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->clearSequences(kEntitySophie);
+			getEntities()->clearSequences(kCharacterSophie);
 			break;
 
 		case 2:
-			getEntities()->drawSequenceLeft(kEntitySophie, "BLANK");
+			getEntities()->drawSequenceLeft(kCharacterSophie, "BLANK");
 			break;
 
 		case 3:
-			getEntities()->clearSequences(kEntitySophie);
+			getEntities()->clearSequences(kCharacterSophie);
 			break;
 
 		case 4:
-			getEntities()->drawSequenceLeft(kEntitySophie, "BLANK");
+			getEntities()->drawSequenceLeft(kCharacterSophie, "BLANK");
 			break;
 		}
 		break;
 
-	case kAction125242096:
-		getData()->entityPosition = (EntityPosition)(getEntityData(kEntityRebecca)->entityPosition - 100);
-		getData()->location = getEntityData(kEntityRebecca)->location;
-		getData()->car = getEntityData(kEntityRebecca)->car;
+	case kCharacterAction125242096:
+		getData()->entityPosition = (EntityPosition)(getEntityData(kCharacterRebecca)->entityPosition - 100);
+		getData()->location = getEntityData(kCharacterRebecca)->location;
+		getData()->car = getEntityData(kCharacterRebecca)->car;
 
 		setCallback(1);
 		setup_updateEntity(kCarRestaurant, kPosition_850);
 		break;
 
-	case kAction136654208:
-		getData()->entityPosition = (EntityPosition)(getEntityData(kEntityRebecca)->entityPosition + 100);
-		getData()->location = getEntityData(kEntityRebecca)->location;
-		getData()->car = getEntityData(kEntityRebecca)->car;
+	case kCharacterAction136654208:
+		getData()->entityPosition = (EntityPosition)(getEntityData(kCharacterRebecca)->entityPosition + 100);
+		getData()->location = getEntityData(kCharacterRebecca)->location;
+		getData()->car = getEntityData(kCharacterRebecca)->car;
 
 		setCallback(2);
 		setup_updateEntity(kCarRedSleeping, kPosition_4840);
 		break;
 
-	case kAction259921280:
-		getData()->entityPosition = (EntityPosition)(getEntityData(kEntityRebecca)->entityPosition + 100);
-		getData()->location = getEntityData(kEntityRebecca)->location;
-		getData()->car = getEntityData(kEntityRebecca)->car;
+	case kCharacterAction259921280:
+		getData()->entityPosition = (EntityPosition)(getEntityData(kCharacterRebecca)->entityPosition + 100);
+		getData()->location = getEntityData(kCharacterRebecca)->location;
+		getData()->car = getEntityData(kCharacterRebecca)->car;
 
 		setCallback(3);
 		setup_updateEntity(kCarKronos, kPosition_9460);
 		break;
 
-	case kAction292775040:
+	case kCharacterAction292775040:
 		getData()->entityPosition = kPosition_9270;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarKronos;
@@ -178,11 +178,11 @@ IMPLEMENT_FUNCTION(4, Sophie, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Sophie, setup_chaptersHandler));
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_4840;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
@@ -221,12 +221,12 @@ IMPLEMENT_FUNCTION(10, Sophie, chapter5)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter5Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntitySophie);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterSophie);
 
 		getData()->entityPosition = kPosition_3969;
 		getData()->location = kLocationInsideCompartment;
@@ -239,7 +239,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Sophie, chapter5Handler)
-	if (savepoint.action == kActionProceedChapter5)
+	if (savepoint.action == kCharacterActionProceedChapter5)
 		setup_nullfunction();
 IMPLEMENT_FUNCTION_END
 
@@ -251,11 +251,11 @@ IMPLEMENT_NULL_FUNCTION(12, Sophie)
 //////////////////////////////////////////////////////////////////////////
 
 void Sophie::handleAction(const SavePoint &savepoint) {
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 		getData()->entityPosition = kPosition_4840;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
-		getEntities()->clearSequences(kEntitySophie);
+		getEntities()->clearSequences(kCharacterSophie);
 	}
 }
 
@@ -264,12 +264,12 @@ void Sophie::handleChapter(const SavePoint &savepoint) {
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chaptersHandler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntitySophie);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterSophie);
 		getData()->entityPosition = kPosition_4840;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;

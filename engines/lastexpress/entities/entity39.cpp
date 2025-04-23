@@ -31,7 +31,7 @@
 
 namespace LastExpress {
 
-Entity39::Entity39(LastExpressEngine *engine) : Entity(engine, kEntity39) {
+Entity39::Entity39(LastExpressEngine *engine) : Entity(engine, kCharacterMitchell) {
 	ADD_CALLBACK_FUNCTION(Entity39, chapter1);
 	ADD_CALLBACK_FUNCTION(Entity39, chapter2);
 	ADD_CALLBACK_FUNCTION(Entity39, chapter3);
@@ -45,31 +45,31 @@ Entity39::Entity39(LastExpressEngine *engine) : Entity(engine, kEntity39) {
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Entity39, chapter1)
-	if (savepoint.action == kActionDefault)
+	if (savepoint.action == kCharacterActionDefault)
 		setup_process();
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(2, Entity39, chapter2)
-	if (savepoint.action == kActionDefault)
+	if (savepoint.action == kCharacterActionDefault)
 		setup_process();
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(3, Entity39, chapter3)
-	if (savepoint.action == kActionDefault)
+	if (savepoint.action == kCharacterActionDefault)
 		setup_process();
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(4, Entity39, chapter4)
-	if (savepoint.action == kActionDefault)
+	if (savepoint.action == kCharacterActionDefault)
 		setup_process();
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Entity39, chapter5)
-	if (savepoint.action == kActionDefault)
+	if (savepoint.action == kCharacterActionDefault)
 		setup_process();
 IMPLEMENT_FUNCTION_END
 
@@ -80,16 +80,16 @@ IMPLEMENT_FUNCTION(6, Entity39, process)
 	default:
 		break;
 
-	case kActionExitCompartment:
-		getEntities()->drawSequenceRight(kEntity39, (char *)&_sequence);
+	case kCharacterActionExitCompartment:
+		getEntities()->drawSequenceRight(kCharacterMitchell, (char *)&_sequence);
 		break;
 
-	case kActionNone:
-		getData()->car = getEntityData(kEntityPlayer)->car;
+	case kCharacterActionNone:
+		getData()->car = getEntityData(kCharacterCath)->car;
 
 		if (*_sequence && !_counter) {
 			_counter++;
-			getEntities()->drawSequenceRight(kEntity39, (char *)&_sequence);
+			getEntities()->drawSequenceRight(kCharacterMitchell, (char *)&_sequence);
 		}
 		break;
 	}

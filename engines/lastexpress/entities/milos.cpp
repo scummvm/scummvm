@@ -40,7 +40,7 @@
 
 namespace LastExpress {
 
-Milos::Milos(LastExpressEngine *engine) : Entity(engine, kEntityMilos) {
+Milos::Milos(LastExpressEngine *engine) : Entity(engine, kCharacterMilos) {
 	ADD_CALLBACK_FUNCTION(Milos, reset);
 	ADD_CALLBACK_FUNCTION_S(Milos, draw);
 	ADD_CALLBACK_FUNCTION_SI(Milos, enterExitCompartment);
@@ -129,27 +129,27 @@ IMPLEMENT_FUNCTION_II(10, Milos, enterCompartmentDialog, CarIndex, EntityPositio
 	default:
 		break;
 
-	case kActionNone:
-	case kActionDefault:
-		if (getEntities()->updateEntity(kEntityMilos, (CarIndex)params->param1, (EntityPosition)params->param2))
+	case kCharacterActionNone:
+	case kCharacterActionDefault:
+		if (getEntities()->updateEntity(kCharacterMilos, (CarIndex)params->param1, (EntityPosition)params->param2))
 			callbackAction();
 		break;
 
-	case kActionExcuseMeCath:
-	case kActionExcuseMe:
-		if (getEvent(kEventMilosTylerCompartmentDefeat)) {
+	case kCharacterActionExcuseMeCath:
+	case kCharacterActionExcuseMe:
+		if (HELPERgetEvent(kEventMilosTylerCompartmentDefeat)) {
 			// Robert saying: "Milos"
 			switch(rnd(3)) {
 			case 0:
-				getSound()->playSound(kEntityPlayer, "CAT1014");
+				getSound()->playSound(kCharacterCath, "CAT1014");
 				break;
 
 			case 1:
-				getSound()->playSound(kEntityPlayer, "CAT1014A");
+				getSound()->playSound(kCharacterCath, "CAT1014A");
 				break;
 
 			case 2:
-				getSound()->playSound(kEntityPlayer, "CAT1014B");
+				getSound()->playSound(kCharacterCath, "CAT1014B");
 				break;
 
 			default:
@@ -168,7 +168,7 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!params->param5 && params->param1 < getState()->time && !params->param7) {
 			params->param7 = 1;
 
@@ -180,7 +180,7 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 			if (Entity::updateParameter(params->param8,  getState()->timeTicks, 75)) {
 				params->param2 = 0;
 				params->param3 = 1;
-				getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorNormal, kCursorNormal);
+				getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation1, kCursorNormal, kCursorNormal);
 				params->param8 = 0;
 			}
 		} else {
@@ -201,7 +201,7 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 
 			if (ENTITY_PARAM(0, 3) && !getProgress().field_14 && !params->param6) {
 				getProgress().field_14 = 14;
-				getSavePoints()->push(kEntityMilos, kEntityVesna, kAction190412928);
+				getSavePoints()->push(kCharacterMilos, kCharacterVesna, kCharacterAction190412928);
 
 				setCallback(1);
 				setup_enterExitCompartment("609Cg", kObjectCompartmentG);
@@ -214,7 +214,7 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 
 		if (CURRENT_PARAM(1, 2) != kTimeInvalid) {
 			if (params->param4 >= getState()->time) {
-				if (!getEntities()->isDistanceBetweenEntities(kEntityPlayer, kEntityMilos, 2000) || !CURRENT_PARAM(1, 2))
+				if (!getEntities()->isDistanceBetweenEntities(kCharacterCath, kCharacterMilos, 2000) || !CURRENT_PARAM(1, 2))
 					CURRENT_PARAM(1, 2) = (uint)getState()->time + 150;
 
 				if (CURRENT_PARAM(1, 2) >= getState()->time)
@@ -223,19 +223,19 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 
 			CURRENT_PARAM(1, 2) = kTimeInvalid;
 
-			if (getEntities()->isDistanceBetweenEntities(kEntityPlayer, kEntityMilos, 2000))
+			if (getEntities()->isDistanceBetweenEntities(kCharacterCath, kCharacterMilos, 2000))
 				getProgress().field_98 = 1;
 
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
 
 			setCallback(6);
 			setup_playSound("MIL1012");
 		}
 		break;
 
-	case kActionKnock:
-	case kActionOpenDoor:
-		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
+	case kCharacterActionKnock:
+	case kCharacterActionOpenDoor:
+		getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
 
 		if (params->param2) {
 			if (getInventory()->hasItem(kItemPassengerList)) {
@@ -246,24 +246,24 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 				setup_playSound(getSound()->wrongDoorCath());
 			}
 		} else {
-			setCallback(savepoint.action == kActionKnock ? 7 : 8);
-			setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
+			setCallback(savepoint.action == kCharacterActionKnock ? 7 : 8);
+			setup_playSound(savepoint.action == kCharacterActionKnock ? "LIB012" : "LIB013");
 		}
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	case kCharacterActionDefault:
+		getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (params->param3 || params->param2) {
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
 			params->param3 = 0;
 			params->param2 = 0;
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch(getCallback()) {
 		default:
 			break;
@@ -295,13 +295,13 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 
 		case 5:
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityMilos);
-			getSavePoints()->push(kEntityMilos, kEntityVesna, kAction101687594);
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			getEntities()->clearSequences(kCharacterMilos);
+			getSavePoints()->push(kCharacterMilos, kCharacterVesna, kCharacterAction101687594);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
 			break;
 
 		case 6:
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
 			break;
 
 		case 7:
@@ -312,7 +312,7 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 			break;
 
 		case 9:
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorTalk, kCursorNormal);
 			params->param2 = 1;
 			break;
 
@@ -323,36 +323,36 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 			break;
 
 		case 12:
-			getEntities()->drawSequenceLeft(kEntityMilos, "611Cg");
-			getEntities()->enterCompartment(kEntityMilos, kObjectCompartmentG, true);
-			getSavePoints()->push(kEntityMilos, kEntityCoudert, kAction88652208);
+			getEntities()->drawSequenceLeft(kCharacterMilos, "611Cg");
+			getEntities()->enterCompartment(kCharacterMilos, kObjectCompartmentG, true);
+			getSavePoints()->push(kCharacterMilos, kCharacterCond2, kCharacterAction88652208);
 			break;
 
 		case 13:
-			getEntities()->exitCompartment(kEntityMilos, kObjectCompartmentG, true);
+			getEntities()->exitCompartment(kCharacterMilos, kObjectCompartmentG, true);
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityMilos);
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			getEntities()->clearSequences(kCharacterMilos);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
 			params->param5 = 0;
 			break;
 
 		}
 		break;
 
-	case kAction122865568:
+	case kCharacterAction122865568:
 		getData()->location = kLocationOutsideCompartment;
 		setCallback(12);
 		setup_enterExitCompartment("611Bg", kObjectCompartmentG);
 		break;
 
-	case kAction123852928:
+	case kCharacterAction123852928:
 		setCallback(13);
 		setup_enterExitCompartment("611Dg", kObjectCompartmentG);
 		break;
 
-	case kAction221683008:
+	case kCharacterAction221683008:
 		params->param5 = 1;
-		getSavePoints()->push(kEntityMilos, kEntityCoudert, kAction123199584);
+		getSavePoints()->push(kCharacterMilos, kCharacterCond2, kCharacterAction123199584);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -363,21 +363,21 @@ IMPLEMENT_FUNCTION(12, Milos, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Milos, setup_chapter1Handler));
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObjectCompartmentG, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject46, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+	case kCharacterActionDefault:
+		getObjects()->update(kObjectCompartmentG, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject46, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
 		getData()->entityPosition = kPosition_4689;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRestaurant;
 
-		getSavePoints()->addData(kEntityMilos, kAction157691176, 0);
-		getSavePoints()->addData(kEntityMilos, kAction208228224, 2);
-		getSavePoints()->addData(kEntityMilos, kAction259125998, 3);
+		getSavePoints()->addData(kCharacterMilos, kCharacterAction157691176, 0);
+		getSavePoints()->addData(kCharacterMilos, kCharacterAction208228224, 2);
+		getSavePoints()->addData(kCharacterMilos, kCharacterAction259125998, 3);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -388,21 +388,21 @@ IMPLEMENT_FUNCTION(13, Milos, function13)
 	default:
 		break;
 
-	case kActionExitCompartment:
-		getSavePoints()->push(kEntityMilos, kEntityTables2, kActionDrawTablesWithChairs, "009E");
-		getEntities()->clearSequences(kEntityVesna);
-		getEntities()->clearSequences(kEntityIvo);
-		getEntities()->clearSequences(kEntitySalko);
+	case kCharacterActionExitCompartment:
+		getSavePoints()->push(kCharacterMilos, kCharacterTableC, kCharacterActionDrawTablesWithChairs, "009E");
+		getEntities()->clearSequences(kCharacterVesna);
+		getEntities()->clearSequences(kCharacterIvo);
+		getEntities()->clearSequences(kCharacterSalko);
 
 		callbackAction();
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceRight(kEntitySalko, "009D5");
-		getEntities()->drawSequenceRight(kEntityTables2, "009D4");
-		getEntities()->drawSequenceRight(kEntityIvo, "009D3");
-		getEntities()->drawSequenceRight(kEntityVesna, "009D2");
-		getEntities()->drawSequenceRight(kEntityMilos, "009D1");
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceRight(kCharacterSalko, "009D5");
+		getEntities()->drawSequenceRight(kCharacterTableC, "009D4");
+		getEntities()->drawSequenceRight(kCharacterIvo, "009D3");
+		getEntities()->drawSequenceRight(kCharacterVesna, "009D2");
+		getEntities()->drawSequenceRight(kCharacterMilos, "009D1");
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -413,14 +413,14 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getProgress().field_14 == 29 || getProgress().field_14 == 3) {
 			if (params->param2) {
 				setCallback(1);
 				setup_enterExitCompartment("609Ca", kObjectCompartment1);
 			} else {
-				getEntities()->exitCompartment(kEntityMilos, kObjectCompartment1, true);
-				getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+				getEntities()->exitCompartment(kCharacterMilos, kObjectCompartment1, true);
+				getObjects()->update(kObjectCompartment1, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
 				callbackAction();
 			}
@@ -439,12 +439,12 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 					if (!Entity::updateParameter(CURRENT_PARAM(1, 2), getState()->timeTicks, 75))
 						break;
 
-					getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
+					getObjects()->update(kObjectCompartment1, kCharacterMilos, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 					++params->param5;
 					switch (params->param5) {
 					default:
-						getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, params->param3 == 0 ? kCursorTalk : kCursorNormal, kCursorHand);
+						getObjects()->update(kObjectCompartment1, kCharacterMilos, getObjects()->get(kObjectCompartment1).status, params->param3 == 0 ? kCursorTalk : kCursorNormal, kCursorHand);
 						CURRENT_PARAM(1, 2) = 0;
 						break;
 
@@ -468,12 +468,12 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 
 						if (params->param7 < 3) {
 							params->param5 = 1;
-							getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, params->param3 == 0 ? kCursorTalk : kCursorNormal, kCursorHand);
+							getObjects()->update(kObjectCompartment1, kCharacterMilos, getObjects()->get(kObjectCompartment1).status, params->param3 == 0 ? kCursorTalk : kCursorNormal, kCursorHand);
 							CURRENT_PARAM(1, 2) = 0;
 							break;
 						}
 
-						getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorHandKnock, kCursorHand);
+						getObjects()->update(kObjectCompartment1, kCharacterCath, getObjects()->get(kObjectCompartment1).status, kCursorHandKnock, kCursorHand);
 
 						callbackAction();
 						break;
@@ -485,7 +485,7 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 						setCallback(3);
 						setup_savegame(kSavegameTypeEvent, kEventMilosTylerCompartmentVisit);
 					} else {
-						getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+						getObjects()->update(kObjectOutsideTylerCompartment, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
 						setCallback(2);
 						setup_savegame(kSavegameTypeEvent, kEventMilosCorpseFloor);
@@ -511,7 +511,7 @@ label_callback_12:
 			if (!Entity::updateParameter(CURRENT_PARAM(1, 4), getState()->timeTicks, 75))
 				break;
 
-			getEntities()->exitCompartment(kEntityMilos, kObjectCompartment1, true);
+			getEntities()->exitCompartment(kCharacterMilos, kObjectCompartment1, true);
 
 			if (getProgress().eventCorpseMovedFromFloor) {
 				setCallback(13);
@@ -519,38 +519,38 @@ label_callback_12:
 				break;
 			}
 
-			if (getEntities()->isInsideTrainCar(kEntityPlayer, kCarGreenSleeping)) {
+			if (getEntities()->isInsideTrainCar(kCharacterCath, kCarGreenSleeping)) {
 				setCallback(14);
 				setup_enterExitCompartment2("609Ba", kObjectCompartment1);
 				break;
 			}
 
 			getScenes()->loadSceneFromPosition(kCarNone, 1);
-			getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+			getObjects()->update(kObjectOutsideTylerCompartment, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
 			setCallback(15);
 			setup_savegame(kSavegameTypeEvent, kEventMilosCorpseFloor);
 		}
 		break;
 
-	case kActionKnock:
+	case kCharacterActionKnock:
 		if (params->param2) {
-			getObjects()->update(kObjectCompartment1, kEntityMilos, kObjectLocationNone, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment1, kCharacterMilos, kObjectLocationNone, kCursorNormal, kCursorNormal);
 
 			setCallback(20);
 			setup_playSound("LIB012");
 		} else if (!params->param3) {
-			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment1, kCharacterMilos, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 			setCallback(22);
 			setup_playSound16("MIL1032");
 		}
 		break;
 
-	case kActionOpenDoor:
+	case kCharacterActionOpenDoor:
 		if (getProgress().eventCorpseMovedFromFloor && getProgress().jacket != kJacketBlood) {
 			if (params->param2) {
-				getEntityData(kEntityPlayer)->location = kLocationInsideCompartment;
+				getEntityData(kCharacterCath)->location = kLocationInsideCompartment;
 				params->param6 = (getObjects()->get(kObjectCompartment1).model == kObjectModel1) ? kEventMilosTylerCompartmentBed : kEventMilosTylerCompartment;
 			} else {
 				params->param6 = (getObjects()->get(kObjectCompartment1).model == kObjectModel1) ? kEventMilosTylerCompartmentBedVisit : kEventMilosTylerCompartmentVisit;
@@ -559,56 +559,56 @@ label_callback_12:
 			setCallback(17);
 			setup_savegame(kSavegameTypeEvent, kEventMilosTylerCompartmentVisit);
 		} else {
-			getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+			getObjects()->update(kObjectOutsideTylerCompartment, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
 			setCallback(16);
 			setup_savegame(kSavegameTypeEvent, kEventMilosCorpseFloor);
 		}
 		break;
 
-	case kActionDefault:
-		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_8200)
-		 || getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_7850)
+	case kCharacterActionDefault:
+		if (getEntities()->isInsideCompartment(kCharacterCath, kCarGreenSleeping, kPosition_8200)
+		 || getEntities()->isInsideCompartment(kCharacterCath, kCarGreenSleeping, kPosition_7850)
 		 || getEntities()->isOutsideAlexeiWindow()) {
-			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment1, kCharacterMilos, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 			if (getEntities()->isOutsideAlexeiWindow())
 				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
 
-			getSound()->playSound(kEntityPlayer, "LIB012");
+			getSound()->playSound(kCharacterCath, "LIB012");
 
-			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, kCursorTalk, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kCharacterMilos, getObjects()->get(kObjectCompartment1).status, kCursorTalk, kCursorHand);
 
 			params->param1 = 1;
 		} else {
-			getEntities()->drawSequenceLeft(kEntityMilos, "609Aa");
-			getEntities()->enterCompartment(kEntityMilos, kObjectCompartment1, true);
+			getEntities()->drawSequenceLeft(kCharacterMilos, "609Aa");
+			getEntities()->enterCompartment(kCharacterMilos, kObjectCompartment1, true);
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
 			getData()->location = kLocationOutsideCompartment;
-			getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
 			callbackAction();
 			break;
 
 		case 2:
-			getSound()->playSound(kEntityPlayer, "LIB014");
-			getAction()->playAnimation(kEventMilosCorpseFloor);
+			getSound()->playSound(kCharacterCath, "LIB014");
+			getActionOld()->playAnimation(kEventMilosCorpseFloor);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, getProgress().eventCorpseMovedFromFloor ? kSceneGameOverBloodJacket : kSceneGameOverPolice1, true);
 			break;
 
 		case 3:
-			getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
-			getSound()->playSound(kEntityPlayer, "LIB014");
-			getAction()->playAnimation((EventIndex)params->param6);
+			getObjects()->update(kObjectCompartment1, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectOutsideTylerCompartment, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+			getSound()->playSound(kCharacterCath, "LIB014");
+			getActionOld()->playAnimation((EventIndex)params->param6);
 
 			setCallback(4);
 			setup_savegame(kSavegameTypeTime, kTimeNone);
@@ -616,22 +616,22 @@ label_callback_12:
 
 		case 4:
 		case 18:
-			params->param8 = getFight()->setup(kFightMilos);
-			if (params->param8) {
-				getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, params->param8  == Fight::kFightEndLost);
-			} else {
-				getState()->time = (TimeValue)(getState()->time + 1800);
-				getProgress().field_CC = 1;
-
-				setCallback(getCallback() + 1);
-				setup_savegame(kSavegameTypeEvent, kEventMilosTylerCompartmentDefeat);
-			}
+			//params->param8 = 1; // getFight()->setup(kFightMilos);
+			//if (params->param8) {
+			//	getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, params->param8  == 1);
+			//} else {
+			//	getState()->time = (TimeValue)(getState()->time + 1800);
+			//	getProgress().field_CC = 1;
+			//
+			//	setCallback(getCallback() + 1);
+			//	setup_savegame(kSavegameTypeEvent, kEventMilosTylerCompartmentDefeat);
+			//}
 			break;
 
 		case 5:
 		case 19:
-			getAction()->playAnimation(kEventMilosTylerCompartmentDefeat);
-			getSound()->playSound(kEntityPlayer, "LIB015");
+			getActionOld()->playAnimation(kEventMilosTylerCompartmentDefeat);
+			getSound()->playSound(kCharacterCath, "LIB015");
 			getScenes()->loadScene(kScene41);
 			getData()->location = kLocationOutsideCompartment;
 
@@ -646,7 +646,7 @@ label_callback_12:
 		case 7:
 		case 9:
 		case 11:
-			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, params->param3 == 0 ? kCursorTalk : kCursorNormal, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kCharacterMilos, getObjects()->get(kObjectCompartment1).status, params->param3 == 0 ? kCursorTalk : kCursorNormal, kCursorHand);
 			CURRENT_PARAM(1, 2) = 0;
 			break;
 
@@ -666,34 +666,34 @@ label_callback_12:
 
 		case 13:
 			params->param2 = 1;
-			getEntities()->clearSequences(kEntityMilos);
+			getEntities()->clearSequences(kCharacterMilos);
 			getData()->location = kLocationInsideCompartment;
-			getObjects()->update(kObjectCompartment1, kEntityMilos, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kCharacterMilos, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 			break;
 
 		case 14:
-			getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+			getObjects()->update(kObjectOutsideTylerCompartment, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
 			setCallback(15);
 			setup_savegame(kSavegameTypeEvent, kEventMilosCorpseFloor);
 			break;
 
 		case 15:
-			getAction()->playAnimation(kEventMilosCorpseFloor);
+			getActionOld()->playAnimation(kEventMilosCorpseFloor);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneGameOverPolice1, true);
 			break;
 
 		case 16:
-			getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).status == kObjectLocation1 ? "LIB032" : "LIB014");
-			getAction()->playAnimation(kEventMilosCorpseFloor);
+			getSound()->playSound(kCharacterCath, getObjects()->get(kObjectCompartment1).status == kObjectLocation1 ? "LIB032" : "LIB014");
+			getActionOld()->playAnimation(kEventMilosCorpseFloor);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, getProgress().eventCorpseMovedFromFloor ? kSceneGameOverBloodJacket : kSceneGameOverPolice1, true);
 			break;
 
 		case 17:
-			getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).status == kObjectLocation1 ? "LIB032" : "LIB014");
-			getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
-			getAction()->playAnimation((EventIndex)params->param6);
+			getSound()->playSound(kCharacterCath, getObjects()->get(kObjectCompartment1).status == kObjectLocation1 ? "LIB032" : "LIB014");
+			getObjects()->update(kObjectCompartment1, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectOutsideTylerCompartment, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+			getActionOld()->playAnimation((EventIndex)params->param6);
 
 			setCallback(18);
 			setup_savegame(kSavegameTypeTime, kTimeNone);
@@ -705,12 +705,12 @@ label_callback_12:
 			break;
 
 		case 21:
-			getObjects()->update(kObjectCompartment1, kEntityMilos, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kCharacterMilos, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 			break;
 
 		case 22:
 			params->param3 = 1;
-			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kCharacterMilos, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorHand);
 			break;
 		}
 		break;
@@ -723,8 +723,8 @@ IMPLEMENT_FUNCTION(15, Milos, chapter1Handler)
 	default:
 		break;
 
-	case kActionNone:
-		Entity::timeCheckSavepoint(kTime1071000, params->param3, kEntityMilos, kEntityWaiter2, kAction223002560);
+	case kCharacterActionNone:
+		Entity::timeCheckSavepoint(kTime1071000, params->param3, kCharacterMilos, kCharacterWaiter2, kCharacterAction223002560);
 
 		if (getState()->time > kTime1089000 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			setup_function16();
@@ -749,23 +749,23 @@ label_callback_1:
 		}
 		break;
 
-	case kActionDefault:
-		getSavePoints()->push(kEntityMilos, kEntityTables2, kAction136455232);
-		getEntities()->drawSequenceLeft(kEntityMilos, "009A");
+	case kCharacterActionDefault:
+		getSavePoints()->push(kCharacterMilos, kCharacterTableC, kCharacterAction136455232);
+		getEntities()->drawSequenceLeft(kCharacterMilos, "009A");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->drawSequenceLeft(kEntityMilos, "009A");
+			getEntities()->drawSequenceLeft(kCharacterMilos, "009A");
 			params->param1 = 1;
 			goto label_callback_1;
 
 		case 2:
-			getEntities()->drawSequenceLeft(kEntityMilos, "009A");
+			getEntities()->drawSequenceLeft(kCharacterMilos, "009A");
 			params->param2 = 1;
 			break;
 		}
@@ -779,11 +779,11 @@ IMPLEMENT_FUNCTION(16, Milos, function16)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param1) {
-			if (getEntities()->isDistanceBetweenEntities(kEntityMilos, kEntityVesna, 750)
-			 || getEntities()->checkDistanceFromPosition(kEntityVesna, kPosition_3050, 500)) {
-				getSavePoints()->push(kEntityMilos, kEntityVesna, kAction123668192);
+			if (getEntities()->isDistanceBetweenEntities(kCharacterMilos, kCharacterVesna, 750)
+			 || getEntities()->checkDistanceFromPosition(kCharacterVesna, kPosition_3050, 500)) {
+				getSavePoints()->push(kCharacterMilos, kCharacterVesna, kCharacterAction123668192);
 
 				setCallback(5);
 				setup_enterExitCompartment("611Ag", kObjectCompartmentG);
@@ -791,69 +791,69 @@ IMPLEMENT_FUNCTION(16, Milos, function16)
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->location = kLocationOutsideCompartment;
 
 		setCallback(1);
 		setup_function13();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityMilos, kEntityWaiter2, kAction269485588);
-			getSavePoints()->push(kEntityMilos, kEntityIvo, kAction125242096);
-			getEntities()->drawSequenceRight(kEntityMilos, "807DS");
-			if (getEntities()->isInRestaurant(kEntityPlayer))
-				getEntities()->updateFrame(kEntityMilos);
+			getSavePoints()->push(kCharacterMilos, kCharacterWaiter2, kCharacterAction269485588);
+			getSavePoints()->push(kCharacterMilos, kCharacterIvo, kCharacterAction125242096);
+			getEntities()->drawSequenceRight(kCharacterMilos, "807DS");
+			if (getEntities()->isInRestaurant(kCharacterCath))
+				getEntities()->updateFrame(kCharacterMilos);
 
 			setCallback(2);
 			setup_callbackActionOnDirection();
 			break;
 
 		case 2:
-			getEntities()->clearSequences(kEntityMilos);
+			getEntities()->clearSequences(kCharacterMilos);
 			break;
 
 		case 3:
-			if (getEntities()->isDistanceBetweenEntities(kEntityMilos, kEntityVesna, 750)
-			 || getEntities()->checkDistanceFromPosition(kEntityVesna, kPosition_3050, 500)) {
-				getSavePoints()->push(kEntityMilos, kEntityVesna, kAction123668192);
+			if (getEntities()->isDistanceBetweenEntities(kCharacterMilos, kCharacterVesna, 750)
+			 || getEntities()->checkDistanceFromPosition(kCharacterVesna, kPosition_3050, 500)) {
+				getSavePoints()->push(kCharacterMilos, kCharacterVesna, kCharacterAction123668192);
 
 				setCallback(4);
 				setup_enterExitCompartment("611Ag", kObjectCompartmentG);
 			} else {
 				params->param1 = 1;
 
-				getEntities()->drawSequenceLeft(kEntityMilos, "609Dg");
-				getEntities()->enterCompartment(kEntityMilos, kObjectCompartmentG, true);
+				getEntities()->drawSequenceLeft(kCharacterMilos, "609Dg");
+				getEntities()->enterCompartment(kCharacterMilos, kObjectCompartmentG, true);
 			}
 			break;
 
 		case 4:
 			getData()->entityPosition = kPosition_3050;
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityMilos);
+			getEntities()->clearSequences(kCharacterMilos);
 
 			setup_function17();
 			break;
 
 		case 5:
-			getEntities()->exitCompartment(kEntityMilos, kObjectCompartmentG, true);
+			getEntities()->exitCompartment(kCharacterMilos, kObjectCompartmentG, true);
 			getData()->entityPosition = kPosition_3050;
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityMilos);
+			getEntities()->clearSequences(kCharacterMilos);
 
 			setup_function17();
 			break;
 		}
 		break;
 
-	case kAction135024800:
-		getSavePoints()->push(kEntityMilos, kEntityVesna, kAction204832737);
+	case kCharacterAction135024800:
+		getSavePoints()->push(kCharacterMilos, kCharacterVesna, kCharacterAction204832737);
 
 		setCallback(3);
 		setup_enterCompartmentDialog(kCarRedSleeping, kPosition_3050);
@@ -863,7 +863,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Milos, function17)
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 		setCallback(1);
 		setup_function11(kTimeBedTime);
 	}
@@ -871,13 +871,13 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Milos, function18)
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getEntities()->clearSequences(kEntityMilos);
-		getObjects()->update(kObjectCompartmentG, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getEntities()->clearSequences(kCharacterMilos);
+		getObjects()->update(kObjectCompartmentG, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 	}
 IMPLEMENT_FUNCTION_END
 
@@ -887,12 +887,12 @@ IMPLEMENT_FUNCTION(19, Milos, chapter2)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter2Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityMilos);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterMilos);
 
 		getData()->entityPosition = kPosition_540;
 		getData()->location = kLocationOutsideCompartment;
@@ -900,8 +900,8 @@ IMPLEMENT_FUNCTION(19, Milos, chapter2)
 		getData()->inventoryItem = kItemNone;
 		getData()->clothes = kClothesDefault;
 
-		getObjects()->update(kObjectCompartmentG, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject46, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+		getObjects()->update(kObjectCompartmentG, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject46, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -912,22 +912,22 @@ IMPLEMENT_FUNCTION(20, Milos, chapter2Handler)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->car = kCarRedSleeping;
 		getData()->entityPosition = kPosition_540;
 		getData()->location = kLocationOutsideCompartment;
 
-		getSavePoints()->push(kEntityMilos, kEntityVesna, kAction137165825);
+		getSavePoints()->push(kCharacterMilos, kCharacterVesna, kCharacterAction137165825);
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (getEntities()->isPlayerInCar(kCarRedSleeping) && !getEntities()->isPlayerPosition(kCarRedSleeping, 1)) {
 			setCallback(1);
 			setup_enterCompartmentDialog(kCarRedSleeping, kPosition_3050);
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -938,12 +938,12 @@ IMPLEMENT_FUNCTION(20, Milos, chapter2Handler)
 			break;
 
 		case 2:
-			getEntities()->clearSequences(kEntityMilos);
+			getEntities()->clearSequences(kCharacterMilos);
 
 			getData()->entityPosition = kPosition_3050;
 			getData()->location = kLocationInsideCompartment;
 
-			getSavePoints()->push(kEntityMilos, kEntityVesna, kAction101687594);
+			getSavePoints()->push(kCharacterMilos, kCharacterVesna, kCharacterAction101687594);
 
 			setup_function21();
 			break;
@@ -958,40 +958,40 @@ IMPLEMENT_FUNCTION(21, Milos, function21)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!Entity::updateParameter(params->param2, getState()->time, 4500))
 			break;
 
 		params->param1 = 1;
 		break;
 
-	case kActionKnock:
-		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
+	case kCharacterActionKnock:
+		getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
 
 		setCallback(1);
 		setup_playSound("LIB012");
 		break;
 
-	case kActionOpenDoor:
-		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
-		getEntityData(kEntityPlayer)->location = kLocationInsideCompartment;
+	case kCharacterActionOpenDoor:
+		getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
+		getEntityData(kCharacterCath)->location = kLocationInsideCompartment;
 
 		setCallback(3);
 		setup_savegame(kSavegameTypeEvent, kEventMilosCompartmentVisitAugust);
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	case kCharacterActionDefault:
+		getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		break;
 
-	case kActionDrawScene:
-		if (!getEvent(kEventMilosCompartmentVisitAugust)
-		 && !getEntities()->isInsideTrainCar(kEntityPlayer, kCarRedSleeping)
+	case kCharacterActionDrawScene:
+		if (!HELPERgetEvent(kEventMilosCompartmentVisitAugust)
+		 && !getEntities()->isInsideTrainCar(kCharacterCath, kCarRedSleeping)
 		 && params->param1)
 			setup_chapter2Handler();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1002,13 +1002,13 @@ IMPLEMENT_FUNCTION(21, Milos, function21)
 			break;
 
 		case 2:
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
 			break;
 
 		case 3:
-			getAction()->playAnimation(kEventMilosCompartmentVisitAugust);
+			getActionOld()->playAnimation(kEventMilosCompartmentVisitAugust);
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 5);
-			getSavePoints()->push(kEntityMilos, kEntityVesna, kAction135024800);
+			getSavePoints()->push(kCharacterMilos, kCharacterVesna, kCharacterAction135024800);
 
 			setCallback(4);
 			setup_function11(kTimeEnd);
@@ -1024,20 +1024,20 @@ IMPLEMENT_FUNCTION(22, Milos, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->events[kEventMilosCompartmentVisitAugust])
 			setup_function24();
 		else
 			setup_function23();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityMilos);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterMilos);
 
 		getData()->clothes = kClothesDefault;
 		getData()->inventoryItem = kItemNone;
 
-		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
 		ENTITY_PARAM(0, 1) = 0;
 		ENTITY_PARAM(0, 4) = 0;
@@ -1051,7 +1051,7 @@ IMPLEMENT_FUNCTION(23, Milos, function23)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->time > kTime2106000 && !params->param1) {
 			params->param1 = 1;
 
@@ -1060,15 +1060,15 @@ IMPLEMENT_FUNCTION(23, Milos, function23)
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_540;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getSavePoints()->push(kEntityMilos, kEntityVesna, kAction137165825);
+		getSavePoints()->push(kCharacterMilos, kCharacterVesna, kCharacterAction137165825);
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (getEntities()->isPlayerInCar(kCarRedSleeping)
 		 && !getEntities()->isPlayerPosition(kCarRedSleeping, 1)) {
 			setCallback(3);
@@ -1076,7 +1076,7 @@ IMPLEMENT_FUNCTION(23, Milos, function23)
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1088,9 +1088,9 @@ IMPLEMENT_FUNCTION(23, Milos, function23)
 
 		case 2:
 		case 4:
-			getEntities()->clearSequences(kEntityMilos);
+			getEntities()->clearSequences(kCharacterMilos);
 			getData()->location = kLocationInsideCompartment;
-			getSavePoints()->push(kEntityMilos, kEntityVesna, kAction101687594);
+			getSavePoints()->push(kCharacterMilos, kCharacterVesna, kCharacterAction101687594);
 
 			setup_function24();
 			break;
@@ -1110,7 +1110,7 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!params->param4)
 			params->param4 = (uint)getState()->time + 4500;
 
@@ -1132,14 +1132,14 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 			params->param1 = 0;
 			params->param2 = 1;
 
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation1, kCursorNormal, kCursorNormal);
 		}
 
 		params->param5 = 0;
 		break;
 
-	case kActionKnock:
-		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
+	case kCharacterActionKnock:
+		getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
 
 		if (params->param1) {
 			if (getInventory()->hasItem(kItemPassengerList)) {
@@ -1155,35 +1155,35 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 		}
 		break;
 
-	case kActionOpenDoor:
-		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
+	case kCharacterActionOpenDoor:
+		getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
 
-		if (getEvent(kEventMilosCompartmentVisitAugust) || getState()->time >= kTime2106000) {
+		if (HELPERgetEvent(kEventMilosCompartmentVisitAugust) || getState()->time >= kTime2106000) {
 			setCallback(12);
 			setup_playSound("LIB013");
 		} else {
-			getEntityData(kEntityPlayer)->location = kLocationInsideCompartment;
+			getEntityData(kCharacterCath)->location = kLocationInsideCompartment;
 
 			setCallback(11);
 			setup_savegame(kSavegameTypeEvent, kEventMilosCompartmentVisitAugust);
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		break;
 
-	case kActionDrawScene:
-		if (getEvent(kEventMilosCompartmentVisitAugust)
-		 || getEntities()->isInsideTrainCar(kEntityPlayer, kCarRedSleeping)
+	case kCharacterActionDrawScene:
+		if (HELPERgetEvent(kEventMilosCompartmentVisitAugust)
+		 || getEntities()->isInsideTrainCar(kCharacterCath, kCarRedSleeping)
 		 || !params->param3
 		 || getState()->time >= kTime2106000) {
 			if (params->param1 || params->param2) {
-				getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+				getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
 				params->param1 = 0;
 				params->param2 = 0;
 			}
@@ -1193,14 +1193,14 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 		setup_function23();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getObjects()->update(kObjectCompartmentG, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-			getSavePoints()->push(kEntityMilos, kEntityVesna, kAction203663744);
+			getObjects()->update(kObjectCompartmentG, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			getSavePoints()->push(kCharacterMilos, kCharacterVesna, kCharacterAction203663744);
 			getData()->location = kLocationOutsideCompartment;
 
 			setCallback(2);
@@ -1218,12 +1218,12 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 			break;
 
 		case 3:
-			getAction()->playAnimation((getData()->entityPosition < getEntityData(kEntityPlayer)->entityPosition) ? kEventMilosCorridorThanksD : kEventMilosCorridorThanks);
+			getActionOld()->playAnimation((getData()->entityPosition < getEntityData(kCharacterCath)->entityPosition) ? kEventMilosCorridorThanksD : kEventMilosCorridorThanks);
 
-			if (getData()->car == kCarRedSleeping && getEntities()->checkDistanceFromPosition(kEntityMilos, kPosition_3050, 500))
+			if (getData()->car == kCarRedSleeping && getEntities()->checkDistanceFromPosition(kCharacterMilos, kPosition_3050, 500))
 				getData()->entityPosition = kPosition_3550;
 
-			getEntities()->updateEntity(kEntityMilos, kCarRedSleeping, kPosition_3050);
+			getEntities()->updateEntity(kCharacterMilos, kCarRedSleeping, kPosition_3050);
 			getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition + (750 * (getData()->direction == kDirectionDown ? 1 : -1))), getData()->direction != kDirectionDown);
 
 			setCallback(4);
@@ -1236,7 +1236,7 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 			break;
 
 		case 5:
-			getEntities()->clearSequences(kEntityMilos);
+			getEntities()->clearSequences(kCharacterMilos);
 			getData()->location = kLocationInsideCompartment;
 			ENTITY_PARAM(0, 1) = 0;
 
@@ -1244,7 +1244,7 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 			break;
 
 		case 6:
-			if (getEvent(kEventMilosCompartmentVisitAugust) || getState()->time >= kTime2106000) {
+			if (HELPERgetEvent(kEventMilosCompartmentVisitAugust) || getState()->time >= kTime2106000) {
 				setCallback(8);
 				setup_playSound("Mil1117A");
 			} else {
@@ -1254,12 +1254,12 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 			break;
 
 		case 7:
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
 			break;
 
 		case 8:
 		case 13:
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorTalk, kCursorNormal);
 			params->param1 = 1;
 			break;
 
@@ -1270,10 +1270,10 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 			break;
 
 		case 11:
-			getAction()->playAnimation(kEventMilosCompartmentVisitAugust);
+			getActionOld()->playAnimation(kEventMilosCompartmentVisitAugust);
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 5);
-			getSavePoints()->push(kEntityMilos, kEntityVesna, kAction135024800);
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			getSavePoints()->push(kCharacterMilos, kCharacterVesna, kCharacterAction135024800);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
 			break;
 
 		case 12:
@@ -1291,10 +1291,10 @@ IMPLEMENT_FUNCTION(25, Milos, function25)
 	default:
 		break;
 
-	case kActionNone:
-		if (!getEvent(kEventMilosCompartmentVisitTyler) && !getProgress().field_54 && !ENTITY_PARAM(0, 4)) {
+	case kCharacterActionNone:
+		if (!HELPERgetEvent(kEventMilosCompartmentVisitTyler) && !getProgress().field_54 && !ENTITY_PARAM(0, 4)) {
 			if (Entity::updateParameter(params->param3, getState()->time, 13500)) {
-				getSavePoints()->push(kEntityMilos, kEntityVesna, kAction155913424);
+				getSavePoints()->push(kCharacterMilos, kCharacterVesna, kCharacterAction155913424);
 				params->param3 = 0;
 			}
 		}
@@ -1305,69 +1305,69 @@ IMPLEMENT_FUNCTION(25, Milos, function25)
 
 			params->param1 = 0;
 			params->param2 = 1;
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation1, kCursorNormal, kCursorNormal);
 		}
 
 		params->param4 = 0;
 		break;
 
-	case kActionKnock:
-	case kActionOpenDoor:
-		getObjects()->update(kObjectCompartmentG, kEntityMilos, params->param1 ? kObjectLocation3 : kObjectLocation1, kCursorNormal, kCursorNormal);
+	case kCharacterActionKnock:
+	case kCharacterActionOpenDoor:
+		getObjects()->update(kObjectCompartmentG, kCharacterMilos, params->param1 ? kObjectLocation3 : kObjectLocation1, kCursorNormal, kCursorNormal);
 
 		if (params->param1) {
 			setCallback(5);
 			setup_playSound(rnd(2) ? "CAT1505" : "CAT1505A");
 		} else {
-			setCallback(savepoint.action == kActionKnock ? 1 : 2);
-			setup_playSound(savepoint.action == kActionKnock ?  "LIB012" : "LIB013");
+			setCallback(savepoint.action == kCharacterActionKnock ? 1 : 2);
+			setup_playSound(savepoint.action == kCharacterActionKnock ?  "LIB012" : "LIB013");
 		}
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	case kCharacterActionDefault:
+		getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
-		if (!getEvent(kEventMilosCompartmentVisitTyler) && !getProgress().field_54 && !ENTITY_PARAM(0, 4))
-			getSavePoints()->push(kEntityMilos, kEntityVesna, kAction155913424);
+		if (!HELPERgetEvent(kEventMilosCompartmentVisitTyler) && !getProgress().field_54 && !ENTITY_PARAM(0, 4))
+			getSavePoints()->push(kCharacterMilos, kCharacterVesna, kCharacterAction155913424);
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (params->param1 || params->param2) {
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
 			params->param1 = 0;
 			params->param2 = 0;
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
 		case 2:
-			if (getEntities()->isInsideCompartment(kEntityVesna, kCarRedSleeping, kPosition_3050)) {
+			if (getEntities()->isInsideCompartment(kCharacterVesna, kCarRedSleeping, kPosition_3050)) {
 				setCallback(3);
 				setup_playSound("VES1015A");
 				break;
 			}
 
-			if (getEvent(kEventMilosCompartmentVisitTyler) || ENTITY_PARAM(0, 4)) {
-				getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			if (HELPERgetEvent(kEventMilosCompartmentVisitTyler) || ENTITY_PARAM(0, 4)) {
+				getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation1, kCursorHandKnock, kCursorHand);
 				break;
 			}
 
-			RESET_ENTITY_STATE(kEntityVesna, Vesna, setup_inCompartment);
+			RESET_ENTITY_STATE(kCharacterVesna, Vesna, setup_inCompartment);
 
-			getEntityData(kEntityPlayer)->location = kLocationInsideCompartment;
+			getEntityData(kCharacterCath)->location = kLocationInsideCompartment;
 
 			setCallback(4);
 			setup_savegame(kSavegameTypeEvent, kEventMilosCompartmentVisitTyler);
 			break;
 
 		case 3:
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation1, kCursorTalk, kCursorNormal);
 
 			params->param1 = 1;
 			// BUG: the original game executes the last line of [case 4:] here too, resetting cursor once again.
@@ -1378,9 +1378,9 @@ IMPLEMENT_FUNCTION(25, Milos, function25)
 			break;
 
 		case 4:
-			getAction()->playAnimation(kEventMilosCompartmentVisitTyler);
+			getActionOld()->playAnimation(kEventMilosCompartmentVisitTyler);
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 5);
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentG, kCharacterMilos, kObjectLocation1, kCursorHandKnock, kCursorHand);
 			break;
 
 		case 5:
@@ -1398,7 +1398,7 @@ IMPLEMENT_FUNCTION_I(26, Milos, function26, TimeValue)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param1 < getState()->time && !params->param2) {
 			params->param2 = 1;
 			callbackAction();
@@ -1406,7 +1406,7 @@ IMPLEMENT_FUNCTION_I(26, Milos, function26, TimeValue)
 		}
 
 		if (getEntities()->isPlayerInCar(kCarGreenSleeping) || getEntities()->isPlayerInCar(kCarRedSleeping)) {
-			if (getEntities()->isInsideTrainCar(kEntityPlayer, kCarGreenSleeping)) {
+			if (getEntities()->isInsideTrainCar(kCharacterCath, kCarGreenSleeping)) {
 				setCallback(2);
 				setup_function27(kCarGreenSleeping, kPosition_540);
 			} else {
@@ -1416,14 +1416,14 @@ IMPLEMENT_FUNCTION_I(26, Milos, function26, TimeValue)
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		ENTITY_PARAM(0, 2) = 0;
 
 		setCallback(1);
 		setup_function27(kCarRedSleeping, kPosition_540);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1434,7 +1434,7 @@ IMPLEMENT_FUNCTION_I(26, Milos, function26, TimeValue)
 				break;
 			}
 
-			getEntities()->clearSequences(kEntityMilos);
+			getEntities()->clearSequences(kCharacterMilos);
 			break;
 
 		case 2:
@@ -1444,7 +1444,7 @@ IMPLEMENT_FUNCTION_I(26, Milos, function26, TimeValue)
 				break;
 			}
 
-			getEntities()->clearSequences(kEntityMilos);
+			getEntities()->clearSequences(kCharacterMilos);
 
 			setCallback(4);
 			setup_updateFromTime(450);
@@ -1461,7 +1461,7 @@ IMPLEMENT_FUNCTION_I(26, Milos, function26, TimeValue)
 				break;
 			}
 
-			getEntities()->clearSequences(kEntityMilos);
+			getEntities()->clearSequences(kCharacterMilos);
 			break;
 		}
 		break;
@@ -1474,16 +1474,16 @@ IMPLEMENT_FUNCTION_II(27, Milos, function27, CarIndex, EntityPosition)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->updateEntity(kEntityMilos, (CarIndex)params->param1, (EntityPosition)params->param2)) {
+	case kCharacterActionNone:
+		if (getEntities()->updateEntity(kCharacterMilos, (CarIndex)params->param1, (EntityPosition)params->param2)) {
 			callbackAction();
 			break;
 		}
 
-		if (getEntities()->isDistanceBetweenEntities(kEntityMilos, kEntityPlayer, 1000)
-		 && !getEntities()->isInGreenCarEntrance(kEntityPlayer)
-		 && !getEntities()->isInsideCompartments(kEntityPlayer)
-		 && !getEntities()->checkFields10(kEntityPlayer)) {
+		if (getEntities()->isDistanceBetweenEntities(kCharacterMilos, kCharacterCath, 1000)
+		 && !getEntities()->isInGreenCarEntrance(kCharacterCath)
+		 && !getEntities()->isInsideCompartments(kCharacterCath)
+		 && !getEntities()->checkFields10(kCharacterCath)) {
 			if (getData()->car == kCarRedSleeping || getData()->car == kCarGreenSleeping) {
 				ENTITY_PARAM(0, 2) = 1;
 
@@ -1492,8 +1492,8 @@ IMPLEMENT_FUNCTION_II(27, Milos, function27, CarIndex, EntityPosition)
 		}
 		break;
 
-	case kActionDefault:
-		if (getEntities()->updateEntity(kEntityMilos, (CarIndex)params->param1, (EntityPosition)params->param2))
+	case kCharacterActionDefault:
+		if (getEntities()->updateEntity(kCharacterMilos, (CarIndex)params->param1, (EntityPosition)params->param2))
 			callbackAction();
 		break;
 	}
@@ -1505,12 +1505,12 @@ IMPLEMENT_FUNCTION(28, Milos, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter4Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityMilos);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterMilos);
 
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
@@ -1526,8 +1526,8 @@ IMPLEMENT_FUNCTION(29, Milos, chapter4Handler)
 #define TIME_CHECK_PLAYSOUND_MILOS(timeValue, parameter, sound) \
 	if (getState()->time > timeValue && !parameter) { \
 		parameter = 1; \
-		getSound()->playSound(kEntityMilos, sound); \
-		if (getEntities()->isDistanceBetweenEntities(kEntityMilos, kEntityPlayer, 2000)) \
+		getSound()->playSound(kCharacterMilos, sound); \
+		if (getEntities()->isDistanceBetweenEntities(kCharacterMilos, kCharacterCath, 2000)) \
 			getProgress().field_94 = 1; \
 	}
 
@@ -1535,7 +1535,7 @@ IMPLEMENT_FUNCTION(29, Milos, chapter4Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param1)
 			break;
 
@@ -1550,54 +1550,54 @@ IMPLEMENT_FUNCTION(29, Milos, chapter4Handler)
 
 		TIME_CHECK_PLAYSOUND_MILOS(kTime2370600, params->param5, "Mil4015");
 
-		Entity::timeCheckSavepoint(kTime2407500, params->param6, kEntityMilos, kEntityVesna, kAction55996766);
+		Entity::timeCheckSavepoint(kTime2407500, params->param6, kCharacterMilos, kCharacterVesna, kCharacterAction55996766);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
 			getData()->location = kLocationOutsideCompartment;
-			getEntities()->drawSequenceLeft(kEntityMilos, "611Cg");
-			getEntities()->enterCompartment(kEntityMilos, kObjectCompartmentG, true);
-			getSavePoints()->push(kEntityMilos, kEntityCoudert, kAction88652208);
+			getEntities()->drawSequenceLeft(kCharacterMilos, "611Cg");
+			getEntities()->enterCompartment(kCharacterMilos, kObjectCompartmentG, true);
+			getSavePoints()->push(kCharacterMilos, kCharacterCond2, kCharacterAction88652208);
 			break;
 
 		case 2:
-			getEntities()->exitCompartment(kEntityMilos, kObjectCompartmentG, true);
+			getEntities()->exitCompartment(kCharacterMilos, kObjectCompartmentG, true);
 
 			getData()->location = kLocationInsideCompartment;
 			getData()->entityPosition = kPosition_3050;
 
-			getEntities()->clearSequences(kEntityMilos);
+			getEntities()->clearSequences(kCharacterMilos);
 
 			params->param1 = 0;
 			break;
 		}
 		break;
 
-	case kAction122865568:
+	case kCharacterAction122865568:
 		setCallback(1);
 		setup_enterExitCompartment("611Bg", kObjectCompartmentG);
 		break;
 
-	case kAction123852928:
+	case kCharacterAction123852928:
 		setCallback(2);
 		setup_enterExitCompartment("611Dg", kObjectCompartmentG);
 		break;
 
-	case kAction135600432:
+	case kCharacterAction135600432:
 		params->param2 = 1;
 		break;
 
-	case kAction221683008:
-		if (getSoundQueue()->isBuffered(kEntityMilos))
-			getSoundQueue()->fade(kEntityMilos);
+	case kCharacterAction221683008:
+		if (getSoundQueue()->isBuffered(kCharacterMilos))
+			getSoundQueue()->fade(kCharacterMilos);
 
 		params->param1 = 1;
-		getSavePoints()->push(kEntityMilos, kEntityCoudert, kAction123199584);
+		getSavePoints()->push(kCharacterMilos, kCharacterCond2, kCharacterAction123199584);
 		break;
 	}
 
@@ -1610,25 +1610,25 @@ IMPLEMENT_FUNCTION(30, Milos, function30)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function11(kTime2410200);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityMilos, kEntityIvo, kAction55996766);
+			getSavePoints()->push(kCharacterMilos, kCharacterIvo, kCharacterAction55996766);
 
 			setCallback(2);
 			setup_function11(kTime2412000);
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityMilos, kEntitySalko, kAction55996766);
+			getSavePoints()->push(kCharacterMilos, kCharacterSalko, kCharacterAction55996766);
 
 			setCallback(3);
 			setup_function11(kTime2415600);
@@ -1648,19 +1648,19 @@ IMPLEMENT_FUNCTION(31, Milos, function31)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_enterExitCompartment("609CG", kObjectCompartmentG);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
 			getData()->location = kLocationOutsideCompartment;
-			getObjects()->update(kObjectCompartmentG, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentG, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
 			setCallback(2);
 			setup_enterCompartmentDialog(kCarGreenSleeping, kPosition_540);
@@ -1676,9 +1676,9 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(32, Milos, function32)
-	if (savepoint.action == kActionDefault) {
-		getEntities()->clearSequences(kEntityMilos);
-		getObjects()->update(kObjectCompartmentG, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	if (savepoint.action == kCharacterActionDefault) {
+		getEntities()->clearSequences(kCharacterMilos);
+		getObjects()->update(kObjectCompartmentG, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
 		getData()->entityPosition = kPosition_540;
 		getData()->location = kLocationInsideCompartment;
@@ -1693,12 +1693,12 @@ IMPLEMENT_FUNCTION(33, Milos, chapter5)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter5Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityMilos);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterMilos);
 
 		getData()->entityPosition = kPosition_540;
 		getData()->location = kLocationInsideCompartment;
@@ -1715,7 +1715,7 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 	default:
 		break;
 
-	case kActionEndSound:
+	case kCharacterActionEndSound:
 		if (!getProgress().isNightTime) {
 			setCallback(6);
 			setup_savegame(kSavegameTypeEvent, kEventTrainStopped);
@@ -1725,13 +1725,13 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 		getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneGameOverTrainStopped2, true);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getAction()->playAnimation(getProgress().isNightTime ? kEventLocomotiveMilosShovelingDay : kEventLocomotiveMilosShovelingNight);
+			getActionOld()->playAnimation(getProgress().isNightTime ? kEventLocomotiveMilosShovelingDay : kEventLocomotiveMilosShovelingNight);
 			getScenes()->processScene();
 			break;
 
@@ -1743,19 +1743,19 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 				getSoundQueue()->stop("ARRIVE");
 
 			getSoundQueue()->endAmbient();
-			getAction()->playAnimation(getProgress().isNightTime ? kEventLocomotiveMilosDay : kEventLocomotiveMilosNight);
-			getSoundQueue()->assignNISLink(kEntityMilos);
+			getActionOld()->playAnimation(getProgress().isNightTime ? kEventLocomotiveMilosDay : kEventLocomotiveMilosNight);
+			getSoundQueue()->assignNISLink(kCharacterMilos);
 			getScenes()->loadSceneFromPosition(kCarCoalTender, 1);
 			break;
 
 		case 3:
-			getAction()->playAnimation(kEventLocomotiveAnnaStopsTrain);
+			getActionOld()->playAnimation(kEventLocomotiveAnnaStopsTrain);
 			getLogic()->gameOver(kSavegameTypeEvent2, kEventLocomotiveMilosDay, kSceneGameOverTrainStopped, true);
 			break;
 
 		case 4:
-			getAction()->playAnimation(kEventLocomotiveRestartTrain);
-			getAction()->playAnimation(kEventLocomotiveOldBridge);
+			getActionOld()->playAnimation(kEventLocomotiveRestartTrain);
+			getActionOld()->playAnimation(kEventLocomotiveOldBridge);
 			getSoundQueue()->startAmbient();
 			getState()->time = kTime2983500;
 
@@ -1765,26 +1765,26 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 
 		case 5:
 			getScenes()->loadSceneFromPosition(kCarCoalTender, 2, 1);
-			getSavePoints()->push(kEntityMilos, kEntityAbbot, kAction135600432);
+			getSavePoints()->push(kCharacterMilos, kCharacterAbbot, kCharacterAction135600432);
 
 			setup_function35();
 			break;
 
 		case 6:
-			getAction()->playAnimation(kEventTrainStopped);
+			getActionOld()->playAnimation(kEventTrainStopped);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneGameOverTrainStopped, true);
 			break;
 		}
 		break;
 
-	case kAction168646401:
-		if (!getEvent(kEventLocomotiveMilosShovelingDay) && !getEvent(kEventLocomotiveMilosShovelingNight)) {
+	case kCharacterAction168646401:
+		if (!HELPERgetEvent(kEventLocomotiveMilosShovelingDay) && !HELPERgetEvent(kEventLocomotiveMilosShovelingNight)) {
 			setCallback(1);
 			setup_savegame(kSavegameTypeEvent, kEventLocomotiveMilosShovelingDay);
 			break;
 		}
 
-		if (!getEvent(kEventLocomotiveMilosDay) && !getEvent(kEventLocomotiveMilosNight)) {
+		if (!HELPERgetEvent(kEventLocomotiveMilosDay) && !HELPERgetEvent(kEventLocomotiveMilosNight)) {
 			if (getProgress().isNightTime && getState()->time < kTimeTrainStopped2)
 				getState()->time = kTimeTrainStopped2;
 
@@ -1793,14 +1793,14 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 		}
 		break;
 
-	case kAction169773228:
+	case kCharacterAction169773228:
 		if (!getProgress().isNightTime) {
 			setCallback(3);
 			setup_savegame(kSavegameTypeEvent, kEventLocomotiveAnnaStopsTrain);
 			break;
 		}
 
-		getSoundQueue()->fade(kEntityMilos);
+		getSoundQueue()->fade(kCharacterMilos);
 		if (getState()->time < kTime2949300)
 			getState()->time = kTime2949300;
 
@@ -1812,8 +1812,8 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(35, Milos, function35)
-	if (savepoint.action == kActionDefault)
-		getEntities()->clearSequences(kEntityMilos);
+	if (savepoint.action == kCharacterActionDefault)
+		getEntities()->clearSequences(kCharacterMilos);
 IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

@@ -36,7 +36,7 @@
 
 namespace LastExpress {
 
-Verges::Verges(LastExpressEngine *engine) : Entity(engine, kEntityVerges) {
+Verges::Verges(LastExpressEngine *engine) : Entity(engine, kCharacterTrainM) {
 	ADD_CALLBACK_FUNCTION(Verges, reset);
 	ADD_CALLBACK_FUNCTION_S(Verges, draw);
 	ADD_CALLBACK_FUNCTION(Verges, callbackActionOnDirection);
@@ -97,18 +97,18 @@ IMPLEMENT_FUNCTION(3, Verges, callbackActionOnDirection)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getData()->direction != kDirectionRight)
 			callbackAction();
 		break;
 
-	case kActionExitCompartment:
+	case kCharacterActionExitCompartment:
 		callbackAction();
 		break;
 
-	case kActionExcuseMeCath:
+	case kCharacterActionExcuseMeCath:
 		if (!params->param1) {
-			getSound()->excuseMe(kEntityVerges);
+			getSound()->excuseMe(kCharacterTrainM);
 			params->param1 = 1;
 		}
 		break;
@@ -137,9 +137,9 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(8, Verges, updateEntity, CarIndex, EntityPosition)
-	if (savepoint.action == kActionExcuseMeCath) {
-		if (!getSoundQueue()->isBuffered(kEntityVerges))
-			getSound()->playSound(kEntityPlayer, "TRA1113", getSound()->getSoundFlag(kEntityVerges));
+	if (savepoint.action == kCharacterActionExcuseMeCath) {
+		if (!getSoundQueue()->isBuffered(kCharacterTrainM))
+			getSound()->playSound(kCharacterCath, "TRA1113", getSound()->getSoundFlag(kCharacterTrainM));
 
 		return;
 	}
@@ -153,13 +153,13 @@ switch (savepoint.action) {
 	default:
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObject104, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
-		getObjects()->update(kObject105, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
+	case kCharacterActionDefault:
+		getObjects()->update(kObject104, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObject105, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorHand);
 
-		if (getEntities()->isInBaggageCar(kEntityPlayer) || getEntities()->isInKitchen(kEntityPlayer)) {
-			getAction()->playAnimation(getEntities()->isInBaggageCar(kEntityPlayer) ? kEventVergesBaggageCarOffLimits : kEventVergesCanIHelpYou);
-			getSound()->playSound(kEntityPlayer, "BUMP");
+		if (getEntities()->isInBaggageCar(kCharacterCath) || getEntities()->isInKitchen(kCharacterCath)) {
+			getActionOld()->playAnimation(getEntities()->isInBaggageCar(kCharacterCath) ? kEventVergesBaggageCarOffLimits : kEventVergesCanIHelpYou);
+			getSound()->playSound(kCharacterCath, "BUMP");
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 65);
 		}
 
@@ -171,7 +171,7 @@ switch (savepoint.action) {
 		setup_callbackActionRestaurantOrSalon();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -179,20 +179,20 @@ switch (savepoint.action) {
 		case 1:
 			getData()->entityPosition = kPosition_5800;
 			getData()->location = kLocationOutsideCompartment;
-			getSound()->playSound(kEntityVerges, (char *)&params->seq1);
+			getSound()->playSound(kCharacterTrainM, (char *)&params->seq1);
 
 			setCallback(2);
 			setup_draw("813DD");
 			break;
 
 		case 2:
-			if (!getSoundQueue()->isBuffered(kEntityVerges))
-				getSound()->playSound(kEntityVerges, (char *)&params->seq1);
+			if (!getSoundQueue()->isBuffered(kCharacterTrainM))
+				getSound()->playSound(kCharacterTrainM, (char *)&params->seq1);
 
-			getEntities()->drawSequenceRight(kEntityVerges, "813DS");
+			getEntities()->drawSequenceRight(kCharacterTrainM, "813DS");
 
-			if (getEntities()->isInRestaurant(kEntityPlayer))
-				getEntities()->updateFrame(kEntityVerges);
+			if (getEntities()->isInRestaurant(kCharacterCath))
+				getEntities()->updateFrame(kCharacterTrainM);
 
 			setCallback(3);
 			setup_callbackActionOnDirection();
@@ -204,7 +204,7 @@ switch (savepoint.action) {
 			break;
 
 		case 4:
-			getEntities()->clearSequences(kEntityVerges);
+			getEntities()->clearSequences(kCharacterTrainM);
 
 			setCallback(5);
 			setup_updateFromTime(225);
@@ -229,15 +229,15 @@ IMPLEMENT_FUNCTION_IIS(10, Verges, makeAnnouncement, CarIndex, EntityPosition)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!params->param7) {
-			if (!getSoundQueue()->isBuffered(kEntityVerges)) {
-				getSound()->playSound(kEntityVerges, (char *)&params->seq);
+			if (!getSoundQueue()->isBuffered(kCharacterTrainM)) {
+				getSound()->playSound(kCharacterTrainM, (char *)&params->seq);
 				params->param7 = 1;
 			}
 		}
 
-		if (getEntities()->updateEntity(kEntityVerges, (CarIndex)params->param1, (EntityPosition)params->param2)) {
+		if (getEntities()->updateEntity(kCharacterTrainM, (CarIndex)params->param1, (EntityPosition)params->param2)) {
 			callbackAction();
 			break;
 		}
@@ -246,24 +246,24 @@ IMPLEMENT_FUNCTION_IIS(10, Verges, makeAnnouncement, CarIndex, EntityPosition)
 			if (!Entity::updateParameter(params->param8, getState()->timeTicks, 75))
 				break;
 
-			getSound()->playSound(kEntityVerges, (char *)&params->seq);
+			getSound()->playSound(kCharacterTrainM, (char *)&params->seq);
 
 			params->param6 = 0;
 			params->param8 = 0;
 		}
 		break;
 
-	case kActionEndSound:
+	case kCharacterActionEndSound:
 		params->param6 = 1;
 		break;
 
-	case kActionDefault:
-		if (!getSoundQueue()->isBuffered(kEntityVerges)) {
-			getSound()->playSound(kEntityVerges, (char *)&params->seq);
+	case kCharacterActionDefault:
+		if (!getSoundQueue()->isBuffered(kCharacterTrainM)) {
+			getSound()->playSound(kCharacterTrainM, (char *)&params->seq);
 			params->param7 = 1;
 		}
 
-		if (getEntities()->updateEntity(kEntityVerges, (CarIndex)params->param1, (EntityPosition)params->param2))
+		if (getEntities()->updateEntity(kCharacterTrainM, (CarIndex)params->param1, (EntityPosition)params->param2))
 			callbackAction();
 		break;
 	}
@@ -275,12 +275,12 @@ IMPLEMENT_FUNCTION(11, Verges, function11)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_updateEntity(kCarRestaurant, kPosition_540);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -299,31 +299,31 @@ IMPLEMENT_FUNCTION(11, Verges, function11)
 			break;
 
 		case 3:
-			getEntities()->drawSequenceRight(kEntityVerges, "813UD");
+			getEntities()->drawSequenceRight(kCharacterTrainM, "813UD");
 
-			if (getEntities()->isInSalon(kEntityPlayer))
-				getEntities()->updateFrame(kEntityVerges);
+			if (getEntities()->isInSalon(kCharacterCath))
+				getEntities()->updateFrame(kCharacterTrainM);
 
 			setCallback(4);
 			setup_callbackActionOnDirection();
 			break;
 
 		case 4: {
-			getEntities()->clearSequences(kEntityVerges);
+			getEntities()->clearSequences(kCharacterTrainM);
 
 			bool loadscene = true;
 
-			if (getEntities()->isInBaggageCarEntrance(kEntityPlayer))
-				getAction()->playAnimation(kEventVergesEscortToDiningCar);
-			else if (getEntities()->isInBaggageCar(kEntityPlayer))
-				getAction()->playAnimation(kEventVergesBaggageCarOffLimits);
-			else if (getEntities()->isInKitchen(kEntityPlayer))
-				getAction()->playAnimation(kEventVergesCanIHelpYou);
+			if (getEntities()->isInBaggageCarEntrance(kCharacterCath))
+				getActionOld()->playAnimation(kEventVergesEscortToDiningCar);
+			else if (getEntities()->isInBaggageCar(kCharacterCath))
+				getActionOld()->playAnimation(kEventVergesBaggageCarOffLimits);
+			else if (getEntities()->isInKitchen(kCharacterCath))
+				getActionOld()->playAnimation(kEventVergesCanIHelpYou);
 			else
 				loadscene = false;
 
 			if (loadscene) {
-				getSound()->playSound(kEntityPlayer, "BUMP");
+				getSound()->playSound(kCharacterCath, "BUMP");
 				getScenes()->loadSceneFromPosition(kCarRestaurant, 65);
 			}
 
@@ -332,8 +332,8 @@ IMPLEMENT_FUNCTION(11, Verges, function11)
 			getData()->car = kCarBaggage;
 			getData()->entityPosition = kPosition_5000;
 
-			getObjects()->update(kObject104, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
-			getObjects()->update(kObject105, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
+			getObjects()->update(kObject104, kCharacterTrainM, kObjectLocationNone, kCursorNormal, kCursorHand);
+			getObjects()->update(kObject105, kCharacterTrainM, kObjectLocationNone, kCursorNormal, kCursorHand);
 
 			callbackAction();
 			break;
@@ -349,13 +349,13 @@ IMPLEMENT_FUNCTION(12, Verges, function12)
 	default:
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObject104, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
-		getObjects()->update(kObject105, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
+	case kCharacterActionDefault:
+		getObjects()->update(kObject104, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObject105, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorHand);
 
-		if (getEntities()->isInBaggageCar(kEntityPlayer) || getEntities()->isInKitchen(kEntityPlayer)) {
-			getAction()->playAnimation(getEntities()->isInBaggageCar(kEntityPlayer) ? kEventVergesBaggageCarOffLimits : kEventVergesCanIHelpYou);
-			getSound()->playSound(kEntityPlayer, "BUMP");
+		if (getEntities()->isInBaggageCar(kCharacterCath) || getEntities()->isInKitchen(kCharacterCath)) {
+			getActionOld()->playAnimation(getEntities()->isInBaggageCar(kCharacterCath) ? kEventVergesBaggageCarOffLimits : kEventVergesCanIHelpYou);
+			getSound()->playSound(kCharacterCath, "BUMP");
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 65);
 		}
 
@@ -368,7 +368,7 @@ IMPLEMENT_FUNCTION(12, Verges, function12)
 		setup_callbackActionRestaurantOrSalon();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -382,10 +382,10 @@ IMPLEMENT_FUNCTION(12, Verges, function12)
 			break;
 
 		case 2:
-			getEntities()->drawSequenceRight(kEntityVerges, "813DS");
+			getEntities()->drawSequenceRight(kCharacterTrainM, "813DS");
 
-			if (getEntities()->isInRestaurant(kEntityPlayer))
-				getEntities()->updateFrame(kEntityVerges);
+			if (getEntities()->isInRestaurant(kCharacterCath))
+				getEntities()->updateFrame(kCharacterTrainM);
 
 			setCallback(3);
 			setup_callbackActionOnDirection();
@@ -393,7 +393,7 @@ IMPLEMENT_FUNCTION(12, Verges, function12)
 
 		case 3:
 			getData()->entityPosition = kPosition_850;
-			getEntities()->clearSequences(kEntityVerges);
+			getEntities()->clearSequences(kCharacterTrainM);
 
 			callbackAction();
 			break;
@@ -408,32 +408,32 @@ IMPLEMENT_FUNCTION_I(13, Verges, baggageCar, bool)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_savegame(kSavegameTypeEvent, kEventVergesSuitcase);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1) {
-			if (getEvent(kEventVergesSuitcase) || getEvent(kEventVergesSuitcaseNight) || getEvent(kEventVergesSuitcaseOtherEntry) || getEvent(kEventVergesSuitcaseNightOtherEntry))
+			if (HELPERgetEvent(kEventVergesSuitcase) || HELPERgetEvent(kEventVergesSuitcaseNight) || HELPERgetEvent(kEventVergesSuitcaseOtherEntry) || HELPERgetEvent(kEventVergesSuitcaseNightOtherEntry))
 				params->param2 = 1;
 
-			if (isNight() && getProgress().chapter != kChapter1)
+			if (isNightOld() && getProgress().chapter != kChapter1)
 				params->param2 = 1;
 
 			if (params->param1) {
-				if (isNight())
-					getAction()->playAnimation(params->param2 ? kEventVergesSuitcaseNightOtherEntryStart : kEventVergesSuitcaseNightOtherEntry);
+				if (isNightOld())
+					getActionOld()->playAnimation(params->param2 ? kEventVergesSuitcaseNightOtherEntryStart : kEventVergesSuitcaseNightOtherEntry);
 				else
-					getAction()->playAnimation(params->param2 ? kEventVergesSuitcaseOtherEntryStart : kEventVergesSuitcaseOtherEntry);
+					getActionOld()->playAnimation(params->param2 ? kEventVergesSuitcaseOtherEntryStart : kEventVergesSuitcaseOtherEntry);
 			} else {
-				if (isNight())
-					getAction()->playAnimation(params->param2 ? kEventVergesSuitcaseNightStart : kEventVergesSuitcaseNight);
+				if (isNightOld())
+					getActionOld()->playAnimation(params->param2 ? kEventVergesSuitcaseNightStart : kEventVergesSuitcaseNight);
 				else
-					getAction()->playAnimation(params->param2 ? kEventVergesSuitcaseStart : kEventVergesSuitcase);
+					getActionOld()->playAnimation(params->param2 ? kEventVergesSuitcaseStart : kEventVergesSuitcase);
 			}
 
-			getEntities()->clearSequences(kEntityVerges);
+			getEntities()->clearSequences(kCharacterTrainM);
 			getScenes()->loadSceneFromPosition(kCarBaggage, 91);
 
 			callbackAction();
@@ -448,14 +448,14 @@ IMPLEMENT_FUNCTION_I(14, Verges, updateFromTime, uint32)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_IS(15, Verges, dialog, EntityIndex)
+IMPLEMENT_FUNCTION_IS(15, Verges, dialog, CharacterIndex)
 	switch (savepoint.action) {
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param5 && params->param6) {
-			getSavePoints()->push(kEntityVerges, (EntityIndex)params->param1, kAction125499160);
+			getSavePoints()->push(kCharacterTrainM, (CharacterIndex)params->param1, kCharacterAction125499160);
 
 			if (!getEntities()->isPlayerPosition(kCarGreenSleeping, 2) && !getEntities()->isPlayerPosition(kCarRedSleeping, 2))
 				getData()->entityPosition = kPosition_2088;
@@ -464,35 +464,35 @@ IMPLEMENT_FUNCTION_IS(15, Verges, dialog, EntityIndex)
 		}
 		break;
 
-	case kActionEndSound:
+	case kCharacterActionEndSound:
 		params->param5 = 1;
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceLeft(kEntityVerges, "620F");
-		getSavePoints()->push(kEntityVerges, (EntityIndex)params->param1, kAction171394341);
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceLeft(kCharacterTrainM, "620F");
+		getSavePoints()->push(kCharacterTrainM, (CharacterIndex)params->param1, kCharacterAction171394341);
 		break;
 
-	case kAction155853632:
+	case kCharacterAction155853632:
 		params->param6 = 1;
 		break;
 
-	case kAction202558662:
-		getEntities()->drawSequenceLeft(kEntityVerges, "620E");
-		getSound()->playSound(kEntityVerges, (char *)&params->seq);
+	case kCharacterAction202558662:
+		getEntities()->drawSequenceLeft(kCharacterTrainM, "620E");
+		getSound()->playSound(kCharacterTrainM, (char *)&params->seq);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_ISS(16, Verges, dialog2, EntityIndex)
+IMPLEMENT_FUNCTION_ISS(16, Verges, dialog2, CharacterIndex)
 	switch (savepoint.action) {
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (CURRENT_PARAM(1, 1) >= 2 && params->param8) {
-			getSavePoints()->push(kEntityVerges, (EntityIndex)params->param1, kAction125499160);
+			getSavePoints()->push(kCharacterTrainM, (CharacterIndex)params->param1, kCharacterAction125499160);
 
 			if (!getEntities()->isPlayerPosition(kCarGreenSleeping, 2) && !getEntities()->isPlayerPosition(kCarRedSleeping, 2))
 				getData()->entityPosition = kPosition_2088;
@@ -501,25 +501,25 @@ IMPLEMENT_FUNCTION_ISS(16, Verges, dialog2, EntityIndex)
 		}
 		break;
 
-	case kActionEndSound:
+	case kCharacterActionEndSound:
 		CURRENT_PARAM(1, 1)++;
 
 		if (CURRENT_PARAM(1, 1) == 1)
-			getSound()->playSound(kEntityVerges, (char *)&params->seq2);
+			getSound()->playSound(kCharacterTrainM, (char *)&params->seq2);
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceLeft(kEntityVerges, "620F");
-		getSavePoints()->push(kEntityVerges, (EntityIndex)params->param1, kAction171394341);
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceLeft(kCharacterTrainM, "620F");
+		getSavePoints()->push(kCharacterTrainM, (CharacterIndex)params->param1, kCharacterAction171394341);
 		break;
 
-	case kAction155853632:
+	case kCharacterAction155853632:
 		params->param8 = 1;
 		break;
 
-	case kAction202558662:
-		getEntities()->drawSequenceLeft(kEntityVerges, "620E");
-		getSound()->playSound(kEntityVerges, (char *)&params->seq1);
+	case kCharacterAction202558662:
+		getEntities()->drawSequenceLeft(kCharacterTrainM, "620E");
+		getSound()->playSound(kCharacterTrainM, (char *)&params->seq1);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -530,12 +530,12 @@ IMPLEMENT_FUNCTION(17, Verges, talkAboutPassengerList)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function12();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -547,7 +547,7 @@ IMPLEMENT_FUNCTION(17, Verges, talkAboutPassengerList)
 
 		case 2:
 			setCallback(3);
-			setup_dialog(kEntityMertens, "TRA1291");
+			setup_dialog(kCharacterCond1, "TRA1291");
 			break;
 
 		case 3:
@@ -570,22 +570,22 @@ IMPLEMENT_FUNCTION(18, Verges, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Verges, setup_chapter1Handler));
 		break;
 
-	case kActionDefault:
-		getSavePoints()->addData(kEntityVerges, kActionDeliverMessageToTyler, 0);
-		getSavePoints()->addData(kEntityVerges, kAction226031488, 1);
-		getSavePoints()->addData(kEntityVerges, kAction339669520, 1);
-		getSavePoints()->addData(kEntityVerges, kAction167854368, 4);
-		getSavePoints()->addData(kEntityVerges, kAction158617345, 2);
-		getSavePoints()->addData(kEntityVerges, kAction168255788, 3);
-		getSavePoints()->addData(kEntityVerges, kAction201431954, 5);
-		getSavePoints()->addData(kEntityVerges, kAction168187490, 6);
+	case kCharacterActionDefault:
+		getSavePoints()->addData(kCharacterTrainM, kCharacterActionDeliverMessageToTyler, 0);
+		getSavePoints()->addData(kCharacterTrainM, kCharacterAction226031488, 1);
+		getSavePoints()->addData(kCharacterTrainM, kCharacterAction339669520, 1);
+		getSavePoints()->addData(kCharacterTrainM, kCharacterAction167854368, 4);
+		getSavePoints()->addData(kCharacterTrainM, kCharacterAction158617345, 2);
+		getSavePoints()->addData(kCharacterTrainM, kCharacterAction168255788, 3);
+		getSavePoints()->addData(kCharacterTrainM, kCharacterAction201431954, 5);
+		getSavePoints()->addData(kCharacterTrainM, kCharacterAction168187490, 6);
 
-		getObjects()->update(kObject104, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
-		getObjects()->update(kObject105, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObject104, kCharacterTrainM, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObject105, kCharacterTrainM, kObjectLocationNone, kCursorNormal, kCursorHand);
 
 		getData()->entityPosition = kPosition_5000;
 		getData()->location = kLocationOutsideCompartment;
@@ -615,12 +615,12 @@ IMPLEMENT_FUNCTION(22, Verges, askMertensToRelayAugustInvitation)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function12();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -631,18 +631,18 @@ IMPLEMENT_FUNCTION(22, Verges, askMertensToRelayAugustInvitation)
 			break;
 
 		case 2:
-			if (getEvent(kEventMertensAskTylerCompartment) || getEvent(kEventMertensAskTylerCompartmentD) || getEvent(kEventMertensAugustWaiting)) {
+			if (HELPERgetEvent(kEventMertensAskTylerCompartment) || HELPERgetEvent(kEventMertensAskTylerCompartmentD) || HELPERgetEvent(kEventMertensAugustWaiting)) {
 				setCallback(3);
-				setup_dialog2(kEntityMertens, "TRA1200", "TRA1201");
+				setup_dialog2(kCharacterCond1, "TRA1200", "TRA1201");
 			} else {
 				setCallback(4);
-				setup_dialog2(kEntityMertens, "TRA1200A", "TRA1201");
+				setup_dialog2(kCharacterCond1, "TRA1200A", "TRA1201");
 			}
 			break;
 
 		case 3:
 		case 4:
-			getSavePoints()->push(kEntityVerges, kEntityMertens, kAction169633856);
+			getSavePoints()->push(kCharacterTrainM, kCharacterCond1, kCharacterAction169633856);
 
 			setCallback(5);
 			setup_function11();
@@ -662,7 +662,7 @@ IMPLEMENT_FUNCTION(23, Verges, function23)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getScenes()->loadSceneFromItemPosition(kItem9);
 
 		getData()->entityPosition = kPosition_8200;
@@ -670,7 +670,7 @@ IMPLEMENT_FUNCTION(23, Verges, function23)
 		getData()->car = kCarRedSleeping;
 		break;
 
-	case kAction191477936:
+	case kCharacterAction191477936:
 		getData()->entityPosition = kPosition_8200;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarRedSleeping;
@@ -687,25 +687,25 @@ IMPLEMENT_FUNCTION(24, Verges, policeGettingOffTrain)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->isDistanceBetweenEntities(kEntityVerges, kEntityPlayer, 1000) && getEntityData(kEntityPlayer)->location == kLocationOutsideCompartment) {
+	case kCharacterActionNone:
+		if (getEntities()->isDistanceBetweenEntities(kCharacterTrainM, kCharacterCath, 1000) && getEntityData(kCharacterCath)->location == kLocationOutsideCompartment) {
 			setCallback(1);
 			setup_savegame(kSavegameTypeEvent, kEventGendarmesArrestation);
 		}
 		break;
 
-	case kActionEndSound:
+	case kCharacterActionEndSound:
 		callbackAction();
 		break;
 
-	case kActionDefault:
-		getSound()->playSound(kEntityVerges, "POL1101", kVolumeFull);
+	case kCharacterActionDefault:
+		getSound()->playSound(kCharacterTrainM, "POL1101", kVolumeFull);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1) {
-			getSoundQueue()->fade(kEntityVerges);
-			getAction()->playAnimation(kEventGendarmesArrestation);
+			getSoundQueue()->fade(kCharacterTrainM);
+			getActionOld()->playAnimation(kEventGendarmesArrestation);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneGameOverPolice1, true);
 		}
 		break;
@@ -718,12 +718,12 @@ IMPLEMENT_FUNCTION(25, Verges, policeSearch)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_savegame(kSavegameTypeTime, kTimeNone);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -731,19 +731,19 @@ IMPLEMENT_FUNCTION(25, Verges, policeSearch)
 		case 1:
 			getScenes()->loadSceneFromItemPosition(kItem9);
 
-			if (!getEntities()->isInKronosSalon(kEntityPlayer)) {
+			if (!getEntities()->isInKronosSalon(kCharacterCath)) {
 
-				if (getEntityData(kEntityPlayer)->car > kCarRedSleeping
-				 || (getEntityData(kEntityPlayer)->car == kCarRedSleeping && getEntityData(kEntityPlayer)->entityPosition > kPosition_9270)) {
-					getSound()->playSound(kEntityPlayer, "BUMP");
+				if (getEntityData(kCharacterCath)->car > kCarRedSleeping
+				 || (getEntityData(kCharacterCath)->car == kCarRedSleeping && getEntityData(kCharacterCath)->entityPosition > kPosition_9270)) {
+					getSound()->playSound(kCharacterCath, "BUMP");
 					getScenes()->loadSceneFromPosition(kCarRedSleeping, 40);
 
 					getData()->car = kCarRedSleeping;
 					getData()->entityPosition = kPosition_9270;
 				} else {
-					if (getEntityData(kEntityPlayer)->car < kCarGreenSleeping
-					 || (getEntityData(kEntityPlayer)->car == kCarGreenSleeping && getEntityData(kEntityPlayer)->entityPosition < kPosition_4840)) {
-						getSound()->playSound(kEntityPlayer, "BUMP");
+					if (getEntityData(kCharacterCath)->car < kCarGreenSleeping
+					 || (getEntityData(kCharacterCath)->car == kCarGreenSleeping && getEntityData(kCharacterCath)->entityPosition < kPosition_4840)) {
+						getSound()->playSound(kCharacterCath, "BUMP");
 						getScenes()->loadSceneFromObject(kObjectCompartment5, true);
 					}
 
@@ -753,20 +753,20 @@ IMPLEMENT_FUNCTION(25, Verges, policeSearch)
 
 				getData()->location = kLocationOutsideCompartment;
 
-				getObjects()->update(kObjectRestaurantCar, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorForward);
-				getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+				getObjects()->update(kObjectRestaurantCar, kCharacterCath, kObjectLocation1, kCursorNormal, kCursorForward);
+				getObjects()->update(kObjectCompartmentE, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 				if (getEntities()->isOutsideAnnaWindow())
 					getScenes()->loadSceneFromPosition(kCarRedSleeping, 49);
 
-				if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_4840)
-				 || getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_4455)) {
-					getAction()->playAnimation(isNight() ? kEventCathTurningNight : kEventCathTurningDay);
-					getSound()->playSound(kEntityPlayer, "BUMP");
+				if (getEntities()->isInsideCompartment(kCharacterCath, kCarRedSleeping, kPosition_4840)
+				 || getEntities()->isInsideCompartment(kCharacterCath, kCarRedSleeping, kPosition_4455)) {
+					getActionOld()->playAnimation(isNightOld() ? kEventCathTurningNight : kEventCathTurningDay);
+					getSound()->playSound(kCharacterCath, "BUMP");
 					getScenes()->loadSceneFromObject(kObjectCompartmentE, true);
 				}
 
-				getSavePoints()->push(kEntityVerges, kEntityGendarmes, kAction169499649);
+				getSavePoints()->push(kCharacterTrainM, kCharacterPolice, kCharacterAction169499649);
 
 				getProgress().field_3C = 1;
 				getState()->timeDelta = 1;
@@ -783,14 +783,14 @@ IMPLEMENT_FUNCTION(25, Verges, policeSearch)
 			// fall through
 
 		case 2:
-			if (getEvent(kEventKronosConversation)) {
+			if (HELPERgetEvent(kEventKronosConversation)) {
 				getProgress().field_3C = 1;
 				getData()->car = kCarGreenSleeping;
 				getData()->entityPosition = kPosition_540;
 				getData()->location = kLocationOutsideCompartment;
 
 				getState()->timeDelta = 3;
-				getSavePoints()->push(kEntityVerges, kEntityChapters, kAction169629818);
+				getSavePoints()->push(kCharacterTrainM, kCharacterMaster, kCharacterAction169629818);
 
 				setCallback(3);
 				setup_policeGettingOffTrain();
@@ -801,7 +801,7 @@ IMPLEMENT_FUNCTION(25, Verges, policeSearch)
 			break;
 
 		case 3:
-			getSavePoints()->push(kEntityVerges, kEntityCoudert, kAction168254872);
+			getSavePoints()->push(kCharacterTrainM, kCharacterCond2, kCharacterAction168254872);
 
 			setCallback(4);
 			setup_makeAnnouncement(kCarRedSleeping, kPosition_9460, "TRA1006");
@@ -821,20 +821,20 @@ IMPLEMENT_FUNCTION(25, Verges, policeSearch)
 
 		case 6:
 		case 7:
-			getEntities()->clearSequences(kEntityVerges);
+			getEntities()->clearSequences(kCharacterTrainM);
 			break;
 
 		case 8:
-			getSavePoints()->push(kEntityVerges, kEntityChapters, kAction169629818);
+			getSavePoints()->push(kCharacterTrainM, kCharacterMaster, kCharacterAction169629818);
 
 			setCallback(9);
 			setup_policeGettingOffTrain();
 			break;
 
 		case 9:
-			getObjects()->update(kObjectRestaurantCar, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-			getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-			getSavePoints()->push(kEntityVerges, kEntityCoudert, kAction168254872);
+			getObjects()->update(kObjectRestaurantCar, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
+			getObjects()->update(kObjectCompartmentE, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getSavePoints()->push(kCharacterTrainM, kCharacterCond2, kCharacterAction168254872);
 
 			setCallback(10);
 			setup_makeAnnouncement(kCarGreenSleeping, kPosition_540, "TRA1006");
@@ -847,10 +847,10 @@ IMPLEMENT_FUNCTION(25, Verges, policeSearch)
 		}
 		break;
 
-	case kAction168710784:
+	case kCharacterAction168710784:
 		getData()->car = kCarGreenSleeping;
 
-		if (!(getEntityData(kEntityPlayer)->car == kCarGreenSleeping))
+		if (!(getEntityData(kCharacterCath)->car == kCarGreenSleeping))
 			getData()->car = kCarRedSleeping;
 
 		getData()->entityPosition = kPosition_8200;
@@ -870,7 +870,7 @@ IMPLEMENT_FUNCTION(26, Verges, chapter1Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (ENTITY_PARAM(0, 6)) {
 			params->param1 = 1;
 			params->param2 = 1;
@@ -889,7 +889,7 @@ IMPLEMENT_FUNCTION(26, Verges, chapter1Handler)
 		}
 
 label_callback1:
-		if (getEntities()->isInBaggageCarEntrance(kEntityPlayer)) {
+		if (getEntities()->isInBaggageCarEntrance(kCharacterCath)) {
 			setCallback(2);
 			setup_baggageCar(false);
 			break;
@@ -965,21 +965,21 @@ label_callback15:
 		}
 		break;
 
-	case kActionOpenDoor:
+	case kCharacterActionOpenDoor:
 		setCallback(17);
 		setup_baggageCar(savepoint.param.intValue == kObject105 ? true : false);
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->car = kCarBaggage;
 		getData()->entityPosition = kPosition_5000;
 		getData()->location = kLocationOutsideCompartment;
 
-		getEntities()->clearSequences(kEntityVerges);
+		getEntities()->clearSequences(kCharacterTrainM);
 		getInventory()->setLocationAndProcess(kItem9, kObjectLocation1);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1003,7 +1003,7 @@ label_callback15:
 
 		case 6:
 			setCallback(7);
-			setup_dialog(kEntityMertens, "TRA1202");
+			setup_dialog(kCharacterCond1, "TRA1202");
 			break;
 
 		case 7:
@@ -1052,20 +1052,20 @@ IMPLEMENT_FUNCTION(27, Verges, chapter2)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter2Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityVerges);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterTrainM);
 
 		getData()->entityPosition = kPosition_5000;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarBaggage;
 		getData()->inventoryItem = kItemNone;
 
-		getObjects()->update(kObject104, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
-		getObjects()->update(kObject105, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObject104, kCharacterTrainM, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObject105, kCharacterTrainM, kObjectLocationNone, kCursorNormal, kCursorHand);
 
 		ENTITY_PARAM(0, 3) = 0;
 		break;
@@ -1078,8 +1078,8 @@ IMPLEMENT_FUNCTION(28, Verges, chapter2Handler)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->isInBaggageCarEntrance(kEntityPlayer)) {
+	case kCharacterActionNone:
+		if (getEntities()->isInBaggageCarEntrance(kCharacterCath)) {
 			setCallback(1);
 			setup_baggageCar(false);
 			break;
@@ -1126,16 +1126,16 @@ label_callback_6:
 		setup_function12();
 		break;
 
-	case kActionOpenDoor:
+	case kCharacterActionOpenDoor:
 		setCallback(8);
 		setup_baggageCar(savepoint.param.intValue == kObject105);
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getInventory()->setLocationAndProcess(kItem9, kObjectLocation1);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1153,7 +1153,7 @@ label_callback_6:
 
 		case 4:
 			setCallback(5);
-			setup_dialog(kEntityCoudert, "TRA2100");
+			setup_dialog(kCharacterCond2, "TRA2100");
 			break;
 
 		case 5:
@@ -1174,12 +1174,12 @@ IMPLEMENT_FUNCTION(29, Verges, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_function33();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityVerges);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterTrainM);
 
 		getData()->entityPosition = kPosition_540;
 		getData()->location = kLocationOutsideCompartment;
@@ -1187,8 +1187,8 @@ IMPLEMENT_FUNCTION(29, Verges, chapter3)
 		getData()->clothes = kClothesDefault;
 		getData()->inventoryItem = kItemNone;
 
-		getObjects()->update(kObject104, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
-		getObjects()->update(kObject105, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObject104, kCharacterTrainM, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObject105, kCharacterTrainM, kObjectLocationNone, kCursorNormal, kCursorHand);
 
 		ENTITY_PARAM(0, 3) = 0;
 		ENTITY_PARAM(0, 4) = 0;
@@ -1202,12 +1202,12 @@ IMPLEMENT_FUNCTION_S(30, Verges, function30)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function12();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1219,7 +1219,7 @@ IMPLEMENT_FUNCTION_S(30, Verges, function30)
 
 		case 2:
 			setCallback(3);
-			setup_dialog(kEntityCoudert, (char *)&params->seq1);
+			setup_dialog(kCharacterCond2, (char *)&params->seq1);
 			break;
 
 		case 3:
@@ -1241,12 +1241,12 @@ IMPLEMENT_FUNCTION(31, Verges, talkAboutMax)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function12();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1258,7 +1258,7 @@ IMPLEMENT_FUNCTION(31, Verges, talkAboutMax)
 
 		case 2:
 			setCallback(3);
-			setup_dialog(kEntityCoudert, "TRA3015");
+			setup_dialog(kCharacterCond2, "TRA3015");
 			break;
 
 		case 3:
@@ -1283,7 +1283,7 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->time > kTime2263500 && !params->param1) {
 			params->param1 = 1;
 			setCallback(5);
@@ -1292,13 +1292,13 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 		}
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObject104, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
-		getObjects()->update(kObject105, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
+	case kCharacterActionDefault:
+		getObjects()->update(kObject104, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObject105, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorHand);
 
-		if (getEntities()->isInBaggageCar(kEntityPlayer) || getEntities()->isInKitchen(kEntityPlayer)) {
-			getAction()->playAnimation(getEntities()->isInBaggageCar(kEntityPlayer) ? kEventVergesBaggageCarOffLimits : kEventVergesCanIHelpYou);
-			getSound()->playSound(kEntityPlayer, "BUMP");
+		if (getEntities()->isInBaggageCar(kCharacterCath) || getEntities()->isInKitchen(kCharacterCath)) {
+			getActionOld()->playAnimation(getEntities()->isInBaggageCar(kCharacterCath) ? kEventVergesBaggageCarOffLimits : kEventVergesCanIHelpYou);
+			getSound()->playSound(kCharacterCath, "BUMP");
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 65);
 		}
 
@@ -1310,7 +1310,7 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 		setup_callbackActionRestaurantOrSalon();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1318,20 +1318,20 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 		case 1:
 			getData()->entityPosition = kPosition_5800;
 			getData()->location = kLocationOutsideCompartment;
-			getSound()->playSound(kEntityVerges, "TRA3004");
+			getSound()->playSound(kCharacterTrainM, "TRA3004");
 
 			setCallback(2);
 			setup_draw("813DD");
 			break;
 
 		case 2:
-			if (!getSoundQueue()->isBuffered(kEntityVerges))
-				getSound()->playSound(kEntityVerges, "TRA3004");
+			if (!getSoundQueue()->isBuffered(kCharacterTrainM))
+				getSound()->playSound(kCharacterTrainM, "TRA3004");
 
-			getEntities()->drawSequenceRight(kEntityVerges, "813DS");
+			getEntities()->drawSequenceRight(kCharacterTrainM, "813DS");
 
-			if (getEntities()->isInRestaurant(kEntityPlayer))
-				getEntities()->updateFrame(kEntityVerges);
+			if (getEntities()->isInRestaurant(kCharacterCath))
+				getEntities()->updateFrame(kCharacterTrainM);
 
 			setCallback(3);
 			setup_callbackActionOnDirection();
@@ -1343,7 +1343,7 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 			break;
 
 		case 4:
-			getEntities()->clearSequences(kEntityVerges);
+			getEntities()->clearSequences(kCharacterTrainM);
 			break;
 
 		case 5:
@@ -1365,12 +1365,12 @@ IMPLEMENT_FUNCTION(33, Verges, function33)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_callbackActionRestaurantOrSalon();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1384,16 +1384,16 @@ IMPLEMENT_FUNCTION(33, Verges, function33)
 			break;
 
 		case 2:
-			getEntities()->drawSequenceRight(kEntityVerges, "813UD");
-			if (getEntities()->isInSalon(kEntityPlayer))
-				getEntities()->updateFrame(kEntityVerges);
+			getEntities()->drawSequenceRight(kCharacterTrainM, "813UD");
+			if (getEntities()->isInSalon(kCharacterCath))
+				getEntities()->updateFrame(kCharacterTrainM);
 
 			setCallback(3);
 			setup_callbackActionOnDirection();
 			break;
 
 		case 3:
-			getEntities()->clearSequences(kEntityVerges);
+			getEntities()->clearSequences(kCharacterTrainM);
 			getData()->location = kLocationInsideCompartment;
 			getData()->entityPosition = kPosition_5799;
 
@@ -1407,7 +1407,7 @@ IMPLEMENT_FUNCTION(33, Verges, function33)
 			break;
 
 		case 5:
-			getSavePoints()->push(kEntityVerges, kEntityAbbot, kAction192054567);
+			getSavePoints()->push(kCharacterTrainM, kCharacterAbbot, kCharacterAction192054567);
 
 			setCallback(6);
 			setup_walkBetweenCars("Tra3010");
@@ -1427,8 +1427,8 @@ IMPLEMENT_FUNCTION(34, Verges, function34)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->isInBaggageCarEntrance(kEntityPlayer)) {
+	case kCharacterActionNone:
+		if (getEntities()->isInBaggageCarEntrance(kCharacterCath)) {
 			setCallback(1);
 			setup_baggageCar(false);
 			break;
@@ -1476,12 +1476,12 @@ label_callback_9:
 		Entity::timeCheckCallback(kTime2218500, params->param7, 10, WRAP_SETUP_FUNCTION(Verges, setup_function32));
 		break;
 
-	case kActionOpenDoor:
+	case kCharacterActionOpenDoor:
 		setCallback(11);
 		setup_baggageCar(savepoint.param.intValue == kObject105);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1523,12 +1523,12 @@ IMPLEMENT_FUNCTION(35, Verges, organizeConcertInvitations)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function12();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1540,11 +1540,11 @@ IMPLEMENT_FUNCTION(35, Verges, organizeConcertInvitations)
 
 		case 2:
 			setCallback(3);
-			setup_dialog(kEntityCoudert, "Tra3011A");
+			setup_dialog(kCharacterCond2, "Tra3011A");
 			break;
 
 		case 3:
-			getSavePoints()->push(kEntityVerges, kEntityCoudert, kAction188570113);
+			getSavePoints()->push(kCharacterTrainM, kCharacterCond2, kCharacterAction188570113);
 
 			setCallback(4);
 			setup_updateEntity(kCarGreenSleeping, kPosition_2000);
@@ -1552,11 +1552,11 @@ IMPLEMENT_FUNCTION(35, Verges, organizeConcertInvitations)
 
 		case 4:
 			setCallback(5);
-			setup_dialog(kEntityMertens, "Tra3011");
+			setup_dialog(kCharacterCond1, "Tra3011");
 			break;
 
 		case 5:
-			getSavePoints()->push(kEntityVerges, kEntityMertens, kAction188635520);
+			getSavePoints()->push(kCharacterTrainM, kCharacterCond1, kCharacterAction188635520);
 
 			setCallback(6);
 			setup_function11();
@@ -1576,12 +1576,12 @@ IMPLEMENT_FUNCTION(36, Verges, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter4Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityVerges);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterTrainM);
 
 		getData()->entityPosition = kPosition_5000;
 		getData()->location = kLocationOutsideCompartment;
@@ -1589,8 +1589,8 @@ IMPLEMENT_FUNCTION(36, Verges, chapter4)
 		getData()->clothes = kClothesDefault;
 		getData()->inventoryItem = kItemNone;
 
-		getObjects()->update(kObject104, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
-		getObjects()->update(kObject105, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObject104, kCharacterTrainM, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObject105, kCharacterTrainM, kObjectLocationNone, kCursorNormal, kCursorHand);
 
 		ENTITY_PARAM(0, 3) = 0;
 		ENTITY_PARAM(0, 6) = 0;
@@ -1604,8 +1604,8 @@ IMPLEMENT_FUNCTION(37, Verges, chapter4Handler)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->isInBaggageCarEntrance(kEntityPlayer)) {
+	case kCharacterActionNone:
+		if (getEntities()->isInBaggageCarEntrance(kCharacterCath)) {
 			setCallback(1);
 			setup_baggageCar(false);
 			break;
@@ -1648,12 +1648,12 @@ label_callback_8:
 		Entity::timeCheckCallback(kTime2538000, params->param7, 9, "Tra4005", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars));
 		break;
 
-	case kActionOpenDoor:
+	case kCharacterActionOpenDoor:
 		setCallback(10);
 		setup_baggageCar(savepoint.param.intValue == kObject105);
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->car = kCarBaggage;
 		getData()->entityPosition = kPosition_5000;
 		getData()->location = kLocationOutsideCompartment;
@@ -1661,7 +1661,7 @@ label_callback_8:
 		getInventory()->setLocationAndProcess(kItem9, kObjectLocation1);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1700,24 +1700,24 @@ IMPLEMENT_FUNCTION(38, Verges, resetState)
 	default:
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObject104, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
-		getObjects()->update(kObject105, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
+	case kCharacterActionDefault:
+		getObjects()->update(kObject104, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObject105, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorHand);
 		getScenes()->loadSceneFromItemPosition(kItem9);
-		getEntities()->clearSequences(kEntityVerges);
+		getEntities()->clearSequences(kCharacterTrainM);
 
 		getData()->entityPosition = kPosition_6469;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarRedSleeping;
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->clearSequences(kEntityVerges);
+			getEntities()->clearSequences(kCharacterTrainM);
 			setCallback(2);
 			setup_updateFromTime(1800);
 			break;
@@ -1733,7 +1733,7 @@ IMPLEMENT_FUNCTION(38, Verges, resetState)
 		}
 		break;
 
-	case kAction125233040:
+	case kCharacterAction125233040:
 		getData()->entityPosition = kPosition_5790;
 
 		setCallback(1);
@@ -1748,12 +1748,12 @@ IMPLEMENT_FUNCTION(39, Verges, chapter5)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter5Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityVerges);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterTrainM);
 
 		getData()->entityPosition = kPosition_3650;
 		getData()->location = kLocationInsideCompartment;
@@ -1761,8 +1761,8 @@ IMPLEMENT_FUNCTION(39, Verges, chapter5)
 		getData()->clothes = kClothesDefault;
 		getData()->inventoryItem = kItemNone;
 
-		getObjects()->update(kObject104, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
-		getObjects()->update(kObject105, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObject104, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObject105, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorHand);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -1773,33 +1773,33 @@ IMPLEMENT_FUNCTION(40, Verges, chapter5Handler)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->isInSalon(kEntityPlayer) && !getSoundQueue()->isBuffered(kEntityVerges))
-			getSound()->playSound(kEntityVerges, "WAT5000");
+	case kCharacterActionNone:
+		if (getEntities()->isInSalon(kCharacterCath) && !getSoundQueue()->isBuffered(kCharacterTrainM))
+			getSound()->playSound(kCharacterTrainM, "WAT5000");
 		break;
 
-	case kActionOpenDoor:
-		if (getSoundQueue()->isBuffered(kEntityVerges))
-			getSoundQueue()->fade(kEntityVerges);
+	case kCharacterActionOpenDoor:
+		if (getSoundQueue()->isBuffered(kCharacterTrainM))
+			getSoundQueue()->fade(kCharacterTrainM);
 
 		if (getSoundQueue()->isBuffered("MUS050"))
 			getSoundQueue()->fade("MUS050");
 
-		getObjects()->update(kObject65, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
+		getObjects()->update(kObject65, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
 
 		setCallback(1);
 		setup_savegame(kSavegameTypeEvent, kEventCathFreePassengers);
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getScenes()->loadSceneFromItemPosition(kItem9);
-		getObjects()->update(kObject65, kEntityVerges, kObjectLocation1, kCursorNormal, kCursorForward);
+		getObjects()->update(kObject65, kCharacterTrainM, kObjectLocation1, kCursorNormal, kCursorForward);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1) {
-			getAction()->playAnimation(kEventCathFreePassengers);
-			getSavePoints()->pushAll(kEntityVerges, kActionProceedChapter5);
+			getActionOld()->playAnimation(kEventCathFreePassengers);
+			getSavePoints()->pushAll(kCharacterTrainM, kCharacterActionProceedChapter5);
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 40);
 			setup_askPassengersToStayInCompartments();
 		}
@@ -1813,7 +1813,7 @@ IMPLEMENT_FUNCTION(41, Verges, askPassengersToStayInCompartments)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getObjects()->updateModel(kObjectRestaurantCar, kObjectModel3);
 		getData()->car = kCarRedSleeping;
 		getData()->entityPosition = kPosition_9460;
@@ -1823,17 +1823,17 @@ IMPLEMENT_FUNCTION(41, Verges, askPassengersToStayInCompartments)
 		setup_makeAnnouncement(kCarRedSleeping, kPosition_2000, "Tra5001");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->drawSequenceLeft(kEntityVerges, "620E");
+			getEntities()->drawSequenceLeft(kCharacterTrainM, "620E");
 			// fall through
 
 		case 2:
-			if (getSoundQueue()->isBuffered(kEntityVerges)) {
+			if (getSoundQueue()->isBuffered(kCharacterTrainM)) {
 				setCallback(2);
 				setup_updateFromTime(225);
 			} else {
@@ -1843,7 +1843,7 @@ IMPLEMENT_FUNCTION(41, Verges, askPassengersToStayInCompartments)
 			break;
 
 		case 3:
-			getSavePoints()->push(kEntityVerges, kEntityCoudert, kAction155991520);
+			getSavePoints()->push(kCharacterTrainM, kCharacterCond2, kCharacterAction155991520);
 
 			setCallback(4);
 			setup_updateEntity(kCarBaggageRear, kPosition_9460);
@@ -1859,8 +1859,8 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(42, Verges, end)
-	if (savepoint.action == kActionDefault)
-		getEntities()->clearSequences(kEntityVerges);
+	if (savepoint.action == kCharacterActionDefault)
+		getEntities()->clearSequences(kCharacterTrainM);
 IMPLEMENT_FUNCTION_END
 
 
@@ -1872,12 +1872,12 @@ void Verges::talk(const SavePoint &savepoint, const char *sound1, const char *so
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_function12();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1889,7 +1889,7 @@ void Verges::talk(const SavePoint &savepoint, const char *sound1, const char *so
 
 		case 2:
 			setCallback(3);
-			setup_dialog(kEntityCoudert, sound1);
+			setup_dialog(kCharacterCond2, sound1);
 			break;
 
 		case 3:
@@ -1899,7 +1899,7 @@ void Verges::talk(const SavePoint &savepoint, const char *sound1, const char *so
 
 		case 4:
 			setCallback(5);
-			setup_dialog(kEntityMertens, sound2);
+			setup_dialog(kCharacterCond1, sound2);
 			break;
 
 		case 5:

@@ -34,7 +34,7 @@ public:
 	~Alouan() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
@@ -61,10 +61,10 @@ public:
 	DECLARE_FUNCTION_1(updateFromTime, uint32 time)
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_VFUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 

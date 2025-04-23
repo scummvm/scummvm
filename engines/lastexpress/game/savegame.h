@@ -39,7 +39,7 @@
 	Game data Format
 	-----------------
 
-	uint32 {4}        - entity
+	uint32 {4}        - character
 	uint32 {4}        - current time
 	uint32 {4}        - time delta (how much a tick is in "real" time)
 	uint32 {4}        - time ticks
@@ -161,7 +161,7 @@ public:
 	// Save & Load
 	void loadLastGame();
 	void loadGame(uint32 index);
-	void saveGame(SavegameType type, EntityIndex entity, uint32 value);
+	void saveGame(SavegameType type, CharacterIndex entity, uint32 value);
 
 	void loadVolumeBrightness();
 	void saveVolumeBrightness();
@@ -312,8 +312,8 @@ private:
 	static bool loadMainHeader(Common::InSaveFile *stream, SavegameMainHeader *header);
 
 	// Entries
-	void writeEntry(SavegameType type, EntityIndex entity, uint32 val);
-	void readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, bool keepIndex);
+	void writeEntry(SavegameType type, CharacterIndex entity, uint32 val);
+	void readEntry(SavegameType *type, CharacterIndex *entity, uint32 *val, bool keepIndex);
 
 	uint32 writeValue(Common::Serializer &ser, const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size);
 	uint32 readValue(Common::Serializer &ser, const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size = 0);
@@ -326,8 +326,33 @@ private:
 	void flushStream(const Common::String &target, GameId id);
 
 	// Misc
-	EntityIndex _entity;
+	CharacterIndex _entity;
 	void syncEntity(Common::Serializer &ser);
+};
+
+class CVCRFile;
+struct SVCRFileHeader;
+struct SVCRSavePointHeader;
+
+class SaveManager {
+public:
+	SaveManager(LastExpressEngine *engine);
+	~SaveManager() {}
+
+	void writeSavePoint(CVCRFile *file, int saveType, int entityIndex, int value);
+	void readSavePoint(CVCRFile *savegameData, int *saveType, uint8 *entity, int *saveEvent, bool skipSoundLoading);
+	void validateSaveFile(bool flag);
+	bool checkFileHeader(SVCRFileHeader *fileHeader);
+	bool checkSavePointHeader(SVCRSavePointHeader *savePointHeader);
+	void continueGame();
+	void startRewoundGame();
+	bool fileExists(const char *filename);
+	bool removeSavegame(const char *filename);
+	bool renameSavegame(const char *oldName, const char *newName);
+
+private:
+	LastExpressEngine *_engine = nullptr;
+
 };
 
 } // End of namespace LastExpress

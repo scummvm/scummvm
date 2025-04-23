@@ -34,12 +34,12 @@ public:
 	~Milos() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
 	/**
-	 * Draws the entity
+	 * Draws the character
 	 *
 	 * @param sequence The sequence to draw
 	 */
@@ -62,7 +62,7 @@ public:
 	DECLARE_FUNCTION_2(enterExitCompartment2, const char *sequence, ObjectIndex compartment)
 
 	/**
-	 * Process callback action when the entity direction is not kDirectionRight
+	 * Process callback action when the character direction is not kDirectionRight
 	 */
 	DECLARE_FUNCTION(callbackActionOnDirection)
 

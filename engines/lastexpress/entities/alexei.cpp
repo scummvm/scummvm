@@ -34,7 +34,7 @@
 
 namespace LastExpress {
 
-Alexei::Alexei(LastExpressEngine *engine) : Entity(engine, kEntityAlexei) {
+Alexei::Alexei(LastExpressEngine *engine) : Entity(engine, kCharacterAlexei) {
 	ADD_CALLBACK_FUNCTION(Alexei, reset);
 	ADD_CALLBACK_FUNCTION_S(Alexei, playSound);
 	ADD_CALLBACK_FUNCTION_I(Alexei, updateFromTime);
@@ -106,7 +106,7 @@ IMPLEMENT_FUNCTION_S(4, Alexei, draw)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_SII(5, Alexei, updatePosition, CarIndex, Position)
+IMPLEMENT_FUNCTION_SII(5, Alexei, updatePosition, CarIndex, PositionOld)
 	Entity::updatePosition(savepoint);
 IMPLEMENT_FUNCTION_END
 
@@ -121,7 +121,7 @@ IMPLEMENT_FUNCTION(7, Alexei, callbackActionOnDirection)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_SIIS(8, Alexei, callSavepoint, EntityIndex, ActionIndex)
+IMPLEMENT_FUNCTION_SIIS(8, Alexei, callSavepoint, CharacterIndex, CharacterActions)
 	Entity::callSavepoint(savepoint);
 IMPLEMENT_FUNCTION_END
 
@@ -136,12 +136,12 @@ IMPLEMENT_FUNCTION_II(10, Alexei, updateEntity, CarIndex, EntityPosition)
 	default:
 		break;
 
-	case kActionExcuseMeCath:
+	case kCharacterActionExcuseMeCath:
 		if (getEntities()->isPlayerPosition(kCarGreenSleeping, 18) || getEntities()->isPlayerPosition(kCarRedSleeping, 18)) {
-			getSound()->excuseMe(kEntityAlexei);
+			getSound()->excuseMe(kCharacterAlexei);
 		} else {
-			if (getEvent(kEventAlexeiSalonVassili) || (getEvent(kEventTatianaAskMatchSpeakRussian) && getInventory()->hasItem(kItemPassengerList))) {
-				getSound()->playSound(kEntityPlayer, rnd(2) ? "CAT1012" : "CAT1012A");
+			if (HELPERgetEvent(kEventAlexeiSalonVassili) || (HELPERgetEvent(kEventTatianaAskMatchSpeakRussian) && getInventory()->hasItem(kItemPassengerList))) {
+				getSound()->playSound(kCharacterCath, rnd(2) ? "CAT1012" : "CAT1012A");
 			} else {
 				getSound()->excuseMeCath();
 			}
@@ -149,7 +149,7 @@ IMPLEMENT_FUNCTION_II(10, Alexei, updateEntity, CarIndex, EntityPosition)
 		// Stop execution here
 		return;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
@@ -173,42 +173,42 @@ IMPLEMENT_FUNCTION(13, Alexei, enterComparment)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_updateEntity(kCarGreenSleeping, kPosition_7500);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityAlexei, kEntityMertens, kAction302614416);
-			getEntities()->drawSequenceLeft(kEntityAlexei, "602DB");
-			getEntities()->enterCompartment(kEntityAlexei, kObjectCompartment2, true);
+			getSavePoints()->push(kCharacterAlexei, kCharacterCond1, kCharacterAction302614416);
+			getEntities()->drawSequenceLeft(kCharacterAlexei, "602DB");
+			getEntities()->enterCompartment(kCharacterAlexei, kObjectCompartment2, true);
 
 			getData()->location = kLocationInsideCompartment;
 
-			if (getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_7500)) {
-				getAction()->playAnimation(isNight() ? kEventCathTurningNight : kEventCathTurningDay);
-				getSound()->playSound(kEntityPlayer, "BUMP");
+			if (getEntities()->isInsideCompartment(kCharacterCath, kCarGreenSleeping, kPosition_7500)) {
+				getActionOld()->playAnimation(isNightOld() ? kEventCathTurningNight : kEventCathTurningDay);
+				getSound()->playSound(kCharacterCath, "BUMP");
 				getScenes()->loadSceneFromObject(kObjectCompartment2, true);
 			}
 			break;
 
 		case 2:
-			getEntities()->exitCompartment(kEntityAlexei, kObjectCompartment2, true);
+			getEntities()->exitCompartment(kCharacterAlexei, kObjectCompartment2, true);
 			getData()->location = kLocationInsideCompartment;
 			getData()->entityPosition = kPosition_7500;
-			getEntities()->clearSequences(kEntityAlexei);
+			getEntities()->clearSequences(kCharacterAlexei);
 
 			callbackAction();
 			break;
 		}
 		break;
 
-	case kAction135664192:
+	case kCharacterAction135664192:
 		setCallback(2);
 		setup_enterExitCompartment("602Eb", kObjectCompartment2);
 	}
@@ -220,23 +220,23 @@ IMPLEMENT_FUNCTION(14, Alexei, exitCompartment)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_enterExitCompartment("602Fb", kObjectCompartment2);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1) {
 			getData()->location = kLocationOutsideCompartment;
-			getSavePoints()->push(kEntityAlexei, kEntityMertens, kAction302614416);
-			getEntities()->drawSequenceLeft(kEntityAlexei, "602DB");
-			getEntities()->enterCompartment(kEntityAlexei, kObjectCompartment2, true);
+			getSavePoints()->push(kCharacterAlexei, kCharacterCond1, kCharacterAction302614416);
+			getEntities()->drawSequenceLeft(kCharacterAlexei, "602DB");
+			getEntities()->enterCompartment(kCharacterAlexei, kObjectCompartment2, true);
 		}
 		break;
 
-	case kAction135664192:
-		getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
-		getEntities()->exitCompartment(kEntityAlexei, kObjectCompartment2, true);
+	case kCharacterAction135664192:
+		getObjects()->update(kObjectCompartment2, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getEntities()->exitCompartment(kCharacterAlexei, kObjectCompartment2, true);
 
 		callbackAction();
 		break;
@@ -249,7 +249,7 @@ IMPLEMENT_FUNCTION(15, Alexei, pacingAtWindow)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (Entity::updateParameterCheck(params->param2, getState()->time, params->param1)) {
 			if (getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 				getData()->location = kLocationOutsideCompartment;
@@ -260,14 +260,14 @@ IMPLEMENT_FUNCTION(15, Alexei, pacingAtWindow)
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 5 * (3 * rnd(60) + 90);
 
 		setCallback(1);
 		setup_callbackActionRestaurantOrSalon();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -281,12 +281,12 @@ IMPLEMENT_FUNCTION(15, Alexei, pacingAtWindow)
 
 		case 2:
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->drawSequenceLeft(kEntityAlexei, "103E");
+			getEntities()->drawSequenceLeft(kCharacterAlexei, "103E");
 			break;
 
 		case 3:
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->drawSequenceLeft(kEntityAlexei, "103B");
+			getEntities()->drawSequenceLeft(kCharacterAlexei, "103B");
 
 			callbackAction();
 			break;
@@ -301,12 +301,12 @@ IMPLEMENT_FUNCTION_IS(16, Alexei, compartmentLogic, TimeValue)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!params->param7 && params->param1 < getState()->time && !params->param8) {
 			params->param8 = 1;
 
-			getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObjectHandleInsideBathroom, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartment2, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectHandleInsideBathroom, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 			callbackAction();
 			break;
@@ -319,17 +319,17 @@ IMPLEMENT_FUNCTION_IS(16, Alexei, compartmentLogic, TimeValue)
 			params->param5 = 0;
 			params->param6 = 1;
 
-			getObjects()->update(kObjectCompartment2, kEntityAlexei, kObjectLocation1, kCursorNormal, kCursorNormal);
-			getObjects()->update(kObjectHandleInsideBathroom, kEntityAlexei, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment2, kCharacterAlexei, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectHandleInsideBathroom, kCharacterAlexei, kObjectLocation1, kCursorNormal, kCursorNormal);
 		}
 
 		CURRENT_PARAM(1, 1) = 0;
 		break;
 
-	case kActionKnock:
-	case kActionOpenDoor:
-		getObjects()->update(kObjectCompartment2, kEntityAlexei, kObjectLocation1, kCursorNormal, kCursorNormal);
-		getObjects()->update(kObjectHandleInsideBathroom, kEntityAlexei, kObjectLocation1, kCursorNormal, kCursorNormal);
+	case kCharacterActionKnock:
+	case kCharacterActionOpenDoor:
+		getObjects()->update(kObjectCompartment2, kCharacterAlexei, kObjectLocation1, kCursorNormal, kCursorNormal);
+		getObjects()->update(kObjectHandleInsideBathroom, kCharacterAlexei, kObjectLocation1, kCursorNormal, kCursorNormal);
 
 		if (params->param5) {
 			if (savepoint.param.intValue == 18) {
@@ -346,28 +346,28 @@ IMPLEMENT_FUNCTION_IS(16, Alexei, compartmentLogic, TimeValue)
 				setup_playSound(getSound()->wrongDoorCath());
 			}
 		} else {
-			setCallback(savepoint.action == kActionKnock ? 1 : 2);
-			setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
+			setCallback(savepoint.action == kCharacterActionKnock ? 1 : 2);
+			setup_playSound(savepoint.action == kCharacterActionKnock ? "LIB012" : "LIB013");
 		}
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceLeft(kEntityAlexei, (char *)&params->seq);
-		getObjects()->update(kObjectCompartment2, kEntityAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectHandleInsideBathroom, kEntityAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceLeft(kCharacterAlexei, (char *)&params->seq);
+		getObjects()->update(kObjectCompartment2, kCharacterAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectHandleInsideBathroom, kCharacterAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (params->param6 || params->param5) {
-			getObjects()->update(kObjectCompartment2, kEntityAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObjectHandleInsideBathroom, kEntityAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartment2, kCharacterAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectHandleInsideBathroom, kCharacterAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 			params->param5 = 0;
 			params->param6 = 0;
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -379,8 +379,8 @@ IMPLEMENT_FUNCTION_IS(16, Alexei, compartmentLogic, TimeValue)
 			break;
 
 		case 3:
-			getObjects()->update(kObjectCompartment2, kEntityAlexei, kObjectLocation1, kCursorTalk, kCursorNormal);
-			getObjects()->update(kObjectHandleInsideBathroom, kEntityAlexei, kObjectLocation1, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObjectCompartment2, kCharacterAlexei, kObjectLocation1, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObjectHandleInsideBathroom, kCharacterAlexei, kObjectLocation1, kCursorTalk, kCursorNormal);
 			params->param5 = 1;
 			break;
 
@@ -403,34 +403,34 @@ IMPLEMENT_FUNCTION_IS(16, Alexei, compartmentLogic, TimeValue)
 
 		case 9:
 			getData()->location = kLocationOutsideCompartment;
-			getSavePoints()->push(kEntityAlexei, kEntityMertens, kAction156567128);
-			getEntities()->drawSequenceLeft(kEntityAlexei, "602Hb");
-			getEntities()->enterCompartment(kEntityAlexei, kObjectCompartment2, true);
+			getSavePoints()->push(kCharacterAlexei, kCharacterCond1, kCharacterAction156567128);
+			getEntities()->drawSequenceLeft(kCharacterAlexei, "602Hb");
+			getEntities()->enterCompartment(kCharacterAlexei, kObjectCompartment2, true);
 			break;
 
 		case 10:
-			getEntities()->exitCompartment(kEntityAlexei, kObjectCompartment2, true);
+			getEntities()->exitCompartment(kCharacterAlexei, kObjectCompartment2, true);
 
 			getData()->location = kLocationInsideCompartment;
 			getData()->entityPosition = kPosition_7500;
 
-			getEntities()->drawSequenceLeft(kEntityAlexei, (char *)&params->seq);
-			getObjects()->update(kObjectCompartment2, kEntityAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObjectHandleInsideBathroom, kEntityAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getEntities()->drawSequenceLeft(kCharacterAlexei, (char *)&params->seq);
+			getObjects()->update(kObjectCompartment2, kCharacterAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectHandleInsideBathroom, kCharacterAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 			params->param7 = 0;
 			break;
 		}
 		break;
 
-	case kAction124697504:
+	case kCharacterAction124697504:
 		setCallback(10);
 		setup_enterExitCompartment("602Ib", kObjectCompartment2);
 		break;
 
-	case kAction221617184:
+	case kCharacterAction221617184:
 		params->param7 = 1;
-		getSavePoints()->push(kEntityAlexei, kEntityMertens, kAction100906246);
+		getSavePoints()->push(kCharacterAlexei, kCharacterCond1, kCharacterAction100906246);
 
 		setCallback(7);
 		setup_playSound("CON1024");
@@ -444,14 +444,14 @@ IMPLEMENT_FUNCTION(17, Alexei, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Alexei, setup_atDinner));
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject10, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
-		getObjects()->update(kObjectHandleInsideBathroom, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+	case kCharacterActionDefault:
+		getObjects()->update(kObjectCompartment2, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject10, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+		getObjects()->update(kObjectHandleInsideBathroom, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 		getData()->entityPosition = kPosition_3969;
 		getData()->location = kLocationInsideCompartment;
@@ -466,18 +466,18 @@ IMPLEMENT_FUNCTION(18, Alexei, atDinner)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->time > kTime1089000 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			params->param2 = kItemNone;
 
 			getData()->location = kLocationOutsideCompartment;
 			getData()->inventoryItem = kItemNone;
 
-			getEntities()->updatePositionEnter(kEntityAlexei, kCarRestaurant, 63);
+			getEntities()->updatePositionEnter(kCharacterAlexei, kCarRestaurant, 63);
 			getInventory()->setLocationAndProcess(kItem17, kObjectLocation1);
 
 			setCallback(1);
-			setup_callSavepoint("005D", kEntityTables1, kActionDrawTablesWithChairs, "005E");
+			setup_callSavepoint("005D", kCharacterTableB, kCharacterActionDrawTablesWithChairs, "005E");
 			break;
 		}
 
@@ -491,7 +491,7 @@ IMPLEMENT_FUNCTION(18, Alexei, atDinner)
 		}
 		break;
 
-	case kAction1:
+	case kCharacterAction1:
 		params->param2 = kItemNone;
 		getData()->inventoryItem = kItemNone;
 
@@ -499,36 +499,36 @@ IMPLEMENT_FUNCTION(18, Alexei, atDinner)
 		setup_savegame(kSavegameTypeEvent, kEventAlexeiDiner);
 		break;
 
-	case kActionDefault:
-		getSavePoints()->push(kEntityAlexei, kEntityTables1, kAction136455232);
-		getEntities()->drawSequenceLeft(kEntityAlexei, "005B");
+	case kCharacterActionDefault:
+		getSavePoints()->push(kCharacterAlexei, kCharacterTableB, kCharacterAction136455232);
+		getEntities()->drawSequenceLeft(kCharacterAlexei, "005B");
 
 		params->param2 = kItemInvalid;
 		getData()->inventoryItem = kItemInvalid;
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		params->param1 = getEntities()->isPlayerPosition(kCarRestaurant, 63) ? 1 : 0;
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->updatePositionExit(kEntityAlexei, kCarRestaurant, 63);
+			getEntities()->updatePositionExit(kCharacterAlexei, kCarRestaurant, 63);
 			setup_returnCompartment();
 			break;
 
 		case 2:
-			getAction()->playAnimation(getProgress().jacket == kJacketGreen ? kEventAlexeiDiner : kEventAlexeiDinerOriginalJacket);
-			getSavePoints()->push(kEntityAlexei, kEntityTables1, kActionDrawTablesWithChairs, "005E");
+			getActionOld()->playAnimation(getProgress().jacket == kJacketGreen ? kEventAlexeiDiner : kEventAlexeiDinerOriginalJacket);
+			getSavePoints()->push(kCharacterAlexei, kCharacterTableB, kCharacterActionDrawTablesWithChairs, "005E");
 
 			getData()->entityPosition = kPosition_3650;
 			getData()->location = kLocationOutsideCompartment;
 
-			getEntities()->clearSequences(kEntityAlexei);
+			getEntities()->clearSequences(kCharacterAlexei);
 			getInventory()->get(kItem17)->location = kObjectLocation1;
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 63);
 
@@ -537,15 +537,15 @@ IMPLEMENT_FUNCTION(18, Alexei, atDinner)
 		}
 		break;
 
-	case kAction168046720:
+	case kCharacterAction168046720:
 		getData()->inventoryItem = kItemNone;
 		break;
 
-	case kAction168627977:
+	case kCharacterAction168627977:
 		getData()->inventoryItem = (InventoryItem)LOW_BYTE(params->param2);
 		break;
 
-	case kAction225182640:
+	case kCharacterAction225182640:
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
@@ -557,12 +557,12 @@ IMPLEMENT_FUNCTION(19, Alexei, returnCompartment)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_draw("811DS");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -596,17 +596,17 @@ IMPLEMENT_FUNCTION(19, Alexei, returnCompartment)
 			break;
 
 		case 6:
-			getEntities()->updatePositionEnter(kEntityAlexei, kCarRestaurant, 63);
+			getEntities()->updatePositionEnter(kCharacterAlexei, kCarRestaurant, 63);
 			getScenes()->loadSceneFromItemPosition(kItem17);
-			getSavePoints()->push(kEntityAlexei, kEntityTables1, kAction136455232);
+			getSavePoints()->push(kCharacterAlexei, kCharacterTableB, kCharacterAction136455232);
 
 			setCallback(7);
-			setup_callSavepoint("005F", kEntityTables1, kActionDrawTablesWithChairs, "005G");
+			setup_callSavepoint("005F", kCharacterTableB, kCharacterActionDrawTablesWithChairs, "005G");
 			break;
 
 		case 7:
-			getEntities()->updatePositionExit(kEntityAlexei, kCarRestaurant, 63);
-			getSavePoints()->push(kEntityAlexei, kEntityWaiter2, kAction302996448);
+			getEntities()->updatePositionExit(kCharacterAlexei, kCarRestaurant, 63);
+			getSavePoints()->push(kCharacterAlexei, kCharacterWaiter2, kCharacterAction302996448);
 
 			setCallback(8);
 			setup_draw("934");
@@ -644,12 +644,12 @@ IMPLEMENT_FUNCTION(20, Alexei, goSalon)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_exitCompartment();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -687,7 +687,7 @@ IMPLEMENT_FUNCTION(21, Alexei, sitting)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (Entity::updateParameterCheck(params->param2, getState()->time, params->param1) && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			getData()->location = kLocationOutsideCompartment;
 			getData()->inventoryItem = kItemNone;
@@ -697,22 +697,22 @@ IMPLEMENT_FUNCTION(21, Alexei, sitting)
 		}
 		break;
 
-	case kAction1:
+	case kCharacterAction1:
 		getData()->inventoryItem = kItemNone;
 
 		setCallback(2);
 		setup_savegame(kSavegameTypeEvent, kEventAlexeiSalonPoem);
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceLeft(kEntityAlexei, "103B");
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceLeft(kCharacterAlexei, "103B");
 		params->param1 = 225 * (4 * rnd(3) + 4);
 
-		if (!getEvent(kEventAlexeiSalonPoem))
+		if (!HELPERgetEvent(kEventAlexeiSalonPoem))
 			getData()->inventoryItem = kItemParchemin;
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -723,20 +723,20 @@ IMPLEMENT_FUNCTION(21, Alexei, sitting)
 			break;
 
 		case 2:
-			getAction()->playAnimation(kEventAlexeiSalonPoem);
+			getActionOld()->playAnimation(kEventAlexeiSalonPoem);
 			getData()->location = kLocationOutsideCompartment;
 
-			getEntities()->drawSequenceRight(kEntityAlexei, "103D");
+			getEntities()->drawSequenceRight(kCharacterAlexei, "103D");
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 55);
-			getEntities()->updatePositionEnter(kEntityAlexei, kCarRestaurant, 52);
+			getEntities()->updatePositionEnter(kCharacterAlexei, kCarRestaurant, 52);
 
 			setCallback(3);
 			setup_callbackActionOnDirection();
 			break;
 
 		case 3:
-			getEntities()->drawSequenceLeft(kEntityAlexei, "103B");
-			getEntities()->updatePositionExit(kEntityAlexei, kCarRestaurant, 52);
+			getEntities()->drawSequenceLeft(kCharacterAlexei, "103B");
+			getEntities()->updatePositionExit(kCharacterAlexei, kCarRestaurant, 52);
 			getData()->location = kLocationInsideCompartment;
 			break;
 		}
@@ -750,7 +750,7 @@ IMPLEMENT_FUNCTION(22, Alexei, standingAtWindow)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (Entity::updateParameterCheck(params->param2, getState()->time, params->param1)) {
 			if (getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 				getData()->location = kLocationOutsideCompartment;
@@ -768,7 +768,7 @@ IMPLEMENT_FUNCTION(22, Alexei, standingAtWindow)
 		if (getState()->time > kTime1138500) {
 			params->param3 = kTimeInvalid;
 		} else {
-			if ((!getEntities()->isInSalon(kEntityPlayer) && !getEntities()->isInRestaurant(kEntityPlayer)) || !params->param3)
+			if ((!getEntities()->isInSalon(kCharacterCath) && !getEntities()->isInRestaurant(kCharacterCath)) || !params->param3)
 				params->param3 = (uint)getState()->time;
 
 			if (params->param3 >= getState()->time)
@@ -782,19 +782,19 @@ IMPLEMENT_FUNCTION(22, Alexei, standingAtWindow)
 		setup_waitingForTatiana();
 		break;
 
-	case kAction1:
+	case kCharacterAction1:
 		setCallback(2);
 		setup_savegame(kSavegameTypeEvent, kEventAlexeiSalonPoem);
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 225 * (4 * rnd(4) + 8);
-		getEntities()->drawSequenceLeft(kEntityAlexei, "103E");
-		if (!getEvent(kEventAlexeiSalonPoem))
+		getEntities()->drawSequenceLeft(kCharacterAlexei, "103E");
+		if (!HELPERgetEvent(kEventAlexeiSalonPoem))
 			getData()->inventoryItem = kItemParchemin;
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -805,12 +805,12 @@ IMPLEMENT_FUNCTION(22, Alexei, standingAtWindow)
 			break;
 
 		case 2:
-			getAction()->playAnimation(kEventAlexeiSalonPoem);
+			getActionOld()->playAnimation(kEventAlexeiSalonPoem);
 			getData()->inventoryItem = kItemNone;
 			getData()->location = kLocationOutsideCompartment;
 
-			getEntities()->drawSequenceRight(kEntityAlexei, "103D");
-			getEntities()->updatePositionEnter(kEntityAlexei, kCarRestaurant, 52);
+			getEntities()->drawSequenceRight(kCharacterAlexei, "103D");
+			getEntities()->updatePositionEnter(kCharacterAlexei, kCarRestaurant, 52);
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 55);
 
 			setCallback(3);
@@ -818,7 +818,7 @@ IMPLEMENT_FUNCTION(22, Alexei, standingAtWindow)
 			break;
 
 		case 3:
-			getEntities()->updatePositionExit(kEntityAlexei, kCarRestaurant, 52);
+			getEntities()->updatePositionExit(kCharacterAlexei, kCarRestaurant, 52);
 			getData()->location = kLocationInsideCompartment;
 
 			setup_sitting();
@@ -834,38 +834,38 @@ IMPLEMENT_FUNCTION(23, Alexei, waitingForTatiana)
 	default:
 		break;
 
-	case kActionNone:
-		getData()->inventoryItem = (!getEntities()->isInRestaurant(kEntityTatiana) || getEvent(kEventAlexeiSalonPoem)) ? kItemNone : kItemParchemin;
+	case kCharacterActionNone:
+		getData()->inventoryItem = (!getEntities()->isInRestaurant(kCharacterTatiana) || HELPERgetEvent(kEventAlexeiSalonPoem)) ? kItemNone : kItemParchemin;
 		break;
 
-	case kAction1:
+	case kCharacterAction1:
 		setCallback(2);
 		setup_savegame(kSavegameTypeEvent, kEventAlexeiSalonPoem);
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->location = kLocationInsideCompartment;
-		getSavePoints()->push(kEntityAlexei, kEntityTatiana, kAction124973510);
+		getSavePoints()->push(kCharacterAlexei, kCharacterTatiana, kCharacterAction124973510);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getAction()->playAnimation(kEventAlexeiSalonVassili);
+			getActionOld()->playAnimation(kEventAlexeiSalonVassili);
 
 			getData()->location = kLocationOutsideCompartment;
 
-			getEntities()->drawSequenceLeft(kEntityAlexei, "103F");
+			getEntities()->drawSequenceLeft(kCharacterAlexei, "103F");
 			getScenes()->processScene();
 
 			setup_upset();
 			break;
 
 		case 2:
-			getAction()->playAnimation(kEventAlexeiSalonPoem);
+			getActionOld()->playAnimation(kEventAlexeiSalonPoem);
 
 			getData()->inventoryItem = kItemNone;
 
@@ -874,8 +874,8 @@ IMPLEMENT_FUNCTION(23, Alexei, waitingForTatiana)
 		}
 		break;
 
-	case kAction157159392:
-		if (getEntities()->isInSalon(kEntityPlayer)) {
+	case kCharacterAction157159392:
+		if (getEntities()->isInSalon(kCharacterCath)) {
 			setCallback(1);
 			setup_savegame(kSavegameTypeEvent, kEventAlexeiSalonVassili);
 		} else {
@@ -883,7 +883,7 @@ IMPLEMENT_FUNCTION(23, Alexei, waitingForTatiana)
 		}
 		break;
 
-	case kAction188784532:
+	case kCharacterAction188784532:
 		setup_upset();
 		break;
 	}
@@ -895,27 +895,27 @@ IMPLEMENT_FUNCTION(24, Alexei, upset)
 	default:
 		break;
 
-	case kAction1:
+	case kCharacterAction1:
 		getData()->inventoryItem = kItemNone;
 		setCallback(1);
 		setup_savegame(kSavegameTypeEvent, kEventAlexeiSalonCath);
 		break;
 
-	case kActionDefault:
-		if (getEvent(kEventAlexeiSalonVassili))
+	case kCharacterActionDefault:
+		if (HELPERgetEvent(kEventAlexeiSalonVassili))
 			getData()->inventoryItem = kItemInvalid;
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getAction()->playAnimation(kEventAlexeiSalonCath);
+			getActionOld()->playAnimation(kEventAlexeiSalonCath);
 			getData()->car = kCarRedSleeping;
 			getData()->entityPosition = kPosition_9460;
-			getEntities()->clearSequences(kEntityAlexei);
+			getEntities()->clearSequences(kCharacterAlexei);
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 55);
 			setup_returnCompartmentNight();
 			break;
@@ -926,7 +926,7 @@ IMPLEMENT_FUNCTION(24, Alexei, upset)
 		}
 		break;
 
-	case kAction135854208:
+	case kCharacterAction135854208:
 		getData()->inventoryItem = kItemNone;
 		setCallback(2);
 		setup_draw("103G");
@@ -940,12 +940,12 @@ IMPLEMENT_FUNCTION(25, Alexei, returnCompartmentNight)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_enterComparment();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -977,36 +977,36 @@ IMPLEMENT_FUNCTION(26, Alexei, function26)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTime1512000, params->param1, WRAP_SETUP_FUNCTION(Alexei, setup_function27));
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_7500;
 		getData()->car = kCarGreenSleeping;
 		getData()->location = kLocationInsideCompartment;
 
-		getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectHandleInsideBathroom, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject10, kEntityPlayer, kObjectLocation1, kCursorKeepValue, kCursorKeepValue);
+		getObjects()->update(kObjectCompartment2, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectHandleInsideBathroom, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject10, kCharacterCath, kObjectLocation1, kCursorKeepValue, kCursorKeepValue);
 
 		if (getEntities()->isPlayerPosition(kCarGreenSleeping, 61))
 			getScenes()->loadSceneFromPosition(kCarGreenSleeping, 66);
 
-		getEntities()->clearSequences(kEntityAlexei);
+		getEntities()->clearSequences(kCharacterAlexei);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Alexei, function27)
-	if (savepoint.action == kActionDefault) {
-		getObjects()->update(kObject10, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+	if (savepoint.action == kCharacterActionDefault) {
+		getObjects()->update(kObject10, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
 		if (getEntities()->isPlayerPosition(kCarGreenSleeping, 66))
 			getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
 
-		getEntities()->drawSequenceLeft(kEntityAlexei, "412");
+		getEntities()->drawSequenceLeft(kCharacterAlexei, "412");
 	}
 IMPLEMENT_FUNCTION_END
 
@@ -1016,16 +1016,16 @@ IMPLEMENT_FUNCTION(28, Alexei, chapter2)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_inCompartment2();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityAlexei);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterAlexei);
 
-		getObjects()->update(kObjectCompartment2, kEntityAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject10, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
-		getObjects()->update(kObjectHandleInsideBathroom, kEntityAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment2, kCharacterAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject10, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+		getObjects()->update(kObjectHandleInsideBathroom, kCharacterAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 		getData()->entityPosition = kPosition_7500;
 		getData()->location = kLocationInsideCompartment;
@@ -1042,12 +1042,12 @@ IMPLEMENT_FUNCTION(29, Alexei, inCompartment2)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_compartmentLogic(kTime1791000, "411");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1076,15 +1076,15 @@ IMPLEMENT_FUNCTION(29, Alexei, inCompartment2)
 			break;
 
 		case 5:
-			getEntities()->updatePositionEnter(kEntityAlexei, kCarRestaurant, 63);
+			getEntities()->updatePositionEnter(kCharacterAlexei, kCarRestaurant, 63);
 
 			setCallback(6);
-			setup_callSavepoint("018B", kEntityTables1, kAction136455232, "BOGUS");
+			setup_callSavepoint("018B", kCharacterTableB, kCharacterAction136455232, "BOGUS");
 			break;
 
 		case 6:
-			getEntities()->updatePositionExit(kEntityAlexei, kCarRestaurant, 63);
-			getSavePoints()->push(kEntityAlexei, kEntityTatiana, kAction290869168);
+			getEntities()->updatePositionExit(kCharacterAlexei, kCarRestaurant, 63);
+			getSavePoints()->push(kCharacterAlexei, kCharacterTatiana, kCharacterAction290869168);
 			setup_atBreakfast();
 			break;
 		}
@@ -1098,26 +1098,26 @@ IMPLEMENT_FUNCTION(30, Alexei, atBreakfast)
 	default:
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+	case kCharacterActionDefault:
+		getObjects()->update(kObjectCompartment2, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		getData()->car = kCarRestaurant;
 		getData()->location = kLocationInsideCompartment;
 
-		getEntities()->drawSequenceLeft(kEntityAlexei, "018C");
-		getSavePoints()->push(kEntityAlexei, kEntityTables1, kAction136455232);
+		getEntities()->drawSequenceLeft(kCharacterAlexei, "018C");
+		getSavePoints()->push(kCharacterAlexei, kCharacterTableB, kCharacterAction136455232);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->updatePositionExit(kEntityAlexei, kCarRestaurant, 63);
-			getSavePoints()->push(kEntityAlexei, kEntityTatiana, kAction156444784);
-			getEntities()->drawSequenceLeft(kEntityAlexei, "018E");
+			getEntities()->updatePositionExit(kCharacterAlexei, kCarRestaurant, 63);
+			getSavePoints()->push(kCharacterAlexei, kCharacterTatiana, kCharacterAction156444784);
+			getEntities()->drawSequenceLeft(kCharacterAlexei, "018E");
 
-			if (getEntities()->isInRestaurant(kEntityPlayer))
+			if (getEntities()->isInRestaurant(kCharacterCath))
 				getProgress().field_68 = 1;
 
 			setCallback(2);
@@ -1125,27 +1125,27 @@ IMPLEMENT_FUNCTION(30, Alexei, atBreakfast)
 			break;
 
 		case 2:
-			getSound()->playSound(kEntityAlexei, "TAT2116A");
-			getEntities()->updatePositionEnter(kEntityAlexei, kCarRestaurant, 63);
+			getSound()->playSound(kCharacterAlexei, "TAT2116A");
+			getEntities()->updatePositionEnter(kCharacterAlexei, kCarRestaurant, 63);
 
 			setCallback(3);
-			setup_callSavepoint("018F", kEntityTatiana, kAction123857088, "BOGUS");
+			setup_callSavepoint("018F", kCharacterTatiana, kCharacterAction123857088, "BOGUS");
 			break;
 
 		case 3:
-			getEntities()->updatePositionExit(kEntityAlexei, kCarRestaurant, 63);
+			getEntities()->updatePositionExit(kCharacterAlexei, kCarRestaurant, 63);
 			setup_returnCompartment2();
 			break;
 		}
 		break;
 
-	case kAction236053296:
-		getEntities()->drawSequenceRight(kEntityAlexei, "018D1");
-		getEntities()->drawSequenceRight(kEntityTatiana, "018D2");
-		getEntities()->updatePositionEnter(kEntityAlexei, kCarRestaurant, 63);
+	case kCharacterAction236053296:
+		getEntities()->drawSequenceRight(kCharacterAlexei, "018D1");
+		getEntities()->drawSequenceRight(kCharacterTatiana, "018D2");
+		getEntities()->updatePositionEnter(kCharacterAlexei, kCarRestaurant, 63);
 
 		if (savepoint.param.intValue)
-			getScenes()->loadSceneFromPosition(kCarRestaurant, (Position)savepoint.param.intValue);
+			getScenes()->loadSceneFromPosition(kCarRestaurant, (PositionOld)savepoint.param.intValue);
 
 		setCallback(1);
 		setup_callbackActionOnDirection();
@@ -1159,16 +1159,16 @@ IMPLEMENT_FUNCTION(31, Alexei, returnCompartment2)
 	default:
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceRight(kEntityAlexei, "811DS");
-		if (getEntities()->isInRestaurant(kEntityPlayer))
-			getEntities()->updateFrame(kEntityAlexei);
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceRight(kCharacterAlexei, "811DS");
+		if (getEntities()->isInRestaurant(kCharacterCath))
+			getEntities()->updateFrame(kCharacterAlexei);
 
 		setCallback(1);
 		setup_callbackActionOnDirection();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1196,16 +1196,16 @@ IMPLEMENT_FUNCTION(32, Alexei, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_playingChess();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityAlexei);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterAlexei);
 
-		getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject10, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
-		getObjects()->update(kObjectHandleInsideBathroom, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment2, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject10, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+		getObjects()->update(kObjectHandleInsideBathroom, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRestaurant;
@@ -1221,12 +1221,12 @@ IMPLEMENT_FUNCTION(33, Alexei, playingChess)
 	default:
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
 			setup_inPart3();
 		break;
 
-	case kAction122288808:
+	case kCharacterAction122288808:
 		getData()->entityPosition = kPosition_9270;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarRedSleeping;
@@ -1235,8 +1235,8 @@ IMPLEMENT_FUNCTION(33, Alexei, playingChess)
 		setup_enterComparment();
 		break;
 
-	case kAction122358304:
-		getEntities()->drawSequenceLeft(kEntityAlexei, "BLANK");
+	case kCharacterAction122358304:
+		getEntities()->drawSequenceLeft(kCharacterAlexei, "BLANK");
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -1247,7 +1247,7 @@ IMPLEMENT_FUNCTION(34, Alexei, inPart3)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		if (getEntities()->isPlayerPosition(kCarGreenSleeping, 61))
 			getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
 
@@ -1255,7 +1255,7 @@ IMPLEMENT_FUNCTION(34, Alexei, inPart3)
 		setup_compartmentLogic(kTime2083500, "411");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1294,7 +1294,7 @@ IMPLEMENT_FUNCTION(34, Alexei, inPart3)
 			break;
 
 		case 7:
-			getObjects()->update(kObject10, kEntityPlayer, kObjectLocation1, kCursorKeepValue, kCursorKeepValue);
+			getObjects()->update(kObject10, kCharacterCath, kObjectLocation1, kCursorKeepValue, kCursorKeepValue);
 			if (getEntities()->isPlayerPosition(kCarGreenSleeping, 61))
 				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 66);
 
@@ -1313,7 +1313,7 @@ IMPLEMENT_FUNCTION(34, Alexei, inPart3)
 			break;
 
 		case 10:
-			getObjects()->update(kObject10, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+			getObjects()->update(kObject10, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 			if (getEntities()->isPlayerPosition(kCarGreenSleeping, 66))
 				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
 
@@ -1331,8 +1331,8 @@ IMPLEMENT_FUNCTION(35, Alexei, pacing3)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->isInSalon(kEntityPlayer)) {
+	case kCharacterActionNone:
+		if (getEntities()->isInSalon(kCharacterCath)) {
 			if (Entity::updateParameterCheck(params->param2, getState()->time, 2700)) {
 				setCallback(1);
 				setup_callbackActionRestaurantOrSalon();
@@ -1358,13 +1358,13 @@ label_callback_3:
 		setup_callbackActionRestaurantOrSalon();
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 15 * rnd(120);
-		getEntities()->drawSequenceLeft(kEntityAlexei, "103B");
+		getEntities()->drawSequenceLeft(kCharacterAlexei, "103B");
 		getData()->location = kLocationInsideCompartment;
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1397,35 +1397,35 @@ IMPLEMENT_FUNCTION(36, Alexei, goSalon3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param3 || params->param2)
 			break;
 
 		if (!Entity::updateParameter(params->param4, getState()->timeTicks, params->param1))
 			break;
 
-		getEntities()->drawSequenceRight(kEntityAlexei, "124B");
+		getEntities()->drawSequenceRight(kCharacterAlexei, "124B");
 
 		params->param2 = 1;
 		params->param4 = 0;
 		break;
 
-	case kActionExitCompartment:
+	case kCharacterActionExitCompartment:
 		if (params->param2) {
-			getEntities()->drawSequenceLeft(kEntityAlexei, "124A");
+			getEntities()->drawSequenceLeft(kCharacterAlexei, "124A");
 			params->param1 = 5 * (3 * rnd(15) + 15);
 			params->param2 = 0;
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 5 * (3 * rnd(15) + 15);
 
 		setCallback(1);
 		setup_updateEntity(kCarRestaurant, kPosition_850);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1436,7 +1436,7 @@ IMPLEMENT_FUNCTION(36, Alexei, goSalon3)
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityAlexei, kEntityAbbot, kAction222609266);
+			getSavePoints()->push(kCharacterAlexei, kCharacterAbbot, kCharacterAction222609266);
 			getData()->entityPosition = kPosition_1540;
 			getData()->location = kLocationOutsideCompartment;
 
@@ -1446,7 +1446,7 @@ IMPLEMENT_FUNCTION(36, Alexei, goSalon3)
 
 		case 3:
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->drawSequenceLeft(kEntityAlexei, "124A");
+			getEntities()->drawSequenceLeft(kCharacterAlexei, "124A");
 			break;
 
 		case 4:
@@ -1455,13 +1455,13 @@ IMPLEMENT_FUNCTION(36, Alexei, goSalon3)
 		}
 		break;
 
-	case kAction122288808:
+	case kCharacterAction122288808:
 		setCallback(4);
 		setup_enterComparment();
 		break;
 
-	case kAction122358304:
-		getEntities()->drawSequenceLeft(kEntityAlexei, "BLANK");
+	case kCharacterAction122358304:
+		getEntities()->drawSequenceLeft(kCharacterAlexei, "BLANK");
 		params->param3 = 1;
 		break;
 	}
@@ -1473,16 +1473,16 @@ IMPLEMENT_FUNCTION(37, Alexei, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_inCompartment4();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityAlexei);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterAlexei);
 
-		getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject10, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
-		getObjects()->update(kObjectHandleInsideBathroom, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment2, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject10, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+		getObjects()->update(kObjectHandleInsideBathroom, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 		getData()->entityPosition = kPosition_7500;
 		getData()->location = kLocationInsideCompartment;
@@ -1498,12 +1498,12 @@ IMPLEMENT_FUNCTION(38, Alexei, inCompartment4)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_compartmentLogic(kTime2354400, "411");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
 			setup_meetTatiana();
 		break;
@@ -1516,7 +1516,7 @@ IMPLEMENT_FUNCTION(39, Alexei, meetTatiana)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!params->param2)
 			break;
 
@@ -1528,7 +1528,7 @@ IMPLEMENT_FUNCTION(39, Alexei, meetTatiana)
 		if (params->param5 != kTimeInvalid && params->param3 < getState()->time) {
 
 			if (params->param4 >= getState()->time) {
-				if (getEntities()->isInGreenCarEntrance(kEntityPlayer) || !params->param5)
+				if (getEntities()->isInGreenCarEntrance(kCharacterCath) || !params->param5)
 					params->param5 = (uint)getState()->time;
 
 				if (params->param5 >= getState()->time)
@@ -1537,11 +1537,11 @@ IMPLEMENT_FUNCTION(39, Alexei, meetTatiana)
 
 			params->param5 = kTimeInvalid;
 
-			getEntities()->updatePositionExit(kEntityAlexei, kCarGreenSleeping, 70);
-			getEntities()->updatePositionExit(kEntityAlexei, kCarGreenSleeping, 71);
+			getEntities()->updatePositionExit(kCharacterAlexei, kCarGreenSleeping, 70);
+			getEntities()->updatePositionExit(kCharacterAlexei, kCarGreenSleeping, 71);
 
-			if (getEntities()->isInGreenCarEntrance(kEntityPlayer)) {
-				getSound()->excuseMe(kEntityAlexei);
+			if (getEntities()->isInGreenCarEntrance(kCharacterCath)) {
+				getSound()->excuseMe(kCharacterAlexei);
 
 				if (getEntities()->isPlayerPosition(kCarGreenSleeping, 62))
 					getScenes()->loadSceneFromPosition(kCarGreenSleeping, 72);
@@ -1551,23 +1551,23 @@ IMPLEMENT_FUNCTION(39, Alexei, meetTatiana)
 		}
 		break;
 
-	case kActionExitCompartment:
+	case kCharacterActionExitCompartment:
 		if (!params->param1 && !params->param2)
-			getEntities()->drawSequenceLeft(kEntityAlexei, "306F");
+			getEntities()->drawSequenceLeft(kCharacterAlexei, "306F");
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_enterExitCompartment("602FB", kObjectCompartment2);
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (getEntities()->isPlayerPosition(kCarGreenSleeping, 62)) {
 			if (params->param1) {
 				if (!params->param2)
 					break;
 			} else if (!params->param2) {
-				getEntities()->drawSequenceRight(kEntityAlexei, "306A");
+				getEntities()->drawSequenceRight(kCharacterAlexei, "306A");
 				break;
 			}
 
@@ -1575,13 +1575,13 @@ IMPLEMENT_FUNCTION(39, Alexei, meetTatiana)
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartment2, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 			getData()->location = kLocationOutsideCompartment;
 
 			setCallback(2);
@@ -1589,27 +1589,27 @@ IMPLEMENT_FUNCTION(39, Alexei, meetTatiana)
 			break;
 
 		case 2:
-			getEntities()->clearSequences(kEntityAlexei);
+			getEntities()->clearSequences(kCharacterAlexei);
 
-			if (getEntities()->isInGreenCarEntrance(kEntityPlayer)) {
-				getSound()->excuseMe(kEntityAlexei);
+			if (getEntities()->isInGreenCarEntrance(kCharacterCath)) {
+				getSound()->excuseMe(kCharacterAlexei);
 
 				if (getEntities()->isPlayerPosition(kCarGreenSleeping, 62))
 					getScenes()->loadSceneFromPosition(kCarGreenSleeping, 72);
 			}
 
-			getEntities()->updatePositionEnter(kEntityAlexei, kCarGreenSleeping, 70);
-			getEntities()->updatePositionEnter(kEntityAlexei, kCarGreenSleeping, 71);
+			getEntities()->updatePositionEnter(kCharacterAlexei, kCarGreenSleeping, 70);
+			getEntities()->updatePositionEnter(kCharacterAlexei, kCarGreenSleeping, 71);
 			break;
 		}
 		break;
 
-	case kAction123536024:
+	case kCharacterAction123536024:
 		params->param2 = 1;
 		break;
 
-	case kAction123712592:
-		getEntities()->clearSequences(kEntityAlexei);
+	case kCharacterAction123712592:
+		getEntities()->clearSequences(kCharacterAlexei);
 		params->param1 = 1;
 		break;
 	}
@@ -1621,25 +1621,25 @@ IMPLEMENT_FUNCTION(40, Alexei, leavePlatform)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_updateEntity(kCarGreenSleeping, kPosition_7500);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->drawSequenceRight(kEntityAlexei, "602Eb");
-			getEntities()->enterCompartment(kEntityAlexei, kObjectCompartment2);
+			getEntities()->drawSequenceRight(kCharacterAlexei, "602Eb");
+			getEntities()->enterCompartment(kCharacterAlexei, kObjectCompartment2);
 
 			getData()->location = kLocationInsideCompartment;
 
-			if (getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_7500)) {
-				getAction()->playAnimation(isNight() ? kEventCathTurningNight : kEventCathTurningDay);
-				getSound()->playSound(kEntityPlayer, "BUMP");
+			if (getEntities()->isInsideCompartment(kCharacterCath, kCarGreenSleeping, kPosition_7500)) {
+				getActionOld()->playAnimation(isNightOld() ? kEventCathTurningNight : kEventCathTurningDay);
+				getSound()->playSound(kCharacterCath, "BUMP");
 				getScenes()->loadSceneFromObject(kObjectCompartment2);
 			}
 
@@ -1648,10 +1648,10 @@ IMPLEMENT_FUNCTION(40, Alexei, leavePlatform)
 			break;
 
 		case 2:
-			getEntities()->exitCompartment(kEntityAlexei, kObjectCompartment2);
+			getEntities()->exitCompartment(kCharacterAlexei, kObjectCompartment2);
 			getData()->entityPosition = kPosition_7500;
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityAlexei);
+			getEntities()->clearSequences(kCharacterAlexei);
 
 			setup_inCompartmentAgain();
 			break;
@@ -1666,7 +1666,7 @@ IMPLEMENT_FUNCTION(41, Alexei, inCompartmentAgain)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		if (getEntities()->isPlayerPosition(kCarGreenSleeping, 66))
 			getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
 
@@ -1674,7 +1674,7 @@ IMPLEMENT_FUNCTION(41, Alexei, inCompartmentAgain)
 		setup_compartmentLogic(kTime2403000, "411");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
 			setup_goSalon4();
 		break;
@@ -1687,18 +1687,18 @@ IMPLEMENT_FUNCTION(42, Alexei, goSalon4)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_exitCompartment();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityAlexei, kEntityTatiana, kAction191198209);
+			getSavePoints()->push(kCharacterAlexei, kCharacterTatiana, kCharacterAction191198209);
 
 			setCallback(2);
 			setup_updateEntity(kCarRestaurant, kPosition_850);
@@ -1724,7 +1724,7 @@ IMPLEMENT_FUNCTION(43, Alexei, pacing)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->time < kTime1806300 && Entity::updateParameterCheck(params->param2, getState()->time, params->param1)) {
 			if (getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 				setCallback(1);
@@ -1742,12 +1742,12 @@ label_callback_1:
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 5 * (3 * rnd(120) + 180);
-		getEntities()->drawSequenceLeft(kEntityAlexei, "103B");
+		getEntities()->drawSequenceLeft(kCharacterAlexei, "103B");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1778,15 +1778,15 @@ IMPLEMENT_FUNCTION(44, Alexei, goToPlatform)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->time > kTime2475000 && !params->param1) {
 			params->param1 = 1;
 
-			getEntities()->updatePositionExit(kEntityAlexei, kCarGreenSleeping, 70);
-			getEntities()->updatePositionExit(kEntityAlexei, kCarGreenSleeping, 71);
+			getEntities()->updatePositionExit(kCharacterAlexei, kCarGreenSleeping, 70);
+			getEntities()->updatePositionExit(kCharacterAlexei, kCarGreenSleeping, 71);
 
-			if (getEntities()->isInGreenCarEntrance(kEntityPlayer)) {
-				getSound()->excuseMe(kEntityAlexei);
+			if (getEntities()->isInGreenCarEntrance(kCharacterCath)) {
+				getSound()->excuseMe(kCharacterAlexei);
 
 				if (getEntities()->isPlayerPosition(kCarGreenSleeping, 62))
 					getScenes()->loadSceneFromPosition(kCarGreenSleeping, 72);
@@ -1796,7 +1796,7 @@ IMPLEMENT_FUNCTION(44, Alexei, goToPlatform)
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->car = kCarRedSleeping;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->entityPosition = kPosition_9460;
@@ -1805,34 +1805,34 @@ IMPLEMENT_FUNCTION(44, Alexei, goToPlatform)
 		setup_updateEntity(kCarGreenSleeping, kPosition_540);
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (getEntities()->isPlayerPosition(kCarGreenSleeping, 62)) {
 			setCallback(2);
 			setup_draw("306A");
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->clearSequences(kEntityAlexei);
+			getEntities()->clearSequences(kCharacterAlexei);
 
-			if (getEntities()->isInGreenCarEntrance(kEntityPlayer)) {
-				getSound()->excuseMe(kEntityAlexei);
+			if (getEntities()->isInGreenCarEntrance(kCharacterCath)) {
+				getSound()->excuseMe(kCharacterAlexei);
 
 				if (getEntities()->isPlayerPosition(kCarGreenSleeping, 62))
 					getScenes()->loadSceneFromPosition(kCarGreenSleeping, 72);
 			}
 
-			getEntities()->updatePositionEnter(kEntityAlexei, kCarGreenSleeping, 70);
-			getEntities()->updatePositionEnter(kEntityAlexei, kCarGreenSleeping, 71);
+			getEntities()->updatePositionEnter(kCharacterAlexei, kCarGreenSleeping, 70);
+			getEntities()->updatePositionEnter(kCharacterAlexei, kCarGreenSleeping, 71);
 			break;
 
 		case 2:
-			getEntities()->drawSequenceLeft(kEntityAlexei, "306F");
+			getEntities()->drawSequenceLeft(kCharacterAlexei, "306F");
 			break;
 		}
 		break;
@@ -1845,12 +1845,12 @@ IMPLEMENT_FUNCTION(45, Alexei, returnCompartment4)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_enterComparment();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1) {
 			if (getEntities()->isPlayerPosition(kCarGreenSleeping, 66))
 				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
@@ -1872,13 +1872,13 @@ IMPLEMENT_FUNCTION(46, Alexei, bombPlanB)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param1 == kTimeInvalid)
 			break;
 
 		if (getState()->time <= kTime2493000) {
 
-			if (getEntities()->isInSalon(kEntityPlayer) || getEntities()->isInSalon(kEntityAugust) || !params->param1)
+			if (getEntities()->isInSalon(kCharacterCath) || getEntities()->isInSalon(kCharacterAugust) || !params->param1)
 				params->param1 = (uint)getState()->time;
 
 			if (params->param1 >= getState()->time)
@@ -1889,8 +1889,8 @@ IMPLEMENT_FUNCTION(46, Alexei, bombPlanB)
 
 		getScenes()->loadSceneFromItemPosition(kItem22);
 
-		if (getEntities()->isInSalon(kEntityPlayer)) {
-			getSound()->excuseMe(kEntityAlexei);
+		if (getEntities()->isInSalon(kCharacterCath)) {
+			getSound()->excuseMe(kCharacterAlexei);
 
 			getScenes()->loadSceneFromPosition(kCarRestaurant, getScenes()->get(getState()->scene)->position);
 		}
@@ -1899,12 +1899,12 @@ IMPLEMENT_FUNCTION(46, Alexei, bombPlanB)
 		setup_enterComparment();
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_compartmentLogic(kTime2488500, "411");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1933,7 +1933,7 @@ IMPLEMENT_FUNCTION(46, Alexei, bombPlanB)
 			break;
 
 		case 6:
-			getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartment2, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 			getData()->location = kLocationOutsideCompartment;
 
 			setCallback(7);
@@ -1941,13 +1941,13 @@ IMPLEMENT_FUNCTION(46, Alexei, bombPlanB)
 			break;
 
 		case 7:
-			getEntities()->drawSequenceRight(kEntityAlexei, "602Eb");
-			getEntities()->enterCompartment(kEntityAlexei, kObjectCompartmentB);
+			getEntities()->drawSequenceRight(kCharacterAlexei, "602Eb");
+			getEntities()->enterCompartment(kCharacterAlexei, kObjectCompartmentB);
 			getData()->location = kLocationInsideCompartment;
 
-			if (getEntities()->checkFields19(kEntityPlayer, kCarRedSleeping, kPosition_7850)) {
-				getAction()->playAnimation(isNight() ? kEventCathTurningNight : kEventCathTurningDay);
-				getSound()->playSound(kEntityPlayer, "BUMP");
+			if (getEntities()->checkFields19(kCharacterCath, kCarRedSleeping, kPosition_7850)) {
+				getActionOld()->playAnimation(isNightOld() ? kEventCathTurningNight : kEventCathTurningDay);
+				getSound()->playSound(kCharacterCath, "BUMP");
 				getScenes()->loadSceneFromObject(kObjectCompartmentB);
 			}
 
@@ -1956,19 +1956,19 @@ IMPLEMENT_FUNCTION(46, Alexei, bombPlanB)
 			break;
 
 		case 8:
-			getEntities()->exitCompartment(kEntityAlexei, kObjectCompartmentB);
-			getEntities()->clearSequences(kEntityAlexei);
+			getEntities()->exitCompartment(kCharacterAlexei, kObjectCompartmentB);
+			getEntities()->clearSequences(kCharacterAlexei);
 			getData()->entityPosition = kPosition_8200;
 			getData()->location = kLocationInsideCompartment;
-			getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
-			getObjects()->update(kObject48, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentA, kCharacterCath, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject48, kCharacterCath, kObjectLocation1, kCursorNormal, kCursorNormal);
 
 			setCallback(9);
 			setup_playSound("TAT4167");
 			break;
 
 		case 9:
-			getSavePoints()->push(kEntityAlexei, kEntityChapters, kAction156435676);
+			getSavePoints()->push(kCharacterAlexei, kCharacterMaster, kCharacterAction156435676);
 			setup_function47();
 			break;
 		}
@@ -1978,22 +1978,22 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(47, Alexei, function47)
-	if (savepoint.action == kActionDefault) {
-		getEntities()->clearSequences(kEntityAlexei);
+	if (savepoint.action == kCharacterActionDefault) {
+		getEntities()->clearSequences(kCharacterAlexei);
 
 		getData()->entityPosition = kPositionNone;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarLocomotive;
 
-		getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectHandleInsideBathroom, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment2, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectHandleInsideBathroom, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(48, Alexei, chapter5)
-	if (savepoint.action == kActionDefault)
-		getEntities()->clearSequences(kEntityAlexei);
+	if (savepoint.action == kCharacterActionDefault)
+		getEntities()->clearSequences(kCharacterAlexei);
 IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

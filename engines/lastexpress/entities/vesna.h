@@ -34,7 +34,7 @@ public:
 	~Vesna() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
@@ -54,17 +54,17 @@ public:
 	DECLARE_VFUNCTION_2(enterExitCompartment, const char *sequence, ObjectIndex compartment)
 
 	/**
-	 * Draws the entity
+	 * Draws the character
 	 *
 	 * @param sequence The sequence to draw
 	 */
 	DECLARE_FUNCTION_1(draw, const char *sequence)
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_VFUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
@@ -76,10 +76,10 @@ public:
 	DECLARE_FUNCTION_1(updateFromTime, uint32 time)
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_FUNCTION_2(updateEntity2, CarIndex car, EntityPosition entityPosition)
 
@@ -89,7 +89,7 @@ public:
 	DECLARE_FUNCTION(callbackActionRestaurantOrSalon)
 
 	/**
-	 * Process callback action when the entity direction is not kDirectionRight
+	 * Process callback action when the character direction is not kDirectionRight
 	 */
 	DECLARE_FUNCTION(callbackActionOnDirection)
 

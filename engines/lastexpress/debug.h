@@ -30,6 +30,12 @@
 
 namespace LastExpress {
 
+#ifdef USE_IMGUI
+void onImGuiInit();
+void onImGuiRender();
+void onImGuiCleanup();
+#endif
+
 enum {
 	kLastExpressDebugGraphics = 1,
 	kLastExpressDebugResource,
@@ -40,6 +46,10 @@ enum {
 	kLastExpressDebugLogic,
 	kLastExpressDebugScenes,
 	kLastExpressDebugUnknown,
+};
+
+enum LastExpressDebugChannels {
+	kDebugConsole = 0
 };
 
 class LastExpressEngine;

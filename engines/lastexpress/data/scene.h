@@ -27,7 +27,7 @@
 
 	(text:00484750)
 	header (24 bytes)
-	    char {8}    - entry name (null terminated)
+	    char {8}    - entry eraseData (null terminated)
 	    byte {1}    - 0xCD
 	    uint16 {2}  - number of scenes (for first entry - always 0 after?)
 	    uint16 {2}  - 11 ??
@@ -219,7 +219,7 @@ public:
 	EntityPosition entityPosition;
 	Location location;
 	CarIndex car;
-	Position position;
+	PositionOld position;
 	Type type;
 	byte param1;
 	byte param2;

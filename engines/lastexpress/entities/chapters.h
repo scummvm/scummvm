@@ -44,7 +44,7 @@ public:
 	/**
 	 * Exit a train station
 	 *
-	 * @param stationName The name of the train station
+	 * @param stationName The eraseData of the train station
 	 * @param index       The index of the train station
 	 */
 	DECLARE_FUNCTION_2(enterStation, const char *stationName, CityIndex index)
@@ -52,7 +52,7 @@ public:
 	/**
 	 * Exit a train station
 	 *
-	 * @param stationName The name of the train station
+	 * @param stationName The eraseData of the train station
 	 */
 	DECLARE_FUNCTION_1(exitStation, const char *stationName)
 

@@ -34,7 +34,7 @@ public:
 	~August() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
@@ -46,7 +46,7 @@ public:
 	DECLARE_FUNCTION_1(updateFromTime, uint32 time)
 
 	/**
-	 * Draws the entity
+	 * Draws the character
 	 *
 	 * @param sequence The sequence to draw
 	 */
@@ -59,7 +59,7 @@ public:
 	 * @param car            The car
 	 * @param position       The position
 	 */
-	DECLARE_FUNCTION_3(updatePosition, const char *sequence1, CarIndex car, Position position)
+	DECLARE_FUNCTION_3(updatePosition, const char *sequence1, CarIndex car, PositionOld position)
 
 	/**
 	 * Handles entering/exiting a compartment.
@@ -86,7 +86,7 @@ public:
 	DECLARE_FUNCTION_2(enterExitCompartment3, const char *sequence, ObjectIndex compartment)
 
 	/**
-	 * Process callback action when the entity direction is not kDirectionRight
+	 * Process callback action when the character direction is not kDirectionRight
 	 */
 	DECLARE_FUNCTION(callbackActionOnDirection)
 
@@ -94,29 +94,29 @@ public:
 	 * Call a savepoint (or draw sequence in default case)
 	 *
 	 * @param sequence1   The sequence to draw in the default case
-	 * @param entity      The entity
+	 * @param character      The character
 	 * @param action      The action
-	 * @param sequence2   The sequence name for the savepoint
+	 * @param sequence2   The sequence eraseData for the savepoint
 	 */
-	DECLARE_FUNCTION_4(callSavepoint, const char *sequence1, EntityIndex entity, ActionIndex action, const char *sequence2)
+	DECLARE_FUNCTION_4(callSavepoint, const char *sequence1, CharacterIndex entity, CharacterActions action, const char *sequence2)
 
 	/**
 	 * Call a savepoint
 	 *
-	 * @param param1 The entity
+	 * @param param1 The character
 	 * @param param2 The action
-	 * @param seq    The sequence name for the savepoint
+	 * @param seq    The sequence eraseData for the savepoint
 	 */
-	DECLARE_FUNCTION_3(callSavepointNoDrawing, EntityIndex entity, ActionIndex action, const char *sequence)
+	DECLARE_FUNCTION_3(callSavepointNoDrawing, CharacterIndex entity, CharacterActions action, const char *sequence)
 
 	/**
-	 * Draws the entity along with another one
+	 * Draws the character along with another one
 	 *
 	 * @param sequence1   The sequence to draw
-	 * @param sequence2   The sequence to draw for the second entity
-	 * @param entity      The EntityIndex of the second entity
+	 * @param sequence2   The sequence to draw for the second character
+	 * @param character      The CharacterIndex of the second character
 	 */
-	DECLARE_FUNCTION_3(draw2, const char *sequence1, const char *sequence2, EntityIndex entity)
+	DECLARE_FUNCTION_3(draw2, const char *sequence1, const char *sequence2, CharacterIndex entity)
 
 	/**
 	 * Plays sound
@@ -146,20 +146,20 @@ public:
 	DECLARE_VFUNCTION_2(savegame, SavegameType savegameType, uint32 param)
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_VFUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
 	DECLARE_FUNCTION_1(function17, TimeValue timeValue)
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param param1 The car
-	 * @param param2 The entity position
+	 * @param param2 The character position
 	 */
 	DECLARE_FUNCTION_2(updateEntity2, CarIndex car, EntityPosition entityPosition)
 

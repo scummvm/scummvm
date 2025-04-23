@@ -22,6 +22,8 @@
 #ifndef LASTEXPRESS_BEETLE_H
 #define LASTEXPRESS_BEETLE_H
 
+#include "lastexpress/lastexpress.h"
+
 #include "lastexpress/data/sequence.h"
 
 #include "lastexpress/helpers.h"
@@ -32,6 +34,8 @@
 namespace LastExpress {
 
 class LastExpressEngine;
+struct Seq;
+struct Sprite;
 
 class Beetle {
 public:
@@ -111,6 +115,35 @@ private:
 	void updateData(uint32 index);
 	void drawUpdate();
 	void invertDirection();
+};
+
+class CBeetle {
+public:
+	CBeetle(LastExpressEngine *engine);
+	~CBeetle();
+
+	void tick();
+	void checkMouse();
+	void setDirection(int direction);
+	bool onTable();
+	bool click();
+
+private:
+	LastExpressEngine *_engine = nullptr;
+
+	Seq *_sequences[30];
+	Seq *_currentSequence = nullptr;
+	int _currentFrame = 0;
+	int _index = 0;
+	int _coordOffset = 0;
+	Common::Point _coords;
+	int _directions[16];
+	int _currentDirectionIndex = 0;
+	Sprite *_frame = nullptr;
+	bool _loaded = false;
+	int _mouseCooldown = 0;
+	int _fleeSpeed = 0;
+	int _spawnCounter = 0;
 };
 
 } // End of namespace LastExpress

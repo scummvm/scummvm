@@ -34,12 +34,12 @@ public:
 	~Vassili() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
 	/**
-	 * Draws the entity
+	 * Draws the character
 	 *
 	 * @param sequence The sequence to draw
 	 */

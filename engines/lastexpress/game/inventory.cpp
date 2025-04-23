@@ -135,7 +135,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 		// Remove highlight if needed
 		if (_eggHightlighted) {
 			if (!getGlobalTimer()) {
-				drawItem((CursorStyle)(getMenu()->getGameId() + 39), 608, 448, 1);
+				drawItem((CursorStyle)(getMenuOld()->getGameId() + 39), 608, 448, 1);
 				askForRedraw();
 			}
 
@@ -145,7 +145,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 		// Highlight menu
 		if (!_eggHightlighted) {
 			if (!getGlobalTimer()) {
-				drawItem((CursorStyle)(getMenu()->getGameId() + 39), 608, 448);
+				drawItem((CursorStyle)(getMenuOld()->getGameId() + 39), 608, 448);
 				askForRedraw();
 			}
 
@@ -158,9 +158,9 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 			_portraitHighlighted = false;
 			_isOpened = false;
 
-			getSound()->playSoundWithSubtitles("LIB039.SND", kSoundTypeMenu | kSoundFlagFixedVolume | kVolumeFull, kEntityPlayer);
+			getSound()->playSoundWithSubtitles("LIB039.SND", kSoundTypeMenu | kSoundFlagFixedVolume | kVolumeFull, kCharacterCath);
 
-			getMenu()->show(true, kSavegameTypeIndex, 0);
+			getMenuOld()->show(true, kSavegameTypeIndex, 0);
 
 		} else if (ev.type == Common::EVENT_RBUTTONDOWN && getGlobalTimer()) {
 			if (getSoundQueue()->isBuffered("TIMER"))
@@ -180,7 +180,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 			} else {
 				// The user released the mouse button, we need to update the inventory state (clear highlight and items)
 				drawItem((CursorStyle)getProgress().portrait, 0, 0, 1);
-				_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(0, 44, 32, (int16)(40 * _itemsShown + 40)));
+				_engine->getGraphicsManagerOld()->clear(GraphicsManagerOld::kBackgroundInventory, Common::Rect(0, 44, 32, (int16)(40 * _itemsShown + 40)));
 				_isOpened = false;
 				askForRedraw();
 
@@ -195,7 +195,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 
 						// Load our scene
 						getScenes()->loadScene(scene);
-					} else if (!getEvent(kEventKronosBringFirebird) && !getProgress().isEggOpen) {
+					} else if (!HELPERgetEvent(kEventKronosBringFirebird) && !getProgress().isEggOpen) {
 						getState()->sceneUseBackup = false;
 						scene = getState()->sceneBackup;
 
@@ -274,7 +274,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 
 		// Reset items and portrait
 		drawItem((CursorStyle)getProgress().portrait, 0, 0, 1);
-		_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(0, 44, 32, (int16)(40 * _itemsShown + 40)));
+		_engine->getGraphicsManagerOld()->clear(GraphicsManagerOld::kBackgroundInventory, Common::Rect(0, 44, 32, (int16)(40 * _itemsShown + 40)));
 		askForRedraw();
 		_highlightedItemIndex = 0;
 		_itemsShown = 0;
@@ -321,7 +321,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 			scene = getState()->sceneBackup2;
 			getState()->sceneBackup2 = kSceneNone;
 		} else {
-			if (getEvent(kEventKronosBringFirebird) || getProgress().isEggOpen) {
+			if (HELPERgetEvent(kEventKronosBringFirebird) || getProgress().isEggOpen) {
 				_isOpened = false;
 				return;
 			}
@@ -342,7 +342,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 
 	//
 	if (!getProgress().field_84
-	 && getEntityData(kEntityPlayer)->location != kLocationOutsideTrain
+	 && getEntityData(kCharacterCath)->location != kLocationOutsideTrain
 	 && getProgress().field_18 != 4
 	 && (_selectedItem == kItemNone || get(_selectedItem)->floating || getState()->sceneUseBackup)) {
 
@@ -376,7 +376,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 					getState()->sceneBackup2 = kSceneNone;
 
 					getScenes()->loadScene(backup);
-				} else if (!getEvent(kEventKronosBringFirebird)) {
+				} else if (!HELPERgetEvent(kEventKronosBringFirebird)) {
 					if (!getProgress().isEggOpen) {
 						getState()->sceneBackup = kSceneNone;
 
@@ -402,7 +402,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 // UI
 //////////////////////////////////////////////////////////////////////////
 void Inventory::show() {
-	clearBg(GraphicsManager::kBackgroundInventory);
+	clearBg(GraphicsManagerOld::kBackgroundInventory);
 	askForRedraw();
 
 	// Show portrait (first draw, cannot be highlighted)
@@ -421,7 +421,7 @@ void Inventory::setPortrait(InventoryItem item) const {
 }
 
 void Inventory::showHourGlass() const {
-	if (!getMenu()->isShown())
+	if (!getMenuOld()->isShown())
 		drawItem(kCursorHourGlass, 608, 448);
 
 	getFlags()->shouldRedraw = false;
@@ -465,7 +465,7 @@ void Inventory::removeItem(InventoryItem item, ObjectLocation newLocation) {
 
 	if (get(item)->cursor == get(_selectedItem)->cursor) {
 		_selectedItem = kItemNone;
-		_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(44, 0, 44 + 32, 32));
+		_engine->getGraphicsManagerOld()->clear(GraphicsManagerOld::kBackgroundInventory, Common::Rect(44, 0, 44 + 32, 32));
 		askForRedraw();
 	}
 }
@@ -487,7 +487,7 @@ void Inventory::selectItem(InventoryItem item) {
 void Inventory::unselectItem() {
 	_selectedItem = kItemNone;
 
-	_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(44, 0, 44 + 32, 32));
+	_engine->getGraphicsManagerOld()->clear(GraphicsManagerOld::kBackgroundInventory, Common::Rect(44, 0, 44 + 32, 32));
 	askForRedraw();
 }
 
@@ -611,8 +611,8 @@ void Inventory::examine(InventoryItem item) {
 }
 
 void Inventory::drawEgg() const {
-	if (!getMenu()->isShown())
-		drawItem((CursorStyle)(getMenu()->getGameId() + 39), 608, 448, _eggHightlighted ? 0 : 1);
+	if (!getMenuOld()->isShown())
+		drawItem((CursorStyle)(getMenuOld()->getGameId() + 39), 608, 448, _eggHightlighted ? 0 : 1);
 
 	getFlags()->shouldDrawEggOrHourGlass = false;
 }
@@ -637,23 +637,23 @@ void Inventory::drawBlinkingEgg(uint ticks) {
 
 	if (globalTimer < 90) {
 		if ((globalTimer + ticks) >= 90)
-			getSound()->playSoundWithSubtitles("TIMER", kSoundTypeMenu | kVolumeFull, kEntityPlayer);
+			getSound()->playSoundWithSubtitles("TIMER", kSoundTypeMenu | kVolumeFull, kCharacterCath);
 
 		if (!getSoundQueue()->isBuffered("TIMER"))
 			setGlobalTimer(0);
 	}
 
 	if (globalTimer == 0) {
-		drawItem((CursorStyle)(getMenu()->getGameId() + 39), 608, 448, _menuEggRect.contains(getCoords()) ? 1 : -1);
+		drawItem((CursorStyle)(getMenuOld()->getGameId() + 39), 608, 448, _menuEggRect.contains(getCoords()) ? 1 : -1);
 
 		askForRedraw();
 
-		getSaveLoad()->saveGame(kSavegameTypeAuto, kEntityChapters, 0);
+		getSaveLoad()->saveGame(kSavegameTypeAuto, kCharacterMaster, 0);
 	}
 }
 
 void Inventory::blinkEgg() {
-	drawItem((CursorStyle)(getMenu()->getGameId() + 39), 608, 448, (_blinkingBrightness == 0) ? -1 : (int16)_blinkingBrightness);
+	drawItem((CursorStyle)(getMenuOld()->getGameId() + 39), 608, 448, (_blinkingBrightness == 0) ? -1 : (int16)_blinkingBrightness);
 
 	askForRedraw();
 
@@ -669,7 +669,7 @@ void Inventory::drawItem(CursorStyle id, uint16 x, uint16 y, int16 brightnessInd
 	if (brightnessIndex != -1)
 		icon.setBrightness(brightnessIndex);
 
-	_engine->getGraphicsManager()->draw(&icon, GraphicsManager::kBackgroundInventory);
+	_engine->getGraphicsManagerOld()->draw(&icon, GraphicsManagerOld::kBackgroundInventory);
 }
 
 void Inventory::drawSelectedItem() {
@@ -687,7 +687,7 @@ void Inventory::drawSelectedItem() {
 }
 
 void Inventory::clearSelectedItem() const {
-	_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(44, 0, 44 + 32, 32));
+	_engine->getGraphicsManagerOld()->clear(GraphicsManagerOld::kBackgroundInventory, Common::Rect(44, 0, 44 + 32, 32));
 }
 
 // Open inventory: show portrait selected and draw contents
@@ -724,7 +724,7 @@ void Inventory::close() {
 	drawItem((CursorStyle)getProgress().portrait, 0, 0);
 
 	// Erase rectangle for inventory items shown
-	_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(0, 44, 32, (int16)(44 + 40 * _itemsShown)));
+	_engine->getGraphicsManagerOld()->clear(GraphicsManagerOld::kBackgroundInventory, Common::Rect(0, 44, 32, (int16)(44 + 40 * _itemsShown)));
 
 	_itemsShown = 0;
 

@@ -21,6 +21,8 @@
 
 #include "lastexpress/game/savegame.h"
 
+#include "lastexpress/data/cvcrfile.h"
+
 #include "lastexpress/game/entities.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
@@ -346,7 +348,7 @@ uint32 SavegameStream::readCompressed(void *dataPtr, uint32 dataSize) {
 // Constructors
 //////////////////////////////////////////////////////////////////////////
 
-SaveLoad::SaveLoad(LastExpressEngine *engine) : _engine(engine), _savegame(nullptr), _gameTicksLastSavegame(0), _entity(kEntityPlayer) {
+SaveLoad::SaveLoad(LastExpressEngine *engine) : _engine(engine), _savegame(nullptr), _gameTicksLastSavegame(0), _entity(kCharacterCath) {
 }
 
 SaveLoad::~SaveLoad() {
@@ -451,7 +453,7 @@ void SaveLoad::loadStream(const Common::String &target, GameId id) {
 	// Load all savegame data
 	uint8 *buf = new uint8[8192];
 	while (!save->eos() && !save->err()) {
-		_engine->pollEvents();
+		_engine->pollEventsOld();
 
 		uint32 count = save->read(buf, 8192);
 		if (count) {
@@ -495,7 +497,7 @@ void SaveLoad::loadLastGame() {
 	// Validate main header
 	SavegameMainHeader header;
 	if (!loadMainHeader(_savegame, &header)) {
-		debugC(2, kLastExpressDebugSavegame, "Cannot load main header: %s", getFilename(_engine->getTargetName(), getMenu()->getGameId()).c_str());
+		debugC(2, kLastExpressDebugSavegame, "Cannot load main header: %s", getFilename(_engine->getTargetName(), getMenuOld()->getGameId()).c_str());
 		return;
 	}
 
@@ -503,7 +505,7 @@ void SaveLoad::loadLastGame() {
 	_savegame->seek(header.offsetEntry);
 
 	SavegameType type = kSavegameTypeIndex;
-	EntityIndex entity = kEntityPlayer;
+	CharacterIndex entity = kCharacterCath;
 	uint32 val = 0;
 	readEntry(&type, &entity, &val, header.keepIndex == 1);
 
@@ -547,14 +549,14 @@ void SaveLoad::loadGame(uint32 index) {
 }
 
 // Save game
-void SaveLoad::saveGame(SavegameType type, EntityIndex entity, uint32 value) {
+void SaveLoad::saveGame(SavegameType type, CharacterIndex entity, uint32 value) {
 	if (getState()->scene <= kSceneIntro)
 		return;
 
 	// Validate main header
 	SavegameMainHeader header;
 	if (!loadMainHeader(_savegame, &header)) {
-		debugC(2, kLastExpressDebugSavegame, "Cannot load main header: %s", getFilename(_engine->getTargetName(), getMenu()->getGameId()).c_str());
+		debugC(2, kLastExpressDebugSavegame, "Cannot load main header: %s", getFilename(_engine->getTargetName(), getMenuOld()->getGameId()).c_str());
 		return;
 	}
 
@@ -616,7 +618,7 @@ void SaveLoad::saveGame(SavegameType type, EntityIndex entity, uint32 value) {
 	Common::Serializer ser(nullptr, _savegame);
 	header.saveLoadWithSerializer(ser);
 
-	flushStream(_engine->getTargetName(), getMenu()->getGameId());
+	flushStream(_engine->getTargetName(), getMenuOld()->getGameId());
 }
 
 void SaveLoad::saveVolumeBrightness() {
@@ -699,7 +701,7 @@ void SaveLoad::syncEntity(Common::Serializer &ser) {
 	ser.syncAsUint32LE(_entity);
 }
 
-void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
+void SaveLoad::writeEntry(SavegameType type, CharacterIndex entity, uint32 value) {
 	if (!_savegame)
 		error("[SaveLoad::writeEntry] Savegame stream is invalid");
 
@@ -721,7 +723,7 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	_entity = entity;
 
 	_savegame->process();
-	writeValue(ser, "entity index", WRAP_SYNC_FUNCTION(this, SaveLoad, syncEntity), 4);
+	writeValue(ser, "character index", WRAP_SYNC_FUNCTION(this, SaveLoad, syncEntity), 4);
 	writeValue(ser, "state", WRAP_SYNC_FUNCTION(getState(), State::GameState, saveLoadWithSerializer), 4 + 4 + 4 + 4 + 1 + 4 + 4);
 	writeValue(ser, "selected item", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveSelectedItem), 4);
 	writeValue(ser, "positions", WRAP_SYNC_FUNCTION(getEntities(), Entities, savePositions), 4 * 1000);
@@ -758,7 +760,7 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	_savegame->seek(endPosition);
 }
 
-void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, bool keepIndex) {
+void SaveLoad::readEntry(SavegameType *type, CharacterIndex *entity, uint32 *val, bool keepIndex) {
 	if (!type || !entity || !val)
 		error("[SaveLoad::readEntry] Invalid parameters passed");
 
@@ -773,7 +775,7 @@ void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, b
 	if (!entry.isValid())
 		error("[SaveLoad::readEntry] Entry header is invalid");
 
-	// Init type, entity & value
+	// Init type, character & value
 	*type = entry.type;
 	*val = entry.value;
 
@@ -782,7 +784,7 @@ void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, b
 
 	// Load game data
 	_savegame->process();
-	readValue(ser, "entity index", WRAP_SYNC_FUNCTION(this, SaveLoad, syncEntity), 4);
+	readValue(ser, "character index", WRAP_SYNC_FUNCTION(this, SaveLoad, syncEntity), 4);
 	readValue(ser, "state", WRAP_SYNC_FUNCTION(getState(), State::GameState, saveLoadWithSerializer), 4 + 4 + 4 + 4 + 1 + 4 + 4);
 	readValue(ser, "selected item", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveSelectedItem), 4);
 	readValue(ser, "positions", WRAP_SYNC_FUNCTION(getEntities(), Entities, savePositions), 4 * 1000);
@@ -806,7 +808,7 @@ void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, b
 		// (offset & 0xF) is a value in [0, 15]; the remainder of division of offset with 16.
 		// Entering here, that remainder is not zero so, with the following code, we skip the padding
 		// by seeking ahead (forward) from SEEK_CUR for the amount of the bytes required to complete
-		// a full 16 bytes final segment for the entity entry that we are reading.
+		// a full 16 bytes final segment for the character entry that we are reading.
 		// That is: 16 - (offset & 0xF)  or equivalently: (~offset & 0xF) + 1) bytes skipped ahead.
 		_savegame->seek(16 - (offset & 0xF), SEEK_CUR);
 	}
@@ -919,7 +921,7 @@ bool SaveLoad::isGameFinished(uint32 menuIndex, uint32 savegameIndex) {
 // Private methods
 //////////////////////////////////////////////////////////////////////////
 
-// Get the file name from the savegame ID
+// Get the file eraseData from the savegame ID
 Common::String SaveLoad::getFilename(const Common::String &target, GameId id) {
 	if (id < 0 || id >= kMaximumSaveSlots)
 		error("[SaveLoad::getFilename] Attempting to use an invalid game id. Valid values: 0 - %d, was %d", kMaximumSaveSlots - 1, id);
@@ -948,6 +950,738 @@ Common::OutSaveFile *SaveLoad::openForSaving(const Common::String &target, GameI
 bool SaveLoad::remove(const Common::String &target, GameId id) {
 	Common::String filename = getFilename(target, id);
 	return g_system->getSavefileManager()->removeSavefile(filename);
+}
+
+SaveManager::SaveManager(LastExpressEngine *engine) {
+	_engine = engine;
+}
+
+void SaveManager::writeSavePoint(CVCRFile *file, int saveType, int character, int value) {
+	int32 originalFilePos;
+	int32 paddingSize;
+	int32 posAfterWriting;
+	SVCRSavePointHeader savePointHeader;
+	byte emptyHeader[15];
+
+	savePointHeader.saveType = saveType;
+	savePointHeader.signature = 0xE660E660;
+	savePointHeader.headerSize = 0;
+	savePointHeader.gameTime = _engine->getLogicManager()->_gameTime;
+	savePointHeader.chapter = _engine->getLogicManager()->_gameProgress[kProgressChapter];
+	savePointHeader.latestGameEvent = value;
+	savePointHeader.emptyField1 = 0;
+	savePointHeader.emptyField2 = 0;
+
+	originalFilePos = file->tell();
+	file->write(&savePointHeader, sizeof(SVCRSavePointHeader), 1, 0);
+	file->flush();
+	file->writeRLE(&character, 4, 1);
+	file->writeRLE(&_engine->getLogicManager()->_gameTime, 4, 1);
+	file->writeRLE(&_engine->getLogicManager()->_gameTimeTicksDelta, 4, 1);
+	file->writeRLE(&_engine->getLogicManager()->_currentGameSessionTicks, 4, 1);
+	file->writeRLE(&_engine->getLogicManager()->_trainNodeIndex, 4, 1);
+	file->writeRLE(&_engine->getLogicManager()->_useLastSavedNodeIndex, 1, 1);
+	file->writeRLE(&_engine->getLogicManager()->_lastNodeIndex, 4, 1);
+	file->writeRLE(&_engine->getLogicManager()->_lastSavedNodeIndex, 4, 1);
+	file->writeRLE(&_engine->getLogicManager()->_inventorySelectedItemIdx, 4, 1);
+
+	file->writeRLE(_engine->getLogicManager()->_positions, 4, 1000);
+	file->writeRLE(_engine->getLogicManager()->_blockedEntitiesBits, 4, 16);
+	file->writeRLE(_engine->getLogicManager()->_softBlockedEntitiesBits, 4, 16);
+	file->writeRLE(_engine->getLogicManager()->_gameProgress, 4, 128);
+	file->writeRLE(_engine->getLogicManager()->_gameEvents, 1, 512);
+
+	// Handle complex types (which were fine in the original, but not within a crossplatform context)...
+	byte *inventoryBuffer = (byte *)malloc(32 * 7); // 32 items, 7 bytes each
+	byte *objectsBuffer = (byte *)malloc(128 * 5); // 128 objects, 5 bytes each
+	byte *charactersBuffer = (byte *)malloc(40 * 1262); // 128 objects, 5 bytes each
+
+	assert(inventoryBuffer && objectsBuffer && charactersBuffer);
+
+	// Copy Item data...
+	for (int i = 0; i < 32; i++) {
+		int offset = i * 7;
+		inventoryBuffer[offset] = _engine->getLogicManager()->_gameInventory[i].cursor;
+		WRITE_LE_UINT16(&inventoryBuffer[offset + 1], _engine->getLogicManager()->_gameInventory[i].scene);
+		inventoryBuffer[offset + 3] = _engine->getLogicManager()->_gameInventory[i].isSelectable;
+		inventoryBuffer[offset + 4] = _engine->getLogicManager()->_gameInventory[i].isPresent;
+		inventoryBuffer[offset + 5] = _engine->getLogicManager()->_gameInventory[i].manualSelect;
+		inventoryBuffer[offset + 6] = _engine->getLogicManager()->_gameInventory[i].location;
+	}
+
+	file->writeRLE(inventoryBuffer, 7, 32);
+
+	// Copy Object data...
+	for (int i = 0; i < 128; i++) {
+		int offset = i * 5;
+		objectsBuffer[offset] = _engine->getLogicManager()->_gameObjects[i].character;
+		objectsBuffer[offset + 1] = _engine->getLogicManager()->_gameObjects[i].door;
+		objectsBuffer[offset + 2] = _engine->getLogicManager()->_gameObjects[i].cursor;
+		objectsBuffer[offset + 3] = _engine->getLogicManager()->_gameObjects[i].cursor2;
+		objectsBuffer[offset + 4] = _engine->getLogicManager()->_gameObjects[i].model;
+	}
+
+	file->writeRLE(objectsBuffer, 5, 128);
+
+	// Copy Character data...
+	for (int i = 0; i < 40; i++) {
+		int offset = 0;
+		Character characterStruct = getCharacter(i);
+
+		// First copy CallParams (9 sets of 32 integers)...
+		for (int j = 0; j < 9; j++) {
+			for (int k = 0; k < 32; k++) {
+				WRITE_LE_UINT32(&charactersBuffer[i * 1262 + offset], characterStruct.callParams[j].parameters[k]);
+				offset += 4;
+			}
+		}
+
+		// Copy callbacks array (16 bytes)...
+		for (int j = 0; j < 16; j++) {
+			charactersBuffer[i * 1262 + offset++] = characterStruct.callbacks[j];
+		}
+
+		// Copy currentCall (1 byte)...
+		charactersBuffer[i * 1262 + offset++] = characterStruct.currentCall;
+
+		// Copy characterPosition (3 uint16)...
+		WRITE_LE_UINT16(&charactersBuffer[i * 1262 + offset], characterStruct.characterPosition.position); offset += 2;
+		WRITE_LE_UINT16(&charactersBuffer[i * 1262 + offset], characterStruct.characterPosition.location); offset += 2;
+		WRITE_LE_UINT16(&charactersBuffer[i * 1262 + offset], characterStruct.characterPosition.car); offset += 2;
+
+		// Copy the remaining basic fields...
+		charactersBuffer[i * 1262 + offset++] = characterStruct.walkCounter;
+		charactersBuffer[i * 1262 + offset++] = characterStruct.attachedConductor;
+		charactersBuffer[i * 1262 + offset++] = characterStruct.inventoryItem;
+		charactersBuffer[i * 1262 + offset++] = characterStruct.direction;
+
+		WRITE_LE_INT16(&charactersBuffer[i * 1262 + offset], characterStruct.waitedTicksUntilCycleRestart); offset += 2;
+		WRITE_LE_INT16(&charactersBuffer[i * 1262 + offset], characterStruct.currentFrameSeq1); offset += 2;
+		WRITE_LE_INT16(&charactersBuffer[i * 1262 + offset], characterStruct.currentFrameSeq2); offset += 2;
+		WRITE_LE_INT16(&charactersBuffer[i * 1262 + offset], characterStruct.elapsedFrames); offset += 2;
+		WRITE_LE_INT16(&charactersBuffer[i * 1262 + offset], characterStruct.walkStepSize); offset += 2;
+
+		charactersBuffer[i * 1262 + offset++] = characterStruct.clothes;
+		charactersBuffer[i * 1262 + offset++] = characterStruct.position2;
+		charactersBuffer[i * 1262 + offset++] = characterStruct.car2;
+		charactersBuffer[i * 1262 + offset++] = characterStruct.doProcessEntity;
+		charactersBuffer[i * 1262 + offset++] = characterStruct.field_4A9;
+		charactersBuffer[i * 1262 + offset++] = characterStruct.field_4AA;
+		charactersBuffer[i * 1262 + offset++] = characterStruct.directionSwitch;
+
+		// Copy string fields
+		memcpy(&charactersBuffer[i * 1262 + offset], characterStruct.sequenceName, 13); offset += 13;
+		memcpy(&charactersBuffer[i * 1262 + offset], characterStruct.sequenceName2, 13); offset += 13;
+		memcpy(&charactersBuffer[i * 1262 + offset], characterStruct.sequenceNamePrefix, 7); offset += 7;
+		memcpy(&charactersBuffer[i * 1262 + offset], characterStruct.sequenceNameCopy, 13); offset += 13;
+
+		// Set pointers to zero (each 4 bytes)
+		WRITE_LE_UINT32(&charactersBuffer[i * 1262 + offset], 0); offset += 4; // frame1
+		WRITE_LE_UINT32(&charactersBuffer[i * 1262 + offset], 0); offset += 4; // frame2
+		WRITE_LE_UINT32(&charactersBuffer[i * 1262 + offset], 0); offset += 4; // sequence1
+		WRITE_LE_UINT32(&charactersBuffer[i * 1262 + offset], 0); offset += 4; // sequence2
+		WRITE_LE_UINT32(&charactersBuffer[i * 1262 + offset], 0); offset += 4; // sequence3
+
+		// At this point, offset should equal 1262!
+		assert(offset == 1262);
+	}
+
+	file->writeRLE(charactersBuffer, 1262, 40);
+
+	free(inventoryBuffer);
+	free(objectsBuffer);
+	free(charactersBuffer);
+
+	_engine->getSoundManager()->saveSoundInfo(file);
+	_engine->getMessageManager()->saveMessages(file);
+
+	savePointHeader.headerSize = file->flush();
+
+	if ((savePointHeader.headerSize & 0xF) != 0) {
+		memset(emptyHeader, 0, sizeof(emptyHeader));
+		paddingSize = ((~(savePointHeader.headerSize & 0xFF) & 0xF) + 1);
+		file->write(&emptyHeader, 1, paddingSize, 0);
+		savePointHeader.headerSize += paddingSize;
+	}
+
+	posAfterWriting = file->tell();
+	file->seek(originalFilePos, 0);
+	checkSavePointHeader(&savePointHeader);
+	file->write(&savePointHeader, 32, 1, false);
+	file->seek(posAfterWriting, 0);
+}
+
+void SaveManager::readSavePoint(CVCRFile *file, int *saveType, uint8 *character, int *saveEvent, bool skipSoundLoading) {
+	int latestGameEvent;
+	int32 originalPos;
+	int32 posDiff;
+	SVCRSavePointHeader savePointHeader;
+
+	if (saveType && character && saveEvent) {
+		*saveType = 1;
+		*character = kCharacterCath;
+		*saveEvent = 0;
+
+		file->read(&savePointHeader, sizeof(SVCRSavePointHeader), 1, false, true);
+
+		if (checkSavePointHeader(&savePointHeader)) {
+			latestGameEvent = savePointHeader.latestGameEvent;
+			*saveType = savePointHeader.saveType;
+			*saveEvent = latestGameEvent;
+			file->flush();
+			originalPos = file->tell();
+
+			// The original treats the "character" arg as uint8, but then asks
+			// for a four bytes integer, causing a stack corruption around it.
+			// This is our workaround...
+			int32 intCharacter;
+			file->readRLE(&intCharacter, 4, 1);
+			*character = (uint8)(intCharacter & 0xFF);
+
+			if (*character >= 40) {
+				error("Save game file \"%s\" is corrupt", _engine->_savegameFilename);
+			}
+
+			file->readRLE(&_engine->getLogicManager()->_gameTime, 4, 1);
+			if (_engine->getLogicManager()->_gameTime < 1061100) {
+				error("Save game file \"%s\" is corrupt", _engine->_savegameFilename);
+			}
+
+			if (_engine->getLogicManager()->_gameTime > 4941000) {
+				error("Save game file \"%s\" is corrupt", _engine->_savegameFilename);
+			}
+
+			file->readRLE(&_engine->getLogicManager()->_gameTimeTicksDelta, 4, 1);
+			if (_engine->getLogicManager()->_gameTime > 4941000) {
+				error("Save game file \"%s\" is corrupt", _engine->_savegameFilename);
+			}
+
+			file->readRLE(&_engine->getLogicManager()->_currentGameSessionTicks, 4, 1);
+
+			file->readRLE(&_engine->getLogicManager()->_trainNodeIndex, 4, 1);
+			if (_engine->getLogicManager()->_trainNodeIndex >= 2500) {
+				error("Save game file \"%s\" is corrupt", _engine->_savegameFilename);
+			}
+
+			file->readRLE(&_engine->getLogicManager()->_useLastSavedNodeIndex, 1, 1);
+			if (_engine->getLogicManager()->_useLastSavedNodeIndex > 1) {
+				error("Save game file \"%s\" is corrupt", _engine->_savegameFilename);
+			}
+
+			file->readRLE(&_engine->getLogicManager()->_lastNodeIndex, 4, 1);
+			if (_engine->getLogicManager()->_lastNodeIndex >= 2500) {
+				error("Save game file \"%s\" is corrupt", _engine->_savegameFilename);
+			}
+
+			file->readRLE(&_engine->getLogicManager()->_lastSavedNodeIndex, 4, 1);
+			if (_engine->getLogicManager()->_lastSavedNodeIndex >= 2500) {
+				error("Save game file \"%s\" is corrupt", _engine->_savegameFilename);
+			}
+
+			file->readRLE(&_engine->getLogicManager()->_inventorySelectedItemIdx, 4, 1);
+			if (_engine->getLogicManager()->_inventorySelectedItemIdx >= 32) {
+				error("Save game file \"%s\" is corrupt", _engine->_savegameFilename);
+			}
+
+			file->readRLE(_engine->getLogicManager()->_positions, 4, 1000);
+			file->readRLE(_engine->getLogicManager()->_blockedEntitiesBits, 4, 16);
+			file->readRLE(_engine->getLogicManager()->_softBlockedEntitiesBits, 4, 16);
+			file->readRLE(_engine->getLogicManager()->_gameProgress, 4, 128);
+			file->readRLE(_engine->getLogicManager()->_gameEvents, 1, 512);
+
+			// Handle complex types (which were fine in the original, but not within a crossplatform context)...
+			byte *inventoryBuffer = (byte *)malloc(32 * 7);     // 32 items, 7 bytes each
+			byte *objectsBuffer = (byte *)malloc(128 * 5);      // 128 objects, 5 bytes each
+			byte *charactersBuffer = (byte *)malloc(40 * 1262); // 40 characters, 1262 bytes each
+
+			assert(inventoryBuffer && objectsBuffer && charactersBuffer);
+
+			// Read data from file
+			file->readRLE(inventoryBuffer, 7, 32);
+			file->readRLE(objectsBuffer, 5, 128);
+			file->readRLE(charactersBuffer, 1262, 40);
+
+			// Copy Item data from buffer to structures
+			for (int i = 0; i < 32; i++) {
+				int offset = i * 7;
+				_engine->getLogicManager()->_gameInventory[i].cursor = inventoryBuffer[offset];
+				_engine->getLogicManager()->_gameInventory[i].scene = READ_LE_UINT16(&inventoryBuffer[offset + 1]);
+				_engine->getLogicManager()->_gameInventory[i].isSelectable = inventoryBuffer[offset + 3];
+				_engine->getLogicManager()->_gameInventory[i].isPresent = inventoryBuffer[offset + 4];
+				_engine->getLogicManager()->_gameInventory[i].manualSelect = inventoryBuffer[offset + 5];
+				_engine->getLogicManager()->_gameInventory[i].location = inventoryBuffer[offset + 6];
+			}
+
+			// Copy Object data from buffer to structures
+			for (int i = 0; i < 128; i++) {
+				int offset = i * 5;
+				_engine->getLogicManager()->_gameObjects[i].character = objectsBuffer[offset];
+				_engine->getLogicManager()->_gameObjects[i].door = objectsBuffer[offset + 1];
+				_engine->getLogicManager()->_gameObjects[i].cursor = objectsBuffer[offset + 2];
+				_engine->getLogicManager()->_gameObjects[i].cursor2 = objectsBuffer[offset + 3];
+				_engine->getLogicManager()->_gameObjects[i].model = objectsBuffer[offset + 4];
+			}
+
+			// Copy Character data from buffer to structures
+			for (int i = 0; i < 40; i++) {
+				int offset = 0;
+				Character *characterStruct = &getCharacter(i);
+
+				// Copy CallParams (9 sets of 32 integers)
+				for (int j = 0; j < 9; j++) {
+					for (int k = 0; k < 32; k++) {
+						characterStruct->callParams[j].parameters[k] = READ_LE_UINT32(&charactersBuffer[i * 1262 + offset]);
+						offset += 4;
+					}
+				}
+
+				// Copy callbacks array (16 bytes)
+				for (int j = 0; j < 16; j++) {
+					characterStruct->callbacks[j] = charactersBuffer[i * 1262 + offset]; offset++;
+				}
+
+				// Copy currentCall (1 byte)
+				characterStruct->currentCall = charactersBuffer[i * 1262 + offset]; offset++;
+
+				// Copy characterPosition (3 uint16)
+				characterStruct->characterPosition.position = READ_LE_UINT16(&charactersBuffer[i * 1262 + offset]); offset += 2;
+				characterStruct->characterPosition.location = READ_LE_UINT16(&charactersBuffer[i * 1262 + offset]); offset += 2;
+				characterStruct->characterPosition.car = READ_LE_UINT16(&charactersBuffer[i * 1262 + offset]); offset += 2;
+
+				// Copy the remaining basic fields
+				characterStruct->walkCounter = charactersBuffer[i * 1262 + offset++];
+				characterStruct->attachedConductor = charactersBuffer[i * 1262 + offset++];
+				characterStruct->inventoryItem = charactersBuffer[i * 1262 + offset++];
+				characterStruct->direction = charactersBuffer[i * 1262 + offset++];
+
+				characterStruct->waitedTicksUntilCycleRestart = READ_LE_INT16(&charactersBuffer[i * 1262 + offset]); offset += 2;
+				characterStruct->currentFrameSeq1 = READ_LE_INT16(&charactersBuffer[i * 1262 + offset]); offset += 2;
+				characterStruct->currentFrameSeq2 = READ_LE_INT16(&charactersBuffer[i * 1262 + offset]); offset += 2;
+				characterStruct->elapsedFrames = READ_LE_INT16(&charactersBuffer[i * 1262 + offset]); offset += 2;
+				characterStruct->walkStepSize = READ_LE_INT16(&charactersBuffer[i * 1262 + offset]); offset += 2;
+
+				characterStruct->clothes = charactersBuffer[i * 1262 + offset]; offset++;
+				characterStruct->position2 = charactersBuffer[i * 1262 + offset]; offset++;
+				characterStruct->car2 = charactersBuffer[i * 1262 + offset]; offset++;
+				characterStruct->doProcessEntity = charactersBuffer[i * 1262 + offset]; offset++;
+				characterStruct->field_4A9 = charactersBuffer[i * 1262 + offset]; offset++;
+				characterStruct->field_4AA = charactersBuffer[i * 1262 + offset]; offset++;
+				characterStruct->directionSwitch = charactersBuffer[i * 1262 + offset]; offset++;
+
+				// Copy string fields
+				memcpy(characterStruct->sequenceName, &charactersBuffer[i * 1262 + offset], 13); offset += 13;
+				memcpy(characterStruct->sequenceName2, &charactersBuffer[i * 1262 + offset], 13); offset += 13;
+				memcpy(characterStruct->sequenceNamePrefix, &charactersBuffer[i * 1262 + offset], 7); offset += 7;
+				memcpy(characterStruct->sequenceNameCopy, &charactersBuffer[i * 1262 + offset], 13); offset += 13;
+
+				// Skip pointer data...
+				offset += 4; // frame1
+				offset += 4; // frame2
+				offset += 4; // sequence1
+				offset += 4; // sequence2
+				offset += 4; // sequence3
+
+				// At this point, offset should equal 1262!
+				assert(offset == 1262);
+			}
+
+			free(inventoryBuffer);
+			free(objectsBuffer);
+			free(charactersBuffer);
+
+			_engine->getSoundManager()->loadSoundInfo(file, skipSoundLoading);
+			_engine->getMessageManager()->loadMessages(file);
+
+			_engine->getLogicManager()->_gameProgress[kProgressChapter] = savePointHeader.chapter;
+
+			file->flush();
+
+			posDiff = (file->tell() - originalPos) & 0xFF;
+			if ((posDiff & 0xF) != 0)
+				file->seek(((~posDiff & 0xF) + 1), 1);
+
+			for (int i = 0; i < 40; i++) {
+				getCharacter(i).frame1 = nullptr;
+				getCharacter(i).frame2 = nullptr;
+				getCharacter(i).sequence1 = nullptr;
+				getCharacter(i).sequence2 = nullptr;
+				getCharacter(i).sequence3 = nullptr;
+			}
+		}
+	}
+}
+
+void SaveManager::validateSaveFile(bool flag) {
+	SVCRSavePointHeader savePointHeader;
+	SVCRFileHeader fileHeader;
+
+	CVCRFile *tempFile = new CVCRFile(_engine);
+	CVCRFile *saveFile = new CVCRFile(_engine);
+
+	bool hasValidationError = false;
+
+	if (flag) {
+		if (_engine->_savePointHeaders)
+			_engine->getMemoryManager()->freeMem(_engine->_savePointHeaders);
+
+		_engine->_savePointHeaders = (SVCRSavePointHeader *)_engine->getMemoryManager()->allocMem(
+			sizeof(SVCRSavePointHeader), _engine->_savegameFilename, kCharacterMaster
+		);
+
+		if (!_engine->_savePointHeaders) {
+			error("Out of memory");
+		}
+
+		_engine->_savePointHeaders->gameTime = 1037700;
+		_engine->_savePointHeaders->chapter = 1;
+	}
+
+	saveFile->open(_engine->_savegameFilename, CVCRMODE_RB);
+
+	saveFile->seek(0, SEEK_END);
+	int fileSize = saveFile->tell();
+	saveFile->seek(0, SEEK_SET);
+
+	if (fileSize >= sizeof(SVCRFileHeader)) {
+		saveFile->read(&fileHeader, sizeof(SVCRFileHeader), 1, false, true);
+		if (checkFileHeader(&fileHeader)) {
+			if (flag) {
+				if (_engine->_savePointHeaders)
+					_engine->getMemoryManager()->freeMem(_engine->_savePointHeaders);
+
+				_engine->_savePointHeaders = (SVCRSavePointHeader *)_engine->getMemoryManager()->allocMem(
+					sizeof(SVCRSavePointHeader) * (fileHeader.numSavePoints + 1),
+					_engine->_savegameFilename,
+					kCharacterMaster
+				);
+
+				if (!_engine->_savePointHeaders) {
+					error("Out of memory");
+				}
+
+				_engine->_savePointHeaders->gameTime = 1037700;
+				_engine->_savePointHeaders->chapter = 1;
+			}
+
+			for (int i = 0; fileSize >= sizeof(SVCRFileHeader) && i < fileHeader.numSavePoints; ++i) {
+				_engine->getSoundManager()->soundThread();
+
+				saveFile->read(&savePointHeader, sizeof(SVCRSavePointHeader), 1, false, true);
+				if (flag) {
+					memcpy(&_engine->_savePointHeaders[i + 1], &savePointHeader, sizeof(savePointHeader));
+				}
+
+				fileSize -= sizeof(SVCRSavePointHeader);
+				if (fileSize >= 0) {
+					if (checkSavePointHeader(&savePointHeader)) {
+						fileSize -= savePointHeader.headerSize;
+						if (fileSize >= 0) {
+							saveFile->seek(savePointHeader.headerSize, SEEK_CUR);
+						} else {
+							hasValidationError = true;
+						}
+					} else {
+						fileSize = 0;
+						hasValidationError = true;
+					}
+				} else {
+					hasValidationError = true;
+				}
+			}
+
+			saveFile->close();
+		} else {
+			hasValidationError = true;
+			saveFile->close();
+		}
+	} else {
+		hasValidationError = true;
+		saveFile->close();
+	}
+
+	if (hasValidationError) {
+		saveFile->open(_engine->_savegameFilename, CVCRMODE_RB);
+		saveFile->seek(0, SEEK_END);
+		fileSize = saveFile->tell();
+		saveFile->seek(0, SEEK_SET);
+
+		if (fileSize < sizeof(SVCRFileHeader)) {
+			if (fileSize) {
+				error("Attempting to salvage corrupt save game file \"%s\"", _engine->_savegameFilename);
+			}
+
+			saveFile->close();
+			_engine->getVCR()->virginSaveFile();
+
+			delete tempFile;
+			delete saveFile;
+
+			return;
+		}
+
+		saveFile->read(&fileHeader, sizeof(SVCRFileHeader), 1, false, true);
+		if (!checkFileHeader(&fileHeader)) {
+			error("Attempting to salvage corrupt save game file \"%s\"", _engine->_savegameFilename);
+			saveFile->close();
+			_engine->getVCR()->virginSaveFile();
+
+			delete tempFile;
+			delete saveFile;
+
+			return;
+		}
+
+		if (flag) {
+			if (_engine->_savePointHeaders)
+				_engine->getMemoryManager()->freeMem(_engine->_savePointHeaders);
+
+			_engine->_savePointHeaders = (SVCRSavePointHeader *)_engine->getMemoryManager()->allocMem(
+				sizeof(SVCRSavePointHeader) * (fileHeader.numSavePoints + 1),
+				_engine->_savegameFilename,
+				kCharacterMaster
+			);
+
+			if (!_engine->_savePointHeaders) {
+				error("Out of memory");
+			}
+
+			_engine->_savePointHeaders->gameTime = 1037700;
+			_engine->_savePointHeaders->chapter = 1;
+		}
+
+		int offset = sizeof(SVCRFileHeader);
+		tempFile->open("temp.egg", CVCRMODE_WB);
+		tempFile->seek(sizeof(SVCRFileHeader), 0);
+		tempFile->close();
+		fileHeader.savePointsOffset = sizeof(SVCRFileHeader);
+		fileHeader.offset = sizeof(SVCRFileHeader);
+		fileHeader.skipSoundLoading = 0;
+		int numSavePoints = 0;
+
+		for (int j = 0; true; j++) {
+			if (fileSize < sizeof(SVCRFileHeader) || j >= fileHeader.numSavePoints) {
+				saveFile->close();
+				fileHeader.numSavePoints = numSavePoints;
+				tempFile->open("temp.egg", CVCRMODE_RWB);
+				tempFile->seek(0, SEEK_SET);
+				tempFile->write(&fileHeader, sizeof(SVCRFileHeader), 1, false);
+				tempFile->seek(offset, SEEK_SET);
+				tempFile->close();
+
+				if (removeSavegame(_engine->_savegameFilename)) {
+					error("Error deleting file \"%s\"", _engine->_savegameFilename);
+				} else if (renameSavegame("temp.egg", _engine->_savegameFilename)) {
+					error("Error renaming file \"%s\" to \"%s\"", "temp.egg", _engine->_savegameFilename);
+				}
+
+				delete tempFile;
+				delete saveFile;
+
+				return;
+			}
+
+			_engine->getSoundManager()->soundThread();
+			saveFile->read(&savePointHeader, sizeof(SVCRSavePointHeader), 1, false, true);
+			if (flag) {
+				memcpy(&_engine->_savePointHeaders[j + 1], &savePointHeader, sizeof(savePointHeader));
+			}
+
+			fileSize -= sizeof(SVCRSavePointHeader);
+			if (fileSize < 0)
+				break;
+
+			if (checkSavePointHeader(&savePointHeader)) {
+				fileSize -= savePointHeader.headerSize;
+				if (fileSize < 0)
+					break;
+
+				numSavePoints++;
+
+				byte *tempMem = (byte *)malloc(savePointHeader.headerSize);
+
+				saveFile->read(tempMem, savePointHeader.headerSize, 1, false, true);
+				tempFile->open("temp.egg", CVCRMODE_RWB);
+				tempFile->seek(offset, SEEK_SET);
+
+				if (savePointHeader.saveType != 3 && savePointHeader.saveType != 4)
+					fileHeader.savePointsOffset = offset;
+
+				tempFile->write(&savePointHeader, sizeof(SVCRSavePointHeader), 1, false);
+				tempFile->write(tempMem, savePointHeader.headerSize, 1, false);
+				tempFile->close();
+
+				free(tempMem);
+
+				offset += savePointHeader.headerSize + sizeof(SVCRSavePointHeader);
+				if (savePointHeader.saveType == 3 || savePointHeader.saveType == 4) {
+					fileHeader.skipSoundLoading = 1;
+				} else {
+					fileHeader.skipSoundLoading = 0;
+					fileHeader.offset = offset;
+				}
+			} else {
+				fileSize = 0;
+				error("Attempting to salvage corrupt save game file \"%s\"", _engine->_savegameFilename);
+			}
+		}
+
+		error("Attempting to salvage corrupt save game file \"%s\"", _engine->_savegameFilename);
+	}
+
+	delete tempFile;
+	delete saveFile;
+}
+
+bool SaveManager::checkFileHeader(SVCRFileHeader *fileHeader) {
+	if (fileHeader->signature == 0x12001200 &&
+		fileHeader->numSavePoints >= 0 &&
+		fileHeader->offset >= sizeof(SVCRFileHeader) &&
+		fileHeader->savePointsOffset >= sizeof(SVCRFileHeader) &&
+		fileHeader->skipSoundLoading < 2 &&
+		fileHeader->gammaLevel <= 6 &&
+		fileHeader->volume < 8) {
+
+		if (fileHeader->saveVersion == 9) {
+			return true;
+		} else {
+			error("Save game file \"%s\" is incompatible with this version of the game", _engine->_savegameFilename);
+			return false;
+		}
+	} else {
+		error("Save game file \"%s\" is corrupt", _engine->_savegameFilename);
+		return false;
+	}
+}
+
+bool SaveManager::checkSavePointHeader(SVCRSavePointHeader *savePointHeader) {
+	if (savePointHeader->signature == 0xE660E660) {
+		if (savePointHeader->saveType > 0 && savePointHeader->saveType <= 5) {
+			if (savePointHeader->gameTime >= 1061100 && savePointHeader->gameTime <= 4941000) {
+				if (savePointHeader->headerSize > 0 && (savePointHeader->headerSize & 0xF) == 0 && savePointHeader->chapter > 0)
+					return true;
+			}
+		}
+	}
+
+	error("Save game file \"%s\" is corrupt", _engine->_savegameFilename);
+
+	return false;
+}
+
+void SaveManager::continueGame() {
+	uint8 character;
+	int saveEvent;
+	int saveType;
+	SVCRFileHeader header;
+
+	_engine->_savegame->open(_engine->_savegameFilename, CVCRMODE_RB);
+	_engine->_savegame->read(&header, sizeof(SVCRFileHeader), 1, false, true);
+
+	if (checkFileHeader(&header)) {
+		_engine->_savegame->seek(header.savePointsOffset, SEEK_SET);
+		readSavePoint(_engine->_savegame, &saveType, &character, &saveEvent, header.skipSoundLoading);
+		_engine->getLogicManager()->_lastSavegameSessionTicks = _engine->getLogicManager()->_currentGameSessionTicks;
+
+		if (header.skipSoundLoading) {
+			_engine->getSoundManager()->destroyAllSound();
+			readSavePoint(_engine->_savegame, &saveType, &character, &saveEvent, 0);
+		}
+
+		_engine->_savegame->close();
+		_engine->getOtisManager()->wipeAllGSysInfo();
+		_engine->getLogicManager()->CONS_All(false, character);
+	} else {
+		_engine->_savegame->close();
+	}
+}
+
+void SaveManager::startRewoundGame() {
+	SVCRFileHeader header;
+	SVCRSavePointHeader savePointHeader;
+	int saveEvent;
+	int saveType;
+	uint8 character = 0;
+
+	CVCRFile *saveFile = new CVCRFile(_engine);
+	byte *buf = (byte *)malloc(0x2000);
+
+	_engine->_fightSkipCounter = 0;
+
+	_engine->_savegame->open(_engine->_savegameNames[_engine->_currentGameFileColorId], CVCRMODE_RB);
+	_engine->_savegameFilename = _engine->_savegameTempNames[_engine->_currentGameFileColorId];
+	saveFile->open(_engine->_savegameFilename, CVCRMODE_WB);
+
+	header.offset = sizeof(SVCRFileHeader);
+	header.numSavePoints = _engine->_currentSavePoint;
+	header.savePointsOffset = sizeof(SVCRFileHeader);
+	header.signature = 0x12001200;
+	header.skipSoundLoading = 0;
+	header.gammaLevel = _engine->getGraphicsManager()->getGammaLevel();
+	header.volume = _engine->getSoundManager()->getMasterVolume();
+	header.saveVersion = 9;
+	saveFile->write(&header, sizeof(header), 1, false);
+
+	_engine->_savegame->seek(sizeof(header), SEEK_SET);
+
+	if (_engine->_currentSavePoint > 1) {
+		int count = _engine->_currentSavePoint - 1;
+		do {
+			_engine->_savegame->read(&savePointHeader, sizeof(savePointHeader), 1, false, true);
+			saveFile->write(&savePointHeader, sizeof(savePointHeader), 1, false);
+			for (; savePointHeader.headerSize > 0x2000; savePointHeader.headerSize -= 0x2000) {
+				_engine->_savegame->read(buf, 0x2000, 1, false, true);
+				saveFile->write(buf, 0x2000, 1, false);
+			}
+			_engine->_savegame->read(buf, savePointHeader.headerSize, 1, false, true);
+			saveFile->write(buf, savePointHeader.headerSize, 1, false);
+			--count;
+		} while (count);
+	}
+
+	free(buf);
+	buf = nullptr;
+
+	if (_engine->_currentSavePoint) {
+		readSavePoint(_engine->_savegame, &saveType, &character, &saveEvent, false);
+		_engine->_savegame->close();
+		_engine->getLogicManager()->_lastSavegameSessionTicks = _engine->getLogicManager()->_currentGameSessionTicks;
+		header.savePointsOffset = saveFile->tell();
+
+		writeSavePoint(saveFile, saveType, character, saveEvent);
+
+		header.offset = saveFile->tell();
+		checkFileHeader(&header);
+		saveFile->seek(0, SEEK_SET);
+		saveFile->write(&header, sizeof(header), 1, false);
+	}
+
+	_engine->_savegame->close();
+	saveFile->close();
+	delete saveFile;
+
+	_engine->_gracePeriodIndex = _engine->_currentSavePoint;
+	_engine->_gracePeriodTimer = _engine->getLogicManager()->_gameProgress[kProgressJacket] < 2 ? 225 : 450;
+
+	if (_engine->_currentSavePoint) {
+		_engine->getOtisManager()->wipeAllGSysInfo();
+		_engine->getLogicManager()->CONS_All(false, character);
+	} else {
+		_engine->startNewGame();
+	}
+}
+
+bool SaveManager::fileExists(const char *filename) {
+	return g_system->getSavefileManager()->exists(_engine->getTargetName() + "-" + Common::String(filename));
+}
+
+bool SaveManager::removeSavegame(const char *filename) {
+	return !g_system->getSavefileManager()->removeSavefile(_engine->getTargetName() + "-" + Common::String(filename));
+}
+
+bool SaveManager::renameSavegame(const char *oldName, const char *newName) {
+	return !g_system->getSavefileManager()->renameSavefile(
+		_engine->getTargetName() + "-" + Common::String(oldName),
+		_engine->getTargetName() + "-" + Common::String(newName), false);
 }
 
 } // End of namespace LastExpress

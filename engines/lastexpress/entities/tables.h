@@ -30,7 +30,7 @@ class LastExpressEngine;
 
 class Tables : public Entity {
 public:
-	Tables(LastExpressEngine *engine, EntityIndex id);
+	Tables(LastExpressEngine *engine, CharacterIndex id);
 	~Tables() override {}
 
 	/**
@@ -64,7 +64,7 @@ public:
 	DECLARE_FUNCTION(draw)
 
 private:
-	EntityIndex _id;	///< Table entity id
+	CharacterIndex _id;	///< Table character id
 };
 
 } // End of namespace LastExpress

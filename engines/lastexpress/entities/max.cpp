@@ -35,7 +35,7 @@
 
 namespace LastExpress {
 
-Max::Max(LastExpressEngine *engine) : Entity(engine, kEntityMax) {
+Max::Max(LastExpressEngine *engine) : Entity(engine, kCharacterMax) {
 	ADD_CALLBACK_FUNCTION(Max, reset);
 	ADD_CALLBACK_FUNCTION_S(Max, playSound);
 	ADD_CALLBACK_FUNCTION_S(Max, draw);
@@ -87,29 +87,29 @@ IMPLEMENT_FUNCTION(6, Max, withAnna)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!Entity::updateParameter(params->param2, getState()->time, params->param1))
 			break;
 
-		if (!getSoundQueue()->isBuffered(kEntityMax))
-			getSound()->playSound(kEntityMax, "Max1122");
+		if (!getSoundQueue()->isBuffered(kCharacterMax))
+			getSound()->playSound(kCharacterMax, "Max1122");
 
 		params->param1 = 225 * (4 * rnd(20) + 40);
 		params->param2 = 0;
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 225 * (4 * rnd(20) + 40);
 		break;
 
-	case kAction71277948:
+	case kCharacterAction71277948:
 		setCallback(1);
 		setup_guardingCompartment();
 		break;
 
-	case kAction158007856:
-		if (!getSoundQueue()->isBuffered(kEntityMax)) {
-			getSound()->playSound(kEntityMax, "Max1122");
+	case kCharacterAction158007856:
+		if (!getSoundQueue()->isBuffered(kCharacterMax)) {
+			getSound()->playSound(kCharacterMax, "Max1122");
 			params->param1 = 225 * (4 * rnd(20) + 40);
 		}
 		break;
@@ -122,48 +122,48 @@ IMPLEMENT_FUNCTION(7, Max, guardingCompartment)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!Entity::updateParameter(params->param2, getState()->time, params->param1))
 			break;
 
-		if (!getSoundQueue()->isBuffered(kEntityMax))
-			getSound()->playSound(kEntityMax, "Max1122");
+		if (!getSoundQueue()->isBuffered(kCharacterMax))
+			getSound()->playSound(kCharacterMax, "Max1122");
 
 		params->param1 = 225 * (4 * rnd(20) + 40);
 		params->param2 = 0;
 		break;
 
-	case kActionKnock:
-	case kActionOpenDoor:
-		getObjects()->update(kObjectCompartmentF, kEntityMax, kObjectLocation1, kCursorNormal, kCursorNormal);
-		getObjects()->update(kObject53, kEntityMax, kObjectLocation1, kCursorNormal, kCursorNormal);
+	case kCharacterActionKnock:
+	case kCharacterActionOpenDoor:
+		getObjects()->update(kObjectCompartmentF, kCharacterMax, kObjectLocation1, kCursorNormal, kCursorNormal);
+		getObjects()->update(kObject53, kCharacterMax, kObjectLocation1, kCursorNormal, kCursorNormal);
 
-		if (getSoundQueue()->isBuffered(kEntityMax))
-			getSoundQueue()->fade(kEntityMax);
+		if (getSoundQueue()->isBuffered(kCharacterMax))
+			getSoundQueue()->fade(kCharacterMax);
 
-		setCallback((savepoint.action == kActionKnock) ? 1 : 2);
-		setup_playSound((savepoint.action == kActionKnock) ? "LIB012" : "LIB013");
+		setCallback((savepoint.action == kCharacterActionKnock) ? 1 : 2);
+		setup_playSound((savepoint.action == kCharacterActionKnock) ? "LIB012" : "LIB013");
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 225 * (4 * rnd(20) + 40);
 
 		getData()->entityPosition = kPosition_4070;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getObjects()->update(kObjectCompartmentF, kEntityMax, kObjectLocation1, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject53, kEntityMax, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentF, kCharacterMax, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject53, kCharacterMax, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		break;
 
-	case kActionDrawScene:
-		if (!getSoundQueue()->isBuffered(kEntityMax)) {
+	case kCharacterActionDrawScene:
+		if (!getSoundQueue()->isBuffered(kCharacterMax)) {
 			if (getEntities()->isPlayerPosition(kCarRedSleeping, 56) || getEntities()->isPlayerPosition(kCarRedSleeping, 78))
-				getSound()->playSound(kEntityMax, "MAX1120");
+				getSound()->playSound(kCharacterMax, "MAX1120");
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		case 0:
 		default:
@@ -176,30 +176,30 @@ IMPLEMENT_FUNCTION(7, Max, guardingCompartment)
 			break;
 
 		case 3:
-			getObjects()->update(kObjectCompartmentF, kEntityMax, kObjectLocation1, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObject53, kEntityMax, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentF, kCharacterMax, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject53, kCharacterMax, kObjectLocation1, kCursorHandKnock, kCursorHand);
 			break;
 		}
 		break;
 
-	case kAction101687594:
-		getEntities()->clearSequences(kEntityMax);
+	case kCharacterAction101687594:
+		getEntities()->clearSequences(kCharacterMax);
 
 		callbackAction();
 		break;
 
-	case kAction122358304:
-	case kActionMaxFreeFromCage:
-		getSavePoints()->push(kEntityMax, kEntityMax, kActionMaxFreeFromCage);
-		getObjects()->update(kObjectCompartmentF, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject53, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+	case kCharacterAction122358304:
+	case kCharacterActionMaxFreeFromCage:
+		getSavePoints()->push(kCharacterMax, kCharacterMax, kCharacterActionMaxFreeFromCage);
+		getObjects()->update(kObjectCompartmentF, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject53, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
 		callbackAction();
 		break;
 
-	case kAction158007856:
-		if (!getSoundQueue()->isBuffered(kEntityMax)) {
-			getSound()->playSound(kEntityMax, "Max1122");
+	case kCharacterAction158007856:
+		if (!getSoundQueue()->isBuffered(kCharacterMax)) {
+			getSound()->playSound(kCharacterMax, "Max1122");
 			params->param1 = 225 * (4 * rnd(20) + 40);
 		}
 		break;
@@ -212,58 +212,58 @@ IMPLEMENT_FUNCTION(8, Max, inCageFriendly)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!Entity::updateParameter(params->param3, getState()->time, params->param2))
 			break;
 
-		if (!getSoundQueue()->isBuffered(kEntityMax))
-			getSound()->playSound(kEntityMax, "Max3101");
+		if (!getSoundQueue()->isBuffered(kCharacterMax))
+			getSound()->playSound(kCharacterMax, "Max3101");
 
 		params->param2 = 225 * (4 * rnd(4) + 8);
 		params->param3 = 0;
 		break;
 
-	case kActionOpenDoor:
+	case kCharacterActionOpenDoor:
 		if (params->param1) {
 			setCallback(1);
 			setup_savegame(kSavegameTypeEvent, kEventCathMaxLickHand);
 			break;
 		}
 
-		if (getSoundQueue()->isBuffered(kEntityMax))
-			getSoundQueue()->fade(kEntityMax);
+		if (getSoundQueue()->isBuffered(kCharacterMax))
+			getSoundQueue()->fade(kCharacterMax);
 
-		getAction()->playAnimation(kEventCathMaxLickHand);
+		getActionOld()->playAnimation(kEventCathMaxLickHand);
 		getScenes()->processScene();
 
 		params->param1 = 1;
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param2 = 225 * (4 * rnd(4) + 8);
 
-		getObjects()->update(kObjectCageMax, kEntityMax, kObjectLocationNone, kCursorNormal, kCursorHand);
-		getEntities()->clearSequences(kEntityMax);
+		getObjects()->update(kObjectCageMax, kCharacterMax, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getEntities()->clearSequences(kCharacterMax);
 
 		getData()->entityPosition = kPosition_8000;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarBaggage;
 
-		if (!getSoundQueue()->isBuffered(kEntityMax))
-			getSound()->playSound(kEntityMax, "Max3101");
+		if (!getSoundQueue()->isBuffered(kCharacterMax))
+			getSound()->playSound(kCharacterMax, "Max3101");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() != 1)
 			break;
 
-		if (getSoundQueue()->isBuffered(kEntityMax))
-			getSoundQueue()->fade(kEntityMax);
+		if (getSoundQueue()->isBuffered(kCharacterMax))
+			getSoundQueue()->fade(kCharacterMax);
 
-		getSound()->playSound(kEntityPlayer, "LIB026");
-		getAction()->playAnimation(kEventCathMaxFree);
+		getSound()->playSound(kCharacterCath, "LIB026");
+		getActionOld()->playAnimation(kEventCathMaxFree);
 		getScenes()->loadSceneFromPosition(kCarBaggage, 92);
-		getObjects()->update(kObjectCageMax, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObjectCageMax, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorHand);
 		setup_function9();
 		break;
 	}
@@ -275,12 +275,12 @@ IMPLEMENT_FUNCTION(9, Max, function9)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param2 == kTimeInvalid || !getState()->time)
 			break;
 
 		if (params->param1 >= getState()->time) {
-			if (!getEntities()->hasValidFrame(kEntityMax) || !params->param2) {
+			if (!getEntities()->hasValidFrame(kCharacterMax) || !params->param2) {
 
 				params->param2 = (uint)getState()->time;
 				if (!params->param2)
@@ -303,13 +303,13 @@ setup_functions:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Draw Max outside of cage
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_4070;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getEntities()->drawSequenceLeft(kEntityMax, "630Af");
-		getEntities()->enterCompartment(kEntityMax, kObjectCompartmentF, true);
+		getEntities()->drawSequenceLeft(kCharacterMax, "630Af");
+		getEntities()->enterCompartment(kCharacterMax, kObjectCompartmentF, true);
 
 		params->param1 = (uint)(getState()->time + 2700);
 		break;
@@ -322,11 +322,11 @@ IMPLEMENT_FUNCTION(10, Max, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Max, setup_withAnna));
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_4070;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
@@ -341,12 +341,12 @@ IMPLEMENT_FUNCTION(11, Max, chapter2)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_withAnna();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityMax);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterMax);
 
 		getData()->entityPosition = kPosition_4070;
 		getData()->location = kLocationInsideCompartment;
@@ -364,12 +364,12 @@ IMPLEMENT_FUNCTION(12, Max, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter3Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityMax);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterMax);
 
 		getData()->entityPosition = kPosition_4070;
 		getData()->location = kLocationInsideCompartment;
@@ -386,25 +386,25 @@ IMPLEMENT_FUNCTION(13, Max, chapter3Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param2) {
-			getData()->entityPosition = getEntityData(kEntityCoudert)->entityPosition;
-			getData()->location = getEntityData(kEntityCoudert)->location;
-			getData()->car = getEntityData(kEntityCoudert)->car;
+			getData()->entityPosition = getEntityData(kCharacterCond2)->entityPosition;
+			getData()->location = getEntityData(kCharacterCond2)->location;
+			getData()->car = getEntityData(kCharacterCond2)->car;
 			break;
 		}
 
 		if (!Entity::updateParameter(params->param3, getState()->time, params->param1))
 			break;
 
-		if (!getSoundQueue()->isBuffered(kEntityMax))
-			getSound()->playSound(kEntityMax, "Max1122");
+		if (!getSoundQueue()->isBuffered(kCharacterMax))
+			getSound()->playSound(kCharacterMax, "Max1122");
 
 		params->param1 = 225 * (4 * rnd(20) + 40);
 		params->param3 = 0;
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 225 * (4 * rnd(20) + 40);
 
 		getData()->entityPosition = kPosition_4070;
@@ -412,25 +412,25 @@ IMPLEMENT_FUNCTION(13, Max, chapter3Handler)
 		getData()->car = kCarRedSleeping;
 		break;
 
-	case kAction71277948:
+	case kCharacterAction71277948:
 		setCallback(1);
 		setup_guardingCompartment();
 		break;
 
-	case kAction122358304:
+	case kCharacterAction122358304:
 		params->param2 = 1;
 		break;
 
-	case kActionMaxFreeFromCage:
+	case kCharacterActionMaxFreeFromCage:
 		setup_inCageMad();
 		break;
 
-	case kAction158007856:
+	case kCharacterAction158007856:
 		if (params->param2)
 			break;
 
-		if (!getSoundQueue()->isBuffered(kEntityMax)) {
-			getSound()->playSound(kEntityMax, "Max1122");
+		if (!getSoundQueue()->isBuffered(kCharacterMax)) {
+			getSound()->playSound(kCharacterMax, "Max1122");
 			params->param1 = 225 * (4 * rnd(20) + 40);
 		}
 		break;
@@ -443,15 +443,15 @@ IMPLEMENT_FUNCTION(14, Max, inCageMad)
 	default:
 		break;
 
-	case kActionEndSound:
-		getSound()->playSound(kEntityMax, "Max1122");
+	case kCharacterActionEndSound:
+		getSound()->playSound(kCharacterMax, "Max1122");
 		break;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Save game after freeing Max from his cage
-	case kActionOpenDoor:
-		if (getEvent(kEventCathMaxCage)) {
-			if (!getEvent(kEventCathMaxFree)) {
+	case kCharacterActionOpenDoor:
+		if (HELPERgetEvent(kEventCathMaxCage)) {
+			if (!HELPERgetEvent(kEventCathMaxFree)) {
 				setCallback(2);
 				setup_savegame(kSavegameTypeEvent, kEventCathMaxFree);
 			}
@@ -462,41 +462,41 @@ IMPLEMENT_FUNCTION(14, Max, inCageMad)
 		}
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObjectCageMax, kEntityMax, kObjectLocationNone, kCursorNormal, kCursorHand);
+	case kCharacterActionDefault:
+		getObjects()->update(kObjectCageMax, kCharacterMax, kObjectLocationNone, kCursorNormal, kCursorHand);
 
 		getData()->entityPosition = kPosition_8000;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarBaggage;
 
-		if (!getSoundQueue()->isBuffered(kEntityMax))
-			getSound()->playSound(kEntityMax, "Max1122");
+		if (!getSoundQueue()->isBuffered(kCharacterMax))
+			getSound()->playSound(kCharacterMax, "Max1122");
 		break;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Play animation for Max in the cage and after opening it
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			if (getSoundQueue()->isBuffered(kEntityMax))
-				getSoundQueue()->stop(kEntityMax);
+			if (getSoundQueue()->isBuffered(kCharacterMax))
+				getSoundQueue()->stop(kCharacterMax);
 
-			getAction()->playAnimation(kEventCathMaxCage);
-			getSoundQueue()->assignNISLink(kEntityMax);
+			getActionOld()->playAnimation(kEventCathMaxCage);
+			getSoundQueue()->assignNISLink(kCharacterMax);
 			getScenes()->processScene();
 			break;
 
 		case 2:
-			if (getSoundQueue()->isBuffered(kEntityMax))
-				getSoundQueue()->fade(kEntityMax);
+			if (getSoundQueue()->isBuffered(kCharacterMax))
+				getSoundQueue()->fade(kCharacterMax);
 
-			getSound()->playSound(kEntityPlayer, "LIB026");
-			getAction()->playAnimation(kEventCathMaxFree);
+			getSound()->playSound(kCharacterCath, "LIB026");
+			getActionOld()->playAnimation(kEventCathMaxFree);
 			getScenes()->loadSceneFromPosition(kCarBaggage, 92);
-			getObjects()->update(kObjectCageMax, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
+			getObjects()->update(kObjectCageMax, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorHand);
 			setup_function9();
 			break;
 		}
@@ -510,49 +510,49 @@ IMPLEMENT_FUNCTION(15, Max, letMeIn)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param2) {
-			getData()->entityPosition = getEntityData(kEntityCoudert)->entityPosition;
-			getData()->location = getEntityData(kEntityCoudert)->location;
-			getData()->car = getEntityData(kEntityCoudert)->car;
+			getData()->entityPosition = getEntityData(kCharacterCond2)->entityPosition;
+			getData()->location = getEntityData(kCharacterCond2)->location;
+			getData()->car = getEntityData(kCharacterCond2)->car;
 		}
 
 		if (!params->param1) {
 			if (!Entity::updateParameter(params->param3, getState()->time, 900))
 				break;
 
-			getSavePoints()->push(kEntityMax, kEntityCoudert, kAction157026693);
+			getSavePoints()->push(kCharacterMax, kCharacterCond2, kCharacterAction157026693);
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_4070;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		if (!getSoundQueue()->isBuffered(kEntityMax))
-			getSound()->playSound(kEntityMax, "Max3010");
+		if (!getSoundQueue()->isBuffered(kCharacterMax))
+			getSound()->playSound(kCharacterMax, "Max3010");
 
 		setCallback(1);
 		setup_enterExitCompartment("630Bf", kObjectCompartmentF);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1) {
-			getEntities()->drawSequenceLeft(kEntityMax, "630Af");
-			getEntities()->enterCompartment(kEntityMax, kObjectCompartmentF, true);
-			getSavePoints()->push(kEntityMax, kEntityAnna, kAction156622016);
+			getEntities()->drawSequenceLeft(kCharacterMax, "630Af");
+			getEntities()->enterCompartment(kCharacterMax, kObjectCompartmentF, true);
+			getSavePoints()->push(kCharacterMax, kCharacterAnna, kCharacterAction156622016);
 		}
 		break;
 
-	case kAction122358304:
-		(savepoint.entity2 == kEntityAnna) ? (params->param1 = 1) : (params->param2 = 1);
-		getEntities()->exitCompartment(kEntityMax, kObjectCompartmentF, true);
-		getEntities()->drawSequenceLeft(kEntityMax, "BLANK");
+	case kCharacterAction122358304:
+		(savepoint.entity2 == kCharacterAnna) ? (params->param1 = 1) : (params->param2 = 1);
+		getEntities()->exitCompartment(kCharacterMax, kObjectCompartmentF, true);
+		getEntities()->drawSequenceLeft(kCharacterMax, "BLANK");
 		break;
 
-	case kActionMaxFreeFromCage:
-		getEntities()->exitCompartment(kEntityMax, kObjectCompartmentF, true);
+	case kCharacterActionMaxFreeFromCage:
+		getEntities()->exitCompartment(kCharacterMax, kObjectCompartmentF, true);
 		setup_inCageFriendly();
 		break;
 	}
@@ -564,12 +564,12 @@ IMPLEMENT_FUNCTION(16, Max, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_inCageFriendly();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityMax);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterMax);
 
 		getData()->entityPosition = kPosition_8000;
 		getData()->location = kLocationInsideCompartment;
@@ -584,31 +584,31 @@ IMPLEMENT_FUNCTION(17, Max, function17)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param1) {
-			getData()->entityPosition = getEntityData(kEntityCoudert)->entityPosition;
-			getData()->location = getEntityData(kEntityCoudert)->location;
-			getData()->car = getEntityData(kEntityCoudert)->car;
+			getData()->entityPosition = getEntityData(kCharacterCond2)->entityPosition;
+			getData()->location = getEntityData(kCharacterCond2)->location;
+			getData()->car = getEntityData(kCharacterCond2)->car;
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_4070;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getEntities()->drawSequenceLeft(kEntityMax, "630Af");
-		getSavePoints()->push(kEntityMax, kEntityCoudert, kAction157026693);
+		getEntities()->drawSequenceLeft(kCharacterMax, "630Af");
+		getSavePoints()->push(kCharacterMax, kCharacterCond2, kCharacterAction157026693);
 		break;
 
-	case kAction122358304:
+	case kCharacterAction122358304:
 		params->param1 = 1;
-		getEntities()->exitCompartment(kEntityMax, kObjectCompartmentF, true);
-		getEntities()->drawSequenceLeft(kEntityMax, "BLANK");
+		getEntities()->exitCompartment(kCharacterMax, kObjectCompartmentF, true);
+		getEntities()->drawSequenceLeft(kCharacterMax, "BLANK");
 		break;
 
-	case kActionMaxFreeFromCage:
-		getEntities()->exitCompartment(kEntityMax, kObjectCompartmentF, true);
+	case kCharacterActionMaxFreeFromCage:
+		getEntities()->exitCompartment(kCharacterMax, kObjectCompartmentF, true);
 		setup_inCageFriendly();
 		break;
 	}
@@ -616,14 +616,14 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Max, chapter5)
-	if (savepoint.action == kActionDefault) {
-		getEntities()->clearSequences(kEntityMax);
+	if (savepoint.action == kCharacterActionDefault) {
+		getEntities()->clearSequences(kCharacterMax);
 
 		getData()->entityPosition = kPositionNone;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarNone;
 
-		getObjects()->update(kObjectCageMax, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObjectCageMax, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorHand);
 	}
 IMPLEMENT_FUNCTION_END
 

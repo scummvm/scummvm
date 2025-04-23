@@ -33,7 +33,7 @@
 
 namespace LastExpress {
 
-Cooks::Cooks(LastExpressEngine *engine) : Entity(engine, kEntityCooks) {
+Cooks::Cooks(LastExpressEngine *engine) : Entity(engine, kCharacterCook) {
 	ADD_CALLBACK_FUNCTION_S(Cooks, draw);
 	ADD_CALLBACK_FUNCTION_S(Cooks, playSound);
 	ADD_CALLBACK_FUNCTION(Cooks, uptrainVersion);
@@ -66,14 +66,14 @@ IMPLEMENT_FUNCTION(3, Cooks, uptrainVersion)
 	default:
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceLeft(kEntityCooks, "308A");
-		getEntities()->updatePositionEnter(kEntityCooks, kCarRestaurant, 75);
-		getEntities()->updatePositionEnter(kEntityCooks, kCarRestaurant, 78);
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceLeft(kCharacterCook, "308A");
+		getEntities()->updatePositionEnter(kCharacterCook, kCarRestaurant, 75);
+		getEntities()->updatePositionEnter(kCharacterCook, kCarRestaurant, 78);
 
 		switch (getProgress().chapter) {
 		default:
-			getSound()->playSound(kEntityCooks, "KIT1011");
+			getSound()->playSound(kCharacterCook, "KIT1011");
 			setCallback(3);
 			setup_draw("308B");
 			break;
@@ -90,46 +90,46 @@ IMPLEMENT_FUNCTION(3, Cooks, uptrainVersion)
 		}
 		break;
 
-	case kActionDrawScene:
-		if (!getEntities()->isInKitchen(kEntityPlayer)) {
-			getEntities()->clearSequences(kEntityCooks);
+	case kCharacterActionDrawScene:
+		if (!getEntities()->isInKitchen(kCharacterCath)) {
+			getEntities()->clearSequences(kCharacterCook);
 			callbackAction();
 			break;
 		}
 
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 76)) {
-			getEntities()->drawSequenceLeft(kEntityCooks, "308D");
+			getEntities()->drawSequenceLeft(kCharacterCook, "308D");
 
-			if (!getSoundQueue()->isBuffered(kEntityCooks) && !params->param1) {
+			if (!getSoundQueue()->isBuffered(kCharacterCook) && !params->param1) {
 				// Kitchen apprentice getting a lesson :D
-				getSound()->playSound(kEntityCooks, "KIT1011A");
+				getSound()->playSound(kCharacterCook, "KIT1011A");
 				params->param1 = 1;
 			}
 		}
 
-		if (params->param1 && !getEntities()->hasValidFrame(kEntityCooks) && !getSoundQueue()->isBuffered(kEntityCooks)) {
-			getSound()->playSound(kEntityCooks, "LIB015");
-			getEntities()->clearSequences(kEntityCooks);
+		if (params->param1 && !getEntities()->hasValidFrame(kCharacterCook) && !getSoundQueue()->isBuffered(kCharacterCook)) {
+			getSound()->playSound(kCharacterCook, "LIB015");
+			getEntities()->clearSequences(kCharacterCook);
 			callbackAction();
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
 		case 2:
-			getSound()->playSound(kEntityCooks, "KIT1011");
+			getSound()->playSound(kCharacterCook, "KIT1011");
 			setCallback(3);
 			setup_draw("308B");
 			break;
 
 		case 3:
-			getEntities()->drawSequenceLeft(kEntityCooks, "308C");
-			getEntities()->updatePositionExit(kEntityCooks, kCarRestaurant, 75);
-			getEntities()->updatePositionExit(kEntityCooks, kCarRestaurant, 78);
+			getEntities()->drawSequenceLeft(kCharacterCook, "308C");
+			getEntities()->updatePositionExit(kCharacterCook, kCarRestaurant, 75);
+			getEntities()->updatePositionExit(kCharacterCook, kCarRestaurant, 78);
 			break;
 		}
 		break;
@@ -142,14 +142,14 @@ IMPLEMENT_FUNCTION(4, Cooks, downtrainVersion)
 	default:
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceLeft(kEntityCooks, "308A");
-		getEntities()->updatePositionEnter(kEntityCooks, kCarRestaurant, 75);
-		getEntities()->updatePositionEnter(kEntityCooks, kCarRestaurant, 78);
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceLeft(kCharacterCook, "308A");
+		getEntities()->updatePositionEnter(kCharacterCook, kCarRestaurant, 75);
+		getEntities()->updatePositionEnter(kCharacterCook, kCarRestaurant, 78);
 
 		switch (getProgress().chapter) {
 		default:
-			getSound()->playSound(kEntityCooks, "KIT1011");
+			getSound()->playSound(kCharacterCook, "KIT1011");
 			setCallback(3);
 			setup_draw("308B");
 			break;
@@ -166,46 +166,46 @@ IMPLEMENT_FUNCTION(4, Cooks, downtrainVersion)
 		}
 		break;
 
-	case kActionDrawScene:
-		if (!getEntities()->isInKitchen(kEntityPlayer)) {
-			getEntities()->clearSequences(kEntityCooks);
+	case kCharacterActionDrawScene:
+		if (!getEntities()->isInKitchen(kCharacterCath)) {
+			getEntities()->clearSequences(kCharacterCook);
 			callbackAction();
 			break;
 		}
 
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 80)) {
-			getEntities()->drawSequenceLeft(kEntityCooks, "308D");
+			getEntities()->drawSequenceLeft(kCharacterCook, "308D");
 
-			if (!getSoundQueue()->isBuffered(kEntityCooks) && !params->param1) {
+			if (!getSoundQueue()->isBuffered(kCharacterCook) && !params->param1) {
 				// Kitchen apprentice getting a lesson :D
-				getSound()->playSound(kEntityCooks, "KIT1011A");
+				getSound()->playSound(kCharacterCook, "KIT1011A");
 				params->param1 = 1;
 			}
 		}
 
-		if (params->param1 && !getEntities()->hasValidFrame(kEntityCooks) && !getSoundQueue()->isBuffered(kEntityCooks)) {
-			getSound()->playSound(kEntityCooks, "LIB015");
-			getEntities()->clearSequences(kEntityCooks);
+		if (params->param1 && !getEntities()->hasValidFrame(kCharacterCook) && !getSoundQueue()->isBuffered(kCharacterCook)) {
+			getSound()->playSound(kCharacterCook, "LIB015");
+			getEntities()->clearSequences(kCharacterCook);
 			callbackAction();
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
 		case 2:
-			getSound()->playSound(kEntityCooks, "KIT1011");
+			getSound()->playSound(kCharacterCook, "KIT1011");
 			setCallback(3);
 			setup_draw("308B");
 			break;
 
 		case 3:
-			getEntities()->drawSequenceLeft(kEntityCooks, "308C");
-			getEntities()->updatePositionExit(kEntityCooks, kCarRestaurant, 75);
-			getEntities()->updatePositionExit(kEntityCooks, kCarRestaurant, 78);
+			getEntities()->drawSequenceLeft(kCharacterCook, "308C");
+			getEntities()->updatePositionExit(kCharacterCook, kCarRestaurant, 75);
+			getEntities()->updatePositionExit(kCharacterCook, kCarRestaurant, 78);
 			break;
 		}
 		break;
@@ -218,11 +218,11 @@ IMPLEMENT_FUNCTION(5, Cooks, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Cooks, setup_inKitchenDinner));
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5900;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarRestaurant;
@@ -239,23 +239,23 @@ IMPLEMENT_FUNCTION(6, Cooks, inKitchenDinner)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!Entity::updateParameter(params->param4, getState()->time, params->param2))
 			break;
 
 		// Broken plate sound
-		getSound()->playSound(kEntityPlayer, "LIB122",  getSound()->getSoundFlag(kEntityCooks));
+		getSound()->playSound(kCharacterCath, "LIB122",  getSound()->getSoundFlag(kCharacterCook));
 		params->param2 = 225 * (4 * rnd(30) + 120);
 		params->param4 = 0;
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 1;
 		params->param2 = 225 * (4 * rnd(30) + 120);
 		break;
 
-	case kActionDrawScene:
-		if (!getEntities()->isInKitchen(kEntityPlayer))
+	case kCharacterActionDrawScene:
+		if (!getEntities()->isInKitchen(kCharacterCath))
 			break;
 
 		if (params->param1) {
@@ -274,7 +274,7 @@ IMPLEMENT_FUNCTION(6, Cooks, inKitchenDinner)
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -290,11 +290,11 @@ IMPLEMENT_FUNCTION(6, Cooks, inKitchenDinner)
 		}
 		break;
 
-	case kAction101632192:
+	case kCharacterAction101632192:
 		setup_lockUp();
 		break;
 
-	case kAction224849280:
+	case kCharacterAction224849280:
 		getProgress().field_4C = 1;
 		params->param1 = 1;
 		break;
@@ -307,18 +307,18 @@ IMPLEMENT_FUNCTION(7, Cooks, lockUp)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		// Snoring...
 		setCallback(1);
 		setup_playSound("WAT1200");
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_3650;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarRestaurant;
 
-		getEntities()->clearSequences(kEntityCooks);
+		getEntities()->clearSequences(kCharacterCook);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -329,12 +329,12 @@ IMPLEMENT_FUNCTION(8, Cooks, chapter2)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_inKitchenBreakfast();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityCooks);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterCook);
 
 		getData()->entityPosition = kPosition_5900;
 		getData()->location = kLocationOutsideCompartment;
@@ -353,22 +353,22 @@ IMPLEMENT_FUNCTION(9, Cooks, inKitchenBreakfast)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!Entity::updateParameter(params->param3, getState()->time, params->param1))
 			break;
 
 		// Broken plate sound
-		getSound()->playSound(kEntityPlayer, "LIB122",  getSound()->getSoundFlag(kEntityCooks));
+		getSound()->playSound(kCharacterCath, "LIB122",  getSound()->getSoundFlag(kCharacterCook));
 		params->param1 = 225 * (4 * rnd(30) + 120);
 		params->param3 = 0;
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 225 * (4 * rnd(30) + 120);
 		break;
 
-	case kActionDrawScene:
-		if (!getEntities()->isInKitchen(kEntityPlayer))
+	case kCharacterActionDrawScene:
+		if (!getEntities()->isInKitchen(kCharacterCath))
 			break;
 
 		if (params->param2) {
@@ -380,7 +380,7 @@ IMPLEMENT_FUNCTION(9, Cooks, inKitchenBreakfast)
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1 || getCallback() == 2)
 			params->param2 = !params->param2;
 		break;
@@ -393,12 +393,12 @@ IMPLEMENT_FUNCTION(10, Cooks, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_inKitchenLunch();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityCooks);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterCook);
 
 		getData()->entityPosition = kPosition_5900;
 		getData()->car = kCarRestaurant;
@@ -416,10 +416,10 @@ IMPLEMENT_FUNCTION(11, Cooks, inKitchenLunch)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (Entity::updateParameter(params->param4, getState()->time, params->param2)) {
 			// Broken plate sound
-			getSound()->playSound(kEntityPlayer, "LIB122",  getSound()->getSoundFlag(kEntityCooks));
+			getSound()->playSound(kCharacterCath, "LIB122",  getSound()->getSoundFlag(kCharacterCook));
 			params->param2 = 225 * (4 * rnd(30) + 120);
 			params->param4 = 0;
 		}
@@ -430,13 +430,13 @@ IMPLEMENT_FUNCTION(11, Cooks, inKitchenLunch)
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 1;
 		params->param2 = 225 * (4 * rnd(30) + 120);
 		break;
 
-	case kActionDrawScene:
-		if (!getEntities()->isInKitchen(kEntityPlayer))
+	case kCharacterActionDrawScene:
+		if (!getEntities()->isInKitchen(kCharacterCath))
 			break;
 
 		if (params->param1) {
@@ -455,7 +455,7 @@ IMPLEMENT_FUNCTION(11, Cooks, inKitchenLunch)
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -471,7 +471,7 @@ IMPLEMENT_FUNCTION(11, Cooks, inKitchenLunch)
 		}
 		break;
 
-	case kAction236976550:
+	case kCharacterAction236976550:
 		getProgress().field_4C = 1;
 		break;
 
@@ -484,12 +484,12 @@ IMPLEMENT_FUNCTION(12, Cooks, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_inKitchenDinner2();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityCooks);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterCook);
 
 		getData()->entityPosition = kPosition_5900;
 		getData()->location = kLocationOutsideCompartment;
@@ -508,22 +508,22 @@ IMPLEMENT_FUNCTION(13, Cooks, inKitchenDinner2)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!Entity::updateParameter(params->param3, getState()->time, params->param1))
 			break;
 
 		// Broken plate sound
-		getSound()->playSound(kEntityPlayer, "LIB122",  getSound()->getSoundFlag(kEntityCooks));
+		getSound()->playSound(kCharacterCath, "LIB122",  getSound()->getSoundFlag(kCharacterCook));
 		params->param1 = 225 * (4 * rnd(30) + 120);
 		params->param3 = 0;
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 225 * (4 * rnd(30) + 120);
 		break;
 
-	case kActionDrawScene:
-		if (!getEntities()->isInKitchen(kEntityPlayer))
+	case kCharacterActionDrawScene:
+		if (!getEntities()->isInKitchen(kCharacterCath))
 			break;
 
 		// Kitchen background sound
@@ -536,7 +536,7 @@ IMPLEMENT_FUNCTION(13, Cooks, inKitchenDinner2)
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		// Play the next part of background sound
 		if (getCallback() == 1 || getCallback() == 2) {
 			params->param2 = !params->param2;
@@ -546,8 +546,8 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Cooks, chapter5)
-	if (savepoint.action == kActionDefault)
-		getEntities()->clearSequences(kEntityCooks);
+	if (savepoint.action == kCharacterActionDefault)
+		getEntities()->clearSequences(kCharacterCook);
 IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

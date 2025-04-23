@@ -31,13 +31,13 @@
 	    uint32 {4}      - LastExpress_ADPCMStream::_volumeHoldBlocks
 	                      (useless since the target volume is not saved)
 	    uint32 {4}      - ?? [no references except for save/load]
-	    uint32 {4}      - entity
+	    uint32 {4}      - character
 	    uint32 {4}      - activate delay in sound ticks (30Hz timer)
 	    uint32 {4}      - priority
-	    char {16}       - name of linked-after sound
+	    char {16}       - eraseData of linked-after sound
 	                      (always empty because only NIS entries
 	                       have linked-after sounds, and NIS entries are not saved)
-	    char {16}       - name
+	    char {16}       - eraseData
 
 	Sound queue entry: 120 bytes
 	    uint32 {4}      - status (combination of flags from SoundFlag)
@@ -64,11 +64,11 @@
 	    uint32 {4}      - base volume if NIS is playing
 	                      (the actual volume is reduced in half for non-NIS sounds;
 	                       this is used to restore the volume after NIS ends)
-	    uint32 {4}      - entity
+	    uint32 {4}      - character
 	    uint32 {4}      - activate time in sound ticks (30Hz timer)
 	    uint32 {4}      - priority
-	    char {16}       - name of linked-after sound, used to save/load _linkAfter
-	    char {16}       - name
+	    char {16}       - eraseData of linked-after sound, used to save/load _linkAfter
+	    char {16}       - eraseData
 	    uint32 {4}      - pointer to next entry in the queue
 	    uint32 {4}      - subtitle data pointer
 */
@@ -99,7 +99,7 @@ public:
 	// [used for restoring the entry from savefile]
 	void play(uint32 startTime = 0);
 	void kill() {
-		_entity = kEntityPlayer; // no kActionEndSound notifications
+		_entity = kCharacterCath; // no kCharacterActionEndSound notifications
 		close();
 	}
 	void setVolumeSmoothly(SoundFlag newVolume);
@@ -119,7 +119,7 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 	// Accessors
-	void setEntity(EntityIndex entity) { _entity = entity; }
+	void setEntity(CharacterIndex entity) { _entity = entity; }
 	bool needSaving() const {
 		return (_name != "NISSND?" && (_status & kSoundTypeMask) != kSoundTypeMenu);
 	}
@@ -127,7 +127,7 @@ public:
 	uint32           getStatus()   { return _status; }
 	int32            getTag()      { return _tag; }
 	uint32           getTime()     { return _soundStream ? (_soundStream->getTimeMS() * 30 / 1000) + _startTime : 0; }
-	EntityIndex      getEntity()   { return _entity; }
+	CharacterIndex      getEntity()   { return _entity; }
 	uint32           getPriority() { return _priority; }
 	const Common::String& getName(){ return _name; }
 
@@ -155,7 +155,7 @@ private:
 	//uint32 _unused;
 	//uint32 _smoothChangeTarget; // the related logic is in LastExpress_ADPCMStream
 	uint32 _volumeWithoutNIS;
-	EntityIndex _entity;
+	CharacterIndex _entity;
 	// The original game uses one variable _activateTime = _initTime + _activateDelay
 	// and measures everything in sound ticks (30Hz timer).
 	// We use milliseconds and two variables to deal with possible overflow
@@ -199,7 +199,7 @@ private:
 	Common::String    _filename;
 	uint32            _status;
 	SoundEntry       *_sound;
-	SubtitleManager  *_data;
+	SubtitleManagerOld  *_data;
 };
 
 } // End of namespace LastExpress

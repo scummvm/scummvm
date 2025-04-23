@@ -34,7 +34,7 @@ public:
 	~Salko() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
@@ -47,7 +47,7 @@ public:
 	DECLARE_VFUNCTION_2(enterExitCompartment, const char *sequence, ObjectIndex compartment)
 
 	/**
-	* Draws the entity
+	* Draws the character
 	*
 	* @param savepoint The savepoint
 	*                    - The sequence to draw
@@ -55,10 +55,10 @@ public:
 	DECLARE_FUNCTION_NOSETUP(draw)
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_VFUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 

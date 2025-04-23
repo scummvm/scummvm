@@ -39,7 +39,7 @@
 
 namespace LastExpress {
 
-Vassili::Vassili(LastExpressEngine *engine) : Entity(engine, kEntityVassili) {
+Vassili::Vassili(LastExpressEngine *engine) : Entity(engine, kCharacterVassili) {
 	ADD_CALLBACK_FUNCTION(Vassili, reset);
 	ADD_CALLBACK_FUNCTION_S(Vassili, draw);
 	ADD_CALLBACK_FUNCTION_II(Vassili, savegame);
@@ -81,13 +81,13 @@ IMPLEMENT_FUNCTION(4, Vassili, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Vassili, setup_chapter1Handler));
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject40, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+	case kCharacterActionDefault:
+		getObjects()->update(kObjectCompartmentA, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject40, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -98,35 +98,35 @@ IMPLEMENT_FUNCTION(5, Vassili, chapter1Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param1) {
-			getData()->entityPosition = getEntityData(kEntityTatiana)->entityPosition;
-			getData()->location = getEntityData(kEntityTatiana)->location;
-			getData()->car = getEntityData(kEntityTatiana)->car;
+			getData()->entityPosition = getEntityData(kCharacterTatiana)->entityPosition;
+			getData()->location = getEntityData(kCharacterTatiana)->location;
+			getData()->car = getEntityData(kCharacterTatiana)->car;
 		} else {
 			if (!Entity::updateParameterCheck(params->param3, getState()->time, 450))
 				break;
 
 			if (!params->param2 && getObjects()->get(kObjectCompartmentA).model == kObjectModel1) {
 				params->param2 = 1;
-				getEntities()->drawSequenceLeft(kEntityVassili, "303A");
-				getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+				getEntities()->drawSequenceLeft(kCharacterVassili, "303A");
+				getObjects()->update(kObjectCompartmentA, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 			}
 			break;
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 1;
 		break;
 
-	case kAction122732000:
+	case kCharacterAction122732000:
 		setup_inBed();
 		break;
 
-	case kAction168459827:
+	case kCharacterAction168459827:
 		params->param1 = 0;
-		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentA, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -137,8 +137,8 @@ IMPLEMENT_FUNCTION(6, Vassili, inBed)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200)) {
+	case kCharacterActionNone:
+		if (getEntities()->isInsideCompartment(kCharacterCath, kCarRedSleeping, kPosition_8200)) {
 			if (!Entity::updateParameter(params->param3, getState()->timeTicks, params->param1))
 				goto label_function7;
 
@@ -150,14 +150,14 @@ IMPLEMENT_FUNCTION(6, Vassili, inBed)
 		params->param3 = 0;
 
 		if (params->param2)
-			getEntities()->drawSequenceLeft(kEntityVassili, "303A");
+			getEntities()->drawSequenceLeft(kCharacterVassili, "303A");
 
 label_function7:
 		if (params->param4 != kTimeInvalid && getState()->time > kTime1489500) {
 
 			if (getState()->time <= kTime1503000) {
 
-				if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200) || !params->param4) {
+				if (getEntities()->isInsideCompartment(kCharacterCath, kCarRedSleeping, kPosition_8200) || !params->param4) {
 
 					params->param4 = (uint)getState()->time;
 					if (!params->param4) {
@@ -175,25 +175,25 @@ label_function7:
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_8200;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentA, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
 		params->param1 = 5 * (3 * rnd(25) + 15);
 
-		getEntities()->drawSequenceLeft(kEntityVassili, "303A");
+		getEntities()->drawSequenceLeft(kCharacterVassili, "303A");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1) {
-			getEntities()->drawSequenceLeft(kEntityVassili, "303C");
+			getEntities()->drawSequenceLeft(kCharacterVassili, "303C");
 			params->param1 = 5 * (3 * rnd(25) + 15);
 			params->param2 = 1;
 
-			// Shared part with kActionNone
+			// Shared part with kCharacterActionNone
 			goto label_function7;
 		}
 		break;
@@ -206,7 +206,7 @@ IMPLEMENT_FUNCTION(7, Vassili, function7)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param1 != kTimeInvalid && getState()->time > kTime1503000) {
 
 			 if (getState()->time <= kTime1512000) {
@@ -227,19 +227,19 @@ IMPLEMENT_FUNCTION(7, Vassili, function7)
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_8200;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getEntities()->clearSequences(kEntityVassili);
-		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200))
+		getEntities()->clearSequences(kCharacterVassili);
+		if (getEntities()->isInsideCompartment(kCharacterCath, kCarRedSleeping, kPosition_8200))
 			getScenes()->loadSceneFromObject(kObjectCompartmentA);
 
-		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentA, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		break;
 
-	case kAction339669520:
+	case kCharacterAction339669520:
 		setup_function9();
 		break;
 	}
@@ -251,20 +251,20 @@ IMPLEMENT_FUNCTION(8, Vassili, function8)
 	default:
 		break;
 
-	case kActionEndSound:
+	case kCharacterActionEndSound:
 		setup_function9();
 		break;
 
-	case kActionDefault:
-		if (!getEntities()->isInsideTrainCar(kEntityPlayer, kCarRedSleeping)) {
-			getSound()->playSound(kEntityPlayer, "BUMP");
-			getScenes()->loadSceneFromPosition(kCarRedSleeping, (getEntityData(kEntityPlayer)->car <= kCarRedSleeping) ? 1 : 40);
+	case kCharacterActionDefault:
+		if (!getEntities()->isInsideTrainCar(kCharacterCath, kCarRedSleeping)) {
+			getSound()->playSound(kCharacterCath, "BUMP");
+			getScenes()->loadSceneFromPosition(kCarRedSleeping, (getEntityData(kCharacterCath)->car <= kCarRedSleeping) ? 1 : 40);
 		}
 
-		getSavePoints()->push(kEntityVassili, kEntityAnna, kAction226031488);
-		getSavePoints()->push(kEntityVassili, kEntityVerges, kAction226031488);
-		getSavePoints()->push(kEntityVassili, kEntityCoudert, kAction226031488);
-		getSound()->playSound(kEntityVassili, "VAS1027", kVolumeFull);
+		getSavePoints()->push(kCharacterVassili, kCharacterAnna, kCharacterAction226031488);
+		getSavePoints()->push(kCharacterVassili, kCharacterTrainM, kCharacterAction226031488);
+		getSavePoints()->push(kCharacterVassili, kCharacterCond2, kCharacterAction226031488);
+		getSound()->playSound(kCharacterVassili, "VAS1027", kVolumeFull);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -275,28 +275,28 @@ IMPLEMENT_FUNCTION(9, Vassili, function9)
 	default:
 		break;
 
-	case kActionEndSound:
-		if (!getEntities()->isDistanceBetweenEntities(kEntityVassili, kEntityPlayer, 2500))
-			getSound()->playSound(kEntityPlayer, "BUMP");
+	case kCharacterActionEndSound:
+		if (!getEntities()->isDistanceBetweenEntities(kCharacterVassili, kCharacterCath, 2500))
+			getSound()->playSound(kCharacterCath, "BUMP");
 
 		setup_seizure();
 		break;
 
-	case kActionDefault:
-	case kActionDrawScene:
+	case kCharacterActionDefault:
+	case kCharacterActionDrawScene:
 		if ((getObjects()->get(kObjectCompartmentA).status == kObjectLocation2 && getEntities()->isPlayerPosition(kCarRedSleeping, 17))
 		|| getEntities()->isPlayerPosition(kCarRedSleeping, 18)
 		|| getEntities()->isPlayerPosition(kCarRedSleeping, 37)
 		|| getEntities()->isPlayerPosition(kCarRedSleeping, 38)
 		|| getEntities()->isPlayerPosition(kCarRedSleeping, 41)) {
 
-			if (savepoint.action == kActionDrawScene)
-				getSoundQueue()->fade(kEntityVassili);
+			if (savepoint.action == kCharacterActionDrawScene)
+				getSoundQueue()->fade(kCharacterVassili);
 
 			setup_seizure();
 		} else {
-			if (savepoint.action == kActionDefault)
-				getSound()->playSound(kEntityVassili, "VAS1028", kVolumeFull);
+			if (savepoint.action == kCharacterActionDefault)
+				getSound()->playSound(kCharacterVassili, "VAS1028", kVolumeFull);
 		}
 		break;
 	}
@@ -308,48 +308,48 @@ IMPLEMENT_FUNCTION(10, Vassili, seizure)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		// Check that we have removed the body from the train and changed jacket
 		if (!getProgress().eventCorpseMovedFromFloor) {
-			getAction()->playAnimation(kEventMertensCorpseFloor);
+			getActionOld()->playAnimation(kEventMertensCorpseFloor);
 			getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, true);
 			break;
 		}
 
 		if (!getProgress().eventCorpseThrown) {
-			getAction()->playAnimation(kEventMertensCorpseBed);
+			getActionOld()->playAnimation(kEventMertensCorpseBed);
 			getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, true);
 			break;
 		}
 
 		if (getProgress().jacket == kJacketBlood) {
-			getAction()->playAnimation(kEventMertensBloodJacket);
+			getActionOld()->playAnimation(kEventMertensBloodJacket);
 			getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, true);
 			break;
 		}
 
 		// Setup Anna & Coudert
-		RESET_ENTITY_STATE(kEntityAnna, Anna, setup_function37);
-		RESET_ENTITY_STATE(kEntityCoudert, Coudert, setup_function38);
+		RESET_ENTITY_STATE(kCharacterAnna, Anna, setup_function37);
+		RESET_ENTITY_STATE(kCharacterCond2, Coudert, setup_function38);
 
 		setCallback(1);
 		setup_savegame(kSavegameTypeEvent, kEventVassiliSeizure);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() != 1)
 			break;
 
-		getEntityData(kEntityPlayer)->location = kLocationInsideCompartment;
-		getAction()->playAnimation(kEventVassiliSeizure);
+		getEntityData(kCharacterCath)->location = kLocationInsideCompartment;
+		getActionOld()->playAnimation(kEventVassiliSeizure);
 
-		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentA, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment1, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 		getProgress().field_18 = 2;
 
-		getSavePoints()->push(kEntityVassili, kEntityAnna, kAction191477936);
-		getSavePoints()->push(kEntityVassili, kEntityVerges, kAction191477936);
-		getSavePoints()->push(kEntityVassili, kEntityCoudert, kAction191477936);
+		getSavePoints()->push(kCharacterVassili, kCharacterAnna, kCharacterAction191477936);
+		getSavePoints()->push(kCharacterVassili, kCharacterTrainM, kCharacterAction191477936);
+		getSavePoints()->push(kCharacterVassili, kCharacterCond2, kCharacterAction191477936);
 		getScenes()->loadSceneFromObject(kObjectCompartmentA);
 
 		setup_drawInBed();
@@ -359,8 +359,8 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Vassili, drawInBed)
-	if (savepoint.action == kActionDefault)
-		getEntities()->drawSequenceLeft(kEntityVassili, "303A");
+	if (savepoint.action == kCharacterActionDefault)
+		getEntities()->drawSequenceLeft(kCharacterVassili, "303A");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -369,12 +369,12 @@ IMPLEMENT_FUNCTION(12, Vassili, chapter2)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_sleeping();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityVassili);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterVassili);
 
 		getData()->entityPosition = kPosition_8200;
 		getData()->location = kLocationInsideCompartment;
@@ -382,7 +382,7 @@ IMPLEMENT_FUNCTION(12, Vassili, chapter2)
 		getData()->clothes = kClothesDefault;
 		getData()->inventoryItem = kItemNone;
 
-		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentA, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 		getObjects()->updateModel(kObjectCompartmentA, kObjectModel1);
 		break;
 	}
@@ -394,8 +394,8 @@ IMPLEMENT_FUNCTION(13, Vassili, sleeping)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200)) {
+	case kCharacterActionNone:
+		if (getEntities()->isInsideCompartment(kCharacterCath, kCarRedSleeping, kPosition_8200)) {
 			if (!Entity::updateParameter(params->param3, getState()->timeTicks, params->param1))
 				break;
 
@@ -404,20 +404,20 @@ IMPLEMENT_FUNCTION(13, Vassili, sleeping)
 		} else {
 			params->param3 = 0;
 			if (params->param2)
-				getEntities()->drawSequenceLeft(kEntityVassili, "303A");
+				getEntities()->drawSequenceLeft(kCharacterVassili, "303A");
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 5 * (3 * rnd(25) + 15);
-		getEntities()->drawSequenceLeft(kEntityVassili, "303A");
+		getEntities()->drawSequenceLeft(kCharacterVassili, "303A");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() != 1)
 			break;
 
-		getEntities()->drawSequenceLeft(kEntityVassili, "303C");
+		getEntities()->drawSequenceLeft(kCharacterVassili, "303C");
 		params->param1 = 5 * (3 * rnd(25) + 15);
 		params->param2 = 1;
 		break;
@@ -430,12 +430,12 @@ IMPLEMENT_FUNCTION(14, Vassili, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_stealEgg();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityVassili);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterVassili);
 
 		getData()->entityPosition = kPosition_8200;
 		getData()->location = kLocationInsideCompartment;
@@ -443,7 +443,7 @@ IMPLEMENT_FUNCTION(14, Vassili, chapter3)
 		getData()->clothes = kClothesDefault;
 		getData()->inventoryItem = kItemNone;
 
-		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentA, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -454,8 +454,8 @@ IMPLEMENT_FUNCTION(15, Vassili, stealEgg)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200)) {
+	case kCharacterActionNone:
+		if (getEntities()->isInsideCompartment(kCharacterCath, kCarRedSleeping, kPosition_8200)) {
 			if (!Entity::updateParameter(params->param3, getState()->timeTicks, params->param1))
 				break;
 
@@ -464,42 +464,42 @@ IMPLEMENT_FUNCTION(15, Vassili, stealEgg)
 		} else {
 			params->param3 = 0;
 			if (params->param2)
-				getEntities()->drawSequenceLeft(kEntityVassili, "303A");
+				getEntities()->drawSequenceLeft(kCharacterVassili, "303A");
 		}
 		break;
 
-	case kActionOpenDoor:
+	case kCharacterActionOpenDoor:
 		setCallback(2);
 		setup_savegame(kSavegameTypeEvent, kEventVassiliCompartmentStealEgg);
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 5 * (3 * rnd(25) + 15);
-		getEntities()->drawSequenceLeft(kEntityVassili, "303A");
+		getEntities()->drawSequenceLeft(kCharacterVassili, "303A");
 		break;
 
-	case kActionDrawScene:
-		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_7850)
+	case kCharacterActionDrawScene:
+		if (getEntities()->isInsideCompartment(kCharacterCath, kCarRedSleeping, kPosition_7850)
 		 && getInventory()->hasItem(kItemFirebird)
-		 && !getEvent(kEventVassiliCompartmentStealEgg))
-			getObjects()->update(kObject48, kEntityVassili, kObjectLocationNone, kCursorNormal, kCursorHand);
+		 && !HELPERgetEvent(kEventVassiliCompartmentStealEgg))
+			getObjects()->update(kObject48, kCharacterVassili, kObjectLocationNone, kCursorNormal, kCursorHand);
 		else
-			getObjects()->update(kObject48, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
+			getObjects()->update(kObject48, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorHand);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->drawSequenceLeft(kEntityVassili, "303C");
+			getEntities()->drawSequenceLeft(kCharacterVassili, "303C");
 			params->param1 = 5 * (3 * rnd(25) + 15);
 			params->param2 = 1;
 			break;
 
 		case 2:
-			getAction()->playAnimation(kEventVassiliCompartmentStealEgg);
+			getActionOld()->playAnimation(kEventVassiliCompartmentStealEgg);
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 67);
 			break;
 		}
@@ -513,12 +513,12 @@ IMPLEMENT_FUNCTION(16, Vassili, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter4Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityVassili);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterVassili);
 
 		getData()->entityPosition = kPosition_8200;
 		getData()->location = kLocationInsideCompartment;
@@ -526,7 +526,7 @@ IMPLEMENT_FUNCTION(16, Vassili, chapter4)
 		getData()->clothes = kClothesDefault;
 		getData()->inventoryItem = kItemNone;
 
-		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentA, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 		getObjects()->updateModel(kObjectCompartmentA, kObjectModel1);
 		break;
 	}
@@ -539,8 +539,8 @@ IMPLEMENT_FUNCTION(17, Vassili, chapter4Handler)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200)) {
+	case kCharacterActionNone:
+		if (getEntities()->isInsideCompartment(kCharacterCath, kCarRedSleeping, kPosition_8200)) {
 			if (!Entity::updateParameter(params->param3, getState()->timeTicks, params->param1))
 				break;
 
@@ -549,20 +549,20 @@ IMPLEMENT_FUNCTION(17, Vassili, chapter4Handler)
 		} else {
 			params->param3 = 0;
 			if (params->param2)
-				getEntities()->drawSequenceLeft(kEntityVassili, "303A");
+				getEntities()->drawSequenceLeft(kCharacterVassili, "303A");
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 5 * (3 * rnd(25) + 15);
-		getEntities()->drawSequenceLeft(kEntityVassili, "303A");
+		getEntities()->drawSequenceLeft(kCharacterVassili, "303A");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() != 1)
 			break;
 
-		getEntities()->drawSequenceLeft(kEntityVassili, "303C");
+		getEntities()->drawSequenceLeft(kCharacterVassili, "303C");
 		params->param1 = 5 * (3 * rnd(25) + 15);
 		params->param2 = 1;
 		break;
@@ -571,8 +571,8 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Vassili, chapter5)
-	if (savepoint.action == kActionDefault) {
-		getEntities()->clearSequences(kEntityVassili);
+	if (savepoint.action == kCharacterActionDefault) {
+		getEntities()->clearSequences(kCharacterVassili);
 
 		getData()->entityPosition = kPosition_3969;
 		getData()->location = kLocationInsideCompartment;

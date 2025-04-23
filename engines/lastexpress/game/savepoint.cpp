@@ -42,7 +42,7 @@ SavePoints::~SavePoints() {
 //////////////////////////////////////////////////////////////////////////
 // Savepoints
 //////////////////////////////////////////////////////////////////////////
-void SavePoints::push(EntityIndex entity2, EntityIndex entity1, ActionIndex action, uint32 param) {
+void SavePoints::push(CharacterIndex entity2, CharacterIndex entity1, CharacterActions action, uint32 param) {
 	if (_savepoints.size() >= _savePointsMaxSize)
 		return;
 
@@ -55,7 +55,7 @@ void SavePoints::push(EntityIndex entity2, EntityIndex entity1, ActionIndex acti
 	_savepoints.push_back(point);
 }
 
-void SavePoints::push(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const Common::String &param) {
+void SavePoints::push(CharacterIndex entity2, CharacterIndex entity1, CharacterActions action, const Common::String param) {
 	if (_savepoints.size() >= _savePointsMaxSize)
 		return;
 
@@ -76,10 +76,10 @@ SavePoint SavePoints::pop() {
 	return point;
 }
 
-void SavePoints::pushAll(EntityIndex entity, ActionIndex action, uint32 param) {
+void SavePoints::pushAll(CharacterIndex entity, CharacterActions action, uint32 param) {
 	for (uint32 index = 1; index < 40; index++) {
-		if ((EntityIndex)index != entity)
-			push(entity, (EntityIndex)index, action, param);
+		if ((CharacterIndex)index != entity)
+			push(entity, (CharacterIndex)index, action, param);
 	}
 }
 
@@ -88,7 +88,7 @@ void SavePoints::process() {
 	while (_savepoints.size() > 0 && getFlags()->isGameRunning) {
 		SavePoint savepoint = pop();
 
-		// If this is a data savepoint, update the entity
+		// If this is a data savepoint, update the character
 		// otherwise, execute the callback
 		if (!updateEntityFromData(savepoint)) {
 
@@ -109,7 +109,7 @@ void SavePoints::reset() {
 //////////////////////////////////////////////////////////////////////////
 // Data
 //////////////////////////////////////////////////////////////////////////
-void SavePoints::addData(EntityIndex entity, ActionIndex action, uint32 param) {
+void SavePoints::addData(CharacterIndex entity, CharacterActions action, uint32 param) {
 	if (_data.size() >= _savePointsMaxSize)
 		return;
 
@@ -124,24 +124,24 @@ void SavePoints::addData(EntityIndex entity, ActionIndex action, uint32 param) {
 //////////////////////////////////////////////////////////////////////////
 // Callbacks
 //////////////////////////////////////////////////////////////////////////
-void SavePoints::setCallback(EntityIndex index, Callback *callback) {
+void SavePoints::setCallback(CharacterIndex index, Callback *callback) {
 	if (index >= 40)
-		error("[SavePoints::setCallback] Attempting to use an invalid entity index. Valid values 0-39, was %d", index);
+		error("[SavePoints::setCallback] Attempting to use an invalid character index. Valid values 0-39, was %d", index);
 
 	if (!callback || !callback->isValid())
-		error("[SavePoints::setCallback] Attempting to set an invalid callback for entity %s", ENTITY_NAME(index));
+		error("[SavePoints::setCallback] Attempting to set an invalid callback for character %s", ENTITY_NAME(index));
 
 	_callbacks[index] = callback;
 }
 
-Callback *SavePoints::getCallback(EntityIndex index) const {
+Callback *SavePoints::getCallback(CharacterIndex index) const {
 	if (index >= 40)
-		error("[SavePoints::getCallback] Attempting to use an invalid entity index. Valid values 0-39, was %d", index);
+		error("[SavePoints::getCallback] Attempting to use an invalid character index. Valid values 0-39, was %d", index);
 
 	return _callbacks[index];
 }
 
-void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex action, uint32 param) const {
+void SavePoints::call(CharacterIndex entity2, CharacterIndex entity1, CharacterActions action, uint32 param) const {
 	SavePoint point;
 	point.entity1 = entity1;
 	point.action = action;
@@ -155,7 +155,7 @@ void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex acti
 	}
 }
 
-void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const Common::String &param) const {
+void SavePoints::call(CharacterIndex entity2, CharacterIndex entity1, CharacterActions action, const Common::String param) const {
 	SavePoint point;
 	point.entity1 = entity1;
 	point.action = action;
@@ -174,8 +174,8 @@ void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex acti
 void SavePoints::callAndProcess() {
 	SavePoint savepoint; // empty parameters
 
-	// We ignore the kEntityPlayer callback in the list
-	EntityIndex index = kEntityAnna;
+	// We ignore the kCharacterCath callback in the list
+	CharacterIndex index = kCharacterAnna;
 
 	// Call all callbacks with empty parameters
 	bool isRunning = getFlags()->isGameRunning;
@@ -187,7 +187,7 @@ void SavePoints::callAndProcess() {
 			isRunning = getFlags()->isGameRunning;
 		}
 
-		index = (EntityIndex)(index + 1);
+		index = (CharacterIndex)(index + 1);
 
 		// Process all savepoints when done
 		if (index >= 40) {
@@ -211,9 +211,9 @@ bool SavePoints::updateEntityFromData(const SavePoint &savepoint) {
 
 		// Found our data!
 		if (_data[i].entity1 == savepoint.entity1 && _data[i].action == savepoint.action) {
-			debugC(8, kLastExpressDebugLogic, "Update entity from data: entity1=%s, action=%s, param=%u", ENTITY_NAME(_data[i].entity1), ACTION_NAME(_data[i].action), _data[i].param);
+			debugC(8, kLastExpressDebugLogic, "Update character from data: entity1=%s, action=%s, param=%u", ENTITY_NAME(_data[i].entity1), ACTION_NAME(_data[i].action), _data[i].param);
 
-			// the SavePoint param value is the index of the entity call parameter to update
+			// the SavePoint param value is the index of the character call parameter to update
 			getEntities()->get(_data[i].entity1)->getParamData()->updateParameters(_data[i].param);
 
 			return true;

@@ -33,7 +33,7 @@
 
 namespace LastExpress {
 
-Tables::Tables(LastExpressEngine *engine, EntityIndex id) : Entity(engine, id) {
+Tables::Tables(LastExpressEngine *engine, CharacterIndex id) : Entity(engine, id) {
 	_id = id;
 
 	ADD_CALLBACK_FUNCTION(Tables, chapter1);
@@ -46,9 +46,9 @@ Tables::Tables(LastExpressEngine *engine, EntityIndex id) : Entity(engine, id) {
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Tables, chapter1)
-	if (savepoint.action == kActionDefault) {
-		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
+	if (savepoint.action == kCharacterActionDefault) {
+		if (_id == kCharacterTableC)
+			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kCharacterTableC);
 
 		setup_draw();
 	}
@@ -56,9 +56,9 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(2, Tables, chapter2)
-	if (savepoint.action == kActionDefault) {
-		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
+	if (savepoint.action == kCharacterActionDefault) {
+		if (_id == kCharacterTableC)
+			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kCharacterTableC);
 
 		setup_draw();
 	}
@@ -66,9 +66,9 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(3, Tables, chapter3)
-	if (savepoint.action == kActionDefault) {
-		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
+	if (savepoint.action == kCharacterActionDefault) {
+		if (_id == kCharacterTableC)
+			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kCharacterTableC);
 
 		setup_draw();
 	}
@@ -76,9 +76,9 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(4, Tables, chapter4)
-	if (savepoint.action == kActionDefault) {
-		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
+	if (savepoint.action == kCharacterActionDefault) {
+		if (_id == kCharacterTableC)
+			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kCharacterTableC);
 
 		setup_draw();
 	}
@@ -86,9 +86,9 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Tables, chapter5)
-	if (savepoint.action == kActionDefault) {
-		if (_id == kEntityTables2 && getSoundQueue()->isBuffered(kEntityTables2))
-			getSoundQueue()->fade(kEntityTables2);
+	if (savepoint.action == kCharacterActionDefault) {
+		if (_id == kCharacterTableC && getSoundQueue()->isBuffered(kCharacterTableC))
+			getSoundQueue()->fade(kCharacterTableC);
 
 		setup_draw();
 	}
@@ -100,9 +100,9 @@ IMPLEMENT_FUNCTION(6, Tables, draw)
 	default:
 		break;
 
-	case kActionNone:
-		// Only applicable to Tables2 entity
-		if (_id != kEntityTables2)
+	case kCharacterActionNone:
+		// Only applicable to Tables2 character
+		if (_id != kCharacterTableC)
 			break;
 
 		switch (getProgress().chapter) {
@@ -112,60 +112,60 @@ IMPLEMENT_FUNCTION(6, Tables, draw)
 		case kChapter1:
 			if (getState()->time > kTime1165500 && !params->param1) {
 				params->param1 = 1;
-				getSoundQueue()->fade(kEntityTables2);
+				getSoundQueue()->fade(kCharacterTableC);
 			}
 			break;
 
 		case kChapter3:
 			if (getState()->time > kTime2052000 && !params->param2) {
 				params->param2 = 1;
-				getSoundQueue()->fade(kEntityTables2);
+				getSoundQueue()->fade(kCharacterTableC);
 			}
 			break;
 
 		case kChapter4:
 			if (getState()->time > kTime2488500 && !params->param3) {
 				params->param3 = 1;
-				getSoundQueue()->fade(kEntityTables2);
+				getSoundQueue()->fade(kCharacterTableC);
 			}
 			break;
 
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRestaurant;
 		switch(_id) {
 		default:
 			break;
 
-		case kEntityTables0:
+		case kCharacterTableA:
 			getData()->entityPosition = kPosition_3970;
 			getEntities()->drawSequenceLeft(_id, "001P");
 			break;
 
-		case kEntityTables1:
+		case kCharacterTableB:
 			getData()->entityPosition = kPosition_3970;
 			getEntities()->drawSequenceLeft(_id, "005J");
 			break;
 
-		case kEntityTables2:
+		case kCharacterTableC:
 			getData()->entityPosition = kPosition_4690;
 			getEntities()->drawSequenceLeft(_id, "009G");
 			break;
 
-		case kEntityTables3:
+		case kCharacterTableD:
 			getData()->entityPosition = kPosition_4690;
 			getEntities()->drawSequenceLeft(_id, "010M");
 			break;
 
-		case kEntityTables4:
+		case kCharacterTableE:
 			getData()->entityPosition = kPosition_5420;
 			getEntities()->drawSequenceLeft(_id, "014F");
 			break;
 
-		case kEntityTables5:
+		case kCharacterTableF:
 			getData()->entityPosition = kPosition_5420;
 			getEntities()->drawSequenceLeft(_id, "024D");
 			break;
@@ -173,7 +173,7 @@ IMPLEMENT_FUNCTION(6, Tables, draw)
 
 		break;
 
-	case kActionDrawTablesWithChairs:
+	case kCharacterActionDrawTablesWithChairs:
 		if (!strcmp(savepoint.param.charValue, "")) {
 			getEntities()->drawSequenceLeft(_id, savepoint.param.charValue);
 		} else {
@@ -181,34 +181,34 @@ IMPLEMENT_FUNCTION(6, Tables, draw)
 			default:
 				break;
 
-			case kEntityTables0:
+			case kCharacterTableA:
 				getEntities()->drawSequenceLeft(_id, "001P");
 				break;
 
-			case kEntityTables1:
+			case kCharacterTableB:
 				getEntities()->drawSequenceLeft(_id, "005J");
 				break;
 
-			case kEntityTables2:
+			case kCharacterTableC:
 				getEntities()->drawSequenceLeft(_id, "009G");
 				break;
 
-			case kEntityTables3:
+			case kCharacterTableD:
 				getEntities()->drawSequenceLeft(_id, "010M");
 				break;
 
-			case kEntityTables4:
+			case kCharacterTableE:
 				getEntities()->drawSequenceLeft(_id, "014F");
 				break;
 
-			case kEntityTables5:
+			case kCharacterTableF:
 				getEntities()->drawSequenceLeft(_id, "024D");
 				break;
 			}
 		}
 		break;
 
-	case kAction136455232:
+	case kCharacterAction136455232:
 		getEntities()->drawSequenceLeft(_id, "BLANK");
 		break;
 	}

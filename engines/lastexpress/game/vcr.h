@@ -19,32 +19,54 @@
  *
  */
 
-#ifndef LASTEXPRESS_FIGHTER_MILOS_H
-#define LASTEXPRESS_FIGHTER_MILOS_H
+#ifndef LASTEXPRESS_VCR_H
+#define LASTEXPRESS_VCR_H
 
-#include "lastexpress/fight/fighter.h"
+#include "lastexpress/lastexpress.h"
+#include "lastexpress/data/cvcrfile.h"
 
 namespace LastExpress {
 
 class LastExpressEngine;
+class CVCRFile;
 
-class FighterPlayerMilos : public Fighter {
+struct SVCRFileHeader;
+struct SVCRSavePointHeader;
+
+class VCR {
+
 public:
-	FighterPlayerMilos(LastExpressEngine *engine);
+	VCR(LastExpressEngine *engine);
+	~VCR() {}
 
-	void handleAction(FightAction action) override;
-	void update() override;
-	bool canInteract(FightAction action = kFightActionNone) override;
-};
+	void virginSaveFile();
+	void writeSavePoint(int type, int entity, int event);
+	void selectFromName(const char *filename);
+	void shuffleGames();
+	void setCurrentGameColor(int index);
+	void init(bool doSaveGameFlag, int saveType, int32 time);
+	void autoRewind(int saveType, int32 time);
+	void free();
+	bool isVirgin(int savegameIndex);
+	bool currentEndsGame();
+	bool makePermanent();
+	int switchGames();
+	void storeSettings();
+	void loadSettings();
+	void rewind();
+	void forward();
+	void stop();
+	void seekToTime(int32 time);
+	void updateCurGame(int32 fromTime, int32 toTime, bool searchEntry);
+	void go();
 
-class FighterOpponentMilos : public Opponent {
-public:
-	FighterOpponentMilos(LastExpressEngine *engine);
+protected:
+	LastExpressEngine *_engine;
 
-	void handleAction(FightAction action) override;
-	void update() override;
+	int32 _currentSavePointInVCR = 0;
+
 };
 
 } // End of namespace LastExpress
 
-#endif // LASTEXPRESS_FIGHTER_MILOS_H
+#endif // LASTEXPRESS_VCR_H

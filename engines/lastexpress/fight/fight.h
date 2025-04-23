@@ -22,101 +22,46 @@
 #ifndef LASTEXPRESS_FIGHT_H
 #define LASTEXPRESS_FIGHT_H
 
-/*
-	Fight structure
-	---------------
-	uint32 {4}      - player struct
-	uint32 {4}      - opponent struct
-	uint32 {4}      - hasLost flag
-
-	byte {1}        - isRunning
-
-	Fight participant structure
-	---------------------------
-	uint32 {4}      - function pointer
-	uint32 {4}      - pointer to fight structure
-	uint32 {4}      - pointer to opponent (fight participant structure)
-	uint32 {4}      - array of sequences
-	uint32 {4}      - number of sequences
-	uint32 {4}      - ??
-	uint32 {4}      - ??
-	uint32 {4}      - ??
-	uint32 {4}      - ??
-	uint32 {4}      - ??
-	uint32 {4}      - ??
-	uint32 {4}      - ??
-	uint32 {4}      - ??
-	uint16 {2}      - ??
-	uint16 {2}      - ??    - only for opponent structure
-	uint32 {4}      - ??    - only for opponent structure
-
-*/
-
-#include "lastexpress/shared.h"
-
-#include "lastexpress/eventhandler.h"
+#include "lastexpress/lastexpress.h"
 
 namespace LastExpress {
 
 class LastExpressEngine;
-class Sequence;
+class CFighter;
 
-class Fighter;
-class Opponent;
+struct Seq;
+struct Event;
 
-class Fight : public EventHandler {
+class CFight {
 public:
-	enum FightEndType {
-		kFightEndWin  = 0,
-		kFightEndLost = 1,
-		kFightEndExit = 2
-	};
+	CFight(LastExpressEngine *engine, int fightId);
+	~CFight();
 
-	Fight(LastExpressEngine *engine);
-	~Fight() override;
+	int process();
+	void setOutcome(int outcome);
+	void endFight(int outcome);
+	void timer(Event *event, bool isProcessing);
+	void mouse(Event *event);
 
-	FightEndType setup(FightType type);
-
-	void eventMouse(const Common::Event &ev) override;
-	void eventTick(const Common::Event &ev) override;
-
-	// State
-	bool isRunning() { return _data->isFightRunning; }
-	void setRunningState(bool state) { _data->isFightRunning = state; }
-	void bailout(FightEndType type);
-	void setStopped();
-	void resetState() { _state = 0; }
-	void setEndType(FightEndType endType) { _endType = endType; }
+	void setFightHappening(bool happening) { _fightIsHappening = happening; }
+	bool fightHappening() { return _fightIsHappening; }
 
 private:
-	struct FightData {
-		Fighter *player;
-		Opponent *opponent;
-		int32 index;
+	LastExpressEngine *_engine = nullptr;
 
-		Sequence *sequences[20];
-		Common::String names[20];
+	CFighter *_cath = nullptr;
+	CFighter *_opponent = nullptr;
+	int _outcome = 0;
+	int _currentSeqIdx = 0;
+	Common::String _seqNames[20];
+	bool _fightIsHappening = false;
 
-		bool isFightRunning;
+	void (LastExpressEngine::*_savedTimerEventHandle)(Event *) = nullptr;
+	void (LastExpressEngine::*_savedMouseEventHandle)(Event *) = nullptr;
 
-		FightData();
-		~FightData();
-	};
-
-	LastExpressEngine *_engine;
-	FightData *_data;
-	FightEndType _endType;
-	int _state;
-
-	bool _handleTimer;
-
-	// Events
-	void handleTick(const Common::Event &ev, bool unknown);
-
-	// Data
-	void loadData(FightType type);
-	void clearData();
-	void setOpponents();
+	bool _lowIconToggle = false;
+	int _eggIconBrightness = 0;
+	int _eggIconBrightnessStep = 1;
 };
 
 } // End of namespace LastExpress

@@ -35,7 +35,7 @@
 
 namespace LastExpress {
 
-Francois::Francois(LastExpressEngine *engine) : Entity(engine, kEntityFrancois) {
+Francois::Francois(LastExpressEngine *engine) : Entity(engine, kCharacterFrancois) {
 	ADD_CALLBACK_FUNCTION(Francois, reset);
 	ADD_CALLBACK_FUNCTION_I(Francois, updateFromTime);
 	ADD_CALLBACK_FUNCTION_S(Francois, draw);
@@ -110,21 +110,21 @@ IMPLEMENT_FUNCTION_II(8, Francois, doWalk, CarIndex, EntityPosition)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2)) {
 			getData()->inventoryItem = kItemNone;
 			callbackAction();
 		} else {
-			if (!getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000)
+			if (!getEntities()->isDistanceBetweenEntities(kCharacterFrancois, kCharacterCath, 2000)
 			 || !getInventory()->hasItem(kItemFirebird)
-			 || getEvent(kEventFrancoisShowEgg)
-			 || getEvent(kEventFrancoisShowEggD)
-			 || getEvent(kEventFrancoisShowEggNight)
-			 || getEvent(kEventFrancoisShowEggNightD)) {
-				if (getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000)
+			 || HELPERgetEvent(kEventFrancoisShowEgg)
+			 || HELPERgetEvent(kEventFrancoisShowEggD)
+			 || HELPERgetEvent(kEventFrancoisShowEggNight)
+			 || HELPERgetEvent(kEventFrancoisShowEggNightD)) {
+				if (getEntities()->isDistanceBetweenEntities(kCharacterFrancois, kCharacterCath, 2000)
 				 && getInventory()->get(kItemBeetle)->location == kObjectLocation1
-				 && !getEvent(kEventFrancoisShowBeetle)
-				 && !getEvent(kEventFrancoisShowBeetleD))
+				 && !HELPERgetEvent(kEventFrancoisShowBeetle)
+				 && !HELPERgetEvent(kEventFrancoisShowBeetleD))
 					getData()->inventoryItem = kItemMatchBox;
 				else
 					getData()->inventoryItem = kItemNone;
@@ -133,16 +133,16 @@ IMPLEMENT_FUNCTION_II(8, Francois, doWalk, CarIndex, EntityPosition)
 			}
 
 			if (ENTITY_PARAM(0, 1)
-			 && getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 1000)
-			 && !getEntities()->isInsideCompartments(kEntityPlayer)
-			 && !getEntities()->checkFields10(kEntityPlayer)) {
+			 && getEntities()->isDistanceBetweenEntities(kCharacterFrancois, kCharacterCath, 1000)
+			 && !getEntities()->isInsideCompartments(kCharacterCath)
+			 && !getEntities()->checkFields10(kCharacterCath)) {
 				setCallback(1);
 				setup_savegame(kSavegameTypeEvent, kEventFrancoisTradeWhistle);
 			}
 		}
 		break;
 
-	case kAction1:
+	case kCharacterAction1:
 		switch (savepoint.param.intValue) {
 		default:
 			break;
@@ -153,33 +153,33 @@ IMPLEMENT_FUNCTION_II(8, Francois, doWalk, CarIndex, EntityPosition)
 			break;
 
 		case kItemFirebird:
-			if (isNight())
-				getAction()->playAnimation(getData()->entityPosition < getEntityData(kEntityPlayer)->entityPosition ? kEventFrancoisShowEggNightD : kEventFrancoisShowEggNight);
+			if (isNightOld())
+				getActionOld()->playAnimation(getData()->entityPosition < getEntityData(kCharacterCath)->entityPosition ? kEventFrancoisShowEggNightD : kEventFrancoisShowEggNight);
 			else
-				getAction()->playAnimation(getData()->entityPosition < getEntityData(kEntityPlayer)->entityPosition ? kEventFrancoisShowEggD : kEventFrancoisShowEgg);
+				getActionOld()->playAnimation(getData()->entityPosition < getEntityData(kCharacterCath)->entityPosition ? kEventFrancoisShowEggD : kEventFrancoisShowEgg);
 
 			getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition + (750 * (getData()->direction == kDirectionUp ? -1 : 1))), getData()->direction == kDirectionUp);
 			break;
 		}
 		break;
 
-	case kActionExcuseMeCath:
-	case kActionExcuseMe:
+	case kCharacterActionExcuseMeCath:
+	case kCharacterActionExcuseMe:
 		getSound()->excuseMe(_entityIndex);
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2))
 			callbackAction();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getAction()->playAnimation(getData()->entityPosition < getEntityData(kEntityPlayer)->entityPosition ? kEventFrancoisTradeWhistleD : kEventFrancoisTradeWhistle);
+			getActionOld()->playAnimation(getData()->entityPosition < getEntityData(kCharacterCath)->entityPosition ? kEventFrancoisTradeWhistleD : kEventFrancoisTradeWhistle);
 			getInventory()->addItem(kItemWhistle);
 			getInventory()->removeItem(kItemMatchBox);
 			getInventory()->get(kItemBeetle)->location = kObjectLocation2;
@@ -188,7 +188,7 @@ IMPLEMENT_FUNCTION_II(8, Francois, doWalk, CarIndex, EntityPosition)
 			break;
 
 		case 2:
-			getAction()->playAnimation(getData()->entityPosition < getEntityData(kEntityPlayer)->entityPosition ? kEventFrancoisShowBeetleD : kEventFrancoisShowBeetle);
+			getActionOld()->playAnimation(getData()->entityPosition < getEntityData(kCharacterCath)->entityPosition ? kEventFrancoisShowBeetleD : kEventFrancoisShowBeetle);
 			getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition + (750 * (getData()->direction == kDirectionUp ? -1 : 1))), getData()->direction == kDirectionUp);
 			getData()->inventoryItem = kItemNone;
 			break;
@@ -203,10 +203,10 @@ IMPLEMENT_FUNCTION(9, Francois, exitCompartment)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		if (getObjects()->get(kObjectCompartmentD).status == kObjectLocation2) {
-			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
-			getSavePoints()->push(kEntityFrancois, kEntityMmeBoutarel, kAction134289824);
+			getObjects()->update(kObjectCompartmentD, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+			getSavePoints()->push(kCharacterFrancois, kCharacterMadame, kCharacterAction134289824);
 			setCallback(1);
 			setup_enterExitCompartment("605Cd", kObjectCompartmentD);
 		} else {
@@ -215,13 +215,13 @@ IMPLEMENT_FUNCTION(9, Francois, exitCompartment)
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
+			getObjects()->update(kObjectCompartmentD, kCharacterCath, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
 			// fall through
 
 		case 2:
@@ -239,9 +239,9 @@ IMPLEMENT_FUNCTION(10, Francois, enterCompartment)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		if (getObjects()->get(kObjectCompartmentD).status == kObjectLocation2) {
-			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+			getObjects()->update(kObjectCompartmentD, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 			setCallback(1);
 			setup_enterExitCompartment2("605Bd", kObjectCompartmentD);
 		} else {
@@ -250,19 +250,19 @@ IMPLEMENT_FUNCTION(10, Francois, enterCompartment)
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
-			getSavePoints()->push(kEntityFrancois, kEntityMmeBoutarel, kAction102484312);
+			getObjects()->update(kObjectCompartmentD, kCharacterCath, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
+			getSavePoints()->push(kCharacterFrancois, kCharacterMadame, kCharacterAction102484312);
 			// fall through
 
 		case 2:
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityFrancois);
+			getEntities()->clearSequences(kCharacterFrancois);
 
 			callbackAction();
 			break;
@@ -277,8 +277,8 @@ IMPLEMENT_FUNCTION_I(11, Francois, rampage, TimeValue)
 	default:
 		break;
 
-	case kActionNone:
-		if (!getSoundQueue()->isBuffered(kEntityFrancois)) {
+	case kCharacterActionNone:
+		if (!getSoundQueue()->isBuffered(kCharacterFrancois)) {
 
 			if (Entity::updateParameter(CURRENT_PARAM(1, 1), getState()->timeTicks, params->param6)) {
 				switch (rnd(7)) {
@@ -286,28 +286,28 @@ IMPLEMENT_FUNCTION_I(11, Francois, rampage, TimeValue)
 					break;
 
 				case 0:
-					getSound()->playSound(kEntityFrancois, "Fra1002A");
+					getSound()->playSound(kCharacterFrancois, "Fra1002A");
 					break;
 
 				case 1:
-					getSound()->playSound(kEntityFrancois, "Fra1002B");
+					getSound()->playSound(kCharacterFrancois, "Fra1002B");
 					break;
 
 				case 2:
-					getSound()->playSound(kEntityFrancois, "Fra1002C");
+					getSound()->playSound(kCharacterFrancois, "Fra1002C");
 					break;
 
 				case 3:
-					getSound()->playSound(kEntityFrancois, "Fra1002D");
+					getSound()->playSound(kCharacterFrancois, "Fra1002D");
 					break;
 
 				case 4:
-					getSound()->playSound(kEntityFrancois, "Fra1002E");
+					getSound()->playSound(kCharacterFrancois, "Fra1002E");
 					break;
 
 				case 5:
 				case 6:
-					getSound()->playSound(kEntityFrancois, "Fra1002F");
+					getSound()->playSound(kCharacterFrancois, "Fra1002F");
 					break;
 				}
 
@@ -316,10 +316,10 @@ IMPLEMENT_FUNCTION_I(11, Francois, rampage, TimeValue)
 			}
 		}
 
-		if (!getEntities()->hasValidFrame(kEntityFrancois) || !getEntities()->isWalkingOppositeToPlayer(kEntityFrancois))
+		if (!getEntities()->hasValidFrame(kCharacterFrancois) || !getEntities()->isWalkingOppositeToPlayer(kCharacterFrancois))
 			getData()->inventoryItem = kItemNone;
 
-		if (getEntities()->updateEntity(kEntityFrancois, (CarIndex)params->param2, (EntityPosition)params->param3)) {
+		if (getEntities()->updateEntity(kCharacterFrancois, (CarIndex)params->param2, (EntityPosition)params->param3)) {
 			params->param5 = 0;
 
 			if (params->param3 == kPosition_540) {
@@ -331,20 +331,20 @@ IMPLEMENT_FUNCTION_I(11, Francois, rampage, TimeValue)
 				params->param7 = 0;
 				params->param8 = 0;
 
-				getSavePoints()->push(kEntityFrancois, kEntityCoudert, kAction225932896);
-				getSavePoints()->push(kEntityFrancois, kEntityMertens, kAction225932896);
+				getSavePoints()->push(kCharacterFrancois, kCharacterCond2, kCharacterAction225932896);
+				getSavePoints()->push(kCharacterFrancois, kCharacterCond1, kCharacterAction225932896);
 			}
 		}
 
-		if (getEntities()->checkDistanceFromPosition(kEntityFrancois, kPosition_2000, 500) && getData()->direction == kDirectionDown) {
+		if (getEntities()->checkDistanceFromPosition(kCharacterFrancois, kPosition_2000, 500) && getData()->direction == kDirectionDown) {
 
-			if (getEntities()->isInsideTrainCar(kEntityFrancois, kCarRedSleeping) && params->param8) {
+			if (getEntities()->isInsideTrainCar(kCharacterFrancois, kCarRedSleeping) && params->param8) {
 				setCallback(2);
 				setup_draw("605A");
 				break;
 			}
 
-			if (getEntities()->isInsideTrainCar(kEntityFrancois, kCarGreenSleeping) && params->param7) {
+			if (getEntities()->isInsideTrainCar(kCharacterFrancois, kCarGreenSleeping) && params->param7) {
 				setCallback(3);
 				setup_draw("605A");
 				break;
@@ -354,17 +354,17 @@ IMPLEMENT_FUNCTION_I(11, Francois, rampage, TimeValue)
 label_callback:
 		if (getProgress().chapter == kChapter1) {
 
-			if (getEntities()->isInsideTrainCar(kEntityFrancois, kCarRedSleeping)
-			 && (getEntities()->hasValidFrame(kEntityFrancois) || params->param1 < getState()->time || params->param4)
+			if (getEntities()->isInsideTrainCar(kCharacterFrancois, kCarRedSleeping)
+			 && (getEntities()->hasValidFrame(kCharacterFrancois) || params->param1 < getState()->time || params->param4)
 			 && !params->param5
-			 && getData()->entityPosition < getEntityData(kEntityMmeBoutarel)->entityPosition) {
+			 && getData()->entityPosition < getEntityData(kCharacterMadame)->entityPosition) {
 
 				if (getData()->direction == kDirectionDown) {
-					getSavePoints()->push(kEntityFrancois, kEntityMmeBoutarel, kAction202221040);
+					getSavePoints()->push(kCharacterFrancois, kCharacterMadame, kCharacterAction202221040);
 					params->param4 = 1;
 					params->param5 = 1;
-				} else if (params->param4 && getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityMmeBoutarel, 1000)) {
-					getSavePoints()->push(kEntityFrancois, kEntityMmeBoutarel, kAction168986720);
+				} else if (params->param4 && getEntities()->isDistanceBetweenEntities(kCharacterFrancois, kCharacterMadame, 1000)) {
+					getSavePoints()->push(kCharacterFrancois, kCharacterMadame, kCharacterAction168986720);
 					params->param5 = 1;
 				}
 			}
@@ -373,39 +373,39 @@ label_callback:
 			getData()->field_4A3 = 30;
 			getData()->inventoryItem = kItemNone;
 
-			if (getSoundQueue()->isBuffered(kEntityFrancois))
-				getSoundQueue()->fade(kEntityFrancois);
+			if (getSoundQueue()->isBuffered(kCharacterFrancois))
+				getSoundQueue()->fade(kCharacterFrancois);
 
 			setCallback(4);
 			setup_doWalk(kCarRedSleeping, kPosition_5790);
 		}
 		break;
 
-	case kAction1:
+	case kCharacterAction1:
 		getData()->inventoryItem = kItemNone;
 
-		if (getSoundQueue()->isBuffered(kEntityFrancois))
-			getSoundQueue()->fade(kEntityFrancois);
+		if (getSoundQueue()->isBuffered(kCharacterFrancois))
+			getSoundQueue()->fade(kCharacterFrancois);
 
 		setCallback(6);
 		setup_savegame(kSavegameTypeEvent, kEventFrancoisWhistle);
 		break;
 
-	case kActionExcuseMeCath:
+	case kCharacterActionExcuseMeCath:
 		if (getProgress().jacket == kJacketGreen
-		 && !getEvent(kEventFrancoisWhistle)
-		 && !getEvent(kEventFrancoisWhistleD)
-		 && !getEvent(kEventFrancoisWhistleNight)
-		 && !getEvent(kEventFrancoisWhistleNightD))
+		 && !HELPERgetEvent(kEventFrancoisWhistle)
+		 && !HELPERgetEvent(kEventFrancoisWhistleD)
+		 && !HELPERgetEvent(kEventFrancoisWhistleNight)
+		 && !HELPERgetEvent(kEventFrancoisWhistleNightD))
 			getData()->inventoryItem = kItemInvalid;
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_exitCompartment();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -418,13 +418,13 @@ label_callback:
 			params->param2 = kCarGreenSleeping;
 			params->param3 = kPosition_540;
 
-			getEntities()->updateEntity(kEntityFrancois, kCarGreenSleeping, kPosition_540);
+			getEntities()->updateEntity(kCharacterFrancois, kCarGreenSleeping, kPosition_540);
 
 			params->param6 = 15 * rnd(7);
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityFrancois, kEntityCoudert, kAction168253822);
+			getSavePoints()->push(kCharacterFrancois, kCharacterCond2, kCharacterAction168253822);
 			// fall through
 
 		case 3:
@@ -434,7 +434,7 @@ label_callback:
 
 			getData()->entityPosition = kPosition_2088;
 
-			getEntities()->updateEntity(kEntityFrancois, kCarRedSleeping, kPosition_9460);
+			getEntities()->updateEntity(kCharacterFrancois, kCarRedSleeping, kPosition_9460);
 			goto label_callback;
 
 		case 4:
@@ -448,18 +448,18 @@ label_callback:
 
 		case 6:
 			if (getProgress().jacket == kJacketGreen) {
-				if (isNight())
-					getAction()->playAnimation(getData()->entityPosition <= getEntityData(kEntityPlayer)->entityPosition ? kEventFrancoisWhistleNightD : kEventFrancoisWhistleNight);
+				if (isNightOld())
+					getActionOld()->playAnimation(getData()->entityPosition <= getEntityData(kCharacterCath)->entityPosition ? kEventFrancoisWhistleNightD : kEventFrancoisWhistleNight);
 				else
-					getAction()->playAnimation(getData()->entityPosition <= getEntityData(kEntityPlayer)->entityPosition ? kEventFrancoisWhistleD : kEventFrancoisWhistle);
+					getActionOld()->playAnimation(getData()->entityPosition <= getEntityData(kCharacterCath)->entityPosition ? kEventFrancoisWhistleD : kEventFrancoisWhistle);
 			}
 			getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition + 750 * (getData()->direction == kDirectionUp ? -1 : 1)), getData()->direction == kDirectionUp);
 			break;
 		}
 		break;
 
-	case kAction102752636:
-		getEntities()->clearSequences(kEntityFrancois);
+	case kCharacterAction102752636:
+		getEntities()->clearSequences(kCharacterFrancois);
 		getData()->location = kLocationInsideCompartment;
 		getData()->entityPosition = kPosition_5790;
 		getData()->clothes = kClothesDefault;
@@ -469,10 +469,10 @@ label_callback:
 		callbackAction();
 		break;
 
-	case kAction205346192:
-		if (savepoint.entity2 == kEntityCoudert)
+	case kCharacterAction205346192:
+		if (savepoint.entity2 == kCharacterCond2)
 			params->param8 = 1;
-		else if (savepoint.entity2 == kEntityMertens)
+		else if (savepoint.entity2 == kCharacterCond1)
 			params->param7 = 1;
 		break;
 	}
@@ -484,12 +484,12 @@ IMPLEMENT_FUNCTION(12, Francois, takeWalk)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_exitCompartment();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -538,12 +538,12 @@ IMPLEMENT_FUNCTION(13, Francois, haremVisit)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_exitCompartment();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -565,14 +565,14 @@ IMPLEMENT_FUNCTION(13, Francois, haremVisit)
 
 		case 4:
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityFrancois);
+			getEntities()->clearSequences(kCharacterFrancois);
 
 			setCallback(5);
 			setup_playSound("Har2010");
 			break;
 
 		case 5:
-			getSavePoints()->push(kEntityFrancois, kEntityAlouan, kAction189489753);
+			getSavePoints()->push(kCharacterFrancois, kCharacterAlouan, kCharacterAction189489753);
 			break;
 
 		case 6:
@@ -589,8 +589,8 @@ IMPLEMENT_FUNCTION(13, Francois, haremVisit)
 				break;
 			}
 
-			getEntities()->drawSequenceLeft(kEntityFrancois, "605He");
-			getEntities()->enterCompartment(kEntityFrancois, kObjectCompartmentE, true);
+			getEntities()->drawSequenceLeft(kCharacterFrancois, "605He");
+			getEntities()->enterCompartment(kCharacterFrancois, kObjectCompartmentE, true);
 			setCallback(8);
 			setup_playSound(rnd(2) ? "Fra2005B" : "Fra2005C");
 			break;
@@ -601,7 +601,7 @@ IMPLEMENT_FUNCTION(13, Francois, haremVisit)
 			break;
 
 		case 9:
-			getEntities()->exitCompartment(kEntityFrancois, kObjectCompartmentE, true);
+			getEntities()->exitCompartment(kCharacterFrancois, kObjectCompartmentE, true);
 
 			setCallback(10);
 			setup_doWalk(kCarRedSleeping, kPosition_5790);
@@ -618,7 +618,7 @@ IMPLEMENT_FUNCTION(13, Francois, haremVisit)
 		}
 		break;
 
-	case kAction190219584:
+	case kCharacterAction190219584:
 		setCallback(6);
 		setup_enterExitCompartment("605Ef", kObjectCompartment6);
 		break;
@@ -634,7 +634,7 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, chaseBeetle, ObjectIndex, EntityPosition)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		Common::strcpy_s(parameters->seq2, "605H");
 		Common::strcat_s(parameters->seq2, parameters->seq1);
 
@@ -642,7 +642,7 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, chaseBeetle, ObjectIndex, EntityPosition)
 		setup_exitCompartment();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -654,8 +654,8 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, chaseBeetle, ObjectIndex, EntityPosition)
 
 		case 2:
 			if (getInventory()->get(kItemBeetle)->location == kObjectLocation3) {
-				getEntities()->drawSequenceLeft(kEntityFrancois, parameters->seq2);
-				getEntities()->enterCompartment(kEntityFrancois, (ObjectIndex)parameters->param1, true);
+				getEntities()->drawSequenceLeft(kCharacterFrancois, parameters->seq2);
+				getEntities()->enterCompartment(kCharacterFrancois, (ObjectIndex)parameters->param1, true);
 
 				setCallback(3);
 				setup_playSound("Fra2005A");
@@ -688,7 +688,7 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, chaseBeetle, ObjectIndex, EntityPosition)
 			break;
 
 		case 8:
-			getEntities()->exitCompartment(kEntityFrancois, (ObjectIndex)parameters->param1, true);
+			getEntities()->exitCompartment(kCharacterFrancois, (ObjectIndex)parameters->param1, true);
 			// fall through
 
 		case 9:
@@ -725,18 +725,18 @@ IMPLEMENT_FUNCTION(15, Francois, findCath)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_exitCompartment();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			if (getData()->entityPosition >= getEntityData(kEntityPlayer)->entityPosition) {
+			if (getData()->entityPosition >= getEntityData(kCharacterCath)->entityPosition) {
 				setCallback(3);
 				setup_doWalk(kCarRedSleeping, kPosition_540);
 			} else {
@@ -767,7 +767,7 @@ IMPLEMENT_FUNCTION(15, Francois, findCath)
 			break;
 
 		case 7:
-			if (!getEntities()->isInsideCompartment(kEntityMmeBoutarel, kCarRedSleeping, kPosition_5790)) {
+			if (!getEntities()->isInsideCompartment(kCharacterMadame, kCarRedSleeping, kPosition_5790)) {
 				callbackAction();
 				break;
 			}
@@ -790,20 +790,20 @@ IMPLEMENT_FUNCTION(16, Francois, letsGo)
 	default:
 		break;
 
-	case kActionNone:
-		getData()->entityPosition = getEntityData(kEntityBoutarel)->entityPosition;
-		getData()->location = getEntityData(kEntityBoutarel)->location;
-		getData()->car = getEntityData(kEntityBoutarel)->car;
+	case kCharacterActionNone:
+		getData()->entityPosition = getEntityData(kCharacterMonsieur)->entityPosition;
+		getData()->location = getEntityData(kCharacterMonsieur)->location;
+		getData()->car = getEntityData(kCharacterMonsieur)->car;
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorNormal);
+	case kCharacterActionDefault:
+		getObjects()->update(kObjectCompartmentD, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorNormal);
 
 		setCallback(1);
 		setup_enterExitCompartment("605Cd", kObjectCompartmentD);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -812,15 +812,15 @@ IMPLEMENT_FUNCTION(16, Francois, letsGo)
 			getData()->location = kLocationOutsideCompartment;
 			getData()->entityPosition = kPosition_5890;
 
-			getSavePoints()->push(kEntityFrancois, kEntityMmeBoutarel, kAction101107728);
+			getSavePoints()->push(kCharacterFrancois, kCharacterMadame, kCharacterAction101107728);
 
 			setCallback(2);
 			setup_doWalk(kCarRestaurant, kPosition_850);
 			break;
 
 		case 2:
-			getEntities()->clearSequences(kEntityFrancois);
-			getSavePoints()->push(kEntityFrancois, kEntityBoutarel, kAction237889408);
+			getEntities()->clearSequences(kCharacterFrancois);
+			getSavePoints()->push(kCharacterFrancois, kCharacterMonsieur, kCharacterAction237889408);
 			break;
 
 		case 3:
@@ -829,19 +829,19 @@ IMPLEMENT_FUNCTION(16, Francois, letsGo)
 			break;
 
 		case 4:
-			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
-			getSavePoints()->push(kEntityFrancois, kEntityMmeBoutarel, kAction100957716);
+			getObjects()->update(kObjectCompartmentD, kCharacterCath, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
+			getSavePoints()->push(kCharacterFrancois, kCharacterMadame, kCharacterAction100957716);
 
 			getData()->entityPosition = kPosition_5790;
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityFrancois);
+			getEntities()->clearSequences(kCharacterFrancois);
 
 			callbackAction();
 			break;
 		}
 		break;
 
-	case kAction100901266:
+	case kCharacterAction100901266:
 		setCallback(3);
 		setup_doWalk(kCarRedSleeping, kPosition_5790);
 		break;
@@ -854,11 +854,11 @@ IMPLEMENT_FUNCTION(17, Francois, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Francois, setup_chapter1Handler));
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5790;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
@@ -872,11 +872,11 @@ IMPLEMENT_FUNCTION(18, Francois, chapter1Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		timeCheckCallback(kTimeParisEpernay, params->param1, 1, kTime1093500);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
 			setup_inCompartment();
 		break;
@@ -889,11 +889,11 @@ IMPLEMENT_FUNCTION(19, Francois, inCompartment)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheckCallback(kTime1161000, params->param1, 2, WRAP_SETUP_FUNCTION(Francois, setup_takeWalk));
 		break;
 
-	case kAction101107728:
+	case kCharacterAction101107728:
 		setCallback(1);
 		setup_letsGo();
 		break;
@@ -902,12 +902,12 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Francois, function20)
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 		getData()->entityPosition = kPosition_5790;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getEntities()->clearSequences(kEntityFrancois);
+		getEntities()->clearSequences(kCharacterFrancois);
 	}
 IMPLEMENT_FUNCTION_END
 
@@ -917,12 +917,12 @@ IMPLEMENT_FUNCTION(21, Francois, chapter2)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_atBreakfast();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityFrancois);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterFrancois);
 
 		getData()->entityPosition = kPosition_4689;
 		getData()->location = kLocationInsideCompartment;
@@ -939,7 +939,7 @@ IMPLEMENT_FUNCTION(22, Francois, atBreakfast)
 	default:
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -950,17 +950,17 @@ IMPLEMENT_FUNCTION(22, Francois, atBreakfast)
 			break;
 
 		case 2:
-			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
-			getSavePoints()->push(kEntityFrancois, kEntityMmeBoutarel, kAction100957716);
+			getObjects()->update(kObjectCompartmentD, kCharacterCath, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
+			getSavePoints()->push(kCharacterFrancois, kCharacterMadame, kCharacterAction100957716);
 			getData()->entityPosition = kPosition_5790;
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityFrancois);
+			getEntities()->clearSequences(kCharacterFrancois);
 			setup_withMama();
 			break;
 		}
 		break;
 
-	case kAction100901266:
+	case kCharacterAction100901266:
 		setCallback(1);
 		setup_doWalk(kCarRedSleeping, kPosition_5790);
 		break;
@@ -973,9 +973,9 @@ IMPLEMENT_FUNCTION(23, Francois, withMama)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEvent(kEventFrancoisShowBeetle) || getEvent(kEventFrancoisShowBeetleD))
-			if (!getEvent(kEventFrancoisTradeWhistle) && !getEvent(kEventFrancoisTradeWhistleD))
+	case kCharacterActionNone:
+		if (HELPERgetEvent(kEventFrancoisShowBeetle) || HELPERgetEvent(kEventFrancoisShowBeetleD))
+			if (!HELPERgetEvent(kEventFrancoisTradeWhistle) && !HELPERgetEvent(kEventFrancoisTradeWhistleD))
 				ENTITY_PARAM(0, 1) = 1;
 
 		if (ENTITY_PARAM(0, 1) && getEntities()->isPlayerInCar(kCarRedSleeping)) {
@@ -1023,7 +1023,7 @@ label_callback_5:
 		}
 
 		if (params->param5 != kTimeInvalid) {
-			if (Entity::updateParameterTime(kTimeEnd, !getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000), params->param5, 75)) {
+			if (Entity::updateParameterTime(kTimeEnd, !getEntities()->isDistanceBetweenEntities(kCharacterFrancois, kCharacterCath, 2000), params->param5, 75)) {
 				setCallback(6);
 				setup_playSound("Fra2010");
 				break;
@@ -1038,7 +1038,7 @@ label_callback_7:
 		timeCheckCallbackCompartment(kTime1813500, params->param7, 8, kObjectCompartmentC, kPosition_6470, "c");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1075,12 +1075,12 @@ IMPLEMENT_FUNCTION(24, Francois, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter3Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityFrancois);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterFrancois);
 
 		getData()->entityPosition = kPosition_5790;
 		getData()->location = kLocationInsideCompartment;
@@ -1097,12 +1097,12 @@ IMPLEMENT_FUNCTION(25, Francois, chapter3Handler)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEvent(kEventFrancoisShowBeetle) || getEvent(kEventFrancoisShowBeetleD))
-			if (!getEvent(kEventFrancoisTradeWhistle) && !getEvent(kEventFrancoisTradeWhistleD))
+	case kCharacterActionNone:
+		if (HELPERgetEvent(kEventFrancoisShowBeetle) || HELPERgetEvent(kEventFrancoisShowBeetleD))
+			if (!HELPERgetEvent(kEventFrancoisTradeWhistle) && !HELPERgetEvent(kEventFrancoisTradeWhistleD))
 				ENTITY_PARAM(0, 1) = 1;
 
-		if (params->param2 && getEntities()->isInsideCompartment(kEntityMmeBoutarel, kCarRedSleeping, kPosition_5790) && !params->param1) {
+		if (params->param2 && getEntities()->isInsideCompartment(kCharacterMadame, kCarRedSleeping, kPosition_5790) && !params->param1) {
 
 			if (ENTITY_PARAM(0, 1) && getEntities()->isPlayerInCar(kCarRedSleeping)) {
 				setCallback(2);
@@ -1152,7 +1152,7 @@ label_callback_11:
 			if (getInventory()->get(kItemBeetle)->location == kObjectLocation3) {
 				if (CURRENT_PARAM(1, 4) != kTimeInvalid) {
 					if (getState()->time <= kTimeEnd)
-						if (!getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000) || !CURRENT_PARAM(1, 4))
+						if (!getEntities()->isDistanceBetweenEntities(kCharacterFrancois, kCharacterCath, 2000) || !CURRENT_PARAM(1, 4))
 							CURRENT_PARAM(1, 4) = (uint)(getState()->time + 75);
 
 					if (CURRENT_PARAM(1, 4) < getState()->time || getState()->time > kTimeEnd) {
@@ -1184,7 +1184,7 @@ label_callback_14:
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1235,15 +1235,15 @@ label_callback_14:
 		}
 		break;
 
-	case kAction101107728:
+	case kCharacterAction101107728:
 		setCallback(1);
 		setup_letsGo();
 		break;
 
-	case kAction189872836:
+	case kCharacterAction189872836:
 		params->param1 = 1;
 		break;
-	case kAction190390860:
+	case kCharacterAction190390860:
 		params->param1 = 0;
 		break;
 	}
@@ -1255,12 +1255,12 @@ IMPLEMENT_FUNCTION(26, Francois, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter4Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityFrancois);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterFrancois);
 
 		getData()->entityPosition = kPosition_5790;
 		getData()->location = kLocationInsideCompartment;
@@ -1273,7 +1273,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Francois, chapter4Handler)
-	if (savepoint.action == kAction101107728) {
+	if (savepoint.action == kCharacterAction101107728) {
 		setCallback(1);
 		setup_letsGo();
 	}
@@ -1285,12 +1285,12 @@ IMPLEMENT_FUNCTION(28, Francois, chapter5)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter5Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityFrancois);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterFrancois);
 
 		getData()->entityPosition = kPosition_3969;
 		getData()->location = kLocationInsideCompartment;
@@ -1303,7 +1303,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Francois, chapter5Handler)
-	if (savepoint.action == kActionProceedChapter5) {
+	if (savepoint.action == kCharacterActionProceedChapter5) {
 		if (!getInventory()->hasItem(kItemWhistle)
 		  && getInventory()->get(kItemWhistle)->location != kObjectLocation3)
 		  getInventory()->setLocationAndProcess(kItemWhistle, kObjectLocation1);
@@ -1318,7 +1318,7 @@ IMPLEMENT_FUNCTION(30, Francois, function30)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5790;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
@@ -1326,7 +1326,7 @@ IMPLEMENT_FUNCTION(30, Francois, function30)
 		getData()->inventoryItem = kItemNone;
 		break;
 
-	case kAction135800432:
+	case kCharacterAction135800432:
 		setup_nullfunction();
 		break;
 	}

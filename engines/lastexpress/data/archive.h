@@ -19,25 +19,31 @@
  *
  */
 
-#ifndef LASTEXPRESS_HPFARCHIVE_H
-#define LASTEXPRESS_HPFARCHIVE_H
+#ifndef LASTEXPRESS_HPF_H
+#define LASTEXPRESS_HPF_H
 
 /*
-	Archive file format (.HPF)
+	HPF Archive Format
 
-	uint32 {4}   - number of files
+	* uint32 {4}   Number of files
 
-	// for each file
-	    char {12}    - name (zero-terminated)
-	    uint32 {4}   - offset (expressed in sectors of 2048 bytes)
-	    uint32 {4}   - size (expressed in sectors of 2048 bytes)
-	    byte {2}     - file status: 1 = on disk (ie. in HD.HPF), 0 = on CD
+	For each file:
+		* char {12}    Name (zero-terminated)
+		* uint32 {4}   Offset (expressed in sectors of 2048 bytes)
+		* uint16 {2}   Size (expressed in sectors of 2048 bytes)
+		* uint16 {2}   Current position (expressed in sectors of 2048 bytes)
+		* uint16 {2}   File status flags:
+					   - Bit 0: "Is on CD"
+					   - Bit 1: "Is loaded"
 */
 
 #include "common/archive.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
 #include "common/str.h"
+#include "common/file.h"
+
+#include "lastexpress/lastexpress.h"
 
 namespace LastExpress {
 
@@ -69,6 +75,85 @@ private:
 	Common::Path _filename;   ///< Filename of the archive
 };
 
+struct Seq;
+
+/*
+ *  HPF Archive Format
+ *
+ *  * uint32 {4}   Number of files
+ *
+ *  For each file:
+ *  	* char {12}    Name (zero-terminated)
+ *  	* uint32 {4}   Offset (expressed in sectors of 2048 bytes)
+ *  	* uint16 {2}   Size (expressed in sectors of 2048 bytes)
+ *  	* uint16 {2}   Current position (expressed in sectors of 2048 bytes)
+ *  	* uint16 {2}   File status flags:
+ *  				   - Bit 0: "Is on CD"
+ *  				   - Bit 1: "Is loaded"
+ */
+
+typedef struct HPF {
+	char name[12];
+	uint32 offset;
+	uint16 size;
+	uint16 currentPos;
+	uint16 status;
+
+	HPF() {
+		memset(name, 0, sizeof(name));
+		offset = 0;
+		size = 0;
+		currentPos = 0;
+		status = 0;
+	};
+
+} HPF;
+
+enum HPFFlags {
+	kHPFFileIsOnCD   = 1 << 0,
+	kHPFFileIsLoaded = 1 << 1,
+};
+
+
+class ArchiveManager {
+public:
+	ArchiveManager(LastExpressEngine *engine);
+	~ArchiveManager();
+
+	HPF *search(const char *name, HPF *archive, int archiveSize);
+	bool lockCD(int32 index);
+	bool isCDAvailable(int cdNum, char *outPath, int pathSize);
+	bool lockCache(char *filename);
+	void initHPFS();
+	void shutDownHPFS();
+	void unlockCD();
+	HPF *openHPF(const char *filename);
+	void readHD(void *dstBuf, int offset, uint32 size);
+	void readCD(void *dstBuf, int offset, uint32 size);
+	void readHPF(HPF *archive, void *dstBuf, uint32 size);
+	void seekHPF(HPF *archive, uint32 position);
+	void closeHPF(HPF *archive);
+
+	int loadBG(const char *filename);
+	Seq *loadSeq(const char *filename, uint8 ticksToWaitUntilCycleRestart, int character);
+	void loadMice();
+
+private:
+	LastExpressEngine *_engine = nullptr;
+
+	Common::File *g_CDFilePointer = nullptr;
+	int32 g_CDFilePosition = 0;
+	int32 g_CDArchiveNumFiles = 0;
+
+	Common::File *g_HDFilePointer = nullptr;
+	int32 g_HDFilePosition = 0;
+	int32 g_HDArchiveNumFiles = 0;
+
+	HPF *g_CDArchive = nullptr;
+	HPF *g_HDArchive = nullptr;
+	int32 g_CDArchiveIndex = 0;
+};
+
 } // End of namespace LastExpress
 
-#endif // LASTEXPRESS_HPFARCHIVE_H
+#endif // LASTEXPRESS_HPF_H
