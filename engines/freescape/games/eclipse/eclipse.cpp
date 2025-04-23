@@ -327,6 +327,9 @@ void EclipseEngine::drawBackground() {
 		if (isSpectrum() || isCPC()) {
 			color1 = 2;
 			color2 = 10;
+		} else if (isC64()) {
+			color1 = 1;
+			color2 = 5;
 		} else if (isAmiga() || isAtariST()) {
 			color1 = 8;
 			color2 = 14;

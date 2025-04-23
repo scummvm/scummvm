@@ -112,8 +112,16 @@ byte getCGAPixel(byte x, int index) {
 }
 
 byte getC64Pixel(byte x, int index) {
-	// Unknown
-	return 0;
+	if (index == 0)
+		return (x >> 0) & 0x3;
+	else if (index == 1)
+		return (x >> 2) & 0x3;
+	else if (index == 2)
+		return (x >> 4) & 0x3;
+	else if (index == 3)
+		return (x >> 6) & 0x3;
+	else
+		error("Invalid index %d requested", index);
 }
 
 byte getCGAStipple(byte x, int back, int fore) {
@@ -173,107 +181,40 @@ void Renderer::clearColorPairArray() {
 		_colorPair[i] = 0;
 }
 
-int getC64Color(uint8 index, bool isBackground) {
-	if (index < 4)
-		return index;
-
-	if (isBackground) {
-		switch (index) {
-		case 4:
-			return 1;
-		case 5: // OK
-			return 2;
-		case 6: // OK
-			return 0;
-		case 7: // OK
-			return 1;
-		case 8:
-			return 1; // ??
-		case 9:  // OK
-			return 3;
-		case 10: // ??
-			return 0;
-		case 11:
-			return 0;
-		case 12:
-			return 0;
-		case 13: // OK
-			return 3;
-		case 14:
-			return 0;
-		default:
-			error("invalid c64 color index %d", index);
-		}
-	}
-
-	switch (index) {
-	case 4:
-		return 0;
-	case 5: // OK
-		return 0;
-	case 6: // OK
-		return 3;
-	case 7: // OK
-		return 2;
-	case 8:
-		return 3; // ??
-	case 9: // OK
-		return 2;
-	case 10: // ??
-		return 0;
-	case 11:
-		return 0;
-	case 12:
-		return 0;
-	case 13:
-		return 2;
-	case 14:
-		return 0;
-	default:
-		error("invalid c64 color index %d", index);
-	}
-
-	error("unreachable");
-}
-
 void Renderer::fillColorPairArray() {
 	for (int i = 0; i < 15; i++) {
 		byte *entry = (*_colorMap)[i];
 		int c1 = -1;
 		int c2 = -1;
-		if (_renderMode == Common::kRenderCGA)
+		if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderC64)
 			c1 = getCGAPixel(entry[0], 0);
 		else if (_renderMode == Common::kRenderCPC)
 			c1 = getCPCPixel(entry[0], 0, true);
-		else if (_renderMode == Common::kRenderC64) {
-			c1 = getC64Color(i, false);
-			c2 = getC64Color(i, true);
-		} else
+		else
 			error("Not implemented");
 
-		if (_renderMode != Common::kRenderC64) {
-			for (int j = 0; j < 4  && c2 == -1; j++) {
-				int k, c;
-				for (k = 0; k < 4; k++) {
-					if (_renderMode == Common::kRenderCGA)
-						c = getCGAPixel(entry[j], k);
-					else if (_renderMode == Common::kRenderCPC)
-						c = getCPCPixel(entry[j], k, true);
-					else
-						error("Not implemented");
-					if (c1 != c) {
-						c2 = c;
-						break;
-					}
-				}
-				if (k != 4)
-					break;
-			}
-			// The Castle Master CPC release needs the following workaround
-			if (c2 < 0)
-				c2 = c1;
 
+		for (int j = 0; j < 4  && c2 == -1; j++) {
+			int k, c;
+			for (k = 0; k < 4; k++) {
+				if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderC64)
+					c = getCGAPixel(entry[j], k);
+				else if (_renderMode == Common::kRenderCPC)
+					c = getCPCPixel(entry[j], k, true);
+				else
+					error("Not implemented");
+				if (c1 != c) {
+					c2 = c;
+					break;
+				}
+			}
+			if (k != 4)
+				break;
 		}
+		// The Castle Master CPC release needs the following workaround
+		if (c2 < 0)
+			c2 = c1;
+
 		assert((c1 < 16) & (c2 < 16));
 		_colorPair[i] = byte(c1) | (byte(c2) << 4);
 	}
