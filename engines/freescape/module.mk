@@ -29,6 +29,7 @@ MODULE_OBJS := \
 	games/driller/driller.o \
 	games/driller/zx.o \
 	games/eclipse/atari.o \
+	games/eclipse/c64.o \
 	games/eclipse/dos.o \
 	games/eclipse/eclipse.o \
 	games/eclipse/cpc.o \

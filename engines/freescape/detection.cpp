@@ -663,6 +663,15 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
+		"totaleclipse", // Tape relese
+		"",
+		AD_ENTRY1s("TOTALECLIPSE.C64.DATA", "70bbb8b122a27a476f908de697098947", 64317),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
 		"totaleclipse",
 		"",
 		{

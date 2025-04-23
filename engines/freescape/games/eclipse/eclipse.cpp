@@ -57,6 +57,8 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 		initDOS();
 	else if (isCPC())
 		initCPC();
+	else if (isC64())
+		initC64();
 	else if (isSpectrum())
 		initZX();
 	else if (isAmiga() || isAtariST())

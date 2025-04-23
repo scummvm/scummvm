@@ -66,10 +66,12 @@ public:
 	void initDOS();
 	void initCPC();
 	void initZX();
+	void initC64();
 	void initAmigaAtari();
 
 	void loadAssetsZXFullGame() override;
 	void loadAssetsCPCFullGame() override;
+	void loadAssetsC64FullGame() override;
 	void loadAssetsAtariFullGame() override;
 	void loadAssetsCPCDemo() override;
 	void loadAssetsZXDemo() override;
@@ -81,6 +83,7 @@ public:
 	void drawBackground() override;
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawCPCUI(Graphics::Surface *surface) override;
+	void drawC64UI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
 	void drawAnalogClock(Graphics::Surface *surface, int x, int y, uint32 colorHand1, uint32 colorHand2, uint32 colorBack);
 	void drawAnalogClockHand(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, uint32 color);

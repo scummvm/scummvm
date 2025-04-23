@@ -33,16 +33,16 @@ void DarkEngine::initC64() {
 
 void DarkEngine::loadAssetsC64FullGame() {
 	Common::File file;
-    file.open("darkside.c64.data");
-    loadMessagesFixedSize(&file, 0x1edf, 16, 27);
-    loadFonts(&file, 0xc3e);
-    loadGlobalObjects(&file, 0x20bd, 23);
-    load8bitBinary(&file, 0x9b3e, 16);
+	file.open("darkside.c64.data");
+	loadMessagesFixedSize(&file, 0x1edf, 16, 27);
+	loadFonts(&file, 0xc3e);
+	loadGlobalObjects(&file, 0x20bd, 23);
+	load8bitBinary(&file, 0x9b3e, 16);
 
-    Graphics::Surface *surf = loadBundledImage("dark_border");
-    surf->convertToInPlace(_gfx->_texturePixelFormat);
-    _border = new Graphics::ManagedSurface();
-    _border->copyFrom(*surf);
+	Graphics::Surface *surf = loadBundledImage("dark_border");
+	surf->convertToInPlace(_gfx->_texturePixelFormat);
+	_border = new Graphics::ManagedSurface();
+	_border->copyFrom(*surf);
 	surf->free();
 	delete surf;
 }
@@ -90,7 +90,7 @@ void DarkEngine::drawC64UI(Graphics::Surface *surface) {
 	_gfx->readFromPalette(_gfx->_inkColor, r, g, b);
 	uint32 inkColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	if (shield >= 0) {
+	/*if (shield >= 0) {
 		Common::Rect shieldBar;
 		shieldBar = Common::Rect(72, 141 - 1, 143 - (_maxShield - shield), 146);
 		surface->fillRect(shieldBar, inkColor);
@@ -106,7 +106,7 @@ void DarkEngine::drawC64UI(Graphics::Surface *surface) {
 
 		energyBar = Common::Rect(72, 148 + 2, 143 - (_maxEnergy - energy), 154 - 2);
 		surface->fillRect(energyBar, front);
-	}
+	}*/
 	drawBinaryClock(surface, 304, 124, front, back);
 }
 
