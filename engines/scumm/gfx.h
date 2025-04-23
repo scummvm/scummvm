@@ -271,7 +271,7 @@ struct VirtScreen : Graphics::Surface {
 	}
 
 	byte *getBackPixels(int x, int y) const {
-		return (byte *)backBuf + y * pitch + (xstart + x) * format.bytesPerPixel;
+		return (backBuf != nullptr) ? (byte *)backBuf + y * pitch + (xstart + x) * format.bytesPerPixel : nullptr;
 	}
 };
 
