@@ -715,7 +715,7 @@ void ScummEngine_v5::o5_add() {
 	//
 	// We fix this by changing Var[229] += 8 to Var[229] += 1.
 
-	if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && _resultVarNumber == 229 && a == 8 && enhancementEnabled(kEnhSubFmtCntChanges)) {
+	if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && _language == Common::EN_ANY && _resultVarNumber == 229 && a == 8 && enhancementEnabled(kEnhSubFmtCntChanges)) {
 		int scriptNr = vm.slot[_currentScript].number;
 
 		// Room 35 - Talking to the Men of Low Moral Fiber (pirates),
