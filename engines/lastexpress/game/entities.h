@@ -26,7 +26,7 @@
 	Entities
 	--------
 
-	The entities structure contains 40 Entity_t structures for each entity
+	The entities structure contains 40 Entity_t structures for each character
 
 */
 
@@ -52,49 +52,49 @@ public:
 	void savePositions(Common::Serializer &ser);
 	void saveCompartments(Common::Serializer &ser);
 
-	void setup(bool isFirstChapter, EntityIndex entity);
+	void setup(bool isFirstChapter, CharacterIndex entity);
 	void setupChapter(ChapterIndex chapter);
 	void reset();
 
 	// Update & drawing
 
 	/**
-	 * Reset an entity state
+	 * Reset an character state
 	 *
-	 * @param entity entity index
+	 * @param character character index
 	 * @note remember to call the function pointer (we do not pass it our implementation)
 	 */
-	void resetState(EntityIndex entity);
+	void resetState(CharacterIndex entity);
 	void updateFields() const;
 	void updateSequences() const;
 	void updateCallbacks();
 
-	EntityIndex canInteractWith(const Common::Point &point) const;
-	bool compare(EntityIndex entity1, EntityIndex entity2) const;
+	CharacterIndex canInteractWith(const Common::Point &point) const;
+	bool compare(CharacterIndex entity1, CharacterIndex entity2) const;
 
 	/**
-	 * Update an entity current sequence frame (and related fields)
+	 * Update an character current sequence frame (and related fields)
 	 *
-	 * @param entity entity index
+	 * @param character character index
 	 */
-	void updateFrame(EntityIndex entity) const;
-	void updatePositionEnter(EntityIndex entity, CarIndex car, Position position);
-	void updatePositionExit(EntityIndex entity, CarIndex car, Position position);
-	void enterCompartment(EntityIndex entity, ObjectIndex compartment, bool useCompartment1 = false);
-	void exitCompartment(EntityIndex entity, ObjectIndex compartment, bool useCompartment1 = false);
+	void updateFrame(CharacterIndex entity) const;
+	void updatePositionEnter(CharacterIndex entity, CarIndex car, PositionOld position);
+	void updatePositionExit(CharacterIndex entity, CarIndex car, PositionOld position);
+	void enterCompartment(CharacterIndex entity, ObjectIndex compartment, bool useCompartment1 = false);
+	void exitCompartment(CharacterIndex entity, ObjectIndex compartment, bool useCompartment1 = false);
 
 	// Sequences
-	void drawSequenceLeft(EntityIndex index, const char *sequence) const;
-	void drawSequenceRight(EntityIndex index, const char *sequence) const;
-	void clearSequences(EntityIndex index) const;
+	void drawSequenceLeft(CharacterIndex index, const char *sequence) const;
+	void drawSequenceRight(CharacterIndex index, const char *sequence) const;
+	void clearSequences(CharacterIndex index) const;
 
-	bool updateEntity(EntityIndex entity, CarIndex car, EntityPosition position) const;
-	bool hasValidFrame(EntityIndex entity) const;
+	bool updateEntity(CharacterIndex entity, CarIndex car, EntityPosition position) const;
+	bool hasValidFrame(CharacterIndex entity) const;
 
 	// Accessors
-	Entity *get(EntityIndex entity);
-	EntityData::EntityCallData *getData(EntityIndex entity) const;
-	int getPosition(CarIndex car, Position position) const;
+	Entity *get(CharacterIndex entity);
+	EntityData::EntityCallData *getData(CharacterIndex entity) const;
+	int getPosition(CarIndex car, PositionOld position) const;
 	int getCompartments(int index) const;
 	int getCompartments1(int index) const;
 
@@ -106,26 +106,26 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Query if 'entity' is inside a compartment
+	 * Query if 'character' is inside a compartment
 	 *
-	 * @param entity   The entity.
+	 * @param character   The character.
 	 * @param car      The car.
 	 * @param position The position.
 	 *
 	 * @return true if inside the compartment, false if not.
 	 */
-	bool isInsideCompartment(EntityIndex entity, CarIndex car, EntityPosition position) const;
+	bool isInsideCompartment(CharacterIndex entity, CarIndex car, EntityPosition position) const;
 
 	bool checkFields2(ObjectIndex object) const;
 
 	/**
-	 * Query if 'entity' is in compartment cars.
+	 * Query if 'character' is in compartment cars.
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 *
 	 * @return true if in compartment cars, false if not.
 	 */
-	bool isInsideCompartments(EntityIndex entity) const;
+	bool isInsideCompartments(CharacterIndex entity) const;
 
 	/**
 	 * Query if the player is in the specified position
@@ -134,26 +134,26 @@ public:
 	 * @param position  The position.
 	 * @return true if player is in that position, false if not.
 	 */
-	bool isPlayerPosition(CarIndex car, Position position) const;
+	bool isPlayerPosition(CarIndex car, PositionOld position) const;
 
 	/**
-	 * Query if 'entity' is inside a train car
+	 * Query if 'character' is inside a train car
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 * @param car    The car.
 	 *
 	 * @return true if inside a train car, false if not.
 	 */
-	bool isInsideTrainCar(EntityIndex entity, CarIndex car) const;
+	bool isInsideTrainCar(CharacterIndex entity, CarIndex car) const;
 
 	/**
-	 * Query if 'entity' is in green car entrance.
+	 * Query if 'character' is in green car entrance.
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 *
 	 * @return true if in the green car entrance, false if not.
 	 */
-	bool isInGreenCarEntrance(EntityIndex entity) const;
+	bool isInGreenCarEntrance(CharacterIndex entity) const;
 
 	/**
 	 * Query if the player is in a specific car
@@ -165,26 +165,26 @@ public:
 	bool isPlayerInCar(CarIndex car) const;
 
 	/**
-	 * Query if 'entity' is going in the up or down direction.
+	 * Query if 'character' is going in the up or down direction.
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 *
 	 * @return true if direction is up or down, false if not.
 	 */
-	bool isDirectionUpOrDown(EntityIndex entity) const;
+	bool isDirectionUpOrDown(CharacterIndex entity) const;
 
 	/**
 	 * Query if the distance between the two entities is less 'distance'
 	 *
-	 * @param entity1  The first entity.
-	 * @param entity2  The second entity.
+	 * @param entity1  The first character.
+	 * @param entity2  The second character.
 	 * @param distance The distance.
 	 *
 	 * @return true if the distance between entities is less than 'distance', false if not.
 	 */
-	bool isDistanceBetweenEntities(EntityIndex entity1, EntityIndex entity2, uint distance) const;
+	bool isDistanceBetweenEntities(CharacterIndex entity1, CharacterIndex entity2, uint distance) const;
 
-	bool checkFields10(EntityIndex entity) const;
+	bool checkFields10(CharacterIndex entity) const;
 
 	/**
 	 * Query if there is somebody in the restaurant or salon.
@@ -194,31 +194,31 @@ public:
 	bool isSomebodyInsideRestaurantOrSalon() const;
 
 	/**
-	 * Query if 'entity' is in the salon.
+	 * Query if 'character' is in the salon.
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 *
 	 * @return true if in the salon, false if not.
 	 */
-	bool isInSalon(EntityIndex entity) const;
+	bool isInSalon(CharacterIndex entity) const;
 
 	/**
-	 * Query if 'entity' is in the restaurant.
+	 * Query if 'character' is in the restaurant.
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 *
 	 * @return true if in the restaurant, false if not.
 	 */
-	bool isInRestaurant(EntityIndex entity) const;
+	bool isInRestaurant(CharacterIndex entity) const;
 
 	/**
-	 * Query if 'entity' is in Kronos salon.
+	 * Query if 'character' is in Kronos salon.
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 *
 	 * @return true if in Kronos salon, false if not.
 	 */
-	bool isInKronosSalon(EntityIndex entity) const;
+	bool isInKronosSalon(CharacterIndex entity) const;
 
 	/**
 	 * Query if the player is outside Alexei window.
@@ -235,13 +235,13 @@ public:
 	bool isOutsideAnnaWindow() const;
 
 	/**
-	 * Query if 'entity' is in the kitchen.
+	 * Query if 'character' is in the kitchen.
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 *
 	 * @return true if in the kitchen, false if not.
 	 */
-	bool isInKitchen(EntityIndex entity) const;
+	bool isInKitchen(CharacterIndex entity) const;
 
 	/**
 	 * Query if nobody is in a compartment at that position.
@@ -253,81 +253,81 @@ public:
 	 */
 	bool isNobodyInCompartment(CarIndex car, EntityPosition position) const;
 
-	bool checkFields19(EntityIndex entity, CarIndex car, EntityPosition position) const;
+	bool checkFields19(CharacterIndex entity, CarIndex car, EntityPosition position) const;
 
 	/**
-	 * Query if 'entity' is in the baggage car entrance.
+	 * Query if 'character' is in the baggage car entrance.
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 *
 	 * @return true if in the baggage car entrance, false if not.
 	 */
-	bool isInBaggageCarEntrance(EntityIndex entity) const;
+	bool isInBaggageCarEntrance(CharacterIndex entity) const;
 
 	/**
-	 * Query if 'entity' is in the baggage car.
+	 * Query if 'character' is in the baggage car.
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 *
 	 * @return true if in the baggage car, false if not.
 	 */
-	bool isInBaggageCar(EntityIndex entity) const;
+	bool isInBaggageCar(CharacterIndex entity) const;
 
 	/**
-	 * Query if 'entity' is in Kronos sanctum.
+	 * Query if 'character' is in Kronos sanctum.
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 *
 	 * @return true if in Kronos sanctum, false if not.
 	 */
-	bool isInKronosSanctum(EntityIndex entity) const;
+	bool isInKronosSanctum(CharacterIndex entity) const;
 
 	/**
-	 * Query if 'entity' is in Kronos car entrance.
+	 * Query if 'character' is in Kronos car entrance.
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 *
 	 * @return true if in Kronos car entrance, false if not.
 	 */
-	bool isInKronosCarEntrance(EntityIndex entity) const;
+	bool isInKronosCarEntrance(CharacterIndex entity) const;
 
 	/**
 	 * Check distance from position.
 	 *
-	 * @param entity   The entity.
+	 * @param character   The character.
 	 * @param position The position.
 	 * @param distance The distance.
 	 *
 	 * @return true if distance is bigger, false otherwise.
 	 */
-	bool checkDistanceFromPosition(EntityIndex entity, EntityPosition position, int distance) const;
+	bool checkDistanceFromPosition(CharacterIndex entity, EntityPosition position, int distance) const;
 
 	/**
-	 * Query if 'entity' is walking opposite to player.
+	 * Query if 'character' is walking opposite to player.
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 *
 	 * @return true if walking opposite to player, false if not.
 	 */
-	bool isWalkingOppositeToPlayer(EntityIndex entity) const;
+	bool isWalkingOppositeToPlayer(CharacterIndex entity) const;
 
 	/**
-	 * Query if 'entity' is female.
+	 * Query if 'character' is female.
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 *
 	 * @return true if female, false if not.
 	 */
-	static bool isFemale(EntityIndex entity);
+	static bool isFemale(CharacterIndex entity);
 
 	/**
-	 * Query if 'entity' is married.
+	 * Query if 'character' is married.
 	 *
-	 * @param entity The entity.
+	 * @param character The character.
 	 *
 	 * @return true if married, false if not.
 	 */
-	static bool isMarried(EntityIndex entity);
+	static bool isMarried(CharacterIndex entity);
 
 private:
 	static const int _compartmentsCount = 16;
@@ -344,31 +344,31 @@ private:
 
 	void executeCallbacks();
 	void incrementDirectionCounter(EntityData::EntityCallData *data) const;
-	void processEntity(EntityIndex entity);
+	void processEntity(CharacterIndex entity);
 
-	void drawSequence(EntityIndex entity, const char *sequence, EntityDirection direction) const;
-	void drawSequences(EntityIndex entity, EntityDirection direction, bool loadSequence) const;
-	void loadSequence2(EntityIndex entity, Common::String sequenceName, Common::String sequenceName2, byte field30, bool loadSequence) const;
+	void drawSequence(CharacterIndex entity, const char *sequence, EntityDirection direction) const;
+	void drawSequences(CharacterIndex entity, EntityDirection direction, bool loadSequence) const;
+	void loadSequence2(CharacterIndex entity, Common::String sequenceName, Common::String sequenceName2, byte field30, bool loadSequence) const;
 
 	void clearEntitySequenceData(EntityData::EntityCallData *data, EntityDirection direction) const;
-	void computeCurrentFrame(EntityIndex entity) const;
-	int16 getCurrentFrame(EntityIndex entity, Sequence *sequence, EntityPosition position, bool doProcessing) const;
-	void processFrame(EntityIndex entity, bool keepPreviousFrame, bool dontPlaySound);
-	void drawNextSequence(EntityIndex entity) const;
-	void updateEntityPosition(EntityIndex entity) const;
-	void copySequenceData(EntityIndex entity) const;
+	void computeCurrentFrame(CharacterIndex entity) const;
+	int16 getCurrentFrame(CharacterIndex entity, Sequence *sequence, EntityPosition position, bool doProcessing) const;
+	void processFrame(CharacterIndex entity, bool keepPreviousFrame, bool dontPlaySound);
+	void drawNextSequence(CharacterIndex entity) const;
+	void updateEntityPosition(CharacterIndex entity) const;
+	void copySequenceData(CharacterIndex entity) const;
 
-	bool changeCar(EntityData::EntityCallData *data, EntityIndex entity, CarIndex car, EntityPosition position, bool increment, EntityPosition newPosition, CarIndex newCar) const;
+	bool changeCar(EntityData::EntityCallData *data, CharacterIndex entity, CarIndex car, EntityPosition position, bool increment, EntityPosition newPosition, CarIndex newCar) const;
 
-	void getSequenceName(EntityIndex entity, EntityDirection direction, Common::String &sequence1, Common::String &sequence2) const;
+	void getSequenceName(CharacterIndex entity, EntityDirection direction, Common::String &sequence1, Common::String &sequence2) const;
 
-	void updatePositionsEnter(EntityIndex entity, CarIndex car, Position position1, Position position2, Position position3, Position position4);
-	void updatePositionsExit(EntityIndex entity, CarIndex car, Position position1, Position position2);
+	void updatePositionsEnter(CharacterIndex entity, CarIndex car, PositionOld position1, PositionOld position2, PositionOld position3, PositionOld position4);
+	void updatePositionsExit(CharacterIndex entity, CarIndex car, PositionOld position1, PositionOld position2);
 
-	void resetSequences(EntityIndex entity) const;
+	void resetSequences(CharacterIndex entity) const;
 
 	bool checkPosition(EntityPosition position) const;
-	bool checkSequenceFromPosition(EntityIndex entity) const;
+	bool checkSequenceFromPosition(CharacterIndex entity) const;
 	EntityPosition getEntityPositionFromCurrentPosition() const;
 };
 

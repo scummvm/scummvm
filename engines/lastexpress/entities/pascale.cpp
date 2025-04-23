@@ -34,7 +34,7 @@
 
 namespace LastExpress {
 
-Pascale::Pascale(LastExpressEngine *engine) : Entity(engine, kEntityPascale) {
+Pascale::Pascale(LastExpressEngine *engine) : Entity(engine, kCharacterHeadWait) {
 	ADD_CALLBACK_FUNCTION_S(Pascale, draw);
 	ADD_CALLBACK_FUNCTION(Pascale, callbackActionRestaurantOrSalon);
 	ADD_CALLBACK_FUNCTION(Pascale, callbackActionOnDirection);
@@ -83,9 +83,9 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(3, Pascale, callbackActionOnDirection)
-	if (savepoint.action == kActionExcuseMeCath) {
+	if (savepoint.action == kCharacterActionExcuseMeCath) {
 		if (!params->param1) {
-			getSound()->excuseMe(kEntityPascale);
+			getSound()->excuseMe(kCharacterHeadWait);
 			params->param1 = 1;
 		}
 
@@ -122,7 +122,7 @@ IMPLEMENT_FUNCTION(8, Pascale, welcomeSophieAndRebecca)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_850;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -130,7 +130,7 @@ IMPLEMENT_FUNCTION(8, Pascale, welcomeSophieAndRebecca)
 		setup_draw("901");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -141,15 +141,15 @@ IMPLEMENT_FUNCTION(8, Pascale, welcomeSophieAndRebecca)
 				break;
 
 			case kChapter1:
-				getSound()->playSound(kEntityPascale, "REB1198", kSoundVolumeEntityDefault, 30);
+				getSound()->playSound(kCharacterHeadWait, "REB1198", kSoundVolumeEntityDefault, 30);
 				break;
 
 			case kChapter3:
-				getSound()->playSound(kEntityPascale, "REB3001", kSoundVolumeEntityDefault, 30);
+				getSound()->playSound(kCharacterHeadWait, "REB3001", kSoundVolumeEntityDefault, 30);
 				break;
 
 			case kChapter4:
-				getSound()->playSound(kEntityPascale, "REB4001", kSoundVolumeEntityDefault, 30);
+				getSound()->playSound(kCharacterHeadWait, "REB4001", kSoundVolumeEntityDefault, 30);
 				break;
 			}
 
@@ -158,14 +158,14 @@ IMPLEMENT_FUNCTION(8, Pascale, welcomeSophieAndRebecca)
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityPascale, kEntityRebecca, kAction157370960);
+			getSavePoints()->push(kCharacterHeadWait, kCharacterRebecca, kCharacterAction157370960);
 
 			setCallback(3);
 			setup_draw("905");
 			break;
 
 		case 3:
-			getEntities()->clearSequences(kEntityPascale);
+			getEntities()->clearSequences(kCharacterHeadWait);
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(0, 4) = 0;
 
@@ -182,14 +182,14 @@ IMPLEMENT_FUNCTION(9, Pascale, sitSophieAndRebecca)
 	default:
 		break;
 
-	case kActionExitCompartment:
+	case kCharacterActionExitCompartment:
 		callbackAction();
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceRight(kEntityPascale, "012C1");
-		getEntities()->drawSequenceRight(kEntityRebecca, "012C2");
-		getEntities()->drawSequenceRight(kEntityTables3, "012C3");
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceRight(kCharacterHeadWait, "012C1");
+		getEntities()->drawSequenceRight(kCharacterRebecca, "012C2");
+		getEntities()->drawSequenceRight(kCharacterTableD, "012C3");
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -200,17 +200,17 @@ IMPLEMENT_FUNCTION(10, Pascale, welcomeCath)
 	default:
 		break;
 
-	case kActionNone:
-		if (params->param1 && !getSoundQueue()->isBuffered(kEntityPascale))
-			getEntities()->updatePositionExit(kEntityPascale, kCarRestaurant, 64);
+	case kCharacterActionNone:
+		if (params->param1 && !getSoundQueue()->isBuffered(kCharacterHeadWait))
+			getEntities()->updatePositionExit(kCharacterHeadWait, kCarRestaurant, 64);
 		break;
 
-	case kActionExitCompartment:
+	case kCharacterActionExitCompartment:
 		if (!params->param2) {
 			params->param2 = 1;
 
-			getSound()->playSound(kEntityPascale, "HED1001A");
-			getSound()->playSound(kEntityPlayer, "LIB004");
+			getSound()->playSound(kCharacterHeadWait, "HED1001A");
+			getSound()->playSound(kCharacterCath, "LIB004");
 
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 69);
 		}
@@ -218,22 +218,22 @@ IMPLEMENT_FUNCTION(10, Pascale, welcomeCath)
 		callbackAction();
 		break;
 
-	case kAction4:
+	case kCharacterAction4:
 		if (!params->param1) {
 			params->param1 = 1;
-			getSound()->playSound(kEntityPascale, "HED1001");
+			getSound()->playSound(kCharacterHeadWait, "HED1001");
 		}
 		break;
 
-	case kActionDefault:
-		getEntities()->updatePositionEnter(kEntityPascale, kCarRestaurant, 64);
-		getEntities()->drawSequenceRight(kEntityPascale, "035A");
+	case kCharacterActionDefault:
+		getEntities()->updatePositionEnter(kCharacterHeadWait, kCarRestaurant, 64);
+		getEntities()->drawSequenceRight(kCharacterHeadWait, "035A");
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (params->param1 && getEntities()->isPlayerPosition(kCarRestaurant, 64)) {
-			getSound()->playSound(kEntityPascale, "HED1001A");
-			getSound()->playSound(kEntityPlayer, "LIB004");
+			getSound()->playSound(kCharacterHeadWait, "HED1001A");
+			getSound()->playSound(kCharacterCath, "LIB004");
 
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 69);
 
@@ -249,36 +249,36 @@ IMPLEMENT_FUNCTION(11, Pascale, seatCath)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5800;
 		getData()->location = kLocationOutsideCompartment;
 
-		getSavePoints()->push(kEntityPascale, kEntityAugust, kAction168046720);
-		getSavePoints()->push(kEntityPascale, kEntityAnna, kAction168046720);
-		getSavePoints()->push(kEntityPascale, kEntityAlexei, kAction168046720);
-		getEntities()->updatePositionEnter(kEntityPascale, kCarRestaurant, 55);
+		getSavePoints()->push(kCharacterHeadWait, kCharacterAugust, kCharacterAction168046720);
+		getSavePoints()->push(kCharacterHeadWait, kCharacterAnna, kCharacterAction168046720);
+		getSavePoints()->push(kCharacterHeadWait, kCharacterAlexei, kCharacterAction168046720);
+		getEntities()->updatePositionEnter(kCharacterHeadWait, kCarRestaurant, 55);
 
 		setCallback(1);
 		setup_welcomeCath();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityPascale, kEntityAugust, kAction168627977);
-			getSavePoints()->push(kEntityPascale, kEntityAnna, kAction168627977);
-			getSavePoints()->push(kEntityPascale, kEntityAlexei, kAction168627977);
-			getEntities()->updatePositionExit(kEntityPascale, kCarRestaurant, 55);
+			getSavePoints()->push(kCharacterHeadWait, kCharacterAugust, kCharacterAction168627977);
+			getSavePoints()->push(kCharacterHeadWait, kCharacterAnna, kCharacterAction168627977);
+			getSavePoints()->push(kCharacterHeadWait, kCharacterAlexei, kCharacterAction168627977);
+			getEntities()->updatePositionExit(kCharacterHeadWait, kCarRestaurant, 55);
 
 			setCallback(2);
 			setup_draw("905");
 			break;
 
 		case 2:
-			getEntities()->clearSequences(kEntityPascale);
+			getEntities()->clearSequences(kCharacterHeadWait);
 			getData()->entityPosition = kPosition_5900;
 
 			callbackAction();
@@ -294,22 +294,22 @@ IMPLEMENT_FUNCTION(12, Pascale, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_servingDinner();
 		break;
 
-	case kActionDefault:
-		getSavePoints()->addData(kEntityPascale, kAction239072064, 0);
-		getSavePoints()->addData(kEntityPascale, kAction257489762, 2);
-		getSavePoints()->addData(kEntityPascale, kAction207769280, 6);
-		getSavePoints()->addData(kEntityPascale, kAction101824388, 7);
-		getSavePoints()->addData(kEntityPascale, kAction136059947, 8);
-		getSavePoints()->addData(kEntityPascale, kAction223262556, 1);
-		getSavePoints()->addData(kEntityPascale, kAction269479296, 3);
-		getSavePoints()->addData(kEntityPascale, kAction352703104, 4);
-		getSavePoints()->addData(kEntityPascale, kAction352768896, 5);
-		getSavePoints()->addData(kEntityPascale, kAction191604416, 10);
-		getSavePoints()->addData(kEntityPascale, kAction190605184, 11);
+	case kCharacterActionDefault:
+		getSavePoints()->addData(kCharacterHeadWait, kCharacterAction239072064, 0);
+		getSavePoints()->addData(kCharacterHeadWait, kCharacterAction257489762, 2);
+		getSavePoints()->addData(kCharacterHeadWait, kCharacterAction207769280, 6);
+		getSavePoints()->addData(kCharacterHeadWait, kCharacterAction101824388, 7);
+		getSavePoints()->addData(kCharacterHeadWait, kCharacterAction136059947, 8);
+		getSavePoints()->addData(kCharacterHeadWait, kCharacterAction223262556, 1);
+		getSavePoints()->addData(kCharacterHeadWait, kCharacterAction269479296, 3);
+		getSavePoints()->addData(kCharacterHeadWait, kCharacterAction352703104, 4);
+		getSavePoints()->addData(kCharacterHeadWait, kCharacterAction352768896, 5);
+		getSavePoints()->addData(kCharacterHeadWait, kCharacterAction191604416, 10);
+		getSavePoints()->addData(kCharacterHeadWait, kCharacterAction190605184, 11);
 
 		getData()->entityPosition = kPosition_5900;
 		getData()->location = kLocationOutsideCompartment;
@@ -324,7 +324,7 @@ IMPLEMENT_FUNCTION(13, Pascale, greetAugust)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5800;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -332,15 +332,15 @@ IMPLEMENT_FUNCTION(13, Pascale, greetAugust)
 		setup_draw("902");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
 			if (!ENTITY_PARAM(1, 3)) {
-				getEntities()->drawSequenceLeft(kEntityPascale, "010E");
-				getEntities()->drawSequenceLeft(kEntityAugust, "BLANK");
+				getEntities()->drawSequenceLeft(kCharacterHeadWait, "010E");
+				getEntities()->drawSequenceLeft(kCharacterAugust, "BLANK");
 
 				setCallback(2);
 				setup_playSound("AUG1001");
@@ -352,7 +352,7 @@ IMPLEMENT_FUNCTION(13, Pascale, greetAugust)
 			break;
 
 		case 2:
-			getEntities()->drawSequenceLeft(kEntityAugust, "010B");
+			getEntities()->drawSequenceLeft(kCharacterAugust, "010B");
 
 			setCallback(3);
 			setup_draw("905");
@@ -360,8 +360,8 @@ IMPLEMENT_FUNCTION(13, Pascale, greetAugust)
 
 		case 3:
 			getData()->entityPosition = kPosition_5900;
-			getEntities()->clearSequences(kEntityPascale);
-			getSavePoints()->push(kEntityPascale, kEntityVerges, kActionDeliverMessageToTyler);
+			getEntities()->clearSequences(kCharacterHeadWait);
+			getSavePoints()->push(kCharacterHeadWait, kCharacterTrainM, kCharacterActionDeliverMessageToTyler);
 			ENTITY_PARAM(0, 1) = 0;
 
 			callbackAction();
@@ -377,18 +377,18 @@ IMPLEMENT_FUNCTION(14, Pascale, seatAnna)
 	default:
 		break;
 
-	case kActionExitCompartment:
-		getEntities()->updatePositionExit(kEntityPascale, kCarRestaurant, 62);
+	case kCharacterActionExitCompartment:
+		getEntities()->updatePositionExit(kCharacterHeadWait, kCarRestaurant, 62);
 
 		callbackAction();
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceRight(kEntityTables0, "001C3");
-		getEntities()->drawSequenceRight(kEntityAnna, "001C2");
-		getEntities()->drawSequenceRight(kEntityPascale, "001C1");
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceRight(kCharacterTableA, "001C3");
+		getEntities()->drawSequenceRight(kCharacterAnna, "001C2");
+		getEntities()->drawSequenceRight(kCharacterHeadWait, "001C1");
 
-		getEntities()->updatePositionEnter(kEntityPascale, kCarRestaurant, 62);
+		getEntities()->updatePositionEnter(kCharacterHeadWait, kCarRestaurant, 62);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -399,7 +399,7 @@ IMPLEMENT_FUNCTION(15, Pascale, greetAnna)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5800;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -407,27 +407,27 @@ IMPLEMENT_FUNCTION(15, Pascale, greetAnna)
 		setup_draw("901");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSound()->playSound(kEntityPascale, "ANN1047");
+			getSound()->playSound(kCharacterHeadWait, "ANN1047");
 
 			setCallback(2);
 			setup_seatAnna();
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityPascale, kEntityAnna, kAction157370960);
+			getSavePoints()->push(kCharacterHeadWait, kCharacterAnna, kCharacterAction157370960);
 
 			setCallback(3);
 			setup_draw("904");
 			break;
 
 		case 3:
-			getEntities()->clearSequences(kEntityPascale);
+			getEntities()->clearSequences(kCharacterHeadWait);
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(0, 2) = 0;
 
@@ -444,7 +444,7 @@ IMPLEMENT_FUNCTION(16, Pascale, greetTatiana)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5800;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -452,15 +452,15 @@ IMPLEMENT_FUNCTION(16, Pascale, greetTatiana)
 		setup_draw("903");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityPascale, kEntityTatiana, kAction122358304);
-			getEntities()->drawSequenceLeft(kEntityPascale, "014B");
-			getEntities()->updatePositionEnter(kEntityPascale, kCarRestaurant, 67);
+			getSavePoints()->push(kCharacterHeadWait, kCharacterTatiana, kCharacterAction122358304);
+			getEntities()->drawSequenceLeft(kCharacterHeadWait, "014B");
+			getEntities()->updatePositionEnter(kCharacterHeadWait, kCarRestaurant, 67);
 
 			if (getSoundQueue()->isBuffered("TAT1069A"))
 				getSoundQueue()->fade("TAT1069A");
@@ -472,15 +472,15 @@ IMPLEMENT_FUNCTION(16, Pascale, greetTatiana)
 			break;
 
 		case 2:
-			getEntities()->updatePositionExit(kEntityPascale, kCarRestaurant, 67);
-			getSavePoints()->push(kEntityPascale, kEntityTatiana, kAction122288808);
+			getEntities()->updatePositionExit(kCharacterHeadWait, kCarRestaurant, 67);
+			getSavePoints()->push(kCharacterHeadWait, kCharacterTatiana, kCharacterAction122288808);
 
 			setCallback(3);
 			setup_draw("906");
 			break;
 
 		case 3:
-			getEntities()->clearSequences(kEntityPascale);
+			getEntities()->clearSequences(kCharacterHeadWait);
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(0, 3) = 0;
 
@@ -497,7 +497,7 @@ switch (savepoint.action) {
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!params->param2) {
 			if (getEntities()->isPlayerPosition(kCarRestaurant, 69)
 			 || getEntities()->isPlayerPosition(kCarRestaurant, 70)
@@ -508,7 +508,7 @@ switch (savepoint.action) {
 				params->param1 = 1;
 		}
 
-		if (!getEntities()->isInKitchen(kEntityPascale))
+		if (!getEntities()->isInKitchen(kCharacterHeadWait))
 			break;
 
 		if (ENTITY_PARAM(0, 5) && ENTITY_PARAM(0, 6)) {
@@ -553,7 +553,7 @@ label_callback4:
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -578,16 +578,16 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Pascale, function18)
-	if (savepoint.action != kActionNone)
+	if (savepoint.action != kCharacterActionNone)
 		return;
 
 	if (getState()->time > kTime1242000 && !params->param1) {
 		params->param1 = 1;
 
-		getSavePoints()->push(kEntityPascale, kEntityWaiter1, kAction101632192);
-		getSavePoints()->push(kEntityPascale, kEntityWaiter2, kAction101632192);
-		getSavePoints()->push(kEntityPascale, kEntityCooks, kAction101632192);
-		getSavePoints()->push(kEntityPascale, kEntityVerges, kAction101632192);
+		getSavePoints()->push(kCharacterHeadWait, kCharacterWaiter1, kCharacterAction101632192);
+		getSavePoints()->push(kCharacterHeadWait, kCharacterWaiter2, kCharacterAction101632192);
+		getSavePoints()->push(kCharacterHeadWait, kCharacterCook, kCharacterAction101632192);
+		getSavePoints()->push(kCharacterHeadWait, kCharacterTrainM, kCharacterAction101632192);
 
 		setup_function19();
 	}
@@ -599,34 +599,34 @@ IMPLEMENT_FUNCTION(19, Pascale, function19)
 	default:
 		break;
 
-	case kActionNone:
-		if (!params->param1 && getEntityData(kEntityPlayer)->entityPosition < kPosition_3650) {
-			getObjects()->update(kObject65, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
-			getSavePoints()->push(kEntityPascale, kEntityTables0, kActionDrawTablesWithChairs, "001P");
-			getSavePoints()->push(kEntityPascale, kEntityTables1, kActionDrawTablesWithChairs, "005J");
-			getSavePoints()->push(kEntityPascale, kEntityTables2, kActionDrawTablesWithChairs, "009G");
-			getSavePoints()->push(kEntityPascale, kEntityTables3, kActionDrawTablesWithChairs, "010M");
-			getSavePoints()->push(kEntityPascale, kEntityTables4, kActionDrawTablesWithChairs, "014F");
-			getSavePoints()->push(kEntityPascale, kEntityTables5, kActionDrawTablesWithChairs, "024D");
+	case kCharacterActionNone:
+		if (!params->param1 && getEntityData(kCharacterCath)->entityPosition < kPosition_3650) {
+			getObjects()->update(kObject65, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getSavePoints()->push(kCharacterHeadWait, kCharacterTableA, kCharacterActionDrawTablesWithChairs, "001P");
+			getSavePoints()->push(kCharacterHeadWait, kCharacterTableB, kCharacterActionDrawTablesWithChairs, "005J");
+			getSavePoints()->push(kCharacterHeadWait, kCharacterTableC, kCharacterActionDrawTablesWithChairs, "009G");
+			getSavePoints()->push(kCharacterHeadWait, kCharacterTableD, kCharacterActionDrawTablesWithChairs, "010M");
+			getSavePoints()->push(kCharacterHeadWait, kCharacterTableE, kCharacterActionDrawTablesWithChairs, "014F");
+			getSavePoints()->push(kCharacterHeadWait, kCharacterTableF, kCharacterActionDrawTablesWithChairs, "024D");
 
 			params->param1 = 1;
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->car = kCarRestaurant;
 		getData()->entityPosition = kPosition_5900;
 		getData()->location = kLocationOutsideCompartment;
 
-		getEntities()->clearSequences(kEntityPascale);
+		getEntities()->clearSequences(kCharacterHeadWait);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Pascale, chapter2)
-	if (savepoint.action == kActionDefault) {
-		getEntities()->clearSequences(kEntityPascale);
+	if (savepoint.action == kCharacterActionDefault) {
+		getEntities()->clearSequences(kCharacterHeadWait);
 
 		getData()->entityPosition = kPosition_5900;
 		getData()->location = kLocationOutsideCompartment;
@@ -634,7 +634,7 @@ IMPLEMENT_FUNCTION(20, Pascale, chapter2)
 		getData()->clothes = kClothes1;
 		getData()->inventoryItem = kItemNone;
 
-		getObjects()->update(kObject65, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
+		getObjects()->update(kObject65, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
 	}
 IMPLEMENT_FUNCTION_END
 
@@ -644,12 +644,12 @@ IMPLEMENT_FUNCTION(21, Pascale, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter3Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityPascale);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterHeadWait);
 
 		getData()->entityPosition = kPosition_5900;
 		getData()->location = kLocationOutsideCompartment;
@@ -668,8 +668,8 @@ IMPLEMENT_FUNCTION(22, Pascale, chapter3Handler)
 	default:
 		break;
 
-	case kActionNone:
-		if (!getEntities()->isInKitchen(kEntityPascale))
+	case kCharacterActionNone:
+		if (!getEntities()->isInKitchen(kCharacterHeadWait))
 			break;
 
 		if (ENTITY_PARAM(0, 7)) {
@@ -685,7 +685,7 @@ label_callback:
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
 			goto label_callback;
 		break;
@@ -698,23 +698,23 @@ IMPLEMENT_FUNCTION(23, Pascale, abbotSeatMe3)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5800;
 		getData()->location = kLocationOutsideCompartment;
-		getEntities()->updatePositionEnter(kEntityPascale, kCarRestaurant, 67);
+		getEntities()->updatePositionEnter(kCharacterHeadWait, kCarRestaurant, 67);
 
 		setCallback(1);
 		setup_welcomeAbbot();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->updatePositionExit(kEntityPascale, kCarRestaurant, 67);
-			getSavePoints()->push(kEntityPascale, kEntityAbbot, kAction122288808);
+			getEntities()->updatePositionExit(kCharacterHeadWait, kCarRestaurant, 67);
+			getSavePoints()->push(kCharacterHeadWait, kCharacterAbbot, kCharacterAction122288808);
 
 			setCallback(2);
 			setup_draw("906");
@@ -723,7 +723,7 @@ IMPLEMENT_FUNCTION(23, Pascale, abbotSeatMe3)
 		case 2:
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(0, 7) = 0;
-			getEntities()->clearSequences(kEntityPascale);
+			getEntities()->clearSequences(kCharacterHeadWait);
 
 			callbackAction();
 			break;
@@ -738,25 +738,25 @@ IMPLEMENT_FUNCTION(24, Pascale, welcomeAbbot)
 	default:
 		break;
 
-	case kActionEndSound:
+	case kCharacterActionEndSound:
 		if (!params->param1) {
-			getSound()->playSound(kEntityPascale, "ABB3015A");
+			getSound()->playSound(kCharacterHeadWait, "ABB3015A");
 			params->param1 = 1;
 		}
 		break;
 
-	case kActionExitCompartment:
+	case kCharacterActionExitCompartment:
 		callbackAction();
 		break;
 
-	case kAction10:
-		getSavePoints()->push(kEntityPascale, kEntityTables4, kAction136455232);
+	case kCharacterAction10:
+		getSavePoints()->push(kCharacterHeadWait, kCharacterTableE, kCharacterAction136455232);
 		break;
 
-	case kActionDefault:
-		getSound()->playSound(kEntityPascale, "ABB3015", kSoundVolumeEntityDefault, 105);
-		getEntities()->drawSequenceRight(kEntityPascale, "029A1");
-		getEntities()->drawSequenceRight(kEntityAbbot, "029A2");
+	case kCharacterActionDefault:
+		getSound()->playSound(kCharacterHeadWait, "ABB3015", kSoundVolumeEntityDefault, 105);
+		getEntities()->drawSequenceRight(kCharacterHeadWait, "029A1");
+		getEntities()->drawSequenceRight(kCharacterAbbot, "029A2");
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -767,12 +767,12 @@ IMPLEMENT_FUNCTION(25, Pascale, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter4Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityPascale);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterHeadWait);
 
 		getData()->entityPosition = kPosition_5900;
 		getData()->location = kLocationOutsideCompartment;
@@ -794,13 +794,13 @@ IMPLEMENT_FUNCTION(26, Pascale, chapter4Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->time > kTime2511000 && !params->param4) {
 			params->param2 = 1;
 			params->param4 = 1;
 		}
 
-		if (!getEntities()->isInKitchen(kEntityPascale))
+		if (!getEntities()->isInKitchen(kCharacterHeadWait))
 			break;
 
 		if (getEntities()->isSomebodyInsideRestaurantOrSalon()) {
@@ -824,7 +824,7 @@ label_callback1:
 						break;
 					}
 
-					if (!getEntities()->isInRestaurant(kEntityPlayer) || !params->param5)
+					if (!getEntities()->isInRestaurant(kCharacterCath) || !params->param5)
 						params->param5 = (uint)getState()->time;
 
 					if (params->param5 < getState()->time) {
@@ -851,14 +851,14 @@ label_callback3:
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 69)
 		 || getEntities()->isPlayerPosition(kCarRestaurant, 70)
 		 || getEntities()->isPlayerPosition(kCarRestaurant, 71))
 			params->param2 = 1;
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (!params->param2) {
 			if (getEntities()->isPlayerPosition(kCarRestaurant, 69)
 			 || getEntities()->isPlayerPosition(kCarRestaurant, 70)
@@ -870,7 +870,7 @@ label_callback3:
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -888,16 +888,16 @@ label_callback3:
 		}
 		break;
 
-	case kAction201431954:
+	case kCharacterAction201431954:
 		ENTITY_PARAM(0, 4) = 0;
 		ENTITY_PARAM(0, 8) = 0;
 
-		getSavePoints()->push(kEntityPascale, kEntityTables0, kActionDrawTablesWithChairs, "001P");
-		getSavePoints()->push(kEntityPascale, kEntityTables1, kActionDrawTablesWithChairs, "005J");
-		getSavePoints()->push(kEntityPascale, kEntityTables2, kActionDrawTablesWithChairs, "009G");
-		getSavePoints()->push(kEntityPascale, kEntityTables3, kActionDrawTablesWithChairs, "010M");
-		getSavePoints()->push(kEntityPascale, kEntityTables4, kActionDrawTablesWithChairs, "014F");
-		getSavePoints()->push(kEntityPascale, kEntityTables5, kActionDrawTablesWithChairs, "024D");
+		getSavePoints()->push(kCharacterHeadWait, kCharacterTableA, kCharacterActionDrawTablesWithChairs, "001P");
+		getSavePoints()->push(kCharacterHeadWait, kCharacterTableB, kCharacterActionDrawTablesWithChairs, "005J");
+		getSavePoints()->push(kCharacterHeadWait, kCharacterTableC, kCharacterActionDrawTablesWithChairs, "009G");
+		getSavePoints()->push(kCharacterHeadWait, kCharacterTableD, kCharacterActionDrawTablesWithChairs, "010M");
+		getSavePoints()->push(kCharacterHeadWait, kCharacterTableE, kCharacterActionDrawTablesWithChairs, "014F");
+		getSavePoints()->push(kCharacterHeadWait, kCharacterTableF, kCharacterActionDrawTablesWithChairs, "024D");
 
 		getData()->entityPosition = kPosition_5900;
 		getData()->location = kLocationOutsideCompartment;
@@ -911,29 +911,29 @@ IMPLEMENT_FUNCTION(27, Pascale, meetCoudert)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (ENTITY_PARAM(1, 1)) {
 			setCallback(2);
 			setup_updateFromTime(450);
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_walkDownTrain();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->clearSequences(kEntityPascale);
+			getEntities()->clearSequences(kCharacterHeadWait);
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityPascale, kEntityCoudert, kAction123712592);
+			getSavePoints()->push(kCharacterHeadWait, kCharacterCond2, kCharacterAction123712592);
 
 			setCallback(3);
 			setup_callbackActionRestaurantOrSalon();
@@ -945,7 +945,7 @@ IMPLEMENT_FUNCTION(27, Pascale, meetCoudert)
 			break;
 
 		case 4:
-			getEntities()->clearSequences(kEntityPascale);
+			getEntities()->clearSequences(kCharacterHeadWait);
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(0, 8) = 0;
 			ENTITY_PARAM(1, 1) = 0;
@@ -965,7 +965,7 @@ IMPLEMENT_FUNCTION(28, Pascale, tellAugust)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5800;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -973,28 +973,28 @@ IMPLEMENT_FUNCTION(28, Pascale, tellAugust)
 		setup_draw("902");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityPascale, kEntityAugust, kAction122358304);
-			getEntities()->drawSequenceLeft(kEntityPascale, "010E2");
+			getSavePoints()->push(kCharacterHeadWait, kCharacterAugust, kCharacterAction122358304);
+			getEntities()->drawSequenceLeft(kCharacterHeadWait, "010E2");
 
 			setCallback(2);
 			setup_playSound("Aug4001");
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityPascale, kEntityAugust, kAction123793792);
+			getSavePoints()->push(kCharacterHeadWait, kCharacterAugust, kCharacterAction123793792);
 
 			setCallback(3);
 			setup_draw("905");
 			break;
 
 		case 3:
-			getEntities()->clearSequences(kEntityPascale);
+			getEntities()->clearSequences(kCharacterHeadWait);
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(1, 2) = 0;
 
@@ -1011,7 +1011,7 @@ IMPLEMENT_FUNCTION(29, Pascale, walkDownTrain)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_1540;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -1019,15 +1019,15 @@ IMPLEMENT_FUNCTION(29, Pascale, walkDownTrain)
 		setup_draw("817DD");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->drawSequenceRight(kEntityPascale, "817DS");
-			if (getEntities()->isInRestaurant(kEntityPlayer))
-				getEntities()->updateFrame(kEntityPascale);
+			getEntities()->drawSequenceRight(kCharacterHeadWait, "817DS");
+			if (getEntities()->isInRestaurant(kCharacterCath))
+				getEntities()->updateFrame(kCharacterHeadWait);
 
 			setCallback(2);
 			setup_callbackActionOnDirection();
@@ -1049,7 +1049,7 @@ IMPLEMENT_FUNCTION(30, Pascale, walkUpTrain)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_9270;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -1057,15 +1057,15 @@ IMPLEMENT_FUNCTION(30, Pascale, walkUpTrain)
 		setup_draw("817US");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->drawSequenceRight(kEntityPascale, "817UD");
-			if (getEntities()->isInSalon(kEntityPlayer))
-				getEntities()->updateFrame(kEntityPascale);
+			getEntities()->drawSequenceRight(kCharacterHeadWait, "817UD");
+			if (getEntities()->isInSalon(kCharacterCath))
+				getEntities()->updateFrame(kCharacterHeadWait);
 
 			setCallback(2);
 			setup_callbackActionOnDirection();
@@ -1087,12 +1087,12 @@ IMPLEMENT_FUNCTION(31, Pascale, chapter5)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter5Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityPascale);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterHeadWait);
 
 		getData()->entityPosition = kPosition_3969;
 		getData()->location = kLocationInsideCompartment;
@@ -1104,7 +1104,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(32, Pascale, chapter5Handler)
-	if (savepoint.action == kActionProceedChapter5)
+	if (savepoint.action == kCharacterActionProceedChapter5)
 		setup_hiding();
 IMPLEMENT_FUNCTION_END
 
@@ -1114,10 +1114,10 @@ IMPLEMENT_FUNCTION(33, Pascale, hiding)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param4) {
 			if (Entity::updateParameter(params->param5, getState()->time, 4500)) {
-				getObjects()->update(kObjectCompartmentG, kEntityPascale, kObjectLocation1, kCursorNormal, kCursorNormal);
+				getObjects()->update(kObjectCompartmentG, kCharacterHeadWait, kObjectLocation1, kCursorNormal, kCursorNormal);
 
 				setCallback(1);
 				setup_playSound("Wat5010");
@@ -1133,55 +1133,55 @@ label_callback1:
 			params->param1 = 0;
 			params->param2 = 1;
 
-			getObjects()->update(kObjectCompartmentG, kEntityPascale, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterHeadWait, kObjectLocation1, kCursorNormal, kCursorNormal);
 		}
 
 		params->param6 = 0;
 		break;
 
-	case kActionKnock:
-	case kActionOpenDoor:
+	case kCharacterActionKnock:
+	case kCharacterActionOpenDoor:
 		if (params->param1) {
-			getObjects()->update(kObjectCompartmentG, kEntityPascale, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterHeadWait, kObjectLocation1, kCursorNormal, kCursorNormal);
 			params->param1 = 0;
 
 			setCallback(2);
 			setup_playSound(getSound()->justCheckingCath());
 		} else {
-			setCallback(savepoint.action == kActionKnock ? 3 : 4);
-			setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
+			setCallback(savepoint.action == kCharacterActionKnock ? 3 : 4);
+			setup_playSound(savepoint.action == kCharacterActionKnock ? "LIB012" : "LIB013");
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->car = kCarRedSleeping;
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
 
-		getObjects()->update(kObjectCompartmentG, kEntityPascale, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentG, kCharacterHeadWait, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (params->param2 || params->param1) {
 			params->param1 = 0;
 			params->param2 = 0;
 			params->param3 = 0;
 
-			getObjects()->update(kObjectCompartmentG, kEntityPascale, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentG, kCharacterHeadWait, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getObjects()->update(kObjectCompartmentG, kEntityPascale, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentG, kCharacterHeadWait, kObjectLocation1, kCursorHandKnock, kCursorHand);
 			goto label_callback1;
 
 		case 2:
-			getObjects()->update(kObjectCompartmentG, kEntityPascale, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentG, kCharacterHeadWait, kObjectLocation1, kCursorHandKnock, kCursorHand);
 			break;
 
 		case 3:
@@ -1189,7 +1189,7 @@ label_callback1:
 			params->param3++;
 
 			if (params->param3 == 1 || params->param3 == 2) {
-				getObjects()->update(kObjectCompartmentG, kEntityPascale, kObjectLocation1, kCursorNormal, kCursorNormal);
+				getObjects()->update(kObjectCompartmentG, kCharacterHeadWait, kObjectLocation1, kCursorNormal, kCursorNormal);
 				setCallback(params->param3 == 1 ? 5 : 6);
 				setup_playSound(params->param3 == 1 ? "Wat5001" : "Wat5001A");
 			}
@@ -1197,7 +1197,7 @@ label_callback1:
 
 		case 5:
 			params->param1 = 1;
-			getObjects()->update(kObjectCompartmentG, kEntityPascale, kObjectLocation1, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterHeadWait, kObjectLocation1, kCursorTalk, kCursorNormal);
 			break;
 
 		case 6:
@@ -1210,12 +1210,12 @@ label_callback1:
 		}
 		break;
 
-	case kAction135800432:
+	case kCharacterAction135800432:
 		setup_nullfunction();
 		break;
 
-	case kAction169750080:
-		if (getSoundQueue()->isBuffered(kEntityPascale)) {
+	case kCharacterAction169750080:
+		if (getSoundQueue()->isBuffered(kCharacterHeadWait)) {
 			params->param4 = 1;
 		} else {
 			setCallback(7);

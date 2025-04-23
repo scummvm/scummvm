@@ -152,7 +152,7 @@ struct SavePoint;
 #define EXPOSE_PARAMS(type) \
 	type *params = (type *)_data->getCurrentParameters(); \
 	if (!params) \
-		error("[EXPOSE_PARAMS] Trying to call an entity function with invalid parameters"); \
+		error("[EXPOSE_PARAMS] Trying to call an character function with invalid parameters"); \
 
 // function signature without setup (we keep the index for consistency but never use it)
 #define IMPLEMENT_FUNCTION_NOSETUP(index, class, name) \
@@ -784,7 +784,7 @@ public:
 		Location location;                  // word
 		CarIndex car;                       // word
 		byte field_497;
-		EntityIndex entity;                 // byte
+		CharacterIndex entity;                 // byte
 		InventoryItem inventoryItem;        // byte
 		EntityDirection direction;          // byte
 		int16 field_49B;
@@ -793,7 +793,7 @@ public:
 		int16 field_4A1;
 		int16 field_4A3;
 		ClothesIndex clothes;               // byte
-		Position position;
+		PositionOld position;
 		CarIndex car2;                      // byte
 		bool doProcessEntity;               // byte
 		bool field_4A9;	                    // byte
@@ -819,7 +819,7 @@ public:
 			location = kLocationOutsideCompartment;
 			car = kCarNone;
 			field_497 = 0;
-			entity = kEntityPlayer;
+			entity = kCharacterCath;
 			inventoryItem = kItemNone;
 			direction = kDirectionNone;
 			field_49B = 0;
@@ -860,7 +860,7 @@ public:
 			str += "\n";
 			str += "Sequence: " + sequenceName + "                 - Sequence 2: " + sequenceName2 + "\n";
 			str += "Sequence prefix: " + sequenceNamePrefix + "    - Sequence copy: " + sequenceNameCopy + "\n";
-			str += Common::String::format("Current frame: %i    - Current frame 2: %i       - Process entity: %d\n", currentFrame, currentFrame2, doProcessEntity);
+			str += Common::String::format("Current frame: %i    - Current frame 2: %i       - Process character: %d\n", currentFrame, currentFrame2, doProcessEntity);
 			str += "\n";
 			str += Common::String::format("Current call: %d\n", currentCall);
 			str += Common::String::format("Functions: %d %d %d %d %d %d %d %d\n", callbacks[0], callbacks[1], callbacks[2], callbacks[3], callbacks[4], callbacks[5], callbacks[6], callbacks[7]);
@@ -918,7 +918,7 @@ private:
 
 class Entity : Common::Serializable {
 public:
-	Entity(LastExpressEngine *engine, EntityIndex index);
+	Entity(LastExpressEngine *engine, CharacterIndex index);
 	~Entity() override;
 
 	// Accessors
@@ -939,10 +939,10 @@ public:
 	virtual void setup_chapter5() = 0;
 
 	// Shared functions
-	virtual void setup_savegame(SavegameType, uint32) { error("[Entity::setup_savegame] Trying to call the parent setup function. Use the specific entity function directly"); }
-	virtual void setup_enterExitCompartment(const char *, ObjectIndex) { error("[Entity::setup_enterExitCompartment] Trying to call the parent setup function. Use the specific entity function directly"); }
-	virtual void setup_updateEntity(CarIndex, EntityPosition) { error("[Entity::setup_updateEntity] Trying to call the parent setup function. Use the specific entity function directly"); }
-	virtual void setup_playSound(const char*) { error("[Entity::setup_playSound] Trying to call the parent setup function. Use the specific entity function directly"); }
+	virtual void setup_savegame(SavegameType, uint32) { error("[Entity::setup_savegame] Trying to call the parent setup function. Use the specific character function directly"); }
+	virtual void setup_enterExitCompartment(const char *, ObjectIndex) { error("[Entity::setup_enterExitCompartment] Trying to call the parent setup function. Use the specific character function directly"); }
+	virtual void setup_updateEntity(CarIndex, EntityPosition) { error("[Entity::setup_updateEntity] Trying to call the parent setup function. Use the specific character function directly"); }
+	virtual void setup_playSound(const char*) { error("[Entity::setup_playSound] Trying to call the parent setup function. Use the specific character function directly"); }
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &ser) override { _data->saveLoadWithSerializer(ser, &_paramsTypeSetters); }
@@ -953,7 +953,7 @@ protected:
 	LastExpressEngine *_engine;
 	typedef Common::Functor1<const SavePoint&, void> Callback;
 
-	EntityIndex                _entityIndex;
+	CharacterIndex                _entityIndex;
 	EntityData                *_data;
 	Common::Array<Callback *>  _callbacks;
 	Common::Array<EntityData::TypeSetter> _paramsTypeSetters;
@@ -986,7 +986,7 @@ protected:
 	void playSound(const SavePoint &savepoint, bool resetItem = false, SoundFlag flag = kSoundVolumeEntityDefault);
 
 	/**
-	 * Draws the entity
+	 * Draws the character
 	 *
 	 * @param savepoint   The savepoint
 	 *                    - Sequence
@@ -996,12 +996,12 @@ protected:
 	void draw(const SavePoint &savepoint, bool handleExcuseMe = false);
 
 	/**
-	 * Draws the entity along with another one
+	 * Draws the character along with another one
 	 *
 	 * @param savepoint   The savepoint.
 	 *                    - Sequence 1
 	 *                    - Sequence 2
-	 *                    - EntityIndex
+	 *                    - CharacterIndex
 	 */
 	void draw2(const SavePoint &savepoint);
 
@@ -1022,7 +1022,7 @@ protected:
 	void updateFromTime(const SavePoint &savepoint);
 
 	/**
-	 * Resets an entity
+	 * Resets an character
 	 *
 	 * @param savepoint    The savepoint.
 	 * @param maxClothes   cycles clothes from kClothesDefault to maxClothes inclusively
@@ -1031,7 +1031,7 @@ protected:
 	void reset(const SavePoint &savepoint, ClothesIndex maxClothes = kClothesDefault, bool resetItem = false);
 
 	/**
-	 * Process callback action when the entity direction is not kDirectionRight
+	 * Process callback action when the character direction is not kDirectionRight
 	 *
 	 * @param savepoint    The savepoint.
 	 */
@@ -1045,12 +1045,12 @@ protected:
 	void callbackActionRestaurantOrSalon(const SavePoint &savepoint);
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param savepoint    The savepoint.
 	 *                     - CarIndex
 	 *                     - EntityPosition
-	 * @param handleExcuseMe true to handle the kActionExcuseMe/kActionExcuseMeCath actions.
+	 * @param handleExcuseMe true to handle the kCharacterActionExcuseMe/kCharacterActionExcuseMeCath actions.
 	 */
 	void updateEntity(const SavePoint &savepoint, bool handleExcuseMe = false);
 
@@ -1059,8 +1059,8 @@ protected:
 	 *
 	 * @param savepoint    The savepoint.
 	 *                     - Sequence to draw in default case
-	 *                     - EntityIndex
-	 *                     - ActionIndex
+	 *                     - CharacterIndex
+	 *                     - CharacterActions
 	 *                     - Sequence for the savepoint
 	 * @param handleExcuseMe true to handle excuse me.
 	 */
@@ -1106,7 +1106,7 @@ protected:
 	 * Updates the position
 	 *
 	 * @param savepoint       The savepoint
-	 *                        - Sequence name
+	 *                        - Sequence eraseData
 	 *                        - CarIndex
 	 *                        - Position
 	 * @param handleExcuseMe true to handle excuseMe actions
@@ -1151,7 +1151,7 @@ protected:
 	bool timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, bool check, Common::Functor1<bool, void> *function);
 	bool timeCheckCallbackInventory(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
 	bool timeCheckCar(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
-	void timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action) const;
+	void timeCheckSavepoint(TimeValue timeValue, uint &parameter, CharacterIndex entity1, CharacterIndex entity2, CharacterActions action) const;
 	void timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex index, ObjectModel model) const;
 	bool timeCheckCallbackAction(TimeValue timeValue, uint &parameter);
 	bool timeCheckPlaySoundUpdatePosition(TimeValue timeValue, uint &parameter, byte callback, const char* sound, EntityPosition position);

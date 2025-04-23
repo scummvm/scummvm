@@ -180,7 +180,7 @@ void EntityData::saveLoadWithSerializer(Common::Serializer &s, const Common::Arr
 //////////////////////////////////////////////////////////////////////////
 // Entity
 //////////////////////////////////////////////////////////////////////////
-Entity::Entity(LastExpressEngine *engine, EntityIndex index) : _engine(engine), _entityIndex(index) {
+Entity::Entity(LastExpressEngine *engine, CharacterIndex index) : _engine(engine), _entityIndex(index) {
 	_data = new EntityData();
 
 	// Add first empty entry to callbacks array
@@ -242,7 +242,7 @@ void Entity::reset(const SavePoint &savepoint, ClothesIndex maxClothes, bool res
 	default:
 		break;
 
-	case kAction1:
+	case kCharacterAction1:
 		if (maxClothes != kClothesDefault) {
 			// Select next available clothes
 			getData()->clothes = (ClothesIndex)(getData()->clothes + 1);
@@ -251,12 +251,12 @@ void Entity::reset(const SavePoint &savepoint, ClothesIndex maxClothes, bool res
 		}
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getEntities()->updateEntity(_entityIndex, kCarGreenSleeping, (EntityPosition)params->param1))
 			params->param1 = (params->param1 == 10000) ? 0 : 10000;
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPositionNone;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarGreenSleeping;
@@ -276,11 +276,11 @@ void Entity::savegame(const SavePoint &savepoint) {
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		callbackAction();
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getSaveLoad()->saveGame((SavegameType)params->param1, _entityIndex, (EventIndex)params->param2);
 		callbackAction();
 		break;
@@ -289,9 +289,9 @@ void Entity::savegame(const SavePoint &savepoint) {
 
 bool Entity::savegameBloodJacket(byte callback) {
 	if (getProgress().jacket == kJacketBlood
-	 && getEntities()->isDistanceBetweenEntities(_entityIndex, kEntityPlayer, 1000)
-	 && !getEntities()->isInsideCompartments(kEntityPlayer)
-	 && !getEntities()->checkFields10(kEntityPlayer)) {
+	 && getEntities()->isDistanceBetweenEntities(_entityIndex, kCharacterCath, 1000)
+	 && !getEntities()->isInsideCompartments(kCharacterCath)
+	 && !getEntities()->checkFields10(kCharacterCath)) {
 		setCallback(callback);
 		setup_savegame(kSavegameTypeEvent, kEventMertensBloodJacket);
 		return true;
@@ -306,11 +306,11 @@ void Entity::playSound(const SavePoint &savepoint, bool resetItem, SoundFlag fla
 	default:
 		break;
 
-	case kActionEndSound:
+	case kCharacterActionEndSound:
 		callbackAction();
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		if (resetItem)
 			getData()->inventoryItem = kItemNone;
 
@@ -326,18 +326,18 @@ void Entity::draw(const SavePoint &savepoint, bool handleExcuseMe) {
 	default:
 		break;
 
-	case kActionExitCompartment:
+	case kCharacterActionExitCompartment:
 		callbackAction();
 		break;
 
-	case kActionExcuseMeCath:
+	case kCharacterActionExcuseMeCath:
 		if (handleExcuseMe && !params->param4) {
 			getSound()->excuseMe(_entityIndex);
 			params->param4 = 1;
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getEntities()->drawSequenceRight(_entityIndex, (char *)&params->seq1);
 		break;
 	}
@@ -350,13 +350,13 @@ void Entity::draw2(const SavePoint &savepoint) {
 	default:
 		break;
 
-	case kActionExitCompartment:
+	case kCharacterActionExitCompartment:
 		callbackAction();
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getEntities()->drawSequenceRight(_entityIndex, (char *)&params->seq1);
-		getEntities()->drawSequenceRight((EntityIndex)params->param7, (char *)&params->seq2);
+		getEntities()->drawSequenceRight((CharacterIndex)params->param7, (char *)&params->seq2);
 		break;
 	}
 }
@@ -368,7 +368,7 @@ void Entity::updateFromTicks(const SavePoint &savepoint) {
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!Entity::updateParameter(params->param2, getState()->timeTicks, params->param1))
 			break;
 
@@ -384,7 +384,7 @@ void Entity::updateFromTime(const SavePoint &savepoint) {
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!Entity::updateParameter(params->param2, getState()->time, params->param1))
 			break;
 
@@ -398,11 +398,11 @@ void Entity::callbackActionOnDirection(const SavePoint &savepoint) {
 	default:
 		break;
 
-	case kActionExitCompartment:
+	case kCharacterActionExitCompartment:
 		callbackAction();
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getData()->direction != kDirectionRight)
 			callbackAction();
 		break;
@@ -414,8 +414,8 @@ void Entity::callbackActionRestaurantOrSalon(const SavePoint &savepoint) {
 	default:
 		break;
 
-	case kActionNone:
-	case kActionDefault:
+	case kCharacterActionNone:
+	case kCharacterActionDefault:
 		if (getEntities()->isSomebodyInsideRestaurantOrSalon())
 			callbackAction();
 		break;
@@ -429,18 +429,18 @@ void Entity::updateEntity(const SavePoint &savepoint, bool handleExcuseMe) {
 	default:
 		break;
 
-	case kActionExcuseMeCath:
+	case kCharacterActionExcuseMeCath:
 		if (handleExcuseMe)
 			getSound()->excuseMeCath();
 		break;
 
-	case kActionExcuseMe:
+	case kCharacterActionExcuseMe:
 		if (handleExcuseMe)
 			getSound()->excuseMe(_entityIndex);
 		break;
 
-	case kActionNone:
-	case kActionDefault:
+	case kCharacterActionNone:
+	case kCharacterActionDefault:
 		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2))
 			callbackAction();
 		break;
@@ -454,27 +454,27 @@ void Entity::callSavepoint(const SavePoint &savepoint, bool handleExcuseMe) {
 	default:
 		break;
 
-	case kActionExitCompartment:
+	case kCharacterActionExitCompartment:
 		if (!CURRENT_PARAM(1, 1))
-			getSavePoints()->call(_entityIndex, (EntityIndex)params->param4, (ActionIndex)params->param5, (char *)&params->seq2);
+			getSavePoints()->call(_entityIndex, (CharacterIndex)params->param4, (CharacterActions)params->param5, (char *)&params->seq2);
 		callbackAction();
 		break;
 
-	case kActionExcuseMeCath:
+	case kCharacterActionExcuseMeCath:
 		if (handleExcuseMe && !CURRENT_PARAM(1, 2)) {
 			getSound()->excuseMe(_entityIndex);
 			CURRENT_PARAM(1, 2) = 1;
 		}
 		break;
 
-	case kAction10:
+	case kCharacterAction10:
 		if (!CURRENT_PARAM(1, 1)) {
-			getSavePoints()->call(_entityIndex, (EntityIndex)params->param4, (ActionIndex)params->param5, (char *)&params->seq2);
+			getSavePoints()->call(_entityIndex, (CharacterIndex)params->param4, (CharacterActions)params->param5, (char *)&params->seq2);
 			CURRENT_PARAM(1, 1) = 1;
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getEntities()->drawSequenceRight(_entityIndex, (char *)&params->seq1);
 		break;
 	}
@@ -487,7 +487,7 @@ void Entity::enterExitCompartment(const SavePoint &savepoint, EntityPosition pos
 	default:
 		break;
 
-	case kActionExitCompartment:
+	case kCharacterActionExitCompartment:
 		getEntities()->exitCompartment(_entityIndex, (ObjectIndex)params->param4);
 		if (position1)
 			getData()->entityPosition = position1;
@@ -498,16 +498,16 @@ void Entity::enterExitCompartment(const SavePoint &savepoint, EntityPosition pos
 		callbackAction();
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getEntities()->drawSequenceRight(_entityIndex, (char *)&params->seq1);
 		getEntities()->enterCompartment(_entityIndex, (ObjectIndex)params->param4);
 
 		if (position1) {
 			getData()->location = kLocationInsideCompartment;
 
-			if (getEntities()->isInsideCompartment(kEntityPlayer, car, position1) || getEntities()->isInsideCompartment(kEntityPlayer, car, position2)) {
-				getAction()->playAnimation(isNight() ? kEventCathTurningNight : kEventCathTurningDay);
-				getSound()->playSound(kEntityPlayer, "BUMP");
+			if (getEntities()->isInsideCompartment(kCharacterCath, car, position1) || getEntities()->isInsideCompartment(kCharacterCath, car, position2)) {
+				getActionOld()->playAnimation(isNightOld() ? kEventCathTurningNight : kEventCathTurningDay);
+				getSound()->playSound(kCharacterCath, "BUMP");
 				getScenes()->loadSceneFromObject(compartment, alternate);
 			}
 		}
@@ -520,13 +520,13 @@ void Entity::goToCompartment(const SavePoint &savepoint, ObjectIndex compartment
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = positionFrom;
 		setCallback(1);
 		setup_enterExitCompartment(sequenceFrom.c_str(), compartmentFrom);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -551,14 +551,14 @@ void Entity::goToCompartmentFromCompartment(const SavePoint &savepoint, ObjectIn
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = positionFrom;
 		getData()->location = kLocationOutsideCompartment;
 		setCallback(1);
 		setup_enterExitCompartment(sequenceFrom.c_str(), compartmentFrom);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -590,21 +590,21 @@ void Entity::updatePosition(const SavePoint &savepoint, bool handleExcuseMe) {
 	default:
 		break;
 
-	case kActionExitCompartment:
-		getEntities()->updatePositionExit(_entityIndex, (CarIndex)params->param4, (Position)params->param5);
+	case kCharacterActionExitCompartment:
+		getEntities()->updatePositionExit(_entityIndex, (CarIndex)params->param4, (PositionOld)params->param5);
 		callbackAction();
 		break;
 
-	case kActionExcuseMeCath:
+	case kCharacterActionExcuseMeCath:
 		if (handleExcuseMe && !params->param6) {
 			getSound()->excuseMe(_entityIndex);
 			params->param6 = 1;
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getEntities()->drawSequenceRight(_entityIndex, (char *)&params->seq);
-		getEntities()->updatePositionEnter(_entityIndex, (CarIndex)params->param4, (Position)params->param5);
+		getEntities()->updatePositionEnter(_entityIndex, (CarIndex)params->param4, (PositionOld)params->param5);
 		break;
 	}
 }
@@ -617,7 +617,7 @@ void Entity::callbackAction() {
 
 	getSavePoints()->setCallback(_entityIndex, _callbacks[_data->getCurrentCallback()]);
 
-	getSavePoints()->call(_entityIndex, _entityIndex, kActionCallback);
+	getSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionCallback);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -630,7 +630,7 @@ void Entity::setup(const char *name, uint index, EntityData::TypeSetter paramsTy
 	_data->setCurrentCallback(index);
 	paramsTypeSetter(_data->getCurrentCallParameters());
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 void Entity::setupI(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1) {
@@ -643,7 +643,7 @@ void Entity::setupI(const char *name, uint index, EntityData::TypeSetter paramsT
 	EntityData::EntityParametersIIII *params = (EntityData::EntityParametersIIII *)_data->getCurrentParameters();
 	params->param1 = (unsigned int)param1;
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 void Entity::setupII(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, uint param2) {
@@ -657,7 +657,7 @@ void Entity::setupII(const char *name, uint index, EntityData::TypeSetter params
 	params->param1 = param1;
 	params->param2 = param2;
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 void Entity::setupIII(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, uint param2, uint param3) {
@@ -672,7 +672,7 @@ void Entity::setupIII(const char *name, uint index, EntityData::TypeSetter param
 	params->param2 = param2;
 	params->param3 = param3;
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 void Entity::setupS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1) {
@@ -685,7 +685,7 @@ void Entity::setupS(const char *name, uint index, EntityData::TypeSetter paramsT
 	EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS*)_data->getCurrentParameters();
 	strncpy(params->seq1, seq1, 12);
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 void Entity::setupSS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, const char *seq2) {
@@ -699,7 +699,7 @@ void Entity::setupSS(const char *name, uint index, EntityData::TypeSetter params
 	strncpy(params->seq1, seq1, 12);
 	strncpy(params->seq2, seq2, 12);
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 void Entity::setupSI(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, uint param4) {
@@ -713,7 +713,7 @@ void Entity::setupSI(const char *name, uint index, EntityData::TypeSetter params
 	strncpy(params->seq1, seq1, 12);
 	params->param4 = param4;
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 void Entity::setupSII(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, uint param4, uint param5) {
@@ -728,7 +728,7 @@ void Entity::setupSII(const char *name, uint index, EntityData::TypeSetter param
 	params->param4 = param4;
 	params->param5 = param5;
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 void Entity::setupSIII(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq, uint param4, uint param5, uint param6) {
@@ -744,7 +744,7 @@ void Entity::setupSIII(const char *name, uint index, EntityData::TypeSetter para
 	params->param5 = param5;
 	params->param6 = param6;
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 void Entity::setupSIIS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, uint param4, uint param5, const char *seq2) {
@@ -760,7 +760,7 @@ void Entity::setupSIIS(const char *name, uint index, EntityData::TypeSetter para
 	params->param5 = param5;
 	strncpy(params->seq2, seq2, 12);
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 void Entity::setupSSI(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, const char *seq2, uint param7) {
@@ -775,7 +775,7 @@ void Entity::setupSSI(const char *name, uint index, EntityData::TypeSetter param
 	strncpy(params->seq2, seq2, 12);
 	params->param7 = param7;
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 void Entity::setupIS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, const char *seq) {
@@ -789,7 +789,7 @@ void Entity::setupIS(const char *name, uint index, EntityData::TypeSetter params
 	params->param1 = (unsigned int)param1;
 	strncpy(params->seq, seq, 12);
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 void Entity::setupISS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, const char *seq1, const char *seq2) {
@@ -804,7 +804,7 @@ void Entity::setupISS(const char *name, uint index, EntityData::TypeSetter param
 	strncpy(params->seq1, seq1, 12);
 	strncpy(params->seq2, seq2, 12);
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 void Entity::setupIIS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, uint param2, const char *seq) {
@@ -819,7 +819,7 @@ void Entity::setupIIS(const char *name, uint index, EntityData::TypeSetter param
 	params->param2 = param2;
 	strncpy(params->seq, seq, 12);
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 void Entity::setupIISS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, uint param2, const char *seq1, const char *seq2) {
@@ -835,7 +835,7 @@ void Entity::setupIISS(const char *name, uint index, EntityData::TypeSetter para
 	strncpy(params->seq1, seq1, 12);
 	strncpy(params->seq2, seq2, 12);
 
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kCharacterActionDefault);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -953,7 +953,7 @@ bool Entity::timeCheckCar(TimeValue timeValue, uint &parameter, byte callback, C
 	return false;
 }
 
-void Entity::timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action) const {
+void Entity::timeCheckSavepoint(TimeValue timeValue, uint &parameter, CharacterIndex entity1, CharacterIndex entity2, CharacterActions action) const {
 	if (getState()->time > timeValue && !parameter) {
 		parameter = 1;
 		getSavePoints()->push(entity1, entity2, action);

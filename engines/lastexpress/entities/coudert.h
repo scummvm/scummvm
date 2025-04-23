@@ -33,7 +33,7 @@ public:
 	~Coudert() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
@@ -53,7 +53,7 @@ public:
 	DECLARE_VFUNCTION_2(enterExitCompartment, const char *sequence, ObjectIndex compartment)
 
 	/**
-	 * Process callback action when the entity direction is not kDirectionRight
+	 * Process callback action when the character direction is not kDirectionRight
 	 */
 	DECLARE_FUNCTION(callbackActionOnDirection)
 
@@ -62,8 +62,8 @@ public:
 	*
 	* @param sequence        The sequence to draw
 	* @param compartment     The compartment
-	* @param entityPosition1 The entity position 1
-	* @param entityPosition2 The entity position 2
+	* @param entityPosition1 The character position 1
+	* @param entityPosition2 The character position 2
 	*/
 	DECLARE_FUNCTION_4(enterExitCompartment2, const char *sequence, ObjectIndex compartment, EntityPosition entityPosition1, EntityPosition entityPosition2)
 
@@ -91,10 +91,10 @@ public:
 	DECLARE_VFUNCTION_2(savegame, SavegameType savegameType, uint32 param)
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_VFUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
@@ -112,9 +112,9 @@ public:
 	 */
 	DECLARE_FUNCTION_1(updateFromTicks, uint32 ticks)
 
-	DECLARE_FUNCTION_1(excuseMe, EntityIndex entity)
-	DECLARE_FUNCTION_2(function13, bool, EntityIndex entity)
-	DECLARE_FUNCTION_1(function14, EntityIndex entity)
+	DECLARE_FUNCTION_1(excuseMe, CharacterIndex entity)
+	DECLARE_FUNCTION_2(function13, bool, CharacterIndex entity)
+	DECLARE_FUNCTION_1(function14, CharacterIndex entity)
 	DECLARE_FUNCTION_1(function15, bool)
 	DECLARE_FUNCTION(function16)
 	DECLARE_FUNCTION_1(function17, bool)

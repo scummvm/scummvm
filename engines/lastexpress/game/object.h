@@ -35,14 +35,14 @@ class Objects : Common::Serializable {
 public:
 
 	struct Object : Common::Serializable {                         // All fields should be saved as bytes
-		EntityIndex entity;
+		CharacterIndex entity;
 		ObjectLocation status;
 		CursorStyle windowCursor;
 		CursorStyle handleCursor;
 		ObjectModel model;
 
 		Object() {
-			entity = kEntityPlayer;
+			entity = kCharacterCath;
 			status = kObjectLocationNone;
 			windowCursor = kCursorHandKnock;
 			handleCursor = kCursorHandKnock;
@@ -64,7 +64,7 @@ public:
 	Objects(LastExpressEngine *engine);
 
 	const Object get(ObjectIndex index) const;
-	void update(ObjectIndex index, EntityIndex entity, ObjectLocation status, CursorStyle cursor, CursorStyle cursor2);
+	void update(ObjectIndex index, CharacterIndex entity, ObjectLocation status, CursorStyle cursor, CursorStyle cursor2);
 	void updateModel(ObjectIndex index, ObjectModel model);
 
 	// Serializable

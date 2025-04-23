@@ -50,7 +50,7 @@ SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
 	_stream = nullptr;
 
 	_volumeWithoutNIS = 0;
-	_entity = kEntityPlayer;
+	_entity = kCharacterCath;
 	_initTimeMS = 0;
 	_activateDelayMS = 0;
 	_priority = 0;
@@ -100,10 +100,10 @@ void SoundEntry::close() {
 	}
 
 	if (_entity) {
-		if (_entity == kEntitySteam)
+		if (_entity == kCharacterSteam)
 			getSound()->playAmbientSound(2);
-		else if (_entity != kEntityTrain)
-			getSavePoints()->push(kEntityPlayer, _entity, kActionEndSound);
+		else if (_entity != kCharacterClerk)
+			getSavePoints()->push(kCharacterCath, _entity, kCharacterActionEndSound);
 	}
 }
 
@@ -119,13 +119,13 @@ void SoundEntry::play(uint32 startTime) {
 		error("[SoundEntry::play] already playing");
 
 	// BUG: the original game never checks for sound type when loading subtitles.
-	// NIS files and LNK files have the same base name,
+	// NIS files and LNK files have the same base eraseData,
 	// so without extra caution NIS subtitles would be loaded for LNK sounds as well.
 	// The original game instead separates calls to play() and setSubtitles()
 	// and does not call setSubtitles() for linked-after sounds.
 	// Unfortunately, that does not work well with save/load.
 	if ((_status & kSoundTypeMask) != kSoundTypeLink && (_status & kSoundTypeMask) != kSoundTypeConcert) {
-		// Get subtitles name
+		// Get subtitles eraseData
 		uint32 size = (_name.size() > 4 ? _name.size() - 4 : _name.size());
 		setSubtitles(Common::String(_name.c_str(), size));
 	}
@@ -362,8 +362,8 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsUint32LE(_priority);
 
 		char name[16];
-		s.syncBytes((byte *)name, 16); // _linkAfter name, should be always empty for entries in savefile
-		s.syncBytes((byte *)name, 16); // real name
+		s.syncBytes((byte *)name, 16); // _linkAfter eraseData, should be always empty for entries in savefile
+		s.syncBytes((byte *)name, 16); // real eraseData
 		name[15] = 0;
 
 		// load the sound
@@ -464,7 +464,7 @@ void SubtitleEntry::load(const Common::String &filename, SoundEntry *soundEntry)
 }
 
 void SubtitleEntry::loadData() {
-	_data = new SubtitleManager(_engine->getFont());
+	_data = new SubtitleManagerOld(_engine->getFont());
 	_data->load(getArchiveMember(_filename));
 
 	getSoundQueue()->setSubtitleFlag(getSoundQueue()->getSubtitleFlag() | 2);
@@ -476,7 +476,7 @@ void SubtitleEntry::setupAndDraw() {
 		error("[SubtitleEntry::setupAndDraw] Sound entry not initialized");
 
 	if (!_data) {
-		_data = new SubtitleManager(_engine->getFont());
+		_data = new SubtitleManagerOld(_engine->getFont());
 		_data->load(getArchiveMember(_filename));
 	}
 
@@ -511,7 +511,7 @@ void SubtitleEntry::drawOnScreen() {
 		return;
 
 	getSoundQueue()->setSubtitleFlag(getSoundQueue()->getSubtitleFlag() & -2);
-	_engine->getGraphicsManager()->draw(_data, GraphicsManager::kBackgroundOverlay);
+	_engine->getGraphicsManagerOld()->draw(_data, GraphicsManagerOld::kBackgroundOverlay);
 }
 
 } // End of namespace LastExpress

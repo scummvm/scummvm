@@ -31,7 +31,7 @@
 
 namespace LastExpress {
 
-Hadija::Hadija(LastExpressEngine *engine) : Entity(engine, kEntityHadija) {
+Hadija::Hadija(LastExpressEngine *engine) : Entity(engine, kCharacterHadija) {
 	ADD_CALLBACK_FUNCTION(Hadija, reset);
 	ADD_CALLBACK_FUNCTION_SI(Hadija, enterExitCompartment);
 	ADD_CALLBACK_FUNCTION_S(Hadija, playSound);
@@ -109,11 +109,11 @@ IMPLEMENT_FUNCTION(10, Hadija, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Hadija, setup_chapter1Handler));
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_4070;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarGreenSleeping;
@@ -128,7 +128,7 @@ IMPLEMENT_FUNCTION(11, Hadija, chapter1Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (Entity::timeCheckPlaySoundUpdatePosition(kTimeParisEpernay, params->param1, 1, "Har1100", kPosition_4840))
 			break;
 
@@ -141,7 +141,7 @@ label_callback2:
 
 			if (getState()->time <= kTime1134000) {
 
-				if (!getEntities()->isPlayerInCar(kCarGreenSleeping) || !getEntities()->isInsideCompartment(kEntityMahmud, kCarGreenSleeping, kPosition_5790) || !params->param3) {
+				if (!getEntities()->isPlayerInCar(kCarGreenSleeping) || !getEntities()->isInsideCompartment(kCharacterMahmud, kCarGreenSleeping, kPosition_5790) || !params->param3) {
 					params->param3 = (uint)getState()->time + 75;
 
 					if (!params->param3) {
@@ -169,7 +169,7 @@ label_callback4:
 		if (params->param5 != kTimeInvalid && getState()->time > kTime1165500) {
 			if (getState()->time <= kTime1188000) {
 
-				if (!getEntities()->isPlayerInCar(kCarGreenSleeping) || !getEntities()->isInsideCompartment(kEntityMahmud, kCarGreenSleeping, kPosition_5790) || !params->param5) {
+				if (!getEntities()->isPlayerInCar(kCarGreenSleeping) || !getEntities()->isInsideCompartment(kCharacterMahmud, kCarGreenSleeping, kPosition_5790) || !params->param5) {
 					params->param5 = (uint)getState()->time + 75;
 
 					if (!params->param5) {
@@ -190,7 +190,7 @@ label_callback4:
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -213,22 +213,22 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Hadija, function12)
-	if (savepoint.action == kActionDefault) {
-		getObjects()->update(kObjectCompartment8, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	if (savepoint.action == kCharacterActionDefault) {
+		getObjects()->update(kObjectCompartment8, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
 		getData()->entityPosition = kPosition_2740;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarGreenSleeping;
 
-		getEntities()->clearSequences(kEntityHadija);
+		getEntities()->clearSequences(kCharacterHadija);
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Hadija, chapter2)
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 
-		getEntities()->clearSequences(kEntityHadija);
+		getEntities()->clearSequences(kCharacterHadija);
 
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
@@ -246,7 +246,7 @@ IMPLEMENT_FUNCTION(14, Hadija, chapter2Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->time > kTime1782000 && !params->param1) {
 			params->param1 = 1;
 			getData()->entityPosition = kPosition_2740;
@@ -274,7 +274,7 @@ IMPLEMENT_FUNCTION(14, Hadija, chapter2Handler)
 		setup_peekH();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -298,12 +298,12 @@ IMPLEMENT_FUNCTION(15, Hadija, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter3Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityHadija);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterHadija);
 
 		getData()->entityPosition = kPosition_4070;
 		getData()->location = kLocationInsideCompartment;
@@ -319,7 +319,7 @@ IMPLEMENT_FUNCTION(16, Hadija, chapter3Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (Entity::timeCheckCallback(kTime1998000, params->param1, 1, WRAP_SETUP_FUNCTION(Hadija, setup_goFtoH)))
 			break;
 
@@ -342,7 +342,7 @@ label_callback4:
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -369,11 +369,11 @@ IMPLEMENT_FUNCTION(17, Hadija, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter4Handler();
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_4070;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarGreenSleeping;
@@ -387,7 +387,7 @@ IMPLEMENT_FUNCTION(18, Hadija, chapter4Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param1 != kTimeInvalid) {
 			if (Entity::timeCheckCar(kTime1714500, params->param1, 1, WRAP_SETUP_FUNCTION(Hadija, setup_peekF)))
 				break;
@@ -408,7 +408,7 @@ label_callback3:
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -428,14 +428,14 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Hadija, function19)
-	if (savepoint.action == kActionDefault) {
-		getObjects()->update(kObjectCompartment8, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	if (savepoint.action == kCharacterActionDefault) {
+		getObjects()->update(kObjectCompartment8, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
 		getData()->entityPosition = kPosition_4070;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarGreenSleeping;
 
-		getEntities()->clearSequences(kEntityHadija);
+		getEntities()->clearSequences(kCharacterHadija);
 	}
 IMPLEMENT_FUNCTION_END
 
@@ -445,12 +445,12 @@ IMPLEMENT_FUNCTION(20, Hadija, chapter5)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter5Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityHadija);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterHadija);
 
 		getData()->entityPosition = kPosition_3969;
 		getData()->location = kLocationInsideCompartment;
@@ -464,7 +464,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Hadija, chapter5Handler)
-	if (savepoint.action == kActionProceedChapter5)
+	if (savepoint.action == kCharacterActionProceedChapter5)
 		setup_function22();
 IMPLEMENT_FUNCTION_END
 
@@ -474,21 +474,21 @@ IMPLEMENT_FUNCTION(22, Hadija, function22)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!Entity::updateParameter(params->param1, getState()->time, 2700))
 			break;
 
 		setup_hiding();
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5000;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarGreenSleeping;
 		break;
 
-	case kActionDrawScene:
-		if (getEntities()->isInsideTrainCar(kEntityPlayer, kCarGreenSleeping)) {
+	case kCharacterActionDrawScene:
+		if (getEntities()->isInsideTrainCar(kCharacterCath, kCarGreenSleeping)) {
 			setup_hiding();
 		}
 		break;
@@ -501,12 +501,12 @@ IMPLEMENT_FUNCTION(23, Hadija, hiding)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_updateEntity(kCarGreenSleeping, kPosition_4070);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -517,17 +517,17 @@ IMPLEMENT_FUNCTION(23, Hadija, hiding)
 			break;
 
 		case 2:
-			getEntities()->clearSequences(kEntityHadija);
+			getEntities()->clearSequences(kCharacterHadija);
 
 			getData()->entityPosition = kPosition_4840;
 			getData()->location = kLocationInsideCompartment;
 
-			getObjects()->update(kObjectCompartment5, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartment5, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
 			break;
 		}
 		break;
 
-	case kAction135800432:
+	case kCharacterAction135800432:
 		setup_nullfunction();
 		break;
 	}

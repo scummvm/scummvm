@@ -34,7 +34,7 @@ public:
 	~Francois() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
@@ -46,7 +46,7 @@ public:
 	DECLARE_FUNCTION_1(updateFromTime, uint32 time)
 
 	/**
-	 * Draws the entity
+	 * Draws the character
 	 *
 	 * @param sequence The sequence to draw
 	 */
@@ -87,7 +87,7 @@ public:
 	 * Walk
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_FUNCTION_2(doWalk, CarIndex car, EntityPosition entityPosition)
 

@@ -34,19 +34,23 @@
 
 // Engine subclasses
 #define getLogic() _engine->getGameLogic()
-#define getMenu() _engine->getGameMenu()
+#define getMenuOld() _engine->getGameMenu()
 
 // Logic
-#define getAction() getLogic()->getGameAction()
+#define getActionOld() getLogic()->getGameAction()
 #define getBeetle() getLogic()->getGameBeetle()
 #define getFight() getLogic()->getGameFight()
 #define getEntities() getLogic()->getGameEntities()
 #define getSaveLoad() getLogic()->getGameSaveLoad()
-#define isNight() getLogic()->getGameState()->isNightTime()
+#define isNightOld() getLogic()->getGameState()->isNightTime()
+
+#define getCharacter(c) (_engine->_characters->characters[c])
+#define getCharacterCurrentParams(c) (getCharacter(c).callParams[getCharacter(c).currentCall].parameters)
+#define getCharacterParams(c, n) (getCharacter(c).callParams[n].parameters)
 
 // State
 #define getState() getLogic()->getGameState()->getGameState()
-#define getEvent(id) getState()->events[id]
+#define HELPERgetEvent(id) getState()->events[id]
 #define getFlags() getLogic()->getGameState()->getGameFlags()
 #define getInventory() getLogic()->getGameState()->getGameInventory()
 #define getObjects() getLogic()->getGameState()->getGameObjects()
@@ -62,8 +66,8 @@
 #define getScenes() _engine->getSceneManager()
 
 // Sound
-#define getSound() _engine->getSoundManager()
-#define getSoundQueue() _engine->getSoundManager()->getQueue()
+#define getSound() _engine->getSoundManagerOld()
+#define getSoundQueue() _engine->getSoundManagerOld()->getQueue()
 
 // Others
 #define getEntityData(entity) getEntities()->getData(entity)
@@ -76,14 +80,15 @@
 #define loadSequence(name) Sequence::load(name, getArchiveMember(name))
 #define loadSequence1(name, field30) Sequence::load(name, getArchiveMember(name), field30)
 
-#define clearBg(type) _engine->getGraphicsManager()->clear(type)
-#define showScene(index, type) _engine->getGraphicsManager()->draw(getScenes()->get(index), type);
+#define clearBg(type) _engine->getGraphicsManagerOld()->clear(type)
+#define showScene(index, type) _engine->getGraphicsManagerOld()->draw(getScenes()->get(index), type);
 
-#define askForRedraw() _engine->getGraphicsManager()->change()
-#define redrawScreen() do { _engine->getGraphicsManager()->update(); _engine->_system->updateScreen(); } while (false)
+#define askForRedraw() _engine->getGraphicsManagerOld()->change()
+#define redrawScreen() do { _engine->getGraphicsManagerOld()->update(); _engine->_system->updateScreen(); } while (false)
 
-// Used to delete entity sequences
-#define SAFE_DELETE(_p) do { delete (_p); (_p) = NULL; } while (false)
+// Used to delete character sequences
+#define SAFE_DELETE(_p) do { if (_p) delete (_p); (_p) = nullptr; } while (false)
+#define SAFE_FREE(_p)   do { if (_p) free   (_p); (_p) = nullptr; } while (false)
 
 //////////////////////////////////////////////////////////////////////////
 // Output

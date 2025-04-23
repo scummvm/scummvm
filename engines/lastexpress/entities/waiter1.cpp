@@ -38,7 +38,7 @@ namespace LastExpress {
 		break; \
 	}
 
-Waiter1::Waiter1(LastExpressEngine *engine) : Entity(engine, kEntityWaiter1) {
+Waiter1::Waiter1(LastExpressEngine *engine) : Entity(engine, kCharacterWaiter1) {
 	ADD_CALLBACK_FUNCTION_SIIS(Waiter1, callSavepoint);
 	ADD_CALLBACK_FUNCTION_I(Waiter1, updateFromTime);
 	ADD_CALLBACK_FUNCTION_S(Waiter1, draw);
@@ -80,7 +80,7 @@ Waiter1::Waiter1(LastExpressEngine *engine) : Entity(engine, kEntityWaiter1) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_SIIS(1, Waiter1, callSavepoint, EntityIndex, ActionIndex)
+IMPLEMENT_FUNCTION_SIIS(1, Waiter1, callSavepoint, CharacterIndex, CharacterActions)
 	Entity::callSavepoint(savepoint, true);
 IMPLEMENT_FUNCTION_END
 
@@ -107,18 +107,18 @@ IMPLEMENT_FUNCTION_NOSETUP(5, Waiter1, callbackActionOnDirection)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getData()->direction != kDirectionRight)
 			callbackAction();
 		break;
 
-	case kActionExitCompartment:
+	case kCharacterActionExitCompartment:
 		callbackAction();
 		break;
 
-	case kActionExcuseMeCath:
+	case kCharacterActionExcuseMeCath:
 		if (!params->param1) {
-			getSound()->excuseMe(kEntityWaiter1);
+			getSound()->excuseMe(kCharacterWaiter1);
 			params->param1 = 1;
 		}
 		break;
@@ -136,7 +136,7 @@ IMPLEMENT_FUNCTION(7, Waiter1, rebeccaFeedUs)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5800;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -146,25 +146,25 @@ IMPLEMENT_FUNCTION(7, Waiter1, rebeccaFeedUs)
 		setup_draw("911");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->clearSequences(kEntityWaiter1);
-			getSavePoints()->push(kEntityWaiter1, kEntityRebecca, kAction123712592);
+			getEntities()->clearSequences(kCharacterWaiter1);
+			getSavePoints()->push(kCharacterWaiter1, kCharacterRebecca, kCharacterAction123712592);
 			break;
 
 		case 2:
-			getEntities()->clearSequences(kEntityWaiter1);
+			getEntities()->clearSequences(kCharacterWaiter1);
 			getData()->entityPosition = kPosition_5900;
 			callbackAction();
 			break;
 		}
 		break;
 
-	case kAction136702400:
+	case kCharacterAction136702400:
 		setCallback(2);
 		setup_draw("913");
 		break;
@@ -173,7 +173,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Waiter1, rebeccaClearOurTable)
-	serveTable(savepoint, "911", kEntityTables3, "010L", "010M", "913", &ENTITY_PARAM(1, 2));
+	serveTable(savepoint, "911", kCharacterTableD, "010L", "010M", "913", &ENTITY_PARAM(1, 2));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -182,7 +182,7 @@ IMPLEMENT_FUNCTION(9, Waiter1, abbotCheckMe)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5800;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -190,21 +190,21 @@ IMPLEMENT_FUNCTION(9, Waiter1, abbotCheckMe)
 		setup_draw("915");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityWaiter1, kEntityAbbot, kAction122358304);
-			getEntities()->drawSequenceLeft(kEntityWaiter1, "029D");
+			getSavePoints()->push(kCharacterWaiter1, kCharacterAbbot, kCharacterAction122358304);
+			getEntities()->drawSequenceLeft(kCharacterWaiter1, "029D");
 
 			setCallback(2);
 			setup_playSound(getProgress().chapter == kChapter3 ? "Abb3016" : "Abb4001");
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityWaiter1, kEntityAbbot, kAction122288808);
+			getSavePoints()->push(kCharacterWaiter1, kCharacterAbbot, kCharacterAction122288808);
 
 			setCallback(3);
 			setup_draw("917");
@@ -212,7 +212,7 @@ IMPLEMENT_FUNCTION(9, Waiter1, abbotCheckMe)
 
 		case 3:
 			getData()->entityPosition = kPosition_5900;
-			getEntities()->clearSequences(kEntityWaiter1);
+			getEntities()->clearSequences(kCharacterWaiter1);
 			ENTITY_PARAM(2, 2) = 0;
 			ENTITY_PARAM(1, 6) = 0;
 
@@ -225,7 +225,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Waiter1, abbotClearTable)
-	serveTable(savepoint, "916", kEntityTables4, "014E", "014F", "918", &ENTITY_PARAM(2, 3), false);
+	serveTable(savepoint, "916", kCharacterTableE, "014E", "014F", "918", &ENTITY_PARAM(2, 3), false);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -234,27 +234,27 @@ IMPLEMENT_FUNCTION(11, Waiter1, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_servingDinner();
 		break;
 
-	case kActionDefault:
-		getSavePoints()->addData(kEntityWaiter1, kAction270410280, 0);
-		getSavePoints()->addData(kEntityWaiter1, kAction304061224, 1);
-		getSavePoints()->addData(kEntityWaiter1, kAction252568704, 10);
-		getSavePoints()->addData(kEntityWaiter1, kAction286534136, 11);
-		getSavePoints()->addData(kEntityWaiter1, kAction218983616, 12);
-		getSavePoints()->addData(kEntityWaiter1, kAction218586752, 13);
-		getSavePoints()->addData(kEntityWaiter1, kAction207330561, 14);
-		getSavePoints()->addData(kEntityWaiter1, kAction286403504, 16);
-		getSavePoints()->addData(kEntityWaiter1, kAction218128129, 17);
-		getSavePoints()->addData(kEntityWaiter1, kAction270068760, 18);
-		getSavePoints()->addData(kEntityWaiter1, kAction223712416, 2);
-		getSavePoints()->addData(kEntityWaiter1, kAction237485916, 5);
-		getSavePoints()->addData(kEntityWaiter1, kAction188893625, 8);
-		getSavePoints()->addData(kEntityWaiter1, kAction204704037, 6);
-		getSavePoints()->addData(kEntityWaiter1, kAction292758554, 7);
-		getSavePoints()->addData(kEntityWaiter1, kAction337548856, 9);
+	case kCharacterActionDefault:
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction270410280, 0);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction304061224, 1);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction252568704, 10);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction286534136, 11);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction218983616, 12);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction218586752, 13);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction207330561, 14);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction286403504, 16);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction218128129, 17);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction270068760, 18);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction223712416, 2);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction237485916, 5);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction188893625, 8);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction204704037, 6);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction292758554, 7);
+		getSavePoints()->addData(kCharacterWaiter1, kCharacterAction337548856, 9);
 
 		getData()->entityPosition = kPosition_5900;
 		getData()->location = kLocationOutsideCompartment;
@@ -265,42 +265,42 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Waiter1, annaOrder)
-	handleServer(savepoint, "907", kEntityAnna, kAction268773672, &ENTITY_PARAM(0, 1));
+	handleServer(savepoint, "907", kCharacterAnna, kCharacterAction268773672, &ENTITY_PARAM(0, 1));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Waiter1, augustOrder)
-	handleServer(savepoint, "911", kEntityAugust, kAction268773672, &ENTITY_PARAM(0, 2), "010F");
+	handleServer(savepoint, "911", kCharacterAugust, kCharacterAction268773672, &ENTITY_PARAM(0, 2), "010F");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Waiter1, serveAnna)
-	handleServer(savepoint, "908", kEntityAnna, kAction170016384, &ENTITY_PARAM(0, 4));
+	handleServer(savepoint, "908", kCharacterAnna, kCharacterAction170016384, &ENTITY_PARAM(0, 4));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Waiter1, serveAugust)
-	handleServer(savepoint, "912", kEntityAugust, kAction170016384, &ENTITY_PARAM(0, 5));
+	handleServer(savepoint, "912", kCharacterAugust, kCharacterAction170016384, &ENTITY_PARAM(0, 5));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Waiter1, clearAnna)
-	serveTable(savepoint, "907", kEntityTables0, "001N", "001P", "909", &ENTITY_PARAM(0, 6));
+	serveTable(savepoint, "907", kCharacterTableA, "001N", "001P", "909", &ENTITY_PARAM(0, 6));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Waiter1, clearTatiana)
-	serveTable(savepoint, "915", kEntityTables4, "014E", "014F", "917", &ENTITY_PARAM(1, 1), true, false, 67);
+	serveTable(savepoint, "915", kCharacterTableE, "014E", "014F", "917", &ENTITY_PARAM(1, 1), true, false, 67);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Waiter1, clearAugust1)
-	serveTable(savepoint, "911", kEntityTables3, "010L", "010M", "913", &ENTITY_PARAM(0, 7));
+	serveTable(savepoint, "911", kCharacterTableD, "010L", "010M", "913", &ENTITY_PARAM(0, 7));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Waiter1, clearAugust2)
-	serveTable(savepoint, "911", kEntityTables3, "010L", "010M", "913", &ENTITY_PARAM(0, 8), true, true);
+	serveTable(savepoint, "911", kCharacterTableD, "010L", "010M", "913", &ENTITY_PARAM(0, 8), true, true);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -309,7 +309,7 @@ IMPLEMENT_FUNCTION(20, Waiter1, servingDinner)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param2) {
 			if (Entity::updateParameter(params->param3, getState()->time, 2700)) {
 				ENTITY_PARAM(0, 4) = 1;
@@ -324,7 +324,7 @@ IMPLEMENT_FUNCTION(20, Waiter1, servingDinner)
 			}
 		}
 
-		if (!getEntities()->isInKitchen(kEntityWaiter1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
+		if (!getEntities()->isInKitchen(kCharacterWaiter1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
 			break;
 
 		HANDLE_TABLE(0, 1, 1, setup_annaOrder);
@@ -339,19 +339,19 @@ IMPLEMENT_FUNCTION(20, Waiter1, servingDinner)
 		HANDLE_TABLE(1, 2, 10, setup_rebeccaClearOurTable);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 10:
-			getSavePoints()->push(kEntityWaiter1, kEntityPascale, kAction352703104);
+			getSavePoints()->push(kCharacterWaiter1, kCharacterHeadWait, kCharacterAction352703104);
 			setup_function21();
 			break;
 
 		case 11:
 		case 12:
-			getEntities()->clearSequences(kEntityWaiter1);
+			getEntities()->clearSequences(kCharacterWaiter1);
 			getData()->entityPosition = kPosition_5900;
 
 			if (getCallback() == 11)
@@ -362,20 +362,20 @@ IMPLEMENT_FUNCTION(20, Waiter1, servingDinner)
 
 		case 13:
 		case 14:
-			getEntities()->clearSequences(kEntityWaiter1);
+			getEntities()->clearSequences(kCharacterWaiter1);
 			getData()->entityPosition = kPosition_5900;
 			break;
 		}
 		break;
 
-	case kAction136702400:
-		setCallback(savepoint.entity2 == kEntityAnna ? 13 : 14);
-		setup_draw(savepoint.entity2 == kEntityAnna ? "909" : "913");
+	case kCharacterAction136702400:
+		setCallback(savepoint.entity2 == kCharacterAnna ? 13 : 14);
+		setup_draw(savepoint.entity2 == kCharacterAnna ? "909" : "913");
 		break;
 
-	case kAction203859488:
-		setCallback(savepoint.entity2 == kEntityAnna ? 11 : 12);
-		setup_draw(savepoint.entity2 == kEntityAnna ? "910" : "913");
+	case kCharacterAction203859488:
+		setCallback(savepoint.entity2 == kCharacterAnna ? 11 : 12);
+		setup_draw(savepoint.entity2 == kCharacterAnna ? "910" : "913");
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -386,11 +386,11 @@ IMPLEMENT_FUNCTION(21, Waiter1, function21)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5900;
 		break;
 
-	case kAction101632192:
+	case kCharacterAction101632192:
 		setup_function22();
 		break;
 	}
@@ -398,12 +398,12 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Waiter1, function22)
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 		getData()->entityPosition = kPosition_5900;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarRestaurant;
 
-		getEntities()->clearSequences(kEntityWaiter1);
+		getEntities()->clearSequences(kCharacterWaiter1);
 	}
 IMPLEMENT_FUNCTION_END
 
@@ -413,12 +413,12 @@ IMPLEMENT_FUNCTION(23, Waiter1, chapter2)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_inKitchen();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityWaiter1);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterWaiter1);
 
 		getData()->entityPosition = kPosition_5900;
 		getData()->location = kLocationOutsideCompartment;
@@ -438,15 +438,15 @@ IMPLEMENT_FUNCTION(24, Waiter1, inKitchen)
 	default:
 		break;
 
-	case kActionNone:
-		if (!getEntities()->isInKitchen(kEntityWaiter1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
+	case kCharacterActionNone:
+		if (!getEntities()->isInKitchen(kCharacterWaiter1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
 			break;
 
 		HANDLE_TABLE(1, 3, 1, setup_augustComeHere2);
 		HANDLE_TABLE(1, 4, 2, setup_augustClearTable2);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
 			HANDLE_TABLE(1, 4, 2, setup_augustClearTable2);
 		break;
@@ -459,7 +459,7 @@ IMPLEMENT_FUNCTION(25, Waiter1, augustComeHere2)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5800;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -467,19 +467,19 @@ IMPLEMENT_FUNCTION(25, Waiter1, augustComeHere2)
 		setup_draw("957");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityWaiter1, kEntityAugust, kAction123712592);
-			getEntities()->drawSequenceLeft(kEntityWaiter1, "BLANK");
+			getSavePoints()->push(kCharacterWaiter1, kCharacterAugust, kCharacterAction123712592);
+			getEntities()->drawSequenceLeft(kCharacterWaiter1, "BLANK");
 			break;
 
 		case 2:
 			getData()->entityPosition = kPosition_5900;
-			getEntities()->clearSequences(kEntityWaiter1);
+			getEntities()->clearSequences(kCharacterWaiter1);
 			ENTITY_PARAM(1, 3) = 0;
 
 			callbackAction();
@@ -487,7 +487,7 @@ IMPLEMENT_FUNCTION(25, Waiter1, augustComeHere2)
 		}
 		break;
 
-	case kAction219522616:
+	case kCharacterAction219522616:
 		setCallback(2);
 		setup_draw("959");
 		break;
@@ -496,7 +496,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Waiter1, augustClearTable2)
-	serveTable(savepoint, "957", kEntityTables0, "016E", "016D", "959", &ENTITY_PARAM(1, 4));
+	serveTable(savepoint, "957", kCharacterTableA, "016E", "016D", "959", &ENTITY_PARAM(1, 4));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -505,12 +505,12 @@ IMPLEMENT_FUNCTION(27, Waiter1, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_serving3();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityWaiter1);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterWaiter1);
 
 		getData()->entityPosition = kPosition_5900;
 		getData()->location = kLocationOutsideCompartment;
@@ -534,8 +534,8 @@ IMPLEMENT_FUNCTION(28, Waiter1, serving3)
 	default:
 		break;
 
-	case kActionNone:
-		if (!getEntities()->isInKitchen(kEntityWaiter1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
+	case kCharacterActionNone:
+		if (!getEntities()->isInKitchen(kCharacterWaiter1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
 			break;
 
 		if (ENTITY_PARAM(1, 5)) {
@@ -580,7 +580,7 @@ label_callback_5:
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -611,7 +611,7 @@ IMPLEMENT_FUNCTION(29, Waiter1, annaComeHere3)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5800;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -619,21 +619,21 @@ IMPLEMENT_FUNCTION(29, Waiter1, annaComeHere3)
 		setup_draw("911");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityWaiter1, kEntityAnna, kAction122358304);
-			getEntities()->drawSequenceLeft(kEntityWaiter1, "026D");
+			getSavePoints()->push(kCharacterWaiter1, kCharacterAnna, kCharacterAction122358304);
+			getEntities()->drawSequenceLeft(kCharacterWaiter1, "026D");
 
 			setCallback(2);
 			setup_playSound("Ann3138");
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityWaiter1, kEntityAnna, kAction122288808);
+			getSavePoints()->push(kCharacterWaiter1, kCharacterAnna, kCharacterAction122288808);
 
 			setCallback(3);
 			setup_draw("913");
@@ -641,7 +641,7 @@ IMPLEMENT_FUNCTION(29, Waiter1, annaComeHere3)
 
 		case 3:
 			getData()->entityPosition = kPosition_5900;
-			getEntities()->clearSequences(kEntityWaiter1);
+			getEntities()->clearSequences(kCharacterWaiter1);
 			ENTITY_PARAM(1, 5) = 0;
 
 			callbackAction();
@@ -657,7 +657,7 @@ IMPLEMENT_FUNCTION(30, Waiter1, abbotServeLunch3)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5800;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -665,21 +665,21 @@ IMPLEMENT_FUNCTION(30, Waiter1, abbotServeLunch3)
 		setup_draw("916");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityWaiter1, kEntityAbbot, kAction122358304);
-			getEntities()->drawSequenceLeft(kEntityWaiter1, "029D");
+			getSavePoints()->push(kCharacterWaiter1, kCharacterAbbot, kCharacterAction122358304);
+			getEntities()->drawSequenceLeft(kCharacterWaiter1, "029D");
 
 			setCallback(2);
 			setup_playSound("Abb3016a");
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityWaiter1, kEntityAbbot, kAction122288808);
+			getSavePoints()->push(kCharacterWaiter1, kCharacterAbbot, kCharacterAction122288808);
 
 			setCallback(3);
 			setup_draw("918");
@@ -687,7 +687,7 @@ IMPLEMENT_FUNCTION(30, Waiter1, abbotServeLunch3)
 
 		case 3:
 			getData()->entityPosition = kPosition_5900;
-			getEntities()->clearSequences(kEntityWaiter1);
+			getEntities()->clearSequences(kCharacterWaiter1);
 			ENTITY_PARAM(2, 4) = 0;
 
 			callbackAction();
@@ -703,12 +703,12 @@ IMPLEMENT_FUNCTION(31, Waiter1, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_serving4();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityWaiter1);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterWaiter1);
 
 		getData()->entityPosition = kPosition_5900;
 		getData()->location = kLocationOutsideCompartment;
@@ -732,7 +732,7 @@ IMPLEMENT_FUNCTION(32, Waiter1, serving4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param1) {
 			if (Entity::updateParameter(params->param2, getState()->time, 3600)) {
 				ENTITY_PARAM(1, 8) = 1;
@@ -740,7 +740,7 @@ IMPLEMENT_FUNCTION(32, Waiter1, serving4)
 			}
 		}
 
-		if (!getEntities()->isInKitchen(kEntityWaiter1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
+		if (!getEntities()->isInKitchen(kCharacterWaiter1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
 			break;
 
 		if (ENTITY_PARAM(1, 7)) {
@@ -785,7 +785,7 @@ label_callback_5:
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -808,7 +808,7 @@ label_callback_5:
 		}
 		break;
 
-	case kAction201431954:
+	case kCharacterAction201431954:
 		ENTITY_PARAM(0, 3) = 0;
 		ENTITY_PARAM(1, 7) = 0;
 		ENTITY_PARAM(1, 8) = 0;
@@ -829,26 +829,26 @@ IMPLEMENT_FUNCTION(33, Waiter1, augustOrder4)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_draw("911");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->drawSequenceLeft(kEntityWaiter1, "010F3");
-			getEntities()->drawSequenceLeft(kEntityAugust, "010D3");
+			getEntities()->drawSequenceLeft(kCharacterWaiter1, "010F3");
+			getEntities()->drawSequenceLeft(kCharacterAugust, "010D3");
 
 			setCallback(2);
 			setup_playSound("AUG4002");
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityWaiter1, kEntityAugust, kAction122288808);
+			getSavePoints()->push(kCharacterWaiter1, kCharacterAugust, kCharacterAction122288808);
 
 			setCallback(3);
 			setup_draw("913");
@@ -856,7 +856,7 @@ IMPLEMENT_FUNCTION(33, Waiter1, augustOrder4)
 
 		case 3:
 			getData()->entityPosition = kPosition_5900;
-			getEntities()->clearSequences(kEntityWaiter1);
+			getEntities()->clearSequences(kCharacterWaiter1);
 			ENTITY_PARAM(1, 7) = 0;
 
 			callbackAction();
@@ -873,26 +873,26 @@ IMPLEMENT_FUNCTION(34, Waiter1, serveAugust4)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_draw("912");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityWaiter1, kEntityAugust, kAction122358304);
-			getSound()->playSound(kEntityWaiter1, "AUG1053");
+			getSavePoints()->push(kCharacterWaiter1, kCharacterAugust, kCharacterAction122358304);
+			getSound()->playSound(kCharacterWaiter1, "AUG1053");
 
 			setCallback(2);
 			setup_draw("010G3");
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityWaiter1, kEntityAugust, kAction201964801);
+			getSavePoints()->push(kCharacterWaiter1, kCharacterAugust, kCharacterAction201964801);
 
 			setCallback(3);
 			setup_draw("914");
@@ -900,7 +900,7 @@ IMPLEMENT_FUNCTION(34, Waiter1, serveAugust4)
 
 		case 3:
 			getData()->entityPosition = kPosition_5900;
-			getEntities()->clearSequences(kEntityWaiter1);
+			getEntities()->clearSequences(kCharacterWaiter1);
 			ENTITY_PARAM(1, 8) = 0;
 
 			callbackAction();
@@ -912,7 +912,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(35, Waiter1, augustClearTable)
-	serveTable(savepoint, "911", kEntityTables3, "010L", "010M", "914", &ENTITY_PARAM(2, 1), false, true);
+	serveTable(savepoint, "911", kCharacterTableD, "010L", "010M", "914", &ENTITY_PARAM(2, 1), false, true);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -921,12 +921,12 @@ IMPLEMENT_FUNCTION(36, Waiter1, chapter5)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter5Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityWaiter1);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterWaiter1);
 
 		getData()->entityPosition = kPosition_3969;
 		getData()->location = kLocationInsideCompartment;
@@ -938,7 +938,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(37, Waiter1, chapter5Handler)
-	if (savepoint.action == kActionProceedChapter5)
+	if (savepoint.action == kCharacterActionProceedChapter5)
 		setup_nullfunction();
 IMPLEMENT_FUNCTION_END
 
@@ -949,12 +949,12 @@ IMPLEMENT_NULL_FUNCTION(38, Waiter1)
 //////////////////////////////////////////////////////////////////////////
 // Private functions
 //////////////////////////////////////////////////////////////////////////
-void Waiter1::handleServer(const SavePoint &savepoint, const char *name, EntityIndex entity, ActionIndex action, uint *parameter, const char *name2) {
+void Waiter1::handleServer(const SavePoint &savepoint, const char *name, CharacterIndex entity, CharacterActions action, uint *parameter, const char *name2) {
 	switch (savepoint.action) {
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5800;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -962,15 +962,15 @@ void Waiter1::handleServer(const SavePoint &savepoint, const char *name, EntityI
 		setup_draw(name);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1) {
 			// Prepare or draw sequences depending of value of string
 			if (!strcmp(name2, ""))
-				getEntities()->clearSequences(kEntityWaiter1);
+				getEntities()->clearSequences(kCharacterWaiter1);
 			else
-				getEntities()->drawSequenceLeft(kEntityWaiter1, name2);
+				getEntities()->drawSequenceLeft(kCharacterWaiter1, name2);
 
-			getSavePoints()->push(kEntityWaiter1, entity, action);
+			getSavePoints()->push(kCharacterWaiter1, entity, action);
 			*parameter = 0;
 
 			callbackAction();
@@ -980,12 +980,12 @@ void Waiter1::handleServer(const SavePoint &savepoint, const char *name, EntityI
 }
 
 //////////////////////////////////////////////////////////////////////////
-void Waiter1::serveTable(const SavePoint &savepoint, const char *seq1, EntityIndex entity, const char *seq2, const char *seq3, const char *seq4, uint *parameter, bool shouldUpdatePosition, bool pushSavepoint, Position position) {
+void Waiter1::serveTable(const SavePoint &savepoint, const char *seq1, CharacterIndex entity, const char *seq2, const char *seq3, const char *seq4, uint *parameter, bool shouldUpdatePosition, bool pushSavepoint, PositionOld position) {
 	switch (savepoint.action) {
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		if (shouldUpdatePosition) {
 			getData()->entityPosition = kPosition_5800;
 			getData()->location = kLocationOutsideCompartment;
@@ -995,24 +995,24 @@ void Waiter1::serveTable(const SavePoint &savepoint, const char *seq1, EntityInd
 		setup_draw(seq1);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
 			if (position)
-				getEntities()->updatePositionEnter(kEntityWaiter1, kCarRestaurant, position);
+				getEntities()->updatePositionEnter(kCharacterWaiter1, kCarRestaurant, position);
 
-			getSavePoints()->push(kEntityWaiter1, entity, kAction136455232);
+			getSavePoints()->push(kCharacterWaiter1, entity, kCharacterAction136455232);
 
 			setCallback(2);
-			setup_callSavepoint(seq2, entity, kActionDrawTablesWithChairs, seq3);
+			setup_callSavepoint(seq2, entity, kCharacterActionDrawTablesWithChairs, seq3);
 			break;
 
 		case 2:
 			if (position)
-				getEntities()->updatePositionExit(kEntityWaiter1, kCarRestaurant, position);
+				getEntities()->updatePositionExit(kCharacterWaiter1, kCarRestaurant, position);
 
 			setCallback(3);
 			setup_draw(seq4);
@@ -1023,9 +1023,9 @@ void Waiter1::serveTable(const SavePoint &savepoint, const char *seq1, EntityInd
 
 			// Special case for functions 19 & 35
 			if (pushSavepoint)
-				getSavePoints()->push(kEntityWaiter1, kEntityRebecca, kAction224253538);
+				getSavePoints()->push(kCharacterWaiter1, kCharacterRebecca, kCharacterAction224253538);
 
-			getEntities()->clearSequences(kEntityWaiter1);
+			getEntities()->clearSequences(kCharacterWaiter1);
 			*parameter = 0;
 
 			callbackAction();

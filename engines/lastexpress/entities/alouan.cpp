@@ -31,7 +31,7 @@
 
 namespace LastExpress {
 
-Alouan::Alouan(LastExpressEngine *engine) : Entity(engine, kEntityAlouan) {
+Alouan::Alouan(LastExpressEngine *engine) : Entity(engine, kCharacterAlouan) {
 	ADD_CALLBACK_FUNCTION(Alouan, reset);
 	ADD_CALLBACK_FUNCTION_SI(Alouan, enterExitCompartment);
 	ADD_CALLBACK_FUNCTION_S(Alouan, playSound);
@@ -109,11 +109,11 @@ IMPLEMENT_FUNCTION(10, Alouan, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Alouan, setup_chapter1Handler));
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_2740;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarGreenSleeping;
@@ -128,7 +128,7 @@ IMPLEMENT_FUNCTION(11, Alouan, chapter1Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 
 		if (Entity::timeCheckCallback(kTime1096200, params->param1, 1, WRAP_SETUP_FUNCTION(Alouan, setup_goHtoF)))
 			break;
@@ -136,20 +136,20 @@ IMPLEMENT_FUNCTION(11, Alouan, chapter1Handler)
 label_callback1:
 		if (getState()->time > kTime1162800 && !params->param2) {
 			params->param2 = 1;
-			getSavePoints()->push(kEntityAlouan, kEntityTrain, kAction191070912, kPosition_4070);
+			getSavePoints()->push(kCharacterAlouan, kCharacterClerk, kCharacterAction191070912, kPosition_4070);
 			getData()->entityPosition = kPosition_4070;
 		}
 
 		if (getState()->time > kTime1179000 && !params->param3) {
 			params->param3 = 1;
-			getSavePoints()->push(kEntityAlouan, kEntityTrain, kAction191070912, kPosition_4840);
+			getSavePoints()->push(kCharacterAlouan, kCharacterClerk, kCharacterAction191070912, kPosition_4840);
 
 			setCallback(2);
 			setup_goFtoH();
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -164,24 +164,24 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Alouan, function12)
-	if (savepoint.action == kActionDefault) {
-		getObjects()->update(kObjectCompartment7, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartment5, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	if (savepoint.action == kCharacterActionDefault) {
+		getObjects()->update(kObjectCompartment7, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment5, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
 		getData()->entityPosition = kPosition_4070;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarGreenSleeping;
 
-		getEntities()->clearSequences(kEntityAlouan);
+		getEntities()->clearSequences(kCharacterAlouan);
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Alouan, chapter2)
-	if (savepoint.action != kActionDefault)
+	if (savepoint.action != kCharacterActionDefault)
 		return;
 
-	getEntities()->clearSequences(kEntityAlouan);
+	getEntities()->clearSequences(kCharacterAlouan);
 
 	getData()->entityPosition = kPosition_2740;
 	getData()->location = kLocationInsideCompartment;
@@ -198,7 +198,7 @@ IMPLEMENT_FUNCTION(14, Alouan, chapter2Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param2 == kTimeInvalid)
 			break;
 
@@ -219,12 +219,12 @@ IMPLEMENT_FUNCTION(14, Alouan, chapter2Handler)
 			setup_peekF();
 		break;
 
-	case kActionDefault:
-		getSavePoints()->push(kEntityAlouan, kEntityTrain, kAction191070912, kPosition_4840);
+	case kCharacterActionDefault:
+		getSavePoints()->push(kCharacterAlouan, kCharacterClerk, kCharacterAction191070912, kPosition_4840);
 		params->param1 = 1;
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -241,12 +241,12 @@ IMPLEMENT_FUNCTION(14, Alouan, chapter2Handler)
 			break;
 
 		case 5:
-			getSavePoints()->push(kEntityAlouan, kEntityFrancois, kAction190219584);
+			getSavePoints()->push(kCharacterAlouan, kCharacterFrancois, kCharacterAction190219584);
 			break;
 		}
 		break;
 
-	case kAction189489753:
+	case kCharacterAction189489753:
 		setCallback(3);
 		setup_goHtoF();
 		break;
@@ -259,12 +259,12 @@ IMPLEMENT_FUNCTION(15, Alouan, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter3Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityAlouan);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterAlouan);
 
 		getData()->entityPosition = kPosition_2740;
 		getData()->location = kLocationInsideCompartment;
@@ -280,7 +280,7 @@ IMPLEMENT_FUNCTION(16, Alouan, chapter3Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (Entity::timeCheckCallback(kTimeCitySalzbourg, params->param1, 1, WRAP_SETUP_FUNCTION(Alouan, setup_goHtoF)))
 			break;
 
@@ -305,11 +305,11 @@ label_callback4:
 		}
 		break;
 
-	case kActionDefault:
-		getSavePoints()->push(kEntityAlouan, kEntityTrain, kAction191070912, kPosition_4840);
+	case kCharacterActionDefault:
+		getSavePoints()->push(kCharacterAlouan, kCharacterClerk, kCharacterAction191070912, kPosition_4840);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -337,12 +337,12 @@ IMPLEMENT_FUNCTION(17, Alouan, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter4Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityAlouan);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterAlouan);
 
 		getData()->entityPosition = kPosition_2740;
 		getData()->location = kLocationInsideCompartment;
@@ -358,7 +358,7 @@ IMPLEMENT_FUNCTION(18, Alouan, chapter4Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (params->param1 != kTimeInvalid) {
 			if (Entity::timeCheckCar(kTime2443500, params->param1, 1, WRAP_SETUP_FUNCTION(Alouan, setup_peekH)))
 				break;
@@ -371,18 +371,18 @@ label_callback1:
 label_callback2:
 		if (getState()->time > kTime2475000 && !params->param3) {
 			params->param3 = 1;
-			getSavePoints()->push(kEntityAlouan, kEntityTrain, kAction191070912, kPosition_4840);
+			getSavePoints()->push(kCharacterAlouan, kCharacterClerk, kCharacterAction191070912, kPosition_4840);
 
 			setCallback(3);
 			setup_goFtoH();
 		}
 		break;
 
-	case kActionDefault:
-		getSavePoints()->push(kEntityAlouan, kEntityTrain, kAction191070912, kPosition_4840);
+	case kCharacterActionDefault:
+		getSavePoints()->push(kCharacterAlouan, kCharacterClerk, kCharacterAction191070912, kPosition_4840);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -391,7 +391,7 @@ label_callback2:
 			goto label_callback1;
 
 		case 2:
-			getSavePoints()->push(kEntityAlouan, kEntityTrain, kAction191070912, kPosition_4070);
+			getSavePoints()->push(kCharacterAlouan, kCharacterClerk, kCharacterAction191070912, kPosition_4070);
 			goto label_callback2;
 		}
 		break;
@@ -400,15 +400,15 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Alouan, function19)
-	if (savepoint.action == kActionDefault) {
-		getObjects()->update(kObjectCompartment7, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartment5, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	if (savepoint.action == kCharacterActionDefault) {
+		getObjects()->update(kObjectCompartment7, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment5, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
 		getData()->entityPosition = kPosition_2740;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarGreenSleeping;
 
-		getEntities()->clearSequences(kEntityAlouan);
+		getEntities()->clearSequences(kCharacterAlouan);
 	}
 IMPLEMENT_FUNCTION_END
 
@@ -418,12 +418,12 @@ IMPLEMENT_FUNCTION(20, Alouan, chapter5)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter5Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityAlouan);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterAlouan);
 
 		getData()->entityPosition = kPosition_3969;
 		getData()->location = kLocationInsideCompartment;
@@ -437,7 +437,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Alouan, chapter5Handler)
-	if (savepoint.action == kActionProceedChapter5)
+	if (savepoint.action == kCharacterActionProceedChapter5)
 		setup_function22();
 IMPLEMENT_FUNCTION_END
 
@@ -447,21 +447,21 @@ IMPLEMENT_FUNCTION(22, Alouan, function22)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!Entity::updateParameter(params->param1, getState()->time, 2700))
 			break;
 
 		setup_hiding();
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_5000;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarGreenSleeping;
 		break;
 
-	case kActionDrawScene:
-		if (getEntities()->isInsideTrainCar(kEntityPlayer, kCarGreenSleeping))
+	case kCharacterActionDrawScene:
+		if (getEntities()->isInsideTrainCar(kCharacterCath, kCarGreenSleeping))
 			setup_hiding();
 		break;
 	}
@@ -473,12 +473,12 @@ IMPLEMENT_FUNCTION(23, Alouan, hiding)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_updateEntity(kCarGreenSleeping, kPosition_4070);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -489,17 +489,17 @@ IMPLEMENT_FUNCTION(23, Alouan, hiding)
 			break;
 
 		case 2:
-			getEntities()->clearSequences(kEntityAlouan);
+			getEntities()->clearSequences(kCharacterAlouan);
 
 			getData()->entityPosition = kPosition_4070;
 			getData()->location = kLocationInsideCompartment;
 
-			getObjects()->update(kObjectCompartment6, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartment6, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
 			break;
 		}
 		break;
 
-	case kAction135800432:
+	case kCharacterAction135800432:
 		setup_nullfunction();
 		break;
 	}

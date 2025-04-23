@@ -70,7 +70,7 @@
 
 namespace LastExpress {
 
-Chapters::Chapters(LastExpressEngine *engine) : Entity(engine, kEntityChapters) {
+Chapters::Chapters(LastExpressEngine *engine) : Entity(engine, kCharacterMaster) {
 	ADD_CALLBACK_FUNCTION_II(Chapters, savegame);
 	ADD_CALLBACK_FUNCTION_SI(Chapters, enterStation);
 	ADD_CALLBACK_FUNCTION_S(Chapters, exitStation);
@@ -112,43 +112,43 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(4, Chapters, chapter1)
-	if (savepoint.action == kActionDefault) {
-		getSavePoints()->addData(kEntityChapters, kAction171843264, 0);
+	if (savepoint.action == kCharacterActionDefault) {
+		getSavePoints()->addData(kCharacterMaster, kCharacterAction171843264, 0);
 		setup_chapter1Init();
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Chapters, resetMainEntities)
-	if (savepoint.action != kActionDefault)
+	if (savepoint.action != kCharacterActionDefault)
 		return;
 
-	RESET_ENTITY_STATE(kEntityAbbot, Abbot, setup_reset);
-	RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_reset);
-	RESET_ENTITY_STATE(kEntityAlouan, Alouan, setup_reset);
-	RESET_ENTITY_STATE(kEntityAnna, Anna, setup_reset);
-	RESET_ENTITY_STATE(kEntityAugust, August, setup_reset);
-	RESET_ENTITY_STATE(kEntityMertens, Mertens, setup_reset);
-	RESET_ENTITY_STATE(kEntityCoudert, Coudert, setup_reset);
-	RESET_ENTITY_STATE(kEntityFrancois, Francois, setup_reset);
-	RESET_ENTITY_STATE(kEntityHadija, Hadija, setup_reset);
-	RESET_ENTITY_STATE(kEntityIvo, Ivo, setup_reset);
-	RESET_ENTITY_STATE(kEntityKahina, Kahina, setup_reset);
-	RESET_ENTITY_STATE(kEntityKronos, Kronos, setup_reset);
-	RESET_ENTITY_STATE(kEntityMmeBoutarel, MmeBoutarel, setup_reset);
-	RESET_ENTITY_STATE(kEntityMahmud, Mahmud, setup_reset);
-	RESET_ENTITY_STATE(kEntityMax, Max, setup_reset);
-	RESET_ENTITY_STATE(kEntityMilos, Milos, setup_reset);
-	RESET_ENTITY_STATE(kEntityBoutarel, Boutarel, setup_reset);
-	RESET_ENTITY_STATE(kEntityGendarmes, Gendarmes, setup_reset);
-	RESET_ENTITY_STATE(kEntityRebecca, Rebecca, setup_reset);
-	RESET_ENTITY_STATE(kEntitySalko, Salko, setup_reset);
-	RESET_ENTITY_STATE(kEntitySophie, Sophie, setup_reset);
-	RESET_ENTITY_STATE(kEntityTatiana, Tatiana, setup_reset);
-	RESET_ENTITY_STATE(kEntityVerges, Verges, setup_reset);
-	RESET_ENTITY_STATE(kEntityVassili, Vassili, setup_reset);
-	RESET_ENTITY_STATE(kEntityVesna, Vesna, setup_reset);
-	RESET_ENTITY_STATE(kEntityYasmin, Yasmin, setup_reset);
+	RESET_ENTITY_STATE(kCharacterAbbot, Abbot, setup_reset);
+	RESET_ENTITY_STATE(kCharacterAlexei, Alexei, setup_reset);
+	RESET_ENTITY_STATE(kCharacterAlouan, Alouan, setup_reset);
+	RESET_ENTITY_STATE(kCharacterAnna, Anna, setup_reset);
+	RESET_ENTITY_STATE(kCharacterAugust, August, setup_reset);
+	RESET_ENTITY_STATE(kCharacterCond1, Mertens, setup_reset);
+	RESET_ENTITY_STATE(kCharacterCond2, Coudert, setup_reset);
+	RESET_ENTITY_STATE(kCharacterFrancois, Francois, setup_reset);
+	RESET_ENTITY_STATE(kCharacterHadija, Hadija, setup_reset);
+	RESET_ENTITY_STATE(kCharacterIvo, Ivo, setup_reset);
+	RESET_ENTITY_STATE(kCharacterKahina, Kahina, setup_reset);
+	RESET_ENTITY_STATE(kCharacterKronos, Kronos, setup_reset);
+	RESET_ENTITY_STATE(kCharacterMadame, MmeBoutarel, setup_reset);
+	RESET_ENTITY_STATE(kCharacterMahmud, Mahmud, setup_reset);
+	RESET_ENTITY_STATE(kCharacterMax, Max, setup_reset);
+	RESET_ENTITY_STATE(kCharacterMilos, Milos, setup_reset);
+	RESET_ENTITY_STATE(kCharacterMonsieur, Boutarel, setup_reset);
+	RESET_ENTITY_STATE(kCharacterPolice, Gendarmes, setup_reset);
+	RESET_ENTITY_STATE(kCharacterRebecca, Rebecca, setup_reset);
+	RESET_ENTITY_STATE(kCharacterSalko, Salko, setup_reset);
+	RESET_ENTITY_STATE(kCharacterSophie, Sophie, setup_reset);
+	RESET_ENTITY_STATE(kCharacterTatiana, Tatiana, setup_reset);
+	RESET_ENTITY_STATE(kCharacterTrainM, Verges, setup_reset);
+	RESET_ENTITY_STATE(kCharacterVassili, Vassili, setup_reset);
+	RESET_ENTITY_STATE(kCharacterVesna, Vesna, setup_reset);
+	RESET_ENTITY_STATE(kCharacterYasmin, Yasmin, setup_reset);
 
 	callbackAction();
 IMPLEMENT_FUNCTION_END
@@ -160,89 +160,89 @@ IMPLEMENT_FUNCTION(6, Chapters, firstDream)
 	default:
 		break;
 
-	case kActionEndSound:
-		getSound()->playSound(kEntityChapters, "MUS009", kVolumeFull);
+	case kCharacterActionEndSound:
+		getSound()->playSound(kCharacterMaster, "MUS009", kVolumeFull);
 		break;
 
-	case kActionKnock:
+	case kCharacterActionKnock:
 		if (!getSoundQueue()->isBuffered("LIB012", true))
-			getSound()->playSound(kEntityPlayer, "LIB012");
+			getSound()->playSound(kCharacterCath, "LIB012");
 		break;
 
-	case kActionOpenDoor:
+	case kCharacterActionOpenDoor:
 		if (params->param1) {
-			getEntities()->clearSequences(kEntityChapters);
-			getSoundQueue()->fade(kEntityChapters);
-			getSound()->playSound(kEntityPlayer, "LIB014");
+			getEntities()->clearSequences(kCharacterMaster);
+			getSoundQueue()->fade(kCharacterMaster);
+			getSound()->playSound(kCharacterCath, "LIB014");
 			getSoundQueue()->startAmbient();
 
 			ENTITY_PARAM(0, 4) = 7;
 
 			getSound()->playSteam(kCityPolice);
 
-			getAction()->playAnimation(kEventCathDream);
+			getActionOld()->playAnimation(kEventCathDream);
 
 			getState()->timeDelta = 3;
 			getProgress().field_18 = 1;
 			getProgress().field_84 = 0;
 
-			getObjects()->update(kObject63, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject63, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
 			getScenes()->loadScene(kScene41);
 
 			callbackAction();
 		} else {
-			getSound()->playSound(kEntityPlayer, "LIB014");
-			getSound()->playSound(kEntityPlayer, "LIB015", kVolumeFull, 15);
+			getSound()->playSound(kCharacterCath, "LIB014");
+			getSound()->playSound(kCharacterCath, "LIB015", kVolumeFull, 15);
 
-			if (!getSoundQueue()->isBuffered(kEntityChapters))
-				getSound()->playSound(kEntityChapters, "MUS009", kVolumeFull);
+			if (!getSoundQueue()->isBuffered(kCharacterMaster))
+				getSound()->playSound(kCharacterMaster, "MUS009", kVolumeFull);
 
 			getScenes()->loadSceneFromPosition(kCarLocomotive, 38);
 
-			getObjects()->update(kObject63, kEntityChapters, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject63, kCharacterMaster, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
 			params->param1 = 1;
 		}
 		break;
 
-	case kActionDefault:
-		RESET_ENTITY_STATE(kEntityPascale, Pascale, setup_function19);
-		RESET_ENTITY_STATE(kEntityWaiter1, Waiter1, setup_function22);
-		RESET_ENTITY_STATE(kEntityWaiter2, Waiter2, setup_function16);
-		RESET_ENTITY_STATE(kEntityCooks, Cooks, setup_lockUp);
+	case kCharacterActionDefault:
+		RESET_ENTITY_STATE(kCharacterHeadWait, Pascale, setup_function19);
+		RESET_ENTITY_STATE(kCharacterWaiter1, Waiter1, setup_function22);
+		RESET_ENTITY_STATE(kCharacterWaiter2, Waiter2, setup_function16);
+		RESET_ENTITY_STATE(kCharacterCook, Cooks, setup_lockUp);
 
-		RESET_ENTITY_STATE(kEntityMertens, Mertens, setup_function42);
-		RESET_ENTITY_STATE(kEntityCoudert, Coudert, setup_chapter1Handler);
-		RESET_ENTITY_STATE(kEntityVerges,  Verges, setup_chapter1Handler);
+		RESET_ENTITY_STATE(kCharacterCond1, Mertens, setup_function42);
+		RESET_ENTITY_STATE(kCharacterCond2, Coudert, setup_chapter1Handler);
+		RESET_ENTITY_STATE(kCharacterTrainM,  Verges, setup_chapter1Handler);
 
-		getSavePoints()->push(kEntityChapters, kEntityMertens, kAction201431954);
-		getSavePoints()->push(kEntityChapters, kEntityCoudert, kAction201431954);
-		getSavePoints()->push(kEntityChapters, kEntityVerges, kAction201431954);
+		getSavePoints()->push(kCharacterMaster, kCharacterCond1, kCharacterAction201431954);
+		getSavePoints()->push(kCharacterMaster, kCharacterCond2, kCharacterAction201431954);
+		getSavePoints()->push(kCharacterMaster, kCharacterTrainM, kCharacterAction201431954);
 
-		RESET_ENTITY_STATE(kEntityKronos, Kronos, setup_function10);
-		RESET_ENTITY_STATE(kEntityKahina, Kahina, setup_cathDone);
-		RESET_ENTITY_STATE(kEntityAnna, Anna, setup_asleep);
-		RESET_ENTITY_STATE(kEntityAugust, August, setup_function34);
-		RESET_ENTITY_STATE(kEntityTatiana, Tatiana, setup_function24);
-		RESET_ENTITY_STATE(kEntityVassili, Vassili, setup_function7);
-		RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_function26);
-		RESET_ENTITY_STATE(kEntityMilos, Milos, setup_function18);
-		RESET_ENTITY_STATE(kEntityVesna, Vesna, setup_function15);
-		RESET_ENTITY_STATE(kEntityIvo, Ivo, setup_function17);
-		RESET_ENTITY_STATE(kEntitySalko, Salko, setup_function11);
-		RESET_ENTITY_STATE(kEntityFrancois, Francois, setup_function20);
-		RESET_ENTITY_STATE(kEntityMmeBoutarel, MmeBoutarel, setup_function16);
-		RESET_ENTITY_STATE(kEntityBoutarel, Boutarel, setup_function22);
-		RESET_ENTITY_STATE(kEntityRebecca, Rebecca, setup_function27);
-		RESET_ENTITY_STATE(kEntitySophie, Sophie, setup_function5);
-		RESET_ENTITY_STATE(kEntityMahmud, Mahmud, setup_resetChapter);
-		RESET_ENTITY_STATE(kEntityYasmin, Yasmin, setup_function10);
-		RESET_ENTITY_STATE(kEntityHadija, Hadija, setup_function12);
-		RESET_ENTITY_STATE(kEntityHadija, Alouan, setup_function12);
+		RESET_ENTITY_STATE(kCharacterKronos, Kronos, setup_function10);
+		RESET_ENTITY_STATE(kCharacterKahina, Kahina, setup_cathDone);
+		RESET_ENTITY_STATE(kCharacterAnna, Anna, setup_asleep);
+		RESET_ENTITY_STATE(kCharacterAugust, August, setup_function34);
+		RESET_ENTITY_STATE(kCharacterTatiana, Tatiana, setup_function24);
+		RESET_ENTITY_STATE(kCharacterVassili, Vassili, setup_function7);
+		RESET_ENTITY_STATE(kCharacterAlexei, Alexei, setup_function26);
+		RESET_ENTITY_STATE(kCharacterMilos, Milos, setup_function18);
+		RESET_ENTITY_STATE(kCharacterVesna, Vesna, setup_function15);
+		RESET_ENTITY_STATE(kCharacterIvo, Ivo, setup_function17);
+		RESET_ENTITY_STATE(kCharacterSalko, Salko, setup_function11);
+		RESET_ENTITY_STATE(kCharacterFrancois, Francois, setup_function20);
+		RESET_ENTITY_STATE(kCharacterMadame, MmeBoutarel, setup_function16);
+		RESET_ENTITY_STATE(kCharacterMonsieur, Boutarel, setup_function22);
+		RESET_ENTITY_STATE(kCharacterRebecca, Rebecca, setup_function27);
+		RESET_ENTITY_STATE(kCharacterSophie, Sophie, setup_function5);
+		RESET_ENTITY_STATE(kCharacterMahmud, Mahmud, setup_resetChapter);
+		RESET_ENTITY_STATE(kCharacterYasmin, Yasmin, setup_function10);
+		RESET_ENTITY_STATE(kCharacterHadija, Hadija, setup_function12);
+		RESET_ENTITY_STATE(kCharacterHadija, Alouan, setup_function12);
 
 		if (ENTITY_PARAM(0, 2) || ENTITY_PARAM(0, 3)) {
-			getSoundQueue()->stop(kEntityChapters);
+			getSoundQueue()->stop(kCharacterMaster);
 
 			ENTITY_PARAM(0, 2) = 0;
 			ENTITY_PARAM(0, 3) = 0;
@@ -267,7 +267,7 @@ IMPLEMENT_FUNCTION(6, Chapters, firstDream)
 		else if (getSoundQueue()->isBuffered("ZFX1007B"))
 			getSoundQueue()->fade("ZFX1007B");
 
-		getSound()->playSound(kEntityPlayer, "MUS008", kVolumeFull);
+		getSound()->playSound(kCharacterCath, "MUS008", kVolumeFull);
 		getInventory()->unselectItem();
 		// TODO: fade to black screen
 
@@ -284,8 +284,8 @@ IMPLEMENT_FUNCTION(6, Chapters, firstDream)
 		getProgress().field_18 = 4;
 		getState()->timeDelta = 0;
 
-		getObjects()->update(kObject63, kEntityChapters, kObjectLocationNone, kCursorNormal, kCursorHand);
-		getSavePoints()->push(kEntityChapters, kEntityTrain, kActionTrainStopRunning);
+		getObjects()->update(kObject63, kCharacterMaster, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getSavePoints()->push(kCharacterMaster, kCharacterClerk, kCharacterActionTrainStopRunning);
 
 		getProgress().isTrainRunning = false;
 
@@ -293,17 +293,17 @@ IMPLEMENT_FUNCTION(6, Chapters, firstDream)
 		setup_savegame(kSavegameTypeTime, kTimeNone);
 		break;
 
-	case kAction225358684:
+	case kCharacterAction225358684:
 		params->param2++;
 
 		if (params->param2 >= 3) {
 
 			if (!getSoundQueue()->isBuffered("LIB031", true))
-				getSound()->playSound(kEntityPlayer, "LIB031");
+				getSound()->playSound(kCharacterCath, "LIB031");
 
 			if (params->param2 == 3) {
 				getData()->car = kCarLocomotive;
-				getEntities()->drawSequenceLeft(kEntityChapters, "JUGL");
+				getEntities()->drawSequenceLeft(kCharacterMaster, "JUGL");
 			}
 		}
 		break;
@@ -312,7 +312,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Chapters, chapter1Init)
-	if (savepoint.action != kActionDefault)
+	if (savepoint.action != kCharacterActionDefault)
 		return;
 
 	getProgress().chapter = kChapter1;
@@ -342,8 +342,8 @@ IMPLEMENT_FUNCTION(7, Chapters, chapter1Init)
 
 	getProgress().field_7C = 1;
 
-	getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-	getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+	getObjects()->update(kObjectCompartment1, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+	getObjects()->update(kObjectOutsideTylerCompartment, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
 	for (uint i = kObjectCompartment1; i <= kObjectCompartment8; i++) {
 		getObjects()->updateModel((ObjectIndex) i, kObjectModel2);
@@ -360,22 +360,22 @@ IMPLEMENT_FUNCTION(7, Chapters, chapter1Init)
 	getObjects()->updateModel(kObject98, kObjectModel1);
 	getObjects()->updateModel(kObjectRestaurantCar, kObjectModel1);
 
-	getObjects()->update(kObject25, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-	getObjects()->update(kObjectTrainTimeTable, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-	getObjects()->update(kObjectRedSleepingCar, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-	getObjects()->update(kObject28, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-	getObjects()->update(kObject56, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-	getObjects()->update(kObject54, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-	getObjects()->update(kObjectRestaurantCar, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-	getObjects()->update(kObject59, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-	getObjects()->update(kObject66, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-	getObjects()->update(kObject64, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-	getObjects()->update(kObject65, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-	getObjects()->update(kObject69, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-	getObjects()->update(kObject98, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-	getObjects()->update(kObjectHandleOutsideLeft, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
-	getObjects()->update(kObjectHandleOutsideRight, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
-	getObjects()->update(kObject101, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+	getObjects()->update(kObject25, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
+	getObjects()->update(kObjectTrainTimeTable, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
+	getObjects()->update(kObjectRedSleepingCar, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
+	getObjects()->update(kObject28, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
+	getObjects()->update(kObject56, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
+	getObjects()->update(kObject54, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
+	getObjects()->update(kObjectRestaurantCar, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
+	getObjects()->update(kObject59, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
+	getObjects()->update(kObject66, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
+	getObjects()->update(kObject64, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
+	getObjects()->update(kObject65, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
+	getObjects()->update(kObject69, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
+	getObjects()->update(kObject98, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
+	getObjects()->update(kObjectHandleOutsideLeft, kCharacterCath, kObjectLocation1, kCursorNormal, kCursorHand);
+	getObjects()->update(kObjectHandleOutsideRight, kCharacterCath, kObjectLocation1, kCursorNormal, kCursorHand);
+	getObjects()->update(kObject101, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 	setup_chapter1Handler();
 IMPLEMENT_FUNCTION_END
@@ -387,7 +387,7 @@ IMPLEMENT_FUNCTION(8, Chapters, chapter1Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!getProgress().isTrainRunning || getState()->time >= kTime1458000)
 			goto label_processStations;
 
@@ -536,12 +536,12 @@ label_chapter1_next:
 		}
 		break;
 
-	case kActionEndSound:
+	case kCharacterActionEndSound:
 		if (ENTITY_PARAM(0, 2)) {
 
-			getSavePoints()->push(kEntityChapters, kEntityTrain, kActionTrainStopRunning);
+			getSavePoints()->push(kCharacterMaster, kCharacterClerk, kCharacterActionTrainStopRunning);
 
-			if (getEntityData(kEntityPlayer)->location != kLocationOutsideTrain) {
+			if (getEntityData(kCharacterCath)->location != kLocationOutsideTrain) {
 				playSteam();
 				break;
 			}
@@ -558,7 +558,7 @@ label_chapter1_next:
 				break;
 			}
 
-			CarIndex car = getEntityData(kEntityPlayer)->car;
+			CarIndex car = getEntityData(kCharacterCath)->car;
 			if (car < kCarRedSleeping || car > kCarCoalTender) {
 				if (car < kCarBaggageRear || car > kCarGreenSleeping) {
 					playSteam();
@@ -566,7 +566,7 @@ label_chapter1_next:
 				}
 
 				if (getEntities()->isPlayerPosition(kCarGreenSleeping, 98)) {
-					getSound()->playSound(kEntityPlayer, "LIB015");
+					getSound()->playSound(kCharacterCath, "LIB015");
 					getScenes()->loadSceneFromPosition(kCarGreenSleeping, 71);
 					playSteam();
 					break;
@@ -587,17 +587,17 @@ label_chapter1_next:
 			ENTITY_PARAM(0, 3) = 0;
 
 			if (params->param4) {
-				getSavePoints()->push(kEntityChapters, getProgress().field_24 ? kEntityVerges : kEntityMertens, getProgress().field_24 ? kAction168187490 : kAction224122407);
+				getSavePoints()->push(kCharacterMaster, getProgress().field_24 ? kCharacterTrainM : kCharacterCond1, getProgress().field_24 ? kCharacterAction168187490 : kCharacterAction224122407);
 				params->param4 = 0;
 			}
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param2 = 225 * (4 * rnd(5) + 20);
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (!params->param3) {
 			if (getEntities()->isPlayerPosition(kCarGreenSleeping, 1)) {
 				getState()->time = kTimeChapter1;
@@ -607,7 +607,7 @@ label_chapter1_next:
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -691,12 +691,12 @@ label_chapter1_next:
 		}
 		break;
 
-	case kAction169629818:
+	case kCharacterAction169629818:
 		setCallback(22);
 		setup_enterStation("Unschedu", kCityPolice);
 		break;
 
-	case kActionEndChapter:
+	case kCharacterActionEndChapter:
 		getProgress().field_18 = 3;
 
 		if (getState()->time >= kTimeChapter1End) {
@@ -711,15 +711,15 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Chapters, chapter1Next)
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 		// Reset sound cache
 		if (ENTITY_PARAM(0, 2) || ENTITY_PARAM(0, 3)) {
-			getSoundQueue()->stop(kEntityChapters);
+			getSoundQueue()->stop(kCharacterMaster);
 			ENTITY_PARAM(0, 2) = 0;
 			ENTITY_PARAM(0, 3) = 0;
 		}
 
-		getSound()->playSound(kEntityPlayer, "MUS008", kVolumeFull);
+		getSound()->playSound(kCharacterCath, "MUS008", kVolumeFull);
 		getInventory()->unselectItem();
 		// TODO: fade to black screen
 
@@ -736,7 +736,7 @@ IMPLEMENT_FUNCTION(10, Chapters, chapter2)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		// Setup for chapter 2 in case it hasn't been done before
 		if (getProgress().chapter != kChapter2) {
 			getProgress().chapter = kChapter2;
@@ -752,10 +752,10 @@ IMPLEMENT_FUNCTION(10, Chapters, chapter2)
 		setup_savegame(kSavegameTypeTime, kTimeNone);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1) {
 			if (!_engine->getResourceManager()->loadArchive(kArchiveCd2)) {
-				getMenu()->show(false, kSavegameTypeIndex, 0);
+				getMenuOld()->show(false, kSavegameTypeIndex, 0);
 				return;
 			}
 
@@ -769,7 +769,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Chapters, chapter2Init)
-	if (savepoint.action != kActionDefault)
+	if (savepoint.action != kCharacterActionDefault)
 		return;
 
 	getProgress().eventCorpseMovedFromFloor = true;
@@ -786,8 +786,8 @@ IMPLEMENT_FUNCTION(11, Chapters, chapter2Init)
 	getInventory()->get(kItemCorpse)->location = kObjectLocationNone;
 	getInventory()->get(kItemCorpse)->inPocket = false;
 
-	getObjects()->update(kObjectHandleOutsideLeft, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
-	getObjects()->update(kObjectHandleOutsideRight, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
+	getObjects()->update(kObjectHandleOutsideLeft, kCharacterCath, kObjectLocation1, kCursorNormal, kCursorHand);
+	getObjects()->update(kObjectHandleOutsideRight, kCharacterCath, kObjectLocation1, kCursorNormal, kCursorHand);
 
 	getInventory()->setLocationAndProcess(kItemBeetle, kObjectLocation3);
 	getInventory()->setLocationAndProcess(kItem3, kObjectLocation1);
@@ -802,23 +802,23 @@ IMPLEMENT_FUNCTION(11, Chapters, chapter2Init)
 
 	params->param1 = 40;
 
-	getSavePoints()->push(kEntityChapters, kEntityTables0, kActionDrawTablesWithChairs);
-	getSavePoints()->push(kEntityChapters, kEntityTables1, kActionDrawTablesWithChairs);
-	getSavePoints()->push(kEntityChapters, kEntityTables2, kActionDrawTablesWithChairs);
-	getSavePoints()->push(kEntityChapters, kEntityTables3, kActionDrawTablesWithChairs);
-	getSavePoints()->push(kEntityChapters, kEntityTables4, kActionDrawTablesWithChairs);
+	getSavePoints()->push(kCharacterMaster, kCharacterTableA, kCharacterActionDrawTablesWithChairs);
+	getSavePoints()->push(kCharacterMaster, kCharacterTableB, kCharacterActionDrawTablesWithChairs);
+	getSavePoints()->push(kCharacterMaster, kCharacterTableC, kCharacterActionDrawTablesWithChairs);
+	getSavePoints()->push(kCharacterMaster, kCharacterTableD, kCharacterActionDrawTablesWithChairs);
+	getSavePoints()->push(kCharacterMaster, kCharacterTableE, kCharacterActionDrawTablesWithChairs);
 
-	getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-	getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+	getObjects()->update(kObjectCompartment1, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+	getObjects()->update(kObjectOutsideTylerCompartment, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
 	// Reset sound cache
 	if (ENTITY_PARAM(0, 2) || ENTITY_PARAM(0, 3)) {
-		getSoundQueue()->stop(kEntityChapters);
+		getSoundQueue()->stop(kCharacterMaster);
 		ENTITY_PARAM(0, 2) = 0;
 		ENTITY_PARAM(0, 3) = 0;
 	}
 
-	getAction()->playAnimation(kEventTrainPassing);
+	getActionOld()->playAnimation(kEventTrainPassing);
 
 	if (getInventory()->hasItem(kItemScarf))
 		getScenes()->loadScene(kScene41);
@@ -834,7 +834,7 @@ IMPLEMENT_FUNCTION(12, Chapters, chapter2Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!getProgress().isTrainRunning)
 			break;
 
@@ -847,11 +847,11 @@ IMPLEMENT_FUNCTION(12, Chapters, chapter2Handler)
 		params->param2 = 0;
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 225 * (4 * rnd(5) + 20);
 		break;
 
-	case kActionChapter3:
+	case kCharacterActionChapter3:
 		setup_chapter3();
 		break;
 	}
@@ -859,7 +859,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Chapters, chapter3)
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 		// Setup for chapter 3 in case it hasn't been done before
 		if (getProgress().chapter != kChapter3) {
 			getProgress().chapter = kChapter3;
@@ -885,25 +885,25 @@ IMPLEMENT_FUNCTION(14, Chapters, chapter3Init)
 	default:
 		break;
 
-	case kActionDefault:
-		getSavePoints()->push(kEntityChapters, kEntityTables0, kActionDrawTablesWithChairs);
-		getSavePoints()->push(kEntityChapters, kEntityTables1, kActionDrawTablesWithChairs);
-		getSavePoints()->push(kEntityChapters, kEntityTables2, kActionDrawTablesWithChairs);
-		getSavePoints()->push(kEntityChapters, kEntityTables3, kActionDrawTablesWithChairs);
-		getSavePoints()->push(kEntityChapters, kEntityTables4, kActionDrawTablesWithChairs);
-		getSavePoints()->push(kEntityChapters, kEntityTables5, kActionDrawTablesWithChairs);
+	case kCharacterActionDefault:
+		getSavePoints()->push(kCharacterMaster, kCharacterTableA, kCharacterActionDrawTablesWithChairs);
+		getSavePoints()->push(kCharacterMaster, kCharacterTableB, kCharacterActionDrawTablesWithChairs);
+		getSavePoints()->push(kCharacterMaster, kCharacterTableC, kCharacterActionDrawTablesWithChairs);
+		getSavePoints()->push(kCharacterMaster, kCharacterTableD, kCharacterActionDrawTablesWithChairs);
+		getSavePoints()->push(kCharacterMaster, kCharacterTableE, kCharacterActionDrawTablesWithChairs);
+		getSavePoints()->push(kCharacterMaster, kCharacterTableF, kCharacterActionDrawTablesWithChairs);
 
 		getProgress().isTrainRunning = true;
 
-		getObjects()->update(kObjectHandleOutsideLeft, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
-		getObjects()->update(kObjectHandleOutsideRight, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
+		getObjects()->update(kObjectHandleOutsideLeft, kCharacterCath, kObjectLocation1, kCursorNormal, kCursorHand);
+		getObjects()->update(kObjectHandleOutsideRight, kCharacterCath, kObjectLocation1, kCursorNormal, kCursorHand);
 		getInventory()->setLocationAndProcess(kItemBriefcase, kObjectLocation1);
 		getInventory()->setLocationAndProcess(kItem3, kObjectLocation1);
 		getObjects()->updateModel(kObjectCompartment1, kObjectModel2);
-		getObjects()->update(kObject107, kEntityPlayer, kObjectLocation3, kCursorKeepValue, kCursorKeepValue);
+		getObjects()->update(kObject107, kCharacterCath, kObjectLocation3, kCursorKeepValue, kCursorKeepValue);
 
 		if (ENTITY_PARAM(0, 2) || ENTITY_PARAM(0, 3)) {
-			getSoundQueue()->stop(kEntityChapters);
+			getSoundQueue()->stop(kCharacterMaster);
 			ENTITY_PARAM(0, 2) = 0;
 			ENTITY_PARAM(0, 3) = 0;
 		}
@@ -917,7 +917,7 @@ IMPLEMENT_FUNCTION(14, Chapters, chapter3Init)
 		setup_savegame(kSavegameTypeTime, kTimeNone);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
 			setup_chapter3Handler();
 		break;
@@ -931,7 +931,7 @@ IMPLEMENT_FUNCTION(15, Chapters, chapter3Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getProgress().isTrainRunning) {
 			if (Entity::updateParameter(params->param4, getState()->timeTicks, params->param1)) {
 				getSound()->playLocomotiveSound();
@@ -947,11 +947,11 @@ IMPLEMENT_FUNCTION(15, Chapters, chapter3Handler)
 				break;
 
 			case 0:
-				getSound()->playSound(kEntityPlayer, "ZFX1008", (SoundFlag)(rnd(15) + 2));
+				getSound()->playSound(kCharacterCath, "ZFX1008", (SoundFlag)(rnd(15) + 2));
 				break;
 
 			case 1:
-				getSound()->playSound(kEntityPlayer, "ZFX1009", (SoundFlag)(rnd(15) + 2));
+				getSound()->playSound(kCharacterCath, "ZFX1009", (SoundFlag)(rnd(15) + 2));
 				break;
 			}
 
@@ -999,23 +999,23 @@ label_callback_8:
 		timeCheckEnterStation(kTimeCityVienna, CURRENT_PARAM(1, 7), 9, "Vienna", kCityVienna);
 		break;
 
-	case kActionEndSound:
+	case kCharacterActionEndSound:
 		if (ENTITY_PARAM(0, 2)) {
-			getSavePoints()->push(kEntityChapters, kEntityTrain, kActionTrainStopRunning);
+			getSavePoints()->push(kCharacterMaster, kCharacterClerk, kCharacterActionTrainStopRunning);
 
-			if (getEntityData(kEntityPlayer)->location == kLocationOutsideTrain) {
+			if (getEntityData(kCharacterCath)->location == kLocationOutsideTrain) {
 
 				if (getEntities()->isOutsideAlexeiWindow()) {
 					getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
 				} else if (getEntities()->isOutsideAnnaWindow()) {
 					getScenes()->loadSceneFromPosition(kCarRedSleeping, 49);
 				} else {
-					CarIndex car = getEntityData(kEntityPlayer)->car;
+					CarIndex car = getEntityData(kCharacterCath)->car;
 
 					if (car < kCarRedSleeping || car > kCarCoalTender) {
 						if (car >= kCarBaggageRear && car <= kCarGreenSleeping) {
 							if (getEntities()->isPlayerPosition(kCarGreenSleeping, 98)) {
-								getSound()->playSound(kEntityPlayer, "LIB015");
+								getSound()->playSound(kCharacterCath, "LIB015");
 								getScenes()->loadSceneFromPosition(kCarGreenSleeping, 71);
 							} else {
 								getScenes()->loadSceneFromPosition(kCarGreenSleeping, 82);
@@ -1043,12 +1043,12 @@ label_callback_8:
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 225 * (4 * rnd(5) + 20);
 		params->param2 = 225 * (4 * rnd(6) + 8);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1092,12 +1092,12 @@ IMPLEMENT_FUNCTION(16, Chapters, viennaEvents)
 	default:
 		break;
 
-	case kActionDefault:
-		getEntityData(kEntityPlayer)->car = kCarLocomotive;
-		if (getSoundQueue()->isBuffered(kEntityAbbot))
-			getSoundQueue()->fade(kEntityAbbot);
+	case kCharacterActionDefault:
+		getEntityData(kCharacterCath)->car = kCarLocomotive;
+		if (getSoundQueue()->isBuffered(kCharacterAbbot))
+			getSoundQueue()->fade(kCharacterAbbot);
 
-		if (!getEvent(kEventAugustBringBriefcase)) {
+		if (!HELPERgetEvent(kEventAugustBringBriefcase)) {
 			setCallback(1);
 			setup_savegame(kSavegameTypeEvent, kEventViennaAugustUnloadGuns);
 			break;
@@ -1119,35 +1119,35 @@ IMPLEMENT_FUNCTION(16, Chapters, viennaEvents)
 		setup_savegame(kSavegameTypeEvent, kEventViennaContinueGame);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getAction()->playAnimation(kEventViennaAugustUnloadGuns);
-			if (getEvent(kEventConcertLeaveWithBriefcase))
+			getActionOld()->playAnimation(kEventViennaAugustUnloadGuns);
+			if (HELPERgetEvent(kEventConcertLeaveWithBriefcase))
 				getLogic()->gameOver(kSavegameTypeTime, kTime2187000, kSceneNone, true);
-			else if (getEvent(kEventCathJumpDownCeiling))
+			else if (HELPERgetEvent(kEventCathJumpDownCeiling))
 				getLogic()->gameOver(kSavegameTypeEvent, kEventCathJumpDownCeiling, kSceneNone, true);
 			else
 				getLogic()->gameOver(kSavegameTypeTime, kTime2155500, kSceneNone, true);
 			break;
 
 		case 2:
-			getAction()->playAnimation(kEventViennaKronosFirebird);
-			if (getEvent(kEventKronosBringEggCeiling))
+			getActionOld()->playAnimation(kEventViennaKronosFirebird);
+			if (HELPERgetEvent(kEventKronosBringEggCeiling))
 				getLogic()->gameOver(kSavegameTypeEvent2, kEventKronosBringEggCeiling, kSceneGameOverVienna1, true);
-			else if (getEvent(kEventKronosBringEgg)) {
+			else if (HELPERgetEvent(kEventKronosBringEgg)) {
 				getLogic()->gameOver(kSavegameTypeTime, kTime2155500, kSceneGameOverVienna1, true);
 			} else {
 				if (getProgress().field_C0) {
-					if (getEvent(kEventKronosReturnBriefcase))
+					if (HELPERgetEvent(kEventKronosReturnBriefcase))
 						getLogic()->gameOver(kSavegameTypeTime, getProgress().field_C0, kSceneGameOverVienna2, true);
 					else
 						getLogic()->gameOver(kSavegameTypeTime, kTime2155500, kSceneGameOverVienna2, true);
 				} else {
-					if (getEvent(kEventKronosReturnBriefcase))
+					if (HELPERgetEvent(kEventKronosReturnBriefcase))
 						getLogic()->gameOver(kSavegameTypeEvent, kEventKronosReturnBriefcase, kSceneGameOverVienna, true);
 					else
 						getLogic()->gameOver(kSavegameTypeTime, kTime2155500, kSceneGameOverVienna, true);
@@ -1156,12 +1156,12 @@ IMPLEMENT_FUNCTION(16, Chapters, viennaEvents)
 			break;
 
 		case 3:
-			getAction()->playAnimation(kEventVergesAnnaDead);
+			getActionOld()->playAnimation(kEventVergesAnnaDead);
 			getLogic()->gameOver(kSavegameTypeTime, kTime2250000, kSceneGameOverAnnaDied, true);
 			break;
 
 		case 4:
-			getAction()->playAnimation(kEventViennaContinueGame);
+			getActionOld()->playAnimation(kEventViennaContinueGame);
 			setup_chapter4();
 			break;
 		}
@@ -1175,7 +1175,7 @@ IMPLEMENT_FUNCTION(17, Chapters, chapter4)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		// Setup for chapter 4 in case it hasn't been done before
 		if (getProgress().chapter != kChapter4) {
 			getProgress().chapter = kChapter4;
@@ -1191,10 +1191,10 @@ IMPLEMENT_FUNCTION(17, Chapters, chapter4)
 		setup_savegame(kSavegameTypeTime, kTimeNone);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1) {
 			if (!_engine->getResourceManager()->loadArchive(kArchiveCd3)) {
-				getMenu()->show(false, kSavegameTypeIndex, 0);
+				getMenuOld()->show(false, kSavegameTypeIndex, 0);
 				return;
 			}
 
@@ -1209,7 +1209,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Chapters, chapter4Init)
-	if (savepoint.action != kActionDefault)
+	if (savepoint.action != kCharacterActionDefault)
 		return;
 
 	getSoundQueue()->endAmbient();
@@ -1217,16 +1217,16 @@ IMPLEMENT_FUNCTION(18, Chapters, chapter4Init)
 
 	getProgress().isTrainRunning = true;
 
-	getObjects()->update(kObjectHandleOutsideLeft, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
-	getObjects()->update(kObjectHandleOutsideRight, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
+	getObjects()->update(kObjectHandleOutsideLeft, kCharacterCath, kObjectLocation1, kCursorNormal, kCursorHand);
+	getObjects()->update(kObjectHandleOutsideRight, kCharacterCath, kObjectLocation1, kCursorNormal, kCursorHand);
 
-	getSavePoints()->push(kEntityChapters, kEntityTrain, kActionTrainStartRunning);
-	getSavePoints()->push(kEntityChapters, kEntityTables0, kActionDrawTablesWithChairs);
-	getSavePoints()->push(kEntityChapters, kEntityTables1, kActionDrawTablesWithChairs);
-	getSavePoints()->push(kEntityChapters, kEntityTables2, kActionDrawTablesWithChairs);
-	getSavePoints()->push(kEntityChapters, kEntityTables3, kActionDrawTablesWithChairs);
-	getSavePoints()->push(kEntityChapters, kEntityTables4, kActionDrawTablesWithChairs);
-	getSavePoints()->push(kEntityChapters, kEntityTables5, kActionDrawTablesWithChairs);
+	getSavePoints()->push(kCharacterMaster, kCharacterClerk, kCharacterActionTrainStartRunning);
+	getSavePoints()->push(kCharacterMaster, kCharacterTableA, kCharacterActionDrawTablesWithChairs);
+	getSavePoints()->push(kCharacterMaster, kCharacterTableB, kCharacterActionDrawTablesWithChairs);
+	getSavePoints()->push(kCharacterMaster, kCharacterTableC, kCharacterActionDrawTablesWithChairs);
+	getSavePoints()->push(kCharacterMaster, kCharacterTableD, kCharacterActionDrawTablesWithChairs);
+	getSavePoints()->push(kCharacterMaster, kCharacterTableE, kCharacterActionDrawTablesWithChairs);
+	getSavePoints()->push(kCharacterMaster, kCharacterTableF, kCharacterActionDrawTablesWithChairs);
 
 	getScenes()->loadSceneFromItemPosition(kItem3);
 
@@ -1236,10 +1236,10 @@ IMPLEMENT_FUNCTION(18, Chapters, chapter4Init)
 		getScenes()->loadSceneFromItemPosition(kItemBeetle);
 
 	getObjects()->updateModel(kObject25, kObjectModel2);
-	getObjects()->update(kObject107, kEntityPlayer, kObjectLocation3, kCursorKeepValue, kCursorKeepValue);
+	getObjects()->update(kObject107, kCharacterCath, kObjectLocation3, kCursorKeepValue, kCursorKeepValue);
 
 	if (ENTITY_PARAM(0, 2) || ENTITY_PARAM(0, 3)) {
-		getSoundQueue()->stop(kEntityChapters);
+		getSoundQueue()->stop(kCharacterMaster);
 		ENTITY_PARAM(0, 2) = 0;
 		ENTITY_PARAM(0, 3) = 0;
 	}
@@ -1263,7 +1263,7 @@ IMPLEMENT_FUNCTION(19, Chapters, chapter4Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getProgress().isTrainRunning) {
 			if (Entity::updateParameter(params->param6, getState()->timeTicks, params->param4)) {
 				getSound()->playLocomotiveSound();
@@ -1279,11 +1279,11 @@ IMPLEMENT_FUNCTION(19, Chapters, chapter4Handler)
 				break;
 
 			case 0:
-				getSound()->playSound(kEntityPlayer, "ZFX1008", (SoundFlag)(rnd(15) + 2));
+				getSound()->playSound(kCharacterCath, "ZFX1008", (SoundFlag)(rnd(15) + 2));
 				break;
 
 			case 1:
-				getSound()->playSound(kEntityPlayer, "ZFX1009", (SoundFlag)(rnd(15) + 2));
+				getSound()->playSound(kCharacterCath, "ZFX1009", (SoundFlag)(rnd(15) + 2));
 				break;
 			}
 
@@ -1341,12 +1341,12 @@ label_callback_4:
 		}
 		break;
 
-	case kActionEndSound:
+	case kCharacterActionEndSound:
 		if (ENTITY_PARAM(0, 2)) {
 
-			getSavePoints()->push(kEntityChapters, kEntityTrain, kActionTrainStopRunning);
+			getSavePoints()->push(kCharacterMaster, kCharacterClerk, kCharacterActionTrainStopRunning);
 
-			if (getEntityData(kEntityPlayer)->location != kLocationOutsideTrain) {
+			if (getEntityData(kCharacterCath)->location != kLocationOutsideTrain) {
 				playSteam();
 				break;
 			}
@@ -1363,7 +1363,7 @@ label_callback_4:
 				break;
 			}
 
-			CarIndex car = getEntityData(kEntityPlayer)->car;
+			CarIndex car = getEntityData(kCharacterCath)->car;
 			if (car < kCarRedSleeping || car > kCarCoalTender) {
 				if (car < kCarBaggageRear || car > kCarGreenSleeping) {
 					playSteam();
@@ -1371,7 +1371,7 @@ label_callback_4:
 				}
 
 				if (getEntities()->isPlayerPosition(kCarGreenSleeping, 98)) {
-					getSound()->playSound(kEntityPlayer, "LIB015");
+					getSound()->playSound(kCharacterCath, "LIB015");
 					getScenes()->loadSceneFromPosition(kCarGreenSleeping, 71);
 					playSteam();
 					break;
@@ -1391,23 +1391,23 @@ label_callback_4:
 			getSoundQueue()->startAmbient();
 			ENTITY_PARAM(0, 3) = 0;
 		} else if (!params->param2 && !params->param3) {
-			getSound()->playSound(kEntityChapters, "ZFX1001");
+			getSound()->playSound(kCharacterMaster, "ZFX1001");
 		}
 		break;
 
-	case kActionExitCompartment:
-		getEntities()->clearSequences(kEntityChapters);
+	case kCharacterActionExitCompartment:
+		getEntities()->clearSequences(kCharacterMaster);
 
 		setCallback(11);
 		setup_savegame(kSavegameTypeTime, kTimeNone);
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param4 = 225 * (4 * rnd(5) + 20);
 		params->param5 = 225 * (4 * rnd(6) + 8);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -1425,22 +1425,22 @@ label_callback_4:
 			goto label_callback_4;
 
 		case 5:
-			if (getSoundQueue()->isBuffered(kEntityChapters))
-				getSoundQueue()->stop(kEntityChapters);
+			if (getSoundQueue()->isBuffered(kCharacterMaster))
+				getSoundQueue()->stop(kCharacterMaster);
 
-			getAction()->playAnimation(kEventTrainExplosionBridge);
+			getActionOld()->playAnimation(kEventTrainExplosionBridge);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneNone, true);
 			break;
 
 		case 6:
 			getSoundQueue()->endAmbient();
-			getAction()->playAnimation(kEventTylerCastleDream);
+			getActionOld()->playAnimation(kEventTylerCastleDream);
 			getSoundQueue()->startAmbient();
 
 			getProgress().field_18 = 1;
 
 			getScenes()->loadScene(kScene41);
-			getSavePoints()->push(kEntityChapters, kEntityTatiana, kAction169360385);
+			getSavePoints()->push(kCharacterMaster, kCharacterTatiana, kCharacterAction169360385);
 
 			getState()->timeDelta = 1;
 			getState()->time = kTime2511900;
@@ -1452,31 +1452,31 @@ label_callback_4:
 			getData()->entityPosition = kPosition_1500;
 			getData()->location = kLocationInsideCompartment;
 
-			getSound()->playSound(kEntityChapters, "ZFX1001");
+			getSound()->playSound(kCharacterMaster, "ZFX1001");
 			break;
 
 		case 7:
-			getAction()->playAnimation(kEventTrainExplosionBridge);
+			getActionOld()->playAnimation(kEventTrainExplosionBridge);
 			getLogic()->gameOver(kSavegameTypeTime, kTime2430000, kSceneNone, true);
 			break;
 
 		case 8:
-			getSound()->playSound(kEntityPlayer, "MUS022");
+			getSound()->playSound(kCharacterCath, "MUS022");
 
 			if (getState()->time < kTime2517300)
 				getState()->time = kTime2517300;
 			break;
 
 		case 9:
-			getAction()->playAnimation(kEventCathDefusingBomb);
+			getActionOld()->playAnimation(kEventCathDefusingBomb);
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 73);
 			break;
 
 		case 10:
-			getAction()->playAnimation(kEventDefuseBomb);
-			RESET_ENTITY_STATE(kEntityAbbot, Abbot, setup_afterBomb);
-			getSavePoints()->push(kEntityChapters, kEntityAnna, kAction191001984);
-			getSavePoints()->push(kEntityChapters, kEntityCoudert, kAction191001984);
+			getActionOld()->playAnimation(kEventDefuseBomb);
+			RESET_ENTITY_STATE(kCharacterAbbot, Abbot, setup_afterBomb);
+			getSavePoints()->push(kCharacterMaster, kCharacterAnna, kCharacterAction191001984);
+			getSavePoints()->push(kCharacterMaster, kCharacterCond2, kCharacterAction191001984);
 			getScenes()->loadSceneFromItemPosition(kItem2);
 
 			getInventory()->get(kItem2)->location = kObjectLocationNone;
@@ -1487,20 +1487,20 @@ label_callback_4:
 
 		case 11:
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 74);
-			getSound()->playSound(kEntityTrain, "ZFX4001", kVolumeFull);
+			getSound()->playSound(kCharacterClerk, "ZFX4001", kVolumeFull);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneNone, true);
 			break;
 		}
 		break;
 
-	case kActionChapter5:
+	case kCharacterActionChapter5:
 		setup_chapter5();
 		break;
 
-	case kAction156435676:
-		getSavePoints()->push(kEntityChapters, kEntityTatiana, kAction169360385);
-		getSavePoints()->push(kEntityChapters, kEntityCoudert, kAction201431954);
-		getSavePoints()->push(kEntityChapters, kEntityVerges, kAction201431954);
+	case kCharacterAction156435676:
+		getSavePoints()->push(kCharacterMaster, kCharacterTatiana, kCharacterAction169360385);
+		getSavePoints()->push(kCharacterMaster, kCharacterCond2, kCharacterAction201431954);
+		getSavePoints()->push(kCharacterMaster, kCharacterTrainM, kCharacterAction201431954);
 
 		getState()->timeDelta = 1;
 		getState()->time = kTime2511900;
@@ -1511,30 +1511,30 @@ label_callback_4:
 		getData()->entityPosition = kPosition_1500;
 		getData()->location = kLocationInsideCompartment;
 
-		getSound()->playSound(kEntityChapters, "ZFX1001");
+		getSound()->playSound(kCharacterMaster, "ZFX1001");
 		break;
 
-	case kAction158610240:
+	case kCharacterAction158610240:
 		setCallback(8);
 		setup_savegame(kSavegameTypeTime, kTimeNone);
 		break;
 
-	case kAction169300225:
+	case kCharacterAction169300225:
 		if (getState()->time < kTime2519100)
 			getState()->time = kTime2519100;
 
 		params->param3 = 1;
 
-		getEntities()->drawSequenceRight(kEntityChapters, "BOMB");
+		getEntities()->drawSequenceRight(kCharacterMaster, "BOMB");
 		break;
 
-	case kAction190346110:
+	case kCharacterAction190346110:
 		getProgress().field_18 = 3;
 
 		params->param1 = 1;
 
 		if (ENTITY_PARAM(0, 2) || ENTITY_PARAM(0, 3)) {
-			getSoundQueue()->stop(kEntityChapters);
+			getSoundQueue()->stop(kCharacterMaster);
 
 			ENTITY_PARAM(0, 2) = 0;
 			ENTITY_PARAM(0, 3) = 0;
@@ -1543,7 +1543,7 @@ label_callback_4:
 		// BUG: the original game fades to black screen twice, before MUS008 starts playing
 		// (the second call just makes a delay)
 
-		getSound()->playSound(kEntityPlayer, "MUS008", kVolumeFull);
+		getSound()->playSound(kCharacterCath, "MUS008", kVolumeFull);
 		getInventory()->unselectItem();
 
 		// TODO: fade to black screen
@@ -1552,36 +1552,36 @@ label_callback_4:
 			getSoundQueue()->updateQueue();
 
 		if (getInventory()->hasItem(kItemBomb)) {
-			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_function47);
-			RESET_ENTITY_STATE(kEntityAnna, Anna, setup_sulking);
-			RESET_ENTITY_STATE(kEntityAugust, August, setup_function65);
-			RESET_ENTITY_STATE(kEntityMertens, Mertens, setup_function48);
-			RESET_ENTITY_STATE(kEntityCoudert, Coudert, setup_function53);
-			RESET_ENTITY_STATE(kEntityWaiter1, Waiter1, setup_serving4);
-			RESET_ENTITY_STATE(kEntityWaiter2, Waiter2, setup_serving4);
-			RESET_ENTITY_STATE(kEntityPascale, Pascale, setup_chapter4Handler);
-			RESET_ENTITY_STATE(kEntityVerges, Verges, setup_chapter4Handler);
-			RESET_ENTITY_STATE(kEntityTatiana, Tatiana, setup_function49);
-			RESET_ENTITY_STATE(kEntityAbbot, Abbot, setup_function44);
-			RESET_ENTITY_STATE(kEntityMilos, Milos, setup_function32);
-			RESET_ENTITY_STATE(kEntityVesna, Vesna, setup_function27);
-			RESET_ENTITY_STATE(kEntityIvo, Ivo, setup_function29);
-			RESET_ENTITY_STATE(kEntitySalko, Salko, setup_function22);
-			RESET_ENTITY_STATE(kEntityMmeBoutarel, MmeBoutarel, setup_function25);
-			RESET_ENTITY_STATE(kEntityBoutarel, Boutarel, setup_function35);
-			RESET_ENTITY_STATE(kEntityRebecca, Rebecca, setup_function45);
-			RESET_ENTITY_STATE(kEntitySophie, Sophie, setup_function9);
-			RESET_ENTITY_STATE(kEntityYasmin, Yasmin, setup_function17);
-			RESET_ENTITY_STATE(kEntityHadija, Hadija, setup_function19);
-			RESET_ENTITY_STATE(kEntityAlouan, Alouan, setup_function19);
-			RESET_ENTITY_STATE(kEntityMax, Max, setup_inCageFriendly);
-			getSavePoints()->push(kEntityChapters, kEntityAnna, kAction201431954);
-			getSavePoints()->push(kEntityChapters, kEntityMertens, kAction201431954);
-			getSavePoints()->push(kEntityChapters, kEntityCoudert, kAction201431954);
-			getSavePoints()->push(kEntityChapters, kEntityWaiter1, kAction201431954);
-			getSavePoints()->push(kEntityChapters, kEntityWaiter2, kAction201431954);
-			getSavePoints()->push(kEntityChapters, kEntityPascale, kAction201431954);
-			getSavePoints()->push(kEntityChapters, kEntityVerges, kAction201431954);
+			RESET_ENTITY_STATE(kCharacterAlexei, Alexei, setup_function47);
+			RESET_ENTITY_STATE(kCharacterAnna, Anna, setup_sulking);
+			RESET_ENTITY_STATE(kCharacterAugust, August, setup_function65);
+			RESET_ENTITY_STATE(kCharacterCond1, Mertens, setup_function48);
+			RESET_ENTITY_STATE(kCharacterCond2, Coudert, setup_function53);
+			RESET_ENTITY_STATE(kCharacterWaiter1, Waiter1, setup_serving4);
+			RESET_ENTITY_STATE(kCharacterWaiter2, Waiter2, setup_serving4);
+			RESET_ENTITY_STATE(kCharacterHeadWait, Pascale, setup_chapter4Handler);
+			RESET_ENTITY_STATE(kCharacterTrainM, Verges, setup_chapter4Handler);
+			RESET_ENTITY_STATE(kCharacterTatiana, Tatiana, setup_function49);
+			RESET_ENTITY_STATE(kCharacterAbbot, Abbot, setup_function44);
+			RESET_ENTITY_STATE(kCharacterMilos, Milos, setup_function32);
+			RESET_ENTITY_STATE(kCharacterVesna, Vesna, setup_function27);
+			RESET_ENTITY_STATE(kCharacterIvo, Ivo, setup_function29);
+			RESET_ENTITY_STATE(kCharacterSalko, Salko, setup_function22);
+			RESET_ENTITY_STATE(kCharacterMadame, MmeBoutarel, setup_function25);
+			RESET_ENTITY_STATE(kCharacterMonsieur, Boutarel, setup_function35);
+			RESET_ENTITY_STATE(kCharacterRebecca, Rebecca, setup_function45);
+			RESET_ENTITY_STATE(kCharacterSophie, Sophie, setup_function9);
+			RESET_ENTITY_STATE(kCharacterYasmin, Yasmin, setup_function17);
+			RESET_ENTITY_STATE(kCharacterHadija, Hadija, setup_function19);
+			RESET_ENTITY_STATE(kCharacterAlouan, Alouan, setup_function19);
+			RESET_ENTITY_STATE(kCharacterMax, Max, setup_inCageFriendly);
+			getSavePoints()->push(kCharacterMaster, kCharacterAnna, kCharacterAction201431954);
+			getSavePoints()->push(kCharacterMaster, kCharacterCond1, kCharacterAction201431954);
+			getSavePoints()->push(kCharacterMaster, kCharacterCond2, kCharacterAction201431954);
+			getSavePoints()->push(kCharacterMaster, kCharacterWaiter1, kCharacterAction201431954);
+			getSavePoints()->push(kCharacterMaster, kCharacterWaiter2, kCharacterAction201431954);
+			getSavePoints()->push(kCharacterMaster, kCharacterHeadWait, kCharacterAction201431954);
+			getSavePoints()->push(kCharacterMaster, kCharacterTrainM, kCharacterAction201431954);
 
 			setCallback(6);
 			setup_savegame(kSavegameTypeEvent, kEventTylerCastleDream);
@@ -1593,13 +1593,13 @@ label_callback_4:
 		}
 		break;
 
-	case kAction191001984:
+	case kCharacterAction191001984:
 		getState()->time = kTime2520000;
 
-		if (getSoundQueue()->isBuffered(kEntityChapters))
-			getSoundQueue()->stop(kEntityChapters);
+		if (getSoundQueue()->isBuffered(kCharacterMaster))
+			getSoundQueue()->stop(kCharacterMaster);
 
-		getEntities()->clearSequences(kEntityChapters);
+		getEntities()->clearSequences(kCharacterMaster);
 		getInventory()->removeItem(kItemTelegram);
 
 		getState()->timeDelta = 5;
@@ -1608,16 +1608,16 @@ label_callback_4:
 		setup_savegame(kSavegameTypeEvent, kEventDefuseBomb);
 		break;
 
-	case kAction201959744:
-		if (getSoundQueue()->isBuffered(kEntityChapters))
-			getSoundQueue()->stop(kEntityChapters);
+	case kCharacterAction201959744:
+		if (getSoundQueue()->isBuffered(kCharacterMaster))
+			getSoundQueue()->stop(kCharacterMaster);
 
-		getSound()->playSound(kEntityTrain, "ZFX4001", kVolumeFull);
+		getSound()->playSound(kCharacterClerk, "ZFX4001", kVolumeFull);
 
 		getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, true);
 		break;
 
-	case kAction225367984:
+	case kCharacterAction225367984:
 		setCallback(9);
 		setup_savegame(kSavegameTypeEvent, kEventCathDefusingBomb);
 		break;
@@ -1626,7 +1626,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Chapters, chapter5)
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 		// Setup for chapter 5 in case it hasn't been done before
 		if (getProgress().chapter != kChapter5) {
 			getProgress().chapter = kChapter5;
@@ -1647,48 +1647,48 @@ IMPLEMENT_FUNCTION(21, Chapters, chapter5Init)
 	default:
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityTables0);
-		getEntities()->clearSequences(kEntityTables1);
-		getEntities()->clearSequences(kEntityTables2);
-		getEntities()->clearSequences(kEntityTables3);
-		getEntities()->clearSequences(kEntityTables4);
-		getEntities()->clearSequences(kEntityTables5);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterTableA);
+		getEntities()->clearSequences(kCharacterTableB);
+		getEntities()->clearSequences(kCharacterTableC);
+		getEntities()->clearSequences(kCharacterTableD);
+		getEntities()->clearSequences(kCharacterTableE);
+		getEntities()->clearSequences(kCharacterTableF);
 
 		getProgress().isTrainRunning = true;
 
-		getObjects()->update(kObjectHandleOutsideLeft, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
-		getObjects()->update(kObjectHandleOutsideRight, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
-		getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartment3, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartment4, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartment5, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartment6, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartment7, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartment8, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartmentB, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartmentC, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartmentF, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartmentG, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectCompartmentH, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectHandleBathroom, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectHandleInsideBathroom, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectKitchen, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject20, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject21, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject22, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject48, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject49, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject50, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject51, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject52, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject53, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectHandleOutsideLeft, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObjectHandleOutsideRight, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectHandleOutsideLeft, kCharacterCath, kObjectLocation1, kCursorNormal, kCursorHand);
+		getObjects()->update(kObjectHandleOutsideRight, kCharacterCath, kObjectLocation1, kCursorNormal, kCursorHand);
+		getObjects()->update(kObjectCompartment1, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment2, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment3, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment4, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment5, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment6, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment7, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment8, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentA, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentB, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentC, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentD, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentE, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentF, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentG, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentH, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectHandleBathroom, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectHandleInsideBathroom, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectKitchen, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject20, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject21, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject22, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject48, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject49, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject50, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject51, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject52, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject53, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectHandleOutsideLeft, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectHandleOutsideRight, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
 		getProgress().field_18 = 1;
 		getProgress().field_84 = 1;
@@ -1710,15 +1710,15 @@ IMPLEMENT_FUNCTION(21, Chapters, chapter5Init)
 			}
 		}
 
-		getObjects()->update(kObject93, kEntityPlayer, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
-		getObjects()->update(kObject94, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
-		getObjects()->update(kObject101, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject93, kCharacterCath, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
+		getObjects()->update(kObject94, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+		getObjects()->update(kObject101, kCharacterCath, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
 		getObjects()->updateModel(kObject98, kObjectModel2);
 		getObjects()->updateModel(kObjectRestaurantCar, kObjectModel2);
 
 		if (ENTITY_PARAM(0, 2) || ENTITY_PARAM(0, 3)) {
-			getSoundQueue()->stop(kEntityChapters);
+			getSoundQueue()->stop(kCharacterMaster);
 			ENTITY_PARAM(0, 2) = 0;
 			ENTITY_PARAM(0, 3) = 0;
 		}
@@ -1732,7 +1732,7 @@ IMPLEMENT_FUNCTION(21, Chapters, chapter5Init)
 		setup_savegame(kSavegameTypeTime, kTimeNone);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
 			setup_chapter5Handler();
 		break;
@@ -1745,12 +1745,12 @@ IMPLEMENT_FUNCTION(22, Chapters, chapter5Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->time > kTime2907000 && !params->param2) {
 			params->param2 = 1;
 
 			if (!getProgress().isNightTime) {
-				getSound()->playSound(kEntityChapters, "ARRIVE", kVolume8);
+				getSound()->playSound(kCharacterMaster, "ARRIVE", kVolume8);
 				getSoundQueue()->endAmbient();
 			}
 		}
@@ -1758,14 +1758,14 @@ IMPLEMENT_FUNCTION(22, Chapters, chapter5Handler)
 		if (getState()->time > kTimeTrainStopped2 && !params->param3) {
 			params->param3 = 1;
 
-			if (!getEvent(kEventLocomotiveMilosDay) && !getEvent(kEventLocomotiveMilosNight)) {
-				getSound()->playSound(kEntityChapters, "ARRIVE", kVolume8);
+			if (!HELPERgetEvent(kEventLocomotiveMilosDay) && !HELPERgetEvent(kEventLocomotiveMilosNight)) {
+				getSound()->playSound(kCharacterMaster, "ARRIVE", kVolume8);
 				getSoundQueue()->endAmbient();
 			}
 		}
 		break;
 
-	case kActionEndSound:
+	case kCharacterActionEndSound:
 		if (getState()->time <= kTimeTrainStopped2) {
 			setCallback(1);
 			setup_savegame(kSavegameTypeEvent, kEventTrainStopped);
@@ -1774,23 +1774,23 @@ IMPLEMENT_FUNCTION(22, Chapters, chapter5Handler)
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		params->param1 = 225 * (4 * rnd(10) + 20);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1) {
-			getAction()->playAnimation(kEventTrainStopped);
+			getActionOld()->playAnimation(kEventTrainStopped);
 			getLogic()->gameOver(kSavegameTypeTime, kTimeTrainStopped, kSceneGameOverTrainStopped, true);
 		}
 		break;
 
-	case kAction135800432:
+	case kCharacterAction135800432:
 		getProgress().isNightTime = true;
 		getState()->time = kTime2916000;
 
-		if (getSoundQueue()->isBuffered(kEntityChapters))
-			getSoundQueue()->stop(kEntityChapters);
+		if (getSoundQueue()->isBuffered(kCharacterMaster))
+			getSoundQueue()->stop(kCharacterMaster);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -1799,13 +1799,13 @@ IMPLEMENT_FUNCTION_END
 // Private functions
 //////////////////////////////////////////////////////////////////////////
 void Chapters::enterExitStation(const SavePoint &savepoint, bool isEnteringStation) {
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 		if (!ENTITY_PARAM(0, 2) && !ENTITY_PARAM(0, 3)) {
 			enterExitHelper(isEnteringStation);
 			return;
 		}
 
-		getSoundQueue()->stop(kEntityChapters);
+		getSoundQueue()->stop(kCharacterMaster);
 
 		if (!ENTITY_PARAM(0, 2)) {
 			if (ENTITY_PARAM(0, 3))
@@ -1815,9 +1815,9 @@ void Chapters::enterExitStation(const SavePoint &savepoint, bool isEnteringStati
 			return;
 		}
 
-		getSavePoints()->push(kEntityChapters, kEntityTrain, kActionTrainStopRunning);
+		getSavePoints()->push(kCharacterMaster, kCharacterClerk, kCharacterActionTrainStopRunning);
 
-		if (getEntityData(kEntityPlayer)->location != kLocationOutsideTrain) {
+		if (getEntityData(kCharacterCath)->location != kLocationOutsideTrain) {
 			ENTITY_PARAM(0, 2) = 0;
 			enterExitHelper(isEnteringStation);
 			return;
@@ -1840,16 +1840,16 @@ void Chapters::enterExitStation(const SavePoint &savepoint, bool isEnteringStati
 		}
 
 		// Other cars
-		if (getEntityData(kEntityPlayer)->car < kCarRedSleeping || getEntityData(kEntityPlayer)->car > kCarCoalTender) {
+		if (getEntityData(kCharacterCath)->car < kCarRedSleeping || getEntityData(kCharacterCath)->car > kCarCoalTender) {
 
-			if (getEntityData(kEntityPlayer)->car < kCarBaggageRear || getEntityData(kEntityPlayer)->car > kCarGreenSleeping) {
+			if (getEntityData(kCharacterCath)->car < kCarBaggageRear || getEntityData(kCharacterCath)->car > kCarGreenSleeping) {
 				ENTITY_PARAM(0, 2) = 0;
 				enterExitHelper(isEnteringStation);
 				return;
 			}
 
 			if (getEntities()->isPlayerPosition(kCarGreenSleeping, 98)) {
-				getSound()->playSound(kEntityPlayer, "LIB015");
+				getSound()->playSound(kCharacterCath, "LIB015");
 				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 71);
 				ENTITY_PARAM(0, 2) = 0;
 				enterExitHelper(isEnteringStation);
@@ -1872,11 +1872,11 @@ void Chapters::enterExitStation(const SavePoint &savepoint, bool isEnteringStati
 void Chapters::enterExitHelper(bool isEnteringStation) {
 	EXPOSE_PARAMS(EntityData::EntityParametersSIIS);
 
-	getSound()->playSound(kEntityChapters, isEnteringStation ? "ARRIVE" : "DEPART", kVolume8);
+	getSound()->playSound(kCharacterMaster, isEnteringStation ? "ARRIVE" : "DEPART", kVolume8);
 	getSoundQueue()->endAmbient();
 
-	getObjects()->update(kObjectHandleOutsideLeft, kEntityPlayer, kObjectLocation1, kCursorNormal, isEnteringStation ? kCursorNormal : kCursorHand);
-	getObjects()->update(kObjectHandleOutsideRight, kEntityPlayer, kObjectLocation1, kCursorNormal, isEnteringStation ? kCursorNormal : kCursorHand);
+	getObjects()->update(kObjectHandleOutsideLeft, kCharacterCath, kObjectLocation1, kCursorNormal, isEnteringStation ? kCursorNormal : kCursorHand);
+	getObjects()->update(kObjectHandleOutsideRight, kCharacterCath, kObjectLocation1, kCursorNormal, isEnteringStation ? kCursorNormal : kCursorHand);
 
 	getProgress().isTrainRunning = !isEnteringStation;
 
@@ -1884,7 +1884,7 @@ void Chapters::enterExitHelper(bool isEnteringStation) {
 		ENTITY_PARAM(0, 2) = 1;
 		ENTITY_PARAM(0, 4) = params->param4;
 	} else {
-		getSavePoints()->push(kEntityChapters, kEntityTrain, kActionTrainStartRunning);
+		getSavePoints()->push(kCharacterMaster, kCharacterClerk, kCharacterActionTrainStartRunning);
 		ENTITY_PARAM(0, 3) = 1;
 	}
 

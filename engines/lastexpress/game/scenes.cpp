@@ -137,9 +137,9 @@ void SceneManager::loadSceneFromObject(ObjectIndex object, bool alternate) {
 	case kObjectCompartment6:
 	case kObjectCompartment7:
 		if (alternate)
-			loadSceneFromPosition(kCarGreenSleeping, (Position)(17 - (object - 1) * 2));
+			loadSceneFromPosition(kCarGreenSleeping, (PositionOld)(17 - (object - 1) * 2));
 		else
-			loadSceneFromPosition(kCarGreenSleeping, (Position)(38 - (object - 1) * 2));
+			loadSceneFromPosition(kCarGreenSleeping, (PositionOld)(38 - (object - 1) * 2));
 		break;
 
 	case kObjectCompartmentA:
@@ -150,9 +150,9 @@ void SceneManager::loadSceneFromObject(ObjectIndex object, bool alternate) {
 	case kObjectCompartmentF:
 	case kObjectCompartmentG:
 		if (alternate)
-			loadSceneFromPosition(kCarGreenSleeping, (Position)(17 - (object - 32) * 2));
+			loadSceneFromPosition(kCarGreenSleeping, (PositionOld)(17 - (object - 32) * 2));
 		else
-			loadSceneFromPosition(kCarRedSleeping, (Position)(38 - (object - 32) * 2));
+			loadSceneFromPosition(kCarRedSleeping, (PositionOld)(38 - (object - 32) * 2));
 		break;
 
 	case kObjectCompartment8:
@@ -179,7 +179,7 @@ void SceneManager::loadSceneFromItem(InventoryItem item) {
 	loadScene(index);
 }
 
-void SceneManager::loadSceneFromPosition(CarIndex car, Position position, int param3) {
+void SceneManager::loadSceneFromPosition(CarIndex car, PositionOld position, int param3) {
 	loadScene(getSceneIndexFromPosition(car, position, param3));
 }
 
@@ -203,7 +203,7 @@ void SceneManager::loadSceneFromItemPosition(InventoryItem item) {
 	if (item == kItem5) car = kCarRedSleeping;
 	if (item == kItem7) car = kCarGreenSleeping;
 
-	if (!getEntities()->isInsideTrainCar(kEntityPlayer, car))
+	if (!getEntities()->isInsideTrainCar(kCharacterCath, car))
 		return;
 
 	if (getFlags()->flag_0)
@@ -211,7 +211,7 @@ void SceneManager::loadSceneFromItemPosition(InventoryItem item) {
 
 	// Get current scene position
 	Scene *scene = getScenes()->get(getState()->scene);
-	Position position = scene->position;
+	PositionOld position = scene->position;
 
 	if (getState()->sceneUseBackup) {
 		Scene *sceneBackup = getScenes()->get(getState()->sceneBackup);
@@ -257,20 +257,20 @@ void SceneManager::drawScene(SceneIndex index) {
 	debugC(9, kLastExpressDebugScenes, "== Drawing scene: %d ==", index);
 
 	// Update scene
-	_engine->getGraphicsManager()->draw(get(index), GraphicsManager::kBackgroundC, true);
+	_engine->getGraphicsManagerOld()->draw(get(index), GraphicsManagerOld::kBackgroundC, true);
 	getState()->scene = index;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Update entities
 	Scene *scene = (getState()->sceneUseBackup ? get(getState()->sceneBackup) : get(index));
 
-	getEntityData(kEntityPlayer)->entityPosition = scene->entityPosition;
-	getEntityData(kEntityPlayer)->car = scene->car;
+	getEntityData(kCharacterCath)->entityPosition = scene->entityPosition;
+	getEntityData(kCharacterCath)->car = scene->car;
 
 	getFlags()->flag_3 = true;
 
 	if (getFlags()->isGameRunning) {
-		getSavePoints()->pushAll(kEntityPlayer, kActionDrawScene);
+		getSavePoints()->pushAll(kCharacterCath, kCharacterActionDrawScene);
 		getSavePoints()->process();
 
 		if (_flagNoEntity)
@@ -322,7 +322,7 @@ LastExpress::SceneIndex SceneManager::processIndex(SceneIndex index) {
 
 	case kCarRedSleeping:
 		if (checkPosition(index, kCheckPositionLookingAtDoors)) {
-			Position position = (Position)(scene->position + (checkPosition(kSceneNone, kCheckPositionLookingUp) ? -1 : 1));
+			PositionOld position = (PositionOld)(scene->position + (checkPosition(kSceneNone, kCheckPositionLookingUp) ? -1 : 1));
 
 			if (position == 4)
 				position = 3;
@@ -453,7 +453,7 @@ bool SceneManager::checkPosition(SceneIndex index, CheckPositionType type) const
 	Scene *scene = getScenes()->get((index ? index : getState()->scene));
 
 	CarIndex car = (CarIndex)scene->car;
-	Position position = scene->position;
+	PositionOld position = scene->position;
 
 	bool isInSleepingCar = (car == kCarGreenSleeping || car == kCarRedSleeping);
 
@@ -478,7 +478,7 @@ bool SceneManager::checkPosition(SceneIndex index, CheckPositionType type) const
 bool SceneManager::checkCurrentPosition(bool doCheckOtherCars) const {
 	Scene *scene = getScenes()->get(getState()->scene);
 
-	Position position = scene->position;
+	PositionOld position = scene->position;
 	CarIndex car = (CarIndex)scene->car;
 
 	if (!doCheckOtherCars)
@@ -567,9 +567,9 @@ void SceneManager::updateDoorsAndClock() {
 		ObjectIndex firstIndex = kObjectNone;
 
 		// Init objectIndex (or exit if not in one of the two compartment cars
-		if (getEntityData(kEntityPlayer)->car == kCarGreenSleeping)
+		if (getEntityData(kCharacterCath)->car == kCarGreenSleeping)
 			firstIndex = kObjectCompartment1;
-		else if (getEntityData(kEntityPlayer)->car == kCarRedSleeping)
+		else if (getEntityData(kCharacterCath)->car == kCarRedSleeping)
 			firstIndex = kObjectCompartmentA;
 		else
 			return;
@@ -651,10 +651,10 @@ void SceneManager::drawFrames(bool refreshScreen) {
 
 	// TODO handle flag coordinates
 
-	clearBg(GraphicsManager::kBackgroundOverlay);
+	clearBg(GraphicsManagerOld::kBackgroundOverlay);
 
 	for (Common::List<SequenceFrame *>::iterator i = _queue.begin(); i != _queue.end(); ++i)
-		_engine->getGraphicsManager()->draw(*i, GraphicsManager::kBackgroundOverlay);
+		_engine->getGraphicsManagerOld()->draw(*i, GraphicsManagerOld::kBackgroundOverlay);
 
 	if (refreshScreen) {
 		askForRedraw();
@@ -777,7 +777,7 @@ void SceneManager::resetCoordinates() {
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
-SceneIndex SceneManager::getSceneIndexFromPosition(CarIndex car, Position position, int param3) {
+SceneIndex SceneManager::getSceneIndexFromPosition(CarIndex car, PositionOld position, int param3) {
 	// Probably can't happen (can we be called during cd-swap?)
 	if (_sceneLoader->count() <= 1)
 		return getState()->scene;
@@ -818,7 +818,7 @@ SceneIndex SceneManager::getSceneIndexFromPosition(CarIndex car, Position positi
 //
 // Note: we use the original hotspot scene to pre-process again
 #define PROCESS_HOTSPOT_SCENE(hotspot, index) { \
-	SceneIndex processedScene = getAction()->processHotspot(*hotspot); \
+	SceneIndex processedScene = getActionOld()->processHotspot(*hotspot); \
 	SceneIndex testScene = (processedScene == kSceneInvalid) ? (hotspot)->scene : processedScene; \
 	if (testScene) { \
 		*index = (hotspot)->scene; \
@@ -1025,7 +1025,7 @@ void SceneManager::preProcessScene(SceneIndex *index) {
 
 				if (State::getPowerOfTwo((uint32)getEntities()->getCompartments(scene->param1)) != 30
 				 && State::getPowerOfTwo((uint32)getEntities()->getCompartments1(scene->param1)) != 30 )
-					getSound()->playSound(kEntityPlayer, "CAT1126A");
+					getSound()->playSound(kCharacterCath, "CAT1126A");
 
 				*index = scene->getHotspot()->scene;
 			} else {
@@ -1061,9 +1061,9 @@ void SceneManager::preProcessScene(SceneIndex *index) {
 
 	// Sound processing
 	Scene *newScene = getScenes()->get(*index);
-	if (getSoundQueue()->isBuffered(kEntityTables4)) {
+	if (getSoundQueue()->isBuffered(kCharacterTableE)) {
 		if (newScene->type != Scene::kTypeReadText || newScene->param1)
-			getSoundQueue()->fade(kEntityTables4);
+			getSoundQueue()->fade(kCharacterTableE);
 	}
 
 	// Cleanup beetle sequences
@@ -1088,7 +1088,7 @@ void SceneManager::postProcessScene() {
 		uint32 nextFrameCount = getFrameCount() + 4 * scene->param1;
 		if (!getFlags()->mouseRightClick) {
 			while (nextFrameCount > getFrameCount()) {
-				_engine->pollEvents();
+				_engine->pollEventsOld();
 
 				if (getFlags()->mouseRightClick)
 					break;
@@ -1100,43 +1100,43 @@ void SceneManager::postProcessScene() {
 
 		// Process hotspots and load scenes in the list
 		SceneHotspot *hotspot = scene->getHotspot();
-		SceneIndex processedScene = getAction()->processHotspot(*hotspot);
+		SceneIndex processedScene = getActionOld()->processHotspot(*hotspot);
 		SceneIndex testScene = (processedScene == kSceneInvalid) ? hotspot->scene : processedScene;
 
 		if (getFlags()->mouseRightClick) {
 
 			while (getScenes()->get(testScene)->type == Scene::kTypeList) {
 				hotspot = getScenes()->get(testScene)->getHotspot();
-				processedScene = getAction()->processHotspot(*hotspot);
+				processedScene = getActionOld()->processHotspot(*hotspot);
 				testScene = (processedScene == kSceneInvalid) ? hotspot->scene : processedScene;
 			}
 		}
 
 		// If several entities are there, choose one to sound "Excuse me"
-		EntityPosition entityPosition = getEntityData(kEntityPlayer)->entityPosition;
-		if (getEntityData(kEntityPlayer)->car == kCar9 && (entityPosition == kPosition_4 || entityPosition == kPosition_3)) {
-			EntityIndex entities[40] = {(EntityIndex)0};
+		EntityPosition entityPosition = getEntityData(kCharacterCath)->entityPosition;
+		if (getEntityData(kCharacterCath)->car == kCarVestibule && (entityPosition == kPosition_4 || entityPosition == kPosition_3)) {
+			CharacterIndex entities[40] = {(CharacterIndex)0};
 
 			// Init entities
-			entities[0] = kEntityPlayer;
+			entities[0] = kCharacterCath;
 
 			uint progress = 0;
 
 			for (uint i = 1; i < 40 /* number of entities */; ++i) {
-				CarIndex car = getEntityData((EntityIndex)i)->car;
-				EntityPosition position = getEntityData((EntityIndex)i)->entityPosition;
+				CarIndex car = getEntityData((CharacterIndex)i)->car;
+				EntityPosition position = getEntityData((CharacterIndex)i)->entityPosition;
 
 				if (entityPosition == kPosition_4) {
 					if ((car == kCarRedSleeping && position > kPosition_9270) || (car == kCarRestaurant && position < kPosition_1540))
-						entities[progress++] = (EntityIndex)i;
+						entities[progress++] = (CharacterIndex)i;
 				} else {
 					if ((car == kCarGreenSleeping && position > kPosition_9270) || (car == kCarRedSleeping && position < kPosition_850))
-						entities[progress++] = (EntityIndex)i;
+						entities[progress++] = (CharacterIndex)i;
 				}
 			}
 
 			if (progress)
-				getSound()->excuseMe((progress == 1) ? entities[0] : entities[rnd(progress)], kEntityPlayer, kVolumeFull);
+				getSound()->excuseMe((progress == 1) ? entities[0] : entities[rnd(progress)], kCharacterCath, kVolumeFull);
 		}
 
 		if (hotspot->scene)
@@ -1146,7 +1146,7 @@ void SceneManager::postProcessScene() {
 
 	case Scene::kTypeSavePointChapter:
 		if (getProgress().field_18 == 2)
-			getSavePoints()->push(kEntityPlayer, kEntityChapters, kActionEndChapter);
+			getSavePoints()->push(kCharacterCath, kCharacterMaster, kCharacterActionEndChapter);
 		break;
 
 	case Scene::kTypeLoadBeetleSequences:
@@ -1162,7 +1162,7 @@ void SceneManager::postProcessScene() {
 			break;
 
 		getSoundQueue()->fade(kSoundTagLink);
-		getSound()->playSound(kEntityTrain, "LIB050", kVolumeFull);
+		getSound()->playSound(kCharacterClerk, "LIB050", kVolumeFull);
 
 		switch (getProgress().chapter) {
 		default:

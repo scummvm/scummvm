@@ -42,7 +42,7 @@ public:
 	// Queue
 	void addToQueue(SoundEntry *entry);
 	void stop(Common::String filename);
-	void stop(EntityIndex entity);
+	void stop(CharacterIndex entity);
 	void updateQueue();
 	void stopAmbient();
 	void stopAllExcept(SoundTag tag1, SoundTag tag2 = kSoundTagNone);
@@ -55,17 +55,17 @@ public:
 	void setAmbientToSteam() { _ambientState |= kAmbientSoundSteam; }
 
 	// Entries
-	void assignNISLink(EntityIndex index);
-	void fade(EntityIndex entity);
+	void assignNISLink(CharacterIndex index);
+	void fade(CharacterIndex entity);
 	void fade(SoundTag tag);
 	void fade(Common::String filename);
 	void endAmbient();
 	SoundEntry *getEntry(SoundTag tag);
-	SoundEntry *getEntry(EntityIndex index);
+	SoundEntry *getEntry(CharacterIndex index);
 	SoundEntry *getEntry(Common::String name);
-	uint32 getEntryTime(EntityIndex index);
+	uint32 getEntryTime(CharacterIndex index);
 	bool isBuffered(Common::String filename, bool testForEntity = false);
-	bool isBuffered(EntityIndex entity);
+	bool isBuffered(CharacterIndex entity);
 
 	// Subtitles
 	void updateSubtitles();

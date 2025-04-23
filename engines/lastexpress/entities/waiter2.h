@@ -42,7 +42,7 @@ public:
 	DECLARE_FUNCTION_NOSETUP(updateFromTime)
 
 	/**
-	 * Draws the entity
+	 * Draws the character
 	 *
 	 * @param sequence The sequence to draw
 	 */
@@ -55,10 +55,10 @@ public:
 	 * @param car            The car
 	 * @param position       The position
 	 */
-	DECLARE_FUNCTION_3(updatePosition, const char *sequence, CarIndex car, Position position)
+	DECLARE_FUNCTION_3(updatePosition, const char *sequence, CarIndex car, PositionOld position)
 
 	/**
-	 * Process callback action when the entity direction is not kDirectionRight
+	 * Process callback action when the character direction is not kDirectionRight
 	 */
 	DECLARE_FUNCTION(callbackActionOnDirection)
 
@@ -66,11 +66,11 @@ public:
 	 * Call a savepoint (or draw sequence in default case)
 	 *
 	 * @param sequence1   The sequence to draw in the default case
-	 * @param entity      The entity
+	 * @param character      The character
 	 * @param action      The action
-	 * @param sequence2   The sequence name for the savepoint
+	 * @param sequence2   The sequence eraseData for the savepoint
 	 */
-	DECLARE_FUNCTION_4(callSavepoint, const char *sequence1, EntityIndex entity, ActionIndex action, const char *sequence2)
+	DECLARE_FUNCTION_4(callSavepoint, const char *sequence1, CharacterIndex entity, CharacterActions action, const char *sequence2)
 
 	/**
 	 * Plays sound
@@ -133,8 +133,8 @@ public:
 	DECLARE_NULL_FUNCTION()
 
 private:
-	void serveTable(const SavePoint &savepoint, const char *seq1, EntityIndex entity, const char *seq2, const char *seq3, const char *seq4, uint *parameter, Position position = 0, bool updatePosition = true, uint *parameter2 = NULL);
-	void serveSalon(const SavePoint &savepoint, const char *seq1, const char *snd1, EntityIndex entity, const char *snd2, const char *seq2, ActionIndex action, const char *seq3, uint *parameter);
+	void serveTable(const SavePoint &savepoint, const char *seq1, CharacterIndex entity, const char *seq2, const char *seq3, const char *seq4, uint *parameter, PositionOld position = 0, bool updatePosition = true, uint *parameter2 = NULL);
+	void serveSalon(const SavePoint &savepoint, const char *seq1, const char *snd1, CharacterIndex entity, const char *snd2, const char *seq2, CharacterActions action, const char *seq3, uint *parameter);
 };
 
 } // End of namespace LastExpress

@@ -35,7 +35,7 @@
 
 namespace LastExpress {
 
-Vesna::Vesna(LastExpressEngine *engine) : Entity(engine, kEntityVesna) {
+Vesna::Vesna(LastExpressEngine *engine) : Entity(engine, kCharacterVesna) {
 	ADD_CALLBACK_FUNCTION(Vesna, reset);
 	ADD_CALLBACK_FUNCTION_S(Vesna, playSound);
 	ADD_CALLBACK_FUNCTION_SI(Vesna, enterExitCompartment);
@@ -91,8 +91,8 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(5, Vesna, updateEntity, CarIndex, EntityPosition)
-	if (savepoint.action == kActionExcuseMeCath) {
-		getSound()->playSound(kEntityPlayer, rnd(2) ? "CAT1015" : "CAT1015A");
+	if (savepoint.action == kCharacterActionExcuseMeCath) {
+		getSound()->playSound(kCharacterCath, rnd(2) ? "CAT1015" : "CAT1015A");
 
 		return;
 	}
@@ -111,25 +111,25 @@ IMPLEMENT_FUNCTION_II(7, Vesna, updateEntity2, CarIndex, EntityPosition)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		params->param3 = 0;
 
-		if (getEntities()->isDistanceBetweenEntities(kEntityVesna, kEntityMilos, 500)
-		 || (getData()->direction == kDirectionUp && (getData()->car > getEntityData(kEntityMilos)->car || (getData()->car == getEntityData(kEntityMilos)->car && getData()->entityPosition > getEntityData(kEntityMilos)->entityPosition)))
-		 || (getData()->direction == kDirectionDown && (getData()->car < getEntityData(kEntityMilos)->car || (getData()->car == getEntityData(kEntityMilos)->car && getData()->entityPosition < getEntityData(kEntityMilos)->entityPosition)))) {
+		if (getEntities()->isDistanceBetweenEntities(kCharacterVesna, kCharacterMilos, 500)
+		 || (getData()->direction == kDirectionUp && (getData()->car > getEntityData(kCharacterMilos)->car || (getData()->car == getEntityData(kCharacterMilos)->car && getData()->entityPosition > getEntityData(kCharacterMilos)->entityPosition)))
+		 || (getData()->direction == kDirectionDown && (getData()->car < getEntityData(kCharacterMilos)->car || (getData()->car == getEntityData(kCharacterMilos)->car && getData()->entityPosition < getEntityData(kCharacterMilos)->entityPosition)))) {
 			getData()->field_49B = 0;
 			params->param3 = 1;
 		}
 
 		if (!params->param3)
-			getEntities()->updateEntity(kEntityVesna, (CarIndex)params->param1, (EntityPosition)params->param2);
+			getEntities()->updateEntity(kCharacterVesna, (CarIndex)params->param1, (EntityPosition)params->param2);
 		break;
 
-	case kActionDefault:
-		getEntities()->updateEntity(kEntityVesna, (CarIndex)params->param1, (EntityPosition)params->param2);
+	case kCharacterActionDefault:
+		getEntities()->updateEntity(kCharacterVesna, (CarIndex)params->param1, (EntityPosition)params->param2);
 		break;
 
-	case kAction123668192:
+	case kCharacterAction123668192:
 		callbackAction();
 		break;
 	}
@@ -159,23 +159,23 @@ IMPLEMENT_FUNCTION(11, Vesna, homeAlone)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (parameters->param3) {
 			if (!Entity::updateParameter(parameters->param7, getState()->timeTicks, 75))
 				break;
 
 			parameters->param2 = 1;
 			parameters->param3 = 0;
-			getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation1, kCursorNormal, kCursorNormal);
 		}
 
 		parameters->param7 = 0;
 		break;
 
-	case kActionKnock:
-	case kActionOpenDoor:
+	case kCharacterActionKnock:
+	case kCharacterActionOpenDoor:
 		if (parameters->param3) {
-			getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation3, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation3, kCursorNormal, kCursorNormal);
 
 			setCallback(4);
 			setup_playSound(getSound()->wrongDoorCath());
@@ -198,26 +198,26 @@ IMPLEMENT_FUNCTION(11, Vesna, homeAlone)
 			break;
 		}
 
-		getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation3, kCursorNormal, kCursorNormal);
+		getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation3, kCursorNormal, kCursorNormal);
 
-		setCallback(savepoint.action == kActionKnock ? 2 : 1);
-		setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
+		setCallback(savepoint.action == kCharacterActionKnock ? 2 : 1);
+		setup_playSound(savepoint.action == kCharacterActionKnock ? "LIB012" : "LIB013");
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	case kCharacterActionDefault:
+		getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (parameters->param2 || parameters->param3) {
-			getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 			parameters->param2 = 0;
 			parameters->param3 = 0;
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -229,7 +229,7 @@ IMPLEMENT_FUNCTION(11, Vesna, homeAlone)
 			break;
 
 		case 3:
-			getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation3, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation3, kCursorTalk, kCursorNormal);
 			parameters->param3 = 1;
 			break;
 
@@ -240,8 +240,8 @@ IMPLEMENT_FUNCTION(11, Vesna, homeAlone)
 		}
 		break;
 
-	case kAction55996766:
-	case kAction101687594:
+	case kCharacterAction55996766:
+	case kCharacterAction101687594:
 		callbackAction();
 		break;
 	}
@@ -253,12 +253,12 @@ IMPLEMENT_FUNCTION(12, Vesna, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Vesna, setup_withMilos));
 		break;
 
-	case kActionDefault:
-		getSavePoints()->addData(kEntityVesna, kAction124190740, 0);
+	case kCharacterActionDefault:
+		getSavePoints()->addData(kCharacterVesna, kCharacterAction124190740, 0);
 
 		getData()->entityPosition = kPosition_4689;
 		getData()->location = kLocationInsideCompartment;
@@ -273,20 +273,20 @@ IMPLEMENT_FUNCTION(13, Vesna, withMilos)
 	default:
 		break;
 
-	case kActionNone:
-		getData()->entityPosition = getEntityData(kEntityMilos)->entityPosition;
-		getData()->location = getEntityData(kEntityMilos)->location;
-		getData()->car = getEntityData(kEntityMilos)->car;
+	case kCharacterActionNone:
+		getData()->entityPosition = getEntityData(kCharacterMilos)->entityPosition;
+		getData()->location = getEntityData(kCharacterMilos)->location;
+		getData()->car = getEntityData(kCharacterMilos)->car;
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1) {
-			getEntities()->clearSequences(kEntityVesna);
+			getEntities()->clearSequences(kCharacterVesna);
 			setup_homeTogether();
 		}
 		break;
 
-	case kAction204832737:
+	case kCharacterAction204832737:
 		setCallback(1);
 		setup_updateEntity2(kCarRedSleeping, kPosition_3050);
 		break;
@@ -299,13 +299,13 @@ IMPLEMENT_FUNCTION(14, Vesna, homeTogether)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 		break;
 
-	case kAction190412928:
+	case kCharacterAction190412928:
 		setCallback(1);
 		setup_homeAlone();
 		break;
@@ -314,13 +314,13 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Vesna, function15)
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getEntities()->clearSequences(kEntityVesna);
-		getObjects()->update(kObjectCompartmentG, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getEntities()->clearSequences(kCharacterVesna);
+		getObjects()->update(kObjectCompartmentG, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 	}
 IMPLEMENT_FUNCTION_END
 
@@ -330,12 +330,12 @@ IMPLEMENT_FUNCTION(16, Vesna, chapter2)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter2Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityVesna);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterVesna);
 
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
@@ -353,12 +353,12 @@ IMPLEMENT_FUNCTION(17, Vesna, chapter2Handler)
 	default:
 		break;
 
-	case kAction135024800:
+	case kCharacterAction135024800:
 		setCallback(2);
 		setup_checkTrain();
 		break;
 
-	case kAction137165825:
+	case kCharacterAction137165825:
 		setCallback(1);
 		setup_homeAlone();
 		break;
@@ -371,12 +371,12 @@ IMPLEMENT_FUNCTION(18, Vesna, checkTrain)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_enterExitCompartment("610BG", kObjectCompartmentG);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -404,9 +404,9 @@ IMPLEMENT_FUNCTION(18, Vesna, checkTrain)
 			break;
 
 		case 4:
-			getEntities()->drawSequenceRight(kEntityVesna, "808UD");
-			if (getEntities()->isInSalon(kEntityPlayer))
-				getEntities()->updateFrame(kEntityVesna);
+			getEntities()->drawSequenceRight(kCharacterVesna, "808UD");
+			if (getEntities()->isInSalon(kCharacterCath))
+				getEntities()->updateFrame(kCharacterVesna);
 
 			setCallback(5);
 			setup_callbackActionOnDirection();
@@ -414,7 +414,7 @@ IMPLEMENT_FUNCTION(18, Vesna, checkTrain)
 
 		case 5:
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityVesna);
+			getEntities()->clearSequences(kCharacterVesna);
 
 			setCallback(6);
 			setup_updateFromTime(4500);
@@ -434,9 +434,9 @@ IMPLEMENT_FUNCTION(18, Vesna, checkTrain)
 			break;
 
 		case 8:
-			getEntities()->drawSequenceRight(kEntityVesna, "808DS");
-			if (getEntities()->isInRestaurant(kEntityPlayer))
-				getEntities()->updateFrame(kEntityVesna);
+			getEntities()->drawSequenceRight(kCharacterVesna, "808DS");
+			if (getEntities()->isInRestaurant(kCharacterCath))
+				getEntities()->updateFrame(kCharacterVesna);
 
 			setCallback(9);
 			setup_callbackActionOnDirection();
@@ -454,7 +454,7 @@ IMPLEMENT_FUNCTION(18, Vesna, checkTrain)
 
 		case 11:
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityVesna);
+			getEntities()->clearSequences(kCharacterVesna);
 
 			callbackAction();
 			break;
@@ -469,12 +469,12 @@ IMPLEMENT_FUNCTION(19, Vesna, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_inCompartment();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityVesna);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterVesna);
 
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
@@ -493,7 +493,7 @@ IMPLEMENT_FUNCTION(20, Vesna, inCompartment)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getProgress().field_54 && parameters->param7 != kTimeInvalid) {
 			if (getState()->time > kTime2250000) {
 				parameters->param7 = kTimeInvalid;
@@ -518,16 +518,16 @@ IMPLEMENT_FUNCTION(20, Vesna, inCompartment)
 			parameters->param1 = 1;
 			parameters->param2 = 0;
 
-			getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation1, kCursorNormal, kCursorNormal);
 		}
 
 		parameters->param8 = 0;
 		break;
 
-	case kActionKnock:
-	case kActionOpenDoor:
+	case kCharacterActionKnock:
+	case kCharacterActionOpenDoor:
 		if (parameters->param2) {
-			getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation3, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation3, kCursorNormal, kCursorNormal);
 
 			setCallback(4);
 			setup_playSound(getSound()->wrongDoorCath());
@@ -551,31 +551,31 @@ IMPLEMENT_FUNCTION(20, Vesna, inCompartment)
 			break;
 		}
 
-		getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation3, kCursorNormal, kCursorNormal);
+		getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation3, kCursorNormal, kCursorNormal);
 
-		setCallback(savepoint.action == kActionKnock ? 2 : 1);
-		setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
+		setCallback(savepoint.action == kCharacterActionKnock ? 2 : 1);
+		setup_playSound(savepoint.action == kCharacterActionKnock ? "LIB012" : "LIB013");
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->car = kCarRedSleeping;
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
 		getData()->clothes = kClothesDefault;
 		getData()->inventoryItem = kItemNone;
 
-		getEntities()->clearSequences(kEntityVesna);
+		getEntities()->clearSequences(kCharacterVesna);
 		break;
 
-	case kActionDrawScene:
+	case kCharacterActionDrawScene:
 		if (parameters->param1 || parameters->param2) {
-			getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation1, kCursorHandKnock, kCursorHand);
 			parameters->param1 = 0;
 			parameters->param2 = 0;
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -587,7 +587,7 @@ IMPLEMENT_FUNCTION(20, Vesna, inCompartment)
 			break;
 
 		case 3:
-			getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation3, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation3, kCursorTalk, kCursorNormal);
 			parameters->param2 = 1;
 			break;
 
@@ -598,18 +598,18 @@ IMPLEMENT_FUNCTION(20, Vesna, inCompartment)
 		}
 		break;
 
-	case kAction137165825:
+	case kCharacterAction137165825:
 		setCallback(5);
 		setup_homeAlone();
 		break;
 
-	case kAction155913424:
+	case kCharacterAction155913424:
 		setCallback(6);
 		setup_takeAWalk();
 		break;
 
-	case kAction203663744:
-		getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	case kCharacterAction203663744:
+		getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -620,12 +620,12 @@ IMPLEMENT_FUNCTION(21, Vesna, takeAWalk)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_enterExitCompartment("610Bg", kObjectCompartmentG);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -653,16 +653,16 @@ IMPLEMENT_FUNCTION(21, Vesna, takeAWalk)
 			break;
 
 		case 4:
-			getEntities()->drawSequenceRight(kEntityVesna, "808UD");
-			if (getEntities()->isInSalon(kEntityPlayer))
-				getEntities()->updateFrame(kEntityVesna);
+			getEntities()->drawSequenceRight(kCharacterVesna, "808UD");
+			if (getEntities()->isInSalon(kCharacterCath))
+				getEntities()->updateFrame(kCharacterVesna);
 
 			setCallback(5);
 			setup_callbackActionOnDirection();
 			break;
 
 		case 5:
-			getEntities()->clearSequences(kEntityVesna);
+			getEntities()->clearSequences(kCharacterVesna);
 			getData()->entityPosition = kPosition_5900;
 			getData()->location = kLocationInsideCompartment;
 
@@ -684,9 +684,9 @@ IMPLEMENT_FUNCTION(21, Vesna, takeAWalk)
 			break;
 
 		case 8:
-			getEntities()->drawSequenceRight(kEntityVesna, "808DS");
-			if (getEntities()->isInRestaurant(kEntityPlayer))
-				getEntities()->updateFrame(kEntityVesna);
+			getEntities()->drawSequenceRight(kCharacterVesna, "808DS");
+			if (getEntities()->isInRestaurant(kCharacterCath))
+				getEntities()->updateFrame(kCharacterVesna);
 
 			setCallback(9);
 			setup_callbackActionOnDirection();
@@ -705,7 +705,7 @@ IMPLEMENT_FUNCTION(21, Vesna, takeAWalk)
 		case 11:
 			getData()->entityPosition = kPosition_3050;
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityVesna);
+			getEntities()->clearSequences(kCharacterVesna);
 
 			callbackAction();
 			break;
@@ -720,14 +720,14 @@ IMPLEMENT_FUNCTION(22, Vesna, killAnna)
 	default:
 		break;
 
-	case kActionDefault:
-		getSavePoints()->push(kEntityVesna, kEntityMilos, kAction259125998);
+	case kCharacterActionDefault:
+		getSavePoints()->push(kCharacterVesna, kCharacterMilos, kCharacterAction259125998);
 
 		setCallback(1);
 		setup_enterExitCompartment("610Bg", kObjectCompartmentG);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -755,18 +755,18 @@ IMPLEMENT_FUNCTION(22, Vesna, killAnna)
 			break;
 
 		case 4:
-			getEntities()->drawSequenceRight(kEntityVesna, "808UD");
-			if (getEntities()->isInSalon(kEntityPlayer))
-				getEntities()->updateFrame(kEntityVesna);
+			getEntities()->drawSequenceRight(kCharacterVesna, "808UD");
+			if (getEntities()->isInSalon(kCharacterCath))
+				getEntities()->updateFrame(kCharacterVesna);
 
 			setCallback(5);
 			setup_callbackActionOnDirection();
 			break;
 
 		case 5:
-			getEntities()->clearSequences(kEntityVesna);
+			getEntities()->clearSequences(kCharacterVesna);
 			getData()->car = kCarBaggage;
-			getSavePoints()->push(kEntityVesna, kEntityAnna, kAction235856512);
+			getSavePoints()->push(kCharacterVesna, kCharacterAnna, kCharacterAction235856512);
 			break;
 
 		case 6:
@@ -779,9 +779,9 @@ IMPLEMENT_FUNCTION(22, Vesna, killAnna)
 			break;
 
 		case 7:
-			getEntities()->drawSequenceRight(kEntityVesna, "808DS");
-			if (getEntities()->isInRestaurant(kEntityPlayer))
-				getEntities()->updateFrame(kEntityVesna);
+			getEntities()->drawSequenceRight(kCharacterVesna, "808DS");
+			if (getEntities()->isInRestaurant(kCharacterCath))
+				getEntities()->updateFrame(kCharacterVesna);
 
 			setCallback(8);
 			setup_callbackActionOnDirection();
@@ -800,14 +800,14 @@ IMPLEMENT_FUNCTION(22, Vesna, killAnna)
 		case 10:
 			getData()->entityPosition = kPosition_3050;
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityVesna);
+			getEntities()->clearSequences(kCharacterVesna);
 
 			setup_killedAnna();
 			break;
 		}
 		break;
 
-	case kAction189299008:
+	case kCharacterAction189299008:
 		setCallback(6);
 		setup_callbackActionRestaurantOrSalon();
 		break;
@@ -820,14 +820,14 @@ IMPLEMENT_FUNCTION(23, Vesna, killedAnna)
 	default:
 		break;
 
-	case kActionKnock:
-	case kActionOpenDoor:
-		getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation3, kCursorNormal, kCursorNormal);
-		setCallback(savepoint.action == kActionKnock ? 1 : 2);
-		setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
+	case kCharacterActionKnock:
+	case kCharacterActionOpenDoor:
+		getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation3, kCursorNormal, kCursorNormal);
+		setCallback(savepoint.action == kCharacterActionKnock ? 1 : 2);
+		setup_playSound(savepoint.action == kCharacterActionKnock ? "LIB012" : "LIB013");
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->car = kCarRedSleeping;
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
@@ -835,7 +835,7 @@ IMPLEMENT_FUNCTION(23, Vesna, killedAnna)
 		getData()->inventoryItem = kItemNone;
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -847,13 +847,13 @@ IMPLEMENT_FUNCTION(23, Vesna, killedAnna)
 			break;
 
 		case 3:
-			getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation3, kCursorHandKnock, kCursorHand);
 			break;
 		}
 		break;
 
-	case kAction203663744:
-		getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	case kCharacterAction203663744:
+		getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -864,23 +864,23 @@ IMPLEMENT_FUNCTION(24, Vesna, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setCallback(1);
 		setup_homeAlone();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityVesna);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterVesna);
 
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 		getData()->inventoryItem = kItemNone;
 
-		getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentG, kCharacterVesna, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
 			setup_exitLocation();
 	}
@@ -892,21 +892,21 @@ IMPLEMENT_FUNCTION(25, Vesna, exitLocation)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->time > kTime2428200 && !params->param1) {
 			params->param1 = 1;
 			setup_done();
 		}
 		break;
 
-	case kActionDefault:
-		getSavePoints()->push(kEntityVesna, kEntityMilos, kAction135600432);
+	case kCharacterActionDefault:
+		getSavePoints()->push(kCharacterVesna, kCharacterMilos, kCharacterAction135600432);
 
 		setCallback(1);
 		setup_enterExitCompartment("610BG", kObjectCompartmentG);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -934,16 +934,16 @@ IMPLEMENT_FUNCTION(25, Vesna, exitLocation)
 			break;
 
 		case 4:
-			getEntities()->drawSequenceRight(kEntityVesna, "808UD");
-			if (getEntities()->isInSalon(kEntityPlayer))
-				getEntities()->updateFrame(kEntityVesna);
+			getEntities()->drawSequenceRight(kCharacterVesna, "808UD");
+			if (getEntities()->isInSalon(kCharacterCath))
+				getEntities()->updateFrame(kCharacterVesna);
 
 			setCallback(5);
 			setup_callbackActionOnDirection();
 			break;
 
 		case 5:
-			getEntities()->clearSequences(kEntityVesna);
+			getEntities()->clearSequences(kCharacterVesna);
 			getData()->entityPosition = kPosition_5900;
 			getData()->location = kLocationInsideCompartment;
 
@@ -960,12 +960,12 @@ IMPLEMENT_FUNCTION(26, Vesna, done)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_callbackActionRestaurantOrSalon();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -980,10 +980,10 @@ IMPLEMENT_FUNCTION(26, Vesna, done)
 			break;
 
 		case 2:
-			getEntities()->drawSequenceRight(kEntityVesna, "808DS");
+			getEntities()->drawSequenceRight(kCharacterVesna, "808DS");
 
-			if (getEntities()->isInRestaurant(kEntityPlayer))
-				getEntities()->updateFrame(kEntityVesna);
+			if (getEntities()->isInRestaurant(kCharacterCath))
+				getEntities()->updateFrame(kCharacterVesna);
 
 			setCallback(3);
 			setup_callbackActionOnDirection();
@@ -1009,9 +1009,9 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Vesna, function27)
-	if (savepoint.action == kActionDefault) {
-		getEntities()->clearSequences(kEntityVesna);
-		getObjects()->update(kObjectCompartmentG, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	if (savepoint.action == kCharacterActionDefault) {
+		getEntities()->clearSequences(kCharacterVesna);
+		getObjects()->update(kObjectCompartmentG, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
@@ -1026,12 +1026,12 @@ IMPLEMENT_FUNCTION(28, Vesna, chapter5)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_guarding();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityVesna);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterVesna);
 
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRestaurant;
@@ -1046,24 +1046,24 @@ IMPLEMENT_FUNCTION(29, Vesna, guarding)
 	default:
 		break;
 
-	case kActionOpenDoor:
+	case kCharacterActionOpenDoor:
 		setCallback(1);
 		setup_savegame(kSavegameTypeEvent, kEventCathVesnaRestaurantKilled);
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObject64, kEntityVesna, kObjectLocationNone, kCursorNormal, kCursorForward);
+	case kCharacterActionDefault:
+		getObjects()->update(kObject64, kCharacterVesna, kObjectLocationNone, kCursorNormal, kCursorForward);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1) {
-			getAction()->playAnimation(kEventCathVesnaRestaurantKilled);
+			getActionOld()->playAnimation(kEventCathVesnaRestaurantKilled);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneNone, true);
 		}
 		break;
 
-	case kAction134427424:
-		getObjects()->update(kObject64, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
+	case kCharacterAction134427424:
+		getObjects()->update(kObject64, kCharacterCath, kObjectLocationNone, kCursorNormal, kCursorForward);
 		setup_climbing();
 		break;
 	}
@@ -1075,10 +1075,10 @@ IMPLEMENT_FUNCTION(30, Vesna, climbing)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!params->param1) {
 			if (Entity::updateParameter(params->param3, getState()->timeTicks, 120)) {
-				getSound()->playSound(kEntityVesna, "Ves5001", kVolumeFull);
+				getSound()->playSound(kCharacterVesna, "Ves5001", kVolumeFull);
 				params->param1 = 1;
 			}
 		}
@@ -1090,42 +1090,42 @@ IMPLEMENT_FUNCTION(30, Vesna, climbing)
 		setup_savegame(kSavegameTypeEvent, kEventCathVesnaTrainTopKilled);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
 		case 2:
-			getAction()->playAnimation(kEventCathVesnaTrainTopKilled);
+			getActionOld()->playAnimation(kEventCathVesnaTrainTopKilled);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneNone, true);
 			break;
 
 		case 3:
-			getAction()->playAnimation(kEventCathVesnaTrainTopFight);
+			getActionOld()->playAnimation(kEventCathVesnaTrainTopFight);
 
 			setCallback(4);
 			setup_savegame(kSavegameTypeTime, kTimeNone);
 			break;
 
 		case 4:
-			params->param2 = getFight()->setup(kFightVesna);
+			//params->param2 = getFight()->setup(kFightVesna);
 
-			if (params->param2) {
-				getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, params->param2 == Fight::kFightEndLost);
-			} else {
-				getSound()->playSound(kEntityPlayer, "TUNNEL");
-				// TODO: fade to black screen
-
-				getState()->time = (TimeValue)(getState()->time + 1800);
-
-				setCallback(5);
-				setup_savegame(kSavegameTypeEvent, kEventCathVesnaTrainTopWin);
-			}
+			//if (params->param2) {
+			//	getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, params->param2 == Fight::kFightEndLost);
+			//} else {
+			//	getSound()->playSound(kCharacterCath, "TUNNEL");
+			//	// TODO: fade to black screen
+			//
+			//	getState()->time = (TimeValue)(getState()->time + 1800);
+			//
+			//	setCallback(5);
+			//	setup_savegame(kSavegameTypeEvent, kEventCathVesnaTrainTopWin);
+			//}
 			break;
 
 		case 5:
-			getAction()->playAnimation(kEventCathVesnaTrainTopWin);
+			getActionOld()->playAnimation(kEventCathVesnaTrainTopWin);
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 11);
 
 			setup_nullfunction();
@@ -1133,17 +1133,17 @@ IMPLEMENT_FUNCTION(30, Vesna, climbing)
 		}
 		break;
 
-	case kAction167992577:
+	case kCharacterAction167992577:
 		setCallback(3);
 		setup_savegame(kSavegameTypeEvent, kEventCathVesnaTrainTopFight);
 		break;
 
-	case kAction202884544:
+	case kCharacterAction202884544:
 		if (params->param1) {
 			setCallback(2);
 			setup_savegame(kSavegameTypeEvent, kEventCathVesnaTrainTopKilled);
 		} else {
-			getSound()->playSound(kEntityVesna, "Ves5001", kVolumeFull);
+			getSound()->playSound(kCharacterVesna, "Ves5001", kVolumeFull);
 			params->param1 = 1;
 		}
 		break;

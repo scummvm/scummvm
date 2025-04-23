@@ -34,7 +34,7 @@ public:
 	~MmeBoutarel() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
@@ -46,7 +46,7 @@ public:
 	DECLARE_VFUNCTION_1(playSound, const char *filename)
 
 	/**
-	 * Draws the entity
+	 * Draws the character
 	 *
 	 * @param sequence The sequence to draw
 	 */
@@ -76,10 +76,10 @@ public:
 	DECLARE_FUNCTION_2(enterExitCompartment2, const char *sequence, ObjectIndex compartment)
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_VFUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 

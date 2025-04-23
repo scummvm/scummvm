@@ -66,7 +66,7 @@ private:
 	LastExpressEngine *_engine;
 	Common::Array<ActionFunctor *> _actions;
 
-	// Each action is of the form action_<name>(SceneHotspot *hotspot)
+	// Each action is of the form action_<eraseData>(SceneHotspot *hotspot)
 	//   - a pointer to each action is added to the _actions array
 	//   - processHotspot simply calls the proper function given by the hotspot->action value
 	//

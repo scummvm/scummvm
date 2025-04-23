@@ -36,7 +36,7 @@ public:
 	~Gendarmes() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 

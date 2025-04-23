@@ -34,7 +34,7 @@ public:
 	~Pascale() override {}
 
 	/**
-	 * Draws the entity
+	 * Draws the character
 	 *
 	 * @param sequence The sequence to draw
 	 */
@@ -46,7 +46,7 @@ public:
 	DECLARE_FUNCTION(callbackActionRestaurantOrSalon)
 
 	/**
-	 * Process callback action when the entity direction is not kDirectionRight
+	 * Process callback action when the character direction is not kDirectionRight
 	 */
 	DECLARE_FUNCTION(callbackActionOnDirection)
 
@@ -75,12 +75,12 @@ public:
 	DECLARE_VFUNCTION_1(playSound, const char *filename)
 
 	/**
-	 * Draws the entity along with another one
+	 * Draws the character along with another one
 	 *
 	 * @param savepoint The savepoint
 	 *                    - The sequence to draw
-	 *                    - The sequence to draw for the second entity
-	 *                    - The EntityIndex of the second entity
+	 *                    - The sequence to draw for the second character
+	 *                    - The CharacterIndex of the second character
 	 */
 	DECLARE_FUNCTION_NOSETUP(draw2)
 

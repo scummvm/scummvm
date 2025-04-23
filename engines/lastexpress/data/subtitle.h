@@ -49,12 +49,12 @@ class SeekableReadStream;
 namespace LastExpress {
 
 class Font;
-class Subtitle;
+class SubtitleOld;
 
-class SubtitleManager : public Drawable {
+class SubtitleManagerOld : public Drawable {
 public:
-	SubtitleManager(Font *font);
-	~SubtitleManager() override;
+	SubtitleManagerOld(Font *font);
+	~SubtitleManagerOld() override;
 
 	bool load(Common::SeekableReadStream *stream);
 	uint16 getMaxTime() const;
@@ -63,7 +63,7 @@ public:
 	Common::Rect draw(Graphics::Surface *surface) override;
 
 private:
-	Common::Array<Subtitle *> _subtitles;
+	Common::Array<SubtitleOld *> _subtitles;
 	Font *_font;
 	uint16 _maxTime;
 

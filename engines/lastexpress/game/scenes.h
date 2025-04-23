@@ -56,7 +56,7 @@ public:
 	void loadSceneFromObject(ObjectIndex object, bool alternate = false);
 	void loadSceneFromItem(InventoryItem item);
 	void loadSceneFromItemPosition(InventoryItem item);
-	void loadSceneFromPosition(CarIndex car, Position position, int param3 = -1);
+	void loadSceneFromPosition(CarIndex car, PositionOld position, int param3 = -1);
 
 	// Scene drawing & processing
 	void drawScene(SceneIndex sceneIndex);
@@ -81,7 +81,7 @@ public:
 	void setCoordinates(const Common::Rect &rect);
 
 	// Helpers
-	SceneIndex getSceneIndexFromPosition(CarIndex car, Position position, int param3 = -1);
+	SceneIndex getSceneIndexFromPosition(CarIndex car, PositionOld position, int param3 = -1);
 
 	void setFlagDrawSequences() { _flagDrawSequences = true; }
 

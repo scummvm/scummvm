@@ -19,32 +19,20 @@
  *
  */
 
-#ifndef LASTEXPRESS_FIGHTER_VESNA_H
-#define LASTEXPRESS_FIGHTER_VESNA_H
-
 #include "lastexpress/fight/fighter.h"
+
+#include "lastexpress/lastexpress.h"
 
 namespace LastExpress {
 
-class LastExpressEngine;
+void COpponent::timer() {
+	CFighter::timer();
 
-class FighterPlayerVesna : public Fighter {
-public:
-	FighterPlayerVesna(LastExpressEngine *engine);
+	if (_timer && !_currentActionIdx)
+		_timer--;
 
-	void handleAction(FightAction action) override;
-	void update() override;
-	bool canInteract(FightAction action = kFightActionNone) override;
-};
-
-class FighterOpponentVesna : public Opponent {
-public:
-	FighterOpponentVesna(LastExpressEngine *engine);
-
-	void handleAction(FightAction action) override;
-	void update() override;
-};
+	if (_currentSprite)
+		_currentSprite->hotspotPriority = 1;
+}
 
 } // End of namespace LastExpress
-
-#endif // LASTEXPRESS_FIGHTER_VESNA_H

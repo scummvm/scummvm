@@ -35,7 +35,7 @@
 
 namespace LastExpress {
 
-Ivo::Ivo(LastExpressEngine *engine) : Entity(engine, kEntityIvo) {
+Ivo::Ivo(LastExpressEngine *engine) : Entity(engine, kCharacterIvo) {
 	ADD_CALLBACK_FUNCTION(Ivo, reset);
 	ADD_CALLBACK_FUNCTION_S(Ivo, draw);
 	ADD_CALLBACK_FUNCTION_SI(Ivo, enterExitCompartment);
@@ -99,8 +99,8 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(6, Ivo, updateEntity, CarIndex, EntityPosition)
-	if (savepoint.action == kActionExcuseMeCath || savepoint.action == kActionExcuseMe) {
-		getSound()->playSound(kEntityPlayer, "CAT1127A");
+	if (savepoint.action == kCharacterActionExcuseMeCath || savepoint.action == kCharacterActionExcuseMe) {
+		getSound()->playSound(kCharacterCath, "CAT1127A");
 		return;
 	}
 
@@ -133,61 +133,61 @@ IMPLEMENT_FUNCTION(11, Ivo, goCompartment)
 	default:
 		break;
 
-	case kActionNone:
-		if (getEntities()->isDistanceBetweenEntities(kEntityIvo, kEntitySalko, 750) || getEntities()->checkDistanceFromPosition(kEntitySalko, kPosition_2740, 500)) {
-			getSavePoints()->push(kEntityIvo, kEntitySalko, kAction123668192);
+	case kCharacterActionNone:
+		if (getEntities()->isDistanceBetweenEntities(kCharacterIvo, kCharacterSalko, 750) || getEntities()->checkDistanceFromPosition(kCharacterSalko, kPosition_2740, 500)) {
+			getSavePoints()->push(kCharacterIvo, kCharacterSalko, kCharacterAction123668192);
 
 			setCallback(4);
 			setup_enterExitCompartment("613Ah", kObjectCompartmentH);
 		}
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceRight(kEntityIvo, "809DS");
-		if (getEntities()->isInRestaurant(kEntityPlayer))
-			getEntities()->updateFrame(kEntityIvo);
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceRight(kCharacterIvo, "809DS");
+		if (getEntities()->isInRestaurant(kCharacterCath))
+			getEntities()->updateFrame(kCharacterIvo);
 
 		setCallback(1);
 		setup_callbackActionOnDirection();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityIvo, kEntitySalko, kAction125242096);
+			getSavePoints()->push(kCharacterIvo, kCharacterSalko, kCharacterAction125242096);
 
 			setCallback(2);
 			setup_updateEntity(kCarRedSleeping, kPosition_2740);
 			break;
 
 		case 2:
-			if (getEntities()->isDistanceBetweenEntities(kEntityIvo, kEntitySalko, 750) || getEntities()->checkDistanceFromPosition(kEntitySalko, kPosition_2740, 500)) {
-				getSavePoints()->push(kEntityIvo, kEntitySalko, kAction123668192);
+			if (getEntities()->isDistanceBetweenEntities(kCharacterIvo, kCharacterSalko, 750) || getEntities()->checkDistanceFromPosition(kCharacterSalko, kPosition_2740, 500)) {
+				getSavePoints()->push(kCharacterIvo, kCharacterSalko, kCharacterAction123668192);
 
 				setCallback(3);
 				setup_enterExitCompartment("613Ah", kObjectCompartmentH);
 			} else {
-				getEntities()->drawSequenceLeft(kEntityIvo, "613Hh");
-				getEntities()->enterCompartment(kEntityIvo, kObjectCompartmentH, true);
+				getEntities()->drawSequenceLeft(kCharacterIvo, "613Hh");
+				getEntities()->enterCompartment(kCharacterIvo, kObjectCompartmentH, true);
 			}
 			break;
 
 		case 3:
 			getData()->entityPosition = kPosition_2740;
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityIvo);
+			getEntities()->clearSequences(kCharacterIvo);
 
 			callbackAction();
 			break;
 
 		case 4:
-			getEntities()->exitCompartment(kEntityIvo, kObjectCompartmentH, true);
+			getEntities()->exitCompartment(kCharacterIvo, kObjectCompartmentH, true);
 			getData()->entityPosition = kPosition_2740;
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityIvo);
+			getEntities()->clearSequences(kCharacterIvo);
 
 			callbackAction();
 			break;
@@ -202,17 +202,17 @@ IMPLEMENT_FUNCTION(12, Ivo, sitAtTableWithSalko)
 	default:
 		break;
 
-	case kActionExitCompartment:
-		getEntities()->clearSequences(kEntitySalko);
-		getSavePoints()->push(kEntityIvo, kEntityTables2, kAction136455232);
+	case kCharacterActionExitCompartment:
+		getEntities()->clearSequences(kCharacterSalko);
+		getSavePoints()->push(kCharacterIvo, kCharacterTableC, kCharacterAction136455232);
 
 		callbackAction();
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceRight(kEntityIvo, "023A1");
-		getEntities()->drawSequenceRight(kEntitySalko, "023A2");
-		getEntities()->drawSequenceRight(kEntityTables2, "023A3");
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceRight(kCharacterIvo, "023A1");
+		getEntities()->drawSequenceRight(kCharacterSalko, "023A2");
+		getEntities()->drawSequenceRight(kCharacterTableC, "023A3");
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -223,17 +223,17 @@ IMPLEMENT_FUNCTION(13, Ivo, leaveTableWithSalko)
 	default:
 		break;
 
-	case kActionExitCompartment:
-		getSavePoints()->push(kEntityIvo, kEntityTables2, kActionDrawTablesWithChairs, "009E");
-		getEntities()->clearSequences(kEntitySalko);
+	case kCharacterActionExitCompartment:
+		getSavePoints()->push(kCharacterIvo, kCharacterTableC, kCharacterActionDrawTablesWithChairs, "009E");
+		getEntities()->clearSequences(kCharacterSalko);
 
 		callbackAction();
 		break;
 
-	case kActionDefault:
-		getEntities()->drawSequenceRight(kEntityIvo, "023D1");
-		getEntities()->drawSequenceRight(kEntitySalko, "023D2");
-		getEntities()->drawSequenceRight(kEntityTables2, "023D3");
+	case kCharacterActionDefault:
+		getEntities()->drawSequenceRight(kCharacterIvo, "023D1");
+		getEntities()->drawSequenceRight(kCharacterSalko, "023D2");
+		getEntities()->drawSequenceRight(kCharacterTableC, "023D3");
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -244,13 +244,13 @@ IMPLEMENT_FUNCTION(14, Ivo, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Ivo, setup_chapter1Handler));
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObjectCompartmentH, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject47, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+	case kCharacterActionDefault:
+		getObjects()->update(kObjectCompartmentH, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject47, kCharacterCath, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
 		getData()->entityPosition = kPosition_4691;
 		getData()->location = kLocationInsideCompartment;
@@ -266,13 +266,13 @@ IMPLEMENT_FUNCTION(15, Ivo, chapter1Handler)
 	default:
 		break;
 
-	case kActionNone:
-		getData()->entityPosition = getEntityData(kEntityMilos)->entityPosition;
-		getData()->location = getEntityData(kEntityMilos)->location;
-		getData()->car = getEntityData(kEntityMilos)->car;
+	case kCharacterActionNone:
+		getData()->entityPosition = getEntityData(kCharacterMilos)->entityPosition;
+		getData()->location = getEntityData(kCharacterMilos)->location;
+		getData()->car = getEntityData(kCharacterMilos)->car;
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -283,13 +283,13 @@ IMPLEMENT_FUNCTION(15, Ivo, chapter1Handler)
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityIvo, kEntityMilos, kAction135024800);
+			getSavePoints()->push(kCharacterIvo, kCharacterMilos, kCharacterAction135024800);
 			setup_inCompartment();
 			break;
 		}
 		break;
 
-	case kAction125242096:
+	case kCharacterAction125242096:
 		setCallback(1);
 		setup_updateFromTicks(75);
 		break;
@@ -302,65 +302,65 @@ IMPLEMENT_FUNCTION(16, Ivo, inCompartment)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_2740;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getObjects()->update(kObjectCompartmentH, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getEntities()->clearSequences(kEntityIvo);
+		getObjects()->update(kObjectCompartmentH, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getEntities()->clearSequences(kCharacterIvo);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getEntities()->drawSequenceLeft(kEntityIvo, "613Ch");
-			getEntities()->enterCompartment(kEntityIvo, kObjectCompartmentH, true);
-			getSavePoints()->push(kEntityIvo, kEntityCoudert, kAction88652208);
+			getEntities()->drawSequenceLeft(kCharacterIvo, "613Ch");
+			getEntities()->enterCompartment(kCharacterIvo, kObjectCompartmentH, true);
+			getSavePoints()->push(kCharacterIvo, kCharacterCond2, kCharacterAction88652208);
 			break;
 
 		case 2:
 			getData()->entityPosition = kPosition_2740;
 			getData()->location = kLocationInsideCompartment;
 
-			getEntities()->clearSequences(kEntityIvo);
-			getObjects()->update(kObjectCompartmentH, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			getEntities()->clearSequences(kCharacterIvo);
+			getObjects()->update(kObjectCompartmentH, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 			break;
 		}
 		break;
 
-	case kAction122865568:
+	case kCharacterAction122865568:
 		getData()->location = kLocationOutsideCompartment;
 
 		setCallback(1);
 		setup_enterExitCompartment("613Bh", kObjectCompartmentH);
 		break;
 
-	case kAction123852928:
-		getEntities()->exitCompartment(kEntityIvo, kObjectCompartmentH, true);
+	case kCharacterAction123852928:
+		getEntities()->exitCompartment(kCharacterIvo, kObjectCompartmentH, true);
 
 		setCallback(2);
 		setup_enterExitCompartment("613Dh", kObjectCompartmentH);
 		break;
 
-	case kAction221683008:
-		getSavePoints()->push(kEntityIvo, kEntityCoudert, kAction123199584);
+	case kCharacterAction221683008:
+		getSavePoints()->push(kCharacterIvo, kCharacterCond2, kCharacterAction123199584);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Ivo, function17)
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 		getData()->entityPosition = kPosition_2740;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getEntities()->clearSequences(kEntityIvo);
-		getObjects()->update(kObjectCompartmentH, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getEntities()->clearSequences(kCharacterIvo);
+		getObjects()->update(kObjectCompartmentH, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 	}
 IMPLEMENT_FUNCTION_END
 
@@ -370,12 +370,12 @@ IMPLEMENT_FUNCTION(18, Ivo, chapter2)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTime1777500, params->param1, WRAP_SETUP_FUNCTION(Ivo, setup_goBreakfast));
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityIvo);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterIvo);
 
 		getData()->entityPosition = kPosition_2740;
 		getData()->location = kLocationInsideCompartment;
@@ -383,8 +383,8 @@ IMPLEMENT_FUNCTION(18, Ivo, chapter2)
 		getData()->clothes = kClothesDefault;
 		getData()->inventoryItem = kItemNone;
 
-		getObjects()->update(kObjectCompartmentH, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
-		getObjects()->update(kObject47, kEntityPlayer, kObjectLocation1, kCursorKeepValue, kCursorKeepValue);
+		getObjects()->update(kObjectCompartmentH, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject47, kCharacterCath, kObjectLocation1, kCursorKeepValue, kCursorKeepValue);
 
 		break;
 	}
@@ -396,12 +396,12 @@ IMPLEMENT_FUNCTION(19, Ivo, goBreakfast)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_enterExitCompartment("613FH", kObjectCompartmentH);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -416,7 +416,7 @@ IMPLEMENT_FUNCTION(19, Ivo, goBreakfast)
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityIvo, kEntitySalko, kAction136184016);
+			getSavePoints()->push(kCharacterIvo, kCharacterSalko, kCharacterAction136184016);
 			break;
 
 		case 3:
@@ -439,7 +439,7 @@ IMPLEMENT_FUNCTION(19, Ivo, goBreakfast)
 		}
 		break;
 
-	case kAction102675536:
+	case kCharacterAction102675536:
 		setCallback(3);
 		setup_callbackActionRestaurantOrSalon();
 		break;
@@ -452,7 +452,7 @@ IMPLEMENT_FUNCTION(20, Ivo, atBreakfast)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->time > kTime1809000 && params->param1) {
 			if (getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 				getData()->location = kLocationOutsideCompartment;
@@ -463,19 +463,19 @@ IMPLEMENT_FUNCTION(20, Ivo, atBreakfast)
 		}
 		break;
 
-	case kActionDefault:
-		getSavePoints()->push(kEntityIvo, kEntityWaiter2, kAction189688608);
-		getEntities()->drawSequenceLeft(kEntityIvo, "023B");
+	case kCharacterActionDefault:
+		getSavePoints()->push(kCharacterIvo, kCharacterWaiter2, kCharacterAction189688608);
+		getEntities()->drawSequenceLeft(kCharacterIvo, "023B");
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			 getSavePoints()->push(kEntityIvo, kEntityWaiter2, kAction101106391);
-			 getEntities()->drawSequenceLeft(kEntityIvo, "023B");
+			 getSavePoints()->push(kCharacterIvo, kCharacterWaiter2, kCharacterAction101106391);
+			 getEntities()->drawSequenceLeft(kCharacterIvo, "023B");
 			 params->param1 = 1;
 			break;
 
@@ -485,14 +485,14 @@ IMPLEMENT_FUNCTION(20, Ivo, atBreakfast)
 			break;
 
 		case 3:
-			getSavePoints()->push(kEntityIvo, kEntityWaiter2, kAction236237423);
+			getSavePoints()->push(kCharacterIvo, kCharacterWaiter2, kCharacterAction236237423);
 			setup_function21();
 			break;
 		}
 		break;
 
-	case kAction123712592:
-		getEntities()->drawSequenceLeft(kEntityIvo, "023C2");
+	case kCharacterAction123712592:
+		getEntities()->drawSequenceLeft(kCharacterIvo, "023C2");
 
 		setCallback(1);
 		setup_updateFromTime(450);
@@ -502,12 +502,12 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Ivo, function21)
-	if (savepoint.action == kActionDefault) {
+	if (savepoint.action == kCharacterActionDefault) {
 		getData()->entityPosition = kPosition_2740;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getObjects()->update(kObjectCompartmentH, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentH, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 	}
 IMPLEMENT_FUNCTION_END
 
@@ -517,12 +517,12 @@ IMPLEMENT_FUNCTION(22, Ivo, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter3Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityIvo);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterIvo);
 
 		getData()->entityPosition = kPosition_2740;
 		getData()->location = kLocationInsideCompartment;
@@ -536,8 +536,8 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Ivo, chapter3Handler)
-	if (savepoint.action == kActionDefault)
-		getObjects()->update(kObjectCompartmentH, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	if (savepoint.action == kCharacterActionDefault)
+		getObjects()->update(kObjectCompartmentH, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -546,11 +546,11 @@ IMPLEMENT_FUNCTION(24, Ivo, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter4Handler();
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRestaurant;
 		getData()->inventoryItem = kItemNone;
@@ -564,16 +564,16 @@ IMPLEMENT_FUNCTION(25, Ivo, chapter4Handler)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->time > kTime2361600 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			getData()->location = kLocationOutsideCompartment;
 			setup_returnCompartment4();
 		}
 		break;
 
-	case kActionDefault:
-		getSavePoints()->push(kEntityIvo, kEntityTables2, kAction136455232);
-		getEntities()->drawSequenceLeft(kEntityIvo, "023B");
+	case kCharacterActionDefault:
+		getSavePoints()->push(kCharacterIvo, kCharacterTableC, kCharacterAction136455232);
+		getEntities()->drawSequenceLeft(kCharacterIvo, "023B");
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -584,12 +584,12 @@ IMPLEMENT_FUNCTION(26, Ivo, returnCompartment4)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_leaveTableWithSalko();
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -613,11 +613,11 @@ IMPLEMENT_FUNCTION(27, Ivo, inCompartment4)
 	default:
 		break;
 
-	case kActionDefault:
-		getObjects()->update(kObjectCompartmentH, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	case kCharacterActionDefault:
+		getObjects()->update(kObjectCompartmentH, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -633,44 +633,44 @@ IMPLEMENT_FUNCTION(27, Ivo, inCompartment4)
 			break;
 
 		case 2:
-			getEntities()->clearSequences(kEntityIvo);
+			getEntities()->clearSequences(kCharacterIvo);
 			setup_hiding();
 			break;
 
 		case 3:
-			getEntities()->drawSequenceLeft(kEntityIvo, "613Ch");
-			getEntities()->enterCompartment(kEntityIvo, kObjectCompartmentH, true);
-			getSavePoints()->push(kEntityIvo, kEntityCoudert, kAction88652208);
+			getEntities()->drawSequenceLeft(kCharacterIvo, "613Ch");
+			getEntities()->enterCompartment(kCharacterIvo, kObjectCompartmentH, true);
+			getSavePoints()->push(kCharacterIvo, kCharacterCond2, kCharacterAction88652208);
 			break;
 
 		case 4:
-			getEntities()->exitCompartment(kEntityIvo, kObjectCompartmentH, true);
+			getEntities()->exitCompartment(kCharacterIvo, kObjectCompartmentH, true);
 			getData()->entityPosition = kPosition_2740;
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityIvo);
+			getEntities()->clearSequences(kCharacterIvo);
 			break;
 		}
 		break;
 
-	case kAction55996766:
+	case kCharacterAction55996766:
 		setCallback(1);
 		setup_enterExitCompartment("613FH", kObjectCompartmentH);
 		break;
 
-	case kAction122865568:
+	case kCharacterAction122865568:
 		getData()->location = kLocationOutsideCompartment;
 
 		setCallback(3);
 		setup_enterExitCompartment("613Bh", kObjectCompartmentH);
 		break;
 
-	case kAction123852928:
+	case kCharacterAction123852928:
 		setCallback(4);
 		setup_enterExitCompartment("613Dh", kObjectCompartmentH);
 		break;
 
-	case kAction221683008:
-		getSavePoints()->push(kEntityIvo, kEntityCoudert, kAction123199584);
+	case kCharacterAction221683008:
+		getSavePoints()->push(kCharacterIvo, kCharacterCond2, kCharacterAction123199584);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -681,7 +681,7 @@ IMPLEMENT_FUNCTION(28, Ivo, hiding)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (getState()->time > kTime2425500 && !params->param1) {
 			params->param1 = 1;
 			setCallback(1);
@@ -689,7 +689,7 @@ IMPLEMENT_FUNCTION(28, Ivo, hiding)
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -709,9 +709,9 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Ivo, function29)
-	if (savepoint.action == kActionDefault) {
-		getEntities()->clearSequences(kEntityIvo);
-		getObjects()->update(kObjectCompartmentH, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	if (savepoint.action == kCharacterActionDefault) {
+		getEntities()->clearSequences(kCharacterIvo);
+		getObjects()->update(kObjectCompartmentH, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
 		getData()->entityPosition = kPosition_2740;
 		getData()->location = kLocationInsideCompartment;
@@ -726,12 +726,12 @@ IMPLEMENT_FUNCTION(30, Ivo, chapter5)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_chapter5Handler();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityIvo);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterIvo);
 
 		getData()->entityPosition = kPosition_540;
 		getData()->location = kLocationInsideCompartment;
@@ -744,7 +744,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(31, Ivo, chapter5Handler)
-	if (savepoint.action == kAction192637492)
+	if (savepoint.action == kCharacterAction192637492)
 		setup_fightCath();
 IMPLEMENT_FUNCTION_END
 
@@ -754,7 +754,7 @@ IMPLEMENT_FUNCTION(32, Ivo, fightCath)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->location = kLocationOutsideCompartment;
 		getData()->entityPosition = kPosition_540;
 		getData()->car = kCarBaggageRear;
@@ -764,27 +764,27 @@ IMPLEMENT_FUNCTION(32, Ivo, fightCath)
 		setup_savegame(kSavegameTypeEvent, kEventCathIvoFight);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
 
 		case 1:
-			getSound()->playSound(kEntityPlayer, "LIB090");
-			getAction()->playAnimation(kEventCathIvoFight);
+			getSound()->playSound(kCharacterCath, "LIB090");
+			getActionOld()->playAnimation(kEventCathIvoFight);
 
 			setCallback(2);
 			setup_savegame(kSavegameTypeTime, kTimeNone);
 			break;
 
 		case 2:
-			params->param1 = getFight()->setup(kFightIvo);
-			if (params->param1) {
-				getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, params->param1 == Fight::kFightEndLost);
-			} else {
-				getScenes()->loadSceneFromPosition(kCarBaggageRear, 96);
-				setup_knockedOut();
-			}
+			//params->param1 = getFight()->setup(kFightIvo);
+			//if (params->param1) {
+			//	getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, params->param1 == Fight::kFightEndLost);
+			//} else {
+			//	getScenes()->loadSceneFromPosition(kCarBaggageRear, 96);
+			//	setup_knockedOut();
+			//}
 			break;
 		}
 		break;
@@ -797,20 +797,20 @@ IMPLEMENT_FUNCTION(33, Ivo, knockedOut)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getState()->time = (TimeValue)(getState()->time + 1800);
 
 		setCallback(1);
 		setup_savegame(kSavegameTypeTime, kTimeNone);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		if (getCallback() == 1)
-			getObjects()->update(kObject94, kEntityPlayer, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
+			getObjects()->update(kObject94, kCharacterCath, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
 
 		break;
 
-	case kAction135800432:
+	case kCharacterAction135800432:
 		setup_function34();
 		break;
 	}
@@ -818,8 +818,8 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(34, Ivo, function34)
-	if (savepoint.action == kActionDefault)
-		getEntities()->clearSequences(kEntityIvo);
+	if (savepoint.action == kCharacterActionDefault)
+		getEntities()->clearSequences(kCharacterIvo);
 IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

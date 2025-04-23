@@ -33,7 +33,7 @@
 
 namespace LastExpress {
 
-Yasmin::Yasmin(LastExpressEngine *engine) : Entity(engine, kEntityYasmin) {
+Yasmin::Yasmin(LastExpressEngine *engine) : Entity(engine, kCharacterYasmin) {
 	ADD_CALLBACK_FUNCTION(Yasmin, reset);
 	ADD_CALLBACK_FUNCTION_SI(Yasmin, enterExitCompartment);
 	ADD_CALLBACK_FUNCTION_S(Yasmin, playSound);
@@ -64,12 +64,12 @@ IMPLEMENT_FUNCTION(1, Yasmin, reset)
 	default:
 		break;
 
-	case kActionExcuseMeCath:
+	case kCharacterActionExcuseMeCath:
 		getSound()->excuseMeCath();
 		break;
 
-	case kActionExcuseMe:
-		getSound()->excuseMe(kEntityYasmin);
+	case kCharacterActionExcuseMe:
+		getSound()->excuseMe(kCharacterYasmin);
 		break;
 	}
 
@@ -103,7 +103,7 @@ IMPLEMENT_FUNCTION(6, Yasmin, goEtoG)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_4840;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -111,7 +111,7 @@ IMPLEMENT_FUNCTION(6, Yasmin, goEtoG)
 		setup_enterExitCompartment("615Be", kObjectCompartment5);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -128,7 +128,7 @@ IMPLEMENT_FUNCTION(6, Yasmin, goEtoG)
 
 		case 3:
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityYasmin);
+			getEntities()->clearSequences(kCharacterYasmin);
 
 			callbackAction();
 			break;
@@ -143,7 +143,7 @@ IMPLEMENT_FUNCTION(7, Yasmin, goGtoE)
 	default:
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationOutsideCompartment;
 
@@ -151,7 +151,7 @@ IMPLEMENT_FUNCTION(7, Yasmin, goGtoE)
 		setup_enterExitCompartment("615Bg", kObjectCompartment7);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -168,7 +168,7 @@ IMPLEMENT_FUNCTION(7, Yasmin, goGtoE)
 
 		case 3:
 			getData()->location = kLocationInsideCompartment;
-			getEntities()->clearSequences(kEntityYasmin);
+			getEntities()->clearSequences(kCharacterYasmin);
 
 			callbackAction();
 			break;
@@ -183,11 +183,11 @@ IMPLEMENT_FUNCTION(8, Yasmin, chapter1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Yasmin, setup_part1));
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_4840;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarGreenSleeping;
@@ -201,7 +201,7 @@ IMPLEMENT_FUNCTION(9, Yasmin, part1)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (Entity::timeCheckCallback(kTime1093500, params->param1, 1, WRAP_SETUP_FUNCTION(Yasmin, setup_goEtoG)))
 			break;
 
@@ -220,7 +220,7 @@ IMPLEMENT_FUNCTION(9, Yasmin, part1)
 		Entity::timeCheckCallback(kTime1183500, params->param6, 7, WRAP_SETUP_FUNCTION(Yasmin, setup_goEtoG));
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -261,20 +261,20 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Yasmin, function10)
-	if (savepoint.action == kActionDefault) {
-		getObjects()->update(kObjectCompartment7, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+	if (savepoint.action == kCharacterActionDefault) {
+		getObjects()->update(kObjectCompartment7, kCharacterCath, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarGreenSleeping;
 
-		getEntities()->clearSequences(kEntityYasmin);
+		getEntities()->clearSequences(kCharacterYasmin);
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Yasmin, chapter2)
-	if (savepoint.action == kActionDefault) {
-		getEntities()->clearSequences(kEntityYasmin);
+	if (savepoint.action == kCharacterActionDefault) {
+		getEntities()->clearSequences(kCharacterYasmin);
 
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
@@ -292,7 +292,7 @@ IMPLEMENT_FUNCTION(12, Yasmin, part2)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (Entity::timeCheckCallback(kTime1759500, params->param1, 1, WRAP_SETUP_FUNCTION(Yasmin, setup_goGtoE)))
 			break;
 
@@ -300,11 +300,11 @@ IMPLEMENT_FUNCTION(12, Yasmin, part2)
 			params->param2 = 1;
 			getData()->entityPosition = kPosition_4070;
 
-			getSavePoints()->push(kEntityYasmin, kEntityTrain, kAction191070912, kPosition_4070);
+			getSavePoints()->push(kCharacterYasmin, kCharacterClerk, kCharacterAction191070912, kPosition_4070);
 		}
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 
 		if (getCallback() != 1)
 			break;
@@ -313,7 +313,7 @@ IMPLEMENT_FUNCTION(12, Yasmin, part2)
 			params->param2 = 1;
 			getData()->entityPosition = kPosition_4070;
 
-			getSavePoints()->push(kEntityYasmin, kEntityTrain, kAction191070912, kPosition_4070);
+			getSavePoints()->push(kCharacterYasmin, kCharacterClerk, kCharacterAction191070912, kPosition_4070);
 		}
 
 		break;
@@ -326,12 +326,12 @@ IMPLEMENT_FUNCTION(13, Yasmin, chapter3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_part3();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityYasmin);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterYasmin);
 
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
@@ -346,7 +346,7 @@ IMPLEMENT_FUNCTION(14, Yasmin, part3)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (Entity::timeCheckCallback(kTime2062800, params->param1, 1, WRAP_SETUP_FUNCTION(Yasmin, setup_goEtoG)))
 			break;
 
@@ -356,7 +356,7 @@ IMPLEMENT_FUNCTION(14, Yasmin, part3)
 		Entity::timeCheckCallback(kTime2160000, params->param3, 3, WRAP_SETUP_FUNCTION(Yasmin, setup_goEtoG));
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -380,11 +380,11 @@ IMPLEMENT_FUNCTION(15, Yasmin, chapter4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_part4();
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_3050;
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarGreenSleeping;
@@ -398,14 +398,14 @@ IMPLEMENT_FUNCTION(16, Yasmin, part4)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (Entity::timeCheckCallback(kTime2457000, params->param1, 1, WRAP_SETUP_FUNCTION(Yasmin, setup_goGtoE)))
 			break;
 
 		Entity::timeCheckCallback(kTime2479500, params->param2, 3, WRAP_SETUP_FUNCTION(Yasmin, setup_goEtoG));
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -436,12 +436,12 @@ IMPLEMENT_FUNCTION(18, Yasmin, chapter5)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		setup_part5();
 		break;
 
-	case kActionDefault:
-		getEntities()->clearSequences(kEntityYasmin);
+	case kCharacterActionDefault:
+		getEntities()->clearSequences(kCharacterYasmin);
 
 		getData()->entityPosition = kPosition_3969;
 		getData()->location = kLocationInsideCompartment;
@@ -454,7 +454,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Yasmin, part5)
-	if (savepoint.action == kActionProceedChapter5)
+	if (savepoint.action == kCharacterActionProceedChapter5)
 		setup_function20();
 IMPLEMENT_FUNCTION_END
 
@@ -464,21 +464,21 @@ IMPLEMENT_FUNCTION(20, Yasmin, function20)
 	default:
 		break;
 
-	case kActionNone:
+	case kCharacterActionNone:
 		if (!Entity::updateParameter(params->param1, getState()->time, 2700))
 			break;
 
 		setup_hiding();
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		getData()->entityPosition = kPosition_2500;
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarGreenSleeping;
 		break;
 
-	case kActionDrawScene:
-		if (getEntities()->isInsideTrainCar(kEntityPlayer, kCarGreenSleeping)) {
+	case kCharacterActionDrawScene:
+		if (getEntities()->isInsideTrainCar(kCharacterCath, kCarGreenSleeping)) {
 			setup_hiding();
 		}
 		break;
@@ -491,21 +491,21 @@ IMPLEMENT_FUNCTION(21, Yasmin, hiding)
 	default:
 		break;
 
-	case kActionNone:
-		if (!getSoundQueue()->isBuffered(kEntityYasmin)) {
+	case kCharacterActionNone:
+		if (!getSoundQueue()->isBuffered(kCharacterYasmin)) {
 			if (Entity::updateParameter(params->param1, getState()->timeTicks, 450)) {
-				getSound()->playSound(kEntityYasmin, "Har5001");
+				getSound()->playSound(kCharacterYasmin, "Har5001");
 				params->param1 = 0;
 			}
 		}
 		break;
 
-	case kActionDefault:
+	case kCharacterActionDefault:
 		setCallback(1);
 		setup_updateEntity(kCarGreenSleeping, kPosition_4840);
 		break;
 
-	case kActionCallback:
+	case kCharacterActionCallback:
 		switch (getCallback()) {
 		default:
 			break;
@@ -516,16 +516,16 @@ IMPLEMENT_FUNCTION(21, Yasmin, hiding)
 			break;
 
 		case 2:
-			getEntities()->clearSequences(kEntityYasmin);
+			getEntities()->clearSequences(kCharacterYasmin);
 			getData()->location = kLocationInsideCompartment;
 			getData()->entityPosition = kPosition_3050;
-			getObjects()->update(kObjectCompartment7, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
-			getSound()->playSound(kEntityYasmin, "Har5001");
+			getObjects()->update(kObjectCompartment7, kCharacterCath, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getSound()->playSound(kCharacterYasmin, "Har5001");
 			break;
 		}
 		break;
 
-	case kAction135800432:
+	case kCharacterAction135800432:
 		setup_nullfunction();
 		break;
 	}

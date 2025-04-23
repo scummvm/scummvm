@@ -34,19 +34,19 @@ public:
 	~Verges() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
 	/**
-	 * Draws the entity
+	 * Draws the character
 	 *
 	 * @param sequence The sequence to draw
 	 */
 	DECLARE_FUNCTION_1(draw, const char *sequence)
 
 	/**
-	 * Process callback action when the entity direction is not kDirectionRight
+	 * Process callback action when the character direction is not kDirectionRight
 	 */
 	DECLARE_FUNCTION(callbackActionOnDirection)
 
@@ -79,10 +79,10 @@ public:
 	DECLARE_VFUNCTION_2(savegame, SavegameType savegameType, uint32 param)
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_VFUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
@@ -99,8 +99,8 @@ public:
 	 */
 	DECLARE_FUNCTION_1(updateFromTime, uint32 time)
 
-	DECLARE_FUNCTION_2(dialog, EntityIndex entity, const char *soundName)
-	DECLARE_FUNCTION_3(dialog2, EntityIndex entityIndex, const char *soundName1, const char *soundName2)
+	DECLARE_FUNCTION_2(dialog, CharacterIndex entity, const char *soundName)
+	DECLARE_FUNCTION_3(dialog2, CharacterIndex entityIndex, const char *soundName1, const char *soundName2)
 	DECLARE_FUNCTION(talkAboutPassengerList)
 
 	/**

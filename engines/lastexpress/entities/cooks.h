@@ -34,7 +34,7 @@ public:
 	~Cooks() override {}
 
 	/**
-	 * Draws the entity
+	 * Draws the character
 	 *
 	 * @param sequence The sequence to draw
 	 */

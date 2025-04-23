@@ -34,7 +34,7 @@ public:
 	~Kahina() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
@@ -71,18 +71,18 @@ public:
 	DECLARE_FUNCTION_1(lookingForCath, TimeValue timeValue)
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_FUNCTION_2(updateEntity2, CarIndex car, EntityPosition entityPosition)
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_VFUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
@@ -121,10 +121,10 @@ public:
 	DECLARE_VFUNCTION(chapter3)
 
 	/**
-	 * Update the entity, handling excuse me events and resetting the entity state after the argument with Anna in the baggage car
+	 * Update the character, handling excuse me events and resetting the character state after the argument with Anna in the baggage car
 	 *
 	 * @param car            The car index
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_FUNCTION_2(function19, CarIndex car, EntityPosition entityPosition)
 

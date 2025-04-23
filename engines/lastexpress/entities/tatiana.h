@@ -34,7 +34,7 @@ public:
 	~Tatiana() override {}
 
 	/**
-	 * Resets the entity
+	 * Resets the character
 	 */
 	DECLARE_FUNCTION(reset)
 
@@ -46,7 +46,7 @@ public:
 	DECLARE_VFUNCTION_1(playSound, const char *filename)
 
 	/**
-	 * Draws the entity
+	 * Draws the character
 	 *
 	 * @param sequence The sequence to draw
 	 */
@@ -59,7 +59,7 @@ public:
 	 * @param car            The car
 	 * @param position       The position
 	 */
-	DECLARE_FUNCTION_3(updatePosition, const char *sequence1, CarIndex car, Position position)
+	DECLARE_FUNCTION_3(updatePosition, const char *sequence1, CarIndex car, PositionOld position)
 
 	/**
 	 * Handles entering/exiting a compartment.
@@ -81,14 +81,14 @@ public:
 	 * Call a savepoint (or draw sequence in default case)
 	 *
 	 * @param sequence1   The sequence to draw in the default case
-	 * @param entity      The entity
+	 * @param character      The character
 	 * @param action      The action
-	 * @param sequence2   The sequence name for the savepoint
+	 * @param sequence2   The sequence eraseData for the savepoint
 	 */
-	DECLARE_FUNCTION_4(callSavepoint, const char *sequence1, EntityIndex entity, ActionIndex action, const char *sequence2)
+	DECLARE_FUNCTION_4(callSavepoint, const char *sequence1, CharacterIndex entity, CharacterActions action, const char *sequence2)
 
 	/**
-	 * Process callback action when the entity direction is not kDirectionRight
+	 * Process callback action when the character direction is not kDirectionRight
 	 */
 	DECLARE_FUNCTION(callbackActionOnDirection)
 
@@ -121,10 +121,10 @@ public:
 	DECLARE_VFUNCTION_2(savegame, SavegameType savegameType, uint32 param)
 
 	/**
-	 * Updates the entity
+	 * Updates the character
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_VFUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
@@ -185,7 +185,7 @@ public:
 	 * ???
 	 *
 	 * @param car            The car
-	 * @param entityPosition The entity position
+	 * @param entityPosition The character position
 	 */
 	DECLARE_FUNCTION_2(function42, CarIndex car, EntityPosition entityPosition)
 

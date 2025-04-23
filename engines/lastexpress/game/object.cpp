@@ -43,7 +43,7 @@ const Objects::Object Objects::get(ObjectIndex index) const {
 	return _objects[index];
 }
 
-void Objects::update(ObjectIndex index, EntityIndex entity, ObjectLocation status, CursorStyle windowCursor, CursorStyle handleCursor) {
+void Objects::update(ObjectIndex index, CharacterIndex entity, ObjectLocation status, CursorStyle windowCursor, CursorStyle handleCursor) {
 	if (index >= kObjectMax)
 		return;
 
@@ -52,7 +52,7 @@ void Objects::update(ObjectIndex index, EntityIndex entity, ObjectLocation statu
 	// Store original location
 	ObjectLocation original_status = object->status;
 
-	// Update entity
+	// Update character
 	object->entity = entity;
 	object->status = status;
 

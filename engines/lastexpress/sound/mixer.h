@@ -19,32 +19,16 @@
  *
  */
 
-#ifndef LASTEXPRESS_FIGHTER_SALKO_H
-#define LASTEXPRESS_FIGHTER_SALKO_H
+#ifndef LASTEXPRESS_SOUND_MIXER_H
+#define LASTEXPRESS_SOUND_MIXER_H
 
-#include "lastexpress/fight/fighter.h"
+#include "lastexpress/shared.h"
 
 namespace LastExpress {
 
 class LastExpressEngine;
 
-class FighterPlayerSalko : public Fighter {
-public:
-	FighterPlayerSalko(LastExpressEngine *engine);
-
-	void handleAction(FightAction action) override;
-	void update() override;
-	bool canInteract(FightAction action = kFightActionNone) override;
-};
-
-class FighterOpponentSalko : public Opponent {
-public:
-	FighterOpponentSalko(LastExpressEngine *engine);
-
-	void handleAction(FightAction action) override;
-	void update() override;
-};
 
 } // End of namespace LastExpress
 
-#endif // LASTEXPRESS_FIGHTER_SALKO_H
+#endif // LASTEXPRESS_SOUND_MIXER_H

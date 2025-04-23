@@ -45,7 +45,7 @@ public:
 		bool eventCorpseMovedFromFloor;
 		uint32 field_C;
 		bool eventCorpseFound;
-		uint32 field_14;                  ///< EntityIndex (used in Gendarmes)
+		uint32 field_14;                  ///< CharacterIndex (used in Gendarmes)
 		uint32 field_18;
 		uint32 portrait;
 		bool eventCorpseThrown;
