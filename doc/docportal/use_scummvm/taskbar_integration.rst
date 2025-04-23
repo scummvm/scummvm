@@ -5,9 +5,9 @@ Taskbar integration
 The taskbar integration has several features:
 
     - Adds an overlay icon in the taskbar/dock when running a game (Windows and macOS)
-    -  Updates a list of recently played games that can be started from the taskbar/dock (Windows and macOS).
-    -  Shows a progress bar when doing a mass add of games, and shows the number of games found at the end (Windows, macOS and Linux).
-    -  Shows an error state in the taskbar if an error occurs when running a game (Windows only).
+    - Updates a list of recently played games that can be started from the taskbar/dock (Windows and macOS).
+    - Shows a progress bar when doing a mass add of games, and shows the number of games found at the end (Windows, macOS and Linux).
+    - Shows an error state in the taskbar if an error occurs when running a game (Windows only).
 
 
 Setting up the icon overlay
