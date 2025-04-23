@@ -40,8 +40,6 @@ public:
 	void daemon() override;
 
 private:
-	int32 _unkSeries1 = 0;
-
 	int32 _unkVar1 = 0;
 	int32 _unkVar2 = 0;
 	int32 _unkVar3 = 0;
