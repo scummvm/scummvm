@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-23 07:56+0000\n"
-"PO-Revision-Date: 2025-04-23 07:59+0000\n"
+"PO-Revision-Date: 2025-04-23 08:11+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -5000,10 +5000,8 @@ msgid "Remove folder authorizations..."
 msgstr "Elimina les autoritzacions de carpetes..."
 
 #: backends/platform/android/options.cpp:268
-#, fuzzy
-#| msgid "Select the orientation:"
 msgid "Select backup destination"
-msgstr "Seleccioneu l'orientació:"
+msgstr "Seleccioneu la destinació de la còpia de seguretat"
 
 #: backends/platform/android/options.cpp:276
 msgid "The backup has been saved successfully."
@@ -5019,10 +5017,8 @@ msgid "The game saves couldn't be backed up"
 msgstr "No s'ha pogut fer una còpia de seguretat de les partides desades"
 
 #: backends/platform/android/options.cpp:282
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while saving the backup."
-msgstr "S'ha produït un error en escriure la partida desada"
+msgstr "S'ha produït un error en desar la còpia de seguretat."
 
 #: backends/platform/android/options.cpp:289
 msgid ""
@@ -5031,20 +5027,16 @@ msgid ""
 msgstr ""
 
 #: backends/platform/android/options.cpp:294
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select backup file"
-msgstr "Seleccioneu un Tema"
+msgstr "Seleccioneu el fitxer de còpia de seguretat"
 
 #: backends/platform/android/options.cpp:311
 msgid "The backup has been restored successfully."
 msgstr ""
 
 #: backends/platform/android/options.cpp:315
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while restoring the backup."
-msgstr "S'ha produït un error en escriure la partida desada"
+msgstr "S'ha produït un error en restaurar la còpia de seguretat."
 
 #: backends/platform/android/options.cpp:559
 msgid "Remove"
@@ -7553,17 +7545,13 @@ msgstr "Mira endavant"
 
 #: engines/freescape/games/dark/dark.cpp:222
 #: engines/freescape/games/driller/driller.cpp:187
-#, fuzzy
-#| msgid "Move left"
 msgid "Roll left"
-msgstr "Mou a l'esquerra"
+msgstr "Roda cap a l'esquerra"
 
 #: engines/freescape/games/dark/dark.cpp:227
 #: engines/freescape/games/driller/driller.cpp:192
-#, fuzzy
-#| msgid "Move right"
 msgid "Roll right"
-msgstr "Mou a la dreta"
+msgstr "Roda cap a la dreta"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:233
@@ -9525,10 +9513,8 @@ msgid "3DO Plumbers requires RGB support."
 msgstr ""
 
 #: engines/qdengine/dialogs.cpp:32
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable 16 bits per pixel mode"
-msgstr "Habilita el mode de depuració"
+msgstr "Habilita el mode de 16 bits per píxel"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
