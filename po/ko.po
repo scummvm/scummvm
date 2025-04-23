@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-23 07:56+0000\n"
-"PO-Revision-Date: 2025-04-14 21:19+0000\n"
+"PO-Revision-Date: 2025-04-23 12:05+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -5127,19 +5127,19 @@ msgstr "게임에서"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export backup"
-msgstr ""
+msgstr "백업 내보내기"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export a backup of the configuration and save files"
-msgstr ""
+msgstr "구성 백업을 내보내고 파일을 저장"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import backup"
-msgstr ""
+msgstr "백업 가져오기"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import a previously exported backup file"
-msgstr ""
+msgstr "이전에 내보낸 백업 파일 가져오기"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:196
@@ -5147,53 +5147,44 @@ msgid "Remove folder authorizations..."
 msgstr "폴더 권한을 제거합니다..."
 
 #: backends/platform/android/options.cpp:268
-#, fuzzy
-#| msgid "Select the orientation:"
 msgid "Select backup destination"
-msgstr "방향을 선택:"
+msgstr "백업 대상 선택"
 
 #: backends/platform/android/options.cpp:276
 msgid "The backup has been saved successfully."
-msgstr ""
+msgstr "백업이 성공적으로 저장되었습니다."
 
 #: backends/platform/android/options.cpp:278
 msgid "The backup has been saved successfully to the Downloads folder."
-msgstr ""
+msgstr "백업이 다운로드 폴더에 성공적으로 저장되었습니다."
 
 #: backends/platform/android/options.cpp:280
 #: backends/platform/android/options.cpp:313
-#, fuzzy
-#| msgid "the shader could not be changed"
 msgid "The game saves couldn't be backed up"
-msgstr "셰이더를 변경할 수 없음"
+msgstr "게임 저장을 백업할 수 없음"
 
 #: backends/platform/android/options.cpp:282
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while saving the backup."
-msgstr "저장 게임을 쓰는 동안 오류가 발생함"
+msgstr "백업을 저장하는 동안 오류가 발생했습니다."
 
 #: backends/platform/android/options.cpp:289
 msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
-msgstr ""
+msgstr "백업을 복원하면 현재 구성이 지워지고 기존 저장 내용이 덮어쓰여집니다. "
+"계속할까요?"
 
 #: backends/platform/android/options.cpp:294
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select backup file"
-msgstr "테마 선택"
+msgstr "백업 파일 선택"
 
 #: backends/platform/android/options.cpp:311
 msgid "The backup has been restored successfully."
-msgstr ""
+msgstr "백업이 성공적으로 복구되었습니다."
 
 #: backends/platform/android/options.cpp:315
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while restoring the backup."
-msgstr "저장 게임을 쓰는 동안 오류가 발생함"
+msgstr "백업을 복원하는 동안 오류가 발생했습니다."
 
 #: backends/platform/android/options.cpp:559
 msgid "Remove"
@@ -7855,17 +7846,13 @@ msgstr "얼굴 앞으로"
 
 #: engines/freescape/games/dark/dark.cpp:222
 #: engines/freescape/games/driller/driller.cpp:187
-#, fuzzy
-#| msgid "Move left"
 msgid "Roll left"
-msgstr "왼쪽으로 이동"
+msgstr "왼쪽으로 구르기"
 
 #: engines/freescape/games/dark/dark.cpp:227
 #: engines/freescape/games/driller/driller.cpp:192
-#, fuzzy
-#| msgid "Move right"
 msgid "Roll right"
-msgstr "오른쪽으로 이동"
+msgstr "오른쪽으로 구르기"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:233
@@ -9858,14 +9845,12 @@ msgid "3DO Plumbers requires RGB support."
 msgstr "3DO Plumbers에는 RGB 지원이 필요합니다."
 
 #: engines/qdengine/dialogs.cpp:32
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable 16 bits per pixel mode"
-msgstr "디버그 모드를 활성화"
+msgstr "픽셀당 16비트 모드 활성화"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
-msgstr ""
+msgstr "백엔드가 32bpp를 지원하지 않거나 그래픽을 디버깅하려면 이것을 활성화"
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
