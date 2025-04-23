@@ -94,7 +94,7 @@ bool sndDispatcher::play_sound(const sndSound *snd, bool loop, int vol) {
 		if (loop)
 			p.toggle_looping();
 
-		int snd_volume = (vol == 255) ? volume_dB() : convert_volume_to_dB((volume() * vol) >> 8);
+		int snd_volume = vol * volume() / 256;
 
 		if (!p.create_sound_buffer())
 			return false;
@@ -161,7 +161,7 @@ sndSound::status_t sndDispatcher::sound_status(const sndSound *snd) const {
 
 bool sndDispatcher::update_volume() {
 	for (sound_list_t::iterator it = _sounds.begin(); it != _sounds.end(); ++it)
-		it->set_volume(volume_dB());
+		it->set_volume(volume());
 
 	return true;
 }
