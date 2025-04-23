@@ -658,11 +658,11 @@ void Section8Room::parser() {
 }
 
 void Section8Room::daemon() {
-	int32 _dword1948BC[] = {1815, 1080, 1157, 1241, 1319, 1402, 1478};
-	int32 _dword1948D8[] = {1561, 874, 949, 1034, 1117, 1198, 1276};
-	int32 _dword1948F4[] = {1355, 624, 702, 787, 865, 949, 1027};
-	int32 _dword194910[] = {1110, 278, 351, 439, 519, 601, 679};
-	int32 _dword19492C[] = {756, 1219, 1301, 1383, 1466, 1548, 1626, 1701};
+	int32 _greenSoldierCoordX[] = {1815, 1080, 1157, 1241, 1319, 1402, 1478, 1561};
+	int32 _purpleSoldierCoordX[] = {1561, 874, 949, 1034, 1117, 1198, 1276, 1355};
+	int32 _yellowSoldierCoordX[] = {1355, 624, 702, 787, 865, 949, 1027, 1110};
+	int32 _blueSoldierCoordX[] = {1110, 278, 351, 439, 519, 601, 679, 756};
+	int32 _redSoldierCoordX[] = {756, 1219, 1301, 1383, 1466, 1548, 1626, 1701};
 
 	switch (_G(kernel).trigger) {
 	case 1:
@@ -882,23 +882,23 @@ void Section8Room::daemon() {
 	case 15:
 		switch (_currentRoom) {
 		case 804:
-			ws_walk(_G(my_walker), _dword1948BC[_coordArrayId], 321, nullptr, 16, 3, true);
+			ws_walk(_G(my_walker), _greenSoldierCoordX[_coordArrayId], 321, nullptr, 16, 3, true);
 			break;
 
 		case 814:
-			ws_walk(_G(my_walker), _dword1948D8[_coordArrayId], 321, nullptr, 16, 3, true);
+			ws_walk(_G(my_walker), _purpleSoldierCoordX[_coordArrayId], 321, nullptr, 16, 3, true);
 			break;
 
 		case 824:
-			ws_walk(_G(my_walker), _dword1948F4[_coordArrayId], 321, nullptr, 16, 3, true);
+			ws_walk(_G(my_walker), _yellowSoldierCoordX[_coordArrayId], 321, nullptr, 16, 3, true);
 			break;
 
 		case 834:
-			ws_walk(_G(my_walker), _dword194910[_coordArrayId], 321, nullptr, 16, 3, true);
+			ws_walk(_G(my_walker), _blueSoldierCoordX[_coordArrayId], 321, nullptr, 16, 3, true);
 			break;
 
 		case 844:
-			ws_walk(_G(my_walker), _dword19492C[_coordArrayId], 321, nullptr, 16, 3, true);
+			ws_walk(_G(my_walker), _redSoldierCoordX[_coordArrayId], 321, nullptr, 16, 3, true);
 			break;
 
 		default:
