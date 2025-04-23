@@ -196,7 +196,7 @@ _debug_build=auto
 _release_build=auto
 _optimizations=auto
 _verbose_build=no
-_werror_build=no
+_werror_build=auto
 _text_console=no
 _mt32emu=yes
 _lua=yes
@@ -984,7 +984,8 @@ Optional Features:
   --enable-detection-dynamic build detection features into a library
   --disable-detection-full add detection only for the engines which were enabled
   --disable-debug          disable building with debugging symbols
-  --enable-Werror          treat warnings as errors
+  --enable-Werror          treat all warnings as errors
+  --disable-Werror         disable default promotion of some warnings to errors
   --enable-release         enable building in release mode (this activates
                            optimizations)
   --enable-release-mode    enable building in release mode (without optimizations)
@@ -1542,6 +1543,9 @@ for ac_option in $@; do
 		;;
 	--enable-Werror)
 		_werror_build=yes
+		;;
+	--disable-Werror)
+		_werror_build=no
 		;;
 	--enable-release-mode)
 		_release_build=yes
@@ -7544,12 +7548,20 @@ case $_host_os in
 		;;
 esac
 
-
+# Promote any warning to an error, only if explicitly asked
 if test "$_werror_build" = yes; then
 	# --enable-Werror shouldn't be applied before being done testing all system
 	# features and libraries. Otherwise, some of them could just end up being silently
 	# disabled, when any small warning appears in a test.
 	append_var CXXFLAGS "-Werror"
+fi
+
+# Promote some selected warnings to errors, by default
+#
+# Some warnings can reveal some serious issues that shouldn't remain
+# unnoticed. Flags added here shouldn't trigger false positives, though.
+if test "$_werror_build" != no; then
+	append_var CXXFLAGS "-Werror=return-type"
 fi
 
 #
