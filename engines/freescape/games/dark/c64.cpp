@@ -99,26 +99,44 @@ void DarkEngine::drawC64UI(Graphics::Surface *surface) {
 	int energy = _gameStateVars[k8bitVariableEnergy]; // called fuel in this game
 	int shield = _gameStateVars[k8bitVariableShield];
 
-	_gfx->readFromPalette(_gfx->_inkColor, r, g, b);
-	uint32 inkColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+	_gfx->readFromPalette(6, r, g, b); // Violet Blue
+	uint32 outBarColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	/*if (shield >= 0) {
+	_gfx->readFromPalette(14, r, g, b); // Violet
+	uint32 inBarColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	_gfx->readFromPalette(3, r, g, b); // Light Blue
+	uint32 lineColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	Common::Rect coverBar;
+	coverBar = Common::Rect(64, 144, 135, 151);
+	surface->fillRect(coverBar, back);
+
+	if (shield >= 0) {
 		Common::Rect shieldBar;
-		shieldBar = Common::Rect(72, 141 - 1, 143 - (_maxShield - shield), 146);
-		surface->fillRect(shieldBar, inkColor);
 
-		shieldBar = Common::Rect(72, 143 - 1, 143 - (_maxShield - shield), 144);
-		surface->fillRect(shieldBar, front);
+		shieldBar = Common::Rect(64, 144, 127 - (_maxShield - shield), 151);
+		surface->fillRect(shieldBar, outBarColor);
+
+		shieldBar = Common::Rect(64, 146, 127 - (_maxShield - shield), 149);
+		surface->fillRect(shieldBar, inBarColor);
+		if (shield >= 1)
+			surface->drawLine(64, 147, 127 - (_maxShield - shield) - 1, 147, lineColor);
 	}
+
+	coverBar = Common::Rect(64, 144 + 8, 127, 159);
+	surface->fillRect(coverBar, back);
 
 	if (energy >= 0) {
 		Common::Rect energyBar;
-		energyBar = Common::Rect(72, 147 + 1, 143 - (_maxEnergy - energy), 155 - 1);
-		surface->fillRect(energyBar, inkColor);
+		energyBar = Common::Rect(64, 144 + 8, 127 - (_maxEnergy - energy), 159);
+		surface->fillRect(energyBar, outBarColor);
 
-		energyBar = Common::Rect(72, 148 + 2, 143 - (_maxEnergy - energy), 154 - 2);
-		surface->fillRect(energyBar, front);
-	}*/
+		energyBar = Common::Rect(64, 146 + 8, 127 - (_maxEnergy - energy), 157);
+		surface->fillRect(energyBar, inBarColor);
+		if (energy >= 1)
+			surface->drawLine(64, 147 + 8, 127 - (_maxEnergy - energy) - 1, 155, lineColor);
+	}
 	drawBinaryClock(surface, 304, 124, front, back);
 }
 
