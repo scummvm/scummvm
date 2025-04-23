@@ -678,6 +678,9 @@ int main(int argc, char *argv[]) {
 		globalErrors.push_back("4305"); // truncation of double to float or int to bool
 		globalErrors.push_back("4366"); // address taken of unaligned field
 		globalErrors.push_back("4315"); // unaligned field has constructor that expects to be aligned
+		globalErrors.push_back("4715"); // not all control paths return a value
+		globalErrors.push_back("4716"); // function must return a value
+
 
 		projectWarnings["agi"].push_back("4510");
 		projectWarnings["agi"].push_back("4610");
