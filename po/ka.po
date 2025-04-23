@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-21 16:10+0000\n"
+"POT-Creation-Date: 2025-04-23 07:56+0000\n"
 "PO-Revision-Date: 2025-04-16 07:18+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -6445,7 +6445,7 @@ msgstr "სამხილის კონფიდენციალობი�
 #: engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:135
-#: engines/freescape/games/eclipse/eclipse.cpp:204
+#: engines/freescape/games/eclipse/eclipse.cpp:206
 #: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
 msgstr "თამაშის შენახვა"
@@ -6458,7 +6458,7 @@ msgstr "თამაშის შენახვა"
 #: engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:140
-#: engines/freescape/games/eclipse/eclipse.cpp:209
+#: engines/freescape/games/eclipse/eclipse.cpp:211
 #: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
 msgstr "თამაშის ჩატვირთვა"
@@ -6496,7 +6496,7 @@ msgstr "სამხილების ბაზა"
 #: engines/freescape/games/castle/castle.cpp:259
 #: engines/freescape/games/dark/dark.cpp:196
 #: engines/freescape/games/driller/driller.cpp:145
-#: engines/freescape/games/eclipse/eclipse.cpp:214
+#: engines/freescape/games/eclipse/eclipse.cpp:216
 #: engines/sword1/metaengine.cpp:295
 msgid "Quit Game"
 msgstr "თამაშიდან გასვლა"
@@ -7191,21 +7191,21 @@ msgstr "აირჩიეთ პრინცესა"
 #: engines/freescape/games/castle/castle.cpp:264
 #: engines/freescape/games/dark/dark.cpp:206
 #: engines/freescape/games/driller/driller.cpp:153
-#: engines/freescape/games/eclipse/eclipse.cpp:222
+#: engines/freescape/games/eclipse/eclipse.cpp:224
 msgid "Toggle Sound"
 msgstr "ხმის გადართვა"
 
 #: engines/freescape/games/castle/castle.cpp:269
 #: engines/freescape/games/dark/dark.cpp:212
 #: engines/freescape/games/driller/driller.cpp:159
-#: engines/freescape/games/eclipse/eclipse.cpp:227
+#: engines/freescape/games/eclipse/eclipse.cpp:229
 msgid "Rotate Left"
 msgstr "მარცხნივ შებრუნება"
 
 #: engines/freescape/games/castle/castle.cpp:274
 #: engines/freescape/games/dark/dark.cpp:217
 #: engines/freescape/games/driller/driller.cpp:164
-#: engines/freescape/games/eclipse/eclipse.cpp:232
+#: engines/freescape/games/eclipse/eclipse.cpp:234
 msgid "Rotate Right"
 msgstr "მარჯვნივ შებრუნება"
 
@@ -7222,7 +7222,7 @@ msgid "Crawl"
 msgstr "ფორთხვა"
 
 #: engines/freescape/games/castle/castle.cpp:296
-#: engines/freescape/games/eclipse/eclipse.cpp:259
+#: engines/freescape/games/eclipse/eclipse.cpp:261
 msgid "Face Forward"
 msgstr "სახე წინ"
 
@@ -7277,21 +7277,21 @@ msgid "Collect drilling rig"
 msgstr "ბურღის ამოღება"
 
 #. I18N: Illustrates the angle at which you turn left or right.
-#: engines/freescape/games/eclipse/eclipse.cpp:238
+#: engines/freescape/games/eclipse/eclipse.cpp:240
 msgid "Change Angle"
 msgstr "კუთხის შეცვლა"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
-#: engines/freescape/games/eclipse/eclipse.cpp:244
+#: engines/freescape/games/eclipse/eclipse.cpp:246
 msgid "Change Step Size"
 msgstr "ნაბიჯის ზომის შეცვლა"
 
-#: engines/freescape/games/eclipse/eclipse.cpp:249
+#: engines/freescape/games/eclipse/eclipse.cpp:251
 msgid "Toggle Height"
 msgstr "სიმაღლის გადართვა"
 
 #. I18N: Action of hero party in Might & Magic 1
-#: engines/freescape/games/eclipse/eclipse.cpp:254
+#: engines/freescape/games/eclipse/eclipse.cpp:256
 #: engines/kyra/engine/lol.cpp:516 engines/mm/mm1/metaengine.cpp:109
 msgid "Rest"
 msgstr "პაუზა"
