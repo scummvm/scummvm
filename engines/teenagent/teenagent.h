@@ -160,6 +160,9 @@ public:
 
 	void setMusic(byte id);
 
+	void sayText(const Common::String &text);
+	void stopTextToSpeech() const;
+	Common::String _previousSaid;
 private:
 	void processObject();
 	bool trySelectedObject();

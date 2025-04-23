@@ -484,6 +484,7 @@ bool Scene::processEvent(const Common::Event &event) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
 		if (!message.empty() && messageFirstFrame == 0) {
+			_vm->stopTextToSpeech();
 			clearMessage();
 			nextEvent();
 			return true;
@@ -505,10 +506,12 @@ bool Scene::processEvent(const Common::Event &event) {
 					customAnimation[i].free();
 				_vm->playMusic(4);
 				_vm->loadScene(10, Common::Point(136, 153));
+				_vm->stopTextToSpeech();
 				return true;
 			}
 
 			if (!message.empty() && messageFirstFrame == 0) {
+				_vm->stopTextToSpeech();
 				clearMessage();
 				nextEvent();
 				return true;
@@ -616,6 +619,8 @@ bool Scene::render(bool tickGame, bool tickMark, uint32 messageDelta) {
 			_vm->res->font7.render(surface, currentEvent.dst.x, currentEvent.dst.y -= gameDelta, currentEvent.message, currentEvent.color);
 			_vm->_system->unlockScreen();
 
+			_vm->sayText(currentEvent.message);
+
 			if (currentEvent.dst.y < -(int)currentEvent.timer)
 				currentEvent.clear();
 			}
@@ -643,6 +648,11 @@ bool Scene::render(bool tickGame, bool tickMark, uint32 messageDelta) {
 				_vm->res->font7.render(surface, currentEvent.dst.x, currentEvent.dst.y, message, textColorCredits);
 			}
 			_vm->_system->unlockScreen();
+
+			Common::String ttsMessage = message;
+			ttsMessage.replace(';', '-');
+			_vm->sayText(ttsMessage);
+
 			return true;
 		}
 
@@ -828,6 +838,17 @@ bool Scene::render(bool tickGame, bool tickMark, uint32 messageDelta) {
 			if (visible) {
 				_vm->res->font7.render(surface, messagePos.x, messagePos.y, message, _messageColor);
 				busy = true;
+
+				Common::String ttsMessage = message;
+				if (!_vm->inventory->active()) {
+					ttsMessage.replace('\n', ' ');
+				} else {
+					// Keep a newline character after the item name, so the TTS has an appropriate pause
+					int endOfItemName = ttsMessage.find('\n');
+					ttsMessage.replace('\n', ' ');
+					ttsMessage.replace(endOfItemName, 1, "\n");
+				}
+				_vm->sayText(ttsMessage);
 			}
 		}
 
