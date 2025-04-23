@@ -121,6 +121,8 @@ private:
 
 	Audio::SoundHandle _audHandle;
 
+	byte _volume = 255;
+
 	bool _isStopped = false;
 };
 

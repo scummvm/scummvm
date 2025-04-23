@@ -61,9 +61,9 @@ bool sndSound::play() {
 
 	if (_flags & SOUND_FLAG_LOOPING) {
 		Audio::AudioStream *audio = new Audio::LoopingAudioStream(_sound->_audioStream, 0, DisposeAfterUse::NO);
-		g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_audHandle, audio, -1, Audio::Mixer::kMaxChannelVolume, 0,  DisposeAfterUse::NO);
+		g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_audHandle, audio, -1, _volume, 0,  DisposeAfterUse::NO);
 	} else {
-		g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_audHandle, _sound->_audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0,  DisposeAfterUse::NO);
+		g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_audHandle, _sound->_audioStream, -1, _volume, 0,  DisposeAfterUse::NO);
 	}
 
 	return true;
@@ -119,6 +119,7 @@ bool sndSound::is_stopped() const {
 }
 
 bool sndSound::set_volume(int vol) {
+	_volume = vol;
 	g_system->getMixer()->setChannelVolume(_audHandle, vol);
 	return true;
 }
