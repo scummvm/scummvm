@@ -29,10 +29,10 @@ namespace Awe {
 
 struct Win31BankEntry {
 	char name[16] = { '\0' };
-	uint8_t type = 0;
-	uint32_t offset = 0;
-	uint32_t size = 0;
-	uint32_t packedSize = 0;
+	uint8 type = 0;
+	uint32 offset = 0;
+	uint32 size = 0;
+	uint32 packedSize = 0;
 };
 
 struct ResourceWin31 {
@@ -41,14 +41,14 @@ struct ResourceWin31 {
 	File _f;
 	Win31BankEntry *_entries = nullptr;
 	int _entriesCount = 0;
-	uint8_t *_textBuf = nullptr;
+	uint8 *_textBuf = nullptr;
 	const char *_stringsTable[614] = { nullptr };
 
 	ResourceWin31();
 	~ResourceWin31();
 
 	bool readEntries();
-	uint8_t *loadFile(int num, uint8_t *dst, uint32_t *size);
+	uint8 *loadFile(int num, uint8 *dst, uint32 *size);
 	void readStrings();
 	const char *getString(int num) const;
 	const char *getMusicName(int num) const;

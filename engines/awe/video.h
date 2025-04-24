@@ -27,7 +27,7 @@
 namespace Awe {
 
 struct StrEntry {
-	uint16_t id;
+	uint16 id;
 	const char *str;
 };
 
@@ -45,14 +45,14 @@ struct Video {
 	static const StrEntry STRINGS_TABLE_FR[];
 	static const StrEntry STRINGS_TABLE_ENG[];
 	static const StrEntry STRINGS_TABLE_DEMO[];
-	static const uint16_t STRINGS_ID_15TH[];
+	static const uint16 STRINGS_ID_15TH[];
 	static const char *STRINGS_TABLE_15TH[];
 	static const char *_str0x194AtariDemo;
 	static const StrEntry STRINGS_TABLE_3DO[];
 	static const char *NOTE_TEXT_3DO;
 	static const char *END_TEXT_3DO;
-	static const uint8_t *VERTICES_3DO[201];
-	static const uint8_t PALETTE_EGA[];
+	static const uint8 *VERTICES_3DO[201];
+	static const uint8 PALETTE_EGA[];
 
 	static bool _useEGA;
 
@@ -61,38 +61,38 @@ struct Video {
 	bool _hasHeadSprites = false;
 	bool _displayHead = true;
 
-	uint8_t _nextPal = 0, _currentPal = 0;
-	uint8_t _buffers[3] = { 0 };
+	uint8 _nextPal = 0, _currentPal = 0;
+	uint8 _buffers[3] = { 0 };
 	Ptr _pData;
-	uint8_t *_dataBuf = nullptr;
+	uint8 *_dataBuf = nullptr;
 	const StrEntry *_stringsTable = nullptr;
-	uint8_t _tempBitmap[BITMAP_W * BITMAP_H] = { 0 };
-	uint16_t _bitmap555[BITMAP_W * BITMAP_H] = { 0 };
+	uint8 _tempBitmap[BITMAP_W * BITMAP_H] = { 0 };
+	uint16 _bitmap555[BITMAP_W * BITMAP_H] = { 0 };
 
 	Video(Resource *res);
 	~Video() {}
 	void init();
 
 	void setDefaultFont();
-	void setFont(const uint8_t *font);
-	void setHeads(const uint8_t *src);
-	void setDataBuffer(uint8_t *dataBuf, uint16_t offset);
-	void drawShape(uint8_t color, uint16_t zoom, const Point *pt);
+	void setFont(const uint8 *font);
+	void setHeads(const uint8 *src);
+	void setDataBuffer(uint8 *dataBuf, uint16 offset);
+	void drawShape(uint8 color, uint16 zoom, const Point *pt);
 	void drawShapePart3DO(int color, int part, const Point *pt);
 	void drawShape3DO(int color, int zoom, const Point *pt);
-	void fillPolygon(uint16_t color, uint16_t zoom, const Point *pt);
-	void drawShapeParts(uint16_t zoom, const Point *pt);
-	void drawString(uint8_t color, uint16_t x, uint16_t y, uint16_t strId);
-	uint8_t getPagePtr(uint8_t page);
-	void setWorkPagePtr(uint8_t page);
-	void fillPage(uint8_t page, uint8_t color);
-	void copyPage(uint8_t src, uint8_t dst, int16_t vscroll);
-	void scaleBitmap(const uint8_t *src, int fmt);
-	void copyBitmapPtr(const uint8_t *src, uint32_t size = 0);
-	void changePal(uint8_t pal);
-	void updateDisplay(uint8_t page, SystemStub *stub);
-	void setPaletteColor(uint8_t color, int r, int g, int b);
-	void drawRect(uint8_t page, uint8_t color, int x1, int y1, int x2, int y2);
+	void fillPolygon(uint16 color, uint16 zoom, const Point *pt);
+	void drawShapeParts(uint16 zoom, const Point *pt);
+	void drawString(uint8 color, uint16 x, uint16 y, uint16 strId);
+	uint8 getPagePtr(uint8 page);
+	void setWorkPagePtr(uint8 page);
+	void fillPage(uint8 page, uint8 color);
+	void copyPage(uint8 src, uint8 dst, int16 vscroll);
+	void scaleBitmap(const uint8 *src, int fmt);
+	void copyBitmapPtr(const uint8 *src, uint32 size = 0);
+	void changePal(uint8 pal);
+	void updateDisplay(uint8 page, SystemStub *stub);
+	void setPaletteColor(uint8 color, int r, int g, int b);
+	void drawRect(uint8 page, uint8 color, int x1, int y1, int x2, int y2);
 	void drawBitmap3DO(const char *name, SystemStub *stub);
 };
 

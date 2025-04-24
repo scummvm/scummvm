@@ -246,10 +246,10 @@ void Engine::titlePage() {
 	_state = kStateGame;
 }
 
-void Engine::saveGameState(uint8_t slot, const char *desc) {
+void Engine::saveGameState(uint8 slot, const char *desc) {
 }
 
-void Engine::loadGameState(uint8_t slot) {
+void Engine::loadGameState(uint8 slot) {
 }
 
 } // namespace Awe

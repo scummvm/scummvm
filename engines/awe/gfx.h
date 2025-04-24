@@ -60,12 +60,12 @@ enum {
 struct SystemStub;
 
 struct Gfx {
-	static const uint8_t FONT[];
+	static const uint8 FONT[];
 	static bool _is1991; // draw graphics as in the original 1991 game release
 	static Graphics::PixelFormat _format;
-	static const uint16_t SHAPES_MASK_OFFSET[];
+	static const uint16 SHAPES_MASK_OFFSET[];
 	static const int SHAPES_MASK_COUNT;
-	static const uint8_t SHAPES_MASK_DATA[];
+	static const uint8 SHAPES_MASK_DATA[];
 
 	int _fixUpPalette = 0;
 
@@ -74,18 +74,18 @@ struct Gfx {
 	virtual void init(int targetW, int targetH) {}
 	virtual void fini() {}
 
-	virtual void setFont(const uint8_t *src, int w, int h) = 0;
+	virtual void setFont(const uint8 *src, int w, int h) = 0;
 	virtual void setPalette(const Color *colors, int count) = 0;
-	virtual void setSpriteAtlas(const uint8_t *src, int w, int h, int xSize, int ySize) = 0;
-	virtual void drawSprite(int buffer, int num, const Point *pt, uint8_t color) = 0;
-	virtual void drawBitmap(int buffer, const uint8_t *data, int w, int h, int fmt) = 0;
-	virtual void drawPoint(int buffer, uint8_t color, const Point *pt) = 0;
-	virtual void drawQuadStrip(int buffer, uint8_t color, const QuadStrip *qs) = 0;
-	virtual void drawStringChar(int buffer, uint8_t color, char c, const Point *pt) = 0;
-	virtual void clearBuffer(int num, uint8_t color) = 0;
+	virtual void setSpriteAtlas(const uint8 *src, int w, int h, int xSize, int ySize) = 0;
+	virtual void drawSprite(int buffer, int num, const Point *pt, uint8 color) = 0;
+	virtual void drawBitmap(int buffer, const uint8 *data, int w, int h, int fmt) = 0;
+	virtual void drawPoint(int buffer, uint8 color, const Point *pt) = 0;
+	virtual void drawQuadStrip(int buffer, uint8 color, const QuadStrip *qs) = 0;
+	virtual void drawStringChar(int buffer, uint8 color, char c, const Point *pt) = 0;
+	virtual void clearBuffer(int num, uint8 color) = 0;
 	virtual void copyBuffer(int dst, int src, int vscroll = 0) = 0;
 	virtual void drawBuffer(int num, SystemStub *) = 0;
-	virtual void drawRect(int num, uint8_t color, const Point *pt, int w, int h) = 0;
+	virtual void drawRect(int num, uint8 color, const Point *pt, int w, int h) = 0;
 	virtual void drawBitmapOverlay(const Graphics::Surface &src, int fmt, SystemStub *stub) = 0;
 };
 

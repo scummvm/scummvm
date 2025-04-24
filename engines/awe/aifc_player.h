@@ -29,20 +29,20 @@ namespace Awe {
 
 struct AifcPlayer {
 	File _f;
-	uint32_t _ssndOffset = 0;
-	uint32_t _ssndSize = 0;
-	uint32_t _pos = 0;
-	int16_t _sampleL = 0, _sampleR = 0;
+	uint32 _ssndOffset = 0;
+	uint32 _ssndSize = 0;
+	uint32 _pos = 0;
+	int16 _sampleL = 0, _sampleR = 0;
 	Frac _rate;
 
 	AifcPlayer();
 
-	bool play(int mixRate, const char *path, uint32_t offset);
+	bool play(int mixRate, const char *path, uint32 offset);
 	void stop();
 
-	int8_t readSampleData();
+	int8 readSampleData();
 	void decodeSamples();
-	void readSamples(int16_t *buf, int len);
+	void readSamples(int16 *buf, int len);
 };
 
 } // namespace Awe

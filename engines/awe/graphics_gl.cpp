@@ -74,18 +74,18 @@ struct Texture {
 	GLuint _id;
 	int _w, _h;
 	float _u, _v;
-	uint8_t *_rgbData;
-	const uint8_t *_raw16Data;
+	uint8 *_rgbData;
+	const uint8 *_raw16Data;
 	int _fmt;
 
 	void init();
-	void uploadDataCLUT(const uint8_t *data, int srcPitch, int w, int h, const Color *pal);
+	void uploadDataCLUT(const uint8 *data, int srcPitch, int w, int h, const Color *pal);
 	void uploadDataRGB(const void *data, int srcPitch, int w, int h, int fmt, int type);
 	void draw(int w, int h);
 	void clear();
-	void readRaw16(const uint8_t *src, const Color *pal, int w, int h);
-	void readFont(const uint8_t *src);
-	void readRGB555(const uint16_t *src, int w, int h);
+	void readRaw16(const uint8 *src, const Color *pal, int w, int h);
+	void readFont(const uint8 *src);
+	void readRGB555(const uint16 *src, int w, int h);
 };
 
 void Texture::init() {
@@ -98,11 +98,11 @@ void Texture::init() {
 	_fmt = -1;
 }
 
-static void convertTextureCLUT(const uint8_t *src, const int srcPitch, int w, int h, uint8_t *dst, int dstPitch, const Color *pal, bool alpha) {
+static void convertTextureCLUT(const uint8 *src, const int srcPitch, int w, int h, uint8 *dst, int dstPitch, const Color *pal, bool alpha) {
 	for (int y = 0; y < h; ++y) {
 		int offset = 0;
 		for (int x = 0; x < w; ++x) {
-			const uint8_t color = src[x];
+			const uint8 color = src[x];
 			dst[offset++] = pal[color].r;
 			dst[offset++] = pal[color].g;
 			dst[offset++] = pal[color].b;
@@ -119,7 +119,7 @@ static void convertTextureCLUT(const uint8_t *src, const int srcPitch, int w, in
 	}
 }
 
-void Texture::uploadDataCLUT(const uint8_t *data, int srcPitch, int w, int h, const Color *pal) {
+void Texture::uploadDataCLUT(const uint8 *data, int srcPitch, int w, int h, const Color *pal) {
 	if (w != _w || h != _h) {
 		free(_rgbData);
 		_rgbData = 0;
@@ -147,7 +147,7 @@ void Texture::uploadDataCLUT(const uint8_t *data, int srcPitch, int w, int h, co
 	if (!_rgbData) {
 		_w = _npotTex ? w : roundPow2(w);
 		_h = _npotTex ? h : roundPow2(h);
-		_rgbData = (uint8_t *)malloc(_w * _h * depth);
+		_rgbData = (uint8 *)malloc(_w * _h * depth);
 		if (!_rgbData) {
 			return;
 		}
@@ -213,20 +213,20 @@ void Texture::clear() {
 	_raw16Data = 0;
 }
 
-void Texture::readRaw16(const uint8_t *src, const Color *pal, int w, int h) {
+void Texture::readRaw16(const uint8 *src, const Color *pal, int w, int h) {
 	_raw16Data = src;
 	uploadDataCLUT(_raw16Data, w, w, h, pal);
 }
 
-void Texture::readFont(const uint8_t *src) {
+void Texture::readFont(const uint8 *src) {
 	_fmt = FMT_RGBA;
 	const int W = 96 * 8 * 2;
 	const int H = 8;
-	uint8_t *out = (uint8_t *)calloc(1, W * H);
+	uint8 *out = (uint8 *)calloc(1, W * H);
 	if (out) {
 		for (int i = 0; i < 96; ++i) {
 			for (int y = 0; y < 8; ++y) {
-				uint8_t mask = *src++;
+				uint8 mask = *src++;
 				for (int x = 0; x < 8; ++x) {
 					out[y * W + i * 16 + x] = (mask >> (7 - x)) & 1;
 				}
@@ -240,22 +240,22 @@ void Texture::readFont(const uint8_t *src) {
 	}
 }
 
-static uint16_t rgb555_to_565(const uint16_t color) {
+static uint16 rgb555_to_565(const uint16 color) {
 	const int r = (color >> 10) & 31;
 	const int g = (color >> 5) & 31;
 	const int b = color & 31;
 	return (r << 11) | (g << 6) | b;
 }
 
-void Texture::readRGB555(const uint16_t *src, int w, int h) {
-	_rgbData = (uint8_t *)malloc(w * h * sizeof(uint16_t));
+void Texture::readRGB555(const uint16 *src, int w, int h) {
+	_rgbData = (uint8 *)malloc(w * h * sizeof(uint16));
 	if (!_rgbData) {
 		return;
 	}
 	for (int i = 0; i < w * h; ++i) {
-		((uint16_t *)_rgbData)[i] = rgb555_to_565(src[i]);
+		((uint16 *)_rgbData)[i] = rgb555_to_565(src[i]);
 	}
-	uploadDataRGB(_rgbData, w * sizeof(uint16_t), w, h, GL_RGB, GL_UNSIGNED_SHORT_5_6_5);
+	uploadDataRGB(_rgbData, w * sizeof(uint16), w, h, GL_RGB, GL_UNSIGNED_SHORT_5_6_5);
 }
 
 struct DrawListEntry {
@@ -277,12 +277,12 @@ struct DrawList {
 		: fillColor(0), yOffset(0) {
 	}
 
-	void clear(uint8_t color) {
+	void clear(uint8 color) {
 		fillColor = color;
 		entries.clear();
 	}
 
-	void append(uint8_t color, int count, const Point *vertices) {
+	void append(uint8 color, int count, const Point *vertices) {
 		if (count <= DrawListEntry::NUM_VERTICES) {
 			DrawListEntry e;
 			e.color = color;
@@ -323,24 +323,24 @@ struct GraphicsGL : Graphics {
 	}
 
 	virtual void init(int targetW, int targetH);
-	virtual void setFont(const uint8_t *src, int w, int h);
+	virtual void setFont(const uint8 *src, int w, int h);
 	virtual void setPalette(const Color *colors, int count);
-	virtual void setSpriteAtlas(const uint8_t *src, int w, int h, int xSize, int ySize);
-	virtual void drawSprite(int listNum, int num, const Point *pt, uint8_t color);
-	virtual void drawBitmap(int listNum, const uint8_t *data, int w, int h, int fmt);
-	virtual void drawPoint(int listNum, uint8_t color, const Point *pt);
-	virtual void drawQuadStrip(int listNum, uint8_t color, const QuadStrip *qs);
-	virtual void drawStringChar(int listNum, uint8_t color, char c, const Point *pt);
-	virtual void clearBuffer(int listNum, uint8_t color);
+	virtual void setSpriteAtlas(const uint8 *src, int w, int h, int xSize, int ySize);
+	virtual void drawSprite(int listNum, int num, const Point *pt, uint8 color);
+	virtual void drawBitmap(int listNum, const uint8 *data, int w, int h, int fmt);
+	virtual void drawPoint(int listNum, uint8 color, const Point *pt);
+	virtual void drawQuadStrip(int listNum, uint8 color, const QuadStrip *qs);
+	virtual void drawStringChar(int listNum, uint8 color, char c, const Point *pt);
+	virtual void clearBuffer(int listNum, uint8 color);
 	virtual void copyBuffer(int dstListNum, int srcListNum, int vscroll = 0);
 	virtual void drawBuffer(int listNum, SystemStub *stub);
-	virtual void drawRect(int num, uint8_t color, const Point *pt, int w, int h);
+	virtual void drawRect(int num, uint8 color, const Point *pt, int w, int h);
 	virtual void drawBitmapOverlay(const Graphics::Surface &src, int fmt, SystemStub *stub);
 
 	void initFbo();
 	void drawVerticesFlat(int count, const Point *vertices);
 	void drawVerticesTex(int count, const Point *vertices);
-	void drawVerticesToFb(uint8_t color, int count, const Point *vertices);
+	void drawVerticesToFb(uint8 color, int count, const Point *vertices);
 };
 
 GraphicsGL::GraphicsGL() {
@@ -410,7 +410,7 @@ void GraphicsGL::initFbo() {
 	glPointSize(r);
 }
 
-void GraphicsGL::setFont(const uint8_t *src, int w, int h) {
+void GraphicsGL::setFont(const uint8 *src, int w, int h) {
 	if (src == 0) {
 		_fontTex.readFont(_font);
 	} else {
@@ -459,7 +459,7 @@ void GraphicsGL::setPalette(const Color *colors, int n) {
 	}
 }
 
-void GraphicsGL::setSpriteAtlas(const uint8_t *src, int w, int h, int xSize, int ySize) {
+void GraphicsGL::setSpriteAtlas(const uint8 *src, int w, int h, int xSize, int ySize) {
 	_spritesTex.uploadDataRGB(src, w * 4, w, h, GL_RGBA, GL_UNSIGNED_BYTE);
 	_spritesSizeX = xSize;
 	_spritesSizeY = ySize;
@@ -498,7 +498,7 @@ static void drawSpriteHelper(const Point *pt, int num, int xSize, int ySize, int
 	drawTexQuad(pos, uv, texId);
 }
 
-void GraphicsGL::drawSprite(int listNum, int num, const Point *pt, uint8_t color) {
+void GraphicsGL::drawSprite(int listNum, int num, const Point *pt, uint8 color) {
 	assert(listNum < NUM_LISTS);
 	_fptr.glBindFramebuffer(GL_FRAMEBUFFER, _fbPage0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + listNum);
@@ -517,7 +517,7 @@ void GraphicsGL::drawSprite(int listNum, int num, const Point *pt, uint8_t color
 	glScalef(1., 1., 1.);
 }
 
-void GraphicsGL::drawBitmap(int listNum, const uint8_t *data, int w, int h, int fmt) {
+void GraphicsGL::drawBitmap(int listNum, const uint8 *data, int w, int h, int fmt) {
 	_backgroundTex._fmt = fmt;
 	switch (fmt) {
 	case FMT_CLUT:
@@ -529,7 +529,7 @@ void GraphicsGL::drawBitmap(int listNum, const uint8_t *data, int w, int h, int 
 		break;
 	case FMT_RGB555:
 		_backgroundTex.clear();
-		_backgroundTex.readRGB555((const uint16_t *)data, w, h);
+		_backgroundTex.readRGB555((const uint16 *)data, w, h);
 		break;
 	}
 	_fptr.glBindFramebuffer(GL_FRAMEBUFFER, _fbPage0);
@@ -546,7 +546,7 @@ void GraphicsGL::drawBitmap(int listNum, const uint8_t *data, int w, int h, int 
 	_drawLists[listNum].clear(COL_BMP);
 }
 
-void GraphicsGL::drawVerticesToFb(uint8_t color, int count, const Point *vertices) {
+void GraphicsGL::drawVerticesToFb(uint8 color, int count, const Point *vertices) {
 	glScalef((float)_fbW / SCREEN_W, (float)_fbH / SCREEN_H, 1);
 
 	if (color == COL_PAGE) {
@@ -569,7 +569,7 @@ void GraphicsGL::drawVerticesToFb(uint8_t color, int count, const Point *vertice
 	glScalef(1., 1., 1.);
 }
 
-void GraphicsGL::drawPoint(int listNum, uint8_t color, const Point *pt) {
+void GraphicsGL::drawPoint(int listNum, uint8 color, const Point *pt) {
 	assert(listNum < NUM_LISTS);
 	_fptr.glBindFramebuffer(GL_FRAMEBUFFER, _fbPage0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + listNum);
@@ -586,7 +586,7 @@ void GraphicsGL::drawPoint(int listNum, uint8_t color, const Point *pt) {
 	}
 }
 
-void GraphicsGL::drawQuadStrip(int listNum, uint8_t color, const QuadStrip *qs) {
+void GraphicsGL::drawQuadStrip(int listNum, uint8 color, const QuadStrip *qs) {
 	assert(listNum < NUM_LISTS);
 	_fptr.glBindFramebuffer(GL_FRAMEBUFFER, _fbPage0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + listNum);
@@ -603,7 +603,7 @@ void GraphicsGL::drawQuadStrip(int listNum, uint8_t color, const QuadStrip *qs) 
 	}
 }
 
-void GraphicsGL::drawStringChar(int listNum, uint8_t color, char c, const Point *pt) {
+void GraphicsGL::drawStringChar(int listNum, uint8 color, char c, const Point *pt) {
 	assert(listNum < NUM_LISTS);
 	_fptr.glBindFramebuffer(GL_FRAMEBUFFER, _fbPage0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + listNum);
@@ -702,7 +702,7 @@ void GraphicsGL::drawVerticesTex(int count, const Point *vertices) {
 	glEnd();
 }
 
-void GraphicsGL::clearBuffer(int listNum, uint8_t color) {
+void GraphicsGL::clearBuffer(int listNum, uint8 color) {
 	assert(listNum < NUM_LISTS);
 	_fptr.glBindFramebuffer(GL_FRAMEBUFFER, _fbPage0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + listNum);
@@ -799,7 +799,7 @@ void GraphicsGL::drawBuffer(int listNum, SystemStub *stub) {
 	stub->updateScreen();
 }
 
-void GraphicsGL::drawRect(int num, uint8_t color, const Point *pt, int w, int h) {
+void GraphicsGL::drawRect(int num, uint8 color, const Point *pt, int w, int h) {
 
 	// ignore 'num' target framebuffer as this is only used for the title screen with the 3DO version
 	assert(color < 16);

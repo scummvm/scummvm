@@ -32,12 +32,12 @@ SfxPlayer::SfxPlayer(Resource *res)
 	_playing = false;
 }
 
-void SfxPlayer::setEventsDelay(uint16_t delay) {
+void SfxPlayer::setEventsDelay(uint16 delay) {
 	debugC(kDebugSound, "SfxPlayer::setEventsDelay(%d)", delay);
 	_delay = delay;
 }
 
-void SfxPlayer::loadSfxModule(uint16_t resNum, uint16_t delay, uint8_t pos) {
+void SfxPlayer::loadSfxModule(uint16 resNum, uint16 delay, uint8 pos) {
 	debugC(kDebugSound, "SfxPlayer::loadSfxModule(0x%X, %d, %d)", resNum, delay, pos);
 	MemEntry *me = &_res->_memList[resNum];
 	if (me->status == Resource::STATUS_LOADED && me->type == Resource::RT_MUSIC) {
@@ -59,11 +59,11 @@ void SfxPlayer::loadSfxModule(uint16_t resNum, uint16_t delay, uint8_t pos) {
 	}
 }
 
-void SfxPlayer::prepareInstruments(const uint8_t *p) {
+void SfxPlayer::prepareInstruments(const uint8 *p) {
 	memset(_sfxMod.samples, 0, sizeof(_sfxMod.samples));
 	for (int i = 0; i < 15; ++i) {
 		SfxInstrument *ins = &_sfxMod.samples[i];
-		uint16_t resNum = READ_BE_UINT16(p); p += 2;
+		uint16 resNum = READ_BE_UINT16(p); p += 2;
 		if (resNum != 0) {
 			ins->volume = READ_BE_UINT16(p);
 			MemEntry *me = &_res->_memList[resNum];
@@ -85,18 +85,18 @@ void SfxPlayer::play(int rate) {
 	memset(_channels, 0, sizeof(_channels));
 }
 
-static int16_t toS16(int a) {
+static int16 toS16(int a) {
 	if (a <= -128) {
 		return -32768;
 	} else if (a >= 127) {
 		return 32767;
 	} else {
-		const uint8_t u8 = (a ^ 0x80);
+		const uint8 u8 = (a ^ 0x80);
 		return ((u8 << 8) | u8) - 32768;
 	}
 }
 
-static void mixChannel(int16_t &s, SfxChannel *ch) {
+static void mixChannel(int16 &s, SfxChannel *ch) {
 	if (ch->sampleLen == 0) {
 		return;
 	}
@@ -114,12 +114,12 @@ static void mixChannel(int16_t &s, SfxChannel *ch) {
 			return;
 		}
 	}
-	int sample = ch->pos.interpolate((int8_t)ch->sampleData[pos1], (int8_t)ch->sampleData[pos2]);
+	int sample = ch->pos.interpolate((int8)ch->sampleData[pos1], (int8)ch->sampleData[pos2]);
 	sample = s + toS16(sample * ch->volume / 64);
 	s = (sample < -32768 ? -32768 : (sample > 32767 ? 32767 : sample));
 }
 
-void SfxPlayer::mixSamples(int16_t *buf, int len) {
+void SfxPlayer::mixSamples(int16 *buf, int len) {
 	while (len != 0) {
 		if (_samplesLeft == 0) {
 			handleEvents();
@@ -143,7 +143,7 @@ void SfxPlayer::mixSamples(int16_t *buf, int len) {
 	}
 }
 
-void SfxPlayer::readSamples(int16_t *buf, int len) {
+void SfxPlayer::readSamples(int16 *buf, int len) {
 	if (_delay != 0) {
 		mixSamples(buf, len / 2);
 	}
@@ -160,9 +160,9 @@ void SfxPlayer::stop() {
 }
 
 void SfxPlayer::handleEvents() {
-	uint8_t order = _sfxMod.orderTable[_sfxMod.curOrder];
-	const uint8_t *patternData = _sfxMod.data + _sfxMod.curPos + order * 1024;
-	for (uint8_t ch = 0; ch < 4; ++ch) {
+	uint8 order = _sfxMod.orderTable[_sfxMod.curOrder];
+	const uint8 *patternData = _sfxMod.data + _sfxMod.curPos + order * 1024;
+	for (uint8 ch = 0; ch < 4; ++ch) {
 		handlePattern(ch, patternData);
 		patternData += 4;
 	}
@@ -178,22 +178,22 @@ void SfxPlayer::handleEvents() {
 	}
 }
 
-void SfxPlayer::handlePattern(uint8_t channel, const uint8_t *data) {
+void SfxPlayer::handlePattern(uint8 channel, const uint8 *data) {
 	SfxPattern pat;
 	memset(&pat, 0, sizeof(SfxPattern));
 	pat.note_1 = READ_BE_UINT16(data + 0);
 	pat.note_2 = READ_BE_UINT16(data + 2);
 	if (pat.note_1 != 0xFFFD) {
-		uint16_t sample = (pat.note_2 & 0xF000) >> 12;
+		uint16 sample = (pat.note_2 & 0xF000) >> 12;
 		if (sample != 0) {
-			uint8_t *ptr = _sfxMod.samples[sample - 1].data;
+			uint8 *ptr = _sfxMod.samples[sample - 1].data;
 			if (ptr != 0) {
 				debugC(kDebugSound, "SfxPlayer::handlePattern() preparing sample %d", sample);
 				pat.sampleVolume = _sfxMod.samples[sample - 1].volume;
 				pat.sampleStart = 8;
 				pat.sampleBuffer = ptr;
 				pat.sampleLen = READ_BE_UINT16(ptr) * 2;
-				uint16_t loopLen = READ_BE_UINT16(ptr + 2) * 2;
+				uint16 loopLen = READ_BE_UINT16(ptr + 2) * 2;
 				if (loopLen != 0) {
 					pat.loopPos = pat.sampleLen;
 					pat.loopLen = loopLen;
@@ -201,16 +201,16 @@ void SfxPlayer::handlePattern(uint8_t channel, const uint8_t *data) {
 					pat.loopPos = 0;
 					pat.loopLen = 0;
 				}
-				int16_t m = pat.sampleVolume;
-				uint8_t effect = (pat.note_2 & 0x0F00) >> 8;
+				int16 m = pat.sampleVolume;
+				uint8 effect = (pat.note_2 & 0x0F00) >> 8;
 				if (effect == 5) { // volume up
-					uint8_t volume = (pat.note_2 & 0xFF);
+					uint8 volume = (pat.note_2 & 0xFF);
 					m += volume;
 					if (m > 0x3F) {
 						m = 0x3F;
 					}
 				} else if (effect == 6) { // volume down
-					uint8_t volume = (pat.note_2 & 0xFF);
+					uint8 volume = (pat.note_2 & 0xFF);
 					m -= volume;
 					if (m < 0) {
 						m = 0;

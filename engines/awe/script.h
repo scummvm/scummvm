@@ -63,7 +63,7 @@ struct Script {
 	};
 
 	static const OpcodeStub OPCODE_TABLE[];
-	static const uint16_t PERIOD_TABLE[];
+	static const uint16 PERIOD_TABLE[];
 	static Difficulty _difficulty;
 	static bool _useRemasteredAudio;
 
@@ -73,17 +73,17 @@ struct Script {
 	Video *_vid;
 	SystemStub *_stub = nullptr;
 
-	int16_t _scriptVars[256] = { 0 };
-	uint16_t _scriptStackCalls[64] = { 0 };
-	uint16_t _scriptTasks[2][64] = { { 0 } };
-	uint8_t _scriptStates[2][64] = { { 0 } };
+	int16 _scriptVars[256] = { 0 };
+	uint16 _scriptStackCalls[64] = { 0 };
+	uint16 _scriptTasks[2][64] = { { 0 } };
+	uint8 _scriptStates[2][64] = { { 0 } };
 	Ptr _scriptPtr;
-	uint8_t _stackPtr = 0;
+	uint8 _stackPtr = 0;
 	bool _scriptPaused = false;
 	bool _fastMode = false;
 	int _screenNum = 0;
 	bool _is3DO = false;
-	uint32_t _startTime = 0, _timeStamp = 0;
+	uint32 _startTime = 0, _timeStamp = 0;
 
 	Script(Sound *snd, Resource *res, SfxPlayer *ply, Video *vid);
 	void init();
@@ -125,9 +125,9 @@ struct Script {
 	void updateInput();
 	void inp_handleSpecialKeys();
 
-	void snd_playSound(uint16_t resNum, uint8_t freq, uint8_t vol, uint8_t channel);
-	void snd_playMusic(uint16_t resNum, uint16_t delay, uint8_t pos);
-	void snd_preloadSound(uint16_t resNum, const uint8_t *data);
+	void snd_playSound(uint16 resNum, uint8 freq, uint8 vol, uint8 channel);
+	void snd_playMusic(uint16 resNum, uint16 delay, uint8 pos);
+	void snd_preloadSound(uint16 resNum, const uint8 *data);
 
 	void fixUpPalette_changeScreen(int part, int screen);
 };

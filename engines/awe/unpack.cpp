@@ -26,10 +26,10 @@ namespace Awe {
 
 struct UnpackCtx {
 	int size;
-	uint32_t crc;
-	uint32_t bits;
-	uint8_t *dst;
-	const uint8_t *src;
+	uint32 crc;
+	uint32 bits;
+	uint8 *dst;
+	const uint8 *src;
 };
 
 static bool nextBit(UnpackCtx *uc) {
@@ -63,7 +63,7 @@ static void copyLiteral(UnpackCtx *uc, int bitsCount, int len) { // getd3chr
 		uc->size = 0;
 	}
 	for (int i = 0; i < count; ++i) {
-		*(uc->dst - i) = (uint8_t)getBits(uc, 8);
+		*(uc->dst - i) = (uint8)getBits(uc, 8);
 	}
 	uc->dst -= count;
 }
@@ -81,7 +81,7 @@ static void copyReference(UnpackCtx *uc, int bitsCount, int count) { // copyd3by
 	uc->dst -= count;
 }
 
-bool bytekiller_unpack(uint8_t *dst, int dstSize, const uint8_t *src, int srcSize) {
+bool bytekiller_unpack(uint8 *dst, int dstSize, const uint8 *src, int srcSize) {
 	UnpackCtx uc;
 	uc.src = src + srcSize - 4;
 	uc.size = READ_BE_UINT32(uc.src); uc.src -= 4;

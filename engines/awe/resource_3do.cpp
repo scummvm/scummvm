@@ -24,19 +24,19 @@
 
 namespace Awe {
 
-static int decodeLzss(const uint8_t *src, uint32_t len, uint8_t *dst) {
-	uint32_t rd = 0, wr = 0;
+static int decodeLzss(const uint8 *src, uint32 len, uint8 *dst) {
+	uint32 rd = 0, wr = 0;
 	while (rd < len) {
-		const uint8_t code = src[rd++];
+		const uint8 code = src[rd++];
 		for (int j = 0; j < 8 && rd < len; ++j) {
 			if (code & (1 << j)) {
 				dst[wr++] = src[rd++];
 			} else {
-				const uint16_t offset = 0xF000 | src[rd] | ((src[rd + 1] & 0xF) << 8);
+				const uint16 offset = 0xF000 | src[rd] | ((src[rd + 1] & 0xF) << 8);
 				const int llen = (src[rd + 1] >> 4) + 3;
 				rd += 2;
 				for (int i = 0; i < llen; ++i) {
-					dst[wr] = dst[wr + (int16_t)offset];
+					dst[wr] = dst[wr + (int16)offset];
 					++wr;
 				}
 			}
@@ -45,13 +45,13 @@ static int decodeLzss(const uint8_t *src, uint32_t len, uint8_t *dst) {
 	return wr;
 }
 
-static void decodeCcb16(int ccbWidth, int ccbHeight, File *f, uint32_t dataSize, uint16_t *dst) {
+static void decodeCcb16(int ccbWidth, int ccbHeight, File *f, uint32 dataSize, uint16 *dst) {
 	for (int y = 0; y < ccbHeight; ++y) {
 		const int scanlineSize = 4 * (f->readUint16BE() + 2);
 		int scanlineLen = 2;
 		int w = ccbWidth;
 		while (w > 0) {
-			uint8_t code = f->readByte();
+			uint8 code = f->readByte();
 			++scanlineLen;
 			const int count = (code & 63) + 1;
 			code >>= 6;
@@ -66,12 +66,12 @@ static void decodeCcb16(int ccbWidth, int ccbHeight, File *f, uint32_t dataSize,
 				scanlineLen += count * 2;
 				break;
 			case 2:
-				memset(dst, 0, count * sizeof(uint16_t));
+				memset(dst, 0, count * sizeof(uint16));
 				dst += count;
 				break;
 			case 3:
 			{
-				const uint16_t color = f->readUint16BE();
+				const uint16 color = f->readUint16BE();
 				for (int i = 0; i < count; ++i) {
 					*dst++ = color;
 				}
@@ -92,24 +92,24 @@ static void decodeCcb16(int ccbWidth, int ccbHeight, File *f, uint32_t dataSize,
 	}
 }
 
-static const uint8_t _ccb_bppTable[8] = {
+static const uint8 _ccb_bppTable[8] = {
 		0, 1, 2, 4, 6, 8, 16, 0
 };
 
-static uint16_t *decodeShapeCcb(File *f, int dataSize, int *w, int *h) {
-	const uint32_t flags = f->readUint32BE();
+static uint16 *decodeShapeCcb(File *f, int dataSize, int *w, int *h) {
+	const uint32 flags = f->readUint32BE();
 	f->seek(4, SEEK_CUR);
-	const uint32_t celData = f->readUint32BE();
+	const uint32 celData = f->readUint32BE();
 	f->seek(40, SEEK_CUR);
-	const uint32_t pre0 = f->readUint32BE();
-	const uint32_t pre1 = f->readUint32BE();
+	const uint32 pre0 = f->readUint32BE();
+	const uint32 pre1 = f->readUint32BE();
 	assert(celData == 0x30);
 	assert(flags & (1 << 9));
 	const int bpp = _ccb_bppTable[pre0 & 7];
 	assert(bpp == 16);
-	const uint32_t width = (pre1 & 0x3FF) + 1;
-	const uint32_t height = ((pre0 >> 6) & 0x3FF) + 1;
-	uint16_t *buffer = (uint16_t *)malloc(width * height * sizeof(uint16_t));
+	const uint32 width = (pre1 & 0x3FF) + 1;
+	const uint32 height = ((pre0 >> 6) & 0x3FF) + 1;
+	uint16 *buffer = (uint16 *)malloc(width * height * sizeof(uint16));
 	if (buffer) {
 		decodeCcb16(width, height, f, dataSize - 60, buffer);
 		*w = width;
@@ -122,8 +122,8 @@ bool Resource3do::readEntries() {
 	return true;
 }
 
-uint8_t *Resource3do::loadFile(int num, uint8_t *dst, uint32_t *size) {
-	uint8_t *in = dst;
+uint8 *Resource3do::loadFile(int num, uint8 *dst, uint32 *size) {
+	uint8 *in = dst;
 
 	char path[MAXPATHLEN];
 	snprintf(path, sizeof(path), "GameData/File%d", num);
@@ -131,7 +131,7 @@ uint8_t *Resource3do::loadFile(int num, uint8_t *dst, uint32_t *size) {
 	if (f.open(path)) {
 		const int sz = f.size();
 		if (!dst) {
-			dst = (uint8_t *)malloc(sz);
+			dst = (uint8 *)malloc(sz);
 			if (!dst) {
 				warning("Unable to allocate %d bytes", sz);
 				return 0;
@@ -146,7 +146,7 @@ uint8_t *Resource3do::loadFile(int num, uint8_t *dst, uint32_t *size) {
 
 	if (dst && memcmp(dst, "\x00\xf4\x01\x00", 4) == 0) {
 		static const int SZ = 64000 * 2;
-		uint8_t *tmp = (uint8_t *)calloc(1, SZ);
+		uint8 *tmp = (uint8 *)calloc(1, SZ);
 		if (!tmp) {
 			warning("Unable to allocate %d bytes", SZ);
 			if (in != dst) free(dst);
@@ -164,26 +164,26 @@ uint8_t *Resource3do::loadFile(int num, uint8_t *dst, uint32_t *size) {
 	return dst;
 }
 
-uint16_t *Resource3do::loadShape555(const char *name, int *w, int *h) {
+uint16 *Resource3do::loadShape555(const char *name, int *w, int *h) {
 	char path[MAXPATHLEN];
 	snprintf(path, sizeof(path), "GameData/%s", name);
 	File f;
 	if (f.open(path)) {
-		const uint32_t dataSize = f.size();
+		const uint32 dataSize = f.size();
 		return decodeShapeCcb(&f, dataSize, w, h);
 	}
 
 	return nullptr;
 }
 
-const char *Resource3do::getMusicName(int num, uint32_t *offset) {
+const char *Resource3do::getMusicName(int num, uint32 *offset) {
 	*offset = 0;
 
 	snprintf(_musicPath, sizeof(_musicPath), "GameData/song%d", num);
 	return _musicPath;
 }
 
-const char *Resource3do::getCpak(const char *name, uint32_t *offset) {
+const char *Resource3do::getCpak(const char *name, uint32 *offset) {
 	*offset = 0;
 
 	snprintf(_cpakPath, sizeof(_cpakPath), "GameData/%s", name);

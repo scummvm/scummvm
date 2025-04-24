@@ -26,7 +26,7 @@
 
 namespace Awe {
 
-uint8_t *decode_bitmap(const uint8_t *src, bool alpha, int colorKey, int *w, int *h);
+uint8 *decode_bitmap(const uint8 *src, bool alpha, int colorKey, int *w, int *h);
 
 } // namespace Awe
 

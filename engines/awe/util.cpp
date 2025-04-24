@@ -23,7 +23,7 @@
 
 namespace Awe {
 
-uint16_t g_debugMask;
+uint16 g_debugMask;
 
 void string_lower(char *p) {
 	for (; *p; ++p) {

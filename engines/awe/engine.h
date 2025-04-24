@@ -74,8 +74,8 @@ struct Engine {
 	void scrollText(int a, int b, const char *text);
 	void titlePage();
 
-	void saveGameState(uint8_t slot, const char *desc);
-	void loadGameState(uint8_t slot);
+	void saveGameState(uint8 slot, const char *desc);
+	void loadGameState(uint8 slot);
 };
 
 } // namespace Awe

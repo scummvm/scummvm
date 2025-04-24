@@ -24,7 +24,7 @@
 
 namespace Awe {
 
-static const uint8_t _shuffleTable[256] = {
+static const uint8 _shuffleTable[256] = {
 	0xB2, 0x91, 0x49, 0xEE, 0x8C, 0xBC, 0x16, 0x0D, 0x07, 0x87, 0xCD, 0xB6, 0x4C, 0x44, 0x22, 0xB3,
 	0xAE, 0x96, 0xDF, 0x18, 0x7B, 0x28, 0x17, 0x9A, 0x74, 0x3C, 0x2E, 0x59, 0x69, 0x56, 0x38, 0x82,
 	0x7F, 0x25, 0x41, 0xC6, 0xE8, 0x8A, 0x86, 0x7A, 0xB5, 0x8B, 0xA7, 0xB1, 0x2C, 0x53, 0xF0, 0x3B,
@@ -43,11 +43,11 @@ static const uint8_t _shuffleTable[256] = {
 	0xAB, 0x0C, 0xCC, 0x78, 0xFC, 0x2A, 0xD8, 0x3A, 0xDD, 0x8F, 0x10, 0x29, 0xF4, 0x0A, 0xB8, 0xC3
 };
 
-static uint16_t decode(uint8_t *p, int size, uint16_t key) {
+static uint16 decode(uint8 *p, int size, uint16 key) {
 	for (int i = 0; i < size; ++i) {
-		const uint8_t dl = 1 + (key >> 8);
-		const uint8_t al = _shuffleTable[dl];
-		const uint8_t dh = al ^ (key & 255);
+		const uint8 dl = 1 + (key >> 8);
+		const uint8 al = _shuffleTable[dl];
+		const uint8 dh = al ^ (key & 255);
 		p[i] ^= al;
 		key = (dh << 8) | dl;
 	}
@@ -57,7 +57,7 @@ static uint16_t decode(uint8_t *p, int size, uint16_t key) {
 struct Bitstream {
 	File *_f;
 	int _size;
-	uint16_t _bits;
+	uint16 _bits;
 	int _len;
 
 	Bitstream()
@@ -71,7 +71,7 @@ struct Bitstream {
 		_len = 0;
 	}
 
-	uint8_t readByte() {
+	uint8 readByte() {
 		if (_len < 8) {
 			_bits <<= 8;
 			assert(_size > 0);
@@ -210,7 +210,7 @@ struct LzHuffman {
 			p = _parent[p];
 		} while (p != 0);
 	}
-	bool decode(uint8_t *out, int uncompressedSize) {
+	bool decode(uint8 *out, int uncompressedSize) {
 		resetHuffTables();
 		memset(_historyBuffer, ' ', sizeof(_historyBuffer));
 		int offset = 4078;
@@ -237,7 +237,7 @@ struct LzHuffman {
 		return currentSize == uncompressedSize;
 	}
 
-	bool decompressEntry(File &f, const Win31BankEntry *e, uint8_t *out) {
+	bool decompressEntry(File &f, const Win31BankEntry *e, uint8 *out) {
 		f.seek(e->offset);
 		_stream.reset(&f, e->packedSize);
 		return decode(out, e->size);
@@ -257,7 +257,7 @@ ResourceWin31::~ResourceWin31() {
 }
 
 bool ResourceWin31::readEntries() {
-	uint8_t buf[32];
+	uint8 buf[32];
 	const int count = _f.read(buf, sizeof(buf));
 
 	if (count == 32 && memcmp(buf, "NL\00\00", 4) == 0) {
@@ -265,13 +265,13 @@ bool ResourceWin31::readEntries() {
 		debugC(kDebugResource, "Read %d entries in win31 '%s'", _entriesCount, FILENAME);
 		_entries = (Win31BankEntry *)calloc(_entriesCount, sizeof(Win31BankEntry));
 		if (_entries) {
-			uint16_t key = READ_LE_UINT16(buf + 0x14);
+			uint16 key = READ_LE_UINT16(buf + 0x14);
 			for (int i = 0; i < _entriesCount; ++i) {
 				_f.read(buf, sizeof(buf));
 				key = decode(buf, sizeof(buf), key);
 				Win31BankEntry *e = &_entries[i];
 				memcpy(e->name, buf, 16);
-				const uint16_t flags = READ_LE_UINT16(buf + 16);
+				const uint16 flags = READ_LE_UINT16(buf + 16);
 				e->type = buf[19];
 				e->size = READ_LE_UINT32(buf + 20);
 				e->offset = READ_LE_UINT32(buf + 24);
@@ -285,12 +285,12 @@ bool ResourceWin31::readEntries() {
 	return _entries != 0;
 }
 
-uint8_t *ResourceWin31::loadFile(int num, uint8_t *dst, uint32_t *size) {
+uint8 *ResourceWin31::loadFile(int num, uint8 *dst, uint32 *size) {
 	if (num > 0 && num < _entriesCount) {
 		Win31BankEntry *e = &_entries[num];
 		*size = e->size;
 		if (!dst) {
-			dst = (uint8_t *)malloc(e->size);
+			dst = (uint8 *)malloc(e->size);
 			if (!dst) {
 				warning("Unable to allocate %d bytes", e->size);
 				return 0;
@@ -314,11 +314,11 @@ uint8_t *ResourceWin31::loadFile(int num, uint8_t *dst, uint32_t *size) {
 }
 
 void ResourceWin31::readStrings() {
-	uint32_t len, offset = 0;
+	uint32 len, offset = 0;
 	_textBuf = loadFile(148, 0, &len);
 	while (1) {
-		const uint32_t sep = READ_LE_UINT32(_textBuf + offset); offset += 4;
-		const uint16_t num = sep >> 16;
+		const uint32 sep = READ_LE_UINT32(_textBuf + offset); offset += 4;
+		const uint16 num = sep >> 16;
 		if (num == 0xFFFF) {
 			break;
 		}

@@ -27,10 +27,10 @@
 namespace Awe {
 
 struct GraphicsSoft : public Gfx {
-	typedef void (GraphicsSoft:: *drawLine)(int16_t x1, int16_t x2, int16_t y, uint8_t col);
+	typedef void (GraphicsSoft:: *drawLine)(int16 x1, int16 x2, int16 y, uint8 col);
 
-	uint8_t *_pagePtrs[4] = { nullptr };
-	uint8_t *_drawPagePtr = { nullptr };
+	uint8 *_pagePtrs[4] = { nullptr };
+	uint8 *_drawPagePtr = { nullptr };
 	int _u = 0, _v = 0;
 	int _w = 0, _h = 0;
 	int _byteDepth = 0;
@@ -48,33 +48,33 @@ struct GraphicsSoft : public Gfx {
 	}
 
 	void setSize(int w, int h);
-	void drawPolygon(uint8_t color, const QuadStrip &qs);
-	void drawChar(uint8_t c, uint16_t x, uint16_t y, uint8_t color);
-	void drawSpriteMask(int x, int y, uint8_t color, const uint8_t *data);
-	void drawPoint(int16_t x, int16_t y, uint8_t color);
-	void drawLineT(int16_t x1, int16_t x2, int16_t y, uint8_t color);
-	void drawLineN(int16_t x1, int16_t x2, int16_t y, uint8_t color);
-	void drawLineP(int16_t x1, int16_t x2, int16_t y, uint8_t color);
-	uint8_t *getPagePtr(uint8_t page);
+	void drawPolygon(uint8 color, const QuadStrip &qs);
+	void drawChar(uint8 c, uint16 x, uint16 y, uint8 color);
+	void drawSpriteMask(int x, int y, uint8 color, const uint8 *data);
+	void drawPoint(int16 x, int16 y, uint8 color);
+	void drawLineT(int16 x1, int16 x2, int16 y, uint8 color);
+	void drawLineN(int16 x1, int16 x2, int16 y, uint8 color);
+	void drawLineP(int16 x1, int16 x2, int16 y, uint8 color);
+	uint8 *getPagePtr(uint8 page);
 	int getPageSize() const {
 		return _w * _h * _byteDepth;
 	}
-	void setWorkPagePtr(uint8_t page);
+	void setWorkPagePtr(uint8 page);
 
 	void init(int targetW, int targetH) override;
 
-	void setFont(const uint8_t *src, int w, int h) override;
+	void setFont(const uint8 *src, int w, int h) override;
 	void setPalette(const Color *colors, int count) override;
-	void setSpriteAtlas(const uint8_t *src, int w, int h, int xSize, int ySize) override;
-	void drawSprite(int buffer, int num, const Point *pt, uint8_t color) override;
-	void drawBitmap(int buffer, const uint8_t *data, int w, int h, int fmt) override;
-	void drawPoint(int buffer, uint8_t color, const Point *pt) override;
-	void drawQuadStrip(int buffer, uint8_t color, const QuadStrip *qs) override;
-	void drawStringChar(int buffer, uint8_t color, char c, const Point *pt) override;
-	void clearBuffer(int num, uint8_t color) override;
+	void setSpriteAtlas(const uint8 *src, int w, int h, int xSize, int ySize) override;
+	void drawSprite(int buffer, int num, const Point *pt, uint8 color) override;
+	void drawBitmap(int buffer, const uint8 *data, int w, int h, int fmt) override;
+	void drawPoint(int buffer, uint8 color, const Point *pt) override;
+	void drawQuadStrip(int buffer, uint8 color, const QuadStrip *qs) override;
+	void drawStringChar(int buffer, uint8 color, char c, const Point *pt) override;
+	void clearBuffer(int num, uint8 color) override;
 	void copyBuffer(int dst, int src, int vscroll = 0) override;
 	void drawBuffer(int num, SystemStub *stub) override;
-	void drawRect(int num, uint8_t color, const Point *pt, int w, int h) override;
+	void drawRect(int num, uint8 color, const Point *pt, int w, int h) override;
 	void drawBitmapOverlay(const Graphics::Surface &src, int fmt, SystemStub *stub) override;
 };
 
@@ -101,7 +101,7 @@ void GraphicsSoft::setSize(int w, int h) {
 	assert(_byteDepth == 1 || _byteDepth == 2);
 
 	for (int i = 0; i < 4; ++i) {
-		_pagePtrs[i] = (uint8_t *)realloc(_pagePtrs[i], getPageSize());
+		_pagePtrs[i] = (uint8 *)realloc(_pagePtrs[i], getPageSize());
 		if (!_pagePtrs[i]) {
 			error("Not enough memory to allocate offscreen buffers");
 		}
@@ -110,13 +110,13 @@ void GraphicsSoft::setSize(int w, int h) {
 	setWorkPagePtr(2);
 }
 
-static uint32_t calcStep(const Point &p1, const Point &p2, uint16_t &dy) {
+static uint32 calcStep(const Point &p1, const Point &p2, uint16 &dy) {
 	dy = p2.y - p1.y;
-	uint16_t delta = (dy <= 1) ? 1 : dy;
+	uint16 delta = (dy <= 1) ? 1 : dy;
 	return ((p2.x - p1.x) * (0x4000 / delta)) << 2;
 }
 
-void GraphicsSoft::drawPolygon(uint8_t color, const QuadStrip &quadStrip) {
+void GraphicsSoft::drawPolygon(uint8 color, const QuadStrip &quadStrip) {
 	QuadStrip qs = quadStrip;
 	if (_w != GFX_W || _h != GFX_H) {
 		for (int i = 0; i < qs.numVertices; ++i) {
@@ -127,9 +127,9 @@ void GraphicsSoft::drawPolygon(uint8_t color, const QuadStrip &quadStrip) {
 	int i = 0;
 	int j = qs.numVertices - 1;
 
-	int16_t x2 = qs.vertices[i].x;
-	int16_t x1 = qs.vertices[j].x;
-	int16_t hliney = MIN(qs.vertices[i].y, qs.vertices[j].y);
+	int16 x2 = qs.vertices[i].x;
+	int16 x1 = qs.vertices[j].x;
+	int16 hliney = MIN(qs.vertices[i].y, qs.vertices[j].y);
 
 	++i;
 	--j;
@@ -147,8 +147,8 @@ void GraphicsSoft::drawPolygon(uint8_t color, const QuadStrip &quadStrip) {
 		break;
 	}
 
-	uint32_t cpt1 = x1 << 16;
-	uint32_t cpt2 = x2 << 16;
+	uint32 cpt1 = x1 << 16;
+	uint32 cpt2 = x2 << 16;
 
 	int numVertices = qs.numVertices;
 	while (1) {
@@ -156,9 +156,9 @@ void GraphicsSoft::drawPolygon(uint8_t color, const QuadStrip &quadStrip) {
 		if (numVertices == 0) {
 			return;
 		}
-		uint16_t h;
-		uint32_t step1 = calcStep(qs.vertices[j + 1], qs.vertices[j], h);
-		uint32_t step2 = calcStep(qs.vertices[i - 1], qs.vertices[i], h);
+		uint16 h;
+		uint32 step1 = calcStep(qs.vertices[j + 1], qs.vertices[j], h);
+		uint32 step2 = calcStep(qs.vertices[i - 1], qs.vertices[i], h);
 
 		++i;
 		--j;
@@ -189,15 +189,15 @@ void GraphicsSoft::drawPolygon(uint8_t color, const QuadStrip &quadStrip) {
 	}
 }
 
-void GraphicsSoft::drawChar(uint8_t c, uint16_t x, uint16_t y, uint8_t color) {
+void GraphicsSoft::drawChar(uint8 c, uint16 x, uint16 y, uint8 color) {
 	if (x <= GFX_W - 8 && y <= GFX_H - 8) {
 		x = xScale(x);
 		y = yScale(y);
-		const uint8_t *ft = FONT + (c - 0x20) * 8;
+		const uint8 *ft = FONT + (c - 0x20) * 8;
 		const int offset = (x + y * _w) * _byteDepth;
 		if (_byteDepth == 1) {
 			for (int j = 0; j < 8; ++j) {
-				const uint8_t ch = ft[j];
+				const uint8 ch = ft[j];
 				for (int i = 0; i < 8; ++i) {
 					if (ch & (1 << (7 - i))) {
 						_drawPagePtr[offset + j * _w + i] = color;
@@ -205,21 +205,21 @@ void GraphicsSoft::drawChar(uint8_t c, uint16_t x, uint16_t y, uint8_t color) {
 				}
 			}
 		} else if (_byteDepth == 2) {
-			const uint16_t rgbColor = _format.RGBToColor(
+			const uint16 rgbColor = _format.RGBToColor(
 				_pal[color].r, _pal[color].g, _pal[color].b);
 
 			for (int j = 0; j < 8; ++j) {
-				const uint8_t ch = ft[j];
+				const uint8 ch = ft[j];
 				for (int i = 0; i < 8; ++i) {
 					if (ch & (1 << (7 - i))) {
-						((uint16_t *)(_drawPagePtr + offset))[j * _w + i] = rgbColor;
+						((uint16 *)(_drawPagePtr + offset))[j * _w + i] = rgbColor;
 					}
 				}
 			}
 		}
 	}
 }
-void GraphicsSoft::drawSpriteMask(int x, int y, uint8_t color, const uint8_t *data) {
+void GraphicsSoft::drawSpriteMask(int x, int y, uint8 color, const uint8 *data) {
 	const int w = *data++;
 	x = xScale(x - w / 2);
 	const int h = *data++;
@@ -228,7 +228,7 @@ void GraphicsSoft::drawSpriteMask(int x, int y, uint8_t color, const uint8_t *da
 	for (int j = 0; j < h; ++j) {
 		const int yoffset = y + j;
 		for (int i = 0; i <= w / 16; ++i) {
-			const uint16_t mask = READ_BE_UINT16(data); data += 2;
+			const uint16 mask = READ_BE_UINT16(data); data += 2;
 			if (yoffset < 0 || yoffset >= _h) {
 				continue;
 			}
@@ -245,19 +245,19 @@ void GraphicsSoft::drawSpriteMask(int x, int y, uint8_t color, const uint8_t *da
 	}
 }
 
-static void blend_rgb555(uint16_t *dst, const uint16_t b) {
-	static const uint16_t RB_MASK = 0x7c1f;
-	static const uint16_t G_MASK = 0x03e0;
-	uint16_t a = *dst;
+static void blend_rgb555(uint16 *dst, const uint16 b) {
+	static const uint16 RB_MASK = 0x7c1f;
+	static const uint16 G_MASK = 0x03e0;
+	uint16 a = *dst;
 	if ((a & 0x8000) == 0) { // use bit 15 to prevent additive blending
-		uint16_t r = 0x8000;
+		uint16 r = 0x8000;
 		r |= (((a & RB_MASK) + (b & RB_MASK)) >> 1) & RB_MASK;
 		r |= (((a & G_MASK) + (b & G_MASK)) >> 1) & G_MASK;
 		*dst = r;
 	}
 }
 
-void GraphicsSoft::drawPoint(int16_t x, int16_t y, uint8_t color) {
+void GraphicsSoft::drawPoint(int16 x, int16 y, uint8 color) {
 	x = xScale(x);
 	y = yScale(y);
 	const int offset = (y * _w + x) * _byteDepth;
@@ -278,25 +278,25 @@ void GraphicsSoft::drawPoint(int16_t x, int16_t y, uint8_t color) {
 		case COL_ALPHA: {
 			const Color &c = _pal[ALPHA_COLOR_INDEX];
 			const uint16 rgbColor = _format.RGBToColor(c.r, c.g, c.b);
-			blend_rgb555((uint16_t *)(_drawPagePtr + offset), rgbColor);
+			blend_rgb555((uint16 *)(_drawPagePtr + offset), rgbColor);
 			break;
 		}
 		case COL_PAGE:
-			*(uint16_t *)(_drawPagePtr + offset) = *(uint16_t *)(_pagePtrs[0] + offset);
+			*(uint16 *)(_drawPagePtr + offset) = *(uint16 *)(_pagePtrs[0] + offset);
 			break;
 		default: {
 			const Color &c = _pal[color];
 			const uint16 rgbColor = _format.RGBToColor(c.r, c.g, c.b);
-			*(uint16_t *)(_drawPagePtr + offset) = rgbColor;
+			*(uint16 *)(_drawPagePtr + offset) = rgbColor;
 			break;
 		}
 		}
 	}
 }
 
-void GraphicsSoft::drawLineT(int16_t x1, int16_t x2, int16_t y, uint8_t color) {
-	int16_t xmax = MAX(x1, x2);
-	int16_t xmin = MIN(x1, x2);
+void GraphicsSoft::drawLineT(int16 x1, int16 x2, int16 y, uint8 color) {
+	int16 xmax = MAX(x1, x2);
+	int16 xmin = MIN(x1, x2);
 	int w = xmax - xmin + 1;
 	const int offset = (y * _w + xmin) * _byteDepth;
 	if (_byteDepth == 1) {
@@ -305,18 +305,18 @@ void GraphicsSoft::drawLineT(int16_t x1, int16_t x2, int16_t y, uint8_t color) {
 		}
 	} else if (_byteDepth == 2) {
 		const Color &c = _pal[ALPHA_COLOR_INDEX];
-		const uint16_t rgbColor = _format.RGBToColor(c.r, c.g, c.b);
+		const uint16 rgbColor = _format.RGBToColor(c.r, c.g, c.b);
 
-		uint16_t *p = (uint16_t *)(_drawPagePtr + offset);
+		uint16 *p = (uint16 *)(_drawPagePtr + offset);
 		for (int i = 0; i < w; ++i) {
 			blend_rgb555(p + i, rgbColor);
 		}
 	}
 }
 
-void GraphicsSoft::drawLineN(int16_t x1, int16_t x2, int16_t y, uint8_t color) {
-	int16_t xmax = MAX(x1, x2);
-	int16_t xmin = MIN(x1, x2);
+void GraphicsSoft::drawLineN(int16 x1, int16 x2, int16 y, uint8 color) {
+	int16 xmax = MAX(x1, x2);
+	int16 xmin = MIN(x1, x2);
 	const int w = xmax - xmin + 1;
 	const int offset = (y * _w + xmin) * _byteDepth;
 	if (_byteDepth == 1) {
@@ -324,30 +324,30 @@ void GraphicsSoft::drawLineN(int16_t x1, int16_t x2, int16_t y, uint8_t color) {
 	} else if (_byteDepth == 2) {
 		const Color &c = _pal[color];
 		const uint16 rgbColor = _format.RGBToColor(c.r, c.g, c.b);
-		uint16_t *p = (uint16_t *)(_drawPagePtr + offset);
+		uint16 *p = (uint16 *)(_drawPagePtr + offset);
 		for (int i = 0; i < w; ++i) {
 			p[i] = rgbColor;
 		}
 	}
 }
 
-void GraphicsSoft::drawLineP(int16_t x1, int16_t x2, int16_t y, uint8_t color) {
+void GraphicsSoft::drawLineP(int16 x1, int16 x2, int16 y, uint8 color) {
 	if (_drawPagePtr == _pagePtrs[0]) {
 		return;
 	}
-	int16_t xmax = MAX(x1, x2);
-	int16_t xmin = MIN(x1, x2);
+	int16 xmax = MAX(x1, x2);
+	int16 xmin = MIN(x1, x2);
 	const int w = xmax - xmin + 1;
 	const int offset = (y * _w + xmin) * _byteDepth;
 	memcpy(_drawPagePtr + offset, _pagePtrs[0] + offset, w * _byteDepth);
 }
 
-uint8_t *GraphicsSoft::getPagePtr(uint8_t page) {
+uint8 *GraphicsSoft::getPagePtr(uint8 page) {
 	assert(page < 4);
 	return _pagePtrs[page];
 }
 
-void GraphicsSoft::setWorkPagePtr(uint8_t page) {
+void GraphicsSoft::setWorkPagePtr(uint8 page) {
 	_drawPagePtr = getPagePtr(page);
 }
 
@@ -356,7 +356,7 @@ void GraphicsSoft::init(int targetW, int targetH) {
 	setSize(targetW, targetH);
 }
 
-void GraphicsSoft::setFont(const uint8_t *src, int w, int h) {
+void GraphicsSoft::setFont(const uint8 *src, int w, int h) {
 	if (_is1991) {
 		// no-op for 1991
 	}
@@ -368,23 +368,23 @@ void GraphicsSoft::setPalette(const Color *colors, int count) {
 	_palChanged = true;
 }
 
-void GraphicsSoft::setSpriteAtlas(const uint8_t *src, int w, int h, int xSize, int ySize) {
+void GraphicsSoft::setSpriteAtlas(const uint8 *src, int w, int h, int xSize, int ySize) {
 	if (_is1991) {
 		// no-op for 1991
 	}
 }
 
-void GraphicsSoft::drawSprite(int buffer, int num, const Point *pt, uint8_t color) {
+void GraphicsSoft::drawSprite(int buffer, int num, const Point *pt, uint8 color) {
 	if (_is1991) {
 		if (num < SHAPES_MASK_COUNT) {
 			setWorkPagePtr(buffer);
-			const uint8_t *data = SHAPES_MASK_DATA + SHAPES_MASK_OFFSET[num];
+			const uint8 *data = SHAPES_MASK_DATA + SHAPES_MASK_OFFSET[num];
 			drawSpriteMask(pt->x, pt->y, color, data);
 		}
 	}
 }
 
-void GraphicsSoft::drawBitmap(int buffer, const uint8_t *data, int w, int h, int fmt) {
+void GraphicsSoft::drawBitmap(int buffer, const uint8 *data, int w, int h, int fmt) {
 	switch (_byteDepth) {
 	case 1:
 		if (fmt == FMT_CLUT && _w == w && _h == h) {
@@ -402,28 +402,28 @@ void GraphicsSoft::drawBitmap(int buffer, const uint8_t *data, int w, int h, int
 	warning("GraphicsSoft::drawBitmap() unhandled fmt %d w %d h %d", fmt, w, h);
 }
 
-void GraphicsSoft::drawPoint(int buffer, uint8_t color, const Point *pt) {
+void GraphicsSoft::drawPoint(int buffer, uint8 color, const Point *pt) {
 	setWorkPagePtr(buffer);
 	drawPoint(pt->x, pt->y, color);
 }
 
-void GraphicsSoft::drawQuadStrip(int buffer, uint8_t color, const QuadStrip *qs) {
+void GraphicsSoft::drawQuadStrip(int buffer, uint8 color, const QuadStrip *qs) {
 	setWorkPagePtr(buffer);
 	drawPolygon(color, *qs);
 }
 
-void GraphicsSoft::drawStringChar(int buffer, uint8_t color, char c, const Point *pt) {
+void GraphicsSoft::drawStringChar(int buffer, uint8 color, char c, const Point *pt) {
 	setWorkPagePtr(buffer);
 	drawChar(c, pt->x, pt->y, color);
 }
 
-void GraphicsSoft::clearBuffer(int num, uint8_t color) {
+void GraphicsSoft::clearBuffer(int num, uint8 color) {
 	if (_byteDepth == 1) {
 		memset(getPagePtr(num), color, getPageSize());
 	} else if (_byteDepth == 2) {
 		const Color &c = _pal[color];
 		const uint16 rgbColor = _format.RGBToColor(c.r, c.g, c.b);
-		uint16_t *p = (uint16_t *)getPagePtr(num);
+		uint16 *p = (uint16 *)getPagePtr(num);
 		for (int i = 0; i < _w * _h; ++i) {
 			p[i] = rgbColor;
 		}
@@ -465,7 +465,7 @@ void GraphicsSoft::drawBuffer(int num, SystemStub *stub) {
 	stub->updateScreen();
 }
 
-void GraphicsSoft::drawRect(int num, uint8_t color, const Point *pt, int w, int h) {
+void GraphicsSoft::drawRect(int num, uint8 color, const Point *pt, int w, int h) {
 	assert(_byteDepth == 2);
 	setWorkPagePtr(num);
 
@@ -477,13 +477,13 @@ void GraphicsSoft::drawRect(int num, uint8_t color, const Point *pt, int w, int 
 	const int y2 = yScale(pt->y + h - 1);
 	// horizontal
 	for (int x = x1; x <= x2; ++x) {
-		*(uint16_t *)(_drawPagePtr + (y1 * _w + x) * _byteDepth) = rgbColor;
-		*(uint16_t *)(_drawPagePtr + (y2 * _w + x) * _byteDepth) = rgbColor;
+		*(uint16 *)(_drawPagePtr + (y1 * _w + x) * _byteDepth) = rgbColor;
+		*(uint16 *)(_drawPagePtr + (y2 * _w + x) * _byteDepth) = rgbColor;
 	}
 	// vertical
 	for (int y = y1; y <= y2; ++y) {
-		*(uint16_t *)(_drawPagePtr + (y * _w + x1) * _byteDepth) = rgbColor;
-		*(uint16_t *)(_drawPagePtr + (y * _w + x2) * _byteDepth) = rgbColor;
+		*(uint16 *)(_drawPagePtr + (y * _w + x1) * _byteDepth) = rgbColor;
+		*(uint16 *)(_drawPagePtr + (y * _w + x2) * _byteDepth) = rgbColor;
 	}
 }
 
