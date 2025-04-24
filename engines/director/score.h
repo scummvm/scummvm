@@ -112,7 +112,7 @@ public:
 	uint16 getSpriteIDFromPos(Common::Point pos);
 	uint16 getMouseSpriteIDFromPos(Common::Point pos);
 	uint16 getActiveSpriteIDFromPos(Common::Point pos);
-	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
+	bool checkSpriteRollOver(uint16 spriteId, Common::Point pos);
 	Common::List<Channel *> getSpriteIntersections(const Common::Rect &r);
 	uint16 getSpriteIdByMemberId(CastMemberID id);
 	bool refreshPointersForCastMemberID(CastMemberID id);
