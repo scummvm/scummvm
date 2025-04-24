@@ -1814,12 +1814,12 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheLocH:
 		if (d.asInt() != channel->getPosition().x) {
-			// adding the dirtyRect only when the trails is false. Other changes which will add dirtyRect may also apply this patch
-			// this is for fixing the bug in jman-win. Currently, i've only patched the LocH, LocV and castNum since those are the only ones used in jman
+			// Only add a dirty rectangle for the original position if we're not rendering in trails mode.
+			// Otherwise, it will erase the trail.
 			if (!channel->_sprite->_trails) {
 				movie->getWindow()->addDirtyRect(channel->getBbox());
-				channel->_dirty = true;
 			}
+			channel->_dirty = true;
 			channel->setPosition(d.asInt(), channel->getPosition().y);
 		}
 
@@ -1831,8 +1831,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		if (d.asInt() != channel->getPosition().y) {
 			if (!channel->_sprite->_trails) {
 				movie->getWindow()->addDirtyRect(channel->getBbox());
-				channel->_dirty = true;
 			}
+			channel->_dirty = true;
 			channel->setPosition(channel->getPosition().x, d.asInt());
 		}
 
