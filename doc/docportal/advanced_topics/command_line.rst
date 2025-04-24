@@ -176,7 +176,7 @@ Short options are listed where they are available.
         ``--iconspath=PATH``,,":ref:`Path to additional icons for the launcher grid view <iconspath>`",
         ``--initial-cfg=FILE``,``-i``,"Loads an initial configuration file if no configuration file has been saved yet.",
         ``--joystick=NUM``,,"Enables joystick input.",0
-        ``--language``,``-q``,":ref:`Selects language <lang>`. Allowed values: en, de, fr, it, pt, es, jp, zh, kr, se, gb, hb, ru, cz",en
+        ``--language``,``-q``,":ref:`Selects language <lang>`. Allowed values: en, de, fr, it, pt, es, jp, zh, kr, sv, gb, hb, ru, cz",en
         ``--list-all-debugflags``,,"Lists all debug flags",
         ``--list-all-engines``,,"Lists all detection engines, then exits",
         ``--list-audio-devices``,,"Lists all available audio devices",
