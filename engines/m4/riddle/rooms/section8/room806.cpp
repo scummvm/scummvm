@@ -67,7 +67,7 @@ void Room806::init() {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "CRANK", false);
 	}
 
-	if (_G(flags)[V270] == 806) {
+	if (_G(flags)[V270] != 806) {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "CHARIOT", false);
 	} else {
 		digi_stop(2);
