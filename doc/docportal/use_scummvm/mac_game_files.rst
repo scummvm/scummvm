@@ -36,7 +36,7 @@ Files that contain prohibited characters are always puny-encoded.
 
 .. note::
 
-    Windows, MacOS and Linux can store these files and do not need punycode enabled.
+    Windows, macOS and Linux can store these files and do not need punycode enabled.
 
 For more information, see the `Windows naming conventions <https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#naming-conventions>`_ for a list of prohibited characters.
 

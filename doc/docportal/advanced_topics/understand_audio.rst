@@ -133,7 +133,7 @@ If you select an option that does not match the actual device, this might have u
 
 
 
-macOS/Mac OSX
+macOS/Mac OS X
 ***************
 
 Mac has a built-in MIDI synthesizer; Apple DLS software synthesizer. It uses the Mac's built-in sounds (which are based on Roland GS).

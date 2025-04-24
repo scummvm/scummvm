@@ -13,7 +13,7 @@ The taskbar integration has several features:
 Setting up the icon overlay
 ================================
 
-Currently the taskbar cannot yet use the icons .dat files that can be downloaded from the **Global Options**. This means the icons need to be downloaded manually from our `Github repository <https://github.com/scummvm/scummvm-icons>`. Either place these in the default :ref:`Icon Path <iconspath>` or change the Icon Path to point to the folder containing the icons.
+Currently the taskbar cannot yet use the icon .dat files that can be downloaded from the **Global Options**. This means the icons need to be downloaded manually from our `GitHub repository <https://github.com/scummvm/scummvm-icons>`. Either place these in the default :ref:`Icon Path <iconspath>` or change the Icon Path to point to the folder containing the icons.
 
 The icon files must be ICO files for Windows, or PNG files for macOS. They must follow one of these naming conventions, where xxx is the file extension:
 
