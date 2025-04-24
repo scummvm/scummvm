@@ -25,18 +25,12 @@
 #include "awe/gfx.h"
 #include "awe/resource.h"
 #include "awe/resource_3do.h"
-#include "awe/scaler.h"
 #include "awe/system_stub.h"
 #include "awe/util.h"
 
 namespace Awe {
 
-Video::Video(Resource *res)
-	: _res(res), _graphics(0), _hasHeadSprites(false), _displayHead(true) {
-}
-
-Video::~Video() {
-	free(_scalerBuffer);
+Video::Video(Resource *res) : _res(res) {
 }
 
 void Video::init() {
@@ -45,29 +39,6 @@ void Video::init() {
 	_buffers[1] = getPagePtr(2);
 	setWorkPagePtr(0xFE);
 	_pData.byteSwap = (_res->getDataType() == DT_3DO);
-	_scaler = 0;
-	_scalerBuffer = 0;
-}
-
-void Video::setScaler(const char *name, int factor) {
-	_scaler = findScaler(name);
-	if (!_scaler) {
-		warning("Scaler '%s' not found", name);
-	} else {
-		const int byteDepth = (_res->getDataType() == DT_3DO) ? 2 : 1;
-		if ((_scaler->bpp & (byteDepth * 8)) == 0) {
-			warning("Scaler '%s' does not support %d bits per pixel", name, (byteDepth << 8));
-			_scaler = 0;
-		} else {
-			if (factor < _scaler->factorMin) {
-				factor = _scaler->factorMin;
-			} else if (factor > _scaler->factorMax) {
-				factor = _scaler->factorMax;
-			}
-			_scalerFactor = factor;
-			_scalerBuffer = (uint8_t *)malloc((BITMAP_W * _scalerFactor) * (BITMAP_H * _scalerFactor) * byteDepth);
-		}
-	}
 }
 
 void Video::setDefaultFont() {
@@ -482,15 +453,7 @@ static void yflip(const uint8_t *src, int w, int h, uint8_t *dst) {
 }
 
 void Video::scaleBitmap(const uint8_t *src, int fmt) {
-	if (_scaler) {
-		const int w = BITMAP_W * _scalerFactor;
-		const int h = BITMAP_H * _scalerFactor;
-		const int depth = (fmt == FMT_CLUT) ? 1 : 2;
-		_scaler->scale(_scalerFactor, depth, _scalerBuffer, w * depth, src, BITMAP_W * depth, BITMAP_W, BITMAP_H);
-		_graphics->drawBitmap(_buffers[0], _scalerBuffer, w, h, fmt);
-	} else {
-		_graphics->drawBitmap(_buffers[0], src, BITMAP_W, BITMAP_H, fmt);
-	}
+	_graphics->drawBitmap(_buffers[0], src, BITMAP_W, BITMAP_H, fmt);
 }
 
 void Video::copyBitmapPtr(const uint8_t *src, uint32_t size) {
