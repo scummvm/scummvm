@@ -19,12 +19,14 @@
  *
  */
 
+#include "audio/decoders/aiff.h"
 #include "common/macresman.h"
 
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "graphics/macgui/macwidget.h"
 
+#include "video/video_decoder.h"
 #include "video/avi_decoder.h"
 #include "video/qt_decoder.h"
 
@@ -38,6 +40,46 @@
 #include "director/lingo/lingo-the.h"
 
 namespace Director {
+
+
+class NoVideoAIFFDecoder : public Video::VideoDecoder {
+
+protected:
+	class AIFFAudioTrack : public Video::VideoDecoder::AudioTrack {
+	private:
+		Audio::RewindableAudioStream *_audioStream = nullptr;
+	public:
+		AIFFAudioTrack(Audio::Mixer::SoundType soundType, Audio::RewindableAudioStream *stream) : AudioTrack(soundType) {
+			_audioStream = stream;
+		}
+
+		virtual Audio::AudioStream *getAudioStream() const {
+			return _audioStream;
+		}
+	};
+
+public:
+	bool loadFile(const Common::Path &filename) override {
+		Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(filename);
+		if (!file) {
+			delete file;
+			return false;
+		}
+
+		bool result = loadStream(file);
+		if (!result)
+			delete file;
+		return result;
+	}
+
+	virtual bool loadStream(Common::SeekableReadStream *stream) override {
+		addTrack(new AIFFAudioTrack(Audio::Mixer::SoundType::kSFXSoundType, Audio::makeAIFFStream(stream, DisposeAfterUse::Flag::NO)));
+		return true;
+	}
+
+};
+
+
 
 DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
@@ -144,11 +186,12 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	// TODO: detect file type (AVI, QuickTime, FLIC) based on magic number,
 	// insert the right video decoder
 
-	if (_video)
+	if (_video) {
 		delete _video;
+		_video = nullptr;
+	}
 
 	_filename = path;
-	_video = new Video::QuickTimeDecoder();
 
 	Common::Path location = findPath(path);
 	if (location.empty()) {
@@ -156,34 +199,63 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 		return false;
 	}
 
+	Common::SeekableReadStream *copiedStream = Common::MacResManager::openFileOrDataFork(location);
+	if (!copiedStream) {
+		warning("DigitalVideoCastMember::loadVideo Failed to open %s", path.c_str());
+		return false;
+	}
+
+	uint32 magic1 = copiedStream->readUint32BE();
+	uint32 magic2 = copiedStream->readUint32BE();
+	uint32 magic3 = copiedStream->readUint32BE();
+	delete copiedStream;
+	bool result = false;
+
 	debugC(2, kDebugLoading, "Loading video %s -> %s", path.c_str(), location.toString(Common::Path::kNativeSeparator).c_str());
-	bool result = _video->loadFile(location);
-	if (!result) {
-		delete _video;
-		_video = nullptr;
-
-		// Probe for empty file
-		Common::MacResManager mgr;
-		if (mgr.open(location)) {
-			if (!mgr.hasDataFork()) {
-				debugC(8, kDebugLevelGVideo, "DigitalVideoCastMember::loadVideo(): skipping empty stream");
-				_emptyFile = true;
-			}
-
+	if (magic1 == MKTAG('F', 'O', 'R', 'M') &&
+				(magic3 == MKTAG('A', 'I', 'F', 'F') || magic3 == MKTAG('A', 'I', 'F', 'C'))) {
+		_video = new NoVideoAIFFDecoder();
+		result = _video->loadFile(location);
+		if (!result) {
+			delete _video;
+			_video = nullptr;
 			return false;
+		} else {
+			// Pretend that this is our friend QuickTime
+			_videoType = kDVQuickTime;
 		}
 
+	} else if (magic2 == MKTAG('m', 'o', 'o', 'v') || magic2 == MKTAG('m', 'd', 'a', 't')) {
+		_video = new Video::QuickTimeDecoder();
+		result = _video->loadFile(location);
+		if (!result) {
+			delete _video;
+			_video = nullptr;
+
+			// Probe for empty file
+			Common::MacResManager mgr;
+			if (mgr.open(location)) {
+				if (!mgr.hasDataFork()) {
+					debugC(8, kDebugLevelGVideo, "DigitalVideoCastMember::loadVideo(): skipping empty stream");
+					_emptyFile = true;
+				}
+
+				return false;
+			}
+		} else {
+			_videoType = kDVQuickTime;
+		}
+	} else if (magic1 == MKTAG('R', 'I', 'F', 'F') && (magic3 == MKTAG('A', 'V', 'I', ' '))) {
 		_video = new Video::AVIDecoder();
 		result = _video->loadFile(location);
 		if (!result) {
 		    warning("DigitalVideoCastMember::loadVideo(): format not supported, skipping video '%s'", path.c_str());
 		    delete _video;
 		    _video = nullptr;
+			return false;
 		} else {
 			_videoType = kDVVideoForWindows;
 		}
-	} else {
-		_videoType = kDVQuickTime;
 	}
 
 	if (result && g_director->_pixelformat.bytesPerPixel == 1) {
