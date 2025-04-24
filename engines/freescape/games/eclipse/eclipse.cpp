@@ -324,12 +324,9 @@ void EclipseEngine::drawBackground() {
 		uint8 color1 = 15;
 		uint8 color2 = 10;
 
-		if (isSpectrum() || isCPC()) {
+		if (isSpectrum() || isCPC() || isC64()) {
 			color1 = 2;
 			color2 = 10;
-		} else if (isC64()) {
-			color1 = 1;
-			color2 = 5;
 		} else if (isAmiga() || isAtariST()) {
 			color1 = 8;
 			color2 = 14;
@@ -697,6 +694,24 @@ void EclipseEngine::drawSensorShoot(Sensor *sensor) {
 			}
 		}
 	}
+}
+
+Common::String EclipseEngine::getScoreString(int score) {
+	Common::String scoreStr = Common::String::format("%07d", score);
+
+	if (isDOS() || isCPC() || isSpectrum()) {
+		scoreStr = shiftStr(scoreStr, 'Z' - '0' + 1);
+		if (_renderMode == Common::RenderMode::kRenderEGA || isSpectrum())
+			return scoreStr;
+	}
+	Common::String encodedScoreStr;
+
+	for (int i = 0; i < int(scoreStr.size()); i++) {
+		encodedScoreStr.insertChar(scoreStr[int(scoreStr.size()) - i - 1], 0);
+		if ((i + 1) % 3 == 0 && i > 0)
+		encodedScoreStr.insertChar(',', 0);
+	}
+	return encodedScoreStr;
 }
 
 void EclipseEngine::updateTimeVariables() {

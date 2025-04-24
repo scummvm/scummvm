@@ -184,8 +184,7 @@ void EclipseEngine::drawCPCUI(Graphics::Surface *surface) {
 	} else if (!_currentAreaMessages.empty())
 		drawStringInSurface(_currentArea->_name, 102, 135, back, front, surface);
 
-	Common::String scoreStr = Common::String::format("%07d", score);
-	Common::String encodedScoreStr = shiftStr(scoreStr, 'Z' - '0' + 1);
+	Common::String encodedScoreStr = getScoreString(score);
 	drawStringInSurface(encodedScoreStr, 136, 6, back, other, surface);
 
 	int x = 171;

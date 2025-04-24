@@ -81,36 +81,41 @@ void EclipseEngine::drawC64UI(Graphics::Surface *surface) {
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	_gfx->readFromPalette(7, r, g, b);
-	uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+	_gfx->readFromPalette(13, r, g, b);
+	uint32 green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	_gfx->readFromPalette(5, r, g, b);
+	_gfx->readFromPalette(3, r, g, b);
 	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	_gfx->readFromPalette(2, r, g, b);
 	uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
+	_gfx->readFromPalette(0, r, g, b);
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	_gfx->readFromPalette(1, r, g, b);
+	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	int score = _gameStateVars[k8bitVariableScore];
 	int shield = _gameStateVars[k8bitVariableShield] * 100 / _maxShield;
 	int energy = _gameStateVars[k8bitVariableEnergy];
 	shield = shield < 0 ? 0 : shield;
 
-	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0);
+	_gfx->readFromPalette(7, r, g, b);
+	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 102, 141, back, yellow, surface);
+		drawStringInSurface(message, 104, 138, back, yellow, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else if (!_currentAreaMessages.empty())
-		drawStringInSurface(_currentArea->_name, 102, 141, back, yellow, surface);
+		drawStringInSurface(_currentArea->_name, 104, 138, back, yellow, surface);
 
-	Common::String scoreStr = Common::String::format("%07d", score);
-	Common::String encodedScoreStr = shiftStr(scoreStr, 'Z' - '0' + 1);
-	drawStringInSurface(encodedScoreStr, 133, 11, back, gray, surface, 'Z' - '0' + 1);
+	Common::String encodedScoreStr = getScoreString(score);
+	drawStringInSurface(encodedScoreStr, 128, 7, black, white, surface);
 
 	Common::String shieldStr = Common::String::format("%d", shield);
 
@@ -125,13 +130,13 @@ void EclipseEngine::drawC64UI(Graphics::Surface *surface) {
 
 	drawStringInSurface(shieldStr, x, 161, back, red, surface);
 
-	Common::Rect jarBackground(120, 162, 144, 192 - 4);
+	Common::Rect jarBackground(112, 170, 144, 196);
 	surface->fillRect(jarBackground, back);
 
-	Common::Rect jarWater(120, 192 - energy - 4, 144, 192 - 4);
+	Common::Rect jarWater(112, 196 - energy, 144, 196);
 	surface->fillRect(jarWater, blue);
 
-	drawStringInSurface(shiftStr("0", 'Z' - '$' + 1 - _angleRotationIndex), 79, 141, back, yellow, surface);
+	/*drawStringInSurface(shiftStr("0", 'Z' - '$' + 1 - _angleRotationIndex), 79, 141, back, yellow, surface);
 	drawStringInSurface(shiftStr("3", 'Z' - '$' + 1 - _playerStepIndex), 63, 141, back, yellow, surface);
 	drawStringInSurface(shiftStr("7", 'Z' - '$' + 1 - _playerHeightNumber), 240, 141, back, yellow, surface);
 
@@ -142,10 +147,10 @@ void EclipseEngine::drawC64UI(Graphics::Surface *surface) {
 	drawAnalogClock(surface, 89, 172, back, back, gray);
 
 	surface->fillRect(Common::Rect(227, 168, 235, 187), gray);
-	drawCompass(surface, 231, 177, _yaw, 10, back);
+	drawCompass(surface, 231, 177, _yaw, 10, back);*/
 
 	//drawIndicator(surface, 65, 7, 8);
-	drawEclipseIndicator(surface, 215, 3, front, gray);
+	drawEclipseIndicator(surface, 224, 0, front, green);
 }
 
 } // End of namespace Freescape
