@@ -79,7 +79,7 @@ Games can also be launched directly from the command line. For more information,
 A note about copyright
 ==============================
 
-ScummVM has a strict anti-piracy stance and the team wil not tolerate discussions around pirated games in any part of the project, including on the Forum or on Discord.
+ScummVM has a strict anti-piracy stance and the team will not tolerate discussions around pirated games in any part of the project, including on the Forum or on Discord.
 
 Copy protection screen
 ************************

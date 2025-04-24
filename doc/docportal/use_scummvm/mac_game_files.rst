@@ -215,7 +215,7 @@ Install machfs, and xattr if using macOS:
 Use
 ****
 
-The dumper companion supports three modes: ISO, DIR and MAC. The MAC mode is specific to macOS. There's also a STR mode that is used test drive the punyencode parts. For more info see its help section.
+The dumper companion supports three modes: ISO, DIR and MAC. The MAC mode is specific to macOS. There's also a STR mode that is used to test drive the punyencode parts. For more info see its help section.
 
 .. note::
 
@@ -306,7 +306,7 @@ There are other ways to access HFS and HFS+ media on Windows, macOS, and Linux. 
            1. Install hfsplus using the software manager. On Debian-based distributions, use ``sudo apt install hfsplus``.
            2. Find the game disc by running ``sudo fdisk -l`` and finding the one with type ``Apple HFS/HFS+``. In this example, this is ``/dev/fd0``.
            3. Create a mount point, for example: ``sudo mkdir /media/macgamedrive``
-           4. Mount the device to that moint point: ``sudo mount -t hfsplus /dev/fd0 /media/macgamedrive``
+           4. Mount the device to that mount point: ``sudo mount -t hfsplus /dev/fd0 /media/macgamedrive``
            5. Access the device at ``/media/macgamedrive``. To copy files you can use ``hpcopy``. It takes options to indicate if the files should be converted to macbinary (``-m``) or copied as a raw file (``-r``).
 
         Access HFS drives using ``hfsutils``. To use hfsutils, use the command line:

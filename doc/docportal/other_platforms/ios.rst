@@ -90,7 +90,7 @@ For a two finger double tap, hold one finger down and then double tap with a sec
 Keyboard
 ^^^^^^^^^^^^^^^^^^^^
 
-If no external keyboard is connected, the pinch gesture shows and hides the onscreen keyboard. When an external keyboard is connected the inputs from the external keyboard is enaled by default.
+If no external keyboard is connected, the pinch gesture shows and hides the onscreen keyboard. When an external keyboard is connected, input from the external keyboard is enabled by default.
 External keyboards are supported and from iOS 13.4 most of the special keys, e.g. function keys, Home and End, are mapped.
 For external keyboards missing the special keys, e.g. the Apple Magic Keyboard for iPads, the special keys can be triggered using the following key combinations:
 
@@ -136,6 +136,6 @@ Known issues
 ===============
 
 - If ScummVM is uninstalled or downgraded, its internal and external app spaces are fully deleted. If you want to keep saved games use ScummVM's :doc:`cloud <../use_scummvm/connect_cloud>` or LAN functionality to keep those files. Alternatively, change the saved game path to a shared location such as an SD card.
-- If closing the ScummVM application (background mode) and then killing the application (by swiping the application upwards) there is a risk that the ScummVM configuration file becomes corrupted. Make sure not to kill the application to soon after ptting it to background.
-- In rare cases the ScummVM folder is not created in the "Files" application after installing ScummVM. Make sure the ScummVM folder shows up after installation. If not, uninstall the ScummVM, restart the iOS device and reinstall ScummVM.
-- In rare cases the system mouse pointer on iPadOS is not hidden so both the ScummVM arrow mouse pointer and the iPadOS system pointer are seen in parallell. It's usually fixed when restartarting the iPad.
+- If closing the ScummVM application (background mode) and then killing the application (by swiping the application upwards) there is a risk that the ScummVM configuration file becomes corrupted. Make sure not to kill the application too soon after putting it in the background.
+- In rare cases the ScummVM folder is not created in the "Files" application after installing ScummVM. Make sure the ScummVM folder shows up after installation. If not, uninstall ScummVM, restart the iOS device, and reinstall ScummVM.
+- In rare cases the system mouse pointer on iPadOS is not hidden so both the ScummVM arrow pointer and the iPadOS system pointer are seen at the same time. It's usually fixed by restarting the iPad.

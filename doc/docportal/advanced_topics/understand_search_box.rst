@@ -60,7 +60,7 @@ Here are some more examples:
 - ``guioptions:noLang`` - games without displayed language
 - ``keymap_engine-default_LCLK:MOUSE_RIGHT`` - games with right mouse button remapped to left mouse button
 
-Abbrevating configuration keys
+Abbreviating configuration keys
 *******************************************
 
 To abbreviate the 6 most common configuration keys, just type any prefix instead of full strings for those keys:
@@ -102,7 +102,7 @@ To abbreviate the 6 most common configuration keys, just type any prefix instead
 
 .. note::
 
-	The ``platform`` key can't be abbrevated to ``p``, since ``p`` is already used for ``path``.
+	The ``platform`` key can't be abbreviated to ``p``, since ``p`` is already used for ``path``.
 
 
 Inverting the search pattern
@@ -111,7 +111,7 @@ ___________________________________________
 To invert the search result, prefix the search pattern with the`!` character. For example:
 
 - ``!GOG`` - games that don't contain "GOG" substring in description
-- ``!lang=ru`` - games not in Russian languange
+- ``!lang=ru`` - games not in Russian language
 - ``!p:demo`` - games that don't have "demo" substring in game path
 - ``!engine~sword#`` - games not made with "sword1" and "sword2" engines (but "sword25" is fine)
 
