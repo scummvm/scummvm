@@ -79,7 +79,7 @@ struct SystemStub {
 	virtual uint32 getTimeStamp() = 0;
 };
 
-extern SystemStub *SystemStub_create();
+extern SystemStub *SystemStub_create(bool isAnniversaryEdition);
 
 } // namespace Awe
 

@@ -165,7 +165,10 @@ Common::Error AweEngine::run() {
 		}
 	}
 
-	SystemStub *stub = SystemStub_create();
+	SystemStub *stub = SystemStub_create(
+		dataType == DT_15TH_EDITION ||
+		dataType == DT_20TH_EDITION
+	);
 	stub->init(dm);
 	e->setSystemStub(stub, graphics);
 

@@ -32,6 +32,10 @@
 namespace Awe {
 
 struct SystemStubScummVM : SystemStub {
+private:
+	bool _isAnniversaryEdition;
+
+public:
 	static const int kJoystickIndex = 0;
 	static const int kJoystickCommitValue = 16384;
 	static const float kAspectRatio;
@@ -40,7 +44,8 @@ struct SystemStubScummVM : SystemStub {
 	float _aspectRatio[4] = { 0.0 };
 	int _screenshot = 0;
 
-	SystemStubScummVM() {}
+	SystemStubScummVM(bool isAnniversaryEdition) :
+		_isAnniversaryEdition(isAnniversaryEdition) {}
 	~SystemStubScummVM() override;
 
 	void init(const DisplayMode &dm) override;
@@ -108,6 +113,13 @@ void SystemStubScummVM::setPalette(const Color pal[16]) {
 void SystemStubScummVM::processEvents() {
 	Common::Event ev;
 	while (g_system->getEventManager()->pollEvent(ev)) {
+		// WORKAROUND: Anniversary editions have a separate
+		// jump button than the up arrow; for earlier releases,
+		// remap the jump to up, which does the same thing
+		if (!_isAnniversaryEdition &&
+			ev.customType == KEYBIND_JUMP)
+			ev.customType = KEYBIND_UP;
+
 		switch (ev.type) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
@@ -243,8 +255,8 @@ void SystemStubScummVM::setAspectRatio(int w, int h) {
 	}
 }
 
-SystemStub *SystemStub_create() {
-	return new SystemStubScummVM();
+SystemStub *SystemStub_create(bool isAnniversaryEdition) {
+	return new SystemStubScummVM(isAnniversaryEdition);
 }
 
 } // namespace Awe
