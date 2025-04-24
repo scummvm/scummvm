@@ -4728,6 +4728,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("perfecttides", "game.ags", "63f8a60cc094996bd070e68cb3c4722c", 1201068548),  // Mac v1.0.2
 	GAME_ENTRY_EN_STEAM("perfecttides", "game.ags", "163f1abe335f3c3eb8bc68131a2ba6c6", 1240690225),  // Mac v2.0.1
 	GAME_ENTRY("perfidiouspetrolstation", "NancyATPPS.exe", "be858e83311d4f1b49e05b933b92f0a9", 28085287),  // Eng-Deu
+	GAME_ENTRY("perfidiouspetrolstation", "NancyATPPS.exe", "be858e83311d4f1b49e05b933b92f0a9", 28085732),  // Eng-Deu Shinyloot.com
 	GAME_ENTRY_EN_STEAM("personalrocket", "PersonalRocket.exe", "7db052bc30700d1f30f5330f5814f519", 76071166),
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("phantomfellows", "TPF.exe", "93195fd3208f13c3d65ccd3972a72949", 2935770586, 0),  // GOG 1.1.0.2G
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("phantomfellows", "TPF.exe", "93195fd3208f13c3d65ccd3972a72949", 2936807036, 0),  // GOG 1.1.0.6G
@@ -4952,25 +4953,32 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "6475b8eb253b8d992a052869de4632cb", 420114105, 0),  // Win v3.0.1
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "6475b8eb253b8d992a052869de4632cb", 420114113, 0),  // Win v3.0.1 updated
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "6475b8eb253b8d992a052869de4632cb", 420115055, 0),  // Win v3.0.5
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "6475b8eb253b8d992a052869de4632cb", 420128182, 0),  // Win v3.0.6d
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "technobabylon.ags", "9d48667020cf3e3612a753934b16cc04", 416922690, 0),  // Linux v3.0
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "technobabylon.ags", "9d48667020cf3e3612a753934b16cc04", 416929445, 0),  // Linux v3.0.1
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "technobabylon.ags", "9d48667020cf3e3612a753934b16cc04", 416930395, 0),  // Linux v3.0.5
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "technobabylon.ags", "9d48667020cf3e3612a753934b16cc04", 416943522, 0),  // Linux v3.0.6d
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445700420, 0),  // Mac
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "ac2game.dat", "9d48667020cf3e3612a753934b16cc04", 416929445, 0),  // Mac
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "ac2game.dat", "9d48667020cf3e3612a753934b16cc04", 416930395, 0),  // Mac v3.0.5
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "ac2game.dat", "9d48667020cf3e3612a753934b16cc04", 416943522, 0),  // Mac v3.0.6d
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448796372, 0), // Win v2.2
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448825442, 0), // Win v2.5
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448836736, 0), // Win v2.5a
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "6475b8eb253b8d992a052869de4632cb", 420107616, 0), // Win v3.0
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "f2332e54784086e5a2f249c1867897df", 420097475, 0), // Win v3.0.1
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "6475b8eb253b8d992a052869de4632cb", 420115313, 0), // Win v3.0.5
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "6475b8eb253b8d992a052869de4632cb", 420128440, 0), // Win v3.0.6d
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445671616, 0), // Mac v2.2a
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445711980, 0), // Mac v2.5a
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "ac2game.dat", "9d48667020cf3e3612a753934b16cc04", 416922956, 0), // Mac v3.0
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "ac2game.dat", "9d48667020cf3e3612a753934b16cc04", 416929711, 0), // Mac v3.0.1
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "ac2game.dat", "9d48667020cf3e3612a753934b16cc04", 416930653, 0), // Mac v3.1-v3.2
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "ac2game.dat", "9d48667020cf3e3612a753934b16cc04", 416943780, 0), // Mac v3.3c
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.ags", "9d48667020cf3e3612a753934b16cc04", 416929711, 0), // Linux v3.0.1
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.ags", "9d48667020cf3e3612a753934b16cc04", 416930653, 0), // Linux v3.0.5
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.ags", "9d48667020cf3e3612a753934b16cc04", 416942832, 0), // Linux v3.0.6c
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.ags", "9d48667020cf3e3612a753934b16cc04", 416943780, 0), // Linux v3.0.6d
 	GAME_ENTRY_EN("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447894701),  // Humble Bundle
 	GAME_ENTRY_EN_STEAM("theadventuresoffatman", "fatman.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 44449205),
 	GAME_ENTRY_STEAM("theadventuresoftheblackhawk", "The Adventures of The Black Hawk.ags", "275e81b2ba532d12399b6329fa484ed4", 658932547), // En-Es
