@@ -28,7 +28,7 @@ In tile view, click on the **New Save** tile. Enter a description for the game, 
 
 .. figure:: ../images/Launcher/save_game_grid_desc.png
 
-	Save game decription, grid view.
+	Save game description, grid view.
 
 In list view, click on a slot to save the game to that slot. Enter a description for the game, then click **Save**.
 

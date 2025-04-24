@@ -107,7 +107,7 @@ Setting an initial configuration file in this way allows default settings to eas
 Configuration keys
 =====================
 
-There are many recognized configuration keys. In the table below, each key is either linked to an explanatory description in the Settings pages, or has further information in the **Decription/Options** column.
+There are many recognized configuration keys. In the table below, each key is either linked to an explanatory description in the Settings pages, or has further information in the **Description/Options** column.
 
 .. csv-table::
   	:header-rows: 1
@@ -250,7 +250,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 	- timidity"
 		":ref:`gui_browser_native <guibrowser>`", boolean, true
 		gui_browser_show_hidden,boolean,false, Shows hidden files/folders in the ScummVM file browser.
-		gui_list_max_scan_entries,integer,-1, "Specifies the threshold for scanning directories in the Launcher. If the number of game entires exceeds the specified number, then scanning is skipped."
+		gui_list_max_scan_entries,integer,-1, "Specifies the threshold for scanning directories in the Launcher. If the number of game entries exceeds the specified number, then scanning is skipped."
 		":ref:`gui_return_to_launcher_at_exit <guireturn>`",boolean,false,
 		gui_saveload_chooser,string,grid,"- list
 	- grid"
@@ -395,7 +395,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 	- 44100"
 		":ref:`palette_mods <palette>`",boolean,false,
 		":ref:`platform <platform>`",string,,
-		":ref:`portaits_on <portraits>`",boolean,true,
+		":ref:`portraits_on <portraits>`",boolean,true,
 		":ref:`prefer_digitalsfx <dsfx>`",boolean,true,
 		":ref:`prerecorded_sounds <prerecorded>`",boolean,true,
 		":ref:`renderer <renderer>`",string,default,"

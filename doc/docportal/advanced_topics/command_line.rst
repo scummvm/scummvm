@@ -191,7 +191,7 @@ Short options are listed where they are available.
         ``--md5``,,"Shows MD5 hash of the file given by ``--md5-path=PATH``. If ``--md5-length=NUM`` is passed then it shows the MD5 hash of the first or last ``NUM`` bytes of the file given by ``PATH``. If ``--md5-engine=ENGINE_ID`` option is passed then it auto-calculates the required bytes and its hash, overriding ``--md5-length``",
         ``--md5mac``,,"Shows MD5 hash for both the resource fork and data fork of the file given by ``--md5-path=PATH``. If ``--md5-length=NUM`` is passed then it shows the MD5 hash of the first or last``NUM`` bytes of each fork.",
         ``--md5-engine=ENGINE_ID``,,"Used with ``--md5`` to specify the engine for which number of bytes to be hashed must be calculated. This option overrides ``--md5-length`` if used along with it. Use ``--list-engines`` to find all engine IDs.",
-        ``--md5-length=NUM``,,"Used with ``--md5`` or ``--md5mac`` to specify the number of bytes to be hashed.If ``NUM`` is 0, MD5 hash of the whole file is calculated. If ``NUM`` is negative, the MD5 hash is calculated from the tail. Is overriden if passed with ``--md5-engine`` option",0
+        ``--md5-length=NUM``,,"Used with ``--md5`` or ``--md5mac`` to specify the number of bytes to be hashed. If ``NUM`` is 0, MD5 hash of the whole file is calculated. If ``NUM`` is negative, the MD5 hash is calculated from the tail. Is overridden if passed with ``--md5-engine`` option",0
         ``--md5-path=PATH``,,"Used with ``--md5`` or ``--md5mac`` to specify path of file to calculate MD5 hash of", ./scummvm
         ``--midi-gain=NUM``,,":ref:`Sets the gain for MIDI playback <gain>` Only supported by some MIDI drivers. 0-1000",100
         ``--multi-midi``,,":ref:`Enables combination AdLib and native MIDI <multi>`",false
@@ -262,7 +262,7 @@ Short options are listed where they are available.
         ``--screenshot-period=NUM``,,"When recording, triggers a screenshot every NUM milliseconds.(`Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_)",60000
         ``--sfx-volume=NUM``,``-s``,":ref:`Sets the sfx volume <sfx>`, 0-255",192
     	``--show-fps``,,Turns on frames-per-second information in 3D games,false
-        ``--soundfont=FILE``,,":ref:`Selects the SoundFont for MIDI playback. <soundfont>`. Only supported bysome MIDI drivers.",
+        ``--soundfont=FILE``,,":ref:`Selects the SoundFont for MIDI playback. <soundfont>`. Only supported by some MIDI drivers.",
         ``--speech-volume=NUM``,``-r``,":ref:`Sets the speech volume <speechvol>`, 0-255",192
         ``--start-movie=NAME@NUM``,,"Starts Director movie at specified frame. Either can be specified without the other.",
         ``--stretch-mode=MODE``,, "Selects stretch mode.
