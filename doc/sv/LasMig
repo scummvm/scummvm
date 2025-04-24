@@ -787,7 +787,7 @@ Beneath a Steel Sky
     it  - Italienska
     pt  - Portugisiska
     es  - Spanska
-    se  - Svenska
+    sv  - Svenska
 
 Broken Sword
     en  - Engelska (standard)
@@ -1535,7 +1535,7 @@ Följande nyckelord kan användas:
     description        string   Beskrivningen av spelet enligt launchern.
 
     language           string   Bestäm språk (en, us, de, fr, it, pt, es,
-                                jp, zh, kr, se, gb, hb, cz, ru)
+                                jp, zh, kr, sv, gb, hb, cz, ru)
     speech_mute        bool     Ställ in till “true” för att
                                 stänga av röster
     subtitles          bool     Ställ in till “true” för att

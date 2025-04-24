@@ -1098,7 +1098,7 @@ Beneath a Steel Sky
     it  - Italština
     pt  - Portugalština
     es  - Španělština
-    se  - Švédština
+    sv  - Švédština
 
 Broken Sword
     en  - Angličtina (výchozí)
@@ -1863,7 +1863,7 @@ Jsou rozpoznávána následující klíčová slova:
     gameid             řetězec  Skutečné id hry. Užitečné, pokud máte několik verzí stejné hry a chcete pro ně různé přezdívky. Viz příklad.
     description        řetězec  Popis hry jak se zobrazí ve spouštěči.
     language           řetězec  Určí jazyk (en, us, de, fr, it, pt, es,
-                                jp, zh, kr, se, gb, hb, cz, ru)
+                                jp, zh, kr, sv, gb, hb, cz, ru)
     speech_mute        boolean  Pokud true, řeč je ztlumena
     subtitles          boolean  Pokud true jsou titulky zapnuty.
     talkspeed          číslo    Zpoždění textu v hrách SCUMM, nebo rychlost textu v jiných hrách.

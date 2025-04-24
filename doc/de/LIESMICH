@@ -1997,7 +1997,7 @@ Beneath a Steel Sky
     it  - Italienisch
     pt  - Portugiesisch
     es  - Spanisch
-    se  - Schwedisch
+    sv  - Schwedisch
 
 Baphomets Fluch
     en  - Englisch (Standard)
@@ -2782,7 +2782,7 @@ Die folgenden Schlüsselwörter werden erkannt:
                                 erscheinen wird
 
     language           Text     Legt Sprache fest (de, en, us, fr, it, pt, es,
-                                jp, zh, kr, se, gb, hb, cz, ru).
+                                jp, zh, kr, sv, gb, hb, cz, ru).
     speech_mute        Bool     Falls „true“, wird Sprachausgabe unterdrückt.
     subtitles          Bool     Belegung mit „true“ aktiviert Untertitel.
     talkspeed          Zahl     Textverzögerung in SCUMM-Spielen oder Texttempo
