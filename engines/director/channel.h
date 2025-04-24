@@ -52,6 +52,7 @@ public:
 	inline Common::Point getPosition() { return _sprite->getPosition(); };
 	// Return the area of screen to be used for drawing content.
 	inline Common::Rect getBbox(bool unstretched = false) { return _sprite->getBbox(unstretched); };
+	Common::Rect getRollOverBbox();
 
 	bool isStretched();
 	bool isDirty(Sprite *nextSprite = nullptr);
@@ -115,6 +116,8 @@ public:
 
 	// Used in film loops
 	uint _filmLoopFrame;
+
+	Common::Rect _rollOverBbox;
 
 private:
 	Graphics::ManagedSurface *getSurface();

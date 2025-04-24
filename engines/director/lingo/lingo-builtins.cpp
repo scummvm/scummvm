@@ -2979,7 +2979,7 @@ void LB::b_rollOver(int nargs) {
 
 	Common::Point pos = g_director->getCurrentWindow()->getMousePos();
 
-	if (score->checkSpriteIntersection(arg, pos))
+	if (score->checkSpriteRollOver(arg, pos))
 		res.u.i = 1; // TRUE
 
 	g_lingo->push(res);

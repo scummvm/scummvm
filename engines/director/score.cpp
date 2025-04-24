@@ -471,6 +471,17 @@ void Score::updateCurrentFrame() {
 	}
 
 	if (_curFrameNumber != nextFrameNumberToLoad) {
+		// Cache the previous bounding box for the purposes of rollOver.
+		// If the sprite is blank, D4 and below will use whatever the previous valid bounding
+		// box was for rollOver testing.
+		if (g_director->getVersion() < 500) {
+			for (uint ch = 0; ch < _channels.size(); ch++) {
+				if (_channels[ch]->_sprite->_castId.member != 0) {
+					_channels[ch]->_rollOverBbox = _channels[ch]->getBbox();
+				}
+			}
+		}
+
 		// Load the current sprite information into the _currentFrame data store.
 		// This is specifically because of delta updates; loading the next frame
 		// in the score applies delta changes to _currentFrame, and ideally we want
@@ -1522,8 +1533,8 @@ uint16 Score::getActiveSpriteIDFromPos(Common::Point pos) {
 	return 0;
 }
 
-bool Score::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {
-	if (_channels[spriteId]->getBbox().contains(pos))
+bool Score::checkSpriteRollOver(uint16 spriteId, Common::Point pos) {
+	if (_channels[spriteId]->getRollOverBbox().contains(pos))
 		return true;
 
 	return false;

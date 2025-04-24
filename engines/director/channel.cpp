@@ -265,6 +265,15 @@ bool Channel::isDirty(Sprite *nextSprite) {
 	return isDirtyFlag;
 }
 
+Common::Rect Channel::getRollOverBbox() {
+	// In D4 and below, the rollOver command will check against whatever the last
+	// contents of the sprite were, regardless of whether the score has zeroed it out.
+	if (g_director->getVersion() < 500 && _sprite->_castId.member == 0) {
+		return _rollOverBbox;
+	}
+	return getBbox();
+}
+
 bool Channel::isStretched() {
 	return _sprite->_stretch;
 }
@@ -582,7 +591,7 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 void Channel::setPosition(int x, int y, bool force) {
 	Common::Point newPos(x, y);
 	if (_constraint > 0 && _score && _constraint <= _score->_channels.size()) {
-		Common::Rect constraintBbox = _score->_channels[_constraint]->getBbox();
+		Common::Rect constraintBbox = _score->_channels[_constraint]->getRollOverBbox();
 		newPos.x = MIN(constraintBbox.right, MAX(constraintBbox.left, newPos.x));
 		newPos.y = MIN(constraintBbox.bottom, MAX(constraintBbox.top, newPos.y));
 	}
