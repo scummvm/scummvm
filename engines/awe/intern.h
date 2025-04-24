@@ -48,15 +48,15 @@ enum {
 };
 
 struct Ptr {
-	uint8_t *pc = nullptr;
+	uint8 *pc = nullptr;
 	bool byteSwap = false;
 
-	uint8_t fetchByte() {
+	uint8 fetchByte() {
 		return *pc++;
 	}
 
-	uint16_t fetchWord() {
-		const uint16_t i = byteSwap ? READ_LE_UINT16(pc) : READ_BE_UINT16(pc);
+	uint16 fetchWord() {
+		const uint16 i = byteSwap ? READ_LE_UINT16(pc) : READ_BE_UINT16(pc);
 		pc += 2;
 		return i;
 	}
@@ -64,7 +64,7 @@ struct Ptr {
 
 struct Point : public Common::Point {
 	Point() : Common::Point() {}
-	Point(int16_t xx, int16_t yy) : Common::Point(xx, yy) {}
+	Point(int16 xx, int16 yy) : Common::Point(xx, yy) {}
 	Point(const Point &p) : Common::Point(p) {}
 
 	void scale(int u, int v) {
@@ -78,32 +78,32 @@ struct QuadStrip {
 		MAX_VERTICES = 70
 	};
 
-	uint8_t numVertices = 0;
+	uint8 numVertices = 0;
 	Point vertices[MAX_VERTICES];
 };
 
 struct Color {
 	byte rgb[3];
-	uint8_t &r = rgb[0];
-	uint8_t &g = rgb[1];
-	uint8_t &b = rgb[2];
+	uint8 &r = rgb[0];
+	uint8 &g = rgb[1];
+	uint8 &b = rgb[2];
 };
 
 struct Frac {
 	static const int BITS = 16;
 	static const int MASK = (1 << BITS) - 1;
-	uint32_t inc = 0;
-	uint64_t offset = 0;
+	uint32 inc = 0;
+	uint64 offset = 0;
 
 	void reset(int n, int d) {
-		inc = (((int64_t)n) << BITS) / d;
+		inc = (((int64)n) << BITS) / d;
 		offset = 0;
 	}
 
-	uint32_t getInt() const {
+	uint32 getInt() const {
 		return offset >> BITS;
 	}
-	uint32_t getFrac() const {
+	uint32 getFrac() const {
 		return offset & MASK;
 	}
 	int interpolate(int sample1, int sample2) const {

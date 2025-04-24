@@ -27,36 +27,36 @@
 namespace Awe {
 
 struct SfxInstrument {
-	uint8_t *data = nullptr;
-	uint16_t volume = 0;
+	uint8 *data = nullptr;
+	uint16 volume = 0;
 };
 
 struct SfxModule {
-	const uint8_t *data = nullptr;
-	uint16_t curPos = 0;
-	uint8_t curOrder = 0;
-	uint8_t numOrder = 0;
-	uint8_t *orderTable = nullptr;
+	const uint8 *data = nullptr;
+	uint16 curPos = 0;
+	uint8 curOrder = 0;
+	uint8 numOrder = 0;
+	uint8 *orderTable = nullptr;
 	SfxInstrument samples[15];
 };
 
 struct SfxPattern {
-	uint16_t note_1 = 0;
-	uint16_t note_2 = 0;
-	uint16_t sampleStart = 0;
-	uint8_t *sampleBuffer = nullptr;
-	uint16_t sampleLen = 0;
-	uint16_t loopPos = 0;
-	uint16_t loopLen = 0;
-	uint16_t sampleVolume = 0;
+	uint16 note_1 = 0;
+	uint16 note_2 = 0;
+	uint16 sampleStart = 0;
+	uint8 *sampleBuffer = nullptr;
+	uint16 sampleLen = 0;
+	uint16 loopPos = 0;
+	uint16 loopLen = 0;
+	uint16 sampleVolume = 0;
 };
 
 struct SfxChannel {
-	uint8_t *sampleData = nullptr;
-	uint16_t sampleLen = 0;
-	uint16_t sampleLoopPos = 0;
-	uint16_t sampleLoopLen = 0;
-	uint16_t volume = 0;
+	uint8 *sampleData = nullptr;
+	uint16 sampleLen = 0;
+	uint16 sampleLoopPos = 0;
+	uint16 sampleLoopLen = 0;
+	uint16 volume = 0;
 	Frac pos;
 };
 
@@ -69,10 +69,10 @@ struct SfxPlayer {
 
 	Resource *_res;
 
-	uint16_t _delay = 0;
-	uint16_t _resNum = 0;
+	uint16 _delay = 0;
+	uint16 _resNum = 0;
 	SfxModule _sfxMod;
-	int16_t *_syncVar = nullptr;
+	int16 *_syncVar = nullptr;
 	bool _playing = false;
 	int _rate = 0;
 	int _samplesLeft = 0;
@@ -80,16 +80,16 @@ struct SfxPlayer {
 
 	SfxPlayer(Resource *res);
 
-	void setEventsDelay(uint16_t delay);
-	void loadSfxModule(uint16_t resNum, uint16_t delay, uint8_t pos);
-	void prepareInstruments(const uint8_t *p);
+	void setEventsDelay(uint16 delay);
+	void loadSfxModule(uint16 resNum, uint16 delay, uint8 pos);
+	void prepareInstruments(const uint8 *p);
 	void play(int rate);
-	void mixSamples(int16_t *buf, int len);
-	void readSamples(int16_t *buf, int len);
+	void mixSamples(int16 *buf, int len);
+	void readSamples(int16 *buf, int len);
 	void start();
 	void stop();
 	void handleEvents();
-	void handlePattern(uint8_t channel, const uint8_t *patternData);
+	void handlePattern(uint8 channel, const uint8 *patternData);
 };
 
 } // namespace Awe

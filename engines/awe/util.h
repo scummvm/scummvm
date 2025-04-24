@@ -28,7 +28,7 @@
 
 namespace Awe {
 
-extern uint16_t g_debugMask;
+extern uint16 g_debugMask;
 
 extern void string_lower(char *p);
 extern void string_upper(char *p);

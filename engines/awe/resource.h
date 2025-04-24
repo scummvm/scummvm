@@ -28,31 +28,31 @@
 namespace Awe {
 
 struct MemEntry {
-	uint8_t status = 0;        // 0x0
-	uint8_t type = 0;          // 0x1, Resource::ResType
-	uint8_t *bufPtr = nullptr; // 0x2
-	uint8_t rankNum = 0;       // 0x6
-	uint8_t bankNum = 0;       // 0x7
-	uint32_t bankPos = 0;      // 0x8
-	uint32_t packedSize = 0;   // 0xC
-	uint32_t unpackedSize = 0; // 0x12
+	uint8 status = 0;        // 0x0
+	uint8 type = 0;          // 0x1, Resource::ResType
+	uint8 *bufPtr = nullptr; // 0x2
+	uint8 rankNum = 0;       // 0x6
+	uint8 bankNum = 0;       // 0x7
+	uint32 bankPos = 0;      // 0x8
+	uint32 packedSize = 0;   // 0xC
+	uint32 unpackedSize = 0; // 0x12
 
 	void load(Common::SeekableReadStream *src);
 };
 
 struct AmigaMemEntry {
-	uint8_t type;
-	uint8_t bank;
-	uint32_t offset;
-	uint32_t packedSize;
-	uint32_t unpackedSize;
+	uint8 type;
+	uint8 bank;
+	uint32 offset;
+	uint32 packedSize;
+	uint32 unpackedSize;
 };
 
 struct DemoJoy {
-	uint8_t keymask = 0;
-	uint8_t counter = 0;
+	uint8 keymask = 0;
+	uint8 counter = 0;
 
-	uint8_t *bufPtr = nullptr;
+	uint8 *bufPtr = nullptr;
 	int bufPos = 0, bufSize = 0;
 
 	bool start() {
@@ -65,7 +65,7 @@ struct DemoJoy {
 		return false;
 	}
 
-	uint8_t update() {
+	uint8 update() {
 		if (bufPos >= 0 && bufPos < bufSize) {
 			if (counter == 0) {
 				keymask = bufPtr[bufPos++];
@@ -84,7 +84,7 @@ struct ResourceWin31;
 struct Resource3do;
 struct Video;
 
-typedef void (*PreloadSoundProc)(void *userdata, int num, const uint8_t *data);
+typedef void (*PreloadSoundProc)(void *userdata, int num, const uint8 *data);
 
 struct Resource {
 	enum ResType {
@@ -112,23 +112,23 @@ struct Resource {
 	static const AmigaMemEntry MEMLIST_AMIGA_FR[ENTRIES_COUNT];
 	static const AmigaMemEntry MEMLIST_AMIGA_EN[ENTRIES_COUNT];
 	static const AmigaMemEntry MEMLIST_ATARI_EN[ENTRIES_COUNT];
-	static const uint8_t MEMLIST_PARTS[][4];
+	static const uint8 MEMLIST_PARTS[][4];
 	static const AmigaMemEntry *detectAmigaAtari();
 
 	Video *_vid;
 	DataType _dataType;
 	MemEntry _memList[ENTRIES_COUNT_20TH];
-	uint16_t _numMemList = 0;
-	uint16_t _currentPart = 0, _nextPart = 0;
-	uint8_t *_memPtrStart = nullptr,
+	uint16 _numMemList = 0;
+	uint16 _currentPart = 0, _nextPart = 0;
+	uint8 *_memPtrStart = nullptr,
 		*_scriptBakPtr = nullptr,
 		*_scriptCurPtr = nullptr,
 		*_vidCurPtr = nullptr;
 	bool _useSegVideo2 = false;
-	uint8_t *_segVideoPal = nullptr;
-	uint8_t *_segCode = nullptr;
-	uint8_t *_segVideo1 = nullptr;
-	uint8_t *_segVideo2 = nullptr;
+	uint8 *_segVideoPal = nullptr;
+	uint8 *_segCode = nullptr;
+	uint8 *_segVideo1 = nullptr;
+	uint8 *_segVideo2 = nullptr;
 	const char *_bankPrefix = "bank";
 	bool _hasPasswordScreen = true;
 	ResourceNth *_nth = nullptr;
@@ -146,21 +146,21 @@ struct Resource {
 		return _dataType;
 	}
 	const char *getGameTitle(Language lang) const;
-	bool readBank(const MemEntry *me, uint8_t *dstBuf);
+	bool readBank(const MemEntry *me, uint8 *dstBuf);
 	void readEntries();
 	void readEntriesAmiga(const AmigaMemEntry *entries, int count);
 	void dumpEntries();
 	void load();
 	void invalidateAll();
 	void invalidateRes();
-	void update(uint16_t num, PreloadSoundProc, void *);
+	void update(uint16 num, PreloadSoundProc, void *);
 	void loadBmp(int num);
-	uint8_t *loadDat(int num);
+	uint8 *loadDat(int num);
 	void loadFont();
 	void loadHeads();
-	uint8_t *loadWav(int num, uint32 *size = nullptr);
+	uint8 *loadWav(int num, uint32 *size = nullptr);
 	const char *getString(int num);
-	const char *getMusicPath(int num, char *buf, int bufSize, uint32_t *offset = 0);
+	const char *getMusicPath(int num, char *buf, int bufSize, uint32 *offset = 0);
 	void setupPart(int part);
 	void allocMemBlock();
 	void freeMemBlock();

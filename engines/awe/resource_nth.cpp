@@ -70,13 +70,13 @@ struct Resource15th : ResourceNth {
 		return _pak._entriesCount != 0;
 	}
 
-	virtual uint8_t *load(const char *name) {
-		uint8_t *buf = 0;
+	virtual uint8 *load(const char *name) {
+		uint8 *buf = 0;
 		const PakEntry *e = _pak.find(name);
 		if (e) {
-			buf = (uint8_t *)malloc(e->size);
+			buf = (uint8 *)malloc(e->size);
 			if (buf) {
-				uint32_t size;
+				uint32 size;
 				_pak.loadData(e, buf, &size);
 			}
 		} else {
@@ -85,7 +85,7 @@ struct Resource15th : ResourceNth {
 		return buf;
 	}
 
-	virtual uint8_t *loadBmp(int num) {
+	virtual uint8 *loadBmp(int num) {
 		char name[16];
 		if (num >= 3000) {
 			snprintf(name, sizeof(name), "e%04d.bmp", num);
@@ -95,7 +95,7 @@ struct Resource15th : ResourceNth {
 		return load(name);
 	}
 
-	virtual uint8_t *loadDat(int num, uint8_t *dst, uint32_t *size) {
+	virtual uint8 *loadDat(int num, uint8 *dst, uint32 *size) {
 		char name[16];
 		snprintf(name, sizeof(name), "file%03d.dat", num);
 		const PakEntry *e = _pak.find(name);
@@ -108,7 +108,7 @@ struct Resource15th : ResourceNth {
 		return 0;
 	}
 
-	virtual uint8_t *loadWav(int num, uint8_t *dst, uint32_t *size) {
+	virtual uint8 *loadWav(int num, uint8 *dst, uint32 *size) {
 		char name[32];
 		const PakEntry *e = 0;
 		if (Script::_useRemasteredAudio) {
@@ -124,7 +124,7 @@ struct Resource15th : ResourceNth {
 			}
 		}
 		if (e) {
-			uint8_t *p = (uint8_t *)malloc(e->size);
+			uint8 *p = (uint8 *)malloc(e->size);
 			if (p) {
 				_pak.loadData(e, p, size);
 				*size = 0;
@@ -183,7 +183,7 @@ struct Resource15th : ResourceNth {
 							while (*p == ' ' || *p == '\t') {
 								++p;
 							}
-							if ((uint32_t)strNum < ARRAYSIZE(_stringsTable)) {
+							if ((uint32)strNum < ARRAYSIZE(_stringsTable)) {
 								_stringsTable[strNum] = p;
 							}
 						}
@@ -196,7 +196,7 @@ struct Resource15th : ResourceNth {
 
 	virtual const char *getString(Language lang, int num) {
 		loadStrings(lang);
-		if ((uint32_t)num < ARRAYSIZE(_stringsTable)) {
+		if ((uint32)num < ARRAYSIZE(_stringsTable)) {
 			return _stringsTable[num];
 		}
 		return 0;
@@ -229,20 +229,20 @@ struct Resource15th : ResourceNth {
 	}
 };
 
-static uint8_t *inflateGzip(const char *filepath) {
+static uint8 *inflateGzip(const char *filepath) {
 	File f;
 	if (!f.open(filepath)) {
 		warning("Unable to open '%s'", filepath);
 		return 0;
 	}
-	const uint16_t sig = f.readUint16LE();
+	const uint16 sig = f.readUint16LE();
 	if (sig != 0x8B1F) {
 		warning("Unexpected file signature 0x%x for '%s'", sig, filepath);
 		return 0;
 	}
 	f.seek(-4, SEEK_END);
-	const uint32_t dataSize = f.readUint32LE();
-	uint8_t *out = (uint8_t *)malloc(dataSize);
+	const uint32 dataSize = f.readUint32LE();
+	uint8 *out = (uint8 *)malloc(dataSize);
 	if (!out) {
 		warning("Failed to allocate %d bytes", dataSize);
 		return 0;
@@ -282,7 +282,7 @@ struct Resource20th : ResourceNth {
 	char *_textBuf;
 	const char *_stringsTable[192];
 	char _musicName[64];
-	uint8_t _musicType;
+	uint8 _musicType;
 	char _datName[32];
 	const char *_bitmapSize;
 
@@ -333,7 +333,7 @@ struct Resource20th : ResourceNth {
 		return true;
 	}
 
-	virtual uint8_t *load(const char *name) {
+	virtual uint8 *load(const char *name) {
 		if (strcmp(name, "font.bmp") == 0) {
 			return inflateGzip("game/BGZ/Font.bgz");
 		} else if (strcmp(name, "heads.bmp") == 0) {
@@ -343,7 +343,7 @@ struct Resource20th : ResourceNth {
 		return 0;
 	}
 
-	virtual uint8_t *loadBmp(int num) {
+	virtual uint8 *loadBmp(int num) {
 		char path[MAXPATHLEN];
 		if (num >= 3000 && _bitmapSize) {
 			snprintf(path, sizeof(path), "game/BGZ/data%s/%s_e%04d.bgz", _bitmapSize, _bitmapSize, num);
@@ -374,7 +374,7 @@ struct Resource20th : ResourceNth {
 		}
 	}
 
-	virtual uint8_t *loadDat(int num, uint8_t *dst, uint32_t *size) {
+	virtual uint8 *loadDat(int num, uint8 *dst, uint32 *size) {
 		bool datOpen = false;
 		char path[MAXPATHLEN];
 		Common::strcpy_s(path, "game/DAT");
@@ -388,8 +388,8 @@ struct Resource20th : ResourceNth {
 			datOpen = f.open(_datName, path);
 		}
 		if (datOpen) {
-			const uint32_t dataSize = f.size();
-			const uint32_t count = f.read(dst, dataSize);
+			const uint32 dataSize = f.size();
+			const uint32 count = f.read(dst, dataSize);
 			if (count != dataSize) {
 				warning("Failed to read %d bytes (expected %d)", dataSize, count);
 			}
@@ -402,7 +402,7 @@ struct Resource20th : ResourceNth {
 		return dst;
 	}
 
-	virtual uint8_t *loadWav(int num, uint8_t *dst, uint32_t *size) {
+	virtual uint8 *loadWav(int num, uint8 *dst, uint32 *size) {
 		char path[MAXPATHLEN];
 		if (!Script::_useRemasteredAudio) {
 			snprintf(path, sizeof(path), "game/WGZ/original/file%03d.wgz", num);
@@ -521,7 +521,7 @@ struct Resource20th : ResourceNth {
 	}
 	virtual const char *getString(Language lang, int num) {
 		loadStrings(lang);
-		if ((uint32_t)num < ARRAYSIZE(_stringsTable)) {
+		if ((uint32)num < ARRAYSIZE(_stringsTable)) {
 			return _stringsTable[num];
 		}
 		return 0;

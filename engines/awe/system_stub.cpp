@@ -52,8 +52,8 @@ struct SystemStubScummVM : SystemStub {
 	void setPalette(const Color pal[16]) override;
 
 	void processEvents() override;
-	void sleep(uint32_t duration) override;
-	virtual uint32_t getTimeStamp() override;
+	void sleep(uint32 duration) override;
+	virtual uint32 getTimeStamp() override;
 
 	void setAspectRatio(int w, int h);
 };
@@ -206,11 +206,11 @@ void SystemStubScummVM::processEvents() {
 	}
 }
 
-void SystemStubScummVM::sleep(uint32_t duration) {
+void SystemStubScummVM::sleep(uint32 duration) {
 	g_system->delayMillis(duration);
 }
 
-uint32_t SystemStubScummVM::getTimeStamp() {
+uint32 SystemStubScummVM::getTimeStamp() {
 	return g_system->getMillis();
 }
 

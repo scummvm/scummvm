@@ -27,7 +27,7 @@
 
 namespace Awe {
 
-extern bool bytekiller_unpack(uint8_t *dst, int dstSize, const uint8_t *src, int srcSize);
+extern bool bytekiller_unpack(uint8 *dst, int dstSize, const uint8 *src, int srcSize);
 
 } // namespace Awe
 

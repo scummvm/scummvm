@@ -42,7 +42,7 @@ public:
 		_mixer->stopAll();
 	}
 	void playMusic(const char *path, int loops);
-	void playAifcMusic(const char *path, uint32_t offset);
+	void playAifcMusic(const char *path, uint32 offset);
 	void playSfxMusic(int num);
 	void stopMusic();
 	void stopAifcMusic();
@@ -52,7 +52,7 @@ public:
 	void playSoundRaw(byte channel, const byte *data, size_t size,
 		int freq, byte volume);
 	void playSoundWav(byte channel, const byte *data, size_t size,
-		uint16_t freq, byte volume, byte loop);
+		uint16 freq, byte volume, byte loop);
 	void playSoundAiff(byte channel, byte num, byte volume);
 	void stopSound(byte channel);
 };
@@ -73,13 +73,13 @@ struct Mixer {
 	void quit();
 	void update();
 
-	void playSoundRaw(byte channel, const byte *data, uint16_t freq, byte volume);
-	void playSoundWav(byte channel, const byte *data, uint16_t freq, byte volume, byte loop);
+	void playSoundRaw(byte channel, const byte *data, uint16 freq, byte volume);
+	void playSoundWav(byte channel, const byte *data, uint16 freq, byte volume, byte loop);
 	void stopSound(byte channel);
 	void setChannelVolume(byte channel, byte volume);
 	void playMusic(const char *path, byte loop);
 	void stopMusic();
-	void playAifcMusic(const char *path, uint32_t offset);
+	void playAifcMusic(const char *path, uint32 offset);
 	void stopAifcMusic();
 	void playSfxMusic(int num);
 	void stopSfxMusic();

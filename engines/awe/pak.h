@@ -29,8 +29,8 @@ namespace Awe {
 
 struct PakEntry {
 	char name[32] = { '\0' };
-	uint32_t offset = 0;
-	uint32_t size = 0;
+	uint32 offset = 0;
+	uint32 size = 0;
 };
 
 struct Pak {
@@ -48,7 +48,7 @@ struct Pak {
 
 	void readEntries();
 	const PakEntry *find(const char *name);
-	void loadData(const PakEntry *e, uint8_t *buf, uint32_t *size);
+	void loadData(const PakEntry *e, uint8 *buf, uint32 *size);
 };
 
 } // namespace Awe

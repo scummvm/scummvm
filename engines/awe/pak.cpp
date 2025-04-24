@@ -24,17 +24,17 @@
 
 namespace Awe {
 
-// static const uint32_t XOR_KEY1 = 0x31111612;
-static const uint32_t XOR_KEY2 = 0x22683297;
-static const uint32_t CHECKSUM = 0x20202020;
+// static const uint32 XOR_KEY1 = 0x31111612;
+static const uint32 XOR_KEY2 = 0x22683297;
+static const uint32 CHECKSUM = 0x20202020;
 
-static uint8_t *decode_toodc(uint8_t *p, int count) {
-	uint32_t key = XOR_KEY2;
-	uint32_t acc = 0;
+static uint8 *decode_toodc(uint8 *p, int count) {
+	uint32 key = XOR_KEY2;
+	uint32 acc = 0;
 	for (int i = 0; i < count; ++i) {
-		uint8_t *q = p + i * 4;
-		const uint32_t data = READ_LE_UINT32(q) ^ key;
-		uint32_t r = (q[2] + q[1] + q[0]) ^ q[3];
+		uint8 *q = p + i * 4;
+		const uint32 data = READ_LE_UINT32(q) ^ key;
+		uint32 r = (q[2] + q[1] + q[0]) ^ q[3];
 		r += acc;
 		key += r;
 		acc += 0x4D;
@@ -68,16 +68,16 @@ static int comparePakEntry(const void *a, const void *b) {
 }
 
 void Pak::readEntries() {
-	uint8_t header[12];
+	uint8 header[12];
 
 	memset(header, 0, sizeof(header));
 	_f.read(header, sizeof(header));
 	if (_f.ioErr() || memcmp(header, "PACK", 4) != 0) {
 		return;
 	}
-	const uint32_t entriesOffset = READ_LE_UINT32(header + 4);
+	const uint32 entriesOffset = READ_LE_UINT32(header + 4);
 	_f.seek(entriesOffset);
-	const uint32_t entriesSize = READ_LE_UINT32(header + 8);
+	const uint32 entriesSize = READ_LE_UINT32(header + 8);
 	_entriesCount = entriesSize / 0x40;
 	debugC(kDebugPak, "Pak::readEntries() entries count %d", _entriesCount);
 	_entries = (PakEntry *)calloc(_entriesCount, sizeof(PakEntry));
@@ -86,7 +86,7 @@ void Pak::readEntries() {
 		return;
 	}
 	for (int i = 0; i < _entriesCount; ++i) {
-		uint8_t buf[0x40];
+		uint8 buf[0x40];
 		_f.read(buf, sizeof(buf));
 		if (_f.ioErr()) {
 			break;
@@ -105,13 +105,13 @@ void Pak::readEntries() {
 	// the original executable descrambles the (ke)y.txt file and check the last 4 bytes.
 	// this has been disabled in later re-releases and a key is bundled in the data files
 	if (0) {
-		uint8_t buf[128];
+		uint8 buf[128];
 		const PakEntry *e = find("check.txt");
 		if (e && e->size <= sizeof(buf)) {
-			uint32_t size = 0;
+			uint32 size = 0;
 			loadData(e, buf, &size);
 			assert(size >= 4);
-			const uint32_t num = READ_LE_UINT32(buf + size - 4);
+			const uint32 num = READ_LE_UINT32(buf + size - 4);
 			assert(num == CHECKSUM);
 		}
 	}
@@ -124,7 +124,7 @@ const PakEntry *Pak::find(const char *name) {
 	return (const PakEntry *)bsearch(&tmp, _entries, _entriesCount, sizeof(PakEntry), comparePakEntry);
 }
 
-void Pak::loadData(const PakEntry *e, uint8_t *buf, uint32_t *size) {
+void Pak::loadData(const PakEntry *e, uint8 *buf, uint32 *size) {
 	debugC(kDebugPak, "Pak::loadData() %d bytes from 0x%x", e->size, e->offset);
 	_f.seek(e->offset);
 	if (_f.ioErr()) {
@@ -136,7 +136,7 @@ void Pak::loadData(const PakEntry *e, uint8_t *buf, uint32_t *size) {
 		const int dataSize = e->size - 6;
 		debugC(kDebugPak, "Pak::loadData() encoded TooDC data, size %d", dataSize);
 		if ((dataSize & 3) != 0) {
-			// descrambler operates on uint32_t
+			// descrambler operates on uint32
 			warning("Unexpected size %d for encoded TooDC data '%s'", dataSize, e->name);
 		}
 		*size = dataSize - 4;

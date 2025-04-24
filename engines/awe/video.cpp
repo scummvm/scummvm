@@ -45,18 +45,18 @@ void Video::setDefaultFont() {
 	_graphics->setFont(0, 0, 0);
 }
 
-void Video::setFont(const uint8_t *font) {
+void Video::setFont(const uint8 *font) {
 	int w, h;
-	uint8_t *buf = decode_bitmap(font, true, -1, &w, &h);
+	uint8 *buf = decode_bitmap(font, true, -1, &w, &h);
 	if (buf) {
 		_graphics->setFont(buf, w, h);
 		free(buf);
 	}
 }
 
-void Video::setHeads(const uint8_t *src) {
+void Video::setHeads(const uint8 *src) {
 	int w, h;
-	uint8_t *buf = decode_bitmap(src, true, 0xF06080, &w, &h);
+	uint8 *buf = decode_bitmap(src, true, 0xF06080, &w, &h);
 	if (buf) {
 		_graphics->setSpriteAtlas(buf, w, h, 2, 2);
 		free(buf);
@@ -64,13 +64,13 @@ void Video::setHeads(const uint8_t *src) {
 	}
 }
 
-void Video::setDataBuffer(uint8_t *dataBuf, uint16_t offset) {
+void Video::setDataBuffer(uint8 *dataBuf, uint16 offset) {
 	_dataBuf = dataBuf;
 	_pData.pc = dataBuf + offset;
 }
 
-void Video::drawShape(uint8_t color, uint16_t zoom, const Point *pt) {
-	uint8_t i = _pData.fetchByte();
+void Video::drawShape(uint8 color, uint16 zoom, const Point *pt) {
+	uint8 i = _pData.fetchByte();
 	if (i >= 0xC0) {
 		if (color & 0x80) {
 			color = i & 0x3F;
@@ -90,7 +90,7 @@ void Video::drawShape(uint8_t color, uint16_t zoom, const Point *pt) {
 
 void Video::drawShapePart3DO(int color, int part, const Point *pt) {
 	assert(part < (int)ARRAYSIZE(VERTICES_3DO));
-	const uint8_t *vertices = VERTICES_3DO[part];
+	const uint8 *vertices = VERTICES_3DO[part];
 	const int w = *vertices++;
 	const int h = *vertices++;
 	const int x = pt->x - w / 2;
@@ -120,7 +120,7 @@ void Video::drawShape3DO(int color, int zoom, const Point *pt) {
 		const int y0 = pt->y - _pData.fetchByte() * zoom / 64;
 		int count = _pData.fetchByte() + 1;
 		do {
-			uint16_t offset = _pData.fetchWord();
+			uint16 offset = _pData.fetchWord();
 			Point po;
 			po.x = x0 + _pData.fetchByte() * zoom / 64;
 			po.y = y0 + _pData.fetchByte() * zoom / 64;
@@ -134,7 +134,7 @@ void Video::drawShape3DO(int color, int zoom, const Point *pt) {
 				}
 			}
 			offset <<= 1;
-			uint8_t *bak = _pData.pc;
+			uint8 *bak = _pData.pc;
 			_pData.pc = _dataBuf + offset;
 			drawShape3DO(color, zoom, &po);
 			_pData.pc = bak;
@@ -204,16 +204,16 @@ void Video::drawShape3DO(int color, int zoom, const Point *pt) {
 	}
 }
 
-void Video::fillPolygon(uint16_t color, uint16_t zoom, const Point *pt) {
-	const uint8_t *p = _pData.pc;
+void Video::fillPolygon(uint16 color, uint16 zoom, const Point *pt) {
+	const uint8 *p = _pData.pc;
 
-	uint16_t bbw = (*p++) * zoom / 64;
-	uint16_t bbh = (*p++) * zoom / 64;
+	uint16 bbw = (*p++) * zoom / 64;
+	uint16 bbh = (*p++) * zoom / 64;
 
-	int16_t x1 = pt->x - bbw / 2;
-	int16_t x2 = pt->x + bbw / 2;
-	int16_t y1 = pt->y - bbh / 2;
-	int16_t y2 = pt->y + bbh / 2;
+	int16 x1 = pt->x - bbw / 2;
+	int16 x2 = pt->x + bbw / 2;
+	int16 y1 = pt->y - bbh / 2;
+	int16 y2 = pt->y + bbh / 2;
 
 	if (x1 > 319 || x2 < 0 || y1 > 199 || y2 < 0)
 		return;
@@ -239,18 +239,18 @@ void Video::fillPolygon(uint16_t color, uint16_t zoom, const Point *pt) {
 	}
 }
 
-void Video::drawShapeParts(uint16_t zoom, const Point *pgc) {
+void Video::drawShapeParts(uint16 zoom, const Point *pgc) {
 	Point pt;
 	pt.x = pgc->x - _pData.fetchByte() * zoom / 64;
 	pt.y = pgc->y - _pData.fetchByte() * zoom / 64;
-	int16_t n = _pData.fetchByte();
+	int16 n = _pData.fetchByte();
 	debugC(kDebugVideo, "Video::drawShapeParts n=%d", n);
 	for (; n >= 0; --n) {
-		uint16_t offset = _pData.fetchWord();
+		uint16 offset = _pData.fetchWord();
 		Point po(pt);
 		po.x += _pData.fetchByte() * zoom / 64;
 		po.y += _pData.fetchByte() * zoom / 64;
-		uint16_t color = 0xFF;
+		uint16 color = 0xFF;
 		if (offset & 0x8000) {
 			color = _pData.fetchByte();
 			const int num = _pData.fetchByte();
@@ -280,7 +280,7 @@ void Video::drawShapeParts(uint16_t zoom, const Point *pgc) {
 			color &= 0x7F;
 		}
 		offset <<= 1;
-		uint8_t *bak = _pData.pc;
+		uint8 *bak = _pData.pc;
 		_pData.pc = _dataBuf + offset;
 		drawShape(color, zoom, &po);
 		_pData.pc = bak;
@@ -298,7 +298,7 @@ static const char *findString(const StrEntry *stringsTable, int id) {
 	return 0;
 }
 
-void Video::drawString(uint8_t color, uint16_t x, uint16_t y, uint16_t strId) {
+void Video::drawString(uint8 color, uint16 x, uint16 y, uint16 strId) {
 	bool escapedChars = false;
 	const char *str = 0;
 	if (_res->getDataType() == DT_15TH_EDITION || _res->getDataType() == DT_20TH_EDITION) {
@@ -330,7 +330,7 @@ void Video::drawString(uint8_t color, uint16_t x, uint16_t y, uint16_t strId) {
 		return;
 	}
 	debugC(kDebugVideo, "drawString(%d, %d, %d, '%s')", color, x, y, str);
-	uint16_t xx = x;
+	uint16 xx = x;
 	int len = strlen(str);
 	for (int i = 0; i < len; ++i) {
 		if (str[i] == '\n' || str[i] == '\r') {
@@ -354,8 +354,8 @@ void Video::drawString(uint8_t color, uint16_t x, uint16_t y, uint16_t strId) {
 	}
 }
 
-uint8_t Video::getPagePtr(uint8_t page) {
-	uint8_t p;
+uint8 Video::getPagePtr(uint8 page) {
+	uint8 p;
 	if (page <= 3) {
 		p = page;
 	} else {
@@ -375,36 +375,36 @@ uint8_t Video::getPagePtr(uint8_t page) {
 	return p;
 }
 
-void Video::setWorkPagePtr(uint8_t page) {
+void Video::setWorkPagePtr(uint8 page) {
 	debugC(kDebugVideo, "Video::setWorkPagePtr(%d)", page);
 	_buffers[0] = getPagePtr(page);
 }
 
-void Video::fillPage(uint8_t page, uint8_t color) {
+void Video::fillPage(uint8 page, uint8 color) {
 	debugC(kDebugVideo, "Video::fillPage(%d, %d)", page, color);
 	_graphics->clearBuffer(getPagePtr(page), color);
 }
 
-void Video::copyPage(uint8_t src, uint8_t dst, int16_t vscroll) {
+void Video::copyPage(uint8 src, uint8 dst, int16 vscroll) {
 	debugC(kDebugVideo, "Video::copyPage(%d, %d)", src, dst);
 	if (src >= 0xFE || ((src &= ~0x40) & 0x80) == 0) { // no vscroll
 		_graphics->copyBuffer(getPagePtr(dst), getPagePtr(src));
 	} else {
-		uint8_t sl = getPagePtr(src & 3);
-		uint8_t dl = getPagePtr(dst);
+		uint8 sl = getPagePtr(src & 3);
+		uint8 dl = getPagePtr(dst);
 		if (sl != dl && vscroll >= -199 && vscroll <= 199) {
 			_graphics->copyBuffer(dl, sl, vscroll);
 		}
 	}
 }
 
-static void decode_amiga(const uint8_t *src, uint8_t *dst) {
+static void decode_amiga(const uint8 *src, uint8 *dst) {
 	static const int plane_size = 200 * 320 / 8;
 	for (int y = 0; y < 200; ++y) {
 		for (int x = 0; x < 320; x += 8) {
 			for (int b = 0; b < 8; ++b) {
 				const int mask = 1 << (7 - b);
-				uint8_t color = 0;
+				uint8 color = 0;
 				for (int p = 0; p < 4; ++p) {
 					if (src[p * plane_size] & mask) {
 						color |= 1 << p;
@@ -417,12 +417,12 @@ static void decode_amiga(const uint8_t *src, uint8_t *dst) {
 	}
 }
 
-static void decode_atari(const uint8_t *src, uint8_t *dst) {
+static void decode_atari(const uint8 *src, uint8 *dst) {
 	for (int y = 0; y < 200; ++y) {
 		for (int x = 0; x < 320; x += 16) {
 			for (int b = 0; b < 16; ++b) {
 				const int mask = 1 << (15 - b);
-				uint8_t color = 0;
+				uint8 color = 0;
 				for (int p = 0; p < 4; ++p) {
 					if (READ_BE_UINT16(src + p * 2) & mask) {
 						color |= 1 << p;
@@ -435,7 +435,7 @@ static void decode_atari(const uint8_t *src, uint8_t *dst) {
 	}
 }
 
-static void deinterlace555(const uint8_t *src, int w, int h, uint16_t *dst) {
+static void deinterlace555(const uint8 *src, int w, int h, uint16 *dst) {
 	for (int y = 0; y < h / 2; ++y) {
 		for (int x = 0; x < w; ++x) {
 			dst[x] = READ_BE_UINT16(src) & 0x7FFF; src += 2;
@@ -445,18 +445,18 @@ static void deinterlace555(const uint8_t *src, int w, int h, uint16_t *dst) {
 	}
 }
 
-static void yflip(const uint8_t *src, int w, int h, uint8_t *dst) {
+static void yflip(const uint8 *src, int w, int h, uint8 *dst) {
 	for (int y = 0; y < h; ++y) {
 		memcpy(dst + (h - 1 - y) * w, src, w);
 		src += w;
 	}
 }
 
-void Video::scaleBitmap(const uint8_t *src, int fmt) {
+void Video::scaleBitmap(const uint8 *src, int fmt) {
 	_graphics->drawBitmap(_buffers[0], src, BITMAP_W, BITMAP_H, fmt);
 }
 
-void Video::copyBitmapPtr(const uint8_t *src, uint32_t size) {
+void Video::copyBitmapPtr(const uint8 *src, uint32 size) {
 	if (_res->getDataType() == DT_DOS || _res->getDataType() == DT_AMIGA) {
 		decode_amiga(src, _tempBitmap);
 		scaleBitmap(_tempBitmap, FMT_CLUT);
@@ -468,19 +468,19 @@ void Video::copyBitmapPtr(const uint8_t *src, uint32_t size) {
 		scaleBitmap(_tempBitmap, FMT_CLUT);
 	} else if (_res->getDataType() == DT_3DO) {
 		deinterlace555(src, BITMAP_W, BITMAP_H, _bitmap555);
-		scaleBitmap((const uint8_t *)_bitmap555, FMT_RGB555);
+		scaleBitmap((const uint8 *)_bitmap555, FMT_RGB555);
 	} else { // .BMP
 		if (Gfx::_is1991) {
 			const int w = READ_LE_UINT32(src + 0x12);
 			const int h = READ_LE_UINT32(src + 0x16);
 			if (w == BITMAP_W && h == BITMAP_H) {
-				const uint8_t *data = src + READ_LE_UINT32(src + 0xA);
+				const uint8 *data = src + READ_LE_UINT32(src + 0xA);
 				yflip(data, w, h, _tempBitmap);
 				scaleBitmap(_tempBitmap, FMT_CLUT);
 			}
 		} else {
 			int w, h;
-			uint8_t *buf = decode_bitmap(src, false, -1, &w, &h);
+			uint8 *buf = decode_bitmap(src, false, -1, &w, &h);
 			if (buf) {
 				_graphics->drawBitmap(_buffers[0], buf, w, h, FMT_RGB);
 				free(buf);
@@ -489,21 +489,21 @@ void Video::copyBitmapPtr(const uint8_t *src, uint32_t size) {
 	}
 }
 
-static void readPaletteWin31(const uint8_t *buf, int num, Color pal[16]) {
-	const uint8_t *p = buf + num * 16 * sizeof(uint16_t);
+static void readPaletteWin31(const uint8 *buf, int num, Color pal[16]) {
+	const uint8 *p = buf + num * 16 * sizeof(uint16);
 	for (int i = 0; i < 16; ++i) {
-		const uint16_t index = READ_LE_UINT16(p); p += 2;
-		const uint32_t color = READ_LE_UINT32(buf + 0xC04 + index * sizeof(uint32_t));
+		const uint16 index = READ_LE_UINT16(p); p += 2;
+		const uint32 color = READ_LE_UINT32(buf + 0xC04 + index * sizeof(uint32));
 		pal[i].r = color & 255;
 		pal[i].g = (color >> 8) & 255;
 		pal[i].b = (color >> 16) & 255;
 	}
 }
 
-static void readPalette3DO(const uint8_t *buf, int num, Color pal[16]) {
-	const uint8_t *p = buf + num * 16 * sizeof(uint16_t);
+static void readPalette3DO(const uint8 *buf, int num, Color pal[16]) {
+	const uint8 *p = buf + num * 16 * sizeof(uint16);
 	for (int i = 0; i < 16; ++i) {
-		const uint16_t color = READ_BE_UINT16(p); p += 2;
+		const uint16 color = READ_BE_UINT16(p); p += 2;
 		const int r = (color >> 10) & 31;
 		const int g = (color >> 5) & 31;
 		const int b = color & 31;
@@ -513,20 +513,20 @@ static void readPalette3DO(const uint8_t *buf, int num, Color pal[16]) {
 	}
 }
 
-static void readPaletteEGA(const uint8_t *buf, int num, Color pal[16]) {
-	const uint8_t *p = buf + num * 16 * sizeof(uint16_t);
+static void readPaletteEGA(const uint8 *buf, int num, Color pal[16]) {
+	const uint8 *p = buf + num * 16 * sizeof(uint16);
 	p += 1024; // EGA colors are stored after VGA (Amiga)
 	for (int i = 0; i < 16; ++i) {
-		const uint16_t color = READ_BE_UINT16(p); p += 2;
+		const uint16 color = READ_BE_UINT16(p); p += 2;
 		if (1) {
-			const uint8_t *ega = &Video::PALETTE_EGA[3 * ((color >> 12) & 15)];
+			const uint8 *ega = &Video::PALETTE_EGA[3 * ((color >> 12) & 15)];
 			pal[i].r = ega[0];
 			pal[i].g = ega[1];
 			pal[i].b = ega[2];
 		} else { // lower 12 bits hold other colors
-			const uint8_t r = (color >> 8) & 0xF;
-			const uint8_t g = (color >> 4) & 0xF;
-			const uint8_t b = color & 0xF;
+			const uint8 r = (color >> 8) & 0xF;
+			const uint8 g = (color >> 4) & 0xF;
+			const uint8 b = color & 0xF;
 			pal[i].r = (r << 4) | r;
 			pal[i].g = (g << 4) | g;
 			pal[i].b = (b << 4) | b;
@@ -534,20 +534,20 @@ static void readPaletteEGA(const uint8_t *buf, int num, Color pal[16]) {
 	}
 }
 
-static void readPaletteAmiga(const uint8_t *buf, int num, Color pal[16]) {
-	const uint8_t *p = buf + num * 16 * sizeof(uint16_t);
+static void readPaletteAmiga(const uint8 *buf, int num, Color pal[16]) {
+	const uint8 *p = buf + num * 16 * sizeof(uint16);
 	for (int i = 0; i < 16; ++i) {
-		const uint16_t color = READ_BE_UINT16(p); p += 2;
-		const uint8_t r = (color >> 8) & 0xF;
-		const uint8_t g = (color >> 4) & 0xF;
-		const uint8_t b = color & 0xF;
+		const uint16 color = READ_BE_UINT16(p); p += 2;
+		const uint8 r = (color >> 8) & 0xF;
+		const uint8 g = (color >> 4) & 0xF;
+		const uint8 b = color & 0xF;
 		pal[i].r = (r << 4) | r;
 		pal[i].g = (g << 4) | g;
 		pal[i].b = (b << 4) | b;
 	}
 }
 
-void Video::changePal(uint8_t palNum) {
+void Video::changePal(uint8 palNum) {
 	if (palNum < 32 && palNum != _currentPal) {
 		Color pal[16];
 		if (_res->getDataType() == DT_WIN31) {
@@ -564,7 +564,7 @@ void Video::changePal(uint8_t palNum) {
 	}
 }
 
-void Video::updateDisplay(uint8_t page, SystemStub *stub) {
+void Video::updateDisplay(uint8 page, SystemStub *stub) {
 	debugC(kDebugVideo, "Video::updateDisplay(%d)", page);
 	if (page != 0xFE) {
 		if (page == 0xFF) {
@@ -580,7 +580,7 @@ void Video::updateDisplay(uint8_t page, SystemStub *stub) {
 	_graphics->drawBuffer(_buffers[1], stub);
 }
 
-void Video::setPaletteColor(uint8_t color, int r, int g, int b) {
+void Video::setPaletteColor(uint8 color, int r, int g, int b) {
 	Color c;
 	c.r = r;
 	c.g = g;
@@ -588,7 +588,7 @@ void Video::setPaletteColor(uint8_t color, int r, int g, int b) {
 	_graphics->setPalette(&c, 1);
 }
 
-void Video::drawRect(uint8_t page, uint8_t color, int x1, int y1, int x2, int y2) {
+void Video::drawRect(uint8 page, uint8 color, int x1, int y1, int x2, int y2) {
 	Point pt;
 	pt.x = x1;
 	pt.y = y1;

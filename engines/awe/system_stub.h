@@ -34,7 +34,7 @@ struct PlayerInput {
 		DIR_DOWN = 1 << 3
 	};
 
-	uint8_t dirMask = 0;
+	uint8 dirMask = 0;
 	bool action = false; // run,shoot
 	bool jump = false;
 	bool code = false;
@@ -56,7 +56,7 @@ struct DisplayMode {
 };
 
 struct SystemStub {
-	typedef void (*AudioCallback)(void *param, uint8_t *stream, int len);
+	typedef void (*AudioCallback)(void *param, uint8 *stream, int len);
 
 	PlayerInput _pi;
 	DisplayMode _dm;
@@ -75,8 +75,8 @@ struct SystemStub {
 	virtual void setScreenPixels(const Graphics::Surface &src) = 0;
 
 	virtual void processEvents() = 0;
-	virtual void sleep(uint32_t duration) = 0;
-	virtual uint32_t getTimeStamp() = 0;
+	virtual void sleep(uint32 duration) = 0;
+	virtual uint32 getTimeStamp() = 0;
 };
 
 extern SystemStub *SystemStub_create();

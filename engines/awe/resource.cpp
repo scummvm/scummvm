@@ -57,7 +57,7 @@ Resource::~Resource() {
 	delete _3do;
 }
 
-bool Resource::readBank(const MemEntry *me, uint8_t *dstBuf) {
+bool Resource::readBank(const MemEntry *me, uint8 *dstBuf) {
 	bool ret = false;
 	char name[10];
 	snprintf(name, sizeof(name), "%s%02x", _bankPrefix, me->bankNum);
@@ -77,7 +77,7 @@ const AmigaMemEntry *Resource::detectAmigaAtari() {
 	Common::File f;
 
 	static const struct {
-		uint32_t bank01Size;
+		uint32 bank01Size;
 		const AmigaMemEntry *entries;
 	} FILES[] = {
 		{ 244674, Resource::MEMLIST_AMIGA_FR },
@@ -86,7 +86,7 @@ const AmigaMemEntry *Resource::detectAmigaAtari() {
 		{ 0, 0 }
 	};
 	if (f.open("bank01")) {
-		const uint32_t size = f.size();
+		const uint32 size = f.size();
 		for (int i = 0; FILES[i].entries; ++i) {
 			if (FILES[i].bank01Size == size) {
 				return FILES[i].entries;
@@ -185,10 +185,10 @@ void Resource::readEntries() {
 		File f;
 		if (f.open(atariDemo)) {
 			static const struct {
-				uint8_t type;
-				uint8_t num;
-				uint32_t offset;
-				uint16_t size;
+				uint8 type;
+				uint8 num;
+				uint32 offset;
+				uint16 size;
 			} DATA[] = {
 				{ RT_SHAPE, 0x19, 0x50f0, 65146 },
 				{ RT_PALETTE, 0x17, 0x14f6a, 2048 },
@@ -233,7 +233,7 @@ void Resource::dumpEntries() {
 			if (_memList[i].bankNum == 5 && (_dataType == DT_AMIGA || _dataType == DT_ATARI)) {
 				continue;
 			}
-			uint8_t *p = (uint8_t *)malloc(_memList[i].unpackedSize);
+			uint8 *p = (uint8 *)malloc(_memList[i].unpackedSize);
 			if (p) {
 				if (readBank(&_memList[i], p)) {
 					char name[16];
@@ -251,7 +251,7 @@ void Resource::load() {
 		MemEntry *me = 0;
 
 		// get resource with max rankNum
-		uint8_t maxNum = 0;
+		uint8 maxNum = 0;
 		for (int i = 0; i < _numMemList; ++i) {
 			MemEntry *it = &_memList[i];
 			if (it->status == STATUS_TOLOAD && maxNum <= it->rankNum) {
@@ -265,12 +265,12 @@ void Resource::load() {
 
 		const int resourceNum = me - _memList;
 
-		uint8_t *memPtr = 0;
+		uint8 *memPtr = 0;
 		if (me->type == RT_BITMAP) {
 			memPtr = _vidCurPtr;
 		} else {
 			memPtr = _scriptCurPtr;
-			const uint32_t avail = uint32_t(_vidCurPtr - _scriptCurPtr);
+			const uint32 avail = uint32(_vidCurPtr - _scriptCurPtr);
 			if (me->unpackedSize > avail) {
 				warning("Resource::load() not enough memory, available=%d", avail);
 				me->status = STATUS_NULL;
@@ -326,35 +326,35 @@ void Resource::invalidateAll() {
 	_vid->_currentPal = 0xFF;
 }
 
-static const uint8_t *getSoundsList3DO(int num) {
-	static const uint8_t INTRO7[] = {
+static const uint8 *getSoundsList3DO(int num) {
+	static const uint8 INTRO7[] = {
 		0x33, 0xFF
 	};
-	static const uint8_t WATER7[] = {
+	static const uint8 WATER7[] = {
 		0x08, 0x10, 0x2D, 0x30, 0x31, 0x32, 0x35, 0x39, 0x3A, 0x3C,
 		0x3D, 0x3E, 0x4A, 0x4B, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52,
 		0x54, 0xFF
 	};
-	static const uint8_t PRI1[] = {
+	static const uint8 PRI1[] = {
 		0x52, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5D,
 		0x5E, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
 		0x69, 0x70, 0x71, 0x72, 0x73, 0xFF
 	};
-	static const uint8_t CITE1[] = {
+	static const uint8 CITE1[] = {
 		0x02, 0x03, 0x52, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B,
 		0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x63, 0x66, 0x6A, 0x6B, 0x6C,
 		0x6D, 0x6E, 0x6F, 0x70, 0x72, 0x74, 0x75, 0x77, 0x78, 0x79,
 		0x7A, 0x7B, 0x7C, 0x88, 0xFF
 	};
-	static const uint8_t ARENE2[] = {
+	static const uint8 ARENE2[] = {
 		0x52, 0x57, 0x58, 0x59, 0x5B, 0x84, 0x8B, 0x8C, 0x8E, 0xFF
 	};
-	static const uint8_t LUXE2[] = {
+	static const uint8 LUXE2[] = {
 		0x30, 0x52, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C,
 		0x5D, 0x5E, 0x5F, 0x60, 0x66, 0x67, 0x6B, 0x6C, 0x70, 0x74,
 		0x75, 0x79, 0x7A, 0x8D, 0xFF
 	};
-	static const uint8_t FINAL3[] = {
+	static const uint8 FINAL3[] = {
 		0x08, 0x0E, 0x0F, 0x57, 0xFF
 	};
 
@@ -372,7 +372,7 @@ static const uint8_t *getSoundsList3DO(int num) {
 	return 0;
 }
 
-void Resource::update(uint16_t num, PreloadSoundProc preloadSound, void *data) {
+void Resource::update(uint16 num, PreloadSoundProc preloadSound, void *data) {
 	if (num > 16000) {
 		_nextPart = num;
 		return;
@@ -401,7 +401,7 @@ void Resource::update(uint16_t num, PreloadSoundProc preloadSound, void *data) {
 		break;
 	case DT_3DO:
 		if (num >= 2000) { // preload sounds
-			const uint8_t *soundsList = getSoundsList3DO(num);
+			const uint8 *soundsList = getSoundsList3DO(num);
 			for (int i = 0; soundsList[i] != 255; ++i) {
 				const int soundNum = soundsList[i];
 				loadDat(soundNum);
@@ -427,8 +427,8 @@ void Resource::update(uint16_t num, PreloadSoundProc preloadSound, void *data) {
 }
 
 void Resource::loadBmp(int num) {
-	uint32_t size = 0;
-	uint8_t *p = 0;
+	uint32 size = 0;
+	uint8 *p = 0;
 	switch (_dataType) {
 	case DT_15TH_EDITION:
 	case DT_20TH_EDITION:
@@ -449,13 +449,13 @@ void Resource::loadBmp(int num) {
 	}
 }
 
-uint8_t *Resource::loadDat(int num) {
+uint8 *Resource::loadDat(int num) {
 	assert(num < _numMemList);
 	if (_memList[num].status == STATUS_LOADED) {
 		return _memList[num].bufPtr;
 	}
-	uint32_t size = 0;
-	uint8_t *p = 0;
+	uint32 size = 0;
+	uint8 *p = 0;
 	switch (_dataType) {
 	case DT_15TH_EDITION:
 	case DT_20TH_EDITION:
@@ -480,7 +480,7 @@ uint8_t *Resource::loadDat(int num) {
 
 void Resource::loadFont() {
 	if (_nth) {
-		uint8_t *p = _nth->load("font.bmp");
+		uint8 *p = _nth->load("font.bmp");
 		if (p) {
 			_vid->setFont(p);
 			free(p);
@@ -490,7 +490,7 @@ void Resource::loadFont() {
 
 void Resource::loadHeads() {
 	if (_nth) {
-		uint8_t *p = _nth->load("heads.bmp");
+		uint8 *p = _nth->load("heads.bmp");
 		if (p) {
 			_vid->setHeads(p);
 			free(p);
@@ -498,15 +498,15 @@ void Resource::loadHeads() {
 	}
 }
 
-uint8_t *Resource::loadWav(int num, uint32 *size) {
+uint8 *Resource::loadWav(int num, uint32 *size) {
 	if (_memList[num].status == STATUS_LOADED) {
 		return _memList[num].bufPtr;
 	}
 
-	uint32_t dummy = 0;
+	uint32 dummy = 0;
 	if (!size)
 		size = &dummy;
-	uint8_t *p = 0;
+	uint8 *p = 0;
 	switch (_dataType) {
 	case DT_15TH_EDITION:
 	case DT_20TH_EDITION:
@@ -540,7 +540,7 @@ const char *Resource::getString(int num) {
 	return 0;
 }
 
-const char *Resource::getMusicPath(int num, char *buf, int bufSize, uint32_t *offset) {
+const char *Resource::getMusicPath(int num, char *buf, int bufSize, uint32 *offset) {
 	const char *name = 0;
 	switch (_dataType) {
 	case DT_15TH_EDITION:
@@ -566,7 +566,7 @@ const char *Resource::getMusicPath(int num, char *buf, int bufSize, uint32_t *of
 	return 0;
 }
 
-const uint8_t Resource::MEMLIST_PARTS[][4] = {
+const uint8 Resource::MEMLIST_PARTS[][4] = {
 	{ 0x14, 0x15, 0x16, 0x00 }, // 16000 - protection screens
 	{ 0x17, 0x18, 0x19, 0x00 }, // 16001 - introduction
 	{ 0x1A, 0x1B, 0x1C, 0x11 }, // 16002 - water
@@ -590,7 +590,7 @@ void Resource::setupPart(int ptrId) {
 	case DT_WIN31:
 		if (ptrId >= firstPart && ptrId <= 16009) {
 			invalidateAll();
-			uint8_t **segments[4] = { &_segVideoPal, &_segCode, &_segVideo1, &_segVideo2 };
+			uint8 **segments[4] = { &_segVideoPal, &_segCode, &_segVideo1, &_segVideo2 };
 			for (int i = 0; i < 4; ++i) {
 				const int num = MEMLIST_PARTS[ptrId - 16000][i];
 				if (num != 0) {
@@ -612,12 +612,12 @@ void Resource::setupPart(int ptrId) {
 	case DT_ATARI_DEMO:
 	case DT_DOS:
 		if (ptrId != _currentPart) {
-			uint8_t ipal = 0;
-			uint8_t icod = 0;
-			uint8_t ivd1 = 0;
-			uint8_t ivd2 = 0;
+			uint8 ipal = 0;
+			uint8 icod = 0;
+			uint8 ivd1 = 0;
+			uint8 ivd2 = 0;
 			if (ptrId >= 16000 && ptrId <= 16009) {
-				uint16_t part = ptrId - 16000;
+				uint16 part = ptrId - 16000;
 				ipal = MEMLIST_PARTS[part][0];
 				icod = MEMLIST_PARTS[part][1];
 				ivd1 = MEMLIST_PARTS[part][2];
@@ -647,7 +647,7 @@ void Resource::setupPart(int ptrId) {
 }
 
 void Resource::allocMemBlock() {
-	_memPtrStart = (uint8_t *)malloc(MEM_BLOCK_SIZE);
+	_memPtrStart = (uint8 *)malloc(MEM_BLOCK_SIZE);
 	_scriptBakPtr = _scriptCurPtr = _memPtrStart;
 	_vidCurPtr = _memPtrStart + MEM_BLOCK_SIZE - (320 * 200 / 2); // 4bpp bitmap
 	_useSegVideo2 = false;
@@ -662,8 +662,8 @@ void Resource::readDemo3Joy() {
 	static const char *filename = "demo3.joy";
 	File f;
 	if (f.open(filename)) {
-		const uint32_t fileSize = f.size();
-		_demo3Joy.bufPtr = (uint8_t *)malloc(fileSize);
+		const uint32 fileSize = f.size();
+		_demo3Joy.bufPtr = (uint8 *)malloc(fileSize);
 		if (_demo3Joy.bufPtr) {
 			_demo3Joy.bufSize = f.read(_demo3Joy.bufPtr, fileSize);
 			_demo3Joy.bufPos = -1;

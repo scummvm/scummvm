@@ -51,25 +51,25 @@ struct File {
 	bool openForWriting(const char *filepath);
 	void close();
 	bool ioErr() const;
-	uint32_t size();
+	uint32 size();
 	void seek(int off, int whence = SEEK_SET);
-	int read(void *ptr, uint32_t len);
-	uint8_t readByte();
-	uint16_t readUint16LE();
-	uint32_t readUint32LE();
-	uint16_t readUint16BE();
-	uint32_t readUint32BE();
-	int write(void *ptr, uint32_t size);
-	void writeByte(uint8_t b);
-	void writeUint16LE(uint16_t n);
-	void writeUint32LE(uint32_t n);
-	void writeUint16BE(uint16_t n);
-	void writeUint32BE(uint32_t n);
+	int read(void *ptr, uint32 len);
+	uint8 readByte();
+	uint16 readUint16LE();
+	uint32 readUint32LE();
+	uint16 readUint16BE();
+	uint32 readUint32BE();
+	int write(void *ptr, uint32 size);
+	void writeByte(uint8 b);
+	void writeUint16LE(uint16 n);
+	void writeUint32LE(uint32 n);
+	void writeUint16BE(uint16 n);
+	void writeUint32BE(uint32 n);
 };
 
 #endif
 
-void dumpFile(const char *filename, const uint8_t *p, int size);
+void dumpFile(const char *filename, const uint8 *p, int size);
 
 } // namespace Awe
 
