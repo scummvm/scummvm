@@ -48,11 +48,11 @@ struct Engine {
 	Gfx *_graphics = nullptr;
 	SystemStub *_stub = nullptr;
 	Script _script;
-	Sound *_sound;
+	Sound *_sound = nullptr;
 	Resource _res;
 	SfxPlayer _ply;
 	Video _vid;
-	int _partNum;
+	int _partNum = 0;
 
 	Engine(Sound *sound, DataType dataType, int partNum);
 
@@ -63,7 +63,7 @@ struct Engine {
 	}
 
 	void run();
-	void setup(Language lang, int graphicsType, const char *scalerName, int scalerFactor);
+	void setup(Language lang, int graphicsType);
 	void finish();
 	void processInput();
 

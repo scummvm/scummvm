@@ -26,7 +26,6 @@
 #include "awe/engine.h"
 #include "awe/gfx.h"
 #include "awe/resource.h"
-#include "awe/scaler.h"
 #include "awe/script.h"
 #include "awe/system_stub.h"
 #include "awe/util.h"
@@ -175,7 +174,7 @@ Common::Error AweEngine::run() {
 	}
 
 	e->_res._copyProtection = ConfMan.getBool("copy_protection");
-	e->setup(lang, graphicsType, nullptr, 1);
+	e->setup(lang, graphicsType);
 
 	while (!stub->_pi.quit) {
 		e->run();

@@ -59,7 +59,7 @@ struct Video {
 	Resource *_res;
 	Gfx *_graphics = nullptr;
 	bool _hasHeadSprites = false;
-	bool _displayHead = false;
+	bool _displayHead = true;
 
 	uint8_t _nextPal = 0, _currentPal = 0;
 	uint8_t _buffers[3] = { 0 };
@@ -68,15 +68,11 @@ struct Video {
 	const StrEntry *_stringsTable = nullptr;
 	uint8_t _tempBitmap[BITMAP_W * BITMAP_H] = { 0 };
 	uint16_t _bitmap555[BITMAP_W * BITMAP_H] = { 0 };
-	const Scaler *_scaler = nullptr;
-	int _scalerFactor = 0;
-	uint8_t *_scalerBuffer = nullptr;
 
 	Video(Resource *res);
-	~Video();
+	~Video() {}
 	void init();
 
-	void setScaler(const char *name, int factor);
 	void setDefaultFont();
 	void setFont(const uint8_t *font);
 	void setHeads(const uint8_t *src);

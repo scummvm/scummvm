@@ -16,7 +16,6 @@ MODULE_OBJS = \
 	resource_3do.o \
 	resource_nth.o \
 	resource_win31.o \
-	scaler.o \
 	script.o \
 	sfx_player.o \
 	sound.o \

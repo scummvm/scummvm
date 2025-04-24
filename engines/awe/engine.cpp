@@ -87,17 +87,16 @@ void Engine::run() {
 	}
 }
 
-void Engine::setup(Language lang, int graphicsType, const char *scalerName, int scalerFactor) {
+void Engine::setup(Language lang, int graphicsType) {
 	_vid._graphics = _graphics;
-	int w = GFX_W * scalerFactor;
-	int h = GFX_H * scalerFactor;
+	int w = GFX_W;
+	int h = GFX_H;
 	if (_res.getDataType() != DT_3DO) {
 		_vid._graphics->_fixUpPalette = FIXUP_PALETTE_REDRAW;
 	}
+
 	_vid.init();
-	if (scalerFactor > 1) {
-		_vid.setScaler(scalerName, scalerFactor);
-	}
+
 	_res._lang = lang;
 	_res.allocMemBlock();
 	_res.readEntries();
