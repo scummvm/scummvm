@@ -1167,6 +1167,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "desmond", "Desmond: The 'Thing' from another world!" },
 	{ "desolate", "Desolate" },
 	{ "detectivebhmini", "Detective Boiled-Hard Mini Case" },
+	{ "detectivegame", "Detective Game" },
 	{ "detectiveobriced", "Detective O.Briced" },
 	{ "detectiverizal", "Detective Rizal and the Jaded Ruby" },
 	{ "detention", "Detention!" },
@@ -1411,6 +1412,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "flashbax", "Flashbax" },
 	{ "flashdown", "Flash Down" },
 	{ "flashmccoy", "Flash McCoy" },
+	{ "flayedman", "The Flayed Man" },
 	{ "flightrobots", "Flight from the Robots" },
 	{ "flightrobotsch2", "Flight from the Robots - Chapter 2" },
 	{ "floatyrog", "Floaty Rog'" },
@@ -3721,6 +3723,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "paintedhills", "Painted Hills" },
 	{ "paintedhills2", "Big Trouble in Little River" },
 	{ "reddad", "Red Dad Redemption" },
+	{ "troppearl", "The Rings of Power - The Pearl of Light" },
 	{ "useitall", "Use It All (Or Forget Your Ball)" },
 
 	{ 0, 0 }
@@ -4203,6 +4206,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("paintedhills2", "Painted Hills 2.ags", "6837c43e8ad038be9bd3c0eed267f82a", 724921454),
 	UNSUPPORTED_GAME_ENTRY("paintedhills2", "Big Trouble in Little River.ags", "2b1d7d8958d817543671177d6d98a77c", 203373454),
 	UNSUPPORTED_GAME_ENTRY("reddad", "Red Dad Redemption.ags", "9390772f2a4c4f28a2ca8fed610c0d82", 114168081),
+	UNSUPPORTED_GAME_ENTRY("troppearl", "The Rings of Power RPG.ags", "8825a53fedeb7258672d67cc65acb705", 7754285),
 	UNSUPPORTED_GAME_ENTRY("useitall", "mags2402.exe", "41cd9288896f33d2003f3f3a3a208482", 5212519),  // Win
 	UNSUPPORTED_GAME_ENTRY("useitall", "mags2402.ags", "bf6501e529633843043b94643bcb8348", 2219859),  // Linux
 
@@ -6615,6 +6619,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("desolate", "Desolate.exe", "5e6155cb09d4d4d59c6998fdafa0e17d", 39349967),  // Windows
 	GAME_ENTRY_EN("desolate", "Desolate.ags", "ff0cfe9bf8322574250d1241e94b1bc9", 36237499),  // Linux
 	GAME_ENTRY_EN("detectivebhmini", "Detective Boiled-Hard Mini Case.exe", "7971a7c02d414dc8cb33b6ec36080b91", 23715735),
+	GAME_ENTRY_EN_PLATFORM("detectivegame", "Detective.ags", "528ab7553577919a38c63d2cfbadcf6e", 15881845, "Promo"),  // itch.io client
 	GAME_ENTRY_EN("detectiveobriced", "OBriced.exe", "3ab9922a2ab7c5875af4c9794b33e012", 92518862),
 	GAME_ENTRY_EN("detectiveobriced", "OBriced.exe", "dbe9bab672130b9a84925cb6da64a3db", 379971970),
 	GAME_ENTRY_EN("detectiveobriced", "OBriced.ags", "f2a2dded9282b8acab30dcc0a7c4750e", 376863598),
@@ -6914,6 +6919,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("flamebarrels", "Flame barrel.exe", "06a03fe35791b0578068ab1873455463", 2298745),
 	GAME_ENTRY_EN("flashdown", "FlashDown.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 1655207),
 	GAME_ENTRY_EN("flashmccoy", "FlashMcCoy.exe", "0564de07d3fd5c16e6947a647061913c", 16314015),
+	GAME_ENTRY_EN("flayedman", "The Flayed Man.ags", "f4619de8649a175d74e58b5f5706da45", 217945676),  // itch.io v1.0
+	GAME_ENTRY_EN_STEAM("flayedman", "The Flayed Man.ags", "01f2113fd14b6f09c42d00bf34a96cae", 217942719),  // Steam v1.0
 	GAME_ENTRY_EN("flightrobots", "FlightFromTheRobots.exe", "3ab9922a2ab7c5875af4c9794b33e012", 4517631),
 	GAME_ENTRY_EN_PLATFORM("flightrobotsch2", "FlightFromTheRobots2.exe", "9bb70a54ea1c4063c6821c88c7427dfb", 4751416, "Original Version"),
 	GAME_ENTRY_EN_PLATFORM("flightrobotsch2", "FlightFromTheRobots2.ags", "ae9236152eef64bf635f7bb63c981a88", 1643556, "Original Version"),
