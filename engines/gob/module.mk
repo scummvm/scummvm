@@ -81,6 +81,7 @@ MODULE_OBJS := \
 	demos/demoplayer.o \
 	demos/scnplayer.o \
 	demos/batplayer.o \
+	image/brc.o \
 	pregob/pregob.o \
 	pregob/txtfile.o \
 	pregob/gctfile.o \

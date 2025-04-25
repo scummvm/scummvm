@@ -47,8 +47,6 @@ namespace Image {
  *
  * @brief Decoder for BRC images.
  *
- * Used in engines:
- *  - Gob
  * @{
  */
 
