@@ -426,7 +426,7 @@ void Room808::parser() {
 				terminateMachine(_808PosMach);
 				setPosMachInfo();
 				_808PosMach = series_stream(_posMachName, 5, 1281, 10);
-				series_stream_break_on_frame(_808PosMach, 7, _posMachFrameNum);
+				series_stream_break_on_frame(_808PosMach, _posMachFrameNum, 7);
 				player_update_info(_G(my_walker), &_G(player_info));
 				_808RipFallShovelNearSideMach = series_place_sprite(SAFARI_SHADOWS_2[_G(player_info).facing], 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 1282);
 				break;
