@@ -198,7 +198,7 @@ bool Screen::init() {
 
 			_sjisFontShared = Common::SharedPtr<Graphics::FontSJIS>(Graphics::FontSJIS::createFont(_vm->gameFlags().platform));
 			if (!_sjisFontShared.get())
-				error("Could not load any SJIS font, neither the original %s nor ScummVM's 'SJIS.FNT'", _vm->gameFlags().platform == Common::kPlatformPC98 ? "'FONT.ROM'/'FONT.BMP'" : "'FMT_FMT.ROM'");
+				error("Could not load any SJIS font, neither the original %s nor ScummVM's 'SJIS.FNT'", _vm->gameFlags().platform == Common::kPlatformPC98 ? "'FONT.ROM'/'FONT.BMP'" : "'FMT_FNT.ROM'");
 
 			if (_use16ColorMode)
 				_fonts[FID_SJIS_TEXTMODE_FNT] = new SJISFont(_sjisFontShared, _sjisInvisibleColor, true, false, 0);
