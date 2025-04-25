@@ -49,7 +49,7 @@ public:
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
-	void close();
+	void close() override;
 };
 
 } // namespace HodjNPodj

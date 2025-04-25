@@ -93,7 +93,7 @@ public:
 	bool msgMouseDown(const MouseDownMessage &msg) override;
 	bool msgMouseUp(const MouseUpMessage &msg) override;
 	bool msgMouseEnter(const MouseEnterMessage &msg) override;
-	bool msgMouseLeave(const MouseLeaveMessage &msg);
+	bool msgMouseLeave(const MouseLeaveMessage &msg) override;
 	bool msgMouseMove(const MouseMoveMessage &msg) override {
 		return true;
 	}

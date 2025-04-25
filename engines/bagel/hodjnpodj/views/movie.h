@@ -52,7 +52,7 @@ public:
 	virtual ~Movie() {
 	}
 
-	void close();
+	void close() override;
 	void draw() override;
 	bool msgOpen(const OpenMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;

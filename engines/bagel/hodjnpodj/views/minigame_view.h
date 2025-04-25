@@ -56,7 +56,7 @@ public:
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool tick() override;
 
-	void close();
+	void close() override;
 };
 
 } // namespace HodjNPodj

@@ -72,7 +72,7 @@ public:
 	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 };
 
 } // namespace HodjNPodj
