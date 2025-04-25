@@ -19,7 +19,7 @@
  *
  */
 
-#include "image/brc.h"
+#include "brc.h"
 
 #include "common/stream.h"
 #include "common/textconsole.h"

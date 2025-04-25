@@ -3,7 +3,6 @@ MODULE := image
 MODULE_OBJS := \
 	ani.o \
 	bmp.o \
-	brc.o \
 	cel_3do.o \
 	cicn.o \
 	icocur.o \
