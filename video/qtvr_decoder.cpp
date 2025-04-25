@@ -351,7 +351,7 @@ bool QuickTimeDecoder::setFOV(float fov) {
 		track->_currentHFOV = _hfov;
 		_hfov = _fov * (float)_width / (float)_height;
 
-		// We need to recalculate the pan angle and tilt angle to see if it has went 
+		// We need to recalculate the pan angle and tilt angle to see if it has went
 		// out of bound for the current value of FOV
 		// This solves the distortion that we got sometimes when we zoom out at Tilt Angle != 0
 		setPanAngle(_panAngle);
@@ -486,8 +486,7 @@ QuickTimeDecoder::PanoTrackHandler::PanoTrackHandler(QuickTimeDecoder *decoder, 
 
 	_constructedPano = nullptr;
 	_constructedHotspots = nullptr;
-	_1DUpscaledConstructedPano = nullptr;
-	_2DUpscaledConstructedPano = nullptr;
+	_upscaledConstructedPano = nullptr;
 	_projectedPano = nullptr;
 	_planarProjection = nullptr;
 
@@ -501,11 +500,8 @@ QuickTimeDecoder::PanoTrackHandler::~PanoTrackHandler() {
 		_constructedPano->free();
 		delete _constructedPano;
 
-		_1DUpscaledConstructedPano->free();
-		delete _1DUpscaledConstructedPano;
-
-		_2DUpscaledConstructedPano->free();
-		delete _2DUpscaledConstructedPano;
+		_upscaledConstructedPano->free();
+		delete _upscaledConstructedPano;
 
 		_constructedHotspots->free();
 		delete _constructedHotspots;
@@ -647,7 +643,7 @@ const Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::decodeNextFrame() {
 		float tiltAngle = _decoder->_tiltAngle;
 		float panAngle = _decoder->_panAngle;
 
-		switch ((int) quality) {
+		switch ((int)quality) {
 		case 1:
 			projectPanorama(1, fov, hfov, tiltAngle, panAngle);
 			break;
@@ -733,14 +729,7 @@ void QuickTimeDecoder::PanoTrackHandler::initPanorama() {
 
 Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::upscalePanorama(Graphics::Surface *sourceSurface, int8 level) {
 	// This algorithm (bilinear upscaling) takes quite some time to complete
-	// PanoTrackHandler is larger by two very large images
-	// This may have consequences on the memory usage
-
-	// The original director has three quality levels (plus one dynamic quality mode)
-	// In quality mode = 1.0f, the _constructedPano is left as it is, no upscaling
-	// In quality mode = 2.0f, the _constructedPano is upscaled in one dimension (twice the width; same height)
-	// In quality mode = 4.0f, the _constructedPano is upscaled in two dimensions (twice the width; twice the height) 
-
+	//
 	// upscaling method
 	//
 	// for level 1 upscaling
@@ -766,7 +755,7 @@ Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::upscalePanorama(Graphics:
 		for (uint y = 0; y < h; ++y) {
 			for (uint x = 0; x < w; ++x) {
 				// For the row x==w and column y==h, wrap around the panorama
-				// and average these pixels with row x==0 and column y==0 respectively 
+				// and average these pixels with row x==0 and column y==0 respectively
 				uint x1 = (x + 1) % w;
 				uint y1 = (y + 1) % h;
 
@@ -829,16 +818,18 @@ Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::upscalePanorama(Graphics:
 	return target;
 }
 
-void QuickTimeDecoder::PanoTrackHandler::boxAverage(Graphics::Surface *sourceSurface, int scaleFactor) {
+void QuickTimeDecoder::PanoTrackHandler::boxAverage(Graphics::Surface *sourceSurface, uint8 scaleFactor) {
 	uint16 h = sourceSurface->h;
 	uint16 w = sourceSurface->w;
 
-	// Apply anti-aliasing if quality is higher than 1
+	// Apply box average if quality is higher than 1
 	// Otherwise it'll be quicker to just copy the _planarProjection onto _projectedPano
 	if (scaleFactor == 1) {
 		_projectedPano->copyFrom(*sourceSurface);
 		return;
 	}
+
+	uint8 scaleSquare = scaleFactor * scaleFactor;
 
 	// Average out the pixels from the larger image
 	for (uint16 y = 0; y < h / scaleFactor; y++) {
@@ -858,7 +849,6 @@ void QuickTimeDecoder::PanoTrackHandler::boxAverage(Graphics::Surface *sourceSur
 				}
 			}
 
-			uint8 scaleSquare = scaleFactor * scaleFactor;
 			avgA /= scaleSquare;
 			avgR /= scaleSquare;
 			avgG /= scaleSquare;
@@ -910,8 +900,6 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 	track->seek(Audio::Timestamp(0, timestamp, _decoder->_timeScale));
 
 	_constructedPano = constructMosaic(track, desc->_sceneNumFramesX, desc->_sceneNumFramesY, "dumps/pano-full.png");
-	_1DUpscaledConstructedPano = upscalePanorama(_constructedPano, 1);
-	_2DUpscaledConstructedPano = upscalePanorama(_constructedPano, 2);
 
 	track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_hotSpotTrackID - 1]->targetTrack));
 
@@ -1033,7 +1021,40 @@ Common::Point QuickTimeDecoder::PanoTrackHandler::projectPoint(int16 mx, int16 m
 	return Common::Point(hotX, hotY);
 }
 
-void QuickTimeDecoder::PanoTrackHandler::projectPanorama(int scaleFactor,
+// It may get confusing what the three terms _quality, scaleVector and _upscaleLevel mean
+// They are all related to the quality of the _projectedPanorama
+// These are relevant for the functions upscalePanorama(), boxAverage() and projectPanorama()
+//
+// _quality is the attribute of the panorama that dictates how good the panorama looks
+// This is taken directly from the original QTVR Xtra documentation by Apple
+// (float) _quality can take three values:
+//		1.0f; (higher
+//		2.0f; means
+//	 	4.0f; better)
+// Excluding _quality = 0.0f (which is a combination of _quality = 1.0f and _quality = 4.0f)
+// See setQuality() function to get a better idea
+//
+// This _quality determines what the scaleFactor value will be passed to projectPanorama()
+// scaleFactor is the parameter to projectPanorama used for anti-aliasing the panorama
+// We project a Surface object that has [scaleFactor] times the target height and width from _constructedPano
+// Then we take a boxAverage() in a [scaleFactor * scaleFactor] box to make the panorama target sized
+// This effectively removes aliasing from the image
+// (uint8) scaleFactor can take three values:
+//		1; (no-anti-aliasing)
+//  	2; (some anti-aliasing)
+// 		3; (better anti-aliasing) (For better Performance, we may remove this option)
+//
+// _quality also controls another factor that is the scale of original panorama (_constructedPano)
+// Basically we upscalePanorama() at higher _quality values, exactly by how much is given by _upscaleLevel
+// (uint8) _upscaleLevel can take two values:
+//		1 (upscale to twice the width);
+//		2 (upscale to twice the width and height);
+//
+// _quality = 1.0f => scaleFactor = 1; No upscaling;
+// _quality = 2.0f => scaleFactor = 2; _upscaleLevel = 1;
+// _quality = 4.0f => scaleFactor = 3; _upscaleLevel = 2;
+
+void QuickTimeDecoder::PanoTrackHandler::projectPanorama(uint8 scaleFactor,
                                                          float fov,
                                                          float hfov,
                                                          float tiltAngle,
@@ -1054,7 +1075,12 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama(int scaleFactor,
 	// The size of _planarProjection will keep changing in quality mode 0
 	// It might (will definitely) cause some out of bound access if left as it is
 	if (!_planarProjection || _planarProjection->w != w || _planarProjection->h != h) {
+		// If _planarProjection holds some pixels, first need to free all the pixel data
+		if (_planarProjection) {
+			_planarProjection->free();
+		}
 		delete _planarProjection;
+
 		_planarProjection = new Graphics::Surface();
 		_planarProjection->create(w, h, _constructedPano->format);
 	}
@@ -1114,16 +1140,38 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama(int scaleFactor,
 	}
 
 	Graphics::Surface *sourceSurface;
-	switch(scaleFactor) {
+
+	switch (scaleFactor) {
 	case 1:
 		sourceSurface = _decoder->_renderHotspots ? _constructedHotspots : _constructedPano;
 		break;
+
 	case 2:
-		sourceSurface = _decoder->_renderHotspots ? _constructedHotspots : _1DUpscaledConstructedPano;
+		if (!_upscaledConstructedPano || _upscaleLevel != 1) {
+			// Avoid memory leakage if _upscaledConstructedPano already points to a Panorama
+			if (_upscaledConstructedPano) {
+				_upscaledConstructedPano->free();
+				delete _upscaledConstructedPano;
+			}
+			_upscaleLevel = 1;
+			_upscaledConstructedPano = upscalePanorama(_constructedPano, _upscaleLevel);
+		}
+		sourceSurface = _decoder->_renderHotspots ? _constructedHotspots : _upscaledConstructedPano;
 		break;
+
 	case 3:
-		sourceSurface = _decoder->_renderHotspots ? _constructedHotspots : _2DUpscaledConstructedPano;
+		if (!_upscaledConstructedPano || _upscaleLevel != 2) {
+			// Avoid memory leakage if _upscaledConstructedPano already points to a Panorama
+			if (_upscaledConstructedPano) {
+				_upscaledConstructedPano->free();
+				delete _upscaledConstructedPano;
+			}
+			_upscaleLevel = 2;
+			_upscaledConstructedPano = upscalePanorama(_constructedPano, _upscaleLevel);
+		}
+		sourceSurface = _decoder->_renderHotspots ? _constructedHotspots : _upscaledConstructedPano;
 		break;
+
 	default:
 		sourceSurface = _decoder->_renderHotspots ? _constructedHotspots : _constructedPano;
 		break;
@@ -1132,7 +1180,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama(int scaleFactor,
 	int32 panoWidth = sourceSurface->h;
 	int32 panoHeight = sourceSurface->w;
 
-	// This angle offset will tell you exactly which portion of Cylindrical panorama 
+	// This angle offset will tell you exactly which portion of Cylindrical panorama
 	// (when you construct a rectangular mosaic out of it) you're projecting on the plane surface
 	uint16 angleOffset = static_cast<uint32>(angleT * panoWidth);
 
@@ -1215,11 +1263,11 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama(int scaleFactor,
 
 		// The descriptor has the original sceneSizeX and sceneSizeY of the movie
 		// But in quality mode 3 we're increasing them to twice the original
-		// This factor just make sure we're wrapping leftSourceXCoord and rightSourceXCoord 
+		// This factor just make sure we're wrapping leftSourceXCoord and rightSourceXCoord
 		// According to the sourceSurface's dimensions rather than the original's
 		int factor = scaleFactor == 3 && !_decoder->_renderHotspots ? 2 : 1;
 
-		// Wrap around if out of range 
+		// Wrap around if out of range
 		leftSourceXCoord = leftSourceXCoord % static_cast<int32>(panoWidth);
 		if (leftSourceXCoord < 0) {
 			leftSourceXCoord += panoWidth;
@@ -1325,6 +1373,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama(int scaleFactor,
 
 	boxAverage(aliasedProjectedPano, scaleFactor);
 	// Memory leakage avoided; Should I use a stack allocated object?
+	aliasedProjectedPano->free();
 	delete aliasedProjectedPano;
 
 	_dirty = false;
