@@ -633,7 +633,6 @@ void TextCastMember::unload() {
 
 bool TextCastMember::hasField(int field) {
 	switch (field) {
-	case kTheHilite:
 	case kTheText:
 	case kTheTextAlign:
 	case kTheTextFont:
@@ -664,9 +663,6 @@ Datum TextCastMember::getField(int field) {
 	Datum d;
 
 	switch (field) {
-	case kTheHilite:
-		d = _hilite;
-		break;
 	case kTheText:
 		d = getText().encode(Common::kUtf8);
 		break;
@@ -768,12 +764,6 @@ bool TextCastMember::setField(int field, const Datum &d) {
 			uint32 color = g_director->transformColor(d.asInt());
 			setColors(&color, nullptr);
 		}
-		return true;
-	case kTheHilite:
-		// TODO: Understand how texts can be selected programmatically as well.
-		// since hilite won't affect text castmember, and we may have button info in text cast in D2/3. so don't check type here
-		_hilite = (bool)d.asInt();
-		_modified = true;
 		return true;
 	case kTheText:
 		setRawText(d.asString());
