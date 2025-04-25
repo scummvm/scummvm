@@ -87,7 +87,7 @@ public:
 
 	bool SetPosition(CBgbObject *, CRPoint);
 	bool PaintBitmapObject(CBgbObject *, bool bPaint PDFT(false), Common::Rect *p = NULL);
-	bool AnimateSprite(CBgbObject *, Common::Point, Common::Point);
+	bool AnimateSprite(CBgbObject *, const CPoint &, const CPoint &);
 	bool InitDc(CView *xpView, CBsuSet *xpBsuSet PDFT(NULL), CDC *xpDc PDFT(NULL));
 	bool ReInitDc();
 	bool AdjustLockCount(int iIncr);

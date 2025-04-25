@@ -32,6 +32,8 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
+bool bExitMetaDLL;
+
 CGtlApp *AfxGetApp() {
 	CGtlFrame *view = dynamic_cast<CGtlFrame *>(
 		g_events->findView("Boardgame"));
@@ -40,6 +42,8 @@ CGtlApp *AfxGetApp() {
 }
 
 CGtlFrame::CGtlFrame() : SpritesView("Boardgame", "") {
+	bExitMetaDLL = false;
+
 	// TODO: Move this to msgOpen
 	_doc.onNewDocument();
 }

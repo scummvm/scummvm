@@ -194,7 +194,7 @@ public:
 	 * @param cPoint	The point to be tested
 	 * @returns			true if error, false otherwise
 	 */
-	bool EdgeToCenter(const Common::Point &cPoint, bool bScroll = false);
+	bool EdgeToCenter(const CPoint &cPoint, bool bScroll = false);
 
 	/**
 	 * Set rectangle to portion of window

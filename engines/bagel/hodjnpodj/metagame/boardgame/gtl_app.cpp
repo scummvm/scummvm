@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "bagel/hodjnpodj/metagame/boardgame/gtl_app.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/metaengine.h"
@@ -36,6 +37,11 @@ void CGtlApp::initInstance() {
 	m_iX = 0;
 	m_iY = 0;
 }
+
+int CGtlApp::ConfManProxy::GetDebugInt(const char *name) {
+	return ConfMan.getInt(name);
+}
+
 
 } // namespace Metagame
 } // namespace HodjNPodj

@@ -149,6 +149,7 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/boardgame/minimap.o \
 	hodjnpodj/metagame/boardgame/notebook.o \
 	hodjnpodj/metagame/boardgame/pawn_shop.o \
+	hodjnpodj/metagame/views/button_dialog.o \
 	hodjnpodj/metagame/views/credits.o \
 	hodjnpodj/metagame/views/grand_tour_options.o \
 	hodjnpodj/metagame/views/minigames.o \

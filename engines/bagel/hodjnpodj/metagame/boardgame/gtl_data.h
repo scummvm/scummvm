@@ -588,7 +588,8 @@ private:
 	bool MoveNode(CNode *lpNode, CRPoint crPosition);
 
 	int DoSpecialTravel(int, bool);
-	void LoadCharDirection(CBgbObject *, const Common::Point &, const Common::Point &);
+	void LoadCharDirection(CBgbObject *, const CPoint &,
+		const CPoint &);
 
 	/**
 	 * Create link between two nodes

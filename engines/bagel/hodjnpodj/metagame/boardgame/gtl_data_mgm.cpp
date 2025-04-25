@@ -22,6 +22,9 @@
 #include "bagel/hodjnpodj/metagame/boardgame/gtl_data.h"
 #include "bagel/hodjnpodj/metagame/bgen/bgen.h"
 #include "bagel/hodjnpodj/metagame/boardgame/gtl_doc.h"
+#include "bagel/hodjnpodj/metagame/boardgame/gtl_frame.h"
+#include "bagel/hodjnpodj/metagame/views/button_dialog.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -59,7 +62,6 @@ static SPECIAL_TRAVEL aTravelArray[MG_SPECIAL_VISIT_COUNT] = {
 
 bool CGtlData::SetMetaGame(bool bOn) {
 	int iError = 0;            // error code
-	bool bFound = false;               // node position found
 	CPoint cLocation;
 
 	// turn meta game on
@@ -199,12 +201,12 @@ bool CGtlData::ProcessMove(CNode *lpTargetNode)
 	// play it
 	while ((m_xpCurXodj != nullptr) && (m_xpCurXodj->m_bComputer) && (m_bGameOver == false) && (bExitMetaDLL == false)) {
 
-		if (((m_xpCurXodj->m_bHodj) && (lpMetaGameStruct->m_cHodj.m_bHaveMishMosh)) ||
-			((m_xpCurXodj->m_bHodj == false) && (lpMetaGameStruct->m_cPodj.m_bHaveMishMosh)))
+		if (((m_xpCurXodj->m_bHodj) && (lpMetaGame->m_cHodj.m_bHaveMishMosh)) ||
+			((m_xpCurXodj->m_bHodj == false) && (lpMetaGame->m_cPodj.m_bHaveMishMosh)))
 			m_xpCurXodj->m_iTargetLocation = MG_LOC_CASTLE;
 		else {
 
-			if ((lpMetaGameStruct->m_cHodj.m_bHaveMishMosh) && (m_xpCurXodj->m_bHodj == false)) {
+			if ((lpMetaGame->m_cHodj.m_bHaveMishMosh) && (m_xpCurXodj->m_bHodj == false)) {
 				m_xpCurXodj->m_iTargetLocation = MG_LOC_HODJ;
 			} else {
 				SelectBestMove(m_xpCurXodj);
@@ -226,7 +228,6 @@ bool CGtlData::ProcessMove(CNode *lpTargetNode)
 	// test debugging option to give hint for next human move
 	//
 	if (xpGtlApp->m_cBdbgMgr.GetDebugInt("givehints")) {
-
 		SelectBestMove(m_xpCurXodj);           // do best move analysis
 		m_xpCurXodj->m_iTargetLocation = 0;    // but ignore result
 	}
@@ -254,7 +255,7 @@ bool CGtlData::MoveCharToNode(CNode *lpTargetNode)
 
 	// no current char sprite
 	if ((m_xpCurXodj == nullptr) || ((lpChar = m_xpCurXodj->m_lpcCharSprite) == nullptr)) {
-		::MessageBox(nullptr, "No current char sprite.", nullptr, MB_OK);
+		error("No current char sprite.");
 		iError = 100;
 		goto cleanup;
 	}
@@ -262,7 +263,7 @@ bool CGtlData::MoveCharToNode(CNode *lpTargetNode)
 	lpNode = m_lpNodes + m_xpCurXodj->m_iCharNode;
 
 	if ((lpiShortPath = FindShortestPath(lpNode, lpTargetNode)) == nullptr) {
-		C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", "You can't get there", "from here...");
+		C1ButtonDialog dlg1Button("&OK", "You can't get there", "from here...");
 		(void)dlg1Button.DoModal();
 		iError = 101;
 		goto cleanup;
@@ -279,7 +280,7 @@ bool CGtlData::MoveCharToNode(CNode *lpTargetNode)
 
 			m_xpCurXodj->m_iFurlongs -= lpNextNode->m_iWeight;
 			gnFurlongs = m_xpCurXodj->m_iFurlongs;
-			lpMetaGameStruct->m_bChanged = true;
+			lpMetaGame->m_bChanged = true;
 			SetFurlongs(m_xpCurXodj);
 			cOldPosition = NodeToPoint(lpNode, &lpChar->m_cSize);
 			cNewPosition = NodeToPoint(lpNextNode, &lpChar->m_cSize);
@@ -291,7 +292,7 @@ bool CGtlData::MoveCharToNode(CNode *lpTargetNode)
 
 			// update the furlongs at each step
 			//
-			if (!lpMetaGameStruct->m_bScrolling) {
+			if (!lpMetaGame->m_bScrolling) {
 
 				if ((m_xpCurXodj->m_iFurlongs >= 0) && (m_xpCurXodj->m_iFurlongs < 24) && ((lpMap = m_lpFurlongMaps[m_xpCurXodj->m_iFurlongs]) != nullptr) && lpMap->m_lpcBgbObject)
 					DrawABitmap(nullptr, lpMap->m_lpcBgbObject);
@@ -375,12 +376,12 @@ int CGtlData::DoSpecialTravel(int iVisitId, bool bHodj) {
 	}
 
 	// save old filename
-	strcpy(szOldFileName, pCurPlayer->m_szFileName);
+	Common::strcpy_s(szOldFileName, pCurPlayer->m_szFileName);
 
 	// load the appropriate cel strip (new filename)
 	//
 	chPlayerChar = pCurPlayer->m_szFileName[6];
-	strcpy(pCurPlayer->m_szFileName, aTravelArray[iSpecialIndex].pszFileName);
+	Common::strcpy_s(pCurPlayer->m_szFileName, aTravelArray[iSpecialIndex].pszFileName);
 	pCurPlayer->m_szFileName[6] = chPlayerChar;
 
 	// erase old image
@@ -419,7 +420,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, bool bHodj) {
 		if (stricmp(aTravelArray[iSpecialIndex].pszLink[i + 1], "Aerie") == 0) {
 
 			// put back old filename
-			strcpy(pCurPlayer->m_szFileName, szOldFileName);
+			Common::strcpy_s(pCurPlayer->m_szFileName, szOldFileName);
 			assert(FileExists(pCurPlayer->m_szFileName));
 
 			// set direction index to a bogus number so a new BMP is loaded
@@ -540,7 +541,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, bool bHodj) {
 			pSoundFile = szGameSounds[iHodjSound - MG_SOUND_BASE];
 
 		pSound = new CSound(m_xpcGtlDoc->m_xpcLastFocusView, pSoundFile, SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);
-		pSound->SetDrivePath(lpMetaGameStruct->m_chCDPath);
+		pSound->SetDrivePath(lpMetaGame->m_chCDPath);
 		pSound->Play();
 		CSound::WaitWaveSounds();
 	}
@@ -558,7 +559,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, bool bHodj) {
 	}
 
 	// put back old filename
-	strcpy(pCurPlayer->m_szFileName, szOldFileName);
+	Common::strcpy_s(pCurPlayer->m_szFileName, szOldFileName);
 	assert(FileExists(pCurPlayer->m_szFileName));
 
 	if (bDoTransport) {
@@ -1033,10 +1034,10 @@ done:
 				szMsg[0] = 0;
 
 			else if (iK % 12)
-				strcpy(szMsg, ", ");
+				Common::strcpy_s(szMsg, ", ");
 
 			else
-				strcpy(szMsg, ",\n            ");
+				Common::strcpy_s(szMsg, ",\n            ");
 
 			itoa(lpiPath[iK], szMsg + strlen(szMsg), 10);
 			JXOutputDebugString(szMsg);
@@ -1161,7 +1162,7 @@ CNode *CGtlData::LocationToNode(int iLocationCode)
 	if (iLocationCode >= MG_LOC_BASE && iLocationCode <= MG_LOC_MAX) {
 
 		if (iLocationCode == MG_LOC_HODJ) {
-			lpNode = m_lpNodes + lpMetaGameStruct->m_cHodj.m_iNode;   // compute node pointer
+			lpNode = m_lpNodes + lpMetaGame->m_cHodj.m_iNode;   // compute node pointer
 
 		} else {
 
@@ -1183,9 +1184,9 @@ VOID CGtlData::SetFurlongs(CXodj *pXodj) {
 	assert(pXodj != nullptr);
 
 	if (pXodj->m_bHodj) {
-		lpMetaGameStruct->m_cHodj.m_iFurlongs = pXodj->m_iFurlongs;
+		lpMetaGame->m_cHodj.m_iFurlongs = pXodj->m_iFurlongs;
 	} else {
-		lpMetaGameStruct->m_cPodj.m_iFurlongs = pXodj->m_iFurlongs;
+		lpMetaGame->m_cPodj.m_iFurlongs = pXodj->m_iFurlongs;
 	}
 }
 

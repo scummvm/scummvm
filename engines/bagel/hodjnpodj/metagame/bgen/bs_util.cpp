@@ -550,7 +550,7 @@ cleanup:
 	return false;
 }
 
-bool CBsuSet::EdgeToCenter(const Common::Point &cPoint, bool bScroll) {
+bool CBsuSet::EdgeToCenter(const CPoint &cPoint, bool bScroll) {
 #ifdef TODO
 	int iError = 0;		// error code
 	int bCenter = false;	// flag: center the point

@@ -19,53 +19,21 @@
  *
  */
 
-#ifndef HODJNPODJ_METAGAME_GTL_FRAME_H
-#define HODJNPODJ_METAGAME_GTL_FRAME_H
-
-#include "bagel/hodjnpodj/views/sprites_view.h"
-#include "bagel/hodjnpodj/metagame/boardgame/gtl_app.h"
-#include "bagel/hodjnpodj/metagame/boardgame/gtl_doc.h"
+#include "bagel/hodjnpodj/metagame/views/button_dialog.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-enum DialogId {
-	kDialogInventory = 1,
-	kDialogGeneralStore = 2,
-	kDialogPawnShop = 3,
-	kDialogBlackMarket = 4
-};
+C1ButtonDialog::C1ButtonDialog(const char *btnText, const char *line1,
+	const char *line2) {
+}
 
-class CGtlFrame : public SpritesView {
-private:
-	bool bJustReturned = false;
-
-	void showClue(CNote *note);
-	void showInventory(int nWhichDlg);
-	bool isInputAllowed() const;
-
-public:
-	CGtlApp _app;
-	CGtlDoc _doc;
-
-public:
-	CGtlFrame();
-	~CGtlFrame() override;
-
-	bool msgOpen(const OpenMessage &msg) override;
-	bool msgClose(const CloseMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-	void draw() override;
-};
-
-extern CGtlApp *AfxGetApp();
-extern bool bExitMetaDLL;
+void C1ButtonDialog::DoModal() {
+	error("TODO: C1ButtonDialog::DoModal");
+}
 
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif

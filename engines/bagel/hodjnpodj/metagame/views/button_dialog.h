@@ -19,50 +19,33 @@
  *
  */
 
-#ifndef HODJNPODJ_METAGAME_GTL_FRAME_H
-#define HODJNPODJ_METAGAME_GTL_FRAME_H
+#ifndef HODJNPODJ_METAGAME_VIEWS_BUTTON_DIALOG_H
+#define HODJNPODJ_METAGAME_VIEWS_BUTTON_DIALOG_H
 
-#include "bagel/hodjnpodj/views/sprites_view.h"
-#include "bagel/hodjnpodj/metagame/boardgame/gtl_app.h"
-#include "bagel/hodjnpodj/metagame/boardgame/gtl_doc.h"
+#include "bagel/hodjnpodj/views/view.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-enum DialogId {
-	kDialogInventory = 1,
-	kDialogGeneralStore = 2,
-	kDialogPawnShop = 3,
-	kDialogBlackMarket = 4
+class ButtonDialog : public View {
+public:
+	ButtonDialog();
+	~ButtonDialog() override {}
 };
 
-class CGtlFrame : public SpritesView {
-private:
-	bool bJustReturned = false;
-
-	void showClue(CNote *note);
-	void showInventory(int nWhichDlg);
-	bool isInputAllowed() const;
-
+/**
+ * Proxy class for opening 1 button dialog view
+ */
+class C1ButtonDialog {
 public:
-	CGtlApp _app;
-	CGtlDoc _doc;
+	C1ButtonDialog(const char *btnText, const char *line1,
+		const char *line2);
 
-public:
-	CGtlFrame();
-	~CGtlFrame() override;
-
-	bool msgOpen(const OpenMessage &msg) override;
-	bool msgClose(const CloseMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-	void draw() override;
+	void DoModal();
 };
 
-extern CGtlApp *AfxGetApp();
-extern bool bExitMetaDLL;
+
 
 } // namespace Metagame
 } // namespace HodjNPodj

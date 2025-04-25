@@ -27,6 +27,10 @@ namespace HodjNPodj {
 namespace Metagame {
 
 class CGtlApp {
+	class ConfManProxy {
+	public:
+		int GetDebugInt(const char *name);
+	};
 public:
 	int  m_iNumOpens = 0;		// number of document opens (including "New")
 	const char *m_szFilename = "meta/meta.gtl";	// input file name
@@ -42,6 +46,7 @@ public:
 	bool m_bPaintBackground = false;	// paint background on map paint
 	bool m_bStartMetaGame = false;		// start meta game automatically
 	bool m_bDumpGamePlay = false;		// dump game play
+	ConfManProxy m_cBdbgMgr;
 
 	void initInstance();
 	void setDialogBkColor() {}
@@ -49,6 +54,9 @@ public:
 public:
 	CGtlApp() {
 		initInstance();
+	}
+
+	void DoWaitCursor(int cNode) {
 	}
 };
 
