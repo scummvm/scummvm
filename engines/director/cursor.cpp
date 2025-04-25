@@ -251,9 +251,9 @@ bool Cursor::readFromArchive(Archive *archive, uint16 resourceId) {
 	if (cursorStream && readFromStream(*((Common::SeekableReadStream *)cursorStream), false, 0)) {
 		_usePalette = true;
 		_keyColor = 0xff;
+		_cursorType = Graphics::kMacCursorCustom;
+		_cursorResId = resourceId;
 		readSuccessful = true;
-
-		resetCursor(Graphics::kMacCursorCustom, false, resourceId);
 	}
 	delete cursorStream;
 	return readSuccessful;
