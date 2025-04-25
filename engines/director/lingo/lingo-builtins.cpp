@@ -2128,6 +2128,12 @@ void LB::b_voidP(int nargs) {
 // Misc
 ///////////////////
 void LB::b_alert(int nargs) {
+	// Let the movie know not to record mouse and key events
+	// While there is an GUI alert box being shown
+	// It may happen the user clicks on the button on the GUI message and
+	// due to it getting recorded as a movie event, causes unpredictable changes
+	g_director->getCurrentMovie()->_inGuiMessageBox = true;
+
 	Datum d = g_lingo->pop();
 
 	Common::String alert = d.asString();
@@ -2144,6 +2150,9 @@ void LB::b_alert(int nargs) {
 		GUI::MessageDialog dialog(alert.c_str(), _("OK"));
 		dialog.runModal();
 	}
+
+	// Movie can process events as normal now
+	g_director->getCurrentMovie()->_inGuiMessageBox = false;
 }
 
 void LB::b_clearGlobals(int nargs) {

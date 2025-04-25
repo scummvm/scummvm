@@ -121,6 +121,12 @@ bool Window::processEvent(Common::Event &event) {
 }
 
 bool Movie::processEvent(Common::Event &event) {
+	// When in GUI message box is being shown, movie may record clicking on the message box as a movie event
+	// Make sure that these events (mouseUp, mouseDown) are not recorded in the movie
+	if (_inGuiMessageBox) {
+		return false;
+	}
+
 	Score *sc = getScore();
 	if (sc->getCurrentFrameNum() > sc->getFramesNum()) {
 		warning("processEvents: request to access frame %d of %d", sc->getCurrentFrameNum(), sc->getFramesNum());
