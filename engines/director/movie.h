@@ -194,6 +194,11 @@ public:
 
 	Common::String _script;
 
+	// A flag to disable the event processing in the Movie
+	// This flag will be set when the user's interaction (mouse and key events like mouseUp, keyUp)  
+	// shouldn't be recorded as movie event, which may cause undesirable change in the lingo script
+	bool _inGuiMessageBox = false;
+
 private:
 	Window *_window;
 	DirectorEngine *_vm;
