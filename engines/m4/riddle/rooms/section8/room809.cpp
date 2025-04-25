@@ -161,8 +161,6 @@ void Room809::parser() {
 		return;
 	}
 
-	int32 eax = -1;
-
 	switch (_G(kernel).trigger) {
 	case -1:
 		if (checkSaid()) {
@@ -170,37 +168,37 @@ void Room809::parser() {
 			int32 destY;
 			player_update_info(_G(my_walker), &_G(player_info));
 			if (_G(player_info).x >= _G(player).click_x) {
-				destY = imath_min(145, _G(player).x + 20);
-				destY = imath_max(destY, 145);
+				destX = imath_min(145, _G(player).x + 20);
+				destX = imath_max(destX, 145);
 				if (_G(player).click_y < 315) {
 					if (_playerFacing < 0)
 						_playerFacing = 11;
-					destX = 315;
+					destY = 315;
 				} else if (_G(player).click_y <= 321) {
-					destX = _G(player).click_y;
+					destY = _G(player).click_y;
 				} else {
 					if (_playerFacing < 0)
 						_playerFacing = 7;
 
-					destX = 321;
+					destY = 321;
 				}
 			} else {
 				if (_G(player).click_x >= 1340)
-					destY = 1349;
+					destX = 1349;
 				else
-					destY = imath_max(_G(player_info).x, _G(player).click_x - 20);
+					destX = imath_max(_G(player_info).x, _G(player).click_x - 20);
 
 				if (_G(player).click_y < 315) {
 					if (_playerFacing < 0)
 						_playerFacing = 1;
-					destX = 315;
+					destY = 315;
 				} else if (_G(player).click_y <= 321)
-					destX = _G(player).click_y;
+					destY = _G(player).click_y;
 				else {
 					if (_playerFacing < 0)
 						_playerFacing = 5;
 
-					destX = 321;
+					destY = 321;
 				}
 			}
 			ws_walk(_G(my_walker), destX, destY, nullptr, 1, _playerFacing, true);
@@ -210,28 +208,30 @@ void Room809::parser() {
 
 		break;
 
-	case 1:
+	case 1: {
 		player_update_info();
 		if (_G(player_info).x < 1340 && -_G(game_buff_ptr)->x1 < 1259) {
 			g_engine->camera_shift_xy(1259, 0);
 		}
 
-		if (player_said_any("look", "look at"))
-			eax = 1;
-		else if (player_said_any("gear", "use"))
-			eax = 0;
-		else if (player_said("take"))
-			eax = 2;
-		else if (player_said("talk to"))
-			eax = 3;
-		else if (player_said_any("walk to", "walk", "spleen"))
-			eax = 5;
-		else if (player_said("journal"))
-			eax = 4;
-		else if (player_said("go"))
-			eax = 6;
+		int32 opcode = -1;
 
-		switch (eax) {
+		if (player_said_any("look", "look at"))
+			opcode = 1;
+		else if (player_said_any("gear", "use"))
+			opcode = 0;
+		else if (player_said("take"))
+			opcode = 2;
+		else if (player_said("talk to"))
+			opcode = 3;
+		else if (player_said_any("walk to", "walk", "spleen"))
+			opcode = 5;
+		else if (player_said("journal"))
+			opcode = 4;
+		else if (player_said("go"))
+			opcode = 6;
+
+		switch (opcode) {
 		case 1:
 			if (player_said(" ")) {
 				digi_play("809r02", 1, 255, -1, -1);
@@ -341,6 +341,8 @@ void Room809::parser() {
 				_G(player).command_ready = true;
 			}
 			break;
+		}
+		
 		}
 		break;
 
