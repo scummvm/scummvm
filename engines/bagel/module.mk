@@ -127,6 +127,7 @@ MODULE_OBJS = \
 	hodjnpodj/views/view.o \
 	hodjnpodj/fuge/fuge.o \
 	hodjnpodj/fuge/options.o \
+	hodjnpodj/life/game.o \
 	hodjnpodj/mazedoom/maze_doom.o \
 	hodjnpodj/mazedoom/maze_gen.o \
 	hodjnpodj/mazedoom/options.o \
