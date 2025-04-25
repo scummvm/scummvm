@@ -165,7 +165,6 @@ Graphics::MacWidget *RichTextCastMember::createWidget(Common::Rect &bbox, Channe
 
 bool RichTextCastMember::hasField(int field) {
 	switch (field) {
-	case kTheHilite:
 	case kTheText:
 	case kThePageHeight:
 	case kTheScrollTop:
@@ -183,7 +182,6 @@ Datum RichTextCastMember::getField(int field) {
 	case kTheText:
 		d = Datum(Common::String(_plainText));
 		break;
-	case kTheHilite:
 	case kThePageHeight:
 	case kTheScrollTop:
 	default:
@@ -200,7 +198,6 @@ bool RichTextCastMember::setField(int field, const Datum &d) {
 		_plainText = Common::U32String(d.asString());
 		warning("STUB: RichTextCastMember::setField: text set to \"%s\", but won't rerender!", d.asString().c_str());
 		break;
-	case kTheHilite:
 	case kThePageHeight:
 	case kTheScrollTop:
 	default:
