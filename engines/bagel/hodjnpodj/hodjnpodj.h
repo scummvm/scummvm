@@ -36,16 +36,18 @@
 #include "graphics/screen.h"
 #include "bagel/hodjnpodj/events.h"
 #include "bagel/hodjnpodj/libs/settings.h"
-#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
-#include "bagel/hodjnpodj/metagame/views/grand_tour_options.h"
 
 #include "bagel/bagel.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
+struct CBfcMgr {
+	bool m_bRestart = false;
+};
+
 extern GAMESTRUCT *pGameParams;
-extern Metagame::CBfcMgr *lpMetaGame;
+extern CBfcMgr *lpMetaGame;
 
 class HodjNPodjEngine : public BagelEngine, public Events {
 private:
@@ -64,9 +66,9 @@ protected:
 
 public:
 	Common::HashMap<int, Graphics::Font *> _fonts;
-	Metagame::CBfcMgr _metaGame;
-	Metagame::SCORESTRUCT _topScores[10];
-	Metagame::GRANDTRSTRUCT _grandTour;
+	CBfcMgr _metaGame;
+//	Metagame::SCORESTRUCT _topScores[10];
+//	Metagame::GRANDTRSTRUCT _grandTour;
 	Settings _settings;
 	bool _bDonePodj = false;
 	bool _bReturnToZoom = false;

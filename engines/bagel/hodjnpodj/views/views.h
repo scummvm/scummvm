@@ -25,19 +25,7 @@
 #include "bagel/hodjnpodj/views/rules.h"
 #include "bagel/hodjnpodj/views/main_menu.h"
 #include "bagel/hodjnpodj/views/message_box.h"
-#include "bagel/hodjnpodj/metagame/boardgame/backpack.h"
-#include "bagel/hodjnpodj/metagame/boardgame/gtl_frame.h"
-#include "bagel/hodjnpodj/metagame/boardgame/boardgame_options.h"
-#include "bagel/hodjnpodj/metagame/boardgame/general_store.h"
-#include "bagel/hodjnpodj/metagame/boardgame/minimap.h"
-#include "bagel/hodjnpodj/metagame/boardgame/notebook.h"
-#include "bagel/hodjnpodj/metagame/boardgame/pawn_shop.h"
-#include "bagel/hodjnpodj/metagame/views/credits.h"
-#include "bagel/hodjnpodj/metagame/views/grand_tour_options.h"
-#include "bagel/hodjnpodj/metagame/views/minigames.h"
-#include "bagel/hodjnpodj/metagame/views/movie.h"
-#include "bagel/hodjnpodj/metagame/views/title_menu.h"
-#include "bagel/hodjnpodj/metagame/views/top_scores.h"
+#include "bagel/hodjnpodj/views/movie.h"
 #include "bagel/hodjnpodj/fuge/fuge.h"
 #include "bagel/hodjnpodj/mazedoom/maze_doom.h"
 #include "bagel/hodjnpodj/novacancy/no_vacancy.h"
@@ -48,20 +36,8 @@ namespace HodjNPodj {
 struct Views {
 	MainMenu _mainMenu;
 	MessageBox _messageBox;
+	Movie _movie;
 	Rules _rules;
-	Metagame::BoardgameOptions _boardgameOptions;
-	Metagame::Backpack _backpack;
-	Metagame::CGtlFrame _boardgame;
-	Metagame::GeneralStore _generalStore;
-	Metagame::Minimap _minimap;
-	Metagame::Notebook _notebook;
-	Metagame::PawnShop _pawnShop;
-	Metagame::Credits _credits;
-	Metagame::GrandTourOptions _grandTour;
-	Metagame::Minigames _minigames;
-	Metagame::Movie _movie;
-	Metagame::TitleMenu _titleMenu;
-	Metagame::TopScores _topScores;
 	Fuge::Fuge _fuge;
 	MazeDoom::MazeDoom _mazeDoom;
 	NoVacancy::NoVacancy _noVacancy;

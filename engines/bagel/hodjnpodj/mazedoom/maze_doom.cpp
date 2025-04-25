@@ -453,11 +453,11 @@ void MazeDoom::loadBitmaps() {
 
 void MazeDoom::loadIniSettings() {
 	if (pGameParams->bPlayingMetagame) {
-		if (pGameParams->nSkillLevel == Metagame::SKILLLEVEL_LOW) {
+		if (pGameParams->nSkillLevel == SkillLevel::SKILLLEVEL_LOW) {
 			// Total Wussy
 			_difficulty = MIN_DIFFICULTY;
 			_time = 60;
-		} else if (pGameParams->nSkillLevel == Metagame::SKILLLEVEL_MEDIUM) {
+		} else if (pGameParams->nSkillLevel == SkillLevel::SKILLLEVEL_MEDIUM) {
 			// Big Sissy
 			_difficulty = 2;
 			_time = 60;

@@ -21,14 +21,13 @@
 
 #include "common/file.h"
 #include "image/bmp.h"
-#include "bagel/hodjnpodj/metagame/views/movie.h"
+#include "bagel/hodjnpodj/views/movie.h"
 #include "bagel/metaengine.h"
 #include "bagel/hodjnpodj/events.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
-namespace Metagame {
 
 #define SCROLL_BITMAP "video/vscroll.bmp"
 
@@ -123,6 +122,5 @@ void Movie::draw() {
 	}
 }
 
-} // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

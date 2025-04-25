@@ -31,7 +31,7 @@
 #include "bagel/hodjnpodj/gfx/cursor.h"
 #include "bagel/hodjnpodj/gfx/palette.h"
 #include "bagel/hodjnpodj/libs/array.h"
-#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
+#include "bagel/hodjnpodj/globals.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -39,8 +39,32 @@ namespace HodjNPodj {
 #define FRAME_RATE 50
 #define FRAME_DELAY (1000 / FRAME_RATE)
 
-using Metagame::GAMESTRUCT;
-using Metagame::SkillLevel;
+enum SkillLevel {
+	NOPLAY = -1,
+	SKILLLEVEL_LOW = 0,
+	SKILLLEVEL_MEDIUM = 1,
+	SKILLLEVEL_HIGH = 2
+};
+
+struct GAMESTRUCT {
+	long lCrowns = 0;
+	long lScore = 0;
+	SkillLevel nSkillLevel = SkillLevel::SKILLLEVEL_LOW;
+	bool bSoundEffectsEnabled = false;
+	bool bMusicEnabled = false;
+	bool bPlayingMetagame = false;
+	bool bPlayingHodj = false;
+
+	void clear() {
+		lCrowns = lScore = 0;
+		nSkillLevel = SkillLevel::SKILLLEVEL_LOW;
+		bSoundEffectsEnabled = bMusicEnabled = true;
+		bPlayingMetagame = false;
+		bPlayingHodj = true;
+	}
+};
+typedef GAMESTRUCT *LPGAMESTRUCT;
+
 class Events;
 
 /**

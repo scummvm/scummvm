@@ -30,7 +30,6 @@
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/console.h"
 #include "bagel/hodjnpodj/gfx/bold_font.h"
-#include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
 #include "bagel/music.h"
 
 namespace Bagel {
@@ -40,9 +39,7 @@ namespace HodjNPodj {
 
 HodjNPodjEngine *g_engine;
 GAMESTRUCT *pGameParams;
-Metagame::CBfcMgr *lpMetaGame;
-
-using Metagame::CMgStatic;
+CBfcMgr *lpMetaGame;
 
 HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		BagelEngine(syst, gameDesc) {
@@ -73,7 +70,7 @@ Common::Error HodjNPodjEngine::run() {
 	}
 
 	_settings.load();
-	_metaGame.initBFCInfo();
+	//_metaGame.initBFCInfo();
 
 	Settings::Domain &meta = _settings["Meta"];
 	_bAnimationsEnabled = meta.getBool("Animations", true);
@@ -115,6 +112,7 @@ void HodjNPodjEngine::stopBackgroundMidi() {
 }
 
 void HodjNPodjEngine::selectMinigame(int newArea) {
+#ifdef TODO
 	int nWhichMinigame = newArea - MG_GAME_BASE;
 	assert(nWhichMinigame >= 0 && nWhichMinigame < MG_GAME_COUNT);
 
@@ -161,6 +159,9 @@ void HodjNPodjEngine::selectMinigame(int newArea) {
 
 	// Switch to the minigame
 	addView(CMgStatic::cGameTable[nWhichMinigame]._viewName);
+#else
+	error("TODO: select minigame");
+#endif
 }
 
 } // namespace HodjNPodj

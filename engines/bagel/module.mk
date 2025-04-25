@@ -120,42 +120,11 @@ MODULE_OBJS = \
 	hodjnpodj/views/main_menu.o \
 	hodjnpodj/views/message_box.o \
 	hodjnpodj/views/minigame_view.o \
+	hodjnpodj/views/movie.o \
 	hodjnpodj/views/resource_view.o \
 	hodjnpodj/views/rules.o \
 	hodjnpodj/views/sprites_view.o \
 	hodjnpodj/views/view.o \
-	hodjnpodj/metagame/bgen/bbt.o \
-	hodjnpodj/metagame/bgen/bfc.o \
-	hodjnpodj/metagame/bgen/bgb.o \
-	hodjnpodj/metagame/bgen/bgen_util.o \
-	hodjnpodj/metagame/bgen/bs_util.o \
-	hodjnpodj/metagame/bgen/invent.o \
-	hodjnpodj/metagame/bgen/item.o \
-	hodjnpodj/metagame/bgen/mgstat.o \
-	hodjnpodj/metagame/bgen/note.o \
-	hodjnpodj/metagame/boardgame/backpack.o \
-	hodjnpodj/metagame/boardgame/boardgame.o \
-	hodjnpodj/metagame/boardgame/boardgame_options.o \
-	hodjnpodj/metagame/boardgame/general_store.o \
-	hodjnpodj/metagame/boardgame/gtl_app.o \
-	hodjnpodj/metagame/boardgame/gtl_data_compiler.o \
-	hodjnpodj/metagame/boardgame/gtl_data_lexical.o \
-	hodjnpodj/metagame/boardgame/gtl_data_mgm.o \
-	hodjnpodj/metagame/boardgame/gtl_data_move.o \
-	hodjnpodj/metagame/boardgame/gtl_data_ui.o \
-	hodjnpodj/metagame/boardgame/gtl_doc.o \
-	hodjnpodj/metagame/boardgame/gtl_frame.o \
-	hodjnpodj/metagame/boardgame/gtl_view.o \
-	hodjnpodj/metagame/boardgame/minimap.o \
-	hodjnpodj/metagame/boardgame/notebook.o \
-	hodjnpodj/metagame/boardgame/pawn_shop.o \
-	hodjnpodj/metagame/views/button_dialog.o \
-	hodjnpodj/metagame/views/credits.o \
-	hodjnpodj/metagame/views/grand_tour_options.o \
-	hodjnpodj/metagame/views/minigames.o \
-	hodjnpodj/metagame/views/movie.o \
-	hodjnpodj/metagame/views/title_menu.o \
-	hodjnpodj/metagame/views/top_scores.o \
 	hodjnpodj/fuge/fuge.o \
 	hodjnpodj/fuge/options.o \
 	hodjnpodj/mazedoom/maze_doom.o \
