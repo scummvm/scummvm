@@ -270,6 +270,7 @@ void Room810::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
 		_ripLooksAroundAndNodsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 160, 318, 46, 768, false, triggerMachineByHashCallback, "rip looks around and nods");
+		ws_hide_walker(_G(my_walker));
 		sendWSMessage_10000(1, _ripLooksAroundAndNodsMach, _ripPos3LookAroundSeries, 1, 16, 51, _ripPos3LookAroundSeries, 17, 20, 4);
 		_safariShadow3Mach = series_show("SAFARI SHADOW 3", 1280, 16, -1, -1, 0, 46, 160, 318);
 
