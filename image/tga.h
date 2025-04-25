@@ -25,7 +25,8 @@
 
 /*
  * TGA decoder used in engines:
- *	- titanic
+ *  - gob
+ *  - titanic
  *  - wintermute
  *  - zvision
  */
