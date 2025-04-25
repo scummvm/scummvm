@@ -416,20 +416,23 @@ private:
 		QuickTimeDecoder *_decoder;
 		Common::QuickTimeParser::Track *_parent;
 
-		void projectPanorama(int scaleFactor, float fov, float hfov, float panAngle, float tiltAngle);
+		void projectPanorama(uint8 scaleFactor, float fov, float hfov, float panAngle, float tiltAngle);
 		void swingTransitionHandler();
-		void boxAverage(Graphics::Surface *sourceSurface, int scaleFactor);
+		void boxAverage(Graphics::Surface *sourceSurface, uint8 scaleFactor);
 		Graphics::Surface* upscalePanorama(Graphics::Surface *sourceSurface, int8 level);
 
 		const Graphics::Surface *bufferNextFrame();
 
 	public:
 		Graphics::Surface *_constructedPano;
-		Graphics::Surface *_1DUpscaledConstructedPano;
-		Graphics::Surface *_2DUpscaledConstructedPano;
+		Graphics::Surface *_upscaledConstructedPano;
 		Graphics::Surface *_constructedHotspots;
 		Graphics::Surface *_projectedPano;
 		Graphics::Surface *_planarProjection;
+
+		// Current upscale level (1 or 2) of _upscaledConstructedPanorama compared to _constructedPano
+		// Level 1 means only upscaled height (2x pixels), level 2 means upscaled height and width (4x pixels)
+		uint8 _upscaleLevel = 0;
 
 		// Defining these to make the swing transition happen
 		// which requires storing the previous point during every change in FOV, Pan Angle and Tilt Angle
