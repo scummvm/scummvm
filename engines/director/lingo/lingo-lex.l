@@ -135,10 +135,10 @@ static Common::String *readUntilWhitespace(const char **ptr) {
 	return res;
 }
 
-static Common::String *readUntilNull(const char **ptr) {
+static Common::String *readUntilNewline(const char **ptr) {
 	Common::String *res = new Common::String;
 
-	while (**ptr) {
+	while ((**ptr != '\n') && (**ptr != '\r') && (**ptr != '\0')) {
 		if (**ptr == '\xC2' && *(*ptr + 1) == '\xAC') { // continuation
 			*ptr += 2;
 			*res += ' '; // replace with space
@@ -254,7 +254,7 @@ the			{ count(); return tTHE; }
 then		{ count(); return tTHEN; }
 time		{ count(); return tTIME; }
 to			{ count(); return tTO; }
-when{spc}+{eventname}{spc}+then{spc}+{unparsedstmt}	{
+when{spc}+{eventname}{spc}+then{spc}*{unparsedstmt}	{
 		count();
 
 		const char *ptr =  &yytext[5]; // Skip 'when '
@@ -263,10 +263,10 @@ when{spc}+{eventname}{spc}+then{spc}+{unparsedstmt}	{
 		Common::String *eventName = readUntilWhitespace(&ptr);
 
 		skipWhitespace(&ptr);
-		ptr += 5; // Skip 'then '
+		ptr += 4; // Skip 'then'
 		skipWhitespace(&ptr);
 
-		Common::String *stmt = readUntilNull(&ptr);
+		Common::String *stmt = readUntilNewline(&ptr);
 
 		yylval.w.eventName = eventName;
 		yylval.w.stmt = stmt;
