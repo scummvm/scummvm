@@ -247,7 +247,7 @@ void Resource::dumpEntries() {
 }
 
 void Resource::load() {
-	while (1) {
+	while (true) {
 		MemEntry *me = nullptr;
 
 		// get resource with max rankNum

@@ -316,7 +316,7 @@ uint8 *ResourceWin31::loadFile(int num, uint8 *dst, uint32 *size) {
 void ResourceWin31::readStrings() {
 	uint32 len, offset = 0;
 	_textBuf = loadFile(148, nullptr, &len);
-	while (1) {
+	while (true) {
 		const uint32 sep = READ_LE_UINT32(_textBuf + offset); offset += 4;
 		const uint16 num = sep >> 16;
 		if (num == 0xFFFF) {
@@ -325,7 +325,8 @@ void ResourceWin31::readStrings() {
 		if (num < ARRAYSIZE(_stringsTable) && _stringsTable[num] == nullptr) {
 			_stringsTable[num] = (const char *)_textBuf + offset;
 		}
-		while (offset < len && _textBuf[offset++] != 0);
+		while (offset < len && _textBuf[offset++] != 0)
+			;
 		// strings are not always '\0' terminated
 		if (_textBuf[offset + 1] != 0) {
 			--offset;
