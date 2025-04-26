@@ -34,7 +34,7 @@ bool DoodleDecoder::loadStreams(Common::SeekableReadStream &highresStream,
 	destroy();
 
 	// Check stream sizes
-	if (highresStream.size() < 8187) {
+	if (highresStream.size() < 8002) {
 		error("DoodleDecoder: Invalid high-resolution data size");
 		return false;
 	}

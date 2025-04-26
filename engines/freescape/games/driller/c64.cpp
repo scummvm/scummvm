@@ -44,20 +44,18 @@ void DrillerEngine::loadAssetsC64FullGame() {
 	} else if (_targetName.hasPrefix("driller")) {
 		file.open("driller.c64.data");
 
-		if (_variant & GF_C64_RETAIL) {
+		if (_variant & GF_C64_TAPE) {
 			loadFonts(&file, 0x402);
 			load8bitBinary(&file, 0x8b04, 16);
 			loadMessagesFixedSize(&file, 0x167a, 14, 20);
 			loadGlobalObjects(&file, 0x1855, 8);
-		} else if (_variant & GF_C64_BUDGET) {
+		/*} else if (_variant & GF_C64_BUDGET) {
 			//loadFonts(&file, 0x402);
 			load8bitBinary(&file, 0x7df7, 16);
 			loadMessagesFixedSize(&file, 0x1399, 14, 20);
-			loadGlobalObjects(&file, 0x150a, 8);
-		} else {
-			//error("Unknown C64 release");
-			assert(false);
-		}
+			loadGlobalObjects(&file, 0x150a, 8);*/
+		} else
+			error("Unknown C64 variant %x", _variant);
 
 		// The color map from the data is not correct,
 		// so we'll just hardcode the one that we found in the executable

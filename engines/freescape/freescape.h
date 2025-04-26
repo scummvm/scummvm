@@ -606,8 +606,8 @@ enum GameReleaseFlags {
 	GF_CPC_VIRTUALWORLDS = (1 << 8),
 	GF_ATARI_RETAIL = (1 << 9),
 	GF_ATARI_BUDGET = (1 << 10),
-	GF_C64_RETAIL = (1 << 11),
-	GF_C64_BUDGET = (1 << 12),
+	GF_C64_TAPE = (1 << 11),
+	GF_C64_DISC = (1 << 12),
 };
 
 extern FreescapeEngine *g_freescape;

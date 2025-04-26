@@ -20,6 +20,7 @@
  */
 
 #include "common/file.h"
+#include "common/memstream.h"
 
 #include "freescape/freescape.h"
 #include "freescape/games/dark/dark.h"
@@ -36,10 +37,28 @@ extern byte kC64Palette[16][3];
 void DarkEngine::loadAssetsC64FullGame() {
 	Common::File file;
 	file.open("darkside.c64.data");
-	loadMessagesFixedSize(&file, 0x1edf, 16, 27);
-	loadFonts(&file, 0xc3e);
-	loadGlobalObjects(&file, 0x20bd, 23);
-	load8bitBinary(&file, 0x9b3e, 16);
+
+	if (_variant & GF_C64_TAPE) {
+		loadMessagesFixedSize(&file, 0x1edf, 16, 27);
+		loadFonts(&file, 0xc3e);
+		loadGlobalObjects(&file, 0x20bd, 23);
+		load8bitBinary(&file, 0x9b3e, 16);
+	} else if (_variant & GF_C64_DISC) {
+		loadMessagesFixedSize(&file, 0x16a3, 16, 27);
+		loadFonts(&file, 0x402);
+
+		// It is unclear why this C64 has this byte changed at 0x1881
+		// Once the game is loaded, it will be set to 0x66
+		// and the game will work
+		file.seek(0x1881);
+		_extraBuffer = (byte *)malloc(0x300 * sizeof(byte));
+		file.read(_extraBuffer, 0x300);
+		_extraBuffer[0] = 0x66;
+		Common::MemoryReadStream stream(_extraBuffer, 0x300, DisposeAfterUse::NO);
+		loadGlobalObjects(&stream, 0x0, 23);
+		load8bitBinary(&file, 0x8914, 16);
+	} else
+		error("Unknown C64 variant %x", _variant);
 
 	// The color map from the data is not correct,
 	// so we'll just hardcode the one that we found in the executable

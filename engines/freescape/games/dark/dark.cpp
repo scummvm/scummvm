@@ -84,6 +84,13 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 	_initialShield = 15;
 
 	_jetFuelSeconds = _initialEnergy * 6;
+	_extraBuffer = nullptr;
+}
+
+DarkEngine::~DarkEngine() {
+	if (_extraBuffer)
+		free(_extraBuffer);
+	_extraBuffer = nullptr;
 }
 
 void DarkEngine::addECDs(Area *area) {

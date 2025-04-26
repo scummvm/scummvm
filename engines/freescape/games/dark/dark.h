@@ -48,6 +48,7 @@ enum DarkFontSize {
 class DarkEngine : public FreescapeEngine {
 public:
 	DarkEngine(OSystem *syst, const ADGameDescription *gd);
+	~DarkEngine();
 
 	uint32 _initialEnergy;
 	uint32 _initialShield;
@@ -103,6 +104,8 @@ public:
 	int _soundIndexRestoreECD;
 	int _soundIndexDestroyECD;
 	Audio::SoundHandle _soundFxHandleJetpack;
+
+	byte *_extraBuffer;
 
 	void drawString(const DarkFontSize size, const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface);
 	void drawInfoMenu() override;
