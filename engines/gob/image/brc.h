@@ -52,7 +52,7 @@ namespace Image {
 
 class BRCDecoder : public ImageDecoder {
 public:
-	BRCDecoder(Graphics::PixelFormat format);
+	BRCDecoder();
 	~BRCDecoder() override;
 
 	// ImageDecoder API
