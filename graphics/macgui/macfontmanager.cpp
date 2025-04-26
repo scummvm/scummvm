@@ -574,10 +574,16 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 				debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont() - Font size <= 0!");
 			}
 			font = Graphics::loadTTFFontFromArchive("LiberationSans-Regular.ttf", macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
-			_uniFontRegistry.setVal(macFont->getName(), font);
+			if (font)
+				_uniFontRegistry.setVal(macFont->getName(), font);
 		} else if (_fontInfo.contains(familyId)) {
 			font = Graphics::loadTTFFontFromArchive(_fontInfo[familyId]->name, macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
-			_uniFontRegistry.setVal(macFont->getName(), font);
+			if (font)
+				_uniFontRegistry.setVal(macFont->getName(), font);
+		} else {
+			font = Graphics::loadTTFFontFromArchive("LiberationSans-Regular.ttf", macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
+			if (font)
+				_uniFontRegistry.setVal(macFont->getName(), font);
 		}
 	}
 #endif
