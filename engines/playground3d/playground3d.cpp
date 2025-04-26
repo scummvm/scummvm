@@ -157,7 +157,12 @@ void Playground3dEngine::processInput() {
 		if (event.type == Common::EVENT_SCREEN_CHANGED) {
 			_gfx->computeScreenViewport();
 		}
-		if (event.type == Common::EVENT_LBUTTONUP) {
+		if (event.type != Common::EVENT_CUSTOM_ENGINE_ACTION_START)	{
+			continue;
+		}
+
+		switch (event.customType) {
+		case kActionSwitchTest:
 			testId++;
 			if (testId > 5)
 				testId = 1;
@@ -186,6 +191,10 @@ void Playground3dEngine::processInput() {
 				default:
 					assert(false);
 			}
+			break;
+		case kActionEnableFog:
+			_fogEnable = !_fogEnable;
+			break;
 		}
 	}
 }

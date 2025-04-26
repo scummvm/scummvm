@@ -32,6 +32,11 @@
 
 namespace Playground3d {
 
+enum Actions {
+	kActionSwitchTest,
+	kActionEnableFog
+};
+
 class Playground3dEngine : public Engine {
 public:
 	Playground3dEngine(OSystem *syst);
