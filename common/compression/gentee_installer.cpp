@@ -835,9 +835,10 @@ bool PackageArchive::loadPAK(const char *prefix) {
 
 			debug(3, "GenteeInstaller: Detected %s item '%s' size %u at pos %u .. %u", (isCompressed ? "compressed" : "stored"), fileName.c_str(), static_cast<uint>(decompressedSize), static_cast<uint>(dataStart), static_cast<uint>(dataEnd));
 
+			fileName.replace('\\', '/');
+
 			if (fileName.hasPrefix(prefix)) {
 				fileName = fileName.substr(strlen(prefix));
-				fileName.replace('\\', '/');
 				Common::Path path(fileName, '/');
 
 				Common::SharedPtr<ArchiveItem> item(new ArchiveItem(_stream, getGuardMutex(), path, dataStart, static_cast<uint>(dataEnd - dataStart), decompressedSize, isCompressed));
