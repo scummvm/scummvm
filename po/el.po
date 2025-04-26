@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-25 13:05+0000\n"
+"POT-Creation-Date: 2025-04-26 11:10+0000\n"
 "PO-Revision-Date: 2024-12-25 11:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -7346,7 +7346,7 @@ msgstr "Εναλλαγή Ιδιωτικότητας Ευρημάτων"
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:75
 #: engines/freescape/games/castle/castle.cpp:246
-#: engines/freescape/games/dark/dark.cpp:186
+#: engines/freescape/games/dark/dark.cpp:193
 #: engines/freescape/games/driller/driller.cpp:135
 #: engines/freescape/games/eclipse/eclipse.cpp:206
 #: engines/pegasus/pegasus.cpp:2825
@@ -7359,7 +7359,7 @@ msgstr "Αποθήκευση παιχνιδιού"
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:74
 #: engines/freescape/games/castle/castle.cpp:251
-#: engines/freescape/games/dark/dark.cpp:191
+#: engines/freescape/games/dark/dark.cpp:198
 #: engines/freescape/games/driller/driller.cpp:140
 #: engines/freescape/games/eclipse/eclipse.cpp:211
 #: engines/pegasus/pegasus.cpp:2831
@@ -7397,7 +7397,7 @@ msgstr "Βάση Δεδομένων Στοιχείων Έρευνας"
 #: engines/bladerunner/metaengine.cpp:375 engines/darkseed/metaengine.cpp:93
 #: engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/castle/castle.cpp:259
-#: engines/freescape/games/dark/dark.cpp:196
+#: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:145
 #: engines/freescape/games/eclipse/eclipse.cpp:216
 #: engines/sword1/metaengine.cpp:295
@@ -8138,21 +8138,21 @@ msgid "Select Princess"
 msgstr "Επιλέξτε Πριγκίπισσα"
 
 #: engines/freescape/games/castle/castle.cpp:264
-#: engines/freescape/games/dark/dark.cpp:206
+#: engines/freescape/games/dark/dark.cpp:213
 #: engines/freescape/games/driller/driller.cpp:153
 #: engines/freescape/games/eclipse/eclipse.cpp:224
 msgid "Toggle Sound"
 msgstr "Εναλλαγή ήχου"
 
 #: engines/freescape/games/castle/castle.cpp:269
-#: engines/freescape/games/dark/dark.cpp:212
+#: engines/freescape/games/dark/dark.cpp:219
 #: engines/freescape/games/driller/driller.cpp:159
 #: engines/freescape/games/eclipse/eclipse.cpp:229
 msgid "Rotate Left"
 msgstr "Περιστροφή Αριστερά"
 
 #: engines/freescape/games/castle/castle.cpp:274
-#: engines/freescape/games/dark/dark.cpp:217
+#: engines/freescape/games/dark/dark.cpp:224
 #: engines/freescape/games/driller/driller.cpp:164
 #: engines/freescape/games/eclipse/eclipse.cpp:234
 msgid "Rotate Right"
@@ -8175,53 +8175,68 @@ msgstr "Σύρσου"
 msgid "Face Forward"
 msgstr "Μέτωπο μπροστά"
 
-#: engines/freescape/games/dark/dark.cpp:222
-#: engines/freescape/games/driller/driller.cpp:187
+#: engines/freescape/games/dark/dark.cpp:229
+#: engines/freescape/games/driller/driller.cpp:198
 #, fuzzy
 #| msgid "Move left"
 msgid "Roll left"
 msgstr "Κίνηση αριστερά"
 
-#: engines/freescape/games/dark/dark.cpp:227
-#: engines/freescape/games/driller/driller.cpp:192
+#: engines/freescape/games/dark/dark.cpp:234
+#: engines/freescape/games/driller/driller.cpp:203
 #, fuzzy
 #| msgid "Move right"
 msgid "Roll right"
 msgstr "Κίνηση δεξιά"
 
-#. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
-#: engines/freescape/games/dark/dark.cpp:233
+#. I18N: Illustrates the angle at which you turn left or right.
+#: engines/freescape/games/dark/dark.cpp:240
 #: engines/freescape/games/driller/driller.cpp:170
+#, fuzzy
+#| msgid "Increasing Volume"
+msgid "Increase Turn Angle"
+msgstr "Αύξηση Έντασης"
+
+#: engines/freescape/games/dark/dark.cpp:245
+#: engines/freescape/games/driller/driller.cpp:175
+#, fuzzy
+#| msgid "Decreasing Volume"
+msgid "Decrease Turn Angle"
+msgstr "Μείωση Έντασης"
+
+#. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+#: engines/freescape/games/dark/dark.cpp:251
+#: engines/freescape/games/driller/driller.cpp:181
 msgid "Increase Step Size"
 msgstr "Αύξηση διαστήματος βήματος"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
-#: engines/freescape/games/dark/dark.cpp:239
-#: engines/freescape/games/driller/driller.cpp:176
+#: engines/freescape/games/dark/dark.cpp:257
+#: engines/freescape/games/driller/driller.cpp:187
 msgid "Decrease Step Size"
 msgstr "Μείωση διαστήματος βήματος"
 
-#: engines/freescape/games/dark/dark.cpp:244
-#: engines/freescape/games/driller/driller.cpp:181
+#: engines/freescape/games/dark/dark.cpp:262
+#: engines/freescape/games/driller/driller.cpp:192
 msgid "Rise/Fly up"
 msgstr "Σήκω/Πέτα ψηλότερα"
 
-#: engines/freescape/games/dark/dark.cpp:250
-#: engines/freescape/games/driller/driller.cpp:197
+#: engines/freescape/games/dark/dark.cpp:268
+#: engines/freescape/games/driller/driller.cpp:208
 msgid "Lower/Fly down"
 msgstr "Κατέβα/Πέτα χαμηλότερα"
 
-#: engines/freescape/games/dark/dark.cpp:256
+#: engines/freescape/games/dark/dark.cpp:274
 msgid "Enable/Disable Jetpack"
 msgstr "Απ/ενεργοποίηση Jetpack"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:204
+#: engines/freescape/games/driller/driller.cpp:215
 msgid "Deploy drilling rig"
 msgstr "Εγκατάσταση γεωτρύπανου"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:211
+#: engines/freescape/games/driller/driller.cpp:222
 msgid "Collect drilling rig"
 msgstr "Συμμάζεμα γεωτρύπανου"
 
@@ -14362,14 +14377,8 @@ msgstr ""
 #~ msgid "Pause Game"
 #~ msgstr "Παύση παιχνιδιού"
 
-#~ msgid "Increasing Volume"
-#~ msgstr "Αύξηση Έντασης"
-
 #~ msgid "Minimal Volume"
 #~ msgstr "Ελάχιστη Ένταση"
-
-#~ msgid "Decreasing Volume"
-#~ msgstr "Μείωση Έντασης"
 
 #~ msgid "Select Actor 6"
 #~ msgstr "Επιλογή Ηθοποιού 6"
