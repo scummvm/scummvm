@@ -694,7 +694,6 @@ void AtariGraphicsManager::updateScreen() {
 		s_screenSurf = _pendingScreenChanges.screenSurface();
 		_pendingScreenChanges.setScreenSurface(nullptr);
 	}
-
 	if (_pendingScreenChanges.aspectRatioCorrectionYOffset().second)
 		s_aspectRatioCorrectionYOffset = _pendingScreenChanges.aspectRatioCorrectionYOffset().first;
 	if (_pendingScreenChanges.screenOffsets().second)

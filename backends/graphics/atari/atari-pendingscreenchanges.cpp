@@ -38,7 +38,7 @@ void PendingScreenChanges::queueAll() {
 }
 
 /*
- * VsetRGB() - stores the palette in a buffer and applyBeforeVblLock in nearest VBL
+ * VsetRGB() - stores the palette in a buffer and process it in the nearest non-locked VBL
  * EsetPalette() - immediatelly applies the palette
  * (V)SetScreen() - immediatelly sets physbase/logbase but explicitly calls Vsync() for resolution changes
  * VsetMode() - explicitly calls Vsync()
@@ -47,7 +47,6 @@ void PendingScreenChanges::queueAll() {
 void PendingScreenChanges::applyBeforeVblLock(const Screen &screen) {
 	_mode = screen.mode;	// avoid modifying 'Screen' content
 	_resetSuperVidel = false;
-	_switchToBlackPalette = (_changes & kVideoMode);
 
 	_aspectRatioCorrectionYOffset.second = false;
 	_setScreenOffsets.second = false;
@@ -58,7 +57,7 @@ void PendingScreenChanges::applyBeforeVblLock(const Screen &screen) {
 		_changes &= ~kAspectRatioCorrection;
 	}
 
-	_switchToBlackPalette |= _resetSuperVidel;
+	_switchToBlackPalette = (_changes & kVideoMode) || _resetSuperVidel;
 
 	if (_changes & kVideoMode) {
 		processVideoMode(screen);
@@ -68,6 +67,7 @@ void PendingScreenChanges::applyBeforeVblLock(const Screen &screen) {
 
 void PendingScreenChanges::applyAfterVblLock(const Screen &screen) {
 	// VBL doesn't process new palette nor screen address updates
+	// if _changes & kVideoMode then the Vsync handler has just returned
 
 	if (_changes & kShakeScreen) {
 		_setScreenOffsets = std::make_pair(true, true);
@@ -77,14 +77,14 @@ void PendingScreenChanges::applyAfterVblLock(const Screen &screen) {
 	// restore current (kVideoMode) or set new (kPalette) palette
 	if (_changes & (kVideoMode | kPalette)) {
 		if (_switchToBlackPalette || (_changes & kPalette)) {
+			// Set the palette as fast as possible. Vsync() is a big no-no, updateScreen() and
+			// therefore this function can be called multiple times per frame. In this case,
+			// EsetPalette() will set the colours immediately (oops) but VsetRGB() is fine:
+			// it will be set as soon as VBL is unlocked again.
 			if (_manager->_tt) {
-				if (_changes & kPalette)
-					Vsync();
 				EsetPalette(0, screen.palette->entries, screen.palette->tt);
 			} else {
 				VsetRGB(0, screen.palette->entries, screen.palette->falcon);
-				if (_changes & kPalette)
-					Vsync();
 			}
 		}
 
@@ -137,20 +137,17 @@ void PendingScreenChanges::processVideoMode(const Screen &screen) {
 	// changing video mode implies an additional Vsync(): there's no way to change resolution
 	// and set new screen address (and/or shake offsets etc) in one go
 	if (screen.rez != -1) {
-		if (_switchToBlackPalette) {
-			static uint16 black[256];
-			EsetPalette(0, screen.palette->entries, black);
-		}
+		static uint16 black[256];
+		EsetPalette(0, screen.palette->entries, black);
 
 		// unfortunately this reinitializes VDI, too
 		Setscreen(SCR_NOCHANGE, SCR_NOCHANGE, screen.rez);
 	} else if (_mode != -1) {
-		if (_switchToBlackPalette) {
-			static _RGB black[256];
-			VsetRGB(0, screen.palette->entries, black);
-		}
+		static _RGB black[256];
+		VsetRGB(0, screen.palette->entries, black);
 
-		  // VsetMode() must be called first: it resets all hz/v, scrolling and line width registers
+		// VsetMode() must be called before the VBL s_ stuff is set as
+		// it resets all hz/v, scrolling and line width registers
 		if (_resetSuperVidel)
 			VsetMode(SVEXT | SVEXT_BASERES(0) | COL80 | BPS8C);	// resync to proper 640x480
 
