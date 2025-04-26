@@ -33,8 +33,7 @@ struct ResourceNth {
 	virtual bool init() = 0;
 	virtual uint8 *load(const char *name) = 0;
 	virtual uint8 *loadBmp(int num) = 0;
-	virtual void preloadDat(int part, int type, int num) {
-	}
+	virtual void preloadDat(int part, int type, int num) {}
 	virtual uint8 *loadDat(int num, uint8 *dst, uint32 *size) = 0;
 	virtual uint8 *loadWav(int num, uint8 *dst, uint32 *size) = 0;
 	virtual const char *getString(Language lang, int num) = 0;

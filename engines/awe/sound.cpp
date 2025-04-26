@@ -307,6 +307,8 @@ struct Mixer_impl {
 		case kMixerTypeAiff:
 			Mix_AllocateChannels(kMixChannels);
 			break;
+		default:
+			break;
 		}
 	}
 	void quit() {

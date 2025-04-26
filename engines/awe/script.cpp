@@ -612,13 +612,15 @@ void Script::executeTask() {
 					::debug("Time = %d", _scriptVars[0xF7]);
 				}
 				continue;
+					
+			default:
+					break;
 				}
 			}
-			if (opcode > 0x1A) {
+			if (opcode > 0x1A)
 				error("Script::executeTask() ec=0x%X invalid opcode=0x%X", 0xFFF, opcode);
-			} else {
-				(this->*OPCODE_TABLE[opcode])();
-			}
+
+			(this->*OPCODE_TABLE[opcode])();
 		}
 	}
 }
@@ -768,7 +770,11 @@ static uint8 getWavLooping(uint16 resNum) {
 	case 104:
 	case 106:
 	case 132:
-	case 139: return 1;
+	case 139:
+		return 1;
+		
+	default:
+		break;
 	}
 	return 0;
 }
@@ -899,10 +905,14 @@ void Script::fixUpPalette_changeScreen(int part, int screen) {
 			pal = 8;
 		}
 		break;
+
 	case 16006:
 		if (screen == 0x4A) { // bitmap resources #144, #145
 			pal = 1;
 		}
+		break;
+
+	default:
 		break;
 	}
 	if (pal != -1) {
