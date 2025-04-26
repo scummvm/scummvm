@@ -62,22 +62,22 @@ void Script::init() {
 }
 
 void Script::op_movConst() {
-	uint8 i = _scriptPtr.fetchByte();
-	int16 n = _scriptPtr.fetchWord();
+	const uint8 i = _scriptPtr.fetchByte();
+	const int16 n = _scriptPtr.fetchWord();
 	debugC(kDebugScript, "Script::op_movConst(0x%02X, %d)", i, n);
 	_scriptVars[i] = n;
 }
 
 void Script::op_mov() {
-	uint8 i = _scriptPtr.fetchByte();
-	uint8 j = _scriptPtr.fetchByte();
+	const uint8 i = _scriptPtr.fetchByte();
+	const uint8 j = _scriptPtr.fetchByte();
 	debugC(kDebugScript, "Script::op_mov(0x%02X, 0x%02X)", i, j);
 	_scriptVars[i] = _scriptVars[j];
 }
 
 void Script::op_add() {
-	uint8 i = _scriptPtr.fetchByte();
-	uint8 j = _scriptPtr.fetchByte();
+	const uint8 i = _scriptPtr.fetchByte();
+	const uint8 j = _scriptPtr.fetchByte();
 	debugC(kDebugScript, "Script::op_add(0x%02X, 0x%02X)", i, j);
 	_scriptVars[i] += _scriptVars[j];
 }
@@ -99,14 +99,14 @@ void Script::op_addConst() {
 			snd_playSound(0x5B, 1, 64, 1);
 		}
 	}
-	uint8 i = _scriptPtr.fetchByte();
-	int16 n = _scriptPtr.fetchWord();
+	const uint8 i = _scriptPtr.fetchByte();
+	const int16 n = _scriptPtr.fetchWord();
 	debugC(kDebugScript, "Script::op_addConst(0x%02X, %d)", i, n);
 	_scriptVars[i] += n;
 }
 
 void Script::op_call() {
-	uint16 off = _scriptPtr.fetchWord();
+	const uint16 off = _scriptPtr.fetchWord();
 	debugC(kDebugScript, "Script::op_call(0x%X)", off);
 	if (_stackPtr == 0x40) {
 		error("Script::op_call() ec=0x%X stack overflow", 0x8F);
@@ -131,21 +131,21 @@ void Script::op_yieldTask() {
 }
 
 void Script::op_jmp() {
-	uint16 off = _scriptPtr.fetchWord();
+	const uint16 off = _scriptPtr.fetchWord();
 	debugC(kDebugScript, "Script::op_jmp(0x%02X)", off);
 	_scriptPtr.pc = _res->_segCode + off;
 }
 
 void Script::op_installTask() {
-	uint8 i = _scriptPtr.fetchByte();
-	uint16 n = _scriptPtr.fetchWord();
+	const uint8 i = _scriptPtr.fetchByte();
+	const uint16 n = _scriptPtr.fetchWord();
 	debugC(kDebugScript, "Script::op_installTask(0x%X, 0x%X)", i, n);
 	assert(i < 0x40);
 	_scriptTasks[1][i] = n;
 }
 
 void Script::op_jmpIfVar() {
-	uint8 i = _scriptPtr.fetchByte();
+	const uint8 i = _scriptPtr.fetchByte();
 	debugC(kDebugScript, "Script::op_jmpIfVar(0x%02X)", i);
 	--_scriptVars[i];
 	if (_scriptVars[i] != 0) {
@@ -167,9 +167,9 @@ void Script::op_condJmp() {
 		WRITE_BE_UINT16(script + 153, 0xced);
 	}
 
-	uint8 op = _scriptPtr.fetchByte();
+	const uint8 op = _scriptPtr.fetchByte();
 	const uint8 var = _scriptPtr.fetchByte();
-	int16 b = _scriptVars[var];
+	const int16 b = _scriptVars[var];
 	int16 a;
 	if (op & 0x80) {
 		a = _scriptVars[_scriptPtr.fetchByte()];
@@ -236,7 +236,7 @@ void Script::op_condJmp() {
 }
 
 void Script::op_setPalette() {
-	uint16 i = _scriptPtr.fetchWord();
+	const uint16 i = _scriptPtr.fetchWord();
 	debugC(kDebugScript, "Script::op_changePalette(%d)", i);
 	const int num = i >> 8;
 	if (_vid->_graphics->_fixUpPalette == FIXUP_PALETTE_REDRAW) {
@@ -253,12 +253,12 @@ void Script::op_setPalette() {
 
 void Script::op_changeTasksState() {
 	uint8 start = _scriptPtr.fetchByte();
-	uint8 end = _scriptPtr.fetchByte();
+	const uint8 end = _scriptPtr.fetchByte();
 	if (end < start) {
 		warning("Script::op_changeTasksState() ec=0x%X (end < start)", 0x880);
 		return;
 	}
-	uint8 state = _scriptPtr.fetchByte();
+	const uint8 state = _scriptPtr.fetchByte();
 
 	debugC(kDebugScript, "Script::op_changeTasksState(%d, %d, %d)", start, end, state);
 
@@ -274,27 +274,27 @@ void Script::op_changeTasksState() {
 }
 
 void Script::op_selectPage() {
-	uint8 i = _scriptPtr.fetchByte();
+	const uint8 i = _scriptPtr.fetchByte();
 	debugC(kDebugScript, "Script::op_selectPage(%d)", i);
 	_vid->setWorkPagePtr(i);
 }
 
 void Script::op_fillPage() {
-	uint8 i = _scriptPtr.fetchByte();
-	uint8 color = _scriptPtr.fetchByte();
+	const uint8 i = _scriptPtr.fetchByte();
+	const uint8 color = _scriptPtr.fetchByte();
 	debugC(kDebugScript, "Script::op_fillPage(%d, %d)", i, color);
 	_vid->fillPage(i, color);
 }
 
 void Script::op_copyPage() {
-	uint8 i = _scriptPtr.fetchByte();
-	uint8 j = _scriptPtr.fetchByte();
+	const uint8 i = _scriptPtr.fetchByte();
+	const uint8 j = _scriptPtr.fetchByte();
 	debugC(kDebugScript, "Script::op_copyPage(%d, %d)", i, j);
 	_vid->copyPage(i, j, _scriptVars[VAR_SCROLL_Y]);
 }
 
 void Script::op_updateDisplay() {
-	uint8 page = _scriptPtr.fetchByte();
+	const uint8 page = _scriptPtr.fetchByte();
 	debugC(kDebugScript, "Script::op_updateDisplay(%d)", page);
 	inp_handleSpecialKeys();
 
@@ -331,54 +331,54 @@ void Script::op_removeTask() {
 }
 
 void Script::op_drawString() {
-	uint16 strId = _scriptPtr.fetchWord();
-	uint16 x = _scriptPtr.fetchByte();
-	uint16 y = _scriptPtr.fetchByte();
-	uint16 col = _scriptPtr.fetchByte();
+	const uint16 strId = _scriptPtr.fetchWord();
+	const uint16 x = _scriptPtr.fetchByte();
+	const uint16 y = _scriptPtr.fetchByte();
+	const uint16 col = _scriptPtr.fetchByte();
 	debugC(kDebugScript, "Script::op_drawString(0x%03X, %d, %d, %d)", strId, x, y, col);
 	_vid->drawString(col, x, y, strId);
 }
 
 void Script::op_sub() {
-	uint8 i = _scriptPtr.fetchByte();
-	uint8 j = _scriptPtr.fetchByte();
+	const uint8 i = _scriptPtr.fetchByte();
+	const uint8 j = _scriptPtr.fetchByte();
 	debugC(kDebugScript, "Script::op_sub(0x%02X, 0x%02X)", i, j);
 	_scriptVars[i] -= _scriptVars[j];
 }
 
 void Script::op_and() {
-	uint8 i = _scriptPtr.fetchByte();
-	uint16 n = _scriptPtr.fetchWord();
+	const uint8 i = _scriptPtr.fetchByte();
+	const uint16 n = _scriptPtr.fetchWord();
 	debugC(kDebugScript, "Script::op_and(0x%02X, %d)", i, n);
 	_scriptVars[i] = (uint16)_scriptVars[i] & n;
 }
 
 void Script::op_or() {
-	uint8 i = _scriptPtr.fetchByte();
-	uint16 n = _scriptPtr.fetchWord();
+	const uint8 i = _scriptPtr.fetchByte();
+	const uint16 n = _scriptPtr.fetchWord();
 	debugC(kDebugScript, "Script::op_or(0x%02X, %d)", i, n);
 	_scriptVars[i] = (uint16)_scriptVars[i] | n;
 }
 
 void Script::op_shl() {
-	uint8 i = _scriptPtr.fetchByte();
-	uint16 n = _scriptPtr.fetchWord();
+	const uint8 i = _scriptPtr.fetchByte();
+	const uint16 n = _scriptPtr.fetchWord();
 	debugC(kDebugScript, "Script::op_shl(0x%02X, %d)", i, n);
 	_scriptVars[i] = (uint16)_scriptVars[i] << n;
 }
 
 void Script::op_shr() {
-	uint8 i = _scriptPtr.fetchByte();
-	uint16 n = _scriptPtr.fetchWord();
+	const uint8 i = _scriptPtr.fetchByte();
+	const uint16 n = _scriptPtr.fetchWord();
 	debugC(kDebugScript, "Script::op_shr(0x%02X, %d)", i, n);
 	_scriptVars[i] = (uint16)_scriptVars[i] >> n;
 }
 
 void Script::op_playSound() {
-	uint16 resNum = _scriptPtr.fetchWord();
-	uint8 freq = _scriptPtr.fetchByte();
-	uint8 vol = _scriptPtr.fetchByte();
-	uint8 channel = _scriptPtr.fetchByte();
+	const uint16 resNum = _scriptPtr.fetchWord();
+	const uint8 freq = _scriptPtr.fetchByte();
+	const uint8 vol = _scriptPtr.fetchByte();
+	const uint8 channel = _scriptPtr.fetchByte();
 	debugC(kDebugScript, "Script::op_playSound(0x%X, %d, %d, %d)", resNum, freq, vol, channel);
 	snd_playSound(resNum, freq, vol, channel);
 }
@@ -388,7 +388,7 @@ static void preloadSoundCb(void *userdata, int soundNum, const uint8 *data) {
 }
 
 void Script::op_updateResources() {
-	uint16 num = _scriptPtr.fetchWord();
+	const uint16 num = _scriptPtr.fetchWord();
 	debugC(kDebugScript, "Script::op_updateResources(%d)", num);
 	if (num == 0) {
 		_ply->stop();
@@ -400,9 +400,9 @@ void Script::op_updateResources() {
 }
 
 void Script::op_playMusic() {
-	uint16 resNum = _scriptPtr.fetchWord();
-	uint16 delay = _scriptPtr.fetchWord();
-	uint8 pos = _scriptPtr.fetchByte();
+	const uint16 resNum = _scriptPtr.fetchWord();
+	const uint16 delay = _scriptPtr.fetchWord();
+	const uint8 pos = _scriptPtr.fetchByte();
 	debugC(kDebugScript, "Script::op_playMusic(0x%X, %d, %d)", resNum, delay, pos);
 	snd_playMusic(resNum, delay, pos);
 }
@@ -453,7 +453,7 @@ void Script::setupTasks() {
 	}
 	for (int i = 0; i < 0x40; ++i) {
 		_scriptStates[0][i] = _scriptStates[1][i];
-		uint16 n = _scriptTasks[1][i];
+		const uint16 n = _scriptTasks[1][i];
 		if (n != 0xFFFF) {
 			_scriptTasks[0][i] = (n == 0xFFFE) ? 0xFFFF : n;
 			_scriptTasks[1][i] = 0xFFFF;
@@ -464,7 +464,7 @@ void Script::setupTasks() {
 void Script::runTasks() {
 	for (int i = 0; i < 0x40 && !_stub->_pi.quit; ++i) {
 		if (_scriptStates[0][i] == 0) {
-			uint16 n = _scriptTasks[0][i];
+			const uint16 n = _scriptTasks[0][i];
 			if (n != 0xFFFF) {
 				_scriptPtr.pc = _res->_segCode + n;
 				_stackPtr = 0;
@@ -480,14 +480,14 @@ void Script::runTasks() {
 
 void Script::executeTask() {
 	while (!_scriptPaused) {
-		uint8 opcode = _scriptPtr.fetchByte();
+		const uint8 opcode = _scriptPtr.fetchByte();
 		if (opcode & 0x80) {
 			const uint16 off = ((opcode << 8) | _scriptPtr.fetchByte()) << 1;
 			_res->_useSegVideo2 = false;
 			Point pt;
 			pt.x = _scriptPtr.fetchByte();
 			pt.y = _scriptPtr.fetchByte();
-			int16 h = pt.y - 199;
+			const int16 h = pt.y - 199;
 			if (h > 0) {
 				pt.y = 199;
 				pt.x += h;
@@ -626,7 +626,7 @@ void Script::executeTask() {
 void Script::updateInput() {
 	_stub->processEvents();
 	if (_res->_currentPart == kPartPassword) {
-		char c = _stub->_pi.lastChar;
+		const char c = _stub->_pi.lastChar;
 		if (c == 8 || /*c == 0xD ||*/ c == 0 || (c >= 'a' && c <= 'z')) {
 			_scriptVars[VAR_LAST_KEYCHAR] = c & ~0x20;
 			_stub->_pi.lastChar = 0;

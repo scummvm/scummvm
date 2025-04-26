@@ -122,7 +122,7 @@ int8 AifcPlayer::readSampleData() {
 }
 
 void AifcPlayer::decodeSamples() {
-	for (uint32 pos = _rate.getInt(); pos == _rate.getInt(); _rate.offset += _rate.inc) {
+	for (const uint32 pos = _rate.getInt(); pos == _rate.getInt(); _rate.offset += _rate.inc) {
 		_sampleL = decodeSDX2(_sampleL, readSampleData());
 		_sampleR = decodeSDX2(_sampleR, readSampleData());
 	}

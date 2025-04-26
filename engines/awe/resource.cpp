@@ -154,7 +154,7 @@ void Resource::readEntries() {
 				if (me->status == 0xFF) {
 					const int num = MEMLIST_PARTS[8][1]; // 16008 bytecode
 					assert(num < _numMemList);
-					Common::String bank = Common::String::format(
+					const Common::String bank = Common::String::format(
 						"%s%02x", _bankPrefix, _memList[num].bankNum);
 					_hasPasswordScreen = Common::File::exists(bank.c_str());
 					return;
@@ -617,7 +617,7 @@ void Resource::setupPart(int ptrId) {
 			uint8 ivd1 = 0;
 			uint8 ivd2 = 0;
 			if (ptrId >= 16000 && ptrId <= 16009) {
-				uint16 part = ptrId - 16000;
+				const uint16 part = ptrId - 16000;
 				ipal = MEMLIST_PARTS[part][0];
 				icod = MEMLIST_PARTS[part][1];
 				ivd1 = MEMLIST_PARTS[part][2];

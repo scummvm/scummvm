@@ -25,8 +25,9 @@
 namespace Awe {
 
 // static const uint32 XOR_KEY1 = 0x31111612;
+// static const uint32 CHECKSUM = 0x20202020;
+
 static const uint32 XOR_KEY2 = 0x22683297;
-static const uint32 CHECKSUM = 0x20202020;
 
 static uint8 *decode_toodc(uint8 *p, int count) {
 	uint32 key = XOR_KEY2;
@@ -102,19 +103,20 @@ void Pak::readEntries() {
 		debugC(kDebugPak, "Pak::readEntries() buf '%s' size %d", e->name, e->size);
 	}
 	qsort(_entries, _entriesCount, sizeof(PakEntry), comparePakEntry);
+
+#if 0
 	// the original executable descrambles the (ke)y.txt file and check the last 4 bytes.
 	// this has been disabled in later re-releases and a key is bundled in the data files
-	if (0) {
-		uint8 buf[128];
-		const PakEntry *e = find("check.txt");
-		if (e && e->size <= sizeof(buf)) {
-			uint32 size = 0;
-			loadData(e, buf, &size);
-			assert(size >= 4);
-			const uint32 num = READ_LE_UINT32(buf + size - 4);
-			assert(num == CHECKSUM);
-		}
+	uint8 buf[128];
+	const PakEntry *e = find("check.txt");
+	if (e && e->size <= sizeof(buf)) {
+		uint32 size = 0;
+		loadData(e, buf, &size);
+		assert(size >= 4);
+		const uint32 num = READ_LE_UINT32(buf + size - 4);
+		assert(num == CHECKSUM);
 	}
+#endif
 }
 
 const PakEntry *Pak::find(const char *name) {

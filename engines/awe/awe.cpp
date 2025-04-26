@@ -112,7 +112,7 @@ Common::Error AweEngine::run() {
 		warning("Sound initialization failed.");
 	}
 
-	int part = 16001;
+	const int part = 16001;
 	const Language lang = getLanguage();
 	const DataType dataType = getDataType();
 	int graphicsType = GRAPHICS_SOFTWARE;
@@ -123,8 +123,8 @@ Common::Error AweEngine::run() {
 	dm.height = GFX_H;
 	dm.opengl = (graphicsType == GRAPHICS_GL);
 
-	bool defaultGraphics = true;
-	bool demo3JoyInputs = false;
+	const bool defaultGraphics = true;
+	const bool demo3JoyInputs = false;
 
 	Sound snd(_mixer);
 	Awe::Engine *e = new Awe::Engine(&snd, dataType, part);
