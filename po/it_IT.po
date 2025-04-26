@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-26 11:37+0000\n"
-"PO-Revision-Date: 2025-04-07 14:56+0000\n"
+"PO-Revision-Date: 2025-04-26 20:35+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -5237,19 +5237,19 @@ msgstr "Nei giochi"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export backup"
-msgstr ""
+msgstr "Esporta backup"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export a backup of the configuration and save files"
-msgstr ""
+msgstr "Esporta un backup dei salvataggi e dei file di configurazione"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import backup"
-msgstr ""
+msgstr "Importa backup"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import a previously exported backup file"
-msgstr ""
+msgstr "Importa un file di backup precedentemente creato"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:196
@@ -5257,53 +5257,45 @@ msgid "Remove folder authorizations..."
 msgstr "Rimuovi autorizzazioni cartelle..."
 
 #: backends/platform/android/options.cpp:268
-#, fuzzy
-#| msgid "Select the orientation:"
 msgid "Select backup destination"
-msgstr "Orientamento schermo:"
+msgstr "Seleziona destinazione backup"
 
 #: backends/platform/android/options.cpp:276
 msgid "The backup has been saved successfully."
-msgstr ""
+msgstr "Backup salvato con successo."
 
 #: backends/platform/android/options.cpp:278
 msgid "The backup has been saved successfully to the Downloads folder."
-msgstr ""
+msgstr "Il backup è stato salvato con successo nella cartella Downloads."
 
 #: backends/platform/android/options.cpp:280
 #: backends/platform/android/options.cpp:313
-#, fuzzy
-#| msgid "the shader could not be changed"
 msgid "The game saves couldn't be backed up"
-msgstr "non è stato possibile cambiare lo shader"
+msgstr "Non è stato possibile effettuare il backup dei salvataggi dei giochi"
 
 #: backends/platform/android/options.cpp:282
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while saving the backup."
-msgstr "Errore durante il salvataggio della partita"
+msgstr "Errore durante la creazione del backup."
 
 #: backends/platform/android/options.cpp:289
 msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
 msgstr ""
+"Il ripristino dal backup eliminerà la configurazione corrente e "
+"sovrascriverà i salvataggi esistenti. Sei sicuro di voler procedere?"
 
 #: backends/platform/android/options.cpp:294
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select backup file"
-msgstr "Seleziona un tema"
+msgstr "Seleziona file backup"
 
 #: backends/platform/android/options.cpp:311
 msgid "The backup has been restored successfully."
-msgstr ""
+msgstr "Il backup è stato ripristinato con successo."
 
 #: backends/platform/android/options.cpp:315
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while restoring the backup."
-msgstr "Errore durante il salvataggio della partita"
+msgstr "Errore durante il ripristino del backup."
 
 #: backends/platform/android/options.cpp:559
 msgid "Remove"
@@ -8027,32 +8019,24 @@ msgstr "Guarda in avanti"
 
 #: engines/freescape/games/dark/dark.cpp:229
 #: engines/freescape/games/driller/driller.cpp:198
-#, fuzzy
-#| msgid "Move left"
 msgid "Roll left"
-msgstr "Movimento verso sinistra"
+msgstr "Vira a sinistra"
 
 #: engines/freescape/games/dark/dark.cpp:234
 #: engines/freescape/games/driller/driller.cpp:203
-#, fuzzy
-#| msgid "Move right"
 msgid "Roll right"
-msgstr "Movimento verso destra"
+msgstr "Vira a destra"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/dark/dark.cpp:240
 #: engines/freescape/games/driller/driller.cpp:170
-#, fuzzy
-#| msgid "Increasing Volume"
 msgid "Increase Turn Angle"
-msgstr "Aumento volume"
+msgstr "Aumenta Angolo di Rotazione"
 
 #: engines/freescape/games/dark/dark.cpp:245
 #: engines/freescape/games/driller/driller.cpp:175
-#, fuzzy
-#| msgid "Decreasing Volume"
 msgid "Decrease Turn Angle"
-msgstr "Diminuzione volume"
+msgstr "Riduci Angolo di Rotazione"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:251
@@ -10106,14 +10090,14 @@ msgid "3DO Plumbers requires RGB support."
 msgstr "La versione 3DO di Plumbers richiede il supporto RGB."
 
 #: engines/qdengine/dialogs.cpp:32
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable 16 bits per pixel mode"
-msgstr "Attiva la modalità di debug"
+msgstr "Abilità modalità a 16 bit per pixel"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
 msgstr ""
+"Abilita questa opzione se il tuo backend non supporta la modalità a 32 bpp e/"
+"o per il debugging della grafica"
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
