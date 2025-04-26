@@ -658,22 +658,29 @@ PackageArchive::~PackageArchive() {
 }
 
 bool PackageArchive::load(const char *prefix) {
-	byte pakFileSizeBytes[4];
+	byte pakFileEOFBytes[4];
 
 	int64 pakFileStartPos = _stream->pos();
 	int64 maxPakFileSize = _stream->size() - pakFileStartPos;
 
-	if (_stream->read(pakFileSizeBytes, 4) != 4) {
+	if (_stream->read(pakFileEOFBytes, 4) != 4) {
 		warning("GenteeInstaller::PackageArchive::load: Couldn't read pak file size declaration");
 		return false;
 	}
 
-	uint32 pakFileSize = READ_LE_UINT32(pakFileSizeBytes);
+	uint32 pakFileEOF = READ_LE_UINT32(pakFileEOFBytes);
 
-	if (static_cast<int64>(pakFileSize) < maxPakFileSize) {
+	if (static_cast<int64>(pakFileEOF) > _stream->size()) {
 		warning("GenteeInstaller::PackageArchive::load: Pak file size was larger than would be possible");
 		return false;
 	}
+
+	if (static_cast<int64>(pakFileEOF) < pakFileStartPos) {
+		warning("GenteeInstaller::PackageArchive::load: Pak file EOF preceded the start position");
+		return false;
+	}
+
+	uint32 pakFileSize = static_cast<uint32>(static_cast<int64>(pakFileEOF) - pakFileStartPos);
 
 	if (pakFileStartPos != 0 || maxPakFileSize != pakFileSize) {
 		_stream = new Common::SeekableSubReadStream(_stream, pakFileStartPos, static_cast<uint32>(pakFileStartPos) + pakFileSize, DisposeAfterUse::YES);
@@ -761,7 +768,6 @@ bool PackageArchive::load(const char *prefix) {
 					if (fileCtx->decompressBytes(skipBuf, amountToSkip) != amountToSkip) {
 						warning("GenteeInstaller::PackageArchive::load: Couldn't decompress file data to skip it");
 						return false;
-
 					}
 
 					skipRemaining -= amountToSkip;
