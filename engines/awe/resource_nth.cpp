@@ -35,7 +35,7 @@ static char *loadTextFile(File &f, const int size) {
 		if (count != size) {
 			warning("Failed to read %d bytes (%d expected)", count, size);
 			free(buf);
-			return 0;
+			return nullptr;
 		}
 		buf[count] = 0;
 	}
@@ -56,7 +56,7 @@ struct Resource15th : ResourceNth {
 		_hasRemasteredMusic = Common::FSNode(_dataPath).isDirectory();
 		Common::strcpy_s(_dataPath, "Data");
 		Common::strcpy_s(_menuPath, "Menu");
-		_textBuf = 0;
+		_textBuf = nullptr;
 		memset(_stringsTable, 0, sizeof(_stringsTable));
 	}
 
@@ -71,7 +71,7 @@ struct Resource15th : ResourceNth {
 	}
 
 	virtual uint8 *load(const char *name) {
-		uint8 *buf = 0;
+		uint8 *buf = nullptr;
 		const PakEntry *e = _pak.find(name);
 		if (e) {
 			buf = (uint8 *)malloc(e->size);
@@ -105,12 +105,12 @@ struct Resource15th : ResourceNth {
 		} else {
 			warning("Unable to load '%s'", name);
 		}
-		return 0;
+		return nullptr;
 	}
 
 	virtual uint8 *loadWav(int num, uint8 *dst, uint32 *size) {
 		char name[32];
-		const PakEntry *e = 0;
+		const PakEntry *e = nullptr;
 		if (Script::_useRemasteredAudio) {
 			snprintf(name, sizeof(name), "rmsnd/file%03d.wav", num);
 			e = _pak.find(name);
@@ -134,12 +134,12 @@ struct Resource15th : ResourceNth {
 		} else {
 			warning("Unable to load '%s'", name);
 		}
-		return 0;
+		return nullptr;
 	}
 
 	void loadStrings(Language lang) {
 		if (!_textBuf) {
-			const char *name = 0;
+			const char *name = nullptr;
 			switch (lang) {
 			case Common::FR_FRA:
 				name = "Francais.Txt";
@@ -199,11 +199,11 @@ struct Resource15th : ResourceNth {
 		if ((uint32)num < ARRAYSIZE(_stringsTable)) {
 			return _stringsTable[num];
 		}
-		return 0;
+		return nullptr;
 	}
 
 	virtual const char *getMusicName(int num) {
-		const char *path = 0;
+		const char *path = nullptr;
 		switch (num) {
 		case 7:
 			if (_hasRemasteredMusic && Script::_useRemasteredAudio) {
@@ -233,19 +233,19 @@ static uint8 *inflateGzip(const char *filepath) {
 	File f;
 	if (!f.open(filepath)) {
 		warning("Unable to open '%s'", filepath);
-		return 0;
+		return nullptr;
 	}
 	const uint16 sig = f.readUint16LE();
 	if (sig != 0x8B1F) {
 		warning("Unexpected file signature 0x%x for '%s'", sig, filepath);
-		return 0;
+		return nullptr;
 	}
 	f.seek(-4, SEEK_END);
 	const uint32 dataSize = f.readUint32LE();
 	uint8 *out = (uint8 *)malloc(dataSize);
 	if (!out) {
 		warning("Failed to allocate %d bytes", dataSize);
-		return 0;
+		return nullptr;
 	}
 	f.seek(0);
 
@@ -275,7 +275,7 @@ static uint8 *inflateGzip(const char *filepath) {
 #else
 	error("TODO: inflateGzip");
 #endif
-	return 0;
+	return nullptr;
 }
 
 struct Resource20th : ResourceNth {
@@ -286,7 +286,7 @@ struct Resource20th : ResourceNth {
 	char _datName[32];
 	const char *_bitmapSize;
 
-	Resource20th() : _textBuf(0) {
+	Resource20th() : _textBuf(nullptr) {
 		memset(_stringsTable, 0, sizeof(_stringsTable));
 		_musicType = 0;
 		_datName[0] = 0;
@@ -297,7 +297,7 @@ struct Resource20th : ResourceNth {
 	}
 
 	virtual bool init() {
-		static const char *dirs[] = { "BGZ", "DAT", "WGZ", 0 };
+		static const char *dirs[] = { "BGZ", "DAT", "WGZ", nullptr };
 		for (int i = 0; dirs[i]; ++i) {
 			char path[MAXPATHLEN];
 			snprintf(path, sizeof(path), "game/%s", dirs[i]);
@@ -317,9 +317,9 @@ struct Resource20th : ResourceNth {
 			"768x480",
 			"480x300",
 			"320x200",
-			0
+			nullptr
 		};
-		_bitmapSize = 0;
+		_bitmapSize = nullptr;
 		for (int i = 0; bmps[i]; ++i) {
 			char path[MAXPATHLEN];
 			snprintf(path, sizeof(path), "game/BGZ/data%s", bmps[i]);
@@ -340,7 +340,7 @@ struct Resource20th : ResourceNth {
 			return inflateGzip("game/BGZ/Heads.bgz");
 		}
 
-		return 0;
+		return nullptr;
 	}
 
 	virtual uint8 *loadBmp(int num) {
@@ -356,10 +356,10 @@ struct Resource20th : ResourceNth {
 
 	void preloadDat(int part, int type, int num) {
 		static const char *names[] = {
-			"INTRO", "EAU", "PRI", "CITE", "arene", "LUXE", "FINAL", 0
+			"INTRO", "EAU", "PRI", "CITE", "arene", "LUXE", "FINAL", nullptr
 		};
 		static const char *exts[] = {
-			"pal", "mac", "mat", 0
+			"pal", "mac", "mat", nullptr
 		};
 		if (part > 0 && part < 8) {
 			if (type == 3) {
@@ -396,7 +396,7 @@ struct Resource20th : ResourceNth {
 			*size = dataSize;
 		} else {
 			warning("Unable to open '%s/%s'", path, _datName);
-			dst = 0;
+			dst = nullptr;
 		}
 		_datName[0] = 0;
 		return dst;
@@ -469,7 +469,7 @@ struct Resource20th : ResourceNth {
 
 	void loadStrings(Language lang) {
 		if (!_textBuf) {
-			const char *name = 0;
+			const char *name = nullptr;
 			switch (lang) {
 			case Common::FR_FRA:
 				name = "FR";
@@ -493,7 +493,7 @@ struct Resource20th : ResourceNth {
 			static const char *fmt[] = {
 				"game/TXT/%s.txt",
 				"game/TXT/Linux/%s.txt",
-				0
+				nullptr
 			};
 			bool isOpen = false;
 			File f;
@@ -524,7 +524,7 @@ struct Resource20th : ResourceNth {
 		if ((uint32)num < ARRAYSIZE(_stringsTable)) {
 			return _stringsTable[num];
 		}
-		return 0;
+		return nullptr;
 	}
 
 	virtual const char *getMusicName(int num) {
@@ -557,7 +557,7 @@ struct Resource20th : ResourceNth {
 				}
 				/* fall-through */
 			default:
-				return 0;
+				return nullptr;
 			}
 		}
 		return _musicName;
@@ -579,7 +579,7 @@ ResourceNth *ResourceNth::create(int edition) {
 	case 20:
 		return new Resource20th();
 	}
-	return 0;
+	return nullptr;
 }
 
 } // namespace Awe

@@ -262,7 +262,7 @@ const StrEntry Video::STRINGS_TABLE_FR[] = {
 	{ 0x193, "Monsieur est en parfaite sante." },
 	{ 0x194, "O" },
 	{ 0x193, "AU BOULOT !!!\n" },
-	{ 0xFFFF, 0 }
+	{ 0xFFFF, nullptr }
 };
 
 const StrEntry Video::STRINGS_TABLE_ENG[] = {
@@ -406,7 +406,7 @@ const StrEntry Video::STRINGS_TABLE_ENG[] = {
 	{ 0x193, "Monsieur est en parfaite sante." },
 	{ 0x194, "Y\n" },
 	{ 0x193, "AU BOULOT !!!\n" },
-	{ 0xFFFF, 0 }
+	{ 0xFFFF, nullptr }
 };
 
 const StrEntry Video::STRINGS_TABLE_DEMO[] = {
@@ -417,7 +417,7 @@ const StrEntry Video::STRINGS_TABLE_DEMO[] = {
 	{ 0x1F8, "Nature decides to put a little\n    extra spin on the ball" },
 	{ 0x1F9, "And sends you ..." },
 	{ 0x1FA, "     Out of this World\nA Cinematic Action Adventure\n from Interplay Productions\n                    \n       By Eric CHAHI      \n\n  IBM version : D.MORAIS\n" },
-	{ 0xFFFF, 0 }
+	{ 0xFFFF, nullptr }
 };
 
 const uint16 Video::STRINGS_ID_15TH[] = {
@@ -703,7 +703,7 @@ const StrEntry Video::STRINGS_TABLE_3DO[] = {
 	{ 401, "I see you have driven here in your\nFerrari." },
 	{ 402, "IDENTIFICATION" },
 	{ 404, "Y" },
-	{ 0xFFFF, 0 }
+	{ 0xFFFF, nullptr }
 };
 
 const char *Video::NOTE_TEXT_3DO = {

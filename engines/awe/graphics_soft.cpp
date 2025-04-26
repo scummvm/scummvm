@@ -88,7 +88,7 @@ GraphicsSoft::GraphicsSoft() {
 GraphicsSoft::~GraphicsSoft() {
 	for (int i = 0; i < 4; ++i) {
 		free(_pagePtrs[i]);
-		_pagePtrs[i] = 0;
+		_pagePtrs[i] = nullptr;
 	}
 }
 

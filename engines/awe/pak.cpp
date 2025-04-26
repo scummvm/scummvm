@@ -46,7 +46,7 @@ static uint8 *decode_toodc(uint8 *p, int count) {
 const char *Pak::FILENAME = "Pak01.pak";
 
 Pak::Pak()
-	: _entries(0), _entriesCount(0) {
+	: _entries(nullptr), _entriesCount(0) {
 }
 
 Pak::~Pak() {
@@ -59,7 +59,7 @@ void Pak::open(const char *dataPath) {
 
 void Pak::close() {
 	free(_entries);
-	_entries = 0;
+	_entries = nullptr;
 	_entriesCount = 0;
 }
 

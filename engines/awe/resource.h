@@ -160,7 +160,7 @@ struct Resource {
 	void loadHeads();
 	uint8 *loadWav(int num, uint32 *size = nullptr);
 	const char *getString(int num);
-	const char *getMusicPath(int num, char *buf, int bufSize, uint32 *offset = 0);
+	const char *getMusicPath(int num, char *buf, int bufSize, uint32 *offset = nullptr);
 	void setupPart(int part);
 	void allocMemBlock();
 	void freeMemBlock();

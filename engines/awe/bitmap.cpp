@@ -50,7 +50,7 @@ static void clut(const uint8 *src, const uint8 *pal, int pitch, int w, int h, in
 
 uint8 *decode_bitmap(const uint8 *src, bool alpha, int colorKey, int *w, int *h) {
 	if (memcmp(src, "BM", 2) != 0) {
-		return 0;
+		return nullptr;
 	}
 	const uint32 imageOffset = READ_LE_UINT32(src + 0xA);
 	const int width = READ_LE_UINT32(src + 0x12);
@@ -59,13 +59,13 @@ uint8 *decode_bitmap(const uint8 *src, bool alpha, int colorKey, int *w, int *h)
 	const int compression = READ_LE_UINT32(src + 0x1E);
 	if ((depth != 8 && depth != 32) || compression != 0) {
 		warning("Unhandled bitmap depth %d compression %d", depth, compression);
-		return 0;
+		return nullptr;
 	}
 	const int bpp = (!alpha && colorKey < 0) ? 3 : 4;
 	uint8 *dst = (uint8 *)malloc(width * height * bpp);
 	if (!dst) {
 		warning("Failed to allocate bitmap buffer, width %d height %d bpp %d", width, height, bpp);
-		return 0;
+		return nullptr;
 	}
 	if (depth == 8) {
 		const uint8 *palette = src + 14 /* BITMAPFILEHEADER */ + 40 /* BITMAPINFOHEADER */;
