@@ -187,7 +187,7 @@ void SfxPlayer::handlePattern(uint8 channel, const uint8 *data) {
 		uint16 sample = (pat.note_2 & 0xF000) >> 12;
 		if (sample != 0) {
 			uint8 *ptr = _sfxMod.samples[sample - 1].data;
-			if (ptr != 0) {
+			if (ptr != nullptr) {
 				debugC(kDebugSound, "SfxPlayer::handlePattern() preparing sample %d", sample);
 				pat.sampleVolume = _sfxMod.samples[sample - 1].volume;
 				pat.sampleStart = 8;
@@ -226,7 +226,7 @@ void SfxPlayer::handlePattern(uint8 channel, const uint8 *data) {
 		*_syncVar = pat.note_2;
 	} else if (pat.note_1 == 0xFFFE) {
 		_channels[channel].sampleLen = 0;
-	} else if (pat.note_1 != 0 && pat.sampleBuffer != 0) {
+	} else if (pat.note_1 != 0 && pat.sampleBuffer != nullptr) {
 		assert(pat.note_1 >= 0x37 && pat.note_1 < 0x1000);
 		// convert Amiga period value to hz
 		const int freq = kPaulaFreq / (pat.note_1 * 2);

@@ -43,7 +43,7 @@ static const struct {
 	{ "original", GRAPHICS_ORIGINAL },
 	{ "software", GRAPHICS_SOFTWARE },
 	{ "gl", GRAPHICS_GL },
-	{ 0,  -1 }
+	{ nullptr,  -1 }
 };
 
 static const struct {
@@ -53,7 +53,7 @@ static const struct {
 	{ "easy", DIFFICULTY_EASY },
 	{ "normal", DIFFICULTY_NORMAL },
 	{ "hard", DIFFICULTY_HARD },
-	{ 0,  -1 }
+	{ nullptr,  -1 }
 };
 
 bool Gfx::_is1991;
@@ -77,7 +77,7 @@ static Gfx *createGraphics(int type) {
 #endif
 	}
 
-	return 0;
+	return nullptr;
 }
 
 static int getGraphicsType(DataType type) {

@@ -61,7 +61,7 @@ struct Bitstream {
 	int _len;
 
 	Bitstream()
-		: _f(0), _size(0), _bits(0), _len(0) {
+		: _f(nullptr), _size(0), _bits(0), _len(0) {
 	}
 
 	void reset(File *f, int size) {
@@ -282,7 +282,7 @@ bool ResourceWin31::readEntries() {
 			readStrings();
 		}
 	}
-	return _entries != 0;
+	return _entries != nullptr;
 }
 
 uint8 *ResourceWin31::loadFile(int num, uint8 *dst, uint32 *size) {
@@ -293,7 +293,7 @@ uint8 *ResourceWin31::loadFile(int num, uint8 *dst, uint32 *size) {
 			dst = (uint8 *)malloc(e->size);
 			if (!dst) {
 				warning("Unable to allocate %d bytes", e->size);
-				return 0;
+				return nullptr;
 			}
 		}
 		// check for unpacked data
@@ -310,19 +310,19 @@ uint8 *ResourceWin31::loadFile(int num, uint8 *dst, uint32 *size) {
 		}
 	}
 	warning("Unable to load resource #%d", num);
-	return 0;
+	return nullptr;
 }
 
 void ResourceWin31::readStrings() {
 	uint32 len, offset = 0;
-	_textBuf = loadFile(148, 0, &len);
+	_textBuf = loadFile(148, nullptr, &len);
 	while (1) {
 		const uint32 sep = READ_LE_UINT32(_textBuf + offset); offset += 4;
 		const uint16 num = sep >> 16;
 		if (num == 0xFFFF) {
 			break;
 		}
-		if (num < ARRAYSIZE(_stringsTable) && _stringsTable[num] == 0) {
+		if (num < ARRAYSIZE(_stringsTable) && _stringsTable[num] == nullptr) {
 			_stringsTable[num] = (const char *)_textBuf + offset;
 		}
 		while (offset < len && _textBuf[offset++] != 0);
@@ -344,7 +344,7 @@ const char *ResourceWin31::getMusicName(int num) const {
 	case 138:
 		return "X.mid";
 	}
-	return 0;
+	return nullptr;
 }
 
 } // namespace Awe

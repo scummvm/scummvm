@@ -42,7 +42,7 @@ void Video::init() {
 }
 
 void Video::setDefaultFont() {
-	_graphics->setFont(0, 0, 0);
+	_graphics->setFont(nullptr, 0, 0);
 }
 
 void Video::setFont(const uint8 *font) {
@@ -295,12 +295,12 @@ static const char *findString(const StrEntry *stringsTable, int id) {
 			return se->str;
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 void Video::drawString(uint8 color, uint16 x, uint16 y, uint16 strId) {
 	bool escapedChars = false;
-	const char *str = 0;
+	const char *str = nullptr;
 	if (_res->getDataType() == DT_15TH_EDITION || _res->getDataType() == DT_20TH_EDITION) {
 		for (int i = 0; i < NTH_EDITION_STRINGS_COUNT; ++i) {
 			if (Video::STRINGS_ID_15TH[i] == strId) {

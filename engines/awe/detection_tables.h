@@ -23,7 +23,7 @@ namespace Awe {
 
 const PlainGameDescriptor aweGames[] = {
 	{ "anotherworld", "Another World - Out of this World" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 const AweGameDescription gameDescriptions[] = {

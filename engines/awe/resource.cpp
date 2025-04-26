@@ -83,7 +83,7 @@ const AmigaMemEntry *Resource::detectAmigaAtari() {
 		{ 244674, Resource::MEMLIST_AMIGA_FR },
 		{ 244868, Resource::MEMLIST_AMIGA_EN },
 		{ 227142, Resource::MEMLIST_ATARI_EN },
-		{ 0, 0 }
+		{ 0, nullptr }
 	};
 	if (f.open("bank01")) {
 		const uint32 size = f.size();
@@ -248,7 +248,7 @@ void Resource::dumpEntries() {
 
 void Resource::load() {
 	while (1) {
-		MemEntry *me = 0;
+		MemEntry *me = nullptr;
 
 		// get resource with max rankNum
 		uint8 maxNum = 0;
@@ -259,13 +259,13 @@ void Resource::load() {
 				me = it;
 			}
 		}
-		if (me == 0) {
+		if (me == nullptr) {
 			break; // no entry found
 		}
 
 		const int resourceNum = me - _memList;
 
-		uint8 *memPtr = 0;
+		uint8 *memPtr = nullptr;
 		if (me->type == RT_BITMAP) {
 			memPtr = _vidCurPtr;
 		} else {
@@ -369,7 +369,7 @@ static const uint8 *getSoundsList3DO(int num) {
 	default: break;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void Resource::update(uint16 num, PreloadSoundProc preloadSound, void *data) {
@@ -428,17 +428,17 @@ void Resource::update(uint16 num, PreloadSoundProc preloadSound, void *data) {
 
 void Resource::loadBmp(int num) {
 	uint32 size = 0;
-	uint8 *p = 0;
+	uint8 *p = nullptr;
 	switch (_dataType) {
 	case DT_15TH_EDITION:
 	case DT_20TH_EDITION:
 		p = _nth->loadBmp(num);
 		break;
 	case DT_WIN31:
-		p = _win31->loadFile(num, 0, &size);
+		p = _win31->loadFile(num, nullptr, &size);
 		break;
 	case DT_3DO:
-		p = _3do->loadFile(num, 0, &size);
+		p = _3do->loadFile(num, nullptr, &size);
 		break;
 	default:
 		break;
@@ -455,7 +455,7 @@ uint8 *Resource::loadDat(int num) {
 		return _memList[num].bufPtr;
 	}
 	uint32 size = 0;
-	uint8 *p = 0;
+	uint8 *p = nullptr;
 	switch (_dataType) {
 	case DT_15TH_EDITION:
 	case DT_20TH_EDITION:
@@ -506,7 +506,7 @@ uint8 *Resource::loadWav(int num, uint32 *size) {
 	uint32 dummy = 0;
 	if (!size)
 		size = &dummy;
-	uint8 *p = 0;
+	uint8 *p = nullptr;
 	switch (_dataType) {
 	case DT_15TH_EDITION:
 	case DT_20TH_EDITION:
@@ -518,7 +518,7 @@ uint8 *Resource::loadWav(int num, uint32 *size) {
 	default:
 		break;
 	}
-	if (p && size != 0) {
+	if (p && size != nullptr) {
 		_scriptCurPtr += *size;
 		_memList[num].bufPtr = p;
 		_memList[num].status = STATUS_LOADED;
@@ -537,11 +537,11 @@ const char *Resource::getString(int num) {
 	default:
 		break;
 	}
-	return 0;
+	return nullptr;
 }
 
 const char *Resource::getMusicPath(int num, char *buf, int bufSize, uint32 *offset) {
-	const char *name = 0;
+	const char *name = nullptr;
 	switch (_dataType) {
 	case DT_15TH_EDITION:
 	case DT_20TH_EDITION:
@@ -563,7 +563,7 @@ const char *Resource::getMusicPath(int num, char *buf, int bufSize, uint32 *offs
 		return buf;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 const uint8 Resource::MEMLIST_PARTS[][4] = {
@@ -655,7 +655,7 @@ void Resource::allocMemBlock() {
 
 void Resource::freeMemBlock() {
 	free(_memPtrStart);
-	_memPtrStart = 0;
+	_memPtrStart = nullptr;
 }
 
 void Resource::readDemo3Joy() {

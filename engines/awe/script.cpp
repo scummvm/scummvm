@@ -31,7 +31,7 @@
 namespace Awe {
 
 Script::Script(Sound *snd, Resource *res, SfxPlayer *ply, Video *vid)
-	: _sound(snd), _res(res), _ply(ply), _vid(vid), _stub(0) {
+	: _sound(snd), _res(res), _ply(ply), _vid(vid), _stub(nullptr) {
 }
 
 void Script::init() {
