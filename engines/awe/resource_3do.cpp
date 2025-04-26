@@ -70,14 +70,17 @@ static void decodeCcb16(int ccbWidth, int ccbHeight, File *f, uint32 dataSize, u
 				dst += count;
 				break;
 			case 3:
-			{
+				{
 				const uint16 color = f->readUint16BE();
 				for (int i = 0; i < count; ++i) {
 					*dst++ = color;
 				}
 				scanlineLen += 2;
-			}
-			break;
+				}
+				break;
+				
+			default:
+				break;
 			}
 			w -= count;
 		}

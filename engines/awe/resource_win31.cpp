@@ -344,6 +344,8 @@ const char *ResourceWin31::getMusicName(int num) const {
 		return "y.mid";
 	case 138:
 		return "X.mid";
+	default:
+		break;
 	}
 	return nullptr;
 }

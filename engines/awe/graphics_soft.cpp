@@ -398,6 +398,8 @@ void GraphicsSoft::drawBitmap(int buffer, const uint8 *data, int w, int h, int f
 			return;
 		}
 		break;
+	default:
+		break;
 	}
 	warning("GraphicsSoft::drawBitmap() unhandled fmt %d w %d h %d", fmt, w, h);
 }

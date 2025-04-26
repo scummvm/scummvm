@@ -531,6 +531,8 @@ void GraphicsGL::drawBitmap(int listNum, const uint8 *data, int w, int h, int fm
 		_backgroundTex.clear();
 		_backgroundTex.readRGB555((const uint16 *)data, w, h);
 		break;
+	default:
+		break;
 	}
 	_fptr.glBindFramebuffer(GL_FRAMEBUFFER, _fbPage0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + listNum);

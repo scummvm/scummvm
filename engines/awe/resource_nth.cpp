@@ -219,6 +219,9 @@ struct Resource15th : ResourceNth {
 				path = "Music/AW/End2004.wav";
 			}
 			break;
+			
+		default:
+			break;
 		}
 		return path;
 	}
@@ -417,23 +420,24 @@ struct Resource20th : ResourceNth {
 
 		switch (num) {
 		case 81:
-		{
+			{
 			const int r = g_engine->getRandomNumber(1, 3);
 			snprintf(path, sizeof(path), "game/WGZ/file081-EX-%d.wgz", r);
-		}
-		break;
+			}
+			break;
+
 		case 85:
-		{
+			{
 			const int r = g_engine->getRandomNumber(1, 2);
 			const char *snd = "IN";
 			if (_musicType == 1) {
 				snd = "EX";
 			}
 			snprintf(path, sizeof(path), "game/WGZ/file085-%s-%d.wgz", snd, r);
-		}
-		break;
+			}
+			break;
 		case 96:
-		{
+			{
 			const int r = g_engine->getRandomNumber(1, 3);
 			const char *snd = "GR";
 			if (_musicType == 1) {
@@ -442,10 +446,10 @@ struct Resource20th : ResourceNth {
 				snd = "IN";
 			}
 			snprintf(path, sizeof(path), "game/WGZ/file096-%s-%d.wgz", snd, r);
-		}
-		break;
+			}
+			break;
 		case 163:
-		{
+			{
 			const char *snd = "GR";
 			if (_musicType == 1) {
 				snd = "EX";
@@ -453,15 +457,14 @@ struct Resource20th : ResourceNth {
 				snd = "IN";
 			}
 			snprintf(path, sizeof(path), "game/WGZ/file163-%s-1.wgz", snd);
-		}
-		break;
-		default: {
+			}
+			break;
+		default:
 			snprintf(path, sizeof(path), "game/WGZ/file%03d.wgz", num);
 			if (!Common::File::exists(path)) {
 				snprintf(path, sizeof(path), "game/WGZ/file%03dB.wgz", num);
 			}
-		}
-		break;
+			break;
 		}
 		*size = 0;
 		return inflateGzip(path);
@@ -578,6 +581,8 @@ ResourceNth *ResourceNth::create(int edition) {
 		return new Resource15th();
 	case 20:
 		return new Resource20th();
+	default:
+		break;
 	}
 	return nullptr;
 }

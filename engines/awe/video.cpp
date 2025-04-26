@@ -275,6 +275,9 @@ void Video::drawShapeParts(uint16 zoom, const Point *pgc) {
 				}
 				case 0x50:
 					return;
+
+				default:
+					break;
 				}
 			}
 			color &= 0x7F;
@@ -343,6 +346,9 @@ void Video::drawString(uint8 color, uint16 x, uint16 y, uint16 strId) {
 				case 'n':
 					y += 8;
 					x = xx;
+					break;
+
+				default:
 					break;
 				}
 			}

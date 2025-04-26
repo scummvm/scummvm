@@ -81,8 +81,12 @@ void Engine::run() {
 			case 16000:
 				_state = kStateTitle3DO;
 				break;
+			default:
+				break;
 			}
 		}
+		break;
+	default:
 		break;
 	}
 }
@@ -133,7 +137,6 @@ void Engine::setup(Language lang, int graphicsType) {
 	case DT_WIN31:
 	case DT_15TH_EDITION:
 	case DT_20TH_EDITION:
-		break;
 	case DT_3DO:
 		break;
 	}

@@ -74,7 +74,13 @@ static Gfx *createGraphics(int type) {
 		debugC(kDebugInfo, "Using GL graphics");
 #ifdef USE_GL
 		return GraphicsGL_create();
+#elsif
+		break;
 #endif
+
+	default:
+		break;
+
 	}
 
 	return nullptr;
