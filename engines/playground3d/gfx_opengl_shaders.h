@@ -58,6 +58,9 @@ public:
 	void enableFog(const Math::Vector4d &fogColor) override;
 	void disableFog() override;
 
+	void enableScissor(int x, int y, int width, int height) override;
+	void disableScissor() override;
+
 private:
 	OpenGL::Shader *_cubeShader;
 	OpenGL::Shader *_offsetShader;

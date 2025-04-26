@@ -72,6 +72,9 @@ public:
 	virtual void enableFog(const Math::Vector4d &fogColor) = 0;
 	virtual void disableFog() = 0;
 
+	virtual void enableScissor(int x, int y, int width, int height) = 0;
+	virtual void disableScissor() = 0;
+
 protected:
 	OSystem *_system;
 
