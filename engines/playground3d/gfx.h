@@ -70,6 +70,7 @@ public:
 	virtual void drawRgbaTexture() = 0;
 
 	virtual void enableFog(const Math::Vector4d &fogColor) = 0;
+	virtual void disableFog() = 0;
 
 protected:
 	OSystem *_system;
