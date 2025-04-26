@@ -238,7 +238,7 @@ private:
 	uint8 *_sfxTrackData;
 	TownsPC98_AudioDriver *_driver;
 
-	const SoundResourceInfo_TownsPC98V2 *res() const {return _resInfo[_currentResourceSet]; }
+	const SoundResourceInfo_TownsPC98V2 *res() const { return _resInfo[_currentResourceSet]; }
 	SoundResourceInfo_TownsPC98V2 *_resInfo[3];
 	int _currentResourceSet;
 };
