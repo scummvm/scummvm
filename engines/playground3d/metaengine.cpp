@@ -64,6 +64,12 @@ public:
 		act->addDefaultInputMapping("JOY_X");
 		keymap->addAction(act);
 
+		act = new Common::Action("SCISSOR", _("Enable/Disable scissor"));
+		act->setCustomEngineActionEvent(Playground3d::kActionEnableScissor);
+		act->addDefaultInputMapping("s");
+		act->addDefaultInputMapping("JOY_Y");
+		keymap->addAction(act);
+
 		Common::KeymapArray keymaps = { keymap };
 		return keymaps;
 	}

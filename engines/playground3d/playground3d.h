@@ -34,7 +34,8 @@ namespace Playground3d {
 
 enum Actions {
 	kActionSwitchTest,
-	kActionEnableFog
+	kActionEnableFog,
+	kActionEnableScissor
 };
 
 class Playground3dEngine : public Engine {
@@ -61,6 +62,7 @@ private:
 	float _fade;
 	bool _fadeIn;
 	bool _fogEnable;
+	bool _scissorEnable;
 	Graphics::Surface *_rgbaTexture;
 	Graphics::Surface *_rgbTexture;
 	Graphics::Surface *_rgb565Texture;
