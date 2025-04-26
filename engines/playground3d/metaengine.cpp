@@ -22,6 +22,11 @@
 #include "base/plugins.h"
 
 #include "common/system.h"
+#include "common/translation.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "engines/advancedDetector.h"
 
@@ -40,6 +45,27 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override {
 		return false;
+	}
+
+	Common::KeymapArray initKeymaps(const char *target) const override {
+		Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "playground3d", _("Default keymappings"));
+
+		Common::Action *act;
+
+		act = new Common::Action(Common::kStandardActionLeftClick, _("Switch test"));
+		act->setCustomEngineActionEvent(Playground3d::kActionSwitchTest);
+		act->addDefaultInputMapping("MOUSE_LEFT");
+		act->addDefaultInputMapping("JOY_A");
+		keymap->addAction(act);
+
+		act = new Common::Action("FOG", _("Enable/Disable fog"));
+		act->setCustomEngineActionEvent(Playground3d::kActionEnableFog);
+		act->addDefaultInputMapping("f");
+		act->addDefaultInputMapping("JOY_X");
+		keymap->addAction(act);
+
+		Common::KeymapArray keymaps = { keymap };
+		return keymaps;
 	}
 };
 
