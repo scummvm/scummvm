@@ -3802,6 +3802,8 @@ if test -n "$_host"; then
 			_strip=$_host-strip
 			if `which $_host-peldd >/dev/null 2>&1`; then
 				_ldd="$_host-peldd -t --ignore-errors"
+			elif `which peldd >/dev/null 2>&1`; then
+				_ldd="peldd -t --ignore-errors"
 			fi
 			;;
 		mips-sgi*)
