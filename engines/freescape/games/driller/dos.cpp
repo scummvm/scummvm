@@ -302,7 +302,7 @@ void DrillerEngine::loadAssetsDOSDemo() {
 	loadFonts(&file, 0x4eb0);
 	loadMessagesFixedSize(&file, 0x636, 14, 20);
 	load8bitBinary(&file, 0x55b0, 4);
-	loadGlobalObjects(&file, 0x8c, 5);
+	loadGlobalObjects(&file, 0x53, 8);
 	_border = load8bitDemoImage(&file, 0x6220);
 	_border->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
 

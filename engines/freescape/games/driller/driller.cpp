@@ -530,8 +530,6 @@ void DrillerEngine::pressedKey(const int keycode) {
 	} else if (keycode == kActionRollLeft) {
 		rotate(0, 0, _angleRotations[_angleRotationIndex]);
 	} else if (keycode == kActionDeployDrillingRig) {
-		if (isDOS() && isDemo()) // No support for drilling here yet
-			return;
 		clearTemporalMessages();
 		Common::Point gasPocket = _currentArea->_gasPocketPosition;
 		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
@@ -568,6 +566,9 @@ void DrillerEngine::pressedKey(const int keycode) {
 		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
 		const Math::Vector3d gasPocket3D(gasPocket.x, drill.y(), gasPocket.y);
 		float distanceToPocket = (gasPocket3D - drill).length();
+		debugC(1, kFreescapeDebugMove, "Gas pocket position: %f %f %f", gasPocket3D.x(), gasPocket3D.y(), gasPocket3D.z());
+		debugC(1, kFreescapeDebugMove, "Distance to gas pocket: %f", distanceToPocket);
+
 		float success = _useAutomaticDrilling ? 100.0 : 100.0 * (1.0 - distanceToPocket / _currentArea->_gasPocketRadius);
 		insertTemporaryMessage(_messagesList[3], _countdown - 2);
 		addDrill(drill, success > 0);
@@ -645,7 +646,6 @@ Math::Vector3d DrillerEngine::drillPosition() {
 
 	Object *obj = (GeometricObject *)_areaMap[255]->objectWithID(255); // Drill base
 	assert(obj);
-	position.setValue(0, position.x() - 128);
 	position.setValue(2, position.z() - 128);
 	return position;
 }
@@ -774,6 +774,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position, bool gasFound) {
 	// int drillObjectIDs[8] = {255, 254, 253, 252, 251, 250, 248, 247};
 	GeometricObject *obj = nullptr;
 	Math::Vector3d origin = position;
+	origin.setValue(0, origin.x() - 128);
 
 	int16 id;
 	int heightLastObject;
