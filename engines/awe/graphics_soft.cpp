@@ -112,7 +112,7 @@ void GraphicsSoft::setSize(int w, int h) {
 
 static uint32 calcStep(const Point &p1, const Point &p2, uint16 &dy) {
 	dy = p2.y - p1.y;
-	uint16 delta = (dy <= 1) ? 1 : dy;
+	const uint16 delta = (dy <= 1) ? 1 : dy;
 	return ((p2.x - p1.x) * (0x4000 / delta)) << 2;
 }
 
@@ -151,14 +151,14 @@ void GraphicsSoft::drawPolygon(uint8 color, const QuadStrip &quadStrip) {
 	uint32 cpt2 = x2 << 16;
 
 	int numVertices = qs.numVertices;
-	while (1) {
+	while (true) {
 		numVertices -= 2;
 		if (numVertices == 0) {
 			return;
 		}
 		uint16 h;
-		uint32 step1 = calcStep(qs.vertices[j + 1], qs.vertices[j], h);
-		uint32 step2 = calcStep(qs.vertices[i - 1], qs.vertices[i], h);
+		const uint32 step1 = calcStep(qs.vertices[j + 1], qs.vertices[j], h);
+		const uint32 step2 = calcStep(qs.vertices[i - 1], qs.vertices[i], h);
 
 		++i;
 		--j;
@@ -248,7 +248,7 @@ void GraphicsSoft::drawSpriteMask(int x, int y, uint8 color, const uint8 *data) 
 static void blend_rgb555(uint16 *dst, const uint16 b) {
 	static const uint16 RB_MASK = 0x7c1f;
 	static const uint16 G_MASK = 0x03e0;
-	uint16 a = *dst;
+	const uint16 a = *dst;
 	if ((a & 0x8000) == 0) { // use bit 15 to prevent additive blending
 		uint16 r = 0x8000;
 		r |= (((a & RB_MASK) + (b & RB_MASK)) >> 1) & RB_MASK;
@@ -295,9 +295,9 @@ void GraphicsSoft::drawPoint(int16 x, int16 y, uint8 color) {
 }
 
 void GraphicsSoft::drawLineT(int16 x1, int16 x2, int16 y, uint8 color) {
-	int16 xmax = MAX(x1, x2);
-	int16 xmin = MIN(x1, x2);
-	int w = xmax - xmin + 1;
+	const int16 xmax = MAX(x1, x2);
+	const int16 xmin = MIN(x1, x2);
+	const int w = xmax - xmin + 1;
 	const int offset = (y * _w + xmin) * _byteDepth;
 	if (_byteDepth == 1) {
 		for (int i = 0; i < w; ++i) {
@@ -315,8 +315,8 @@ void GraphicsSoft::drawLineT(int16 x1, int16 x2, int16 y, uint8 color) {
 }
 
 void GraphicsSoft::drawLineN(int16 x1, int16 x2, int16 y, uint8 color) {
-	int16 xmax = MAX(x1, x2);
-	int16 xmin = MIN(x1, x2);
+	const int16 xmax = MAX(x1, x2);
+	const int16 xmin = MIN(x1, x2);
 	const int w = xmax - xmin + 1;
 	const int offset = (y * _w + xmin) * _byteDepth;
 	if (_byteDepth == 1) {
@@ -335,8 +335,8 @@ void GraphicsSoft::drawLineP(int16 x1, int16 x2, int16 y, uint8 color) {
 	if (_drawPagePtr == _pagePtrs[0]) {
 		return;
 	}
-	int16 xmax = MAX(x1, x2);
-	int16 xmin = MIN(x1, x2);
+	const int16 xmax = MAX(x1, x2);
+	const int16 xmin = MIN(x1, x2);
 	const int w = xmax - xmin + 1;
 	const int offset = (y * _w + xmin) * _byteDepth;
 	memcpy(_drawPagePtr + offset, _pagePtrs[0] + offset, w * _byteDepth);

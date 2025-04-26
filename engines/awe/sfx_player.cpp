@@ -63,7 +63,7 @@ void SfxPlayer::prepareInstruments(const uint8 *p) {
 	memset(_sfxMod.samples, 0, sizeof(_sfxMod.samples));
 	for (int i = 0; i < 15; ++i) {
 		SfxInstrument *ins = &_sfxMod.samples[i];
-		uint16 resNum = READ_BE_UINT16(p); p += 2;
+		const uint16 resNum = READ_BE_UINT16(p); p += 2;
 		if (resNum != 0) {
 			ins->volume = READ_BE_UINT16(p);
 			MemEntry *me = &_res->_memList[resNum];
@@ -100,7 +100,7 @@ static void mixChannel(int16 &s, SfxChannel *ch) {
 	if (ch->sampleLen == 0) {
 		return;
 	}
-	int pos1 = ch->pos.offset >> Frac::BITS;
+	const int pos1 = ch->pos.offset >> Frac::BITS;
 	ch->pos.offset += ch->pos.inc;
 	int pos2 = pos1 + 1;
 	if (ch->sampleLoopLen != 0) {
@@ -184,7 +184,7 @@ void SfxPlayer::handlePattern(uint8 channel, const uint8 *data) {
 	pat.note_1 = READ_BE_UINT16(data + 0);
 	pat.note_2 = READ_BE_UINT16(data + 2);
 	if (pat.note_1 != 0xFFFD) {
-		uint16 sample = (pat.note_2 & 0xF000) >> 12;
+		const uint16 sample = (pat.note_2 & 0xF000) >> 12;
 		if (sample != 0) {
 			uint8 *ptr = _sfxMod.samples[sample - 1].data;
 			if (ptr != nullptr) {
@@ -193,7 +193,7 @@ void SfxPlayer::handlePattern(uint8 channel, const uint8 *data) {
 				pat.sampleStart = 8;
 				pat.sampleBuffer = ptr;
 				pat.sampleLen = READ_BE_UINT16(ptr) * 2;
-				uint16 loopLen = READ_BE_UINT16(ptr + 2) * 2;
+				const uint16 loopLen = READ_BE_UINT16(ptr + 2) * 2;
 				if (loopLen != 0) {
 					pat.loopPos = pat.sampleLen;
 					pat.loopLen = loopLen;
@@ -202,15 +202,15 @@ void SfxPlayer::handlePattern(uint8 channel, const uint8 *data) {
 					pat.loopLen = 0;
 				}
 				int16 m = pat.sampleVolume;
-				uint8 effect = (pat.note_2 & 0x0F00) >> 8;
+				const uint8 effect = (pat.note_2 & 0x0F00) >> 8;
 				if (effect == 5) { // volume up
-					uint8 volume = (pat.note_2 & 0xFF);
+					const uint8 volume = (pat.note_2 & 0xFF);
 					m += volume;
 					if (m > 0x3F) {
 						m = 0x3F;
 					}
 				} else if (effect == 6) { // volume down
-					uint8 volume = (pat.note_2 & 0xFF);
+					const uint8 volume = (pat.note_2 & 0xFF);
 					m -= volume;
 					if (m < 0) {
 						m = 0;

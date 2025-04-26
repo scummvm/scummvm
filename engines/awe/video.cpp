@@ -207,13 +207,13 @@ void Video::drawShape3DO(int color, int zoom, const Point *pt) {
 void Video::fillPolygon(uint16 color, uint16 zoom, const Point *pt) {
 	const uint8 *p = _pData.pc;
 
-	uint16 bbw = (*p++) * zoom / 64;
-	uint16 bbh = (*p++) * zoom / 64;
+	const uint16 bbw = (*p++) * zoom / 64;
+	const uint16 bbh = (*p++) * zoom / 64;
 
-	int16 x1 = pt->x - bbw / 2;
-	int16 x2 = pt->x + bbw / 2;
-	int16 y1 = pt->y - bbh / 2;
-	int16 y2 = pt->y + bbh / 2;
+	const int16 x1 = pt->x - bbw / 2;
+	const int16 x2 = pt->x + bbw / 2;
+	const int16 y1 = pt->y - bbh / 2;
+	const int16 y2 = pt->y + bbh / 2;
 
 	if (x1 > 319 || x2 < 0 || y1 > 199 || y2 < 0)
 		return;
@@ -330,8 +330,8 @@ void Video::drawString(uint8 color, uint16 x, uint16 y, uint16 strId) {
 		return;
 	}
 	debugC(kDebugVideo, "drawString(%d, %d, %d, '%s')", color, x, y, str);
-	uint16 xx = x;
-	int len = strlen(str);
+	const uint16 xx = x;
+	const int len = strlen(str);
 	for (int i = 0; i < len; ++i) {
 		if (str[i] == '\n' || str[i] == '\r') {
 			y += 8;
@@ -390,8 +390,8 @@ void Video::copyPage(uint8 src, uint8 dst, int16 vscroll) {
 	if (src >= 0xFE || ((src &= ~0x40) & 0x80) == 0) { // no vscroll
 		_graphics->copyBuffer(getPagePtr(dst), getPagePtr(src));
 	} else {
-		uint8 sl = getPagePtr(src & 3);
-		uint8 dl = getPagePtr(dst);
+		const uint8 sl = getPagePtr(src & 3);
+		const uint8 dl = getPagePtr(dst);
 		if (sl != dl && vscroll >= -199 && vscroll <= 199) {
 			_graphics->copyBuffer(dl, sl, vscroll);
 		}
