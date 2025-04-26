@@ -383,15 +383,15 @@ void GlkMetaEngineDetection::dumpDetectionEntries() const {
 
 			Common::String checksum = entry->_md5;
 
-			//Filename for Comprehend Engine's md5 is stored in the extra field. 
-			//For other engines, filename is not available, so it has been kept as the gameId
+			// Filename for Comprehend Engine's md5 is stored in the extra field. 
+			// For other engines, filename is not available, so it has been kept as the gameId
 			const char *fname = engineName == EngineName::COMPREHEND ? entry->_extra : entry->_gameId;
 
-			//Level9 engine does not use md5 checksums, so checksums are not printed. 
+			// Level9 engine does not use md5 checksums, so checksums are not printed. 
 			if (engineName == EngineName::LEVEL9) {
-				debug("\trom ( name \"%s\" size %lld)", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize));
+				debug("\trom (name \"%s\" size %lld)", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize));
 			} else {
-				debug("\trom ( name \"%s\" size %lld md5-%d %s )", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize), getMD5Bytes(), checksum.c_str());
+				debug("\trom (name \"%s\" size %lld md5-%d %s)", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize), getMD5Bytes(), checksum.c_str());
 			}
 			
 			debug(")\n");
