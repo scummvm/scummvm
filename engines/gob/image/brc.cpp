@@ -26,7 +26,7 @@
 
 namespace Image {
 
-BRCDecoder::BRCDecoder(Graphics::PixelFormat format): _palette(0), _format(format) {
+BRCDecoder::BRCDecoder(): _palette(0), _format(Graphics::createPixelFormat<555>()) {
 }
 
 

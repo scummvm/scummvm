@@ -1070,7 +1070,7 @@ bool Surface::loadIFF(Common::SeekableReadStream &stream, int16 left, int16 top,
 }
 
 bool Surface::loadBRC(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
-	Image::BRCDecoder decoder(format);
+	Image::BRCDecoder decoder;
 	return loadImage(decoder, stream, left, top, right, bottom, x, y, transp, format);
 }
 
