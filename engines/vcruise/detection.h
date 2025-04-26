@@ -40,10 +40,12 @@ enum VCruiseGameFlag {
 	VCRUISE_GF_NEED_JPEG		= (1 << 2),
 	VCRUISE_GF_GENTEE_PACKAGE	= (1 << 3),
 	
-	VCRUISE_GF_STEAM_LANGUAGES	= (1 << 4),
-	VCRUISE_GF_FORCE_LANGUAGE	= (1 << 5),
+	VCRUISE_GF_BUL_LANGUAGE		= (1 << 4),
+	VCRUISE_GF_STEAM_LANGUAGES	= (1 << 5),
+	VCRUISE_GF_FORCE_LANGUAGE	= (1 << 6),
 	
-	VCRUISE_GF_WANT_MIDI		= (1 << 6),
+	VCRUISE_GF_WANT_MIDI		= (1 << 7),
+
 };
 
 struct VCruiseGameDescription {

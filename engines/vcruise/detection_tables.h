@@ -214,14 +214,14 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::EN_GRB,
 	},
-	{ // Schizm: Mysterious Journey, English DVD Version
+	{ // Schizm: Mysterious Journey, English DVD Version, 11-language
 		{
 			"schizm",
 			"English DVD",
 			AD_ENTRY1s("setup.pak", "eaaed2f6655342b4c320bdeb6f5ccfb9", 272655597),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
-			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_GENTEE_PACKAGE,
+			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_GENTEE_PACKAGE | VCRUISE_GF_BUL_LANGUAGE,
 			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,

@@ -104,6 +104,8 @@ public:
 					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::HU_HUN));
 					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_CHN));
 					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::CS_CZE));
+				} else if (adGame.desc->flags & VCruise::VCRUISE_GF_BUL_LANGUAGE) {
+					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::BG_BUL));
 				}
 			}
 		}
