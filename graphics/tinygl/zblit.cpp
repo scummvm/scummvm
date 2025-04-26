@@ -174,37 +174,39 @@ public:
 			height = srcHeight;
 		}
 
-		if (dstX >= c->_scissorRect.right || dstY >= c->_scissorRect.bottom)
+		const Common::Rect &clippingRect = c->fb->getClippingRectangle();
+
+		if (dstX >= clippingRect.right || dstY >= clippingRect.bottom)
 			return false;
 
-		if (dstX + width < c->_scissorRect.left || dstY + height < c->_scissorRect.top) {
+		if (dstX + width < clippingRect.left || dstY + height < clippingRect.top) {
 			return false;
 		}
 
-		if (dstX < c->_scissorRect.left) {
-			srcX += (c->_scissorRect.left - dstX);
-			width -= (c->_scissorRect.left - dstX);
-			dstX = c->_scissorRect.left;
+		if (dstX < clippingRect.left) {
+			srcX += (clippingRect.left - dstX);
+			width -= (clippingRect.left - dstX);
+			dstX = clippingRect.left;
 		}
 
-		if (dstY < c->_scissorRect.top) {
-			srcY += (c->_scissorRect.top - dstY);
-			height -= (c->_scissorRect.top - dstY);
-			dstY = c->_scissorRect.top;
+		if (dstY < clippingRect.top) {
+			srcY += (clippingRect.top - dstY);
+			height -= (clippingRect.top - dstY);
+			dstY = clippingRect.top;
 		}
 
 		if (width < 0 || height < 0) {
 			return false;
 		}
 
-		if (dstX + width >= c->_scissorRect.right) {
-			clampWidth = c->_scissorRect.right - dstX;
+		if (dstX + width >= clippingRect.right) {
+			clampWidth = clippingRect.right - dstX;
 		} else {
 			clampWidth = width;
 		}
 
-		if (dstY + height >= c->_scissorRect.bottom) {
-			clampHeight = c->_scissorRect.bottom - dstY;
+		if (dstY + height >= clippingRect.bottom) {
+			clampHeight = clippingRect.bottom - dstY;
 		} else {
 			clampHeight = height;
 		}
@@ -804,15 +806,6 @@ void tglCleanupImages() {
 			++it;
 		}
 	}
-}
-
-void tglBlitSetScissorRect(const Common::Rect &rect) {
-	gl_get_context()->_scissorRect = rect;
-}
-
-void tglBlitResetScissorRect() {
-	GLContext *c = gl_get_context();
-	c->_scissorRect = c->renderRect;
 }
 
 } // end of namespace Internal

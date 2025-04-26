@@ -448,8 +448,6 @@ struct GLContext {
 	float fog_start;
 	float fog_end;
 
-	Common::Rect _scissorRect;
-
 	bool _enableDirtyRectangles;
 
 	// stipple

@@ -569,13 +569,22 @@ public:
 	void clearRegion(int x, int y, int w, int h, bool clearZ, int z,
 	                 bool clearColor, int r, int g, int b, bool clearStencil, int stencilValue);
 
-	void setScissorRectangle(const Common::Rect &rect) {
+	void setClippingRectangle(const Common::Rect &rect) {
 		_clipRectangle = rect;
-		_enableScissor = true;
+		_clippingEnabled = true;
 	}
 
-	void resetScissorRectangle() {
-		_enableScissor = false;
+	void resetClippingRectangle() {
+		_clippingEnabled = false;
+		// Mark it as invalid to fix it when it is fetched
+		_clipRectangle.left = -1;
+	}
+
+	Common::Rect &getClippingRectangle() {
+		if (!_clippingEnabled && _clipRectangle.left != 0) {
+			_clipRectangle = Common::Rect(0, 0, _pbufWidth, _pbufHeight);
+		}
+		return _clipRectangle;
 	}
 
 	void enableBlending(bool enable) {
@@ -770,7 +779,7 @@ private:
 	int _textureSizeMask;
 
 	Common::Rect _clipRectangle;
-	bool _enableScissor;
+	bool _clippingEnabled;
 
 	const TexelBuffer *_currentTexture;
 	uint _wrapS, _wrapT;

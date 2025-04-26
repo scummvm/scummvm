@@ -720,7 +720,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 
 template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kEnableAlphaTest>
 void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
-	if (_enableScissor) {
+	if (_clippingEnabled) {
 		fillTriangle<kInterpRGB, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, true>(p0, p1, p2);
 	} else {
 		fillTriangle<kInterpRGB, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, false>(p0, p1, p2);
