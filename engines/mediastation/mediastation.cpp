@@ -279,7 +279,7 @@ void MediaStationEngine::refreshActiveHotspot() {
 			hotspot->runEventHandlerIfExists(kMouseEnteredEvent);
 		} else {
 			// There is no hotspot, so set the default cursor for this screen instead.
-			setCursor(_currentContext->_screenAsset->_cursorResourceId);
+			setCursor(_currentContext->_screenAsset->getHeader()->_cursorResourceId);
 		}
 	}
 
@@ -417,15 +417,8 @@ ScriptValue MediaStationEngine::callMethod(BuiltInMethod methodId, Common::Array
 
 void MediaStationEngine::doBranchToScreen() {
 	if (_currentContext != nullptr) {
-		EventHandler *exitEvent = _currentContext->_screenAsset->_eventHandlers.getValOrDefault(kExitEvent);
-		if (exitEvent != nullptr) {
-			debugC(5, kDebugScript, "Executing context exit event handler");
-			exitEvent->execute(_currentContext->_screenAsset->_id);
-		} else {
-			debugC(5, kDebugScript, "No context exit event handler");
-		}
-
-		releaseContext(_currentContext->_screenAsset->_id);
+		_currentContext->_screenAsset->runEventHandlerIfExists(kExitEvent);
+		releaseContext(_currentContext->_screenAsset->getHeader()->_id);
 	}
 
 	Context *context = loadContext(_requestedScreenBranchId);
@@ -434,15 +427,7 @@ void MediaStationEngine::doBranchToScreen() {
 	_currentHotspot = nullptr;
 
 	if (context->_screenAsset != nullptr) {
-		// TODO: Make the screen an asset just like everything else so we can
-		// run event handlers with runEventHandlerIfExists.
-		EventHandler *entryEvent = context->_screenAsset->_eventHandlers.getValOrDefault(MediaStation::kEntryEvent);
-		if (entryEvent != nullptr) {
-			debugC(5, kDebugScript, "Executing context entry event handler");
-			entryEvent->execute(context->_screenAsset->_id);
-		} else {
-			debugC(5, kDebugScript, "No context entry event handler");
-		}
+		context->_screenAsset->runEventHandlerIfExists(kEntryEvent);
 	}
 
 	_requestedScreenBranchId = 0;

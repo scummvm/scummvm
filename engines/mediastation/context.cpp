@@ -363,7 +363,7 @@ bool Context::readHeaderSection(Subfile &subfile, Chunk &chunk) {
 
 		case kAssetTypeScreen:
 			asset = new Screen(header);
-			_screenAsset = header;
+			_screenAsset = asset;
 			break;
 
 		case kAssetTypeFont:

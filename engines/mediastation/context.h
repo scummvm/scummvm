@@ -62,9 +62,7 @@ public:
 	uint32 _subfileCount;
 	uint32 _fileSize;
 	Graphics::Palette *_palette = nullptr;
-	// TODO: Eliminate this screenAsset because the screen that this context
-	// represents is now an asset in itself.
-	AssetHeader *_screenAsset = nullptr;
+	Asset *_screenAsset = nullptr;
 
 	Asset *getAssetById(uint assetId);
 	Asset *getAssetByChunkReference(uint chunkReference);
