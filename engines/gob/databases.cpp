@@ -65,10 +65,10 @@ void TranslationDatabases::setLanguage(Common::Language language) {
 }
 
 bool TranslationDatabases::open(const Common::String &id, const Common::Path &file) {
-		if (_databases.contains(id)) {
-			warning("TranslationDatabases::open(): A database with the ID \"%s\" already exists", id.c_str());
-			return false;
-		}
+	if (_databases.contains(id)) {
+		warning("TranslationDatabases::open(): A database with the ID \"%s\" already exists", id.c_str());
+		return false;
+	}
 
 	Common::File dbFile;
 	if (!dbFile.open(file)) {
@@ -176,7 +176,7 @@ bool TranslationDatabases::buildMap(const dBase &db, Common::StringMap &map) con
 }
 
 Database::~Database() {
-	for (Common::HashMap<Common::String, dBase*>::Node &node : _tables)
+	for (auto &node : _tables)
 		delete node._value;
 }
 

@@ -900,7 +900,7 @@ uint32 VideoPlayer::getVideoBufferSize(int slot) const {
 bool VideoPlayer::hasVideo(int slot) const {
 	const Video *video = getVideoBySlot(slot);
 	if (!video)
-		return 0;
+		return false;
 
 	return video->decoder->hasVideo();
 }

@@ -157,9 +157,9 @@ bool dBase::load(Common::SeekableReadStream &stream) {
 
 	_version = stream.readByte();
 	if (_version == 0x03 || _version == 0x83) {
-		_versionMajor= 3;
+		_versionMajor = 3;
 	} else if (_version == 0x04 || _version == 0x7B || _version == 0x8B) {
-		_versionMajor= 4;
+		_versionMajor = 4;
 	} else {
 		warning("dBase::load() called on unsupported dBase version %d", _version);
 		return false;
@@ -407,7 +407,7 @@ void dBase::findNextMatchingRecord() {
 		return;
 	}
 
-	for (; _currentRecordIndex < (int) _records.size(); ++_currentRecordIndex) {
+	for (; _currentRecordIndex < (int)_records.size(); ++_currentRecordIndex) {
 		const Record &record = _records[_currentRecordIndex];
 
 		bool match = true;
