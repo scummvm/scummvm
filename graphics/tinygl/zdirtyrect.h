@@ -53,8 +53,7 @@ public:
 	bool operator!=(const DrawCall &other) const {
 		return !(*this == other);
 	}
-	virtual void execute(bool restoreState) const = 0;
-	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const = 0;
+	virtual void execute(bool restoreState, const Common::Rect *clippingRectangle = nullptr) const = 0;
 	DrawCallType getType() const { return _type; }
 	virtual const Common::Rect getDirtyRegion() const { return _dirtyRegion; }
 protected:
@@ -68,8 +67,7 @@ public:
 	ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue, bool clearStencilBuffer, int stencilValue);
 	virtual ~ClearBufferDrawCall() { }
 	bool operator==(const ClearBufferDrawCall &other) const;
-	virtual void execute(bool restoreState) const;
-	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
+	virtual void execute(bool restoreState, const Common::Rect *clippingRectangle = nullptr) const;
 
 	void *operator new(size_t size) {
 		return Internal::allocateFrame(size);
@@ -79,6 +77,24 @@ public:
 private:
 	bool _clearZBuffer, _clearColorBuffer, _clearStencilBuffer;
 	int _rValue, _gValue, _bValue, _zValue, _stencilValue;
+	struct ClearBufferState {
+		bool enableScissor;
+		int scissor[4];
+
+		bool operator==(const ClearBufferState &other) const {
+			return
+				enableScissor == other.enableScissor &&
+				scissor[0] == other.scissor[0] &&
+				scissor[1] == other.scissor[1] &&
+				scissor[2] == other.scissor[2] &&
+				scissor[3] == other.scissor[3];
+		}
+	};
+
+	ClearBufferState captureState() const;
+	void applyState(const ClearBufferState &state, const Common::Rect *clippingRectangle) const;
+
+	ClearBufferState _clearState;
 };
 
 // Encapsulate a rasterization call: it might execute either a triangle or line rasterization.
@@ -87,8 +103,7 @@ public:
 	RasterizationDrawCall();
 	virtual ~RasterizationDrawCall() { }
 	bool operator==(const RasterizationDrawCall &other) const;
-	virtual void execute(bool restoreState) const;
-	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
+	virtual void execute(bool restoreState, const Common::Rect *clippingRectangle = nullptr) const;
 
 	void *operator new(size_t size) {
 		return Internal::allocateFrame(size);
@@ -103,6 +118,8 @@ private:
 	gl_draw_triangle_func_ptr _drawTriangleFront, _drawTriangleBack;
 
 	struct RasterizationState {
+		bool enableScissor;
+		int scissor[4];
 		int beginType;
 		int currentFrontFace;
 		int cullFaceEnabled;
@@ -153,7 +170,7 @@ private:
 	RasterizationState _state;
 
 	RasterizationState captureState() const;
-	void applyState(const RasterizationState &state) const;
+	void applyState(const RasterizationState &state, const Common::Rect *clippingRectangle) const;
 };
 
 // Encapsulate a blit call: it might execute either a color buffer or z buffer blit.
@@ -168,8 +185,7 @@ public:
 	BlittingDrawCall(BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode);
 	virtual ~BlittingDrawCall();
 	bool operator==(const BlittingDrawCall &other) const;
-	virtual void execute(bool restoreState) const;
-	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
+	virtual void execute(bool restoreState, const Common::Rect *clippingRectangle = nullptr) const;
 
 	BlittingMode getBlittingMode() const { return _mode; }
 
@@ -186,6 +202,8 @@ private:
 	int _imageVersion;
 
 	struct BlittingState {
+		bool enableScissor;
+		int scissor[4];
 		bool enableBlending;
 		int sfactor, dfactor;
 		bool alphaTest;
@@ -194,6 +212,11 @@ private:
 
 		bool operator==(const BlittingState &other) const {
 			return
+				enableScissor == other.enableScissor &&
+				scissor[0] == other.scissor[0] &&
+				scissor[1] == other.scissor[1] &&
+				scissor[2] == other.scissor[2] &&
+				scissor[3] == other.scissor[3] &&
 				enableBlending == other.enableBlending &&
 				sfactor == other.sfactor &&
 				dfactor == other.dfactor &&
@@ -205,7 +228,7 @@ private:
 	};
 
 	BlittingState captureState() const;
-	void applyState(const BlittingState &state) const;
+	void applyState(const BlittingState &state, const Common::Rect *clippingRectangle) const;
 
 	BlittingState _blitState;
 };

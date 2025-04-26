@@ -48,6 +48,7 @@ ADD_OP(Translate, 3, "%f %f %f")
 ADD_OP(Scale, 3, "%f %f %f")
 ADD_OP(Ortho, 6, "%f %f %f %f %f %f")
 
+ADD_OP(Scissor, 4, "%d %d %d %d")
 ADD_OP(Viewport, 4, "%d %d %d %d")
 ADD_OP(Frustum, 6, "%f %f %f %f %f %f")
 
