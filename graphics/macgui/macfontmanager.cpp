@@ -559,7 +559,7 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 #ifdef USE_FREETYPE2
 	if (!font && !(_mode & MacGUIConstants::kWMModeForceMacFonts)) {
 
-		if (_uniFontRegistry.contains(macFont->getName())) { 
+		if (_uniFontRegistry.contains(macFont->getName())) {
 			return _uniFontRegistry[macFont->getName()];
 		}
 
@@ -568,15 +568,14 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 		int newSlant = macFont->getSlant();
 		int familyId = getFamilyId(newId, newSlant);
 
-		if ((_mode & kWMModeUnicode) && 
-			(((!_fontInfo.contains(familyId))) || (_mode & kWMModeForceMacFontsInWin95))) {
+		if ((_mode & kWMModeUnicode) &&
+				(((!_fontInfo.contains(familyId))) || (_mode & kWMModeForceMacFontsInWin95))) {
 			if (macFont->getSize() <= 0) {
 				debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont() - Font size <= 0!");
 			}
 			font = Graphics::loadTTFFontFromArchive("LiberationSans-Regular.ttf", macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
 			_uniFontRegistry.setVal(macFont->getName(), font);
-		}
-		else if (_fontInfo.contains(familyId)) {
+		} else if (_fontInfo.contains(familyId)) {
 			font = Graphics::loadTTFFontFromArchive(_fontInfo[familyId]->name, macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
 			_uniFontRegistry.setVal(macFont->getName(), font);
 		}
