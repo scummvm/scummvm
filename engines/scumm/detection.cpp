@@ -136,7 +136,7 @@ void ScummMetaEngineDetection::dumpDetectionEntries() const {
 
 		Common::String md5 = entry->md5;
 
-		debug("\trom ( name \"%s\" size %lld md5-%d %s )", escapeString(entry->gameid).c_str(), static_cast<long long int>(entry->filesize), getMD5Bytes(), md5.c_str());
+		debug("\trom (name \"%s\" size %lld md5-%d %s)", escapeString(entry->gameid).c_str(), static_cast<long long int>(entry->filesize), getMD5Bytes(), md5.c_str());
 
 		debug(")\n");
 
