@@ -121,6 +121,7 @@ static Common::String escapeString(const char *string) {
 }
 
 void ScummMetaEngineDetection::dumpDetectionEntries() const {
+#if 0
 	for (const MD5Table *entry = md5table; entry->gameid != 0; ++entry) {
 		PlainGameDescriptor pd = findGame(entry->gameid);
 		const char *title = pd.description;
@@ -139,8 +140,8 @@ void ScummMetaEngineDetection::dumpDetectionEntries() const {
 		debug("\trom (name \"%s\" size %lld md5-%d %s)", escapeString(entry->gameid).c_str(), static_cast<long long int>(entry->filesize), getMD5Bytes(), md5.c_str());
 
 		debug(")\n");
-
 	}
+#endif
 }
 
 PlainGameDescriptor ScummMetaEngineDetection::findGame(const char *gameid) const {
