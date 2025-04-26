@@ -213,6 +213,9 @@ void ShaderRenderer::setupViewport(int x, int y, int width, int height) {
 void ShaderRenderer::enableFog(const Math::Vector4d &fogColor) {
 }
 
+void ShaderRenderer::disableFog() {
+}
+
 void ShaderRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) {
 	glDisable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ZERO);

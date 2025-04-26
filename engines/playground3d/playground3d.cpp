@@ -268,6 +268,8 @@ void Playground3dEngine::drawFrame(int id) {
 	Common::Rect vp = _gfx->viewport();
 	_gfx->setupViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
 
+	_gfx->disableFog();
+
 	switch (id) {
 		case 1:
 			if (_fogEnable) {

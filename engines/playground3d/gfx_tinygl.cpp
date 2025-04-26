@@ -189,6 +189,10 @@ void TinyGLRenderer::enableFog(const Math::Vector4d &fogColor) {
 	tglEnable(TGL_FOG);
 }
 
+void TinyGLRenderer::disableFog() {
+	tglDisable(TGL_FOG);
+}
+
 void TinyGLRenderer::drawFace(uint face) {
 	tglBegin(TGL_TRIANGLE_STRIP);
 	for (uint i = 0; i < 4; i++) {

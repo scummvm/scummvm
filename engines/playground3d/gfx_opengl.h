@@ -56,6 +56,7 @@ public:
 	void drawRgbaTexture() override;
 
 	void enableFog(const Math::Vector4d &fogColor) override;
+	void disableFog() override;
 
 private:
 	Math::Vector3d _pos;
