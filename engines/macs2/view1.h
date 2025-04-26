@@ -262,6 +262,10 @@ public:
 	void drawInventory(Graphics::ManagedSurface &s);
 	void drawInventory2(Graphics::ManagedSurface &s);
 	GameObject *getClickedInventoryItem(const Common::Point &p);
+	GameObject *getClickedInventoryItem2(const Common::Point &p);
+
+	Common::Point inventoryGridUpperLeft;
+	Common::Point inventorySlotSize;
 
 	void setStringBox(const Common::StringArray& sa);
 	void clearStringBox();
@@ -285,6 +289,9 @@ public:
 	void DrawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
 	// fn0037_3AD4 proc
 	void DrawBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
+	// ;; fn0037_3CDE: 0037:3CDE
+	void DrawPressedBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
+
 
 	Macs2::Sprite *GetUISprite(uint32 offset);
 
@@ -304,6 +311,17 @@ public:
 	uint16 GetHitObjectID(const Common::Point &pos) const;
 
 	Common::Array<Common::Rect> inventoryButtonLocations;
+
+	enum class InventoryButtonIndex {
+		Look = 0,
+		Hand = 1,
+		Up = 2,
+		Down = 3,
+		Drop = 4,
+		Close = 5
+	};
+
+	uint16 inventoryPage = 0; 
 };
 
 } // namespace Macs2

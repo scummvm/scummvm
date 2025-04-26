@@ -447,6 +447,31 @@ View1::View1() : UIElement("View1") {
 			}
 
 			if (_isShowingInventory) {
+
+				for (int i = 0; i < 6; i++) {
+					const Common::Rect &current = inventoryButtonLocations[i];
+					if (current.contains(msg._pos)) {
+						switch (i) {
+						case static_cast<int>(InventoryButtonIndex::Up): {
+							if (inventoryPage > 0) {
+								inventoryPage--;
+							}
+						} break;
+						case static_cast<int>(InventoryButtonIndex::Down): {
+							// Check how many pages we have
+							uint16 numPages = (uint16)ceil((double) inventoryItems.size() / 5.0);
+							if (inventoryPage < numPages - 2) {
+								inventoryPage++;
+							}
+
+						} break;
+						case static_cast<int>(InventoryButtonIndex::Close): {
+							_isShowingInventory = false;
+						}
+						}
+					}
+				}
+
 				// Check if we hit an item
 				// TODO: Skipping this for now while we only have one item
 				GameObject *clickedObject = getClickedInventoryItem(msg._pos);
@@ -583,6 +608,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 			SetInventorySource(GameObjects::instance().GetProtagonistObject());
 		}
 		_isShowingInventory = !_isShowingInventory;
+		inventoryPage = 0;
 		// If we closed an external inventory, we need to continue where we left
 		// to have the chance to do closing of containers etc.
 		if (!_isShowingInventory && !IsInventorySourceProtagonist()) {
@@ -892,7 +918,7 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	for (int i = 0; i < 6; i++) {
 		uint16 index = g_engine->inventoryIconIndices[i];
 		AnimFrame &currentFrame = g_engine->imageResources[index - 1];
-		DrawBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(maxWidthButtonIcon, maxHeightButtonIcon), s);	
+		DrawPressedBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(maxWidthButtonIcon, maxHeightButtonIcon), s);	
 		uint16 iconX = (maxWidthButtonIcon / 2 + buttonX) - currentFrame.Width / 2;
 		uint16 iconY = (maxHeightButtonIcon / 2 + buttonY) - currentFrame.Height / 2;
 		inventoryButtonLocations[i] = Common::Rect(Common::Point(buttonX, buttonY), maxWidthButtonIcon, maxHeightButtonIcon);
@@ -913,12 +939,19 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 
 	uint16 itemX = x + 8;
 	uint16 itemY = x + 8;
+	inventoryGridUpperLeft.x = itemX;
+	inventoryGridUpperLeft.y = itemY;
+	inventorySlotSize.x = maxWidthInventoryIcon;
+	inventorySlotSize.y = maxHeightInventoryIcon;
 	// TODO: Align with original code's pagingation and ordering logic
-	uint16 itemIndex = 0;
+	uint16 itemIndex = inventoryPage * 5;
 	// Now the inventory icons themselves
 	for (int iy = 0; iy < 2; iy++) {
 		for (int ix = 0; ix < 5; ix++) {
-			AnimFrame *icon = GetInventoryIcon(inventoryItems[itemIndex]);
+			if (itemIndex > inventoryItems.size() - 1) {
+				break;
+			}
+			AnimFrame *icon = GetInventoryIcon(inventoryItems[itemIndex++]);
 			// ;; x = slotWidth / 2 + currentX - imageWidth / 2
 			//  ;; y = slotHeight / 2 + currentY - imageHeight / 2
 			DrawSprite(maxWidthInventoryIcon / 2 + itemX - icon->Width / 2,
@@ -950,6 +983,28 @@ GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
 			x = 0;
 			y += rowHeight;
 		}
+	}
+	return nullptr;
+}
+
+GameObject *View1::getClickedInventoryItem2(const Common::Point &p) {
+
+	Common::Rect currentInventorySlot(inventoryGridUpperLeft, inventorySlotSize);
+
+	uint16 itemIndex = inventoryPage * 5;
+	for (int iy = 0; iy < 2; iy++) {
+		for (int ix = 0; ix < 5; ix++) {
+			if (itemIndex > inventoryItems.size() - 1) {
+				break;
+			}
+			if (currentInventorySlot.contains(p)) {
+				return inventoryItems[itemIndex];
+			}
+			itemIndex++;
+			currentInventorySlot.left += inventorySlotSize.x;
+		}
+		currentInventorySlot.left = inventoryGridUpperLeft.x;
+		currentInventorySlot.top += inventorySlotSize.y + 4;
 	}
 	return nullptr;
 }
@@ -1317,6 +1372,17 @@ void View1::DrawBorderOuterHighlights(const Common::Point &pos, const Common::Po
 	DrawVerticalBorderHighlight(pos + Common::Point(size.x, 0), size.y + 1, 0x1010, s);
 	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1012, s);
 	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1012, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1011, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
+}
+
+void View1::DrawPressedBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
+	DrawHorizontalBorderHighlight(pos, size.x + 1, 0x1010, s);
+	DrawVerticalBorderHighlight(pos, size.y + 1, 0x1010, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(0, size.y), size.x + 1, 0x1010, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(size.x, 0), size.y + 1, 0x1010, s);
+	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1011, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1011, s);
 	DrawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1011, s);
 	DrawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
 }
