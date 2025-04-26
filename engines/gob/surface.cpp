@@ -923,7 +923,7 @@ bool Surface::getImageInfo(Common::SeekableReadStream &stream, uint32 &width, ui
 		decoder.reset(new Image::IFFDecoder());
 		break;
 	case kImageTypeBRC:
-		warning("Surface::getImageInfo(): BRC images are not supported");
+		decoder.reset(new Image::BRCDecoder());
 		break;
 	case kImageTypeBMP:
 		decoder.reset(new Image::BitmapDecoder());
