@@ -332,7 +332,7 @@ static Common::String escapeString(const char *string) {
 }
 
 void GlkMetaEngineDetection::dumpDetectionEntries() const {
-
+#if 0
 	enum class EngineName : uint8 {
     	COMPREHEND,
     	LEVEL9,
@@ -397,6 +397,7 @@ void GlkMetaEngineDetection::dumpDetectionEntries() const {
 			debug(")\n");
 		}
 	}
+#endif
 }
 
 
