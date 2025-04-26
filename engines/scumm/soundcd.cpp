@@ -307,74 +307,58 @@ void SoundCD::updateMusicTimer() {
 }
 
 int SoundCD::restoreAfterLoad() {
-	_musicTimer = 0;
-	_replacementTrackStartTime = 0;
 	int trackNr = -1;
-	int loops = 1;
-	int start = 0;
-	int end = 0;
 
-	if (!_currentCDSound)
-		return -1;
-
-	if (_useReplacementAudioTracks) {
-		trackNr = getReplacementAudioTrack(_currentCDSound);
-		if (trackNr == -1)
-			return -1;
-
-		int32 now = _vm->VAR(_vm->VAR_TIMER_TOTAL);
-		uint32 frame;
-
-		_musicTimer = _vm->VAR(_vm->VAR_MUSIC_TIMER);
-
-		// We try to resume the audio track from where it was
-		// saved. The timer isn't very accurate, but it should
-		// be good enough.
-		//
-		// NOTE: This does not seem to work at the moment, since
-		// the track immediately gets restarted in the cases I
-		// tried.
-
-		if (_musicTimer > 0) {
-			int32 ticks = TIMER_TO_TICKS(_musicTimer);
-
-			_replacementTrackStartTime = now - TICKS_TO_JIFFIES(ticks);
-			frame = (75 * ticks) / 10;
-		} else {
-			_replacementTrackStartTime = now;
-			frame = 0;
+	if (_currentCDSound) {
+		if (_useReplacementAudioTracks) {
+			trackNr = getReplacementAudioTrack(_currentCDSound);
+		} else if (_vm->_game.platform != Common::kPlatformFMTowns) {
+			int loops, start, end;
+			trackNr = getCDTrackIdFromSoundId(_currentCDSound, loops, start, end);
 		}
-
-		// If the user has fiddled with the Loom overture
-		// setting, the calculated position could be outside
-		// the track. But it seems a warning message is as bad
-		// as it gets.
-
-		g_system->getAudioCDManager()->play(trackNr, 1, frame, 0, true);
-	} else if (_vm->_game.platform != Common::kPlatformFMTowns) {
-		trackNr = getCDTrackIdFromSoundId(_currentCDSound, loops, start, end);
-		if (trackNr != -1)
-			g_system->getAudioCDManager()->play(trackNr, loops, start + _vm->VAR(_vm->VAR_MUSIC_TIMER), 0, true);
 	}
 
 	return trackNr;
 }
 
 void SoundCD::restoreCDAudioAfterLoad(AudioCDManager::Status &info) {
-	if (info.numLoops < 0 && _vm->_game.platform != Common::kPlatformFMTowns) {
-		// If we are loading, and the music being loaded was supposed to loop
-		// forever, then resume playing it. This helps a lot when the audio CD
-		// is used to provide ambient music (see bug #1150).
-		// FM-Towns versions handle this in Player_Towns_v1::restoreAfterLoad().
-		playCDTrackInternal(info.track, info.numLoops, info.start, info.duration);
-	} else if (_vm->_game.id == GID_LOOM && info.start != 0 && info.duration != 0) {
-		// Reload audio for LOOM CD/Steam. We move the offset forward by a little bit
-		// to restore the correct sync.
-		int startOffset = (int)(_vm->VAR(_vm->VAR_MUSIC_TIMER) * 1.25);
+	// FM-Towns versions handle this in Player_Towns_v1::restoreAfterLoad().
+	if (_vm->_game.platform == Common::kPlatformFMTowns)
+		return;
 
-		_cdMusicTimer = _vm->VAR(_vm->VAR_MUSIC_TIMER);
-		playCDTrackInternal(info.track, info.numLoops, info.start + startOffset, info.duration - _vm->VAR(_vm->VAR_MUSIC_TIMER));
+	int track = info.track;
+	int numLoops = info.numLoops;
+	int start = info.start;
+	int duration = info.duration;
+
+	// We only try to restore the position of the track if it's a non-looping
+	// sound. (This is particularly important for the talkie version of Loom.)
+	// For looping sounds, the timer may point beyond the end of the track.
+	// And even if it's not, the next loop would start from that point, rather
+	// than the beginning of the track.
+
+	if (numLoops == 1) {
+		int musicTimer = _vm->VAR(_vm->VAR_MUSIC_TIMER);
+
+		if (_useReplacementAudioTracks) {
+			// Special handling for Loom with replacement audio tracks. There
+			// the music timer is mentioned in "ticks" (tenths of a second),
+			// and the "start" field may have been modified if we're saving
+			// more than once during the same track.
+			start = (75 * TIMER_TO_TICKS(musicTimer)) / 10;
+		} else {
+			// The one game where timing really matters is probably the VGA
+			// version of Loom. We move the offset forward by a little bit to
+			// restore the correct sync. (At least that's what the old version
+			// of this code said, and who am I to argue?)
+			start += (int)(musicTimer * 1.25);
+
+			if (duration)
+				duration -= musicTimer;
+		}
 	}
+
+	playCDTrackInternal(track, numLoops, start, duration);
 }
 
 bool SoundCD::triggerCDSound(int soundID) {
