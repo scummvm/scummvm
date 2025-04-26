@@ -265,7 +265,7 @@ void Resource::load() {
 
 		const int resourceNum = me - _memList;
 
-		uint8 *memPtr = nullptr;
+		uint8 *memPtr;
 		if (me->type == RT_BITMAP) {
 			memPtr = _vidCurPtr;
 		} else {
@@ -594,10 +594,6 @@ void Resource::setupPart(int ptrId) {
 			for (int i = 0; i < 4; ++i) {
 				const int num = MEMLIST_PARTS[ptrId - 16000][i];
 				if (num != 0) {
-					if (_dataType == DT_20TH_EDITION && 0) {
-						// HD assets
-						_nth->preloadDat(ptrId - 16000, i, num);
-					}
 					*segments[i] = loadDat(num);
 				}
 			}
