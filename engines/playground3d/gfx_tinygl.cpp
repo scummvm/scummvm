@@ -194,9 +194,12 @@ void TinyGLRenderer::disableFog() {
 }
 
 void TinyGLRenderer::enableScissor(int x, int y, int width, int height) {
+	tglScissor(x, y, width, height);
+	tglEnable(TGL_SCISSOR_TEST);
 }
 
 void TinyGLRenderer::disableScissor() {
+	tglDisable(TGL_SCISSOR_TEST);
 }
 
 void TinyGLRenderer::drawFace(uint face) {
