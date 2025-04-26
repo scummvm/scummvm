@@ -244,8 +244,21 @@ void FreescapeEngine::shoot() {
 	executeLocalGlobalConditions(true, false, false); // Only execute "on shot" room/global conditions
 }
 
-void FreescapeEngine::changeAngle() {
-	_angleRotationIndex++;
+void FreescapeEngine::changeAngle(int offset, bool wrapAround) {
+	_angleRotationIndex = _angleRotationIndex + offset;
+
+	if (_angleRotationIndex < 0) {
+		if (wrapAround)
+			_angleRotationIndex = int(_angleRotations.size()) - 1;
+		else
+			_angleRotationIndex = 0;
+	} else if (_angleRotationIndex >= int(_angleRotations.size())) {
+		if (wrapAround)
+			_angleRotationIndex = 0;
+		else
+			_angleRotationIndex = int(_angleRotations.size()) - 1;
+	}
+
 	_angleRotationIndex = _angleRotationIndex % int(_angleRotations.size());
 }
 

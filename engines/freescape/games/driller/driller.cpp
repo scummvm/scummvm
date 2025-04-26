@@ -166,6 +166,17 @@ void DrillerEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *in
 	act->addDefaultInputMapping("w");
 	engineKeyMap->addAction(act);
 
+	// I18N: Illustrates the angle at which you turn left or right.
+	act = new Common::Action("INCANGLE", _("Increase Turn Angle"));
+	act->setCustomEngineActionEvent(kActionIncreaseAngle);
+	act->addDefaultInputMapping("a");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("DECANGLE", _("Decrease Turn Angle"));
+	act->setCustomEngineActionEvent(kActionDecreaseAngle);
+	act->addDefaultInputMapping("z");
+	engineKeyMap->addAction(act);
+
 	// I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 	act = new Common::Action("INCSTEPSIZE", _("Increase Step Size"));
 	act->setCustomEngineActionEvent(kActionIncreaseStepSize);
@@ -510,6 +521,10 @@ void DrillerEngine::pressedKey(const int keycode) {
 		rise();
 	} else if (keycode == kActionLowerOrFlyDown) {
 		lower();
+	} else if (keycode == kActionIncreaseAngle) {
+		changeAngle(1, false);
+	} else if (keycode == kActionDecreaseAngle) {
+		changeAngle(-1, false);
 	} else if (keycode == kActionRollRight) {
 		rotate(0, 0, -_angleRotations[_angleRotationIndex]);
 	} else if (keycode == kActionRollLeft) {
@@ -875,6 +890,8 @@ void DrillerEngine::initGameState() {
 	_gameStateVars[k8bitVariableShieldDrillerJet] = _initialJetShield;
 
 	_playerHeightNumber = 1;
+	_angleRotationIndex = 0;
+	_playerStepIndex = 6;
 	_demoIndex = 0;
 	_demoEvents.clear();
 

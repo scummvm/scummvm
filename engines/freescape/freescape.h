@@ -69,7 +69,8 @@ enum FreescapeAction {
 	kActionMoveLeft,
 	kActionMoveRight,
 	kActionShoot,
-	kActionChangeAngle,
+	kActionIncreaseAngle,
+	kActionDecreaseAngle,
 	kActionChangeStepSize,
 	kActionToggleRiseLower,
 	kActionRiseOrFlyUp,
@@ -343,7 +344,7 @@ public:
 	void decreaseStepSize();
 	void changeStepSize();
 
-	void changeAngle();
+	void changeAngle(int offset, bool wrapAround);
 	bool rise();
 	void lower();
 	bool checkFloor(Math::Vector3d currentPosition);

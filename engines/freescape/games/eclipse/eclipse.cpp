@@ -238,7 +238,7 @@ void EclipseEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *in
 
 	// I18N: Illustrates the angle at which you turn left or right.
 	act = new Common::Action("CHNGANGLE", _("Change Angle"));
-	act->setCustomEngineActionEvent(kActionChangeAngle);
+	act->setCustomEngineActionEvent(kActionIncreaseAngle);
 	act->addDefaultInputMapping("a");
 	engineKeyMap->addAction(act);
 
@@ -460,8 +460,8 @@ void EclipseEngine::drawInfoMenu() {
 }
 
 void EclipseEngine::pressedKey(const int keycode) {
-	if (keycode == kActionChangeAngle) {
-		changeAngle();
+	if (keycode == kActionIncreaseAngle) {
+		changeAngle(1, true);
 	} else if (keycode == kActionChangeStepSize) {
 		changeStepSize();
 	} else if (keycode == kActionToggleRiseLower) {

@@ -236,6 +236,17 @@ void DarkEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoS
 	act->addDefaultInputMapping("m");
 	engineKeyMap->addAction(act);
 
+	// I18N: Illustrates the angle at which you turn left or right.
+	act = new Common::Action("INCANGLE", _("Increase Turn Angle"));
+	act->setCustomEngineActionEvent(kActionIncreaseAngle);
+	act->addDefaultInputMapping("a");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("DECANGLE", _("Decrease Turn Angle"));
+	act->setCustomEngineActionEvent(kActionDecreaseAngle);
+	act->addDefaultInputMapping("z");
+	engineKeyMap->addAction(act);
+
 	// I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 	act = new Common::Action("INCSTEPSIZE", _("Increase Step Size"));
 	act->setCustomEngineActionEvent(kActionIncreaseStepSize);
@@ -284,6 +295,10 @@ void DarkEngine::initGameState() {
 	getTimeFromCountdown(seconds, minutes, hours);
 	_lastMinute = minutes;
 	_lastTenSeconds = seconds / 10;
+
+	_angleRotationIndex = 0;
+	_playerStepIndex = 6;
+
 	// Start playing music, if any, in any supported format
 	playMusic("Dark Side Theme");
 }
@@ -665,6 +680,10 @@ void DarkEngine::pressedKey(const int keycode) {
 		increaseStepSize();
 	} else if (keycode == kActionDecreaseStepSize) {
 		decreaseStepSize();
+	} else if (keycode == kActionIncreaseAngle) {
+		changeAngle(1, false);
+	} else if (keycode == kActionDecreaseAngle) {
+		changeAngle(-1, false);
 	} else if (keycode == kActionRollRight) {
 		rotate(0, 0, -_angleRotations[_angleRotationIndex]);
 	} else if (keycode == kActionRollLeft) {
