@@ -548,9 +548,9 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 
 void RasterizationDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
 	TinyGL::GLContext *c = gl_get_context();
-	c->fb->setScissorRectangle(clippingRectangle);
+	c->fb->setClippingRectangle(clippingRectangle);
 	execute(restoreState);
-	c->fb->resetScissorRectangle();
+	c->fb->resetClippingRectangle();
 }
 
 bool RasterizationDrawCall::operator==(const RasterizationDrawCall &other) const {
@@ -608,9 +608,10 @@ void BlittingDrawCall::execute(bool restoreState) const {
 }
 
 void BlittingDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
-	Internal::tglBlitSetScissorRect(clippingRectangle);
+	TinyGL::GLContext *c = gl_get_context();
+	c->fb->setClippingRectangle(clippingRectangle);
 	execute(restoreState);
-	Internal::tglBlitResetScissorRect();
+	c->fb->resetClippingRectangle();
 }
 
 BlittingDrawCall::BlittingState BlittingDrawCall::captureState() const {

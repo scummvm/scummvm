@@ -357,8 +357,6 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	_drawCallAllocator[1].initialize(drawCallMemorySize);
 	_debugRectsEnabled = false;
 	_profilingEnabled = false;
-
-	TinyGL::Internal::tglBlitResetScissorRect();
 }
 
 void GLContext::deinit() {

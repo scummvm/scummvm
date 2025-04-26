@@ -55,7 +55,7 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &for
 
 	_currentTexture = nullptr;
 
-	_enableScissor = false;
+	_clippingEnabled = false;
 }
 
 FrameBuffer::~FrameBuffer() {

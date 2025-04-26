@@ -31,7 +31,7 @@ namespace TinyGL {
 
 template <bool kDepthWrite>
 FORCEINLINE void FrameBuffer::putPixel(uint pixelOffset, int color, int x, int y, uint z) {
-	if (_enableScissor)
+	if (_clippingEnabled)
 		putPixel<kDepthWrite, true>(pixelOffset, color, x, y, z);
 	else
 		putPixel<kDepthWrite, false>(pixelOffset, color, x, y, z);
@@ -58,7 +58,7 @@ FORCEINLINE void FrameBuffer::putPixel(uint pixelOffset, int color, int x, int y
 
 template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
 void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
-	if (_enableScissor)
+	if (_clippingEnabled)
 		drawLine<kInterpRGB, kInterpZ, kDepthWrite, true>(p1, p2);
 	else
 		drawLine<kInterpRGB, kInterpZ, kDepthWrite, false>(p1, p2);
