@@ -484,10 +484,20 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 		_chunkySurfaceOffsetted.init(_currentState.width, _currentState.height, c2pWidth,
 			_chunkySurface.getBasePtr(xOffset, 0), _currentState.format);
 
+		Common::Point oldCursorPosition = _screen[kFrontBuffer]->cursor.getPosition();
+
 		_screen[kFrontBuffer]->reset(c2pWidth, _currentState.height, 8, _chunkySurfaceOffsetted, xOffset, true);
 		if (_currentState.mode > kSingleBuffering) {
 			_screen[kBackBuffer1]->reset(c2pWidth, _currentState.height, 8, _chunkySurfaceOffsetted, xOffset, true);
 			_screen[kBackBuffer2]->reset(c2pWidth, _currentState.height, 8, _chunkySurfaceOffsetted, xOffset, true);
+		}
+
+		{
+			Common::Event event;
+			event.type = Common::EVENT_MOUSEMOVE;
+			event.mouse = _screen[kFrontBuffer]->cursor.getPosition();
+			event.relMouse = event.mouse - oldCursorPosition;
+			g_system->getEventManager()->pushEvent(event);
 		}
 
 		if (hasPendingSize)
