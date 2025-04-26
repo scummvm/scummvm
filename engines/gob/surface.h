@@ -33,11 +33,14 @@
 #include "common/rational.h"
 #include "common/rect.h"
 
-#include "image/image_decoder.h"
 #include "graphics/pixelformat.h"
 
 namespace Common {
 class SeekableReadStream;
+}
+
+namespace Image {
+class ImageDecoder;
 }
 
 namespace Gob {

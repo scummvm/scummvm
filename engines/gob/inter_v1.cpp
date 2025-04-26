@@ -25,7 +25,6 @@
  *
  */
 
-#include "common/debug-channels.h"
 #include "common/str.h"
 
 #include "gob/gob.h"
@@ -440,8 +439,8 @@ void Inter_v1::o1_updateAnim() {
 	_vm->_game->_script->evalExpr(&layer);
 	_vm->_game->_script->evalExpr(&frame);
 	flags = _vm->_game->_script->readInt16();
-	_vm->_scenery->updateAnim((int16) layer, (int16) frame, (int16) animation, (int16) flags,
-							  (int16) deltaX, (int16) deltaY, 1);
+	_vm->_scenery->updateAnim((int16)layer, (int16)frame, (int16)animation, (int16)flags,
+							  (int16)deltaX, (int16)deltaY, 1);
 }
 
 void Inter_v1::o1_initMult() {
@@ -638,7 +637,7 @@ void Inter_v1::o1_renderStatic() {
 
 	_vm->_game->_script->evalExpr(&index);
 	_vm->_game->_script->evalExpr(&layer);
-	_vm->_scenery->renderStatic((int16) index, (int16) layer);
+	_vm->_scenery->renderStatic((int16)index, (int16)layer);
 }
 
 void Inter_v1::o1_loadCurLayer() {
@@ -647,8 +646,8 @@ void Inter_v1::o1_loadCurLayer() {
 	_vm->_game->_script->evalExpr(&curStatic);
 	_vm->_game->_script->evalExpr(&curStaticLayer);
 
-	_vm->_scenery->_curStatic = (int16) curStatic;
-	_vm->_scenery->_curStaticLayer = (int16) curStaticLayer;
+	_vm->_scenery->_curStatic = (int16)curStatic;
+	_vm->_scenery->_curStaticLayer = (int16)curStaticLayer;
 
 }
 
@@ -696,7 +695,7 @@ void Inter_v1::o1_freeFontToSprite() {
 void Inter_v1::o1_callSub(OpFuncParams &params) {
 	uint16 offset = _vm->_game->_script->readUint16();
 
-	if (gDebugLevel >= 5 && DebugMan.isDebugChannelEnabled(kDebugGameFlow)) {
+	if (debugChannelSet(5, kDebugGameFlow)) {
 		Common::String functionName = _vm->_game->getFunctionName(_vm->_game->_curTotFile, offset);
 		Common::String functionNameInLog;
 

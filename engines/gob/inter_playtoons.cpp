@@ -221,8 +221,8 @@ void Inter_Playtoons::oPlaytoons_freeSprite(OpFuncParams &params) {
 	}
 
 	if (_vm->getGameType() == kGameTypeAdibou2 &&
-		_vm->_util->getFrameRate() == 5 &&
-		_vm->isCurrentTot("BS_LAB50.TOT")) {
+			_vm->_util->getFrameRate() == 5 &&
+			_vm->isCurrentTot("BS_LAB50.TOT")) {
 		// WORKAROUND: In the "puzzle shapes" game of Adibou2/Sciences, the script
 		// sets the frame rate to 5Hz for a special animation but forgets to reset it
 		// afterward, making some videos laggy (e.g. Adibou help mode).

@@ -350,7 +350,7 @@ void Inter_Fascination::oFascin_initCursorAnim() {
 void Inter_Fascination::oFascin_setRenderFlags() {
 	int32 expr;
 	_vm->_game->_script->evalExpr(&expr);
-	_vm->_draw->_renderFlags = (int16) expr;
+	_vm->_draw->_renderFlags = (int16)expr;
 }
 
 void Inter_Fascination::oFascin_setWinFlags() {

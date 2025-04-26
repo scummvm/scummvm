@@ -32,7 +32,7 @@
 #include "common/hashmap.h"
 #include "common/str.h"
 
-#include "gob.h"
+#include "gob/gob.h"
 
 namespace Gob {
 
