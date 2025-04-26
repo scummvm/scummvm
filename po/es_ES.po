@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-26 11:37+0000\n"
-"PO-Revision-Date: 2025-04-22 04:18+0000\n"
+"PO-Revision-Date: 2025-04-27 05:18+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8056,17 +8056,13 @@ msgstr "Inclinar hacia la derecha"
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/dark/dark.cpp:240
 #: engines/freescape/games/driller/driller.cpp:170
-#, fuzzy
-#| msgid "Increasing Volume"
 msgid "Increase Turn Angle"
-msgstr "Aumentando el volumen"
+msgstr "Aumentar ángulo de giro"
 
 #: engines/freescape/games/dark/dark.cpp:245
 #: engines/freescape/games/driller/driller.cpp:175
-#, fuzzy
-#| msgid "Decreasing Volume"
 msgid "Decrease Turn Angle"
-msgstr "Bajando el volumen"
+msgstr "Reducir ángulo de giro"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:251
