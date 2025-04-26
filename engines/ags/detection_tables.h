@@ -4516,6 +4516,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159589239), // 1.02b Win
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159785509), // 1.07b Win
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 160015617), // 1.10k Win
+	GAME_ENTRY_EN_STEAM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 160027639), // 1.10l Win
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "game.ags", "38a49a28c0af599633006c09fe6c2f72", 159579164), // Initial Release Mac
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "game.ags", "38a49a28c0af599633006c09fe6c2f72", 159785509), // 1.07b Mac
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "game.ags", "38a49a28c0af599633006c09fe6c2f72", 160015617), // 1.10k Mac
@@ -4863,6 +4864,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DETECTION_ENTRY_GUIO("roguestate", "roguestate.exe", "981a1c4d5a64b8ebe300f9769acf0fe5", 895486573, Common::EN_ANY, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), ADGF_NO_FLAGS, 0),
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("rosewater", "Rosewater.ags", "9748c2a388a93061a1a480127493acb2", 3905499047, 0),  // v1.00.1
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("rosewater", "Rosewater.ags", "9748c2a388a93061a1a480127493acb2", 3905515500, 0),  // v1.02.0
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("rosewater", "Rosewater.ags", "9748c2a388a93061a1a480127493acb2", 3905534225, 0),  // v1.03.0
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("rosewater", "Rosewater.ags", "9748c2a388a93061a1a480127493acb2", 3905498635, 0),
 	GAME_ENTRY_GOG("samaritan", "samaritan.exe", "79dd677433bbb10d4970367eb68b243c", 78070237), // Groupees, v1.1 - GOG
 	GAME_ENTRY_STEAM("samaritan", "samaritan.exe", "5fb404a4a7c9cd1449dfdd3d23fa0250", 78753952),  // En-Fr-De-Es-It
