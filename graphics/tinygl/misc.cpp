@@ -64,6 +64,13 @@ void GLContext::glopViewport(GLParam *p) {
 	}
 }
 
+void GLContext::glopScissor(GLParam *p) {
+	scissor[0] = p[1].i;
+	scissor[1] = p[2].i;
+	scissor[2] = p[3].i;
+	scissor[3] = p[4].i;
+}
+
 void GLContext::glopEnableDisable(GLParam *p) {
 	int code = p[1].i;
 	int v = p[2].i;
@@ -98,6 +105,9 @@ void GLContext::glopEnableDisable(GLParam *p) {
 		break;
 	case TGL_STENCIL_TEST:
 		stencil_test_enabled = v != 0;
+		break;
+	case TGL_SCISSOR_TEST:
+		scissor_test_enabled = v != 0;
 		break;
 	case TGL_BLEND:
 		blending_enabled = v != 0;

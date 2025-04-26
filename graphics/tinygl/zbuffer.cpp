@@ -80,6 +80,12 @@ void FrameBuffer::delOffscreenBuffer(Buffer *buf) {
 
 void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b,
                         bool clearStencil, int stencilValue) {
+	if (_clippingEnabled) {
+		clearRegion(_clipRectangle.left, _clipRectangle.top,
+				_clipRectangle.width(), _clipRectangle.height(),
+				clearZ, z, clearColor, r, g, b, clearStencil, stencilValue);
+		return;
+	}
 	if (clearZ) {
 		const uint8 *zc = (const uint8 *)&z;
 		uint i;

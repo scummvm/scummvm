@@ -569,22 +569,32 @@ public:
 	void clearRegion(int x, int y, int w, int h, bool clearZ, int z,
 	                 bool clearColor, int r, int g, int b, bool clearStencil, int stencilValue);
 
-	void setClippingRectangle(const Common::Rect &rect) {
-		_clipRectangle = rect;
-		_clippingEnabled = true;
+	const Common::Rect &getClippingRectangle() const {
+		return _clipRectangle;
 	}
 
-	void resetClippingRectangle() {
-		_clippingEnabled = false;
-		// Mark it as invalid to fix it when it is fetched
-		_clipRectangle.left = -1;
-	}
+	void setupScissor(bool enable, const int (&scissor)[4], const Common::Rect *clippingRectangle) {
+		_clippingEnabled = enable || clippingRectangle;
 
-	Common::Rect &getClippingRectangle() {
-		if (!_clippingEnabled && _clipRectangle.left != 0) {
+		if (enable && clippingRectangle) {
+			_clipRectangle = clippingRectangle->findIntersectingRect(Common::Rect(
+					scissor[0],
+					// all viewport calculations are already flipped upside down
+					_pbufHeight - scissor[1] - scissor[3],
+					scissor[0] + scissor[2],
+					_pbufHeight - scissor[1]));
+		} else if (enable) {
+			_clipRectangle = Common::Rect(
+					scissor[0],
+					// all viewport calculations are already flipped upside down
+					_pbufHeight - scissor[1] - scissor[3],
+					scissor[0] + scissor[2],
+					_pbufHeight - scissor[1]);
+		} else if (clippingRectangle) {
+			_clipRectangle = *clippingRectangle;
+		} else {
 			_clipRectangle = Common::Rect(0, 0, _pbufWidth, _pbufHeight);
 		}
-		return _clipRectangle;
 	}
 
 	void enableBlending(bool enable) {

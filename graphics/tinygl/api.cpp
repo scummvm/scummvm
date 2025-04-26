@@ -464,6 +464,19 @@ void tglViewport(TGLint x, TGLint y, TGLsizei width, TGLsizei height) {
 	c->gl_add_op(p);
 }
 
+void tglScissor(TGLint x, TGLint y, TGLsizei width, TGLsizei height) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[5];
+
+	p[0].op = TinyGL::OP_Scissor;
+	p[1].i = x;
+	p[2].i = y;
+	p[3].i = width;
+	p[4].i = height;
+
+	c->gl_add_op(p);
+}
+
 void tglFrustumf(TGLfloat left, TGLfloat right, TGLfloat bottom, TGLfloat top, TGLfloat nearv, TGLfloat farv) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[7];
