@@ -52,13 +52,16 @@ namespace Common {
  * other compression methods like PPMd.  This version uses LZ77 with adaptive Huffman coding.
  *
  * @param stream          Data stream to load
+ * @param embedded        If true, load an embedded package from an installer executable, otherwise load
+ *                        a stand-alone package file.
  * @param prefixToRemove  Specifies the prefix of extract directives to include, and removes the prefix
- *                        If you pass an empty string or null, all directives will be included
+ *                        If you pass an empty string or null, all directives will be included.
+ *                        File path separators will be normalized to '/' before checking the prefix.
  * @param threadSafe      If true, all read operations will be wrapped in a mutex-guarded substream
  *
  * @return                The Gentee Installer package archive
  */
-Common::Archive *createGenteeInstallerArchive(Common::SeekableReadStream *stream, const char *prefixToRemove, bool threadSafe);
+Common::Archive *createGenteeInstallerArchive(Common::SeekableReadStream *stream, const char *prefixToRemove, bool embedded, bool threadSafe);
 
 } // End of namespace Common
 
