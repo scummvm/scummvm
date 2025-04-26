@@ -119,7 +119,7 @@ void Room810::parser() {
 	} else if (lookFl && player_said("mausoleum")) {
 		// Nothing -> already covered by ripley_said(LOOK)
 	} else if (lookFl && player_said("urn")) {
-		digi_play("Com061_1", 1, 255, -1, 997);
+		digi_play("com061", 1, 255, -1, 997);
 	} else if (goFl && player_said("outside")) {
 		digi_play("810r06", 1, 255, -1, 810);
 	} else if (gearFl && player_said("large urn")) {
