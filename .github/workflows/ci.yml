@@ -32,12 +32,15 @@ jobs:
       VCPKG_FEATURE_FLAGS: dependencygraph
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
       VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
+      VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
+      GIT_VCPKG_COMMIT: b02e341c927f16d991edbd915d8ea43eac52096c
     permissions:
       contents: write # For dependencygraph
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - uses: ilammy/setup-nasm@v1
+      - name: Setup nasm
+        uses: ilammy/setup-nasm@v1
         if: matrix.useNasm == 'true'
       - name: Force CMake < 4.0 usage
         uses: jwlawson/actions-setup-cmake@v2
@@ -47,16 +50,16 @@ jobs:
         uses: lukka/run-vcpkg@v11
         id: runvcpkg
         with:
-          vcpkgGitCommitId: b02e341c927f16d991edbd915d8ea43eac52096c
+          vcpkgGitCommitId: ${{ env.GIT_VCPKG_COMMIT }}
       - name: Integrate vcpkg
         run: |
           ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}/vcpkg integrate install
-      - name: Upload libs
-        uses: actions/upload-artifact@v4
-        if: matrix.buildArtifacts == 'true'
+      - name: Restore vcpkg cache
+        uses: actions/cache/restore@v4
         with:
-          name: libs-${{ matrix.triplet }}
-          path: ${{ env.VCPKG_INSTALLED_DIR }}\\${{ matrix.triplet }}
+          path: ${{ github.workspace }}/vcpkg_cache
+          key: vcpkg-${{ env.GIT_VCPKG_COMMIT }}-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json', 'vcpkg_installed/compiler-file-hash-cache.json', 'vcpkg_installed/status') }}
+          restore-keys: vcpkg-${{ env.GIT_VCPKG_COMMIT }}-${{ matrix.triplet }}-
       - name: Build create_project
         run: |
           cd devtools/create_project/cmake
@@ -77,6 +80,17 @@ jobs:
           cd build-scummvm
           ls
           msbuild scummvm.sln /m /p:VcpkgEnableManifest=true /p:BuildInParallel=true /p:Configuration=${{ env.CONFIGURATION }} /p:PreferredToolArchitecture=x64 /p:Platform=${{ matrix.platform }} /v:minimal
+      - name: Save vcpkg cache
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ github.workspace }}/vcpkg_cache
+          key: vcpkg-${{ env.GIT_VCPKG_COMMIT }}-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json', 'vcpkg_installed/compiler-file-hash-cache.json', 'vcpkg_installed/status') }}
+      - name: Upload libs
+        uses: actions/upload-artifact@v4
+        if: matrix.buildArtifacts == 'true'
+        with:
+          name: libs-${{ matrix.triplet }}
+          path: ${{ env.VCPKG_INSTALLED_DIR }}\\${{ matrix.triplet }}
       - name: Upload scummvm
         uses: actions/upload-artifact@v4
         if: matrix.buildArtifacts == 'true'
