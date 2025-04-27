@@ -36,6 +36,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Activate original bug fixes (FunFrock's HQ door and safe bugs).
    - Fixed normal mode action triggering.
 
+ V-Cruise:
+   - Fixed text rendering in Chinese and Japanese localizations.
+   - Added support for Japanese DVD version of Schizm: Mysterious Journey.
 
 #### 2.9.0 "Close Encounters of the 2.9th Kind" (2024-12-22)
 
