@@ -94,6 +94,7 @@ protected:
 	void injectMISESpeech();
 
 	void workaroundLoomHetchelDoubleHead(Actor *a, int act);
+	bool workaroundMonkey1JollyRoger(byte callerOpcode, int arg);
 
 	/**
 	 * Fetch the next script word, then if cond is *false*, perform a relative jump.
