@@ -482,7 +482,7 @@ View1::View1() : UIElement("View1") {
 
 				// Check if we hit an item
 				// TODO: Skipping this for now while we only have one item
-				GameObject *clickedObject = getClickedInventoryItem(msg._pos);
+				GameObject *clickedObject = getClickedInventoryItem2(msg._pos);
 
 				// TODO: Maybe handled better elsewhere - examining inventory items
 				if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Look) {
@@ -768,7 +768,7 @@ void View1::draw() {
 
 	if (_isShowingInventory) {
 		// Show the ID of the hovered item
-		GameObject* hoveredObject = getClickedInventoryItem(mousePos);
+		GameObject* hoveredObject = getClickedInventoryItem2(mousePos);
 		if (hoveredObject != nullptr) {
 			Common::String name = GameObjects::instance().ObjectNames[hoveredObject->Index];
 			if (!name.empty()) {
@@ -996,7 +996,7 @@ GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
 
 GameObject *View1::getClickedInventoryItem2(const Common::Point &p) {
 
-	Common::Rect currentInventorySlot(inventoryGridUpperLeft, inventorySlotSize);
+	Common::Rect currentInventorySlot(inventoryGridUpperLeft, inventoryGridUpperLeft + inventorySlotSize);
 
 	uint16 itemIndex = inventoryPage * 5;
 	for (int iy = 0; iy < 2; iy++) {
@@ -1008,10 +1008,9 @@ GameObject *View1::getClickedInventoryItem2(const Common::Point &p) {
 				return inventoryItems[itemIndex];
 			}
 			itemIndex++;
-			currentInventorySlot.left += inventorySlotSize.x;
+			currentInventorySlot.moveTo(currentInventorySlot.left + inventorySlotSize.x, currentInventorySlot.top);
 		}
-		currentInventorySlot.left = inventoryGridUpperLeft.x;
-		currentInventorySlot.top += inventorySlotSize.y + 4;
+		currentInventorySlot.moveTo(inventoryGridUpperLeft.x, currentInventorySlot.top + inventorySlotSize.y + 4);
 	}
 	return nullptr;
 }
