@@ -41,8 +41,6 @@ void set_walker_scaling(SceneDef *rdef) {
 }
 
 static void ws_walkto_node(machine *myWalker, railNode *destNode, bool firstTime) {
-	frac16	x, y, s;
-
 	// Parameter verification
 	if (!myWalker) {
 		error_show(FL, 'W:-(');
@@ -54,9 +52,9 @@ static void ws_walkto_node(machine *myWalker, railNode *destNode, bool firstTime
 	}
 
 	// Calculate the destination values x, y, s
-	x = destNode->x << 16;
-	y = destNode->y << 16;
-	s = _G(globals)[GLB_MIN_SCALE] + FixedMul(y - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
+	const frac16 x = destNode->x << 16;
+	const frac16 y = destNode->y << 16;
+	const frac16 s = _G(globals)[GLB_MIN_SCALE] + FixedMul(y - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
 
 	// Plug in the destination x, y, and s
 	_G(globals)[GLB_TEMP_1] = x;
@@ -77,8 +75,6 @@ static void ws_walkto_node(machine *myWalker, railNode *destNode, bool firstTime
 }
 
 bool walker_has_walk_finished(machine *sender) {
-	railNode *tempNode;
-
 	// Parameter verification
 	if ((!sender) || (!sender->myAnim8)) {
 		error_show(FL, 'W:-(');
@@ -87,7 +83,7 @@ bool walker_has_walk_finished(machine *sender) {
 
 	// Remove the node we just arrived at from the sender's walkPath
 	if (sender->walkPath) {
-		tempNode = sender->walkPath;
+		railNode *tempNode = sender->walkPath;
 		sender->walkPath = sender->walkPath->shortPath;
 		mem_free((void *)tempNode);
 	}
@@ -108,16 +104,14 @@ bool walker_has_walk_finished(machine *sender) {
  */
 void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int32 finalFacing, bool complete_walk) {
 	int8 directions[14] = { 0, 0, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 9 };
-	int32 currX, currY;
 	int32 currNodeID, destNodeID;
-	bool result;
 
 	if (!myWalker || !myWalker->myAnim8)
 		error_show(FL, 'W:-(');
 
 	// Get walker's current location
-	currX = myWalker->myAnim8->myRegs[IDX_X] >> 16;
-	currY = myWalker->myAnim8->myRegs[IDX_Y] >> 16;
+	const int32 currX = myWalker->myAnim8->myRegs[IDX_X] >> 16;
+	const int32 currY = myWalker->myAnim8->myRegs[IDX_Y] >> 16;
 
 	// Add the walker's current location and the destination to the rail nodes...
 	Buffer *walkerCodes = nullptr;
@@ -136,7 +130,7 @@ void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int3
 	}
 
 	// Find the shortest path between currNodeID, and destNodeID
-	result = GetShortestPath(currNodeID, destNodeID, &(myWalker->walkPath));
+	const bool result = GetShortestPath(currNodeID, destNodeID, &(myWalker->walkPath));
 
 	// Now that a path has been found, remove the two extra added nodes
 	RemoveRailNode(currNodeID, walkerCodes, true);
@@ -179,9 +173,7 @@ void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int3
 }
 
 bool adv_walker_path_exists(machine *myWalker, int32 x, int32 y) {
-	int32 currX, currY;
 	int32 currNodeID, destNodeID;
-	bool result;
 
 	if (!myWalker || !myWalker->myAnim8) {
 		error_show(FL, 'W:-(');
@@ -189,8 +181,8 @@ bool adv_walker_path_exists(machine *myWalker, int32 x, int32 y) {
 	}
 
 	// Get walker's current location
-	currX = myWalker->myAnim8->myRegs[IDX_X] >> 16;
-	currY = myWalker->myAnim8->myRegs[IDX_Y] >> 16;
+	const int32 currX = myWalker->myAnim8->myRegs[IDX_X] >> 16;
+	const int32 currY = myWalker->myAnim8->myRegs[IDX_Y] >> 16;
 
 	// Add the walker's current location and the destination to the rail nodes...
 	Buffer *walkerCodes = nullptr;
@@ -210,7 +202,7 @@ bool adv_walker_path_exists(machine *myWalker, int32 x, int32 y) {
 	}
 
 	// Find the shortest path between currNodeID, and destNodeID
-	result = GetShortestPath(currNodeID, destNodeID, &(myWalker->walkPath));
+	const bool result = GetShortestPath(currNodeID, destNodeID, &(myWalker->walkPath));
 
 	// Now that a path has been attempted, remove the two extra added nodes
 	RemoveRailNode(currNodeID, walkerCodes, true);
@@ -368,7 +360,6 @@ void ws_walk(int32 x, int32 y, GrBuff **buffer, int16 trigger, int32 finalFacing
 }
 
 void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *layer, int32 *facing) {
-	Anim8 *myAnim8;
 	const int8 facings[10] = { 1, 2, 3, 4, 5, 7, 8, 9, 10, 11 };
 
 	if (!myWalker || !myWalker->myAnim8) {
@@ -376,7 +367,7 @@ void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *
 		return;
 	}
 
-	myAnim8 = myWalker->myAnim8;
+	Anim8 *myAnim8 = myWalker->myAnim8;
 
 	if (x) {
 		*x = myAnim8->myRegs[IDX_X] >> 16;
@@ -452,16 +443,12 @@ bool ws_walk_load_shadow_series(const int16 *dir_array, const char *name_array[]
 }
 
 void ws_walk_dump_series(int16 num_directions, int16 start_hash) {
-	int32 i;
-
-	for (i = 0; i < num_directions; i++) {
+	for (int32 i = 0; i < num_directions; i++) {
 		series_unload(start_hash++);
 	}
 }
 
 void adv_get_walker_destination(machine *my_walker, int32 *x, int32 *y, int32 *final_facing) {
-	railNode *current_node;
-	int32 face;
 	int8 directions[11] = { 1, 2, 3, 4, 5, 7, 8, 9, 10, 11 };
 
 	// If there is no walker, or the walker is not on a walk path, return 
@@ -473,7 +460,7 @@ void adv_get_walker_destination(machine *my_walker, int32 *x, int32 *y, int32 *f
 	}
 
 	// Find the end of the path
-	current_node = my_walker->walkPath;
+	railNode *current_node = my_walker->walkPath;
 	while (current_node->shortPath) {
 		current_node = current_node->shortPath;
 	}
@@ -483,7 +470,7 @@ void adv_get_walker_destination(machine *my_walker, int32 *x, int32 *y, int32 *f
 	*y = current_node->y;
 
 	// Get final facing from l.v.6 = myRegs[6 + IDX_COUNT]
-	face = my_walker->myAnim8->myRegs[6 + IDX_COUNT] >> 16;
+	int32 face = my_walker->myAnim8->myRegs[6 + IDX_COUNT] >> 16;
 
 	// FIXME: Riddle room 608 Twelvetrees cutscene has face -1. Not sure if happens in original
 	if (face == -1)
