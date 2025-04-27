@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-26 11:37+0000\n"
+"POT-Creation-Date: 2025-04-27 12:27+0000\n"
 "PO-Revision-Date: 2024-11-14 01:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -58,7 +58,7 @@ msgstr "Beschikbare engines:"
 
 #. I18N: Close dialog button
 #: gui/about.cpp:523 gui/downloadpacksdialog.cpp:297
-#: gui/downloadpacksdialog.cpp:388 gui/integrity-dialog.cpp:276
+#: gui/downloadpacksdialog.cpp:388 gui/integrity-dialog.cpp:307
 #: gui/gui-manager.cpp:170 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:558
 #: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:126
@@ -94,7 +94,7 @@ msgstr "Ga omhoog"
 #: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:271
 #: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:340
 #: gui/editrecorddialog.cpp:66 gui/integrity-dialog.cpp:118
-#: gui/integrity-dialog.cpp:169 gui/filebrowser-dialog.cpp:68
+#: gui/integrity-dialog.cpp:206 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:93 gui/options.cpp:2427
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
@@ -347,7 +347,7 @@ msgstr "JSON code heeft niet het juiste formaat."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
-#: gui/integrity-dialog.cpp:176 gui/fluidsynth-dialog.cpp:154
+#: gui/integrity-dialog.cpp:213 gui/fluidsynth-dialog.cpp:154
 #: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
 #: gui/options.cpp:2429 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 dists/android.strings.xml.cpp:33
@@ -845,7 +845,7 @@ msgid ""
 msgstr ""
 "Integriteit van bestanden controleren kan lang duren. Geduld a.u.b...\n"
 
-#: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:168
+#: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:205
 msgid "Calculating file checksums..."
 msgstr "Bestand controlesom berekenen..."
 
@@ -853,16 +853,16 @@ msgstr "Bestand controlesom berekenen..."
 msgid "Launch Email Client"
 msgstr "Start Email programma"
 
-#: gui/integrity-dialog.cpp:174
+#: gui/integrity-dialog.cpp:211
 msgid "Calculation complete"
 msgstr "Berekening klaar"
 
-#: gui/integrity-dialog.cpp:263
+#: gui/integrity-dialog.cpp:294
 #, c-format
 msgid "Calculated %s %S / %s %S"
 msgstr "Berekend %s %S / %s %S"
 
-#: gui/integrity-dialog.cpp:509
+#: gui/integrity-dialog.cpp:539
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -876,14 +876,14 @@ msgstr ""
 "Als u zeker bent dat dit een valide variant is, stuur dan de volgende e-mail "
 "naar integrity@scummvm.org"
 
-#: gui/integrity-dialog.cpp:533
+#: gui/integrity-dialog.cpp:563
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
 "Het spel lijkt geen enkel bestand te hebben. Weet u zeker dat het pad juist "
 "is?"
 
-#: gui/integrity-dialog.cpp:538
+#: gui/integrity-dialog.cpp:568
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
@@ -891,7 +891,7 @@ msgstr ""
 "Er lijkt geen metadata te zijn voor het spel, dus is het niet te matchen. "
 "Vul a.u.b. de juiste metadata in voor het spel."
 
-#: gui/integrity-dialog.cpp:565
+#: gui/integrity-dialog.cpp:595
 msgid "Files all OK"
 msgstr "Alle bestanden OK"
 
