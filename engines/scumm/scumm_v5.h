@@ -90,6 +90,8 @@ protected:
 
 	void walkActorToActor(int actor, int toActor, int dist);
 
+	bool workaroundMonkey1JollyRoger(byte callerOpcode, int arg);
+
 	/**
 	 * Fetch the next script word, then if cond is *false*, perform a relative jump.
 	 * So this corresponds to a "jne" jump instruction.

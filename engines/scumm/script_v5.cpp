@@ -437,24 +437,9 @@ void ScummEngine_v5::o5_actorOps() {
 	Actor *a = derefActor(act, "o5_actorOps");
 	int i, j;
 
-	// WORKAROUND: There's a continuity error in Monkey 1, in that the Jolly Roger should
-	// only appear in the first scene showing the Sea Monkey in the middle of the sea,
-	// since Guybrush must have picked it for the two other ship cutscenes to happen.
-	//
-	// Some official releases appear to have a fix for this (e.g. the English floppy VGA
-	// version), but most releases don't. The fixed release would check whether the
-	// script describing that "the crew begins to plan their voyage" is running in order
-	// to display the flag, so we just reuse this check. The Ultimate Talkie also fixed
-	// this, but in a different way which doesn't look as portable between releases.
-	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE))) &&
-		_roomResource == 87 && vm.slot[_currentScript].number == 10002 && act == 9 &&
-		enhancementEnabled(kEnhVisualChanges)) {
-		const int scriptNr = (_game.version == 5) ? 122 : 119;
-		if (!isScriptRunning(scriptNr)) {
-			a->putActor(0);
-			stopObjectCode();
-			return;
-		}
+	if (workaroundMonkey1JollyRoger(_opcode, a->_number)) {
+		stopObjectCode();
+		return;
 	}
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
@@ -1447,7 +1432,8 @@ void ScummEngine_v5::o5_getRandomNr() {
 
 void ScummEngine_v5::o5_isScriptRunning() {
 	getResultPos();
-	setResult(isScriptRunning(getVarOrDirectByte(PARAM_1)));
+	int scriptNr = getVarOrDirectByte(PARAM_1);
+	setResult(isScriptRunning(scriptNr));
 
 	// WORKAROUND bug #346 (also occurs in original): Object stopped with active cutscene
 	// In script 204 room 25 (Cannibal Village) a crash can occur when you are
@@ -1474,6 +1460,8 @@ void ScummEngine_v5::o5_isScriptRunning() {
 			}
 		}
 	}
+
+	(void)workaroundMonkey1JollyRoger(_opcode, scriptNr);
 }
 
 void ScummEngine_v5::o5_getVerbEntrypoint() {
@@ -3526,6 +3514,10 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 	}
 }
 
+#pragma mark -
+#pragma mark --- Enhancements & workarounds ---
+#pragma mark -
+
 void ScummEngine_v5::printPatchedMI1CannibalString(int textSlot, const byte *ptr) {
 	const char *msg = (const char *)ptr;
 
@@ -3552,6 +3544,50 @@ void ScummEngine_v5::printPatchedMI1CannibalString(int textSlot, const byte *ptr
 	}
 
 	printString(textSlot, (const byte *)msg);
+}
+
+bool ScummEngine_v5::workaroundMonkey1JollyRoger(byte callerOpcode, int arg) {
+	// WORKAROUND: There's a continuity error in Monkey 1, in that the Jolly Roger should
+	// only appear in the *first* scene showing the Sea Monkey in the middle of the sea,
+	// since Guybrush must have picked it for the two other ship cutscenes to happen.
+	//
+	// Most (all?) releases are impacted by this; the English floppy VGA release made a
+	// change to check whether the script describing that "the crew begins to plan their
+	// voyage" is running before displaying the flag, but it's an incomplete fix, as it'd
+	// also need to remove the flag from the room, once it's been shown for the first time.
+	// We fix both issues.
+	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE))) &&
+		_roomResource == 87 && _currentScript != 0xFF && vm.slot[_currentScript].number == 10002 &&
+		enhancementEnabled(kEnhVisualChanges)) {
+		// The script that's only run the first time the flag is shown
+		const int defaultExpectedScriptNr = (_game.version == 5) ? 122 : 119;
+		// Jolly Roger actor number
+		const int defaultExpectedActNr = 9;
+		int scriptNr = -1, actNr = -1;
+
+		if (callerOpcode == 0x13) {
+			// called before o5_actorOps is done
+			actNr = arg;
+			scriptNr = defaultExpectedScriptNr;
+		} else if (callerOpcode == 0x68) {
+			// called after o5_isScriptRunning is done
+			scriptNr = arg;
+			actNr = defaultExpectedActNr;
+		}
+
+		// Unmet conditions; abort any workaround attempt
+		if (scriptNr != defaultExpectedScriptNr || actNr != defaultExpectedActNr)
+			return false;
+
+		// Remove the Jolly Roger from the screen, if not right at the start of Part II
+		Actor *a = derefActorSafe(actNr, "workaroundMonkey1JollyRoger");
+		if (a && !isScriptRunning(scriptNr)) {
+			a->putActor(0);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 } // End of namespace Scumm
