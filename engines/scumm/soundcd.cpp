@@ -326,10 +326,24 @@ void SoundCD::restoreCDAudioAfterLoad(AudioCDManager::Status &info) {
 	if (_vm->_game.platform == Common::kPlatformFMTowns)
 		return;
 
-	int track = info.track;
-	int numLoops = info.numLoops;
-	int start = info.start;
-	int duration = info.duration;
+	int track, numLoops, start, duration;
+
+	// FIXME: We still have a problem if the user saves more than once during
+	// the same sound, because then info.start no longer refers to the original
+	// start of the sound. We can fix that for some games, but probably not
+	// where it really counts, i.e. VGA Loom.
+
+	if (_currentCDSound) {
+		int end;
+
+		track = getCDTrackIdFromSoundId(_currentCDSound, numLoops, start, end);
+		duration = (end <= start) ? 0 : end - start;
+	} else {
+		track = info.track;
+		numLoops = info.numLoops;
+		start = info.start;
+		duration = info.duration;
+	}
 
 	// We only try to restore the position of the track if it's a non-looping
 	// sound. (This is particularly important for the talkie version of Loom.)
@@ -351,6 +365,7 @@ void SoundCD::restoreCDAudioAfterLoad(AudioCDManager::Status &info) {
 			// version of Loom. We move the offset forward by a little bit to
 			// restore the correct sync. (At least that's what the old version
 			// of this code said, and who am I to argue?)
+
 			start += (int)(musicTimer * 1.25);
 
 			if (duration)
