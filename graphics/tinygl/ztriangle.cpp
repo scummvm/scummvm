@@ -51,18 +51,18 @@ void FrameBuffer::putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
                                     int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
                                     uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx) {
 	if (kEnableScissor && scissorPixel(x + _a, y)) {
-		return;
+		goto end;
 	}
 
 	if (kStippleEnabled && !applyStipplePattern(x + _a, y, _polygonStipplePattern)) {
-		return;
+		goto end;
 	}
 
 	if (kStencilEnabled) {
 		bool stencilResult = stencilTest(ps[_a]);
 		if (!stencilResult) {
 			stencilOp(false, true, ps + _a);
-			return;
+			goto end;
 		}
 	}
 	bool depthTestResult;
@@ -79,6 +79,7 @@ void FrameBuffer::putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
 		          (fbOffset + _a, a >> (ZB_POINT_ALPHA_BITS - 8), r >> (ZB_POINT_RED_BITS - 8), g >> (ZB_POINT_GREEN_BITS - 8), b >> (ZB_POINT_BLUE_BITS - 8),
 		          z, fog, fog_r, fog_g, fog_b);
 	}
+end:
 	z += dzdx;
 	if (kFogMode) {
 		fog += dfdx;
@@ -99,14 +100,14 @@ void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *texture,
                                   int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
                                   uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx) {
 	if (kEnableScissor && scissorPixel(x + _a, y)) {
-		return;
+		goto end;
 	}
 
 	if (kStencilEnabled) {
 		bool stencilResult = stencilTest(ps[_a]);
 		if (!stencilResult) {
 			stencilOp(false, true, ps + _a);
-			return;
+			goto end;
 		}
 	}
 	bool depthTestResult;
@@ -133,6 +134,7 @@ void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *texture,
 		}
 		writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite, kFogMode>(fbOffset + _a, c_a, c_r, c_g, c_b, z, fog, fog_r, fog_g, fog_b);
 	}
+end:
 	z += dzdx;
 	s += dsdx;
 	t += dtdx;
@@ -150,7 +152,7 @@ void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *texture,
 template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled, bool kStippleEnabled, bool kDepthTestEnabled>
 void FrameBuffer::putPixelDepth(uint *pz, byte *ps, int _a, int x, int y, uint &z, int &dzdx) {
 	if (kEnableScissor && scissorPixel(x + _a, y)) {
-		return;
+		goto end;
 	}
 
 	/*if (kStippleEnabled && !applyStipplePattern(x + _a, y, _polygonStipplePattern)) {
@@ -161,7 +163,7 @@ void FrameBuffer::putPixelDepth(uint *pz, byte *ps, int _a, int x, int y, uint &
 		bool stencilResult = stencilTest(ps[_a]);
 		if (!stencilResult) {
 			stencilOp(false, true, ps + _a);
-			return;
+			goto end;
 		}
 	}
 	bool depthTestResult;
@@ -176,6 +178,7 @@ void FrameBuffer::putPixelDepth(uint *pz, byte *ps, int _a, int x, int y, uint &
 	if (kDepthWrite && depthTestResult) {
 		pz[_a] = z;
 	}
+end:
 	z += dzdx;
 }
 
