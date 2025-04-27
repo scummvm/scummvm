@@ -47,6 +47,14 @@ const GlkDetectionEntry* ComprehendMetaEngine::getDetectionEntries() {
 		};
 		entries.push_back(detection);
 	}
+
+	entries.push_back({nullptr,
+					   nullptr,
+					   nullptr,
+					   0,
+					   Common::UNK_LANG,
+					   Common::kPlatformUnknown});
+
 	return entries.data();
 }
 

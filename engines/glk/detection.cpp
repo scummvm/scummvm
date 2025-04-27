@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "base/plugins.h"
 #include "common/md5.h"
 #include "common/memstream.h"
@@ -372,14 +374,14 @@ void GlkMetaEngineDetection::dumpDetectionEntries() const {
 			const char *title = pd.description;
 			const char *extra = engineName == EngineName::COMPREHEND ? "" : entry->_extra;
 
-			debug("game (");
-			debug("\tname \"%s\"", escapeString(entry->_gameId).c_str());
-			debug("\ttitle \"%s\"", escapeString(title).c_str());
-			debug("\textra \"%s\"", escapeString(extra).c_str());
-			debug("\tlanguage \"%s\"", escapeString(getLanguageLocale(entry->_language)).c_str());
-			debug("\tplatform \"%s\"", escapeString(getPlatformCode(entry->_platform)).c_str());
-			debug("\tsourcefile \"%s\"", escapeString(getName()).c_str());
-			debug("\tengine \"%s\"", escapeString(getEngineName()).c_str());
+			printf("game (\n");
+			printf("\tname \"%s\"\n", escapeString(entry->_gameId).c_str());
+			printf("\ttitle \"%s\"\n", escapeString(title).c_str());
+			printf("\textra \"%s\"\n", escapeString(extra).c_str());
+			printf("\tlanguage \"%s\"\n", escapeString(getLanguageLocale(entry->_language)).c_str());
+			printf("\tplatform \"%s\"\n", escapeString(getPlatformCode(entry->_platform)).c_str());
+			printf("\tsourcefile \"%s\"\n", escapeString(getName()).c_str());
+			printf("\tengine \"%s\"\n", escapeString(getEngineName()).c_str());
 
 			Common::String checksum = entry->_md5;
 
@@ -389,12 +391,12 @@ void GlkMetaEngineDetection::dumpDetectionEntries() const {
 
 			// Level9 engine does not use md5 checksums, so checksums are not printed. 
 			if (engineName == EngineName::LEVEL9) {
-				debug("\trom (name \"%s\" size %lld)", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize));
+				printf("\trom ( name \"%s\" size %lld )", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize));
 			} else {
-				debug("\trom (name \"%s\" size %lld md5-%d %s)", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize), getMD5Bytes(), checksum.c_str());
+				printf("\trom ( name \"%s\" size %lld md5-%d %s )", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize), getMD5Bytes(), checksum.c_str());
 			}
 			
-			debug(")\n");
+			printf(")\n");
 		}
 	}
 #endif
