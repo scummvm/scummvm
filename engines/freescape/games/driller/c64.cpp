@@ -44,7 +44,7 @@ void DrillerEngine::loadAssetsC64FullGame() {
 	} else if (_targetName.hasPrefix("driller")) {
 		file.open("driller.c64.data");
 
-		if (_variant & GF_C64_TAPE) {
+		if (_variant) {
 			loadFonts(&file, 0x402);
 			load8bitBinary(&file, 0x8b04, 16);
 			loadMessagesFixedSize(&file, 0x167a, 14, 20);
@@ -117,16 +117,21 @@ void DrillerEngine::loadAssetsC64FullGame() {
 		_colorMap[10][2] = 0x5a;
 		_colorMap[10][3] = 0xa5;
 
-		// TODO
-		_colorMap[12][0] = 0xee;
-		_colorMap[12][1] = 0x77;
-		_colorMap[12][2] = 0x9e;
-		_colorMap[12][3] = 0xd5;
+		_colorMap[11][0] = 0xaf;
+		_colorMap[11][1] = 0xfa;
+		_colorMap[11][2] = 0xaf;
+		_colorMap[11][3] = 0xfa;
 
-		_colorMap[13][0] = 0xaf;
-		_colorMap[13][1] = 0xfa;
-		_colorMap[13][2] = 0xaf;
-		_colorMap[13][3] = 0xfa;
+
+		_colorMap[12][0] = 0x77;
+		_colorMap[12][1] = 0xdd;
+		_colorMap[12][2] = 0x77;
+		_colorMap[12][3] = 0xdd;
+
+		_colorMap[13][0] = 0xcc;
+		_colorMap[13][1] = 0xcc;
+		_colorMap[13][2] = 0xcc;
+		_colorMap[13][3] = 0xcc;
 
 		// TODO
 		_colorMap[14][0] = 0x77;

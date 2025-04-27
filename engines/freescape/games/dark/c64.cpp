@@ -132,10 +132,10 @@ void DarkEngine::loadAssetsC64FullGame() {
 	_colorMap[13][3] = 0xdd;
 
 	// TODO
-	_colorMap[14][0] = 0x00;
-	_colorMap[14][1] = 0x00;
-	_colorMap[14][2] = 0x00;
-	_colorMap[14][3] = 0x00;
+	_colorMap[14][0] = 0xcc;
+	_colorMap[14][1] = 0xcc;
+	_colorMap[14][2] = 0xcc;
+	_colorMap[14][3] = 0xcc;
 
 	Graphics::Surface *surf = loadBundledImage("dark_border");
 	surf->convertToInPlace(_gfx->_texturePixelFormat);

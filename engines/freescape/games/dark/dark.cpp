@@ -318,6 +318,7 @@ void DarkEngine::loadAssets() {
 	_noEnergyMessage = _messagesList[16];
 	_fallenMessage = _messagesList[17];
 	_crushedMessage = _messagesList[10];
+	_forceEndGameMessage = _messagesList[18];
 }
 
 bool DarkEngine::tryDestroyECDFullGame(int index) {

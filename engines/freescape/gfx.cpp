@@ -151,13 +151,13 @@ byte getCGAStipple(byte x, int back, int fore) {
 }
 
 byte getC64Stipple(byte x, int back, int fore) {
-	int c0 = x & 1 ? fore : back; //getC64Pixel(x, 0);
+	int c0 = getCGAPixel(x, 0);
 	assert(c0 == back || c0 == fore || back == fore);
-	int c1 = (x >> 1) & 1 ? fore : back; //getC64Pixel(x, 1);
+	int c1 = getCGAPixel(x, 1);
 	assert(c1 == back || c1 == fore || back == fore);
-	int c2 = (x >> 2) & 1 ? fore : back; //getC64Pixel(x, 2);
+	int c2 = getCGAPixel(x, 2);
 	assert(c2 == back || c2 == fore || back == fore);
-	int c3 = (x >> 3) & 1 ? fore : back; //getC64Pixel(x, 3);
+	int c3 = getCGAPixel(x, 3);
 	assert(c3 == back || c3 == fore || back == fore);
 
 	byte st = 0;
