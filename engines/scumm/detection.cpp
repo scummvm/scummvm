@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "base/plugins.h"
 
 #include "engines/metaengine.h"
@@ -97,6 +99,8 @@ public:
 	}
 
 	void dumpDetectionEntries() const override final;
+
+	GameFilenamePattern matchGameFilenamePattern(const MD5Table *entry) const;
 };
 
 PlainGameList ScummMetaEngineDetection::getSupportedGames() const {
@@ -120,26 +124,58 @@ static Common::String escapeString(const char *string) {
 	return res;
 }
 
-void ScummMetaEngineDetection::dumpDetectionEntries() const {
+GameFilenamePattern ScummMetaEngineDetection::matchGameFilenamePattern(const MD5Table *entry) const {
+	GameFilenamePattern bestMatch = GameFilenamePattern();
+
+	for (const GameFilenamePattern *gfp = gameFilenamesTable; gfp->gameid; ++gfp) {
+		if (!scumm_stricmp(gfp->gameid, entry->gameid)) {
+			if (gfp->platform == UNK || entry->platform == UNK || gfp->platform == entry->platform) {
+				bestMatch = *gfp;
+
+				if (gfp->language == UNK_LANG || entry->language == UNK_LANG || gfp->language == entry->language) {
+					if (!gfp->variant || !entry->variant || !scumm_stricmp(gfp->variant, entry->variant))
+						return *gfp;
+				}
+			}
+		}
+	}
+
+	return bestMatch;
+}
+
+ void ScummMetaEngineDetection::dumpDetectionEntries() const {
 #if 0
 	for (const MD5Table *entry = md5table; entry->gameid != 0; ++entry) {
 		PlainGameDescriptor pd = findGame(entry->gameid);
 		const char *title = pd.description;
 
-		debug("game (");
-		debug("\tname \"%s\"", escapeString(pd.gameId).c_str());
-		debug("\ttitle \"%s\"", escapeString(title).c_str());
-		debug("\textra \"%s\"", escapeString(entry->extra).c_str());
-		debug("\tlanguage \"%s\"", escapeString(getLanguageLocale(entry->language)).c_str());
-		debug("\tplatform \"%s\"", escapeString(getPlatformCode(entry->platform)).c_str());
-		debug("\tsourcefile \"%s\"", escapeString(getName()).c_str());
-		debug("\tengine \"%s\"", escapeString(getEngineName()).c_str());
+		printf("game (\n");
+		printf("\tname \"%s\"\n", escapeString(entry->gameid).c_str());
+		printf("\ttitle \"%s\"\n", escapeString(title).c_str());
+		printf("\textra \"%s\"\n", escapeString(entry->extra).c_str());
+		printf("\tlanguage \"%s\"\n", escapeString(getLanguageLocale(entry->language)).c_str());
+		printf("\tplatform \"%s\"\n", escapeString(getPlatformCode(entry->platform)).c_str());
+		printf("\tsourcefile \"%s\"\n", escapeString(getName()).c_str());
+		printf("\tengine \"%s\"\n", escapeString(getEngineName()).c_str());
 
-		Common::String md5 = entry->md5;
+		// Match the appropriate file name for the current game variant.
+		GameFilenamePattern gameEntry = matchGameFilenamePattern(entry);
+		Common::String fileName;
 
-		debug("\trom (name \"%s\" size %lld md5-%d %s)", escapeString(entry->gameid).c_str(), static_cast<long long int>(entry->filesize), getMD5Bytes(), md5.c_str());
+		if (gameEntry.gameid) {
+			fileName = generateFilenameForDetection(gameEntry.pattern, gameEntry.genMethod, gameEntry.platform);
+		} else {
+			warning("dumpDetectionEntries(): no game entry found for '%s'", entry->gameid);
+			fileName = entry->gameid;
+		}
 
-		debug(")\n");
+		printf("\trom ( name \"%s\" size %lld md5-%d %s )\n",
+			escapeString(fileName.c_str()).c_str(),
+			static_cast<long long int>(entry->filesize),
+			getMD5Bytes(),
+			entry->md5);
+
+		printf(")\n\n"); // Closing for 'game ('
 	}
 #endif
 }
