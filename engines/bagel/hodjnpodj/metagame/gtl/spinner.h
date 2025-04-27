@@ -1,0 +1,108 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "bagel/hodjnpodj/metagame/gtl/resource.h"
+#include "bagel/hodjnpodj/metagame/gtl/gtl.h"
+#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
+#include "bagel/hodjnpodj/metagame/gtl/dllinit.h"
+
+#ifndef HODJNPODJ_METAGAME_GTL_SPINNER_H
+#define HODJNPODJ_METAGAME_GTL_SPINNER_H
+
+#include "sprite.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
+
+#define SPINNER_SPEC				".\\art\\spinner.bmp"
+#define HODJ_SPINNER_NUMBERS_SPEC	".\\art\\spinblue.bmp"
+#define PODJ_SPINNER_NUMBERS_SPEC	".\\art\\spinred.bmp"
+#define SPINNER_SOUND				".\\sound\\spinner.wav"
+
+#define	SPINNER_COUNT		64
+#define SPINNER_CYCLE		15
+
+#define SPINNER_WAIT		2
+
+#define SPINNER_SLOT_DDX	30
+#define SPINNER_SLOT_DDY	47
+#define SPINNER_SLOTA_DX	23
+#define	SPINNER_SLOTA_DY	14
+#define SPINNER_SLOTB_DX	66
+#define	SPINNER_SLOTB_DY	14
+
+
+class CSpinner : public CObject
+{
+	DECLARE_DYNCREATE(CSpinner)
+
+// Constructors
+public:
+	CSpinner();
+	CSpinner(CWnd *pWnd, CDC *pDC, int nX = 0, int nY = 0, BOOL bHodj = TRUE);
+
+// Destructors
+public:
+	~CSpinner();
+
+// Implementation
+public:
+	int	Animate(void)
+		{ return(Animate(m_nX, m_nY)); }
+	int	Animate(int nX, int nY);
+
+private:
+	BOOL Initialize(CWnd *pWnd, CDC *pDC, int nX = 0, int nY = 0, BOOL bHodj = TRUE);
+	int Spin(void);
+	BOOL Hide(void);
+	BOOL Show(void)
+		{ return(Show(m_nX,m_nY)); }
+	BOOL Show(int nX,int nY);
+
+private:
+	void SetupSpinner(void);
+
+static BOOL HandleMessages(void);
+
+private:
+
+	CWnd	*m_pWnd;			// window for messages
+	CDC		*m_pDC;				// context for display
+	CSprite	*m_pSprite;			// sprite for spinner
+	int		m_nValue;			// current spinner value
+	int		m_nX;				// x location of sprite
+	int		m_nY;				// y location of sprite
+	BOOL	m_bVisible;			// whether spinner is visible
+	BOOL	m_bHodj;			// which character is active
+
+#ifdef _DEBUG
+	virtual void AssertValid() const;
+	virtual void Dump(CDumpContext& dc) const;
+#endif
+
+};
+
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

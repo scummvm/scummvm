@@ -125,6 +125,7 @@ MODULE_OBJS = \
 	hodjnpodj/views/rules.o \
 	hodjnpodj/views/sprites_view.o \
 	hodjnpodj/views/view.o \
+	hodjnpodj/metagame/bgen/mgstat.o \
 	hodjnpodj/fuge/fuge.o \
 	hodjnpodj/fuge/options.o \
 	hodjnpodj/life/game.o \
