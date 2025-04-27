@@ -1500,25 +1500,6 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, MidiDriver *midiDrv, cons
 
 	_rng.reset(new Common::RandomSource("vcruise"));
 
-#ifdef USE_FREETYPE2
-	if (_gameID == GID_AD2044) {
-		Common::File *f = new Common::File();
-		if (f->open("gfx/AD2044.TTF"))
-			_subtitleFontKeepalive.reset(Graphics::loadTTFFont(f, DisposeAfterUse::YES, 16, Graphics::kTTFSizeModeCharacter, 108, 72, Graphics::kTTFRenderModeLight));
-		else
-			delete f;
-	} else
-		_subtitleFontKeepalive.reset(Graphics::loadTTFFontFromArchive("NotoSans-Regular.ttf", 16, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeLight));
-
-	_subtitleFont = _subtitleFontKeepalive.get();
-#endif
-
-	if (!_subtitleFont)
-		_subtitleFont = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
-
-	if (!_subtitleFont)
-		warning("Couldn't load subtitle font, subtitles will be disabled");
-
 	_menuInterface.reset(new RuntimeMenuInterface(this));
 
 	for (int32 i = 0; i < 49; i++)
@@ -1956,6 +1937,46 @@ bool Runtime::bootGame(bool newGame) {
 		debug(1, "Localization data loaded OK");
 	else
 		warning("Localization data failed to load!  Text and subtitles will be disabled.");
+
+
+#ifdef USE_FREETYPE2
+	if (_gameID == GID_AD2044) {
+		Common::File *f = new Common::File();
+		if (f->open("gfx/AD2044.TTF"))
+			_subtitleFontKeepalive.reset(Graphics::loadTTFFont(f, DisposeAfterUse::YES, 16, Graphics::kTTFSizeModeCharacter, 108, 72, Graphics::kTTFRenderModeLight));
+		else
+			delete f;
+	} else {
+		Common::String fontFile;
+		switch (_charSet) {
+		case kCharSetGreek:
+		case kCharSetLatin:
+		case kCharSetCyrillic:
+		default:
+			fontFile = "NotoSans-Regular.ttf";
+			break;
+		case kCharSetChineseSimplified:
+			fontFile = "NotoSansSC-Regular.otf";
+			break;
+		case kCharSetChineseTraditional:
+			fontFile = "NotoSansTC-Regular.otf";
+			break;
+		case kCharSetJapanese:
+			fontFile = "NotoSansJP-Regular.otf";
+			break;
+		}
+
+		_subtitleFontKeepalive.reset(Graphics::loadTTFFontFromArchive(fontFile, 16, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeLight));
+	}
+
+	_subtitleFont = _subtitleFontKeepalive.get();
+#endif
+
+	if (!_subtitleFont)
+		_subtitleFont = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
+
+	if (!_subtitleFont)
+		warning("Couldn't load subtitle font, subtitles will be disabled");
 
 	if (_gameID != GID_AD2044) {
 		_uiGraphics.resize(24);
@@ -6609,6 +6630,8 @@ const Graphics::Font *Runtime::resolveFont(const Common::String &textStyle, uint
 #ifdef USE_FREETYPE2
 	const char *fontFile = nullptr;
 
+	const char *jpnFontName = "\x82\x6c\x82\x72\x20\x96\xbe\x92\xa9";
+
 	if (textStyle == "Verdana") {
 		switch (_charSet) {
 		case kCharSetGreek:
@@ -6618,13 +6641,13 @@ const Graphics::Font *Runtime::resolveFont(const Common::String &textStyle, uint
 			fontFile = "NotoSans-Bold.ttf";
 			break;
 		case kCharSetChineseSimplified:
-			fontFile = "NotoSansSC-Bold.ttf";
+			fontFile = "NotoSansSC-Bold.otf";
 			break;
 		case kCharSetChineseTraditional:
-			fontFile = "NotoSansTC-Bold.ttf";
+			fontFile = "NotoSansTC-Bold.otf";
 			break;
 		case kCharSetJapanese:
-			fontFile = "NotoSansJP-Bold.ttf";
+			fontFile = "NotoSansJP-Bold.otf";
 			break;
 		}
 	} else if (textStyle == "Arial") {
@@ -6636,15 +6659,17 @@ const Graphics::Font *Runtime::resolveFont(const Common::String &textStyle, uint
 			fontFile = "LiberationSans-Bold.ttf";
 			break;
 		case kCharSetChineseSimplified:
-			fontFile = "NotoSansSC-Bold.ttf";
+			fontFile = "NotoSansSC-Bold.otf";
 			break;
 		case kCharSetChineseTraditional:
-			fontFile = "NotoSansTC-Bold.ttf";
+			fontFile = "NotoSansTC-Bold.otf";
 			break;
 		case kCharSetJapanese:
-			fontFile = "NotoSansJP-Bold.ttf";
+			fontFile = "NotoSansJP-Bold.otf";
 			break;
 		}
+	} else if (textStyle == jpnFontName) {
+		fontFile = "NotoSansJP-Bold.otf";
 	}
 
 	if (fontFile) {
