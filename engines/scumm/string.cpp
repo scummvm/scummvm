@@ -162,7 +162,7 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 		else
 			VAR(VAR_KEYPRESS) = showOldStyleBannerAndPause((const char *)msg, _string[3].color, -1).ascii;
 	} else {
-		InfoDialog dialog(this, Common::U32String((char *)buf));
+		InfoDialog dialog(this, Common::U32String((char *)buf, getDialogCodePage()));
 		VAR(VAR_KEYPRESS) = runDialog(dialog);
 	}
 
