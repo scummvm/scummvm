@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-27 12:27+0000\n"
+"POT-Creation-Date: 2025-04-27 14:20+0000\n"
 "PO-Revision-Date: 2024-07-11 17:47+0000\n"
 "Last-Translator: Krish <ganatrakrish2882005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -57,7 +57,7 @@ msgstr "उपलब्ध इंजन :"
 
 #. I18N: Close dialog button
 #: gui/about.cpp:523 gui/downloadpacksdialog.cpp:297
-#: gui/downloadpacksdialog.cpp:388 gui/integrity-dialog.cpp:307
+#: gui/downloadpacksdialog.cpp:388 gui/integrity-dialog.cpp:308
 #: gui/gui-manager.cpp:170 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:558
 #: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:126
@@ -93,7 +93,7 @@ msgstr "ऊपर जाएँ"
 #: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:271
 #: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:340
 #: gui/editrecorddialog.cpp:66 gui/integrity-dialog.cpp:118
-#: gui/integrity-dialog.cpp:206 gui/filebrowser-dialog.cpp:68
+#: gui/integrity-dialog.cpp:207 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:93 gui/options.cpp:2427
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
@@ -345,7 +345,7 @@ msgstr "JSON कोड की सामग्री अवैध है।"
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
-#: gui/integrity-dialog.cpp:213 gui/fluidsynth-dialog.cpp:154
+#: gui/integrity-dialog.cpp:214 gui/fluidsynth-dialog.cpp:154
 #: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
 #: gui/options.cpp:2429 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 dists/android.strings.xml.cpp:33
@@ -839,7 +839,7 @@ msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
 msgstr "फ़ाइल अखंडता सत्यापन में अधिक समय लग सकता है। कृपया प्रतीक्षा करें...\n"
 
-#: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:205
+#: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:206
 msgid "Calculating file checksums..."
 msgstr "फ़ाइल चेकसम की गणना हो रही है..."
 
@@ -847,16 +847,16 @@ msgstr "फ़ाइल चेकसम की गणना हो रही ह
 msgid "Launch Email Client"
 msgstr "ईमेल क्लाइंट प्रारंभ करें"
 
-#: gui/integrity-dialog.cpp:211
+#: gui/integrity-dialog.cpp:212
 msgid "Calculation complete"
 msgstr "गणना पूर्ण"
 
-#: gui/integrity-dialog.cpp:294
+#: gui/integrity-dialog.cpp:295
 #, c-format
 msgid "Calculated %s %S / %s %S"
 msgstr "गणना पूरी हुई: %s %S / %s %S"
 
-#: gui/integrity-dialog.cpp:539
+#: gui/integrity-dialog.cpp:540
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -870,12 +870,12 @@ msgstr ""
 "यदि आप सुनिश्चित हैं कि यह एक मान्य अज्ञात संस्करण है, तो कृपया निम्नलिखित ईमेल "
 "integrity@scummvm.org पर भेजें"
 
-#: gui/integrity-dialog.cpp:563
+#: gui/integrity-dialog.cpp:564
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr "ऐसा लगता है कि इस गेम में कोई फ़ाइल नहीं है। क्या आप सुनिश्चित हैं कि पथ सही है?"
 
-#: gui/integrity-dialog.cpp:568
+#: gui/integrity-dialog.cpp:569
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
@@ -883,7 +883,7 @@ msgstr ""
 "ऐसा लगता है कि इस गेम से कोई मेटाडेटा जुड़ा नहीं है, इसलिए इसका मिलान नहीं हो पा रहा "
 "है। कृपया गेम के लिए सही मेटाडेटा भरें।"
 
-#: gui/integrity-dialog.cpp:595
+#: gui/integrity-dialog.cpp:596
 msgid "Files all OK"
 msgstr "सभी फ़ाइलें ठीक हैं"
 

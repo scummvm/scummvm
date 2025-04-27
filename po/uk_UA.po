@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-27 12:27+0000\n"
+"POT-Creation-Date: 2025-04-27 14:20+0000\n"
 "PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -59,7 +59,7 @@ msgstr "Доступні движки:"
 
 #. I18N: Close dialog button
 #: gui/about.cpp:523 gui/downloadpacksdialog.cpp:297
-#: gui/downloadpacksdialog.cpp:388 gui/integrity-dialog.cpp:307
+#: gui/downloadpacksdialog.cpp:388 gui/integrity-dialog.cpp:308
 #: gui/gui-manager.cpp:170 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:558
 #: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:126
@@ -95,7 +95,7 @@ msgstr "Вгору"
 #: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:271
 #: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:340
 #: gui/editrecorddialog.cpp:66 gui/integrity-dialog.cpp:118
-#: gui/integrity-dialog.cpp:206 gui/filebrowser-dialog.cpp:68
+#: gui/integrity-dialog.cpp:207 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:93 gui/options.cpp:2427
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
@@ -347,7 +347,7 @@ msgstr "Невірний формат JSON-коду."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
-#: gui/integrity-dialog.cpp:213 gui/fluidsynth-dialog.cpp:154
+#: gui/integrity-dialog.cpp:214 gui/fluidsynth-dialog.cpp:154
 #: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
 #: gui/options.cpp:2429 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 dists/android.strings.xml.cpp:33
@@ -849,7 +849,7 @@ msgid ""
 msgstr ""
 "Перевірка цілісності файлів може зайняти деякий час. Будь-ласка заждіть...\n"
 
-#: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:205
+#: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:206
 msgid "Calculating file checksums..."
 msgstr "Обчислюю контрольні суми файлів..."
 
@@ -857,16 +857,16 @@ msgstr "Обчислюю контрольні суми файлів..."
 msgid "Launch Email Client"
 msgstr "Запустити поштового клієнта"
 
-#: gui/integrity-dialog.cpp:211
+#: gui/integrity-dialog.cpp:212
 msgid "Calculation complete"
 msgstr "Обчислювання закінчено"
 
-#: gui/integrity-dialog.cpp:294
+#: gui/integrity-dialog.cpp:295
 #, c-format
 msgid "Calculated %s %S / %s %S"
 msgstr "Обчислено %s %S з %s %S"
 
-#: gui/integrity-dialog.cpp:539
+#: gui/integrity-dialog.cpp:540
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -880,14 +880,14 @@ msgstr ""
 "У разі, якщо ви впевнені, що це є дійсно новий варіант, будь-ласка, "
 "надішліть наступний лист до integrity@scummvm.org"
 
-#: gui/integrity-dialog.cpp:563
+#: gui/integrity-dialog.cpp:564
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
 "Виглядає, що гра взагалі не має файлів. Чи ви впевнені, що шлях вказано "
 "вірно?"
 
-#: gui/integrity-dialog.cpp:568
+#: gui/integrity-dialog.cpp:569
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
@@ -895,7 +895,7 @@ msgstr ""
 "Гра не має метаданих, тож нема з чим її порівняти. Будь-ласка, заповніть "
 "правильні метадані для гри."
 
-#: gui/integrity-dialog.cpp:595
+#: gui/integrity-dialog.cpp:596
 msgid "Files all OK"
 msgstr "Всі файли в порядку"
 
