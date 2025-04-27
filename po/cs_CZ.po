@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-27 14:20+0000\n"
+"POT-Creation-Date: 2025-04-27 18:25+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -6977,7 +6977,7 @@ msgstr ""
 "spuštění této hry.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:345
+#: engines/vcruise/vcruise.cpp:358
 #, fuzzy
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr "Uložená hra byla vytvořena v jiné verzi hry, nelze ji načíst"
@@ -9601,12 +9601,12 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "Načteni hry ze souboru selhalo."
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:340
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:353
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:350
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:363
 #, fuzzy
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
@@ -12989,17 +12989,17 @@ msgid ""
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:330
+#: engines/vcruise/vcruise.cpp:343
 #, fuzzy
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "Uložená hra byla vytvořena v jiné verzi hry, nelze ji načíst"
 
-#: engines/vcruise/vcruise.cpp:335
+#: engines/vcruise/vcruise.cpp:348
 #, fuzzy
 msgid "Failed to read version information from save file."
 msgstr "Načteni hry ze souboru selhalo."
 
-#: engines/vcruise/vcruise.cpp:355
+#: engines/vcruise/vcruise.cpp:368
 #, fuzzy
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ", chyba při připojování sdílení"

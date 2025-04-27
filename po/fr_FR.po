@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-27 14:20+0000\n"
+"POT-Creation-Date: 2025-04-27 18:25+0000\n"
 "PO-Revision-Date: 2025-04-22 12:18+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -7316,7 +7316,7 @@ msgstr ""
 "s'affichera la prochaine fois que vous démarrerez le jeu.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:345
+#: engines/vcruise/vcruise.cpp:358
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Sauvegarde créée avec une version plus récente de ScummVM. Chargement "
@@ -9842,14 +9842,14 @@ msgid "Failed to read version information from save file"
 msgstr ""
 "Impossible de lire les informations de version du fichier de sauvegarde"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:340
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:353
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Impossible de lire la sauvegarde, le fichier de sauvegarde ne contient pas "
 "d'information de version valide."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:350
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:363
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -13287,18 +13287,18 @@ msgstr ""
 "compilation.\n"
 "Le jeu continuera de tourner, mais sans aucune musique."
 
-#: engines/vcruise/vcruise.cpp:330
+#: engines/vcruise/vcruise.cpp:343
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Impossible de charger la sauvegarde, les données de la sauvegarde semblent "
 "être endommagées."
 
-#: engines/vcruise/vcruise.cpp:335
+#: engines/vcruise/vcruise.cpp:348
 msgid "Failed to read version information from save file."
 msgstr ""
 "Impossible de lire les informations de version du fichier de sauvegarde."
 
-#: engines/vcruise/vcruise.cpp:355
+#: engines/vcruise/vcruise.cpp:368
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ""
 "Une erreur inconnue s'est produite lors du chargement de la sauvegarde."

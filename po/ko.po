@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-27 14:20+0000\n"
+"POT-Creation-Date: 2025-04-27 18:25+0000\n"
 "PO-Revision-Date: 2025-04-23 12:05+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -7125,7 +7125,7 @@ msgstr ""
 "니다.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:345
+#: engines/vcruise/vcruise.cpp:358
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 불러올 수 없습니다."
@@ -9574,14 +9574,14 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "저장 파일에서 버전 정보를 읽기 실패함"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:340
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:353
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "저장 파일을 불러오는 데 실패했습니다. 저장 파일에 유효한 버전 정보가 없습니"
 "다."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:350
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:363
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -12872,16 +12872,16 @@ msgstr ""
 "이 게임의 음악은 MP3 지원이 필요하지만, 컴파일되지 않았습니다.\n"
 "게임은 계속 플레이되지만, 음악은 없습니다."
 
-#: engines/vcruise/vcruise.cpp:330
+#: engines/vcruise/vcruise.cpp:343
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "저장 데이터를 불러오는 데 실패했습니다, 저장 데이터가 손상된 것 같습니다."
 
-#: engines/vcruise/vcruise.cpp:335
+#: engines/vcruise/vcruise.cpp:348
 msgid "Failed to read version information from save file."
 msgstr "저장 파일에서 버전 정보를 읽는데 실패하였습니다."
 
-#: engines/vcruise/vcruise.cpp:355
+#: engines/vcruise/vcruise.cpp:368
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "저장된 게임을 불러오는 동안 알 수 없는 오류가 발생했습니다."
 

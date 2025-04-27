@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-27 14:20+0000\n"
+"POT-Creation-Date: 2025-04-27 18:25+0000\n"
 "PO-Revision-Date: 2024-12-25 11:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -7441,7 +7441,7 @@ msgstr ""
 "την επόμενη φορά που θα ξεκινήσετε το παιχνίδι.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:345
+#: engines/vcruise/vcruise.cpp:358
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Το αποθηκευμένο παιχνίδι δημιουργήθηκε με νεότερη έκδοση του ScummVM. "
@@ -9980,14 +9980,14 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "Η ανάγνωση της έκδοσης από το αρχείο αποθηκευμένου παιχνιδιού απέτυχε"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:340
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:353
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Αποτυχία φόρτωσης αποθηκευμένου παιχνιδιού. Το αρχείο αποθηκευσης δεν "
 "περιέχει έγκυρση πληροφορία έκδοσης."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:350
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:363
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -13459,17 +13459,17 @@ msgstr ""
 "ενσωματωθεί στο εκτελέσιμο.\n"
 "Μπορείτε να παίξετε το παιχνίδι, αλλά χωρίς μουσική."
 
-#: engines/vcruise/vcruise.cpp:330
+#: engines/vcruise/vcruise.cpp:343
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Αποτυχία φόρτωσης αποθηκευμένου παιχνιδιού. Το αρχείο αποθηκευσης δείχνει να "
 "είναι κατεστραμμένο."
 
-#: engines/vcruise/vcruise.cpp:335
+#: engines/vcruise/vcruise.cpp:348
 msgid "Failed to read version information from save file."
 msgstr "Η ανάγνωση της έκδοσης από το αρχείο αποθηκευμένου παιχνιδιού απέτυχε."
 
-#: engines/vcruise/vcruise.cpp:355
+#: engines/vcruise/vcruise.cpp:368
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ""
 "Παρουσιάστηκε άγνωστο σφάλμα κατά την απόπειρα φόρτωσης του αποθηκευμένου "
