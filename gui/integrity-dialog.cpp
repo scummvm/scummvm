@@ -183,10 +183,11 @@ void IntegrityDialog::open() {
 }
 
 void IntegrityDialog::close() {
-	if (g_checksum_state)
+	if (g_checksum_state) {
 		g_checksum_state->dialog = nullptr;
 		delete g_checksum_state;
 		g_checksum_state = nullptr;
+	}
 	
 	if (g_result) {
 		delete g_result;
