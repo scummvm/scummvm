@@ -38,7 +38,8 @@ namespace Sci {
 GfxPicture::GfxPicture(ResourceManager *resMan, GfxCoordAdjuster16 *coordAdjuster, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
 	: _resMan(resMan),
 	_coordAdjuster(coordAdjuster),
-	_ports(ports), _screen(screen),
+	_ports(ports),
+	_screen(screen),
 	_palette(palette),
 	_resourceId(resourceId),
 	_resourceType(SCI_PICTURE_TYPE_REGULAR),
@@ -428,7 +429,6 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 	uint curPos = 0;
 	uint16 size;
 	byte pixel;
-	int i;
 	Palette palette;
 	int16 pattern_Code = 0, pattern_Texture = 0;
 	bool icemanDrawFix = false;
@@ -443,7 +443,7 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 	if (_resMan->getViewType() == kViewEga) {
 		isEGA = true;
 		// setup default mapping tables
-		for (i = 0; i < PIC_EGAPALETTE_TOTALSIZE; i += PIC_EGAPALETTE_SIZE)
+		for (int i = 0; i < PIC_EGAPALETTE_TOTALSIZE; i += PIC_EGAPALETTE_SIZE)
 			memcpy(&EGApalettes[i], &vector_defaultEGApalette, sizeof(vector_defaultEGApalette));
 		memcpy(&EGApriority, &vector_defaultEGApriority, sizeof(vector_defaultEGApriority));
 
@@ -540,7 +540,7 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 		case PIC_OP_FILL: //fill
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetAbsCoords(data, curPos, x, y);
-				vectorFloodFill(x, y, pic_color, pic_priority, pic_control);
+				vectorFloodFill(x, y, pic_color, pic_priority, pic_control, isEGA);
 			}
 			break;
 
@@ -624,7 +624,7 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 						error("picture trying to write to invalid palette %d", (int)pixel);
 					}
 					pixel *= PIC_EGAPALETTE_SIZE;
-					for (i = 0; i < PIC_EGAPALETTE_SIZE; i++) {
+					for (int i = 0; i < PIC_EGAPALETTE_SIZE; i++) {
 						EGApalettes[pixel + i] = data[curPos++];
 					}
 					break;
@@ -681,7 +681,7 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 						}
 					} else {
 						curPos += 256 + 4; // Skip over mapping and timestamp
-						for (i = 0; i < 256; i++) {
+						for (int i = 0; i < 256; i++) {
 							palette.colors[i].used = data[curPos++];
 							palette.colors[i].r = data[curPos++]; palette.colors[i].g = data[curPos++]; palette.colors[i].b = data[curPos++];
 						}
@@ -690,7 +690,8 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 					break;
 				case PIC_OPX_VGA_EMBEDDED_VIEW: // draw cel
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
-					size = data.getUint16LEAt(curPos); curPos += 2;
+					size = data.getUint16LEAt(curPos);
+					curPos += 2;
 					if (getSciVersion() <= SCI_VERSION_1_EARLY) {
 						// During SCI1Early sierra always used 0 as priority for cels inside picture resources
 						//  fixes Space Quest 4 orange ship lifting off (bug #6446)
@@ -747,16 +748,16 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 }
 
 bool GfxPicture::vectorIsNonOpcode(byte pixel) {
-	if (pixel >= PIC_OP_FIRST)
-		return false;
-	return true;
+	return (pixel < PIC_OP_FIRST);
 }
 
 void GfxPicture::vectorGetAbsCoords(const SciSpan<const byte> &data, uint &curPos, int16 &x, int16 &y) {
 	byte pixel = data[curPos++];
 	x = data[curPos++] + ((pixel & 0xF0) << 4);
 	y = data[curPos++] + ((pixel & 0x0F) << 8);
-	if (_mirroredFlag) x = 319 - x;
+	if (_mirroredFlag) {
+		x = 319 - x;
+	}
 }
 
 void GfxPicture::vectorGetAbsCoordsNoMirror(const SciSpan<const byte> &data, uint &curPos, int16 &x, int16 &y) {
@@ -802,14 +803,12 @@ void GfxPicture::vectorGetPatternTexture(const SciSpan<const byte> &data, uint &
 
 // WARNING: Do not replace the following code with something else, like generic
 // code. This algo really needs to behave exactly as the one from sierra.
-void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, byte control) {
+void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, byte control, bool isEGA) {
 	Port *curPort = _ports->getPort();
 	Common::Stack<Common::Point> stack;
 	Common::Point p, p1;
 	byte screenMask = _screen->getDrawingMask(color, priority, control);
-	byte matchedMask, matchMask;
-
-	bool isEGA = (_resMan->getViewType() == kViewEga);
+	byte matchMask;
 
 	p.x = x + curPort->left;
 	p.y = y + curPort->top;
@@ -832,7 +831,7 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 			searchColor = searchColor & 0x0F;
 	}
 
-	// This logic was taken directly from sierra sci, floodfill will get aborted on various occations
+	// This logic was taken directly from sierra sci, floodfill will get aborted on various occasions
 	if (screenMask & GFX_SCREEN_MASK_VISUAL) {
 		if ((color == _screen->getColorWhite()) || (searchColor != _screen->getColorWhite()))
 			return;
@@ -880,15 +879,15 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 
 	while (stack.size()) {
 		p = stack.pop();
-		if ((matchedMask = _screen->vectorIsFillMatch(p.x, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)) == 0) // already filled
+		if (_screen->vectorIsFillMatch(p.x, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA) == 0) // already filled
 			continue;
 		_screen->vectorPutPixel(p.x, p.y, screenMask, color, priority, control);
 		curToLeft = p.x;
 		curToRight = p.x;
 		// moving west and east pointers as long as there is a matching color to fill
-		while (curToLeft > borderLeft && (matchedMask = _screen->vectorIsFillMatch(curToLeft - 1, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)))
+		while (curToLeft > borderLeft && _screen->vectorIsFillMatch(curToLeft - 1, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA))
 			_screen->vectorPutPixel(--curToLeft, p.y, screenMask, color, priority, control);
-		while (curToRight < borderRight && (matchedMask = _screen->vectorIsFillMatch(curToRight + 1, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)))
+		while (curToRight < borderRight && _screen->vectorIsFillMatch(curToRight + 1, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA))
 			_screen->vectorPutPixel(++curToRight, p.y, screenMask, color, priority, control);
 #if 0
 		// debug code for floodfill
@@ -899,7 +898,7 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 		// checking lines above and below for possible flood targets
 		a_set = b_set = 0;
 		while (curToLeft <= curToRight) {
-			if (p.y > borderTop && (matchedMask = _screen->vectorIsFillMatch(curToLeft, p.y - 1, matchMask, searchColor, searchPriority, searchControl, isEGA))) { // one line above
+			if (p.y > borderTop && _screen->vectorIsFillMatch(curToLeft, p.y - 1, matchMask, searchColor, searchPriority, searchControl, isEGA)) { // one line above
 				if (a_set == 0) {
 					p1.x = curToLeft;
 					p1.y = p.y - 1;
@@ -909,7 +908,7 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 			} else
 				a_set = 0;
 
-			if (p.y < borderBottom && (matchedMask = _screen->vectorIsFillMatch(curToLeft, p.y + 1, matchMask, searchColor, searchPriority, searchControl, isEGA))) { // one line below
+			if (p.y < borderBottom && _screen->vectorIsFillMatch(curToLeft, p.y + 1, matchMask, searchColor, searchPriority, searchControl, isEGA)) { // one line below
 				if (b_set == 0) {
 					p1.x = curToLeft;
 					p1.y = p.y + 1;
@@ -1052,11 +1051,10 @@ static const byte vectorPatternTextureOffset[128] = {
 
 void GfxPicture::vectorPatternBox(Common::Rect box, Common::Rect clipBox, byte color, byte prio, byte control) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
-	int y, x;
 
 	box.clip(clipBox);
-	for (y = box.top; y < box.bottom; y++) {
-		for (x = box.left; x < box.right; x++) {
+	for (int y = box.top; y < box.bottom; y++) {
+		for (int x = box.left; x < box.right; x++) {
 			_screen->vectorPutPixel(x, y, flag, color, prio, control);
 		}
 	}
@@ -1065,10 +1063,9 @@ void GfxPicture::vectorPatternBox(Common::Rect box, Common::Rect clipBox, byte c
 void GfxPicture::vectorPatternTexturedBox(Common::Rect box, Common::Rect clipBox, byte color, byte prio, byte control, byte texture) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
 	const bool *textureData = &vectorPatternTextures[vectorPatternTextureOffset[texture]];
-	int y, x;
 
-	for (y = box.top; y < box.bottom; y++) {
-		for (x = box.left; x < box.right; x++) {
+	for (int y = box.top; y < box.bottom; y++) {
+		for (int x = box.left; x < box.right; x++) {
 			if (*textureData) {
 				if (clipBox.contains(x, y)) {
 					_screen->vectorPutPixel(x, y, flag, color, prio, control);
@@ -1085,10 +1082,9 @@ void GfxPicture::vectorPatternCircle(Common::Rect box, Common::Rect clipBox, byt
 	const byte *circleData = vectorPatternCircles[size];
 	byte bitmap = *circleData;
 	byte bitNo = 0;
-	int y, x;
 
-	for (y = box.top; y < box.bottom; y++) {
-		for (x = box.left; x < box.right; x++) {
+	for (int y = box.top; y < box.bottom; y++) {
+		for (int x = box.left; x < box.right; x++) {
 			if (bitNo == 8) {
 				circleData++;
 				bitmap = *circleData;
@@ -1112,10 +1108,9 @@ void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, Common::Rect clip
 	byte bitmap = *circleData;
 	byte bitNo = 0;
 	const bool *textureData = &vectorPatternTextures[vectorPatternTextureOffset[texture]];
-	int y, x;
 
-	for (y = box.top; y < box.bottom; y++) {
-		for (x = box.left; x < box.right; x++) {
+	for (int y = box.top; y < box.bottom; y++) {
+		for (int x = box.left; x < box.right; x++) {
 			if (bitNo == 8) {
 				circleData++;
 				bitmap = *circleData;
@@ -1179,7 +1174,6 @@ void GfxPicture::vectorPattern(int16 x, int16 y, byte color, byte priority, byte
 		} else {
 			vectorPatternBox(box, clipBox, color, priority, control);
 		}
-
 	} else {
 		// Circle
 		if (code & SCI_PATTERN_CODE_USE_TEXTURE) {

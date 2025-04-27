@@ -192,10 +192,10 @@ void setupCustomPaletteMods(GfxScreen *screen) {
 
 void doCustomViewPalette(GfxScreen *screen, GuiResourceId view, int16 loop, int16 cel) {
 	for (int i = 0; i < ARRAYSIZE(mods); i++) {
-		SciFxMod mod = mods[i];
+		const SciFxMod &mod = mods[i];
 		if (mod.gameId == g_sci->getGameId()) {
 			for (int j = 0; j < mod.viewModsSize; j++) {
-				ViewMod m = mod.viewMods[j];
+				const ViewMod &m = mod.viewMods[j];
 				if (m.id == view && (m.loop == -1 || m.loop == loop) && (m.cel == -1 || m.cel == cel)) {
 					screen->setCurPaletteMapValue(m.multiplier);
 					break;
@@ -208,10 +208,10 @@ void doCustomViewPalette(GfxScreen *screen, GuiResourceId view, int16 loop, int1
 
 void doCustomPicPalette(GfxScreen *screen, GuiResourceId pic) {
 	for (int i = 0; i < ARRAYSIZE(mods); i++) {
-		SciFxMod mod = mods[i];
+		const SciFxMod &mod = mods[i];
 		if (mod.gameId == g_sci->getGameId()) {
 			for (int j = 0; j < mod.picModsSize; j++) {
-				PicMod m = mod.picMods[j];
+				const PicMod &m = mod.picMods[j];
 				if (m.id == pic) {
 					screen->setCurPaletteMapValue(m.multiplier);
 					break;

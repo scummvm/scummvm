@@ -31,9 +31,8 @@ namespace Sci {
 #define SCI_PATTERN_CODE_PENSIZE 0x07
 
 enum {
-	SCI_PICTURE_TYPE_REGULAR		= 0,
-	SCI_PICTURE_TYPE_SCI11		= 1,
-	SCI_PICTURE_TYPE_SCI32		= 2
+	SCI_PICTURE_TYPE_REGULAR = 0,
+	SCI_PICTURE_TYPE_SCI11   = 1
 };
 
 class GfxPorts;
@@ -69,7 +68,7 @@ private:
 	void vectorGetRelCoords(const SciSpan<const byte> &data, uint &curPos, int16 &x, int16 &y);
 	void vectorGetRelCoordsMed(const SciSpan<const byte> &data, uint &curPos, int16 &x, int16 &y);
 	void vectorGetPatternTexture(const SciSpan<const byte> &data, uint &curPos, int16 pattern_Code, int16 &pattern_Texture);
-	void vectorFloodFill(int16 x, int16 y, byte color, byte prio, byte control);
+	void vectorFloodFill(int16 x, int16 y, byte color, byte prio, byte control, bool isEGA);
 	void vectorPattern(int16 x, int16 y, byte pic_color, byte pic_priority, byte pic_control, byte code, byte texture);
 	void vectorPatternBox(Common::Rect box, Common::Rect clipBox, byte color, byte prio, byte control);
 	void vectorPatternTexturedBox(Common::Rect box, Common::Rect clipBox, byte color, byte prio, byte control, byte texture);
