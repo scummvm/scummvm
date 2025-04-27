@@ -391,12 +391,12 @@ void GlkMetaEngineDetection::dumpDetectionEntries() const {
 
 			// Level9 engine does not use md5 checksums, so checksums are not printed. 
 			if (engineName == EngineName::LEVEL9) {
-				printf("\trom ( name \"%s\" size %lld )", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize));
+				printf("\trom ( name \"%s\" size %lld )\n", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize));
 			} else {
-				printf("\trom ( name \"%s\" size %lld md5-%d %s )", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize), getMD5Bytes(), checksum.c_str());
+				printf("\trom ( name \"%s\" size %lld md5-%d %s )\n", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize), getMD5Bytes(), checksum.c_str());
 			}
 			
-			printf(")\n");
+			printf(")\n\n");
 		}
 	}
 #endif
