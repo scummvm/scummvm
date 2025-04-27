@@ -218,7 +218,8 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		{
 			"schizm",
 			"English DVD",
-			AD_ENTRY1s("setup.pak", "eaaed2f6655342b4c320bdeb6f5ccfb9", 272655597),
+			AD_ENTRY2s("setup.pak", "eaaed2f6655342b4c320bdeb6f5ccfb9", 272655597,
+					   "setup.exe", "62f2ed1b1a6a4ed3e3298c7d6852a495", 63234),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_GENTEE_PACKAGE | VCRUISE_GF_BUL_LANGUAGE,
@@ -226,6 +227,21 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		},
 		GID_SCHIZM,
 		Common::EN_GRB,
+	},
+	{ // Schizm: Mysterious Journey, Japanese DVD Version, 12-language
+		{
+			"schizm",
+			"Japanese DVD",
+			AD_ENTRY2s("setup.pak", "eaaed2f6655342b4c320bdeb6f5ccfb9", 272655597,
+					   "setup.exe", "62f2ed1b1a6a4ed3e3298c7d6852a495", 66646),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_GENTEE_PACKAGE | VCRUISE_GF_USE_SETUP_EXE
+				| VCRUISE_GF_BUL_LANGUAGE | VCRUISE_GF_JPN_LANGUAGE,
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
+		},
+		GID_SCHIZM,
+		Common::JA_JPN,
 	},
 	{ // Schizm: Mysterious Journey, English DVD Version, unknown variant
 		{

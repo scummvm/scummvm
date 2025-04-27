@@ -96,17 +96,23 @@ public:
 				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EL_GRC));
 				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::RU_RUS));
 
-				// Steam version languages
-				if (adGame.desc->flags & VCruise::VCRUISE_GF_STEAM_LANGUAGES) {
+				if (adGame.desc->flags & VCruise::VCRUISE_GF_BUL_LANGUAGE)
 					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::BG_BUL));
+
+				if (adGame.desc->flags & VCruise::VCRUISE_GF_TWN_LANGUAGE)
 					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_TWN));
+
+				if (adGame.desc->flags & VCruise::VCRUISE_GF_JPN_LANGUAGE)
 					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::JA_JPN));
+
+				if (adGame.desc->flags & VCruise::VCRUISE_GF_HUN_LANGUAGE)
 					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::HU_HUN));
+
+				if (adGame.desc->flags & VCruise::VCRUISE_GF_CHN_LANGUAGE)
 					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_CHN));
+
+				if (adGame.desc->flags & VCruise::VCRUISE_GF_CZE_LANGUAGE)
 					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::CS_CZE));
-				} else if (adGame.desc->flags & VCruise::VCRUISE_GF_BUL_LANGUAGE) {
-					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::BG_BUL));
-				}
 			}
 		}
 
