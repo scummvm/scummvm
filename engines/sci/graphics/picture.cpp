@@ -1159,10 +1159,10 @@ void GfxPicture::vectorPattern(int16 x, int16 y, byte color, byte priority, byte
 	// texture and circle data can only be properly consumed by evaluating
 	// every pixel during drawing, even the pixels that are then skipped
 	// for being out of bounds. (Example: SQ3 picture 2)
-	if (box.right >= _screen->getScriptWidth()) {
-		box.moveTo(_screen->getScriptWidth() - box.width() + 1, box.top);
+	if (box.right > _screen->getScriptWidth() + 1) {
+		box.moveTo(_screen->getScriptWidth() + 1 - box.width(), box.top);
 	}
-	if (box.bottom >= _screen->getScriptHeight()) {
+	if (box.bottom > _screen->getScriptHeight()) {
 		box.moveTo(box.left, _screen->getScriptHeight() - box.height());
 	}
 	_screen->vectorAdjustCoordinate(&box.left, &box.top);
