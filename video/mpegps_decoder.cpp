@@ -248,7 +248,7 @@ MPEGPSDecoder::PrivateStreamType MPEGPSDecoder::detectPrivateStreamType(Common::
 // should start slightly before the video.
 // --------------------------------------------------------------------------
 
-#define PREBUFFERED_PACKETS 150
+#define PREBUFFERED_PACKETS 800
 #define AUDIO_THRESHOLD     100
 
 MPEGPSDecoder::MPEGPSDemuxer::MPEGPSDemuxer() {
