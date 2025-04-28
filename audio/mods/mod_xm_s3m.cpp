@@ -63,8 +63,10 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/system.h"
 
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "audio/mods/mod_xm_s3m.h"
 #include "audio/mods/module_mod_xm_s3m.h"
 
@@ -166,7 +168,7 @@ public:
 	int getRate() const override { return _sampleRate; }
 	bool endOfData() const override { return _dataLeft <= 0; }
 
-	ModXmS3mStream(Common::SeekableReadStream *stream, int initialPos, int rate, int interpolation);
+	ModXmS3mStream(Common::SeekableReadStream *stream, int initialPos, int interpolation);
 	~ModXmS3mStream();
 };
 
@@ -178,9 +180,10 @@ const short ModXmS3mStream::sinetable[] = {
 		255, 253, 250, 244, 235, 224, 212, 197, 180, 161, 141, 120,  97,  74,  49,  24
 	};
 
-ModXmS3mStream::ModXmS3mStream(Common::SeekableReadStream *stream, int initialPos, int rate, int interpolation) :
+ModXmS3mStream::ModXmS3mStream(Common::SeekableReadStream *stream, int initialPos, int interpolation) :
 	_rampBuf(nullptr), _playCount(nullptr), _channels(nullptr),
-	_mixBuffer(nullptr), _sampleRate(rate), _interpolation(interpolation),
+	_mixBuffer(nullptr), _interpolation(interpolation),
+	_sampleRate(g_system->getMixer()->getOutputRate()),
 	_seqPos(initialPos), _mixBufferSamples(0), _finished(false) {
 	if (!_module.load(*stream)) {
 		warning("It's not a valid Mod/S3m/Xm sound file");
@@ -1360,8 +1363,8 @@ void ModXmS3mStream::setSequencePos(int pos) {
 
 namespace Audio {
 
-RewindableAudioStream *makeModXmS3mStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int initialPos, int rate, int interpolation) {
-	Modules::ModXmS3mStream *soundStream = new Modules::ModXmS3mStream(stream, initialPos, rate, interpolation);
+RewindableAudioStream *makeModXmS3mStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int initialPos, int interpolation) {
+	Modules::ModXmS3mStream *soundStream = new Modules::ModXmS3mStream(stream, initialPos, interpolation);
 
 	if (disposeAfterUse == DisposeAfterUse::YES)
 		delete stream;

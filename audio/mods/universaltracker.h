@@ -49,7 +49,7 @@ class RewindableAudioStream;
  * @param disposeAfterUse   whether to delete the stream after use
  * @return  a new AudioStream, or NULL, if an error occurred
  */
-RewindableAudioStream *makeUniversalTrackerStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate = 48000);
+RewindableAudioStream *makeUniversalTrackerStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Audio
 
