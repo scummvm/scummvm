@@ -25,6 +25,7 @@
 #include "image/codecs/codec.h"
 
 #include "common/types.h"
+#include "graphics/palette.h"
 
 namespace Image {
 
@@ -54,7 +55,7 @@ private:
 	Codec *_codec;
 
 	Graphics::Surface *_ditherFrame;
-	byte *_forcedDitherPalette;
+	Graphics::Palette _forcedDitherPalette;
 	byte *_ditherTable;
 	bool _dirtyPalette;
 };

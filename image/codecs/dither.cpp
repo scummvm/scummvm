@@ -58,7 +58,6 @@ DitherCodec::~DitherCodec() {
 	if (_disposeAfterUse == DisposeAfterUse::YES)
 		delete _codec;
 
-	delete[] _forcedDitherPalette;
 	delete[] _ditherTable;
 
 	if (_ditherFrame) {
@@ -112,7 +111,7 @@ void ditherQuickTimeFrame(const Graphics::Surface &src, Graphics::Surface &dst, 
 
 const Graphics::Surface *DitherCodec::decodeFrame(Common::SeekableReadStream &stream) {
 	const Graphics::Surface *frame = _codec->decodeFrame(stream);
-	if (!frame || !_forcedDitherPalette)
+	if (!frame || _forcedDitherPalette.empty())
 		return frame;
 
 	// TODO: Handle palettes that are owned by the container instead of the codec
@@ -124,7 +123,7 @@ const Graphics::Surface *DitherCodec::decodeFrame(Common::SeekableReadStream &st
 			return frame;
 
 		// If the palettes match, bail out
-		if (memcmp(_forcedDitherPalette, curPalette, 256 * 3) == 0)
+		if (memcmp(_forcedDitherPalette.data(), curPalette, 256 * 3) == 0)
 			return frame;
 	}
 
@@ -150,32 +149,32 @@ const Graphics::Surface *DitherCodec::decodeFrame(Common::SeekableReadStream &st
 }
 
 Graphics::PixelFormat DitherCodec::getPixelFormat() const {
-	if (!_forcedDitherPalette)
+	if (_forcedDitherPalette.empty())
 		return _codec->getPixelFormat();
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
 bool DitherCodec::setOutputPixelFormat(const Graphics::PixelFormat &format) {
-	if (!_forcedDitherPalette)
+	if (_forcedDitherPalette.empty())
 		return _codec->setOutputPixelFormat(format);
 	return format.isCLUT8();
 }
 
 bool DitherCodec::containsPalette() const {
-	if (!_forcedDitherPalette)
+	if (_forcedDitherPalette.empty())
 		return _codec->containsPalette();
 	return true;
 }
 
 const byte *DitherCodec::getPalette() {
-	if (!_forcedDitherPalette)
+	if (_forcedDitherPalette.empty())
 		return _codec->getPalette();
 	_dirtyPalette = false;
-	return _forcedDitherPalette;
+	return _forcedDitherPalette.data();
 }
 
 bool DitherCodec::hasDirtyPalette() const {
-	if (!_forcedDitherPalette)
+	if (_forcedDitherPalette.empty())
 		return _codec->hasDirtyPalette();
 	return _dirtyPalette;
 }
@@ -189,14 +188,14 @@ void DitherCodec::setDither(DitherType type, const byte *palette) {
 		_codec->setDither(type, palette);
 	} else {
 		assert(type == kDitherTypeQT);
-		assert(!_forcedDitherPalette);
+		assert(_forcedDitherPalette.empty());
 
 		// Forced dither
-		_forcedDitherPalette = new byte[256 * 3];
-		memcpy(_forcedDitherPalette, palette, 256 * 3);
+		_forcedDitherPalette.resize(256, false);
+		_forcedDitherPalette.set(palette, 0, 256);
 		_dirtyPalette = true;
 
-		_ditherTable = createQuickTimeDitherTable(_forcedDitherPalette, 256);
+		_ditherTable = createQuickTimeDitherTable(_forcedDitherPalette.data(), 256);
 
 		// Prefer RGB554 or RGB555 to avoid extra conversion when dithering
 		if (!_codec->setOutputPixelFormat(Graphics::PixelFormat(2, 5, 5, 4, 0, 9, 4, 0, 0)))
