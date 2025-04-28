@@ -255,6 +255,10 @@ public:
 	int GetCharacterArrayIndex(const Character *c) const;
 	bool HasDuplicateCharacters() const;
 
+	// Updates the cursor from the mode set in the engine - TODO: Clean up, this should not
+	// be so separated
+	void UpdateCursor();
+
 	View1();
 	virtual ~View1() {}
 
