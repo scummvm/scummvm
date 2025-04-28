@@ -230,7 +230,7 @@ bool SoundManager::playMOD(int f, int a, int fromTrack) {
 		mod = Audio::makeModXmS3mStream(memImage, DisposeAfterUse::NO, fromTrack);
 
 	if (!mod) {
-		mod = Audio::makeUniversalTrackerStream(memImage, DisposeAfterUse::NO, g_sludge->_mixer->getOutputRate());
+		mod = Audio::makeUniversalTrackerStream(memImage, DisposeAfterUse::NO);
 	}
 
 	if (!mod) {
