@@ -68,6 +68,10 @@ Character *View1::GetCharacterByIndex(uint16 index) {
 	}
 	return nullptr;
 }
+void View1::UpdateCursor() {
+	int mode = (int)g_engine->_scriptExecutor->_mouseMode - (int)Script::MouseMode::Talk;
+	CursorMan.replaceCursor(g_engine->_cursorData[mode], g_engine->_cursorWidths[mode], g_engine->_cursorHeights[mode], g_engine->_cursorWidths[mode] >> 1, g_engine->_cursorHeights[0] >> 1, 0);
+}
 View1::View1() : UIElement("View1") {
 		_backgroundSurface = g_engine->_bgImageShip;
 		// TODO: Adjust for final min value
@@ -452,6 +456,10 @@ View1::View1() : UIElement("View1") {
 					const Common::Rect &current = inventoryButtonLocations[i];
 					if (current.contains(msg._pos)) {
 						switch (i) {
+						case static_cast<int>(InventoryButtonIndex::Look): {
+							g_engine->SetCursorMode(Script::MouseMode::Look);
+							UpdateCursor();
+						} break;
 						case static_cast<int>(InventoryButtonIndex::Up): {
 							if (inventoryPage > 0) {
 								inventoryPage--;
@@ -553,8 +561,7 @@ View1::View1() : UIElement("View1") {
 
 			g_engine->NextCursorMode();
 			// TODO: Adjust for actual min value
-			int mode = (int)g_engine->_scriptExecutor->_mouseMode - (int)Script::MouseMode::Talk;
-			CursorMan.replaceCursor(g_engine->_cursorData[mode], g_engine->_cursorWidths[mode], g_engine->_cursorHeights[mode], g_engine->_cursorWidths[mode] >> 1, g_engine->_cursorHeights[0] >> 1, 0);
+			UpdateCursor();
 			return true;
 		}
 	}

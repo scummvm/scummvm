@@ -304,6 +304,8 @@ public:
 
 	void NextCursorMode();
 
+	void SetCursorMode(Script::MouseMode newMode);
+
 	// Offset 5023h of current scene data
 	// TODO: Consider moving somewhere else
 	Common::Array<uint8> array5023;
