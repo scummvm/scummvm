@@ -68,7 +68,7 @@ const char *const g_lookUpFragmentShader =
 	"varying vec2 texCoord;\n"
 	"varying vec4 blendColor;\n"
 	"\n"
-	"uniform sampler2D shaderTexture;\n"
+	"uniform mediump sampler2D shaderTexture;\n"
 	"uniform sampler2D palette;\n"
 	"\n"
 	"const float scaleFactor = 255.0 / 256.0;\n"
