@@ -548,7 +548,10 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"darkside", // Disk release NTSC?
 		"",
-		{"DARKSIDE.C64.DATA", 0, "0d4edbc562ac5a9e6b3cf8a2b763dc08", 53780},
+		{
+			{"DARKSIDE.C64.DATA", 0, "0d4edbc562ac5a9e6b3cf8a2b763dc08", 53780},
+			AD_LISTEND
+		},
 		Common::EN_ANY,
 		Common::kPlatformC64,
 		ADGF_UNSTABLE | GF_C64_DISC,
