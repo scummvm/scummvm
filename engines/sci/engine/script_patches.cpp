@@ -5674,7 +5674,7 @@ static const SciScriptPatcherEntry kq4Signatures[] = {
 	{  true,    99, "fix speed test overflow",                     1, sci0SpeedTestOverflowSignature,           sci0SpeedTestOverflowPatch },
 	{  true,   994, "restore fix",                                 1, kq4SignatureRestoreFix1,                  kq4PatchRestoreFix1 },
 	{  true,   994, "restore fix",                                 1, kq4SignatureRestoreFix2,                  kq4PatchRestoreFix2 },
-	{  true,   994, "ride unicorn at night",                       1, kq4SignatureUnicornNightRide,             kq4PatchUnicornNightRide },
+	{  false,  994, "ride unicorn at night",                       1, kq4SignatureUnicornNightRide,             kq4PatchUnicornNightRide },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -26622,6 +26622,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 			case GID_KQ4:
 				if (!g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 653))) {
 					enablePatch(signatureTable, "missing waterfall view");
+				}
+				if (!g_sci->isDemo()) {
+					enablePatch(signatureTable, "ride unicorn at night");
 				}
 				break;
 			case GID_KQ5:
