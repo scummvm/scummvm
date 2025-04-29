@@ -314,7 +314,7 @@ void sendWSMessage_3840000(machine *machine, int32 trigger) {
 }
 
 void sendWSMessage_3860000(machine *mach, int32 trigger) {
-	_G(globals[GLB_TEMP_1]) = kernel_trigger_create(trigger);
+	_G(globals[GLB_TEMP_1]) = kernel_trigger_create(trigger) << 16;
 	sendWSMessage(ACTION_902 << 16, 0, mach, 0, nullptr, 1);
 }
 
