@@ -79,13 +79,13 @@ void Room860::daemon() {
 		break;
 
 	case 2:
+		series_unload(_860RipWalkSeries);
 		sendWSMessage_10000(1, _860McMach, _860MeiTalkSeries, 1, 1, -1,
 			_860MeiTalkSeries, 1, 11, 4);
 		digi_play("860m01", 2, 255, 3, 860);
 		break;
 
 	case 3:
-		series_unload(_860RipWalkSeries);
 		sendWSMessage_10000(1, _860McMach, _860MeiTalkSeries, 11, 11, -1,
 			_860MeiTalkSeries, 11, 11, 0);
 		sendWSMessage_10000(1, _860RipMach, _860RipTalkSeries, 1, 2, -1,
