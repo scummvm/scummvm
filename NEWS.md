@@ -125,6 +125,15 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed Fluidsynth soundfont existence check failing with sandboxed
      filesystems.
 
+ macOS port:
+   - Fixed ScummVM failing to start when the monitor settings are not
+     set to "Millions of colors", on older macOS releases.
+   - Fixed Audio CD support when playing from original discs on Snow
+     Leopard and earlier.
+
+ Windows port:
+   - Restored FLAC support in the Windows 9x port.
+
 #### 2.9.0 "Close Encounters of the 2.9th Kind" (2024-12-22)
 
  New games:
