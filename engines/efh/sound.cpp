@@ -27,7 +27,7 @@ void EfhEngine::songDelay(int delay) {
 	debugC(3, kDebugEngine, "songDelay %d", delay);
 
 	int remainingDelay = delay / 2;
-	while (remainingDelay > 0 && !shouldQuitGame()) {
+	while (remainingDelay > 0 && !shouldQuit()) {
 		remainingDelay -= 3;
 		_system->delayMillis(3);
 	}
@@ -90,7 +90,7 @@ Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
 			if (inputChar == Common::KEYCODE_ESCAPE || inputChar == Common::KEYCODE_RETURN)
 				stopFl = 0;
 		}
-	} while (stopFl != 0 && !shouldQuitGame());
+	} while (stopFl != 0 && !shouldQuit());
 
 	_mixer->stopHandle(_speakerHandle);
 	delete _speakerStream;
@@ -164,7 +164,7 @@ void EfhEngine::generateSound2(int startFreq, int endFreq, int speed) {
 		songDelay(speed);
 		_speakerStream->stop();
 		curFreq += delta;
-	} while (curFreq < endFreq && !shouldQuitGame());
+	} while (curFreq < endFreq && !shouldQuit());
 
 
 	_mixer->stopHandle(_speakerHandle);

@@ -84,7 +84,7 @@ Common::Error EfhEngine::run() {
 		return Common::kNoError;
 
 	uint32 lastMs = _system->getMillis();
-	while (!shouldQuitGame()) {
+	while (!shouldQuit()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -95,7 +95,7 @@ Common::Error EfhEngine::run() {
 
 		handleEvents();
 
-		if ((_mapPosX != _oldMapPosX || _mapPosY != _oldMapPosY) && !shouldQuitGame()) {
+		if ((_mapPosX != _oldMapPosX || _mapPosY != _oldMapPosY) && !shouldQuit()) {
 			bool collisionFl = checkMonsterCollision();
 			if (collisionFl) {
 				_oldMapPosX = _mapPosX;
@@ -116,16 +116,16 @@ Common::Error EfhEngine::run() {
 			}
 		}
 
-		if (!shouldQuitGame()) {
+		if (!shouldQuit()) {
 			handleMapMonsterMoves();
 		}
 
-		if (_redrawNeededFl && !shouldQuitGame()) {
+		if (_redrawNeededFl && !shouldQuit()) {
 			drawScreen();
 			displayLowStatusScreen(true);
 		}
 
-		if (!shouldQuitGame()) {
+		if (!shouldQuit()) {
 			handleNewRoundEffects();
 
 			if (_tempTextDelay > 0) {
@@ -140,7 +140,7 @@ Common::Error EfhEngine::run() {
 
 		if (isTPK()) {
 			if (handleDeathMenu())
-				_shouldQuit = true;
+				quitGame();
 		}
 
 		displayFctFullScreen();
@@ -268,7 +268,6 @@ void EfhEngine::handleActionLoad() {
 void EfhEngine::initialize() {
 	_rnd = new Common::RandomSource("Hell");
 	_rnd->setSeed(g_system->getMillis());   // Kick random number generator
-	_shouldQuit = false;
 }
 
 void EfhEngine::playIntro() {
@@ -829,7 +828,7 @@ void EfhEngine::handleWinSequence() {
 
 	Common::KeyCode input = Common::KEYCODE_INVALID;
 
-	while (input != Common::KEYCODE_ESCAPE && !shouldQuitGame()) {
+	while (input != Common::KEYCODE_ESCAPE && !shouldQuit()) {
 		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
 		displayFctFullScreen();
 		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
@@ -1702,7 +1701,7 @@ void EfhEngine::handleMapMonsterMoves() {
 
 				break;
 			}
-		} while (!monsterMovedFl && retryCounter > 0 && !shouldQuitGame());
+		} while (!monsterMovedFl && retryCounter > 0 && !shouldQuit());
 	}
 
 	if (attackMonsterId != -1)
@@ -2039,7 +2038,7 @@ void EfhEngine::displayImp1Text(int16 textId) {
 						curTextId = nextTextId;
 				}
 
-			} while (!textComplete && curTextId != -1 && !shouldQuitGame());
+			} while (!textComplete && curTextId != -1 && !shouldQuit());
 
 			textComplete = false;
 			if (curTextId == 0xFF || curTextId == -1)
@@ -2426,7 +2425,7 @@ bool EfhEngine::checkMonsterCollision() {
 			default:
 				break;
 			}
-		} while (!endLoop && !shouldQuitGame());
+		} while (!endLoop && !shouldQuit());
 		return false;
 	}
 

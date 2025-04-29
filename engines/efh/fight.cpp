@@ -94,7 +94,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 
 	drawCombatScreen(0, false, true);
 
-	for (bool mainLoopCond = false; !mainLoopCond && !shouldQuitGame();) {
+	for (bool mainLoopCond = false; !mainLoopCond && !shouldQuit();) {
 		if (isTPK()) {
 			resetTeamMonsterIdArray();
 			_ongoingFightFl = false;
@@ -1022,7 +1022,7 @@ int16 EfhEngine::determineTeamTarget(int16 charId, int16 unkFied18Val, bool chec
 				getLastCharAfterAnimCount(_guessAnimationAmount);
 			}
 		}
-	} while (retVal == -1 && !shouldQuitGame());
+	} while (retVal == -1 && !shouldQuit());
 
 	if (retVal == 27)
 		retVal = -1;
@@ -1128,7 +1128,7 @@ bool EfhEngine::getTeamAttackRoundPlans() {
 			default:
 				break;
 			}
-		} while (_teamChar[charId]._lastAction == 0 && !shouldQuitGame());
+		} while (_teamChar[charId]._lastAction == 0 && !shouldQuit());
 	}
 
 	return retVal;
@@ -1662,7 +1662,7 @@ int16 EfhEngine::selectMonsterGroup() {
 
 	int16 retVal = -1;
 
-	while (retVal == -1 && !shouldQuitGame()) {
+	while (retVal == -1 && !shouldQuit()) {
 		Common::KeyCode input = handleAndMapInput(true);
 		switch (input) {
 		case Common::KEYCODE_ESCAPE:

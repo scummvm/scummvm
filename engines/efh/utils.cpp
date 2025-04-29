@@ -50,7 +50,7 @@ void EfhEngine::decryptImpFile(bool techMapFl) {
 				_imp1PtrArray[counter++] = curPtr;
 		} else
 			++curPtr;
-	} while (*curPtr != 0x60 && counter <= target && !shouldQuitGame());
+	} while (*curPtr != 0x60 && counter <= target && !shouldQuit());
 
 	if (ConfMan.getBool("dump_scripts")) {
 		// Dump the decompressed IMP file
@@ -143,7 +143,7 @@ Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
 	_customAction = kActionNone;
 
 	uint32 lastMs = _system->getMillis();
-	while (delay > 0 && lastChar == Common::KEYCODE_INVALID && _customAction == kActionNone && !shouldQuitGame()) {
+	while (delay > 0 && lastChar == Common::KEYCODE_INVALID && _customAction == kActionNone && !shouldQuit()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -168,7 +168,7 @@ Common::KeyCode EfhEngine::getInput(int16 delay) {
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
 
 	uint32 lastMs = _system->getMillis();
-	while (delay > 0 && !shouldQuitGame()) {
+	while (delay > 0 && !shouldQuit()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -194,14 +194,14 @@ Common::KeyCode EfhEngine::getKeyCode(const Common::Event &event) {
 		switch (retVal) {
 		case Common::KEYCODE_x:
 		case Common::KEYCODE_q:
-			_shouldQuit = true;
+			quitGame();
 			retVal = Common::KEYCODE_INVALID;
 			break;
 		default:
 			break;
 		}
 	} else if (event.kbd.flags & Common::KBD_ALT && retVal == Common::KEYCODE_F4) {
-		_shouldQuit = true;
+		quitGame();
 	}
 
 	return retVal;
@@ -213,7 +213,7 @@ Common::KeyCode EfhEngine::waitForKey() {
 	Common::Event event;
 
 	uint32 lastMs = _system->getMillis();
-	while (retVal == Common::KEYCODE_INVALID && !shouldQuitGame()) {
+	while (retVal == Common::KEYCODE_INVALID && !shouldQuit()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -239,7 +239,7 @@ Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 	_customAction = kActionNone;
 
 	uint32 lastMs = _system->getMillis();
-	while (retVal == Common::KEYCODE_INVALID && _customAction == kActionNone && !shouldQuitGame()) {
+	while (retVal == Common::KEYCODE_INVALID && _customAction == kActionNone && !shouldQuit()) {
 		_system->getEventManager()->pollEvent(event);
 
 		if (event.type == Common::EVENT_KEYUP)

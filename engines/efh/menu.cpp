@@ -122,7 +122,7 @@ bool EfhEngine::handleDeathMenu() {
 			displayFctFullScreen();
 	}
 
-	for (bool found = false; !found && !shouldQuitGame();) {
+	for (bool found = false; !found && !shouldQuit();) {
 		Common::KeyCode input = waitForKey();
 		switch (input) {
 		case Common::KEYCODE_l:
@@ -133,7 +133,7 @@ bool EfhEngine::handleDeathMenu() {
 			found = _saveAuthorized;
 			break;
 		case Common::KEYCODE_q:
-			_shouldQuit = true;
+			quitGame();
 			return true;
 			break;
 		case Common::KEYCODE_r:
@@ -657,7 +657,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 
 			prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 
-		} while (!selectionDoneFl && !shouldQuitGame()); // Loop until a menu entry is confirmed by the user by pressing the enter key
+		} while (!selectionDoneFl && !shouldQuit()); // Loop until a menu entry is confirmed by the user by pressing the enter key
 
 		bool validationFl = true;
 
@@ -763,7 +763,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						}
 						givenFl = false;
 					}
-				} while (!givenFl && !var2 && destCharId != 0x1B && !shouldQuitGame());
+				} while (!givenFl && !var2 && destCharId != 0x1B && !shouldQuit());
 
 				if (givenFl) {
 					removeObject(charId, objectId);

@@ -300,9 +300,6 @@ public:
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
-	bool _shouldQuit;
-	bool shouldQuitGame() const { return _shouldQuit || shouldQuit(); }
-
 protected:
 	int _lastTime;
 	// Engine APIs
