@@ -26428,6 +26428,10 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 					enablePatch(signatureTable, "missing waterfall view");
 				}
 				if (!g_sci->isDemo()) {
+					// Signature matches kq4 demo, which would be okay, except
+					// that the demo does not include a selector table.
+					// The patcher does not validate this, so it creates an
+					// invalid instruction when processing PATCH_SELECTOR16.
 					enablePatch(signatureTable, "ride unicorn at night");
 				}
 				break;
