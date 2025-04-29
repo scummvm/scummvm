@@ -4250,10 +4250,13 @@ void ScummEngine::drawMainMenuControls() {
 
 		// Savegame names
 		for (int i = GUI_CTRL_FIRST_SG; i <= GUI_CTRL_LAST_SG; i++) {
-			if ((_game.version == 4 && _game.id != GID_LOOM) && _mainMenuSavegameLabel == 0 && i == 1)
+			if ((_game.version == 4 && _game.id != GID_LOOM) && _mainMenuSavegameLabel == 0 && i == 1) {
 				drawInternalGUIControl(i, 1);
-			else
+				if (_menuPage == GUI_PAGE_LOAD)
+					_mainMenuSavegameLabel = 1;
+			} else {
 				drawInternalGUIControl(i, 0);
+			}
 		}
 
 		if (_game.version > 4 || (_game.version == 4 && _game.id == GID_LOOM)) {
