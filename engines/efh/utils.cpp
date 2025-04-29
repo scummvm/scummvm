@@ -186,27 +186,6 @@ Common::KeyCode EfhEngine::getInput(int16 delay) {
 	return retVal;
 }
 
-Common::KeyCode EfhEngine::getKeyCode(const Common::Event &event) {
-	Common::KeyCode retVal = event.kbd.keycode;
-	if (retVal == Common::KEYCODE_LCTRL || retVal == Common::KEYCODE_RCTRL || retVal == Common::KEYCODE_RALT || retVal == Common::KEYCODE_LALT)
-		retVal = Common::KEYCODE_INVALID;
-	else  if (event.kbd.flags & Common::KBD_CTRL) {
-		switch (retVal) {
-		case Common::KEYCODE_x:
-		case Common::KEYCODE_q:
-			quitGame();
-			retVal = Common::KEYCODE_INVALID;
-			break;
-		default:
-			break;
-		}
-	} else if (event.kbd.flags & Common::KBD_ALT && retVal == Common::KEYCODE_F4) {
-		quitGame();
-	}
-
-	return retVal;
-}
-
 Common::KeyCode EfhEngine::waitForKey() {
 	debugC(1, kDebugUtils, "waitForKey");
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
@@ -223,8 +202,12 @@ Common::KeyCode EfhEngine::waitForKey() {
 		}
 
 		_system->getEventManager()->pollEvent(event);
-		if (event.type == Common::EVENT_KEYUP)
-			retVal = getKeyCode(event);
+		if (event.type == Common::EVENT_KEYUP) {
+			if ((event.kbd.flags & Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_q)
+				quitGame();
+			if (!event.kbd.flags)
+				retVal = event.kbd.keycode;
+		}
 	}
 
 	return retVal;
@@ -242,8 +225,12 @@ Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 	while (retVal == Common::KEYCODE_INVALID && _customAction == kActionNone && !shouldQuit()) {
 		_system->getEventManager()->pollEvent(event);
 
-		if (event.type == Common::EVENT_KEYUP)
-			retVal = getKeyCode(event);
+		if (event.type == Common::EVENT_KEYUP) {
+			if ((event.kbd.flags & Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_q)
+				quitGame();
+			if (!event.kbd.flags)
+				retVal = event.kbd.keycode;
+		}
 
 		if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START)
 			_customAction = event.customType;

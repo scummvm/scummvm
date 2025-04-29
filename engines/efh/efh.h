@@ -524,7 +524,6 @@ private:
 	int16 getRandom(int16 maxVal);
 	Common::KeyCode getLastCharAfterAnimCount(int16 delay);
 	Common::KeyCode getInput(int16 delay);
-	Common::KeyCode getKeyCode(const Common::Event & event);
 	Common::KeyCode waitForKey();
 	Common::KeyCode handleAndMapInput(bool animFl);
 	bool getValidationFromUser();
