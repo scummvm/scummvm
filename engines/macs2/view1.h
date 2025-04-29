@@ -271,7 +271,10 @@ public:
 	Common::Point inventoryGridUpperLeft;
 	Common::Point inventorySlotSize;
 
+	Common::Point stringBoxPosition;
+
 	void setStringBox(const Common::StringArray& sa);
+	void setStringBoxAt(const Common::StringArray &sa, const Common::Point &pos);
 	void clearStringBox();
 
 	void startFading();
