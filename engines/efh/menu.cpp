@@ -533,45 +533,45 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			windowId = kEfhMenuEquip;
 
 		do {
-			Common::KeyCode var19 = handleAndMapInput(false);
+			Common::KeyCode input = handleAndMapInput(false);
 			if (_menuDepth == 0) {
-				switch (var19) {
+				switch (input) {
 				case Common::KEYCODE_a:
 					windowId = kEfhMenuActive;
-					var19 = Common::KEYCODE_RETURN;
+					input = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_d:
 					windowId = kEfhMenuDrop;
-					var19 = Common::KEYCODE_RETURN;
+					input = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_e:
 					windowId = kEfhMenuEquip;
-					var19 = Common::KEYCODE_RETURN;
+					input = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_g:
 					windowId = kEfhMenuGive;
-					var19 = Common::KEYCODE_RETURN;
+					input = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_i:
 					windowId = kEfhMenuInfo;
-					var19 = Common::KEYCODE_RETURN;
+					input = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_ESCAPE:
 				case Common::KEYCODE_l:
 					windowId = kEfhMenuLeave;
-					var19 = Common::KEYCODE_RETURN;
+					input = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_p:
 					windowId = kEfhMenuPassive;
-					var19 = Common::KEYCODE_RETURN;
+					input = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_t:
 					windowId = kEfhMenuTrade;
-					var19 = Common::KEYCODE_RETURN;
+					input = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_u:
 					windowId = kEfhMenuUse;
-					var19 = Common::KEYCODE_RETURN;
+					input = Common::KEYCODE_RETURN;
 					break;
 				default:
 					debugC(9, kDebugEngine, "handleStatusMenu - unhandled keys");
@@ -579,16 +579,16 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				}
 			} else if (_menuDepth == 1) {
 				// in the sub-menus, only a list of selectable items is displayed
-				if (var19 >= Common::KEYCODE_a && var19 <= Common::KEYCODE_z) {
-					int16 var8 = var19 - Common::KEYCODE_a;
+				if (input >= Common::KEYCODE_a && input <= Common::KEYCODE_z) {
+					int16 var8 = input - Common::KEYCODE_a;
 					if (var8 < _menuItemCounter) {
 						curMenuLine = var8;
-						var19 = Common::KEYCODE_RETURN;
+						input = Common::KEYCODE_RETURN;
 					}
 				}
 			}
 
-			switch (var19) {
+			switch (input) {
 			case Common::KEYCODE_RETURN:
 				// case 0xFA: Joystick button 1
 				if (_menuDepth == 0) {
