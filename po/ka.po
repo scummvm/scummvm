@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-27 18:25+0000\n"
-"PO-Revision-Date: 2025-04-16 07:18+0000\n"
+"PO-Revision-Date: 2025-04-30 02:19+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -4778,7 +4778,7 @@ msgstr "თამაშებში"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export backup"
-msgstr ""
+msgstr "მარქაფის გატანა"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export a backup of the configuration and save files"
@@ -4786,7 +4786,7 @@ msgstr ""
 
 #: backends/platform/android/options.cpp:193
 msgid "Import backup"
-msgstr ""
+msgstr "მარქაფის შემოტანა"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import a previously exported backup file"
@@ -4798,10 +4798,8 @@ msgid "Remove folder authorizations..."
 msgstr "საქაღალდის ავტორიზაციის წაშლა..."
 
 #: backends/platform/android/options.cpp:268
-#, fuzzy
-#| msgid "Select the orientation:"
 msgid "Select backup destination"
-msgstr "აირჩიეთ ორიენტაცია:"
+msgstr "აირჩიეთ მარქაფის სამიზნე"
 
 #: backends/platform/android/options.cpp:276
 msgid "The backup has been saved successfully."
@@ -4813,16 +4811,12 @@ msgstr ""
 
 #: backends/platform/android/options.cpp:280
 #: backends/platform/android/options.cpp:313
-#, fuzzy
-#| msgid "the shader could not be changed"
 msgid "The game saves couldn't be backed up"
-msgstr "შეიდერის შეცვლა შეუძლებელია"
+msgstr "შენახული თამაშების მარქაფი შეუძლებელია"
 
 #: backends/platform/android/options.cpp:282
-#, fuzzy
-#| msgid ", error while mounting the share"
 msgid "An error occured while saving the backup."
-msgstr ", შეცდომა გაზიარებულის მიმაგრებისას"
+msgstr "შეცდომა მარქაფის შენახვისას."
 
 #: backends/platform/android/options.cpp:289
 msgid ""
@@ -4831,20 +4825,16 @@ msgid ""
 msgstr ""
 
 #: backends/platform/android/options.cpp:294
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select backup file"
-msgstr "აირჩიეთ თემა"
+msgstr "აირჩიეთ მარქაფის ფაილი"
 
 #: backends/platform/android/options.cpp:311
 msgid "The backup has been restored successfully."
 msgstr ""
 
 #: backends/platform/android/options.cpp:315
-#, fuzzy
-#| msgid ", error while mounting the share"
 msgid "An error occured while restoring the backup."
-msgstr ", შეცდომა გაზიარებულის მიმაგრებისას"
+msgstr "შეცდომა მარქაფის აღდგენისას."
 
 #: backends/platform/android/options.cpp:559
 msgid "Remove"
@@ -7228,32 +7218,24 @@ msgstr "სახე წინ"
 
 #: engines/freescape/games/dark/dark.cpp:229
 #: engines/freescape/games/driller/driller.cpp:198
-#, fuzzy
-#| msgid "Move left"
 msgid "Roll left"
-msgstr "მარცხნივ გაწევა"
+msgstr "გადაბრუნება მარცხნივ"
 
 #: engines/freescape/games/dark/dark.cpp:234
 #: engines/freescape/games/driller/driller.cpp:203
-#, fuzzy
-#| msgid "Move right"
 msgid "Roll right"
-msgstr "მარჯვნივ გაწევა"
+msgstr "გადაბრუნება მარჯვნივ"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/dark/dark.cpp:240
 #: engines/freescape/games/driller/driller.cpp:170
-#, fuzzy
-#| msgid "Increasing Volume"
 msgid "Increase Turn Angle"
-msgstr "ხმის აწევა"
+msgstr "მობრუნების კუთხის გაზრდა"
 
 #: engines/freescape/games/dark/dark.cpp:245
 #: engines/freescape/games/driller/driller.cpp:175
-#, fuzzy
-#| msgid "Decreasing Volume"
 msgid "Decrease Turn Angle"
-msgstr "ხმის დაწევა"
+msgstr "მობრუნების კუთხის შემცირება"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:251
