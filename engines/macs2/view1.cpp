@@ -272,16 +272,14 @@ View1::View1() : UIElement("View1") {
 		int padding = 3;
 		int totalWidth = g_engine->MeasureStrings(sa) + 0x12;
 		int totalHeight = g_engine->MeasureStringsVertically(sa) + 0x10;
-		constexpr int x = 80;
-		constexpr int y = 20;
 
 		// drawStringBackground(x, y, totalWidth, totalHeight);
 		Graphics::ManagedSurface s = getSurface();
-		DrawBorder(Common::Point(x, y), Common::Point(totalWidth, totalHeight), s);
+		DrawBorder(stringBoxPosition, Common::Point(totalWidth, totalHeight), s);
 		// TODO range based
-		int lineOffset = y + 0x9;
+		int lineOffset = stringBoxPosition.y + 0x9;
 		for (auto iter = sa.begin(); iter < sa.end(); iter++) {
-			renderString(x + 0x9, lineOffset, *iter);
+			renderString(stringBoxPosition.x + 0x9, lineOffset, *iter);
 			lineOffset += g_engine->maxGlyphHeight + 2;
 		}
 	}
@@ -394,6 +392,11 @@ View1::View1() : UIElement("View1") {
 
 		// TODO: Change cursor, stop animations, hide again
 		redraw();
+	}
+
+	void View1::setStringBoxAt(const Common::StringArray &sa, const Common::Point &pos) {
+		stringBoxPosition = pos;
+		setStringBox(sa);
 	}
 
 	void View1::clearStringBox() {
