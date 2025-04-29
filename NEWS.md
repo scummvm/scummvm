@@ -12,9 +12,6 @@ For a more comprehensive changelog of the latest experimental code, see:
  Freescape:
    - Added roll rotation to Driller and Dark Side.
 
- Hopkins:
-   - Fix crash using elevator to go to other floors.
-
  Nuvie:
    - Added "Transfer a Character" feature to main menu.
 
@@ -25,7 +22,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added speech support in the SE versions of MI1 and MI2.
    - Improved graphics support for Macintosh DOTT, Sam & Max, The Dig, Full
      Throttle, and Maniac Mansion.
-   - Fixed pops in Sega CD MI1 sound effects.
    - Added an option to render Sega CD MI1 with the "Shadow Mode" palette
      which was originally used for that release. (It's unclear whether that
      much darker rendering was used on purpose, or unintentionally.)
@@ -34,11 +30,100 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed meca penguin movement.
    - Fixed sound related issues.
    - Activate original bug fixes (FunFrock's HQ door and safe bugs).
-   - Fixed normal mode action triggering.
 
  V-Cruise:
    - Fixed text rendering in Chinese and Japanese localizations.
    - Added support for Japanese DVD version of Schizm: Mysterious Journey.
+
+#### 2.9.1 (XXXX-XX-XX)
+
+ General:
+   - Avoid using the GNU Gold linker when building ScummVM, (unless the
+     --enable-gold option is given), since it has long-standing issues
+     on some platforms and is now deprecated upstream.
+
+ Asylum:
+   - Fixed crash in Sanitarium main menu, when moving the cursor to the
+     top part of the screen.
+
+ Bladerunner:
+   - Fixed 2x scaling and fullscreen support in non-interactive demo.
+   - Fixed memory leaks that could cause Out of Memory issues on some
+     ports.
+
+ Hopkins:
+   - Fixed a crash when using the elevator to go to other floors.
+
+ MADS:
+   - Fixed Rex Nebular inventory and verb area UIs not updating.
+
+ NGI:
+   - Optimized game resource loading, improving the performance on
+     Android.
+
+ SCI:
+   - Fixed KQ6 CD hi-res drawing glitches.
+
+ SCUMM:
+   - Restored the ScummVM 2.7.0 behavior of allowing all the DOS v2-v4
+     (i.e. Maniac Mansion to Monkey1) EGA titles to be played with the
+     Amiga palette again, using the Render mode game option.
+   - Fixed most of the iMUSE tracks being silent in the Booty Store,
+     in Monkey2.
+   - Fixed an accuracy issue with some character positioning in SCUMMv2
+     and below. This would happen when interacting with the devotee at
+     the airport in Zak McKracken (all releases but the FM-TOWNS one),
+     for instance.
+   - Fixed Moonbase Commander multiplayer mode crashing guests when
+     starting the game.
+   - Fixed pops in Sega CD Monkey1 sound effects.
+   - Fixed saving over an existing save in COMI.
+   - Fixed excessive MIDI messages being sent during iMUSE music volume
+     reduction (e.g. in the Sam & Max intro), which could cause
+     slowed-down, garbled speech when using older, real MIDI hardware.
+   - Fixed an iMUSE crash when loading an older savegame with a sound
+     fade in progress.
+   - Fixed the Jolly Roger enhancement for Monkey1; enabling this
+     enhancement would prevent this flag from appearing when it should
+     no longer be visible anymore, but the fix was incomplete in some
+     VGA floppy releases.
+   - Fixed the enhancement for Smirk's cigar smoke in Monkey1 FM-TOWNS.
+
+ Sky:
+   - Fixed a crash in the intro of Beneath a Steel Sky on some platforms,
+     such as Android.
+
+ Sword1:
+   - Fixed audio balance issue when using the Windows executable option.
+
+ Tetraedge:
+   - Improved OpenGL vs. software rendering support, preventing the
+     engine from erroring out on Android and some other platforms.
+
+ Tinsel:
+   - Fixed Discworld Save/Load menu becoming inaccessible.
+
+ Tucker:
+   - Fixed skipping cutscenes, when the Esc key is mapped.
+
+ TwinE:
+   - Fixed crash when restarting a game from the launcher a second time.
+   - Fixed pressing Space in normal mode not triggering Use/Talk action.
+
+ Android port:
+   - Enabled NEON support by default, resulting in better performance for
+     the vast majority of older Android devices.
+   - Worked around a bug in ARMv7a Android 6.0 and below, which could
+     cause some game options to be missing, for example.
+   - Increased stack allocation for Android Java thread, benefiting game
+     engines that heavily use the stack.
+
+ Atari port:
+   - Fixed crash with certain audio settings.
+
+ iOS/iPadOS port:
+   - Fixed Fluidsynth soundfont existence check failing with sandboxed
+     filesystems.
 
 #### 2.9.0 "Close Encounters of the 2.9th Kind" (2024-12-22)
 
