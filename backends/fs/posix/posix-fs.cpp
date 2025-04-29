@@ -38,6 +38,7 @@
 #include <sys/param.h>
 #include <sys/stat.h>
 #ifdef MACOSX
+#include <AvailabilityMacros.h>
 #include <sys/types.h>
 #endif
 #ifdef PSP2
@@ -202,7 +203,19 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 		 */
 		entry.setFlags();
 #else
-		if (dp->d_type == DT_UNKNOWN) {
+		// HACK: Before macOS 10.6.2, the cddafs module would return bogus values
+		// (kAppleCDDAXMLFileType or kAppleCDDATrackType) for Audio CD volumes,
+		// instead of DT_REG. A more comprehensive fix is used in newer ScummVM
+		// releases, but for 2.9.x we avoid changing too much, and just apply a
+		// smaller fix that's only targeting older macOS.
+		if (dp->d_type == DT_UNKNOWN
+#  if defined(MACOSX) && __MAC_OS_X_VERSION_MIN_REQUIRED < 1070
+#    define kAppleCDDATrackType    2
+#    define kAppleCDDAXMLFileType  3
+			|| dp->d_type == kAppleCDDATrackType
+			|| dp->d_type == kAppleCDDAXMLFileType
+#  endif
+			) {
 			// Fall back to stat()
 			entry.setFlags();
 		} else {
