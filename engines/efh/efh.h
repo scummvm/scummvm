@@ -307,7 +307,6 @@ private:
 	void playIntro();
 	void initEngine();
 	void initMapMonsters();
-	void loadMapArrays(int idx);
 	void saveAnimImageSetId();
 	int16 getEquipmentDefense(int16 charId);
 	uint16 getEquippedExclusiveType(int16 charId, int16 exclusiveType, bool flag);
@@ -519,10 +518,7 @@ private:
 	Common::KeyCode getInput(int16 delay);
 	Common::KeyCode getKeyCode(const Common::Event & event);
 	Common::KeyCode waitForKey();
-	Common::KeyCode mapInputCode(Common::KeyCode input);
 	Common::KeyCode handleAndMapInput(bool animFl);
-	Common::KeyCode getInputBlocking();
-	void setNumLock();
 	bool getValidationFromUser();
 	uint32 ROR(uint32 val, uint8 shiftVal);
 	Common::String getArticle(int pronoun);

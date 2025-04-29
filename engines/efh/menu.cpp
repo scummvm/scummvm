@@ -344,10 +344,6 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 					setTextPos(286, textPosY);
 					displayStringAtTextPos("Def");
 				}
-				// useless code removed.
-				// else {
-				//	var54 = _items[_npcBuf[npcId]._inventory[_menuStatItemArr[counter]]._ref]._defense;
-				// {
 			} else if (_items[itemId]._uses != 0x7F) {
 				int16 stat1 = _npcBuf[npcId]._inventory[_menuStatItemArr[counter]].getUsesLeft();
 				if (stat1 != 0x7F) {

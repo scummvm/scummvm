@@ -238,16 +238,6 @@ Common::KeyCode EfhEngine::waitForKey() {
 	return retVal;
 }
 
-Common::KeyCode EfhEngine::mapInputCode(Common::KeyCode input) {
-	// Original is doing:
-	// if input < a or > z : return input
-	// else return (input + 0xE0)
-	// ex: 'a' = 0x61 + 0xE0 = 0x0141, but it's a uint8 so it's 0x41 which is 'A'.
-	// So basically the original works with uppercase letters and do not alter the other inputs.
-	// => no implementation needed.
-	return input;
-}
-
 Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 	debugC(1, kDebugUtils, "handleAndMapInput %s", animFl ? "True" : "False");
 	// The original checks for the joystick input
@@ -277,35 +267,6 @@ Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 			break;
 	}
 	return retVal;
-}
-
-Common::KeyCode EfhEngine::getInputBlocking() {
-	debugC(1, kDebugUtils, "getInputBlocking");
-	// The original checks for the joystick input
-	Common::Event event;
-	_system->getEventManager()->pollEvent(event);
-	Common::KeyCode retVal = Common::KEYCODE_INVALID;
-
-	uint32 lastMs = _system->getMillis();
-	while (retVal == Common::KEYCODE_INVALID && !shouldQuitGame()) {
-		_system->getEventManager()->pollEvent(event);
-
-		if (event.type == Common::EVENT_KEYUP)
-			retVal = getKeyCode(event);
-
-		_system->delayMillis(20);
-		uint32 newMs = _system->getMillis();
-
-		if (newMs - lastMs >= 220) {
-			lastMs = newMs;
-			handleAnimations();
-		}
-	}
-	return retVal;
-}
-
-void EfhEngine::setNumLock() {
-	// No implementation in ScummVM
 }
 
 bool EfhEngine::getValidationFromUser() {

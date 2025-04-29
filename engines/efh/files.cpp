@@ -207,10 +207,6 @@ void EfhEngine::loadTechMapImp(int16 fileId) {
 	// The original was loading the specific tech.%d and map.%d files.
 	// This is gone in our implementation as we pre-load all the files to save them inside the savegames
 
-	// This is not present in the original.
-	// The purpose is to properly load the misc map data in arrays in order to use them without being a pain afterwards
-	loadMapArrays(_techId);
-
 	loadImageSetToTileBank(0, _mapBitmapRefArr[_techId]._setId1);
 	loadImageSetToTileBank(1, _mapBitmapRefArr[_techId]._setId2);
 

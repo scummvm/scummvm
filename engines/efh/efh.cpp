@@ -113,42 +113,34 @@ Common::Error EfhEngine::run() {
 		case Common::KEYCODE_DOWN:
 		case Common::KEYCODE_KP2:
 			goSouth();
-			_imageSetSubFilesIdx = 144;
 			break;
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_KP8:
 			goNorth();
-			_imageSetSubFilesIdx = 145;
 			break;
 		case Common::KEYCODE_RIGHT:
 		case Common::KEYCODE_KP6:
 			goEast();
-			_imageSetSubFilesIdx = 146;
 			break;
 		case Common::KEYCODE_LEFT:
 		case Common::KEYCODE_KP4:
 			goWest();
-			_imageSetSubFilesIdx = 147;
 			break;
 		case Common::KEYCODE_PAGEUP:
 		case Common::KEYCODE_KP9:
 			goNorthEast();
-			_imageSetSubFilesIdx = 146;
 			break;
 		case Common::KEYCODE_PAGEDOWN:
 		case Common::KEYCODE_KP3:
 			goSouthEast();
-			_imageSetSubFilesIdx = 146;
 			break;
 		case Common::KEYCODE_END:
 		case Common::KEYCODE_KP1:
 			goSouthWest();
-			_imageSetSubFilesIdx = 147;
 			break;
 		case Common::KEYCODE_HOME:
 		case Common::KEYCODE_KP7:
 			goNorthWest();
-			_imageSetSubFilesIdx = 147;
 			break;
 		case Common::KEYCODE_1:
 		case Common::KEYCODE_F1:
@@ -511,10 +503,6 @@ void EfhEngine::initMapMonsters() {
 	}
 }
 
-void EfhEngine::loadMapArrays(int idx) {
-	// No longer required as everything is in memory.
-}
-
 void EfhEngine::saveAnimImageSetId() {
 	debugC(6, kDebugEngine, "saveAnimImageSetId");
 
@@ -572,14 +560,6 @@ uint16 EfhEngine::getEquippedExclusiveType(int16 charId, int16 exclusiveType, bo
 
 void EfhEngine::drawGameScreenAndTempText(bool flag) {
 	debugC(2, kDebugEngine, "drawGameScreenAndTempText %s", flag ? "True" : "False");
-
-#if 0
-	// This code is present in the original, but looks strictly useless.
-	uint8 mapTileInfo = getMapTileInfo(_mapPosX, _mapPosY);
-	int16 imageSetId = _currentTileBankImageSetId[mapTileInfo / 72];
-
-	int16 mapImageSetId = (imageSetId * 72) + (mapTileInfo % 72);
-#endif
 
 	for (int counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || flag) {
@@ -1140,6 +1120,8 @@ bool EfhEngine::isPosOutOfMap(int16 mapPosX, int16 mapPosY) {
 void EfhEngine::goSouth() {
 	debugC(6,kDebugEngine, "goSouth");
 
+	_imageSetSubFilesIdx = 144;
+
 	int16 maxMapBlocks = _largeMapFlag ? 63 : 23;
 
 	if (++_mapPosY > maxMapBlocks)
@@ -1154,6 +1136,8 @@ void EfhEngine::goSouth() {
 void EfhEngine::goNorth() {
 	debugC(6,kDebugEngine, "goNorth");
 
+	_imageSetSubFilesIdx = 145;
+
 	if (--_mapPosY < 0)
 		_mapPosY = 0;
 
@@ -1165,6 +1149,8 @@ void EfhEngine::goNorth() {
 
 void EfhEngine::goEast() {
 	debugC(6, kDebugEngine, "goEast");
+
+	_imageSetSubFilesIdx = 146;
 
 	int16 maxMapBlocks = _largeMapFlag ? 63 : 23;
 
@@ -1180,6 +1166,8 @@ void EfhEngine::goEast() {
 void EfhEngine::goWest() {
 	debugC(6, kDebugEngine, "goWest");
 
+	_imageSetSubFilesIdx = 147;
+
 	if (--_mapPosX < 0)
 		_mapPosX = 0;
 
@@ -1191,6 +1179,8 @@ void EfhEngine::goWest() {
 
 void EfhEngine::goNorthEast() {
 	debugC(6, kDebugEngine, "goNorthEast");
+
+	_imageSetSubFilesIdx = 146;
 
 	if (--_mapPosY < 0)
 		_mapPosY = 0;
@@ -1212,6 +1202,8 @@ void EfhEngine::goNorthEast() {
 void EfhEngine::goSouthEast() {
 	debugC(6, kDebugEngine, "goSouthEast");
 
+	_imageSetSubFilesIdx = 146;
+
 	int16 maxMapBlocks = _largeMapFlag ? 63 : 23;
 
 	if (++_mapPosX > maxMapBlocks)
@@ -1229,6 +1221,8 @@ void EfhEngine::goSouthEast() {
 void EfhEngine::goNorthWest() {
 	debugC(6, kDebugEngine,"goNorthWest");
 
+	_imageSetSubFilesIdx = 147;
+
 	if (--_mapPosY < 0)
 		_mapPosY = 0;
 
@@ -1243,6 +1237,8 @@ void EfhEngine::goNorthWest() {
 
 void EfhEngine::goSouthWest() {
 	debugC(6, kDebugEngine, "goSouthWest");
+
+	_imageSetSubFilesIdx = 147;
 
 	if (--_mapPosX < 0)
 		_mapPosX = 0;
@@ -1319,8 +1315,6 @@ void EfhEngine::computeMapAnimation() {
 }
 
 void EfhEngine::handleAnimations() {
-	setNumLock();
-
 	if (_engineInitPending)
 		return;
 
@@ -1912,7 +1906,7 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 						displayFctFullScreen();
 				}
 				setTextColorRed();
-				Common::KeyCode input = mapInputCode(waitForKey());
+				Common::KeyCode input = waitForKey();
 				if (input == Common::KEYCODE_y) {
 					removeCharacterFromTeam(charId);
 					displayImp1Text(_npcBuf[npcId].field14_textId);
@@ -2063,7 +2057,7 @@ void EfhEngine::displayImp1Text(int16 textId) {
 								if (counter == 0)
 									displayFctFullScreen();
 							}
-							getInputBlocking();
+							waitForKey();
 						}
 					}
 					if (nextTextId != 0xFF)
@@ -2433,7 +2427,7 @@ bool EfhEngine::checkMonsterCollision() {
 					displayFctFullScreen();
 			}
 
-			Common::KeyCode input = mapInputCode(waitForKey());
+			Common::KeyCode input = waitForKey();
 
 			switch (input) {
 			case Common::KEYCODE_a: // Attack

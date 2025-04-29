@@ -1122,7 +1122,7 @@ bool EfhEngine::getTeamAttackRoundPlans() {
 			} break;
 			case Common::KEYCODE_t: // Terrain
 				redrawScreenForced();
-				getInputBlocking();
+				waitForKey();
 				drawCombatScreen(_teamChar[charId]._id, false, true);
 				break;
 			default:
