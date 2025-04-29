@@ -410,7 +410,6 @@ void EfhEngine::initEngine() {
 	loadImageSet(62, _circleImageBuf, _circleImageSubFileArray, _decompBuf);
 	fileName = "titlsong";
 	readFileToBuffer(fileName, _titleSong);
-	setDefaultNoteDuration();
 	Common::KeyCode lastInput = Common::KEYCODE_INVALID;
 
 	if (_loadSaveSlot == -1)
@@ -2531,12 +2530,6 @@ uint8 EfhEngine::getMapTileInfo(int16 mapPosX, int16 mapPosY) {
 		return _mapGameMaps[_techId][mapPosX][mapPosY];
 
 	return _curPlace[mapPosX][mapPosY];
-}
-
-void EfhEngine::writeTechAndMapFiles() {
-	// The original game overwrite game data files when switching map, keeping track of modified data.
-	// In our implementation, we have everything in memory and save it in savegames only.
-	// This function is therefore not useful and is not implemented.
 }
 
 uint16 EfhEngine::getStringWidth(const Common::String &str) const {

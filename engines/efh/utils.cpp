@@ -26,15 +26,6 @@
 
 namespace Efh {
 
-void EfhEngine::setDefaultNoteDuration() {
-	// Original implementation is based on the int1C, which is triggered at 18.2065Hz.
-	// Every 4 times, it sets a flag (thus, approx every 220ms)
-	// The function was checking the keyboard in a loop, incrementing a counter and setting the last character read
-	// The "_defaultNoteDuration" was then set to 7 times this counter
-	//
-	// No implementation required in ScummVM
-}
-
 void EfhEngine::decryptImpFile(bool techMapFl) {
 	debugC(1, kDebugUtils, "decryptImpFile %s", techMapFl ? "True" : "False");
 	uint16 counter = 0;

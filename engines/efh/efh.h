@@ -328,7 +328,6 @@ private:
 	void loadEfhGame();
 	void copyCurrentPlaceToBuffer(int16 id);
 	uint8 getMapTileInfo(int16 mapPosX, int16 mapPosY);
-	void writeTechAndMapFiles();
 	uint16 getStringWidth(const Common::String &str) const;
 	void setTextPos(int16 textPosX, int16 textPosY);
 	void drawGameScreenAndTempText(bool flag);
@@ -522,7 +521,6 @@ private:
 	void genericGenerateSound(int16 soundType, int16 repeatCount);
 
 	// Utils
-	void setDefaultNoteDuration();
 	void decryptImpFile(bool techMapFl);
 	void loadImageSet(int16 imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer);
 	uint32 uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf);
