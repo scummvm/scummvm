@@ -149,9 +149,10 @@ Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
 		return Common::KEYCODE_INVALID;
 
 	Common::KeyCode lastChar = Common::KEYCODE_INVALID;
+	_customAction = kActionNone;
 
 	uint32 lastMs = _system->getMillis();
-	while (delay > 0 && lastChar == Common::KEYCODE_INVALID && !shouldQuitGame()) {
+	while (delay > 0 && lastChar == Common::KEYCODE_INVALID && _customAction == kActionNone && !shouldQuitGame()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -244,6 +245,7 @@ Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 	Common::Event event;
 	_system->getEventManager()->pollEvent(event);
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
+	_customAction = kActionNone;
 
 	uint32 lastMs = _system->getMillis();
 	while (retVal == Common::KEYCODE_INVALID && _customAction == kActionNone && !shouldQuitGame()) {

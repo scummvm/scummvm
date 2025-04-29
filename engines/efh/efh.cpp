@@ -93,117 +93,7 @@ Common::Error EfhEngine::run() {
 			handleAnimations();
 		}
 
-		Common::Event event;
-		Common::KeyCode retVal = getLastCharAfterAnimCount(4);
-
-		switch (_customAction) {
-		case kActionSave:
-			handleActionSave();
-			break;
-		case kActionLoad:
-			handleActionLoad();
-			break;
-		default:
-			break;
-		}
-
-		_customAction = kActionNone;
-
-		switch (retVal) {
-		case Common::KEYCODE_DOWN:
-		case Common::KEYCODE_KP2:
-			goSouth();
-			break;
-		case Common::KEYCODE_UP:
-		case Common::KEYCODE_KP8:
-			goNorth();
-			break;
-		case Common::KEYCODE_RIGHT:
-		case Common::KEYCODE_KP6:
-			goEast();
-			break;
-		case Common::KEYCODE_LEFT:
-		case Common::KEYCODE_KP4:
-			goWest();
-			break;
-		case Common::KEYCODE_PAGEUP:
-		case Common::KEYCODE_KP9:
-			goNorthEast();
-			break;
-		case Common::KEYCODE_PAGEDOWN:
-		case Common::KEYCODE_KP3:
-			goSouthEast();
-			break;
-		case Common::KEYCODE_END:
-		case Common::KEYCODE_KP1:
-			goSouthWest();
-			break;
-		case Common::KEYCODE_HOME:
-		case Common::KEYCODE_KP7:
-			goNorthWest();
-			break;
-		case Common::KEYCODE_1:
-		case Common::KEYCODE_F1:
-			if (_teamChar[0]._id != -1) {
-				handleStatusMenu(1, _teamChar[0]._id);
-				_tempTextPtr = nullptr;
-				drawGameScreenAndTempText(true);
-				_redrawNeededFl = true;
-			}
-			break;
-		case Common::KEYCODE_2:
-		case Common::KEYCODE_F2:
-			if (_teamChar[1]._id != -1) {
-				handleStatusMenu(1, _teamChar[1]._id);
-				_tempTextPtr = nullptr;
-				drawGameScreenAndTempText(true);
-				_redrawNeededFl = true;
-			}
-			break;
-		case Common::KEYCODE_3:
-		case Common::KEYCODE_F3:
-			if (_teamChar[2]._id != -1) {
-				handleStatusMenu(1, _teamChar[2]._id);
-				_tempTextPtr = nullptr;
-				drawGameScreenAndTempText(true);
-				_redrawNeededFl = true;
-			}
-			break;
-
-		// debug cases to test sound
-		case Common::KEYCODE_4:
-			if (ConfMan.getBool("dump_scripts"))
-				generateSound(13);
-			break;
-		case Common::KEYCODE_5:
-			if (ConfMan.getBool("dump_scripts"))
-				generateSound(14);
-			break;
-		case Common::KEYCODE_6:
-			if (ConfMan.getBool("dump_scripts"))
-				generateSound(15);
-			break;
-		case Common::KEYCODE_7:
-			if (ConfMan.getBool("dump_scripts"))
-				generateSound(5);
-			break;
-		case Common::KEYCODE_8:
-			if (ConfMan.getBool("dump_scripts"))
-				generateSound(10);
-			break;
-		case Common::KEYCODE_9:
-			if (ConfMan.getBool("dump_scripts"))
-				generateSound(9);
-			break;
-		case Common::KEYCODE_0:
-			if (ConfMan.getBool("dump_scripts"))
-				generateSound(16);
-			break;
-		default:
-			if (retVal != Common::KEYCODE_INVALID)
-				warning("Main Loop: Unhandled input %d", retVal);
-			break;
-		}
+		handleEvents();
 
 		if ((_mapPosX != _oldMapPosX || _mapPosY != _oldMapPosY) && !shouldQuitGame()) {
 			bool collisionFl = checkMonsterCollision();
@@ -256,6 +146,83 @@ Common::Error EfhEngine::run() {
 		displayFctFullScreen();
 	}
 	return Common::kNoError;
+}
+
+void EfhEngine::handleEvents() {
+	Common::KeyCode retVal = getLastCharAfterAnimCount(4);
+
+	switch (_customAction) {
+	case kActionSave:
+		handleActionSave();
+		break;
+	case kActionLoad:
+		handleActionLoad();
+		break;
+	case kActionMoveDown:
+		goSouth();
+		break;
+	case kActionMoveUp:
+		goNorth();
+		break;
+	case kActionMoveRight:
+		goEast();
+		break;
+	case kActionMoveLeft:
+		goWest();
+		break;
+	case kActionMoveUpRight:
+		goNorthEast();
+		break;
+	case kActionMoveDownRight:
+		goSouthEast();
+		break;
+	case kActionMoveDownLeft:
+		goSouthWest();
+		break;
+	case kActionMoveUpLeft:
+		goNorthWest();
+		break;
+	case kActionCharacter1Status:
+		showCharacterStatus(0);
+		break;
+	case kActionCharacter2Status:
+		showCharacterStatus(1);
+		break;
+	case kActionCharacter3Status:
+		showCharacterStatus(2);
+		break;
+	default:
+		break;
+	}
+
+	// debug cases to test sound
+	if (ConfMan.getBool("dump_scripts")) {
+		switch (retVal) {
+		case Common::KEYCODE_4:
+			generateSound(13);
+			break;
+		case Common::KEYCODE_5:
+			generateSound(14);
+			break;
+		case Common::KEYCODE_6:
+			generateSound(15);
+			break;
+		case Common::KEYCODE_7:
+			generateSound(5);
+			break;
+		case Common::KEYCODE_8:
+			generateSound(10);
+			break;
+		case Common::KEYCODE_9:
+			generateSound(9);
+			break;
+		case Common::KEYCODE_0:
+			generateSound(16);
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void EfhEngine::handleActionSave() {
@@ -1251,6 +1218,15 @@ void EfhEngine::goSouthWest() {
 	if (isPosOutOfMap(_mapPosX, _mapPosY)) {
 		_mapPosX = _oldMapPosX;
 		_mapPosY = _oldMapPosY;
+	}
+}
+
+void EfhEngine::showCharacterStatus(uint8 character) {
+	if (_teamChar[character]._id != -1) {
+		handleStatusMenu(1, _teamChar[character]._id);
+		_tempTextPtr = nullptr;
+		drawGameScreenAndTempText(true);
+		_redrawNeededFl = true;
 	}
 }
 

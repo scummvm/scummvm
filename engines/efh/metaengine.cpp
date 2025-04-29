@@ -228,6 +228,65 @@ Common::KeymapArray EfhMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	keymap->addAction(act);
 
+	act = new Action("MOVEUP", _("Move up"));
+	act->setCustomEngineActionEvent(kActionMoveUp);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_UP");
+	keymap->addAction(act);
+
+	act = new Action("MOVEDOWN", _("Move down"));
+	act->setCustomEngineActionEvent(kActionMoveDown);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
+	keymap->addAction(act);
+
+	act = new Action("MOVELEFT", _("Move left"));
+	act->setCustomEngineActionEvent(kActionMoveLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT");
+	keymap->addAction(act);
+
+	act = new Action("MOVERIGHT", _("Move right"));
+	act->setCustomEngineActionEvent(kActionMoveRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	keymap->addAction(act);
+
+	act = new Action("MOVEUPLEFT", _("Move up left"));
+	act->setCustomEngineActionEvent(kActionMoveUpLeft);
+	act->addDefaultInputMapping("HOME");
+	keymap->addAction(act);
+
+	act = new Action("MOVEUPRIGHT", _("Move up right"));
+	act->setCustomEngineActionEvent(kActionMoveUpRight);
+	act->addDefaultInputMapping("PAGEUP");
+	keymap->addAction(act);
+
+	act = new Action("MOVEDOWNLEFT", _("Move down left"));
+	act->setCustomEngineActionEvent(kActionMoveDownLeft);
+	act->addDefaultInputMapping("END");
+	keymap->addAction(act);
+
+	act = new Action("MOVEDOWNRIGHT", _("Move down right"));
+	act->setCustomEngineActionEvent(kActionMoveDownRight);
+	act->addDefaultInputMapping("PAGEDOWN");
+	keymap->addAction(act);
+
+	act = new Action("CHARACTER1STATUS", _("Character 1 status"));
+	act->setCustomEngineActionEvent(kActionCharacter1Status);
+	act->addDefaultInputMapping("F1");
+	keymap->addAction(act);
+
+	act = new Action("CHARACTER2STATUS", _("Character 2 status"));
+	act->setCustomEngineActionEvent(kActionCharacter2Status);
+	act->addDefaultInputMapping("F2");
+	keymap->addAction(act);
+
+	act = new Action("CHARACTER3STATUS", _("Character 3 status"));
+	act->setCustomEngineActionEvent(kActionCharacter3Status);
+	act->addDefaultInputMapping("F3");
+	keymap->addAction(act);
+
 	return Keymap::arrayOf(keymap);
 }
 

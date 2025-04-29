@@ -261,7 +261,18 @@ enum EFHAction {
 	kActionNone,
 	kActionExit,
 	kActionSave,
-	kActionLoad
+	kActionLoad,
+	kActionMoveUp,
+	kActionMoveDown,
+	kActionMoveLeft,
+	kActionMoveRight,
+	kActionMoveUpLeft,
+	kActionMoveUpRight,
+	kActionMoveDownLeft,
+	kActionMoveDownRight,
+	kActionCharacter1Status,
+	kActionCharacter2Status,
+	kActionCharacter3Status
 };
 
 class EfhEngine : public Engine {
@@ -348,10 +359,12 @@ private:
 	void goSouthEast();
 	void goNorthWest();
 	void goSouthWest();
+	void showCharacterStatus(uint8 character);
 	void handleNewRoundEffects();
 	void resetGame();
 	void computeMapAnimation();
 	void handleAnimations();
+	void handleEvents();
 	int8 checkMonsterMoveCollisionAndTileTexture(int16 monsterId);
 	bool moveMonsterAwayFromTeam(int16 monsterId);
 	bool moveMonsterTowardsTeam(int16 monsterId);
