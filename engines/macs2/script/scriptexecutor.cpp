@@ -1069,12 +1069,8 @@ void ScriptExecutor::ScriptPrintString() {
 	// TODO: Lots of details not handled
 	// l0037_A94E:
 
-	uint16 v1;
-	uint16 v2;
-	Func9F4D(v1, v2);
-	uint16 v3;
-	uint16 v4;
-	Func9F4D(v3, v4);
+	uint16 x = Func9F4D_16();
+	uint16 y = Func9F4D_16();
 	// TODO: Several globals writes around this code
 	uint16 bp2 = ReadWord();
 	uint16 bp4 = ReadWord();
@@ -1091,7 +1087,7 @@ void ScriptExecutor::ScriptPrintString() {
 	
 	// TODO: Look for good pattern for the view, this feels like it is not intended this way
 	View1 *currentView = (View1 *)_engine->findView("View1");
-	currentView->setStringBox(strings);
+	currentView->setStringBoxAt(strings, Common::Point(x, y));
 }
 
 void ScriptExecutor::BeginBuffering() {
