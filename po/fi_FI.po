@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-27 18:25+0000\n"
-"PO-Revision-Date: 2025-03-29 13:18+0000\n"
+"PO-Revision-Date: 2025-04-29 13:32+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -5174,19 +5174,19 @@ msgstr "Peleissä"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export backup"
-msgstr ""
+msgstr "Luo varmuuskopio"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export a backup of the configuration and save files"
-msgstr ""
+msgstr "Luo varmuuskopio konfiguraatio- ja pelitallennustiedostoista"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import backup"
-msgstr ""
+msgstr "Lataa varmuuskopio"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import a previously exported backup file"
-msgstr ""
+msgstr "Lataa aiemmin luotu varmuuskopio"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:196
@@ -5194,53 +5194,45 @@ msgid "Remove folder authorizations..."
 msgstr "Poista kansioautorisaatiot..."
 
 #: backends/platform/android/options.cpp:268
-#, fuzzy
-#| msgid "Select the orientation:"
 msgid "Select backup destination"
-msgstr "Valitse orientaatio:"
+msgstr "Valitse varmuuskopion sijainti"
 
 #: backends/platform/android/options.cpp:276
 msgid "The backup has been saved successfully."
-msgstr ""
+msgstr "Varmuuskopio on luotu."
 
 #: backends/platform/android/options.cpp:278
 msgid "The backup has been saved successfully to the Downloads folder."
-msgstr ""
+msgstr "Varmuuskopio on onnistuneesti luotu Downloads-kansioon."
 
 #: backends/platform/android/options.cpp:280
 #: backends/platform/android/options.cpp:313
-#, fuzzy
-#| msgid "the shader could not be changed"
 msgid "The game saves couldn't be backed up"
-msgstr "sävytintä ei voitu vaihtaa"
+msgstr "Pelitallennuksia ei kyetty varmuuskopioimaan"
 
 #: backends/platform/android/options.cpp:282
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while saving the backup."
-msgstr "Pelitallennetta kirjoittaessa tapahtui virhe"
+msgstr "Varmuuskopiota kirjoittaessa tapahtui virhe."
 
 #: backends/platform/android/options.cpp:289
 msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
 msgstr ""
+"Varmuuskopion lataaminen ylikirjoittaa nykyisen konfiguraation sekä "
+"pelitallennukset. Haluatko jatkaa?"
 
 #: backends/platform/android/options.cpp:294
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select backup file"
-msgstr "Valitse teema"
+msgstr "Valitse varmuuskopiotiedosto"
 
 #: backends/platform/android/options.cpp:311
 msgid "The backup has been restored successfully."
-msgstr ""
+msgstr "Varmuuskopion lataaminen onnistui."
 
 #: backends/platform/android/options.cpp:315
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while restoring the backup."
-msgstr "Pelitallennetta kirjoittaessa tapahtui virhe"
+msgstr "Varmuuskopiota lukiessa tapahtui virhe."
 
 #: backends/platform/android/options.cpp:559
 msgid "Remove"
@@ -5706,21 +5698,6 @@ msgid "Libretro playlist"
 msgstr "Libretro soittolista"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:236
-#, fuzzy
-#| msgid ""
-#| "## Libretro playlists for ScummVM core\n"
-#| "Playlists used in Libretro frontends (e.g. Retroarch) are plain text "
-#| "lists used to directly launch a game with a specific core from the user "
-#| "interface. Those lists are structured to pass to the core the path of a "
-#| "specific content file to be loaded (e.g. ROM).\n"
-#| "\n"
-#| "ScummVM core can accept as content the path to any of the files inside a "
-#| "valid game folder, the detection system will try to autodetect the game "
-#| "from the content file parent folder and run the game with default ScummVM "
-#| "options.\n"
-#| "\n"
-#| "The core also supports dedicated per game **hook** plain text files with "
-#| "**."
 msgid ""
 "## Libretro playlists for ScummVM core\n"
 "Playlists used in Libretro frontends (e.g. Retroarch) are plain text lists "
@@ -5736,6 +5713,37 @@ msgid ""
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
 "## Libretro-soittolistat ScummVM-ytimelle\n"
+"Libretro:n käyttöliittymissä (esim. Retroarch) käytetyt soittolistat ovat "
+"tekstilistoja joiden avulla voidaan suoraan käynnistää peli tietyllä "
+"ytimellä käyttöliittymästä. Listat sisältävät polkuja tiettyihin "
+"pelitiedostoihin (esim. ROM) jotka passataan ytimelle.\n"
+"\n"
+"ScummVM-ydin hyväksyy sisällöksi soittolistan polun mihin tahansa tiedostoon "
+"validissa pelihakemistossa, tunnistusjärjestelmä yrittää tunnistaa pelin "
+"tiedoston hakemiston perusteella ja käynnistää sen ScummVM:n "
+"vakioasetuksilla.\n"
+"\n"
+"Ydin tukee myös pelikohtaisia **hook**-tekstitiedostoja **:lla.\n"
+"Libretro:n käyttöliittymissä (esim. Retroarch) käytetyt soittolistat ovat "
+"tekstilistoja joiden avulla voidaan suoraan käynnistää peli tietyllä "
+"ytimellä käyttöliittymästä. Listat sisältävät polkuja tiettyihin "
+"pelitiedostoihin (esim. ROM) jotka passataan ytimelle.\n"
+"\n"
+"ScummVM-ydin hyväksyy sisällöksi polun mihin tahansa tiedostoon validissa "
+"pelihakemistossa, tunnistusjärjestelmä yrittää tunnistaa pelin tiedoston "
+"hakemiston perusteella ja käynnistää sen ScummVM:n vakioasetuksilla.\n"
+"\n"
+"Ydin tukee myös pelikohtaisia **hook**-tekstitiedostoja **:lla.\n"
+"Libretro:n käyttöliittymissä (esim. Retroarch) käytetyt soittolistat ovat "
+"tekstilistoja joiden avulla voidaan suoraan käynnistää peli tietyllä "
+"ytimellä käyttöliittymästä. Listat sisältävät polkuja tiettyihin "
+"pelitiedostoihin (esim. ROM) jotka passataan ytimelle.\n"
+"\n"
+"ScummVM-ydin hyväksyy sisällöksi polun mihin tahansa tiedostoon validissa "
+"pelihakemistossa, tunnistusjärjestelmä yrittää tunnistaa pelin tiedoston "
+"hakemiston perusteella ja käynnistää sen ScummVM:n vakioasetuksilla.\n"
+"\n"
+"Ydin tukee myös pelikohtaisia **hook**-tekstitiedostoja **:lla.\n"
 "Libretro:n käyttöliittymissä (esim. Retroarch) käytetyt soittolistat ovat "
 "tekstilistoja joiden avulla voidaan suoraan käynnistää peli tietyllä "
 "ytimellä käyttöliittymästä. Listat sisältävät polkuja tiettyihin "
@@ -6552,10 +6560,8 @@ msgid "Turn right"
 msgstr "Käänny oikealle"
 
 #: engines/agos/metaengine.cpp:315
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fight mode"
-msgstr "Nopea tila päälle / pois"
+msgstr "Tappelutila päälle / pois"
 
 #: engines/agos/metaengine.cpp:324
 msgid "Text speed - Fast"
@@ -7954,32 +7960,24 @@ msgstr "Katse eteenpäin"
 
 #: engines/freescape/games/dark/dark.cpp:229
 #: engines/freescape/games/driller/driller.cpp:198
-#, fuzzy
-#| msgid "Move left"
 msgid "Roll left"
-msgstr "Liiku vasemmalle"
+msgstr "Kallista vasemmalle"
 
 #: engines/freescape/games/dark/dark.cpp:234
 #: engines/freescape/games/driller/driller.cpp:203
-#, fuzzy
-#| msgid "Move right"
 msgid "Roll right"
-msgstr "Liiku oikealle"
+msgstr "Kallista oikealle"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/dark/dark.cpp:240
 #: engines/freescape/games/driller/driller.cpp:170
-#, fuzzy
-#| msgid "Increasing Volume"
 msgid "Increase Turn Angle"
-msgstr "Nostetaan äänenvoimakkuutta"
+msgstr "Kasvata kääntökulmaa"
 
 #: engines/freescape/games/dark/dark.cpp:245
 #: engines/freescape/games/driller/driller.cpp:175
-#, fuzzy
-#| msgid "Decreasing Volume"
 msgid "Decrease Turn Angle"
-msgstr "Lasketaan äänenvoimakkuutta"
+msgstr "Pienennä kääntökulmaa"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:251
@@ -9989,14 +9987,14 @@ msgid "3DO Plumbers requires RGB support."
 msgstr "3DO Plumbers vaatii RGB-tuen."
 
 #: engines/qdengine/dialogs.cpp:32
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable 16 bits per pixel mode"
-msgstr "Debug-tila päälle"
+msgstr "16 bittiä/pikseli-tila päälle"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
 msgstr ""
+"Laita tämä päälle jos backend ei tue 32bpp ja/tai jos haluta debugata "
+"grafiikkaa"
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
@@ -12314,20 +12312,16 @@ msgid "Go to end of save/load menu"
 msgstr "Mene tallennus/lataus valikon loppuun"
 
 #: engines/toltecs/metaengine.cpp:216
-#, fuzzy
-#| msgid "Move left"
 msgid "Move / Select"
-msgstr "Liiku vasemmalle"
+msgstr "Liiku / Valitse"
 
 #: engines/toltecs/metaengine.cpp:222
 msgid "Move / Perform Default Action"
-msgstr ""
+msgstr "Liiku / Suorita vakiotoiminne"
 
 #: engines/toltecs/metaengine.cpp:258
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip ride"
-msgstr "Ohita video"
+msgstr "Ohita kyyti"
 
 #: engines/tony/tony.cpp:248
 #, c-format
