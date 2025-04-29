@@ -20,9 +20,13 @@
  */
 
 #include "engines/advancedDetector.h"
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
@@ -70,6 +74,7 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	bool removeSaveState(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 Common::Error EfhMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
@@ -190,6 +195,40 @@ SaveStateDescriptor EfhMetaEngine::querySaveMetaInfos(const char *target, int sl
 bool EfhMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	return g_system->getSavefileManager()->removeSavefile(fileName);
+}
+
+Common::KeymapArray EfhMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "efh", _("Game keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	keymap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	keymap->addAction(act);
+
+	act = new Action(kStandardActionSave, _("Save game"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("F5");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	keymap->addAction(act);
+
+	act = new Action(kStandardActionLoad, _("Load game"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("F7");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	keymap->addAction(act);
+
+	return Keymap::arrayOf(keymap);
 }
 
 } // End of namespace Efh

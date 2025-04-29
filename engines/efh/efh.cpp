@@ -96,6 +96,19 @@ Common::Error EfhEngine::run() {
 		Common::Event event;
 		Common::KeyCode retVal = getLastCharAfterAnimCount(4);
 
+		switch (_customAction) {
+		case kActionSave:
+			handleActionSave();
+			break;
+		case kActionLoad:
+			handleActionLoad();
+			break;
+		default:
+			break;
+		}
+
+		_customAction = kActionNone;
+
 		switch (retVal) {
 		case Common::KEYCODE_DOWN:
 		case Common::KEYCODE_KP2:
@@ -163,12 +176,6 @@ Common::Error EfhEngine::run() {
 				drawGameScreenAndTempText(true);
 				_redrawNeededFl = true;
 			}
-			break;
-		case Common::KEYCODE_F5: // Original is using CTRL-S, which is mapped to F5 in utils
-			handleActionSave();
-			break;
-		case Common::KEYCODE_F7: // Original is using CTRL-L, which is mapped to F7 in utils
-			handleActionLoad();
 			break;
 
 		// debug cases to test sound

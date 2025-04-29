@@ -257,6 +257,13 @@ struct TeamMonster {
 	void init();
 };
 
+enum EFHAction {
+	kActionNone,
+	kActionExit,
+	kActionSave,
+	kActionLoad
+};
+
 class EfhEngine : public Engine {
 public:
 	EfhEngine(OSystem *syst, const ADGameDescription *gd);
@@ -294,6 +301,7 @@ private:
 	Common::Platform _platform;
 	int _loadSaveSlot;
 	bool _saveAuthorized;
+	Common::CustomEventType _customAction = kActionNone;
 
 	void initialize();
 	void playIntro();

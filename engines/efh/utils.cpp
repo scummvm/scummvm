@@ -200,12 +200,6 @@ Common::KeyCode EfhEngine::getKeyCode(const Common::Event &event) {
 		retVal = Common::KEYCODE_INVALID;
 	else  if (event.kbd.flags & Common::KBD_CTRL) {
 		switch (retVal) {
-		case Common::KEYCODE_l:
-			retVal = Common::KEYCODE_F7;
-			break;
-		case Common::KEYCODE_s:
-			retVal = Common::KEYCODE_F5;
-			break;
 		case Common::KEYCODE_x:
 		case Common::KEYCODE_q:
 			_shouldQuit = true;
@@ -262,11 +256,14 @@ Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
 
 	uint32 lastMs = _system->getMillis();
-	while (retVal == Common::KEYCODE_INVALID && !shouldQuitGame()) {
+	while (retVal == Common::KEYCODE_INVALID && _customAction == kActionNone && !shouldQuitGame()) {
 		_system->getEventManager()->pollEvent(event);
 
 		if (event.type == Common::EVENT_KEYUP)
 			retVal = getKeyCode(event);
+
+		if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START)
+			_customAction = event.customType;
 
 		if (animFl) {
 			_system->delayMillis(20);
