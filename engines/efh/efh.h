@@ -519,6 +519,10 @@ private:
 	uint32 ROR(uint32 val, uint8 shiftVal);
 	Common::String getArticle(int pronoun);
 
+	// Actions
+	void handleActionSave();
+	void handleActionLoad();
+
 	uint8 _videoMode;
 	uint8 _bufferCharBM[128];
 	int8 *_vgaLineBuffer[200];

@@ -164,47 +164,12 @@ Common::Error EfhEngine::run() {
 				_redrawNeededFl = true;
 			}
 			break;
-		case Common::KEYCODE_F5: { // Original is using CTRL-S, which is mapped to F5 in utils
-			for (uint counter = 0; counter < 2; ++counter) {
-				clearBottomTextZone(0);
-				displayCenteredString("Are You Sure You Want To Save?", 24, 296, 160);
-				if (counter == 0)
-					displayFctFullScreen();
-			}
-			Common::KeyCode input = waitForKey();
-			if (input == Common::KEYCODE_y) {
-				displayMenuAnswerString("-> Yes <-", 24, 296, 169);
-				getInput(2);
-				saveGameDialog();
-			} else {
-				displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
-				getInput(2);
-			}
-			clearBottomTextZone_2(0);
-			displayLowStatusScreen(true);
-
-			}
+		case Common::KEYCODE_F5: // Original is using CTRL-S, which is mapped to F5 in utils
+			handleActionSave();
 			break;
-		case Common::KEYCODE_F7: { // Original is using CTRL-L, which is mapped to F7 in utils
-			for (uint counter = 0; counter < 2; ++counter) {
-				clearBottomTextZone(0);
-				displayCenteredString("Are You Sure You Want To Load?", 24, 296, 160);
-				if (counter == 0)
-					displayFctFullScreen();
-			}
-			Common::KeyCode input = waitForKey();
-			if (input == Common::KEYCODE_y) {
-				displayMenuAnswerString("-> Yes <-", 24, 296, 169);
-				getInput(2);
-				loadGameDialog();
-			} else {
-				displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
-				getInput(2);
-			}
-			clearBottomTextZone_2(0);
-			displayLowStatusScreen(true);
-
-		} break;
+		case Common::KEYCODE_F7: // Original is using CTRL-L, which is mapped to F7 in utils
+			handleActionLoad();
+			break;
 
 		// debug cases to test sound
 		case Common::KEYCODE_4:
@@ -292,6 +257,46 @@ Common::Error EfhEngine::run() {
 		displayFctFullScreen();
 	}
 	return Common::kNoError;
+}
+
+void EfhEngine::handleActionSave() {
+	for (uint counter = 0; counter < 2; ++counter) {
+		clearBottomTextZone(0);
+		displayCenteredString("Are You Sure You Want To Save?", 24, 296, 160);
+		if (counter == 0)
+			displayFctFullScreen();
+	}
+	Common::KeyCode input = waitForKey();
+	if (input == Common::KEYCODE_y) {
+		displayMenuAnswerString("-> Yes <-", 24, 296, 169);
+		getInput(2);
+		saveGameDialog();
+	} else {
+		displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
+		getInput(2);
+	}
+	clearBottomTextZone_2(0);
+	displayLowStatusScreen(true);
+}
+
+void EfhEngine::handleActionLoad() {
+	for (uint counter = 0; counter < 2; ++counter) {
+		clearBottomTextZone(0);
+		displayCenteredString("Are You Sure You Want To Load?", 24, 296, 160);
+		if (counter == 0)
+			displayFctFullScreen();
+	}
+	Common::KeyCode input = waitForKey();
+	if (input == Common::KEYCODE_y) {
+		displayMenuAnswerString("-> Yes <-", 24, 296, 169);
+		getInput(2);
+		loadGameDialog();
+	} else {
+		displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
+		getInput(2);
+	}
+	clearBottomTextZone_2(0);
+	displayLowStatusScreen(true);
 }
 
 void EfhEngine::initialize() {
