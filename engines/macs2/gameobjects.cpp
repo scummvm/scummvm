@@ -108,6 +108,24 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0x1b] = "Feuerhaken";
 	ObjectNames[0x23] = "Tasse"; // leer
 	ObjectNames[0x24] = "Axt";
+	ObjectNames[0x24] = "Whiskyglas"; // leer
+	ObjectNames[0x30] = "Schürhaken";
+	ObjectNames[0x43] = "Koffer"; // geschlossen
+	ObjectNames[0x47] = "Messer";
+	ObjectNames[0x49] = "Kartonschachtel";
+	ObjectNames[0x52] = "Stoffbeutel"; // Mit Murmeln
+	ObjectNames[0x53] = "Blasebalg";
+	ObjectNames[0x54] = "Brennholz";
+	ObjectNames[0x56] = "Brotmesser";
+	ObjectNames[0x57] = "Brot";
+	ObjectNames[0x58] = "Bücher";
+	ObjectNames[0x59] = "Clownpuppe";
+	ObjectNames[0x5B] = "Blechdose";
+	ObjectNames[0x5D] = "Papierdrache";
+	ObjectNames[0x5E] = "Blecheimer";
+	ObjectNames[0x61] = "Schnapsflasche";
+	ObjectNames[0x6B] = "Korkenzieher";
+	ObjectNames[0x70] = "Musketen";
 }
 
 // TODO: Add all to namespace?
