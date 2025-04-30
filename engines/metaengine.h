@@ -124,6 +124,12 @@ struct ExtendedSavegameHeader {
  * To instantiate actual Engine objects, see the class @ref MetaEngine.
  */
 class MetaEngineDetection : public PluginObject {
+protected:
+	/** Internal: Add backslash before double quotes (") and backslashes themselves (\)
+	 *  Used for dumping detection entries.
+	 */
+	static Common::String escapeString(const char *string);
+
 public:
 	/**
 	 * This is the message to use in detection tables when

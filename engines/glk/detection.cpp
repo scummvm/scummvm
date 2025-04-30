@@ -316,23 +316,6 @@ uint GlkMetaEngineDetection::getMD5Bytes() const {
 	return 5000;
 }
 
-// Add backslash before double quotes (") and backslashes themselves (\)
-static Common::String escapeString(const char *string) {
-	if (string == nullptr)
-		return "";
-
-	Common::String res = "";
-
-	for (int i = 0; string[i] != '\0'; i++) {
-		if (string[i] == '"' || string[i] == '\\')
-			res += "\\";
-
-		res += string[i];
-	}
-
-	return res;
-}
-
 void GlkMetaEngineDetection::dumpDetectionEntries() const {
 #if 0
 	enum class EngineName : uint8 {

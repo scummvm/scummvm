@@ -38,6 +38,23 @@
 
 const char MetaEngineDetection::GAME_NOT_IMPLEMENTED[] = _s("Game not implemented");
 
+// Add backslash before double quotes (") and backslashes themselves (\)
+Common::String MetaEngineDetection::escapeString(const char *string) {
+	if (string == nullptr)
+		return "";
+
+	Common::String res = "";
+
+	for (int i = 0; string[i] != '\0'; i++) {
+		if (string[i] == '"' || string[i] == '\\')
+			res += "\\";
+
+		res += string[i];
+	}
+
+	return res;
+}
+
 Common::String MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
 	if (!target)
 		target = getName();
