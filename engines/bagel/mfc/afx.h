@@ -470,7 +470,6 @@ protected:
 	UINT m_nHashSize;
 };
 
-
 struct CFileStatus {
 	CTime m_ctime;          // creation date/time of file
 	CTime m_mtime;          // last modification date/time of file

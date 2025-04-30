@@ -45,61 +45,12 @@ namespace MFC {
 #define PASCAL
 #define AFXAPI
 #define AFX_DATA
+#define AFX_NOVTABLE
 #ifndef _In_
 #define _In_
 #endif
 #ifndef _Out_
 #define _Out_
-#endif
-
-typedef int BOOL;
-typedef byte BYTE;
-typedef uint16 TCHAR;
-typedef uint16 SHORT;
-typedef uint16 WORD;
-typedef long LONG;
-typedef uint32 DWORD;
-typedef int64 LONGLONG;
-typedef uint64 ULONGLONG;
-typedef float FLOAT;
-typedef FLOAT *PFLOAT;
-typedef BOOL *PBOOL;
-typedef BOOL *LPBOOL;
-typedef BYTE *PBYTE;
-typedef BYTE *LPBYTE;
-typedef int *PINT;
-typedef int *LPINT;
-typedef WORD *PWORD;
-typedef WORD *LPWORD;
-typedef long *LPLONG;
-typedef DWORD *PDWORD;
-typedef DWORD *LPDWORD;
-typedef void *LPVOID;
-typedef CONST void *LPCVOID;
-
-typedef const char *LPCSTR;
-typedef const uint16 *LPCTSTR;
-typedef const uint16 *LPCWSTR;
-typedef uint16 *LPTSTR;
-typedef char *LPSTR;
-
-typedef int INT;
-typedef unsigned int UINT;
-typedef unsigned int *PUINT;
-
-typedef int INT_PTR, *PINT_PTR;
-typedef unsigned int UINT_PTR, *PUINT_PTR;
-
-typedef long LONG_PTR, *PLONG_PTR;
-typedef unsigned long ULONG_PTR, *PULONG_PTR;
-typedef ULONG_PTR DWORD_PTR;
-
-#ifndef FALSE
-#define FALSE               0
-#endif
-
-#ifndef TRUE
-#define TRUE                1
 #endif
 
 DECLARE_HANDLE(HWND);
@@ -154,6 +105,15 @@ DECLARE_HANDLE(HSTR);
 DECLARE_HANDLE(HTASK);
 DECLARE_HANDLE(HWINSTA);
 DECLARE_HANDLE(HKL);
+
+typedef struct tagRECT {
+	LONG    left;
+	LONG    top;
+	LONG    right;
+	LONG    bottom;
+} RECT, *PRECT, NEAR *NPRECT, FAR *LPRECT;
+
+typedef const RECT FAR *LPCRECT;
 
 typedef struct _FILETIME {
 	DWORD dwLowDateTime;

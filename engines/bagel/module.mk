@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	boflib/sound.o \
 	boflib/string.o \
 	boflib/string_functions.o \
+	mfc/afx.o \
 	spacebar/baglib/area_object.o \
 	spacebar/baglib/bagel.o \
 	spacebar/baglib/base_pda.o \
