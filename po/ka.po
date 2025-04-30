@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-27 18:25+0000\n"
+"POT-Creation-Date: 2025-04-30 15:51+0000\n"
 "PO-Revision-Date: 2025-04-30 02:19+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -982,7 +982,7 @@ msgstr "ინტერფეისი"
 msgid "Interact"
 msgstr "ურთიერთობა"
 
-#: gui/gui-manager.cpp:176 engines/metaengine.cpp:117
+#: gui/gui-manager.cpp:176 engines/metaengine.cpp:134
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
 #: engines/got/metaengine.cpp:55 engines/griffon/metaengine.cpp:121
@@ -997,7 +997,7 @@ msgstr "ურთიერთობა"
 msgid "Up"
 msgstr "ჩართული"
 
-#: gui/gui-manager.cpp:182 engines/metaengine.cpp:123
+#: gui/gui-manager.cpp:182 engines/metaengine.cpp:140
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
 #: engines/got/metaengine.cpp:56 engines/griffon/metaengine.cpp:127
@@ -1012,7 +1012,7 @@ msgstr "ჩართული"
 msgid "Down"
 msgstr "ქვემოთ"
 
-#: gui/gui-manager.cpp:188 engines/metaengine.cpp:129
+#: gui/gui-manager.cpp:188 engines/metaengine.cpp:146
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:171 engines/got/metaengine.cpp:57
 #: engines/griffon/metaengine.cpp:133 engines/grim/grim.cpp:491
@@ -1028,7 +1028,7 @@ msgstr "ქვემოთ"
 msgid "Left"
 msgstr "მარცხენა"
 
-#: gui/gui-manager.cpp:194 engines/metaengine.cpp:135
+#: gui/gui-manager.cpp:194 engines/metaengine.cpp:152
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:177 engines/got/metaengine.cpp:58
 #: engines/griffon/metaengine.cpp:139 engines/grim/grim.cpp:496
@@ -3484,11 +3484,11 @@ msgstr ""
 msgid "Game not implemented"
 msgstr "თამაში განხორციელებული არაა"
 
-#: engines/metaengine.cpp:58 engines/saga/metaengine.cpp:267
+#: engines/metaengine.cpp:75 engines/saga/metaengine.cpp:267
 msgid "Default game keymap"
 msgstr "ნაგულისხმევი თამაშების ღილაკების ასახვა"
 
-#: engines/metaengine.cpp:62 backends/platform/maemo/maemo.cpp:161
+#: engines/metaengine.cpp:79 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:232 engines/asylum/metaengine.cpp:159
 #: engines/bbvs/metaengine.cpp:99 engines/cge/metaengine.cpp:203
 #: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:264
@@ -3508,7 +3508,7 @@ msgstr "ნაგულისხმევი თამაშების ღი�
 msgid "Left Click"
 msgstr "მარცხენა-წკაპი"
 
-#: engines/metaengine.cpp:68 backends/platform/maemo/maemo.cpp:165
+#: engines/metaengine.cpp:85 backends/platform/maemo/maemo.cpp:165
 #: engines/mtropolis/metaengine.cpp:173 engines/saga/metaengine.cpp:284
 #: engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
@@ -3516,7 +3516,7 @@ msgstr "მარცხენა-წკაპი"
 msgid "Middle Click"
 msgstr "შუა-წკაპი"
 
-#: engines/metaengine.cpp:73 backends/platform/maemo/maemo.cpp:169
+#: engines/metaengine.cpp:90 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:238 engines/asylum/metaengine.cpp:165
 #: engines/bbvs/metaengine.cpp:105 engines/cge/metaengine.cpp:209
 #: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:270
@@ -3536,7 +3536,7 @@ msgid "Right Click"
 msgstr "მარჯვენა-წკაპი"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:79 engines/agos/metaengine.cpp:252
+#: engines/metaengine.cpp:96 engines/agos/metaengine.cpp:252
 #: engines/crab/input/input.cpp:261 engines/cruise/metaengine.cpp:191
 #: engines/grim/grim.cpp:550 engines/hdb/metaengine.cpp:258
 #: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
@@ -3546,13 +3546,13 @@ msgstr "მარჯვენა-წკაპი"
 msgid "Pause"
 msgstr "შეჩერება"
 
-#: engines/metaengine.cpp:85 engines/parallaction/metaengine.cpp:137
+#: engines/metaengine.cpp:102 engines/parallaction/metaengine.cpp:137
 msgid "Game menu"
 msgstr "თამაშის მენიუ"
 
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
-#: engines/metaengine.cpp:92 engines/composer/metaengine.cpp:125
+#: engines/metaengine.cpp:109 engines/composer/metaengine.cpp:125
 #: engines/freescape/movement.cpp:87 engines/grim/grim.cpp:533
 #: engines/grim/grim.cpp:633 engines/illusions/metaengine.cpp:142
 #: engines/made/metaengine.cpp:121 engines/mohawk/myst.cpp:566
@@ -3565,29 +3565,29 @@ msgstr "თამაშის მენიუ"
 msgid "Skip"
 msgstr "გამოტოვება"
 
-#: engines/metaengine.cpp:99 engines/sky/metaengine.cpp:121
+#: engines/metaengine.cpp:116 engines/sky/metaengine.cpp:121
 msgid "Skip line"
 msgstr "ხაზის გამოტოვება"
 
-#: engines/metaengine.cpp:106
+#: engines/metaengine.cpp:123
 msgid "Predictive input dialog"
 msgstr "პროგნოზირებადი შეყვანის დიალოგი"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
-#: engines/metaengine.cpp:111 engines/bladerunner/metaengine.cpp:273
+#: engines/metaengine.cpp:128 engines/bladerunner/metaengine.cpp:273
 #: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:539
 #: engines/grim/grim.cpp:639 engines/sky/metaengine.cpp:101
 #: engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr "დადასტურება"
 
-#: engines/metaengine.cpp:414
+#: engines/metaengine.cpp:431
 msgid "Autosave on"
 msgstr "ავტოშენახვა ჩართ"
 
-#: engines/metaengine.cpp:414
+#: engines/metaengine.cpp:431
 msgid "Autosave off"
 msgstr "ავტოშენახვა გამორთ"
 
