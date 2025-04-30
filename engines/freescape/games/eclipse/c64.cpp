@@ -36,9 +36,22 @@ extern byte kC64Palette[16][3];
 void EclipseEngine::loadAssetsC64FullGame() {
 	Common::File file;
 	file.open("totaleclipse.c64.data");
-	loadMessagesFixedSize(&file, 0x1d82, 16, 30);
-	loadFonts(&file, 0xc3e);
-	load8bitBinary(&file, 0x9a3e, 16);
+
+	if (_variant & GF_C64_TAPE) {
+		int size = file.size();
+
+		byte *buffer = (byte *)malloc(size * sizeof(byte));
+		file.read(buffer, file.size());
+
+		_extraBuffer = decompressC64RLE(buffer, &size, 0xe1);
+		// size should be the size of the decompressed data
+		Common::MemoryReadStream dfile(_extraBuffer, size, DisposeAfterUse::NO);
+
+		loadMessagesFixedSize(&dfile, 0x1d82, 16, 30);
+		loadFonts(&dfile, 0xc3e);
+		load8bitBinary(&dfile, 0x9a3e, 16);
+	} else
+		error("Unknown C64 variant %x", _variant);
 
 	for (auto &it : _areaMap) {
 		it._value->addStructure(_areaMap[255]);

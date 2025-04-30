@@ -39,10 +39,19 @@ void DarkEngine::loadAssetsC64FullGame() {
 	file.open("darkside.c64.data");
 
 	if (_variant & GF_C64_TAPE) {
-		loadMessagesFixedSize(&file, 0x1edf, 16, 27);
-		loadFonts(&file, 0xc3e);
-		loadGlobalObjects(&file, 0x20bd, 23);
-		load8bitBinary(&file, 0x9b3e, 16);
+		int size = file.size();
+
+		byte *buffer = (byte *)malloc(size * sizeof(byte));
+		file.read(buffer, file.size());
+
+		_extraBuffer = decompressC64RLE(buffer, &size, 0xdf);
+		// size should be the size of the decompressed data
+		Common::MemoryReadStream dfile(_extraBuffer, size, DisposeAfterUse::NO);
+
+		loadMessagesFixedSize(&dfile, 0x1edf, 16, 27);
+		loadFonts(&dfile, 0xc3e);
+		loadGlobalObjects(&dfile, 0x20bd, 23);
+		load8bitBinary(&dfile, 0x9b3e, 16);
 	} else if (_variant & GF_C64_DISC) {
 		loadMessagesFixedSize(&file, 0x16a3, 16, 27);
 		loadFonts(&file, 0x402);

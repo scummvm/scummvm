@@ -38,6 +38,7 @@ MODULE_OBJS := \
 	gfx.o \
 	loaders/8bitImage.o \
 	loaders/8bitBinaryLoader.o \
+	loaders/c64.o \
 	language/8bitDetokeniser.o \
 	language/instruction.o \
 	metaengine.o \

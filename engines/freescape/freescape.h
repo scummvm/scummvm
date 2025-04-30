@@ -24,9 +24,12 @@
 
 #include "common/bitarray.h"
 #include "common/events.h"
+#include "common/file.h"
+#include "common/memstream.h"
 #include "engines/advancedDetector.h"
 #include "graphics/managed_surface.h"
 #include "graphics/surface.h"
+
 
 #include "audio/decoders/wave.h"
 #include "audio/mixer.h"
@@ -593,6 +596,10 @@ public:
 
 	// Random
 	Common::RandomSource *_rnd;
+
+	// C64 specifics
+	byte *decompressC64RLE(byte *buffer, int *size, byte marker);
+	byte *_extraBuffer;
 };
 
 enum GameReleaseFlags {

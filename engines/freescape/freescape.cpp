@@ -143,6 +143,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_uiTexture = nullptr;
 	_fontLoaded = false;
 	_dataBundle = nullptr;
+	_extraBuffer = nullptr;
 
 	_lastFrame = 0;
 	_nearClipPlane = 2;
@@ -264,6 +265,10 @@ FreescapeEngine::~FreescapeEngine() {
 		_savedScreen->free();
 		delete _savedScreen;
 	}
+
+	if (_extraBuffer)
+		free(_extraBuffer);
+	_extraBuffer = nullptr;
 }
 
 void FreescapeEngine::drawBorder() {
