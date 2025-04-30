@@ -27,8 +27,6 @@ For a more comprehensive changelog of the latest experimental code, see:
      much darker rendering was used on purpose, or unintentionally.)
 
  TwinE:
-   - Fixed meca penguin movement.
-   - Fixed sound related issues.
    - Activate original bug fixes (FunFrock's HQ door and safe bugs).
 
  V-Cruise:
@@ -109,6 +107,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  TwinE:
    - Fixed crash when restarting a game from the launcher a second time.
    - Fixed pressing Space in normal mode not triggering Use/Talk action.
+   - Fixed meca penguin movement.
+   - Fixed sound related issues.
 
  Android port:
    - Enabled NEON support by default, resulting in better performance for
