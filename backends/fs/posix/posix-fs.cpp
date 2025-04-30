@@ -209,7 +209,7 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 		// releases, but for 2.9.x we avoid changing too much, and just apply a
 		// smaller fix that's only targeting older macOS.
 		if (dp->d_type == DT_UNKNOWN
-#  if defined(MACOSX) && __MAC_OS_X_VERSION_MIN_REQUIRED < 1070
+#  if defined(MACOSX) && defined(MAC_OS_X_VERSION_MIN_REQUIRED) && MAC_OS_X_VERSION_MIN_REQUIRED < 1070
 #    define kAppleCDDATrackType    2
 #    define kAppleCDDAXMLFileType  3
 			|| dp->d_type == kAppleCDDATrackType
