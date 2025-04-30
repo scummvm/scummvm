@@ -28,7 +28,7 @@
 #include <mint/falcon.h>
 
 // bits 9:0
-#define SV_VERSION	((volatile long*)0x8001007C)
+#define SV_VERSION	((volatile long *)0x8001007C)
 
 inline static bool hasSuperVidel() {
 	// this works also on the TT

@@ -94,7 +94,7 @@ private:
 			if (ptr != 0)
 				ptr |= 0xA0000000;
 
-			return (void*)ptr;
+			return (void *)ptr;
 		};
 	}
 	AtariMemFree getStRamFreeFunc() const override {

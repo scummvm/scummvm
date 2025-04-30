@@ -178,7 +178,7 @@ private:
 	}
 
 	virtual AtariMemAlloc getStRamAllocFunc() const {
-		return [](size_t bytes) { return (void*)Mxalloc(bytes, MX_STRAM); };
+		return [](size_t bytes) { return (void *)Mxalloc(bytes, MX_STRAM); };
 	}
 	virtual AtariMemFree getStRamFreeFunc() const {
 		return [](void *ptr) { Mfree(ptr); };

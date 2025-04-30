@@ -33,15 +33,15 @@ SYM(asm_draw_4bpl_sprite):
 	movem.l	d0-d7/a0-a2,-(sp)		| 11 longs
 
 #ifdef __FASTCALL__
-	move.l	a0,a2					| a2: dstBuffer
-									| a1: srcBuffer
+	move.l	a0,a2				| a2: dstBuffer
+						| a1: srcBuffer
 	move.l	(4+11*4,sp),a0			| a0: srcMask
-									| d0.w: destX
-									| d1.w: destY
-	move.l	d2,d3					| d3.w: dstPitch
-	ext.l	d3						| d3.l: dstPitch
+						| d0.w: destX
+						| d1.w: destY
+	move.l	d2,d3				| d3.w: dstPitch
+	ext.l	d3				| d3.l: dstPitch
 	move.l	(8+11*4,sp),d6			| d6.w: w
-	lsr.w	#4,d6					| d6.w: w/16
+	lsr.w	#4,d6				| d6.w: w/16
 	move.l	(12+11*4,sp),d7			| d7.w: h
 #else
 	move.l	(4+11*4,sp),a2			| a2: dstBuffer
@@ -144,15 +144,15 @@ SYM(asm_draw_8bpl_sprite):
 	movem.l	d0-d7/a0-a2,-(sp)		| 11 longs
 
 #ifdef __FASTCALL__
-	move.l	a0,a2					| a2: dstBuffer
-									| a1: srcBuffer
+	move.l	a0,a2				| a2: dstBuffer
+						| a1: srcBuffer
 	move.l	(4+11*4,sp),a0			| a0: srcMask
-									| d0.w: destX
-									| d1.w: destY
-	move.l	d2,d3					| d3.w: dstPitch
-	ext.l	d3						| d3.l: dstPitch
+						| d0.w: destX
+						| d1.w: destY
+	move.l	d2,d3				| d3.w: dstPitch
+	ext.l	d3				| d3.l: dstPitch
 	move.l	(8+11*4,sp),d6			| d6.w: w
-	lsr.w	#4,d6					| d6.w: w/16
+	lsr.w	#4,d6				| d6.w: w/16
 	move.l	(12+11*4,sp),d7			| d7.w: h
 #else
 	move.l	(4+11*4,sp),a2			| a2: dstBuffer
