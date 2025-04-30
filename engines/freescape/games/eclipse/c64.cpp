@@ -50,6 +50,10 @@ void EclipseEngine::loadAssetsC64FullGame() {
 		loadMessagesFixedSize(&dfile, 0x1d82, 16, 30);
 		loadFonts(&dfile, 0xc3e);
 		load8bitBinary(&dfile, 0x9a3e, 16);
+	} else if (_variant & GF_C64_DISC) {
+		loadMessagesFixedSize(&file,0x1536, 16, 30);
+		loadFonts(&file, 0x3f2);
+		load8bitBinary(&file, 0x7ab4, 16);
 	} else
 		error("Unknown C64 variant %x", _variant);
 
