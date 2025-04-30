@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-30 15:51+0000\n"
-"PO-Revision-Date: 2025-04-23 08:11+0000\n"
+"PO-Revision-Date: 2025-05-01 01:19+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -7556,17 +7556,13 @@ msgstr "Roda cap a la dreta"
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/dark/dark.cpp:240
 #: engines/freescape/games/driller/driller.cpp:170
-#, fuzzy
-#| msgid "Increasing Volume"
 msgid "Increase Turn Angle"
-msgstr "Pujant el volum"
+msgstr "Augmenta l'angle de gir"
 
 #: engines/freescape/games/dark/dark.cpp:245
 #: engines/freescape/games/driller/driller.cpp:175
-#, fuzzy
-#| msgid "Decreasing Volume"
 msgid "Decrease Turn Angle"
-msgstr "Baixant el volum"
+msgstr "Disminueix l'angle de gir"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:251
