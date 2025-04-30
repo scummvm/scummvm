@@ -107,23 +107,6 @@ PlainGameList ScummMetaEngineDetection::getSupportedGames() const {
 	return PlainGameList(gameDescriptions);
 }
 
-// Add backslash before double quotes (") and backslashes themselves (\)
-static Common::String escapeString(const char *string) {
-	if (string == nullptr)
-		return "";
-
-	Common::String res = "";
-
-	for (int i = 0; string[i] != '\0'; i++) {
-		if (string[i] == '"' || string[i] == '\\')
-			res += "\\";
-
-		res += string[i];
-	}
-
-	return res;
-}
-
 GameFilenamePattern ScummMetaEngineDetection::matchGameFilenamePattern(const MD5Table *entry) const {
 	GameFilenamePattern bestMatch = GameFilenamePattern();
 

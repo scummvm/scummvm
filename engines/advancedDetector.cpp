@@ -668,23 +668,6 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngineBase:
 	return true;
 }
 
-// Add backslash before double quotes (") and backslashes themselves (\)
-Common::String escapeString(const char *string) {
-	if (string == nullptr)
-		return "";
-
-	Common::String res = "";
-
-	for (int i = 0; string[i] != '\0'; i++) {
-		if (string[i] == '"' || string[i] == '\\')
-			res += "\\";
-
-		res += string[i];
-	}
-
-	return res;
-}
-
 void AdvancedMetaEngineDetectionBase::dumpDetectionEntries() const {
 	const byte *descPtr;
 
