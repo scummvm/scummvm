@@ -751,7 +751,9 @@ void View1::draw() {
 
 	// DrawSprite(100, 100, g_engine->_stick.Width, g_engine->_stick.Height, g_engine->_stick.Data, s);
 
-	if (_isShowingInventory) {
+	// We keep the inventory on but don't draw it in case we display a string
+	// i.e. a description of an item
+	if (_isShowingInventory && !_isShowingStringBox) {
 		// drawInventory(s);
 		drawInventory2(s);
 	}
