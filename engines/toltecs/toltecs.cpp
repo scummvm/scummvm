@@ -80,6 +80,7 @@ ToltecsEngine::ToltecsEngine(OSystem *syst, const ToltecsGameDescription *gameDe
 	_walkSpeedY = 5;
 	_walkSpeedX = 1;
 
+	_action = kActionNone;
 	_mouseX = 0;
 	_mouseY = 0;
 	_mouseDblClickTicks = 60;
