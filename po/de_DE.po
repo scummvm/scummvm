@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-30 15:51+0000\n"
-"PO-Revision-Date: 2025-05-01 01:19+0000\n"
+"PO-Revision-Date: 2025-05-01 16:18+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -5246,53 +5246,46 @@ msgid "Remove folder authorizations..."
 msgstr "Entferne Ordner-Berechtigungen..."
 
 #: backends/platform/android/options.cpp:268
-#, fuzzy
-#| msgid "Select the orientation:"
 msgid "Select backup destination"
-msgstr "Ausrichtung auswählen:"
+msgstr "Backup-Ziel auswählen"
 
 #: backends/platform/android/options.cpp:276
 msgid "The backup has been saved successfully."
-msgstr ""
+msgstr "Das Backup wurde erfolgreich gespeichert."
 
 #: backends/platform/android/options.cpp:278
 msgid "The backup has been saved successfully to the Downloads folder."
-msgstr ""
+msgstr "Das Backup wurde erfolgreich im Download-Verzeichnis gespeichert."
 
 #: backends/platform/android/options.cpp:280
 #: backends/platform/android/options.cpp:313
-#, fuzzy
-#| msgid "the shader could not be changed"
 msgid "The game saves couldn't be backed up"
-msgstr "der Shader konnte nicht geändert werden"
+msgstr "Die Spielstand-Dateien konnten nicht gesichert werden"
 
 #: backends/platform/android/options.cpp:282
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while saving the backup."
-msgstr "Fehler beim Schreiben der Spielstand-Daten"
+msgstr "Während der Speicherung der Backup-Daten ist ein Fehler aufgetreten."
 
 #: backends/platform/android/options.cpp:289
 msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
 msgstr ""
+"Die Wiederherstellung eines Backups wird die aktuelle Konfiguration löschen "
+"und alle existierenden Spielstand-Dateien überschreiben. Möchtest Du "
+"fortfahren?"
 
 #: backends/platform/android/options.cpp:294
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select backup file"
-msgstr "Theme auswählen"
+msgstr "Backup-Datei auswählen"
 
 #: backends/platform/android/options.cpp:311
 msgid "The backup has been restored successfully."
-msgstr ""
+msgstr "Das Backup wurde erfolgreich wiederhergestellt."
 
 #: backends/platform/android/options.cpp:315
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while restoring the backup."
-msgstr "Fehler beim Schreiben der Spielstand-Daten"
+msgstr "Während der Wiederherstellung des Backups ist ein Fehler aufgetreten."
 
 #: backends/platform/android/options.cpp:559
 msgid "Remove"
@@ -8022,17 +8015,13 @@ msgstr "Nach vorne blicken"
 
 #: engines/freescape/games/dark/dark.cpp:229
 #: engines/freescape/games/driller/driller.cpp:198
-#, fuzzy
-#| msgid "Move left"
 msgid "Roll left"
-msgstr "Nach links bewegen"
+msgstr "Nach links rollen"
 
 #: engines/freescape/games/dark/dark.cpp:234
 #: engines/freescape/games/driller/driller.cpp:203
-#, fuzzy
-#| msgid "Move right"
 msgid "Roll right"
-msgstr "Nach rechts bewegen"
+msgstr "Nach rechts rollen"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/dark/dark.cpp:240
