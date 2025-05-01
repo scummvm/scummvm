@@ -424,8 +424,10 @@ private:
 		Graphics::Surface *_projectedPano;
 		Graphics::Surface *_planarProjection;
 
-		// Current upscale level (1 or 2) of _upscaledConstructedPanorama compared to _constructedPano
-		// Level 1 means only upscaled height (2x pixels), level 2 means upscaled height and width (4x pixels)
+		// Current upscale level (0 or 1 or 2) of _upscaledConstructedPanorama compared to _constructedPano
+		// level 0 means that constructedPano was just contructed and hasn't been upscaled yet
+		// level 1 means only upscaled height (2x pixels) 
+		// level 2 means upscaled height and width (4x pixels)
 		uint8 _upscaleLevel = 0;
 
 		// Defining these to make the swing transition happen

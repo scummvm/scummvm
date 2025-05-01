@@ -901,6 +901,10 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 
 	_constructedPano = constructMosaic(track, desc->_sceneNumFramesX, desc->_sceneNumFramesY, "dumps/pano-full.png");
 
+	// _upscaleLevel = 0 means _contructedPano has just been constructed, hasn't been upscaled yet
+	// or that the upscaledConstructedPanorama has upscaled a different panorama, not the current constructedPano
+	_upscaleLevel = 0;
+
 	track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_hotSpotTrackID - 1]->targetTrack));
 
 	track->seek(Audio::Timestamp(0, timestamp, _decoder->_timeScale));
