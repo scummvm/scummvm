@@ -69,8 +69,7 @@ Common::Array<dbaseMultipeIndex::FieldReference> dbaseMultipeIndex::parseKeyDefi
 	return fieldReferences;
 }
 
-const Common::Array<dbaseMultipeIndex::FieldReference>* dbaseMultipeIndex::getTagKeyDefinition(Common::String tagName) const
-{
+const Common::Array<dbaseMultipeIndex::FieldReference>* dbaseMultipeIndex::getTagKeyDefinition(Common::String tagName) const {
 	if (!_tagKeyDefinitions.contains(tagName))
 		return nullptr;
 	else
