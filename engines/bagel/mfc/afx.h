@@ -30,6 +30,10 @@
 namespace Bagel {
 namespace MFC {
 
+#define AFX_COMDAT
+#define _RUNTIME_CLASS(class_name) ((CRuntimeClass*)(&class_name::class##class_name))
+#define RUNTIME_CLASS(class_name) _RUNTIME_CLASS(class_name)
+
 #define DECLARE_DYNAMIC(class_name) \
 public: \
 	static const CRuntimeClass class##class_name; \
@@ -39,6 +43,55 @@ public: \
 public: \
 	static CRuntimeClass class##class_name; \
 	virtual CRuntimeClass* GetRuntimeClass() const; \
+
+
+// not serializable, but dynamically constructable
+#define DECLARE_DYNCREATE(class_name) \
+	DECLARE_DYNAMIC(class_name) \
+	static CObject *CreateObject();
+
+#define _DECLARE_DYNCREATE(class_name) \
+	_DECLARE_DYNAMIC(class_name) \
+	static CObject *CreateObject();
+
+#define DECLARE_SERIAL(class_name) \
+	_DECLARE_DYNCREATE(class_name) \
+	AFX_API friend CArchive& AFXAPI operator>>(CArchive& ar, class_name* &pOb);
+
+#define IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, pfnNew, class_init) \
+	AFX_COMDAT const CRuntimeClass class_name::class##class_name = { \
+		#class_name, sizeof(class class_name), wSchema, pfnNew, \
+			RUNTIME_CLASS(base_class_name), NULL, class_init }; \
+	CRuntimeClass* class_name::GetRuntimeClass() const \
+		{ return RUNTIME_CLASS(class_name); }
+
+#define _IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, pfnNew, class_init) \
+	AFX_COMDAT CRuntimeClass class_name::class##class_name = { \
+		#class_name, sizeof(class class_name), wSchema, pfnNew, \
+			RUNTIME_CLASS(base_class_name), NULL, class_init }; \
+	CRuntimeClass* class_name::GetRuntimeClass() const \
+		{ return RUNTIME_CLASS(class_name); }
+
+
+#define IMPLEMENT_DYNAMIC(class_name, base_class_name) \
+	IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, 0xFFFF, NULL, NULL)
+
+#define IMPLEMENT_DYNCREATE(class_name, base_class_name) \
+	CObject *class_name::CreateObject() \
+		{ return new class_name; } \
+	IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, 0xFFFF, \
+		class_name::CreateObject, NULL)
+
+#define IMPLEMENT_SERIAL(class_name, base_class_name, wSchema) \
+	CObject *class_name::CreateObject() \
+		{ return new class_name; } \
+	extern AFX_CLASSINIT _init_##class_name; \
+	_IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, \
+		class_name::CreateObject, &_init_##class_name) \
+	AFX_CLASSINIT _init_##class_name(RUNTIME_CLASS(class_name)); \
+	CArchive& AFXAPI operator>>(CArchive& ar, class_name* &pOb) \
+		{ pOb = (class_name*) ar.ReadObject(RUNTIME_CLASS(class_name)); \
+			return ar; }
 
 class CArchive;
 class CDocument;
@@ -62,11 +115,11 @@ typedef __POSITION *POSITION;
 // not serializable, but dynamically constructable
 #define DECLARE_DYNCREATE(class_name) \
 	DECLARE_DYNAMIC(class_name) \
-	static CObject* PASCAL CreateObject();
+	static CObject *CreateObject();
 
 #define _DECLARE_DYNCREATE(class_name) \
 	_DECLARE_DYNAMIC(class_name) \
-	static CObject* PASCAL CreateObject();
+	static CObject *CreateObject();
 
 #define DECLARE_SERIAL(class_name) \
 	_DECLARE_DYNCREATE(class_name) \
@@ -119,6 +172,7 @@ public:
 	virtual CRuntimeClass *GetRuntimeClass() const;
 	virtual ~CObject() = 0;  // virtual destructors are necessary
 
+#if 0
 	// Diagnostic allocations
 	void *PASCAL operator new(size_t nSize);
 	void *PASCAL operator new(size_t, void *p);
@@ -129,6 +183,7 @@ public:
 	// for file name/line number tracking using DEBUG_NEW
 	void *PASCAL operator new(size_t nSize, LPCSTR lpszFileName, int nLine);
 	void PASCAL operator delete(void *p, LPCSTR lpszFileName, int nLine);
+#endif
 #endif
 
 	// Disable the copy constructor and assignment by default so you will get
@@ -150,8 +205,8 @@ public:
 
 #if defined(_DEBUG) || defined(_AFXDLL)
 	// Diagnostic Support
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext &dc) const;
+	virtual void AssertValid() const {}
+	virtual void Dump(CDumpContext &dc) const {}
 #endif
 
 	// Implementation

@@ -25,12 +25,14 @@
 namespace Bagel {
 namespace MFC {
 
-
 typedef int BOOL;
 typedef byte BYTE;
+typedef byte UBYTE;
+typedef char CHAR;
 typedef uint16 TCHAR;
 typedef uint16 SHORT;
 typedef uint16 WORD;
+typedef uint16 USHORT;
 typedef long LONG;
 typedef unsigned long ULONG;
 typedef uint32 DWORD;
@@ -55,8 +57,10 @@ typedef const void *LPCVOID;
 typedef const char *LPCSTR;
 typedef const uint16 *LPCTSTR;
 typedef const uint16 *LPCWSTR;
+typedef uint16 *LPWSTR;
 typedef uint16 *LPTSTR;
 typedef char *LPSTR;
+typedef LPWSTR BSTR;
 
 typedef int INT;
 typedef unsigned int UINT;
@@ -71,6 +75,12 @@ typedef ULONG_PTR DWORD_PTR;
 typedef uint32 COLORREF;
 
 #define RGB(r,g,b)          ((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((DWORD)(BYTE)(b))<<16)))
+#define PALETTERGB(r,g,b)   (0x02000000 | RGB(r,g,b))
+#define IS_RGB(VAL) ((VAL & 0x02000000) != 0)
+
+#define PAL_DEFAULT 0x0000
+#define PAL_ANIMATED 0x0001
+#define PAL_EXPLICIT 0x0002
 
 #ifndef FALSE
 #define FALSE               0
@@ -79,6 +89,12 @@ typedef uint32 COLORREF;
 #ifndef TRUE
 #define TRUE                1
 #endif
+
+//
+// Success codes
+//
+#define S_OK                                   ((HRESULT)0L)
+#define S_FALSE                                ((HRESULT)1L)
 
 typedef void *HANDLE;
 typedef HANDLE *PHANDLE;
@@ -228,12 +244,92 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define FILE_DAX_VOLUME                     0x20000000  
 #define FILE_SUPPORTS_GHOSTING              0x40000000  
 
+/*
+ * RedrawWindow() flags
+ */
+#define RDW_INVALIDATE          0x0001
+#define RDW_INTERNALPAINT       0x0002
+#define RDW_ERASE               0x0004
+
+#define RDW_VALIDATE            0x0008
+#define RDW_NOINTERNALPAINT     0x0010
+#define RDW_NOERASE             0x0020
+
+#define RDW_NOCHILDREN          0x0040
+#define RDW_ALLCHILDREN         0x0080
+
+#define RDW_UPDATENOW           0x0100
+#define RDW_ERASENOW            0x0200
+
+#define RDW_FRAME               0x0400
+#define RDW_NOFRAME             0x0800
+
+
+ /*
+  * EnableScrollBar() flags
+  */
+#define ESB_ENABLE_BOTH     0x0000
+#define ESB_DISABLE_BOTH    0x0003
+
+#define ESB_DISABLE_LEFT    0x0001
+#define ESB_DISABLE_RIGHT   0x0002
+
+#define ESB_DISABLE_UP      0x0001
+#define ESB_DISABLE_DOWN    0x0002
+
+#define ESB_DISABLE_LTUP    ESB_DISABLE_LEFT
+#define ESB_DISABLE_RTDN    ESB_DISABLE_RIGHT
+
+#define SIF_RANGE           0x0001
+#define SIF_PAGE            0x0002
+#define SIF_POS             0x0004
+#define SIF_DISABLENOSCROLL 0x0008
+#define SIF_TRACKPOS        0x0010
+#define SIF_ALL             (SIF_RANGE | SIF_PAGE | SIF_POS | SIF_TRACKPOS)
+
+  /*
+   * GetWindow() Constants
+   */
+#define GW_HWNDFIRST        0
+#define GW_HWNDLAST         1
+#define GW_HWNDNEXT         2
+#define GW_HWNDPREV         3
+#define GW_OWNER            4
+#define GW_CHILD            5
+#if(WINVER <= 0x0400)
+#define GW_MAX              5
+#else
+#define GW_ENABLEDPOPUP     6
+#define GW_MAX              6
+#endif
+
+
+   /*
+	* MessageBox() Flags
+	*/
+#define MB_OK                       0x00000000L
+#define MB_OKCANCEL                 0x00000001L
+#define MB_ABORTRETRYIGNORE         0x00000002L
+#define MB_YESNOCANCEL              0x00000003L
+#define MB_YESNO                    0x00000004L
+#define MB_RETRYCANCEL              0x00000005L
+
+/*
+	* Scroll Bar Constants
+	*/
+#define SB_HORZ             0
+#define SB_VERT             1
+#define SB_CTL              2
+#define SB_BOTH             3
+
+
 typedef struct _GUID {
 	unsigned long  Data1;
 	unsigned short Data2;
 	unsigned short Data3;
 	unsigned char  Data4[8];
 } GUID;
+#define REFIID const IID &
 
 typedef struct tagTEXTMETRICA {
 	LONG        tmHeight = 0;

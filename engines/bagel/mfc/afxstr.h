@@ -29,6 +29,21 @@ namespace Bagel {
 namespace MFC {
 
 class CString : public Common::String {
+public:
+	CString() : Common::String() {}
+	CString(const char *s) : Common::String(s) {}
+
+	char *GetBufferSetLength(size_t nNewLength) {
+		ensureCapacity(nNewLength + 1, false);
+		return const_cast<char *>(c_str());
+	}
+	void ReleaseBuffer(int nNewLength = -1) {
+		assert(nNewLength == -1);
+		*this = CString(c_str());
+	}
+	size_t GetLength() const {
+		return size();
+	}
 };
 
 } // namespace MFC

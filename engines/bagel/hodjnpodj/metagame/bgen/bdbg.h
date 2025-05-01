@@ -1,11 +1,33 @@
-// bdbg.h -- Boffo Debugging Header
-// Written by John J. Xenakis, 1994, for Boffo Games Inc.
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-#ifndef __bdbg_H__
-#define __bdbg_H__
+#ifndef HODJNPODJ_METAGAME_BGEN_BDBG_H
+#define HODJNPODJ_METAGAME_BGEN_BDBG_H
 
-#include <stdinc.h>
-#include "bgen.h"
+#include "bagel/boflib/stdinc.h"
+#include "bagel/hodjnpodj/metagame/bgen/bgen.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
 
 #ifdef __cplusplus
 
@@ -13,16 +35,16 @@
 
 #define TRACECONSTRUCTOR(name) \
 	AfxGetApp()->DoMessageBox("~~C" #name, \
-		LOWORD((LPVOID)this), HIWORD((LPVOID)this)) ;
+		LOWORD((LPVOID)this), HIWORD((LPVOID)this));
 
 #define TRACEDESTRUCTOR(name) \
 	AfxGetApp()->DoMessageBox("~~D" #name, \
-		LOWORD((LPVOID)this), HIWORD((LPVOID)this)) ;
+		LOWORD((LPVOID)this), HIWORD((LPVOID)this));
 #else
 
-#define TRACECONSTRUCTOR(name) ;
+#define TRACECONSTRUCTOR(name);
 
-#define TRACEDESTRUCTOR(name) ;
+#define TRACEDESTRUCTOR(name);
 
 #endif // JX_DEBUG
 
@@ -48,47 +70,47 @@ public:
     char m_cEndData ;
 
 // methods
-    static CBdbgMgr FAR * GetPointer(void) { return(lpBdbgMgr) ; }
+    static CBdbgMgr FAR * GetPointer() { return(lpBdbgMgr); }
 
 
 
 // bdbg.cpp -- Boffo debugging for meta game
 
-//- CBdbgMgr::CBdbgMgr -- constructor
-public: CBdbgMgr::CBdbgMgr(void) ;
-//- CBdbgMgr::~CBdbgMgr -- destructor
-public: CBdbgMgr::~CBdbgMgr(void) ;
-//- CBdbgMgr::DebugInit -- Initialize
-public: BOOL CBdbgMgr::DebugInit(LPSTR lpszIniFilename,
-			LPSTR lpszIniSectionname) ;
-//- CBdbgMgr::GetDebugInt -- get debugging integer
-public: int CBdbgMgr::GetDebugInt(LPSTR lpszOption,
-			int iDefault PDFT(0)) ;
-//- CBdbgMgr::GetDebugString -- 
-public: BOOL CBdbgMgr::GetDebugString(LPCSTR lpszOption,
+//- CBdbgMgr -- constructor
+public: CBdbgMgr();
+//- ~CBdbgMgr -- destructor
+public: ~CBdbgMgr();
+//- DebugInit -- Initialize
+public: BOOL DebugInit(LPSTR lpszIniFilename,
+			LPSTR lpszIniSectionname);
+//- GetDebugInt -- get debugging integer
+public: int GetDebugInt(LPSTR lpszOption,
+			int iDefault PDFT(0));
+//- GetDebugString -- 
+public: BOOL GetDebugString(LPCSTR lpszOption,
     	LPSTR lpszTarget, int iTargetSize,
-		LPSTR lpszDefault PDFT(NULL)) ;
-//- CBdbgMgr::TraceConstructor -- trace object constructor, if optioned
-public: BOOL CBdbgMgr::TraceConstructor(LPCSTR lpszName, LPVOID lpLoc) ;
-//- CBdbgMgr::TraceDestructor -- trace object destructor, if optioned
-public: BOOL CBdbgMgr::TraceDestructor(LPCSTR lpszName, LPVOID lpLoc) ;
-//- CBdbgMgr::DebugMessageBox -- 
-public: BOOL CBdbgMgr::DebugMessageBox(LPCSTR lpszPrompt,
-	UINT nType, UINT nIDPrompt) ;
-//- CBdbgMgr::AddTraceObject -- add object to trace list
-public: BOOL CBdbgMgr::AddTraceObject(LPCSTR lpszName, LPVOID lpPtr) ;
-//- CBdbgMgr::TestTraceObject -- test 
-public: BOOL CBdbgMgr::TestTraceObject(LPCSTR lpszName, LPVOID lpPtr,
-    			BOOL bMissing PDFT(FALSE)) ;
-//- CBdbgMgr::RemoveTraceObject -- add object to trace list
-public: BOOL CBdbgMgr::RemoveTraceObject(LPCSTR lpszName, LPVOID lpPtr) ;
-//- CBdbgMgr::ReportTraceObjects -- final report at program end
-public: BOOL CBdbgMgr::ReportTraceObjects(void) ;
-//- CBdbgMgr::OutputWithTime -- output debugging string with time
-public: STATIC BOOL CBdbgMgr::OutputWithTime(LPSTR lpszPattern) ;
-//- CBdbgMgr::OutputWithWordWrap -- output debugging string with time
-public: STATIC BOOL CBdbgMgr::OutputWithWordWrap(LPSTR lpStr1,
-			LPSTR lpStr2, int iIndent) ;
+		LPSTR lpszDefault PDFT(NULL));
+//- TraceConstructor -- trace object constructor, if optioned
+public: BOOL TraceConstructor(LPCSTR lpszName, LPVOID lpLoc);
+//- TraceDestructor -- trace object destructor, if optioned
+public: BOOL TraceDestructor(LPCSTR lpszName, LPVOID lpLoc);
+//- DebugMessageBox -- 
+public: BOOL DebugMessageBox(LPCSTR lpszPrompt,
+	UINT nType, UINT nIDPrompt);
+//- AddTraceObject -- add object to trace list
+public: BOOL AddTraceObject(LPCSTR lpszName, LPVOID lpPtr);
+//- TestTraceObject -- test 
+public: BOOL TestTraceObject(LPCSTR lpszName, LPVOID lpPtr,
+    			BOOL bMissing PDFT(FALSE));
+//- RemoveTraceObject -- add object to trace list
+public: BOOL RemoveTraceObject(LPCSTR lpszName, LPVOID lpPtr);
+//- ReportTraceObjects -- final report at program end
+public: BOOL ReportTraceObjects();
+//- OutputWithTime -- output debugging string with time
+public: STATIC BOOL OutputWithTime(LPSTR lpszPattern);
+//- OutputWithWordWrap -- output debugging string with time
+public: STATIC BOOL OutputWithWordWrap(LPSTR lpStr1,
+			LPSTR lpStr2, int iIndent);
 
 
 
@@ -132,61 +154,61 @@ extern char dbgfile[DBGFILESIZE] ;
 /* bdbgc.c -- debugging routines */
 
 //- dbgarg -- handle debugging arguments
-void dbgarg(int argc, char * argv[]) ;
+void dbgarg(int argc, char * argv[]);
 //- dbgntr -- enter a subroutine
-void dbgntr(char * name) ;
+void dbgntr(char * name);
 //- dbgxit -- exit a subroutine
-void dbgxit(char * name, int iError) ;
+void dbgxit(char * name, int iError);
 //- dbgtyp -- type status line
-void dbgtyp(char * ps, BOOL bReset) ;
+void dbgtyp(char * ps, BOOL bReset);
 //- dbgntu -- enter a subroutine -- unconditional message
-void dbgntu(char * name) ;
+void dbgntu(char * name);
 //- dbgxiu -- exit a subroutine -- unconditional message
-void dbgxiu(char * name) ;
+void dbgxiu(char * name);
 //- dbgttg -- keyboard trace toggle hit
-void dbgttg(void) ;
+void dbgttg();
 //- dbggsd -- get current stack depth
-int dbggsd(void) ;
+int dbggsd();
 //- dbgssd -- set stack depth
-void dbgssd(int depth) ;
+void dbgssd(int depth);
 //- dbgcnp -- check null pointer storage area clobbered
-void dbgcnp(char * caller, char * name) ;
+void dbgcnp(char * caller, char * name);
 //- kybupq -- input chars, update keyboard input queue
-void kybupq(void) ;
+void kybupq();
 //- kybrd -- keyboard read -- wait if no char available
-int kybrd(void) ;
+int kybrd();
 //- kybrdz -- keyboard read, return zero if no char
-int kybrdz(void) ;
+int kybrdz();
 //- kybord -- o/s keyboard read -- returns char or scan code + 1000
-int kybord(void) ;
+int kybord();
 //- kybtst -- test for keyboard input, return char, leave in queue
 // Quick test for keyboard input -- returns next char, but
 //		doesn't remove it from queue
-int kybtst(void) ;
+int kybtst();
 //- kybnlt -- new line test -- test if there's a newline in queue
-int kybnlt(void) ;
+int kybnlt();
 //- ifcprf -- printf replacement
-void ifcprf(char * cs, ...) ;
+void ifcprf(char * cs, ...);
 //- ifcspf -- sprintf replacement
-int ifcspf(char * ds, char * cs, ...) ;
+int ifcspf(char * ds, char * cs, ...);
 //- ifcfmt -- formatting routine
-char * ifcfmt(char * cs, char * ds, void * pparg, int * flen) ;
+char * ifcfmt(char * cs, char * ds, void * pparg, int * flen);
 //- ifcwst -- write character string to screen
-void ifcwst(XPSTR xpStr) ;
+void ifcwst(XPSTR xpStr);
 //- ifcwtt -- write character to screen
-void ifcwtt(char ch) ;
+void ifcwtt(char ch);
 //- ifcwnl -- write newline
-void ifcwnl(void) ;
+void ifcwnl();
 //- ifcbep -- "display" a beep
-void ifcbep(void) ;
+void ifcbep();
 //- ifcwwf -- write character to windows file
-void ifcwwf(int iChar) ;
+void ifcwwf(int iChar);
 //- dbgWindowDump -- dump current window tree
-VOID FAR PASCAL dbgWindowDump(HWND hStartWnd) ;
+VOID FAR PASCAL dbgWindowDump(HWND hStartWnd);
 //- dbgDumpEnumProc - enumeration function to find child windows
-BOOL FAR PASCAL dbgDumpEnumProc(HWND hWnd, DWORD dwlpWddb) ;
+BOOL FAR PASCAL dbgDumpEnumProc(HWND hWnd, DWORD dwlpWddb);
 //- dbgDumpWindowInfo - dump info on one window
-VOID dbgDumpWindowInfo(HWND hWnd, DWORD dwlpWddb) ;
+VOID dbgDumpWindowInfo(HWND hWnd, DWORD dwlpWddb);
 
 
 
@@ -199,4 +221,8 @@ VOID dbgDumpWindowInfo(HWND hWnd, DWORD dwlpWddb) ;
 
 #endif /* JX_DEBUG */
 
-#endif // __bdbg_H__
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

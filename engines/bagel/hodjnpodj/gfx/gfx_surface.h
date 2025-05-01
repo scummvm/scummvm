@@ -26,6 +26,7 @@
 #include "graphics/managed_surface.h"
 #include "graphics/font.h"
 #include "graphics/palette.h"
+#include "bagel/afxwin.h"
 #include "bagel/boflib/palette.h"
 #include "bagel/boflib/stdinc.h"
 
@@ -47,8 +48,7 @@ struct RectWH : public Common::Rect {
 		Common::Rect(x, y, x + w, y + h) {}
 };
 
-class GfxSurface : public Graphics::ManagedSurface,
-		public CObject {
+class GfxSurface : public Graphics::ManagedSurface {
 private:
 	Graphics::ManagedSurface _cellsSource; // Used with loadCels
 	const UIElement *_owner = nullptr;
@@ -64,6 +64,7 @@ public:
 		Graphics::ManagedSurface(surf, bounds),
 		_owner(owner) {
 	}
+	~GfxSurface() override {}
 
 	GfxSurface &operator=(const GfxSurface &surf);
 

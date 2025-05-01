@@ -24,6 +24,45 @@
 namespace Bagel {
 namespace MFC {
 
+const CRuntimeClass CObject::classCObject;
+
+CObject::CObject() {
+}
+
+CObject::CObject(const CObject &objectSrc) {
+	*this = objectSrc;
+}
+
+CObject::~CObject() {
+}
+
+void CObject::operator=(const CObject &objectSrc) {
+}
+
+BOOL CObject::IsSerializable() const {
+	return false;
+}
+
+BOOL CObject::IsKindOf(const CRuntimeClass *pClass) const {
+	for (const CRuntimeClass *p = &classCObject; p;
+			p = p->m_pBaseClass) {
+		if (p == pClass)
+			return true;
+	}
+
+	return false;
+}
+
+	virtual void Serialize(CArchive &ar);
+
+#if defined(_DEBUG) || defined(_AFXDLL)
+	// Diagnostic Support
+	virtual void AssertValid() const;
+	virtual void Dump(CDumpContext &dc) const;
+#endif
+
+	// Implementation
+public:
 
 } // namespace MFC
 } // namespace Bagel

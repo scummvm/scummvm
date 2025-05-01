@@ -23,12 +23,11 @@
 #ifndef BAGEL_BOFLIB_SIZE_H
 #define BAGEL_BOFLIB_SIZE_H
 
+#include "bagel/afxwin.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/object.h"
 
 namespace Bagel {
-
-typedef StSize SIZE;
 
 class CBofSize : public SIZE, public CBofObject {
 public:

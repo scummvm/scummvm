@@ -19,5 +19,5 @@
  *
  */
 
-#include "bagel/hodjnpodj/metagame/afxwin.h"
+#include "bagel/afxwin.h"
 //include <afxext.h>         // MFC extensions (including VB)

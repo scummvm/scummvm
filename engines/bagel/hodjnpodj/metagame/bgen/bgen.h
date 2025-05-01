@@ -1,8 +1,32 @@
-// bgen.h -- Boffo Games general header file
-// Written by John J. Xenakis 1984, 1985-1989, 1992-1994
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-#ifndef BGEN_H
-#define BGEN_H
+#ifndef HODJNPODJ_METAGAME_BGEN_BGEN_H
+#define HODJNPODJ_METAGAME_BGEN_BGEN_H
+
+#include "bagel/hodjnpodj/metagame/bgen/bdbg.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
 
 #ifdef _DEBUG
 #define JX_DEBUG
@@ -23,19 +47,16 @@
 // #define HIWORD(lParm) (*((unsigned int huge *)&lParm + 1) )
 // #define LOWORD(lParm) ((unsigned int)lParm )
 
-typedef int BOOL ;
-typedef char * XPSTR ;
-typedef char far * LPSTR ;
-typedef LPSTR far * LPLPSTR ;
-typedef int * XPINT ;
-typedef int far * LPINT ;
-typedef char * XPCHAR ;
+typedef int BOOL;
+typedef char *XPSTR;
+typedef char *LPSTR;
+typedef LPSTR *LPLPSTR;
+typedef int *XPINT;
+typedef int *LPINT;
+typedef char *XPCHAR;
 #define VOID void
-typedef void * XPVOID ;
-typedef void far * LPVOID ;
-//typedef unsigned int WORD ;
-//typedef WORD * XPWORD ;
-//typedef WORD far * LPWORD ;
+typedef void * XPVOID;
+typedef void * LPVOID;
 
 #define HUGE __huge
 typedef unsigned long ULONG ;
@@ -114,8 +135,9 @@ inline BOOL EQV(BOOL b1, BOOL b2)
 	{ return((b1 != 0) == (b2 != 0)) ; }
 #endif	/* __cplusplus */
 
-#include "bdbg.h"
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel
 
-#endif /* BGEN_H */
-
+#endif
 

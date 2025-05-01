@@ -64,20 +64,6 @@ struct WindowPos {
 	uint32 flags = 0;
 };
 
-
-#ifndef LOBYTE
-#define LOBYTE(w) ((byte)(w))
-#endif
-#ifndef HIBYTE
-#define HIBYTE(w) ((byte)(((uint32)(w) >> 8) & 0xFF))
-#endif
-#ifndef LOWORD
-#define LOWORD(l) ((uint16)(uint32)(l))
-#endif
-#ifndef HIWORD
-#define HIWORD(l) ((uint16)((((uint32)(l)) >> 16) & 0xFFFF))
-#endif
-
 #define MAKE_WORD(a, b) ((uint16)(((byte)(a)) | ((uint16)((byte)(b))) << 8))
 #define MAKE_LONG(low, high) ((int32)(((uint16)(low)) | (((uint32)((uint16)(high))) << 16)))
 
@@ -92,22 +78,14 @@ struct WindowPos {
 #define MAX_DIRPATH 256
 
 #define PDFT(VALUE) = VALUE
-#define CView View
 
-typedef void *CWnd;
-typedef void *CDialog;
-typedef void *CDC;
-class CBrush {};
-class CPen {};
-class CPalette {};
-
-class CObject {
-public:
-	virtual ~CObject() {}
-};
-
-/* Brush Styles */
-#define BS_SOLID            0
+/*
+* normal types
+*/
+#define VIRTUAL virtual
+#define STATIC static
+#define CDECL
+#define INLINE inline
 
 } // namespace Bagel
 

@@ -1,14 +1,33 @@
-// bsutl.h -- header file for Boffo scrolling utility set
-// Written by John J. Xenakis, 1994, for Boffo Games Inc.
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-#ifndef __bsu_H__
-#define __bsu_H__
+#ifndef HODJNPODJ_METAGAME_BGEN_BSUTL_H
+#define HODJNPODJ_METAGAME_BGEN_BSUTL_H
 
-#include "stdafx.h"
-#include <stdinc.h>
+#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
+#include "bagel/hodjnpodj/metagame/bgen/bgen.h"
 
-#include "bgen.h"
-
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
 
 // define scroll bar types (should not conflict with IDC_xxxx codes
 //	from resource.h)
@@ -64,7 +83,7 @@ public:
 
 // methods
 public:
-    CBsuSet::CBsuSet() { TRACECONSTRUCTOR(CBsuSet) ;
+    CBsuSet() { TRACECONSTRUCTOR(CBsuSet) ;
 	    memset(&m_cStartData, 0,
 				&m_cEndData - &m_cStartData) ;}
 #ifdef NODEEDIT
@@ -73,54 +92,54 @@ public:
 
 // bsutl.cpp : Boffo scroll bar utilities
 
-//- CBsuSet::~CBsuSet -- destructor
-public: CBsuSet::~CBsuSet(void) ;
-//- CBsuSet::InitWndBsuSet -- initialize bsu set for a window
-public: BOOL CBsuSet::InitWndBsuSet(CWnd * xpWnd,
+//- ~CBsuSet -- destructor
+public: ~CBsuSet(void) ;
+//- InitWndBsuSet -- initialize bsu set for a window
+public: BOOL InitWndBsuSet(CWnd * xpWnd,
 	BOOL bScrollView PDFT(FALSE), BOOL bScrollBars PDFT(FALSE),
 	CBsuSet * xpLinkSet PDFT(NULL)) ;
-//- CBsuSet::InitDlgBsuSet -- initialize bsu set for dialog box
-public: BOOL CBsuSet::InitDlgBsuSet(CDialog * xpDlg,
+//- InitDlgBsuSet -- initialize bsu set for dialog box
+public: BOOL InitDlgBsuSet(CDialog * xpDlg,
 	CBsuSet * xpLinkSet PDFT(NULL)) ;
-//- CBsuSet::AddBarToSet -- add scroll bar to scroll bar set
-public: BOOL CBsuSet::AddBarToSet(int iId, int iWndScrollCode,
+//- AddBarToSet -- add scroll bar to scroll bar set
+public: BOOL AddBarToSet(int iId, int iWndScrollCode,
 			int iBarType PDFT(0)) ;
-//- CBsuSet::PrepareWndBsuSet -- prepare window scroll bar set
+//- PrepareWndBsuSet -- prepare window scroll bar set
 //		by filling in the device fields
-public: BOOL CBsuSet::PrepareWndBsuSet(CSize cDocSize, CRect cScrollRect) ;
-//- CBsuSet::UpdateWndDeviceExtents -- update window devices coordinates
-private: BOOL CBsuSet::UpdateWndDeviceExtents(void) ;
-//- CBsuSet::LinkWndBsuSet -- link window/dialog bsu sets
-public: BOOL CBsuSet::LinkWndBsuSet(void) ;
-//- CBsuSet::PrepareDc -- replace OnPrepareDC -- set the viewport and
+public: BOOL PrepareWndBsuSet(CSize cDocSize, CRect cScrollRect) ;
+//- UpdateWndDeviceExtents -- update window devices coordinates
+private: BOOL UpdateWndDeviceExtents(void) ;
+//- LinkWndBsuSet -- link window/dialog bsu sets
+public: BOOL LinkWndBsuSet(void) ;
+//- PrepareDc -- replace OnPrepareDC -- set the viewport and
 //	the clip rectangle to the specified region
-public: BOOL CBsuSet::PrepareDc(CDC *xpDc, BOOL bRelocatable PDFT(TRUE));
-//- CBsuSet::OnScroll -- handle OnHScroll and OnVScroll messages
-public: BOOL CBsuSet::OnScroll(UINT nSBCode, UINT nPos,
+public: BOOL PrepareDc(CDC *xpDc, BOOL bRelocatable PDFT(TRUE));
+//- OnScroll -- handle OnHScroll and OnVScroll messages
+public: BOOL OnScroll(UINT nSBCode, UINT nPos,
 		CScrollBar* xpScrollBar, int iBarType PDFT(0)) ;
-//- CBsuSet::GetBar -- get bsu scroll bar object
-private: CBsuBar * CBsuSet::GetBar(int iBarType) ;
-//- CBsuSet::ScrollWindowToPoint -- scroll window to spec point
-public: BOOL CBsuSet::ScrollWindowToPoint(CPoint cScrollPosition,
+//- GetBar -- get bsu scroll bar object
+private: CBsuBar * GetBar(int iBarType) ;
+//- ScrollWindowToPoint -- scroll window to spec point
+public: BOOL ScrollWindowToPoint(CPoint cScrollPosition,
 		BOOL bScrollWindow PDFT(TRUE)) ;
-//- CBsuSet::EdgeToCenter -- if point is on edge, scroll it to center
-public: BOOL CBsuSet::EdgeToCenter(CPoint cPoint, BOOL bScroll PDFT(FALSE));
-//- CBsuSet::SetSubWindowRect -- set rectangle to portion of window
+//- EdgeToCenter -- if point is on edge, scroll it to center
+public: BOOL EdgeToCenter(CPoint cPoint, BOOL bScroll PDFT(FALSE));
+//- SetSubWindowRect -- set rectangle to portion of window
 //		(logical coordinates)
-public: BOOL CBsuSet::SetSubWindowRect(LPRECT lpRect, int iBsRegion);
-//- CBsuSet::TestRect -- test whether rectangle is in window
-public: BOOL CBsuSet::TestRect(CRRect crTestRect,
+public: BOOL SetSubWindowRect(LPRECT lpRect, int iBsRegion);
+//- TestRect -- test whether rectangle is in window
+public: BOOL TestRect(CRRect crTestRect,
        			BOOL & bPhysical, BOOL & bEdge) ;
-//- CBsuSet::GetWindowBars -- set rectangle to portion of window
+//- GetWindowBars -- set rectangle to portion of window
 //		(device coordinates)
-public: BOOL CBsuSet::GetWindowBars(CBsuBar *& xpHBar,
+public: BOOL GetWindowBars(CBsuBar *& xpHBar,
 		CBsuBar *& xpVBar, BOOL bErrorRtn PDFT(TRUE)) ;
-//- CBsuSet::PointLogical -- convert device point to logical coords
-public: CRPoint CBsuSet::PointLogical(CPoint cPoint) ;
-//- CBsuSet::GetInfo -- get information about scroll set
-public: BOOL CBsuSet::GetInfo(CBsuInfo * xpBsuInfo) ;
-//- CBsuSet::DumpInfo -- dump information about scroll set
-public: BOOL CBsuSet::DumpInfo(LPSTR lpStart PDFT(NULL)) ;
+//- PointLogical -- convert device point to logical coords
+public: CRPoint PointLogical(CPoint cPoint) ;
+//- GetInfo -- get information about scroll set
+public: BOOL GetInfo(CBsuInfo * xpBsuInfo) ;
+//- DumpInfo -- dump information about scroll set
+public: BOOL DumpInfo(LPSTR lpStart PDFT(NULL)) ;
 
 } ;
 
@@ -151,9 +170,10 @@ class CBsuBar {
 
 // methods
 public:
-    CBsuBar::CBsuBar() {memset(&m_cStartData, 0,
-				&m_cEndData - &m_cStartData) ;}
-} ;
+    CBsuBar() {
+		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
+	}
+};
 
 // CBsuInfo -- information returned by GetInfo
 class CBsuInfo {
@@ -231,9 +251,14 @@ public:
     CRect cHintRect ;
     char m_cEndData ;
 
-    CGtlHint::CGtlHint(void) {memset(&m_cStartData,
-			0, &m_cEndData - &m_cStartData) ;}
+    CGtlHint() {
+		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
+	}
 //    DECLARE_SERIAL(CGtlHint) ;
-} ;
+};
 
-#endif // __bsu_H__
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

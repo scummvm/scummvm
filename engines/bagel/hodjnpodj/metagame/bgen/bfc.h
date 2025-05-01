@@ -22,11 +22,10 @@
 #ifndef HODJNPODJ_METAGAME_BGEN_BFC_H
 #define HODJNPODJ_METAGAME_BGEN_BFC_H
 
-#include "mgstat.h"
-#include "gamedll.h"
-
-#include "item.h"
-#include "invent.h"
+#include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
+#include "bagel/hodjnpodj/metagame/gtl/gamedll.h"
+#include "bagel/hodjnpodj/metagame/bgen/item.h"
+#include "bagel/hodjnpodj/metagame/bgen/invent.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -100,9 +99,10 @@ public:
     char m_cEndData ;
 
     // constructor
-    CHodjPodj::CHodjPodj(void) {memset(&m_cStartData,0, &m_cEndData - &m_cStartData); }
-
-} ;
+    CHodjPodj() {
+		memset(&m_cStartData,0, &m_cEndData - &m_cStartData);
+	}
+};
 
 // CBfcMgr -- boffo games interface manager class
 class CBfcMgr {
@@ -166,7 +166,9 @@ public:
     char m_cEndData ;
 
     // constructor
-    CBfcMgr::CBfcMgr(void) {memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;}
+    CBfcMgr() {
+		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
+	}
 };
 
 //
@@ -183,18 +185,15 @@ typedef struct {
     INT iNoteID;
     INT iPlaceID;
     INT iPersonID;
-
 } CLUE_ARRAY;
 
 typedef struct {
-    CHAR    m_szTitle[40];
-    INT     m_aItemList[MG_OBJ_COUNT];
-    INT     m_nItems;
-
+    char m_szTitle[40];
+    INT m_aItemList[MG_OBJ_COUNT];
+    INT m_nItems;
 } INVENTORY;
 
 typedef struct {
-
     // these items are directly translated from CHodjPodj
     //
 

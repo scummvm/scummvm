@@ -25,13 +25,9 @@
 #include "bagel/mfc/afxwin.h"
 
 namespace Bagel {
-namespace HodjNPodj {
-namespace Metagame {
 
 using namespace Bagel::MFC;
 
-} // namespace Metagame
-} // namespace HodjNPodj
 } // namespace Bagel
 
 #endif

@@ -23,13 +23,11 @@
 #ifndef BAGEL_BOFLIB_POINT_H
 #define BAGEL_BOFLIB_POINT_H
 
-#include "common/rect.h"
+#include "bagel/afxwin.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/object.h"
 
 namespace Bagel {
-
-typedef Common::Point POINT;
 
 class CBofPoint : public StPoint, public CBofObject {
 public:

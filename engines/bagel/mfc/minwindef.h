@@ -46,6 +46,9 @@ namespace MFC {
 #define AFXAPI
 #define AFX_DATA
 #define AFX_NOVTABLE
+#define BASED_CODE
+#define AFX_CDECL
+
 #ifndef _In_
 #define _In_
 #endif
@@ -65,11 +68,15 @@ DECLARE_HANDLE(HBITMAP);
 DECLARE_HANDLE(HBRUSH);
 DECLARE_HANDLE(HENHMETAFILE);
 DECLARE_HANDLE(HGDIOBJ);
+DECLARE_HANDLE(HDROP);
+DECLARE_HANDLE(HRAWINPUT);
 
 /* Types use for passing & returning polymorphic values */
 typedef UINT_PTR            WPARAM;
 typedef LONG_PTR            LPARAM;
 typedef LONG_PTR            LRESULT;
+
+typedef LRESULT(CALLBACK *WNDPROC)(HWND, UINT, WPARAM, LPARAM);
 
 #ifndef max
 #define max(a,b)            (((a) > (b)) ? (a) : (b))

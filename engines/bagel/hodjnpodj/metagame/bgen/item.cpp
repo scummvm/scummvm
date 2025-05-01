@@ -19,27 +19,22 @@
  *
  */
 
-#include "stdafx.h"
-#include <limits.h>
-#include "globals.h"
-#include "note.h"
-#include "invent.h"
+#include "bagel/afxwin.h"
+#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
+#include "bagel/hodjnpodj/metagame/bgen/note.h"
+#include "bagel/hodjnpodj/metagame/bgen/invent.h"
+#include "bagel/hodjnpodj/metagame/globals.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
-
-#ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
 
 IMPLEMENT_DYNCREATE(CItem, CObject)
 
 
 #ifndef FRAME_EXE
 // descriptive text for each item
-char	*CItem::m_pItemText[MG_OBJ_COUNT] = {	
+const char *CItem::m_pItemText[MG_OBJ_COUNT] = {	
 	"a Radio-Controlled Flying Anvil",
 	"a Beret of Invisibilty",
 	"a Broomstick",
@@ -77,7 +72,7 @@ char	*CItem::m_pItemText[MG_OBJ_COUNT] = {
 	};
 
 // pluralized descriptive text for each item
-char	*CItem::m_pItemPluralText[MG_OBJ_COUNT] = {	
+const char *CItem::m_pItemPluralText[MG_OBJ_COUNT] = {	
 	"Radio-Controlled Flying Anvils",
 	"Berets of Invisibilty",
 	"Broomsticks",
@@ -115,10 +110,10 @@ char	*CItem::m_pItemPluralText[MG_OBJ_COUNT] = {
 	};
 
 // place to construct item names
-char	CItem::m_chTextBuffer[ITEM_BUFFER_LENGTH + 1];	
+char CItem::m_chTextBuffer[ITEM_BUFFER_LENGTH + 1];	
 
 // disk path specifications for item bitmaps
-char	*CItem::m_pItemBitmapPath[MG_OBJ_COUNT] = {	
+const char *CItem::m_pItemBitmapPath[MG_OBJ_COUNT] = {	
 	".\\art\\anvil.bmp",
 	".\\art\\beret.bmp",
 	".\\art\\broom.bmp",
@@ -156,7 +151,7 @@ char	*CItem::m_pItemBitmapPath[MG_OBJ_COUNT] = {
 	};
 
 // disk path specifications for item sounds
-char	*CItem::m_pItemSoundPath[MG_OBJ_COUNT] = {
+const char *CItem::m_pItemSoundPath[MG_OBJ_COUNT] = {
 	".\\sound\\obj25.wav",
 	".\\sound\\obj21.wav",
 	".\\sound\\obj15.wav",
@@ -303,16 +298,16 @@ char * CItem::GetDescription(int nID, long nQuantity)
 		m_chTextBuffer[0] = '\0';
 	else {
 		if (nQuantity > 1)                              // create blurb for multiple
-			sprintf(m_chTextBuffer,"%ld %s",nQuantity,m_pItemPluralText[nID - MG_OBJ_BASE]);
+			Common::sprintf_s(m_chTextBuffer,"%ld %s",nQuantity,m_pItemPluralText[nID - MG_OBJ_BASE]);
 		else
 		if ((nID == MG_OBJ_CROWN) &&					// special case having no crowns
 			(nQuantity == 0))
-			sprintf(m_chTextBuffer,"%s %s","You have no",m_pItemPluralText[nID - MG_OBJ_BASE]);
+			Common::sprintf_s(m_chTextBuffer,"%s %s","You have no",m_pItemPluralText[nID - MG_OBJ_BASE]);
 		else
-			strcpy(m_chTextBuffer,m_pItemText[nID - MG_OBJ_BASE]);    // get the text for the item
+			Common::strcpy_s(m_chTextBuffer,m_pItemText[nID - MG_OBJ_BASE]);    // get the text for the item
 	}
 	
-	return(m_chTextBuffer);
+	return m_chTextBuffer;
 }
 #endif
 

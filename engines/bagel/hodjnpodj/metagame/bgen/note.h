@@ -22,7 +22,7 @@
 #ifndef HODJNPODJ_METAGAME_BGEN_NOTE_H
 #define HODJNPODJ_METAGAME_BGEN_NOTE_H
 
-#include "bagel/hodjnpodj/metagame/afxwin.h"
+#include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/metagame/bgen/notelist.h"
 
 namespace Bagel {

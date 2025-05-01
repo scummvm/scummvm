@@ -19,9 +19,9 @@
  *
  */
 
-#include "stdafx.h"
-#include "bfc.h"
-#include "bsutl.h"
+#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
+#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
+#include "bagel/hodjnpodj/metagame/bgen/bsutl.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -39,7 +39,7 @@ CBsuSet::~CBsuSet(void)
 // returns: TRUE if error, FALSE otherwise
 {
     JXENTER(CBsuSet::~CBsuSet) ;
-    int iError = 0 ;		// error code
+    //int iError = 0 ;		// error code
     CBsuBar * xpBar ;
 
     TRACEDESTRUCTOR(CBsuSet) ;
@@ -71,7 +71,7 @@ BOOL CBsuSet::InitWndBsuSet(CWnd *xpWnd, BOOL bScrollView, BOOL bScrollBars, CBs
 {
     JXENTER(CBsuSet::InitWndBsuSet) ;
     int iError = 0 ;		// error code
-    BOOL bAllocDc = FALSE ;	// flag: device context allocated
+    //BOOL bAllocDc = FALSE ;	// flag: device context allocated
     CBsuBar * xpHBar = NULL, * xpVBar = NULL ;
 
     GetWindowBars(xpHBar, xpVBar, FALSE) ;	// try to get existing
