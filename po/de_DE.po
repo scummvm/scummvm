@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-30 15:51+0000\n"
-"PO-Revision-Date: 2025-05-01 16:18+0000\n"
+"PO-Revision-Date: 2025-05-01 17:09+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -8026,17 +8026,13 @@ msgstr "Nach rechts rollen"
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/dark/dark.cpp:240
 #: engines/freescape/games/driller/driller.cpp:170
-#, fuzzy
-#| msgid "Increasing Volume"
 msgid "Increase Turn Angle"
-msgstr "Lautstärke höher"
+msgstr "Drehwinkel erhöhen"
 
 #: engines/freescape/games/dark/dark.cpp:245
 #: engines/freescape/games/driller/driller.cpp:175
-#, fuzzy
-#| msgid "Decreasing Volume"
 msgid "Decrease Turn Angle"
-msgstr "Lautstärke niedriger"
+msgstr "Drehwinkel verringern"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:251
@@ -10103,14 +10099,14 @@ msgid "3DO Plumbers requires RGB support."
 msgstr "Die 3DO-Version von Plumbers benötigt RGB-Unterstützung."
 
 #: engines/qdengine/dialogs.cpp:32
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable 16 bits per pixel mode"
-msgstr "Aktiviere den Debug-Modus"
+msgstr "Aktiviere 16-Bit-pro-Pixel-Modus"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
 msgstr ""
+"Verwende diese Option, wenn das Backend keine Darstellung in 32bpp "
+"ermöglichst oder wenn Du Grafikfehler untersuchen möchtest"
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
