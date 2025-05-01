@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-04-30 15:51+0000\n"
-"PO-Revision-Date: 2025-02-15 11:09+0000\n"
+"PO-Revision-Date: 2025-05-01 16:19+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4129,7 +4129,7 @@ msgstr "マウスキャプチャーの切替"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:545
 msgid "Toggle resizable window"
-msgstr ""
+msgstr "リサイズ可/不可の切替"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:550 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
@@ -5056,19 +5056,19 @@ msgstr "ゲーム内"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export backup"
-msgstr ""
+msgstr "エクスポート"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export a backup of the configuration and save files"
-msgstr ""
+msgstr "設定・セーブファイルとバックアップを出力"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import backup"
-msgstr ""
+msgstr "インポート"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import a previously exported backup file"
-msgstr ""
+msgstr "バックアップファイルをインポート"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:196
@@ -5076,10 +5076,8 @@ msgid "Remove folder authorizations..."
 msgstr "フォルダーの権限を削除..."
 
 #: backends/platform/android/options.cpp:268
-#, fuzzy
-#| msgid "Select the orientation:"
 msgid "Select backup destination"
-msgstr "オリエンテーションを選択："
+msgstr "バックアップ先を選択"
 
 #: backends/platform/android/options.cpp:276
 msgid "The backup has been saved successfully."
