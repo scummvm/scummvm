@@ -75,16 +75,19 @@ jobs:
           ls
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
-      - name: Build scummvm
+      - name: Install vcpkg packages
         run: |
-          cd build-scummvm
-          ls
-          msbuild scummvm.sln /m /p:VcpkgEnableManifest=true /p:BuildInParallel=true /p:Configuration=${{ env.CONFIGURATION }} /p:PreferredToolArchitecture=x64 /p:Platform=${{ matrix.platform }} /v:minimal
+          vcpkg install
       - name: Save vcpkg cache
         uses: actions/cache/save@v4
         with:
           path: ${{ github.workspace }}/vcpkg_cache
           key: vcpkg-${{ env.GIT_VCPKG_COMMIT }}-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json', 'vcpkg_installed/compiler-file-hash-cache.json', 'vcpkg_installed/status') }}
+      - name: Build scummvm
+        run: |
+          cd build-scummvm
+          ls
+          msbuild scummvm.sln /m /p:VcpkgEnableManifest=true /p:BuildInParallel=true /p:Configuration=${{ env.CONFIGURATION }} /p:PreferredToolArchitecture=x64 /p:Platform=${{ matrix.platform }} /v:minimal
       - name: Upload libs
         uses: actions/upload-artifact@v4
         if: matrix.buildArtifacts == 'true'
