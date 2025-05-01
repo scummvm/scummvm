@@ -205,6 +205,20 @@ else
   echoOk
 fi
 
+echo_n "Checking Android translations..."
+
+fileDate=`git log -1 --pretty=format:"%aI" dists/android/res/values-*/strings.xml`
+
+num_lines=`git -P log --oneline "--since=$fileDate" po/ | wc -l`
+
+if [ "$num_lines" -ne "0" ]; then
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'make android-translations'${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
 
 ###########
 # Release Notes
