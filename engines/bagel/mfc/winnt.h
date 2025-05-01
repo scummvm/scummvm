@@ -32,6 +32,7 @@ typedef uint16 TCHAR;
 typedef uint16 SHORT;
 typedef uint16 WORD;
 typedef long LONG;
+typedef unsigned long ULONG;
 typedef uint32 DWORD;
 typedef int64 LONGLONG;
 typedef uint64 ULONGLONG;
@@ -67,6 +68,9 @@ typedef unsigned int UINT_PTR, *PUINT_PTR;
 typedef long LONG_PTR, *PLONG_PTR;
 typedef unsigned long ULONG_PTR, *PULONG_PTR;
 typedef ULONG_PTR DWORD_PTR;
+typedef uint32 COLORREF;
+
+#define RGB(r,g,b)          ((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((DWORD)(BYTE)(b))<<16)))
 
 #ifndef FALSE
 #define FALSE               0
@@ -84,6 +88,8 @@ typedef char CCHAR;
 typedef DWORD LCID;
 typedef PDWORD PLCID;
 typedef WORD   LANGID;
+
+typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 
 #define DECLARE_HANDLE(name) struct name##__{int unused;}; typedef struct name##__ *name
 
@@ -228,6 +234,32 @@ typedef struct _GUID {
 	unsigned short Data3;
 	unsigned char  Data4[8];
 } GUID;
+
+typedef struct tagTEXTMETRICA {
+	LONG        tmHeight = 0;
+	LONG        tmAscent = 0;
+	LONG        tmDescent = 0;
+	LONG        tmInternalLeading = 0;
+	LONG        tmExternalLeading = 0;
+	LONG        tmAveCharWidth = 0;
+	LONG        tmMaxCharWidth = 0;
+	LONG        tmWeight = 0;
+	LONG        tmOverhang = 0;
+	LONG        tmDigitizedAspectX = 0;
+	LONG        tmDigitizedAspectY = 0;
+	BYTE        tmFirstChar = 0;
+	BYTE        tmLastChar = 0;
+	BYTE        tmDefaultChar = 0;
+	BYTE        tmBreakChar = 0;
+	BYTE        tmItalic = 0;
+	BYTE        tmUnderlined = 0;
+	BYTE        tmStruckOut = 0;
+	BYTE        tmPitchAndFamily = 0;
+	BYTE        tmCharSet = 0;
+} TEXTMETRIC, *PTEXTMETRIC, *LPTEXTMETRIC;
+
+typedef struct tagGCP_RESULTS {
+} GCP_RESULTS, *LPGCP_RESULTS;
 
 } // namespace MFC
 } // namespace Bagel

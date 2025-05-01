@@ -59,6 +59,12 @@ DECLARE_HANDLE(HDC);
 DECLARE_HANDLE(HMENU);
 DECLARE_HANDLE(HACCEL);
 DECLARE_HANDLE(HFONT);
+DECLARE_HANDLE(HCURSOR);
+DECLARE_HANDLE(HICON);
+DECLARE_HANDLE(HBITMAP);
+DECLARE_HANDLE(HBRUSH);
+DECLARE_HANDLE(HENHMETAFILE);
+DECLARE_HANDLE(HGDIOBJ);
 
 /* Types use for passing & returning polymorphic values */
 typedef UINT_PTR            WPARAM;
@@ -115,6 +121,38 @@ typedef struct tagRECT {
 
 typedef const RECT FAR *LPCRECT;
 
+typedef struct tagPOINT
+{
+	LONG  x;
+	LONG  y;
+} POINT, *PPOINT, NEAR *NPPOINT, FAR *LPPOINT;
+
+typedef struct _POINTL      /* ptl  */
+{
+	LONG  x;
+	LONG  y;
+} POINTL, *PPOINTL;
+
+typedef struct tagSIZE
+{
+	LONG        cx;
+	LONG        cy;
+} SIZE, *PSIZE, *LPSIZE;
+
+typedef SIZE               SIZEL;
+typedef SIZE *PSIZEL, *LPSIZEL;
+
+typedef struct tagPOINTS
+{
+#ifndef _MAC
+	SHORT   x;
+	SHORT   y;
+#else
+	SHORT   y;
+	SHORT   x;
+#endif
+} POINTS, *PPOINTS, *LPPOINTS;
+
 typedef struct _FILETIME {
 	DWORD dwLowDateTime;
 	DWORD dwHighDateTime;
@@ -130,6 +168,15 @@ typedef struct _SYSTEMTIME {
 	WORD wSecond;
 	WORD wMilliseconds;
 } SYSTEMTIME, *PSYSTEMTIME, *LPSYSTEMTIME;
+
+typedef struct tagPAINTSTRUCT {
+	HDC         hdc;
+	BOOL        fErase;
+	RECT        rcPaint;
+	BOOL        fRestore;
+	BOOL        fIncUpdate;
+	BYTE        rgbReserved[32];
+} PAINTSTRUCT, *PPAINTSTRUCT, *NPPAINTSTRUCT, *LPPAINTSTRUCT;
 
 } // namespace MFC
 } // namespace Bagel

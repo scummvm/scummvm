@@ -53,6 +53,27 @@ typedef void CAtlTransactionManager;
 typedef void CException;
 typedef void CFileException;
 
+/*============================================================================*/
+// Basic types
+// abstract iteration position
+struct __POSITION {};
+typedef __POSITION *POSITION;
+
+// not serializable, but dynamically constructable
+#define DECLARE_DYNCREATE(class_name) \
+	DECLARE_DYNAMIC(class_name) \
+	static CObject* PASCAL CreateObject();
+
+#define _DECLARE_DYNCREATE(class_name) \
+	_DECLARE_DYNAMIC(class_name) \
+	static CObject* PASCAL CreateObject();
+
+#define DECLARE_SERIAL(class_name) \
+	_DECLARE_DYNCREATE(class_name) \
+	AFX_API friend CArchive& AFXAPI operator>>(CArchive& ar, class_name* &pOb);
+
+/*============================================================================*/
+
 // generate static object constructor for class registration
 void AFXAPI AfxClassInit(CRuntimeClass *pNewClass);
 struct AFX_CLASSINIT {
