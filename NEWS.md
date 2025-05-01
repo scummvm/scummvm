@@ -39,6 +39,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed 2x scaling and fullscreen support in non-interactive demo.
    - Fixed memory leaks that could cause Out of Memory issues on some
      ports.
+   - Fixed a path finding issue that could cause soft-lock in some rare cases.
 
  Hopkins:
    - Fixed a crash when using the elevator to go to other floors.
