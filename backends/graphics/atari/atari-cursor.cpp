@@ -244,7 +244,7 @@ void Cursor::draw() {
 
 	//atari_debug("Cursor::draw: %d %d %d %d", _dstRect.left, _dstRect.top, _dstRect.width(), _dstRect.height());
 
-	if (_surfaceChanged || _srcRect != _previousSrcRect) {
+	if (_surfaceChanged || _srcRect.width() != _previousSrcRect.width()) {
 		_previousSrcRect = _srcRect;
 
 		// TODO: some sort of in-place C2P directly into convertSurfaceTo() ...
