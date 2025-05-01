@@ -102,7 +102,7 @@ bool dbaseMultipeIndex::load(Common::SeekableReadStream &stream) {
 	_lastUpdate.tm_mon  = stream.readByte() - 1;
 	_lastUpdate.tm_mday = stream.readByte();
 
-	stream.skip(497); // Reserved
+	stream.seek(544); // Go past the header (size 32 + 512)
 
 	for (int i = 0; i < _nbrOfTagsInUse; ++i) {
 		uint32 tagHeaderPage = stream.readUint32LE();
