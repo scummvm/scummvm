@@ -3288,6 +3288,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "theeternalnight", "The Eternal Night" },
 	{ "theeverbeginningtale", "The Ever-Beginning Tale" },
 	{ "theexecutionofanneboleyn", "The Execution of Anne Boleyn" },
+	{ "theexpedition", "The Expedition" },
 	{ "theexperimentp1", "The Experiment - Part 1: The Laboratory" },
 	{ "theexperimentp2", "The Experiment - Part 2: Menacing Darkness" },
 	{ "thefaketrix", "The Faketrix" },
@@ -3666,6 +3667,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "wulffenstein", "Wulffenstein – Im Kreuzfeuer der Reporter" },
 	{ "y", "Y" },
 	{ "yago", "Yago, the Coquerrestrial / Yago, el Coquerrestre" },
+	{ "yearmags", "The Year of MAGS" },
 	{ "yipquest", "Yip Quest" },
 	{ "yoda", "Yoda" },
 	{ "yourgrace", "Your Grace" },
@@ -4584,6 +4586,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "gemini rue.exe", "3b7e8fdf626c2f8e6538669cdab91c0e", 61438210, 0),  // Win v3.0.1
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "gemini rue.exe", "3b7e8fdf626c2f8e6538669cdab91c0e", 61472326, 0),  // Win v3.2
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "gemini rue.exe", "3b7e8fdf626c2f8e6538669cdab91c0e", 61473114, 0),  // Win v3.5d
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "gemini rue.exe", "3b7e8fdf626c2f8e6538669cdab91c0e", 61474210, 0),  // Win v3.6
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70356639, 0), // Mac v2.1
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70375199, 0), // Mac v2.2
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70412031, 0), // Mac v2.3
@@ -4591,11 +4594,13 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "ac2game.dat", "ab6c0c2d89adb2d529131190a657be6a", 58249454, 0), // Mac v3.0.1
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "ac2game.dat", "ab6c0c2d89adb2d529131190a657be6a", 58283570, 0), // Mac v3.3-v3.4
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "ac2game.dat", "ab6c0c2d89adb2d529131190a657be6a", 58284358, 0), // Mac v3.5f
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "ac2game.dat", "ab6c0c2d89adb2d529131190a657be6a", 58285454, 0), // Mac v3.6
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "agsgame.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62069353, 0), // Linux
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "Gemini Rue.ags", "ab6c0c2d89adb2d529131190a657be6a", 58212622, 0),  // Linux v3.0
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "Gemini Rue.ags", "ab6c0c2d89adb2d529131190a657be6a", 58249454, 0),  // Linux v3.0.1
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "Gemini Rue.ags", "ab6c0c2d89adb2d529131190a657be6a", 58283570, 0),  // Linux v3.2
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "Gemini Rue.ags", "ab6c0c2d89adb2d529131190a657be6a", 58284358, 0),  // Linux v3.5d
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("geminirue", "Gemini Rue.ags", "ab6c0c2d89adb2d529131190a657be6a", 58285454, 0),  // Linux v3.6
 	GAME_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 61926695),
 	DETECTION_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 64650419, Common::DE_DEU, nullptr, ADGF_NO_FLAGS, GAMEFLAG_FORCE_AA), // German retail
 	GAME_ENTRY_STEAM("geminirue", "gemini_rue_pc.exe", "83362d0d2c1d4909bfbd85c04c95bde2", 72960932),
@@ -4603,13 +4608,16 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("geminirue", "gemini rue.exe", "3b7e8fdf626c2f8e6538669cdab91c0e", 61437936, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win v3.0
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("geminirue", "gemini rue.exe", "3b7e8fdf626c2f8e6538669cdab91c0e", 61472052, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win v3.2
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("geminirue", "gemini rue.exe", "3b7e8fdf626c2f8e6538669cdab91c0e", 61472840, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win v3.5
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("geminirue", "gemini rue.exe", "3b7e8fdf626c2f8e6538669cdab91c0e", 61473936, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win v3.6
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("geminirue", "ac2game.dat", "ab6c0c2d89adb2d529131190a657be6a", 58249180, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Mac
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("geminirue", "ac2game.dat", "ab6c0c2d89adb2d529131190a657be6a", 58283296, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Mac v3.2
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("geminirue", "ac2game.dat", "ab6c0c2d89adb2d529131190a657be6a", 58284084, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Mac v3.5
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("geminirue", "ac2game.dat", "ab6c0c2d89adb2d529131190a657be6a", 58285180, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Mac v3.6
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("geminirue", "agsgame.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62059297, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Linux
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("geminirue", "Gemini Rue.ags", "ab6c0c2d89adb2d529131190a657be6a", 58249180, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  //Linux v3.0
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("geminirue", "Gemini Rue.ags", "ab6c0c2d89adb2d529131190a657be6a", 58283296, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  //Linux v3.2
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("geminirue", "Gemini Rue.ags", "ab6c0c2d89adb2d529131190a657be6a", 58284084, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  //Linux v3.5
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("geminirue", "Gemini Rue.ags", "ab6c0c2d89adb2d529131190a657be6a", 58285180, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  //Linux v3.6
 	GAME_ENTRY("geminirue", "gemini_rue_pc.exe", "e8f1d07a6b363e9cc80dac5367f1b4ba", 72860463), // Humble Bundle
 	GAME_ENTRY("geminirue", "ac2game.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62852566), // Android
 	GAME_ENTRY("geminirue", "ac2game.dat", "e8f1d07a6b363e9cc80dac5367f1b4ba", 72836785), // MacOS, Humble Bundle
@@ -4729,7 +4737,11 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "OldSkies.ags", "4f356539cb679daf9c45cf592abddb47", 2477364607, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win/Linux 1.1
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "OldSkies.ags", "4f356539cb679daf9c45cf592abddb47", 2477364738, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win/Linux 1.2
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "OldSkies.ags", "4f356539cb679daf9c45cf592abddb47", 2477367366, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win/Linux 1.4
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "OldSkies.ags", "4f356539cb679daf9c45cf592abddb47", 2477368417, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win/Linux 1.5
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "OldSkies.ags", "4f356539cb679daf9c45cf592abddb47", 2477370512, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win/Linux 1.6?
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "OldSkies.ags", "4f356539cb679daf9c45cf592abddb47", 2477371093, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win/Linux 1.8
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "ac2game.dat", "4f356539cb679daf9c45cf592abddb47", 2477364851, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Mac 1.2
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "ac2game.dat", "4f356539cb679daf9c45cf592abddb47", 2477370512, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Mac 1.8
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467834855, 0),
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467845009, 0),
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("oott", "agsgame.dat", "ca8414acc5dc5687891db2d8ac5a0e76", 465662744, 0), // Linux
@@ -5670,6 +5682,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("thecatlady", "Cat Lady.exe", "92320e20e3d4c70a94d89e2f797e65c1", 752683721),  // v1.1 Screen7
 	DEMO_ENTRY("thedarktrial", "dark trial demo.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 36442694),  // Eng-Hun
 	DEMO_ENTRY_EN("theeternalnight", "Hotel.exe", "615e73fc1874e92d60a1996c2330ea36", 29586297),
+	DEMO_ENTRY_EN("theexpedition", "The Expendition.ags", "56bd625738bbcf0127f93018de62bdfd", 3398656),
 	DEMO_ENTRY_EN("thejourneyofiesir", "The Journey of Iesir.exe", "376a3f162c7940d990325c53edc20fed", 70444514),
 	DEMO_ENTRY("theloneloser", "demo (english).exe", "0500aacb6c176d47ac0f8158f055db83", 6082095), //Eng-Ita
 	DEMO_ENTRY_EN("themajesticconspiracy", "majestic.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 17929647),
@@ -9747,6 +9760,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("y", "LD49.exe", "776a62db4387dc68be92ef9933399fd5", 15326041),  // Windows
 	GAME_ENTRY("yago", "Yago.exe", "7c6e063343fc2ec2bfffc93a1bbd6cfe", 864427955),  //Eng-Esp Win
 	GAME_ENTRY("yago", "Yago.ags", "1f5c1900e2e1406a0beba1e7d04520c2", 861940131),  //Eng-Esp Linux
+	GAME_ENTRY_EN_PLATFORM("yearmags", "YearOfMAGS.ags", "a46a48fe70963573978a28a53894a6eb", 1519546, "Prototype"),
 	GAME_ENTRY_EN("yipquest", "Yip Quest.ags", "8c940f9a41296602e8fce1f6698f64ea", 16478722),
 	GAME_ENTRY_EN("yipquest", "YQuest.ags", "88cfc1f39d3980cdf16b2f10b6c3cb3f", 16494301),  //v1.1 Win/Linux
 	GAME_ENTRY_EN("yipquest", "game.ags", "88cfc1f39d3980cdf16b2f10b6c3cb3f", 16494301),  //v1.1 Mac
