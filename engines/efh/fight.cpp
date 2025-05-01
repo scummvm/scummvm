@@ -1043,90 +1043,91 @@ bool EfhEngine::getTeamAttackRoundPlans() {
 		do {
 			drawCombatScreen(_teamChar[charId]._id, false, true);
 			switch (handleAndMapInput(true)) {
-			case Common::KEYCODE_a: // Attack
-				_teamChar[charId]._lastAction = 'A';
-				_teamChar[charId]._nextAttack = determineTeamTarget(_teamChar[charId]._id, 9, true);
-				if (_teamChar[charId]._nextAttack == -1)
-					_teamChar[charId]._lastAction = 0;
-				break;
-			case Common::KEYCODE_d: // Defend
-				_teamChar[charId]._lastAction = 'D';
-				break;
-			case Common::KEYCODE_h: // Hide
-				_teamChar[charId]._lastAction = 'H';
-				break;
-			case Common::KEYCODE_r: // Run
-				for (int counter2 = 0; counter2 < _teamSize; ++counter2) {
-					_teamChar[counter2]._lastAction = 'R';
-				}
-				return true;
-			case Common::KEYCODE_s: { // Status
-				int16 lastInvId = handleStatusMenu(2, _teamChar[charId]._id);
-				redrawCombatScreenWithTempText(_teamChar[charId]._id);
-				if (lastInvId >= 999) {
-					if (lastInvId == 0x7D00) // Result of Equip, Give and Drop in combat mode(2)
-						_teamChar[charId]._lastAction = 'S';
-				} else {
-					_teamChar[charId]._lastAction = 'U';
-					_teamChar[charId]._lastInventoryUsed = lastInvId;
-					int16 invEffect = _items[_npcBuf[_teamChar[charId]._id]._inventory[lastInvId]._ref]._specialEffect;
-					switch (invEffect - 1) {
-					case 0:
-					case 1:
-					case 2:
-					case 3:
-					case 4:
-					case 5:
-					case 6:
-					case 7:
-					case 8:
-					case 10:
-					case 12:
-					case 13:
-						_teamChar[charId]._nextAttack = determineTeamTarget(_teamChar[charId]._id, 9, false);
+					switch (_customAction) {
+					case kActionA: // Attack
+						_teamChar[charId]._lastAction = 'A';
+						_teamChar[charId]._nextAttack = determineTeamTarget(_teamChar[charId]._id, 9, true);
+						if (_teamChar[charId]._nextAttack == -1)
+							_teamChar[charId]._lastAction = 0;
 						break;
-
-					case 9:
-					case 11:
-					case 14:
-					case 15:
-					case 18:
-					case 24:
-					case 25:
-					case 27:
-					case 28:
-					case 29:
-					case 30:
-						displayBoxWithText("Select Character:", 3, 1, false);
-						_teamChar[charId]._nextAttack = selectOtherCharFromTeam();
+					case kActionD: // Defend
+						_teamChar[charId]._lastAction = 'D';
 						break;
-
-					case 16:
-					case 17:
-					case 26:
-						_teamChar[charId]._nextAttack = 0xC8;
+					case kActionH: // Hide
+						_teamChar[charId]._lastAction = 'H';
 						break;
-
-					case 19:
-					case 20:
-					case 21:
-					case 22:
-					case 23:
-					default:
-						_teamChar[charId]._lastInventoryUsed = lastInvId;
-						_teamChar[charId]._nextAttack = -1;
+					case kActionR: // Run
+						for (int counter2 = 0; counter2 < _teamSize; ++counter2) {
+							_teamChar[counter2]._lastAction = 'R';
+						}
+						return true;
+					case kActionS: { // Status
+						int16 lastInvId = handleStatusMenu(2, _teamChar[charId]._id);
+						redrawCombatScreenWithTempText(_teamChar[charId]._id);
+						if (lastInvId >= 999) {
+							if (lastInvId == 0x7D00) // Result of Equip, Give and Drop in combat mode(2)
+								_teamChar[charId]._lastAction = 'S';
+						} else {
+							_teamChar[charId]._lastAction = 'U';
+							_teamChar[charId]._lastInventoryUsed = lastInvId;
+							int16 invEffect = _items[_npcBuf[_teamChar[charId]._id]._inventory[lastInvId]._ref]._specialEffect;
+							switch (invEffect - 1) {
+							case 0:
+							case 1:
+							case 2:
+							case 3:
+							case 4:
+							case 5:
+							case 6:
+							case 7:
+							case 8:
+							case 10:
+							case 12:
+							case 13:
+								_teamChar[charId]._nextAttack = determineTeamTarget(_teamChar[charId]._id, 9, false);
+								break;
+		
+							case 9:
+							case 11:
+							case 14:
+							case 15:
+							case 18:
+							case 24:
+							case 25:
+							case 27:
+							case 28:
+							case 29:
+							case 30:
+								displayBoxWithText("Select Character:", 3, 1, false);
+								_teamChar[charId]._nextAttack = selectOtherCharFromTeam();
+								break;
+		
+							case 16:
+							case 17:
+							case 26:
+								_teamChar[charId]._nextAttack = 0xC8;
+								break;
+		
+							case 19:
+							case 20:
+							case 21:
+							case 22:
+							case 23:
+							default:
+								_teamChar[charId]._lastInventoryUsed = lastInvId;
+								_teamChar[charId]._nextAttack = -1;
+								break;
+							}
+						}
+					} break;
+					case kActionT:
+						redrawScreenForced();
+						waitForKey();
+						drawCombatScreen(_teamChar[charId]._id, false, true);
 						break;
+					
 					}
-				}
-
-			} break;
-			case Common::KEYCODE_t: // Terrain
-				redrawScreenForced();
-				waitForKey();
-				drawCombatScreen(_teamChar[charId]._id, false, true);
-				break;
-			default:
-				break;
+					_customAction = kActionNone;
 			}
 		} while (_teamChar[charId]._lastAction == 0 && !shouldQuit());
 	}

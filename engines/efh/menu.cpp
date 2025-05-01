@@ -125,23 +125,25 @@ bool EfhEngine::handleDeathMenu() {
 	for (bool found = false; !found && !shouldQuit();) {
 		Common::KeyCode input = waitForKey();
 		switch (input) {
-		case Common::KEYCODE_l:
-			// If the user actually loads a savegame, it'll get _saveAuthorized from the savegame (always true) and will set 'found' to true.
-			// If 'found' remains false, it means the user cancelled the loading and still needs to take a decision
-			// Original is calling loadEfhGame() because there's only one savegame, so it's not ambiguous
-			loadGameDialog();
-			found = _saveAuthorized;
-			break;
-		case Common::KEYCODE_q:
-			quitGame();
-			return true;
-			break;
-		case Common::KEYCODE_r:
-			loadEfhGame();
-			resetGame();
-			found = true;
-			_saveAuthorized = true;
-			break;
+			switch (_customAction) {
+				case kActionL:
+				// If the user actually loads a savegame, it'll get _saveAuthorized from the savegame (always true) and will set 'found' to true.
+				// If 'found' remains false, it means the user cancelled the loading and still needs to take a decision
+				// Original is calling loadEfhGame() because there's only one savegame, so it's not ambiguous
+				loadGameDialog();
+				found = _saveAuthorized;
+				break;
+				case kActionQ:
+					quitGame();
+					return true;
+					break;
+				case kActionR:
+					loadEfhGame();
+					resetGame();
+					found = true;
+					_saveAuthorized = true;
+					break;
+			}
 		case Common::KEYCODE_x: // mysterious and unexpected keycode ?
 			found = true;
 			break;
@@ -532,46 +534,49 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			Common::KeyCode input = handleAndMapInput(false);
 			if (_menuDepth == 0) {
 				switch (input) {
-				case Common::KEYCODE_a:
-					windowId = kEfhMenuActive;
-					input = Common::KEYCODE_RETURN;
-					break;
-				case Common::KEYCODE_d:
-					windowId = kEfhMenuDrop;
-					input = Common::KEYCODE_RETURN;
-					break;
-				case Common::KEYCODE_e:
-					windowId = kEfhMenuEquip;
-					input = Common::KEYCODE_RETURN;
-					break;
-				case Common::KEYCODE_g:
-					windowId = kEfhMenuGive;
-					input = Common::KEYCODE_RETURN;
-					break;
-				case Common::KEYCODE_i:
-					windowId = kEfhMenuInfo;
-					input = Common::KEYCODE_RETURN;
-					break;
-				case Common::KEYCODE_ESCAPE:
-				case Common::KEYCODE_l:
-					windowId = kEfhMenuLeave;
-					input = Common::KEYCODE_RETURN;
-					break;
-				case Common::KEYCODE_p:
-					windowId = kEfhMenuPassive;
-					input = Common::KEYCODE_RETURN;
-					break;
-				case Common::KEYCODE_t:
-					windowId = kEfhMenuTrade;
-					input = Common::KEYCODE_RETURN;
-					break;
-				case Common::KEYCODE_u:
-					windowId = kEfhMenuUse;
-					input = Common::KEYCODE_RETURN;
-					break;
-				default:
-					debugC(9, kDebugEngine, "handleStatusMenu - unhandled keys");
-					break;
+					switch (_customAction) {
+					case kActionA:
+						windowId = kEfhMenuActive;
+						input = Common::KEYCODE_RETURN;
+						break;
+					case kActionD:
+						windowId = kEfhMenuDrop;
+						input = Common::KEYCODE_RETURN;
+						break;
+					case kActionE:
+						windowId = kEfhMenuEquip;
+						input = Common::KEYCODE_RETURN;
+						break;
+					case kActionG:
+						windowId = kEfhMenuGive;
+						input = Common::KEYCODE_RETURN;
+						break;
+					case kActionI:
+						windowId = kEfhMenuInfo;
+						input = Common::KEYCODE_RETURN;
+						break;
+					case kActionEscape:
+					case kActionL:
+						windowId = kEfhMenuLeave;
+						input = Common::KEYCODE_RETURN;
+						break;
+					case kActionP:
+						windowId = kEfhMenuPassive;
+						input = Common::KEYCODE_RETURN;
+						break;
+					case kActionT:
+						windowId = kEfhMenuTrade;
+						input = Common::KEYCODE_RETURN;
+						break;
+					case kActionU:
+						windowId = kEfhMenuUse;
+						input = Common::KEYCODE_RETURN;
+						break;
+					default:
+						debugC(9, kDebugEngine, "handleStatusMenu - unhandled keys");
+						break;
+					}
+					_customAction = kActionNone;
 				}
 			} else if (_menuDepth == 1) {
 				// in the sub-menus, only a list of selectable items is displayed

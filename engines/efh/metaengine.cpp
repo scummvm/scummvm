@@ -30,10 +30,6 @@
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
-#include "backends/keymapper/action.h"
-#include "backends/keymapper/keymapper.h"
-#include "backends/keymapper/standard-actions.h"
-
 #include "efh/efh.h"
 
 namespace Efh {
@@ -208,86 +204,122 @@ Common::KeymapArray EfhMetaEngine::initKeymaps(const char *target) const {
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left click"));
-	act->setLeftClickEvent();
-	act->addDefaultInputMapping("MOUSE_LEFT");
-	act->addDefaultInputMapping("JOY_A");
-	keymap->addAction(act);
-
-	act = new Action(kStandardActionRightClick, _("Right click"));
-	act->setRightClickEvent();
-	act->addDefaultInputMapping("MOUSE_RIGHT");
-	act->addDefaultInputMapping("JOY_B");
-	keymap->addAction(act);
-
 	act = new Action(kStandardActionSave, _("Save game"));
 	act->setCustomEngineActionEvent(kActionSave);
 	act->addDefaultInputMapping("F5");
-	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	act->addDefaultInputMapping("Ctrl+s");
 	keymap->addAction(act);
 
 	act = new Action(kStandardActionLoad, _("Load game"));
 	act->setCustomEngineActionEvent(kActionLoad);
 	act->addDefaultInputMapping("F7");
-	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	act->addDefaultInputMapping("Ctrl+l");
 	keymap->addAction(act);
 
-	act = new Action("MOVEUP", _("Move up"));
-	act->setCustomEngineActionEvent(kActionMoveUp);
-	act->addDefaultInputMapping("UP");
-	act->addDefaultInputMapping("JOY_UP");
+	act = new Action("A", _("A"));
+	act->setCustomEngineActionEvent(kActionA);
+	act->addDefaultInputMapping("a");
 	keymap->addAction(act);
 
-	act = new Action("MOVEDOWN", _("Move down"));
+	act = new Action("H",_( "H"));
+	act->setCustomEngineActionEvent(kActionH);
+	act->addDefaultInputMapping("h");
+	keymap->addAction(act);
+
+	act = new Action("D", _("D"));
+	act->setCustomEngineActionEvent(kActionD);
+	act->addDefaultInputMapping("d");
+	keymap->addAction(act);
+
+	act = new Action("R", _("R"));
+	act->setCustomEngineActionEvent(kActionR);
+	act->addDefaultInputMapping("r");
+	keymap->addAction(act);
+
+	act = new Action("S", _("S"));
+	act->setCustomEngineActionEvent(kActionS);
+	act->addDefaultInputMapping("s");
+	keymap->addAction(act);
+
+	act = new Action("T", _("T"));
+	act->setCustomEngineActionEvent(kActionT);
+	act->addDefaultInputMapping("t");
+	keymap->addAction(act);
+
+	act = new Action("L", _("L"));
+	act->setCustomBackendActionAxisEvent(kActionL);
+	act->addDefaultInputMapping("l");
+	keymap->addAction(act);
+
+	act = new Action("Q", _("Q"));
+	act->setCustomBackendActionAxisEvent(kActionQ);
+	act->addDefaultInputMapping("q");
+	keymap->addAction(act);
+
+	act = new Action("ESC", _("ESC"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("KEYCODE_ESCAPE");
+	keymap->addAction(act);
+
+	act = new Action(kStandardActionMoveDown, _("goSouth"));
 	act->setCustomEngineActionEvent(kActionMoveDown);
-	act->addDefaultInputMapping("DOWN");
-	act->addDefaultInputMapping("JOY_DOWN");
+	act->addDefaultInputMapping("KEYCODE_DOWN");
+	act->addDefaultInputMapping("KEYCODE_KP2");
 	keymap->addAction(act);
 
-	act = new Action("MOVELEFT", _("Move left"));
-	act->setCustomEngineActionEvent(kActionMoveLeft);
-	act->addDefaultInputMapping("LEFT");
-	act->addDefaultInputMapping("JOY_LEFT");
-	keymap->addAction(act);
-
-	act = new Action("MOVERIGHT", _("Move right"));
-	act->setCustomEngineActionEvent(kActionMoveRight);
-	act->addDefaultInputMapping("RIGHT");
-	act->addDefaultInputMapping("JOY_RIGHT");
-	keymap->addAction(act);
-
-	act = new Action("MOVEUPLEFT", _("Move up left"));
-	act->setCustomEngineActionEvent(kActionMoveUpLeft);
-	act->addDefaultInputMapping("HOME");
-	keymap->addAction(act);
-
-	act = new Action("MOVEUPRIGHT", _("Move up right"));
-	act->setCustomEngineActionEvent(kActionMoveUpRight);
-	act->addDefaultInputMapping("PAGEUP");
-	keymap->addAction(act);
-
-	act = new Action("MOVEDOWNLEFT", _("Move down left"));
+	act = new Action("Movement Down left", _("goSouthEast"));
 	act->setCustomEngineActionEvent(kActionMoveDownLeft);
-	act->addDefaultInputMapping("END");
+	act->addDefaultInputMapping("KEYCODE_END");
 	keymap->addAction(act);
 
-	act = new Action("MOVEDOWNRIGHT", _("Move down right"));
+	act = new Action("Movement Down Right", _("goSouthWest"));
 	act->setCustomEngineActionEvent(kActionMoveDownRight);
-	act->addDefaultInputMapping("PAGEDOWN");
+	act->addDefaultInputMapping("KEYCODE_PAGEDOWN");
 	keymap->addAction(act);
 
-	act = new Action("CHARACTER1STATUS", _("Character 1 status"));
-	act->setCustomEngineActionEvent(kActionCharacter1Status);
+	act = new Action(kStandardActionMoveUp, _("goNorth"));
+	act->setCustomEngineActionEvent(kActionMoveUp);
+	act->addDefaultInputMapping("KEYCODE_UP");
+	act->addDefaultInputMapping("KEYCODE_KP8");
+	keymap->addAction(act);
+
+	act = new Action("Movement Up left", _("goNorthEast"));
+	act->setCustomEngineActionEvent(kActionMoveUpLeft);
+	act->addDefaultInputMapping("KEYCODE_HOME");
+	keymap->addAction(act);
+
+	act = new Action("Movement Up Right", _("goNorthWest"));
+	act->setCustomEngineActionEvent(kActionMoveUpRight);
+	act->addDefaultInputMapping("KEYCODE_PAGEUP");
+	keymap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("goEast"));
+	act->setCustomEngineActionEvent(kActionMoveRight);
+	act->addDefaultInputMapping("KEYCODE_RIGHT");
+	act->addDefaultInputMapping("KEYCODE_KP6");
+	keymap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("goWest"));
+	act->setCustomEngineActionEvent(kActionMoveLeft);
+	act->addDefaultInputMapping("KEYCODE_LEFT");
+	act->addDefaultInputMapping("KEYCODE_KP4");
+	keymap->addAction(act);
+
+	act = new Action("ShowCharacterPortraitsOne", _("Display Character Summary One"));
+	act->setCustomEngineActionEvent(kActionShowCharacterPortraitsOne);
+	act->addDefaultInputMapping("1");
 	act->addDefaultInputMapping("F1");
 	keymap->addAction(act);
 
-	act = new Action("CHARACTER2STATUS", _("Character 2 status"));
-	act->setCustomEngineActionEvent(kActionCharacter2Status);
+	act = new Action("ShowCharacterPortraitsTwo", _("Display Character Summary Two"));
+	act->setCustomEngineActionEvent(kActionShowCharacterPortraitsTwo);
+	act->addDefaultInputMapping("2");
 	act->addDefaultInputMapping("F2");
 	keymap->addAction(act);
 
-	act = new Action("CHARACTER3STATUS", _("Character 3 status"));
-	act->setCustomEngineActionEvent(kActionCharacter3Status);
+	act = new Action("ShowCharacterPortraitsThree", _("Display Character Summary Three"));
+	act->setCustomEngineActionEvent(kActionShowCharacterPortraitsThree);
+	act->addDefaultInputMapping("3");
 	act->addDefaultInputMapping("F3");
 	keymap->addAction(act);
 
