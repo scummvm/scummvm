@@ -120,6 +120,9 @@ public:
 	/** Whether texture max level is available or not. */
 	bool textureMaxLevelSupported;
 
+	/** Texture lookup result precision. */
+	unsigned int textureLookupPrecision;
+
 private:
 	/**
 	 * Returns the native GLSL version supported by the driver.
