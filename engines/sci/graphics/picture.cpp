@@ -1050,34 +1050,57 @@ static const byte vectorPatternTextureOffset[128] = {
 };
 
 void GfxPicture::vectorPatternBox(Common::Rect box, Common::Rect clipBox, byte color, byte prio, byte control) {
-	byte flag = _screen->getDrawingMask(color, prio, control);
+	byte drawMask = _screen->getDrawingMask(color, prio, control);
 
-	box.clip(clipBox);
 	for (int y = box.top; y < box.bottom; y++) {
 		for (int x = box.left; x < box.right; x++) {
-			_screen->vectorPutPixel(x, y, flag, color, prio, control);
+			vectorPatternBoxPixel(x, y, clipBox, drawMask, color, prio, control);
 		}
 	}
 }
 
 void GfxPicture::vectorPatternTexturedBox(Common::Rect box, Common::Rect clipBox, byte color, byte prio, byte control, byte texture) {
-	byte flag = _screen->getDrawingMask(color, prio, control);
+	byte drawMask = _screen->getDrawingMask(color, prio, control);
 	const bool *textureData = &vectorPatternTextures[vectorPatternTextureOffset[texture]];
 
 	for (int y = box.top; y < box.bottom; y++) {
 		for (int x = box.left; x < box.right; x++) {
 			if (*textureData) {
-				if (clipBox.contains(x, y)) {
-					_screen->vectorPutPixel(x, y, flag, color, prio, control);
-				}
+				vectorPatternBoxPixel(x, y, clipBox, drawMask, color, prio, control);
 			}
 			textureData++;
 		}
 	}
 }
 
+/**
+ * Draw a rectangle pattern pixel. Includes wrap-around behavior from the original.
+ * Patterns can be placed at the right edge of the picture with their last column
+ * going beyond the edge. These pixels wrap around to the next row with the opposite
+ * dither color than what would normally be drawn at that coordinate. This does
+ * not apply to circles because their last column only contains transparent pixels.
+ */
+void GfxPicture::vectorPatternBoxPixel(int16 x, int16 y, Common::Rect clipBox, byte drawMask, byte color, byte prio, byte control) {
+	if (!(clipBox.left <= x && clipBox.top <= y && y < clipBox.bottom)) {
+		return;
+	}
+
+	if (x < clipBox.right) {
+		// draw pixel normally if x is within bounds
+		_screen->vectorPutPixel(x, y, drawMask, color, prio, control);
+	} else if (y < clipBox.bottom - 1) {
+		// wrap pixel around to next row with opposite dither color
+		if (color & 0xf0) {
+			color ^= (color << 4); // decode
+			color = (color << 4) | (color >> 4); // swap
+			color ^= (color << 4); // re-encode
+		}
+		_screen->vectorPutPixel(0, y + 1, drawMask, color, prio, control);
+	}
+}
+
 void GfxPicture::vectorPatternCircle(Common::Rect box, Common::Rect clipBox, byte size, byte color, byte prio, byte control) {
-	byte flag = _screen->getDrawingMask(color, prio, control);
+	byte drawMask = _screen->getDrawingMask(color, prio, control);
 	assert(size < ARRAYSIZE(vectorPatternCircles));
 	const byte *circleData = vectorPatternCircles[size];
 	byte bitmap = *circleData;
@@ -1092,7 +1115,7 @@ void GfxPicture::vectorPatternCircle(Common::Rect box, Common::Rect clipBox, byt
 			}
 			if (bitmap & 1) {
 				if (clipBox.contains(x, y)) {
-					_screen->vectorPutPixel(x, y, flag, color, prio, control);
+					_screen->vectorPutPixel(x, y, drawMask, color, prio, control);
 				}
 			}
 			bitNo++;
@@ -1102,7 +1125,7 @@ void GfxPicture::vectorPatternCircle(Common::Rect box, Common::Rect clipBox, byt
 }
 
 void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, Common::Rect clipBox, byte size, byte color, byte prio, byte control, byte texture) {
-	byte flag = _screen->getDrawingMask(color, prio, control);
+	byte drawMask = _screen->getDrawingMask(color, prio, control);
 	assert(size < ARRAYSIZE(vectorPatternCircles));
 	const byte *circleData = vectorPatternCircles[size];
 	byte bitmap = *circleData;
@@ -1119,7 +1142,7 @@ void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, Common::Rect clip
 			if (bitmap & 1) {
 				if (*textureData) {
 					if (clipBox.contains(x, y)) {
-						_screen->vectorPutPixel(x, y, flag, color, prio, control);
+						_screen->vectorPutPixel(x, y, drawMask, color, prio, control);
 					}
 				}
 				textureData++;

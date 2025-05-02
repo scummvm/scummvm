@@ -72,6 +72,7 @@ private:
 	void vectorPattern(int16 x, int16 y, byte pic_color, byte pic_priority, byte pic_control, byte code, byte texture);
 	void vectorPatternBox(Common::Rect box, Common::Rect clipBox, byte color, byte prio, byte control);
 	void vectorPatternTexturedBox(Common::Rect box, Common::Rect clipBox, byte color, byte prio, byte control, byte texture);
+	void vectorPatternBoxPixel(int16 x, int16 y, Common::Rect clipBox, byte drawMask, byte color, byte prio, byte control);
 	void vectorPatternCircle(Common::Rect box, Common::Rect clipBox, byte size, byte color, byte prio, byte control);
 	void vectorPatternTexturedCircle(Common::Rect box, Common::Rect clipBox, byte size, byte color, byte prio, byte control, byte texture);
 
