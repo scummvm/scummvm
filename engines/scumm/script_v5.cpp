@@ -3052,6 +3052,14 @@ void ScummEngine_v5::o5_stopScript() {
 void ScummEngine_v5::o5_stringOps() {
 	int a, b, c, i;
 	byte *ptr;
+	int len;
+
+	// For at the very least "get string char" we need to do bounds checking
+	// because the copy protection script in floppy versions of Fate of
+	// Atlantis has a bug that causes it to access the string at a negative
+	// position. In that case we should technically return 48 (the ASCII
+	// code for "0"), but anything outside the 49-56 should be fine. See
+	// bug #15884 for further details.
 
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
@@ -3074,9 +3082,13 @@ void ScummEngine_v5::o5_stringOps() {
 		b = getVarOrDirectByte(PARAM_2);
 		c = getVarOrDirectByte(PARAM_3);
 		ptr = getResourceAddress(rtString, a);
+		len = getResourceSize(rtString, a);
 		if (ptr == nullptr)
 			error("String %d does not exist", a);
-		ptr[b] = c;
+		if (b >= 0 && b < len)
+			ptr[b] = c;
+		else
+			warning("o5_stringOps: Writing %d to string %d (size %d) out of bounds (%d)", c, a, len, b);
 		break;
 
 	case 4:											/* get string char */
@@ -3084,9 +3096,15 @@ void ScummEngine_v5::o5_stringOps() {
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
 		ptr = getResourceAddress(rtString, a);
+		len = getResourceSize(rtString, a);
 		if (ptr == nullptr)
 			error("String %d does not exist", a);
-		setResult(ptr[b]);
+		if (b >= 0 && b < len)
+			setResult(ptr[b]);
+		else {
+			warning("o5_stringOps: Reading string %d (size %d) out of bounds (%d)", a, len, b);
+			setResult(0);
+		}
 		break;
 
 	case 5:											/* create empty string */
