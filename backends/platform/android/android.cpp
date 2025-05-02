@@ -103,6 +103,16 @@ extern "C" {
 	}
 }
 
+static bool androidErrorHandler(const char *msg) {
+	if (g_system) {
+		g_system->quit();
+	}
+	__android_log_assert(nullptr, android_log_tag,
+	                     "ERROR: %s", msg);
+	// If we end up here, we failed to handle the error
+	return false;
+}
+
 #ifdef ANDROID_DEBUG_GL
 static const char *getGlErrStr(GLenum error) {
 	switch (error) {
@@ -210,6 +220,8 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	// JNI::getAndroidSDKVersionId() should be identical to the result from ("ro.build.version.sdk"),
 	// though getting it via JNI is maybe the most reliable option (?)
 	// Also __system_property_get which is used by getSystemProperty() is being deprecated in recent NDKs
+
+	Common::setErrorHandler(androidErrorHandler);
 
 	int sdkVersion = JNI::getAndroidSDKVersionId();
 
