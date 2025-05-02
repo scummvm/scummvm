@@ -941,7 +941,7 @@ int QuickTimeParser::readNAVG(Atom atom) {
 	_fd->readUint32BE(); // reserved2
 
 	debugC(2, kDebugLevelGVideo, "  cols: %d rows: %d loop_size: %d frame_duration: %d movie_type: %d",
-		_nav.columns, _nav.rows, _nav.loop_size, _nav.frame_duration, _nav.movie_type);
+		_nav.columns, _nav.rows, _nav.loop_size, _nav.frame_duration, (int)_nav.movie_type);
 	debugC(2, kDebugLevelGVideo, "  fov: %f hpan: [%f - %f] vpan: [%f - %f] initHpan: %f initVPan: %f",
 		_nav.field_of_view, _nav.startHPan, _nav.endHPan, _nav.startVPan, _nav.endVPan, _nav.initialHPan, _nav.initialVPan);
 
