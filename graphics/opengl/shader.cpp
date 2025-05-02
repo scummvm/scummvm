@@ -58,7 +58,6 @@ static const char *const compatFragment =
 		"#define outColor gl_FragColor\n"
 		"#define texture texture2D\n"
 	"#elif __VERSION__ < 130\n"
-		"#define mediump\n"
 		"#define in varying\n"
 		"#define OUTPUT\n"
 		"#define outColor gl_FragColor\n"

@@ -309,7 +309,9 @@ public:
 	static bool isSupportedByContext() {
 		return OpenGLContext.shadersSupported
 		    && OpenGLContext.multitextureSupported
-		    && OpenGLContext.framebufferObjectSupported;
+		    && OpenGLContext.framebufferObjectSupported
+		    // With 2^-8 precision this is too prone to approximation errors
+		    && OpenGLContext.textureLookupPrecision > 8;
 	}
 private:
 	void lookUpColors();
