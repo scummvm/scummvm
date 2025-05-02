@@ -629,7 +629,7 @@ void QuickTimeDecoder::PanoTrackHandler::swingTransitionHandler() {
 	// Due to floating point errors, we may end a few degrees here and there
 	// Make sure we reach the destination at the end of this loop
 	// Also we have to go back to our original quality
-	projectPanorama(3, _decoder->_fov, _decoder->_hfov, _decoder->_panAngle, _decoder->_panAngle);
+	projectPanorama(3, _decoder->_fov, _decoder->_hfov, _decoder->_tiltAngle, _decoder->_panAngle);
 }
 
 const Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::decodeNextFrame() {
