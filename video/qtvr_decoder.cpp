@@ -123,7 +123,18 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readPanoSampleDesc(Common
 	if (entry->_maximumZoom == 0.0)
 		entry->_maximumZoom = 65.0;
 
-	return entry;
+	debugC(2, kDebugLevelGVideo, "    version: %d.%d sceneTrackID: %d loResSceneTrackID: %d hotSpotTrackID: %d",
+		entry->_majorVersion, entry->_minorVersion, entry->_sceneTrackID, entry->_loResSceneTrackID, entry->_hotSpotTrackID);
+	debugC(2, kDebugLevelGVideo, "    hpan: [%f - %f] vpan: [%f - %f] zoom: [%f - %f]",
+		entry->_hPanStart, entry->_hPanEnd, entry->_vPanTop, entry->_vPanBottom, entry->_minimumZoom, entry->_maximumZoom);
+	debugC(2, kDebugLevelGVideo, "    sceneDims: [%d x %d] frames: %d sceneFrm: [%d x %d] bpp: %d",
+		entry->_sceneSizeX, entry->_sceneSizeY, entry->_numFrames, entry->_sceneNumFramesX,
+		entry->_sceneNumFramesY, entry->_sceneColorDepth);
+	debugC(2, kDebugLevelGVideo, "    hotspotDims: [%d x %d] hotspotFrm: [%d x %d] bpp: %d",
+		entry->_hotSpotSizeX, entry->_hotSpotSizeY, entry->_hotSpotNumFramesX, entry->_hotSpotNumFramesY,
+		entry->_hotSpotColorDepth);
+
+		return entry;
 }
 
 void QuickTimeDecoder::closeQTVR() {
