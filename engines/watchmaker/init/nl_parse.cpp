@@ -112,6 +112,8 @@ skipped_comms:
 					lastreadeol = 1;
 					return -1;
 				}
+				// FIXME: fallthrough intended?
+				// fallthrough
 
 			case '\t':
 			case ' ':
@@ -152,6 +154,7 @@ skipped_comms:
 				return (c + 1);
 			// }
 			// break;
+			// fallthrough
 			case '\\':
 				t = JParse_ReadByte();
 				switch (t) {
@@ -170,6 +173,7 @@ skipped_comms:
 				default:
 					a = ' ';
 				}                                    // senza break....ok
+				// fallthrough
 			default:
 				if (c++ >= jStringLimit)
 					return -1;
@@ -190,11 +194,14 @@ int NLParser::ReadNumber(void) {
 	int res;
 	if (ReadArgument(stri) < 0)
 		return 0;
-	if (stri[1] == 'x' || stri[1] == 'X')
-		sscanf(stri, "%x", &res);
-	else
+	if (stri[1] == 'x' || stri[1] == 'X') {
+		unsigned int ures;
+		sscanf(stri, "%x", &ures);
+		res = ures;
+	} else {
 		sscanf(stri, "%d", &res);
-	return (int)res;
+	}
+	return res;
 }
 
 int NLParser::SearchArgument(char *t, ...) {

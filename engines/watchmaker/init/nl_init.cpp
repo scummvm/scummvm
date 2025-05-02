@@ -474,7 +474,7 @@ public:
 			csn = ocOROLOGIAIO;
 			break;
 		}
-		debug("%s s%04d %s\n", ShortName[csn], SentenceNum - 1, CurText);
+		debug("%s s%04d %s\n", ShortName[(uint)csn], SentenceNum - 1, CurText);
 		CurText += a;
 		return (SentenceNum - 1);
 	}
@@ -488,7 +488,7 @@ public:
 			_parser->ParseError("Error Reading a string in ReadSysSent");
 		SysSent[SysSentNum++] = CurText;
 		csn = ocNOTRANS;
-		debug("%s y%04d %s\n", ShortName[csn], SysSentNum - 1, CurText);
+		debug("%s y%04d %s\n", ShortName[(uint)csn], SysSentNum - 1, CurText);
 		CurText += a;
 		return (SysSentNum - 1);
 	}
@@ -502,7 +502,7 @@ public:
 			_parser->ParseError("Error Reading a string in ReadTooltipSent");
 		TooltipSent[TooltipSentNum++] = CurText;
 		csn = ocNOTRANS;
-		debug("%s t%04d %s\n", ShortName[csn], TooltipSentNum - 1, CurText);
+		debug("%s t%04d %s\n", ShortName[(uint)csn], TooltipSentNum - 1, CurText);
 		CurText += a;
 		return (TooltipSentNum - 1);
 	}
@@ -517,7 +517,7 @@ public:
 			_parser->ParseError("Error Reading a string in ReadExtraLS");
 		ExtraLS[ExtraLSNum++] = CurText;
 		csn = ocNOTRANS;
-		debug("%s e%04d %s\n", ShortName[csn], ExtraLSNum - 1, CurText);
+		debug("%s e%04d %s\n", ShortName[(uint)csn], ExtraLSNum - 1, CurText);
 		CurText += a;
 		return (ExtraLSNum - 1);
 	}
@@ -531,7 +531,7 @@ public:
 			_parser->ParseError("Error Reading a string in ReadObjName");
 		ObjName[ObjNameNum++] = CurText;
 		csn = ocNOTRANS;
-		debug("%s n%04d %s\n", ShortName[csn], ObjNameNum - 1, CurText);
+		debug("%s n%04d %s\n", ShortName[(uint)csn], ObjNameNum - 1, CurText);
 		CurText += a;
 		return (ObjNameNum - 1);
 	}
@@ -623,8 +623,7 @@ public:
 
 int InitStructures(WGame &game) {
 	const char **filelist = InitFile;
-	//
-	int  res = TRUE;
+
 	if (!BuildDefineTable(game.workDirs._define.c_str()))
 		return 0;
 
@@ -643,7 +642,7 @@ int InitStructures(WGame &game) {
 
 	FreeDefineTable();
 	if ((CurText - TextBucket) > TEXT_BUCKET_SIZE)
-		error("TextBucket OverFlow in %s by %d", *filelist, (CurText - TextBucket));
+		error("TextBucket OverFlow in %s by %ld", *filelist, (CurText - TextBucket));
 
 	{
 		debug("\n// ROOMS DESCRIPTIONS\n");
@@ -882,7 +881,7 @@ int StructureInitializer::ParseRoom(char *s) {
 	room = &_init.Room[inx];
 
 	a = _parser->ReadArgument(str);
-	if (a < 0 || a > sizeof(room->name))return _parser->ParseError("Error reading basename in room %s", s);
+	if (a < 0 || (size_t)a > sizeof(room->name))return _parser->ParseError("Error reading basename in room %s", s);
 	strcpy((char *)room->name, str);
 
 	cr = inx;
@@ -960,7 +959,7 @@ int StructureInitializer::ParseAnim(char *s) {
 		case 2:
 			for (a = 0; a < MAX_SUBANIMS; a++) if (anim->meshLinkIsEmpty(a)) break;
 			if ((a < MAX_SUBANIMS) && (--a >= 0))
-				if ((len = _parser->ReadArgument(str)) < 0 || len > sizeof(anim->name[a])) return _parser->ParseError("Error reading animname %s in %s", str, s);
+				if ((len = _parser->ReadArgument(str)) < 0 || (long unsigned int)len > sizeof(anim->name[a])) return _parser->ParseError("Error reading animname %s in %s", str, s);
 				else strcpy((char*)anim->name[a].rawArray(), str);
 			else return _parser->ParseError("Too many subanim in Anim %s sub %d max is %d", str, a, MAX_SUBANIMS);
 			break;
@@ -978,11 +977,11 @@ int StructureInitializer::ParseAnim(char *s) {
 			else return _parser->ParseError("Too many Meshlinks in Anim %s sub %d max is %d", str, a, MAX_SUBANIMS);
 			break;
 		case 5:
-			if ((len = _parser->ReadArgument(str)) < 0 || len > sizeof(anim->RoomName)) return _parser->ParseError("Error reading RoomName %s in %s", str, s);
+			if ((len = _parser->ReadArgument(str)) < 0 || (size_t)len > sizeof(anim->RoomName)) return _parser->ParseError("Error reading RoomName %s in %s", str, s);
 			else strcpy((char*)anim->RoomName.rawArray(), str);
 			break;
 		case 6:
-			if ((len = _parser->ReadArgument(str)) < 0 || len > sizeof(anim->RoomName)) return _parser->ParseError("Error reading PortalLink %s in %s", str, s);
+			if ((len = _parser->ReadArgument(str)) < 0 || (size_t)len > sizeof(anim->RoomName)) return _parser->ParseError("Error reading PortalLink %s in %s", str, s);
 			else strcpy((char*)anim->RoomName.rawArray(), str);
 			break;
 		case 7:
@@ -1068,7 +1067,7 @@ int StructureInitializer::ParseInv(char *s) {
 			inv->action[VICTORIA] = ReadSentence();
 			break;
 		case 8:
-			if ((len = _parser->ReadArgument(str)) < 0 || len > sizeof(inv->meshlink)) return _parser->ParseError("Error reading meshlink %s in %s", str, s);
+			if ((len = _parser->ReadArgument(str)) < 0 || (size_t)len > sizeof(inv->meshlink)) return _parser->ParseError("Error reading meshlink %s in %s", str, s);
 			else strcpy((char*)inv->meshlink.rawArray(), str);
 			break;
 		case 9:
@@ -1139,7 +1138,7 @@ int StructureInitializer::ParseSound(char *s) {
 			break;
 		case 1:
 			len = _parser->ReadArgument(str);
-			if (len < 0 || len > sizeof(sound->name))return _parser->ParseError("Error reading sound 'filename' %s in %s", str, s);
+			if (len < 0 || (size_t)len > sizeof(sound->name))return _parser->ParseError("Error reading sound 'filename' %s in %s", str, s);
 			strcpy(sound->name, str);
 			break;
 		case 2:
@@ -1151,7 +1150,7 @@ int StructureInitializer::ParseSound(char *s) {
 		case 4:
 			for (a = 0; a < MAX_SOUND_MESHLINKS; a++) if (sound->meshlink[a][0] == 0) break;
 			if (a < MAX_SOUND_MESHLINKS)
-				if ((len = _parser->ReadArgument(str)) < 0 || len > sizeof(sound->meshlink[a]))return _parser->ParseError("Error reading meshlink %s in %s", str, s);
+				if ((len = _parser->ReadArgument(str)) < 0 || (size_t)len > sizeof(sound->meshlink[a]))return _parser->ParseError("Error reading meshlink %s in %s", str, s);
 				else strcpy((char*)sound->meshlink[a].rawArray(), str);
 			else _parser->ParseError("Too many Meshlink in Sound %s %d max is %d", s, a, MAX_SOUND_MESHLINKS);
 			break;
@@ -1538,7 +1537,7 @@ int StructureInitializer::ParseMusic(char *s) {
 		case 9:
 		case 10:
 			len = _parser->ReadArgument(str);
-			if (len < 0 || len > sizeof(n->name[arg - 1]))return _parser->ParseError("Error reading music 'filename' %s in %s", str, s);
+			if (len < 0 || (size_t)len > sizeof(n->name[arg - 1]))return _parser->ParseError("Error reading music 'filename' %s in %s", str, s);
 			strcpy(n->name[arg - 1], str);
 			n->vol[arg - 1] = _parser->ReadNumber();
 			break;
