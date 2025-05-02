@@ -735,6 +735,19 @@ Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::constructMosaic(VideoTrac
 }
 
 void QuickTimeDecoder::PanoTrackHandler::initPanorama() {
+	if (_decoder->_panoTrack->panoInfo.nodes.size() == 0) {
+		// This is a single node panorama
+		// We add one node to the list, so the rest of our code
+		// is happy
+		PanoTrackSample *sample = &_parent->panoSamples[0];
+
+		_decoder->_panoTrack->panoInfo.nodes.resize(1);
+		_decoder->_panoTrack->panoInfo.nodes[0].nodeID = sample->hdr.nodeID;
+		_decoder->_panoTrack->panoInfo.nodes[0].timestamp = 0;
+
+		_decoder->_panoTrack->panoInfo.defNodeID = sample->hdr.nodeID;
+	}
+
 	_decoder->goToNode(_decoder->_panoTrack->panoInfo.defNodeID);
 }
 
