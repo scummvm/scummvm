@@ -168,14 +168,14 @@ public:
 	};
 
 	struct PanoramaNode {
-		uint32 nodeID;
-		uint32 timestamp;
+		uint32 nodeID = 0;
+		uint32 timestamp = 0;
 	};
 
 	struct PanoramaInformation {
 		String name;
-		uint32 defNodeID;
-		float defZoom;
+		uint32 defNodeID = 0;
+		float defZoom = 0.0f;
 		Array<PanoramaNode> nodes;
 	};
 
