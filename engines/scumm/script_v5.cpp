@@ -3060,6 +3060,10 @@ void ScummEngine_v5::o5_stringOps() {
 	// position. In that case we should technically return 48 (the ASCII
 	// code for "0"), but anything outside the 49-56 should be fine. See
 	// bug #15884 for further details.
+	//
+	// VGA Loom writes out of bounds on startup, but we allow it since it's
+	// still within the additional 2 bytes that gets allocated for each
+	// resources as a "safety area".
 
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
@@ -3085,9 +3089,11 @@ void ScummEngine_v5::o5_stringOps() {
 		len = getResourceSize(rtString, a);
 		if (ptr == nullptr)
 			error("String %d does not exist", a);
-		if (b >= 0 && b < len)
+		if (b >= 0 && b < len + SAFETY_AREA) {
+			if (b >= len)
+				warning("o5_stringOps: Allowing writing %d to string %d (size %d) out of bounds (%d) since it's in the safety area", c, a, len, b);
 			ptr[b] = c;
-		else
+		} else
 			warning("o5_stringOps: Writing %d to string %d (size %d) out of bounds (%d)", c, a, len, b);
 		break;
 
@@ -3099,9 +3105,11 @@ void ScummEngine_v5::o5_stringOps() {
 		len = getResourceSize(rtString, a);
 		if (ptr == nullptr)
 			error("String %d does not exist", a);
-		if (b >= 0 && b < len)
+		if (b >= 0 && b < len + SAFETY_AREA) {
+			if (b >= len)
+				warning("o5_stringOps: Allowing reading from strings %d (size %d) out of bounds (%d) since it's in the safety earea", a, len, b);
 			setResult(ptr[b]);
-		else {
+		} else {
 			warning("o5_stringOps: Reading string %d (size %d) out of bounds (%d)", a, len, b);
 			setResult(0);
 		}

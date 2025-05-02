@@ -838,9 +838,6 @@ byte ResourceManager::Resource::getResourceCounter() const {
 	return _flags & RF_USAGE;
 }
 
-/* 2 bytes safety area to make "precaching" of bytes in the gdi drawer easier */
-#define SAFETY_AREA 2
-
 byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 	debugC(DEBUG_RESOURCE, "_res->createResource(%s,%d,%d)", nameOfResType(type), idx, size);
 

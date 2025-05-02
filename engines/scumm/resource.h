@@ -27,6 +27,11 @@
 
 namespace Scumm {
 
+// Extra space allocated for every resource. Originaly a safety area to make
+// "precaching" of bytes in the gdi drawer easier. Now also taken into
+// consideration when doing bounds checking in o5_stringOps().
+#define SAFETY_AREA 2
+
 enum {
 	OF_OWNER_MASK = 0x0F,
 	OF_STATE_MASK = 0xF0,
