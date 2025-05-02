@@ -3091,10 +3091,10 @@ void ScummEngine_v5::o5_stringOps() {
 			error("String %d does not exist", a);
 		if (b >= 0 && b < len + SAFETY_AREA) {
 			if (b >= len)
-				warning("o5_stringOps: Allowing writing %d to string %d (size %d) out of bounds (%d) since it's in the safety area", c, a, len, b);
+			  warning("o5_stringOps: Allowing OOB write string%d[%d] = %d (size %d) (within safety area)", a, b, c, len);
 			ptr[b] = c;
 		} else
-			warning("o5_stringOps: Writing %d to string %d (size %d) out of bounds (%d)", c, a, len, b);
+			warning("o5_stringOps: Denying OOB write string-%d[%d] = %d (size %d)", a, b, c, len);
 		break;
 
 	case 4:											/* get string char */
@@ -3107,10 +3107,10 @@ void ScummEngine_v5::o5_stringOps() {
 			error("String %d does not exist", a);
 		if (b >= 0 && b < len + SAFETY_AREA) {
 			if (b >= len)
-				warning("o5_stringOps: Allowing reading from strings %d (size %d) out of bounds (%d) since it's in the safety earea", a, len, b);
+				warning("o5_stringOps: Allowing OOB read string-%d[%d] (size %d) (within safety area)", a, b, len);
 			setResult(ptr[b]);
 		} else {
-			warning("o5_stringOps: Reading string %d (size %d) out of bounds (%d)", a, len, b);
+			warning("o5_stringOps: Denying OOB read string-%d[%d] (size %d)", a, b, len);
 			setResult(0);
 		}
 		break;
