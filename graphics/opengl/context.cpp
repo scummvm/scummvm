@@ -78,6 +78,7 @@ void Context::reset() {
 	textureBorderClampSupported = false;
 	textureMirrorRepeatSupported = false;
 	textureMaxLevelSupported = false;
+	textureLookupPrecision = 0;
 }
 
 void Context::initialize(ContextType contextType) {
@@ -240,6 +241,13 @@ void Context::initialize(ContextType contextType) {
 		// No border clamping in GLES2
 		textureMirrorRepeatSupported = true;
 		// TODO: textureMaxLevelSupported with GLES3
+
+		// In GLES2, texture lookup is done using lowp (and mediump is not always available)
+		GLint range[2];
+		GLint precision = 0;
+		glGetShaderPrecisionFormat(GL_FRAGMENT_SHADER, GL_LOW_FLOAT, range, &precision);
+		textureLookupPrecision = precision;
+
 		debug(5, "OpenGL: GLES2 context initialized");
 	} else if (type == kContextGLES) {
 		// GLES doesn't support shaders natively
@@ -252,6 +260,8 @@ void Context::initialize(ContextType contextType) {
 		textureEdgeClampSupported = true;
 		// No border clamping in GLES
 		// No mirror repeat in GLES
+		// Precision is irrelevant (shaders) in GLES
+
 		debug(5, "OpenGL: GLES context initialized");
 	} else if (type == kContextGL) {
 		// Official support of shaders starts with version 110
@@ -285,6 +295,10 @@ void Context::initialize(ContextType contextType) {
 		if (isGLVersionOrHigher(1, 4)) {
 			textureMirrorRepeatSupported = true;
 		}
+
+		// In OpenGL precision is always enough
+		textureLookupPrecision = UINT_MAX;
+
 		debug(5, "OpenGL: GL context initialized");
 	} else {
 		warning("OpenGL: Unknown context initialized");
@@ -315,6 +329,7 @@ void Context::initialize(ContextType contextType) {
 	debug(5, "OpenGL: Texture border clamping support: %d", textureBorderClampSupported);
 	debug(5, "OpenGL: Texture mirror repeat support: %d", textureMirrorRepeatSupported);
 	debug(5, "OpenGL: Texture max level support: %d", textureMaxLevelSupported);
+	debug(5, "OpenGL: Texture lookup precision: %d", textureLookupPrecision);
 }
 
 int Context::getGLSLVersion() const {
