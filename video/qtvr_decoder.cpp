@@ -461,8 +461,8 @@ void QuickTimeDecoder::goToNode(uint32 nodeID) {
 	}
 
 	if (idx == -1) {
-		warning("QuickTimeDecoder::goToNode(): Incorrect nodeID: %d", nodeID);
-		return;
+		warning("QuickTimeDecoder::goToNode(): Incorrect nodeID: %d (numNodes: %d)", nodeID, _panoTrack->panoSamples.size());
+		idx = 0;
 	}
 
 	_currentSample = idx;
@@ -887,7 +887,7 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 		}
 
 	if (nodeidx == -1) {
-		warning("constructPanorama(): Missing node %d in anoInfo", sample->hdr.nodeID);
+		warning("constructPanorama(): Missing node %d in panoInfo", sample->hdr.nodeID);
 		nodeidx = 0;
 	}
 
