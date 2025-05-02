@@ -367,6 +367,7 @@ void OSystem_Atari::engineInit() {
 	atari_debug("checking %s/%s", engineId.c_str(), gameId.c_str());
 
 	if (engineId == "composer"
+		|| engineId == "dgds"
 		|| engineId == "hypno"
 		|| engineId == "mohawk"
 		|| engineId == "parallaction"
