@@ -1094,6 +1094,8 @@ int QuickTimeParser::readPHOT(Atom atom) {
 	int16 numHotSpots = _fd->readSint16BE();
 	pHotSpotTable.hotSpots.resize(numHotSpots);
 
+	debugC(2, kDebugLevelGVideo, "  numHotspots: %d", numHotSpots);
+
 	for (int i = 0; i < numHotSpots; i++) {
 		pHotSpotTable.hotSpots[i].id = _fd->readUint16BE();
 
@@ -1119,6 +1121,21 @@ int QuickTimeParser::readPHOT(Atom atom) {
 
 		pHotSpotTable.hotSpots[i].nameStrOffset = _fd->readSint32BE();
 		pHotSpotTable.hotSpots[i].commentStrOffset = _fd->readSint32BE();
+
+		debugC(3, kDebugLevelGVideo, "    [%d]: id: %d type: %s (%08x) typedata: %d",
+			i, pHotSpotTable.hotSpots[i].id, tag2str(pHotSpotTable.hotSpots[i].type),
+			pHotSpotTable.hotSpots[i].type, pHotSpotTable.hotSpots[i].typeData);
+		debugC(3, kDebugLevelGVideo, "      hpan: %f vpan: %f zoom: %f",
+			pHotSpotTable.hotSpots[i].viewHPan, pHotSpotTable.hotSpots[i].viewVPan,
+			pHotSpotTable.hotSpots[i].viewZoom);
+		debugC(3, kDebugLevelGVideo, "      bbox: [%d, %d, %d, %d]",
+			pHotSpotTable.hotSpots[i].rect.top, pHotSpotTable.hotSpots[i].rect.left,
+			pHotSpotTable.hotSpots[i].rect.right, pHotSpotTable.hotSpots[i].rect.bottom);
+		debugC(3, kDebugLevelGVideo, "      curOver: %d curDown: %d curUp: %d",
+			pHotSpotTable.hotSpots[i].mouseOverCursorID, pHotSpotTable.hotSpots[i].mouseDownCursorID,
+			pHotSpotTable.hotSpots[i].mouseUpCursorID);
+		debugC(3, kDebugLevelGVideo, "      nameOffset: %d commentOffset: %d",
+			pHotSpotTable.hotSpots[i].nameStrOffset, pHotSpotTable.hotSpots[i].commentStrOffset);
 	}
 
 	return 0;
@@ -1128,6 +1145,8 @@ int QuickTimeParser::readSTRT(Atom atom) {
 	PanoStringTable &pStrTable = _panoTrack->panoSamples.back().strTable;
 
 	pStrTable.strings = _fd->readString(0, atom.size);
+
+	debugC(2, kDebugLevelGVideo, "  %s", pStrTable.strings.c_str());
 
 	return 0;
 }
@@ -1139,6 +1158,8 @@ int QuickTimeParser::readPLNK(Atom atom) {
 
 	int16 numLinks = _fd->readSint16BE();
 	pLinkTable.links.resize(numLinks);
+
+	debugC(2, kDebugLevelGVideo, "  numlinks: %d", numLinks);
 
 	for (int i = 0; i < numLinks; i++) {
 		pLinkTable.links[i].id = _fd->readUint16BE();
@@ -1158,6 +1179,11 @@ int QuickTimeParser::readPLNK(Atom atom) {
 
 		pLinkTable.links[i].nameStrOffset = _fd->readSint32BE();
 		pLinkTable.links[i].commentStrOffset = _fd->readSint32BE();
+
+		debugC(3, kDebugLevelGVideo, "    [%d]: id: %d node: %d hpan: %f vpan: %f zoom: %f name: %d comment: %d",
+			i, pLinkTable.links[i].id, pLinkTable.links[i].toNodeID, pLinkTable.links[i].toHPan,
+			pLinkTable.links[i].toVPan, pLinkTable.links[i].toZoom, pLinkTable.links[i].nameStrOffset,
+			pLinkTable.links[i].commentStrOffset);
 	}
 
 	return 0;
@@ -1170,6 +1196,8 @@ int QuickTimeParser::readPNAV(Atom atom) {
 
 	int16 numNavs = _fd->readSint16BE();
 	pLinkTable.navs.resize(numNavs);
+
+	debugC(2, kDebugLevelGVideo, "  numNavs: %d", numNavs);
 
 	for (int i = 0; i < numNavs; i++) {
 		pLinkTable.navs[i].id = _fd->readUint16BE();
@@ -1190,6 +1218,16 @@ int QuickTimeParser::readPNAV(Atom atom) {
 
 		pLinkTable.navs[i].nameStrOffset = _fd->readSint32BE();
 		pLinkTable.navs[i].commentStrOffset = _fd->readSint32BE();
+
+		debugC(3, kDebugLevelGVideo, "    [%d]: id: %d hpan: %f vpan: %f zoom: %f",
+			i, pLinkTable.navs[i].id, pLinkTable.navs[i].navgHPan, pLinkTable.navs[i].navgVPan,
+			pLinkTable.navs[i].navgZoom);
+		debugC(3, kDebugLevelGVideo, "      rect: [%d, %d, %d, %d]",
+			pLinkTable.navs[i].zoomRect.top, pLinkTable.navs[i].zoomRect.left,
+			pLinkTable.navs[i].zoomRect.right, pLinkTable.navs[i].zoomRect.bottom);
+		debugC(3, kDebugLevelGVideo, "      name: %d comment: %d",
+			pLinkTable.navs[i].nameStrOffset, pLinkTable.navs[i].commentStrOffset);
+
 	}
 
 	return 0;
