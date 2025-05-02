@@ -1058,7 +1058,7 @@ int QuickTimeParser::readPHDR(Atom atom) {
 	pHdr.minZoom = readAppleFloatField(_fd);
 	pHdr.maxHPan = readAppleFloatField(_fd);
 	pHdr.maxVPan = readAppleFloatField(_fd);
-	pHdr.minHPan = readAppleFloatField(_fd);
+	pHdr.maxZoom = readAppleFloatField(_fd);
 
 	_fd->readSint64BE(); // reserved1 + reserved2
 

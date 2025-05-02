@@ -192,6 +192,7 @@ public:
 		float maxHPan;
 		float maxVPan;
 		float minZoom;
+		float maxZoom;
 
 		int32 nameStrOffset;
 		int32 commentStrOffset;
