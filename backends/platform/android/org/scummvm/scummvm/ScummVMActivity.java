@@ -2277,6 +2277,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		// Continue: with extracting the whole assets
 		try {
 			extractAssets(assetManager, "assets", new File(_actualScummVMDataDir, "assets"));
+			extractAssets(assetManager, "doc", new File(_actualScummVMDataDir, "doc"));
 		} catch (IOException e) {
 			Log.e(ScummVM.LOG_TAG, "An error happened while extracting the assets");
 			// Don't write the new MD5SUMS: we did not finish our work well
