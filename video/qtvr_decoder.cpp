@@ -514,8 +514,10 @@ QuickTimeDecoder::PanoTrackHandler::~PanoTrackHandler() {
 		_upscaledConstructedPano->free();
 		delete _upscaledConstructedPano;
 
-		_constructedHotspots->free();
-		delete _constructedHotspots;
+		if (_constructedHotspots) {
+			_constructedHotspots->free();
+			delete _constructedHotspots;
+		}
 	}
 
 	if (_projectedPano) {
@@ -892,8 +894,10 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 		_constructedPano->free();
 		delete _constructedPano;
 
-		_constructedHotspots->free();
-		delete _constructedHotspots;
+		if (_constructedHotspots) {
+			_constructedHotspots->free();
+			delete _constructedHotspots;
+		}
 	}
 
 	debugC(1, kDebugLevelGVideo, "scene: %d (%d x %d) hotspots: %d (%d x %d)", desc->_sceneTrackID, desc->_sceneSizeX, desc->_sceneSizeY,
@@ -929,17 +933,19 @@ void QuickTimeDecoder::PanoTrackHandler::constructPanorama() {
 	// or that the upscaledConstructedPanorama has upscaled a different panorama, not the current constructedPano
 	_upscaleLevel = 0;
 
-	track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_hotSpotTrackID - 1]->targetTrack));
+	if (desc->_hotSpotTrackID) {
+		track = (VideoTrackHandler *)(_decoder->getTrack(_decoder->Common::QuickTimeParser::_tracks[desc->_hotSpotTrackID - 1]->targetTrack));
 
-	track->seek(Audio::Timestamp(0, timestamp, _decoder->_timeScale));
+		track->seek(Audio::Timestamp(0, timestamp, _decoder->_timeScale));
 
-	_constructedHotspots = constructMosaic(track, desc->_hotSpotNumFramesX, desc->_hotSpotNumFramesY, "dumps/pano-hotspot.png");
+		_constructedHotspots = constructMosaic(track, desc->_hotSpotNumFramesX, desc->_hotSpotNumFramesY, "dumps/pano-hotspot.png");
+	}
 
 	_isPanoConstructed = true;
 }
 
 Common::Point QuickTimeDecoder::PanoTrackHandler::projectPoint(int16 mx, int16 my) {
-	if (!_isPanoConstructed)
+	if (!_isPanoConstructed || !_constructedHotspots)
 		return Common::Point(-1, -1);
 
 	uint16 w = _decoder->getWidth(), h = _decoder->getHeight();
@@ -1429,13 +1435,16 @@ Graphics::FloatPoint QuickTimeDecoder::getPanAngles(int16 x, int16 y) {
 void QuickTimeDecoder::lookupHotspot(int16 x, int16 y) {
 	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
 
+	if (!track->_constructedHotspots)
+		return;
+
 	Common::Point hotspotPoint = track->projectPoint(x, y);
 
 	if (hotspotPoint.x < 0) {
 		_rolloverHotspot = nullptr;
 		_rolloverHotspotID = 0;
 	} else {
-		int hotspotId = (int)(((PanoTrackHandler *)getTrack(_panoTrack->targetTrack))->_constructedHotspots->getPixel(hotspotPoint.y, hotspotPoint.x));
+		int hotspotId = (int)track->_constructedHotspots->getPixel(hotspotPoint.y, hotspotPoint.x);
 
 		_rolloverHotspotID = hotspotId;
 
@@ -1733,8 +1742,10 @@ void QuickTimeDecoder::handlePanoKey(Common::KeyState &state, bool down, bool re
 		_zoomState = kZoomNone;
 	}
 
-	if (state.keycode == Common::KEYCODE_h && down && !repeat)
-		renderHotspots(!_renderHotspots);
+	if (state.keycode == Common::KEYCODE_h && down && !repeat) {
+		if (track->_constructedHotspots)
+			renderHotspots(!_renderHotspots);
+	}
 }
 
 enum {
