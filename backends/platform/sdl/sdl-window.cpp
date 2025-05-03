@@ -428,8 +428,8 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	if (_resizable) {
-		flags |= SDL_WINDOW_RESIZABLE;
+	if (!_resizable) {
+		flags &= ~SDL_WINDOW_RESIZABLE;
 	}
 #endif
 
@@ -547,9 +547,9 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 #endif
 
 #if SDL_VERSION_ATLEAST(3, 0, 0)
-	SDL_SetWindowResizable(_window, _resizable);
+	SDL_SetWindowResizable(_window, (flags & SDL_WINDOW_RESIZABLE) != 0);
 #elif SDL_VERSION_ATLEAST(2, 0, 5)
-	SDL_SetWindowResizable(_window, _resizable ? SDL_TRUE : SDL_FALSE);
+	SDL_SetWindowResizable(_window, (flags & SDL_WINDOW_RESIZABLE) ? SDL_TRUE : SDL_FALSE);
 #endif
 
 #if defined(MACOSX)
