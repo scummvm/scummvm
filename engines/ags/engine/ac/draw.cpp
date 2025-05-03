@@ -778,13 +778,8 @@ void draw_game_screen_callback() {
 	construct_game_screen_overlay(false);
 }
 
-void putpixel_compensate(Bitmap *ds, int xx, int yy, int col) {
-	if ((ds->GetColorDepth() == 32) && (col != 0)) {
-		// ensure the alpha channel is preserved if it has one
-		int alphaval = geta32(ds->GetPixel(xx, yy));
-		col = makeacol32(getr32(col), getg32(col), getb32(col), alphaval);
-	}
-	ds->FillRect(Rect(xx, yy, xx + get_fixed_pixel_size(1) - 1, yy + get_fixed_pixel_size(1) - 1), col);
+void putpixel_scaled(Bitmap *ds, int x, int y, int col) {
+	ds->FillRect(Rect(x, y, x + get_fixed_pixel_size(1) - 1, y + get_fixed_pixel_size(1) - 1), col);
 }
 
 void draw_sprite_support_alpha(Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, Bitmap *image, bool src_has_alpha,

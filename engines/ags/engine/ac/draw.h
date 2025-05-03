@@ -242,7 +242,9 @@ void draw_sprite_slot_support_alpha(Shared::Bitmap *ds, bool ds_has_alpha, int x
 void draw_gui_sprite(Shared::Bitmap *ds, int pic, int x, int y, bool use_alpha = true, Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha);
 void draw_gui_sprite_v330(Shared::Bitmap *ds, int pic, int x, int y, bool use_alpha = true, Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha);
 void draw_gui_sprite(Shared::Bitmap *ds, bool use_alpha, int xpos, int ypos,
-	Shared::Bitmap *image, bool src_has_alpha, Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha, int alpha = 0xFF);
+					 Shared::Bitmap *image, bool src_has_alpha, Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha, int alpha = 0xFF);
+// Puts a pixel of certain color, scales it if running in upscaled resolution (legacy feature)
+void putpixel_scaled(Shared::Bitmap *ds, int x, int y, int col);
 
 // Render game on screen
 void render_to_screen();
@@ -250,7 +252,7 @@ void render_to_screen();
 void draw_game_screen_callback();
 void GfxDriverOnInitCallback(void *data);
 bool GfxDriverSpriteEvtCallback(int evt, int data);
-void putpixel_compensate(Shared::Bitmap *g, int xx, int yy, int col);
+
 // Create the actsps[objid] image with the object drawn correctly.
 // Returns true if nothing at all has changed and actsps is still
 // intact from last time; false otherwise.

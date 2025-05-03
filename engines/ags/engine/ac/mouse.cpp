@@ -133,15 +133,15 @@ void set_mouse_cursor(int newcurs, bool force_update) {
 			                               hotspoty - _GP(game).SpriteInfos[_GP(game).invhotdotsprite].Height / 2,
 			                               _GP(game).invhotdotsprite);
 		} else {
-			putpixel_compensate(_G(dotted_mouse_cursor), hotspotx, hotspoty, MakeColor(_GP(game).hotdot));
+			putpixel_scaled(_G(dotted_mouse_cursor), hotspotx, hotspoty, MakeColor(_GP(game).hotdot));
 
 			if (_GP(game).hotdotouter > 0) {
-				int outercol = MakeColor(_GP(game).hotdotouter);
+				const int outercol = MakeColor(_GP(game).hotdotouter);
 
-				putpixel_compensate(_G(dotted_mouse_cursor), hotspotx + get_fixed_pixel_size(1), hotspoty, outercol);
-				putpixel_compensate(_G(dotted_mouse_cursor), hotspotx, hotspoty + get_fixed_pixel_size(1), outercol);
-				putpixel_compensate(_G(dotted_mouse_cursor), hotspotx - get_fixed_pixel_size(1), hotspoty, outercol);
-				putpixel_compensate(_G(dotted_mouse_cursor), hotspotx, hotspoty - get_fixed_pixel_size(1), outercol);
+				putpixel_scaled(_G(dotted_mouse_cursor), hotspotx + get_fixed_pixel_size(1), hotspoty, outercol);
+				putpixel_scaled(_G(dotted_mouse_cursor), hotspotx, hotspoty + get_fixed_pixel_size(1), outercol);
+				putpixel_scaled(_G(dotted_mouse_cursor), hotspotx - get_fixed_pixel_size(1), hotspoty, outercol);
+				putpixel_scaled(_G(dotted_mouse_cursor), hotspotx, hotspoty - get_fixed_pixel_size(1), outercol);
 			}
 		}
 		_G(mousecurs)[0] = _G(dotted_mouse_cursor);
