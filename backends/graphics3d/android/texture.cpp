@@ -216,7 +216,6 @@ void GLESBaseTexture::initSize() {
 	// Allocate room for the texture now, but pixel data gets uploaded
 	// later (perhaps with multiple TexSubImage2D operations).
 	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
-	GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
 	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
 	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
