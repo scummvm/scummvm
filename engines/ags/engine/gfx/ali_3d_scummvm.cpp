@@ -804,6 +804,7 @@ void ScummVMRendererGraphicsDriver::__fade_from_range(PALETTE source, PALETTE de
 		sys_evt_process_pending();
 		if (_pollingCallback)
 			_pollingCallback();
+		WaitForNextFrame();
 	}
 
 	set_palette_range(dest, from, to, TRUE);
