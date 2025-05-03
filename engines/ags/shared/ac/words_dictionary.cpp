@@ -27,7 +27,7 @@
 
 namespace AGS3 {
 
-using AGS::Shared::Stream;
+using namespace AGS::Shared;
 
 WordsDictionary::WordsDictionary()
 	: num_words(0)
@@ -116,6 +116,15 @@ void read_string_decrypt(Stream *in, char *buf, size_t buf_sz) {
 		in->Seek(len - slen);
 	decrypt_text(buf, slen);
 	buf[slen] = 0;
+}
+
+String read_string_decrypt(Stream *in, std::vector<char> &dec_buf) {
+	size_t len = in->ReadInt32();
+	dec_buf.resize(len + 1);
+	in->Read(dec_buf.data(), len);
+	decrypt_text(dec_buf.data(), len);
+	dec_buf.back() = 0; // null terminate in case read string does not have one
+	return String(dec_buf.data());
 }
 
 void read_dictionary(WordsDictionary *dict, Stream *out) {

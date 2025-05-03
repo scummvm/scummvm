@@ -74,17 +74,15 @@ HError OpenTraFile(Stream *in) {
 
 HError ReadTraBlock(Translation &tra, Stream *in, TraFileBlock block, const String &ext_id, soff_t /*block_len*/) {
 	switch (block) {
-	case kTraFblk_Dict:
-	{
-		char original[1024];
-		char translation[1024];
+	case kTraFblk_Dict: {
+		std::vector<char> buf;
 		// Read lines until we find zero-length key & value
 		while (true) {
-			read_string_decrypt(in, original, sizeof(original));
-			read_string_decrypt(in, translation, sizeof(translation));
-			if (!original[0] && !translation[0])
+			String src_line = read_string_decrypt(in, buf);
+			String dst_line = read_string_decrypt(in, buf);
+			if (src_line.IsEmpty() || dst_line.IsEmpty())
 				break;
-			tra.Dict.insert(std::make_pair(String(original), String(translation)));
+			tra.Dict.insert(std::make_pair(src_line, dst_line));
 		}
 		return HError::None();
 	}
