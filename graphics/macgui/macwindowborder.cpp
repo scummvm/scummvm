@@ -259,6 +259,8 @@ void MacWindowBorder::setBorder(Graphics::ManagedSurface *surface, uint32 flags,
 	offsets.titleBottom = -1;
 	offsets.titlePos = 0;
 	offsets.dark = false;
+	offsets.upperScrollHeight = 0;
+	offsets.lowerScrollHeight = 0;
 	setBorder(surface, flags, offsets);
 }
 

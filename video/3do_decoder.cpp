@@ -290,6 +290,7 @@ void ThreeDOMovieDecoder::readNextPacket() {
 							uint32 currentFrameStartTime = _videoTrack->getNextFrameStartTime();
 							uint32 nextFrameStartTime = videoTimeStamp * 1000 / 240;
 							assert(currentFrameStartTime <= nextFrameStartTime);
+							(void)currentFrameStartTime;
 							_videoTrack->setNextFrameStartTime(nextFrameStartTime);
 
 							// next time we want to start at the current chunk

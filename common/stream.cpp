@@ -546,6 +546,7 @@ public:
 	virtual ~BufferedWriteStream() {
 		const bool flushResult = flushBuffer();
 		assert(flushResult);
+		(void)flushResult;
 
 		delete _parentStream;
 
@@ -560,11 +561,13 @@ public:
 		} else if (_bufSize >= dataSize) {	// check if we can flush the buffer and load the data
 			const bool flushResult = flushBuffer();
 			assert(flushResult);
+			(void)flushResult;
 			memcpy(_buf, dataPtr, dataSize);
 			_pos += dataSize;
 		} else	{	// too big for our buffer
 			const bool flushResult = flushBuffer();
 			assert(flushResult);
+			(void)flushResult;
 			return _parentStream->write(dataPtr, dataSize);
 		}
 		return dataSize;

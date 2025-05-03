@@ -97,6 +97,7 @@ void GLContext::glopBindTexture(GLParam *p) {
 	GLTexture *t;
 
 	assert(target == TGL_TEXTURE_2D);
+	(void)target;
 
 	t = find_texture(texture);
 	if (!t) {

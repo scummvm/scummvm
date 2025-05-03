@@ -31,7 +31,7 @@ ProDOSFile::ProDOSFile(char name[16], uint8 type, uint16 tBlk, uint32 eof, uint1
 	, _eof(eof)
 	, _blockPtr(bPtr)
 	, _disk(disk) {
-	strncpy(_name, name, 16);
+	Common::strlcpy(_name, name, 16);
 }
 
 /* For debugging purposes, this prints the meta data of a file */
