@@ -246,11 +246,16 @@ String String::forEachLine(String(*func)(const String, va_list args), ...) const
 	va_list args;
 	va_start(args, func);
 	while (index != npos) {
+		va_list args_;
+		va_copy(args_, args):
+
 		String textLine = substr(prev_index, index - prev_index);
-		textLine = (*func)(textLine, args);
+		textLine = (*func)(textLine, args_);
 		result = result + textLine + '\n';
 		prev_index = index + 1;
 		index = findFirstOf('\n', index + 1);
+
+		va_end(args_);
 	}
 
 	String textLine = substr(prev_index);
