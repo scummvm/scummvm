@@ -9747,11 +9747,60 @@ static const uint16 larry6HelpCursorPatch[] = {
 	PATCH_END
 };
 
+// When entering the west hallway (room 680) from outside the hotel, clicking
+//  Walk before Larry finishes moving breaks the room exits. The room's init
+//  method contains incorrect logic that calls handsOn during enterFromWestScr.
+//  Interrupting Larry's initial motion prevents the script from completing, and
+//  this leaves a stale room script that blocks the exit scripts.
+//
+// We fix this by skipping the handsOn call in rm680:init when the room has a
+//  script running. enterFromWestScr now runs in handsOff mode as intended.
+//  The east hallway (room 690) contains the correct logic and does not have
+//  this bug. See larry6HiresRoom680ExitsPatch for high-res version.
+//
+// Applies to: All versions
+// Responsible method: rm680:init
+// Fixes bug: #15910
+static const uint16 larry6Room680ExitsSignature[] = {
+	0x31, 0x4d,                         // bnt 4d
+	SIG_ADDTOOFFSET(+0x7),
+	0x18,                               // not
+	0x31,                               // bnt
+	SIG_ADDTOOFFSET(+0x36),
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa rideTram
+	0x36,                               // push
+	SIG_ADDTOOFFSET(+0xa),
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(handsOn),      // pushi handsOn
+	0x76,                               // push0
+	0x81, 0x01,                         // lag 01
+	0x4a, 0x04,                         // send 04 [ LSL6 handsOn: ]
+	SIG_ADDTOOFFSET(+0x1d),
+	0x39, SIG_SELECTOR8(init),          // pushi init
+	0x76,                               // push0
+	0x59, 0x01,                         // &rest 01 [ unused ]
+	SIG_END
+};
+
+static const uint16 larry6Room680ExitsPatch[] = {
+	0x31, 0x4b,                         // bnt 4b
+	PATCH_ADDTOOFFSET(+0x7),
+	0x2f,                               // bt [ save 1 byte ]
+	PATCH_GETORIGINALBYTES(0xb, 0x36),
+	0x74, PATCH_GETORIGINALUINT16(0x42),// lofss rideTram [ save 1 byte ]
+	PATCH_GETORIGINALBYTES(0x45, 0xa),
+	0x63, 0x12,                         // pToa script
+	0x2f, 0x08,                         // bt 08 [ skip handsOn if room has script ]
+	PATCH_GETORIGINALBYTES(0x4f, 0x28),
+	PATCH_END
+};
+
 //          script, description,                                      signature                   patch
 static const SciScriptPatcherEntry larry6Signatures[] = {
 	{  true,    75, "fix help cursor",                             1, larry6HelpCursorSignature,  larry6HelpCursorPatch },
 	{  true,    82, "death dialog memory corruption",              1, larry6DeathDialogSignature, larry6DeathDialogPatch },
 	{  true,    99, "disable speed test",                          1, sci11SpeedTestSignature,    sci11SpeedTestPatch },
+	{  true,   680, "room 680 exits",                              1, larry6Room680ExitsSignature,larry6Room680ExitsPatch },
 	{  true,   928, "Narrator lockup fix",                         1, sciNarratorLockupSignature, sciNarratorLockupPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -9997,6 +10046,39 @@ static const uint16 larry6HiresHelpCursorPatch[] = {
 	PATCH_END
 };
 
+// When entering the west hallway (room 680) from outside the hotel, clicking
+//  Walk before Larry finishes moving breaks the room exits.
+//
+// This bug originated in the low-res version, see larry6Room680ExitsPatch.
+//
+// Applies to: All versions
+// Responsible method: rm680:init
+// Fixes bug: #15910
+static const uint16 larry6HiresRoom680ExitsSignature[] = {
+	0x31, 0x58,                         // bnt 58
+	SIG_ADDTOOFFSET(+0x56),
+	SIG_MAGICDWORD,
+	0x33, 0x09,                         // jmp 09
+	0x38, SIG_SELECTOR16(handsOn),      // pushi handsOn
+	0x76,                               // push0
+	0x81, 0x01,                         // lag 01
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ LSL6 handsOn: ]
+	SIG_ADDTOOFFSET(+0x1f),
+	0x38, SIG_SELECTOR16(init),         // pushi init
+	0x76,                               // push0
+	0x59, 0x01,                         // &rest 01 [ unused ]
+	SIG_END
+};
+
+static const uint16 larry6HiresRoom680ExitsPatch[] = {
+	0x31, 0x56,                         // bnt 56
+	PATCH_ADDTOOFFSET(+0x56),
+	0x63, 0x14,                         // pToa script
+	0x2f, 0x09,                         // bt 09 [ skip handsOn if room has script ]
+	PATCH_GETORIGINALBYTES(0x5a, 0x2c),
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,     0, "disable mac volume restore",                  1, larry6HiresMacVolumeRestoreSignature, larry6HiresMacVolumeRestorePatch },
@@ -10007,6 +10089,7 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,         larry6HiresSetScalePatch },
 	{  true,   330, "fix whale oil lamp lockup",                   1, larry6HiresWhaleOilLampSignature,     larry6HiresWhaleOilLampPatch },
 	{  true,   610, "phone operator crash",                        1, larry6HiresPhoneOperatorSignature,    larry6HiresPhoneOperatorPatch },
+	{  true,   680, "room 680 exits",                              1, larry6HiresRoom680ExitsSignature,     larry6HiresRoom680ExitsPatch },
 	{  true,   850, "guard delay (1/2)",                           1, larry6HiresGuardDelaySignature1,      larry6HiresGuardDelayPatch1 },
 	{  true,   850, "guard delay (2/2)",                           1, larry6HiresGuardDelaySignature2,      larry6HiresGuardDelayPatch2 },
 	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
