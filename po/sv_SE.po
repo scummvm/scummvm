@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-30 15:51+0000\n"
+"POT-Creation-Date: 2025-05-03 09:53+0000\n"
 "PO-Revision-Date: 2025-04-26 20:35+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -4824,12 +4824,12 @@ msgstr "Förstoringsläge av. Återaktiverar dragläge..."
 msgid "Magnify Mode Off"
 msgstr "Förstoringsläge av"
 
-#: backends/platform/android/android.cpp:1102
+#: backends/platform/android/android.cpp:1114
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid "Getting help"
 msgstr "Be om hjälp"
 
-#: backends/platform/android/android.cpp:1105
+#: backends/platform/android/android.cpp:1117
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4870,13 +4870,13 @@ msgstr ""
 "svåra. Om du fastnar i ett spel, fundera på att kolla in en spelgenomgång. "
 "Vi önskar dig lycka till!\n"
 
-#: backends/platform/android/android.cpp:1114
+#: backends/platform/android/android.cpp:1126
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid "Touch Controls"
 msgstr "Pekkontroller"
 
-#: backends/platform/android/android.cpp:1117
+#: backends/platform/android/android.cpp:1129
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5011,13 +5011,13 @@ msgstr ""
 "  ![Tangentbordsikon](keyboard.png \"Tangentbordsikon\"){w=10em}\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1173
+#: backends/platform/android/android.cpp:1185
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid "Adding Games"
 msgstr "Lägger till spel"
 
-#: backends/platform/android/android.cpp:1176
+#: backends/platform/android/android.cpp:1188
 msgid ""
 "## Adding Games \n"
 "\n"

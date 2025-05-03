@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-04-30 15:51+0000\n"
+"POT-Creation-Date: 2025-05-03 09:53+0000\n"
 "PO-Revision-Date: 2025-04-28 03:18+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -4898,12 +4898,12 @@ msgstr "Mode Loupe désactivé. Réactivation du Mode Déplacement..."
 msgid "Magnify Mode Off"
 msgstr "Mode Loupe désactivé"
 
-#: backends/platform/android/android.cpp:1102
+#: backends/platform/android/android.cpp:1114
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid "Getting help"
 msgstr "Obtenir de l'aide"
 
-#: backends/platform/android/android.cpp:1105
+#: backends/platform/android/android.cpp:1117
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4946,13 +4946,13 @@ msgstr ""
 "vous êtes bloqué au cours d'une partie, pensez à consulter un guide de jeu. "
 "Bonne chance !\n"
 
-#: backends/platform/android/android.cpp:1114
+#: backends/platform/android/android.cpp:1126
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid "Touch Controls"
 msgstr "Contrôles tactiles"
 
-#: backends/platform/android/android.cpp:1117
+#: backends/platform/android/android.cpp:1129
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5091,13 +5091,13 @@ msgstr ""
 "  ![Icône Clavier](keyboard.png \"Icône Clavier\"){w=10em}\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1173
+#: backends/platform/android/android.cpp:1185
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid "Adding Games"
 msgstr "Ajouter des jeux"
 
-#: backends/platform/android/android.cpp:1176
+#: backends/platform/android/android.cpp:1188
 msgid ""
 "## Adding Games \n"
 "\n"
