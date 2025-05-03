@@ -37,6 +37,7 @@ public:
 	CBofPoint(StPoint stPoint);
 	CBofPoint(const CBofPoint &cPoint);
 	CBofPoint(const StSize &stSize);
+	CBofPoint(const Common::Point &pt);
 
 	CBofPoint(const POINT &stPoint) {
 		setWinPoint(&stPoint);
@@ -101,6 +102,11 @@ inline CBofPoint::CBofPoint(const StSize &stSize) {
 inline CBofPoint::CBofPoint(const CBofPoint &cPoint) {
 	x = cPoint.x;
 	y = cPoint.y;
+}
+
+inline CBofPoint::CBofPoint(const Common::Point &pt) {
+	x = pt.x;
+	y = pt.y;
 }
 
 inline void CBofPoint::setWinPoint(const POINT *pPoint) {

@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef BAGEL_HODJNPODJ_METAGAME_AFXWIN_H
-#define BAGEL_HODJNPODJ_METAGAME_AFXWIN_H
+#ifndef BAGEL_AFXWIN_H
+#define BAGEL_AFXWIN_H
 
-#include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/mfc.h"
 
 namespace Bagel {
 

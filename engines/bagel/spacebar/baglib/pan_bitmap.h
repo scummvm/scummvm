@@ -99,7 +99,7 @@ public:
 		return _xFOVAngle;
 	}
 	const CBofSize getViewSize() const {
-		return CBofPoint(_xCurrView.size());
+		return CBofSize(_xCurrView.size());
 	}
 	const CBofRect getCurrView() const {
 		return _xCurrView;

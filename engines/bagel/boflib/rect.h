@@ -77,9 +77,16 @@ public:
 	void operator=(const RECT &srcRect) {
 		setWinRect(&srcRect);
 	}
+	void operator=(const Common::Rect &srcRect) {
+		const RECT r = { srcRect.left, srcRect.top, srcRect.right, srcRect.bottom };
+		setWinRect(&r);
+	}
 
 	operator const RECT() {
 		return getWinRect();
+	}
+	operator const Common::Rect() {
+		return Common::Rect(left, top, right, bottom);
 	}
 
 	void offsetRect(int x, int y);

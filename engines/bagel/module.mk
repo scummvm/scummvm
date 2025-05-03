@@ -17,7 +17,7 @@ MODULE_OBJS = \
 	boflib/sound.o \
 	boflib/string.o \
 	boflib/string_functions.o \
-	mfc/afx.o \
+	mfc/object.o \
 	spacebar/baglib/area_object.o \
 	spacebar/baglib/bagel.o \
 	spacebar/baglib/base_pda.o \
@@ -126,9 +126,6 @@ MODULE_OBJS = \
 	hodjnpodj/views/rules.o \
 	hodjnpodj/views/sprites_view.o \
 	hodjnpodj/views/view.o \
-	hodjnpodj/metagame/bgen/bsutl.o \
-	hodjnpodj/metagame/bgen/item.o \
-	hodjnpodj/metagame/bgen/mgstat.o \
 	hodjnpodj/fuge/fuge.o \
 	hodjnpodj/fuge/options.o \
 	hodjnpodj/life/game.o \

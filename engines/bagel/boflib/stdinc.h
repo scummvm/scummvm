@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "bagel/afxwin.h"
 
 namespace Bagel {
 
