@@ -307,14 +307,11 @@ void QuickTimeDecoder::setPanAngle(float angle) {
 	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
 
 	if (desc->_hPanStart != desc->_hPanEnd && (desc->_hPanStart != 0.0 || desc->_hPanEnd != 360.0)) {
-		if (angle < desc->_hPanStart + _fov / 2) {
-			angle = desc->_hPanStart + _fov / 2;
-		} else if (angle > desc->_hPanEnd - _fov / 2) {
-			angle = desc->_hPanEnd - _fov / 2;
+		if (angle < desc->_hPanStart + _vfov) {
+			angle = desc->_hPanStart + _vfov;
+		} else if (angle > desc->_hPanEnd - _vfov) {
+			angle = desc->_hPanEnd - _vfov;
 		}
-
-		if (angle > 360.0)
-			angle = 360.0;
 	}
 
 	if (_panAngle != angle) {
@@ -329,10 +326,10 @@ void QuickTimeDecoder::setPanAngle(float angle) {
 void QuickTimeDecoder::setTiltAngle(float angle) {
 	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
 
-	if (angle < desc->_vPanBottom + _vfov / 2) {
-		angle = desc->_vPanBottom + _vfov / 2;
-	} else if (angle > desc->_vPanTop - _vfov / 2) {
-		angle = desc->_vPanTop - _vfov / 2;
+	if (angle < desc->_vPanBottom + _fov / 2) {
+		angle = desc->_vPanBottom + _fov / 2;
+	} else if (angle > desc->_vPanTop - _fov / 2) {
+		angle = desc->_vPanTop - _fov / 2;
 	}
 
 	if (_tiltAngle != angle) {
@@ -561,7 +558,7 @@ void QuickTimeDecoder::PanoTrackHandler::swingTransitionHandler() {
 
 	// Calculate the step
 	float stepFOV = (_decoder->_fov - _currentFOV) / NUM_STEPS;
-	float stepVFOV = (_decoder->_vfov - _currentVFOV) / NUM_STEPS;
+	float stepHFOV = (_decoder->_vfov - _currentVFOV) / NUM_STEPS;
 
 	float stepTiltAngle = (_decoder->_tiltAngle - _currentTiltAngle) / NUM_STEPS;
 
@@ -592,7 +589,7 @@ void QuickTimeDecoder::PanoTrackHandler::swingTransitionHandler() {
 	for (int i = 0; i < NUM_STEPS; i++) {
 		projectPanorama(1,
 						_currentFOV + i * stepFOV,
-						_currentVFOV + i * stepVFOV,
+						_currentVFOV + i * stepHFOV,
 						_currentTiltAngle + i * stepTiltAngle,
 						_currentPanAngle + i * stepPanAngle);
 
@@ -1913,7 +1910,6 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 			int res = 0;
 			PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
 			bool pano360 = !(desc->_hPanStart != desc->_hPanEnd && (desc->_hPanStart != 0.0 || desc->_hPanEnd != 360.0));
-			debugC(4, kDebugLevelGVideo, "pano360: %d _panAngle: %f [%f - %f] +%f  -%f fov: %f vfov: %f", pano360, _panAngle, desc->_hPanStart, desc->_hPanEnd, desc->_hPanStart + _fov, desc->_hPanEnd - _fov, _fov, _vfov);
 
 			// left
 			if (x < _mouseDrag.x - sensitivity) {
@@ -1921,7 +1917,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 				res <<= 1;
 
 				// left stop
-				if (!pano360 && _panAngle >= desc->_hPanEnd - _fov / 2)
+				if (!pano360 && _panAngle >= desc->_hPanEnd - _vfov)
 					res |= 1;
 				res <<= 1;
 			} else {
@@ -1934,7 +1930,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 				res <<= 1;
 
 				// right stop
-				if (!pano360 && _panAngle <= desc->_hPanStart + _fov / 2)
+				if (!pano360 && _panAngle <= desc->_hPanStart + _vfov)
 					res |= 1;
 				res <<= 1;
 			} else {
@@ -1947,7 +1943,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 				res <<= 1;
 
 				// down stop
-				if (_tiltAngle <= desc->_vPanBottom + _vfov / 2)
+				if (_tiltAngle <= desc->_vPanBottom + _fov / 2)
 					res |= 1;
 				res <<= 1;
 			} else {
@@ -1960,7 +1956,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 				res <<= 1;
 
 				// up stop
-				if (_tiltAngle >= desc->_vPanTop - _vfov / 2)
+				if (_tiltAngle >= desc->_vPanTop - _fov / 2)
 					res |= 1;
 			} else {
 				res <<= 1;
