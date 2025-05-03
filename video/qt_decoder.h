@@ -97,7 +97,7 @@ public:
 	float getTiltAngle() const { return _tiltAngle; }
 	void setTiltAngle(float tiltAngle);
 	float getFOV() const { return _fov; }
-	float getVFOV() const { return _vfov; }
+	float getHFOV() const { return _hfov; }
 	bool setFOV(float fov);
 	int getCurrentNodeID() { return _currentSample == -1 ? 0 : _panoTrack->panoSamples[_currentSample].hdr.nodeID; }
 	Common::String getCurrentNodeName();
@@ -235,7 +235,7 @@ private:
 	float _panAngle = 0.0f;
 	float _tiltAngle = 0.0f;
 	float _fov = 56.0f;
-	float _vfov = 56.0f;
+	float _hfov = 56.0f;
 	int _zoomState = kZoomNone;
 	bool _repeatTimerActive = false;
 
@@ -426,7 +426,7 @@ private:
 
 		// Current upscale level (0 or 1 or 2) of _upscaledConstructedPanorama compared to _constructedPano
 		// level 0 means that constructedPano was just contructed and hasn't been upscaled yet
-		// level 1 means only upscaled height (2x pixels)
+		// level 1 means only upscaled height (2x pixels) 
 		// level 2 means upscaled height and width (4x pixels)
 		uint8 _upscaleLevel = 0;
 
@@ -434,7 +434,7 @@ private:
 		// which requires storing the previous point during every change in FOV, Pan Angle and Tilt Angle
 		// If swing transition is called, this will be the start point of the transition
 		float _currentFOV = 0;
-		float _currentVFOV = 0;
+		float _currentHFOV = 0;
 		float _currentPanAngle = 0;
 		float _currentTiltAngle = 0;
 
