@@ -2809,7 +2809,7 @@ void ScummEngine_v5::o5_startMusic() {
 			// can look at the global script #9 (0x888A in 49.LFL).
 			break;
 		}
-		debugC(DEBUG_GENERAL,"o5_startMusic(%d)", b);
+		debugC(DEBUG_GENERAL, "o5_startMusic(%d)", b);
 		setResult(result);
 	} else {
 		_sound->startSound(getVarOrDirectByte(PARAM_1));
@@ -3091,7 +3091,7 @@ void ScummEngine_v5::o5_stringOps() {
 			error("String %d does not exist", a);
 		if (b >= 0 && b < len + SAFETY_AREA) {
 			if (b >= len)
-			  warning("o5_stringOps: Allowing OOB write string%d[%d] = %d (size %d) (within safety area)", a, b, c, len);
+				debug(0, "o5_stringOps: Allowing OOB write string%d[%d] = %d (size %d) (within safety area)", a, b, c, len);
 			ptr[b] = c;
 		} else
 			warning("o5_stringOps: Denying OOB write string-%d[%d] = %d (size %d)", a, b, c, len);
@@ -3107,7 +3107,7 @@ void ScummEngine_v5::o5_stringOps() {
 			error("String %d does not exist", a);
 		if (b >= 0 && b < len + SAFETY_AREA) {
 			if (b >= len)
-				warning("o5_stringOps: Allowing OOB read string-%d[%d] (size %d) (within safety area)", a, b, len);
+				debug(0, "o5_stringOps: Allowing OOB read string-%d[%d] (size %d) (within safety area)", a, b, len);
 			setResult(ptr[b]);
 		} else {
 			warning("o5_stringOps: Denying OOB read string-%d[%d] (size %d)", a, b, len);
