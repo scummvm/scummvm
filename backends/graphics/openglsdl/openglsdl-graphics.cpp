@@ -610,6 +610,13 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		_glContext = nullptr;
 	}
 
+	// Request a OpenGL (ES) context we can use.
+	// This must be done before any window creation
+	SDL_GL_ResetAttributes();
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, _glContextProfileMask);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, _glContextMajor);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, _glContextMinor);
+
 #if SDL_VERSION_ATLEAST(3, 0, 0)
 	uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
 #else
@@ -644,11 +651,6 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	if (!_wantsFullScreen && ConfMan.getBool("window_maximized", Common::ConfigManager::kApplicationDomain)) {
 		flags |= SDL_WINDOW_MAXIMIZED;
 	}
-
-	// Request a OpenGL (ES) context we can use.
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, _glContextProfileMask);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, _glContextMajor);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, _glContextMinor);
 
 #if defined(NINTENDO_SWITCH) && !SDL_VERSION_ATLEAST(3, 0, 0)
 	// Switch quirk: Switch seems to need this flag, otherwise the screen
