@@ -1550,6 +1550,15 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glFormat = GL_RGBA;
 		glType = GL_UNSIGNED_BYTE;
 		return true;
+#ifdef SCUMM_LITTLE_ENDIAN
+	} else if (pixelFormat == Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0)) { // BGR888
+#else
+	} else if (pixelFormat == Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0)) { // RGB888
+#endif
+		glIntFormat = GL_RGB;
+		glFormat = GL_RGB;
+		glType = GL_UNSIGNED_BYTE;
+		return true;
 	} else if (!OpenGLContext.packedPixelsSupported) {
 		return false;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) { // RGB565
