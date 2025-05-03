@@ -298,19 +298,19 @@ void QuickTimeDecoder::setTargetSize(uint16 w, uint16 h) {
 		_width = w;
 		_height = h;
 	}
-	// Set up the _hfov properly for the very first frame of the pano
-	// After our setFOV will handle the _hfov
-	_hfov = _fov * (float)_width / (float)_height;
+	// Set up the _vfov properly for the very first frame of the pano
+	// After our setFOV will handle the _vfov
+	_vfov = _fov * (float)_width / (float)_height;
 }
 
 void QuickTimeDecoder::setPanAngle(float angle) {
 	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
 
 	if (desc->_hPanStart != desc->_hPanEnd && (desc->_hPanStart != 0.0 || desc->_hPanEnd != 360.0)) {
-		if (angle < desc->_hPanStart + _hfov) {
-			angle = desc->_hPanStart + _hfov;
-		} else if (angle > desc->_hPanEnd - _hfov) {
-			angle = desc->_hPanEnd - _hfov;
+		if (angle < desc->_hPanStart + _vfov) {
+			angle = desc->_hPanStart + _vfov;
+		} else if (angle > desc->_hPanEnd - _vfov) {
+			angle = desc->_hPanEnd - _vfov;
 		}
 	}
 
@@ -359,8 +359,8 @@ bool QuickTimeDecoder::setFOV(float fov) {
 		track->_currentFOV = _fov;
 		_fov = fov;
 
-		track->_currentHFOV = _hfov;
-		_hfov = _fov * (float)_width / (float)_height;
+		track->_currentVFOV = _vfov;
+		_vfov = _fov * (float)_width / (float)_height;
 
 		// We need to recalculate the pan angle and tilt angle to see if it has went
 		// out of bound for the current value of FOV
@@ -558,7 +558,7 @@ void QuickTimeDecoder::PanoTrackHandler::swingTransitionHandler() {
 
 	// Calculate the step
 	float stepFOV = (_decoder->_fov - _currentFOV) / NUM_STEPS;
-	float stepHFOV = (_decoder->_hfov - _currentHFOV) / NUM_STEPS;
+	float stepHFOV = (_decoder->_vfov - _currentVFOV) / NUM_STEPS;
 
 	float stepTiltAngle = (_decoder->_tiltAngle - _currentTiltAngle) / NUM_STEPS;
 
@@ -589,7 +589,7 @@ void QuickTimeDecoder::PanoTrackHandler::swingTransitionHandler() {
 	for (int i = 0; i < NUM_STEPS; i++) {
 		projectPanorama(1,
 						_currentFOV + i * stepFOV,
-						_currentHFOV + i * stepHFOV,
+						_currentVFOV + i * stepHFOV,
 						_currentTiltAngle + i * stepTiltAngle,
 						_currentPanAngle + i * stepPanAngle);
 
@@ -636,13 +636,13 @@ void QuickTimeDecoder::PanoTrackHandler::swingTransitionHandler() {
 	// The second time there will be no transition
 	_currentFOV = _decoder->_fov;
 	_currentPanAngle = _decoder->_panAngle;
-	_currentHFOV = _decoder->_hfov;
+	_currentVFOV = _decoder->_vfov;
 	_currentTiltAngle = _decoder->_tiltAngle;
 
 	// Due to floating point errors, we may end a few degrees here and there
 	// Make sure we reach the destination at the end of this loop
 	// Also we have to go back to our original quality
-	projectPanorama(3, _decoder->_fov, _decoder->_hfov, _decoder->_tiltAngle, _decoder->_panAngle);
+	projectPanorama(3, _decoder->_fov, _decoder->_vfov, _decoder->_tiltAngle, _decoder->_panAngle);
 }
 
 const Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::decodeNextFrame() {
@@ -652,7 +652,7 @@ const Graphics::Surface *QuickTimeDecoder::PanoTrackHandler::decodeNextFrame() {
 	if (_dirty && _decoder->_transitionMode == kTransitionModeNormal) {
 		float quality = _decoder->getQuality();
 		float fov = _decoder->_fov;
-		float hfov = _decoder->_hfov;
+		float hfov = _decoder->_vfov;
 		float tiltAngle = _decoder->_tiltAngle;
 		float panAngle = _decoder->_panAngle;
 
@@ -1005,7 +1005,7 @@ Common::Point QuickTimeDecoder::PanoTrackHandler::projectPoint(int16 mx, int16 m
 	mousePixelVector[2] = topRightVector[2] + yRatio * (bottomRightVector[2] - topRightVector[2]);
 
 	float t, xCoord = 0, yawRatio = 0;
-	float horizontalFovRadians = _decoder->_hfov * M_PI / 180.0f;
+	float horizontalFovRadians = _decoder->_vfov * M_PI / 180.0f;
 	float verticalFovRadians = _decoder->_fov * M_PI / 180.0f;
 	float tiltAngleRadians = -_decoder->_tiltAngle * M_PI / 180.0f;
 
@@ -1917,7 +1917,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 				res <<= 1;
 
 				// left stop
-				if (!pano360 && _panAngle >= desc->_hPanEnd - _hfov)
+				if (!pano360 && _panAngle >= desc->_hPanEnd - _vfov)
 					res |= 1;
 				res <<= 1;
 			} else {
@@ -1930,7 +1930,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 				res <<= 1;
 
 				// right stop
-				if (!pano360 && _panAngle <= desc->_hPanStart + _hfov)
+				if (!pano360 && _panAngle <= desc->_hPanStart + _vfov)
 					res |= 1;
 				res <<= 1;
 			} else {
