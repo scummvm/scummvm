@@ -69,6 +69,13 @@ void FrameBuffer::init() {
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, getGLTexture(), 0);
 
+#ifdef EMSCRIPTEN
+		// See https://www.khronos.org/registry/webgl/specs/latest/1.0/#FBO_ATTACHMENTS
+		// and https://github.com/emscripten-core/emscripten/issues/4832
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, getWidth(), getHeight());
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+#else
 	if (usePackedBuffer()) {
 		glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[0]);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, getWidth(), getHeight());
@@ -78,29 +85,15 @@ void FrameBuffer::init() {
 	} else {
 		glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[0]);
 
-		const char *glVersion = (const char *)glGetString(GL_VERSION);
-		if (strstr(glVersion, "WebGL 1.0") != NULL) {
-			// See https://www.khronos.org/registry/webgl/specs/latest/1.0/#FBO_ATTACHMENTS
-			// and https://github.com/emscripten-core/emscripten/issues/4832
-#ifndef GL_DEPTH_STENCIL
-#define GL_DEPTH_STENCIL 0x84F9
-#endif
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, getWidth(), getHeight());
+		glRenderbufferStorage(GL_RENDERBUFFER, useDepthComponent24() ? GL_DEPTH_COMPONENT24 : GL_DEPTH_COMPONENT16, getWidth(), getHeight());
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
 
-#ifndef GL_DEPTH_STENCIL_ATTACHMENT
-#define GL_DEPTH_STENCIL_ATTACHMENT 0x821A
-#endif
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
-		} else {
-			glRenderbufferStorage(GL_RENDERBUFFER, useDepthComponent24() ? GL_DEPTH_COMPONENT24 : GL_DEPTH_COMPONENT16, getWidth(), getHeight());
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
-
-			glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[1]);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, getWidth(), getHeight());
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[1]);
-		}
+		glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[1]);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, getWidth(), getHeight());
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[1]);
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	}
+#endif
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
