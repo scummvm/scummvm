@@ -67,6 +67,7 @@ ProtrackerStream::ProtrackerStream(Common::SeekableReadStream *stream, int offs,
 	_module = new Module();
 	bool result = _module->load(*stream, offs);
 	assert(result);
+	(void)result;
 
 	startPaula();
 }

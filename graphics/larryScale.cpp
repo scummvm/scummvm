@@ -296,6 +296,8 @@ void scaleUp(
 	assert(srcHeight > 0);
 	assert(dstWidth >= srcWidth && dstWidth <= 2 * src.getWidth());
 	assert(dstHeight >= srcHeight && dstHeight <= 2 * src.getHeight());
+	(void)srcWidth;
+	(void)srcHeight;
 
 	const MarginedBitmap<bool> linePixels = createMarginedLinePixelsBitmap(src);
 	Common::Array<Color> topDstRow(dstWidth);

@@ -476,6 +476,7 @@ int DK3_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 			_stream->skip(2);
 			const uint16 rate = _stream->readUint16LE();
 			assert(rate == getRate());
+			(void)rate;
 			_stream->skip(6);
 
 			// Get predictor for both sum/diff channels

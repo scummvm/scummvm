@@ -81,6 +81,9 @@ bool MveDecoder::loadStream(Common::SeekableReadStream *stream) {
 	assert(h1 == 0x001a);
 	assert(h2 == 0x0100);
 	assert(h3 == 0x1133);
+	(void)h1;
+	(void)h2;
+	(void)h3;
 
 	readPacketHeader();
 	while (!_done && _packetKind < 3) {

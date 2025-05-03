@@ -834,6 +834,7 @@ Common::SharedArchiveContents ArjArchive::readContentsForPath(const Common::Path
 		if (hdr->method == 0) { // store
 			int32 len = archiveFile.read(uncompressedData + uncompressedPtr, hdr->origSize);
 			assert(len == hdr->origSize);
+			(void)len;
 		} else {
 			ArjDecoder *decoder = new ArjDecoder(hdr);
 
