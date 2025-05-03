@@ -228,13 +228,15 @@ uint16 GameMapGump::TraceCoordinates(int mx, int my, Point3 &coords,
 bool GameMapGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 									int32 lerp_factor) {
 	Item *item = getItem(itemid);
-
 	if (!item)
 		return false;
 
 	Container *root = item->getRootContainer();
 	if (root)
 		item = root;
+
+	if (item->hasFlags(Item::FLG_ETHEREAL))
+		return false;
 
 	// Hacks be us. Force the item into the fast area
 	item->setupLerp(Kernel::get_instance()->getFrameNum());

@@ -61,7 +61,7 @@ BarkGump::~BarkGump(void) {
 
 int BarkGump::dialogFontForActor(uint16 actor) {
 	// OK, this is a bit of a hack, but it's how it has to be
-	if (actor == kMainActorId)
+	if (actor == kMainActorId || actor == kGuardianId)
 		return 6;
 	if (actor > 256)
 		return 8;

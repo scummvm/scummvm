@@ -126,6 +126,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 	}
 
 	int32 gx, gy;
+	bool found;
 
 	if (!gump) {
 		gump = GetRootGump()->FindGump<GameMapGump>();
@@ -135,23 +136,32 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 			return;
 		}
 
-		gump->GetLocationOfItem(_owner, gx, gy, lerp_factor);
+		found = gump->GetLocationOfItem(_owner, gx, gy, lerp_factor);
 	} else {
 		assert(prev);
-		gump->GetLocationOfItem(prev->getObjId(), gx, gy, lerp_factor);
+		found = gump->GetLocationOfItem(prev->getObjId(), gx, gy, lerp_factor);
 	}
 
-	// Convert the GumpSpaceCoord relative to the world/item gump
-	// into screenspace coords
-	gy = gy - it->getShapeInfo()->_z * 8 - 16;
+	if (found) {
+		// Convert the GumpSpaceCoord relative to the world/item gump
+		// into screenspace coords
+		gy = gy - it->getShapeInfo()->_z * 8 - 16;
+	} else {
+		// If location not found show near bottom center
+		Rect r;
+		gump->GetDims(r);
+		gx = (r.left + r.right) / 2;
+		gy = r.bottom - 8;
+	}
+
 	gump->GumpToScreenSpace(gx, gy);
 
 	// Convert the screenspace coords into the coords of us
-	if (_parent) _parent->ScreenSpaceToGump(gx, gy);
+	if (_parent)
+		_parent->ScreenSpaceToGump(gx, gy);
 
 	// Set x and y, and center us over it
 	_ix = gx - _dims.width() / 2;
-//	_iy = gy-_dims.h-it->getShapeInfo()->z*8-16;
 	_iy = gy - _dims.height();
 
 

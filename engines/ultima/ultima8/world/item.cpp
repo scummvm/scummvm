@@ -28,6 +28,7 @@
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/delay_process.h"
+#include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/gfx/main_shape_archive.h"
 #include "ultima/ultima8/gfx/gump_shape_archive.h"
@@ -2031,12 +2032,10 @@ void Item::clearGump() {
 	_flags &= ~FLG_GUMP_OPEN;
 }
 
-ProcId Item::bark(const Std::string &msg, ObjId id) {
+ProcId Item::bark(const Std::string &msg) {
 	closeBark();
 
 	uint32 shapenum = getShape();
-	if (id == kGuardianId)
-		shapenum = kGuardianId; // Hack for guardian barks
 
 	Gump *gump = new BarkGump(getObjId(), msg, shapenum);
 	_bark = gump->getObjId();
@@ -3057,8 +3056,15 @@ uint32 Item::I_getWeightIncludingContents(const uint8 *args,
 uint32 Item::I_bark(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_STRING(str);
-	if (id_item == kGuardianId)
-		item = getItem(kMainActorId);
+	if (!item && id_item == kGuardianId) {
+		Actor *actor = ItemFactory::createActor(kGuardianId, 0, 0, Item::FLG_ETHEREAL | Item::FLG_IN_NPC_LIST, kGuardianId, 0, Item::EXT_PERMANENT_NPC, false);
+		if (!actor) {
+			warning("Couldn't create actor");
+			return 0;
+		}
+		ObjectManager::get_instance()->assignActorObjId(actor, kGuardianId);
+		item = actor;
+	}
 
 	if (!item) {
 		// Hack! Items should always be valid?
@@ -3066,7 +3072,7 @@ uint32 Item::I_bark(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 	}
 
-	return item->bark(str, id_item);
+	return item->bark(str);
 }
 
 uint32 Item::I_look(const uint8 *args, unsigned int /*argsize*/) {

@@ -116,7 +116,7 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 }
 
 static Actor *getActorForNpcNum(uint32 npcnum) {
-	if (npcnum == 1)
+	if (npcnum == kMainActorId)
 		return new MainActor();
 
 	// 'normal' Actor/NPC
