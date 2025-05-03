@@ -87,10 +87,10 @@ void AndroidGraphicsManager::initSurface() {
 		notifyContextCreate(OpenGL::kContextGLES2,
 				new OpenGL::Backbuffer(),
 #ifdef SCUMM_BIG_ENDIAN
-				Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),
+				Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
 				Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)
 #else
-				Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),
+				Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
 				Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)
 #endif
 		);
