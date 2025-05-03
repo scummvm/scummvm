@@ -149,7 +149,7 @@ int Button_GetMouseOverGraphic(GUIButton *butt) {
 
 void Button_SetMouseOverGraphic(GUIButton *guil, int slotn) {
 	debug_script_log("GUI %d Button %d mouseover set to slot %d", guil->ParentId, guil->Id, slotn);
-
+	slotn = std::max(0, slotn);
 	guil->SetMouseOverImage(slotn);
 	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);
 }
@@ -158,24 +158,22 @@ int Button_GetNormalGraphic(GUIButton *butt) {
 	return butt->GetNormalImage();
 }
 
-void Button_SetNormalGraphic(GUIButton *guil, int slotn) {
-	debug_script_log("GUI %d Button %d normal set to slot %d", guil->ParentId, guil->Id, slotn);
-	// update the clickable area to the same size as the graphic
-	int width, height;
-	if (slotn < 0 || (size_t)slotn >= _GP(game).SpriteInfos.size()) {
-		width = 0;
-		height = 0;
-	} else {
-		width = _GP(game).SpriteInfos[slotn].Width;
-		height = _GP(game).SpriteInfos[slotn].Height;
+void Button_SetNormalGraphic(GUIButton *butt, int slotn) {
+	debug_script_log("GUI %d Button %d normal set to slot %d", butt->ParentId, butt->Id, slotn);
+	slotn = std::max(0, slotn);
+	// NormalGraphic = 0 will turn the Button into a standard colored button
+	if (slotn == 0) {
+		butt->SetNormalImage(slotn);
+	}
+	// Any other sprite - update the clickable area to the same size as the graphic
+	else {
+		const int width = slotn < (int)_GP(game).SpriteInfos.size() ? _GP(game).SpriteInfos[slotn].Width : 0;
+		const int height = slotn < (int)_GP(game).SpriteInfos.size() ? _GP(game).SpriteInfos[slotn].Height : 0;
+		butt->SetNormalImage(slotn);
+		butt->SetSize(width, height);
 	}
 
-	if ((slotn != guil->GetNormalImage()) || (width != guil->GetWidth()) || (height != guil->GetHeight())) {
-		guil->SetNormalImage(slotn);
-		guil->SetSize(width, height);
-	}
-
-	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);
+	FindAndRemoveButtonAnimation(butt->ParentId, butt->Id);
 }
 
 int Button_GetPushedGraphic(GUIButton *butt) {
@@ -184,7 +182,7 @@ int Button_GetPushedGraphic(GUIButton *butt) {
 
 void Button_SetPushedGraphic(GUIButton *guil, int slotn) {
 	debug_script_log("GUI %d Button %d pushed set to slot %d", guil->ParentId, guil->Id, slotn);
-
+	slotn = std::max(0, slotn);
 	guil->SetPushedImage(slotn);
 	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);
 }
