@@ -31,6 +31,7 @@
 #include "ags/engine/ac/properties.h"
 #include "ags/engine/ac/string.h"
 #include "ags/engine/ac/dynobj/cc_inventory.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/gui/gui_inv.h"
 #include "ags/engine/script/script.h"
@@ -40,9 +41,18 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
+bool ValidateInventoryItem(const char *api_name, int invitem) {
+	// Inventory Item 0 is a "dummy" slot in AGS historically (idk why)
+	if ((invitem < 1) || (invitem >= _GP(game).numinvitems)) {
+		debug_script_warn("%s: invalid inventory item specified, id %d, valid range is 1..%d", invitem, _GP(game).numinvitems - 1);
+		return false;
+	}
+	return true;
+}
+
 void set_inv_item_pic(int invi, int piccy) {
-	if ((invi < 1) || (invi > _GP(game).numinvitems))
-		quit("!SetInvItemPic: invalid inventory item specified");
+	if (!ValidateInventoryItem("SetInvItemPic", invi))
+		return;
 
 	if (_GP(game).invinfo[invi].pic == piccy)
 		return;
@@ -58,8 +68,8 @@ void set_inv_item_pic(int invi, int piccy) {
 }
 
 void SetInvItemName(int invi, const char *newName) {
-	if ((invi < 1) || (invi > _GP(game).numinvitems))
-		quit("!SetInvName: invalid inventory item specified");
+	if (!ValidateInventoryItem("SetInvName", invi))
+		return;
 
 	_GP(game).invinfo[invi].name = newName;
 	// might need to redraw the GUI if it has the inv item name on it
@@ -84,19 +94,21 @@ int GetInvAt(int atx, int aty) {
 
 void GetInvName(int indx, char *buff) {
 	VALIDATE_STRING(buff);
-	if ((indx < 0) | (indx >= _GP(game).numinvitems)) quit("!GetInvName: invalid inventory item specified");
+	if (!ValidateInventoryItem("GetInvName", indx))
+		return;
 	snprintf(buff, MAX_MAXSTRLEN, "%s", get_translation(_GP(game).invinfo[indx].name.GetCStr()));
 }
 
 int GetInvGraphic(int indx) {
-	if ((indx < 0) | (indx >= _GP(game).numinvitems)) quit("!GetInvGraphic: invalid inventory item specified");
+	if (!ValidateInventoryItem("GetInvGraphic", indx))
+		return 0;
 
 	return _GP(game).invinfo[indx].pic;
 }
 
 void RunInventoryInteraction(int iit, int mood) {
-	if ((iit < 0) || (iit >= _GP(game).numinvitems))
-		quit("!RunInventoryInteraction: invalid inventory number");
+	if (!ValidateInventoryItem("RunInventoryInteraction", iit))
+		return;
 
 	// convert cursor mode to event index (in inventoryitem event table)
 	// TODO: probably move this conversion table elsewhere? should be a global info
@@ -129,8 +141,8 @@ void RunInventoryInteraction(int iit, int mood) {
 }
 
 int IsInventoryInteractionAvailable(int item, int mood) {
-	if ((item < 0) || (item >= MAX_INV))
-		quit("!IsInventoryInteractionAvailable: invalid inventory number");
+	if (!ValidateInventoryItem("IsInventoryInteractionAvailable", item))
+		return 0;
 
 	_GP(play).check_interaction_only = 1;
 
@@ -146,10 +158,16 @@ int IsInventoryInteractionAvailable(int item, int mood) {
 }
 
 int GetInvProperty(int item, const char *property) {
+	if (!ValidateInventoryItem("GetInvProperty", item))
+		return 0;
+
 	return get_int_property(_GP(game).invProps[item], _GP(play).invProps[item], property);
 }
 
 void GetInvPropertyText(int item, const char *property, char *bufer) {
+	if (!ValidateInventoryItem("GetInvPropertyText", item))
+		return;
+
 	get_text_property(_GP(game).invProps[item], _GP(play).invProps[item], property, bufer);
 }
 
