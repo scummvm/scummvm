@@ -153,10 +153,15 @@ public:
 	// Unregisters sprite from the bank and returns the bitmap
 	Bitmap		*RemoveSprite(sprkey_t index);
 	// Deletes particular sprite, marks slot as unused
-	void		DisposeSprite(sprkey_t index);
-	// Deletes all loaded asset (non-locked, non-external) images from the cache;
-	// this keeps all the auxiliary sprite information intact
-	void        DisposeAllCached();
+	void		DeleteSprite(sprkey_t index);
+	// Deletes a loaded asset image (non-external) from memory, ignoring its
+	// locked status; this keeps an auxiliary sprite information intact,
+	// so that the same sprite can be cached back later.
+	void		DisposeCached(sprkey_t index);
+	// Deletes all free cached asset images (non-locked, non-external)
+	// from memory; this keeps all the auxiliary sprite information intact,
+	// so that the same sprite(s) can be cached back later.
+	void		DisposeAllFreeCached();
 	// Deletes all data and resets cache to the clear state
 	void        Reset();
 	// Assigns new sprite for the given index; this sprite won't be auto disposed.

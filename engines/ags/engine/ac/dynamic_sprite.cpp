@@ -455,7 +455,7 @@ void free_dynamic_sprite(int slot, bool notify_all) {
 		(_GP(game).SpriteInfos[slot].Flags & SPF_DYNAMICALLOC) == 0)
 		return;
 
-	_GP(spriteset).DisposeSprite(slot);
+	_GP(spriteset).DeleteSprite(slot);
 	if (notify_all)
 		game_sprite_updated(slot, true);
 }

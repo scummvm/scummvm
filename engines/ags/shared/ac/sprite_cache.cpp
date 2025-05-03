@@ -114,7 +114,7 @@ bool SpriteCache::SetSprite(sprkey_t index, std::unique_ptr<Bitmap> image, int f
 		return false;
 	}
 	if (!image || image->GetSize().IsNull() || image->GetColorDepth() <= 0) {
-		DisposeSprite(index); // free previous item in this slot anyway
+		DeleteSprite(index); // free previous item in this slot anyway
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SetSprite: attempt to assign an invalid bitmap to index %d", index);
 		return false;
 	}
@@ -148,7 +148,7 @@ Bitmap *SpriteCache::RemoveSprite(sprkey_t index) {
 	return image;
 }
 
-void SpriteCache::DisposeSprite(sprkey_t index) {
+void SpriteCache::DeleteSprite(sprkey_t index) {
 	assert(index >= 0); // out of positive range indexes are valid to fail
 	if (index < 0 || (size_t)index >= _spriteData.size())
 		return;
@@ -245,7 +245,7 @@ void SpriteCache::FreeMem(size_t space) {
 		DisposeOldest();
 		if (tries > 1000) { // ???
 			Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "RUNTIME CACHE ERROR: STUCK IN FREE_UP_MEM; RESETTING CACHE");
-			DisposeAllCached();
+			DisposeAllFreeCached();
 		}
 	}
 }
@@ -285,7 +285,15 @@ void SpriteCache::DisposeOldest() {
 	_spriteData[sprnum].MruIt._node = nullptr;
 }
 
-void SpriteCache::DisposeAllCached() {
+void SpriteCache::DisposeCached(sprkey_t index) {
+	if (IsAssetSprite(index)) {
+		_spriteData[index].Flags &= ~SPRCACHEFLAG_LOCKED;
+		_spriteData[index].Image.reset();
+	}
+	_cacheSize = _lockedSize;
+}
+
+void SpriteCache::DisposeAllFreeCached() {
 	for (size_t i = 0; i < _spriteData.size(); ++i) {
 		if (!_spriteData[i].IsLocked() &&   // not locked
 			_spriteData[i].IsAssetSprite()) // sprite from game resource
