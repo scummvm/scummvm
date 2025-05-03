@@ -1146,7 +1146,7 @@ int QuickTimeParser::readSTRT(Atom atom) {
 
 	pStrTable.strings = _fd->readString(0, atom.size);
 
-	debugC(2, kDebugLevelGVideo, "  %s", pStrTable.strings.c_str());
+	pStrTable.debugPrint(2, kDebugLevelGVideo, "  ");
 
 	return 0;
 }
@@ -1342,6 +1342,14 @@ String QuickTimeParser::PanoStringTable::getString(int32 offset) const {
 	int32 str_length = strings[offset];
 
 	return strings.substr(str_start, str_length);
+}
+
+void QuickTimeParser::PanoStringTable::debugPrint(int level, uint32 debugChannel, String prefix) const {
+	int i = 0;
+	for (uint off = 8; off < strings.size() + 8; i++) {
+		debugC(level, debugChannel, "%s[%d]: \"%s\"", prefix.c_str(), i, getString(off).c_str());
+		off += strings[off - 8] + 1;
+	}
 }
 
 QuickTimeParser::Track::~Track() {

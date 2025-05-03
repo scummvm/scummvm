@@ -234,6 +234,7 @@ public:
 		String strings;
 
 		String getString(int32 offset) const;
+		void debugPrint(int level, uint32 debugChannel, String prefix) const;
 	};
 
 	struct PanoLink {
