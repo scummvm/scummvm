@@ -888,7 +888,7 @@ bool OpenGLSdlGraphics3dManager::saveScreenshot(const Common::Path &filename) co
 	// The second is an implementation-chosen format. " and the implementation-chosen formats are buggy:
 	// https://github.com/KhronosGroup/WebGL/issues/2747
 	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels.front());
-	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	const Graphics::PixelFormat format(OpenGL::Texture::getRGBAPixelFormat());
 #else
 
 	if (_frameBuffer) {
@@ -899,11 +899,7 @@ bool OpenGLSdlGraphics3dManager::saveScreenshot(const Common::Path &filename) co
 		_frameBuffer->attach();
 	}
 
-#ifdef SCUMM_LITTLE_ENDIAN
-	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 0, 8, 16, 0);
-#else
-	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
-#endif
+	const Graphics::PixelFormat format(OpenGL::Texture::getRGBPixelFormat());
 #endif
 
 	Graphics::Surface data;
@@ -930,7 +926,7 @@ void *OpenGLSdlGraphics3dManager::getImGuiTexture(const Graphics::Surface &image
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
 
 	// Upload pixels into texture
-	Graphics::Surface *s = image.convertTo(Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0));
+	Graphics::Surface *s = image.convertTo(OpenGL::Texture::getRGBPixelFormat());
 	glPixelStorei(GL_UNPACK_ALIGNMENT, s->format.bytesPerPixel);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, s->w, s->h, 0, GL_RGB, GL_UNSIGNED_BYTE, s->getPixels());

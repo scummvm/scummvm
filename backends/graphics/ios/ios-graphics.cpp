@@ -41,15 +41,8 @@ void iOSGraphicsManager::initSurface() {
 
 	notifyContextCreate(OpenGL::kContextGLES2,
 	new OpenGL::RenderbufferTarget(rbo),
-	// Currently iOS runs the ARMs in little-endian mode but prepare if
-	// that is changed in the future.
-#ifdef SCUMM_LITTLE_ENDIAN
-	Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
-	Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-#else
-	Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
-	Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#endif
+	OpenGL::Texture::getRGBAPixelFormat(),
+	OpenGL::Texture::getRGBAPixelFormat());
 	handleResize(sys->getScreenWidth(), sys->getScreenHeight());
 
 	_old_touch_mode = kTouchModeTouchpad;

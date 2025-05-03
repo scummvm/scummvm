@@ -145,7 +145,21 @@ public:
 	 */
 	GLuint getGLTexture() const { return _glTexture; }
 
-	static const Graphics::PixelFormat getRGBAPixelFormat();
+	static inline const Graphics::PixelFormat getRGBPixelFormat() {
+#ifdef SCUMM_BIG_ENDIAN
+		return Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#else
+		return Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#endif
+	}
+
+	static inline const Graphics::PixelFormat getRGBAPixelFormat() {
+#ifdef SCUMM_BIG_ENDIAN
+		return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+		return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
+	}
 
 protected:
 	const GLenum _glIntFormat;

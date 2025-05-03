@@ -365,9 +365,9 @@ void TextureSurfaceRGB555::updateGLTexture() {
 
 TextureSurfaceRGBA8888Swap::TextureSurfaceRGBA8888Swap()
 #ifdef SCUMM_LITTLE_ENDIAN
-	: FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) // RGBA8888 -> ABGR8888
+	: FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, OpenGL::Texture::getRGBAPixelFormat(), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) // RGBA8888 -> ABGR8888
 #else
-	: FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) // ABGR8888 -> RGBA8888
+	: FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, OpenGL::Texture::getRGBAPixelFormat(), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) // ABGR8888 -> RGBA8888
 #endif
 	  {
 }
@@ -653,13 +653,7 @@ void TextureSurfaceCLUT8GPU::updateGLTexture() {
 	// Update palette if necessary.
 	if (_paletteDirty) {
 		Graphics::Surface palSurface;
-		palSurface.init(256, 1, 256, _palette,
-#ifdef SCUMM_LITTLE_ENDIAN
-		                Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24) // ABGR8888
-#else
-		                Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0) // RGBA8888
-#endif
-		               );
+		palSurface.init(256, 1, 256, _palette, OpenGL::Texture::getRGBAPixelFormat());
 
 		_paletteTexture.updateArea(Common::Rect(256, 1), palSurface);
 		_paletteDirty = false;

@@ -596,12 +596,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	// whether we run on little endian or big endian. However, we can
 	// only safely assume that RGBA8888 in memory layout is supported.
 	// Thus, we chose this one.
-	const Graphics::PixelFormat rgba8888 =
-#ifdef SCUMM_LITTLE_ENDIAN
-	                                       Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#else
-	                                       Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#endif
+	const Graphics::PixelFormat rgba8888 = OpenGL::Texture::getRGBAPixelFormat();
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_glContext) {
@@ -980,7 +975,7 @@ void *OpenGLSdlGraphicsManager::getImGuiTexture(const Graphics::Surface &image, 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
 
 	// Upload pixels into texture
-	Graphics::Surface *s = image.convertTo(Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0), palette, palCount);
+	Graphics::Surface *s = image.convertTo(OpenGL::Texture::getRGBPixelFormat(), palette, palCount);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, s->format.bytesPerPixel);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, s->w, s->h, 0, GL_RGB, GL_UNSIGNED_BYTE, s->getPixels());

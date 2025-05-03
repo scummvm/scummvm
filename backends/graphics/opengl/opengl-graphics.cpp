@@ -221,13 +221,9 @@ Common::List<Graphics::PixelFormat> OpenGLGraphicsManager::getSupportedFormats()
 	// it is the only 32bit color mode we can safely assume to be present in
 	// OpenGL and OpenGL ES implementations. Thus, we need to supply different
 	// logical formats based on endianness.
-#ifdef SCUMM_LITTLE_ENDIAN
-	// ABGR8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-#else
-	// RGBA8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#endif
+
+	// ABGR8888/RGBA8888
+	formats.push_back(OpenGL::Texture::getRGBAPixelFormat());
 	// RGB565
 	formats.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	// RGBA5551
@@ -1494,11 +1490,7 @@ Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &forma
 		if (getGLPixelFormat(format, glIntFormat, glFormat, glType)) {
 			return new ScaledTextureSurface(glIntFormat, glFormat, glType, format, format);
 		} else {
-#ifdef SCUMM_LITTLE_ENDIAN
-			return new ScaledTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), format);
-#else
-			return new ScaledTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), format);
-#endif
+			return new ScaledTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, OpenGL::Texture::getRGBAPixelFormat(), format);
 		}
 	}
 #endif
@@ -1532,29 +1524,17 @@ Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &forma
 #endif
 		return new TextureSurfaceRGBA8888Swap();
 	} else {
-#ifdef SCUMM_LITTLE_ENDIAN
-		return new FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), format);
-#else
-		return new FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), format);
-#endif
+		return new FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, OpenGL::Texture::getRGBAPixelFormat(), format);
 	}
 }
 
 bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelFormat, GLenum &glIntFormat, GLenum &glFormat, GLenum &glType) const {
-#ifdef SCUMM_LITTLE_ENDIAN
-	if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) { // ABGR8888
-#else
-	if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
-#endif
+	if (pixelFormat == OpenGL::Texture::getRGBAPixelFormat()) { // ABGR8888 / RGBA8888
 		glIntFormat = GL_RGBA;
 		glFormat = GL_RGBA;
 		glType = GL_UNSIGNED_BYTE;
 		return true;
-#ifdef SCUMM_LITTLE_ENDIAN
-	} else if (pixelFormat == Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0)) { // BGR888
-#else
-	} else if (pixelFormat == Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0)) { // RGB888
-#endif
+	} else if (pixelFormat == OpenGL::Texture::getRGBPixelFormat()) { // BGR888 / RGB888
 		glIntFormat = GL_RGB;
 		glFormat = GL_RGB;
 		glType = GL_UNSIGNED_BYTE;
@@ -1803,15 +1783,12 @@ bool OpenGLGraphicsManager::saveScreenshot(const Common::Path &filename) const {
 	// The second is an implementation-chosen format. " and the implementation-chosen formats are buggy:
 	// https://github.com/KhronosGroup/WebGL/issues/2747
 	GL_CALL(glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels.front()));
-	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 0, 8, 16, 24);
+
+	const Graphics::PixelFormat format(OpenGL::Texture::getRGBAPixelFormat());
 #else
 	GL_CALL(glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, &pixels.front()));
 
-#ifdef SCUMM_LITTLE_ENDIAN
-	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 0, 8, 16, 0);
-#else
-	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
-#endif
+	const Graphics::PixelFormat format(OpenGL::Texture::getRGBPixelFormat());
 #endif
 	Graphics::Surface data;
 	data.init(width, height, lineSize, &pixels.front(), format);
