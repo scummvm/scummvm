@@ -3054,16 +3054,16 @@ void ScummEngine_v5::o5_stringOps() {
 	byte *ptr;
 	int len;
 
-	// For at the very least "get string char" we need to do bounds checking
-	// because the copy protection script in floppy versions of Fate of
-	// Atlantis has a bug that causes it to access the string at a negative
-	// position. In that case we should technically return 48 (the ASCII
-	// code for "0"), but anything outside the 49-56 should be fine. See
-	// bug #15884 for further details.
+	// We do bounds checking on get/set string char to catch misbehaving
+	// scripts. Known cases so far:
 	//
-	// VGA Loom writes out of bounds on startup, but we allow it since it's
-	// still within the additional 2 bytes that gets allocated for each
-	// resources as a "safety area".
+	// * Fate of Atlantis, the copy protection screen. This will read from
+	//   a negative index if the mouse cursor is moved to the top of the
+	//   screen. Technically we should return 48 (ASCII for "0"), but
+	//   anything outside the 49-56 range is fine. See bug #15884.
+	//
+	// * VGA Loom writes one byte past the end of a string on startup, but
+	//   this is within the "safety area" so it's ok.
 
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
