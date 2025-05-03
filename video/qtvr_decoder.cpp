@@ -1910,6 +1910,7 @@ void QuickTimeDecoder::updateQTVRCursor(int16 x, int16 y) {
 			int res = 0;
 			PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
 			bool pano360 = !(desc->_hPanStart != desc->_hPanEnd && (desc->_hPanStart != 0.0 || desc->_hPanEnd != 360.0));
+			debugC(4, kDebugLevelGVideo, "pano360: %d _panAngle: %f [%f - %f] +%f  -%f fov: %f hfov: %f", pano360, _panAngle, desc->_hPanStart, desc->_hPanEnd, desc->_hPanStart + _fov, desc->_hPanEnd - _fov, _fov, _hfov);
 
 			// left
 			if (x < _mouseDrag.x - sensitivity) {
