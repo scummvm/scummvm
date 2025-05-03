@@ -879,7 +879,7 @@ void Character_SetSpeed(CharacterInfo *chaa, int xspeed, int yspeed) {
 	else
 		chaa->walkspeed_y = yspeed;
 
-	if (chaa->walking > 0) {
+	if (chaa->walking > 0 && (old_speedx != xspeed || old_speedy != yspeed)) {
 		recalculate_move_speeds(&_GP(mls)[chaa->walking % TURNING_AROUND], old_speedx, old_speedy, xspeed, yspeed);
 	}
 }
