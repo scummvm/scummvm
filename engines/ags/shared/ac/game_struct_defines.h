@@ -278,7 +278,7 @@ struct FontInfo {
 	// Factor to multiply base font size by
 	int           SizeMultiplier;
 	// Outlining font index, or auto-outline flag
-	int8          Outline;
+	int           Outline;
 	// Custom vertical render offset, used mainly for fixing broken fonts
 	int           YOffset;
 	// Custom line spacing between two lines of text (0 = use font height)
