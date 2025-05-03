@@ -119,4 +119,14 @@
 	#define GL_DRAW_FRAMEBUFFER_BINDING 0x8CA6
 #endif
 
+#if !defined(GL_DEPTH_STENCIL)
+	// For WebGL: see https://github.com/emscripten-core/emscripten/issues/4832
+	#define GL_DEPTH_STENCIL 0x84F9
+#endif
+
+#if !defined(GL_DEPTH_STENCIL_ATTACHMENT)
+	// For WebGL: see https://github.com/emscripten-core/emscripten/issues/4832
+	#define GL_DEPTH_STENCIL_ATTACHMENT 0x821A
+#endif
+
 #endif
