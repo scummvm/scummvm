@@ -300,7 +300,7 @@ void QuickTimeDecoder::setTargetSize(uint16 w, uint16 h) {
 	}
 	// Set up the _hfov properly for the very first frame of the pano
 	// After our setFOV will handle the _hfov
-	_hfov = _fov * (float)_width / (float)_height;
+	_hfov = _fov * (float)_height / (float)_width;
 }
 
 void QuickTimeDecoder::setPanAngle(float angle) {
@@ -360,7 +360,7 @@ bool QuickTimeDecoder::setFOV(float fov) {
 		_fov = fov;
 
 		track->_currentHFOV = _hfov;
-		_hfov = _fov * (float)_width / (float)_height;
+		_hfov = _fov * (float)_height / (float)_width;
 
 		// We need to recalculate the pan angle and tilt angle to see if it has went
 		// out of bound for the current value of FOV
