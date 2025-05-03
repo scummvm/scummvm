@@ -10046,6 +10046,31 @@ static const uint16 larry6HiresHelpCursorPatch[] = {
 	PATCH_END
 };
 
+// LSL6 High-Res initializes the picture plane (global 3) to an incorrect width.
+//  It seems there was confusion over whether scripts should set a plane's rect
+//  with endpoint-inclusive or exclusive coordinates. This causes mirrored
+//  pictures to appear two pixels to the right, leaving a border of stale pixels
+//  from the previous screen. This occurs in the three west hallway rooms.
+//
+// When restarting the game, a different code path sets the correct width.
+//
+// We fix this by setting the correct picture plane width when the game starts.
+//
+// Applies to: All versions
+// Responsible method: rm100:dispose
+// Fixes bug: #15909
+static const uint16 larry6HiresPlaneWidthSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0140),           // pushi 0140 [ right:  320 ]
+	0x38, SIG_UINT16(0x009a),           // pushi 009a [ bottom: 154 ]
+	SIG_END
+};
+
+static const uint16 larry6HiresPlaneWidthPatch[] = {
+	0x38, PATCH_UINT16(0x013f),         // pushi 013f [ right:  319 ]
+	PATCH_END
+};
+
 // When entering the west hallway (room 680) from outside the hotel, clicking
 //  Walk before Larry finishes moving breaks the room exits.
 //
@@ -10086,6 +10111,7 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,    71, "disable volume reset on startup (2/2)",       1, larry6HiresVolumeResetSignature,      larry6HiresVolumeResetPatch },
 	{  true,    71, "disable video benchmarking",                  1, sci2BenchmarkSignature,               sci2BenchmarkPatch },
 	{  true,    75, "fix help cursor",                             1, larry6HiresHelpCursorSignature,       larry6HiresHelpCursorPatch },
+	{  true,   100, "fix plane width",                             1, larry6HiresPlaneWidthSignature,       larry6HiresPlaneWidthPatch },
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,         larry6HiresSetScalePatch },
 	{  true,   330, "fix whale oil lamp lockup",                   1, larry6HiresWhaleOilLampSignature,     larry6HiresWhaleOilLampPatch },
 	{  true,   610, "phone operator crash",                        1, larry6HiresPhoneOperatorSignature,    larry6HiresPhoneOperatorPatch },
