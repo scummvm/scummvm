@@ -89,6 +89,9 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 
 	workspace << R"(set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11) # Globally enable C++11
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+	add_definitions(-DRELEASE_BUILD)
+endif()
 
 find_package(PkgConfig QUIET)
 include(CMakeParseArguments)
