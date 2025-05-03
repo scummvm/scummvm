@@ -208,7 +208,7 @@ void recalculate_move_speeds(MoveList *mlsp, int old_speed_x, int old_speed_y, i
 	for (int i = 0; (i < mlsp->numstage) && ((mlsp->xpermove[i] != 0) || (mlsp->ypermove[i] != 0)); ++i) {
 		// First three cases where the speed is a plain factor, therefore
 		// we may simply divide on old one and multiple on a new one
-		if ((old_movspeed_x == old_movspeed_y) && (new_movspeed_x == new_movspeed_y)  // diagonal move at straight 45 degrees
+		if (((old_movspeed_x == old_movspeed_y) && (new_movspeed_x == new_movspeed_y))  // diagonal move at straight 45 degrees
 			|| (mlsp->xpermove[i] == 0)   // straight vertical move
 			|| (mlsp->ypermove[i] == 0))  // straight horizontal move
 		{
