@@ -87,8 +87,10 @@ public:
 
 	/**
 	 * Bind the texture to the active texture unit.
+	 *
+	 * @return Whether a texture really exists
 	 */
-	void bind() const;
+	bool bind() const;
 
 	/**
 	 * Sets the size of the texture in pixels.
