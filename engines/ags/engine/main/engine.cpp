@@ -756,7 +756,6 @@ void engine_init_game_settings() {
 	update_invorder();
 	_G(displayed_room) = -10;
 
-	_G(currentcursor) = 0;
 	set_our_eip(-4);
 	_G(mousey) = 100; // stop icon bar popping up
 
