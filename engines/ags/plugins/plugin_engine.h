@@ -66,9 +66,9 @@ int pl_run_plugin_debug_hooks(const char *scriptfile, int linenum);
 // Finds a plugin that wants this event, starting with pl_index;
 // returns TRUE on success and fills its index and name;
 // returns FALSE if no more suitable plugins found.
-bool pl_query_next_plugin_for_event(int event, int &pl_index, Shared::String &pl_name);
+bool pl_query_next_plugin_for_event(int event, uint32_t &pl_index, Shared::String &pl_name);
 // Runs event for a plugin identified by an index it was registered under.
-int pl_run_plugin_hook_by_index(int pl_index, int event, int data);
+int pl_run_plugin_hook_by_index(uint32_t pl_index, int event, int data);
 // Runs event for a plugin identified by its name.
 int pl_run_plugin_hook_by_name(Shared::String &pl_name, int event, int data);
 

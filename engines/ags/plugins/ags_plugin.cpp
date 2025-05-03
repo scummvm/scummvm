@@ -825,8 +825,8 @@ int pl_run_plugin_debug_hooks(const char *scriptfile, int linenum) {
 	return 0;
 }
 
-bool pl_query_next_plugin_for_event(int event, int &pl_index, String &pl_name) {
-	for (int i = pl_index; i < (int)_GP(plugins).size(); ++i) {
+bool pl_query_next_plugin_for_event(int event, uint32_t &pl_index, String &pl_name) {
+	for (uint32_t i = pl_index; i < _GP(plugins).size(); ++i) {
 		if (_GP(plugins)[i].wantHook & event) {
 			pl_index = i;
 			pl_name = _GP(plugins)[i].filename;
@@ -836,8 +836,8 @@ bool pl_query_next_plugin_for_event(int event, int &pl_index, String &pl_name) {
 	return false;
 }
 
-int pl_run_plugin_hook_by_index(int pl_index, int event, int data) {
-	if (pl_index < 0 || pl_index >= (int)_GP(plugins).size())
+int pl_run_plugin_hook_by_index(uint32_t pl_index, int event, int data) {
+	if (pl_index >= _GP(plugins).size())
 		return 0;
 	auto &plugin = _GP(plugins)[pl_index];
 	if (plugin.wantHook & event) {

@@ -775,7 +775,7 @@ void ReadPluginSaveData(Stream *in, PluginSvgVersion svg_ver, soff_t max_size) {
 	const soff_t end_pos = start_pos + max_size;
 
 	if (svg_ver >= kPluginSvgVersion_36115) {
-		int num_plugins_read = in->ReadInt32();
+		uint32_t num_plugins_read = in->ReadInt32();
 		soff_t cur_pos = start_pos;
 		while ((num_plugins_read--) > 0 && (cur_pos < end_pos)) {
 			String pl_name = StrUtil::ReadString(in);
@@ -793,7 +793,7 @@ void ReadPluginSaveData(Stream *in, PluginSvgVersion svg_ver, soff_t max_size) {
 		}
 	} else {
 		String pl_name;
-		for (int pl_index = 0; pl_query_next_plugin_for_event(AGSE_RESTOREGAME, pl_index, pl_name); ++pl_index) {
+		for (uint32_t pl_index = 0; pl_query_next_plugin_for_event(AGSE_RESTOREGAME, pl_index, pl_name); ++pl_index) {
 			auto pl_handle = AGSE_RESTOREGAME;
 			pl_set_file_handle(pl_handle, in);
 			pl_run_plugin_hook_by_index(pl_index, AGSE_RESTOREGAME, pl_handle);
@@ -806,9 +806,9 @@ void WritePluginSaveData(Stream *out) {
 	soff_t pluginnum_pos = out->GetPosition();
 	out->WriteInt32(0); // number of plugins which wrote data
 
-	int num_plugins_wrote = 0;
+	uint32_t num_plugins_wrote = 0;
 	String pl_name;
-	for (int pl_index = 0; pl_query_next_plugin_for_event(AGSE_SAVEGAME, pl_index, pl_name); ++pl_index) {
+	for (uint32_t pl_index = 0; pl_query_next_plugin_for_event(AGSE_SAVEGAME, pl_index, pl_name); ++pl_index) {
 		// NOTE: we don't care if they really write anything,
 		// but count them so long as they subscribed to AGSE_SAVEGAME
 		num_plugins_wrote++;
