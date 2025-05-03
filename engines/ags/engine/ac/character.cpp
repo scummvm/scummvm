@@ -1794,7 +1794,7 @@ void fix_player_sprite(MoveList *cmls, CharacterInfo *chinf) {
 // Check whether two characters have walked into each other
 int has_hit_another_character(int sourceChar) {
 
-	// if the character who's moving doesn't Bitmap *, don't bother checking
+	// if the character who's moving doesn't block, don't bother checking
 	if (_GP(game).chars[sourceChar].flags & CHF_NOBLOCKING)
 		return -1;
 
@@ -1804,7 +1804,7 @@ int has_hit_another_character(int sourceChar) {
 		if (ww == sourceChar) continue;
 		if (_GP(game).chars[ww].flags & CHF_NOBLOCKING) continue;
 
-		if (is_char_on_another(sourceChar, ww, nullptr, nullptr)) {
+		if (is_char_in_blocking_rect(sourceChar, ww, nullptr, nullptr)) {
 			// we are now overlapping character 'ww'
 			if ((_GP(game).chars[ww].walking) &&
 			        ((_GP(game).chars[ww].flags & CHF_AWAITINGMOVE) == 0))
@@ -2248,12 +2248,12 @@ void get_char_blocking_rect(int charid, int *x1, int *y1, int *width, int *y2) {
 		*y2 = char1->get_blocking_bottom();
 }
 
-// Check whether the source char has walked onto character ww
-int is_char_on_another(int sourceChar, int ww, int *fromxptr, int *cwidptr) {
+// Check whether the source char is standing inside otherChar's blocking rectangle
+int is_char_in_blocking_rect(int sourceChar, int otherChar, int *fromxptr, int *cwidptr) {
 
 	int fromx, cwidth;
 	int y1, y2;
-	get_char_blocking_rect(ww, &fromx, &y1, &cwidth, &y2);
+	get_char_blocking_rect(otherChar, &fromx, &y1, &cwidth, &y2);
 
 	if (fromxptr)
 		fromxptr[0] = fromx;

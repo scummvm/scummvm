@@ -217,10 +217,9 @@ CharacterInfo *GetCharacterAtRoom(int x, int y);
 // Get character ID at the given room coordinates
 int is_pos_on_character(int xx, int yy);
 void get_char_blocking_rect(int charid, int *x1, int *y1, int *width, int *y2);
-// Check whether the source char has walked onto character ww
-int is_char_on_another(int sourceChar, int ww, int *fromxptr, int *cwidptr);
+// Check whether the source char is standing inside otherChar's blocking rectangle
+int is_char_in_blocking_rect(int sourceChar, int otherChar, int *fromxptr, int *cwidptr);
 int my_getpixel(Shared::Bitmap *blk, int x, int y);
-// X and Y co-ordinates must be in 320x200 format
 int check_click_on_character(int xx, int yy, int mood);
 void _DisplaySpeechCore(int chid, const char *displbuf);
 void _DisplayThoughtCore(int chid, const char *displbuf);

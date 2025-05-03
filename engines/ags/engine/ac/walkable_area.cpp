@@ -148,9 +148,9 @@ Bitmap *prepare_walkable_areas(int sourceChar) {
 		CharacterInfo *char1 = &_GP(game).chars[ww];
 		int cwidth, fromx;
 
-		if (is_char_on_another(sourceChar, ww, &fromx, &cwidth))
-			continue;
-		if ((sourceChar >= 0) && (is_char_on_another(ww, sourceChar, nullptr, nullptr)))
+		// If walking character is already inside that other character's blocking rect,
+		// then ignore that blocking rect (otherwise character may get stuck forever)
+		if (is_char_in_blocking_rect(sourceChar, ww, &fromx, &cwidth))
 			continue;
 
 		remove_walkable_areas_from_temp(fromx, cwidth, char1->get_blocking_top(), char1->get_blocking_bottom());
