@@ -221,7 +221,7 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readGMIN,    MKTAG('g', 'm', 'i', 'n') },
 		{ &QuickTimeParser::readDefault, MKTAG('S', 'T', 'p', 'n') },
 		{ &QuickTimeParser::readPINF,    MKTAG('p', 'I', 'n', 'f') },
-		{ &QuickTimeParser::readDefault, MKTAG('S', 'T', 'p', 'n') },
+		{ &QuickTimeParser::readDefault, MKTAG('s', 't', 'p', 'n') },
 		{ &QuickTimeParser::readPHDR,    MKTAG('p', 'H', 'd', 'r') },
 		{ &QuickTimeParser::readPHOT,    MKTAG('p', 'H', 'o', 't') },
 		{ &QuickTimeParser::readSTRT,    MKTAG('s', 't', 'r', 'T') },
