@@ -112,7 +112,6 @@ void DynamicSprite_Resize(ScriptDynamicSprite *sds, int width, int height) {
 					   RectWH(0, 0, width, height));
 
 	add_dynamic_sprite(sds->slot, std::move(new_pic), (_GP(game).SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
-	game_sprite_updated(sds->slot);
 }
 
 void DynamicSprite_Flip(ScriptDynamicSprite *sds, int direction) {
@@ -129,7 +128,6 @@ void DynamicSprite_Flip(ScriptDynamicSprite *sds, int direction) {
 	new_pic->FlipBlt(sprite, 0, 0, static_cast<GraphicFlip>(direction));
 
 	add_dynamic_sprite(sds->slot, std::move(new_pic), (_GP(game).SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
-	game_sprite_updated(sds->slot);
 }
 
 void DynamicSprite_CopyTransparencyMask(ScriptDynamicSprite *sds, int sourceSprite) {
@@ -157,7 +155,6 @@ void DynamicSprite_CopyTransparencyMask(ScriptDynamicSprite *sds, int sourceSpri
 	}
 
 	BitmapHelper::CopyTransparency(target, source, dst_has_alpha, src_has_alpha);
-	game_sprite_updated(sds->slot);
 }
 
 void DynamicSprite_ChangeCanvasSize(ScriptDynamicSprite *sds, int width, int height, int x, int y) {
@@ -176,7 +173,6 @@ void DynamicSprite_ChangeCanvasSize(ScriptDynamicSprite *sds, int width, int hei
 
 	// replace the bitmap in the sprite set
 	add_dynamic_sprite(sds->slot, std::move(new_pic), (_GP(game).SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
-	game_sprite_updated(sds->slot);
 }
 
 void DynamicSprite_Crop(ScriptDynamicSprite *sds, int x1, int y1, int width, int height) {
@@ -198,7 +194,6 @@ void DynamicSprite_Crop(ScriptDynamicSprite *sds, int x1, int y1, int width, int
 
 	// replace the bitmap in the sprite set
 	add_dynamic_sprite(sds->slot, std::move(new_pic), (_GP(game).SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
-	game_sprite_updated(sds->slot);
 }
 
 void DynamicSprite_Rotate(ScriptDynamicSprite *sds, int angle, int width, int height) {
@@ -239,7 +234,6 @@ void DynamicSprite_Rotate(ScriptDynamicSprite *sds, int angle, int width, int he
 
 	// replace the bitmap in the sprite set
 	add_dynamic_sprite(sds->slot, std::move(new_pic), (_GP(game).SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
-	game_sprite_updated(sds->slot);
 }
 
 void DynamicSprite_Tint(ScriptDynamicSprite *sds, int red, int green, int blue, int saturation, int luminance) {
@@ -249,7 +243,6 @@ void DynamicSprite_Tint(ScriptDynamicSprite *sds, int red, int green, int blue, 
 	tint_image(new_pic.get(), source, red, green, blue, saturation, (luminance * 25) / 10);
 
 	add_dynamic_sprite(sds->slot, std::move(new_pic), (_GP(game).SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
-	game_sprite_updated(sds->slot);
 }
 
 int DynamicSprite_SaveToFile(ScriptDynamicSprite *sds, const char *namm) {
@@ -447,6 +440,11 @@ int add_dynamic_sprite(int slot, std::unique_ptr<Bitmap> image, bool has_alpha, 
 
 	if(!_GP(spriteset).SetSprite(slot, std::move(image), flags))
 		return 0; // failed to add the sprite, bad image or realloc failed
+
+	// Notify a new (normal) dynamic sprite in case some objects
+	// have this number assigned to their Graphic property
+	if ((extra_flags & SPF_OBJECTOWNED) == 0)
+		game_sprite_updated(slot);
 	return slot;
 }
 
