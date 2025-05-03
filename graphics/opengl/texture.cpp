@@ -53,7 +53,9 @@ void Texture::enableLinearFiltering(bool enable) {
 		_glFilter = GL_NEAREST;
 	}
 
-	bind();
+	if (!bind()) {
+		return;
+	}
 
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
@@ -97,7 +99,9 @@ void Texture::setWrapMode(WrapMode wrapMode) {
 	}
 
 
-	bind();
+	if (!bind()) {
+		return;
+	}
 
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glwrapMode));
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glwrapMode));
@@ -137,8 +141,12 @@ void Texture::create() {
 	}
 }
 
-void Texture::bind() const {
+bool Texture::bind() const {
+	if (!_glTexture) {
+		return false;
+	}
 	GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
+	return true;
 }
 
 bool Texture::setSize(uint width, uint height) {
@@ -175,7 +183,10 @@ bool Texture::setSize(uint width, uint height) {
 
 		// Allocate storage for OpenGL texture if necessary.
 		if (oldWidth != _width || oldHeight != _height) {
-			bind();
+			if (!bind()) {
+				return false;
+			}
+
 			bool error;
 			GL_CALL_CHECK(error, glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _width, _height,
 			             0, _glFormat, _glType, nullptr));
@@ -189,7 +200,9 @@ bool Texture::setSize(uint width, uint height) {
 
 void Texture::updateArea(const Common::Rect &area, const Graphics::Surface &src) {
 	// Set the texture on the active texture unit.
-	bind();
+	if (!bind()) {
+		return;
+	}
 
 	// Update the actual texture.
 	// Although we have the area of the texture buffer we want to update we
