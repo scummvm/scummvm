@@ -228,7 +228,6 @@ MODULE_OBJS = \
 	engine/debugging/log_file.o \
 	engine/debugging/message_buffer.o \
 	engine/device/mouse_w32.o \
-	engine/font/fonts_engine.o \
 	engine/game/game_init.o \
 	engine/game/savegame.o \
 	engine/game/savegame_components.o \
