@@ -166,7 +166,7 @@ int16 ModularGraphicsBackend::getWidth() {
 }
 
 PaletteManager *ModularGraphicsBackend::getPaletteManager() {
-	return _graphicsManager;
+	return _graphicsManager->getPaletteManager();
 }
 
 void ModularGraphicsBackend::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {

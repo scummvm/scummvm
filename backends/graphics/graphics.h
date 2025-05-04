@@ -34,7 +34,7 @@
  * Abstract class for graphics manager. Subclasses
  * implement the real functionality.
  */
-class GraphicsManager : public PaletteManager {
+class GraphicsManager {
 public:
 	virtual ~GraphicsManager() {}
 
@@ -82,8 +82,6 @@ public:
 
 	virtual int16 getHeight() const = 0;
 	virtual int16 getWidth() const = 0;
-	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
-	virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) = 0;
 	virtual Graphics::Surface *lockScreen() = 0;
 	virtual void unlockScreen() = 0;
@@ -112,11 +110,7 @@ public:
 	virtual void displayMessageOnOSD(const Common::U32String &msg) {}
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) {}
 
-
-	// Graphics::PaletteManager interface
-	//virtual void setPalette(const byte *colors, uint start, uint num) = 0;
-	//virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
-	//virtual void setCursorPalette(const byte *colors, uint start, uint num) = 0;
+	virtual PaletteManager *getPaletteManager() = 0;
 
 	virtual void saveScreenshot() {}
 	virtual bool lockMouse(bool lock) { return false; }

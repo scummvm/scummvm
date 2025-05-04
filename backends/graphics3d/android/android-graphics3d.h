@@ -31,7 +31,7 @@
 #include "backends/platform/android/touchcontrols.h"
 
 class AndroidGraphics3dManager :
-	public GraphicsManager, public AndroidCommonGraphics, public TouchControlsDrawer {
+	public GraphicsManager, public PaletteManager, public AndroidCommonGraphics, public TouchControlsDrawer {
 public:
 	AndroidGraphics3dManager();
 	virtual ~AndroidGraphics3dManager();
@@ -87,6 +87,7 @@ public:
 	virtual int16 getWidth() const override;
 
 	// PaletteManager API
+	PaletteManager *getPaletteManager() override { return this; }
 	virtual void setPalette(const byte *colors, uint start, uint num) override;
 	virtual void grabPalette(byte *colors, uint start, uint num) const override;
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y,

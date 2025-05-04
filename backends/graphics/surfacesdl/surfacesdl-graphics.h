@@ -47,7 +47,7 @@ enum {
 /**
  * SDL graphics manager
  */
-class SurfaceSdlGraphicsManager : public SdlGraphicsManager {
+class SurfaceSdlGraphicsManager : public SdlGraphicsManager, public PaletteManager {
 public:
 	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 	virtual ~SurfaceSdlGraphicsManager();
@@ -86,8 +86,10 @@ public:
 
 protected:
 	// PaletteManager API
+	PaletteManager *getPaletteManager() override { return this; }
 	void setPalette(const byte *colors, uint start, uint num) override;
 	void grabPalette(byte *colors, uint start, uint num) const override;
+
 	virtual void initGraphicsSurface();
 
 	/**

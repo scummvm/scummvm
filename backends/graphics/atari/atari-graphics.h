@@ -38,7 +38,7 @@
 #define MAX_HZ_SHAKE 16 // Falcon only
 #define MAX_V_SHAKE  16
 
-class AtariGraphicsManager : public GraphicsManager, Common::EventObserver {
+class AtariGraphicsManager : public GraphicsManager, public PaletteManager, Common::EventObserver {
 	friend class Cursor;
 	friend class PendingScreenChanges;
 	friend class Screen;
@@ -73,6 +73,7 @@ public:
 
 	int16 getHeight() const override { return _currentState.height; }
 	int16 getWidth() const override { return _currentState.width; }
+	PaletteManager *getPaletteManager() override { return this; }
 	void setPalette(const byte *colors, uint start, uint num) override;
 	void grabPalette(byte *colors, uint start, uint num) const override;
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;

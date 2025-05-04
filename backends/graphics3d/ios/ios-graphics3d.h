@@ -32,7 +32,7 @@
 #include "backends/graphics3d/opengl/tiledsurface.h"
 #include "backends/graphics3d/opengl/surfacerenderer.h"
 
-class iOSGraphics3dManager : virtual public WindowedGraphicsManager, public iOSCommonGraphics {
+class iOSGraphics3dManager : virtual public WindowedGraphicsManager, public PaletteManager, public iOSCommonGraphics {
 public:
 	iOSGraphics3dManager();
 	virtual ~iOSGraphics3dManager();
@@ -87,6 +87,7 @@ public:
 	// GraphicsManager API - Draw methods
 	void updateScreen() override;
 	// Following methods are not used by 3D graphics managers
+	PaletteManager *getPaletteManager() override { return this; }
 	void setPalette(const byte *colors, uint start, uint num) override {}
 	void grabPalette(byte *colors, uint start, uint num) const override {}
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override {}

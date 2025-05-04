@@ -24,7 +24,7 @@
 
 #include "backends/graphics/graphics.h"
 
-class NullGraphicsManager : public GraphicsManager {
+class NullGraphicsManager : public GraphicsManager, public PaletteManager {
 public:
 	virtual ~NullGraphicsManager() {}
 
@@ -62,6 +62,7 @@ public:
 
 	int16 getHeight() const override { return _height; }
 	int16 getWidth() const override { return _width; }
+	PaletteManager *getPaletteManager() override { return this; }
 	void setPalette(const byte *colors, uint start, uint num) override {}
 	void grabPalette(byte *colors, uint start, uint num) const override {}
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override {}

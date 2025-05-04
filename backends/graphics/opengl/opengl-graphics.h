@@ -54,7 +54,7 @@ enum {
 	GFX_OPENGL = 0
 };
 
-class OpenGLGraphicsManager : virtual public WindowedGraphicsManager {
+class OpenGLGraphicsManager : virtual public WindowedGraphicsManager, public PaletteManager {
 public:
 	OpenGLGraphicsManager();
 	virtual ~OpenGLGraphicsManager();
@@ -129,6 +129,7 @@ public:
 	void displayActivityIconOnOSD(const Graphics::Surface *icon) override;
 
 	// PaletteManager interface
+	PaletteManager *getPaletteManager() override { return this; }
 	void setPalette(const byte *colors, uint start, uint num) override;
 	void grabPalette(byte *colors, uint start, uint num) const override;
 

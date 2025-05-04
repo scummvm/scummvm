@@ -22,7 +22,7 @@
 #include "graphics/managed_surface.h"
 #include "backends/graphics/windowed.h"
 
-class LibretroGraphics : public WindowedGraphicsManager {
+class LibretroGraphics : public WindowedGraphicsManager, public PaletteManager {
 
 public:
 	Graphics::ManagedSurface _screen;
@@ -105,6 +105,7 @@ public:
 
 	void displayMessageOnOSD(const Common::U32String &msg) override;
 
+	PaletteManager *getPaletteManager() override { return this; }
 protected:
 	void setPalette(const byte *colors, uint start, uint num) override;
 	void grabPalette(byte *colors, uint start, uint num) const override;

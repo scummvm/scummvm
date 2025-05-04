@@ -41,7 +41,7 @@ namespace OpenGL {
  *
  * Used when rendering games with OpenGL
  */
-class OpenGLSdlGraphics3dManager : public SdlGraphicsManager {
+class OpenGLSdlGraphics3dManager : public SdlGraphicsManager, public PaletteManager {
 public:
 	OpenGLSdlGraphics3dManager(SdlEventSource *eventSource, SdlWindow *window, bool supportsFrameBuffer);
 	virtual ~OpenGLSdlGraphics3dManager();
@@ -80,6 +80,7 @@ public:
 	// GraphicsManager API - Draw methods
 	void updateScreen() override;
 	// Following methods are not used by 3D graphics managers
+	PaletteManager *getPaletteManager() override { return this; }
 	void setPalette(const byte *colors, uint start, uint num) override {}
 	void grabPalette(byte *colors, uint start, uint num) const override {}
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override {}
