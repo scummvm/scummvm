@@ -51,7 +51,7 @@ inline uint16 makeQuickTimeDitherColor(byte r, byte g, byte b) {
 
 DitherCodec::DitherCodec(Codec *codec, DisposeAfterUse::Flag disposeAfterUse)
   : _codec(codec), _disposeAfterUse(disposeAfterUse), _dirtyPalette(false),
-    _forcedDitherPalette(0), _ditherTable(0), _ditherFrame(0) {
+    _forcedDitherPalette(0), _ditherTable(0), _ditherFrame(0), _srcPalette(nullptr) {
 }
 
 DitherCodec::~DitherCodec() {
@@ -114,8 +114,7 @@ const Graphics::Surface *DitherCodec::decodeFrame(Common::SeekableReadStream &st
 	if (!frame || _forcedDitherPalette.empty())
 		return frame;
 
-	// TODO: Handle palettes that are owned by the container instead of the codec
-	const byte *curPalette = _codec->getPalette();
+	const byte *curPalette = _codec->containsPalette() ? _codec->getPalette() : _srcPalette;
 
 	if (frame->format.isCLUT8() && curPalette) {
 		// This should always be true, but this is for sanity
