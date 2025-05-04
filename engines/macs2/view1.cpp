@@ -463,6 +463,10 @@ View1::View1() : UIElement("View1") {
 							g_engine->SetCursorMode(Script::MouseMode::Look);
 							UpdateCursor();
 						} break;
+						case static_cast<int>(InventoryButtonIndex::Hand): {
+							g_engine->SetCursorMode(Script::MouseMode::Use);
+							UpdateCursor();
+						} break;
 						case static_cast<int>(InventoryButtonIndex::Up): {
 							if (inventoryPage > 0) {
 								inventoryPage--;
