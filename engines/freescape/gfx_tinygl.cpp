@@ -584,7 +584,7 @@ Graphics::Surface *TinyGLRenderer::getScreenshot() {
 
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(_screenW, _screenH, getRGBAPixelFormat());
-	s->copyFrom(glBuffer);
+	s->convertFrom(glBuffer, getRGBAPixelFormat());
 
 	return s;
 }

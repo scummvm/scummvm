@@ -1252,7 +1252,6 @@ Graphics::RendererType determinateRenderType() {
 }
 
 Renderer *createRenderer(int screenW, int screenH, Common::RenderMode renderMode, bool authenticGraphics) {
-	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	Graphics::RendererType rendererType = determinateRenderType();
 
 	bool isAccelerated = rendererType != Graphics::kRendererTypeTinyGL;
@@ -1260,7 +1259,7 @@ Renderer *createRenderer(int screenW, int screenH, Common::RenderMode renderMode
 	if (isAccelerated) {
 		initGraphics3d(screenW, screenH);
 	} else {
-		initGraphics(screenW, screenH, &pixelFormat);
+		initGraphics(screenW, screenH, nullptr);
 	}
 
 	#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
