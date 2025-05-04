@@ -501,11 +501,11 @@ void OpenGLSdlGraphics3dManager::initializeOpenGLContext() const {
 #endif
 }
 
-OpenGLSdlGraphics3dManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenBytesPerPixel, uint red, uint blue, uint green, uint alpha, int samples) :
+OpenGLSdlGraphics3dManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenBytesPerPixel, uint red, uint green, uint blue, uint alpha, int samples) :
 		bytesPerPixel(screenBytesPerPixel),
 		redSize(red),
-		blueSize(blue),
 		greenSize(green),
+		blueSize(blue),
 		alphaSize(alpha),
 		multisampleSamples(samples) {
 
