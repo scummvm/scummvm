@@ -70,7 +70,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable gamma correction"),
 			_s("Brighten the graphics to simulate a Macintosh monitor"),
 			"gamma_correction",
-			false,
+			true,
 			0,
 			0
 		}

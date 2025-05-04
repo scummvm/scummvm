@@ -129,10 +129,10 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 		_colorDepth = 8;	// 256-color
 	}
 	// Enable Macintosh gamma correction. This resolves the issue of Mac games appearing too dark.
-	// Applied by default for Macintosh and Pippin games in the detection list.
+	// Enabled by default for Macintosh and Pippin games in the detection code.
 	// Right now only used in 8-bit mode to adjust the palette.
 	// FIXME: How do we add this to true color rendering without a heap of workarounds?
-	_gammaCorrection = ConfMan.getBool("gamma_correction") || (getGameFlags() & GF_GAMMA);
+	_gammaCorrection = ConfMan.getBool("gamma_correction");
 
 	switch (getPlatform()) {
 	case Common::kPlatformMacintoshII:

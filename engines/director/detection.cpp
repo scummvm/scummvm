@@ -114,6 +114,8 @@ public:
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extraInfo) const override;
+
+	DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const override;
 };
 
 static Director::DirectorGameDescription s_fallbackDesc = {
@@ -310,6 +312,18 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 		return ADDetectedGame(&desc->desc);
 
 	return ADDetectedGame();
+}
+
+DetectedGame DirectorMetaEngineDetection::toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const {
+	DetectedGame game = AdvancedMetaEngineDetectionBase::toDetectedGame(adGame, extraInfo);
+	const Director::DirectorGameDescription *desc = reinterpret_cast<const Director::DirectorGameDescription *>(adGame.desc);
+
+	if (desc->desc.platform == Common::kPlatformMacintosh || desc->desc.platform == Common::kPlatformPippin)
+		game.appendGUIOptions(Common::getGameGUIOptionsDescription(GAMEOPTION_GAMMA_CORRECTION));
+	if (!(desc->desc.flags & Director::GF_32BPP))
+		game.appendGUIOptions(Common::getGameGUIOptionsDescription(GAMEOPTION_TRUE_COLOR));
+
+	return game;
 }
 
 REGISTER_PLUGIN_STATIC(DIRECTOR_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, DirectorMetaEngineDetection);

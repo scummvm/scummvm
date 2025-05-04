@@ -99,7 +99,6 @@ enum {
 	GF_DESKTOP = 1 << 0,
 	GF_640x480 = 1 << 1,
 	GF_32BPP   = 1 << 2,
-	GF_GAMMA   = 1 << 3,
 };
 
 struct MovieReference {
