@@ -95,7 +95,7 @@ static void decodeCcb16(int ccbWidth, int ccbHeight, File *f, uint32 dataSize, u
 }
 
 static const uint8 _ccb_bppTable[8] = {
-		0, 1, 2, 4, 6, 8, 16, 0
+	0, 1, 2, 4, 6, 8, 16, 0
 };
 
 static uint16 *decodeShapeCcb(File *f, int dataSize, int *w, int *h) {
