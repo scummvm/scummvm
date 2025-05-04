@@ -125,6 +125,8 @@ void force_event(int evtyp, int ev1, int ev2, int ev3) {
 }
 
 void process_event(const EventHappened *evp) {
+	const int room_was = _GP(play).room_changes;
+
 	RuntimeScriptValue rval_null;
 	if (evp->type == EV_TEXTSCRIPT) {
 		cc_clear_error();
@@ -169,6 +171,14 @@ void process_event(const EventHappened *evp) {
 			//Debug::Printf("Running room interaction, event %d", evp->data3);
 		} else {
 			quit("process_event: RunEvBlock: unknown evb type");
+		}
+
+		// If the room was changed inside a on_event call above,
+		// then skip running further interaction scripts
+		if (room_was != _GP(play).room_changes) {
+			if ((evp->data1 == EVB_ROOM) && (evp->data3 == EVROM_BEFOREFADEIN))
+				_G(in_enters_screen)--;
+			return;
 		}
 
 		assert(scriptPtr || evpt);
@@ -356,7 +366,7 @@ void processallevents() {
 	// TODO: need to redesign engine events system?
 	std::vector<EventHappened> evtCopy = _GP(events);
 
-	int room_was = _GP(play).room_changes;
+	const int room_was = _GP(play).room_changes;
 
 	_G(inside_processevent)++;
 

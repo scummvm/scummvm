@@ -702,7 +702,7 @@ int run_interaction_commandlist(const ObjectEvent &obj_evt, InteractionCommandLi
 	const int evblocknum = obj_evt.BlockID;
 	for (size_t i = 0; i < nicl->Cmds.size(); i++) {
 		cmdsrun[0] ++;
-		int room_was = _GP(play).room_changes;
+		const int room_was = _GP(play).room_changes;
 
 		switch (nicl->Cmds[i].Type) {
 		case 0:  // Do nothing
