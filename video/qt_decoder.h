@@ -345,7 +345,7 @@ private:
 		const Graphics::Surface *decodeNextFrame();
 		Audio::Timestamp getFrameTime(uint frame) const;
 		const byte *getPalette() const;
-		bool hasDirtyPalette() const { return _curPalette; }
+		bool hasDirtyPalette() const { return _dirtyPalette; }
 		bool setReverse(bool reverse);
 		bool isReversed() const { return _reversed; }
 		bool canDither() const;
