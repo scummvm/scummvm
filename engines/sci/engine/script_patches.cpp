@@ -195,6 +195,8 @@ static const char *const selectorNameTable[] = {
 	"setScaler",    // LSL6hires, QFG4
 	"showTitle",    // LSL6hires
 	"name",         // LSL6hires
+	"completed",    // LSL6hires
+	"endType",      // LSL6hires
 	"oSpecialSync", // LSL7
 	"readWord",     // LSL7, Phant1, Torin
 	"points",       // PQ4
@@ -339,6 +341,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setScaler,
 	SELECTOR_showTitle,
 	SELECTOR_name,
+	SELECTOR_completed,
+	SELECTOR_endType,
 	SELECTOR_oSpecialSync,
 	SELECTOR_readWord,
 	SELECTOR_points,
@@ -10104,9 +10108,53 @@ static const uint16 larry6HiresRoom680ExitsPatch[] = {
 	PATCH_END
 };
 
+// Restarting the game while the tram is moving east breaks the game. Instead of
+//  restting the tram to room 820, the tram is stuck off-screen above room 680.
+//  The first time room 680 is entered, the tram descends from the sky, turns
+//  around, and floats back off-screen. After this, the tram never reappears.
+//  Normally, the tram is always moving back and forth across the hotel, so in
+//  practice there is a 50% chance that a restarted game can't be completed.
+//
+// This bug only occurs in the high-res version because kRestartGame was removed
+//  in SCI32. SCI32 games are responsible for manually implementing restart, but
+//  LSL6:restart fails to reset all of theTramPath's properties.
+//
+// We fix this by resetting theTramPath:endType to its initial heap value when
+//  restarting. We make room by overwriting code that disposes of the tram if it
+//  is in the cast. This code has no effect because several lines earlier the
+//  function disposes of all cast members and clears the list.
+//
+// Applies to: All versions
+// Responsible method: LSL6:restart
+static const uint16 larry6HiresTramRestartSignature[] = {
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi contains
+	0x78,                               // push1
+	0x7a,                               // push2
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0339),           // pushi 0339
+	0x78,                               // push1
+	0x43, 0x02, SIG_UINT16(0x0004),     // callk ScriptID 04 [ tram ]
+	SIG_ADDTOOFFSET(+29),
+	0x38, SIG_SELECTOR16(completed),    // pushi completed
+	SIG_ADDTOOFFSET(+21),
+	0x4a, SIG_UINT16(0x0012),           // send 12 [ theTramPath completed: 1 ... ]
+	SIG_END
+};
+
+static const uint16 larry6HiresTramRestartPatch[] = {
+	0x38, PATCH_SELECTOR16(endType),    // pushi endType
+	0x78,                               // push1
+	0x39, 0xff,                         // pushi ff
+	0x33, 0x22,                         // jmp 22 [ pushi completed ]
+	PATCH_ADDTOOFFSET(+58),
+	0x4a, PATCH_UINT16(0x0018),         // send 18 [ theTramPath endType: -1 completed: 1 ... ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,     0, "disable mac volume restore",                  1, larry6HiresMacVolumeRestoreSignature, larry6HiresMacVolumeRestorePatch },
+	{  true,     0, "fix tram restart",                            1, larry6HiresTramRestartSignature,      larry6HiresTramRestartPatch },
 	{  true,    71, "disable volume reset on startup (1/2)",       1, sci2VolumeResetSignature,             sci2VolumeResetPatch },
 	{  true,    71, "disable volume reset on startup (2/2)",       1, larry6HiresVolumeResetSignature,      larry6HiresVolumeResetPatch },
 	{  true,    71, "disable video benchmarking",                  1, sci2BenchmarkSignature,               sci2BenchmarkPatch },
