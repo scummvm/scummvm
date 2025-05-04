@@ -27,13 +27,13 @@
 namespace Awe {
 
 enum AweDebugChannels {
-	kDebugScript = 1 << 0,
-	kDebugBank = 1 << 1,
-	kDebugVideo = 1 << 2,
-	kDebugSound = 1 << 3,
-	kDebugInfo = 1 << 4,
-	kDebugPak = 1 << 5,
-	kDebugResource = 1 << 6
+	kDebugScript = 1,
+	kDebugBank,
+	kDebugVideo,
+	kDebugSound,
+	kDebugInfo,
+	kDebugPak,
+	kDebugResource
 };
 
 enum DataType {
