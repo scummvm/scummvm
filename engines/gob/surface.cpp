@@ -1028,12 +1028,12 @@ bool Surface::loadImage(Image::ImageDecoder &decoder, Common::SeekableReadStream
 		return false;
 
 	const Graphics::Surface *st = decoder.getSurface();
-	bool needConversion = decoder.getSurface()->format.bpp() > 1 && decoder.getSurface()->format != format;
+	bool needConversion = decoder.getSurface()->format.bytesPerPixel > 1 && decoder.getSurface()->format != format;
 	if (needConversion)
 		st = st->convertTo(format);
 
 	uint32 *colorMap = nullptr;
-	if (format.bytesPerPixel > 1) {
+	if (format.bytesPerPixel > 1 && decoder.getSurface()->format.bytesPerPixel == 1) {
 		colorMap = new uint32[256];
 		computeHighColorMap(colorMap, decoder.getPalette().data(), format, true);
 	}
