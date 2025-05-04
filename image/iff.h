@@ -82,8 +82,8 @@ public:
 	virtual ~IFFDecoder();
 
 	// ImageDecoder API
-	void destroy();
-	bool loadStream(Common::SeekableReadStream &stream);
+	void destroy() override;
+	bool loadStream(Common::SeekableReadStream &stream) override;
 	const Header *getHeader() const { return &_header; }
 	const Graphics::Surface *getSurface() const override { return _surface; }
 	const Graphics::Palette &getPalette() const override { return _palette; }

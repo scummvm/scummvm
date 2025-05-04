@@ -67,10 +67,10 @@ class TGADecoder : public ImageDecoder {
 public:
 	TGADecoder();
 	virtual ~TGADecoder();
-	virtual void destroy();
+	virtual void destroy() override;
 	const Graphics::Surface *getSurface() const override { return &_surface; }
 	const Graphics::Palette &getPalette() const override { return _colorMap; }
-	virtual bool loadStream(Common::SeekableReadStream &stream);
+	virtual bool loadStream(Common::SeekableReadStream &stream) override;
 private:
 	// Format-spec from:
 	//http://www.ludorg.net/amnesia/TGA_File_Format_Spec.html
