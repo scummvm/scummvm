@@ -9,9 +9,6 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für The Adventures of Willy Beamish hinzugefügt.
    - Unterstützung für Heart of China hinzugefügt.
 
- Hopkins:
-   - Absturz behoben, der auftritt, wenn mit dem Aufzug zwischen Stockwerken gewechselt wird.
-
  Nuvie:
    - Funktion "Charakter übertragen" zum Hauptmenü hinzugefügt.
 
@@ -33,6 +30,102 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Ursprünngliche Fehlerkorrektur aktiviert (Tür zum Hauptquartier von FunFrock).
    - Fehlerkorrektur für das Auslösen von Action-Events.
 
+ V-Cruise:
+   - Fehlerhafte Text-Darstellung in der chinesischen und japanischen Version korrigiert.
+   - Unterstützung für die japanische DVD-Version von Schizm: Mysterious Journey hinzugefügt.
+
+#### 2.9.1 (XXXX-XX-XX)
+
+ Allgemein:
+   - Vermeide die Nutzung des GNU Gold-Linkers wenn ScummVM gebaut wird (sofern die Option --enable-gold
+     nicht genutzt wird), da er für anhaltende Probleme auf manchen Plattformen bekannt ist und
+	 seitens des Upstreams nicht mehr unterstützt wird.
+
+ Asylum:
+   - Absturz im Hauptmenü von Sanitarium korrigiert, der auftritt, wenn der Cursor in den
+     oberen Bereich des Bildschirms bewegt wird.
+
+ Bladerunner:
+   - 2x-Skalierung und Vollbild-Unterstützung in der nicht-interaktiven Demo-Version korrigiert.
+   - Memory-Leaks behoben, die zu Out-of-Memory-Situationen auf manchen Plattformen führen können.
+   - Fehler bei der Wegfindung behoben, der in einigen Fällen zu Soft-Locks führen kann.
+
+ Hopkins:
+   - Absturz behoben, der auftritt, wenn mit dem Aufzug zwischen Stockwerken gewechselt wird.
+
+ MADS:
+   - Inventar und Verben-Menü werden in Rex Nebular jetzt korrekt aktualisiert.
+
+ NGI:
+   - Behandlung von Spiel-Ressourcen verbessert, was zur Verbesserung der Leistung auf Android führt.
+
+ SCI:
+   - Darstellungsprobleme bei den hochaufläsenden Grafiken von KQ6 korrigiert.
+
+ SCUMM:
+   - Verhalten von ScummVM 2.7.0 wiederhergestellt: Die DOS-v2-v4-Spiele (Maniac Mansion bis Monkey2)
+     können in ihrer EGA-Version jetzt wieder mit der Amiga-Farbpalette gespielt werden, in dem die
+	 Option zur Änderung des Render-Modus für das Spiel aktiviert wird.
+   - Die iMUSE-Tracks werden im Booty Store von Monkey2 jetzt korrekt abgespielt.
+   - Fehler bei der Charakter-Positionierung in SCUMMv2 und nierdiger behoben. Dieses Problem konnte
+     beispielsweise am Flughafen von Zak McKracken auftreten.
+   - Absturz im Multiplayer-Modus von Moonbase Commander behoben.
+   - Störungen bei der Wiedergabe von Sound-Effekten in der Sega CD-Version von Monkey1 behoben.
+   - Fehler beim Überschreiben eines bestehenden Spielstands in COMI behoben.
+   - Fehler behoben, der dazu führt, dass bei der Verringerung der Lautstärke in iMUSE
+     (z.B. im Intro von Sam & Max) exzessive MIDI-Nachrichten erzeugt werden, die zu verlangsamter,
+	 fehlerhafter Sprachausgabe bei der Nutzung älterer MIDI-Hardware führen kann.
+   - Absturz behoben, der auftritt, wenn ein älterer Spielstand geladen werden und gerade
+     ein iMUSE-Überang wiedergegeben wird.
+   - Jolly Roger-Verbesserung für Moneky1 korrigiert. Die Aktivierung dieser Verbesserung
+     würde verhindern, dass diese Flagge erscheint, obwohl sie nicht mehr sichtbar sein sollte.
+	 Die entsprechende Fehlerbehebung war in einigen VGA-Diskettenversionen fehlerhaft.
+   - Darstellung des Zigarrenrauchs von Smirks Zigarre in der FM-Towns-Version von Monkey1 behoben.
+
+ Sky:
+   - Absturz im Intro von Beneath a Steel Sky auf einigen Plattformen wie Android behoben.
+
+ Sword1:
+   - Fehlerhafte Audio-Balance bei der Nutzung der Windows-Programmdatei behoben.
+
+ Tetraedge:
+   - Verbesserte Unterstützung für OpenGL vs. Software-Rendering, was die Engine davor
+     schützt, auf Android und einigen anderen Plattformen einen Fehler auszulösen.
+
+ Tinsel:
+   - Fehler behoben, der dazu führt, dass das Speichern/Laden-Menü in Discworld nicht mehr erreicht werden kann.
+
+ Tucker:
+   - Zwischensequenzen können jetzt auch dann übersprungen werden, wenn die ESC-Taste zugewiesen ist.
+
+ TwinE:
+   - Absturz behoben, der auftritt, wenn ein Spiel zum zweiten Mal über den Launcher gestartet wird.
+   - Das Drücken der Leertaste löst die Benutzen/Sprechen-Aktion im normalen Modus jetzt korrekt aus.
+   - Bewegungsabläufe des Meca-Pinguins korrigiert.
+   - Einige Fehler bei der Audiowiedergabe behoben.
+
+ Android-Portierung:
+   - Die NEON-Unterstützung ist jetzt standardmäßig aktiviert, was zu einer verbesserten Leistung auf
+     der überwiegenden Mehrzahl älterer Android-Geräte führt.
+   - Ein Fehler in der ARMv7a-Version von Android 6.0 und älter wurde behoben, der in einigen
+     Fällen dazu geführt hat, dass beispielsweise die Spieloptionen nicht angezeigt wurden.
+   - Stack-Allocation für den Android-Java-Thread erhöht, was zur Leistungsverbesserung von
+     Engines führt, die den Stack stark nutzen.
+
+ Atari-Portierung:
+   - Absturz im Zusammenhang mit einigen Audio-Einstellungen behoben.
+
+ iOS/iPadOS-Portierung:
+   - Soundfonts für FluidSynth werden jetzt auch in Sandboxed-Dateisystemen korrekt erkannt.
+
+ macOS-Portierung:
+   - Fehler behoben, der dazu führt, dass ScummVM nicht gestartet werden kann, sofern die
+     Monitor-Einstellungen nicht auf "Millionen von Farben" auf älteren macOS-Versionen gesetzt ist.
+   - Die Unterstützung für die Audio-CD-Wiedergabe von originalen CDs auf Snow Leopard und älter
+     funktioniert jetzt korrekt.
+
+ Windows-Portierung:
+   - Die Windows 9x-Version unterstützt jetzt wieder FLAC.
 
 #### 2.9.0 "Close Encounters of the 2.9th Kind" (22.12.2024)
 
