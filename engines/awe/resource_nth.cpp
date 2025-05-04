@@ -22,7 +22,6 @@
 #include "common/fs.h"
 #include "awe/pak.h"
 #include "awe/resource_nth.h"
-#include "awe/util.h"
 #include "awe/script.h"
 #include "awe/awe.h"
 

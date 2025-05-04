@@ -28,7 +28,6 @@
 #include "awe/resource.h"
 #include "awe/script.h"
 #include "awe/system_stub.h"
-#include "awe/util.h"
 #include "awe/video.h"
 
 namespace Awe {

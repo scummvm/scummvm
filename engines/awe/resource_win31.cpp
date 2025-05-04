@@ -20,7 +20,7 @@
  */
 
 #include "awe/resource_win31.h"
-#include "awe/util.h"
+#include "awe/detection.h"
 
 namespace Awe {
 

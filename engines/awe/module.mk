@@ -22,7 +22,6 @@ MODULE_OBJS = \
 	static_res.o \
 	system_stub.o \
 	unpack.o \
-	util.o \
 	video.o
 
 # This module can be built as a plugin

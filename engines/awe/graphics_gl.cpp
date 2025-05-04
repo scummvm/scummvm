@@ -20,7 +20,6 @@
  */
 
 #include "awe/gfx.h"
-#include "awe/util.h"
 #include "awe/system_stub.h"
 
 namespace Awe {

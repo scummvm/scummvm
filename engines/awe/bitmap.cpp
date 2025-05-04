@@ -19,8 +19,8 @@
  *
  */
 
+#include "common/textconsole.h"
 #include "awe/bitmap.h"
-#include "awe/util.h"
 
 namespace Awe {
 
