@@ -1076,16 +1076,18 @@ bool TeenAgentEngine::hasFeature(EngineFeature f) const {
 
 void TeenAgentEngine::sayText(const Common::String &text) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	// _previousSaid is used to prevent the TTS from looping when sayText calls are inside loops
 	if (ttsMan && ConfMan.getBool("tts_enabled") && _previousSaid != text) {
 		_previousSaid = text;
 		ttsMan->say(text);
 	}
 }
 
-void TeenAgentEngine::stopTextToSpeech() const {
+void TeenAgentEngine::stopTextToSpeech() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
 		ttsMan->stop();
+		_previousSaid.clear();
 	}
 }
 

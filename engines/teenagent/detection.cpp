@@ -153,7 +153,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformDOS,
 		ADGF_CD,
-		GUIO2(GUIO_NOMIDI, GAMEOPTION_TTS)
+		GUIO1(GUIO_NOMIDI)
 	},
 	{ // Polish Floppy
 		"teenagent",
