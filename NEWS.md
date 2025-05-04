@@ -88,7 +88,11 @@ For a more comprehensive changelog of the latest experimental code, see:
      engines that heavily use the stack.
 
  Atari port:
-   - Fixed crash with certain audio settings.
+   - Fixed sending of SysEx MIDI messages.
+   - Fixed crash and distorted audio with certain audio settings.
+   - Fixed performance issues with SCI32 games like Phantasmagoria or
+     KQ7.
+   - Various GUI / backend fixes and optimizations.
 
  iOS/iPadOS port:
    - Fixed Fluidsynth soundfont existence check failing with sandboxed
