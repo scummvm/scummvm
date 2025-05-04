@@ -863,24 +863,27 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::bufferNextFrame() 
 		return 0;
 	}
 
+	// Check if the video description has been updated
+	const byte *palette = entry->_palette.data();
+	if (palette != _curPalette) {
+		_curPalette = palette;
+		_dirtyPalette = true;
+	}
+
+	// Update the palette used when dithering
+	Image::DitherCodec *ditherCodec = dynamic_cast<Image::DitherCodec *>(entry->_videoCodec);
+	if (ditherCodec && _dirtyPalette) {
+		ditherCodec->setPalette(_curPalette);
+		_dirtyPalette = false;
+	}
+
 	const Graphics::Surface *frame = entry->_videoCodec->decodeFrame(*frameData);
 	delete frameData;
 
-	// Update the palette
+	// The codec palette takes priority over the container one
 	if (entry->_videoCodec->containsPalette()) {
-		// The codec itself contains a palette
-		if (entry->_videoCodec->hasDirtyPalette()) {
-			_curPalette = entry->_videoCodec->getPalette();
-			_dirtyPalette = true;
-		}
-	} else {
-		// Check if the video description has been updated
-		const byte *palette = entry->_palette.data();
-
-		if (palette != _curPalette) {
-			_curPalette = palette;
-			_dirtyPalette = true;
-		}
+		_curPalette = entry->_videoCodec->getPalette();
+		_dirtyPalette = entry->_videoCodec->hasDirtyPalette();
 	}
 
 	return frame;

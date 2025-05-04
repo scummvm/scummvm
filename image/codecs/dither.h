@@ -46,6 +46,11 @@ public:
 	void setCodecAccuracy(CodecAccuracy accuracy) override;
 
 	/**
+	 * Specify the source palette when dithering from CLUT8 to CLUT8.
+	 */
+	void setPalette(const byte *palette) { _srcPalette = palette; }
+
+	/**
 	 * Create a dither table, as used by QuickTime codecs.
 	 */
 	static byte *createQuickTimeDitherTable(const byte *palette, uint colorCount);
@@ -53,6 +58,7 @@ public:
 private:
 	DisposeAfterUse::Flag _disposeAfterUse;
 	Codec *_codec;
+	const byte *_srcPalette;
 
 	Graphics::Surface *_ditherFrame;
 	Graphics::Palette _forcedDitherPalette;
