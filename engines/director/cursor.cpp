@@ -59,26 +59,33 @@ bool Cursor::operator==(const CursorRef &c) {
 }
 
 void Cursor::readFromCast(Datum cursorCasts) {
-	if (cursorCasts.type != ARRAY || cursorCasts.u.farr->arr.size() != 2 ) {
-		warning("Cursor::readFromCast: Needs array of 2");
+	if (cursorCasts.type != ARRAY || cursorCasts.u.farr->arr.size() < 1) {
+		warning("Cursor::readFromCast: Needs array of at least 1");
 		return;
 	}
 	if (_cursorResId.type == ARRAY && LC::eqData(_cursorResId, cursorCasts).asInt())
 		return;
 
+
 	CastMemberID cursorId = cursorCasts.u.farr->arr[0].asMemberID();
-	CastMemberID maskId = cursorCasts.u.farr->arr[1].asMemberID();
-
 	CastMember *cursorCast = g_director->getCurrentMovie()->getCastMember(cursorId);
-	CastMember *maskCast = g_director->getCurrentMovie()->getCastMember(maskId);
-
 	if (!cursorCast || cursorCast->_type != kCastBitmap) {
 		warning("Cursor::readFromCast: No bitmap cast for cursor");
 		return;
-	} else if (!maskCast || maskCast->_type != kCastBitmap) {
-		warning("Cursor::readFromCast: No bitmap mask for cursor");
-		return;
 	}
+
+	CastMember *maskCast = nullptr;
+	CastMemberID maskId;
+	if (cursorCasts.u.farr->arr.size() > 1) {
+		maskId = cursorCasts.u.farr->arr[1].asMemberID();
+		maskCast = g_director->getCurrentMovie()->getCastMember(maskId);
+		if (!maskCast || maskCast->_type != kCastBitmap) {
+			warning("Cursor::readFromCast: Invalid bitmap mask for cursor, ignoring");
+			maskCast = nullptr;
+		}
+	}
+
+	debugC(2, kDebugImages, "Cursor::readFromCast: setting cursor: %s, mask: %s", cursorId.asString().c_str(), maskId.asString().c_str());
 
 	_usePalette = false;
 	_keyColor = 3;
@@ -91,8 +98,11 @@ void Cursor::readFromCast(Datum cursorCasts) {
 	}
 	resetCursor(Graphics::kMacCursorCustom, true, cursorRes);
 
-	BitmapCastMember *cursorBitmap = (BitmapCastMember *)cursorCast;
-	BitmapCastMember *maskBitmap = (BitmapCastMember *)maskCast;
+	Graphics::Surface *cursorSurface = &((BitmapCastMember *)cursorCast)->_picture->_surface;
+	Graphics::Surface *maskSurface = nullptr;
+	if (maskCast) {
+		maskSurface = &((BitmapCastMember *)maskCast)->_picture->_surface;
+	}
 
 	_surface = new byte[getWidth() * getHeight()];
 	byte *dst = _surface;
@@ -100,24 +110,26 @@ void Cursor::readFromCast(Datum cursorCasts) {
 	for (int y = 0; y < 16; y++) {
 		const byte *cursor = nullptr, *mask = nullptr;
 
-		if (y < cursorBitmap->_picture->_surface.h &&
-				y < maskBitmap->_picture->_surface.h) {
-			cursor = (const byte *)cursorBitmap->_picture->_surface.getBasePtr(0, y);
-			mask = (const byte *)maskBitmap->_picture->_surface.getBasePtr(0, y);
+		if (y < cursorSurface->h &&
+				(!maskSurface || y < maskSurface->h)) {
+			cursor = (const byte *)cursorSurface->getBasePtr(0, y);
+			if (maskSurface)
+				mask = (const byte *)maskSurface->getBasePtr(0, y);
 		}
 
 		for (int x = 0; x < 16; x++) {
-			if (x >= cursorBitmap->_picture->_surface.w ||
-					x >= maskBitmap->_picture->_surface.w) {
+			if (x >= cursorSurface->w ||
+					(!maskSurface || x >= maskSurface->w)) {
 				cursor = mask = nullptr;
 			}
 
 			if (!cursor) {
 				*dst = 3;
 			} else {
-				*dst = *mask ? (*cursor ? 0 : 1) : 3;
+				*dst = (!mask || *mask) ? (*cursor ? 0 : 1) : 3;
 				cursor++;
-				mask++;
+				if (mask)
+					mask++;
 			}
 			dst++;
 		}
