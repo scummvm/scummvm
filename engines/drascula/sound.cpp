@@ -26,10 +26,56 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/substream.h"
+#include "common/text-to-speech.h"
 
 #include "backends/audiocd/audiocd.h"
 
 #include "drascula/drascula.h"
+
+// For consistency with the verb names, the English words in the volume controls menu are
+// translated into the game's language for text-to-speech
+static const char *volumeControlsEnglish[] = {
+	"Master",
+	"Voice/FX",
+	"Music"
+};
+
+static const char *volumeControlsSpanish[] = {
+	"Maestro",
+	"Voces/efectos de sonido",
+	"Música"
+};
+
+static const char *volumeControlsItalian[] = {
+	"Principale",
+	"Voci/effetti sonori",
+	"Musica"
+};
+
+static const char *volumeControlsFrench[] = {
+	"Principal",
+	"Voix/effets sonores",
+	"Musique"
+};
+
+static const char *volumeControlsGerman[] = {
+	"Gesamtlautstärke",
+	"Stimmen/Soundeffekte",
+	"Musik"
+};
+
+// The Russian volume controls are translated in-game
+static const char *volumeControlsRussian[] = {
+	"Общий",
+	"голос",
+	"му́зыка"
+};
+
+enum VolumeControlType {
+	kMaster = 0,
+	kSpeechAndSFX = 1,
+	kMusic = 2
+};
 
 namespace Drascula {
 
@@ -154,6 +200,49 @@ void DrasculaEngine::volumeControls() {
 			ConfMan.setInt("music_volume", musicVolume);
 		}
 
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+
+		if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+			const char **controlNames;
+
+			switch (_lang) {
+			case kEnglish:
+				controlNames = volumeControlsEnglish;
+				break;
+			case kSpanish:
+				controlNames = volumeControlsSpanish;
+				break;
+			case kGerman:
+				controlNames = volumeControlsGerman;
+				break;
+			case kFrench:
+				controlNames = volumeControlsFrench;
+				break;
+			case kItalian:
+				controlNames = volumeControlsItalian;
+				break;
+			case kRussian:
+				controlNames = volumeControlsRussian;
+				break;
+			default:
+				controlNames = volumeControlsEnglish;
+			}
+
+			Common::String ttsMessage;
+			if (_mouseX > 80 && _mouseX < 121)
+				ttsMessage = controlNames[kMaster];
+			else if (_mouseX > 136 && _mouseX < 178)
+				ttsMessage = controlNames[kSpeechAndSFX];
+			else if (_mouseX > 192 && _mouseX < 233)
+				ttsMessage = controlNames[kMusic];
+			else
+				_previousSaid.clear();
+
+			if (ttsMessage.size() > 0 && ttsMessage != _previousSaid) {
+				_previousSaid = ttsMessage;
+				ttsMan->say(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
+			}
+		}
 	}
 
 	if (_lang == kSpanish && currentChapter != 6)

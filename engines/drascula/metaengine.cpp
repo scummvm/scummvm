@@ -44,6 +44,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+#ifdef USE_TTS
 	{
 		GAMEOPTION_TTS,
 		{
@@ -55,6 +56,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+#endif
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };

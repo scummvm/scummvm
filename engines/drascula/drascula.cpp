@@ -254,6 +254,12 @@ Common::Error DrasculaEngine::run() {
 	if (ttsMan != nullptr) {
 		ttsMan->setLanguage(ConfMan.get("language"));
 		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+
+		if (_lang == kRussian) {
+			_ttsTextEncoding = Common::CodePage::kWindows1251;
+		} else {
+			_ttsTextEncoding = Common::CodePage::kUtf8;
+		}
 	}
 
 	setDebugger(new Console(this));
@@ -698,7 +704,7 @@ bool DrasculaEngine::runCurrentChapter() {
 
 			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
-				ttsMan->say(_textsys[2]);
+				ttsMan->say(_textsys[2], _ttsTextEncoding);
 			}
 
 			updateScreen();
@@ -711,7 +717,7 @@ bool DrasculaEngine::runCurrentChapter() {
 
 			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
-				ttsMan->say(_textsys[3]);
+				ttsMan->say(_textsys[3], _ttsTextEncoding);
 			}
 
 			updateScreen();

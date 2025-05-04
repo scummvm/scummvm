@@ -81,7 +81,7 @@ void DrasculaEngine::animation_1_1() {
 		centerText(_textmisc[1], 160, 100);
 
 		if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
-			ttsMan->say(_textmisc[1]);
+			ttsMan->say(_textmisc[1], _ttsTextEncoding);
 		}
 
 		updateScreen();
@@ -779,7 +779,7 @@ void DrasculaEngine::animation_16_2() {
 		loadPic(curPic, screenSurface, HALF_PAL);
 
 		if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
-			ttsMan->say(_texthis[i], Common::TextToSpeechManager::QUEUE);
+			ttsMan->say(_texthis[i], Common::TextToSpeechManager::QUEUE, _ttsTextEncoding);
 		}
 
 		centerText(_texthis[i], 180, 180);

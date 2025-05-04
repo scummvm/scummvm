@@ -198,12 +198,24 @@ void DrasculaEngine::converse(int index) {
 	// from 1(top) to 31
 	color_abc(kColorLightGreen);
 
+	Common::String ttsPhrase1 = phrase1;
+	Common::String ttsPhrase2 = phrase2;
+	Common::String ttsPhrase3 = phrase3;
+	Common::String ttsPhrase4 = phrase4;
+
+	if (_lang == kRussian) {
+		ttsPhrase1.replace('%', ' ');
+		ttsPhrase2.replace('%', ' ');
+		ttsPhrase3.replace('%', ' ');
+		ttsPhrase4.replace('%', ' ');
+	}
+
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
-		ttsMan->say(phrase1, Common::TextToSpeechManager::QUEUE);
-		ttsMan->say(phrase2, Common::TextToSpeechManager::QUEUE);
-		ttsMan->say(phrase3, Common::TextToSpeechManager::QUEUE);
-		ttsMan->say(phrase4, Common::TextToSpeechManager::QUEUE);
+		ttsMan->say(ttsPhrase1, Common::TextToSpeechManager::QUEUE, _ttsTextEncoding);
+		ttsMan->say(ttsPhrase2, Common::TextToSpeechManager::QUEUE, _ttsTextEncoding);
+		ttsMan->say(ttsPhrase3, Common::TextToSpeechManager::QUEUE, _ttsTextEncoding);
+		ttsMan->say(ttsPhrase4, Common::TextToSpeechManager::QUEUE, _ttsTextEncoding);
 	}
 
 	while (breakOut == 0 && !shouldQuit()) {
@@ -234,9 +246,9 @@ void DrasculaEngine::converse(int index) {
 
 			print_abc_opc(phrase1, 2, kDialogOptionSelected);
 
-			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && phrase1 != _previousSaid) {
-				_previousSaid = phrase1;
-				ttsMan->say(phrase1);
+			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && ttsPhrase1 != _previousSaid) {
+				_previousSaid = ttsPhrase1;
+				ttsMan->say(ttsPhrase1, _ttsTextEncoding);
 			}
 
 			if (_leftMouseButton == 1) {
@@ -253,9 +265,9 @@ void DrasculaEngine::converse(int index) {
 
 			print_abc_opc(phrase2, phrase1_bottom + 2, kDialogOptionSelected);
 
-			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && phrase2 != _previousSaid) {
-				_previousSaid = phrase2;
-				ttsMan->say(phrase2);
+			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && ttsPhrase2 != _previousSaid) {
+				_previousSaid = ttsPhrase2;
+				ttsMan->say(ttsPhrase2, _ttsTextEncoding);
 			}
 
 			if (_leftMouseButton == 1) {
@@ -272,9 +284,9 @@ void DrasculaEngine::converse(int index) {
 
 			print_abc_opc(phrase3, phrase2_bottom + 2, kDialogOptionSelected);
 
-			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && phrase3 != _previousSaid) {
-				_previousSaid = phrase3;
-				ttsMan->say(phrase3);
+			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && ttsPhrase3 != _previousSaid) {
+				_previousSaid = ttsPhrase3;
+				ttsMan->say(ttsPhrase3, _ttsTextEncoding);
 			}
 
 			if (_leftMouseButton == 1) {
@@ -286,9 +298,9 @@ void DrasculaEngine::converse(int index) {
 		} else if (_mouseY > phrase3_bottom && _mouseY < phrase4_bottom) {
 			print_abc_opc(phrase4, phrase3_bottom + 2, kDialogOptionSelected);
 
-			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && phrase4 != _previousSaid) {
-				_previousSaid = phrase4;
-				ttsMan->say(phrase4);
+			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && ttsPhrase4 != _previousSaid) {
+				_previousSaid = ttsPhrase4;
+				ttsMan->say(ttsPhrase4, _ttsTextEncoding);
 			}
 
 			if (_leftMouseButton == 1) {
@@ -298,6 +310,8 @@ void DrasculaEngine::converse(int index) {
 			}
 		} else if (_color != kColorLightGreen)
 			color_abc(kColorLightGreen);
+		else
+			_previousSaid.clear();
 
 		_system->delayMillis(10);
 		updateScreen();

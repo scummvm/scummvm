@@ -777,6 +777,7 @@ private:
 	TalkSequenceCommand *_talkSequences;
 	Common::String _saveNames[10];
 	Common::String _previousSaid;
+	Common::CodePage _ttsTextEncoding;
 
 	char **loadTexts(Common::File &in);
 	void freeTexts(char **ptr);
