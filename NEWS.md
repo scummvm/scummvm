@@ -3,23 +3,6 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.9.1 (XXXX-XX-XX)
 
- Nuvie:
-   - Added "Transfer a Character" feature to main menu.
-
- SCUMM:
-   - Added support for the classic SE variants of MI1, MI2, DOTT and FT.
-   - Added support for the remastered speech and sound effects in the
-     remastered version of Day of the Tentacle.
-   - Added speech support in the SE versions of MI1 and MI2.
-   - Improved graphics support for Macintosh DOTT, Sam & Max, The Dig, Full
-     Throttle, and Maniac Mansion.
-   - Added an option to render Sega CD MI1 with the "Shadow Mode" palette
-     which was originally used for that release. (It's unclear whether that
-     much darker rendering was used on purpose, or unintentionally.)
-
-
-#### 2.9.1 (XXXX-XX-XX)
-
  General:
    - Avoid using the GNU Gold linker when building ScummVM, (unless the
      --enable-gold option is given), since it has long-standing issues
