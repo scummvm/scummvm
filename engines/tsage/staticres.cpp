@@ -269,8 +269,8 @@ char const *const BIKINI_HUT = "Bikini Hut";
 // Scene 60 radio messages
 char const *const RADIO_BTN_LIST[8] = { "10-2 ", "10-4 ", "10-13", "10-15", "10-27", "10-35", "10-97", "10-98" };
 
-// Scene 570 computer messageS
-char const *const SCENE570_PASSWORD = "PASSWORD - }, ";
+// Scene 570 computer messages
+char const *const SCENE570_PASSWORD = "PASSWORD -> ";
 char const *const SCENE570_C_DRIVE = "C:\\";
 char const *const SCENE570_RING = "RING";
 char const *const SCENE570_PROTO = "PROTO";
