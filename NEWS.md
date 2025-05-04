@@ -79,10 +79,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed meca penguin movement.
    - Fixed sound related issues.
 
- V-Cruise:
-   - Fixed text rendering in Chinese and Japanese localizations.
-   - Added support for Japanese DVD version of Schizm: Mysterious Journey.
-
  Android port:
    - Enabled NEON support by default, resulting in better performance for
      the vast majority of older Android devices.
