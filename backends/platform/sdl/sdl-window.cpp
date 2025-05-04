@@ -505,6 +505,10 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 		_window = SDL_CreateWindow(_windowCaption.c_str(), _lastX,
 								   _lastY, width, height, flags);
 #endif
+		if (!_window) {
+			return false;
+		}
+
 		if (_window) {
 			setupIcon();
 		}
@@ -547,10 +551,6 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 #elif SDL_VERSION_ATLEAST(2, 0, 5)
 	SDL_SetWindowResizable(_window, _resizable ? SDL_TRUE : SDL_FALSE);
 #endif
-
-	if (!_window) {
-		return false;
-	}
 
 #if defined(MACOSX)
 	// macOS windows with the flag SDL_WINDOW_FULLSCREEN_DESKTOP exiting their fullscreen space
