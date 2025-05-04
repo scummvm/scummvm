@@ -23,8 +23,9 @@
 #define BACKENDS_GRAPHICS_NULL_H
 
 #include "backends/graphics/graphics.h"
+#include "backends/graphics/default-palette.h"
 
-class NullGraphicsManager : public GraphicsManager, public PaletteManager {
+class NullGraphicsManager : public GraphicsManager, public DefaultPaletteManager {
 public:
 	virtual ~NullGraphicsManager() {}
 
@@ -62,9 +63,6 @@ public:
 
 	int16 getHeight() const override { return _height; }
 	int16 getWidth() const override { return _width; }
-	PaletteManager *getPaletteManager() override { return this; }
-	void setPalette(const byte *colors, uint start, uint num) override {}
-	void grabPalette(byte *colors, uint start, uint num) const override {}
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override {}
 	Graphics::Surface *lockScreen() override { return NULL; }
 	void unlockScreen() override {}
@@ -88,7 +86,12 @@ public:
 	bool showMouse(bool visible) override { return !visible; }
 	void warpMouse(int x, int y) override {}
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = NULL) override {}
-	void setCursorPalette(const byte *colors, uint start, uint num) override {}
+
+	PaletteManager *getPaletteManager() override { return this; }
+protected:
+	// DefaultPaletteManager interface
+	void setPaletteIntern(const byte *colors, uint start, uint num) override {}
+	void setCursorPaletteIntern(const byte *colors, uint start, uint num) override {}
 
 private:
 	uint _width, _height;

@@ -23,6 +23,7 @@
 #define BACKENDS_GRAPHICS_OPENGL_OPENGL_GRAPHICS_H
 
 #include "backends/graphics/opengl/framebuffer.h"
+#include "backends/graphics/default-palette.h"
 #include "backends/graphics/windowed.h"
 
 #include "base/plugins.h"
@@ -54,7 +55,7 @@ enum {
 	GFX_OPENGL = 0
 };
 
-class OpenGLGraphicsManager : virtual public WindowedGraphicsManager, public PaletteManager {
+class OpenGLGraphicsManager : virtual public WindowedGraphicsManager, public DefaultPaletteManager {
 public:
 	OpenGLGraphicsManager();
 	virtual ~OpenGLGraphicsManager();
@@ -123,15 +124,15 @@ public:
 	void grabOverlay(Graphics::Surface &surface) const override;
 
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) override;
-	void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 	void displayMessageOnOSD(const Common::U32String &msg) override;
 	void displayActivityIconOnOSD(const Graphics::Surface *icon) override;
 
-	// PaletteManager interface
 	PaletteManager *getPaletteManager() override { return this; }
-	void setPalette(const byte *colors, uint start, uint num) override;
-	void grabPalette(byte *colors, uint start, uint num) const override;
+protected:
+	// DefaultPaletteManager interface
+	void setPaletteIntern(const byte *colors, uint start, uint num) override;
+	void setCursorPaletteIntern(const byte *colors, uint start, uint num) override;
 
 protected:
 	void renderCursor();

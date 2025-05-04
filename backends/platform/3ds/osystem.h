@@ -25,10 +25,10 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 #include "backends/base-backend.h"
-#include "graphics/paletteman.h"
 #include "base/main.h"
 #include "audio/mixer_intern.h"
 #include "backends/graphics/graphics.h"
+#include "backends/graphics/default-palette.h"
 #include "backends/log/log.h"
 #include "backends/platform/3ds/sprite.h"
 #include "common/rect.h"
@@ -99,7 +99,7 @@ struct GfxState {
 };
 
 
-class OSystem_3DS : public EventsBaseBackend, public PaletteManager, public Common::EventObserver {
+class OSystem_3DS : public EventsBaseBackend, public DefaultPaletteManager, public Common::EventObserver {
 public:
 	OSystem_3DS();
 	virtual ~OSystem_3DS();
@@ -132,7 +132,6 @@ public:
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 	virtual Audio::Mixer *getMixer();
-	virtual PaletteManager *getPaletteManager() { return this; }
 	virtual Common::String getSystemLanguage() const;
 	virtual void fatalError();
 	virtual void quit();
@@ -154,8 +153,6 @@ public:
 	int16 getHeight(){ return _gameHeight; }
 	int16 getWidth(){ return _gameWidth; }
 	float getScaleRatio() const;
-	void setPalette(const byte *colors, uint start, uint num);
-	void grabPalette(byte *colors, uint start, uint num) const;
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w,
 	                      int h);
 	Graphics::Surface *lockScreen();
@@ -182,8 +179,14 @@ public:
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 	                    int hotspotY, uint32 keycolor, bool dontScale = false,
 	                    const Graphics::PixelFormat *format = NULL, const byte *mask = NULL);
-	void setCursorPalette(const byte *colors, uint start, uint num);
 
+	PaletteManager *getPaletteManager() override { return this; }
+protected:
+	// DefaultPaletteManager interface
+	void setPaletteIntern(const byte *colors, uint start, uint num) override;
+	void setCursorPaletteIntern(const byte *colors, uint start, uint num) override;
+
+public:
 	// Transform point from touchscreen coords into gamescreen coords
 	void transformPoint(touchPosition &point);
 	// Clip point to gamescreen coords

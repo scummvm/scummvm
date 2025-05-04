@@ -206,7 +206,7 @@ void LibretroGraphics::handleResizeImpl(const int width, const int height) {
 	overrideCursorScaling();
 }
 
-void LibretroGraphics::setCursorPalette(const byte *colors, uint start, uint num) {
+void LibretroGraphics::setCursorPaletteIntern(const byte *colors, uint start, uint num) {
 	_cursorPalette.set(colors, start, num);
 	_cursorPaletteEnabled = true;
 }
@@ -219,12 +219,8 @@ const Graphics::ManagedSurface *LibretroGraphics::getScreen() {
 	return &_screen;
 }
 
-void LibretroGraphics::setPalette(const byte *colors, uint start, uint num) {
+void LibretroGraphics::setPaletteIntern(const byte *colors, uint start, uint num) {
 	_gamePalette.set(colors, start, num);
-}
-
-void LibretroGraphics::grabPalette(byte *colors, uint start, uint num) const {
-	_gamePalette.grab(colors, start, num);
 }
 
 bool LibretroGraphics::hasFeature(OSystem::Feature f) const {

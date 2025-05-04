@@ -351,7 +351,7 @@ void OSystem_Wii::updateMousePalette() {
 	}
 }
 
-void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
+void OSystem_Wii::setPaletteIntern(const byte *colors, uint start, uint num) {
 #ifdef PLATFORM_WII_OSYSTEM_GFX_DEBUG
 	printf("%s(%p, %d, %d) _cursorPaletteDisabled:%d\n", __func__, colors, start, num, _cursorPaletteDisabled);
 #endif
@@ -371,24 +371,7 @@ void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 	updateMousePalette();
 }
 
-void OSystem_Wii::grabPalette(byte *colors, uint start, uint num) const {
-#ifdef USE_RGB_COLOR
-	assert(_pfGame.bytesPerPixel == 1);
-#endif
-
-	u16 *s = _texGame.palette;
-	byte *d = colors;
-
-	u8 r, g, b;
-	for (uint i = 0; i < num; ++i, d += 3) {
-		_pfRGB565.colorToRGB(s[start + i], r, g, b);
-		d[0] = r;
-		d[1] = g;
-		d[2] = b;
-	}
-}
-
-void OSystem_Wii::setCursorPalette(const byte *colors, uint start, uint num) {
+void OSystem_Wii::setCursorPaletteIntern(const byte *colors, uint start, uint num) {
 #ifdef PLATFORM_WII_OSYSTEM_GFX_DEBUG
 	printf("%s(%p,%u,%u) _cursorPaletteDisabled:%d\n", __func__, colors, start, num, _cursorPaletteDisabled);
 #endif

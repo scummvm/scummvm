@@ -521,14 +521,6 @@ void GLESFakePalette16Texture::setPalette(const byte *colors, uint start, uint n
 	}
 }
 
-void GLESFakePalette16Texture::grabPalette(byte *colors, uint start, uint num) const {
-        const uint16 *p = _palette + start;
-
-        for (uint i = 0; i < num; ++i, colors += 3, ++p) {
-                _palettePixelFormat.colorToRGB(*p, colors[0], colors[1], colors[2]);
-        }
-}
-
 GLESFakePalette565Texture::GLESFakePalette565Texture() :
 	GLESFakePalette16Texture(GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
 	                         GLES565Texture::pixelFormat()) {
@@ -599,10 +591,6 @@ void GLESFakePalette888Texture::setPalette(const byte *colors, uint start, uint 
 	memcpy(_palette + start * 3, colors, num * 3);
 }
 
-void GLESFakePalette888Texture::grabPalette(byte *colors, uint start, uint num) const {
-	memcpy(colors, _palette + start * 3, num * 3);
-}
-
 GLESFakePalette8888Texture::GLESFakePalette8888Texture() :
 	GLESFakePaletteTexture(GL_RGBA, GL_UNSIGNED_BYTE,
 	                       GLES8888Texture::pixelFormat()),
@@ -667,14 +655,4 @@ void GLESFakePalette8888Texture::setKeycolor(byte color) {
 
 	p = (byte *)(_palette + _keycolor);
 	p[3] = 0;
-}
-
-void GLESFakePalette8888Texture::grabPalette(byte *colors, uint start, uint num) const {
-	const byte *p = (byte *)(_palette + start);
-
-        for (uint i = 0; i < num; ++i, colors += 3, p += 4) {
-		colors[0] = p[0];
-		colors[1] = p[1];
-		colors[2] = p[2];
-        }
 }

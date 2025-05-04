@@ -20,9 +20,10 @@
 #include "common/system.h"
 #include "graphics/palette.h"
 #include "graphics/managed_surface.h"
+#include "backends/graphics/default-palette.h"
 #include "backends/graphics/windowed.h"
 
-class LibretroGraphics : public WindowedGraphicsManager, public PaletteManager {
+class LibretroGraphics : public WindowedGraphicsManager, public DefaultPaletteManager {
 
 public:
 	Graphics::ManagedSurface _screen;
@@ -65,7 +66,6 @@ public:
 	const Graphics::ManagedSurface *getScreen(void);
 	void warpMouse(int x, int y) override;
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 255, bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = nullptr) override;
-	void setCursorPalette(const byte *colors, uint start, uint num) override;
 	bool isOverlayInGUI(void);
 
 	bool hasFeature(OSystem::Feature f) const override;
@@ -107,8 +107,9 @@ public:
 
 	PaletteManager *getPaletteManager() override { return this; }
 protected:
-	void setPalette(const byte *colors, uint start, uint num) override;
-	void grabPalette(byte *colors, uint start, uint num) const override;
+	// DefaultPaletteManager interface
+	void setPaletteIntern(const byte *colors, uint start, uint num) override;
+	void setCursorPaletteIntern(const byte *colors, uint start, uint num) override;
 private:
 	void overrideCursorScaling();
 };

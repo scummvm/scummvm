@@ -353,16 +353,11 @@ float OSystem_3DS::getScaleRatio() const {
 	}
 }
 
-void OSystem_3DS::setPalette(const byte *colors, uint start, uint num) {
+void OSystem_3DS::setPaletteIntern(const byte *colors, uint start, uint num) {
 	assert(start + num <= 256);
 	memcpy(_palette + 3 * start, colors, 3 * num);
 	Graphics::convertPaletteToMap(_paletteMap + start, colors, num, _modeCLUT8.surfaceFormat);
 	_gameTextureDirty = true;
-}
-
-void OSystem_3DS::grabPalette(byte *colors, uint start, uint num) const {
-	assert(start + num <= 256);
-	memcpy(colors, _palette + 3 * start, 3 * num);
 }
 
 static void copyRect555To5551(const Graphics::Surface &srcSurface, Graphics::Surface &destSurface, uint16 destX, uint16 destY, const Common::Rect &srcRect) {
@@ -819,7 +814,7 @@ void OSystem_3DS::setMouseCursor(const void *buf, uint w, uint h,
 	}
 }
 
-void OSystem_3DS::setCursorPalette(const byte *colors, uint start, uint num) {
+void OSystem_3DS::setCursorPaletteIntern(const byte *colors, uint start, uint num) {
 	assert(start + num <= 256);
 	memcpy(_cursorPalette + 3 * start, colors, 3 * num);
 	_cursorPaletteEnabled = true;

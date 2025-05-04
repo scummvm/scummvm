@@ -32,7 +32,7 @@
 #include "common/rect.h"
 #include "common/events.h"
 #include "backends/base-backend.h"
-#include "graphics/paletteman.h"
+#include "backends/graphics/default-palette.h"
 #include "graphics/surface.h"
 #include "audio/mixer_intern.h"
 
@@ -51,7 +51,7 @@ extern void wii_memstats(void);
 }
 #endif
 
-class OSystem_Wii final : public EventsBaseBackend, public PaletteManager {
+class OSystem_Wii final : public EventsBaseBackend, public DefaultPaletteManager {
 private:
 	s64 _startup_time;
 
@@ -164,10 +164,11 @@ public:
 
 	PaletteManager *getPaletteManager() override { return this; }
 protected:
-	void setPalette(const byte *colors, uint start, uint num) override;
-	void grabPalette(byte *colors, uint start, uint num) const override;
+	// DefaultPaletteManager API
+	void setPaletteIntern(const byte *colors, uint start, uint num) override;
+	void setCursorPaletteIntern(const byte *colors, uint start, uint num) override;
+
 public:
-	void setCursorPalette(const byte *colors, uint start, uint num) override;
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y,
 									int w, int h) override;
 	void updateScreen() override;
