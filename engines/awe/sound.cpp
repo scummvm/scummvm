@@ -30,7 +30,6 @@
 #include "awe/aifc_player.h"
 #include "awe/sound.h"
 #include "awe/sfx_player.h"
-#include "awe/util.h"
 
 namespace Awe {
 

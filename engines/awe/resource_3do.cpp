@@ -20,7 +20,6 @@
  */
 
 #include "awe/resource_3do.h"
-#include "awe/util.h"
 
 namespace Awe {
 

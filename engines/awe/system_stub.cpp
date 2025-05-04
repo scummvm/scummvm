@@ -27,7 +27,6 @@
 #include "awe/gfx.h"
 #include "awe/metaengine.h"
 #include "awe/system_stub.h"
-#include "awe/util.h"
 
 namespace Awe {
 

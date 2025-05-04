@@ -27,7 +27,6 @@
 #include "awe/resource_win31.h"
 #include "awe/resource_3do.h"
 #include "awe/unpack.h"
-#include "awe/util.h"
 #include "awe/video.h"
 
 namespace Awe {

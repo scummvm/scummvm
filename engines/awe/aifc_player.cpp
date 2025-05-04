@@ -20,7 +20,7 @@
  */
 
 #include "awe/aifc_player.h"
-#include "awe/util.h"
+#include "awe/detection.h"
 
 namespace Awe {
 

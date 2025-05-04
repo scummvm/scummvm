@@ -24,7 +24,6 @@
 #include "awe/gfx.h"
 #include "awe/resource_nth.h"
 #include "awe/system_stub.h"
-#include "awe/util.h"
 
 namespace Awe {
 
