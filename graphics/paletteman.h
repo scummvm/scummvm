@@ -116,6 +116,23 @@ public:
 		grabPalette(tmp, start, num);
 		return Graphics::Palette(tmp, num);
 	}
+
+	/**
+	 * Replace the specified range of cursor palette with new colors.
+	 *
+	 * The palette entries from 'start' till (start+num-1) will be replaced - so
+	 * a full palette update is accomplished via start=0, num=256.
+	 *
+	 * Backends which implement this should have the kFeatureCursorPalette flag set.
+	 *
+	 * @see setPalette
+	 * @see kFeatureCursorPalette
+	 */
+	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
+
+	void setCursorPalette(const Graphics::Palette &pal, uint start = 0) {
+		setCursorPalette(pal.data(), start, pal.size());
+	}
 };
  /** @} */
 

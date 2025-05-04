@@ -280,10 +280,6 @@ void ModularGraphicsBackend::setMouseCursor(const void *buf, uint w, uint h, int
 	_graphicsManager->setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format, mask);
 }
 
-void ModularGraphicsBackend::setCursorPalette(const byte *colors, uint start, uint num) {
-	_graphicsManager->setCursorPalette(colors, start, num);
-}
-
 void ModularGraphicsBackend::displayMessageOnOSD(const Common::U32String &msg) {
 	_graphicsManager->displayMessageOnOSD(msg);
 }
