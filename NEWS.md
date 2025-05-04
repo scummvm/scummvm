@@ -17,12 +17,6 @@ For a more comprehensive changelog of the latest experimental code, see:
      which was originally used for that release. (It's unclear whether that
      much darker rendering was used on purpose, or unintentionally.)
 
- TwinE:
-   - Activate original bug fixes (FunFrock's HQ door and safe bugs).
-
- V-Cruise:
-   - Fixed text rendering in Chinese and Japanese localizations.
-   - Added support for Japanese DVD version of Schizm: Mysterious Journey.
 
 #### 2.9.1 (XXXX-XX-XX)
 
@@ -101,6 +95,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed pressing Space in normal mode not triggering Use/Talk action.
    - Fixed meca penguin movement.
    - Fixed sound related issues.
+
+ V-Cruise:
+   - Fixed text rendering in Chinese and Japanese localizations.
+   - Added support for Japanese DVD version of Schizm: Mysterious Journey.
 
  Android port:
    - Enabled NEON support by default, resulting in better performance for
