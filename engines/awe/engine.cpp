@@ -211,9 +211,11 @@ void Engine::doEndCredits() {
 }
 
 void Engine::playCinepak(const char *name) {
+	warning("STUB: Engine::playCinepak()");
 }
 
 void Engine::scrollText(int a, int b, const char *text) {
+	warning("STUB: Engine::scrollText()");
 }
 
 void Engine::titlePage() {
@@ -249,9 +251,11 @@ void Engine::titlePage() {
 }
 
 void Engine::saveGameState(uint8 slot, const char *desc) {
+	warning("STUB: Engine::saveGameState()");
 }
 
 void Engine::loadGameState(uint8 slot) {
+	warning("STUB: Engine::loadGameState()");
 }
 
 } // namespace Awe
