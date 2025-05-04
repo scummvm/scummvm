@@ -111,71 +111,20 @@ bool Draw_v7::loadCursorFromFile(Common::String cursorName) {
 	}
 
 
-	// Make sure the cursor sprite is big enough
-	if (_scummvmCursor->getWidth() != cursor->getWidth() || _scummvmCursor->getHeight() != cursor->getHeight()) {
-		_vm->_draw->_scummvmCursor.reset();
-		_vm->_draw->_scummvmCursor = _vm->_video->initSurfDesc(cursor->getWidth(), cursor->getHeight(), SCUMMVM_CURSOR);
-	}
-
-	_scummvmCursor->clear();
-
-	uint32 keyColor = cursor->getKeyColor();
-	if (_scummvmCursor->getBPP() == 1) {
-		Graphics::copyBlit(_scummvmCursor->getData(), cursor->getSurface(),
-						   _scummvmCursor->getWidth() *  _scummvmCursor->getBPP(),
-						   cursor->getWidth(),
-						   cursor->getWidth(),
-						   cursor->getHeight(),
-						   1);
-	} else {
-		uint32 map[256];
-		convertPaletteToMap(map + cursor->getPaletteStartIndex(), cursor->getPalette(), cursor->getPaletteCount(), _vm->getPixelFormat());
-		if (!cursor->getMask()) {
-			// Look for a RGB color in [0, 256] not in the map and use it as the new key color.
-			// At least one of this 257 colors is guaranteed to be free, since the map size is 256.
-			bool colorPresent[257] = {false};
-			for (uint32 i = cursor->getPaletteStartIndex();
-				 i < cursor->getPaletteStartIndex() + cursor->getPaletteCount();
-				 ++i) {
-				uint32 color = map[i];
-				if (color <= 256)
-					colorPresent[color] = true;
-			}
-
-			for (keyColor = 0; keyColor <= 256; ++keyColor) {
-				if (!colorPresent[keyColor])
-					break;
-			}
-		}
-
-		map[cursor->getKeyColor()] = keyColor;
-
-		Graphics::crossBlitMap(_scummvmCursor->getData(), cursor->getSurface(),
-							   _scummvmCursor->getWidth() * _scummvmCursor->getBPP(),
-							   cursor->getWidth(),
-							   cursor->getWidth(),
-							   cursor->getHeight(),
-							   _scummvmCursor->getBPP(),
-							   map);
-	}
-
-	CursorMan.replaceCursor(_scummvmCursor->getData(),
+	Graphics::PixelFormat clut8Format = Graphics::PixelFormat::createFormatCLUT8();
+	CursorMan.replaceCursor(cursor->getSurface(),
 							cursor->getWidth(),
 							cursor->getHeight(),
 							cursor->getHotspotX(),
 							cursor->getHotspotY(),
-							keyColor,
+							cursor->getKeyColor(),
 							false,
-							&_vm->getPixelFormat(),
+							&clut8Format,
 							cursor->getMask());
-	if (_scummvmCursor->getBPP() != 1)
-		CursorMan.disableCursorPalette(true);
-	else {
-		CursorMan.replaceCursorPalette(cursor->getPalette(),
-									   cursor->getPaletteStartIndex(),
-									   cursor->getPaletteCount());
-		CursorMan.disableCursorPalette(false);
-	}
+	CursorMan.replaceCursorPalette(cursor->getPalette(),
+								   cursor->getPaletteStartIndex(),
+								   cursor->getPaletteCount());
+	CursorMan.disableCursorPalette(false);
 
 	delete cursorGroup;
 	delete defaultCursor;
