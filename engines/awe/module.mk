@@ -9,7 +9,6 @@ MODULE_OBJS = \
 	engine.o \
 	graphics_gl.o \
 	graphics_soft.o \
-	metaengine.o \
 	pak.o \
 	resource.o \
 	resource_3do.o \
