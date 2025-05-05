@@ -87,6 +87,13 @@ struct Color {
 	uint8 &r = rgb[0];
 	uint8 &g = rgb[1];
 	uint8 &b = rgb[2];
+
+	Color() {
+		clear();
+	}
+	void clear() {
+		r = g = b = 0;
+	}
 };
 
 struct Frac {

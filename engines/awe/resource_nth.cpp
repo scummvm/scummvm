@@ -85,7 +85,7 @@ struct Resource15th : ResourceNth {
 	}
 
 	virtual uint8 *loadBmp(int num) {
-		char name[16];
+		char name[32];
 		if (num >= 3000) {
 			snprintf(name, sizeof(name), "e%04d.bmp", num);
 		} else {
@@ -95,7 +95,7 @@ struct Resource15th : ResourceNth {
 	}
 
 	virtual uint8 *loadDat(int num, uint8 *dst, uint32 *size) {
-		char name[16];
+		char name[32];
 		snprintf(name, sizeof(name), "file%03d.dat", num);
 		const PakEntry *e = _pak.find(name);
 		if (e) {

@@ -82,7 +82,6 @@ struct GraphicsSoft : public Gfx {
 GraphicsSoft::GraphicsSoft() {
 	_fixUpPalette = FIXUP_PALETTE_NONE;
 	memset(_pagePtrs, 0, sizeof(_pagePtrs));
-	memset(_pal, 0, sizeof(_pal));
 }
 
 GraphicsSoft::~GraphicsSoft() {

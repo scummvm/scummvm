@@ -29,6 +29,8 @@ namespace Awe {
 struct SfxInstrument {
 	uint8 *data = nullptr;
 	uint16 volume = 0;
+
+	void clear();
 };
 
 struct SfxModule {
@@ -38,6 +40,9 @@ struct SfxModule {
 	uint8 numOrder = 0;
 	uint8 *orderTable = nullptr;
 	SfxInstrument samples[15];
+
+	void clear();
+	void clearSamples();
 };
 
 struct SfxPattern {

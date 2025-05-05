@@ -26,6 +26,26 @@
 
 namespace Awe {
 
+void SfxInstrument::clear() {
+	data = nullptr;
+	volume = 0;
+}
+
+void SfxModule::clear() {
+	data = nullptr;
+	curPos = 0;
+	curOrder = 0;
+	numOrder = 0;
+	orderTable = nullptr;
+
+	clearSamples();
+}
+
+void SfxModule::clearSamples() {
+	for (int i = 0; i < 15; ++i)
+		samples[i].clear();
+}
+
 SfxPlayer::SfxPlayer(Resource *res)
 	: _res(res), _delay(0) {
 	_playing = false;
@@ -40,7 +60,8 @@ void SfxPlayer::loadSfxModule(uint16 resNum, uint16 delay, uint8 pos) {
 	debugC(kDebugSound, "SfxPlayer::loadSfxModule(0x%X, %d, %d)", resNum, delay, pos);
 	MemEntry *me = &_res->_memList[resNum];
 	if (me->status == Resource::STATUS_LOADED && me->type == Resource::RT_MUSIC) {
-		memset(&_sfxMod, 0, sizeof(SfxModule));
+		_sfxMod.clear();
+
 		_sfxMod.curOrder = pos;
 		_sfxMod.numOrder = me->bufPtr[0x3F];
 		debugC(kDebugSound, "SfxPlayer::loadSfxModule() curOrder = 0x%X numOrder = 0x%X", _sfxMod.curOrder, _sfxMod.numOrder);
@@ -59,7 +80,8 @@ void SfxPlayer::loadSfxModule(uint16 resNum, uint16 delay, uint8 pos) {
 }
 
 void SfxPlayer::prepareInstruments(const uint8 *p) {
-	memset(_sfxMod.samples, 0, sizeof(_sfxMod.samples));
+	_sfxMod.clearSamples();
+
 	for (int i = 0; i < 15; ++i) {
 		SfxInstrument *ins = &_sfxMod.samples[i];
 		const uint16 resNum = READ_BE_UINT16(p); p += 2;
@@ -179,7 +201,7 @@ void SfxPlayer::handleEvents() {
 
 void SfxPlayer::handlePattern(uint8 channel, const uint8 *data) {
 	SfxPattern pat;
-	memset(&pat, 0, sizeof(SfxPattern));
+
 	pat.note_1 = READ_BE_UINT16(data + 0);
 	pat.note_2 = READ_BE_UINT16(data + 2);
 	if (pat.note_1 != 0xFFFD) {
