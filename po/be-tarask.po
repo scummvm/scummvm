@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-05-05 09:04+0000\n"
+"POT-Creation-Date: 2025-05-05 10:34+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -1032,7 +1032,7 @@ msgid "Interact"
 msgstr "Інтэракцыя"
 
 #: gui/gui-manager.cpp:176 engines/metaengine.cpp:134
-#: engines/awe//metaengine.cpp:57 engines/crab/input/input.cpp:95
+#: engines/awe/metaengine.cpp:57 engines/crab/input/input.cpp:95
 #: engines/crab/input/input.cpp:145 engines/dragons/metaengine.cpp:159
 #: engines/freescape/movement.cpp:35 engines/got/metaengine.cpp:55
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
@@ -1048,7 +1048,7 @@ msgid "Up"
 msgstr "Угару"
 
 #: gui/gui-manager.cpp:182 engines/metaengine.cpp:140
-#: engines/awe//metaengine.cpp:58 engines/crab/input/input.cpp:101
+#: engines/awe/metaengine.cpp:58 engines/crab/input/input.cpp:101
 #: engines/crab/input/input.cpp:151 engines/dragons/metaengine.cpp:165
 #: engines/freescape/movement.cpp:42 engines/got/metaengine.cpp:56
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
@@ -1064,7 +1064,7 @@ msgid "Down"
 msgstr "Уніз"
 
 #: gui/gui-manager.cpp:188 engines/metaengine.cpp:146
-#: engines/awe//metaengine.cpp:59 engines/crab/input/input.cpp:107
+#: engines/awe/metaengine.cpp:59 engines/crab/input/input.cpp:107
 #: engines/crab/input/input.cpp:157 engines/dragons/metaengine.cpp:171
 #: engines/got/metaengine.cpp:57 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:573 engines/icb/icb.cpp:78
@@ -1080,7 +1080,7 @@ msgid "Left"
 msgstr "Налева"
 
 #: gui/gui-manager.cpp:194 engines/metaengine.cpp:152
-#: engines/awe//metaengine.cpp:60 engines/crab/input/input.cpp:113
+#: engines/awe/metaengine.cpp:60 engines/crab/input/input.cpp:113
 #: engines/crab/input/input.cpp:163 engines/dragons/metaengine.cpp:177
 #: engines/got/metaengine.cpp:58 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:578 engines/icb/icb.cpp:83
@@ -6024,7 +6024,7 @@ msgid "Add game speed menu (similar to PC version)"
 msgstr "Дадаць хуткае мэню (як у вэрсіі на ПК)"
 
 #: engines/agi/metaengine.cpp:195 engines/agos/metaengine.cpp:44
-#: engines/awe//metaengine.cpp:35 engines/dreamweb/metaengine.cpp:36
+#: engines/awe/metaengine.cpp:35 engines/dreamweb/metaengine.cpp:36
 #: engines/gob/metaengine.cpp:42 engines/lure/metaengine.cpp:41
 #: engines/mads/metaengine.cpp:51 engines/mm/metaengine.cpp:46
 #: engines/saga/metaengine.cpp:52 engines/scumm/dialogs.cpp:1202
@@ -6035,7 +6035,7 @@ msgid "Enable copy protection"
 msgstr "Далучыць інтэґрацыю з Discord"
 
 #: engines/agi/metaengine.cpp:196 engines/agos/metaengine.cpp:45
-#: engines/awe//metaengine.cpp:36 engines/dreamweb/metaengine.cpp:37
+#: engines/awe/metaengine.cpp:36 engines/dreamweb/metaengine.cpp:37
 #: engines/gob/metaengine.cpp:43 engines/lure/metaengine.cpp:42
 #: engines/mads/metaengine.cpp:52 engines/mm/metaengine.cpp:47
 #: engines/saga/metaengine.cpp:53 engines/scumm/dialogs.cpp:1203
@@ -6191,14 +6191,14 @@ msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
 #: engines/cine/metaengine.cpp:258 engines/cruise/metaengine.cpp:143
-#: engines/draci/metaengine.cpp:137 engines/hopkins/metaengine.cpp:207
-#: engines/hugo/metaengine.cpp:93 engines/illusions/metaengine.cpp:90
-#: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
-#: engines/mads/metaengine.cpp:275 engines/stark/metaengine.cpp:185
-#: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
-#: engines/toon/metaengine.cpp:82 engines/touche/metaengine.cpp:119
-#: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
-#: engines/tucker/metaengine.cpp:168
+#: engines/draci/metaengine.cpp:137 engines/efh/metaengine.cpp:203
+#: engines/hopkins/metaengine.cpp:207 engines/hugo/metaengine.cpp:93
+#: engines/illusions/metaengine.cpp:90 engines/lure/metaengine.cpp:169
+#: engines/made/metaengine.cpp:103 engines/mads/metaengine.cpp:275
+#: engines/stark/metaengine.cpp:185 engines/sword1/metaengine.cpp:267
+#: engines/tinsel/metaengine.cpp:241 engines/toon/metaengine.cpp:82
+#: engines/touche/metaengine.cpp:119 engines/trecision/metaengine.cpp:121
+#: engines/tsage/metaengine.cpp:170 engines/tucker/metaengine.cpp:168
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game keymappings"
@@ -6475,6 +6475,16 @@ msgid ""
 "2. Any .sav file inside the QfG2 Remake game directory"
 msgstr ""
 
+#: engines/alg/metaengine.cpp:34
+msgid "Use lower quality single speed CD-ROM video"
+msgstr ""
+
+#: engines/alg/metaengine.cpp:35
+msgid ""
+"These videos are of lower quality, the default version uses double speed CD-"
+"ROM videos which are of better quality"
+msgstr ""
+
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
 msgstr "Паказваць вэрсію"
@@ -6509,33 +6519,35 @@ msgstr "Адкрыць пэрсанажаў рыштунак"
 
 #. I18N: Move Actor to upwards direction
 #: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
-#: engines/cine/metaengine.cpp:364 engines/hdb/metaengine.cpp:213
-#: engines/nancy/input.cpp:195 engines/tinsel/metaengine.cpp:263
+#: engines/cine/metaengine.cpp:364 engines/efh/metaengine.cpp:231
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:195
+#: engines/tinsel/metaengine.cpp:263
 msgid "Move up"
 msgstr "Рухацца ўгару"
 
 #. I18N: Move Actor to downwards direction
 #: engines/asylum/metaengine.cpp:177 engines/asylum/metaengine.cpp:205
-#: engines/cine/metaengine.cpp:371 engines/hdb/metaengine.cpp:219
-#: engines/nancy/input.cpp:201 engines/tinsel/metaengine.cpp:269
+#: engines/cine/metaengine.cpp:371 engines/efh/metaengine.cpp:237
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:201
+#: engines/tinsel/metaengine.cpp:269
 msgid "Move down"
 msgstr "Рухацца ўніз"
 
 #. I18N: Move Actor to left direction
 #. I18N: Move actor left during fight
 #: engines/asylum/metaengine.cpp:183 engines/asylum/metaengine.cpp:212
-#: engines/cine/metaengine.cpp:378 engines/hdb/metaengine.cpp:225
-#: engines/lure/metaengine.cpp:218 engines/nancy/input.cpp:207
-#: engines/tinsel/metaengine.cpp:275
+#: engines/cine/metaengine.cpp:378 engines/efh/metaengine.cpp:243
+#: engines/hdb/metaengine.cpp:225 engines/lure/metaengine.cpp:218
+#: engines/nancy/input.cpp:207 engines/tinsel/metaengine.cpp:275
 msgid "Move left"
 msgstr "Рухацца налева"
 
 #. I18N: Move Actor to right direction
 #. I18N: Move actor right during fight
 #: engines/asylum/metaengine.cpp:189 engines/asylum/metaengine.cpp:219
-#: engines/cine/metaengine.cpp:385 engines/hdb/metaengine.cpp:231
-#: engines/lure/metaengine.cpp:226 engines/nancy/input.cpp:213
-#: engines/tinsel/metaengine.cpp:281
+#: engines/cine/metaengine.cpp:385 engines/efh/metaengine.cpp:249
+#: engines/hdb/metaengine.cpp:231 engines/lure/metaengine.cpp:226
+#: engines/nancy/input.cpp:213 engines/tinsel/metaengine.cpp:281
 msgid "Move right"
 msgstr "Рухацца направа"
 
@@ -6591,19 +6603,19 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Усё адно заладаваць"
 
-#: engines/awe//metaengine.cpp:61
+#: engines/awe/metaengine.cpp:61
 msgid "Select/Kick/Run"
 msgstr ""
 
-#: engines/awe//metaengine.cpp:62 engines/hpl1/metaengine.cpp:83
+#: engines/awe/metaengine.cpp:62 engines/hpl1/metaengine.cpp:83
 msgid "Jump"
 msgstr ""
 
-#: engines/awe//metaengine.cpp:63
+#: engines/awe/metaengine.cpp:63
 msgid "Enter Level Code"
 msgstr ""
 
-#: engines/awe//metaengine.cpp:89 engines/dgds/metaengine.cpp:87
+#: engines/awe/metaengine.cpp:89 engines/dgds/metaengine.cpp:87
 #: engines/got/metaengine.cpp:90
 #, fuzzy
 #| msgid "Game Options"
@@ -6629,10 +6641,11 @@ msgstr "Галоўныя"
 #: engines/hopkins/metaengine.cpp:206 engines/hugo/metaengine.cpp:92
 #: engines/illusions/metaengine.cpp:89 engines/lure/metaengine.cpp:168
 #: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
-#: engines/stark/metaengine.cpp:184 engines/sword1/metaengine.cpp:266
-#: engines/tinsel/metaengine.cpp:240 engines/toltecs/metaengine.cpp:212
-#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
-#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
+#: engines/playground3d/metaengine.cpp:51 engines/stark/metaengine.cpp:184
+#: engines/sword1/metaengine.cpp:266 engines/tinsel/metaengine.cpp:240
+#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
+#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
+#: engines/tucker/metaengine.cpp:167
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -7037,19 +7050,19 @@ msgid "Exit/Skip"
 msgstr "Прапусьціць"
 
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
-#: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:128
-#: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
-#: engines/mads/metaengine.cpp:305 engines/saga/metaengine.cpp:442
-#: engines/stark/metaengine.cpp:208 engines/toltecs/metaengine.cpp:234
-#: engines/toon/metaengine.cpp:112 engines/trecision/metaengine.cpp:169
-#: engines/tsage/metaengine.cpp:242 engines/vcruise/metaengine.cpp:175
-#: engines/wintermute/keymapper_tables.h:920
+#: engines/efh/metaengine.cpp:219 engines/hopkins/metaengine.cpp:236
+#: engines/hugo/metaengine.cpp:128 engines/lure/metaengine.cpp:191
+#: engines/made/metaengine.cpp:162 engines/mads/metaengine.cpp:305
+#: engines/saga/metaengine.cpp:442 engines/stark/metaengine.cpp:208
+#: engines/toltecs/metaengine.cpp:234 engines/toon/metaengine.cpp:112
+#: engines/trecision/metaengine.cpp:169 engines/tsage/metaengine.cpp:242
+#: engines/vcruise/metaengine.cpp:175 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Захаваць гульню"
 
 #: engines/cge/metaengine.cpp:227 engines/cge2/metaengine.cpp:241
-#: engines/hopkins/metaengine.cpp:242 engines/made/metaengine.cpp:168
-#: engines/mohawk/myst_stacks/menu.cpp:283
+#: engines/efh/metaengine.cpp:225 engines/hopkins/metaengine.cpp:242
+#: engines/made/metaengine.cpp:168 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:432
 #: engines/stark/metaengine.cpp:213 engines/toltecs/metaengine.cpp:240
 #: engines/toon/metaengine.cpp:118 engines/trecision/metaengine.cpp:175
@@ -7552,6 +7565,27 @@ msgstr ""
 "Гульня не дазваляе выйсьці цяпер. Ці сапраўды вы хочаце выйсьці, ня гледзячы "
 "на гэта?"
 
+#: engines/director/metaengine.cpp:70 engines/scumm/dialogs.cpp:1188
+#: engines/scumm/metaengine.cpp:792
+#, fuzzy
+#| msgid "Enabled aspect ratio correction"
+msgid "Enable gamma correction"
+msgstr "Карэкцыя прапорцыяў экрану далучана"
+
+#: engines/director/metaengine.cpp:71
+msgid "Brighten the graphics to simulate a Macintosh monitor"
+msgstr ""
+
+#: engines/director/metaengine.cpp:81
+msgid "Force true color"
+msgstr ""
+
+#: engines/director/metaengine.cpp:82
+#, fuzzy
+#| msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgid "Use true color graphics mode, even if the game is not designed for it"
+msgstr "Памякчаць шрыфты, нават калі гульня пра гэта не пытала"
+
 #: engines/draci/metaengine.cpp:153
 msgid "Skip intro/Exit map or inventory"
 msgstr ""
@@ -7661,6 +7695,60 @@ msgstr "Паказваць графіку карыстаючыся яскрав�
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 "Далучыць ператварэньне тэксту ў мову для аб’ектаў, наладаў і біблійнай цытаты"
+
+#: engines/efh/metaengine.cpp:207
+#, fuzzy
+#| msgid "Left Click"
+msgid "Left click"
+msgstr "Левы пстрык"
+
+#: engines/efh/metaengine.cpp:213
+#, fuzzy
+#| msgid "Right Click"
+msgid "Right click"
+msgstr "Правы пстрык"
+
+#: engines/efh/metaengine.cpp:255
+#, fuzzy
+#| msgid "Move left"
+msgid "Move up left"
+msgstr "Рухацца налева"
+
+#: engines/efh/metaengine.cpp:260
+#, fuzzy
+#| msgid "Move right"
+msgid "Move up right"
+msgstr "Рухацца направа"
+
+#: engines/efh/metaengine.cpp:265
+#, fuzzy
+#| msgid "Move down"
+msgid "Move down left"
+msgstr "Рухацца ўніз"
+
+#: engines/efh/metaengine.cpp:270
+#, fuzzy
+#| msgid "Move right"
+msgid "Move down right"
+msgstr "Рухацца направа"
+
+#: engines/efh/metaengine.cpp:275
+#, fuzzy
+#| msgid "Show character portraits"
+msgid "Character 1 status"
+msgstr "Паказваць партрэты пэрсанажаў"
+
+#: engines/efh/metaengine.cpp:280
+#, fuzzy
+#| msgid "Show character portraits"
+msgid "Character 2 status"
+msgstr "Паказваць партрэты пэрсанажаў"
+
+#: engines/efh/metaengine.cpp:285
+#, fuzzy
+#| msgid "Show character portraits"
+msgid "Character 3 status"
+msgstr "Паказваць партрэты пэрсанажаў"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -10014,6 +10102,22 @@ msgstr "Пералучэньне гаваркога ШІ"
 msgid "This menu item is not yet implemented"
 msgstr "Гэты пункт мэню шчэ ня дзейсны"
 
+#: engines/playground3d/metaengine.cpp:55
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch test"
+msgstr "Перайсьці да гульні"
+
+#: engines/playground3d/metaengine.cpp:61
+#, fuzzy
+msgid "Enable/Disable fog"
+msgstr "Адлучыць мэню захаваньня"
+
+#: engines/playground3d/metaengine.cpp:67
+#, fuzzy
+msgid "Enable/Disable scissor"
+msgstr "Адлучыць мэню захаваньня"
+
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
 msgid "3DO Plumbers requires RGB support."
@@ -10806,12 +10910,6 @@ msgid ""
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
 "for a more complete experience."
 msgstr ""
-
-#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:792
-#, fuzzy
-#| msgid "Enabled aspect ratio correction"
-msgid "Enable gamma correction"
-msgstr "Карэкцыя прапорцыяў экрану далучана"
 
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:793
 msgid "Brighten the graphics to simulate a Macintosh monitor."
@@ -12407,6 +12505,10 @@ msgstr "Да мэню захаваньня/заладваньня"
 #| msgid "Go to save/load menu"
 msgid "Go to end of save/load menu"
 msgstr "Да мэню захаваньня/заладваньня"
+
+#: engines/tinsel/tinsel.cpp:1040
+msgid "Discworld Noir needs ScummVM with TinyGL enabled"
+msgstr ""
 
 #: engines/toltecs/metaengine.cpp:216
 #, fuzzy
@@ -14028,16 +14130,6 @@ msgstr ""
 #~ msgctxt "Options menu"
 #~ msgid "Language selection"
 #~ msgstr "Нявызначаная мова"
-
-#, fuzzy
-#~| msgid "Left Click"
-#~ msgid "Left click"
-#~ msgstr "Левы пстрык"
-
-#, fuzzy
-#~| msgid "Right Click"
-#~ msgid "Right click"
-#~ msgstr "Правы пстрык"
 
 #, fuzzy
 #~| msgid "Special sound effects volume"
