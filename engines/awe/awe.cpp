@@ -148,7 +148,9 @@ Common::Error AweEngine::run() {
 	}
 
 	Gfx *graphics = createGraphics(graphicsType);
-	assert(graphics);
+
+	if (!graphics)
+		error("The Anniversary versions graphics is not currently supported");
 
 	if (dataType == DT_20TH_EDITION) {
 		switch (Script::_difficulty) {
