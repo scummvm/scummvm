@@ -36,12 +36,11 @@ public:
 	~EventHandler();
 
 	ScriptValue execute(uint assetId);
+	Common::String getDebugHeader();
 	EventType _type;
 	ScriptValue _argumentValue;
 
 private:
-	Common::String getDebugHeader();
-
 	CodeChunk *_code = nullptr;
 };
 

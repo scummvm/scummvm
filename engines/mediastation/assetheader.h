@@ -203,11 +203,7 @@ public:
 	uint _totalSteps = 0;
 
 	// EVENT HANDLER FIELDS.
-	Common::HashMap<uint, EventHandler *> _eventHandlers;
-	Common::Array<EventHandler *> _timeHandlers;
-	Common::HashMap<uint, EventHandler *> _keyDownHandlers;
-	Common::Array<EventHandler *> _inputHandlers;
-	Common::Array<EventHandler *> _loadCompleteHandlers;
+	Common::HashMap<uint, Common::Array<EventHandler *>> _eventHandlers;
 
 	// TEXT FIELDS.
 	Common::String _text;

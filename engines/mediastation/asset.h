@@ -66,8 +66,8 @@ public:
 	void setInactive();
 	void setActive();
 	void processTimeEventHandlers();
+	void runEventHandlerIfExists(EventType eventType, const ScriptValue &arg);
 	void runEventHandlerIfExists(EventType eventType);
-	void runKeyDownEventHandlerIfExists(Common::KeyState keyState);
 
 	AssetType type() const;
 	int zIndex() const;

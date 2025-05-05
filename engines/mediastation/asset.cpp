@@ -71,7 +71,8 @@ void Asset::processTimeEventHandlers() {
 
 	// TODO: Replace with a queue.
 	uint currentTime = g_system->getMillis();
-	for (EventHandler *timeEvent : _header->_timeHandlers) {
+	const Common::Array<EventHandler *> &_timeHandlers = _header->_eventHandlers.getValOrDefault(kTimerEvent);
+	for (EventHandler *timeEvent : _timeHandlers) {
  		// Indeed float, not time.
 		double timeEventInFractionalSeconds = timeEvent->_argumentValue.asFloat();
 		uint timeEventInMilliseconds = timeEventInFractionalSeconds * 1000;
@@ -85,24 +86,29 @@ void Asset::processTimeEventHandlers() {
 	_lastProcessedTime = currentTime - _startTime;
 }
 
-void Asset::runEventHandlerIfExists(EventType eventType) {
-	EventHandler *eventHandler = _header->_eventHandlers.getValOrDefault(eventType);
-	if (eventHandler != nullptr) {
-		debugC(5, kDebugScript, "Executing handler for event type %s on asset %d", eventTypeToStr(eventType), _header->_id);
-		eventHandler->execute(_header->_id);
-	} else {
-		debugC(5, kDebugScript, "No event handler for event type %s on asset %d", eventTypeToStr(eventType), _header->_id);
+void Asset::runEventHandlerIfExists(EventType eventType, const ScriptValue &arg) {
+	const Common::Array<EventHandler *> &_eventHandlers = _header->_eventHandlers.getValOrDefault(eventType);
+	for (EventHandler *eventHandler : _eventHandlers) {
+		const ScriptValue &argToCheck = eventHandler->_argumentValue;
+
+		if (arg.getType() != argToCheck.getType()) {
+			warning("Got event handler arg type %s, expected %s",
+				scriptValueTypeToStr(arg.getType()), scriptValueTypeToStr(argToCheck.getType()));
+			continue;
+		}
+
+		if (arg == argToCheck) {
+			debugC(5, kDebugScript, "Executing handler for event type %s on asset %d", eventTypeToStr(eventType), _header->_id);
+			eventHandler->execute(_header->_id);
+			return;
+		}
 	}
+	debugC(5, kDebugScript, "No event handler for event type %s on asset %d", eventTypeToStr(eventType), _header->_id);
 }
 
-void Asset::runKeyDownEventHandlerIfExists(Common::KeyState keyState) {
-	EventHandler *keyDownEvent = _header->_keyDownHandlers.getValOrDefault(keyState.ascii);
-	if (keyDownEvent != nullptr) {
-		debugC(5, kDebugScript, "Executing keydown event handler for ASCII code %d on asset %d", keyState.ascii, _header->_id);
-		keyDownEvent->execute(_header->_id);
-	} else {
-		debugC(5, kDebugScript, "No keydown event handler for ASCII code %d on asset %d", keyState.ascii, _header->_id);
-	}
+void Asset::runEventHandlerIfExists(EventType eventType) {
+	ScriptValue scriptValue;
+	runEventHandlerIfExists(eventType, scriptValue);
 }
 
 } // End of namespace MediaStation

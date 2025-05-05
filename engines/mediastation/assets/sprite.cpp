@@ -306,7 +306,10 @@ void Sprite::updateFrameState() {
 		_currentFrameIndex = 0;
 		_nextFrameTime = 0;
 
-		runEventHandlerIfExists(kSpriteMovieEndEvent);
+		ScriptValue defaultSpriteClip;
+		const uint DEFAULT_SPRITE_CLIP_ID = 1200;
+		defaultSpriteClip.setToParamToken(DEFAULT_SPRITE_CLIP_ID);
+		runEventHandlerIfExists(kSpriteMovieEndEvent, defaultSpriteClip);
 	}
 }
 

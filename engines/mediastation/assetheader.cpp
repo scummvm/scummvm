@@ -41,29 +41,11 @@ AssetHeader::AssetHeader(Chunk &chunk) {
 
 AssetHeader::~AssetHeader() {
 	for (auto it = _eventHandlers.begin(); it != _eventHandlers.end(); ++it) {
-		delete it->_value;
+		for (EventHandler *eventHandler : it->_value) {
+			delete eventHandler;
+		}
 	}
 	_eventHandlers.clear();
-
-	for (EventHandler *timeHandler : _timeHandlers) {
-		delete timeHandler;
-	}
-	_timeHandlers.clear();
-
-	for (auto it = _keyDownHandlers.begin(); it != _keyDownHandlers.end(); ++it) {
-		delete it->_value;
-	}
-	_keyDownHandlers.clear();
-
-	for (EventHandler *inputHandler : _inputHandlers) {
-		delete inputHandler;
-	}
-	_inputHandlers.clear();
-
-	for (EventHandler *loadCompleteHandler : _loadCompleteHandlers) {
-		delete loadCompleteHandler;
-	}
-	_loadCompleteHandlers.clear();
 
 	delete _palette;
 	_palette = nullptr;
@@ -78,46 +60,16 @@ void AssetHeader::readSection(AssetHeaderSectionType sectionType, Chunk& chunk) 
 
 	case kAssetHeaderEventHandler: {
 		EventHandler *eventHandler = new EventHandler(chunk);
-		switch (eventHandler->_type) {
-		case kTimerEvent: {
-			_timeHandlers.push_back(eventHandler);
-			break;
-		}
+		Common::Array<EventHandler *> &eventHandlersForType = _eventHandlers.getOrCreateVal(eventHandler->_type);
 
-		case kKeyDownEvent: {
-			if (eventHandler->_argumentValue.getType() != kScriptValueTypeFloat) {
-				error("Keydown event handler doesn't have correct argument type");
+		// This is not a hashmap because we don't want to have to hash ScriptValues.
+		for (EventHandler *existingEventHandler : eventHandlersForType) {
+			if (existingEventHandler->_argumentValue == eventHandler->_argumentValue) {
+				error("AssetHeader::readSection(): Event handler for %s (%s) already exists",
+					eventTypeToStr(eventHandler->_type), eventHandler->getDebugHeader().c_str());
 			}
-			uint asciiCode = static_cast<uint>(eventHandler->_argumentValue.asFloat());
-			_keyDownHandlers.setVal(asciiCode, eventHandler);
-			break;
 		}
-
-		case kInputEvent: {
-			_inputHandlers.push_back(eventHandler);
-			break;
-		}
-
-		case kLoadCompleteEvent: {
-			_loadCompleteHandlers.push_back(eventHandler);
-			break;
-		}
-
-		default: {
-			if (eventHandler->_argumentValue.getType() != kScriptValueTypeEmpty && \
-				eventHandler->_argumentValue.getType() != kScriptValueTypeParamToken) {
-				error("AssetHeader::readSection(): Event handler of type %s has a non-null argument type %s",
-					eventTypeToStr(eventHandler->_type), scriptValueTypeToStr(eventHandler->_argumentValue.getType()));
-			}
-
-			if (_eventHandlers.contains(eventHandler->_type)) {
-				error("AssetHeader::readSection(): Event handler type %s already exists", eventTypeToStr(eventHandler->_type));
-			} else {
-				_eventHandlers.setVal(eventHandler->_type, eventHandler);
-			}
-			break;
-		}
-		}
+		eventHandlersForType.push_back(eventHandler);
 		break;
 	}
 

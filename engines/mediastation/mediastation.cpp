@@ -227,7 +227,9 @@ void MediaStationEngine::processEvents() {
 			Asset *hotspot = findAssetToAcceptMouseEvents();
 			if (hotspot != nullptr) {
 				debugC(1, kDebugEvents, "EVENT_KEYDOWN (%d): Sent to hotspot %d", _event.kbd.ascii, hotspot->getHeader()->_id);
-				hotspot->runKeyDownEventHandlerIfExists(_event.kbd);
+				ScriptValue keyCode;
+				keyCode.setToFloat(_event.kbd.ascii);
+				hotspot->runEventHandlerIfExists(kKeyDownEvent, keyCode);
 			}
 			break;
 		}
