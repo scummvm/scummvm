@@ -24,10 +24,14 @@ f 0644 root sys usr/ScummVM/share/scummvm/bagel.dat bagel.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/classicmacfonts.dat classicmacfonts.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/cryo.dat cryo.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/cryomni3d.dat cryomni3d.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/darkseed.dat darkseed.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/drascula.dat drascula.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/encoding.dat encoding.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/fonts.dat fonts.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/fonts-cjk.dat fonts-cjk.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/freescape.dat freescape.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/got.aud got.aud scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/got.gfx got.gfx scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/grim-patch.lab grim-patch.lab scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/helpdialog.zip helpdialog.zip scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/hugo.dat hugo.dat scummvm.sw.eoe
@@ -51,7 +55,6 @@ f 0644 root sys usr/ScummVM/share/scummvm/tony.dat tony.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/toon.dat toon.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/ultima.dat ultima.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/ultima8.dat ultima8.dat scummvm.sw.eoe
-f 0644 root sys usr/ScummVM/share/scummvm/freescape.dat freescape.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/wintermute.zip wintermute.zip scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/mm.dat mm.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/pred.dic pred.dic scummvm.sw.eoe
