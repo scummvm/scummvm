@@ -39,6 +39,20 @@ const AweGameDescription gameDescriptions[] = {
 		},
 		DT_DOS
 	},
+	// DOS Floppy - ANOTHER WORLD PC (19/3/92)
+	{
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY1s("memlist.bin",  "63675fdb53dd4a2b8d72182bbee47592", 2940),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
+		},
+		DT_DOS
+	},
+
 	{
 		{
 			"anotherworld",
@@ -51,6 +65,7 @@ const AweGameDescription gameDescriptions[] = {
 		},
 		DT_DOS
 	},
+
 	{
 		{
 			"anotherworld",
@@ -63,6 +78,7 @@ const AweGameDescription gameDescriptions[] = {
 		},
 		DT_WIN31
 	},
+
 	{
 		{
 			"anotherworld",
@@ -75,6 +91,7 @@ const AweGameDescription gameDescriptions[] = {
 		},
 		DT_20TH_EDITION
 	},
+
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
