@@ -222,8 +222,7 @@ void Resource::readEntriesAmiga(const AmigaMemEntry *entries, int count) {
 }
 
 void Resource::dumpEntries() {
-	static const bool kDump = false;
-	if (kDump && (_dataType == DT_DOS || _dataType == DT_AMIGA || _dataType == DT_ATARI)) {
+	if (ConfMan.getBool("dump_scripts") && (_dataType == DT_DOS || _dataType == DT_AMIGA || _dataType == DT_ATARI)) {
 		for (int i = 0; i < _numMemList; ++i) {
 			if (_memList[i].unpackedSize == 0) {
 				continue;
