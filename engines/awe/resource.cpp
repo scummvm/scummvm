@@ -234,9 +234,17 @@ void Resource::dumpEntries() {
 			uint8 *p = (uint8 *)malloc(_memList[i].unpackedSize);
 			if (p) {
 				if (readBank(&_memList[i], p)) {
-					char name[16];
-					snprintf(name, sizeof(name), "data_%02x_%d", i, _memList[i].type);
-					//dumpFile(name, p, _memList[i].unpackedSize);
+					Common::String fname = Common::String::format("dumps/data_%02x_%d", i, _memList[i].type);
+					Common::DumpFile out;
+
+					if (!out.open(fname.c_str(), true)) {
+						warning("Resource::dumpEntries(): Can not open dump file %s", fname.c_str());
+					} else {
+						out.write(p, _memList[i].unpackedSize);
+
+						out.flush();
+						out.close();
+					}
 				}
 				free(p);
 			}
