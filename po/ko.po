@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-05-03 23:42+0000\n"
+"POT-Creation-Date: 2025-05-05 09:04+0000\n"
 "PO-Revision-Date: 2025-04-28 17:18+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -1006,13 +1006,14 @@ msgid "Interact"
 msgstr "상호작용"
 
 #: gui/gui-manager.cpp:176 engines/metaengine.cpp:134
-#: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
-#: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
-#: engines/got/metaengine.cpp:55 engines/griffon/metaengine.cpp:121
-#: engines/grim/grim.cpp:481 engines/grim/grim.cpp:563 engines/icb/icb.cpp:68
-#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:1004
-#: engines/twine/metaengine.cpp:430 engines/twine/metaengine.cpp:497
-#: engines/twp/metaengine.cpp:154 engines/wintermute/keymapper_tables.h:1290
+#: engines/awe//metaengine.cpp:57 engines/crab/input/input.cpp:95
+#: engines/crab/input/input.cpp:145 engines/dragons/metaengine.cpp:159
+#: engines/freescape/movement.cpp:35 engines/got/metaengine.cpp:55
+#: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
+#: engines/grim/grim.cpp:563 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
+#: engines/scumm/metaengine.cpp:1004 engines/twine/metaengine.cpp:430
+#: engines/twine/metaengine.cpp:497 engines/twp/metaengine.cpp:154
+#: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
 #: engines/wintermute/keymapper_tables.h:1920
@@ -1021,13 +1022,14 @@ msgid "Up"
 msgstr "위쪽"
 
 #: gui/gui-manager.cpp:182 engines/metaengine.cpp:140
-#: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
-#: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
-#: engines/got/metaengine.cpp:56 engines/griffon/metaengine.cpp:127
-#: engines/grim/grim.cpp:486 engines/grim/grim.cpp:568 engines/icb/icb.cpp:73
-#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:971
-#: engines/twine/metaengine.cpp:437 engines/twine/metaengine.cpp:505
-#: engines/twp/metaengine.cpp:155 engines/wintermute/keymapper_tables.h:1296
+#: engines/awe//metaengine.cpp:58 engines/crab/input/input.cpp:101
+#: engines/crab/input/input.cpp:151 engines/dragons/metaengine.cpp:165
+#: engines/freescape/movement.cpp:42 engines/got/metaengine.cpp:56
+#: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
+#: engines/grim/grim.cpp:568 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
+#: engines/scumm/metaengine.cpp:971 engines/twine/metaengine.cpp:437
+#: engines/twine/metaengine.cpp:505 engines/twp/metaengine.cpp:155
+#: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
 #: engines/wintermute/keymapper_tables.h:1926
@@ -1036,13 +1038,13 @@ msgid "Down"
 msgstr "아래쪽"
 
 #: gui/gui-manager.cpp:188 engines/metaengine.cpp:146
-#: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
-#: engines/dragons/metaengine.cpp:171 engines/got/metaengine.cpp:57
-#: engines/griffon/metaengine.cpp:133 engines/grim/grim.cpp:491
-#: engines/grim/grim.cpp:573 engines/icb/icb.cpp:78 engines/icb/icb.cpp:162
-#: engines/scumm/metaengine.cpp:984 engines/twine/metaengine.cpp:452
-#: engines/twine/metaengine.cpp:520 engines/twp/metaengine.cpp:152
-#: engines/wintermute/keymapper_tables.h:320
+#: engines/awe//metaengine.cpp:59 engines/crab/input/input.cpp:107
+#: engines/crab/input/input.cpp:157 engines/dragons/metaengine.cpp:171
+#: engines/got/metaengine.cpp:57 engines/griffon/metaengine.cpp:133
+#: engines/grim/grim.cpp:491 engines/grim/grim.cpp:573 engines/icb/icb.cpp:78
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:984
+#: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
+#: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
 #: engines/wintermute/keymapper_tables.h:1385
 #: engines/wintermute/keymapper_tables.h:1908
@@ -1052,13 +1054,13 @@ msgid "Left"
 msgstr "왼쪽"
 
 #: gui/gui-manager.cpp:194 engines/metaengine.cpp:152
-#: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
-#: engines/dragons/metaengine.cpp:177 engines/got/metaengine.cpp:58
-#: engines/griffon/metaengine.cpp:139 engines/grim/grim.cpp:496
-#: engines/grim/grim.cpp:578 engines/icb/icb.cpp:83 engines/icb/icb.cpp:167
-#: engines/scumm/metaengine.cpp:991 engines/twine/metaengine.cpp:444
-#: engines/twine/metaengine.cpp:513 engines/twp/metaengine.cpp:153
-#: engines/wintermute/keymapper_tables.h:326
+#: engines/awe//metaengine.cpp:60 engines/crab/input/input.cpp:113
+#: engines/crab/input/input.cpp:163 engines/dragons/metaengine.cpp:177
+#: engines/got/metaengine.cpp:58 engines/griffon/metaengine.cpp:139
+#: engines/grim/grim.cpp:496 engines/grim/grim.cpp:578 engines/icb/icb.cpp:83
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:991
+#: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
+#: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
 #: engines/wintermute/keymapper_tables.h:1391
 #: engines/wintermute/keymapper_tables.h:1914
@@ -6234,18 +6236,20 @@ msgid "Add game speed menu (similar to PC version)"
 msgstr "속도 메뉴를 추가합니다. (PC 버전과 유사)"
 
 #: engines/agi/metaengine.cpp:195 engines/agos/metaengine.cpp:44
-#: engines/dreamweb/metaengine.cpp:36 engines/gob/metaengine.cpp:42
-#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
-#: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
-#: engines/scumm/dialogs.cpp:1202 engines/scumm/metaengine.cpp:821
+#: engines/awe//metaengine.cpp:35 engines/dreamweb/metaengine.cpp:36
+#: engines/gob/metaengine.cpp:42 engines/lure/metaengine.cpp:41
+#: engines/mads/metaengine.cpp:51 engines/mm/metaengine.cpp:46
+#: engines/saga/metaengine.cpp:52 engines/scumm/dialogs.cpp:1202
+#: engines/scumm/metaengine.cpp:821
 msgid "Enable copy protection"
 msgstr "복사 방지 기능 활성화"
 
 #: engines/agi/metaengine.cpp:196 engines/agos/metaengine.cpp:45
-#: engines/dreamweb/metaengine.cpp:37 engines/gob/metaengine.cpp:43
-#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
-#: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
-#: engines/scumm/dialogs.cpp:1203 engines/scumm/metaengine.cpp:822
+#: engines/awe//metaengine.cpp:36 engines/dreamweb/metaengine.cpp:37
+#: engines/gob/metaengine.cpp:43 engines/lure/metaengine.cpp:42
+#: engines/mads/metaengine.cpp:52 engines/mm/metaengine.cpp:47
+#: engines/saga/metaengine.cpp:53 engines/scumm/dialogs.cpp:1203
+#: engines/scumm/metaengine.cpp:822
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr "기본적으로 우회되는 모든 복사 방지 기능을 활성화합니다."
 
@@ -6747,6 +6751,23 @@ msgstr "경고: 이전 버전에서 저장한 게임을 불러오려고 시도�
 #: engines/asylum/asylum.cpp:204 engines/cine/saveload.cpp:857
 msgid "Load anyway"
 msgstr "무시하고 불러오기"
+
+#: engines/awe//metaengine.cpp:61
+msgid "Select/Kick/Run"
+msgstr ""
+
+#: engines/awe//metaengine.cpp:62 engines/hpl1/metaengine.cpp:83
+msgid "Jump"
+msgstr "점프"
+
+#: engines/awe//metaengine.cpp:63
+msgid "Enter Level Code"
+msgstr ""
+
+#: engines/awe//metaengine.cpp:89 engines/dgds/metaengine.cpp:87
+#: engines/got/metaengine.cpp:90
+msgid "Game Keys"
+msgstr "게임 키"
 
 #: engines/bagel/metaengine.cpp:41
 msgid "Wait"
@@ -7583,10 +7604,6 @@ msgstr "집다 / 운용"
 msgid "Activate Inventory Object"
 msgstr "인벤토리 객체 활성화"
 
-#: engines/dgds/metaengine.cpp:87 engines/got/metaengine.cpp:90
-msgid "Game Keys"
-msgstr "게임 키"
-
 #: engines/director/events.cpp:99
 msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
@@ -8330,10 +8347,6 @@ msgstr "십자 패드 왼쪽"
 #: engines/hpl1/metaengine.cpp:81
 msgid "Lean Right"
 msgstr "십자 패드 오른쪽"
-
-#: engines/hpl1/metaengine.cpp:83
-msgid "Jump"
-msgstr "점프"
 
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:84 engines/icb/icb.cpp:119
