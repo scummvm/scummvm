@@ -1,0 +1,132 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HODJNPODJ_HNPLIBS_STDINC_H
+#define HODJNPODJ_HNPLIBS_STDINC_H
+
+#include "common/algorithm.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+
+#define BOF_DEBUG 1
+
+/*
+* Accept Microsofts new debug macro
+*/
+#ifdef _DEBUG
+#ifndef DEBUG
+#define DEBUG 1
+#endif
+#endif
+
+/*
+* Math Function Macros
+*/
+#define isodd(x) ((x)&1)                    /* Returns 1 if number is odd  */
+#define iseven(x) !((x)&1)                  /* Returns 1 if number is even */
+#ifndef min
+#define min(x,y) (x<y?x:y)                  /* returns the min of x and y */
+#endif
+#ifndef max
+#define max(x,y) (x>y?x:y)                  /* returns the max of x and y */
+#endif
+#ifndef abs
+#define abs(x) ((x)<0?-(x):(x))             /* returns the absolute value of x */
+#endif
+
+/* remove this when the X-factor is gone */
+#define PDFT(value) = value
+
+/*
+* normal types
+*/
+#define VIRTUAL virtual
+#define STATIC static
+#define CDECL 
+#define INLINE inline
+//define ASM __asm
+#ifndef FAR
+#define FAR
+#endif
+#define CHAR char
+typedef unsigned char UCHAR;
+typedef byte UBYTE;
+#define INT int
+typedef short SHORT;
+typedef uint16 USHORT;
+#define WORD USHORT
+#define LONG long
+typedef unsigned long ULONG;
+#define FLOAT float
+#define DOUBLE double
+#define VOID void
+#define CONST const
+
+/*
+* Define things that Windows would otherwise define
+*/
+#ifndef _WINDOWS
+typedef unsigned char BYTE;
+typedef unsigned int UINT;
+typedef unsigned long DWORD;
+typedef int BOOL;
+#endif
+
+/* abnormal types */
+typedef int BOOLEAN;
+
+#define YES   1
+#define NO    0
+#define TRUE  1
+#define FALSE 0
+
+#ifndef MAX_FNAME
+#define MAX_FNAME 256
+#endif
+
+#define MAX_DIRPATH 256
+
+
+/*
+* My assertion implementation writes the internal error to a log file.
+*/
+#if BOF_DEBUG
+
+#ifdef _DEBUG
+#define Assert(f) assert(f);
+#else
+
+VOID ErrorLog(const CHAR *, ...);
+#define Assert(f)       \
+        if (f) ;            \
+        else ErrorLog("Internal Error: File %s at line %u (FileDate: %s)", __FILE__, __LINE__, __TIMESTAMP__)
+
+#endif  /* _DEBUG */
+
+#else
+#define Assert(f)   ;
+#endif  /* BOF_DEBUG */
+
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

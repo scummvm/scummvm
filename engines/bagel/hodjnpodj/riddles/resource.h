@@ -19,16 +19,25 @@
  *
  */
 
-#ifndef BAGEL_MFC_MFC_H
-#define BAGEL_MFC_MFC_H
+#ifndef HODJNPODJ_RIDDLES_RESOURCE_H
+#define HODJNPODJ_RIDDLES_RESOURCE_H
 
-#include "bagel/mfc/minwindef.h"
-#include "bagel/mfc/winnt.h"
-#include "bagel/mfc/wingdi.h"
-#include "bagel/mfc/atltime.h"
-#include "bagel/mfc/atltypes.h"
-#include "bagel/mfc/afx.h"
-#include "bagel/mfc/afxwin.h"
-#include "bagel/mfc/global_functions.h"
+namespace Bagel {
+namespace HodjNPodj {
+namespace Riddles {
 
+// Next default values for new objects
+// 
+#ifdef APSTUDIO_INVOKED
+#ifndef APSTUDIO_READONLY_SYMBOLS
+
+#define _APS_NEXT_RESOURCE_VALUE        101
+#define _APS_NEXT_COMMAND_VALUE         101
+#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_SYMED_VALUE           101
 #endif
+#endif
+
+} // namespace Riddles
+} // namespace HodjNPodj
+} // namespace Bagel

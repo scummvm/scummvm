@@ -19,16 +19,18 @@
  *
  */
 
-#ifndef BAGEL_MFC_MFC_H
-#define BAGEL_MFC_MFC_H
+#ifndef BAGEL_MFC_GLOBAL_FUNCTIONS_H
+#define BAGEL_MFC_GLOBAL_FUNCTIONS_H
 
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/winnt.h"
-#include "bagel/mfc/wingdi.h"
-#include "bagel/mfc/atltime.h"
-#include "bagel/mfc/atltypes.h"
-#include "bagel/mfc/afx.h"
-#include "bagel/mfc/afxwin.h"
-#include "bagel/mfc/global_functions.h"
+
+namespace Bagel {
+namespace MFC {
+
+extern LPVOID GlobalLock(HGLOBAL hMem);
+
+} // namespace MFC
+} // namespace Bagel
 
 #endif

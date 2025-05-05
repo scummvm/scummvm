@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	boflib/sound.o \
 	boflib/string.o \
 	boflib/string_functions.o \
+	mfc/global_functions.o \
 	mfc/object.o \
 	spacebar/baglib/area_object.o \
 	spacebar/baglib/bagel.o \
@@ -115,6 +116,8 @@ MODULE_OBJS = \
 	hodjnpodj/gfx/cursor.o \
 	hodjnpodj/gfx/gfx_surface.o \
 	hodjnpodj/gfx/palette.o \
+	hodjnpodj/hnplibs/dibapi.o \
+	hodjnpdoj/hnplibs/dibdoc.o \
 	hodjnpodj/libs/settings.o \
 	hodjnpodj/libs/vector.o \
 	hodjnpodj/views/dialog.o \
@@ -132,7 +135,8 @@ MODULE_OBJS = \
 	hodjnpodj/mazedoom/maze_doom.o \
 	hodjnpodj/mazedoom/maze_gen.o \
 	hodjnpodj/mazedoom/options.o \
-	hodjnpodj/novacancy/no_vacancy.o
+	hodjnpodj/novacancy/no_vacancy.o \
+	hodjnpodj/riddles/gamedll.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)

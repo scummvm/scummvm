@@ -19,16 +19,47 @@
  *
  */
 
-#ifndef BAGEL_MFC_MFC_H
-#define BAGEL_MFC_MFC_H
+#ifndef HODJNPODJ_HNPLIBS_GAMEDLL_H
+#define HODJNPODJ_HNPLIBS_GAMEDLL_H
 
-#include "bagel/mfc/minwindef.h"
-#include "bagel/mfc/winnt.h"
-#include "bagel/mfc/wingdi.h"
-#include "bagel/mfc/atltime.h"
-#include "bagel/mfc/atltypes.h"
-#include "bagel/mfc/afx.h"
-#include "bagel/mfc/afxwin.h"
-#include "bagel/mfc/global_functions.h"
+#include "bagel/afxwin.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+
+#define	PATHSPECSIZE		256
+
+#define SKILLLEVEL_LOW      0
+#define SKILLLEVEL_MEDIUM   1
+#define SKILLLEVEL_HIGH     2
+
+#define	INSTALL_NONE		0
+#define	INSTALL_MINIMAL		1
+#define INSTALL_BASIC		2
+#define	INSTALL_EXTRA		3
+#define INSTALL_FULL		4
+
+
+struct GAMESTRUCT
+{
+	long            lCrowns;
+	long            lScore;
+	int             nSkillLevel;
+	BOOL            bSoundEffectsEnabled;
+	BOOL            bMusicEnabled;
+	BOOL            bPlayingMetagame;
+	BOOL            bPlayingHodj;
+	/*  For use later in Beta Test
+			int				nInstallationCode;
+			char			chHomePath[PATHSPECSIZE];
+			char			chCDPath[PATHSPECSIZE];
+			char			chMiniPath[PATHSPECSIZE];
+	*/
+};
+
+typedef GAMESTRUCT FAR *LPGAMESTRUCT;
+
+} // namespace HodjNPodj
+} // namespace Bagel
 
 #endif

@@ -19,16 +19,5 @@
  *
  */
 
-#ifndef BAGEL_MFC_MFC_H
-#define BAGEL_MFC_MFC_H
-
-#include "bagel/mfc/minwindef.h"
-#include "bagel/mfc/winnt.h"
-#include "bagel/mfc/wingdi.h"
-#include "bagel/mfc/atltime.h"
-#include "bagel/mfc/atltypes.h"
-#include "bagel/mfc/afx.h"
-#include "bagel/mfc/afxwin.h"
-#include "bagel/mfc/global_functions.h"
-
-#endif
+#include "bagel/afxwin.h"
+//#include <afxext.h>

@@ -19,16 +19,42 @@
  *
  */
 
-#ifndef BAGEL_MFC_MFC_H
-#define BAGEL_MFC_MFC_H
+#ifndef BAGEL_MFC_WINGDI_H
+#define BAGEL_MFC_WINGDI_H
 
 #include "bagel/mfc/minwindef.h"
-#include "bagel/mfc/winnt.h"
-#include "bagel/mfc/wingdi.h"
-#include "bagel/mfc/atltime.h"
-#include "bagel/mfc/atltypes.h"
-#include "bagel/mfc/afx.h"
-#include "bagel/mfc/afxwin.h"
-#include "bagel/mfc/global_functions.h"
+
+namespace Bagel {
+namespace MFC {
+
+typedef struct tagBITMAPINFOHEADER {
+	DWORD      biSize;
+	LONG       biWidth;
+	LONG       biHeight;
+	WORD       biPlanes;
+	WORD       biBitCount;
+	DWORD      biCompression;
+	DWORD      biSizeImage;
+	LONG       biXPelsPerMeter;
+	LONG       biYPelsPerMeter;
+	DWORD      biClrUsed;
+	DWORD      biClrImportant;
+} BITMAPINFOHEADER, FAR *LPBITMAPINFOHEADER,
+	*PBITMAPINFOHEADER;
+
+typedef struct tagRGBQUAD {
+	BYTE    rgbBlue;
+	BYTE    rgbGreen;
+	BYTE    rgbRed;
+	BYTE    rgbReserved;
+} RGBQUAD;
+
+typedef struct tagBITMAPINFO {
+	BITMAPINFOHEADER    bmiHeader;
+	RGBQUAD             bmiColors[1];
+} BITMAPINFO, FAR *LPBITMAPINFO, *PBITMAPINFO;
+
+} // namespace MFC
+} // namespace Bagel
 
 #endif
