@@ -35,6 +35,7 @@ namespace Awe {
 AweEngine *g_engine;
 
 
+/* unused
 static const struct {
 	const char *name;
 	int type;
@@ -54,6 +55,7 @@ static const struct {
 	{ "hard", DIFFICULTY_HARD },
 	{ nullptr,  -1 }
 };
+*/
 
 bool Gfx::_is1991;
 Graphics::PixelFormat Gfx::_format;
@@ -73,7 +75,7 @@ static Gfx *createGraphics(int type) {
 		debugC(kDebugInfo, "Using GL graphics");
 #ifdef USE_GL
 		return GraphicsGL_create();
-#elsif
+#else
 		break;
 #endif
 
