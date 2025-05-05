@@ -992,7 +992,8 @@ Graphics::MacWindowManager *GuiManager::getWM() {
 		SearchMan.addDirectory(dir);
 	}
 
-	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMMode32bpp | Graphics::kWMModeNoCursorOverride;
+	// TODO: Use the overlay format instead of the first screen format
+	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMModeTrueColor | Graphics::kWMModeNoCursorOverride;
 
 	_wm = new Graphics::MacWindowManager(wmMode);
 

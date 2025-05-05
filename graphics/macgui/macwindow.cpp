@@ -332,6 +332,12 @@ void MacWindow::drawPattern() {
 					*dst = _wm->_colorBlack;
 				else
 					*dst = _wm->_colorWhite;
+			} else if (_wm->_pixelformat.bytesPerPixel == 2) {
+				uint16 *dst = (uint16 *)_composeSurface->getBasePtr(x, y);
+				if (pat[y % 8] & (1 << (7 - (x % 8))))
+					*dst = _wm->_colorBlack;
+				else
+					*dst = _wm->_colorWhite;
 			} else {
 				uint32 *dst = (uint32 *)_composeSurface->getBasePtr(x, y);
 				if (pat[y % 8] & (1 << (7 - (x % 8))))

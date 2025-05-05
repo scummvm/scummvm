@@ -118,16 +118,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob, 0, 5);
 	}
 
-	if (ConfMan.getBool("true_color") || (getGameFlags() & GF_32BPP) || debugChannelSet(-1, kDebug32bpp)) {
-#ifdef USE_RGB_COLOR
-		_colorDepth = 32;
-#else
-		warning("32-bpp color dept is not supported, forcing 8-bit");
-		_colorDepth = 8;
-#endif
-	} else {
-		_colorDepth = 8;	// 256-color
-	}
 	// Enable Macintosh gamma correction. This resolves the issue of Mac games appearing too dark.
 	// Applied by default for Macintosh and Pippin games in the detection list.
 	// Right now only used in 8-bit mode to adjust the palette.
@@ -252,10 +242,8 @@ Common::Error DirectorEngine::run() {
 	if (!debugChannelSet(-1, kDebugDesktop))
 		_wmMode |= Graphics::kWMModeFullscreen | Graphics::kWMModeNoDesktop;
 
-#ifdef USE_RGB_COLOR
-	if (ConfMan.getBool("true_color") || (getGameFlags() & GF_32BPP) || debugChannelSet(-1, kDebug32bpp))
-		_wmMode |= Graphics::kWMMode32bpp;
-#endif
+	if (ConfMan.getBool("true_color") || (getGameFlags() & GF_TRUECOLOR) || debugChannelSet(-1, kDebug32bpp))
+		_wmMode |= Graphics::kWMModeTrueColor;
 
 	if (getGameFlags() & GF_DESKTOP)
 		_wmMode &= ~Graphics::kWMModeNoDesktop;
@@ -275,6 +263,7 @@ Common::Error DirectorEngine::run() {
 	_wm->printWMMode();
 
 	_pixelformat = _wm->_pixelformat;
+	_colorDepth = _pixelformat.bytesPerPixel * 8;
 
 	debugC(1, kDebugImages, "Director pixelformat is: %s", _pixelformat.toString().c_str());
 
