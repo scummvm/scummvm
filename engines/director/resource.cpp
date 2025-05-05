@@ -29,6 +29,7 @@
 #include "common/bufferedstream.h"
 #include "common/substream.h"
 #include "common/formats/winexe.h"
+#include "director/detection.h"
 #include "director/types.h"
 #include "graphics/wincursor.h"
 
@@ -311,6 +312,12 @@ Archive *DirectorEngine::loadEXE(const Common::Path &movie) {
 		const Common::Array<Common::WinResourceID> versions = exe->getIDList(Common::kWinVersion);
 		for (uint i = 0; i < versions.size(); i++) {
 			Common::WinResources::VersionInfo *info = exe->getVersionResource(versions[i]);
+
+			Common::String gameName = info->hash["FileDescription"];
+			Common::String versionInfo = Common::String::format("v%d.%d.%dr%d", info->fileVersion[0], info->fileVersion[1], info->fileVersion[2], info->fileVersion[3]);
+
+			debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): Game name from resources: \"%s\"", gameName.c_str());
+			debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): Executable version: %s", versionInfo.c_str());
 
 			for (Common::WinResources::VersionHash::const_iterator it = info->hash.begin(); it != info->hash.end(); ++it)
 				debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): info <%s>: <%s>", it->_key.c_str(), it->_value.encode().c_str());
