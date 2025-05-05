@@ -80,11 +80,6 @@ void AGSWaves::SFX_GetVolume(ScriptMethodParams &params) {
 }
 
 void AGSWaves::Music_Play(ScriptMethodParams &params) {
-	if (params.size() == 2) {
-		// TODO: Plugin changed in latest update, this will need to be reimplemented
-		debug(0, "AGSWaves::Music_Play not implemented in latest version");
-		return;
-	}
 	PARAMS6(int, MFX, int, repeat, int, fadeinMS, int, fadeoutMS, int, Position, bool, fixclick);
 	MusicPlay(MFX, repeat, fadeinMS, fadeoutMS, Position, false, fixclick);
 }
