@@ -528,9 +528,12 @@ void Inter_v7::o7_initScreen() {
 	videoMode = _vm->_game->_script->readInt16();
 
 	if (videoMode == 32000 || videoMode == 256) {
-		Graphics::PixelFormat format = Graphics::createPixelFormat<555>();
 		bool trueColor = videoMode == 32000;
-		_vm->setTrueColor(trueColor, false, &format);
+
+		// Comment the next line and uncomment the following ones to use the original pixel format (RGB555) for debugging purposes
+		_vm->setTrueColor(trueColor, false, nullptr);
+		// Graphics::PixelFormat format = Graphics::createPixelFormat<555>();
+		// _vm->setTrueColor(trueColor, false, &format);
 	}
 
 	videoMode &= 0xFF;
