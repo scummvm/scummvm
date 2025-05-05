@@ -3,3 +3,8 @@
 // (i.e. when launching a game)
 /*global JSEvents*/
 JSEvents.removeAllHandlersOnTarget = function(){};
+
+// Make sure to release any resources (e.g. RetroWave or Midi Devices) when leaving the page
+window.addEventListener("beforeunload", function (e) {
+	Module["_raise"](2); // SIGINT
+});

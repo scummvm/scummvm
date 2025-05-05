@@ -63,6 +63,7 @@ _libmpeg2=false
 _libmikmod=false
 _libtheoradec=false
 _libvpx=false
+_retrowave=false
 
 # parse inputs
 for i in "$@"; do
@@ -94,6 +95,10 @@ for i in "$@"; do
     ;;
   --enable-openmpt) 
     _libopenmpt=true
+    CONFIGURE_ARGS+=" $i"
+    ;;
+  --enable-retrowave)
+    _retrowave=true
     CONFIGURE_ARGS+=" $i"
     ;;
   --enable-theoradec)
@@ -305,6 +310,20 @@ if [ "$_libopenmpt" = true ]; then
     emmake make install CONFIG=emscripten EMSCRIPTEN_TARGET=wasm PREFIX="$LIBS_FOLDER/build/"
   fi
   LIBS_FLAGS="${LIBS_FLAGS} --with-openmpt-prefix=$LIBS_FOLDER/build"
+fi
+
+if [ "$_retrowave" = true ]; then
+  if [[ ! -f "$LIBS_FOLDER/build/lib/libRetroWave.a" ]]; then
+    echo "build libRetroWave-e6bf60e"
+    cd "$LIBS_FOLDER"
+    wget -nc --content-disposition "https://github.com/SudoMaker/RetroWave/archive/e6bf60eed2d2bd1deff688d645be71a32bbf05bb.tar.gz"
+    tar -xf RetroWave-e6bf60eed2d2bd1deff688d645be71a32bbf05bb.tar.gz
+    cd "$LIBS_FOLDER/RetroWave-e6bf60eed2d2bd1deff688d645be71a32bbf05bb/"
+    CFLAGS="-fPIC -s USE_ZLIB=1 -Oz"  emcmake cmake -B "build/" -DRETROWAVE_BUILD_PLAYER=0  -DCMAKE_INSTALL_PREFIX="$LIBS_FOLDER/build/" -DCMAKE_INSTALL_LIBDIR="lib"
+    cmake --build "build/"  
+    cmake --install "build/"  
+  fi
+  LIBS_FLAGS="${LIBS_FLAGS} --with-retrowave-prefix=$LIBS_FOLDER/build"
 fi
 
 if [ "$_libtheoradec" = true ]; then
