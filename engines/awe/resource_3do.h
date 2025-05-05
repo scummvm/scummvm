@@ -23,7 +23,6 @@
 #define AWE_RESOURCE_3DO_H
 
 #include "awe/intern.h"
-#include "awe/file.h"
 
 namespace Awe {
 

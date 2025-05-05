@@ -22,8 +22,9 @@
 #ifndef AWE_RESOURCE_WIN31_H
 #define AWE_RESOURCE_WIN31_H
 
+#include "common/file.h"
+
 #include "awe/intern.h"
-#include "awe/file.h"
 
 namespace Awe {
 
@@ -38,7 +39,7 @@ struct Win31BankEntry {
 struct ResourceWin31 {
 	static const char *FILENAME;
 
-	File _f;
+	Common::File _f;
 	Win31BankEntry *_entries = nullptr;
 	int _entriesCount = 0;
 	uint8 *_textBuf = nullptr;

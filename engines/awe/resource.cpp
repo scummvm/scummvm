@@ -21,7 +21,6 @@
 
 #include "common/config-manager.h"
 #include "awe/resource.h"
-#include "awe/file.h"
 #include "awe/pak.h"
 #include "awe/resource_nth.h"
 #include "awe/resource_win31.h"
@@ -60,7 +59,7 @@ bool Resource::readBank(const MemEntry *me, uint8 *dstBuf) {
 	bool ret = false;
 	char name[10];
 	snprintf(name, sizeof(name), "%s%02x", _bankPrefix, me->bankNum);
-	File f;
+	Common::File f;
 	if (f.open(name) || (_dataType == DT_ATARI_DEMO && f.open(atariDemo))) {
 		f.seek(me->bankPos);
 		const size_t count = f.read(dstBuf, me->packedSize);
@@ -181,7 +180,7 @@ void Resource::readEntries() {
 		break;
 	case DT_ATARI_DEMO:
 	{
-		File f;
+		Common::File f;
 		if (f.open(atariDemo)) {
 			static const struct {
 				uint8 type;
@@ -237,7 +236,7 @@ void Resource::dumpEntries() {
 				if (readBank(&_memList[i], p)) {
 					char name[16];
 					snprintf(name, sizeof(name), "data_%02x_%d", i, _memList[i].type);
-					dumpFile(name, p, _memList[i].unpackedSize);
+					//dumpFile(name, p, _memList[i].unpackedSize);
 				}
 				free(p);
 			}
@@ -655,7 +654,7 @@ void Resource::freeMemBlock() {
 
 void Resource::readDemo3Joy() {
 	static const char *filename = "demo3.joy";
-	File f;
+	Common::File f;
 	if (f.open(filename)) {
 		const uint32 fileSize = f.size();
 		_demo3Joy.bufPtr = (uint8 *)malloc(fileSize);

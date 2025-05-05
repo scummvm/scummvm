@@ -55,7 +55,7 @@ Pak::~Pak() {
 }
 
 void Pak::open(const char *dataPath) {
-	_f.open(FILENAME, dataPath);
+	_f.open(Common::Path(FILENAME));
 }
 
 void Pak::close() {
@@ -73,7 +73,7 @@ void Pak::readEntries() {
 
 	memset(header, 0, sizeof(header));
 	_f.read(header, sizeof(header));
-	if (_f.ioErr() || memcmp(header, "PACK", 4) != 0) {
+	if (_f.err() || memcmp(header, "PACK", 4) != 0) {
 		return;
 	}
 	const uint32 entriesOffset = READ_LE_UINT32(header + 4);
@@ -89,7 +89,7 @@ void Pak::readEntries() {
 	for (int i = 0; i < _entriesCount; ++i) {
 		uint8 buf[0x40];
 		_f.read(buf, sizeof(buf));
-		if (_f.ioErr()) {
+		if (_f.err()) {
 			break;
 		}
 		const char *name = (const char *)buf;
@@ -129,7 +129,7 @@ const PakEntry *Pak::find(const char *name) {
 void Pak::loadData(const PakEntry *e, uint8 *buf, uint32 *size) {
 	debugC(kDebugPak, "Pak::loadData() %d bytes from 0x%x", e->size, e->offset);
 	_f.seek(e->offset);
-	if (_f.ioErr()) {
+	if (_f.err()) {
 		*size = 0;
 		return;
 	}

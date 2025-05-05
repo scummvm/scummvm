@@ -20,7 +20,6 @@
  */
 
 #include "awe/engine.h"
-#include "awe/file.h"
 #include "awe/gfx.h"
 #include "awe/resource_nth.h"
 #include "awe/system_stub.h"

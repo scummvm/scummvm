@@ -27,7 +27,7 @@
 
 namespace Awe {
 
-static char *loadTextFile(File &f, const int size) {
+static char *loadTextFile(Common::File &f, const int size) {
 	char *buf = (char *)malloc(size + 1);
 	if (buf) {
 		const int count = f.read(buf, size);
@@ -160,7 +160,7 @@ struct Resource15th : ResourceNth {
 			}
 			char path[MAXPATHLEN];
 			snprintf(path, sizeof(path), "%s/lang_%s", _menuPath, name);
-			File f;
+			Common::File f;
 			if (f.open(path)) {
 				const int size = f.size();
 				_textBuf = loadTextFile(f, size);
@@ -218,7 +218,7 @@ struct Resource15th : ResourceNth {
 				path = "Music/AW/End2004.wav";
 			}
 			break;
-			
+
 		default:
 			break;
 		}
@@ -232,7 +232,7 @@ struct Resource15th : ResourceNth {
 };
 
 static uint8 *inflateGzip(const char *filepath) {
-	File f;
+	Common::File f;
 	if (!f.open(filepath)) {
 		warning("Unable to open '%s'", filepath);
 		return nullptr;
@@ -262,7 +262,7 @@ static uint8 *inflateGzip(const char *filepath) {
 		str.next_out = out;
 		str.avail_out = dataSize;
 		while (err == Z_OK && str.avail_out != 0) {
-			if (str.avail_in == 0 && !f.ioErr()) {
+			if (str.avail_in == 0 && !f.err()) {
 				str.next_in = buf;
 				str.avail_in = f.read(buf, sizeof(buf));
 			}
@@ -381,13 +381,13 @@ struct Resource20th : ResourceNth {
 		char path[MAXPATHLEN];
 		Common::strcpy_s(path, "game/DAT");
 
-		File f;
+		Common::File f;
 		if (_datName[0]) {
-			datOpen = f.open(_datName, path);
+			datOpen = f.open(_datName);
 		}
 		if (!datOpen) {
 			snprintf(_datName, sizeof(_datName), "FILE%03d.DAT", num);
-			datOpen = f.open(_datName, path);
+			datOpen = f.open(_datName);
 		}
 		if (datOpen) {
 			const uint32 dataSize = f.size();
@@ -498,7 +498,7 @@ struct Resource20th : ResourceNth {
 				nullptr
 			};
 			bool isOpen = false;
-			File f;
+			Common::File f;
 			for (int i = 0; fmt[i] && !isOpen; ++i) {
 				snprintf(path, sizeof(path), fmt[i], name);
 				isOpen = f.open(path);

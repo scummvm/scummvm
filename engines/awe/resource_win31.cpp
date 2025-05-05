@@ -55,7 +55,7 @@ static uint16 decode(uint8 *p, int size, uint16 key) {
 }
 
 struct Bitstream {
-	File *_f;
+	Common::File *_f;
 	int _size;
 	uint16 _bits;
 	int _len;
@@ -64,7 +64,7 @@ struct Bitstream {
 		: _f(nullptr), _size(0), _bits(0), _len(0) {
 	}
 
-	void reset(File *f, int size) {
+	void reset(Common::File *f, int size) {
 		_f = f;
 		_size = size;
 		_bits = 0;
@@ -237,7 +237,7 @@ struct LzHuffman {
 		return currentSize == uncompressedSize;
 	}
 
-	bool decompressEntry(File &f, const Win31BankEntry *e, uint8 *out) {
+	bool decompressEntry(Common::File &f, const Win31BankEntry *e, uint8 *out) {
 		f.seek(e->offset);
 		_stream.reset(&f, e->packedSize);
 		return decode(out, e->size);
@@ -299,7 +299,7 @@ uint8 *ResourceWin31::loadFile(int num, uint8 *dst, uint32 *size) {
 		// check for unpacked data
 		char name[32];
 		snprintf(name, sizeof(name), "%03d_%s", num, e->name);
-		File f;
+		Common::File f;
 		if (f.open(name) && f.size() == e->size) {
 			f.read(dst, e->size);
 			return dst;

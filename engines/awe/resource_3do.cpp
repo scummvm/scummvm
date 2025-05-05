@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/file.h"
+
 #include "awe/resource_3do.h"
 
 namespace Awe {
@@ -44,7 +46,7 @@ static int decodeLzss(const uint8 *src, uint32 len, uint8 *dst) {
 	return wr;
 }
 
-static void decodeCcb16(int ccbWidth, int ccbHeight, File *f, uint32 dataSize, uint16 *dst) {
+static void decodeCcb16(int ccbWidth, int ccbHeight, Common::File *f, uint32 dataSize, uint16 *dst) {
 	for (int y = 0; y < ccbHeight; ++y) {
 		const int scanlineSize = 4 * (f->readUint16BE() + 2);
 		int scanlineLen = 2;
@@ -77,7 +79,7 @@ static void decodeCcb16(int ccbWidth, int ccbHeight, File *f, uint32 dataSize, u
 				scanlineLen += 2;
 				}
 				break;
-				
+
 			default:
 				break;
 			}
@@ -98,7 +100,7 @@ static const uint8 _ccb_bppTable[8] = {
 	0, 1, 2, 4, 6, 8, 16, 0
 };
 
-static uint16 *decodeShapeCcb(File *f, int dataSize, int *w, int *h) {
+static uint16 *decodeShapeCcb(Common::File *f, int dataSize, int *w, int *h) {
 	const uint32 flags = f->readUint32BE();
 	f->seek(4, SEEK_CUR);
 	const uint32 celData = f->readUint32BE();
@@ -129,7 +131,7 @@ uint8 *Resource3do::loadFile(int num, uint8 *dst, uint32 *size) {
 
 	char path[MAXPATHLEN];
 	snprintf(path, sizeof(path), "GameData/File%d", num);
-	File f;
+	Common::File f;
 	if (f.open(path)) {
 		const int sz = f.size();
 		if (!dst) {
@@ -169,7 +171,7 @@ uint8 *Resource3do::loadFile(int num, uint8 *dst, uint32 *size) {
 uint16 *Resource3do::loadShape555(const char *name, int *w, int *h) {
 	char path[MAXPATHLEN];
 	snprintf(path, sizeof(path), "GameData/%s", name);
-	File f;
+	Common::File f;
 	if (f.open(path)) {
 		const uint32 dataSize = f.size();
 		return decodeShapeCcb(&f, dataSize, w, h);

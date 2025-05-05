@@ -22,8 +22,9 @@
 #ifndef AWE_PAK_H
 #define AWE_PAK_H
 
+#include "common/file.h"
+
 #include "awe/intern.h"
-#include "awe/file.h"
 
 namespace Awe {
 
@@ -36,7 +37,7 @@ struct PakEntry {
 struct Pak {
 	static const char *FILENAME;
 
-	File _f;
+	Common::File _f;
 	PakEntry *_entries = nullptr;
 	int _entriesCount = 0;
 

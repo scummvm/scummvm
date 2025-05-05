@@ -22,13 +22,14 @@
 #ifndef AWE_AIFC_PLAYER_H
 #define AWE_AIFC_PLAYER_H
 
+#include "common/file.h"
+
 #include "awe/intern.h"
-#include "awe/file.h"
 
 namespace Awe {
 
 struct AifcPlayer {
-	File _f;
+	Common::File _f;
 	uint32 _ssndOffset = 0;
 	uint32 _ssndSize = 0;
 	uint32 _pos = 0;

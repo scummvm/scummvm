@@ -7,7 +7,6 @@ MODULE_OBJS = \
 	bitmap.o \
 	detection.o \
 	engine.o \
-	file.o \
 	graphics_gl.o \
 	graphics_soft.o \
 	metaengine.o \
