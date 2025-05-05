@@ -3267,6 +3267,8 @@ EOF
 		append_var LDFLAGS "-s INITIAL_MEMORY=128MB -s STACK_SIZE=32MB -s ALLOW_MEMORY_GROWTH=1"
 		append_var LDFLAGS "-s ASYNCIFY=1 -s ASYNCIFY_STACK_SIZE=1048576"
 
+		append_var LDFLAGS "-s EXPORTED_FUNCTIONS=[_main,_malloc,_free,_raise]"
+		append_var LDFLAGS "-s EXPORTED_RUNTIME_METHODS=[ccall,lengthBytesUTF8,setValue,writeArrayToMemory]"
 		if test "$_debug_build" = yes; then
 			_optimization_level=-O2
 			append_var LDFLAGS "-O2 -g3 -s ASSERTIONS=2"
