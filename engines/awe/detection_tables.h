@@ -44,7 +44,20 @@ const AweGameDescription gameDescriptions[] = {
 		{
 			"anotherworld",
 			nullptr,
-			AD_ENTRY1s("memlist.bin",  "63675fdb53dd4a2b8d72182bbee47592", 2940),
+			AD_ENTRY1s("memlist.bin", "63675fdb53dd4a2b8d72182bbee47592", 2940),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
+		},
+		DT_DOS
+	},
+	// Out of This World, Valueware and Interplay's 10 Year Anthology
+	{
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY1s("memlist.bin", "4605962431175a5b961f6db4041adcff", 2940),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
