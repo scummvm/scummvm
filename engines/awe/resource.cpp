@@ -422,6 +422,9 @@ void Resource::update(uint16 num, PreloadSoundProc preloadSound, void *data) {
 	case DT_ATARI:
 	case DT_ATARI_DEMO:
 	case DT_DOS:
+		if (num >= ENTRIES_COUNT_20TH)
+			error("Resource::update - Resource number too high %d", num);
+
 		MemEntry *me = &_memList[num];
 		if (me->status == STATUS_NULL) {
 			me->status = STATUS_TOLOAD;
