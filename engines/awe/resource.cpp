@@ -45,7 +45,8 @@ Resource::Resource(Video *vid, DataType dataType) :
 		_vid(vid), _dataType(dataType) {
 	if (_dataType == DT_ATARI) {
 		_amigaMemList = detectAmigaAtari();
-	}
+	} else
+		_amigaMemList = nullptr;
 }
 
 Resource::~Resource() {
@@ -526,7 +527,7 @@ uint8 *Resource::loadWav(int num, uint32 *size) {
 	default:
 		break;
 	}
-	if (p && size != nullptr) {
+	if (p) {
 		_scriptCurPtr += *size;
 		_memList[num].bufPtr = p;
 		_memList[num].status = STATUS_LOADED;
@@ -652,6 +653,9 @@ void Resource::setupPart(int ptrId) {
 
 void Resource::allocMemBlock() {
 	_memPtrStart = (uint8 *)malloc(MEM_BLOCK_SIZE);
+	if (!_memPtrStart)
+		error("allocMemBlock - Error allocating memory");
+	
 	_scriptBakPtr = _scriptCurPtr = _memPtrStart;
 	_vidCurPtr = _memPtrStart + MEM_BLOCK_SIZE - (320 * 200 / 2); // 4bpp bitmap
 	_useSegVideo2 = false;
