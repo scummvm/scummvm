@@ -51,27 +51,27 @@ class SurfacePrimitives final : public Graphics::Primitives {
 public:
         void drawPoint(int x, int y, uint32 color, void *data) override {
 		Surface *s = (Surface *)data;
-		s->putPixel(x, y, color);
+		s->putPixelRaw(x, y, color);
 	}
 
         void drawHLine(int x1, int x2, int y, uint32 color, void *data) override {
 		Surface *s = (Surface *)data;
-		s->fillRect(x1, y, x2, y, color);
+		s->fillRectRaw(x1, y, x2, y, color);
 	}
 
         void drawVLine(int x, int y1, int y2, uint32 color, void *data) override {
 		Surface *s = (Surface *)data;
-		s->fillRect(x, y1, x, y2, color);
+		s->fillRectRaw(x, y1, x, y2, color);
 	}
 
 	void drawFilledRect(const Common::Rect &rect, uint32 color, void *data) override {
 		Surface *s = (Surface *)data;
-		s->fillRect(rect.left, rect.top, rect.right - 1, rect.bottom - 1, color);
+		s->fillRectRaw(rect.left, rect.top, rect.right - 1, rect.bottom - 1, color);
 	}
 
 	void drawFilledRect1(const Common::Rect &rect, uint32 color, void *data) override {
 		Surface *s = (Surface *)data;
-		s->fillRect(rect.left, rect.top, rect.right, rect.bottom, color);
+		s->fillRectRaw(rect.left, rect.top, rect.right, rect.bottom, color);
 	}
 };
 
