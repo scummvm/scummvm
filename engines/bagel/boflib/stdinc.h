@@ -78,7 +78,9 @@ struct WindowPos {
 
 #define MAX_DIRPATH 256
 
+#ifndef PDFT
 #define PDFT(VALUE) = VALUE
+#endif
 
 /*
 * normal types

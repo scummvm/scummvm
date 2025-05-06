@@ -76,7 +76,7 @@ void      WINAPI  InitBitmapInfoHeader(LPBITMAPINFOHEADER lpBmInfoHdr,
 	DWORD dwHeight,
 	int nBPP);
 
-void	  WINAPI  ShowMemoryInfo(char *chMessage, char *chTitle);
+void	  WINAPI  ShowMemoryInfo(const char *chMessage, const char *chTitle);
 
 CPalette *DuplicatePalette(CPalette *pPal);
 

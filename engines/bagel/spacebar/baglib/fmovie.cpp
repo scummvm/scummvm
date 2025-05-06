@@ -113,8 +113,7 @@ bool CBagFMovie::openMovie(const char *sFilename) {
 
 
 	// Allocate the bitmaps.
-	HPALETTE pal;
-	_smackerPal = new CBofPalette(pal);
+	_smackerPal = new CBofPalette();
 
 	_bmpBuf = new CBofBitmap(_smk->getWidth(), _smk->getHeight(), _smackerPal, false);
 

@@ -43,7 +43,7 @@ void Palette::loadInitialPalette() {
 }
 
 void Palette::setPalette(const byte *palette) {
-	g_system->getPaletteManager()->setPalette(palette, 0, PALETTE_COUNT);
+	g_system->getPaletteManager()->setPalette(palette, 0, Graphics::PALETTE_COUNT);
 }
 
 void Palette::setPalette(const Graphics::Palette &palette) {
@@ -51,11 +51,11 @@ void Palette::setPalette(const Graphics::Palette &palette) {
 }
 
 Graphics::Palette Palette::getPalette() const {
-	return g_system->getPaletteManager()->grabPalette(0, PALETTE_COUNT);
+	return g_system->getPaletteManager()->grabPalette(0, Graphics::PALETTE_COUNT);
 }
 
 void Palette::loadPalette(const byte *palette) {
-	_gamePalette = Graphics::Palette(palette, PALETTE_COUNT);
+	_gamePalette = Graphics::Palette(palette, Graphics::PALETTE_COUNT);
 	setPalette(_gamePalette);
 }
 

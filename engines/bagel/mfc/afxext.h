@@ -19,41 +19,21 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "bagel/mfc/global_functions.h"
+#ifndef BAGEL_MFC_AFXEXT_H
+#define BAGEL_MFC_AFXEXT_H
+
+#include "bagel/mfc/afxwin.h"
 
 namespace Bagel {
 namespace MFC {
 
-HGLOBAL GlobalAlloc(UINT uFlags, SIZE_T dwBytes) {
-	error("TODO: GlobalAlloc");
-}
-
-LPVOID GlobalLock(HGLOBAL hMem) {
-	error("TODO: GlobalLock");
-}
-
-BOOL GlobalUnlock(HGLOBAL hMem) {
-	error("TODO: GlobalUnlock");
-}
-
-HGLOBAL GlobalFree(HGLOBAL hMem) {
-	error("TODO: GlobalFree");
-}
-
-SIZE_T GlobalSize(HGLOBAL hMem) {
-	error("TODO: GlobalSize");
-}
-
-SIZE_T GlobalCompact(DWORD dwMinFree) {
-	error("TODO: GlobalCompact");
-}
-
-int MessageBox(HWND hWnd, LPCSTR lpText,
-		LPCSTR lpCaption, UINT uType) {
-	error("%s %s", lpText, lpCaption);
-	return 0;
-}
+class CBitmapButton : public CButton {
+public:
+	~CBitmapButton() override {
+	}
+};
 
 } // namespace MFC
 } // namespace Bagel
+
+#endif

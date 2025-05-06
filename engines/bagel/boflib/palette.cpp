@@ -33,7 +33,7 @@ namespace SpaceBar {
 CBofPalette *CBofPalette::_pSharedPalette;
 char CBofPalette::_szSharedPalFile[MAX_FNAME];
 
-HPALETTE::HPALETTE(int16 numColors) : _numColors(numColors) {
+PaletteData::PaletteData(int16 numColors) : _numColors(numColors) {
 	Common::fill(&_data[0], &_data[Graphics::PALETTE_SIZE], 0);
 }
 
@@ -53,8 +53,8 @@ CBofPalette::CBofPalette(const char *pszFileName) {
 	loadPalette(pszFileName);
 }
 
-CBofPalette::CBofPalette(const HPALETTE &hPalette) {
-	_palette = hPalette;
+CBofPalette::CBofPalette(const PaletteData &paletteData) {
+	_palette = paletteData;
 }
 
 CBofPalette::~CBofPalette() {
@@ -71,11 +71,11 @@ CBofPalette::~CBofPalette() {
 	ReleasePalette();
 }
 
-void CBofPalette::setPalette(const HPALETTE &hPalette) {
+void CBofPalette::setPalette(const PaletteData &PaletteData) {
 	assert(isValidObject(this));
 
 	ReleasePalette();
-	_palette = hPalette;
+	_palette = PaletteData;
 }
 
 ErrorCode CBofPalette::loadPalette(const char *pszFileName, uint16 nFlags) {

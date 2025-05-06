@@ -43,6 +43,7 @@ enum ErrorCode {
 	ERR_CRC = 13,   /* file or data failed CRC check */
 };
 
+#define ERROR_CODE ErrorCode
 #define MAX_ERRORS 3
 
 extern const char *const g_errList[];

@@ -228,7 +228,7 @@ ErrorCode CBofBitmap::paint(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrc
 
 		if (_bitmap.format.bytesPerPixel == 1) {
 			// Bitmap is paletted, so ensure it's palette is updated
-			const HPALETTE &pal = _pPalette->getPalette();
+			const auto &pal = _pPalette->getPalette();
 			_bitmap.setPalette(pal._data, 0, pal._numColors);
 		}
 

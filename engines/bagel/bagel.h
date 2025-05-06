@@ -23,7 +23,7 @@
 #define BAGEL_H
 
 #include "common/random.h"
-
+#include "graphics/screen.h"
 #include "bagel/detection.h"
 #include "bagel/music.h"
 #include "bagel/spacebar/baglib/master_win.h"

@@ -79,55 +79,55 @@ BOOL WINAPI PaintDIB(HDC     hDC,
 	/* Lock down the DIB, and get a pointer to the beginning of the bit
 	 *  buffer
 	 */
-	lpDIBHdr = (LPSTR) ::GlobalLock((HGLOBAL)hDIB);
-	lpDIBBits = ::FindDIBBits(lpDIBHdr);
+	lpDIBHdr = (LPSTR)GlobalLock((HGLOBAL)hDIB);
+	lpDIBBits = FindDIBBits(lpDIBHdr);
 
 	// Get the palette, then select it into DC
 	if (pPal != NULL) {
 		hPal = (HPALETTE)pPal->m_hObject;
 
 		// Select as foreground and realize it
-		hOldPal = ::SelectPalette(hDC, hPal, FALSE);
-		(void) ::RealizePalette(hDC);
+		hOldPal = SelectPalette(hDC, hPal, FALSE);
+		(void) RealizePalette(hDC);
 	}
 
 	nDevCaps = GetDeviceCaps(hDC, RASTERCAPS);
 	if (!(nDevCaps & RC_STRETCHDIB)) {
-		hBitmap = ::DIBtoBitmap(hDC, NULL, (LPBITMAPINFO)lpDIBHdr);
+		hBitmap = DIBtoBitmap(hDC, NULL, (LPBITMAPINFO)lpDIBHdr);
 		if (hBitmap) {
-			hdcMem = ::CreateCompatibleDC(hDC);
+			hdcMem = CreateCompatibleDC(hDC);
 			if (hdcMem) {
-				hOldPal2 = ::SelectPalette(hdcMem, hPal, FALSE);
-				(void) ::RealizePalette(hdcMem);
+				hOldPal2 = SelectPalette(hdcMem, hPal, FALSE);
+				(void) RealizePalette(hdcMem);
 				hBitmapOld = SelectBitmap(hdcMem, hBitmap);
 				if ((RECTWIDTH(lpDCRect) == RECTWIDTH(lpDIBRect)) &&
 					(RECTHEIGHT(lpDCRect) == RECTHEIGHT(lpDIBRect)))
-					bSuccess = ::BitBlt(hDC, lpDCRect->left, lpDCRect->top,
+					bSuccess = BitBlt(hDC, lpDCRect->left, lpDCRect->top,
 						RECTWIDTH(lpDIBRect),
 						RECTHEIGHT(lpDIBRect),
 						hdcMem, lpDIBRect->left, lpDIBRect->top, SRCCOPY);
 				else
 					if (nDevCaps & RC_STRETCHBLT)
-						bSuccess = ::StretchBlt(hDC, lpDCRect->left, lpDCRect->top, RECTWIDTH(lpDCRect), RECTHEIGHT(lpDCRect),
+						bSuccess = StretchBlt(hDC, lpDCRect->left, lpDCRect->top, RECTWIDTH(lpDCRect), RECTHEIGHT(lpDCRect),
 							hdcMem, lpDIBRect->left, lpDIBRect->top, RECTWIDTH(lpDIBRect), RECTHEIGHT(lpDIBRect),
 							SRCCOPY);
 					else
 						bSuccess = FALSE;
 				(void)SelectBitmap(hdcMem, hBitmapOld);
-				(void) ::SelectPalette(hdcMem, hOldPal2, FALSE);
-				::DeleteDC(hdcMem);
+				(void) SelectPalette(hdcMem, hOldPal2, FALSE);
+				DeleteDC(hdcMem);
 			}
 		}
 		if (hBitmap != NULL)
 			DeleteBitmap(hBitmap);
 		if (pPal != NULL)
-			::SelectPalette(hDC, hOldPal, FALSE);
-		::GlobalUnlock((HGLOBAL)hDIB);
+			SelectPalette(hDC, hOldPal, FALSE);
+		GlobalUnlock((HGLOBAL)hDIB);
 		return(bSuccess);
 	}
 
 	/* Make sure to use the stretching mode best for color pictures */
-	::SetStretchBltMode(hDC, COLORONCOLOR);
+	SetStretchBltMode(hDC, COLORONCOLOR);
 
 #ifdef HIDE	// looks like some graphics cards do not support this to offscreen bitmaps
 	/* Determine whether to call StretchDIBits() or SetDIBitsToDevice() */
@@ -149,7 +149,7 @@ BOOL WINAPI PaintDIB(HDC     hDC,
 			DIB_RGB_COLORS);            // wUsage
 	else
 #endif
-		bSuccess = ::StretchDIBits(hDC,                          // hDC
+		bSuccess = StretchDIBits(hDC,                          // hDC
 			lpDCRect->left,                 // DestX
 			lpDCRect->top,                  // DestY
 			RECTWIDTH(lpDCRect),            // nDestWidth
@@ -164,9 +164,9 @@ BOOL WINAPI PaintDIB(HDC     hDC,
 			SRCCOPY);                       // dwROP
 
 	if (pPal != NULL)
-		::SelectPalette(hDC, hOldPal, FALSE);
+		SelectPalette(hDC, hOldPal, FALSE);
 
-	::GlobalUnlock((HGLOBAL)hDIB);
+	GlobalUnlock((HGLOBAL)hDIB);
 
 	return bSuccess;
 }
@@ -198,7 +198,7 @@ BOOL WINAPI PaintDIB(HDC     hDC,
 BOOL WINAPI CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
 	LPLOGPALETTE lpPal;      // pointer to a logical palette
 	HANDLE hLogPal;          // handle to a logical palette
-	HPALETTE hPal = NULL;    // handle to a palette
+	//HPALETTE hPal = NULL;    // handle to a palette
 	int i;                   // loop index
 	WORD wNumColors;         // number of colors in color table
 	LPSTR lpbi;              // pointer to packed-DIB
@@ -213,7 +213,7 @@ BOOL WINAPI CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
 	if (hDIB == NULL)
 		return FALSE;
 
-	lpbi = (LPSTR) ::GlobalLock((HGLOBAL)hDIB);
+	lpbi = (LPSTR) GlobalLock((HGLOBAL)hDIB);
 
 	/* get pointer to BITMAPINFO (Win 3.0) */
 	lpbmi = (LPBITMAPINFO)lpbi;
@@ -222,13 +222,13 @@ BOOL WINAPI CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
 	lpbmc = (LPBITMAPCOREINFO)lpbi;
 
 	/* get the number of colors in the DIB */
-	wNumColors = ::DIBNumColors(lpbi);
+	wNumColors = DIBNumColors(lpbi);
 
 	if (wNumColors != 0)
 	{
 try_again:
 		/* allocate memory block for logical palette */
-		hLogPal = ::GlobalAlloc(GPTR, sizeof(LOGPALETTE)
+		hLogPal = GlobalAlloc(GPTR, sizeof(LOGPALETTE)
 			+ sizeof(PALETTEENTRY)
 			* wNumColors);
 
@@ -240,11 +240,11 @@ try_again:
 				(void)GlobalCompact(1000000L);
 				goto try_again;
 			}
-			::GlobalUnlock((HGLOBAL)hDIB);
+			GlobalUnlock((HGLOBAL)hDIB);
 			return FALSE;
 		}
 
-		lpPal = (LPLOGPALETTE) ::GlobalLock((HGLOBAL)hLogPal);
+		lpPal = (LPLOGPALETTE) GlobalLock((HGLOBAL)hLogPal);
 
 		/* set version and number of palette entries */
 		lpPal->palVersion = PALVERSION;
@@ -272,11 +272,11 @@ try_again:
 		/* create the palette and get handle to it */
 		bResult = pPal->CreatePalette(lpPal);
 
-		::GlobalUnlock((HGLOBAL)hLogPal);
-		::GlobalFree((HGLOBAL)hLogPal);
+		GlobalUnlock((HGLOBAL)hLogPal);
+		GlobalFree((HGLOBAL)hLogPal);
 	}
 
-	::GlobalUnlock((HGLOBAL)hDIB);
+	GlobalUnlock((HGLOBAL)hDIB);
 
 	return bResult;
 }
@@ -300,7 +300,7 @@ try_again:
 		return(NULL);
 
 	/* allocate memory block for logical palette */
-	hLogPal = ::GlobalAlloc(GPTR, sizeof(LOGPALETTE)
+	hLogPal = GlobalAlloc(GPTR, sizeof(LOGPALETTE)
 		+ sizeof(PALETTEENTRY)
 		* wNumColors);
 
@@ -315,7 +315,7 @@ try_again:
 		return(NULL);
 	}
 
-	lpPal = (LPLOGPALETTE) ::GlobalLock((HGLOBAL)hLogPal);
+	lpPal = (LPLOGPALETTE) GlobalLock((HGLOBAL)hLogPal);
 
 	/* set version and number of palette entries */
 	lpPal->palVersion = PALVERSION;
@@ -332,8 +332,8 @@ try_again:
 		pPal = NULL;
 	}
 
-	::GlobalUnlock((HGLOBAL)hLogPal);
-	::GlobalFree((HGLOBAL)hLogPal);
+	GlobalUnlock((HGLOBAL)hLogPal);
+	GlobalFree((HGLOBAL)hLogPal);
 
 	return(pPal);
 }
@@ -360,7 +360,7 @@ try_again:
 
 
 LPSTR WINAPI FindDIBBits(LPSTR lpbi) {
-	return (lpbi + *(LPDWORD)lpbi + ::PaletteSize(lpbi));
+	return (lpbi + *(LPDWORD)lpbi + PaletteSize(lpbi));
 }
 
 
@@ -465,9 +465,9 @@ DWORD WINAPI DIBHeight(LPSTR lpDIB) {
 WORD WINAPI PaletteSize(LPSTR lpbi) {
 	/* calculate the size required by the palette */
 	if (IS_WIN30_DIB(lpbi))
-		return (WORD)(::DIBNumColors(lpbi) * sizeof(RGBQUAD));
+		return (WORD)(DIBNumColors(lpbi) * sizeof(RGBQUAD));
 	else
-		return (WORD)(::DIBNumColors(lpbi) * sizeof(RGBTRIPLE));
+		return (WORD)(DIBNumColors(lpbi) * sizeof(RGBTRIPLE));
 }
 
 
@@ -553,7 +553,7 @@ CBitmap *WINAPI ConvertDIB(CDC *pDC,
 	CPalette *pPal) {
 	LPSTR    lpDIBHdr;            // Pointer to BITMAPINFOHEADER
 	LPSTR    lpDIBBits;           // Pointer to DIB bits
-	BOOL     bSuccess = FALSE;      // Success/fail flag
+	//BOOL     bSuccess = FALSE;      // Success/fail flag
 	HPALETTE hPal = NULL;           // Our DIB's palette
 	HPALETTE hOldPal = NULL;        // Previous palette
 	HDC		 hDC;
@@ -568,19 +568,19 @@ CBitmap *WINAPI ConvertDIB(CDC *pDC,
 		hPal = (HPALETTE)pPal->m_hObject;
 
 		// Select as foreground and realize it
-		hOldPal = ::SelectPalette(hDC, hPal, FALSE);
-		(void) ::RealizePalette(hDC);
+		hOldPal = SelectPalette(hDC, hPal, FALSE);
+		(void) RealizePalette(hDC);
 	}
 
 	/* Lock down the DIB, and get a pointer to the beginning of the bit
 	 *  buffer
 	 */
-	lpDIBHdr = (LPSTR) ::GlobalLock((HGLOBAL)hDIB);
-	lpDIBBits = ::FindDIBBits(lpDIBHdr);
+	lpDIBHdr = (LPSTR) GlobalLock((HGLOBAL)hDIB);
+	lpDIBBits = FindDIBBits(lpDIBHdr);
 
-	hBitmap = ::DIBtoBitmap(hDC, NULL, (LPBITMAPINFO)lpDIBHdr);
+	hBitmap = DIBtoBitmap(hDC, NULL, (LPBITMAPINFO)lpDIBHdr);
 
-	::GlobalUnlock((HGLOBAL)hDIB);
+	GlobalUnlock((HGLOBAL)hDIB);
 
 	if (hBitmap != NULL) {
 		pBitmap = new CBitmap();
@@ -590,7 +590,7 @@ CBitmap *WINAPI ConvertDIB(CDC *pDC,
 
 	/* Reselect old palette */
 	if (pPal != NULL)
-		::SelectPalette(hDC, hOldPal, FALSE);
+		SelectPalette(hDC, hOldPal, FALSE);
 
 	return(pBitmap);
 }
@@ -614,10 +614,10 @@ HBITMAP WINAPI DIBtoBitmap(HDC hDC,      				// where DDB will be displayed
 	HBITMAP  hBitmap;									// Handle to our DDB bitmap
 	LPSTR    lpbihBits;           						// Pointer to DIB bits
 
-	lpbihBits = ::FindDIBBits((LPSTR)lpbih);
+	lpbihBits = FindDIBBits((LPSTR)lpbih);
 
 try_again:
-	hBitmap = ::CreateDIBitmap(hDC,
+	hBitmap = CreateDIBitmap(hDC,
 		(LPBITMAPINFOHEADER)lpbih,
 		CBM_INIT,
 		lpbihBits,
@@ -672,7 +672,7 @@ void WINAPI InitBitmapInfoHeader(LPBITMAPINFOHEADER lpBmInfoHdr,
 	DWORD dwWidth,
 	DWORD dwHeight,
 	int nBPP) {
-	_fmemset(lpBmInfoHdr, 0, sizeof(BITMAPINFOHEADER));
+	memset(lpBmInfoHdr, 0, sizeof(BITMAPINFOHEADER));
 
 	lpBmInfoHdr->biSize = sizeof(BITMAPINFOHEADER);
 	lpBmInfoHdr->biWidth = dwWidth;
@@ -729,10 +729,10 @@ HANDLE WINAPI BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal) {
 	if (!hBitmap)
 		return NULL;
 
-	if (!::GetObject(hBitmap, sizeof(Bitmap), (LPSTR)&Bitmap))
+	if (!GetObject(hBitmap, sizeof(Bitmap), (LPSTR)&Bitmap))
 		return NULL;
 
-	::InitBitmapInfoHeader(&bmInfoHdr,
+	InitBitmapInfoHeader(&bmInfoHdr,
 		Bitmap.bmWidth,
 		Bitmap.bmHeight,
 		Bitmap.bmPlanes * Bitmap.bmBitsPixel);
@@ -741,26 +741,26 @@ HANDLE WINAPI BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal) {
 	// Now allocate memory for the DIB.  Then, set the BITMAPINFOHEADER
 	//  into this memory, and find out where the bitmap bits go.
 
-	hDIB = ::GlobalAlloc(GHND, sizeof(BITMAPINFOHEADER) +
+	hDIB = GlobalAlloc(GHND, sizeof(BITMAPINFOHEADER) +
 		PaletteSize((LPSTR)&bmInfoHdr) + bmInfoHdr.biSizeImage);
 
 	if (!hDIB)
 		return NULL;
 
-	lpbmInfoHdr = (LPBITMAPINFOHEADER) ::GlobalLock(hDIB);
+	lpbmInfoHdr = (LPBITMAPINFOHEADER) GlobalLock(hDIB);
 	*lpbmInfoHdr = bmInfoHdr;
-	lpBits = ::FindDIBBits((LPSTR)lpbmInfoHdr);
+	lpBits = FindDIBBits((LPSTR)lpbmInfoHdr);
 
 
 	// Now, we need a DC to hold our bitmap.  If the app passed us
 	//  a palette, it should be selected into the DC.
 
-	hMemDC = ::GetDC(NULL);
+	hMemDC = MFC::GetDC(NULL);
 
 	if (hPal)
 	{
-		hOldPal = ::SelectPalette(hMemDC, hPal, FALSE);
-		::RealizePalette(hMemDC);
+		hOldPal = SelectPalette(hMemDC, hPal, FALSE);
+		RealizePalette(hMemDC);
 	}
 
 
@@ -769,7 +769,7 @@ HANDLE WINAPI BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal) {
 	//  it party on our bitmap.  It will fill in the color table,
 	//  and bitmap bits of our global memory block.
 
-	if (!::GetDIBits(hMemDC,
+	if (!GetDIBits(hMemDC,
 		hBitmap,
 		0,
 		Bitmap.bmHeight,
@@ -777,19 +777,19 @@ HANDLE WINAPI BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal) {
 		(LPBITMAPINFO)lpbmInfoHdr,
 		DIB_RGB_COLORS))
 	{
-		::GlobalUnlock(hDIB);
-		::GlobalFree(hDIB);
+		GlobalUnlock(hDIB);
+		GlobalFree(hDIB);
 		hDIB = NULL;
 	} else
-		::GlobalUnlock(hDIB);
+		GlobalUnlock(hDIB);
 
 
 	// Finally, clean up and return.
 
 	if (hOldPal)
-		::SelectPalette(hMemDC, hOldPal, FALSE);
+		SelectPalette(hMemDC, hOldPal, FALSE);
 
-	::ReleaseDC(NULL, hMemDC);
+	MFC::ReleaseDC(NULL, hMemDC);
 
 	return hDIB;
 }
@@ -814,41 +814,42 @@ HANDLE WINAPI BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal) {
 //---------------------------------------------------------------------
 
 HANDLE WINAPI CopyHandle(HANDLE h) {
-	BYTE huge *lpCopy;
-	BYTE huge *lp;
-	HANDLE     hCopy;
-	DWORD      dwLen;
+	BYTE *lpCopy;
+	BYTE *lp;
+	HANDLE hCopy;
+	DWORD dwLen;
 
 	if (h == NULL)
 		return NULL;
 
-	dwLen = ::GlobalSize((HGLOBAL)h);
+	dwLen = GlobalSize((HGLOBAL)h);
 
-	if ((hCopy = (HANDLE) ::GlobalAlloc(GHND, dwLen)) != NULL)
+	if ((hCopy = (HANDLE) GlobalAlloc(GHND, dwLen)) != NULL)
 	{
-		lpCopy = (BYTE huge *) ::GlobalLock((HGLOBAL)hCopy);
-		lp = (BYTE huge *) ::GlobalLock((HGLOBAL)h);
+		lpCopy = (BYTE *) GlobalLock((HGLOBAL)hCopy);
+		lp = (BYTE *) GlobalLock((HGLOBAL)h);
 
 		while (dwLen--)
 			*lpCopy++ = *lp++;
 
-		::GlobalUnlock((HGLOBAL)hCopy);
-		::GlobalUnlock((HGLOBAL)h);
+		GlobalUnlock((HGLOBAL)hCopy);
+		GlobalUnlock((HGLOBAL)h);
 	}
 
 	return hCopy;
 }
 
 
-void WINAPI ShowMemoryInfo(char *chMessage, char *chTitle) {
+void WINAPI ShowMemoryInfo(char *chMessage, const char *chTitle) {
 #ifdef _DEBUG
 	char	buf[256];
 
-	::MessageBox(NULL, chMessage, chTitle, MB_ICONEXCLAMATION);
-	sprintf(buf, "Free Memory = %ld\nLargest Memory Block = %ld", GetFreeSpace(0), GlobalCompact(0));
-	::MessageBox(NULL, buf, "Internal Status", MB_ICONINFORMATION);
+	MessageBox(NULL, chMessage, chTitle, MB_ICONEXCLAMATION);
+	Common::sprintf_s(buf, "Free Memory = %ld\nLargest Memory Block = %ld",
+		GetFreeSpace(0), GlobalCompact(0));
+	MessageBox(NULL, buf, "Internal Status", MB_ICONINFORMATION);
 	//	sprintf(buf,"Largest Memory Block = %ld",GlobalCompact(0));
-	//	::MessageBox(NULL,buf,"Internal Problem",MB_ICONINFORMATION);
+	//	MessageBox(NULL,buf,"Internal Problem",MB_ICONINFORMATION);
 #endif
 }
 

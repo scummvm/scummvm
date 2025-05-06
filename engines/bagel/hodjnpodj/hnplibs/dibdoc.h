@@ -64,12 +64,6 @@ private:
 	CPalette* m_palDIB;
 	CSize m_sizeDoc;
 
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-#endif
-
-// Generated message map functions
 protected:
 	//{{AFX_MSG(CDibDoc)
 	//}}AFX_MSG

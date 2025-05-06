@@ -23,13 +23,12 @@
 #define HODJNPODJ_RIDDLES_H
 
 #include "bagel/afxwin.h"
-//#include <afxext.h>
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
-#include <errors.h>
-#include <sprite.h>
-#include <text.h>
-#include <button.h>
-#include <sound.h>
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -110,21 +109,16 @@ typedef struct {
 } RIDDLE;
 
 class CMyEdit: public CEdit {
+protected:
+    VOID OnChar(UINT, UINT, UINT);
+    VOID OnSysChar(UINT, UINT, UINT);
+    VOID OnKeyDown(UINT, UINT, UINT);
+    VOID OnSysKeyDown(UINT, UINT, UINT);
 
-    public:
-
-    private:
-
-    protected:
-        VOID OnChar(UINT, UINT, UINT);
-        VOID OnSysChar(UINT, UINT, UINT);
-        VOID OnKeyDown(UINT, UINT, UINT);
-        VOID OnSysKeyDown(UINT, UINT, UINT);
-        DECLARE_MESSAGE_MAP()
+	DECLARE_MESSAGE_MAP()
 };
 
-class CRiddlesWindow : public CFrameWnd
-{
+class CRiddlesWindow : public CFrameWnd {
     public:
         CRiddlesWindow(VOID);
         VOID        PlayGame(VOID);

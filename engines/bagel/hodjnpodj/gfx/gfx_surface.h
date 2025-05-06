@@ -75,7 +75,7 @@ public:
 
 	void loadBitmap(const char *filename);
 	void loadCels(const char *filename, size_t numCells);
-	void convertTo(const byte *palette, int count = PALETTE_COUNT);
+	void convertTo(const byte *palette, int count = Graphics::PALETTE_COUNT);
 
 	void setCel(size_t cellNum);
 	int getCelIndex() const {

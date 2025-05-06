@@ -23,7 +23,7 @@
 #ifndef BAGEL_BOFLIB_GFX_PALETTE_H
 #define BAGEL_BOFLIB_GFX_PALETTE_H
 
-#include "graphics/screen.h"
+#include "graphics/palette.h"
 #include "bagel/afxwin.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/object.h"
@@ -32,10 +32,10 @@
 namespace Bagel {
 namespace SpaceBar {
 
-struct HPALETTE {
+struct PaletteData {
 	byte _data[Graphics::PALETTE_SIZE];
 	int16 _numColors;
-	HPALETTE(int16 numColors = Graphics::PALETTE_COUNT);
+	PaletteData(int16 numColors = Graphics::PALETTE_COUNT);
 };
 
 struct PALETTEENTRY {
@@ -63,7 +63,7 @@ struct BOFRGBQUAD {
 
 class CBofPalette : public CBofError, public CBofObject {
 protected:
-	HPALETTE _palette;
+	PaletteData _palette;
 
 	static CBofPalette *_pSharedPalette;
 	static char _szSharedPalFile[MAX_FNAME];
@@ -88,7 +88,7 @@ public:
 	/**
 	 * Constructor that takes in an existing palette
 	 */
-	CBofPalette(const HPALETTE &hPalette);
+	CBofPalette(const PaletteData &paletteData);
 
 	/**
 	 * Loads palette from specified bitmap-file
@@ -106,11 +106,11 @@ public:
 
 	/**
 	 * Assigns specified palette to this CBofPalette
-	 * @param hPalette      Handle to windows palette
+	 * @param PaletteData      Handle to windows palette
 	 */
-	void setPalette(const HPALETTE &hPalette);
+	void setPalette(const PaletteData &PaletteData);
 
-	const HPALETTE &getPalette() const {
+	const PaletteData &getPalette() const {
 		return _palette;
 	}
 

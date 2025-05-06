@@ -19,6 +19,9 @@ MODULE_OBJS = \
 	boflib/string_functions.o \
 	mfc/global_functions.o \
 	mfc/object.o \
+	mfc/win_app.o \
+	mfc/wingdi.o \
+	mfc/wnd.o \
 	spacebar/baglib/area_object.o \
 	spacebar/baglib/bagel.o \
 	spacebar/baglib/base_pda.o \
@@ -117,7 +120,6 @@ MODULE_OBJS = \
 	hodjnpodj/gfx/gfx_surface.o \
 	hodjnpodj/gfx/palette.o \
 	hodjnpodj/hnplibs/dibapi.o \
-	hodjnpdoj/hnplibs/dibdoc.o \
 	hodjnpodj/libs/settings.o \
 	hodjnpodj/libs/vector.o \
 	hodjnpodj/views/dialog.o \

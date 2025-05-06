@@ -109,12 +109,13 @@ void GfxSurface::loadBitmap(const char *filename) {
 		error("Could not load bitmap - %s", filename);
 
 	// Get the bitmap
-	copyFrom(decoder.getSurface());
-	setPalette(decoder.getPalette(), 0, decoder.getPaletteColorCount());
+	copyFrom(*decoder.getSurface());
+	const Graphics::Palette &pal = decoder.getPalette();
+	setPalette(pal.data(), 0, pal.size());
 
 	// Convert it to the currently active game palette
-	byte destPal[PALETTE_SIZE];
-	g_system->getPaletteManager()->grabPalette(destPal, 0, PALETTE_COUNT);
+	byte destPal[Graphics::PALETTE_SIZE];
+	g_system->getPaletteManager()->grabPalette(destPal, 0, Graphics::PALETTE_COUNT);
 	convertTo(destPal);
 }
 
@@ -124,7 +125,7 @@ void GfxSurface::convertTo(const byte *palette, int count) {
 
 	// Create a lookup between the bitmap palette and game palette
 	Graphics::PaletteLookup lookup(palette, count);
-	uint32 *map = lookup.createMap(surfacePal->data(), PALETTE_COUNT);
+	uint32 *map = lookup.createMap(surfacePal->data(), Graphics::PALETTE_COUNT);
 
 	if (map) {
 		// Translate the pixels using the lookup

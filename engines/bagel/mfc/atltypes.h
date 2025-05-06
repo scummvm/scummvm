@@ -44,43 +44,39 @@ public:
 		// construct an uninitialized size
 	CSize();
 	// create from two integers
-	CSize(
-		_In_ int initCX,
-		_In_ int initCY);
+	CSize(int initCX, int initCY);
 	// create from another size
-	CSize(_In_ SIZE initSize);
+	CSize(SIZE initSize);
 	// create from a point
-	CSize(_In_ POINT initPt);
+	CSize(POINT initPt);
 	// create from a DWORD: cx = LOWORD(dw) cy = HIWORD(dw)
-	CSize(_In_ DWORD dwSize);
+	CSize(DWORD dwSize);
 
 	// Operations
-	BOOL operator==(_In_ SIZE size) const;
-	BOOL operator!=(_In_ SIZE size) const;
-	void operator+=(_In_ SIZE size);
-	void operator-=(_In_ SIZE size);
-	void SetSize(_In_ int CX, _In_ int CY);
+	BOOL operator==(SIZE size) const;
+	BOOL operator!=(SIZE size) const;
+	void operator+=(SIZE size);
+	void operator-=(SIZE size);
+	void SetSize(int CX, int CY);
 
 	// Operators returning CSize values
-	CSize operator+(_In_ SIZE size) const;
-	CSize operator-(_In_ SIZE size) const;
+	CSize operator+(SIZE size) const;
+	CSize operator-(SIZE size) const;
 	CSize operator-() const;
 
 	// Operators returning CPoint values
-	CPoint operator+(_In_ POINT point) const;
-	CPoint operator-(_In_ POINT point) const;
+	CPoint operator+(POINT point) const;
+	CPoint operator-(POINT point) const;
 
 	// Operators returning CRect values
-	CRect operator+(_In_ const RECT *lpRect) const;
-	CRect operator-(_In_ const RECT *lpRect) const;
+	CRect operator+(const RECT *lpRect) const;
+	CRect operator-(const RECT *lpRect) const;
 };
 
 /////////////////////////////////////////////////////////////////////////////
 // CPoint - A 2-D point, similar to Windows POINT structure.
 
-class CPoint :
-	public tagPOINT
-{
+class CPoint : public tagPOINT {
 public:
 	// Constructors
 
@@ -88,47 +84,45 @@ public:
 	CPoint();
 	// create from two integers
 	CPoint(
-		_In_ int initX,
-		_In_ int initY);
+		int initX,
+		int initY);
 	// create from another point
-	CPoint(_In_ POINT initPt);
+	CPoint(POINT initPt);
 	// create from a size
-	CPoint(_In_ SIZE initSize);
+	CPoint(SIZE initSize);
 	// create from an LPARAM: x = LOWORD(dw) y = HIWORD(dw)
-	CPoint(_In_ LPARAM dwPoint);
+	CPoint(LPARAM dwPoint);
 
 
 	// Operations
 
 	// translate the point
 	void Offset(
-		_In_ int xOffset,
-		_In_ int yOffset);
-	void Offset(_In_ POINT point);
-	void Offset(_In_ SIZE size);
-	void SetPoint(
-		_In_ int X,
-		_In_ int Y);
+		int xOffset,
+		int yOffset);
+	void Offset(POINT point);
+	void Offset(SIZE size);
+	void SetPoint(int X, int Y);
 
-	BOOL operator==(_In_ POINT point) const;
-	BOOL operator!=(_In_ POINT point) const;
-	void operator+=(_In_ SIZE size);
-	void operator-=(_In_ SIZE size);
-	void operator+=(_In_ POINT point);
-	void operator-=(_In_ POINT point);
+	BOOL operator==(POINT point) const;
+	BOOL operator!=(POINT point) const;
+	void operator+=(SIZE size);
+	void operator-=(SIZE size);
+	void operator+=(POINT point);
+	void operator-=(POINT point);
 
 	// Operators returning CPoint values
-	CPoint operator+(_In_ SIZE size) const;
-	CPoint operator-(_In_ SIZE size) const;
+	CPoint operator+(SIZE size) const;
+	CPoint operator-(SIZE size) const;
 	CPoint operator-() const;
-	CPoint operator+(_In_ POINT point) const;
+	CPoint operator+(POINT point) const;
 
 	// Operators returning CSize values
-	CSize operator-(_In_ POINT point) const;
+	CSize operator-(POINT point) const;
 
 	// Operators returning CRect values
-	CRect operator+(_In_ const RECT *lpRect) const;
-	CRect operator-(_In_ const RECT *lpRect) const;
+	CRect operator+(const RECT *lpRect) const;
+	CRect operator-(const RECT *lpRect) const;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -143,23 +137,23 @@ public:
 	CRect();
 	// from left, top, right, and bottom
 	CRect(
-		_In_ int l,
-		_In_ int t,
-		_In_ int r,
-		_In_ int b);
+		int l,
+		int t,
+		int r,
+		int b);
 	// copy constructor
-	CRect(_In_ const RECT &srcRect);
+	CRect(const RECT &srcRect);
 
 	// from a pointer to another rect
-	CRect(_In_ LPCRECT lpSrcRect);
+	CRect(LPCRECT lpSrcRect);
 	// from a point and size
 	CRect(
-		_In_ POINT point,
-		_In_ SIZE size);
+		POINT point,
+		SIZE size);
 	// from two points
 	CRect(
-		_In_ POINT topLeft,
-		_In_ POINT bottomRight);
+		POINT topLeft,
+		POINT bottomRight);
 
 	// Attributes (in addition to RECT members)
 
@@ -169,19 +163,11 @@ public:
 	int Height() const;
 	// returns the size
 	CSize Size() const;
-	// reference to the top-left point
-	CPoint &TopLeft();
-	// reference to the bottom-right point
-	CPoint &BottomRight();
-	// const reference to the top-left point
-	const CPoint &TopLeft() const;
-	// const reference to the bottom-right point
-	const CPoint &BottomRight() const;
 	// the geometric center point of the rectangle
 	CPoint CenterPoint() const;
 	// swap the left and right
 	void SwapLeftRight();
-	static void WINAPI SwapLeftRight(_Inout_ LPRECT lpRect);
+	static void WINAPI SwapLeftRight(LPRECT lpRect);
 
 	// convert between CRect and LPRECT/LPCRECT (no need for &)
 	operator LPRECT();
@@ -192,118 +178,116 @@ public:
 	// returns TRUE if rectangle is at (0,0) and has no area
 	BOOL IsRectNull() const;
 	// returns TRUE if point is within rectangle
-	BOOL PtInRect(_In_ POINT point) const;
+	BOOL PtInRect(POINT point) const;
 
 	// Operations
 
 		// set rectangle from left, top, right, and bottom
 	void SetRect(
-		_In_ int x1,
-		_In_ int y1,
-		_In_ int x2,
-		_In_ int y2);
+		int x1,
+		int y1,
+		int x2,
+		int y2);
 	void SetRect(
-		_In_ POINT topLeft,
-		_In_ POINT bottomRight);
+		POINT topLeft,
+		POINT bottomRight);
 	// empty the rectangle
 	void SetRectEmpty();
 	// copy from another rectangle
-	void CopyRect(_In_ LPCRECT lpSrcRect);
+	void CopyRect(LPCRECT lpSrcRect);
 	// TRUE if exactly the same as another rectangle
-	BOOL EqualRect(_In_ LPCRECT lpRect) const;
+	BOOL EqualRect(LPCRECT lpRect) const;
 
 	// Inflate rectangle's width and height by
 	// x units to the left and right ends of the rectangle
 	// and y units to the top and bottom.
 	void InflateRect(
-		_In_ int x,
-		_In_ int y);
+		int x,
+		int y);
 	// Inflate rectangle's width and height by
 	// size.cx units to the left and right ends of the rectangle
 	// and size.cy units to the top and bottom.
-	void InflateRect(_In_ SIZE size);
+	void InflateRect(SIZE size);
 	// Inflate rectangle's width and height by moving individual sides.
 	// Left side is moved to the left, right side is moved to the right,
 	// top is moved up and bottom is moved down.
-	void InflateRect(_In_ LPCRECT lpRect);
+	void InflateRect(LPCRECT lpRect);
 	void InflateRect(
-		_In_ int l,
-		_In_ int t,
-		_In_ int r,
-		_In_ int b);
+		int l,
+		int t,
+		int r,
+		int b);
 
 	// deflate the rectangle's width and height without
 	// moving its top or left
 	void DeflateRect(
-		_In_ int x,
-		_In_ int y);
-	void DeflateRect(_In_ SIZE size);
-	void DeflateRect(_In_ LPCRECT lpRect);
+		int x,
+		int y);
+	void DeflateRect(SIZE size);
+	void DeflateRect(LPCRECT lpRect);
 	void DeflateRect(
-		_In_ int l,
-		_In_ int t,
-		_In_ int r,
-		_In_ int b);
+		int l,
+		int t,
+		int r,
+		int b);
 
 	// translate the rectangle by moving its top and left
 	void OffsetRect(
-		_In_ int x,
-		_In_ int y);
-	void OffsetRect(_In_ SIZE size);
-	void OffsetRect(_In_ POINT point);
+		int x,
+		int y);
+	void OffsetRect(SIZE size);
+	void OffsetRect(POINT point);
 	void NormalizeRect();
 
 	// absolute position of rectangle
-	void MoveToY(_In_ int y);
-	void MoveToX(_In_ int x);
+	void MoveToY(int y);
+	void MoveToX(int x);
 	void MoveToXY(
-		_In_ int x,
-		_In_ int y);
-	void MoveToXY(_In_ POINT point);
+		int x,
+		int y);
+	void MoveToXY(POINT point);
 
 	// set this rectangle to intersection of two others
 	BOOL IntersectRect(
-		_In_ LPCRECT lpRect1,
-		_In_ LPCRECT lpRect2);
+		LPCRECT lpRect1,
+		LPCRECT lpRect2);
 
 	// set this rectangle to bounding union of two others
 	BOOL UnionRect(
-		_In_ LPCRECT lpRect1,
-		_In_ LPCRECT lpRect2);
+		LPCRECT lpRect1,
+		LPCRECT lpRect2);
 
 	// set this rectangle to minimum of two others
 	BOOL SubtractRect(
-		_In_ LPCRECT lpRectSrc1,
-		_In_ LPCRECT lpRectSrc2);
+		LPCRECT lpRectSrc1,
+		LPCRECT lpRectSrc2);
 
 	// Additional Operations
-	void operator=(_In_ const RECT &srcRect);
-	BOOL operator==(_In_ const RECT &rect) const;
-	BOOL operator!=(_In_ const RECT &rect) const;
-	void operator+=(_In_ POINT point);
-	void operator+=(_In_ SIZE size);
-	void operator+=(_In_ LPCRECT lpRect);
-	void operator-=(_In_ POINT point);
-	void operator-=(_In_ SIZE size);
-	void operator-=(_In_ LPCRECT lpRect);
-	void operator&=(_In_ const RECT &rect);
-	void operator|=(_In_ const RECT &rect);
+	void operator=(const RECT &srcRect);
+	BOOL operator==(const RECT &rect) const;
+	BOOL operator!=(const RECT &rect) const;
+	void operator+=(POINT point);
+	void operator+=(SIZE size);
+	void operator+=(LPCRECT lpRect);
+	void operator-=(POINT point);
+	void operator-=(SIZE size);
+	void operator-=(LPCRECT lpRect);
+	void operator&=(const RECT &rect);
+	void operator|=(const RECT &rect);
 
 	// Operators returning CRect values
-	CRect operator+(_In_ POINT point) const;
-	CRect operator-(_In_ POINT point) const;
-	CRect operator+(_In_ LPCRECT lpRect) const;
-	CRect operator+(_In_ SIZE size) const;
-	CRect operator-(_In_ SIZE size) const;
-	CRect operator-(_In_ LPCRECT lpRect) const;
-	CRect operator&(_In_ const RECT &rect2) const;
-	CRect operator|(_In_ const RECT &rect2) const;
+	CRect operator+(POINT point) const;
+	CRect operator-(POINT point) const;
+	CRect operator+(LPCRECT lpRect) const;
+	CRect operator+(SIZE size) const;
+	CRect operator-(SIZE size) const;
+	CRect operator-(LPCRECT lpRect) const;
+	CRect operator&(const RECT &rect2) const;
+	CRect operator|(const RECT &rect2) const;
 	CRect MulDiv(
-		_In_ int nMultiplier,
-		_In_ int nDivisor) const;
+		int nMultiplier,
+		int nDivisor) const;
 };
-
-#ifndef _ATL_STATIC_LIB_IMPL
 
 // CSize
 inline CSize::CSize() {
@@ -312,55 +296,55 @@ inline CSize::CSize() {
 }
 
 inline CSize::CSize(
-	_In_ int initCX,
-	_In_ int initCY) {
+	int initCX,
+	int initCY) {
 	cx = initCX;
 	cy = initCY;
 }
 
-inline CSize::CSize(_In_ SIZE initSize) {
+inline CSize::CSize(SIZE initSize) {
 	*(SIZE *)this = initSize;
 }
 
-inline CSize::CSize(_In_ POINT initPt) {
+inline CSize::CSize(POINT initPt) {
 	*(POINT *)this = initPt;
 }
 
-inline CSize::CSize(_In_ DWORD dwSize) {
+inline CSize::CSize(DWORD dwSize) {
 	cx = (short)LOWORD(dwSize);
 	cy = (short)HIWORD(dwSize);
 }
 
-inline BOOL CSize::operator==(_In_ SIZE size) const {
+inline BOOL CSize::operator==(SIZE size) const {
 	return (cx == size.cx && cy == size.cy);
 }
 
-inline BOOL CSize::operator!=(_In_ SIZE size) const {
+inline BOOL CSize::operator!=(SIZE size) const {
 	return (cx != size.cx || cy != size.cy);
 }
 
-inline void CSize::operator+=(_In_ SIZE size) {
+inline void CSize::operator+=(SIZE size) {
 	cx += size.cx;
 	cy += size.cy;
 }
 
-inline void CSize::operator-=(_In_ SIZE size) {
+inline void CSize::operator-=(SIZE size) {
 	cx -= size.cx;
 	cy -= size.cy;
 }
 
 inline void CSize::SetSize(
-	_In_ int CX,
-	_In_ int CY) {
+	int CX,
+	int CY) {
 	cx = CX;
 	cy = CY;
 }
 
-inline CSize CSize::operator+(_In_ SIZE size) const {
+inline CSize CSize::operator+(SIZE size) const {
 	return CSize(cx + size.cx, cy + size.cy);
 }
 
-inline CSize CSize::operator-(_In_ SIZE size) const {
+inline CSize CSize::operator-(SIZE size) const {
 	return CSize(cx - size.cx, cy - size.cy);
 }
 
@@ -368,19 +352,19 @@ inline CSize CSize::operator-() const {
 	return CSize(-cx, -cy);
 }
 
-inline CPoint CSize::operator+(_In_ POINT point) const {
+inline CPoint CSize::operator+(POINT point) const {
 	return CPoint(cx + point.x, cy + point.y);
 }
 
-inline CPoint CSize::operator-(_In_ POINT point) const {
+inline CPoint CSize::operator-(POINT point) const {
 	return CPoint(cx - point.x, cy - point.y);
 }
 
-inline CRect CSize::operator+(_In_ const RECT *lpRect) const {
+inline CRect CSize::operator+(const RECT *lpRect) const {
 	return CRect(lpRect) + *this;
 }
 
-inline CRect CSize::operator-(_In_ const RECT *lpRect) const {
+inline CRect CSize::operator-(const RECT *lpRect) const {
 	return CRect(lpRect) - *this;
 }
 
@@ -391,82 +375,82 @@ inline CPoint::CPoint() {
 }
 
 inline CPoint::CPoint(
-	_In_ int initX,
-	_In_ int initY) {
+	int initX,
+	int initY) {
 	x = initX;
 	y = initY;
 }
 
-inline CPoint::CPoint(_In_ POINT initPt) {
+inline CPoint::CPoint(POINT initPt) {
 	*(POINT *)this = initPt;
 }
 
-inline CPoint::CPoint(_In_ SIZE initSize) {
+inline CPoint::CPoint(SIZE initSize) {
 	*(SIZE *)this = initSize;
 }
 
-inline CPoint::CPoint(_In_ LPARAM dwPoint) {
+inline CPoint::CPoint(LPARAM dwPoint) {
 	x = (short)LOWORD(dwPoint);
 	y = (short)HIWORD(dwPoint);
 }
 
 inline void CPoint::Offset(
-	_In_ int xOffset,
-	_In_ int yOffset) {
+	int xOffset,
+	int yOffset) {
 	x += xOffset;
 	y += yOffset;
 }
 
-inline void CPoint::Offset(_In_ POINT point) {
+inline void CPoint::Offset(POINT point) {
 	x += point.x;
 	y += point.y;
 }
 
-inline void CPoint::Offset(_In_ SIZE size) {
+inline void CPoint::Offset(SIZE size) {
 	x += size.cx;
 	y += size.cy;
 }
 
 inline void CPoint::SetPoint(
-	_In_ int X,
-	_In_ int Y) {
+	int X,
+	int Y) {
 	x = X;
 	y = Y;
 }
 
-inline BOOL CPoint::operator==(_In_ POINT point) const {
+inline BOOL CPoint::operator==(POINT point) const {
 	return (x == point.x && y == point.y);
 }
 
-inline BOOL CPoint::operator!=(_In_ POINT point) const {
+inline BOOL CPoint::operator!=(POINT point) const {
 	return (x != point.x || y != point.y);
 }
 
-inline void CPoint::operator+=(_In_ SIZE size) {
+inline void CPoint::operator+=(SIZE size) {
 	x += size.cx;
 	y += size.cy;
 }
 
-inline void CPoint::operator-=(_In_ SIZE size) {
+inline void CPoint::operator-=(SIZE size) {
 	x -= size.cx;
 	y -= size.cy;
 }
 
-inline void CPoint::operator+=(_In_ POINT point) {
+inline void CPoint::operator+=(POINT point) {
 	x += point.x;
 	y += point.y;
 }
 
-inline void CPoint::operator-=(_In_ POINT point) {
+inline void CPoint::operator-=(POINT point) {
 	x -= point.x;
 	y -= point.y;
 }
 
-inline CPoint CPoint::operator+(_In_ SIZE size) const {
+inline CPoint CPoint::operator+(SIZE size) const {
 	return CPoint(x + size.cx, y + size.cy);
 }
 
-inline CPoint CPoint::operator-(_In_ SIZE size) const {
+inline CPoint CPoint::operator-(SIZE size) const {
 	return CPoint(x - size.cx, y - size.cy);
 }
 
@@ -474,19 +458,19 @@ inline CPoint CPoint::operator-() const {
 	return CPoint(-x, -y);
 }
 
-inline CPoint CPoint::operator+(_In_ POINT point) const {
+inline CPoint CPoint::operator+(POINT point) const {
 	return CPoint(x + point.x, y + point.y);
 }
 
-inline CSize CPoint::operator-(_In_ POINT point) const {
+inline CSize CPoint::operator-(POINT point) const {
 	return CSize(x - point.x, y - point.y);
 }
 
-inline CRect CPoint::operator+(_In_ const RECT *lpRect) const {
+inline CRect CPoint::operator+(const RECT *lpRect) const {
 	return CRect(lpRect) + *this;
 }
 
-inline CRect CPoint::operator-(_In_ const RECT *lpRect) const {
+inline CRect CPoint::operator-(const RECT *lpRect) const {
 	return CRect(lpRect) - *this;
 }
 
@@ -499,34 +483,34 @@ inline CRect::CRect() {
 }
 
 inline CRect::CRect(
-	_In_ int l,
-	_In_ int t,
-	_In_ int r,
-	_In_ int b) {
+	int l,
+	int t,
+	int r,
+	int b) {
 	left = l;
 	top = t;
 	right = r;
 	bottom = b;
 }
 
-inline CRect::CRect(_In_ const RECT &srcRect) {
+inline CRect::CRect(const RECT &srcRect) {
 	*this = srcRect;
 }
 
-inline CRect::CRect(_In_ LPCRECT lpSrcRect) {
+inline CRect::CRect(LPCRECT lpSrcRect) {
 	*this = *lpSrcRect;
 }
 
 inline CRect::CRect(
-	_In_ POINT point,
-	_In_ SIZE size) {
+	POINT point,
+	SIZE size) {
 	right = (left = point.x) + size.cx;
 	bottom = (top = point.y) + size.cy;
 }
 
 inline CRect::CRect(
-	_In_ POINT topLeft,
-	_In_ POINT bottomRight) {
+	POINT topLeft,
+	POINT bottomRight) {
 	left = topLeft.x;
 	top = topLeft.y;
 	right = bottomRight.x;
@@ -545,22 +529,6 @@ inline CSize CRect::Size() const {
 	return CSize(right - left, bottom - top);
 }
 
-inline CPoint &CRect::TopLeft() {
-	return *((CPoint *)this);
-}
-
-inline CPoint &CRect::BottomRight() {
-	return *((CPoint *)this + 1);
-}
-
-inline const CPoint &CRect::TopLeft() const {
-	return *((CPoint *)this);
-}
-
-inline const CPoint &CRect::BottomRight() const {
-	return *((CPoint *)this + 1);
-}
-
 inline CPoint CRect::CenterPoint() const {
 	return CPoint((left + right) / 2, (top + bottom) / 2);
 }
@@ -569,7 +537,7 @@ inline void CRect::SwapLeftRight() {
 	SwapLeftRight(LPRECT(this));
 }
 
-inline void WINAPI CRect::SwapLeftRight(_Inout_ LPRECT lpRect) {
+inline void WINAPI CRect::SwapLeftRight(LPRECT lpRect) {
 	LONG temp = lpRect->left;
 	lpRect->left = lpRect->right;
 	lpRect->right = temp;
@@ -591,20 +559,20 @@ inline BOOL CRect::IsRectNull() const {
 	return (left == 0 && right == 0 && top == 0 && bottom == 0);
 }
 
-inline BOOL CRect::PtInRect(_In_ POINT point) const {
+inline BOOL CRect::PtInRect(POINT point) const {
 	return (point.x >= left) && (point.x < right) &&
 		(point.y >= top) && (point.y < bottom);
 }
 
-inline void CRect::SetRect(_In_ int x1, _In_ int y1,
-		_In_ int x2, _In_ int y2) {
+inline void CRect::SetRect(int x1, int y1,
+		int x2, int y2) {
 	left = x1; top = y1;
 	right = x2; bottom = y2;
 }
 
 inline void CRect::SetRect(
-		_In_ POINT topLeft,
-		_In_ POINT bottomRight) {
+		POINT topLeft,
+		POINT bottomRight) {
 	left = topLeft.x; top = topLeft.y;
 	right = bottomRight.x; bottom = bottomRight.y;
 }
@@ -613,11 +581,11 @@ inline void CRect::SetRectEmpty() {
 	left = top = right = bottom = 0;
 }
 
-inline void CRect::CopyRect(_In_ LPCRECT lpSrcRect) {
+inline void CRect::CopyRect(LPCRECT lpSrcRect) {
 	*this = *lpSrcRect;
 }
 
-inline BOOL CRect::EqualRect(_In_ LPCRECT lpRect) const {
+inline BOOL CRect::EqualRect(LPCRECT lpRect) const {
 	return left == lpRect->left &&
 		top == lpRect->top &&
 		right == lpRect->right &&
@@ -625,14 +593,14 @@ inline BOOL CRect::EqualRect(_In_ LPCRECT lpRect) const {
 }
 
 inline void CRect::InflateRect(
-		_In_ int x, _In_ int y) {
+		int x, int y) {
 	left -= x;
 	top -= y;
 	right += x;
 	bottom += y;
 }
 
-inline void CRect::InflateRect(_In_ SIZE size) {
+inline void CRect::InflateRect(SIZE size) {
 	left -= size.cx;
 	top -= size.cy;
 	right += size.cx;
@@ -640,57 +608,57 @@ inline void CRect::InflateRect(_In_ SIZE size) {
 }
 
 inline void CRect::DeflateRect(
-		_In_ int x, _In_ int y) {
+		int x, int y) {
 	InflateRect(-x, -y);
 }
 
-inline void CRect::DeflateRect(_In_ SIZE size) {
+inline void CRect::DeflateRect(SIZE size) {
 	InflateRect(-size.cx, -size.cy);
 }
 
 inline void CRect::OffsetRect(
-		_In_ int x, _In_ int y) {
+		int x, int y) {
 	left += x;
 	top += y;
 	right += x;
 	bottom += y;
 }
 
-inline void CRect::OffsetRect(_In_ POINT point) {
+inline void CRect::OffsetRect(POINT point) {
 	left += point.x;
 	top += point.y;
 	right += point.x;
 	bottom += point.y;
 }
 
-inline void CRect::OffsetRect(_In_ SIZE size) {
+inline void CRect::OffsetRect(SIZE size) {
 	OffsetRect(size.cx, size.cy);
 }
 
-inline void CRect::MoveToY(_In_ int y) {
+inline void CRect::MoveToY(int y) {
 	bottom = Height() + y;
 	top = y;
 }
 
-inline void CRect::MoveToX(_In_ int x) {
+inline void CRect::MoveToX(int x) {
 	right = Width() + x;
 	left = x;
 }
 
 inline void CRect::MoveToXY(
-	_In_ int x,
-	_In_ int y) {
+	int x,
+	int y) {
 	MoveToX(x);
 	MoveToY(y);
 }
 
-inline void CRect::MoveToXY(_In_ POINT pt) {
+inline void CRect::MoveToXY(POINT pt) {
 	MoveToX(pt.x);
 	MoveToY(pt.y);
 }
 
 inline BOOL CRect::IntersectRect(
-		_In_ LPCRECT lpRect1, _In_ LPCRECT lpRect2) {
+		LPCRECT lpRect1, LPCRECT lpRect2) {
 	return (lpRect1->left < lpRect2->right) &&
 		(lpRect2->left < lpRect1->right) &&
 		(lpRect1->top < lpRect2->bottom) &&
@@ -698,7 +666,7 @@ inline BOOL CRect::IntersectRect(
 }
 
 inline BOOL CRect::UnionRect(
-		_In_ LPCRECT lpRect1, _In_ LPCRECT lpRect2) {
+		LPCRECT lpRect1, LPCRECT lpRect2) {
 	if (lpRect1->right < lpRect2->left ||
 		lpRect1->left > lpRect2->right ||
 		lpRect1->bottom < lpRect2->top ||
@@ -714,100 +682,100 @@ inline BOOL CRect::UnionRect(
 	}
 }
 
-inline void CRect::operator=(_In_ const RECT &srcRect) {
+inline void CRect::operator=(const RECT &srcRect) {
 	CopyRect(&srcRect);
 }
 
-inline BOOL CRect::operator==(_In_ const RECT &rect) const {
+inline BOOL CRect::operator==(const RECT &rect) const {
 	return EqualRect(&rect);
 }
 
-inline BOOL CRect::operator!=(_In_ const RECT &rect) const {
+inline BOOL CRect::operator!=(const RECT &rect) const {
 	return !EqualRect(&rect);
 }
 
-inline void CRect::operator+=(_In_ POINT point) {
+inline void CRect::operator+=(POINT point) {
 	OffsetRect(point.x, point.y);
 }
 
-inline void CRect::operator+=(_In_ SIZE size) {
+inline void CRect::operator+=(SIZE size) {
 	OffsetRect(size.cx, size.cy);
 }
 
-inline void CRect::operator+=(_In_ LPCRECT lpRect) {
+inline void CRect::operator+=(LPCRECT lpRect) {
 	InflateRect(lpRect);
 }
 
-inline void CRect::operator-=(_In_ POINT point) {
+inline void CRect::operator-=(POINT point) {
 	OffsetRect(-point.x, -point.y);
 }
 
-inline void CRect::operator-=(_In_ SIZE size) {
+inline void CRect::operator-=(SIZE size) {
 	OffsetRect(-size.cx, -size.cy);
 }
 
-inline void CRect::operator-=(_In_ LPCRECT lpRect) {
+inline void CRect::operator-=(LPCRECT lpRect) {
 	DeflateRect(lpRect);
 }
 
-inline void CRect::operator&=(_In_ const RECT &rect) {
+inline void CRect::operator&=(const RECT &rect) {
 	IntersectRect(this, &rect);
 }
 
-inline void CRect::operator|=(_In_ const RECT &rect) {
+inline void CRect::operator|=(const RECT &rect) {
 	UnionRect(this, &rect);
 }
 
-inline CRect CRect::operator+(_In_ POINT pt) const {
+inline CRect CRect::operator+(POINT pt) const {
 	CRect rect(*this);
 	rect.OffsetRect(pt.x, pt.y);
 	return rect;
 }
 
-inline CRect CRect::operator-(_In_ POINT pt) const {
+inline CRect CRect::operator-(POINT pt) const {
 	CRect rect(*this);
 	rect.OffsetRect(-pt.x, -pt.y);
 	return rect;
 }
 
-inline CRect CRect::operator+(_In_ SIZE size) const {
+inline CRect CRect::operator+(SIZE size) const {
 	CRect rect(*this);
 	rect.OffsetRect(size.cx, size.cy);
 	return rect;
 }
 
-inline CRect CRect::operator-(_In_ SIZE size) const {
+inline CRect CRect::operator-(SIZE size) const {
 	CRect rect(*this);
 	rect.OffsetRect(-size.cx, -size.cy);
 	return rect;
 }
 
-inline CRect CRect::operator+(_In_ LPCRECT lpRect) const {
+inline CRect CRect::operator+(LPCRECT lpRect) const {
 	CRect rect(this);
 	rect.InflateRect(lpRect);
 	return rect;
 }
 
-inline CRect CRect::operator-(_In_ LPCRECT lpRect) const {
+inline CRect CRect::operator-(LPCRECT lpRect) const {
 	CRect rect(this);
 	rect.DeflateRect(lpRect);
 	return rect;
 }
 
-inline CRect CRect::operator&(_In_ const RECT &rect2) const {
+inline CRect CRect::operator&(const RECT &rect2) const {
 	CRect rect;
 	rect.IntersectRect(this, &rect2);
 	return rect;
 }
 
-inline CRect CRect::operator|(_In_ const RECT &rect2) const {
+inline CRect CRect::operator|(const RECT &rect2) const {
 	CRect rect;
 	rect.UnionRect(this, &rect2);
 	return rect;
 }
 
 inline BOOL CRect::SubtractRect(
-		_In_ LPCRECT lpRectSrc1, _In_ LPCRECT lpRectSrc2) {
+		LPCRECT lpRectSrc1, LPCRECT lpRectSrc2) {
 	// Calculate the intersection of the two rectangles
 	CRect intersect;
 	if (!intersect.IntersectRect(lpRectSrc1, lpRectSrc2))
@@ -888,7 +856,7 @@ inline void CRect::NormalizeRect() {
 	}
 }
 
-inline void CRect::InflateRect(_In_ LPCRECT lpRect) {
+inline void CRect::InflateRect(LPCRECT lpRect) {
 	left -= lpRect->left;
 	top -= lpRect->top;
 	right += lpRect->right;
@@ -896,17 +864,17 @@ inline void CRect::InflateRect(_In_ LPCRECT lpRect) {
 }
 
 inline void CRect::InflateRect(
-	_In_ int l,
-	_In_ int t,
-	_In_ int r,
-	_In_ int b) {
+	int l,
+	int t,
+	int r,
+	int b) {
 	left -= l;
 	top -= t;
 	right += r;
 	bottom += b;
 }
 
-inline void CRect::DeflateRect(_In_ LPCRECT lpRect) {
+inline void CRect::DeflateRect(LPCRECT lpRect) {
 	left += lpRect->left;
 	top += lpRect->top;
 	right -= lpRect->right;
@@ -914,10 +882,10 @@ inline void CRect::DeflateRect(_In_ LPCRECT lpRect) {
 }
 
 inline void CRect::DeflateRect(
-	_In_ int l,
-	_In_ int t,
-	_In_ int r,
-	_In_ int b) {
+	int l,
+	int t,
+	int r,
+	int b) {
 	left += l;
 	top += t;
 	right -= r;
@@ -939,16 +907,14 @@ inline int SafeMulDiv(int a, int b, int c) {
 }
 
 inline CRect CRect::MulDiv(
-	_In_ int nMultiplier,
-	_In_ int nDivisor) const {
+	int nMultiplier,
+	int nDivisor) const {
 	return CRect(
 		SafeMulDiv(left, nMultiplier, nDivisor),
 		SafeMulDiv(top, nMultiplier, nDivisor),
 		SafeMulDiv(right, nMultiplier, nDivisor),
 		SafeMulDiv(bottom, nMultiplier, nDivisor));
 }
-
-#endif // _ATL_STATIC_LIB_IMPL
 
 } // namespace MFC
 } // namespace Bagel

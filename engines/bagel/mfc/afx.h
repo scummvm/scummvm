@@ -28,12 +28,33 @@
 namespace Bagel {
 namespace MFC {
 
+class CObject;
+
+struct CRuntimeClass {
+	// Attributes
+	LPCSTR m_lpszClassName = nullptr;
+	int m_nObjectSize = 0;
+	UINT m_wSchema = 0;
+	CObject *(*m_pfnCreateObject)() = nullptr;
+	CRuntimeClass *m_pBaseClass = nullptr;
+
+	// CRuntimeClass objects linked together in simple list
+	CRuntimeClass *m_pNextClass = nullptr;       // linked list of registered classes
+	//const AFX_CLASSINIT *m_pClassInit;
+};
+
+class CDumpContext {
+};
+
 class CObject {
-protected:
-	virtual ~CObject() = 0;
 public:
 	CObject();
 	CObject(const CObject &objectSrc);
+	virtual ~CObject() = 0;
+	virtual CRuntimeClass *GetRuntimeClass() const;
+
+	virtual void AssertValid() const {}
+	virtual void Dump(CDumpContext &dc) const {}
 };
 
 class CFile : public CObject {

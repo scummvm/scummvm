@@ -117,7 +117,7 @@ void Movie::draw() {
 	if (_video.isPlaying() && _video.needsUpdate()) {
 		GfxSurface s = getSurface();
 		const Graphics::Surface *frame = _video.decodeNextFrame();
-		s.blitFrom(frame, Common::Rect(0, 0, frame->w, frame->h),
+		s.blitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h),
 			Common::Rect(0, 0, s.w, s.h));
 	}
 }

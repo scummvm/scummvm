@@ -31,12 +31,12 @@ namespace MFC {
 class CTimeSpan {
 public:
 	CTimeSpan();
-	CTimeSpan(_In_ __time64_t time);
+	CTimeSpan(int64 time);
 	CTimeSpan(
-		_In_ LONG lDays,
-		_In_ int nHours,
-		_In_ int nMins,
-		_In_ int nSecs);
+		LONG lDays,
+		int nHours,
+		int nMins,
+		int nSecs);
 
 	LONGLONG GetDays() const;
 	LONGLONG GetTotalHours() const;
@@ -46,30 +46,22 @@ public:
 	LONGLONG GetTotalSeconds() const;
 	LONG GetSeconds() const;
 
-	__time64_t GetTimeSpan() const;
+	int64 GetTimeSpan() const;
 
-	CTimeSpan operator+(_In_ CTimeSpan span) const;
-	CTimeSpan operator-(_In_ CTimeSpan span) const;
-	CTimeSpan &operator+=(_In_ CTimeSpan span);
-	CTimeSpan &operator-=(_In_ CTimeSpan span);
-	bool operator==(_In_ CTimeSpan span) const;
-	bool operator!=(_In_ CTimeSpan span) const;
-	bool operator<(_In_ CTimeSpan span) const;
-	bool operator>(_In_ CTimeSpan span) const;
-	bool operator<=(_In_ CTimeSpan span) const;
-	bool operator>=(_In_ CTimeSpan span) const;
+	CTimeSpan operator+(CTimeSpan span) const;
+	CTimeSpan operator-(CTimeSpan span) const;
+	CTimeSpan &operator+=(CTimeSpan span);
+	CTimeSpan &operator-=(CTimeSpan span);
+	bool operator==(CTimeSpan span) const;
+	bool operator!=(CTimeSpan span) const;
+	bool operator<(CTimeSpan span) const;
+	bool operator>(CTimeSpan span) const;
+	bool operator<=(CTimeSpan span) const;
+	bool operator>=(CTimeSpan span) const;
 
 public:
-	CString Format(_In_z_ LPCTSTR pszFormat) const;
-	CString Format(_In_ UINT nID) const;
-#if defined(_AFX) && defined(_UNICODE)
-	// for compatibility with MFC 3.x
-	CString Format(_In_z_ LPCSTR pFormat) const;
-#endif
-
-#ifdef _AFX
-	CArchive &Serialize64(_In_ CArchive &ar);
-#endif
+	CString Format(LPCTSTR pszFormat) const;
+	CString Format(UINT nID) const;
 
 private:
 	int64 m_timeSpan;
@@ -78,51 +70,46 @@ private:
 class CTime {
 public:
 	static CTime WINAPI GetCurrentTime();
-	static BOOL WINAPI IsValidFILETIME(_In_ const FILETIME &ft);
+	static BOOL WINAPI IsValidFILETIME(const FILETIME &ft);
 
 	CTime();
-	CTime(_In_ __time64_t time);
+	CTime(int64 time);
 	CTime(
-		_In_ int nYear,
-		_In_ int nMonth,
-		_In_ int nDay,
-		_In_ int nHour,
-		_In_ int nMin,
-		_In_ int nSec,
-		_In_ int nDST = -1);
+		int nYear,
+		int nMonth,
+		int nDay,
+		int nHour,
+		int nMin,
+		int nSec,
+		int nDST = -1);
 	CTime(
-		_In_ WORD wDosDate,
-		_In_ WORD wDosTime,
-		_In_ int nDST = -1);
+		WORD wDosDate,
+		WORD wDosTime,
+		int nDST = -1);
 	CTime(
-		_In_ const SYSTEMTIME &st,
-		_In_ int nDST = -1);
+		const SYSTEMTIME &st,
+		int nDST = -1);
 	CTime(
-		_In_ const FILETIME &ft,
-		_In_ int nDST = -1);
+		const FILETIME &ft,
+		int nDST = -1);
 
-	CTime &operator=(_In_ __time64_t time);
+	CTime &operator=(int64 time);
 
-	CTime &operator+=(_In_ CTimeSpan span);
-	CTime &operator-=(_In_ CTimeSpan span);
+	CTime &operator+=(CTimeSpan span);
+	CTime &operator-=(CTimeSpan span);
 
-	CTimeSpan operator-(_In_ CTime time) const;
-	CTime operator-(_In_ CTimeSpan span) const;
-	CTime operator+(_In_ CTimeSpan span) const;
+	CTimeSpan operator-(CTime time) const;
+	CTime operator-(CTimeSpan span) const;
+	CTime operator+(CTimeSpan span) const;
 
-	bool operator==(_In_ CTime time) const;
-	bool operator!=(_In_ CTime time) const;
-	bool operator<(_In_ CTime time) const;
-	bool operator>(_In_ CTime time) const;
-	bool operator<=(_In_ CTime time) const;
-	bool operator>=(_In_ CTime time) const;
+	bool operator==(CTime time) const;
+	bool operator!=(CTime time) const;
+	bool operator<(CTime time) const;
+	bool operator>(CTime time) const;
+	bool operator<=(CTime time) const;
+	bool operator>=(CTime time) const;
 
-	_Success_(return != NULL) struct tm *GetGmtTm(_Out_ struct tm *ptm) const;
-	_Success_(return != NULL) struct tm *GetLocalTm(_Out_ struct tm *ptm) const;
-
-	_Success_(return != false) bool GetAsSystemTime(_Out_ SYSTEMTIME &st) const;
-
-	__time64_t GetTime() const;
+	int64 GetTime() const;
 
 	int GetYear() const;
 	int GetMonth() const;
@@ -133,48 +120,38 @@ public:
 	int GetDayOfWeek() const;
 
 	// formatting using "C" strftime
-	CString Format(_In_z_ LPCTSTR pszFormat) const;
-	CString FormatGmt(_In_z_ LPCTSTR pszFormat) const;
-	CString Format(_In_ UINT nFormatID) const;
-	CString FormatGmt(_In_ UINT nFormatID) const;
-
-#if defined(_AFX) && defined(_UNICODE)
-	// for compatibility with MFC 3.x
-	CString Format(_In_z_ LPCSTR pFormat) const;
-	CString FormatGmt(_In_z_ LPCSTR pFormat) const;
-#endif
-
-#ifdef _AFX
-	CArchive &Serialize64(_In_ CArchive &ar);
-#endif
+	CString Format(LPCTSTR pszFormat) const;
+	CString FormatGmt(LPCTSTR pszFormat) const;
+	CString Format(UINT nFormatID) const;
+	CString FormatGmt(UINT nFormatID) const;
 
 private:
-	__time64_t m_time;
+	int64 m_time;
 };
 
 class CFileTimeSpan {
 public:
 	CFileTimeSpan();
-	CFileTimeSpan(_In_ const CFileTimeSpan &span);
-	CFileTimeSpan(_In_ LONGLONG nSpan);
+	CFileTimeSpan(const CFileTimeSpan &span);
+	CFileTimeSpan(LONGLONG nSpan);
 
-	CFileTimeSpan &operator=(_In_ const CFileTimeSpan &span);
+	CFileTimeSpan &operator=(const CFileTimeSpan &span);
 
-	CFileTimeSpan &operator+=(_In_ CFileTimeSpan span);
-	CFileTimeSpan &operator-=(_In_ CFileTimeSpan span);
+	CFileTimeSpan &operator+=(CFileTimeSpan span);
+	CFileTimeSpan &operator-=(CFileTimeSpan span);
 
-	CFileTimeSpan operator+(_In_ CFileTimeSpan span) const;
-	CFileTimeSpan operator-(_In_ CFileTimeSpan span) const;
+	CFileTimeSpan operator+(CFileTimeSpan span) const;
+	CFileTimeSpan operator-(CFileTimeSpan span) const;
 
-	bool operator==(_In_ CFileTimeSpan span) const;
-	bool operator!=(_In_ CFileTimeSpan span) const;
-	bool operator<(_In_ CFileTimeSpan span) const;
-	bool operator>(_In_ CFileTimeSpan span) const;
-	bool operator<=(_In_ CFileTimeSpan span) const;
-	bool operator>=(_In_ CFileTimeSpan span) const;
+	bool operator==(CFileTimeSpan span) const;
+	bool operator!=(CFileTimeSpan span) const;
+	bool operator<(CFileTimeSpan span) const;
+	bool operator>(CFileTimeSpan span) const;
+	bool operator<=(CFileTimeSpan span) const;
+	bool operator>=(CFileTimeSpan span) const;
 
 	LONGLONG GetTimeSpan() const;
-	void SetTimeSpan(_In_ LONGLONG nSpan);
+	void SetTimeSpan(LONGLONG nSpan);
 
 protected:
 	LONGLONG m_nSpan;
@@ -183,29 +160,29 @@ protected:
 class CFileTime : public FILETIME {
 public:
 	CFileTime();
-	CFileTime(_In_ const FILETIME &ft);
-	CFileTime(_In_ ULONGLONG nTime);
+	CFileTime(const FILETIME &ft);
+	CFileTime(ULONGLONG nTime);
 
 	static CFileTime WINAPI GetCurrentTime();
 
-	CFileTime &operator=(_In_ const FILETIME &ft);
+	CFileTime &operator=(const FILETIME &ft);
 
-	CFileTime &operator+=(_In_ CFileTimeSpan span);
-	CFileTime &operator-=(_In_ CFileTimeSpan span);
+	CFileTime &operator+=(CFileTimeSpan span);
+	CFileTime &operator-=(CFileTimeSpan span);
 
-	CFileTime operator+(_In_ CFileTimeSpan span) const;
-	CFileTime operator-(_In_ CFileTimeSpan span) const;
-	CFileTimeSpan operator-(_In_ CFileTime ft) const;
+	CFileTime operator+(CFileTimeSpan span) const;
+	CFileTime operator-(CFileTimeSpan span) const;
+	CFileTimeSpan operator-(CFileTime ft) const;
 
-	bool operator==(_In_ CFileTime ft) const;
-	bool operator!=(_In_ CFileTime ft) const;
-	bool operator<(_In_ CFileTime ft) const;
-	bool operator>(_In_ CFileTime ft) const;
-	bool operator<=(_In_ CFileTime ft) const;
-	bool operator>=(_In_ CFileTime ft) const;
+	bool operator==(CFileTime ft) const;
+	bool operator!=(CFileTime ft) const;
+	bool operator<(CFileTime ft) const;
+	bool operator>(CFileTime ft) const;
+	bool operator<=(CFileTime ft) const;
+	bool operator>=(CFileTime ft) const;
 
 	ULONGLONG GetTime() const;
-	void SetTime(_In_ ULONGLONG nTime);
+	void SetTime(ULONGLONG nTime);
 
 	CFileTime UTCToLocal() const;
 	CFileTime LocalToUTC() const;

@@ -200,7 +200,7 @@ void CBofApp::setPalette(CBofPalette *pPalette) {
 
 	if (pPalette != nullptr) {
 		if (g_system->getScreenFormat().bytesPerPixel == 1) {
-			const HPALETTE &pal = pPalette->getPalette();
+			const auto &pal = pPalette->getPalette();
 			g_system->getPaletteManager()->setPalette(pal._data, 0, pal._numColors);
 		}
 

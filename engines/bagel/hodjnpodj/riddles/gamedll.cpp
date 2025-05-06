@@ -57,8 +57,8 @@ HWND RunRiddles(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
     }
 
     // these must be set in this function
-    hDLLInst = (HINSTANCE)::GetWindowWord( pMain->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)::GetWindowWord( hParentWnd, GWW_HINSTANCE);
+    hDLLInst = (HINSTANCE)GetWindowWord( pMain->m_hWnd, GWW_HINSTANCE);
+    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
 
     return pMain->m_hWnd;   // return the m_hWnd of your main game window
 }
@@ -105,8 +105,7 @@ public:
  *      BOOL            Success (TRUE) / Failure (FALSE) status
  *
  ****************************************************************/
-BOOL CTracerDLL::InitInstance()
-{
+BOOL CTracerDLL::InitInstance() {
     // gray dialogs
     SetDialogBkColor();
 

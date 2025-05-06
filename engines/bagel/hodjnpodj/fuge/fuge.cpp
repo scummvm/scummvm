@@ -239,7 +239,7 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 	if (!f.open(MINI_GAME_MAP) || !decoder.loadStream(f))
 		error("Could not load %s", MINI_GAME_MAP);
 
-	assert(decoder.getPaletteColorCount() == PALETTE_COUNT);
+	assert(decoder.getPalette().size() == Graphics::PALETTE_COUNT);
 	loadPalette(decoder.getPalette());
 
 	// Load scroll button

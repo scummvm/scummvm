@@ -23,10 +23,88 @@
 #define BAGEL_MFC_AFXWIN_H
 
 #include "bagel/mfc/minwindef.h"
+#include "bagel/mfc/wingdi.h"
 #include "bagel/mfc/afx.h"
 
 namespace Bagel {
 namespace MFC {
+
+/*============================================================================*/
+// Window message map handling
+
+struct AFX_MSGMAP_ENTRY;       // declared below after CWnd
+
+struct AFX_MSGMAP {
+	const AFX_MSGMAP *(*pfnGetBaseMap)();
+	const AFX_MSGMAP_ENTRY *lpEntries;
+};
+
+#define afx_msg
+
+#define DECLARE_MESSAGE_MAP() \
+protected: \
+	static const AFX_MSGMAP *GetThisMessageMap(); \
+	const AFX_MSGMAP *GetMessageMap() const override; \
+
+#define BEGIN_TEMPLATE_MESSAGE_MAP(theClass, type_name, baseClass)			\
+	template < typename type_name >											\
+	const AFX_MSGMAP *theClass< type_name >::GetMessageMap() const			\
+		{ return GetThisMessageMap(); }										\
+	template < typename type_name >											\
+	const AFX_MSGMAP *theClass< type_name >::GetThisMessageMap() {		\
+		typedef theClass< type_name > ThisClass;							\
+		typedef baseClass TheBaseClass;										\
+		static const AFX_MSGMAP_ENTRY _messageEntries[] =					\
+		{
+
+#define BEGIN_MESSAGE_MAP(theClass, baseClass) \
+	const AFX_MSGMAP *theClass::GetMessageMap() const \
+		{ return GetThisMessageMap(); } \
+	const AFX_MSGMAP *theClass::GetThisMessageMap() { \
+		typedef theClass ThisClass;						   \
+		typedef baseClass TheBaseClass;					   \
+		static const AFX_MSGMAP_ENTRY _messageEntries[] =  \
+		{
+
+#define END_MESSAGE_MAP() \
+		{ 0, 0, 0, 0, AfxSig_end, (AFX_PMSG)0 } \
+	}; \
+		static const AFX_MSGMAP messageMap = \
+		{ &TheBaseClass::GetThisMessageMap, &_messageEntries[0] }; \
+		return &messageMap; \
+	}								  \
+
+#define DECLARE_DYNAMIC(class_name) \
+public: \
+	static const CRuntimeClass class##class_name; \
+	virtual CRuntimeClass *GetRuntimeClass() const; \
+
+#define DECLARE_DYNAMIC(class_name) \
+public: \
+	static const CRuntimeClass class##class_name; \
+	virtual CRuntimeClass *GetRuntimeClass() const; \
+
+#define DECLARE_DYNCREATE(class_name) \
+	DECLARE_DYNAMIC(class_name) \
+	static CObject *CreateObject();
+
+enum AfxSig {
+	AfxSig_end = 0		// [marks end of message map]
+};
+
+/*
+ * Message structure
+ */
+typedef struct tagMSG {
+	HWND        hwnd;
+	UINT        message;
+	WPARAM      wParam;
+	LPARAM      lParam;
+	DWORD       time;
+	POINT       pt;
+} MSG, *PMSG, NEAR *NPMSG, FAR *LPMSG;
+
+/*============================================================================*/
 
 class CGdiObject : public CObject {
 public:
@@ -56,12 +134,25 @@ class CBitmap : public CGdiObject {
 public:
 	~CBitmap() override {
 	}
+
+	BOOL Attach(HGDIOBJ hObject);
+	HGDIOBJ Detach();
 };
 
 class CPalette : public CGdiObject {
 public:
+	HGDIOBJ m_hObject = nullptr;
+
+public:
 	~CPalette() override {
 	}
+
+	BOOL CreatePalette(LPLOGPALETTE lpLogPalette);
+	int GetObject(int nCount, LPVOID lpObject) const;
+	UINT GetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
+		LPPALETTEENTRY lpPaletteColors) const;
+	UINT SetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
+		LPPALETTEENTRY lpPaletteColors);
 };
 
 class CRgn : public CGdiObject {
@@ -72,19 +163,50 @@ public:
 
 class CDC : public CObject {
 public:
+	HDC m_hDC = nullptr;
+
+public:
 	~CDC() override {
 	}
 };
 
 class CCmdTarget : public CObject {
+	DECLARE_DYNAMIC(CCmdTarget)
 public:
 	~CCmdTarget() override {
+	}
+
+	virtual const AFX_MSGMAP *GetMessageMap() const;
+};
+
+class CDocument : public CCmdTarget {
+	DECLARE_DYNAMIC(CDocument)
+public:
+	~CDocument() override {
 	}
 };
 
 class CWnd : public CCmdTarget {
+	DECLARE_DYNCREATE(CWnd)
+protected:
+	static const MSG *GetCurrentMessage();
+
+public:
+	HWND m_hWnd;
+
 public:
 	~CWnd() override {
+	}
+
+	void ShowWindow(int nCmdShow);
+	void UpdateWindow();
+	void SetActiveWindow();
+};
+
+class CFrameWnd : public CWnd {
+	DECLARE_DYNCREATE(CFrameWnd)
+public:
+	~CFrameWnd() override {
 	}
 };
 
@@ -118,6 +240,18 @@ public:
 	}
 };
 
+class CEdit : public CWnd {
+	DECLARE_DYNAMIC(CEdit)
+public:
+	~CEdit() override {
+	}
+};
+
+class CScrollBar : public CWnd {
+public:
+	~CScrollBar() override { }
+};
+
 class CView : public CWnd {
 public:
 	~CView() override {
@@ -138,8 +272,11 @@ public:
 
 class CWinApp : public CWinThread {
 public:
+	CWinApp(const char *appName);
 	~CWinApp() override {
 	}
+
+	void SetDialogBkColor();
 };
 
 } // namespace MFC
