@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-05-05 10:34+0000\n"
-"PO-Revision-Date: 2025-04-30 02:19+0000\n"
+"PO-Revision-Date: 2025-05-06 10:18+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -6179,7 +6179,7 @@ msgstr "მაინც ჩატვირთვა"
 
 #: engines/awe/metaengine.cpp:61
 msgid "Select/Kick/Run"
-msgstr ""
+msgstr "მონიშვნა/მირტყმა/გაქცევა"
 
 #: engines/awe/metaengine.cpp:62 engines/hpl1/metaengine.cpp:83
 msgid "Jump"
@@ -6187,7 +6187,7 @@ msgstr "გადასვლა"
 
 #: engines/awe/metaengine.cpp:63
 msgid "Enter Level Code"
-msgstr ""
+msgstr "შეიყვანეთ დონის კოდი"
 
 #: engines/awe/metaengine.cpp:89 engines/dgds/metaengine.cpp:87
 #: engines/got/metaengine.cpp:90
@@ -7022,7 +7022,7 @@ msgstr ""
 
 #: engines/director/metaengine.cpp:81
 msgid "Force true color"
-msgstr ""
+msgstr "ნამდვილი ფერების ჩართვა"
 
 #: engines/director/metaengine.cpp:82
 msgid "Use true color graphics mode, even if the game is not designed for it"
@@ -7118,46 +7118,32 @@ msgid "Right click"
 msgstr "მარჯვენა წკაპი"
 
 #: engines/efh/metaengine.cpp:255
-#, fuzzy
-#| msgid "Move up-left"
 msgid "Move up left"
-msgstr "მარცხნივ-მაღლა გაწევა"
+msgstr "მარცხნივ-მაღლა გადასვლა"
 
 #: engines/efh/metaengine.cpp:260
-#, fuzzy
-#| msgid "Move up-right"
 msgid "Move up right"
-msgstr "მარჯვნივ-მაღლა გაწევა"
+msgstr "მარჯვნივ-მაღლა გადასვლა"
 
 #: engines/efh/metaengine.cpp:265
-#, fuzzy
-#| msgid "Move down-left"
 msgid "Move down left"
-msgstr "ქვემოთ-მარცხნივ ჩამოწევა"
+msgstr "ქვემოთ-მარცხნივ გადასვლა"
 
 #: engines/efh/metaengine.cpp:270
-#, fuzzy
-#| msgid "Move down-right"
 msgid "Move down right"
-msgstr "მარჯვნივ-დაბლა ჩაწევა"
+msgstr "მარჯვნივ-დაბლა გადასვლა"
 
 #: engines/efh/metaengine.cpp:275
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 1 status"
-msgstr "გმირის პორტრეტების ჩვენება"
+msgstr "გმირი 1-ის სტატუსი"
 
 #: engines/efh/metaengine.cpp:280
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 2 status"
-msgstr "გმირის პორტრეტების ჩვენება"
+msgstr "გმირი 2-ის სტატუსი"
 
 #: engines/efh/metaengine.cpp:285
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 3 status"
-msgstr "გმირის პორტრეტების ჩვენება"
+msgstr "გმირი 3-ის პასუხი"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -9067,7 +9053,7 @@ msgstr ""
 
 #: engines/neverhood/dialogs.cpp:62
 msgid "Repeat useful Willie's hint"
-msgstr ""
+msgstr "უილის სასარგებლო მინიშნების გამეორება"
 
 #: engines/neverhood/dialogs.cpp:63
 msgid "Repeat actual useful hint by Willie"
@@ -9168,22 +9154,16 @@ msgid "This menu item is not yet implemented"
 msgstr ""
 
 #: engines/playground3d/metaengine.cpp:55
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch test"
-msgstr "თამაშზე გადართვა"
+msgstr "ტესტის გადართვა"
 
 #: engines/playground3d/metaengine.cpp:61
-#, fuzzy
-#| msgid "Enable/Disable Jetpack"
 msgid "Enable/Disable fog"
-msgstr "ჯეტპაკის ჩართვა/გამორთვა"
+msgstr "ნისლის ჩართვა/გამორთვა"
 
 #: engines/playground3d/metaengine.cpp:67
-#, fuzzy
-#| msgid "Enable/Disable Jetpack"
 msgid "Enable/Disable scissor"
-msgstr "ჯეტპაკის ჩართვა/გამორთვა"
+msgstr "მაკრატლის ჩართვა/გამორთვა"
 
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
