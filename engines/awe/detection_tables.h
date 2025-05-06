@@ -40,6 +40,7 @@ const AweGameDescription gameDescriptions[] = {
 		DT_DOS
 	},
 	// DOS Floppy - ANOTHER WORLD PC (19/3/92)
+	// This version is also included on the Delphine Classic Collection CD
 	{
 		{
 			"anotherworld",
