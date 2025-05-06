@@ -140,12 +140,7 @@ void Cursor::convertSurfaceTo(const Graphics::PixelFormat &format) {
 		}
 
 		_surface.create(cursorWidth, cursorHeight, format);
-
-		extern bool g_unalignedPitch;
-		const bool old_unalignedPitch = g_unalignedPitch;
-		g_unalignedPitch = true;
 		_surfaceMask.create(_surface.w / 8, _surface.h, format);	// 1 bpl
-		g_unalignedPitch = old_unalignedPitch;
 	}
 
 	const int srcRectWidth = _srcRect.width();

@@ -92,8 +92,6 @@ void unlockSuperBlitter() {
 #endif
 }
 
-// see osystem-atari.cpp
-extern bool g_unalignedPitch;
 // see atari-graphics.cpp
 extern mspace g_mspace;
 
@@ -110,10 +108,7 @@ void Surface::create(int16 width, int16 height, const PixelFormat &f) {
 	w = width;
 	h = height;
 	format = f;
-	// align pitch to a 16-byte boundary for a possible C2P conversion
-	pitch = g_unalignedPitch
-		? w * format.bytesPerPixel
-		: (w * format.bytesPerPixel + ALIGN - 1) & (-ALIGN);
+	pitch = w * format.bytesPerPixel;
 
 	if (width && height) {
 #ifdef USE_SV_BLITTER
