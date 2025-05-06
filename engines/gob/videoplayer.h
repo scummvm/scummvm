@@ -177,6 +177,8 @@ private:
 		Common::String fileName;
 
 		SurfacePtr surface;
+		Common::SharedPtr<Graphics::Surface> tmpSurfBppConversion;
+		uint32 *highColorMap;
 
 		Properties properties;
 
