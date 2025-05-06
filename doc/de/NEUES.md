@@ -80,7 +80,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      Engines führt, die den Stack stark nutzen.
 
  Atari-Portierung:
-   - Absturz im Zusammenhang mit einigen Audio-Einstellungen behoben.
+   - SysEX-MIDI-Nachrichten werden jetzt korrekt gesendet.
+   - Abstürze und Wiedergabestörungen im Zusammenhang mit einigen Audio-Einstellungen behoben.
+   - Performance-Probleme mit SCI32-Spielen wie Phantasmagoria oder KQ7 behoben.
+   - Mehrere GUI/Backend-Fehlerkorrekturen und Optimierungen.
 
  iOS/iPadOS-Portierung:
    - Soundfonts für FluidSynth werden jetzt auch in Sandboxed-Dateisystemen korrekt erkannt.
