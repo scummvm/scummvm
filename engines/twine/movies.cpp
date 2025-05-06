@@ -458,7 +458,10 @@ bool Movies::playMovie(const char *name) { // PlayAnimFla
 		warning("Unsupported fla version: %u, %s", version, fileNamePath.c_str());
 	}
 
-	_engine->_screens->fadeToBlack(_paletteOrg);
+	// this might happen if the movie was interrupted before it even started to load the palette.
+	if (!_paletteOrg.empty()) {
+		_engine->_screens->fadeToBlack(_paletteOrg);
+	}
 
 	_engine->_sound->stopSamples();
 	_engine->_screens->setBlackPal();
