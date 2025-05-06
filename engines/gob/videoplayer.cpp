@@ -25,6 +25,7 @@
  *
  */
 
+#include "graphics/blit.h"
 
 #include "video/coktel_decoder.h"
 
@@ -50,7 +51,7 @@ VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFront
 }
 
 
-VideoPlayer::Video::Video() : decoder(0), live(false) {
+VideoPlayer::Video::Video() : decoder(nullptr), live(false), highColorMap(nullptr) {
 }
 
 bool VideoPlayer::Video::isEmpty() const {
@@ -60,9 +61,13 @@ bool VideoPlayer::Video::isEmpty() const {
 void VideoPlayer::Video::close() {
 	delete decoder;
 
-	decoder = 0;
+	decoder = nullptr;
 	fileName.clear();
 	surface.reset();
+
+	tmpSurfBppConversion.reset();
+	delete highColorMap;
+	highColorMap = nullptr;
 
 	live = false;
 }
@@ -252,16 +257,21 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 					video->surface = _vm->_draw->_backSurface;
 
 				if (video->decoder->isPaletted() && video->surface->getBPP() > 1) {
-					uint32 *highColorMap = new uint32[256];
-					Surface::computeHighColorMap(highColorMap,
+					video->tmpSurfBppConversion.reset(new Graphics::Surface());
+					video->tmpSurfBppConversion->create(video->surface->getWidth(),
+														video->surface->getHeight(),
+														video->decoder->getPixelFormat());
+
+					if (!video->highColorMap)
+						video->highColorMap = new uint32[256];
+					Surface::computeHighColorMap(video->highColorMap,
 												 video->decoder->getPalette(),
 												 _vm->getPixelFormat(),
 												 _vm->getGameType() == kGameTypeAdibou2);
-					video->decoder->setSurfaceMemoryPalettedToHighColor(video->surface->getData(),
-																		video->surface->getWidth(),
-																		video->surface->getHeight(),
-																		_vm->getPixelFormat(),
-																		highColorMap);
+					video->decoder->setSurfaceMemory(video->tmpSurfBppConversion->getPixels(),
+													 video->tmpSurfBppConversion->w,
+													 video->tmpSurfBppConversion->h,
+													 video->tmpSurfBppConversion->format.bytesPerPixel);
 				} else {
 					video->decoder->setSurfaceMemory(video->surface->getData(),
 													 video->surface->getWidth(),
@@ -669,6 +679,18 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 	}
 
 	const Graphics::Surface *surface = video->decoder->decodeNextFrame();
+	if (surface != nullptr && video->decoder->isPaletted() && video->surface && video->surface->getBPP() > 1) {
+		int16 x = 0;
+		int16 y = 0;
+		int16 width = 0;
+		int16 height = 0;
+		video->decoder->getFrameCoords(video->decoder->getCurFrame(), x, y, width, height);
+		Graphics::crossBlitMap(video->surface->getData(x, y), static_cast<const byte *>(surface->getBasePtr(x, y)),
+							   video->surface->getWidth() * video->surface->getBPP(),
+							   surface->pitch,
+							   width, height,
+							   video->surface->getBPP(), video->highColorMap);
+	}
 
 	if (_vm->getGameType() != kGameTypeAdibou2)
 		WRITE_VAR(11, video->decoder->getCurFrame());
@@ -991,7 +1013,7 @@ bool VideoPlayer::copyFrame(int slot, Surface &dest,
 	// of the frame data which is undesirable.
 	const Surface src(surface->w, surface->h, surface->format.bytesPerPixel,
 					  static_cast<byte*>(const_cast<void*>(surface->getPixels())),
-					  video->decoder->getHighColorMap());
+					  video->highColorMap);
 
 	dest.blit(src, left, top, left + width - 1, top + height - 1, x, y, transp, yAxisReflection);
 
