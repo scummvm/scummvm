@@ -95,14 +95,6 @@ public:
 
 	/** Draw directly onto the specified video memory. */
 	void setSurfaceMemory(void *mem, uint16 width, uint16 height, uint8 bpp);
-
-	/** Draw directly onto the specified video memory, with a CLUT to high color conversion. */
-	void setSurfaceMemoryPalettedToHighColor(void *mem,
-											 uint16 width,
-											 uint16 height,
-											 Graphics::PixelFormat format,
-											 uint32 *highColorMap);
-
 	/** Reset the video memory. */
 	void setSurfaceMemory();
 
@@ -204,7 +196,6 @@ public:
 
 	const byte *getPalette();
 	bool  hasDirtyPalette() const;
-	const uint32 *getHighColorMap();
 
 	uint32 getTimeToNextFrame() const;
 	uint32 getStaticTimeToNextFrame() const;
@@ -254,13 +245,10 @@ protected:
 	Graphics::Palette _palette;
 	bool _paletteDirty;
 
-	uint32 *_highColorMap;
-
 	bool _isDouble;
 
 	bool    _ownSurface;
 	Graphics::Surface _surface;
-	Graphics::Surface _tmpSurfBppConversion;
 
 	Common::List<Common::Rect> _dirtyRects;
 
@@ -593,7 +581,6 @@ private:
 	bool renderFrame(Common::Rect &rect);
 	bool getRenderRects(const Common::Rect &rect,
 			Common::Rect &realRect, Common::Rect &fakeRect);
-	void blitPalettedToHighColor(const Graphics::Surface &srcSurf, Common::Rect &rect);
 	void blit16(const Graphics::Surface &srcSurf, Common::Rect &rect);
 	void blit24(const Graphics::Surface &srcSurf, Common::Rect &rect);
 
