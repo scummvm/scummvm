@@ -122,8 +122,8 @@ void Surface::create(int16 width, int16 height, const PixelFormat &f) {
 
 			if (!pixels)
 				error("Not enough memory to allocate a surface");
-			else if (pixels <= (void *)0xA0000000)
-				warning("SuperVidel surface allocated in regular memory");
+
+			assert(pixels >= (void *)0xA0000000);
 		} else {
 #else
 		{
@@ -131,8 +131,8 @@ void Surface::create(int16 width, int16 height, const PixelFormat &f) {
 			pixels = ::calloc(height * pitch, f.bytesPerPixel);
 			if (!pixels)
 				error("Not enough memory to allocate a surface");
-			else
-				assert(((uintptr)pixels & (ALIGN - 1)) == 0);
+
+			assert(((uintptr)pixels & (ALIGN - 1)) == 0);
 		}
 	}
 }
