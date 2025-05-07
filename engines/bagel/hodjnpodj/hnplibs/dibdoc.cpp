@@ -1,26 +1,29 @@
-// dibdoc.cpp : implementation of the CDibDoc class
-//
-// Version 2.0
-//
-// This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) 1992 Microsoft Corporation
-// All rights reserved.
-//
-// This source code is only intended as a supplement to the
-// Microsoft Foundation Classes Reference and Microsoft
-// QuickHelp and/or WinHelp documentation provided with the library.
-// See these sources for detailed information regarding the
-// Microsoft Foundation Classes product.
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-#include "stdafx.h"
-#include <limits.h>
+#include "bagel/afxwin.h"
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
 
-#include "dibdoc.h"
-
-#ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
+namespace Bagel {
+namespace HodjNPodj {
 
 /////////////////////////////////////////////////////////////////////////////
 // CDibDoc
@@ -35,18 +38,16 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CDibDoc construction/destruction
 
-CDibDoc::CDibDoc()
-{
+CDibDoc::CDibDoc() {
 	m_hDIB = NULL;
 	m_palDIB = NULL;
-	m_sizeDoc = CSize(1,1);     // dummy value to make CScrollView happy
+	m_sizeDoc = CSize(1, 1);     // dummy value to make CScrollView happy
 }
 
-CDibDoc::~CDibDoc()
-{
+CDibDoc::~CDibDoc() {
 	if (m_hDIB != NULL)
 	{
-		::GlobalFree((HGLOBAL) m_hDIB);
+		GlobalFree((HGLOBAL)m_hDIB);
 	}
 	if (m_palDIB != NULL)
 	{
@@ -55,8 +56,7 @@ CDibDoc::~CDibDoc()
 	}
 }
 
-void CDibDoc::InitDIBData()
-{
+void CDibDoc::InitDIBData() {
 	if (m_palDIB != NULL)
 	{
 		delete m_palDIB;
@@ -67,32 +67,30 @@ void CDibDoc::InitDIBData()
 		return;
 	}
 	// Set up document size
-	LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) m_hDIB);
-	
-	if (::DIBWidth(lpDIB) > INT_MAX ||::DIBHeight(lpDIB) > INT_MAX)
-	{
-		::GlobalUnlock((HGLOBAL) m_hDIB);
-		::GlobalFree((HGLOBAL) m_hDIB);
+	LPSTR lpDIB = (LPSTR)GlobalLock((HGLOBAL)m_hDIB);
+
+	if (DIBWidth(lpDIB) > INT_MAX || DIBHeight(lpDIB) > INT_MAX) {
+		GlobalUnlock((HGLOBAL)m_hDIB);
+		GlobalFree((HGLOBAL)m_hDIB);
 		m_hDIB = NULL;
 		return;
 	}
 
-	m_sizeDoc = CSize((int) ::DIBWidth(lpDIB), (int) ::DIBHeight(lpDIB));
+	m_sizeDoc = CSize((int) DIBWidth(lpDIB), (int) DIBHeight(lpDIB));
 
-	::GlobalUnlock((HGLOBAL) m_hDIB);
+	GlobalUnlock((HGLOBAL)m_hDIB);
 	// Create copy of palette
 	m_palDIB = new CPalette;
 	if (m_palDIB == NULL)
 	{
 		// we must be really low on memory
-		::GlobalFree((HGLOBAL) m_hDIB);
+		GlobalFree((HGLOBAL)m_hDIB);
 		m_hDIB = NULL;
 		ShowMemoryInfo("Unable to create artwork palette", "Internal Problem");
 		return;
 	}
 
-	if (::CreateDIBPalette(m_hDIB, m_palDIB) == NULL)
-	{
+	if (!CreateDIBPalette(m_hDIB, m_palDIB)) {
 		// DIB may not have a palette
 		delete m_palDIB;
 		m_palDIB = NULL;
@@ -102,22 +100,21 @@ void CDibDoc::InitDIBData()
 }
 
 
-BOOL CDibDoc::OpenResourceDocument(const int nResID)
-{
-char	chResID[8];
+BOOL CDibDoc::OpenResourceDocument(const int nResID) {
+	char	chResID[8];
 
 	DeleteContents();
 
-	sprintf(chResID,"#%d",nResID);
+	Common::sprintf_s(chResID, "#%d", nResID);
 	m_hDIB = ReadDIBResource(chResID);
 	if (m_hDIB != NULL)
 		InitDIBData();
 
 	if (m_hDIB == NULL)
 	{
-    	char	buf[128];
-        	
-    	sprintf(buf,"Unable to load artwork resource: %s",chResID);
+		char	buf[128];
+
+		Common::sprintf_s(buf, "Unable to load artwork resource: %s", chResID);
 		ShowMemoryInfo(buf, "Internal Problem");
 		return FALSE;
 	}
@@ -127,8 +124,7 @@ char	chResID[8];
 }
 
 
-BOOL CDibDoc::OpenResourceDocument(const char* pszPathName)
-{
+BOOL CDibDoc::OpenResourceDocument(const char *pszPathName) {
 	DeleteContents();
 
 	m_hDIB = ReadDIBResource(pszPathName);
@@ -137,9 +133,9 @@ BOOL CDibDoc::OpenResourceDocument(const char* pszPathName)
 
 	if (m_hDIB == NULL)
 	{
-    	char	buf[128];
-        	
-    	sprintf(buf,"Unable to load artwork file: %s",pszPathName);
+		char	buf[128];
+
+		Common::sprintf_s(buf, "Unable to load artwork file: %s", pszPathName);
 		ShowMemoryInfo(buf, "Internal Problem");
 		return FALSE;
 	}
@@ -150,9 +146,8 @@ BOOL CDibDoc::OpenResourceDocument(const char* pszPathName)
 
 
 
-CPalette * CDibDoc::DetachPalette()
-{
-CPalette	*pMyPalette;
+CPalette *CDibDoc::DetachPalette() {
+	CPalette *pMyPalette;
 
 	pMyPalette = m_palDIB;
 	m_palDIB = NULL;
@@ -160,15 +155,14 @@ CPalette	*pMyPalette;
 }
 
 
-BOOL CDibDoc::OpenDocument(const char* pszPathName)
-{
+BOOL CDibDoc::OpenDocument(const char *pszPathName) {
 	CFile file;
 	CFileException fe;
-	if (!file.Open(pszPathName, CFile::modeRead | CFile::shareDenyWrite, &fe))
-	{
-    	char	buf[128];
-        	
-    	sprintf(buf,"Unable to open artwork file: %s",pszPathName);
+
+	if (!file.Open(pszPathName, CFile::modeRead | CFile::shareDenyWrite, &fe)) {
+		char buf[128];
+
+		Common::sprintf_s(buf, "Unable to open artwork file: %s", pszPathName);
 		ShowMemoryInfo(buf, "Internal Problem");
 
 		ReportSaveLoadException(pszPathName, &fe,
@@ -177,24 +171,23 @@ BOOL CDibDoc::OpenDocument(const char* pszPathName)
 	}
 
 	DeleteContents();
-//	BeginWaitCursor();
+	//	BeginWaitCursor();
 
-	// replace calls to Serialize with ReadDIBFile function
+		// replace calls to Serialize with ReadDIBFile function
 	TRY
 	{
-		m_hDIB = ::ReadDIBFile(file);
-		
+		m_hDIB = ReadDIBFile(file);
+
 		if (m_hDIB == NULL) {
-	    	char	buf[128];
-	        	
-	    	sprintf(buf,"Unable to load artwork file: %s",pszPathName);
+			char	buf[128];
+
+			Common::sprintf_s(buf,"Unable to load artwork file: %s",pszPathName);
 			ShowMemoryInfo(buf, "Internal Problem");
 		}
 	}
-	CATCH (CFileException, eLoad)
-	{
+		CATCH(CFileException, eLoad) {
 		file.Abort(); // will not throw an exception
-//		EndWaitCursor();
+		//		EndWaitCursor();
 		ReportSaveLoadException(pszPathName, eLoad,
 			FALSE, AFX_IDP_FAILED_TO_OPEN_DOC);
 		m_hDIB = NULL;
@@ -202,14 +195,14 @@ BOOL CDibDoc::OpenDocument(const char* pszPathName)
 	}
 	END_CATCH
 
-	InitDIBData();
-//	EndWaitCursor();
+		InitDIBData();
+	//	EndWaitCursor();
 
 	if (m_hDIB == NULL)
 	{
-    	char	buf[128];
-        	
-    	sprintf(buf,"Unable to load artwork file: %s",pszPathName);
+		char	buf[128];
+
+		Common::sprintf_s(buf, "Unable to load artwork file: %s", pszPathName);
 		ShowMemoryInfo(buf, "Internal Problem");
 		return FALSE;
 	}
@@ -220,13 +213,12 @@ BOOL CDibDoc::OpenDocument(const char* pszPathName)
 }
 
 
-BOOL CDibDoc::SaveDocument(const char* pszPathName)
-{
+BOOL CDibDoc::SaveDocument(const char *pszPathName) {
 	CFile file;
 	CFileException fe;
 
 	if (!file.Open(pszPathName, CFile::modeCreate |
-	  CFile::modeReadWrite | CFile::shareExclusive, &fe))
+		CFile::modeReadWrite | CFile::shareExclusive, &fe))
 	{
 		ReportSaveLoadException(pszPathName, &fe,
 			TRUE, AFX_IDP_INVALID_FILENAME);
@@ -237,31 +229,29 @@ BOOL CDibDoc::SaveDocument(const char* pszPathName)
 	BOOL bSuccess = FALSE;
 	TRY
 	{
-//		BeginWaitCursor();
-		bSuccess = ::SaveDIB(m_hDIB, file);
-		file.Close();
+		//		BeginWaitCursor();
+				bSuccess = SaveDIB(m_hDIB, file);
+				file.Close();
 	}
-	CATCH (CException, eSave)
-	{
+		CATCH(CException, eSave) {
 		file.Abort(); // will not throw an exception
-//		EndWaitCursor();
+		//		EndWaitCursor();
 		ReportSaveLoadException(pszPathName, eSave,
 			TRUE, AFX_IDP_FAILED_TO_SAVE_DOC);
 		return FALSE;
 	}
 	END_CATCH
 
-//	EndWaitCursor();
-	SetModifiedFlag(FALSE);     // back to unmodified
+		//	EndWaitCursor();
+		SetModifiedFlag(FALSE);     // back to unmodified
 
 	return bSuccess;
 }
 
-void CDibDoc::ReplaceHDIB(HDIB hDIB)
-{
+void CDibDoc::ReplaceHDIB(HDIB hDIB) {
 	if (m_hDIB != NULL)
 	{
-		::GlobalFree((HGLOBAL) m_hDIB);
+		GlobalFree((HGLOBAL)m_hDIB);
 	}
 	m_hDIB = hDIB;
 }
@@ -270,18 +260,15 @@ void CDibDoc::ReplaceHDIB(HDIB hDIB)
 // CDibDoc diagnostics
 
 #ifdef _DEBUG
-void CDibDoc::AssertValid() const
-{
+void CDibDoc::AssertValid() const {
 	CDocument::AssertValid();
 }
 
-void CDibDoc::Dump(CDumpContext& dc) const
-{
+void CDibDoc::Dump(CDumpContext &dc) const {
 	CDocument::Dump(dc);
 }
 
 #endif //_DEBUG
 
-/////////////////////////////////////////////////////////////////////////////
-// CDibDoc commands
-
+} // namespace HodjNPodj
+} // namespace Bagel

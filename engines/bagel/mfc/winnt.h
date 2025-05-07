@@ -324,6 +324,11 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define SB_CTL              2
 #define SB_BOTH             3
 
+// General error / prompt strings
+#define AFX_IDP_INVALID_FILENAME        0xF100
+#define AFX_IDP_FAILED_TO_OPEN_DOC      0xF101
+#define AFX_IDP_FAILED_TO_SAVE_DOC      0xF102
+
 
 typedef struct _GUID {
 	unsigned long  Data1;

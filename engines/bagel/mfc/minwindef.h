@@ -62,6 +62,11 @@ namespace MFC {
 #define _Inout_
 #endif
 
+// Dummy try/catch implementation
+#define TRY if (1) {
+#define CATCH(KLASS, VAL) KLASS *VAL = nullptr; if (0)
+#define END_CATCH }
+
 DECLARE_HANDLE(HACCEL);
 DECLARE_HANDLE(HCURSOR);
 DECLARE_HANDLE(HDROP);

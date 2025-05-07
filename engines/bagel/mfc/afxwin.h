@@ -25,6 +25,7 @@
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/wingdi.h"
 #include "bagel/mfc/afx.h"
+#include "bagel/mfc/afxstr.h"
 
 namespace Bagel {
 namespace MFC {
@@ -32,7 +33,17 @@ namespace MFC {
 /*============================================================================*/
 // Window message map handling
 
-struct AFX_MSGMAP_ENTRY;       // declared below after CWnd
+class CCmdTarget;
+typedef void (CCmdTarget::*AFX_PMSG)();
+
+struct AFX_MSGMAP_ENTRY {
+	AFX_PMSG pfn;    // routine to call (or special value)
+	UINT nMessage;   // windows message
+	UINT nCode;      // control code or WM_NOTIFY code
+	UINT nID;        // control ID (or 0 for windows messages)
+	UINT nLastID;    // used for entries specifying a range of control id's
+	AFX_PMSG nSig;   // signature type (action) or pointer to message #
+};
 
 struct AFX_MSGMAP {
 	const AFX_MSGMAP *(*pfnGetBaseMap)();
@@ -67,22 +78,12 @@ protected: \
 		{
 
 #define END_MESSAGE_MAP() \
-		{ 0, 0, 0, 0, AfxSig_end, (AFX_PMSG)0 } \
+		{ 0, 0, 0, 0, AfxSig_end, (AFX_PMSG)nullptr } \
 	}; \
 		static const AFX_MSGMAP messageMap = \
 		{ &TheBaseClass::GetThisMessageMap, &_messageEntries[0] }; \
 		return &messageMap; \
 	}								  \
-
-#define DECLARE_DYNAMIC(class_name) \
-public: \
-	static const CRuntimeClass class##class_name; \
-	virtual CRuntimeClass *GetRuntimeClass() const; \
-
-#define DECLARE_DYNAMIC(class_name) \
-public: \
-	static const CRuntimeClass class##class_name; \
-	virtual CRuntimeClass *GetRuntimeClass() const; \
 
 #define DECLARE_DYNCREATE(class_name) \
 	DECLARE_DYNAMIC(class_name) \
@@ -110,6 +111,8 @@ class CGdiObject : public CObject {
 public:
 	~CGdiObject() override {
 	}
+
+	BOOL DeleteObject();
 };
 
 class CPen : public CGdiObject {
@@ -181,9 +184,29 @@ public:
 
 class CDocument : public CCmdTarget {
 	DECLARE_DYNAMIC(CDocument)
+private:
+	CString _title;
+	bool _isModified = false;
+
 public:
 	~CDocument() override {
 	}
+
+	const CString &GetTitle() const;
+	virtual void SetTitle(LPCSTR lpszTitle);
+	const CString &GetPathName() const;
+	virtual void SetPathName(LPCSTR lpszPathName, BOOL bAddToMRU = TRUE);
+	virtual void ClearPathName();
+
+	virtual BOOL IsModified();
+	virtual void SetModifiedFlag(BOOL bModified = TRUE);
+	virtual void ReportSaveLoadException(LPCSTR lpszPathName,
+		CException *e, BOOL bSaving, UINT nIDPDefault);
+
+	// delete doc items etc
+	virtual void DeleteContents();
+
+	DECLARE_MESSAGE_MAP()
 };
 
 class CWnd : public CCmdTarget {

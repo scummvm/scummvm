@@ -29,9 +29,7 @@ namespace HodjNPodj {
 
 class CDibDoc : public CDocument {
 	DECLARE_DYNCREATE(CDibDoc)
-
-friend class
-	CSprite;
+	friend class CSprite;
 	
 public:
 	CDibDoc();
@@ -63,6 +61,11 @@ private:
 	HDIB m_hDIB;
 	CPalette* m_palDIB;
 	CSize m_sizeDoc;
+
+#ifdef _DEBUG
+	void AssertValid() const override;
+	void Dump(CDumpContext &dc) const override;
+#endif
 
 protected:
 	//{{AFX_MSG(CDibDoc)

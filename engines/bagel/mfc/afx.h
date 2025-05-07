@@ -28,19 +28,45 @@
 namespace Bagel {
 namespace MFC {
 
+struct CRuntimeClass;
 class CObject;
+class CException;
+class CFileException;
+
+#define DECLARE_DYNAMIC(class_name) \
+public: \
+	static const CRuntimeClass class##class_name; \
+	virtual const CRuntimeClass *GetRuntimeClass() const; \
+
+
+#define RUNTIME_CLASS(class_name) ((const CRuntimeClass *)(&class_name::class##class_name))
+
+#define IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, pfnNew) \
+	const CRuntimeClass class_name::class##class_name = { \
+		#class_name, sizeof(class class_name), wSchema, pfnNew, \
+			RUNTIME_CLASS(base_class_name), NULL }; \
+	const CRuntimeClass* class_name::GetRuntimeClass() const \
+		{ return RUNTIME_CLASS(class_name); }
+
+#define IMPLEMENT_DYNAMIC(class_name, base_class_name) \
+	IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, 0xFFFF, nullptr)
+
+#define IMPLEMENT_DYNCREATE(class_name, base_class_name) \
+	CObject *class_name::CreateObject() \
+		{ return new class_name; } \
+	IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, 0xFFFF, \
+		class_name::CreateObject)
 
 struct CRuntimeClass {
 	// Attributes
-	LPCSTR m_lpszClassName = nullptr;
+	const char *m_lpszClassName = nullptr;
 	int m_nObjectSize = 0;
 	UINT m_wSchema = 0;
 	CObject *(*m_pfnCreateObject)() = nullptr;
-	CRuntimeClass *m_pBaseClass = nullptr;
+	const CRuntimeClass *m_pBaseClass = nullptr;
 
 	// CRuntimeClass objects linked together in simple list
-	CRuntimeClass *m_pNextClass = nullptr;       // linked list of registered classes
-	//const AFX_CLASSINIT *m_pClassInit;
+	const CRuntimeClass *m_pNextClass = nullptr;       // linked list of registered classes
 };
 
 class CDumpContext {
@@ -51,14 +77,14 @@ public:
 	CObject();
 	CObject(const CObject &objectSrc);
 	virtual ~CObject() = 0;
-	virtual CRuntimeClass *GetRuntimeClass() const;
+	virtual const CRuntimeClass *GetRuntimeClass() const;
 
 	virtual void AssertValid() const {}
 	virtual void Dump(CDumpContext &dc) const {}
 };
 
 class CFile : public CObject {
-public:
+	DECLARE_DYNAMIC(CFile)
 public:
 	// Flag values
 	enum OpenFlags {
@@ -111,7 +137,20 @@ private:
 
 public:
 	CFile() {}
+	CFile(const char *lpszFileName, UINT nOpenFlags);
+	~CFile() {
+		Close();
+	}
+
+	BOOL Open(const char *lpszFileName, UINT nOpenFlags, CFileException *pError = NULL);
+	void Close();
+	void Abort() {}
 };
+
+/*============================================================================*/
+/* Exceptions - Not supported in ScummVM */
+class CException {};
+class CFileException : public CException {};
 
 } // namespace MFC
 } // namespace Bagel

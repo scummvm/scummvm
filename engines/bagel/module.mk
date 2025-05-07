@@ -17,6 +17,9 @@ MODULE_OBJS = \
 	boflib/sound.o \
 	boflib/string.o \
 	boflib/string_functions.o \
+	mfc/document.o \
+	mfc/file.o \
+	mfc/gdi_object.o \
 	mfc/global_functions.o \
 	mfc/object.o \
 	mfc/win_app.o \
@@ -120,6 +123,7 @@ MODULE_OBJS = \
 	hodjnpodj/gfx/gfx_surface.o \
 	hodjnpodj/gfx/palette.o \
 	hodjnpodj/hnplibs/dibapi.o \
+	hodjnpodj/hnplibs/dibdoc.o \
 	hodjnpodj/libs/settings.o \
 	hodjnpodj/libs/vector.o \
 	hodjnpodj/views/dialog.o \

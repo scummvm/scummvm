@@ -21,8 +21,6 @@
 
 #include "bagel/hodjnpodj/hnplibs/dibapi.h"
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-//#include <io.h>
-//#include <errno.h>
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -552,7 +550,7 @@ CBitmap *WINAPI ConvertDIB(CDC *pDC,
 	HDIB hDIB,
 	CPalette *pPal) {
 	LPSTR    lpDIBHdr;            // Pointer to BITMAPINFOHEADER
-	LPSTR    lpDIBBits;           // Pointer to DIB bits
+	//LPSTR    lpDIBBits;           // Pointer to DIB bits
 	//BOOL     bSuccess = FALSE;      // Success/fail flag
 	HPALETTE hPal = NULL;           // Our DIB's palette
 	HPALETTE hOldPal = NULL;        // Previous palette
@@ -576,7 +574,7 @@ CBitmap *WINAPI ConvertDIB(CDC *pDC,
 	 *  buffer
 	 */
 	lpDIBHdr = (LPSTR) GlobalLock((HGLOBAL)hDIB);
-	lpDIBBits = FindDIBBits(lpDIBHdr);
+	/*lpDIBBits =*/(void)FindDIBBits(lpDIBHdr);
 
 	hBitmap = DIBtoBitmap(hDC, NULL, (LPBITMAPINFO)lpDIBHdr);
 
