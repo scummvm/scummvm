@@ -109,7 +109,7 @@ void ConnectCloudClientHandler::handle(Client *client) {
 	if (!client->readContent(&_clientContent))
 		return;
 
-	char *contents = Common::JSON::untaintContents(_clientContent);
+	char *contents = Common::JSON::zeroTerminateContents(_clientContent);
 	Common::JSONValue *json = Common::JSON::parse(contents);
 	if (json == nullptr) {
 		handleError(*client, "Not Acceptable", 406);
