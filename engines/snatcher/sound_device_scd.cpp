@@ -33,8 +33,6 @@
 #include "snatcher/util.h"
 
 
-#define SNDDRV_DEBUG
-
 namespace Snatcher {
 
 class MessageHandler {
@@ -142,7 +140,7 @@ private:
 	struct PCMResidentDataInfo {
 		uint8 prio;
 		uint8 unit;
-		uint8 c;
+		uint8 vol;
 		uint8 pan;
 		uint16 rate;
 		uint32 addr;
@@ -159,8 +157,8 @@ private:
 		uint8 prio;
 		uint8 unit;
 		uint32 addr;
-		uint8 f16;
-		uint8 vol;
+		uint8 volBase;
+		uint8 volEff;
 		uint8 pan;
 		uint16 rate;
 	};
@@ -1993,7 +1991,7 @@ bool SegaSoundDevice::pcmLoadData() {
 	for (int i = 0; i < 0x4A; ++i) {
 		p2->prio = *in++;
 		p2->unit = *in++;
-		p2->c = *in++;
+		p2->vol = *in++;
 		p2->pan = *in++;
 		p2->rate = READ_BE_UINT16(in);
 		in += 2;
@@ -2061,8 +2059,8 @@ void SegaSoundDevice::pcmStartSound(uint8 sndId, int8 unit, uint8 vol) {
 		return;
 	pcmResetUnit(unit, s);
 	s.unit = p.unit;
-	s.f16 = p.c;
-	s.vol = vol ? (p.c * vol) >> 8 : p.c;
+	s.volBase = p.vol;
+	s.volEff = vol ? (p.vol * vol) >> 8 : p.vol;
 	s.pan = p.pan;
 	s.rate = p.rate;
 	s.addr = p.addr + 0x10;
@@ -2111,7 +2109,7 @@ void SegaSoundDevice::pcmDelayedStart() {
 		PCMResourceInfo &p = _pcmResourceInfo[_pcmResourceNumber];
 		s.addr = 0x65000;
 		s.prio = p.prio;
-		s.vol = p.vol;
+		s.volEff = p.vol;
 		s.pan = p.pan;
 		s.rate = 0x400;
 
@@ -2189,8 +2187,8 @@ void SegaSoundDevice::pcmStartInstrument(uint8 unit, uint8 sndId, uint8 vol) {
 	pcmResetUnit(unit, s);
 
 	s.unit = p.unit;
-	s.f16 = p.c;
-	s.vol = vol ? (p.c * vol) >> 8 : p.c;
+	s.volBase = p.vol;
+	s.volEff = vol ? (p.vol * vol) >> 8 : p.vol;
 	s.pan = p.pan;
 	s.rate = p.rate;
 
@@ -2201,7 +2199,7 @@ void SegaSoundDevice::pcmStartInstrument(uint8 unit, uint8 sndId, uint8 vol) {
 }
 
 uint8 SegaSoundDevice::calcVolume(uint8 unit, PCMSound &s) const {
-	uint8 vol = s.vol;
+	uint8 vol = s.volEff;
 	if (_unkVolCond)
 		vol = (vol * 112) >> 8;
 	if (unit >= 2 && _fmVolume1 != 0xFF)

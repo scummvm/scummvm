@@ -171,12 +171,32 @@ uint16 GraphicsEngine::getAnimCurFrame(uint8 animObjId) const {
 	return _renderer->anim_getCurFrameNo(animObjId);
 }
 
+void GraphicsEngine::setAnimPosX(uint8 animObjId, int16 x) {
+	_renderer->anim_setPosX(animObjId, x);
+}
+
+void GraphicsEngine::setAnimPosY(uint8 animObjId, int16 y) {
+	_renderer->anim_setPosY(animObjId, y);
+}
+
+void GraphicsEngine::setAnimSpeedX(uint8 animObjId, int16 speedX) {
+	_renderer->anim_setSpeedX(animObjId, speedX);
+}
+
+void GraphicsEngine::setAnimSpeedY(uint8 animObjId, int16 speedY) {
+	_renderer->anim_setSpeedY(animObjId, speedY);
+}
+
+void GraphicsEngine::toggleAnimBlink(uint8 animObjId, bool enable) {
+	_renderer->anim_toggleBlink(animObjId, enable);
+}
+
 bool GraphicsEngine::isAnimEnabled(uint8 animObjId) const {
 	return _renderer->anim_isEnabled(animObjId);
 }
 
-void GraphicsEngine::gunTestAnimUpdate() {
-	_renderer->anim_gunTestUpdate();
+void GraphicsEngine::updateAnimBlink() {
+	_renderer->anim_updateBlink();
 }
 
 uint16 GraphicsEngine::screenWidth() const {
@@ -203,8 +223,8 @@ void GraphicsEngine::createMouseCursor(bool show) {
 	_renderer->createMouseCursor();
 }
 
-int GraphicsEngine::displayBootSequenceFrame(int frameNo) {
-	int res = _renderer->drawBootSequenceFrame(_screen, frameNo);
+int GraphicsEngine::displayBootLogoFrame(int frameNo) {
+	int res = _renderer->drawBootLogoFrame(_screen, frameNo);
 	_system->copyRectToScreen(_screen, _renderer->screenWidth() * _bpp, 0, 0, _renderer->screenWidth(), _renderer->screenHeight());
 	_system->updateScreen();
 	return res;

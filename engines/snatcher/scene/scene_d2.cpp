@@ -434,6 +434,7 @@ SH_IMPL_FRM(D2, 11) {
 			return;
 		_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 		_vm->gfx()->runScript(_module->getPtr(0), 7);
+		_vm->gfx()->createMouseCursor(true);
 		++state.frameState;
 		break;
 	case 2:
@@ -444,12 +445,12 @@ SH_IMPL_FRM(D2, 11) {
 		_vm->gfx()->setAnimFrame(17, 0);
 		_vm->gfx()->setAnimFrame(18, 0);
 		_vm->gfx()->setAnimFrame(19, 0);
-		//anim17 3a:0
-		//anim17 absSpeedX:0
-		//anim18 3a:0
-		//anim18 absSpeedX:0
-		//anim19 3a:0
-		//anim19 absSpeedX:0
+		_vm->gfx()->toggleAnimBlink(17, false);
+		_vm->gfx()->setAnimSpeedX(17, 0);
+		_vm->gfx()->toggleAnimBlink(18, false);
+		_vm->gfx()->setAnimSpeedX(18, 0);
+		_vm->gfx()->toggleAnimBlink(19, 0);
+		_vm->gfx()->setAnimSpeedX(19, false);
 
 		++state.frameState;
 		break;
@@ -457,39 +458,51 @@ SH_IMPL_FRM(D2, 11) {
 		if (_vm->input().controllerFlags & 0x80) {
 			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x10F2));
 			state.counter = 10;
-			state.frameState = 0;
-			++state.frameNo;
+			++state.frameState;
 			return;
 		}
 
-		_vm->gfx()->gunTestAnimUpdate();
+		_vm->gfx()->updateAnimBlink();
 
 		switch (state.counter) {
 		case 0:
-			if (_vm->input().controllerFlags & 0x70) {
-				//a18.f3a = 1;
-				//a18.speedX = 0x100;
+			_vm->gfx()->toggleAnimBlink(18, true);
+			_vm->gfx()->setAnimSpeedX(18, 1);
+			++state.counter;
+			break;
+		case 1:
+			if (_vm->input().controllerFlags & 0x100) {
+				_vm->sound()->pcmSendCommand(57, -1);
+				_vm->gfx()->toggleAnimBlink(18, false);
+				_vm->gfx()->setAnimSpeedX(18, 0);
+				_vm->gfx()->toggleAnimBlink(19, true);
+				_vm->gfx()->setAnimSpeedX(19, 1);
 				++state.counter;
 			}
 			break;
-		case 1:
-			_vm->sound()->pcmSendCommand(57, -1);
-			//a18.f3a = 0;
-			//a18.speedX = 0;
-			//a19.f3a = 1;
-			//a19.speedX = 1;
-			++state.counter;
-			break;
 		case 2:
+			_vm->calibrateLightGun(state);
 			_vm->gfx()->setAnimControlFlags(16, GraphicsEngine::kAnimPause);
-			//a16: posX = 117;
-			//a16: posY = 93;
+			_vm->gfx()->setAnimPosX(16, 117);
+			_vm->gfx()->setAnimPosY(16, 93);
 			++state.counter;
 			break;
 		case 3:
-			state.counter += 2;
+			if (_vm->input().controllerFlags & 0x200) {
+				_vm->gfx()->toggleAnimBlink(17, true);
+				_vm->gfx()->setAnimSpeedX(17, 1);
+				_vm->gfx()->toggleAnimBlink(19, false);
+				_vm->gfx()->setAnimSpeedX(19, 0);
+				state.counter += 2;
+				_vm->sound()->fmSendCommand(29, 0);
+			} else if (_vm->input().controllerFlags & 0x100) {
+				_vm->sound()->pcmSendCommand(57, -1);
+				state.counter++;
+			}
 			break;
 		case 4:
+			_vm->gfx()->setAnimPosX(16, _vm->input().lightGunPos.x - 11);
+			_vm->gfx()->setAnimPosY(16, _vm->input().lightGunPos.y - 35);
 			--state.counter;
 			break;
 		case 5:

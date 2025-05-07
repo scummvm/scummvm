@@ -31,14 +31,16 @@
 #include "snatcher/staticres.h"
 #include "snatcher/transition.h"
 #include "snatcher/util.h"
-
+#include "common/system.h"
 
 namespace Snatcher {
 
 //#define		ANIM_DEBUG
 
 struct AnimObject {
-	AnimObject(int num) : id(num), enable(0), fadeLevel(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), f16(0), f18(0), f1c(0), timeStamp(0), f24(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), f2c(0), f2d(0), spriteTableLocation(0), res(), scriptData(), spriteData(0), absSpeedX(0), absSpeedY(0), parent(0), children(0), next(0), f4e(0), f4f(0), f3a(0), f3c(0), f3e(0) {}
+	AnimObject(int num) : id(num), enable(0), fadeLevel(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), f16(0), f18(0), f1c(0),
+		timeStamp(0), f24(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), f2c(0), f2d(0), spriteTableLocation(0),
+			res(), scriptData(), spriteData(nullptr), absSpeedX(0), absSpeedY(0), parent(0), children(0), next(0), f4e(0), f4f(0), blink(0), blinkCounter(0), blinkDuration(0) {}
 	
 	void clear() {
 		enable = fadeLevel = drawFlags = 0;
@@ -59,7 +61,8 @@ struct AnimObject {
 		absSpeedX = absSpeedY = 0;
 		parent = children = next = 0;
 		f4e = f4f = 0;
-		f3a = f3c = f3e = 0;
+		blink = blinkCounter = blinkDuration = 0;
+
 	}
 
 	uint16 enable;
@@ -86,9 +89,9 @@ struct AnimObject {
 	ResourcePointer res;
 	ResourcePointer scriptData;
 	const uint16 *spriteData;
-	uint16 f3a;
-	uint16 f3c;
-	uint16 f3e;
+	uint16 blink;
+	uint16 blinkCounter;
+	uint16 blinkDuration;
 	int32 absSpeedX;
 	int32 absSpeedY;
 	uint16 parent;
@@ -122,8 +125,13 @@ public:
 	void anim_clearControlFlags(uint8 animObjId, int flags) override;
 	void anim_setFrame(uint8 animObjId, uint16 frameNo) override;
 	uint16 anim_getCurFrameNo(uint8 animObjId) const override;
+	void anim_setPosX(uint8 animObjId, int16 x) override;
+	void anim_setPosY(uint8 animObjId, int16 y) override;
+	void anim_setSpeedX(uint8 animObjId, int16 speedX) override;
+	void anim_setSpeedY(uint8 animObjId, int16 speedY) override;
+	void anim_toggleBlink(uint8 animObjId, bool enable) override;
 	bool anim_isEnabled(uint8 animObjId) const override;
-	void anim_gunTestUpdate() override;
+	void anim_updateBlink() override;
 
 	uint16 screenWidth() const override { return _screenWidth; }
 	uint16 screenHeight() const override { return _screenHeight; }
@@ -247,7 +255,7 @@ private:
 
 public:
 	// boot logo animation
-	int drawBootSequenceFrame(uint8 *screen, int frameNo) override;
+	int drawBootLogoFrame(uint8 *screen, int frameNo) override;
 private:
 	int32 _bootsDelay, _bootsTotalFrames;
 	uint16 _bootsHScroll, _bootsVScroll, _bootsCol;
@@ -487,23 +495,48 @@ uint16 Renderer_SCD::anim_getCurFrameNo(uint8 animObjId) const {
 	return _animations[animObjId]->frame;
 }
 
+void Renderer_SCD::anim_setPosX(uint8 animObjId, int16 x) {
+	assert(animObjId < 64);
+	_animations[animObjId]->posX = x << 16;
+}
+
+void Renderer_SCD::anim_setPosY(uint8 animObjId, int16 y) {
+	assert(animObjId < 64);
+	_animations[animObjId]->posY = y << 16;
+}
+
+void Renderer_SCD::anim_setSpeedX(uint8 animObjId, int16 speedX) {
+	assert(animObjId < 64);
+	_animations[animObjId]->absSpeedX = speedX << 16;
+}
+
+void Renderer_SCD::anim_setSpeedY(uint8 animObjId, int16 speedY) {
+	assert(animObjId < 64);
+	_animations[animObjId]->absSpeedY = speedY << 16;
+}
+
+void Renderer_SCD::anim_toggleBlink(uint8 animObjId, bool enable) {
+	assert(animObjId < 64);
+	_animations[animObjId]->blink = enable ? 1 : 0;
+}
+
 bool Renderer_SCD::anim_isEnabled(uint8 animObjId) const {
 	assert(animObjId < 64);
 	return _animations[animObjId]->enable != 0;
 }
 
-void Renderer_SCD::anim_gunTestUpdate() {
+void Renderer_SCD::anim_updateBlink() {
 	for (int i = 0; i < 3; ++i) {
 		AnimObject &a = *_animations[17 + i];
 		a.controlFlags = GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide;
 		if (a.absSpeedX)
 			a.controlFlags = GraphicsEngine::kAnimPause;
-		if (a.f3a == 1) {
-			if (++a.f3c >= 16) {
-				a.f3c = 0;
-				a.absSpeedX ^= 0x100;
-				if (++a.f3e >= 6)
-					a.f3a = 0;
+		if (a.blink == 1) {
+			if (++a.blinkCounter >= 16) {
+				a.blinkCounter = 0;
+				a.absSpeedX ^= (1 << 16);
+				if (++a.blinkDuration >= 6)
+					a.blink = 0;
 			}
 		}
 	}
@@ -680,19 +713,20 @@ void Renderer_SCD::drawAnimSprites() {
 	uint16 *d = _spriteBuffer;
 	memset(d, 0, 4 * sizeof(uint16));
 	uint16 nxt = 1;
-
+	debug("%s():", __FUNCTION__);
 	for (int i = 0; i < 64; ++i) {
 		AnimObject &a = *_animations[i];
-		if (a.enable && a.spriteData != nullptr && !(a.controlFlags & GraphicsEngine::kAnimHide) && a.fadeLevel != 0xFFFF && !(a.fadeLevel & _gfxState.frameCount()))
+		if (a.enable && a.spriteData != nullptr && !(a.controlFlags & GraphicsEngine::kAnimHide) && a.fadeLevel != 0xFFFF && !(a.fadeLevel & _gfxState.frameCount())) {
+			debug("		anim: %02d at x = %d, y = %d", i, a.posX >> 16, a.posY >> 16);
 			generateSpriteData(a, nxt, d);
-		if (i == 31)
+		} if (i == 31)
 			updateAnim32Spec(a);
 	}
 
 	if (d - 3 > _spriteBuffer)
 		*(reinterpret_cast<uint8*>(d) - 5) = 0;
 
-	_sr->loadToVRAM(_spriteBuffer, (d - _spriteBuffer) * sizeof(uint16), 0xFE00);
+	_sr->loadToVRAM(_spriteBuffer, MAX<uint>(4, d - _spriteBuffer) * sizeof(uint16), 0xFE00);
 }
 
 void Renderer_SCD::reconfigPlanes() {
@@ -1227,11 +1261,24 @@ void Renderer_SCD::anim_setGroupParameter(AnimObject &a, int para, int16 val, bo
 void Renderer_SCD::createMouseCursor() {
 	// This will obviously only work when the necessary animation has been loaded.
 	anim_setControlFlags(16, GraphicsEngine::kAnimPause);
-	//_sr->renderSprites(
+	anim_setFrame(16, 0);
+	
+	memset(_tempBuffer, 0, 0x10000);
+	updateAnimations();
+	drawAnimSprites();
+	_sr->renderSprites(_tempBuffer, nullptr);
+	anim_setControlFlags(16, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
+
+	for (int i = 1; i < 24; ++i)
+		memcpy(_tempBuffer + i * 24, _tempBuffer + i * _screenWidth, 24);
+
+	g_system->setMouseCursor(_tempBuffer, 24, 24, 12, 12, 4);
+	g_system->setCursorPalette(_pal->getSystemPalette(), 0, 64);
+	g_system->showMouse(true);
 }
 
 // Boot logo sequence code. This has nothing to do with the engine graphics code, so I put it at the end, to keep the ugly mess out of sight...
-int Renderer_SCD::drawBootSequenceFrame(uint8 *screen, int frameNo)  {
+int Renderer_SCD::drawBootLogoFrame(uint8 *screen, int frameNo)  {
 	uint16 *tmp = reinterpret_cast<uint16*>(_tempBuffer);
 	uint32 len = 0;
 	uint16 val = 0;
