@@ -63,23 +63,11 @@ namespace Common {
 */
 JSON::JSON() {}
 
-char *JSON::untaintContents(Common::MemoryWriteStreamDynamic &stream) {
+char *JSON::zeroTerminateContents(Common::MemoryWriteStreamDynamic &stream) {
 	// write one more byte in the end
 	byte zero[1] = {0};
 	stream.write(zero, 1);
-
-	// replace all "bad" bytes with '.' character
 	byte *result = stream.getData();
-	uint32 size = stream.size();
-	for (uint32 i = 0; i < size; ++i) {
-		if (result[i] == '\n')
-			result[i] = ' '; // yeah, kinda stupid
-		else if (result[i] < 0x20 || result[i] > 0x7f)
-			result[i] = '.';
-	}
-
-	// make it zero-terminated string
-	result[size - 1] = '\0';
 
 	return (char *)result;
 }
@@ -223,7 +211,7 @@ bool JSON::extractString(const char **data, String &str) {
 		}
 
 		// Disallowed char?
-		else if (next_char < ' ' && next_char != '\t') {
+		else if (next_char > 0 && next_char < ' ' && next_char != '\t') {
 			// SPEC Violation: Allow tabs due to real world cases
 			return false;
 		}
