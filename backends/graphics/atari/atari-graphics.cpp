@@ -291,10 +291,6 @@ AtariGraphicsManager::AtariGraphicsManager()
 	}
 	s_oldPhysbase = Physbase();
 
-	if (!Supexec(InstallVblHandler)) {
-		error("VBL handler was not installed");
-	}
-
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
@@ -405,6 +401,19 @@ void AtariGraphicsManager::beginGFXTransaction() {
 
 OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 	atari_debug("endGFXTransaction");
+
+	{
+		// this can't be done in the c-tor because if the c-tor called error(),
+		// its d-tor wouldn't be called => the vbl handler wouldn't be uninstalled
+		// (for the same reason we don't do any resolution changes in the c-tor)
+		static bool vblHandlerInstalled;
+		if (!vblHandlerInstalled) {
+			if (!Supexec(InstallVblHandler)) {
+				error("VBL handler was not installed");
+			}
+			vblHandlerInstalled = true;
+		}
+	}
 
 	_pendingState.inTransaction = false;
 	_ignoreCursorChanges = false;
