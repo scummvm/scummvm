@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-05-05 10:34+0000\n"
+"POT-Creation-Date: 2025-05-07 13:42+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -6912,7 +6912,7 @@ msgstr "Povolit zachycování myši"
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:75
 #: engines/freescape/games/castle/castle.cpp:246
-#: engines/freescape/games/dark/dark.cpp:193
+#: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:135
 #: engines/freescape/games/eclipse/eclipse.cpp:206
 #: engines/pegasus/pegasus.cpp:2825
@@ -6925,7 +6925,7 @@ msgstr "Uložit hru"
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:74
 #: engines/freescape/games/castle/castle.cpp:251
-#: engines/freescape/games/dark/dark.cpp:198
+#: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:140
 #: engines/freescape/games/eclipse/eclipse.cpp:211
 #: engines/pegasus/pegasus.cpp:2831
@@ -6963,7 +6963,7 @@ msgstr ""
 #: engines/bladerunner/metaengine.cpp:375 engines/darkseed/metaengine.cpp:93
 #: engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/castle/castle.cpp:259
-#: engines/freescape/games/dark/dark.cpp:203
+#: engines/freescape/games/dark/dark.cpp:196
 #: engines/freescape/games/driller/driller.cpp:145
 #: engines/freescape/games/eclipse/eclipse.cpp:216
 #: engines/sword1/metaengine.cpp:295
@@ -7846,7 +7846,7 @@ msgid "Select Princess"
 msgstr "Vyberte Vzhled"
 
 #: engines/freescape/games/castle/castle.cpp:264
-#: engines/freescape/games/dark/dark.cpp:213
+#: engines/freescape/games/dark/dark.cpp:206
 #: engines/freescape/games/driller/driller.cpp:153
 #: engines/freescape/games/eclipse/eclipse.cpp:224
 #, fuzzy
@@ -7854,7 +7854,7 @@ msgid "Toggle Sound"
 msgstr "Povolit zachycování myši"
 
 #: engines/freescape/games/castle/castle.cpp:269
-#: engines/freescape/games/dark/dark.cpp:219
+#: engines/freescape/games/dark/dark.cpp:212
 #: engines/freescape/games/driller/driller.cpp:159
 #: engines/freescape/games/eclipse/eclipse.cpp:229
 #, fuzzy
@@ -7863,7 +7863,7 @@ msgid "Rotate Left"
 msgstr "Přesunout se Doleva"
 
 #: engines/freescape/games/castle/castle.cpp:274
-#: engines/freescape/games/dark/dark.cpp:224
+#: engines/freescape/games/dark/dark.cpp:217
 #: engines/freescape/games/driller/driller.cpp:164
 #: engines/freescape/games/eclipse/eclipse.cpp:234
 #, fuzzy
@@ -7890,27 +7890,27 @@ msgstr ""
 msgid "Face Forward"
 msgstr "Vpřed"
 
-#: engines/freescape/games/dark/dark.cpp:229
+#: engines/freescape/games/dark/dark.cpp:222
 #: engines/freescape/games/driller/driller.cpp:198
 #, fuzzy
 msgid "Roll left"
 msgstr "Přesunout se doleva"
 
-#: engines/freescape/games/dark/dark.cpp:234
+#: engines/freescape/games/dark/dark.cpp:227
 #: engines/freescape/games/driller/driller.cpp:203
 #, fuzzy
 msgid "Roll right"
 msgstr "Přesunout se doprava"
 
 #. I18N: Illustrates the angle at which you turn left or right.
-#: engines/freescape/games/dark/dark.cpp:240
+#: engines/freescape/games/dark/dark.cpp:233
 #: engines/freescape/games/driller/driller.cpp:170
 #, fuzzy
 #| msgid "Increasing Volume"
 msgid "Increase Turn Angle"
 msgstr "Zvyšuji Hlasitost"
 
-#: engines/freescape/games/dark/dark.cpp:245
+#: engines/freescape/games/dark/dark.cpp:238
 #: engines/freescape/games/driller/driller.cpp:175
 #, fuzzy
 #| msgid "Decreasing Volume"
@@ -7918,7 +7918,7 @@ msgid "Decrease Turn Angle"
 msgstr "Snižuji Hlasitost"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
-#: engines/freescape/games/dark/dark.cpp:251
+#: engines/freescape/games/dark/dark.cpp:244
 #: engines/freescape/games/driller/driller.cpp:181
 #, fuzzy
 #| msgid "Increase the scale factor"
@@ -7926,26 +7926,26 @@ msgid "Increase Step Size"
 msgstr "Zvětšit faktor změny velikosti"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
-#: engines/freescape/games/dark/dark.cpp:257
+#: engines/freescape/games/dark/dark.cpp:250
 #: engines/freescape/games/driller/driller.cpp:187
 #, fuzzy
 #| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
 msgstr "Zmenšit faktor změny velikosti"
 
-#: engines/freescape/games/dark/dark.cpp:262
+#: engines/freescape/games/dark/dark.cpp:255
 #: engines/freescape/games/driller/driller.cpp:192
 msgid "Rise/Fly up"
 msgstr ""
 
-#: engines/freescape/games/dark/dark.cpp:268
+#: engines/freescape/games/dark/dark.cpp:261
 #: engines/freescape/games/driller/driller.cpp:208
 #, fuzzy
 #| msgid "Fly down"
 msgid "Lower/Fly down"
 msgstr "Letět dolů"
 
-#: engines/freescape/games/dark/dark.cpp:274
+#: engines/freescape/games/dark/dark.cpp:267
 msgid "Enable/Disable Jetpack"
 msgstr ""
 
