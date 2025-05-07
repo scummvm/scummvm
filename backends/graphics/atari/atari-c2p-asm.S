@@ -36,13 +36,13 @@
 | void asm_c2p1x1_8(const byte *pChunky, const byte *pChunkyEnd, byte *pScreen);
 SYM(asm_c2p1x1_8):
 #ifdef __FASTCALL__
-									| a0: chunky
-	move.l	a1,d0					| chunky end
-	move.l	4(sp),a1				| screen
+						| a0: chunky
+	move.l	a1,d0				| chunky end
+	move.l	4(sp),a1			| screen
 #else
-	move.l	(4,sp),a0				| chunky
-	move.l	(8,sp),d0				| chunky end
-	move.l	(12,sp),a1				| screen
+	move.l	(4,sp),a0			| chunky
+	move.l	(8,sp),d0			| chunky end
+	move.l	(12,sp),a1			| screen
 #endif
 	movem.l	d2-d7/a2-a6,-(sp)
 	move.l	d0,a2
@@ -238,26 +238,25 @@ c2p1x1_8_start:
 
 | void asm_c2p1x1_8_tt(const byte *pChunky, const byte *pChunkyEnd, byte *pScreen, uint32 screenPitch);
 SYM(asm_c2p1x1_8_tt):
-	movem.l	d2-d7/a2-a6,-(sp)			| 6 + 5 = 11 longs
+	movem.l	d2-d7/a2-a6,-(sp)		| 6 + 5 = 11 longs
 
 #ifdef __FASTCALL__
-										| a0: chunky
-	move.l	a1,a2						| a2: chunky end
-	move.l	(11*4+4,sp),a1				| a1: screen
-										| d0.l: screen pitch (double width)
+						| a0: chunky
+	move.l	a1,a2				| a2: chunky end
+	move.l	(11*4+4,sp),a1			| a1: screen
+						| d0.l: screen pitch (double width)
 #else
-	move.l	(11*4+4,sp),a0				| a0: chunky
-	move.l	(11*4+8,sp),a2				| a2: chunky end
-	move.l	(11*4+12,sp),a1				| a1: screen
-	move.l	(11*4+16,sp),d0				| d0.l: screen pitch (double width)
+	move.l	(11*4+4,sp),a0			| a0: chunky
+	move.l	(11*4+8,sp),a2			| a2: chunky end
+	move.l	(11*4+12,sp),a1			| a1: screen
+	move.l	(11*4+16,sp),d0			| d0.l: screen pitch (double width)
 #endif
-
 	move.l	sp,old_sp
 
 	move.l	d0,screen_pitch
 
 	lsr.l	#1,d0
-	lea	(a1,d0.l),a7				| a7: end of first dst line
+	lea	(a1,d0.l),a7			| a7: end of first dst line
 
 	move.l	d0,screen_offset
 
@@ -460,28 +459,27 @@ c2p1x1_8_tt_start:
 
 | void asm_c2p1x1_8_rect(const byte *pChunky, const byte *pChunkyEnd, uint32 chunkyWidth, uint32 chunkyPitch, byte *pScreen, uint32 screenPitch);
 SYM(asm_c2p1x1_8_rect):
-	movem.l	d2-d7/a2-a6,-(sp)			| 6 + 5 = 11 longs
+	movem.l	d2-d7/a2-a6,-(sp)		| 6 + 5 = 11 longs
 
 #ifdef __FASTCALL__
-										| a0: chunky
+						| a0: chunky
 	move.l	a1,chunky_end
-										| d0.l: chunky width
-	move.l	(11*4+4,sp),a1				| a1: screen
-	exg		d1,d2						| d2.l: chunky pitch
-										| d1.l: screen pitch
+						| d0.l: chunky width
+	move.l	(11*4+4,sp),a1			| a1: screen
+	exg	d1,d2				| d2.l: chunky pitch
+						| d1.l: screen pitch
 #else
-	move.l	(11*4+4,sp),a0				| a0: chunky
+	move.l	(11*4+4,sp),a0			| a0: chunky
 	move.l	(11*4+8,sp),chunky_end
-	move.l	(11*4+12,sp),d0				| d0.l: chunky width
-	move.l	(11*4+16,sp),d2				| d2.l: chunky pitch
-	move.l	(11*4+20,sp),a1				| a1: screen
-	move.l	(11*4+24,sp),d1				| d1.l: screen pitch
+	move.l	(11*4+12,sp),d0			| d0.l: chunky width
+	move.l	(11*4+16,sp),d2			| d2.l: chunky pitch
+	move.l	(11*4+20,sp),a1			| a1: screen
+	move.l	(11*4+24,sp),d1			| d1.l: screen pitch
 #endif
-
 	move.l	sp,old_sp
 
-	lea	(a0,d0.l),a2				| a2: end of first src line
-	lea	(a1,d0.l),a7				| a7: end of first dst line
+	lea	(a0,d0.l),a2			| a2: end of first src line
+	lea	(a1,d0.l),a7			| a7: end of first dst line
 
 	move.l	d1,screen_pitch
 
@@ -604,7 +602,7 @@ c2p1x1_8_rect_pix16:
 	| b7b6b5b4f7f6f5f4 j7j6j5j4n7n6n5n4 d7d6d5d4h7h6h5h4 l7l6l5l4p7p6p5p4
 	| b3b2b1b0f3f2f1f0 j3j2j1j0n3n2n1n0 d3d2d1d0h3h2h1h0 l3l2l1l0p3p2p1p0
 
-	cmp.l	a1,a7					| end of dst line?
+	cmp.l	a1,a7				| end of dst line?
 	bne.s	c2p1x1_8_rect_start
 
 	add.l	(screen_offset,pc),a1
@@ -677,7 +675,7 @@ c2p1x1_8_rect_start:
 	move.l	d1,a4
 	move.l	d3,a3
 
-	cmp.l	a0,a2					| end of src line?
+	cmp.l	a0,a2				| end of src line?
 	bne	c2p1x1_8_rect_pix16
 
 	cmp.l	(chunky_end,pc),a2
@@ -702,13 +700,13 @@ c2p1x1_8_rect_done:
 | void asm_c2p1x1_4(const byte *pChunky, const byte *pChunkyEnd, byte *pScreen);
 SYM(asm_c2p1x1_4):
 #ifdef __FASTCALL__
-									| a0: chunky
-	move.l	a1,d0					| chunky end
-	move.l	4(sp),a1				| screen
+						| a0: chunky
+	move.l	a1,d0				| chunky end
+	move.l	4(sp),a1			| screen
 #else
-	move.l	(4,sp),a0				| chunky
-	move.l	(8,sp),d0				| chunky end
-	move.l	(12,sp),a1				| screen
+	move.l	(4,sp),a0			| chunky
+	move.l	(8,sp),d0			| chunky end
+	move.l	(12,sp),a1			| screen
 #endif
 	movem.l	d2-d7/a2-a6,-(sp)
 	move.l	d0,a2
@@ -803,31 +801,30 @@ c2p1x1_4_start:
 
 | void asm_c2p1x1_4_rect(const byte *pChunky, const byte *pChunkyEnd, uint32 chunkyWidth, uint32 chunkyPitch, byte *pScreen, uint32 screenPitch);
 SYM(asm_c2p1x1_4_rect):
-	movem.l	d2-d7/a2-a6,-(sp)			| 6 + 5 = 11 longs
+	movem.l	d2-d7/a2-a6,-(sp)		| 6 + 5 = 11 longs
 
 #ifdef __FASTCALL__
-										| a0: chunky
+						| a0: chunky
 	move.l	a1,chunky_end
-										| d0.l: chunky width
-	move.l	(11*4+4,sp),a1				| a1: screen
-	exg		d1,d2						| d2.l: chunky pitch
-										| d1.l: screen pitch
+						| d0.l: chunky width
+	move.l	(11*4+4,sp),a1			| a1: screen
+	exg	d1,d2				| d2.l: chunky pitch
+						| d1.l: screen pitch
 #else
-	move.l	(11*4+4,sp),a0				| a0: chunky
+	move.l	(11*4+4,sp),a0			| a0: chunky
 	move.l	(11*4+8,sp),chunky_end
-	move.l	(11*4+12,sp),d0				| d0.l: chunky width
-	move.l	(11*4+16,sp),d2				| d2.l: chunky pitch
-	move.l	(11*4+20,sp),a1				| a1: screen
-	move.l	(11*4+24,sp),d1				| d1.l: screen pitch
+	move.l	(11*4+12,sp),d0			| d0.l: chunky width
+	move.l	(11*4+16,sp),d2			| d2.l: chunky pitch
+	move.l	(11*4+20,sp),a1			| a1: screen
+	move.l	(11*4+24,sp),d1			| d1.l: screen pitch
 #endif
-
 	move.l	sp,old_sp
 
-	move.l	d0,d3					| d3.l: screen width
-	lsr.l	#1,d3					|
+	move.l	d0,d3				| d3.l: screen width
+	lsr.l	#1,d3				|
 
-	lea	(a0,d0.l),a2				| a2: end of first src line
-	lea	(a1,d3.l),a7				| a7: end of first dst line
+	lea	(a0,d0.l),a2			| a2: end of first src line
+	lea	(a1,d3.l),a7			| a7: end of first dst line
 
 	move.l	d1,screen_pitch
 
@@ -865,7 +862,7 @@ c2p1x1_4_rect_pix16:
 	or.l	d3,d1
 	move.l	a6,(a1)+
 
-	cmp.l	a1,a7					| end of dst line?
+	cmp.l	a1,a7				| end of dst line?
 	bne.s	c2p1x1_4_rect_start
 
 	add.l	(screen_offset,pc),a1
@@ -924,7 +921,7 @@ c2p1x1_4_rect_start:
 	move.l	d1,a5
 	move.l	d0,a6
 
-	cmp.l	a0,a2					| end of src line?
+	cmp.l	a0,a2				| end of src line?
 	bne.s	c2p1x1_4_rect_pix16
 
 	cmp.l	(chunky_end,pc),a2
