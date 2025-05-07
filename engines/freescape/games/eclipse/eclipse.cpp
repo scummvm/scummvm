@@ -516,6 +516,9 @@ void EclipseEngine::drawAnalogClockHand(Graphics::Surface *surface, int x, int y
 	double w = magnitude * cos(degrees * degtorad);
 	double h = magnitude * sin(degrees * degtorad);
 	surface->drawLine(x, y, x+(int)w, y+(int)h, color);
+	if (isC64()) {
+		surface->drawLine(x+1, y, x+1+(int)w, y+(int)h, color);
+	}
 }
 
 void EclipseEngine::drawCompass(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, uint32 color) {
@@ -528,28 +531,28 @@ void EclipseEngine::drawCompass(Graphics::Surface *surface, int x, int y, double
 
 	// Adjust dx and dy to make the compass look like a compass
 	if (degrees == 0 || degrees == 360) {
-		dx = 0;
+		dx = 1;
 		dy = 2;
 	} else if (degrees > 0 && degrees < 90) {
-		dx = 1;
+		dx = 2;
 		dy = 1;
 	} else if (degrees == 90) {
 		dx = 2;
-		dy = 0;
+		dy = 1;
 	} else if (degrees > 90 && degrees < 180) {
-		dx = 1;
+		dx = 2;
 		dy = -1;
 	} else if (degrees == 180) {
-		dx = 0;
+		dx = 1;
 		dy = 2;
 	} else if (degrees > 180 && degrees < 270) {
-		dx = -1;
+		dx = -2;
 		dy = -1;
 	} else if (degrees == 270) {
 		dx = 2;
-		dy = 0;
+		dy = 1;
 	} else if (degrees > 270 && degrees < 360) {
-		dx = -1;
+		dx = -2;
 		dy = 1;
 	}
 
@@ -619,7 +622,7 @@ void EclipseEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int
 		return;
 
 	for (int i = 0; i < 5; i++) {
-		if (isSpectrum()) {
+		if (isSpectrum() || isC64()) {
 			if (_gameStateVars[kVariableEclipseAnkhs] <= i)
 				continue;
 		} else if (_gameStateVars[kVariableEclipseAnkhs] > i)
