@@ -88,9 +88,14 @@ public:
 	void clearAnimControlFlags(uint8 animObjId, int flags);
 	void setAnimFrame(uint8 animObjId, uint16 frameNo);
 	uint16 getAnimCurFrame(uint8 animObjId) const;
+	void setAnimPosX(uint8 animObjId, int16 x);
+	void setAnimPosY(uint8 animObjId, int16 y);
+	void setAnimSpeedX(uint8 animObjId, int16 speedX);
+	void setAnimSpeedY(uint8 animObjId, int16 speedY);
+	void toggleAnimBlink(uint8 animObjId, bool enable);
 	bool isAnimEnabled(uint8 animObjId) const;
 
-	void gunTestAnimUpdate();
+	void updateAnimBlink();
 
 	uint16 screenWidth() const;
 	uint16 screenHeight() const;
@@ -100,7 +105,7 @@ public:
 
 	void createMouseCursor(bool show);
 
-	int displayBootSequenceFrame(int frameNo);
+	int displayBootLogoFrame(int frameNo);
 
 public:
 	struct GfxState {

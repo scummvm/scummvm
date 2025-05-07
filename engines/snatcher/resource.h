@@ -41,7 +41,7 @@ class SceneModule;
 class FIO;
 
 struct Config {
-	Config() : volumeMusic(0), volumeSFX(0), volumeSpeech(0), lightGunAvailable(1), useLightGun(0), controllerSetup(0), disableStereo(0), hasRAMCart(1), hasFreeBuram(1), lightGunBias() {}
+	Config() : volumeMusic(0), volumeSFX(0), volumeSpeech(0), lightGunAvailable(1), useLightGun(0), controllerSetup(0), disableStereo(0), hasRAMCart(1), hasFreeBuram(1), lightGunBias(0, -16) {}
 	int16 volumeMusic;
 	int16 volumeSFX;
 	int16 volumeSpeech;
