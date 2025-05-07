@@ -35,11 +35,6 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.9.1 (XXXX-XX-XX)
 
- General:
-   - Avoid using the GNU Gold linker when building ScummVM, (unless the
-     --enable-gold option is given), since it has long-standing issues
-     on some platforms and is now deprecated upstream.
-
  Asylum:
    - Fixed crash in Sanitarium main menu, when moving the cursor to the
      top part of the screen.
