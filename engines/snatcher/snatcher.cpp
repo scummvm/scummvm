@@ -110,7 +110,7 @@ bool SnatcherEngine::initSound(Audio::Mixer *mixer, Common::Platform platform, i
 	return (_snd && _snd->init(mixer));
 }
 
-void SnatcherEngine::playBootSequence(const GameState &state) {
+void SnatcherEngine::playBootLogoAnimation(const GameState &state) {
 	uint32 frameTimer = 0;
 	int curSeqState = 0;
 	_snd->fmSendCommand(242, -1);
@@ -120,9 +120,9 @@ void SnatcherEngine::playBootSequence(const GameState &state) {
 		uint32 nextFrame = _system->getMillis() + (frameTimer >> 14);
 		frameTimer &= 0x3FFF;
 
-		int nextState = _gfx->displayBootSequenceFrame(curSeqState);
+		int nextState = _gfx->displayBootLogoFrame(curSeqState);
 		if (curSeqState == 6 && nextState == 7)
-			_snd->fmSendCommand(101, -1);// 65, 76, 86, 88, 89, 94, 98, 100, 101 (pitch bend), 72 (pb special), 74 (vbr)
+			_snd->fmSendCommand(63, -1);
 		curSeqState = nextState;
 
 		checkEvents(state);
@@ -135,7 +135,7 @@ bool SnatcherEngine::start() {
 	Util::rngReset();
 	GameState state;
 
-	playBootSequence(state);
+	playBootLogoAnimation(state);
 
 	uint32 frameTimer = 0;
 
@@ -228,15 +228,16 @@ static const InputEvent _defaultKeyEvents[] = {
 	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_c, 0x00, 0x40, false},
 
 	{ Common::EVENT_MBUTTONDOWN, Common::EVENT_MBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x20, false },
-	{ Common::EVENT_RBUTTONDOWN, Common::EVENT_RBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x40, false },
-
-
-	// Lightgun
-	{ Common::EVENT_LBUTTONDOWN, Common::EVENT_LBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x100, true },
 
 	// Start button
 	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_RETURN, 0x00, 0x80, false},
 	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_SPACE, 0x00, 0x80, false},
+
+	// Lightgun
+	{ Common::EVENT_LBUTTONDOWN, Common::EVENT_LBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x100, true },
+
+	// Lightgun Start button
+	{ Common::EVENT_RBUTTONDOWN, Common::EVENT_RBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x200, false },
 };
 
 void SnatcherEngine::checkEvents(const GameState &state) {
@@ -256,8 +257,10 @@ void SnatcherEngine::checkEvents(const GameState &state) {
 						_releaseKeys |= k.internalEvent;
 					if (k.updateCoords) {
 						_realLightGunPos = evt.mouse;
-						_input.lightGunPos.x = CLIP<int>(evt.mouse.x - state.conf.lightGunBias.x, 0, _gfx->screenWidth() - 1);
-						_input.lightGunPos.y = CLIP<int>(evt.mouse.y - state.conf.lightGunBias.y, 0, _gfx->screenHeight() - 1);
+						// The lightgun coordinates are supposed to be based on a 256 x 256 system, with 128 being
+						// the screen center. I solve this by always adding -16 to the y-bias.
+						_input.lightGunPos.x = CLIP<int>(_realLightGunPos.x - state.conf.lightGunBias.x, 0, 255);
+						_input.lightGunPos.y = CLIP<int>(_realLightGunPos.y - state.conf.lightGunBias.y, 0, 255);
 					}
 				}
 			} else if ((evt.type == k.releaseType) && (k.kc == Common::KEYCODE_INVALID || evt.kbd.keycode == k.kc) && (k.kFlag == 0 || (evt.kbd.flags & k.kFlag))) {
@@ -504,7 +507,6 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 }
 
 void SnatcherEngine::registerDefaultSettings() {
-	//ConfMan.registerDefault("cdaudio", true);
 }
 
 void SnatcherEngine::syncSoundSettings() {
@@ -540,6 +542,9 @@ void SnatcherEngine::pauseEngineIntern(bool pause) {
 void SnatcherEngine::calibrateLightGun(GameState &state) {
 	state.conf.lightGunBias.x = _realLightGunPos.x - (_gfx->screenWidth() / 2);
 	state.conf.lightGunBias.y = _realLightGunPos.y - (_gfx->screenHeight() / 2);
+	// The lightgun coordinates are supposed to be based on a 256 x 256 system, with 128 being
+	// the screen center. I solve this by always adding -16 to the y-bias.
+	state.conf.lightGunBias.y -= ((256 - _gfx->screenHeight()) / 2);
 }
 
 } // End of namespace Snatcher

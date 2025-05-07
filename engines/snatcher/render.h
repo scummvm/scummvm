@@ -47,8 +47,13 @@ public:
 	virtual void anim_clearControlFlags(uint8 animObjId, int flags) = 0;
 	virtual void anim_setFrame(uint8 animObjId, uint16 frameNo) = 0;
 	virtual uint16 anim_getCurFrameNo(uint8 animObjId) const = 0;
+	virtual void anim_setPosX(uint8 animObjId, int16 x) = 0;
+	virtual void anim_setPosY(uint8 animObjId, int16 y) = 0;
+	virtual void anim_setSpeedX(uint8 animObjId, int16 speedX) = 0;
+	virtual void anim_setSpeedY(uint8 animObjId, int16 speedY) = 0;
+	virtual void anim_toggleBlink(uint8 animObjId, bool enable) = 0;
 	virtual bool anim_isEnabled(uint8 animObjId) const = 0;
-	virtual void anim_gunTestUpdate() = 0;
+	virtual void anim_updateBlink() = 0;
 
 	virtual uint16 screenWidth() const = 0;
 	virtual uint16 screenHeight() const = 0;
@@ -61,7 +66,7 @@ public:
 	// This is special code from the CD-ROM boot sectors that does not
 	// share anything with the rest of the game. So it makes sense to
 	// keep it separate.
-	virtual int drawBootSequenceFrame(uint8 *screen, int frameNo) = 0;
+	virtual int drawBootLogoFrame(uint8 *screen, int frameNo) = 0;
 
 protected:
 	Renderer(GraphicsEngine::GfxState &state) : _gfxState(state) {}

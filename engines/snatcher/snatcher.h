@@ -52,7 +52,7 @@ private:
 	bool initResource();
 	bool initGfx(Common::Platform platform, bool use8BitColorMode);
 	bool initSound(Audio::Mixer *mixer, Common::Platform platform, int soundOptions);
-	void playBootSequence(const GameState &state);
+	void playBootLogoAnimation(const GameState &state);
 
 	// Main loop
 	bool start();

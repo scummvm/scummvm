@@ -426,10 +426,7 @@ void SegaRenderer::renderSprites(uint8 *dst, uint8 *dstPrio, int clipX, int clip
 				int y2 = y;
 
 				for (int blY = 0; blY < bH; ++blY) {
-					if (y >= clipY2)
-						break;
-
-					if (y > clipY - 8) {
+					if (y > clipY - 8 && y < clipY2) {
 						(this->*tr)(d, msk, x, y, tile, pal, vflip, hflip);
 						renderedSomething = true;
 					}
