@@ -887,13 +887,14 @@ void Inter_v7::o7_getSystemProperty() {
 	const char *property = _vm->_game->_script->evalString();
 	if (!scumm_stricmp(property, "TotalPhys")) {
 		// HACK
-		storeValue(1000000);
+		// NOTE: Any value lower than 8 MB will disable the icon bar animations in Adibou2/Sciences
+		storeValue(16000000);
 		return;
 	}
 
 	if (!scumm_stricmp(property, "AvailPhys")) {
 		// HACK
-		storeValue(1000000);
+		storeValue(16000000);
 		return;
 	}
 
