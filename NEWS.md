@@ -35,6 +35,13 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.9.1 (XXXX-XX-XX)
 
+ AGS:
+   - Added support for sound clip speed variation, used in some games to
+     slow down background music or other audio effects.
+   - Fixed some audio volume changes not being triggered in some situations
+     (e.g. automatic music volume drop during dev commentary or when a
+     characters speaks, in the Blackwell series).
+
  Asylum:
    - Fixed crash in Sanitarium main menu, when moving the cursor to the
      top part of the screen.
