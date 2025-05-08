@@ -578,6 +578,9 @@ bool Window::step() {
 				debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 				bool goodMovie = _currentMovie->loadArchive();
+				// If we've just started, switch to the default palette
+				if (g_director->_firstMovie)
+					g_director->setPalette(_currentMovie->getCast()->_defaultPalette);
 
 				// If we came in a loop, then skip as requested
 				if (!_nextMovie.frameS.empty()) {
