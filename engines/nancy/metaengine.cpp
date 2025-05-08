@@ -98,6 +98,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			true,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -187,6 +198,7 @@ void NancyMetaEngine::registerDefaultSettings(const Common::String &target) cons
 	ConfMan.registerDefault("player_speech", true);
 	ConfMan.registerDefault("character_speech", true);
 	ConfMan.registerDefault("nancy_max_saves", 999);
+	ConfMan.registerDefault("originalsaveload", true);
 }
 
 const ADExtraGuiOptionsMap *NancyMetaEngine::getAdvancedExtraGuiOptions() const {
