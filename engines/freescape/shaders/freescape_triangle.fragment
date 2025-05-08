@@ -20,9 +20,17 @@ void main()
 		int bitIndex = int(mod(float(x), 8.));
 
 		// Get the stipple pattern byte
-		int patternByte = stipple[byteIndex];
+		int patternByte = 0;
+		for (int i = 0; i < 128; i++) {
+			if (i == byteIndex) {
+				patternByte = stipple[i];
+				break;
+			}
+		}
 
-		for (int i = 0; i < 7 - bitIndex; i++) {
+		for (int i = 0; i < 7; i++) {
+			if (i >= 7 - bitIndex)
+				break;
 			patternByte = patternByte / 2;
 		}
 
