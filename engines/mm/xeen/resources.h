@@ -63,12 +63,14 @@ class Resources {
 		void syncStrings(const char **str, int count) {
 			uint tag = readUint32LE();
 			assert(tag == MKTAG(count, 0, 0, 0));
+			(void)tag;
 			for (int idx = 0; idx < count; ++idx)
 				syncString(str[idx]);
 		}
 		void syncStrings2D(const char **str, int count1, int count2) {
 			uint tag = readUint32LE();
 			assert(tag == MKTAG(count1, count2, 0, 0));
+			(void)tag;
 			for (int idx = 0; idx < count1 * count2; ++idx)
 				syncString(str[idx]);
 		}
@@ -78,30 +80,35 @@ class Resources {
 		void syncNumbers(int *vals, int count) {
 			uint tag = readUint32LE();
 			assert(tag == MKTAG(count, 0, 0, 0));
+			(void)tag;
 			for (int idx = 0; idx < count; ++idx)
 				vals[idx] = readSint32LE();
 		}
 		void syncNumbers2D(int *vals, int count1, int count2) {
 			uint tag = readUint32LE();
 			assert(tag == MKTAG(count1, count2, 0, 0));
+			(void)tag;
 			for (int idx = 0; idx < count1 * count2; ++idx)
 				vals[idx] = readSint32LE();
 		}
 		void syncNumbers3D(int *vals, int count1, int count2, int count3) {
 			uint tag = readUint32LE();
 			assert(tag == MKTAG(count1, count2, count3, 0));
+			(void)tag;
 			for (int idx = 0; idx < count1 * count2 * count3; ++idx)
 				vals[idx] = readSint32LE();
 		}
 		void syncNumbers4D(int *vals, int count1, int count2, int count3, int count4) {
 			uint tag = readUint32LE();
 			assert(tag == MKTAG(count1, count2, count3, count4));
+			(void)tag;
 			for (int idx = 0; idx < count1 * count2 * count3 * count4; ++idx)
 				vals[idx] = readSint32LE();
 		}
 		void syncBytes2D(byte *vals, int count1, int count2) {
 			uint tag = readUint32LE();
 			assert(tag == MKTAG(count1, count2, 0, 0));
+			(void)tag;
 			read(vals, count1 * count2);
 		}
 	};
