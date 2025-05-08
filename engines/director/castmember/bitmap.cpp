@@ -304,14 +304,21 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
-	// scale for drawing a different size sprite
-	copyStretchImg(
-		_ditheredImg ? _ditheredImg : &_picture->_surface,
-		widget->getSurface()->surfacePtr(),
-		_initialRect,
-		bbox,
-		pal
-	);
+	Graphics::Surface *srcSurface = _ditheredImg ? _ditheredImg : &_picture->_surface;
+	if ((srcSurface->w <= 0) || (srcSurface->h <= 0)) {
+		// We're copying from a zero-sized surface; fill widget with white so transparent ink works
+		Common::Rect dims = widget->getDimensions();
+		widget->getSurface()->fillRect(Common::Rect(dims.width(), dims.height()), g_director->_wm->_colorWhite);
+	} else {
+		// scale for drawing a different size sprite
+		copyStretchImg(
+			srcSurface,
+			widget->getSurface()->surfacePtr(),
+			_initialRect,
+			bbox,
+			pal
+		);
+	}
 
 	return widget;
 }
@@ -666,8 +673,10 @@ void BitmapCastMember::load() {
 			} else {
 				img = new Image::BitmapDecoder();
 			}
+		} else if (pic->size() == 0) {
+			// zero-length bitmap
 		} else {
-			warning("BitmapCastMember::load(): Bitmap image %d not found", imgId);
+			warning("BitmapCastMember::load(): Bitmap image %d has invalid size", imgId);
 		}
 
 		break;

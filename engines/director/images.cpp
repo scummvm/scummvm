@@ -326,6 +326,10 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 void copyStretchImg(const Graphics::Surface *srcSurface, Graphics::Surface *targetSurface, const Common::Rect &srcRect, const Common::Rect &targetRect, const byte *pal) {
 	if (!(srcSurface) || !(targetSurface))
 		return;
+	if ((srcSurface->h <= 0) || (srcSurface->w <= 0)) {
+		// Source area is nonexistant
+		return;
+	}
 
 	Graphics::Surface *temp1 = nullptr;
 	Graphics::Surface *temp2 = nullptr;
