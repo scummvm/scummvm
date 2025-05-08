@@ -1,2 +1,3 @@
 engines/nancy/input.cpp
 engines/nancy/metaengine.cpp
+engines/nancy/state/loadsave.cpp
