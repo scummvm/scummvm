@@ -747,6 +747,9 @@ void Inter_v7::o7_playVmdOrMusic() {
 		props.slot = (-props.lastFrame) % 10;
 	}
 
+	if (props.startFrame == -1)
+		close = true;
+
 	if (props.startFrame == -2)
 		props.noBlock    = true;
 
