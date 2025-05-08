@@ -136,7 +136,7 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 	// mouseDown/mouseUp events will have one of each of the source types queued.
 	// run these steps at the very beginning (i.e. before the first source type).
 	if (event.eventHandlerSourceType == kPrimaryHandler) {
-		if (event.event == kEventMouseDown) {
+		if ((event.event == kEventMouseDown) || (event.event == kEventRightMouseDown)) {
 			if (!spriteId && _isBeepOn) {
 				g_lingo->func_beep(1);
 			}
@@ -171,7 +171,7 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 				_currentMouseDownCastID = CastMemberID();
 			}
 
-		} else if (event.event == kEventMouseUp) {
+		} else if ((event.event == kEventMouseUp) || (event.event == kEventRightMouseUp)) {
 			if (_currentHiliteChannelId && _score->_channels[_currentHiliteChannelId]) {
 				g_director->getCurrentWindow()->setDirty(true);
 				g_director->getCurrentWindow()->addDirtyRect(_score->_channels[_currentHiliteChannelId]->getBbox());
@@ -266,7 +266,7 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			// A bit unhinged, but we have a test that proves Director does this,
 			// so we have to do it too.
 			CastMemberID targetCast = _currentMouseDownCastID;
-			if (event.event == kEventMouseDown) {
+			if ((event.event == kEventMouseDown) || (event.event == kEventRightMouseDown)) {
 				if (!spriteId)
 					return;
 				Sprite *sprite = _score->getSpriteById(spriteId);
@@ -375,6 +375,8 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 	switch (event) {
 	case kEventMouseDown:
 	case kEventMouseUp:
+	case kEventRightMouseDown:
+	case kEventRightMouseUp:
 	case kEventKeyUp:
 	case kEventKeyDown:
 	case kEventTimeout:
@@ -440,6 +442,8 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		case kEventKeyDown:
 		case kEventMouseUp:
 		case kEventMouseDown:
+		case kEventRightMouseUp:
+		case kEventRightMouseDown:
 		case kEventBeginSprite:
 			queue.push(LingoEvent(event, eventId, kSpriteHandler, false, pos));
 			queue.push(LingoEvent(event, eventId, kCastHandler, false, pos));
