@@ -602,7 +602,7 @@ public:
 	}
 
 	/**
-	 * Resets the pointer with the new value. Old object will be destroyed
+	 * Resets the pointer with the new value. Old object will be destroyed.
 	 */
 	void reset(PointerType o = nullptr) {
 		DL()(_pointer);
@@ -680,7 +680,7 @@ public:
 	bool operator_bool() const { return _pointer != nullptr; }
 
 	/**
-	 * Resets the pointer with the new value. Old object will be destroyed
+	 * Resets the pointer with the new value. Old object will be destroyed if flagged as disposable.
 	 */
 	void reset(PointerType o, DisposeAfterUse::Flag dispose) {
 		if (_dispose) DL()(_pointer);
@@ -690,7 +690,7 @@ public:
 	}
 
 	/**
-	 * Clears the pointer. Old object will be destroyed
+	 * Clears the pointer. Old object will be destroyed if flagged as disposable.
 	 */
 	void reset() {
 		reset(nullptr, DisposeAfterUse::NO);
