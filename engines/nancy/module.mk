@@ -24,6 +24,7 @@ MODULE_OBJS = \
   action/puzzle/hamradiopuzzle.o \
   action/puzzle/leverpuzzle.o \
   action/puzzle/mazechasepuzzle.o \
+  action/puzzle/matchpuzzle.o \
   action/puzzle/mouselightpuzzle.o \
   action/puzzle/orderingpuzzle.o \
   action/puzzle/overridelockpuzzle.o \

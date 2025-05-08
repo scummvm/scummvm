@@ -38,6 +38,7 @@
 #include "engines/nancy/action/puzzle/bombpuzzle.h"
 #include "engines/nancy/action/puzzle/collisionpuzzle.h"
 #include "engines/nancy/action/puzzle/cubepuzzle.h"
+#include "engines/nancy/action/puzzle/matchpuzzle.h"
 #include "engines/nancy/action/puzzle/hamradiopuzzle.h"
 #include "engines/nancy/action/puzzle/leverpuzzle.h"
 #include "engines/nancy/action/puzzle/mazechasepuzzle.h"
@@ -360,6 +361,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new OrderingPuzzle(OrderingPuzzle::kKeypadTerse);
 	case 225:
 		return new SpigotPuzzle();
+	case 228:
+		return new MatchPuzzle();
 	case 230:
 		return new Telephone(true);
 	default:
