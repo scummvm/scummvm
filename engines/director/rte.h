@@ -24,10 +24,13 @@
 
 #include "common/array.h"
 #include "common/stream.h"
-#include "graphics/surface.h"
 
 namespace Common {
 class SeekableReadStreamEndian;
+}
+
+namespace Graphics {
+class ManagedSurface;
 }
 
 namespace Director {
@@ -55,11 +58,13 @@ public:
 	RTE2(Cast *cast, Common::SeekableReadStreamEndian &stream);
 	~RTE2();
 
+	Graphics::ManagedSurface *createSurface(uint32 foreColor, uint32 bgColor, const Graphics::PixelFormat &pf) const;
+
 	Cast *_cast;
-	uint16 width;
-	uint16 height;
-	uint32 bpp;
-	Graphics::Surface *_surface;
+	uint16 _width;
+	uint16 _height;
+	uint32 _bpp;
+	Common::Array<byte> _rle;
 };
 
 } // End of namespace Director

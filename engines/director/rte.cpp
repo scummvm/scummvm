@@ -21,7 +21,7 @@
 
 #include "common/debug.h"
 #include "common/stream.h"
-#include "common/substream.h"
+#include "common/memstream.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -55,24 +55,33 @@ RTE2::RTE2(Cast *cast, Common::SeekableReadStreamEndian &stream) : _cast(cast) {
 		debugC(5, kDebugLoading, "RTE2:");
 		stream.hexdump(stream.size());
 	}
-	_surface = nullptr;
+	_width = 0;
+	_height = 0;
+	_bpp = 0;
 	if (!stream.size())
 		return;
 
-	width = stream.readUint16BE();
-	height = stream.readUint16BE();
-	bpp = stream.readUint16BE();
-	int checkMax = (1 << bpp) - 1;
-	debugC(5, kDebugLoading, "RTE2: width: %d, height: %d, bpp: %d", width, height, bpp);
+	_width = stream.readUint16BE();
+	_height = stream.readUint16BE();
+	_bpp = stream.readUint16BE();
+	int rleCount = stream.size() - stream.pos();
+	_rle.resize(rleCount, 0x00);
+	stream.read(_rle.data(), rleCount);
+	debugC(5, kDebugLoading, "RTE2: _width: %d, _height: %d, _bpp: %d, _rle: %d bytes", _width, _height, _bpp, rleCount);
+}
+
+Graphics::ManagedSurface *RTE2::createSurface(uint32 foreColor, uint32 bgColor, const Graphics::PixelFormat &pf) const {
+	if (_rle.empty())
+		return nullptr;
+	Common::MemoryReadStream stream(_rle.data(), _rle.size());
 	// Create a 32-bit alpha surface for the decoded image
-	_surface = new Graphics::Surface();
-	_surface->create((int16)width, (int16)height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-	uint8 r = 0;
-	uint8 g = 0;
-	uint8 b = 0;
-	uint8 a = 0;
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width;) {
+	Graphics::Surface surface;
+	surface.create((int16)_width, (int16)_height, pf);
+	int checkMax = (1 << _bpp) - 1;
+	uint8 r = 0, g = 0, b = 0, a = 0;
+	pf.colorToRGB(foreColor, r, g, b);
+	for (int y = 0; y < _height; y++) {
+		for (int x = 0; x < _width;) {
 			uint32 pos = stream.pos();
 			byte check = stream.readByte();
 			if (check == 0x1f) {
@@ -82,39 +91,44 @@ RTE2::RTE2(Cast *cast, Common::SeekableReadStreamEndian &stream) : _cast(cast) {
 				debugC(9, kDebugLoading, "[%04x] (%d, %d): color %d %d %d", pos, x, y, r, g, b);
 				continue;
 			}
-			a = ((uint32)check*0xff/((1 << bpp) - 1));
+			a = ((uint32)check*0xff/((1 << _bpp) - 1));
 			if (check == 0 || check == checkMax) {
 				byte count = stream.readByte();
 				debugC(9, kDebugLoading, "[%04x] (%d, %d): %02x, count %d", pos, x, y, check, count);
 				if (count == 0x00 && check == 0x00) {
 					// end of line, fill the remaining colour
 					a = 0;
-					while (x < width) {
-						*(uint32 *)_surface->getBasePtr(x, y) = ((uint32)r << 24) + ((uint32)g << 16) + ((uint32)b << 8) + a;
+					while (x < _width) {
+						*(uint32 *)surface.getBasePtr(x, y) = pf.ARGBToColor(a, r, g, b);
 						x += 1;
 					}
 					break;
 				}
 				for (byte j = 0; j < count; j++) {
-					*(uint32 *)_surface->getBasePtr(x, y) = ((uint32)r << 24) + ((uint32)g << 16) + ((uint32)b << 8) + a;
+					*(uint32 *)surface.getBasePtr(x, y) = pf.ARGBToColor(a, r, g, b);
 					x += 1;
-					if (x >= width)
+					if (x >= _width)
 						break;
 				}
 			} else {
 				debugC(9, kDebugLoading, "[%04x] (%d, %d): %02x", pos, x, y, check);
-				*(uint32 *)_surface->getBasePtr(x, y) = ((uint32)r << 24) + ((uint32)g << 16) + ((uint32)b << 8) + a;
+				*(uint32 *)surface.getBasePtr(x, y) = pf.ARGBToColor(a, r, g, b);
 				x += 1;
 			}
 		}
 	}
+	Graphics::ManagedSurface *result = new Graphics::ManagedSurface();
+	result->create((int16)_width, (int16)_height, pf);
+	// Fill it with the background colour
+	result->fillRect(Common::Rect(_width, _height), bgColor);
+	// Blit the alpha text map
+	result->blitFrom(surface, nullptr);
+
+	surface.free();
+	return result;
 }
 
 RTE2::~RTE2() {
-	if (_surface) {
-		_surface->free();
-		delete _surface;
-	}
 }
 
 } // End of namespace Director
