@@ -32,6 +32,10 @@
 #include "engines/nancy/ui/button.h"
 
 #include "common/config-manager.h"
+#include "common/translation.h"
+
+#include "gui/message.h"
+#include "gui/saveload.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::LoadSaveMenu);
@@ -99,7 +103,61 @@ void LoadSaveMenu::process() {
 	g_nancy->_cursor->setCursorType(CursorManager::kNormalArrow);
 }
 
+void LoadSaveMenu::scummVMSave() {
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	int slot = dialog->runModalWithCurrentTarget();
+	Common::String saveName = dialog->getResultString();
+	delete dialog;
+
+	g_nancy->_graphics->suppressNextDraw();
+	_destroyOnExit = true;
+	_state = kStop;
+	_selectedSave = slot;
+
+	if (slot >= 0) {
+		g_nancy->saveGameState(slot, saveName, false);
+		g_nancy->_hasJustSaved = true;
+	}
+}
+
+void LoadSaveMenu::scummVMLoad() {
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+	int slot = dialog->runModalWithCurrentTarget();
+	delete dialog;
+
+	g_nancy->_graphics->suppressNextDraw();
+	_destroyOnExit = true;
+	_state = kStop;
+	_selectedSave = slot;
+
+	if (slot >= 0) {
+		if (Nancy::State::Scene::hasInstance())
+			Nancy::State::Scene::destroy();
+
+		ConfMan.setInt("save_slot", slot, Common::ConfigManager::kTransientDomain);
+
+		_enteringNewState = true;
+	}
+}
+
 void LoadSaveMenu::onStateEnter(const NancyState::NancyState prevState) {
+
+	if (!ConfMan.getBool("originalsaveload")) {
+		if (Nancy::State::Scene::hasInstance()) {
+			GUI::MessageDialog saveOrLoad(_("Would you like to load or save a game?"), _("Load"), _("Save"));
+
+			int choice = saveOrLoad.runModal();
+			if (choice == GUI::kMessageOK)
+				scummVMLoad();
+			else
+				scummVMSave();
+		} else {
+			scummVMLoad();
+		}
+
+		return;
+	}
+
 	if (_state == kEnterFilename) {
 		g_nancy->_input->setVKEnabled(true);
 	}

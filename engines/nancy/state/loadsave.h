@@ -64,6 +64,9 @@ private:
 
 	void registerGraphics();
 
+	void scummVMSave();
+	void scummVMLoad();
+
 	uint16 writeToTextbox(uint textboxID, const Common::String &text, const Font *font);
 
 	enum State { kInit, kRun, kEnterFilename, kSave, kLoad, kSuccess, kStop };

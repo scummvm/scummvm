@@ -262,6 +262,16 @@ Common::Error NancyEngine::run() {
 		}
 	}
 
+	// TODO: Since the original save/load menus aren't implemented for
+	// Nancy 8 and newer games, we always use the ScummVM ones there
+	if (getGameType() >= kGameTypeNancy8) {
+		ConfMan.setBool("originalsaveload", false, ConfMan.getActiveDomainName());
+	}
+
+	if (!ConfMan.getBool("originalsaveload")) {
+		ConfMan.setInt("nancy_max_saves", 999, ConfMan.getActiveDomainName());
+	}
+
 	// Boot the engine
 	setState(NancyState::kBoot);
 
