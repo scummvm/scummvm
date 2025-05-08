@@ -15,20 +15,25 @@ MODULE_OBJS = \
   action/overlay.o \
   action/secondarymovie.o \
   action/secondaryvideo.o \
+  action/puzzle/angletosspuzzle.o \
+  action/puzzle/arcadepuzzle.o \
   action/puzzle/assemblypuzzle.o \
   action/puzzle/bballpuzzle.o \
   action/puzzle/bulpuzzle.o \
   action/puzzle/bombpuzzle.o \
   action/puzzle/collisionpuzzle.o \
   action/puzzle/cubepuzzle.o \
+  action/puzzle/cuttingpuzzle.o \
   action/puzzle/hamradiopuzzle.o \
   action/puzzle/leverpuzzle.o \
   action/puzzle/mazechasepuzzle.o \
+  action/puzzle/matchpuzzle.o \
   action/puzzle/mouselightpuzzle.o \
   action/puzzle/orderingpuzzle.o \
   action/puzzle/overridelockpuzzle.o \
   action/puzzle/passwordpuzzle.o \
   action/puzzle/peepholepuzzle.o \
+  action/puzzle/quizpuzzle.o \
   action/puzzle/raycastpuzzle.o \
   action/puzzle/riddlepuzzle.o \
   action/puzzle/rippedletterpuzzle.o \
