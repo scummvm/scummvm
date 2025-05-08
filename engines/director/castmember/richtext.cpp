@@ -99,7 +99,8 @@ void RichTextCastMember::load() {
 	}
 	if (_cast->_loadedRTE1s.contains(rte1id)) {
 		const RTE1 *rte1 =  _cast->_loadedRTE1s.getVal(rte1id);
-		_plainText = Common::U32String((const char *)&rte1->data[0], rte1->data.size(), g_director->getPlatformEncoding());
+		if (!rte1->data.empty())
+			_plainText = Common::U32String((const char *)&rte1->data[0], rte1->data.size(), g_director->getPlatformEncoding());
 	} else {
 		warning("RichTextCastMember::load(): rte1tid %i isn't loaded, no plain text!", rte1id);
 	}
