@@ -77,7 +77,11 @@ CloudConnectionWizard::CloudConnectionWizard() :
 	_manualModeButton = nullptr;
 	_codeBox = nullptr;
 
+#ifdef USE_SDL_NET
 	showStep(Step::MODE_SELECT);
+#else 
+	showStep(Step::MANUAL_MODE_STEP_1);
+#endif
 
 	_callback = new Common::Callback<CloudConnectionWizard, const Networking::ErrorResponse &>(this, &CloudConnectionWizard::storageConnectionCallback);
 }
@@ -316,7 +320,9 @@ void CloudConnectionWizard::hideStepQuickModeSuccess() {
 void CloudConnectionWizard::showStepManualMode1() {
 	_headlineLabel->setLabel(_("Manual Mode: Step 1"));
 	showContainer("ConnectionWizard_ManualModeStep1");
+#ifdef USE_SDL_NET
 	showBackButton();
+#endif
 	showNextButton();
 
 	_label0 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line1", _("Open this link in your browser:"));
