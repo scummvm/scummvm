@@ -215,10 +215,14 @@ void MainMenu::stop() {
 				g_nancy->_graphics->suppressNextDraw();
 				uint ret = ConfMan.getInt("sdlg_return", Common::ConfigManager::kTransientDomain);
 				ConfMan.removeKey("sdlg_return", Common::ConfigManager::kTransientDomain);
+
 				switch (ret) {
 				case 0 :
 					// "Yes" switches to LoadSave
 					g_nancy->setState(NancyState::kLoadSave);
+					if (!ConfMan.getBool("originalsaveload")) {
+						ConfMan.setBool("sdlg_save_and_quit", true, Common::ConfigManager::kTransientDomain);
+					}
 					break;
 				case 1 :
 					// "No" quits the game
