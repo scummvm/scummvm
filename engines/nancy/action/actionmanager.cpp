@@ -294,7 +294,7 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 					}
 
 					if (!dep.children[j].orFlag) {
-						// orFlag chain ended, no satisfied deoendencies
+						// orFlag chain ended, no satisfied dependencies
 						break;
 					}
 				}
