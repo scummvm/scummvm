@@ -4400,6 +4400,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("gusbuds", "",		"MMV Product Demos for PowerMac", "r:692f6732b6d7deaa00c9b3df57bb30ce", 60068, 404),
 	WINGAME1("gusbuds", "",		"MMVDEMOS.EXE",					  "d:71d4ad9e9dc92a81561476d4d9813492", 692037, 404),
 
+	MACGAME1("guscarn", "", "Gus Goes to the Kooky Carnival", "r:e6833f1ce3b022f0128e4c80a55bcd46", 285310, 404),
+	WINGAME1("guscarn", "", "CARNIVAL.EXE", "t:d0babe1503cdec2b3c45674f91911c13", 690553, 404),
 	WINGAME1_l("guscarn", "", "PRETPARK.EXE", "t:d0babe1503cdec2b3c45674f91911c13", 690553, Common::NL_NLD, 404),
 	MACDEMO1("guscarn", "Demo", "Carnival Demo 4 you", "r:67f572196550aedb1f9523d782022be0", 481226, 404),
 
