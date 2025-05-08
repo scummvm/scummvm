@@ -61,7 +61,9 @@ void main(void) {
 	vec2 curPixelPosInLocalSpace = vec2(pixelPos.x, -pixelPos.y);
 
 	vec3 diffuse = vec3(0, 0, 0);
-	for (int i = 0; i < u_numberLights; i++) {
+	for (int i = 0; i < 50; i++) {
+		if (i >= u_numberLights)
+			break;
 		vec2 lightVec = curPixelPosInLocalSpace.xy - u_lightPos[i].xy;
 		float coneValue = dot(normalize(-lightVec), u_coneDirection[i]);
 		if (coneValue >= u_coneCosineHalfConeAngle[i]) {
@@ -127,7 +129,9 @@ void main(void) {
 	vec2 curPixelPosInLocalSpace = vec2(pixelPos.x, -pixelPos.y);
 
 	vec3 diffuse = vec3(0, 0, 0);
-	for (int i = 0; i < u_numberLights; i++) {
+	for (int i = 0; i < 50; i++) {
+		if (i >= u_numberLights)
+			break;
 		vec2 lightVec = curPixelPosInLocalSpace.xy - u_lightPos[i].xy;
 		float coneValue = dot(normalize(-lightVec), u_coneDirection[i]);
 		if (coneValue >= u_coneCosineHalfConeAngle[i]) {
