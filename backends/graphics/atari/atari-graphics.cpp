@@ -611,27 +611,27 @@ void AtariGraphicsManager::unlockScreen() {
 void AtariGraphicsManager::fillScreen(uint32 col) {
 	atari_debug("fillScreen: %d", col);
 
-	Graphics::Surface *screen = lockScreen();
+	Graphics::Surface &dstSurface = *lockScreen();
 
-	screen->fillRect(Common::Rect(screen->w, screen->h), col);
+	addDirtyRectToScreens(
+		dstSurface,
+		0, 0, dstSurface.w, dstSurface.h,
+		_currentState.mode == kDirectRendering);
 
-	unlockScreen();
+	dstSurface.fillRect(Common::Rect(dstSurface.w, dstSurface.h), col);
 }
 
 void AtariGraphicsManager::fillScreen(const Common::Rect &r, uint32 col) {
 	//atari_debug("fillScreen: %dx%d %d", r.width(), r.height(), col);
 
-	Graphics::Surface *screen = lockScreen();
+	Graphics::Surface &dstSurface = *lockScreen();
 
-	if (r.width() == 1 && r.height() == 1) {
-		// handle special case for e.g. Eco Quest's intro
-		byte *ptr = (byte *)screen->getBasePtr(r.left, r.top);
-		*ptr = col;
-	} else {
-		screen->fillRect(r, col);
-	}
+	addDirtyRectToScreens(
+		dstSurface,
+		r.left, r.top, r.width(), r.height(),
+		_currentState.mode == kDirectRendering);
 
-	unlockScreen();
+	dstSurface.fillRect(r, col);
 }
 
 void AtariGraphicsManager::updateScreen() {
@@ -1017,10 +1017,7 @@ bool AtariGraphicsManager::notifyEvent(const Common::Event &event) {
 		if (isOverlayVisible()) {
 			debug("Return to launcher from overlay");
 			// clear work screen: this is needed if *next* game shows an error upon startup
-			Graphics::Surface &surf = _currentState.mode == kDirectRendering
-				? *_screen[kFrontBuffer]->offsettedSurf
-				: _chunkySurfaceOffsetted;
-			surf.fillRect(Common::Rect(surf.w, surf.h), 0);
+			fillScreen(0);
 
 			_ignoreHideOverlay = true;
 			// gui manager would want to hide overlay, set game cursor etc
