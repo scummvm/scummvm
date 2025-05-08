@@ -36,10 +36,13 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
 #### 2.9.1 (XXXX-XX-XX)
 
- Allgemein:
-   - Vermeide die Nutzung des GNU Gold-Linkers wenn ScummVM gebaut wird (sofern die Option --enable-gold
-     nicht genutzt wird), da er für anhaltende Probleme auf manchen Plattformen bekannt ist und
-	 seitens des Upstreams nicht mehr unterstützt wird.
+ AGS:
+   - Unterstützung für Geschwindigkeitsänderungen von Audio-Clips hinzugefügt.
+     Diese werden in einigen Spielen verwendet, um die Hintergrundmusik oder andere
+     Audio-Effekte zu verlangsamen.
+   - Fehler korrigiert, durch den in einigen Fällen Lautstärkeänderungen nicht korrekt
+     ausgelöst wurden (beispielsweise um die Musiklautstärke in Entwicklerkommentaren oder
+     wenn in der Blackwell-Serie ein Charakter spricht, zu verringern)
 
  Asylum:
    - Absturz im Hauptmenü von Sanitarium korrigiert, der auftritt, wenn der Cursor in den
