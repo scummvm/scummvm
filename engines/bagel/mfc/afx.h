@@ -36,7 +36,7 @@ class CFileException;
 #define DECLARE_DYNAMIC(class_name) \
 public: \
 	static const CRuntimeClass class##class_name; \
-	virtual const CRuntimeClass *GetRuntimeClass() const; \
+	virtual const CRuntimeClass *GetRuntimeClass() const override; \
 
 
 #define RUNTIME_CLASS(class_name) ((const CRuntimeClass *)(&class_name::class##class_name))
@@ -67,6 +67,17 @@ struct CRuntimeClass {
 
 	// CRuntimeClass objects linked together in simple list
 	const CRuntimeClass *m_pNextClass = nullptr;       // linked list of registered classes
+
+	CRuntimeClass(const char *m_lpszClassName_, int m_nObjectSize_, UINT m_wSchema_,
+			CObject *(*m_pfnCreateObject_)(), const CRuntimeClass *m_pBaseClass_,
+			const CRuntimeClass *m_pNextClass_) {
+		m_lpszClassName = m_lpszClassName_;
+		m_nObjectSize = m_nObjectSize_;
+		m_wSchema = m_wSchema_;
+		m_pfnCreateObject = m_pfnCreateObject_;
+		m_pBaseClass = m_pBaseClass_;
+		m_pNextClass = m_pNextClass_;
+	}
 };
 
 class CDumpContext {
@@ -145,6 +156,15 @@ public:
 	BOOL Open(const char *lpszFileName, UINT nOpenFlags, CFileException *pError = NULL);
 	void Close();
 	void Abort() {}
+	ULONGLONG SeekToEnd();
+	void SeekToBegin();
+	virtual ULONGLONG Seek(LONGLONG lOff, UINT nFrom);
+	virtual ULONGLONG GetLength() const;
+	virtual ULONGLONG GetPosition() const;
+
+	virtual UINT Read(void *lpBuf, UINT nCount);
+	virtual void Write(const void *lpBuf, UINT nCount);
+
 };
 
 /*============================================================================*/

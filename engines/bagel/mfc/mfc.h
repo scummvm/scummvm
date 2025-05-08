@@ -29,7 +29,9 @@
 #include "bagel/mfc/atltypes.h"
 #include "bagel/mfc/afx.h"
 #include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/afxmsg.h"
 #include "bagel/mfc/afxext.h"
 #include "bagel/mfc/global_functions.h"
+#include "bagel/mfc/keyboard.h"
 
 #endif

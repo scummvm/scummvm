@@ -28,6 +28,8 @@
 namespace Bagel {
 namespace MFC {
 
+typedef long clock_t;
+
 class CTimeSpan {
 public:
 	CTimeSpan();

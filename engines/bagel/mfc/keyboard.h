@@ -19,41 +19,30 @@
  *
  */
 
-#ifndef HODJNPODJ_GFX_CURSOR_H
-#define HODJNPODJ_GFX_CURSOR_H
+#ifndef BAGEL_MFC_KEYBOARD_H
+#define BAGEL_MFC_KEYBOARD_H
 
-#include "common/formats/winexe_ne.h"
-#include "bagel/afxwin.h"
-#include "bagel/boflib/cursor_data.h"
+#include "common/events.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
 enum {
-	IDC_RULES_OKAY    = 900,
-	IDC_RULES_ARROWDN = 901,
-	IDC_RULES_ARROWUP = 902,
-	IDC_RULES_INVALID = 903
+	VK_UP = Common::KEYCODE_UP,
+	VK_DOWN = Common::KEYCODE_DOWN,								// go to next page of text
+	VK_LEFT = Common::KEYCODE_LEFT,
+	VK_RIGHT = Common::KEYCODE_RIGHT,
+	VK_NUMPAD8 = Common::KEYCODE_KP8,
+	VK_NUMPAD2 = Common::KEYCODE_KP2,
+	VK_NUMPAD4 = Common::KEYCODE_KP4,
+	VK_NUMPAD6 = Common::KEYCODE_KP6,
+	VK_PRIOR = Common::KEYCODE_PAGEUP,
+	VK_NEXT = Common::KEYCODE_PAGEDOWN,
+	VK_HOME = Common::KEYCODE_HOME,
+	VK_END = Common::KEYCODE_END
 };
 
-class Cursor {
-private:
-	Common::NEResources _resources;
-	int _cursorId = IDC_NONE;
-
-	void setArrowCursor();
-	void setCursorResource();
-
-public:
-	void loadCursors();
-
-	void setCursor(int cursorId);
-	void showCursor(bool visible) {
-		setCursor(visible ? IDC_ARROW : IDC_NONE);
-	}
-};
-
-} // namespace HodjNPodj
+} // namespace MFC
 } // namespace Bagel
 
 #endif

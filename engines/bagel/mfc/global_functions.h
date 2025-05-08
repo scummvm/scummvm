@@ -28,6 +28,8 @@
 namespace Bagel {
 namespace MFC {
 
+class CWinApp;
+
 /* Global Memory Flags */
 #define GMEM_FIXED          0x0000
 #define GMEM_MOVEABLE       0x0002
@@ -54,6 +56,9 @@ namespace MFC {
 #define MB_ICONINFORMATION          MB_ICONASTERISK
 #define MB_ICONSTOP                 MB_ICONHAND
 
+extern CWinApp *AfxGetApp();
+extern HINSTANCE AfxGetInstanceHandle();
+
 extern HGLOBAL GlobalAlloc(UINT uFlags, SIZE_T dwBytes);
 extern LPVOID GlobalLock(HGLOBAL hMem);
 extern BOOL GlobalUnlock(HGLOBAL hMem);
@@ -64,6 +69,23 @@ extern SIZE_T GlobalCompact(DWORD dwMinFree);
 
 extern int MessageBox(HWND hWnd, LPCSTR lpText,
 	LPCSTR lpCaption, UINT uType);
+extern UINT GetPrivateProfileInt(LPCSTR lpAppName,
+	LPCSTR lpKeyName, INT nDefault, LPCSTR lpFileName);
+extern BOOL WritePrivateProfileString(
+	LPCSTR lpAppName, LPCSTR lpKeyName,
+	LPCSTR lpString, LPCSTR lpFileName);
+extern HCURSOR LoadCursor(HINSTANCE hInstance,
+	LPCSTR lpCursorName);
+extern void SetCursor(HCURSOR hCursor);
+
+extern HTASK GetCurrentTask();
+extern FARPROC MakeProcInstance(FARPROC lpProc, HINSTANCE hInstance);
+extern void FreeProcInstance(FARPROC lpProc);
+extern HHOOK SetWindowsHookEx(int idHook,
+	HOOKPROC lpfn, HINSTANCE hmod, HTASK dwThreadId);
+extern BOOL UnhookWindowsHookEx(HHOOK hhk);
+extern LRESULT CallNextHookEx(HHOOK hhk, int nCode,
+	WPARAM wParam, LPARAM lParam);
 
 } // namespace MFC
 } // namespace Bagel

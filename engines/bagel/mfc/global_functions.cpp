@@ -55,5 +55,51 @@ int MessageBox(HWND hWnd, LPCSTR lpText,
 	return 0;
 }
 
+UINT GetPrivateProfileInt(LPCSTR lpAppName,
+		LPCSTR lpKeyName, INT nDefault, LPCSTR lpFileName) {
+	error("TODO: GetPrivateProfileInt");
+}
+
+BOOL WritePrivateProfileString(
+		LPCSTR lpAppName, LPCSTR lpKeyName,
+		LPCSTR lpString, LPCSTR lpFileName) {
+	error("TODO: WritePrivateProfileString");
+}
+
+HCURSOR LoadCursor(HINSTANCE hInstance,
+		LPCSTR lpCursorName) {
+	error("TODO: LoadCursor");
+}
+
+void SetCursor(HCURSOR hCursor) {
+	error("TODO: SetCursor");
+}
+
+HTASK GetCurrentTask() {
+	error("TODO: GetCurrentTask");
+}
+
+FARPROC MakeProcInstance(FARPROC lpProc, HINSTANCE hInstance) {
+	error("TODO: MakeProcInstance");
+}
+
+void FreeProcInstance(FARPROC lpProc) {
+	error("TODO: FreeProcInstance");
+}
+
+HHOOK SetWindowsHookEx(int idHook,
+		HOOKPROC lpfn, HINSTANCE hmod, HTASK dwThreadId) {
+	error("TODO: SetWindowsHookEx");
+}
+
+BOOL UnhookWindowsHookEx(HHOOK hhk) {
+	error("TODO: UnhookWindowsHookEx");
+}
+
+LRESULT CallNextHookEx(HHOOK hhk, int nCode,
+	WPARAM wParam, LPARAM lParam) {
+	error("TODO: CallNextHookEx");
+}
+
 } // namespace MFC
 } // namespace Bagel

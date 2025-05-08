@@ -99,5 +99,9 @@ WORD GetWindowWord(HWND hWnd, int nIndex) {
 	error("TODO: GetWindowWord");
 }
 
+int WINAPI AddFontResource(LPCSTR fontName) {
+	error("TODO: AddFontResource");
+}
+
 } // namespace MFC
 } // namespace Bagel

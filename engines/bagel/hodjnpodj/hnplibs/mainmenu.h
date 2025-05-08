@@ -1,0 +1,91 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HODJNPODJ_HNPLIBS_MAINMENU_H
+#define HODJNPODJ_HNPLIBS_MAINMENU_H
+
+#include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/afxext.h"
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/menures.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+
+typedef void (CALLBACK *FPFUNC)(CWnd *);
+
+#define NO_RULES    0x0001
+#define NO_NEWGAME  0x0002
+#define NO_OPTIONS  0x0004
+#define NO_RETURN   0x0008
+#define NO_QUIT     0x0010
+#define NO_AUDIO    0x0020
+
+class CMainMenu : public CBmpDialog
+{
+    // Construction
+    public:
+        CMainMenu::CMainMenu(CWnd *, CPalette *, UINT, FPFUNC, char *, char *pWavFileName = NULL,LPGAMESTRUCT pGameParams = NULL);
+		void ClearDialogImage(void);
+
+    private:
+
+
+    // Dialog Data
+        //{{AFX_DATA(CMainMenu)
+        enum { IDD = IDD_OPTIONS_DIALOG };
+            // NOTE: the ClassWizard will add data members here
+        //}}AFX_DATA
+
+    // Implementation
+    protected:
+        virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+        // Generated message map functions
+        //{{AFX_MSG(CMainMenu)
+        virtual BOOL OnInitDialog();
+        virtual void OnOK();
+        virtual void OnCancel();
+        afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+        afx_msg void OnPaint();
+        afx_msg void OnDestroy();
+        afx_msg void OnClickedRules() ;
+        afx_msg void OnClickedNewgame() ;
+        afx_msg void OnClickedOptions() ;
+        afx_msg void OnClickedAudio() ;
+        afx_msg void OnClickedReturn();
+        afx_msg void OnClickedQuit();
+        //}}AFX_MSG
+        DECLARE_MESSAGE_MAP()
+
+        FPFUNC      	m_pOptionsFunction;
+        char       		*m_pRulesFileName;
+        char       		*m_pWavFileName;
+        int         	m_nFlags;
+        LPGAMESTRUCT	m_pGameParams;
+};
+
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

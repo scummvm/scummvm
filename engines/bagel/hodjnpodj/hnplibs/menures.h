@@ -19,41 +19,31 @@
  *
  */
 
-#ifndef HODJNPODJ_GFX_CURSOR_H
-#define HODJNPODJ_GFX_CURSOR_H
+#ifndef BAGEL_MFC_GLOBAL_MENURES_H
+#define BAGEL_MFC_GLOBAL_MENURES_H
 
-#include "common/formats/winexe_ne.h"
-#include "bagel/afxwin.h"
-#include "bagel/boflib/cursor_data.h"
+#define IDC_OPTIONS_ARROWUP	503
+#define IDC_OPTIONS_ARROWDN	504
 
-namespace Bagel {
-namespace HodjNPodj {
+#define	ID_OPTIONS_CODES	450
 
-enum {
-	IDC_RULES_OKAY    = 900,
-	IDC_RULES_ARROWDN = 901,
-	IDC_RULES_ARROWUP = 902,
-	IDC_RULES_INVALID = 903
-};
+// obsolete
+//#define IDR_BITMAP_SCROLL   451
 
-class Cursor {
-private:
-	Common::NEResources _resources;
-	int _cursorId = IDC_NONE;
+#define IDR_OPTION_SCROLL	452
+#define IDD_OPTIONS_DIALOG	453
 
-	void setArrowCursor();
-	void setCursorResource();
+#define IDC_OPTIONS_RETURN	454
+#define IDC_OPTIONS_QUIT	455
+#define IDC_OPTIONS_RULES	456
+#define IDC_OPTIONS_NEWGAME	457
+#define IDC_OPTIONS_OPTIONS	458
+#define IDC_OPTIONS_AUDIO	459
 
-public:
-	void loadCursors();
+#define IDB_SCROLBTN        460
+#define SCROLLUP            461
+#define SCROLLDOWN          462
 
-	void setCursor(int cursorId);
-	void showCursor(bool visible) {
-		setCursor(visible ? IDC_ARROW : IDC_NONE);
-	}
-};
-
-} // namespace HodjNPodj
-} // namespace Bagel
+#define IDD_AUDIOCFG		463
 
 #endif

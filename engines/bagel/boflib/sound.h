@@ -166,6 +166,18 @@ public:
 	static bool bofSleep(uint32 dwTime);
 	static void audioTask();
 	static bool soundsPlaying();
+	static bool MidiAvailable() {
+		return _bMidiAvailable;
+	}
+	static bool SoundAvailable() {
+		return _bSoundAvailable;
+	}
+	static bool SoundVolumeAvailable() {
+		return _bWaveVolume;
+	}
+	static bool MidiVolumeAvailable() {
+		return _bMidiVolume;
+	}
 
 private:
 	bool loadSound();

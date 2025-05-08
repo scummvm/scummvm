@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/textconsole.h"
+#include "bagel/mfc/global_functions.h"
 #include "bagel/mfc/afxwin.h"
 
 namespace Bagel {
@@ -28,6 +30,35 @@ CWinApp::CWinApp(const char *appName) : CWinThread() {
 }
 
 void CWinApp::SetDialogBkColor() {
+}
+
+HCURSOR CWinApp::LoadStandardCursor(LPCSTR lpszCursorName) const {
+	return MFC::LoadCursor(NULL, lpszCursorName);
+}
+
+HCURSOR CWinApp::LoadCursor(LPCSTR lpszResourceName) const {
+	return MFC::LoadCursor(NULL, lpszResourceName);
+}
+
+HCURSOR CWinApp::LoadCursor(UINT nIDResource) const {
+	error("TODO: CWinApp::LoadCursor");
+}
+
+void CWinApp::BeginWaitCursor() {
+	error("TODO: BeginWaitCursor");
+}
+
+void CWinApp::EndWaitCursor() {
+	error("TODO: EndWaitCursor");
+}
+
+
+CWinApp *AfxGetApp() {
+	error("TODO: AfxGetApp");
+}
+
+HINSTANCE AfxGetInstanceHandle() {
+	error("TODO: AfxGetInstanceHandle");
 }
 
 } // namespace MFC

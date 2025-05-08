@@ -317,18 +317,126 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define MB_RETRYCANCEL              0x00000005L
 
 /*
-	* Scroll Bar Constants
-	*/
+ * Scroll Bar Constants
+ */
 #define SB_HORZ             0
 #define SB_VERT             1
 #define SB_CTL              2
 #define SB_BOTH             3
+
+ /*
+  * Scroll Bar Commands
+  */
+#define SB_LINEUP           0
+#define SB_LINELEFT         0
+#define SB_LINEDOWN         1
+#define SB_LINERIGHT        1
+#define SB_PAGEUP           2
+#define SB_PAGELEFT         2
+#define SB_PAGEDOWN         3
+#define SB_PAGERIGHT        3
+#define SB_THUMBPOSITION    4
+#define SB_THUMBTRACK       5
+#define SB_TOP              6
+#define SB_LEFT             6
+#define SB_BOTTOM           7
+#define SB_RIGHT            7
+#define SB_ENDSCROLL        8
+
+/*
+ * Scroll Bar Styles
+ */
+#define SBS_HORZ                    0x0000L
+#define SBS_VERT                    0x0001L
+#define SBS_TOPALIGN                0x0002L
+#define SBS_LEFTALIGN               0x0002L
+#define SBS_BOTTOMALIGN             0x0004L
+#define SBS_RIGHTALIGN              0x0004L
+#define SBS_SIZEBOXTOPLEFTALIGN     0x0002L
+#define SBS_SIZEBOXBOTTOMRIGHTALIGN 0x0004L
+#define SBS_SIZEBOX                 0x0008L
 
 // General error / prompt strings
 #define AFX_IDP_INVALID_FILENAME        0xF100
 #define AFX_IDP_FAILED_TO_OPEN_DOC      0xF101
 #define AFX_IDP_FAILED_TO_SAVE_DOC      0xF102
 
+
+/*
+ * Dialog Box Command IDs
+ */
+#define IDOK                1
+#define IDCANCEL            2
+#define IDABORT             3
+#define IDRETRY             4
+#define IDIGNORE            5
+#define IDYES               6
+#define IDNO                7
+#define IDCLOSE             8
+#define IDHELP              9
+#define IDTRYAGAIN         10
+#define IDCONTINUE         11
+#define IDTIMEOUT       32000
+
+ /*
+  * User Button Notification Codes
+  */
+#define BN_CLICKED          0
+#define BN_PAINT            1
+#define BN_HILITE           2
+#define BN_UNHILITE         3
+#define BN_DISABLE          4
+#define BN_DOUBLECLICKED    5
+#define BN_PUSHED           BN_HILITE
+#define BN_UNPUSHED         BN_UNHILITE
+#define BN_DBLCLK           BN_DOUBLECLICKED
+#define BN_SETFOCUS         6
+#define BN_KILLFOCUS        7
+
+/*
+ * Window Styles
+ */
+#define WS_OVERLAPPED       0x00000000L
+#define WS_POPUP            0x80000000L
+#define WS_CHILD            0x40000000L
+#define WS_MINIMIZE         0x20000000L
+#define WS_VISIBLE          0x10000000L
+#define WS_DISABLED         0x08000000L
+#define WS_CLIPSIBLINGS     0x04000000L
+#define WS_CLIPCHILDREN     0x02000000L
+#define WS_MAXIMIZE         0x01000000L
+#define WS_CAPTION          0x00C00000L     /* WS_BORDER | WS_DLGFRAME  */
+#define WS_BORDER           0x00800000L
+#define WS_DLGFRAME         0x00400000L
+#define WS_VSCROLL          0x00200000L
+#define WS_HSCROLL          0x00100000L
+#define WS_SYSMENU          0x00080000L
+#define WS_THICKFRAME       0x00040000L
+#define WS_GROUP            0x00020000L
+#define WS_TABSTOP          0x00010000L
+
+#define WS_MINIMIZEBOX      0x00020000L
+#define WS_MAXIMIZEBOX      0x00010000L
+
+
+#define WS_TILED            WS_OVERLAPPED
+#define WS_ICONIC           WS_MINIMIZE
+#define WS_SIZEBOX          WS_THICKFRAME
+#define WS_TILEDWINDOW      WS_OVERLAPPEDWINDOW
+
+ /*
+  * SetWindowsHook() codes
+  */
+#define WH_MIN              (-1)
+#define WH_MSGFILTER        (-1)
+#define WH_JOURNALRECORD    0
+#define WH_JOURNALPLAYBACK  1
+#define WH_KEYBOARD         2
+#define WH_GETMESSAGE       3
+#define WH_CALLWNDPROC      4
+#define WH_CBT              5
+#define WH_SYSMSGFILTER     6
+#define WH_MOUSE            7
 
 typedef struct _GUID {
 	unsigned long  Data1;

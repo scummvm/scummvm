@@ -122,8 +122,12 @@ MODULE_OBJS = \
 	hodjnpodj/gfx/cursor.o \
 	hodjnpodj/gfx/gfx_surface.o \
 	hodjnpodj/gfx/palette.o \
+	hodjnpodj/hnplibs/audiocfg.o \
+	hodjnpodj/hnplibs/cmessbox.o \
 	hodjnpodj/hnplibs/dibapi.o \
 	hodjnpodj/hnplibs/dibdoc.o \
+	hodjnpodj/hnplibs/mainmenu.o \
+	hodjnpodj/hnplibs/rules.o \
 	hodjnpodj/libs/settings.o \
 	hodjnpodj/libs/vector.o \
 	hodjnpodj/views/dialog.o \

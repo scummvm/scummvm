@@ -156,6 +156,67 @@ namespace MFC {
 /* GetWindowWord */
 #define GWW_HINSTANCE (-6)
 
+/* Font Families */
+#define FF_DONTCARE         (0<<4)  /* Don't care or don't know. */
+#define FF_ROMAN            (1<<4)  /* Variable stroke width, serifed. */
+									/* Times Roman, Century Schoolbook, etc. */
+#define FF_SWISS            (2<<4)  /* Variable stroke width, sans-serifed. */
+									/* Helvetica, Swiss, etc. */
+#define FF_MODERN           (3<<4)  /* Constant stroke width, serifed or sans-serifed. */
+									/* Pica, Elite, Courier, etc. */
+#define FF_SCRIPT           (4<<4)  /* Cursive, etc. */
+#define FF_DECORATIVE       (5<<4)  /* Old English, etc. */
+
+/* Font Weights */
+enum FontWeight {
+	FW_DONTCARE         = 0,
+	FW_THIN             = 100,
+	FW_EXTRALIGHT       = 200,
+	FW_LIGHT            = 300,
+	FW_NORMAL           = 400,
+	FW_MEDIUM           = 500,
+	FW_SEMIBOLD         = 600,
+	FW_BOLD             = 700,
+	FW_EXTRABOLD        = 800,
+	FW_HEAVY            = 900,
+
+	FW_ULTRALIGHT       = FW_EXTRALIGHT,
+	FW_REGULAR          = FW_NORMAL,
+	FW_DEMIBOLD         = FW_SEMIBOLD,
+	FW_ULTRABOLD        = FW_EXTRABOLD,
+	FW_BLACK            = FW_HEAVY
+};
+
+
+#define OUT_DEFAULT_PRECIS          0
+#define OUT_STRING_PRECIS           1
+#define OUT_CHARACTER_PRECIS        2
+#define OUT_STROKE_PRECIS           3
+#define OUT_TT_PRECIS               4
+#define OUT_DEVICE_PRECIS           5
+#define OUT_RASTER_PRECIS           6
+#define OUT_TT_ONLY_PRECIS          7
+#define OUT_OUTLINE_PRECIS          8
+#define OUT_SCREEN_OUTLINE_PRECIS   9
+#define OUT_PS_ONLY_PRECIS          10
+
+#define DEFAULT_QUALITY         0
+#define DRAFT_QUALITY           1
+#define PROOF_QUALITY           2
+#define NONANTIALIASED_QUALITY  3
+#define ANTIALIASED_QUALITY     4
+
+/* Background Modes */
+#define TRANSPARENT         1
+#define OPAQUE              2
+#define BKMODE_LAST         2
+
+/*
+ * Standard Cursor IDs
+ */
+#define IDC_NONE			0
+#define IDC_ARROW           1
+
 typedef struct tagBITMAPINFOHEADER {
 	DWORD      biSize;
 	LONG       biWidth;
@@ -280,6 +341,7 @@ extern int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestH
 	CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, DWORD rop);
 
 extern WORD GetWindowWord(HWND hWnd, int nIndex);
+extern int WINAPI AddFontResource(LPCSTR fontName);
 
 } // namespace MFC
 } // namespace Bagel

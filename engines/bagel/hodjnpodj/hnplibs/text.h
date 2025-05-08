@@ -58,8 +58,7 @@ namespace HodjNPodj {
 #define TEXT_BLACK			FW_BLACK
 #define TEXT_HEAVY			FW_HEAVY
 
-class CText : public CObject
-{
+class CText : public CObject {
 	DECLARE_DYNCREATE(CText)
 
 // Constructors
@@ -113,7 +112,6 @@ static	BOOL	m_bFontLoaded;      // font loaded flag
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
-
 };
 
 } // namespace HodjNPodj

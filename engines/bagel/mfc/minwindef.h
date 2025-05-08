@@ -29,6 +29,8 @@
 namespace Bagel {
 namespace MFC {
 
+#define ASSERT assert
+
 #undef FAR
 #undef  NEAR
 #define FAR
@@ -92,7 +94,11 @@ typedef UINT_PTR            WPARAM;
 typedef LONG_PTR            LPARAM;
 typedef LONG_PTR            LRESULT;
 
+typedef LRESULT(CALLBACK *HOOKPROC)(int code, WPARAM wParam, LPARAM lParam);
 typedef LRESULT(CALLBACK *WNDPROC)(HWND, UINT, WPARAM, LPARAM);
+typedef INT_PTR(FAR WINAPI *FARPROC)();
+typedef INT_PTR(NEAR WINAPI *NEARPROC)();
+typedef INT_PTR(WINAPI *PROC)();
 
 #ifndef max
 #define max(a,b)            (((a) > (b)) ? (a) : (b))
