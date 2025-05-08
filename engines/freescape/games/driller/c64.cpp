@@ -158,7 +158,7 @@ void DrillerEngine::loadAssetsC64FullGame() {
 	} else
 		error("Unknown C64 release");
 
-	_playerSid = new DrillerSIDPlayer(_mixer);
+	//_playerSid = new DrillerSIDPlayer(_mixer);
 }
 
 
@@ -236,6 +236,14 @@ void DrillerEngine::drawC64UI(Graphics::Surface *surface) {
 		Common::Rect shieldBar(88 - 4  - shield, 180 - 4, 88 - 4, 186 - 4);
 		surface->fillRect(shieldBar, green);
 	}
+
+	_gfx->readFromPalette(7, r, g, b);
+	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	surface->fillRect(Common::Rect(87, 156, 104, 166), back);
+	drawCompass(surface, 94, 156, _yaw - 30, 11, 75, yellow);
+	surface->fillRect(Common::Rect(224, 151, 235, 160), back);
+	drawCompass(surface, 223, 156, _pitch - 30, 12, 60, yellow);
 }
 
 } // End of namespace Freescape

@@ -277,13 +277,13 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gameStateVars[0x1f] = 0;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
-		if (isC64())
+		/*if (isC64())
 			_playerSid->startMusic();
-		else {
+		else {*/
 			playSound(_soundIndexStart, true);
 			// Start playing music, if any, in any supported format
 			playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme");
-		}
+		//}
 
 	} else if (areaID == 127) {
 		assert(entranceID == 0);
@@ -1016,7 +1016,8 @@ void DrillerEngine::drawCompass(Graphics::Surface *surface, int x, int y, double
 	double h = magnitude * sin(-degrees * degtorad);
 
 	surface->drawLine(x, y, x+(int)w, y+(int)h, color);
-
+	if (isC64())
+		surface->drawLine(x+1, y, x+1+(int)w, y+(int)h, color);
 
 	degrees = degrees - fov;
 	if (degrees < 0)
@@ -1026,7 +1027,8 @@ void DrillerEngine::drawCompass(Graphics::Surface *surface, int x, int y, double
 	h = magnitude * sin(-degrees * degtorad);
 
 	surface->drawLine(x, y, x+(int)w, y+(int)h, color);
-	//surface->drawLine(x, y, x+(int)-w, y+(int)h, color);
+	if (isC64())
+		surface->drawLine(x+1, y, x+1+(int)w, y+(int)h, color);
 }
 
 
