@@ -6564,8 +6564,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("compconf", "Windows 3.1", "CCWIN311.EXE", "t:d2f5116b14bb8aaeaeae3d3d7e55d40b", 918905,  500),
 	WINGAME1("compconf", "Windows 95",  "CCWIN95.EXE",  "t:4cb9a6383932f6f11946a5692d82bcf0", 1395275, 500),
 
-	WINGAME2t("cracking", "", "crack.exe", "c2093c2b5dc9d3dc5b491e4df027e202", 1842361,
-							  "ufog8.dxr", "7c8222a010d40b59dd96a97f0b4fa974", 542472, 500),
+	WINGAME2tf("cracking", "", "crack.exe", "c2093c2b5dc9d3dc5b491e4df027e202", 1842361,
+							  "ufog8.dxr", "7c8222a010d40b59dd96a97f0b4fa974", 542472, 500, GF_32BPP),
 
 	// Mac versions require installation
 	// Original Mac german filename is Kreuzzüge

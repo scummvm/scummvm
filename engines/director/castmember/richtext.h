@@ -22,6 +22,8 @@
 #ifndef DIRECTOR_CASTMEMBER_RICHTEXT_H
 #define DIRECTOR_CASTMEMBER_RICHTEXT_H
 
+#include "graphics/pixelformat.h"
+
 #include "director/types.h"
 #include "director/castmember/castmember.h"
 
@@ -47,6 +49,7 @@ public:
 
 private:
 	Common::U32String _plainText;
+	Graphics::PixelFormat _pf32;
 	uint32 _foreColor;
 	uint32 _bgColor;
 	Picture *_picture;

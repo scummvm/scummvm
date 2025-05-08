@@ -37,18 +37,28 @@ namespace Director {
 RichTextCastMember::RichTextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
 
+	_pf32 = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+
 	if (version >= kFileVer500 && version < kFileVer600) {
+		if (debugChannelSet(5, kDebugLoading)) {
+			debugC(5, kDebugLoading, "RichTextCastMember():");
+			stream.hexdump(stream.size());
+		}
+
 		_initialRect = Movie::readRect(stream);
 		_boundingRect = Movie::readRect(stream);
-		if (debugChannelSet(5, kDebugLoading)) {
-			debugC(5, kDebugLoading, "RichTextCastMember(): unk");
-			stream.hexdump(8);
-		}
 		stream.seek(8, SEEK_CUR);
-		_foreColor = stream.readUint32BE();
-		_bgColor = (stream.readUint16BE() >> 8) << 16;
-		_bgColor |= (stream.readUint16BE() >> 8) << 8;
-		_bgColor |= (stream.readUint16BE() >> 8);
+		uint8 r = 0, g = 0, b = 0;
+		stream.readByte();
+		r = stream.readByte();
+		g = stream.readByte();
+		b = stream.readByte();
+		_foreColor = _pf32.RGBToColor(r, g, b);
+
+		r = (stream.readUint16BE() >> 8);
+		g = (stream.readUint16BE() >> 8);
+		b = (stream.readUint16BE() >> 8);
+		_bgColor = _pf32.RGBToColor(r, g, b);
 	} else {
 		warning("RichTextCastMember(): >D5 isn't handled");
 	}
@@ -105,17 +115,14 @@ void RichTextCastMember::load() {
 		warning("RichTextCastMember::load(): rte1tid %i isn't loaded, no plain text!", rte1id);
 	}
 	if (_cast->_loadedRTE2s.contains(rte2id)) {
-		const RTE2 *rte2 =  _cast->_loadedRTE2s.getVal(rte2id);
-		// Create a 24-bit temporary surface, no alpha.
-		Graphics::ManagedSurface temp;
-		temp.create((int16)rte2->width, (int16)rte2->height, Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0));
-		// Fill it with the background colour
-		temp.fillRect(Common::Rect((int16)rte2->width, (int16)rte2->height), _bgColor);
-		// Blit the alpha text map
-		temp.blitFrom(*rte2->_surface, nullptr);
 		_picture = new Picture();
-		_picture->_surface.copyFrom(temp);
-		temp.free();
+		const RTE2 *rte2 =  _cast->_loadedRTE2s.getVal(rte2id);
+		Graphics::ManagedSurface *surface = rte2->createSurface(_foreColor, _bgColor, _pf32);
+		if (surface) {
+			_picture->_surface.copyFrom(surface->rawSurface());
+			surface->free();
+			delete surface;
+		}
 	} else {
 		warning("RichTextCastMember::load(): rte2tid %i isn't loaded, no bitmap text!", rte2id);
 	}
