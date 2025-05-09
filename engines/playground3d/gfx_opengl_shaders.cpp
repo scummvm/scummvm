@@ -230,7 +230,6 @@ void ShaderRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &r
 	glBlendFunc(GL_ONE, GL_ZERO);
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
-	glDisable(GL_TEXTURE_2D);
 
 	auto rotateMatrix = (Math::Quaternion::fromEuler(roll.x(), roll.y(), roll.z(), Math::EO_XYZ)).inverse().toMatrix();
 	_cubeShader->use();
@@ -252,7 +251,6 @@ void ShaderRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 	glBlendFunc(GL_ONE, GL_ZERO);
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
-	glDisable(GL_TEXTURE_2D);
 
 	auto rotateMatrix = (Math::Quaternion::fromEuler(roll.x(), roll.y(), roll.z(), Math::EO_XYZ)).inverse().toMatrix();
 	_offsetShader->use();
@@ -275,7 +273,6 @@ void ShaderRenderer::dimRegionInOut(float fade) {
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
-	glDisable(GL_TEXTURE_2D);
 
 	_fadeShader->use();
 	_fadeShader->setUniform1f("alphaLevel", 1.0 - fade);
@@ -288,7 +285,6 @@ void ShaderRenderer::drawInViewport() {
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
-	glDisable(GL_TEXTURE_2D);
 
 	_viewportShader->use();
 	_viewportShader->setUniform("offset", Math::Vector2d(0.0f, 0.0f));
