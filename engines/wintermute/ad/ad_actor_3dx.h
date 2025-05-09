@@ -49,6 +49,7 @@ public:
 	DXVector3 _partOffset;
 
 	bool displayShadowVolume();
+	bool displayFlatShadow();
 	bool restoreDeviceObjects() override;
 	bool invalidateDeviceObjects() override;
 	int32 _stateAnimChannel;

@@ -396,10 +396,13 @@ bool AdActor3DX::display() {
 	if (shadowType == SHADOW_STENCIL) {
 		displayShadowVolume();
 	} else if (shadowType > SHADOW_NONE) {
-		DXVector3 lightPos = DXVector3(_shadowLightPos._x * _scale3D,
-									   _shadowLightPos._y * _scale3D,
-									   _shadowLightPos._z * _scale3D);
-		_gameRef->_renderer3D->displayShadow(this, &lightPos, true);
+		bool simpleShadow = shadowType <= SHADOW_SIMPLE;
+		if (!_gameRef->_supportsRealTimeShadows)
+			simpleShadow = true;
+		if (simpleShadow)
+			_gameRef->_renderer3D->displaySimpleShadow(this);
+		else
+			displayFlatShadow();
 	}
 
 	_gameRef->_renderer3D->setSpriteBlendMode(_blendMode, true);
@@ -521,6 +524,38 @@ bool AdActor3DX::displayShadowVolume() {
 
 	// finally display all the shadows rendered into stencil buffer
 	getShadowVolume()->renderToScene();
+
+	return true;
+}
+
+bool AdActor3DX::displayFlatShadow() {
+	DXMatrix shadowMat;
+	DXVector3 pos;
+	DXVector3 target;
+
+	if (!_xmodel) {
+		return false;
+	}
+
+	DXVector3 lightPos = DXVector3(_shadowLightPos._x * _scale3D,
+								   _shadowLightPos._y * _scale3D,
+								   _shadowLightPos._z * _scale3D);
+	pos = _posVector + lightPos;
+	target = _posVector;
+
+	DXMatrix origWorld;
+	_gameRef->_renderer3D->getWorldTransform(&origWorld);
+
+	DXVector4 lightVector = { lightPos._x, lightPos._y, lightPos._z, 0 };
+	DXPlane plane = { 0, 1, 0, -target._y };
+
+	DXMatrixShadow(&shadowMat, &lightVector, &plane);
+	DXMatrix shadowWorld = _worldMatrix * shadowMat;
+
+	_gameRef->_renderer3D->setWorldTransform(shadowWorld);
+	_xmodel->renderFlatShadowModel(_shadowColor);
+
+	_gameRef->_renderer3D->setWorldTransform(origWorld);
 
 	return true;
 }

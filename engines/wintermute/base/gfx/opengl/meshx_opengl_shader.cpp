@@ -167,7 +167,7 @@ bool XMeshOpenGLShader::render(XModel *model) {
 	return true;
 }
 
-bool XMeshOpenGLShader::renderFlatShadowModel() {
+bool XMeshOpenGLShader::renderFlatShadowModel(uint32 shadowColor) {
 	float *vertexData = (float *)_blendedMesh->getVertexBuffer().ptr();
 	uint32 vertexSize = DXGetFVFVertexSize(_blendedMesh->getFVF()) / sizeof(float);
 	if (vertexData == nullptr) {

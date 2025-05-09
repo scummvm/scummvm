@@ -55,7 +55,7 @@ public:
 	bool findBones(FrameNode *rootFrame);
 	virtual bool update(FrameNode *parentFrame);
 	virtual bool render(XModel *model) = 0;
-	virtual bool renderFlatShadowModel() = 0;
+	virtual bool renderFlatShadowModel(uint32 shadowColor) = 0;
 	bool updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth);
 
 	bool pickPoly(DXVector3 *pickRayOrig, DXVector3 *pickRayDir);

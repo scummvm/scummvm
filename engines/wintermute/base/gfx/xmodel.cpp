@@ -511,7 +511,7 @@ bool XModel::render() {
 	}
 }
 
-bool XModel::renderFlatShadowModel() {
+bool XModel::renderFlatShadowModel(uint32 shadowColor) {
 	if (_rootFrame) {
 		if(_owner && !_owner->_drawBackfaces) {
 			_gameRef->_renderer3D->enableCulling();
@@ -519,7 +519,7 @@ bool XModel::renderFlatShadowModel() {
 			_gameRef->_renderer3D->disableCulling();
 		}
 
-		return _rootFrame->renderFlatShadowModel();
+		return _rootFrame->renderFlatShadowModel(shadowColor);
 	} else {
 		return false;
 	}

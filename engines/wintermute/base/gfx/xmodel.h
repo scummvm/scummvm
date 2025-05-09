@@ -206,7 +206,7 @@ public:
 
 	bool update() override;
 	bool render();
-	bool renderFlatShadowModel();
+	bool renderFlatShadowModel(uint32 shadowColor);
 	bool reset();
 
 	bool updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth);

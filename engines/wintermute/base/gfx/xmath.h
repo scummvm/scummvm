@@ -111,6 +111,7 @@ struct DXPlane {
 	float           _d;
 
 	DXPlane() {}
+	DXPlane(float fa, float fb, float fc, float fd);
 };
 
 struct DXMatrix {
@@ -176,6 +177,7 @@ DXVector3 *DXVec3Project(DXVector3 *pout, const DXVector3 *pv, const DXViewport 
                          const DXMatrix *pprojection, const DXMatrix *pview, const DXMatrix *pworld);
 DXMatrix *DXMatrixTranspose(DXMatrix *pout, const DXMatrix *pm);
 DXVector4 *DXVec4Transform(DXVector4 *pout, const DXVector4 *pv, const DXMatrix *pm);
+DXMatrix *DXMatrixShadow(DXMatrix *pout, const DXVector4 *plight, const DXPlane *pplane);
 
 static inline DXMatrix *DXMatrixIdentity(DXMatrix *pout) {
 	(*pout)._m[0][1] = 0.0f;
@@ -232,6 +234,15 @@ static inline DXVector3 *DXVec3Subtract(DXVector3 *pout, const DXVector3 *pv1, c
 static inline float DXVec3Length(const DXVector3 *pv) {
 	return sqrtf(pv->_x * pv->_x + pv->_y * pv->_y + pv->_z * pv->_z);
 }
+
+static inline float DXVec4Dot(const DXVector4 *pv1, const DXVector4 *pv2) {
+	return (pv1->_x) * (pv2->_x) + (pv1->_y) * (pv2->_y) + (pv1->_z) * (pv2->_z) + (pv1->_w) * (pv2->_w);
+}
+
+static inline float DXPlaneDot(const DXPlane *pp, const DXVector4 *pv) {
+	return ((pp->_a) * (pv->_x) + (pp->_b) * (pv->_y) + (pp->_c) * (pv->_z) + (pp->_d) * (pv->_w) );
+}
+
 
 } // End of namespace Wintermute
 

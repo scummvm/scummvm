@@ -356,18 +356,18 @@ bool FrameNode::render(XModel *model) {
 	return true;
 }
 
-bool FrameNode::renderFlatShadowModel() {
+bool FrameNode::renderFlatShadowModel(uint32 shadowColor) {
 	bool res = true;
 
 	for (uint32 i = 0; i < _meshes.size(); i++) {
-		res = _meshes[i]->renderFlatShadowModel();
+		res = _meshes[i]->renderFlatShadowModel(shadowColor);
 		if (!res) {
 			return res;
 		}
 	}
 
 	for (uint32 i = 0; i < _frames.size(); i++) {
-		res = _frames[i]->renderFlatShadowModel();
+		res = _frames[i]->renderFlatShadowModel(shadowColor);
 		if (!res) {
 			return res;
 		}

@@ -78,7 +78,6 @@ public:
 	virtual bool enableShadows() = 0;
 	virtual bool disableShadows() = 0;
 	virtual bool stencilSupported() = 0;
-	virtual void displayShadow(BaseObject *object, const DXVector3 *light, bool lightPosRelative) = 0;
 	virtual bool invalidateTexture(BaseSurfaceOpenGL3D *texture) = 0;
 
 	Graphics::TSpriteBlendMode _blendMode;
@@ -162,6 +161,8 @@ public:
 	virtual void renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
 	                                 const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) = 0;
 	virtual void renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) = 0;
+
+	virtual void displaySimpleShadow(BaseObject *object) = 0;
 
 	virtual void postfilter() = 0;
 	virtual void setPostfilter(PostFilter postFilter) = 0;

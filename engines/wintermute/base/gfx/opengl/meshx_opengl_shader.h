@@ -46,7 +46,7 @@ public:
 
 	bool loadFromXData(const Common::String &filename, XFileData *xobj) override;
 	bool render(XModel *model) override;
-	bool renderFlatShadowModel() override;
+	bool renderFlatShadowModel(uint32 shadowColor) override;
 	bool update(FrameNode *parentFrame) override;
 
 private:

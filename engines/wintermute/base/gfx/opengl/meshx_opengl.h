@@ -43,7 +43,7 @@ public:
 	~XMeshOpenGL() override;
 
 	bool render(XModel *model) override;
-	bool renderFlatShadowModel() override;
+	bool renderFlatShadowModel(uint32 shadowColor) override;
 
 private:
 	void renderEffect(Material *material);

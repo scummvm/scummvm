@@ -187,6 +187,13 @@ DXQuaternion::operator const float* () const {
 	return (const float *)&_x;
 }
 
+DXPlane::DXPlane(float fa, float fb, float fc, float fd) {
+	_a = fa;
+	_b = fb;
+	_c = fc;
+	_d = fd;
+}
+
 DXMatrix *DXMatrixTranspose(DXMatrix *pout, const DXMatrix *pm) {
 	uint32 i, j;
 	DXMatrix m;
@@ -658,6 +665,50 @@ DXMatrix *DXMatrixOrthoOffCenterLH(DXMatrix *pout, float l, float r, float b, fl
 	pout->_m[3][0] = -1.0f -2.0f * l / (r - l);
 	pout->_m[3][1] = 1.0f + 2.0f * t / (b - t);
 	pout->_m[3][2] = zn / (zn -zf);
+	return pout;
+}
+
+DXPlane *DXPlaneNormalize(DXPlane *out, const DXPlane *p) {
+	float norm;
+	
+	norm = sqrtf(p->_a * p->_a + p->_b * p->_b + p->_c * p->_c);
+	if (norm) {
+		out->_a = p->_a / norm;
+		out->_b = p->_b / norm;
+		out->_c = p->_c / norm;
+		out->_d = p->_d / norm;
+	} else {
+		out->_a = 0.0f;
+		out->_b = 0.0f;
+		out->_c = 0.0f;
+		out->_d = 0.0f;
+	}
+	
+	return out;
+}
+
+DXMatrix *DXMatrixShadow(DXMatrix *pout, const DXVector4 *plight, const DXPlane *pplane) {
+	DXPlane nplane;
+	float dot;
+
+	DXPlaneNormalize(&nplane, pplane);
+	dot = DXPlaneDot(&nplane, plight);
+	pout->_m[0][0] = dot - nplane._a * plight->_x;
+	pout->_m[0][1] = -nplane._a * plight->_y;
+	pout->_m[0][2] = -nplane._a * plight->_z;
+	pout->_m[0][3] = -nplane._a * plight->_w;
+	pout->_m[1][0] = -nplane._b * plight->_x;
+	pout->_m[1][1] = dot - nplane._b * plight->_y;
+	pout->_m[1][2] = -nplane._b * plight->_z;
+	pout->_m[1][3] = -nplane._b * plight->_w;
+	pout->_m[2][0] = -nplane._c * plight->_x;
+	pout->_m[2][1] = -nplane._c * plight->_y;
+	pout->_m[2][2] = dot - nplane._c * plight->_z;
+	pout->_m[2][3] = -nplane._c * plight->_w;
+	pout->_m[3][0] = -nplane._d * plight->_x;
+	pout->_m[3][1] = -nplane._d * plight->_y;
+	pout->_m[3][2] = -nplane._d * plight->_z;
+	pout->_m[3][3] = dot - nplane._d * plight->_w;
 	return pout;
 }
 

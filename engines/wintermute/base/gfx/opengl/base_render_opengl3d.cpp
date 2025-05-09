@@ -682,7 +682,7 @@ BaseImage *BaseRenderOpenGL3D::takeScreenshot() {
 }
 
 bool BaseRenderOpenGL3D::enableShadows() {
-	_gameRef->_supportsRealTimeShadows = false;
+	_gameRef->_supportsRealTimeShadows = true;
 	return true;
 }
 
@@ -690,21 +690,10 @@ bool BaseRenderOpenGL3D::disableShadows() {
 	return true;
 }
 
-void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const DXVector3 *lightPos, bool lightPosRelative) {
-	if (!_ready || !object || !lightPos)
+void BaseRenderOpenGL3D::displaySimpleShadow(BaseObject *object) {
+	if (!_ready || !object)
 		return;
 
-	// redirect simple shadow if needed
-	bool simpleShadow = _gameRef->getMaxShadowType(object) <= SHADOW_SIMPLE;
-	if (!_gameRef->_supportsRealTimeShadows)
-		simpleShadow = true;
-	if (simpleShadow)
-		return renderSimpleShadow(object);
-
-	// TODO: to be implemented
-}
-
-void BaseRenderOpenGL3D::renderSimpleShadow(BaseObject *object) {
 	BaseSurface *shadowImage;
 	if (object->_shadowImage) {
 		shadowImage = object->_shadowImage;

@@ -75,7 +75,6 @@ public:
 
 	bool enableShadows() override;
 	bool disableShadows() override;
-	void displayShadow(BaseObject *object, const DXVector3 *lightPos, bool lightPosRelative) override;
 	bool stencilSupported() override;
 
 	void dumpData(const char *filename) override {}
@@ -143,7 +142,7 @@ public:
 	OpenGL::Shader *_shadowMaskShader;
 
 private:
-	void renderSimpleShadow(BaseObject *object);
+	void displaySimpleShadow(BaseObject *object) override;
 
 	DXMatrix _glProjectionMatrix;
 	float _alphaRef;

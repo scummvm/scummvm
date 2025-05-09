@@ -50,7 +50,7 @@ public:
 	bool updateMeshes();
 	bool resetMatrices();
 	bool render(XModel *model);
-	bool renderFlatShadowModel();
+	bool renderFlatShadowModel(uint32 shadowColor);
 	bool updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth);
 
 	bool loadFromXData(const Common::String &filename, XModel *model, XFileData *xobj);

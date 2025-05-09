@@ -85,7 +85,6 @@ public:
 
 	bool enableShadows() override;
 	bool disableShadows() override;
-	void displayShadow(BaseObject *object, const DXVector3 *lightPos, bool lightPosRelative) override;
 	bool stencilSupported() override;
 
 	void dumpData(const char *filename) override {}
@@ -152,7 +151,7 @@ public:
 	void setPostfilter(PostFilter postFilter) override { _postFilterMode = postFilter; };
 
 private:
-	void renderSimpleShadow(BaseObject *object);
+	void displaySimpleShadow(BaseObject *object) override;
 
 	SimpleShadowVertex _simpleShadow[4]{};
 	Common::Array<DXVector4> _lightPositions;
