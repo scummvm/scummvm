@@ -35,8 +35,8 @@ struct Point32 {
 	Point32(int32 x1, int32 y1) : x(x1), y(y1) {}
 	bool operator==(const Point32 &p) const { return x == p.x && y == p.y; }
 	bool operator!=(const Point32 &p) const { return x != p.x || y != p.y; }
-	Point32 operator+(const Point32 &delta) const {	return Point32(x + delta.x, y + delta.y);	}
-	Point32 operator-(const Point32 &delta) const {	return Point32(x - delta.x, y - delta.y);	}
+	Point32 operator+(const Point32 &delta) const { return Point32(x + delta.x, y + delta.y); }
+	Point32 operator-(const Point32 &delta) const { return Point32(x - delta.x, y - delta.y); }
 
 	Point32 &operator+=(const Point32 &delta) {
 		x += delta.x;

@@ -31,8 +31,8 @@ struct FloatPoint {
 	FloatPoint(float x1, float y1) : x(x1), y(y1) {}
 	bool operator==(const FloatPoint &p) const { return x == p.x && y == p.y; }
 	bool operator!=(const FloatPoint  &p) const { return x != p.x || y != p.y; }
-	FloatPoint operator+(const FloatPoint &delta) const { return FloatPoint (x + delta.x, y + delta.y);	}
-	FloatPoint operator-(const FloatPoint &delta) const { return FloatPoint (x - delta.x, y - delta.y);	}
+	FloatPoint operator+(const FloatPoint &delta) const { return FloatPoint (x + delta.x, y + delta.y); }
+	FloatPoint operator-(const FloatPoint &delta) const { return FloatPoint (x - delta.x, y - delta.y); }
 
 	FloatPoint& operator+=(const FloatPoint &delta) {
 		x += delta.x;
