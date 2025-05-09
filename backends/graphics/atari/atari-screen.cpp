@@ -24,48 +24,43 @@
 #include <mint/falcon.h>
 
 #include "atari-graphics.h"
-#include "atari-graphics-superblitter.h"
+#include "atari-supervidel.h"
+#include "atari-surface.h"
 #include "backends/platform/atari/atari-debug.h"
 
 Screen::Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format, const Palette *palette_)
 	: _manager(manager)
-	, cursor(manager, this, width / 2, height / 2)
+	, cursor(manager, this)
 	, palette(palette_) {
-	const AtariGraphicsManager::AtariMemAlloc &allocFunc = _manager->getStRamAllocFunc();
 
-	surf.init(
-		width + (_manager->_tt ? 0 : 2 * MAX_HZ_SHAKE),
-		height + 2 * MAX_V_SHAKE,
-		(width + (_manager->_tt ? 0 : 2 * MAX_HZ_SHAKE)) * _manager->getBitsPerPixel(format) / 8,
-		nullptr,
-		format);
+	const int bitsPerPixel = _manager->getBitsPerPixel(format);
 
-	void *pixelsUnaligned = allocFunc(sizeof(uintptr) + (surf.h * surf.pitch) + ALIGN - 1);
-	if (!pixelsUnaligned) {
-		error("Failed to allocate memory in ST RAM");
+	if (g_hasSuperVidel) {
+		surf.reset(new SuperVidelSurface(
+			width + 2 * MAX_HZ_SHAKE,
+			height + 2 * MAX_V_SHAKE,
+			format,
+			bitsPerPixel));
+		_offsettedSurf.reset(new SuperVidelSurface(bitsPerPixel));
+	} else {
+		surf.reset(new AtariSurface(
+			width + (_manager->_tt ? 0 : 2 * MAX_HZ_SHAKE),
+			height + 2 * MAX_V_SHAKE,
+			format,
+			bitsPerPixel));
+		_offsettedSurf.reset(new AtariSurface(bitsPerPixel));
 	}
 
-	// TODO: use mspace_calloc similar as what we do with SuperVidel
-	surf.setPixels((void *)(((uintptr)pixelsUnaligned + sizeof(uintptr) + ALIGN - 1) & (-ALIGN)));
-
-	// store the unaligned pointer for later release
-	*((uintptr *)surf.getPixels() - 1) = (uintptr)pixelsUnaligned;
-
-	memset(surf.getPixels(), 0, surf.h * surf.pitch);
-
-	_offsettedSurf.init(
-		width, height, surf.pitch,
-		surf.getBasePtr((surf.w - width) / 2, (surf.h - height) / 2),
-		surf.format);
+	_offsettedSurf->create(
+		*surf,
+		Common::Rect(
+			Common::Point(
+				(surf->w - width) / 2,		// left
+				(surf->h - height) / 2),	// top
+			width, height));
 }
 
-Screen::~Screen() {
-	const AtariGraphicsManager::AtariMemFree &freeFunc = _manager->getStRamFreeFunc();
-
-	freeFunc((void *)*((uintptr *)surf.getPixels() - 1));
-}
-
-void Screen::reset(int width, int height, int bitsPerPixel, const Graphics::Surface &boundingSurf, int xOffset, bool resetCursorPosition) {
+void Screen::reset(int width, int height, const Graphics::Surface &boundingSurf, int xOffset, bool resetCursorPosition) {
 	_xOffset = xOffset;
 
 	clearDirtyRects();
@@ -75,67 +70,72 @@ void Screen::reset(int width, int height, int bitsPerPixel, const Graphics::Surf
 	rez = -1;
 	mode = -1;
 
+	const int bitsPerPixel = _manager->getBitsPerPixel(surf->format);
+
 	// erase old screen
-	_offsettedSurf.fillRect(Common::Rect(_offsettedSurf.w, _offsettedSurf.h), 0);
+	_offsettedSurf->fillRect(_offsettedSurf->getBounds(), 0);
 
 	if (_manager->_tt) {
 		if (width <= 320 && height <= 240) {
-			surf.w = 320;
-			surf.h = 240 + 2 * MAX_V_SHAKE;
-			surf.pitch = 2 * surf.w * bitsPerPixel / 8;
+			surf->w = 320;
+			surf->h = 240 + 2 * MAX_V_SHAKE;
+			surf->pitch = 2 * surf->w * bitsPerPixel / 8;
 			rez = kRezValueTTLow;
 		} else {
-			surf.w = 640;
-			surf.h = 480 + 2 * MAX_V_SHAKE;
-			surf.pitch = surf.w * bitsPerPixel / 8;
+			surf->w = 640;
+			surf->h = 480 + 2 * MAX_V_SHAKE;
+			surf->pitch = surf->w * bitsPerPixel / 8;
 			rez = kRezValueTTMid;
 		}
 	} else {
 		mode = VsetMode(VM_INQUIRE) & PAL;
 
 		if (_manager->_vgaMonitor) {
-			mode |= VGA | (bitsPerPixel == 4 ? BPS4 : (hasSuperVidel() ? BPS8C : BPS8));
+			mode |= VGA | (bitsPerPixel == 4 ? BPS4 : (g_hasSuperVidel ? BPS8C : BPS8));
 
 			if (width <= 320 && height <= 240) {
-				surf.w = 320;
-				surf.h = 240;
+				surf->w = 320;
+				surf->h = 240;
 				mode |= VERTFLAG | COL40;
 			} else {
-				surf.w = 640;
-				surf.h = 480;
+				surf->w = 640;
+				surf->h = 480;
 				mode |= COL80;
 			}
 		} else {
 			mode |= TV | (bitsPerPixel == 4 ? BPS4 : BPS8);
 
 			if (width <= 320 && height <= 200) {
-				surf.w = 320;
-				surf.h = 200;
+				surf->w = 320;
+				surf->h = 200;
 				mode |= COL40;
 			} else if (width <= 320*1.2 && height <= 200*1.2) {
-				surf.w = 320*1.2;
-				surf.h = 200*1.2;
+				surf->w = 320*1.2;
+				surf->h = 200*1.2;
 				mode |= OVERSCAN | COL40;
 			} else if (width <= 640 && height <= 400) {
-				surf.w = 640;
-				surf.h = 400;
+				surf->w = 640;
+				surf->h = 400;
 				mode |= VERTFLAG | COL80;
 			} else {
-				surf.w = 640*1.2;
-				surf.h = 400*1.2;
+				surf->w = 640*1.2;
+				surf->h = 400*1.2;
 				mode |= VERTFLAG | OVERSCAN | COL80;
 			}
 		}
 
-		surf.w += 2 * MAX_HZ_SHAKE;
-		surf.h += 2 * MAX_V_SHAKE;
-		surf.pitch = surf.w * bitsPerPixel / 8;
+		surf->w += 2 * MAX_HZ_SHAKE;
+		surf->h += 2 * MAX_V_SHAKE;
+		surf->pitch = surf->w * bitsPerPixel / 8;
 	}
 
-	_offsettedSurf.init(
-		width, height, surf.pitch,
-		surf.getBasePtr((surf.w - width) / 2, (surf.h - height) / 2),
-		surf.format);
+	_offsettedSurf->create(
+		*surf,
+		Common::Rect(
+			Common::Point(
+				(surf->w - width) / 2,		// left
+				(surf->h - height) / 2),	// top
+			width, height));
 }
 
 void Screen::addDirtyRect(const Graphics::Surface &srcSurface, int x, int y, int w, int h, bool directRendering) {

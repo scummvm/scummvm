@@ -21,20 +21,17 @@
 
 #include "atari-cursor.h"
 
-#include <cassert>
-
 #include "atari-graphics.h"
 #include "atari-screen.h"
+#include "atari-supervidel.h"
+#include "atari-surface.h"
 //#include "backends/platform/atari/atari-debug.h"
 
 byte Cursor::_palette[256*3] = {};
 
-Cursor::Cursor(const AtariGraphicsManager *manager, const Screen *screen, int x, int y)
+Cursor::Cursor(const AtariGraphicsManager *manager, const Screen *screen)
 		: _manager(manager)
-		, _parentScreen(screen)
-		, _boundingSurf(screen->offsettedSurf)
-		, _x(x)
-		, _y(y) {
+		, _parentScreen(screen) {
 }
 
 void Cursor::update() {
@@ -219,7 +216,7 @@ void Cursor::saveBackground() {
 
 	// as this is used only for direct rendering, we don't need to worry about offsettedSurf
 	// having different dimensions than the source surface
-	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
+	const Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
 
 	//atari_debug("Cursor::saveBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
 
@@ -234,27 +231,27 @@ void Cursor::saveBackground() {
 }
 
 void Cursor::draw() {
-	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
-	const int dstBitsPerPixel     = _manager->getBitsPerPixel(dstSurface.format);
+	auto &dstSurface          = *_parentScreen->offsettedSurf;
+	const int dstBitsPerPixel = _manager->getBitsPerPixel(dstSurface.format);
 
 	//atari_debug("Cursor::draw: %d %d %d %d", _dstRect.left, _dstRect.top, _dstRect.width(), _dstRect.height());
 
 	if (_surfaceChanged || _srcRect.width() != _previousSrcRect.width()) {
 		_previousSrcRect = _srcRect;
 
-		// TODO: some sort of in-place C2P directly into convertSurfaceTo() ...
 		convertSurfaceTo(dstSurface.format);
-		{
-			// c2p in-place (will do nothing on regular Surface::copyRectToSurface)
-			Graphics::Surface surf;
-			surf.init(
-				_surface.w,
-				_surface.h,
-				_surface.pitch * dstBitsPerPixel / 8,	// 4bpp is not byte per pixel anymore
-				_surface.getPixels(),
-				_surface.format);
-			_manager->copyRectToSurface(
-				surf, _surface,
+
+		if (!g_hasSuperVidel) {
+			// C2P in-place (TODO: merge with convertSurfaceTo)
+			AtariSurface surf(dstBitsPerPixel);
+			surf.w = _surface.w;
+			surf.h = _surface.h;
+			surf.pitch = _surface.pitch * dstBitsPerPixel / 8;	// 4bpp is not byte per pixel anymore
+			surf.setPixels(_surface.getPixels());
+			surf.format = _surface.format;
+
+			surf.copyRectToSurface(
+				_surface,
 				0, 0,
 				Common::Rect(_surface.w, _surface.h));
 		}
@@ -262,8 +259,7 @@ void Cursor::draw() {
 
 	// don't use _srcRect.right as 'x2' as this must be aligned first
 	// (_surface.w is recalculated thanks to convertSurfaceTo())
-	_manager->drawMaskedSprite(
-		dstSurface,
+	dstSurface.drawMaskedSprite(
 		_surface, _surfaceMask,
 		_dstRect.left + _xOffset, _dstRect.top,
 		Common::Rect(0, _srcRect.top, _surface.w, _srcRect.bottom));
@@ -281,9 +277,9 @@ void Cursor::restoreBackground() {
 
 	// as this is used only for direct rendering, we don't need to worry about offsettedSurf
 	// having different dimensions than the source surface
-	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
+	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf->surfacePtr();
 
-	// restore native pixels (i.e. bitplanes)
+	// restore native bitplanes or pixels, so it must be a Graphics::Surface to copy to
 	dstSurface.copyRectToSurface(
 		_savedBackground,
 		_savedRect.left, _savedRect.top,

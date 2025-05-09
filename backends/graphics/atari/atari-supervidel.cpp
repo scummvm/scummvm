@@ -19,36 +19,48 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_ATARI_SUPERBLITTER_H
-#define BACKENDS_GRAPHICS_ATARI_SUPERBLITTER_H
+#include "atari-supervidel.h"
+
+#include "common/scummsys.h"
+
+bool g_hasSuperVidel = false;
 
 #ifdef USE_SUPERVIDEL
 
-#include <mint/cookie.h>
-#include <mint/falcon.h>
+#ifdef USE_SV_BLITTER
+int g_superVidelFwVersion = 0;
 
-// bits 9:0
-#define SV_VERSION	((volatile long *)0x8001007C)
+static bool isSuperBlitterLocked;
 
-inline static bool hasSuperVidel() {
-	// this works also on the TT
-	static bool hasSuperVidel = Getcookie(C_SupV, NULL) == C_FOUND && VgetMonitor() == MON_VGA;
-	return hasSuperVidel;
+void SyncSuperBlitter() {
+	// if externally locked, let the owner decide when to sync (unlock)
+	if (isSuperBlitterLocked)
+		return;
+
+	// while FIFO not empty...
+	if (g_superVidelFwVersion >= 9)
+		while (!(*SV_BLITTER_FIFO & 1));
+	// while busy blitting...
+	while (*SV_BLITTER_CONTROL & 1);
+}
+#endif	// USE_SV_BLITTER
+
+void LockSuperBlitter() {
+#ifdef USE_SV_BLITTER
+	assert(!isSuperBlitterLocked);
+
+	isSuperBlitterLocked = true;
+#endif
 }
 
-static int superVidelFwVersion = hasSuperVidel() ? *SV_VERSION & 0x01ff : 0;
+void UnlockSuperBlitter() {
+#ifdef USE_SV_BLITTER
+	assert(isSuperBlitterLocked);
 
-#else
-
-constexpr bool hasSuperVidel() {
-	return false;
+	isSuperBlitterLocked = false;
+	if (g_hasSuperVidel)
+		SyncSuperBlitter();
+#endif
 }
-
-constexpr int superVidelFwVersion = 0;
 
 #endif	// USE_SUPERVIDEL
-
-void lockSuperBlitter();
-void unlockSuperBlitter();
-
-#endif

@@ -25,10 +25,8 @@
 #include <utility>
 
 class AtariGraphicsManager;
+class AtariSurface;
 class Screen;
-namespace Graphics {
-class Surface;
-}
 
 class PendingScreenChanges {
 public:
@@ -40,7 +38,7 @@ public:
 		_changes &= ~kTransaction;
 	}
 
-	void setScreenSurface(Graphics::Surface *surface) {
+	void setScreenSurface(AtariSurface *surface) {
 		_surface = surface;
 	}
 
@@ -65,7 +63,7 @@ public:
 		return _changes == kNone;
 	}
 
-	Graphics::Surface *screenSurface() const {
+	AtariSurface *screenSurface() const {
 		return _surface;
 	}
 	const std::pair<int, bool>& aspectRatioCorrectionYOffset() const {
@@ -98,7 +96,7 @@ private:
 
 	const AtariGraphicsManager *_manager;
 
-	Graphics::Surface *_surface = nullptr;
+	AtariSurface *_surface = nullptr;
 
 	int _mode;
 	bool _resetSuperVidel;

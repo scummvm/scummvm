@@ -24,7 +24,7 @@
 
 #include "backends/modular-backend.h"
 
-class OSystem_Atari : public ModularMixerBackend, public ModularGraphicsBackend {
+class OSystem_Atari final : public ModularMixerBackend, public ModularGraphicsBackend {
 public:
 	OSystem_Atari();
 	virtual ~OSystem_Atari();
@@ -43,6 +43,7 @@ public:
 	Common::HardwareInputSet *getHardwareInputSet() override;
 
 	void quit() override;
+	void fatalError() override;
 
 	void logMessage(LogMessageType::Type type, const char *message) override;
 
@@ -59,8 +60,6 @@ private:
 	int16 _vdi_handle;
 	int _vdi_width;
 	int _vdi_height;
-
-	void (*_old_procterm)(void) = nullptr;
 };
 
 #endif

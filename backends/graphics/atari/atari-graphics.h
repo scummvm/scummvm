@@ -25,20 +25,17 @@
 #include "backends/graphics/graphics.h"
 #include "common/events.h"
 
-#include <mint/osbind.h>
-
-#include "common/rect.h"
 #include "graphics/surface.h"
 
 #include "atari-cursor.h"
-#include "atari-graphics-superblitter.h"
 #include "atari-pendingscreenchanges.h"
 #include "atari-screen.h"
+#include "atari-supervidel.h"
 
 #define MAX_HZ_SHAKE 16 // Falcon only
 #define MAX_V_SHAKE  16
 
-class AtariGraphicsManager : public GraphicsManager, Common::EventObserver {
+class AtariGraphicsManager final : public GraphicsManager, Common::EventObserver {
 	friend class Cursor;
 	friend class PendingScreenChanges;
 	friend class Screen;
@@ -114,14 +111,6 @@ public:
 	bool notifyEvent(const Common::Event &event) override;
 	Common::Keymap *getKeymap() const;
 
-protected:
-	typedef void* (*AtariMemAlloc)(size_t bytes);
-	typedef void (*AtariMemFree)(void *ptr);
-
-	int getBitsPerPixel(const Graphics::PixelFormat &format) const;
-	void allocateSurfaces();
-	void freeSurfaces();
-
 private:
 	enum {
 		kUnknownMode		= -1,
@@ -134,6 +123,10 @@ private:
 		kActionToggleAspectRatioCorrection = 100,
 	};
 
+	int getBitsPerPixel(const Graphics::PixelFormat &format) const;
+	void allocateSurfaces();
+	void freeSurfaces();
+
 #ifndef DISABLE_FANCY_THEMES
 	int16 getMaximumScreenHeight() const { return 480; }
 	int16 getMaximumScreenWidth() const { return _tt ? 320 : (_vgaMonitor ? 640 : 640*1.2); }
@@ -144,18 +137,18 @@ private:
 
 	void addDirtyRectToScreens(const Graphics::Surface &dstSurface,
 							   int x, int y, int w, int h, bool directRendering);
-	bool updateScreenInternal(Screen *dstScreen, const Graphics::Surface &srcSurface);
-	void copyRectToScreenInternal(Graphics::Surface &dstSurface,
-								  const void *buf, int pitch, int x, int y, int w, int h,
-								  const Graphics::PixelFormat &format, bool directRendering);
+	bool updateScreenInternal(Screen *dstScreen, const Graphics::Surface *srcSurface);
+	void copyRectToScreenInternal(AtariSurface &dstSurface,
+								  const byte *buf, int pitch, int x, int y, int w, int h);
 
 	bool isOverlayDirectRendering() const {
+#ifndef DISABLE_FANCY_THEMES
 		// see osystem_atari.cpp
 		extern bool g_gameEngineActive;
-
+#endif
 		// overlay is direct rendered if in the launcher or if game is directly rendered
-		// (on SuperVidel we always want to use shading/transparency but its direct rendering is fine and supported)
-		return !hasSuperVidel()
+		// (on SuperVidel we always want to use _overlaySurface as source for background pixels)
+		return !g_hasSuperVidel
 #ifndef DISABLE_FANCY_THEMES
 			&& (!g_gameEngineActive || _currentState.mode == kDirectRendering)
 #endif
@@ -166,34 +159,16 @@ private:
 
 	Common::Rect alignRect(int x1, int y1, int x2, int y2) const {
 		// make non-virtual for performance reasons
-		return hasSuperVidel()
+		return g_hasSuperVidel
 				   ? Common::Rect(x1, y1, x2, y2)
 				   : Common::Rect(x1 & (-16), y1, (x2 + 15) & (-16), y2);
 	}
 	Common::Rect alignRect(const Common::Rect &rect) const {
 		// make non-virtual for performance reasons
-		return hasSuperVidel()
+		return g_hasSuperVidel
 				   ? rect
 				   : Common::Rect(rect.left & (-16), rect.top, (rect.right + 15) & (-16), rect.bottom);
 	}
-
-	virtual AtariMemAlloc getStRamAllocFunc() const {
-		return [](size_t bytes) { return (void *)Mxalloc(bytes, MX_STRAM); };
-	}
-	virtual AtariMemFree getStRamFreeFunc() const {
-		return [](void *ptr) { Mfree(ptr); };
-	}
-
-	virtual void copyRectToSurface(Graphics::Surface &dstSurface, const Graphics::Surface &srcSurface,
-								   int destX, int destY,
-								   const Common::Rect &subRect) const {
-		dstSurface.copyRectToSurface(srcSurface, destX, destY, subRect);
-	}
-
-	virtual void drawMaskedSprite(Graphics::Surface &dstSurface,
-								  const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
-								  int destX, int destY,
-								  const Common::Rect &subRect) const = 0;
 
 	bool _vgaMonitor = true;
 	bool _tt = false;

@@ -46,10 +46,6 @@
 #include "common/config-manager.h"
 #include "backends/events/atari/atari-events.h"
 #include "backends/events/default/default-events.h"
-#include "backends/graphics/atari/atari-graphics-asm.h"
-#include "backends/graphics/atari/atari-graphics-superblitter.h"
-#include "backends/graphics/atari/atari-graphics-supervidel.h"
-#include "backends/graphics/atari/atari-graphics-videl.h"
 #include "backends/graphics/atari/atari-graphics.h"
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mixer/atari/atari-mixer.h"
@@ -78,10 +74,11 @@ extern void nf_init(void);
 extern void nf_print(const char* msg);
 
 static int s_app_id = -1;
+static void (*s_old_procterm)(void) = nullptr;
 
 static volatile uint32 counter_200hz;
 
-static bool exit_already_called = false;
+static bool s_dtor_already_called = false;
 
 static long atari_200hz_init(void)
 {
@@ -129,11 +126,7 @@ static long atari_200hz_shutdown(void)
 }
 
 static void critical_restore() {
-	extern void AtariAudioShutdown();
-	extern void AtariGraphicsShutdown();
-
-	AtariAudioShutdown();
-	AtariGraphicsShutdown();
+	//atari_debug("critical_restore()");
 
 	Supexec(atari_200hz_shutdown);
 
@@ -154,12 +147,25 @@ static void critical_restore() {
 		graf_mouse(M_ON, NULL);
 	}
 #endif
+
+	// avoid infinite recursion if either of the shutdown procedures fails
+	(void)Setexc(VEC_PROCTERM, s_old_procterm);
+
+	extern void AtariAudioShutdown();
+	extern void AtariGraphicsShutdown();
+
+	AtariAudioShutdown();
+	AtariGraphicsShutdown();
 }
 
 // called on normal program termination (via exit() or returning from main())
 static void exit_restore() {
-	if (!exit_already_called)
+	// causes a crash upon termination
+	//atari_debug("exit_restore()");
+
+	if (!s_dtor_already_called)
 		g_system->destroy();
+	// else critical_restore() will be called, too
 }
 
 OSystem_Atari::OSystem_Atari() {
@@ -218,12 +224,14 @@ OSystem_Atari::OSystem_Atari() {
 	// protect against sudden exit()
 	atexit(exit_restore);
 	// protect against sudden crash
-	_old_procterm = Setexc(VEC_PROCTERM, -1);
+	s_old_procterm = Setexc(VEC_PROCTERM, -1);
 	(void)Setexc(VEC_PROCTERM, critical_restore);
 }
 
 OSystem_Atari::~OSystem_Atari() {
 	atari_debug("OSystem_Atari::~OSystem_Atari()");
+
+	s_dtor_already_called = true;
 
 	// _audiocdManager needs to be deleted before _mixerManager to avoid a crash.
 	delete _audiocdManager;
@@ -271,11 +279,12 @@ OSystem_Atari::~OSystem_Atari() {
 	}
 
 	// graceful exit
-	exit_already_called = true;
-	(void)Setexc(VEC_PROCTERM, _old_procterm);
+	(void)Setexc(VEC_PROCTERM, s_old_procterm);
 }
 
 void OSystem_Atari::initBackend() {
+	atari_debug("OSystem_Atari::initBackend()");
+
 	s_app_id = appl_init();
 	if (s_app_id != -1) {
 		// get the ID of the current physical screen workstation
@@ -314,13 +323,7 @@ void OSystem_Atari::initBackend() {
 	_eventManager = new DefaultEventManager(makeKeyboardRepeatingEventSource(atariEventSource));
 
 	// AtariGraphicsManager needs _eventManager ready
-	AtariGraphicsManager *atariGraphicsManager;
-#ifdef USE_SUPERVIDEL
-	if (hasSuperVidel())
-		atariGraphicsManager = new AtariSuperVidelManager();
-	else
-#endif
-		atariGraphicsManager = new AtariVidelManager();
+	AtariGraphicsManager *atariGraphicsManager = new AtariGraphicsManager();
 	_graphicsManager = atariGraphicsManager;
 
 	atariEventSource->setGraphicsManager(atariGraphicsManager);
@@ -410,7 +413,17 @@ Common::HardwareInputSet *OSystem_Atari::getHardwareInputSet() {
 void OSystem_Atari::quit() {
 	atari_debug("OSystem_Atari::quit()");
 
-	destroy();
+	if (!s_dtor_already_called)
+		destroy();
+}
+
+void OSystem_Atari::fatalError() {
+	atari_debug("OSystem_Atari::fatalError()");
+
+	quit();
+
+	// let exit_restore() and critical_restore() handle the recovery
+	exit(1);
 }
 
 void OSystem_Atari::logMessage(LogMessageType::Type type, const char *message) {

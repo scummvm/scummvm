@@ -28,7 +28,7 @@
 #include "graphics/surface.h"
 
 #include "atari-graphics.h"
-#include "atari-graphics-superblitter.h"
+#include "atari-supervidel.h"
 
 void PendingScreenChanges::queueAll() {
 	_changes |= kAll;
@@ -107,7 +107,7 @@ void PendingScreenChanges::processAspectRatioCorrection(const Screen &screen) {
 			_changes |= kVideoMode;
 		} else {
 			_aspectRatioCorrectionYOffset =
-				std::make_pair((screen.surf.h - 2*MAX_V_SHAKE - screen.offsettedSurf->h) / 2, true);
+				std::make_pair((screen.surf->h - 2*MAX_V_SHAKE - screen.offsettedSurf->h) / 2, true);
 			_shrinkVidelVisibleArea = std::make_pair(true, true);
 		}
 	} else {
@@ -121,7 +121,7 @@ void PendingScreenChanges::processAspectRatioCorrection(const Screen &screen) {
 			_aspectRatioCorrectionYOffset = std::make_pair(0, true);
 			_shrinkVidelVisibleArea = std::make_pair(false, true);
 
-			if (hasSuperVidel())
+			if (g_hasSuperVidel)
 				_resetSuperVidel = true;
 
 			// kPendingVideoMode will reset the shrunken Videl area
