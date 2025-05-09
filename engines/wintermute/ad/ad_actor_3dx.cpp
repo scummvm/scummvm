@@ -529,9 +529,7 @@ bool AdActor3DX::displayShadowVolume() {
 }
 
 bool AdActor3DX::displayFlatShadow() {
-	DXMatrix shadowMat;
-	DXVector3 pos;
-	DXVector3 target;
+	DXMatrix shadowMat, origWorld;
 
 	if (!_xmodel) {
 		return false;
@@ -540,14 +538,11 @@ bool AdActor3DX::displayFlatShadow() {
 	DXVector3 lightPos = DXVector3(_shadowLightPos._x * _scale3D,
 								   _shadowLightPos._y * _scale3D,
 								   _shadowLightPos._z * _scale3D);
-	pos = _posVector + lightPos;
-	target = _posVector;
 
-	DXMatrix origWorld;
 	_gameRef->_renderer3D->getWorldTransform(&origWorld);
 
 	DXVector4 lightVector = { lightPos._x, lightPos._y, lightPos._z, 0 };
-	DXPlane plane = { 0, 1, 0, -target._y };
+	DXPlane plane = { 0, 1, 0, -_posVector._y };
 
 	DXMatrixShadow(&shadowMat, &lightVector, &plane);
 	DXMatrix shadowWorld = _worldMatrix * shadowMat;
