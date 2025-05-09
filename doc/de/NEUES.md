@@ -4,6 +4,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 #### 2.9.1 (XXXX-XX-XX)
 
  AGS:
+   - Unterstützung für Old Skies und Rosewater hinzugefügt.
    - Unterstützung für Geschwindigkeitsänderungen von Audio-Clips hinzugefügt.
      Diese werden in einigen Spielen verwendet, um die Hintergrundmusik oder andere
      Audio-Effekte zu verlangsamen.
