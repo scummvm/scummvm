@@ -38,21 +38,22 @@
 #include "backends/platform/sdl/emscripten/emscripten.h"
 #endif
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(3, 0, 0)
+#if defined(USE_IMGUI)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
 #include "backends/imgui/backends/imgui_impl_sdl3.h"
-#ifdef USE_OPENGL
-#include "backends/imgui/backends/imgui_impl_opengl3.h"
-#endif
-#ifdef USE_IMGUI_SDLRENDERER3
-#include "backends/imgui/backends/imgui_impl_sdlrenderer3.h"
-#endif
-#elif defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 #include "backends/imgui/backends/imgui_impl_sdl2.h"
+#else
+#include "backends/imgui/backends/imgui_impl_scummvm.h"
+#endif
 #ifdef USE_OPENGL
 #include "backends/imgui/backends/imgui_impl_opengl3.h"
 #endif
 #ifdef USE_IMGUI_SDLRENDERER2
 #include "backends/imgui/backends/imgui_impl_sdlrenderer2.h"
+#endif
+#ifdef USE_IMGUI_SDLRENDERER3
+#include "backends/imgui/backends/imgui_impl_sdlrenderer3.h"
 #endif
 #endif
 
@@ -600,7 +601,7 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 	return keymap;
 }
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#ifdef USE_IMGUI
 void SdlGraphicsManager::setImGuiCallbacks(const ImGuiCallbacks &callbacks) {
 	if (_imGuiInited) {
 		if (_imGuiCallbacks.cleanup) {
@@ -621,7 +622,7 @@ void SdlGraphicsManager::setImGuiCallbacks(const ImGuiCallbacks &callbacks) {
 	_imGuiInited = true;
 }
 
-void SdlGraphicsManager::initImGui(SDL_Renderer *renderer, void *glContext) {
+void SdlGraphicsManager::initImGui(void *renderer, void *glContext) {
 	assert(!_imGuiReady);
 	_imGuiInited = false;
 
@@ -631,6 +632,7 @@ void SdlGraphicsManager::initImGui(SDL_Renderer *renderer, void *glContext) {
 	}
 	ImGuiIO &io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+	io.ConfigFlags |= ImGuiConfigFlags_NoMouse;               // Disable mouse until required
 	ImGui::StyleColorsDark();
 	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 	ImGuiStyle& style = ImGui::GetStyle();
@@ -638,6 +640,7 @@ void SdlGraphicsManager::initImGui(SDL_Renderer *renderer, void *glContext) {
 	style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 	io.IniFilename = nullptr;
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	_imGuiSDLRenderer = nullptr;
 #ifdef USE_OPENGL
 	if (!_imGuiReady && glContext) {
@@ -696,19 +699,37 @@ void SdlGraphicsManager::initImGui(SDL_Renderer *renderer, void *glContext) {
 	}
 #elif defined(USE_IMGUI_SDLRENDERER2)
 	if (!_imGuiReady && renderer) {
-		if (!ImGui_ImplSDL2_InitForSDLRenderer(_window->getSDLWindow(), renderer)) {
+		if (!ImGui_ImplSDL2_InitForSDLRenderer(_window->getSDLWindow(), (SDL_Renderer *)renderer)) {
 			ImGui::DestroyContext();
 			return;
 		}
 
-		if (!ImGui_ImplSDLRenderer2_Init(renderer)) {
+		if (!ImGui_ImplSDLRenderer2_Init((SDL_Renderer *)renderer)) {
 			ImGui_ImplSDL2_Shutdown();
 			ImGui::DestroyContext();
 			return;
 		}
 
 		_imGuiReady = true;
-		_imGuiSDLRenderer = renderer;
+		_imGuiSDLRenderer = (SDL_Renderer *)renderer;
+	}
+#endif
+#else
+	if (!_imGuiReady) {
+		_impl = new ImGui_ImplScummVM(g_system->getEventManager()->getEventDispatcher());
+		if (!_impl) {
+			ImGui::DestroyContext();
+			return;
+		}
+
+		if (!ImGui_ImplOpenGL3_Init("#version 110")) {
+			delete _impl;
+			_impl = nullptr;
+			ImGui::DestroyContext();
+			return;
+		}
+
+		_imGuiReady = true;
 	}
 #endif
 	if (!_imGuiReady) {
@@ -752,8 +773,11 @@ void SdlGraphicsManager::renderImGui() {
 #endif
 #if SDL_VERSION_ATLEAST(3, 0, 0)
 	ImGui_ImplSDL3_NewFrame();
-#else
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 	ImGui_ImplSDL2_NewFrame();
+#else
+	assert(_impl);
+	_impl->newFrame();
 #endif
 
 	ImGui::NewFrame();
@@ -766,20 +790,21 @@ void SdlGraphicsManager::renderImGui() {
 #elif defined(USE_IMGUI_SDLRENDERER2)
 	if (_imGuiSDLRenderer) {
 		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), _imGuiSDLRenderer);
-	} else {
+	} else
 #endif
+	{
 #ifdef USE_OPENGL
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 		SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
 		SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
 		SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 #endif
-#if defined(USE_IMGUI_SDLRENDERER2) || defined(USE_IMGUI_SDLRENDERER3)
-	}
 #endif
+	}
 }
 
 void SdlGraphicsManager::destroyImGui() {
@@ -811,8 +836,11 @@ void SdlGraphicsManager::destroyImGui() {
 #endif
 #if SDL_VERSION_ATLEAST(3, 0, 0)
 	ImGui_ImplSDL3_Shutdown();
-#else
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 	ImGui_ImplSDL2_Shutdown();
+#else
+	delete _impl;
+	_impl = nullptr;
 #endif
 	ImGui::DestroyContext();
 }
