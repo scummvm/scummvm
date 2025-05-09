@@ -54,6 +54,7 @@ void MidiTests::waitForMusicToPlay(MidiParser *parser) {
 
 	CursorMan.showMouse(true);
 	while (!quitLoop) {
+		g_system->delayMillis(10);
 		while (eventMan->pollEvent(event)) {
 			// Quit if explicitly requested!
 			if (Engine::shouldQuit()) {
