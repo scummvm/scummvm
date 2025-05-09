@@ -524,6 +524,11 @@ public:
 
 	void dumpDetectionEntries() const override final;
 
+	/**
+	 * Sanitizes a string to be usable by gameId
+	 */
+	static Common::String sanitizeName(const char *name, int maxLen);
+
 protected:
 	/**
 	 * A hashmap of file paths and their file system nodes.
@@ -759,11 +764,11 @@ public:
 			return;
 
 		Common::Path filename = node.getPath();
-		
+
 		if (archiveHashMap.contains(filename)) {
 			delete archiveHashMap[filename];
 		}
-		
+
 		archiveHashMap.setVal(filename, archivePtr);
 	}
 
