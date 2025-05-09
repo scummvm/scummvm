@@ -56,6 +56,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed crash in Sanitarium main menu, when moving the cursor to the
      top part of the screen.
 
+ BAGEL:
+   - Fixed crash when inserting the credit card in the slot machine.
+
  Bladerunner:
    - Fixed 2x scaling and fullscreen support in non-interactive demo.
    - Fixed memory leaks that could cause Out of Memory issues on some
