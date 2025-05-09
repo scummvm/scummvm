@@ -25,6 +25,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Absturz im Hauptmenü von Sanitarium korrigiert, der auftritt, wenn der Cursor in den
      oberen Bereich des Bildschirms bewegt wird.
 
+ BAGEL:
+   - Absturz behoben, der auftritt, wenn die Kreditkarte in den Spielautomat gesteckt wird.
+
  Bladerunner:
    - 2x-Skalierung und Vollbild-Unterstützung in der nicht-interaktiven Demo-Version korrigiert.
    - Memory-Leaks behoben, die zu Out-of-Memory-Situationen auf manchen Plattformen führen können.
