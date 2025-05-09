@@ -23,6 +23,7 @@
 
 #include "base/plugins.h"
 #include "testbed/testbed.h"
+#include "testbed/detection.h"
 
 static const PlainGameDescriptor testbed_setting[] = {
 	{ "testbed", "Testbed: The Backend Testing Framework" },
@@ -52,6 +53,7 @@ class TestbedMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDesc
 public:
 	TestbedMetaEngineDetection() : AdvancedMetaEngineDetection(testbedDescriptions, testbed_setting) {
 		_md5Bytes = 512;
+		_guiOptions = GUIO1(GAMEOPTION_INTERACTIVE_MODE);
 	}
 
 	const char *getName() const override {
