@@ -105,6 +105,7 @@ public:
 	void setOutputColorSpace(ColorSpace outSpace) { _colorSpace = outSpace; }
 
 private:
+	using Codec::getPalette;
 	Graphics::Surface _surface;
 	Graphics::Palette _palette;
 	ColorSpace _colorSpace;
