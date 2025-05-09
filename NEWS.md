@@ -33,7 +33,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed text rendering in Chinese and Japanese localizations.
    - Added support for Japanese DVD version of Schizm: Mysterious Journey.
 
-#### 2.9.1 (XXXX-XX-XX)
+#### 2.9.1 (2025-05-25)
 
  AGI:
    - Added support for early version of Christmas Card 1986 with advertisements
