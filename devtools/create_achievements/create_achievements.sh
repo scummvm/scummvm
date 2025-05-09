@@ -146,12 +146,16 @@ add_steam 1182310
 add_steamlike_gog 1182310 1790032718
 add_steam 1196520
 add_steam 1220930
+add_steam 1226670
+add_steamlike_gog 1226670 1657623040
 add_steam 1259140
 add_steam 1251910
 add_steam 1270590
 add_steam 1285960
 add_steam 1305500
 add_steam 1343390
+add_steam 1346360
+add_steamlike_gog 1346360 1391436028
 add_steam 1355910
 add_steam 1369520
 add_steamlike_gog 1369520 1392294208
