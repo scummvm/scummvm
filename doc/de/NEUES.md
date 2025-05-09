@@ -1,7 +1,7 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.9.1 (XXXX-XX-XX)
+#### 2.9.1 (25.05.2025)
 
  AGI:
    - Unterstützung für frühe Versionen von Christmas Card 1986 mit Werbung
