@@ -453,6 +453,24 @@ bool TotFunctions::call(const Tot &tot, uint16 offset) const {
 	return true;
 }
 
+Common::String TotFunctions::getFunctionName(const Common::String &totFile, uint16 offset) const {
+	int index = find(totFile);
+	if (index < 0) {
+		warning("TotFunctions::getFunctionName(): No such TOT \"%s\"", totFile.c_str());
+		return "";
+	}
+
+	const Tot &tot = _tots[index];
+
+	Common::List<Function>::const_iterator it;
+	for (it = tot.functions.begin(); it != tot.functions.end(); ++it) {
+		if (it->offset == offset)
+			return it->name;
+	}
+
+	return "";
+}
+
 
 Game::Game(GobEngine *vm) : _vm(vm), _environments(_vm), _totFunctions(_vm) {
 	_captureCount = 0;
@@ -462,6 +480,9 @@ Game::Game(GobEngine *vm) : _vm(vm), _environments(_vm), _totFunctions(_vm) {
 
 	_handleMouse = 0;
 	_forceHandleMouse = 0;
+	_hasForwardedEventsFromVideo = false;
+	_forwardedMouseButtonsFromVideo = kMouseButtonsNone;
+	_forwardedKeyFromVideo = 0;
 	_noScroll = true;
 	_preventScroll = false;
 
@@ -518,7 +539,7 @@ void Game::prepareStart() {
 	_startTimeKey = _vm->_util->getTimeKey();
 }
 
-void Game::playTot(int16 function) {
+void Game::playTot(int32 function) {
 	int16 *oldNestLevel      = _vm->_inter->_nestLevel;
 	int16 *oldBreakFrom      = _vm->_inter->_breakFromLevel;
 	int16 *oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
@@ -814,6 +835,8 @@ void Game::evaluateScroll() {
 int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
 		MouseButtons *pButtons, char handleMouse) {
 
+	if (_vm->getGameType() == kGameTypeAdibou2)
+		_vm->_vidPlayer->updateLive();
 	_vm->_util->processInput(true);
 
 	if (_vm->_mult->_multData && _vm->_inter->_variables &&
@@ -840,7 +863,15 @@ int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
 			*pButtons = kMouseButtonsNone;
 	}
 
-	return _vm->_util->checkKey();
+	int16 key = _vm->_util->checkKey();
+	if (_vm->_game->_hasForwardedEventsFromVideo) {
+		if (pButtons)
+			*pButtons = _vm->_game->_forwardedMouseButtonsFromVideo;
+		key = _vm->_game->_forwardedKeyFromVideo;
+		_vm->_game->_hasForwardedEventsFromVideo = false;
+	}
+
+	return key;
 }
 
 void Game::start() {
@@ -1027,6 +1058,13 @@ bool Game::callFunction(const Common::String &tot, const Common::String &functio
 		return _totFunctions.call(tot, Common::String(function.c_str(), 16));
 
 	return _totFunctions.call(tot, function);
+}
+
+Common::String Game::getFunctionName(const Common::String &tot, uint16 offset) {
+	if (_totFunctions.find(tot) < 0)
+		loadFunctions(tot, 0);
+
+	return _totFunctions.getFunctionName(tot, offset);
 }
 
 } // End of namespace Gob

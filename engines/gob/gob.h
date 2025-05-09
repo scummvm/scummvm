@@ -250,8 +250,7 @@ public:
 	bool hasResourceSizeWorkaround() const;
 
 	bool isCurrentTot(const Common::String &tot) const;
-
-	void setTrueColor(bool trueColor);
+	void setTrueColor(bool trueColor, bool convertAllSurfaces, Graphics::PixelFormat *format = nullptr);
 
 	const Graphics::PixelFormat &getPixelFormat() const;
 

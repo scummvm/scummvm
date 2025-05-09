@@ -303,15 +303,6 @@ void Draw::clearPalette() {
 	}
 }
 
-uint32 Draw::getColor(uint8 index) const {
-	if (!_vm->isTrueColor())
-		return index;
-
-	return _vm->getPixelFormat().RGBToColor(_vgaPalette[index].red   << 2,
-	                                        _vgaPalette[index].green << 2,
-	                                        _vgaPalette[index].blue  << 2);
-}
-
 void Draw::dirtiedRect(int16 surface,
 		int16 left, int16 top, int16 right, int16 bottom) {
 
@@ -330,9 +321,9 @@ void Draw::dirtiedRect(SurfacePtr surface,
 }
 
 void Draw::initSpriteSurf(int16 index, int16 width, int16 height,
-		int16 flags) {
+						  int16 flags, byte bpp) {
 
-	_spritesArray[index] = _vm->_video->initSurfDesc(width, height, flags);
+	_spritesArray[index] = _vm->_video->initSurfDesc(width, height, flags, bpp);
 	_spritesArray[index]->clear();
 }
 

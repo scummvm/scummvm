@@ -30,6 +30,7 @@ MODULE_OBJS := \
 	goblin_v4.o \
 	goblin_v7.o \
 	hotspots.o \
+	html_parser.o \
 	iniconfig.o \
 	init.o \
 	init_v1.o \
@@ -81,6 +82,7 @@ MODULE_OBJS := \
 	demos/demoplayer.o \
 	demos/scnplayer.o \
 	demos/batplayer.o \
+	image/brc.o \
 	pregob/pregob.o \
 	pregob/txtfile.o \
 	pregob/gctfile.o \

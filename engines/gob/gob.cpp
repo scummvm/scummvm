@@ -268,20 +268,15 @@ const Graphics::PixelFormat &GobEngine::getPixelFormat() const {
 	return _pixelFormat;
 }
 
-void GobEngine::setTrueColor(bool trueColor) {
+void GobEngine::setTrueColor(bool trueColor, bool convertAllSurfaces, Graphics::PixelFormat *trueColorFormat) {
 	if (isTrueColor() == trueColor)
 		return;
 
 	_features = (_features & ~kFeaturesTrueColor) | (trueColor ? kFeaturesTrueColor : 0);
 
-	_video->setSize();
+	_video->setSize(trueColorFormat);
 
 	_pixelFormat = g_system->getScreenFormat();
-
-	Common::Array<SurfacePtr>::iterator surf;
-	for (surf = _draw->_spritesArray.begin(); surf != _draw->_spritesArray.end(); ++surf)
-		if (*surf)
-			(*surf)->setBPP(_pixelFormat.bytesPerPixel);
 
 	if (_draw->_backSurface)
 		_draw->_backSurface->setBPP(_pixelFormat.bytesPerPixel);
@@ -293,7 +288,13 @@ void GobEngine::setTrueColor(bool trueColor) {
 		_draw->_cursorSpritesBack->setBPP(_pixelFormat.bytesPerPixel);
 	if (_draw->_scummvmCursor)
 		_draw->_scummvmCursor->setBPP(_pixelFormat.bytesPerPixel);
-	SurfacePtr _scummvmCursor;
+
+	if (convertAllSurfaces) {
+		Common::Array<SurfacePtr>::iterator surf;
+		for (surf = _draw->_spritesArray.begin(); surf != _draw->_spritesArray.end(); ++surf)
+			if (*surf)
+				(*surf)->setBPP(_pixelFormat.bytesPerPixel);
+	}
 }
 
 Common::Error GobEngine::run() {

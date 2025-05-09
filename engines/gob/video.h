@@ -50,11 +50,13 @@ public:
 
 	bool isMonospaced() const;
 
+	void drawLetterRaw(Surface &surf, uint8 c, uint16 x, uint16 y,
+					   uint32 color1, uint32 color2, bool transp) const;
 	void drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
-	                uint32 color1, uint32 color2, bool transp) const;
+					uint8 colorIndex1, uint8 colorIndex2, bool transp) const;
 
-	void drawString(const Common::String &str, int16 x, int16 y, int16 color1, int16 color2,
-	                bool transp, Surface &dest) const;
+	void drawString(const Common::String &str, int16 x, int16 y, uint8 colorIndex1, uint8 colorIndex2,
+					bool transp, Surface &dest) const;
 
 private:
 	const byte *_dataPtr;
@@ -93,9 +95,12 @@ public:
 
 	struct PalDesc {
 		Color *vgaPal;
+		uint32 highColorMap[256];
 		int16 *unused1;
 		int16 *unused2;
-		PalDesc() : vgaPal(0), unused1(0), unused2(0) {}
+		PalDesc() : vgaPal(nullptr), unused1(nullptr), unused2(nullptr) {
+			memset(highColorMap, 0, sizeof(highColorMap));
+		}
 	};
 
 	bool _doRangeClamp;
@@ -115,9 +120,9 @@ public:
 	int16 _screenDeltaY;
 
 	void initPrimary(int16 mode);
-	SurfacePtr initSurfDesc(int16 width, int16 height, int16 flags = 0);
+	SurfacePtr initSurfDesc(int16 width, int16 height, int16 flags = 0, byte bpp = 0);
 
-	void setSize();
+	void setSize(Graphics::PixelFormat *highColorFormat = nullptr);
 
 	void clearScreen();
 	void retrace(bool mouse = true);

@@ -34,11 +34,16 @@
 #include "common/textconsole.h"
 #include "common/stack.h"
 
+#include "graphics/palette.h"
 #include "graphics/primitives.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
+#include "image/bmp.h"
+#include "image/brc.h"
 #include "image/iff.h"
+#include "image/jpeg.h"
+#include "image/tga.h"
 
 namespace Gob {
 
@@ -46,27 +51,27 @@ class SurfacePrimitives final : public Graphics::Primitives {
 public:
         void drawPoint(int x, int y, uint32 color, void *data) override {
 		Surface *s = (Surface *)data;
-		s->putPixel(x, y, color);
+		s->putPixelRaw(x, y, color);
 	}
 
         void drawHLine(int x1, int x2, int y, uint32 color, void *data) override {
 		Surface *s = (Surface *)data;
-		s->fillRect(x1, y, x2, y, color);
+		s->fillRectRaw(x1, y, x2, y, color);
 	}
 
         void drawVLine(int x, int y1, int y2, uint32 color, void *data) override {
 		Surface *s = (Surface *)data;
-		s->fillRect(x, y1, x, y2, color);
+		s->fillRectRaw(x, y1, x, y2, color);
 	}
 
 	void drawFilledRect(const Common::Rect &rect, uint32 color, void *data) override {
 		Surface *s = (Surface *)data;
-		s->fillRect(rect.left, rect.top, rect.right - 1, rect.bottom - 1, color);
+		s->fillRectRaw(rect.left, rect.top, rect.right - 1, rect.bottom - 1, color);
 	}
 
 	void drawFilledRect1(const Common::Rect &rect, uint32 color, void *data) override {
 		Surface *s = (Surface *)data;
-		s->fillRect(rect.left, rect.top, rect.right, rect.bottom, color);
+		s->fillRectRaw(rect.left, rect.top, rect.right, rect.bottom, color);
 	}
 };
 
@@ -202,8 +207,10 @@ bool ConstPixel::isValid() const {
 }
 
 
-Surface::Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem) :
-	_width(width), _height(height), _bpp(bpp), _vidMem(vidMem) {
+Surface::Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem, const uint32 *highColorMap, bool ownHighColorMap) :
+	_width(width), _height(height), _bpp(bpp), _vidMem(vidMem),
+	_ownHighColorMap(ownHighColorMap),
+	_highColorMap(highColorMap)  {
 
 	assert((_width > 0) && (_height > 0));
 	assert((_bpp == 1) || (_bpp == 2) || (_bpp == 4));
@@ -215,8 +222,10 @@ Surface::Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem) :
 		_ownVidMem = false;
 }
 
-Surface::Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem) :
-	_width(width), _height(height), _bpp(bpp), _vidMem(nullptr) {
+Surface::Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem, const uint32 *highColorMap, bool ownHighColorMap) :
+	_width(width), _height(height), _bpp(bpp), _vidMem(nullptr),
+	_ownHighColorMap(ownHighColorMap),
+	_highColorMap(highColorMap) {
 
 	assert((_width > 0) && (_height > 0));
 	assert((_bpp == 1) || (_bpp == 2) || (_bpp == 4));
@@ -230,6 +239,9 @@ Surface::Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem) :
 Surface::~Surface() {
 	if (_ownVidMem)
 		delete[] _vidMem;
+
+	if (_ownHighColorMap)
+		delete[] _highColorMap;
 }
 
 uint16 Surface::getWidth() const {
@@ -345,11 +357,18 @@ bool Surface::clipBlitRect(int16 &left, int16 &top, int16 &right, int16 &bottom,
 	return true;
 }
 
+uint32 Surface::getColorFromIndex(uint8 index) const {
+	if (_bpp == 1 || !_highColorMap)
+		return index;
+	else
+		return _highColorMap[index];
+}
+
 void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
 		int16 x, int16 y, int32 transp, bool yAxisReflection) {
 
 	// Color depths have to fit
-	assert(_bpp == from._bpp);
+	assert(_bpp == from._bpp || (from._bpp == 1 && from._highColorMap != nullptr));
 
 	// Clip
 	if (!clipBlitRect(left, top, right, bottom, x, y, _width, _height, from._width, from._height))
@@ -363,7 +382,7 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		// Nothing to do
 		return;
 
-	if ((left == 0) && (_width == from._width) && (_width == width) && (transp == -1) && !yAxisReflection) {
+	if ((left == 0) && (_width == from._width) && (_width == width) && (transp == -1) && !yAxisReflection && (from._bpp == _bpp)) {
 		// If these conditions are met, we can directly use memmove
 
 		// Pointers to the blit destination and source start points
@@ -374,7 +393,7 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		return;
 	}
 
-	if (transp == -1 && !yAxisReflection) {
+	if (transp == -1 && !yAxisReflection && from._bpp == _bpp && _bpp == 1) {
 		// We don't have to look for transparency => we can use memmove line-wise
 
 		// Pointers to the blit destination and source start points
@@ -403,14 +422,27 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 
 		if (yAxisReflection) {
 			srcRow += width - 1;
-			for (uint16 i = 0; i < width; i++, ++dstRow, --srcRow)
-				if (srcRow.get() != ((uint32) transp))
-					dstRow.set(srcRow.get());
-		}
-		else {
-			for (uint16 i = 0; i < width; i++, ++dstRow, ++srcRow)
-				if (srcRow.get() != ((uint32) transp))
-					dstRow.set(srcRow.get());
+			for (uint16 i = 0; i < width; i++, ++dstRow, --srcRow) {
+				if (srcRow.get() != ((uint32) transp)) {
+					if (_bpp == from._bpp)
+						dstRow.set(srcRow.get());
+					else {
+						uint32 index = srcRow.get();
+						dstRow.set(from._highColorMap[index]);
+					}
+				}
+			}
+		} else {
+			for (uint16 i = 0; i < width; i++, ++dstRow, ++srcRow) {
+				if (srcRow.get() != ((uint32) transp)) {
+					if (_bpp == from._bpp)
+						dstRow.set(srcRow.get());
+					else {
+						uint32 index = srcRow.get();
+						dstRow.set(from._highColorMap[index]);
+					}
+				}
+			}
 		}
 
 		dst +=      _width;
@@ -501,7 +533,7 @@ void Surface::blitScaled(const Surface &from, Common::Rational scale, int32 tran
 	blitScaled(from, 0, 0, from._width - 1, from._height - 1, 0, 0, scale, transp);
 }
 
-void Surface::fillRect(int16 left, int16 top, int16 right, int16 bottom, uint32 color) {
+void Surface::fillRectRaw(int16 left, int16 top, int16 right, int16 bottom, uint32 color) {
 	// Just in case those are swapped
 	if (left > right)
 		SWAP(left, right);
@@ -560,8 +592,13 @@ void Surface::fillRect(int16 left, int16 top, int16 right, int16 bottom, uint32 
 	}
 }
 
+void Surface::fillRect(int16 left, int16 top, int16 right, int16 bottom, uint8 colorIndex) {
+	uint32 color = getColorFromIndex(colorIndex);
+	fillRectRaw(left, top, right, bottom, color);
+}
+
 // Fill rectangle with fillColor, except pixels with backgroundColor
-void Surface::fillArea(int16 left, int16 top, int16 right, int16 bottom, uint32 fillColor, uint32 backgroundColor) {
+void Surface::fillArea(int16 left, int16 top, int16 right, int16 bottom, uint8 fillColorIndex, uint8 backgroundColorIndex) {
 	// Just in case those are swapped
 	if (left > right)
 		SWAP(left, right);
@@ -585,6 +622,9 @@ void Surface::fillArea(int16 left, int16 top, int16 right, int16 bottom, uint32 
 		// Nothing to do
 		return;
 
+	uint32 fillColor = getColorFromIndex(fillColorIndex);
+	uint32 backgroundColor = getColorFromIndex(backgroundColorIndex);
+
 	Pixel p = get(left, top);
 	while (height-- > 0) {
 		for (uint16 i = 0; i < width; i++, ++p)
@@ -595,7 +635,8 @@ void Surface::fillArea(int16 left, int16 top, int16 right, int16 bottom, uint32 
 	}
 }
 
-Common::Rect Surface::fillAreaAtPoint(int16 left, int16 top, uint32 fillColor) {
+Common::Rect Surface::fillAreaAtPoint(int16 left, int16 top, uint8 fillColorIndex) {
+	uint32 fillColor = getColorFromIndex(fillColorIndex);
 	Common::Rect modifiedArea;
 	if (left < 0 || left >= _width || top < 0  || top >= _height)
 		// Nothing to do
@@ -649,13 +690,15 @@ void Surface::clear() {
 }
 
 void Surface::shadeRect(uint16 left, uint16 top, uint16 right, uint16 bottom,
-		uint32 color, uint8 strength) {
+		uint8 colorIndex, uint8 strength) {
 
 	if (_bpp == 1) {
 		// We can't properly shade in paletted mode, fill the rect instead
-		fillRect(left, top, right, bottom, color);
+		fillRect(left, top, right, bottom, colorIndex);
 		return;
 	}
+
+	uint32 color = getColorFromIndex(colorIndex);
 
 	// Just in case those are swapped
 	if (left > right)
@@ -709,18 +752,29 @@ void Surface::recolor(uint8 from, uint8 to) {
 			p.set(to);
 }
 
-void Surface::putPixel(uint16 x, uint16 y, uint32 color) {
+void Surface::putPixelRaw(uint16 x, uint16 y, uint32 color) {
 	if ((x >= _width) || (y >= _height))
 		return;
 
 	get(x, y).set(color);
 }
 
-void Surface::drawLine(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint32 color) {
+void Surface::putPixel(uint16 x, uint16 y, uint8 colorIndex) {
+	uint32 color = getColorFromIndex(colorIndex);
+	putPixelRaw(x, y, color);
+}
+
+void Surface::drawLineRaw(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint32 color) {
 	SurfacePrimitives().drawLine(x0, y0, x1, y1, color, this);
 }
 
-void Surface::drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint32 color) {
+void Surface::drawLine(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint8 colorIndex) {
+	uint32 color = getColorFromIndex(colorIndex);
+	drawLineRaw(x0, y0, x1, y1, color);
+}
+
+void Surface::drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint8 colorIndex) {
+	uint32 color = getColorFromIndex(colorIndex);
 	// Just in case those are swapped
 	if (left > right)
 		SWAP(left, right);
@@ -742,10 +796,10 @@ void Surface::drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uin
 	right  = left + width  - 1;
 	bottom = top  + height - 1;
 
-	drawLine(left , top   , left , bottom, color);
-	drawLine(right, top   , right, bottom, color);
-	drawLine(left , top   , right, top   , color);
-	drawLine(left , bottom, right, bottom, color);
+	drawLineRaw(left , top   , left , bottom, color);
+	drawLineRaw(right, top   , right, bottom, color);
+	drawLineRaw(left , top   , right, top   , color);
+	drawLineRaw(left , bottom, right, bottom, color);
 }
 
 /*
@@ -754,7 +808,8 @@ void Surface::drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uin
  * version found in the Wikipedia article about the
  * "Bresenham's line algorithm" instead
  */
-void Surface::drawCircle(uint16 x0, uint16 y0, uint16 radius, uint32 color, int16 pattern) {
+void Surface::drawCircle(uint16 x0, uint16 y0, uint16 radius, uint8 colorIndex, int16 pattern) {
+	uint32 color = getColorFromIndex(colorIndex);
 	int16 f = 1 - radius;
 	int16 ddFx = 0;
 	int16 ddFy = -2 * radius;
@@ -763,14 +818,14 @@ void Surface::drawCircle(uint16 x0, uint16 y0, uint16 radius, uint32 color, int1
 
 	switch (pattern) {
 	case 0xFF:
-		fillRect(x0, y0 + radius, x0, y0 - radius, color);
-		fillRect(x0 + radius, y0, x0 - radius, y0, color);
+		fillRectRaw(x0, y0 + radius, x0, y0 - radius, color);
+		fillRectRaw(x0 + radius, y0, x0 - radius, y0, color);
 		break ;
 	case 0:
-		putPixel(x0, y0 + radius, color);
-		putPixel(x0, y0 - radius, color);
-		putPixel(x0 + radius, y0, color);
-		putPixel(x0 - radius, y0, color);
+		putPixelRaw(x0, y0 + radius, color);
+		putPixelRaw(x0, y0 - radius, color);
+		putPixelRaw(x0 + radius, y0, color);
+		putPixelRaw(x0 - radius, y0, color);
 		break;
 	default:
 		break;
@@ -790,20 +845,20 @@ void Surface::drawCircle(uint16 x0, uint16 y0, uint16 radius, uint32 color, int1
 		switch (pattern) {
 		case 0xFF:
 			// Fill circle
-			fillRect(x0 - y, y0 + x, x0 + y, y0 + x, color);
-			fillRect(x0 - x, y0 + y, x0 + x, y0 + y, color);
-			fillRect(x0 - y, y0 - x, x0 + y, y0 - x, color);
-			fillRect(x0 - x, y0 - y, x0 + x, y0 - y, color);
+			fillRectRaw(x0 - y, y0 + x, x0 + y, y0 + x, color);
+			fillRectRaw(x0 - x, y0 + y, x0 + x, y0 + y, color);
+			fillRectRaw(x0 - y, y0 - x, x0 + y, y0 - x, color);
+			fillRectRaw(x0 - x, y0 - y, x0 + x, y0 - y, color);
 			break;
 		case 0:
-			putPixel(x0 + x, y0 + y, color);
-			putPixel(x0 - x, y0 + y, color);
-			putPixel(x0 + x, y0 - y, color);
-			putPixel(x0 - x, y0 - y, color);
-			putPixel(x0 + y, y0 + x, color);
-			putPixel(x0 - y, y0 + x, color);
-			putPixel(x0 + y, y0 - x, color);
-			putPixel(x0 - y, y0 - x, color);
+			putPixelRaw(x0 + x, y0 + y, color);
+			putPixelRaw(x0 - x, y0 + y, color);
+			putPixelRaw(x0 + x, y0 - y, color);
+			putPixelRaw(x0 - x, y0 - y, color);
+			putPixelRaw(x0 + y, y0 + x, color);
+			putPixelRaw(x0 - y, y0 + x, color);
+			putPixelRaw(x0 + y, y0 - x, color);
+			putPixelRaw(x0 - y, y0 - x, color);
 			break;
 		default:
 			fillRect(x0 + y - pattern, y0 + x - pattern, x0 + y, y0 + x, color);
@@ -854,29 +909,70 @@ void Surface::blitToScreen(uint16 left, uint16 top, uint16 right, uint16 bottom,
 	g_system->copyRectToScreen(src, _width * _bpp, x, y, width, height);
 }
 
-bool Surface::loadImage(Common::SeekableReadStream &stream) {
+bool Surface::getImageInfo(Common::SeekableReadStream &stream, uint32 &width, uint32 &height, uint32 &bpp) {
 	ImageType type = identifyImage(stream);
 	if (type == kImageTypeNone)
 		return false;
 
-	return loadImage(stream, type);
+	Common::ScopedPtr<Image::ImageDecoder> decoder;
+	switch (type) {
+	case kImageTypeTGA:
+		decoder.reset(new Image::TGADecoder());
+		break;
+	case kImageTypeIFF:
+		decoder.reset(new Image::IFFDecoder());
+		break;
+	case kImageTypeBRC:
+		decoder.reset(new Image::BRCDecoder());
+		break;
+	case kImageTypeBMP:
+		decoder.reset(new Image::BitmapDecoder());
+		break;
+	case kImageTypeJPEG:
+		decoder.reset(new Image::JPEGDecoder());
+		break;
+	default:
+		warning("Surface::getImageInfo(): Unhandled image type: %d", (int)type);
+		return false;
+	}
+
+	decoder->loadStream(stream);
+	const Graphics::Surface *surf = decoder->getSurface();
+	if (!surf)
+		return false;
+
+	width  = surf->w;
+	height = surf->h;
+	bpp    = surf->format.bytesPerPixel;
+
+	return true;
 }
 
-bool Surface::loadImage(Common::SeekableReadStream &stream, ImageType type) {
+bool Surface::loadImage(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom,
+						int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
+	ImageType type = identifyImage(stream);
+	if (type == kImageTypeNone)
+		return false;
+
+	return loadImage(stream, type, left, top, right, bottom, x, y, transp, format);
+}
+
+bool Surface::loadImage(Common::SeekableReadStream &stream, ImageType type, int16 left, int16 top, int16 right, int16 bottom,
+						int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
 	if (type == kImageTypeNone)
 		return false;
 
 	switch (type) {
 	case kImageTypeTGA:
-		return loadTGA(stream);
+		return loadTGA(stream, left, top, right, bottom, x, y, transp, format);
 	case kImageTypeIFF:
-		return loadIFF(stream);
+		return loadIFF(stream, left, top, right, bottom, x, y, transp, format);
 	case kImageTypeBRC:
-		return loadBRC(stream);
+		return loadBRC(stream, left, top, right, bottom, x, y, transp, format);
 	case kImageTypeBMP:
-		return loadBMP(stream);
+		return loadBMP(stream, left, top, right, bottom, x, y, transp, format);
 	case kImageTypeJPEG:
-		return loadJPEG(stream);
+		return loadJPEG(stream, left, top, right, bottom, x, y, transp, format);
 
 	default:
 		warning("Surface::loadImage(): Unknown image type: %d", (int)type);
@@ -917,8 +1013,6 @@ ImageType Surface::identifyImage(Common::SeekableReadStream &stream) {
 	// Check width, height and bpp for sane values
 	if ((width == 0) || (height == 0) || (bpp == 0))
 		return kImageTypeNone;
-	if ((width > 800) || (height > 600))
-		return kImageTypeNone;
 	if ((bpp != 8) && (bpp != 16) && (bpp != 24) && (bpp != 32))
 		return kImageTypeNone;
 
@@ -926,38 +1020,114 @@ ImageType Surface::identifyImage(Common::SeekableReadStream &stream) {
 	return kImageTypeTGA;
 }
 
-
-bool Surface::loadTGA(Common::SeekableReadStream &stream) {
-	warning("TODO: Surface::loadTGA()");
-	return false;
-}
-
-bool Surface::loadIFF(Common::SeekableReadStream &stream) {
-	Image::IFFDecoder decoder;
+bool Surface::loadImage(Image::ImageDecoder &decoder, Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom,
+						int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
 	decoder.loadStream(stream);
 
 	if (!decoder.getSurface())
 		return false;
 
-	resize(decoder.getSurface()->w, decoder.getSurface()->h);
-	memcpy(_vidMem, decoder.getSurface()->getPixels(), decoder.getSurface()->w * decoder.getSurface()->h);
+	const Graphics::Surface *st = decoder.getSurface();
+	bool needConversion = decoder.getSurface()->format.bytesPerPixel > 1 && decoder.getSurface()->format != format;
+	if (needConversion) {
+		Graphics::Surface *st2 = st->convertTo(format);
+		// Force the pixel value 0 (used by the engine as the special transparent color) to be still mapped to 0 in the new format
+		for (int16 x2 = 0; x2 < st->w; ++x2) {
+			for (int16 y2 = 0; y2 < st->h; ++y2) {
+				uint32 p = st->getPixel(x2, y2);
+				if (p == 0) {
+					st2->setPixel(x2, y2, 0);
+				}
+			}
+		}
+
+		st = st2;
+	}
+
+	uint32 *colorMap = nullptr;
+	if (format.bytesPerPixel > 1 && decoder.getSurface()->format.bytesPerPixel == 1) {
+		colorMap = new uint32[256];
+		computeHighColorMap(colorMap, decoder.getPalette().data(), format, true);
+	}
+
+	const Surface src(st->w, st->h, st->format.bytesPerPixel,
+					  static_cast<const byte *>(st->getPixels()),
+					  colorMap);
+
+	blit(src, left, top, right, bottom, x, y, (transp == 0) ? -1 : 0);
+	if (colorMap) {
+		if (_bpp == 1) {
+			// The destination must retain the source color map for further conversions
+			_highColorMap = colorMap;
+			_ownHighColorMap = true;
+		} else {
+			delete[] colorMap;
+		}
+	}
+
+	if (needConversion)
+		delete st;
 
 	return true;
 }
 
-bool Surface::loadBRC(Common::SeekableReadStream &stream) {
-	warning("TODO: Surface::loadBRC()");
-	return false;
+bool Surface::loadTGA(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
+	Image::TGADecoder decoder;
+	return loadImage(decoder, stream, left, top, right, bottom, x, y, transp, format);
 }
 
-bool Surface::loadBMP(Common::SeekableReadStream &stream) {
-	warning("TODO: Surface::loadBMP()");
-	return false;
+bool Surface::loadIFF(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
+	Image::IFFDecoder decoder;
+	return loadImage(decoder, stream, left, top, right, bottom, x, y, transp, format);
 }
 
-bool Surface::loadJPEG(Common::SeekableReadStream &stream) {
-	warning("TODO: Surface::loadJPEG()");
-	return false;
+bool Surface::loadBRC(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
+	Image::BRCDecoder decoder;
+	return loadImage(decoder, stream, left, top, right, bottom, x, y, transp, format);
+}
+
+bool Surface::loadBMP(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
+	Image::BitmapDecoder decoder;
+	return loadImage(decoder, stream, left, top, right, bottom, x, y, transp, format);
+}
+
+bool Surface::loadJPEG(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
+	Image::JPEGDecoder decoder;
+	return loadImage(decoder, stream, left, top, right, bottom, x, y, transp, format);
+}
+
+void Surface::computeHighColorMap(uint32 *highColorMap, const byte *palette,
+								  const Graphics::PixelFormat &format,
+								  bool useSpecialBlackWhiteValues,
+								  int16 startColor, int16 colorCount,
+								  int16 startColorSrc) {
+	if (!palette)
+		return;
+
+	if (startColorSrc < 0)
+		startColorSrc = startColor;
+
+	for (int16 i = 0; i < colorCount; i++) {
+		int indexSrc = (startColorSrc + i ) * 3;
+		byte red = palette[indexSrc];
+		byte green = palette[indexSrc + 1];
+		byte blue = palette[indexSrc + 2];
+
+		int indexDest = startColor + i;
+
+		if (!useSpecialBlackWhiteValues)
+			highColorMap[indexDest] = format.RGBToColor(red, green, blue);
+		else if (i == 0) // Trick from the original engine to handle transparency with high color surfaces
+			highColorMap[indexDest] = 0; // Palette index 0 is always mapped to high color value 0, possibly interpreted as the special transparent color.
+		else if (i == 255)
+			highColorMap[indexDest] = format.RGBToColor(0xFF, 0xFF, 0xFF); // Palette index 255 is always mapped to white.
+		else if (red == 0 && green == 0 && blue == 0)
+			highColorMap[indexDest] = format.RGBToColor((1 << format.rLoss),
+														(1 << format.gLoss),
+														(1 << format.bLoss)); // Blacks at other indexes are mapped to rgb(1, 1, 1) value to prevent interpreting them as transparent.
+		else
+			highColorMap[indexDest] = format.RGBToColor(red, green, blue);
+	}
 }
 
 } // End of namespace Gob

@@ -610,18 +610,18 @@ void Inter_v2::o2_pushVars() {
 		if ((_vm->_game->_script->peekByte() == 25) ||
 				(_vm->_game->_script->peekByte() == 28)) {
 
-			int16 varOff = _vm->_game->_script->readVarIndex();
+			uint16 varOff = _vm->_game->_script->readVarIndex();
 			_vm->_game->_script->skip(1);
 
 			_varStack.pushData(*_variables, varOff, _vm->_global->_inter_animDataSize * 4);
 
 		} else {
-			int16 value;
+			int32 value;
 
 			if (_vm->_game->_script->evalExpr(&value) != 20)
 				value = 0;
 
-			_varStack.pushInt((uint32)value);
+			_varStack.pushInt(value);
 		}
 	}
 }
@@ -1050,7 +1050,7 @@ void Inter_v2::o2_assign(OpFuncParams &params) {
 		loopCount = 1;
 
 	for (int i = 0; i < loopCount; i++) {
-		int16 result;
+		int32 result;
 		int16 srcType = _vm->_game->_script->evalExpr(&result);
 
 		switch (destType) {
@@ -1459,7 +1459,7 @@ void Inter_v2::o2_getFreeMem(OpFuncParams &params) {
 
 void Inter_v2::o2_checkData(OpFuncParams &params) {
 	Common::String file = _vm->_game->_script->evalString();
-	int16 varOff = _vm->_game->_script->readVarIndex();
+	uint16 varOff = _vm->_game->_script->readVarIndex();
 
 	// WORKAROUND: For some reason, the variable indicating which TOT to load next
 	// is overwritten in the guard house card game in Woodruff.
@@ -1574,7 +1574,7 @@ void Inter_v2::o2_readData(OpFuncParams &params) {
 void Inter_v2::o2_writeData(OpFuncParams &params) {
 	const char *file = _vm->_game->_script->evalString();
 
-	int16 dataVar = _vm->_game->_script->readVarIndex();
+	uint16 dataVar = _vm->_game->_script->readVarIndex();
 	int32 size    = _vm->_game->_script->readValExpr();
 	int32 offset  = _vm->_game->_script->evalInt();
 

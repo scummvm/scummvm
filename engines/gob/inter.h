@@ -33,6 +33,7 @@
 
 #include "gob/goblin.h"
 #include "gob/variables.h"
+#include "gob/html_parser.h"
 #include "gob/iniconfig.h"
 #include "gob/databases.h"
 
@@ -686,7 +687,7 @@ protected:
 	void oPlaytoons_copyFile();
 	void oPlaytoons_openItk();
 
-	Common::String getFile(const char *path, bool stripPath = true);
+	Common::String getFile(const char *path, bool stripPath = true, bool *isCd = nullptr);
 
 	bool readSprite(Common::String file, int32 dataVar, int32 size, int32 offset);
 };
@@ -700,6 +701,9 @@ protected:
 	void setupOpcodesDraw() override;
 	void setupOpcodesFunc() override;
 	void setupOpcodesGob() override;
+
+	Common::String ansiToOEM(Common::String string);
+	Common::String oemToANSI(Common::String string);
 
 	void o7_draw0x0C();
 	void o7_setCursorToLoadFromExec();
@@ -717,20 +721,60 @@ protected:
 	void o7_copyFile();
 	void o7_deleteFile();
 	void o7_playVmdOrMusic();
+	void o7_openItk();
 	void o7_initScreen();
 	void o7_setActiveCD();
 	void o7_findFile();
 	void o7_findNextFile();
+	void o7_getFileInfo();
 	void o7_getSystemProperty();
 	void o7_loadImage();
 	void o7_setVolume();
 	void o7_zeroVar();
+	void o7_draw0xA0();
 	void o7_getINIValue();
 	void o7_setINIValue();
 	void o7_loadIFFPalette();
-	void o7_opendBase();
-	void o7_closedBase();
+	void o7_openDatabase();
+	void o7_openDatabaseTable();
+	void o7_closeDatabaseTable();
+	void o7_draw0xAE();
+	void o7_openDatabaseIndex();
+	void o7_findDatabaseRecord();
+	void o7_findNextDatabaseRecord();
+	void o7_getDatabaseRecordValue();
+	void o7_checkAnyDatabaseRecordFound();
+	void o7_seekHtmlFile();
+	void o7_nextKeywordHtmlFile();
+	void o7_draw0xC3();
+	void o7_openTranlsationDB();
+	void o7_closeTranslationDB();
 	void o7_getDBString();
+	void o7_draw0xCC();
+	void o7_draw0xCD();
+	void o7_draw0xCE();
+	void o7_openHtmlFile();
+	void o7_closeHtmlFile();
+	void o7_draw0xDC();
+	void o7_draw0xDD();
+	void o7_draw0xDE();
+	void o7_draw0xDF();
+	void o7_draw0xE0();
+	void o7_draw0xE1();
+	void o7_draw0xE2();
+	void o7_draw0xE3();
+	void o7_draw0xE4();
+	void o7_draw0xE6();
+	void o7_draw0xE7();
+	void o7_draw0xE8();
+	void o7_draw0xE9();
+	void o7_draw0xF0();
+	void o7_executeModAddEvent();
+	void o7_executeModSetLength();
+	void o7_executeModGetPosition();
+	void o7_executeModStart();
+	void o7_vmdGetSoundBuffer();
+	void o7_vmdReleaseSoundBuffer();
 
 	void o7_loadCursor(OpFuncParams &params);
 	void o7_printText(OpFuncParams &params);
@@ -741,18 +785,24 @@ protected:
 	void o7_readData(OpFuncParams &params);
 	void o7_writeData(OpFuncParams &params);
 
+	void o7_ansiToOEM(OpGobParams &params);
 	void o7_oemToANSI(OpGobParams &params);
+	void o7_setDBStringEncoding(OpGobParams &params);
 	void o7_gob0x201(OpGobParams &params);
+	void o7_getFreeDiskSpace(OpGobParams &params);
 
 private:
 	INIConfig _inis;
-	Databases _databases;
+	TranslationDatabases _translationDatabases;
+	Common::HashMap<Common::String, Database, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _databases;
 
 	Common::ArchiveMemberList _remainingFilesFromPreviousSearch;
 	Common::String _currentCDPath;
 
-	Common::String findFile(const Common::String &mask, const Common::String &previousFile);
-	void copyFile(const Common::String &sourceFile, const Common::String &destFile);
+	Common::String _currentHtmlFile;
+	HtmlContext *_currentHtmlContext;
+
+	void copyFile(const Common::String &sourceFile, bool sourceIsCd, const Common::String &destFile);
 
 	bool setCurrentCDPath(const Common::String &dir);
 	Common::Array<uint32> getAdibou2InstalledApplications();

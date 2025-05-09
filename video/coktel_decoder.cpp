@@ -57,7 +57,7 @@ CoktelDecoder::State::State() : flags(0), speechId(0) {
 
 CoktelDecoder::CoktelDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
 	_mixer(mixer), _soundType(soundType), _width(0), _height(0), _x(0), _y(0),
-	_defaultX(0), _defaultY(0), _features(0), _frameCount(0), _palette(256), _paletteDirty(false),
+	_defaultX(0), _defaultY(0), _features(0), _nbFramesPastEnd(0), _frameCount(0), _palette(256), _paletteDirty(false),
 	_isDouble(false), _ownSurface(true), _frameRate(12), _hasSound(false),
 	_soundEnabled(false), _soundStage(kSoundNone), _audioStream(0), _startTime(0),
 	_pauseStartTime(0), _isPaused(false) {
@@ -270,6 +270,10 @@ int CoktelDecoder::getCurFrame() const {
 	return _curFrame;
 }
 
+int CoktelDecoder::getNbFramesPastEnd() const {
+	return _nbFramesPastEnd;
+}
+
 void CoktelDecoder::close() {
 	disableSound();
 	freeSurface();
@@ -283,6 +287,7 @@ void CoktelDecoder::close() {
 	_features = 0;
 
 	_curFrame   = -1;
+	_nbFramesPastEnd = 0;
 	_frameCount =  0;
 
 	_startTime = 0;
@@ -801,6 +806,7 @@ bool PreIMDDecoder::seek(int32 frame, int whence, bool restart) {
 
 	// Run through the frames
 	_curFrame = -1;
+	_nbFramesPastEnd = 0;
 	_stream->seek(2);
 	while (_curFrame != frame) {
 		uint16 frameSize = _stream->readUint16LE();
@@ -965,6 +971,14 @@ uint32 PreIMDDecoder::getFlags() const {
 	return 0;
 }
 
+uint16 PreIMDDecoder::getSoundFlags() const {
+	return 0;
+}
+
+uint32 PreIMDDecoder::getVideoBufferSize() const {
+	return _videoBufferSize;
+}
+
 Graphics::PixelFormat PreIMDDecoder::getPixelFormat() const {
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
@@ -1032,6 +1046,7 @@ bool IMDDecoder::seek(int32 frame, int whence, bool restart) {
 		// audio to worry about, restart the video and run through the frames
 
 		_curFrame = 0;
+		_nbFramesPastEnd = 0;
 		_stream->seek(_firstFramePos);
 
 		for (int i = ((frame > _curFrame) ? _curFrame : 0); i <= frame; i++)
@@ -1049,6 +1064,7 @@ bool IMDDecoder::seek(int32 frame, int whence, bool restart) {
 	// Seek
 	_stream->seek(framePos);
 	_curFrame = frame;
+	_nbFramesPastEnd = 0;
 
 	return true;
 }
@@ -1423,6 +1439,7 @@ void IMDDecoder::processFrame() {
 			int16 frame = _stream->readSint16LE();
 			if (_framePos) {
 				_curFrame = frame - 1;
+				_nbFramesPastEnd = 0;
 				_stream->seek(_framePos[frame]);
 
 				hasNextCmd = true;
@@ -1647,6 +1664,14 @@ uint32 IMDDecoder::getFlags() const {
 	return _flags;
 }
 
+uint16 IMDDecoder::getSoundFlags() const {
+	return _soundFlags;
+}
+
+uint32 IMDDecoder::getVideoBufferSize() const {
+	return _videoBufferSize;
+}
+
 Graphics::PixelFormat IMDDecoder::getPixelFormat() const {
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
@@ -1829,6 +1854,7 @@ bool VMDDecoder::seek(int32 frame, int whence, bool restart) {
 		if (_curFrame > frame) {
 			_stream->seek(_frames[0].offset);
 			_curFrame = -1;
+			_nbFramesPastEnd = 0;
 		}
 
 		while (frame > _curFrame)
@@ -1840,6 +1866,7 @@ bool VMDDecoder::seek(int32 frame, int whence, bool restart) {
 	// Seek
 	_stream->seek(_frames[frame + 1].offset);
 	_curFrame = frame;
+	_nbFramesPastEnd = 0;
 	_startTime = g_system->getMillis() - ((frame + 2) * getStaticTimeToNextFrame());
 
 
@@ -1996,7 +2023,7 @@ bool VMDDecoder::loadStream(Common::SeekableReadStream *stream) {
 		}
 	}
 
-	_soundFreq        = _stream->readSint16LE();
+	_soundFreq        = _stream->readUint16LE();
 	_soundSliceSize   = _stream->readSint16LE();
 	_soundSlicesCount = _stream->readSint16LE();
 	_soundFlags       = _stream->readUint16LE();
@@ -2314,8 +2341,10 @@ bool VMDDecoder::isVideoLoaded() const {
 }
 
 const Graphics::Surface *VMDDecoder::decodeNextFrame() {
-	if (!isVideoLoaded() || endOfVideo())
-		return 0;
+	if (!isVideoLoaded() || endOfVideo()) {
+		++_nbFramesPastEnd;
+		return nullptr;
+	}
 
 	createSurface();
 
@@ -2852,6 +2881,14 @@ Audio::AudioStream *VMDDecoder::create16bitADPCM(Common::SeekableReadStream *str
 
 uint32 VMDDecoder::getFlags() const {
 	return _flags;
+}
+
+uint16 VMDDecoder::getSoundFlags() const {
+	return _soundFlags;
+}
+
+uint32 VMDDecoder::getVideoBufferSize() const {
+	return _videoBufferSize;
 }
 
 Graphics::PixelFormat VMDDecoder::getPixelFormat() const {

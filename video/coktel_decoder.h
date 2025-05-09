@@ -151,11 +151,14 @@ public:
 	/** Is the video paletted or true color? */
 	virtual bool isPaletted() const;
 
+	virtual uint32 getVideoBufferSize() const = 0;
+
 	/**
 	 * Get the current frame
 	 * @see VideoDecoder::getCurFrame()
 	 */
 	int getCurFrame() const;
+	int getNbFramesPastEnd() const;
 
 	/**
 	 * Decode the next frame
@@ -186,6 +189,7 @@ public:
 	uint16 getWidth()  const;
 	uint16 getHeight() const;
 	virtual uint32 getFlags() const = 0;
+	virtual uint16 getSoundFlags() const = 0;
 	virtual Graphics::PixelFormat getPixelFormat() const = 0;
 
 	uint32 getFrameCount() const;
@@ -233,6 +237,7 @@ protected:
 	uint32 _features;
 
 	 int32 _curFrame;
+	 int32 _nbFramesPastEnd;
 	uint32 _frameCount;
 
 	uint32 _startTime;
@@ -304,6 +309,8 @@ public:
 	const Graphics::Surface *decodeNextFrame();
 
 	uint32 getFlags() const;
+	uint16 getSoundFlags() const;
+	uint32 getVideoBufferSize() const;
 
 	Graphics::PixelFormat getPixelFormat() const;
 
@@ -338,6 +345,8 @@ public:
 	const Graphics::Surface *decodeNextFrame();
 
 	uint32 getFlags() const;
+	uint16 getSoundFlags() const;
+	uint32 getVideoBufferSize() const;
 
 	Graphics::PixelFormat getPixelFormat() const;
 
@@ -445,6 +454,8 @@ public:
 	const Graphics::Surface *decodeNextFrame();
 
 	uint32 getFlags() const;
+	uint16 getSoundFlags() const;
+	uint32 getVideoBufferSize() const;
 
 	Graphics::PixelFormat getPixelFormat() const;
 
@@ -513,7 +524,7 @@ private:
 
 	// Sound properties
 	uint16 _soundFlags;
-	int16  _soundFreq;
+	uint16  _soundFreq;
 	int16  _soundSliceSize;
 	int16  _soundSlicesCount;
 	byte   _soundBytesPerSample;

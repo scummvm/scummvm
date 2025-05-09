@@ -177,7 +177,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 	}
 
 	if (props.hasSound)
-		_vm->_vidPlayer->closeLiveSound();
+		_vm->_vidPlayer->closeLiveVideos();
 
 	if (props.startFrame >= 0)
 		_vm->_vidPlayer->play(slot, props);
@@ -265,7 +265,7 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 	uint16 dest = _vm->_game->_script->readVarIndex(&size, &destType);
 
 	if (size != 0) {
-		int16 src;
+		int32 src;
 
 		_vm->_game->_script->push();
 
@@ -332,7 +332,7 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 	}
 
 	for (int i = 0; i < loopCount; i++) {
-		int16 result;
+		int32 result;
 		int16 srcType = _vm->_game->_script->evalExpr(&result);
 
 		switch (destType) {
@@ -358,9 +358,9 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 		case TYPE_VAR_STR:
 		case TYPE_ARRAY_STR:
 			if (srcType == TYPE_IMM_INT16)
-				WRITE_VARO_UINT8(dest, result);
+				WRITE_VARO_UINT8(dest + i * _vm->_global->_inter_animDataSize, result);
 			else
-				WRITE_VARO_STR(dest, _vm->_game->_script->getResultStr());
+				WRITE_VARO_STR(dest + i * _vm->_global->_inter_animDataSize, _vm->_game->_script->getResultStr());
 			break;
 
 		default:
@@ -389,13 +389,13 @@ void Inter_v6::o6_removeHotspot(OpFuncParams &params) {
 
 	switch (id + 5) {
 	case 0:
-		_vm->_game->_hotspots->push(1);
+		_vm->_game->_hotspots->push(1, true);
 		break;
 	case 1:
 		_vm->_game->_hotspots->pop();
 		break;
 	case 2:
-		_vm->_game->_hotspots->push(2);
+		_vm->_game->_hotspots->push(2, true);
 		break;
 	case 3:
 		_vm->_game->_hotspots->removeState(stateType1);

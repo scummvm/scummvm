@@ -27,8 +27,10 @@
 
 #include "common/formats/winexe_ne.h"
 #include "common/formats/winexe_pe.h"
+#include "graphics/blit.h"
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
+#include "image/icocur.h"
 
 #include "gob/dataio.h"
 #include "gob/draw.h"
@@ -73,38 +75,51 @@ bool Draw_v7::loadCursorFromFile(Common::String cursorName) {
 	Graphics::WinCursorGroup *cursorGroup = nullptr;
 	Graphics::Cursor *defaultCursor = nullptr;
 
-	// Load the cursor file and cursor group
-	if (loadCursorFile())
-		cursorGroup = Graphics::WinCursorGroup::createCursorGroup(_cursors, Common::WinResourceID(cursorName));
-
-	// If the requested cursor does not exist, create a default one
 	const Graphics::Cursor *cursor = nullptr;
-	if (!cursorGroup || cursorGroup->cursors.empty() || !cursorGroup->cursors[0].cursor) {
-		defaultCursor = Graphics::makeDefaultWinCursor();
 
-		cursor = defaultCursor;
-	} else
-		cursor = cursorGroup->cursors[0].cursor;
+	if (cursorName.hasPrefix("*")) {
+		// Load from an external .CUR file
+		cursorName = cursorName.substr(1);
+		Common::SeekableReadStream *cursorStream = _vm->_dataIO->getFile(cursorName);
 
-	// Make sure the cursor sprite is big enough
-	if (_scummvmCursor->getWidth() != cursor->getWidth() || _scummvmCursor->getHeight() != cursor->getHeight()) {
-		_vm->_draw->_scummvmCursor.reset();
-		_vm->_draw->_scummvmCursor = _vm->_video->initSurfDesc(cursor->getWidth(), cursor->getHeight(), SCUMMVM_CURSOR);
+		if (cursorStream) {
+			Image::IcoCurDecoder cursorDecoder;
+			cursorDecoder.open(*cursorStream);
+
+			if (cursorDecoder.numItems() > 0) {
+				cursor = cursorDecoder.loadItemAsCursor(0);
+			} else {
+				warning("No cursor item found in file '%s'", cursorName.c_str());
+			}
+		} else {
+			warning("External cursor file '%s' not found", cursorName.c_str());
+		}
+	} else {
+		// Load from a .DLL cursor file and cursor group
+		if (loadCursorFile())
+			cursorGroup = Graphics::WinCursorGroup::createCursorGroup(_cursors, Common::WinResourceID(cursorName));
+
+		if (cursorGroup && !cursorGroup->cursors.empty() && cursorGroup->cursors[0].cursor) {
+			cursor = cursorGroup->cursors[0].cursor;
+		}
 	}
 
-	_scummvmCursor->clear();
+	// If the requested cursor does not exist, create a default one
+	if (!cursor) {
+		defaultCursor = Graphics::makeDefaultWinCursor();
+		cursor = defaultCursor;
+	}
 
-	Surface cursorSurf(cursor->getWidth(), cursor->getHeight(), 1, cursor->getSurface());
-	_scummvmCursor->blit(cursorSurf, 0, 0);
 
-	CursorMan.replaceCursor(_scummvmCursor->getData(),
+	Graphics::PixelFormat clut8Format = Graphics::PixelFormat::createFormatCLUT8();
+	CursorMan.replaceCursor(cursor->getSurface(),
 							cursor->getWidth(),
 							cursor->getHeight(),
 							cursor->getHotspotX(),
 							cursor->getHotspotY(),
 							cursor->getKeyColor(),
 							false,
-							&_vm->getPixelFormat(),
+							&clut8Format,
 							cursor->getMask());
 	CursorMan.replaceCursorPalette(cursor->getPalette(),
 								   cursor->getPaletteStartIndex(),
@@ -116,8 +131,7 @@ bool Draw_v7::loadCursorFromFile(Common::String cursorName) {
 	return true;
 }
 
-void Draw_v7::initScreen()
-{
+void Draw_v7::initScreen() {
 	_vm->_game->_preventScroll = false;
 
 	_scrollOffsetX = 0;

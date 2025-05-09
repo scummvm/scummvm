@@ -28,6 +28,7 @@
 #ifndef GOB_DRAW_H
 #define GOB_DRAW_H
 
+#include "common/stack.h"
 #include "gob/video.h"
 
 namespace Common {
@@ -126,6 +127,8 @@ public:
 	int16 _unusedPalette2[16];
 	Video::Color _vgaPalette[256];
 
+	Common::Stack<Video::Color *> _paletteStack;
+
 	// 0 (00b): No cursor
 	// 1 (01b): Cursor would be on _backSurface
 	// 2 (10b): Cursor would be on _frontSurface
@@ -192,12 +195,10 @@ public:
 	void setPalette();
 	void clearPalette();
 
-	uint32 getColor(uint8 index) const;
-
 	void dirtiedRect(int16 surface, int16 left, int16 top, int16 right, int16 bottom);
 	void dirtiedRect(SurfacePtr surface, int16 left, int16 top, int16 right, int16 bottom);
 
-	void initSpriteSurf(int16 index, int16 width, int16 height, int16 flags);
+	void initSpriteSurf(int16 index, int16 width, int16 height, int16 flags, byte bpp = 0);
 	void freeSprite(int16 index);
 	void adjustCoords(char adjust, int16 *coord1, int16 *coord2);
 	void adjustCoords(char adjust, uint16 *coord1, uint16 *coord2) {

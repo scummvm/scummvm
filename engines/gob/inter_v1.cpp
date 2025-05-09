@@ -426,12 +426,12 @@ void Inter_v1::o1_freeAnim() {
 }
 
 void Inter_v1::o1_updateAnim() {
-	int16 deltaX;
-	int16 deltaY;
-	int16 flags;
-	int16 frame;
-	int16 layer;
-	int16 animation;
+	int32 deltaX;
+	int32 deltaY;
+	int32 flags;
+	int32 frame;
+	int32 layer;
+	int32 animation;
 
 	_vm->_game->_script->evalExpr(&deltaX);
 	_vm->_game->_script->evalExpr(&deltaY);
@@ -439,17 +439,17 @@ void Inter_v1::o1_updateAnim() {
 	_vm->_game->_script->evalExpr(&layer);
 	_vm->_game->_script->evalExpr(&frame);
 	flags = _vm->_game->_script->readInt16();
-	_vm->_scenery->updateAnim(layer, frame, animation, flags,
-			deltaX, deltaY, 1);
+	_vm->_scenery->updateAnim((int16)layer, (int16)frame, (int16)animation, (int16)flags,
+							  (int16)deltaX, (int16)deltaY, 1);
 }
 
 void Inter_v1::o1_initMult() {
 	int16 oldAnimHeight;
 	int16 oldAnimWidth;
 	int16 oldObjCount;
-	int16 posXVar;
-	int16 posYVar;
-	int16 animDataVar;
+	uint16 posXVar;
+	uint16 posYVar;
+	uint16 animDataVar;
 
 	oldAnimWidth = _vm->_mult->_animWidth;
 	oldAnimHeight = _vm->_mult->_animHeight;
@@ -547,8 +547,8 @@ void Inter_v1::o1_animate() {
 }
 
 void Inter_v1::o1_loadMultObject() {
-	int16 val;
-	int16 objIndex;
+	int32 val;
+	int32 objIndex;
 	byte *multData;
 
 	_vm->_game->_script->evalExpr(&objIndex);
@@ -570,11 +570,11 @@ void Inter_v1::o1_loadMultObject() {
 }
 
 void Inter_v1::o1_getAnimLayerInfo() {
-	int16 anim;
-	int16 layer;
-	int16 varDX, varDY;
-	int16 varUnk0;
-	int16 varFrames;
+	int32 anim;
+	int32 layer;
+	uint16 varDX, varDY;
+	uint16 varUnk0;
+	uint16 varFrames;
 
 	_vm->_game->_script->evalExpr(&anim);
 	_vm->_game->_script->evalExpr(&layer);
@@ -589,7 +589,7 @@ void Inter_v1::o1_getAnimLayerInfo() {
 }
 
 void Inter_v1::o1_getObjAnimSize() {
-	int16 objIndex;
+	int32 objIndex;
 
 	_vm->_game->_script->evalExpr(&objIndex);
 
@@ -632,17 +632,23 @@ void Inter_v1::o1_freeStatic() {
 }
 
 void Inter_v1::o1_renderStatic() {
-	int16 layer;
-	int16 index;
+	int32 layer;
+	int32 index;
 
 	_vm->_game->_script->evalExpr(&index);
 	_vm->_game->_script->evalExpr(&layer);
-	_vm->_scenery->renderStatic(index, layer);
+	_vm->_scenery->renderStatic((int16)index, (int16)layer);
 }
 
 void Inter_v1::o1_loadCurLayer() {
-	_vm->_game->_script->evalExpr(&_vm->_scenery->_curStatic);
-	_vm->_game->_script->evalExpr(&_vm->_scenery->_curStaticLayer);
+	int32 curStatic;
+	int32 curStaticLayer;
+	_vm->_game->_script->evalExpr(&curStatic);
+	_vm->_game->_script->evalExpr(&curStaticLayer);
+
+	_vm->_scenery->_curStatic = (int16)curStatic;
+	_vm->_scenery->_curStaticLayer = (int16)curStaticLayer;
+
 }
 
 void Inter_v1::o1_playCDTrack() {
@@ -689,8 +695,20 @@ void Inter_v1::o1_freeFontToSprite() {
 void Inter_v1::o1_callSub(OpFuncParams &params) {
 	uint16 offset = _vm->_game->_script->readUint16();
 
-	debugC(5, kDebugGameFlow, "tot = \"%s\", offset = %d",
-			_vm->_game->_curTotFile.c_str(), offset);
+	if (debugChannelSet(5, kDebugGameFlow)) {
+		Common::String functionName = _vm->_game->getFunctionName(_vm->_game->_curTotFile, offset);
+		Common::String functionNameInLog;
+
+		if (!functionName.empty()) {
+			functionNameInLog = Common::String::format(", function = \"%s\"",
+													   functionName.c_str());
+		}
+
+		debugC(5, kDebugGameFlow, "tot = \"%s\", offset = %d%s",
+			   _vm->_game->_curTotFile.c_str(),
+			   offset,
+			   functionNameInLog.c_str());
+	}
 
 	if (offset < 128) {
 		warning("Inter_v1::o1_callSub(): Offset %d points into the header. "
@@ -961,9 +979,9 @@ void Inter_v1::o1_if(OpFuncParams &params) {
 
 void Inter_v1::o1_assign(OpFuncParams &params) {
 	byte destType = _vm->_game->_script->peekByte();
-	int16 dest = _vm->_game->_script->readVarIndex();
+	uint16 dest = _vm->_game->_script->readVarIndex();
 
-	int16 result;
+	int32 result;
 	int16 srcType = _vm->_game->_script->evalExpr(&result);
 
 	switch (destType) {
@@ -1226,17 +1244,33 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 		memset((char *)_vm->_draw->_vgaPalette, 0, 768);
 		break;
 
-	case 55:
-		// TODO case 55 implementation
-		warning("STUB: o1_palLoad case 55 not implemented");
+	case 55: {
+		// Push a copy of the current palette
+		Video::Color *paletteCopy = new Video::Color[256];
+		memcpy((char *)paletteCopy, (char *)_vm->_draw->_vgaPalette, 768);
+		_vm->_draw->_paletteStack.push(paletteCopy);
+
 		_vm->_game->_script->skip(2);
 		_vm->_draw->_applyPal = false;
 		return;
+	}
 
 	case 56:
-		// TODO case 56 implementation
-		warning("STUB: o1_palLoad case 56 not implemented");
-		_vm->_game->_script->skip(2);
+		// Pop the last pushed palette
+		index1 =  _vm->_game->_script->readByte();
+		index2 = (_vm->_game->_script->readByte() - index1 + 1) * 3;
+		if (!_vm->_draw->_paletteStack.empty()) {
+			memcpy((char *)_vm->_draw->_vgaPalette + index1 * 3,
+				   (char *)_vm->_draw->_paletteStack.top() + index1 * 3, index2);
+			delete[] _vm->_draw->_paletteStack.pop();
+		} else {
+			warning("o1_palLoad case 56: empty palette stack, cannot pop");
+		}
+
+		_vm->_draw->_applyPal = true;
+		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+		_vm->_draw->_applyPal = false;
+
 		break;
 
 	case 61:
@@ -1376,8 +1410,18 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		if (cmd < 20) {
 			_vm->_util->delay(cmd);
 			_noBusyWait = true;
-		} else
+		} else {
+			if (_vm->getGameType() == kGameTypeAdibou2) {
+				// The engine calls updateLive() every 100ms while waiting there
+				while (cmd > 100) {
+					_vm->_vidPlayer->updateLive();
+					_vm->_util->longDelay(100);
+					cmd -= 100;
+				}
+			}
+
 			_vm->_util->longDelay(cmd);
+		}
 		break;
 	}
 }
@@ -1542,7 +1586,8 @@ void Inter_v1::o1_createSprite(OpFuncParams &params) {
 
 	_vm->_draw->adjustCoords(0, &width, &height);
 	flag = _vm->_game->_script->readInt16();
-	_vm->_draw->initSpriteSurf(index, width, height, flag ? 2 : 0);
+	byte bpp = (flag & 0x200) ? 1 : _vm->_pixelFormat.bytesPerPixel;
+	_vm->_draw->initSpriteSurf(index, width, height, flag ? 2 : 0, bpp);
 }
 
 void Inter_v1::o1_freeSprite(OpFuncParams &params) {
@@ -1598,6 +1643,20 @@ void Inter_v1::o1_copySprite(OpFuncParams &params) {
 
 	_vm->_draw->_transparency = _vm->_game->_script->readInt16();
 
+	if (_vm->_draw->_sourceSurface != 100 &&
+		_vm->_draw->_sourceSurface != 101 &&
+		(_vm->_draw->_sourceSurface < 0 || _vm->_draw->_sourceSurface >= Draw::kSpriteCount)) {
+		warning("o1_copySprite(): Invalid source surface index %d", _vm->_draw->_sourceSurface);
+		return;
+	}
+
+	if (_vm->_draw->_destSurface != 100 &&
+		_vm->_draw->_destSurface != 101 &&
+		(_vm->_draw->_destSurface < 0 || _vm->_draw->_destSurface >= Draw::kSpriteCount)) {
+		warning("o1_copySprite(): Invalid destination surface index %d", _vm->_draw->_destSurface);
+		return;
+	}
+
 	_vm->_draw->spriteOperation(DRAW_BLITSURF);
 }
 
@@ -1642,15 +1701,12 @@ void Inter_v1::o1_drawLine(OpFuncParams &params) {
 
 void Inter_v1::o1_strToLong(OpFuncParams &params) {
 	char str[20];
-	int16 strVar;
-	int16 destVar;
-	int32 res;
 
-	strVar = _vm->_game->_script->readVarIndex();
+	uint16 strVar = _vm->_game->_script->readVarIndex();
 	Common::strlcpy(str, GET_VARO_STR(strVar), 20);
-	res = atoi(str);
+	int32 res = atoi(str);
 
-	destVar = _vm->_game->_script->readVarIndex();
+	uint16 destVar = _vm->_game->_script->readVarIndex();
 	WRITE_VAR_OFFSET(destVar, res);
 }
 
@@ -1729,7 +1785,7 @@ void Inter_v1::o1_waitEndPlay(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_playComposition(OpFuncParams &params) {
-	int16 dataVar = _vm->_game->_script->readVarIndex();
+	uint16 dataVar = _vm->_game->_script->readVarIndex();
 	int16 freqVal = _vm->_game->_script->readValExpr();
 
 	int16 composition[50];
@@ -1741,8 +1797,8 @@ void Inter_v1::o1_playComposition(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_getFreeMem(OpFuncParams &params) {
-	int16 freeVar;
-	int16 maxFreeVar;
+	uint16 freeVar;
+	uint16 maxFreeVar;
 
 	freeVar = _vm->_game->_script->readVarIndex();
 	maxFreeVar = _vm->_game->_script->readVarIndex();
@@ -1754,7 +1810,7 @@ void Inter_v1::o1_getFreeMem(OpFuncParams &params) {
 
 void Inter_v1::o1_checkData(OpFuncParams &params) {
 	const char *file   = _vm->_game->_script->evalString();
-	      int16 varOff = _vm->_game->_script->readVarIndex();
+	      uint16 varOff = _vm->_game->_script->readVarIndex();
 
 	if (!_vm->_dataIO->hasFile(file)) {
 		warning("File \"%s\" not found", file);
@@ -1764,7 +1820,7 @@ void Inter_v1::o1_checkData(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_cleanupStr(OpFuncParams &params) {
-	int16 strVar;
+	uint16 strVar;
 
 	strVar = _vm->_game->_script->readVarIndex();
 	_vm->_util->cleanupStr(GET_VARO_FSTR(strVar));
@@ -1772,7 +1828,7 @@ void Inter_v1::o1_cleanupStr(OpFuncParams &params) {
 
 void Inter_v1::o1_insertStr(OpFuncParams &params) {
 	int16 pos;
-	int16 strVar;
+	uint16 strVar;
 
 	strVar = _vm->_game->_script->readVarIndex();
 	_vm->_game->_script->evalExpr(nullptr);
@@ -1783,7 +1839,7 @@ void Inter_v1::o1_insertStr(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_cutStr(OpFuncParams &params) {
-	int16 strVar;
+	uint16 strVar;
 	int16 pos;
 	int16 size;
 
@@ -1794,8 +1850,8 @@ void Inter_v1::o1_cutStr(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_strstr(OpFuncParams &params) {
-	int16 strVar;
-	int16 resVar;
+	uint16 strVar;
+	uint16 resVar;
 	int16 pos;
 
 	strVar = _vm->_game->_script->readVarIndex();
@@ -1809,7 +1865,7 @@ void Inter_v1::o1_strstr(OpFuncParams &params) {
 
 void Inter_v1::o1_istrlen(OpFuncParams &params) {
 	int16 len;
-	int16 strVar;
+	uint16 strVar;
 
 	strVar = _vm->_game->_script->readVarIndex();
 	len = strlen(GET_VARO_STR(strVar));
@@ -1873,7 +1929,7 @@ void Inter_v1::o1_freeFont(OpFuncParams &params) {
 
 void Inter_v1::o1_readData(OpFuncParams &params) {
 	const char *file    = _vm->_game->_script->evalString();
-	      int16 dataVar = _vm->_game->_script->readVarIndex();
+	      uint16 dataVar = _vm->_game->_script->readVarIndex();
 	      int16 size    = _vm->_game->_script->readValExpr();
 	      int16 offset  = _vm->_game->_script->readValExpr();
 	      int16 retSize = 0;

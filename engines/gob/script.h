@@ -86,7 +86,7 @@ public:
 	void  skipExpr(char stopToken);
 
 	// Higher-level expression parsing functions
-	char  evalExpr(int16 *pRes);
+	char  evalExpr(int32 *pRes);
 	bool  evalBool();
 	int32 evalInt();
 
