@@ -10,7 +10,7 @@ PLATFORM=m68k-atari-mintelf
 FASTCALL=false
 
 export ASFLAGS="-m68020-60"
-export CXXFLAGS="-m68020-60 -DUSE_MOVE16 -DUSE_SUPERVIDEL -DUSE_SV_BLITTER"
+export CXXFLAGS="-m68020-60 -DUSE_SUPERVIDEL -DUSE_SV_BLITTER"
 export LDFLAGS="-m68020-60"
 export PKG_CONFIG_LIBDIR="$(${PLATFORM}-gcc -print-sysroot)/usr/lib/m68020-60/pkgconfig"
 
@@ -72,8 +72,8 @@ cp ../backends/platform/atari/readme.txt dist-generic/scummvm
 unix2dos dist-generic/scummvm/readme.txt
 
 cd dist-generic
-mv scummvm scummvm-2.9.0pre-atari-full
-zip -r -9 scummvm-2.9.0pre-atari-full.zip scummvm-2.9.0pre-atari-full
+mv scummvm scummvm-2.9.2pre-atari-full
+zip -r -9 scummvm-2.9.2pre-atari-full.zip scummvm-2.9.2pre-atari-full
 cd -
 
-mv dist-generic/scummvm-2.9.0pre-atari-full.zip ..
+mv dist-generic/scummvm-2.9.2pre-atari-full.zip ..
