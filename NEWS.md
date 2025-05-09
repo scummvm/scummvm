@@ -4,6 +4,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 #### 2.9.1 (XXXX-XX-XX)
 
  AGS:
+   - Added official support for Old Skies and Rosewater.
    - Added support for sound clip speed variation, used in some games to
      slow down background music or other audio effects.
    - Fixed some audio volume changes not being triggered in some situations
