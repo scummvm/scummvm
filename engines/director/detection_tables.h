@@ -224,6 +224,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "grammarplaytime2",	"Grammar Playtime Vol.2: Asking Questions" },
 	{ "gundam0079",			"Gundam 0079: The War for Earth" },
 	{ "guscarn",			"Gus Goes to the Kooky Carnival" },
+	{ "gusmuse",			"Gus Goes to the Megarific Museum" },
 	{ "gusolis",			"Gus Goes to Cyberopolis" },
 	{ "guspark",			"Gus Goes to CyberStone Park" },
 	{ "gussshc",			"Gus and the CyberBuds Software SchoolHouse Collection" },
@@ -4407,10 +4408,22 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("gusbuds", "",		"MMV Product Demos for PowerMac", "r:692f6732b6d7deaa00c9b3df57bb30ce", 60068, 404),
 	WINGAME1("gusbuds", "",		"MMVDEMOS.EXE",					  "d:71d4ad9e9dc92a81561476d4d9813492", 692037, 404),
 
-	MACGAME1("guscarn", "", "Gus Goes to the Kooky Carnival", "r:e6833f1ce3b022f0128e4c80a55bcd46", 285310, 404),
-	WINGAME1("guscarn", "", "CARNIVAL.EXE", "t:d0babe1503cdec2b3c45674f91911c13", 690553, 404),
-	WINGAME1_l("guscarn", "", "PRETPARK.EXE", "t:d0babe1503cdec2b3c45674f91911c13", 690553, Common::NL_NLD, 404),
+	MACGAME2("guscarn", "", "Gus Goes to the Kooky Carnival", "r:e6833f1ce3b022f0128e4c80a55bcd46", 285310,
+				"Title.dxr", "t:ceadd61bd30a8602a6ed112a2cc31366", 202112, 404),
+	WINGAME2("guscarn", "", "CARNIVAL.EXE", "t:d0babe1503cdec2b3c45674f91911c13", 690553,
+				"TITLE.DIR", "t:182a0b3a7491f3d7816fe61cc7e6c20f", 199242, 404),
+	MACGAME2_l("guscarn", "", "Guus in het Pretpark", "r:e6833f1ce3b022f0128e4c80a55bcd46", 285310,
+				"Title.dir", "t:48d1c674927d573531d4693f0469eb61", 200576, Common::NL_NLD, 404),
+	WINGAME2_l("guscarn", "", "PRETPARK.EXE", "t:d0babe1503cdec2b3c45674f91911c13", 690553,
+				"TITLE.DIR", "t:572cfd8f36dbf42fe13d5f9f4bf59f73", 195306, Common::NL_NLD, 404),
 	MACDEMO1("guscarn", "Demo", "Carnival Demo 4 you", "r:67f572196550aedb1f9523d782022be0", 481226, 404),
+
+	MACGAME2("gusmuse", "", "Gus Goes to the Museum", "r:ccfbfc1a0ac231db40a250babaa6ad7c", 285282,
+			"Content/Intro.dir", "t:2b6830757b15dc6546a492df2c3fd032", 115390, 404),
+	WINGAME2("gusmuse", "", "MUSEUM.EXE", "t:a94c1f2c2bb45335edaed96cb99243f7", 697019,
+			"CONTENT/INTRO.DIR", "t:2b6830757b15dc6546a492df2c3fd032", 115390, 404),
+	WINGAME2_l("gusmuse", "", "MUSEUM.EXE", "t:a94c1f2c2bb45335edaed96cb99243f7", 697019,
+			"CONTENT/INTRO.DIR", "t:40fb23b25fd6e873338e9f52d10983f7", 217402, Common::NL_NLD, 404),
 
 	MACDEMO1("gusolis", "Demo", "Cyberopolis DEMO", "r:77f4098988d5386794d1530065f514cd", 303961, 404),
 
@@ -6571,8 +6584,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("compconf", "Windows 3.1", "CCWIN311.EXE", "t:d2f5116b14bb8aaeaeae3d3d7e55d40b", 918905,  500),
 	WINGAME1("compconf", "Windows 95",  "CCWIN95.EXE",  "t:4cb9a6383932f6f11946a5692d82bcf0", 1395275, 500),
 
-	WINGAME2tf("cracking", "", "crack.exe", "c2093c2b5dc9d3dc5b491e4df027e202", 1842361,
-							  "ufog8.dxr", "7c8222a010d40b59dd96a97f0b4fa974", 542472, 500, GF_32BPP),
+	WINGAME2tf("cracking", "", "crack.exe", "t:c2093c2b5dc9d3dc5b491e4df027e202", 1842361,
+							  "ufog8.dxr", "t:7c8222a010d40b59dd96a97f0b4fa974", 542472, 501, GF_32BPP),
 
 	// Mac versions require installation
 	// Original Mac german filename is Kreuzzüge
