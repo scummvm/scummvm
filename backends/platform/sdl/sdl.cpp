@@ -83,7 +83,7 @@
 static bool sdlGetAttribute(SDL_GLAttr attr, int *value) {
 	return SDL_GL_GetAttribute(attr, value);
 }
-#elif SDL_VERSION_ATLEAST(2, 0, 0)
+#elif SDL_VERSION_ATLEAST(2, 0, 0) && !USE_FORCED_GLES2
 static bool sdlGetAttribute(SDL_GLattr attr, int *value) {
 	return SDL_GL_GetAttribute(attr, value) == 0;
 }
