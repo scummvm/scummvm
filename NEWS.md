@@ -44,7 +44,25 @@ For a more comprehensive changelog of the latest experimental code, see:
      Android.
 
  SCI:
-   - Fixed KQ6 CD hi-res drawing glitches.
+   - Fixed KQ6 CD crash when talking to Rotten Tomato from inventory window in
+     high-resolution mode. (ScummVM 2.9.0 bug)
+   - Fixed KQ4 Amiga skipping title screen. (ScummVM 2.8.0 bug)
+   - Fixed QFG4 v1.0 crash in Thieves' Guild. (ScummVM 2.1.0 bug)
+   - Fixed messages disappearing every 18.2 minutes in BRAIN1, LSL5, and SQ1.
+     (Original game bug)
+   - Fixed SQ5 introduction comets not appearing on machines faster than a 386.
+     (Original game bug)
+   - Fixed LSL1 lockup when entering casino. (Original game bug)
+   - Fixed LSL6 crash when entering hotel. (Original game bug)
+   - Fixed LSL6-HIRES tram disappearing after restarting game.
+     (Original game bug)
+   - Fixed LSL6 help cursor not appearing. (Original game bug)
+   - Fixed QFG1 EGA lockup when tripping over trip wire. (Original game bug)
+   - Fixed KQ1 lockup when drowning in cave. (Original game bug)
+   - Fixed GK1 day 5 phone lockup in all game versions at all speeds.
+     (Original game bug)
+   - Fixed incorrect blue dither pattern in EGA vector pictures.
+     (All SCI tools since SCI Decoder in 1992)
 
  SCUMM:
    - Restored the ScummVM 2.7.0 behavior of allowing all the DOS v2-v4
