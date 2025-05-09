@@ -88,8 +88,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehler behoben, der dazu führt, dass bei der Verringerung der Lautstärke in iMUSE
      (z.B. im Intro von Sam & Max) exzessive MIDI-Nachrichten erzeugt werden, die zu verlangsamter,
 	 fehlerhafter Sprachausgabe bei der Nutzung älterer MIDI-Hardware führen kann.
-   - Absturz behoben, der auftritt, wenn ein älterer Spielstand geladen werden und gerade
-     ein iMUSE-Überang wiedergegeben wird.
+   - Absturz behoben, der auftritt, wenn ein älterer Spielstand geladen und gerade
+     ein iMUSE-Überang wiedergegeben werden.
    - Jolly Roger-Verbesserung für Moneky1 korrigiert. Die Aktivierung dieser Verbesserung
      würde verhindern, dass diese Flagge erscheint, obwohl sie nicht mehr sichtbar sein sollte.
 	 Die entsprechende Fehlerbehebung war in einigen VGA-Diskettenversionen fehlerhaft.
