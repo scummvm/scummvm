@@ -1492,19 +1492,6 @@ public:
 	 */
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = nullptr, const byte *mask = nullptr) = 0;
 
-	/**
-	 * Replace the specified range of cursor palette with new colors.
-	 *
-	 * The palette entries from 'start' till (start+num-1) will be replaced - so
-	 * a full palette update is accomplished via start=0, num=256.
-	 *
-	 * Backends which implement this should have the kFeatureCursorPalette flag set.
-	 *
-	 * @see setPalette
-	 * @see kFeatureCursorPalette
-	 */
-	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
-
 
 
 	/**

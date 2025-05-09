@@ -130,7 +130,6 @@ public:
 
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 	virtual void setKeycolor(byte color) = 0;
-	virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
 
 	inline bool hasPalette() const {
 		return _palettePixelFormat.bytesPerPixel > 0;
@@ -236,7 +235,6 @@ public:
 
 	void setPalette(const byte *colors, uint start, uint num) override {}
 	void setKeycolor(byte color) override {};
-	void grabPalette(byte *colors, uint start, uint num) const override {}
 
 	void readPixels();
 
@@ -332,7 +330,6 @@ public:
 	void allocBuffer(GLuint w, GLuint h) override;
 
 	void setPalette(const byte *colors, uint start, uint num) override;
-	void grabPalette(byte *colors, uint start, uint num) const override;
 
 protected:
 	void *prepareTextureBuffer(const Common::Rect &rect) override;
@@ -369,7 +366,6 @@ public:
 
 	void setPalette(const byte *colors, uint start, uint num) override;
 	void setKeycolor(byte color) override {};
-	void grabPalette(byte *colors, uint start, uint num) const override;
 
 protected:
 	void *prepareTextureBuffer(const Common::Rect &rect) override;
@@ -387,7 +383,6 @@ public:
 
 	void setPalette(const byte *colors, uint start, uint num) override;
 	void setKeycolor(byte color) override;
-	void grabPalette(byte *colors, uint start, uint num) const override;
 
 protected:
 	void *prepareTextureBuffer(const Common::Rect &rect) override;

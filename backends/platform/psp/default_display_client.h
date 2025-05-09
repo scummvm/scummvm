@@ -42,9 +42,6 @@ public:
 	uint32 getWidth() const { return _buffer.getSourceWidth(); }
 	uint32 getHeight() const { return _buffer.getSourceHeight(); }
 	void setPartialPalette(const byte *colors, uint start, uint num) { setDirty(); return _palette.setPartial(colors, start, num); }
-	void getPartialPalette(byte *colors, uint start, uint num) const {
-		return _palette.getPartial(colors, start, num);
-	}
 	void copyFromRect(const byte *buf, int pitch, int destX, int destY, int recWidth, int recHeight);
 	void copyToArray(byte *dst, int pitch);
 	void setDirty() { _dirty = true; }

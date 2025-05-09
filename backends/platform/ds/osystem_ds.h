@@ -25,11 +25,11 @@
 
 #include "backends/modular-backend.h"
 #include "backends/events/ds/ds-events.h"
+#include "backends/graphics/default-palette.h"
 #include "backends/mixer/mixer.h"
 #include "backends/platform/ds/background.h"
 #include "backends/platform/ds/keyboard.h"
 #include "graphics/surface.h"
-#include "graphics/paletteman.h"
 
 enum {
 	GFX_NOSCALE = 0,
@@ -37,7 +37,7 @@ enum {
 	GFX_SWSCALE = 2
 };
 
-class OSystem_DS : public ModularMixerBackend, public PaletteManager {
+class OSystem_DS : public ModularMixerBackend, public DefaultPaletteManager {
 protected:
 	Graphics::Surface _framebuffer, _overlay;
 	DS::Background *_screen, *_overlayScreen;
@@ -101,11 +101,11 @@ public:
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 
-	virtual PaletteManager *getPaletteManager() { return this; }
+	PaletteManager *getPaletteManager() override { return this; }
 protected:
-	// PaletteManager API
-	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(byte *colors, uint start, uint num) const;
+	// DefaultPaletteManager API
+	void setPaletteIntern(const byte *colors, uint start, uint num) override;
+	void setCursorPaletteIntern(const byte *colors, uint start, uint num) override;
 
 public:
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
@@ -152,8 +152,6 @@ public:
 
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
-
-	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	void setSwapLCDs(bool swap);
 

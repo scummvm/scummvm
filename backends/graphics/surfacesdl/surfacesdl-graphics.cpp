@@ -1938,7 +1938,7 @@ int16 SurfaceSdlGraphicsManager::getWidth() const {
 	return _videoMode.screenWidth;
 }
 
-void SurfaceSdlGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
+void SurfaceSdlGraphicsManager::setPaletteIntern(const byte *colors, uint start, uint num) {
 	assert(colors);
 	assert(_screenFormat.bytesPerPixel == 1);
 
@@ -1972,20 +1972,7 @@ void SurfaceSdlGraphicsManager::setPalette(const byte *colors, uint start, uint 
 		blitCursor();
 }
 
-void SurfaceSdlGraphicsManager::grabPalette(byte *colors, uint start, uint num) const {
-	assert(colors);
-	assert(_screenFormat.bytesPerPixel == 1);
-
-	const SDL_Color *base = _currentPalette + start;
-
-	for (uint i = 0; i < num; ++i) {
-		colors[i * 3] = base[i].r;
-		colors[i * 3 + 1] = base[i].g;
-		colors[i * 3 + 2] = base[i].b;
-	}
-}
-
-void SurfaceSdlGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
+void SurfaceSdlGraphicsManager::setCursorPaletteIntern(const byte *colors, uint start, uint num) {
 	assert(colors);
 	const byte *b = colors;
 	uint i;

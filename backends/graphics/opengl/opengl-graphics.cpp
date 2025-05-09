@@ -1125,7 +1125,7 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 	recalculateCursorScaling();
 }
 
-void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
+void OpenGLGraphicsManager::setCursorPaletteIntern(const byte *colors, uint start, uint num) {
 	// FIXME: For some reason client code assumes that usage of this function
 	// automatically enables the cursor palette.
 	_cursorPaletteEnabled = true;
@@ -1250,7 +1250,7 @@ void OpenGLGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface *ic
 #endif
 }
 
-void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
+void OpenGLGraphicsManager::setPaletteIntern(const byte *colors, uint start, uint num) {
 	assert(_gameScreen->hasPalette());
 
 	memcpy(_gamePalette + start * 3, colors, num * 3);
@@ -1258,12 +1258,6 @@ void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num)
 
 	// We might need to update the cursor palette here.
 	updateCursorPalette();
-}
-
-void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) const {
-	assert(_gameScreen->hasPalette());
-
-	memcpy(colors, _gamePalette + start * 3, num * 3);
 }
 
 void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) {

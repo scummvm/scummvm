@@ -178,7 +178,7 @@ int16 OSystem_PSP::getHeight() {
 	return (int16)_screen.getHeight();
 }
 
-void OSystem_PSP::setPalette(const byte *colors, uint start, uint num) {
+void OSystem_PSP::setPaletteIntern(const byte *colors, uint start, uint num) {
 	DEBUG_ENTER_FUNC();
 	_displayManager.waitUntilRenderFinished();
 	_pendingUpdate = false;
@@ -187,7 +187,7 @@ void OSystem_PSP::setPalette(const byte *colors, uint start, uint num) {
 	_cursor.clearKeyColor();
 }
 
-void OSystem_PSP::setCursorPalette(const byte *colors, uint start, uint num) {
+void OSystem_PSP::setCursorPaletteIntern(const byte *colors, uint start, uint num) {
 	DEBUG_ENTER_FUNC();
 	_displayManager.waitUntilRenderFinished();
 	_pendingUpdate = false;
@@ -280,11 +280,6 @@ int16 OSystem_PSP::getOverlayWidth() {
 
 int16 OSystem_PSP::getOverlayHeight() {
 	return (int16)_overlay.getHeight();
-}
-
-void OSystem_PSP::grabPalette(byte *colors, uint start, uint num) const {
-	DEBUG_ENTER_FUNC();
-	_screen.getPartialPalette(colors, start, num);
 }
 
 bool OSystem_PSP::showMouse(bool v) {

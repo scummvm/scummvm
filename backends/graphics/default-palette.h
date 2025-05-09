@@ -37,22 +37,27 @@ protected:
 	byte _palette[3 * 256];
 
 	/**
-	 * Subclasses should only implement this method and none of the others.
+	 * Subclasses should only implement these methods and none of the others.
 	 * Its semantics are like that of setPalette, only that it does not need
 	 * to worry about making it possible to query the palette values once they
 	 * have been set.
 	 */
 	virtual void setPaletteIntern(const byte *colors, uint start, uint num) = 0;
+	virtual void setCursorPaletteIntern(const byte *colors, uint start, uint num) {}
 
 public:
-	void setPalette(const byte *colors, uint start, uint num) {
+	void setPalette(const byte *colors, uint start, uint num) override final {
 		assert(start + num <= 256);
 		memcpy(_palette + 3 * start, colors, 3 * num);
 		setPaletteIntern(colors, start, num);
 	}
-	void grabPalette(byte *colors, uint start, uint num) const {
+	void grabPalette(byte *colors, uint start, uint num) const override final {
 		assert(start + num <= 256);
 		memcpy(colors, _palette + 3 * start, 3 * num);
+	}
+	void setCursorPalette(const byte *colors, uint start, uint num) override final {
+		assert(start + num <= 256);
+		setCursorPaletteIntern(colors, start, num);
 	}
 };
 

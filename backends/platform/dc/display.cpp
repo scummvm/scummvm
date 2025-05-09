@@ -146,7 +146,7 @@ void commit_dummy_transpoly()
 }
 
 
-void OSystem_Dreamcast::setPalette(const byte *colors, uint start, uint num)
+void OSystem_Dreamcast::setPaletteIntern(const byte *colors, uint start, uint num)
 {
   unsigned short *dst = palette + start;
   if (num>0)
@@ -159,7 +159,7 @@ void OSystem_Dreamcast::setPalette(const byte *colors, uint start, uint num)
   _screen_dirty = true;
 }
 
-void OSystem_Dreamcast::setCursorPalette(const byte *colors, uint start, uint num)
+void OSystem_Dreamcast::setCursorPaletteIntern(const byte *colors, uint start, uint num)
 {
   unsigned short *dst = cursor_palette + start;
   if (num>0)
@@ -170,19 +170,6 @@ void OSystem_Dreamcast::setCursorPalette(const byte *colors, uint start, uint nu
 	  colors += 3;
 	}
   _enable_cursor_palette = true;
-}
-
-void OSystem_Dreamcast::grabPalette(byte *colors, uint start, uint num) const
-{
-  const unsigned short *src = palette + start;
-  if (num>0)
-	while ( num-- ) {
-	  unsigned short p = *src++;
-	  colors[0] = ((p&0x7c00)>>7)|((p&0x7000)>>12);
-	  colors[1] = ((p&0x03e0)>>2)|((p&0x0380)>>7);
-	  colors[2] = ((p&0x001f)<<3)|((p&0x001c)>>2);
-	  colors += 3;
-	}
 }
 
 Graphics::PixelFormat OSystem_Dreamcast::getScreenFormat() const
