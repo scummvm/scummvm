@@ -3,6 +3,14 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
 #### 2.9.1 (XXXX-XX-XX)
 
+ AGI:
+   - Unterstützung für frühe Versionen von Christmas Card 1986 mit Werbung
+     für Tandy-Hardware hinzugefügt.
+   - Korrektur vieler Grafikfehler und verbesserte Wiedergabegeschwindigkeit in Mickey's Space
+     Adventure, Winnie The Pooh In The Hundred Acre Wood und Troll's Tale.
+   - Spielstände in Mickey's Space Adventure werden jetzt auf dem Planeten wiederhergestellt,
+     auf dem sie gespeichert wurden, und nicht länger immer auf der Erde.
+
  AGS:
    - Unterstützung für Old Skies und Rosewater hinzugefügt.
    - Unterstützung für Geschwindigkeitsänderungen von Audio-Clips hinzugefügt.
