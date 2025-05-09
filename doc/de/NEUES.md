@@ -43,6 +43,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehler korrigiert, durch den in einigen Fällen Lautstärkeänderungen nicht korrekt
      ausgelöst wurden (beispielsweise um die Musiklautstärke in Entwicklerkommentaren oder
      wenn in der Blackwell-Serie ein Charakter spricht, zu verringern)
+   - Erkennungs-Datenbank für einige AGS-Spiele aktualisiert.
 
  Asylum:
    - Absturz im Hauptmenü von Sanitarium korrigiert, der auftritt, wenn der Cursor in den
@@ -107,7 +108,15 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Bewegungsabläufe des Meca-Pinguins korrigiert.
    - Einige Fehler bei der Audiowiedergabe behoben.
 
+ TWP:
+   - Wenn Thimbleweed Park auf Plattformen gestartet wird, die keine Unterstützung für
+     OpenGL-Shader anbieten, wird jetzt eine entsprechende Fehlermeldung ausgegeben.
+
+ 3DS-Portierung:
+   - Fehler behoben, durch den die Darstellung auf dem oberen Bildschirm teilweise fehlerhaft war.
+
  Android-Portierung:
+   - Spielstände und Konfiguration können jetzt gesichert und wiederhergestellt werden.
    - Die NEON-Unterstützung ist jetzt standardmäßig aktiviert, was zu einer verbesserten Leistung auf
      der überwiegenden Mehrzahl älterer Android-Geräte führt.
    - Ein Fehler in der ARMv7a-Version von Android 6.0 und älter wurde behoben, der in einigen
