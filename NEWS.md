@@ -41,6 +41,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed some audio volume changes not being triggered in some situations
      (e.g. automatic music volume drop during dev commentary or when a
      characters speaks, in the Blackwell series).
+   - Added/updated detection entries for various AGS games.
 
  Asylum:
    - Fixed crash in Sanitarium main menu, when moving the cursor to the
@@ -113,7 +114,16 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed meca penguin movement.
    - Fixed sound related issues.
 
+ TWP:
+   - Added an error message when trying to play Thimbleweed Park on
+     platforms not having support for OpenGL with shaders.
+
+ 3DS port:
+   - Fix top screen not fully rendering in some cases.
+
  Android port:
+   - Added a feature to let users backup and restore their configuration
+     and saves.
    - Enabled NEON support by default, resulting in better performance for
      the vast majority of older Android devices.
    - Worked around a bug in ARMv7a Android 6.0 and below, which could
