@@ -1611,8 +1611,6 @@ void QuickTimeDecoder::handleObjectMouseButton(bool isDown, int16 x, int16 y, bo
 	}
 
 	_isMouseButtonDown = isDown;
-	PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
-	track->setDirty();
 }
 
 void QuickTimeDecoder::handlePanoMouseButton(bool isDown, int16 x, int16 y, bool repeat) {
