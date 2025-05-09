@@ -160,20 +160,6 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 		glDisable(GL_STENCIL_TEST);
 
 		glDisable(GL_FOG);
-
-		//
-		// WME has this. It's unknown if it's really needed
-		// Support this would require higher OpenGL version
-		//
-		// D3DTSS_COLOROP               = D3DTOP_MODULATE
-		// D3DTSS_COLORARG1             = D3DTA_TEXTURE
-		// D3DTSS_COLORARG              = D3DTA_DIFFUSE
-		// D3DTSS_ALPHAOP               = D3DTOP_MODULATE
-		// D3DTSS_ALPHAARG1             = D3DTA_TEXTURE
-		// D3DTSS_ALPHAARG2             = D3DTA_DIFFUSE
-		// D3DTSS_MIPFILTER             = D3DTEXF_NONE
-		// D3DTSS_TEXCOORDINDEX         = 0
-		// D3DTSS_TEXTURETRANSFORMFLAGS = D3DTTFF_DISABLE
 	}
 
 	return true;
@@ -184,15 +170,6 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 		_state = RSTATE_3D;
 
 		glEnable(GL_NORMALIZE);
-
-		//
-		// WME has this. It's unknown if it's really needed
-		// Support this would require higher OpenGL version
-		//
-		// D3DTSS_COLORARG1 = D3DTA_TEXTURE
-		// D3DTSS_COLORARG2 = D3DTA_CURRENT
-		// D3DTSS_COLOROP   = D3DTOP_MODULATE
-		// D3DTSS_ALPHAOP   = D3DTOP_SELECTARG1
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
