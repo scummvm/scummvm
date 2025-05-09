@@ -3,6 +3,14 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.9.1 (XXXX-XX-XX)
 
+ AGI:
+   - Added support for early version of Christmas Card 1986 with advertisements
+     for Tandy hardware.
+   - Fixed many graphics bugs and improved responsiveness in Mickey's Space
+     Adventure, Winnie The Pooh In The Hundred Acre Wood, and Troll's Tale.
+   - Save games in Mickey's Space Adventure now restore to the planet they
+     were saved on instead of Earth.
+
  AGS:
    - Added official support for Old Skies and Rosewater.
    - Added support for sound clip speed variation, used in some games to
