@@ -43,7 +43,23 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Behandlung von Spiel-Ressourcen verbessert, was zur Verbesserung der Leistung auf Android führt.
 
  SCI:
-   - Darstellungsprobleme bei den hochaufläsenden Grafiken von KQ6 korrigiert.
+   - Absturz in der CD-Version von KQ6 korrigiert, wenn im hochauflösenden Modus vom Inventar-Fenster aus
+     mit Rotten Tomato gesprochen wird. (Fehler in ScummVM 2.9.0)
+   - Fehler korrigiert, durch den der Titel-Bildschirm in der Amiga-Version von KQ4 übersprungen wird. (Fehler in ScummVM 2.8.0)
+   - Absturz in der Thieves' Guild in QFG4 v1.0 behoben. (Fehler in ScummVM 2.1.0)
+   - Fehler korrigiert, der verursacht, dass in BRAIN1, LSL5 und SQ1 Nachrichten alle 18,2 Minuten verschwinden. (Fehler im Original-Spiel)
+   - Fehler in SQ5 korrigiert, durch den die Kometen in der Einfürhung nicht erscheinen, wenn das Spiel
+     auf einer Maschine läuft, die schneller als ein 386er ist. (Fehler im Original-Spiel)
+   - Absturz in LSL1 behoben, der auftritt, wenn das Casino betreten wird. (Fehler im Original-Spiel)
+   - Absturz in LSL6 behoben, der auftritt, wenn das Hotel betreten wird. (Fehler im Original-Spiel)
+   - Fehler in LSL6-HIRES behoben, durch den die Tram verschwindet, wenn das Spiel neu gestartet wird.
+     (Fehler im Original-Spiel)
+   - Der Hilfe-Cursor in LSL6 wird jetzt korrekt angezeigt. (Fehler im Original-Spiel)
+   - Absturz in QFG1 EGA behoben, der auftritt, wenn auf den Stolperdraht getreten wird. (Fehler im Original-Spiel)
+   - Absturz in KQ1 behoben, der auftritt, wenn in der Höhle ertrunken wird. (Fehler im Original-Spiel)
+   - Absturz im Zusammenhang mit dem Telefon an Tag 5 in GK1 in allen Spiel-Geschwindigkeiten behoben.
+     (Fehler im Original-Spiel)
+   - Fehlerhafter Blauton im Dithering von EGA-Vektorgrafiken behoben (Alle SCI-Tools seit dem SCI-Decoder von 1992)
 
  SCUMM:
    - Verhalten von ScummVM 2.7.0 wiederhergestellt: Die DOS-v2-v4-Spiele (Maniac Mansion bis Monkey2)
