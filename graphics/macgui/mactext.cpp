@@ -1828,9 +1828,9 @@ void MacText::getLineCharacter(int x, int y, int *sx, int *sy, int *line, int *c
 	}
 
 
-	for (int i = 0; i < _canvas._text[nrow].chunks.size(); i++) {
+	for (uint i = 0; i < _canvas._text[nrow].chunks.size(); i++) {
 		Common::U32String &text =  _canvas._text[nrow].chunks[i].text;
-		if (ncol > text.size()) {
+		if (ncol > (int)text.size()) {
 			ncol -= text.size();
 			ncharacter += text.size();
 		} else {
