@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-05-08 22:18+0000\n"
-"PO-Revision-Date: 2025-04-28 17:18+0000\n"
+"PO-Revision-Date: 2025-05-10 19:19+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -6650,13 +6650,13 @@ msgstr ""
 
 #: engines/alg/metaengine.cpp:34
 msgid "Use lower quality single speed CD-ROM video"
-msgstr ""
+msgstr "낮은 품질의 단일 속도 CD-ROM 비디오 사용"
 
 #: engines/alg/metaengine.cpp:35
 msgid ""
 "These videos are of lower quality, the default version uses double speed CD-"
 "ROM videos which are of better quality"
-msgstr ""
+msgstr "이 비디오는 품질이 낮음, 기본 버전은 품질이 더 좋은 2배속 CD-ROM 비디오 사용"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -6766,7 +6766,7 @@ msgstr "무시하고 불러오기"
 
 #: engines/awe/metaengine.cpp:61
 msgid "Select/Kick/Run"
-msgstr ""
+msgstr "선택/킥/런"
 
 #: engines/awe/metaengine.cpp:62 engines/hpl1/metaengine.cpp:83
 msgid "Jump"
@@ -6774,7 +6774,7 @@ msgstr "점프"
 
 #: engines/awe/metaengine.cpp:63
 msgid "Enter Level Code"
-msgstr ""
+msgstr "레벨 코드 입력"
 
 #: engines/awe/metaengine.cpp:89 engines/dgds/metaengine.cpp:87
 #: engines/got/metaengine.cpp:90
@@ -7629,20 +7629,16 @@ msgid "Enable gamma correction"
 msgstr "감마 교정 활성화"
 
 #: engines/director/metaengine.cpp:71
-#, fuzzy
-#| msgid "Brighten the graphics to simulate a Macintosh monitor."
 msgid "Brighten the graphics to simulate a Macintosh monitor"
-msgstr "매킨토시 모니터를 시뮬레이션하기 위해 그래픽을 밝게 합니다."
+msgstr "매킨토시 모니터를 시뮬레이션하기 위해 그래픽을 밝게 함"
 
 #: engines/director/metaengine.cpp:81
 msgid "Force true color"
-msgstr ""
+msgstr "강제 트루 컬러"
 
 #: engines/director/metaengine.cpp:82
-#, fuzzy
-#| msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgid "Use true color graphics mode, even if the game is not designed for it"
-msgstr "게임에서 요청하지 않더라도 안티에일리어싱을 사용하여 텍스트를 그림"
+msgstr "게임이 실제 색상 그래픽 모드로 설계되지 않았더라도 실제 색상 그래픽 모드 사용"
 
 #: engines/draci/metaengine.cpp:153
 msgid "Skip intro/Exit map or inventory"
@@ -7751,46 +7747,32 @@ msgid "Right click"
 msgstr "오른쪽 클릭"
 
 #: engines/efh/metaengine.cpp:255
-#, fuzzy
-#| msgid "Move up-left"
 msgid "Move up left"
 msgstr "왼쪽 위로 이동"
 
 #: engines/efh/metaengine.cpp:260
-#, fuzzy
-#| msgid "Move up-right"
 msgid "Move up right"
 msgstr "오른쪽 위로 이동"
 
 #: engines/efh/metaengine.cpp:265
-#, fuzzy
-#| msgid "Move down-left"
 msgid "Move down left"
 msgstr "왼쪽 아래로 이동"
 
 #: engines/efh/metaengine.cpp:270
-#, fuzzy
-#| msgid "Move down-right"
 msgid "Move down right"
 msgstr "오른쪽 아래로 이동"
 
 #: engines/efh/metaengine.cpp:275
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 1 status"
-msgstr "캐릭터 인물 표시"
+msgstr "캐릭터 1 상태"
 
 #: engines/efh/metaengine.cpp:280
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 2 status"
-msgstr "캐릭터 인물 표시"
+msgstr "캐릭터 2 상태"
 
 #: engines/efh/metaengine.cpp:285
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 3 status"
-msgstr "캐릭터 인물 표시"
+msgstr "캐릭터 3 상태"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -9949,22 +9931,16 @@ msgid "This menu item is not yet implemented"
 msgstr "이 메뉴 항목은 아직 구현되지 않았음"
 
 #: engines/playground3d/metaengine.cpp:55
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch test"
-msgstr "게임으로 전환"
+msgstr "테스트 전환"
 
 #: engines/playground3d/metaengine.cpp:61
-#, fuzzy
-#| msgid "Enable/Disable Jetpack"
 msgid "Enable/Disable fog"
-msgstr "제트팩 활성화/비활성화"
+msgstr "안개 활성화/비활성화"
 
 #: engines/playground3d/metaengine.cpp:67
-#, fuzzy
-#| msgid "Enable/Disable Jetpack"
 msgid "Enable/Disable scissor"
-msgstr "제트팩 활성화/비활성화"
+msgstr "가위 활성화/비활성화"
 
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
@@ -12241,7 +12217,7 @@ msgstr "저장/불러오기 메뉴 끝으로 이동"
 
 #: engines/tinsel/tinsel.cpp:1040
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
-msgstr ""
+msgstr "Discworld Noir는 TinyGL이 활성화된 ScummVM이 필요함"
 
 #: engines/toltecs/metaengine.cpp:216
 msgid "Move / Select"
