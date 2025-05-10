@@ -131,6 +131,7 @@ MODULE_OBJS = \
 	hodjnpodj/hnplibs/mainmenu.o \
 	hodjnpodj/hnplibs/rules.o \
 	hodjnpodj/hnplibs/sprite.o \
+	hodjnpodj/hnplibs/text.o \
 	hodjnpodj/libs/settings.o \
 	hodjnpodj/libs/vector.o \
 	hodjnpodj/views/dialog.o \
