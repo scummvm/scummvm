@@ -78,7 +78,7 @@ Common::Error HodjNPodjEngine::run() {
 	_gameId = getGameId();
 
 	// Run the game
-	runGame();
+	//runGame();
 
 	for (int size = 8; size <= 14; size += 2)
 		delete _fonts[size];

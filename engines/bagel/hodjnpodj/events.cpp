@@ -282,8 +282,8 @@ void Bounds::setBorderSize(size_t borderSize) {
 /*------------------------------------------------------------------------*/
 
 UIElement::UIElement(const Common::String &name) :
-	_name(name), _parent(g_engine), _bounds(_innerBounds) {
-	g_engine->_children.push_back(this);
+	_name(name), _parent(nullptr), _bounds(_innerBounds) {
+	//g_engine->_children.push_back(this);
 }
 
 UIElement::UIElement(const Common::String &name, UIElement *uiParent) :

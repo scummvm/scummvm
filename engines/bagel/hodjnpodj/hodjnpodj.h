@@ -49,7 +49,7 @@ struct CBfcMgr {
 extern GAMESTRUCT *pGameParams;
 extern CBfcMgr *lpMetaGame;
 
-class HodjNPodjEngine : public BagelEngine, public Events {
+class HodjNPodjEngine : public BagelEngine {
 private:
 	CBofSound *_backgroundMidi = nullptr;
 
@@ -57,18 +57,13 @@ protected:
 	// Engine APIs
 	Common::Error run() override;
 
-	/**
-	 * Returns true if the game should quit
-	 */
-	bool shouldQuit() const override {
-		return Engine::shouldQuit();
-	}
-
 public:
 	Common::HashMap<int, Graphics::Font *> _fonts;
+	Common::String _gameId;
 	CBfcMgr _metaGame;
 //	Metagame::SCORESTRUCT _topScores[10];
 //	Metagame::GRANDTRSTRUCT _grandTour;
+	GAMESTRUCT _gameInfo;
 	Settings _settings;
 	bool _bDonePodj = false;
 	bool _bReturnToZoom = false;
@@ -95,7 +90,7 @@ public:
 	/**
 	 * Returns the underlying screen
 	 */
-	Graphics::Screen *getScreen() const override {
+	Graphics::Screen *getScreen() const {
 		return _screen;
 	}
 
