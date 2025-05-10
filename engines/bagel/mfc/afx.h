@@ -85,6 +85,8 @@ class CDumpContext {
 
 class CObject {
 public:
+	static const CRuntimeClass classCObject;
+public:
 	CObject();
 	CObject(const CObject &objectSrc);
 	virtual ~CObject() = 0;

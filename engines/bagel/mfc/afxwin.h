@@ -146,6 +146,9 @@ struct CCreateContext   // Creation information structure
 
 class CGdiObject : public CObject {
 public:
+	HGDIOBJ m_hObject;
+
+public:
 	~CGdiObject() override {
 	}
 
@@ -191,6 +194,8 @@ public:
 	BOOL CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight);
 	BOOL CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
 		UINT nBitcount, const void *lpBits);
+	int GetObject(int nCount, LPVOID lpObject) const;
+	LONG GetBitmapBits(LONG dwCount, LPVOID lpBits) const;
 };
 
 class CPalette : public CGdiObject {
@@ -237,6 +242,7 @@ public:
 	void Ellipse(LPCRECT lpRect);
 	void Ellipse(int x1, int y1, int x2, int y2);
 	void FrameRect(LPCRECT lpRect, CBrush *pBrush);
+	void FillRect(LPCRECT lpRect, CBrush *pBrush);
 	void Rectangle(LPCRECT lpRect);
 	void Rectangle(int x1, int y1, int x2, int y2);
 	void MoveTo(int x, int y);
