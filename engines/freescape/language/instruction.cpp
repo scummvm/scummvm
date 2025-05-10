@@ -327,7 +327,11 @@ bool FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 
 void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 	debugC(1, kFreescapeDebugCode, "Redrawing screen");
-	waitInLoop((100 / 15) + 1);
+	uint32 delay = (100 / 15) + 1;
+	if (isEclipse2() && _currentArea->getAreaID() == _startArea && _gameStateControl == kFreescapeGameStateStart)
+		delay = delay * 10;
+
+	waitInLoop(delay);
 	if (_syncSound) {
 		waitForSounds();
 	}
