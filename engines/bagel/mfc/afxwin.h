@@ -489,7 +489,8 @@ protected:
 	afx_msg int OnVKeyToItem(UINT nKey, CListBox *pListBox, UINT nIndex);
 
 public:
-	HWND m_hWnd;
+	HWND m_hWnd = (HWND)0;
+	CWnd *m_pParentWnd = nullptr;
 
 	static CWnd *FromHandlePermanent(HWND hWnd);
 

@@ -124,6 +124,7 @@ MODULE_OBJS = \
 	hodjnpodj/gfx/palette.o \
 	hodjnpodj/hnplibs/audiocfg.o \
 	hodjnpodj/hnplibs/button.o \
+	hodjnpodj/hnplibs/cbofdlg.o \
 	hodjnpodj/hnplibs/cmessbox.o \
 	hodjnpodj/hnplibs/dibapi.o \
 	hodjnpodj/hnplibs/dibdoc.o \
