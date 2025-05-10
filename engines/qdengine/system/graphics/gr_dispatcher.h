@@ -269,7 +269,18 @@ public:
 	}
 
 	inline int bytes_per_pixel() const {
-		return 2;
+		switch (_pixel_format) {
+		case GR_ARGB1555:
+		case GR_RGB565:
+			return 2;
+		case GR_RGB888:
+			return 3;
+		case GR_ARGB8888:
+		case GR_RGBA8888:
+			return 4;
+		default:
+			return 0;
+		}
 	}
 
 	enum { // маски для high color режимов
