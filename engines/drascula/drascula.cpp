@@ -23,6 +23,7 @@
 #include "common/keyboard.h"
 #include "common/file.h"
 #include "common/config-manager.h"
+#include "common/text-to-speech.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
@@ -247,6 +248,18 @@ Common::Error DrasculaEngine::run() {
 	default:
 		warning("Unknown game language. Falling back to English");
 		_lang = kEnglish;
+	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->setLanguage(ConfMan.get("language"));
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+
+		if (_lang == kRussian) {
+			_ttsTextEncoding = Common::CodePage::kWindows1251;
+		} else {
+			_ttsTextEncoding = Common::CodePage::kUtf8;
+		}
 	}
 
 	setDebugger(new Console(this));
@@ -688,6 +701,12 @@ bool DrasculaEngine::runCurrentChapter() {
 			ConfMan.setBool("subtitles", !_subtitlesDisabled);
 
 			print_abc(_textsys[2], 96, 86);
+
+			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
+				ttsMan->say(_textsys[2], _ttsTextEncoding);
+			}
+
 			updateScreen();
 			delay(1410);
 		} else if (key == Common::KEYCODE_t) {
@@ -695,6 +714,12 @@ bool DrasculaEngine::runCurrentChapter() {
 			ConfMan.setBool("subtitles", !_subtitlesDisabled);
 
 			print_abc(_textsys[3], 94, 86);
+
+			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
+				ttsMan->say(_textsys[3], _ttsTextEncoding);
+			}
+
 			updateScreen();
 			delay(1460);
 		} else if (key == Common::KEYCODE_ESCAPE) {

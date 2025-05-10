@@ -22,6 +22,75 @@
 #include "drascula/drascula.h"
 #include "graphics/cursorman.h"
 
+#include "common/config-manager.h"
+#include "common/text-to-speech.h"
+
+// The verbs are represented in-game as a picture, thus we are
+// adding transcriptions here
+// While only English, Spanish, Italian, and Russian are translated in-game,
+// they are translated for the TTS system here
+static const char *verbNamesEnglish[] = {
+	"Walk",
+	"Look",
+	"Take",
+	"Open",
+	"Close",
+	"Talk",
+	"Push"
+};
+
+static const char *verbNamesSpanish[] = {
+	"Ir a",
+	"Mirar",
+	"Coger",
+	"Abrir",
+	"Cerrar",
+	"Hablar",
+	"Mover"
+};
+
+static const char *verbNamesItalian[] = {
+	"Vai",
+	"Guarda",
+	"Prendi",
+	"Apri",
+	"Chiudi",
+	"Parla",
+	"Premi"
+};
+
+static const char *verbNamesFrench[] = {
+	"Marcher",
+	"Regarder",
+	"Ramasser",
+	"Ouvrir",
+	"Fermer",
+	"Parler",
+	"Pousser"
+};
+
+static const char *verbNamesGerman[] = {
+	"Gehe",
+	"Schau",
+	"Nimm",
+	"Oeffne",
+	"Schliesse",
+	"Rede",
+	"Druecke"
+};
+
+static const char *verbNamesRussian[] = {
+	"Идти",
+	"Смотреть",
+	"взять",
+	"Открыть",
+	"Закрыть",
+	"Говорить",
+	"Толкать"
+};
+
+static const int kConfirmExit = 1;
+
 namespace Drascula {
 
 void DrasculaEngine::setCursor(int cursor) {
@@ -80,6 +149,39 @@ void DrasculaEngine::selectVerb(int verb) {
 	if (verb > 0) {
 		takeObject = 1;
 		pickedObject = verb;
+
+		if (ConfMan.getBool("tts_enabled")) {
+			const char **verbNames;
+
+			switch (_lang) {
+			case kEnglish:
+				verbNames = verbNamesEnglish;
+				break;
+			case kSpanish:
+				verbNames = verbNamesSpanish;
+				break;
+			case kGerman:
+				verbNames = verbNamesGerman;
+				break;
+			case kFrench:
+				verbNames = verbNamesFrench;
+				break;
+			case kItalian:
+				verbNames = verbNamesItalian;
+				break;
+			case kRussian:
+				verbNames = verbNamesRussian;
+				break;
+			default:
+				verbNames = verbNamesEnglish;
+			}
+
+			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+
+			if (ttsMan != nullptr) {
+				ttsMan->say(verbNames[verb], Common::TextToSpeechManager::INTERRUPT);
+			}
+		}
 	} else {
 		takeObject = 0;
 		_hasName = false;
@@ -93,6 +195,11 @@ bool DrasculaEngine::confirmExit() {
 	updateRoom();
 	centerText(_textsys[1], 160, 87);
 	updateScreen();
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
+		ttsMan->say(_textsys[kConfirmExit], _ttsTextEncoding);
+	}
 
 	delay(100);
 	while (!shouldQuit()) {
@@ -134,16 +241,64 @@ void DrasculaEngine::showMenu() {
 				OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
 	}
 
-	if (x < 7)
+	if (x < 7) {
+		if (iconName[x] != _previousSaid) {
+			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+			if (ConfMan.getBool("tts_enabled") && strlen(iconName[x]) > 0 && ttsMan != nullptr) {
+				ttsMan->say(iconName[x], _ttsTextEncoding);
+			}
+
+			_previousSaid = iconName[x];
+		}
+
 		print_abc(iconName[x], _itemLocations[x].x - 2, _itemLocations[x].y - 7);
+	}
 }
 
 void DrasculaEngine::clearMenu() {
 	int n, verbActivated = 1;
 
 	for (n = 0; n < 7; n++) {
-		if (_mouseX > _verbBarX[n] && _mouseX < _verbBarX[n + 1])
+		if (_mouseX > _verbBarX[n] && _mouseX < _verbBarX[n + 1]) {
 			verbActivated = 0;
+
+			if (ConfMan.getBool("tts_enabled")) {
+				const char **verbNames;
+
+				switch (_lang) {
+				case kEnglish:
+					verbNames = verbNamesEnglish;
+					break;
+				case kSpanish:
+					verbNames = verbNamesSpanish;
+					break;
+				case kGerman:
+					verbNames = verbNamesGerman;
+					break;
+				case kFrench:
+					verbNames = verbNamesFrench;
+					break;
+				case kItalian:
+					verbNames = verbNamesItalian;
+					break;
+				case kRussian:
+					verbNames = verbNamesRussian;
+					break;
+				default:
+					verbNames = verbNamesEnglish;
+				}
+	
+				if (verbNames[n] != _previousSaid) {
+					Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	
+					if (ttsMan != nullptr) {
+						ttsMan->say(verbNames[n]);
+					}
+		
+					_previousSaid = verbNames[n];
+				}
+			}
+		}
 		copyRect(OBJWIDTH * n, OBJHEIGHT * verbActivated, _verbBarX[n], 2,
 						OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
 		verbActivated = 1;

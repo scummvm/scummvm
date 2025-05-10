@@ -24,6 +24,8 @@
 
 #include "common/stream.h"
 #include "common/textconsole.h"
+#include "common/config-manager.h"
+#include "common/text-to-speech.h"
 
 namespace Drascula {
 
@@ -80,8 +82,21 @@ void DrasculaEngine::moveCursor() {
 			color_abc(kColorRed);
 	} else if (!_menuScreen && _color != kColorLightGreen)
 		color_abc(kColorLightGreen);
-	if (_hasName && !_menuScreen)
+	if (_hasName && !_menuScreen) {
+		// _previousSaid is used to prevent the speech from looping, since this ttsMan->say() is in a loop
+		if (_previousSaid != textName) {
+			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
+				ttsMan->say(textName, _ttsTextEncoding);
+			}
+
+			_previousSaid = textName;
+		}
+
 		centerText(textName, _mouseX, _mouseY);
+	} else if (!_menuBar && !_menuScreen)
+		_previousSaid.clear();
+	
 	if (_menuScreen)
 		showMenu();
 	else if (_menuBar)
