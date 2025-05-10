@@ -149,7 +149,7 @@ bool Texture::bind() const {
 	return true;
 }
 
-bool Texture::setSize(uint width, uint height) {
+bool Texture::setSize(uint width, uint height, bool flip) {
 	const uint oldWidth  = _width;
 	const uint oldHeight = _height;
 
@@ -169,17 +169,31 @@ bool Texture::setSize(uint width, uint height) {
 		const GLfloat texWidth = (GLfloat)width / _width;
 		const GLfloat texHeight = (GLfloat)height / _height;
 
-		_texCoords[0] = 0;
-		_texCoords[1] = 0;
+		if (flip) {
+			_texCoords[0] = 0;
+			_texCoords[1] = texHeight;
 
-		_texCoords[2] = texWidth;
-		_texCoords[3] = 0;
+			_texCoords[2] = texWidth;
+			_texCoords[3] = texHeight;
 
-		_texCoords[4] = 0;
-		_texCoords[5] = texHeight;
+			_texCoords[4] = 0;
+			_texCoords[5] = 0;
 
-		_texCoords[6] = texWidth;
-		_texCoords[7] = texHeight;
+			_texCoords[6] = texWidth;
+			_texCoords[7] = 0;
+		} else {
+			_texCoords[0] = 0;
+			_texCoords[1] = 0;
+
+			_texCoords[2] = texWidth;
+			_texCoords[3] = 0;
+
+			_texCoords[4] = 0;
+			_texCoords[5] = texHeight;
+
+			_texCoords[6] = texWidth;
+			_texCoords[7] = texHeight;
+		}
 
 		// Allocate storage for OpenGL texture if necessary.
 		if (oldWidth != _width || oldHeight != _height) {
