@@ -100,9 +100,10 @@ public:
 	 *
 	 * @param width  The desired logical width.
 	 * @param height The desired logical height.
+	 * @param flip   Whether to flip vertically the texture when displaying it.
 	 * @return Whether the call was successful
 	 */
-	bool setSize(uint width, uint height);
+	bool setSize(uint width, uint height, bool flip = false);
 
 	/**
 	 * Copy image data to the texture.
