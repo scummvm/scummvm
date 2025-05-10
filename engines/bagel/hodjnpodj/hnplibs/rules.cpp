@@ -1408,8 +1408,8 @@ CDibDoc * CRules::LoadScrollDIB(const char *pszPathName, CRect *pRect) {
 	LPSTR 		lpDIB;
 	int			dxDIB, dyDIB;
 	CDibDoc		*pDibDoc = NULL;
-	CPalette	*pPalette = NULL;
-	CBitmap		*pBitmap = NULL;
+//	CPalette	*pPalette = NULL;
+//	CBitmap		*pBitmap = NULL;
 
 	pDibDoc = new CDibDoc();
 	ASSERT(pDibDoc != NULL);
@@ -1513,8 +1513,8 @@ CWinApp	*pMyApp;
 	else
 		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 
-	if (hNewCursor != NULL);
-		SetCursor(hNewCursor);
+	//if (hNewCursor != NULL);
+	SetCursor(hNewCursor);
 	
 	CDialog::OnMouseMove(nFlags, point);
 }

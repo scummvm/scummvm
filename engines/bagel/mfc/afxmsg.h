@@ -432,7 +432,7 @@ enum AfxSig {
 // for general controls
 #define ON_CONTROL(wNotifyCode, id, memberFxn) \
 	{ WM_COMMAND, (WORD)wNotifyCode, (WORD)id, (WORD)id, AfxSigCmd_v, \
-		(static_cast< AFX_PMSG > (memberFxn)) },
+		(static_cast< AFX_PMSG > (&memberFxn)) },
 
 #define ON_CONTROL_RANGE(wNotifyCode, id, idLast, memberFxn) \
 	{ WM_COMMAND, (WORD)wNotifyCode, (WORD)id, (WORD)idLast, AfxSigCmd_RANGE, \
@@ -1509,7 +1509,7 @@ enum AfxSig {
 	{ message, 0, 0, 0, AfxSig_lwl, \
 		(AFX_PMSG)(AFX_PMSGW) \
 		(static_cast< LRESULT (AFX_MSG_CALL CWnd::*)(WPARAM, LPARAM) > \
-		(memberFxn)) },
+		(&memberFxn)) },
 
 // for Registered Windows messages
 #define ON_REGISTERED_MESSAGE(nMessageVariable, memberFxn) \

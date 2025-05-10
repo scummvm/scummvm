@@ -406,7 +406,7 @@ bool Fuge::msgMouseMove(const MouseMoveMessage &msg) {
 		g_events->setCursor(0);
 
 	} else {
-		g_events->setCursor(IDC_ARROW);
+		g_events->setCursor(1);
 	}
 
 	return true;
@@ -532,7 +532,7 @@ bool Fuge::msgMouseUp(const MouseUpMessage &msg) {
 			gameResume();
 
 		} else {
-			g_events->setCursor(IDC_ARROW);
+			g_events->setCursor(1);
 			gamePause();
 		}
 	}

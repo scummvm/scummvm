@@ -41,48 +41,46 @@ typedef void (CALLBACK *FPFUNC)(CWnd *);
 #define NO_QUIT     0x0010
 #define NO_AUDIO    0x0020
 
-class CMainMenu : public CBmpDialog
-{
-    // Construction
-    public:
-        CMainMenu::CMainMenu(CWnd *, CPalette *, UINT, FPFUNC, char *, char *pWavFileName = NULL,LPGAMESTRUCT pGameParams = NULL);
-		void ClearDialogImage(void);
+class CMainMenu : public CBmpDialog {
+public:
+    CMainMenu(CWnd *, CPalette *, UINT, FPFUNC, char *, char *pWavFileName = NULL,LPGAMESTRUCT pGameParams = NULL);
+	void ClearDialogImage();
 
-    private:
+// Implementation
+protected:
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
+    // Generated message map functions
+    //{{AFX_MSG(CMainMenu)
+    virtual BOOL OnInitDialog();
+    virtual void OnOK();
+    virtual void OnCancel();
+    afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+    afx_msg void OnPaint();
+    afx_msg void OnDestroy();
+    afx_msg void OnClickedRules() ;
+    afx_msg void OnClickedNewgame() ;
+    afx_msg void OnClickedOptions() ;
+    afx_msg void OnClickedAudio() ;
+    afx_msg void OnClickedReturn();
+    afx_msg void OnClickedQuit();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 
-    // Dialog Data
-        //{{AFX_DATA(CMainMenu)
-        enum { IDD = IDD_OPTIONS_DIALOG };
-            // NOTE: the ClassWizard will add data members here
-        //}}AFX_DATA
+    FPFUNC      	m_pOptionsFunction = nullptr;
+    char       		*m_pRulesFileName = nullptr;
+    char       		*m_pWavFileName = nullptr;
+    int         	m_nFlags = 0;
+    LPGAMESTRUCT	m_pGameParams = nullptr;
 
-    // Implementation
-    protected:
-        virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
-        // Generated message map functions
-        //{{AFX_MSG(CMainMenu)
-        virtual BOOL OnInitDialog();
-        virtual void OnOK();
-        virtual void OnCancel();
-        afx_msg BOOL OnEraseBkgnd(CDC *pDC);
-        afx_msg void OnPaint();
-        afx_msg void OnDestroy();
-        afx_msg void OnClickedRules() ;
-        afx_msg void OnClickedNewgame() ;
-        afx_msg void OnClickedOptions() ;
-        afx_msg void OnClickedAudio() ;
-        afx_msg void OnClickedReturn();
-        afx_msg void OnClickedQuit();
-        //}}AFX_MSG
-        DECLARE_MESSAGE_MAP()
-
-        FPFUNC      	m_pOptionsFunction;
-        char       		*m_pRulesFileName;
-        char       		*m_pWavFileName;
-        int         	m_nFlags;
-        LPGAMESTRUCT	m_pGameParams;
+private:
+	// Dialog Data
+	//{{AFX_DATA(CMainMenu)
+	enum {
+		IDD = IDD_OPTIONS_DIALOG
+	};
+	// NOTE: the ClassWizard will add data members here
+	//}}AFX_DATA
 };
 
 } // namespace HodjNPodj

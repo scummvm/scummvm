@@ -212,10 +212,116 @@ enum FontWeight {
 #define BKMODE_LAST         2
 
 /*
+ * Button Control Styles
+ */
+#define BS_PUSHBUTTON       0x00000000L
+#define BS_DEFPUSHBUTTON    0x00000001L
+#define BS_CHECKBOX         0x00000002L
+#define BS_AUTOCHECKBOX     0x00000003L
+#define BS_RADIOBUTTON      0x00000004L
+#define BS_3STATE           0x00000005L
+#define BS_AUTO3STATE       0x00000006L
+#define BS_GROUPBOX         0x00000007L
+#define BS_USERBUTTON       0x00000008L
+#define BS_AUTORADIOBUTTON  0x00000009L
+#define BS_PUSHBOX          0x0000000AL
+#define BS_OWNERDRAW        0x0000000BL
+#define BS_TYPEMASK         0x0000000FL
+#define BS_LEFTTEXT         0x00000020L
+#define BS_TEXT             0x00000000L
+#define BS_ICON             0x00000040L
+#define BS_BITMAP           0x00000080L
+#define BS_LEFT             0x00000100L
+#define BS_RIGHT            0x00000200L
+#define BS_CENTER           0x00000300L
+#define BS_TOP              0x00000400L
+#define BS_BOTTOM           0x00000800L
+#define BS_VCENTER          0x00000C00L
+#define BS_PUSHLIKE         0x00001000L
+#define BS_MULTILINE        0x00002000L
+#define BS_NOTIFY           0x00004000L
+#define BS_FLAT             0x00008000L
+#define BS_RIGHTBUTTON      BS_LEFTTEXT
+
+/*
  * Standard Cursor IDs
  */
+#define MAKEINTRESOURCE(i) ((LPSTR)((ULONG_PTR)((WORD)(i))))
 #define IDC_NONE			0
-#define IDC_ARROW           1
+#define IDC_ARROW           MAKEINTRESOURCE(32512)
+
+
+ /*
+  * Owner draw state
+  */
+enum {
+	ODS_SELECTED = 0x0001,
+	ODS_GRAYED = 0x0002,
+	ODS_DISABLED = 0x0004,
+	ODS_CHECKED = 0x0008,
+	ODS_FOCUS = 0x0010,
+	ODS_DEFAULT = 0x0020,
+	ODS_COMBOBOXEDIT = 0x1000,
+	ODS_HOTLIGHT = 0x0040,
+	ODS_INACTIVE = 0x0080,
+	ODS_NOACCEL = 0x0100,
+	ODS_NOFOCUSRECT = 0x0200
+};
+
+
+/* Stock Logical Objects */
+#define WHITE_BRUSH         0
+#define LTGRAY_BRUSH        1
+#define GRAY_BRUSH          2
+#define DKGRAY_BRUSH        3
+#define BLACK_BRUSH         4
+#define NULL_BRUSH          5
+#define HOLLOW_BRUSH        NULL_BRUSH
+#define WHITE_PEN           6
+#define BLACK_PEN           7
+#define NULL_PEN            8
+#define OEM_FIXED_FONT      10
+#define ANSI_FIXED_FONT     11
+#define ANSI_VAR_FONT       12
+#define SYSTEM_FONT         13
+#define DEVICE_DEFAULT_FONT 14
+#define DEFAULT_PALETTE     15
+#define SYSTEM_FIXED_FONT   16
+
+
+/* Pen Styles */
+#define PS_SOLID            0
+#define PS_DASH             1       /* -------  */
+#define PS_DOT              2       /* .......  */
+#define PS_DASHDOT          3       /* _._._._  */
+#define PS_DASHDOTDOT       4       /* _.._.._  */
+#define PS_NULL             5
+#define PS_INSIDEFRAME      6
+#define PS_USERSTYLE        7
+#define PS_ALTERNATE        8
+#define PS_STYLE_MASK       0x0000000F
+
+
+/*
+ * Button Control Messages
+ */
+#define BM_GETCHECK        0x00F0
+#define BM_SETCHECK        0x00F1
+#define BM_GETSTATE        0x00F2
+#define BM_SETSTATE        0x00F3
+#define BM_SETSTYLE        0x00F4
+#define BM_CLICK           0x00F5
+#define BM_GETIMAGE        0x00F6
+#define BM_SETIMAGE        0x00F7
+#define BM_SETDONTCLICK    0x00F8
+
+ /*
+  * Owner draw actions
+  */
+#define ODA_DRAWENTIRE  0x0001
+#define ODA_SELECT      0x0002
+#define ODA_FOCUS       0x0004
+
 
 typedef struct tagBITMAPINFOHEADER {
 	DWORD      biSize;

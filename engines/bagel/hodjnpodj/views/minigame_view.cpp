@@ -64,7 +64,7 @@ bool MinigameView::msgKeypress(const KeypressMessage &msg) {
 }
 
 void MinigameView::close() {
-	g_events->setCursor(IDC_ARROW);
+	g_events->setCursor(1);
 
 	if (g_engine->_bReturnToGrandTour) {
 		g_engine->_bReturnToGrandTour = false;

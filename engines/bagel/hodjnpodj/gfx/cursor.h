@@ -49,7 +49,7 @@ public:
 
 	void setCursor(int cursorId);
 	void showCursor(bool visible) {
-		setCursor(visible ? IDC_ARROW : IDC_NONE);
+		setCursor(visible ? 1 : 0);
 	}
 };
 

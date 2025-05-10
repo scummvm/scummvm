@@ -191,7 +191,7 @@ bool MazeDoom::msgMouseMove(const MouseMoveMessage &msg) {
 			movePlayer(msg._pos);
 		}
 	} else {
-		g_events->setCursor(IDC_ARROW);
+		g_events->setCursor(1);
 	}
 
 	return true;

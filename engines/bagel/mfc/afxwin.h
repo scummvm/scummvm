@@ -39,6 +39,7 @@ class CView;
 class CFrameWnd;
 class CDC;
 class CScrollBar;
+class CListBox;
 
 /*============================================================================*/
 // Window message map handling
@@ -46,6 +47,7 @@ class CScrollBar;
 typedef void (CCmdTarget::*AFX_PMSG)();
 typedef void (CWnd::*AFX_PMSGW)(void);
 
+#pragma warning(disable: 4121)
 struct AFX_MSGMAP_ENTRY {
 	UINT nMessage;   // windows message
 	UINT nCode;      // control code or WM_NOTIFY code
@@ -54,6 +56,7 @@ struct AFX_MSGMAP_ENTRY {
 	int nSig;   // signature type (action) or pointer to message #
 	AFX_PMSG pfn;    // routine to call (or special value)
 };
+#pragma warning(default: 4121)
 
 struct AFX_MSGMAP {
 	const AFX_MSGMAP *(*pfnGetBaseMap)();
@@ -153,12 +156,17 @@ class CPen : public CGdiObject {
 public:
 	~CPen() override {
 	}
+
+	BOOL CreatePen(int nPenStyle, int nWidth, COLORREF crColor);
 };
 
 class CBrush : public CGdiObject {
 public:
 	~CBrush() override {
 	}
+
+	BOOL CreateSolidBrush(COLORREF crColor);
+	BOOL CreateStockObject(int nIndex);
 };
 
 class CFont : public CGdiObject {
@@ -219,11 +227,20 @@ public:
 		LPCSTR lpszOutput, const void *lpInitData);
 	BOOL CreateCompatibleDC(CDC *pDC);
 	BOOL DeleteDC();
+	void Attach(HDC hDC);
+	void Detach();
 
 	BOOL BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 		int xSrc, int ySrc, DWORD dwRop);
 	BOOL StretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 		int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop);
+	void Ellipse(LPCRECT lpRect);
+	void Ellipse(int x1, int y1, int x2, int y2);
+	void FrameRect(LPCRECT lpRect, CBrush *pBrush);
+	void Rectangle(LPCRECT lpRect);
+	void Rectangle(int x1, int y1, int x2, int y2);
+	void MoveTo(int x, int y);
+	void LineTo(int x, int y);
 
 	virtual CGdiObject *SelectStockObject(int nIndex);
 	CPen *SelectObject(CPen *pPen);
@@ -300,6 +317,7 @@ class CDocument : public CCmdTarget {
 private:
 	CString _title;
 	bool _isModified = false;
+	CString _unusedPathName;
 
 public:
 	~CDocument() override {
@@ -463,8 +481,17 @@ protected:
 	afx_msg BOOL OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 
+	// Control message handler member functions
+	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
+	afx_msg UINT OnGetDlgCode();
+	afx_msg void OnMeasureItem(int nIDCtl, LPMEASUREITEMSTRUCT lpMeasureItemStruct);
+	afx_msg int OnCharToItem(UINT nChar, CListBox *pListBox, UINT nIndex);
+	afx_msg int OnVKeyToItem(UINT nKey, CListBox *pListBox, UINT nIndex);
+
 public:
 	HWND m_hWnd;
+
+	static CWnd *FromHandlePermanent(HWND hWnd);
 
 public:
 	~CWnd() override {
@@ -475,9 +502,16 @@ public:
 	BOOL EnableWindow(BOOL bEnable = TRUE);
 	void UpdateWindow();
 	void SetActiveWindow();
+	BOOL IsWindowVisible() const;
+	int GetWindowText(CString &rString) const;
+	int GetWindowText(LPSTR lpszStringBuf, int nMaxCount) const;
+
 	CDC *GetDC();
 	int ReleaseDC(CDC *pDC);
+
 	BOOL PostMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
+	LRESULT SendMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
+
 	BOOL ValidateRect(LPCRECT lpRect = NULL);
 	BOOL InvalidateRect(LPCRECT lpRect, BOOL bErase = TRUE);
 	void GetWindowRect(LPRECT lpRect) const;
@@ -490,6 +524,9 @@ public:
 		DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
 		CCreateContext *pContext = nullptr);
 	CWnd *GetDlgItem(int nID) const;
+	CWnd *GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious = FALSE) const;
+	BOOL GotoDlgCtrl(CWnd *pWndCtrl);
+	BOOL SubclassDlgItem(UINT nID, CWnd *pParent);
 };
 
 class CFrameWnd : public CWnd {
@@ -521,6 +558,7 @@ public:
 	virtual BOOL OnInitDialog();
 
 	DWORD GetDefID();
+	void SetDefID(UINT nID);
 
 	// termination
 	void EndDialog(int nResult);
@@ -535,12 +573,17 @@ public:
 
 class CButton : public CWnd {
 	DECLARE_DYNAMIC(CButton)
+
+protected:
+	DECLARE_MESSAGE_MAP()
+
 public:
 	~CButton() override {
 	}
 
 	int GetCheck() const;
 	void SetCheck(int nCheck);
+	void SetButtonStyle(UINT nStyle, BOOL bRedraw = TRUE);
 };
 
 class CListBox : public CWnd {

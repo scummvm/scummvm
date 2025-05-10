@@ -379,7 +379,7 @@ OkButton::OkButton(const Common::Rect &r, UIElement *parent) :
 }
 
 bool OkButton::msgMouseEnter(const MouseEnterMessage &msg) {
-	g_events->setCursor(IDC_ARROW);
+	g_events->setCursor(1);
 	return ColorButton::msgMouseEnter(msg);
 }
 

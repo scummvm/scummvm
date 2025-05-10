@@ -57,7 +57,7 @@ bool ResourceView::msgOpen(const OpenMessage &msg) {
 		}
 	}
 
-	g_events->setCursor(IDC_ARROW);
+	g_events->setCursor(1);
 
 	return View::msgOpen(msg);
 }

@@ -115,9 +115,8 @@ BOOL CAudioCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam)
     return CBmpDialog::OnCommand(wParam, lParam);
 }
 
-VOID CAudioCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll)
-{
-    INT 	nMin, nMax, nVal;
+VOID CAudioCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
+	INT nMin = 0, nMax = 0, nVal = 0;
     
     if (pScroll == m_pScrollBar1) {
 

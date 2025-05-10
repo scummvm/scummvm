@@ -28,9 +28,22 @@ namespace Bagel {
 namespace MFC {
 
 class CBitmapButton : public CButton {
+	DECLARE_DYNAMIC(CBitmapButton)
+
+protected:
+	DECLARE_MESSAGE_MAP()
+
+public:
+	CBitmap m_bitmap;           // normal image (REQUIRED)
+	CBitmap m_bitmapSel;        // selected image (OPTIONAL)
+	CBitmap m_bitmapFocus;      // focused but not selected (OPTIONAL)
+	CBitmap m_bitmapDisabled;   // disabled bitmap (OPTIONAL)
+
 public:
 	~CBitmapButton() override {
 	}
+
+	void SizeToContent();
 };
 
 } // namespace MFC

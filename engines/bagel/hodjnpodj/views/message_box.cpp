@@ -68,7 +68,7 @@ bool MessageBox::msgOpen(const OpenMessage &msg) {
 	_okButton.setBounds(btnRect);
 
 	// Make sure the cursor is shown
-	g_events->setCursor(IDC_ARROW);
+	g_events->setCursor(1);
 
 	return View::msgOpen(msg);
 }

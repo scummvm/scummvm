@@ -99,7 +99,7 @@ bool Rules::msgOpen(const OpenMessage &msg) {
 	_background.copyFrom(s);
 
 	// Make sure the cursor is shown
-	g_events->setCursor(IDC_ARROW);
+	g_events->setCursor(1);
 
 	// Read the text content
 	Common::File f;
@@ -197,7 +197,7 @@ bool Rules::msgMouseMove(const MouseMoveMessage &msg) {
 		else
 			g_events->setCursor(IDC_RULES_ARROWDN);
 	} else {
-		g_events->setCursor(IDC_ARROW);
+		g_events->setCursor(1);
 	}
 
 	return true;

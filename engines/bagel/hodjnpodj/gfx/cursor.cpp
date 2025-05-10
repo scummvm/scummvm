@@ -41,7 +41,7 @@ void Cursor::setCursor(int cursorId) {
 		_cursorId = cursorId;
 		CursorMan.showMouse(_cursorId != IDC_NONE);
 
-		if (cursorId == IDC_ARROW) {
+		if (cursorId == 1) {
 			setArrowCursor();
 
 		} else if (cursorId != IDC_NONE) {

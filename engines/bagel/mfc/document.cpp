@@ -34,7 +34,7 @@ void CDocument::SetTitle(LPCSTR lpszTitle) {
 }
 
 const CString &CDocument::GetPathName() const {
-	return CString();
+	return _unusedPathName;
 }
 void CDocument::SetPathName(LPCSTR lpszPathName, BOOL bAddToMRU) {
 }

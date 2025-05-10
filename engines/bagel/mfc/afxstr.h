@@ -30,8 +30,10 @@ namespace MFC {
 
 class CString : public Common::String {
 public:
-	CString() : Common::String() {}
-	CString(const char *s) : Common::String(s) {}
+	CString() : Common::String() {
+	}
+	CString(const char *s) : Common::String(s) {
+	}
 
 	char *GetBufferSetLength(size_t nNewLength) {
 		ensureCapacity(nNewLength + 1, false);
@@ -44,7 +46,59 @@ public:
 	size_t GetLength() const {
 		return size();
 	}
+	bool IsEmpty() const {
+		return empty();
+	}
+
+	operator LPCSTR() const {
+		return c_str();
+	}
+
+	CString &operator+=(const char *str) {
+		Common::String::operator+=(str);
+		return *this;
+	}
+	CString &operator+=(const Common::String &str) {
+		Common::String::operator+=(str);
+		return *this;
+	}
+	CString &operator+=(char c) {
+		Common::String::operator+=(c);
+		return *this;
+	}
 };
+
+
+inline CString operator+(const CString &x, const CString &y) {
+	CString tmp = x;
+	tmp += y;
+	return tmp;
+}
+
+inline CString operator+(const char *x, const CString &y) {
+	CString tmp(x);
+	tmp += y;
+	return tmp;
+}
+
+inline CString operator+(const CString &x, const char *y) {
+	CString tmp = x;
+	tmp += y;
+	return tmp;
+}
+
+inline CString operator+(const CString &x, char y) {
+	CString tmp = x;
+	tmp += y;
+	return tmp;
+}
+
+inline CString operator+(char x, const CString &y) {
+	CString tmp;
+	tmp += x;
+	tmp += y;
+	return tmp;
+}
 
 } // namespace MFC
 } // namespace Bagel
