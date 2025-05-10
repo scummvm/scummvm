@@ -115,13 +115,7 @@ MODULE_OBJS = \
 	spacebar/vid_wnd.o \
 	hodjnpodj/hodjnpodj.o \
 	hodjnpodj/console.o \
-	hodjnpodj/events.o \
-	hodjnpodj/messages.o \
 	hodjnpodj/gfx/bold_font.o \
-	hodjnpodj/gfx/button.o \
-	hodjnpodj/gfx/scrollbar.o \
-	hodjnpodj/gfx/cursor.o \
-	hodjnpodj/gfx/gfx_surface.o \
 	hodjnpodj/gfx/palette.o \
 	hodjnpodj/hnplibs/audiocfg.o \
 	hodjnpodj/hnplibs/button.o \
@@ -144,13 +138,6 @@ MODULE_OBJS = \
 	hodjnpodj/views/rules.o \
 	hodjnpodj/views/sprites_view.o \
 	hodjnpodj/views/view.o \
-	hodjnpodj/fuge/fuge.o \
-	hodjnpodj/fuge/options.o \
-	hodjnpodj/life/game.o \
-	hodjnpodj/mazedoom/maze_doom.o \
-	hodjnpodj/mazedoom/maze_gen.o \
-	hodjnpodj/mazedoom/options.o \
-	hodjnpodj/novacancy/no_vacancy.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o
 

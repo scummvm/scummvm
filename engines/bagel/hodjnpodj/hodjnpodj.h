@@ -34,9 +34,8 @@
 #include "engines/savestate.h"
 #include "graphics/fonts/winfont.h"
 #include "graphics/screen.h"
-#include "bagel/hodjnpodj/events.h"
 #include "bagel/hodjnpodj/libs/settings.h"
-
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {

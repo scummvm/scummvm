@@ -30,8 +30,6 @@ namespace HodjNPodj {
 
 class Console : public GUI::Debugger {
 private:
-	bool cmdView(int argc, const char **argv);
-	bool cmdOverlays(int argc, const char **argv);
 
 public:
 	Console();

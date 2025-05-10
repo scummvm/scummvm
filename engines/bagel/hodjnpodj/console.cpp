@@ -26,27 +26,9 @@ namespace Bagel {
 namespace HodjNPodj {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("view", WRAP_METHOD(Console, cmdView));
-	registerCmd("overlays", WRAP_METHOD(Console, cmdOverlays));
 }
 
 Console::~Console() {
-}
-
-bool Console::cmdView(int argc, const char **argv) {
-	if (argc == 2) {
-		g_events->replaceView(argv[1], true);
-		return false;
-	} else {
-		debugPrintf("view <name>\n");
-		return true;
-	}
-}
-
-bool Console::cmdOverlays(int argc, const char **argv) {
-	g_events->focusedView()->send(GameMessage("TOGGLE_OVERLAYS"));
-	debugPrintf("Overlays toggled\n");
-	return true;
 }
 
 } // namespace HodjNPodj

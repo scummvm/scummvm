@@ -29,6 +29,7 @@ namespace HodjNPodj {
 
 #define	PATHSPECSIZE		256
 
+#define NOPLAY             -1
 #define SKILLLEVEL_LOW      0
 #define SKILLLEVEL_MEDIUM   1
 #define SKILLLEVEL_HIGH     2
