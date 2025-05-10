@@ -41,17 +41,16 @@ static	CColorButton *pAudioButton = NULL;
 static	CColorButton *pReturnButton = NULL;
 static	CColorButton *pQuitButton = NULL;
 
-CMainMenu::CMainMenu(CWnd* pParent, CPalette *pPalette, UINT nFlags, FPFUNC pOptionsFunc, char *pRulesFileName, char *pWavFileName, LPGAMESTRUCT pGameParams)
-        : CBmpDialog(pParent, pPalette, IDD_OPTIONS_DIALOG, ".\\ART\\OSCROLL.BMP")
-{
-    // can't access null pointers
-    //
+CMainMenu::CMainMenu(CWnd *pParent, CPalette *pPalette,
+		UINT nFlags, FPFUNC pOptionsFunc, const char *pRulesFileName,
+		const char *pWavFileName, LPGAMESTRUCT pGameParams)
+        : CBmpDialog(pParent, pPalette, IDD_OPTIONS_DIALOG, ".\\ART\\OSCROLL.BMP") {
+    // Can't access null pointers
     assert(pParent != NULL);
     assert(pPalette != NULL);
     assert(pRulesFileName != NULL);
 
     // Inits
-    //
     m_pRulesFileName = pRulesFileName;
     m_pWavFileName = pWavFileName;
     m_nFlags = nFlags;

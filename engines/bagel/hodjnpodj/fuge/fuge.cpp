@@ -255,7 +255,7 @@ bool Fuge::msgOpen(const OpenMessage &msg) {
 	loadMasterSprites();
 	loadMasterSounds();
 
-	if (pGameParams->bPlayingMetagame)
+	if (pGameParams->bplayingMetagame)
 		playGame();
 
 	return true;
@@ -442,7 +442,7 @@ bool Fuge::msgMouseDown(const MouseDownMessage &msg) {
 	if (_rNewGameButton.contains(msg._pos)) {
 		// User clicked on the left hand side of the title area.
 		// If we're not in the metagame, start a new Fuge game
-		if (!pGameParams->bPlayingMetagame) {
+		if (!pGameParams->bplayingMetagame) {
 			// Start a new game
 			playGame();
 		}
@@ -706,7 +706,7 @@ void Fuge::showMainMenu() {
 
 	// Show the options view
 	MainMenu::show(
-		(pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) |
+		(pGameParams->bplayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) |
 		(_bGameActive ? 0 : NO_RETURN),
 		"fuge/fuge.txt",
 		pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL
@@ -767,7 +767,7 @@ void Fuge::gameReset() {
 }
 
 void Fuge::loadIniSettings() {
-	if (pGameParams->bPlayingMetagame) {
+	if (pGameParams->bplayingMetagame) {
 		_bOuterWall = false;
 		_nInitNumBalls = 1;
 		_nInitStartLevel = 3;
@@ -1136,7 +1136,7 @@ void Fuge::loseBall() {
 }
 
 void Fuge::gameOverClosed() {
-	if (pGameParams->bPlayingMetagame) {
+	if (pGameParams->bplayingMetagame) {
 		// Return the final score
 		pGameParams->lScore = _lScore;
 	}
@@ -1730,7 +1730,7 @@ void Fuge::roundCompleteClosed() {
 	// Get new brick count
 	_nBricks = _nNumRows * BRICKS_PER_ROW;
 
-	if (pGameParams->bPlayingMetagame) {
+	if (pGameParams->bplayingMetagame) {
 		// If user is playing the metagame
 		// return to the metagame
 		pGameParams->lScore = _lScore;

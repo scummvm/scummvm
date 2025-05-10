@@ -52,14 +52,14 @@ struct GAMESTRUCT {
 	SkillLevel nSkillLevel = SkillLevel::SKILLLEVEL_LOW;
 	bool bSoundEffectsEnabled = false;
 	bool bMusicEnabled = false;
-	bool bPlayingMetagame = false;
+	bool bplayingMetagame = false;
 	bool bPlayingHodj = false;
 
 	void clear() {
 		lCrowns = lScore = 0;
 		nSkillLevel = SkillLevel::SKILLLEVEL_LOW;
 		bSoundEffectsEnabled = bMusicEnabled = true;
-		bPlayingMetagame = false;
+		bplayingMetagame = false;
 		bPlayingHodj = true;
 	}
 };

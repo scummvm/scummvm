@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/file.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "bagel/mfc/global_functions.h"
 
@@ -51,6 +53,11 @@ SIZE_T GlobalCompact(DWORD dwMinFree) {
 
 int MessageBox(HWND hWnd, LPCSTR lpText,
 		LPCSTR lpCaption, UINT uType) {
+	error("%s %s", lpText, lpCaption);
+	return 0;
+}
+
+int MessageBox(LPCSTR lpText, LPCSTR lpCaption, UINT uType) {
 	error("%s %s", lpText, lpCaption);
 	return 0;
 }
@@ -99,6 +106,34 @@ BOOL UnhookWindowsHookEx(HHOOK hhk) {
 LRESULT CallNextHookEx(HHOOK hhk, int nCode,
 	WPARAM wParam, LPARAM lParam) {
 	error("TODO: CallNextHookEx");
+}
+
+UINT_PTR SetTimer(UINT_PTR nIDEvent, UINT nElapse,
+		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
+	error("TODO: SetTimer");
+}
+
+BOOL KillTimer(UINT_PTR nIDEvent) {
+	error("TODO: KillTimer");
+}
+
+void Sleep(UINT milli) {
+	g_system->delayMillis(milli);
+}
+
+bool FileExists(const char *filename) {
+	return Common::File::exists(filename);
+}
+
+long FileLength(const char *filename) {
+	Common::File f;
+	return f.open(filename) ? f.size() : -1;
+}
+
+BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,
+	UINT wMsgFilterMin, UINT wMsgFilterMax,
+	UINT wRemoveMsg) {
+	error("TODO: PeekMessage");
 }
 
 } // namespace MFC

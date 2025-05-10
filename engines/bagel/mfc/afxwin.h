@@ -40,6 +40,7 @@ class CFrameWnd;
 class CDC;
 class CScrollBar;
 class CListBox;
+class CBitmap;
 
 /*============================================================================*/
 // Window message map handling
@@ -107,18 +108,6 @@ protected: \
 	DECLARE_DYNAMIC(class_name) \
 	static CObject *CreateObject();
 
-/*
- * Message structure
- */
-typedef struct tagMSG {
-	HWND        hwnd;
-	UINT        message;
-	WPARAM      wParam;
-	LPARAM      lParam;
-	DWORD       time;
-	POINT       pt;
-} MSG, *PMSG, NEAR *NPMSG, FAR *LPMSG;
-
 class CDataExchange {
 };
 
@@ -165,6 +154,10 @@ public:
 
 class CBrush : public CGdiObject {
 public:
+	CBrush();
+	CBrush(CBitmap *pBitmap);
+	CBrush(COLORREF crColor);
+	CBrush(int nIndex, COLORREF crColor);
 	~CBrush() override {
 	}
 
@@ -316,6 +309,10 @@ public:
 	}
 
 	virtual const AFX_MSGMAP *GetMessageMap() const;
+
+	void BeginWaitCursor();
+	void EndWaitCursor();
+	void RestoreWaitCursor();
 };
 
 class CDocument : public CCmdTarget {
@@ -503,6 +500,9 @@ public:
 public:
 	~CWnd() override {
 	}
+	virtual BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
+		DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
+		CCreateContext *pContext = nullptr);
 
 	CWnd *GetParent() const;
 	void ShowWindow(int nCmdShow);
@@ -510,8 +510,10 @@ public:
 	void UpdateWindow();
 	void SetActiveWindow();
 	BOOL IsWindowVisible() const;
+	void Invalidate(BOOL bErase = TRUE);
 	int GetWindowText(CString &rString) const;
 	int GetWindowText(LPSTR lpszStringBuf, int nMaxCount) const;
+	BOOL SetWindowText(LPCSTR lpszString);
 
 	CDC *GetDC();
 	int ReleaseDC(CDC *pDC);
@@ -523,21 +525,26 @@ public:
 	BOOL InvalidateRect(LPCRECT lpRect, BOOL bErase = TRUE);
 	void GetWindowRect(LPRECT lpRect) const;
 	BOOL GetUpdateRect(LPRECT lpRect, BOOL bErase = FALSE);
+	BOOL GetClientRect(LPRECT lpRect) const;
 	void MoveWindow(LPCRECT lpRect, BOOL bRepaint = true);
 	void MoveWindow(int x, int y, int nWidth, int nHeight,
 		BOOL bRepaint = TRUE);
+	HDC BeginPaint(LPPAINTSTRUCT lpPaint);
+	BOOL EndPaint(const PAINTSTRUCT *lpPaint);
 
-	virtual BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
-		DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
-		CCreateContext *pContext = nullptr);
 	CWnd *GetDlgItem(int nID) const;
 	CWnd *GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious = FALSE) const;
 	BOOL GotoDlgCtrl(CWnd *pWndCtrl);
 	BOOL SubclassDlgItem(UINT nID, CWnd *pParent);
+	void SetFocus();
 };
 
 class CFrameWnd : public CWnd {
 	DECLARE_DYNCREATE(CFrameWnd)
+
+protected:
+	DECLARE_MESSAGE_MAP()
+
 public:
 	~CFrameWnd() override {
 	}
@@ -561,7 +568,7 @@ public:
 	~CDialog() override {
 	}
 
-	void DoModal();
+	int DoModal();
 	virtual BOOL OnInitDialog();
 
 	DWORD GetDefID();
@@ -587,6 +594,8 @@ protected:
 public:
 	~CButton() override {
 	}
+	virtual BOOL Create(LPCTSTR lpszCaption, DWORD dwStyle,
+		const RECT &rect, CWnd *pParentWnd, UINT nID);
 
 	int GetCheck() const;
 	void SetCheck(int nCheck);
@@ -609,13 +618,23 @@ public:
 
 class CEdit : public CWnd {
 	DECLARE_DYNAMIC(CEdit)
+
+protected:
+	DECLARE_MESSAGE_MAP()
+
 public:
 	~CEdit() override {
 	}
+	BOOL Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
+	void LimitText(int nChars);
 };
 
 class CScrollBar : public CWnd {
 	DECLARE_DYNAMIC(CScrollBar)
+
+protected:
+	DECLARE_MESSAGE_MAP()
+
 public:
 	~CScrollBar() override { }
 	virtual BOOL Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
@@ -629,6 +648,10 @@ public:
 
 class CView : public CWnd {
 	DECLARE_DYNAMIC(CView)
+
+protected:
+	DECLARE_MESSAGE_MAP()
+
 public:
 	~CView() override {
 	}
@@ -636,6 +659,10 @@ public:
 
 class CScrollView : public CView {
 	DECLARE_DYNAMIC(CScrollView)
+
+protected:
+	DECLARE_MESSAGE_MAP()
+
 public:
 	~CScrollView() override {
 	}

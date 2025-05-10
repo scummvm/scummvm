@@ -23,9 +23,8 @@
 #define HODJNPODJ_RIDDLES_USERCFG_H
 
 #include "bagel/afxwin.h"
-//#include <afxext.h>
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
-#include <stdinc.h>
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
 
 namespace Bagel {
 namespace HodjNPodj {

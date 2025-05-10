@@ -19,47 +19,52 @@
  *
  */
 
-#ifndef HODJNPODJ_HNPLIBS_GAMEDLL_H
-#define HODJNPODJ_HNPLIBS_GAMEDLL_H
+#ifndef BAGEL_MFC_IFSTREAM_H
+#define BAGEL_MFC_IFSTREAM_H
 
-#include "bagel/afxwin.h"
+#include "common/file.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
 
-#define	PATHSPECSIZE		256
+namespace ios {
+enum openmode {
+	in = 1 << 0,
+	binary = 1 << 1
+};
+} // namespace ios
 
-#define SKILLLEVEL_LOW      0
-#define SKILLLEVEL_MEDIUM   1
-#define SKILLLEVEL_HIGH     2
+class ifstream {
+private:
+	Common::File _file;
 
-#define	INSTALL_NONE		0
-#define	INSTALL_MINIMAL		1
-#define INSTALL_BASIC		2
-#define	INSTALL_EXTRA		3
-#define INSTALL_FULL		4
+public:
+	ifstream();
+	ifstream(const char *filename, ios::openmode mode = ios::in);
+	virtual ~ifstream();
 
+	virtual void open(const char *filename, ios::openmode mode = ios::in);
+	virtual bool is_open() const;
+	virtual void close();
 
-struct GAMESTRUCT
-{
-	long            lCrowns;
-	long            lScore;
-	int             nSkillLevel;
-	BOOL            bSoundEffectsEnabled;
-	BOOL            bMusicEnabled;
-	BOOL            bplayingMetagame;
-	BOOL            bPlayingHodj;
-	/*  For use later in Beta Test
-			int				nInstallationCode;
-			char			chHomePath[PATHSPECSIZE];
-			char			chCDPath[PATHSPECSIZE];
-			char			chMiniPath[PATHSPECSIZE];
-	*/
+	virtual ifstream &getline(char *buffer, size_t count);
+	virtual ifstream &read(char *buffer, size_t count);
+	virtual size_t gcount() const;
+
+	virtual bool good() const;
+	virtual bool eof() const;
+	virtual bool fail() const;
+	virtual bool bad() const;
+
+	virtual operator bool() const;
+
+	// Positioning
+	virtual size_t tellg();
+	virtual ifstream &seekg(size_t pos);
+	virtual ifstream &seekg(int32 off, int dir);
 };
 
-typedef GAMESTRUCT FAR *LPGAMESTRUCT;
-
-} // namespace HodjNPodj
+} // namespace MFC
 } // namespace Bagel
 
 #endif

@@ -66,7 +66,7 @@ void Events::runGame() {
 
 	if (minigame.empty()) {
 		// Start the metagame
-		_gameInfo.bPlayingMetagame = true;
+		_gameInfo.bplayingMetagame = true;
 
 		if (ConfMan.getBool("skip_intro"))
 			// Original used /n cmd line parameter instead

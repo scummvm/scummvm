@@ -213,6 +213,13 @@ enum AfxSig {
 // < 0 are for MFC's use
 
 /*
+ * PeekMessage() Options
+ */
+#define PM_NOREMOVE         0x0000
+#define PM_REMOVE           0x0001
+#define PM_NOYIELD          0x0002
+
+/*
  * Window Messages
  */
 
@@ -248,15 +255,9 @@ enum AfxSig {
 #define WM_ERASEBKGND                   0x0014
 #define WM_SYSCOLORCHANGE               0x0015
 #define WM_SHOWWINDOW                   0x0018
+#define WM_CTLCOLOR                     0x0019
 #define WM_WININICHANGE                 0x001A
-#if(WINVER >= 0x0400)
 #define WM_SETTINGCHANGE                WM_WININICHANGE
-#endif /* WINVER >= 0x0400 */
-
-#if (NTDDI_VERSION >= NTDDI_WIN10_19H1)
-#endif // NTDDI_VERSION >= NTDDI_WIN10_19H1
-
-
 #define WM_DEVMODECHANGE                0x001B
 #define WM_ACTIVATEAPP                  0x001C
 #define WM_FONTCHANGE                   0x001D
@@ -266,7 +267,6 @@ enum AfxSig {
 #define WM_MOUSEACTIVATE                0x0021
 #define WM_CHILDACTIVATE                0x0022
 #define WM_QUEUESYNC                    0x0023
-
 #define WM_GETMINMAXINFO                0x0024
 #define WM_PAINTICON                    0x0026
 #define WM_ICONERASEBKGND               0x0027
@@ -283,16 +283,11 @@ enum AfxSig {
 #define WM_GETHOTKEY                    0x0033
 #define WM_QUERYDRAGICON                0x0037
 #define WM_COMPAREITEM                  0x0039
-#if(WINVER >= 0x0500)
-#ifndef _WIN32_WCE
 #define WM_GETOBJECT                    0x003D
-#endif
-#endif /* WINVER >= 0x0500 */
 #define WM_COMPACTING                   0x0041
 #define WM_COMMNOTIFY                   0x0044  /* no longer suported */
 #define WM_WINDOWPOSCHANGING            0x0046
 #define WM_WINDOWPOSCHANGED             0x0047
-
 #define WM_POWER                        0x0048
 #define WM_COPYDATA                     0x004A
 #define WM_CANCELJOURNAL                0x004B
@@ -352,7 +347,14 @@ enum AfxSig {
 #define WM_VSCROLL                      0x0115
 #define WM_INITMENU                     0x0116
 #define WM_INITMENUPOPUP                0x0117
-
+#define WM_CTLCOLORMSGBOX               0x0132
+#define WM_CTLCOLOREDIT                 0x0133
+#define WM_CTLCOLORLISTBOX              0x0134
+#define WM_CTLCOLORBTN                  0x0135
+#define WM_CTLCOLORDLG                  0x0136
+#define WM_CTLCOLORSCROLLBAR            0x0137
+#define WM_CTLCOLORSTATIC               0x0138
+#define MN_GETHMENU                     0x01E1
 #define WM_MOUSEFIRST                   0x0200
 #define WM_MOUSEMOVE                    0x0200
 #define WM_LBUTTONDOWN                  0x0201
@@ -365,6 +367,19 @@ enum AfxSig {
 #define WM_MBUTTONUP                    0x0208
 #define WM_MBUTTONDBLCLK                0x0209
 #define WM_MOUSEWHEEL                   0x020A
+#define WM_XBUTTONDOWN                  0x020B
+#define WM_XBUTTONUP                    0x020C
+#define WM_XBUTTONDBLCLK                0x020D
+#define WM_MOUSEHWHEEL                  0x020E
+#define WM_MOUSELAST                    0x020E
+#define WM_UNICHAR                      0x0109
+#define WM_KEYLAST                      0x0109
+#define UNICODE_NOCHAR                  0xFFFF
+
+#define MM_MCINOTIFY                    0x3B9           /* MCI */
+#define MM_WOM_OPEN                     0x3BB           /* waveform output */
+#define MM_WOM_CLOSE                    0x3BC
+#define MM_WOM_DONE                     0x3BD
 
 #define ON_COMMAND(id, memberFxn) \
 	{ WM_COMMAND, CN_COMMAND, (WORD)id, (WORD)id, AfxSigCmd_v, \

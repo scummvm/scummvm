@@ -206,6 +206,18 @@ typedef struct tagPAINTSTRUCT {
 	BYTE        rgbReserved[32];
 } PAINTSTRUCT, *PPAINTSTRUCT, *NPPAINTSTRUCT, *LPPAINTSTRUCT;
 
+/*
+ * Message structure
+ */
+typedef struct tagMSG {
+	HWND        hwnd;
+	UINT        message;
+	WPARAM      wParam;
+	LPARAM      lParam;
+	DWORD       time;
+	POINT       pt;
+} MSG, *PMSG, NEAR *NPMSG, FAR *LPMSG;
+
 } // namespace MFC
 } // namespace Bagel
 

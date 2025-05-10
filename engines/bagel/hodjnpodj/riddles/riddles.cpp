@@ -19,28 +19,23 @@
  *
  */
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <time.h>
-#include <assert.h>
-#include <ctype.h>
-#include <mmsystem.h>
-#include <dibdoc.h>
-#include <fstream.h>
-#include <stdinc.h>
-#include <text.h>
-#include <globals.h>
-#include <sprite.h>
-#include <copyrite.h>
-#include <cmessbox.h>
-#include <misc.h>
-#include <errors.h>
-#include <mainmenu.h>
-#include <rules.h>
-#include <sound.h>
+#include "bagel/afxwin.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
 #include "bagel/hodjnpodj/riddles/riddles.h"
 #include "bagel/hodjnpodj/riddles/usercfg.h"
+//#include "bagel/hodjnpodj/libs/copyrite.h"
+#include "bagel/boflib/sound.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/boflib/error.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -299,14 +294,14 @@ CRiddlesWindow::CRiddlesWindow(VOID)
             //
             m_pSoundTrack = new CSound( this, ".\\sound\\riddles.mid", SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
             if (m_pSoundTrack != NULL) {
-                (*m_pSoundTrack).MidiLoopPlaySegment( 1930, 32870, 0, FMT_MILLISEC );
+                (*m_pSoundTrack).midiLoopPlaySegment( 1930, 32870, 0, FMT_MILLISEC );
             } else {
                 errCode = ERR_MEMORY;
             }
         }
 
         // seed the random number generator
-        srand((unsigned)time(NULL));
+        //srand((unsigned)time(NULL));
 
         // load the 32 character sprites into masters
         //
@@ -314,7 +309,7 @@ CRiddlesWindow::CRiddlesWindow(VOID)
 
         // if we are not playing from the metagame
         //
-        if (!pGameParams->bPlayingMetagame) {
+        if (!pGameParams->bplayingMetagame) {
 
             pGameParams->lScore = 0L;
             // Automatically bring up the main menu
@@ -453,12 +448,12 @@ VOID CRiddlesWindow::PaintScreen()
             if (hDIB && (m_pGamePalette != NULL)) {
 
                 GetClientRect( rcDest );
-                LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
+                LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
                 rcDIB.top = rcDIB.left = 0;
-                rcDIB.right = (INT) ::DIBWidth(lpDIB);
-                rcDIB.bottom = (INT) ::DIBHeight(lpDIB);
-                ::GlobalUnlock((HGLOBAL) hDIB);
-                ::PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
+                rcDIB.right = (INT) DIBWidth(lpDIB);
+                rcDIB.bottom = (INT) DIBHeight(lpDIB);
+                GlobalUnlock((HGLOBAL) hDIB);
+                PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
             }
     
             ReleaseDC(pDC);
@@ -480,7 +475,7 @@ BOOL CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 {
     CMainMenu COptionsWind((CWnd *)this,
     			m_pGamePalette,
-    			(pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (m_bGameActive ? 0 : NO_RETURN),
+    			(pGameParams->bplayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (m_bGameActive ? 0 : NO_RETURN),
     			GetGameParams, "riddles.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL),pGameParams);
 
     if (HIWORD(lParam) == BN_CLICKED) {
@@ -500,7 +495,7 @@ BOOL CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam)
                     m_bIgnoreScrollClick = TRUE;
 
                     GamePause();
-                    CSound::ClearWaveSounds(); 
+                    CSound::clearWaveSounds(); 
 
                     // Create the commands menu
                     //
@@ -534,16 +529,16 @@ BOOL CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 					// Check to see if the music state was changed and adjust to match it
 					//    
 				   	if((pGameParams->bMusicEnabled == FALSE) && (m_pSoundTrack != NULL)) {
-				   		if (m_pSoundTrack->Playing())
-				   			m_pSoundTrack->Stop();
+				   		if (m_pSoundTrack->playing())
+				   			m_pSoundTrack->stop();
 				   	} 
 				   	else if( pGameParams->bMusicEnabled ){
 				   		if (m_pSoundTrack == NULL) { 
 				            m_pSoundTrack = new CSound( this, ".\\sound\\riddles.mid", SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 						}
             			if (m_pSoundTrack != NULL) {
-							if ( !m_pSoundTrack->Playing() )
-                				(*m_pSoundTrack).MidiLoopPlaySegment( 1930, 32870, 0, FMT_MILLISEC );
+							if ( !m_pSoundTrack->playing() )
+                				(*m_pSoundTrack).midiLoopPlaySegment( 1930, 32870, 0, FMT_MILLISEC );
 				   		}
 				   	}
 
@@ -594,15 +589,15 @@ VOID CRiddlesWindow::PlayGame()
         // Speak the riddle (as .WAV)
         //
         if (pGameParams->bSoundEffectsEnabled) {
-            wsprintf(szBuf, ".\\SOUND\\RD%03d.WAV", m_pRiddle->nSoundId);
+            Common::sprintf_s(szBuf, ".\\SOUND\\RD%03d.WAV", m_pRiddle->nSoundId);
 //          sndPlaySound(szBuf, SND_SYNC);
 
 			if (FileExists(szBuf)) {										// Make sure we have the file
-				CSound::ClearWaveSounds();
+				CSound::clearWaveSounds();
 	            pRiddleReading = new CSound( (CWnd *)this, szBuf,                               // Load up the sound file as a
 	            						SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
 				if (pRiddleReading != NULL)
-            		pRiddleReading->Play();                                                          //...play the sound effect
+            		pRiddleReading->play();                                                          //...play the sound effect
 	        }
         }
 
@@ -621,7 +616,7 @@ VOID CRiddlesWindow::LoadIniSettings()
 {
     INT nVal;
 
-    if (pGameParams->bPlayingMetagame) {
+    if (pGameParams->bplayingMetagame) {
 
         switch (pGameParams->nSkillLevel) {
 
@@ -754,7 +749,7 @@ ERROR_CODE CRiddlesWindow::LoadRiddle(VOID)
 
         // don't load same riddle twice in a row
         do {
-            m_nRiddleNumber = nMin + (rand() % n);
+            m_nRiddleNumber = nMin + (brand() % n);
         } while (m_nRiddleNumber == nLast);
 
         // remember last riddle #
@@ -777,7 +772,7 @@ ERROR_CODE CRiddlesWindow::LoadRiddle(VOID)
 
             Decrypt(m_pRiddle, sizeof(RIDDLE));             // decrypt the riddle
 
-            strupr(m_pRiddle->text);                        // convert riddle to uppercase
+            strUpper(m_pRiddle->text);                        // convert riddle to uppercase
 
             errCode = ValidateRiddle(m_pRiddle);            // make sure the data file is not corrupt
 
@@ -1062,8 +1057,8 @@ INT CRiddlesWindow::CharToIndex(CHAR c)
         // character must be an uppercase letter
         //
         default:
-            assert(isalpha(c));
-            assert(isupper(c));
+            assert(Common::isAlpha(c));
+            assert(Common::isUpper(c));
 
             nIndex = c - 65;
 
@@ -1155,7 +1150,7 @@ VOID CRiddlesWindow::OnTimer(UINT nEvent)
                 //
                 GamePause();
 
-				CSound::ClearWaveSounds();						// Make sure nothing else is playing
+				CSound::clearWaveSounds();						// Make sure nothing else is playing
                 if (pGameParams->bSoundEffectsEnabled)
                     sndPlaySound(WAV_GAMEOVER, SND_ASYNC);
 
@@ -1167,7 +1162,7 @@ VOID CRiddlesWindow::OnTimer(UINT nEvent)
 
                 GameReset();
 
-                if (pGameParams->bPlayingMetagame) {
+                if (pGameParams->bplayingMetagame) {
                     if (pGameParams->bSoundEffectsEnabled)
                         sndPlaySound(NULL, SND_ASYNC);
                     pGameParams->lScore = 0;
@@ -1251,7 +1246,7 @@ void CMyEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
         // Bring up the Rules
         //
         case VK_F1: {
-			CSound::WaitWaveSounds();
+			CSound::waitWaveSounds();
             gMainWindow->GamePause();
             CRules  RulesDlg(pParent, "riddles.txt", pGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL));
             RulesDlg.DoModal();
@@ -1331,14 +1326,14 @@ VOID CRiddlesWindow::ParseAnswer(const CHAR *pszAnswer)
         //
         if (CheckUserGuess(pszAnswer)) {
 
-			CSound::ClearWaveSounds();						// Make sure the reading stops first
+			CSound::clearWaveSounds();						// Make sure the reading stops first
             if (pGameParams->bSoundEffectsEnabled)
                 sndPlaySound(WAV_YOUWIN, SND_ASYNC);
 
             CMessageBox dlgYouWin((CWnd *)this, m_pGamePalette, "You are correct!", "You have won.");
             GameReset();
 
-            if (pGameParams->bPlayingMetagame) {
+            if (pGameParams->bplayingMetagame) {
                 pGameParams->lScore = 1;
                 if (pGameParams->bSoundEffectsEnabled)
                     sndPlaySound(NULL, SND_ASYNC);
@@ -1348,7 +1343,7 @@ VOID CRiddlesWindow::ParseAnswer(const CHAR *pszAnswer)
             	PlayGame(); 								//...continuous play
 
         } else {
-			CSound::ClearWaveSounds();						// Make sure the reading stops first
+			CSound::clearWaveSounds();						// Make sure the reading stops first
             if (pGameParams->bSoundEffectsEnabled)
                 sndPlaySound(WAV_NOPE, SND_SYNC);
                 sndPlaySound(WAV_TRYAGAIN, SND_SYNC);
@@ -1415,7 +1410,7 @@ VOID CRiddlesWindow::OnLButtonDown(UINT nFlags, CPoint point)
 
         // if we are not playing from the metagame
         //
-        if (!pGameParams->bPlayingMetagame) {
+        if (!pGameParams->bplayingMetagame) {
 
             // start a new game
             PlayGame();
@@ -1425,28 +1420,28 @@ VOID CRiddlesWindow::OnLButtonDown(UINT nFlags, CPoint point)
         pDC = GetDC();
         pSprite = new CSprite;
         (*pSprite).SharePalette(pGamePalette);
-        nSelector = rand() % 3;                     // Pick one of the 3 easter eggs randomly
+        nSelector = brand() % 3;                     // Pick one of the 3 easter eggs randomly
         switch( nSelector ) {
 
             case 0:
-                sprintf( animBuf, FISH_ANIM );
-                sprintf( soundBuf, FISH_WAV );
+                Common::sprintf_s( animBuf, FISH_ANIM );
+                Common::sprintf_s( soundBuf, FISH_WAV );
                 animLoc.x = FISH_X;
                 animLoc.y = FISH_Y;
                 nNumCels = NUM_FISH_CELS;
                 break;
 
             case 1:
-                sprintf( animBuf, NESS_ANIM );
-                sprintf( soundBuf, NESS_WAV );
+                Common::sprintf_s( animBuf, NESS_ANIM );
+                Common::sprintf_s( soundBuf, NESS_WAV );
                 animLoc.x = NESSIE_X;
                 animLoc.y = NESSIE_Y;
                 nNumCels = NUM_NESSIE_CELS;
                 break;
             
             case 2:
-                sprintf( animBuf, SKIER_ANIM );
-                sprintf( soundBuf, SKIER_WAV );
+                Common::sprintf_s( animBuf, SKIER_ANIM );
+                Common::sprintf_s( soundBuf, SKIER_WAV );
                 animLoc.x = SKIER_X;
                 animLoc.y = SKIER_Y;
                 nNumCels = NUM_SKIER_CELS;
@@ -1462,7 +1457,7 @@ VOID CRiddlesWindow::OnLButtonDown(UINT nFlags, CPoint point)
         	if (pGameParams->bSoundEffectsEnabled) {
 	            pEffect = new CSound( (CWnd *)this, soundBuf,                               // Load up the sound file as a
 	            						SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-	            (*pEffect).Play();                                                          //...play the sound effect
+	            (*pEffect).play();                                                          //...play the sound effect
 	        }
             for( i = 0; i < nNumCels; i++ ) {
                 (*pSprite).PaintSprite( pDC, animLoc.x, animLoc.y );
@@ -1481,7 +1476,7 @@ VOID CRiddlesWindow::OnLButtonDown(UINT nFlags, CPoint point)
         	if (pGameParams->bSoundEffectsEnabled) {
 		        pEffect = new CSound( (CWnd *)this, COLUMN_WAV,                             // Load up the sound file as a 
 										SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-		        (*pEffect).Play();                                                          //...play the sound effect
+		        (*pEffect).play();                                                          //...play the sound effect
 		    }
     }
     else {
@@ -1550,7 +1545,7 @@ VOID CRiddlesWindow::OnClose()
         m_pSoundTrack = NULL;
     }
     
-    CSound::ClearSounds();
+    CSound::clearSounds();
     
     // release the master sprites
     //
@@ -1610,8 +1605,7 @@ VOID CRiddlesWindow::OnClose()
 
 //////////// Additional Sound Notify routines //////////////
 
-long CRiddlesWindow::OnMCINotify( WPARAM wParam, LPARAM lParam)
-{
+long CRiddlesWindow::OnMCINotify( WPARAM wParam, LPARAM lParam) {
 CSound  *pSound;
     
     pSound = CSound::OnMCIStopped(wParam,lParam);

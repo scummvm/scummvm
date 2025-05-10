@@ -47,6 +47,7 @@ enum ErrorCode {
 #define MAX_ERRORS 3
 
 extern const char *const g_errList[];
+#define errList g_errList
 
 class CBofError {
 protected:

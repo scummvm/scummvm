@@ -53,6 +53,14 @@ int GetObject(HANDLE h, int c, LPVOID pv) {
 	error("TODO: GetObject");
 }
 
+HDC BeginPaint(HWND hWnd, LPPAINTSTRUCT lpPaint) {
+	error("TODO: BeginPaint");
+}
+
+BOOL EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint) {
+	error("TODO: EndPaint");
+}
+
 HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h) {
 	error("TODO: SelectObject");
 }

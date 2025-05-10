@@ -205,7 +205,7 @@ void NoVacancy::clearBitmaps() {
 
 void NoVacancy::showMainMenu() {
 	MainMenu::show(
-		(pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) |
+		(pGameParams->bplayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) |
 		(m_bGameActive ? 0 : NO_RETURN),
 		RULES_TEXT,
 		pGameParams->bSoundEffectsEnabled ? RULES_WAV : NULL);

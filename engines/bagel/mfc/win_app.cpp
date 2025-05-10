@@ -61,5 +61,11 @@ HINSTANCE AfxGetInstanceHandle() {
 	error("TODO: AfxGetInstanceHandle");
 }
 
+LPCSTR AFXAPI AfxRegisterWndClass(UINT nClassStyle,
+	HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
+	error("TODO: AfxRegisterWndClass");
+}
+
+
 } // namespace MFC
 } // namespace Bagel

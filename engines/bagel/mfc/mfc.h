@@ -32,6 +32,7 @@
 #include "bagel/mfc/afxmsg.h"
 #include "bagel/mfc/afxext.h"
 #include "bagel/mfc/global_functions.h"
+#include "bagel/mfc/ifstream.h"
 #include "bagel/mfc/keyboard.h"
 
 #endif

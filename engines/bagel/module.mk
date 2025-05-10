@@ -21,6 +21,7 @@ MODULE_OBJS = \
 	mfc/file.o \
 	mfc/gdi_object.o \
 	mfc/global_functions.o \
+	mfc/ifstream.o \
 	mfc/object.o \
 	mfc/win_app.o \
 	mfc/wingdi.o \
@@ -150,7 +151,8 @@ MODULE_OBJS = \
 	hodjnpodj/mazedoom/maze_gen.o \
 	hodjnpodj/mazedoom/options.o \
 	hodjnpodj/novacancy/no_vacancy.o \
-	hodjnpodj/riddles/gamedll.o
+	hodjnpodj/riddles/gamedll.o \
+	hodjnpodj/riddles/riddles.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)

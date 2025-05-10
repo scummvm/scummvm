@@ -96,9 +96,13 @@ inline uint32 getFreePhysMem() {
  */
 void encrypt(void *pBuf, int32 lSize, const char *pszPassword = nullptr);
 #define decrypt encrypt
+#define Decrypt encrypt
 
 extern void encryptPartial(void *, int32, int32, const char *pPassword = nullptr);
 #define decryptPartial encryptPartial
+
+inline void ErrorLog(const char *logFile, const char *format, ...) {
+}
 
 } // namespace Bagel
 

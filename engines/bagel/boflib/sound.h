@@ -179,6 +179,13 @@ public:
 		return _bMidiVolume;
 	}
 
+	static CBofSound *OnMCIStopped(WPARAM wParam, LPARAM lParam) {
+		return nullptr;
+	}
+	static CBofSound *OnMMIOStopped(WPARAM wParam, LPARAM lParam) {
+		return nullptr;
+	}
+
 private:
 	bool loadSound();
 	bool releaseSound();

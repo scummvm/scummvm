@@ -39,7 +39,13 @@ enum {
 	VK_PRIOR = Common::KEYCODE_PAGEUP,
 	VK_NEXT = Common::KEYCODE_PAGEDOWN,
 	VK_HOME = Common::KEYCODE_HOME,
-	VK_END = Common::KEYCODE_END
+	VK_END = Common::KEYCODE_END,
+	VK_F1 = Common::KEYCODE_F1,
+	VK_F2 = Common::KEYCODE_F2,
+	VK_F3 = Common::KEYCODE_F3,
+	VK_F4 = Common::KEYCODE_F4,
+	VK_RETURN = Common::KEYCODE_RETURN,
+	VK_ESCAPE = Common::KEYCODE_ESCAPE
 };
 
 } // namespace MFC

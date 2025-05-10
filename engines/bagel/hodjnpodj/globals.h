@@ -27,6 +27,11 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+/*
+ * Hodj 'n' Podj .INI file name
+ */
+#define INI_FILENAME    "HODJPODJ.INI"
+
 #define PATHSPECSIZE				256
 
 /*

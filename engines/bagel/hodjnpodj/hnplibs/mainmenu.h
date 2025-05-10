@@ -43,7 +43,9 @@ typedef void (CALLBACK *FPFUNC)(CWnd *);
 
 class CMainMenu : public CBmpDialog {
 public:
-    CMainMenu(CWnd *, CPalette *, UINT, FPFUNC, char *, char *pWavFileName = NULL,LPGAMESTRUCT pGameParams = NULL);
+    CMainMenu(CWnd *, CPalette *, UINT, FPFUNC,
+		const char *, const char *pWavFileName = NULL,
+		LPGAMESTRUCT pGameParams = NULL);
 	void ClearDialogImage();
 
 // Implementation
@@ -68,8 +70,8 @@ protected:
     DECLARE_MESSAGE_MAP()
 
     FPFUNC      	m_pOptionsFunction = nullptr;
-    char       		*m_pRulesFileName = nullptr;
-    char       		*m_pWavFileName = nullptr;
+    const char     *m_pRulesFileName = nullptr;
+	const char     *m_pWavFileName = nullptr;
     int         	m_nFlags = 0;
     LPGAMESTRUCT	m_pGameParams = nullptr;
 

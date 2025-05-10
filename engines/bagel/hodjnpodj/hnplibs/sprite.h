@@ -28,7 +28,9 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-#define	COLOR_WHITE		RGB(255,255,255)
+enum {
+	COLOR_WHITE = RGB(255, 255, 255)
+};
 
 #define SPRITE_TOPMOST		0
 #define SPRITE_FOREGROUND	64

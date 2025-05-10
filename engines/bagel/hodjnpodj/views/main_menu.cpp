@@ -127,7 +127,7 @@ bool MainMenu::msgGame(const GameMessage &msg) {
 			// Close menu dialog
 			close();
 
-			if (pGameParams->bPlayingMetagame)
+			if (pGameParams->bplayingMetagame)
 				pGameParams->lScore = 0;
 
 			// Close the minigame

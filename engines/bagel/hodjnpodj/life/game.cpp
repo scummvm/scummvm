@@ -73,7 +73,7 @@ bool Life::msgGame(const GameMessage &msg) {
 	MinigameView::msgGame(msg);
 
 	if (msg._name == "NEW_GAME") {
-		assert(!pGameParams->bPlayingMetagame);
+		assert(!pGameParams->bplayingMetagame);
 		newGame();
 		return true;
 	}
@@ -142,7 +142,7 @@ void Life::showMainMenu() {
 	_playing = true;
 
 	MainMenu::show(
-		pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0,
+		pGameParams->bplayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0,
 		RULES_TXT,
 		pGameParams->bSoundEffectsEnabled ? RULES_WAV : NULL);
 }

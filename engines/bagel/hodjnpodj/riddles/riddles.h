@@ -102,11 +102,13 @@ namespace Riddles {
 #define	SKIER_ANIM			".\\art\\skier.bmp"
 #define SKIER_WAV			".\\sound\\jetski.wav"
 
-typedef struct {
+#include "common/pack-start.h"  // START STRUCT PACKING
+struct RIDDLE {
     USHORT nSoundId;
     char text[MAX_RIDDLE_LENGTH + 1];
     char answers[MAX_ANSWERS][MAX_ANSWER_LENGTH + 1];
-} RIDDLE;
+} PACKED_STRUCT;
+#include "common/pack-end.h"    // END STRUCT PACKING
 
 class CMyEdit: public CEdit {
 protected:
@@ -119,60 +121,60 @@ protected:
 };
 
 class CRiddlesWindow : public CFrameWnd {
-    public:
-        CRiddlesWindow(VOID);
-        VOID        PlayGame(VOID);
-        VOID        PaintScreen(VOID);
-        VOID        LoadIniSettings(VOID);
-        VOID        ParseAnswer(const CHAR *);
-        VOID        GamePause(VOID);
-        VOID        GameResume(VOID);
+public:
+    CRiddlesWindow(VOID);
+    VOID        PlayGame(VOID);
+    VOID        PaintScreen(VOID);
+    VOID        LoadIniSettings(VOID);
+    VOID        ParseAnswer(const CHAR *);
+    VOID        GamePause(VOID);
+    VOID        GameResume(VOID);
 
-    private:
-    	VOID 		OnSoundNotify(CSound *pSound);
+private:
+    VOID 		OnSoundNotify(CSound *pSound);
 
-    protected:
-        VOID        FlushInputEvents(VOID);
-        BOOLEAN     CheckUserGuess(const CHAR *);
-        ERROR_CODE  RepaintSpriteList(VOID);
-        ERROR_CODE  LoadRiddle(VOID);
-        ERROR_CODE  BuildSpriteList(VOID);
-        ERROR_CODE  DisplayLine(const CHAR *, INT, INT, INT);
-        INT         CharToIndex(CHAR);
-        ERROR_CODE  ValidateRiddle(RIDDLE *);
-        ERROR_CODE  LoadMasterSprites(VOID);
-        VOID        GameReset(VOID);
-        virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-        VOID        HandleError(ERROR_CODE);
-        VOID        DeleteSprite(CSprite *);
+protected:
+    VOID        FlushInputEvents(VOID);
+    BOOLEAN     CheckUserGuess(const CHAR *);
+    ERROR_CODE  RepaintSpriteList(VOID);
+    ERROR_CODE  LoadRiddle(VOID);
+    ERROR_CODE  BuildSpriteList(VOID);
+    ERROR_CODE  DisplayLine(const CHAR *, INT, INT, INT);
+    INT         CharToIndex(CHAR);
+    ERROR_CODE  ValidateRiddle(RIDDLE *);
+    ERROR_CODE  LoadMasterSprites(VOID);
+    VOID        GameReset(VOID);
+    virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+    VOID        HandleError(ERROR_CODE);
+    VOID        DeleteSprite(CSprite *);
 
-        VOID        OnPaint();
-        VOID        OnMouseMove(UINT, CPoint);
-        VOID        OnLButtonDown(UINT, CPoint);
-        VOID        OnClose();
-        VOID        OnSetFocus(CWnd *);
-        VOID        OnTimer(UINT);
-    	long 		OnMCINotify( WPARAM, LPARAM);
-    	long 		OnMMIONotify( WPARAM, LPARAM);
-        HBRUSH      OnCtlColor(CDC *, CWnd *, UINT);
+    VOID        OnPaint();
+    VOID        OnMouseMove(UINT, CPoint);
+    VOID        OnLButtonDown(UINT, CPoint);
+    VOID        OnClose();
+    VOID        OnSetFocus(CWnd *);
+    VOID        OnTimer(UINT);
+    long 		OnMCINotify( WPARAM, LPARAM);
+    long 		OnMMIONotify( WPARAM, LPARAM);
+    HBRUSH      OnCtlColor(CDC *, CWnd *, UINT);
 
-        DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
 
-        CRect       m_rNewGameButton;
-        CMyEdit    *m_pEditText;
-        CPalette   *m_pGamePalette;
-        CBmpButton *m_pScrollButton;
-        RIDDLE     *m_pRiddle;
-        CSprite    *m_pSunDial;
-        CSound     *m_pSoundTrack;
-        INT         m_nTimeLimit;
-        INT         m_nInitTimeLimit;
-        INT         m_nTimer;
-        INT         m_nDifficultyLevel;
-        UINT        m_nRiddleNumber;
-        BOOL        m_bGameActive;
-        BOOL        m_bPause;
-        BOOL        m_bIgnoreScrollClick;
+    CRect       m_rNewGameButton;
+    CMyEdit    *m_pEditText;
+    CPalette   *m_pGamePalette;
+    CBmpButton *m_pScrollButton;
+    RIDDLE     *m_pRiddle;
+    CSprite    *m_pSunDial;
+    CSound     *m_pSoundTrack;
+    INT         m_nTimeLimit;
+    INT         m_nInitTimeLimit;
+    INT         m_nTimer;
+    INT         m_nDifficultyLevel;
+    UINT        m_nRiddleNumber;
+    BOOL        m_bGameActive;
+    BOOL        m_bPause;
+    BOOL        m_bIgnoreScrollClick;
 };
 
 } // namespace Riddles

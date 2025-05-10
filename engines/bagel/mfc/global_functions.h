@@ -58,6 +58,8 @@ class CWinApp;
 
 extern CWinApp *AfxGetApp();
 extern HINSTANCE AfxGetInstanceHandle();
+extern LPCSTR AFXAPI AfxRegisterWndClass(UINT nClassStyle,
+	HCURSOR hCursor = 0, HBRUSH hbrBackground = 0, HICON hIcon = 0);
 
 extern HGLOBAL GlobalAlloc(UINT uFlags, SIZE_T dwBytes);
 extern LPVOID GlobalLock(HGLOBAL hMem);
@@ -69,6 +71,7 @@ extern SIZE_T GlobalCompact(DWORD dwMinFree);
 
 extern int MessageBox(HWND hWnd, LPCSTR lpText,
 	LPCSTR lpCaption, UINT uType);
+extern int MessageBox(LPCSTR lpText, LPCSTR lpCaption, UINT uType);
 extern UINT GetPrivateProfileInt(LPCSTR lpAppName,
 	LPCSTR lpKeyName, INT nDefault, LPCSTR lpFileName);
 extern BOOL WritePrivateProfileString(
@@ -86,6 +89,30 @@ extern HHOOK SetWindowsHookEx(int idHook,
 extern BOOL UnhookWindowsHookEx(HHOOK hhk);
 extern LRESULT CallNextHookEx(HHOOK hhk, int nCode,
 	WPARAM wParam, LPARAM lParam);
+extern UINT_PTR SetTimer(UINT_PTR nIDEvent, UINT nElapse,
+	void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = NULL);
+extern BOOL KillTimer(UINT_PTR nIDEvent);
+extern void Sleep(UINT milli);
+
+extern bool FileExists(const char *filename);
+extern long FileLength(const char *filename);
+
+extern BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,
+	UINT wMsgFilterMin, UINT wMsgFilterMax,
+	UINT wRemoveMsg);
+
+inline void strUpper(char *s) {
+	for (; *s; ++s)
+		*s = toupper(*s);
+}
+
+inline int StrCompare(LPCTSTR psz1, LPCTSTR psz2) {
+	return strcmp(psz1, psz2);
+}
+
+inline int StrCompare(LPCTSTR psz1, LPCTSTR psz2, size_t len) {
+	return strncmp(psz1, psz2, len);
+}
 
 } // namespace MFC
 } // namespace Bagel

@@ -76,7 +76,7 @@ bool MazeDoom::msgOpen(const OpenMessage &msg) {
 		}
 	}
 
-	_playing = pGameParams->bPlayingMetagame;
+	_playing = pGameParams->bplayingMetagame;
 	_gameOver = false;
 	_move.clear();
 
@@ -124,12 +124,12 @@ bool MazeDoom::msgGame(const GameMessage &msg) {
 		showMainMenu();
 		return true;
 	} else if (msg._name == "NEW_GAME") {
-		assert(!pGameParams->bPlayingMetagame);
+		assert(!pGameParams->bplayingMetagame);
 		newGame();
 		return true;
 	} else if (msg._name == "GAME_OVER") {
 		CBofSound::waitWaveSounds();
-		if (pGameParams->bPlayingMetagame) {
+		if (pGameParams->bplayingMetagame) {
 			pGameParams->lScore = 0;
 			close();
 		}
@@ -138,7 +138,7 @@ bool MazeDoom::msgGame(const GameMessage &msg) {
 	} else if (msg._name == "EXIT") {
 		CBofSound::waitWaveSounds();
 
-		if (pGameParams->bPlayingMetagame) {
+		if (pGameParams->bplayingMetagame) {
 			pGameParams->lScore = 1;	// A victorious maze solving
 			close();					// and close minigame
 		}
@@ -165,7 +165,7 @@ bool MazeDoom::msgMouseDown(const MouseDownMessage &msg) {
 		const RectWH rectTitle(NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
 			NEWGAME_WIDTH, NEWGAME_HEIGHT);
 
-		if (rectTitle.contains(msg._pos) && !pGameParams->bPlayingMetagame)
+		if (rectTitle.contains(msg._pos) && !pGameParams->bplayingMetagame)
 			// Start new game
 			newGame();
 
@@ -452,7 +452,7 @@ void MazeDoom::loadBitmaps() {
 }
 
 void MazeDoom::loadIniSettings() {
-	if (pGameParams->bPlayingMetagame) {
+	if (pGameParams->bplayingMetagame) {
 		if (pGameParams->nSkillLevel == SkillLevel::SKILLLEVEL_LOW) {
 			// Total Wussy
 			_difficulty = MIN_DIFFICULTY;
@@ -485,7 +485,7 @@ void MazeDoom::showMainMenu() {
 	_playing = true;
 
 	MainMenu::show(
-		pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0,
+		pGameParams->bplayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0,
 		RULES_TEXT,
 		pGameParams->bSoundEffectsEnabled ? RULES_WAV : NULL);
 }

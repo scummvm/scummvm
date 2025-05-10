@@ -57,7 +57,7 @@ typedef void *LPVOID;
 typedef const void *LPCVOID;
 
 typedef const char *LPCSTR;
-typedef const uint16 *LPCTSTR;
+typedef const char *LPCTSTR;
 typedef const uint16 *LPCWSTR;
 typedef uint16 *LPWSTR;
 typedef uint16 *LPTSTR;
@@ -414,15 +414,30 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define WS_THICKFRAME       0x00040000L
 #define WS_GROUP            0x00020000L
 #define WS_TABSTOP          0x00010000L
-
 #define WS_MINIMIZEBOX      0x00020000L
 #define WS_MAXIMIZEBOX      0x00010000L
-
-
 #define WS_TILED            WS_OVERLAPPED
 #define WS_ICONIC           WS_MINIMIZE
 #define WS_SIZEBOX          WS_THICKFRAME
 #define WS_TILEDWINDOW      WS_OVERLAPPEDWINDOW
+
+ /*
+  * Edit Control Styles
+  */
+#define ES_LEFT             0x0000L
+#define ES_CENTER           0x0001L
+#define ES_RIGHT            0x0002L
+#define ES_MULTILINE        0x0004L
+#define ES_UPPERCASE        0x0008L
+#define ES_LOWERCASE        0x0010L
+#define ES_PASSWORD         0x0020L
+#define ES_AUTOVSCROLL      0x0040L
+#define ES_AUTOHSCROLL      0x0080L
+#define ES_NOHIDESEL        0x0100L
+#define ES_OEMCONVERT       0x0400L
+#define ES_READONLY         0x0800L
+#define ES_WANTRETURN       0x1000L
+#define ES_NUMBER           0x2000L
 
  /*
   * SetWindowsHook() codes

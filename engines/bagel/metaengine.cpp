@@ -52,6 +52,7 @@ static const KeybindingRecord MINIMAL_KEYS[] = {
 namespace HodjNPodj {
 
 static const KeybindingRecord MINIMAL_KEYS[] = {
+#ifdef TODO
 	{ KEYBIND_SELECT, "SELECT", _s("Select"), "SPACE", "RETURN", "JOY_A" },
 	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr, "JOY_B" },
 	{ KEYBIND_UP, "UP", _s("Up"), "UP", nullptr, "JOY_UP"},
@@ -62,7 +63,7 @@ static const KeybindingRecord MINIMAL_KEYS[] = {
 	{ KEYBIND_PAGEDOWN, "PAGEDOWN", _s("Page Down"), "PAGEDOWN", "KP3", "JOY_RIGHT"},
 	{ KEYBIND_HOME, "HOME", _s("Home"), "HOME", "KP7", "JOY_RIGHT"},
 	{ KEYBIND_END, "END", _s("End"), "END", "KP2", "JOY_RIGHT"},
-
+#endif
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 

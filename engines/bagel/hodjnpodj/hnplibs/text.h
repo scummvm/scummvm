@@ -35,10 +35,11 @@ namespace HodjNPodj {
 #define	CTEXT_SHADOW_DY		2
 
 // text justification definitions
-
-#define	JUSTIFY_CENTER		0
-#define	JUSTIFY_LEFT		1
-#define JUSTIFY_RIGHT		2
+enum {
+	JUSTIFY_CENTER		= 0,
+	JUSTIFY_LEFT		= 1,
+	JUSTIFY_RIGHT		= 2
+};
 
 // text weight definitions
 

@@ -53,9 +53,6 @@ namespace HodjNPodj {
 #define abs(x) ((x)<0?-(x):(x))             /* returns the absolute value of x */
 #endif
 
-/* remove this when the X-factor is gone */
-#define PDFT(value) = value
-
 /*
 * normal types
 */

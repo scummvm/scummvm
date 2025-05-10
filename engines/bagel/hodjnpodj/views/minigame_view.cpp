@@ -31,7 +31,7 @@ MinigameView::MinigameView(const Common::String &name, const Common::String &res
 }
 
 bool MinigameView::msgOpen(const OpenMessage &msg) {
-	_showMenuCtr = pGameParams->bPlayingMetagame ? 0 : 2;
+	_showMenuCtr = pGameParams->bplayingMetagame ? 0 : 2;
 
 	return ResourceView::msgOpen(msg);
 }
@@ -54,7 +54,7 @@ bool MinigameView::msgFocus(const FocusMessage &msg) {
 bool MinigameView::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_q &&
 			(msg.flags & Common::KBD_ALT)) {
-		if (pGameParams->bPlayingMetagame)
+		if (pGameParams->bplayingMetagame)
 			pGameParams->lScore = 0;
 		close();
 		return true;
