@@ -74,6 +74,8 @@ enum NancyDebugChannels {
 // Patch settings, specific to each game
 #define GAMEOPTION_NANCY2_TIMER			GUIO_GAMEOPTIONS6
 
+#define GAMEOPTION_ORIGINAL_SAVELOAD	GUIO_GAMEOPTIONS7
+
 } // End of namespace Nancy
 
 #endif // NANCY_DETECTION_H
