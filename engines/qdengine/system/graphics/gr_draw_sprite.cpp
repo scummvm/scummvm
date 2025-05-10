@@ -1144,14 +1144,17 @@ void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint3
 	int psy = sy;
 
 	if (!clip_rectangle(x, y, px, py, psx, psy)) return;
-	int dx = -1;
+	int dx = -2;
 	int dy = -1;
 
 	if (mode & GR_FLIP_HORIZONTAL) {
 		x += psx - 1;
 		px = sx - px - psx;
 	} else
-		dx = 1;
+		dx = 2;
+
+	if (_pixel_format == GR_RGBA8888)
+		dx *= 2;
 
 	if (mode & GR_FLIP_VERTICAL) {
 		y += psy - 1;
@@ -1165,7 +1168,10 @@ void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint3
 	const byte *data_ptr = p + py * sx + px;
 
 	byte mr, mg, mb;
-	split_rgb565u(mask_color, mr, mg, mb);
+	if (bytes_per_pixel() == 2)
+		split_rgb565u(mask_color, mr, mg, mb);
+	else
+		split_rgb888(mask_color, mr, mg, mb);
 
 	mr = (mr * (255 - mask_alpha)) >> 8;
 	mg = (mg * (255 - mask_alpha)) >> 8;
@@ -1175,12 +1181,19 @@ void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint3
 
 	warning("STUB: grDispatcher::putSprMask");
 	for (int i = 0; i < psy; i++) {
-		uint16 *scr_buf = (uint16 *)(_screenBuf->getBasePtr(x, y));
+		byte *scr_buf = (byte *)(_screenBuf->getBasePtr(x, y));
 		const byte *data_line = data_ptr;
 
 		for (int j = 0; j < psx; j++) {
-			if (data_line[0] || data_line[1] || data_line[2])
-				*scr_buf = alpha_blend_565(mcl, *scr_buf, mask_alpha);
+			if (data_line[0] || data_line[1] || data_line[2]) {
+				if (_pixel_format == GR_RGB565) {
+					*(uint16 *)scr_buf = alpha_blend_565(mcl, *scr_buf, mask_alpha);
+				} else if (_pixel_format == GR_RGBA8888) {
+					scr_buf[1] = mb + ((mask_alpha * scr_buf[1]) >> 8);
+					scr_buf[2] = mg + ((mask_alpha * scr_buf[2]) >> 8);
+					scr_buf[3] = mr + ((mask_alpha * scr_buf[3]) >> 8);
+				}
+			}
 			scr_buf += dx;
 			data_line += 3;
 		}
@@ -1224,7 +1237,10 @@ void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint3
 	}
 
 	byte mr, mg, mb;
-	split_rgb565u(mask_color, mr, mg, mb);
+	if (bytes_per_pixel() == 2)
+		split_rgb565u(mask_color, mr, mg, mb);
+	else
+		split_rgb888(mask_color, mr, mg, mb);
 
 	mr = (mr * (255 - mask_alpha)) >> 8;
 	mg = (mg * (255 - mask_alpha)) >> 8;
@@ -1245,9 +1261,18 @@ void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint3
 		for (int j = x0; j != x1; j += ix) {
 			const byte *src_data = line_src + (fx >> 16) * 3;
 			if (src_data[0] || src_data[1] || src_data[2]) {
-				uint16 scl;
-				getPixel(x + j, y + i, scl);
-				setPixel(x + j, y + i, alpha_blend_565(mcl, scl, mask_alpha));
+				if (_pixel_format == GR_RGB565) {
+					uint16 scl;
+					getPixel(x + j, y + i, scl);
+					setPixel(x + j, y + i, alpha_blend_565(mcl, scl, mask_alpha));
+				} else if (_pixel_format == GR_RGBA8888) {
+					byte r, g, b;
+					b = mb + ((mask_alpha * src_data[0]) >> 8);
+					g = mg + ((mask_alpha * src_data[1]) >> 8);
+					r = mr + ((mask_alpha * src_data[2]) >> 8);
+
+					setPixel(x + j, y + i, r, g, b);
+				}
 			}
 			fx += dx;
 		}
