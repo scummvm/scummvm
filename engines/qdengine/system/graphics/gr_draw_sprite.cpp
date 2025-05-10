@@ -279,11 +279,9 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 	int sin_a = round(sn * float(1 << F_PREC));
 	int cos_a = round(cs * float(1 << F_PREC));
 
-	warning("STUB: grDispatcher::putSpr_rot");
-
 	if (has_alpha) {
 		for (int y = 0; y <= sy; y++) {
-			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
+			byte *screen_ptr = (byte *)_screenBuf->getBasePtr(x0, y + y0);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
@@ -302,22 +300,28 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 
 					uint32 a = data_ptr[3];
 					if (a != 255) {
-						if (a)
-							*screen_ptr = alpha_blend_565(make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]), *screen_ptr, a);
-						else
-							*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
+						if (a) {
+							if (_pixel_format == GR_RGB565) {
+								*(uint16 *)screen_ptr = alpha_blend_565(make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]), *screen_ptr, a);
+							} else if (_pixel_format == GR_RGBA8888) {
+								screen_ptr[1] = data_ptr[0] + ((a * screen_ptr[1]) >> 8);
+								screen_ptr[2] = data_ptr[1] + ((a * screen_ptr[2]) >> 8);
+								screen_ptr[3] = data_ptr[2] + ((a * screen_ptr[3]) >> 8);
+							}
+						} else
+							setPixelFast(screen_ptr, make_rgb(data_ptr[2], data_ptr[1], data_ptr[0]));
 					}
 				}
 
 				xx += cos_a;
 				yy -= sin_a;
 
-				screen_ptr++;
+				screen_ptr += bytes_per_pixel();
 			}
 		}
 	} else {
 		for (int y = 0; y <= sy; y++) {
-			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
+			byte *screen_ptr = (byte *)_screenBuf->getBasePtr(x0, y + y0);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
@@ -334,13 +338,13 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 
 					const byte *data_ptr = data + size.x * 3 * yb + xb * 3;
 					if (data_ptr[0] || data_ptr[1] || data_ptr[2])
-						*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
+						setPixelFast(screen_ptr, make_rgb(data_ptr[2], data_ptr[1], data_ptr[0]));
 				}
 
 				xx += cos_a;
 				yy -= sin_a;
 
-				screen_ptr++;
+				screen_ptr += bytes_per_pixel();
 			}
 		}
 	}
@@ -372,11 +376,9 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 	Vect2i iscale = Vect2i(scale.x * float(1 << F_PREC), scale.y * float(1 << F_PREC));
 	Vect2i scaled_size = Vect2i(iscale.x * size.x, iscale.y * size.y);
 
-	warning("STUB: grDispatcher::putSpr_rot (scaled)");
-
 	if (has_alpha) {
 		for (int y = 0; y <= sy; y++) {
-			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
+			byte *screen_ptr = (byte *)_screenBuf->getBasePtr(x0, y + y0);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
@@ -395,22 +397,28 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 
 					uint32 a = data_ptr[3];
 					if (a != 255) {
-						if (a)
-							*screen_ptr = alpha_blend_565(make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]), *screen_ptr, a);
-						else
-							*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
+						if (a) {
+							if (_pixel_format == GR_RGB565) {
+								*(uint16 *)screen_ptr = alpha_blend_565(make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]), *screen_ptr, a);
+							} else if (_pixel_format == GR_RGBA8888) {
+								screen_ptr[1] = data_ptr[0] + ((a * screen_ptr[1]) >> 8);
+								screen_ptr[2] = data_ptr[1] + ((a * screen_ptr[2]) >> 8);
+								screen_ptr[3] = data_ptr[2] + ((a * screen_ptr[3]) >> 8);
+							}
+						} else
+							setPixelFast(screen_ptr, make_rgb(data_ptr[2], data_ptr[1], data_ptr[0]));
 					}
 				}
 
 				xx += cos_a;
 				yy -= sin_a;
 
-				screen_ptr++;
+				screen_ptr += bytes_per_pixel();
 			}
 		}
 	} else {
 		for (int y = 0; y <= sy; y++) {
-			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
+			byte *screen_ptr = (byte *)_screenBuf->getBasePtr(x0, y + y0);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
@@ -426,13 +434,13 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 						yb = size.y - yb - 1;
 
 					const byte *data_ptr = data + size.x * 3 * yb + xb * 3;
-					*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
+					setPixelFast(screen_ptr, make_rgb(data_ptr[2], data_ptr[1], data_ptr[0]));
 				}
 
 				xx += cos_a;
 				yy -= sin_a;
 
-				screen_ptr++;
+				screen_ptr += bytes_per_pixel();
 			}
 		}
 	}
@@ -461,14 +469,15 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 	int sin_a = round(sn * float(1 << F_PREC));
 	int cos_a = round(cs * float(1 << F_PREC));
 
-	warning("STUB: grDispatcher::putSprMask_rot");
-
 	if (has_alpha) {
 		byte mr, mg, mb;
-		split_rgb565u(mask_color, mr, mg, mb);
+		if (bytes_per_pixel() == 2)
+			split_rgb565u(mask_color, mr, mg, mb);
+		else
+			split_rgb888(mask_color, mr, mg, mb);
 
 		for (int y = 0; y <= sy; y++) {
-			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
+			byte *screen_ptr = (byte *)_screenBuf->getBasePtr(x0, y + y0);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
@@ -493,22 +502,31 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 						uint32 g = (mg * (255 - a)) >> 8;
 						uint32 b = (mb * (255 - a)) >> 8;
 
-						uint32 cl = make_rgb565u(r, g, b);
+						if (_pixel_format == GR_RGB565) {
+							uint32 cl = make_rgb565u(r, g, b);
 
-						*screen_ptr = alpha_blend_565(cl, *screen_ptr, a);
+							*(uint16 *)screen_ptr = alpha_blend_565(cl, *screen_ptr, a);
+						} else if (_pixel_format == GR_RGBA8888) {
+							screen_ptr[1] = b + ((a * screen_ptr[1]) >> 8);
+							screen_ptr[2] = g + ((a * screen_ptr[2]) >> 8);
+							screen_ptr[3] = r + ((a * screen_ptr[3]) >> 8);
+						}
 					}
 				}
 
 				xx += cos_a;
 				yy -= sin_a;
 
-				screen_ptr++;
+				screen_ptr += bytes_per_pixel();
 			}
 		}
 
 	} else {
 		byte mr, mg, mb;
-		split_rgb565u(mask_color, mr, mg, mb);
+		if (bytes_per_pixel() == 2)
+			split_rgb565u(mask_color, mr, mg, mb);
+		else
+			split_rgb888(mask_color, mr, mg, mb);
 
 		mr = (mr * (255 - mask_alpha)) >> 8;
 		mg = (mg * (255 - mask_alpha)) >> 8;
@@ -517,7 +535,7 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 		uint32 mcl = make_rgb565u(mr, mg, mb);
 
 		for (int y = 0; y <= sy; y++) {
-			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
+			byte *screen_ptr = (byte *)_screenBuf->getBasePtr(x0, y + y0);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
@@ -534,14 +552,20 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 
 					const byte *data_ptr = data + size.x * 3 * yb + xb * 3;
 					if (data_ptr[0] || data_ptr[1] || data_ptr[2]) {
-						*screen_ptr = alpha_blend_565(mcl, *screen_ptr, mask_alpha);
+						if (_pixel_format == GR_RGB565) {
+							*(uint16 *)screen_ptr = alpha_blend_565(mcl, *screen_ptr, mask_alpha);
+						} else if (_pixel_format == GR_RGBA8888) {
+							screen_ptr[1] = mb + ((mask_alpha * screen_ptr[1]) >> 8);
+							screen_ptr[2] = mg + ((mask_alpha * screen_ptr[2]) >> 8);
+							screen_ptr[3] = mr + ((mask_alpha * screen_ptr[3]) >> 8);
+						}
 					}
 				}
 
 				xx += cos_a;
 				yy -= sin_a;
 
-				screen_ptr++;
+				screen_ptr += bytes_per_pixel();
 			}
 		}
 	}
@@ -573,14 +597,15 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 	Vect2i iscale = Vect2i(scale.x * float(1 << F_PREC), scale.y * float(1 << F_PREC));
 	Vect2i scaled_size = Vect2i(iscale.x * size.x, iscale.y * size.y);
 
-	warning("STUB: grDispatcher::putSprMask_rot (scaled)");
-
 	if (has_alpha) {
 		byte mr, mg, mb;
-		split_rgb565u(mask_color, mr, mg, mb);
+		if (bytes_per_pixel() == 2)
+			split_rgb565u(mask_color, mr, mg, mb);
+		else
+			split_rgb888(mask_color, mr, mg, mb);
 
 		for (int y = 0; y <= sy; y++) {
-			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
+			byte *screen_ptr = (byte *)_screenBuf->getBasePtr(x0, y + y0);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
@@ -605,28 +630,37 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 						uint32 g = (mg * (255 - a)) >> 8;
 						uint32 b = (mb * (255 - a)) >> 8;
 
-						uint32 cl = make_rgb565u(r, g, b);
+						if (_pixel_format == GR_RGB565) {
+							uint32 cl = make_rgb565u(r, g, b);
 
-						*screen_ptr = alpha_blend_565(cl, *screen_ptr, a);
+							*(uint16 *)screen_ptr = alpha_blend_565(cl, *screen_ptr, a);
+						} else if (_pixel_format == GR_RGBA8888) {
+							screen_ptr[1] = b + ((a * screen_ptr[1]) >> 8);
+							screen_ptr[2] = g + ((a * screen_ptr[2]) >> 8);
+							screen_ptr[3] = r + ((a * screen_ptr[3]) >> 8);
+						}
 					}
 				}
 
 				xx += cos_a;
 				yy -= sin_a;
 
-				screen_ptr++;
+				screen_ptr += bytes_per_pixel();
 			}
 		}
 	} else {
 		byte mr, mg, mb;
-		split_rgb565u(mask_color, mr, mg, mb);
+		if (bytes_per_pixel() == 2)
+			split_rgb565u(mask_color, mr, mg, mb);
+		else
+			split_rgb888(mask_color, mr, mg, mb);
 
 		mr = (mr * (255 - mask_alpha)) >> 8;
 		mg = (mg * (255 - mask_alpha)) >> 8;
 		mb = (mb * (255 - mask_alpha)) >> 8;
 
 		for (int y = 0; y <= sy; y++) {
-			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
+			byte *screen_ptr = (byte *)_screenBuf->getBasePtr(x0, y + y0);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
@@ -642,13 +676,13 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 						yb = size.y - yb - 1;
 
 					const byte *data_ptr = data + size.x * 3 * yb + xb * 3;
-					*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
+					setPixelFast(screen_ptr, make_rgb(data_ptr[2], data_ptr[1], data_ptr[0]));
 				}
 
 				xx += cos_a;
 				yy -= sin_a;
 
-				screen_ptr++;
+				screen_ptr += bytes_per_pixel();
 			}
 		}
 	}
