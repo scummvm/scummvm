@@ -208,7 +208,8 @@ void TestbedInteractionDialog::handleCommand(GUI::CommandSender *sender, uint32 
 void TestbedConfigManager::initDefaultConfiguration() {
 	// Default Configuration
 	// Add Global configuration Parameters here.
-	_configFileInterface.setKey("isSessionInteractive", "Global", "true");
+	ConfParams.setSessionAsInteractive(ConfMan.getBool("interactive-mode"));
+	_configFileInterface.setKey("isSessionInteractive", "Global", ConfParams.isSessionInteractive() ? "true" : "false");
 }
 
 void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {

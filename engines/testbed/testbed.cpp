@@ -54,6 +54,9 @@
 #ifdef USE_IMGUI
 #include "testbed/imgui.h"
 #endif
+#ifdef EMSCRIPTEN
+#include "backends/platform/sdl/emscripten/emscripten.h"
+#endif
 
 namespace Testbed {
 
@@ -90,6 +93,9 @@ void TestbedExitDialog::init() {
 	_yOffset += 5;
 	addButtonXY(_xOffset + 80, _yOffset, 120, 24, "Rerun test suite", kCmdRerunTestbed);
 	addButtonXY(_xOffset + 240, _yOffset, 60, 24, "Close", GUI::kCloseCmd);
+#ifdef EMSCRIPTEN
+	addButtonXY(_xOffset + 340, _yOffset, 60, 24, "Open Log", kCmdOpenLogfile);
+#endif
 }
 
 void TestbedExitDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
@@ -97,10 +103,17 @@ void TestbedExitDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 	default:
 		break;
 
-	case kCmdRerunTestbed :
+	case kCmdRerunTestbed:
 		ConfParams.setRerunFlag(true);
 		cmd = GUI::kCloseCmd;
 		break;
+#ifdef EMSCRIPTEN
+	case kCmdOpenLogfile:
+		OSystem_Emscripten *emscripten_g_system = dynamic_cast<OSystem_Emscripten *>(g_system);
+		Common::Path path = Common::Path(ConfParams.getLogDirectory());
+		emscripten_g_system->exportFile(path.appendComponent(ConfParams.getLogFilename()));
+		break;
+#endif
 	}
 
 	GUI::Dialog::handleCommand(sender, cmd, data);
@@ -111,7 +124,7 @@ bool TestbedEngine::hasFeature(EngineFeature f) const {
 }
 
 TestbedEngine::TestbedEngine(OSystem *syst)
- : Engine(syst) {
+	: Engine(syst) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from init().
@@ -160,9 +173,9 @@ void TestbedEngine::pushTestsuites(Common::Array<Testsuite *> &testsuiteList) {
 	ts = new NetworkingTestSuite();
 	testsuiteList.push_back(ts);
 #ifdef USE_TTS
-	 // TextToSpeech
-	 ts = new SpeechTestSuite();
-	 testsuiteList.push_back(ts);
+	// TextToSpeech
+	ts = new SpeechTestSuite();
+	testsuiteList.push_back(ts);
 #endif
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	// Cloud

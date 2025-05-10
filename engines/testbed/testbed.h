@@ -37,6 +37,9 @@ enum {
 	kTestbedLogOutput = 1,
 	kTestbedEngineDebug,
 
+#ifdef EMSCRIPTEN
+	kCmdOpenLogfile = 'oplf',
+#endif
 	kCmdRerunTestbed = 'crtb'
 };
 
