@@ -58,7 +58,7 @@ static bool sdlSetSwapInterval(int interval) {
 static bool sdlGetAttribute(SDL_GLAttr attr, int *value) {
 	return SDL_GL_GetAttribute(attr, value);
 }
-#else
+#elif !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
 static bool sdlGetAttribute(SDL_GLattr attr, int *value) {
 	return SDL_GL_GetAttribute(attr, value) == 0;
 }
