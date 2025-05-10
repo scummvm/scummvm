@@ -26,7 +26,10 @@
 namespace Graphics {
 
 // see graphics/blit/blit-atari.cpp
-#ifndef ATARI
+#ifdef ATARI
+extern void keyBlitLogicAtari(byte *dst, const byte *src, const uint w, const uint h,
+							  const uint srcDelta, const uint dstDelta, const uint32 key);
+#else
 // Function to blit a rect
 void copyBlit(byte *dst, const byte *src,
 				const uint dstPitch, const uint srcPitch,
@@ -82,6 +85,14 @@ inline void keyBlitLogic(byte *dst, const byte *src, const uint w, const uint h,
 		dst += dstDelta;
 	}
 }
+
+#ifdef ATARI
+template<>
+inline void keyBlitLogic<uint8, 1>(byte *dst, const byte *src, const uint w, const uint h,
+								   const uint srcDelta, const uint dstDelta, const uint32 key) {
+	keyBlitLogicAtari(dst, src, w, h, srcDelta, dstDelta, key);
+}
+#endif
 
 } // End of anonymous namespace
 

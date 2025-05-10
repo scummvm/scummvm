@@ -43,6 +43,55 @@ constexpr bool isAligned(T val) {
 
 namespace Graphics {
 
+// Function to blit a rect with a transparent color key
+void keyBlitLogicAtari(byte *dst, const byte *src, const uint w, const uint h,
+					   const uint srcDelta, const uint dstDelta, const uint32 key) {
+#ifdef USE_SV_BLITTER
+	if (key == 0 && ((uintptr)src & 0xFF000000) >= 0xA0000000 && ((uintptr)dst & 0xFF000000) >= 0xA0000000) {
+		if (g_superVidelFwVersion >= 9) {
+			*SV_BLITTER_FIFO = (long)src;				// SV_BLITTER_SRC1
+			*SV_BLITTER_FIFO = (long)src;				// SV_BLITTER_SRC2
+			*SV_BLITTER_FIFO = (long)dst;				// SV_BLITTER_DST
+			*SV_BLITTER_FIFO = w - 1;					// SV_BLITTER_COUNT
+			*SV_BLITTER_FIFO = srcDelta + w;			// SV_BLITTER_SRC1_OFFSET
+			*SV_BLITTER_FIFO = srcDelta + w;			// SV_BLITTER_SRC2_OFFSET
+			*SV_BLITTER_FIFO = dstDelta + w;			// SV_BLITTER_DST_OFFSET
+			*SV_BLITTER_FIFO = h;						// SV_BLITTER_MASK_AND_LINES
+			*SV_BLITTER_FIFO = 0x03;					// SV_BLITTER_CONTROL
+		}  else {
+			// make sure the blitter is idle
+			while (*SV_BLITTER_CONTROL & 1);
+
+			*SV_BLITTER_SRC1           = (long)src;
+			*SV_BLITTER_SRC2           = (long)src;
+			*SV_BLITTER_DST            = (long)dst;
+			*SV_BLITTER_COUNT          = w - 1;
+			*SV_BLITTER_SRC1_OFFSET    = srcDelta + w;
+			*SV_BLITTER_SRC2_OFFSET    = srcDelta + w;
+			*SV_BLITTER_DST_OFFSET     = dstDelta + w;
+			*SV_BLITTER_MASK_AND_LINES = h;
+			*SV_BLITTER_CONTROL        = 0x03;
+		}
+
+		SyncSuperBlitter();
+	} else
+#endif
+	{
+		for (uint y = 0; y < h; ++y) {
+			for (uint x = 0; x < w; ++x) {
+				const uint32 color = *src++;
+				if (color != key)
+					*dst++ = color;
+				else
+					dst++;
+			}
+
+			src += srcDelta;
+			dst += dstDelta;
+		}
+	}
+}
+
 // Function to blit a rect (version optimized for Atari Falcon with SuperVidel's SuperBlitter)
 void copyBlit(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
