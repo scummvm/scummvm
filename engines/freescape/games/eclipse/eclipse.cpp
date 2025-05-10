@@ -113,6 +113,29 @@ void EclipseEngine::initGameState() {
 void EclipseEngine::loadAssets() {
 	FreescapeEngine::loadAssets();
 
+	Common::List<int> globalIds = _areaMap[255]->getEntranceIds();
+	for (auto &it : _areaMap) {
+		if (it._value->getAreaID() == 255)
+			continue;
+
+		it._value->addStructure(_areaMap[255]);
+
+		if (isDemo()) {
+			it._value->_name = "  NOW TRAINING  ";
+		}
+
+		for (auto &id : globalIds) {
+			if (it._value->entranceWithID(id))
+				continue;
+
+			Object *obj = _areaMap[255]->entranceWithID(id);
+			assert(obj);
+			assert(obj->getType() == ObjectType::kEntranceType);
+			// The entrance is not in the current area, so we need to add it
+			it._value->addObjectFromArea(id, _areaMap[255]);
+		}
+	}
+
 	_timeoutMessage = _messagesList[1];
 	_noShieldMessage = _messagesList[0];
 	//_noEnergyMessage = _messagesList[16];

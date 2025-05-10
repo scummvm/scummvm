@@ -57,13 +57,6 @@ void EclipseEngine::loadAssetsC64FullGame() {
 	} else
 		error("Unknown C64 variant %x", _variant);
 
-	for (auto &it : _areaMap) {
-		it._value->addStructure(_areaMap[255]);
-
-		for (int16 id = 183; id < 207; id++)
-			it._value->addObjectFromArea(id, _areaMap[255]);
-	}
-
 	Graphics::Surface *surf = loadBundledImage("eclipse_border");
 	surf->convertToInPlace(_gfx->_texturePixelFormat);
 	_border = new Graphics::ManagedSurface();

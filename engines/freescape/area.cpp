@@ -577,6 +577,14 @@ void Area::removeObject(int16 id) {
 	_addedObjects.erase(id);
 }
 
+Common::List<int> Area::getEntranceIds() {
+	Common::List<int> ids;
+	for (auto &it : *_entrancesByID) {
+		ids.push_back(it._key);
+	}
+	return ids;
+}
+
 void Area::addObjectFromArea(int16 id, Area *global) {
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure in area %d", id, _areaID);
 	Object *obj = global->objectWithID(id);

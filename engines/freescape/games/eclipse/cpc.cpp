@@ -94,18 +94,6 @@ void EclipseEngine::loadAssetsCPCFullGame() {
 		load8bitBinary(&file, 0x626e, 16);
 	}
 
-	for (auto &it : _areaMap) {
-		it._value->addStructure(_areaMap[255]);
-
-		if (isEclipse2() && it._value->getAreaID() == 1)
-			continue;
-
-		if (isEclipse2() && it._value->getAreaID() == _startArea)
-			continue;
-
-		for (int16 id = 183; id < 207; id++)
-			it._value->addObjectFromArea(id, _areaMap[255]);
-	}
 	loadColorPalette();
 	swapPalette(1);
 
@@ -135,12 +123,6 @@ void EclipseEngine::loadAssetsCPCDemo() {
 	loadMessagesFixedSize(&file, 0x362, 16, 23);
 	loadMessagesFixedSize(&file, 0x570b, 264, 5);
 	load8bitBinary(&file, 0x65c6, 16);
-	for (auto &it : _areaMap) {
-		it._value->_name = "  NOW TRAINING  ";
-		it._value->addStructure(_areaMap[255]);
-		for (int16 id = 183; id < 207; id++)
-			it._value->addObjectFromArea(id, _areaMap[255]);
-	}
 	loadColorPalette();
 	swapPalette(1);
 

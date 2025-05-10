@@ -56,11 +56,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		loadSpeakerFxDOS(&file, 0x7396 + 0x200, 0x72a1 + 0x200);
 		loadFonts(&file, 0xd403);
 		load8bitBinary(&file, 0x3ce0, 16);
-		for (auto &it : _areaMap) {
-			it._value->addStructure(_areaMap[255]);
-			for (int16 id = 183; id < 207; id++)
-				it._value->addObjectFromArea(id, _areaMap[255]);
-		}
+
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 
@@ -85,11 +81,6 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		loadSoundsFx(&file, 0xb9f0, 5);
 		loadFonts(&file, 0xb785);
 		load8bitBinary(&file, 0x2530, 4);
-		for (auto &it : _areaMap) {
-			it._value->addStructure(_areaMap[255]);
-			for (int16 id = 183; id < 207; id++)
-				it._value->addObjectFromArea(id, _areaMap[255]);
-		}
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kCGAPaletteRedGreen, 0, 4);
 		swapPalette(_startArea);

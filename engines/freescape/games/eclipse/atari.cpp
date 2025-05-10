@@ -174,12 +174,6 @@ void EclipseEngine::loadAssetsAtariFullGame() {
 	loadPalettes(stream, 0x2a0fa);
 	loadSoundsFx(stream, 0x3030c, 6);
 
-	for (auto &it : _areaMap) {
-		it._value->addStructure(_areaMap[255]);
-		for (int16 id = 183; id < 207; id++)
-			it._value->addObjectFromArea(id, _areaMap[255]);
-	}
-
 	/*
 	loadFonts(stream, 0xd06b, _fontBig);
 	loadFonts(stream, 0xd49a, _fontMedium);
