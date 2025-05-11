@@ -133,6 +133,9 @@ public:
 	void blitScaled(const Surface &from, int16 x, int16 y, Common::Rational scale, int32 transp = -1);
 	void blitScaled(const Surface &from, Common::Rational scale, int32 transp = -1);
 
+	void blitShaded(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
+					int16 x, int16 y, uint8 strength, int32 transp, Graphics::PixelFormat pixelFormat);
+
 	void fillRectRaw(int16 left, int16 top, int16 right, int16 bottom, uint32 color);
 	void fillRect(int16 left, int16 top, int16 right, int16 bottom, uint8 colorIndex);
 	void fillArea(int16 left, int16 top, int16 right, int16 bottom, uint8 fillColorIndex, uint8 backgroundColorIndex);
