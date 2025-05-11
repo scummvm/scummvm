@@ -46,12 +46,12 @@
 
 #include <stdlib.h>
 #include "stdafx.h"
-#include <mmsystem.h>
-#include <button.h>
-#include <sound.h> 
-#include <rules.h>
-#include <sprite.h>
-#include <misc.h>
+
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/boflib/sound.h" 
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/boflib/misc.h"
 #include "poker.h"  
 #include "dialogs.h"            // header for all of my dialog boxes
 #include "cmessbox.h"
@@ -274,7 +274,7 @@ WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
 								NULL, NULL, NULL);
 
 // set the seed for the random number generator
-srand( (unsigned)time( NULL ));
+//srand( (unsigned)time( NULL ));
 
 // initiialize arrays
 for (nCounter1 = 0; nCounter1 < 5; ++nCounter1) {
@@ -493,7 +493,7 @@ if (m_lpGameStruct->bMusicEnabled) {
 	pGameSound = new CSound( this, GAME_THEME, 
 							SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 	if (pGameSound != NULL)
-		(*pGameSound).MidiLoopPlaySegment( 6370, 33000, 0, FMT_MILLISEC );
+		(*pGameSound).midiLoopPlaySegment( 6370, 33000, 0, FMT_MILLISEC );
 } // end if pGameSound
 
 bFirstTime = TRUE;
@@ -711,8 +711,8 @@ ptxtUserDisplay = new CText;
 ptxtBetDisplay = new CText;
 
 // create the display strings for the bet and user amount
-wsprintf( (LPSTR)cBet, "%li", m_lUserBet);
-wsprintf( (LPSTR)cUser, "%li", m_lUserAmount);
+Common::sprintf_s( (LPSTR)cBet, "%li", m_lUserBet);
+Common::sprintf_s( (LPSTR)cUser, "%li", m_lUserAmount);
 
 j=0;
 for ( nCharIndex = lstrlen((LPSTR)cUser) - 1, nDisplayIndex = nCharIndex + (nCharIndex / 3), nCounter1 = 1;
@@ -937,7 +937,7 @@ if (HIWORD(lParam) == BN_CLICKED)			// only want to look at button clicks
 
 		case IDC_OPTION:								// Option button clicked, then put up the Options dialog 
 			pOptionButton->ShowWindow( SW_HIDE );
-			CSound::WaitWaveSounds();
+			CSound::waitWaveSounds();
 			::sndPlaySound( NULL, 0 );
 			nMainOption = dlgMainOpts.DoModal();
 			switch (nMainOption) {
@@ -958,12 +958,12 @@ if (HIWORD(lParam) == BN_CLICKED)			// only want to look at button clicks
 					pGameSound = new CSound( this, GAME_THEME, 
 											SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 					if (pGameSound != NULL)
-						(*pGameSound).MidiLoopPlaySegment( 6370, 33000, 0, FMT_MILLISEC );
+						(*pGameSound).midiLoopPlaySegment( 6370, 33000, 0, FMT_MILLISEC );
 				}
 			} // end if pGameSound
 			else { 
 				if (pGameSound != NULL) {
-					pGameSound->Stop();
+					pGameSound->stop();
 					delete pGameSound;
 					pGameSound = NULL;
 				}
@@ -1169,7 +1169,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 	  m_bMouseCaptured = TRUE;           
 	}
 	else if (rClock.PtInRect(point) )  {
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		::sndPlaySound( NULL, 0 );
 		PlayEasterEgg( pDC, (CWnd *)this, pGamePalette, CLOCK_ANIM, WAV_CLOCK, CLOCK_FRAMES, 
 						CLOCK_X, CLOCK_Y, CLOCK_SLEEP, m_bPlaySounds );
@@ -1187,7 +1187,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 		(*pSprite).SetMasked(FALSE);
 		(*pSprite).SetMobile(FALSE); 
 		
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		::sndPlaySound( NULL, 0 );
 				
 		if ( m_bPlaySounds ) {
@@ -1224,7 +1224,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 			delete pSprite; 
 	}
 	else if (rPencil.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled )  {
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		::sndPlaySound( NULL, 0 );
 		if ( m_bPlaySounds ) {
 			pEffect = new CSound( (CWnd *)this, WAV_PENCIL,								// Load up the sound file as a 
@@ -1238,7 +1238,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 //		::sndPlaySound( WAV_PENCIL, SND_ASYNC );
 	}
 	else if (rChair.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled )  {
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		::sndPlaySound( NULL, 0 );
 		if ( m_bPlaySounds ) {
 			pEffect = new CSound( (CWnd *)this, WAV_CHAIR,								// Load up the sound file as a 
@@ -1252,7 +1252,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 //		::sndPlaySound( WAV_CHAIR, SND_ASYNC );
 	}
 	else if (rWindow.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled )  {
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		::sndPlaySound( NULL, 0 );
 		if ( m_bPlaySounds ) {
 			pEffect = new CSound( (CWnd *)this, WAV_WINDOW,								// Load up the sound file as a 
@@ -1266,7 +1266,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 //		::sndPlaySound( WAV_WINDOW, SND_ASYNC );
 	}
 	else if (rLight.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled )  {
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		::sndPlaySound( NULL, 0 );
 		if ( m_bPlaySounds ) {
 			pEffect = new CSound( (CWnd *)this, WAV_LIGHT,								// Load up the sound file as a 
@@ -2026,7 +2026,7 @@ BOOL	bDealAgain;   // bool to test that the card has not already been dealt
 // generate a new number 1-52
   do {
   	bDealAgain = FALSE;
-		nNewCard = ( rand() % 52 ) + 1;
+		nNewCard = ( brand() % 52 ) + 1;
 	  for ( nCounter = 0; nCounter < 9; ++nCounter ){
 	  	if ( aDealtArray[nCounter][0] == nNewCard )
 	  		bDealAgain = TRUE;

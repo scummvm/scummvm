@@ -23,7 +23,7 @@
 #define HODJNPODJ_METAGAME_GTL_SOUND_H
 
 //#include <limits.h>
-//#include <mmsystem.h>
+//
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -89,7 +89,7 @@ public:
 	void SetDrivePath(char *pszDrivePath)
 		{ strcpy(m_chDrivePath,pszDrivePath); }
 	
-    BOOL MidiLoopPlaySegment(DWORD LoopBegin, DWORD LoopEnd = 0L, DWORD FirstPassBegin = 0L, DWORD TimeFmt = FMT_MILLISEC);
+    BOOL midiLoopPlaySegment(DWORD LoopBegin, DWORD LoopEnd = 0L, DWORD FirstPassBegin = 0L, DWORD TimeFmt = FMT_MILLISEC);
 	BOOL Play(DWORD StartOfPlay = 0L, DWORD TimeFmtFlag = FMT_MILLISEC);
 	BOOL Pause(void);
 	BOOL Resume(void);

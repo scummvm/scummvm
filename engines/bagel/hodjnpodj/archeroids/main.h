@@ -22,14 +22,14 @@
 #ifndef HODJNPODJ_ARCHEROIDS_MAIN_H
 #define HODJNPODJ_ARCHEROIDS_MAIN_H
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <errors.h>
-#include <stdinc.h>
-#include <sound.h>
-#include <sprite.h>
-#include <llist.h>
-#include "usercfg.h"
+#include "bagel/afxwin.h"
+
+#include "bagel/boflib/error.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/boflib/llist.h"
+#include "bagel/hodjnpodj/archeroids/usercfg.h"
 
 namespace Bagel {
 namespace HodjNPodj {

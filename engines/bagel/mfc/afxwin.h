@@ -709,6 +709,7 @@ public:
 	void UpdateWindow();
 	void SetActiveWindow();
 	BOOL IsWindowVisible() const;
+	void DestroyWindow();
 	void Invalidate(BOOL bErase = TRUE);
 	int GetWindowText(CString &rString) const;
 	int GetWindowText(LPSTR lpszStringBuf, int nMaxCount) const;
@@ -735,6 +736,7 @@ public:
 	CWnd *GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious = FALSE) const;
 	BOOL GotoDlgCtrl(CWnd *pWndCtrl);
 	BOOL SubclassDlgItem(UINT nID, CWnd *pParent);
+	int GetDlgCtrlID() const;
 	void SetFocus();
 };
 
@@ -872,6 +874,8 @@ class CWinThread : public CCmdTarget {
 public:
 	~CWinThread() override {
 	}
+
+	virtual BOOL OnIdle(LONG lCount);
 };
 
 class CWinApp : public CWinThread {
@@ -881,6 +885,7 @@ public:
 	~CWinApp() override {
 	}
 
+	virtual BOOL PreTranslateMessage(MSG *pMsg);
 	void SetDialogBkColor();
 	HCURSOR LoadStandardCursor(LPCSTR lpszCursorName) const;
 	HCURSOR LoadCursor(LPCSTR lpszResourceName) const;

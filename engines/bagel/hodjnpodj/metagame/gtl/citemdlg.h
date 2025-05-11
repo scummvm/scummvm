@@ -23,10 +23,10 @@
 #define IDD_ITEMMOVE		202
 #define	BUTTON_DY			10
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <cbofdlg.h>
-#include <text.h>
+#include "bagel/afxwin.h"
+
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 #include "button.h"
 #include "item.h"
 

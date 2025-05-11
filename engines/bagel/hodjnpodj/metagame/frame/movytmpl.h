@@ -23,11 +23,11 @@
 #ifndef _INC_MOVYTMPL_H
 #define _INC_MOVYTMPL_H
 
-#include <afxwin.h>                     
-#include <afxext.h>     
+#include "bagel/afxwin.h"                     
+     
 #include <stdlib.h>
-#include <stdinc.h>                 
-#include <mmsystem.h>
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"                 
+
 
 #define INTRO_WIDTH 	640
 #define INTRO_HEIGHT	480  

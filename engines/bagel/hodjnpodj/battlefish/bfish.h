@@ -21,13 +21,13 @@
 #ifndef BFISH_H
 #define BFISH_H
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <stdinc.h>
-#include <sprite.h>
-#include <text.h>
-#include <errors.h>
-#include <sound.h>
+#include "bagel/afxwin.h"
+
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/sound.h"
 
 #define GRID_ROWS       8
 #define GRID_COLS       8

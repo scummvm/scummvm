@@ -107,6 +107,17 @@ enum {
 
 #define Assert(f) assert(f)
 
+
+#define WF_80x87  1024
+#define WF_CPU186  128
+#define WF_CPU286    2
+#define WF_CPU386    4
+#define WF_CPU486    8
+#define WF_STANDARD 16
+#define WF_ENHANCED 32
+
+inline UINT GetWinFlags() { return 0; }
+
 } // namespace HodjNPodj
 } // namespace Bagel
 

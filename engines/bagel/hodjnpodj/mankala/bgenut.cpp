@@ -21,13 +21,13 @@ PUBLIC int CGenUtil::RandomInteger(int iLow, int iHigh)
 
     // for first call, initialize the random number generator
     if (!m_bRandomInit)
-	    srand((unsigned) time(&tTime)), m_bRandomInit = TRUE ;
+	    //srand((unsigned) time(&tTime)), m_bRandomInit = TRUE ;
 
-    // Note: since rand() returns a value uniform in [0, 2^15-1], the
+    // Note: since brand() returns a value uniform in [0, 2^15-1], the
     // following method, though simple, gives a slight preference
     // to lower numbers.  Might be worth fixing sometime.
     if (iLow < iHigh)		// if there's a valid range
-	iRetval = iLow + (rand() % (iHigh - iLow + 1)) ;  // compute value
+	iRetval = iLow + (brand() % (iHigh - iLow + 1)) ;  // compute value
     else		// invalid args
 	iRetval = iLow ;
     JXELEAVE(CGenUtil::RandomInteger) ;
@@ -43,7 +43,7 @@ PUBLIC BOOL CGenUtil::RandomEvent(int iNum, int iDenom)
     int iError = 0 ;
     BOOL bRetval ;		// return value
 
-    bRetval = (iNum >= 1 + (rand() % iDenom)) ;
+    bRetval = (iNum >= 1 + (brand() % iDenom)) ;
     JXELEAVE(CGenUtil::RandomEvent) ;
     return(bRetval) ;
 }

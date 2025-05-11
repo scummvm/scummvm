@@ -39,9 +39,9 @@
 *
 *
 ****************************************************************/
-#include <afxwin.h>
-#include <afxext.h>
-#include <text.h>
+#include "bagel/afxwin.h"
+
+#include "bagel/hodjnpodj/hnplibs/text.h"
 #include "cturndlg.h"
 
 #ifdef _DEBUG

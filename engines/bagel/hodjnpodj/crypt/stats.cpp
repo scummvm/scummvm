@@ -134,7 +134,7 @@ int CStats::ResetGame()
 	#endif
 
 	do {															// Get random unused cryptogram
-		nID = rand() % CRYPT_RECS;
+		nID = brand() % CRYPT_RECS;
 	} while ( m_nIsUsedGram == nID );
 
 	m_nIsUsedGram = nID;											// Mark as used

@@ -3,8 +3,8 @@
 
 //#include <options.h>
 #include "resource.h"
-#include <cbofdlg.h>
-#include <text.h>
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 
 #define MIN_LTTRSSLVD 		0				// Preferences
 #define	MAX_LTTRSSLVD		15

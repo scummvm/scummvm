@@ -53,19 +53,19 @@
 ******************************************************************************/
 #include "stdafx.h"
 #include <time.h>
-#include <mmsystem.h>
+
 #include <copyrite.h>
 
 #include "resource.h"
 #include "globals.h"
-#include <sprite.h>
-#include <text.h>
-#include <bitmaps.h>
-#include <button.h>
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 
-#include <mainmenu.h>
-#include <cmessbox.h>
-#include <rules.h>
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
 
 #include "game.h"
 #include "life.h"
@@ -324,7 +324,7 @@ CMainWindow::CMainWindow(  HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 	*************************/
     if ( m_lpGameStruct->bMusicEnabled != FALSE ) {
         if ((m_pSound = new CSound((CWnd*) this, MIDI_SOUND, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END)) != NULL) {
-            m_pSound->MidiLoopPlaySegment(1500L, 31000L, 00L, FMT_MILLISEC);
+            m_pSound->midiLoopPlaySegment(1500L, 31000L, 00L, FMT_MILLISEC);
         } else {
             PostMessage(WM_CLOSE, 0, 0);
         }
@@ -333,7 +333,7 @@ CMainWindow::CMainWindow(  HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 	/**************************************
 	* Initialize random number generator. *
 	**************************************/
-	srand((unsigned) time(NULL));			// seed the random number generator 
+	//srand((unsigned) time(NULL));			// seed the random number generator 
 
 	/**************************
 	* New game or popup menu? *
@@ -468,8 +468,8 @@ void CMainWindow::NewGame()
 	// Randomly place 10 of their villages for them!
 		i = 0;														// initialize counter
 		while ( i < VILLAGES_PLACED ) {								// until we place all preset villages
-			point.x = ( ((rand() % PLACE_COLS) + OFFSET_X) * CURLY_X) + BOARD_START_COL;
-			point.y = ( ((rand() % PLACE_ROWS) + OFFSET_Y) * CURLY_Y) + BOARD_START_ROW;
+			point.x = ( ((brand() % PLACE_COLS) + OFFSET_X) * CURLY_X) + BOARD_START_COL;
+			point.y = ( ((brand() % PLACE_ROWS) + OFFSET_Y) * CURLY_Y) + BOARD_START_ROW;
 		 	// track down cell of board that was clicked
 			row = (point.y - BOARD_START_ROW) / (BOARD_SPACING_TIMES_TWO + CURLY_Y);
 			col = (point.x - BOARD_START_COL) / (BOARD_SPACING_TIMES_TWO + CURLY_X);
@@ -611,7 +611,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 			m_lpGameStruct
 			);
 
-        CSound::WaitWaveSounds();
+        CSound::waitWaveSounds();
 
 		switch (COptionsWind.DoModal()) {
 
@@ -632,14 +632,14 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 
         if (!m_lpGameStruct->bMusicEnabled && (m_pSound != NULL)) {
 
-            m_pSound->Stop();
+            m_pSound->stop();
             delete m_pSound;
             m_pSound = NULL;
 
         } else if (m_lpGameStruct->bMusicEnabled && (m_pSound == NULL)) {
 
             if ((m_pSound = new CSound((CWnd*) this, MIDI_SOUND, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END)) != NULL)
-                m_pSound->MidiLoopPlaySegment(1500L, 31000L, 00L, FMT_MILLISEC);
+                m_pSound->midiLoopPlaySegment(1500L, 31000L, 00L, FMT_MILLISEC);
         }
 
 		// show the command scroll
@@ -753,7 +753,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
         case VK_F1:	{					// Bring up the Rules
 			GamePause();
-            CSound::WaitWaveSounds();
+            CSound::waitWaveSounds();
 			CRules  RulesDlg(
 					this,
 					RULES_TXT,
@@ -1051,12 +1051,12 @@ void CMainWindow::OnClose()
 	delete m_cLife; 
 	
 	if ( m_pSound != NULL ) {
-		m_pSound->Stop();
+		m_pSound->stop();
 		delete m_pSound;
 		m_pSound = NULL;
 	} // end if
 
-	CSound::ClearSounds();
+	CSound::clearSounds();
 
 	CFrameWnd ::OnClose();
 }

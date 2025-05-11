@@ -25,14 +25,14 @@
 *
 *
 ****************************************************************/
-#include <afxwin.h>
-#include <afxext.h>
-#include <assert.h>
-#include <globals.h>
-#include <text.h>
-#include <cbofdlg.h>
-#include <menures.h> 
-#include <button.h>
+#include "bagel/afxwin.h"
+
+
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/menures.h" 
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "usercfg.h"
 
 #define ID_RESET     104
@@ -233,7 +233,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll)
 
             m_nNumBalls = nVal;
             if (m_pTxtNumBalls != NULL) {
-                wsprintf(buf, "Number of Balls: %d", m_nNumBalls);
+                Common::sprintf_s(buf, "Number of Balls: %d", m_nNumBalls);
                 m_pTxtNumBalls->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB( 0, 0, 0));
             }
 
@@ -241,7 +241,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll)
 
             m_nStartLevel = nVal;
             if (m_pTxtStartLevel != NULL) {
-                wsprintf(buf, "Starting Level: %d", m_nStartLevel);
+                Common::sprintf_s(buf, "Starting Level: %d", m_nStartLevel);
                 m_pTxtStartLevel->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB( 0, 0, 0));
             }
 
@@ -249,7 +249,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll)
 
             m_nBallSpeed = nVal;
             if (m_pTxtBallSpeed != NULL) {
-                wsprintf(buf, "Ball Speed: %d", m_nBallSpeed);
+                Common::sprintf_s(buf, "Ball Speed: %d", m_nBallSpeed);
                 m_pTxtBallSpeed->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB( 0, 0, 0));
             }
 
@@ -257,7 +257,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll)
 
             m_nPaddleSize = nVal;
             if (m_pTxtPaddleSize != NULL) {
-                wsprintf(buf, "Paddle Size: %d", m_nPaddleSize);
+                Common::sprintf_s(buf, "Paddle Size: %d", m_nPaddleSize);
                 m_pTxtPaddleSize->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB( 0, 0, 0));
             }
 
@@ -369,22 +369,22 @@ VOID CUserCfgDlg::UpdateOptions(VOID)
     if ((pDC = GetDC()) != NULL) {
 
         if (m_pTxtNumBalls != NULL) {
-            wsprintf(buf, "Number of Balls: %d", m_nNumBalls);
+            Common::sprintf_s(buf, "Number of Balls: %d", m_nNumBalls);
             m_pTxtNumBalls->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB( 0, 0, 0));
         }
 
         if (m_pTxtStartLevel != NULL) {
-            wsprintf(buf, "Starting Level: %d", m_nStartLevel);
+            Common::sprintf_s(buf, "Starting Level: %d", m_nStartLevel);
             m_pTxtStartLevel->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB( 0, 0, 0));
         }
 
         if (m_pTxtBallSpeed != NULL) {
-            wsprintf(buf, "Ball Speed: %d", m_nBallSpeed);
+            Common::sprintf_s(buf, "Ball Speed: %d", m_nBallSpeed);
             m_pTxtBallSpeed->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB( 0, 0, 0));
         }
 
         if (m_pTxtPaddleSize != NULL) {
-            wsprintf(buf, "Paddle Size: %d", m_nPaddleSize);
+            Common::sprintf_s(buf, "Paddle Size: %d", m_nPaddleSize);
             m_pTxtPaddleSize->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB( 0, 0, 0));
         }
 

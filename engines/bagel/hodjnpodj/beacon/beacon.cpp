@@ -35,16 +35,16 @@
 #include <stdafx.h>
 #include <time.h>
 #include <fstream.h> 
-#include <mmsystem.h>
+
 #include <math.h>
 #include <dos.h>
 
-#include <sound.h>
-#include <mainmenu.h>
-#include <cmessbox.h>
-#include <rules.h>
-#include <button.h>
-#include <text.h> 
+#include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/hodjnpodj/hnplibs/text.h" 
 
 #include "gamedll.h"                      
 #include "resource.h"
@@ -55,7 +55,7 @@
 #include "copyrite.cpp"						// Boffo!
 
 void CALLBACK GetSubOptions( CWnd* pParentWind );
-void CALLBACK _export StepAlongLine( int xpos, int ypos, LPSTR lphdc );
+void CALLBACK StepAlongLine( int xpos, int ypos, LPSTR lphdc );
 BOOL InArtRegion( CPoint point );
 void MyFocusRect( CDC *pDC, CRect rect, BOOL bPressed );
 
@@ -268,13 +268,13 @@ CMainWindow::CMainWindow()
 	(*pDC).SelectPalette( pOldPal, FALSE );         // Select back the old palette
 	ReleaseDC( pDC );
 
-	srand((unsigned) time(NULL));			// seed the random number generator
+	//srand((unsigned) time(NULL));			// seed the random number generator
 	NewGame();
 
 	if( pGameInfo->bMusicEnabled ) {
 		pGameSound = new CSound( this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 		if (pGameSound != NULL) {
-			(*pGameSound).MidiLoopPlaySegment( 1300, 36500, 0, FMT_MILLISEC );
+			(*pGameSound).midiLoopPlaySegment( 1300, 36500, 0, FMT_MILLISEC );
 		} // end if pGameSound
 	}
 
@@ -473,7 +473,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 		switch (wParam) {
 
 			case IDC_RULES:
-				CSound::WaitWaveSounds();
+				CSound::waitWaveSounds();
 				
 				m_bIgnoreScrollClick = TRUE;
 				(*m_pScrollButton).SendMessage( BM_SETSTATE, TRUE, 0L );
@@ -534,7 +534,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 				//    
 			   	if((pGameInfo->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
 			   		if (pGameSound->Playing())
-			   			pGameSound->Stop();
+			   			pGameSound->stop();
 			   	} 
 			   	else if( pGameInfo->bMusicEnabled ) {
 			   		if (pGameSound == NULL) { 
@@ -542,7 +542,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 					}
 					if (pGameSound != NULL) {
 						if ( !pGameSound->Playing() )
-							(*pGameSound).MidiLoopPlaySegment( 1300, 36500, 0, FMT_MILLISEC );
+							(*pGameSound).midiLoopPlaySegment( 1300, 36500, 0, FMT_MILLISEC );
 					} // end if pGameSound
 				} // end else..musicenabled check
 
@@ -1016,7 +1016,7 @@ void CMainWindow::CheckUnderBeam()
 	ReleaseDC( pDC );
 } // end CheckUnderBeam
 
-void CALLBACK _export StepAlongLine( int xpos, int ypos, LPSTR lphdc )
+void CALLBACK StepAlongLine( int xpos, int ypos, LPSTR lphdc )
 {
 	CDC		*pDC;
 	CPoint point;      
@@ -1261,7 +1261,7 @@ BOOL CMainWindow::LoadArtWork( CDC *pDC )
 	nNumEntries = atoi( chNumEntries );
 	pick = nLastPick;
 	while ( pick == nLastPick ) {
-		pick = (rand() % nNumEntries) + 1;
+		pick = (brand() % nNumEntries) + 1;
 	}
 	for ( i = 0; i < pick; i++ ) {
 		if( !inFile.eof() ) 

@@ -22,11 +22,11 @@
 #ifndef HODJNPODJ_METAGAME_GTL_SAVEDLG_H
 #define HODJNPODJ_METAGAME_GTL_SAVEDLG_H
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <text.h>
-#include <cbofdlg.h>
-#include <button.h>
+#include "bagel/afxwin.h"
+
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 
 namespace Bagel {

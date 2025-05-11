@@ -78,7 +78,7 @@ extern CBfcMgr      *lpMetaGameStruct;
 
 
 extern "C" {
-LRESULT FAR PASCAL _export StoreHookProc(int,WORD,LONG);	// keyboard hook procedure definition
+LRESULT FAR PASCAL StoreHookProc(int,WORD,LONG);	// keyboard hook procedure definition
 }
 
 extern 	HINSTANCE	hDLLInst;
@@ -165,7 +165,7 @@ void CGeneralStore::RemoveKeyboardHook(void)
 
 
 extern "C" 
-LRESULT FAR PASCAL _export StoreHookProc(int code, WORD wParam, LONG lParam)
+LRESULT FAR PASCAL StoreHookProc(int code, WORD wParam, LONG lParam)
 {
 CDC	*pDC = NULL;
 
@@ -802,7 +802,7 @@ char	chBuffer[128];
 	}
 
 	ASSERT(hNewCursor != NULL);						// force the cursor change
-	::SetCursor(hNewCursor);
+	MFC::SetCursor(hNewCursor);
 	
 	CDialog::OnMouseMove(nFlags, point);            // do standard mouse move behavior
 }
@@ -852,7 +852,7 @@ CSound	*pSound;
 				}
 				else {
 					(*pItemText).DisplayString(pDC, "Thanks for the purchase!", 18, TEXT_BOLD, STORE_BLURB_COLOR);
-					if (rand() & 1)
+					if (brand() & 1)
 						pSound = new CSound(this,(bPlayingHodj ? ".\\sound\\gsps1.wav" : ".\\sound\\gsps2.wav"),SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 					else
 						pSound = new CSound(this,(bPlayingHodj ? ".\\sound\\gsps3.wav" : ".\\sound\\gsps4.wav"),SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);

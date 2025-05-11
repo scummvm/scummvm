@@ -22,8 +22,8 @@
 #ifndef HODJNPODJ_METAGAME_GTL_RESOURCE_H
 #define HODJNPODJ_METAGAME_GTL_RESOURCE_H
 
-#include <cbofdlg.h>
-#include <button.h>
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "gtlfrm.h"
 #include "bfc.h"
 

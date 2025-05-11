@@ -1,9 +1,9 @@
 #ifndef GUESS_H
 #define GUESS_H
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <cbofdlg.h>
+#include "bagel/afxwin.h"
+
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 
 #define IDD_GUESS_DLG 102
 

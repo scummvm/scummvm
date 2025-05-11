@@ -54,26 +54,26 @@
 *       [Specifications, documents, test plans, etc.]
 *
 ****************************************************************/
-#include <afxwin.h>
-#include <afxext.h>
+#include "bagel/afxwin.h"
+
 #include <time.h>
-#include <assert.h>
+
 #include <limits.h>
-#include <mmsystem.h>
-#include <dibdoc.h>
-#include <stdinc.h>
-#include <text.h>
-#include <globals.h>
-#include <sprite.h>
-#include <mainmenu.h>
+
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
 #include <copyrite.h>
-#include <cmessbox.h>
-#include <button.h>
-#include <misc.h>
-#include <rules.h>
-#include <errors.h>
-#include <sound.h>
-#include <gamedll.h>
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
 #include "bfish.h"
 #include "usercfg.h"
 
@@ -454,14 +454,14 @@ CBFishWindow::CBFishWindow(VOID)
             if (pGameParams->bMusicEnabled) {
                 if ((m_pSoundTrack = new CSound) != NULL) {
                     m_pSoundTrack->Initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-                    m_pSoundTrack->MidiLoopPlaySegment( 2470, 32160, 0, FMT_MILLISEC );
+                    m_pSoundTrack->midiLoopPlaySegment( 2470, 32160, 0, FMT_MILLISEC );
                 } else {
                     errCode = ERR_MEMORY;
                 }
             }
 
             // seed the random number generator
-            srand((unsigned)time(NULL));
+            //srand((unsigned)time(NULL));
 
             errCode = LoadMasterSprites();
 
@@ -948,7 +948,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam)
                     m_pScrollSprite->EraseSprite(pDC);
                 }
 
-                CSound::WaitWaveSounds();
+                CSound::waitWaveSounds();
 
                 // Get users choice from command menu
                 //
@@ -979,7 +979,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 
                 if (!pGameParams->bMusicEnabled && (m_pSoundTrack != NULL)) {
 
-                    m_pSoundTrack->Stop();
+                    m_pSoundTrack->stop();
                     delete m_pSoundTrack;
                     m_pSoundTrack = NULL;
 
@@ -987,7 +987,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 
                     if ((m_pSoundTrack = new CSound) != NULL) {
                         m_pSoundTrack->Initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-                        m_pSoundTrack->MidiLoopPlaySegment(2470, 32160, 0, FMT_MILLISEC);
+                        m_pSoundTrack->midiLoopPlaySegment(2470, 32160, 0, FMT_MILLISEC);
                     }
                 }
 
@@ -1007,7 +1007,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam)
                 
                 if (pGameParams->bSoundEffectsEnabled &&
                 	((m_nUserFish > VOICE_CUTOFF) && (m_nEnemyFish > VOICE_CUTOFF)) ) {
-                    nPick = rand() % NUM_TURN_WAVS;
+                    nPick = brand() % NUM_TURN_WAVS;
                     if ( nPick == 0 ) {
 #if CSOUND
                         pSound = new CSound((CWnd *)this, WAV_MYTURN1, SOUND_WAVE | SOUND_AUTODELETE);
@@ -1042,7 +1042,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 
                     if (pGameParams->bSoundEffectsEnabled &&
                 	((m_nUserFish > VOICE_CUTOFF) && (m_nEnemyFish > VOICE_CUTOFF)) ) {
-                        nPick = rand() % NUM_TURN_WAVS;
+                        nPick = brand() % NUM_TURN_WAVS;
                         if ( nPick == 0 ) {
 #if CSOUND
                             pSound = new CSound((CWnd *)this, WAV_YOURTURN1, SOUND_WAVE | SOUND_AUTODELETE);
@@ -1273,15 +1273,15 @@ VOID CBFishWindow::PlaceEnemyFish(VOID)
 
             // select random starting square
             //
-            row = rand() % GRID_ROWS;
-            col = rand() % GRID_COLS;
+            row = brand() % GRID_ROWS;
+            col = brand() % GRID_COLS;
 
             // make a copy of this fish
             memcpy(&m_aEnemyFishInfo[i], &gFishSizes[i], sizeof(FISH));
 
             // rotate some of the fish
             //
-            if (rand() & 1) {
+            if (brand() & 1) {
                 for (k = 0; k < MAX_FISH_SIZE; k++) {
                     m_aEnemyFishInfo[i].nLoc[k].x = gFishSizes[i].nLoc[k].y;
                     m_aEnemyFishInfo[i].nLoc[k].y = gFishSizes[i].nLoc[k].x;
@@ -1932,7 +1932,7 @@ VOID CBFishWindow::OnLButtonDown(UINT, CPoint point)
 
                     if (pGameParams->bSoundEffectsEnabled &&
                 	((m_nUserFish > VOICE_CUTOFF) && (m_nEnemyFish > VOICE_CUTOFF)) ) {            // have her say somethin' clever
-                        nPick = rand() % NUM_TURN_WAVS;
+                        nPick = brand() % NUM_TURN_WAVS;
                         if ( nPick == 0 ) {
 #if CSOUND
                             pSound = new CSound((CWnd *)this, WAV_YOURTURN1, SOUND_WAVE | SOUND_AUTODELETE);
@@ -2281,10 +2281,10 @@ VOID CBFishWindow::OnMouseMove(UINT, CPoint point)
         }
     } else {
 
-        hCursor = ::LoadCursor(NULL, IDC_ARROW);
+        hCursor = LoadCursor(NULL, IDC_ARROW);
     }
 
-    ::SetCursor(hCursor);
+    MFC::SetCursor(hCursor);
 }
 
 
@@ -2596,8 +2596,8 @@ INT CBFishWindow::SelectRandomTarget(VOID)
     //
     n = 0;
     do {
-        nRow = rand() % GRID_ROWS;
-        nCol = rand() % GRID_COLS;
+        nRow = brand() % GRID_ROWS;
+        nCol = brand() % GRID_COLS;
 
         if (m_nUserGrid[nRow][nCol] & SHOT)
             continue;
@@ -2696,7 +2696,7 @@ BOOL CBFishWindow::FishFits(INT nFishIndex, INT row, INT col)
     bFound = FALSE;
     for (i = 0; i < 2; i++) {
 
-        rotate = rand() & 1;
+        rotate = brand() & 1;
         for (j = 0; j < MAX_FISH_SIZE; j++) {
 
             // make a fresh copy of this fish
@@ -2983,7 +2983,7 @@ INT CBFishWindow::FindMatch(INT nLastHitRow, INT nLastHitCol)
 
             // Try fish at both 0 and 90 degrees
             //
-            rotate = rand() & 1;
+            rotate = brand() & 1;
             for (j = 0; j < 2; j++) {
 
                 bFound = FALSE;
@@ -3146,7 +3146,7 @@ INT CBFishWindow::FindMatch(INT nLastHitRow, INT nLastHitCol)
 
             // Try fish at both 0 and 90 degrees
             //
-            rotate = rand() & 1;
+            rotate = brand() & 1;
             for (j = 0; j < 2; j++) {
 
                 bFound = FALSE;
@@ -3598,7 +3598,7 @@ void CBFishWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
         //
         case VK_F1: {
             GamePause();
-            CSound::WaitWaveSounds();
+            CSound::waitWaveSounds();
             CRules  RulesDlg(this, "bfish.txt", m_pGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL));
             PaintScreen();
             RulesDlg.DoModal();
@@ -3743,7 +3743,7 @@ VOID CBFishWindow::OnClose()
         m_pSoundTrack = NULL;
     }
     
-    CSound::ClearSounds();              // Make sure to return cleanly to Metagame
+    CSound::clearSounds();              // Make sure to return cleanly to Metagame
     
     // de-allocate the master sprites
     ReleaseMasterSprites();

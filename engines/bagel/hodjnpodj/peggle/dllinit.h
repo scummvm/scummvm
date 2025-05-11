@@ -34,10 +34,10 @@
 extern "C" {
 #endif  /* __cplusplus */
 
-HWND FAR PASCAL _export RunPeggle( HWND, LPGAMESTRUCT =NULL );
+HWND FAR PASCAL RunPeggle( HWND, LPGAMESTRUCT =NULL );
 
-BOOL FAR PASCAL _export FilterDllMsg(LPMSG lpMsg);
-void FAR PASCAL _export ProcessDllIdle();
+BOOL FAR PASCAL FilterDllMsg(LPMSG lpMsg);
+void FAR PASCAL ProcessDllIdle();
 
 #ifdef __cplusplus
 }

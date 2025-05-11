@@ -26,7 +26,7 @@
 // CMainWindow:
 // See game.cpp for the code to the member functions and the message map.
 //
-#include <sound.h>
+#include "bagel/boflib/sound.h"
 #include "gamedll.h"
 #include "crypt.h"
 

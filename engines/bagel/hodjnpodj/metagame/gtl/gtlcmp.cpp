@@ -676,7 +676,7 @@ BOOL CGtlData::FindTopLocations(CXodj * xpXodj)
 	}
 
 
-	i = rand() % 10;
+	i = brand() % 10;
 
 	if ( xpStratTemp[0]->m_iValueCode == MG_VISIT_MISHMOSH ) {
 		i = 9;
@@ -702,7 +702,7 @@ char	cTemp[128];
 	lstrcat( cTemp, " : " );
 	lstrcat( cTemp, xpStratTemp[2]->m_lpNode->m_szLabel );
 	 
-//	wsprintf( cTemp, "%s : %s : %s", xpStratTemp[0].m_lpNode->m_szLabel, xpStratTemp[1].m_lpNode->m_szLabel, xpStratTemp[2].m_lpNode->m_szLabel);
+//	Common::sprintf_s( cTemp, "%s : %s : %s", xpStratTemp[0].m_lpNode->m_szLabel, xpStratTemp[1].m_lpNode->m_szLabel, xpStratTemp[2].m_lpNode->m_szLabel);
 	::MessageBox( NULL, cTemp, xpStrategyInfo->xpTargetLocInfo->m_lpNode->m_szLabel, MB_OK );
 }
 #endif

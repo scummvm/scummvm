@@ -30,13 +30,13 @@
 *       [Discuss files created, or used]
 *
 ****************************************************************/
-#include <afxwin.h>
-#include <afxext.h>
+#include "bagel/afxwin.h"
+
 #include <stdio.h>
-#include <assert.h>
-#include <stdinc.h>
-#include <misc.h>
-#include <errors.h>
+
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/boflib/error.h"
 
 #include "resource.h"
 #include "bfc.h"

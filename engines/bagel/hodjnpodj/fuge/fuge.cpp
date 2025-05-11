@@ -47,25 +47,25 @@
 *
 *
 ****************************************************************/
-#include <afxwin.h>
-#include <afxext.h>
+#include "bagel/afxwin.h"
+
 #include <time.h>
 #include <math.h>
-#include <assert.h>
-#include <dibdoc.h>
-#include <stdinc.h>
-#include <text.h>
-#include <globals.h>
-#include <sprite.h>
-#include <mainmenu.h>
-#include <cmessbox.h>
+
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include <copyrite.h>
-#include <misc.h>
-#include <rules.h>
-#include <errors.h>
-#include <button.h>
-#include <gamedll.h>
-#include <sound.h>
+#include "bagel/boflib/misc.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/boflib/error.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
+#include "bagel/boflib/sound.h"
 #include <vector.h>
 #include "fuge.h"
 #include "usercfg.h"
@@ -515,14 +515,14 @@ CFugeWindow::CFugeWindow(VOID)
             if (pGameParams->bMusicEnabled) {
                 if ((m_pSoundTrack = new CSound) != NULL) {
                     m_pSoundTrack->Initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-                    m_pSoundTrack->MidiLoopPlaySegment( 5390, 32280, 0, FMT_MILLISEC );
+                    m_pSoundTrack->midiLoopPlaySegment( 5390, 32280, 0, FMT_MILLISEC );
                 } else {
                     errCode = ERR_MEMORY;
                 }
             }
 
             // seed the random number generator
-            srand((UINT)time(NULL));
+            //srand((UINT)time(NULL));
 
             //
             // The vector table is rotated by 11 or so degrees, because it
@@ -779,7 +779,7 @@ BOOL CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 
                     GamePause();
 
-                    CSound::WaitWaveSounds();
+                    CSound::waitWaveSounds();
 
                     // Get users choice from command menu
                     //
@@ -808,7 +808,7 @@ BOOL CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 
                     if (!pGameParams->bMusicEnabled && (m_pSoundTrack != NULL)) {
 
-                        m_pSoundTrack->Stop();
+                        m_pSoundTrack->stop();
                         delete m_pSoundTrack;
                         m_pSoundTrack = NULL;
 
@@ -816,7 +816,7 @@ BOOL CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 
                         if ((m_pSoundTrack = new CSound) != NULL) {
                             m_pSoundTrack->Initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-                            m_pSoundTrack->MidiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
+                            m_pSoundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
                         }
                     }
 
@@ -947,7 +947,7 @@ ERROR_CODE CFugeWindow::LoadMasterSounds(VOID)
     // assume no error
     errCode = ERR_NONE;
 
-    hInst = (HINSTANCE)::GetWindowWord(m_hWnd, GWW_HINSTANCE);
+    hInst = (HINSTANCE)GetWindowWord(m_hWnd, GWW_HINSTANCE);
 
     // Load and lock the Brick "ping" into memory
     //
@@ -1185,7 +1185,7 @@ VOID CFugeWindow::PaintBall(VOID)
                     m_vBallVector.x = -m_vBallVector.x;
 
                     // randomly rotate 1 or -1 degrees
-                    m_vBallVector.Rotate(Deg2Rad((rand() & 1) ? 0.125 : 0));
+                    m_vBallVector.Rotate(Deg2Rad((brand() & 1) ? 0.125 : 0));
 
                     m_fTurboBoost = (DOUBLE)12 - m_nBallSpeed;
 
@@ -1203,7 +1203,7 @@ VOID CFugeWindow::PaintBall(VOID)
                     m_vBallVector.x = -m_vBallVector.x;
 
                     // randomly rotate 1 or -1 degrees
-                    m_vBallVector.Rotate(Deg2Rad((rand() & 1) ? 0.125 : 0));
+                    m_vBallVector.Rotate(Deg2Rad((brand() & 1) ? 0.125 : 0));
 
                     m_fTurboBoost = (DOUBLE)12 - m_nBallSpeed;
 
@@ -1221,7 +1221,7 @@ VOID CFugeWindow::PaintBall(VOID)
                     m_vBallVector.y = -m_vBallVector.y;
 
                     // randomly rotate 1 or -1 degrees
-                    m_vBallVector.Rotate(Deg2Rad((rand() & 1) ? 0.125 : 0));
+                    m_vBallVector.Rotate(Deg2Rad((brand() & 1) ? 0.125 : 0));
 
                     m_fTurboBoost = (DOUBLE)12 - m_nBallSpeed;
 
@@ -1239,7 +1239,7 @@ VOID CFugeWindow::PaintBall(VOID)
                     m_vBallVector.y = -m_vBallVector.y;
 
                     // randomly rotate 1 or -1 degrees
-                    m_vBallVector.Rotate(Deg2Rad((rand() & 1) ? 0.125 : 0));
+                    m_vBallVector.Rotate(Deg2Rad((brand() & 1) ? 0.125 : 0));
 
                     m_fTurboBoost = (DOUBLE)12 - m_nBallSpeed;
 
@@ -1780,8 +1780,8 @@ VOID CFugeWindow::BallvsBrick(DOUBLE length)
                         //
                         // User wins this round
                         //
-                        wsprintf(buf1, "Round complete.");
-                        wsprintf(buf2, "Score:  %ld", m_lScore);
+                        Common::sprintf_s(buf1, "Round complete.");
+                        Common::sprintf_s(buf2, "Score:  %ld", m_lScore);
                         CMessageBox dlgYouWin((CWnd *)this, m_pGamePalette, buf1, buf2);
 
                         // stop all sounds
@@ -2032,7 +2032,7 @@ VOID CFugeWindow::LoseBall(VOID)
 #endif
             }
 
-            wsprintf(buf1, "Score:  %ld", m_lScore);
+            Common::sprintf_s(buf1, "Score:  %ld", m_lScore);
             CMessageBox dlgLoseBall((CWnd *)this, m_pGamePalette, "Game over.", buf1);                        
 
             if (pGameParams->bPlayingMetagame) {
@@ -2049,8 +2049,8 @@ VOID CFugeWindow::LoseBall(VOID)
             // display score, and start a new ball
             //
 
-            wsprintf(buf1, "Score:  %ld", m_lScore);
-            wsprintf(buf2, "Balls Left:  %d", m_nBalls);
+            Common::sprintf_s(buf1, "Score:  %ld", m_lScore);
+            Common::sprintf_s(buf2, "Balls Left:  %d", m_nBalls);
             CMessageBox dlgLoseBall((CWnd *)this, m_pGamePalette, buf1, buf2);
 
             //
@@ -2112,7 +2112,7 @@ VOID CFugeWindow::LaunchBall(VOID)
 
     // add a slight randomness to the balls vector
     //
-    m_vBallVector.Rotate(Deg2Rad((rand()%2) * ((rand() & 1) ? -1 : 1)));
+    m_vBallVector.Rotate(Deg2Rad((brand()%2) * ((brand() & 1) ? -1 : 1)));
     m_vBallVector.Unitize();
 
     PaintBall();
@@ -2654,7 +2654,7 @@ VOID CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point)
     } else if (peopRect.PtInRect(point)) {
 
         if (pGameParams->bSoundEffectsEnabled) {
-            nPick = rand() % NUM_WAVS;
+            nPick = brand() % NUM_WAVS;
             if (nPick == 0) {
 #if CSOUND
                 pEffect = new CSound( (CWnd *)this, WAV_PEOPLE1,
@@ -2682,7 +2682,7 @@ VOID CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point)
 
         if (pGameParams->bSoundEffectsEnabled) {
 
-            nPick = rand() % NUM_WAVS;
+            nPick = brand() % NUM_WAVS;
 
 #if CSOUND
             // Wave file, to delete itself play the narration
@@ -2783,7 +2783,7 @@ void CFugeWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
         //
         case VK_F1: {
             GamePause();
-            CSound::WaitWaveSounds();
+            CSound::waitWaveSounds();
             CRules  RulesDlg(this, "fuge.txt", m_pGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL));
             RulesDlg.DoModal();
             GameResume();
@@ -2891,7 +2891,7 @@ VOID CFugeWindow::OnClose()
     }
 
 #if CSOUND
-    CSound::ClearSounds();
+    CSound::clearSounds();
 #endif
 
     //

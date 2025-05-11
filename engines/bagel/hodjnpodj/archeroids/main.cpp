@@ -19,25 +19,22 @@
  *
  */
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <mmsystem.h>
-#include <assert.h>
-#include <ctype.h>
-#include <dibdoc.h>
-#include <sprite.h>
-#include <stdinc.h>
-#include <globals.h>
-#include <mainmenu.h>
-#include <misc.h>
-#include <cmessbox.h>
-#include <errors.h>
-#include <bitmaps.h>
-#include <rules.h>
-#include <gamedll.h>
-#include <llist.h>
-#include "main.h"
-#include "usercfg.h"
+#include "bagel/afxwin.h"
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
+#include "bagel/boflib/error.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
+#include "bagel/boflib/llist.h"
+#include "bagel/hodjnpodj/archeroids/main.h"
+#include "bagel/hodjnpodj/archeroids/usercfg.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -155,7 +152,7 @@ LPGAMESTRUCT pGameParams;
 
 STATIC INT aBales[N_HAY];
 
-STATIC POINT aHayPosition[N_HAY][N_SECTIONS_PER_HAY] = {
+STATIC const POINT aHayPosition[N_HAY][N_SECTIONS_PER_HAY] = {
    {{100,  60}, {108,  60}, {116,  60}, {124,  60}, {132,  60},
     {100,  66}, {108,  66}, {116,  66}, {124,  66}, {132,  66},
     {100,  72}, {108,  72}, {116,  72}, {124,  72}, {132,  72},
@@ -206,7 +203,7 @@ STATIC POINT aHayPosUse[N_HAY][N_SECTIONS_PER_HAY];
 //
 // Position data for bad guys for each wave
 //
-STATIC POINT aBadGuyPosition[N_WAVES][BADGUYS_MAX] = {
+STATIC const POINT aBadGuyPosition[N_WAVES][BADGUYS_MAX] = {
 
    {{LEVEL4, ROW3}, {LEVEL4, ROW4}, {LEVEL4, ROW5}, {LEVEL4, ROW6},     // Wave 1
     {LEVEL3, ROW3}, {LEVEL3, ROW4}, {LEVEL3, ROW5}, {LEVEL3, ROW6},
@@ -403,7 +400,7 @@ CMainWindow::CMainWindow()
         BeginWaitCursor();
 
         // Seed the random number generator
-        srand((UINT)time(NULL));
+        //srand((UINT)time(NULL));
 
         errCode = LoadMasterSprites();
 
@@ -424,7 +421,7 @@ CMainWindow::CMainWindow()
         if (pGameParams->bMusicEnabled) {
             m_pSoundTrack = new CSound( this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
             assert(m_pSoundTrack != NULL);
-            m_pSoundTrack->MidiLoopPlaySegment( 6400, 37680, 0, FMT_MILLISEC );  //6320
+            m_pSoundTrack->midiLoopPlaySegment( 6400, 37680, 0, FMT_MILLISEC );  //6320
         } // end if m_pSoundTrack
 
 
@@ -814,7 +811,7 @@ ERROR_CODE CMainWindow::LoadMasterSounds(VOID)
     // assume no error
     errCode = ERR_NONE;
 
-    hInst = (HINSTANCE)::GetWindowWord(m_hWnd, GWW_HINSTANCE);
+    hInst = (HINSTANCE)GetWindowWord(m_hWnd, GWW_HINSTANCE);
 
     // Load and lock
     //
@@ -1045,7 +1042,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
                     ASSERT(bSuccess);
                 }
 
-                CSound::WaitWaveSounds();
+                CSound::waitWaveSounds();
 
                 switch (COptionsWind.DoModal()) {
 
@@ -1071,16 +1068,13 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 
                 if (!pGameParams->bMusicEnabled && (m_pSoundTrack != NULL)) {
 
-                    m_pSoundTrack->Stop();
+                    m_pSoundTrack->stop();
                     delete m_pSoundTrack;
                     m_pSoundTrack = NULL;
 
                 } else if (pGameParams->bMusicEnabled && (m_pSoundTrack == NULL)) {
-
-                    if ((m_pSoundTrack = new CSound) != NULL) {
-                        m_pSoundTrack->Initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-                        m_pSoundTrack->MidiLoopPlaySegment(6400, 37680, 0, FMT_MILLISEC);
-                    }
+                    m_pSoundTrack = new CBofSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+                    m_pSoundTrack->midiLoopPlaySegment(6400, 37680, 0, FMT_MILLISEC);
                 }
 
                 // resume timer
@@ -1373,7 +1367,7 @@ ERROR_CODE CMainWindow::CreateBadArrow(CSprite *pBadGuy)
         bHit = FALSE;
         pList = m_pHayList;
         while (pList != NULL) {
-            oldRect = ((CSprite *)pList->GetData())->GetRect();
+            oldRect = ((CSprite *)pList->getData())->GetRect();
 
             // Check for intercection
             //
@@ -1381,7 +1375,7 @@ ERROR_CODE CMainWindow::CreateBadArrow(CSprite *pBadGuy)
                 bHit = TRUE;
                 break;
             }
-            pList = pList->GetNext();
+            pList = pList->getNext();
         }
 
         // Don't create this arrow if it interects another arrow or if it
@@ -1434,7 +1428,7 @@ ERROR_CODE CMainWindow::CreateBadArrow(CSprite *pBadGuy)
                     if ((pList = new CLList(pSprite)) != NULL) {
 
                         if (m_pBadArrowList != NULL)
-                            m_pBadArrowList->AddToTail(pList);
+                            m_pBadArrowList->addToTail(pList);
                         else {
                             m_pBadArrowList = pList;
                         }
@@ -1469,14 +1463,14 @@ POINT CMainWindow::GetLeftMostBadGuy(VOID)
     assert(m_pBadGuyList != NULL);
 
     ptBest.x = 9999;
-    pList = m_pBadGuyList->GetHead();
+    pList = m_pBadGuyList->getHead();
     while (pList != NULL) {
-        ptTmp = ((CSprite *)pList->GetData())->GetPosition();
+        ptTmp = ((CSprite *)pList->getData())->GetPosition();
 
         if (ptTmp.x < ptBest.x)
             ptBest = ptTmp;
 
-        pList = pList->GetNext();
+        pList = pList->getNext();
     }
 
     return(ptBest);
@@ -1532,7 +1526,7 @@ ERROR_CODE CMainWindow::CreateGoodArrow()
         bHit = FALSE;
         pList = m_pGoodArrowList;
         while (pList != NULL) {
-            oldRect = ((CSprite *)pList->GetData())->GetRect();
+            oldRect = ((CSprite *)pList->getData())->GetRect();
 
             // Check for intercection
             //
@@ -1540,7 +1534,7 @@ ERROR_CODE CMainWindow::CreateGoodArrow()
                 bHit = TRUE;
                 break;
             }
-            pList = pList->GetNext();
+            pList = pList->getNext();
         }
 
         //
@@ -1593,7 +1587,7 @@ ERROR_CODE CMainWindow::CreateGoodArrow()
                     //
                     pList = new CLList(pSprite);
                     if (m_pGoodArrowList != NULL)
-                        m_pGoodArrowList->AddToTail(pList);
+                        m_pGoodArrowList->addToTail(pList);
                     else {
                         m_pGoodArrowList = pList;
                     }
@@ -1908,10 +1902,10 @@ VOID CMainWindow::KillAnimation(VOID)
     //
     while (m_pFXList != NULL) {
 
-        DeleteSprite((CSprite *)m_pFXList->GetData());
+        DeleteSprite((CSprite *)m_pFXList->getData());
 
         pList = m_pFXList;
-        m_pFXList = m_pFXList->GetNext();
+        m_pFXList = m_pFXList->getNext();
         delete pList;
     }
 }
@@ -2029,10 +2023,10 @@ BOOL CMainWindow::MainLoop()
             //
             pList = m_pFXList;
             while (pList != NULL) {
-                pNext = pList->GetNext();
+                pNext = pList->getNext();
 
                 // get local pointer to this cell's sprite
-                pSprite = (CSprite *)pList->GetData();
+                pSprite = (CSprite *)pList->getData();
 
                 // paint this cell
                 pSprite->PaintSprite(pDC, pSprite->GetPosition());
@@ -2106,12 +2100,12 @@ BOOL CMainWindow::MoveArrows(CDC *pDC)
     //
     pList = m_pBadArrowList;
     while (pList != NULL) {
-        pSprite = (CSprite *)pList->GetData();
+        pSprite = (CSprite *)pList->getData();
         point = pSprite->GetPosition();
         point.x -= ARROW_SPEED;
 
         // save pointer to next arrow
-        pNext = pList->GetNext();
+        pNext = pList->getNext();
 
         if (point.x > (0 + GAME_LEFT_BORDER_WIDTH)) {
             pSprite->PaintSprite(pDC, point);
@@ -2127,7 +2121,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC)
 
                         newRect = pSprite->GetRect();
                         //newRect.right = newRect.left + 2;
-                        pTmpSprite = (CSprite *)pSearchList->GetData();
+                        pTmpSprite = (CSprite *)pSearchList->getData();
                         if (tmpRect.IntersectRect(newRect, pTmpSprite->GetRect())) {
 
                             if (pSprite->TestInterception(pDC, pTmpSprite)) {
@@ -2139,7 +2133,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC)
                             }
                         }
 
-                        pSearchList = pSearchList->GetNext();
+                        pSearchList = pSearchList->getNext();
                     }
 
                     if (!bHit) {
@@ -2166,7 +2160,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC)
     //
     pList = m_pGoodArrowList;
     while (pList != NULL) {
-        pSprite = (CSprite *)pList->GetData();
+        pSprite = (CSprite *)pList->getData();
         size = pSprite->GetSize();
 
         // calc new arrow location
@@ -2175,7 +2169,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC)
         point.x += ARROW_SPEED;
 
         // save pointer to next arrow
-        pNext = pList->GetNext();
+        pNext = pList->getNext();
 
         // If arrow did not leave the playing field
         //
@@ -2195,7 +2189,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC)
 
                         newRect = pSprite->GetRect();
                         //newRect.left = newRect.right - 2;
-                        pTmpSprite = (CSprite *)pSearchList->GetData();
+                        pTmpSprite = (CSprite *)pSearchList->getData();
                         if (tmpRect.IntersectRect(newRect, pTmpSprite->GetRect())) {
 
                             if (pSprite->TestInterception(pDC, pTmpSprite)) {
@@ -2207,7 +2201,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC)
                             }
                         }
 
-                        pSearchList = pSearchList->GetNext();
+                        pSearchList = pSearchList->getNext();
                     }
                 }
 
@@ -2220,7 +2214,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC)
 
                         // if badguy is not already dead
                         //
-                        pTmpSprite = (CSprite *)pSearchList->GetData();
+                        pTmpSprite = (CSprite *)pSearchList->getData();
                         if (pTmpSprite->GetTypeCode() == FALSE) {
 
                             if (pSprite->TestInterception(pDC, pTmpSprite)) {
@@ -2240,12 +2234,12 @@ BOOL CMainWindow::MoveArrows(CDC *pDC)
                                         sndPlaySound(WAV_WINWAVE, SND_SYNC);
 
                                     if (pGameParams->bPlayingMetagame) {
-                                        wsprintf(buf1, "You have defeated");
-                                        wsprintf(buf2, "all of the archers.");
+                                        Common::sprintf_s(buf1, "You have defeated");
+                                        Common::sprintf_s(buf2, "all of the archers.");
 
                                     } else {
-                                        wsprintf(buf1, "Wave %d completed.", m_nWave);
-                                        wsprintf(buf2, "Score: %ld   Lives: %d", m_lScore, m_nLives);
+                                        Common::sprintf_s(buf1, "Wave %d completed.", m_nWave);
+                                        Common::sprintf_s(buf2, "Score: %ld   Lives: %d", m_lScore, m_nLives);
                                     }
 
                                     FlushInputEvents();
@@ -2263,7 +2257,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC)
                                 break;
                             }
                         }
-                        pSearchList = pSearchList->GetNext();
+                        pSearchList = pSearchList->getNext();
                     }
                 }
             }
@@ -2350,7 +2344,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC)
                 i = 0;
                 pList = m_pBadGuyList;
                 while (pList != NULL) {
-                    pSprite = (CSprite *)pList->GetData();
+                    pSprite = (CSprite *)pList->getData();
 
                     assert(pSprite != NULL);
 
@@ -2380,9 +2374,9 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC)
                                 //
                                 pSearchList = m_pHayList;
                                 while (pSearchList != NULL) {
-                                    pSearchNext = pSearchList->GetNext();
+                                    pSearchNext = pSearchList->getNext();
 
-                                    if (tmpRect.IntersectRect(pSprite->GetRect(), ((CSprite *)pSearchList->GetData())->GetRect())) {
+                                    if (tmpRect.IntersectRect(pSprite->GetRect(), ((CSprite *)pSearchList->getData())->GetRect())) {
 
                                         point.x = tmpRect.left;
                                         point.y = tmpRect.top;
@@ -2394,7 +2388,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC)
                             }
                         }
 
-                        if ((rand() & 0x001f) == 0) {
+                        if ((brand() & 0x001f) == 0) {
                             CreateBadArrow(pSprite);
                         }
 
@@ -2414,7 +2408,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC)
                         i++;
                     }
 
-                    pList = pList->GetNext();
+                    pList = pList->getNext();
                 }
                 break;
 
@@ -2429,7 +2423,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC)
                 i = 0;
                 pList = m_pBadGuyList;
                 while (pList != NULL) {
-                    pSprite = (CSprite *)pList->GetData();
+                    pSprite = (CSprite *)pList->getData();
 
                     assert(pSprite != NULL);
 
@@ -2459,9 +2453,9 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC)
                                 //
                                 pSearchList = m_pHayList;
                                 while (pSearchList != NULL) {
-                                    pSearchNext = pSearchList->GetNext();
+                                    pSearchNext = pSearchList->getNext();
 
-                                    if (tmpRect.IntersectRect(pSprite->GetRect(), ((CSprite *)pSearchList->GetData())->GetRect())) {
+                                    if (tmpRect.IntersectRect(pSprite->GetRect(), ((CSprite *)pSearchList->getData())->GetRect())) {
 
                                         point.x = tmpRect.left;
                                         point.y = tmpRect.top;
@@ -2475,7 +2469,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC)
 
                         // Crossbow shoots arrow from center of badguy
                         //
-                        if ((rand() & 0x001f) == 0) {
+                        if ((brand() & 0x001f) == 0) {
                             CreateBadArrow(pSprite);
                         }
 
@@ -2495,7 +2489,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC)
                         i++;
                     }
 
-                    pList = pList->GetNext();
+                    pList = pList->getNext();
                 }
                 break;
 
@@ -2514,7 +2508,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC)
                 i = 0;
                 pList = m_pBadGuyList;
                 while (pList != NULL) {
-                    pSprite = (CSprite *)pList->GetData();
+                    pSprite = (CSprite *)pList->getData();
 
                     assert(pSprite != NULL);
 
@@ -2543,9 +2537,9 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC)
                                 //
                                 pSearchList = m_pHayList;
                                 while (pSearchList != NULL) {
-                                    pSearchNext = pSearchList->GetNext();
+                                    pSearchNext = pSearchList->getNext();
 
-                                    if (tmpRect.IntersectRect(pSprite->GetRect(), ((CSprite *)pSearchList->GetData())->GetRect())) {
+                                    if (tmpRect.IntersectRect(pSprite->GetRect(), ((CSprite *)pSearchList->getData())->GetRect())) {
 
                                         point.x = tmpRect.left;
                                         point.y = tmpRect.top;
@@ -2559,7 +2553,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC)
 
                         // Crossbow shoots arrow from center of badguy
                         //
-                        if ((rand() & 0x001f) == 0) {
+                        if ((brand() & 0x001f) == 0) {
                             CreateBadArrow(pSprite);
                         }
 
@@ -2579,7 +2573,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC)
                         i++;
                     }
 
-                    pList = pList->GetNext();
+                    pList = pList->getNext();
                 }
 
                 // goto next state
@@ -2623,7 +2617,7 @@ VOID CMainWindow::LoseLife(CDC *pDC, BOOL bAnimate)
         sndPlaySound(WAV_DEATH, SND_ASYNC);
     }
 
-    //CSound::WaitWaveSounds();
+    //CSound::waitWaveSounds();
 
     if (bAnimate) {
 
@@ -2649,7 +2643,7 @@ VOID CMainWindow::LoseLife(CDC *pDC, BOOL bAnimate)
 
         // Inform user that he has lost a life
         //
-        wsprintf(szTmpBuf, "You have %d li%s left.", m_nLives, m_nLives != 1 ? "ves" : "fe");
+        Common::sprintf_s(szTmpBuf, "You have %d li%s left.", m_nLives, m_nLives != 1 ? "ves" : "fe");
         CMessageBox dlgLoseLife((CWnd *)this, m_pGamePalette, "That Hurts!", szTmpBuf);
 
         //
@@ -2657,13 +2651,13 @@ VOID CMainWindow::LoseLife(CDC *pDC, BOOL bAnimate)
         //
         pList = m_pBadArrowList;                // destroy all bad arrows
         while (pList != NULL) {
-            pNext = pList->GetNext();
+            pNext = pList->getNext();
             DestroyBadArrow(pList);
             pList = pNext;
         }
         pList = m_pGoodArrowList;               // destroy all good arrows
         while (pList != NULL) {
-            pNext = pList->GetNext();
+            pNext = pList->getNext();
             DestroyGoodArrow(pList);
             pList = pNext;
         }
@@ -2678,7 +2672,7 @@ VOID CMainWindow::LoseLife(CDC *pDC, BOOL bAnimate)
         i = 0;
         pList = m_pBadGuyList;
         while (pList != NULL) {
-            pSprite = (CSprite *)pList->GetData();
+            pSprite = (CSprite *)pList->getData();
 
             assert(pSprite != NULL);
 
@@ -2686,7 +2680,7 @@ VOID CMainWindow::LoseLife(CDC *pDC, BOOL bAnimate)
             point.x -= (m_nInitArcherLevel - 1) * BADGUYMOVE_X;
             pSprite->PaintSprite(pDC, point);
             i++;
-            pList = pList->GetNext();
+            pList = pList->getNext();
         }
         m_pHodj->PaintSprite(pDC, m_pHodj->GetPosition());
 
@@ -2702,7 +2696,7 @@ VOID CMainWindow::LoseLife(CDC *pDC, BOOL bAnimate)
 
         FlushInputEvents();
 
-        wsprintf(szTmpBuf, "Score: %ld.", m_lScore);
+        Common::sprintf_s(szTmpBuf, "Score: %ld.", m_lScore);
         CMessageBox dlgGameOver((CWnd *)this, m_pGamePalette, "Game over.", szTmpBuf);
         GameReset();
 
@@ -2720,9 +2714,9 @@ VOID CMainWindow::PruneDeadBadGuys()
     pList = m_pBadGuyList;
     while (pList != NULL) {
 
-        pNext = pList->GetNext();
+        pNext = pList->getNext();
 
-        pSprite = (CSprite *)(pList->GetData());
+        pSprite = (CSprite *)(pList->getData());
         assert(pSprite != NULL);
 
         if (pSprite->GetTypeCode() == TRUE) {
@@ -2759,7 +2753,7 @@ VOID CMainWindow::DestroyBadGuy(CLList *pList, CDC *pDC)
 
     // Update the score
     //
-    pSprite = (CSprite *)pList->GetData();
+    pSprite = (CSprite *)pList->getData();
 
     assert(pSprite != NULL);
 
@@ -2848,7 +2842,7 @@ VOID CMainWindow::DestroyHay(CLList *pList, CRect rect, CDC *pDC, BOOL bAnimate)
     assert(pList != NULL);
     assert(pDC != NULL);
 
-    pSprite = (CSprite *)pList->GetData();
+    pSprite = (CSprite *)pList->getData();
     assert(pSprite != NULL);
 
     point = pSprite->GetPosition();
@@ -2887,7 +2881,7 @@ VOID CMainWindow::DestroyHay(CLList *pList, CRect rect, CDC *pDC, BOOL bAnimate)
                     //
                     DeleteSprite(pSprite);
                     if (pList == m_pHayList)
-                        m_pHayList = m_pHayList->GetNext();
+                        m_pHayList = m_pHayList->getNext();
 
                     delete pList;
                     break;
@@ -2922,12 +2916,12 @@ VOID CMainWindow::DestroyGoodArrow(CLList *pList)
 
     // Delete the actual sprite
     //
-    DeleteSprite((CSprite *)pList->GetData());
+    DeleteSprite((CSprite *)pList->getData());
 
     // if this is the 1st arrow in the list, then move the head
     //
     if (pList == m_pGoodArrowList)
-        m_pGoodArrowList = pList->GetNext();
+        m_pGoodArrowList = pList->getNext();
 
     delete pList;
 }
@@ -2946,12 +2940,12 @@ VOID CMainWindow::DestroyBadArrow(CLList *pList)
 
     // Delete the actual sprite
     //
-    DeleteSprite((CSprite *)pList->GetData());
+    DeleteSprite((CSprite *)pList->getData());
 
     // if this is the 1st arrow in the list, then move the head
     //
     if (pList == m_pBadArrowList)
-        m_pBadArrowList = pList->GetNext();
+        m_pBadArrowList = pList->getNext();
 
     delete pList;
 }
@@ -3054,7 +3048,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
         //
         case VK_F1: {
             GamePause();
-            CSound::WaitWaveSounds();
+            CSound::waitWaveSounds();
             CRules  RulesDlg(this, "arch.txt", m_pGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL));
             RulesDlg.DoModal();
 
@@ -3169,7 +3163,7 @@ VOID CMainWindow::OnClose()
     
     ClipCursor(NULL);                           // release mouse limits
     
-    CSound::ClearSounds();                      // stop and delete all CSounds
+    CSound::clearSounds();                      // stop and delete all CSounds
 
     ReleaseMasterSounds();                      // release pre-loaded WAVs
 
@@ -3250,7 +3244,7 @@ VOID CMainWindow::GamePause(VOID)
     m_bPause = TRUE;
     if (m_bMoveMode) {
         m_bMoveMode = FALSE;
-        ::SetCursor(::LoadCursor(NULL, IDC_ARROW));
+        MFC::SetCursor(LoadCursor(NULL, IDC_ARROW));
     }
 };
 

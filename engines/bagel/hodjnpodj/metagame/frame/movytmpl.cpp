@@ -121,16 +121,16 @@
 *                             
  ****************************************************************/
 
-#include <afxwin.h>                     
-#include <afxext.h>     
+#include "bagel/afxwin.h"                     
+     
 #include <stdlib.h>
-#include <mmsystem.h>
+
 #include "movytmpl.h"
 #include <mciavi.h>              // search path: \vfwdk\inc               ; VideoForWindows SDK
 #include <digitalv.h>             // search path: \vfwdk\inc      
 #include <vfw.h>
-#include <stdinc.h>
-#include <bitmaps.h>      
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"      
 
 #define WINDOW_WIDTH	640
 #define WINDOW_HEIGHT	480

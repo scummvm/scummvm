@@ -21,11 +21,11 @@
 #ifndef USERCFG_H
 #define USERCFG_H
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <button.h>
-#include <cbofdlg.h>
-#include <text.h>
+#include "bagel/afxwin.h"
+
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 #include "main.h"
 
 #define RGBCOLOR_DARKRED	RGB(0, 128, 0)

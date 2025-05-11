@@ -244,13 +244,13 @@ char	cDisplay[30];
 
 	switch ( m_nWhichMsg ) {
 	    case 1:
-	    	wsprintf( cDisplay, "Level %i Cleared!", m_nLevel );
+	    	Common::sprintf_s( cDisplay, "Level %i Cleared!", m_nLevel );
 	    	txtLine1.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
-	    	wsprintf( cDisplay, "Current Score: %li", m_lCurrentScore );
+	    	Common::sprintf_s( cDisplay, "Current Score: %li", m_lCurrentScore );
 	    	txtLine3.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
 			break;
 	    case 2:
-	    	wsprintf( cDisplay, "Final Score: %li", m_lCurrentScore );
+	    	Common::sprintf_s( cDisplay, "Final Score: %li", m_lCurrentScore );
 	    	txtLine1.DisplayString( pDC, "Congratulations!", 21, FW_BOLD ); 
 	    	txtLine2.DisplayString( pDC, "All Levels Cleared.", 21, FW_BOLD ); 
 	    	txtLine3.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
@@ -258,24 +258,24 @@ char	cDisplay[30];
 	    case 3:
 	    	txtLine1.DisplayString( pDC, "You Died!", 21, FW_BOLD ); 
 			if ( m_nLevel == 1 ) {
-		    	wsprintf( cDisplay, "You have %i life left.", m_nLevel );
+		    	Common::sprintf_s( cDisplay, "You have %i life left.", m_nLevel );
 			}
 			else {
-		    	wsprintf( cDisplay, "You have %i lives left.", m_nLevel );
+		    	Common::sprintf_s( cDisplay, "You have %i lives left.", m_nLevel );
 			}
 	    	txtLine2.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
-	    	wsprintf( cDisplay, "Current Score: %li", m_lCurrentScore );
+	    	Common::sprintf_s( cDisplay, "Current Score: %li", m_lCurrentScore );
 	    	txtLine3.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
 			break;
 	    case 4:
-	    	wsprintf( cDisplay, "Final Score: %li", m_lCurrentScore );
+	    	Common::sprintf_s( cDisplay, "Final Score: %li", m_lCurrentScore );
 	    	txtLine1.DisplayString( pDC, "Game over.", 21, FW_BOLD ); 
 	    	txtLine3.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
 			break;
 	    case 5:
-	    	wsprintf( cDisplay, "Level Cleared!", m_nLevel );
+	    	Common::sprintf_s( cDisplay, "Level Cleared!", m_nLevel );
 	    	txtLine1.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
-	    	wsprintf( cDisplay, "Final Score: %li", m_lCurrentScore );
+	    	Common::sprintf_s( cDisplay, "Final Score: %li", m_lCurrentScore );
 	    	txtLine3.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
 			break;
 	}

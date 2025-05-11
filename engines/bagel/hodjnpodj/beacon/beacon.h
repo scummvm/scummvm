@@ -22,7 +22,7 @@
 #ifndef __game_H__
 #define __game_H__
 
-#include <sound.h>
+#include "bagel/boflib/sound.h"
 
 #define ABS(a)		( (a > 0) ? (a) : (-a) )
 

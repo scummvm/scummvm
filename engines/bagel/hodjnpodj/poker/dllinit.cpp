@@ -25,7 +25,7 @@
  *
  ****************************************************************/
 
-#include <afxwin.h>
+#include "bagel/afxwin.h"
 #include "resource.h"
 #include "poker.h" 
 
@@ -69,7 +69,7 @@ CPalette                    *pTestPalette = NULL;
  *
  ****************************************************************/
 extern "C" 
-HWND FAR PASCAL _export RunPoker( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
+HWND FAR PASCAL RunPoker( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 {
 
 // if the pointer has garbage in it, the clean it out
@@ -86,8 +86,8 @@ HWND FAR PASCAL _export RunPoker( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 //  pcwndPoker->SetBet( 0 ); 
 
 // return the handle to this window
-    hDLLInst = (HINSTANCE)::GetWindowWord( pcwndPoker->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)::GetWindowWord( hParentWnd, GWW_HINSTANCE);  
+    hDLLInst = (HINSTANCE)GetWindowWord( pcwndPoker->m_hWnd, GWW_HINSTANCE);
+    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);  
     if ( lpGameInfo->bPlayingMetagame == FALSE ) {
         pcwndPoker->UpdateWindow();
         ::PostMessage( pcwndPoker->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );

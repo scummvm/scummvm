@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <ctype.h>
+
 
 #include <windows.h>		// for DebugBreak() function
 
@@ -1116,7 +1116,7 @@ VOID dbgDumpWindowInfo(HWND hWnd, DWORD dwlpWddb)
     GetWindowRect(hWnd, &stRect) ;	// get window coordinates
     lstrcpy(szDebugString,
 			"\n****************************************") ;
-    wsprintf(szDebugString + lpWddb->iDepth + 1,
+    Common::sprintf_s(szDebugString + lpWddb->iDepth + 1,
 	    " %04x %s:%s (%d,%d,%d,%d)",
 		hWnd, (LPSTR)szMessageClass,
 		(LPSTR)szCaption, stRect.left, stRect.top,

@@ -23,8 +23,8 @@
 #define HODJNPODJ_METAGAME_GTL_SAVEGAME_H
 
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
-//#include <stdinc.h>
-//#include <errors.h>
+//#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+//#include "bagel/boflib/error.h"
 
 namespace Bagel {
 namespace HodjNPodj {

@@ -30,15 +30,15 @@
  ****************************************************************/
 
 #include "stdafx.h"
-#include <mmsystem.h>
+
 #include <io.h>
 #include <direct.h>
 #include <sys\types.h>
 #include <sys\stat.h>
 #include <stdlib.h>
 
-#include <assert.h>
-#include <misc.h>
+
+#include "bagel/boflib/misc.h"
 
 #include "invent.h"
 #include "item.h"
@@ -271,7 +271,7 @@ CHodjPodjWindow::CHodjPodjWindow()
 
     WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, NULL, NULL, NULL);
 
-    srand( (unsigned)time( NULL ));
+    //srand( (unsigned)time( NULL ));
 
 #ifdef _DEBUG
     MainRect.left = 0;
@@ -808,7 +808,7 @@ CWinApp *pMyApp;
     hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 
     if (hNewCursor != NULL);
-        ::SetCursor(hNewCursor);
+        MFC::SetCursor(hNewCursor);
 
     CWnd::OnMouseMove(nFlags, point);
 }
@@ -1325,7 +1325,7 @@ LPARAM CHodjPodjWindow::UpdateChallengePhase(LPARAM lParam)
         if (( lpMetaGame->m_stGameStruct.bPlayingHodj ) && ( lpMetaGame->m_cPodj.m_bComputer)){
         int nGameIndex;
         do {
-            nGameIndex = rand() % ( MG_GAME_COUNT - 1 );
+            nGameIndex = brand() % ( MG_GAME_COUNT - 1 );
         } while ( CMgStatic::cGameTable[nGameIndex].m_lpszDllName == NULL );
         nGameID = (LPARAM)(nGameIndex + MG_GAME_BASE);
             {
@@ -1491,7 +1491,7 @@ void CHodjPodjWindow::SetComputerScore()
     for ( i = 0; i < BELLCURVE; i++ ) {
         bTemp = FALSE;
         do {
-            j = rand() % BELLCURVE;
+            j = brand() % BELLCURVE;
             if ( anScrambledCurve[j] == 0 ) {
         anScrambledCurve[j] = (int)anBellCurve[i];
                 bTemp = TRUE;
@@ -1734,13 +1734,13 @@ void CHodjPodjWindow::SetComputerScore()
             }
 
 CALCSCORE:
-        nBellScore = (int)anBellCurve[rand() % BELLCURVE];
+        nBellScore = (int)anBellCurve[brand() % BELLCURVE];
         lpMetaGame->m_stGameStruct.lScore = ((((( nTopScore - nBottomScore ) * 10 ) / 19 ) * nBellScore ) / 10 ) + nBottomScore; 
 ENDCASE:
         break;
 
     case  MG_GAME_PEGGLEBOZ : // number
-        i = rand() % 100;
+        i = brand() % 100;
         lpMetaGame->m_stGameStruct.lScore = 1;
 
         if ( i < 5 )
@@ -1842,10 +1842,10 @@ long CHodjPodjWindow::DetermineChallengeScore()
     }
 
     if ( nChallengeGame == MG_GAME_VIDEOPOKER ) {
-        wsprintf( cTemp, "%li", lReturn );
+        Common::sprintf_s( cTemp, "%li", lReturn );
     }
     else {
-        wsprintf( cTemp, "%li / 100", lReturn );
+        Common::sprintf_s( cTemp, "%li / 100", lReturn );
     }
 
     if ( lpMetaGame->m_stGameStruct.bPlayingHodj ) {
@@ -2197,7 +2197,7 @@ void CHodjPodjWindow::OnClose()
 
 void CHodjPodjWindow::ReleaseResources(void)
 {
-    CSound::ClearSounds();
+    CSound::clearSounds();
     
     if (bMetaLoaded) {
     if ( hMetaInst > HINSTANCE_ERROR ) {
@@ -2356,7 +2356,7 @@ VOID InitBFCInfo(CBfcMgr *pBfcMgr)
 
         if ((pPlayer->m_pBlackMarket = new CInventory("Black Market")) != NULL) {
         for  ( i = 0; i < ITEMS_IN_BLACK_MARKET; i ++ ) {
-            j = rand() % pPlayer->m_pGenStore->ItemCount();
+            j = brand() % pPlayer->m_pGenStore->ItemCount();
             pItem = pPlayer->m_pGenStore->FetchItem( j );
             pPlayer->m_pGenStore->RemoveItem( pItem );
 

@@ -502,7 +502,7 @@ PUBLIC BOOL FAR PASCAL CMnkWindow::UserDialog(void) ;
 //- CMnkWindow::OptionsDialog -- call options dialog
 PRIVATE BOOL CMnkWindow::OptionsDialog(void) ;
 
-//PRIVATE BOOL CALLBACK _export CMnkWindow::ResetPitsDlgProc(HWND, UINT, WPARAM, LPARAM);
+//PRIVATE BOOL CALLBACK CMnkWindow::ResetPitsDlgProc(HWND, UINT, WPARAM, LPARAM);
 
 
 

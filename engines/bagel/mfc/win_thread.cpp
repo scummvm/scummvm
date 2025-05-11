@@ -27,5 +27,9 @@ namespace MFC {
 
 IMPLEMENT_DYNAMIC(CWinThread, CCmdTarget)
 
+BOOL CWinThread::OnIdle(LONG lCount) {
+	return FALSE;
+}
+
 } // namespace MFC
 } // namespace Bagel

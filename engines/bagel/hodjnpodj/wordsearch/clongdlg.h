@@ -19,8 +19,8 @@
 #ifndef C1BTNDLG_H
 #define C1BTNDLG_H
 
-#include <afxwin.h>
-#include <afxext.h>
+#include "bagel/afxwin.h"
+
 
 #define CBUTTON1 IDOK
 #define CBUTTON2 IDCANCEL

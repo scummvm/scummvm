@@ -19,8 +19,8 @@
 #ifndef DIALOGS_H
 #define DIALOGS_H
 
-#include <cbofdlg.h>
-#include <button.h>
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "hodjpodj.h"
 #include "bfc.h"
 

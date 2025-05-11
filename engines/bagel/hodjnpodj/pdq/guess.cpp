@@ -1,9 +1,9 @@
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <bitmaps.h>
-#include <assert.h>
-#include <cbofdlg.h>
+#include "bagel/afxwin.h"
+
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "main.h"
 #include "guess.h"
 #include "game.h"

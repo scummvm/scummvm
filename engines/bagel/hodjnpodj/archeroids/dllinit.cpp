@@ -19,11 +19,10 @@
  *
  */
 
-#include <afxwin.h>
-#include <gamedll.h>
-#include "resource.h"
-#include "dllinit.h"
-#include "main.h"
+#include "bagel/afxwin.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
+#include "bagel/hodjnpodj/archeroids/dllinit.h"
+#include "bagel/hodjnpodj/archeroids/main.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -66,9 +65,7 @@ extern LPGAMESTRUCT pGameParams;
  *
  ****************************************************************/
  
-extern "C" 
-HWND FAR PASCAL _export RunArch( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
-{
+HWND FAR PASCAL RunArch( HWND hParentWnd, LPGAMESTRUCT lpGameInfo ) {
     CMainWindow *pMainWnd;
 
     pGameParams = lpGameInfo;
@@ -91,96 +88,13 @@ HWND FAR PASCAL _export RunArch( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
     }
 
     // these must be set in this function
-    hDLLInst = (HINSTANCE)::GetWindowWord( pMainWnd->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)::GetWindowWord( hParentWnd, GWW_HINSTANCE);
+    hDLLInst = (HINSTANCE)GetWindowWord( pMainWnd->m_hWnd, GWW_HINSTANCE);
+    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
 
     return pMainWnd->m_hWnd;   // return the m_hWnd of your main game window
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// DLL initialization
-// this was take straight from the MSVC MFC Sample DLLTRACE
-
-class CTracerDLL : public CWinApp
-{
-public:
-    virtual BOOL InitInstance(); // Initialization
-    virtual int ExitInstance();  // Termination (WEP-like code)
-
-    // nothing special for the constructor
-    CTracerDLL(const char* pszAppName)
-        : CWinApp(pszAppName)
-        { }
-};
-
-/*****************************************************************
- *
- * InitInstance
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *      This routine is automatically called when the application is
- *      started. Use this InitInstance instead of your own 
- *   
- * FORMAL PARAMETERS:
- *
- *      n/a
- *
- * IMPLICIT INPUT PARAMETERS:
- *  
- *      n/a
- *   
- * IMPLICIT OUTPUT PARAMETERS:
- *   
- *      n/a
- *   
- * RETURN VALUE:
- *
- *      BOOL            Success (TRUE) / Failure (FALSE) status
- *
- ****************************************************************/
-BOOL CTracerDLL::InitInstance()
-{
-    // gray dialogs
-    SetDialogBkColor();
-
-    return TRUE;
-}
-
-/*****************************************************************
- *
- * ExitInstance
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *      This routine is automatically called when the application is
- *      being terminated. 
- *   
- * FORMAL PARAMETERS:
- *
- *      n/a
- *
- * IMPLICIT INPUT PARAMETERS:
- *  
- *      n/a
- *   
- * IMPLICIT OUTPUT PARAMETERS:
- *   
- *      n/a
- *   
- * RETURN VALUE:
- *
- *      int                     Success (0) / Failure status
- *
- ****************************************************************/
-int CTracerDLL::ExitInstance()
-{
-    return(0);
-}
-
-
-extern "C" BOOL FAR PASCAL _export FilterDllMsg(LPMSG lpMsg)
-{
+BOOL FAR PASCAL FilterDllMsg(LPMSG lpMsg) {
     TRY
     {
         return AfxGetApp()->PreTranslateMessage(lpMsg);
@@ -189,8 +103,7 @@ extern "C" BOOL FAR PASCAL _export FilterDllMsg(LPMSG lpMsg)
     return FALSE;
 }
 
-extern "C" void FAR PASCAL _export ProcessDllIdle()
-{
+void FAR PASCAL ProcessDllIdle() {
     TRY
     {
         // flush it all at once

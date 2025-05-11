@@ -25,11 +25,11 @@
 #include <stdafx.h>
 #include <time.h>
 #include <fstream.h> 
-#include <mmsystem.h>
+
 #include <dos.h>
 
-#include <sound.h>
-#include <misc.h>
+#include "bagel/boflib/sound.h"
+#include "bagel/boflib/misc.h"
 #include "gamedll.h"                      
 #include "resource.h"
 #include "globals.h"
@@ -146,7 +146,7 @@ CMainWindow::CMainWindow()
 	pScratch2DC->CreateCompatibleDC( pDC );                             //...bitmap and DC
 	pOldBmp2 = pScratch2DC->SelectObject( pScratch2 );
 	
-	srand((unsigned) time(NULL));			// seed the random number generator 
+	//srand((unsigned) time(NULL));			// seed the random number generator 
 
 	InitValues();		// Set the default values of global variables
 	m_bPlaying = FALSE;
@@ -195,14 +195,14 @@ CMainWindow::CMainWindow()
         if (pGameInfo->bMusicEnabled) {
             pGameSound = new CSound( this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
             if (pGameSound != NULL) {
-                (*pGameSound).MidiLoopPlaySegment( 2300, 32000, 0, FMT_MILLISEC );
+                (*pGameSound).midiLoopPlaySegment( 2300, 32000, 0, FMT_MILLISEC );
             } // end if pGameSound
         }
     } else {
         if (pGameInfo->bMusicEnabled) {
             pGameSound = new CSound( this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
             if (pGameSound != NULL) {
-                (*pGameSound).MidiLoopPlaySegment( 2300, 32000, 0, FMT_MILLISEC );
+                (*pGameSound).midiLoopPlaySegment( 2300, 32000, 0, FMT_MILLISEC );
             } // end if pGameSound
         }
 		PostMessage( WM_COMMAND, IDC_SCROLL, BN_CLICKED);		// Activate the Options dialog
@@ -469,7 +469,7 @@ if ( (HIWORD( lParam ) == BN_CLICKED) && !m_bShowOutOfPlace ) {
 	switch (wParam) {
 
 		case IDC_RULES:
-			CSound::WaitWaveSounds();				
+			CSound::waitWaveSounds();				
 
 			m_bIgnoreScrollClick = TRUE;
 			(*m_pScrollButton).SendMessage( BM_SETSTATE, TRUE, 0L );
@@ -550,7 +550,7 @@ if ( (HIWORD( lParam ) == BN_CLICKED) && !m_bShowOutOfPlace ) {
 			//    
 		   	if((pGameInfo->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
 		   		if (pGameSound->Playing())
-		   			pGameSound->Stop();
+		   			pGameSound->stop();
 		   	} 
 		   	else if( pGameInfo->bMusicEnabled ){
 		   		if (pGameSound == NULL) { 
@@ -558,7 +558,7 @@ if ( (HIWORD( lParam ) == BN_CLICKED) && !m_bShowOutOfPlace ) {
 				}
 				if (pGameSound != NULL) {
 					if ( !pGameSound->Playing() )
-       					(*pGameSound).MidiLoopPlaySegment( 2300, 32000, 0, FMT_MILLISEC );
+       					(*pGameSound).midiLoopPlaySegment( 2300, 32000, 0, FMT_MILLISEC );
 				} // end if pGameSound
 		   	}
 
@@ -1362,7 +1362,7 @@ int i, pick;
 	nNumEntries = atoi( chNumEntries );
 	pick = nLastPick;
 	while ( pick == nLastPick ) {
-		pick = (rand() % nNumEntries) + 1;
+		pick = (brand() % nNumEntries) + 1;
 	}
  
 	for ( i = 0; i < pick; i++ ) {
@@ -1485,8 +1485,8 @@ int i, pick;
 			ScrTwo.y = r * m_nHeight;
 			bAssigning = TRUE;
 			while( bAssigning ) {
-				x = rand() % m_nColumns;			// 0 thru m_nColumns - 1 
-				y = rand() % m_nRows;				// 0 thru m_nRows - 1
+				x = brand() % m_nColumns;			// 0 thru m_nColumns - 1 
+				y = brand() % m_nRows;				// 0 thru m_nRows - 1
 				bAssigning = bCheckGrid[x][y];
 			}
 			bCheckGrid[x][y] = TRUE;
@@ -1877,7 +1877,7 @@ void CMainWindow::OnClose()
 		pGameSound = NULL;
 	}
 	
-	CSound::ClearSounds();						// Make sure it's cleared before returning to Metagame
+	CSound::clearSounds();						// Make sure it's cleared before returning to Metagame
 
 	if (m_pScrollButton != NULL)
 		delete m_pScrollButton; 

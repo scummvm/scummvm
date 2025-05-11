@@ -21,14 +21,14 @@
 #define __hodjpodj_H__
 
 #include <time.h>
-#include <globals.h>
+#include "bagel/hodjnpodj/globals.h"
 #include "resource.h"
-#include <dibdoc.h>
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
 #include <dibapi.h>
-#include <bitmaps.h>
-#include <text.h>
-#include <errors.h>
-#include <stdinc.h>
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/boflib/error.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
 
 #include "gamedll.h"
 

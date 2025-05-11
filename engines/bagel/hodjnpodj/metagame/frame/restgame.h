@@ -22,8 +22,8 @@
 #define RESTGAME_H
 
 #include "bfc.h"
-#include <stdinc.h>
-#include <errors.h>
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/boflib/error.h"
 
 // prototypes
 //

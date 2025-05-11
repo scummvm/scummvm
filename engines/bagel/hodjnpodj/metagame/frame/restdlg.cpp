@@ -42,10 +42,10 @@
 *       [list members of the class with one line descriptions]
 *
 ****************************************************************/
-#include <afxwin.h>
-#include <afxext.h>
-#include <assert.h>
-#include <stdinc.h>
+#include "bagel/afxwin.h"
+
+
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
 
 #include "restdlg.h"
 #include "resource.h"

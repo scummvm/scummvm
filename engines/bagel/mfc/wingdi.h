@@ -526,6 +526,15 @@ extern int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestH
 
 extern WORD GetWindowWord(HWND hWnd, int nIndex);
 extern int WINAPI AddFontResource(LPCSTR fontName);
+extern int SetScrollPos(HWND hWnd, int nBar,
+	int nPos, BOOL bRedraw);
+extern BOOL SetScrollRange(HWND hWnd, int nBar,
+	int nMinPos, int nMaxPos, BOOL bRedraw);
+
+extern BOOL ClipCursor(const RECT *lpRect);
+extern BOOL GetCursorPos(LPPOINT lpPoint);
+extern BOOL SetCursorPos(int x, int y);
+extern BOOL ReleaseCapture();
 
 } // namespace MFC
 } // namespace Bagel

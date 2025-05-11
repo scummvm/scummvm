@@ -4,8 +4,8 @@
 #ifndef __bgb_H__
 #define __bgb_H__
 
-#include <llist.h>
-#include <stdinc.h>
+#include "bagel/boflib/llist.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
 
 #include "bsutl.h"
 

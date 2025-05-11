@@ -401,40 +401,40 @@ char	cDisplay[64];
 
     switch ( m_nGameTime ) {
     	case 1:
-    		wsprintf( cDisplay, "%s15 Seconds", strTime );
+    		Common::sprintf_s( cDisplay, "%s15 Seconds", strTime );
     		break;
     	case 2:
-    		wsprintf( cDisplay, "%s30 Seconds", strTime );
+    		Common::sprintf_s( cDisplay, "%s30 Seconds", strTime );
     		break;
     	case 3:
-    		wsprintf( cDisplay, "%s45 Seconds", strTime );
+    		Common::sprintf_s( cDisplay, "%s45 Seconds", strTime );
     		break;
     	case 4:
-    		wsprintf( cDisplay, "%s60 Seconds", strTime );
+    		Common::sprintf_s( cDisplay, "%s60 Seconds", strTime );
     		break;
     	case 5:
-    		wsprintf( cDisplay, "%s75 Seconds", strTime );
+    		Common::sprintf_s( cDisplay, "%s75 Seconds", strTime );
     		break;
     	case 6:
-    		wsprintf( cDisplay, "%s90 Seconds", strTime );
+    		Common::sprintf_s( cDisplay, "%s90 Seconds", strTime );
     		break;
     	case 7:
-    		wsprintf( cDisplay, "%s2 Minutes", strTime );
+    		Common::sprintf_s( cDisplay, "%s2 Minutes", strTime );
     		break;
     	case 8:
-    		wsprintf( cDisplay, "%s3 Minutes", strTime );
+    		Common::sprintf_s( cDisplay, "%s3 Minutes", strTime );
     		break;
     	case 9:
-    		wsprintf( cDisplay, "%s4 Minutes", strTime );
+    		Common::sprintf_s( cDisplay, "%s4 Minutes", strTime );
     		break;
     	case 10:
-    		wsprintf( cDisplay, "%s5 Minutes", strTime );
+    		Common::sprintf_s( cDisplay, "%s5 Minutes", strTime );
     		break;
     	case 11:
-    		wsprintf( cDisplay, "%s10 Minutes", strTime );
+    		Common::sprintf_s( cDisplay, "%s10 Minutes", strTime );
     		break;
     	default:
-    		wsprintf( cDisplay, "%sUnlimited", strTime );
+    		Common::sprintf_s( cDisplay, "%sUnlimited", strTime );
     		break;
     }
 
@@ -533,40 +533,40 @@ CString	strTime = "Time Limit:  ";
 		m_nGameTime = newAmnt;
 	    switch ( m_nGameTime ) {
 	    	case 1:
-	    		wsprintf( cDisplay, "%s15 Seconds", strTime );
+	    		Common::sprintf_s( cDisplay, "%s15 Seconds", strTime );
 	    		break;
 	    	case 2:
-	    		wsprintf( cDisplay, "%s30 Seconds", strTime );
+	    		Common::sprintf_s( cDisplay, "%s30 Seconds", strTime );
 	    		break;
 	    	case 3:
-	    		wsprintf( cDisplay, "%s45 Seconds", strTime );
+	    		Common::sprintf_s( cDisplay, "%s45 Seconds", strTime );
 	    		break;
 	    	case 4:
-	    		wsprintf( cDisplay, "%s60 Seconds", strTime );
+	    		Common::sprintf_s( cDisplay, "%s60 Seconds", strTime );
 	    		break;
 	    	case 5:
-	    		wsprintf( cDisplay, "%s75 Seconds", strTime );
+	    		Common::sprintf_s( cDisplay, "%s75 Seconds", strTime );
 	    		break;
 	    	case 6:
-	    		wsprintf( cDisplay, "%s90 Seconds", strTime );
+	    		Common::sprintf_s( cDisplay, "%s90 Seconds", strTime );
 	    		break;
 	    	case 7:
-	    		wsprintf( cDisplay, "%s2 Minutes", strTime );
+	    		Common::sprintf_s( cDisplay, "%s2 Minutes", strTime );
 	    		break;
 	    	case 8:
-	    		wsprintf( cDisplay, "%s3 Minutes", strTime );
+	    		Common::sprintf_s( cDisplay, "%s3 Minutes", strTime );
 	    		break;
 	    	case 9:
-	    		wsprintf( cDisplay, "%s4 Minutes", strTime );
+	    		Common::sprintf_s( cDisplay, "%s4 Minutes", strTime );
 	    		break;
 	    	case 10:
-	    		wsprintf( cDisplay, "%s5 Minutes", strTime );
+	    		Common::sprintf_s( cDisplay, "%s5 Minutes", strTime );
 	    		break;
 	    	case 11:
-	    		wsprintf( cDisplay, "%s10 Minutes", strTime );
+	    		Common::sprintf_s( cDisplay, "%s10 Minutes", strTime );
 	    		break;
 	    	default:
-	    		wsprintf( cDisplay, "%sUnlimited", strTime );
+	    		Common::sprintf_s( cDisplay, "%sUnlimited", strTime );
 	    		break;
 	    }
 

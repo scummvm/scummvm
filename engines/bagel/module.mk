@@ -32,6 +32,7 @@ MODULE_OBJS = \
 	mfc/gdi_object.o \
 	mfc/global_functions.o \
 	mfc/ifstream.o \
+	mfc/joystickapi.o \
 	mfc/object.o \
 	mfc/paint_dc.o \
 	mfc/palette.o \
@@ -146,6 +147,9 @@ MODULE_OBJS = \
 	hodjnpodj/hnplibs/text.o \
 	hodjnpodj/libs/settings.o \
 	hodjnpodj/libs/vector.o \
+	hodjnpodj/archeroids/dllinit.o \
+	hodjnpodj/archeroids/main.o \
+	hodjnpodj/archeroids/usercfg.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o

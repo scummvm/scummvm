@@ -31,8 +31,8 @@
  ****************************************************************/
 
 #include "stdafx.h"
-#include <bitmaps.h>
-#include <sprite.h>
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
 
 #include "globals.h"
 #include "pnt_gram.h"

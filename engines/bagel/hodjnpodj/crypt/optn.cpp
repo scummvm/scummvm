@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
-#include <button.h>
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "optn.h"
 
 #ifdef _DEBUG

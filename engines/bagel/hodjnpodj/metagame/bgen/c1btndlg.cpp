@@ -19,12 +19,12 @@
  *
  */
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <assert.h>
-#include <cbofdlg.h>
-#include <text.h>
-#include <button.h>
+#include "bagel/afxwin.h"
+
+
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "c1btndlg.h"
 
 namespace Bagel {

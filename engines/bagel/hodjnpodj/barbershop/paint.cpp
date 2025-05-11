@@ -34,7 +34,7 @@
 
 #include "paint.h"
 #include "barb.h"
-#include <bitmaps.h>
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 
 /*****************************************************************
  *

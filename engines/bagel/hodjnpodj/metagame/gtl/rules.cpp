@@ -75,7 +75,7 @@
  ****************************************************************/
 
 #include "stdafx.h"
-#include <mmsystem.h>
+
 #include "rules.h"
 #include "globals.h"
 #include "button.h"
@@ -120,7 +120,7 @@ static char BASED_CODE THIS_FILE[] = __FILE__;
 #if BUILD_FOR_DLL
 
 extern "C" {
-LRESULT FAR PASCAL _export KeyboardHookProc(int,WORD,LONG);		// keyboard hook procedure definition
+LRESULT FAR PASCAL KeyboardHookProc(int,WORD,LONG);		// keyboard hook procedure definition
 }
 typedef LRESULT (FAR PASCAL *FPKBDHOOKPROC) ( int, WORD, LONG );
 extern 	HINSTANCE	hDLLInst;
@@ -274,7 +274,7 @@ void CRules::RemoveKeyboardHook(void)
 
 #if BUILD_FOR_DLL
 extern "C" 
-LRESULT FAR PASCAL _export KeyboardHookProc(int code, WORD wParam, LONG lParam)
+LRESULT FAR PASCAL KeyboardHookProc(int code, WORD wParam, LONG lParam)
 {
 	if (code < 0)									// required to punt to next hook
 		return(CallNextHookEx((HHOOK) lpfnKbdHook,code,wParam,lParam));
@@ -382,7 +382,7 @@ CWinApp	*pMyApp;
 	pMyApp = AfxGetApp();
 	hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 	if (hNewCursor != NULL);
-		::SetCursor(hNewCursor);
+		MFC::SetCursor(hNewCursor);
 
     if (pNarrative != NULL)							// end the narration
 		delete pNarrative;
@@ -1571,7 +1571,7 @@ CWinApp	*pMyApp;
 		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 
 	if (hNewCursor != NULL);
-		::SetCursor(hNewCursor);
+		MFC::SetCursor(hNewCursor);
 	
 	CDialog::OnMouseMove(nFlags, point);
 }

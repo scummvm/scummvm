@@ -243,7 +243,7 @@ char	cDisplay[30];
 
 	switch ( m_nWhichMsg ) {
 	    case 1:
-    		wsprintf( cDisplay, "Score:  %li", m_lScore );
+    		Common::sprintf_s( cDisplay, "Score:  %li", m_lScore );
 //	    	txtLine1.DisplayString( pDC, "", 21, FW_BOLD ); 
 	    	txtLine2.DisplayString( pDC, "Game over.", 21, FW_BOLD ); 
 	    	txtLine3.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 

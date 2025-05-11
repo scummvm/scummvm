@@ -7,10 +7,10 @@
 
 
 #include "stdafx.h"
-#include <assert.h>
+
 //#include "options.h"
-#include <cbofdlg.h>
-#include <button.h>
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bitmaps.h"
 
 

@@ -47,7 +47,7 @@ static char BASED_CODE THIS_FILE[] = __FILE__;
 extern CBfcMgr      *lpMetaGameStruct;
 
 extern "C" {
-LRESULT FAR PASCAL _export NotebookHookProc(int,WORD,LONG);	// keyboard hook procedure definition
+LRESULT FAR PASCAL NotebookHookProc(int,WORD,LONG);	// keyboard hook procedure definition
 }
 
 extern 	HINSTANCE	hDLLInst;
@@ -785,7 +785,7 @@ CWinApp	*pMyApp = NULL;
 		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 
 	ASSERT(hNewCursor != NULL);						// force the cursor change
-	::SetCursor(hNewCursor);
+	MFC::SetCursor(hNewCursor);
 	
 	CDialog::OnMouseMove(nFlags, point);            // do standard mouse move behavior
 }

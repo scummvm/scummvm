@@ -79,8 +79,8 @@
 
 #include "stdafx.h"
 #include <time.h>
-#include <mmsystem.h>
-#include <cmessbox.h>
+
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "misc.h"
 #include "resource.h"
 #include "gamedll.h"
@@ -250,11 +250,11 @@ ASSERT(bSuccess);
 (*pCursorSprite).SetMasked(TRUE);
 (*pCursorSprite).SetMobile(TRUE);
 
-	srand((unsigned)time(NULL));
+	//srand((unsigned)time(NULL));
 
 	if ((*pGameInfo).bPlayingMetagame)
 		bRandomBoard = TRUE;
-//		BoardSelected = (rand() % BOARD_COUNT) + BOARD_BASE;
+//		BoardSelected = (brand() % BOARD_COUNT) + BOARD_BASE;
 
 	SetUpBoard(pDC);
 	
@@ -264,7 +264,7 @@ ASSERT(bSuccess);
 	if ((*pGameInfo).bMusicEnabled) {
 		if (pGameSound = new CSound( this, GAME_THEME, 
 										SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END ) ) {
-			(*pGameSound).MidiLoopPlaySegment( 1000, 30000, 0, FMT_MILLISEC );
+			(*pGameSound).midiLoopPlaySegment( 1000, 30000, 0, FMT_MILLISEC );
 		} // end if pGameSound
 	}
 	
@@ -352,7 +352,7 @@ CSprite::EraseSprites(pDC);
 CSprite::FlushSpriteChain();
 
 if (bRandomBoard)											// want a random board selected
-	BoardSelected = (rand() % BOARD_COUNT) + BOARD_BASE;
+	BoardSelected = (brand() % BOARD_COUNT) + BOARD_BASE;
 
 switch(BoardSelected) {
 	case CROSS_PLUS:
@@ -500,12 +500,12 @@ if (HIWORD(lParam) == BN_CLICKED) {
 					pGameSound = new CSound( this, GAME_THEME, 
 											SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 					if (pGameSound != NULL)
-						(*pGameSound).MidiLoopPlaySegment( 6370, 33000, 0, FMT_MILLISEC );
+						(*pGameSound).midiLoopPlaySegment( 6370, 33000, 0, FMT_MILLISEC );
 				}
 			} // end if pGameSound
 			else { 
 				if (pGameSound != NULL) {
-					pGameSound->Stop();
+					pGameSound->stop();
 					delete pGameSound;
 					pGameSound = NULL;
 				}
@@ -646,7 +646,7 @@ CRect	bottleRect,
 	}
 	else
 	if (dartRect.PtInRect(myPoint)) {
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		sndPlaySound( NULL, 0 );
 		pDC = GetDC();
 		pSprite = new CSprite;
@@ -680,7 +680,7 @@ CRect	bottleRect,
 	}
 	else
 	if (kegRect.PtInRect(myPoint)) {
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		sndPlaySound( NULL, 0 );
 		pDC = GetDC();
 		pSprite = new CSprite;
@@ -715,7 +715,7 @@ CRect	bottleRect,
 	}
 	else
 	if (stoolRect.PtInRect(myPoint)) {
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		sndPlaySound( NULL, 0 );
 		pDC = GetDC();
 		pSprite = new CSprite;
@@ -749,7 +749,7 @@ CRect	bottleRect,
 	}
 	else
 	if ( oarRect.PtInRect(myPoint) && (*pGameInfo).bSoundEffectsEnabled ) {
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		sndPlaySound( NULL, 0 );
 		pEffect = new CSound( (CWnd *)this, OAR_SOUND,								// Load up the sound file as a 
 									SOUND_WAVE | SOUND_QUEUE |  SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
@@ -761,7 +761,7 @@ CRect	bottleRect,
 	}
 	else
 	if (netRect.PtInRect(myPoint) && (*pGameInfo).bSoundEffectsEnabled) {
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		sndPlaySound( NULL, 0 );
 		pEffect = new CSound( (CWnd *)this, NET_SOUND,								// Load up the sound file as a 
 									SOUND_WAVE | SOUND_QUEUE |  SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
@@ -773,7 +773,7 @@ CRect	bottleRect,
 	}
 	else
 	if (signRect.PtInRect(myPoint) && (*pGameInfo).bSoundEffectsEnabled) {
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		sndPlaySound( NULL, 0 );
 		pEffect = new CSound( (CWnd *)this, SIGN_SOUND,								// Load up the sound file as a 
 									SOUND_WAVE | SOUND_QUEUE |  SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
@@ -785,7 +785,7 @@ CRect	bottleRect,
 	}
 	else
 	if (tableRect.PtInRect(myPoint) && (*pGameInfo).bSoundEffectsEnabled) {
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		sndPlaySound( NULL, 0 );
 		pEffect = new CSound( (CWnd *)this, TABLE_SOUND,								// Load up the sound file as a 
 									SOUND_WAVE | SOUND_QUEUE |  SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
@@ -797,7 +797,7 @@ CRect	bottleRect,
 	}
 	else
 	if ((candlenrRect.PtInRect(myPoint) || candlefrRect.PtInRect(myPoint)) && (*pGameInfo).bSoundEffectsEnabled) {
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		sndPlaySound( NULL, 0 );
 		pEffect = new CSound( (CWnd *)this, CANDLE_SOUND,								// Load up the sound file as a 
 									SOUND_WAVE | SOUND_QUEUE |  SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
@@ -1413,7 +1413,7 @@ CRect	myRect;
 	ReleaseDC(pDC);
 
 	if ((*pGameInfo).bMusicEnabled) {
-		CSound::ClearSounds();
+		CSound::clearSounds();
 	}
 
 	CFrameWnd ::OnClose();
@@ -1430,7 +1430,7 @@ CWinApp	*pMyApp;
 	hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 
 	ASSERT(hNewCursor != NULL);
-	::SetCursor(hNewCursor);
+	MFC::SetCursor(hNewCursor);
 }
 
 

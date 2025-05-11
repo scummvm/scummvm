@@ -30,7 +30,7 @@
  * 			n/a
  ****************************************************************/
 #include "stdafx.h"
-#include <button.h>
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "resource.h"
 #include "dialogs.h"
 

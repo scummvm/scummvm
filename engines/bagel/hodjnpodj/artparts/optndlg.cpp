@@ -20,7 +20,7 @@
  */
 
 #include <stdafx.h>
-#include <button.h>
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "globals.h"
 #include "resource.h"
 #include "artparts.h" 

@@ -25,7 +25,7 @@
  *
  ****************************************************************/
 
-#include <afxwin.h>
+#include "bagel/afxwin.h"
 #include "resource.h"
 #include "packrat.h" 
 
@@ -69,7 +69,7 @@ CPalette            *pTestPalette = NULL;
  *
  ****************************************************************/
 extern "C" 
-HWND FAR PASCAL _export RunPackRat( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
+HWND FAR PASCAL RunPackRat( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 {
 
 // if the pointer has garbage in it, the clean it out
@@ -83,8 +83,8 @@ HWND FAR PASCAL _export RunPackRat( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 //  pcwndPackRat->UpdateWindow();
     pcwndPackRat->SetActiveWindow(); 
 // return the handle to this window
-    hDLLInst = (HINSTANCE)::GetWindowWord( pcwndPackRat->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)::GetWindowWord( hParentWnd, GWW_HINSTANCE);  
+    hDLLInst = (HINSTANCE)GetWindowWord( pcwndPackRat->m_hWnd, GWW_HINSTANCE);
+    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);  
     if (lpGameInfo->bPlayingMetagame == FALSE)
         ::PostMessage( pcwndPackRat->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );
     return pcwndPackRat->m_hWnd;

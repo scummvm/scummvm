@@ -22,10 +22,10 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <stdinc.h>
-#include <errors.h>
+#include "bagel/afxwin.h"
+
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/boflib/error.h"
 
 #define MAX_PLENGTH   	25
 #define MAX_PLENGTH_S 	30

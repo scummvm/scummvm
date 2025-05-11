@@ -19,11 +19,11 @@
 
 #define IDD_TURNDLG			203
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <cbofdlg.h>
-#include <text.h>
-#include <button.h>
+#include "bagel/afxwin.h"
+
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 
 class CTurnDialog : public CBmpDialog
 {

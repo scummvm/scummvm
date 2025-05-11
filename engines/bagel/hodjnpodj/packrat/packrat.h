@@ -23,7 +23,7 @@
 #define OINK
 
 #include <time.h>
-#include <sound.h>
+#include "bagel/boflib/sound.h"
 #include "globals.h"
 #include "resource.h"
 #include "dibdoc.h"

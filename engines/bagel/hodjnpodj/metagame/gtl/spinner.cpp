@@ -263,7 +263,7 @@ int	Values[SPINNER_COUNT];
 			Values[i] = 0;                          // ... ahead for an empty spot as needed
 		
 		for (i = 0; i < SPINNER_COUNT; i++) {
-			n = rand() % SPINNER_COUNT;
+			n = brand() % SPINNER_COUNT;
 			while(Values[n] != 0) {
 				n += 1;
 				if (n >= SPINNER_COUNT)
@@ -276,7 +276,7 @@ int	Values[SPINNER_COUNT];
 			SpinnerValues[i] = 0;                   // ... back where they came from, thus
 		                                            // ... double-shuffling the entries
 		for (i = 0; i < SPINNER_COUNT; i++) {
-			n = rand() % SPINNER_COUNT;
+			n = brand() % SPINNER_COUNT;
 			while(SpinnerValues[n] != 0) {
 				n += 1;
 				if (n >= SPINNER_COUNT)
@@ -421,7 +421,7 @@ BOOL		bSuccess = FALSE;
 	if (m_pSprite == NULL)								// punt if no spinner sprite
 		return(-1);
 
-	CSound::WaitWaveSounds();
+	CSound::waitWaveSounds();
 
 	pSound = new CSound();								// create the spinner sound
 	(*pSound).Initialize(m_pWnd, SPINNER_SOUND, SOUND_WAVE | SOUND_QUEUE | SOUND_BUFFERED | SOUND_ASYNCH | SOUND_NOTIFY | SOUND_LOOP);
@@ -432,7 +432,7 @@ BOOL		bSuccess = FALSE;
 			goto punt;
 	}
 
-	nIdx = rand() % SPINNER_COUNT;						// generate a spinner value
+	nIdx = brand() % SPINNER_COUNT;						// generate a spinner value
 	nValue = SpinnerValues[nIdx];
     
     dstARect.SetRect(m_nX + SPINNER_SLOTA_DX,			// calculate rectangles for digits

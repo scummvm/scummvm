@@ -61,7 +61,7 @@ CDeck::CDeck()
 	for ( i = 0; i < DECK; i++ )
 		m_cDeck[i] = CCard(i);			// Reset deck
 
-	srand((unsigned) time(NULL));		// seed the random number generator
+	//srand((unsigned) time(NULL));		// seed the random number generator
 }
 
 CDeck::~CDeck()
@@ -84,7 +84,7 @@ void CDeck::Shuffle()
 
 		#ifndef REVEAL  						// change ifndef to ifdef for debugging purposes
 		do {
-			nCard = rand() % DECK;
+			nCard = brand() % DECK;
 		} while ( nNewDeck[nCard] == USED );	// find unshuffled card
 
 		nNewDeck[nCard] = USED;					// mark card as shuffled

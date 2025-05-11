@@ -22,7 +22,7 @@
 #ifndef HODJNPODJ_ARTPARTS_ARTPARTS_H
 #define HODJNPODJ_ARTPARTS_ARTPARTS_H
 
-#include <sound.h>
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 namespace HodjNPodj {

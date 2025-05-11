@@ -284,9 +284,9 @@ char	cDisplay[5];
     pDC->TextOut( 43, 47, strLevel );
     pDC->TextOut( 43, 88, strLives );
     pDC->SetBkMode( nOldBkMode );
-    wsprintf( cDisplay, "%i", m_nLevel ); 
+    Common::sprintf_s( cDisplay, "%i", m_nLevel ); 
     ptxtLevel->DisplayString( pDC, cDisplay, 14, FW_BOLD, RGB(0,0,100) );
-    wsprintf( cDisplay, "%i", m_nLives ); 
+    Common::sprintf_s( cDisplay, "%i", m_nLives ); 
     ptxtLives->DisplayString( pDC, cDisplay, 14, FW_BOLD, RGB(0,0,100) );
 
     ReleaseDC(pDC);  
@@ -432,12 +432,12 @@ char	cDisplay[5];
 	switch ( pScrollBar->GetDlgCtrlID() ) {
 		case IDC_GAMELEVEL:
 	        m_nLevel = newAmnt;            
-			wsprintf( cDisplay, "%i", m_nLevel );
+			Common::sprintf_s( cDisplay, "%i", m_nLevel );
 			ptxtLevel->DisplayString( pDC, cDisplay, 14, FW_BOLD, RGB(0,0,100) );
 			break;
 		case IDC_NUMBEROFLIVES:
 	        m_nLives = newAmnt;            
-			wsprintf( cDisplay, "%i", m_nLives );
+			Common::sprintf_s( cDisplay, "%i", m_nLives );
 		    ptxtLives->DisplayString( pDC, cDisplay, 14, FW_BOLD, RGB(0,0,100) );
 			break;
 	}

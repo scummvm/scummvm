@@ -48,7 +48,7 @@ struct GAMESTRUCT
 	int             nSkillLevel;
 	BOOL            bSoundEffectsEnabled;
 	BOOL            bMusicEnabled;
-	BOOL            bplayingMetagame;
+	BOOL            bPlayingMetagame;
 	BOOL            bPlayingHodj;
 	/*  For use later in Beta Test
 			int				nInstallationCode;

@@ -39,11 +39,11 @@
 *
 ****************************************************************/
 #include "stdafx.h"
-#include <mmsystem.h>
+
 
 #include "globals.h"
-#include <sprite.h>
-#include <text.h>
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 
 #include "life.h"
 #include "game.h"
@@ -119,7 +119,7 @@ CLife::CLife(CDC *pDC)
 		m_cCalendar.pMonthSprite[i]->SetMasked(TRUE);
 	}
 
-	srand((unsigned) time(NULL));		// seed the random number generator
+	//srand((unsigned) time(NULL));		// seed the random number generator
 }
 
 /*****************************************************************
@@ -258,7 +258,7 @@ void CLife::change_board(UINT nFlags,CPoint point, CDC *pDC, BOOL bPlayingMeta)
  			bAssertCheck = pColonyStat->DisplayString(pDC,buf,21,FW_BOLD,STATS_COLOR);
 			ASSERT(bAssertCheck);   // paint the text
 		}
-		i = rand() % VILLAGES;
+		i = brand() % VILLAGES;
 		pSprite = (*pBaseSprite[i]).DuplicateSprite(pDC);
 		mySize = (*pSprite).GetSize();
 		(*pSprite).LinkSprite();
@@ -361,7 +361,7 @@ void CLife::evolution(CDC *pDC)
 
 				if ((*pColony).islife(row,col)) { //Need to put a sprite there?
 					// Yes, paint new sprite in cell
-					i = rand() % VILLAGES;
+					i = brand() % VILLAGES;
 					pSprite = (*pBaseSprite[i]).DuplicateSprite(pDC);
 					mySize = (*pSprite).GetSize();
 					//set it up to be centered

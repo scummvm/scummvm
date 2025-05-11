@@ -72,7 +72,7 @@ BOOL			bJustReturned = FALSE;
  *
  ****************************************************************/
 extern "C"
-HWND FAR PASCAL _export RunMeta(HWND hParentWnd, CBfcMgr * lpBfcMgr, BOOL bMetaLoaded) {
+HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr * lpBfcMgr, BOOL bMetaLoaded) {
 	ghwndParent = hParentWnd;
 	lpMetaGameStruct = lpBfcMgr;
 
@@ -127,8 +127,8 @@ void SetupWindow(CBfcMgr *) {
 
 	xpGtlApp->CreateInstance();
 
-	hDLLInst = (HINSTANCE)::GetWindowWord(pMainWindow->m_hWnd, GWW_HINSTANCE);
-	hExeInst = (HINSTANCE)::GetWindowWord(ghwndParent, GWW_HINSTANCE);
+	hDLLInst = (HINSTANCE)GetWindowWord(pMainWindow->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)GetWindowWord(ghwndParent, GWW_HINSTANCE);
 
 }
 
@@ -139,7 +139,7 @@ void SetupCursor(void) {
 
 	hNewCursor = xpGtlApp->LoadStandardCursor(IDC_ARROW);
 	if (hNewCursor != NULL);
-	::SetCursor(hNewCursor);
+	MFC::SetCursor(hNewCursor);
 }
 
 

@@ -30,13 +30,13 @@
 *       [Discuss files created, or used]
 *
 ****************************************************************/
-#include <afxwin.h>
-#include <afxext.h>
+#include "bagel/afxwin.h"
+
 #include <stdio.h>
-#include <assert.h>
-#include <stdinc.h>
-#include <misc.h>
-#include <errors.h>
+
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/boflib/error.h"
 
 #include "bfc.h"
 #include "c1btndlg.h"
@@ -140,7 +140,7 @@ BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CP
                 pMyApp = AfxGetApp();
                 hCursor = pMyApp->LoadCursor(IDC_SAVE_BUSY);
                 assert(hCursor != NULL);
-                ::SetCursor(hCursor);
+                MFC::SetCursor(hCursor);
 
                 // pause for a 2 seconds to make it look good
                 Sleep(2000);
@@ -152,7 +152,7 @@ BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CP
                 //
                 hCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
                 assert(hCursor != NULL);
-                ::SetCursor(hCursor);
+                MFC::SetCursor(hCursor);
 
             } else {
                 bSaved = FALSE;
@@ -620,7 +620,7 @@ VOID ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo)
                     assert(pSaveInv->m_aItemList[k] >= MG_OBJ_BASE && pSaveInv->m_aItemList[k] <= MG_OBJ_MAX);
 
                     k++;
-                    pItem = pItem->GetNext();
+                    pItem = pItem->getNext();
                 }
                 assert(k == pInv->ItemCount());
 

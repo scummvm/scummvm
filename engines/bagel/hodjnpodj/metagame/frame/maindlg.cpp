@@ -33,7 +33,7 @@
 #include "resource.h"
 #include "dialogs.h"
 #include "button.h"
-#include <misc.h>
+#include "bagel/boflib/misc.h"
 
 extern	BOOL	bMetaLoaded;
 

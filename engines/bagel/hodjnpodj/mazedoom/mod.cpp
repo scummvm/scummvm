@@ -35,15 +35,15 @@
 #include <stdafx.h>
 #include <time.h>
 #include <fstream.h> 
-#include <mmsystem.h>
+
 #include <dos.h>
 
-#include <sound.h>
-#include <sprite.h>
-#include <button.h>
-#include <mainmenu.h>
-#include <cmessbox.h>
-#include <rules.h>
+#include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "gamedll.h"                      
 #include "resource.h"
 #include "globals.h"
@@ -257,7 +257,7 @@ CMainWindow::CMainWindow()
 
     ReleaseDC( pDC );
     
-    srand((unsigned) time( NULL ));         // seed the random number generator 
+    //srand((unsigned) time( NULL ));         // seed the random number generator 
 
     if (pGameInfo->bPlayingMetagame) {
         if (pGameInfo->nSkillLevel == SKILLLEVEL_LOW) {
@@ -297,7 +297,7 @@ CMainWindow::CMainWindow()
     if( pGameInfo->bMusicEnabled ) {
         _gameSound = new CSound( this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
         if (_gameSound != NULL) {
-            (*_gameSound).MidiLoopPlaySegment( 3000, 32980, 0, FMT_MILLISEC );
+            (*_gameSound).midiLoopPlaySegment( 3000, 32980, 0, FMT_MILLISEC );
         } // end if pGameSound
     }
 
@@ -411,7 +411,7 @@ if ( HIWORD( lParam ) == BN_CLICKED ) {
     
         case IDC_RULES:
             KillTimer( GAME_TIMER );
-            CSound::WaitWaveSounds();
+            CSound::waitWaveSounds();
             m_bIgnoreScrollClick = TRUE;
             (*m_pScrollButton).SendMessage( BM_SETSTATE, TRUE, 0L );
 
@@ -433,7 +433,7 @@ if ( HIWORD( lParam ) == BN_CLICKED ) {
             (*m_pScrollButton).SendMessage( BM_SETSTATE, TRUE, 0L );
             SendDlgItemMessage( IDC_SCROLL, BM_SETSTATE, TRUE, 0L );
 
-            CSound::WaitWaveSounds();
+            CSound::waitWaveSounds();
 
             switch ( COptionsWind.DoModal() ) {
             
@@ -462,7 +462,7 @@ if ( HIWORD( lParam ) == BN_CLICKED ) {
 
             if (!pGameInfo->bMusicEnabled && (_gameSound != NULL)) {
 
-                _gameSound->Stop();
+                _gameSound->stop();
                 delete _gameSound;
                 _gameSound = NULL;
 
@@ -470,7 +470,7 @@ if ( HIWORD( lParam ) == BN_CLICKED ) {
 
                 if ((_gameSound = new CSound) != NULL) {
                     _gameSound->Initialize(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-                    _gameSound->MidiLoopPlaySegment(3000, 32980, 0, FMT_MILLISEC);
+                    _gameSound->midiLoopPlaySegment(3000, 32980, 0, FMT_MILLISEC);
                 }
             }
 
@@ -792,7 +792,7 @@ void CMainWindow::OnTimer(UINT nIDEvent)
                 while ( PeekMessage( &lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE ) ) ;
 
                 CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Game over.","Time ran out!");
-                CSound::WaitWaveSounds();
+                CSound::waitWaveSounds();
                 if (pGameInfo->bPlayingMetagame) {
                     pGameInfo->lScore = 0;
                     PostMessage( WM_CLOSE,0,0 );            // and post a program exit
@@ -1060,7 +1060,7 @@ void CMainWindow::MovePlayer( CPoint point )
                 MSG lpmsg;
                 while ( PeekMessage( &lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE ) ) ;
                 CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Game over.","He's free!");
-                CSound::WaitWaveSounds();
+                CSound::waitWaveSounds();
                 if (pGameInfo->bPlayingMetagame) {
                     pGameInfo->lScore = 1;                  // A victorious maze solving
                     PostMessage( WM_CLOSE,0,0 );            // and post a program exit
@@ -1140,7 +1140,7 @@ void CMainWindow::GetNewCursor()
     }
 
     if (hNewCursor != NULL);
-        ::SetCursor(hNewCursor);
+        MFC::SetCursor(hNewCursor);
 }
 
 /*****************************************************************
@@ -1453,10 +1453,10 @@ CPoint GetRandomPoint( BOOL bRight )
     BOOL    bLocated = FALSE;
 
     if ( bRight )                                                           // Get random column
-        point.x = (rand() % (2*(NUM_COLUMNS/3))) + (NUM_COLUMNS/3);         //...in the right half
+        point.x = (brand() % (2*(NUM_COLUMNS/3))) + (NUM_COLUMNS/3);         //...in the right half
     else 
-        point.x = rand() % (2*(NUM_COLUMNS/3));                             //...or the left half
-    point.y = rand() % NUM_ROWS;                                            // Get random row
+        point.x = brand() % (2*(NUM_COLUMNS/3));                             //...or the left half
+    point.y = brand() % NUM_ROWS;                                            // Get random row
     
     while ( !bLocated ) {
         if ( _mazeTile[point.x][point.y].m_nWall == PATH )
@@ -1522,8 +1522,8 @@ void SetInvisibleWalls()
     } // end for x
 
     if ( _difficulty > MIN_DIFFICULTY && _difficulty < MAX_DIFFICULTY ) {
-        x = (rand() % (NUM_COLUMNS - 4)) + 2;                       // Avoid the edge walls
-        y = (rand() % (NUM_ROWS - 4)) + 2;
+        x = (brand() % (NUM_COLUMNS - 4)) + 2;                       // Avoid the edge walls
+        y = (brand() % (NUM_ROWS - 4)) + 2;
         nMaxWalls = nTotalWalls - (int)(_difficulty * (nTotalWalls/10));
 
         while ( nWallCount < nMaxWalls ) {
@@ -1537,12 +1537,12 @@ void SetInvisibleWalls()
                     } // end j
                 } // end i
             } // end if
-            x += (rand() % NUM_NEIGHBORS);// + 1;                                   // Increment Column 
-            y += (rand() % NUM_NEIGHBORS);// + 1;                                   // Increment Row
+            x += (brand() % NUM_NEIGHBORS);// + 1;                                   // Increment Column 
+            y += (brand() % NUM_NEIGHBORS);// + 1;                                   // Increment Row
             if ( x >= (NUM_COLUMNS - 2) ) 
-                x = (rand() % (NUM_COLUMNS - 4)) + 2;               // If we're at the end,
+                x = (brand() % (NUM_COLUMNS - 4)) + 2;               // If we're at the end,
             if ( y >= (NUM_ROWS - 2) ) 
-                y = (rand() % (NUM_COLUMNS - 4)) + 2;               //...reset the counter
+                y = (brand() % (NUM_COLUMNS - 4)) + 2;               //...reset the counter
         } // end while
     } // end if
 }
@@ -1585,7 +1585,7 @@ void initialize_maze()         /* draw the surrounding wall and start/end square
   /* set start square */
     wall = 1;                           // Start on right side
     i = _mazeSizeX - 1;                // Set maze x location
-    j = rand() % _mazeSizeY;       // Set a random y location not on the top row
+    j = brand() % _mazeSizeY;       // Set a random y location not on the top row
 
     _maze[i][j] |= START_SQUARE;
     _maze[i][j] |= ( DOOR_IN_TOP >> wall );
@@ -1600,20 +1600,20 @@ void initialize_maze()         /* draw the surrounding wall and start/end square
   wall = (wall + 2)%4;
   switch (wall) {
   case 0:
-    i = rand()%(_mazeSizeX);
+    i = brand()%(_mazeSizeX);
     j = 0;
     break;
   case 1:
     i = _mazeSizeX - 1;
-    j = rand()%(_mazeSizeY);
+    j = brand()%(_mazeSizeY);
     break;
   case 2:
-    i = rand()%(_mazeSizeX);
+    i = brand()%(_mazeSizeX);
     j = _mazeSizeY - 1;
     break;
   case 3:
     i = 0;
-    j = rand()%(_mazeSizeY);
+    j = brand()%(_mazeSizeY);
     break;
   }
   _maze[i][j] |= END_SQUARE;
@@ -1735,7 +1735,7 @@ int choose_door()                      /* pick a new path */
     return ( -1 );
   if (num_candidates == 1)
     return ( candidates[0] );
-  return ( candidates[ rand()%(num_candidates) ] );
+  return ( candidates[ brand()%(num_candidates) ] );
   
 }
 
@@ -1839,7 +1839,7 @@ void CMainWindow::OnClose()
         _gameSound = NULL;
     }
     
-    CSound::ClearSounds();                              // Clean up sounds before returning
+    CSound::clearSounds();                              // Clean up sounds before returning
 
     if (m_pScrollButton != NULL)
         delete m_pScrollButton; 

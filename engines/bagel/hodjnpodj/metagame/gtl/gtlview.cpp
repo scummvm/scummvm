@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include <assert.h>
+
 #include <dibapi.h>
 #include "gtl.h"
 

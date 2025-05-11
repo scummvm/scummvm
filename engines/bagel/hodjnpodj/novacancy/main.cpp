@@ -60,29 +60,29 @@
 *       [Specifications, documents, test plans, etc.]
 *
 ****************************************************************/
-#include <afxwin.h>                     
-#include <afxext.h>
+#include "bagel/afxwin.h"                     
+
 #include <time.h>           
 #include <stdarg.h>
-#include <assert.h>
-#include <mmsystem.h>
-#include <dibdoc.h>       
-#include <stdinc.h>
-#include <text.h>
-#include <globals.h>    
-#include <gamedll.h>
-#include <sprite.h>
-#include <mainmenu.h>
-#include <cmessbox.h>
+
+
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"       
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/globals.h"    
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include <copyrite.h>
-#include <bitmaps.h>
-#include <misc.h>
-#include <rules.h>
-#include <errors.h>
-#include <button.h>
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/boflib/error.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "main.h"
 #include "dimens.h"                               //dimensions of doors, dice, file paths of midi, wave and bmp files, etc.
-#include <sound.h>    
+#include "bagel/boflib/sound.h"    
 #include "macros.h"                              //debug macros.         
 
 //
@@ -148,7 +148,7 @@ CMainWindow::CMainWindow(VOID)
     */
     // assume no error
     errCode = ERR_NONE;
-    ::SetCursor(::LoadCursor(NULL,IDC_WAIT));		//hourglass cursor (wait!)
+    MFC::SetCursor(LoadCursor(NULL,IDC_WAIT));		//hourglass cursor (wait!)
 
     /* Initialize members	*/
     m_pScrollButton = NULL;
@@ -219,7 +219,7 @@ CMainWindow::CMainWindow(VOID)
         pDC=NULL;
     } else {
         errCode = ERR_UNKNOWN;
-	    ::SetCursor(::LoadCursor(NULL,IDC_ARROW));
+	    MFC::SetCursor(LoadCursor(NULL,IDC_ARROW));
         HandleError(errCode);
         return;
     }
@@ -229,7 +229,7 @@ CMainWindow::CMainWindow(VOID)
     // this is because the game's background art will fill the entire 640x480 area.
     if(!Create(WndClass, "Boffo Games -- No Vacancy", WS_POPUP|WS_CLIPCHILDREN,m_rectGameArea, NULL, NULL)){
     	errCode=ERR_UNKNOWN;
-	    ::SetCursor(::LoadCursor(NULL,IDC_ARROW));               //reset cursor
+	    MFC::SetCursor(LoadCursor(NULL,IDC_ARROW));               //reset cursor
     	HandleError(errCode);
     	return ;
     }
@@ -312,12 +312,12 @@ CMainWindow::CMainWindow(VOID)
     if (errCode == ERR_NONE) {
 
         // seed the random number generator
-        srand((UINT)timeGetTime());
+        //srand((UINT)timeGetTime());
 
         //		 begin playing bckgnd music when the game begins  
         if(pGameParams->bMusicEnabled){
         	if(m_psndBkgndMusic=new CSound(this,GetStringFromResource(IDS_MIDI_FILE),SOUND_MIDI|SOUND_LOOP|SOUND_DONT_LOOP_TO_END)){
-           		m_psndBkgndMusic->MidiLoopPlaySegment(4000L,31030L,0L,FMT_MILLISEC);
+           		m_psndBkgndMusic->midiLoopPlaySegment(4000L,31030L,0L,FMT_MILLISEC);
           	}//end if m_psndBkgndMusic=new...                       
         }else{
         	m_psndBkgndMusic=NULL;
@@ -325,7 +325,7 @@ CMainWindow::CMainWindow(VOID)
             	
     }
                                                          
-    ::SetCursor(::LoadCursor(NULL,IDC_ARROW));
+    MFC::SetCursor(LoadCursor(NULL,IDC_ARROW));
     HandleError(errCode);
 }
 
@@ -518,7 +518,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 					//    
 					if((pGameParams->bMusicEnabled == FALSE) && (m_psndBkgndMusic != NULL)) {
 						if (m_psndBkgndMusic->Playing())
-							m_psndBkgndMusic->Stop();
+							m_psndBkgndMusic->stop();
 					} 
 					else if( pGameParams->bMusicEnabled ){
 						if (m_psndBkgndMusic == NULL) { 
@@ -526,7 +526,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 						}
 						if (m_psndBkgndMusic != NULL) {
 							if ( !m_psndBkgndMusic->Playing() )
-				           		m_psndBkgndMusic->MidiLoopPlaySegment(4000L,31030L,0L,FMT_MILLISEC);
+				           		m_psndBkgndMusic->midiLoopPlaySegment(4000L,31030L,0L,FMT_MILLISEC);
 						}
 					}
 
@@ -593,7 +593,7 @@ VOID CMainWindow::PlayGame()
     GameReset();            
     
 	if(!m_bDiceBmpsLoaded){
-		hOldCursor=::SetCursor(::LoadCursor(NULL, IDC_WAIT));
+		hOldCursor=MFC::SetCursor(LoadCursor(NULL, IDC_WAIT));
 		if(pDC=GetDC()){
 			if(m_pCLRollingDie=new CSprite()){
 				m_pCLRollingDie->SetMobile(TRUE); 
@@ -602,13 +602,13 @@ VOID CMainWindow::PlayGame()
 					m_pCLRollingDie->LinkSprite();		
 				else{
 					errCode=ERR_MEMORY;
-			    	::SetCursor(::LoadCursor(NULL,IDC_ARROW));               //reset cursor
+			    	MFC::SetCursor(LoadCursor(NULL,IDC_ARROW));               //reset cursor
 					HandleError(errCode);
 					return ;
 				}
 			}else{
 				errCode=ERR_MEMORY;
-			    ::SetCursor(::LoadCursor(NULL,IDC_ARROW));               //reset cursor
+			    MFC::SetCursor(LoadCursor(NULL,IDC_ARROW));               //reset cursor
 				HandleError(errCode);
 				return ;
 			}  // end if m_pCLRollingDie
@@ -620,13 +620,13 @@ VOID CMainWindow::PlayGame()
 					m_pCRRollingDie->LinkSprite();	
 				else{
 					errCode=ERR_MEMORY;
-			    	::SetCursor(::LoadCursor(NULL,IDC_ARROW));               //reset cursor
+			    	MFC::SetCursor(LoadCursor(NULL,IDC_ARROW));               //reset cursor
 					HandleError(errCode);
 					return ;
 				}		
 			}else{
 				errCode=ERR_MEMORY;
-			    ::SetCursor(::LoadCursor(NULL,IDC_ARROW));               //reset cursor
+			    MFC::SetCursor(LoadCursor(NULL,IDC_ARROW));               //reset cursor
 				HandleError(errCode);
 				return ;
 			}	// end if m_pCRRollingDie	
@@ -644,7 +644,7 @@ VOID CMainWindow::PlayGame()
 		
 		     }else{
 			   	errCode=ERR_MEMORY;
-			    ::SetCursor(::LoadCursor(NULL,IDC_ARROW));                //reset cursor
+			    MFC::SetCursor(LoadCursor(NULL,IDC_ARROW));                //reset cursor
 			   	HandleError(errCode);
 		     	return ;
 			}             // end if pCMonolithDiceBmp
@@ -657,10 +657,10 @@ VOID CMainWindow::PlayGame()
 			       
 	    }else{   // pDC
 			errCode=ERR_MEMORY;
-			::SetCursor(hOldCursor);
+			MFC::SetCursor(hOldCursor);
 			HandleError(errCode);
 		}//end if pDC	                                               
-		::SetCursor(hOldCursor);
+		MFC::SetCursor(hOldCursor);
 		m_bDiceBmpsLoaded=TRUE;
     }    // m_bDiceBmpsLoaded                                        
     
@@ -682,8 +682,8 @@ VOID CMainWindow::PlayGame()
         
     	AnimateDice();
 #pragma warning(disable: 4135)
-		m_LDie=(BYTE) (((DWORD)(UINT)rand()*6L)/((DWORD)(UINT)RAND_MAX+1L)) +1;
-		m_RDie=(BYTE) (((DWORD)(UINT)rand()*6L)/((DWORD)(UINT)RAND_MAX+1L)) +1;
+		m_LDie=(BYTE) (((DWORD)(UINT)brand()*6L)/((DWORD)(UINT)RAND_MAX+1L)) +1;
+		m_RDie=(BYTE) (((DWORD)(UINT)brand()*6L)/((DWORD)(UINT)RAND_MAX+1L)) +1;
 #pragma warning(default: 4135)
 		::PaintMaskedBitmap(pDC, m_pGamePalette, pCRDieBmp[m_RDie],\
                 										m_rRDie.left, m_rRDie.top,	(int) m_rRDie.Width(),	(int) m_rRDie.Height());
@@ -728,7 +728,7 @@ VOID CMainWindow::GameReset(VOID)
     
     m_bOneDieCase=FALSE;                        
     m_iMoveValid=0;                                      
-    srand(LOWORD(timeGetTime()));                           
+    //srand(LOWORD(timeGetTime()));                           
     
 }
 
@@ -861,7 +861,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 	   			if(pBottleSprite=new CSprite()){
    					if(!pBottleSprite->LoadCels(pDC, GetStringFromResource(IDS_BOTTLE_STRIP_door_closed), BOTTLE_CELS)){
    						errCode=ERR_MEMORY;
-			    		::SetCursor(::LoadCursor(NULL,IDC_ARROW));               //reset cursor
+			    		MFC::SetCursor(LoadCursor(NULL,IDC_ARROW));               //reset cursor
 						HandleError(errCode);
 						return ;
 					}else{	
@@ -955,8 +955,8 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 			/* randomise throws */                                                          
 #pragma warning(disable: 4135)
 			V=(DWORD)((UINT)RAND_MAX+1);
-   			m_LDie=(BYTE)(((DWORD)(UINT)rand()*6L)/V)+1;                							//	left Die
-   			m_RDie=m_bOneDieCase? 0: (BYTE)(((DWORD)(UINT)rand()*6)/V)+1;                //	right Die              
+   			m_LDie=(BYTE)(((DWORD)(UINT)brand()*6L)/V)+1;                							//	left Die
+   			m_RDie=m_bOneDieCase? 0: (BYTE)(((DWORD)(UINT)brand()*6)/V)+1;                //	right Die              
 #pragma warning(default: 4135)
    			
    			pDC=GetDC();       
@@ -1016,7 +1016,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 						//if(!pGameParams->bPlayingMetagame){         
 							if(hlocScore=LocalAlloc(LHND, 32)){
 								npszScore=(NPSTR)LocalLock(hlocScore);
-								wsprintf(npszScore, "%lu point%c out of 45.", iMaxScore-pGameParams->lScore, ((iMaxScore-pGameParams->lScore)==1)?' ':'s'  );		//imaxScore is 45.
+								Common::sprintf_s(npszScore, "%lu point%c out of 45.", iMaxScore-pGameParams->lScore, ((iMaxScore-pGameParams->lScore)==1)?' ':'s'  );		//imaxScore is 45.
 								CMessageBox(this,m_pGamePalette,"Your score is", npszScore);
 								LocalUnlock(hlocScore);
 						    	LocalFree(hlocScore);
@@ -1034,7 +1034,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
    						
    						if(hInfo=LocalAlloc(LHND, 32))   	npszInfo=(NPSTR)LocalLock(hInfo);
    						
-   						wsprintf(npszInfo, "Only %d throw%c left.", (3-m_cUnDoableThrows), (m_cUnDoableThrows==1)?'s':' ');       
+   						Common::sprintf_s(npszInfo, "Only %d throw%c left.", (3-m_cUnDoableThrows), (m_cUnDoableThrows==1)?'s':' ');       
    						
    						GamePause();
 						sndPlaySound(GetStringFromResource(IDS_SORRY),SND_ASYNC);
@@ -1278,7 +1278,7 @@ long CMainWindow::OnMCINotify( WPARAM wParam, LPARAM lParam)
 	#endif                                                                 
 	
 	    /*
-		if(_recursion_count>12) m_psndBkgndMusic->Stop();		//arrest having the sound stuck.
+		if(_recursion_count>12) m_psndBkgndMusic->stop();		//arrest having the sound stuck.
 	    else
 	    */
 		pSound = CSound::OnMCIStopped(wParam,lParam);
@@ -1412,7 +1412,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
         //
         case VK_F1: {
             GamePause();
-            CSound::WaitWaveSounds();
+            CSound::waitWaveSounds();
             CRules  RulesDlg(this,".\\novac.txt", m_pGamePalette,\
             							(pGameParams->bSoundEffectsEnabled)?GetStringFromResource(IDS_RULES_WAV): NULL);
             RulesDlg.DoModal();
@@ -1825,7 +1825,7 @@ VOID CMainWindow::OnClose()
     
 	GameReset();                            
 
-	CSound::ClearSounds();   //ONLY A TEST; this works.
+	CSound::clearSounds();   //ONLY A TEST; this works.
     
     for(i=0; i<7; i++){
     	if(pCLDieBmp[i]){

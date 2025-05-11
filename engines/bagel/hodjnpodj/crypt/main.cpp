@@ -32,14 +32,14 @@
 
 #include <stdafx.h>
 #include <time.h>
-#include <dibdoc.h>
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
 
-#include <misc.h>
-#include <sprite.h>
-#include <cmessbox.h>
+#include "bagel/boflib/misc.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "mainmenu.h"
-#include <rules.h>
-#include <sound.h>
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/boflib/sound.h"
 
 #include "globals.h"
 #include "resource.h"
@@ -248,12 +248,12 @@ CMainWindow::CMainWindow( HWND hCallingWnd, LPGAMESTRUCT lpGameStruct )
 
 	ReleaseDC(pDC);									// release our window context
 
-	srand((unsigned) time(NULL));					// seed the random number generator
+	//srand((unsigned) time(NULL));					// seed the random number generator
 
 	pGameSound = new CSound( this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 	if( m_lpGameStruct->bMusicEnabled) {
 		if (pGameSound != NULL) {
-			(*pGameSound).MidiLoopPlaySegment( 1080, 32500, 0, FMT_MILLISEC );  //32750
+			(*pGameSound).midiLoopPlaySegment( 1080, 32500, 0, FMT_MILLISEC );  //32750
 		} // end if pGameSound
 	}
 
@@ -272,7 +272,7 @@ CMainWindow::~CMainWindow()
     	pGameSound = NULL;
     }
 
-    CSound::ClearSounds();				// clean exit to metagame
+    CSound::clearSounds();				// clean exit to metagame
 
 	if ( m_cCryptograms != NULL ) {		// release Cryptograms
 		delete m_cCryptograms;
@@ -533,7 +533,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 				m_bIgnoreScrollClick = TRUE;
 				(*m_pScrollButton).SendMessage(BM_SETSTATE,TRUE,0L);
 
-				CSound::WaitWaveSounds();
+				CSound::waitWaveSounds();
 				(void) RulesDlg.DoModal();
 				m_bPause = FALSE;
 
@@ -628,7 +628,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 					}
 					if (pGameSound != NULL) {
 						if (!pGameSound->Playing())
-							(*pGameSound).MidiLoopPlaySegment( 1080, 32500, 0, FMT_MILLISEC ); 
+							(*pGameSound).midiLoopPlaySegment( 1080, 32500, 0, FMT_MILLISEC ); 
 					} // end if pGameSound
 				}
 				break;
@@ -813,7 +813,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags,CPoint point)
 		(*pSprite).SetMobile(FALSE);
 
 		if( m_lpGameStruct->bSoundEffectsEnabled) {
-			nPick = rand() % NUM_SKULL_SOUNDS;
+			nPick = brand() % NUM_SKULL_SOUNDS;
 			switch (nPick) {
 				case 0:
 					sprintf( bufName, WAV_JOKE1 );

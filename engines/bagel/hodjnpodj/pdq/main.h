@@ -20,13 +20,13 @@
 **/
 #ifndef MAIN_H
 #define MAIN_H
-#include <afxwin.h>
-#include <afxext.h>
-#include <text.h>
-#include <sprite.h>
-#include <errors.h>
-#include <stdinc.h>
-#include <sound.h>
+#include "bagel/afxwin.h"
+
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/boflib/error.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/boflib/sound.h"
 #include "guess.h"
 
 #define N_CATEGORIES    4

@@ -78,7 +78,7 @@ extern CBfcMgr      *lpMetaGameStruct;
 
 
 extern "C" {
-LRESULT FAR PASCAL _export PawnHookProc(int,WORD,LONG);	// keyboard hook procedure definition
+LRESULT FAR PASCAL PawnHookProc(int,WORD,LONG);	// keyboard hook procedure definition
 }
 
 extern 	HINSTANCE	hDLLInst;
@@ -166,7 +166,7 @@ void CPawnShop::RemoveKeyboardHook(void)
 
 
 extern "C" 
-LRESULT FAR PASCAL _export PawnHookProc(int code, WORD wParam, LONG lParam)
+LRESULT FAR PASCAL PawnHookProc(int code, WORD wParam, LONG lParam)
 {
 CDC	*pDC = NULL;
 
@@ -818,7 +818,7 @@ char	chBuffer[128];
 	}
 
 	ASSERT(hNewCursor != NULL);						// force the cursor change
-	::SetCursor(hNewCursor);
+	MFC::SetCursor(hNewCursor);
 	
 	CDialog::OnMouseMove(nFlags, point);            // do standard mouse move behavior
 }

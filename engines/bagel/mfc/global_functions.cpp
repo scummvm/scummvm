@@ -121,6 +121,10 @@ void Sleep(UINT milli) {
 	g_system->delayMillis(milli);
 }
 
+DWORD GetTickCount() {
+	return g_system->getMillis();
+}
+
 bool FileExists(const char *filename) {
 	return Common::File::exists(filename);
 }
@@ -134,6 +138,31 @@ BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,
 	UINT wMsgFilterMin, UINT wMsgFilterMax,
 	UINT wRemoveMsg) {
 	error("TODO: PeekMessage");
+}
+
+void TranslateMessage(LPMSG lpMsg) {
+	error("TODO: TranslateMessage");
+}
+
+void DispatchMessage(LPMSG lpMsg) {
+	error("TODO: DispatchMessage");
+}
+
+HRSRC FindResource(HMODULE hModule,
+		LPCSTR lpName, LPCSTR lpType) {
+	error("TODO: FindResource");
+}
+
+HGLOBAL LoadResource(HMODULE hModule, HRSRC hResInfo) {
+	error("TODO: LoadResource");
+}
+
+LPVOID LockResource(HGLOBAL hResData) {
+	error("TODO: LockResource");
+}
+
+BOOL FreeResource(HGLOBAL hResData) {
+	error("TODO: FreeResource");
 }
 
 } // namespace MFC

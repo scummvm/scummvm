@@ -31,6 +31,10 @@ IMPLEMENT_DYNAMIC(CWinApp, CWinThread)
 CWinApp::CWinApp(const char *appName) : CWinThread() {
 }
 
+BOOL CWinApp::PreTranslateMessage(MSG *pMsg) {
+	return FALSE;
+}
+
 void CWinApp::SetDialogBkColor() {
 }
 

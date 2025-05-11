@@ -21,13 +21,13 @@
 #define __poker_H__
 
 #include <time.h>
-#include <globals.h>
-#include <dibdoc.h>
-#include <sound.h>
-#include <text.h>
-#include <cbofdlg.h>            // header for the options library
-#include <mainmenu.h>
-#include <gamedll.h>
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
+#include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"            // header for the options library
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
 #include "resource.h"
 
 

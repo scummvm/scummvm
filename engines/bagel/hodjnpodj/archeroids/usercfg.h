@@ -19,15 +19,14 @@
  *
  */
 
-#ifndef USERCFG_H
-#define USERCFG_H
+#ifndef HODJNPODJ_ARCHEROIDS_USERCFG_H
+#define HODJNPODJ_ARCHEROIDS_USERCFG_H
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <stdinc.h>
-#include <cbofdlg.h>
-#include <text.h>
-#include <button.h>
+#include "bagel/afxwin.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {

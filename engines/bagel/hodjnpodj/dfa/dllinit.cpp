@@ -25,7 +25,7 @@
  *
  ****************************************************************/
 
-#include <afxwin.h>
+#include "bagel/afxwin.h"
 #include "resource.h"
 #include "dfa.h" 
 
@@ -69,7 +69,7 @@ CPalette        *pTestPalette = NULL;
  *
  ****************************************************************/
 extern "C" 
-HWND FAR PASCAL _export RunDFA( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
+HWND FAR PASCAL RunDFA( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 {
 
 // if the pointer has garbage in it, the clean it out
@@ -88,8 +88,8 @@ HWND FAR PASCAL _export RunDFA( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
     pMainGameWnd->UpdateWindow();
     pMainGameWnd->SetActiveWindow(); 
 // return the handle to this window
-    hDLLInst = (HINSTANCE)::GetWindowWord( pMainGameWnd->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)::GetWindowWord( hParentWnd, GWW_HINSTANCE);
+    hDLLInst = (HINSTANCE)GetWindowWord( pMainGameWnd->m_hWnd, GWW_HINSTANCE);
+    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
     if (!lpGameInfo->bPlayingMetagame)  
         ::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );
     return pMainGameWnd->m_hWnd;
@@ -139,7 +139,7 @@ public:
 BOOL CDFADll::InitInstance()
 {
 //  hGameCursor = 0;
-//  hGameCursor = ::LoadCursor( m_hInstance, MAKEINTRESOURCE(IDC_CURSOR1) );
+//  hGameCursor = LoadCursor( m_hInstance, MAKEINTRESOURCE(IDC_CURSOR1) );
     return TRUE;
 }
 

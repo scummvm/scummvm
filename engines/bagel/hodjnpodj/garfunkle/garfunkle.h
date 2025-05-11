@@ -22,7 +22,7 @@
 #ifndef __game_H__
 #define __game_H__
 
-#include <sound.h>
+#include "bagel/boflib/sound.h"
 
 #define PLAY_FACTOR		150		// Multiply MilliSeconds by SpeedFactor for tenths of Seconds
 #define ANIM_SLEEP		200		// Milliseconds

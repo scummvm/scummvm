@@ -5,8 +5,8 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <assert.h>
-#include <sprite.h>
+
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
 
 #include "gtldat.h"
 #include "bgb.h"

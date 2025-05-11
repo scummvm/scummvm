@@ -19,13 +19,11 @@
  *
  */
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <assert.h>
-#include <cbofdlg.h>
-#include <globals.h>
-#include <menures.h>
-#include "usercfg.h"
+#include "bagel/afxwin.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hnplibs/menures.h"
+#include "bagel/hodjnpodj/archeroids/usercfg.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -80,17 +78,17 @@ void CUserCfgDlg::PutDlgData() {
 	pDC = GetDC();
 	m_pTxtSpeedSetting->DisplayString(pDC, apszSpeeds[m_nInitGameSpeed - 1], 14, TEXT_BOLD, RGB(0, 0, 0));
 
-	wsprintf(buf, "Level:  %d", m_nInitArcherLevel);
+	Common::sprintf_s(buf, "Level:  %d", m_nInitArcherLevel);
 	m_pTxtLevel->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB(0, 0, 0));
 
-	wsprintf(buf, "Lives:  %d", m_nInitNumLives);
+	Common::sprintf_s(buf, "Lives:  %d", m_nInitNumLives);
 	m_pTxtLives->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB(0, 0, 0));
 
 	ReleaseDC(pDC);
 
-	::SetScrollPos(GetDlgItem(IDS_GAMESPEED)->m_hWnd, SB_CTL, m_nInitGameSpeed, TRUE);
-	::SetScrollPos(GetDlgItem(IDS_LIVES)->m_hWnd, SB_CTL, m_nInitNumLives, TRUE);
-	::SetScrollPos(GetDlgItem(IDS_ARCHER_LEVEL)->m_hWnd, SB_CTL, m_nInitArcherLevel, TRUE);
+	SetScrollPos(GetDlgItem(IDS_GAMESPEED)->m_hWnd, SB_CTL, m_nInitGameSpeed, TRUE);
+	SetScrollPos(GetDlgItem(IDS_LIVES)->m_hWnd, SB_CTL, m_nInitNumLives, TRUE);
+	SetScrollPos(GetDlgItem(IDS_ARCHER_LEVEL)->m_hWnd, SB_CTL, m_nInitArcherLevel, TRUE);
 }
 
 
@@ -225,7 +223,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 		pScroll->SetScrollPos(m_nInitNumLives);
 
 		pDC = GetDC();
-		wsprintf(szBuf, "Lives:  %d", m_nInitNumLives);
+		Common::sprintf_s(szBuf, "Lives:  %d", m_nInitNumLives);
 		m_pTxtLives->DisplayString(pDC, szBuf, 14, TEXT_BOLD, RGB(0, 0, 0));
 		ReleaseDC(pDC);
 
@@ -269,7 +267,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 		pScroll->SetScrollPos(m_nInitArcherLevel);
 
 		pDC = GetDC();
-		wsprintf(szBuf, "Level:  %d", m_nInitArcherLevel);
+		Common::sprintf_s(szBuf, "Level:  %d", m_nInitArcherLevel);
 		m_pTxtLevel->DisplayString(pDC, szBuf, 14, TEXT_BOLD, RGB(0, 0, 0));
 		ReleaseDC(pDC);
 
@@ -319,9 +317,9 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 	if (nVal < BADGUYS_MIN || nVal > BADGUYS_MAX)
 		m_nInitNumBadGuys = DEFAULT_BADGUYS;
 
-	::SetScrollRange(GetDlgItem(IDS_GAMESPEED)->m_hWnd, SB_CTL, SPEED_MIN, SPEED_MAX, TRUE);
-	::SetScrollRange(GetDlgItem(IDS_LIVES)->m_hWnd, SB_CTL, LIVES_MIN, LIVES_MAX, TRUE);
-	::SetScrollRange(GetDlgItem(IDS_ARCHER_LEVEL)->m_hWnd, SB_CTL, LEVEL_MIN, LEVEL_MAX, TRUE);
+	SetScrollRange(GetDlgItem(IDS_GAMESPEED)->m_hWnd, SB_CTL, SPEED_MIN, SPEED_MAX, TRUE);
+	SetScrollRange(GetDlgItem(IDS_LIVES)->m_hWnd, SB_CTL, LIVES_MIN, LIVES_MAX, TRUE);
+	SetScrollRange(GetDlgItem(IDS_ARCHER_LEVEL)->m_hWnd, SB_CTL, LEVEL_MIN, LEVEL_MAX, TRUE);
 
 	pDC = GetDC();
 	tmpRect.SetRect(18, 113, 65, 132);
@@ -376,8 +374,6 @@ void CUserCfgDlg::OnPaint(void) {
 }
 
 void CUserCfgDlg::OnDestroy() {
-	char tmpBuf[8];
-
 	ClearDialogImage();
 
 	assert(m_pTxtSpeed != NULL);
@@ -403,10 +399,10 @@ void CUserCfgDlg::OnDestroy() {
 
 	if (m_bShouldSave) {
 
-		WritePrivateProfileString(INI_SECTION, "GameSpeed", itoa(m_nInitGameSpeed, tmpBuf, 10), INI_FILENAME);
-		WritePrivateProfileString(INI_SECTION, "ArcherLevel", itoa(m_nInitArcherLevel, tmpBuf, 10), INI_FILENAME);
-		WritePrivateProfileString(INI_SECTION, "NumberOfLives", itoa(m_nInitNumLives, tmpBuf, 10), INI_FILENAME);
-		WritePrivateProfileString(INI_SECTION, "NumberOfBadGuys", itoa(m_nInitNumBadGuys, tmpBuf, 10), INI_FILENAME);
+		WritePrivateProfileString(INI_SECTION, "GameSpeed", Common::String::format("%d", m_nInitGameSpeed).c_str(), INI_FILENAME);
+		WritePrivateProfileString(INI_SECTION, "ArcherLevel", Common::String::format("%d", m_nInitArcherLevel).c_str(), INI_FILENAME);
+		WritePrivateProfileString(INI_SECTION, "NumberOfLives", Common::String::format("%d", m_nInitNumLives).c_str(), INI_FILENAME);
+		WritePrivateProfileString(INI_SECTION, "NumberOfBadGuys", Common::String::format("%d", m_nInitNumBadGuys).c_str(), INI_FILENAME);
 	}
 
 	CBmpDialog::OnDestroy();

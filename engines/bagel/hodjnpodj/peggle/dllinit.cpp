@@ -25,7 +25,7 @@
  *                             
  ****************************************************************/
 
-#include <afxwin.h>
+#include "bagel/afxwin.h"
 #include "stdafx.h"
 #include "resource.h"
 #include "dllinit.h"
@@ -77,7 +77,7 @@ LPGAMESTRUCT    pGameInfo;
  *
  ****************************************************************/
 extern "C" 
-HWND FAR PASCAL _export RunPeggle( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
+HWND FAR PASCAL RunPeggle( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 {
     pGameInfo = lpGameInfo;
     
@@ -95,8 +95,8 @@ HWND FAR PASCAL _export RunPeggle( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
   pcwndPeggle->UpdateWindow();
   pcwndPeggle->SetActiveWindow(); 
 // return the handle to this window
-  hDLLInst = (HINSTANCE)::GetWindowWord( pcwndPeggle->m_hWnd, GWW_HINSTANCE);
-  hExeInst = (HINSTANCE)::GetWindowWord( hParentWnd, GWW_HINSTANCE);  
+  hDLLInst = (HINSTANCE)GetWindowWord( pcwndPeggle->m_hWnd, GWW_HINSTANCE);
+  hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);  
   return pcwndPeggle->m_hWnd;
 }
 

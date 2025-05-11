@@ -37,7 +37,7 @@
 
 #include <stdlib.h>
 #include "stdafx.h"
-#include <mmsystem.h>
+
 #include "wordsrch.h"
 #include "dialogs.h"
 #include "misc.h"
@@ -159,7 +159,7 @@ CText	atxtDisplayRow[NUMBEROFROWS];
 									hGameCursor, NULL, NULL);
 	
 	// set the seed for the random number generator
-	srand( (unsigned)time( NULL ));
+	//srand( (unsigned)time( NULL ));
 	
 	// initialize private members
 	m_lpGameStruct = lpGameStruct;
@@ -304,7 +304,7 @@ else {
 	if (m_lpGameStruct->bMusicEnabled) {
 		pGameSound = new CSound( this, GAME_THEME, 
 								SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-		(*pGameSound).MidiLoopPlaySegment( 500, 31500, 0, FMT_MILLISEC );
+		(*pGameSound).midiLoopPlaySegment( 500, 31500, 0, FMT_MILLISEC );
 	} // end if pGameSound
 
 	EndWaitCursor();
@@ -478,7 +478,7 @@ CText	txtDisplayCat( pOffScreenDC, pGamePalette, &rDisplayCat, JUSTIFY_CENTER );
 	BeginWaitCursor();
 
 	nWordsLeft = WORDSPERLIST;
-	nWordList = rand() % NUMBEROFLISTS;
+	nWordList = brand() % NUMBEROFLISTS;
 	nIterations2 = 0;
 
 	for ( y = 0; y < WORDSPERLIST; y++) {
@@ -521,9 +521,9 @@ CText	txtDisplayCat( pOffScreenDC, pGamePalette, &rDisplayCat, JUSTIFY_CENTER );
 		nWordLen = lstrlen( cTemp1 );
 		bTemp1 = TRUE;
 		if ( m_bWordsForwardOnly )
-			nDirection = rand() % 4;
+			nDirection = brand() % 4;
 		else
-			nDirection = rand() % 8;
+			nDirection = brand() % 8;
 		
 		while ( bTemp1 ){
 			nIterations1++;
@@ -534,8 +534,8 @@ CText	txtDisplayCat( pOffScreenDC, pGamePalette, &rDisplayCat, JUSTIFY_CENTER );
 				bTemp1 = FALSE;
 				continue;
 			}
-			ptSPos.x = rand() % NUMBEROFCOLS;
-			ptSPos.y = rand() % NUMBEROFROWS;
+			ptSPos.x = brand() % NUMBEROFCOLS;
+			ptSPos.y = brand() % NUMBEROFROWS;
 			if ( m_bWordsForwardOnly )
 				switch ( nDirection) {
 					case 0:
@@ -730,7 +730,7 @@ CText	txtDisplayCat( pOffScreenDC, pGamePalette, &rDisplayCat, JUSTIFY_CENTER );
 	for (y = 0; y < NUMBEROFROWS; y++ ) { 
 		for (x = 0; x < NUMBEROFCOLS; x++ ) {     
 			if ( acGameGrid[y][x] == '\0' )
-				acGameGrid[y][x] = acAlpha[(rand() % 26)];
+				acGameGrid[y][x] = acAlpha[(brand() % 26)];
 		}
 	}
 
@@ -757,7 +757,7 @@ CText	txtDisplayCat( pOffScreenDC, pGamePalette, &rDisplayCat, JUSTIFY_CENTER );
 	txtDisplayCat.DisplayString( pOffScreenDC, strTemp, 16, FW_BOLD, DK_CYAN ); //Shadowed
 
 	char	cDisplayTemp[32];
-	wsprintf( cDisplayTemp, "Words Left: %i", nWordsLeft);
+	Common::sprintf_s( cDisplayTemp, "Words Left: %i", nWordsLeft);
 	ptxtScore->DisplayString( pOffScreenDC, cDisplayTemp, 16, FW_BOLD, DK_CYAN );  //Shadowed
     
     m_bNoGrid = FALSE;
@@ -884,7 +884,7 @@ if (HIWORD(lParam) == BN_CLICKED)	{		// only want to look at button clicks
 			//    
 		   	if((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
 		   		if (pGameSound->Playing())
-		   			pGameSound->Stop();
+		   			pGameSound->stop();
 		   	} 
 		   	else if( m_lpGameStruct->bMusicEnabled ){
 		   		if (pGameSound == NULL) { 
@@ -893,7 +893,7 @@ if (HIWORD(lParam) == BN_CLICKED)	{		// only want to look at button clicks
 				}
 				if (pGameSound != NULL) {
 					if ( !pGameSound->Playing() )
-						(*pGameSound).MidiLoopPlaySegment( 500, 31500, 0, FMT_MILLISEC );
+						(*pGameSound).midiLoopPlaySegment( 500, 31500, 0, FMT_MILLISEC );
 		   		}
 		   	}
 			if ( bResetGame && !m_lpGameStruct->bPlayingMetagame )
@@ -939,24 +939,24 @@ void CMainWSWindow::OnLButtonDown(UINT nFlags, CPoint point)
 	pDC = GetDC();
 
 	if ( rChicken.PtInRect( point ) ) {
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		sndPlaySound( NULL, 0 ); 
 		PlayEasterEgg( pDC, (CWnd *)this, pGamePalette, CHICKEN_ANIM, CHICKEN_WAV, NUM_CHICKEN_CELS, 
 						CHICKEN_X, CHICKEN_Y, CHICKEN_SLEEP, (*m_lpGameStruct).bSoundEffectsEnabled );	
 	}
 	else if ( rCow.PtInRect( point ) ) { 
-		CSound::WaitWaveSounds(); 
+		CSound::waitWaveSounds(); 
 		sndPlaySound( NULL, 0 ); 
 		PlayEasterEgg( pDC, (CWnd *)this, pGamePalette, COW_ANIM, COW_WAV, NUM_COW_CELS, 
 						COW_X, COW_Y, COW_SLEEP, (*m_lpGameStruct).bSoundEffectsEnabled );
 	}
 	else if ( rPig.PtInRect( point ) && (*m_lpGameStruct).bSoundEffectsEnabled ) { 
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		sndPlaySound( NULL, 0 ); 
 		sndPlaySound( PIG_WAV, SND_ASYNC );	
 	}
 	else if ( rFlower.PtInRect( point ) && (*m_lpGameStruct).bSoundEffectsEnabled ) { 
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 		sndPlaySound( NULL, 0 ); 
 		sndPlaySound( FLOWER_WAV, SND_ASYNC );	
 	}
@@ -1262,7 +1262,7 @@ CRect	rTemp;
 				astrGameList[nWordNum].Empty();
 				nWordsLeft--;
 				char	cDisplayTemp[32];
-					wsprintf( cDisplayTemp, "Words Left: %i", nWordsLeft);
+					Common::sprintf_s( cDisplayTemp, "Words Left: %i", nWordsLeft);
 					ptxtScore->DisplayString( pOffScreenDC, cDisplayTemp, 16, FW_BOLD, DK_CYAN ); 
 				
 				ptTemp.x = ptOrigPosInGrid.x;
@@ -1401,7 +1401,7 @@ CRules	dlgRules( (CWnd *)this, RULESFILE, pGamePalette, NULL );
 		case VK_F1:
 			pOptionButton->ShowWindow( SW_HIDE );
 //			UpdateWindow();
-			CSound::WaitWaveSounds();
+			CSound::waitWaveSounds();
 			(void) dlgRules.DoModal();      // invoke the help dialog box
 			pOptionButton->ShowWindow( SW_SHOWNORMAL );
 			break;
@@ -1624,7 +1624,7 @@ void CMainWSWindow::ReleaseResources(void)
 		pGameSound = NULL;
 	} 
 	
-	CSound::ClearSounds();
+	CSound::clearSounds();
 	
 	if ( pTimerSprite != NULL )
 		delete pTimerSprite;

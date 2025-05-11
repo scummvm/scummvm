@@ -42,15 +42,15 @@
 
 #include "stdafx.h"
 #include "mnk.h"           
-#include <gamedll.h>   
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"   
 #include "stdlib.h"
 
 
 #include "sound.h"
 #include "copyrite.h"   // mandatory internal copyright notice 
-#include <misc.h>                  
+#include "bagel/boflib/misc.h"                  
 #include <macros.h>
-#include <mmsystem.h>     
+     
 #include <memory.h>
 #include "resource.h"
 
@@ -66,7 +66,7 @@ LPGAMESTRUCT pGameParams;
 extern HWND ghParentWnd;     
 
 #ifdef _DEBUG
-BOOL _far _pascal _export ResetPitsDlgProc(HWND, UINT, WPARAM, LPARAM);       
+BOOL _far _pascal ResetPitsDlgProc(HWND, UINT, WPARAM, LPARAM);       
 inline void FlushMouseMessages(HWND);
 
 static CMove* gpcMove,
@@ -134,9 +134,9 @@ PUBLIC CMnkWindow::CMnkWindow(void){
 	pGameParams->lScore = 0L;
 	gbTurnSoundsOff= GetPrivateProfileInt("Mankala","MuteCrab",0,INI_FILENAME) ;    // Crab talks
 	               
-	hHourGlassCursor=::LoadCursor(NULL,IDC_WAIT);
+	hHourGlassCursor=LoadCursor(NULL,IDC_WAIT);
 	SetCursor(hHourGlassCursor);
-	hOldCursor=::LoadCursor(NULL, IDC_ARROW);
+	hOldCursor=LoadCursor(NULL, IDC_ARROW);
 	
 	if(pGameParams->bMusicEnabled)
 		m_pSound=new CSound(this,MIDI_BCKGND,SOUND_MIDI|SOUND_DONT_LOOP_TO_END); 
@@ -171,14 +171,14 @@ PUBLIC CMnkWindow::CMnkWindow(void){
 
   xpDibDoc = new CDibDoc() ;  // create an object to hold our screen
   if(! xpDibDoc){
-  		::SetCursor(hOldCursor);
+  		MFC::SetCursor(hOldCursor);
   		::MessageBox(NULL,"Abnormal MiniGame Termination", "Internal Error", MB_ICONSTOP);
 		delete this;
 		return;
   }      // ... and verify we got it
   
   if(!(*xpDibDoc).OpenDocument(".\\ART\\MANKALA.BMP")){
-  		::SetCursor(hOldCursor);
+  		MFC::SetCursor(hOldCursor);
 		::MessageBox(NULL, "Cannot Open Background Bitmap. Please Check for file path and/or system resources. Terminating Game", "Open Error", MB_ICONEXCLAMATION|MB_OK) ;
 		delete xpDibDoc;
 		delete this;
@@ -188,7 +188,7 @@ PUBLIC CMnkWindow::CMnkWindow(void){
       // next load in the actual DIB based artwork for screen
   if(!(CMnkWindow::m_xpGamePalette = (*xpDibDoc).DetachPalette())){
             // grab its palette and save it for later use
-  		::SetCursor(hOldCursor);
+  		MFC::SetCursor(hOldCursor);
 		::MessageBox(NULL, "Cannot acquire a non NULL Palette. Game Terminated", "Palette Error", MB_OK|MB_ICONEXCLAMATION);
 		delete xpDibDoc;
 		delete this;
@@ -289,21 +289,21 @@ PUBLIC CMnkWindow::CMnkWindow(void){
 	#ifdef _MACROS          
 			//always play music in test mode.
 	   	if(m_pSound) 
-	   		if(!m_pSound->MidiLoopPlaySegment(1004L, 34040L, 1004L, FMT_MILLISEC))
+	   		if(!m_pSound->midiLoopPlaySegment(1004L, 34040L, 1004L, FMT_MILLISEC))
 	   			MessageBox("Unable to Play Background Music", "Internal Error");
 	#else								
 			//otherwise test for flag before playing music.
 	   	if(pGameParams->bMusicEnabled && m_pSound){ 
 	   	//#if 0
-	   		if(!(m_pSound->MidiLoopPlaySegment(1004L, 34040L, 1004L, FMT_MILLISEC)))
+	   		if(!(m_pSound->midiLoopPlaySegment(1004L, 34040L, 1004L, FMT_MILLISEC)))
 	   			MessageBox("Unable to Play Background Music", "Internal Error");
 	   	//#endif
 	   	}
 	#endif
 
-//    srand((unsigned) time(NULL)) ;  // seed the random number generator
+//    //srand((unsigned) time(NULL)) ;  // seed the random number generator
 
-	::SetCursor(hOldCursor);
+	MFC::SetCursor(hOldCursor);
     
 //    ASSERT(SetTimer(SPRITE_TIMER,SPRITE_INTERVAL,NULL)) ;
                 // set the interval timer for movement
@@ -479,7 +479,7 @@ void CMnkWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     {
    	m_bRulesActive=FALSE;
     CRules cRulesDlg(this, RULES, m_xpGamePalette, pGameParams->bSoundEffectsEnabled ? RULES_NARRATION : NULL ) ;
-    CSound::WaitWaveSounds();
+    CSound::waitWaveSounds();
     if((iRVal=cRulesDlg.DoModal())==-1)
     	MessageBox("The Mankala Rules Text File Can't Be Opened","Error Opening File"); 
    	m_bRulesActive=FALSE;
@@ -501,7 +501,7 @@ void CMnkWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	    		j ;
 	    
 	    if(hWnd= GetSafeHwnd()){
-	    	hInst=(HINSTANCE)::GetWindowWord(hWnd, GWW_HINSTANCE);
+	    	hInst=(HINSTANCE)GetWindowWord(hWnd, GWW_HINSTANCE);
 	    	
 	    	if((gpcMove=new CMove) && (gpcStoreMove=new CMove)){
 	    		_fmemcpy(gpcMove, &m_cCurrentMove, sizeof(CMove));
@@ -651,7 +651,7 @@ void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point)
     #ifdef _MACROS                           
     	EM("Entering MouseMove");
     #endif              
-    ::SetCursor(::LoadCursor(NULL,IDC_ARROW));
+    MFC::SetCursor(LoadCursor(NULL,IDC_ARROW));
 	    
 	static int dxCursor=GetSystemMetrics(SM_CXCURSOR);  		//cursor size.
 	static int dyCursor=GetSystemMetrics(SM_CYCURSOR);
@@ -683,7 +683,7 @@ void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point)
 	   	if(pDC=GetDC()){                           
 	   		if(hlocShells=::LocalAlloc(GHND, 16)){
 		   			npszShells=(NPSTR)::LocalLock(hlocShells);
-		   			wsprintf((LPSTR)npszShells,"%2d shell%c", m_cCurrentMove.m_iNumStones[iPlayer][iPit+2], (m_cCurrentMove.m_iNumStones[iPlayer][iPit+2]>1)?'s':0x0);                                                              
+		   			Common::sprintf_s(LPSTR)npszShells,"%2d shell%c", m_cCurrentMove.m_iNumStones[iPlayer][iPit+2], (m_cCurrentMove.m_iNumStones[iPlayer][iPit+2]>1)?'s':0x0);                                                              
 			    	    
 		   	    	if(m_pText){  
 		   	    		m_pText->RestoreBackground(pDC);
@@ -785,11 +785,11 @@ void CMnkWindow::OnLButtonDown(UINT nFlags,CPoint point)
 					#ifdef _MACROS3
 					EM("Clicked On Globe");
 					#endif	    	
-				CSound::WaitWaveSounds();
+				CSound::waitWaveSounds();
 				sndPlaySound( NULL, 0 );
 		    	if (pDC=GetDC()){
 		    		if( pSpriteGlobe= new CSprite()){    
-		    			hOldCur=::SetCursor(hHourGlassCursor);         
+		    			hOldCur=MFC::SetCursor(hHourGlassCursor);         
 		    			
 		    			if(pSpriteGlobe->LoadCels(pDC,GLOBE_SPRITE, 25)){
 		    			                                                                             
@@ -805,7 +805,7 @@ void CMnkWindow::OnLButtonDown(UINT nFlags,CPoint point)
 					    	for(i=0; i<25; i++){
 			    				if(pGameParams->bSoundEffectsEnabled && i==4) pGlobeWaveSound->Play();		//begin playing sound at the 4th loop cycle, for sync.
 			    				if(!pSpriteGlobe->PaintSprite(pDC, pointGlobeSprite.x, pointGlobeSprite.y)){
-			    					::SetCursor(hOldCur);
+			    					MFC::SetCursor(hOldCur);
 			    					MessageBox("Can't Conduct Animation Anymore","Insufficient Memory");
 			    					break;     
 			    				}                                          
@@ -816,9 +816,9 @@ void CMnkWindow::OnLButtonDown(UINT nFlags,CPoint point)
 							#ifdef _MACROS3
 							EM("pGlobeSprite Unloaded");
 							#endif
-				    		::SetCursor(hOldCur);         
+				    		MFC::SetCursor(hOldCur);         
 						}else{
-				    		::SetCursor(hOldCur);         
+				    		MFC::SetCursor(hOldCur);         
 							MessageBox("Unable to Play Animation"," Out Of Memory");
 						}
 		    			delete pSpriteGlobe;
@@ -828,11 +828,11 @@ void CMnkWindow::OnLButtonDown(UINT nFlags,CPoint point)
 		    	}       // end if pDC                 
 		    }		//  if rectTemp.SetRect(Globe.left,....)  over.
 		    else if ((point.x< Chair.right) && (point.x > Chair.left) && (point.y < Chair.bottom) && (point.y >Chair.top)){
-				CSound::WaitWaveSounds();
+				CSound::waitWaveSounds();
 				sndPlaySound( NULL, 0 );
 		    	if(pDC=GetDC()){                               
 		    		if (pSpriteChair= new CSprite()){
-		    			hOldCur=::SetCursor(hHourGlassCursor);         
+		    			hOldCur=MFC::SetCursor(hHourGlassCursor);         
 		    			if(pSpriteChair->LoadCels(pDC,CHAIR_SPRITE, 25)){
 		                	pSpriteChair->SetCel(-1);
 			   				pSpriteChair->LinkSprite();
@@ -844,7 +844,7 @@ void CMnkWindow::OnLButtonDown(UINT nFlags,CPoint point)
 			    			for(i=0; i<25; i++){
 			    				if(pGameParams->bSoundEffectsEnabled && i==7) pChairWaveSound->Play();		//begin playing sound at the 4th loop cycle, for sync.
 			    				if(!pSpriteChair->PaintSprite(pDC, pointChairSprite.x, pointChairSprite.y)){
-			    					::SetCursor(hOldCur);
+			    					MFC::SetCursor(hOldCur);
 			    					MessageBox("Can't paint anymore animation","Insufficient Memory");
 			    					break;
 			    				}          
@@ -853,10 +853,10 @@ void CMnkWindow::OnLButtonDown(UINT nFlags,CPoint point)
 							pSpriteChair->EraseSprite(pDC);    		  
 							pSpriteChair->UnlinkSprite();    
 						}else{
-	    					::SetCursor(hOldCur);
+	    					MFC::SetCursor(hOldCur);
 							MessageBox("Unable To Play Animation", "Insufficient Memory");
 						}//end if pSpriteChair->LoadCels...
-    					::SetCursor(hOldCur);
+    					MFC::SetCursor(hOldCur);
 		    			delete pSpriteChair;
 		    		}//end if pSpriteChair=new...
 		    		ReleaseDC(pDC);
@@ -1106,7 +1106,7 @@ void CMnkWindow::OnClose()
 	hlocTmp=::LocalAlloc(LHND, 16);                                                               
     npszTmp=(NPSTR)::LocalLock(hlocTmp);   
     
-    wsprintf(npszTmp,"%d",m_iStartStones);
+    Common::sprintf_s(npszTmp,"%d",m_iStartStones);
     WritePrivateProfileString("Mankala","StartStones",npszTmp,INI_FILENAME);
     
 	switch(m_eLevel[0]){
@@ -1116,7 +1116,7 @@ void CMnkWindow::OnClose()
 		default:
 		case LEV_EVAL: level=3; break;                                                      
 	}
-    wsprintf(npszTmp,"%d",level);
+    Common::sprintf_s(npszTmp,"%d",level);
     WritePrivateProfileString("Mankala","StartLevel",npszTmp,INI_FILENAME);
 
     ::LocalUnlock(hlocTmp);
@@ -1256,7 +1256,7 @@ BEGIN_MESSAGE_MAP( CMnkWindow, CFrameWnd )
 END_MESSAGE_MAP()
 
 #ifdef _DEBUG
-BOOL _far _pascal _export ResetPitsDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam){
+BOOL _far _pascal ResetPitsDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam){
 
 static long lTotalStones;
 	

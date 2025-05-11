@@ -290,7 +290,7 @@ CRiddlesWindow::CRiddlesWindow(VOID)
         }
 
         // seed the random number generator
-        //srand((unsigned)time(NULL));
+        ////srand((unsigned)time(NULL));
 
         // load the 32 character sprites into masters
         //
@@ -298,7 +298,7 @@ CRiddlesWindow::CRiddlesWindow(VOID)
 
         // if we are not playing from the metagame
         //
-        if (!pGameParams->bplayingMetagame) {
+        if (!pGameParams->bPlayingMetagame) {
 
             pGameParams->lScore = 0L;
             // Automatically bring up the main menu
@@ -464,7 +464,7 @@ BOOL CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 {
     CMainMenu COptionsWind((CWnd *)this,
     			m_pGamePalette,
-    			(pGameParams->bplayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (m_bGameActive ? 0 : NO_RETURN),
+    			(pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (m_bGameActive ? 0 : NO_RETURN),
     			GetGameParams, "riddles.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL),pGameParams);
 
     if (HIWORD(lParam) == BN_CLICKED) {
@@ -605,7 +605,7 @@ VOID CRiddlesWindow::LoadIniSettings()
 {
     INT nVal;
 
-    if (pGameParams->bplayingMetagame) {
+    if (pGameParams->bPlayingMetagame) {
 
         switch (pGameParams->nSkillLevel) {
 
@@ -1150,7 +1150,7 @@ VOID CRiddlesWindow::OnTimer(UINT nEvent)
 
                 GameReset();
 
-                if (pGameParams->bplayingMetagame) {
+                if (pGameParams->bPlayingMetagame) {
                     if (pGameParams->bSoundEffectsEnabled)
                         sndPlaySound(NULL, SND_ASYNC);
                     pGameParams->lScore = 0;
@@ -1321,7 +1321,7 @@ VOID CRiddlesWindow::ParseAnswer(const CHAR *pszAnswer)
             CMessageBox dlgYouWin((CWnd *)this, m_pGamePalette, "You are correct!", "You have won.");
             GameReset();
 
-            if (pGameParams->bplayingMetagame) {
+            if (pGameParams->bPlayingMetagame) {
                 pGameParams->lScore = 1;
                 if (pGameParams->bSoundEffectsEnabled)
                     sndPlaySound(NULL, SND_ASYNC);
@@ -1398,7 +1398,7 @@ VOID CRiddlesWindow::OnLButtonDown(UINT nFlags, CPoint point)
 
         // if we are not playing from the metagame
         //
-        if (!pGameParams->bplayingMetagame) {
+        if (!pGameParams->bPlayingMetagame) {
 
             // start a new game
             PlayGame();

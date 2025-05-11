@@ -39,7 +39,7 @@
 
 #include <stdlib.h>
 #include "stdafx.h"
-#include <mmsystem.h>
+
 #include "dfa.h"
 #include "dialogs.h"
 #include "misc.h"
@@ -148,7 +148,7 @@ CMainDFAWindow::CMainDFAWindow( HWND hCallingWnd, LPGAMESTRUCT lpGameStruct )
 									NULL, NULL, NULL);
 	
 	// set the seed for the random number generator
-	srand( (unsigned)time( NULL ));
+	//srand( (unsigned)time( NULL ));
 	
 	// initialize private members
 	m_lpGameStruct = lpGameStruct;
@@ -326,7 +326,7 @@ CMainDFAWindow::CMainDFAWindow( HWND hCallingWnd, LPGAMESTRUCT lpGameStruct )
 	pGameSound = new CSound( this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 	if (m_lpGameStruct->bMusicEnabled) {
 		if (pGameSound != NULL)
-			(*pGameSound).MidiLoopPlaySegment( 1480, 30700, 0, FMT_MILLISEC );
+			(*pGameSound).midiLoopPlaySegment( 1480, 30700, 0, FMT_MILLISEC );
 	} // end if pGameSound
 
 
@@ -675,7 +675,7 @@ if (HIWORD(lParam) == BN_CLICKED)	{		// only want to look at button clicks
 								SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 				}
 				if (pGameSound != NULL) {
-					(*pGameSound).MidiLoopPlaySegment( 1480, 30700, 0, FMT_MILLISEC );
+					(*pGameSound).midiLoopPlaySegment( 1480, 30700, 0, FMT_MILLISEC );
 				} // end if pGameSound
 			}
 
@@ -785,7 +785,7 @@ void CMainDFAWindow::OnLButtonDown(UINT nFlags, CPoint point)
 			if ( anBeaverShown[x] > 0 ) {						// if it was there at hit-time
 				CDC	*pDC = GetDC();						               
 				if ( m_lpGameStruct->bSoundEffectsEnabled ) {		// Play the hit sound
-					nPick = (rand() % NUM_HIT_SOUNDS);
+					nPick = (brand() % NUM_HIT_SOUNDS);
 					CSound::ClearWaveSounds();
        				sndPlaySound(m_pHitSound[nPick], SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 				} // end if
@@ -798,7 +798,7 @@ void CMainDFAWindow::OnLButtonDown(UINT nFlags, CPoint point)
 			
 			else {												// no beaver there at hit-time
 				if ( m_lpGameStruct->bSoundEffectsEnabled ) {		// Play the hit sound
-					nPick = (rand() % NUM_MISS_SOUNDS);				// randomly select a miss sound
+					nPick = (brand() % NUM_MISS_SOUNDS);				// randomly select a miss sound
 					CSound::ClearWaveSounds();
             		sndPlaySound(m_pMissSound[nPick], SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 				} // end if bSoundEffectsEnabled
@@ -871,7 +871,7 @@ void CMainDFAWindow::OnKeyDown( UINT nChar, UINT nRepCnt, UINT nFlags)
 	switch ( nChar ) {
 		case VK_F1:
 			KillTimer( GAMETIMER );										// stop the beavers for now
-			CSound::WaitWaveSounds();
+			CSound::waitWaveSounds();
 			pOptionButton->ShowWindow( SW_HIDE );						// hide furled scroll
 			(void) dlgRules.DoModal();      							// invoke the help dialog box
 			pOptionButton->ShowWindow( SW_SHOWNORMAL );					// show furled scroll
@@ -902,7 +902,7 @@ void CMainDFAWindow::OnTimer( UINT nWhichTimer )
 	
 	if ( nWhichTimer == GAMETIMER ) {
 	CDC	*pDC = GetDC();
-	int	x = rand() % NUM_BEAVERS;
+	int	x = brand() % NUM_BEAVERS;
 	
 		if ( bStart ) {
 			ReleaseDC( pDC );
@@ -1157,7 +1157,7 @@ int	x;
 		pGameSound = NULL;
 	}
 	
-	CSound::ClearSounds();
+	CSound::clearSounds();
 	
 	if ( pTimerSprite != NULL ) {
 		delete pTimerSprite;                    
@@ -1263,7 +1263,7 @@ BOOL CMainDFAWindow::LoadBeaverSounds(VOID)
     // assume no error
     bSuccess = TRUE;
 
-    hInst = (HINSTANCE)::GetWindowWord(m_hWnd, GWW_HINSTANCE);
+    hInst = (HINSTANCE)GetWindowWord(m_hWnd, GWW_HINSTANCE);
 
 	for (i = 0; i < NUM_HIT_SOUNDS; i++) {
 	    // Load and lock

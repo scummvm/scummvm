@@ -25,13 +25,13 @@
 *
 *
 ****************************************************************/
-#include <afxwin.h>
-#include <afxext.h>
-#include <assert.h>
-#include <globals.h>
-#include <text.h>
-#include <cbofdlg.h>
-#include <button.h>
+#include "bagel/afxwin.h"
+
+
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "usercfg.h"
 #include "resource.h"
 

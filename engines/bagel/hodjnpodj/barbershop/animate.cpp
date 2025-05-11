@@ -47,8 +47,8 @@
  ****************************************************************/
 
 #include "stdafx.h"
-#include <misc.h>
-#include <mmsystem.h>
+#include "bagel/boflib/misc.h"
+
 #include "main.h"
 #include "animate.h"
 
@@ -69,7 +69,7 @@ CAnimate::CAnimate(CSound *pSound)
 	m_cCutRect		= CRect(CUT_LEFT, CUT_TOP, CUT_RIG, CUT_BOT);
 	m_pSound		= pSound;
 
-	srand((unsigned) time(NULL));		// seed the random number generator
+	//srand((unsigned) time(NULL));		// seed the random number generator
 } // CAnimate
 
 CAnimate::~CAnimate()
@@ -260,7 +260,7 @@ BOOL CAnimate::Lollipop(CPoint point)
 	if ( pGameParams->bSoundEffectsEnabled == FALSE )
 		return TRUE;
 
-	if ( (rand() % 2) == 0 ) {		// randomly chose sound wave to play
+	if ( (brand() % 2) == 0 ) {		// randomly chose sound wave to play
 		m_pSound->Initialize(
 				LOLLI_A_WAV,
                 SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE

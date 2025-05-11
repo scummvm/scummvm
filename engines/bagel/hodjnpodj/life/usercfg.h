@@ -22,9 +22,9 @@
 #ifndef __game_usercfg_H__
 #define __game_usercfg_H__
 
-#include <text.h>
-#include <button.h>
-#include <cbofdlg.h>
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "resources.h"
 
 #define LIFE_SETTINGS	16

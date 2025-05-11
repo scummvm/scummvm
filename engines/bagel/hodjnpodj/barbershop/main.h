@@ -21,13 +21,13 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <stdinc.h>
+#include "bagel/afxwin.h"
+
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "sprite.h"
-#include <text.h>
-#include <errors.h>
-#include <sound.h>
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/sound.h"
 #include "barb.h"
 #include "animate.h"
 

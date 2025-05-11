@@ -47,21 +47,21 @@
 *       [Specifications, documents, test plans, etc.]
 *
 ****************************************************************/
-#include <afxwin.h>
-#include <afxext.h>
+#include "bagel/afxwin.h"
+
 #include <time.h>
-#include <assert.h>
-#include <mmsystem.h>
-#include <dibdoc.h>
-#include <stdinc.h>
-#include <text.h>
-#include <globals.h>
-#include <mainmenu.h>
+
+
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
 #include <copyrite.h>
-#include <cmessbox.h>
-#include <misc.h>
-#include <rules.h>
-#include <errors.h>
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/boflib/error.h"
 #include "gamedll.h"
 #include "main.h"
 #include "undo.h"
@@ -218,7 +218,7 @@ CMainWindow::CMainWindow(VOID)
             if (errCode == ERR_NONE) {
 
                 // seed the random number generator
-                srand((unsigned)time(NULL));
+                //srand((unsigned)time(NULL));
             }
 
             ReleaseDC(pDC);
@@ -268,7 +268,7 @@ CMainWindow::CMainWindow(VOID)
         //
         if (pGameParams->bMusicEnabled) {
             m_bMIDIPlaying = TRUE;
-            m_pMIDISound->MidiLoopPlaySegment(2000L, 33560L, 00L, FMT_MILLISEC);
+            m_pMIDISound->midiLoopPlaySegment(2000L, 33560L, 00L, FMT_MILLISEC);
         }
 
         // Automatically bring up the main menu if in stand alone mode
@@ -403,7 +403,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
                     pGameParams
                     );
 
-                CSound::WaitWaveSounds();
+                CSound::waitWaveSounds();
 
                 // Get users choice from command menu
                 //
@@ -437,12 +437,12 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 
                 if (!pGameParams->bMusicEnabled && m_bMIDIPlaying) {
 
-                    m_pMIDISound->Stop();
+                    m_pMIDISound->stop();
                     m_bMIDIPlaying = FALSE;
 
                 } else if (pGameParams->bMusicEnabled && !m_bMIDIPlaying) {
 
-                    m_pMIDISound->MidiLoopPlaySegment(2470, 32160, 0, FMT_MILLISEC);
+                    m_pMIDISound->midiLoopPlaySegment(2470, 32160, 0, FMT_MILLISEC);
                     m_bMIDIPlaying = TRUE;
                 }
 
@@ -517,7 +517,7 @@ VOID CMainWindow::PlayGame()
             UpdateWindow();
 /*
             if ( pGameParams->bMusicEnabled != FALSE ) {
-                m_pMIDISound->MidiLoopPlaySegment(2000L, 33560L, 00L, FMT_MILLISEC);
+                m_pMIDISound->midiLoopPlaySegment(2000L, 33560L, 00L, FMT_MILLISEC);
             }
 */
             m_pBarb->NewGame(pDC);
@@ -867,7 +867,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
             }
 
             GamePause();
-            CSound::WaitWaveSounds();
+            CSound::waitWaveSounds();
             CRules  RulesDlg(this, RULES_TXT, m_pGamePalette, pGameParams->bSoundEffectsEnabled?RULES_WAV:NULL);
             RulesDlg.DoModal();
             GameResume();
@@ -965,7 +965,7 @@ VOID CMainWindow::OnClose()
     }
 
     if (m_pMIDISound != NULL || m_pWavSound != NULL) {
-        CSound::ClearSounds();      // turn all sounds totally off and delete the objects
+        CSound::clearSounds();      // turn all sounds totally off and delete the objects
         m_pMIDISound = NULL;
         m_pWavSound = NULL;
     }

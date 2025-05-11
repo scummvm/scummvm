@@ -4,12 +4,12 @@
 #include "stdafx.h"
 #include "mnk.h"
 #include "mainmenu.h"
-#include <mmsystem.h>            
+            
 
 #include "copyrite.h"   // mandatory internal copyright notice
 #include "misc.h"
 #include "macros.h"        
-#include <gamedll.h>
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
 #include "sound.h"
 
 #ifdef _MACROS
@@ -1012,8 +1012,8 @@ PRIVATE BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
                 npszHumanScore=(NPSTR)LocalLock(hlocHumanScore);
                 npszCrabScore=(NPSTR)LocalLock(hlocCrabScore);
 
-                wsprintf(npszHumanScore,"Your Score: %d shell%c",   m_cCurrentMove.m_iNumStones[0][HOMEINDEX+2],(m_cCurrentMove.m_iNumStones[0][HOMEINDEX+2]>1)? 's':0 );
-                wsprintf(npszCrabScore,"My Score: %d shell%c",  m_cCurrentMove.m_iNumStones[1][HOMEINDEX+2],(m_cCurrentMove.m_iNumStones[1][HOMEINDEX+2]>1)? 's':0 );
+                Common::sprintf_s(npszHumanScore,"Your Score: %d shell%c",   m_cCurrentMove.m_iNumStones[0][HOMEINDEX+2],(m_cCurrentMove.m_iNumStones[0][HOMEINDEX+2]>1)? 's':0 );
+                Common::sprintf_s(npszCrabScore,"My Score: %d shell%c",  m_cCurrentMove.m_iNumStones[1][HOMEINDEX+2],(m_cCurrentMove.m_iNumStones[1][HOMEINDEX+2]>1)? 's':0 );
 
                 CMessageBox(this, m_xpGamePalette, npszHumanScore, npszCrabScore);
 
@@ -1169,7 +1169,7 @@ PUBLIC void CMnkWindow::ReleaseResources(void)
     }
     
     if(m_pSound){
-    	m_pSound->Stop();
+    	m_pSound->stop();
     	delete m_pSound;
     	m_pSound=NULL;
     }                                            
@@ -1332,7 +1332,7 @@ PRIVATE BOOL CMnkWindow::OptionsDialog(void)
 	//    
    	if((pGameParams->bMusicEnabled == FALSE) && (m_pSound != NULL)) {
    		if (m_pSound->Playing())
-   			m_pSound->Stop();
+   			m_pSound->stop();
    	} 
    	else if( pGameParams->bMusicEnabled ){
    		if (m_pSound == NULL) { 
@@ -1340,7 +1340,7 @@ PRIVATE BOOL CMnkWindow::OptionsDialog(void)
 		}
 		if (m_pSound != NULL) {
 			if ( !m_pSound->Playing() )
-   				m_pSound->MidiLoopPlaySegment(1004L, 34040L, 1004L, FMT_MILLISEC);
+   				m_pSound->midiLoopPlaySegment(1004L, 34040L, 1004L, FMT_MILLISEC);
    		}
    	}
 

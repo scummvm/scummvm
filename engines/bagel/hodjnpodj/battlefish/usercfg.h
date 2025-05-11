@@ -21,11 +21,11 @@
 #ifndef USERCFG_H
 #define USERCFG_H
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <cbofdlg.h>
-#include <button.h>
-#include <misc.h>
+#include "bagel/afxwin.h"
+
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/boflib/misc.h"
 
 #define IDD_USERCFG 100
 

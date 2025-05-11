@@ -53,20 +53,20 @@
  *      PDQ.DAT  - contains the data store of phrases
  *
  ****************************************************************/
-#include <afxwin.h>
-#include <afxext.h>
-#include <assert.h>
+#include "bagel/afxwin.h"
+
+
 #include <stdlib.h>
-#include <ctype.h>
+
 #include <fstream.h>
-#include <mmsystem.h>
-#include <sprite.h>
-#include <stdinc.h>
-#include <misc.h>
-#include <gamedll.h>
-#include <mainmenu.h>
-#include <cmessbox.h>
-#include <globals.h>
+
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
+#include "bagel/hodjnpodj/globals.h"
 #include "game.h"
 #include "usercfg.h"
 #include "main.h"
@@ -207,7 +207,7 @@ ERROR_CODE LoadNewPhrase(VOID)
         * pick one at random, but not same one twice in a row
         */
         do {
-            i = rand() % n;
+            i = brand() % n;
         } while (i == nLast);
         nLast = i;
 
@@ -312,7 +312,7 @@ VOID BuildRandomPhraseOrder()
         for (i = 0; i < n; i++) {
             do {
                 use = TRUE;
-                newIndex = rand() % n + 1;
+                newIndex = brand() % n + 1;
                 for (j = 0; j < i; j++) {
                     if (curPhraseOrder[j] == newIndex) {
                         use = FALSE;

@@ -18,14 +18,14 @@
 *   1.00a       03-18-94     BCW        Created this file
 *
 **/
-#include <afxwin.h>
-#include <afxext.h>
-#include <assert.h>
-#include <globals.h>
-#include <text.h>
-#include <cbofdlg.h>
-#include <menures.h>
-#include <stdinc.h>
+#include "bagel/afxwin.h"
+
+
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/menures.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "usercfg.h"
 
 #define ID_RESET     104

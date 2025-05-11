@@ -93,6 +93,7 @@ extern UINT_PTR SetTimer(UINT_PTR nIDEvent, UINT nElapse,
 	void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = NULL);
 extern BOOL KillTimer(UINT_PTR nIDEvent);
 extern void Sleep(UINT milli);
+extern DWORD GetTickCount();
 
 extern bool FileExists(const char *filename);
 extern long FileLength(const char *filename);
@@ -100,6 +101,15 @@ extern long FileLength(const char *filename);
 extern BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,
 	UINT wMsgFilterMin, UINT wMsgFilterMax,
 	UINT wRemoveMsg);
+extern void TranslateMessage(LPMSG lpMsg);
+extern void DispatchMessage(LPMSG lpMsg);
+
+extern HRSRC FindResource(HMODULE hModule,
+	LPCSTR lpName, LPCSTR lpType);
+extern HGLOBAL LoadResource(HMODULE hModule,
+	HRSRC hResInfo);
+extern LPVOID LockResource(HGLOBAL hResData);
+extern BOOL FreeResource(HGLOBAL hResData);
 
 inline void strUpper(char *s) {
 	for (; *s; ++s)

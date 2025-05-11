@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
-#include <misc.h>
-#include <stdinc.h>
+
+#include "bagel/boflib/misc.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
 
 /*
 THE PICTURE OF DORIAN GRAY

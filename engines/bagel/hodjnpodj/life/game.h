@@ -17,7 +17,7 @@
 #ifndef __game_H__
 #define __game_H__
 
-#include <sound.h>
+#include "bagel/boflib/sound.h"
 #include "gamedll.h"
 
 #define SPLASHSPEC			".\\art\\backgrnd.BMP"

@@ -186,6 +186,10 @@ void CWnd::SetActiveWindow() {
 	error("TODO: CWnd::SetActiveWindow");
 }
 
+void CWnd::DestroyWindow() {
+	error("TODO: CWnd::DestroyWindow");
+}
+
 BOOL CWnd::IsWindowVisible() const {
 	error("TODO: CWnd::IsWindowVisible");
 }
@@ -272,6 +276,10 @@ BOOL CWnd::GotoDlgCtrl(CWnd *pWndCtrl) {
 
 BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 	error("TODO: CWnd::SubclassDlgItem");
+}
+
+int CWnd::GetDlgCtrlID() const {
+	error("TODO: CWnd::GetDlgCtrlID");
 }
 
 void CWnd::SetFocus() {

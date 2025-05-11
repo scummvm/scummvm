@@ -209,7 +209,7 @@ void __cdecl _searchenv(const char *, const char *,
     char *);
 void __cdecl _splitpath(const char *, char *,
     char *, char *, char *);
-void __cdecl srand(unsigned int);
+void __cdecl //srand(unsigned int);
 long __cdecl strtol(const char *, char * *,
     int);
 long double __cdecl _strtold(const char *,

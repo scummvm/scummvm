@@ -21,14 +21,14 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <stdinc.h>
-#include <sprite.h>
-#include <text.h>
-#include <errors.h>
-#include <button.h>                 
-#include <sound.h>
+#include "bagel/afxwin.h"
+
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/boflib/error.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"                 
+#include "bagel/boflib/sound.h"
 
 char* GetStringFromResource(UINT);
 

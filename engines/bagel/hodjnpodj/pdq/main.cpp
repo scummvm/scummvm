@@ -18,23 +18,23 @@
 *   1.00a       03-16-94     BCW        Created this file
 *
 **/
-#include <afxwin.h>
-#include <afxext.h>
+#include "bagel/afxwin.h"
+
 #include <time.h>
-#include <assert.h>
-#include <ctype.h>
-#include <mmsystem.h>
-#include <dibdoc.h>
-#include <stdinc.h>
-#include <text.h>
-#include <globals.h>
-#include <sprite.h>
-#include <mainmenu.h>
+
+
+
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
 #include <copyrite.h>
-#include <cmessbox.h>
-#include <rules.h>
-#include <gamedll.h>
-#include <misc.h>
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
+#include "bagel/boflib/misc.h"
 #include "main.h"
 #include "game.h"
 #include "guess.h"
@@ -197,14 +197,14 @@ CMainWindow::CMainWindow()
     if (pGameParams->bMusicEnabled) {
         if ((m_pSoundTrack = new CSound) != NULL) {
             m_pSoundTrack->Initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-            m_pSoundTrack->MidiLoopPlaySegment(1580, 32600, 0, FMT_MILLISEC);
+            m_pSoundTrack->midiLoopPlaySegment(1580, 32600, 0, FMT_MILLISEC);
         }
     } // end if m_pSoundTrack
 
     LoadCategoryNames();
 
     // seed the random number generator
-    srand((unsigned)time(NULL));
+    //srand((unsigned)time(NULL));
 
     EndWaitCursor();
 
@@ -426,7 +426,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
                 }
                 //PaintScreen();
     
-                CSound::WaitWaveSounds();
+                CSound::waitWaveSounds();
 
                 switch (COptionsWind.DoModal()) {
 
@@ -457,7 +457,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 
                 if (!pGameParams->bMusicEnabled && (m_pSoundTrack != NULL)) {
 
-                    m_pSoundTrack->Stop();
+                    m_pSoundTrack->stop();
                     delete m_pSoundTrack;
                     m_pSoundTrack = NULL;
 
@@ -465,7 +465,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 
                     if ((m_pSoundTrack = new CSound) != NULL) {
                         m_pSoundTrack->Initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-                        m_pSoundTrack->MidiLoopPlaySegment(1580, 32600, 0, FMT_MILLISEC);
+                        m_pSoundTrack->midiLoopPlaySegment(1580, 32600, 0, FMT_MILLISEC);
                     }
                 }
 
@@ -533,7 +533,7 @@ void CMainWindow::OnClose()
         m_pSoundTrack = NULL;
     }
     
-    CSound::ClearSounds();
+    CSound::clearSounds();
 
     if ((pDC = GetDC()) != NULL) {
 
@@ -649,7 +649,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
         //
         case VK_F1: {
             GamePauseTimer();
-            CSound::WaitWaveSounds();
+            CSound::waitWaveSounds();
             CRules  RulesDlg(this, "tggrules.txt", pMyGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL));
             RulesDlg.DoModal();
             SetFocus();
@@ -755,9 +755,9 @@ VOID UpdateScore(UINT nLeft, UINT nTotal, UINT nLeftAvg, UINT nTotalAvg)
             * update the current score
             */
             if (nTotal == 0)
-                wsprintf(buf, "%d/%d = %d%%", nLeft, nTotal, 0);
+                Common::sprintf_s(buf, "%d/%d = %d%%", nLeft, nTotal, 0);
             else
-                wsprintf(buf, "%d/%d = %d%%", nLeft, nTotal, (100*nLeft)/nTotal);
+                Common::sprintf_s(buf, "%d/%d = %d%%", nLeft, nTotal, (100*nLeft)/nTotal);
 
             txtScore->DisplayString(pDC, buf, 21, FW_BOLD, RGB( 0, 0, 0));
 
@@ -765,9 +765,9 @@ VOID UpdateScore(UINT nLeft, UINT nTotal, UINT nLeftAvg, UINT nTotalAvg)
             * update the cumulative score
             */
             if (nTotalAvg == 0)
-                wsprintf(buf, "0%%");
+                Common::sprintf_s(buf, "0%%");
             else
-                wsprintf(buf, "%d%%", (100 * nLeftAvg) / nTotalAvg);
+                Common::sprintf_s(buf, "%d%%", (100 * nLeftAvg) / nTotalAvg);
             txtTotalScore->DisplayString(pDC, buf, 21, FW_BOLD, RGB( 0, 0, 0));
         }
         gMain->ReleaseDC(pDC);
@@ -794,7 +794,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 
     tmpRect = m_pScrollSprite->GetRect();
 
-    CSound::WaitWaveSounds();
+    CSound::waitWaveSounds();
 
     if (tmpRect.PtInRect(point)) {
 

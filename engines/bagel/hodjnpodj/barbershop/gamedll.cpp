@@ -24,15 +24,15 @@
  * FILES USED:
  *                             
  ****************************************************************/
-#include <afxwin.h>
-#include <gamedll.h>
+#include "bagel/afxwin.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
 #include "main.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-HWND FAR PASCAL _export RunBarb( HWND, LPGAMESTRUCT);
+HWND FAR PASCAL RunBarb( HWND, LPGAMESTRUCT);
 
 #ifdef __cplusplus
 }
@@ -76,7 +76,7 @@ HWND ghParentWnd;
  ****************************************************************/
  
 extern "C" 
-HWND FAR PASCAL _export RunBarb( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
+HWND FAR PASCAL RunBarb( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 {
     CMainWindow *pMain;
 
@@ -97,8 +97,8 @@ HWND FAR PASCAL _export RunBarb( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
     }
 
     // these must be set in this function
-    hDLLInst = (HINSTANCE)::GetWindowWord( pMain->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)::GetWindowWord( hParentWnd, GWW_HINSTANCE);
+    hDLLInst = (HINSTANCE)GetWindowWord( pMain->m_hWnd, GWW_HINSTANCE);
+    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
 
     return pMain->m_hWnd;   // return the m_hWnd of your main game window
 }

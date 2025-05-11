@@ -285,19 +285,19 @@ char	cBDisplay[12];
 
     switch ( m_nGameTime ) {
     	case 1:
-	    	wsprintf( cGDisplay, "15" ); 
+	    	Common::sprintf_s( cGDisplay, "15" ); 
     		break;
     	case 2:
-	    	wsprintf( cGDisplay, "30" ); 
+	    	Common::sprintf_s( cGDisplay, "30" ); 
     		break;
     	case 3:
-	    	wsprintf( cGDisplay, "45" ); 
+	    	Common::sprintf_s( cGDisplay, "45" ); 
     		break;
     	case 4:
-	    	wsprintf( cGDisplay, "60" ); 
+	    	Common::sprintf_s( cGDisplay, "60" ); 
     		break;
     	default:
-	    	wsprintf( cGDisplay, "Unlimited" ); 
+	    	Common::sprintf_s( cGDisplay, "Unlimited" ); 
     		break;
     }
     ptxtGTime->DisplayString( pDC, cGDisplay, 14, FW_BOLD, RGB(0,0,0) );
@@ -313,16 +313,16 @@ char	cBDisplay[12];
 
     switch ( m_nBeaverTime ) {
     	case 1:
-	    	wsprintf( cBDisplay, ".5" ); 
+	    	Common::sprintf_s( cBDisplay, ".5" ); 
     		break;
     	case 2:
-	    	wsprintf( cBDisplay, "1" ); 
+	    	Common::sprintf_s( cBDisplay, "1" ); 
     		break;
     	case 3:
-	    	wsprintf( cBDisplay, "1.5" ); 
+	    	Common::sprintf_s( cBDisplay, "1.5" ); 
     		break;
 		default:
-	    	wsprintf( cBDisplay, "2" ); 
+	    	Common::sprintf_s( cBDisplay, "2" ); 
 			break;
 	}
     ptxtBTime->DisplayString( pDC, cBDisplay, 14, FW_BOLD, RGB(0,0,0) );
@@ -442,19 +442,19 @@ char	cBDisplay[12];
 	if ( pScrollBar->GetDlgCtrlID() == IDC_GAMETIME) {
 	    switch ( m_nGameTime ) {
 	    	case 1:
-		    	wsprintf( cGDisplay, "15" ); 
+		    	Common::sprintf_s( cGDisplay, "15" ); 
 	    		break;
 	    	case 2:
-		    	wsprintf( cGDisplay, "30" ); 
+		    	Common::sprintf_s( cGDisplay, "30" ); 
 	    		break;
 	    	case 3:
-		    	wsprintf( cGDisplay, "45" ); 
+		    	Common::sprintf_s( cGDisplay, "45" ); 
 	    		break;
 	    	case 4:
-		    	wsprintf( cGDisplay, "60" ); 
+		    	Common::sprintf_s( cGDisplay, "60" ); 
 	    		break;
 			default:
-		    	wsprintf( cGDisplay, "Unlimited" ); 
+		    	Common::sprintf_s( cGDisplay, "Unlimited" ); 
 	    		break;
 	    }
 		ptxtGTime->DisplayString( pDC, cGDisplay, 14, FW_BOLD, RGB(0,0,0) );
@@ -463,16 +463,16 @@ char	cBDisplay[12];
 	if (pScrollBar->GetDlgCtrlID() == IDC_BEAVERDUR) {
 	    switch ( m_nBeaverTime ) {
 	    	case 1:
-		    	wsprintf( cBDisplay, ".5" ); 
+		    	Common::sprintf_s( cBDisplay, ".5" ); 
 	    		break;
 	    	case 2:
-		    	wsprintf( cBDisplay, "1" ); 
+		    	Common::sprintf_s( cBDisplay, "1" ); 
 	    		break;
 	    	case 3:
-		    	wsprintf( cBDisplay, "1.5" ); 
+		    	Common::sprintf_s( cBDisplay, "1.5" ); 
 	    		break;
 			default:
-		    	wsprintf( cBDisplay, "2" ); 
+		    	Common::sprintf_s( cBDisplay, "2" ); 
 				break;
 		}
 		ptxtBTime->DisplayString( pDC, cBDisplay, 14, FW_BOLD, RGB(0,0,0) );

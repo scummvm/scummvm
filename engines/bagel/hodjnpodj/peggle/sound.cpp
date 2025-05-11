@@ -793,7 +793,7 @@ MCI_PLAY_PARMS  	mciPlayParams;
 
 /*************************************************************************
  *
- * MidiLoopPlaySegment()
+ * midiLoopPlaySegment()
  *
  * Parameters:		????
  *
@@ -804,7 +804,7 @@ MCI_PLAY_PARMS  	mciPlayParams;
  *
  ************************************************************************/
 
-BOOL CSound::MidiLoopPlaySegment(DWORD dwLoopFrom, DWORD dwLoopTo, DWORD dwBegin, DWORD TimeFmt){                                 
+BOOL CSound::midiLoopPlaySegment(DWORD dwLoopFrom, DWORD dwLoopTo, DWORD dwBegin, DWORD TimeFmt){                                 
    	
 	m_wFlags |= SOUND_LOOP;
 	m_dwRePlayStart=dwLoopFrom;
@@ -1270,7 +1270,7 @@ int			nID;
  *
  ************************************************************************/
 
-void CSound::ClearSounds(void)
+void CSound::clearSounds(void)
 {
 	while(m_pSoundChain != NULL) {					// delete all sound entries
 		delete m_pSoundChain;

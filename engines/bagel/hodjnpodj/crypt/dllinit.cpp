@@ -27,14 +27,14 @@
 
 #include "stdafx.h"
 #include <time.h>
-#include <dibdoc.h>
-#include <sprite.h>
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
 
 #include "globals.h"
 #include "resource.h"
-#include <button.h>
-#include <rules.h>
-#include <bitmaps.h>
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 #include "main.h"
 //#include "gameover.h"
 #include "optn.h"
@@ -82,7 +82,7 @@ HCURSOR         hGameCursor;
  *
  ****************************************************************/
 extern "C" 
-HWND FAR PASCAL _export RunCrypt( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
+HWND FAR PASCAL RunCrypt( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 {
 
 //  lpGameInfo->bPlayingMetagame = TRUE;
@@ -105,8 +105,8 @@ HWND FAR PASCAL _export RunCrypt( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
     pMainGameWnd->UpdateWindow();
     pMainGameWnd->SetActiveWindow(); 
 // return the handle to this window
-    hDLLInst = (HINSTANCE)::GetWindowWord( pMainGameWnd->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)::GetWindowWord( hParentWnd, GWW_HINSTANCE);  
+    hDLLInst = (HINSTANCE)GetWindowWord( pMainGameWnd->m_hWnd, GWW_HINSTANCE);
+    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);  
 //  ::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_SCROLL, BN_CLICKED );
     return pMainGameWnd->m_hWnd;
 }

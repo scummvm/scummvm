@@ -9,7 +9,7 @@
 // Microsoft Foundation Classes product.
 
 
-#include <afxwin.h>
-#include <afxext.h>
+#include "bagel/afxwin.h"
+
 
 

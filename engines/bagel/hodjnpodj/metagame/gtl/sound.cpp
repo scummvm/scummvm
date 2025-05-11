@@ -1063,7 +1063,7 @@ MCI_PLAY_PARMS      mciPlayParams;
 
 /*************************************************************************
  *
- * MidiLoopPlaySegment()
+ * midiLoopPlaySegment()
  *
  * Parameters:      ????
  *
@@ -1074,7 +1074,7 @@ MCI_PLAY_PARMS      mciPlayParams;
  *
  ************************************************************************/
 
-BOOL CSound::MidiLoopPlaySegment(DWORD dwLoopFrom, DWORD dwLoopTo, DWORD dwBegin, DWORD TimeFmt)
+BOOL CSound::midiLoopPlaySegment(DWORD dwLoopFrom, DWORD dwLoopTo, DWORD dwBegin, DWORD TimeFmt)
 {                                 
 BOOL    bSuccess;
     
@@ -1649,7 +1649,7 @@ UINT        nResult;
  *
  ************************************************************************/
 
-void CSound::ClearSounds(void)
+void CSound::clearSounds(void)
 {
     StopSounds();                                   // stop all active sounds
     
@@ -1794,7 +1794,7 @@ void CSound::WaitSounds(void)
  *
  ************************************************************************/
 
-void CSound::WaitWaveSounds(void)
+void CSound::waitWaveSounds(void)
 {
 DWORD   dwTickCount = 0;
 CSound  *pSound;

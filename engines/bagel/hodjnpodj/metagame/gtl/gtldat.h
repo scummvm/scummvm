@@ -23,7 +23,7 @@
 #define HODJNPODJ_METAGAME_GTL_RESOURCE_H
 
 //#include <sys\timeb.h>
-#include <sound.h>
+#include "bagel/boflib/sound.h"
 
 #include "bgen.h"
 #include "bgenut.h"

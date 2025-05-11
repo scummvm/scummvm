@@ -45,7 +45,8 @@ enum {
 	VK_F3 = Common::KEYCODE_F3,
 	VK_F4 = Common::KEYCODE_F4,
 	VK_RETURN = Common::KEYCODE_RETURN,
-	VK_ESCAPE = Common::KEYCODE_ESCAPE
+	VK_ESCAPE = Common::KEYCODE_ESCAPE,
+	VK_SPACE = Common::KEYCODE_SPACE
 };
 
 } // namespace MFC

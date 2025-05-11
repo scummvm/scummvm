@@ -11,10 +11,10 @@
 #include <fcntl.h>                                                                                                                
 #include <sys\types.h>
 #include <sys\stat.h>                                                                                                                      
-#include <mmsystem.h>            
+            
 #include "gamedll.h"
 
-#include <misc.h>                                                   
+#include "bagel/boflib/misc.h"                                                   
 #include <macros.h>
 
 #ifdef _MACROS
@@ -949,7 +949,7 @@ BOOL CMnk::Minimax(CMove * xpcMove, int iDepth )
 #ifdef _MACROS
 	static char _string[30];
 	
-	::wsprintf(_string, "In Minimax; recursion #%d",_recursion_count++);
+	::Common::sprintf_s(_string, "In Minimax; recursion #%d",_recursion_count++);
 	EM(_string);  
 #endif
 

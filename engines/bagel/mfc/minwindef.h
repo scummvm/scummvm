@@ -70,6 +70,7 @@ namespace MFC {
 
 // Dummy try/catch implementation
 #define TRY if (1) {
+#define END_TRY }
 #define CATCH(KLASS, VAL) KLASS *VAL = nullptr; if (0)
 #define END_CATCH }
 

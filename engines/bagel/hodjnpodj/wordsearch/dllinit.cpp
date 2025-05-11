@@ -25,7 +25,7 @@
  *
  ****************************************************************/
 
-#include <afxwin.h>
+#include "bagel/afxwin.h"
 #include "resource.h"
 #include "wordsrch.h" 
 
@@ -69,7 +69,7 @@ HCURSOR         hGameCursor;
  *
  ****************************************************************/
 extern "C" 
-HWND FAR PASCAL _export RunWordSearch( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
+HWND FAR PASCAL RunWordSearch( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 {
 
 // if the pointer has garbage in it, the clean it out
@@ -83,8 +83,8 @@ HWND FAR PASCAL _export RunWordSearch( HWND hParentWnd, LPGAMESTRUCT lpGameInfo 
     pMainGameWnd->UpdateWindow();
     pMainGameWnd->SetActiveWindow(); 
 // return the handle to this window
-    hDLLInst = (HINSTANCE)::GetWindowWord( pMainGameWnd->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)::GetWindowWord( hParentWnd, GWW_HINSTANCE);
+    hDLLInst = (HINSTANCE)GetWindowWord( pMainGameWnd->m_hWnd, GWW_HINSTANCE);
+    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
     if (lpGameInfo->bPlayingMetagame == FALSE)  
         ::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );
     return pMainGameWnd->m_hWnd;
@@ -134,7 +134,7 @@ public:
 BOOL CTracerDLL::InitInstance()
 {
     hGameCursor = 0;
-    hGameCursor = ::LoadCursor( m_hInstance, IDC_ARROW );
+    hGameCursor = LoadCursor( m_hInstance, IDC_ARROW );
     return TRUE;
 }
 

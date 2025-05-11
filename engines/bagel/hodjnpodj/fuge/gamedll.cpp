@@ -24,15 +24,15 @@
  * FILES USED:
  *                             
  ****************************************************************/
-#include <afxwin.h>
-#include <gamedll.h>
+#include "bagel/afxwin.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
 #include "fuge.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-HWND FAR PASCAL _export RunFuge(HWND, LPGAMESTRUCT);
+HWND FAR PASCAL RunFuge(HWND, LPGAMESTRUCT);
 
 #ifdef __cplusplus
 }
@@ -75,7 +75,7 @@ HWND ghParentWnd;
  *
  ****************************************************************/
 //extern "C"
-HWND FAR PASCAL _export RunFuge(HWND hParentWnd, LPGAMESTRUCT lpGameInfo)
+HWND FAR PASCAL RunFuge(HWND hParentWnd, LPGAMESTRUCT lpGameInfo)
 {
     CFugeWindow *pMain;
 
@@ -95,8 +95,8 @@ HWND FAR PASCAL _export RunFuge(HWND hParentWnd, LPGAMESTRUCT lpGameInfo)
         pMain->SetActiveWindow();
 
         // these are used by Rules
-        hDLLInst = (HINSTANCE)::GetWindowWord(pMain->m_hWnd, GWW_HINSTANCE);
-        hExeInst = (HINSTANCE)::GetWindowWord(hParentWnd, GWW_HINSTANCE);
+        hDLLInst = (HINSTANCE)GetWindowWord(pMain->m_hWnd, GWW_HINSTANCE);
+        hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
 
         if (pGameParams->bPlayingMetagame)
             pMain->PlayGame();

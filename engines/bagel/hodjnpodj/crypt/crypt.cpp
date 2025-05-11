@@ -47,8 +47,8 @@
  ****************************************************************/
 
 #include "stdafx.h"
-#include <ctype.h>
-#include <sprite.h>
+
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
 
 #include "globals.h"
 #include "crypt.h"
@@ -90,7 +90,7 @@ CCryptogram::CCryptogram(CDC *pDC)
 	********************************************************/
 	bIsGameOver			= FALSE;		// Initialize solved switch
 
-	srand((unsigned) time(NULL));		// seed the random number generator
+	//srand((unsigned) time(NULL));		// seed the random number generator
 }
 
 /*****************************************************************
@@ -619,7 +619,7 @@ void CCryptogram::CreateCryptMap(int nLettersSolved)
 			* Find an unused encrypt map. *
 			******************************/
 			do {
-				nEncryptCode = rand() % ALPHABET;
+				nEncryptCode = brand() % ALPHABET;
 				bIsUsed = (m_nCryptMap[ENCRYPT_MAP][nEncryptCode] != NOT_USED);
 			} while ( bIsUsed == TRUE || nEncryptCode == nDecryptCode );	// find unused map
 
@@ -654,7 +654,7 @@ void CCryptogram::CreateCryptMap(int nLettersSolved)
 			break;							// No - by pass loop.
 
 		do {
-			nDecryptCode = rand() % ALPHABET;					// find used char
+			nDecryptCode = brand() % ALPHABET;					// find used char
 			bIsUsed = (
 					m_nCryptMap[DECRYPT_MAP][nDecryptCode] != NOT_USED &&	// in quote and
 					m_nCryptMap[DECRYPT_MAP][nDecryptCode] != nDecryptCode	// not already solved

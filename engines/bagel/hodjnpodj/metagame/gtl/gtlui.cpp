@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 
-#include <assert.h>
-#include <sprite.h>
+
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
 
 #include "gtl.h"
 #include "gtldoc.h"

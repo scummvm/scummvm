@@ -32,7 +32,7 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "dialogs.h"
-#include <button.h>
+#include "bagel/hodjnpodj/hnplibs/button.h"
 
 static CPalette *pUWonPalette;                                         
 

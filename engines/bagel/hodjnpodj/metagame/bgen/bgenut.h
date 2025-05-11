@@ -7,7 +7,7 @@
 
 
 #include <time.h>
-#include <stdinc.h>
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "bgen.h"
 
 // class CGenUtil -- general utilities

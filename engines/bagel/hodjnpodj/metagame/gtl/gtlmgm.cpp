@@ -4,9 +4,9 @@
 #include "stdafx.h"
 
 #include <string.h>
-#include <assert.h>
-#include <misc.h>
-#include <sprite.h>
+
+#include "bagel/boflib/misc.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
 
 #include "gtl.h"
 
@@ -463,7 +463,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj)
             //
             case MG_VISIT_CAR1:
 
-                switch (rand() % 5) {
+                switch (brand() % 5) {
                     case 0:
                         nId = FindNodeId("AerieBT1");
                         break;
@@ -490,7 +490,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj)
             // Oasis Transport
             //
             case MG_VISIT_OASIS:
-                switch (rand() % 8) {
+                switch (brand() % 8) {
 
                     case 0:
                         nId = FindNodeId("OasisBT1");
@@ -553,7 +553,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj)
         pSound = new CSound(m_xpcGtlDoc->m_xpcLastFocusView, pSoundFile, SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);
         pSound->SetDrivePath(lpMetaGameStruct->m_chCDPath);
         pSound->Play();
-        CSound::WaitWaveSounds();
+        CSound::waitWaveSounds();
     }
 
     // if there is no DC, then get one

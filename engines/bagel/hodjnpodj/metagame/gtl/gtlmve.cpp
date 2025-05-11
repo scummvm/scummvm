@@ -3,11 +3,11 @@
 
 #include "stdafx.h"
 
-#include <assert.h>
+
 #include <string.h>
 
-#include <misc.h>
-#include <sound.h>
+#include "bagel/boflib/misc.h"
+#include "bagel/boflib/sound.h"
 #include "gtl.h"
 
 #include "gtldoc.h"
@@ -211,7 +211,7 @@ CXodj::~CXodj(void)
         delete m_xpStrategyInfo ;
 
     if (m_pThemeSound != NULL) {
-        m_pThemeSound->Stop();
+        m_pThemeSound->stop();
         delete m_pThemeSound;
         m_pThemeSound = NULL;
     }
@@ -514,7 +514,7 @@ BOOL CGtlData::EndMoveProcessing(void)
 					(void) dlg1Button.DoModal();
 				}
 	
-	            CSound::WaitWaveSounds();
+	            CSound::waitWaveSounds();
 	                   
 	            InitInterface(MG_GAME_CHALLENGE, bExitDll) ;
 	        }
@@ -580,7 +580,7 @@ BOOL CGtlData::EndMoveProcessing(void)
 					(void) dlg1Button.DoModal();
 				}
 
-                CSound::WaitWaveSounds();
+                CSound::waitWaveSounds();
                    
                 InitInterface(MG_GAME_CHALLENGE, bExitDll) ;
             }
@@ -662,12 +662,12 @@ void CGtlData::CheckForTransport( CXodj *pXodj, int nNewSector )
 
 #if 1
 
-    iNode = iNodeList[rand() % j];
+    iNode = iNodeList[brand() % j];
 
     DoTransport(pXodj, iNode);
 
 #else
-    pXodj->m_iCharNode = iNodeList[rand() % j];
+    pXodj->m_iCharNode = iNodeList[brand() % j];
 
     ptNew = NodeToPoint(m_lpNodes + pXodj->m_iCharNode, &pXodj->m_lpcCharSprite->m_cSize);
     m_cBgbMgr.SetPosition(pXodj->m_lpcCharSprite, ptNew);
@@ -786,7 +786,7 @@ BOOL CGtlData::SwitchPlayers(void)
     int iLocFunctionCode;
     BOOL bSpinner, bAgain;
 
-    CSound::WaitWaveSounds();
+    CSound::waitWaveSounds();
 
     m_xpcGtlDoc->m_xpcLastFocusView->FlushInputEvents();
 
@@ -802,7 +802,7 @@ BOOL CGtlData::SwitchPlayers(void)
         // stop this character's theme song
         //
         if (m_xpCurXodj->m_pThemeSound != NULL) {
-            m_xpCurXodj->m_pThemeSound->Stop();
+            m_xpCurXodj->m_pThemeSound->stop();
             delete m_xpCurXodj->m_pThemeSound;
             m_xpCurXodj->m_pThemeSound = NULL;
         }
@@ -830,7 +830,7 @@ BOOL CGtlData::SwitchPlayers(void)
         if (m_xpCurXodj->m_pThemeSound == NULL) {
 
             m_xpCurXodj->m_pThemeSound = new CSound(m_xpGtlView, m_xpCurXodj->m_pszThemeFile, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-            m_xpCurXodj->m_pThemeSound->MidiLoopPlaySegment(m_xpCurXodj->m_nThemeStart, m_xpCurXodj->m_nThemeEnd);
+            m_xpCurXodj->m_pThemeSound->midiLoopPlaySegment(m_xpCurXodj->m_nThemeStart, m_xpCurXodj->m_nThemeEnd);
         }
     }
 
@@ -877,7 +877,7 @@ BOOL CGtlData::SwitchPlayers(void)
                 if (iSpecialCode == MG_VISIT_BOAT2) {
 
                     // continue upstream ?
-                    wsprintf(szBuf, "Continue Upstream?");
+                    Common::sprintf_s(szBuf, "Continue Upstream?");
 
                     iSpecialCode = MG_VISIT_BOAT4;
 
@@ -886,7 +886,7 @@ BOOL CGtlData::SwitchPlayers(void)
                     assert(iSpecialCode == MG_VISIT_BOAT3);
 
                     // continue downstream ?
-                    wsprintf(szBuf, "Continue Downstream?");
+                    Common::sprintf_s(szBuf, "Continue Downstream?");
                     iSpecialCode = MG_VISIT_BOAT1;
                 }
                 C2ButtonDialog dlg2Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&Yes", "&No", " ", szBuf);
@@ -1118,7 +1118,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
     if (xpGameEntry->m_iGameCode) {
 
         if (m_xpCurXodj->m_pThemeSound != NULL ) {
-            m_xpCurXodj->m_pThemeSound->Stop();
+            m_xpCurXodj->m_pThemeSound->stop();
             delete m_xpCurXodj->m_pThemeSound;
             m_xpCurXodj->m_pThemeSound = NULL;
         }
@@ -1140,7 +1140,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 
             case MG_DLLX_QUIT:  /* quit game (game is over) */
                 if ( m_xpCurXodj->m_pThemeSound != NULL ) {
-                    m_xpCurXodj->m_pThemeSound->Stop();
+                    m_xpCurXodj->m_pThemeSound->stop();
                     delete m_xpCurXodj->m_pThemeSound;
                     m_xpCurXodj->m_pThemeSound = NULL;
                 }
@@ -1197,7 +1197,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
                     pSound = new CSound(xpGtlView, szGameSounds[iSoundCode], SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);
                     pSound->SetDrivePath(lpMetaGameStruct->m_chCDPath);
                     pSound->Play();
-                    CSound::WaitWaveSounds();
+                    CSound::waitWaveSounds();
                 }
 
                 GainMishMosh(m_xpCurXodj, 0) ;
@@ -1327,12 +1327,12 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
                     } else {
 
                         m_xpCurXodj->m_pThemeSound = new CSound(m_xpGtlView, m_xpCurXodj->m_pszThemeFile, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-                        m_xpCurXodj->m_pThemeSound->MidiLoopPlaySegment(m_xpCurXodj->m_nThemeStart, m_xpCurXodj->m_nThemeEnd);
+                        m_xpCurXodj->m_pThemeSound->midiLoopPlaySegment(m_xpCurXodj->m_nThemeStart, m_xpCurXodj->m_nThemeEnd);
                     }
 
                 } else {
                     if ( m_xpCurXodj->m_pThemeSound != NULL ) {
-                        m_xpCurXodj->m_pThemeSound->Stop();
+                        m_xpCurXodj->m_pThemeSound->stop();
                         delete m_xpCurXodj->m_pThemeSound;
                         m_xpCurXodj->m_pThemeSound = NULL;
                     }
@@ -1454,7 +1454,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
                                         }
                                     }
                                     if ( bHasItem == FALSE ) {
-                                        if ( rand() % 2 ){
+                                        if ( brand() % 2 ){
                                         CItem   *pItem = xpXodj->m_pGenStore->FetchItem( nWhichObjToBuy );
                                         long m = xpXodj->m_pInventory->FindItem( MG_OBJ_CROWN )->GetQuantity() - pItem->GetValue();
                                             // Buy item                                                          
@@ -1543,7 +1543,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
                                         }
                                     }
                                     if ( bHasItem == FALSE ) {
-                                        if ( rand() % 2 ){
+                                        if ( brand() % 2 ){
                                         CItem   *pItem = xpXodj->m_pBlackMarket->FetchItem( nWhichObjToBuy );
                                         long m = xpXodj->m_pInventory->FindItem( MG_OBJ_CROWN )->GetQuantity() - pItem->GetValue();
                                             // Buy item                                                          
@@ -1673,7 +1673,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
                     m_xpCurXodj->m_pInventory->DiscardItem(MG_OBJ_CROWN,xpLocTable->m_iCost);
 				}
                                 
-                CSound::WaitWaveSounds();
+                CSound::waitWaveSounds();
 
                 bExitDll = FALSE ;
                 break;
@@ -1729,7 +1729,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
     //
     if (bExitDll) {
     
-        CSound::WaitWaveSounds();
+        CSound::waitWaveSounds();
 
         if (m_bGtlDll)          // if we're in a DLL
             xpGtlFrame->PostMessage(WM_COMMAND, ID_CALL_EXIT) ;
@@ -2006,7 +2006,7 @@ BOOL CGtlData::TakeIneligibleAction(CXodj *xpXodj, int iFunctionCode, int iLocat
 	            
 	            xpXodj->m_iFurlongs = 0 ;
 
-                switch (rand() % 6) {
+                switch (brand() % 6) {
                     case 0:
                         iSoundCode = (xpXodj->m_bHodj ? MG_SOUND_BB66 : MG_SOUND_BB67);
                         break;
@@ -2130,7 +2130,7 @@ BOOL CGtlData::TakeIneligibleAction(CXodj *xpXodj, int iFunctionCode, int iLocat
         pSound = new CSound(xpGtlView, szGameSounds[iSoundCode], SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);
         pSound->SetDrivePath(lpMetaGameStruct->m_chCDPath);
         pSound->Play();
-        CSound::WaitWaveSounds();
+        CSound::waitWaveSounds();
 		if ((iFunctionCode >= MG_GAME_BASE) && (iFunctionCode <= MG_GAME_MAX) &&
 			(CMgStatic::cGameTable[iFunctionCode - MG_GAME_BASE].m_iWinCode == MG_WIN_INFO)) {
 			if ((xpXodj->m_iWinInfoWon == xpXodj->m_iWinInfoNeed) &&
@@ -2147,7 +2147,7 @@ BOOL CGtlData::TakeIneligibleAction(CXodj *xpXodj, int iFunctionCode, int iLocat
 		else
 		if (iFunctionCode == MG_VISIT_INFO) {
 			if (bLacksMoney) {
-				CSound::WaitWaveSounds();
+				CSound::waitWaveSounds();
 				CLocTable * xpLocTable;
 				int  iLocationCode;
 	        	char blurb[128];
@@ -2307,11 +2307,11 @@ BOOL CGtlData::ProcessGameResult(CXodj *xpXodj, int iGameCode, LPGAMESTRUCT lpGa
             if ( bWin ) {
                 bWin = FALSE;
                 i = xpXodj->m_pInventory->FindItem(MG_OBJ_CROWN)->GetQuantity();
-                i += rand() % i;
+                i += brand() % i;
                 xpXodj->m_pInventory->FindItem(MG_OBJ_CROWN)->SetQuantity( i );
             } else {
                 i = xpXodj->m_pInventory->FindItem(MG_OBJ_CROWN)->GetQuantity();
-                i -= rand() % i;
+                i -= brand() % i;
                 xpXodj->m_pInventory->FindItem(MG_OBJ_CROWN)->SetQuantity( i );
             }
 
@@ -3155,7 +3155,7 @@ BOOL CGtlData::DetermineEligibility(CXodj *xpXodj, int iLocationCode, int & iLoc
 
                     // randomly select a boat narration
                     //
-                    switch (rand() % 4) {
+                    switch (brand() % 4) {
 
                         case 0:
                             iSoundCode = MG_SOUND_BB68;

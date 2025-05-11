@@ -46,9 +46,9 @@
  *
  ****************************************************************/
 #include "stdafx.h"
-#include <ctype.h>
-#include <cmessbox.h>
-#include <sound.h>
+
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
+#include "bagel/boflib/sound.h"
 #include "barb.h"
 
 //

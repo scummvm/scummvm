@@ -24,7 +24,7 @@
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/boflib/sound.h"
-//#include <mmsystem.h>
+//
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -63,7 +63,7 @@ namespace HodjNPodj {
 #if BUILD_FOR_DLL
 
 extern "C" {
-LRESULT FAR PASCAL _export KeyboardHookProc(int,WORD,LONG);		// keyboard hook procedure definition
+LRESULT FAR PASCAL KeyboardHookProc(int,WORD,LONG);		// keyboard hook procedure definition
 }
 typedef LRESULT (FAR PASCAL *FPKBDHOOKPROC) ( int, WORD, LONG );
 extern 	HINSTANCE	hDLLInst;
@@ -217,7 +217,7 @@ void CRules::RemoveKeyboardHook(void)
 
 #if BUILD_FOR_DLL
 extern "C" 
-LRESULT FAR PASCAL _export KeyboardHookProc(int code, WORD wParam, LONG lParam)
+LRESULT FAR PASCAL KeyboardHookProc(int code, WORD wParam, LONG lParam)
 {
 	if (code < 0)									// required to punt to next hook
 		return(CallNextHookEx((HHOOK) lpfnKbdHook,code,wParam,lParam));

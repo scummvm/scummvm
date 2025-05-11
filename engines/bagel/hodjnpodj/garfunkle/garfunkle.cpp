@@ -43,15 +43,15 @@
 #include <stdafx.h>
 #include <time.h>
 #include <fstream.h> 
-#include <mmsystem.h>
+
 #include <dos.h>
 
-#include <misc.h>
-#include <sprite.h>
-#include <globals.h>
-#include <mainmenu.h>
-#include <cmessbox.h>
-#include <text.h>
+#include "bagel/boflib/misc.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
                       
 #include "gamedll.h"                      
 #include "resource.h"
@@ -238,7 +238,7 @@ CMainWindow::CMainWindow()
 	(*pDC).SelectPalette( pOldPal, FALSE );         // Select back the old palette
 	ReleaseDC( pDC );
 
-	srand((unsigned) time(NULL));					// seed the random number generator 
+	//srand((unsigned) time(NULL));					// seed the random number generator 
 
 	m_bPlayGame = TRUE;
 
@@ -428,7 +428,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 					while ( PeekMessage( &lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE ) ) ;
 	
 					CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Wrong musician!", buf );
-					CSound::WaitWaveSounds();
+					CSound::waitWaveSounds();
 
 					pNoteMarker = NULL;
 					m_bPlaying = FALSE;
@@ -458,7 +458,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 						while ( PeekMessage( &lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE ) ) ;
 	
 						CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Game over","You have won!");
-						CSound::WaitWaveSounds();
+						CSound::waitWaveSounds();
 		    			m_bPlaying = FALSE;
 						m_bNewGame = FALSE;
 						CNote::FlushNoteList(); 
@@ -497,7 +497,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 			m_bIgnoreScrollClick = TRUE;
 			(*m_pScrollButton).SendMessage( BM_SETSTATE, TRUE, 0L );
 
-			CSound::WaitWaveSounds();
+			CSound::waitWaveSounds();
 			(void) RulesDlg.DoModal();
 			m_bIgnoreScrollClick = FALSE;
 			(*m_pScrollButton).SendMessage( BM_SETSTATE, FALSE, 0L );
@@ -642,7 +642,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 	else if (rectSign.PtInRect( point )) {
 		if( pGameInfo->bSoundEffectsEnabled ) {
 			KillTimer( PLAYER_TIMER );											// so it doesn't run out
-			nPick = rand() % NUM_SIGN_SOUNDS;
+			nPick = brand() % NUM_SIGN_SOUNDS;
 			switch (nPick) {
 				case 0:
 					sprintf( bufName, SIGN_1_SOUND );
@@ -901,7 +901,7 @@ void CMainWindow::OnTimer(UINT nIDEvent)
 			while ( PeekMessage( &lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE ) ) ;
 
 			CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Time ran out!", buf );
-			CSound::WaitWaveSounds();
+			CSound::waitWaveSounds();
 			pNoteMarker = NULL;     
 			m_bPlaying = FALSE;
 			CNote::FlushNoteList();
@@ -1028,7 +1028,7 @@ void CMainWindow::StopAnimation()
 		pMusic = NULL;
 	}
 	
-	CSound::ClearSounds();
+	CSound::clearSounds();
 
 	PaintBitmap( pDC, pGamePalette, pMusicians[(m_nButID * 2) + NOT_PLAYING], 
 					rectMusic[m_nButID].TopLeft().x, rectMusic[m_nButID].TopLeft().y ); 
@@ -1058,7 +1058,7 @@ BOOL CMainWindow::GetNewSequence(int nLength)
 {                              
 	int i;
 	for ( i=nLength; i>0; --i ) {
-		add_note_to_series( rand() % m_nNumButtons );
+		add_note_to_series( brand() % m_nNumButtons );
 	} 
 	return( TRUE );                                       
 }//end GetNewSequence()
@@ -1111,8 +1111,8 @@ void CMainWindow::PlayBackSeries(int nNumNotes)
 	
 	bPlayingBackSeries = TRUE;
 	
-//	HCURSOR HOldCursor = ::SetCursor( AfxGetApp ()->LoadStandardCursor( NULL ) );	// Make cursor go away
-	HCURSOR HOldCursor = ::SetCursor( LoadCursor( NULL, IDC_WAIT ) );		// Refresh cursor object
+//	HCURSOR HOldCursor = MFC::SetCursor( AfxGetApp ()->LoadStandardCursor( NULL ) );	// Make cursor go away
+	HCURSOR HOldCursor = MFC::SetCursor( LoadCursor( NULL, IDC_WAIT ) );		// Refresh cursor object
 	::ShowCursor( TRUE );
 
 	pNewNote = CNote::GetNoteHead();
@@ -1132,7 +1132,7 @@ void CMainWindow::PlayBackSeries(int nNumNotes)
 	pNewNote = NULL;
 
 	::ShowCursor ( FALSE );
-	::SetCursor ( HOldCursor );
+	MFC::SetCursor ( HOldCursor );
 	
 	bPlayingBackSeries = FALSE;
 
@@ -1186,7 +1186,7 @@ void CMainWindow::OnClose()
 	ReleaseDC( pDC );                        
 
 	CNote::FlushNoteList();             		// Delete list from memory
-	CSound::ClearSounds();						// Make sure there's no sounds on return
+	CSound::clearSounds();						// Make sure there's no sounds on return
 
 	if( m_pSignText != NULL)
 		delete m_pSignText;

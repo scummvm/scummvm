@@ -26,8 +26,8 @@
 *
 ****************************************************************/
 #include "stdafx.h"
-#include <text.h>
-#include <menures.h>
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/menures.h"
 
 #include "usercfg.h"
 #include "life.h"

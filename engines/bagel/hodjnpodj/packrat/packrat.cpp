@@ -47,7 +47,7 @@
 
 #include <stdlib.h>
 #include "stdafx.h"
-#include <mmsystem.h>
+
 #include "packrat.h"
 #include "dialogs.h"
 #include "misc.h"  
@@ -420,7 +420,7 @@ WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
                                 NULL, NULL, NULL);
 
 // set the seed for the random number generator
-srand( (unsigned)time( NULL ));
+//srand( (unsigned)time( NULL ));
 
 // initialize private members
 m_lpGameStruct = lpGameStruct;
@@ -803,7 +803,7 @@ if (m_lpGameStruct->bMusicEnabled) {
     pGameSound = new CSound( this, GAME_THEME, 
                             SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
     if (pGameSound != NULL)
-        (*pGameSound).MidiLoopPlaySegment( 2310, 29400, 0, FMT_MILLISEC );
+        (*pGameSound).midiLoopPlaySegment( 2310, 29400, 0, FMT_MILLISEC );
 } // end if pGameSound
 
 if ( m_lpGameStruct->bPlayingMetagame ) {
@@ -2304,7 +2304,7 @@ int		nDist2 = abs( m_aptCurrBLocInGrid[nWhichBadGuy].y - m_ptCurrPLocInGrid.y );
                 }
                 else {
                     // change direction
-                    m_anBDirection[nWhichBadGuy] = rand() % 4;
+                    m_anBDirection[nWhichBadGuy] = brand() % 4;
                     bReturn = FALSE;
                 }
 
@@ -2346,7 +2346,7 @@ int		nDist2 = abs( m_aptCurrBLocInGrid[nWhichBadGuy].y - m_ptCurrPLocInGrid.y );
                 }
                 else {
                     // change direction
-                    m_anBDirection[nWhichBadGuy] = rand() % 4;
+                    m_anBDirection[nWhichBadGuy] = brand() % 4;
                     bReturn = FALSE;
                 }
             }
@@ -2387,7 +2387,7 @@ int		nDist2 = abs( m_aptCurrBLocInGrid[nWhichBadGuy].y - m_ptCurrPLocInGrid.y );
                 }
                 else {
                     // change direction
-                    m_anBDirection[nWhichBadGuy] = rand() % 4;
+                    m_anBDirection[nWhichBadGuy] = brand() % 4;
                     bReturn = FALSE;
                 }
             }
@@ -2428,7 +2428,7 @@ int		nDist2 = abs( m_aptCurrBLocInGrid[nWhichBadGuy].y - m_ptCurrPLocInGrid.y );
                 }
                 else {
                     // change direction
-                    m_anBDirection[nWhichBadGuy] = rand() % 4;
+                    m_anBDirection[nWhichBadGuy] = brand() % 4;
                     bReturn = FALSE;
                 }
             }
@@ -2463,7 +2463,7 @@ int		nDist2 = abs( m_aptCurrBLocInGrid[nWhichBadGuy].y - m_ptCurrPLocInGrid.y );
         bEndGame = TRUE;
     }                                               
     if ( m_anBDirection[nWhichBadGuy] > 4)
-        m_anBDirection[nWhichBadGuy] = rand() % 4;
+        m_anBDirection[nWhichBadGuy] = brand() % 4;
     bChangeTurtle = FALSE;
     if ( pDC != NULL )
         ReleaseDC( pDC );
@@ -2796,7 +2796,7 @@ if (HIWORD(lParam) == BN_CLICKED)           // only want to look at button click
             pOptionButton->EnableWindow( FALSE );
             bResetGame = FALSE;
             UpdateWindow();
-            //CSound::WaitWaveSounds();
+            //CSound::waitWaveSounds();
             ::sndPlaySound( NULL, 0 );
 			if ( m_bMouseCaptured ) {
 				ReleaseCapture();
@@ -2847,12 +2847,12 @@ if (HIWORD(lParam) == BN_CLICKED)           // only want to look at button click
 			        pGameSound = new CSound( this, GAME_THEME, 
 			                                SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 			        if (pGameSound != NULL)
-			            (*pGameSound).MidiLoopPlaySegment( 2310, 29400, 0, FMT_MILLISEC );
+			            (*pGameSound).midiLoopPlaySegment( 2310, 29400, 0, FMT_MILLISEC );
 		        }
 		    } // end if pGameSound
 		    else {
 		        if ( pGameSound != NULL ) {
-		        	pGameSound->Stop();
+		        	pGameSound->stop();
 		        	delete pGameSound;
 		        	pGameSound = NULL;
 				}
@@ -3149,9 +3149,9 @@ CDC		*pDC1 = GetDC();
 int		nObjsInMaze = 0;
 int		nLoop = 0;
 
-	wsprintf( cTempText, "Score : %li", m_lScore );
+	Common::sprintf_s( cTempText, "Score : %li", m_lScore );
 	pScore->DisplayString( pDC1, cTempText, 12, FW_BOLD, (COLORREF)RGB( 0, 255, 255 ));
-	wsprintf( cTempText, "Objects Left : %i", m_nNumberOfObjectsLeft );
+	Common::sprintf_s( cTempText, "Objects Left : %i", m_nNumberOfObjectsLeft );
 	pObjsLeft->DisplayString( pDC1, cTempText, 12, FW_BOLD, (COLORREF)RGB( 0, 255, 255 ));
 	
 //	nCounter++;
@@ -3163,7 +3163,7 @@ int		nLoop = 0;
 		}
 
 		if (( nObjsInMaze != m_nNumberOfObjectsLeft ) && (m_nNumberOfObjectsLeft != -1)) {
-			wsprintf( cTempText, "%i", nObjsInMaze );
+			Common::sprintf_s( cTempText, "%i", nObjsInMaze );
 			MessageBox( "Go Find Gordon Now!!!", "cTempText" );
 		}
 
@@ -3539,7 +3539,7 @@ int nLoop1;
         pGameSound = NULL;
     }
     
-    CSound::ClearSounds();
+    CSound::clearSounds();
     
     CSprite::FlushSpriteChain();
 

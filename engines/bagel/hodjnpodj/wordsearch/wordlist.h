@@ -1,5 +1,5 @@
-#include <afxwin.h>
-#include <afxext.h>
+#include "bagel/afxwin.h"
+
 
 #define		WORDSPERLIST	25
 #define		NUMBEROFLISTS	50

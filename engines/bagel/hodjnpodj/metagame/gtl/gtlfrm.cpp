@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include <assert.h>
+
 #include "gtl.h"
 #include "dllinit.h"
 #include "gtldoc.h"
@@ -603,7 +603,7 @@ void CGtlFrame::ShowInventory( CPalette *pPalette, int nWhichDlg )
         }
 
         case 3: {   // pawn shop
-            CPawnShop cPawnnShopDlg((CWnd *)this, pPalette, ((rand() & 1)  == 1 ? pPlayer->m_pGenStore : pPlayer->m_pBlackMarket), pPlayer->m_pInventory);
+            CPawnShop cPawnnShopDlg((CWnd *)this, pPalette, ((brand() & 1)  == 1 ? pPlayer->m_pGenStore : pPlayer->m_pBlackMarket), pPlayer->m_pInventory);
             cPawnnShopDlg.DoModal();
             break;
         }
@@ -689,7 +689,7 @@ void CGtlFrame::CreateInventories(void)
                                         
                 lpMetaGameStruct->m_cHodj.m_pBlackMarket = new CInventory("Black Market");
         for  ( i = 0; i < ITEMS_IN_PAWN_SHOP; i ++ ) {
-                j = rand() % lpMetaGameStruct->m_cHodj.m_pGenStore->ItemCount();
+                j = brand() % lpMetaGameStruct->m_cHodj.m_pGenStore->ItemCount();
                         pItem = lpMetaGameStruct->m_cHodj.m_pGenStore->FetchItem( j );
                         lpMetaGameStruct->m_cHodj.m_pGenStore->RemoveItem( pItem );
                                         
@@ -721,7 +721,7 @@ void CGtlFrame::CreateInventories(void)
                                         
                 lpMetaGameStruct->m_cPodj.m_pBlackMarket = new CInventory("Black Market");
         for  ( i = 0; i < ITEMS_IN_PAWN_SHOP; i ++ ) {
-                j = rand() % lpMetaGameStruct->m_cPodj.m_pGenStore->ItemCount();
+                j = brand() % lpMetaGameStruct->m_cPodj.m_pGenStore->ItemCount();
                         pItem = lpMetaGameStruct->m_cPodj.m_pGenStore->FetchItem( j );
                         lpMetaGameStruct->m_cPodj.m_pGenStore->RemoveItem( pItem );
                                         

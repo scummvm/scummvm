@@ -25,8 +25,8 @@
 #include "paint.h"
 #include "logic.h"
 #include "undo.h"
-#include <gamedll.h>
-#include <sound.h>
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
+#include "bagel/boflib/sound.h"
 
 #define NOT_USED		-1
 #define USED			0

@@ -30,7 +30,7 @@
  * 			n/a
  ****************************************************************/
 #include "stdafx.h"
-#include <button.h>
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "resource.h"
 #include "dialogs.h"
 
@@ -267,7 +267,7 @@ int			nScrollPos = 0;
     pDC->TextOut( 42, 50, strHowMuch2 );
     pDC->SetBkMode( nOldBkMode );
 
-    wsprintf( m_cAmount, "%i", m_nCurrentAmount );
+    Common::sprintf_s( m_cAmount, "%i", m_nCurrentAmount );
 	ptxtAmount->DisplayString( pDC, m_cAmount, 16, FW_BOLD, RGB(0,0,0) );
 
 
@@ -423,7 +423,7 @@ CDC			*pDC;
 
 // paint this new amount onto the screen
 	pDC = GetDC();
-	wsprintf( m_cAmount, "%i", m_nCurrentAmount );
+	Common::sprintf_s( m_cAmount, "%i", m_nCurrentAmount );
 	ptxtAmount->DisplayString( pDC, m_cAmount, 16, FW_BOLD, RGB(0,0,0) );
 	ReleaseDC( pDC );
 	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);

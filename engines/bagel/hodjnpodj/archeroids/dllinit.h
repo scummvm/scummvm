@@ -22,16 +22,16 @@
 #ifndef HODJNPODJ_ARCHEROIDS_DLLINIT_H
 #define HODJNPODJ_ARCHEROIDS_DLLINIT_H
 
-#include "bagel/hodjnpodj/archeroids/gamedll.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Archeroids {
 
-HWND FAR PASCAL _export RunArch( HWND, LPGAMESTRUCT);
+HWND FAR PASCAL RunArch( HWND, LPGAMESTRUCT);
 
-BOOL FAR PASCAL _export FilterDllMsg(LPMSG lpMsg);
-void FAR PASCAL _export ProcessDllIdle();
+BOOL FAR PASCAL FilterDllMsg(LPMSG lpMsg);
+void FAR PASCAL ProcessDllIdle();
 
 } // namespace Archeroids
 } // namespace HodjNPodj

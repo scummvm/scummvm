@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "bagel/mfc/wingdi.h"
 
@@ -109,6 +110,33 @@ WORD GetWindowWord(HWND hWnd, int nIndex) {
 
 int WINAPI AddFontResource(LPCSTR fontName) {
 	error("TODO: AddFontResource");
+}
+
+int SetScrollPos(HWND hWnd, int nBar,
+		int nPos, BOOL bRedraw) {
+	error("TODO: SetScrollPos");
+}
+
+BOOL SetScrollRange(HWND hWnd, int nBar,
+		int nMinPos, int nMaxPos, BOOL bRedraw) {
+	error("TODO: SetScrollRange");
+}
+
+BOOL ClipCursor(const RECT *lpRect) {
+	error("TODO: ClipCursor");
+}
+
+BOOL GetCursorPos(LPPOINT lpPoint) {
+	error("TODO: GetCursorPos");
+}
+
+BOOL SetCursorPos(int x, int y) {
+	g_system->warpMouse(x, y);
+	return TRUE;
+}
+
+BOOL ReleaseCapture() {
+	error("TODO: ReleaseCapture");
 }
 
 } // namespace MFC

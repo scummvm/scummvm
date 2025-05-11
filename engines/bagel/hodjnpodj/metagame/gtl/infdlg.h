@@ -22,8 +22,8 @@
 #ifndef HODJNPODJ_METAGAME_GTL_INFDLG_H
 #define HODJNPODJ_METAGAME_GTL_INFDLG_H
 
-#include <afxwin.h>
-#include <afxext.h>
+#include "bagel/afxwin.h"
+
 
 #include "gtl.h"
 

@@ -20,12 +20,12 @@
  */
 
 #include "stdafx.h"
-#include <assert.h>
-#include <misc.h>
-#include <llist.h>
-#include <sound.h>
-#include <sprite.h>
-#include <bitmaps.h>
+
+#include "bagel/boflib/misc.h"
+#include "bagel/boflib/llist.h"
+#include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 #include "bgb.h"
 #include "bfc.h"
 
@@ -1074,7 +1074,7 @@ void CBgbMgr::DoAnimations(void)
         pList = m_pFXList;
         while (pList != NULL) {
 
-            pBgbObject = (CBgbObject *)pList->GetData();
+            pBgbObject = (CBgbObject *)pList->getData();
 
             assert(pBgbObject != NULL);
 
@@ -1086,7 +1086,7 @@ void CBgbMgr::DoAnimations(void)
             //
             PaintBitmapObject(pBgbObject);
 
-            pList = pList->GetNext();
+            pList = pList->getNext();
         }
     }
 }

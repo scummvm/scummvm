@@ -50,7 +50,7 @@ static char BASED_CODE THIS_FILE[] = __FILE__;
 extern CBfcMgr      *lpMetaGameStruct;
 
 extern "C" {
-LRESULT FAR PASCAL _export BackpackHookProc(int,WORD,LONG);	// keyboard hook procedure definition
+LRESULT FAR PASCAL BackpackHookProc(int,WORD,LONG);	// keyboard hook procedure definition
 }
 
 extern 	HINSTANCE	hDLLInst;
@@ -136,7 +136,7 @@ void CBackpack::RemoveKeyboardHook(void)
 
 
 extern "C" 
-LRESULT FAR PASCAL _export BackpackHookProc(int code, WORD wParam, LONG lParam)
+LRESULT FAR PASCAL BackpackHookProc(int code, WORD wParam, LONG lParam)
 {
 CDC	*pDC = NULL;
 
@@ -742,7 +742,7 @@ CDC		*pDC;
 	}
 
 	ASSERT(hNewCursor != NULL);						// force the cursor change
-	::SetCursor(hNewCursor);
+	MFC::SetCursor(hNewCursor);
 	
 	CDialog::OnMouseMove(nFlags, point);            // do standard mouse move behavior
 }

@@ -19,11 +19,11 @@
 #ifndef C1BTNDLG_H
 #define C1BTNDLG_H
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <text.h>
-#include <cbofdlg.h>
-#include <button.h>
+#include "bagel/afxwin.h"
+
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 
 #define CBUTTON1 IDOK
 #define CBUTTON2 IDCANCEL

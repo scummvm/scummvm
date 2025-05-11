@@ -52,7 +52,7 @@ HWND RunRiddles(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
         pMain->SetActiveWindow();
 
-        if (pGameParams->bplayingMetagame)
+        if (pGameParams->bPlayingMetagame)
             pMain->PlayGame();
     }
 

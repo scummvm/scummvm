@@ -25,7 +25,7 @@
  *
  ****************************************************************/
 
-#include <afxwin.h>
+#include "bagel/afxwin.h"
 #include "resource.h"
 
 #include "game.h"
@@ -71,7 +71,7 @@ HCURSOR                 hGameCursor;
  *
  ****************************************************************/
 extern "C"
-HWND FAR PASCAL _export RunLife( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
+HWND FAR PASCAL RunLife( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 {
 
 #ifdef _DEBUG
@@ -89,8 +89,8 @@ HWND FAR PASCAL _export RunLife( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
         gMainWnd->UpdateWindow();
         gMainWnd->SetActiveWindow();
 // return the handle to this window
-        hDLLInst = (HINSTANCE)::GetWindowWord( gMainWnd->m_hWnd, GWW_HINSTANCE);
-        hExeInst = (HINSTANCE)::GetWindowWord( hParentWnd, GWW_HINSTANCE);
+        hDLLInst = (HINSTANCE)GetWindowWord( gMainWnd->m_hWnd, GWW_HINSTANCE);
+        hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
 //        ::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_COMMAND, BN_CLICKED );
         return gMainWnd->m_hWnd;
 }
