@@ -146,15 +146,6 @@ MODULE_OBJS = \
 	hodjnpodj/hnplibs/text.o \
 	hodjnpodj/libs/settings.o \
 	hodjnpodj/libs/vector.o \
-	hodjnpodj/views/dialog.o \
-	hodjnpodj/views/main_menu.o \
-	hodjnpodj/views/message_box.o \
-	hodjnpodj/views/minigame_view.o \
-	hodjnpodj/views/movie.o \
-	hodjnpodj/views/resource_view.o \
-	hodjnpodj/views/rules.o \
-	hodjnpodj/views/sprites_view.o \
-	hodjnpodj/views/view.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o
