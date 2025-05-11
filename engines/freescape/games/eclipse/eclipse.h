@@ -60,6 +60,8 @@ public:
 
 	bool _resting;
 	int _lastThirtySeconds;
+	int _lastFiveSeconds;
+
 	int _lastSecond;
 	void updateTimeVariables() override;
 

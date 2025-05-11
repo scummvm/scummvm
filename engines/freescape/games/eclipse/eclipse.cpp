@@ -92,6 +92,7 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_endEntrance = 33;
 
 	_lastThirtySeconds = 0;
+	_lastFiveSeconds = 0;
 	_lastSecond = -1;
 	_resting = false;
 }
@@ -107,6 +108,7 @@ void EclipseEngine::initGameState() {
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
 	_lastThirtySeconds = seconds / 30;
+	_lastFiveSeconds = seconds / 5;
 	_resting = false;
 }
 
@@ -752,6 +754,13 @@ void EclipseEngine::updateTimeVariables() {
 	// This function only executes "on collision" room/global conditions
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
+
+
+	if (_lastFiveSeconds != seconds / 5) {
+		_lastFiveSeconds = seconds / 5;
+		executeLocalGlobalConditions(false, false, true);
+	}
+
 	if (_lastThirtySeconds != seconds / 30) {
 		_lastThirtySeconds = seconds / 30;
 
@@ -762,8 +771,6 @@ void EclipseEngine::updateTimeVariables() {
 		if (_gameStateVars[k8bitVariableShield] < _maxShield) {
 			_gameStateVars[k8bitVariableShield] += 1;
 		}
-
-		executeLocalGlobalConditions(false, false, true);
 	}
 
 	if (isEclipse() && isSpectrum() && _currentArea->getAreaID() == 42) {

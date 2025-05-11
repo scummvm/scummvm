@@ -661,6 +661,24 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERCPC)
 	},
 	{
+		"totaleclipse2", // Tape release
+		"",
+		AD_ENTRY1s("TOTALECLIPSE2.C64.DATA", "7ab839a4260c197f24b41ef6ab45ef21", 47105),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_UNSTABLE | GF_C64_TAPE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
+	},
+	{
+		"totaleclipse2", // Disk release
+		"",
+		AD_ENTRY1s("TOTALECLIPSE2.C64.DATA", "b1f59bee6a6e1eec6bb2dbbe0bee0e93", 50372),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_UNSTABLE | GF_C64_DISC,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
+	},
+	{
 		"totaleclipse",
 		"",
 		{
@@ -699,7 +717,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("TOTALECLIPSE.C64.DATA", "968fd46b941a00f887741dfc348ac149", 47105),
 		Common::EN_ANY,
 		Common::kPlatformC64,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | GF_C64_TAPE,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
 	},
 	{

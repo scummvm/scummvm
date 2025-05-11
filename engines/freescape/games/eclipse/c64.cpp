@@ -35,7 +35,7 @@ extern byte kC64Palette[16][3];
 
 void EclipseEngine::loadAssetsC64FullGame() {
 	Common::File file;
-	file.open("totaleclipse.c64.data");
+	file.open(isEclipse2() ? "totaleclipse2.c64.data" : "totaleclipse.c64.data");
 
 	if (_variant & GF_C64_TAPE) {
 		int size = file.size();
@@ -43,17 +43,20 @@ void EclipseEngine::loadAssetsC64FullGame() {
 		byte *buffer = (byte *)malloc(size * sizeof(byte));
 		file.read(buffer, file.size());
 
-		_extraBuffer = decompressC64RLE(buffer, &size, 0xe1);
+		_extraBuffer = decompressC64RLE(buffer, &size, isEclipse2() ? 0xd2 : 0xe1);
 		// size should be the size of the decompressed data
 		Common::MemoryReadStream dfile(_extraBuffer, size, DisposeAfterUse::NO);
 
-		loadMessagesFixedSize(&dfile, 0x1d82, 16, 30);
+		loadMessagesFixedSize(&dfile, 0x1d84, 16, 30);
 		loadFonts(&dfile, 0xc3e);
 		load8bitBinary(&dfile, 0x9a3e, 16);
 	} else if (_variant & GF_C64_DISC) {
-		loadMessagesFixedSize(&file,0x1536, 16, 30);
+		loadMessagesFixedSize(&file, 0x1534, 16, 30);
 		loadFonts(&file, 0x3f2);
-		load8bitBinary(&file, 0x7ab4, 16);
+		if (isEclipse2())
+			load8bitBinary(&file, 0x7ac4, 16);
+		else
+			load8bitBinary(&file, 0x7ab4, 16);
 	} else
 		error("Unknown C64 variant %x", _variant);
 
@@ -65,12 +68,12 @@ void EclipseEngine::loadAssetsC64FullGame() {
 	delete surf;
 
 	file.close();
-	file.open("totaleclipse.c64.title.bitmap");
+	file.open(isEclipse2() ? "totaleclipse2.c64.title.bitmap" : "totaleclipse.c64.title.bitmap");
 
 	Common::File colorFile1;
-	colorFile1.open("totaleclipse.c64.title.colors1");
+	colorFile1.open(isEclipse2() ? "totaleclipse2.c64.title.colors1" : "totaleclipse.c64.title.colors1");
 	Common::File colorFile2;
-	colorFile2.open("totaleclipse.c64.title.colors2");
+	colorFile2.open(isEclipse2() ? "totaleclipse2.c64.title.colors2" : "totaleclipse.c64.title.colors2");
 
 	_title = loadAndConvertDoodleImage(&file, &colorFile1, &colorFile2, (byte *)&kC64Palette);
 

@@ -39,7 +39,7 @@ bool DoodleDecoder::loadStreams(Common::SeekableReadStream &highresStream,
 		return false;
 	}
 
-	if (colorStream1.size() < 1003 || colorStream2.size() < 1003) {
+	if (colorStream1.size() < 1002 || colorStream2.size() < 1002) {
 		error("DoodleDecoder: Invalid color data size");
 		return false;
 	}
