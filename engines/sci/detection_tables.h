@@ -5608,8 +5608,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Slater & Charlie Go Camping - English Macintosh
 	{"slater", "", {
-		{"Data1", 0, "7243b4390e5f0182d8133fbcae4b50c5", 2298853}, // FIXMEMD5
-		{"Data2", 0, "6b6f18f9b502dc0923eeae0ef47f02d5", 2276956},
+		{"Data1", 0, "7243b4390e5f0182d8133fbcae4b50c5", 2298597},
+		{"Data2", 0, "6b6f18f9b502dc0923eeae0ef47f02d5", 2276700},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO1(GUIO_NONE)	},
 
