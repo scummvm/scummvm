@@ -37,10 +37,6 @@ Font::~Font() {
 	_glyphs.clear();
 }
 
-ScriptValue Font::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
-	error("Font::callMethod(): Font does not have any callable methods");
-}
-
 void Font::readChunk(Chunk &chunk) {
 	debugC(5, kDebugLoading, "Font::readChunk(): Reading font glyph (@0x%llx)", static_cast<long long int>(chunk.pos()));
 	uint asciiCode = chunk.readTypedUint16();

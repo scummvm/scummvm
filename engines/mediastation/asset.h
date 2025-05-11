@@ -40,23 +40,13 @@ public:
 	virtual ~Asset();
 
 	// Does any needed frame drawing, audio playing, event handlers, etc.
-	virtual void process() {
-		return;
-	}
-
-	// For spatial assets, actually redraws the dirty area.
-	virtual void redraw(Common::Rect &rect) {
-		return;
-	}
+	virtual void process() { return; }
 
 	// Runs built-in bytecode methods.
-	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) = 0;
-	// Called to have the asset do any processing, like drawing new frames,
-	// handling time-based event handlers, and such. Some assets don't have any
-	// processing to do.
-	virtual bool isActive() const {
-		return _isActive;
-	}
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args);
+
+	virtual bool isSpatialActor() const { return false; }
+	virtual bool isActive() const { return _isActive; }
 
 	// These are not pure virtual so if an asset doesnʻt read any chunks or
 	// subfiles it doesnʻt need to just implement these with an error message.
@@ -69,20 +59,38 @@ public:
 	void runEventHandlerIfExists(EventType eventType, const ScriptValue &arg);
 	void runEventHandlerIfExists(EventType eventType);
 
-	AssetType type() const;
-	int zIndex() const;
-	Common::Rect getBbox() const;
-	AssetHeader *getHeader() const {
-		return _header;
-	}
+	AssetType type() const { return _header->_type; }
+	uint id() const { return _header->_id; }
+	AssetHeader *getHeader() const { return _header; }
 
 protected:
 	AssetHeader *_header = nullptr;
 	bool _isActive = false;
 	uint _startTime = 0;
 	uint _lastProcessedTime = 0;
-	// TODO: Rename this to indicate the time is in milliseconds.
 	uint _duration = 0;
+};
+
+class SpatialEntity : public Asset {
+public:
+	SpatialEntity(AssetHeader *header) : Asset(header) {};
+
+	virtual void redraw(Common::Rect &rect) { return; }
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+
+	virtual bool isSpatialActor() const override { return true; }
+	virtual bool isVisible() const { return false; }
+	Common::Point getTopLeft() { return Common::Point(_header->_boundingBox.left, _header->_boundingBox.top); }
+	Common::Rect getBbox() const { return _header->_boundingBox; }
+	int zIndex() const { return _header->_zIndex; }
+
+	void moveTo(int16 x, int16 y);
+	void moveToCentered(int16 x, int16 y);
+	void setBounds(const Common::Rect &bounds);
+	void setZIndex(int zIndex);
+
+	virtual void invalidateLocalBounds();
+	virtual void invalidateLocalZIndex();
 };
 
 } // End of namespace MediaStation

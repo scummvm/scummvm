@@ -59,16 +59,19 @@ private:
 
 // Sprites are somewhat like movies, but they strictly show one frame at a time
 // and don't have sound. They are intended for background/recurrent animations.
-class Sprite : public Asset {
+class Sprite : public SpatialEntity {
 friend class Context;
 
 public:
 	Sprite(AssetHeader *header);
 	~Sprite();
 
-	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual void process() override;
 	virtual void redraw(Common::Rect &rect) override;
+
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+
+	virtual bool isVisible() const override { return _isShowing; }
 
 	virtual void readChunk(Chunk &chunk) override;
 
@@ -80,9 +83,6 @@ private:
 	bool _isPlaying = false;
 	uint _currentFrameIndex = 0;
 	uint _nextFrameTime = 0;
-
-	int _xAdjust = 0;
-	int _yAdjust = 0;
 
 	// Method implementations.
 	void spatialShow();

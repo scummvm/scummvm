@@ -32,8 +32,6 @@ namespace MediaStation {
 class Palette : public Asset {
 public:
 	Palette(AssetHeader *header) : Asset(header) {};
-
-	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 };
 
 } // End of namespace MediaStation

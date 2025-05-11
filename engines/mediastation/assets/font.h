@@ -46,15 +46,10 @@ public:
 	Font(AssetHeader *header) : Asset(header) {};
 	~Font();
 
-	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
-
 	virtual void readChunk(Chunk &chunk) override;
 
 private:
 	Common::HashMap<uint, FontGlyph *> _glyphs;
-
-	// Method implementations.
-	// No methods are implemented as of now.
 };
 
 } // End of namespace MediaStation

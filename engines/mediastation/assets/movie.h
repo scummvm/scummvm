@@ -89,7 +89,7 @@ enum MovieSectionType {
 	kMovieFooterSection = 0x06aa
 };
 
-class Movie : public Asset {
+class Movie : public SpatialEntity {
 public:
 	Movie(AssetHeader *header);
 	virtual ~Movie() override;
@@ -101,6 +101,8 @@ public:
 	virtual void process() override;
 
 	virtual void redraw(Common::Rect &rect) override;
+
+	virtual bool isVisible() const override { return _isShowing; }
 
 private:
 	bool _showByDefault = false;
@@ -121,8 +123,6 @@ private:
 	void timeStop();
 	void spatialShow();
 	void spatialHide();
-	void spatialCenterMoveTo(int x, int y);
-	void spatialMoveTo(int x, int y);
 
 	void updateFrameState();
 	void showPersistentFrame();

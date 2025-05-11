@@ -30,24 +30,16 @@ Asset::~Asset() {
 	_header = nullptr;
 }
 
+ScriptValue Asset::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+	error("Got unimplemented method call %d (%s)", static_cast<uint>(methodId), builtInMethodToStr(methodId));
+}
+
 void Asset::readChunk(Chunk &chunk) {
 	error("Asset::readChunk(): Chunk reading for asset type 0x%x is not implemented", static_cast<uint>(_header->_type));
 }
 
 void Asset::readSubfile(Subfile &subfile, Chunk &chunk) {
 	error("Asset::readSubfile(): Subfile reading for asset type 0x%x is not implemented", static_cast<uint>(_header->_type));
-}
-
-AssetType Asset::type() const {
-	return _header->_type;
-}
-
-int Asset::zIndex() const {
-	return _header->_zIndex;
-}
-
-Common::Rect Asset::getBbox() const {
-	return _header->_boundingBox;
 }
 
 void Asset::setActive() {
@@ -73,7 +65,7 @@ void Asset::processTimeEventHandlers() {
 	uint currentTime = g_system->getMillis();
 	const Common::Array<EventHandler *> &_timeHandlers = _header->_eventHandlers.getValOrDefault(kTimerEvent);
 	for (EventHandler *timeEvent : _timeHandlers) {
- 		// Indeed float, not time.
+		// Indeed float, not time.
 		double timeEventInFractionalSeconds = timeEvent->_argumentValue.asFloat();
 		uint timeEventInMilliseconds = timeEventInFractionalSeconds * 1000;
 		bool timeEventAlreadyProcessed = timeEventInMilliseconds < _lastProcessedTime;
@@ -109,6 +101,147 @@ void Asset::runEventHandlerIfExists(EventType eventType, const ScriptValue &arg)
 void Asset::runEventHandlerIfExists(EventType eventType) {
 	ScriptValue scriptValue;
 	runEventHandlerIfExists(eventType, scriptValue);
+}
+
+ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+	ScriptValue returnValue;
+	switch (methodId) {
+	case kSpatialMoveToMethod: {
+		assert(args.size() == 2);
+		int16 x = static_cast<int16>(args[0].asFloat());
+		int16 y = static_cast<int16>(args[1].asFloat());
+		moveTo(x, y);
+		break;
+	}
+
+	case kSpatialMoveToByOffsetMethod: {
+		assert(args.size() == 2);
+		int16 dx = static_cast<int16>(args[0].asFloat());
+		int16 dy = static_cast<int16>(args[1].asFloat());
+
+		Common::Point currentPos = getTopLeft();
+		int16 newX = currentPos.x + dx;
+		int16 newY = currentPos.y + dy;
+		moveTo(newX, newY);
+		break;
+	}
+
+	case kSpatialZMoveToMethod: {
+		assert(args.size() == 1);
+		int zIndex = static_cast<int>(args[0].asFloat());
+		setZIndex(zIndex);
+		break;
+	}
+
+	case kSpatialCenterMoveToMethod: {
+		assert(args.size() == 2);
+		int16 x = static_cast<int16>(args[0].asFloat());
+		int16 y = static_cast<int16>(args[1].asFloat());
+		moveToCentered(x, y);
+		break;
+	}
+
+	case kGetLeftXMethod:
+		assert(args.empty());
+		returnValue.setToFloat(_header->_boundingBox.left);
+		break;
+
+	case kGetTopYMethod:
+		assert(args.empty());
+		returnValue.setToFloat(_header->_boundingBox.top);
+		break;
+
+	case kGetWidthMethod:
+		assert(args.empty());
+		returnValue.setToFloat(_header->_boundingBox.width());
+		break;
+
+	case kGetHeightMethod:
+		assert(args.empty());
+		returnValue.setToFloat(_header->_boundingBox.height());
+		break;
+
+	case kGetCenterXMethod: {
+		int centerX = _header->_boundingBox.left + (_header->_boundingBox.width() / 2);
+		returnValue.setToFloat(centerX);
+		break;
+	}
+
+	case kGetCenterYMethod: {
+		int centerY = _header->_boundingBox.top + (_header->_boundingBox.height() / 2);
+		returnValue.setToFloat(centerY);
+		break;
+	}
+
+	case kGetZCoordinateMethod:
+		assert(args.empty());
+		returnValue.setToFloat(_header->_zIndex);
+		break;
+
+	case kIsVisibleMethod:
+		assert(args.empty());
+		returnValue.setToBool(isVisible());
+		break;
+
+	default:
+		Asset::callMethod(methodId, args);
+	}
+	return returnValue;
+}
+
+void SpatialEntity::moveTo(int16 x, int16 y) {
+	Common::Point dest(x, y);
+	if (dest == getTopLeft()) {
+		// We aren't actually moving anywhere.
+		return;
+	}
+
+	if (isVisible()) {
+		invalidateLocalBounds();
+	}
+	_header->_boundingBox.moveTo(dest);
+	if (isVisible()) {
+		invalidateLocalBounds();
+	}
+}
+
+void SpatialEntity::moveToCentered(int16 x, int16 y) {
+	int16 targetX = x - (_header->_boundingBox.width() / 2);
+	int16 targetY = y - (_header->_boundingBox.height() / 2);
+	moveTo(targetX, targetY);
+}
+
+void SpatialEntity::setBounds(const Common::Rect &bounds) {
+	if (_header->_boundingBox == bounds) {
+		// We aren't actually moving anywhere.
+		return;
+	}
+
+	if (isVisible()) {
+		invalidateLocalBounds();
+	}
+	_header->_boundingBox = bounds;
+	if (isVisible()) {
+		invalidateLocalBounds();
+	}
+}
+
+void SpatialEntity::setZIndex(int zIndex) {
+	if (_header->_zIndex == zIndex) {
+		// We aren't actually moving anywhere.
+		return;
+	}
+
+	_header->_zIndex = zIndex;
+	invalidateLocalZIndex();
+}
+
+void SpatialEntity::invalidateLocalBounds() {
+	g_engine->_dirtyRects.push_back(_header->_boundingBox);
+}
+
+void SpatialEntity::invalidateLocalZIndex() {
+	warning("STUB: Asset::invalidateLocalZIndex()");
 }
 
 } // End of namespace MediaStation

@@ -31,13 +31,16 @@
 
 namespace MediaStation {
 
-class Text : public Asset {
+class Text : public SpatialEntity {
 public:
-	Text(AssetHeader *header) : Asset(header) {};
+	Text(AssetHeader *header) : SpatialEntity(header) {};
 
+	virtual bool isVisible() const override { return _isVisible; }
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 
 private:
+	bool _isVisible = false;
+
 	// Method implementations.
 	Common::String text() const;
 	void setText(Common::String text);

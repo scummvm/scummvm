@@ -64,7 +64,7 @@ ScriptValue Path::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> 
 	}
 
 	default:
-		error("Path::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
+		return Asset::callMethod(methodId, args);
 	}
 }
 

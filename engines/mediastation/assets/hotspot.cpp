@@ -24,7 +24,7 @@
 
 namespace MediaStation {
 
-Hotspot::Hotspot(AssetHeader *header) : Asset(header) {
+Hotspot::Hotspot(AssetHeader *header) : SpatialEntity(header) {
 	if (header->_startup == kAssetStartupActive) {
 		_isActive = true;
 	}
@@ -106,7 +106,7 @@ ScriptValue Hotspot::callMethod(BuiltInMethod methodId, Common::Array<ScriptValu
 	}
 
 	default:
-		error("Hotspot::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
+		return SpatialEntity::callMethod(methodId, args);
 	}
 }
 

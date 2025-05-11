@@ -31,7 +31,7 @@
 
 namespace MediaStation {
 
-class Image : public Asset {
+class Image : public SpatialEntity {
 friend class Context;
 
 public:
@@ -39,15 +39,13 @@ public:
 	virtual ~Image() override;
 
 	virtual void readChunk(Chunk &chunk) override;
-
-	virtual void redraw(Common::Rect &rect) override;
-
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+	virtual void redraw(Common::Rect &rect) override;
+	virtual bool isVisible() const override { return _isVisible; }
 
 private:
 	Bitmap *_bitmap = nullptr;
-	int _xAdjust = 0;
-	int _yAdjust = 0;
+	bool _isVisible = false;
 
 	// Script method implementations.
 	void spatialShow();

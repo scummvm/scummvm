@@ -29,11 +29,15 @@
 
 namespace MediaStation {
 
-class Canvas : public Asset {
+class Canvas : public SpatialEntity {
 public:
-	Canvas(AssetHeader *header) : Asset(header) {};
+	Canvas(AssetHeader *header) : SpatialEntity(header) {};
 
+	virtual bool isVisible() const override { return _isVisible; }
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+
+private:
+	bool _isVisible = false;
 };
 
 } // End of namespace MediaStation

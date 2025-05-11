@@ -30,7 +30,7 @@ ScriptValue Canvas::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue
 	}
 
 	default:
-		error("Canvas::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
+		return SpatialEntity::callMethod(methodId, args);
 	}
 }
 

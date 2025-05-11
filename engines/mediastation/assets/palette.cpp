@@ -25,9 +25,5 @@
 
 namespace MediaStation {
 
-ScriptValue Palette::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
-	error("Palette::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
-}
-
 } // End of namespace MediaStation
 

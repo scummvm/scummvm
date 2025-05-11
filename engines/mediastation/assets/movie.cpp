@@ -154,7 +154,7 @@ MovieFrame::~MovieFrame() {
 	_footer = nullptr;
 }
 
-Movie::Movie(AssetHeader *header) : Asset(header) {
+Movie::Movie(AssetHeader *header) : SpatialEntity(header) {
 	if (header->_startup == kAssetStartupActive) {
 		setActive();
 		_showByDefault = true;
@@ -213,35 +213,13 @@ ScriptValue Movie::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 		return returnValue;
 	}
 
-	case kIsVisibleMethod: {
-		assert(args.empty());
-		returnValue.setToBool(_isShowing);
-		return returnValue;
-	}
-
-	case kSpatialCenterMoveToMethod: {
-		assert(args.size() == 2);
-		int x = static_cast<int>(args[0].asFloat());
-		int y = static_cast<int>(args[1].asFloat());
-		spatialCenterMoveTo(x, y);
-		return returnValue;
-	}
-
-	case kSpatialMoveToMethod: {
-		assert(args.size() == 2);
-		int x = static_cast<int>(args[0].asFloat());
-		int y = static_cast<int>(args[1].asFloat());
-		spatialMoveTo(x, y);
-		return returnValue;
-	}
-
 	case kIsPlayingMethod: {
 		assert(args.empty());
 		returnValue.setToBool(_isPlaying);
 		return returnValue;
 	}
 
-	case kXPositionMethod: {
+	case kGetLeftXMethod: {
 		assert(args.empty());
 		double left = static_cast<double>(_header->_boundingBox.left);
 		returnValue.setToFloat(left);
@@ -249,7 +227,7 @@ ScriptValue Movie::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 
 	}
 
-	case kYPositionMethod: {
+	case kGetTopYMethod: {
 		assert(args.empty());
 		double top = static_cast<double>(_header->_boundingBox.top);
 		returnValue.setToFloat(top);
@@ -263,7 +241,7 @@ ScriptValue Movie::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 	}
 
 	default:
-		error("Movie::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
+		return SpatialEntity::callMethod(methodId, args);
 	}
 }
 
@@ -371,48 +349,6 @@ void Movie::timeStop() {
 	}
 
 	runEventHandlerIfExists(kMovieStoppedEvent);
-}
-
-void Movie::spatialCenterMoveTo(int x, int y) {
-	// Mark the previous location dirty.
-	for (MovieFrame *frame : _framesOnScreen) {
-		Common::Rect bbox = getFrameBoundingBox(frame);
-		g_engine->_dirtyRects.push_back(bbox);
-	}
-
-	// Calculate the center of the movie, and update location.
-	int frameWidth = _header->_boundingBox.width();
-	int frameHeight = _header->_boundingBox.height();
-	int centerX = x - frameWidth / 2;
-	int centerY = y - frameHeight / 2;
-
-	debugC(5, kDebugScript, "Movie::callMethod(): (%d) Moving movie center to (%d, %d)", _header->_id, x, y);
-	// Unlike the sprites, movie bounding boxes must be moved too.
-	_header->_boundingBox.moveTo(centerX, centerY);
-
-	// Mark the new location dirty.
-	for (MovieFrame *frame : _framesOnScreen) {
-		Common::Rect bbox = getFrameBoundingBox(frame);
-		g_engine->_dirtyRects.push_back(bbox);
-	}
-}
-
-void Movie::spatialMoveTo(int x, int y) {
-	// Mark the previous location dirty.
-	for (MovieFrame *frame : _framesOnScreen) {
-		Common::Rect bbox = getFrameBoundingBox(frame);
-		g_engine->_dirtyRects.push_back(bbox);
-	}
-
-	// Update the location and mark the new location dirty.
-	debugC(5, kDebugGraphics, "Movie::callMethod(): (%d) Moving movie to (%d, %d)", _header->_id, x, y);
-	// Unlike the sprites, movie bounding boxes must be moved too.
-	_header->_boundingBox.moveTo(x, y);
-
-	for (MovieFrame *frame : _framesOnScreen) {
-		Common::Rect bbox = getFrameBoundingBox(frame);
-		g_engine->_dirtyRects.push_back(bbox);
-	}
 }
 
 void Movie::process() {

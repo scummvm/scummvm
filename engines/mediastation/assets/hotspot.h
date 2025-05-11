@@ -29,11 +29,12 @@
 
 namespace MediaStation {
 
-class Hotspot : public Asset {
+class Hotspot : public SpatialEntity {
 public:
 	Hotspot(AssetHeader *header);
 
 	bool isInside(const Common::Point &pointToCheck);
+	virtual bool isVisible() const override { return false; }
 
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 };

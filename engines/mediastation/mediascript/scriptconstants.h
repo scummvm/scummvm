@@ -89,8 +89,11 @@ enum BuiltInMethod {
 	// Currently it's only in var_7be1_cursor_currentTool in
 	// IBM/Crayola.
 	kCursorSetMethod = 200, // PARAMS: 0
+
+	// SPATIAL ENTITY METHODS.
 	kSpatialHideMethod = 203, // PARAMS: 1
 	kSpatialMoveToMethod = 204, // PARAMS: 2
+	kSpatialMoveToByOffsetMethod = 205, // PARAMS: 2
 	kSpatialZMoveToMethod = 216, // PARAMS: 1
 	kSpatialShowMethod = 202, // PARAMS: 1
 	kTimePlayMethod = 206, // PARAMS: 1
@@ -98,20 +101,24 @@ enum BuiltInMethod {
 	kIsPlayingMethod = 372, // PARAMS: 0
 	kSetDissolveFactorMethod = 241, // PARAMS: 1
 	kSpatialCenterMoveToMethod = 230,
+	kGetLeftXMethod = 233,
+	kGetTopYMethod = 234,
+	kGetWidthMethod = 235, // PARAMS: 0
+	kGetHeightMethod = 236, // PARAMS: 0
+	kGetCenterXMethod = 237,
+	kGetCenterYMethod = 238,
+	kGetZCoordinateMethod = 239,
+	kIsPointInsideMethod = 246,
+	kGetMouseXOffsetMethod = 264,
+	kGetMouseYOffsetMethod = 265,
+	kIsVisibleMethod = 269,
 
 	// HOTSPOT METHODS.
 	kMouseActivateMethod = 210, // PARAMS: 1
 	kMouseDeactivateMethod = 211, // PARAMS: 0
-	kXPositionMethod = 233, // PARAMS: 0
-	kYPositionMethod = 234, // PARAMS: 0
 	kTriggerAbsXPositionMethod = 321, // PARAMS: 0
 	kTriggerAbsYPositionMethod = 322, // PARAMS: 0
 	kIsActiveMethod = 371, // PARAMS: 0
-
-	// IMAGE METHODS.
-	kWidthMethod = 235, // PARAMS: 0
-	kHeightMethod = 236, // PARAMS: 0
-	kIsVisibleMethod = 269,
 
 	// SPRITE METHODS.
 	kMovieResetMethod = 219, // PARAMS: 0

@@ -35,8 +35,6 @@ namespace MediaStation {
 class Screen : public Asset {
 public:
 	Screen(AssetHeader *header) : Asset(header) {};
-
-	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 };
 
 } // End of namespace MediaStation

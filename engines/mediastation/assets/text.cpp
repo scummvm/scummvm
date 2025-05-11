@@ -52,7 +52,7 @@ ScriptValue Text::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> 
 	}
 
 	default:
-		error("Text::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
+		return SpatialEntity::callMethod(methodId, args);
 	}
 }
 

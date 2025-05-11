@@ -72,7 +72,7 @@ ScriptValue Sound::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 	}
 
 	default:
-		error("Sound::callMethod(): Got unimplemented method %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
+		return Asset::callMethod(methodId, args);
 	}
 }
 

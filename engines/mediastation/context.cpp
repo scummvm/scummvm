@@ -81,12 +81,12 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 		Asset *asset = it->_value;
 		uint referencedAssetId = asset->getHeader()->_assetReference;
 		if (referencedAssetId != 0) {
-			switch (asset->getHeader()->_type) {
+			switch (asset->type()) {
 			case kAssetTypeImage: {
 				Image *image = static_cast<Image *>(asset);
 				Image *referencedImage = static_cast<Image *>(getAssetById(referencedAssetId));
 				if (referencedImage == nullptr) {
-					error("Context::Context(): Asset %d references non-existent asset %d", asset->getHeader()->_id, referencedAssetId);
+					error("Context::Context(): Asset %d references non-existent asset %d", asset->id(), referencedAssetId);
 				}
 				image->_bitmap = referencedImage->_bitmap;
 				break;
@@ -96,14 +96,14 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 				Sprite *sprite = static_cast<Sprite *>(asset);
 				Sprite *referencedSprite = static_cast<Sprite *>(getAssetById(referencedAssetId));
 				if (referencedSprite == nullptr) {
-					error("Context::Context(): Asset %d references non-existent asset %d", asset->getHeader()->_id, referencedAssetId);
+					error("Context::Context(): Asset %d references non-existent asset %d", asset->id(), referencedAssetId);
 				}
 				sprite->_frames = referencedSprite->_frames;
 				break;
 			}
 
 			default:
-				error("Context::Context(): Asset type %d referenced, but reference not implemented yet", asset->getHeader()->_type);
+				error("Context::Context(): Asset type %d referenced, but reference not implemented yet", asset->type());
 			}
 		}
 	}

@@ -25,7 +25,7 @@
 
 namespace MediaStation {
 
-Image::Image(AssetHeader *header) : Asset(header) {
+Image::Image(AssetHeader *header) : SpatialEntity(header) {
 	if (header->_startup == kAssetStartupActive) {
 		_isActive = true;
 	}
@@ -42,7 +42,6 @@ Image::~Image() {
 
 ScriptValue Image::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
-
 	switch (methodId) {
 	case kSpatialShowMethod: {
 		assert(args.empty());
@@ -62,29 +61,8 @@ ScriptValue Image::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 		return returnValue;
 	}
 
-	case kSpatialMoveToMethod: {
-		assert(args.size() == 2);
-
-		// Mark the previous location dirty.
-		Common::Rect bbox(getLeftTop(), _bitmap->width(), _bitmap->height());
-		g_engine->_dirtyRects.push_back(bbox);
-
-		// Update location and mark new location dirty.
-		int newXAdjust = static_cast<int>(args[0].asFloat());
-		int newYAdjust = static_cast<int>(args[1].asFloat());
-		if (_xAdjust != newXAdjust || _yAdjust != newYAdjust) {
-			_xAdjust = newXAdjust;
-			_yAdjust = newYAdjust;
-
-			bbox = Common::Rect(getLeftTop(), _bitmap->width(), _bitmap->height());
-			g_engine->_dirtyRects.push_back(bbox);
-		}
-
-		return returnValue;
-	}
-
 	default:
-		error("Image::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
+		return SpatialEntity::callMethod(methodId, args);
 	}
 }
 
@@ -106,6 +84,7 @@ void Image::redraw(Common::Rect &rect) {
 
 void Image::spatialShow() {
 	_isActive = true;
+	_isVisible = true;
 	g_engine->addPlayingAsset(this);
 	Common::Rect bbox(getLeftTop(), _bitmap->width(), _bitmap->height());
 	g_engine->_dirtyRects.push_back(bbox);
@@ -113,12 +92,13 @@ void Image::spatialShow() {
 
 void Image::spatialHide() {
 	_isActive = false;
+	_isVisible = false;
 	Common::Rect bbox(getLeftTop(), _bitmap->width(), _bitmap->height());
 	g_engine->_dirtyRects.push_back(bbox);
 }
 
 Common::Point Image::getLeftTop() {
-	return Common::Point(_header->_x + _header->_boundingBox.left + _xAdjust, _header->_y + _header->_boundingBox.top + _yAdjust);
+	return Common::Point(_header->_x + _header->_boundingBox.left, _header->_y + _header->_boundingBox.top);
 }
 
 void Image::readChunk(Chunk &chunk) {
