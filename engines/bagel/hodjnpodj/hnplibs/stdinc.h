@@ -105,26 +105,7 @@ enum {
 
 #define MAX_DIRPATH 256
 
-
-/*
-* My assertion implementation writes the internal error to a log file.
-*/
-#if BOF_DEBUG
-
-#ifdef _DEBUG
-#define Assert(f) assert(f);
-#else
-
-VOID ErrorLog(const CHAR *, ...);
-#define Assert(f)       \
-        if (f) ;            \
-        else ErrorLog("Internal Error: File %s at line %u (FileDate: %s)", __FILE__, __LINE__, __TIMESTAMP__)
-
-#endif  /* _DEBUG */
-
-#else
-#define Assert(f)   ;
-#endif  /* BOF_DEBUG */
+#define Assert(f) assert(f)
 
 } // namespace HodjNPodj
 } // namespace Bagel
