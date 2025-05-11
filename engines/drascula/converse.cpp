@@ -23,7 +23,6 @@
 
 #include "drascula/drascula.h"
 
-#include "common/config-manager.h"
 #include "common/text-to-speech.h"
 
 namespace Drascula {
@@ -210,13 +209,10 @@ void DrasculaEngine::converse(int index) {
 		ttsPhrase4.replace('%', ' ');
 	}
 
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
-		ttsMan->say(ttsPhrase1, Common::TextToSpeechManager::QUEUE, _ttsTextEncoding);
-		ttsMan->say(ttsPhrase2, Common::TextToSpeechManager::QUEUE, _ttsTextEncoding);
-		ttsMan->say(ttsPhrase3, Common::TextToSpeechManager::QUEUE, _ttsTextEncoding);
-		ttsMan->say(ttsPhrase4, Common::TextToSpeechManager::QUEUE, _ttsTextEncoding);
-	}
+	sayText(ttsPhrase1, Common::TextToSpeechManager::QUEUE);
+	sayText(ttsPhrase2, Common::TextToSpeechManager::QUEUE);
+	sayText(ttsPhrase3, Common::TextToSpeechManager::QUEUE);
+	sayText(ttsPhrase4, Common::TextToSpeechManager::QUEUE);
 
 	while (breakOut == 0 && !shouldQuit()) {
 		updateRoom();
@@ -246,10 +242,7 @@ void DrasculaEngine::converse(int index) {
 
 			print_abc_opc(phrase1, 2, kDialogOptionSelected);
 
-			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && ttsPhrase1 != _previousSaid) {
-				_previousSaid = ttsPhrase1;
-				ttsMan->say(ttsPhrase1, _ttsTextEncoding);
-			}
+			sayText(ttsPhrase1, Common::TextToSpeechManager::INTERRUPT);
 
 			if (_leftMouseButton == 1) {
 				delay(100);
@@ -265,10 +258,7 @@ void DrasculaEngine::converse(int index) {
 
 			print_abc_opc(phrase2, phrase1_bottom + 2, kDialogOptionSelected);
 
-			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && ttsPhrase2 != _previousSaid) {
-				_previousSaid = ttsPhrase2;
-				ttsMan->say(ttsPhrase2, _ttsTextEncoding);
-			}
+			sayText(ttsPhrase2, Common::TextToSpeechManager::INTERRUPT);
 
 			if (_leftMouseButton == 1) {
 				delay(100);
@@ -284,10 +274,7 @@ void DrasculaEngine::converse(int index) {
 
 			print_abc_opc(phrase3, phrase2_bottom + 2, kDialogOptionSelected);
 
-			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && ttsPhrase3 != _previousSaid) {
-				_previousSaid = ttsPhrase3;
-				ttsMan->say(ttsPhrase3, _ttsTextEncoding);
-			}
+			sayText(ttsPhrase3, Common::TextToSpeechManager::INTERRUPT);
 
 			if (_leftMouseButton == 1) {
 				delay(100);
@@ -298,10 +285,7 @@ void DrasculaEngine::converse(int index) {
 		} else if (_mouseY > phrase3_bottom && _mouseY < phrase4_bottom) {
 			print_abc_opc(phrase4, phrase3_bottom + 2, kDialogOptionSelected);
 
-			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr && ttsPhrase4 != _previousSaid) {
-				_previousSaid = ttsPhrase4;
-				ttsMan->say(ttsPhrase4, _ttsTextEncoding);
-			}
+			sayText(ttsPhrase4, Common::TextToSpeechManager::INTERRUPT);
 
 			if (_leftMouseButton == 1) {
 				delay(100);

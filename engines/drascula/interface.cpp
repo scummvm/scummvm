@@ -22,7 +22,6 @@
 #include "drascula/drascula.h"
 #include "graphics/cursorman.h"
 
-#include "common/config-manager.h"
 #include "common/text-to-speech.h"
 
 // The verbs are represented in-game as a picture, thus we are
@@ -73,20 +72,20 @@ static const char *verbNamesGerman[] = {
 	"Gehe",
 	"Schau",
 	"Nimm",
-	"Oeffne",
-	"Schliesse",
+	"\231ffne",
+	"Schlie\341e",
 	"Rede",
-	"Druecke"
+	"Dr\201cke"
 };
 
 static const char *verbNamesRussian[] = {
-	"Идти",
-	"Смотреть",
-	"взять",
-	"Открыть",
-	"Закрыть",
-	"Говорить",
-	"Толкать"
+	"\xc8\xe4\xf2\xe8",					// "Идти"
+	"\xd1\xec\xee\xf2\xf0\xe5\xf2\xfc",	// "Смотреть"
+	"\xc2\xe7\xff\xf2\xfc",				// "Взять"
+	"\xce\xf2\xea\xf0\xfb\xf2\xfc",		// "Открыть"
+	"\xc7\xe0\xea\xf0\xfb\xf2\xfc",		// "Закрыть"
+	"\xc3\xee\xe2\xee\xf0\xe8\xf2\xfc",	// "Говорить"
+	"\xd2\xee\xeb\xea\xe0\xf2\xfc"		// "Толкать"
 };
 
 static const int kConfirmExit = 1;
@@ -150,38 +149,32 @@ void DrasculaEngine::selectVerb(int verb) {
 		takeObject = 1;
 		pickedObject = verb;
 
-		if (ConfMan.getBool("tts_enabled")) {
-			const char **verbNames;
+		const char **verbNames;
 
-			switch (_lang) {
-			case kEnglish:
-				verbNames = verbNamesEnglish;
-				break;
-			case kSpanish:
-				verbNames = verbNamesSpanish;
-				break;
-			case kGerman:
-				verbNames = verbNamesGerman;
-				break;
-			case kFrench:
-				verbNames = verbNamesFrench;
-				break;
-			case kItalian:
-				verbNames = verbNamesItalian;
-				break;
-			case kRussian:
-				verbNames = verbNamesRussian;
-				break;
-			default:
-				verbNames = verbNamesEnglish;
-			}
-
-			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-
-			if (ttsMan != nullptr) {
-				ttsMan->say(verbNames[verb], Common::TextToSpeechManager::INTERRUPT);
-			}
+		switch (_lang) {
+		case kEnglish:
+			verbNames = verbNamesEnglish;
+			break;
+		case kSpanish:
+			verbNames = verbNamesSpanish;
+			break;
+		case kGerman:
+			verbNames = verbNamesGerman;
+			break;
+		case kFrench:
+			verbNames = verbNamesFrench;
+			break;
+		case kItalian:
+			verbNames = verbNamesItalian;
+			break;
+		case kRussian:
+			verbNames = verbNamesRussian;
+			break;
+		default:
+			verbNames = verbNamesEnglish;
 		}
+
+		sayText(verbNames[verb], Common::TextToSpeechManager::INTERRUPT);
 	} else {
 		takeObject = 0;
 		_hasName = false;
@@ -196,10 +189,7 @@ bool DrasculaEngine::confirmExit() {
 	centerText(_textsys[1], 160, 87);
 	updateScreen();
 
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
-		ttsMan->say(_textsys[kConfirmExit], _ttsTextEncoding);
-	}
+	sayText(_textsys[kConfirmExit], Common::TextToSpeechManager::INTERRUPT);
 
 	delay(100);
 	while (!shouldQuit()) {
@@ -242,14 +232,7 @@ void DrasculaEngine::showMenu() {
 	}
 
 	if (x < 7) {
-		if (iconName[x] != _previousSaid) {
-			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-			if (ConfMan.getBool("tts_enabled") && strlen(iconName[x]) > 0 && ttsMan != nullptr) {
-				ttsMan->say(iconName[x], _ttsTextEncoding);
-			}
-
-			_previousSaid = iconName[x];
-		}
+		sayText(iconName[x], Common::TextToSpeechManager::INTERRUPT);
 
 		print_abc(iconName[x], _itemLocations[x].x - 2, _itemLocations[x].y - 7);
 	}
@@ -262,43 +245,34 @@ void DrasculaEngine::clearMenu() {
 		if (_mouseX > _verbBarX[n] && _mouseX < _verbBarX[n + 1]) {
 			verbActivated = 0;
 
-			if (ConfMan.getBool("tts_enabled")) {
-				const char **verbNames;
+			const char **verbNames;
 
-				switch (_lang) {
-				case kEnglish:
-					verbNames = verbNamesEnglish;
-					break;
-				case kSpanish:
-					verbNames = verbNamesSpanish;
-					break;
-				case kGerman:
-					verbNames = verbNamesGerman;
-					break;
-				case kFrench:
-					verbNames = verbNamesFrench;
-					break;
-				case kItalian:
-					verbNames = verbNamesItalian;
-					break;
-				case kRussian:
-					verbNames = verbNamesRussian;
-					break;
-				default:
-					verbNames = verbNamesEnglish;
-				}
-	
-				if (verbNames[n] != _previousSaid) {
-					Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	
-					if (ttsMan != nullptr) {
-						ttsMan->say(verbNames[n]);
-					}
-		
-					_previousSaid = verbNames[n];
-				}
+			switch (_lang) {
+			case kEnglish:
+				verbNames = verbNamesEnglish;
+				break;
+			case kSpanish:
+				verbNames = verbNamesSpanish;
+				break;
+			case kGerman:
+				verbNames = verbNamesGerman;
+				break;
+			case kFrench:
+				verbNames = verbNamesFrench;
+				break;
+			case kItalian:
+				verbNames = verbNamesItalian;
+				break;
+			case kRussian:
+				verbNames = verbNamesRussian;
+				break;
+			default:
+				verbNames = verbNamesEnglish;
 			}
+
+			sayText(verbNames[n], Common::TextToSpeechManager::INTERRUPT);
 		}
+		
 		copyRect(OBJWIDTH * n, OBJHEIGHT * verbActivated, _verbBarX[n], 2,
 						OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
 		verbActivated = 1;

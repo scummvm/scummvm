@@ -32,8 +32,8 @@
 
 #include "drascula/drascula.h"
 
-// For consistency with the verb names, the English words in the volume controls menu are
-// translated into the game's language for text-to-speech
+// For consistency with the verb names, the English words in the volume controls menu (which are pictures) 
+// are translated into the game's language for text-to-speech
 static const char *volumeControlsEnglish[] = {
 	"Master",
 	"Voice/FX",
@@ -43,7 +43,7 @@ static const char *volumeControlsEnglish[] = {
 static const char *volumeControlsSpanish[] = {
 	"Maestro",
 	"Voces/efectos de sonido",
-	"Música"
+	"M\243sica"
 };
 
 static const char *volumeControlsItalian[] = {
@@ -59,16 +59,16 @@ static const char *volumeControlsFrench[] = {
 };
 
 static const char *volumeControlsGerman[] = {
-	"Gesamtlautstärke",
+	"Gesamtlautst\204rke",
 	"Stimmen/Soundeffekte",
 	"Musik"
 };
 
 // The Russian volume controls are translated in-game
 static const char *volumeControlsRussian[] = {
-	"Общий",
-	"голос",
-	"му́зыка"
+	"\xce\xe1\xf9\xe8\xe9",		// "Общий"
+	"\xc3\xee\xeb\xee\xf1",		// "Голос"
+	"\xcc\xf3\xe7\xfb\xea\xe0"	// "Музыка"
 };
 
 enum VolumeControlType {
@@ -200,48 +200,43 @@ void DrasculaEngine::volumeControls() {
 			ConfMan.setInt("music_volume", musicVolume);
 		}
 
-		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		const char **controlNames;
 
-		if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-			const char **controlNames;
+		switch (_lang) {
+		case kEnglish:
+			controlNames = volumeControlsEnglish;
+			break;
+		case kSpanish:
+			controlNames = volumeControlsSpanish;
+			break;
+		case kGerman:
+			controlNames = volumeControlsGerman;
+			break;
+		case kFrench:
+			controlNames = volumeControlsFrench;
+			break;
+		case kItalian:
+			controlNames = volumeControlsItalian;
+			break;
+		case kRussian:
+			controlNames = volumeControlsRussian;
+			break;
+		default:
+			controlNames = volumeControlsEnglish;
+		}
 
-			switch (_lang) {
-			case kEnglish:
-				controlNames = volumeControlsEnglish;
-				break;
-			case kSpanish:
-				controlNames = volumeControlsSpanish;
-				break;
-			case kGerman:
-				controlNames = volumeControlsGerman;
-				break;
-			case kFrench:
-				controlNames = volumeControlsFrench;
-				break;
-			case kItalian:
-				controlNames = volumeControlsItalian;
-				break;
-			case kRussian:
-				controlNames = volumeControlsRussian;
-				break;
-			default:
-				controlNames = volumeControlsEnglish;
-			}
+		Common::String ttsMessage;
+		if (_mouseX > 80 && _mouseX < 121)
+			ttsMessage = controlNames[kMaster];
+		else if (_mouseX > 136 && _mouseX < 178)
+			ttsMessage = controlNames[kSpeechAndSFX];
+		else if (_mouseX > 192 && _mouseX < 233)
+			ttsMessage = controlNames[kMusic];
+		else
+			_previousSaid.clear();
 
-			Common::String ttsMessage;
-			if (_mouseX > 80 && _mouseX < 121)
-				ttsMessage = controlNames[kMaster];
-			else if (_mouseX > 136 && _mouseX < 178)
-				ttsMessage = controlNames[kSpeechAndSFX];
-			else if (_mouseX > 192 && _mouseX < 233)
-				ttsMessage = controlNames[kMusic];
-			else
-				_previousSaid.clear();
-
-			if (ttsMessage.size() > 0 && ttsMessage != _previousSaid) {
-				_previousSaid = ttsMessage;
-				ttsMan->say(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
-			}
+		if (ttsMessage.size() > 0) {
+			sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
 		}
 	}
 

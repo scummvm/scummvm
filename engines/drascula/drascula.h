@@ -34,6 +34,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "common/text-to-speech.h"
 
 #include "engines/savestate.h"
 
@@ -729,6 +730,8 @@ public:
 	void update_62();
 	void update_62_pre();
 	void update_102();
+	
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action);
 
 private:
 	int _lang;

@@ -258,7 +258,7 @@ Common::Error DrasculaEngine::run() {
 		if (_lang == kRussian) {
 			_ttsTextEncoding = Common::CodePage::kWindows1251;
 		} else {
-			_ttsTextEncoding = Common::CodePage::kUtf8;
+			_ttsTextEncoding = Common::CodePage::kDos850;
 		}
 	}
 
@@ -702,10 +702,7 @@ bool DrasculaEngine::runCurrentChapter() {
 
 			print_abc(_textsys[2], 96, 86);
 
-			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
-				ttsMan->say(_textsys[2], _ttsTextEncoding);
-			}
+			sayText(_textsys[2], Common::TextToSpeechManager::INTERRUPT);
 
 			updateScreen();
 			delay(1410);
@@ -715,10 +712,7 @@ bool DrasculaEngine::runCurrentChapter() {
 
 			print_abc(_textsys[3], 94, 86);
 
-			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-			if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
-				ttsMan->say(_textsys[3], _ttsTextEncoding);
-			}
+			sayText(_textsys[3], Common::TextToSpeechManager::INTERRUPT);
 
 			updateScreen();
 			delay(1460);
@@ -1166,6 +1160,18 @@ void DrasculaEngine::freeTexts(char **ptr) {
 
 	free(*ptr);
 	free(ptr);
+}
+
+void DrasculaEngine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+
+	// _previousSaid is used to prevent the TTS from looping when sayText is called inside a loop
+	// (Once the text ends, it will see that there is currently no speech and speak the same text again)
+	// _previousSaid is cleared when appropriate to allow for repeat requests
+	if (ttsMan && ConfMan.getBool("tts_enabled") && _previousSaid != text) {
+		_previousSaid = text;
+		ttsMan->say(text, action, _ttsTextEncoding);
+	}
 }
 
 } // End of namespace Drascula

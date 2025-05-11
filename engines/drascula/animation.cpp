@@ -21,7 +21,6 @@
 
 #include "drascula/drascula.h"
 
-#include "common/config-manager.h"
 #include "common/text-to-speech.h"
 
 namespace Drascula {
@@ -46,7 +45,6 @@ void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int heig
 
 void DrasculaEngine::animation_1_1() {
 	debug(4, "animation_1_1()");
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 
 	while (term_int == 0 && !shouldQuit()) {
 		playMusic(29);
@@ -80,9 +78,7 @@ void DrasculaEngine::animation_1_1() {
 		color_abc(kColorRed);
 		centerText(_textmisc[1], 160, 100);
 
-		if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
-			ttsMan->say(_textmisc[1], _ttsTextEncoding);
-		}
+		sayText(_textmisc[1], Common::TextToSpeechManager::INTERRUPT);
 
 		updateScreen();
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
@@ -768,8 +764,6 @@ void DrasculaEngine::animation_16_2() {
 
 	color_abc(kColorDarkGreen);
 
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-
 	for (int i = 1; i <= 4; i++) {
 		if (i < 4)
 			Common::sprintf_s(curPic, "his%i.alg", i);
@@ -778,9 +772,7 @@ void DrasculaEngine::animation_16_2() {
 
 		loadPic(curPic, screenSurface, HALF_PAL);
 
-		if (ConfMan.getBool("tts_enabled") && ttsMan != nullptr) {
-			ttsMan->say(_texthis[i], Common::TextToSpeechManager::QUEUE, _ttsTextEncoding);
-		}
+		sayText(_texthis[i], Common::TextToSpeechManager::QUEUE);
 
 		centerText(_texthis[i], 180, 180);
 		updateScreen();
