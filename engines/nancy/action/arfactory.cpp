@@ -363,6 +363,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 230:
 		return new Telephone(true);
 	default:
+		warning("Unknown action record type %d", type);
 		return nullptr;
 	}
 }
