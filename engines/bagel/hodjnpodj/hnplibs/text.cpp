@@ -539,8 +539,7 @@ void CText::AssertValid() const {
 void CText::Dump(CDumpContext &dc) const {
 	CObject::Dump(dc);
 }
+#endif
 
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif

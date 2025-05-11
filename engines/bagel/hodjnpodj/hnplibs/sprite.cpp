@@ -3218,8 +3218,8 @@ void CSprite::Dump(CDumpContext& dc) const
 {
     CObject::Dump(dc);
 }
+#endif
+
 
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif

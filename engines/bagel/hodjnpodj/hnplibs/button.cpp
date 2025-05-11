@@ -1414,8 +1414,8 @@ BEGIN_MESSAGE_MAP( CCheckButton, CButton )
 	//{{AFX_MSG_MAP( CCheckButton )
 	ON_WM_ERASEBKGND()
 	ON_WM_DRAWITEM()
-   	ON_MESSAGE( BM_SETCHECK, OnSetCheck)
-   	ON_MESSAGE( BM_GETCHECK, OnGetCheck)
+	ON_MESSAGE( BM_SETCHECK, CCheckButton::OnSetCheck)
+	ON_MESSAGE( BM_GETCHECK, CCheckButton::OnGetCheck)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -1805,11 +1805,10 @@ BEGIN_MESSAGE_MAP( CRadioButton, CButton )
 	//{{AFX_MSG_MAP( CRadioButton )
 	ON_WM_ERASEBKGND()
 	ON_WM_DRAWITEM()
-   	ON_MESSAGE( BM_SETCHECK, OnSetCheck)
-   	ON_MESSAGE( BM_GETCHECK, OnGetCheck)
+	ON_MESSAGE( BM_SETCHECK, CRadioButton::OnSetCheck)
+	ON_MESSAGE( BM_GETCHECK, CRadioButton::OnGetCheck)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CRadioButton diagnostics
@@ -1824,8 +1823,8 @@ void CRadioButton::Dump(CDumpContext& dc) const
 {
 	CButton::Dump(dc);
 }
+#endif
+
 
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif
