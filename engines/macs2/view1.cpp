@@ -490,6 +490,7 @@ View1::View1() : UIElement("View1") {
 				// Check if we hit an item
 				// TODO: Skipping this for now while we only have one item
 				GameObject *clickedObject = getClickedInventoryItem2(msg._pos);
+				// TODO: Reminder that we need to highlight the clicked button for a moment
 
 				// TODO: Maybe handled better elsewhere - examining inventory items
 				if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Look) {
@@ -500,10 +501,18 @@ View1::View1() : UIElement("View1") {
 					g_engine->RunScriptExecutor(false);
 					return true;
 				}
+				if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Use) {
+					activeInventoryItem = clickedObject;
+					AnimFrame *icon = GetInventoryIcon(activeInventoryItem);
+					CursorMan.replaceCursor((void *)icon->Data, icon->Width, icon->Height, icon->Width / 2, icon->Height / 2, 0);
+					g_engine->_scriptExecutor->_mouseMode = Script::MouseMode::UseInventory;
+					return true;
+				}
 				if (activeInventoryItem != nullptr && clickedObject != nullptr) {
 					// Trigger a use item on item
 					GameObject *firstObject = activeInventoryItem;
-					activeInventoryItem = nullptr;
+					// TODO: We should check if the active object still exists afterwards and only
+					// then deactivate it
 					// TODO: Does the scripting engine expect always the objects with the
 					// right number prefix like here 419 instead of 19?
 					g_engine->_scriptExecutor->_interactedObjectID = 0x400 + firstObject->Index;
@@ -511,7 +520,7 @@ View1::View1() : UIElement("View1") {
 					g_engine->RunScriptExecutor(false);
 				}
 				
-				activeInventoryItem = clickedObject;
+				
 				return true;
 			}
 
