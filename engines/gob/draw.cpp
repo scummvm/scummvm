@@ -494,8 +494,7 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 		const char *s = str;
 		while (*s != '\0')
 			width += font.getCharWidth(*s++);
-	}
-	else
+	} else
 		width = strlen(str) * font.getCharWidth();
 
 	adjustCoords(1, &width, nullptr);

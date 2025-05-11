@@ -795,8 +795,7 @@ void Scenery::updateAnimObjectVideo(int16 layer, int16 frame, int16 animation, i
 					if (layer & 0x80) {
 						sprite_dest_left = *obj.pPosX + _vm->_vidPlayer->getWidth(obj.videoSlot - 1) - deltaX - sprite_width;
 					}
-				}
-				else {
+				} else {
 					sprite_dest_left = *obj.pPosX ;
 					sprite_dest_top = *obj.pPosY;
 					sprite_dest_right = sprite_dest_left +  _vm->_vidPlayer->getWidth(obj.videoSlot - 1) - 1;

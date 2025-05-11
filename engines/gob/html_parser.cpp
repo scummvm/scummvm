@@ -237,8 +237,7 @@ Common::String HtmlContext::substituteHtmlEntities(const char *text) {
 		} else if (*charPtr == '\r') {
 			result += ' ';
 			++charPtr;
-		}
-		else {
+		} else {
 			result += *charPtr;
 		}
 

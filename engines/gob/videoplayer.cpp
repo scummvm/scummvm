@@ -179,8 +179,7 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 				_vm->setTrueColor(!video->decoder->isPaletted(), true);
 
 				video->decoder->colorModeChanged();
-			}
-			else {
+			} else {
 				if (!video->decoder->isPaletted()) // Paletted to high color is supported
 					return -1;
 			}

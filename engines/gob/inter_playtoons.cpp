@@ -485,8 +485,7 @@ Common::String Inter_Playtoons::getFile(const char *path, bool stripPath, bool *
 		path += 4;
 		if (isCd)
 			*isCd = true;
-	}
-	else if (!strncmp(path, "<STK>", 5))
+	} else if (!strncmp(path, "<STK>", 5))
 		path += 5;
 	else if (!strncmp(path, "<ALLCD>", 7)) {
 		path += 7;

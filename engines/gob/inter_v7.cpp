@@ -1661,8 +1661,7 @@ void Inter_v7::o7_fillRect(OpFuncParams &params) {
 									_vm->_draw->_destSpriteY + _vm->_draw->_spriteBottom - 1);
 
 		}
-	}
-	else
+	} else
 		_vm->_draw->spriteOperation(DRAW_FILLRECT);
 	_vm->_draw->_pattern = savedPattern;
 }
