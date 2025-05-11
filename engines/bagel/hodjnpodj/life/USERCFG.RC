@@ -1,0 +1,68 @@
+//Microsoft App Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_USERCFG DIALOG DISCARDABLE  0, 0, 131, 110
+STYLE WS_POPUP | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    SCROLLBAR       IDC_STARTVILLAGES,15,25,65,10, 0
+    SCROLLBAR       IDC_EVOLVESPEED,15,47,65,10, 0
+    SCROLLBAR       IDC_ROUNDS,15,70,65,10, 0
+    CHECKBOX        "Pre-Place Ten Villages",IDC_PREPLACE,15,85,100,12, BS_OWNERDRAW
+    DEFPUSHBUTTON   "&OK",IDOK,85,25,30,14, BS_OWNERDRAW
+    PUSHBUTTON      "&Cancel",IDCANCEL,85,65,30,15, BS_OWNERDRAW
+END
+
+
+#ifdef APSTUDIO_INVOKED
+//////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+/////////////////////////////////////////////////////////////////////////////////////
+#endif    // APSTUDIO_INVOKED
+
+
+#ifndef APSTUDIO_INVOKED
+////////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

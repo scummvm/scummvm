@@ -1,0 +1,28 @@
+// options.rc -- dialog box for options dialog
+// Written by John J. Xenakis for Boffo Games Inc., 1994
+
+// Note to programmers:
+
+//	Please do not modify this file.  Use "include options.rc" in
+//	your own rc file.
+
+#include "afxres.h"
+#include "optres.h"
+
+
+IDR_BITMAP_SCROLL       BITMAP  MOVEABLE PURE   ".\\ART\\SSCROLL.BMP"
+
+
+IDD_OPTIONS_DIALOG DIALOG DISCARDABLE  0, 0, 131, 110
+STYLE WS_POPUP | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "&Continue",IDC_OPTIONS_RETURN,33,81,56,14, BS_OWNERDRAW
+    PUSHBUTTON      "&Quit",IDC_OPTIONS_QUIT,33,97,56,14, BS_OWNERDRAW
+    PUSHBUTTON      "&Rules",IDC_OPTIONS_RULES,33,17,56,14, BS_OWNERDRAW
+    PUSHBUTTON      "&New Game",IDC_OPTIONS_NEWGAME,33,33,56,14, BS_OWNERDRAW
+    PUSHBUTTON      "&Options",IDC_OPTIONS_OPTIONS,33,49,56,14, BS_OWNERDRAW
+    PUSHBUTTON      "&Audio Settings",IDC_OPTIONS_AUDIO,33,65,56,14, BS_OWNERDRAW
+END
+
+

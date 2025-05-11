@@ -1,0 +1,10 @@
+// mankala.rc2
+
+#include "afxres.h"
+#include "rules.rc"
+#include "mainmenu.rc"
+#include "cmessbox.rc"
+#include "audiocfg.rc"
+#include "rules.h"
+#include "menures.h"
+

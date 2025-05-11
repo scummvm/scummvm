@@ -1,0 +1,503 @@
+/**
+*   USERCFG.CPP -
+*
+*
+*   Description -
+*
+*
+*
+*
+*   (c) Copyright 1994 - Boffo Games
+*   All rights reserved.
+*
+*
+*   Revision History:
+*
+*   Version     Date        Author      Comments
+*   -------     --------    ------      --------------------------------
+*   1.00a       03-18-94     BCW        Created this file
+*
+**/
+#include <afxwin.h>
+#include <afxext.h>
+#include <assert.h>
+#include <globals.h>
+#include <text.h>
+#include <cbofdlg.h>
+#include <menures.h>
+#include <stdinc.h>
+#include "usercfg.h"
+
+#define ID_RESET     104
+#define ID_GAMESPEED 105
+#define ID_FIXED     106
+#define ID_SPEED     112
+#define ID_SHOWN	 114
+#define ID_NAMES     111
+
+extern const char *INI_SECTION;
+
+static CHAR *apszSpeeds[10] = {
+
+    "Molasses in Stasis",
+    "Frozen Molasses",
+    "Molasses",
+    "Maple Syrup",
+    "Oil",
+    "Watery Oil",
+    "Oily Water",
+    "Water",
+    "Quicksilver",
+    "Quick Quicksilver"
+};
+
+static CText *txtGameSpeed;
+static CText *txtRevealed;
+static CText *txtSpeed;
+static CText *txtShown;
+
+static	CColorButton *pOKButton = NULL;						// OKAY button on scroll
+static	CColorButton *pCancelButton = NULL;					// Cancel button on scroll
+static	CColorButton *pDefaultsButton = NULL;				// Defaults button on scroll
+static  CCheckButton *pFixedButton = NULL;
+
+CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
+            : CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP")
+{
+
+    m_pNamesButton = NULL;
+    DoModal();
+}
+
+void CUserCfgDlg::DoDataExchange(CDataExchange *pDX)
+{
+    CBmpDialog::DoDataExchange(pDX);
+}
+
+
+void CUserCfgDlg::PutDlgData()
+{
+    m_pSpeedScroll->SetScrollPos(m_nGameSpeed);
+    m_pShownScroll->SetScrollPos(m_nShown);
+
+    pFixedButton->SetCheck(!m_bRandomLetters);
+    m_pNamesButton->SetCheck(m_bShowNames);
+}
+
+
+void CUserCfgDlg::GetDlgData()
+{
+    m_nGameSpeed = m_pSpeedScroll->GetScrollPos();
+    m_nShown = m_pShownScroll->GetScrollPos();
+
+    m_bRandomLetters = TRUE;
+    if (pFixedButton->GetCheck() == 1)
+         m_bRandomLetters = FALSE;
+
+    m_bShowNames = FALSE;
+    if (m_pNamesButton->GetCheck() == 1) {
+        m_bShowNames = TRUE;
+    }
+}
+
+
+BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+    /*
+    * respond to user
+    */
+    if (HIWORD(lParam) == BN_CLICKED) {
+
+        switch (wParam) {
+
+            case IDOK:
+                m_bShouldSave = TRUE;
+                ClearDialogImage();
+                EndDialog(IDOK);
+                return(FALSE);
+
+            case IDCANCEL:
+                ClearDialogImage();
+                EndDialog(IDCANCEL);
+                return(FALSE);
+
+            /*
+            * reset params to default
+            */
+            case ID_RESET:
+
+                m_bRandomLetters = FALSE;
+                m_nShown = SHOWN_DEF;
+                m_nGameSpeed = SPEED_DEF;
+                m_bShowNames = TRUE;
+
+                PutDlgData();
+                DispSpeed();
+                DispShown();
+                break;
+
+            case ID_NAMES:
+                m_bShowNames = !m_bShowNames;
+                PutDlgData();
+                break;
+
+            case ID_FIXED:
+                m_bRandomLetters = !m_bRandomLetters;
+                PutDlgData();
+				break;
+
+            default:
+                break;
+        }
+    }
+
+    return(CBmpDialog::OnCommand(wParam, lParam));
+}
+
+
+VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll)
+{
+    switch (pScroll->GetDlgCtrlID()) {
+    
+    	case ID_SPEED:
+    	
+		    switch (nSBCode) {
+		
+		        case SB_LEFT:
+                    m_nGameSpeed = SPEED_MIN;
+		            break;
+		
+		        case SB_LINELEFT:
+		        case SB_PAGELEFT:
+                    if (m_nGameSpeed > SPEED_MIN)
+                        m_nGameSpeed--;
+		            break;
+		
+		
+		        case SB_RIGHT:
+                    m_nGameSpeed = SPEED_MAX;
+		            break;
+		
+		        case SB_LINERIGHT:
+		        case SB_PAGERIGHT:
+                    if (m_nGameSpeed < SPEED_MAX)
+                        m_nGameSpeed++;
+		            break;
+		
+		        case SB_THUMBPOSITION:
+		        case SB_THUMBTRACK:
+                    m_nGameSpeed = nPos;
+		            break;
+		
+		        default:
+		            break;
+		    }
+		
+            assert(m_nGameSpeed >= SPEED_MIN && m_nGameSpeed <= SPEED_MAX);
+		
+            if (m_nGameSpeed < SPEED_MIN)
+                m_nGameSpeed = SPEED_MIN;
+            if (m_nGameSpeed > SPEED_MAX)
+                m_nGameSpeed = SPEED_MAX;
+		
+		    /* can't access a null pointers */
+		    assert(pScroll != NULL);
+		
+            pScroll->SetScrollPos(m_nGameSpeed);
+		
+		    DispSpeed();
+		    break;
+		    
+    	case ID_SHOWN:
+    	
+		    switch (nSBCode) {
+		
+		        case SB_LEFT:
+                    m_nShown = SHOWN_MIN;
+		            break;
+		
+		        case SB_LINELEFT:
+		        case SB_PAGELEFT:
+                    if (m_nShown > SHOWN_MIN)
+                        m_nShown--;
+		            break;
+		
+		
+		        case SB_RIGHT:
+                    m_nShown = SHOWN_MAX;
+		            break;
+		
+		        case SB_LINERIGHT:
+		        case SB_PAGERIGHT:
+                    if (m_nShown < SHOWN_MAX)
+                        m_nShown++;
+		            break;
+		
+		        case SB_THUMBPOSITION:
+		        case SB_THUMBTRACK:
+                    m_nShown = nPos;
+		            break;
+		
+		        default:
+		            break;
+		    }
+		
+            assert(m_nShown >= SHOWN_MIN && m_nShown <= SHOWN_MAX);
+		
+            if (m_nShown < SHOWN_MIN)
+                m_nShown = SHOWN_MIN;
+            if (m_nShown > SHOWN_MAX)
+                m_nShown = SHOWN_MAX;
+		
+		    /* can't access a null pointers */
+		    assert(pScroll != NULL);
+		
+            pScroll->SetScrollPos(m_nShown);
+		
+		    DispShown();
+			break;
+			
+		default:
+			break;
+					    
+	} // end Switch ID
+}
+
+
+BOOL CUserCfgDlg::OnInitDialog(void)
+{
+    CRect tmpRect;
+    char buf[10];
+    CDC *pDC;
+
+    CBmpDialog::OnInitDialog();
+
+    tmpRect.SetRect(22, 100, 122, 120);
+    m_pShownScroll = new CScrollBar;
+    m_pShownScroll->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SHOWN);
+    m_pShownScroll->SetScrollRange(SHOWN_MIN, SHOWN_MAX, TRUE);
+
+    tmpRect.SetRect(22, 138, 122, 158);
+    m_pSpeedScroll = new CScrollBar;
+    m_pSpeedScroll->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SPEED);
+    m_pSpeedScroll->SetScrollRange(SPEED_MIN, SPEED_MAX, TRUE);
+
+    pDC = GetDC();
+
+    tmpRect.SetRect(22, 125, 60, 140);
+    if ((txtGameSpeed = new CText) != NULL) {
+        txtGameSpeed->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
+    }
+
+    tmpRect.SetRect(65, 125, 170, 140);
+    if ((txtSpeed = new CText) != NULL) {
+        txtSpeed->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
+    }
+
+    tmpRect.SetRect(22, 87, 80, 102);
+    if ((txtRevealed = new CText) != NULL) {
+        txtRevealed->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
+    }
+
+    tmpRect.SetRect(85, 87, 146, 102);
+    if ((txtShown = new CText) != NULL) {
+        txtShown->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
+    }
+
+    ReleaseDC(pDC);
+
+	if ((pOKButton = new CColorButton) != NULL) {					// build a color QUIT button to let us exit
+		(*pOKButton).SetPalette(m_pPalette);						// set the palette to use
+		(*pOKButton).SetControl(IDOK,this);				// tie to the dialog control
+	}
+	
+	if ((pCancelButton = new CColorButton) != NULL) {					// build a color QUIT button to let us exit
+		(*pCancelButton).SetPalette(m_pPalette);						// set the palette to use
+		(*pCancelButton).SetControl(IDCANCEL,this);				// tie to the dialog control
+	}
+	
+	if ((pDefaultsButton = new CColorButton) != NULL) {					// build a color QUIT button to let us exit
+		(*pDefaultsButton).SetPalette(m_pPalette);						// set the palette to use
+		(*pDefaultsButton).SetControl(ID_RESET,this);				// tie to the dialog control
+	}
+	
+    if ((pFixedButton = new CCheckButton) != NULL) {        // build a color QUIT button to let us exit
+        (*pFixedButton).SetPalette(m_pPalette);             // set the palette to use
+        (*pFixedButton).SetControl(ID_FIXED, this);         // tie to the dialog control
+    }
+
+    if ((m_pNamesButton = new CCheckButton) != NULL) {
+        m_pNamesButton->SetPalette(m_pPalette);
+        m_pNamesButton->SetControl(ID_NAMES, this);
+    }
+	
+    m_bShouldSave = FALSE;
+
+    /*
+    * User can specify if he/she wants the letters to appear in a random order
+    * or in the predefined fixed order set by the MetaGame
+    */
+    GetPrivateProfileString(INI_SECTION, "RandomLetters", "No", buf, 10, INI_FILENAME);
+    m_bRandomLetters = FALSE;
+    if (!stricmp(buf, "Yes"))
+        m_bRandomLetters = TRUE;
+
+    /*
+    * This will determine how many letters are intially displayed (default is SHOWN_DEF)
+    */
+    m_nShown = GetPrivateProfileInt(INI_SECTION, "NumStartingLetters", SHOWN_DEF, INI_FILENAME);
+    if ((m_nShown < SHOWN_MIN) || (m_nShown > SHOWN_MAX))
+        m_nShown = SHOWN_DEF;
+
+    /*
+    * This will determine the speed of the letters being displayed:
+    * Range is 1..10 with 1 = 5000ms, 10 = 500ms
+    */
+    m_nGameSpeed = GetPrivateProfileInt(INI_SECTION, "GameSpeed", SPEED_DEF, INI_FILENAME);
+    if ((m_nGameSpeed < SPEED_MIN) || (m_nGameSpeed > SPEED_MAX))
+        m_nGameSpeed = SPEED_DEF;
+
+    GetPrivateProfileString(INI_SECTION, "ShowCategoryNames", "Yes", buf, 10, INI_FILENAME);
+    assert(strlen(buf) < 10);
+    m_bShowNames = FALSE;
+    if (!stricmp(buf, "Yes"))
+        m_bShowNames = TRUE;
+
+    PutDlgData();
+    return(TRUE);
+}
+
+
+void CUserCfgDlg::OnPaint(void)
+{
+    CDC *pDC;
+
+    CBmpDialog::OnPaint();
+
+    pDC = GetDC();
+
+    txtGameSpeed->DisplayString(pDC, "Speed:", 14, TEXT_BOLD, RGB( 0, 0, 0));
+    txtRevealed->DisplayString(pDC, "Revealed:", 14, TEXT_BOLD, RGB( 0, 0, 0));
+    DispSpeed();
+    DispShown();
+
+    ReleaseDC(pDC);
+}
+
+
+BEGIN_MESSAGE_MAP(CUserCfgDlg, CBmpDialog)
+    ON_WM_HSCROLL()
+    ON_WM_PAINT()
+    ON_WM_DESTROY()
+END_MESSAGE_MAP()
+
+void CUserCfgDlg::OnDestroy(void)
+{
+    if (m_pSpeedScroll != NULL) {
+        delete m_pSpeedScroll;
+        m_pSpeedScroll = NULL;
+    }
+
+    if (m_pShownScroll != NULL) {
+        delete m_pShownScroll;
+        m_pShownScroll = NULL;
+    }
+
+    CBmpDialog::OnDestroy();
+}
+
+
+void CUserCfgDlg::DispSpeed(void)
+{
+    CDC *pDC;
+
+    if ((pDC = GetDC()) != NULL) {
+        txtSpeed->DisplayString(pDC, apszSpeeds[m_nGameSpeed - 1], 14, TEXT_BOLD, RGB(0, 0, 0));
+        ReleaseDC(pDC);
+    }
+}
+
+
+void CUserCfgDlg::DispShown(void)
+{
+    CDC *pDC;
+    char	msg[5];
+
+    sprintf( msg, "%d", m_nShown );
+	
+    if ((pDC = GetDC()) != NULL) {
+        txtShown->DisplayString(pDC, msg, 14, TEXT_BOLD, RGB( 0, 0, 0));
+        ReleaseDC(pDC);
+    }
+}
+
+
+void CUserCfgDlg::ClearDialogImage(void)
+{
+    char tmpBuf[8];
+    CDC *pDC;
+
+    if (m_bShouldSave) {
+        GetDlgData();
+
+        WritePrivateProfileString(INI_SECTION, "RandomLetters", m_bRandomLetters ? "Yes" : "No", INI_FILENAME);
+        WritePrivateProfileString(INI_SECTION, "NumStartingLetters", itoa(m_nShown, tmpBuf, 10), INI_FILENAME);
+        WritePrivateProfileString(INI_SECTION, "GameSpeed", itoa(m_nGameSpeed, tmpBuf, 10), INI_FILENAME);
+        WritePrivateProfileString(INI_SECTION, "ShowCategoryNames", m_bShowNames ? "Yes" : "No", INI_FILENAME);
+    }
+
+    pDC = GetDC();
+
+    if (txtSpeed != NULL) {
+        txtSpeed->RestoreBackground(pDC);
+        delete txtSpeed;
+        txtSpeed = NULL;
+    }
+
+    if (txtShown != NULL) {
+        txtShown->RestoreBackground(pDC);
+        delete txtShown;
+        txtShown = NULL;
+    }
+
+    if (txtRevealed != NULL) {
+        txtRevealed->RestoreBackground(pDC);
+        delete txtRevealed;
+        txtRevealed = NULL;
+    }
+
+    if (txtGameSpeed != NULL) {
+        txtGameSpeed->RestoreBackground(pDC);
+        delete txtGameSpeed;
+        txtGameSpeed = NULL;
+    }
+
+    ReleaseDC(pDC);
+
+	if (pOKButton != NULL) {                          // release the button
+		delete pOKButton;
+		pOKButton = NULL;
+	}
+
+	if (pCancelButton != NULL) {                     	// release the button
+		delete pCancelButton;
+		pCancelButton = NULL;
+	}
+
+	if (pDefaultsButton != NULL) {                    // release the button
+		delete pDefaultsButton;
+		pDefaultsButton = NULL;
+	}
+
+	if (pFixedButton != NULL) {                     	// release the button
+		delete pFixedButton;
+		pFixedButton = NULL;
+	}
+
+    if (m_pNamesButton != NULL) {
+        delete m_pNamesButton;
+        m_pNamesButton = NULL;
+    }
+
+	ValidateRect(NULL);
+}

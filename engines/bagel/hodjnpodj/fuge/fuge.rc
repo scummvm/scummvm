@@ -1,0 +1,22 @@
+//
+// load the User Setup dialog box
+//
+#include "usercfg.rc"
+#include "mainmenu.rc"
+#include "cmessbox.rc"
+#include "rules.rc"
+#include "audiocfg.rc"
+
+brickSound  WAVE .\SOUND\BRICK0.WAV
+wallSound   WAVE .\SOUND\WALL.WAV
+paddleSound WAVE .\SOUND\PADDLE.WAV
+NewLife     WAVE .\SOUND\NEWLIFE.WAV
+
+103             BITMAP  MOVEABLE PURE   ".\\ART\\BALL.BMP"
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+AFX_IDI_STD_FRAME       ICON    DISCARDABLE     "FUGE.ICO"

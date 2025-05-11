@@ -1,0 +1,49 @@
+//
+// load the User Setup dialog box
+//
+#include "usercfg.rc"
+#include "guess.dlg"
+#include "mainmenu.rc"
+#include "cmessbox.rc"
+#include "rules.rc"
+#include "audiocfg.rc"
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// Bitmaps - each letter displayed has it's own bitmap
+//
+
+101             BITMAP  MOVEABLE PURE   ".\\ART\\A.BMP"
+102             BITMAP  MOVEABLE PURE   ".\\ART\\B.BMP"
+103             BITMAP  MOVEABLE PURE   ".\\ART\\C.BMP"
+104             BITMAP  MOVEABLE PURE   ".\\ART\\D.BMP"
+105             BITMAP  MOVEABLE PURE   ".\\ART\\E.BMP"
+106             BITMAP  MOVEABLE PURE   ".\\ART\\F.BMP"
+107             BITMAP  MOVEABLE PURE   ".\\ART\\G.BMP"
+108             BITMAP  MOVEABLE PURE   ".\\ART\\H.BMP"
+109             BITMAP  MOVEABLE PURE   ".\\ART\\I.BMP"
+110             BITMAP  MOVEABLE PURE   ".\\ART\\J.BMP"
+111             BITMAP  MOVEABLE PURE   ".\\ART\\K.BMP"
+112             BITMAP  MOVEABLE PURE   ".\\ART\\L.BMP"
+113             BITMAP  MOVEABLE PURE   ".\\ART\\M.BMP"
+114             BITMAP  MOVEABLE PURE   ".\\ART\\N.BMP"
+115             BITMAP  MOVEABLE PURE   ".\\ART\\O.BMP"
+116             BITMAP  MOVEABLE PURE   ".\\ART\\P.BMP"
+117             BITMAP  MOVEABLE PURE   ".\\ART\\Q.BMP"
+118             BITMAP  MOVEABLE PURE   ".\\ART\\R.BMP"
+119             BITMAP  MOVEABLE PURE   ".\\ART\\S.BMP"
+120             BITMAP  MOVEABLE PURE   ".\\ART\\T.BMP"
+121             BITMAP  MOVEABLE PURE   ".\\ART\\U.BMP"
+122             BITMAP  MOVEABLE PURE   ".\\ART\\V.BMP"
+123             BITMAP  MOVEABLE PURE   ".\\ART\\W.BMP"
+124             BITMAP  MOVEABLE PURE   ".\\ART\\X.BMP"
+125             BITMAP  MOVEABLE PURE   ".\\ART\\Y.BMP"
+126             BITMAP  MOVEABLE PURE   ".\\ART\\Z.BMP"
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+AFX_IDI_STD_FRAME       ICON    DISCARDABLE     "GAME.ICO"

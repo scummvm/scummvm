@@ -1,0 +1,119 @@
+// bgen.h -- Boffo Games general header file
+// Written by John J. Xenakis 1984, 1985-1989, 1992-1994
+
+#ifndef BGEN_H
+#define BGEN_H
+
+#define JX_DEBUG
+
+// the following are machine-independent definitions of the
+// largest positive signed and and unsigned integers and longs
+#define MAXPOSINT ((int)(((unsigned int)-1) >> 1))
+#define MAXPOSLONG ((long)(((unsigned long)-1L) >> 1))
+#define MAXUINT ((unsigned int)-1)
+#define MAXULONG ((unsigned long)-1L)
+#define MINNEGINT (-MAXPOSINT-1)
+#define MINNEGLONG (-MAXPOSLONG-1)
+
+#define DIMENSION(a) (sizeof(a) / sizeof(a[0]))
+#define UPPERBOUND(a) (DIMENSION(a) - 1)
+
+// #define HIWORD(lParm) (*((unsigned int huge *)&lParm + 1) )
+// #define LOWORD(lParm) ((unsigned int)lParm )
+
+typedef int BOOL ;
+typedef char * XPSTR ;
+typedef char far * LPSTR ;
+typedef LPSTR far * LPLPSTR ;
+typedef int * XPINT ;
+typedef int far * LPINT ;
+typedef char * XPCHAR ;
+#define VOID void
+typedef void * XPVOID ;
+typedef void far * LPVOID ;
+//typedef unsigned int WORD ;
+//typedef WORD * XPWORD ;
+//typedef WORD far * LPWORD ;
+
+#define HUGE __huge
+typedef unsigned long ULONG ;
+
+// RGB colors
+#define RGBCOLOR_RED		RGB(255,   0,   0)
+#define RGBCOLOR_GREEN		RGB(  0, 255,   0)
+#define RGBCOLOR_BLUE		RGB(  0,   0, 255)
+#define RGBCOLOR_YELLOW		RGB(255, 255,   0)
+#define RGBCOLOR_MAGENTA	RGB(255,   0, 255)
+#define RGBCOLOR_CYAN		RGB(  0, 255, 255)
+#define RGBCOLOR_BLACK		RGB(  0,   0,   0)
+#define RGBCOLOR_GREY		RGB(128, 128, 128)
+#define RGBCOLOR_BROWN		RGB(128, 128,   0)
+#define RGBCOLOR_PURPLE		RGB(128,   0, 128)
+#define RGBCOLOR_AQUA		RGB(  0, 128, 128)
+#define RGBCOLOR_WHITE		RGB(255, 255, 255)
+
+// mouse button click types
+#define CLICK_UMOVE 1
+#define CLICK_LDOWN 2
+#define CLICK_LMOVE 3
+#define CLICK_LUP 4
+#define CLICK_LDOUBLE 5
+#define CLICK_RDOWN 6
+#define CLICK_RMOVE 7
+#define CLICK_RUP 8
+#define CLICK_RDOUBLE 9
+
+// ASCII characters
+#define CCHBOF 1		/* beginning of file char (control A) */
+#define CCHBKS 8		/* backspace */
+#define CCHTAB 9		/* tab */
+#define CCHLF 10		/* line feed - '\n' - newline */
+#define CCHFF 12		/* form feed */
+#define CCHCR 13		/* carriage return */
+#define CCHLF 10		/* line feed */
+#define CCHEOF 26		/* end of file char (control Z) */
+#define CCHESC 27		/* escape */
+#define CCHBL 32		/* blank */
+#define CCHDIG(n) 48+n /* 48-57 */	/* digits 0-9 */
+#define CCHTXL 32		/* first text character */
+#define CCHTXH 127		/* last text character */
+
+#define CCHUND 95		/* underline */
+#define CCHLPR '('		/* left paren */
+#define CCHRPR ')'		/* right paren */
+#define CCHQUO '"'		/* quote */
+#define CCHAPO '\''		/* apostrophe (single quote) */
+#define CCHLCB '{'		/* left curly bracket */
+#define CCHRCB '}'		/* right curly bracket */
+#define CCHCOL ':'
+#define CCHDOT '.'
+
+#define CCHCTL(let) (let-'A'+1)	/* control chars: A-Z */
+
+/* old scan codes -- add 1000 to scan code from IBM PC keyboard */
+#define SCANMIN 1000		/* minimum scan code */
+
+#define SCANF(dig) (1058+dig)	/* function keys: 1059-1068 */
+#define SCANSF(dig) (1083+dig)	/* shift function keys: 1084-1093 */
+#define SCANCF(dig) (1093+dig)	/* control function keys: 1094-1103 */
+#define SCANAF(dig) (1103+dig)	/* alt function keys: 1104-1113 */
+
+// code to be used with Windows virtual key codes
+#define CCH_ALTKEY 0x100
+#define CCH_CTRLKEY 0x200
+#define CCH_SHFTKEY 0x400
+#define ALTKEY(ch) ((ch)+CCH_ALTKEY)
+#define CTRLKEY(ch) ((ch)+CCH_CTRLKEY)
+#define SHFTKEY(ch) ((ch)+CCH_SHFTKEY)
+
+
+#ifdef __cplusplus
+inline BOOL EQV(BOOL b1, BOOL b2)
+	{ return((b1 != 0) == (b2 != 0)) ; }
+#endif	/* __cplusplus */
+
+#include "bdbg.h"
+
+#endif /* BGEN_H */
+
+

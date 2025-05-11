@@ -1,0 +1,275 @@
+/*****************************************************************
+ * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+ *
+ *
+ * optdlg.cpp					private options dialog for poker
+ *
+ * HISTORY
+ *
+ *	1.0 5/9/94 GTB		
+ *
+ * MODULE DESCRIPTION:
+ *
+ *	The options dialog specific to my game. It contains buttons for
+ *	Toggle Sound, Set User Amount, and Set Payoffs
+ *
+ * LOCALS:
+ *
+ *   		n/a
+ *
+ * GLOBALS:
+ *
+ *			n/a      
+ *
+ * RELEVANT DOCUMENTATION:
+ *
+ *      n/a
+ *
+ * FILES USED:
+ *
+ * 			n/a
+ ****************************************************************/
+#include "stdafx.h"
+#include <button.h>
+#include "resource.h"
+#include "dialogs.h"
+
+static CPalette		*m_pOptionsPalette = NULL;
+
+static CColorButton    *pAmountButton = NULL;
+static CColorButton    *pPayoffButton = NULL;
+static CColorButton    *pCancelButton = NULL;
+/*****************************************************************
+ *
+ * COptionsDlg
+ *
+ * FUNCTIONAL DESCRIPTION:
+ *
+ * 	Constructor sends the input to the COptions constructor and 
+ *	the intializes the private members 
+ *   
+ * FORMAL PARAMETERS:
+ *
+ *	Those needed to contruct a COptions dialog: pParent,pPalette, nID 
+ *
+ * IMPLICIT INPUT PARAMETERS:
+ *  
+ *	n/a
+ *   
+ * IMPLICIT OUTPUT PARAMETERS:
+ *   
+ *	m_bSoundOn, m_bDisableSets  
+ *   
+ * RETURN VALUE:
+ *
+ *	n/a
+ *
+ ****************************************************************/
+
+COptionsDlg::COptionsDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
+ 				:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP" )
+{
+	m_bSoundOn = TRUE;
+	m_bDisableSets = FALSE;
+	m_pOptionsPalette = pPalette;
+}
+
+/*****************************************************************
+ *
+ * OnCommand
+ *
+ * FUNCTIONAL DESCRIPTION:
+ *
+ * Process the Toggle Sound, "Set Amount", and "Set Payoffs" buttons 
+ *
+ * This function is called when a WM_COMMAND message is issued,
+ * typically in order to process control related activities.
+ *   
+ * FORMAL PARAMETERS:
+ *
+ *	wParam		identifier for the button to be processed
+ *	lParam		type of message to be processed
+ *
+ * IMPLICIT INPUT PARAMETERS:
+ *  
+ *	n/a
+ *   
+ * IMPLICIT OUTPUT PARAMETERS:
+ *   
+ *	n/a
+ *   
+ * RETURN VALUE:
+ *
+ *	n/a
+ *
+ ****************************************************************/
+
+BOOL COptionsDlg::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+// What ever button is clicked, end the dialog and send the ID of the button
+// clicked as the return from the dialog
+	if (HIWORD(lParam) == BN_CLICKED) {
+		switch (wParam) {
+			case ID_TOGGLESOUND:
+			    ClearDialogImage();
+				EndDialog( ID_TOGGLESOUND );
+				return 1;
+				break;
+			case ID_SETUSERAMT:
+			    ClearDialogImage();
+				EndDialog( ID_SETUSERAMT );
+				return 1;
+				break;
+			case ID_SETPAYOFFS:
+			    ClearDialogImage();
+				EndDialog( ID_SETPAYOFFS );
+				return 1;
+				break;
+			case ID_CANCEL:
+			    ClearDialogImage();
+				EndDialog( 0 );
+				return 1;
+				break;
+			}
+	}
+	return(CDialog::OnCommand(wParam, lParam));
+}
+
+/*****************************************************************
+ *
+ * OnInitDialog
+ *
+ * FUNCTIONAL DESCRIPTION:
+ *
+ *	This initializes the options dialog to enable and disable 
+ *	buttons when necessary
+ *
+ * FORMAL PARAMETERS:
+ *
+ *	n/a
+ *
+ * IMPLICIT INPUT PARAMETERS:
+ *  
+ *	n/a
+ *   
+ * IMPLICIT OUTPUT PARAMETERS:
+ *   
+ *	n/a
+ *   
+ * RETURN VALUE:
+ *
+ *	BOOL to tell windows that it has dealt this function
+ *
+ ****************************************************************/
+BOOL COptionsDlg::OnInitDialog(void)
+{                                    
+	BOOL	bSuccess;
+	
+	CBmpDialog::OnInitDialog();
+	
+    pPayoffButton = new CColorButton();
+    ASSERT( pPayoffButton != NULL );
+    pPayoffButton->SetPalette( m_pOptionsPalette );
+    bSuccess = pPayoffButton->SetControl( ID_SETPAYOFFS, this );
+    ASSERT( bSuccess );
+    
+    pAmountButton = new CColorButton();
+    ASSERT( pAmountButton != NULL );
+    pAmountButton->SetPalette( m_pOptionsPalette );
+    bSuccess = pAmountButton->SetControl( ID_SETUSERAMT, this );
+    ASSERT( bSuccess );
+    
+    pCancelButton = new CColorButton();
+    ASSERT( pCancelButton != NULL );
+    pCancelButton->SetPalette( m_pOptionsPalette );
+    bSuccess = pCancelButton->SetControl( ID_CANCEL, this );
+    ASSERT( bSuccess );
+    
+// if we are in the middle of a hand, or we are playing from the metagame
+// then disable the "Set Amount" and "Set Payoffs" buttons
+	if ( m_bDisableSets ) {
+		GetDlgItem( ID_SETUSERAMT )->EnableWindow( FALSE );
+		GetDlgItem( ID_SETPAYOFFS )->EnableWindow( FALSE );
+	}
+
+// if the sound is on, set the text of the Toggle Sound button to "Sound Off"
+	if ( m_bSoundOn  )	                
+		SetDlgItemText( ID_TOGGLESOUND, "Sound Off" ); 
+// otherwise set the text of the Toggle Sound button to "Sound On"
+	else
+		SetDlgItemText( ID_TOGGLESOUND, "Sound On" ); 
+
+	return(TRUE);
+}
+
+/*****************************************************************
+ *
+ * SetInitialOptions
+ *
+ * FUNCTIONAL DESCRIPTION:
+ *
+ *	This sets the privates to the inputted values 
+ *
+ * FORMAL PARAMETERS:
+ *
+ *	bDisableSets = Should I disable the bet buttons 
+ *	bSoundOn = Is the sound turned on
+ *
+ * IMPLICIT INPUT PARAMETERS:
+ *  
+ *	m_bDisableSets = bDisableSets
+ *  m_bSoundOn = bSoundOn
+ *   
+ * IMPLICIT OUTPUT PARAMETERS:
+ *   
+ *	n/a
+ *   
+ * RETURN VALUE:
+ *
+ *
+ ****************************************************************/
+void COptionsDlg::SetInitialOptions( BOOL bDisableSets, BOOL bSoundOn )
+{        
+	m_bDisableSets = bDisableSets;
+	m_bSoundOn = bSoundOn;
+	return;
+}
+
+BOOL COptionsDlg::OnEraseBkgnd(CDC *pDC)
+{
+	return(TRUE);
+}
+
+void COptionsDlg::OnDestroy()
+{
+	CBmpDialog::OnDestroy();
+}
+
+void COptionsDlg::ClearDialogImage(void)
+{
+
+    if ( pAmountButton != NULL ) {
+        delete pAmountButton;
+        pAmountButton = NULL;
+    }
+    if ( pPayoffButton != NULL ) {
+        delete pPayoffButton;
+        pPayoffButton = NULL;
+    }
+    if ( pCancelButton != NULL ) {
+        delete pCancelButton;
+        pCancelButton = NULL;
+    }
+
+    ValidateRect(NULL);
+
+    return;
+}
+
+/// Message Map
+BEGIN_MESSAGE_MAP(COptionsDlg, CBmpDialog)
+	//{{AFX_MSG_MAP( CMainPokerWindow )
+	ON_WM_DESTROY()
+	ON_WM_ERASEBKGND()
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()

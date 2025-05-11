@@ -1,0 +1,198 @@
+//Microsoft App Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+#include "mainmenu.rc"
+#include "rules.rc"
+
+/////////////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_SCROLBTN            BITMAP  MOVEABLE PURE   ".\\ART\\SCROLBTN.BMP"
+SCROLLUP                BITMAP  MOVEABLE PURE   ".\\ART\\SCROLLUP.BMP"
+SCROLLDOWN              BITMAP  MOVEABLE PURE   ".\\ART\\SCROLLDN.BMP"
+IDB_OPTIONG             BITMAP  DISCARDABLE     ".\\ART\\OPTIONG.BMP"
+IDB_OPTIONU             BITMAP  DISCARDABLE     ".\\ART\\OPTIONU.BMP"
+IDB_SEMPTY              BITMAP  DISCARDABLE     ".\\ART\\SEMPTY.BMP"
+IDB_LEMPTY              BITMAP  DISCARDABLE     ".\\ART\\LEMPTY.BMP"
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_OPTIONS_DIALOG DIALOG DISCARDABLE  0, 0, 131, 110
+STYLE WS_POPUP | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "&Continue",IDC_OPTIONS_RETURN,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,33,81,56,14
+    CONTROL         "&Quit",IDC_OPTIONS_QUIT,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,33,97,56,14
+    CONTROL         "&Rules",IDC_OPTIONS_RULES,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,33,17,56,14
+    CONTROL         "&New Game",IDC_OPTIONS_NEWGAME,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,33,33,56,14
+    CONTROL         "&Options",IDC_OPTIONS_OPTIONS,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,33,49,56,14
+    CONTROL         "&Audio Settings",IDC_OPTIONS_AUDIO,"Button",
+                    BS_OWNERDRAW | WS_TABSTOP,33,65,56,14
+END
+
+IDD_RULES_DIALOG DIALOG DISCARDABLE  0, 0, 185, 92
+STYLE WS_POPUP | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "OK",IDOK,"Button",BS_OWNERDRAW | WS_TABSTOP,74,71,36,14
+END
+
+IDD_AUDIOCFG DIALOG DISCARDABLE  0, 0, 131, 110
+STYLE WS_POPUP | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "OK",1,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,20,
+                    80,31,14
+    CONTROL         "Cancel",2,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,
+                    76,80,31,14
+    CONTROL         "Music",109,"Button",BS_OWNERDRAW | WS_TABSTOP,31,20,65,
+                    13
+    CONTROL         "Sound Effects",110,"Button",BS_OWNERDRAW | WS_TABSTOP,
+                    31,35,65,13
+END
+
+IDD_MINIOPTIONS_DIALOG DIALOG DISCARDABLE  0, 0, 131, 110
+STYLE WS_POPUP | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "&OK",IDC_MINI_OK,"Button",BS_OWNERDRAW | WS_TABSTOP,12,
+                    84,48,12
+    CONTROL         "&Cancel",IDC_MINI_CANCEL,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,64,84,48,12
+    SCROLLBAR       IDC_NUMBEROFLIVES,25,70,75,10
+    SCROLLBAR       IDC_GAMELEVEL,25,45,75,10
+END
+
+IDD_MESSAGEBOX DIALOG DISCARDABLE  0, 0, 128, 111
+STYLE WS_POPUP | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "OK",IDOK,"Button",BS_OWNERDRAW | WS_TABSTOP,36,84,50,12
+END
+
+
+#ifdef APSTUDIO_INVOKED
+//////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""mainmenu.rc""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "#include ""mainmenu.rc""\r\n"
+    "#include ""rules.rc""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "#include ""mainmenu.rc""\r\n"
+    "#include ""cmessbox.rc""\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+/////////////////////////////////////////////////////////////////////////////////////
+#endif    // APSTUDIO_INVOKED
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+IDI_PACKRAT             ICON    DISCARDABLE     "PACKRAT.ICO"
+
+#ifndef APSTUDIO_INVOKED
+////////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
