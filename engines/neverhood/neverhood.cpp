@@ -88,7 +88,7 @@ Common::Error NeverhoodEngine::run() {
 	_gameState.which = 0;
 
 	_staticData = new StaticData();
-	_staticData->load("neverhood.dat");
+	_staticData->load("neverhod.dat");
 	_gameVars = new GameVars();
 	_screen = new Screen(this);
 	_res = new ResourceMan();

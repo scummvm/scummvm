@@ -13998,10 +13998,10 @@ msgstr ""
 #~ msgstr "Touchpadmodus avslått."
 
 #~ msgid ""
-#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "The teenagnt.dat file is compressed and zlib hasn't been included in "
 #~ "this executable. Please decompress it"
 #~ msgstr ""
-#~ "Fila teenagent.dat er komprimert og zlib er ikkje inkludert i binærfila, "
+#~ "Fila teenagnt.dat er komprimert og zlib er ikkje inkludert i binærfila, "
 #~ "vennlegs dekomprimer den"
 
 #, fuzzy
@@ -14521,16 +14521,16 @@ msgstr ""
 #~ "Venlegst last den ned frå www.scummvm.org"
 
 #~ msgid ""
-#~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-#~ msgstr "Du mangler fila 'teenagent.dat'. Skaff den frå ScummVM-heimesida"
+#~ "You're missing the 'teenagnt.dat' file. Get it from the ScummVM website"
+#~ msgstr "Du mangler fila 'teenagnt.dat'. Skaff den frå ScummVM-heimesida"
 
 #, fuzzy
 #~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
-#~ msgstr "Du mangler fila 'teenagent.dat'. Skaff den frå ScummVM-heimesida"
+#~ msgstr "Du mangler fila 'teenagnt.dat'. Skaff den frå ScummVM-heimesida"
 
 #, fuzzy
 #~ msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
-#~ msgstr "Du mangler fila 'teenagent.dat'. Skaff den frå ScummVM-heimesida"
+#~ msgstr "Du mangler fila 'teenagnt.dat'. Skaff den frå ScummVM-heimesida"
 
 #~ msgid "Use original savegame dialog"
 #~ msgstr "Nytt opprinnelege skjerm for lagring/lasting"

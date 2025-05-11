@@ -79,9 +79,9 @@ void CryOmni3DEngine::pauseEngineIntern(bool pause) {
 DATSeekableStream *CryOmni3DEngine::getStaticData(uint32 gameId, uint16 version) const {
 	Common::File *datFile = new Common::File();
 
-	if (!datFile->open("cryomni3d.dat")) {
+	if (!datFile->open("cryomn3d.dat")) {
 		delete datFile;
-		error("Failed to open cryomni3d.dat file");
+		error("Failed to open cryomn3d.dat file");
 		return nullptr;
 	}
 
@@ -89,7 +89,7 @@ DATSeekableStream *CryOmni3DEngine::getStaticData(uint32 gameId, uint16 version)
 	                                getPlatform());
 	if (!gameStream) {
 		delete datFile;
-		error("Failed to find game in cryomni3d.dat file");
+		error("Failed to find game in cryomn3d.dat file");
 		return nullptr;
 	}
 

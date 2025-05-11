@@ -29,7 +29,7 @@
 #include "static_tables.h"
 
 int main(int argc, char *argv[]) {
-	const char *dat_name = "teenagent.dat";
+	const char *dat_name = "teenagnt.dat";
 
 	FILE *fout = fopen(dat_name, "wb");
 	if (fout == nullptr) {

@@ -14200,7 +14200,7 @@ msgstr ""
 #~ msgstr "Kontrollér mus"
 
 #~ msgid ""
-#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "The teenagnt.dat file is compressed and zlib hasn't been included in "
 #~ "this executable. Please decompress it"
 #~ msgstr ""
 #~ "Teenagent.dat filen er komprimeret og zlib er ikke blevet inkluderet i "
@@ -14991,16 +14991,16 @@ msgstr ""
 #~ "Venligst (gen)hent den fra www.scummvm.org"
 
 #~ msgid ""
-#~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-#~ msgstr "Du mangler filen 'teenagent.dat'. Hent den på ScummVM hjemmesiden"
+#~ "You're missing the 'teenagnt.dat' file. Get it from the ScummVM website"
+#~ msgstr "Du mangler filen 'teenagnt.dat'. Hent den på ScummVM hjemmesiden"
 
 #, fuzzy
 #~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
-#~ msgstr "Du mangler filen 'teenagent.dat'. Hent den på ScummVM hjemmesiden"
+#~ msgstr "Du mangler filen 'teenagnt.dat'. Hent den på ScummVM hjemmesiden"
 
 #, fuzzy
 #~ msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
-#~ msgstr "Du mangler filen 'teenagent.dat'. Hent den på ScummVM hjemmesiden"
+#~ msgstr "Du mangler filen 'teenagnt.dat'. Hent den på ScummVM hjemmesiden"
 
 #~ msgid "Use original savegame dialog"
 #~ msgstr "Brug original gem/indlæs dialog"

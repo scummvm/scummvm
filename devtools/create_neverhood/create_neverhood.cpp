@@ -549,7 +549,7 @@ int main(int argc, char *argv[]) {
 	sceneInfo140Items.loadVector(sceneInfo140Offsets);
 	sceneInfo2700Items.loadVector(sceneInfo2700Offsets);
 
-	datFile = fopen("neverhood.dat", "wb");
+	datFile = fopen("neverhod.dat", "wb");
 
 	writeUint32LE(datFile, 0x11223344); // Some magic
 	writeUint32LE(datFile, DAT_VERSION);

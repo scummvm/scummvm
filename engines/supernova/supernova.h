@@ -47,7 +47,7 @@ namespace Supernova {
 #define SAVEGAME_HEADER2 MKTAG('M','S','N','2')
 #define SAVEGAME_VERSION 10
 
-#define SUPERNOVA_DAT "supernova.dat"
+#define SUPERNOVA_DAT "suprnova.dat"
 #define SUPERNOVA_DAT_VERSION 4
 
 class GuiElement;

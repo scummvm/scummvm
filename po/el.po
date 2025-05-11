@@ -14914,10 +14914,10 @@ msgstr ""
 #~ "να διορθώσετε το πρόβλημα.\n"
 
 #~ msgid ""
-#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "The teenagnt.dat file is compressed and zlib hasn't been included in "
 #~ "this executable. Please decompress it"
 #~ msgstr ""
-#~ "Το αρχείο teenagent.dat είναι συμπιεσμένο και η zlib δεν έχει "
+#~ "Το αρχείο teenagnt.dat είναι συμπιεσμένο και η zlib δεν έχει "
 #~ "συμπεριληφθεί σε αυτό το εκτελέσιμο. Παρακαλώ αποσυμπιέστε το"
 
 #~ msgid "You cloud storage has been connected!"

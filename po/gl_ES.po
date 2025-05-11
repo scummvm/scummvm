@@ -14128,10 +14128,10 @@ msgstr ""
 #~ msgstr "Rato"
 
 #~ msgid ""
-#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "The teenagnt.dat file is compressed and zlib hasn't been included in "
 #~ "this executable. Please decompress it"
 #~ msgstr ""
-#~ "O ficheiro teenagent.dat está comprimido e zlib non foi incluído neste "
+#~ "O ficheiro teenagnt.dat está comprimido e zlib non foi incluído neste "
 #~ "executable. Descomprime o ficheiro"
 
 #, fuzzy
@@ -14805,9 +14805,9 @@ msgstr ""
 #~ "Descárgao (de novo) dende www.scummvm.org"
 
 #~ msgid ""
-#~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+#~ "You're missing the 'teenagnt.dat' file. Get it from the ScummVM website"
 #~ msgstr ""
-#~ "Falta o ficheiro teenagent.dat. Descárgao dende o sitio web de ScummVM."
+#~ "Falta o ficheiro teenagnt.dat. Descárgao dende o sitio web de ScummVM."
 
 #~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
 #~ msgstr "Falta o ficheiro toon.dat. Descárgao dende o sitio web de ScummVM."

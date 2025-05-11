@@ -14205,9 +14205,9 @@ msgstr ""
 #~ msgstr "עכבר שליטה"
 
 #~ msgid ""
-#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "The teenagnt.dat file is compressed and zlib hasn't been included in "
 #~ "this executable. Please decompress it"
-#~ msgstr "הקובץ teenagent.dat דחוס ו- zlib לא נכלל בהפעלה זו. אנא פרקו אותו"
+#~ msgstr "הקובץ teenagnt.dat דחוס ו- zlib לא נכלל בהפעלה זו. אנא פרקו אותו"
 
 #, fuzzy
 #~| msgid "Connect your cloud storage account"

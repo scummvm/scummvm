@@ -8,7 +8,7 @@ ifdef ENABLE_CRYO
 DIST_FILES_LIST += dists/engine-data/cryo.dat
 endif
 ifdef ENABLE_CRYOMNI3D
-DIST_FILES_LIST += dists/engine-data/cryomni3d.dat
+DIST_FILES_LIST += dists/engine-data/cryomn3d.dat
 endif
 ifdef ENABLE_DARKSEED
 DIST_FILES_LIST += dists/engine-data/darkseed.dat
@@ -42,7 +42,7 @@ ifdef ENABLE_NANCY
 DIST_FILES_LIST += dists/engine-data/nancy.dat
 endif
 ifdef ENABLE_NEVERHOOD
-DIST_FILES_LIST += dists/engine-data/neverhood.dat
+DIST_FILES_LIST += dists/engine-data/neverhod.dat
 endif
 ifdef ENABLE_PRINCE
 DIST_FILES_LIST += dists/engine-data/prince_translation.dat
@@ -54,10 +54,10 @@ ifdef ENABLE_SKY
 DIST_FILES_LIST += dists/engine-data/sky.cpt
 endif
 ifdef ENABLE_SUPERNOVA
-DIST_FILES_LIST += dists/engine-data/supernova.dat
+DIST_FILES_LIST += dists/engine-data/suprnova.dat
 endif
 ifdef ENABLE_TEENAGENT
-DIST_FILES_LIST += dists/engine-data/teenagent.dat
+DIST_FILES_LIST += dists/engine-data/teenagnt.dat
 endif
 ifdef ENABLE_TITANIC
 DIST_FILES_LIST += dists/engine-data/titanic.dat

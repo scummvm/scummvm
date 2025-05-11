@@ -14187,10 +14187,10 @@ msgstr ""
 #~ msgstr "Керування мишею"
 
 #~ msgid ""
-#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "The teenagnt.dat file is compressed and zlib hasn't been included in "
 #~ "this executable. Please decompress it"
 #~ msgstr ""
-#~ "Файл teenagent.dat запаковано, але zlib не було включено в цю программу. "
+#~ "Файл teenagnt.dat запаковано, але zlib не було включено в цю программу. "
 #~ "Будь-ласка розпакуйте його"
 
 #, fuzzy
@@ -15134,9 +15134,9 @@ msgstr ""
 #~ "Будь ласка, (пере)завантажте його з www.scummvm.org"
 
 #~ msgid ""
-#~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+#~ "You're missing the 'teenagnt.dat' file. Get it from the ScummVM website"
 #~ msgstr ""
-#~ "У вас відстуній файл 'teenagent.dat'. Завантажте його з веб-сайту ScummVM"
+#~ "У вас відстуній файл 'teenagnt.dat'. Завантажте його з веб-сайту ScummVM"
 
 #~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
 #~ msgstr "У вас відстуній файл 'toon.dat'. Візьміть його на веб-сайті ScummVM"

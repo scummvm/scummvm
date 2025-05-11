@@ -14238,10 +14238,10 @@ msgstr ""
 #~ msgstr "Steruj myszką"
 
 #~ msgid ""
-#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "The teenagnt.dat file is compressed and zlib hasn't been included in "
 #~ "this executable. Please decompress it"
 #~ msgstr ""
-#~ "Plik teenagent.dat jest skompresowany, a ScummVM nie zawiera obsługi "
+#~ "Plik teenagnt.dat jest skompresowany, a ScummVM nie zawiera obsługi "
 #~ "zlib. Rozpakuj plik"
 
 #, fuzzy
@@ -14959,16 +14959,16 @@ msgstr ""
 #~ "Pobierz go (ponownie) ze strony www.scummvm.org"
 
 #~ msgid ""
-#~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-#~ msgstr "Nie masz pliku \"teenagent.dat\". Pobierz go ze strony ScummVM"
+#~ "You're missing the 'teenagnt.dat' file. Get it from the ScummVM website"
+#~ msgstr "Nie masz pliku \"teenagnt.dat\". Pobierz go ze strony ScummVM"
 
 #, fuzzy
 #~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
-#~ msgstr "Nie masz pliku \"teenagent.dat\". Pobierz go ze strony ScummVM"
+#~ msgstr "Nie masz pliku \"teenagnt.dat\". Pobierz go ze strony ScummVM"
 
 #, fuzzy
 #~ msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
-#~ msgstr "Nie masz pliku \"teenagent.dat\". Pobierz go ze strony ScummVM"
+#~ msgstr "Nie masz pliku \"teenagnt.dat\". Pobierz go ze strony ScummVM"
 
 #~ msgid "Use original savegame dialog"
 #~ msgstr "Używaj oryginalnego ekranu odczytu/zapisu"

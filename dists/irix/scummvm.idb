@@ -23,7 +23,7 @@ f 0644 root sys usr/ScummVM/share/scummvm/achievements.dat achievements.dat scum
 f 0644 root sys usr/ScummVM/share/scummvm/bagel.dat bagel.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/classicmacfonts.dat classicmacfonts.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/cryo.dat cryo.dat scummvm.sw.eoe
-f 0644 root sys usr/ScummVM/share/scummvm/cryomni3d.dat cryomni3d.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/cryomn3d.dat cryomn3d.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/darkseed.dat darkseed.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/drascula.dat drascula.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/encoding.dat encoding.dat scummvm.sw.eoe
@@ -44,12 +44,12 @@ f 0644 root sys usr/ScummVM/share/scummvm/monkey4-patch.m4b monkey4-patch.m4b sc
 f 0644 root sys usr/ScummVM/share/scummvm/mort.dat mort.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/myst3.dat myst3.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/nancy.dat nancy.dat scummvm.sw.eoe
-f 0644 root sys usr/ScummVM/share/scummvm/neverhood.dat neverhood.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/neverhod.dat neverhod.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/prince_translation.dat prince_translation.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/queen.tbl queen.tbl scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/sky.cpt sky.cpt scummvm.sw.eoe
-f 0644 root sys usr/ScummVM/share/scummvm/supernova.dat supernova.dat scummvm.sw.eoe
-f 0644 root sys usr/ScummVM/share/scummvm/teenagent.dat teenagent.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/suprnova.dat suprnova.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/teenagnt.dat teenagnt.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/titanic.dat titanic.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/tony.dat tony.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/toon.dat toon.dat scummvm.sw.eoe

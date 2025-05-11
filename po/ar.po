@@ -14394,10 +14394,10 @@ msgstr ""
 #~ msgstr "تحكم"
 
 #~ msgid ""
-#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "The teenagnt.dat file is compressed and zlib hasn't been included in "
 #~ "this executable. Please decompress it"
 #~ msgstr ""
-#~ "يتم ضغط ملف teenagent.dat ولم يتم تضمين zlib في هذا الملف القابل للتنفيذ. "
+#~ "يتم ضغط ملف teenagnt.dat ولم يتم تضمين zlib في هذا الملف القابل للتنفيذ. "
 #~ "من فضلك فك الضغط"
 
 #, fuzzy

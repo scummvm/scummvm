@@ -14103,10 +14103,10 @@ msgstr ""
 #~ msgstr "Ovládání Myši"
 
 #~ msgid ""
-#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "The teenagnt.dat file is compressed and zlib hasn't been included in "
 #~ "this executable. Please decompress it"
 #~ msgstr ""
-#~ "Soubor teenagent.dat  je komprimován a zlib není součástí spustitelného "
+#~ "Soubor teenagnt.dat  je komprimován a zlib není součástí spustitelného "
 #~ "souboru. Prosím dekomprimujte ho"
 
 #, fuzzy
@@ -14800,19 +14800,19 @@ msgstr ""
 #~ "Stáhněte si ho, prosím, (znovu) z www.scummvm.org"
 
 #~ msgid ""
-#~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+#~ "You're missing the 'teenagnt.dat' file. Get it from the ScummVM website"
 #~ msgstr ""
-#~ "Chybí vám soubor 'teenagent.dat'. Můžete ho získat ze stránky ScummVM"
+#~ "Chybí vám soubor 'teenagnt.dat'. Můžete ho získat ze stránky ScummVM"
 
 #, fuzzy
 #~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
 #~ msgstr ""
-#~ "Chybí vám soubor 'teenagent.dat'. Můžete ho získat ze stránky ScummVM."
+#~ "Chybí vám soubor 'teenagnt.dat'. Můžete ho získat ze stránky ScummVM."
 
 #, fuzzy
 #~ msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
 #~ msgstr ""
-#~ "Chybí vám soubor 'teenagent.dat'. Můžete ho získat ze stránky ScummVM."
+#~ "Chybí vám soubor 'teenagnt.dat'. Můžete ho získat ze stránky ScummVM."
 
 #~ msgid "Use original savegame dialog"
 #~ msgstr "Použít původní obrazovky uložení hry"

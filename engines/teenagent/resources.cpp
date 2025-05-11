@@ -90,7 +90,7 @@ void Resources::precomputeDialogOffsets() {
 
 bool Resources::loadArchives(const ADGameDescription *gd) {
 	Common::File *dat_file = new Common::File();
-	Common::String filename = "teenagent.dat";
+	Common::String filename = "teenagnt.dat";
 	if (!dat_file->open(filename.c_str())) {
 		delete dat_file;
 
@@ -101,7 +101,7 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 		return false;
 	}
 
-	// teenagent.dat used to be compressed with zlib compression. The usage of
+	// teenagnt.dat used to be compressed with zlib compression. The usage of
 	// zlib here is no longer needed, and it's maintained only for backwards
 	// compatibility.
 	Common::SeekableReadStream *dat = Common::wrapCompressedReadStream(dat_file);

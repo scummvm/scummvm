@@ -42,7 +42,7 @@ enum CryOmni3DGameFeatures {
 	GF_VERSAILLES_AUDIOPADDING_YES         = (1 << 2), // Audio files have underscore padding before extension
 
 	GF_VERSAILLES_LINK_STANDARD            = (0 << 3), // Links file is lien_doc.txt
-	GF_VERSAILLES_LINK_LOCALIZED           = (1 << 3)  // Links file is taken from cryomni3d.dat
+	GF_VERSAILLES_LINK_LOCALIZED           = (1 << 3)  // Links file is taken from cryomn3d.dat
 };
 
 struct CryOmni3DGameDescription {

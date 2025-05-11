@@ -14424,11 +14424,11 @@ msgstr ""
 #~ "käytössä, käytä ylläolevan alaotsikon ohjeita niiden korjaamiseen.\n"
 
 #~ msgid ""
-#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "The teenagnt.dat file is compressed and zlib hasn't been included in "
 #~ "this executable. Please decompress it"
 #~ msgstr ""
-#~ "Tiedosto teenagent.dat on pakattu, mutta zlib-kirjastoa ei ole käännetty "
-#~ "ScummVM:ään. Pura teenagent.dat"
+#~ "Tiedosto teenagnt.dat on pakattu, mutta zlib-kirjastoa ei ole käännetty "
+#~ "ScummVM:ään. Pura teenagnt.dat"
 
 #~ msgid "You cloud storage has been connected!"
 #~ msgstr "Yhteys pilvitallennustilisi on avattu!"
@@ -15424,9 +15424,9 @@ msgstr ""
 #~ "Hae uusi versio ScummVM:n verkkosivuilta"
 
 #~ msgid ""
-#~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+#~ "You're missing the 'teenagnt.dat' file. Get it from the ScummVM website"
 #~ msgstr ""
-#~ "Asennuksestasi puuttuu 'teenagent.dat' tiedosto. Hae se ScummVM:n "
+#~ "Asennuksestasi puuttuu 'teenagnt.dat' tiedosto. Hae se ScummVM:n "
 #~ "nettisivuilta"
 
 #~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
@@ -15436,7 +15436,7 @@ msgstr ""
 #, fuzzy
 #~ msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
 #~ msgstr ""
-#~ "Asennuksestasi puuttuu 'teenagent.dat' tiedosto. Hae se ScummVM:n "
+#~ "Asennuksestasi puuttuu 'teenagnt.dat' tiedosto. Hae se ScummVM:n "
 #~ "nettisivuilta"
 
 #, fuzzy

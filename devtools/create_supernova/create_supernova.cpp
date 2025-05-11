@@ -370,8 +370,8 @@ void writeMS2(File &outputFile) {
  */
 int main(int argc, char *argv[]) {
 	File outputFile;
-	if (!outputFile.open("supernova.dat", kFileWriteMode)) {
-		printf("Cannot create file 'supernova.dat' in current directory.\n");
+	if (!outputFile.open("suprnova.dat", kFileWriteMode)) {
+		printf("Cannot create file 'suprnova.dat' in current directory.\n");
 		exit(0);
 	}
 

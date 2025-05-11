@@ -107,7 +107,7 @@ create_project (LordHoto, Littleboy)
 
 create_supernova (criezy)
 ----------------
-    Creates supernova.dat files which contains static data contained in the
+    Creates suprnova.dat files which contains static data contained in the
     original executable as well as translations into additional languages.
 
 
