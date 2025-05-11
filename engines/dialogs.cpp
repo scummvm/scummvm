@@ -71,7 +71,13 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	new GUI::ButtonWidget(this, "GlobalMenu.Save", _("~S~ave"), Common::U32String(), kSaveCmd);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Options", _("~O~ptions"), Common::U32String(), kOptionsCmd);
-
+#ifdef LRHARD
+	if (!g_gui.useLowResGUI()) {
+		new GUI::ButtonWidget(this, "GlobalMenu.GlobalOptions", _("Global ~O~ptions"), _("Change global ScummVM options"), kGlobalOptionsCmd);
+	} else {
+		new GUI::ButtonWidget(this, "GlobalMenu.GlobalOptions", _c("Global ~O~pts", "lowres"), _("Change global ScummVM options"), kGlobalOptionsCmd);
+	}
+#endif
 	// The help button is disabled by default.
 	// To enable "Help", an engine needs to use a subclass of MainMenuDialog
 	// (at least for now, we might change how this works in the future).
@@ -80,7 +86,7 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	_helpButton->setEnabled(_engine->hasFeature(Engine::kSupportsHelp));
 
 	new GUI::ButtonWidget(this, "GlobalMenu.About", _("~A~bout"), Common::U32String(), kAboutCmd);
-
+#ifndef LRHARD
 	if (g_gui.getGUIWidth() > 320)
 		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", _("~R~eturn to Launcher"), Common::U32String(), kLauncherCmd);
 	else
@@ -89,7 +95,7 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit) && (!(ConfMan.getBool("gui_return_to_launcher_at_exit")) || !_engine->hasFeature(Engine::kSupportsReturnToLauncher)))
 		new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), Common::U32String(), kQuitCmd);
-
+#endif
 	_aboutDialog = new GUI::AboutDialog(true);
 	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
 	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
@@ -142,6 +148,13 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 		close();
 		}
 		break;
+#ifdef LRHARD
+	case kGlobalOptionsCmd: {
+			GUI::GlobalOptionsDialog opts(nullptr);
+			opts.runModal();
+		}
+		break;
+#endif
 	default:
 		GUI::Dialog::handleCommand(sender, cmd, data);
 	}
@@ -152,11 +165,12 @@ void MainMenuDialog::reflowLayout() {
 	// Update labels when it might be needed
 	// FIXME: it might be better to declare GUI::StaticTextWidget::setLabel() virtual
 	// and to reimplement it in GUI::ButtonWidget to handle the hotkey.
+#ifndef LRHARD
 	if (g_gui.getGUIWidth() > 320)
 		_returnToLauncherButton->setLabel(_returnToLauncherButton->cleanupHotkey(_("~R~eturn to Launcher")));
 	else
 		_returnToLauncherButton->setLabel(_returnToLauncherButton->cleanupHotkey(_c("~R~eturn to Launcher", "lowres")));
-
+#endif
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowGlobalMenuLogo", 0) == 1 && g_gui.theme()->supportsImages()) {
 		if (!_logo)

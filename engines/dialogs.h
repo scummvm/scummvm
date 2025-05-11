@@ -42,6 +42,9 @@ public:
 		kLoadCmd = 'LOAD',
 		kPlayCmd = 'PLAY',
 		kOptionsCmd = 'OPTN',
+#ifdef LRHARD
+		kGlobalOptionsCmd = 'GOPT',
+#endif
 		kHelpCmd = 'HELP',
 		kAboutCmd = 'ABOU',
 		kQuitCmd = 'QUIT',

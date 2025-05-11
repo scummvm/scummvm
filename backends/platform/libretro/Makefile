@@ -548,6 +548,11 @@ else ifeq ($(platform), osx)
    endif
 endif
 
+# Optional LRHARD build flag
+ifdef LRHARD
+   DEFINES += -DLRHARD
+endif
+
 ifneq (,$(findstring $(platform), wiiu vita))
    DEFINES += -Os
 else ifneq (,$(findstring $(platform), ios osx))
