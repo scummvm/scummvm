@@ -58,7 +58,7 @@ ${PLATFORM}-nm -C dist-generic/scummvm/scummvm.ttp | grep -vF ' .L' | grep ' [Tt
 ${PLATFORM}-strip -s dist-generic/scummvm/scummvm.ttp
 
 # remove unused files
-rm dist-generic/scummvm/data/*.zip dist-generic/scummvm/data/{achievements,encoding,gui-icons,macgui,shaders}.dat
+rm dist-generic/scummvm/data/*.zip dist-generic/scummvm/data/{achievements,classicmacfonts,encoding,gui-icons,macgui,shaders}.dat
 
 # rename remaining files still not fitting into the 8+3 limit (this has to be supported by the backend, too)
 mv dist-generic/scummvm/data/supernova.dat dist-generic/scummvm/data/supernov.dat

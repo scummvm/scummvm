@@ -56,7 +56,7 @@ ${PLATFORM}-nm -C dist-generic/scummvm/scummvm.ttp | grep -vF ' .L' | grep ' [Tt
 ${PLATFORM}-strip -s dist-generic/scummvm/scummvm.ttp
 
 # remove unused files; absent gui-icons.dat massively speeds up startup time (used for the grid mode)
-rm dist-generic/scummvm/data/{achievements,encoding,gui-icons,macgui,shaders}.dat
+rm dist-generic/scummvm/data/{achievements,classicmacfonts,encoding,gui-icons,hadesch_translations,macgui,prince_translation,shaders}.dat
 
 # rename remaining files still not fitting into the 8+3 limit (this has to be supported by the backend, too)
 mv dist-generic/scummvm/data/cryomni3d.dat dist-generic/scummvm/data/cryomni3.dat
