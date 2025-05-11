@@ -777,7 +777,7 @@ void Scene265::remove() {
 void Scene270::Action1::signal() {
 	Scene270 *scene = (Scene270 *)BF_GLOBALS._sceneManager._scene;
 
-	scene->setAction(&scene->_sequenceManager2, this, 2703, &scene->_tv, NULL);
+	setAction(&scene->_sequenceManager2, this, 2703, &scene->_tv, NULL);
 }
 
 /*--------------------------------------------------------------------------*/
