@@ -355,6 +355,7 @@ public:
 	}
 
 	BOOL CreateSolidBrush(COLORREF crColor);
+	BOOL CreateBrushIndirect(const LOGBRUSH *lpLogBrush);
 	BOOL CreateStockObject(int nIndex);
 };
 
@@ -422,6 +423,8 @@ public:
 	void Attach(HDC hDC);
 	void Detach();
 	int SetStretchBltMode(int nStretchMode);
+	int GetDeviceCaps(int nIndex) const;
+	int SetROP2(int nDrawMode);
 
 	BOOL BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 		int xSrc, int ySrc, DWORD dwRop);
@@ -708,6 +711,7 @@ public:
 	BOOL EnableWindow(BOOL bEnable = TRUE);
 	void UpdateWindow();
 	void SetActiveWindow();
+	void SetFocus();
 	BOOL IsWindowVisible() const;
 	void DestroyWindow();
 	void Invalidate(BOOL bErase = TRUE);
@@ -737,7 +741,9 @@ public:
 	BOOL GotoDlgCtrl(CWnd *pWndCtrl);
 	BOOL SubclassDlgItem(UINT nID, CWnd *pParent);
 	int GetDlgCtrlID() const;
-	void SetFocus();
+	void CheckDlgButton(int nIDButton, UINT nCheck);
+	LRESULT SendDlgItemMessage(int nID, UINT message,
+		WPARAM wParam = 0, LPARAM lParam = 0) const;
 };
 
 class CFrameWnd : public CWnd {
@@ -774,6 +780,7 @@ public:
 
 	DWORD GetDefID();
 	void SetDefID(UINT nID);
+	void DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl);
 
 	// termination
 	void EndDialog(int nResult);

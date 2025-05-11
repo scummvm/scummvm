@@ -54,10 +54,10 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "bfc.h"
-#include "bitmaps.h"
-#include "text.h"
-#include "rules.h"
-#include "button.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "sound.h"
 #include "store.h"
 
@@ -583,9 +583,9 @@ char	chBuffer[128];
 		}
 	else {
 		if (bPlayingHodj)
-			sprintf(chBuffer,"Hodj has %ld Crowns",(*pItem).GetQuantity());
+			Common::sprintf_s(chBuffer,"Hodj has %ld Crowns",(*pItem).GetQuantity());
 		else
-			sprintf(chBuffer,"Podj has %ld Crowns",(*pItem).GetQuantity());
+			Common::sprintf_s(chBuffer,"Podj has %ld Crowns",(*pItem).GetQuantity());
 	}
 	(*pItemCost).DisplayString(pDC, chBuffer, 18, TEXT_BOLD, STORE_TEXT_COLOR);
 }
@@ -777,13 +777,13 @@ char	chBuffer[128];
 					if (nPrice == 1)
 						strcpy(chBuffer,"It can be bought for 1 Crown");
 					else
-						sprintf(chBuffer,"It can be bought for %d Crowns",nPrice);
+						Common::sprintf_s(chBuffer,"It can be bought for %d Crowns",nPrice);
 				}
 				else
 				if (nPrice == 1)
 					strcpy(chBuffer,"One can be bought for 1 Crown");
 				else
-					sprintf(chBuffer,"One can be bought for %d Crowns",nPrice);
+					Common::sprintf_s(chBuffer,"One can be bought for %d Crowns",nPrice);
 				(*pItemText).DisplayString(pDC, (*pItem).GetDescription(), 18, TEXT_BOLD, STORE_TEXT_COLOR);
 				(*pItemCost).DisplayString(pDC, chBuffer, 18, TEXT_BOLD, STORE_TEXT_COLOR);
 				ReleaseDC(pDC);
@@ -848,7 +848,7 @@ CSound	*pSound;
 					(*pItemText).DisplayString(pDC, "Not have enough crowns to buy that!", 18, TEXT_BOLD, STORE_BLURB_COLOR);
 					pSound = new CSound(this,(bPlayingHodj ? ".\\sound\\gsps5.wav" : ".\\sound\\gsps6.wav"),SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 					(*pSound).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-					(*pSound).Play();
+					(*pSound).play();
 				}
 				else {
 					(*pItemText).DisplayString(pDC, "Thanks for the purchase!", 18, TEXT_BOLD, STORE_BLURB_COLOR);
@@ -857,7 +857,7 @@ CSound	*pSound;
 					else
 						pSound = new CSound(this,(bPlayingHodj ? ".\\sound\\gsps3.wav" : ".\\sound\\gsps4.wav"),SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 					(*pSound).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-					(*pSound).Play();
+					(*pSound).play();
 					(*pInventory).DiscardItem(pCrowns,nPrice);
 					if ((*pItem).GetQuantity() > 1) {
 						(*pGeneralStore).DiscardItem(pItem,1);

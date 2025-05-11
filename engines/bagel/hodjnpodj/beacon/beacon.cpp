@@ -32,7 +32,7 @@
  *
  ****************************************************************/
 
-#include <stdafx.h>
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include <time.h>
 #include <fstream.h> 
 
@@ -46,7 +46,7 @@
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/hnplibs/text.h" 
 
-#include "gamedll.h"                      
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"                     
 #include "resource.h"
 #include "globals.h"
 #include "beacon.h"
@@ -330,13 +330,13 @@ void CMainWindow::OnPaint()
 	pDC->BitBlt( 0, 0, GAME_WIDTH, GAME_HEIGHT, pBackDC, 0, 0, SRCCOPY );
 #endif
 					
-	sprintf( msg, "Score: %.0f %%", m_Score );
+	Common::sprintf_s( msg, "Score: %.0f %%", m_Score );
 	(*m_pScoreTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
 	if ( (m_nSweeps < MAX_SWEEPS) && bPlaying )
-		sprintf( msg, "Sweeps: %d", m_nSweepCount - 1 );					// Update text on screen
+		Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount - 1 );					// Update text on screen
 	else 
-		sprintf( msg, "Sweeps: %d", m_nSweepCount );
+		Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount );
 	(*m_pSweepTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR); 
 
 	EndPaint(&lpPaint);
@@ -503,10 +503,10 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 						MyFocusRect( pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, FALSE);	// erase highlight on nNextIndex
 						NewGame();
 						char		msg[64];
-						sprintf( msg, "Score: %.0f %%", m_Score );
+						Common::sprintf_s( msg, "Score: %.0f %%", m_Score );
 						(*m_pScoreTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 					
-						sprintf( msg, "Sweeps: %d", m_nSweepCount );
+						Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount );
 						(*m_pSweepTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR); 
 
 						(*m_pScrollButton).SendMessage( BM_SETSTATE, FALSE, 0L );
@@ -533,7 +533,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 				// Check to see if the music state was changed and adjust to match it
 				//    
 			   	if((pGameInfo->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
-			   		if (pGameSound->Playing())
+			   		if (pGameSound->playing())
 			   			pGameSound->stop();
 			   	} 
 			   	else if( pGameInfo->bMusicEnabled ) {
@@ -541,7 +541,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 						pGameSound = new CSound( this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 					}
 					if (pGameSound != NULL) {
-						if ( !pGameSound->Playing() )
+						if ( !pGameSound->playing() )
 							(*pGameSound).midiLoopPlaySegment( 1300, 36500, 0, FMT_MILLISEC );
 					} // end if pGameSound
 				} // end else..musicenabled check
@@ -600,11 +600,11 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 		MyFocusRect( pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, FALSE);		// erase highlight on nNextIndex
 		NewGame();							// Activate New Game
 		char		msg[64];
-		sprintf( msg, "Score: %.0f %%", m_Score );
+		Common::sprintf_s( msg, "Score: %.0f %%", m_Score );
 		(*m_pScoreTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
 		if (m_nSweepCount < 0)	m_nSweepCount = 0;							// Make sure it doesn't go neg	
-		sprintf( msg, "Sweeps: %d", m_nSweepCount );
+		Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount );
 		(*m_pSweepTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR); 
 	}
 
@@ -671,9 +671,9 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point)
 			nCurrentIndex = nNextIndex;
 			SetTimer( BEACON_TIMER, SPEED_BASE - (m_nSpeed * SPEED_STEP), NULL );
 			if (m_nSweeps < MAX_SWEEPS)
-				sprintf( msg, "Sweeps: %d", m_nSweepCount - 1 );					// Update text on screen
+				Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount - 1 );					// Update text on screen
 			else 
-				sprintf( msg, "Sweeps: %d", m_nSweepCount );						// Update text on screen
+				Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount );						// Update text on screen
 			(*m_pSweepTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR); 
 		}
 	}
@@ -812,16 +812,16 @@ void CMainWindow::OnTimer(UINT nIDEvent)
 				else	m_nSweepCount++;							//...or for unlimited, count up
 
 				if ( (m_nSweeps < MAX_SWEEPS) && (m_nSweepCount != 0) )
-					sprintf( msg, "Sweeps: %d", m_nSweepCount - 1 );					// Update text on screen
+					Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount - 1 );					// Update text on screen
 				else 
-					sprintf( msg, "Sweeps: %d", m_nSweepCount );						// Update text on screen
+					Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount );						// Update text on screen
 				(*m_pSweepTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR); 
 
 				m_Score = ((float) m_nRemoved / (float) m_nTotalSquares) * 100;			// Score is the percentage
 				if ( (m_Score > 99.00) && (m_nRemoved < m_nTotalSquares))
-					sprintf( msg, "Score: 99%%" );
+					Common::sprintf_s( msg, "Score: 99%%" );
 				else
-					sprintf( msg, "Score: %.0f %%", m_Score );							// Update score on screen
+					Common::sprintf_s( msg, "Score: %.0f %%", m_Score );							// Update score on screen
 				(*m_pScoreTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
 				if ( m_bAutomatic ) {													// Game plays by itself
@@ -845,10 +845,10 @@ void CMainWindow::OnTimer(UINT nIDEvent)
 						MyFocusRect( pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, FALSE);	// erase highlight on nNextIndex
 						NewGame();
 						char		msg[64];
-						sprintf( msg, "Score: %.0f %%", m_Score );
+						Common::sprintf_s( msg, "Score: %.0f %%", m_Score );
 						(*m_pScoreTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 					
-						sprintf( msg, "Sweeps: %d", m_nSweepCount );
+						Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount );
 						(*m_pSweepTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR); 
 					}
 					else {
@@ -1279,7 +1279,7 @@ BOOL CMainWindow::LoadArtWork( CDC *pDC )
 	}
 	
 	char bufName[MAX_FILE_LENGTH + 10];
-	sprintf( bufName, ".\\ART\\%s", ArtName );
+	Common::sprintf_s( bufName, ".\\ART\\%s", ArtName );
 
 	(*pSourceDoc).OpenDocument( bufName );
 
@@ -1301,10 +1301,10 @@ BOOL CMainWindow::LoadArtWork( CDC *pDC )
 	if ( hDIB ) {
 		rcDest.SetRect( SIDE_BORDER, TOP_BORDER, ART_WIDTH + SIDE_BORDER, ART_HEIGHT + TOP_BORDER );
 			
-		LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
-		int cxDIB = (int) ::DIBWidth(lpDIB);
-		int cyDIB = (int) ::DIBHeight(lpDIB);
-		::GlobalUnlock((HGLOBAL) hDIB);
+		LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
+		int cxDIB = (int) DIBWidth(lpDIB);
+		int cyDIB = (int) DIBHeight(lpDIB);
+		GlobalUnlock((HGLOBAL) hDIB);
 
 		if ( cxDIB > ART_WIDTH ) {					// Center and crop
 			rcDIB.left = (cxDIB - ART_WIDTH) / 2;	//...too wide art
@@ -1330,7 +1330,7 @@ BOOL CMainWindow::LoadArtWork( CDC *pDC )
 			rcDIB.bottom = ART_HEIGHT;	//cyDIB; 
 		}
 
-		::PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+		PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 			
 	} 
 

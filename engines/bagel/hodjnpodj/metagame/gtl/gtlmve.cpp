@@ -1667,7 +1667,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
                 xpLocTable = CMgStatic::FindLoc(iLocationCode);
                 if (xpLocTable->m_iCost > 0) {
 		        	char blurb[128];
-                    sprintf(blurb, "%d %s for the clue.", xpLocTable->m_iCost, (xpLocTable->m_iCost == 1 ? "crown" : "crowns"));
+                    Common::sprintf_s(blurb, "%d %s for the clue.", xpLocTable->m_iCost, (xpLocTable->m_iCost == 1 ? "crown" : "crowns"));
                     C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", (m_xpCurXodj->m_bHodj ? "Hodj generously offers" : "Podj generously offers"), blurb);
 					(void) dlg1Button.DoModal();
                     m_xpCurXodj->m_pInventory->DiscardItem(MG_OBJ_CROWN,xpLocTable->m_iCost);
@@ -2153,7 +2153,7 @@ BOOL CGtlData::TakeIneligibleAction(CXodj *xpXodj, int iFunctionCode, int iLocat
 	        	char blurb[128];
 	        	iLocationCode = (m_lpNodes + m_xpCurXodj->m_iCharNode)->m_iLocationCode;
 	            xpLocTable = CMgStatic::FindLoc(iLocationCode);
-	        	sprintf(blurb,(m_xpCurXodj->m_bHodj ? "Hodj needs %d more" : "Podj needs %d more"),xpLocTable->m_iCost - m_xpCurXodj->m_pInventory->FindItem(MG_OBJ_CROWN)->GetQuantity());
+	        	Common::sprintf_s(blurb,(m_xpCurXodj->m_bHodj ? "Hodj needs %d more" : "Podj needs %d more"),xpLocTable->m_iCost - m_xpCurXodj->m_pInventory->FindItem(MG_OBJ_CROWN)->GetQuantity());
                 C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", blurb, "crowns for the clue.");
 				(void) dlg1Button.DoModal();
 			}
@@ -2199,7 +2199,7 @@ BOOL CGtlData::DumpGameStatus(int iOptionFlags)
         if (iOptionFlags & DUMPSTAT_PROBLEM) {
             CBdbgMgr::OutputWithTime("\nMeta Game Problem Statement -- %s\n");
             xpLoc = CMgStatic::FindLoc(m_iMishMoshLoc);
-            sprintf(szMsg, "  Mish/Mosh in location %Fs.\n", xpLoc ? (LPSTR)xpLoc->m_lpszName : (LPSTR)"[None]");
+            Common::sprintf_s(szMsg, "  Mish/Mosh in location %Fs.\n", xpLoc ? (LPSTR)xpLoc->m_lpszName : (LPSTR)"[None]");
             JXOutputDebugString(szMsg);
         }
 
@@ -2207,10 +2207,10 @@ BOOL CGtlData::DumpGameStatus(int iOptionFlags)
 
             if ((iOptionFlags & DUMPSTAT_BOTH) || ((iOptionFlags & DUMPSTAT_CURRENT) && xpXodj == m_xpCurXodj)) {
 
-                sprintf(szMsg, "  Character: %s %s:\n", xpXodj->m_szName, (xpXodj == m_xpCurXodj) ? " (Current)" : "");
+                Common::sprintf_s(szMsg, "  Character: %s %s:\n", xpXodj->m_szName, (xpXodj == m_xpCurXodj) ? " (Current)" : "");
                 JXOutputDebugString(szMsg);
 
-                sprintf(szMsg, "    You need %d objects and %d crowns to win Mish and Mosh:\n", xpXodj->m_iRequiredObjectsCount, xpXodj->m_iRequiredMoney);
+                Common::sprintf_s(szMsg, "    You need %d objects and %d crowns to win Mish and Mosh:\n", xpXodj->m_iRequiredObjectsCount, xpXodj->m_iRequiredMoney);
                 JXOutputDebugString(szMsg) ;
 
                 for (iK = 0 ; iK < xpXodj->m_iRequiredObjectsCount ; ++iK) {

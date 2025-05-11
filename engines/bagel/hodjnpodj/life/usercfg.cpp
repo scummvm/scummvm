@@ -264,7 +264,7 @@ void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			nSpeedTemp = MAX_SPEED;
 
 		if ( nSpeedTemp != nOldSpeed ) {						//To prevent "flicker"
-			sprintf(msg, "Speed: %s", mSpeedTable[nSpeedTemp]);	//  only redraw if
+			Common::sprintf_s(msg, "Speed: %s", mSpeedTable[nSpeedTemp]);	//  only redraw if
 																//  m_nSpeedTemp has changed
 			bAssertCheck = (*m_pSpeed).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 			ASSERT(bAssertCheck);
@@ -307,9 +307,9 @@ void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		if ( nLifeTemp != nOldCounter ) { 			//To prevent "flicker"
 			//  only redraw if counter has changed
 			if ( nLifeTemp == MAX_LIFE )
-				sprintf(msg, "Villages: Unlimited");
+				Common::sprintf_s(msg, "Villages: Unlimited");
 	 		else
-				sprintf(msg, "Villages: %d", m_nLife[nLifeTemp]);
+				Common::sprintf_s(msg, "Villages: %d", m_nLife[nLifeTemp]);
 
 			bAssertCheck = (*m_pVillages).DisplayString(pDC,msg,FONT_SIZE,FW_BOLD,OPTIONS_COLOR);
 			ASSERT(bAssertCheck);   // paint the text
@@ -352,9 +352,9 @@ void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		//  only redraw if changed to prevent "flicker"
 		if ( nTurnCounterTemp != nOldCounter ) {
 			if ( nTurnCounterTemp == MAX_TURNS )
-				sprintf(msg, "Years: Unlimited");
+				Common::sprintf_s(msg, "Years: Unlimited");
 			else
-				sprintf(msg, "Years: %d", m_nTurns[nTurnCounterTemp]);
+				Common::sprintf_s(msg, "Years: %d", m_nTurns[nTurnCounterTemp]);
 
 			bAssertCheck = (*m_pRounds).DisplayString(pDC,msg,FONT_SIZE,FW_BOLD,OPTIONS_COLOR);
 			ASSERT(bAssertCheck);   // paint the text
@@ -445,25 +445,25 @@ void CUserCfgDlg::OnPaint()
 
 	// Display Starting Villages stats
 	if ( bIsInfiniteLife == TRUE )
-		sprintf(msg, "Villages: Unlimited");
+		Common::sprintf_s(msg, "Villages: Unlimited");
 	else
-		sprintf(msg, "Villages: %d", m_nLife[nLifeTemp]);
+		Common::sprintf_s(msg, "Villages: %d", m_nLife[nLifeTemp]);
 
 	bAssertCheck = (*m_pVillages).DisplayString(pDC,msg,FONT_SIZE,FW_BOLD,OPTIONS_COLOR);
 	ASSERT(bAssertCheck);
 
 
 	// Display Speed stats
-	sprintf(msg, "Speed: %s", mSpeedTable[nSpeedTemp]);
+	Common::sprintf_s(msg, "Speed: %s", mSpeedTable[nSpeedTemp]);
 
 	bAssertCheck = (*m_pSpeed).DisplayString(pDC,msg,FONT_SIZE,FW_BOLD,OPTIONS_COLOR);
 	ASSERT(bAssertCheck);   // paint the text
 
 	// set up the rounds stat display box
 	if ( bIsInfiniteTurns == TRUE )
-		sprintf(msg, "Years: Unlimited");
+		Common::sprintf_s(msg, "Years: Unlimited");
 	else
-		sprintf(msg, "Years: %d", m_nTurns[nTurnCounterTemp]);
+		Common::sprintf_s(msg, "Years: %d", m_nTurns[nTurnCounterTemp]);
 
 	bAssertCheck = (*m_pRounds).DisplayString(pDC,msg,FONT_SIZE,FW_BOLD,OPTIONS_COLOR);
 	ASSERT(bAssertCheck);   // paint the text

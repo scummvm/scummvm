@@ -128,10 +128,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // CRect - A 2-D rectangle, similar to Windows RECT structure.
 
-class CRect :
-	public tagRECT
-{
-	// Constructors
+class CRect : public tagRECT {
 public:
 	// uninitialized rectangle
 	CRect();
@@ -145,15 +142,11 @@ public:
 	CRect(const RECT &srcRect);
 
 	// from a pointer to another rect
-	CRect(LPCRECT lpSrcRect);
+	CRect(const LPCRECT lpSrcRect);
 	// from a point and size
-	CRect(
-		POINT point,
-		SIZE size);
+	CRect(const POINT &point, const SIZE &size);
 	// from two points
-	CRect(
-		POINT topLeft,
-		POINT bottomRight);
+	CRect(const POINT &topLeft, const POINT &bottomRight);
 
 	// Attributes (in addition to RECT members)
 
@@ -287,6 +280,13 @@ public:
 	CRect MulDiv(
 		int nMultiplier,
 		int nDivisor) const;
+
+	CPoint &TopLeft() {
+		return *((CPoint *)this);
+	}
+	CPoint &BottomRight() {
+		return *((CPoint *)this + 1);
+	}
 };
 
 // CSize
@@ -501,16 +501,12 @@ inline CRect::CRect(LPCRECT lpSrcRect) {
 	*this = *lpSrcRect;
 }
 
-inline CRect::CRect(
-	POINT point,
-	SIZE size) {
+inline CRect::CRect(const POINT &point, const SIZE &size) {
 	right = (left = point.x) + size.cx;
 	bottom = (top = point.y) + size.cy;
 }
 
-inline CRect::CRect(
-	POINT topLeft,
-	POINT bottomRight) {
+inline CRect::CRect(const POINT &topLeft, const POINT &bottomRight) {
 	left = topLeft.x;
 	top = topLeft.y;
 	right = bottomRight.x;

@@ -33,12 +33,12 @@
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "resource.h"
 #include "menures.h"
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 #include "optdlg.h"
 #include "savegame.h"
 #include "audiocfg.h"
 #include "c2btndlg.h"
-#include "rules.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
 
 extern HWND     ghwndParent;
 

@@ -2,10 +2,10 @@
 //
 
 #include "stdafx.h"
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 #include "mnk.h"
 #include "mnkopt.h"  
-#include "button.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -322,14 +322,14 @@ void CMnkUsr::UpdateScrollbars()
 	OldValue = m_iUShells;
 	m_iUShells = m_xpUScrShell->GetScrollPos();
 	if ( OldValue != m_iUShells ){
-		sprintf( msg, "Shells per Pit: %d", m_iUShells );
+		Common::sprintf_s( msg, "Shells per Pit: %d", m_iUShells );
 		(*m_pShellText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR); 
 	} 
 
 	OldValue = m_iUStrength;
 	m_iUStrength = m_xpUScrStrength->GetScrollPos();
 	if ( OldValue != m_iUStrength ){
-		sprintf( msg, "Crab's Ability: %s", mLevelTable[m_iUStrength - 1] );
+		Common::sprintf_s( msg, "Crab's Ability: %s", mLevelTable[m_iUStrength - 1] );
 		(*m_pStrengthText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	} 
 
@@ -347,10 +347,10 @@ void CMnkUsr::OnPaint()
     
     pDC = GetDC();
     
-	sprintf( msg, "Shells per Pit: %d", m_iUShells );
+	Common::sprintf_s( msg, "Shells per Pit: %d", m_iUShells );
 	(*m_pShellText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR); 
 	
-	sprintf( msg, "Crab's Ability: %s", mLevelTable[m_iUStrength - 1] );
+	Common::sprintf_s( msg, "Crab's Ability: %s", mLevelTable[m_iUStrength - 1] );
 	(*m_pStrengthText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
 	ReleaseDC( pDC );

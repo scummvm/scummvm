@@ -22,8 +22,8 @@
 #ifndef HODJNPODJ_ARTPARTS_OPTNDLG_H
 #define HODJNPODJ_ARTPARTS_OPTNDLG_H
 
-#include "cbofdlg.h"                    
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"                    
+#include "bagel/hodjnpodj/hnplibs/text.h"
 
 namespace Bagel {
 namespace HodjNPodj {

@@ -53,7 +53,7 @@
 #include "misc.h"  
 
 #ifdef SHOW_SCORE
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 #endif
 
 #define PACKRATTIMER    97

@@ -125,7 +125,7 @@ static  BOOL StopSounds(void);
 static  BOOL StopWaveSounds(void);
 static  BOOL StopMidiSounds(void);
 static  void ClearSounds(void);
-static  void ClearWaveSounds(void);
+static  void clearWaveSounds(void);
 static  void ClearMidiSounds(void);
 static	void WaitSounds(void);
 static	void WaitWaveSounds(void);

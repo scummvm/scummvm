@@ -5,8 +5,8 @@
 #define NUM_SPEEDS		12
 
 #include "resource.h"
-#include "cbofdlg.h"                    
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"                    
+#include "bagel/hodjnpodj/hnplibs/text.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // COptnDlg dialog

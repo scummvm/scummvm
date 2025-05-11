@@ -410,12 +410,12 @@ VOID CMainWindow::PaintScreen()
             
             if (hDIB) {
                 GetClientRect( rcDest );
-                LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
+                LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
                 rcDIB.top = rcDIB.left = 0;
-                rcDIB.right = (INT) ::DIBWidth(lpDIB);
-                rcDIB.bottom = (INT) ::DIBHeight(lpDIB);
-                ::GlobalUnlock((HGLOBAL) hDIB);
-                ::PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
+                rcDIB.right = (INT) DIBWidth(lpDIB);
+                rcDIB.bottom = (INT) DIBHeight(lpDIB);
+                GlobalUnlock((HGLOBAL) hDIB);
+                PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
             }               //end-if (hDIB)
            	
            	if( m_bGameActive){
@@ -517,7 +517,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 					// Check to see if the music state was changed and adjust to match it
 					//    
 					if((pGameParams->bMusicEnabled == FALSE) && (m_psndBkgndMusic != NULL)) {
-						if (m_psndBkgndMusic->Playing())
+						if (m_psndBkgndMusic->playing())
 							m_psndBkgndMusic->stop();
 					} 
 					else if( pGameParams->bMusicEnabled ){
@@ -525,7 +525,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 				        	m_psndBkgndMusic = new CSound(this, GetStringFromResource(IDS_MIDI_FILE),SOUND_MIDI|SOUND_LOOP|SOUND_DONT_LOOP_TO_END);
 						}
 						if (m_psndBkgndMusic != NULL) {
-							if ( !m_psndBkgndMusic->Playing() )
+							if ( !m_psndBkgndMusic->playing() )
 				           		m_psndBkgndMusic->midiLoopPlaySegment(4000L,31030L,0L,FMT_MILLISEC);
 						}
 					}
@@ -672,12 +672,12 @@ VOID CMainWindow::PlayGame()
     	pDC=GetDC();                   
         if (hDIB) {
                 GetClientRect( rcDest );
-                LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
+                LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
                 rcDIB.top = rcDIB.left = 0;
-                rcDIB.right = (INT) ::DIBWidth(lpDIB);
-                rcDIB.bottom = (INT) ::DIBHeight(lpDIB);
-                ::GlobalUnlock((HGLOBAL) hDIB);
-                ::PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
+                rcDIB.right = (INT) DIBWidth(lpDIB);
+                rcDIB.bottom = (INT) DIBHeight(lpDIB);
+                GlobalUnlock((HGLOBAL) hDIB);
+                PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
         }//end if (hDIB) 
         
     	AnimateDice();

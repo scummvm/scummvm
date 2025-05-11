@@ -1,14 +1,14 @@
 // optndlg.cpp : implementation file
 //
 
-#include <stdafx.h>
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 
 #include "globals.h"
 #include "resource.h"
 #include "garfunk.h" 
 #include "optndlg.h"
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -280,14 +280,14 @@ void COptnDlg::UpdateScrollbars()
 	OldValue = m_nNumButtons;
 	m_nNumButtons = m_ScrollButtons.GetScrollPos();
 	if ( OldValue != m_nNumButtons ) {
-		sprintf( msg, "Number of Musicians:  %d", m_nNumButtons );
+		Common::sprintf_s( msg, "Number of Musicians:  %d", m_nNumButtons );
 		(*m_pButtonsText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
     }
 
 	OldValue = m_nSpeed;
 	m_nSpeed = m_ScrollSpeed.GetScrollPos();
 	if ( OldValue != m_nSpeed ){
-		sprintf( msg, "Speed:  %s", mSpeedTable[m_nSpeed] );
+		Common::sprintf_s( msg, "Speed:  %s", mSpeedTable[m_nSpeed] );
 		(*m_pSpeedText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	} 
 
@@ -315,10 +315,10 @@ void COptnDlg::OnPaint()
     
     pDC = GetDC();
     
-	sprintf( msg, "Number of Musicians:  %d", m_nNumButtons );
+	Common::sprintf_s( msg, "Number of Musicians:  %d", m_nNumButtons );
 	(*m_pButtonsText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
-	sprintf( msg, "Speed:  %s", mSpeedTable[m_nSpeed] );
+	Common::sprintf_s( msg, "Speed:  %s", mSpeedTable[m_nSpeed] );
 	(*m_pSpeedText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR); 
 
 	(*pGameButton).SetCheck( m_bPlayGame );

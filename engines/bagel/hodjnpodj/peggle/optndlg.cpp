@@ -6,9 +6,9 @@
 #include "resource.h"
 #include "options.h"
 #include "optndlg.h"
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 #include "game2.h"
-#include "button.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE

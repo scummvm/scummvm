@@ -19,28 +19,24 @@
  *
  */
 
-#ifndef HODJNPODJ_ARTPARTS_RESOURCE_H
-#define HODJNPODJ_ARTPARTS_RESOURCE_H
-
-#include <stdafx.h>
-#include <time.h>
-#include <fstream.h> 
-
-#include <dos.h>
-
 #include "bagel/boflib/sound.h"
 #include "bagel/boflib/misc.h"
-#include "gamedll.h"                      
-#include "resource.h"
-#include "globals.h"
-#include "mainmenu.h"
-#include "cmessbox.h"
-#include "artparts.h"
-#include "rules.h"
-#include "button.h"
-#include "bitmaps.h"
-#include "text.h"
-#include "optndlg.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"                     
+#include "bagel/hodjnpodj/artparts/resource.h"
+#include "bagel/hodjnpodj/artparts/globals.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
+#include "bagel/hodjnpodj/artparts/artparts.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/artparts/optndlg.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
+//include <stdafx.h>
+//include <time.h>
+//include <fstream.h> 
+//include <dos.h>
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -238,9 +234,9 @@ void CMainWindow::OnPaint()
 		SplashScratchPaint();
 		PaintBitmap( pDC, pGamePalette, pBlankBitmap, TIME_LOCATION_X, TIME_LOCATION_Y );
 		if ( m_nTime == 0 ) 
-			sprintf( msg, "Time Used: %02d:%02d", nMinutes, nSeconds );
+			Common::sprintf_s( msg, "Time Used: %02d:%02d", nMinutes, nSeconds );
 		else {  
-			sprintf( msg, "Time Left: %02d:%02d", nMinutes, nSeconds );
+			Common::sprintf_s( msg, "Time Left: %02d:%02d", nMinutes, nSeconds );
 		}
 		(*m_pTimeText).DisplayString( pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
 	}
@@ -351,10 +347,10 @@ void CMainWindow::SplashScratchPaint()
 		if ( hDIB ) {
 			rcDest.SetRect( 0, 0, ART_WIDTH + (2*FRAME_WIDTH), ART_HEIGHT + (2*FRAME_HEIGHT) );	
 				
-			LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
-			int cxDIB = (int) ::DIBWidth(lpDIB);
-			int cyDIB = (int) ::DIBHeight(lpDIB);
-			::GlobalUnlock((HGLOBAL) hDIB);
+			LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
+			int cxDIB = (int) DIBWidth(lpDIB);
+			int cyDIB = (int) DIBHeight(lpDIB);
+			GlobalUnlock((HGLOBAL) hDIB);
 	
 			if ( cxDIB > ART_WIDTH ) {					// Center and crop
 				rcDIB.left = (cxDIB - ART_WIDTH) / 2;	//...too wide art
@@ -373,7 +369,7 @@ void CMainWindow::SplashScratchPaint()
 				rcDIB.top = 0;
 				rcDIB.bottom = cyDIB; 
 			}
-			::PaintDIB((*pSourceDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+			PaintDIB((*pSourceDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 		    pSourceDC->BitBlt( FRAME_WIDTH, FRAME_HEIGHT, ART_WIDTH, ART_HEIGHT,		// Copy the Scrambled art to
 		    					pScratch2DC, 0, 0, SRCCOPY );							//... the Frame + Art bitmap
 			pDC->BitBlt( SIDE_BORDER - FRAME_WIDTH, TOP_BORDER - FRAME_HEIGHT,			// Copy the Frame + Scrambled  
@@ -425,14 +421,14 @@ void CMainWindow::SplashScreen()
 	
 	if (pDC && hDIB) {
 		GetClientRect( rcDest );
-		LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
-		int cxDIB = (int) ::DIBWidth(lpDIB);
-		int cyDIB = (int) ::DIBHeight(lpDIB);
-		::GlobalUnlock((HGLOBAL) hDIB);
+		LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
+		int cxDIB = (int) DIBWidth(lpDIB);
+		int cyDIB = (int) DIBHeight(lpDIB);
+		GlobalUnlock((HGLOBAL) hDIB);
 		rcDIB.top = rcDIB.left = 0;
 		rcDIB.right = cxDIB;
 		rcDIB.bottom = cyDIB;
-		::PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+		PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 		}
 	ReleaseDC(pDC);
 }
@@ -516,7 +512,7 @@ if ( (HIWORD( lParam ) == BN_CLICKED) && !m_bShowOutOfPlace ) {
 				} 
 			} // end if bGameStarted
 
-			CSound::ClearWaveSounds();
+			CSound::clearWaveSounds();
 			
 			switch ( COptionsWind.DoModal() ) {
 		
@@ -549,7 +545,7 @@ if ( (HIWORD( lParam ) == BN_CLICKED) && !m_bShowOutOfPlace ) {
 			// Check to see if the music state was changed and adjust to match it
 			//    
 		   	if((pGameInfo->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
-		   		if (pGameSound->Playing())
+		   		if (pGameSound->playing())
 		   			pGameSound->stop();
 		   	} 
 		   	else if( pGameInfo->bMusicEnabled ){
@@ -557,7 +553,7 @@ if ( (HIWORD( lParam ) == BN_CLICKED) && !m_bShowOutOfPlace ) {
 					pGameSound = new CSound( this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 				}
 				if (pGameSound != NULL) {
-					if ( !pGameSound->Playing() )
+					if ( !pGameSound->playing() )
        					(*pGameSound).midiLoopPlaySegment( 2300, 32000, 0, FMT_MILLISEC );
 				} // end if pGameSound
 		   	}
@@ -639,7 +635,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 			SetCapture();								// Hog all the mouse events
 	   	} // end if
 		else if (m_bFirst) {							// Selecting Second area
-			::ReleaseCapture();     					// Let other windows get mouse events
+			ReleaseCapture();     					// Let other windows get mouse events
 			DstRect.SetRect( OldRect.TopLeft().x - SIDE_BORDER,  	// in case Point is outside 
 			   				OldRect.TopLeft().y - TOP_BORDER,     	//...of art area 
 							OldRect.BottomRight().x - SIDE_BORDER,	// Use OldRect for
@@ -656,7 +652,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 					pEffect = new CSound( (CWnd *)this, WIN_SOUND, 
 											SOUND_WAVE | SOUND_ASYNCH | 
 											SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
-				   	(*pEffect).Play();														//...play the narration
+				   	(*pEffect).play();														//...play the narration
 				}
 				MSG lpmsg;
 				while ( PeekMessage( &lpmsg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE | PM_NOYIELD ) ) ;
@@ -674,7 +670,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 					pEffect = new CSound( (CWnd *)this, SWITCH_SOUND, 
 											SOUND_WAVE | SOUND_ASYNCH | 
 											SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
-				   	(*pEffect).Play();														//...play the narration
+				   	(*pEffect).play();														//...play the narration
 				} // end if pGameInfo->bSoundEffectsEnabled
 			} // end else
 		}// end else if (m_bFirst)
@@ -717,7 +713,7 @@ if (bGameStarted)
 		CDC 	*pDC;
 		CSound 	*pEffect = NULL;
 	
-		::ReleaseCapture();
+		ReleaseCapture();
 		pDC = GetDC();
 			
 		if (m_bFirst) {
@@ -734,7 +730,7 @@ if (bGameStarted)
 				pEffect = new CSound( (CWnd *)this, PICK_SOUND, 
 										SOUND_WAVE | SOUND_ASYNCH | 
 										SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
-			   	(*pEffect).Play();														//...play the narration
+			   	(*pEffect).play();														//...play the narration
 	        }
 	        
 			Center.x = First.x + SIDE_BORDER + (OldRect.Width()/2);	// Center is in Screen coords
@@ -946,7 +942,7 @@ void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point)
 				pEffect = new CSound( (CWnd *)this, UNDO_SOUND, 
 										SOUND_WAVE | SOUND_ASYNCH | 
 										SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
-			   	(*pEffect).Play();														//...play the narration
+			   	(*pEffect).play();														//...play the narration
 			}
 			
 			if ( m_bFirst ) {                           	// Deselect area
@@ -1097,16 +1093,16 @@ void CMainWindow::OnTimer(UINT nIDEvent)
 			}
 				
 			if ( m_nTime == 0 ) 
-				sprintf( msg, "Time Used: %02d:%02d", nMinutes, nSeconds );
+				Common::sprintf_s( msg, "Time Used: %02d:%02d", nMinutes, nSeconds );
 			else {  
-				sprintf( msg, "Time Left: %02d:%02d", nMinutes, nSeconds );
+				Common::sprintf_s( msg, "Time Left: %02d:%02d", nMinutes, nSeconds );
 			}
 			(*m_pTimeText).DisplayString( pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
 	
 			if (nMinutes == 0 && nSeconds == 0) { 
 				char buf[64];
 				bGameStarted = FALSE;
-				sprintf( buf, "Score: %.0f%% correct", m_nScore );
+				Common::sprintf_s( buf, "Score: %.0f%% correct", m_nScore );
 				KillTimer( nIDEvent );						// Stop the Display timer
 				m_bNewGame = FALSE;
 				m_bFirst = FALSE;
@@ -1114,13 +1110,13 @@ void CMainWindow::OnTimer(UINT nIDEvent)
 					pEffect = new CSound( (CWnd *)this, LOSE_SOUND, 
 											SOUND_WAVE | SOUND_ASYNCH | 
 											SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
-				   	(*pEffect).Play();											//...play the narration
+				   	(*pEffect).play();											//...play the narration
 				}
 				CheckForWin();								// Update the score
 				MSG lpmsg;
 				while ( PeekMessage( &lpmsg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE | PM_NOYIELD ) ) ;
 				CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Game over.", buf);
-				::ReleaseCapture();     					// Let other windows get mouse events
+				ReleaseCapture();     					// Let other windows get mouse events
 				if (pGameInfo->bPlayingMetagame) {
 					pGameInfo->lScore = 0;
 					PostMessage( WM_CLOSE,0,0 );			// and post a program exit
@@ -1337,21 +1333,20 @@ void CMainWindow::DrawPart(CPoint Src, CPoint Dst, int nWidth, int nHeight)
  ****************************************************************/ 
 BOOL CMainWindow::LoadArtWork()
 {
-CRect		rcDest;												// Art work - frame bitmap dims
-CRect		rcDIB;												// Source area for Art Work bmp
-HDIB		hDIB;
-CDC			*pDC;
-CDC			*pSourceDC;
-CBitmap		*pSource = NULL,
-			*pOldBmp = NULL;
-CPalette	*pOldPal = NULL;
-char	ArtName[MAX_FILE_LENGTH];
-char 		bufName[MAX_FILE_LENGTH + 10];
-BOOL		bFound = FALSE;
+	CRect		rcDest;												// Art work - frame bitmap dims
+	CRect		rcDIB;												// Source area for Art Work bmp
+	HDIB		hDIB;
+	CDC			*pDC;
+	CDC			*pSourceDC;
+	CBitmap		*pSource = NULL,
+				*pOldBmp = NULL;
+	CPalette	*pOldPal = NULL;
+	char	ArtName[MAX_FILE_LENGTH];
+	char 		bufName[MAX_FILE_LENGTH + 10];
 
-int  nNumEntries;
-char chNumEntries[5];
-int i, pick; 
+	int  nNumEntries;
+	char chNumEntries[5];
+	int i, pick; 
  
 	ifstream inFile;
 	inFile.open( DATA_FILE );                     			// open the data store
@@ -1397,8 +1392,8 @@ int i, pick;
 		return( FALSE );
 	}
 	
-	sprintf( bufName, ".\\art\\%s", ArtName );
-	sprintf( szCurrentArt, "%s", bufName );				// copy to a global for use in OnPaint
+	Common::sprintf_s( bufName, ".\\art\\%s", ArtName );
+	Common::sprintf_s( szCurrentArt, "%s", bufName );				// copy to a global for use in OnPaint
 	
 	(*pSourceDoc).OpenDocument( bufName );
 
@@ -1423,10 +1418,10 @@ int i, pick;
 		else
 			rcDest.SetRect( 0, 0, ART_WIDTH, ART_HEIGHT );
 			
-		LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
-		int cxDIB = (int) ::DIBWidth(lpDIB);
-		int cyDIB = (int) ::DIBHeight(lpDIB);
-		::GlobalUnlock((HGLOBAL) hDIB);
+		LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
+		int cxDIB = (int) DIBWidth(lpDIB);
+		int cyDIB = (int) DIBHeight(lpDIB);
+		GlobalUnlock((HGLOBAL) hDIB);
 
 		if ( cxDIB > ART_WIDTH ) {					// Center and crop
 			rcDIB.left = (cxDIB - ART_WIDTH) / 2;	//...too wide art
@@ -1446,12 +1441,12 @@ int i, pick;
 			rcDIB.bottom = cyDIB; 
 		}
 		if( bFramed ) {
-			::PaintDIB((*pSourceDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+			PaintDIB((*pSourceDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 			pScratch1DC->BitBlt( 0, 0, ART_WIDTH, ART_HEIGHT, pSourceDC, 
 									FRAME_WIDTH, FRAME_HEIGHT, SRCCOPY );
         }
         else {
-			::PaintDIB((*pScratch1DC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+			PaintDIB((*pScratch1DC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 			
 		}
 	} 
@@ -1583,7 +1578,7 @@ void CMainWindow::NewGame()
 
 	KillTimer( DISPLAY_TIMER );		// Stop the Display timer
 
-	CSound::ClearWaveSounds();
+	CSound::clearWaveSounds();
 	
 	BeginWaitCursor();
 	
@@ -1631,9 +1626,9 @@ void CMainWindow::NewGame()
 
 	PaintBitmap( pDC, pGamePalette, pBlankBitmap, TIME_LOCATION_X, TIME_LOCATION_Y );
 	if ( m_nTime == 0 ) 
-		sprintf( msg, "Time Used: %02d:%02d", nMinutes, nSeconds );
+		Common::sprintf_s( msg, "Time Used: %02d:%02d", nMinutes, nSeconds );
 	else {  
-		sprintf( msg, "Time Left: %02d:%02d", nMinutes, nSeconds );
+		Common::sprintf_s( msg, "Time Left: %02d:%02d", nMinutes, nSeconds );
 	}
 	(*m_pTimeText).DisplayString( pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
 	

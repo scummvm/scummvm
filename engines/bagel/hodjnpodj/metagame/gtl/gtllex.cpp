@@ -241,12 +241,12 @@ BOOL CGtlData::ErrorMsg(CLexElement * xpLxel, XPSTR szMessage)
     char szTitle[40] ;		// message box title
 
     JXENTER(CGtlData::ErrorMsg) ;
-    sprintf(szLine, "Error: %s.", szMessage) ;
+    Common::sprintf_s(szLine, "Error: %s.", szMessage) ;
     //printf(szLine) ;
 
     if (xpLxel)
     {
-	sprintf(szTitle, "Error in line %i, column %i.",
+	Common::sprintf_s(szTitle, "Error in line %i, column %i.",
 		    xpLxel->m_iLineNumber, xpLxel->m_iColumn) ;
 	// printf(szLine) ;
     }

@@ -47,7 +47,7 @@
 #include "stdafx.h"
 #include <stdlib.h>
 #include <limits.h>
-#include "bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 #include "sound.h"
 #include "spinner.h"
 
@@ -446,7 +446,7 @@ BOOL		bSuccess = FALSE;
                                                         // "spin" the spinner digits
 	pBitmap = FetchBitmap(m_pDC,&pPalette,(m_bHodj ? HODJ_SPINNER_NUMBERS_SPEC : PODJ_SPINNER_NUMBERS_SPEC));
 
-	(*pSound).Play();									// start the spinner sound
+	(*pSound).play();									// start the spinner sound
 	if (pBitmap != NULL)
 		for (n = 0; n < SPINNER_CYCLE; n++)	
 			for (i = 0; i < 2; i++) {

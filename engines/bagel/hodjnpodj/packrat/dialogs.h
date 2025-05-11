@@ -24,7 +24,7 @@
 #define LEVELMIN       1
 #define LIVESMIN       1
 
-#include "cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "packrat.h"
 
 //////////////////////////////////////////////////////////////////////////////

@@ -252,11 +252,11 @@ void CLongDialog::OnPaint()
 			}
 		}
 		if ( astrGameList[nDisplayWord].IsEmpty() ) {
-			sprintf( buf, "%s", astrGameListDisplay[nDisplayWord] );
+			Common::sprintf_s( buf, "%s", astrGameListDisplay[nDisplayWord] );
 			m_cWordList[i]->DisplayString( pDC,  buf, 12, FW_BOLD, TEXT_COLOR );
 		}
 		else {
-			sprintf( buf, "%s", astrGameListDisplay[nDisplayWord] );
+			Common::sprintf_s( buf, "%s", astrGameListDisplay[nDisplayWord] );
 			m_cWordList[i]->DisplayString( pDC,  buf, 12, FW_BOLD, RED_TEXT );
 		}                          //Shadowed
 	}

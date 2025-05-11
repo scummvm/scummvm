@@ -151,7 +151,7 @@ void CMapDialog::OnPaint()
 
     pDC = GetDC();
 
-    sprintf( buf, "" );
+    Common::sprintf_s( buf, "" );
     bSuccess = (*m_pTextMessage).DisplayString(pDC, buf, 20, FW_BOLD, TEXT_COLOR);
     ASSERT(bSuccess);
 

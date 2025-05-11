@@ -1,13 +1,13 @@
 // optndlg.cpp : implementation file
 //
 
-#include <stdafx.h>
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "globals.h"
 #include "resource.h"
 #include "beacon.h" 
 #include "optndlg.h"
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -290,16 +290,16 @@ void COptnDlg::UpdateScrollbars()
 	m_nSweeps = m_nSweepSettings[m_ScrollSweeps.GetScrollPos()];
 	if ( OldValue != m_nSweeps ){
 		if ( m_nSweeps == MAX_SWEEPS ) 
-			sprintf( msg, "Number of Sweeps: Unlimited" );
+			Common::sprintf_s( msg, "Number of Sweeps: Unlimited" );
 		else 
-			sprintf( msg, "Number of Sweeps: %d", m_nSweeps );
+			Common::sprintf_s( msg, "Number of Sweeps: %d", m_nSweeps );
 		(*m_pSweepsText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	} 
 
 	OldValue = m_nSpeed;
 	m_nSpeed = m_ScrollSpeed.GetScrollPos();
 	if ( OldValue != m_nSpeed ){
-		sprintf( msg, "Speed:  %s", mSpeedTable[m_nSpeed] );
+		Common::sprintf_s( msg, "Speed:  %s", mSpeedTable[m_nSpeed] );
 		(*m_pSpeedText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	} 
 
@@ -340,16 +340,16 @@ void COptnDlg::OnPaint()
     
     pDC = GetDC();
     
-	sprintf( msg, "(Effective on New Game)" );
+	Common::sprintf_s( msg, "(Effective on New Game)" );
 	(*m_pScoreText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
 	if ( m_nSweeps == MAX_SWEEPS ) 
-		sprintf( msg, "Number of Sweeps: Unlimited" );
+		Common::sprintf_s( msg, "Number of Sweeps: Unlimited" );
 	else 
-		sprintf( msg, "Number of Sweeps: %d", m_nSweeps );
+		Common::sprintf_s( msg, "Number of Sweeps: %d", m_nSweeps );
 	(*m_pSweepsText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR); 
 	
-	sprintf( msg, "Speed:  %s", mSpeedTable[m_nSpeed] );
+	Common::sprintf_s( msg, "Speed:  %s", mSpeedTable[m_nSpeed] );
 	(*m_pSpeedText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	
 	ReleaseDC( pDC );

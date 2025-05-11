@@ -32,7 +32,7 @@
  *
  ****************************************************************/
 
-#include <stdafx.h>
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include <time.h>
 #include <fstream.h> 
 
@@ -44,12 +44,12 @@
 #include "bagel/hodjnpodj/hnplibs/mainmenu.h"
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
-#include "gamedll.h"                      
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"                     
 #include "resource.h"
 #include "globals.h"
 #include "mod.h"
 #include "mazegen.h"
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 #include "optndlg.h"
  
 #include "copyrite.cpp"                             // Boffo!
@@ -347,14 +347,14 @@ void CMainWindow::SplashScreen()
     
     if (pDC && hDIB) {
         GetClientRect( rcDest );
-        LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
-        int cxDIB = (int) ::DIBWidth(lpDIB);
-        int cyDIB = (int) ::DIBHeight(lpDIB);
-        ::GlobalUnlock((HGLOBAL) hDIB);
+        LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
+        int cxDIB = (int) DIBWidth(lpDIB);
+        int cyDIB = (int) DIBHeight(lpDIB);
+        GlobalUnlock((HGLOBAL) hDIB);
         rcDIB.top = rcDIB.left = 0;
         rcDIB.right = cxDIB;
         rcDIB.bottom = cyDIB;
-        ::PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+        PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
         pDC->BitBlt( SIDE_BORDER, TOP_BORDER, ART_WIDTH, ART_HEIGHT, pMazeDC, 0, SQ_SIZE_Y/2, SRCCOPY );    // Draw Maze
         if ( (_playerSprite != NULL) && _playing ) 
             (*_playerSprite).PaintSprite(pDC, (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER, 
@@ -364,9 +364,9 @@ void CMainWindow::SplashScreen()
     if ( _playing ) {                       // only false when the options are displayed
         PaintBitmap( pDC, pGamePalette, _blankBitmap, TIME_LOCATION_X, TIME_LOCATION_Y );
         if ( _time == 0 ) 
-            sprintf( msg, "Time Used: %02d:%02d", _minutes, _seconds );
+            Common::sprintf_s( msg, "Time Used: %02d:%02d", _minutes, _seconds );
         else {  
-            sprintf( msg, "Time Left: %02d:%02d", _minutes, _seconds );
+            Common::sprintf_s( msg, "Time Left: %02d:%02d", _minutes, _seconds );
         }
         (*m_pTimeText).DisplayString( pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
     }
@@ -773,9 +773,9 @@ void CMainWindow::OnTimer(UINT nIDEvent)
             }
                 
             if ( _time == 0 ) 
-                sprintf( msg, "Time Used: %02d:%02d", _minutes, _seconds );
+                Common::sprintf_s( msg, "Time Used: %02d:%02d", _minutes, _seconds );
             else {  
-                sprintf( msg, "Time Left: %02d:%02d", _minutes, _seconds );
+                Common::sprintf_s( msg, "Time Left: %02d:%02d", _minutes, _seconds );
             }
             (*m_pTimeText).DisplayString( pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
 
@@ -786,7 +786,7 @@ void CMainWindow::OnTimer(UINT nIDEvent)
                 if (pGameInfo->bSoundEffectsEnabled) {
                     pEffect = new CSound( (CWnd *)this, LOSE_SOUND, 
                                             SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-                    (*pEffect).Play();                                                      //...play the narration
+                    (*pEffect).play();                                                      //...play the narration
                 }
                 MSG lpmsg;
                 while ( PeekMessage( &lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE ) ) ;
@@ -874,9 +874,9 @@ void CMainWindow::NewGame()
 
     PaintBitmap( pDC, pGamePalette, _blankBitmap, TIME_LOCATION_X, TIME_LOCATION_Y );
     if ( _time == 0 ) 
-        sprintf( msg, "Time Used: %02d:%02d", _minutes, _seconds );
+        Common::sprintf_s( msg, "Time Used: %02d:%02d", _minutes, _seconds );
     else {  
-        sprintf( msg, "Time Left: %02d:%02d", _minutes, _seconds );
+        Common::sprintf_s( msg, "Time Left: %02d:%02d", _minutes, _seconds );
     }
     (*m_pTimeText).DisplayString( pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
 
@@ -994,7 +994,7 @@ void CMainWindow::MovePlayer( CPoint point )
                 if (pGameInfo->bSoundEffectsEnabled) {
                     pEffect = new CSound( (CWnd *)this, HIT_SOUND, 
                                             SOUND_WAVE | SOUND_AUTODELETE); //| SOUND_ASYNCH ...Wave file, to delete itself
-                    (*pEffect).Play();                                                      //...play the narration
+                    (*pEffect).play();                                                      //...play the narration
                 }
                 _mazeTile[NewPosition.x][NewPosition.y].m_bHidden = FALSE;
 
@@ -1030,7 +1030,7 @@ void CMainWindow::MovePlayer( CPoint point )
                 if (pGameInfo->bSoundEffectsEnabled) {
                     pEffect = new CSound( (CWnd *)this, TRAP_SOUND, 
                                             SOUND_WAVE | SOUND_AUTODELETE); //| SOUND_ASYNCH ...Wave file, to delete itself
-                    (*pEffect).Play();                                                      //...play the narration
+                    (*pEffect).play();                                                      //...play the narration
                 }
                 PaintBitmap( pMazeDC, pGamePalette,                         // Paint trap in Maze Bitmap
                             _trapBitmap[_mazeTile[NewPosition.x][NewPosition.y].m_nTrap],
@@ -1055,7 +1055,7 @@ void CMainWindow::MovePlayer( CPoint point )
                 if (pGameInfo->bSoundEffectsEnabled) {
                     pEffect = new CSound( (CWnd *)this, WIN_SOUND, 
                                             SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-                    (*pEffect).Play();                                                      //...play the narration
+                    (*pEffect).play();                                                      //...play the narration
                 }
                 MSG lpmsg;
                 while ( PeekMessage( &lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE ) ) ;

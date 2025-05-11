@@ -60,6 +60,10 @@ void CDialog::SetDefID(UINT nID) {
 	error("TODO: CDialog::SetDefID");
 }
 
+void CDialog::DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl) {
+	error("TODO: CDialog::DDX_Control");
+}
+
 void CDialog::EndDialog(int nResult) {
 	error("TODO: CDialog::EndDialog");
 }

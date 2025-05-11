@@ -108,7 +108,7 @@ void CUserCfgDlg::OnPaint(void)
 		PaintMaskedDIB(pDC, pGamePalette, CARD_BACK2B_BMP, CBCK_RECT2_LEFT, CBCK_RECT2_TOP, CBCK_RECT2_RIG - CBCK_RECT2_LEFT, CBCK_RECT2_BOT - CBCK_RECT2_TOP);
 	} // end if
 
-	sprintf(msg, "Select a card back");	// top message
+	Common::sprintf_s(msg, "Select a card back");	// top message
 	bAssertCheck = (*m_ctextBox).DisplayString(pDC,msg,FONT_SIZE,FW_BOLD,RGBCOLOR_BLACK);
 	ASSERT(bAssertCheck);
 

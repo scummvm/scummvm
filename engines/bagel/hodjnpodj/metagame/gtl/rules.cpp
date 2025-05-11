@@ -76,9 +76,9 @@
 
 #include "stdafx.h"
 
-#include "rules.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "globals.h"
-#include "button.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "sound.h"
 
 #ifdef _DEBUG
@@ -503,7 +503,7 @@ CDibDoc		*pDibDoc;
 		ReleaseCompatibleContext(pScrollTopMaskDC,pScrollTopMask,pScrollTopMaskOld,pScrollTopMaskPalOld);
 		ReleaseCompatibleContext(pScrollBotMaskDC,pScrollBotMask,pScrollBotMaskOld,pScrollBotMaskPalOld);
 		if (pNarrative != NULL)
-         	(*pNarrative).Play();					// play the narration
+         	(*pNarrative).play();					// play the narration
  	}
 	else
 	if (bBruteForce) {                              // need to paint directly to screen
@@ -1475,10 +1475,10 @@ CBitmap		*pBitmap = NULL;
 	ASSERT(bSuccess);
 	hDIB = (*pDibDoc).GetHDIB();  
 	ASSERT(hDIB != NULL);
-	lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB); 
-	dxDIB = (int) ::DIBWidth(lpDIB);
-	dyDIB = (int) ::DIBHeight(lpDIB);
-	::GlobalUnlock((HGLOBAL) hDIB);
+	lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB); 
+	dxDIB = (int) DIBWidth(lpDIB);
+	dyDIB = (int) DIBHeight(lpDIB);
+	GlobalUnlock((HGLOBAL) hDIB);
 
 	if (pRect != NULL)
 		(*pRect).SetRect(0,0,dxDIB,dyDIB);
@@ -1497,14 +1497,14 @@ CRect		myRect;
 
 	hDIB = (*pDibDoc).GetHDIB();  
 	ASSERT(hDIB != NULL);
-	lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB); 
-	dxDIB = (int) ::DIBWidth(lpDIB);
-	dyDIB = (int) ::DIBHeight(lpDIB);
-	::GlobalUnlock((HGLOBAL) hDIB);
+	lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB); 
+	dxDIB = (int) DIBWidth(lpDIB);
+	dyDIB = (int) DIBHeight(lpDIB);
+	GlobalUnlock((HGLOBAL) hDIB);
 
 	myRect.SetRect(0,0,dxDIB,dyDIB);
 	
-	bSuccess = ::PaintDIB ((*pDC).m_hDC, myRect, hDIB, myRect, pScrollPalette);
+	bSuccess = PaintDIB ((*pDC).m_hDC, myRect, hDIB, myRect, pScrollPalette);
 
 	return(bSuccess);
 }

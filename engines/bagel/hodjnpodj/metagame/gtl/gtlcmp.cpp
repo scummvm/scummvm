@@ -81,7 +81,7 @@ cleanup:
         DumpBestMoveData(xpXodj) ;
         if (iError)
         {
-            sprintf(szMsg, "    Error %d in computing best move.\n",
+            Common::sprintf_s(szMsg, "    Error %d in computing best move.\n",
                                 iError) ;
             JXOutputDebugString(szMsg) ;
         }
@@ -732,7 +732,7 @@ BOOL CGtlData::DumpBestMoveData(CXodj *xpXodj)
 
     if (xpGtlApp->m_bDumpGamePlay) {
 
-        sprintf(szMsg, "\n  %s strategy tables:\n", xpXodj->m_szName) ;
+        Common::sprintf_s(szMsg, "\n  %s strategy tables:\n", xpXodj->m_szName) ;
         JXOutputDebugString(szMsg) ;
 
         // For each eligible location, adjust weight by distance
@@ -761,7 +761,7 @@ BOOL CGtlData::DumpBestMoveData(CXodj *xpXodj)
             }
         }
 
-        sprintf(szMsg, "%d locations close to max adjusted "
+        Common::sprintf_s(szMsg, "%d locations close to max adjusted "
                         " weight of %d:\n",
                 xpStrategyInfo->m_iTopLocCount,
                 xpStrategyInfo->m_iMaxAdjustedWeight) ;
@@ -792,7 +792,7 @@ BOOL CGtlData::DumpBestMoveData(CXodj *xpXodj)
                                 ? " (Selected target)" : "") ;
             }
             else
-                sprintf(szMsg, "Invalid location code %d.\n",
+                Common::sprintf_s(szMsg, "Invalid location code %d.\n",
                         xpStratLocInfo->m_iLocCode) ;
 
             JXOutputDebugString(szMsg) ;

@@ -154,12 +154,12 @@ void CTurnDialog::OnPaint()
     pDC = GetDC();
 
     if ( m_bTurn ) {
-        sprintf( msgBuf, "%s %s", m_bHodj?"Hodj":"Podj", m_bGain?"gains a turn.":"loses a turn." );
-        sprintf( artBuf, "%s", m_bGain?".\\art\\freeturn.bmp":".\\art\\loseturn.bmp" );
+        Common::sprintf_s( msgBuf, "%s %s", m_bHodj?"Hodj":"Podj", m_bGain?"gains a turn.":"loses a turn." );
+        Common::sprintf_s( artBuf, "%s", m_bGain?".\\art\\freeturn.bmp":".\\art\\loseturn.bmp" );
     }
     else {
-        sprintf( msgBuf, "%s %s", m_bHodj?"Hodj":"Podj", m_bGain?"wins the game!":"loses the game." );
-        sprintf( artBuf, "%s", m_bGain?".\\art\\wingame.bmp":".\\art\\losegame.bmp" );
+        Common::sprintf_s( msgBuf, "%s %s", m_bHodj?"Hodj":"Podj", m_bGain?"wins the game!":"loses the game." );
+        Common::sprintf_s( artBuf, "%s", m_bGain?".\\art\\wingame.bmp":".\\art\\losegame.bmp" );
     }
 
     bSuccess = (*m_pTextMessage).DisplayString(pDC, msgBuf, 20, FW_BOLD, TEXT_COLOR);

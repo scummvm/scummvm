@@ -35,7 +35,7 @@
 #include <time.h>
 #include "dibdoc.h"
 #include "globals.h"
-#include "rules.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "poker.h"
 
 #include "optres.h"

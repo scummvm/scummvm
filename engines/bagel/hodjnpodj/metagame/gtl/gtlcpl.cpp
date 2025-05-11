@@ -57,7 +57,7 @@ cleanup:
         fclose(m_xpGtlFile) ;     // close it
 
     if (iError) {
-        sprintf(szOut, "CGtlData::Compile -- Error code %i", iError);
+        Common::sprintf_s(szOut, "CGtlData::Compile -- Error code %i", iError);
         CGtlData::ErrorMsg(NULL, szOut) ;
     }
 
@@ -431,7 +431,7 @@ cleanup:
 
     if (iError) {
         char szMsg[100] ;   // error message text
-        sprintf(szMsg, "CGtlData::ParseLine -- Error code %i.", iError) ;
+        Common::sprintf_s(szMsg, "CGtlData::ParseLine -- Error code %i.", iError) ;
         CGtlData::ErrorMsg(xpLxel, szMsg) ;
     }
 

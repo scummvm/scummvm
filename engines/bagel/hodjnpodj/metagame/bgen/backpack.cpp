@@ -24,10 +24,10 @@
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 #include "bagel/hodjnpodj/metagame/bgen/notebook.h"
 #include "bagel/hodjnpodj/metagame/bgen/backpack.h"
-#include "bitmaps.h"
-#include "text.h"
-#include "rules.h"
-#include "button.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "sound.h"
 
 namespace Bagel {
@@ -526,7 +526,7 @@ char	chBuffer[32];
     
     if (((*pItem).m_nQuantity == 0) ||
     	((*pItem).m_nQuantity > 1)) {
-    	sprintf(chBuffer,"%ld",(*pItem).m_nQuantity);
+    	Common::sprintf_s(chBuffer,"%ld",(*pItem).m_nQuantity);
 		pFontOld = (*pDC).SelectObject(pFont);  				// select it into our context
 		(*pDC).SetBkMode(TRANSPARENT);            				// make the text overlay transparently
 		(*pDC).SetTextColor(BACKPACK_BLURB_COLOR);            	// set the color of the text
@@ -799,7 +799,7 @@ CWnd		*pControl;
 					case ITEM_ACTION_SOUND:
 						pSound = new CSound(this,(*pItem).GetSoundSpec(),SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 						(*pSound).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-						(*pSound).Play();
+						(*pSound).play();
 						break;
 				}
 			}

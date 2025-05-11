@@ -254,7 +254,7 @@ void CLife::change_board(UINT nFlags,CPoint point, CDC *pDC, BOOL bPlayingMeta)
 		if (bIsInfiniteLife!=TRUE) {
 			//decrement colony counter if not infinite
 			nLifeCounter--;
-			sprintf(buf, "%d", nLifeCounter);
+			Common::sprintf_s(buf, "%d", nLifeCounter);
  			bAssertCheck = pColonyStat->DisplayString(pDC,buf,21,FW_BOLD,STATS_COLOR);
 			ASSERT(bAssertCheck);   // paint the text
 		}
@@ -276,7 +276,7 @@ void CLife::change_board(UINT nFlags,CPoint point, CDC *pDC, BOOL bPlayingMeta)
 			if (bIsInfiniteLife!=TRUE) {
 				//Add life back to colony counter if finite
 				nLifeCounter++;
-				sprintf(buf, "%d", nLifeCounter);
+				Common::sprintf_s(buf, "%d", nLifeCounter);
 				bAssertCheck = pColonyStat->DisplayString(pDC,buf,21,FW_BOLD,STATS_COLOR);
 				ASSERT(bAssertCheck);   // paint the text
 			}

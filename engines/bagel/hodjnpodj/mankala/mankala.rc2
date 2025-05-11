@@ -5,6 +5,6 @@
 #include "mainmenu.rc"
 #include "cmessbox.rc"
 #include "audiocfg.rc"
-#include "rules.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "menures.h"
 

@@ -19,35 +19,47 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "bagel/mfc/afxwin.h"
+#ifndef HODJNPODJ_ARTPARTS_GAMEDLL_H
+#define HODJNPODJ_ARTPARTS_GAMEDLL_H
+
+#include "bagel/afxwin.h"
 
 namespace Bagel {
-namespace MFC {
+namespace HodjNPodj {
+namespace ArtParts {
 
-CBrush::CBrush() {
-}
+/**
+ *****************************************************************
+ *
+ * RunArtp
+ *
+ * FUNCTIONAL DESCRIPTION:
+ *
+ *          This is the API function for the DLL. It is what the calling app
+ *          calls to invoke poker
+ *
+ * FORMAL PARAMETERS:
+ *
+ *      hParentWnd, lpGameInfo
+ *
+ * IMPLICIT INPUT PARAMETERS:
+ *
+ *      n/a
+ *
+ * IMPLICIT OUTPUT PARAMETERS:
+ *
+ *      n/a
+ *
+ * RETURN VALUE:
+ *
+ *      n/a
+ *
+ ***************************************************************
+ */
+extern HWND FAR PASCAL RunArtp(HWND hParentWnd, LPGAMESTRUCT lpGameInfo);
 
-CBrush::CBrush(CBitmap *pBitmap) {
-}
-
-CBrush::CBrush(COLORREF crColor) {
-}
-
-CBrush::CBrush(int nIndex, COLORREF crColor) {
-}
-
-BOOL CBrush::CreateSolidBrush(COLORREF crColor) {
-	error("TODO: CreateSolidBrush");
-}
-
-BOOL CBrush::CreateBrushIndirect(const LOGBRUSH *lpLogBrush) {
-	error("TODO: CBrush::CreateBrushIndirect");
-}
-
-BOOL CBrush::CreateStockObject(int nIndex) {
-	error("TODO: CreateStockObject");
-}
-
-} // namespace MFC
+} // namespace ArtParts
+} // namespace HodjNPodj
 } // namespace Bagel
+
+#endif

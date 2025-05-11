@@ -54,7 +54,7 @@
 #include "bagel/boflib/misc.h"
 #include "poker.h"  
 #include "dialogs.h"            // header for all of my dialog boxes
-#include "cmessbox.h"
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "c1btndlg.h"
 #include "dibapi.h"
 
@@ -695,14 +695,14 @@ pDC = GetDC();										// get a device context for the window
 ASSERT(pDC);
 
 GetClientRect( rcDest );					// get the rectangle to where we paint
-LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB); // from the DIB get the size of the art
-int cxDIB = (int) ::DIBWidth(lpDIB);
-int cyDIB = (int) ::DIBHeight(lpDIB);
-::GlobalUnlock((HGLOBAL) hDIB);
+LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB); // from the DIB get the size of the art
+int cxDIB = (int) DIBWidth(lpDIB);
+int cyDIB = (int) DIBHeight(lpDIB);
+GlobalUnlock((HGLOBAL) hDIB);
 rcDIB.top = rcDIB.left = 0;				// setup the source rectangle from which
 rcDIB.right = cxDIB;             	// ... we'll do the painting
 rcDIB.bottom = cyDIB;
-::PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);	// transfer the image to the screen
+PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);	// transfer the image to the screen
 
 rectDisplayUser.SetRect( USER_AMOUNT_X, USER_AMOUNT_Y, USER_AMOUNT_X + AMOUNT_WIDTH, USER_AMOUNT_Y + AMOUNT_HEIGHT );
 rectDisplayBet.SetRect( POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + AMOUNT_WIDTH, POT_AMOUNT_Y + AMOUNT_HEIGHT );
@@ -1195,7 +1195,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 									SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		}									
 		if (pEffect != NULL) {
-		   	bSuccess = (*pEffect).Play();
+		   	bSuccess = (*pEffect).play();
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
@@ -1210,7 +1210,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 									SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		}									
 		if (pEffect != NULL) {
-		   	bSuccess = (*pEffect).Play();
+		   	bSuccess = (*pEffect).play();
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
@@ -1231,7 +1231,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		}									
 		if (pEffect != NULL) {
-		   	bSuccess = (*pEffect).Play();
+		   	bSuccess = (*pEffect).play();
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
@@ -1245,7 +1245,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		}									
 		if (pEffect != NULL) {
-		   	bSuccess = (*pEffect).Play();
+		   	bSuccess = (*pEffect).play();
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
@@ -1259,7 +1259,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		}									
 		if (pEffect != NULL) {
-		   	bSuccess = (*pEffect).Play();
+		   	bSuccess = (*pEffect).play();
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
@@ -1273,7 +1273,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		}									
 		if (pEffect != NULL) {
-		   	bSuccess = (*pEffect).Play();
+		   	bSuccess = (*pEffect).play();
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
@@ -2449,7 +2449,7 @@ void PlayEasterEgg( CDC *pDC, CWnd *pWnd, CPalette *pPalette, char *pszAnimFile,
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
 	}									
 	if (pEffect != NULL) {
-	   	bSuccess = (*pEffect).Play();
+	   	bSuccess = (*pEffect).play();
 	   	if (!bSuccess)
 	   		delete pEffect;
 	}

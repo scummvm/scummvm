@@ -54,10 +54,10 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "bfc.h"
-#include "bitmaps.h"
-#include "text.h"
-#include "rules.h"
-#include "button.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "sound.h"
 #include "pawn.h"
 
@@ -567,7 +567,7 @@ char	chBuffer[32];
     
     if (((*pItem).m_nQuantity == 0) ||
     	((*pItem).m_nQuantity > 1)) {
-    	sprintf(chBuffer,"%ld",(*pItem).m_nQuantity);
+    	Common::sprintf_s(chBuffer,"%ld",(*pItem).m_nQuantity);
 		pFontOld = (*pDC).SelectObject(pFont);  				// select it into our context
 		(*pDC).SetBkMode(TRANSPARENT);            				// make the text overlay transparently
 		(*pDC).SetTextColor(PAWN_BLURB_COLOR);            			// set the color of the text
@@ -596,9 +596,9 @@ char	chBuffer[128];
 		}
 	else {
 		if (bPlayingHodj)
-			sprintf(chBuffer,"Hodj has %ld Crowns",(*pItem).GetQuantity());
+			Common::sprintf_s(chBuffer,"Hodj has %ld Crowns",(*pItem).GetQuantity());
 		else
-			sprintf(chBuffer,"Podj has %ld Crowns",(*pItem).GetQuantity());
+			Common::sprintf_s(chBuffer,"Podj has %ld Crowns",(*pItem).GetQuantity());
 	}
 	(*pItemCost).DisplayString(pDC, chBuffer, 18, TEXT_BOLD, PAWN_TEXT_COLOR);
 }
@@ -793,13 +793,13 @@ char	chBuffer[128];
 						if (nPrice == 1)
 							strcpy(chBuffer,"It can be sold for 1 Crown");
 						else
-							sprintf(chBuffer,"It can be sold for %d Crowns",nPrice);
+							Common::sprintf_s(chBuffer,"It can be sold for %d Crowns",nPrice);
 					}
 					else
 					if (nPrice == 1)
-						sprintf(chBuffer,"One can be sold for 1 Crown",nPrice);
+						Common::sprintf_s(chBuffer,"One can be sold for 1 Crown",nPrice);
 					else
-						sprintf(chBuffer,"One can be sold for %d Crowns",nPrice);
+						Common::sprintf_s(chBuffer,"One can be sold for %d Crowns",nPrice);
 					hNewCursor = (*pMyApp).LoadCursor(IDC_PAWN_DOLLAR);
 					}
 				(*pItemText).DisplayString(pDC, (*pItem).GetDescription(), 18, TEXT_BOLD, PAWN_TEXT_COLOR);
@@ -857,7 +857,7 @@ BOOL	bNeedsUpdate = FALSE;
 				((*pItem).GetValue() > 0)) {
 				pSound = new CSound(this,(bPlayingHodj ? ".\\sound\\gsps7.wav" : ".\\sound\\gsps8.wav"),SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 				(*pSound).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-				(*pSound).Play();
+				(*pSound).play();
 				pDC = GetDC();
 				(*pInventory).AddItem(MG_OBJ_CROWN,(*pItem).GetValue());
 				if ((*pItem).GetQuantity() > 1) {

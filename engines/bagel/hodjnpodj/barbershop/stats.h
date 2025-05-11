@@ -18,7 +18,7 @@
  *
  ****************************************************************/
 
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 //#include "rec.h"
 
 #define	STATS_COLOR			RGB(255,255,255)

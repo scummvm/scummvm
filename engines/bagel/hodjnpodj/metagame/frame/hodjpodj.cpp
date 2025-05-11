@@ -46,7 +46,7 @@
 #include "hodjpodj.h"  
 #include "mgstat.h"  
 #include "bfc.h"
-#include "cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "dialogs.h"
 #include "misc.h"
 #include "movytmpl.h"
@@ -54,7 +54,7 @@
 #include "sound.h"
 #include "..\grandtr\gtstruct.h"
 #include "c1btndlg.h"
-#include "rules.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
 
 #include "copyrite.h"                       // mandatory internal copyright notice
 
@@ -2158,7 +2158,7 @@ void CHodjPodjWindow::StartBackgroundMidi(void)
     if (bMusicEnabled && (pBackgroundMidi == NULL)) {
         PositionAtHomePath();
         pBackgroundMidi = new CSound(this,LOGO_MIDI,SOUND_MIDI | SOUND_LOOP /* | SOUND_DONT_LOOP_TO_END */ );
-        (*pBackgroundMidi).Play();
+        (*pBackgroundMidi).play();
     }
 }
 

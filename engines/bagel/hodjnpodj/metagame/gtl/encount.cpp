@@ -33,7 +33,7 @@
  *      n/a
  *   
  ****************************************************************/
-#include <stdafx.h>
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include <limits.h>
 
 #include "bagel/boflib/sound.h"
@@ -780,7 +780,7 @@ BOOL PlayEncounter( CWnd *pWnd, int nID )
     	return(FALSE);
 
 	(*pNarration).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-    (*pNarration).Play();                                           //...play the narration
+    (*pNarration).play();                                           //...play the narration
     if ( nID < MG_TRAP_COUNT )                                          // For Booby Traps:
 		CSound::waitWaveSounds();
     

@@ -253,11 +253,11 @@ void C1ButtonDialog::OnPaint()
 */
 	for ( i = 0; i < WORDSPERLIST; i++ ) { 
 		if ( astrGameList[i].IsEmpty() ) {
-			sprintf( buf, "%s", astrGameListDisplay[i] );
+			Common::sprintf_s( buf, "%s", astrGameListDisplay[i] );
 			m_cWordList[i]->DisplayString( pDC,  buf, 12, FW_BOLD );
 		}
 		else {
-			sprintf( buf, "%s", astrGameListDisplay[i] );
+			Common::sprintf_s( buf, "%s", astrGameListDisplay[i] );
 			m_cWordList[i]->DisplayShadowedString( pDC,  buf, 12, FW_BOLD, (COLORREF)RGB( 0, 255, 255) );
 		}
 	}

@@ -149,6 +149,9 @@ MODULE_OBJS = \
 	hodjnpodj/libs/vector.o \
 	hodjnpodj/archeroids/dllinit.o \
 	hodjnpodj/archeroids/main.o \
+	hodjnpodj/artparts/gamedll.o \
+	hodjnpodj/artparts/artparts.o \
+	hodjnpodj/artparts/optndlg.o \
 	hodjnpodj/archeroids/usercfg.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \

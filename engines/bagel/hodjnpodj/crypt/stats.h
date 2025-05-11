@@ -18,7 +18,7 @@
  *
  ****************************************************************/
 
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 #include "rec.h"
 
 #define DECIMAL_BASE		10			// used in atoi() c function

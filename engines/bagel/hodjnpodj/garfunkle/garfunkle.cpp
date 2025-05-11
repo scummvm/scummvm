@@ -40,7 +40,7 @@
  *
  ****************************************************************/
 
-#include <stdafx.h>
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include <time.h>
 #include <fstream.h> 
 
@@ -53,11 +53,11 @@
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
                       
-#include "gamedll.h"                      
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"                     
 #include "resource.h"
 #include "garfunk.h"
-#include "rules.h"   
-#include "button.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"   
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "optndlg.h"
 #include "note.h"
 
@@ -328,18 +328,18 @@ void CMainWindow::SplashScreen()
 	
 	if (pDC && hDIB) {
 		GetClientRect( rcDest );
-		LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
-		int cxDIB = (int) ::DIBWidth(lpDIB);
-		int cyDIB = (int) ::DIBHeight(lpDIB);
-		::GlobalUnlock((HGLOBAL) hDIB);
+		LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
+		int cxDIB = (int) DIBWidth(lpDIB);
+		int cyDIB = (int) DIBHeight(lpDIB);
+		GlobalUnlock((HGLOBAL) hDIB);
 		rcDIB.top = rcDIB.left = 0;
 		rcDIB.right = cxDIB;
 		rcDIB.bottom = cyDIB;
-		::PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+		PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 	}
 	
 	if ( m_bPlayGame ) {
-		sprintf( msg, "%d", nNoteCount - 1 );
+		Common::sprintf_s( msg, "%d", nNoteCount - 1 );
 		(*m_pSignText).DisplayString( pDC, msg, 32, FW_NORMAL, SIGN_COLOR);
 		if (pGameInfo->bPlayingMetagame && (nNoteCount > m_nWinCondition)) {
 			PaintMaskedBitmap( pDC, pGamePalette, pRibbon, RIBBON_X, RIBBON_Y );
@@ -418,11 +418,11 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 				}
 				else {											// They hit the wrong button :-(
 					char buf[64];
-					sprintf( buf, "Longest series:  %d", nNoteCount-1 );
+					Common::sprintf_s( buf, "Longest series:  %d", nNoteCount-1 );
 					if( pGameInfo->bSoundEffectsEnabled ) {
 						pEffect = new CSound( (CWnd *)this, WRONG_SOUND, 
 												SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-					   	(*pEffect).Play();														//...play the narration
+					   	(*pEffect).play();														//...play the narration
 					}
 					MSG lpmsg;									// Clear out any extraneous mouse clicks
 					while ( PeekMessage( &lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE ) ) ;
@@ -442,7 +442,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 					pNoteMarker = NULL;
 					if ( nNoteCount == MAX_SEQUENCE ) {
 						nNoteCount++;							// Hitting MAX increments NoteCount to MAX + 1
-						sprintf( msg, "%d", nNoteCount - 1 );	//...so return is correct
+						Common::sprintf_s( msg, "%d", nNoteCount - 1 );	//...so return is correct
 						(*m_pSignText).DisplayString( pDC, msg, 32, FW_NORMAL, SIGN_COLOR);
 
 						if (pGameInfo->bPlayingMetagame && (nNoteCount > m_nWinCondition)) {
@@ -452,7 +452,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 						if( pGameInfo->bSoundEffectsEnabled ) {
 							pEffect = new CSound( (CWnd *)this, WIN_SOUND, 
 													SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-						   	(*pEffect).Play();														//...play the narration
+						   	(*pEffect).play();														//...play the narration
 						}
 						MSG lpmsg;
 						while ( PeekMessage( &lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE ) ) ;
@@ -467,7 +467,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 	          			} 
 	          		else {
 						nNoteCount++;
-						sprintf( msg, "%d", nNoteCount - 1 );
+						Common::sprintf_s( msg, "%d", nNoteCount - 1 );
 						(*m_pSignText).DisplayString( pDC, msg, 32, FW_NORMAL, SIGN_COLOR);
 						
 						if (pGameInfo->bPlayingMetagame && (nNoteCount > m_nWinCondition)) {
@@ -634,7 +634,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 			KillTimer( PLAYER_TIMER );											// so it doesn't run out
 			pEffect = new CSound( (CWnd *)this, TREES_SOUND,  
 									SOUND_WAVE | SOUND_AUTODELETE);	// Wave file, sync, to delete itself
-		   	(*pEffect).Play();														// Play the sound
+		   	(*pEffect).play();														// Play the sound
 		   	if (m_bPlayGame && m_bNewGame)
 				SetTimer( PLAYER_TIMER, TIME_LIMIT, NULL );						// Reset response time limit
 		}
@@ -645,24 +645,24 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 			nPick = brand() % NUM_SIGN_SOUNDS;
 			switch (nPick) {
 				case 0:
-					sprintf( bufName, SIGN_1_SOUND );
+					Common::sprintf_s( bufName, SIGN_1_SOUND );
 					break;
 				case 1:
-					sprintf( bufName, SIGN_2_SOUND );
+					Common::sprintf_s( bufName, SIGN_2_SOUND );
 					break;
 				case 2:
-					sprintf( bufName, SIGN_3_SOUND );
+					Common::sprintf_s( bufName, SIGN_3_SOUND );
 					break;
 				case 3:
-					sprintf( bufName, SIGN_4_SOUND );
+					Common::sprintf_s( bufName, SIGN_4_SOUND );
 					break;
 				default:
-					sprintf( bufName, SIGN_5_SOUND );
+					Common::sprintf_s( bufName, SIGN_5_SOUND );
 					break;
 			}
 			pEffect = new CSound( (CWnd *)this, bufName,
 									SOUND_WAVE | SOUND_AUTODELETE);				// Wave file, to delete itself
-		   	(*pEffect).Play();													// play the sound
+		   	(*pEffect).play();													// play the sound
 		   	if (m_bPlayGame && m_bNewGame)
 				SetTimer( PLAYER_TIMER, TIME_LIMIT, NULL );							// Reset response time limit
 		}
@@ -672,7 +672,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 			KillTimer( PLAYER_TIMER );											// so it doesn't run out
 			pEffect = new CSound( (CWnd *)this, BENCH_SOUND,            
 									SOUND_WAVE | SOUND_AUTODELETE);				// Wave file, to delete itself
-		   	(*pEffect).Play();													// Play the sound
+		   	(*pEffect).play();													// Play the sound
 		   	if (m_bPlayGame && m_bNewGame)
 				SetTimer( PLAYER_TIMER, TIME_LIMIT, NULL );							// Reset response time limit
 		}
@@ -888,14 +888,14 @@ void CMainWindow::OnTimer(UINT nIDEvent)
 		case PLAYER_TIMER:
 			{                        
 			char buf[64];
-			sprintf( buf, "Longest series:  %d", nNoteCount-1 );
+			Common::sprintf_s( buf, "Longest series:  %d", nNoteCount-1 );
 			if (pAnimSprite[m_nButID] != NULL)									// If there's an animation
 				StopAnimation();										//...running, stop it
 			KillTimer( nIDEvent );										// Stop this timer 
 			if( pGameInfo->bSoundEffectsEnabled ) {
 				pEffect = new CSound( (CWnd *)this, SLOW_SOUND, 
 										SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-			   	(*pEffect).Play();														//...play the narration
+			   	(*pEffect).play();														//...play the narration
 			}
 			MSG lpmsg;
 			while ( PeekMessage( &lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE ) ) ;
@@ -974,12 +974,12 @@ void CMainWindow::NewGame()
 		GetNewSequence( MAX_SEQUENCE );
 		nNoteCount = 1;                        	
 		nCheckCount = 0;
-		sprintf( msg, "%d", nNoteCount - 1 );
+		Common::sprintf_s( msg, "%d", nNoteCount - 1 );
 		(*m_pSignText).DisplayString( pDC, msg, 32, FW_NORMAL, SIGN_COLOR);
 	}
 	else {
 		m_bPlaying = TRUE;									// Make sure we can play music
-		sprintf( msg, "" );
+		Common::sprintf_s( msg, "" );
 		(*m_pSignText).DisplayString( pDC, msg, 32, FW_NORMAL, SIGN_COLOR);
     }
     
@@ -999,7 +999,7 @@ void CMainWindow::StartAnimation()
 		pMusic = new CSound( (CWnd *)this, cSoundName[m_nButID], 
 								SOUND_MIDI | SOUND_ASYNCH | 
 								SOUND_LOOP | SOUND_NOTIFY );		//...Midi file, looping | SOUND_NOTIFY
-	   	(*pMusic).Play();											//...play the sound
+	   	(*pMusic).play();											//...play the sound
 	}
 
 	(*pAnimSprite[m_nButID]).PaintSprite( pDC, 

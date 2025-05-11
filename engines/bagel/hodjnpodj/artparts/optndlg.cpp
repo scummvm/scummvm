@@ -19,13 +19,13 @@
  *
  */
 
-#include <stdafx.h>
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
-#include "globals.h"
-#include "resource.h"
-#include "artparts.h" 
-#include "optndlg.h"
-#include "text.h"
+#include "bagel/hodjnpodj/artparts/globals.h"
+#include "bagel/hodjnpodj/artparts/resource.h"
+#include "bagel/hodjnpodj/artparts/artparts.h" 
+#include "bagel/hodjnpodj/artparts/optndlg.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -281,12 +281,12 @@ void COptnDlg::UpdateScrollbars()
 	m_nTime = m_nTimeScale[m_ScrollTime.GetScrollPos()];
 	if ( OldValue != m_nTime ){
 		if ( m_nTime == m_nTimeScale[TIMER_MAX - 1] ) 
-			sprintf( msg, "Time Limit: None" );
+			Common::sprintf_s( msg, "Time Limit: None" );
 		else {  
 			nMins = m_nTime / 60;
 	    	nSecs = m_nTime % 60;
 
-			sprintf( msg, "Time Limit: %02d:%02d", nMins, nSecs );
+			Common::sprintf_s( msg, "Time Limit: %02d:%02d", nMins, nSecs );
 		}
 		(*m_pTimerText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	} 
@@ -294,21 +294,21 @@ void COptnDlg::UpdateScrollbars()
 	OldValue = m_nColumns;
 	m_nColumns = m_nColumnFactors[m_ScrollColumns.GetScrollPos()];
 	if ( OldValue != m_nColumns ) {
-		sprintf( msg, "Columns: %d", m_nColumns );
+		Common::sprintf_s( msg, "Columns: %d", m_nColumns );
 		(*m_pColumnText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
     }
 
 	OldValue = m_nRows;
 	m_nRows = m_nRowFactors[m_ScrollRows.GetScrollPos()];	
 	if ( OldValue != m_nRows ) {
-		sprintf( msg, "Rows: %d", m_nRows );
+		Common::sprintf_s( msg, "Rows: %d", m_nRows );
 		(*m_pRowText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	}
 
 	OldValue = m_nNumParts;
 	m_nNumParts = m_nColumns * m_nRows;
 	if ( OldValue != m_nNumParts ) {
-		sprintf( msg, "Parts: %d", m_nNumParts );
+		Common::sprintf_s( msg, "Parts: %d", m_nNumParts );
 		(*m_pPartsText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	} 
 	
@@ -345,21 +345,21 @@ void COptnDlg::OnPaint()
     
     pDC = GetDC();
     
-	sprintf( msg, "Parts: %d", m_nNumParts );
+	Common::sprintf_s( msg, "Parts: %d", m_nNumParts );
 	(*m_pPartsText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
-	sprintf( msg, "Columns: %d", m_nColumns );
+	Common::sprintf_s( msg, "Columns: %d", m_nColumns );
 	(*m_pColumnText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
-	sprintf( msg, "Rows: %d", m_nRows );
+	Common::sprintf_s( msg, "Rows: %d", m_nRows );
 	(*m_pRowText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
 	if ( m_nTime == m_nTimeScale[TIMER_MAX - 1] ) 
-		sprintf( msg, "Time Limit: None" );
+		Common::sprintf_s( msg, "Time Limit: None" );
 	else {  
 		nMins = m_nTime / 60;
     	nSecs = m_nTime % 60;
-		sprintf( msg, "Time Limit: %02d:%02d", nMins, nSecs );
+		Common::sprintf_s( msg, "Time Limit: %02d:%02d", nMins, nSecs );
 	}
 	(*m_pTimerText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR); 
 	

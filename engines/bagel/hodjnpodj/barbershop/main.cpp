@@ -342,12 +342,12 @@ VOID CMainWindow::PaintScreen()
             if (hDIB && (m_pGamePalette != NULL)) {
 
                 GetClientRect( rcDest );
-                LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
+                LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
                 rcDIB.top = rcDIB.left = 0;
-                rcDIB.right = (INT) ::DIBWidth(lpDIB);
-                rcDIB.bottom = (INT) ::DIBHeight(lpDIB);
-                ::GlobalUnlock((HGLOBAL) hDIB);
-                ::PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
+                rcDIB.right = (INT) DIBWidth(lpDIB);
+                rcDIB.bottom = (INT) DIBHeight(lpDIB);
+                GlobalUnlock((HGLOBAL) hDIB);
+                PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
             }
 
             // repaint the command scroll
@@ -659,7 +659,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 
         if ( m_pBarb->m_bIsGameOver == TRUE ) {
             if ( pGameParams->bPlayingMetagame ) {
-                sprintf(buf, "Score: %d", m_pBarb->Score());
+                Common::sprintf_s(buf, "Score: %d", m_pBarb->Score());
                 CMessageBox cGameOver(
                                 (CWnd*) this,
                                 m_pGamePalette,
@@ -669,7 +669,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
                 pGameParams->lScore = m_pBarb->Score();
                 PostMessage(WM_CLOSE, 0, 0);
             } else if ( m_pBarb->m_bIsWin ) {
-                sprintf(buf, "You win! Score: %d", m_pBarb->Score());
+                Common::sprintf_s(buf, "You win! Score: %d", m_pBarb->Score());
                 CMessageBox cGameOver(
                                 (CWnd*) this,
                                 m_pGamePalette,
@@ -678,7 +678,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
                                 );
                 pGameParams->lScore = m_pBarb->Score();
             } else {
-                sprintf(buf, "Score: %d", m_pBarb->Score());
+                Common::sprintf_s(buf, "Score: %d", m_pBarb->Score());
                 CMessageBox cGameOver(
                                 (CWnd*) this,
                                 m_pGamePalette,
@@ -726,7 +726,7 @@ VOID CMainWindow::OnLButtonDblClk(UINT nFlags, CPoint point)
 
         if ( m_pBarb->m_bIsGameOver == TRUE ) {
             if ( pGameParams->bPlayingMetagame ) {
-                sprintf(buf, "Score: %d", m_pBarb->Score());
+                Common::sprintf_s(buf, "Score: %d", m_pBarb->Score());
                 CMessageBox cGameOver(
                                 (CWnd*) this,
                                 m_pGamePalette,
@@ -736,7 +736,7 @@ VOID CMainWindow::OnLButtonDblClk(UINT nFlags, CPoint point)
                 pGameParams->lScore = m_pBarb->Score();
                 PostMessage(WM_CLOSE, 0, 0);
             } else if ( m_pBarb->m_bIsWin ) {
-                sprintf(buf, "You win! Score: %d", m_pBarb->Score());
+                Common::sprintf_s(buf, "You win! Score: %d", m_pBarb->Score());
                 CMessageBox cGameOver(
                                 (CWnd*) this,
                                 m_pGamePalette,
@@ -745,7 +745,7 @@ VOID CMainWindow::OnLButtonDblClk(UINT nFlags, CPoint point)
                                 );
                 pGameParams->lScore = m_pBarb->Score();
             } else {
-                sprintf(buf, "Score: %d", m_pBarb->Score());
+                Common::sprintf_s(buf, "Score: %d", m_pBarb->Score());
                 CMessageBox cGameOver(
                                 (CWnd*) this,
                                 m_pGamePalette,
@@ -769,7 +769,7 @@ void CMainWindow::OnLButtonUp(UINT nFlags,CPoint point)
 
         if ( m_pBarb->m_bIsGameOver == TRUE ) {
             if ( pGameParams->bPlayingMetagame ) {
-                sprintf(buf, "Score: %d", m_pBarb->Score());
+                Common::sprintf_s(buf, "Score: %d", m_pBarb->Score());
                 CMessageBox cGameOver(
                                 (CWnd*) this,
                                 m_pGamePalette,
@@ -779,7 +779,7 @@ void CMainWindow::OnLButtonUp(UINT nFlags,CPoint point)
                 pGameParams->lScore = m_pBarb->Score();
                 PostMessage(WM_CLOSE, 0, 0);
             } else if ( m_pBarb->m_bIsWin ) {
-                sprintf(buf, "You win! Score: %d", m_pBarb->Score());
+                Common::sprintf_s(buf, "You win! Score: %d", m_pBarb->Score());
                 CMessageBox cGameOver(
                                 (CWnd*) this,
                                 m_pGamePalette,
@@ -788,7 +788,7 @@ void CMainWindow::OnLButtonUp(UINT nFlags,CPoint point)
                                 );
                 pGameParams->lScore = m_pBarb->Score();
             } else {
-                sprintf(buf, "Score: %d", m_pBarb->Score());
+                Common::sprintf_s(buf, "Score: %d", m_pBarb->Score());
                 CMessageBox cGameOver(
                                 (CWnd*) this,
                                 m_pGamePalette,

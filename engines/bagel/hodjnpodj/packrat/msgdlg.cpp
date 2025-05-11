@@ -32,7 +32,7 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "dialogs.h"
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 
 static CPalette         *pPackRatOptPalette;
 

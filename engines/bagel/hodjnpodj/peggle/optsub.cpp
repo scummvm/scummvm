@@ -10,8 +10,8 @@
 #include "gamedll.h"
 #include "globals.h"
 #include "options.h"
-#include "bitmaps.h"
-#include "button.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "resource.h"
 
 

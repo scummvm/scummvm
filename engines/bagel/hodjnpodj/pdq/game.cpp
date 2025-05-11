@@ -253,7 +253,7 @@ ERROR_CODE LoadNewPhrase(VOID)
                 /*
                 * convert all instances of "the", "an", and "a" to upper case
                 */
-                sprintf(p = buf, " %s", strlwr(curPhrase->text));
+                Common::sprintf_s(p = buf, " %s", strlwr(curPhrase->text));
 
                 StrUprStr(p, " the ");
                 StrUprStr(p, " an ");

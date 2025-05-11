@@ -20,7 +20,7 @@
 #define DIALOGS_H
 
 //#include <options.h>
-#include "cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "poker.h"
 
 #define	AMOUNTMAX	10

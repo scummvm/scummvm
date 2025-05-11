@@ -26,13 +26,13 @@
 #include "resource.h"
 #include "dibdoc.h"
 #include "gamedll.h"
-#include "cbofdlg.h"            // header for the options library
-#include "mainmenu.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"            // header for the options library
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
 
-#include "button.h"
-#include "rules.h"
-#include "text.h"
-#include "bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 #include "sprite.h"
 
 #include "copyrite.h"						// mandatory internal copyright notice

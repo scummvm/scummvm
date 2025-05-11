@@ -30,7 +30,7 @@
 #include "resource.h"
 #include "dllinit.h"
 #include "game.h"
-#include "button.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 // #include your main header file for your game 
 #include "gamedll.h"
 

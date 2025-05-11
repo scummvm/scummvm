@@ -52,6 +52,14 @@ int CDC::SetStretchBltMode(int nStretchMode) {
 	error("TODO: CDC::SetStretchBltMode");
 }
 
+int CDC::GetDeviceCaps(int nIndex) const {
+	error("TODO: CDC::GetDeviceCaps");
+}
+
+int CDC::SetROP2(int nDrawMode) {
+	error("TODO: CDC::SetROP2");
+}
+
 BOOL CDC::BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 		int xSrc, int ySrc, DWORD dwRop) {
 	error("TODO: CDC::BitBlt");

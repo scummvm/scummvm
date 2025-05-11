@@ -776,7 +776,7 @@ BOOL CMnk::UnmapConfiguration(CMove * xpcMove)
     lConfigIndex -= lValue ;
 
 //  // ***** debugging
-//  sprintf(szDebugStr, "lConfig=%ld, #stones=%d, pit %d = %d\n",
+//  Common::sprintf_s(szDebugStr, "lConfig=%ld, #stones=%d, pit %d = %d\n",
 //              lConfigSave, iStones, iK, iPit) ;
 //  OutputDebugString(szDebugStr) ;
 
@@ -793,7 +793,7 @@ BOOL CMnk::UnmapConfiguration(CMove * xpcMove)
     MapConfiguration(xpcMove) ;
     if (lConfigSave != xpcMove->m_lConfigIndex) // if unmap/map failed
     {
-    sprintf(szDebugStr, "Config %ld changed to %ld.\n",
+    Common::sprintf_s(szDebugStr, "Config %ld changed to %ld.\n",
         lConfigSave, xpcMove->m_lConfigIndex) ;
     OutputDebugString(szDebugStr) ;
     DebugBreak() ;
@@ -2089,7 +2089,7 @@ BOOL CMnk::DumpPosition(CMove * xpcMove)
     if (xpcMove->m_bRealMove)
     strcpy(xpStr, "(REAL) "), xpStr += strlen(xpStr) ;
 
-    sprintf(xpStr, "P%d Cfg=%ld w/%d stones, %d moves, sow=%d, "
+    Common::sprintf_s(xpStr, "P%d Cfg=%ld w/%d stones, %d moves, sow=%d, "
                 "best %d for %d.\n",
         xpcMove->m_iPlayer, xpcMove->m_lConfigIndex,
         xpcMove->m_iTotalStones, xpcMove->m_iNumMoves,
@@ -2100,7 +2100,7 @@ BOOL CMnk::DumpPosition(CMove * xpcMove)
 
     xpStr = szStr ;
 
-    sprintf(xpStr, "               "
+    Common::sprintf_s(xpStr, "               "
     "[%3d] %2d %2d %2d %2d %2d %2d              H=%d\n",
     xpcMove->m_iNumStones[1][HOMEINDEX+2],
     xpcMove->m_iNumStones[1][2], xpcMove->m_iNumStones[1][3],
@@ -2109,7 +2109,7 @@ BOOL CMnk::DumpPosition(CMove * xpcMove)
     xpcMove->m_iNumStones[1][HANDINDEX+2]) ;
     OutputDebugString(szStr) ;
 
-    sprintf(xpStr, "               "
+    Common::sprintf_s(xpStr, "               "
     "      %2d %2d %2d %2d %2d %2d [%3d]        H=%d\n\n",
     xpcMove->m_iNumStones[0][7], xpcMove->m_iNumStones[0][6],
     xpcMove->m_iNumStones[0][5], xpcMove->m_iNumStones[0][4],
@@ -2144,7 +2144,7 @@ BOOL CMnk::DumpBestWinTable(long lLow,
     xpStr = szStr ;
     if (lEol > lHigh)
         lEol = lHigh ;
-    sprintf(xpStr, "Table[%ld-%ld]:", lLow, lEol) ;
+    Common::sprintf_s(xpStr, "Table[%ld-%ld]:", lLow, lEol) ;
     xpStr += strlen(xpStr) ;
 
     while (lLow <= lEol)        // loop thru values
@@ -2154,7 +2154,7 @@ BOOL CMnk::DumpBestWinTable(long lLow,
         if (cMove.m_iBestWinValue == BESTWINUNDEF)
         strcat(xpStr, " U") ;
         else
-        sprintf(xpStr, " %d", cMove.m_iBestWinValue) ;
+        Common::sprintf_s(xpStr, " %d", cMove.m_iBestWinValue) ;
         xpStr += strlen(xpStr) ;
     }
     strcpy(xpStr, "\n") ;

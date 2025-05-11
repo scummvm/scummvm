@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "mnk.h"
-#include "mainmenu.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
             
 
 #include "copyrite.h"   // mandatory internal copyright notice
@@ -173,7 +173,7 @@ PRIVATE BOOL CMnkWindow::PaintBitmapObject(CBmpObject * xpcBmpObject,
    }
 
     else        // there's a DIB
-        ::PaintDIB(pDC->m_hDC, &cDestRect,
+        PaintDIB(pDC->m_hDC, &cDestRect,
             xpcBmpObject->m_xpDibDoc->GetHDIB(),
             &cBmpRect, m_xpGamePalette) ;
             // transfer the bitmap to the screen
@@ -268,7 +268,7 @@ PRIVATE BOOL CMnkWindow::InitBitmapObject(CBmpObject * xpcBmpObject)
         goto cleanup ;
         }
 
-        if ( !(xpcBmpObject->m_lpDib = ::GlobalLock(hDib)) )
+        if ( !(xpcBmpObject->m_lpDib = GlobalLock(hDib)) )
             // lock global memory and test
         {
         iError = 104 ;  // can't lock global memory
@@ -370,7 +370,7 @@ PRIVATE BOOL CMnkWindow::InitBitmapFilename(CBmpObject * xpcBmpObject)
                         xpBmpTable->m_iNumBmps) ;
             // choose a random file
 
-    sprintf(szPath + strlen(szPath), xpszFilenameString,
+    Common::sprintf_s(szPath + strlen(szPath), xpszFilenameString,
         xpBmpTable->m_bSubNumStones ? iNumStones
                         : xpcBmpObject->m_iBmpNum,
             xpcBmpObject->m_iBmpNum) ;
@@ -1126,7 +1126,7 @@ PRIVATE BOOL CMnkWindow::ClearBitmapObject(CBmpObject * xpcBmpObject)
     {
     if (xpcBmpObject->m_lpDib &&
         (hDib = xpcBmpObject->m_xpDibDoc->GetHDIB()) ){
-        ::GlobalUnlock(hDib) ;      // unlock Dib memory          
+        GlobalUnlock(hDib) ;      // unlock Dib memory          
     }
 
     xpcBmpObject->m_lpDib = NULL ;  // clear pointers
@@ -1331,7 +1331,7 @@ PRIVATE BOOL CMnkWindow::OptionsDialog(void)
 	// Check to see if the music state was changed and adjust to match it
 	//    
    	if((pGameParams->bMusicEnabled == FALSE) && (m_pSound != NULL)) {
-   		if (m_pSound->Playing())
+   		if (m_pSound->playing())
    			m_pSound->stop();
    	} 
    	else if( pGameParams->bMusicEnabled ){
@@ -1339,7 +1339,7 @@ PRIVATE BOOL CMnkWindow::OptionsDialog(void)
 			m_pSound=new CSound( this, MIDI_BCKGND, SOUND_MIDI | SOUND_DONT_LOOP_TO_END); 
 		}
 		if (m_pSound != NULL) {
-			if ( !m_pSound->Playing() )
+			if ( !m_pSound->playing() )
    				m_pSound->midiLoopPlaySegment(1004L, 34040L, 1004L, FMT_MILLISEC);
    		}
    	}

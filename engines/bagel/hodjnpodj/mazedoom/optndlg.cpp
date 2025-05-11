@@ -1,13 +1,13 @@
 // optndlg.cpp : implementation file
 //
 
-#include <stdafx.h> 
+#include "bagel/hodjnpodj/hnplibs/stdafx.h" 
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "globals.h"
 #include "resource.h"
 #include "mod.h" 
 #include "optndlg.h"
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -249,12 +249,12 @@ void COptnDlg::UpdateScrollbars()
 	m_nTime = m_nTimeScale[m_ScrollTime.GetScrollPos()];
 	if ( OldValue != m_nTime ){
 		if ( m_nTime == m_nTimeScale[TIMER_MAX - 1] ) 
-			sprintf( msg, "Time Limit: None" );
+			Common::sprintf_s( msg, "Time Limit: None" );
 		else {  
 			m_nMins = m_nTime / 60;
 	    	m_nSecs = m_nTime % 60;
 
-			sprintf( msg, "Time Limit: %02d:%02d", m_nMins, m_nSecs );
+			Common::sprintf_s( msg, "Time Limit: %02d:%02d", m_nMins, m_nSecs );
 		}
         (*m_pTimerText).DisplayString( pDC, msg, 14, TEXT_BOLD, RGB( 0, 0, 0));
 	} 
@@ -262,7 +262,7 @@ void COptnDlg::UpdateScrollbars()
 	OldValue = m_nDifficulty;
 	m_nDifficulty = m_ScrollDifficulty.GetScrollPos();
 	if ( OldValue != m_nDifficulty ) {
-		sprintf( msg, "%s", mDifficultyTable[m_nDifficulty - 1] );
+		Common::sprintf_s( msg, "%s", mDifficultyTable[m_nDifficulty - 1] );
         (*m_pDifficultyText).DisplayString( pDC, msg, 14, TEXT_BOLD, RGB( 0, 0, 0));
     }
 	
@@ -293,22 +293,22 @@ void COptnDlg::OnPaint()
     
     pDC = GetDC();
     
-	sprintf( msg, "Time: %02d:%02d", nMinutes, nSeconds );
+	Common::sprintf_s( msg, "Time: %02d:%02d", nMinutes, nSeconds );
     (*m_pTimeLeft).DisplayString( pDC, msg, 14, TEXT_BOLD, RGB( 0, 0, 0));
 	
-	sprintf( msg, "Level:");
+	Common::sprintf_s( msg, "Level:");
     (*m_pDiffTitleText).DisplayString( pDC, msg, 14, TEXT_BOLD, RGB( 0, 0, 0));
 
-	sprintf( msg, "%s", mDifficultyTable[m_nDifficulty - 1] );
+	Common::sprintf_s( msg, "%s", mDifficultyTable[m_nDifficulty - 1] );
     (*m_pDifficultyText).DisplayString( pDC, msg, 14, TEXT_BOLD, RGB( 0, 0, 0));
 
 	if ( m_nTime == m_nTimeScale[TIMER_MAX - 1] ) 
-		sprintf( msg, "Time Limit: None" );
+		Common::sprintf_s( msg, "Time Limit: None" );
 	else {
 		m_nMins = m_nTime / 60;
 	   	m_nSecs = m_nTime % 60;
     
-		sprintf( msg, "Time Limit: %02d:%02d", m_nMins, m_nSecs );
+		Common::sprintf_s( msg, "Time Limit: %02d:%02d", m_nMins, m_nSecs );
     }
     (*m_pTimerText).DisplayString( pDC, msg, 14, TEXT_BOLD, RGB( 0, 0, 0));
 	

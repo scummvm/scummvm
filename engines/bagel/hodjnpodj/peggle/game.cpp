@@ -92,8 +92,8 @@
 #include "options.h"
 #include "time.h"
 //#include "gameover.h"
-#include "rules.h"
-#include "button.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "sound.h"
 
 extern	LPGAMESTRUCT 	pGameInfo;
@@ -322,14 +322,14 @@ hDIB = myDoc.GetHDIB();
 pDC = GetDC();
 if (pDC && hDIB) {
 	GetClientRect( rcDest );
-	lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
-	int cxDIB = (int) ::DIBWidth(lpDIB);
-	int cyDIB = (int) ::DIBHeight(lpDIB);
-	::GlobalUnlock((HGLOBAL) hDIB);
+	lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
+	int cxDIB = (int) DIBWidth(lpDIB);
+	int cyDIB = (int) DIBHeight(lpDIB);
+	GlobalUnlock((HGLOBAL) hDIB);
 	rcDIB.top = rcDIB.left = 0;
 	rcDIB.right = cxDIB;
 	rcDIB.bottom = cyDIB;
-	::PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);}
+	PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);}
 
 pSprite = CSprite::GetSpriteChain();
 while(pSprite) {
@@ -668,7 +668,7 @@ CRect	bottleRect,
 			(*pSprite).PaintSprite( pDC, DART_X, DART_Y );
 			Sleep( DART_SLEEP - (i) );	// * 2
 			if (( i == 0 ) && (pEffect != NULL)) {
-				bSuccess = (*pEffect).Play();														//...play the narration
+				bSuccess = (*pEffect).play();														//...play the narration
 			   	if (!bSuccess)
 			   		delete pEffect;
 			}
@@ -699,7 +699,7 @@ CRect	bottleRect,
 									SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);				//...Wave file, to delete itself
 		}									
 		if (pEffect != NULL) {
-		   	bSuccess = (*pEffect).Play();
+		   	bSuccess = (*pEffect).play();
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
@@ -734,7 +734,7 @@ CRect	bottleRect,
 									SOUND_WAVE | SOUND_QUEUE |  SOUND_ASYNCH | SOUND_AUTODELETE);				//...Wave file, to delete itself
 		}									
 		if (pEffect != NULL) {
-		   	bSuccess = (*pEffect).Play();
+		   	bSuccess = (*pEffect).play();
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
@@ -754,7 +754,7 @@ CRect	bottleRect,
 		pEffect = new CSound( (CWnd *)this, OAR_SOUND,								// Load up the sound file as a 
 									SOUND_WAVE | SOUND_QUEUE |  SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		if (pEffect != NULL) {
-		   	bSuccess = (*pEffect).Play();
+		   	bSuccess = (*pEffect).play();
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
@@ -766,7 +766,7 @@ CRect	bottleRect,
 		pEffect = new CSound( (CWnd *)this, NET_SOUND,								// Load up the sound file as a 
 									SOUND_WAVE | SOUND_QUEUE |  SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		if (pEffect != NULL) {
-		   	bSuccess = (*pEffect).Play();
+		   	bSuccess = (*pEffect).play();
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
@@ -778,7 +778,7 @@ CRect	bottleRect,
 		pEffect = new CSound( (CWnd *)this, SIGN_SOUND,								// Load up the sound file as a 
 									SOUND_WAVE | SOUND_QUEUE |  SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		if (pEffect != NULL) {
-		   	bSuccess = (*pEffect).Play();
+		   	bSuccess = (*pEffect).play();
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
@@ -790,7 +790,7 @@ CRect	bottleRect,
 		pEffect = new CSound( (CWnd *)this, TABLE_SOUND,								// Load up the sound file as a 
 									SOUND_WAVE | SOUND_QUEUE |  SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		if (pEffect != NULL) {
-		   	bSuccess = (*pEffect).Play();
+		   	bSuccess = (*pEffect).play();
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
@@ -802,7 +802,7 @@ CRect	bottleRect,
 		pEffect = new CSound( (CWnd *)this, CANDLE_SOUND,								// Load up the sound file as a 
 									SOUND_WAVE | SOUND_QUEUE |  SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		if (pEffect != NULL) {
-		   	bSuccess = (*pEffect).Play();
+		   	bSuccess = (*pEffect).play();
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
@@ -952,9 +952,9 @@ CRect	bottleRect,
 							score_blurb = "Game over.";}
 	
 						if (score == 1)
-							sprintf(score_string, "Score:  %d point.",score) ;
+							Common::sprintf_s(score_string, "Score:  %d point.",score) ;
 						else
-							sprintf(score_string, "Score:  %d points.",score) ;
+							Common::sprintf_s(score_string, "Score:  %d points.",score) ;
 	
 						CMessageBox GameOverDlg((CWnd *)this, pGamePalette, score_blurb, score_string);
 //						UpdateWindow();

@@ -431,14 +431,14 @@ HDIB		hDIB;			// a handle to the DIB itself
 	ASSERT(pDC);
 	
 	GetClientRect( rcDest );                                   	 	// get the rectangle to where we paint
-	LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB); 			// from the DIB get the size of the art
-	int cxDIB = (int) ::DIBWidth(lpDIB);
-	int cyDIB = (int) ::DIBHeight(lpDIB);
-	::GlobalUnlock((HGLOBAL) hDIB);
+	LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB); 			// from the DIB get the size of the art
+	int cxDIB = (int) DIBWidth(lpDIB);
+	int cyDIB = (int) DIBHeight(lpDIB);
+	GlobalUnlock((HGLOBAL) hDIB);
 	rcDIB.top = rcDIB.left = 0;                             		// setup the source rectangle from which
 	rcDIB.right = cxDIB;                    						// ... we'll do the painting
 	rcDIB.bottom = cyDIB;
-	::PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);  // transfer the image to the screen
+	PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);  // transfer the image to the screen
 	
 	if ( m_nTimeForGame > 0 ) {
 		pTimerSprite->SetCel( nCurrentCel );
@@ -666,7 +666,7 @@ if (HIWORD(lParam) == BN_CLICKED)	{		// only want to look at button clicks
 			SetFocus();
 			
 			if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
-				if (pGameSound->Playing())	
+				if (pGameSound->playing())	
 			    	(*pGameSound).Stop();
 			}
 			else if (m_lpGameStruct->bMusicEnabled == TRUE) {
@@ -745,35 +745,35 @@ void CMainDFAWindow::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 		
 	if ( rWatch.PtInRect( point ) && m_lpGameStruct->bSoundEffectsEnabled )	{
-		CSound::ClearWaveSounds();
+		CSound::clearWaveSounds();
 		sndPlaySound( NULL, 0 );
 		pEffect = new CSound( (CWnd *)this, WATCH_WAV, 
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-	   	(*pEffect).Play();														//...play the narration
+	   	(*pEffect).play();														//...play the narration
 	}
 	
 	else if ( rLake.PtInRect( point ) && m_lpGameStruct->bSoundEffectsEnabled )	{
-		CSound::ClearWaveSounds();
+		CSound::clearWaveSounds();
 		sndPlaySound( NULL, 0 );
 		pEffect = new CSound( (CWnd *)this, LAKE_WAV, 
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-	   	(*pEffect).Play();														//...play the narration
+	   	(*pEffect).play();														//...play the narration
 	}
 	
 	else if ( rMount.PtInRect( point ) && m_lpGameStruct->bSoundEffectsEnabled )	{
-		CSound::ClearWaveSounds();
+		CSound::clearWaveSounds();
 		sndPlaySound( NULL, 0 );
 		pEffect = new CSound( (CWnd *)this, MOUNT_WAV, 
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-	   	(*pEffect).Play();														//...play the narration
+	   	(*pEffect).play();														//...play the narration
 	}
 	
 	else if ( rFlowers.PtInRect( point ) && m_lpGameStruct->bSoundEffectsEnabled )	{
-		CSound::ClearWaveSounds();
+		CSound::clearWaveSounds();
 		sndPlaySound( NULL, 0 );
 		pEffect = new CSound( (CWnd *)this, BEE_WAV, 
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-		(*pEffect).Play();														//...play the narration
+		(*pEffect).play();														//...play the narration
 	}
 
 	if ( bEndGame )
@@ -786,7 +786,7 @@ void CMainDFAWindow::OnLButtonDown(UINT nFlags, CPoint point)
 				CDC	*pDC = GetDC();						               
 				if ( m_lpGameStruct->bSoundEffectsEnabled ) {		// Play the hit sound
 					nPick = (brand() % NUM_HIT_SOUNDS);
-					CSound::ClearWaveSounds();
+					CSound::clearWaveSounds();
        				sndPlaySound(m_pHitSound[nPick], SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 				} // end if
 				
@@ -799,7 +799,7 @@ void CMainDFAWindow::OnLButtonDown(UINT nFlags, CPoint point)
 			else {												// no beaver there at hit-time
 				if ( m_lpGameStruct->bSoundEffectsEnabled ) {		// Play the hit sound
 					nPick = (brand() % NUM_MISS_SOUNDS);				// randomly select a miss sound
-					CSound::ClearWaveSounds();
+					CSound::clearWaveSounds();
             		sndPlaySound(m_pMissSound[nPick], SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 				} // end if bSoundEffectsEnabled
 			} // end else
@@ -927,7 +927,7 @@ void CMainDFAWindow::OnTimer( UINT nWhichTimer )
 /*			if (m_lpGameStruct->bSoundEffectsEnabled) {
 				pEffect = new CSound( (CWnd *)this, TICK_WAV, 
 										SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-			   	(*pEffect).Play();														//...play the narration
+			   	(*pEffect).play();														//...play the narration
 			}
 */
         	pTimerSprite->PaintSprite( pDC, WATCH_X, WATCH_Y );
@@ -950,11 +950,11 @@ void CMainDFAWindow::OnTimer( UINT nWhichTimer )
 			while ( PeekMessage( &lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE ) ) ;	// prevent random 'hits'
 
 			if (m_lpGameStruct->bSoundEffectsEnabled) {
-				CSound::ClearWaveSounds();
+				CSound::clearWaveSounds();
 				sndPlaySound( NULL, 0 );
 				pEffect = new CSound( (CWnd *)this, TIME_WAV, 
 										SOUND_WAVE | SOUND_ASYNCH /*| SOUND_QUEUE*/ | SOUND_AUTODELETE);	//...Wave file, to delete itself
-			   	(*pEffect).Play();														//...play the narration
+			   	(*pEffect).play();														//...play the narration
 			}
 			
 			msgBox.SetInitialOptions( 1, m_lScore );

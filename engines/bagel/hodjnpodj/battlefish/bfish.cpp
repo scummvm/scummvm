@@ -822,12 +822,12 @@ VOID CBFishWindow::PaintScreen()
             if (hDIB && (m_pGamePalette != NULL)) {
 
                 GetClientRect( rcDest );
-                LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
+                LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
                 rcDIB.top = rcDIB.left = 0;
-                rcDIB.right = (INT) ::DIBWidth(lpDIB);
-                rcDIB.bottom = (INT) ::DIBHeight(lpDIB);
-                ::GlobalUnlock((HGLOBAL) hDIB);
-                ::PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
+                rcDIB.right = (INT) DIBWidth(lpDIB);
+                rcDIB.bottom = (INT) DIBHeight(lpDIB);
+                GlobalUnlock((HGLOBAL) hDIB);
+                PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
             }
 
             if (!m_bInMenu && (m_pScrollSprite != NULL)) {

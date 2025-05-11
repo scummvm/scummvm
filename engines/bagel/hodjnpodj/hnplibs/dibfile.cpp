@@ -61,13 +61,13 @@ BOOL WINAPI SaveDIB(HDIB hDib, CFile &file) {
 	 * Get a pointer to the DIB memory, the first of which contains
 	 * a BITMAPINFO structure
 	 */
-	lpBI = (LPBITMAPINFOHEADER) ::GlobalLock((HGLOBAL)hDib);
+	lpBI = (LPBITMAPINFOHEADER) GlobalLock((HGLOBAL)hDib);
 	if (lpBI == NULL)
 		return FALSE;
 
 	if (!IS_WIN30_DIB(lpBI))
 	{
-		::GlobalUnlock((HGLOBAL)hDib);
+		GlobalUnlock((HGLOBAL)hDib);
 		return FALSE;       // It's an other-style DIB (save not supported)
 	}
 
@@ -142,12 +142,12 @@ BOOL WINAPI SaveDIB(HDIB hDib, CFile &file) {
 	file.WriteHuge(lpBI, dwDIBSize);
 	}
 		CATCH(CFileException, e) {
-		::GlobalUnlock((HGLOBAL)hDib);
+		GlobalUnlock((HGLOBAL)hDib);
 		THROW_LAST();
 	}
 	END_CATCH
 
-		::GlobalUnlock((HGLOBAL)hDib);
+		GlobalUnlock((HGLOBAL)hDib);
 	return TRUE;
 #else
 	error("TODO: SaveDIB");
@@ -204,7 +204,7 @@ try_again:
 	{
 		goto done;
 	}
-	pDIB = (LPSTR) ::GlobalLock((HGLOBAL)hDIB);
+	pDIB = (LPSTR) GlobalLock((HGLOBAL)hDIB);
 
 	/*
 	 * Go read the bits.
@@ -212,12 +212,12 @@ try_again:
 	if (file.ReadHuge(pDIB, dwBitsSize - sizeof(BITMAPFILEHEADER)) !=
 		dwBitsSize - sizeof(BITMAPFILEHEADER))
 	{
-		::GlobalUnlock((HGLOBAL)hDIB);
+		GlobalUnlock((HGLOBAL)hDIB);
 		::GlobalFree((HGLOBAL)hDIB);
 		hDIB = NULL;
 		goto done;
 	}
-	::GlobalUnlock((HGLOBAL)hDIB);
+	GlobalUnlock((HGLOBAL)hDIB);
 
 done:
 
@@ -276,9 +276,9 @@ try_again:
 			pData = (char *)LockResource(hGbl);
 			hDIB = (HDIB) ::GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, dwBytes);
 			if (hDIB != NULL) {
-				pDIB = (LPSTR) ::GlobalLock((HGLOBAL)hDIB);
+				pDIB = (LPSTR) GlobalLock((HGLOBAL)hDIB);
 				memcpy(pDIB, pData, dwBytes);
-				::GlobalUnlock((HGLOBAL)hDIB);
+				GlobalUnlock((HGLOBAL)hDIB);
 				UnlockResource(hGbl);
 				FreeResource(hGbl);
 				return(hDIB);

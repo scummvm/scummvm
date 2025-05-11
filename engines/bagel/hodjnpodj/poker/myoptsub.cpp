@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "options.h"
-#include "bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 
 
 #ifdef _DEBUG

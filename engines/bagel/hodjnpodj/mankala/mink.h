@@ -9,7 +9,7 @@
 #include "resource.h"
 #include "dibdoc.h"
 #include "sprite.h"
-#include "bitmaps.h"    
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"    
 #include <memory.h>
 #include "sound.h"
 

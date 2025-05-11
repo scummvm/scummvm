@@ -11,7 +11,7 @@
 //#include "options.h"
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
-#include "bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 
 
 #ifdef _DEBUG

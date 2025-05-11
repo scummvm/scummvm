@@ -883,7 +883,7 @@ if (HIWORD(lParam) == BN_CLICKED)	{		// only want to look at button clicks
 			// Check to see if the music state was changed and adjust to match it
 			//    
 		   	if((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
-		   		if (pGameSound->Playing())
+		   		if (pGameSound->playing())
 		   			pGameSound->stop();
 		   	} 
 		   	else if( m_lpGameStruct->bMusicEnabled ){
@@ -892,7 +892,7 @@ if (HIWORD(lParam) == BN_CLICKED)	{		// only want to look at button clicks
 								SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 				}
 				if (pGameSound != NULL) {
-					if ( !pGameSound->Playing() )
+					if ( !pGameSound->playing() )
 						(*pGameSound).midiLoopPlaySegment( 500, 31500, 0, FMT_MILLISEC );
 		   		}
 		   	}
@@ -1785,7 +1785,7 @@ void PlayEasterEgg( CDC *pDC, CWnd *pWnd, CPalette *pPalette, char *pszAnimFile,
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
 	}									
 	if (pEffect != NULL) {
-	   	bSuccess = (*pEffect).Play();
+	   	bSuccess = (*pEffect).play();
 	   	if (!bSuccess)
 	   		delete pEffect;
 	}

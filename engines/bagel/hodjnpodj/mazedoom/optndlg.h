@@ -3,9 +3,9 @@
 #define LEFT_SIDE		 30 
 #define	OPTIONS_COLOR	RGB(0, 0, 0)	// Color of the stats info CText
 
-#include "cbofdlg.h"                    
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"                    
 #include "mod.h"
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // COptnDlg dialog

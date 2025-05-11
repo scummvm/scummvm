@@ -1768,7 +1768,7 @@ VOID CFugeWindow::BallvsBrick(DOUBLE length)
 #if CSOUND
                             pEffect = new CSound( (CWnd *)this, WAV_WINWAVE,
                                                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-                            (*pEffect).Play();                                                      //...play the narration
+                            (*pEffect).play();                                                      //...play the narration
 #else
                             sndPlaySound(WAV_WINWAVE, SND_ASYNC);
 #endif
@@ -1976,7 +1976,7 @@ VOID CFugeWindow::LoseBall(VOID)
 #if CSOUND
             pEffect = new CSound( (CWnd *)this, WAV_LOSEBALL,
                                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-            (*pEffect).Play();                                                      //...play the narration
+            (*pEffect).play();                                                      //...play the narration
 #else
             sndPlaySound(WAV_LOSEBALL, SND_ASYNC);
 #endif
@@ -2026,7 +2026,7 @@ VOID CFugeWindow::LoseBall(VOID)
 #if CSOUND
                 pEffect = new CSound( (CWnd *)this, WAV_GAMEOVER,
                                         SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-                (*pEffect).Play();                                                      //...play the narration
+                (*pEffect).play();                                                      //...play the narration
 #else
                 sndPlaySound(WAV_GAMEOVER, SND_ASYNC);
 #endif
@@ -2634,7 +2634,7 @@ VOID CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point)
 #if CSOUND
             pEffect = new CSound( (CWnd *)this, WAV_BOOTH,
                                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE);  //...Wave file, to delete itself
-            (*pEffect).Play();                                                      //...play the narration
+            (*pEffect).play();                                                      //...play the narration
 #else
             sndPlaySound( WAV_BOOTH, SND_ASYNC );
 #endif
@@ -2645,7 +2645,7 @@ VOID CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point)
 #if CSOUND
             pEffect = new CSound( (CWnd *)this, WAV_TENT,
                                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE);  //...Wave file, to delete itself
-            (*pEffect).Play();                                                      //...play the narration
+            (*pEffect).play();                                                      //...play the narration
 #else
             sndPlaySound( WAV_TENT, SND_ASYNC );
 #endif
@@ -2659,7 +2659,7 @@ VOID CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point)
 #if CSOUND
                 pEffect = new CSound( (CWnd *)this, WAV_PEOPLE1,
                                         SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE);  //...Wave file, to delete itself
-                (*pEffect).Play();                                                      //...play the narration
+                (*pEffect).play();                                                      //...play the narration
 #else
                 sndPlaySound( WAV_PEOPLE1, SND_ASYNC );
 #endif
@@ -2668,7 +2668,7 @@ VOID CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point)
 #if CSOUND
                 pEffect = new CSound( (CWnd *)this, WAV_PEOPLE2,
                                         SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE);  //...Wave file, to delete itself
-                (*pEffect).Play();                                                      //...play the narration
+                (*pEffect).play();                                                      //...play the narration
 #else
                 sndPlaySound( WAV_PEOPLE2, SND_ASYNC );
 #endif

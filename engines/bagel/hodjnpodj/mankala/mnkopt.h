@@ -5,10 +5,10 @@
 #define __mnkopt_H__
 
 #include "mnk.h"
-#include "cbofdlg.h"
-#include "cmessbox.h"
-#include "mainmenu.h"
-#include "rules.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
 
 #define		OPTIONS_COLOR	RGB(0, 0, 0)	// Color of the stats info CText
 #define		LEFT_SIDE		25

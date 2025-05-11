@@ -51,12 +51,12 @@
 #include "resource.h"
 
 #include "options.h"
-#include "bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 
 #include "dibdoc.h"
 
 #include "poker.h"
-#include "rules.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
 
 #define		RULESSOUND		".\\SOUND\\POKE.WAV"
 

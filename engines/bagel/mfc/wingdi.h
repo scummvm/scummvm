@@ -399,6 +399,39 @@ enum {
 #define STRETCH_DELETESCANS COLORONCOLOR
 #define STRETCH_HALFTONE    HALFTONE
 
+/* Binary raster ops */
+#define R2_BLACK            1   /*  0       */
+#define R2_NOTMERGEPEN      2   /* DPon     */
+#define R2_MASKNOTPEN       3   /* DPna     */
+#define R2_NOTCOPYPEN       4   /* PN       */
+#define R2_MASKPENNOT       5   /* PDna     */
+#define R2_NOT              6   /* Dn       */
+#define R2_XORPEN           7   /* DPx      */
+#define R2_NOTMASKPEN       8   /* DPan     */
+#define R2_MASKPEN          9   /* DPa      */
+#define R2_NOTXORPEN        10  /* DPxn     */
+#define R2_NOP              11  /* D        */
+#define R2_MERGENOTPEN      12  /* DPno     */
+#define R2_COPYPEN          13  /* P        */
+#define R2_MERGEPENNOT      14  /* PDno     */
+#define R2_MERGEPEN         15  /* DPo      */
+#define R2_WHITE            16  /*  1       */
+#define R2_LAST             16
+
+/* Brush Styles */
+#define BS_SOLID            0
+#define BS_NULL             1
+#define BS_HOLLOW           BS_NULL
+#define BS_HATCHED          2
+#define BS_PATTERN          3
+#define BS_INDEXED          4
+#define BS_DIBPATTERN       5
+#define BS_DIBPATTERNPT     6
+#define BS_PATTERN8X8       7
+#define BS_DIBPATTERN8X8    8
+#define BS_MONOPATTERN      9
+
+
 typedef struct tagBITMAPINFOHEADER {
 	DWORD      biSize;
 	LONG       biWidth;
@@ -497,6 +530,15 @@ typedef struct tagDRAWITEMSTRUCT {
 	ULONG_PTR   itemData;
 } DRAWITEMSTRUCT, NEAR *PDRAWITEMSTRUCT, FAR *LPDRAWITEMSTRUCT;
 
+/* Logical Brush (or Pattern) */
+typedef struct tagLOGBRUSH
+{
+	UINT        lbStyle;
+	COLORREF    lbColor;
+	ULONG_PTR   lbHatch;
+} LOGBRUSH, *PLOGBRUSH, NEAR *NPLOGBRUSH, FAR *LPLOGBRUSH;
+
+
 extern int GetDeviceCaps(HDC hdc, int index);
 extern HDC CreateCompatibleDC(HDC hdc);
 extern int ReleaseDC(HWND hWnd, HDC hDC);
@@ -534,6 +576,7 @@ extern BOOL SetScrollRange(HWND hWnd, int nBar,
 extern BOOL ClipCursor(const RECT *lpRect);
 extern BOOL GetCursorPos(LPPOINT lpPoint);
 extern BOOL SetCursorPos(int x, int y);
+extern BOOL SetCapture();
 extern BOOL ReleaseCapture();
 
 } // namespace MFC

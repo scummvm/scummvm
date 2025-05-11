@@ -40,36 +40,7 @@ HWND ghParentWnd;
 /////////////////////////////////////////////////////////////////////////////
 // Public C interface
 
-/*****************************************************************
- *
- * RunArtp
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *          This is the API function for the DLL. It is what the calling app
- *          calls to invoke poker 
- *   
- * FORMAL PARAMETERS:
- *
- *      hParentWnd, lpGameInfo
- *
- * IMPLICIT INPUT PARAMETERS:
- *  
- *      n/a
- *   
- * IMPLICIT OUTPUT PARAMETERS:
- *   
- *      n/a
- *   
- * RETURN VALUE:
- *
- *      n/a
- *
- ****************************************************************/
- 
-extern "C" 
-HWND FAR PASCAL RunArtp( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
-{
+HWND FAR PASCAL RunArtp( HWND hParentWnd, LPGAMESTRUCT lpGameInfo ) {
     CMainWindow *pMain;
 
     pGameInfo = lpGameInfo;

@@ -364,12 +364,12 @@ void CMainWindow::PaintScreen()
     pDC = GetDC();
     if (pDC && hDIB) {
         GetClientRect( rcDest );
-        LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
+        LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
         rcDIB.top = rcDIB.left = 0;
-        rcDIB.right = (int) ::DIBWidth(lpDIB);
-        rcDIB.bottom = (int) ::DIBHeight(lpDIB);
-        ::GlobalUnlock((HGLOBAL) hDIB);
-        ::PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, pMyGamePalette);
+        rcDIB.right = (int) DIBWidth(lpDIB);
+        rcDIB.bottom = (int) DIBHeight(lpDIB);
+        GlobalUnlock((HGLOBAL) hDIB);
+        PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, pMyGamePalette);
     }
 
     if (!m_bInMenu) {

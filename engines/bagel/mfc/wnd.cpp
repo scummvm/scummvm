@@ -186,6 +186,10 @@ void CWnd::SetActiveWindow() {
 	error("TODO: CWnd::SetActiveWindow");
 }
 
+void CWnd::SetFocus() {
+	error("TODO: CWnd::SetFocus");
+}
+
 void CWnd::DestroyWindow() {
 	error("TODO: CWnd::DestroyWindow");
 }
@@ -282,8 +286,13 @@ int CWnd::GetDlgCtrlID() const {
 	error("TODO: CWnd::GetDlgCtrlID");
 }
 
-void CWnd::SetFocus() {
-	error("TODO: CWnd::SetFocus");
+void CWnd::CheckDlgButton(int nIDButton, UINT nCheck) {
+	error("TODO: CWnd::CheckDlgButton");
+}
+
+LRESULT CWnd::SendDlgItemMessage(int nID, UINT message,
+		WPARAM wParam, LPARAM lParam) const {
+	error("TODO: CWnd::SendDlgItemMessage");
 }
 
 } // namespace MFC

@@ -446,26 +446,26 @@ try_again:
         }
 #ifdef _DEBUG
         if (m_dwErrorCode == MCIERR_OUT_OF_MEMORY) {
-            sprintf(chErrorMessage,"Unable to play sound file %s",m_pszPathName);
+            Common::sprintf_s(chErrorMessage,"Unable to play sound file %s",m_pszPathName);
             (*m_pWnd).MessageBox(chErrorMessage,"Insufficient System Resources",MB_ICONEXCLAMATION);
         }
         else
         if (m_chType == SOUND_TYPE_MCI) {
-            sprintf(chErrorMessage,"Unable to play sound file %s\nMCI error code %ld occurred",m_pszPathName,m_dwErrorCode);
+            Common::sprintf_s(chErrorMessage,"Unable to play sound file %s\nMCI error code %ld occurred",m_pszPathName,m_dwErrorCode);
             (*m_pWnd).MessageBox(chErrorMessage,"Internal Problem",MB_ICONEXCLAMATION);
         }
         else
         if (m_chType == SOUND_TYPE_MMIO) {
-            sprintf(chErrorMessage,"Unable to play sound file %s\nMMIO error code %ld occurred",m_pszPathName,m_dwErrorCode);
+            Common::sprintf_s(chErrorMessage,"Unable to play sound file %s\nMMIO error code %ld occurred",m_pszPathName,m_dwErrorCode);
             (*m_pWnd).MessageBox(chErrorMessage,"Internal Problem",MB_ICONEXCLAMATION);
         }
         else
         if (m_chType == SOUND_TYPE_SND) {
-            sprintf(chErrorMessage,"Unable to play sound file %s\nsndPlaySound Routine failure %ld occurred",m_pszPathName,m_dwErrorCode);
+            Common::sprintf_s(chErrorMessage,"Unable to play sound file %s\nsndPlaySound Routine failure %ld occurred",m_pszPathName,m_dwErrorCode);
             (*m_pWnd).MessageBox(chErrorMessage,"Internal Problem",MB_ICONEXCLAMATION);
         }
         else {
-            sprintf(chErrorMessage,"Unable to play sound file %s\nFailure code %ld occurred",m_pszPathName,m_dwErrorCode);
+            Common::sprintf_s(chErrorMessage,"Unable to play sound file %s\nFailure code %ld occurred",m_pszPathName,m_dwErrorCode);
             (*m_pWnd).MessageBox(chErrorMessage,"Internal Problem",MB_ICONEXCLAMATION);
         }
 #endif      
@@ -1594,7 +1594,7 @@ UINT        nResult;
     }
 
     if (pSound != NULL) {                               // release the data structures
-        if ((*pSound).Playing()) {
+        if ((*pSound).playing()) {
 
             (*pSound).m_bPlaying = FALSE;                   // mark sound as no longer playing
             (*pSound).m_bPaused = FALSE;
@@ -1617,7 +1617,7 @@ UINT        nResult;
             (*pSound).m_dwErrorCode = 0;
     
             if ((*pSound).m_wFlags & SOUND_LOOP) {          // if looping is specified
-                bSuccess = (*pSound).Play();
+                bSuccess = (*pSound).play();
                 if (bSuccess == FALSE)
                     (*pSound).m_wFlags ^= SOUND_LOOP;
             }   
@@ -1661,7 +1661,7 @@ void CSound::clearSounds(void)
 
 /*************************************************************************
  *
- * ClearWaveSounds()
+ * clearWaveSounds()
  *
  * Parameters:      none
  *
@@ -1672,7 +1672,7 @@ void CSound::clearSounds(void)
  *
  ************************************************************************/
 
-void CSound::ClearWaveSounds(void)
+void CSound::clearWaveSounds(void)
 {
 CSound  *pSound = NULL,
         *pNextSound = NULL;

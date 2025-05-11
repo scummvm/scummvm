@@ -846,7 +846,7 @@ void WINAPI ShowMemoryInfo(const char *chMessage, const char *chTitle) {
 	Common::sprintf_s(buf, "Free Memory = %ld\nLargest Memory Block = %ld",
 		GetFreeSpace(0), GlobalCompact(0));
 	MessageBox(NULL, buf, "Internal Status", MB_ICONINFORMATION);
-	//	sprintf(buf,"Largest Memory Block = %ld",GlobalCompact(0));
+	//	Common::sprintf_s(buf,"Largest Memory Block = %ld",GlobalCompact(0));
 	//	MessageBox(NULL,buf,"Internal Problem",MB_ICONINFORMATION);
 #endif
 }

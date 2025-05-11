@@ -135,6 +135,10 @@ BOOL SetCursorPos(int x, int y) {
 	return TRUE;
 }
 
+BOOL SetCapture() {
+	error("TODO: SetCapture");
+}
+
 BOOL ReleaseCapture() {
 	error("TODO: ReleaseCapture");
 }

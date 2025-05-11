@@ -1,8 +1,8 @@
 // optndlg.h : header file
 //
 #include "resource.h"
-#include "cbofdlg.h"                    
-#include "text.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"                    
+#include "bagel/hodjnpodj/hnplibs/text.h"
 
 #define LEFT_SIDE		 30 
 #define	OPTIONS_COLOR	RGB(0, 0, 0)	// Color of the stats info CText

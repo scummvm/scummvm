@@ -265,7 +265,7 @@ void COptn::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		if ( m_nLttrsSlvd > MAX_LTTRSSLVD )
 			m_nLttrsSlvd = MAX_LTTRSSLVD;
 
-		sprintf(msg, "Letters Solved: %d", m_nLttrsSlvd);
+		Common::sprintf_s(msg, "Letters Solved: %d", m_nLttrsSlvd);
 		bAssertCheck = (*m_pLttrsSlvd).DisplayString(pDC,msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 		ASSERT(bAssertCheck);
 		pScrollBar->SetScrollPos(m_nLttrsSlvd, TRUE);
@@ -302,7 +302,7 @@ void COptn::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		if ( m_nTime > MAX_INDEX_TIME )
 			m_nTime = MAX_INDEX_TIME;
 
-		sprintf(msg, "Time Limit: %s", m_chTime[m_nTime]);
+		Common::sprintf_s(msg, "Time Limit: %s", m_chTime[m_nTime]);
 
 		bAssertCheck = (*m_pTime).DisplayString(pDC,msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
@@ -326,11 +326,11 @@ void COptn::OnPaint()
 
 	pDC = GetDC();
 
-	sprintf(msg, "Letters Solved: %d", m_nLttrsSlvd);	// Display Letters Solved stats
+	Common::sprintf_s(msg, "Letters Solved: %d", m_nLttrsSlvd);	// Display Letters Solved stats
 	bAssertCheck = (*m_pLttrsSlvd).DisplayString(pDC,msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 	ASSERT(bAssertCheck);
 
-	sprintf(msg, "Time: %s", m_chTime[m_nTime]);		// Display Time stats
+	Common::sprintf_s(msg, "Time: %s", m_chTime[m_nTime]);		// Display Time stats
 	bAssertCheck = (*m_pTime).DisplayString(pDC,msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 	ASSERT(bAssertCheck);
 

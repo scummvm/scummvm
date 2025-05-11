@@ -30,21 +30,21 @@
  *
  ****************************************************************/
 
-#include <stdafx.h>
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include <time.h>
 #include "bagel/hodjnpodj/hnplibs/dibdoc.h"
 
 #include "bagel/boflib/misc.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
-#include "mainmenu.h"
+#include "bagel/hodjnpodj/hnplibs/mainmenu.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/boflib/sound.h"
 
 #include "globals.h"
 #include "resource.h"
-#include "button.h"
-#include "bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 #include "main.h"
 #include "optn.h"
 
@@ -383,14 +383,14 @@ void CMainWindow::SplashScreen()
 	ASSERT(pDC);
 
 	GetClientRect( rcDest );							// get the rectangle to where we paint
-	LPSTR lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB); // from the DIB get the size of the art
-	int cxDIB = (int) ::DIBWidth(lpDIB);
-	int cyDIB = (int) ::DIBHeight(lpDIB);
-	::GlobalUnlock((HGLOBAL) hDIB);
+	LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB); // from the DIB get the size of the art
+	int cxDIB = (int) DIBWidth(lpDIB);
+	int cyDIB = (int) DIBHeight(lpDIB);
+	GlobalUnlock((HGLOBAL) hDIB);
 	rcDIB.top = rcDIB.left = 0;							// setup the source rectangle from which
 	rcDIB.right = cxDIB;                                // ... we'll do the painting
 	rcDIB.bottom = cyDIB;
-	::PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);	// transfer the image to the screen
+	PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);	// transfer the image to the screen
 
 	pSprite = CSprite::GetSpriteChain();				// now get a pointer to the sprite chain
 	while(pSprite) {                                    // ... and for each sprite, clear its saved
@@ -453,7 +453,7 @@ void CMainWindow::GameWin()
 	m_cCryptograms->DrawSource(pDC);
 	ReleaseDC(pDC);
 
-	sprintf( buf, "Score:  %d", m_cCryptograms->m_cStats->m_nScore );
+	Common::sprintf_s( buf, "Score:  %d", m_cCryptograms->m_cStats->m_nScore );
 	CMessageBox GameOverDlg((CWnd *)this, pGamePalette, 
 								"You win!", buf, -1, 30 );
 }
@@ -471,7 +471,7 @@ void CMainWindow::GameLose()
 	m_cCryptograms->m_cStats->m_nScore = m_cCryptograms->LettersSolved() * SCORE_FACTOR;
 
 	RefreshStats();
-	sprintf( buf, "Score:  %d", m_cCryptograms->m_cStats->m_nScore );
+	Common::sprintf_s( buf, "Score:  %d", m_cCryptograms->m_cStats->m_nScore );
 	CMessageBox GameOverDlg((CWnd *)this, pGamePalette, 
 							"Time's up!", buf,  -1, 30 );
 
@@ -551,7 +551,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 				**********************************************************/
 				if ( m_cCryptograms->DrawGram(pDC) == FALSE ) {
 					char szMsg[128];
-					sprintf(szMsg, "File error.  Check %s.", CRYPT_TXT_FILE);
+					Common::sprintf_s(szMsg, "File error.  Check %s.", CRYPT_TXT_FILE);
 					MessageBox(szMsg);
 					PostMessage( WM_CLOSE,0,0 );
 					return( FALSE );
@@ -618,7 +618,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 
 				} //end switch(ComDlg.DoModal())
 				if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
-					if (pGameSound->Playing())	
+					if (pGameSound->playing())	
 				    	(*pGameSound).Stop();
 				}
 				else if (m_lpGameStruct->bMusicEnabled) {
@@ -627,7 +627,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 									SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 					}
 					if (pGameSound != NULL) {
-						if (!pGameSound->Playing())
+						if (!pGameSound->playing())
 							(*pGameSound).midiLoopPlaySegment( 1080, 32500, 0, FMT_MILLISEC ); 
 					} // end if pGameSound
 				}
@@ -816,33 +816,33 @@ void CMainWindow::OnLButtonDown(UINT nFlags,CPoint point)
 			nPick = brand() % NUM_SKULL_SOUNDS;
 			switch (nPick) {
 				case 0:
-					sprintf( bufName, WAV_JOKE1 );
+					Common::sprintf_s( bufName, WAV_JOKE1 );
 					nSleepTime = JOKE1_SLEEP;
 					break;
 				case 1:
-					sprintf( bufName, WAV_JOKE2 );
+					Common::sprintf_s( bufName, WAV_JOKE2 );
 					nSleepTime = JOKE2_SLEEP;
 					break;
 				case 2:
-					sprintf( bufName, WAV_JOKE3 );
+					Common::sprintf_s( bufName, WAV_JOKE3 );
 					nSleepTime = JOKE3_SLEEP;
 					break;
 				case 3:
-					sprintf( bufName, WAV_JOKE4 );
+					Common::sprintf_s( bufName, WAV_JOKE4 );
 					nSleepTime = JOKE4_SLEEP;
 					break;
 				case 4:
-					sprintf( bufName, WAV_JOKE5 );
+					Common::sprintf_s( bufName, WAV_JOKE5 );
 					nSleepTime = JOKE5_SLEEP;
 					break;
 				default:
-					sprintf( bufName, WAV_JOKE6 );
+					Common::sprintf_s( bufName, WAV_JOKE6 );
 					nSleepTime = JOKE6_SLEEP;
 					break;
 			}
 			pEffect = new CSound( (CWnd *)this, bufName, SOUND_QUEUE | 
 									SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-		   	(*pEffect).Play();														//...play the narration
+		   	(*pEffect).play();														//...play the narration
 		}
 		else 		// no sound playing
 			nSleepTime = SKULL_SLEEP;
@@ -878,7 +878,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags,CPoint point)
 		if( m_lpGameStruct->bSoundEffectsEnabled) {
 			pEffect = new CSound( (CWnd *)this, WAV_URN1, SOUND_QUEUE | 
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-		   	(*pEffect).Play();														//...play the narration
+		   	(*pEffect).play();														//...play the narration
 		}
 		if( bSuccess ) {
 			(*pSprite).SetCel( NUM_URN1_CELS );
@@ -904,7 +904,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags,CPoint point)
 		if( m_lpGameStruct->bSoundEffectsEnabled) {
 			pEffect = new CSound( (CWnd *)this, WAV_URN2, SOUND_QUEUE | 
  									SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-		   	(*pEffect).Play();														//...play the narration
+		   	(*pEffect).play();														//...play the narration
 		}
 		if( bSuccess ) {
 			(*pSprite).SetCel( NUM_URN2_CELS );
@@ -930,7 +930,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags,CPoint point)
 		if( m_lpGameStruct->bSoundEffectsEnabled) {
 			pEffect = new CSound( (CWnd *)this, WAV_URN3, SOUND_QUEUE | 
 									SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-		   	(*pEffect).Play();														//...play the narration
+		   	(*pEffect).play();														//...play the narration
 		}
 		if( bSuccess ) {
 			(*pSprite).SetCel( NUM_URN3_CELS );
@@ -947,25 +947,25 @@ void CMainWindow::OnLButtonDown(UINT nFlags,CPoint point)
 	else if (gryphRect.PtInRect(point) && (m_lpGameStruct->bSoundEffectsEnabled)) {
 		pEffect = new CSound( (CWnd *)this, WAV_GRYPH, SOUND_QUEUE | 
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-	   	(*pEffect).Play();														//...play the narration
+	   	(*pEffect).play();														//...play the narration
 	}
 	else if (stepsRect.PtInRect(point) && (m_lpGameStruct->bSoundEffectsEnabled)) {
 		pEffect = new CSound( (CWnd *)this, WAV_STEPS, SOUND_QUEUE | 
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-	   	(*pEffect).Play();														//...play the narration
+	   	(*pEffect).play();														//...play the narration
 	}
 	else if (m_cCryptograms->m_cStats->m_nTime < MAX_TIME && 
 			(hourRect.PtInRect(point) && (m_lpGameStruct->bSoundEffectsEnabled)) ) {
 		pEffect = new CSound( (CWnd *)this, WAV_HOUR, SOUND_QUEUE | 
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-	   	(*pEffect).Play();														//...play the narration
+	   	(*pEffect).play();														//...play the narration
 	}
 	else if ( ( (torch1Rect.PtInRect(point)) || (torch2Rect.PtInRect(point)) ) ||
 				( (torch3Rect.PtInRect(point)) || (torch4Rect.PtInRect(point)) ) ) {
         if (m_lpGameStruct->bSoundEffectsEnabled) {
 			pEffect = new CSound( (CWnd *)this, WAV_TORCH, SOUND_QUEUE | 
 									SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
-		   	(*pEffect).Play();														//...play the narration
+		   	(*pEffect).play();														//...play the narration
 		}
 	}
 }

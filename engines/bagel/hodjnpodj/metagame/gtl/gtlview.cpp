@@ -10,7 +10,7 @@
 #include "gtlview.h"
 #include "gtlfrm.h"
 #include "infdlg.h"
-#include "rules.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
 
 ///DEFS gtlview.h
 

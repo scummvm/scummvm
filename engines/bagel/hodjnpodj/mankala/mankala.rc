@@ -8,7 +8,7 @@
 // Generated from the TEXTINCLUDE 2 resource.
 //
 #include "afxres.h"
-#include "rules.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "menures.h"
 
 #include "rules.rc"

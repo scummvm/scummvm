@@ -303,7 +303,7 @@ void CBarber::OnLButtonDown(CWnd *pWnd, CPalette *pPalette, CPoint point)
 			* Tell the user his score.						*
 			************************************************/
 			char buf[32];
-			sprintf(buf, "Score: %d", Score());
+			Common::sprintf_s(buf, "Score: %d", Score());
 			CMessageBox cmsgboxScore(
 							pWnd,
 							pPalette,
@@ -483,7 +483,7 @@ void CBarber::OnLButtonDblClk(CWnd *pWnd, CPalette *pPalette, CPoint point)
 			* Not allowed to remove cards from foundation. *
 			***********************************************/
 			char buf[32];
-			sprintf(buf, "Score: %d", Score());
+			Common::sprintf_s(buf, "Score: %d", Score());
 			CMessageBox cGameOver(
 							pWnd,
 							pPalette,

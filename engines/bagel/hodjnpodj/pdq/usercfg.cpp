@@ -423,7 +423,7 @@ void CUserCfgDlg::DispShown(void)
     CDC *pDC;
     char	msg[5];
 
-    sprintf( msg, "%d", m_nShown );
+    Common::sprintf_s( msg, "%d", m_nShown );
 	
     if ((pDC = GetDC()) != NULL) {
         txtShown->DisplayString(pDC, msg, 14, TEXT_BOLD, RGB( 0, 0, 0));

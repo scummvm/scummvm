@@ -882,7 +882,7 @@ LPINT CGtlData::FindShortestPath(CNode FAR * lpNode1,
     // if debug5 is 1, then FindShortestPath dumps debugging information
     if (CBdbgMgr::GetPointer()->m_iDebugValues[5])
     {
-        sprintf(szMsg, "Finding shortest path from node #%d "
+        Common::sprintf_s(szMsg, "Finding shortest path from node #%d "
                 "(%d,%d) to node #%d (%d,%d).\n",
                 iStartNode, iTargetNode,
                 cStartPoint.x, cStartPoint.y,

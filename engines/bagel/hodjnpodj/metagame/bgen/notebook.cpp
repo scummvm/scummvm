@@ -23,10 +23,10 @@
 #include "globals.h"
 #include "bfc.h"
 #include "misc.h"
-#include "bitmaps.h"
-#include "text.h"
-#include "rules.h"
-#include "button.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "sound.h"
 #include "notebook.h"
 
@@ -606,7 +606,7 @@ void CNotebook::ShowClue(CNote *pNote)
 {
 char	blurb[128];
 
-	sprintf(blurb,"Id=%d  Clue=%d  Person=%d  Place=%d",(*pNote).GetID(),(*pNote).GetClueID(),(*pNote).GetPersonID(),(*pNote).GetPlaceID());
+	Common::sprintf_s(blurb,"Id=%d  Clue=%d  Person=%d  Place=%d",(*pNote).GetID(),(*pNote).GetClueID(),(*pNote).GetPersonID(),(*pNote).GetPlaceID());
 	::MessageBox(NULL,blurb,"Internal Problem",MB_ICONINFORMATION);
 }
 
@@ -819,7 +819,7 @@ CSound	*pSound;
 		if (lpsPersonSoundSpec != NULL) {
 			pSound = new CSound(this,lpsPersonSoundSpec,SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 			(*pSound).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-			(*pSound).Play();
+			(*pSound).play();
 		}
 	}           
 	else
@@ -827,7 +827,7 @@ CSound	*pSound;
 		if (lpsPlaceSoundSpec != NULL) {
 			pSound = new CSound(this,lpsPlaceSoundSpec,SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 			(*pSound).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-			(*pSound).Play();
+			(*pSound).play();
 		}
 	}           
 	

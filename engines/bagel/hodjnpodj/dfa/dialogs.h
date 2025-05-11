@@ -19,7 +19,7 @@
 #ifndef DIALOGS_H
 #define DIALOGS_H
 
-#include "cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "dfa.h"
 
 //////////////////////////////////////////////////////////////////////////////

@@ -50,13 +50,13 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "options.h"
-#include "bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 #include "optndlg.h"
-#include "rules.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "game.h"
 #include "gamedll.h"
-#include "text.h"
-#include "button.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "audiocfg.h"
 
 #ifdef _DEBUG
