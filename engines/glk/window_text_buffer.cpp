@@ -1588,7 +1588,6 @@ void TextBufferWindow::scrollOneLine(bool forced) {
 void TextBufferWindow::scrollResize() {
 	int i;
 
-	_lines.clear();
 	_lines.resize(_scrollBack + SCROLLBACK);
 
 	_chars = _lines[0]._chars;
