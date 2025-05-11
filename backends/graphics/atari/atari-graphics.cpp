@@ -756,6 +756,8 @@ void AtariGraphicsManager::showOverlay(bool inGUI) {
 
 	_pendingScreenChanges.setScreenSurface(_screen[kOverlayBuffer]->surf.get());
 
+	// cursor is reset before calling showOverlay()
+
 	// do not cache dirtyRects and saved cursor rect
 	_screen[kOverlayBuffer]->reset(
 		getOverlayWidth(), getOverlayHeight(),
@@ -788,6 +790,9 @@ void AtariGraphicsManager::hideOverlay() {
 	// this always contains the next desired frame buffer to show
 	_pendingScreenChanges.setScreenSurface(
 		_screen[_currentState.mode == kTripleBuffering ? kBackBuffer2 : kFrontBuffer]->surf.get());
+
+	// reset cursor as its srcSurface has been just changed so wait for cursor surface to be updated
+	Cursor::setSurface(nullptr, 0, 0, 0, 0, 0);
 
 	_overlayState = kOverlayHidden;
 
@@ -984,20 +989,24 @@ void AtariGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int h
 	if (format)
 		assert(*format == PIXELFORMAT_CLUT8);
 
-	_screen[kOverlayBuffer]->cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
-	_screen[kFrontBuffer]->cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
+	Cursor::setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
+
+	_screen[kOverlayBuffer]->cursor.setSurfaceChanged();
+	_screen[kFrontBuffer]->cursor.setSurfaceChanged();
 
 	if (_currentState.mode == kTripleBuffering) {
-		_screen[kBackBuffer1]->cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
-		_screen[kBackBuffer2]->cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
+		_screen[kBackBuffer1]->cursor.setSurfaceChanged();
+		_screen[kBackBuffer2]->cursor.setSurfaceChanged();
 	}
 }
 
 void AtariGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
 	atari_debug("setCursorPalette: %d, %d", start, num);
 
+	Cursor::setPalette(colors, start, num);
+
 	// cursor palette is supported only in the overlay
-	_screen[kOverlayBuffer]->cursor.setPalette(colors, start, num);
+	_screen[kOverlayBuffer]->cursor.setSurfaceChanged();
 }
 
 void AtariGraphicsManager::updateMousePosition(int deltaX, int deltaY) {
@@ -1137,15 +1146,14 @@ bool AtariGraphicsManager::updateScreenInternal(Screen *dstScreen, const Graphic
 		cursor.saveBackground();
 	}
 
-	// unlock here because cursor.draw() is a software blit
-	UnlockSuperBlitter();
-
 	if (drawCursor) {
 		cursor.draw();
 		updated |= true;
 	}
 
 	dstScreen->clearDirtyRects();
+
+	UnlockSuperBlitter();
 
 	return updated;
 }

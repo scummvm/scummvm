@@ -29,6 +29,7 @@ bool g_hasSuperVidel = false;
 
 #ifdef USE_SV_BLITTER
 int g_superVidelFwVersion = 0;
+const byte *g_blitMask = nullptr;
 
 static bool isSuperBlitterLocked;
 

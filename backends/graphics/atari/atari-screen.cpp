@@ -35,6 +35,7 @@ Screen::Screen(AtariGraphicsManager *manager, int width, int height, const Graph
 
 	const int bitsPerPixel = _manager->getBitsPerPixel(format);
 
+#ifdef USE_SUPERVIDEL
 	if (g_hasSuperVidel) {
 		surf.reset(new SuperVidelSurface(
 			width + 2 * MAX_HZ_SHAKE,
@@ -42,7 +43,9 @@ Screen::Screen(AtariGraphicsManager *manager, int width, int height, const Graph
 			format,
 			bitsPerPixel));
 		_offsettedSurf.reset(new SuperVidelSurface(bitsPerPixel));
-	} else {
+	} else
+#endif
+	{
 		surf.reset(new AtariSurface(
 			width + (_manager->_tt ? 0 : 2 * MAX_HZ_SHAKE),
 			height + 2 * MAX_V_SHAKE,

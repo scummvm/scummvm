@@ -24,6 +24,8 @@
 
 #include "graphics/managed_surface.h"
 
+#include "backends/graphics/atari/atari-supervidel.h"
+
 class AtariSurface : public Graphics::ManagedSurface {
 public:
 	AtariSurface(int bitsPerPixel);
@@ -56,6 +58,7 @@ protected:
 	int _bitsPerPixel = 0;
 };
 
+#ifdef USE_SUPERVIDEL
 class SuperVidelSurface final : public AtariSurface {
 public:
 	SuperVidelSurface(int bitsPerPixel)
@@ -75,8 +78,17 @@ public:
 
 	void drawMaskedSprite(const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
 						  int destX, int destY,
-						  const Common::Rect &subRect) override;
+						  const Common::Rect &subRect) override {
+#ifdef USE_SV_BLITTER
+		g_blitMask = (const byte *)srcMask.getBasePtr(subRect.left, subRect.top);
+#endif
+		copyRectToSurfaceWithKey(srcSurface, destX, destY, subRect, 0);
+#ifdef USE_SV_BLITTER
+		g_blitMask = nullptr;
+#endif
+	}
 };
+#endif
 
 void AtariSurfaceInit();
 void AtariSurfaceDeinit();

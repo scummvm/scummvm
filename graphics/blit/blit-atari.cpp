@@ -50,7 +50,7 @@ void keyBlitLogicAtari(byte *dst, const byte *src, const uint w, const uint h,
 	if (key == 0 && ((uintptr)src & 0xFF000000) >= 0xA0000000 && ((uintptr)dst & 0xFF000000) >= 0xA0000000) {
 		if (g_superVidelFwVersion >= 9) {
 			*SV_BLITTER_FIFO = (long)src;				// SV_BLITTER_SRC1
-			*SV_BLITTER_FIFO = (long)src;				// SV_BLITTER_SRC2
+			*SV_BLITTER_FIFO = (long)(g_blitMask ? g_blitMask : src);	// SV_BLITTER_SRC2
 			*SV_BLITTER_FIFO = (long)dst;				// SV_BLITTER_DST
 			*SV_BLITTER_FIFO = w - 1;					// SV_BLITTER_COUNT
 			*SV_BLITTER_FIFO = srcDelta + w;			// SV_BLITTER_SRC1_OFFSET
@@ -63,7 +63,7 @@ void keyBlitLogicAtari(byte *dst, const byte *src, const uint w, const uint h,
 			while (*SV_BLITTER_CONTROL & 1);
 
 			*SV_BLITTER_SRC1           = (long)src;
-			*SV_BLITTER_SRC2           = (long)src;
+			*SV_BLITTER_SRC2           = (long)(g_blitMask ? g_blitMask : src);
 			*SV_BLITTER_DST            = (long)dst;
 			*SV_BLITTER_COUNT          = w - 1;
 			*SV_BLITTER_SRC1_OFFSET    = srcDelta + w;

@@ -27,11 +27,31 @@
 #include "atari-surface.h"
 //#include "backends/platform/atari/atari-debug.h"
 
-byte Cursor::_palette[256*3] = {};
+bool Cursor::_globalSurfaceChanged;
+
+byte Cursor::_palette[256*3];
+
+const byte *Cursor::_buf;
+int Cursor::_width;
+int Cursor::_height;
+int Cursor::_hotspotX;
+int Cursor::_hotspotY;
+uint32 Cursor::_keycolor;
+
+Graphics::Surface Cursor::_surface;
+Graphics::Surface Cursor::_surfaceMask;
 
 Cursor::Cursor(const AtariGraphicsManager *manager, const Screen *screen)
-		: _manager(manager)
-		, _parentScreen(screen) {
+	: _manager(manager)
+	, _parentScreen(screen) {
+}
+
+Cursor::~Cursor() {
+	_savedBackground.free();
+	// beware, called multiple times (they have to be destroyed before
+	// AtariSurfaceDeinit() is called)
+	_surface.free();
+	_surfaceMask.free();
 }
 
 void Cursor::update() {
@@ -98,7 +118,7 @@ void Cursor::updatePosition(int deltaX, int deltaY) {
 	_positionChanged = true;
 }
 
-void Cursor::setSurface(const void *buf, int w, int h, int hotspotX, int hotspotY, uint32 keycolor) {
+/* static */ void Cursor::setSurface(const void *buf, int w, int h, int hotspotX, int hotspotY, uint32 keycolor) {
 	if (w == 0 || h == 0 || buf == nullptr) {
 		_buf = nullptr;
 		return;
@@ -111,79 +131,97 @@ void Cursor::setSurface(const void *buf, int w, int h, int hotspotX, int hotspot
 	_hotspotY = hotspotY;
 	_keycolor = keycolor;
 
-	_surfaceChanged = true;
+	_globalSurfaceChanged = true;
 }
 
-void Cursor::setPalette(const byte *colors, uint start, uint num) {
+/* static */ void Cursor::setPalette(const byte *colors, uint start, uint num) {
 	memcpy(&_palette[start * 3], colors, num * 3);
 
-	_surfaceChanged = true;
+	_globalSurfaceChanged = true;
 }
 
 void Cursor::convertSurfaceTo(const Graphics::PixelFormat &format) {
-	const int cursorWidth = (_srcRect.width() + 15) & (-16);
+	static int rShift, gShift, bShift;
+	static int rMask, gMask, bMask;
+
+	// TODO: maintain a max width
+	const int cursorWidth = g_hasSuperVidel ? _width : ((_srcRect.width() + 15) & (-16));
 	const int cursorHeight = _height;
 	const bool isCLUT8 = format.isCLUT8();
 
 	if (_surface.w != cursorWidth || _surface.h != cursorHeight || _surface.format != format) {
 		if (!isCLUT8 && _surface.format != format) {
-			_rShift = format.rLoss - format.rShift;
-			_gShift = format.gLoss - format.gShift;
-			_bShift = format.bLoss - format.bShift;
+			rShift = format.rLoss - format.rShift;
+			gShift = format.gLoss - format.gShift;
+			bShift = format.bLoss - format.bShift;
 
-			_rMask = format.rMax() << format.rShift;
-			_gMask = format.gMax() << format.gShift;
-			_bMask = format.bMax() << format.bShift;
+			rMask = format.rMax() << format.rShift;
+			gMask = format.gMax() << format.gShift;
+			bMask = format.bMax() << format.bShift;
 		}
 
-		_surface.create(cursorWidth, cursorHeight, format);
-		_surfaceMask.create(_surface.w / 8, _surface.h, format);	// 1 bpl
+		_surface.create(cursorWidth, cursorHeight, format);	// keep it 8bpl even if bitsPerPixel == 4...
+		_surfaceMask.create(g_hasSuperVidel ? _surface.w : _surface.w / 8, _surface.h, format);	// 1 bpl
 	}
 
-	const int srcRectWidth = _srcRect.width();
+	const int srcRectWidth = g_hasSuperVidel ? _width : _srcRect.width();
 
-	const byte *src = _buf + _srcRect.left;
+	const byte *src = g_hasSuperVidel ? _buf : _buf + _srcRect.left;
 	byte *dst = (byte *)_surface.getPixels();
-	uint16 *dstMask = (uint16 *)_surfaceMask.getPixels();
+	byte *dstMask = (byte *)_surfaceMask.getPixels();
+	uint16 *dstMask16 = (uint16 *)_surfaceMask.getPixels();
 	const int srcPadding = _width - srcRectWidth;
 	const int dstPadding = _surface.w - srcRectWidth;
+
+	uint16 mask16 = 0xffff;
+	uint16 invertedBit = 0x7fff;
 
 	for (int j = 0; j < cursorHeight; ++j) {
 		for (int i = 0; i < srcRectWidth; ++i) {
 			const uint32 color = *src++;
-			const uint16 bit = 1 << (15 - (i % 16));
 
 			if (color != _keycolor) {
 				if (!isCLUT8) {
 					// Convert CLUT8 to RGB332/RGB121 palette
-					*dst++ = ((_palette[color*3 + 0] >> _rShift) & _rMask)
-						   | ((_palette[color*3 + 1] >> _gShift) & _gMask)
-						   | ((_palette[color*3 + 2] >> _bShift) & _bMask);
+					*dst++ =  ((_palette[color*3 + 0] >> rShift) & rMask)
+							 | ((_palette[color*3 + 1] >> gShift) & gMask)
+							 | ((_palette[color*3 + 2] >> bShift) & bMask);
 				} else {
 					*dst++ = color;
 				}
 
-				// clear bit
-				*dstMask &= ~bit;
+				if (g_hasSuperVidel)
+					*dstMask++ = 0xff;
+				else
+					mask16 &= invertedBit;
 			} else {
 				*dst++ = 0x00;
 
-				// set bit
-				*dstMask |= bit;
+				if (g_hasSuperVidel)
+					*dstMask++ = 0x00;
 			}
 
-			if (bit == 0x0001)
-				dstMask++;
+			if (!g_hasSuperVidel && invertedBit == 0xfffe) {
+				*dstMask16++ = mask16;
+				mask16 = 0xffff;
+			}
+
+			// ror.w #1,invertedBit
+			invertedBit = (invertedBit >> 1) | (invertedBit << (sizeof (invertedBit) * 8 - 1));
 		}
 
 		src += srcPadding;
 
 		if (dstPadding) {
+			assert(!g_hasSuperVidel);
+
+			// this is at most 15 pixels
 			memset(dst, 0x00, dstPadding);
 			dst += dstPadding;
 
-			*dstMask |= ((1 << dstPadding) - 1);
-			dstMask++;
+			*dstMask16++ = mask16;
+			mask16 = 0xffff;
+			invertedBit = 0x7fff;
 		}
 	}
 }
@@ -220,7 +258,7 @@ void Cursor::saveBackground() {
 
 	//atari_debug("Cursor::saveBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
 
-	// save native pixels (i.e. bitplanes)
+	// save native bitplanes or pixels, so it must be a Graphics::Surface to copy from
 	if (_savedBackground.w != _savedRect.width()
 		|| _savedBackground.h != _savedRect.height()
 		|| _savedBackground.format != dstSurface.format) {
@@ -236,13 +274,13 @@ void Cursor::draw() {
 
 	//atari_debug("Cursor::draw: %d %d %d %d", _dstRect.left, _dstRect.top, _dstRect.width(), _dstRect.height());
 
-	if (_surfaceChanged || _srcRect.width() != _previousSrcRect.width()) {
+	if (_globalSurfaceChanged || _srcRect.width() != _previousSrcRect.width()) {
 		_previousSrcRect = _srcRect;
 
 		convertSurfaceTo(dstSurface.format);
 
 		if (!g_hasSuperVidel) {
-			// C2P in-place (TODO: merge with convertSurfaceTo)
+			// C2P in-place
 			AtariSurface surf(dstBitsPerPixel);
 			surf.w = _surface.w;
 			surf.h = _surface.h;
@@ -255,14 +293,17 @@ void Cursor::draw() {
 				0, 0,
 				Common::Rect(_surface.w, _surface.h));
 		}
+
+		_globalSurfaceChanged = false;
 	}
 
-	// don't use _srcRect.right as 'x2' as this must be aligned first
-	// (_surface.w is recalculated thanks to convertSurfaceTo())
 	dstSurface.drawMaskedSprite(
 		_surface, _surfaceMask,
 		_dstRect.left + _xOffset, _dstRect.top,
-		Common::Rect(0, _srcRect.top, _surface.w, _srcRect.bottom));
+		g_hasSuperVidel
+			? _srcRect
+			// TODO: _srcRect and add clipping to AtariSurface::drawMaskedSprite
+			: Common::Rect(0, _srcRect.top, _surface.w, _srcRect.bottom));
 
 	_visibilityChanged = _positionChanged = _surfaceChanged = false;
 }

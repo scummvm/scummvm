@@ -233,51 +233,6 @@ void AtariSurface::drawMaskedSprite(
 	}
 }
 
-void SuperVidelSurface::drawMaskedSprite(
-	const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
-	int destX, int destY,
-	const Common::Rect &subRect) {
-	assert(subRect.width() % 16 == 0);
-	assert(subRect.width() == srcSurface.w);
-	assert(srcSurface.format == format);
-	assert(_bitsPerPixel == 8);
-
-	const byte *src = (const byte *)srcSurface.getBasePtr(subRect.left, subRect.top);
-	const uint16 *mask = (const uint16 *)srcMask.getBasePtr(subRect.left, subRect.top);
-	byte *dst = (byte *)getBasePtr(destX, destY);
-
-	const int height = subRect.height();
-	const int width = subRect.width();
-	const int dstOffset = pitch - width;
-
-	for (int j = 0; j < height; ++j) {
-		for (int i = 0; i < width; i += 16, mask++) {
-			const uint16 m = *mask;
-
-			if (m == 0xFFFF) {
-				// all 16 pixels transparent
-				src += 16;
-				dst += 16;
-				continue;
-			}
-
-			for (int k = 0; k < 16; ++k) {
-				const uint16 bit = 1 << (15 - k);
-
-				if (m & bit) {
-					// transparent
-					src++;
-					dst++;
-				} else {
-					*dst++ = *src++;
-				}
-			}
-		}
-
-		dst += dstOffset;
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifdef USE_SUPERVIDEL

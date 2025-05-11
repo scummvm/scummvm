@@ -22,6 +22,8 @@
 #ifndef BACKENDS_GRAPHICS_ATARI_SUPERVIDEL_H
 #define BACKENDS_GRAPHICS_ATARI_SUPERVIDEL_H
 
+#include "common/scummsys.h"
+
 #ifdef USE_SUPERVIDEL
 
 // bits 26:0
@@ -48,6 +50,7 @@
 
 #ifdef USE_SV_BLITTER
 extern int g_superVidelFwVersion;
+extern const byte *g_blitMask;
 
 void SyncSuperBlitter();
 #endif	// USE_SV_BLITTER
