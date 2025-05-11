@@ -533,6 +533,67 @@ void Surface::blitScaled(const Surface &from, Common::Rational scale, int32 tran
 	blitScaled(from, 0, 0, from._width - 1, from._height - 1, 0, 0, scale, transp);
 }
 
+void Surface::blitShaded(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
+						 int16 x, int16 y, uint8 strength, int32 transp, Graphics::PixelFormat pixelFormat) {
+
+	// Color depths have to fit
+	assert(_bpp == from._bpp);
+
+	if (_bpp == 1) {
+		// Cannot properly shade in paletted mode
+		blit(from, left, top, right, bottom, x, y, transp);
+		return;
+	}
+
+	// Clip
+	if (!clipBlitRect(left, top, right, bottom, x, y, _width, _height, from._width, from._height))
+		return;
+
+	// Area to actually copy
+	uint16 width  = right  - left + 1;
+	uint16 height = bottom - top  + 1;
+
+	if ((width == 0) || (height == 0))
+		// Nothing to do
+		return;
+
+	// Pointers to the blit destination and source start points
+	     Pixel dst =      get(x   , y);
+	ConstPixel src = from.get(left, top);
+
+	while (height-- > 0) {
+		     Pixel dstRow = dst;
+		ConstPixel srcRow = src;
+		for (uint16 i = 0; i < width; i++, ++dstRow, ++srcRow) {
+			if (srcRow.get() == ((uint32) transp))
+				continue;
+
+			uint8 srcR = 0;
+			uint8 srcG = 0;
+			uint8 srcB = 0;
+			pixelFormat.colorToRGB(srcRow.get(), srcR, srcG, srcB);
+
+			uint8 dstR = 0;
+			uint8 dstG = 0;
+			uint8 dstB = 0;
+			pixelFormat.colorToRGB(dstRow.get(), dstR, dstG, dstB);
+
+			int shadeR = srcR * (16 - strength);
+			int shadeB = srcB * (16 - strength);
+			int shadeG = srcG * (16 - strength);
+
+			dstR = CLIP<int>((shadeR + strength * dstR) >> 4, 0, 255);
+			dstG = CLIP<int>((shadeG + strength * dstG) >> 4, 0, 255);
+			dstB = CLIP<int>((shadeB + strength * dstB) >> 4, 0, 255);
+
+			dstRow.set(pixelFormat.RGBToColor(dstR, dstG, dstB));
+		}
+
+		dst +=      _width;
+		src += from._width;
+	}
+}
+
 void Surface::fillRectRaw(int16 left, int16 top, int16 right, int16 bottom, uint32 color) {
 	// Just in case those are swapped
 	if (left > right)

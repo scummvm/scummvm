@@ -137,11 +137,23 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		if (!_spritesArray[_sourceSurface] || !_spritesArray[_destSurface])
 			break;
 
-		_spritesArray[_destSurface]->blit(*_spritesArray[_sourceSurface],
-				_spriteLeft, spriteTop,
-				_spriteLeft + _spriteRight - 1,
-				_spriteTop + _spriteBottom - 1,
-				_destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
+		if (_transparency & 0x200) {
+			uint8 strength = 16 - (((uint16) _transparency) >> 12);
+			_spritesArray[_destSurface]->blitShaded(*_spritesArray[_sourceSurface],
+											  _spriteLeft, spriteTop,
+											  _spriteLeft + _spriteRight - 1,
+											  _spriteTop + _spriteBottom - 1,
+											  _destSpriteX, _destSpriteY,
+											  strength,
+											  0,
+											  _vm->getPixelFormat());
+		} else {
+			_spritesArray[_destSurface]->blit(*_spritesArray[_sourceSurface],
+											  _spriteLeft, spriteTop,
+											  _spriteLeft + _spriteRight - 1,
+											  _spriteTop + _spriteBottom - 1,
+											  _destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
+		}
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
