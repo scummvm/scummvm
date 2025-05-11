@@ -177,4 +177,8 @@ int mapWindowsPointSize(int pointSize) {
 	return pointSize;
 }
 
+void ErrorLog(const char *logFile, const char *format, ...) {
+	// No implementation
+}
+
 } // namespace Bagel
