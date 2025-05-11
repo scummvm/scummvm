@@ -702,8 +702,7 @@ VOID CRiddlesWindow::GameReset(VOID)
 }
 
 
-ERROR_CODE CRiddlesWindow::LoadRiddle(VOID)
-{
+ERROR_CODE CRiddlesWindow::LoadRiddle() {
     STATIC UINT nLast;
     INT n, nMin, nMax;
     ERROR_CODE errCode;

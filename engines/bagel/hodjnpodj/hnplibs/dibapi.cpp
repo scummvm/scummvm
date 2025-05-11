@@ -838,7 +838,7 @@ HANDLE WINAPI CopyHandle(HANDLE h) {
 }
 
 
-void WINAPI ShowMemoryInfo(char *chMessage, const char *chTitle) {
+void WINAPI ShowMemoryInfo(const char *chMessage, const char *chTitle) {
 #ifdef _DEBUG
 	char	buf[256];
 

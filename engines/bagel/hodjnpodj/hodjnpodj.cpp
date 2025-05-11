@@ -80,7 +80,7 @@ Common::Error HodjNPodjEngine::run() {
 
 	// Run the game
 	//runGame();
-	//Riddles::RunRiddles(nullptr, &_gameInfo);
+	Riddles::RunRiddles(nullptr, &_gameInfo);
 
 	for (int size = 8; size <= 14; size += 2)
 		delete _fonts[size];

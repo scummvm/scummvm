@@ -148,6 +148,9 @@ public:
 private:
 	Common::Stream *_stream = nullptr;
 
+	Common::SeekableReadStream *readStream() const;
+	Common::WriteStream *writeStream() const;
+
 public:
 	CFile() {}
 	CFile(const char *lpszFileName, UINT nOpenFlags);
@@ -157,7 +160,7 @@ public:
 
 	BOOL Open(const char *lpszFileName, UINT nOpenFlags, CFileException *pError = NULL);
 	void Close();
-	void Abort() {}
+	void Abort();
 	ULONGLONG SeekToEnd();
 	void SeekToBegin();
 	virtual ULONGLONG Seek(LONGLONG lOff, UINT nFrom);
@@ -166,7 +169,6 @@ public:
 
 	virtual UINT Read(void *lpBuf, UINT nCount);
 	virtual void Write(const void *lpBuf, UINT nCount);
-
 };
 
 /*============================================================================*/

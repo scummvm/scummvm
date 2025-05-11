@@ -17,13 +17,28 @@ MODULE_OBJS = \
 	boflib/sound.o \
 	boflib/string.o \
 	boflib/string_functions.o \
+	mfc/bitmap.o \
+	mfc/bitmap_button.o \
+	mfc/brush.o \
+	mfc/button.o \
+	mfc/cmd_target.o \
+	mfc/dialog.o \
+	mfc/dc.o \
 	mfc/document.o \
+	mfc/edit.o \
 	mfc/file.o \
+	mfc/font.o \
+	mfc/frame_wnd.o \
 	mfc/gdi_object.o \
 	mfc/global_functions.o \
 	mfc/ifstream.o \
 	mfc/object.o \
+	mfc/paint_dc.o \
+	mfc/palette.o \
+	mfc/pen.o \
+	mfc/scrollbar.o \
 	mfc/win_app.o \
+	mfc/win_thread.o \
 	mfc/wingdi.o \
 	mfc/wnd.o \
 	spacebar/baglib/area_object.o \
@@ -118,11 +133,13 @@ MODULE_OBJS = \
 	hodjnpodj/gfx/bold_font.o \
 	hodjnpodj/gfx/palette.o \
 	hodjnpodj/hnplibs/audiocfg.o \
+	hodjnpodj/hnplibs/bitmaps.o \
 	hodjnpodj/hnplibs/button.o \
 	hodjnpodj/hnplibs/cbofdlg.o \
 	hodjnpodj/hnplibs/cmessbox.o \
 	hodjnpodj/hnplibs/dibapi.o \
 	hodjnpodj/hnplibs/dibdoc.o \
+	hodjnpodj/hnplibs/dibfile.o \
 	hodjnpodj/hnplibs/mainmenu.o \
 	hodjnpodj/hnplibs/rules.o \
 	hodjnpodj/hnplibs/sprite.o \
@@ -139,7 +156,8 @@ MODULE_OBJS = \
 	hodjnpodj/views/sprites_view.o \
 	hodjnpodj/views/view.o \
 	hodjnpodj/riddles/gamedll.o \
-	hodjnpodj/riddles/riddles.o
+	hodjnpodj/riddles/riddles.o \
+	hodjnpodj/riddles/usercfg.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)

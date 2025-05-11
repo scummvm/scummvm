@@ -24,6 +24,13 @@
 namespace Bagel {
 namespace MFC {
 
+const CRuntimeClass CObject::classCObject = {
+	"CObject", sizeof(CObject), 0xFFFF, // class name, size, schema
+	nullptr,							// (null if DECLARE_DYNAMIC only)
+	nullptr,							// pointer to base class's CRuntimeClass
+	nullptr
+};
+
 CObject::CObject() {
 }
 
@@ -32,6 +39,10 @@ CObject::CObject(const CObject &objectSrc) {
 }
 
 CObject::~CObject() {
+}
+
+const CRuntimeClass *CObject::GetRuntimeClass() const {
+	return &CObject::classCObject;
 }
 
 } // namespace MFC

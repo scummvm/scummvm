@@ -26,6 +26,8 @@
 namespace Bagel {
 namespace MFC {
 
+IMPLEMENT_DYNAMIC(CWinApp, CWinThread)
+
 CWinApp::CWinApp(const char *appName) : CWinThread() {
 }
 

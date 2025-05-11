@@ -19,17 +19,12 @@
  *
  */
 
-#ifndef HODJNPODJ_RIDDLES_USERCFG_H
-#define HODJNPODJ_RIDDLES_USERCFG_H
-
-#include <afxwin.h>
-#include <afxext.h>
-#include <assert.h>
-#include <globals.h>
-#include <text.h>
-#include <cbofdlg.h>
-#include <menures.h>
-#include <stdinc.h>
+#include "bagel/afxwin.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/hnplibs/menures.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "bagel/hodjnpodj/riddles/usercfg.h"
 #include "bagel/hodjnpodj/riddles/riddles.h"
 
@@ -53,14 +48,14 @@ extern const char *INI_SECTION;
 #define MAX_TIME_LIMITS 15
 #define MAX_LEVELS 4
 
-STATIC CHAR *pszLevels[MAX_LEVELS] = {
+static const char *pszLevels[MAX_LEVELS] = {
     "Easy",
     "Medium",
     "Hard",
     "Random"
 };
 
-static CHAR *pTimeLimit[MAX_TIME_LIMITS] = {
+static const char *pTimeLimit[MAX_TIME_LIMITS] = {
     "10 seconds",
     "15 seconds",
     "20 seconds",
@@ -78,7 +73,7 @@ static CHAR *pTimeLimit[MAX_TIME_LIMITS] = {
     "None"
 };
 
-static INT nTimeLimit[MAX_TIME_LIMITS] = {
+static const INT nTimeLimit[MAX_TIME_LIMITS] = {
     10, 15, 20, 25, 30, 40, 50, 60, 75, 90, 120, 180, 240, 300, 301
 };
 
@@ -363,19 +358,19 @@ VOID CUserCfgDlg::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CUserCfgDlg::OnClose()
 {
-    char tmpBuf[8];
+    Common::String tmpBuf;
     CDC *pDC;
 
     if (m_bSave) {
         GetDlgData();
 
-        wsprintf(tmpBuf, "0");
+        tmpBuf = "0";
         if (m_nTimeLimit != LIMIT_MAX)
-            itoa(m_nTimeLimit, tmpBuf, 10);
-        WritePrivateProfileString(INI_SECTION, "TimeLimit", tmpBuf, INI_FILENAME);
+			tmpBuf = Common::String::format("%d", m_nTimeLimit);
+        WritePrivateProfileString(INI_SECTION, "TimeLimit", tmpBuf.c_str(), INI_FILENAME);
 
-        itoa(m_nDifficultyLevel, tmpBuf, 10);
-        WritePrivateProfileString(INI_SECTION, "DifficultyLevel", tmpBuf, INI_FILENAME);
+		tmpBuf = Common::String::format("%d", m_nDifficultyLevel);
+        WritePrivateProfileString(INI_SECTION, "DifficultyLevel", tmpBuf.c_str(), INI_FILENAME);
     }
 
     pDC = GetDC();
@@ -469,15 +464,14 @@ VOID CUserCfgDlg::DispLimit(VOID)
     }
 }
 
-VOID CUserCfgDlg::DispLevel(VOID)
-{
-    CHAR szBuf[40];
+VOID CUserCfgDlg::DispLevel(VOID) {
+	Common::String szBuf;
     CDC *pDC;
 
     if ((pDC = GetDC()) != NULL) {
-
-        wsprintf(szBuf, "Difficulty: %s", pszLevels[m_nDifficultyLevel]);
-        m_pTxtLevel->DisplayString(pDC, szBuf, 14, FW_BOLD, RGB( 0, 0, 0));
+		szBuf = Common::String::format("Difficulty: %s",
+			pszLevels[m_nDifficultyLevel]);
+        m_pTxtLevel->DisplayString(pDC, szBuf.c_str(), 14, FW_BOLD, RGB(0, 0, 0));
         ReleaseDC(pDC);
     }
 }

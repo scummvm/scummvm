@@ -25,44 +25,25 @@
 namespace Bagel {
 namespace MFC {
 
-
-IMPLEMENT_DYNAMIC(CDocument, CCmdTarget)
-BEGIN_MESSAGE_MAP(CDocument, CCmdTarget)
-END_MESSAGE_MAP()
-
-const CString &CDocument::GetTitle() const {
-	return _title;
+CBrush::CBrush() {
 }
 
-void CDocument::SetTitle(LPCSTR lpszTitle) {
-	_title = CString(lpszTitle);
+CBrush::CBrush(CBitmap *pBitmap) {
 }
 
-const CString &CDocument::GetPathName() const {
-	return _unusedPathName;
-}
-void CDocument::SetPathName(LPCSTR lpszPathName, BOOL bAddToMRU) {
+CBrush::CBrush(COLORREF crColor) {
 }
 
-void CDocument::ClearPathName() {
+CBrush::CBrush(int nIndex, COLORREF crColor) {
 }
 
-BOOL CDocument::IsModified() {
-	return _isModified;
+BOOL CBrush::CreateSolidBrush(COLORREF crColor) {
+	error("TODO: CreateSolidBrush");
 }
 
-void CDocument::SetModifiedFlag(BOOL bModified) {
-	_isModified = bModified;
+BOOL CBrush::CreateStockObject(int nIndex) {
+	error("TODO: CreateStockObject");
 }
-
-void CDocument::DeleteContents() {
-}
-
-void CDocument::ReportSaveLoadException(LPCSTR lpszPathName,
-		CException *e, BOOL bSaving, UINT nIDPDefault) {
-	error("Save/load error");
-}
-
 
 } // namespace MFC
 } // namespace Bagel

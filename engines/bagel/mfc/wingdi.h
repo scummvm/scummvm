@@ -388,6 +388,16 @@ enum {
 #define COLOR_3DHILIGHT         COLOR_BTNHIGHLIGHT
 #define COLOR_BTNHILIGHT        COLOR_BTNHIGHLIGHT
 
+/* StretchBlt() Modes */
+#define BLACKONWHITE                 1
+#define WHITEONBLACK                 2
+#define COLORONCOLOR                 3
+#define HALFTONE                     4
+#define MAXSTRETCHBLTMODE            4
+#define STRETCH_ANDSCANS    BLACKONWHITE
+#define STRETCH_ORSCANS     WHITEONBLACK
+#define STRETCH_DELETESCANS COLORONCOLOR
+#define STRETCH_HALFTONE    HALFTONE
 
 typedef struct tagBITMAPINFOHEADER {
 	DWORD      biSize;

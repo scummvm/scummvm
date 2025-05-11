@@ -25,44 +25,30 @@
 namespace Bagel {
 namespace MFC {
 
-
-IMPLEMENT_DYNAMIC(CDocument, CCmdTarget)
-BEGIN_MESSAGE_MAP(CDocument, CCmdTarget)
-END_MESSAGE_MAP()
-
-const CString &CDocument::GetTitle() const {
-	return _title;
+BOOL CBitmap::Attach(HGDIOBJ hObject) {
+	error("TODO: CBitmap::Attach");
 }
 
-void CDocument::SetTitle(LPCSTR lpszTitle) {
-	_title = CString(lpszTitle);
+HGDIOBJ CBitmap::Detach() {
+	error("TODO: CBitmap::Detach");
 }
 
-const CString &CDocument::GetPathName() const {
-	return _unusedPathName;
-}
-void CDocument::SetPathName(LPCSTR lpszPathName, BOOL bAddToMRU) {
+BOOL CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
+	error("TODO: CBitmap::CreateCompatibleBitmap");
 }
 
-void CDocument::ClearPathName() {
+BOOL CBitmap::CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
+		UINT nBitcount, const void *lpBits) {
+	error("TODO: CBitmap::CreateBitmap");
 }
 
-BOOL CDocument::IsModified() {
-	return _isModified;
+int CBitmap::GetObject(int nCount, LPVOID lpObject) const {
+	error("TODO: CBitmap::GetObject");
 }
 
-void CDocument::SetModifiedFlag(BOOL bModified) {
-	_isModified = bModified;
+LONG CBitmap::GetBitmapBits(LONG dwCount, LPVOID lpBits) const {
+	error("TODO: CBitmap::GetBitmapBits");
 }
-
-void CDocument::DeleteContents() {
-}
-
-void CDocument::ReportSaveLoadException(LPCSTR lpszPathName,
-		CException *e, BOOL bSaving, UINT nIDPDefault) {
-	error("Save/load error");
-}
-
 
 } // namespace MFC
 } // namespace Bagel

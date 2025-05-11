@@ -25,44 +25,44 @@
 namespace Bagel {
 namespace MFC {
 
-
-IMPLEMENT_DYNAMIC(CDocument, CCmdTarget)
-BEGIN_MESSAGE_MAP(CDocument, CCmdTarget)
+IMPLEMENT_DYNAMIC(CDialog, CWnd)
+BEGIN_MESSAGE_MAP(CDialog, CWnd)
 END_MESSAGE_MAP()
 
-const CString &CDocument::GetTitle() const {
-	return _title;
+void CDialog::OnOK() {
+	error("TODO: CDialog::OnOK");
 }
 
-void CDocument::SetTitle(LPCSTR lpszTitle) {
-	_title = CString(lpszTitle);
+void CDialog::OnCancel() {
+	error("TODO: CDialog::OnCancel");
 }
 
-const CString &CDocument::GetPathName() const {
-	return _unusedPathName;
-}
-void CDocument::SetPathName(LPCSTR lpszPathName, BOOL bAddToMRU) {
+CDialog::CDialog(LPCSTR lpszTemplateName,
+		CWnd *pParentWnd) {
 }
 
-void CDocument::ClearPathName() {
+CDialog::CDialog(UINT nIDTemplate, CWnd *pParentWnd) {
 }
 
-BOOL CDocument::IsModified() {
-	return _isModified;
+int CDialog::DoModal() {
+	error("TODO: CDialog::DoModal");
 }
 
-void CDocument::SetModifiedFlag(BOOL bModified) {
-	_isModified = bModified;
+BOOL CDialog::OnInitDialog() {
+	error("TODO: CDialog::OnInitDialog");
 }
 
-void CDocument::DeleteContents() {
+DWORD CDialog::GetDefID() {
+	error("TODO: CDialog::GetDefID");
 }
 
-void CDocument::ReportSaveLoadException(LPCSTR lpszPathName,
-		CException *e, BOOL bSaving, UINT nIDPDefault) {
-	error("Save/load error");
+void CDialog::SetDefID(UINT nID) {
+	error("TODO: CDialog::SetDefID");
 }
 
+void CDialog::EndDialog(int nResult) {
+	error("TODO: CDialog::EndDialog");
+}
 
 } // namespace MFC
 } // namespace Bagel

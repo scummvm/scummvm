@@ -25,44 +25,23 @@
 namespace Bagel {
 namespace MFC {
 
-
-IMPLEMENT_DYNAMIC(CDocument, CCmdTarget)
-BEGIN_MESSAGE_MAP(CDocument, CCmdTarget)
-END_MESSAGE_MAP()
-
-const CString &CDocument::GetTitle() const {
-	return _title;
+BOOL CPalette::CreatePalette(LPLOGPALETTE lpLogPalette) {
+	error("TODO: CPalette::CreatePalette");
 }
 
-void CDocument::SetTitle(LPCSTR lpszTitle) {
-	_title = CString(lpszTitle);
+int CPalette::GetObject(int nCount, LPVOID lpObject) const {
+	error("TODO: CPalette::GetObject");
 }
 
-const CString &CDocument::GetPathName() const {
-	return _unusedPathName;
-}
-void CDocument::SetPathName(LPCSTR lpszPathName, BOOL bAddToMRU) {
-}
-
-void CDocument::ClearPathName() {
+UINT CPalette::GetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
+		LPPALETTEENTRY lpPaletteColors) const {
+	error("TODO: CPalette::GetPaletteEntries");
 }
 
-BOOL CDocument::IsModified() {
-	return _isModified;
+UINT CPalette::SetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
+		LPPALETTEENTRY lpPaletteColors) {
+	error("TODO: CPalette::SetPaletteEntries");
 }
-
-void CDocument::SetModifiedFlag(BOOL bModified) {
-	_isModified = bModified;
-}
-
-void CDocument::DeleteContents() {
-}
-
-void CDocument::ReportSaveLoadException(LPCSTR lpszPathName,
-		CException *e, BOOL bSaving, UINT nIDPDefault) {
-	error("Save/load error");
-}
-
 
 } // namespace MFC
 } // namespace Bagel

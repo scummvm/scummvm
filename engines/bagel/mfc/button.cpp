@@ -25,44 +25,26 @@
 namespace Bagel {
 namespace MFC {
 
-
-IMPLEMENT_DYNAMIC(CDocument, CCmdTarget)
-BEGIN_MESSAGE_MAP(CDocument, CCmdTarget)
+IMPLEMENT_DYNAMIC(CButton, CWnd)
+BEGIN_MESSAGE_MAP(CButton, CWnd)
 END_MESSAGE_MAP()
 
-const CString &CDocument::GetTitle() const {
-	return _title;
+BOOL CButton::Create(LPCTSTR lpszCaption, DWORD dwStyle,
+		const RECT &rect, CWnd *pParentWnd, UINT nID) {
+	error("TODO: CButton::Create");
 }
 
-void CDocument::SetTitle(LPCSTR lpszTitle) {
-	_title = CString(lpszTitle);
+int CButton::GetCheck() const {
+	error("TODO: CButton::GetCheck");
 }
 
-const CString &CDocument::GetPathName() const {
-	return _unusedPathName;
-}
-void CDocument::SetPathName(LPCSTR lpszPathName, BOOL bAddToMRU) {
+void CButton::SetCheck(int nCheck) {
+	error("TODO: CButton::SetChunk");
 }
 
-void CDocument::ClearPathName() {
+void CButton::SetButtonStyle(UINT nStyle, BOOL bRedraw) {
+	error("TODO: CButton::SetButtonStyle");
 }
-
-BOOL CDocument::IsModified() {
-	return _isModified;
-}
-
-void CDocument::SetModifiedFlag(BOOL bModified) {
-	_isModified = bModified;
-}
-
-void CDocument::DeleteContents() {
-}
-
-void CDocument::ReportSaveLoadException(LPCSTR lpszPathName,
-		CException *e, BOOL bSaving, UINT nIDPDefault) {
-	error("Save/load error");
-}
-
 
 } // namespace MFC
 } // namespace Bagel

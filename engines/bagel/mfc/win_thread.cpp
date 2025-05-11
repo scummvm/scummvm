@@ -25,44 +25,7 @@
 namespace Bagel {
 namespace MFC {
 
-
-IMPLEMENT_DYNAMIC(CDocument, CCmdTarget)
-BEGIN_MESSAGE_MAP(CDocument, CCmdTarget)
-END_MESSAGE_MAP()
-
-const CString &CDocument::GetTitle() const {
-	return _title;
-}
-
-void CDocument::SetTitle(LPCSTR lpszTitle) {
-	_title = CString(lpszTitle);
-}
-
-const CString &CDocument::GetPathName() const {
-	return _unusedPathName;
-}
-void CDocument::SetPathName(LPCSTR lpszPathName, BOOL bAddToMRU) {
-}
-
-void CDocument::ClearPathName() {
-}
-
-BOOL CDocument::IsModified() {
-	return _isModified;
-}
-
-void CDocument::SetModifiedFlag(BOOL bModified) {
-	_isModified = bModified;
-}
-
-void CDocument::DeleteContents() {
-}
-
-void CDocument::ReportSaveLoadException(LPCSTR lpszPathName,
-		CException *e, BOOL bSaving, UINT nIDPDefault) {
-	error("Save/load error");
-}
-
+IMPLEMENT_DYNAMIC(CWinThread, CCmdTarget)
 
 } // namespace MFC
 } // namespace Bagel

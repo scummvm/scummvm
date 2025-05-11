@@ -25,8 +25,22 @@
 namespace Bagel {
 namespace MFC {
 
-const AFX_MSGMAP *CCmdTarget::GetMessageMap() const {
+IMPLEMENT_DYNAMIC(CCmdTarget, CObject)
+
+const AFX_MSGMAP *CCmdTarget::GetThisMessageMap() {
 	error("TODO: GetMessageMap");
+}
+
+void CCmdTarget::BeginWaitCursor() {
+	error("TODO: BeginWaitCursor");
+}
+
+void CCmdTarget::EndWaitCursor() {
+	error("TODO: EndWaitCursor");
+}
+
+void CCmdTarget::RestoreWaitCursor() {
+	error("TODO: RestoreWaitCursor");
 }
 
 } // namespace MFC

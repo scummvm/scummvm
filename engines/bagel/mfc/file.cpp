@@ -26,6 +26,8 @@
 namespace Bagel {
 namespace MFC {
 
+IMPLEMENT_DYNAMIC(CFile, CObject)
+
 CFile::CFile(const char *lpszFileName, UINT nOpenFlags) {
 	if (!Open(lpszFileName, nOpenFlags))
 		error("Could not open - %s", lpszFileName);
@@ -47,6 +49,52 @@ BOOL CFile::Open(const char *lpszFileName, UINT nOpenFlags, CFileException *pErr
 void CFile::Close() {
 	delete _stream;
 	_stream = nullptr;
+}
+
+void CFile::Abort() {
+	error("TODO: CFile::Abort");
+}
+
+Common::SeekableReadStream *CFile::readStream() const {
+	Common::SeekableReadStream *rs = dynamic_cast<
+		Common::SeekableReadStream *>(_stream);
+	assert(rs);
+	return rs;
+}
+
+Common::WriteStream *CFile::writeStream() const {
+	Common::WriteStream *ws = dynamic_cast<
+		Common::WriteStream *>(_stream);
+	assert(ws);
+	return ws;
+}
+
+ULONGLONG CFile::SeekToEnd() {
+	return readStream()->seek(0, SEEK_END);
+}
+
+void CFile::SeekToBegin() {
+	readStream()->seek(0);
+}
+
+ULONGLONG CFile::Seek(LONGLONG lOff, UINT nFrom) {
+	return readStream()->seek(lOff, nFrom);
+}
+
+ULONGLONG CFile::GetLength() const {
+	return readStream()->size();
+}
+
+ULONGLONG CFile::GetPosition() const {
+	return readStream()->pos();
+}
+
+UINT CFile::Read(void *lpBuf, UINT nCount) {
+	return readStream()->read(lpBuf, nCount);
+}
+
+void CFile::Write(const void *lpBuf, UINT nCount) {
+	writeStream()->write(lpBuf, nCount);
 }
 
 } // namespace MFC

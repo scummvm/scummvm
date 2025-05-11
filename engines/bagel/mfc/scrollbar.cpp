@@ -25,44 +25,33 @@
 namespace Bagel {
 namespace MFC {
 
-
-IMPLEMENT_DYNAMIC(CDocument, CCmdTarget)
-BEGIN_MESSAGE_MAP(CDocument, CCmdTarget)
+IMPLEMENT_DYNAMIC(CScrollBar, CWnd)
+BEGIN_MESSAGE_MAP(CScrollBar, CWnd)
 END_MESSAGE_MAP()
 
-const CString &CDocument::GetTitle() const {
-	return _title;
+BOOL CScrollBar::Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID) {
+	error("TODO: CScrollBar::Create");
 }
 
-void CDocument::SetTitle(LPCSTR lpszTitle) {
-	_title = CString(lpszTitle);
+int CScrollBar::GetScrollPos() const {
+	error("TODO: CScrollBar::GetScrollPos");
 }
 
-const CString &CDocument::GetPathName() const {
-	return _unusedPathName;
-}
-void CDocument::SetPathName(LPCSTR lpszPathName, BOOL bAddToMRU) {
+int CScrollBar::SetScrollPos(int nPos, BOOL bRedraw) {
+	error("TODO: CScrollBar::SetScrollPos");
 }
 
-void CDocument::ClearPathName() {
+void CScrollBar::GetScrollRange(LPINT lpMinPos, LPINT lpMaxPos) const {
+	error("TODO: CScrollBar::GetScrollRange");
 }
 
-BOOL CDocument::IsModified() {
-	return _isModified;
+void CScrollBar::SetScrollRange(int nMinPos, int nMaxPos, BOOL bRedraw) {
+	error("TODO: CScrollBar::SetScrollRange");
 }
 
-void CDocument::SetModifiedFlag(BOOL bModified) {
-	_isModified = bModified;
+void CScrollBar::ShowScrollBar(BOOL bShow) {
+	error("TODO: CScrollBar::ShowScrollBar");
 }
-
-void CDocument::DeleteContents() {
-}
-
-void CDocument::ReportSaveLoadException(LPCSTR lpszPathName,
-		CException *e, BOOL bSaving, UINT nIDPDefault) {
-	error("Save/load error");
-}
-
 
 } // namespace MFC
 } // namespace Bagel

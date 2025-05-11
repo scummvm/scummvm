@@ -135,7 +135,7 @@ private:
 
 protected:
     VOID        FlushInputEvents(VOID);
-    BOOLEAN     CheckUserGuess(const CHAR *);
+    BOOL        CheckUserGuess(const CHAR *);
     ERROR_CODE  RepaintSpriteList(VOID);
     ERROR_CODE  LoadRiddle(VOID);
     ERROR_CODE  BuildSpriteList(VOID);
