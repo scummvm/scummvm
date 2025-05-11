@@ -51,6 +51,10 @@ namespace MFC {
 #define BASED_CODE
 #define AFX_CDECL
 
+// We're temporary disabling virtual Create functions
+// for ScummVM due to the warnings it generates
+#define CVIRTUAL
+
 #ifndef _In_
 #define _In_
 #endif

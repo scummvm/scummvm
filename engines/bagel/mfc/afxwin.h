@@ -699,7 +699,7 @@ public:
 public:
 	~CWnd() override {
 	}
-	virtual BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
+	CVIRTUAL BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 		DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
 		CCreateContext *pContext = nullptr);
 
@@ -793,7 +793,7 @@ protected:
 public:
 	~CButton() override {
 	}
-	virtual BOOL Create(LPCTSTR lpszCaption, DWORD dwStyle,
+	CVIRTUAL BOOL Create(LPCTSTR lpszCaption, DWORD dwStyle,
 		const RECT &rect, CWnd *pParentWnd, UINT nID);
 
 	int GetCheck() const;
@@ -824,7 +824,7 @@ protected:
 public:
 	~CEdit() override {
 	}
-	BOOL Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
+	CVIRTUAL BOOL Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
 	void LimitText(int nChars);
 };
 
@@ -836,7 +836,7 @@ protected:
 
 public:
 	~CScrollBar() override { }
-	virtual BOOL Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
+	CVIRTUAL BOOL Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
 
 	int GetScrollPos() const;
 	int SetScrollPos(int nPos, BOOL bRedraw = true);
