@@ -2371,6 +2371,13 @@ void Scene342::postInit(SceneObjectList *OwnerList) {
 		}
 	}
 
+	// seagull
+	_object2.postInit();
+	_object2.setVisage(340);
+	_object2.setStrip(2);
+	_object2.animate(ANIM_MODE_2, NULL);
+	_object2._numFrames = 4;
+	_object2._moveDiff = Common::Point(2, 2);
 	switch (BF_GLOBALS._randomSource.getRandomNumber(2)) {
 	case 0:
 		_object2.setPosition(Common::Point(46, 59));
