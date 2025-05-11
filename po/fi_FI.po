@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-05-08 22:18+0000\n"
-"PO-Revision-Date: 2025-05-01 16:19+0000\n"
+"PO-Revision-Date: 2025-05-11 15:18+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -6725,12 +6725,15 @@ msgstr ""
 #: engines/alg/metaengine.cpp:34
 msgid "Use lower quality single speed CD-ROM video"
 msgstr ""
+"Käytä matalampilaatuista yksinopeuksiselle CD-ROM:ille tarkoitettua videota"
 
 #: engines/alg/metaengine.cpp:35
 msgid ""
 "These videos are of lower quality, the default version uses double speed CD-"
 "ROM videos which are of better quality"
 msgstr ""
+"Nämä videot ovat matalalaatuisempia. Vakioversio käyttää kaksinopeuksiselle "
+"CD-ROM:ille tarkoitettuja videoita jotka ovat korkealaatuisempia"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -6840,7 +6843,7 @@ msgstr "Lataa silti"
 
 #: engines/awe/metaengine.cpp:61
 msgid "Select/Kick/Run"
-msgstr ""
+msgstr "Valitse/Potkaise/Juokse"
 
 #: engines/awe/metaengine.cpp:62 engines/hpl1/metaengine.cpp:83
 msgid "Jump"
@@ -6848,7 +6851,7 @@ msgstr "Hyppää"
 
 #: engines/awe/metaengine.cpp:63
 msgid "Enter Level Code"
-msgstr ""
+msgstr "Syötä tasokoodi"
 
 #: engines/awe/metaengine.cpp:89 engines/dgds/metaengine.cpp:87
 #: engines/got/metaengine.cpp:90
@@ -7711,21 +7714,18 @@ msgid "Enable gamma correction"
 msgstr "Gammakorjaus"
 
 #: engines/director/metaengine.cpp:71
-#, fuzzy
-#| msgid "Brighten the graphics to simulate a Macintosh monitor."
 msgid "Brighten the graphics to simulate a Macintosh monitor"
-msgstr "Kirkasta grafiikkaa Macintosh-monitorin simuloimiseksi."
+msgstr "Kirkasta grafiikkaa Macintosh-monitorin simuloimiseksi"
 
 #: engines/director/metaengine.cpp:81
 msgid "Force true color"
-msgstr ""
+msgstr "Pakota true color"
 
 #: engines/director/metaengine.cpp:82
-#, fuzzy
-#| msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgid "Use true color graphics mode, even if the game is not designed for it"
 msgstr ""
-"Käytä antialiasointia tekstin piirtämisessä vaikka peli ei sitä pyytäisi"
+"Käytä true color-grafiikkatilaa, vaikka peli ei olisi suunniteltu sitä "
+"käyttämään"
 
 #: engines/draci/metaengine.cpp:153
 msgid "Skip intro/Exit map or inventory"
@@ -7834,46 +7834,32 @@ msgid "Right click"
 msgstr "Oikea klikkaus"
 
 #: engines/efh/metaengine.cpp:255
-#, fuzzy
-#| msgid "Move up-left"
 msgid "Move up left"
-msgstr "Liiku vasemmalle ylös"
+msgstr "Liiku ylös vasemmalle"
 
 #: engines/efh/metaengine.cpp:260
-#, fuzzy
-#| msgid "Move up-right"
 msgid "Move up right"
-msgstr "Liiku oikealle ylös"
+msgstr "Liiku ylös oikealle"
 
 #: engines/efh/metaengine.cpp:265
-#, fuzzy
-#| msgid "Move down-left"
 msgid "Move down left"
 msgstr "Liiku alas vasemmalle"
 
 #: engines/efh/metaengine.cpp:270
-#, fuzzy
-#| msgid "Move down-right"
 msgid "Move down right"
 msgstr "Liiku alas oikealle"
 
 #: engines/efh/metaengine.cpp:275
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 1 status"
-msgstr "Näytä hahmojen muotokuvat"
+msgstr "Hahmon 1 tila"
 
 #: engines/efh/metaengine.cpp:280
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 2 status"
-msgstr "Näytä hahmojen muotokuvat"
+msgstr "Hahmon 2 tila"
 
 #: engines/efh/metaengine.cpp:285
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 3 status"
-msgstr "Näytä hahmojen muotokuvat"
+msgstr "Hahmon 3 tila"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -10050,22 +10036,16 @@ msgid "This menu item is not yet implemented"
 msgstr "Tätä valikkoa ei ole vielä toteutettu"
 
 #: engines/playground3d/metaengine.cpp:55
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch test"
-msgstr "Vaihda peliin"
+msgstr "Vaihda testiä"
 
 #: engines/playground3d/metaengine.cpp:61
-#, fuzzy
-#| msgid "Enable/Disable Jetpack"
 msgid "Enable/Disable fog"
-msgstr "Rakettireppu päälle/pois"
+msgstr "Sumu päälle/pois"
 
 #: engines/playground3d/metaengine.cpp:67
-#, fuzzy
-#| msgid "Enable/Disable Jetpack"
 msgid "Enable/Disable scissor"
-msgstr "Rakettireppu päälle/pois"
+msgstr "Sakset päälle/pois"
 
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
@@ -12395,7 +12375,7 @@ msgstr "Mene tallennus/lataus valikon loppuun"
 
 #: engines/tinsel/tinsel.cpp:1040
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
-msgstr ""
+msgstr "Discworld Noir tarvitsee ScummVM:n jossa TinyGL on päällä"
 
 #: engines/toltecs/metaengine.cpp:216
 msgid "Move / Select"
