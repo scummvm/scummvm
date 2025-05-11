@@ -70,7 +70,7 @@ const float Renderer::cubeVertices[] = {
 };
 
 Renderer::Renderer(OSystem *system)
-		: _system(system), _texture(nullptr) {
+		: _system(system) {
 }
 
 Renderer::~Renderer() {
