@@ -31,6 +31,10 @@
 
 #include "engines/playground3d/gfx.h"
 
+namespace OpenGL {
+class Texture;
+}
+
 namespace Playground3d {
 
 class OpenGLRenderer : public Renderer {
@@ -63,11 +67,7 @@ public:
 
 private:
 	Math::Vector3d _pos;
-	GLuint _textureRgbaId[5];
-	GLuint _textureRgbId[5];
-	GLuint _textureRgb565Id[2];
-	GLuint _textureRgba5551Id[2];
-	GLuint _textureRgba4444Id[2];
+	OpenGL::Texture *_textures[TextureType::MAX];
 
 	void drawFace(uint face);
 };

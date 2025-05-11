@@ -25,6 +25,7 @@
 #if defined(USE_OPENGL_GAME)
 
 #include "graphics/opengl/context.h"
+#include "graphics/opengl/texture.h"
 #include "graphics/surface.h"
 
 #include "engines/playground3d/gfx.h"
@@ -56,20 +57,12 @@ static const GLfloat bitmapVertices[] = {
 	 0.2f, -0.2f,
 };
 
-static const GLfloat textCords[] = {
-	// S     T
-	0.0f, 0.0f,
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-};
-
 Renderer *CreateGfxOpenGL(OSystem *system) {
 	return new OpenGLRenderer(system);
 }
 
 OpenGLRenderer::OpenGLRenderer(OSystem *system) :
-		Renderer(system) {
+		Renderer(system), _textures{} {
 }
 
 OpenGLRenderer::~OpenGLRenderer() {
@@ -89,20 +82,13 @@ void OpenGLRenderer::init() {
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_LIGHTING);
 	glEnable(GL_DEPTH_TEST);
-
-	glGenTextures(5, _textureRgbaId);
-	glGenTextures(5, _textureRgbId);
-	glGenTextures(2, _textureRgb565Id);
-	glGenTextures(2, _textureRgba5551Id);
-	glGenTextures(2, _textureRgba4444Id);
 }
 
 void OpenGLRenderer::deinit() {
-	glDeleteTextures(5, _textureRgbaId);
-	glDeleteTextures(5, _textureRgbId);
-	glDeleteTextures(2, _textureRgb565Id);
-	glDeleteTextures(2, _textureRgba5551Id);
-	glDeleteTextures(2, _textureRgba4444Id);
+	for(int i = 0; i < ARRAYSIZE(_textures); i++) {
+		delete _textures[i];
+		_textures[i] = nullptr;
+	}
 }
 
 void OpenGLRenderer::clear(const Math::Vector4d &clearColor) {
@@ -111,38 +97,43 @@ void OpenGLRenderer::clear(const Math::Vector4d &clearColor) {
 }
 
 void OpenGLRenderer::loadTextureRGBA(Graphics::Surface *texture) {
-	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[0]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->getPixels());
+	if (!_textures[TextureType::RGBA8888]) {
+		_textures[TextureType::RGBA8888] = new OpenGL::Texture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+	}
+	_textures[TextureType::RGBA8888]->setSize(texture->w, texture->h);
+	_textures[TextureType::RGBA8888]->updateArea(Common::Rect(texture->w, texture->h), *texture);
 }
 
 void OpenGLRenderer::loadTextureRGB(Graphics::Surface *texture) {
-	glBindTexture(GL_TEXTURE_2D, _textureRgbId[0]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGB, GL_UNSIGNED_BYTE, texture->getPixels());
+	if (!_textures[TextureType::RGB888]) {
+		_textures[TextureType::RGB888] = new OpenGL::Texture(GL_RGBA, GL_RGB, GL_UNSIGNED_BYTE);
+	}
+	_textures[TextureType::RGB888]->setSize(texture->w, texture->h);
+	_textures[TextureType::RGB888]->updateArea(Common::Rect(texture->w, texture->h), *texture);
 }
 
 void OpenGLRenderer::loadTextureRGB565(Graphics::Surface *texture) {
-	glBindTexture(GL_TEXTURE_2D, _textureRgb565Id[0]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, texture->getPixels());
+	if (!_textures[TextureType::RGB565]) {
+		_textures[TextureType::RGB565] = new OpenGL::Texture(GL_RGBA, GL_RGB, GL_UNSIGNED_SHORT_5_6_5);
+	}
+	_textures[TextureType::RGB565]->setSize(texture->w, texture->h);
+	_textures[TextureType::RGB565]->updateArea(Common::Rect(texture->w, texture->h), *texture);
 }
 
 void OpenGLRenderer::loadTextureRGBA5551(Graphics::Surface *texture) {
-	glBindTexture(GL_TEXTURE_2D, _textureRgba5551Id[0]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, texture->getPixels());
+	if (!_textures[TextureType::RGBA5551]) {
+		_textures[TextureType::RGBA5551] = new OpenGL::Texture(GL_RGBA, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1);
+	}
+	_textures[TextureType::RGBA5551]->setSize(texture->w, texture->h);
+	_textures[TextureType::RGBA5551]->updateArea(Common::Rect(texture->w, texture->h), *texture);
 }
 
 void OpenGLRenderer::loadTextureRGBA4444(Graphics::Surface *texture) {
-	glBindTexture(GL_TEXTURE_2D, _textureRgba4444Id[0]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, texture->getPixels());
+	if (!_textures[TextureType::RGBA4444]) {
+		_textures[TextureType::RGBA4444] = new OpenGL::Texture(GL_RGBA, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4);
+	}
+	_textures[TextureType::RGBA4444]->setSize(texture->w, texture->h);
+	_textures[TextureType::RGBA4444]->updateArea(Common::Rect(texture->w, texture->h), *texture);
 }
 
 void OpenGLRenderer::setupViewport(int x, int y, int width, int height) {
@@ -342,37 +333,42 @@ void OpenGLRenderer::drawRgbaTexture() {
 	glTranslatef(-0.8f, 0.8f, 0);
 
 	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
-	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
-	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[0]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), _textures[TextureType::RGBA8888]->getTexCoords());
+	if (_textures[TextureType::RGBA8888]->bind()) {
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
 
 	glTranslatef(0.5, 0, 0);
 
 	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
-	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
-	glBindTexture(GL_TEXTURE_2D, _textureRgbId[0]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), _textures[TextureType::RGB888]->getTexCoords());
+	if (_textures[TextureType::RGB888]->bind()) {
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
 
 	glTranslatef(0.5, 0, 0);
 
 	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
-	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
-	glBindTexture(GL_TEXTURE_2D, _textureRgb565Id[0]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), _textures[TextureType::RGB565]->getTexCoords());
+	if (_textures[TextureType::RGB565]->bind()) {
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
 
 	glTranslatef(0.5, 0, 0);
 
 	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
-	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
-	glBindTexture(GL_TEXTURE_2D, _textureRgba5551Id[0]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), _textures[TextureType::RGBA5551]->getTexCoords());
+	if (_textures[TextureType::RGBA5551]->bind()) {
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
 
 	glTranslatef(-1.5, -0.5, 0);
 
 	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
-	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
-	glBindTexture(GL_TEXTURE_2D, _textureRgba4444Id[0]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), _textures[TextureType::RGBA4444]->getTexCoords());
+	if (_textures[TextureType::RGBA4444]->bind()) {
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);

@@ -32,6 +32,7 @@
 #include "math/quat.h"
 
 #include "graphics/opengl/shader.h"
+#include "graphics/opengl/texture.h"
 
 #include "engines/playground3d/gfx.h"
 #include "engines/playground3d/gfx_opengl_shaders.h"
@@ -73,11 +74,11 @@ static const GLfloat boxVertices[] = {
 };
 
 static const GLfloat bitmapVertices[] = {
-	//  X      Y     S     T
-	-0.2f,  0.2f, 0.0f, 0.0f,
-	 0.2f,  0.2f, 1.0f, 0.0f,
-	-0.2f, -0.2f, 0.0f, 1.0f,
-	 0.2f, -0.2f, 1.0f, 1.0f,
+	//  X      Y
+	-0.2f,  0.2f,
+	 0.2f,  0.2f,
+	-0.2f, -0.2f,
+	 0.2f, -0.2f,
 };
 
 Renderer *CreateGfxOpenGLShader(OSystem *system) {
@@ -96,7 +97,8 @@ ShaderRenderer::ShaderRenderer(OSystem *system) :
 		_offsetVBO(0),
 		_fadeVBO(0),
 		_viewportVBO(0),
-		_bitmapVBO(0) {
+		_bitmapVBO(0),
+		_textures{} {
 }
 
 ShaderRenderer::~ShaderRenderer() {
@@ -144,22 +146,16 @@ void ShaderRenderer::init() {
 	static const char *bitmapAttributes[] = { "position", "texcoord", nullptr };
 	_bitmapShader = OpenGL::Shader::fromFiles("playground3d_bitmap", bitmapAttributes);
 	_bitmapVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(bitmapVertices), bitmapVertices);
-	_bitmapShader->enableVertexAttribute("position", _bitmapVBO, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(float), 0);
-	_bitmapShader->enableVertexAttribute("texcoord", _bitmapVBO, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(float), 8);
-
-	glGenTextures(5, _textureRgbaId);
-	glGenTextures(5, _textureRgbId);
-	glGenTextures(2, _textureRgb565Id);
-	glGenTextures(2, _textureRgba5551Id);
-	glGenTextures(2, _textureRgba4444Id);
+	_bitmapShader->enableVertexAttribute("position", _bitmapVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+	_bitmapTexVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, 4 * 2 * sizeof(GLfloat), nullptr, GL_DYNAMIC_DRAW);
+	_bitmapShader->enableVertexAttribute("texcoord", _bitmapTexVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 }
 
 void ShaderRenderer::deinit() {
-	glDeleteTextures(5, _textureRgbaId);
-	glDeleteTextures(5, _textureRgbId);
-	glDeleteTextures(2, _textureRgb565Id);
-	glDeleteTextures(2, _textureRgba5551Id);
-	glDeleteTextures(2, _textureRgba4444Id);
+	for(int i = 0; i < ARRAYSIZE(_textures); i++) {
+		delete _textures[i];
+		_textures[i] = nullptr;
+	}
 }
 
 void ShaderRenderer::clear(const Math::Vector4d &clearColor) {
@@ -168,42 +164,43 @@ void ShaderRenderer::clear(const Math::Vector4d &clearColor) {
 }
 
 void ShaderRenderer::loadTextureRGBA(Graphics::Surface *texture) {
-	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[0]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->getPixels());
-	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[1]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, texture->getPixels());
+	if (!_textures[TextureType::RGBA8888]) {
+		_textures[TextureType::RGBA8888] = new OpenGL::Texture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+	}
+	_textures[TextureType::RGBA8888]->setSize(texture->w, texture->h);
+	_textures[TextureType::RGBA8888]->updateArea(Common::Rect(texture->w, texture->h), *texture);
 }
 
 void ShaderRenderer::loadTextureRGB(Graphics::Surface *texture) {
-	glBindTexture(GL_TEXTURE_2D, _textureRgbId[0]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGB, GL_UNSIGNED_BYTE, texture->getPixels());
+	if (!_textures[TextureType::RGB888]) {
+		_textures[TextureType::RGB888] = new OpenGL::Texture(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE);
+	}
+	_textures[TextureType::RGB888]->setSize(texture->w, texture->h);
+	_textures[TextureType::RGB888]->updateArea(Common::Rect(texture->w, texture->h), *texture);
 }
 
 void ShaderRenderer::loadTextureRGB565(Graphics::Surface *texture) {
-	glBindTexture(GL_TEXTURE_2D, _textureRgb565Id[0]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, texture->getPixels());
+	if (!_textures[TextureType::RGB565]) {
+		_textures[TextureType::RGB565] = new OpenGL::Texture(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5);
+	}
+	_textures[TextureType::RGB565]->setSize(texture->w, texture->h);
+	_textures[TextureType::RGB565]->updateArea(Common::Rect(texture->w, texture->h), *texture);
 }
 
 void ShaderRenderer::loadTextureRGBA5551(Graphics::Surface *texture) {
-	glBindTexture(GL_TEXTURE_2D, _textureRgba5551Id[0]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, texture->getPixels());
+	if (!_textures[TextureType::RGBA5551]) {
+		_textures[TextureType::RGBA5551] = new OpenGL::Texture(GL_RGBA, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1);
+	}
+	_textures[TextureType::RGBA5551]->setSize(texture->w, texture->h);
+	_textures[TextureType::RGBA5551]->updateArea(Common::Rect(texture->w, texture->h), *texture);
 }
 
 void ShaderRenderer::loadTextureRGBA4444(Graphics::Surface *texture) {
-	glBindTexture(GL_TEXTURE_2D, _textureRgba4444Id[0]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, texture->getPixels());
+	if (!_textures[TextureType::RGBA4444]) {
+		_textures[TextureType::RGBA4444] = new OpenGL::Texture(GL_RGBA, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4);
+	}
+	_textures[TextureType::RGBA4444]->setSize(texture->w, texture->h);
+	_textures[TextureType::RGBA4444]->updateArea(Common::Rect(texture->w, texture->h), *texture);
 }
 
 void ShaderRenderer::setupViewport(int x, int y, int width, int height) {
@@ -315,37 +312,49 @@ void ShaderRenderer::drawRgbaTexture() {
 	glDepthMask(GL_FALSE);
 
 	_bitmapShader->use();
+	glBindBuffer(GL_ARRAY_BUFFER, _bitmapTexVBO);
 
 	offset.setX(-0.8f);
 	offset.setY(0.8f);
 	_bitmapShader->setUniform("offsetXY", offset);
-	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[0]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 2 * sizeof(GLfloat), _textures[TextureType::RGBA8888]->getTexCoords());
+	if (_textures[TextureType::RGBA8888]->bind()) {
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
 
 	offset.setX(-0.3f);
 	offset.setY(0.8f);
 	_bitmapShader->setUniform("offsetXY", offset);
-	glBindTexture(GL_TEXTURE_2D, _textureRgbId[0]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 2 * sizeof(GLfloat), _textures[TextureType::RGB888]->getTexCoords());
+	if (_textures[TextureType::RGB888]->bind()) {
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
 
 	offset.setX(0.2f);
 	offset.setY(0.8f);
 	_bitmapShader->setUniform("offsetXY", offset);
-	glBindTexture(GL_TEXTURE_2D, _textureRgb565Id[0]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 2 * sizeof(GLfloat), _textures[TextureType::RGB565]->getTexCoords());
+	if (_textures[TextureType::RGB565]->bind()) {
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
 
 	offset.setX(0.7f);
 	offset.setY(0.8f);
 	_bitmapShader->setUniform("offsetXY", offset);
-	glBindTexture(GL_TEXTURE_2D, _textureRgba5551Id[0]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 2 * sizeof(GLfloat), _textures[TextureType::RGBA5551]->getTexCoords());
+	if (_textures[TextureType::RGBA5551]->bind()) {
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
 
 	offset.setX(-0.8f);
 	offset.setY(0.2f);
 	_bitmapShader->setUniform("offsetXY", offset);
-	glBindTexture(GL_TEXTURE_2D, _textureRgba4444Id[0]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 2 * sizeof(GLfloat), _textures[TextureType::RGBA4444]->getTexCoords());
+	if (_textures[TextureType::RGBA4444]->bind()) {
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
 
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	_bitmapShader->unbind();
 }
 

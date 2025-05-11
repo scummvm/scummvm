@@ -31,6 +31,10 @@
 
 #include "engines/playground3d/gfx.h"
 
+namespace OpenGL {
+class Texture;
+}
+
 namespace Playground3d {
 
 class ShaderRenderer : public Renderer {
@@ -73,14 +77,11 @@ private:
 	GLuint _fadeVBO;
 	GLuint _viewportVBO;
 	GLuint _bitmapVBO;
+	GLuint _bitmapTexVBO;
 
 	Common::Rect _currentViewport;
 	Math::Vector2d _pos;
-	GLuint _textureRgbaId[5];
-	GLuint _textureRgbId[5];
-	GLuint _textureRgb565Id[2];
-	GLuint _textureRgba5551Id[2];
-	GLuint _textureRgba4444Id[2];
+	OpenGL::Texture *_textures[TextureType::MAX];
 };
 
 } // End of namespace Playground3d

@@ -34,6 +34,17 @@
 
 namespace Playground3d {
 
+struct TextureType {
+	enum type {
+		RGBA8888 = 0,
+		RGB888   = 1,
+		RGB565   = 2,
+		RGBA5551 = 3,
+		RGBA4444 = 4,
+		MAX      = 5
+	};
+};
+
 class Renderer {
 public:
 	Renderer(OSystem *system);
@@ -85,7 +96,6 @@ protected:
 	Math::Matrix4 _mvpMatrix;
 
 	static const float cubeVertices[11 * 6 * 4];
-	Graphics::Surface *_texture;
 
 	Math::Matrix4 makeProjectionMatrix(float fov, float nearClip, float farClip) const;
 };
