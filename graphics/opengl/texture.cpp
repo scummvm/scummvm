@@ -108,6 +108,9 @@ void Texture::setWrapMode(WrapMode wrapMode) {
 }
 
 void Texture::destroy() {
+	if (!_glTexture) {
+		return;
+	}
 	GL_CALL(glDeleteTextures(1, &_glTexture));
 	_glTexture = 0;
 }
