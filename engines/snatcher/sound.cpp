@@ -79,6 +79,20 @@ void SoundEngine::pause(bool toggle) {
 
 void SoundEngine::update() {
 	_dev->update();
+
+	uint8 fms = fmGetStatus();
+	if (_fmPlayingTracks.sync == (fms & 0x0F))
+		return;
+
+	if (fms & 0x80)
+		_fmPlayingTracks.music = 0;
+	if (fms & 0x40)
+		_fmPlayingTracks.sfx = 0;
+	_fmPlayingTracks.sync = fms & 0x0F;
+}
+
+void SoundEngine::setUnkCond(bool enable) {
+	_dev->setUnkCond(enable);
 }
 
 void SoundEngine::setMusicVolume(int vol) {

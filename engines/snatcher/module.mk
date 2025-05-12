@@ -1,14 +1,15 @@
 MODULE := engines/snatcher
 
 MODULE_OBJS := \
+	animator_scd.o \
 	graphics.o \
 	metaengine.o \
 	palette_scd.o \
-	render_scd.o \
 	resource.o \
 	scene/scene_d0.o \
 	scene/scene_d1.o \
 	scene/scene_d2.o \
+	script.o \
 	snatcher.o \
 	sound.o \
 	sound_device_scd.o \

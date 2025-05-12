@@ -55,8 +55,7 @@ struct Config {
 };
 
 struct GameState {
-	GameState() : frameNo(0), frameState(0), finish(0), modProcessTop(0), modProcessSub(0), counter(0), modIndex(0), menuSelect(0),
-				  main_switch_1_0_orM1_postIntr(-1), topLevelState(0), conf(Config()) {}
+	GameState() : frameNo(0), frameState(0), finish(0), modProcessTop(0), modProcessSub(0), counter(0), modIndex(0), menuSelect(0), introState(0), chapter(0), conf(Config()) {}
 	int16 frameNo;
 	int16 frameState;
 	int16 finish;
@@ -65,8 +64,8 @@ struct GameState {
 	int16 counter;
 	int16 modIndex;
 	int16 menuSelect;
-	int16 main_switch_1_0_orM1_postIntr;
-	int16 topLevelState;
+	int16 introState;
+	int16 chapter;
 	Config conf;
 };
 
@@ -82,11 +81,19 @@ protected:
 };
 
 struct ResourcePointer {
-	ResourcePointer() : dataStart(0), offset(0), startAddr(0x28000) {}
-	ResourcePointer(const uint8 *data, uint32 offs) : dataStart(data), offset(offs), startAddr(0x28000) { if (offset >= startAddr) offset -= startAddr; }
+	ResourcePointer() : dataStart(0), offset(0), moduleLocation(0x28000), ownBuffer(false) {}
+	ResourcePointer(const uint8 *data, uint32 offs, uint32 loc = 0x28000, bool assignBufferOwnership = false) : dataStart(data), offset(offs), moduleLocation(loc), ownBuffer(assignBufferOwnership) {
+		if (offset >= moduleLocation)
+			offset -= moduleLocation;
+	}
+	~ResourcePointer() {
+		if (ownBuffer && dataStart)
+			delete[] dataStart;
+	}
 	const uint8 *dataStart;
 	uint32 offset;
-	uint32 startAddr;
+	uint32 moduleLocation;
+	bool ownBuffer;
 	const uint8 *operator()() const { return dataStart + offset; }
 	const uint8 *operator++(int) { return dataStart + (offset++); }
 	const uint8 *operator++() { return dataStart + (++offset); }
@@ -98,15 +105,15 @@ struct ResourcePointer {
 	uint16 readIncrSINT16() { int16 r = READ_BE_INT16(dataStart + offset); offset += 2; return r; }
 	uint32 readIncrUINT32() { uint32 r = READ_BE_UINT32(dataStart + offset); offset += 4; return r; }
 	uint32 readIncrSINT32() { int32 r = READ_BE_INT32(dataStart + offset); offset += 4; return r; }
-	ResourcePointer operator+(int inc) const { return ResourcePointer(dataStart, offset + startAddr + inc); }
-	bool operator<(const ResourcePointer &ptr) const { assert(dataStart == ptr.dataStart); return offset < ptr.offset; }
-	bool operator>(const ResourcePointer &ptr) const { assert(dataStart == ptr.dataStart); return offset > ptr.offset; }
-	bool operator==(const ResourcePointer &ptr) const { return dataStart == ptr.dataStart && offset == ptr.offset; }
+	ResourcePointer operator+(int inc) const { return ResourcePointer(dataStart, offset + moduleLocation + inc, moduleLocation); }
+	bool operator<(const ResourcePointer &ptr) const { assert(dataStart == ptr.dataStart && moduleLocation == ptr.moduleLocation); return offset < ptr.offset; }
+	bool operator>(const ResourcePointer &ptr) const { assert(dataStart == ptr.dataStart && moduleLocation == ptr.moduleLocation); return offset > ptr.offset; }
+	bool operator==(const ResourcePointer &ptr) const { return dataStart == ptr.dataStart && offset == ptr.offset && moduleLocation == ptr.moduleLocation; }
 	void operator+=(int inc) { offset += inc; }
 	void operator=(const uint8 *ptr) { offset = ptr - dataStart; }
 	uint8 operator[](int index) const { return dataStart[offset + index]; }
-	ResourcePointer getDataFromTable(int tableEntry) const { return ResourcePointer(dataStart, offset + startAddr + READ_BE_UINT16(dataStart + offset + (tableEntry << 1))); }
-	ResourcePointer makeAbsPtr(uint32 offs) const { return ResourcePointer(dataStart, offs); }
+	ResourcePointer getDataFromTable(int tableEntry) const { return ResourcePointer(dataStart, offset + moduleLocation + READ_BE_UINT16(dataStart + offset + tableEntry * 2), moduleLocation); }
+	ResourcePointer makeAbsPtr(uint32 offs) const { return ResourcePointer(dataStart, offs, moduleLocation); }
 };
 
 class SceneModule {

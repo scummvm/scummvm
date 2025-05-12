@@ -249,7 +249,7 @@ SH_IMPL_FRM(D0, 31) {
 }
 
 SH_IMPL_FRM(D0, 32) {
-	_vm->gfx()->setAnimControlFlags(16, GraphicsEngine::kAnimPause);
+	_vm->gfx()->setAnimParameter(16, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause);
 }
 
 SH_IMPL_FRM(D0, 34) {

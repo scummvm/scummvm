@@ -34,11 +34,17 @@ namespace Snatcher {
 
 class GraphicsEngine;
 class FIO;
+class CmdQueue;
+class ScriptEngine;
 class SoundEngine;
 class SceneModule;
+
 struct GameState;
+struct ResourcePointer;
+struct Script;
 
 class SnatcherEngine : public Engine {
+friend class CmdQueue;
 public:
 	SnatcherEngine(OSystem *system, GameDescription &dsc);
 	~SnatcherEngine() override;
@@ -52,6 +58,7 @@ private:
 	bool initResource();
 	bool initGfx(Common::Platform platform, bool use8BitColorMode);
 	bool initSound(Audio::Mixer *mixer, Common::Platform platform, int soundOptions);
+	bool initScriptEngine();
 	void playBootLogoAnimation(const GameState &state);
 
 	// Main loop
@@ -59,7 +66,7 @@ private:
 	void delayUntil(uint32 end);
 	void checkEvents(const GameState &state);
 
-	void updateTopLevelState(GameState &state);
+	void updateChapter(GameState &state);
 	void updateModuleState(GameState &state);
 
 	const uint32 _frameLen;
@@ -78,6 +85,7 @@ private:
 	// Resource
 	FIO *_fio;
 	SceneModule *_module;
+	ResourcePointer *_scd;
 
 	// Graphics
 	GraphicsEngine *_gfx;
@@ -85,6 +93,11 @@ private:
 
 	// Sound
 	SoundEngine *_snd;
+
+	// Script
+	CmdQueue *_cmdQueue;
+	ScriptEngine *_scriptEngine;
+	Script *_script; 
 
 public:
 	// Input

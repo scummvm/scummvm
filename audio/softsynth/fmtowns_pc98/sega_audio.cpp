@@ -395,8 +395,9 @@ void SegaPCMChannel::playStream(Common::SharedPtr<Common::SeekableReadStream> &s
 	delete[] _streamTempBuff;
 	_streamTempBuff = new uint8[memAreaSize]();
 	_streamStartAddr = memAreaStartAddr;
+	uint16 dataSize = _streamSamplesLeft < memAreaSize ? _streamSamplesLeft : memAreaSize;
 	feed();
-	play(data, memAreaSize, memAreaStartAddr, 0, 0, rate, pan, vol);
+	play(data, dataSize, memAreaStartAddr, 0, 0, rate, pan, vol);
 }
 
 void SegaPCMChannel::stop() {

@@ -44,6 +44,9 @@ SH_DCL_FRM(10)
 SH_DCL_FRM(11)
 SH_DCL_FRM(12)
 
+// extra functions
+void updateAnimBlink();
+
 // local vars
 int16 _option;
 uint16 _counter2;
@@ -110,7 +113,7 @@ SH_IMPL_FRM(D2, 00) {
 		break;
 	case 2:
 		if (_vm->input().controllerFlags & 3) {
-			_vm->gfx()->clearAnimControlFlags(16, ~GraphicsEngine::kAnimHide);
+			_vm->gfx()->clearAnimParameterFlags(16, GraphicsEngine::kAnimParaControlFlags, ~GraphicsEngine::kAnimHide);
 			_buram_0 ^= 1;
 		}
 		if (_vm->input().controllerFlags & 0x80) {
@@ -251,16 +254,16 @@ SH_IMPL_FRM(D2, 09) {
 	switch (state.frameState) {
 	case 0:
 		_vm->gfx()->transitionCommand(0xFF);
-		_vm->gfx()->clearAnimControlFlags(_hasSaveSlotFlag ? 17 : 16, ~GraphicsEngine::kAnimHide);
+		_vm->gfx()->clearAnimParameterFlags(_hasSaveSlotFlag ? 17 : 16, GraphicsEngine::kAnimParaControlFlags, ~GraphicsEngine::kAnimHide);
 		state.frameState += (_hasSaveSlotFlag ? 1 : 2);
 		break;
 	case 1:
 		if (_vm->input().controllerFlags & 3)
-			_vm->gfx()->clearAnimControlFlags(17, ~GraphicsEngine::kAnimHide);
+			_vm->gfx()->clearAnimParameterFlags(17, GraphicsEngine::kAnimParaControlFlags, ~GraphicsEngine::kAnimHide);
 		if (_vm->input().controllerFlags & 0x80) {
-			_vm->gfx()->setAnimControlFlags(17, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
+			_vm->gfx()->setAnimParameter(17, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
 			state.menuSelect = 1;
-			if (_vm->gfx()->getAnimCurFrame(17) == 3) {
+			if (_vm->gfx()->getAnimParameter(17, GraphicsEngine::kAnimParaFrame) == 3) {
 				state.menuSelect = 0;
 				++state.frameNo;
 			}
@@ -280,8 +283,8 @@ SH_IMPL_FRM(D2, 09) {
 		state.frameState = 0;
 		_bua3 = 56;
 		_vm->sound()->fmSendCommand(56, 0);
-		_vm->gfx()->setAnimControlFlags(16, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
-		_vm->gfx()->setAnimControlFlags(17, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
+		_vm->gfx()->setAnimParameter(16, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
+		_vm->gfx()->setAnimParameter(17, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
 		_option = 0;
 	}
 }
@@ -300,9 +303,8 @@ SH_IMPL_FRM(D2, 10) {
 			++state.counter;
 			return;
 		}
-		_vm->gfx()->clearAnimControlFlags(24, 0xFF);
-		_vm->gfx()->clearAnimControlFlags(25, 0xFF);
-		
+		_vm->gfx()->clearAnimParameterFlags(24, GraphicsEngine::kAnimParaControlFlags, 0xFF);
+		_vm->gfx()->clearAnimParameterFlags(25, GraphicsEngine::kAnimParaControlFlags, 0xFF);		
 
 		do {
 			if (_vm->input().controllerFlags & 1)
@@ -312,8 +314,8 @@ SH_IMPL_FRM(D2, 10) {
 			_saveFileCurID &= 3;
 		} while (!(_hasSaveSlotFlag & (1 << _saveFileCurID)));
 
-		_vm->gfx()->setAnimFrame(24, _saveFileCurID << 2);
-		_vm->gfx()->setAnimFrame(25, _saveFileCurID << 2);
+		_vm->gfx()->setAnimParameter(24, GraphicsEngine::kAnimParaFrame, _saveFileCurID << 2);
+		_vm->gfx()->setAnimParameter(25, GraphicsEngine::kAnimParaFrame, _saveFileCurID << 2);
 
 		if (_vm->input().controllerFlags & 0x80) {
 			_bua3 = 56;
@@ -325,8 +327,8 @@ SH_IMPL_FRM(D2, 10) {
 			fin = true;
 		}
 		if (fin) {
-			_vm->gfx()->setAnimControlFlags(24, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
-			_vm->gfx()->setAnimControlFlags(25, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
+			_vm->gfx()->setAnimParameter(24, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
+			_vm->gfx()->setAnimParameter(25, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
 			++state.frameState;
 			state.counter = 0;
 		}
@@ -351,8 +353,8 @@ SH_IMPL_FRM(D2, 10) {
 			return;
 		--state.frameNo;
 		state.frameState = 1;
-		_vm->gfx()->setAnimControlFlags(17, GraphicsEngine::kAnimPause);
-		_vm->gfx()->setAnimFrame(17, 0);
+		_vm->gfx()->setAnimParameter(17, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause);
+		_vm->gfx()->setAnimParameter(17, GraphicsEngine::kAnimParaFrame, 0);
 		break;
 	case 3:
 		break;
@@ -376,15 +378,14 @@ SH_IMPL_FRM(D2, 11) {
 		}
 
 		for (int i = 32; i < 37; ++i)
-			_vm->gfx()->clearAnimControlFlags(i, 0xFF);
+			_vm->gfx()->clearAnimParameterFlags(i, GraphicsEngine::kAnimParaControlFlags, 0xFF);
 
 		do {
-		if (_vm->input().controllerFlags & 1)
-			--_option;
-		if (_vm->input().controllerFlags & 2)
-			++_option;
-		_option = (_option + 5) % 5;
-
+			if (_vm->input().controllerFlags & 1)
+				--_option;
+			if (_vm->input().controllerFlags & 2)
+				++_option;
+			_option = (_option + 5) % 5;
 		} while (_option == 3 && !state.conf.useLightGun);
 
 		if (!state.conf.lightGunAvailable) {
@@ -407,12 +408,12 @@ SH_IMPL_FRM(D2, 11) {
 				state.conf.disableStereo ^= 1;
 		}		
 
-		_vm->gfx()->setAnimFrame(32, _option << 2);
-		_vm->gfx()->setAnimFrame(33, ((_option ? 2 : 0) + state.conf.useLightGun) << 1);
-		_vm->gfx()->setAnimFrame(36, state.conf.useLightGun << 1);
-		_vm->gfx()->setAnimFrame(34, ((_option != 1 ? 6 : 0) + state.conf.controllerSetup) << 1);
-		_vm->gfx()->setAnimFrame(35, ((_option != 2 ? 2 : 0) + state.conf.disableStereo) << 1);
-		
+		_vm->gfx()->setAnimParameter(32, GraphicsEngine::kAnimParaFrame, _option << 2);
+		_vm->gfx()->setAnimParameter(33, GraphicsEngine::kAnimParaFrame, ((_option ? 2 : 0) + state.conf.useLightGun) << 1);
+		_vm->gfx()->setAnimParameter(36, GraphicsEngine::kAnimParaFrame, state.conf.useLightGun << 1);
+		_vm->gfx()->setAnimParameter(34, GraphicsEngine::kAnimParaFrame, ((_option != 1 ? 6 : 0) + state.conf.controllerSetup) << 1);
+		_vm->gfx()->setAnimParameter(35, GraphicsEngine::kAnimParaFrame, ((_option != 2 ? 2 : 0) + state.conf.disableStereo) << 1);
+
 		if (_vm->input().controllerFlags & 0x80)
 			fin = (_option != 3) ? 1 : 3;
 		else if (_vm->input().controllerFlags & 0x70)
@@ -440,17 +441,13 @@ SH_IMPL_FRM(D2, 11) {
 	case 2:
 		state.counter  = 0;
 		_counter2 = 0;
-		_vm->gfx()->setAnimControlFlags(16, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
-		_vm->gfx()->setAnimFrame(16, 0);
-		_vm->gfx()->setAnimFrame(17, 0);
-		_vm->gfx()->setAnimFrame(18, 0);
-		_vm->gfx()->setAnimFrame(19, 0);
-		_vm->gfx()->toggleAnimBlink(17, false);
-		_vm->gfx()->setAnimSpeedX(17, 0);
-		_vm->gfx()->toggleAnimBlink(18, false);
-		_vm->gfx()->setAnimSpeedX(18, 0);
-		_vm->gfx()->toggleAnimBlink(19, 0);
-		_vm->gfx()->setAnimSpeedX(19, false);
+		_vm->gfx()->setAnimParameter(16, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
+		for (int i = 0; i < 4; ++i)
+			_vm->gfx()->setAnimParameter(16 + i, GraphicsEngine::kAnimParaFrame, 0);
+		for (int i = 0; i < 3; ++i) {
+			_vm->gfx()->setAnimParameter(16 + i, GraphicsEngine::kAnimParaBlink, 0);
+			_vm->gfx()->setAnimParameter(16 + i, GraphicsEngine::kAnimParaAbsSpeedX, 0);
+		}
 
 		++state.frameState;
 		break;
@@ -462,37 +459,37 @@ SH_IMPL_FRM(D2, 11) {
 			return;
 		}
 
-		_vm->gfx()->updateAnimBlink();
+		updateAnimBlink();
 
 		switch (state.counter) {
 		case 0:
-			_vm->gfx()->toggleAnimBlink(18, true);
-			_vm->gfx()->setAnimSpeedX(18, 1);
+			_vm->gfx()->setAnimParameter(18, GraphicsEngine::kAnimParaBlink, 1);
+			_vm->gfx()->setAnimParameter(18, GraphicsEngine::kAnimParaAbsSpeedX, 1);
 			++state.counter;
 			break;
 		case 1:
 			if (_vm->input().controllerFlags & 0x100) {
 				_vm->sound()->pcmSendCommand(57, -1);
-				_vm->gfx()->toggleAnimBlink(18, false);
-				_vm->gfx()->setAnimSpeedX(18, 0);
-				_vm->gfx()->toggleAnimBlink(19, true);
-				_vm->gfx()->setAnimSpeedX(19, 1);
+				_vm->gfx()->setAnimParameter(18, GraphicsEngine::kAnimParaBlink, 0);
+				_vm->gfx()->setAnimParameter(18, GraphicsEngine::kAnimParaAbsSpeedX, 0);
+				_vm->gfx()->setAnimParameter(19, GraphicsEngine::kAnimParaBlink, 1);
+				_vm->gfx()->setAnimParameter(19, GraphicsEngine::kAnimParaAbsSpeedX, 1);
 				++state.counter;
 			}
 			break;
 		case 2:
 			_vm->calibrateLightGun(state);
-			_vm->gfx()->setAnimControlFlags(16, GraphicsEngine::kAnimPause);
-			_vm->gfx()->setAnimPosX(16, 117);
-			_vm->gfx()->setAnimPosY(16, 93);
+			_vm->gfx()->setAnimParameter(16, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause);
+			_vm->gfx()->setAnimParameter(16, GraphicsEngine::kAnimParaPosX, 117);
+			_vm->gfx()->setAnimParameter(16, GraphicsEngine::kAnimParaPosY, 93);
 			++state.counter;
 			break;
 		case 3:
 			if (_vm->input().controllerFlags & 0x200) {
-				_vm->gfx()->toggleAnimBlink(17, true);
-				_vm->gfx()->setAnimSpeedX(17, 1);
-				_vm->gfx()->toggleAnimBlink(19, false);
-				_vm->gfx()->setAnimSpeedX(19, 0);
+				_vm->gfx()->setAnimParameter(17, GraphicsEngine::kAnimParaBlink, 1);
+				_vm->gfx()->setAnimParameter(17, GraphicsEngine::kAnimParaAbsSpeedX, 1);
+				_vm->gfx()->setAnimParameter(19, GraphicsEngine::kAnimParaBlink, 0);
+				_vm->gfx()->setAnimParameter(19, GraphicsEngine::kAnimParaAbsSpeedX, 0);
 				state.counter += 2;
 				_vm->sound()->fmSendCommand(29, 0);
 			} else if (_vm->input().controllerFlags & 0x100) {
@@ -501,8 +498,8 @@ SH_IMPL_FRM(D2, 11) {
 			}
 			break;
 		case 4:
-			_vm->gfx()->setAnimPosX(16, _vm->input().lightGunPos.x - 11);
-			_vm->gfx()->setAnimPosY(16, _vm->input().lightGunPos.y - 35);
+			_vm->gfx()->setAnimParameter(16, GraphicsEngine::kAnimParaPosX, _vm->input().lightGunPos.x - 11);
+			_vm->gfx()->setAnimParameter(16, GraphicsEngine::kAnimParaPosY, _vm->input().lightGunPos.y - 35);
 			--state.counter;
 			break;
 		case 5:
@@ -535,6 +532,28 @@ SH_IMPL_FRM(D2, 12) {
 	state.frameNo = 0;
 	state.frameState = 0;
 	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
+}
+
+void Scene_D2::updateAnimBlink() {
+	for (int i = 0; i < 3; ++i) {
+		_vm->gfx()->setAnimParameter(17 + i, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
+		int speedx = _vm->gfx()->getAnimParameter(17 + i, GraphicsEngine::kAnimParaAbsSpeedX);
+		if (speedx)
+			_vm->gfx()->setAnimParameter(17 + i, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause);
+		if (_vm->gfx()->getAnimParameter(17 + i, GraphicsEngine::kAnimParaBlink)) {
+			int bc = _vm->gfx()->getAnimParameter(17 + i, GraphicsEngine::kAnimParaBlinkCounter);
+			if (++bc >= 16) {
+				bc = 0;
+				int bd = _vm->gfx()->getAnimParameter(17 + i, GraphicsEngine::kAnimParaBlinkDuration) + 1;
+				_vm->gfx()->setAnimParameter(17 + i, GraphicsEngine::kAnimParaAbsSpeedX, 0);
+				_vm->gfx()->setAnimParameter(17 + i, GraphicsEngine::kAnimParaAbsSpeedX, speedx ^ 1);
+				_vm->gfx()->setAnimParameter(17 + i, GraphicsEngine::kAnimParaBlinkDuration, bd);
+				if (bd >= 6)
+					_vm->gfx()->setAnimParameter(17 + i, GraphicsEngine::kAnimParaBlink, 0);
+			}
+			_vm->gfx()->setAnimParameter(17 + i, GraphicsEngine::kAnimParaBlinkCounter, bc);
+		}
+	}
 }
 
 } // End of namespace Snatcher
