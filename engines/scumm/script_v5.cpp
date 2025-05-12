@@ -953,6 +953,9 @@ void ScummEngine_v5::o5_cutscene() {
 }
 
 void ScummEngine_v5::o5_endCutscene() {
+	if (workaroundMonkey1StorekeeperWaitTablesLine())
+		return;
+
 	endCutscene();
 }
 
@@ -3831,6 +3834,49 @@ void ScummEngine_v5::workaroundLoomHetchelDoubleHead(Actor *a, int act) {
 				a->_talkStartFrame = a->_talkStopFrame = 6;
 		}
 	}
+}
+
+bool ScummEngine_v5::workaroundMonkey1StorekeeperWaitTablesLine() {
+	// WORKAROUND: When Guybrush must get a credit note from the storekeeper,
+	// he may pretend his job's to wait tables at the Scumm Bar. But in this
+	// case, one of the reaction lines from the storekeeper is never displayed,
+	// because of a missing WaitForMessage() call.  And we really don't want
+	// to miss any of his wonderful disparaging comments...
+	//
+	// Fixed in the Ultimate Talkie Edition by LogicDeLuxe.
+	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE))) &&
+		_roomResource == 30 && currentScriptSlotIs(211) &&
+		enhancementEnabled(kEnhRestoredContent)) {
+		const int questionVarNo = (_game.version == 5) ? 194 : 193;
+
+		// Guybrush must have said he was interested in procuring credit
+		// (Bit[28] && !Bit[320])
+		if (readVar(ROOM_VAL(28)) != 1 || readVar(ROOM_VAL(320)) != 0)
+			return false;
+
+		// The storekeeper must have asked Guybrush about his job (Bit[101]),
+		// and he also has to be the last one speaking (act. 11)
+		if (readVar(ROOM_VAL(101)) != 1 || _actorToPrintStrFor != 11)
+			return false;
+
+		// Guybrush must have said he was "waiting tables" (Var[193] == 121,
+		// or VAR[194] == 121, depending on SCUMM v4/v5)
+		if (VAR(questionVarNo) != 121)
+			return false;
+
+		// The player isn't trying to skip the cutscene
+		if (VAR(VAR_OVERRIDE))
+			return false;
+
+		// All good; simulate missing WaitForMessage()
+		if (VAR(VAR_HAVE_MSG)) {
+			_scriptPointer--;
+			o5_breakHere();
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool ScummEngine_v5::workaroundMonkey1JollyRoger(byte callerOpcode, int arg) {
