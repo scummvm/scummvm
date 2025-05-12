@@ -21,6 +21,7 @@
 
 #include "snatcher/graphics.h"
 #include "snatcher/resource.h"
+#include "snatcher/script.h"
 #include "snatcher/snatcher.h"
 #include "snatcher/sound.h"
 #include "snatcher/util.h"
@@ -41,8 +42,8 @@
 
 namespace Snatcher {
 
-SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _gfx(nullptr), _snd(nullptr), _input(), _lastKeys(0),
-	_releaseKeys(0), _keyRepeat(false), _gfxInfo(), _frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
+SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _scd(nullptr), _gfx(nullptr), _snd(nullptr), _input(),
+	_scriptEngine(nullptr), _cmdQueue(nullptr), _script(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _gfxInfo(), _frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
 	assert(system);
 }
 
@@ -51,6 +52,10 @@ SnatcherEngine::~SnatcherEngine() {
 	delete _gfx;
 	delete _snd;
 	delete _fio;
+	delete _scd;
+	delete _scriptEngine;
+	delete _cmdQueue;
+	delete _script;
 }
 
 Common::Error SnatcherEngine::run() {
@@ -63,17 +68,35 @@ Common::Error SnatcherEngine::run() {
 		return Common::Error(Common::kAudioDeviceInitFailed);
 
 	if (!initGfx(_game.platform, SNATCHER_GFXMODE_8BIT))
+		return Common::Error(Common::kUnsupportedColorMode);
+
+	if (!initScriptEngine())
 		return Common::Error(Common::kUnknownError);
 
 	return Common::Error(start() ? Common::kNoError : Common::kUnknownError);
 }
 
 bool SnatcherEngine::initResource() {
-	return (_fio = new FIO(this, _game.isBigEndian));
+	_fio = new FIO(this, _game.isBigEndian);
+	if (!_fio)
+		return false;
+
+	uint32 size = 0;
+	const uint8 *data = _fio->fileData(96, &size);
+	if (!data)
+		return false;
+	_scd = new ResourcePointer(data, 0, 0xD400, true);
+	if (!_scd)
+		return false;
+
+	return true;
 }
 
 bool SnatcherEngine::initGfx(Common::Platform platform, bool use8BitColorMode) {
 	Graphics::PixelFormat pxf;
+
+	// Currently, the animation code needs access to the sound engine. Maybe this can be improved later...
+	assert(_snd);
 
 	if (use8BitColorMode) {
 		pxf = Graphics::PixelFormat::createFormatCLUT8();
@@ -94,7 +117,7 @@ bool SnatcherEngine::initGfx(Common::Platform platform, bool use8BitColorMode) {
 			error("%s(): No suitable color mode found", __FUNCTION__);
 	}
 
-	_gfx = new GraphicsEngine(&pxf, _system, platform, _gfxInfo);
+	_gfx = new GraphicsEngine(&pxf, _system, platform, _gfxInfo, _snd);
 	if (_gfx) {
 		initGraphics(_gfx->screenWidth(), _gfx->screenHeight(), &pxf);
 		return true;
@@ -108,6 +131,19 @@ bool SnatcherEngine::initSound(Audio::Mixer *mixer, Common::Platform platform, i
 	assert(_fio);
 	_snd = new SoundEngine(_fio, platform, soundOptions);
 	return (_snd && _snd->init(mixer));
+}
+
+bool SnatcherEngine::initScriptEngine() {
+	_cmdQueue = new CmdQueue(this);
+	if (!_cmdQueue)
+		return false;
+	_scriptEngine = new ScriptEngine(this, _cmdQueue, _scd);
+	if (!_scriptEngine)
+		return false;
+	_script = new Script();
+	if (!_script)
+		return false;
+	return true;
 }
 
 void SnatcherEngine::playBootLogoAnimation(const GameState &state) {
@@ -147,9 +183,7 @@ bool SnatcherEngine::start() {
 		uint32 nextFrame = _system->getMillis() + (frameTimer >> 14);
 		frameTimer &= 0x3FFF;
 
-		int _sub_doMainScript = 0;
-
-		updateTopLevelState(state);
+		updateChapter(state);
 
 		_gfxInfo.audioSync = _snd->cdaIsPlaying() ? _snd->cdaGetTime() : 0;
 		Util::rngMakeNumber();
@@ -161,13 +195,12 @@ bool SnatcherEngine::start() {
 
 		for (int i = 0; i < numLoops; ++i) {
 			if (!_gfx->busy(0)) {
-				//subVintSub_2();
-				bool blockedUpdt = _sub_doMainScript;
-				if (_sub_doMainScript) {
-					//subVint_mainScriptRun__36Cases();
-					blockedUpdt = _gfx->busy(0);
+				bool blockedMod = _cmdQueue->running();
+				if (_cmdQueue->running()) {
+					_cmdQueue->run();
+					blockedMod = _gfx->busy(0);
 				}
-				if (!blockedUpdt) {
+				if (!blockedMod) {
 					updateModuleState(state);
 					_gfx->updateAnimations();
 				}
@@ -258,7 +291,7 @@ void SnatcherEngine::checkEvents(const GameState &state) {
 					if (k.updateCoords) {
 						_realLightGunPos = evt.mouse;
 						// The lightgun coordinates are supposed to be based on a 256 x 256 system, with 128 being
-						// the screen center. I solve this by always adding -16 to the y-bias.
+						// the screen center. I solve this by always adding the diff to the y-bias.
 						_input.lightGunPos.x = CLIP<int>(_realLightGunPos.x - state.conf.lightGunBias.x, 0, 255);
 						_input.lightGunPos.y = CLIP<int>(_realLightGunPos.y - state.conf.lightGunBias.y, 0, 255);
 					}
@@ -270,33 +303,57 @@ void SnatcherEngine::checkEvents(const GameState &state) {
 	}
 }
 
-void SnatcherEngine::updateTopLevelState(GameState &state) {
-	switch (state.topLevelState) {
+void SnatcherEngine::updateChapter(GameState &state) {
+	switch (state.chapter) {
 	case 0:
-		if (state.main_switch_1_0_orM1_postIntr == -1) {
-			++state.topLevelState;
-		}
+		// Intro and main menu
+		if (state.introState == -1)
+			++state.chapter;
 		break;
+
 	case 1:
+		// Init first scene or load savegame
+		_scriptEngine->resetArrays();
+		if (state.menuSelect == 0) {
+			_cmdQueue->writeUInt16(0x11);
+			_cmdQueue->writeUInt32(0x1A800);
+			_cmdQueue->writeUInt16(0x3F);
+			_cmdQueue->writeUInt16(15);
+		} else {
+			/* load savegame */
+		}
+
+		_cmdQueue->enable();
+		++state.chapter;
+		state.chapter |= 0x80;
 		break;
+
 	case 2:
+		_scriptEngine->run(_script);
+		_cmdQueue->enable();
+		state.chapter |= 0x80;
 		break;
+
 	case 3:
 		break;
+
 	case 4:
 		break;
+
 	case 5:
 		break;
+
 	default:
-		error("%s(): Invalid state %d", __FUNCTION__, state.topLevelState);
+		if (_cmdQueue->running() || (_snd->pcmGetStatus() & 7))
+			return;
+		state.chapter &= ~0x80;
 		break;
 	}
 }
 
 void SnatcherEngine::updateModuleState(GameState &state) {
-	int _unlCDREadSeekWord = 0;
-	uint8 _triggerPalFlag7Etc = 0;
 	bool _sub_bool_5 = false;
+	++_gfxInfo.frameCounter;
 
 	switch (state.modProcessTop) {
 	case -1:
@@ -349,7 +406,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 				state.finish = 0;
 				state.modProcessTop = state.menuSelect ? 7 : state.modProcessTop + 1;
 				state.modIndex = 0;
-				state.main_switch_1_0_orM1_postIntr = 1;
+				state.introState = 1;
 			}
 			break;
 		default:
@@ -375,7 +432,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 		case 1:
 			if (!(_gfx->frameCount() & 0x1F)) {
 				// startup__runWithFileFunc(2)
-				_unlCDREadSeekWord = 0;
+				//_unlCDREadSeekWord = 0;
 				state.frameNo = -1;
 				++state.modProcessSub;
 			}
@@ -387,8 +444,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 				state.finish = 0;
 				state.counter = 10;
 				++state.modProcessSub;
-				static const uint8 data[] = { 0x83, 0x00, 0x00, 0x3F };
-				_gfx->enqueuePaletteEvent(ResourcePointer(data, 0));
+				_gfx->enqueuePaletteEvent(_scd->makeAbsPtr(0x14B1C));
 			} else if (state.finish) {
 				if (state.modIndex == 0) {
 					++state.modIndex;
@@ -400,12 +456,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			break;
 		case 3:
 			if (--state.counter == 1) {
-				static const uint8 cmd[] = {
-					0x01, 0x00, 0x00, 0x00, 0x00, 0x0E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0xFF, 0xFF,
-					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-				};
-				_gfx->enqueueDrawCommands(ResourcePointer(cmd, 0));
+				_gfx->enqueueDrawCommands(_scd->makeAbsPtr(0x14B4E));
 			} else if (state.counter == 0) {
 				state.finish = -1;
 				state.modProcessSub = 0;
@@ -443,9 +494,9 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 	case 6:
 		switch (state.modProcessSub) {
 		case 0:
-			if (!_gfx->isAnimEnabled(31)) {
+			if (!_gfx->getAnimParameter(31, GraphicsEngine::kAnimParaEnable)) {
 				_gfx->reset(GraphicsEngine::kResetSetDefaults | GraphicsEngine::kResetAnimations);
-				_triggerPalFlag7Etc = 0xFF;
+				_gfx->setVar(11, 0xFF);
 				++state.modProcessSub;
 				state.frameNo = -1;
 				state.frameState = 0;
@@ -461,7 +512,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			break;
 		case 2:
 			// startup__runWithFileFunc(2)
-			_unlCDREadSeekWord = 0;
+			//_unlCDREadSeekWord = 0;
 			++state.modProcessSub;
 			break;
 		case 3:
@@ -480,23 +531,22 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 		switch (state.modProcessSub) {
 		case 0:
 			_snd->cdaStop();
-			//loadFile56 PCMLT_01.BIN
+			// original: start load PCMLT_01.BIN
 			++state.modProcessSub;
 			break;
 		case 1:
 		case 3:
-			// startup__runWithFileFunc(2)
-			_unlCDREadSeekWord = 0;
+			// original: check if file loaded
 			++state.modProcessSub;
 			break;
 		case 2:
-			//loadFile54 PCMDRMDT.BIN
+			// original: start load PCMDRMDT.BIN
 			++state.modProcessSub;
 			break;
 		case 4:
 			state.modProcessTop = 5;
 			state.modProcessSub = 0;
-			state.main_switch_1_0_orM1_postIntr = -1;
+			state.introState = -1;
 			break;
 		default:
 			break;
@@ -543,7 +593,7 @@ void SnatcherEngine::calibrateLightGun(GameState &state) {
 	state.conf.lightGunBias.x = _realLightGunPos.x - (_gfx->screenWidth() / 2);
 	state.conf.lightGunBias.y = _realLightGunPos.y - (_gfx->screenHeight() / 2);
 	// The lightgun coordinates are supposed to be based on a 256 x 256 system, with 128 being
-	// the screen center. I solve this by always adding -16 to the y-bias.
+	// the screen center. I just add the diff to the y-bias...
 	state.conf.lightGunBias.y -= ((256 - _gfx->screenHeight()) / 2);
 }
 

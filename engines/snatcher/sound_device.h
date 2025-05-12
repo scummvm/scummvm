@@ -54,6 +54,8 @@ public:
 	virtual void pause(bool toggle) = 0;
 	virtual void update() = 0;
 
+	virtual void setUnkCond(bool enable) = 0;
+
 	virtual void setMusicVolume(int vol) = 0;
 	virtual void setSoundEffectVolume(int vol) = 0;
 

@@ -28,8 +28,9 @@
 namespace Snatcher {
 
 struct VMInfo {
-	VMInfo() : dropFrames(0), audioSync(0) {}
+	VMInfo() : dropFrames(0), audioSync(0), frameCounter(0) {}
 	int16 dropFrames;
+	uint16 frameCounter;
 	uint32 audioSync;
 };
 
