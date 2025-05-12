@@ -167,6 +167,9 @@ MODULE_OBJS = \
 	hodjnpodj/barbershop/stats.o \
 	hodjnpodj/barbershop/undo.o \
 	hodjnpodj/barbershop/usercfg.o \
+	hodjnpodj/battlefish/gamedll.o \
+	hodjnpodj/battlefish/bfish.o \
+	hodjnpodj/battlefish/usercfg.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o

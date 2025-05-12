@@ -1,72 +1,31 @@
-/*****************************************************************
-*
-*  bfish.cpp
-*
-*  HISTORY
-*
-*      1.00      05/26/94     BCW     Created this file
-*
-*  MODULE DESCRIPTION:
-*
-*       Main module for Hodj 'n' Podj: BattleFish
-*
-*  CONSTRUCTORS:
-*
-*       CBFishWindow                     Constructs
-*
-*  PUBLIC:
-*
-*       PaintScreen                     Repaints entire client area
-*       PlayGame                        Starts a new game
-*       LoadIniSettings                 Loads game params from .INI file
-*       SaveIniSettings                 Saves game params to .INI file
-*
-*  PROTECTED:
-*       RepaintSpriteList               Refreshes all Linked Sprites
-*       DeleteSprite                    Erases, Unlinks, and deletes sprite
-*       GamePause                       Pauses any active game
-*       GameResume                      UnPauses any active game
-*       GameReset                       Resets all game parameters
-*       HandleError                     Handles Fatal Errors
-*
-*       OnCommand                       Handles WM_COMMAND messages
-*       OnPaint                         Handles WM_PAINT messages
-*       OnKeyDown                       Handles WM_KEYDOWN messages
-*       OnSysKeyDown                    Handles WM_SYSKEYDOWN messages
-*       OnSysChar                       Handles WM_SYSCHAR messages
-*       OnClose                         Handles WM_CLOSE messages
-*       OnActivate                      Handles WM_ACTIVATE messages
-*       OnLButtonDown                   Handles WM_LBUTTONDOWN messages
-*       OnRButtonDown                   Handles WM_RBUTTONDOWN messages
-*       OnLButtonUp                     Handles WM_LBUTTONUP messages
-*       OnMouseMove                     Handles WM_MOUSEMOVE messages
-*
-*  PRIVATE:
-*
-*
-*
-*  MEMBERS:
-*
-*
-*
-*  RELEVANT DOCUMENTATION:
-*
-*       [Specifications, documents, test plans, etc.]
-*
-****************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/afxwin.h"
-
-#include <time.h>
-
-#include <limits.h>
-
 #include "bagel/hodjnpodj/hnplibs/dibdoc.h"
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/hnplibs/mainmenu.h"
-#include <copyrite.h>
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/boflib/misc.h"
@@ -74,8 +33,13 @@
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
-#include "bfish.h"
-#include "usercfg.h"
+#include "bagel/hodjnpodj/battlefish/bfish.h"
+#include "bagel/hodjnpodj/battlefish/usercfg.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Battlefish {
 
 #define CSOUND 0
 
@@ -255,7 +219,7 @@ STATIC POINT ptFishHooks[MAX_FISH] = {
     {550, GAME_TOP_BORDER_WIDTH},
 };
 
-STATIC CHAR *pszFishSound[MAX_FISH] = {
+STATIC const CHAR *pszFishSound[MAX_FISH] = {
     WAV_BADSINK8,
     WAV_BADSINK4,
     WAV_BADSINK7,
@@ -453,7 +417,7 @@ CBFishWindow::CBFishWindow(VOID)
             //
             if (pGameParams->bMusicEnabled) {
                 if ((m_pSoundTrack = new CSound) != NULL) {
-                    m_pSoundTrack->Initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+                    m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
                     m_pSoundTrack->midiLoopPlaySegment( 2470, 32160, 0, FMT_MILLISEC );
                 } else {
                     errCode = ERR_MEMORY;
@@ -929,7 +893,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam)
     						(pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (m_bGameActive || m_bUserEditMode ? 0 : NO_RETURN),
                             GetGameParams, "bfish.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL), pGameParams);
     CDC *pDC;
-    CSound *pSound;
+    //CSound *pSound;
     INT nPick = 0;
 
     if (HIWORD(lParam) == BN_CLICKED) {
@@ -986,7 +950,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam)
                 } else if (pGameParams->bMusicEnabled && (m_pSoundTrack == NULL)) {
 
                     if ((m_pSoundTrack = new CSound) != NULL) {
-                        m_pSoundTrack->Initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+                        m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
                         m_pSoundTrack->midiLoopPlaySegment(2470, 32160, 0, FMT_MILLISEC);
                     }
                 }
@@ -1822,7 +1786,7 @@ VOID CBFishWindow::OnLButtonDown(UINT, CPoint point)
             sailRect,
             rowRect;
     CPoint  ptTmp;
-    CSound *pSound;
+    //CSound *pSound;
     CDC    *pDC;
     INT     i,
             nPick;
@@ -2290,10 +2254,10 @@ VOID CBFishWindow::OnMouseMove(UINT, CPoint point)
 
 VOID CBFishWindow::UsersTurn(INT nGridIndex)
 {
-    CSound *pSound;
+    //CSound *pSound;
     INT nRow, nCol, nSquare;
     INT nFishIndex;
-    INT nPick = 0;
+    //INT nPick = 0;
 
     // validate the grid index
 
@@ -2447,7 +2411,7 @@ VOID CBFishWindow::SinkEnemyFish(INT nFishIndex)
 VOID CBFishWindow::ComputersTurn(VOID)
 {
     STATIC INT nLastRow, nLastCol;
-    CSound *pSound;
+    //CSound *pSound;
     INT nRow, nCol, nFishIndex, nGridIndex;
     INT nSquare;
 
@@ -3843,3 +3807,7 @@ VOID CALLBACK GetGameParams(CWnd *pParentWnd)
     //
     CUserCfgDlg dlgUserCfg(pParentWnd, pGamePalette, IDD_USERCFG);
 }
+
+} // namespace Battlefish
+} // namespace HodjNPodj
+} // namespace Bagel

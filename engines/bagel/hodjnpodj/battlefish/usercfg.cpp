@@ -1,39 +1,34 @@
-/*****************************************************************
-*
-*  Copyright (c) 1994 by Boffo Games, All Rights Reserved
-*
-*
-*  usercfg.cpp   -
-*
-*  HISTORY
-*
-*       1.00        05/09/94    BCW     Created this file
-*
-*  MODULE DESCRIPTION:
-*
-*
-*
-*  LOCALS:
-*
-*
-*
-*  GLOBALS:
-*
-*
-*
-*  RELEVANT DOCUMENTATION:
-*
-*
-****************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/afxwin.h"
-
-
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
-#include "usercfg.h"
-#include "resource.h"
+#include "bagel/hodjnpodj/battlefish/usercfg.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Battlefish {
 
 #define ID_RESET    104
 #define ID_LIMIT    105
@@ -43,7 +38,7 @@
 
 #define PAGE_SIZE   1
 
-CHAR *pszDiffLevel[DIFF_MAX+1] = {
+static const CHAR *pszDiffLevel[DIFF_MAX+1] = {
     "Wimpy",
     "Average",
     "Hefty"
@@ -292,15 +287,16 @@ VOID CUserCfgDlg::LoadIniSettings(VOID)
     m_bUserGoesFirst = (nVal == 0 ? FALSE : TRUE);
 }
 
-VOID CUserCfgDlg::SaveIniSettings(VOID)
-{
-    CHAR tmpBuf[10];
+VOID CUserCfgDlg::SaveIniSettings() {
+    WritePrivateProfileString(INI_SECTION,
+		"DifficultyLevel",
+		Common::String::format("%d", m_nDifficultyLevel).c_str(),
+		INI_FILENAME);
 
-    itoa(m_nDifficultyLevel, tmpBuf, 10);
-    WritePrivateProfileString(INI_SECTION, "DifficultyLevel", tmpBuf, INI_FILENAME);
-
-    itoa(m_bUserGoesFirst, tmpBuf, 10);
-    WritePrivateProfileString(INI_SECTION, "UserGoesFirst", tmpBuf, INI_FILENAME);
+    WritePrivateProfileString(INI_SECTION,
+		"UserGoesFirst",
+		Common::String::format("%d", m_bUserGoesFirst).c_str(),
+		INI_FILENAME);
 }
 
 void CUserCfgDlg::OnPaint(void)
@@ -416,3 +412,7 @@ BEGIN_MESSAGE_MAP(CUserCfgDlg, CBmpDialog)
     ON_WM_HSCROLL()
     ON_WM_PAINT()
 END_MESSAGE_MAP()
+
+} // namespace Battlefish
+} // namespace HodjNPodj
+} // namespace Bagel

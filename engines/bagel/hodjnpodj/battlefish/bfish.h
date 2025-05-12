@@ -1,33 +1,37 @@
-/*****************************************************************
-*
-*  Copyright (c) 1994 by Boffo Games, All Rights Reserved
-*
-*
-*  bfish.h    -  Main header for Battle Fish
-*
-*  HISTORY
-*
-*       1.00        05/26/94    BCW     Created this file
-*
-*  MODULE DESCRIPTION:
-*
-*       Public header for the main module for BattleFish
-*
-*  RELEVANT DOCUMENTATION:
-*
-*
-*
-****************************************************************/
-#ifndef BFISH_H
-#define BFISH_H
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HODJNPODJ_BATTLEFISH_BFISH_H
+#define HODJNPODJ_BATTLEFISH_BFISH_H
 
 #include "bagel/afxwin.h"
-
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/sound.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Battlefish {
 
 #define GRID_ROWS       8
 #define GRID_COLS       8
@@ -141,4 +145,8 @@ class CBFishWindow : public CFrameWnd
         BOOL        m_bInMenu;
 };
 
-#endif // !BFISH_H
+} // namespace Battlefish
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif
