@@ -1,55 +1,32 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved.
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * barb.cpp
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *		1.0      03/28/94     JSC		First writing
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *	Handles most higher level operations for the mini-game.
- *
- * CONSTRUCTORS:
- *
- *	CBarber		Creates a barbershop quintet object. Only one is needed.
- *
- * DESTRUCTORS:
- *
- *	~CBarber	Deletes the barbershop object.
- *
- * PUBLIC:
- *
- *	NewGame				Resets game, and starts a new one
- *	Refresh				Refreshes board if window was obscured
- *	OnLButtonDown		Handles mouse left button
- *	OnLButtonDblClk		Handles mouse left button double click
- *	OnMouseMove			Handles mouse movement
- *	OnLButtonUp			Handles mouse left button release
- *	IsInRect			Determines if card is in a particular rectangle
- *	IsGameOver			Tests to see if game is over
- *	Score				Returns the number of cards on the foundation
- *
- * PUBLIC GLOBAL:	see header file
- *
- * PROTECTED:		n/a
- *
- * PRIVATE:			n/a
- *
- * MEMBERS:			see header file
- *
- * RELEVANT DOCUMENTATION:
- *
- *	none
- *
- ****************************************************************/
-#include "stdafx.h"
+ */
 
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "bagel/boflib/sound.h"
-#include "barb.h"
+#include "bagel/hodjnpodj/barbershop/barb.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Barbershop {
 
 //
 // global
@@ -229,14 +206,14 @@ void CBarber::OnLButtonDown(CWnd *pWnd, CPalette *pPalette, CPoint point)
 		pDC = pWnd->GetDC();
 
 		if ( pGameParams->bSoundEffectsEnabled != FALSE )
-			m_pSound->Initialize(
+			m_pSound->initialize(
 					UNDO,
 					SOUND_WAVE | SOUND_ASYNCH
 					);
 
 		if ( m_pUndo->Undo(pDC, m_cBrd, m_cPnt) == TRUE ) {	// undo successful?
 			if ( pGameParams->bSoundEffectsEnabled != FALSE )
-				m_pSound->Play();
+				m_pSound->play();
 
 			// undoing does not always guarantee there is a move left,
 			// but it is okay to reset game over switch anyway.
@@ -266,7 +243,7 @@ void CBarber::OnLButtonDown(CWnd *pWnd, CPalette *pPalette, CPoint point)
 			// user wants to recycle used stack
 			//
 			if ( pGameParams->bSoundEffectsEnabled != FALSE )		// init sound if it is enabled
-				m_pSound->Initialize(
+				m_pSound->initialize(
 					STOCKCARDS,
 					SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
 					);
@@ -280,7 +257,7 @@ void CBarber::OnLButtonDown(CWnd *pWnd, CPalette *pPalette, CPoint point)
 					pGameParams->bSoundEffectsEnabled != FALSE &&
 					nFlipSnd % RECYCLE_SOUND_FREQ == 0
 					)
-					m_pSound->Play();									// make flap sound...
+					m_pSound->play();									// make flap sound...
 				nFlipSnd++;											// every three cards
 
 				m_cPnt->FlipCard(pDC, pCard);						// repaint top card
@@ -325,11 +302,11 @@ void CBarber::OnLButtonDown(CWnd *pWnd, CPalette *pPalette, CPoint point)
 
 			// sound (if enabled)
 			if ( pGameParams->bSoundEffectsEnabled != FALSE ) {
-				m_pSound->Initialize(
+				m_pSound->initialize(
 					STOCKCARDS,
 					SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
 					);
-				m_pSound->Play();
+				m_pSound->play();
 			}
 
 			pDC = pWnd->GetDC();
@@ -411,14 +388,14 @@ void CBarber::OnLButtonDblClk(CWnd *pWnd, CPalette *pPalette, CPoint point)
 		) {
 		pDC = pWnd->GetDC();
 		if ( pGameParams->bSoundEffectsEnabled != FALSE )
-			m_pSound->Initialize(
+			m_pSound->initialize(
 						UNDO,
 						SOUND_WAVE | SOUND_QUEUE
 						);
 
 		if ( m_pUndo->Undo(pDC, m_cBrd, m_cPnt) == TRUE ) {	// undo successful?
 			if ( pGameParams->bSoundEffectsEnabled != FALSE )
-				m_pSound->Play();
+				m_pSound->play();
 
 			m_bIsGameOver = FALSE;							// yes
 		}
@@ -444,7 +421,7 @@ void CBarber::OnLButtonDblClk(CWnd *pWnd, CPalette *pPalette, CPoint point)
 			// user wants to recycle used stack
 			//
 			if ( pGameParams->bSoundEffectsEnabled != FALSE )		// init sound if it is enabled
-				m_pSound->Initialize(
+				m_pSound->initialize(
 					STOCKCARDS,
 					SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
 					);
@@ -459,7 +436,7 @@ void CBarber::OnLButtonDblClk(CWnd *pWnd, CPalette *pPalette, CPoint point)
 					pGameParams->bSoundEffectsEnabled != FALSE &&	// every RECYCLE_'_FREQ card
 					nFlipSnd % RECYCLE_SOUND_FREQ == 0
 					)
-					m_pSound->Play();									// make flap sound...
+					m_pSound->play();									// make flap sound...
 				nFlipSnd++;											// update fwap counter
 
 				m_cPnt->FlipCard(pDC, pCard);						// change card sprite
@@ -505,11 +482,11 @@ void CBarber::OnLButtonDblClk(CWnd *pWnd, CPalette *pPalette, CPoint point)
 
 			// sound (if enabled)
 			if ( pGameParams->bSoundEffectsEnabled != FALSE ) {
-				m_pSound->Initialize(
+				m_pSound->initialize(
 					STOCKCARDS,
 					SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
 					);
-				m_pSound->Play();
+				m_pSound->play();
 			} // end if
 
 			for ( i = 0; i < STOCK_DRAW; i++ ) {
@@ -746,22 +723,22 @@ BOOL CBarber::IsGameOver(CWnd *pWnd)
 	if ( m_cBrd->GetStack((loc) fnd)->Size() == DECK ) {
 		// sound (if enabled)
 		if ( pGameParams->bSoundEffectsEnabled != FALSE ) {
-			m_pSound->Initialize(
+			m_pSound->initialize(
 				WIN_SOUND,
 				SOUND_WAVE | SOUND_ASYNCH
 				);
-			m_pSound->Play();
+			m_pSound->play();
 		}
 
 		m_bIsWin = TRUE;
 	} else {
 		// sound (if enabled)
 		if ( pGameParams->bSoundEffectsEnabled != FALSE ) {
-			m_pSound->Initialize(
+			m_pSound->initialize(
 				LOSE_SOUND,
 				SOUND_WAVE | SOUND_ASYNCH
 				);
-			m_pSound->Play();
+			m_pSound->play();
 		}
 
 		m_bIsWin = FALSE;
@@ -834,3 +811,7 @@ int CBarber::Score()
 {
 	return (m_cBrd->GetStack(fnd)->Size());
 }
+
+} // namespace Barbershop
+} // namespace HodjNPodj
+} // namespace Bagel

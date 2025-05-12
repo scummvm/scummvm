@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "stdafx.h"
+#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
 #include <limits.h>
 #include "globals.h"
 #include "note.h"

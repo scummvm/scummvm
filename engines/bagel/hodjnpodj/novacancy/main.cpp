@@ -1884,7 +1884,7 @@ VOID CMainWindow::OnClose()
     }                                                                                     
 	
 	#ifdef _USRDLL
-    	::PostMessage( ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
+    	MFC::PostMessage( ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
 	#endif
     
 

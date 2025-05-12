@@ -1,29 +1,34 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * paint.h
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      1.00      04/19/94     Josquin     Initial Design
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      [Describe the function of the module]
- *
- * RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc.]
- *
- ****************************************************************/
+ */
 
-#ifndef __game_paint_H__
-#define __game_paint_H__
+#ifndef HODJNPODJ_BARBERSHOP_PAINT_H
+#define HODJNPODJ_BARBERSHOP_PAINT_H
 
-#include "deck.h"
-#include "card.h"
-#include "stack.h"
+#include "bagel/hodjnpodj/barbershop/deck.h"
+#include "bagel/hodjnpodj/barbershop/card.h"
+#include "bagel/hodjnpodj/barbershop/stack.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Barbershop {
 
 #define STD_CARD_WTH	72		// standard card width (x-val)
 #define	STD_CARD_HEI	97		// standard card height (y-val)
@@ -81,7 +86,7 @@
 #define CARD_BACK1B_BMP	"art\\card-bk3.bmp"		// card back option #1
 #define CARD_BACK2B_BMP	"art\\card-bk4.bmp"		// card back option #2
 
-static char *lpszDeck[] = {			// bitmap loading
+static const char *lpszDeck[] = {			// bitmap loading
 	"art\\deck0.bmp",
 	"art\\deck1.bmp",
 	"art\\deck2.bmp",
@@ -120,4 +125,8 @@ public:		// vars
 	int		m_nCardBack;
 };
 
-#endif // __game_paint_H__
+} // namespace Barbershop
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

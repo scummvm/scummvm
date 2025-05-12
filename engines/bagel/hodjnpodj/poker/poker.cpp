@@ -45,7 +45,7 @@
  ****************************************************************/
 
 #include <stdlib.h>
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/boflib/sound.h" 
@@ -2213,7 +2213,7 @@ void CMainPokerWindow::OnDestroy()
 {
 //  send a message to the calling app to tell it the user has quit the game
 	m_lpGameStruct->lCrowns = m_lUserAmount;
-	::PostMessage( m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct );
+	MFC::PostMessage( m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct );
 //	m_lpGameStruct = NULL;
 //	delete m_lpGameStruct;
 	CFrameWnd::OnDestroy();

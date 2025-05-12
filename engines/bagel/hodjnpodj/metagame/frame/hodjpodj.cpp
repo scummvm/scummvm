@@ -29,7 +29,7 @@
  *
  ****************************************************************/
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 
 #include <io.h>
 #include <direct.h>

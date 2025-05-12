@@ -1203,7 +1203,7 @@ void CMainWindow::OnClose()
 void CMainWindow::OnDestroy()
 {
 //  send a message to the calling app to tell it the user has quit the game
-        ::PostMessage( m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct );
+        MFC::PostMessage( m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct );
         CFrameWnd::OnDestroy();
 }
 

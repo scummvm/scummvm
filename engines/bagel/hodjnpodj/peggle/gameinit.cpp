@@ -1,5 +1,5 @@
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 
 BOOL	bHasPalette = TRUE;				// whether the display is palette driven
 int		nColorDepth = 8;				// display's bits per pixel

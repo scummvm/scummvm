@@ -1,7 +1,7 @@
 // optndlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "globals.h"
 #include "resource.h"
 #include "options.h"

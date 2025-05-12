@@ -38,7 +38,7 @@
 *       [Specifications, documents, test plans, etc.]
 *
 ****************************************************************/
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 
 
 #include "globals.h"

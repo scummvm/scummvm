@@ -1,71 +1,42 @@
-/*****************************************************************
-*
-*  main.cpp
-*
-*  HISTORY
-*
-*       3.1         09/09/94    BAR     Added OnRButtonDown calling undo
-*       1.00        05/23/94    BCW     Created this file
-*
-*  MODULE DESCRIPTION:
-*
-*       Main module for Hodj 'n' Podj:
-*
-*  CONSTRUCTORS:
-*
-*       CMainWindow                     Constructs
-*
-*  PUBLIC:
-*
-*
-*       PaintScreen                     Repaints entire client area
-*
-*  PROTECTED:
-*
-*
-*       OnCommand                       Handles WM_COMMAND messages
-*       OnPaint                         Handles WM_PAINT messages
-*       OnKeyDown                       Handles WM_KEYDOWN messages
-*       OnSysKeyDown                    Handles WM_SYSKEYDOWN messages
-*       OnSysChar                       Handles WM_SYSCHAR messages
-*       OnClose                         Handles WM_CLOSE messages
-*       OnActivate                      Handles WM_ACTIVATE messages
-*       OnLButtonDown                   Handles WM_LBUTTONDOWN messages
-*       OnMouseMove                     Handles WM_MOUSEMOVE messages
-*       OnTimer                         Handles WM_TIMER messages
-*
-*  PRIVATE:
-*
-*
-*
-*  MEMBERS:
-*
-*
-*
-*  RELEVANT DOCUMENTATION:
-*
-*       [Specifications, documents, test plans, etc.]
-*
-****************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/afxwin.h"
-
-#include <time.h>
-
-
 #include "bagel/hodjnpodj/hnplibs/dibdoc.h"
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hnplibs/mainmenu.h"
-#include <copyrite.h>
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "bagel/boflib/misc.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/boflib/error.h"
-#include "gamedll.h"
-#include "main.h"
-#include "undo.h"
-#include "usercfg.h"
+#include "bagel/hodjnpodj/barbershop/gamedll.h"
+#include "bagel/hodjnpodj/barbershop/main.h"
+#include "bagel/hodjnpodj/barbershop/undo.h"
+#include "bagel/hodjnpodj/barbershop/usercfg.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Barbershop {
 
 //
 // This mini-game's main screen bitmap
@@ -102,7 +73,6 @@ VOID CALLBACK GetGameParams(CWnd *);
 // Globals
 //
 CPalette    *pGamePalette;
-const CHAR  *INI_SECTION = "Barbershop";
 LPGAMESTRUCT pGameParams;
 int         g_nCardBack;
 extern HWND ghParentWnd;
@@ -112,7 +82,7 @@ CMainWindow::CMainWindow(VOID)
 {
     CString  WndClass;
     CRect    tmpRect;
-    CDC     *pDC;
+    CDC     *pDC = nullptr;
     CDibDoc *pDibDoc;
     ERROR_CODE errCode;
     BOOLEAN bSuccess;
@@ -991,7 +961,7 @@ VOID CMainWindow::OnClose()
         delete m_pGamePalette;
     }
 
-    ::PostMessage( ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM) pGameParams );
+    MFC::PostMessage( ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM) pGameParams );
     CFrameWnd::OnClose();
 }
 
@@ -1022,3 +992,7 @@ VOID CALLBACK GetGameParams(CWnd *pParentWnd)
     //
     CUserCfgDlg dlgUserCfg(pParentWnd, pGamePalette, IDD_USERCFG);
 }
+
+} // namespace Barbershop
+} // namespace HodjNPodj
+} // namespace Bagel

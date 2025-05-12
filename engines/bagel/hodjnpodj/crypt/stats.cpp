@@ -46,7 +46,7 @@
  *
  ****************************************************************/
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "globals.h"
 #include "stats.h"
 

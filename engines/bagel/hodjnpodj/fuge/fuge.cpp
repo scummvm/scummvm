@@ -2688,7 +2688,7 @@ VOID CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point)
             // Wave file, to delete itself play the narration
             //
             pEffect = new CSound( (CWnd *)this, ((nPick == 0) ? WAV_CAR1 : WAV_CAR2), SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE);
-            pEffect->Play();
+            pEffect->play();
 #else
             sndPlaySound(((nPick == 0) ? WAV_CAR1 : WAV_CAR2), SND_ASYNC);
 #endif
@@ -2924,7 +2924,7 @@ VOID CFugeWindow::OnClose()
     CFrameWnd::OnClose();
 
 #ifdef _USRDLL
-    ::PostMessage( ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
+    MFC::PostMessage( ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
 #endif
 }
 

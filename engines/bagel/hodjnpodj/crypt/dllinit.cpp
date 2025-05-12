@@ -25,7 +25,7 @@
  *
  ****************************************************************/
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include <time.h>
 #include "bagel/hodjnpodj/hnplibs/dibdoc.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
@@ -107,7 +107,7 @@ HWND FAR PASCAL RunCrypt( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 // return the handle to this window
     hDLLInst = (HINSTANCE)GetWindowWord( pMainGameWnd->m_hWnd, GWW_HINSTANCE);
     hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);  
-//  ::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_SCROLL, BN_CLICKED );
+//  MFC::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_SCROLL, BN_CLICKED );
     return pMainGameWnd->m_hWnd;
 }
 /////////////////////////////////////////////////////////////////////////////

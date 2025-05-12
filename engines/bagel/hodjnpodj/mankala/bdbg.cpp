@@ -1,7 +1,7 @@
 // bdbg.cpp -- Boffo debugging for meta game
 // Written by John J. Xenakis for Boffo Games Inc., 1994
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bdbg.h"
 
 #include "copyrite.h"	// mandatory internal copyright notice

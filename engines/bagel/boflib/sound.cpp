@@ -49,15 +49,23 @@ bool    CBofSound::_bSoundAvailable = false;    // Whether wave sound is availab
 bool    CBofSound::_bMidiAvailable = false;     // Whether midi sound is available
 bool    CBofSound::_bWaveVolume = false;        // Whether wave volume can be set
 bool    CBofSound::_bMidiVolume = false;        // Whether midi volume can be set
-void   *CBofSound::_pMainWnd = nullptr;         // Window for message processing
+void *CBofSound::_pMainWnd = nullptr;         // Window for message processing
 
 bool    CBofSound::_bInit = false;
 
 CQueue *CBofSound::_cQueue[NUM_QUEUES];
 int CBofSound::_nSlotVol[NUM_QUEUES];
 
+CBofSound::CBofSound() {
+	_wLoops = 1;
+}
 
 CBofSound::CBofSound(void *pWnd, const char *pszPathName, uint16 wFlags, const int nLoops) {
+	_wLoops = (uint16)nLoops;
+	initialize(pWnd, pszPathName, wFlags);
+}
+
+void CBofSound::initialize(void *pWnd, const char *pszPathName, WORD wFlags) {
 	// Validate input
 	assert(pszPathName != nullptr);
 	assert(strlen(pszPathName) < MAX_FNAME);
@@ -72,8 +80,6 @@ CBofSound::CBofSound(void *pWnd, const char *pszPathName, uint16 wFlags, const i
 		if (_pMainWnd == nullptr)
 			_pMainWnd = pWnd;
 	}
-
-	_wLoops = (uint16)nLoops;
 
 	_bPlaying = false;                 // Not yet playing
 	_bStarted = false;

@@ -153,6 +153,20 @@ MODULE_OBJS = \
 	hodjnpodj/artparts/artparts.o \
 	hodjnpodj/artparts/optndlg.o \
 	hodjnpodj/archeroids/usercfg.o \
+	hodjnpodj/barbershop/animate.o \
+	hodjnpodj/barbershop/barb.o \
+	hodjnpodj/barbershop/board.o \
+	hodjnpodj/barbershop/card.o \
+	hodjnpodj/barbershop/deck.o \
+	hodjnpodj/barbershop/gamedll.o \
+	hodjnpodj/barbershop/jay.o \
+	hodjnpodj/barbershop/logic.o \
+	hodjnpodj/barbershop/main.o \
+	hodjnpodj/barbershop/paint.o \
+	hodjnpodj/barbershop/stack.o \
+	hodjnpodj/barbershop/stats.o \
+	hodjnpodj/barbershop/undo.o \
+	hodjnpodj/barbershop/usercfg.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o

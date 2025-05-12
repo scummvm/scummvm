@@ -6,7 +6,7 @@
 //	file options.cpp.
 
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "gamedll.h"
 #include "globals.h"
 #include "options.h"

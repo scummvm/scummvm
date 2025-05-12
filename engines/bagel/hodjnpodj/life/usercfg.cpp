@@ -25,7 +25,7 @@
 *
 *
 ****************************************************************/
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/hnplibs/menures.h"
 

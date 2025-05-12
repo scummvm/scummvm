@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
 
 #include "bagel/boflib/misc.h"
 #include "bagel/boflib/llist.h"

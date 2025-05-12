@@ -40,7 +40,7 @@
  *
  ****************************************************************/
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "mnk.h"           
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"   
 #include "stdlib.h"
@@ -803,7 +803,7 @@ void CMnkWindow::OnLButtonDown(UINT nFlags,CPoint point)
 			   					pGlobeWaveSound= new CSound(this, POP, 
 			   									SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE);
 					    	for(i=0; i<25; i++){
-			    				if(pGameParams->bSoundEffectsEnabled && i==4) pGlobeWaveSound->Play();		//begin playing sound at the 4th loop cycle, for sync.
+			    				if(pGameParams->bSoundEffectsEnabled && i==4) pGlobeWaveSound->play();		//begin playing sound at the 4th loop cycle, for sync.
 			    				if(!pSpriteGlobe->PaintSprite(pDC, pointGlobeSprite.x, pointGlobeSprite.y)){
 			    					MFC::SetCursor(hOldCur);
 			    					MessageBox("Can't Conduct Animation Anymore","Insufficient Memory");
@@ -839,10 +839,10 @@ void CMnkWindow::OnLButtonDown(UINT nFlags,CPoint point)
                             
                             if(pGameParams->bSoundEffectsEnabled){
 			   					pChairWaveSound= new CSound(this, HONK, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE| SOUND_QUEUE);
-//			   					pChairWaveSound->Play();                        
+//			   					pChairWaveSound->play();                        
 			   				}
 			    			for(i=0; i<25; i++){
-			    				if(pGameParams->bSoundEffectsEnabled && i==7) pChairWaveSound->Play();		//begin playing sound at the 4th loop cycle, for sync.
+			    				if(pGameParams->bSoundEffectsEnabled && i==7) pChairWaveSound->play();		//begin playing sound at the 4th loop cycle, for sync.
 			    				if(!pSpriteChair->PaintSprite(pDC, pointChairSprite.x, pointChairSprite.y)){
 			    					MFC::SetCursor(hOldCur);
 			    					MessageBox("Can't paint anymore animation","Insufficient Memory");
@@ -1138,8 +1138,8 @@ void CMnkWindow::OnClose()
     CFrameWnd ::OnClose() ;   
     #ifdef _USRDLL  
     if(IsWindow(ghParentWnd)){
-    	::PostMessage( ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, MAKELPARAM(m_hWnd,0));
-//    	::PostMessage( ghParentWnd, WM_PAINT, 0, 0L);                                                                                    
+    	MFC::PostMessage( ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, MAKELPARAM(m_hWnd,0));
+//    	MFC::PostMessage( ghParentWnd, WM_PAINT, 0, 0L);                                                                                    
 	}else{                                                                                                            
 		#ifdef _DEBUG
 		MessageBox("ghParentWnd not a Window", "Debug Message");

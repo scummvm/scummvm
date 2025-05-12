@@ -1,30 +1,35 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * undo.h
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      1.00      07/28/94     Josquin     Initial Design
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      [Describe the function of the module]
- *
- * RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc.]
- *
- ****************************************************************/
+ */
 
-#ifndef __game_undo_H__
-#define __game_undo_H__
+#ifndef HODJNPODJ_BARBERSHOP_UNDO_H
+#define HODJNPODJ_BARBERSHOP_UNDO_H
 
-#include "paint.h"
-#include "board.h"
+#include "bagel/hodjnpodj/barbershop/paint.h"
+#include "bagel/hodjnpodj/barbershop/board.h"
 
-#define NONE	-1
+namespace Bagel {
+namespace HodjNPodj {
+namespace Barbershop {
+
+constexpr int NONE = -1;
 
 #define UNDO_LEF		432			// Undo hotspot rect
 #define UNDO_TOP		80
@@ -49,4 +54,8 @@ private:
 	int		m_nStock;
 };
 
-#endif // __game_undo_H__
+} // namespace Barbershop
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

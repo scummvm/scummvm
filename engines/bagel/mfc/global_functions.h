@@ -103,6 +103,8 @@ extern BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,
 	UINT wRemoveMsg);
 extern void TranslateMessage(LPMSG lpMsg);
 extern void DispatchMessage(LPMSG lpMsg);
+extern BOOL PostMessage(HWND hWnd, UINT Msg,
+	WPARAM wParam, LPARAM lParam);
 
 extern HRSRC FindResource(HMODULE hModule,
 	LPCSTR lpName, LPCSTR lpType);

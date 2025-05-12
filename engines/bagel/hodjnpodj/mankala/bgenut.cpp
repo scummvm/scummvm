@@ -1,7 +1,7 @@
 // bgenut.cpp -- Boffo Games general utilities
 // Written by John J. Xenakis, 1994, for Boffo Games
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "copyrite.h"	// mandatory internal copyright notice
 
 #include "bgenut.h"

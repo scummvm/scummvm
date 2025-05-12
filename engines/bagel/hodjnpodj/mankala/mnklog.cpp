@@ -1,7 +1,7 @@
 // mnklog.cpp -- Mankala game logic
 // Written by John J. Xenakis, 1994, for Boffo Games
 
-#include "stdafx.h" // all we need from windows are things
+#include "bagel/hodjnpodj/hnplibs/stdafx.h" // all we need from windows are things
             // like BOOL, LPVOID, etc.
 #include "mnk.h"
                                                                              

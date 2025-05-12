@@ -1,56 +1,33 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved.
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * animation.cpp
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *		1.0      08/03/94     Josquin     Creation
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      [Describe the function of the module]
- *
- * CONSTRUCTORS:
- *
- *      [list constructors with one line descriptions]
- *
- * DESTRUCTORS:
- *
- *      [list destructors with one line descriptions]
- *
- * PUBLIC:
- *
- *      [list public routines with one line descriptions]
- *
- * PUBLIC GLOBAL:
- *
- *      [list global public routines with one line descriptions]
- *
- * PROTECTED:
- *
- *      [list protected routines with one line descriptions]
- *
- * PRIVATE:
- *
- *      [list private routines with one line descriptions]
- *
- * MEMBERS:
- *
- *      [list members of the class with one line descriptions]
- *
- * RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc.]
- *
- ****************************************************************/
+ */
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bagel/boflib/misc.h"
+#include "bagel/hodjnpodj/barbershop/main.h"
+#include "bagel/hodjnpodj/barbershop/animate.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
-#include "main.h"
-#include "animate.h"
+namespace Bagel {
+namespace HodjNPodj {
+namespace Barbershop {
 
 // globals!!
 //
@@ -92,11 +69,11 @@ BOOL CAnimate::Clown(CDC *pDC, CPoint point)
 	(*m_pSprite).SetMobile(FALSE);
 
 	if ( pGameParams->bSoundEffectsEnabled != FALSE ) {
-		m_pSound->Initialize(
+		m_pSound->initialize(
 			  	CLOWN_WAV,
                 SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
 			  	);
-		m_pSound->Play();
+		m_pSound->play();
 	} // end if
 
 	if ( bSuccess == TRUE ) {
@@ -135,11 +112,11 @@ BOOL CAnimate::UFO(CDC *pDC, CPoint point)
 	(*m_pSprite).SetMobile(FALSE);
 
 	if ( pGameParams->bSoundEffectsEnabled != FALSE ) {
-		m_pSound->Initialize(
+		m_pSound->initialize(
 					SPACESHIP_WAV,
                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
 					);
-		m_pSound->Play();
+		m_pSound->play();
 	} // end if
 
 	if ( bSuccess == TRUE ) {
@@ -155,17 +132,17 @@ BOOL CAnimate::UFO(CDC *pDC, CPoint point)
 		} // end for
 
 		if ( pGameParams->bSoundEffectsEnabled != FALSE ) {
-			m_pSound->Initialize(
+			m_pSound->initialize(
 						SPACERAY_WAV,
 						SOUND_WAVE
 						);
-			m_pSound->Play();
+			m_pSound->play();
 
-			m_pSound->Initialize(
+			m_pSound->initialize(
 						SPACESHIP_WAV,
                         SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
 						);
-			m_pSound->Play();
+			m_pSound->play();
 		} // end if
 
 		for( j = i; j < UFOA_FRAMES - 1; j++ ) {
@@ -185,11 +162,11 @@ BOOL CAnimate::UFO(CDC *pDC, CPoint point)
 	(*m_pSprite).SetMobile(FALSE);
 
 	if ( pGameParams->bSoundEffectsEnabled != FALSE ) {
-		m_pSound->Initialize(
+		m_pSound->initialize(
 					SPACESHIP_WAV,
                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
 					);
-		m_pSound->Play();
+		m_pSound->play();
 	} // end if
 
 	if ( bSuccess == TRUE ) {
@@ -205,17 +182,17 @@ BOOL CAnimate::UFO(CDC *pDC, CPoint point)
 		} // end for
 
 		if ( pGameParams->bSoundEffectsEnabled != FALSE ) {
-			m_pSound->Initialize(		// play synchronous beam up sound
+			m_pSound->initialize(		// play synchronous beam up sound
 						SPACERAY_WAV,
 						SOUND_WAVE
 						);
-			m_pSound->Play();
+			m_pSound->play();
 
-			m_pSound->Initialize(		// async space ship sound
+			m_pSound->initialize(		// async space ship sound
 						SPACESHIP_WAV,
 						SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH
 						);
-			m_pSound->Play();
+			m_pSound->play();
 		} // end if
 
 		for( j = i; j < UFOB_FRAMES - 1; j++ ) {
@@ -242,11 +219,11 @@ BOOL CAnimate::Brat(CPoint point)
 		return FALSE;
 
 	if ( pGameParams->bSoundEffectsEnabled != FALSE ) {
-		m_pSound->Initialize(
+		m_pSound->initialize(
 			  	BRAT_WAV,
                 SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
 			  	);
-		m_pSound->Play();
+		m_pSound->play();
 	}  // end if
 
 	return TRUE;
@@ -261,18 +238,18 @@ BOOL CAnimate::Lollipop(CPoint point)
 		return TRUE;
 
 	if ( (brand() % 2) == 0 ) {		// randomly chose sound wave to play
-		m_pSound->Initialize(
+		m_pSound->initialize(
 				LOLLI_A_WAV,
                 SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
 				);
 	} else {
-		m_pSound->Initialize(
+		m_pSound->initialize(
 				LOLLI_B_WAV,
                 SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
 				);
 	} // end if
 
-	m_pSound->Play();
+	m_pSound->play();
 	return TRUE;
 } // Lollipop
 
@@ -284,11 +261,15 @@ BOOL CAnimate::Haircut(CPoint point)
 	if ( pGameParams->bSoundEffectsEnabled == FALSE )
 		return TRUE;
 
-	m_pSound->Initialize(
+	m_pSound->initialize(
 			CUT_WAV,
             SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
 			);
 
-	m_pSound->Play();
+	m_pSound->play();
 	return TRUE;
 } // Haircut
+
+} // namespace Barbershop
+} // namespace HodjNPodj
+} // namespace Bagel

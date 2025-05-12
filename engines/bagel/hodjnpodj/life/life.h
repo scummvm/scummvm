@@ -22,7 +22,7 @@
 #ifndef __game_life_H__
 #define __game_life_H__
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "grid.h"

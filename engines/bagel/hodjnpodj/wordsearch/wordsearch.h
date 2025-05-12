@@ -33,7 +33,7 @@
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"
-#include "sprite.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
 
 #include "copyrite.h"						// mandatory internal copyright notice
 

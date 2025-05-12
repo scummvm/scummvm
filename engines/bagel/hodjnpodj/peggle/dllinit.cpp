@@ -26,7 +26,7 @@
  ****************************************************************/
 
 #include "bagel/afxwin.h"
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "resource.h"
 #include "dllinit.h"
 #include "game.h"

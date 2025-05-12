@@ -1,54 +1,33 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved.
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * cstats.cpp
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *		1.0      05/05/94     Josquin     Creation
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      [Describe the function of the module]
- *
- * CONSTRUCTORS:
- *
- *      [list constructors with one line descriptions]
- *
- * DESTRUCTORS:
- *
- *      [list destructors with one line descriptions]
- *
- * PUBLIC:
- *
- *      [list public routines with one line descriptions]
- *
- * PUBLIC GLOBAL:
- *
- *      [list global public routines with one line descriptions]
- *
- * PROTECTED:
- *
- *      [list protected routines with one line descriptions]
- *
- * PRIVATE:
- *
- *      [list private routines with one line descriptions]
- *
- * MEMBERS:
- *
- *      [list members of the class with one line descriptions]
- *
- * RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc.]
- *
- ****************************************************************/
+ */
 
-#include "stdafx.h"
-#include "globals.h"
-#include "stats.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/barbershop/stats.h"
+#include "bagel/hodjnpodj/barbershop/resource.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Barbershop {
 
 CStats::CStats()
 {
@@ -106,7 +85,6 @@ CStats::~CStats()
 int CStats::ResetGame()
 {
     //char 	chResetUsedGram;
-	char	tmpBuf[5];
     int		nID;
     //int 	i;
 
@@ -140,11 +118,11 @@ int CStats::ResetGame()
 	m_nIsUsedGram = nID;											// Mark as used
 
 	WritePrivateProfileString(
-						INI_SECTION,
-	   					INI_REC,
-	   					itoa(m_nIsUsedGram, tmpBuf, DECIMAL_BASE),
-						INI_FILENAME
-						);											// Save used list back
+		INI_SECTION,
+		INI_REC,
+		Common::String::format("%d", m_nIsUsedGram).c_str(),
+		INI_FILENAME
+		);											// Save used list back
 
 	return nID;
 }
@@ -159,16 +137,20 @@ void CStats::SaveStats(int nLttrsSlvd, int nTime)
     m_nTime				= nTime;
 
 	WritePrivateProfileString(
-						INI_SECTION,
-						INI_LETTERSSOLVED,
-						itoa(m_nLettersSolved, tmpBuf, DECIMAL_BASE),
-						INI_FILENAME
-						);
+		INI_SECTION,
+		INI_LETTERSSOLVED,
+		Common::String::format("%d", m_nLettersSolved).c_str(),
+		INI_FILENAME
+		);
 
 	WritePrivateProfileString(
-						INI_SECTION,
-						INI_TIME,
-						itoa(m_nTime, tmpBuf, DECIMAL_BASE),
-						INI_FILENAME
-						);
+		INI_SECTION,
+		INI_TIME,
+		Common::String::format("%d", m_nTime).c_str(),
+		INI_FILENAME
+		);
 }
+
+} // namespace Barbershop
+} // namespace HodjNPodj
+} // namespace Bagel

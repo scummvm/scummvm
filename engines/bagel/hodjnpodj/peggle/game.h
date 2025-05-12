@@ -17,7 +17,7 @@
 #ifndef __game_H__
 #define __game_H__
 
-#include "sprite.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "sound.h"
 
 #define NARRATIVESPEC	".\\SOUND\\PEGG.WAV"

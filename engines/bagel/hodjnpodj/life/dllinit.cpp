@@ -91,7 +91,7 @@ HWND FAR PASCAL RunLife( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 // return the handle to this window
         hDLLInst = (HINSTANCE)GetWindowWord( gMainWnd->m_hWnd, GWW_HINSTANCE);
         hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
-//        ::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_COMMAND, BN_CLICKED );
+//        MFC::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_COMMAND, BN_CLICKED );
         return gMainWnd->m_hWnd;
 }
 /////////////////////////////////////////////////////////////////////////////

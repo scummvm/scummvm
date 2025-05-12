@@ -38,7 +38,7 @@
  ****************************************************************/
 
 #include <stdlib.h>
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 
 #include "dfa.h"
 #include "dialogs.h"
@@ -1114,7 +1114,7 @@ void CMainDFAWindow::OnDestroy()
 {
 //  send a message to the calling app to tell it the user has quit the game
 	m_lpGameStruct->lScore = m_lScore;
-	::PostMessage( m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct );
+	MFC::PostMessage( m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct );
 	m_lpGameStruct = NULL;
 	CFrameWnd::OnDestroy();
 } 

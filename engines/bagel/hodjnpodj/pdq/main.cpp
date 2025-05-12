@@ -598,7 +598,7 @@ void CMainWindow::OnClose()
     CFrameWnd::OnClose();
 
 #ifdef _USRDLL
-    ::PostMessage( ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
+    MFC::PostMessage( ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
 #endif
 }
 
@@ -827,7 +827,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
     
         if ((*pGameParams).bSoundEffectsEnabled) {
             if ((pEffect = new CSound( (CWnd *)this, WAV_BIRD, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != NULL) {
-                pEffect->Play();
+                pEffect->play();
             }
         }                                   
         (*pSprite).SetCel( NUM_BIRD_CELS );
@@ -856,7 +856,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
     
         if ((*pGameParams).bSoundEffectsEnabled) {
             if ((pEffect = new CSound( (CWnd *)this, WAV_HORSE1, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != NULL) {
-                pEffect->Play();
+                pEffect->play();
             }
         }                                   
         (*pSprite).SetCel( NUM_HORSE1_CELS );
@@ -885,7 +885,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
     
         if ((*pGameParams).bSoundEffectsEnabled) {
             if ((pEffect = new CSound( (CWnd *)this, WAV_HORSE2, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != NULL) {
-                pEffect->Play();
+                pEffect->play();
             }
         }                                   
         (*pSprite).SetCel( NUM_HORSE2_CELS );
@@ -914,7 +914,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
     
         if ((*pGameParams).bSoundEffectsEnabled) {
             if ((pEffect = new CSound( (CWnd *)this, WAV_FLOWER, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != NULL) {
-                pEffect->Play();
+                pEffect->play();
             }
         }                                   
         (*pSprite).SetCel( NUM_FLOWER_CELS );

@@ -1,7 +1,7 @@
 // mnkopt.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "mnk.h"
 #include "mnkopt.h"  

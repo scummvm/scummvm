@@ -1,36 +1,30 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * undo.cpp					undoing card moves
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      1.00      07/27/94     JSC     Initial Design
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      [Describe the purpose of this module]
- *
- * LOCALS:
- *
- *      MyFunction()            Description of MyFunction
- *
- * GLOBALS:
- *
- *      MyFunction()            Description of MyFunction
- *
- * RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc./]
- *
- * FILES USED:
- *
- *      [Discuss files created, or used]
- *
- ****************************************************************/
-#include "stdafx.h"
-#include "undo.h"
+ */
+
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
+#include "bagel/hodjnpodj/barbershop/undo.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Barbershop {
 
 /*****************************************************************
  *
@@ -280,3 +274,7 @@ BOOL CUndo::Undo(CDC *pDC, CBoard *pBoard, CPaint *pPaint)
 	Reset();						// clear undo
 	return TRUE;
 }
+
+} // namespace Barbershop
+} // namespace HodjNPodj
+} // namespace Bagel

@@ -36,7 +36,7 @@
  ****************************************************************/
 
 #include <stdlib.h>
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 
 #include "wordsrch.h"
 #include "dialogs.h"
@@ -1582,7 +1582,7 @@ void CMainWSWindow::OnDestroy()
 {
 //  send a message to the calling app to tell it the user has quit the game
 	m_lpGameStruct->lScore = ( WORDSPERLIST - nWordsLeft );
-	::PostMessage( m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct );
+	MFC::PostMessage( m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct );
 	m_lpGameStruct = NULL;
 	CFrameWnd::OnDestroy();
 } 

@@ -46,7 +46,7 @@
 #define DYNAMIC_OBJ_COUNT
 
 #include <stdlib.h>
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 
 #include "packrat.h"
 #include "dialogs.h"
@@ -3270,7 +3270,7 @@ int		nLoop = 0;
 						CSound::StopWaveSounds();
 				        ::sndPlaySound( NULL, SND_ASYNC);
 						pSound = new CSound((CWnd *)this, ".\\SOUND\\NEWLIFE.WAV", SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE );
-						pSound->Play();
+						pSound->play();
 */
 				        ::sndPlaySound( NULL, SND_ASYNC);
 				        ::sndPlaySound( NEWLIFE_WAV, SND_ASYNC);
@@ -3480,7 +3480,7 @@ void CMainPackRatWindow::OnDestroy()
 {
 //  send a message to the calling app to tell it the user has quit the game
     m_lpGameStruct->lScore = m_lScore;
-    ::PostMessage( m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct );
+    MFC::PostMessage( m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct );
     m_lpGameStruct = NULL;
     CFrameWnd::OnDestroy();
 } 

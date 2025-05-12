@@ -1,40 +1,36 @@
-/*****************************************************************
-*
-*  Copyright (c) 1994 by Boffo Games, All Rights Reserved
-*
-*
-*  usercfg.cpp   -
-*
-*  HISTORY
-*
-*       1.00        08/24/94    JSC			First writing
-*
-*  MODULE DESCRIPTION:
-*
-*
-*
-*  LOCALS:
-*
-*
-*
-*  GLOBALS:
-*
-*
-*
-*  RELEVANT DOCUMENTATION:
-*
-*
-****************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/afxwin.h"
-
-
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"
-#include "usercfg.h"
-#include "menures.h"
-#include "paint.h"
+#include "bagel/hodjnpodj/barbershop/usercfg.h"
+#include "bagel/hodjnpodj/hnplibs/menures.h"
+#include "bagel/hodjnpodj/barbershop/paint.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Barbershop {
 
 #define ID_RESET     104
 #define ID_LIMIT     105
@@ -72,7 +68,6 @@ BOOL CUserCfgDlg::OnInitDialog(void)
     m_bSave = FALSE;
 
 	if ( (m_ctextBox = new CText) != NULL ) {
-		char	msg[64];
 		BOOL	bAssertCheck;
 
 		tmpRect.SetRect(TEXT_LEFT, TEXT_TOP, TEXT_RIG, TEXT_BOT);
@@ -91,7 +86,6 @@ BOOL CUserCfgDlg::OnInitDialog(void)
 
 void CUserCfgDlg::OnPaint(void)
 {
-	CBrush	*pBrush = NULL;
 	CDC		*pDC = NULL;
 	char	msg[64];
 	BOOL	bAssertCheck;
@@ -117,7 +111,6 @@ void CUserCfgDlg::OnPaint(void)
 
 void CUserCfgDlg::OnLButtonUp(UINT nFlags,CPoint point)
 {
-	CBrush	*pBrush = NULL;
 	CDC		*pDC = GetDC();
 
 	if (
@@ -247,3 +240,7 @@ void CUserCfgDlg::MyFocusRect( CDC *pDC, CRect rect, int nDrawMode, COLORREF rgb
 	}
 
 } // End MyFocusRect()
+
+} // namespace Barbershop
+} // namespace HodjNPodj
+} // namespace Bagel

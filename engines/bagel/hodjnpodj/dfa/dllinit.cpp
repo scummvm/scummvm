@@ -91,7 +91,7 @@ HWND FAR PASCAL RunDFA( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
     hDLLInst = (HINSTANCE)GetWindowWord( pMainGameWnd->m_hWnd, GWW_HINSTANCE);
     hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
     if (!lpGameInfo->bPlayingMetagame)  
-        ::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );
+        MFC::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );
     return pMainGameWnd->m_hWnd;
 }
 /////////////////////////////////////////////////////////////////////////////

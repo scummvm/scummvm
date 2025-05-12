@@ -1,28 +1,32 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * rec.h
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      1.00      04/19/94     Jos     Creation
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      [Describe the function of the module]
- *
- * RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc.]
- *
- ****************************************************************/
+ */
 
+#ifndef HODJNPODJ_BARBERSHOP_DECK_H
+#define HODJNPODJ_BARBERSHOP_DECK_H
 
-#ifndef __game_deck_H__
-#define __game_deck_H__
+#include "bagel/hodjnpodj/barbershop/card.h"
 
-#include "card.h"
+namespace Bagel {
+namespace HodjNPodj {
+namespace Barbershop {
 
 #define	DECK		62
 #define	STOCK		27
@@ -44,4 +48,9 @@ public:	// func
 public:	// vars
 	CCard	m_cDeck[DECK];
 };
-#endif // __game_rec_H__
+
+} // namespace Barbershop
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

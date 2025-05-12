@@ -1,32 +1,38 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * barb.h
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *		1.01	08/22/94	JSC		Documented
- *      1.00	03/28/94	JSC		First writing
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *	Class definition for Barbershop Quintet mini-game.
- *
- * RELEVANT DOCUMENTATION:
- *
- *	This is the main object for the mini-game.  Handles most
- *	higher level functions for the game object.
- *
- ****************************************************************/
+ */
 
-#include "deck.h"
-#include "board.h"
-#include "paint.h"
-#include "logic.h"
-#include "undo.h"
+#ifndef HODJNPODJ_BARBERSHOP_BARB_H
+#define HODJNPODJ_BARBERSHOP_BARB_H
+
+#include "bagel/hodjnpodj/barbershop/deck.h"
+#include "bagel/hodjnpodj/barbershop/board.h"
+#include "bagel/hodjnpodj/barbershop/paint.h"
+#include "bagel/hodjnpodj/barbershop/logic.h"
+#include "bagel/hodjnpodj/barbershop/undo.h"
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
 #include "bagel/boflib/sound.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Barbershop {
 
 #define NOT_USED		-1
 #define USED			0
@@ -76,3 +82,9 @@ public:
 
 // Globals!
 extern CPalette			*pGamePalette;
+
+} // namespace Barbershop
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

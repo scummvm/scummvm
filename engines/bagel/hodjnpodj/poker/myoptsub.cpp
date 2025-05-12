@@ -6,7 +6,7 @@
 //	file options.cpp.
 
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "options.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 

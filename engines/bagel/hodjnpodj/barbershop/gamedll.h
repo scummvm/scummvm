@@ -19,40 +19,17 @@
  *
  */
 
-#ifndef HODJNPODJ_BARBERSHOP_RESOURCE_H
-#define HODJNPODJ_BARBERSHOP_RESOURCE_H
+#ifndef HODJNPODJ_BARBERSHOP_GAMEDLL_H
+#define HODJNPODJ_BARBERSHOP_GAMEDLL_H
+
+#include "bagel/afxwin.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Barbershop {
 
-#define HILITE_BORDER       3
-
-#define INI_SECTION			"Barbershop"
-#define	INI_LETTERSSOLVED	"LettersSolved"
-
-#define	LSLVD_DEFAULT		6
-#define MIN_LSLVD			0
-#define MAX_LSLVD			20
-
-#define	INI_TIME			"Time"
-#define TIME_DEFAULT		180
-#define MIN_TIME			15
-#define MAX_TIME			601
-
-#define INI_REC				"Record"
-#define REC_DEFAULT			0
-#define CRYPT_RECS          200
-
-//{{NO_DEPENDENCIES}}
-// App Studio generated include file.
-// Used by USERCFG.RC
-//
-#define IDD_RULES_DIALOG                900
-#define IDC_RULES_OKAY                  900
-#define IDC_RULES_ARROWDN               901
-#define IDC_RULES_ARROWUP               902
-#define IDC_RULES_INVALID               903
+extern HWND FAR PASCAL RunBarb(HWND hParentWnd, LPGAMESTRUCT lpGameInfo);
 
 } // namespace Barbershop
 } // namespace HodjNPodj

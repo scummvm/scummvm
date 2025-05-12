@@ -1747,7 +1747,7 @@ void CMainWindow::OnClose()
 
  	CFrameWnd::OnClose();
 #ifdef	_USRDLL
-    ::PostMessage( ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
+    MFC::PostMessage( ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
 #endif	//_USRDLL
 } 
 

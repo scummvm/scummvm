@@ -47,7 +47,7 @@
  *   
  ****************************************************************/
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "resource.h"
 #include "options.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"

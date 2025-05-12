@@ -1,30 +1,32 @@
-/*****************************************************************
+/* ScummVM - Graphic Adventure Engine
  *
- *  MyFocusRect( CDC *pDC, CRect rect, int nDrawMode )
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- *  FUNCTIONAL DESCRIPTION:
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *      Draws a rectangle which inverts the current pixels,
- *			thereby delineating the current area of focus.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  FORMAL PARAMETERS:
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *      CDC *pDC	The Device context in which the FocusRect is to be drawn
- *		CRect rect	The CRect object holding the location of the FocusRect
- *
- *  IMPLICIT INPUT PARAMETERS:
- *
- *      pMyPen and pMyBrush, global pointers to the Pen and Brush used
- *
- *  IMPLICIT OUTPUT PARAMETERS:
- *
- *      none
- *
- *  RETURN VALUE:
- *
- *      void
- *
- ****************************************************************/
+ */
+
+#include "bagel/afxwin.h"
+#include "bagel/hodjnpodj/barbershop/resource.h"
+#include "bagel/hodjnpodj/barbershop/usercfg.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Barbershop {
+
 void MyFocusRect( CDC *pDC, CRect rect, int nDrawMode )
 {
 	CBrush		*pMyBrush = NULL;					// New Brush
@@ -65,3 +67,6 @@ void MyFocusRect( CDC *pDC, CRect rect, int nDrawMode )
 
 } // End MyFocusRect()
 
+} // namespace Barbershop
+} // namespace HodjNPodj
+} // namespace Bagel

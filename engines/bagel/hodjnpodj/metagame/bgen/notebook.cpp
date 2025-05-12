@@ -19,7 +19,7 @@
  *
  */
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
 #include "globals.h"
 #include "bfc.h"
 #include "misc.h"

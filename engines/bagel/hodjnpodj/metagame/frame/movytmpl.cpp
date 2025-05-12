@@ -405,7 +405,7 @@ long CDumWnd::OnMCINotify(WPARAM wParam, LPARAM lParam){
 	
 	pChild->m_dwErrorFlag=MAKELPARAM((WORD)(!(wParam==MCI_NOTIFY_SUCCESSFUL)|| !d), wParam);  //set error flag, if error.         
 	
-	::PostMessage(hOwnr, WM_COMMAND, MOVIE_OVER, (LPARAM)(LPVOID)this);
+	MFC::PostMessage(hOwnr, WM_COMMAND, MOVIE_OVER, (LPARAM)(LPVOID)this);
 	::SetActiveWindow(hOwnr);
 	::SetFocus(hOwnr);
 

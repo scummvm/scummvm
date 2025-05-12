@@ -77,7 +77,7 @@
 
 #define SHOW_CURSOR	TRUE
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include <time.h>
 
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
@@ -86,7 +86,7 @@
 #include "gamedll.h"
 #include "game.h"
 #include "dibdoc.h"
-#include "sprite.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "globals.h"
 #include "game2.h"
 #include "options.h"
@@ -1306,7 +1306,7 @@ return(sprite_loc);
 void CMainWindow::OnDestroy()
 {
 //  send a message to the calling app to tell it the user has quit the game
-  ::PostMessage( m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L );
+  MFC::PostMessage( m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L );
   CFrameWnd::OnDestroy();
 } 
 

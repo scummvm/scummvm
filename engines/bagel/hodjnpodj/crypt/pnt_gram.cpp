@@ -30,7 +30,7 @@
  *
  ****************************************************************/
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 

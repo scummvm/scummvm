@@ -86,7 +86,7 @@ HWND FAR PASCAL RunPackRat( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
     hDLLInst = (HINSTANCE)GetWindowWord( pcwndPackRat->m_hWnd, GWW_HINSTANCE);
     hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);  
     if (lpGameInfo->bPlayingMetagame == FALSE)
-        ::PostMessage( pcwndPackRat->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );
+        MFC::PostMessage( pcwndPackRat->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );
     return pcwndPackRat->m_hWnd;
 }
 /////////////////////////////////////////////////////////////////////////////

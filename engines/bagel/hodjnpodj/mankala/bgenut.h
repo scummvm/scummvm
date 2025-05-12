@@ -10,7 +10,7 @@
 //#include "globals.h"
 //#include "resource.h"
 //#include "dibdoc.h"
-//#include "sprite.h"
+//#include "bagel/hodjnpodj/hnplibs/sprite.h"
 
 #include "bgen.h"
 

@@ -102,10 +102,10 @@ HWND FAR PASCAL RunMank( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
         pMain->SetActiveWindow();                              
         
         if (!pGameParams->bPlayingMetagame){
-          	::PostMessage( pMain->m_hWnd, WM_COMMAND, IDC_SCROLL, BN_CLICKED);		// Activate the Options dialog
+          	MFC::PostMessage( pMain->m_hWnd, WM_COMMAND, IDC_SCROLL, BN_CLICKED);		// Activate the Options dialog
         }else{			//kick in game by posting mouse messages  in the new-game-button area.
-        	 ::PostMessage(pMain->m_hWnd,WM_LBUTTONDOWN,0X00,MAKELPARAM(NEWGAME_LOCATION_X+NEWGAME_WIDTH/2, NEWGAME_LOCATION_Y + NEWGAME_HEIGHT/2));
-        	 ::PostMessage(pMain->m_hWnd,WM_LBUTTONUP,0X00,MAKELPARAM(NEWGAME_LOCATION_X+NEWGAME_WIDTH/2, NEWGAME_LOCATION_Y + NEWGAME_HEIGHT /2));
+        	 MFC::PostMessage(pMain->m_hWnd,WM_LBUTTONDOWN,0X00,MAKELPARAM(NEWGAME_LOCATION_X+NEWGAME_WIDTH/2, NEWGAME_LOCATION_Y + NEWGAME_HEIGHT/2));
+        	 MFC::PostMessage(pMain->m_hWnd,WM_LBUTTONUP,0X00,MAKELPARAM(NEWGAME_LOCATION_X+NEWGAME_WIDTH/2, NEWGAME_LOCATION_Y + NEWGAME_HEIGHT /2));
         }
     }
 

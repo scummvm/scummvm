@@ -182,6 +182,9 @@ namespace MFC {
 #define WM_MOUSELAST                    0x020E
 #define WM_UNICHAR                      0x0109
 #define WM_KEYLAST                      0x0109
+#define WM_PARENTNOTIFY                 0x0210
+#define WM_ENTERMENULOOP                0x0211
+#define WM_EXITMENULOOP                 0x0212
 #define UNICODE_NOCHAR                  0xFFFF
 
 #define MM_MCINOTIFY                    0x3B9           /* MCI */

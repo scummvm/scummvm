@@ -1,7 +1,7 @@
 // optnwin.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "resource.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "optn.h"

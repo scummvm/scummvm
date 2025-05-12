@@ -45,7 +45,7 @@
  *   
  ****************************************************************/
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "sound.h"
 
 

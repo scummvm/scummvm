@@ -90,7 +90,7 @@ HWND FAR PASCAL RunPoker( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
     hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);  
     if ( lpGameInfo->bPlayingMetagame == FALSE ) {
         pcwndPoker->UpdateWindow();
-        ::PostMessage( pcwndPoker->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );
+        MFC::PostMessage( pcwndPoker->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );
     }
     return pcwndPoker->m_hWnd;
 }

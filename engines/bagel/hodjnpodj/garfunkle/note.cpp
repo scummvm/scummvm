@@ -34,7 +34,7 @@
  *
  ************************************************************************/
 
-#include "stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
 
 #include "note.h"
 

@@ -31,7 +31,7 @@
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"            // header for the options library
 #include "bagel/hodjnpodj/hnplibs/mainmenu.h"
 
-#include "sprite.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"

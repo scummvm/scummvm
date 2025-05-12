@@ -148,6 +148,11 @@ void DispatchMessage(LPMSG lpMsg) {
 	error("TODO: DispatchMessage");
 }
 
+BOOL PostMessage(HWND hWnd, UINT Msg,
+		WPARAM wParam, LPARAM lParam) {
+	error("TODO: PostMessage");
+}
+
 HRSRC FindResource(HMODULE hModule,
 		LPCSTR lpName, LPCSTR lpType) {
 	error("TODO: FindResource");
