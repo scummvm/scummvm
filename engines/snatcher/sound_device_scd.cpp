@@ -96,6 +96,8 @@ public:
 	void pause(bool toggle) override;
 	void update() override;
 
+	void setUnkCond(bool enable) override;
+
 	void setMusicVolume(int vol) override;
 	void setSoundEffectVolume(int vol) override;
 
@@ -1400,8 +1402,8 @@ void KonamiMCDSndChannel::op_return(const uint8 *&data) {
 				_state.progress |= 0x80;
 		}
 
-		_state.result = _state.progress;
-		if (_state.progress & 0xC0)
+		_state.result = _state.progress & 0xC0;
+		if (_state.result)
 			_state.progress = ((_state.progress & 0x0F) + 1) % 16;
 		_state.result |= _state.progress;
 	}
@@ -1833,9 +1835,13 @@ void SegaSoundDevice::pcmSendCommand(int cmd, int arg) {
 void SegaSoundDevice::pcmInitSound(int sndId) {
 	_pcmResourceNumber = sndId;
 	_pcmMode = _pcmResourceInfo[_pcmResourceNumber].mode;
-	if (_pcmResourceInfo[_pcmResourceNumber].mode == 1) {
+	if (_pcmMode == 1) {
 		_pcmState |= 4;
-	} else {
+	} else if (_pcmMode == 2 || _pcmMode == 0x82) {
+		if (_pcmMode == 2) {
+			_faderTimer2 = 0;
+			_faderFlags = (_faderFlags & ~2) | 1;
+		}
 		_pcmState = (_pcmState & ~8) | 1;
 	}
 }
@@ -1873,6 +1879,10 @@ void SegaSoundDevice::update() {
 	fmUpdateVolumeFader();
 	pcmDelayedStart();
 	fmHandleCmdQueue();
+}
+
+void SegaSoundDevice::setUnkCond(bool enable) {
+	_unkVolCond = enable;
 }
 
 void SegaSoundDevice::setMusicVolume(int vol) {
@@ -2072,7 +2082,15 @@ void SegaSoundDevice::pcmStartSound(uint8 sndId, int8 unit, uint8 vol) {
 }
 
 void SegaSoundDevice::pcmCheckPlayStatus() {
-	for (int i = 0; i < 2; ++i) {
+	int num = (_pcmMode == 2 || _pcmMode == 0x82) ? 4 : 2;
+	uint8 flg = (_pcmMode == 2 || _pcmMode == 0x82) ? 2 : 8;
+
+	if (_pcmMode == 2) {
+		_faderTimer2 = 0;
+		_faderFlags = (_faderFlags & ~1) | 2;
+	}
+	
+	for (int i = 0; i < num; ++i) {
 		PCMSound &s = _pcmSounds[i];
 		if (s.prio == 0)
 			continue;
@@ -2080,8 +2098,7 @@ void SegaSoundDevice::pcmCheckPlayStatus() {
 		s.flags &= ~2;
 		if (!_sai->isPCMChannelPlaying(i << 1) && !_sai->isPCMChannelPlaying(((i << 1) | 1))) {
 			pcmResetUnit(i, s);
-			_pcmState &= ~8;
-			_pcmState &= ~2;
+			_pcmState &= ~flg;
 			_pcmMode = 0;
 		}
 	}

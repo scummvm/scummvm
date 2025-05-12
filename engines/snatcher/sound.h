@@ -55,8 +55,19 @@ public:
 	void pause(bool toggle);
 	void update();
 
+	void setUnkCond(bool enable);
+
 	void setMusicVolume(int vol);
 	void setSoundEffectVolume(int vol);
+
+	struct FMPlayingTracks {
+		FMPlayingTracks() : music(0), sfx(0), sync(0) {}
+		uint8 music;
+		uint8 sfx;
+		uint8 sync;
+	};
+
+	FMPlayingTracks _fmPlayingTracks;
 
 private:
 	SoundDevice *_dev;

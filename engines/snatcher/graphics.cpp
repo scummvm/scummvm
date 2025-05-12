@@ -22,7 +22,7 @@
 
 #include "snatcher/graphics.h"
 #include "snatcher/palette.h"
-#include "snatcher/render.h"
+#include "snatcher/animator.h"
 #include "snatcher/resource.h"
 #include "snatcher/transition.h"
 #include "common/endian.h"
@@ -31,20 +31,20 @@
 
 namespace Snatcher {
 
-GraphicsEngine::GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate) : _system(system), _state(vmstate),
-	_renderer(nullptr), _dataMode(0), _screen(nullptr), _bpp(pxf ? pxf->bytesPerPixel : 1), _flags(0) {
+GraphicsEngine::GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate, SoundEngine *snd) : _system(system), _state(vmstate),
+	_animator(nullptr), _dataMode(0), _screen(nullptr), _bpp(pxf ? pxf->bytesPerPixel : 1), _flags(0) {
 	assert(system);
 	_palette = Palette::create(pxf, _system->getPaletteManager(), platform, _state);
 	assert(_palette);
 	_trs = TransitionManager::create(platform, _state);
-	_renderer = Renderer::create(pxf, platform, _state, _palette, _trs);
-	assert(_renderer);
-	_screen = new uint8[_renderer->screenWidth() * _renderer->screenHeight() * (pxf ? pxf->bytesPerPixel : 1)]();
+	_animator = Animator::create(pxf, platform, _state, _palette, _trs, snd);
+	assert(_animator);
+	_screen = new uint8[_animator->screenWidth() * _animator->screenHeight() * (pxf ? pxf->bytesPerPixel : 1)]();
 	assert(_screen);
 }
 
 GraphicsEngine::~GraphicsEngine() {
-	delete _renderer;
+	delete _animator;
 	delete _palette;
 	delete _trs;
 	delete[] _screen;
@@ -66,15 +66,15 @@ void GraphicsEngine::runScript(ResourcePointer res, int func) {
 			break;
 		case 1:
 			_state.clearFlag(1, 0);
-			_renderer->initData(sc, _dataMode);
+			_animator->initData(sc, _dataMode);
 			_state.setVar(8, 1);
 			break;
 		case 2:
-			_renderer->initAnimations(sc, len);
+			_animator->initAnimations(sc, len);
 			break;
 		case 3: 
 		case 4:
-			_renderer->linkAnimations(sc, len);
+			_animator->linkAnimations(sc, len);
 			break;
 
 		case 5:
@@ -83,7 +83,7 @@ void GraphicsEngine::runScript(ResourcePointer res, int func) {
 			_transitionType = sc[1];
 			break;
 		case 8:
-			_renderer->setPlaneMode(sc.readUINT16());
+			_animator->setPlaneMode(sc.readUINT16());
 			break;
 		case 9:
 			_dataMode = sc[1];
@@ -91,7 +91,7 @@ void GraphicsEngine::runScript(ResourcePointer res, int func) {
 			// (in particular, the dma transfer from word ram to vram). We can just copy the whole thing at once...
 			break;
 		default:
-			error("Unknown opcode 0x%02x", cmd);
+			error("%s(): Unknown opcode 0x%02x", __FUNCTION__, cmd);
 		}
 
 		sc = next;
@@ -103,7 +103,7 @@ void GraphicsEngine::enqueuePaletteEvent(ResourcePointer res) {
 }
 
 bool GraphicsEngine::enqueueDrawCommands(ResourcePointer res) {
-	return _renderer->enqueueDrawCommands(res);
+	return _animator->enqueueDrawCommands(res);
 }
 
 void GraphicsEngine::setScrollStep(uint8 mode, int16 step) {
@@ -118,15 +118,15 @@ void GraphicsEngine::transitionCommand(uint8 cmd) {
 }
 
 void GraphicsEngine::updateAnimations() {
-	_renderer->updateAnimations();
+	_animator->updateAnimations();
 }
 
 void GraphicsEngine::nextFrame() {
 	_palette->processEventQueue();
 	_palette->updateSystemPalette();
-	_renderer->updateScreen(_screen);
+	_animator->updateScreen(_screen);
 
-	_system->copyRectToScreen(_screen, _renderer->screenWidth() * _bpp, 0, 0, _renderer->screenWidth(), _renderer->screenHeight());
+	_system->copyRectToScreen(_screen, _animator->screenWidth() * _bpp, 0, 0, _animator->screenWidth(), _animator->screenHeight());
 	_system->updateScreen();
 
 	_state.nextFrame();
@@ -140,9 +140,9 @@ void GraphicsEngine::reset(int mode) {
 	if (mode & kResetPalEvents)
 		_palette->clearEvents();
 	if (mode & kResetAnimations)
-		_renderer->clearAnimations();
+		_animator->clearAnimations();
 	if (mode & kResetCopyCmds)
-		_renderer->clearDrawCommands();
+		_animator->clearDrawCommands();
 	if (mode & kResetScrollState)
 		_trs->clear();
 }
@@ -151,67 +151,49 @@ void GraphicsEngine::setVar(uint8 var, uint8 val) {
 	_state.setVar(var, val);
 }
 
-void GraphicsEngine::setAnimControlFlags(uint8 animObjId, int flags) {
-	_renderer->anim_setControlFlags(animObjId, flags);
+uint8 GraphicsEngine::getVar(uint8 var) const {
+	return _state.getVar(var);
 }
 
-void GraphicsEngine::addAnimControlFlags(uint8 animObjId, int flags) {
-	_renderer->anim_addControlFlags(animObjId, flags);
+void GraphicsEngine::setAnimParameter(uint8 animObjId, int param, int32 value) {
+	_animator->setAnimParameter(animObjId, param, value);
 }
 
-void GraphicsEngine::clearAnimControlFlags(uint8 animObjId, int flags) {
-	_renderer->anim_clearControlFlags(animObjId, flags);
+void GraphicsEngine::setAnimGroupParameter(uint8 animObjId, int groupOp, int32 value) {
+	_animator->setAnimGroupParameter(animObjId, groupOp, value);
 }
 
-void GraphicsEngine::setAnimFrame(uint8 animObjId, uint16 frameNo) {
-	_renderer->anim_setFrame(animObjId, frameNo);
+int32 GraphicsEngine::getAnimParameter(uint8 animObjId, int param) const {
+	return _animator->getAnimParameter(animObjId, param);
 }
 
-uint16 GraphicsEngine::getAnimCurFrame(uint8 animObjId) const {
-	return _renderer->anim_getCurFrameNo(animObjId);
+void GraphicsEngine::addAnimParameterFlags(uint8 animObjId, int param, int flags) {
+	setAnimParameter(animObjId, param, getAnimParameter(animObjId, param) | flags);
 }
 
-void GraphicsEngine::setAnimPosX(uint8 animObjId, int16 x) {
-	_renderer->anim_setPosX(animObjId, x);
+void GraphicsEngine::clearAnimParameterFlags(uint8 animObjId, int param, int flags) {
+	setAnimParameter(animObjId, param, getAnimParameter(animObjId, param) & ~flags);
 }
 
-void GraphicsEngine::setAnimPosY(uint8 animObjId, int16 y) {
-	_renderer->anim_setPosY(animObjId, y);
-}
-
-void GraphicsEngine::setAnimSpeedX(uint8 animObjId, int16 speedX) {
-	_renderer->anim_setSpeedX(animObjId, speedX);
-}
-
-void GraphicsEngine::setAnimSpeedY(uint8 animObjId, int16 speedY) {
-	_renderer->anim_setSpeedY(animObjId, speedY);
-}
-
-void GraphicsEngine::toggleAnimBlink(uint8 animObjId, bool enable) {
-	_renderer->anim_toggleBlink(animObjId, enable);
-}
-
-bool GraphicsEngine::isAnimEnabled(uint8 animObjId) const {
-	return _renderer->anim_isEnabled(animObjId);
-}
-
-void GraphicsEngine::updateAnimBlink() {
-	_renderer->anim_updateBlink();
+bool GraphicsEngine::testAnimParameterFlags(uint8 animObjId, int param, int flags) const {
+	return (getAnimParameter(animObjId, param) & flags);
 }
 
 uint16 GraphicsEngine::screenWidth() const {
-	return _renderer ? _renderer->screenWidth() : 0;
+	return _animator ? _animator->screenWidth() : 0;
 }
 
 uint16 GraphicsEngine::screenHeight() const {
-	return _renderer ? _renderer->screenHeight() : 0;
+	return _animator ? _animator->screenHeight() : 0;
 }
 
 bool GraphicsEngine::busy(int type) const {
 	if (type == 0)
 		return ((_state.getVar(0) != 0) || (_state.getVar(8) != 0));
-	if (type == 1)
+	else if (type == 1)
 		return _state.getVar(3);
+	else if (type == 2)
+		return ((_state.getVar(4) & 0x7F) || (_state.testFlag(1, 0)));
 	return false;
 }
 
@@ -220,12 +202,12 @@ uint16 GraphicsEngine::frameCount() const {
 }
 
 void GraphicsEngine::createMouseCursor(bool show) {
-	_renderer->createMouseCursor();
+	_animator->createMouseCursor();
 }
 
 int GraphicsEngine::displayBootLogoFrame(int frameNo) {
-	int res = _renderer->drawBootLogoFrame(_screen, frameNo);
-	_system->copyRectToScreen(_screen, _renderer->screenWidth() * _bpp, 0, 0, _renderer->screenWidth(), _renderer->screenHeight());
+	int res = _animator->drawBootLogoFrame(_screen, frameNo);
+	_system->copyRectToScreen(_screen, _animator->screenWidth() * _bpp, 0, 0, _animator->screenWidth(), _animator->screenHeight());
 	_system->updateScreen();
 	return res;
 }
@@ -240,9 +222,9 @@ void GraphicsEngine::restoreDefaultsExt() {
 		_state.setVar(5, 0);
 	}
 
-	_renderer->clearDrawCommands();
+	_animator->clearDrawCommands();
 	_trs->doCommand(0xFC);
-	_renderer->clearAnimations(1);
+	_animator->clearAnimations(1);
 
 	if (!(_state.testFlag(4, 1)))
 		_state.setVar(0, 1);

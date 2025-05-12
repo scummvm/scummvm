@@ -37,12 +37,13 @@ namespace Snatcher {
 
 class Palette;
 class TransitionManager;
-class Renderer;
+class Animator;
 class SceneModule;
+class SoundEngine;
 
 class GraphicsEngine {
 public:
-	GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate);
+	GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate, SoundEngine *snd);
 	~GraphicsEngine();
 
 	void runScript(ResourcePointer res, int func);
@@ -75,6 +76,36 @@ public:
 	void reset(int mode);
 
 	void setVar(uint8 var, uint8 val);
+	uint8 getVar(uint8 var) const;
+
+	enum AnimParameters : int {
+		kAnimParaEnable = 0,
+		kAnimParaBlinkRate,
+		kAnimParaDrawFlags,
+		kAnimParaPosX,
+		kAnimParaPosY,
+		kAnimParaRelSpeedX,
+		kAnimParaRelSpeedY,
+		kAnimParaF16,
+		kAnimParaF18,
+		kAnimParaF1c,
+		kAnimParaTimeStamp,
+		kAnimParaF24,
+		kAnimParaControlFlags,
+		kAnimParaAllowFrameDrop,
+		kAnimParaFrameSeqCounter,
+		kAnimParaFrame,
+		kAnimParaFrameDelay,
+		kAnimParaF2c,
+		kAnimParaF2d,
+		kAnimParaBlink,
+		kAnimParaBlinkCounter,
+		kAnimParaBlinkDuration,
+		kAnimParaAbsSpeedX,
+		kAnimParaAbsSpeedY,
+		kAnimParaScriptComFlags,
+		kAnimParaF4f
+	};
 
 	enum AnimFlags : int {
 		kAnimNone 				=	0,
@@ -83,19 +114,12 @@ public:
 		kAnimAudioSync			=	1 << 2
 	};
 
-	void setAnimControlFlags(uint8 animObjId, int flags);
-	void addAnimControlFlags(uint8 animObjId, int flags);
-	void clearAnimControlFlags(uint8 animObjId, int flags);
-	void setAnimFrame(uint8 animObjId, uint16 frameNo);
-	uint16 getAnimCurFrame(uint8 animObjId) const;
-	void setAnimPosX(uint8 animObjId, int16 x);
-	void setAnimPosY(uint8 animObjId, int16 y);
-	void setAnimSpeedX(uint8 animObjId, int16 speedX);
-	void setAnimSpeedY(uint8 animObjId, int16 speedY);
-	void toggleAnimBlink(uint8 animObjId, bool enable);
-	bool isAnimEnabled(uint8 animObjId) const;
-
-	void updateAnimBlink();
+	void setAnimParameter(uint8 animObjId, int param, int32 value);
+	void setAnimGroupParameter(uint8 animObjId, int groupOp, int32 value = 0);
+	int32 getAnimParameter(uint8 animObjId, int param) const;
+	void addAnimParameterFlags(uint8 animObjId, int param, int flags);
+	void clearAnimParameterFlags(uint8 animObjId, int param, int flags);
+	bool testAnimParameterFlags(uint8 animObjId, int param, int flags) const;
 
 	uint16 screenWidth() const;
 	uint16 screenHeight() const;
@@ -154,9 +178,13 @@ public:
 		uint16 getDropFrames() const {
 			return vm.dropFrames;
 		}
+
+		uint16 frameCount2() const {
+			return vm.frameCounter;
+		}
 	
 	private:
-		uint8 vars[11];
+		uint8 vars[12];
 		uint16 frameCounter;
 		const VMInfo &vm;
 	};
@@ -171,7 +199,7 @@ private:
 	uint8 _flags;
 
 	uint8 *_screen;
-	Renderer *_renderer;
+	Animator *_animator;
 	Palette *_palette;
 	TransitionManager *_trs;
 	OSystem *_system;
