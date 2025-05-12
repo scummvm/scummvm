@@ -458,6 +458,7 @@ void unpackCelData(const SciSpan<const byte> &inBuffer, SciSpan<byte> &celBitmap
 	const byte *literalPtr = inBuffer.getUnsafeDataAt(literalPos, inBuffer.size() - literalPos);
 	const byte *const endOfResource = inBuffer.getUnsafeDataAt(inBuffer.size(), 0);
 	int pixelNr = 0;
+	(void)endOfResource;
 
 	memset(celBitmap.getUnsafeDataAt(0), clearColor, celBitmap.size());
 

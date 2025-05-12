@@ -1416,6 +1416,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 					int size = f.size();
 
 					assert(size >= 70);
+					(void)size;
 
 					f.seek(0x29);
 

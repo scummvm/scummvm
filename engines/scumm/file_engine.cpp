@@ -42,6 +42,7 @@ void ScummFile::setSubfileRange(int64 start, int32 len) {
 	const int64 fileSize = _baseStream->size();
 	assert(start <= fileSize);
 	assert(start + len <= fileSize);
+	(void)fileSize;
 	_subFileStart = start;
 	_subFileLen = len;
 	seek(0, SEEK_SET);

@@ -1061,6 +1061,7 @@ void ScummEngine::createBoxMatrix() {
 
 	byte *matrixStart = _res->createResource(rtMatrix, 1, BOX_MATRIX_SIZE);
 	const byte *matrixEnd = matrixStart + BOX_MATRIX_SIZE;
+	(void)matrixEnd;
 
 	#define addToMatrix(b)	do { *matrixStart++ = (b); assert(matrixStart < matrixEnd); } while (0)
 
@@ -1227,6 +1228,7 @@ bool ScummEngine_v0::areBoxesNeighbors(int box1nr, int box2nr) {
 	int i;
 	const int numOfBoxes = getNumBoxes();
 	const byte *boxm;
+	(void)numOfBoxes;
 
 	assert(box1nr < numOfBoxes);
 	assert(box2nr < numOfBoxes);

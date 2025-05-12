@@ -521,6 +521,7 @@ void MacResourceForkResourceSource::decompressResource(Common::SeekableReadStrea
 		resource->_data = ptr;
 
 		const byte *const bufferEnd = resource->data() + uncompressedSize;
+		(void)bufferEnd;
 
 		while (stream->pos() < stream->size()) {
 			byte code = stream->readByte();

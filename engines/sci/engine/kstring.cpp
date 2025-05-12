@@ -235,6 +235,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	int strLength = 0; /* Used for stuff like "%13s" */
 	bool unsignedVar = false;
 
+	(void)maxsize;
 	if (position.getSegment())
 		startarg = 2;
 	else {

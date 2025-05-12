@@ -676,6 +676,7 @@ public:
 		allocate(numEntries);
 		const uint32 bytesRead = stream.read((void *)const_cast<mutable_value_type *>(_data), bytesRequested);
 		assert(bytesRead == bytesRequested);
+		(void)bytesRead;
 		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 

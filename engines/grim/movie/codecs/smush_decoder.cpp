@@ -155,6 +155,7 @@ bool SmushDecoder::readHeader() {
 	pos = _file->pos();
 
 	assert(tag == expectedTag);
+	(void)expectedTag;
 
 	if (tag == MKTAG('A', 'H', 'D', 'R')) { // Demo
 		uint32 version = _file->readUint16LE();

@@ -2083,6 +2083,7 @@ void CharsetRendererNut::setCurID(int32 id) {
 
 	int numFonts = ((_vm->_game.id == GID_CMI) && (_vm->_game.features & GF_DEMO)) ? 4 : 5;
 	assert(id < numFonts);
+	(void)numFonts;
 	_curId = id;
 	if (!_fr[id]) {
 		char fontname[11];

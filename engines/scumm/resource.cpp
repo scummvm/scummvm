@@ -759,6 +759,7 @@ int ScummEngine::getResourceSize(ResType type, ResId idx) {
 	Common::StackLock lock(_resourceAccessMutex);
 	byte *ptr = getResourceAddress(type, idx);
 	assert(ptr);
+	(void)ptr;
 	return _res->_types[type][idx]._size;
 }
 

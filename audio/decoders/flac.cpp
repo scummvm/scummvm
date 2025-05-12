@@ -530,6 +530,7 @@ inline ::FLAC__StreamDecoderWriteStatus FLACStream::callbackWrite(const ::FLAC__
 		_sampleCache.bufReadPos = _sampleCache.bufData;
 	const uint cacheSpace = (_sampleCache.bufData + BUFFER_SIZE) - (_sampleCache.bufReadPos + _sampleCache.bufFill);
 	assert(numSamples <= cacheSpace);
+	(void)cacheSpace;
 	(*_methodConvertBuffers)(_sampleCache.bufReadPos + _sampleCache.bufFill, inChannels, numSamples, numChannels, numBits);
 
 	_sampleCache.bufFill += numSamples;

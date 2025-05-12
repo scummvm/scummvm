@@ -2627,6 +2627,7 @@ void ScummEngine_v5::o5_roomOps() {
 				assert(ptr);
 				int r = file->read(ptr, len);
 				assert(r == len);
+				(void)r;
 				ptr[len] = '\0';
 				loadPtrToResource(rtString, a, ptr);
 				free(ptr);

@@ -57,6 +57,13 @@ void AlgVideoDecoder::loadVideoFromStream(uint32 offset) {
 	uint16 typeInterHh = _input->readUint16LE();
 	uint16 typeIntraHhv = _input->readUint16LE();
 	uint16 typeInterHhv = _input->readUint16LE();
+	(void)chunkType;
+	(void)typeRaw;
+	(void)typeInter;
+	(void)typeIntraHh;
+	(void)typeInterHh;
+	(void)typeIntraHhv;
+	(void)typeInterHhv;
 	if (chunkSize == 0x18) {
 		_audioType = _input->readUint16LE();
 	}
@@ -226,6 +233,7 @@ void AlgVideoDecoder::decodeIntraFrame(uint32 size, uint8 hh, uint8 hv) {
 		}
 	}
 	assert(bytesRemaining == 0);
+	(void)bytesRemaining;
 }
 
 void AlgVideoDecoder::decodeInterFrame(uint32 size, uint8 hh, uint8 hv) {
@@ -266,6 +274,7 @@ void AlgVideoDecoder::decodeInterFrame(uint32 size, uint8 hh, uint8 hv) {
 	}
 	delete replacement;
 	assert(bytesRead == size);
+	(void)bytesRead;
 }
 
 void AlgVideoDecoder::updatePalette(uint32 size, bool partial) {
@@ -288,10 +297,12 @@ void AlgVideoDecoder::updatePalette(uint32 size, bool partial) {
 		bytesRead += 3;
 	}
 	assert(bytesRead == size);
+	(void)bytesRead;
 }
 
 void AlgVideoDecoder::readAudioData(uint32 size, uint16 rate) {
 	assert(_audioType == 21);
+	(void)_audioType;
 	_audioStream->queuePacket(_input->readStream(size));
 }
 

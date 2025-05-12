@@ -2724,8 +2724,10 @@ void VMDDecoder::filledSoundSlice(uint32 size) {
 		assert(buf);
 		const uint32 numBytesRead = _stream->read(buf, size);
 		assert(numBytesRead == size);
+		(void)numBytesRead;
 		const uint32 numBytesWritten = _oldStereoBuffer->write(buf, size);
 		assert(numBytesWritten == size);
+		(void)numBytesWritten;
 		free(buf);
 		return;
 	}

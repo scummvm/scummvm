@@ -1022,6 +1022,7 @@ void GameBountyHunter::sceneIsoGivemoney(Scene *scene) {
 void GameBountyHunter::sceneNxtscnLoseALife(Scene *scene) {
 	uint16 picked = 0;
 	int deadPlayerCount = 0;
+	(void)scene;
 	for (int i = 0; i < _numPlayers; i++) {
 		_playerLives[i]--;
 		displayLivesLeft(i);
@@ -1266,6 +1267,7 @@ void GameBountyHunter::sceneNxtscnDoBreakoutMains(Scene *scene) {
 void GameBountyHunter::sceneNxtscnDiedRefed(Scene *scene) {
 	uint16 picked = 0;
 	uint8 deadCount = 0;
+	(void)scene;
 	for (int i = 0; i < _numPlayers; i++) {
 		_playerLives[i]--;
 		displayLivesLeft(i);
@@ -1284,6 +1286,7 @@ void GameBountyHunter::sceneNxtscnDiedRefed(Scene *scene) {
 }
 
 void GameBountyHunter::sceneNxtscnGiveShotgun(Scene *scene) {
+	(void)scene;
 	for (int i = 0; i < _numPlayers; i++) {
 		_playerShots[i] = 5;
 		_playerGun[i] = 2;

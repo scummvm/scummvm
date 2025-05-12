@@ -283,6 +283,7 @@ public:
 		// and make the structure point into it
 		void *end = this->toBuffer(_buffer);
 		assert(end <= _buffer + sz);
+		(void)end;
 	}
 
 	~ADDynamicGameDescription() {

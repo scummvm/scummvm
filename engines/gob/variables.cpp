@@ -90,6 +90,7 @@ void Variables::writeOff32(uint32 offset, uint32 value) {
 void Variables::writeOffString(uint32 offset, const char *value) {
 	uint32 length = strlen(value);
 	assert((offset + length + 1) < _size);
+	(void)length;
 
 	Common::strcpy_s((char *)(_vars + offset), _size - offset, value);
 }

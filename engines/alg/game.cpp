@@ -130,9 +130,11 @@ void Game::loadLibArchive(const Common::Path &path) {
 	uint16 magicBytes = _libFile.readSint16LE();
 	uint32 indexOffset = _libFile.readSint32LE();
 	assert(magicBytes == 1020);
+	(void)magicBytes;
 	_libFile.seek(indexOffset);
 	uint16 indexSize = _libFile.readSint16LE();
 	assert(indexSize > 0);
+	(void)indexSize;
 	while (true) {
 		uint32 entryOffset = _libFile.readSint32LE();
 		Common::String entryName = _libFile.readStream(13)->readString();
