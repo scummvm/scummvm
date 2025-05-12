@@ -150,12 +150,13 @@ void GfxPalette::createFromData(const SciSpan<const byte> &data, Palette *palett
 		palFormat = data[32];
 		palOffset = 37;
 		palColorStart = data[25];
-		if (g_sci->getGameId() != GID_HOYLE4) {
-			palColorCount = data.getUint16SEAt(29);
-		} else {
-			// HOYLE4's SCI1.1 palettes are little endian even in
-			// the Mac version, unlike every other SCI1.1 Mac game.
+		if (g_sci->getGameId() == GID_HOYLE4 ||
+			g_sci->getGameId() == GID_SLATER) {
+			// HOYLE4 and SLATER SCI1.1 palettes are little endian even in
+			// the Mac versions, unlike every other SCI1.1 Mac game.
 			palColorCount = data.getUint16LEAt(29);
+		} else {
+			palColorCount = data.getUint16SEAt(29);
 		}
 	}
 
