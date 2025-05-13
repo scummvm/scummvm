@@ -76,7 +76,7 @@ int32 lua_newtag();
 int32 lua_copytagmethods(int32 tagto, int32 tagfrom);
 void lua_settag(int32 tag); // In: object
 
-void lua_error(const char *s);
+void NORETURN_PRE lua_error(const char *s) NORETURN_POST;
 int32 lua_dostring(const char *string); // Out: returns
 int32 lua_dobuffer(const char *buff, int32 size, const char *name);
 int32 lua_callfunction(lua_Object f);

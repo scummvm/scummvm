@@ -93,7 +93,7 @@ static void push_captures(Capture *cap) {
 	for (int i = 0; i < cap->level; i++) {
 		int l = cap->capture[i].len;
 		char *buff = luaL_openspace(l+1);
-		if (l == -1)
+		if (l < 0)
 			lua_error("unfinished capture");
 		strncpy(buff, cap->capture[i].init, l);
 		buff[l] = 0;
