@@ -129,8 +129,8 @@ boolean syncGeneralData(Common::Serializer &s, regispartida &game) {
 
 	for (int indiaux = 0; indiaux < 5; indiaux++) {
 		s.syncAsByte(game.cavernas[indiaux]);
-		s.syncAsByte(game.firstList[indiaux]);
-		s.syncAsByte(game.secondList[indiaux]);
+		s.syncAsUint16LE(game.firstList[indiaux]);
+		s.syncAsUint16LE(game.secondList[indiaux]);
 	}
 
 	for (int indiaux = 0; indiaux < 4; indiaux++) {
