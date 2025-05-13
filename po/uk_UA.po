@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-05-08 22:18+0000\n"
+"POT-Creation-Date: 2025-05-13 20:15+0000\n"
 "PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -318,7 +318,7 @@ msgstr "Інше хмарне сховище вже є активним. Чи в
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4200
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4201
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "Так"
@@ -331,7 +331,7 @@ msgstr "Так"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4200
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4201
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "Ні"
@@ -360,9 +360,9 @@ msgstr "Невірний формат JSON-коду."
 #: engines/groovie/script.cpp:665 engines/mtropolis/mtropolis.cpp:114
 #: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
-#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1351
-#: engines/scumm/scumm.cpp:1768 engines/scumm/scumm.cpp:2258
-#: engines/scumm/scumm.cpp:2274 engines/sky/compact.cpp:140
+#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1352
+#: engines/scumm/scumm.cpp:1769 engines/scumm/scumm.cpp:2259
+#: engines/scumm/scumm.cpp:2275 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:566 engines/sword1/animation.cpp:574
 #: engines/sword1/control.cpp:2816 engines/sword1/logic.cpp:1738
 #: engines/sword2/animation.cpp:459 engines/sword2/animation.cpp:469
@@ -6417,7 +6417,7 @@ msgstr "Відновити"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Швидке завантаження або збереження не підтримується в цій локації"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3154
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3155
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6428,7 +6428,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3141
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3142
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6439,7 +6439,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3174
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3175
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -10569,7 +10569,7 @@ msgstr "Не можу програти %dbpp відео на системі з �
 msgid "SCI32 support not compiled in"
 msgstr "Підтримку для SCI32 не скомпільовано"
 
-#: engines/sci/resource/resource.cpp:858
+#: engines/sci/resource/resource.cpp:859
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
@@ -10727,7 +10727,7 @@ msgid "Your Name:"
 msgstr "Ваше ім'я:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4206
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4207
 msgid "Host"
 msgstr "Розпочати"
 
@@ -10737,7 +10737,7 @@ msgid "Querying games..."
 msgstr "Вичитую список ігор..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4206
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4207
 msgid "Join"
 msgstr "Приєднатись"
 
@@ -11722,7 +11722,7 @@ msgstr ""
 "Будь ласка, відповідно змініть конфігурацію аудіо, щоб правильно завантажити "
 "цей файл збереження."
 
-#: engines/scumm/scumm.cpp:312
+#: engines/scumm/scumm.cpp:313
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -11734,12 +11734,12 @@ msgstr ""
 "Корекцію співвідношення сторін можна отримати, обрізавши роздільну здатність "
 "до 320x200, на вкладці \"движок\"."
 
-#: engines/scumm/scumm.cpp:1342
+#: engines/scumm/scumm.cpp:1343
 #, c-format
 msgid "This game requires the '%s' Macintosh executable for its fonts."
 msgstr "Для цієї гри потрібен виконуваний файл Macintosh «%s» для шрифтів."
 
-#: engines/scumm/scumm.cpp:1346
+#: engines/scumm/scumm.cpp:1347
 #, c-format
 msgid ""
 "This game requires the '%s' Macintosh executable for its music and fonts."
@@ -11747,7 +11747,7 @@ msgstr ""
 "Для цієї гри потрібен виконуваний файл \"%s\" Macintosh для музики та "
 "шрифтів."
 
-#: engines/scumm/scumm.cpp:1350
+#: engines/scumm/scumm.cpp:1351
 #, c-format
 msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. %s will "
@@ -11756,25 +11756,25 @@ msgstr ""
 "Не вдалося знайти файл програми '%s' Macintosh аби прочитати з нього "
 "ресурси. %s буде вимкнено."
 
-#: engines/scumm/scumm.cpp:1351
+#: engines/scumm/scumm.cpp:1352
 msgid "The Mac GUI"
 msgstr "Mac GUI"
 
-#: engines/scumm/scumm.cpp:1351
+#: engines/scumm/scumm.cpp:1352
 msgid "The music and the Mac GUI"
 msgstr "Музику та Mac GUI"
 
-#: engines/scumm/scumm.cpp:1371
+#: engines/scumm/scumm.cpp:1372
 #, c-format
 msgid "Could not open Macintosh resource file %s"
 msgstr "Не вдалося відкрити файл ресурсів Macintosh %s"
 
-#: engines/scumm/scumm.cpp:1374
+#: engines/scumm/scumm.cpp:1375
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
 msgstr "Не вдалося знайти гілку ресурсів у файлі ресурсів Macintosh %s"
 
-#: engines/scumm/scumm.cpp:1382
+#: engines/scumm/scumm.cpp:1383
 #, c-format
 msgid ""
 "'%s' appears to be the wrong Dig executable. It may be the launcher one "
@@ -11786,7 +11786,7 @@ msgstr ""
 "містить необхідних даних для меню та діалогів. Гляньте у папку 'The Dig f' "
 "на вашому CD. Всередині ви зможете знайти вірний файл."
 
-#: engines/scumm/scumm.cpp:1765
+#: engines/scumm/scumm.cpp:1766
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -11797,7 +11797,7 @@ msgstr ""
 "виключено.\n"
 "Будь-ласка скопіюйте наново файли з оригінальних дисків без компресії."
 
-#: engines/scumm/scumm.cpp:2256
+#: engines/scumm/scumm.cpp:2257
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -11806,7 +11806,7 @@ msgstr ""
 "Режим \"рідного\" MIDI потребує поновлення Roland Upgrade від\n"
 "LucasArts, проте %s відсутній. Перемикаюсь на AdLib."
 
-#: engines/scumm/scumm.cpp:2272
+#: engines/scumm/scumm.cpp:2273
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -11814,7 +11814,7 @@ msgstr ""
 "Ця версія Monkey Island 1 бракує деякі ресурси, необхідні\n"
 "для роботи MT-32. Перемикаюсь на AdLib."
 
-#: engines/scumm/scumm.cpp:4094
+#: engines/scumm/scumm.cpp:4095
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -11824,7 +11824,7 @@ msgstr ""
 "вам потрібно переписати файли гри Maniac Manssion у папку Maniac всередині "
 "папки з грою Tentacle, а також додати саму гру у ScummVM."
 
-#: engines/scumm/scumm.cpp:4206
+#: engines/scumm/scumm.cpp:4207
 msgid "Would you like to host or join a network play session?"
 msgstr "Чи ви хочете розпочати або приєднатися до мережевої гри?"
 
