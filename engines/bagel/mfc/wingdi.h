@@ -431,6 +431,10 @@ enum {
 #define BS_DIBPATTERN8X8    8
 #define BS_MONOPATTERN      9
 
+/* palette entry flags */
+#define PC_RESERVED     0x01    /* palette index used for animation */
+#define PC_EXPLICIT     0x02    /* palette index is explicit to device */
+#define PC_NOCOLLAPSE   0x04    /* do not match color to system palette */
 
 typedef struct tagBITMAPINFOHEADER {
 	DWORD      biSize;
@@ -578,6 +582,15 @@ extern BOOL GetCursorPos(LPPOINT lpPoint);
 extern BOOL SetCursorPos(int x, int y);
 extern BOOL SetCapture();
 extern BOOL ReleaseCapture();
+
+typedef FARPROC LINEDDAPROC;
+extern BOOL LineDDA(int nXStart, int nYStart,
+	int nXEnd, int nYEnd, LINEDDAPROC lpLineFunc,
+	LPARAM lpData);
+
+extern BYTE GetRValue(COLORREF color);
+extern BYTE GetGValue(COLORREF color);
+extern BYTE GetBValue(COLORREF color);
 
 } // namespace MFC
 } // namespace Bagel

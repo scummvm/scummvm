@@ -19,27 +19,45 @@
  *
  */
 
-#ifndef HODJNPODJ_BEACON_GLOBALS_H
-#define HODJNPODJ_BEACON_GLOBALS_H
+#ifndef HODJNPODJ_BEACON_GAMEDLL_H
+#define HODJNPODJ_BEACON_GAMEDLL_H
+
+#include "bagel/afxwin.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Beacon {
 
-// Main Window positioning constants
-#define GAME_WIDTH		640
-#define GAME_HEIGHT		480
-
-// Scroll button size and positioning information
-#define IDC_SCROLL			850
-
-#define SCROLL_BUTTON_X		250
-#define SCROLL_BUTTON_Y		0
-#define SCROLL_BUTTON_DX	140
-#define SCROLL_BUTTON_DY	24
+/**
+ ****************************************************************
+ *
+ * RunBeac
+ *
+ * FUNCTIONAL DESCRIPTION:
+ *
+ *          This is the API function for the DLL. It is what the calling app
+ *          calls to invoke poker
+ *
+ * FORMAL PARAMETERS:
+ *
+ *      hParentWnd, lpGameInfo
+ *
+ * IMPLICIT INPUT PARAMETERS:
+ *
+ *      n/a
+ *
+ * IMPLICIT OUTPUT PARAMETERS:
+ *
+ *      n/a
+ *
+ * RETURN VALUE:
+ *
+ *      n/a
+ *
+ ****************************************************************
+ */
+extern HWND FAR PASCAL RunBeac(HWND hParentWnd, LPGAMESTRUCT lpGameInfo)
 
 } // namespace Beacon
 } // namespace HodjNPodj
 } // namespace Bagel
-
-#endif

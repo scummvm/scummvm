@@ -1,58 +1,41 @@
-/*****************************************************************
+/* ScummVM - Graphic Adventure Engine
  *
- *  Copyright (c) 1994 by Boffo Games, All Rights Reserved
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  beacon.cpp  - 1 line description of this module
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  HISTORY
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *      1.00      	06/06/94	BAR     Initial Design
- *
- *  MODULE DESCRIPTION:
- *
- *      Puts up the main window, handles main command loop, 
- *		and mouse events
- *
- *  LOCALS:
- *
- *      MyFunction()            Description of MyFunction
- *
- *  GLOBALS:
- *
- *      MyFunction()            Description of MyFunction
- *
- *  RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc./]
- *
- *  FILES USED:
- *
- *      [Discuss files created, or used]
- *
- ****************************************************************/
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include <time.h>
-#include <fstream.h> 
-
-#include <math.h>
-#include <dos.h>
-
 #include "bagel/boflib/sound.h"
 #include "bagel/hodjnpodj/hnplibs/mainmenu.h"
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/hnplibs/text.h" 
-
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"                     
-#include "resource.h"
-#include "globals.h"
-#include "beacon.h"
-#include "optndlg.h"
- 
-#include "copyrite.cpp"						// Boffo!
+#include "bagel/hodjnpodj/beacon/resource.h"
+#include "bagel/hodjnpodj/beacon/globals.h"
+#include "bagel/hodjnpodj/beacon/beacon.h"
+#include "bagel/hodjnpodj/beacon/optndlg.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Beacon {
 
 void CALLBACK GetSubOptions( CWnd* pParentWind );
 void CALLBACK StepAlongLine( int xpos, int ypos, LPSTR lphdc );
@@ -459,7 +442,7 @@ void CMainWindow::DrawBeams( CDC *pDC )
 
 BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-	CDC	*pDC;
+	CDC	*pDC = nullptr;
 	
 	if ( HIWORD( lParam ) == BN_CLICKED ) {
 
@@ -844,7 +827,7 @@ void CMainWindow::OnTimer(UINT nIDEvent)
 					if ( m_bAutomatic ) {
 						MyFocusRect( pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, FALSE);	// erase highlight on nNextIndex
 						NewGame();
-						char		msg[64];
+
 						Common::sprintf_s( msg, "Score: %.0f %%", m_Score );
 						(*m_pScoreTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 					
@@ -1239,7 +1222,7 @@ CPoint CMainWindow::PointToGrid( CPoint point )
  ****************************************************************/ 
 BOOL CMainWindow::LoadArtWork( CDC *pDC )
 {
-	CBitmap		*pNextArt = NULL;
+//	CBitmap		*pNextArt = NULL;
 	CPalette	*pTempPalette = NULL,
 				*pPalOld = NULL;
 	CPoint		Src; 
@@ -1822,5 +1805,6 @@ BEGIN_MESSAGE_MAP( CMainWindow, CFrameWnd )
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
-
+} // namespace Beacon
+} // namespace HodjNPodj
+} // namespace Bagel

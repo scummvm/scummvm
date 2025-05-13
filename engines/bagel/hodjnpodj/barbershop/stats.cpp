@@ -128,11 +128,7 @@ int CStats::ResetGame()
 }
 
 
-void CStats::SaveStats(int nLttrsSlvd, int nTime)
-{
-	char	tmpBuf[5];
-
-
+void CStats::SaveStats(int nLttrsSlvd, int nTime) {
     m_nLettersSolved	= nLttrsSlvd;
     m_nTime				= nTime;
 

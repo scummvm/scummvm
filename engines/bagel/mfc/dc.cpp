@@ -94,12 +94,29 @@ void CDC::Rectangle(int x1, int y1, int x2, int y2) {
 	error("TODO: CDC::Rectangle");
 }
 
+BOOL CDC::Pie(int x1, int y1, int x2, int y2,
+		int x3, int y3, int x4, int y4) {
+	error("TODO: CDC::Pie");
+}
+
+BOOL CDC::Pie(LPCRECT lpRect, const POINT &ptStart, const POINT &ptEnd) {
+	error("TODO: CDC::Pie");
+}
+
 void CDC::MoveTo(int x, int y) {
 	error("TODO: CDC::MoveTo");
 }
 
 void CDC::LineTo(int x, int y) {
 	error("TODO: CDC::LineTo");
+}
+
+COLORREF CDC::GetPixel(int x, int y) const {
+	error("TODO: CDC::GetPixel");
+}
+
+COLORREF CDC::GetPixel(const POINT &point) const {
+	error("TODO: CDC::GetPixel");
 }
 
 CGdiObject *CDC::SelectStockObject(int nIndex) {

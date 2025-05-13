@@ -43,5 +43,14 @@ UINT CPalette::SetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
 	error("TODO: CPalette::SetPaletteEntries");
 }
 
+BOOL CPalette::AnimatePalette(UINT nStartIndex, UINT nNumEntries,
+		const PALETTEENTRY *lpPaletteColors) {
+	error("TODO: CPalette::AnimatePalette");
+}
+
+UINT CPalette::GetNearestPaletteIndex(COLORREF crColor) {
+	error("TODO: CPalette::GetNearestPaletteIndex");
+}
+
 } // namespace MFC
 } // namespace Bagel

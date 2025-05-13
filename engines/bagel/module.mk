@@ -170,6 +170,9 @@ MODULE_OBJS = \
 	hodjnpodj/battlefish/gamedll.o \
 	hodjnpodj/battlefish/bfish.o \
 	hodjnpodj/battlefish/usercfg.o \
+	hodjnpodj/beacon/gamedll.o \
+	hodjnpodj/beacon/beacon.o \
+	hodjnpodj/beacon/optndlg.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o

@@ -399,6 +399,9 @@ public:
 		LPPALETTEENTRY lpPaletteColors) const;
 	UINT SetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
 		LPPALETTEENTRY lpPaletteColors);
+	BOOL AnimatePalette(UINT nStartIndex, UINT nNumEntries,
+		const PALETTEENTRY *lpPaletteColors);
+	UINT GetNearestPaletteIndex(COLORREF crColor);
 };
 
 class CRgn : public CGdiObject {
@@ -436,8 +439,22 @@ public:
 	void FillRect(LPCRECT lpRect, CBrush *pBrush);
 	void Rectangle(LPCRECT lpRect);
 	void Rectangle(int x1, int y1, int x2, int y2);
+	BOOL Pie(
+		int x1, int y1,     // Upper-left corner of bounding rectangle
+		int x2, int y2,     // Lower-right corner of bounding rectangle
+		int x3, int y3,     // Starting point of the arc (on the ellipse)
+		int x4, int y4      // Ending point of the arc (on the ellipse)
+	);
+	BOOL Pie(
+		LPCRECT lpRect,			// Pointer to bounding rectangle
+		const POINT &ptStart,	// Start point of arc
+		const POINT &ptEnd		// End point of arc
+	);
+
 	void MoveTo(int x, int y);
 	void LineTo(int x, int y);
+	COLORREF GetPixel(int x, int y) const;
+	COLORREF GetPixel(const POINT &point) const;
 
 	virtual CGdiObject *SelectStockObject(int nIndex);
 	CPen *SelectObject(CPen *pPen);

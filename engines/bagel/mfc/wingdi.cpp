@@ -143,5 +143,23 @@ BOOL ReleaseCapture() {
 	error("TODO: ReleaseCapture");
 }
 
+BOOL LineDDA(int nXStart, int nYStart,
+		int nXEnd, int nYEnd, LINEDDAPROC lpLineFunc,
+		LPARAM lpData) {
+	error("TODO: LineDDA");
+}
+
+BYTE GetRValue(COLORREF color) {
+	error("TODO: GetRValue");
+}
+
+BYTE GetGValue(COLORREF color) {
+	error("TODO: GetGValue");
+}
+
+BYTE GetBValue(COLORREF color) {
+	error("TODO: GetBValue");
+}
+
 } // namespace MFC
 } // namespace Bagel
