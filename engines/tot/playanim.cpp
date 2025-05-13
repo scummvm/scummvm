@@ -148,10 +148,12 @@ Common::String nombreficherofoto;
 
 Common::String nombrepersonaje;
 
-char *encriptado;
+// Text decryption key
+Common::String decryptionKey;
+
 uint hornacina[2][4];
 
-RoomFileRegister *roomData;
+RoomFileRegister *currentRoomData;
 
 InvItemRegister regobj;
 
@@ -199,7 +201,6 @@ uint sizeframe,
 	sizeanimado,
 	segpasoanimado,
 	ofspasoanimado,
-	_handpantalla,
 	segfondo,
 	offfondo;
 
@@ -225,7 +226,7 @@ byte *characterDirtyRect;
 
 byte *handpantalla;
 
-uint roomNumber;
+uint currentRoomNumber;
 
 boolean isLoadingFromLauncher;
 
@@ -339,7 +340,7 @@ void initializeScreenFile() {
 	if (!roomFile.open(Common::Path("PANTALLA.DAT"))) {
 		error("Error opening room files: ioresult (320)");
 	}
-	int roomNumber = 0;
+
 	int64 fileSize = roomFile.size();
 	delete (rooms);
 
@@ -857,7 +858,7 @@ void resetGameState() {
 void initPlayAnim() {
 	debug("initplayanim!");
 	isLoadingFromLauncher = false;
-	encriptado = "23313212133122121312132132312312122132322131221322222112121"
+	decryptionKey = "23313212133122121312132132312312122132322131221322222112121"
 				 "32121121212112111212112333131232323213222132123211213221231"
 				 "32132213232333333213132132132322113212132121322123121232332"
 				 "23123221322213233221112312231221233232122332211112233122321"

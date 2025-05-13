@@ -70,8 +70,6 @@ unsigned int imagesize(int x, int y, int x2, int y2) {
 void bar(int x1, int y1, int x2, int y2, byte color) {
 	x2 = x2 + 1;
 	y2 = y2 + 1;
-	int w = x2 - x1;
-	int h = y2 - y1;
 	for (int i = x1; i < x2; i++) {
 		for (int j = y1; j < y2; j++) {
 			*((byte *)g_engine->_screen->getBasePtr(i, j)) = color;
