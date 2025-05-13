@@ -2374,8 +2374,6 @@ void ScummEngine_v100he::saveLoadWithSerializer(Common::Serializer &s) {
 #endif
 
 void ScummEngine::loadResourceOLD(Common::Serializer &ser, ResType type, ResId idx) {
-	uint32 size;
-
 	if (type == rtSound && ser.getVersion() >= VER(23)) {
 		// Save/load only a list of resource numbers that need to be reloaded.
 		uint16 tmp;
@@ -2383,6 +2381,7 @@ void ScummEngine::loadResourceOLD(Common::Serializer &ser, ResType type, ResId i
 		if (tmp)
 			ensureResourceLoaded(rtSound, idx);
 	} else if (_res->_types[type]._mode == kDynamicResTypeMode) {
+		uint32 size = 0;
 		ser.syncAsUint32LE(size);
 		if (size) {
 			_res->createResource(type, idx, size);
@@ -2426,7 +2425,7 @@ void ScummEngine::saveResource(Common::Serializer &ser, ResType type, ResId idx)
 void ScummEngine::loadResource(Common::Serializer &ser, ResType type, ResId idx) {
 	if (_game.heversion >= 60 && ser.getVersion() <= VER(65) &&
 		((type == rtSound && idx == 1) || (type == rtSpoolBuffer))) {
-		uint32 size;
+		uint32 size = 0;
 		ser.syncAsUint32LE(size);
 		assert(size);
 		_res->createResource(type, idx, size);
@@ -2438,7 +2437,7 @@ void ScummEngine::loadResource(Common::Serializer &ser, ResType type, ResId idx)
 
 		ensureResourceLoaded(rtSound, idx);
 	} else if (_res->_types[type]._mode == kDynamicResTypeMode) {
-		uint32 size;
+		uint32 size = 0;
 		ser.syncAsUint32LE(size);
 		assert(size);
 		byte *ptr = _res->createResource(type, idx, size);
