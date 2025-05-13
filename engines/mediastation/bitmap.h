@@ -26,7 +26,7 @@
 #include "graphics/managed_surface.h"
 
 #include "mediastation/datafile.h"
-#include "mediastation/assetheader.h"
+#include "mediastation/asset.h"
 
 namespace MediaStation {
 

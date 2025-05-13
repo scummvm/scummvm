@@ -23,7 +23,6 @@
 #define MEDIASTATION_TIMER_H
 
 #include "mediastation/asset.h"
-#include "mediastation/assetheader.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
@@ -31,7 +30,7 @@ namespace MediaStation {
 
 class Timer : public Asset {
 public:
-	Timer(AssetHeader *header) : Asset(header) {};
+	Timer() : Asset(kAssetTypeTimer) {};
 
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual void process() override;

@@ -28,7 +28,7 @@
 #include "graphics/palette.h"
 
 #include "mediastation/datafile.h"
-#include "mediastation/assetheader.h"
+#include "mediastation/asset.h"
 #include "mediastation/mediascript/function.h"
 
 namespace MediaStation {
@@ -53,6 +53,8 @@ enum ContextSectionType {
 	kContextFunctionSection = 0x0031
 };
 
+class Screen;
+
 class Context : public Datafile {
 public:
 	Context(const Common::Path &path);
@@ -62,7 +64,7 @@ public:
 	uint32 _subfileCount;
 	uint32 _fileSize;
 	Graphics::Palette *_palette = nullptr;
-	Asset *_screenAsset = nullptr;
+	Screen *_screenAsset = nullptr;
 
 	Asset *getAssetById(uint assetId);
 	Asset *getAssetByChunkReference(uint chunkReference);
@@ -82,11 +84,13 @@ private:
 	Common::HashMap<uint, Asset *> _assetsByChunkReference;
 	Common::HashMap<uint, ScriptValue *> _variables;
 
-	void readParametersSection(Chunk &chunk);
-	void readVariable(Chunk &chunk);
 	void readOldStyleHeaderSections(Subfile &subfile, Chunk &chunk);
 	void readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk);
-	bool readHeaderSection(Subfile &subfile, Chunk &chunk);
+
+	bool readHeaderSection(Chunk &chunk);
+	void readCreateContextData(Chunk &chunk);
+	Asset *readCreateAssetData(Chunk &chunk);
+	void readCreateVariableData(Chunk &chunk);
 
 	void readAssetInFirstSubfile(Chunk &chunk);
 	void readAssetFromLaterSubfile(Subfile &subfile);

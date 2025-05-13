@@ -26,7 +26,6 @@
 #include "common/array.h"
 
 #include "mediastation/asset.h"
-#include "mediastation/assetheader.h"
 #include "mediastation/datafile.h"
 #include "mediastation/bitmap.h"
 #include "mediastation/mediascript/scriptvalue.h"
@@ -63,24 +62,29 @@ class Sprite : public SpatialEntity {
 friend class Context;
 
 public:
-	Sprite(AssetHeader *header);
+	Sprite() : SpatialEntity(kAssetTypeSprite) {};
 	~Sprite();
 
 	virtual void process() override;
 	virtual void redraw(Common::Rect &rect) override;
 
+	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 
-	virtual bool isVisible() const override { return _isShowing; }
+	virtual bool isVisible() const override { return _isVisible; }
 
 	virtual void readChunk(Chunk &chunk) override;
 
 private:
+	double _dissolveFactor = 0.0;
+	uint _loadType = 0;
+	uint _frameRate = 0;
+	uint _frameCount = 0;
+	Common::HashMap<uint32, uint32> _spriteFrameMapping;
 	Common::Array<SpriteFrame *> _frames;
 	SpriteFrame *_activeFrame = nullptr;
-	bool _showFirstFrame = true;
-	bool _isShowing = false;
 	bool _isPlaying = false;
+	bool _atFirstFrame = true;
 	uint _currentFrameIndex = 0;
 	uint _nextFrameTime = 0;
 

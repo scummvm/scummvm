@@ -23,6 +23,57 @@
 
 namespace MediaStation {
 
+void Text::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+	switch (paramType) {
+	case kAssetHeaderStartup:
+		_isVisible = static_cast<bool>(chunk.readTypedByte());
+		break;
+
+	case kAssetHeaderEditable:
+		_editable = chunk.readTypedByte();
+		break;
+
+	case kAssetHeaderLoadType:
+		_loadType = chunk.readTypedByte();
+		break;
+
+	case kAssetHeaderFontId:
+		_fontAssetId = chunk.readTypedUint16();
+		break;
+
+	case kAssetHeaderTextMaxLength:
+		_maxTextLength = chunk.readTypedUint16();
+		break;
+
+	case kAssetHeaderInitialText:
+		_text = chunk.readTypedString();
+		break;
+
+	case kAssetHeaderTextJustification:
+		_justification = static_cast<TextJustification>(chunk.readTypedUint16());
+		break;
+
+	case kAssetHeaderTextPosition:
+		_position = static_cast<TextPosition>(chunk.readTypedUint16());
+		break;
+
+	case kAssetHeaderTextCharacterClass: {
+		CharacterClass characterClass;
+		characterClass.firstAsciiCode = chunk.readTypedUint16();
+		characterClass.lastAsciiCode = chunk.readTypedUint16();
+		_acceptedInput.push_back(characterClass);
+		break;
+	}
+
+	case kAssetHeaderDissolveFactor:
+		_dissolveFactor = chunk.readTypedDouble();
+		break;
+
+	default:
+		SpatialEntity::readParameter(chunk, paramType);
+	}
+}
+
 ScriptValue Text::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
 
@@ -57,7 +108,7 @@ ScriptValue Text::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> 
 }
 
 Common::String Text::text() const {
-	return _header->_text;
+	return _text;
 }
 
 void Text::setText(Common::String text) {

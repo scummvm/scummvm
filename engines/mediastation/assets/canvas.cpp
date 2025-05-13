@@ -23,6 +23,21 @@
 
 namespace MediaStation {
 
+void Canvas::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+	switch (paramType) {
+	case kAssetHeaderStartup:
+		_isVisible = static_cast<bool>(chunk.readTypedByte());
+		break;
+
+	case kAssetHeaderDissolveFactor:
+		_dissolveFactor = chunk.readTypedDouble();
+		break;
+
+	default:
+		SpatialEntity::readParameter(chunk, paramType);
+	}
+}
+
 ScriptValue Canvas::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	switch (methodId) {
 	case kClearToPaletteMethod: {

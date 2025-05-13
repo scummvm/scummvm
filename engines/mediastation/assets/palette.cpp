@@ -25,5 +25,25 @@
 
 namespace MediaStation {
 
-} // End of namespace MediaStation
+Palette::~Palette() {
+	delete _palette;
+	_palette = nullptr;
+}
 
+void Palette::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+	switch (paramType) {
+	case kAssetHeaderPalette: {
+		const uint PALETTE_ENTRIES = 256;
+		const uint PALETTE_BYTES = PALETTE_ENTRIES * 3;
+		byte *buffer = new byte[PALETTE_BYTES];
+		chunk.read(buffer, PALETTE_BYTES);
+		_palette = new Graphics::Palette(buffer, PALETTE_ENTRIES, DisposeAfterUse::YES);
+		break;
+	}
+
+	default:
+		Asset::readParameter(chunk, paramType);
+	}
+}
+
+} // End of namespace MediaStation

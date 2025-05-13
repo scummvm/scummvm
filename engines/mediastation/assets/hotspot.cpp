@@ -24,30 +24,48 @@
 
 namespace MediaStation {
 
-Hotspot::Hotspot(AssetHeader *header) : SpatialEntity(header) {
-	if (header->_startup == kAssetStartupActive) {
-		_isActive = true;
+void Hotspot::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+	switch (paramType) {
+	case kAssetHeaderMouseActiveArea: {
+		uint16 total_points = chunk.readTypedUint16();
+		for (int i = 0; i < total_points; i++) {
+			Common::Point point = chunk.readTypedPoint();
+			_mouseActiveArea.push_back(point);
+		}
+		break;
+	}
+
+	case kAssetHeaderCursorResourceId:
+		_cursorResourceId = chunk.readTypedUint16();
+		break;
+
+	case kAssetHeaderGetOffstageEvents:
+		_getOffstageEvents = static_cast<bool>(chunk.readTypedByte());
+		break;
+
+	default:
+		SpatialEntity::readParameter(chunk, paramType);
 	}
 }
 
 bool Hotspot::isInside(const Common::Point &pointToCheck) {
 	// No sense checking the polygon if we're not even in the bbox.
-	if (!_header->_boundingBox.contains(pointToCheck)) {
+	if (!_boundingBox.contains(pointToCheck)) {
 		return false;
 	}
 
 	// We're in the bbox, but there might not be a polygon to check.
-	if (_header->_mouseActiveArea.empty()) {
+	if (_mouseActiveArea.empty()) {
 		return true;
 	}
 
 	// Polygon intersection code adapted from HADESCH engine, might need more
 	// refinement once more testing is possible.
-	Common::Point point = pointToCheck - Common::Point(_header->_boundingBox.left, _header->_boundingBox.top);
+	Common::Point point = pointToCheck - Common::Point(_boundingBox.left, _boundingBox.top);
 	int rcross = 0; // Number of right-side overlaps
 
 	// Each edge is checked whether it cuts the outgoing stream from the point
-	Common::Array<Common::Point> _polygon = _header->_mouseActiveArea;
+	Common::Array<Common::Point> _polygon = _mouseActiveArea;
 	for (unsigned i = 0; i < _polygon.size(); i++) {
 		const Common::Point &edgeStart = _polygon[i];
 		const Common::Point &edgeEnd = _polygon[(i + 1) % _polygon.size()];

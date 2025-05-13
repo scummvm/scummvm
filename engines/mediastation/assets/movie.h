@@ -25,8 +25,8 @@
 #include "common/array.h"
 #include "audio/audiostream.h"
 
+#include "mediastation/asset.h"
 #include "mediastation/datafile.h"
-#include "mediastation/assetheader.h"
 #include "mediastation/bitmap.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
@@ -91,23 +91,32 @@ enum MovieSectionType {
 
 class Movie : public SpatialEntity {
 public:
-	Movie(AssetHeader *header);
+	Movie() : SpatialEntity(kAssetTypeMovie) {};
 	virtual ~Movie() override;
 
 	virtual void readChunk(Chunk &chunk) override;
 	virtual void readSubfile(Subfile &subfile, Chunk &chunk) override;
 
+	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual void process() override;
 
 	virtual void redraw(Common::Rect &rect) override;
 
-	virtual bool isVisible() const override { return _isShowing; }
+	virtual bool isVisible() const override { return _isVisible; }
+
+	uint32 _audioChunkReference = 0;
+	uint32 _animationChunkReference = 0;
 
 private:
-	bool _showByDefault = false;
-	bool _isShowing = false;
+	SoundEncoding _soundEncoding;
+	uint _chunkCount = 0;
+	uint _rate = 0;
+
+	uint _loadType = 0;
+	double _dissolveFactor = 0.0;
 	bool _isPlaying = false;
+	bool _atFirstFrame = true;
 
 	Common::Array<MovieFrame *> _frames;
 	Common::Array<MovieFrame *> _stills;

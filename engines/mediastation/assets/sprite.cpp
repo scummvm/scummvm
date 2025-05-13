@@ -60,23 +60,54 @@ uint32 SpriteFrame::index() {
 	return _bitmapHeader->_index;
 }
 
-Sprite::Sprite(AssetHeader *header) : SpatialEntity(header) {
-	if (header->_startup == kAssetStartupActive) {
-		setActive();
-		_isShowing = true;
-		_showFirstFrame = true;
-	}
-}
 
 Sprite::~Sprite() {
 	// If we're just referencing another asset's frames,
 	// don't delete those frames.
-	if (_header->_assetReference == 0) {
+	if (_assetReference == 0) {
 		for (SpriteFrame *frame : _frames) {
 			delete frame;
 		}
 	}
 	_frames.clear();
+}
+
+void Sprite::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+	switch (paramType) {
+	case kAssetHeaderChunkReference:
+		_chunkReference = chunk.readTypedChunkReference();
+		break;
+
+	case kAssetHeaderDissolveFactor:
+		_dissolveFactor = chunk.readTypedDouble();
+		break;
+
+	case kAssetHeaderFrameRate:
+		_frameRate = static_cast<uint32>(chunk.readTypedDouble());
+		break;
+
+	case kAssetHeaderLoadType:
+		_loadType = chunk.readTypedByte();
+		break;
+
+	case kAssetHeaderSpriteChunkCount:
+		_frameCount = chunk.readTypedUint16();
+		break;
+
+	case kAssetHeaderSpriteFrameMapping: {
+		uint32 externalFrameId = chunk.readTypedUint16();
+		uint32 internalFrameId = chunk.readTypedUint16();
+		uint32 unk1 = chunk.readTypedUint16();
+		if (unk1 != internalFrameId) {
+			warning("AssetHeader::readSection(): Repeated internalFrameId doesn't match");
+		}
+		_spriteFrameMapping.setVal(externalFrameId, internalFrameId);
+		break;
+	}
+
+	default:
+		SpatialEntity::readParameter(chunk, paramType);
+	}
 }
 
 ScriptValue Sprite::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
@@ -92,6 +123,13 @@ ScriptValue Sprite::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue
 	case kSpatialHideMethod: {
 		assert(args.empty());
 		spatialHide();
+		return returnValue;
+	}
+
+	case kSetDissolveFactorMethod: {
+		warning("STUB: setDissolveFactor");
+		assert(args.size() == 1);
+		_dissolveFactor = args[0].asFloat();
 		return returnValue;
 	}
 
@@ -116,7 +154,7 @@ ScriptValue Sprite::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue
 	case kSetCurrentClipMethod: {
 		assert(args.size() <= 1);
 		if (args.size() == 1 && args[0].asParamToken() != 0) {
-			error("Sprite::callMethod(): (%d) setClip() called with unhandled arg: %d", _header->_id, args[0].asParamToken());
+			error("Sprite::callMethod(): (%d) setClip() called with unhandled arg: %d", _id, args[0].asParamToken());
 		}
 		setCurrentClip();
 		return returnValue;
@@ -125,7 +163,7 @@ ScriptValue Sprite::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue
 	case kSetSpriteFrameByIdMethod: {
 		assert(args.size() == 1);
 		uint32 externalFrameId = args[0].asParamToken();
-		uint32 internalFrameId = _header->_spriteFrameMapping.getVal(externalFrameId);
+		uint32 internalFrameId = _spriteFrameMapping.getVal(externalFrameId);
 		showFrame(_frames[internalFrameId]);
 		return returnValue;
 	}
@@ -141,35 +179,35 @@ ScriptValue Sprite::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue
 }
 
 void Sprite::spatialShow() {
-	if (_isShowing) {
-		warning("Sprite::spatialShow(): (%d) Attempted to spatialShow when already showing", _header->_id);
+	if (_isVisible) {
+		warning("Sprite::spatialShow(): (%d) Attempted to spatialShow when already showing", _id);
 		return;
 	}
 	showFrame(_frames[0]);
 
 	setActive();
-	_isShowing = true;
+	_isVisible = true;
 	_isPlaying = false;
 }
 
 void Sprite::spatialHide() {
-	if (!_isShowing) {
-		warning("Sprite::spatialHide(): (%d) Attempted to spatialHide when not showing", _header->_id);
+	if (!_isVisible) {
+		warning("Sprite::spatialHide(): (%d) Attempted to spatialHide when not showing", _id);
 		return;
 	}
 	showFrame(nullptr);
 
 	setInactive();
-	_isShowing = false;
+	_isVisible = false;
 	_isPlaying = false;
 }
 
 void Sprite::timePlay() {
-	if (!_isShowing) {
-		warning("Sprite::timePlay(): (%d) Attempted to timePlay when not showing", _header->_id);
+	if (!_isVisible) {
+		warning("Sprite::timePlay(): (%d) Attempted to timePlay when not showing", _id);
 		return;
 	} else if (_isPlaying) {
-		warning("Sprite::timePlay(): (%d) Attempted to timePlay when already playing", _header->_id);
+		warning("Sprite::timePlay(): (%d) Attempted to timePlay when already playing", _id);
 		return;
 	}
 
@@ -181,11 +219,11 @@ void Sprite::timePlay() {
 }
 
 void Sprite::timeStop() {
-	if (!_isShowing) {
-		warning("Sprite::timeStop(): (%d) Attempted to timeStop when not showing", _header->_id);
+	if (!_isVisible) {
+		warning("Sprite::timeStop(): (%d) Attempted to timeStop when not showing", _id);
 		return;
 	} else if (!_isPlaying) {
-		warning("Sprite::timeStop(): (%d) Attempted to timeStop when not playing", _header->_id);
+		warning("Sprite::timeStop(): (%d) Attempted to timeStop when not playing", _id);
 		return;
 	}
 
@@ -195,7 +233,7 @@ void Sprite::timeStop() {
 
 void Sprite::movieReset() {
 	setActive();
-	if (_isShowing) {
+	if (_isVisible) {
 		showFrame(_frames[0]);
 	} else {
 		showFrame(nullptr);
@@ -211,7 +249,7 @@ void Sprite::setCurrentClip() {
 	if (_currentFrameIndex < _frames.size()) {
 		showFrame(_frames[_currentFrameIndex++]);
 	} else {
-		warning("Sprite::setCurrentClip(): (%d) Attempted to increment past number of frames", _header->_id);
+		warning("Sprite::setCurrentClip(): (%d) Attempted to increment past number of frames", _id);
 	}
 }
 
@@ -229,15 +267,15 @@ void Sprite::readChunk(Chunk &chunk) {
 
 	// TODO: Are these in exactly reverse order? If we can just reverse the
 	// whole thing once.
-	Common::sort(_frames.begin(), _frames.end(), [](SpriteFrame * a, SpriteFrame * b) {
+	Common::sort(_frames.begin(), _frames.end(), [](SpriteFrame *a, SpriteFrame *b) {
 		return a->index() < b->index();
 	});
 }
 
 void Sprite::updateFrameState() {
-	if (_showFirstFrame) {
+	if (_isVisible && _atFirstFrame) {
 		showFrame(_frames[0]);
-		_showFirstFrame = false;
+		_atFirstFrame = false;
 		return;
 	}
 
@@ -248,15 +286,15 @@ void Sprite::updateFrameState() {
 	if (!_isPlaying) {
 		if (_activeFrame != nullptr) {
 			debugC(6, kDebugGraphics, "Sprite::updateFrameState(): (%d): Not playing. Persistent frame %d (%d x %d) @ (%d, %d)",
-				_header->_id, _activeFrame->index(), _activeFrame->width(), _activeFrame->height(), _activeFrame->left(), _activeFrame->top());
+				_id, _activeFrame->index(), _activeFrame->width(), _activeFrame->height(), _activeFrame->left(), _activeFrame->top());
 		} else {
-			debugC(6, kDebugGraphics, "Sprite::updateFrameState(): (%d): Not playing, no persistent frame", _header->_id);
+			debugC(6, kDebugGraphics, "Sprite::updateFrameState(): (%d): Not playing, no persistent frame", _id);
 		}
 		return;
 	}
 
 	debugC(5, kDebugGraphics, "Sprite::updateFrameState(): (%d) Frame %d (%d x %d) @ (%d, %d)",
-		_header->_id, _activeFrame->index(), _activeFrame->width(), _activeFrame->height(), _activeFrame->left(), _activeFrame->top());
+		_id, _activeFrame->index(), _activeFrame->width(), _activeFrame->height(), _activeFrame->left(), _activeFrame->top());
 
 	uint currentTime = g_system->getMillis() - _startTime;
 	bool drawNextFrame = currentTime >= _nextFrameTime;
@@ -266,7 +304,7 @@ void Sprite::updateFrameState() {
 
 	showFrame(_frames[_currentFrameIndex]);
 
-	uint frameDuration = 1000 / _header->_frameRate;
+	uint frameDuration = 1000 / _frameRate;
 	_nextFrameTime = ++_currentFrameIndex * frameDuration;
 
 	bool spriteFinishedPlaying = (_currentFrameIndex == _frames.size());
@@ -291,7 +329,7 @@ void Sprite::updateFrameState() {
 }
 
 void Sprite::redraw(Common::Rect &rect) {
-	if (_activeFrame == nullptr || !_isShowing) {
+	if (_activeFrame == nullptr || !_isVisible) {
 		return;
 	}
 
@@ -299,7 +337,7 @@ void Sprite::redraw(Common::Rect &rect) {
 	Common::Rect areaToRedraw = bbox.findIntersectingRect(rect);
 	if (!areaToRedraw.isEmpty()) {
 		Common::Point originOnScreen(areaToRedraw.left, areaToRedraw.top);
-		areaToRedraw.translate(-_activeFrame->left() - _header->_boundingBox.left, -_activeFrame->top() - _header->_boundingBox.top);
+		areaToRedraw.translate(-_activeFrame->left() - _boundingBox.left, -_activeFrame->top() - _boundingBox.top);
 		areaToRedraw.clip(Common::Rect(0, 0, _activeFrame->width(), _activeFrame->height()));
 		g_engine->_screen->simpleBlitFrom(_activeFrame->_surface, areaToRedraw, originOnScreen);
 	}
@@ -322,7 +360,7 @@ Common::Rect Sprite::getActiveFrameBoundingBox() {
 	// The frame dimensions are relative to those of the sprite movie.
 	// So we must get the absolute coordinates.
 	Common::Rect bbox = _activeFrame->boundingBox();
-	bbox.translate(_header->_boundingBox.left, _header->_boundingBox.top);
+	bbox.translate(_boundingBox.left, _boundingBox.top);
 	return bbox;
 }
 

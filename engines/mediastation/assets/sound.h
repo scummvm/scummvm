@@ -22,11 +22,11 @@
 #ifndef MEDIASTATION_ASSETS_SOUND_H
 #define MEDIASTATION_ASSETS_SOUND_H
 
+#include "audio/mixer.h"
 #include "audio/audiostream.h"
 
 #include "mediastation/asset.h"
 #include "mediastation/datafile.h"
-#include "mediastation/assetheader.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
@@ -34,9 +34,10 @@ namespace MediaStation {
 
 class Sound : public Asset {
 public:
-	Sound(AssetHeader *header);
+	Sound() : Asset(kAssetTypeSound) {};
 	~Sound();
 
+	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual void process() override;
 
@@ -44,6 +45,10 @@ public:
 	virtual void readSubfile(Subfile &subFile, Chunk &chunk) override;
 
 private:
+	uint _loadType = 0;
+	uint _chunkCount = 0;
+	uint _rate = 0;
+	bool _hasOwnSubfile = false;
 	SoundEncoding _encoding;
 	Audio::SoundHandle _handle;
 	Common::Array<Audio::SeekableAudioStream *> _streams;

@@ -25,19 +25,40 @@
 
 namespace MediaStation {
 
-Image::Image(AssetHeader *header) : SpatialEntity(header) {
-	if (header->_startup == kAssetStartupActive) {
-		_isActive = true;
-	}
-}
-
 Image::~Image() {
-	if (_header->_assetReference == 0) {
+	if (_assetReference == 0) {
 		// If we're just referencing another asset's bitmap,
 		// don't delete that bitmap.
 		delete _bitmap;
 	}
 	_bitmap = nullptr;
+}
+
+void Image::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+	switch (paramType) {
+	case kAssetHeaderChunkReference:
+		_chunkReference = chunk.readTypedChunkReference();
+		break;
+
+	case kAssetHeaderLoadType:
+		_loadType = chunk.readTypedByte();
+		break;
+
+	case kAssetHeaderDissolveFactor:
+		_dissolveFactor = chunk.readTypedDouble();
+		break;
+
+	case kAssetHeaderX:
+		_xOffset = chunk.readTypedUint16();
+		break;
+
+	case kAssetHeaderY:
+		_yOffset = chunk.readTypedUint16();
+		break;
+
+	default:
+		SpatialEntity::readParameter(chunk, paramType);
+	}
 }
 
 ScriptValue Image::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
@@ -56,8 +77,9 @@ ScriptValue Image::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 	}
 
 	case kSetDissolveFactorMethod: {
+		warning("STUB: setDissolveFactor");
 		assert(args.size() == 1);
-		warning("Image::callMethod(): setDissolveFactor not implemented yet");
+		_dissolveFactor = args[0].asFloat();
 		return returnValue;
 	}
 
@@ -98,7 +120,7 @@ void Image::spatialHide() {
 }
 
 Common::Point Image::getLeftTop() {
-	return Common::Point(_header->_x + _header->_boundingBox.left, _header->_y + _header->_boundingBox.top);
+	return Common::Point(_xOffset + _boundingBox.left, _yOffset + _boundingBox.top);
 }
 
 void Image::readChunk(Chunk &chunk) {

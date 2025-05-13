@@ -46,6 +46,7 @@
 namespace MediaStation {
 
 struct MediaStationGameDescription;
+class Hotspot;
 
 // Most Media Station titles follow this file structure from the root directory
 // of the CD-ROM:
@@ -118,14 +119,13 @@ private:
 	Boot *_boot = nullptr;
 	Common::List<Asset *> _assetsPlaying;
 	Common::HashMap<uint, Context *> _loadedContexts;
-	Asset *_currentHotspot = nullptr;
+	Hotspot *_currentHotspot = nullptr;
 
 	uint _requestedScreenBranchId = 0;
 	Common::Array<uint> _requestedContextReleaseId;
 	void doBranchToScreen();
 
 	Context *loadContext(uint32 contextId);
-	void setPaletteFromHeader(AssetHeader *header);
 	void releaseContext(uint32 contextId);
 	Asset *findAssetToAcceptMouseEvents();
 

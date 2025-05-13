@@ -154,13 +154,6 @@ MovieFrame::~MovieFrame() {
 	_footer = nullptr;
 }
 
-Movie::Movie(AssetHeader *header) : SpatialEntity(header) {
-	if (header->_startup == kAssetStartupActive) {
-		setActive();
-		_showByDefault = true;
-	}
-}
-
 Movie::~Movie() {
 	g_engine->_mixer->stopHandle(_soundHandle);
 
@@ -183,6 +176,61 @@ Movie::~Movie() {
 		delete footer;
 	}
 	_footers.clear();
+}
+
+void Movie::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+	switch (paramType) {
+	case kAssetHeaderAssetId: {
+		// We already have this asset's ID, so we will just verify it is the same
+		// as the ID we have already read.
+		uint32 duplicateAssetId = chunk.readTypedUint16();
+		if (duplicateAssetId != _id) {
+			warning("Duplicate asset ID %d does not match original ID %d", duplicateAssetId, _id);
+		}
+		break;
+	}
+
+	case kAssetHeaderMovieLoadType:
+		_loadType = chunk.readTypedByte();
+		break;
+
+	case kAssetHeaderChunkReference:
+		_chunkReference = chunk.readTypedChunkReference();
+		break;
+
+	case kAssetHeaderHasOwnSubfile: {
+		bool hasOwnSubfile = static_cast<bool>(chunk.readTypedByte());
+		if (!hasOwnSubfile) {
+			error("Movie doesn't have a subfile");
+		}
+		break;
+	}
+
+	case kAssetHeaderDissolveFactor:
+		_dissolveFactor = chunk.readTypedDouble();
+		break;
+
+	case kAssetHeaderMovieAudioChunkReference:
+		_audioChunkReference = chunk.readTypedChunkReference();
+		break;
+
+	case kAssetHeaderMovieAnimationChunkReference:
+		_animationChunkReference = chunk.readTypedChunkReference();
+		break;
+
+	case kAssetHeaderSoundInfo:
+		_chunkCount = chunk.readTypedUint16();
+		_rate = chunk.readTypedUint32();
+		break;
+
+	case kAssetHeaderSoundEncoding1:
+	case kAssetHeaderSoundEncoding2:
+		_soundEncoding = static_cast<SoundEncoding>(chunk.readTypedUint16());
+		break;
+
+	default:
+		SpatialEntity::readParameter(chunk, paramType);
+	}
 }
 
 ScriptValue Movie::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
@@ -221,7 +269,7 @@ ScriptValue Movie::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 
 	case kGetLeftXMethod: {
 		assert(args.empty());
-		double left = static_cast<double>(_header->_boundingBox.left);
+		double left = static_cast<double>(_boundingBox.left);
 		returnValue.setToFloat(left);
 		return returnValue;
 
@@ -229,14 +277,15 @@ ScriptValue Movie::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 
 	case kGetTopYMethod: {
 		assert(args.empty());
-		double top = static_cast<double>(_header->_boundingBox.top);
+		double top = static_cast<double>(_boundingBox.top);
 		returnValue.setToFloat(top);
 		return returnValue;
 	}
 
 	case kSetDissolveFactorMethod: {
+		warning("STUB: setDissolveFactor");
 		assert(args.size() == 1);
-		warning("Movie::callMethod(): setDissolveFactor not implemented yet");
+		_dissolveFactor = args[0].asFloat();
 		return returnValue;
 	}
 
@@ -247,13 +296,10 @@ ScriptValue Movie::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 
 void Movie::spatialShow() {
 	if (_isPlaying) {
-		warning("Movie::spatialShow(): (%d) Attempted to spatialShow movie that is already showing", _header->_id);
-		return;
-	} else if (_isShowing) {
-		warning("Movie::spatialShow(): (%d) Attempted to spatialShow movie that is already showing", _header->_id);
+		warning("Movie::spatialShow(): (%d) Attempted to spatialShow movie that is already playing", _id);
 		return;
 	} else if (_stills.empty()) {
-		warning("Movie::spatialShow(): (%d) No still frame to show", _header->_id);
+		warning("Movie::spatialShow(): (%d) No still frame to show", _id);
 		return;
 	}
 
@@ -267,16 +313,16 @@ void Movie::spatialShow() {
 	}
 
 	setActive();
-	_isShowing = true;
+	_isVisible = true;
 	_isPlaying = false;
 }
 
 void Movie::spatialHide() {
 	if (_isPlaying) {
-		warning("Movie::spatialShow(): (%d) Attempted to spatialHide movie that is playing", _header->_id);
+		warning("Movie::spatialShow(): (%d) Attempted to spatialHide movie that is playing", _id);
 		return;
-	} else if (!_isShowing) {
-		warning("Movie::spatialHide(): (%d) Attempted to spatialHide movie that is not showing", _header->_id);
+	} else if (!_isVisible) {
+		warning("Movie::spatialHide(): (%d) Attempted to spatialHide movie that is not showing", _id);
 		return;
 	}
 
@@ -286,7 +332,7 @@ void Movie::spatialHide() {
 	_framesOnScreen.clear();
 	_framesNotYetShown.clear();
 
-	_isShowing = false;
+	_isVisible = false;
 	_isPlaying = false;
 	setInactive();
 }
@@ -295,7 +341,7 @@ void Movie::timePlay() {
 	// TODO: Play movies one chunk at a time, which more directly approximates
 	// the original's reading from the CD one chunk at a time.
 	if (_isPlaying) {
-		warning("Movie::timePlay(): (%d) Attempted to play a movie that is already playing", _header->_id);
+		warning("Movie::timePlay(): (%d) Attempted to play a movie that is already playing", _id);
 		return;
 	}
 
@@ -313,18 +359,18 @@ void Movie::timePlay() {
 	}
 
 	_framesNotYetShown = _frames;
-	_isShowing = true;
+	_isVisible = true;
 	_isPlaying = true;
 	setActive();
 	runEventHandlerIfExists(kMovieBeginEvent);
 }
 
 void Movie::timeStop() {
-	if (!_isShowing) {
-		warning("Movie::timeStop(): (%d) Attempted to stop a movie that isn't showing", _header->_id);
+	if (!_isVisible) {
+		warning("Movie::timeStop(): (%d) Attempted to stop a movie that isn't showing", _id);
 		return;
 	} else if (!_isPlaying) {
-		warning("Movie::timePlay(): (%d) Attempted to stop a movie that isn't playing", _header->_id);
+		warning("Movie::timePlay(): (%d) Attempted to stop a movie that isn't playing", _id);
 		return;
 	}
 
@@ -359,13 +405,13 @@ void Movie::process() {
 }
 
 void Movie::updateFrameState() {
-	if (_showByDefault) {
+	if (_isVisible && _atFirstFrame) {
 		spatialShow();
-		_showByDefault = false;
+		_atFirstFrame = false;
 	}
 
 	if (!_isPlaying) {
-		debugC(6, kDebugGraphics, "Movie::updateFrameState (%d): Not playing", _header->_id);
+		debugC(6, kDebugGraphics, "Movie::updateFrameState (%d): Not playing", _id);
 		for (MovieFrame *frame : _framesOnScreen) {
 			debugC(6, kDebugGraphics, "   PERSIST: Frame %d (%d x %d) @ (%d, %d); start: %d ms, end: %d ms, keyframeEnd: %d ms, zIndex = %d",
 				frame->index(), frame->width(), frame->height(), frame->left(), frame->top(), frame->startInMilliseconds(), frame->endInMilliseconds(), frame->keyframeEndInMilliseconds(), frame->zCoordinate());
@@ -375,7 +421,7 @@ void Movie::updateFrameState() {
 
 	uint currentTime = g_system->getMillis();
 	uint movieTime = currentTime - _startTime;
-	debugC(5, kDebugGraphics, "Movie::updateFrameState (%d): Starting update (movie time: %d)", _header->_id, movieTime);
+	debugC(5, kDebugGraphics, "Movie::updateFrameState (%d): Starting update (movie time: %d)", _id, movieTime);
 
 	// This complexity is necessary becuase movies can have more than one frame
 	// showing at the same time - for instance, a movie background and an
@@ -453,7 +499,7 @@ void Movie::redraw(Common::Rect &rect) {
 		Common::Rect areaToRedraw = bbox.findIntersectingRect(rect);
 		if (!areaToRedraw.isEmpty()) {
 			Common::Point originOnScreen(areaToRedraw.left, areaToRedraw.top);
-			areaToRedraw.translate(-frame->left() - _header->_boundingBox.left, -frame->top() - _header->_boundingBox.top);
+			areaToRedraw.translate(-frame->left() - _boundingBox.left, -frame->top() - _boundingBox.top);
 			areaToRedraw.clip(Common::Rect(0, 0, frame->width(), frame->height()));
 			g_engine->_screen->simpleBlitFrom(frame->_surface, areaToRedraw, originOnScreen);
 		}
@@ -462,7 +508,7 @@ void Movie::redraw(Common::Rect &rect) {
 
 Common::Rect Movie::getFrameBoundingBox(MovieFrame *frame) {
 	Common::Rect bbox = frame->boundingBox();
-	bbox.translate(_header->_boundingBox.left, _header->_boundingBox.top);
+	bbox.translate(_boundingBox.left, _boundingBox.top);
 	return bbox;
 }
 
@@ -515,7 +561,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 
 		// READ ALL THE FRAMES IN THIS CHUNK.
 		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading animation chunks... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
-		bool isAnimationChunk = (chunk._id == _header->_animationChunkReference);
+		bool isAnimationChunk = (chunk._id == _animationChunkReference);
 		if (!isAnimationChunk) {
 			warning("Movie::readSubfile(): (Frameset %d of %d) No animation chunks found (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		}
@@ -542,17 +588,17 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 
 			// READ THE NEXT CHUNK.
 			chunk = subfile.nextChunk();
-			isAnimationChunk = (chunk._id == _header->_animationChunkReference);
+			isAnimationChunk = (chunk._id == _animationChunkReference);
 		}
 
 		// READ THE AUDIO.
 		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading audio chunk... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
-		bool isAudioChunk = (chunk._id == _header->_audioChunkReference);
+		bool isAudioChunk = (chunk._id == _audioChunkReference);
 		if (isAudioChunk) {
 			byte *buffer = (byte *)malloc(chunk._length);
 			chunk.read((void *)buffer, chunk._length);
 			Audio::SeekableAudioStream *stream = nullptr;
-			switch (_header->_soundEncoding) {
+			switch (_soundEncoding) {
 			case SoundEncoding::PCM_S16LE_MONO_22050:
 				stream = Audio::makeRawStream(buffer, chunk._length, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 				break;
@@ -562,7 +608,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 				break;
 
 			default:
-				error("Movie::readSubfile(): Unknown audio encoding 0x%x", static_cast<uint>(_header->_soundEncoding));
+				error("Movie::readSubfile(): Unknown audio encoding 0x%x", static_cast<uint>(_soundEncoding));
 			}
 			_audioStreams.push_back(stream);
 			chunk = subfile.nextChunk();
@@ -572,7 +618,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 
 		// READ THE FOOTER FOR THIS SUBFILE.
 		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading header chunk... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
-		bool isHeaderChunk = (chunk._id == _header->_chunkReference);
+		bool isHeaderChunk = (chunk._id == _chunkReference);
 		if (isHeaderChunk) {
 			if (chunk._length != 0x04) {
 				error("Movie::readSubfile(): Expected movie header chunk of size 0x04, got 0x%x (@0x%llx)", chunk._length, static_cast<long long int>(chunk.pos()));

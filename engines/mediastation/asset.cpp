@@ -19,15 +19,56 @@
  *
  */
 
-#include "mediastation/debugchannels.h"
 #include "mediastation/asset.h"
+#include "mediastation/debugchannels.h"
 #include "mediastation/mediascript/scriptconstants.h"
+#include "mediastation/mediastation.h"
 
 namespace MediaStation {
 
 Asset::~Asset() {
-	delete _header;
-	_header = nullptr;
+	for (auto it = _eventHandlers.begin(); it != _eventHandlers.end(); ++it) {
+		Common::Array<EventHandler *> &handlersForType = it->_value;
+		for (EventHandler *handler : handlersForType) {
+			delete handler;
+		}
+		handlersForType.clear();
+	}
+	_eventHandlers.clear();
+}
+
+void Asset::initFromParameterStream(Chunk &chunk) {
+	AssetHeaderSectionType paramType = kAssetHeaderEmptySection;
+	while (true) {
+		paramType = static_cast<AssetHeaderSectionType>(chunk.readTypedUint16());
+		if (paramType == 0) {
+			break;
+		} else {
+			readParameter(chunk, paramType);
+		}
+	}
+}
+
+void Asset::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+	switch (paramType) {
+	case kAssetHeaderEventHandler: {
+		EventHandler *eventHandler = new EventHandler(chunk);
+		Common::Array<EventHandler *> &eventHandlersForType = _eventHandlers.getOrCreateVal(eventHandler->_type);
+
+		// This is not a hashmap because we don't want to have to hash ScriptValues.
+		for (EventHandler *existingEventHandler : eventHandlersForType) {
+			if (existingEventHandler->_argumentValue == eventHandler->_argumentValue) {
+				error("AssetHeader::readSection(): Event handler for %s (%s) already exists",
+					  eventTypeToStr(eventHandler->_type), eventHandler->getDebugHeader().c_str());
+			}
+		}
+		eventHandlersForType.push_back(eventHandler);
+		break;
+	}
+
+	default:
+		error("Got unimplemented asset parameter 0x%x", static_cast<uint>(paramType));
+	}
 }
 
 ScriptValue Asset::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
@@ -35,11 +76,11 @@ ScriptValue Asset::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 }
 
 void Asset::readChunk(Chunk &chunk) {
-	error("Asset::readChunk(): Chunk reading for asset type 0x%x is not implemented", static_cast<uint>(_header->_type));
+	error("Asset::readChunk(): Chunk reading for asset type 0x%x is not implemented", static_cast<uint>(_type));
 }
 
 void Asset::readSubfile(Subfile &subfile, Chunk &chunk) {
-	error("Asset::readSubfile(): Subfile reading for asset type 0x%x is not implemented", static_cast<uint>(_header->_type));
+	error("Asset::readSubfile(): Subfile reading for asset type 0x%x is not implemented", static_cast<uint>(_type));
 }
 
 void Asset::setActive() {
@@ -57,13 +98,13 @@ void Asset::setInactive() {
 
 void Asset::processTimeEventHandlers() {
 	if (!_isActive) {
-		warning("Asset::processTimeEventHandlers(): Attempted to process time event handlers while asset %d is not playing", _header->_id);
+		warning("Asset::processTimeEventHandlers(): Attempted to process time event handlers while asset %d is not playing", _id);
 		return;
 	}
 
 	// TODO: Replace with a queue.
 	uint currentTime = g_system->getMillis();
-	const Common::Array<EventHandler *> &_timeHandlers = _header->_eventHandlers.getValOrDefault(kTimerEvent);
+	const Common::Array<EventHandler *> &_timeHandlers = _eventHandlers.getValOrDefault(kTimerEvent);
 	for (EventHandler *timeEvent : _timeHandlers) {
 		// Indeed float, not time.
 		double timeEventInFractionalSeconds = timeEvent->_argumentValue.asFloat();
@@ -72,30 +113,30 @@ void Asset::processTimeEventHandlers() {
 		bool timeEventNeedsToBeProcessed = timeEventInMilliseconds <= currentTime - _startTime;
 		if (!timeEventAlreadyProcessed && timeEventNeedsToBeProcessed) {
 			debugC(5, kDebugScript, "Asset::processTimeEventHandlers(): Running On Time handler for time %d ms", timeEventInMilliseconds);
-			timeEvent->execute(_header->_id);
+			timeEvent->execute(_id);
 		}
 	}
 	_lastProcessedTime = currentTime - _startTime;
 }
 
 void Asset::runEventHandlerIfExists(EventType eventType, const ScriptValue &arg) {
-	const Common::Array<EventHandler *> &_eventHandlers = _header->_eventHandlers.getValOrDefault(eventType);
-	for (EventHandler *eventHandler : _eventHandlers) {
+	const Common::Array<EventHandler *> &eventHandlers = _eventHandlers.getValOrDefault(eventType);
+	for (EventHandler *eventHandler : eventHandlers) {
 		const ScriptValue &argToCheck = eventHandler->_argumentValue;
 
 		if (arg.getType() != argToCheck.getType()) {
 			warning("Got event handler arg type %s, expected %s",
-				scriptValueTypeToStr(arg.getType()), scriptValueTypeToStr(argToCheck.getType()));
+					scriptValueTypeToStr(arg.getType()), scriptValueTypeToStr(argToCheck.getType()));
 			continue;
 		}
 
 		if (arg == argToCheck) {
-			debugC(5, kDebugScript, "Executing handler for event type %s on asset %d", eventTypeToStr(eventType), _header->_id);
-			eventHandler->execute(_header->_id);
+			debugC(5, kDebugScript, "Executing handler for event type %s on asset %d", eventTypeToStr(eventType), _id);
+			eventHandler->execute(_id);
 			return;
 		}
 	}
-	debugC(5, kDebugScript, "No event handler for event type %s on asset %d", eventTypeToStr(eventType), _header->_id);
+	debugC(5, kDebugScript, "No event handler for event type %s on asset %d", eventTypeToStr(eventType), _id);
 }
 
 void Asset::runEventHandlerIfExists(EventType eventType) {
@@ -118,10 +159,8 @@ ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<Scri
 		assert(args.size() == 2);
 		int16 dx = static_cast<int16>(args[0].asFloat());
 		int16 dy = static_cast<int16>(args[1].asFloat());
-
-		Common::Point currentPos = getTopLeft();
-		int16 newX = currentPos.x + dx;
-		int16 newY = currentPos.y + dy;
+		int16 newX = _boundingBox.left + dx;
+		int16 newY = _boundingBox.top + dy;
 		moveTo(newX, newY);
 		break;
 	}
@@ -143,39 +182,39 @@ ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<Scri
 
 	case kGetLeftXMethod:
 		assert(args.empty());
-		returnValue.setToFloat(_header->_boundingBox.left);
+		returnValue.setToFloat(_boundingBox.left);
 		break;
 
 	case kGetTopYMethod:
 		assert(args.empty());
-		returnValue.setToFloat(_header->_boundingBox.top);
+		returnValue.setToFloat(_boundingBox.top);
 		break;
 
 	case kGetWidthMethod:
 		assert(args.empty());
-		returnValue.setToFloat(_header->_boundingBox.width());
+		returnValue.setToFloat(_boundingBox.width());
 		break;
 
 	case kGetHeightMethod:
 		assert(args.empty());
-		returnValue.setToFloat(_header->_boundingBox.height());
+		returnValue.setToFloat(_boundingBox.height());
 		break;
 
 	case kGetCenterXMethod: {
-		int centerX = _header->_boundingBox.left + (_header->_boundingBox.width() / 2);
+		int centerX = _boundingBox.left + (_boundingBox.width() / 2);
 		returnValue.setToFloat(centerX);
 		break;
 	}
 
 	case kGetCenterYMethod: {
-		int centerY = _header->_boundingBox.top + (_header->_boundingBox.height() / 2);
+		int centerY = _boundingBox.top + (_boundingBox.height() / 2);
 		returnValue.setToFloat(centerY);
 		break;
 	}
 
 	case kGetZCoordinateMethod:
 		assert(args.empty());
-		returnValue.setToFloat(_header->_zIndex);
+		returnValue.setToFloat(_zIndex);
 		break;
 
 	case kIsVisibleMethod:
@@ -189,9 +228,43 @@ ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<Scri
 	return returnValue;
 }
 
+void SpatialEntity::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+	switch (paramType) {
+	case kAssetHeaderBoundingBox:
+		_boundingBox = chunk.readTypedRect();
+		break;
+
+	case kAssetHeaderZIndex:
+		_zIndex = chunk.readTypedGraphicUnit();
+		break;
+
+	case kAssetHeaderStartup:
+		_isVisible = static_cast<bool>(chunk.readTypedByte());
+		if (_isVisible) {
+			setActive();
+		}
+		break;
+
+	case kAssetHeaderTransparency:
+		_hasTransparency = static_cast<bool>(chunk.readTypedByte());
+		break;
+
+	case kAssetHeaderStageId:
+		_stageId = chunk.readTypedUint16();
+		break;
+
+	case kAssetHeaderAssetReference:
+		_assetReference = chunk.readTypedUint16();
+		break;
+
+	default:
+		Asset::readParameter(chunk, paramType);
+	}
+}
+
 void SpatialEntity::moveTo(int16 x, int16 y) {
 	Common::Point dest(x, y);
-	if (dest == getTopLeft()) {
+	if (dest == _boundingBox.origin()) {
 		// We aren't actually moving anywhere.
 		return;
 	}
@@ -199,20 +272,20 @@ void SpatialEntity::moveTo(int16 x, int16 y) {
 	if (isVisible()) {
 		invalidateLocalBounds();
 	}
-	_header->_boundingBox.moveTo(dest);
+	_boundingBox.moveTo(dest);
 	if (isVisible()) {
 		invalidateLocalBounds();
 	}
 }
 
 void SpatialEntity::moveToCentered(int16 x, int16 y) {
-	int16 targetX = x - (_header->_boundingBox.width() / 2);
-	int16 targetY = y - (_header->_boundingBox.height() / 2);
+	int16 targetX = x - (_boundingBox.width() / 2);
+	int16 targetY = y - (_boundingBox.height() / 2);
 	moveTo(targetX, targetY);
 }
 
 void SpatialEntity::setBounds(const Common::Rect &bounds) {
-	if (_header->_boundingBox == bounds) {
+	if (_boundingBox == bounds) {
 		// We aren't actually moving anywhere.
 		return;
 	}
@@ -220,24 +293,24 @@ void SpatialEntity::setBounds(const Common::Rect &bounds) {
 	if (isVisible()) {
 		invalidateLocalBounds();
 	}
-	_header->_boundingBox = bounds;
+	_boundingBox = bounds;
 	if (isVisible()) {
 		invalidateLocalBounds();
 	}
 }
 
 void SpatialEntity::setZIndex(int zIndex) {
-	if (_header->_zIndex == zIndex) {
+	if (_zIndex == zIndex) {
 		// We aren't actually moving anywhere.
 		return;
 	}
 
-	_header->_zIndex = zIndex;
+	_zIndex = zIndex;
 	invalidateLocalZIndex();
 }
 
 void SpatialEntity::invalidateLocalBounds() {
-	g_engine->_dirtyRects.push_back(_header->_boundingBox);
+	g_engine->_dirtyRects.push_back(_boundingBox);
 }
 
 void SpatialEntity::invalidateLocalZIndex() {

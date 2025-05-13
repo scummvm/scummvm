@@ -23,7 +23,6 @@
 #define MEDIASTATION_CANVAS_H
 
 #include "mediastation/asset.h"
-#include "mediastation/assetheader.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
@@ -31,13 +30,13 @@ namespace MediaStation {
 
 class Canvas : public SpatialEntity {
 public:
-	Canvas(AssetHeader *header) : SpatialEntity(header) {};
+	Canvas() : SpatialEntity(kAssetTypeCanvas) {};
 
-	virtual bool isVisible() const override { return _isVisible; }
+	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 
 private:
-	bool _isVisible = false;
+	double _dissolveFactor = 0.0;
 };
 
 } // End of namespace MediaStation

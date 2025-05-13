@@ -23,7 +23,6 @@
 #define MEDIASTATION_FONT_H
 
 #include "mediastation/asset.h"
-#include "mediastation/assetheader.h"
 #include "mediastation/bitmap.h"
 #include "mediastation/datafile.h"
 #include "mediastation/mediascript/scriptvalue.h"
@@ -43,9 +42,10 @@ private:
 
 class Font : public Asset {
 public:
-	Font(AssetHeader *header) : Asset(header) {};
+	Font() : Asset(kAssetTypeFont) {};
 	~Font();
 
+	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
 	virtual void readChunk(Chunk &chunk) override;
 
 private:

@@ -28,12 +28,6 @@
 
 namespace MediaStation {
 
-Sound::Sound(AssetHeader *header) : Asset(header) {
-	if (_header != nullptr) {
-		_encoding = _header->_soundEncoding;
-	}
-}
-
 Sound::~Sound() {
 	g_engine->_mixer->stopHandle(_handle);
 
@@ -41,6 +35,45 @@ Sound::~Sound() {
 		delete stream;
 	}
 	_streams.clear();
+}
+
+void Sound::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+	switch (paramType) {
+	case kAssetHeaderAssetId: {
+		// We already have this asset's ID, so we will just verify it is the same
+		// as the ID we have already read.
+		uint32 duplicateAssetId = chunk.readTypedUint16();
+		if (duplicateAssetId != _id) {
+			warning("Duplicate asset ID %d does not match original ID %d", duplicateAssetId, _id);
+		}
+		break;
+	}
+
+	case kAssetHeaderChunkReference:
+		_chunkReference = chunk.readTypedChunkReference();
+		break;
+
+	case kAssetHeaderHasOwnSubfile:
+		_hasOwnSubfile = static_cast<bool>(chunk.readTypedByte());
+		break;
+
+	case kAssetHeaderSoundInfo:
+		_chunkCount = chunk.readTypedUint16();
+		_rate = chunk.readTypedUint32();
+		break;
+
+	case kAssetHeaderSoundEncoding1:
+	case kAssetHeaderSoundEncoding2:
+		_encoding = static_cast<SoundEncoding>(chunk.readTypedUint16());
+		break;
+
+	case kAssetHeaderMovieLoadType:
+		_loadType = chunk.readTypedByte();
+		break;
+
+	default:
+		Asset::readParameter(chunk, paramType);
+	}
 }
 
 void Sound::process() {
@@ -80,7 +113,7 @@ void Sound::readChunk(Chunk &chunk) {
 	byte *buffer = (byte *)malloc(chunk._length);
 	chunk.read((void *)buffer, chunk._length);
 	Audio::SeekableAudioStream *stream = nullptr;
-	switch (_header->_soundEncoding) {
+	switch (_encoding) {
 	case SoundEncoding::PCM_S16LE_MONO_22050:
 		stream = Audio::makeRawStream(buffer, chunk._length, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 		break;
@@ -96,20 +129,19 @@ void Sound::readChunk(Chunk &chunk) {
 		break;
 
 	default:
-		error("Sound::readChunk(): Unknown audio encoding 0x%x", static_cast<uint>(_header->_soundEncoding));
+		error("Sound::readChunk(): Unknown audio encoding 0x%x", static_cast<uint>(_encoding));
 	}
 	_streams.push_back(stream);
 	debugC(5, kDebugLoading, "Sound::readChunk(): Finished reading audio chunk (@0x%llx)", static_cast<long long int>(chunk.pos()));
 }
 
 void Sound::readSubfile(Subfile &subfile, Chunk &chunk) {
-	uint32 totalChunks = _header->_chunkCount;
 	uint32 expectedChunkId = chunk._id;
 
-	debugC(5, kDebugLoading, "Sound::readSubfile(): Reading %d chunks", totalChunks);
+	debugC(5, kDebugLoading, "Sound::readSubfile(): Reading %d chunks", _chunkCount);
 	readChunk(chunk);
-	for (uint i = 1; i < totalChunks; i++) {
-		debugC(5, kDebugLoading, "Sound::readSubfile(): Reading chunk %d of %d", i, totalChunks);
+	for (uint i = 1; i < _chunkCount; i++) {
+		debugC(5, kDebugLoading, "Sound::readSubfile(): Reading chunk %d of %d", i, _chunkCount);
 		chunk = subfile.nextChunk();
 		if (chunk._id != expectedChunkId) {
 			error("Sound::readSubfile(): Expected chunk %s, got %s", tag2str(expectedChunkId), tag2str(chunk._id));

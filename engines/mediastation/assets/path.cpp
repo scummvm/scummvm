@@ -20,12 +20,42 @@
  */
 
 #include "mediastation/assets/path.h"
+#include "mediastation/mediastation.h"
 #include "mediastation/debugchannels.h"
 
 namespace MediaStation {
 
-Path::~Path() {
-	_percentComplete = 0;
+void Path::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+	switch (paramType) {
+	case kAssetHeaderStartPoint:
+		_startPoint = chunk.readTypedPoint();
+		break;
+
+	case kAssetHeaderEndPoint:
+		_endPoint = chunk.readTypedPoint();
+		break;
+
+	case kAssetHeaderStepRate: {
+		double _stepRateFloat = chunk.readTypedDouble();
+		// This should always be an integer anyway,
+		// so we'll cast away any fractional part.
+		_stepRate = static_cast<uint32>(_stepRateFloat);
+		break;
+	}
+
+	case kAssetHeaderDuration:
+		// These are stored in the file as fractional seconds,
+		// but we want milliseconds.
+		_duration = static_cast<uint32>(chunk.readTypedTime() * 1000);
+		break;
+
+	case kAssetHeaderPathTotalSteps:
+		_totalSteps = chunk.readTypedUint16();
+		break;
+
+	default:
+		Asset::readParameter(chunk, paramType);
+	}
 }
 
 ScriptValue Path::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
@@ -51,12 +81,6 @@ ScriptValue Path::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> 
 		return returnValue;
 	}
 
-	case kSetDissolveFactorMethod: {
-		assert(args.size() == 1);
-		warning("Path::callMethod(): setDissolveFactor not implemented yet");
-		return returnValue;
-	}
-
 	case kIsPlayingMethod: {
 		assert(args.empty());
 		returnValue.setToBool(_isActive);
@@ -74,9 +98,9 @@ void Path::timePlay() {
 		return;
 	}
 
-	if (_header->_duration == 0) {
+	if (_duration == 0) {
 		warning("Path::timePlay(): Got zero duration");
-	} else if (_header->_stepRate == 0) {
+	} else if (_stepRate == 0) {
 		error("Path::timePlay(): Got zero step rate");
 	}
 
@@ -84,8 +108,8 @@ void Path::timePlay() {
 	_percentComplete = 0;
 	_nextPathStepTime = 0;
 	_currentStep = 0;
-	_totalSteps = (_header->_duration * _header->_stepRate) / 1000;
-	_stepDurationInMilliseconds = 1000 / _header->_stepRate;
+	_totalSteps = (_duration * _stepRate) / 1000;
+	_stepDurationInMilliseconds = 1000 / _stepRate;
 
 	// TODO: Run the path start event. Haven't seen one the wild yet, don't know its ID.
 	debugC(5, kDebugScript, "Path::timePlay(): No PathStart event handler");
@@ -125,9 +149,8 @@ void Path::process() {
 void Path::setDuration(uint durationInMilliseconds) {
 	// TODO: Do we need to save the original duration?
 	debugC(5, kDebugScript, "Path::setDuration(): Setting duration to %d ms", durationInMilliseconds);
-	_header->_duration = durationInMilliseconds;
+	_duration = durationInMilliseconds;
 }
-
 
 double Path::percentComplete() {
 	debugC(5, kDebugScript, "Path::percentComplete(): Returning percent complete %f%%", _percentComplete * 100);
@@ -135,4 +158,3 @@ double Path::percentComplete() {
 }
 
 } // End of namespace MediaStation
-

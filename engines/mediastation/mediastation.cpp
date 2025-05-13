@@ -28,8 +28,10 @@
 #include "mediastation/boot.h"
 #include "mediastation/context.h"
 #include "mediastation/asset.h"
-#include "mediastation/assets/hotspot.h"
 #include "mediastation/assets/movie.h"
+#include "mediastation/assets/screen.h"
+#include "mediastation/assets/palette.h"
+#include "mediastation/assets/hotspot.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
@@ -268,7 +270,11 @@ void MediaStationEngine::setCursor(uint id) {
 }
 
 void MediaStationEngine::refreshActiveHotspot() {
-	Asset *hotspot = findAssetToAcceptMouseEvents();
+	Asset *asset = findAssetToAcceptMouseEvents();
+	if (asset != nullptr && asset->type() != kAssetTypeHotspot) {
+		return;
+	}
+	Hotspot *hotspot = static_cast<Hotspot *>(asset);
 	if (hotspot != _currentHotspot) {
 		if (_currentHotspot != nullptr) {
 			_currentHotspot->runEventHandlerIfExists(kMouseExitedEvent);
@@ -277,11 +283,11 @@ void MediaStationEngine::refreshActiveHotspot() {
 		_currentHotspot = hotspot;
 		if (hotspot != nullptr) {
 			debugC(5, kDebugEvents, "refreshActiveHotspot(): (%d, %d): Entered hotspot %d", _mousePos.x, _mousePos.y, hotspot->id());
-			setCursor(hotspot->getHeader()->_cursorResourceId);
+			setCursor(hotspot->_cursorResourceId);
 			hotspot->runEventHandlerIfExists(kMouseEnteredEvent);
 		} else {
 			// There is no hotspot, so set the default cursor for this screen instead.
-			setCursor(_currentContext->_screenAsset->getHeader()->_cursorResourceId);
+			setCursor(_currentContext->_screenAsset->_cursorResourceId);
 		}
 	}
 
@@ -373,17 +379,14 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 	return context;
 }
 
-void MediaStationEngine::setPalette(Asset *palette) {
-	assert(palette != nullptr);
-	setPaletteFromHeader(palette->getHeader());
-}
-
-void MediaStationEngine::setPaletteFromHeader(AssetHeader *header) {
-	assert(header != nullptr);
-	if (header->_palette != nullptr) {
-		_screen->setPalette(*header->_palette);
+void MediaStationEngine::setPalette(Asset *asset) {
+	if (asset == nullptr) {
+		error("Requested palette not found");
+	} else if (asset->type() != kAssetTypePalette) {
+		error("Requested palette %d is not a palette", asset->id());
 	} else {
-		warning("MediaStationEngine::setPaletteFromHeader(): Asset %d does not have a palette. Current palette will be unchanged.", header->_id);
+		Palette *paletteAsset = static_cast<Palette *>(asset);
+		_screen->setPalette(*paletteAsset->_palette);
 	}
 }
 

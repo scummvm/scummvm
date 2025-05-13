@@ -37,6 +37,17 @@ Font::~Font() {
 	_glyphs.clear();
 }
 
+void Font::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+	switch (paramType) {
+	case kAssetHeaderChunkReference:
+		_chunkReference = chunk.readTypedChunkReference();
+		break;
+
+	default:
+		Asset::readParameter(chunk, paramType);
+	}
+}
+
 void Font::readChunk(Chunk &chunk) {
 	debugC(5, kDebugLoading, "Font::readChunk(): Reading font glyph (@0x%llx)", static_cast<long long int>(chunk.pos()));
 	uint asciiCode = chunk.readTypedUint16();
