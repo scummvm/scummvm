@@ -286,6 +286,10 @@ BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 	error("TODO: CWnd::SubclassDlgItem");
 }
 
+BOOL CWnd::SetDlgItemText(int nIDDlgItem, LPCSTR lpString) {
+	error("TODO: CWnd::SetDlgItemText");
+}
+
 int CWnd::GetDlgCtrlID() const {
 	error("TODO: CWnd::GetDlgCtrlID");
 }

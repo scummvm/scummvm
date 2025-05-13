@@ -191,6 +191,11 @@ MODULE_OBJS = \
 	hodjnpodj/garfunkle/garfunkle.o \
 	hodjnpodj/garfunkle/note.o \
 	hodjnpodj/garfunkle/optndlg.o \
+	hodjnpodj/life/dllinit.o \
+	hodjnpodj/life/game.o \
+	hodjnpodj/life/grid.o \
+	hodjnpodj/life/life.o \
+	hodjnpodj/life/usercfg.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o

@@ -1,41 +1,33 @@
-/*****************************************************************
-*
-*  Copyright (c) 1994 by Boffo Games, All Rights Reserved
-*
-*
-*  usercfg.cpp   -
-*
-*  HISTORY
-*
-*       1.00        05/23/94    JSC     Created this file
-*
-*  MODULE DESCRIPTION:
-*
-*
-*
-*  LOCALS:
-*
-*
-*
-*  GLOBALS:
-*
-*
-*
-*  RELEVANT DOCUMENTATION:
-*
-*
-****************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/hnplibs/menures.h"
+#include "bagel/hodjnpodj/life/usercfg.h"
+#include "bagel/hodjnpodj/life/life.h"
 
-#include "usercfg.h"
-#include "life.h"
-
-#ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
+namespace Bagel {
+namespace HodjNPodj {
+namespace Life {
 
 extern int	nSpeed,					// Speed between evolutions
 			nCountDown, 	   		// Counts before an evolution
@@ -264,7 +256,7 @@ void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			nSpeedTemp = MAX_SPEED;
 
 		if ( nSpeedTemp != nOldSpeed ) {						//To prevent "flicker"
-			Common::sprintf_s(msg, "Speed: %s", mSpeedTable[nSpeedTemp]);	//  only redraw if
+			Common::sprintf_s(msg, "Speed: %s", mSpeedTable[nSpeedTemp].c_str());	//  only redraw if
 																//  m_nSpeedTemp has changed
 			bAssertCheck = (*m_pSpeed).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 			ASSERT(bAssertCheck);
@@ -376,8 +368,6 @@ void CUserCfgDlg::OnPrePlace()
    
 void CUserCfgDlg::OnOK()
 {
-	char tmpBuf[10];
-
 	ClearDialogImage();
 	if ( m_nLife[nLifeTemp] == nLife  &&		// Starting Lives or Rounds option changed?
 				m_nTurns[nTurnCounterTemp] == nTurnCounter ) {
@@ -409,19 +399,26 @@ void CUserCfgDlg::OnOK()
 	/******************************************
 	* Save new game settings to the INI file. *
 	******************************************/
-	itoa(nSpeedTemp, tmpBuf, 10);
-	WritePrivateProfileString(INI_SECTION, "Speed", tmpBuf, INI_FNAME);
+	WritePrivateProfileString(INI_SECTION, "Speed",
+		Common::String::format("%d", nSpeedTemp).c_str(),
+		INI_FNAME);
 
-	itoa(m_nTurns[nTurnCounterTemp], tmpBuf, 10);
-	WritePrivateProfileString(INI_SECTION, "Rounds", tmpBuf, INI_FNAME);
+	WritePrivateProfileString(INI_SECTION, "Rounds",
+		Common::String::format("%d", m_nTurns[nTurnCounterTemp]).c_str(),
+		INI_FNAME);
 
-	itoa(m_nLife[nLifeTemp], tmpBuf, 10);
-	WritePrivateProfileString(INI_SECTION, "Villages", tmpBuf, INI_FNAME);
+	WritePrivateProfileString(INI_SECTION, "Villages",
+		Common::String::format("%d", m_nLife[nLifeTemp]).c_str(),
+		INI_FNAME);
 
-	if (bPrePlaceColonies)	nPlace = 1;
-	else	nPlace = 0;
-	itoa(nPlace, tmpBuf, 10);
-	WritePrivateProfileString(INI_SECTION, "PrePlace", tmpBuf, INI_FNAME);
+	if (bPrePlaceColonies)
+		nPlace = 1;
+	else
+		nPlace = 0;
+
+	WritePrivateProfileString(INI_SECTION, "PrePlace",
+		Common::String::format("%d", nPlace).c_str(),
+		INI_FNAME);
 
 	EndDialog(IDOK);
 }
@@ -454,7 +451,7 @@ void CUserCfgDlg::OnPaint()
 
 
 	// Display Speed stats
-	Common::sprintf_s(msg, "Speed: %s", mSpeedTable[nSpeedTemp]);
+	Common::sprintf_s(msg, "Speed: %s", mSpeedTable[nSpeedTemp].c_str());
 
 	bAssertCheck = (*m_pSpeed).DisplayString(pDC,msg,FONT_SIZE,FW_BOLD,OPTIONS_COLOR);
 	ASSERT(bAssertCheck);   // paint the text
@@ -527,3 +524,7 @@ BEGIN_MESSAGE_MAP(CUserCfgDlg, CBmpDialog)
 	ON_BN_CLICKED(IDC_PREPLACE, OnPrePlace)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
+
+} // namespace Life
+} // namespace HodjNPodj
+} // namespace Bagel

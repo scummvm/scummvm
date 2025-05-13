@@ -761,6 +761,7 @@ public:
 	CWnd *GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious = FALSE) const;
 	BOOL GotoDlgCtrl(CWnd *pWndCtrl);
 	BOOL SubclassDlgItem(UINT nID, CWnd *pParent);
+	BOOL SetDlgItemText(int nIDDlgItem, LPCSTR lpString);
 	int GetDlgCtrlID() const;
 	void CheckDlgButton(int nIDButton, UINT nCheck);
 	LRESULT SendDlgItemMessage(int nID, UINT message,

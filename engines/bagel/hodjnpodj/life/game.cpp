@@ -1,75 +1,42 @@
-/*****************************************************************************
-*
-*  game.cpp
-*
-*  HISTORY
-*
-*		2.00	08/06/94	JSC		uses network options dialog boxes, rules
-*									upgraded to DLL
-*									Added sound and MIDI music
-*									references API GAMESTRUCT
-*		1.00	05/23/94	JSC		Initial Design
-*
-*  MODULE DESCRIPTION:
-*
-*	Loads up DLL and creates a window containing the Game of
-*	Life.
-*
-*  CONSTRUCTORS:
-*
-*       CMainWindow                     Constructs
-*
-*  PUBLIC:
-*
-*
-*       PaintScreen                     Repaints entire client area
-*
-*  PROTECTED:
-*
-*
-*       OnCommand                       Handles WM_COMMAND messages
-*       OnPaint                         Handles WM_PAINT messages
-*       OnKeyDown                       Handles WM_KEYDOWN messages
-*       OnSysKeyDown                    Handles WM_SYSKEYDOWN messages
-*       OnSysChar                       Handles WM_SYSCHAR messages
-*       OnClose                         Handles WM_CLOSE messages
-*       OnActivate                      Handles WM_ACTIVATE messages
-*       OnLButtonDown                   Handles WM_LBUTTONDOWN messages
-*       OnMouseMove                     Handles WM_MOUSEMOVE messages
-*       OnTimer                         Handles WM_TIMER messages
-*
-*  PRIVATE:
-*
-*
-*
-*  MEMBERS:
-*
-*
-*
-*  RELEVANT DOCUMENTATION:
-*
-*       [Specifications, documents, test plans, etc.]
-*
-******************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include <time.h>
-
-#include <copyrite.h>
-
-#include "resource.h"
-#include "globals.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
-
 #include "bagel/hodjnpodj/hnplibs/mainmenu.h"
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/life/resource.h"
+#include "bagel/hodjnpodj/life/game.h"
+#include "bagel/hodjnpodj/life/life.h"
+#include "bagel/hodjnpodj/life/usercfg.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
-#include "game.h"
-#include "life.h"
-#include "usercfg.h"
+namespace Bagel {
+namespace HodjNPodj {
+namespace Life {
 
 #define RULES_TXT	"life.txt"					// rules text file
 #define RULES_WAV	".\\sound\\rllf.wav"		// rules narration
@@ -1554,3 +1521,7 @@ VOID CALLBACK GetGameParams(CWnd *pParentWnd)
 		gbNewGame = TRUE;					// restart game with new settings
 	}
 } // GetGameParams
+
+} // namespace Life
+} // namespace HodjNPodj
+} // namespace Bagel

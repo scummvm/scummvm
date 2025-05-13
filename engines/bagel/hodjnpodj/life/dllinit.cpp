@@ -1,38 +1,31 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * dllinit.cpp
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      1.0 5/13/94 GTB
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *
- * LOCALS:
- *
- *
- * GLOBALS:
- *
- *
- * RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- * FILES USED:
- *
- ****************************************************************/
+ */
 
 #include "bagel/afxwin.h"
-#include "resource.h"
+#include "bagel/hodjnpodj/life/resource.h"
+#include "bagel/hodjnpodj/life/game.h"
 
-#include "game.h"
-
-//#ifndef _DEBUG
-//#error This source file must be compiled with _DEBUG defined
-//#endif
+namespace Bagel {
+namespace HodjNPodj {
+namespace Life {
 
 HINSTANCE       hDLLInst;
 HINSTANCE       hExeInst;
@@ -70,16 +63,9 @@ HCURSOR                 hGameCursor;
  *      n/a
  *
  ****************************************************************/
-extern "C"
-HWND FAR PASCAL RunLife( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
-{
 
-#ifdef _DEBUG
-//  lpGameInfo->bPlayingMetagame = TRUE;
-#endif //_DEBUG
-
+HWND FAR PASCAL RunLife( HWND hParentWnd, LPGAMESTRUCT lpGameInfo ) {
         // create a my poker window and show it
-
         gMainWnd = new CMainWindow( hParentWnd, lpGameInfo );
         gMainWnd->ShowWindow( SW_SHOWNORMAL );
 
@@ -94,82 +80,7 @@ HWND FAR PASCAL RunLife( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 //        MFC::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_COMMAND, BN_CLICKED );
         return gMainWnd->m_hWnd;
 }
-/////////////////////////////////////////////////////////////////////////////
-// DLL initialization
-// this was take straight from the MSVC MFC Sample DLLTRACE
 
-class CDFADll : public CWinApp
-{
-public:
-        virtual BOOL InitInstance(); // Initialization
-        virtual int ExitInstance();  // Termination (WEP-like code)
-
-        // nothing special for the constructor
-        CDFADll(const char* pszAppName)
-                : CWinApp(pszAppName)
-                { }
-};
-
-/*****************************************************************
- *
- * InitInstance
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *      This routine is automatically called when the application is
- *      started.
- *
- * FORMAL PARAMETERS:
- *
- *      n/a
- *
- * IMPLICIT INPUT PARAMETERS:
- *
- *      n/a
- *
- * IMPLICIT OUTPUT PARAMETERS:
- *
- *      n/a
- *
- * RETURN VALUE:
- *
- *      BOOL            Success (TRUE) / Failure (FALSE) status
- *
- ****************************************************************/
-BOOL CDFADll::InitInstance()
-{
-        return TRUE;
-}
-
-/*****************************************************************
- *
- * ExitInstance
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *      This routine is automatically called when the application is
- *      being terminated.
- *
- * FORMAL PARAMETERS:
- *
- *      n/a
- *
- * IMPLICIT INPUT PARAMETERS:
- *
- *      n/a
- *
- * IMPLICIT OUTPUT PARAMETERS:
- *
- *      n/a
- *
- * RETURN VALUE:
- *
- *      int                     Success (0) / Failure status
- *
- ****************************************************************/
-int CDFADll::ExitInstance()
-{
-    return(0);
-}
-
-CDFADll  NEAR tracerDLL("hnplife.dll");
+} // namespace Life
+} // namespace HodjNPodj
+} // namespace Bagel
