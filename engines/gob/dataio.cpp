@@ -103,6 +103,8 @@ byte *DataIO::unpack(Common::SeekableReadStream &src, int32 &size, uint8 compres
 		size = src.readUint32LE();
 	else if (compression == 2)
 		size = getSizeChunks(src);
+	else
+		size = 0;
 
 	assert(size > 0);
 

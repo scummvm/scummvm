@@ -167,7 +167,7 @@ bool ANIObject::isIn(int16 x, int16 y) const {
 	if (!isVisible())
 		return false;
 
-	int16 frameX, frameY, frameWidth, frameHeight;
+	int16 frameX = 0, frameY = 0, frameWidth = 0, frameHeight = 0;
 	getFramePosition(frameX, frameY);
 	getFrameSize(frameWidth, frameHeight);
 
@@ -183,7 +183,7 @@ bool ANIObject::isIn(const ANIObject &obj) const {
 	if (!isVisible() || !obj.isVisible())
 		return false;
 
-	int16 frameX, frameY, frameWidth, frameHeight;
+	int16 frameX = 0, frameY = 0, frameWidth = 0, frameHeight = 0;
 	getFramePosition(frameX, frameY);
 	getFrameSize(frameWidth, frameHeight);
 
