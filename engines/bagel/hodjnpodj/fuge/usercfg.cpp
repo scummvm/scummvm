@@ -1,39 +1,35 @@
-/*****************************************************************
-*
-*  Copyright (c) 1994 by Boffo Games, All Rights Reserved
-*
-*
-*  usercfg.cpp   - User options for Fuge
-*
-*  HISTORY
-*
-*       1.00        06/21/94    BCW     Created this file
-*
-*  MODULE DESCRIPTION:
-*
-*
-*
-*  LOCALS:
-*
-*
-*
-*  GLOBALS:
-*
-*
-*
-*  RELEVANT DOCUMENTATION:
-*
-*
-****************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/afxwin.h"
-
-
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/menures.h" 
 #include "bagel/hodjnpodj/hnplibs/button.h"
-#include "usercfg.h"
+#include "bagel/hodjnpodj/fuge/usercfg.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Fuge {
 
 #define ID_RESET     104
 
@@ -127,7 +123,7 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam)
                 m_nNumBalls   = BALLS_DEF;
                 m_nStartLevel = LEVEL_DEF;
                 m_nBallSpeed  = SPEED_DEF;
-                m_nPaddleSize = SIZE_DEF;
+                m_nPaddleSize = PSIZE_DEF;
                 m_bOutterWall = FALSE;
 
                 PutDlgData();
@@ -178,8 +174,8 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll)
     } else {
         assert(pScroll == m_pScrollBar4);
 
-        nMin = SIZE_MIN;
-        nMax = SIZE_MAX;
+        nMin = PSIZE_MIN;
+        nMax = PSIZE_MAX;
         nVal = m_nPaddleSize;
     }
 
@@ -319,7 +315,7 @@ BOOL CUserCfgDlg::OnInitDialog(void)
         tmpRect.SetRect(22, 140, 92, 158);
         if ((m_pScrollBar4 = new CScrollBar) != NULL) {
             m_pScrollBar4->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SCROLL4);
-            m_pScrollBar4->SetScrollRange(SIZE_MIN, SIZE_MAX, TRUE);
+            m_pScrollBar4->SetScrollRange(PSIZE_MIN, PSIZE_MAX, TRUE);
         }
 
         ReleaseDC(pDC);
@@ -512,9 +508,9 @@ VOID CUserCfgDlg::LoadIniSettings(VOID)
     if ((m_nBallSpeed < SPEED_MIN) || (m_nBallSpeed > SPEED_MAX))
         m_nBallSpeed = SPEED_DEF;
 
-    m_nPaddleSize = GetPrivateProfileInt(INI_SECTION, "PaddleSize", SIZE_DEF, INI_FILENAME);
-    if ((m_nPaddleSize < SIZE_MIN) || (m_nPaddleSize > SIZE_MAX))
-        m_nPaddleSize = SIZE_DEF;
+    m_nPaddleSize = GetPrivateProfileInt(INI_SECTION, "PaddleSize", PSIZE_DEF, INI_FILENAME);
+    if ((m_nPaddleSize < PSIZE_MIN) || (m_nPaddleSize > PSIZE_MAX))
+        m_nPaddleSize = PSIZE_DEF;
 
     m_bOutterWall = GetPrivateProfileInt(INI_SECTION, "OutterWall", 0, INI_FILENAME);
     if (m_bOutterWall != 0)
@@ -523,13 +519,11 @@ VOID CUserCfgDlg::LoadIniSettings(VOID)
 
 VOID CUserCfgDlg::SaveIniSettings(VOID)
 {
-    CHAR buf[40];
-
-    WritePrivateProfileString(INI_SECTION, "NumberOfBalls", itoa(m_nNumBalls, buf, 10), INI_FILENAME);
-    WritePrivateProfileString(INI_SECTION, "StartingLevel", itoa(m_nStartLevel, buf, 10), INI_FILENAME);
-    WritePrivateProfileString(INI_SECTION, "BallSpeed", itoa(m_nBallSpeed, buf, 10), INI_FILENAME);
-    WritePrivateProfileString(INI_SECTION, "PaddleSize", itoa(m_nPaddleSize, buf, 10), INI_FILENAME);
-    WritePrivateProfileString(INI_SECTION, "OutterWall", itoa(m_bOutterWall ? 1 : 0, buf, 10), INI_FILENAME);
+    WritePrivateProfileString(INI_SECTION, "NumberOfBalls", Common::String::format("%d", m_nNumBalls).c_str(), INI_FILENAME);
+    WritePrivateProfileString(INI_SECTION, "StartingLevel", Common::String::format("%d", m_nStartLevel).c_str(), INI_FILENAME);
+    WritePrivateProfileString(INI_SECTION, "BallSpeed", Common::String::format("%d", m_nBallSpeed).c_str(), INI_FILENAME);
+    WritePrivateProfileString(INI_SECTION, "PaddleSize", Common::String::format("%d", m_nPaddleSize).c_str(), INI_FILENAME);
+    WritePrivateProfileString(INI_SECTION, "OutterWall", Common::String::format("%d", m_bOutterWall ? 1 : 0).c_str(), INI_FILENAME);
 }
 
 BEGIN_MESSAGE_MAP(CUserCfgDlg, CBmpDialog)
@@ -538,3 +532,7 @@ BEGIN_MESSAGE_MAP(CUserCfgDlg, CBmpDialog)
     ON_WM_HSCROLL()
     ON_WM_PAINT()
 END_MESSAGE_MAP()
+
+} // namespace Fuge
+} // namespace HodjNPodj
+} // namespace Bagel

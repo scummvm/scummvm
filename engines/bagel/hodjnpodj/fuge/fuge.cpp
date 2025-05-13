@@ -1,57 +1,25 @@
-/*****************************************************************
-*
-*  fuge.cpp
-*
-*  HISTORY
-*
-*      1.00      06/21/94     BCW     Created this file
-*
-*  MODULE DESCRIPTION:
-*
-*       Main module for Hodj 'n' Podj: Fuge
-*
-*  CONSTRUCTORS:
-*
-*       CFugeWindow                     Constructs the game of Fuge
-*
-*  PUBLIC:
-*
-*
-*       PaintScreen                     Repaints entire client area
-*       PlayGame                        Starts a new game
-*
-*  PROTECTED:
-*
-*
-*       OnCommand                       Handles WM_COMMAND messages
-*       OnPaint                         Handles WM_PAINT messages
-*       OnKeyDown                       Handles WM_KEYDOWN messages
-*       OnSysKeyDown                    Handles WM_SYSKEYDOWN messages
-*       OnSysChar                       Handles WM_SYSCHAR messages
-*       OnClose                         Handles WM_CLOSE messages
-*       OnActivate                      Handles WM_ACTIVATE messages
-*       OnLButtonDown                   Handles WM_LBUTTONDOWN messages
-*       OnMouseMove                     Handles WM_MOUSEMOVE messages
-*       OnTimer                         Handles WM_TIMER messages
-*
-*  PRIVATE:
-*
-*
-*
-*  MEMBERS:
-*
-*
-*
-*  RELEVANT DOCUMENTATION:
-*
-*
-*
-****************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/afxwin.h"
-
-#include <time.h>
-#include <math.h>
-
 #include "bagel/hodjnpodj/hnplibs/dibdoc.h"
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
@@ -59,16 +27,19 @@
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/hnplibs/mainmenu.h"
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
-#include <copyrite.h>
 #include "bagel/boflib/misc.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/boflib/error.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
 #include "bagel/boflib/sound.h"
-#include <vector.h>
-#include "fuge.h"
-#include "usercfg.h"
+#include "bagel/hodjnpodj/fuge/fuge.h"
+#include "bagel/hodjnpodj/fuge/usercfg.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Fuge {
 
 #define CSOUND      0
 
@@ -167,9 +138,9 @@
 #define WAV_PEOPLE1     ".\\SOUND\\BALLOON.WAV"
 #define WAV_PEOPLE2     ".\\SOUND\\AUNTEDNA.WAV"
 
-#define N_PADDLE_SIZES (SIZE_MAX+1)
+#define N_PADDLE_SIZES (PSIZE_MAX+1)
 
-STATIC CHAR *pszPaddles[N_PADDLE_SIZES] = {
+STATIC const CHAR *pszPaddles[N_PADDLE_SIZES] = {
     ".\\ART\\PADCEL45.BMP",
     ".\\ART\\PADCEL60.BMP",
     ".\\ART\\PADCEL90.BMP"
@@ -240,7 +211,7 @@ STATIC DOUBLE fPaddleAngles[N_PADDLE_SIZES] = {
 //
 // Globals
 //
-STATIC CHAR *pszFugeArt[N_ROWS+1] = {
+STATIC const CHAR *pszFugeArt[N_ROWS+1] = {
     ".\\ART\\FUGE6.BMP",
     ".\\ART\\FUGE1.BMP",
     ".\\ART\\FUGE2.BMP",
@@ -395,7 +366,7 @@ CFugeWindow::CFugeWindow(VOID)
     m_nInitNumBalls = BALLS_DEF;
     m_nInitStartLevel = LEVEL_DEF;
     m_nInitBallSpeed = SPEED_DEF;
-    m_nInitPaddleSize = SIZE_DEF;
+    m_nInitPaddleSize = PSIZE_DEF;
     m_nGForceFactor = GFORCE_DEF;
 
     m_pScrollButton = NULL;
@@ -514,7 +485,7 @@ CFugeWindow::CFugeWindow(VOID)
             //
             if (pGameParams->bMusicEnabled) {
                 if ((m_pSoundTrack = new CSound) != NULL) {
-                    m_pSoundTrack->Initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+                    m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
                     m_pSoundTrack->midiLoopPlaySegment( 5390, 32280, 0, FMT_MILLISEC );
                 } else {
                     errCode = ERR_MEMORY;
@@ -815,7 +786,7 @@ BOOL CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam)
                     } else if (pGameParams->bMusicEnabled && (m_pSoundTrack == NULL)) {
 
                         if ((m_pSoundTrack = new CSound) != NULL) {
-                            m_pSoundTrack->Initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+                            m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
                             m_pSoundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
                         }
                     }
@@ -887,7 +858,7 @@ ERROR_CODE CFugeWindow::LoadNewPaddle(INT nNewSize)
     CDC *pDC;
     ERROR_CODE errCode;
 
-    assert(nNewSize >= SIZE_MIN && nNewSize <= SIZE_MAX);
+    assert(nNewSize >= PSIZE_MIN && nNewSize <= PSIZE_MAX);
 
     // assume no error
     errCode = ERR_NONE;
@@ -1327,7 +1298,7 @@ VOID CFugeWindow::BallvsPaddle(VOID)
 
     vPoints[5] = vPoints[1];
     vPoints[6] = vPoints[2];
-    if (m_nInitPaddleSize > SIZE_MIN) {
+    if (m_nInitPaddleSize > PSIZE_MIN) {
         vTmp = vPoints[0] - vPoints[1];
         vTmp.Unitize();
         vTmp *= 9; // paddle width
@@ -1459,7 +1430,7 @@ VOID CFugeWindow::BallvsPaddle(VOID)
 
             fLen5 = fLen1;
             fLen6 = fLen2;
-            if (m_nInitPaddleSize > SIZE_MIN) {
+            if (m_nInitPaddleSize > PSIZE_MIN) {
 
                 fLen5 = distanceBetweenPoints(vBallCenter, vPoints[1]);
                 fLen5 += distanceBetweenPoints(vBallCenter, vPoints[5]);
@@ -1557,7 +1528,6 @@ VOID CFugeWindow::BallvsBrick(DOUBLE length)
     CHAR buf1[32], buf2[32];
     CVector vPoints[N_BRICK_POINTS];
     CVector vBrick, vBallCenter, vOrigin, vTmp;
-    CSound  *pEffect = NULL;
     CDC *pDC;
     CRect rTmpRect, rBall, cRect;
     CPoint ptTmp;
@@ -1949,7 +1919,6 @@ VOID CFugeWindow::EraseBrick(CDC *pDC, INT nBrickIndex)
 VOID CFugeWindow::LoseBall(VOID)
 {
     CHAR buf1[32], buf2[32];
-    CSound  *pEffect = NULL;
     CDC *pDC;
     ERROR_CODE errCode;
 
@@ -2343,7 +2312,7 @@ VOID CFugeWindow::LoadIniSettings(VOID)
         m_nInitNumBalls = 1;
         m_nInitStartLevel = 3;
         m_nGForceFactor = GFORCE_DEF;
-        m_nInitPaddleSize = SIZE_MAX;
+        m_nInitPaddleSize = PSIZE_MAX;
 
         switch (pGameParams->nSkillLevel) {
 
@@ -2375,9 +2344,9 @@ VOID CFugeWindow::LoadIniSettings(VOID)
         if ((m_nInitBallSpeed < SPEED_MIN) || (m_nInitBallSpeed > SPEED_MAX))
             m_nInitBallSpeed = SPEED_DEF;
 
-        m_nInitPaddleSize = GetPrivateProfileInt(INI_SECTION, "PaddleSize", SIZE_DEF, INI_FILENAME);
-        if ((m_nInitPaddleSize < SIZE_MIN) || (m_nInitPaddleSize > SIZE_MAX))
-            m_nInitPaddleSize = SIZE_DEF;
+        m_nInitPaddleSize = GetPrivateProfileInt(INI_SECTION, "PaddleSize", PSIZE_DEF, INI_FILENAME);
+        if ((m_nInitPaddleSize < PSIZE_MIN) || (m_nInitPaddleSize > PSIZE_MAX))
+            m_nInitPaddleSize = PSIZE_DEF;
 
         m_bOutterWall = GetPrivateProfileInt(INI_SECTION, "OutterWall", 0, INI_FILENAME);
         if (m_bOutterWall != 0)
@@ -2586,7 +2555,6 @@ VOID CFugeWindow::OnRButtonUp(UINT nFlags, CPoint point)
 
 VOID CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point)
 {
-    CSound  *pEffect = NULL;
     CRect   boothRect,
             tentRect,
             peopRect,
@@ -2956,3 +2924,7 @@ VOID CALLBACK GetGameParams(CWnd *pParentWnd)
     //
     CUserCfgDlg dlgUserCfg(pParentWnd, pGamePalette, IDD_USERCFG);
 }
+
+} // namespace Fuge
+} // namespace HodjNPodj
+} // namespace Bagel

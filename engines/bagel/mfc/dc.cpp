@@ -86,6 +86,15 @@ void CDC::FillRect(LPCRECT lpRect, CBrush *pBrush) {
 	error("TODO: CDC::FillRect");
 }
 
+BOOL CDC::FloodFill(int x, int y, COLORREF crColor) {
+	error("TODO: CDC::FloodFill");
+}
+
+BOOL CDC::FloodFill(int x, int y, COLORREF crColor,
+		UINT nFillType) {
+	error("TODO: CDC::FloodFill");
+}
+
 void CDC::Rectangle(LPCRECT lpRect) {
 	error("TODO: CDC::Rectangle");
 }

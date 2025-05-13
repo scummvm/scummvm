@@ -19,38 +19,19 @@
  *
  */
 
-#ifndef BAGEL_MFC_KEYBOARD_H
-#define BAGEL_MFC_KEYBOARD_H
+#ifndef HODJNPODJ_FUGE_RESOURCE_H
+#define HODJNPODJ_FUGE_RESOURCE_H
 
-#include "common/events.h"
+#include "bagel/afxwin.h"
 
 namespace Bagel {
-namespace MFC {
+namespace HodjNPodj {
+namespace Fuge {
 
-enum {
-	VK_UP = Common::KEYCODE_UP,
-	VK_DOWN = Common::KEYCODE_DOWN,								// go to next page of text
-	VK_LEFT = Common::KEYCODE_LEFT,
-	VK_RIGHT = Common::KEYCODE_RIGHT,
-	VK_NUMPAD8 = Common::KEYCODE_KP8,
-	VK_NUMPAD2 = Common::KEYCODE_KP2,
-	VK_NUMPAD4 = Common::KEYCODE_KP4,
-	VK_NUMPAD6 = Common::KEYCODE_KP6,
-	VK_PRIOR = Common::KEYCODE_PAGEUP,
-	VK_NEXT = Common::KEYCODE_PAGEDOWN,
-	VK_HOME = Common::KEYCODE_HOME,
-	VK_END = Common::KEYCODE_END,
-	VK_SCROLL = Common::KEYCODE_SCROLLOCK,
-	VK_F1 = Common::KEYCODE_F1,
-	VK_F2 = Common::KEYCODE_F2,
-	VK_F3 = Common::KEYCODE_F3,
-	VK_F4 = Common::KEYCODE_F4,
-	VK_RETURN = Common::KEYCODE_RETURN,
-	VK_ESCAPE = Common::KEYCODE_ESCAPE,
-	VK_SPACE = Common::KEYCODE_SPACE
-};
+extern HWND FAR PASCAL RunFuge(HWND, LPGAMESTRUCT);
 
-} // namespace MFC
+} // namespace Fuge
+} // namespace HodjNPodj
 } // namespace Bagel
 
 #endif

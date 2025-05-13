@@ -84,7 +84,7 @@ CStats::~CStats()
 int CStats::ResetGame()
 {
     //char 	chResetUsedGram;
-	char	tmpBuf[5];
+	//char	tmpBuf[5];
     int		nID;
     //int 	i;
 
@@ -128,11 +128,7 @@ int CStats::ResetGame()
 }
 
 
-void CStats::SaveStats(int nLttrsSlvd, int nTime)
-{
-	char	tmpBuf[5];
-
-
+void CStats::SaveStats(int nLttrsSlvd, int nTime) {
     m_nLettersSolved	= nLttrsSlvd;
     m_nTime				= nTime;
 

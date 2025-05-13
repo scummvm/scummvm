@@ -31,7 +31,7 @@
 #include "bagel/hodjnpodj/console.h"
 #include "bagel/hodjnpodj/gfx/bold_font.h"
 #include "bagel/music.h"
-#include "bagel/hodjnpodj/dfa/dllinit.h"
+#include "bagel/hodjnpodj/fuge/gamedll.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -80,7 +80,7 @@ Common::Error HodjNPodjEngine::run() {
 
 	// Run the game
 	//runGame();
-	DFA::RunDFA(nullptr, &_gameInfo);
+	Fuge::RunFuge(nullptr, &_gameInfo);
 
 	for (int size = 8; size <= 14; size += 2)
 		delete _fonts[size];

@@ -184,6 +184,9 @@ MODULE_OBJS = \
 	hodjnpodj/dfa/dfa.o \
 	hodjnpodj/dfa/msgdlg.o \
 	hodjnpodj/dfa/optdlg.o \
+	hodjnpodj/fuge/gamedll.o \
+	hodjnpodj/fuge/fuge.o \
+	hodjnpodj/fuge/usercfg.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o

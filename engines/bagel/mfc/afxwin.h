@@ -437,6 +437,9 @@ public:
 	void Ellipse(int x1, int y1, int x2, int y2);
 	void FrameRect(LPCRECT lpRect, CBrush *pBrush);
 	void FillRect(LPCRECT lpRect, CBrush *pBrush);
+	BOOL FloodFill(int x, int y, COLORREF crColor);
+	BOOL FloodFill(int x, int y, COLORREF crColor,
+		UINT nFillType);
 	void Rectangle(LPCRECT lpRect);
 	void Rectangle(int x1, int y1, int x2, int y2);
 	BOOL Pie(

@@ -1,35 +1,39 @@
-/*****************************************************************
-*
-*  Copyright (c) 1994 by Boffo Games, All Rights Reserved
-*
-*
-*  fuge.h     -
-*
-*  HISTORY
-*
-*       1.00        06/21/94    BCW     Created this file
-*
-*  MODULE DESCRIPTION:
-*
-*       Public header for the main module for Fuge
-*
-*  RELEVANT DOCUMENTATION:
-*
-*
-*
-****************************************************************/
-#ifndef FUGE_H
-#define FUGE_H
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HODJNPODJ_FUGE_FUGE_H
+#define HODJNPODJ_FUGE_FUGE_H
 
 #include "bagel/afxwin.h"
-
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/boflib/error.h"
+#include "bagel/hodjnpodj/libs/vector.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/boflib/sound.h"
-#include <vector.h>
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Fuge {
 
 #define N_ROWS           6
 #define BRICKS_PER_ROW  16
@@ -137,4 +141,8 @@ class CFugeWindow : public CFrameWnd
         BOOL        m_bBallOnPaddle;
 };
 
-#endif // !FUGE_H
+} // namespace Fuge
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif
