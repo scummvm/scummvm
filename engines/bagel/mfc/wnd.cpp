@@ -214,6 +214,10 @@ BOOL CWnd::SetWindowText(LPCSTR lpszString) {
 	error("TODO: CWnd::SetWindowText");
 }
 
+UINT CWnd::GetState() const {
+	error("TODO: CWnd::GetState");
+}
+
 CDC *CWnd::GetDC() {
 	error("TODO: CWnd::GetDC");
 }

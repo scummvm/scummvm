@@ -1,37 +1,31 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * optdlg.cpp                                   private options dialog for poker
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      1.0 5/9/94 GTB          
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      The Set User Amount dialog specific to my game. It contains 
- *      a scroll bar for setting the amount, a "Set" button, and "Cancel" button
- *
- * LOCALS:
- *
- *              n/a
- *
- * GLOBALS:
- *
- *                      n/a      
- *
- * RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- * FILES USED:
- *
- *                      n/a
- ****************************************************************/
+ */
+
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include "resource.h"
-#include "dialogs.h"
+#include "bagel/hodjnpodj/dfa/resource.h"
+#include "bagel/hodjnpodj/dfa/dialogs.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace DFA {
 
 #define GAMETIMEMAX			5
 #define GAMETIMEMIN			1 
@@ -512,3 +506,7 @@ BEGIN_MESSAGE_MAP(CDFAOptDlg, CBmpDialog)
 	ON_WM_ERASEBKGND()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+
+} // namespace DFA
+} // namespace HodjNPodj
+} // namespace Bagel

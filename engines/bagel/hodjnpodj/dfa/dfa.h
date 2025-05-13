@@ -1,41 +1,43 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * dfa.h
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      [Describe the function of the module]
- *   
- * RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc.]
- *   
- ****************************************************************/
+ */
 
-#ifndef __dfa_H__
-#define __dfa_H__
+#ifndef HODJNPODJ_DFA_DFA_H
+#define HODJNPODJ_DFA_DFA_H
 
-#include <time.h>
 #include "bagel/boflib/sound.h"
-#include "globals.h"
-#include "resource.h"
-#include "dibdoc.h"
-#include "gamedll.h"
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
+#include "bagel/hodjnpodj/dfa/globals.h"
+#include "bagel/hodjnpodj/dfa/resource.h"
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"            // header for the options library
 #include "bagel/hodjnpodj/hnplibs/mainmenu.h"
-
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 
-#include "copyrite.h"						// mandatory internal copyright notice
+namespace Bagel {
+namespace HodjNPodj {
+namespace DFA {
 
 // Button Identifier codes (BIDs)
 #define	IDC_OPTION			100  
@@ -184,6 +186,8 @@ virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 };
 
+} // namespace DFA
+} // namespace HodjNPodj
+} // namespace Bagel
 
-#endif // __dfa_H__
-
+#endif

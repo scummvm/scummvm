@@ -180,6 +180,10 @@ MODULE_OBJS = \
 	hodjnpodj/crypt/pnt_gram.o \
 	hodjnpodj/crypt/rec.o \
 	hodjnpodj/crypt/stats.o \
+	hodjnpodj/dfa/dllinit.o \
+	hodjnpodj/dfa/dfa.o \
+	hodjnpodj/dfa/msgdlg.o \
+	hodjnpodj/dfa/optdlg.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o

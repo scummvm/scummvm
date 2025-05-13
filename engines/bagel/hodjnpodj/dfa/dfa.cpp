@@ -1,48 +1,33 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * dfa.cpp					Whack-A-Mole game
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *	2.1		9/9/94		BAR		Made Stand-Alone Default time to 60 seconds.
- *	2.0		9/8/94		BAR		Added color mallet pMalletSprite to replace cursor.		
- *	1.0 	5/2/94 		GTB
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *   Game is a simple skeleton program which consists of a main
- *   window, which contains background artwork from a .BMP file,
- *	 and a Quit button.  Stub routines are present for mouse related
- *	 activities and keyboard input; edit the stubs as required.
- *
- *   This is intended to serve as a starting-point for new games.
- *
- * LOCALS:
- *
- *	SplashScreen			paint the background artwork
- *
- * GLOBALS:
- *
- *	FlushInputEvents		flush all unprocessed mouse/keyboard events
- *	ReleaseResources		release all application specific resources
- *
- * RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- * FILES USED:
- *
- *
- ****************************************************************/
+ */
 
-#include <stdlib.h>
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/hodjnpodj/dfa/dfa.h"
+#include "bagel/hodjnpodj/dfa/dialogs.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
-#include "dfa.h"
-#include "dialogs.h"
-#include "misc.h"
+namespace Bagel {
+namespace HodjNPodj {
+namespace DFA {
 
 #define	SPLASHSPEC		".\\ART\\DFA.BMP"
 
@@ -125,7 +110,7 @@ BOOL	bStart;
 CMainDFAWindow::CMainDFAWindow( HWND hCallingWnd, LPGAMESTRUCT lpGameStruct )
 {
 	CDC			*pDC = NULL;						// device context for the screen
-	CPalette	*pOldPalette = NULL;
+//	CPalette	*pOldPalette = NULL;
 	CPalette	*pOldPal = NULL;
 	CString		WndClass;
 	CSize		mySize;         
@@ -557,7 +542,7 @@ void CMainDFAWindow::ResetGame()
 void CALLBACK lpfnOptionCallback ( CWnd * pWnd) {
 // do the mini options dialog
 int 			nOption=0;         // return from the Options dialog
-UINT 			x = IDD_MINIOPTIONS_DIALOG;
+//UINT 			x = IDD_MINIOPTIONS_DIALOG;
 CDFAOptDlg		dlgMiniOptDlg( pWnd, pGamePalette, IDD_MINIOPTIONS_DIALOG );
 
 	dlgMiniOptDlg.SetInitialOptions( pMainGameWnd->m_nTimeForGame, pMainGameWnd->m_nBeaverDuration );
@@ -667,7 +652,7 @@ if (HIWORD(lParam) == BN_CLICKED)	{		// only want to look at button clicks
 			
 			if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
 				if (pGameSound->playing())	
-			    	(*pGameSound).Stop();
+			    	(*pGameSound).stop();
 			}
 			else if (m_lpGameStruct->bMusicEnabled == TRUE) {
 				if (pGameSound == NULL) {
@@ -684,7 +669,7 @@ if (HIWORD(lParam) == BN_CLICKED)	{		// only want to look at button clicks
 			}
 			else {
 				if ( m_nTimeForGame > 0 ) {
-				CDC	*pDC = GetDC();
+					pDC = GetDC();
 				
 					pTimerSprite->SetCel( nCurrentCel );
 					pTimerSprite->PaintSprite( pDC, WATCH_X, WATCH_Y );	                                   
@@ -920,7 +905,7 @@ void CMainDFAWindow::OnTimer( UINT nWhichTimer )
 			nCurrentTimer = 0;
 
 		if ((( nCurrentTimer % 10 ) == 0 ) && ( m_nTimeForGame != 0)) {
-        CDC	*pDC = GetDC();
+			pDC = GetDC();
         
         	nCurrentCel++;
 			pTimerSprite->SetCel( nCurrentCel );
@@ -1342,4 +1327,6 @@ BEGIN_MESSAGE_MAP( CMainDFAWindow, CFrameWnd )
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
+} // namespace DFA
+} // namespace HodjNPodj
+} // namespace Bagel

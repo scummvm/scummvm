@@ -735,6 +735,7 @@ public:
 	int GetWindowText(CString &rString) const;
 	int GetWindowText(LPSTR lpszStringBuf, int nMaxCount) const;
 	BOOL SetWindowText(LPCSTR lpszString);
+	UINT GetState() const;
 
 	CDC *GetDC();
 	int ReleaseDC(CDC *pDC);

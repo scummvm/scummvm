@@ -1,25 +1,30 @@
-/*****************************************************************
-*
-*  Copyright (c) 1994 by Boffo Games, All Rights Reserved
-*
-*
-*  errors.h -
-*
-*  HISTORY
-*
-*       1.00        05/16/94    BCW     Created this file
-*
-*  MODULE DESCRIPTION:
-*
-*       Main header for Error Handler Codes
-*
-*  RELEVANT DOCUMENTATION:
-*
-*
-*
-****************************************************************/
-#ifndef ERRORS_H
-#define ERRORS_H
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HODJNPODJ_DFA_ERRORS_H
+#define HODJNPODJ_DFA_ERRORS_H
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace DFA {
 
 //
 // error reporting codes
@@ -45,4 +50,8 @@ typedef unsigned char ERROR_CODE;
 #define ERR_FUTURE4 16              //
 #define ERR_FUTURE5 17              // future use
 
-#endif  // ERRORS_H
+} // namespace DFA
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif
