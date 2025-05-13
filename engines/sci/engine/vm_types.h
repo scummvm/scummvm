@@ -191,6 +191,12 @@ private:
 #endif
 };
 
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+// setSegment and setOffset together set all the bits without leaving
+// uninitialized parts, so this is not a real problem.
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
 static inline reg_t make_reg(SegmentId segment, uint16 offset) {
 	reg_t r;
 	r.setSegment(segment);
@@ -204,6 +210,9 @@ static inline reg_t make_reg32(SegmentId segment, uint32 offset) {
 	r.setOffset(offset);
 	return r;
 }
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 #define PRINT_REG(r) (kSegmentMask) & (unsigned) (r).getSegment(), (unsigned) (r).getOffset()
 
