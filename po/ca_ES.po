@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-05-13 20:15+0000\n"
-"PO-Revision-Date: 2025-05-01 01:19+0000\n"
+"PO-Revision-Date: 2025-05-14 05:18+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -7334,11 +7334,10 @@ msgid "Force true color"
 msgstr ""
 
 #: engines/director/metaengine.cpp:82
-#, fuzzy
-#| msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgid "Use true color graphics mode, even if the game is not designed for it"
 msgstr ""
-"Utilitza l'antialiàsing per a dibuixar el text encara que el joc no ho demani"
+"Usa el mode de gràfics de color veritable, fins i tot si el joc no està "
+"dissenyat per a aquest mode"
 
 #: engines/draci/metaengine.cpp:153
 msgid "Skip intro/Exit map or inventory"
@@ -7447,46 +7446,32 @@ msgid "Right click"
 msgstr "Clic dret"
 
 #: engines/efh/metaengine.cpp:255
-#, fuzzy
-#| msgid "Move up-left"
 msgid "Move up left"
 msgstr "Mou cap amunt a l'esquerra"
 
 #: engines/efh/metaengine.cpp:260
-#, fuzzy
-#| msgid "Move up-right"
 msgid "Move up right"
 msgstr "Mou cap amunt a la dreta"
 
 #: engines/efh/metaengine.cpp:265
-#, fuzzy
-#| msgid "Move down-left"
 msgid "Move down left"
 msgstr "Mou cap avall a l'esquerra"
 
 #: engines/efh/metaengine.cpp:270
-#, fuzzy
-#| msgid "Move down-right"
 msgid "Move down right"
 msgstr "Mou cap avall a la dreta"
 
 #: engines/efh/metaengine.cpp:275
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 1 status"
-msgstr "Mostra retrats de personatges"
+msgstr "Estat del personatge 1"
 
 #: engines/efh/metaengine.cpp:280
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 2 status"
-msgstr "Mostra retrats de personatges"
+msgstr "Estat del personatge 2"
 
 #: engines/efh/metaengine.cpp:285
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 3 status"
-msgstr "Mostra retrats de personatges"
+msgstr "Estat del personatge 3"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -9615,22 +9600,16 @@ msgid "This menu item is not yet implemented"
 msgstr ""
 
 #: engines/playground3d/metaengine.cpp:55
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch test"
-msgstr "Tornar al joc"
+msgstr "Commuta la prova"
 
 #: engines/playground3d/metaengine.cpp:61
-#, fuzzy
-#| msgid "Enable/Disable Jetpack"
 msgid "Enable/Disable fog"
-msgstr "Activa/Desactiva Jetpack"
+msgstr "Activa/desactiva la boira"
 
 #: engines/playground3d/metaengine.cpp:67
-#, fuzzy
-#| msgid "Enable/Disable Jetpack"
 msgid "Enable/Disable scissor"
-msgstr "Activa/Desactiva Jetpack"
+msgstr "Activa/Desactiva les tisores"
 
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
