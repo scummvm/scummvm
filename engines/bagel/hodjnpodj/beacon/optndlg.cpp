@@ -23,7 +23,7 @@
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/beacon/globals.h"
 #include "bagel/hodjnpodj/beacon/resource.h"
-#include "bagel/hodjnpodj/beacon/beacon.h" 
+#include "bagel/hodjnpodj/beacon/beacon.h"
 #include "bagel/hodjnpodj/beacon/optndlg.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 
@@ -49,7 +49,7 @@ int 	m_nSweepSettings[15] = 	{MIN_SWEEPS, 10, 15, 20, 30, 40, 50, 60, 80, 100, 1
 
 COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
 		:CBmpDialog(pParent, pPalette, IDD_SUBOPTIONS, ".\\ART\\SSCROLL.BMP")
-{                                                         
+{
 	//{{AFX_DATA_INIT(COptnDlg)
 	m_bAutomatic = FALSE;
 	m_bChangeAtTwelve = FALSE;
@@ -112,12 +112,12 @@ BOOL COptnDlg::OnInitDialog()
 	CDC		*pDC;
 	CRect	statRect;
 	int		i;
-	
+
 	pDC = GetDC();
 
 //	mSpeedTable[0] =  "Leaky Rowboat";
 //	mSpeedTable[1] =  "Kayak";
-//	mSpeedTable[2] =  "Fishing Trawler"; 
+//	mSpeedTable[2] =  "Fishing Trawler";
 	mSpeedTable[0] =  "Rowboat";
 	mSpeedTable[1] =  "Dinghy";
 	mSpeedTable[2] =  "Hovercraft";
@@ -126,31 +126,31 @@ BOOL COptnDlg::OnInitDialog()
 	if ((m_pScoreText = new CText()) != NULL) {
 		(*m_pScoreText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
-	
+
 	statRect.SetRect( LEFT_SIDE, 20, LEFT_SIDE + 185, 35 );
 	if ((m_pSweepsText = new CText()) != NULL) {
 		(*m_pSweepsText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
-	
+
 	m_ScrollSweeps.SetScrollRange( 0, nSweepSets - 1, 0 );
 	for (i = 0; i < (int)nSweepSets; i++) {
 		if (m_nSweepSettings[i] == (int)m_nSweeps)
 			m_ScrollSweeps.SetScrollPos( i, TRUE );
 	}
-	
+
 	statRect.SetRect( LEFT_SIDE, 70, LEFT_SIDE + 115, 88 );
 	if ((m_pSpeedText = new CText()) != NULL) {
 		(*m_pSpeedText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
-	
+
 	m_ScrollSpeed.SetScrollRange( MIN_SPEED, MAX_SPEED, 0 );
 	m_ScrollSpeed.SetScrollPos( m_nSpeed, TRUE );
-	
+
 	if ((pOKButton = new CColorButton) != NULL) {					// build a color QUIT button to let us exit
 		(*pOKButton).SetPalette(pSubOptionsPalette);						// set the palette to use
 		(*pOKButton).SetControl(IDOK,this);				// tie to the dialog control
 	}
-	
+
 	if ((pCancelButton = new CColorButton) != NULL) {					// build a color QUIT button to let us exit
 		(*pCancelButton).SetPalette(pSubOptionsPalette);						// set the palette to use
 		(*pCancelButton).SetControl(IDCANCEL,this);				// tie to the dialog control
@@ -169,7 +169,7 @@ BOOL COptnDlg::OnInitDialog()
 	((CWnd *)this)->CheckDlgButton( IDC_CHANGE, m_bChangeAtTwelve );		// Set the Auto option box
 
 	ReleaseDC( pDC );
-	
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -188,26 +188,26 @@ void COptnDlg::OnDestroy(void)
 
 BOOL COptnDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-	
+
 	if ( HIWORD( lParam ) == BN_CLICKED ) {
-			
+
 		switch (wParam) {
 
 			case IDC_AUTOMATIC:
 				m_bAutomatic = !m_bAutomatic;
 				((CWnd *)this)->CheckDlgButton( IDC_AUTOMATIC, m_bAutomatic );
 				break;
-				
+
 			case IDC_CHANGE:
 				m_bChangeAtTwelve = !m_bChangeAtTwelve;
 				((CWnd *)this)->CheckDlgButton( IDC_CHANGE, m_bChangeAtTwelve );
 				break;
-				
+
 			case IDOK:
 				ClearDialogImage();
 				EndDialog( IDOK );
             	break;
-            	
+
             case IDCANCEL:
 				ClearDialogImage();
 				EndDialog( 0 );
@@ -224,14 +224,14 @@ BOOL COptnDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 
 
 void COptnDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{       
-	int pMin, 
+{
+	int pMin,
 		pMax;
 	int OldPos = pScrollBar->GetScrollPos();
 	int NewPos = OldPos;
-	
+
 	pScrollBar->GetScrollRange( &pMin, &pMax );
-		
+
 	switch (nSBCode) {
 		case SB_LINERIGHT:
 			NewPos++;
@@ -253,22 +253,22 @@ void COptnDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			break;
 		case SB_THUMBPOSITION:
 		case SB_THUMBTRACK:
-			NewPos = nPos; 
+			NewPos = nPos;
 			break;
 		}
-		  
+
 	if ( NewPos < pMin ) NewPos = pMin;
 	if ( NewPos > pMax ) NewPos = pMax;
-	
-	if ( NewPos != OldPos ) {							//To prevent "flicker"  
+
+	if ( NewPos != OldPos ) {							//To prevent "flicker"
 		(*pScrollBar).SetScrollPos( NewPos, TRUE );		//...only update when
 	}                                                   //...changed
-	
+
 	UpdateScrollbars();
-	
+
 	CDialog::OnHScroll( nSBCode, NewPos, pScrollBar );
 }
- 
+
 
 /*****************************************************************
  *
@@ -277,19 +277,19 @@ void COptnDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
  *  FUNCTIONAL DESCRIPTION:
  *
  *      Updates data adjusted with scrollbars
- *   
+ *
  *  FORMAL PARAMETERS:
  *
  *      none
  *
  *  IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      CScrollbar	pScrollTime, pScrollColumns, pScrollRows
- *   
+ *
  *  IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      int	m_nTime, m_nNumParts, m_nColumns, m_nRows
- *   
+ *
  *  RETURN VALUE:
  *
  *      void
@@ -306,19 +306,19 @@ void COptnDlg::UpdateScrollbars()
 	OldValue = m_nSweeps;
 	m_nSweeps = m_nSweepSettings[m_ScrollSweeps.GetScrollPos()];
 	if ( OldValue != m_nSweeps ){
-		if ( m_nSweeps == MAX_SWEEPS ) 
+		if ( m_nSweeps == MAX_SWEEPS )
 			Common::sprintf_s( msg, "Number of Sweeps: Unlimited" );
-		else 
+		else
 			Common::sprintf_s( msg, "Number of Sweeps: %d", m_nSweeps );
 		(*m_pSweepsText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
-	} 
+	}
 
 	OldValue = m_nSpeed;
 	m_nSpeed = m_ScrollSpeed.GetScrollPos();
 	if ( OldValue != m_nSpeed ){
 		Common::sprintf_s( msg, "Speed:  %s", mSpeedTable[m_nSpeed].c_str());
 		(*m_pSpeedText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
-	} 
+	}
 
 	ReleaseDC( pDC );
 }
@@ -329,13 +329,13 @@ void COptnDlg::OnAutomatic()
 	m_bAutomatic = !m_bAutomatic;
 	((CWnd *)this)->CheckDlgButton( IDC_AUTOMATIC, m_bAutomatic );
 }
-   
+
 void COptnDlg::OnChangeAtTwelve()
 {
 	m_bChangeAtTwelve = !m_bChangeAtTwelve;
 	((CWnd *)this)->CheckDlgButton( IDC_CHANGE, m_bChangeAtTwelve );
 }
-   
+
 void COptnDlg::OnOK()
 {
 	ClearDialogImage();
@@ -352,23 +352,23 @@ void COptnDlg::OnPaint()
 {
 	CDC 	*pDC;
 	char	msg[64];
-		
+
 	CBmpDialog::OnPaint();
-    
+
     pDC = GetDC();
-    
+
 	Common::sprintf_s( msg, "(Effective on New Game)" );
 	(*m_pScoreText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
-	if ( m_nSweeps == MAX_SWEEPS ) 
+	if ( m_nSweeps == MAX_SWEEPS )
 		Common::sprintf_s( msg, "Number of Sweeps: Unlimited" );
-	else 
+	else
 		Common::sprintf_s( msg, "Number of Sweeps: %d", m_nSweeps );
-	(*m_pSweepsText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR); 
-	
+	(*m_pSweepsText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+
 	Common::sprintf_s( msg, "Speed:  %s", mSpeedTable[m_nSpeed].c_str() );
 	(*m_pSpeedText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
-	
+
 	ReleaseDC( pDC );
 
 }

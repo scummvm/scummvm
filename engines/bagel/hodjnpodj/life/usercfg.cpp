@@ -127,7 +127,7 @@ BOOL CUserCfgDlg::OnInitDialog()
 			break;
 		}
 
-	if ( nTurnCounterTemp == -1 )	
+	if ( nTurnCounterTemp == -1 )
 		nTurnCounterTemp = 10;	// MAgIC NUmbER!!! (bec m_nLife[10] = ROUNDS_DEF)
 
 	pDC = GetDC();
@@ -147,7 +147,7 @@ BOOL CUserCfgDlg::OnInitDialog()
 	if ( (m_pVillages = new CText) != NULL ) {
 		bAssertCheck = (*m_pVillages).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);   // initialize the text objext
-	} // end if 
+	} // end if
 
 	// setup the starting villages scroll bar
 	m_ScrollVillages.SetScrollRange(MIN_LIFE, MAX_LIFE, FALSE);
@@ -183,7 +183,7 @@ BOOL CUserCfgDlg::OnInitDialog()
 	if ( (m_pRounds = new CText) != NULL ) {
 		bAssertCheck = (*m_pRounds).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);   // initialize the text objext
-	} // end if 
+	} // end if
 
 	ReleaseDC(pDC);
 
@@ -291,9 +291,9 @@ void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 				break;
 			}
 
-		if (nLifeTemp < MIN_LIFE) 
+		if (nLifeTemp < MIN_LIFE)
 			nLifeTemp = MIN_LIFE;
-		if (nLifeTemp > MAX_LIFE) 
+		if (nLifeTemp > MAX_LIFE)
 			nLifeTemp = MAX_LIFE;
 
 		if ( nLifeTemp != nOldCounter ) { 			//To prevent "flicker"
@@ -365,7 +365,7 @@ void CUserCfgDlg::OnPrePlace()
 	bPrePlaceColonies = !bPrePlaceColonies;
 	((CWnd *)this)->CheckDlgButton( IDC_PREPLACE, bPrePlaceColonies );
 }
-   
+
 void CUserCfgDlg::OnOK()
 {
 	ClearDialogImage();

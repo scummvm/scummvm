@@ -186,7 +186,7 @@ CMainWindow::CMainWindow(  HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 	if ( m_lpGameStruct->bPlayingMetagame == TRUE ) {	// playing meta game?
 		switch (m_lpGameStruct->nSkillLevel) {			// yes - what skill level?
 			case SKILLLEVEL_LOW:
-				nLife = VILLAGES_HI;					// All levels start with 20 
+				nLife = VILLAGES_HI;					// All levels start with 20
 				break;
 
 			case SKILLLEVEL_MEDIUM:
@@ -225,7 +225,7 @@ CMainWindow::CMainWindow(  HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 			bIsInfiniteLife	= FALSE;
 			nLifeCounter	= nLife;
 		} // end if
-		
+
 		nPlace = GetPrivateProfileInt(INI_SECTION, "PrePlace", PLACE_DEF, INI_FNAME);
 		if ( nPlace > 0 ) {			// fastest turn counter?
 			bPrePlaceColonies = TRUE;
@@ -300,7 +300,7 @@ CMainWindow::CMainWindow(  HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 	/**************************************
 	* Initialize random number generator. *
 	**************************************/
-	//srand((unsigned) time(NULL));			// seed the random number generator 
+	//srand((unsigned) time(NULL));			// seed the random number generator
 
 	/**************************
 	* New game or popup menu? *
@@ -341,8 +341,8 @@ CMainWindow::CMainWindow(  HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 CMainWindow::~CMainWindow()
 {
 	if (pGamePalette != NULL)
-		delete pGamePalette; 
-		
+		delete pGamePalette;
+
 	if (pCalendarSprite != NULL)
 		delete pCalendarSprite;
 
@@ -1015,8 +1015,8 @@ void CMainWindow::OnClose()
 		pEvolveButton = NULL;
 	}
 
-	delete m_cLife; 
-	
+	delete m_cLife;
+
 	if ( m_pSound != NULL ) {
 		m_pSound->stop();
 		delete m_pSound;

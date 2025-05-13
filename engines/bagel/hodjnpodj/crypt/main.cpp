@@ -100,7 +100,7 @@ CMainWindow::CMainWindow( HWND hCallingWnd, LPGAMESTRUCT lpGameStruct )
 	m_lpGameStruct = lpGameStruct;
 	if (m_lpGameStruct->bPlayingMetagame)
 		m_lpGameStruct->lScore = 0L;
-	
+
 	BeginWaitCursor();
 
 	/********************************************************************************
@@ -247,7 +247,7 @@ CMainWindow::CMainWindow( HWND hCallingWnd, LPGAMESTRUCT lpGameStruct )
 	}
 
 	EndWaitCursor();
-	
+
 	if (m_lpGameStruct->bPlayingMetagame)
 		PostMessage(WM_COMMAND, IDC_OPTIONS_NEWGAME, BN_CLICKED);
 	else
@@ -443,7 +443,7 @@ void CMainWindow::GameWin()
 	ReleaseDC(pDC);
 
 	Common::sprintf_s( buf, "Score:  %d", m_cCryptograms->m_cStats->m_nScore );
-	CMessageBox GameOverDlg((CWnd *)this, pGamePalette, 
+	CMessageBox GameOverDlg((CWnd *)this, pGamePalette,
 								"You win!", buf, -1, 30 );
 }
 
@@ -461,7 +461,7 @@ void CMainWindow::GameLose()
 
 	RefreshStats();
 	Common::sprintf_s( buf, "Score:  %d", m_cCryptograms->m_cStats->m_nScore );
-	CMessageBox GameOverDlg((CWnd *)this, pGamePalette, 
+	CMessageBox GameOverDlg((CWnd *)this, pGamePalette,
 							"Time's up!", buf,  -1, 30 );
 
 	#ifdef REVEAL
@@ -607,17 +607,17 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 
 				} //end switch(ComDlg.DoModal())
 				if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
-					if (pGameSound->playing())	
+					if (pGameSound->playing())
 				    	(*pGameSound).stop();
 				}
 				else if (m_lpGameStruct->bMusicEnabled) {
 					if (pGameSound == NULL) {
-						pGameSound = new CSound( this, GAME_THEME, 
+						pGameSound = new CSound( this, GAME_THEME,
 									SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 					}
 					if (pGameSound != NULL) {
 						if (!pGameSound->playing())
-							(*pGameSound).midiLoopPlaySegment( 1080, 32500, 0, FMT_MILLISEC ); 
+							(*pGameSound).midiLoopPlaySegment( 1080, 32500, 0, FMT_MILLISEC );
 					} // end if pGameSound
 				}
 				break;
@@ -829,7 +829,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags,CPoint point)
 					nSleepTime = JOKE6_SLEEP;
 					break;
 			}
-			pEffect = new CSound( (CWnd *)this, bufName, SOUND_QUEUE | 
+			pEffect = new CSound( (CWnd *)this, bufName, SOUND_QUEUE |
 									SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		   	(*pEffect).play();														//...play the narration
 		}
@@ -865,7 +865,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags,CPoint point)
 		(*pSprite).SetMobile(FALSE);
 
 		if( m_lpGameStruct->bSoundEffectsEnabled) {
-			pEffect = new CSound( (CWnd *)this, WAV_URN1, SOUND_QUEUE | 
+			pEffect = new CSound( (CWnd *)this, WAV_URN1, SOUND_QUEUE |
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		   	(*pEffect).play();														//...play the narration
 		}
@@ -891,7 +891,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags,CPoint point)
 		(*pSprite).SetMobile(FALSE);
 
 		if( m_lpGameStruct->bSoundEffectsEnabled) {
-			pEffect = new CSound( (CWnd *)this, WAV_URN2, SOUND_QUEUE | 
+			pEffect = new CSound( (CWnd *)this, WAV_URN2, SOUND_QUEUE |
  									SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		   	(*pEffect).play();														//...play the narration
 		}
@@ -917,7 +917,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags,CPoint point)
 		(*pSprite).SetMobile(FALSE);
 
 		if( m_lpGameStruct->bSoundEffectsEnabled) {
-			pEffect = new CSound( (CWnd *)this, WAV_URN3, SOUND_QUEUE | 
+			pEffect = new CSound( (CWnd *)this, WAV_URN3, SOUND_QUEUE |
 									SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		   	(*pEffect).play();														//...play the narration
 		}
@@ -934,25 +934,25 @@ void CMainWindow::OnLButtonDown(UINT nFlags,CPoint point)
 		ReleaseDC(pDC);
 	}
 	else if (gryphRect.PtInRect(point) && (m_lpGameStruct->bSoundEffectsEnabled)) {
-		pEffect = new CSound( (CWnd *)this, WAV_GRYPH, SOUND_QUEUE | 
+		pEffect = new CSound( (CWnd *)this, WAV_GRYPH, SOUND_QUEUE |
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
 	   	(*pEffect).play();														//...play the narration
 	}
 	else if (stepsRect.PtInRect(point) && (m_lpGameStruct->bSoundEffectsEnabled)) {
-		pEffect = new CSound( (CWnd *)this, WAV_STEPS, SOUND_QUEUE | 
+		pEffect = new CSound( (CWnd *)this, WAV_STEPS, SOUND_QUEUE |
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
 	   	(*pEffect).play();														//...play the narration
 	}
-	else if (m_cCryptograms->m_cStats->m_nTime < MAX_TIME && 
+	else if (m_cCryptograms->m_cStats->m_nTime < MAX_TIME &&
 			(hourRect.PtInRect(point) && (m_lpGameStruct->bSoundEffectsEnabled)) ) {
-		pEffect = new CSound( (CWnd *)this, WAV_HOUR, SOUND_QUEUE | 
+		pEffect = new CSound( (CWnd *)this, WAV_HOUR, SOUND_QUEUE |
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
 	   	(*pEffect).play();														//...play the narration
 	}
 	else if ( ( (torch1Rect.PtInRect(point)) || (torch2Rect.PtInRect(point)) ) ||
 				( (torch3Rect.PtInRect(point)) || (torch4Rect.PtInRect(point)) ) ) {
         if (m_lpGameStruct->bSoundEffectsEnabled) {
-			pEffect = new CSound( (CWnd *)this, WAV_TORCH, SOUND_QUEUE | 
+			pEffect = new CSound( (CWnd *)this, WAV_TORCH, SOUND_QUEUE |
 									SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);	//...Wave file, to delete itself
 		   	(*pEffect).play();														//...play the narration
 		}
@@ -1052,7 +1052,7 @@ void CMainWindow::OnTimer(UINT nIDEvent)
 	    // move pointer to next hour glass formation
 	    //
 		m_nTimer++;
-		
+
 	    m_pHourGlass = NULL;
 	    ASSERT(m_nTimer >= 0 && m_nTimer < MAX_HOURS );
 	    if (m_nTimer < MAX_HOURS)

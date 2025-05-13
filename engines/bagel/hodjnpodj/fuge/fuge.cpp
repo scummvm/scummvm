@@ -74,21 +74,21 @@ namespace Fuge {
 #define ROW1_RADIUS         190
 #define WHEEL_RADIUS        191
 
-#define BRICK0_ANGLE        0.000000 
-#define BRICK1_ANGLE        0.392699 
-#define BRICK2_ANGLE        0.785398 
-#define BRICK3_ANGLE        1.178097 
-#define BRICK4_ANGLE        1.570796 
-#define BRICK5_ANGLE        1.963495 
-#define BRICK6_ANGLE        2.356194 
-#define BRICK7_ANGLE        2.748894 
-#define BRICK8_ANGLE        3.141593 
+#define BRICK0_ANGLE        0.000000
+#define BRICK1_ANGLE        0.392699
+#define BRICK2_ANGLE        0.785398
+#define BRICK3_ANGLE        1.178097
+#define BRICK4_ANGLE        1.570796
+#define BRICK5_ANGLE        1.963495
+#define BRICK6_ANGLE        2.356194
+#define BRICK7_ANGLE        2.748894
+#define BRICK8_ANGLE        3.141593
 #define BRICK9_ANGLE        3.534291
 #define BRICK10_ANGLE       3.926990
-#define BRICK11_ANGLE       4.319690 
-#define BRICK12_ANGLE       4.712389 
-#define BRICK13_ANGLE       5.105088 
-#define BRICK14_ANGLE       5.497787 
+#define BRICK11_ANGLE       4.319690
+#define BRICK12_ANGLE       4.712389
+#define BRICK13_ANGLE       5.105088
+#define BRICK14_ANGLE       5.497787
 #define BRICK15_ANGLE       5.890486
 
 
@@ -163,14 +163,14 @@ STATIC DOUBLE fPaddleAngles[N_PADDLE_SIZES] = {
 
 #define BOOTH_X         503
 #define BOOTH_Y         377
-#define BOOTH_DX        93  
+#define BOOTH_DX        93
 #define BOOTH_DY        53
 
-#define PEOPLE_X        27  
-#define PEOPLE_Y        370 
-#define PEOPLE_DX       102 
-#define PEOPLE_DY       60  
-            
+#define PEOPLE_X        27
+#define PEOPLE_Y        370
+#define PEOPLE_DX       102
+#define PEOPLE_DY       60
+
 #define CAR1_X          131
 #define CAR1_Y          385
 #define CAR_DX          41
@@ -509,7 +509,7 @@ CFugeWindow::CFugeWindow(VOID)
 
             InitializeJoystick();
 
-            EndWaitCursor();            
+            EndWaitCursor();
 
             // as long as there was no error
             //
@@ -745,7 +745,7 @@ BOOL CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam)
                 m_pScrollButton->SendMessage( BM_SETSTATE, TRUE, 0);
 
                 if (!m_bIgnoreScrollClick) {
-                
+
                     m_bIgnoreScrollClick = TRUE;
 
                     GamePause();
@@ -833,7 +833,7 @@ VOID CFugeWindow::PlayGame(VOID)
     errCode = LoadNewPaddle(m_nInitPaddleSize);
 
     if (errCode == ERR_NONE) {
-             
+
         //
         // Start game
         //
@@ -1683,7 +1683,7 @@ VOID CFugeWindow::BallvsBrick(DOUBLE length)
 
                     vPoints[j].Rotate(((2 * PI) / BRICKS_PER_ROW) * (nBrickIndex % BRICKS_PER_ROW));
                     vPoints[j] += gvCenter;
-                    
+
                     if (distanceBetweenPoints(vBallCenter, vPoints[j]) < 11.0) {
                         bHit = TRUE;
                     }
@@ -2002,12 +2002,12 @@ VOID CFugeWindow::LoseBall(VOID)
             }
 
             Common::sprintf_s(buf1, "Score:  %ld", m_lScore);
-            CMessageBox dlgLoseBall((CWnd *)this, m_pGamePalette, "Game over.", buf1);                        
+            CMessageBox dlgLoseBall((CWnd *)this, m_pGamePalette, "Game over.", buf1);
 
             if (pGameParams->bPlayingMetagame) {
 
                 // return the final score
-                //                         
+                //
                 pGameParams->lScore = m_lScore;
                 PostMessage(WM_CLOSE, 0, 0);
             }
@@ -2323,7 +2323,7 @@ VOID CFugeWindow::LoadIniSettings(VOID)
             case SKILLLEVEL_MEDIUM:
                 m_nInitBallSpeed = 6;
                 break;
-            
+
             default:
                 assert(pGameParams->nSkillLevel == SKILLLEVEL_HIGH);
                 m_nInitBallSpeed = 8;
@@ -2583,7 +2583,7 @@ VOID CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point)
     car8Rect.SetRect( CAR8_X, CAR8_Y, CAR8_X + CAR_DX, CAR8_Y + CAR_DY );
     car9Rect.SetRect( CAR9_X, CAR9_Y, CAR9_X + CAR9_DX, CAR9_Y + CAR9_DY );
     car10Rect.SetRect( CAR10_X, CAR10_Y, CAR10_X + CAR10_DX, CAR10_Y + CAR10_DY );
-    
+
     // User clicked on the Title - NewGame button
     //
     if (m_rNewGameButton.PtInRect(point)) {
@@ -2644,7 +2644,7 @@ VOID CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point)
         }
 
     } else if ( ((((((((car1Rect.PtInRect(point) || car2Rect.PtInRect(point)) || car3Rect.PtInRect(point)) ||
-                car4Rect.PtInRect(point)) || car5Rect.PtInRect(point)) || car6Rect.PtInRect(point)) || 
+                car4Rect.PtInRect(point)) || car5Rect.PtInRect(point)) || car6Rect.PtInRect(point)) ||
                 car7Rect.PtInRect(point)) || car8Rect.PtInRect(point)) || car9Rect.PtInRect(point)) ||
                 car10Rect.PtInRect(point) ) {
 
@@ -2802,7 +2802,7 @@ void CFugeWindow::OnActivate(UINT nState, CWnd *, BOOL bMinimized)
 LONG CFugeWindow::OnMCINotify(WPARAM wParam, LPARAM lParam)
 {
     CSound  *pSound;
-    
+
     pSound = CSound::OnMCIStopped(wParam, lParam);
     if (pSound != NULL)
         OnSoundNotify(pSound);
@@ -2810,11 +2810,11 @@ LONG CFugeWindow::OnMCINotify(WPARAM wParam, LPARAM lParam)
     return(0);
 }
 
-    
+
 LONG CFugeWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam)
 {
     CSound  *pSound;
-    
+
     pSound = CSound::OnMMIOStopped(wParam, lParam);
     if (pSound != NULL)
         OnSoundNotify(pSound);
