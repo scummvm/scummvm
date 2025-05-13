@@ -2192,6 +2192,8 @@ void useScreenObject() {
 			} break;
 			case 157: { // giving something to john
 				controlarlista = false;
+				debug("lista1 = %d, %d, %d, %d, %d", firstList[0], firstList[1], firstList[2], firstList[3], firstList[4]);
+				debug("used object = %d", mobj[indicemochila].code);
 				if (lista1) {
 					for (indlista = 0; indlista < 5; indlista++) {
 						if (mobj[indicemochila].code == firstList[indlista])

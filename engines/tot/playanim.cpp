@@ -189,7 +189,7 @@ boolean  primera[maxpersonajes],
 
 boolean  cavernas[5];
 
-boolean  firstList[5], secondList[5];
+uint16 firstList[5], secondList[5];
 
 regsecuencia secuencia;
 reganimado animado;
@@ -1136,6 +1136,7 @@ void initPlayAnim() {
 	firstList[2] = 402;
 	firstList[3] = 223;
 	firstList[4] = 521;
+
 	secondList[0] = 221;
 	secondList[1] = 423;
 	secondList[2] = 308;

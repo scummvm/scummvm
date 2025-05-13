@@ -278,7 +278,7 @@ struct regispartida {
 		objetomochila;
 	Common::String nombrepersonaje;
 	route mainRoute;
-	boolean firstList[5], secondList[5];
+	uint16 firstList[5], secondList[5];
 	Common::Point trayec[300];
 	boolean primera[maxpersonajes],
 			lprimera[maxpersonajes],
@@ -576,7 +576,7 @@ extern boolean  cavernas[5];
 /**
  * First and second lists of objects to retrieve in the game
  */
-extern boolean  firstList[5],
+extern uint16   firstList[5],
 				secondList[5];
 /**
  * Animation sequence
