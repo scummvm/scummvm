@@ -1249,6 +1249,13 @@ void BlueForceInvObjectList::setObjectScene(int objectNum, int sceneNumber) {
 	T2_GLOBALS._uiElements.updateInventory();
 }
 
+/**
+ * This method is called when the day changes (starting from the change from day 1 to day 2).
+ * It handles setting items to the inventory or their proper location at the start of a day
+ * It also resets the dialogue options for Hayley McCoy (at the City Hall (scene 385))
+ * The method is not called when initializing the game's day to 1.
+ * @param mode The day number
+ */
 void BlueForceInvObjectList::alterInventory(int mode) {
 	// Check for existing specific items in player's inventory
 	bool hasPrintout = getObjectScene(INV_PRINT_OUT) == 1;
@@ -1279,6 +1286,9 @@ void BlueForceInvObjectList::alterInventory(int mode) {
 	// Reset ticket book and miranda card back to motorcycle
 	setObjectScene(INV_TICKET_BOOK, 60);
 	setObjectScene(INV_MIRANDA_CARD, 60);
+
+	// The dialogue options for talking to Hayley McCoy is reset here for the day change
+	BF_GLOBALS._deziTopic = 0;
 
 	switch (mode) {
 	case 2:
