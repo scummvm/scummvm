@@ -187,6 +187,10 @@ MODULE_OBJS = \
 	hodjnpodj/fuge/gamedll.o \
 	hodjnpodj/fuge/fuge.o \
 	hodjnpodj/fuge/usercfg.o \
+	hodjnpodj/garfunkle/gamedll.o \
+	hodjnpodj/garfunkle/garfunkle.o \
+	hodjnpodj/garfunkle/note.o \
+	hodjnpodj/garfunkle/optndlg.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o

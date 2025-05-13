@@ -1,24 +1,39 @@
-// optndlg.cpp : implementation file
-//
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
-
-#include "globals.h"
-#include "resource.h"
-#include "garfunk.h" 
-#include "optndlg.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/garfunkle/resource.h"
+#include "bagel/hodjnpodj/garfunkle/garfunkle.h" 
+#include "bagel/hodjnpodj/garfunkle/optndlg.h"
 
-#ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
+namespace Bagel {
+namespace HodjNPodj {
+namespace Garkfunkle {
 
 static	CPalette *pSubOptionsPalette;
 static	CColorButton *pOKButton = NULL;						// OKAY button on scroll
 static	CColorButton *pCancelButton = NULL;					// Cancel button on scroll
-//static	CColorButton *pPlayButton = NULL;					// PlayMusic/PlayGame button on scroll
 static	CRadioButton *pGameButton = NULL;
 static	CRadioButton *pMusicButton = NULL;
 
@@ -287,7 +302,7 @@ void COptnDlg::UpdateScrollbars()
 	OldValue = m_nSpeed;
 	m_nSpeed = m_ScrollSpeed.GetScrollPos();
 	if ( OldValue != m_nSpeed ){
-		Common::sprintf_s( msg, "Speed:  %s", mSpeedTable[m_nSpeed] );
+		Common::sprintf_s( msg, "Speed:  %s", mSpeedTable[m_nSpeed].c_str() );
 		(*m_pSpeedText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	} 
 
@@ -318,7 +333,7 @@ void COptnDlg::OnPaint()
 	Common::sprintf_s( msg, "Number of Musicians:  %d", m_nNumButtons );
 	(*m_pButtonsText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
-	Common::sprintf_s( msg, "Speed:  %s", mSpeedTable[m_nSpeed] );
+	Common::sprintf_s( msg, "Speed:  %s", mSpeedTable[m_nSpeed].c_str() );
 	(*m_pSpeedText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR); 
 
 	(*pGameButton).SetCheck( m_bPlayGame );
@@ -352,3 +367,7 @@ void COptnDlg::ClearDialogImage(void)
 
 	ValidateRect(NULL);
 }
+
+} // namespace Garfunkle
+} // namespace HodjNPodj
+} // namespace Bagel

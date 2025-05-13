@@ -143,6 +143,19 @@ BOOL ReleaseCapture() {
 	error("TODO: ReleaseCapture");
 }
 
+HCURSOR LoadCursor(HINSTANCE hInstance,
+	LPCSTR lpCursorName) {
+	error("TODO: LoadCursor");
+}
+
+HCURSOR SetCursor(HCURSOR hCursor) {
+	error("TODO: SetCursor");
+}
+
+int ShowCursor(BOOL bShow) {
+	error("TODO: ShowCursor");
+}
+
 BOOL LineDDA(int nXStart, int nYStart,
 		int nXEnd, int nYEnd, LINEDDAPROC lpLineFunc,
 		LPARAM lpData) {

@@ -1,67 +1,44 @@
-/*****************************************************************
+/* ScummVM - Graphic Adventure Engine
  *
- *  Copyright (c) 1994 by Boffo Games, All Rights Reserved
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  game.cpp  - 1 line description of this module
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  HISTORY
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *      1.00      	03/10/94	BAR     Initial Design 
- *		1.20		05/11/94	BAR		Added artwork, standard rules and options dialog boxes
- *
- *  MODULE DESCRIPTION:
- *
- *      Puts up the main window, handles main command loop, 
- *		and mouse events
- *
- *  LOCALS:
- *
- *	void CALLBACK GetSubOptions( CWnd* pParentWind );	Game options dialog callback
- *	void add_note_to_series( int nNewValue ); 			Used by GetNewSequence to add to the note chain
- *
- *  GLOBALS:
- *
- *	BOOL GetNewSequence (const char* pszFileName);		Gets a pre-written series of notes from a file
- *	BOOL GetNewSequence (int nLength); 					Gets a random sequence of notes
- *	void ActivateButtons (UINT nNumActive, BOOL bState) Puts all the musicians into state bState (there or not)
- *	void PlayBackSeries(int nNumNotes);					Plays back all the notes up to nNumNotes
- *	void NewGame();										Sets up a new game
- *	void StartAnimation();								Starts a musician animating, starts the anim timer
- *	void StopAnimation();								If an animation & sound are running, it stops them
- * 
- *  RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc./]
- *
- *  FILES USED:
- *
- *      [Discuss files created, or used]
- *
- ****************************************************************/
+ */
 
+#include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include <time.h>
-#include <fstream.h> 
-
-#include <dos.h>
-
 #include "bagel/boflib/misc.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hnplibs/mainmenu.h"
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
-#include "bagel/hodjnpodj/hnplibs/text.h"
-                      
+#include "bagel/hodjnpodj/hnplibs/text.h"                  
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"                     
-#include "resource.h"
-#include "garfunk.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"   
 #include "bagel/hodjnpodj/hnplibs/button.h"
-#include "optndlg.h"
-#include "note.h"
+#include "bagel/hodjnpodj/garfunkle/resource.h"
+#include "bagel/hodjnpodj/garfunkle/garfunkle.h"
+#include "bagel/hodjnpodj/garfunkle/optndlg.h"
+#include "bagel/hodjnpodj/garfunkle/note.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
-#include "copyrite.cpp"						// Boffo!
+namespace Bagel {
+namespace HodjNPodj {
+namespace Garkfunkle {
 
 void CALLBACK GetSubOptions( CWnd* pParentWind );
 void add_note_to_series( int nNewValue ); 
@@ -107,11 +84,15 @@ int		nCheckCount = 0;
 UINT	nSButFlag = MAX_BUTTONS;
 CNote	*pNoteMarker;
 	 
-char 	*cSoundName[MAX_BUTTONS] = { VIOLIN_SOUND, CELLO_SOUND, DRUM_SOUND, 
-											SAX_SOUND, HARP_SOUND, CLARINET_SOUND};
+static const char *cSoundName[MAX_BUTTONS] = {
+	VIOLIN_SOUND, CELLO_SOUND, DRUM_SOUND, 
+	SAX_SOUND, HARP_SOUND, CLARINET_SOUND
+};
 
-CString cAnimName[MAX_BUTTONS] = { VIOLIN_ANIM, CELLO_ANIM, DRUM_ANIM, SAX_ANIM, 
-										HARP_ANIM, CLARINET_ANIM };
+const CString cAnimName[MAX_BUTTONS] = {
+	VIOLIN_ANIM, CELLO_ANIM, DRUM_ANIM, SAX_ANIM, 
+	HARP_ANIM, CLARINET_ANIM
+};
 
 int		nNumCels[MAX_BUTTONS] = { VIOLIN_CELS, CELLO_CELS, DRUM_CELS, SAX_CELS, 
 										HARP_CELS, CLARINET_CELS };
@@ -312,7 +293,6 @@ void CMainWindow::OnPaint()
 // called by both OnPaint and InitInstance.
 void CMainWindow::SplashScreen()
 {
-	CPalette	*pOldPal = NULL;
 	CRect	rcDest;
 	CRect	rcDIB;
 	CDC		*pDC;
@@ -689,7 +669,7 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point)
 		if ( m_bPlaying && bLDown ) {
 			if (pAnimSprite[m_nButID] != NULL) {
 				StopAnimation();
-				::SendMessage( m_hWnd, WM_COMMAND, m_nButID + IDC_A, BN_CLICKED );		// Activate hit logic
+				MFC::SendMessage( m_hWnd, WM_COMMAND, m_nButID + IDC_A, BN_CLICKED );		// Activate hit logic
 			}
 			bLDown = FALSE;
 		}
@@ -771,8 +751,6 @@ void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	UINT i = MAX_BUTTONS;
-
 	if ( !bPlayingBackSeries ) {
 		if ( (nChar == VK_F1) ) {								// F1 key is hit
 			SendMessage( WM_COMMAND, IDC_RULES, BN_CLICKED);		// Activate the Rules dialog
@@ -1023,7 +1001,7 @@ void CMainWindow::StopAnimation()
 	} 
 			
 	if (pMusic != NULL) {
-		(*pMusic).Stop();
+		(*pMusic).stop();
 		delete pMusic;
 		pMusic = NULL;
 	}
@@ -1113,7 +1091,7 @@ void CMainWindow::PlayBackSeries(int nNumNotes)
 	
 //	HCURSOR HOldCursor = MFC::SetCursor( AfxGetApp ()->LoadStandardCursor( NULL ) );	// Make cursor go away
 	HCURSOR HOldCursor = MFC::SetCursor( LoadCursor( NULL, IDC_WAIT ) );		// Refresh cursor object
-	::ShowCursor( TRUE );
+	MFC::ShowCursor( TRUE );
 
 	pNewNote = CNote::GetNoteHead();
 	for ( i=nNumNotes; i>0; --i ) {
@@ -1131,7 +1109,7 @@ void CMainWindow::PlayBackSeries(int nNumNotes)
 	} 
 	pNewNote = NULL;
 
-	::ShowCursor ( FALSE );
+	MFC::ShowCursor ( FALSE );
 	MFC::SetCursor ( HOldCursor );
 	
 	bPlayingBackSeries = FALSE;
@@ -1193,7 +1171,7 @@ void CMainWindow::OnClose()
 
 	for (i = 0; i < (MAX_BUTTONS * 2); i++) {
 		if (pMusicians[i] != NULL) {
-			pMusicians[i]->DeleteObject;
+			//pMusicians[i]->DeleteObject;
 			delete pMusicians[i];				// Bitmap for Not_playing and Not_there
 		}
 	}
@@ -1290,5 +1268,6 @@ BEGIN_MESSAGE_MAP( CMainWindow, CFrameWnd )
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
-
+} // namespace Garfunkle
+} // namespace HodjNPodj
+} // namespace Bagel

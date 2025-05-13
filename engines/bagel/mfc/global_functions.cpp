@@ -78,15 +78,6 @@ BOOL WritePrivateProfileString(
 	error("TODO: WritePrivateProfileString");
 }
 
-HCURSOR LoadCursor(HINSTANCE hInstance,
-		LPCSTR lpCursorName) {
-	error("TODO: LoadCursor");
-}
-
-void SetCursor(HCURSOR hCursor) {
-	error("TODO: SetCursor");
-}
-
 HTASK GetCurrentTask() {
 	error("TODO: GetCurrentTask");
 }
@@ -156,6 +147,11 @@ void DispatchMessage(LPMSG lpMsg) {
 BOOL PostMessage(HWND hWnd, UINT Msg,
 		WPARAM wParam, LPARAM lParam) {
 	error("TODO: PostMessage");
+}
+
+LRESULT SendMessage(HWND hWnd, UINT Msg,
+		WPARAM wParam, LPARAM lParam) {
+	error("TODO: SendMessage");
 }
 
 HRSRC FindResource(HMODULE hModule,

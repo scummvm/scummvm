@@ -78,9 +78,6 @@ extern UINT GetPrivateProfileInt(LPCSTR lpAppName,
 extern BOOL WritePrivateProfileString(
 	LPCSTR lpAppName, LPCSTR lpKeyName,
 	LPCSTR lpString, LPCSTR lpFileName);
-extern HCURSOR LoadCursor(HINSTANCE hInstance,
-	LPCSTR lpCursorName);
-extern void SetCursor(HCURSOR hCursor);
 
 extern HTASK GetCurrentTask();
 extern FARPROC MakeProcInstance(FARPROC lpProc, HINSTANCE hInstance);
@@ -105,6 +102,8 @@ extern BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,
 extern void TranslateMessage(LPMSG lpMsg);
 extern void DispatchMessage(LPMSG lpMsg);
 extern BOOL PostMessage(HWND hWnd, UINT Msg,
+	WPARAM wParam, LPARAM lParam);
+extern LRESULT SendMessage(HWND hWnd, UINT Msg,
 	WPARAM wParam, LPARAM lParam);
 
 extern HRSRC FindResource(HMODULE hModule,

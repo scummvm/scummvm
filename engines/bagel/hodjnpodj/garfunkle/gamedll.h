@@ -19,25 +19,14 @@
  *
  */
 
-#ifndef HODJNPODJ_GARFUNKLE_RESOURCE_H
-#define HODJNPODJ_GARFUNKLE_RESOURCE_H
+#ifndef HODJNPODJ_GARFUNKLE_GAMEDLL_H
+#define HODJNPODJ_GARFUNKLE_GAMEDLL_H
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Garkfunkle {
-                                           
-#define IDC_SCROLL						114
-                                           
-#define IDD_SUBOPTIONS                  115
 
-#define IDD_RULES_DIALOG                900
-
-#define IDC_RULES						1002
-
-#define IDC_NUMBUTTONS                  1021
-#define IDC_SPEED	                    1022
-#define IDC_PLAYGAME                    1023
-#define IDC_PLAYMUSIC                   1024
+extern HWND FAR PASCAL RunGarf(HWND hParentWnd, LPGAMESTRUCT lpGameInfo);
 
 } // namespace Garfunkle
 } // namespace HodjNPodj
