@@ -72,6 +72,7 @@ extern SIZE_T GlobalCompact(DWORD dwMinFree);
 extern int MessageBox(HWND hWnd, LPCSTR lpText,
 	LPCSTR lpCaption, UINT uType);
 extern int MessageBox(LPCSTR lpText, LPCSTR lpCaption, UINT uType);
+extern int MessageBox(LPCSTR lpText);
 extern UINT GetPrivateProfileInt(LPCSTR lpAppName,
 	LPCSTR lpKeyName, INT nDefault, LPCSTR lpFileName);
 extern BOOL WritePrivateProfileString(

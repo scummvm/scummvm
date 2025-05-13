@@ -1,54 +1,30 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved.
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * rec.cpp
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *		1.0      04/19/94     Jos     Creation
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      [Describe the function of the module]
- *
- * CONSTRUCTORS:
- *
- *      [list constructors with one line descriptions]
- *
- * DESTRUCTORS:
- *
- *      [list destructors with one line descriptions]
- *
- * PUBLIC:
- *
- *      [list public routines with one line descriptions]
- *
- * PUBLIC GLOBAL:
- *
- *      [list global public routines with one line descriptions]
- *
- * PROTECTED:
- *
- *      [list protected routines with one line descriptions]
- *
- * PRIVATE:
- *
- *      [list private routines with one line descriptions]
- *
- * MEMBERS:
- *
- *      [list members of the class with one line descriptions]
- *
- * RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc.]
- *
- ****************************************************************/
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include "rec.h"
+#include "bagel/hodjnpodj/crypt/rec.h"
 
+namespace Bagel {
+namespace HodjNPodj {
+namespace Crypt {
 
 CCryptRecord::CCryptRecord()
 {
@@ -59,8 +35,8 @@ CCryptRecord::~CCryptRecord()
 }
 
 
-BOOL CCryptRecord::GetRecord(int nID)
-{
+BOOL CCryptRecord::GetRecord(int nID) {
+#ifdef TODO
 	OFSTRUCT    ofstFileStat;
 	char 		chBuf;
 	int 		i;
@@ -119,4 +95,11 @@ BOOL CCryptRecord::GetRecord(int nID)
 	_fstrupr(m_lpszSource);
 	LZClose(m_hfCryptFile);
 	return TRUE;
+#else
+	error("TODO: CCryptRecord::GetRecord");
+#endif
 }
+
+} // namespace Crypt
+} // namespace HodjNPodj
+} // namespace Bagel

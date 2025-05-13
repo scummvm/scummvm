@@ -1,28 +1,33 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * rec.h
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      1.00      04/19/94     Jos     Creation
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      [Describe the function of the module]
- *
- * RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc.]
- *
- ****************************************************************/
+ */
 
+#ifndef HODJNPODJ_CRYPT_REC_H
+#define HODJNPODJ_CRYPT_REC_H
 
-#include <lzexpand.h>
+#include "common/file.h"
+//#include <lzexpand.h>
 
-#ifndef __game_rec_H__
-#define __game_rec_H__
+namespace Bagel {
+namespace HodjNPodj {
+namespace Crypt {
 
 #define CRYPT_TXT_FILE		"Crypt.lz"
 #define CRYPT_RECS			200
@@ -34,7 +39,7 @@
 
 class CCryptRecord {
 private:
-	HFILE	m_hfCryptFile;
+	Common::File m_hfCryptFile;
 	int 	m_nID;
 	char 	m_lpszGram[MAX_GRAM_LEN];
 	char 	m_lpszSource[MAX_SOURCE_LEN];
@@ -49,4 +54,9 @@ public:
 	char*	GetGram()	{ return m_lpszGram; };
 	char* 	GetSource() { return m_lpszSource; };
 };
-#endif // __game_rec_H__
+
+} // namespace Crypt
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

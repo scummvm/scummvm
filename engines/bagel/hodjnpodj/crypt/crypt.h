@@ -1,26 +1,34 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * [file name].h
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      1.00      03/28/94     Josquin     Creation
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      [Describe the function of the module]
- *
- * RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc.]
- *
- ****************************************************************/
+ */
 
-#include "rec.h"
-#include "pnt_gram.h"
-#include "stats.h"
+#ifndef HODJNPODJ_CRYPT_CRYPT_H
+#define HODJNPODJ_CRYPT_CRYPT_H
+
+#include "bagel/hodjnpodj/crypt/rec.h"
+#include "bagel/hodjnpodj/crypt/pnt_gram.h"
+#include "bagel/hodjnpodj/crypt/stats.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Crypt {
 
 #define SPLASHSPEC		".\\art\\crypt.BMP"	// bitmap file for the splash screen
 
@@ -58,3 +66,9 @@ public:
 
 // Globals!
 extern CPalette		*pGamePalette;
+
+} // namespace Crypt
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

@@ -62,6 +62,11 @@ int MessageBox(LPCSTR lpText, LPCSTR lpCaption, UINT uType) {
 	return 0;
 }
 
+int MessageBox(LPCSTR lpText) {
+	error("%s %s", lpText);
+	return 0;
+}
+
 UINT GetPrivateProfileInt(LPCSTR lpAppName,
 		LPCSTR lpKeyName, INT nDefault, LPCSTR lpFileName) {
 	error("TODO: GetPrivateProfileInt");

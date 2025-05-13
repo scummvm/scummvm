@@ -173,6 +173,13 @@ MODULE_OBJS = \
 	hodjnpodj/beacon/gamedll.o \
 	hodjnpodj/beacon/beacon.o \
 	hodjnpodj/beacon/optndlg.o \
+	hodjnpodj/crypt/dllinit.o \
+	hodjnpodj/crypt/crypt.o \
+	hodjnpodj/crypt/main.o \
+	hodjnpodj/crypt/optn.o \
+	hodjnpodj/crypt/pnt_gram.o \
+	hodjnpodj/crypt/rec.o \
+	hodjnpodj/crypt/stats.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o

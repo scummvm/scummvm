@@ -1,46 +1,37 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * dllinit.h
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *	1.0 5/13/94 GTB		
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *
- * LOCALS:
- *
- *
- * GLOBALS:
- *
- *
- * RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- * FILES USED:
- *
- ****************************************************************/
-#ifndef __dllinit_H__
-#define __dllinit_H__
+ */
 
+#ifndef HODJNPODJ_CRYPT_DLLINIT_H
+#define HODJNPODJ_CRYPT_DLLINIT_H
 
-#include "gamedll.h"
+#include "bagel/afxwin.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif  /* __cplusplus */
+namespace Bagel {
+namespace HodjNPodj {
+namespace Crypt {
 
-HWND FAR PASCAL RunPoker( HWND, LPGAMESTRUCT );
+extern HWND FAR PASCAL RunCrypt(HWND hParentWnd, LPGAMESTRUCT lpGameInfo);
 
-BOOL FAR PASCAL FilterDllMsg(LPMSG lpMsg);
-void FAR PASCAL ProcessDllIdle();
+} // namespace Crypt
+} // namespace HodjNPodj
+} // namespace Bagel
 
-#ifdef __cplusplus
-}
 #endif
-
-#endif // __dllinit_H__

@@ -1,16 +1,32 @@
-// optnwin.cpp : implementation file
-//
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include "resource.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
-#include "optn.h"
+#include "bagel/hodjnpodj/crypt/optn.h"
+#include "bagel/hodjnpodj/crypt/resource.h"
 
-#ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
-
+namespace Bagel {
+namespace HodjNPodj {
+namespace Crypt {
 
 static	CColorButton *pOKButton = NULL;						// OKAY button on scroll
 static	CColorButton *pCancelButton = NULL;					// Cancel button on scroll
@@ -302,7 +318,7 @@ void COptn::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		if ( m_nTime > MAX_INDEX_TIME )
 			m_nTime = MAX_INDEX_TIME;
 
-		Common::sprintf_s(msg, "Time Limit: %s", m_chTime[m_nTime]);
+		Common::sprintf_s(msg, "Time Limit: %s", m_chTime[m_nTime].c_str());
 
 		bAssertCheck = (*m_pTime).DisplayString(pDC,msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
@@ -330,7 +346,7 @@ void COptn::OnPaint()
 	bAssertCheck = (*m_pLttrsSlvd).DisplayString(pDC,msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 	ASSERT(bAssertCheck);
 
-	Common::sprintf_s(msg, "Time: %s", m_chTime[m_nTime]);		// Display Time stats
+	Common::sprintf_s(msg, "Time: %s", m_chTime[m_nTime].c_str());		// Display Time stats
 	bAssertCheck = (*m_pTime).DisplayString(pDC,msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 	ASSERT(bAssertCheck);
 
@@ -371,3 +387,6 @@ void COptn::ClearDialogImage(void)
 	ValidateRect(NULL);
 }
 
+} // namespace Crypt
+} // namespace HodjNPodj
+} // namespace Bagel

@@ -1,57 +1,33 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved.
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * crypt.cpp
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *		1.0      03/28/94     Josquin     Creation
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      [Describe the function of the module]
- *
- * CONSTRUCTORS:
- *
- *      [list constructors with one line descriptions]
- *
- * DESTRUCTORS:
- *
- *      [list destructors with one line descriptions]
- *
- * PUBLIC:
- *
- *      [list public routines with one line descriptions]
- *
- * PUBLIC GLOBAL:
- *
- *      [list global public routines with one line descriptions]
- *
- * PROTECTED:
- *
- *      [list protected routines with one line descriptions]
- *
- * PRIVATE:
- *
- *      [list private routines with one line descriptions]
- *
- * MEMBERS:
- *
- *      [list members of the class with one line descriptions]
- *
- * RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc.]
- *
- ****************************************************************/
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/crypt/globals.h"
+#include "bagel/hodjnpodj/crypt/crypt.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
-#include "globals.h"
-#include "crypt.h"
+namespace Bagel {
+namespace HodjNPodj {
+namespace Crypt {
 
 /*****************************************************************
  *
@@ -425,7 +401,7 @@ BOOL CCryptogram::HandleUserUpdate(CDC *pDC, UINT nChar)
 	/****************************************
 	* Is this a valid alphabetical letter?	*
 	****************************************/
-	if ( isalpha(nNewChar) == FALSE) {
+	if ( Common::isAlpha(nNewChar) == FALSE) {
 		MessageBeep(-1);							// No - exit
 		return FALSE;
 	}
@@ -542,7 +518,7 @@ void CCryptogram::Encrypt()
 	/*******************
 	* Reset workbench. *
 	*******************/
-	strcpy(m_chEncryptGram, m_cRecordGram->GetGram());	// Acquire copy of original
+	Common::strcpy_s(m_chEncryptGram, m_cRecordGram->GetGram());	// Acquire copy of original
 
 	/*****************************************
 	* Encrypt entire string using crypt map. *
@@ -597,7 +573,7 @@ void CCryptogram::CreateCryptMap(int nLettersSolved)
 	/*******************
 	* Reset workbench. *
 	*******************/
-	strcpy(m_chEncryptGram, m_cRecordGram->GetGram());	// Acquire copy of original
+	Common::strcpy_s(m_chEncryptGram, m_cRecordGram->GetGram());	// Acquire copy of original
 	for ( i = 0; i < ALPHABET;  i++ ) {					// Reset cryptmap
 		m_nCryptMap[DECRYPT_MAP][i] = NOT_USED;
 		m_nCryptMap[ENCRYPT_MAP][i] = NOT_USED;
@@ -835,3 +811,7 @@ int CCryptogram::LettersSolved()
 
 	return nTotalSolved;
 }
+
+} // namespace Crypt
+} // namespace HodjNPodj
+} // namespace Bagel

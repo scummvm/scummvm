@@ -922,4 +922,9 @@ void CBofSound::setQVol(int nSlot, int nVol) {
 	}
 }
 
+BOOL MessageBeep(INT uType) {
+	warning("TODO: beep");
+	return true;
+}
+
 } // namespace Bagel

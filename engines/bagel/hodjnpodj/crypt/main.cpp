@@ -1,54 +1,43 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * main.cpp					Creates main window; starts game.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      1.0     04-20-94	JSC     initial release
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *
- * LOCALS:
- *
- *
- * GLOBALS:
- *
- *	FlushInputEvents		flush all unprocessed mouse/keyboard events
- *
- * RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- * FILES USED:
- *
- *	splash.bmp				bitmap image for background artwork
- *	sprite.bmp				bitmap image for active sprites
- *	spritex.bmp				bitmap image for the bumper sprites
- *
- ****************************************************************/
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include <time.h>
 #include "bagel/hodjnpodj/hnplibs/dibdoc.h"
-
 #include "bagel/boflib/misc.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "bagel/hodjnpodj/hnplibs/mainmenu.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/boflib/sound.h"
-
-#include "globals.h"
-#include "resource.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"
-#include "main.h"
-#include "optn.h"
+#include "bagel/hodjnpodj/crypt/globals.h"
+#include "bagel/hodjnpodj/crypt/main.h"
+#include "bagel/hodjnpodj/crypt/optn.h"
+#include "bagel/hodjnpodj/crypt/resource.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
-#include "copyrite.h"					// mandatory internal copyright notice
+namespace Bagel {
+namespace HodjNPodj {
+namespace Crypt {
 
 #define IDB_HOUR	    301
 
@@ -619,7 +608,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 				} //end switch(ComDlg.DoModal())
 				if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
 					if (pGameSound->playing())	
-				    	(*pGameSound).Stop();
+				    	(*pGameSound).stop();
 				}
 				else if (m_lpGameStruct->bMusicEnabled) {
 					if (pGameSound == NULL) {
@@ -776,7 +765,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags,CPoint point)
 			hourRect;
 	BOOL	bSuccess;
 	int		i,
-			nPick,
+			nPick = 0,
 			nSleepTime;
 	char	bufName[64];
 
@@ -1426,3 +1415,7 @@ int CMainWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	return 0;
 }
+
+} // namespace Crypt
+} // namespace HodjNPodj
+} // namespace Bagel
