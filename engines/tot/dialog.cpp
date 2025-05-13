@@ -43,8 +43,7 @@ boolean endOfConversation;
 
 Common::String decrypt(Common::String tEncriptado) {
 	for (int i = 0; i < tEncriptado.size(); i++) {
-		debug("decrypting char = %c into %c", tEncriptado[i], encriptado[i] ^ tEncriptado[i]);
-		tEncriptado.setChar(encriptado[i] ^ (char)tEncriptado[i], i);
+		tEncriptado.setChar(decryptionKey[i] ^ (char)tEncriptado[i], i);
 	}
 	return tEncriptado;
 }
@@ -384,7 +383,7 @@ void showDialogLine(Common::String matrizconversa[16], uint &charlaelegida) {
 			}
 
 			if (tocapintar) {
-				if (roomData->banderapaleta && saltospal >= 4) {
+				if (currentRoomData->banderapaleta && saltospal >= 4) {
 					saltospal = 0;
 					if (movidapaleta > 6)
 						movidapaleta = 0;
@@ -570,14 +569,14 @@ void talk(byte person) {
 void talkScreenObject() {
 	int x_del_raton = (pulsax + 7) / factorx;
 	int y_del_raton = (pulsay + 7) / factory;
-	uint objeto_de_la_pantalla = roomData->indexadoobjetos[roomData->mouseGrid[x_del_raton][y_del_raton]]->indicefichero;
+	uint objeto_de_la_pantalla = currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[x_del_raton][y_del_raton]]->indicefichero;
 	if (objeto_de_la_pantalla == 0)
 		return;
 
 	// verifyCopyProtection2();
 	readItemRegister(objeto_de_la_pantalla);
-	goToObject(roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
-			   roomData->rejapantalla[x_del_raton][y_del_raton]);
+	goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
+			   currentRoomData->rejapantalla[x_del_raton][y_del_raton]);
 
 	if (regobj.habla > 0) {
 		talk(regobj.habla);

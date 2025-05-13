@@ -150,7 +150,7 @@ boolean syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStrea
 		//Restore trajectory
 		setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
 		//Make sure to save any unsaved changes in the room
-		saveRoomData(roomData, rooms);
+		saveRoomData(currentRoomData, rooms);
 
 		// Do not fix screen grids, they will be fixed differently below
 		setRoomTrajectories(altoanimado, anchoanimado, SET_WITH_ANIM);

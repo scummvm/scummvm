@@ -183,8 +183,6 @@ void loadPalette(Common::String paletteName) {
 void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 
 	int i1, i2, i3, j1, j2, j3;
-	byte oldcolor;
-	palette palpaso;
 	bool enabled = false;
 	// numeroefecto = 1;
 
@@ -923,10 +921,10 @@ void copyPalette(palette from, palette to) {
 	Common::copy(from, from + 768, to);
 }
 
-void loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int sizeanimado) {
-	buf = (byte *)malloc(sizeanimado);
-	stream->read(buf, sizeanimado);
-	Common::copy(buf, buf + sizeanimado, pasoanimado);
+void loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int animSize) {
+	buf = (byte *)malloc(animSize);
+	stream->read(buf, animSize);
+	Common::copy(buf, buf + animSize, pasoanimado);
 }
 
 } // End of namespace Tot

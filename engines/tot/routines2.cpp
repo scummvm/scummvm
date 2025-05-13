@@ -75,13 +75,13 @@ void loadAnimation(Common::String animacion) {
 	}
 
 	fichcani.close();
-	debug("Read all frames! longtray2=%d", roomData->longtray2);
+	debug("Read all frames! longtray2=%d", currentRoomData->longtray2);
 	anchoanimado = READ_LE_UINT16(animado.dib[0][1]);
 	altoanimado = READ_LE_UINT16(animado.dib[0][1] + 2);
 
 	setRoomTrajectories(altoanimado, anchoanimado, SET_WITH_ANIM, false);
 
-	readItemRegister(roomData->dir2[299]);
+	readItemRegister(currentRoomData->dir2[299]);
 	maxrejax = (regobj.xrej2 - regobj.xrej1 + 1);
 	maxrejay = (regobj.yrej2 - regobj.yrej1 + 1);
 	oldposx = regobj.xrej1 + 1;
@@ -99,8 +99,8 @@ void loadAnimation(Common::String animacion) {
 		for (int j = 0; j < maxrejay; j++) {
 			rejamascaramovto[i][j] = regobj.parcherejapantalla[i][j];
 			rejamascararaton[i][j] = regobj.parcherejaraton[i][j];
-			rejafondomovto[i][j] = roomData->rejapantalla[oldposx + i][oldposy + j];
-			rejafondoraton[i][j] = roomData->mouseGrid[oldposx + i][oldposy + j];
+			rejafondomovto[i][j] = currentRoomData->rejapantalla[oldposx + i][oldposy + j];
+			rejafondoraton[i][j] = currentRoomData->mouseGrid[oldposx + i][oldposy + j];
 		}
 	iframe2 = 0;
 	debug("Finished loading animation!");
@@ -116,95 +116,95 @@ void updateAltScreen(byte otherScreenNumber) {
 	uint i22;
 	uint i11;
 
-	byte currentScreen = roomData->codigo;
+	byte currentScreen = currentRoomData->codigo;
 
 	setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
 
 	//Save current room
-	saveRoomData(roomData, rooms);
+	saveRoomData(currentRoomData, rooms);
 
 
 	//Load other screen
 	rooms->seek(otherScreenNumber * roomRegSize, SEEK_SET);
-	roomData = readScreenDataFile(rooms);
+	currentRoomData = readScreenDataFile(rooms);
 
 	switch (otherScreenNumber) {
 	case 20: {
 		switch (hornacina[0][hornacina[0][3]]) {
 		case 0: {
-			roomData->indexadoobjetos[9]->objectName = "HORNACINA";
-			roomData->bitmapasociados[1].puntbitmap = 1190768;
+			currentRoomData->indexadoobjetos[9]->objectName = "HORNACINA";
+			currentRoomData->bitmapasociados[1].puntbitmap = 1190768;
 		} break;
 		case 561: {
-			roomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
-			roomData->bitmapasociados[1].puntbitmap = 1182652;
+			currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
+			currentRoomData->bitmapasociados[1].puntbitmap = 1182652;
 		} break;
 		case 563: {
-			roomData->indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
-			roomData->bitmapasociados[1].puntbitmap = 1186044;
+			currentRoomData->indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
+			currentRoomData->bitmapasociados[1].puntbitmap = 1186044;
 		} break;
 		case 615: {
-			roomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
-			roomData->bitmapasociados[1].puntbitmap = 1181760;
+			currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
+			currentRoomData->bitmapasociados[1].puntbitmap = 1181760;
 		} break;
 		}
-		roomData->bitmapasociados[1].tambitmap = 892;
-		roomData->bitmapasociados[1].coordx = 66;
-		roomData->bitmapasociados[1].coordy = 35;
-		roomData->bitmapasociados[1].profund = 1;
+		currentRoomData->bitmapasociados[1].tambitmap = 892;
+		currentRoomData->bitmapasociados[1].coordx = 66;
+		currentRoomData->bitmapasociados[1].coordy = 35;
+		currentRoomData->bitmapasociados[1].profund = 1;
 	} break;
 	case 24: {
 		switch (hornacina[1][hornacina[1][3]]) {
 		case 0: {
-			roomData->indexadoobjetos[8]->objectName = "HORNACINA";
-			roomData->bitmapasociados[0].puntbitmap = 1399610;
+			currentRoomData->indexadoobjetos[8]->objectName = "HORNACINA";
+			currentRoomData->bitmapasociados[0].puntbitmap = 1399610;
 		} break;
 		case 561: {
-			roomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
-			roomData->bitmapasociados[0].puntbitmap = 1381982;
+			currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
+			currentRoomData->bitmapasociados[0].puntbitmap = 1381982;
 		} break;
 		case 615: {
-			roomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
-			roomData->bitmapasociados[0].puntbitmap = 1381090;
+			currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
+			currentRoomData->bitmapasociados[0].puntbitmap = 1381090;
 		} break;
 		case 622: {
-			roomData->indexadoobjetos[8]->objectName = "PARED";
-			roomData->bitmapasociados[0].puntbitmap = 1400502;
+			currentRoomData->indexadoobjetos[8]->objectName = "PARED";
+			currentRoomData->bitmapasociados[0].puntbitmap = 1400502;
 		} break;
 		case 623: {
-			roomData->indexadoobjetos[8]->objectName = "TORNO";
-			roomData->bitmapasociados[0].puntbitmap = 1398718;
+			currentRoomData->indexadoobjetos[8]->objectName = "TORNO";
+			currentRoomData->bitmapasociados[0].puntbitmap = 1398718;
 		} break;
 		}
-		roomData->bitmapasociados[0].tambitmap = 892;
-		roomData->bitmapasociados[0].coordx = 217;
-		roomData->bitmapasociados[0].coordy = 48;
-		roomData->bitmapasociados[0].profund = 1;
+		currentRoomData->bitmapasociados[0].tambitmap = 892;
+		currentRoomData->bitmapasociados[0].coordx = 217;
+		currentRoomData->bitmapasociados[0].coordy = 48;
+		currentRoomData->bitmapasociados[0].profund = 1;
 	} break;
 	case 31: {
 		for (i11 = 23; i11 <= 25; i11++)
 			for (i22 = 4; i22 <= 9; i22++)
-				roomData->mouseGrid[i11][i22] = 4;
+				currentRoomData->mouseGrid[i11][i22] = 4;
 		for (i11 = 23; i11 <= 25; i11++)
 			for (i22 = 10; i22 <= 11; i22++)
-				roomData->mouseGrid[i11][i22] = 3;
+				currentRoomData->mouseGrid[i11][i22] = 3;
 
-		roomData->bitmapasociados[0].tambitmap = 0;
-		roomData->bitmapasociados[0].puntbitmap = 0;
-		roomData->bitmapasociados[0].coordx = 0;
-		roomData->bitmapasociados[0].coordy = 0;
-		roomData->bitmapasociados[0].profund = 0;
+		currentRoomData->bitmapasociados[0].tambitmap = 0;
+		currentRoomData->bitmapasociados[0].puntbitmap = 0;
+		currentRoomData->bitmapasociados[0].coordx = 0;
+		currentRoomData->bitmapasociados[0].coordy = 0;
+		currentRoomData->bitmapasociados[0].profund = 0;
 	} break;
 	}
 
 	setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
 	// Save other screen
-	saveRoomData(roomData, rooms);
+	saveRoomData(currentRoomData, rooms);
 
 
 	// Restore current room again
 	rooms->seek(currentScreen * roomRegSize, SEEK_SET);
-	roomData = readScreenDataFile(rooms);
+	currentRoomData = readScreenDataFile(rooms);
 
 	setRoomTrajectories(altoanimado, anchoanimado, SET_WITH_ANIM);
 }
@@ -258,7 +258,7 @@ void cargatele() {
 	if (!fichct.open("PALETAS.DAT")) {
 		error("cargatele(): ioresult (310)");
 	}
-	fichct.seek(roomData->puntpaleta + 603);
+	fichct.seek(currentRoomData->puntpaleta + 603);
 	fichct.read(movimientopal, 144);
 
 	fichct.close();
@@ -274,17 +274,17 @@ void loadScreen() {
 	Common::File fichcp;
 	palette palcp;
 
-	sizepantalla = roomData->tamimagenpantalla;
-	readBitmap(roomData->puntimagenpantalla, fondo, sizepantalla, 316);
+	sizepantalla = currentRoomData->tamimagenpantalla;
+	readBitmap(currentRoomData->puntimagenpantalla, fondo, sizepantalla, 316);
 	Common::copy(fondo, fondo + sizepantalla, handpantalla);
 	switch (parte_del_juego) {
 	case 1: {
 		if (!fichcp.open("PALETAS.DAT")) {
 				error("loadScreen(): ioresult (310)");
 		}
-		fichcp.seek(roomData->puntpaleta);
+		fichcp.seek(currentRoomData->puntpaleta);
 		fichcp.read(palcp, 603);
-		if (roomData->banderapaleta) {
+		if (currentRoomData->banderapaleta) {
 			fichcp.read(movimientopal, 144);
 			for (int i = 0; i <= 48; i++) {
 				movimientopal[i * 3 + 0] = movimientopal[i * 3 + 0] << 2;
@@ -302,7 +302,7 @@ void loadScreen() {
 	} break;
 	case 2: {
 		loadPalette("SEGUNDA");
-		roomData->banderapaleta = true;
+		currentRoomData->banderapaleta = true;
 	} break;
 	}
 }
@@ -401,8 +401,6 @@ void loadItemWithFixedDepth(uint coordx, uint coordy, uint tamdibujo, int32 dibu
 	uint16 w, h;
 	w = READ_LE_UINT16(objetos[prof]);
 	h = READ_LE_UINT16(objetos[prof] + 2);
-	debug("Reading objeto with depth=%d, posx=%d,posy=%d", prof, coordx, coordy);
-	debug("-------------------------");
 	profundidad[prof].posx = coordx;
 	profundidad[prof].posy = coordy;
 	profundidad[prof].posx2 = coordx + w + 1;
@@ -805,36 +803,36 @@ void checkMouseGrid() {
 	if(yraton >= 0 && yraton <= 131) {
 		xrejilla = (xraton + 7) / factorx;
 		yrejilla = (yraton + 7) / factory;
-		if (roomData->mouseGrid[xrejilla][yrejilla] != roomData->mouseGrid[oldxrejilla][oldyrejilla] || oldobjmochila != "") {
+		if (currentRoomData->mouseGrid[xrejilla][yrejilla] != currentRoomData->mouseGrid[oldxrejilla][oldyrejilla] || oldobjmochila != "") {
 			bar(0, 140, 319, 149, 0);
 			Common::String actionLine;
 			switch (numeroaccion) {
 			case 0:
-				actionLine = Common::String("IR A ") + roomData->indexadoobjetos[roomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = Common::String("IR A ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 1:
-				actionLine = Common::String("HABLAR CON ") + roomData->indexadoobjetos[roomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = Common::String("HABLAR CON ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 2:
-				actionLine = Common::String("COGER ") + roomData->indexadoobjetos[roomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = Common::String("COGER ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 3:
-				actionLine = Common::String("MIRAR ") + roomData->indexadoobjetos[roomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = Common::String("MIRAR ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 4:
 				if (objetomochila != "")
-					actionLine = Common::String("USAR ") + objetomochila + " CON " + roomData->indexadoobjetos[roomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+					actionLine = Common::String("USAR ") + objetomochila + " CON " + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				else
-					actionLine = Common::String("USAR ") + roomData->indexadoobjetos[roomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+					actionLine = Common::String("USAR ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 5:
-				actionLine = Common::String("ABRIR ") + roomData->indexadoobjetos[roomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = Common::String("ABRIR ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 6:
-				actionLine = Common::String("CERRAR ") + roomData->indexadoobjetos[roomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = Common::String("CERRAR ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			default:
-				actionLine = Common::String("IR A ") + roomData->indexadoobjetos[roomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = Common::String("IR A ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 			}
 			actionLineText(actionLine);
 			g_engine->_mouseManager->show();
@@ -1086,9 +1084,6 @@ void hipercadena(
 		matrizsaltoshc[iteracioneshc] = cadenatextnueva.size();
 
 		for (lineahc = 1; lineahc <= iteracioneshc; lineahc++) {
-
-			int size = matrizsaltoshc[lineahc] - matrizsaltoshc[lineahc - 1];
-
 			Common::String lineString = cadenatextnueva.substr(matrizsaltoshc[lineahc - 1], matrizsaltoshc[lineahc] - matrizsaltoshc[lineahc - 1]);
 			outtextxy((xhcnueva + 1), (yhcnueva + ((lineahc - 1) * 11) + 1), lineString, colorsombrahc, true);
 			g_engine->_screen->update();
@@ -1122,18 +1117,18 @@ void buttonBorder(uint x1, uint y1, uint x2, uint y2,
 
 void copyProtection();
 
-static void buttonPress(uint xx1, uint yy1, uint xx2, uint yy2, boolean bandera) {
-	g_engine->_mouseManager->hide();
+// static void buttonPress(uint xx1, uint yy1, uint xx2, uint yy2, boolean bandera) {
+// 	g_engine->_mouseManager->hide();
 
-	byte color = bandera ? 249 : 255;
+// 	byte color = bandera ? 249 : 255;
 
-	line(xx1, yy1, (xx2 - 1), yy1, color);
-	line(xx1, yy1, xx1, (yy2 - 1), color);
-	color = bandera ? 255 : 249;
-	line((xx1 + 1), yy2, xx2, yy2, color);
-	line(xx2, (yy1 + 1), xx2, yy2, color);
-	g_engine->_mouseManager->show();
-}
+// 	line(xx1, yy1, (xx2 - 1), yy1, color);
+// 	line(xx1, yy1, xx1, (yy2 - 1), color);
+// 	color = bandera ? 255 : 249;
+// 	line((xx1 + 1), yy2, xx2, yy2, color);
+// 	line(xx2, (yy1 + 1), xx2, yy2, color);
+// 	g_engine->_mouseManager->show();
+// }
 
 void copyProtection() {
 	// const int retardopitido = 100;
@@ -1461,8 +1456,8 @@ void drawCreditsScreen(byte *&fondopp, uint &sizefondo2, byte *&fondo2) {
 	fichpp.read(fondopp, 64000);
 	fichpp.close();
 
-	uint16 sizehor2 = READ_LE_UINT16(fondopp);
-	uint16 sizever2 = READ_LE_UINT16(fondopp + 2);
+	// uint16 sizehor2 = READ_LE_UINT16(fondopp);
+	// uint16 sizever2 = READ_LE_UINT16(fondopp + 2);
 
 	drawFullScreen(fondopp);
 
@@ -1491,7 +1486,7 @@ void drawCreditsScreen(byte *&fondopp, uint &sizefondo2, byte *&fondo2) {
 void putCreditsImg(uint x, uint y, byte *imagen1, byte *imagen2, boolean direct) {
 
 	uint16 wImagen1, hImagen1;
-	uint auxhor, kaka;
+	uint auxhor;
 	uint incremento, incremento2;
 	byte *paso;
 
@@ -1521,7 +1516,7 @@ void putCreditsImg(uint x, uint y, byte *imagen1, byte *imagen2, boolean direct)
 		kaka = kk + y;
 		for (int jj = 0; jj <= wImagen1; jj++) {
 			incremento = incremento2 + jj;
-			if(direct && imagen1[incremento] > 0 || (imagen1[incremento] > 16 && kaka >= 66 && kaka <= 192)) {
+			if((direct && imagen1[incremento] > 0) || (imagen1[incremento] > 16 && kaka >= 66 && kaka <= 192)) {
 				paso[incremento] = imagen1[incremento];
 			}
 			else if (imagen1[incremento] > 16) {
@@ -1666,7 +1661,7 @@ void removeTitle(byte *&fondo2) {
 		byte *src2 = fondo2 + 4 + ((j2 + 1) * 320) + i2;
 		byte *dest2 = ((byte *)g_engine->_screen->getPixels()) + ((j2 + 1) * 320) + i2;
 
-		Common::copy(src2, src2 + 2, dest);
+		Common::copy(src2, src2 + 2, dest2);
 
 		i2 = Random(320);
 		j2 = Random(60);
@@ -1771,7 +1766,6 @@ void credits() {
 	if (keyPressed() || salirpitando)
 		goto Lsalida;
 	copyFromScreen(fondopp);
-	(fondopp);
 	if (keyPressed() || salirpitando)
 		goto Lsalida;
 	scrollCredit(121308, 8004, pal2, fondopp, salirpitando, 80, false, true);
@@ -2191,7 +2185,6 @@ void exitToDOS() {
 				}
 			} else if (e.type == Common::EVENT_LBUTTONUP) {
 				uint x = e.mouse.x;
-				uint y = e.mouse.y;
 				if (x < 145) {
 					free(puntfondcontroles);
 					// exit game
@@ -2215,8 +2208,8 @@ void exitToDOS() {
 
 void soundControls() {
 	uint oldxraton, oldyraton, tamfondcontroles, tamslade, tamfondoslade,
-		xfade, oldxfade, ypaso, volumenfx, volumenmelodia;
-	byte ytext, oldiraton, oldcolorcontroles;
+		volumenfx, volumenmelodia;
+	byte ytext, oldiraton;
 	boolean salirmenucontroles;
 
 	salirmenucontroles = false;
@@ -2352,8 +2345,8 @@ void sacrifice() {
 	palette palaux;
 
 	stopVoc();
-	boolean pulsada_salida = roomData->banderapaleta;
-	roomData->banderapaleta = false;
+	boolean pulsada_salida = currentRoomData->banderapaleta;
+	currentRoomData->banderapaleta = false;
 
 	bar(0, 139, 319, 149, 0);
 	bar(10, 10, 300, 120, 0);
@@ -2646,7 +2639,7 @@ void sacrifice() {
 	}
 	delay(2000);
 	totalFadeOut(0);
-	roomData->banderapaleta = pulsada_salida;
+	currentRoomData->banderapaleta = pulsada_salida;
 }
 
 void ending() {
@@ -2714,14 +2707,13 @@ void loadDevil() {
 
 void assembleCompleteBackground(byte *image, uint coordx, uint coordy) {
 	uint16 w, h;
-	uint16 wFondo, hFondo;
+	uint16 wFondo;
 	w = READ_LE_UINT16(image);
 	h = READ_LE_UINT16(image + 2);
 
 	wFondo = READ_LE_UINT16(fondo);
-	hFondo = READ_LE_UINT16(fondo + 2);
+
 	wFondo++;
-	hFondo++;
 	w++;
 	h++;
 	for (int i = 0; i < w; i++) {
@@ -2748,17 +2740,15 @@ void assembleScreen(boolean scroll) {
 		if (!scroll && secuencia.profundidad == indice) {
 			assembleCompleteBackground(secuencia.bitmap[direccionmovimiento][iframe], characterPosX, characterPosY);
 		}
-		if (!scroll && roomData->banderamovimiento && animado.profundidad == indice) {
+		if (!scroll && currentRoomData->banderamovimiento && animado.profundidad == indice) {
 			assembleCompleteBackground(pasoanimado, animado.posx, animado.posy);
 		}
 	}
 }
 
 void disableSecondAnimation() {
-	uint ii11, ii22;
-
 	setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
-	roomData->banderamovimiento = false;
+	currentRoomData->banderamovimiento = false;
 	freeAnimation();
 	handPantallaToFondo();
 	assembleScreen();
@@ -2866,29 +2856,29 @@ void drawGrid() {
 void setRoomTrajectories(int animationHeight, int animationWidth, TRAJECTORIES_OP op, boolean fixGrids) {
 	// add to restore the room, subtract to adjust before loading the screen
 
-	if (roomData->banderamovimiento && roomData->nombremovto != "QQQQQQQQ") {
-		for (int i = 0; i < roomData->longtray2; i++) {
+	if (currentRoomData->banderamovimiento && currentRoomData->nombremovto != "QQQQQQQQ") {
+		for (int i = 0; i < currentRoomData->longtray2; i++) {
 			if(op == RESTORE) {
-				roomData->tray2[i].x = roomData->tray2[i].x + (animationWidth >> 1);
-				roomData->tray2[i].y = roomData->tray2[i].y + animationHeight;
+				currentRoomData->tray2[i].x = currentRoomData->tray2[i].x + (animationWidth >> 1);
+				currentRoomData->tray2[i].y = currentRoomData->tray2[i].y + animationHeight;
 			}
 			else {
-				roomData->tray2[i].x = roomData->tray2[i].x - (animationWidth >> 1);
-				roomData->tray2[i].y = roomData->tray2[i].y - animationHeight;
+				currentRoomData->tray2[i].x = currentRoomData->tray2[i].x - (animationWidth >> 1);
+				currentRoomData->tray2[i].y = currentRoomData->tray2[i].y - animationHeight;
 			}
 		}
 		if(fixGrids) {
 			for (int i = 0; i < maxrejax; i++) {
 				for (int j = 0; j < maxrejay; j++) {
 					if(op == RESTORE){
-						roomData->rejapantalla[oldposx + i][oldposy + j] = rejafondomovto[i][j];
-						roomData->mouseGrid[oldposx + i][oldposy + j] = rejafondoraton[i][j];
+						currentRoomData->rejapantalla[oldposx + i][oldposy + j] = rejafondomovto[i][j];
+						currentRoomData->mouseGrid[oldposx + i][oldposy + j] = rejafondoraton[i][j];
 					}
 					else {
 						if (rejamascaramovto[i][j] > 0)
-							roomData->rejapantalla[oldposx + i][oldposy + j] = rejamascaramovto[i][j];
+							currentRoomData->rejapantalla[oldposx + i][oldposy + j] = rejamascaramovto[i][j];
 						if (rejamascararaton[i][j] > 0)
-							roomData->mouseGrid[oldposx + i][oldposy + j] = rejamascararaton[i][j];
+							currentRoomData->mouseGrid[oldposx + i][oldposy + j] = rejamascararaton[i][j];
 					}
 				}
 			}

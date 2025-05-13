@@ -507,11 +507,11 @@ extern Common::String nombreficherofoto;
  */
 extern Common::String nombrepersonaje;
 
-// Text decryption key
-extern char *encriptado;
+extern Common::String decryptionKey;
+
 extern uint hornacina[2][4];
 
-extern RoomFileRegister *roomData;
+extern RoomFileRegister *currentRoomData;
 
 extern InvItemRegister regobj;
 /**
@@ -562,8 +562,10 @@ extern byte rejamascaramovto[10][10];
  */
 extern byte rejamascararaton[10][10];
 
-extern boolean completadalista1, completadalista2,
-	lista1, lista2;
+extern boolean completadalista1,
+	completadalista2,
+	lista1, // whether we've been given list 1
+	lista2; // whether we've been given list 2
 
 
 extern boolean  primera[maxpersonajes],
@@ -589,7 +591,6 @@ extern uint sizeframe,
 	sizeanimado,
 	segpasoanimado,
 	ofspasoanimado,
-	_handpantalla,
 	segfondo,
 	offfondo;
 /**
@@ -642,7 +643,7 @@ extern byte *characterDirtyRect;
  */
 extern byte *handpantalla;
 
-extern uint roomNumber;
+extern uint currentRoomNumber;
 
 extern boolean isLoadingFromLauncher;
 

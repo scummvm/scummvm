@@ -52,12 +52,9 @@ void runaroundRed() {
 			 {282,  52}, {282,  52}, {282,  52}
 	};
 
-	byte iframe2seg;
-	uint anchoaniseg, altoaniseg,
-		itrayseg, longtrayseg;
-	boolean salir_del_bucle;
+	uint itrayseg, longtrayseg;
 
-	salir_del_bucle = false;
+	boolean exitLoop = false;
 	loadDevil();
 	itrayseg = 0;
 	longtrayseg = 82;
@@ -67,7 +64,7 @@ void runaroundRed() {
 		g_engine->_chrono->updateChrono();
 		if (tocapintar) {
 			if (itrayseg == longtrayseg)
-				salir_del_bucle = true;
+				exitLoop = true;
 			itrayseg += 1;
 			if (iframe2 >= secondaryAnimationFrameCount - 1)
 				iframe2 = 0;
@@ -103,7 +100,7 @@ void runaroundRed() {
 				saltospal += 1;
 			g_engine->_screen->update();
 		}
-	} while (!salir_del_bucle && !g_engine->shouldQuit());
+	} while (!exitLoop && !g_engine->shouldQuit());
 	freeAnimation();
 	handPantallaToFondo();
 	assembleScreen();
@@ -114,26 +111,26 @@ void updateMovementCells() {
 	uint j1arm, j2arm;
 	byte i1arm, i2arm;
 
-	j1arm = (roomData->tray2[indicetray2 - 1].x / factorx) + 1;
-	j2arm = (roomData->tray2[indicetray2 - 1].y / factory) + 1;
+	j1arm = (currentRoomData->tray2[indicetray2 - 1].x / factorx) + 1;
+	j2arm = (currentRoomData->tray2[indicetray2 - 1].y / factory) + 1;
 	if ((oldposx != j1arm) || (oldposy != j2arm)) {
 
 		for (i1arm = 0; i1arm < maxrejax; i1arm++)
 			for (i2arm = 0; i2arm < maxrejay; i2arm++) {
-				roomData->rejapantalla[oldposx + i1arm][oldposy + i2arm] = rejafondomovto[i1arm][i2arm];
-				roomData->mouseGrid[oldposx + i1arm][oldposy + i2arm] = rejafondoraton[i1arm][i2arm];
+				currentRoomData->rejapantalla[oldposx + i1arm][oldposy + i2arm] = rejafondomovto[i1arm][i2arm];
+				currentRoomData->mouseGrid[oldposx + i1arm][oldposy + i2arm] = rejafondoraton[i1arm][i2arm];
 			}
 
 
 		for (i1arm = 0; i1arm < maxrejax; i1arm++)
 			for (i2arm = 0; i2arm < maxrejay; i2arm++) {
-				rejafondomovto[i1arm][i2arm] = roomData->rejapantalla[j1arm + i1arm][j2arm + i2arm];
+				rejafondomovto[i1arm][i2arm] = currentRoomData->rejapantalla[j1arm + i1arm][j2arm + i2arm];
 				if (rejamascaramovto[i1arm][i2arm] > 0)
-					roomData->rejapantalla[j1arm + i1arm][j2arm + i2arm] = rejamascaramovto[i1arm][i2arm];
+					currentRoomData->rejapantalla[j1arm + i1arm][j2arm + i2arm] = rejamascaramovto[i1arm][i2arm];
 
-				rejafondoraton[i1arm][i2arm] = roomData->mouseGrid[j1arm + i1arm][j2arm + i2arm];
+				rejafondoraton[i1arm][i2arm] = currentRoomData->mouseGrid[j1arm + i1arm][j2arm + i2arm];
 				if (rejamascararaton[i1arm][i2arm] > 0)
-					roomData->mouseGrid[j1arm + i1arm][j2arm + i2arm] = rejamascararaton[i1arm][i2arm];
+					currentRoomData->mouseGrid[j1arm + i1arm][j2arm + i2arm] = rejamascararaton[i1arm][i2arm];
 			}
 
 		oldposx = j1arm;
@@ -243,9 +240,6 @@ static void overlayObject() {
 			(profundidad[indice].posy < posfondoy2) &&
 			(profundidad[indice].posy2 > posfondoy)
 		) {
-			uint16 w = READ_LE_UINT16(objetos[indice]);
-			uint16 h = READ_LE_UINT16(objetos[indice] + 2);
-
 			assembleImage(objetos[indice], profundidad[indice].posx, profundidad[indice].posy);
 		}
 	}
@@ -288,8 +282,8 @@ void drawMainCharacter() {
 
 		// drawRect(225, posfondox, posfondoy, posfondox2, posfondoy2);
 
-		uint16 wImg = READ_LE_UINT16(pasoframe);
-		uint16 hImg = READ_LE_UINT16(pasoframe + 2);
+		// uint16 wImg = READ_LE_UINT16(pasoframe);
+		// uint16 hImg = READ_LE_UINT16(pasoframe + 2);
 
 		drawPos(xframe2, yframe2, 218);
 		// draw patch of characters sprite
@@ -305,8 +299,9 @@ void sprites(boolean pintapersonaje) {
 	posfondox = characterPosX - 3;
 	posfondoy = characterPosY - 3;
 	if (animacion2) {
-		if (roomData->longtray2 > 1)
+		if (currentRoomData->longtray2 > 1) {
 			updateMovementCells();
+		}
 		if (tocapintar2) {
 			if (peteractivo && !g_engine->_sound->isVocPlaying()) {
 				iframe2 = 0;
@@ -325,10 +320,12 @@ void sprites(boolean pintapersonaje) {
 			 (animado.posy < (characterPosY + pasoframeH + 4))) &&
 			((animado.posy + pasoanimadoH + 1) > posfondoy)) { // Character is in the area of the animation
 
-			if (animado.posx < characterPosX)
+			if (animado.posx < characterPosX) {
 				posfondox = animado.posx - 3;
-			if (animado.posy < characterPosY)
+			}
+			if (animado.posy < characterPosY) {
 				posfondoy = animado.posy - 3;
+			}
 
 			uint16 patchW = pasoanimadoW + pasoframeW + 6;
 
@@ -364,8 +361,8 @@ void sprites(boolean pintapersonaje) {
 			posfondox = animado.posx - 3;
 			posfondoy = animado.posy - 3;
 
-			uint16 pasoanimadoW = READ_LE_UINT16(pasoanimado) + 6;
-			uint16 pasoanimadoH = READ_LE_UINT16(pasoanimado + 2) + 6;
+			pasoanimadoW = READ_LE_UINT16(pasoanimado) + 6;
+			pasoanimadoH = READ_LE_UINT16(pasoanimado + 2) + 6;
 
 			characterDirtyRect = (byte *)malloc((pasoanimadoW + 1) * (pasoanimadoH + 1) + 4);
 			WRITE_LE_UINT16(characterDirtyRect, pasoanimadoW);
@@ -447,7 +444,7 @@ void animatedSequence(uint numSequence) {
 	uint16 tamsecani;
 	uint animx, animy;
 	int guadaxframe;
-	byte numframessec, pasocode;
+	byte numframessec;
 	byte *animptr;
 
 	switch (numSequence) {
@@ -455,14 +452,13 @@ void animatedSequence(uint numSequence) {
 		guadaxframe = characterPosX;
 		characterPosX = 3;
 		if (!animationFile.open("POZO01.DAT")) {
-			boolean exists = animationFile.exists("POZOATR.DAT");
 			error("277");
 		}
 		animx = 127;
 		animy = 70;
 		tamsecani = animationFile.readUint16LE();
 		numframessec = animationFile.readByte();
-		pasocode = animationFile.readByte();
+		animationFile.readByte();
 		animptr = (byte *)malloc(tamsecani);
 		for (indicerep = 1; indicerep <= 3; indicerep++) {
 			playVoc("POZO", 180395, 6034);
@@ -471,13 +467,13 @@ void animatedSequence(uint numSequence) {
 				emptyLoop();
 				tocapintar = false;
 				if (tocapintar2) {
-					if (indicetray2 >= roomData->longtray2)
+					if (indicetray2 >= currentRoomData->longtray2)
 						indicetray2 = 1;
 					else
 						indicetray2 += 1;
-					animado.posx = roomData->tray2[indicetray2 - 1].x;
-					animado.posy = roomData->tray2[indicetray2 - 1].y;
-					animado.dir = roomData->dir2[indicetray2 - 1];
+					animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
+					animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
+					animado.dir = currentRoomData->dir2[indicetray2 - 1];
 					if (iframe2 >= secondaryAnimationFrameCount - 1)
 						iframe2 = 0;
 					else
@@ -496,7 +492,6 @@ void animatedSequence(uint numSequence) {
 	} break;
 	case 2: {
 		if (!animationFile.open("POZOATR.DAT")) {
-			boolean exists = animationFile.exists("POZOATR.DAT");
 			error("277");
 		}
 		animx = 127;
@@ -506,7 +501,7 @@ void animatedSequence(uint numSequence) {
 
 		tamsecani = animationFile.readUint16LE();
 		numframessec = animationFile.readByte();
-		pasocode = animationFile.readByte();
+		animationFile.readByte();
 		animptr = (byte *)malloc(tamsecani);
 		for (indicerep = 1; indicerep <= 3; indicerep++) {
 			playVoc("POZO", 180395, 6034);
@@ -515,13 +510,13 @@ void animatedSequence(uint numSequence) {
 				emptyLoop();
 				tocapintar = false;
 				if (tocapintar2) {
-					if (indicetray2 >= roomData->longtray2)
+					if (indicetray2 >= currentRoomData->longtray2)
 						indicetray2 = 1;
 					else
 						indicetray2 += 1;
-					animado.posx = roomData->tray2[indicetray2 - 1].x;
-					animado.posy = roomData->tray2[indicetray2 - 1].y;
-					animado.dir = roomData->dir2[indicetray2 - 1];
+					animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
+					animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
+					animado.dir = currentRoomData->dir2[indicetray2 - 1];
 					if (iframe2 >= secondaryAnimationFrameCount - 1)
 						iframe2 = 0;
 					else
@@ -551,20 +546,20 @@ void animatedSequence(uint numSequence) {
 
 		tamsecani = animationFile.readUint16LE();
 		numframessec = animationFile.readByte();
-		pasocode = animationFile.readByte();
+		animationFile.readByte();
 		animptr = (byte *)malloc(tamsecani);
 		indiceani = 0;
 		do {
 			emptyLoop();
 			tocapintar = false;
 			if (tocapintar2) {
-				if (indicetray2 >= roomData->longtray2)
+				if (indicetray2 >= currentRoomData->longtray2)
 					indicetray2 = 1;
 				else
 					indicetray2 += 1;
-				animado.posx = roomData->tray2[indicetray2 - 1].x;
-				animado.posy = roomData->tray2[indicetray2 - 1].y;
-				animado.dir = roomData->dir2[indicetray2 - 1];
+				animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
+				animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
+				animado.dir = currentRoomData->dir2[indicetray2 - 1];
 				if (iframe2 >= secondaryAnimationFrameCount - 1)
 					iframe2 = 0;
 				else
@@ -594,7 +589,7 @@ void animatedSequence(uint numSequence) {
 
 		tamsecani = animationFile.readUint16LE();
 		numframessec = animationFile.readByte();
-		pasocode = animationFile.readByte();
+		animationFile.readByte();
 		animptr = (byte *)malloc(tamsecani);
 
 		for (indiceani = 1; indiceani <= 31; indiceani++) {
@@ -654,7 +649,7 @@ void animatedSequence(uint numSequence) {
 		animy = 44;
 		tamsecani = animationFile.readUint16LE();
 		numframessec = animationFile.readByte();
-		pasocode = animationFile.readByte();
+		animationFile.readByte();
 		animptr = (byte *)malloc(tamsecani);
 		for (indiceani = 1; indiceani <= 8; indiceani++) {
 			animationFile.read(animptr, tamsecani);
@@ -694,13 +689,13 @@ void animatedSequence(uint numSequence) {
 		sprites(true);
 	} break;
 	case 6: {
-		roomData->banderamovimiento = false;
+		currentRoomData->banderamovimiento = false;
 		if (!animationFile.open("AZCCOG.DAT")) {
 			error("277");
 		}
 		tamsecani = animationFile.readUint16LE();
 		numframessec = animationFile.readByte();
-		pasocode = animationFile.readByte();
+		animationFile.readByte();
 		objetos[6] = (byte *)malloc(tamsecani);
 		// objetos[7] = ptr(segfondo, (offfondo + 44900));
 		profundidad[6].posx = animado.posx + 5;
@@ -733,7 +728,7 @@ void animatedSequence(uint numSequence) {
 		animationFile.close();
 		stopVoc();
 		objetos[6] = NULL;
-		roomData->banderamovimiento = true;
+		currentRoomData->banderamovimiento = true;
 	} break;
 	}
 }
@@ -817,28 +812,26 @@ RoomFileRegister* readScreenDataFile(Common::SeekableReadStream *screenDataFile)
 
 void loadScreenData(uint screenNumber) {
 	debug("Opening screen %d", screenNumber);
-	roomNumber = screenNumber;
+	currentRoomNumber = screenNumber;
 
 	rooms->seek(screenNumber * roomRegSize, SEEK_SET);
 	clearScreenData();
-	roomData = readScreenDataFile(rooms);
+	currentRoomData = readScreenDataFile(rooms);
 	loadScreen();
 	for (int i = 0; i < 15; i++) {
-		RoomBitmapRegister &bitmap = roomData->bitmapasociados[i];
+		RoomBitmapRegister &bitmap = currentRoomData->bitmapasociados[i];
 		if (bitmap.tambitmap > 0) {
-			debug("-----------------------------");
-			debug("loading bitmap %d, which has a depth = %d, pointer =%d", i, bitmap.profund, bitmap.puntbitmap);
 			loadItem(bitmap.coordx, bitmap.coordy, bitmap.tambitmap, bitmap.puntbitmap, bitmap.profund);
 		}
 	}
-	if (roomData->banderamovimiento && roomData->codigo != 24) {
-		loadAnimation(roomData->nombremovto);
+	if (currentRoomData->banderamovimiento && currentRoomData->codigo != 24) {
+		loadAnimation(currentRoomData->nombremovto);
 		iframe2 = 0;
 		indicetray2 = 1;
-		animado.dir = roomData->dir2[indicetray2 - 1];
-		animado.posx = roomData->tray2[indicetray2 - 1].x;
-		animado.posy = roomData->tray2[indicetray2 - 1].y;
-		if (roomData->nombremovto == "FUENTE01")
+		animado.dir = currentRoomData->dir2[indicetray2 - 1];
+		animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
+		animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
+		if (currentRoomData->nombremovto == "FUENTE01")
 			animado.profundidad = 0;
 		else {
 			updateSecondaryAnimationDepth();
@@ -846,12 +839,12 @@ void loadScreenData(uint screenNumber) {
 		for (int i = 0; i < maxrejax; i++)
 			for (int j = 0; j < maxrejay; j++) {
 				if (rejamascaramovto[i][j] > 0)
-					roomData->rejapantalla[oldposx + i][oldposy + j] = rejamascaramovto[i][j];
+					currentRoomData->rejapantalla[oldposx + i][oldposy + j] = rejamascaramovto[i][j];
 				if (rejamascararaton[i][j] > 0)
-					roomData->mouseGrid[oldposx + i][oldposy + j] = rejamascararaton[i][j];
+					currentRoomData->mouseGrid[oldposx + i][oldposy + j] = rejamascararaton[i][j];
 			}
 	} else
-		roomData->banderamovimiento = false;
+		currentRoomData->banderamovimiento = false;
 
 	updateMainCharacterDepth();
 	assembleScreen();
@@ -922,7 +915,7 @@ void calculateTrajectory(uint finalx, uint finaly) {
 }
 
 void lookInventoryObject(byte numeroobjeto) {
-	byte tipofundido, yaux;
+	byte yaux;
 
 	Common::String cadenadescripcion;
 	boolean kkaux;
@@ -960,7 +953,7 @@ void lookInventoryObject(byte numeroobjeto) {
 			reghpt = readVerbRegister(regobj.beforeUseTextRef);
 			cadenadescripcion = reghpt.cadenatext;
 			for (yaux = 0; yaux < reghpt.cadenatext.size(); yaux++)
-				cadenadescripcion.setChar(encriptado[yaux] ^ reghpt.cadenatext[yaux], yaux);
+				cadenadescripcion.setChar(decryptionKey[yaux] ^ reghpt.cadenatext[yaux], yaux);
 			hipercadena(cadenadescripcion, 60, 15, 33, 255, 0);
 			verb.close();
 		} else {
@@ -974,7 +967,7 @@ void lookInventoryObject(byte numeroobjeto) {
 			reghpt = readVerbRegister(regobj.afterUseTextRef);
 			cadenadescripcion = reghpt.cadenatext;
 			for (yaux = 0; yaux < reghpt.cadenatext.size(); yaux++)
-				cadenadescripcion.setChar(encriptado[yaux] ^ reghpt.cadenatext[yaux], yaux);
+				cadenadescripcion.setChar(decryptionKey[yaux] ^ reghpt.cadenatext[yaux], yaux);
 			hipercadena(cadenadescripcion, 60, 15, 33, 255, 0);
 			verb.close();
 		} else {
@@ -996,7 +989,6 @@ void lookInventoryObject(byte numeroobjeto) {
 
 void useInventoryObjectWithInventoryObject(uint numobj1, uint numobj2) {
 	byte indicemochila, indobj1, indobj2;
-	uint tamobjaux;
 
 	debug("Reading item register %d", numobj1);
 	readItemRegister(invItemData, numobj1, regobj);
@@ -1076,7 +1068,7 @@ void calculateRoute(byte zona1, byte zona2, boolean extraCorrection, boolean zon
 	Common::Point point;
 	do {
 		pasos += 1;
-		point = roomData->trayectories[zona1 - 1][zona2 - 1][pasos - 1];
+		point = currentRoomData->trayectories[zona1 - 1][zona2 - 1][pasos - 1];
 
 		if (point.x < (rectificacionx + 3))
 			mainRoute[pasos].x = 3;
@@ -1103,7 +1095,7 @@ void calculateRoute(byte zona1, byte zona2, boolean extraCorrection, boolean zon
 		pasos -= 1;
 		}
 		if(extraCorrection) {
-			switch (roomData->codigo) {
+			switch (currentRoomData->codigo) {
 				case 5:
 					if (zona2 == 27)
 						pasos += 1;
@@ -1133,13 +1125,13 @@ void goToObject(byte zona1, byte zona2) {
 	contadorpc2 = contadorpc;
 
 	for(int indicepaso = 0; indicepaso < 5; indicepaso++) {
-		if (roomData->doors[indicepaso].codigopuerta == zona2) {
+		if (currentRoomData->doors[indicepaso].codigopuerta == zona2) {
 			zonavedada = true;
 			break;
 		}
 	}
 
-	if (roomData->codigo == 21 && roomData->banderamovimiento) {
+	if (currentRoomData->codigo == 21 && currentRoomData->banderamovimiento) {
 		if ((zona2 >= 1 && zona2 <= 5) ||
 			(zona2 >= 9 && zona2 <= 13) ||
 			(zona2 >= 18 && zona2 <= 21) ||
@@ -1169,7 +1161,7 @@ void goToObject(byte zona1, byte zona2) {
 			advanceAnimations(zonavedada, false);
 			g_engine->_screen->update();
 			g_system->delayMillis(10);
-		} while (!xframe2 == 0);
+		} while (xframe2 != 0);
 
 		iframe = 0;
 		sprites(true);
@@ -1228,12 +1220,12 @@ void updateMainCharacterDepth() {
 
 void advanceAnimations(boolean zonavedada, boolean animateMouse) {
 	if (tocapintar) {
-		if (roomData->banderamovimiento && tocapintar2) {
+		if (currentRoomData->banderamovimiento && tocapintar2) {
 			if (peteractivo && (Random(100) == 1) && !g_engine->_sound->isVocPlaying() && caramelos[0] == false) {
 				debug("Playing tos");
 				playVoc("TOS", 258006, 14044);
 			}
-			if (indicetray2 >= roomData->longtray2)
+			if (indicetray2 >= currentRoomData->longtray2)
 				indicetray2 = 1;
 			else
 				indicetray2 += 1;
@@ -1241,10 +1233,10 @@ void advanceAnimations(boolean zonavedada, boolean animateMouse) {
 				iframe2 = 0;
 			else
 				iframe2 ++;
-			animado.posx = roomData->tray2[indicetray2 - 1].x;
-			animado.posy = roomData->tray2[indicetray2 - 1].y;
-			animado.dir = roomData->dir2[indicetray2 - 1];
-			switch (roomData->codigo) {
+			animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
+			animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
+			animado.dir = currentRoomData->dir2[indicetray2 - 1];
+			switch (currentRoomData->codigo) {
 			case 23:
 				animado.profundidad = 0;
 				break;
@@ -1333,13 +1325,13 @@ void advanceAnimations(boolean zonavedada, boolean animateMouse) {
 		}
 
 		tocapintar = false;
-		if (roomData->banderapaleta && saltospal >= 4) {
+		if (currentRoomData->banderapaleta && saltospal >= 4) {
 			saltospal = 0;
 			if (movidapaleta > 6)
 				movidapaleta = 0;
 			else
 				movidapaleta += 1;
-			if (roomData->codigo == 4 && movidapaleta == 4)
+			if (currentRoomData->codigo == 4 && movidapaleta == 4)
 				pitavocmem();
 			updatePalette(movidapaleta);
 		} else {
@@ -1360,7 +1352,7 @@ void animateGive(uint cogedir, uint cogealt) {
 		// Must add 1 to i because the original game uses 1-based indices
 		iframe = 15 + 6 + 5 + cogealt * 10 - (i + 1);
 
-		if (roomData->banderapaleta && saltospal >= 4) {
+		if (currentRoomData->banderapaleta && saltospal >= 4) {
 			saltospal = 0;
 			if (movidapaleta > 6)
 				movidapaleta = 0;
@@ -1382,7 +1374,7 @@ void animatePickup1(uint cogedir, uint cogealt) {
 		tocapintar = false;
 		iframe = 15 + cogealt * 10 + (i + 1);
 
-		if (roomData->banderapaleta && saltospal >= 4) {
+		if (currentRoomData->banderapaleta && saltospal >= 4) {
 			saltospal = 0;
 			if (movidapaleta > 6)
 				movidapaleta = 0;
@@ -1399,7 +1391,6 @@ void animatePickup1(uint cogedir, uint cogealt) {
 // Lean back after pick
 void animatePickup2(uint cogedir, uint cogealt) {
 	direccionmovimiento = cogedir;
-	ChronoManager *thisChrono = new ChronoManager();
 
 	for (uint i = 0; i < 5; i++) {
 		emptyLoop();
@@ -1407,7 +1398,7 @@ void animatePickup2(uint cogedir, uint cogealt) {
 
 		iframe = 15 + 5 + cogealt * 10 + (i + 1);
 
-		if (roomData->banderapaleta && saltospal >= 4) {
+		if (currentRoomData->banderapaleta && saltospal >= 4) {
 			saltospal = 0;
 			if (movidapaleta > 6)
 				movidapaleta = 0;
@@ -1433,7 +1424,7 @@ void animateOpen2(uint cogedir, uint cogealt) {
 		tocapintar = false;
 		iframe = 15 + 6 + cogealt * 10 - (i + 1);
 
-		if (roomData->banderapaleta && saltospal >= 4) {
+		if (currentRoomData->banderapaleta && saltospal >= 4) {
 			saltospal = 0;
 			if (movidapaleta > 6)
 				movidapaleta = 0;
@@ -1470,7 +1461,7 @@ void animateBat() {
 		itrayseg, longtrayseg, xseg, yseg, profseg, dirseg;
 
 	boolean salir_del_bucle = false;
-	if (roomData->banderamovimiento) {
+	if (currentRoomData->banderamovimiento) {
 		iframe2seg = iframe2;
 		xseg = animado.posx;
 		yseg = animado.posy;
@@ -1522,11 +1513,11 @@ void animateBat() {
 
 	stopVoc();
 	freeAnimation();
-	if (roomData->banderamovimiento) {
+	if (currentRoomData->banderamovimiento) {
 		anchoanimado = anchoaniseg;
 		altoanimado = altoaniseg;
 		setRoomTrajectories(altoanimado, anchoanimado, RESTORE, false);
-		loadAnimation(roomData->nombremovto);
+		loadAnimation(currentRoomData->nombremovto);
 		iframe2 = iframe2seg;
 		animado.posx = xseg;
 		animado.posy = yseg;
@@ -1549,7 +1540,7 @@ void alcoveAnimation(byte direccionhn, int32 dibujo) {
 	uint posdibhn, indicehn;
 	int incrementohn;
 
-	if (roomData->codigo == 24) {
+	if (currentRoomData->codigo == 24) {
 		objetos[1] = (byte *)malloc(3660);
 		readBitmap(1382874, objetos[1], 3652, 319);
 		uint16 object2Width = READ_LE_UINT16(objetos[1]);
@@ -1575,7 +1566,7 @@ void alcoveAnimation(byte direccionhn, int32 dibujo) {
 		Common::copy(objetos[0] + 4, objetos[0] + 4 + (888 - 4), fondo + 44900 + 892);
 	} break;
 	}
-	uint16 object1Width = READ_LE_UINT16(objetos[0]);
+	// uint16 object1Width = READ_LE_UINT16(objetos[0]);
 	uint16 object1Height = READ_LE_UINT16(objetos[0] + 2);
 
 
@@ -1596,7 +1587,7 @@ void alcoveAnimation(byte direccionhn, int32 dibujo) {
 	assembleScreen();
 	drawScreen(fondo);
 
-	if (roomData->codigo == 24) {
+	if (currentRoomData->codigo == 24) {
 		free(objetos[1]);
 		objetos[1] = NULL;
 	}
@@ -1608,24 +1599,24 @@ void pickupScreenObject() {
 
 	uint mouseX = (pulsax + 7) / factorx;
 	uint mouseY = (pulsay + 7) / factory;
-	screenObject = roomData->indexadoobjetos[roomData->mouseGrid[mouseX][mouseY]]->indicefichero;
+	screenObject = currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[mouseX][mouseY]]->indicefichero;
 	if (screenObject == 0)
 		return;
 	readItemRegister(screenObject);
 	goToObject(
-		roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
-		roomData->rejapantalla[mouseX][mouseY]);
+		currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
+		currentRoomData->rejapantalla[mouseX][mouseY]);
 	verifyCopyProtection();
 	if (regobj.coger) {
 		g_engine->_mouseManager->hide();
 		switch (regobj.code) {
 		case 521: { // Corridor lamp
-			roomData->mouseGrid[10][11] = 19;
-			roomData->mouseGrid[9][12] = 18;
-			roomData->mouseGrid[10][12] = 18;
+			currentRoomData->mouseGrid[10][11] = 19;
+			currentRoomData->mouseGrid[9][12] = 18;
+			currentRoomData->mouseGrid[10][12] = 18;
 		} break;
 		case 567: { // Pickup rubble
-			if (roomData->banderamovimiento) {
+			if (currentRoomData->banderamovimiento) {
 				g_engine->_mouseManager->show();
 				drawText(3226);
 				return;
@@ -1668,7 +1659,7 @@ void pickupScreenObject() {
 			} break;
 			case 223: { // table cloths
 				animatePickup1(0, 1);
-				roomData->indexadoobjetos[roomData->mouseGrid[mouseX][mouseY]]->indicefichero = regobj.reemplazarpor;
+				currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[mouseX][mouseY]]->indicefichero = regobj.reemplazarpor;
 				updateVideo();
 				animatePickup2(0, 1);
 			} break;
@@ -1692,7 +1683,7 @@ void pickupScreenObject() {
 			case 521: { // Puts plaster and key on the floor
 				animatePickup1(0, 1);
 				{
-					RoomBitmapRegister &with = roomData->bitmapasociados[1];
+					RoomBitmapRegister &with = currentRoomData->bitmapasociados[1];
 
 					with.puntbitmap = 775611;
 					with.tambitmap = 36;
@@ -1702,7 +1693,7 @@ void pickupScreenObject() {
 					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 				}
 				{
-					RoomBitmapRegister &with = roomData->bitmapasociados[2];
+					RoomBitmapRegister &with = currentRoomData->bitmapasociados[2];
 
 					with.puntbitmap = 730743;
 					with.tambitmap = 64;
@@ -1719,21 +1710,21 @@ void pickupScreenObject() {
 				animatePickup2(0, 1);
 			} break;
 			case 562: { // alcove
-				switch (roomData->codigo) {
+				switch (currentRoomData->codigo) {
 				case 20: { //First scene with alcove
 					if (hornacina[0][hornacina[0][3]] > 0) {
 						//Possibly
 						if (hornacina[0][3] == 2 || hornacina[0][hornacina[0][3]] == 563) {
 							readItemRegister(hornacina[0][hornacina[0][3]]);
 							hornacina[0][hornacina[0][3]] = 0;
-							roomData->indexadoobjetos[9]->objectName = "HORNACINA";
+							currentRoomData->indexadoobjetos[9]->objectName = "HORNACINA";
 							animatePickup1(3, 1);
 							readBitmap(1190768, objetos[regobj.profundidad - 1], 892, 319);
-							roomData->bitmapasociados[1].puntbitmap = 1190768;
-							roomData->bitmapasociados[1].tambitmap = 892;
-							roomData->bitmapasociados[1].coordx = 66;
-							roomData->bitmapasociados[1].coordy = 35;
-							roomData->bitmapasociados[1].profund = 1;
+							currentRoomData->bitmapasociados[1].puntbitmap = 1190768;
+							currentRoomData->bitmapasociados[1].tambitmap = 892;
+							currentRoomData->bitmapasociados[1].coordx = 66;
+							currentRoomData->bitmapasociados[1].coordy = 35;
+							currentRoomData->bitmapasociados[1].profund = 1;
 							handPantallaToFondo();
 							assembleScreen();
 							drawScreen(fondo);
@@ -1743,7 +1734,7 @@ void pickupScreenObject() {
 							hornacina[0][hornacina[0][3]] = 0;
 							hornacina[0][3] += 1;
 							hornacina[1][3] -= 1;
-							roomData->indexadoobjetos[9]->objectName = "                    ";
+							currentRoomData->indexadoobjetos[9]->objectName = "                    ";
 							animatePickup1(3, 1);
 							readBitmap(1190768, objetos[regobj.profundidad - 1],
 									   892, 319);
@@ -1752,30 +1743,30 @@ void pickupScreenObject() {
 							drawScreen(fondo);
 							animatePickup2(3, 1);
 							playVoc("PLATAF", 375907, 14724);
-							roomData->bitmapasociados[1].tambitmap = 892;
-							roomData->bitmapasociados[1].coordx = 66;
-							roomData->bitmapasociados[1].coordy = 35;
-							roomData->bitmapasociados[1].profund = 1;
+							currentRoomData->bitmapasociados[1].tambitmap = 892;
+							currentRoomData->bitmapasociados[1].coordx = 66;
+							currentRoomData->bitmapasociados[1].coordy = 35;
+							currentRoomData->bitmapasociados[1].profund = 1;
 							switch (hornacina[0][hornacina[0][3]]) {
 							case 0: {
-								roomData->indexadoobjetos[9]->objectName = "HORNACINA";
+								currentRoomData->indexadoobjetos[9]->objectName = "HORNACINA";
 								alcoveAnimation(0, 1190768);
-								roomData->bitmapasociados[1].puntbitmap = 1190768;
+								currentRoomData->bitmapasociados[1].puntbitmap = 1190768;
 							} break;
 							case 561: {
-								roomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
+								currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
 								alcoveAnimation(0, 1182652);
-								roomData->bitmapasociados[1].puntbitmap = 1182652;
+								currentRoomData->bitmapasociados[1].puntbitmap = 1182652;
 							} break;
 							case 563: {
-								roomData->indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
+								currentRoomData->indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
 								alcoveAnimation(0, 1186044);
-								roomData->bitmapasociados[1].puntbitmap = 1186044;
+								currentRoomData->bitmapasociados[1].puntbitmap = 1186044;
 							} break;
 							case 615: {
-								roomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
+								currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
 								alcoveAnimation(0, 1181760);
-								roomData->bitmapasociados[1].puntbitmap = 1181760;
+								currentRoomData->bitmapasociados[1].puntbitmap = 1181760;
 							} break;
 							}
 							updateAltScreen(24);
@@ -1793,14 +1784,14 @@ void pickupScreenObject() {
 						if (hornacina[1][3] == 2) {
 							readItemRegister(hornacina[1][2]);
 							hornacina[1][2] = 0;
-							roomData->indexadoobjetos[8]->objectName = "HORNACINA";
+							currentRoomData->indexadoobjetos[8]->objectName = "HORNACINA";
 							animatePickup1(0, 1);
 							readBitmap(1399610, objetos[regobj.profundidad - 1], 892, 319);
-							roomData->bitmapasociados[0].puntbitmap = 1399610;
-							roomData->bitmapasociados[0].tambitmap = 892;
-							roomData->bitmapasociados[0].coordx = 217;
-							roomData->bitmapasociados[0].coordy = 48;
-							roomData->bitmapasociados[0].profund = 1;
+							currentRoomData->bitmapasociados[0].puntbitmap = 1399610;
+							currentRoomData->bitmapasociados[0].tambitmap = 892;
+							currentRoomData->bitmapasociados[0].coordx = 217;
+							currentRoomData->bitmapasociados[0].coordy = 48;
+							currentRoomData->bitmapasociados[0].profund = 1;
 							handPantallaToFondo();
 							assembleScreen();
 							drawScreen(fondo);
@@ -1810,7 +1801,7 @@ void pickupScreenObject() {
 							hornacina[1][hornacina[1][3]] = 622;
 							hornacina[1][3] += 1;
 							hornacina[0][3] -= 1;
-							roomData->indexadoobjetos[8]->objectName = "                    ";
+							currentRoomData->indexadoobjetos[8]->objectName = "                    ";
 							animatePickup1(0, 1);
 							readBitmap(1399610, objetos[0], 892, 319);
 							handPantallaToFondo();
@@ -1818,35 +1809,35 @@ void pickupScreenObject() {
 							drawScreen(fondo);
 							animatePickup2(0, 1);
 							playVoc("PLATAF", 375907, 14724);
-							roomData->bitmapasociados[0].tambitmap = 892;
-							roomData->bitmapasociados[0].coordx = 217;
-							roomData->bitmapasociados[0].coordy = 48;
-							roomData->bitmapasociados[0].profund = 1;
+							currentRoomData->bitmapasociados[0].tambitmap = 892;
+							currentRoomData->bitmapasociados[0].coordx = 217;
+							currentRoomData->bitmapasociados[0].coordy = 48;
+							currentRoomData->bitmapasociados[0].profund = 1;
 							switch (hornacina[1][hornacina[1][3]]) {
 							case 0: {
-								roomData->indexadoobjetos[8]->objectName = "HORNACINA";
+								currentRoomData->indexadoobjetos[8]->objectName = "HORNACINA";
 								alcoveAnimation(0, 1399610);
-								roomData->bitmapasociados[0].puntbitmap = 1399610;
+								currentRoomData->bitmapasociados[0].puntbitmap = 1399610;
 							} break;
 							case 561: {
-								roomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
+								currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
 								alcoveAnimation(0, 1381982);
-								roomData->bitmapasociados[0].puntbitmap = 1381982;
+								currentRoomData->bitmapasociados[0].puntbitmap = 1381982;
 							} break;
 							case 615: {
-								roomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
+								currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
 								alcoveAnimation(0, 1381090);
-								roomData->bitmapasociados[0].puntbitmap = 1381090;
+								currentRoomData->bitmapasociados[0].puntbitmap = 1381090;
 							} break;
 							case 622: {
-								roomData->indexadoobjetos[8]->objectName = "PARED";
+								currentRoomData->indexadoobjetos[8]->objectName = "PARED";
 								alcoveAnimation(0, 1400502);
-								roomData->bitmapasociados[0].puntbitmap = 1400502;
+								currentRoomData->bitmapasociados[0].puntbitmap = 1400502;
 							} break;
 							case 623: {
-								roomData->indexadoobjetos[8]->objectName = "TORNO";
+								currentRoomData->indexadoobjetos[8]->objectName = "TORNO";
 								alcoveAnimation(0, 1398718);
-								roomData->bitmapasociados[0].puntbitmap = 1398718;
+								currentRoomData->bitmapasociados[0].puntbitmap = 1398718;
 							} break;
 							}
 							updateAltScreen(20);
@@ -1863,7 +1854,7 @@ void pickupScreenObject() {
 			case 624: { // red devil
 				animatePickup1(2, 1);
 				{
-					RoomBitmapRegister &with = roomData->bitmapasociados[3];
+					RoomBitmapRegister &with = currentRoomData->bitmapasociados[3];
 
 					with.puntbitmap = 0;
 					with.tambitmap = 0;
@@ -1892,7 +1883,7 @@ void pickupScreenObject() {
 			switch (regobj.code) {
 			case 216: { // chisel
 				animatePickup1(0, 2);
-				roomData->indexadoobjetos[roomData->mouseGrid
+				currentRoomData->indexadoobjetos[currentRoomData->mouseGrid
 												  [mouseX][mouseY]]
 					->indicefichero = regobj.reemplazarpor;
 				updateVideo();
@@ -1900,7 +1891,7 @@ void pickupScreenObject() {
 			} break;
 			case 295: { // candles
 				animatePickup1(3, 2);
-				roomData->indexadoobjetos[roomData->mouseGrid
+				currentRoomData->indexadoobjetos[currentRoomData->mouseGrid
 												  [mouseX][mouseY]]
 					->indicefichero = regobj.reemplazarpor;
 				updateVideo();
@@ -1918,7 +1909,7 @@ void pickupScreenObject() {
 				animatePickup1(3, 2);
 				objetos[regobj.profundidad - 1] = NULL;
 				{ // bird
-					RoomBitmapRegister &with = roomData->bitmapasociados[2];
+					RoomBitmapRegister &with = currentRoomData->bitmapasociados[2];
 
 					with.puntbitmap = 1545924;
 					with.tambitmap = 172;
@@ -1928,7 +1919,7 @@ void pickupScreenObject() {
 					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 				}
 				{ // ring
-					RoomBitmapRegister &with = roomData->bitmapasociados[1];
+					RoomBitmapRegister &with = currentRoomData->bitmapasociados[1];
 
 					with.puntbitmap = 1591272;
 					with.tambitmap = 92;
@@ -1959,7 +1950,7 @@ void pickupScreenObject() {
 			animateBat();
 			g_engine->_mouseManager->show();
 			drawText(kaka);
-			roomData->mouseGrid[34][8] = 24;
+			currentRoomData->mouseGrid[34][8] = 24;
 			numeroaccion = 0;
 			oldxrejilla = 0;
 			oldyrejilla = 0;
@@ -1972,43 +1963,43 @@ void pickupScreenObject() {
 		if (regobj.code != 624)
 			for (indicey = regobj.yrej1; indicey <= regobj.yrej2; indicey++)
 				for (indicex = regobj.xrej1; indicex <= regobj.xrej2; indicex++) {
-					roomData->rejapantalla[indicex][indicey] = regobj.parcherejapantalla[indicex - regobj.xrej1][indicey - regobj.yrej1];
-					roomData->mouseGrid[indicex][indicey] = regobj.parcherejaraton[indicex - regobj.xrej1][indicey - regobj.yrej1];
+					currentRoomData->rejapantalla[indicex][indicey] = regobj.parcherejapantalla[indicex - regobj.xrej1][indicey - regobj.yrej1];
+					currentRoomData->mouseGrid[indicex][indicey] = regobj.parcherejaraton[indicex - regobj.xrej1][indicey - regobj.yrej1];
 				}
 		switch (regobj.code) {
 		case 216: { // chisel
-			roomData->bitmapasociados[5].puntbitmap = 517485;
-			roomData->bitmapasociados[5].tambitmap = 964;
-			roomData->bitmapasociados[5].coordx = 223;
-			roomData->bitmapasociados[5].coordy = 34;
-			roomData->bitmapasociados[5].profund = 1;
+			currentRoomData->bitmapasociados[5].puntbitmap = 517485;
+			currentRoomData->bitmapasociados[5].tambitmap = 964;
+			currentRoomData->bitmapasociados[5].coordx = 223;
+			currentRoomData->bitmapasociados[5].coordy = 34;
+			currentRoomData->bitmapasociados[5].profund = 1;
 		} break;
 		case 218:; // necronomicon
 			break;
 		case 223: { // table cloth
-			roomData->bitmapasociados[6].puntbitmap = 436752;
-			roomData->bitmapasociados[6].tambitmap = 1372;
-			roomData->bitmapasociados[6].coordx = 174;
-			roomData->bitmapasociados[6].coordy = 32;
-			roomData->bitmapasociados[6].profund = 1;
+			currentRoomData->bitmapasociados[6].puntbitmap = 436752;
+			currentRoomData->bitmapasociados[6].tambitmap = 1372;
+			currentRoomData->bitmapasociados[6].coordx = 174;
+			currentRoomData->bitmapasociados[6].coordy = 32;
+			currentRoomData->bitmapasociados[6].profund = 1;
 		} break;
 		case 295: { // candles
-			roomData->bitmapasociados[3].puntbitmap = 1130756;
-			roomData->bitmapasociados[3].tambitmap = 1764;
-			roomData->bitmapasociados[3].coordx = 100;
-			roomData->bitmapasociados[3].coordy = 28;
-			roomData->bitmapasociados[3].profund = 1;
+			currentRoomData->bitmapasociados[3].puntbitmap = 1130756;
+			currentRoomData->bitmapasociados[3].tambitmap = 1764;
+			currentRoomData->bitmapasociados[3].coordx = 100;
+			currentRoomData->bitmapasociados[3].coordy = 28;
+			currentRoomData->bitmapasociados[3].profund = 1;
 		} break;
 		case 308:; // mistletoe
 			break;
 		case 362:;// charcoal
 			break;
 		case 402: {
-			roomData->bitmapasociados[5].puntbitmap = 68130;
-			roomData->bitmapasociados[5].tambitmap = 2564;
-			roomData->bitmapasociados[5].coordx = 148;
-			roomData->bitmapasociados[5].coordy = 49;
-			roomData->bitmapasociados[5].profund = 7;
+			currentRoomData->bitmapasociados[5].puntbitmap = 68130;
+			currentRoomData->bitmapasociados[5].tambitmap = 2564;
+			currentRoomData->bitmapasociados[5].coordx = 148;
+			currentRoomData->bitmapasociados[5].coordy = 49;
+			currentRoomData->bitmapasociados[5].profund = 7;
 		} break;
 		case 479:; // scissors
 			break;
@@ -2022,13 +2013,13 @@ void pickupScreenObject() {
 			break;
 		default: {
 			for (indicex = 0; indicex < 15; indicex++)
-				if (roomData->bitmapasociados[indicex].puntbitmap ==
+				if (currentRoomData->bitmapasociados[indicex].puntbitmap ==
 					regobj.punterobitmap) {
-					roomData->bitmapasociados[indicex].puntbitmap = 0;
-					roomData->bitmapasociados[indicex].tambitmap = 0;
-					roomData->bitmapasociados[indicex].coordx = 0;
-					roomData->bitmapasociados[indicex].coordy = 0;
-					roomData->bitmapasociados[indicex].profund = 0;
+					currentRoomData->bitmapasociados[indicex].puntbitmap = 0;
+					currentRoomData->bitmapasociados[indicex].tambitmap = 0;
+					currentRoomData->bitmapasociados[indicex].coordx = 0;
+					currentRoomData->bitmapasociados[indicex].coordy = 0;
+					currentRoomData->bitmapasociados[indicex].profund = 0;
 				}
 		}
 		}
@@ -2062,8 +2053,6 @@ void pickupScreenObject() {
 }
 
 void replaceBackpack(byte indicador1, uint indicador2) {
-	byte indicepaso, indicex, indicey;
-
 	readItemRegister(indicador2);
 	mobj[indicador1].bitmapIndex = regobj.objectIconBitmap;
 	mobj[indicador1].code = indicador2;
@@ -2076,24 +2065,24 @@ void dropObjectInScreen(InvItemRegister regobjsustituto) {
 
 	if (regobjsustituto.tambitmap > 0) {
 		indicepaso = 0;
-		while (!(roomData->bitmapasociados[indicepaso].tambitmap == 0) || indicepaso == 15) {
+		while (!(currentRoomData->bitmapasociados[indicepaso].tambitmap == 0) || indicepaso == 15) {
 			indicepaso ++;
 		}
-		if (roomData->bitmapasociados[indicepaso].tambitmap == 0) {
+		if (currentRoomData->bitmapasociados[indicepaso].tambitmap == 0) {
 			{
-				RoomBitmapRegister &with = roomData->bitmapasociados[indicepaso];
+				RoomBitmapRegister &with = currentRoomData->bitmapasociados[indicepaso];
 
 				with.puntbitmap = regobjsustituto.punterobitmap;
 				with.tambitmap = regobjsustituto.tambitmap;
 				with.coordx = regobjsustituto.xparche;
 				with.coordy = regobjsustituto.yparche;
-				with.profund = regobjsustituto.profundidad - 1;
+				with.profund = regobjsustituto.profundidad;
 				loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 			}
 			for (indicey = regobjsustituto.yrej1; indicey <= regobjsustituto.yrej2; indicey++)
 				for (indicex = regobjsustituto.xrej1; indicex <= regobjsustituto.xrej2; indicex++) {
-					roomData->rejapantalla[indicex][indicey] = regobjsustituto.parcherejapantalla[indicex - regobjsustituto.xrej1][indicey - regobjsustituto.yrej1];
-					roomData->mouseGrid[indicex][indicey] = regobjsustituto.parcherejaraton[indicex - regobjsustituto.xrej1][indicey - regobjsustituto.yrej1];
+					currentRoomData->rejapantalla[indicex][indicey] = regobjsustituto.parcherejapantalla[indicex - regobjsustituto.xrej1][indicey - regobjsustituto.yrej1];
+					currentRoomData->mouseGrid[indicex][indicey] = regobjsustituto.parcherejaraton[indicex - regobjsustituto.xrej1][indicey - regobjsustituto.yrej1];
 				}
 		} else
 			_exit(264);
@@ -2107,7 +2096,7 @@ void useScreenObject() {
 
 	uint mouseX = (pulsax + 7) / factorx;
 	uint mouseY = (pulsay + 7) / factory;
-	uint screenObject = roomData->indexadoobjetos[roomData->mouseGrid[mouseX][mouseY]]->indicefichero;
+	uint screenObject = currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[mouseX][mouseY]]->indicefichero;
 
 	if (objetomochila != "") {
 		indicemochila = 0;
@@ -2118,8 +2107,8 @@ void useScreenObject() {
 		readItemRegister(mobj[indicemochila].code);
 
 		goToObject(
-			roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
-			roomData->rejapantalla[mouseX][mouseY]
+			currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
+			currentRoomData->rejapantalla[mouseX][mouseY]
 		);
 
 		if (regobj.usarcon == screenObject && screenObject > 0 && regobj.usar[0] == 5) {
@@ -2132,20 +2121,20 @@ void useScreenObject() {
 				animatePickup2(1, 2);
 
 				updateItem(regobj.code);
-				roomData->indexadoobjetos[27]->indicefichero = 201;
+				currentRoomData->indexadoobjetos[27]->indicefichero = 201;
 				do {
 					g_engine->_chrono->updateChrono();
 					if (iframe2 >= secondaryAnimationFrameCount - 1)
 						iframe2 = 0;
 					else
 						iframe2++;
-					if (indicetray2 >= roomData->longtray2)
+					if (indicetray2 >= currentRoomData->longtray2)
 						indicetray2 = 1;
 					else
 						indicetray2 += 1;
-					animado.dir = roomData->dir2[indicetray2 - 1];
-					animado.posx = roomData->tray2[indicetray2 - 1].x;
-					animado.posy = roomData->tray2[indicetray2 - 1].y;
+					animado.dir = currentRoomData->dir2[indicetray2 - 1];
+					animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
+					animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
 					emptyLoop();
 					tocapintar = false;
 					emptyLoop2();
@@ -2155,28 +2144,28 @@ void useScreenObject() {
 
 				for (indlista = 0; indlista < maxrejax; indlista++)
 					for (indmoch = 0; indmoch < maxrejay; indmoch++) {
-						roomData->rejapantalla[oldposx + indlista][oldposy + indmoch] = rejafondomovto[indlista][indmoch];
-						roomData->mouseGrid[oldposx + indlista][oldposy + indmoch] = rejafondoraton[indlista][indmoch];
+						currentRoomData->rejapantalla[oldposx + indlista][oldposy + indmoch] = rejafondomovto[indlista][indmoch];
+						currentRoomData->mouseGrid[oldposx + indlista][oldposy + indmoch] = rejafondoraton[indlista][indmoch];
 					}
 
 				freeAnimation();
-				animado.posx = roomData->tray2[indicetray2 - 1].x + 8;
-				animado.posy = roomData->tray2[indicetray2 - 1].y;
-				roomData->nombremovto = "GALLOPIC";
-				roomData->dir2[299] = 201;
+				animado.posx = currentRoomData->tray2[indicetray2 - 1].x + 8;
+				animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
+				currentRoomData->nombremovto = "GALLOPIC";
+				currentRoomData->dir2[299] = 201;
 				loadAnimation("GALLOPIC");
-				roomData->dir2[0] = 0;
-				roomData->tray2[0].x = animado.posx;
-				roomData->tray2[0].y = animado.posy;
+				currentRoomData->dir2[0] = 0;
+				currentRoomData->tray2[0].x = animado.posx;
+				currentRoomData->tray2[0].y = animado.posy;
 				indicetray2 = 1;
-				roomData->longtray2 = 1;
+				currentRoomData->longtray2 = 1;
 
 				for (indlista = 0; indlista < maxrejax; indlista++)
 					for (indmoch = 0; indmoch < maxrejay; indmoch++) {
 						if (rejamascaramovto[indlista][indmoch] > 0)
-							roomData->rejapantalla[oldposx + indlista][oldposy + indmoch] = rejamascaramovto[indlista][indmoch];
+							currentRoomData->rejapantalla[oldposx + indlista][oldposy + indmoch] = rejamascaramovto[indlista][indmoch];
 						if (rejamascararaton[indlista][indmoch] > 0)
-							roomData->mouseGrid[oldposx + indlista][oldposy + indmoch] = rejamascararaton[indlista][indmoch];
+							currentRoomData->mouseGrid[oldposx + indlista][oldposy + indmoch] = rejamascararaton[indlista][indmoch];
 					}
 				g_engine->_mouseManager->show();
 			} break;
@@ -2188,11 +2177,10 @@ void useScreenObject() {
 				animatePickup2(3, 1);
 				g_engine->_mouseManager->show();
 				updateItem(regobj.code);
-				roomData->indexadoobjetos[21]->indicefichero = 154;
+				currentRoomData->indexadoobjetos[21]->indicefichero = 154;
 			} break;
 			case 157: { // giving something to john
 				controlarlista = false;
-				debug("lista1 = %d, %d, %d, %d, %d", firstList[0], firstList[1], firstList[2], firstList[3], firstList[4]);
 				debug("used object = %d", mobj[indicemochila].code);
 				if (lista1) {
 					for (indlista = 0; indlista < 5; indlista++) {
@@ -2367,7 +2355,7 @@ void useScreenObject() {
 						drawBackpack();
 						disableSecondAnimation();
 						{
-							RoomBitmapRegister &with = roomData->bitmapasociados[0];
+							RoomBitmapRegister &with = currentRoomData->bitmapasociados[0];
 
 							with.puntbitmap = 1545820;
 							with.tambitmap = 104;
@@ -2376,7 +2364,7 @@ void useScreenObject() {
 							with.profund = 1;
 							loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 						}
-						roomData->mouseGrid[15][12] = 7;
+						currentRoomData->mouseGrid[15][12] = 7;
 						g_engine->_mouseManager->show();
 					} else {
 						assignText();
@@ -2412,7 +2400,7 @@ void useScreenObject() {
 						drawBackpack();
 						disableSecondAnimation();
 						{
-							RoomBitmapRegister &with = roomData->bitmapasociados[0];
+							RoomBitmapRegister &with = currentRoomData->bitmapasociados[0];
 
 							with.puntbitmap = 1545820;
 							with.tambitmap = 104;
@@ -2421,7 +2409,7 @@ void useScreenObject() {
 							with.profund = 1;
 							loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 						}
-						roomData->mouseGrid[15][12] = 7;
+						currentRoomData->mouseGrid[15][12] = 7;
 						g_engine->_mouseManager->show();
 					} else {
 						assignText();
@@ -2457,7 +2445,7 @@ void useScreenObject() {
 						drawBackpack();
 						disableSecondAnimation();
 						{
-							RoomBitmapRegister &with = roomData->bitmapasociados[0];
+							RoomBitmapRegister &with = currentRoomData->bitmapasociados[0];
 
 							with.puntbitmap = 1545820;
 							with.tambitmap = 104;
@@ -2466,7 +2454,7 @@ void useScreenObject() {
 							with.profund = 1;
 							loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 						}
-						roomData->mouseGrid[15][12] = 7;
+						currentRoomData->mouseGrid[15][12] = 7;
 						g_engine->_mouseManager->show();
 					} else {
 						assignText();
@@ -2502,7 +2490,7 @@ void useScreenObject() {
 						drawBackpack();
 						disableSecondAnimation();
 						{
-							RoomBitmapRegister &with = roomData->bitmapasociados[0];
+							RoomBitmapRegister &with = currentRoomData->bitmapasociados[0];
 
 							with.puntbitmap = 1545820;
 							with.tambitmap = 104;
@@ -2511,7 +2499,7 @@ void useScreenObject() {
 							with.profund = 1;
 							loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 						}
-						roomData->mouseGrid[15][12] = 7;
+						currentRoomData->mouseGrid[15][12] = 7;
 						g_engine->_mouseManager->show();
 					} else {
 						assignText();
@@ -2539,18 +2527,18 @@ void useScreenObject() {
 						iframe2 = 0;
 					else
 						iframe2++;
-					if (indicetray2 >= roomData->longtray2)
+					if (indicetray2 >= currentRoomData->longtray2)
 						indicetray2 = 1;
 					else
 						indicetray2 += 1;
-					animado.dir = roomData->dir2[indicetray2 - 1];
-					animado.posx = roomData->tray2[indicetray2 - 1].x;
-					animado.posy = roomData->tray2[indicetray2 - 1].y;
+					animado.dir = currentRoomData->dir2[indicetray2 - 1];
+					animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
+					animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
 					emptyLoop();
 					tocapintar = false;
 					emptyLoop2();
 					sprites(true);
-				} while (!(indicetray2 == (roomData->longtray2 / 2)));
+				} while (!(indicetray2 == (currentRoomData->longtray2 / 2)));
 
 				animateGive(3, 2);
 				updateInventory(indicemochila);
@@ -2563,19 +2551,19 @@ void useScreenObject() {
 						iframe2 = 0;
 					else
 						iframe2++;
-					if (indicetray2 >= roomData->longtray2)
+					if (indicetray2 >= currentRoomData->longtray2)
 						indicetray2 = 1;
 					else
 						indicetray2 += 1;
-					animado.dir = roomData->dir2[indicetray2 - 1];
-					animado.posx = roomData->tray2[indicetray2 - 1].x;
-					animado.posy = roomData->tray2[indicetray2 - 1].y;
+					animado.dir = currentRoomData->dir2[indicetray2 - 1];
+					animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
+					animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
 					emptyLoop();
 					tocapintar = false;
 
 					emptyLoop2();
 					sprites(true);
-				} while (indicetray2 != roomData->longtray2);
+				} while (indicetray2 != currentRoomData->longtray2);
 				disableSecondAnimation();
 				drawScreen(fondo);
 				g_engine->_mouseManager->show();
@@ -2625,19 +2613,19 @@ void useScreenObject() {
 				readItemRegister(536);
 				for (indicex = 12; indicex <= 13; indicex++)
 					for (indicey = 7; indicey <= 14; indicey++)
-						roomData->mouseGrid[indicex][indicey] = 14;
+						currentRoomData->mouseGrid[indicex][indicey] = 14;
 				for (indicey = 8; indicey <= 12; indicey++)
-					roomData->mouseGrid[14][indicey] = 14;
-				roomData->mouseGrid[9][10] = 1;
-				roomData->mouseGrid[10][10] = 1;
+					currentRoomData->mouseGrid[14][indicey] = 14;
+				currentRoomData->mouseGrid[9][10] = 1;
+				currentRoomData->mouseGrid[10][10] = 1;
 				for (indicex = 0; indicex < 15; indicex++)
-					if (roomData->bitmapasociados[indicex].puntbitmap ==
+					if (currentRoomData->bitmapasociados[indicex].puntbitmap ==
 						regobj.punterobitmap) {
-						roomData->bitmapasociados[indicex].puntbitmap = 0;
-						roomData->bitmapasociados[indicex].tambitmap = 0;
-						roomData->bitmapasociados[indicex].coordx = 0;
-						roomData->bitmapasociados[indicex].coordy = 0;
-						roomData->bitmapasociados[indicex].profund = 0;
+						currentRoomData->bitmapasociados[indicex].puntbitmap = 0;
+						currentRoomData->bitmapasociados[indicex].tambitmap = 0;
+						currentRoomData->bitmapasociados[indicex].coordx = 0;
+						currentRoomData->bitmapasociados[indicex].coordy = 0;
+						currentRoomData->bitmapasociados[indicex].profund = 0;
 					}
 				indicemochila = 0;
 				while (mobj[indicemochila].code != 0) {
@@ -2678,9 +2666,7 @@ void useScreenObject() {
 				g_engine->_mouseManager->hide();
 				animatePickup1(2, 0);
 				playVoc("TIJERAS", 252764, 5242);
-				do {
-					;
-				} while (!estadovoc != 0);
+				g_engine->_sound->waitForSoundEnd();
 				animatePickup2(2, 0);
 				drawBackpack();
 				g_engine->_mouseManager->show();
@@ -2718,7 +2704,7 @@ void useScreenObject() {
 				loadVoc("GOTA", 140972, 1029);
 				g_engine->_mouseManager->show();
 				drawText(regobj.useTextRef);
-				roomData->doors[2].abiertacerrada = 0;
+				currentRoomData->doors[2].abiertacerrada = 0;
 			} break;
 			case 446: {
 				drawText(regobj.useTextRef);
@@ -2739,7 +2725,7 @@ void useScreenObject() {
 				updateInventory(indicemochila);
 				drawBackpack();
 				g_engine->_mouseManager->show();
-				roomData->mouseGrid[27][8] = 22;
+				currentRoomData->mouseGrid[27][8] = 22;
 			} break;
 			case 549: {
 				updateItem(regobj.code);
@@ -2749,10 +2735,10 @@ void useScreenObject() {
 				animateOpen2(1, 1);
 				g_engine->_mouseManager->show();
 				drawText(regobj.useTextRef);
-				roomData->doors[0].abiertacerrada = 0;
+				currentRoomData->doors[0].abiertacerrada = 0;
 			} break;
 			case 562: { // put any object in the alcoves
-				switch (roomData->codigo) {
+				switch (currentRoomData->codigo) {
 				case 20: {
 					if (hornacina[0][hornacina[0][3]] == 0) {
 
@@ -2760,24 +2746,24 @@ void useScreenObject() {
 							hornacina[0][0] = regobj.code;
 							drawText(regobj.useTextRef);
 							g_engine->_mouseManager->hide();
-							roomData->indexadoobjetos[9]->objectName = "                    ";
+							currentRoomData->indexadoobjetos[9]->objectName = "                    ";
 							animateGive(3, 1);
 							switch (hornacina[0][0]) {
 							case 561: {
-								roomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
+								currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
 								readBitmap(1182652, objetos[0], 892, 319);
-								roomData->bitmapasociados[1].puntbitmap = 1182652;
+								currentRoomData->bitmapasociados[1].puntbitmap = 1182652;
 							} break;
 							case 615: {
-								roomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
+								currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
 								readBitmap(1181760, objetos[0], 892, 319);
-								roomData->bitmapasociados[1].puntbitmap = 1181760;
+								currentRoomData->bitmapasociados[1].puntbitmap = 1181760;
 							} break;
 							}
-							roomData->bitmapasociados[1].tambitmap = 892;
-							roomData->bitmapasociados[1].coordx = 66;
-							roomData->bitmapasociados[1].coordy = 35;
-							roomData->bitmapasociados[1].profund = 1;
+							currentRoomData->bitmapasociados[1].tambitmap = 892;
+							currentRoomData->bitmapasociados[1].coordx = 66;
+							currentRoomData->bitmapasociados[1].coordy = 35;
+							currentRoomData->bitmapasociados[1].profund = 1;
 							handPantallaToFondo();
 							// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4, (sizepantalla - int32(4)));
 							assembleScreen();
@@ -2808,34 +2794,34 @@ void useScreenObject() {
 							animateOpen2(3, 1);
 							updateInventory(indicemochila);
 							drawBackpack();
-							roomData->indexadoobjetos[9]->objectName = "                    ";
+							currentRoomData->indexadoobjetos[9]->objectName = "                    ";
 							playVoc("PLATAF", 375907, 14724);
 							switch (hornacina[0][hornacina[0][3]]) {
 							case 0: {
-								roomData->indexadoobjetos[9]->objectName = "HORNACINA";
+								currentRoomData->indexadoobjetos[9]->objectName = "HORNACINA";
 								alcoveAnimation(1, 1190768);
-								roomData->bitmapasociados[1].puntbitmap = 1190768;
+								currentRoomData->bitmapasociados[1].puntbitmap = 1190768;
 							} break;
 							case 561: {
-								roomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
+								currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
 								alcoveAnimation(1, 1182652);
-								roomData->bitmapasociados[1].puntbitmap = 1182652;
+								currentRoomData->bitmapasociados[1].puntbitmap = 1182652;
 							} break;
 							case 563: {
-								roomData->indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
+								currentRoomData->indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
 								alcoveAnimation(1, 1186044);
-								roomData->bitmapasociados[1].puntbitmap = 1186044;
+								currentRoomData->bitmapasociados[1].puntbitmap = 1186044;
 							} break;
 							case 615: {
-								roomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
+								currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
 								alcoveAnimation(1, 1181760);
-								roomData->bitmapasociados[1].puntbitmap = 1181760;
+								currentRoomData->bitmapasociados[1].puntbitmap = 1181760;
 							} break;
 							}
-							roomData->bitmapasociados[1].tambitmap = 892;
-							roomData->bitmapasociados[1].coordx = 66;
-							roomData->bitmapasociados[1].coordy = 35;
-							roomData->bitmapasociados[1].profund = 1;
+							currentRoomData->bitmapasociados[1].tambitmap = 892;
+							currentRoomData->bitmapasociados[1].coordx = 66;
+							currentRoomData->bitmapasociados[1].coordy = 35;
+							currentRoomData->bitmapasociados[1].profund = 1;
 							g_engine->_mouseManager->show();
 							updateAltScreen(24);
 						}
@@ -2851,24 +2837,24 @@ void useScreenObject() {
 							hornacina[1][0] = regobj.code;
 							drawText(regobj.useTextRef);
 							g_engine->_mouseManager->hide();
-							roomData->indexadoobjetos[8]->objectName = "                    ";
+							currentRoomData->indexadoobjetos[8]->objectName = "                    ";
 							animateGive(0, 1);
 							switch (hornacina[1][0]) {
 							case 561: {
-								roomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
+								currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
 								readBitmap(1381982, objetos[0], 892, 319);
-								roomData->bitmapasociados[0].puntbitmap = 1381982;
+								currentRoomData->bitmapasociados[0].puntbitmap = 1381982;
 							} break;
 							case 615: {
-								roomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
+								currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
 								readBitmap(1381090, objetos[0], 892, 319);
-								roomData->bitmapasociados[0].puntbitmap = 1381090;
+								currentRoomData->bitmapasociados[0].puntbitmap = 1381090;
 							} break;
 							}
-							roomData->bitmapasociados[0].tambitmap = 892;
-							roomData->bitmapasociados[0].coordx = 217;
-							roomData->bitmapasociados[0].coordy = 48;
-							roomData->bitmapasociados[0].profund = 1;
+							currentRoomData->bitmapasociados[0].tambitmap = 892;
+							currentRoomData->bitmapasociados[0].coordx = 217;
+							currentRoomData->bitmapasociados[0].coordy = 48;
+							currentRoomData->bitmapasociados[0].profund = 1;
 							handPantallaToFondo();
 							// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4, (sizepantalla - int32(4)));
 							assembleScreen();
@@ -2903,39 +2889,39 @@ void useScreenObject() {
 							animateOpen2(0, 1);
 							updateInventory(indicemochila);
 							drawBackpack();
-							roomData->indexadoobjetos[8]->objectName = "                    ";
+							currentRoomData->indexadoobjetos[8]->objectName = "                    ";
 							playVoc("PLATAF", 375907, 14724);
 							switch (hornacina[1][hornacina[1][3]]) {
 							case 0: {
-								roomData->indexadoobjetos[8]->objectName = "HORNACINA";
+								currentRoomData->indexadoobjetos[8]->objectName = "HORNACINA";
 								alcoveAnimation(1, 1399610);
-								roomData->bitmapasociados[0].puntbitmap = 1399610;
+								currentRoomData->bitmapasociados[0].puntbitmap = 1399610;
 							} break;
 							case 561: {
-								roomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
+								currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
 								alcoveAnimation(1, 1381982);
-								roomData->bitmapasociados[0].puntbitmap = 1381982;
+								currentRoomData->bitmapasociados[0].puntbitmap = 1381982;
 							} break;
 							case 615: {
-								roomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
+								currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
 								alcoveAnimation(1, 1381090);
-								roomData->bitmapasociados[0].puntbitmap = 1381090;
+								currentRoomData->bitmapasociados[0].puntbitmap = 1381090;
 							} break;
 							case 622: {
-								roomData->indexadoobjetos[8]->objectName = "PARED";
+								currentRoomData->indexadoobjetos[8]->objectName = "PARED";
 								alcoveAnimation(1, 1400502);
-								roomData->bitmapasociados[0].puntbitmap = 1400502;
+								currentRoomData->bitmapasociados[0].puntbitmap = 1400502;
 							} break;
 							case 623: {
-								roomData->indexadoobjetos[8]->objectName = "TORNO";
+								currentRoomData->indexadoobjetos[8]->objectName = "TORNO";
 								alcoveAnimation(1, 1398718);
-								roomData->bitmapasociados[0].puntbitmap = 1398718;
+								currentRoomData->bitmapasociados[0].puntbitmap = 1398718;
 							} break;
 							}
-							roomData->bitmapasociados[0].tambitmap = 892;
-							roomData->bitmapasociados[0].coordx = 217;
-							roomData->bitmapasociados[0].coordy = 48;
-							roomData->bitmapasociados[0].profund = 1;
+							currentRoomData->bitmapasociados[0].tambitmap = 892;
+							currentRoomData->bitmapasociados[0].coordx = 217;
+							currentRoomData->bitmapasociados[0].coordy = 48;
+							currentRoomData->bitmapasociados[0].profund = 1;
 							g_engine->_mouseManager->show();
 							updateAltScreen(20);
 						}
@@ -2951,14 +2937,14 @@ void useScreenObject() {
 				drawFlc(140, 34, 2124896, 0, 9, 24, false, false, true, basurillalog);
 				g_engine->_mouseManager->show();
 				updateItem(regobj.code);
-				roomData->indexadoobjetos[7]->indicefichero = 716;
-				roomData->mouseGrid[19][9] = 14;
-				roomData->mouseGrid[22][16] = 15;
+				currentRoomData->indexadoobjetos[7]->indicefichero = 716;
+				currentRoomData->mouseGrid[19][9] = 14;
+				currentRoomData->mouseGrid[22][16] = 15;
 				for (indlista = 21; indlista <= 22; indlista++)
 					for (indmoch = 17; indmoch <= 20; indmoch++)
-						roomData->mouseGrid[indlista][indmoch] = 17;
+						currentRoomData->mouseGrid[indlista][indmoch] = 17;
 				{
-					RoomBitmapRegister &with = roomData->bitmapasociados[0];
+					RoomBitmapRegister &with = currentRoomData->bitmapasociados[0];
 
 					with.puntbitmap = 1243652;
 					with.tambitmap = 2718;
@@ -2967,7 +2953,7 @@ void useScreenObject() {
 					with.profund = 6;
 				}
 				{
-					RoomBitmapRegister &with = roomData->bitmapasociados[1];
+					RoomBitmapRegister &with = currentRoomData->bitmapasociados[1];
 
 					with.puntbitmap = 1240474;
 					with.tambitmap = 344;
@@ -2977,7 +2963,7 @@ void useScreenObject() {
 					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 				}
 				{
-					RoomBitmapRegister &with = roomData->bitmapasociados[2];
+					RoomBitmapRegister &with = currentRoomData->bitmapasociados[2];
 
 					with.puntbitmap = 1240818;
 					with.tambitmap = 116;
@@ -3003,12 +2989,12 @@ void useScreenObject() {
 			} break;
 			case 608: {
 				drawText(regobj.useTextRef);
-				goToObject(roomData->rejapantalla[mouseX][mouseY], 26);
+				goToObject(currentRoomData->rejapantalla[mouseX][mouseY], 26);
 				g_engine->_mouseManager->hide();
 				animateGive(2, 2);
 				animateOpen2(2, 2);
 				{
-					RoomBitmapRegister &with = roomData->bitmapasociados[3];
+					RoomBitmapRegister &with = currentRoomData->bitmapasociados[3];
 
 					with.puntbitmap = 1546096;
 					with.tambitmap = 372;
@@ -3037,39 +3023,39 @@ void useScreenObject() {
 				drawScreen(fondo);
 				animateOpen2(direccionmovimiento, 1);
 				g_engine->_mouseManager->show();
-				goToObject(roomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)], 14);
+				goToObject(currentRoomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)], 14);
 				g_engine->_mouseManager->hide();
 				playVoc("PUFF", 191183, 18001);
 				drawFlc(180, 60, 2216848, 0, 9, 0, false, false, true, basurillalog);
 
-				roomData->bitmapasociados[2].puntbitmap = 1545820;
-				roomData->bitmapasociados[2].tambitmap = 104;
-				roomData->bitmapasociados[2].coordx = 277;
-				roomData->bitmapasociados[2].coordy = 104;
-				roomData->bitmapasociados[2].profund = 1;
+				currentRoomData->bitmapasociados[2].puntbitmap = 1545820;
+				currentRoomData->bitmapasociados[2].tambitmap = 104;
+				currentRoomData->bitmapasociados[2].coordx = 277;
+				currentRoomData->bitmapasociados[2].coordy = 104;
+				currentRoomData->bitmapasociados[2].profund = 1;
 				profundidad[0].posy = 104;
 				readBitmap(1545820, objetos[0], 104, 319);
 
-				roomData->bitmapasociados[4].puntbitmap = 1447508;
-				roomData->bitmapasociados[4].tambitmap = 464;
-				roomData->bitmapasociados[4].coordx = 186;
-				roomData->bitmapasociados[4].coordy = 64;
-				roomData->bitmapasociados[4].profund = 8;
+				currentRoomData->bitmapasociados[4].puntbitmap = 1447508;
+				currentRoomData->bitmapasociados[4].tambitmap = 464;
+				currentRoomData->bitmapasociados[4].coordx = 186;
+				currentRoomData->bitmapasociados[4].coordy = 64;
+				currentRoomData->bitmapasociados[4].profund = 8;
 				loadItem(186, 63, 464, 1447508, 7);
 				handPantallaToFondo();
 				// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4,(sizepantalla - int32(4)));
 				assembleScreen();
 				drawScreen(fondo);
 				g_engine->_mouseManager->show();
-				goToObject(roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 18);
+				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 18);
 				g_engine->_mouseManager->hide();
 				animatePickup1(1, 1);
 				replaceBackpack(indicemochila, 638);
-				roomData->bitmapasociados[4].puntbitmap = 0;
-				roomData->bitmapasociados[4].tambitmap = 0;
-				roomData->bitmapasociados[4].coordx = 0;
-				roomData->bitmapasociados[4].coordy = 0;
-				roomData->bitmapasociados[4].profund = 0;
+				currentRoomData->bitmapasociados[4].puntbitmap = 0;
+				currentRoomData->bitmapasociados[4].tambitmap = 0;
+				currentRoomData->bitmapasociados[4].coordx = 0;
+				currentRoomData->bitmapasociados[4].coordy = 0;
+				currentRoomData->bitmapasociados[4].profund = 0;
 				objetos[7] = NULL;
 				handPantallaToFondo();
 				assembleScreen();
@@ -3079,7 +3065,7 @@ void useScreenObject() {
 				g_engine->_mouseManager->show();
 				for (indlista = 35; indlista <= 37; indlista++)
 					for (indmoch = 21; indmoch <= 25; indmoch++)
-						roomData->mouseGrid[indlista][indmoch] = 11;
+						currentRoomData->mouseGrid[indlista][indmoch] = 11;
 				guadagna = true;
 				if (tridente)
 					cavernas[3] = true;
@@ -3094,39 +3080,39 @@ void useScreenObject() {
 				drawScreen(fondo);
 				animateOpen2(3, 1);
 				g_engine->_mouseManager->show();
-				goToObject(roomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)], 10);
+				goToObject(currentRoomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)], 10);
 				g_engine->_mouseManager->hide();
 				playVoc("PUFF", 191183, 18001);
 				drawFlc(0, 47, 2209158, 0, 9, 0, false, false, true, basurillalog);
 
-				roomData->bitmapasociados[3].puntbitmap = 1591272;
-				roomData->bitmapasociados[3].tambitmap = 92;
-				roomData->bitmapasociados[3].coordx = 18;
-				roomData->bitmapasociados[3].coordy = 60;
-				roomData->bitmapasociados[3].profund = 3;
+				currentRoomData->bitmapasociados[3].puntbitmap = 1591272;
+				currentRoomData->bitmapasociados[3].tambitmap = 92;
+				currentRoomData->bitmapasociados[3].coordx = 18;
+				currentRoomData->bitmapasociados[3].coordy = 60;
+				currentRoomData->bitmapasociados[3].profund = 3;
 				profundidad[2].posx = 18;
 				profundidad[2].posy = 60;
 				readBitmap(1591272, objetos[2], 92, 319);
 
-				roomData->bitmapasociados[4].puntbitmap = 1746554;
-				roomData->bitmapasociados[4].tambitmap = 384;
-				roomData->bitmapasociados[4].coordx = 82;
-				roomData->bitmapasociados[4].coordy = 53;
-				roomData->bitmapasociados[4].profund = 8;
+				currentRoomData->bitmapasociados[4].puntbitmap = 1746554;
+				currentRoomData->bitmapasociados[4].tambitmap = 384;
+				currentRoomData->bitmapasociados[4].coordx = 82;
+				currentRoomData->bitmapasociados[4].coordy = 53;
+				currentRoomData->bitmapasociados[4].profund = 8;
 				loadItem(82, 53, 384, 1746554, 7);
 				// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4,(sizepantalla - int32(4)));
 				assembleScreen();
 				drawScreen(fondo);
 				g_engine->_mouseManager->show();
-				goToObject(roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 15);
+				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 15);
 				g_engine->_mouseManager->hide();
 				animatePickup1(3, 1);
 				replaceBackpack(indicemochila, 637);
-				roomData->bitmapasociados[4].puntbitmap = 0;
-				roomData->bitmapasociados[4].tambitmap = 0;
-				roomData->bitmapasociados[4].coordx = 0;
-				roomData->bitmapasociados[4].coordy = 0;
-				roomData->bitmapasociados[4].profund = 0;
+				currentRoomData->bitmapasociados[4].puntbitmap = 0;
+				currentRoomData->bitmapasociados[4].tambitmap = 0;
+				currentRoomData->bitmapasociados[4].coordx = 0;
+				currentRoomData->bitmapasociados[4].coordy = 0;
+				currentRoomData->bitmapasociados[4].profund = 0;
 				objetos[7] = NULL;
 				handPantallaToFondo();
 				// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4, (sizepantalla - int32(4)));
@@ -3137,23 +3123,23 @@ void useScreenObject() {
 				g_engine->_mouseManager->show();
 				for (indlista = 0; indlista <= 2; indlista++)
 					for (indmoch = 10; indmoch <= 12; indmoch++)
-						roomData->mouseGrid[indlista][indmoch] = 10;
+						currentRoomData->mouseGrid[indlista][indmoch] = 10;
 				tridente = true;
 				if (guadagna)
 					cavernas[3] = true;
 			} break;
 			case 643: {
-				if (roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory] != 5)
+				if (currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory] != 5)
 					drawText(regobj.useTextRef);
 				pulsax = 149 - 7;
 				pulsay = 126 - 7;
-				goToObject(roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 5);
+				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 5);
 				g_engine->_mouseManager->hide();
 				updateInventory(indicemochila);
 				drawBackpack();
 				drawFlc(133, 0, 2076280, 0, 9, 22, false, false, true, basurillalog);
 				{
-					RoomBitmapRegister &with = roomData->bitmapasociados[2];
+					RoomBitmapRegister &with = currentRoomData->bitmapasociados[2];
 
 					with.puntbitmap = 1744230;
 					with.tambitmap = 824;
@@ -3165,7 +3151,7 @@ void useScreenObject() {
 				updateAltScreen(31);
 				for (indlista = 18; indlista <= 20; indlista++)
 					for (indmoch = 8; indmoch <= 14; indmoch++)
-						roomData->mouseGrid[indlista][indmoch] = 12;
+						currentRoomData->mouseGrid[indlista][indmoch] = 12;
 				sello_quitado = true;
 				cavernas[1] = false;
 				cavernas[0] = false;
@@ -3176,7 +3162,7 @@ void useScreenObject() {
 				drawText(regobj.useTextRef);
 				pulsax = 178 - 7;
 				pulsay = 71 - 7;
-				goToObject(roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 3);
+				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 3);
 				g_engine->_mouseManager->hide();
 				playVoc("AFILAR", 0, 6433);
 				drawFlc(160, 15, 2441804, 0, 9, 23, false, false, true, basurillalog);
@@ -3200,14 +3186,14 @@ void useScreenObject() {
 				animateOpen2(1, 1);
 				for (indlista = 19; indlista <= 21; indlista++)
 					for (indmoch = 10; indmoch <= 13; indmoch++)
-						roomData->mouseGrid[indlista][indmoch] = 13;
+						currentRoomData->mouseGrid[indlista][indmoch] = 13;
 				g_engine->_mouseManager->show();
 			} break;
 			case 689: {
 				drawText(regobj.useTextRef);
 				pulsax = 124 - 7;
 				pulsay = 133 - 7;
-				goToObject(roomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)], 9);
+				goToObject(currentRoomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)], 9);
 				g_engine->_mouseManager->hide();
 				drawFlc(110, 79, 2361800, 0, 9, 0, false, false, true, basurillalog);
 				replaceBackpack(indicemochila, 701);
@@ -3218,50 +3204,50 @@ void useScreenObject() {
 				drawScreen(fondo);
 				g_engine->_mouseManager->show();
 				for (indlista = 18; indlista <= 20; indlista++)
-					roomData->mouseGrid[indlista][26] = 10;
+					currentRoomData->mouseGrid[indlista][26] = 10;
 				for (indlista = 17; indlista <= 21; indlista++)
-					roomData->mouseGrid[indlista][27] = 10;
+					currentRoomData->mouseGrid[indlista][27] = 10;
 			} break;
 			case 700: {
 				drawText(regobj.useTextRef);
 				pulsax = 224 - 7;
 				pulsay = 91 - 7;
-				goToObject(roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 7);
+				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 7);
 				g_engine->_mouseManager->hide();
 				drawFlc(208, 0, 2382552, 0, 9, 21, false, false, true, basurillalog);
-				roomData->bitmapasociados[0].puntbitmap = 0;
-				roomData->bitmapasociados[0].tambitmap = 0;
-				roomData->bitmapasociados[0].coordx = 0;
-				roomData->bitmapasociados[0].coordy = 0;
-				roomData->bitmapasociados[0].profund = 0;
+				currentRoomData->bitmapasociados[0].puntbitmap = 0;
+				currentRoomData->bitmapasociados[0].tambitmap = 0;
+				currentRoomData->bitmapasociados[0].coordx = 0;
+				currentRoomData->bitmapasociados[0].coordy = 0;
+				currentRoomData->bitmapasociados[0].profund = 0;
 				objetos[2] = NULL;
 				for (indmoch = 6; indmoch <= 9; indmoch++)
-					roomData->mouseGrid[26][indmoch] = 3;
+					currentRoomData->mouseGrid[26][indmoch] = 3;
 				for (indmoch = 3; indmoch <= 5; indmoch++)
-					roomData->mouseGrid[27][indmoch] = 3;
+					currentRoomData->mouseGrid[27][indmoch] = 3;
 				for (indmoch = 6; indmoch <= 10; indmoch++)
-					roomData->mouseGrid[27][indmoch] = 4;
+					currentRoomData->mouseGrid[27][indmoch] = 4;
 				for (indmoch = 11; indmoch <= 12; indmoch++)
-					roomData->mouseGrid[27][indmoch] = 7;
+					currentRoomData->mouseGrid[27][indmoch] = 7;
 				for (indmoch = 2; indmoch <= 10; indmoch++)
-					roomData->mouseGrid[28][indmoch] = 4;
+					currentRoomData->mouseGrid[28][indmoch] = 4;
 				for (indmoch = 11; indmoch <= 12; indmoch++)
-					roomData->mouseGrid[28][indmoch] = 7;
-				roomData->mouseGrid[28][13] = 4;
+					currentRoomData->mouseGrid[28][indmoch] = 7;
+				currentRoomData->mouseGrid[28][13] = 4;
 				for (indmoch = 1; indmoch <= 14; indmoch++)
-					roomData->mouseGrid[29][indmoch] = 4;
+					currentRoomData->mouseGrid[29][indmoch] = 4;
 				for (indlista = 30; indlista <= 32; indlista++)
 					for (indmoch = 0; indmoch <= 15; indmoch++)
-						roomData->mouseGrid[indlista][indmoch] = 4;
+						currentRoomData->mouseGrid[indlista][indmoch] = 4;
 				for (indmoch = 1; indmoch <= 14; indmoch++)
-					roomData->mouseGrid[33][indmoch] = 4;
+					currentRoomData->mouseGrid[33][indmoch] = 4;
 				for (indmoch = 2; indmoch <= 14; indmoch++)
-					roomData->mouseGrid[34][indmoch] = 4;
+					currentRoomData->mouseGrid[34][indmoch] = 4;
 				for (indmoch = 3; indmoch <= 8; indmoch++)
-					roomData->mouseGrid[35][indmoch] = 4;
+					currentRoomData->mouseGrid[35][indmoch] = 4;
 				for (indmoch = 9; indmoch <= 11; indmoch++)
-					roomData->mouseGrid[35][indmoch] = 7;
-				roomData->doors[1].abiertacerrada = 1;
+					currentRoomData->mouseGrid[35][indmoch] = 7;
+				currentRoomData->doors[1].abiertacerrada = 1;
 				g_engine->_mouseManager->show();
 				updateItem(regobj.code);
 			} break;
@@ -3272,7 +3258,7 @@ void useScreenObject() {
 					animatePickup1(0, 1);
 					playVoc("TIZA", 390631, 18774);
 					{
-						RoomBitmapRegister &with = roomData->bitmapasociados[1];
+						RoomBitmapRegister &with = currentRoomData->bitmapasociados[1];
 
 						with.puntbitmap = 1745054;
 						with.tambitmap = 1500;
@@ -3296,7 +3282,7 @@ void useScreenObject() {
 			} break;
 			}
 		} else {
-			goToObject(roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], roomData->rejapantalla[mouseX][mouseY]);
+			goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], currentRoomData->rejapantalla[mouseX][mouseY]);
 			if (regobj.code == 536 || regobj.code == 220)
 				drawText(Random(6) + 1033);
 			else
@@ -3305,7 +3291,7 @@ void useScreenObject() {
 	} else {
 		if (screenObject > 0) {
 			readItemRegister(screenObject);
-			goToObject(roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], roomData->rejapantalla[mouseX][mouseY]);
+			goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], currentRoomData->rejapantalla[mouseX][mouseY]);
 			switch (regobj.usar[0]) {
 			case 0: {
 				if (regobj.useTextRef > 0)
@@ -3353,12 +3339,12 @@ void useScreenObject() {
 					teleencendida = !(teleencendida);
 					if (teleencendida) {
 						playVoc("CLICK", 27742, 2458);
-						roomData->banderapaleta = true;
+						currentRoomData->banderapaleta = true;
 						autoPlayVoc("PARASITO", 355778, 20129);
 					} else {
 						stopVoc();
 						playVoc("CLICK", 27742, 2458);
-						roomData->banderapaleta = false;
+						currentRoomData->banderapaleta = false;
 						for (indicex = 195; indicex <= 200; indicex++) {
 							pal[indicex * 3 + 0] = 2 << 2;
 							pal[indicex * 3 + 1] = 2 << 2;
@@ -3380,9 +3366,9 @@ void useScreenObject() {
 					autoPlayVoc("CALDERA", 6433, 15386);
 					turnLightOn();
 					g_engine->_mouseManager->show();
-					roomData->puntpaleta = 1536;
-					roomData->indexadoobjetos[1]->indicefichero = 424;
-					roomData->doors[1].abiertacerrada = 1;
+					currentRoomData->puntpaleta = 1536;
+					currentRoomData->indexadoobjetos[1]->indicefichero = 424;
+					currentRoomData->doors[1].abiertacerrada = 1;
 				} break;
 				case 359: {
 					drawText(regobj.useTextRef);
@@ -3394,10 +3380,10 @@ void useScreenObject() {
 					animateOpen2(0, 0);
 					g_engine->_mouseManager->show();
 					updateItem(regobj.code);
-					roomData->indexadoobjetos[16]->indicefichero = 362;
-					roomData->indexadoobjetos[16]->objectName = "CARBON";
-					roomData->indexadoobjetos[1]->indicefichero = 347;
-					roomData->indexadoobjetos[1]->objectName = "BOMBILLA";
+					currentRoomData->indexadoobjetos[16]->indicefichero = 362;
+					currentRoomData->indexadoobjetos[16]->objectName = "CARBON";
+					currentRoomData->indexadoobjetos[1]->indicefichero = 347;
+					currentRoomData->indexadoobjetos[1]->objectName = "BOMBILLA";
 					debug("Enabled bombilla!");
 					stopVoc();
 					autoPlayVoc("CALDERA", 6433, 15386);
@@ -3413,7 +3399,7 @@ void useScreenObject() {
 					if (vasijapuesta) {
 						drawFlc(108, 0, 2296092, 0, 9, 0, false, false, true, basurillalog);
 						{
-							RoomBitmapRegister &with = roomData->bitmapasociados[0];
+							RoomBitmapRegister &with = currentRoomData->bitmapasociados[0];
 
 							with.puntbitmap = 1636796;
 							with.tambitmap = 628;
@@ -3423,7 +3409,7 @@ void useScreenObject() {
 						}
 						for (indlista = 19; indlista <= 21; indlista++)
 							for (indmoch = 10; indmoch <= 13; indmoch++)
-								roomData->mouseGrid[indlista][indmoch] = 12;
+								currentRoomData->mouseGrid[indlista][indmoch] = 12;
 					} else
 						drawFlc(108, 0, 2231140, 0, 9, 0, false, false, true, basurillalog);
 					g_engine->_mouseManager->show();
@@ -3449,14 +3435,14 @@ void openScreenObject() {
 
 	uint mouseX = (pulsax + 7) / factorx;
 	uint mouseY = (pulsay + 7) / factory;
-	uint screenObject = roomData->indexadoobjetos[roomData->mouseGrid[mouseX][mouseY]]->indicefichero;
+	uint screenObject = currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[mouseX][mouseY]]->indicefichero;
 	if (screenObject == 0)
 		return;
 
 	readItemRegister(screenObject);
 	debug("Read screen object = %s, with code = %d, depth=%d", regobj.name.c_str(), regobj.code, regobj.profundidad);
-	goToObject(roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
-			   roomData->rejapantalla[mouseX][mouseY]);
+	goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
+			   currentRoomData->rejapantalla[mouseX][mouseY]);
 
 	if (regobj.abrir == false) {
 		drawText(Random(9) + 1059);
@@ -3473,23 +3459,23 @@ void openScreenObject() {
 				sueltapegote = true;
 			break;
 		case 415:
-			if (roomData->doors[2].abiertacerrada == 2)
+			if (currentRoomData->doors[2].abiertacerrada == 2)
 				sueltapegote = true;
 			else {
 				g_engine->_mouseManager->hide();
 				animatePickup1(0, 1);
 				objetos[regobj.profundidad - 1] = NULL;
 				indicey = 0;
-				while (roomData->bitmapasociados[indicey].profund != regobj.profundidad && indicey != 15) {
+				while (currentRoomData->bitmapasociados[indicey].profund != regobj.profundidad && indicey != 15) {
 					indicey ++;
 				}
-				debug("changing bitmap at %d, with depth = %d", indicey, roomData->bitmapasociados[indicey].profund);
-				roomData->bitmapasociados[indicey].puntbitmap = 0;
-				roomData->bitmapasociados[indicey].tambitmap = 0;
-				roomData->bitmapasociados[indicey].coordx = 0;
-				roomData->bitmapasociados[indicey].coordy = 0;
-				roomData->bitmapasociados[indicey].profund = 0;
-				roomData->doors[2].abiertacerrada = 1;
+				debug("changing bitmap at %d, with depth = %d", indicey, currentRoomData->bitmapasociados[indicey].profund);
+				currentRoomData->bitmapasociados[indicey].puntbitmap = 0;
+				currentRoomData->bitmapasociados[indicey].tambitmap = 0;
+				currentRoomData->bitmapasociados[indicey].coordx = 0;
+				currentRoomData->bitmapasociados[indicey].coordy = 0;
+				currentRoomData->bitmapasociados[indicey].profund = 0;
+				currentRoomData->doors[2].abiertacerrada = 1;
 				handPantallaToFondo();
 				assembleScreen();
 				drawScreen(fondo);
@@ -3497,9 +3483,9 @@ void openScreenObject() {
 				g_engine->_mouseManager->show();
 				for (indicey = 0; indicey <= 12; indicey++)
 					for (indicex = 33; indicex <= 36; indicex++)
-						roomData->mouseGrid[indicex][indicey] = 43;
+						currentRoomData->mouseGrid[indicex][indicey] = 43;
 				for (indicex = 33; indicex <= 35; indicex++)
-					roomData->mouseGrid[indicex][13] = 43;
+					currentRoomData->mouseGrid[indicex][13] = 43;
 				numeroaccion = 0;
 				oldxrejilla = 0;
 				oldyrejilla = 0;
@@ -3509,22 +3495,22 @@ void openScreenObject() {
 			}
 			break;
 		case 548:
-			if (roomData->doors[0].abiertacerrada == 2)
+			if (currentRoomData->doors[0].abiertacerrada == 2)
 				sueltapegote = true;
 			else {
 				g_engine->_mouseManager->hide();
 				animatePickup1(1, 1);
 				objetos[regobj.profundidad - 1] = NULL;
 				indicey = 0;
-				while (roomData->bitmapasociados[indicey].profund != regobj.profundidad && indicey != 14) {
+				while (currentRoomData->bitmapasociados[indicey].profund != regobj.profundidad && indicey != 14) {
 					indicey ++;
 				}
-				roomData->bitmapasociados[indicey].puntbitmap = 0;
-				roomData->bitmapasociados[indicey].tambitmap = 0;
-				roomData->bitmapasociados[indicey].coordx = 0;
-				roomData->bitmapasociados[indicey].coordy = 0;
-				roomData->bitmapasociados[indicey].profund = 0;
-				roomData->doors[0].abiertacerrada = 1;
+				currentRoomData->bitmapasociados[indicey].puntbitmap = 0;
+				currentRoomData->bitmapasociados[indicey].tambitmap = 0;
+				currentRoomData->bitmapasociados[indicey].coordx = 0;
+				currentRoomData->bitmapasociados[indicey].coordy = 0;
+				currentRoomData->bitmapasociados[indicey].profund = 0;
+				currentRoomData->doors[0].abiertacerrada = 1;
 				handPantallaToFondo();
 				assembleScreen();
 				drawScreen(fondo);
@@ -3532,22 +3518,22 @@ void openScreenObject() {
 				g_engine->_mouseManager->show();
 				indicex = 30;
 				for (indicey = 17; indicey <= 18; indicey++)
-					roomData->mouseGrid[indicex][indicey] = 8;
+					currentRoomData->mouseGrid[indicex][indicey] = 8;
 				indicex += 1;
 				for (indicey = 4; indicey <= 20; indicey++)
-					roomData->mouseGrid[indicex][indicey] = 8;
+					currentRoomData->mouseGrid[indicex][indicey] = 8;
 				indicex += 1;
 				for (indicey = 0; indicey <= 20; indicey++)
-					roomData->mouseGrid[indicex][indicey] = 8;
+					currentRoomData->mouseGrid[indicex][indicey] = 8;
 				indicex += 1;
 				for (indicey = 0; indicey <= 17; indicey++)
-					roomData->mouseGrid[indicex][indicey] = 8;
+					currentRoomData->mouseGrid[indicex][indicey] = 8;
 				indicex += 1;
 				for (indicey = 0; indicey <= 12; indicey++)
-					roomData->mouseGrid[indicex][indicey] = 8;
+					currentRoomData->mouseGrid[indicex][indicey] = 8;
 				for (indicex = 35; indicex <= 39; indicex++)
 					for (indicey = 0; indicey <= 10; indicey++)
-						roomData->mouseGrid[indicex][indicey] = 8;
+						currentRoomData->mouseGrid[indicex][indicey] = 8;
 				numeroaccion = 0;
 				oldxrejilla = 0;
 				oldyrejilla = 0;
@@ -3560,7 +3546,7 @@ void openScreenObject() {
 			drawText(Random(9) + 1059);
 			return;
 		}
-		roomData->indexadoobjetos[roomData->mouseGrid[mouseX][mouseY]]->indicefichero = regobj.reemplazarpor;
+		currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[mouseX][mouseY]]->indicefichero = regobj.reemplazarpor;
 		g_engine->_mouseManager->hide();
 		switch (regobj.altura) {
 		case 0: {
@@ -3582,13 +3568,13 @@ void openScreenObject() {
 		g_engine->_mouseManager->show();
 		for (indicey = regobj.yrej1; indicey <= regobj.yrej2; indicey++)
 			for (indicex = regobj.xrej1; indicex <= regobj.xrej2; indicex++) {
-				roomData->rejapantalla[indicex][indicey] = regobj.parcherejapantalla[indicex - regobj.xrej1][indicey - regobj.yrej1];
-				roomData->mouseGrid[indicex][indicey] = regobj.parcherejaraton[indicex - regobj.xrej1][indicey - regobj.yrej1];
+				currentRoomData->rejapantalla[indicex][indicey] = regobj.parcherejapantalla[indicex - regobj.xrej1][indicey - regobj.yrej1];
+				currentRoomData->mouseGrid[indicex][indicey] = regobj.parcherejaraton[indicex - regobj.xrej1][indicey - regobj.yrej1];
 			}
 		for (indicex = 0; indicex < 15; indicex++)
-			if (roomData->bitmapasociados[indicex].puntbitmap == regobj.punterobitmap) {
-				roomData->bitmapasociados[indicex].puntbitmap = regobj.puntparche;
-				roomData->bitmapasociados[indicex].tambitmap = regobj.tamparche;
+			if (currentRoomData->bitmapasociados[indicex].puntbitmap == regobj.punterobitmap) {
+				currentRoomData->bitmapasociados[indicex].puntbitmap = regobj.puntparche;
+				currentRoomData->bitmapasociados[indicex].tambitmap = regobj.tamparche;
 			}
 		numeroaccion = 0;
 	}
@@ -3604,13 +3590,13 @@ void closeScreenObject() {
 
 	x_del_raton = ((pulsax + 7) / factorx);
 	y_del_raton = ((pulsay + 7) / factory);
-	objeto_de_la_pantalla = roomData->indexadoobjetos[roomData->mouseGrid[x_del_raton][y_del_raton]]->indicefichero;
+	objeto_de_la_pantalla = currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[x_del_raton][y_del_raton]]->indicefichero;
 	if (objeto_de_la_pantalla == 0)
 		return;
 	// verifyCopyProtection2();
 	readItemRegister(objeto_de_la_pantalla);
-	goToObject(roomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)],
-			   roomData->rejapantalla[x_del_raton][y_del_raton]);
+	goToObject(currentRoomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)],
+			   currentRoomData->rejapantalla[x_del_raton][y_del_raton]);
 	if (regobj.cerrar == false) {
 		drawText((Random(10) + 1068));
 		return;
@@ -3632,7 +3618,7 @@ void closeScreenObject() {
 			drawText(Random(10) + 1068);
 			return;
 		}
-		roomData->indexadoobjetos[roomData->mouseGrid[x_del_raton][y_del_raton]]->indicefichero = regobj.reemplazarpor;
+		currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[x_del_raton][y_del_raton]]->indicefichero = regobj.reemplazarpor;
 		g_engine->_mouseManager->hide();
 		switch (regobj.altura) {
 		case 0: {
@@ -3654,13 +3640,13 @@ void closeScreenObject() {
 		g_engine->_mouseManager->show();
 		for (indicey = regobj.yrej1; indicey <= regobj.yrej2; indicey++)
 			for (indicex = regobj.xrej1; indicex <= regobj.xrej2; indicex++) {
-				roomData->rejapantalla[indicex][indicey] = regobj.parcherejapantalla[indicex - regobj.xrej1][indicey - regobj.yrej1];
-				roomData->mouseGrid[indicex][indicey] = regobj.parcherejaraton[indicex - regobj.xrej1][indicey - regobj.yrej1];
+				currentRoomData->rejapantalla[indicex][indicey] = regobj.parcherejapantalla[indicex - regobj.xrej1][indicey - regobj.yrej1];
+				currentRoomData->mouseGrid[indicex][indicey] = regobj.parcherejaraton[indicex - regobj.xrej1][indicey - regobj.yrej1];
 			}
 		for (indicex = 0; indicex < 15; indicex++)
-			if (roomData->bitmapasociados[indicex].puntbitmap == regobj.punterobitmap) {
-				roomData->bitmapasociados[indicex].puntbitmap = regobj.puntparche;
-				roomData->bitmapasociados[indicex].tambitmap = regobj.tamparche;
+			if (currentRoomData->bitmapasociados[indicex].puntbitmap == regobj.punterobitmap) {
+				currentRoomData->bitmapasociados[indicex].puntbitmap = regobj.puntparche;
+				currentRoomData->bitmapasociados[indicex].tambitmap = regobj.tamparche;
 			}
 		numeroaccion = 0;
 	}
@@ -3858,7 +3844,6 @@ static void getScreen(byte *background) {
 }
 
 static void scrollRight(uint &horizontalPos) {
-	uint indicesc;
 
 	int characterPos = 25 + (320 - (characterPosX + rectificacionx * 2));
 	// We scroll 4 by 4 pixels so we divide by 4 to find out the number of necessary steps
@@ -3871,9 +3856,9 @@ static void scrollRight(uint &horizontalPos) {
 		memmove(fondo + 4, fondo + 8, numBytes);
 
 		horizontalPos += 4;
-		for (int i = 0; i < 140; i++) {
+		for (int k = 0; k < 140; k++) {
 			for (int j = 0; j < 4; j++) {
-				fondo[320 + i * 320 + j] = handpantalla[horizontalPos + i * 320 + j];
+				fondo[320 + k * 320 + j] = handpantalla[horizontalPos + k * 320 + j];
 			}
 		}
 		if (characterPos > 0) {
@@ -3925,9 +3910,9 @@ static void scrollLeft(uint &poshor) {
 		}
 
 		poshor -= 4;
-		for (int i = 0; i < 140; i++) {
+		for (int k = 0; k < 140; k++) {
 			for (int j = 0; j < 4; j++) {
-				fondo[4 + i * 320 + j] = handpantalla[4 + poshor + i * 320 + j];
+				fondo[4 + k * 320 + j] = handpantalla[4 + poshor + k * 320 + j];
 			}
 		}
 
@@ -3982,13 +3967,13 @@ void loadScrollData(uint numpantalla, boolean scrollder, uint poshor, int correc
 	Common::File fichpanta;
 
 	rooms->seek(numpantalla * roomRegSize, SEEK_SET);
-	roomData = readScreenDataFile(rooms);
+	currentRoomData = readScreenDataFile(rooms);
 
 	loadScreen();
 	// Fondo now contains background B, handpantalla contains background B
 	for (indicecarga = 0; indicecarga < 15; indicecarga++) {
 		{
-			RoomBitmapRegister &with = roomData->bitmapasociados[indicecarga];
+			RoomBitmapRegister &with = currentRoomData->bitmapasociados[indicecarga];
 			if (with.tambitmap > 0)
 				loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 		}
@@ -4190,7 +4175,7 @@ void saveGame(byte numeropartida) {
 
 void saveGameToRegister() {
 	uint indiaux;
-	regpartida.numeropantalla = roomData->codigo;
+	regpartida.numeropantalla = currentRoomData->codigo;
 	regpartida.longtray = longtray;
 	regpartida.indicetray = indicetray;
 	regpartida.codigoobjmochila = codigoobjmochila;
@@ -4384,7 +4369,7 @@ void loadGame(regispartida game) {
 	loadPalette("DEFAULT");
 	loadScreenData(game.numeropantalla);
 
-	switch (roomData->codigo) {
+	switch (currentRoomData->codigo) {
 	case 2: {
 		if (teleencendida)
 			autoPlayVoc("PARASITO", 355778, 20129);
@@ -4405,22 +4390,22 @@ void loadGame(regispartida game) {
 		autoPlayVoc("CALDERA", 6433, 15386);
 	} break;
 	case 17: {
-		if (libro[0] == true && roomData->banderamovimiento)
+		if (libro[0] == true && currentRoomData->banderamovimiento)
 			disableSecondAnimation();
 	} break;
 	case 20: {
 		switch (hornacina[0][hornacina[0][3]]) {
 		case 0:
-			roomData->indexadoobjetos[9]->objectName = "HORNACINA";
+			currentRoomData->indexadoobjetos[9]->objectName = "HORNACINA";
 			break;
 		case 561:
-			roomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
+			currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
 			break;
 		case 563:
-			roomData->indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
+			currentRoomData->indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
 			break;
 		case 615:
-			roomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
+			currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
 			break;
 		}
 	} break;
@@ -4431,39 +4416,39 @@ void loadGame(regispartida game) {
 	case 24: {
 		switch (hornacina[1][hornacina[1][3]]) {
 		case 0:
-			roomData->indexadoobjetos[8]->objectName = "HORNACINA";
+			currentRoomData->indexadoobjetos[8]->objectName = "HORNACINA";
 			break;
 		case 561:
-			roomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
+			currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
 			break;
 		case 615:
-			roomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
+			currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
 			break;
 		case 622:
-			roomData->indexadoobjetos[8]->objectName = "PARED";
+			currentRoomData->indexadoobjetos[8]->objectName = "PARED";
 			break;
 		case 623:
-			roomData->indexadoobjetos[8]->objectName = "TORNO";
+			currentRoomData->indexadoobjetos[8]->objectName = "TORNO";
 			break;
 		}
 		if (trampa_puesta) {
-			roomData->banderamovimiento = true;
-			loadAnimation(roomData->nombremovto);
+			currentRoomData->banderamovimiento = true;
+			loadAnimation(currentRoomData->nombremovto);
 			iframe2 = 0;
 			indicetray2 = 1;
-			roomData->tray2[indicetray2 - 1].x = 214 - 15;
-			roomData->tray2[indicetray2 - 1].y = 115 - 42;
-			animado.dir = roomData->dir2[indicetray2 - 1];
-			animado.posx = roomData->tray2[indicetray2 - 1].x;
-			animado.posy = roomData->tray2[indicetray2 - 1].y;
+			currentRoomData->tray2[indicetray2 - 1].x = 214 - 15;
+			currentRoomData->tray2[indicetray2 - 1].y = 115 - 42;
+			animado.dir = currentRoomData->dir2[indicetray2 - 1];
+			animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
+			animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
 			animado.profundidad = 14;
 
 			for (indiaux = 0; indiaux < maxrejax; indiaux++)
 				for (indiaux2 = 0; indiaux2 < maxrejay; indiaux2++) {
 					if (rejamascaramovto[indiaux][indiaux2] > 0)
-						roomData->rejapantalla[oldposx + indiaux][oldposy + indiaux2] = rejamascaramovto[indiaux][indiaux2];
+						currentRoomData->rejapantalla[oldposx + indiaux][oldposy + indiaux2] = rejamascaramovto[indiaux][indiaux2];
 					if (rejamascararaton[indiaux][indiaux2] > 0)
-						roomData->mouseGrid[oldposx + indiaux][oldposy + indiaux2] = rejamascararaton[indiaux][indiaux2];
+						currentRoomData->mouseGrid[oldposx + indiaux][oldposy + indiaux2] = rejamascararaton[indiaux][indiaux2];
 				}
 		}
 		assembleScreen();
@@ -4473,7 +4458,7 @@ void loadGame(regispartida game) {
 	mask();
 	posicioninv = 0;
 	drawBackpack();
-	if (rojo_capturado == false && roomData->codigo == 24 && trampa_puesta == false)
+	if (rojo_capturado == false && currentRoomData->codigo == 24 && trampa_puesta == false)
 		runaroundRed();
 	effect(tipoefectofundido, false, fondo);
 }
@@ -4743,7 +4728,7 @@ void saveLoad() {
 	else {
 		regindfich.ultimapartida = 1;
 		for (int i = 0; i < 6; i++) {
-			regindfich.listapartidas[i] = Common::String("DISPONIBLE " + (char)(i + 48));
+			regindfich.listapartidas[i] = Common::String().format("DISPONIBLE %d", i);
 		}
 	}
 	salirmenufunciones = false;
@@ -4756,8 +4741,8 @@ void saveLoad() {
 	getImg(50, 10, 270, 120, puntfondmenu);
 
 	for (int i = 0; i < 6; i++) {
-		uint ytext = i + 1;
-		buttonBorder((120 - (ytext * 10)), (80 - (ytext * 10)), (200 + (ytext * 10)), (60 + (ytext * 10)), 251, 251, 251, 251, 0, 0, "");
+		uint textY = i + 1;
+		buttonBorder((120 - (textY * 10)), (80 - (textY * 10)), (200 + (textY * 10)), (60 + (textY * 10)), 251, 251, 251, 251, 0, 0, "");
 	}
 	drawMenu(2);
 	if (desactivagrabar) {
@@ -4802,7 +4787,7 @@ void saveLoad() {
 					pulsax = e.mouse.x;
 					pulsay = e.mouse.y;
 				}
-				else if (e.type = Common::EVENT_KEYUP){
+				else if (e.type == Common::EVENT_KEYUP){
 					keyPressed = true;
 				}
 			}
@@ -4812,7 +4797,7 @@ void saveLoad() {
 			g_system->delayMillis(10);
 		} while (!keyPressed && !mouseClicked && !g_engine->shouldQuit());
 
-		if(mouseClicked)
+		if(mouseClicked) {
 			if(pulsay >= 13 && pulsay <= 16){
 				if(pulsax >= 54 && pulsax <=124){
 					if (partidaselecc > 0 && !desactivagrabar && (nombrepartida != Common::String("DISPONIBLE ") + (char)(partidaselecc + 48)) && (nombrepartida != "")) {
@@ -4925,6 +4910,7 @@ void saveLoad() {
 				seleccionaPartida(regindfich, 5);
 				nombrepartida = regindfich.listapartidas[5];
 			}
+		}
 
 		if (partidaselecc > 0 && keypressed()) {
 			g_engine->_mouseManager->hide();
@@ -4949,15 +4935,13 @@ void loadTalkAnimations() {
 	if (!fichcani.open("TIOHABLA.SEC")) {
 		error("Error opening file animation (265)");
 	}
-	int32 posfilehabla, pasosize;
-	uint size;
+	int32 posfilehabla;
 
 	sizeframe = fichcani.readUint16LE();
 
 	posfilehabla = sizeframe * 16;
 	posfilehabla = (posfilehabla * direccionmovimiento) + 2;
 	fichcani.seek(posfilehabla);
-	pasosize = 0;
 	debug("LoadTalk direccionmovimiento=%d", direccionmovimiento);
 	for (int i = 0; i < 16; i++) {
 		secuencia.bitmap[0][i] = (byte *)malloc(sizeframe);
@@ -4965,7 +4949,7 @@ void loadTalkAnimations() {
 	}
 	fichcani.close();
 
-	if ((roomData->nombremovto != "PETER") && (roomData->nombremovto != "ARZCAEL")) {
+	if ((currentRoomData->nombremovto != "PETER") && (currentRoomData->nombremovto != "ARZCAEL")) {
 		iframe2 = 0;
 		free(pasoanimado);
 		boolean result;
@@ -4977,7 +4961,7 @@ void loadTalkAnimations() {
 			result = fichcani.open("ALFRED.SEC");
 			break;
 		default:
-			result = fichcani.open(Common::Path(roomData->nombremovto + Common::String(".SEC")));
+			result = fichcani.open(Common::Path(currentRoomData->nombremovto + Common::String(".SEC")));
 		}
 
 		if (!result)
@@ -4987,7 +4971,6 @@ void loadTalkAnimations() {
 		numerodir = fichcani.readByte();
 
 		pasoanimado = (byte *)malloc(sizeanimado);
-		pasosize = 0;
 		if (numerodir != 0) {
 			secondaryAnimationFrameCount = secondaryAnimationFrameCount / 4;
 			for (int i = 0; i <= 3; i++) {
@@ -5003,9 +4986,6 @@ void loadTalkAnimations() {
 
 void unloadTalkAnimations() {
 
-	int32 pasosize;
-	uint size, indice1;
-
 	Common::File fichcani;
 	if (!fichcani.open("PERSONAJ.SPT")) {
 		error("Error loading character sprite! 265");
@@ -5018,8 +4998,8 @@ void unloadTalkAnimations() {
 	}
 	fichcani.close();
 
-	if ((roomData->nombremovto != "PETER") && (roomData->nombremovto != "ARZCAEL")) {
-		if (!fichcani.open(Common::Path(roomData->nombremovto + ".DAT"))) {
+	if ((currentRoomData->nombremovto != "PETER") && (currentRoomData->nombremovto != "ARZCAEL")) {
+		if (!fichcani.open(Common::Path(currentRoomData->nombremovto + ".DAT"))) {
 			error("loading secondary animation after talk (265)");
 		}
 		sizeanimado = fichcani.readUint16LE();
@@ -5074,7 +5054,7 @@ void hypertext(
 	byte *fondotextht;
 	byte matrizsaltosht[15];
 	g_engine->_mouseManager->hide();
-	switch (roomData->codigo) {
+	switch (currentRoomData->codigo) {
 	case 2: { // Leisure room
 		xht = 10;
 		yht = 2;
@@ -5151,7 +5131,7 @@ void hypertext(
 		insertarnombre = 0;
 
 		for (int i = 0; i < regmht.cadenatext.size(); i++) {
-			regmht.cadenatext.setChar(encriptado[i] ^ regmht.cadenatext[i], i);
+			regmht.cadenatext.setChar(decryptionKey[i] ^ regmht.cadenatext[i], i);
 			if (regmht.cadenatext[i] == '@')
 				insertarnombre = i;
 		}
@@ -5209,7 +5189,6 @@ void hypertext(
 
 			for (lineaht = 1; lineaht <= iteracionesht; lineaht++) {
 
-				int size = matrizsaltosht[lineaht] - matrizsaltosht[lineaht - 1];
 				Common::String lineString = Common::String(regmht.cadenatext.c_str() + matrizsaltosht[lineaht - 1], regmht.cadenatext.c_str() + matrizsaltosht[lineaht]);
 
 				outtextxy(xht + 1, yht + ((lineaht - 1) * 11), lineString, colorsombraht);
@@ -5269,13 +5248,13 @@ void hypertext(
 						sprites(true);
 						direccionmovimiento = direccionmovimientopaso;
 					} else {
-						if (indicetray2 >= roomData->longtray2)
+						if (indicetray2 >= currentRoomData->longtray2)
 							indicetray2 = 1;
 						else
 							indicetray2 += 1;
-						animado.posx = roomData->tray2[indicetray2 - 1].x;
-						animado.posy = roomData->tray2[indicetray2 - 1].y;
-						animado.dir = roomData->dir2[indicetray2 - 1];
+						animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
+						animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
+						animado.dir = currentRoomData->dir2[indicetray2 - 1];
 						if (iframe2 >= secondaryAnimationFrameCount - 1)
 							iframe2 = 0;
 						else
@@ -5283,13 +5262,13 @@ void hypertext(
 						sprites(false);
 					}
 				}
-				if (roomData->banderapaleta && saltospal >= 4) {
+				if (currentRoomData->banderapaleta && saltospal >= 4) {
 					saltospal = 0;
 					if (movidapaleta > 6)
 						movidapaleta = 0;
 					else
 						movidapaleta += 1;
-					if (roomData->codigo == 4 && movidapaleta == 4)
+					if (currentRoomData->codigo == 4 && movidapaleta == 4)
 						pitavocmem();
 					updatePalette(movidapaleta);
 				} else
@@ -5310,7 +5289,7 @@ void hypertext(
 
 void wcScene() {
 	palette palwater;
-	zonaactual = roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory];
+	zonaactual = currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory];
 	goToObject(zonaactual, zonadestino);
 
 	copyPalette(pal, palwater);
@@ -5480,7 +5459,6 @@ void initializeObjectFile() {
 		error("initializeObjectFile(): ioresult (261)");
 	}
 	delete (invItemData);
-	int objIndex = 0;
 	byte *objectData = (byte *)malloc(objFile.size());
 	objFile.read(objectData, objFile.size());
 	invItemData = new Common::MemorySeekableReadWriteStream(objectData, objFile.size(), DisposeAfterUse::NO);
