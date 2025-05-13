@@ -425,7 +425,7 @@ bool ModuleModXmS3m::loadXm(Common::SeekableReadStream &st) {
 	}
 
 	sequence = new byte[sequenceLen];
-	for (int i = 0; i < sequenceLen; ++i) {
+	for (uint i = 0; i < sequenceLen; ++i) {
 		int entry = st.readByte();
 		sequence[i] = entry < numPatterns ? entry : 0;
 	}

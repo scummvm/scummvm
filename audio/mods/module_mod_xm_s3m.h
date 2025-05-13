@@ -130,7 +130,7 @@ private:
 public:
 	// sound properties
 	byte name[32];
-	int sequenceLen;
+	uint sequenceLen;
 	int restartPos;
 	byte *sequence;
 
