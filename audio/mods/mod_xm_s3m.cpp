@@ -118,7 +118,7 @@ private:
 	int calculateMixBufLength() const { return (calculateTickLength() + 65) * 4; }
 
 	int initPlayCount(int8 **playCount);
-	void setSequencePos(int pos);
+	void setSequencePos(uint pos);
 	int tick();
 	void updateRow();
 	int seek(int samplePos);
@@ -221,7 +221,7 @@ ModXmS3mStream::~ModXmS3mStream() {
 
 int ModXmS3mStream::initPlayCount(int8 **playCount) {
 	int len = 0;
-	for (int idx = 0; idx < _module.sequenceLen; ++idx) {
+	for (uint idx = 0; idx < _module.sequenceLen; ++idx) {
 		int pat = _module.sequence[idx];
 		int rows = (pat < _module.numPatterns) ? _module.patterns[pat].numRows : 0;
 		if (playCount) {
@@ -991,14 +991,14 @@ void ModXmS3mStream::updateRow() {
 	}
 	if (_breakPos >= 0) {
 		_finished = false;
-		if (_breakPos >= _module.sequenceLen) {
+		if (_breakPos >= (int)_module.sequenceLen) {
 			// Hit the end.
 			_breakPos = _nextRow = 0;
 			_finished = true;
 		}
 		while (_module.sequence[_breakPos] >= _module.numPatterns) {
 			_breakPos++;
-			if (_breakPos >= _module.sequenceLen) {
+			if (_breakPos >= (int)_module.sequenceLen) {
 				// Hit the end.
 				_breakPos = _nextRow = 0;
 				_finished = true;
@@ -1329,7 +1329,7 @@ int ModXmS3mStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samplesRead;
 }
 
-void ModXmS3mStream::setSequencePos(int pos) {
+void ModXmS3mStream::setSequencePos(uint pos) {
 	if (pos >= _module.sequenceLen) {
 		pos = 0;
 	}
