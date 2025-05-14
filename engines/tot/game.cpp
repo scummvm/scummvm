@@ -320,10 +320,10 @@ int startGame() {
 	lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	switch (parte_del_juego) {
 		case 1:
-			// playMidiFile("PRIMERA", true);
+			playMidiFile("PRIMERA", true);
 			break;
 		case 2:
-			// playMidiFile("SEGUNDA", true);
+			playMidiFile("SEGUNDA", true);
 			break;
 		}
 		contadorpc2 = contadorpc;
