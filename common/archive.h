@@ -493,6 +493,7 @@ public:
 private:
 	friend class Singleton<SingletonBaseType>;
 	SearchManager();
+	~SearchManager() { clear(); }
 };
 
 /** Shortcut for accessing the Search Manager. */
