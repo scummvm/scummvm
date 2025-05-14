@@ -182,6 +182,11 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 				case '3':
 				case '4':
 				case '5':
+					// Mark token for Nancy 8 and later games. no-op for earlier games
+					if (g_nancy->getGameType() <= kGameTypeNancy7) {
+						continue;
+					}
+
 					if (curToken.size() != 1) {
 						break;
 					}
