@@ -54,6 +54,9 @@
 #define INCL_DOS
 #include <os2.h>
 #endif
+#ifdef ATARI
+#include <mint/osbind.h>
+#endif
 
 bool POSIXFilesystemNode::exists() const {
 	return access(_path.c_str(), F_OK) == 0;
@@ -90,7 +93,7 @@ POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p) {
 		_path = p;
 	}
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(ATARI)
 	// On OS/2, 'X:/' is a root of drive X, so we should not remove that last
 	// slash.
 	if (!(_path.size() == 3 && _path.hasSuffix(":/")))
@@ -140,13 +143,17 @@ AbstractFSNode *POSIXFilesystemNode::getChild(const Common::String &n) const {
 bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(ATARI)
 	if (_path == "/") {
 		// Special case for the root dir: List all DOS drives
+#ifdef __OS2__
 		ULONG ulDrvNum;
 		ULONG ulDrvMap;
 
 		DosQueryCurrentDisk(&ulDrvNum, &ulDrvMap);
+#else
+		unsigned long ulDrvMap = Drvmap();
+#endif
 
 		for (int i = 0; i < 26; i++) {
 			if (ulDrvMap & 1) {
@@ -250,7 +257,7 @@ AbstractFSNode *POSIXFilesystemNode::getParent() const {
 	if (_path == "/")
 		return 0;	// The filesystem root has no parent
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(ATARI)
 	if (_path.size() == 3 && _path.hasSuffix(":/"))
 		// This is a root directory of a drive
 		return makeNode("/");   // return a virtual root for a list of drives
