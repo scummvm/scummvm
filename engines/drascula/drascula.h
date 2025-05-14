@@ -54,7 +54,7 @@
  */
 namespace Drascula {
 
-#define DRASCULA_DAT_VER 6
+#define DRASCULA_DAT_VER 7
 #define DATAALIGNMENT 4
 
 enum Languages {

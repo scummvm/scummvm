@@ -972,12 +972,40 @@ bool DrasculaEngine::loadDrasculaDat() {
 		return false;
 	}
 
-	_charMapSize = in.readUint16BE();
+	uint16 charMapLettersSize = in.readUint16BE();
+	uint16 charMapSignsSize = in.readUint16BE();
+	uint16 charMapCyrillicSize = in.readUint16BE();
+	uint16 charMapAccentedSize = in.readUint16BE();
+	_charMapSize = charMapLettersSize + charMapSignsSize;
+	if (_lang == kRussian)
+		_charMapSize += charMapCyrillicSize;
+	else
+		_charMapSize += charMapAccentedSize;
 	_charMap = (CharInfo *)malloc(sizeof(CharInfo) * _charMapSize);
-	for (i = 0; i < _charMapSize; i++) {
-		_charMap[i].inChar = in.readByte();
-		_charMap[i].mappedChar = in.readSint16BE();
-		_charMap[i].charType = in.readByte();
+	int map_i = 0;
+	for (i = 0; i < charMapLettersSize + charMapSignsSize; i++, map_i++) {
+		_charMap[map_i].inChar = in.readByte();
+		_charMap[map_i].mappedChar = in.readSint16BE();
+		_charMap[map_i].charType = in.readByte();
+	}
+	if (_lang == kRussian) {
+		// load cyrillic characters
+		for (i = 0; i < charMapCyrillicSize; i++, map_i++) {
+			_charMap[map_i].inChar = in.readByte();
+			_charMap[map_i].mappedChar = in.readSint16BE();
+			_charMap[map_i].charType = in.readByte();
+		}
+		// skip accented characters
+		in.skip(4 * charMapAccentedSize);
+	} else {
+		// skeep cyrillic characters
+		in.skip(4 * charMapCyrillicSize);
+		// load accented characters
+		for (i = 0; i < charMapAccentedSize; i++, map_i++) {
+			_charMap[map_i].inChar = in.readByte();
+			_charMap[map_i].mappedChar = in.readSint16BE();
+			_charMap[map_i].charType = in.readByte();
+		}
 	}
 
 	_itemLocationsSize = in.readUint16BE();
