@@ -103,7 +103,7 @@ void handleFlcEvent(byte numero_del_evento) {
 
 			switch (numerovuelta) {
 			case 2:
-				drawText(80, 0, "Las �ltimas  encuestas  realizadas",
+				drawText(80, 0, "Las \xA3ltimas  encuestas  realizadas",
 						 "acerca  de  la  siniestralidad  en ",
 						 "los transportes arrojan resultados",
 						 "alentadores...", "", 253, 0);
@@ -121,15 +121,15 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 26:
 				drawText(80, 0, "Es una noticia que nos anima a salir",
-						 "de viaje con m�s seguridad.", "", "", "", 253, 0);
+						 "de viaje con m\xA0s seguridad.", "", "", "", 253, 0);
 				break;
 			case 35:
 				removeText(80, 0, 319, 53, 0);
 				break;
 			case 36:
-				drawText(2, 100, "��Por un tornillo!!...",
-						 "Por un m�sero y simple",
-						 "tornillo  del  tr�fugo",
+				drawText(2, 100, "\xAD\xADPor un tornillo!!...",
+						 "Por un m\xA1sero y simple",
+						 "tornillo  del  tr\xA1""fugo",
 						 "del trapecio...", "", 255, 0);
 				break;
 			case 47:
@@ -137,18 +137,18 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 48:
 				drawText(2, 100, "Si lo hubiese apretado",
-						 "bien, no estar�a ahora",
+						 "bien, no estar\xA1""a ahora",
 						 "sin trabajo...", "", "", 255, 0);
 				break;
 			case 59:
 				removeText(2, 100, 134, 199, 0);
 				break;
 			case 60:
-				drawText(80, 0, "��Noticia de �ltima hora!!", "", "", "", "", 253, 0);
+				drawText(80, 0, "\xAD\xADNoticia de \xA3ltima hora!!", "", "", "", "", 253, 0);
 				break;
 			case 63:
 				drawText(2, 100, "Llevo  sin dormir toda",
-						 "la noche, pensando qu�",
+						 "la noche, pensando qu\x82",
 						 "voy a hacer.", "", "", 255, 0);
 				break;
 			case 75:
@@ -158,18 +158,18 @@ void handleFlcEvent(byte numero_del_evento) {
 				removeText(80, 0, 319, 53, 0);
 				break;
 			case 77:
-				drawText(2, 100, "Seguramente  no  podr�",
+				drawText(2, 100, "Seguramente  no  podr\x82",
 						 "encontrar  trabajo  en",
 						 "mucho tiempo...",
-						 "Aunque  ponga mucha f�",
+						 "Aunque  ponga mucha f\x82",
 						 "la oficina de empleo.", 255, 0);
 				break;
 			case 89:
 				removeText(2, 100, 135, 199, 0);
 				break;
 			case 90:
-				drawText(2, 100, "Y  para  animarme  m�s",
-						 "todav�a, ma�ana  noche",
+				drawText(2, 100, "Y  para  animarme  m\xA0s",
+						 "todav\xAD""a, ma\xA4""ana  noche",
 						 "es HALLOWEEN...", "",
 						 "Es que tengo la negra.", 255, 0);
 				break;
@@ -178,10 +178,10 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 103:
 				drawText(80, 0, "Grave  accidente  en  TWELVE MOTORS...",
-						 "un empleado olvid� apretar un tornillo",
+						 "un empleado olvid\xA2 apretar un tornillo",
 						 "y media  cadena  de montaje ha quedado",
 						 "para chatarra...",
-						 "las p�rdidas se  estiman cuantiosas...", 253, 0);
+						 "las p\x82rdidas se  estiman cuantiosas...", 253, 0);
 				break;
 			case 120:
 				removeText(80, 0, 319, 53, 0);
@@ -191,8 +191,8 @@ void handleFlcEvent(byte numero_del_evento) {
 						 "contra ese inconsciente...", "", "", "", 253, 0);
 				break;
 			case 125:
-				drawText(2, 100, "�Dios mio!... hasta en",
-						 "la televisi�n...",
+				drawText(2, 100, "\xAD""Dios mio!... hasta en",
+						 "la televisi\xA2n...",
 						 "Seguro  que  hasta  mi",
 						 "perro  encuentra curro",
 						 "antes que yo...", 255, 0);
@@ -213,52 +213,52 @@ void handleFlcEvent(byte numero_del_evento) {
 			playVoc("MANDO", 142001, 11469);
 			break;
 		case 20:
-			drawText(2, 100, "�HORROR!...una factura", "", "", "", "", 255, 0);
+			drawText(2, 100, "\xADHORROR!...una factura", "", "", "", "", 255, 0);
 			break;
 		case 58: {
 			removeText(2, 100, 135, 199, 0);
-			drawText(2, 100, "�Oficina de empleo?...",
-					 "�y para m�?...", "",
-					 "�Se habr�n equivocado!", "", 255, 0);
+			drawText(2, 100, "\xA8""Oficina de empleo?...",
+					 "\xA8""y para m\xA1?...", "",
+					 "\xADSe habr\xA0n equivocado!", "", 255, 0);
 		} break;
 		case 74: {
 			delay(1500);
 			removeText(2, 100, 135, 199, 0);
-			drawText(2, 100, "�Tan  pronto lograron",
+			drawText(2, 100, "\xA8Tan  pronto lograron",
 					 "encontrarme  trabajo?", "",
 					 "Claro... antes de ver",
 					 "las noticias...", 255, 0);
 			delay(4000);
 			removeText(2, 100, 135, 199, 0);
-			drawText(80, 0, "Estimado se�or: Nos dirigimos a",
+			drawText(80, 0, "Estimado se\xA4or: Nos dirigimos a",
 					 "usted  para  comunicarle que su",
-					 "solicitud n�:93435 fu� aceptada",
+					 "solicitud n\xA7:93435 fu\x82 aceptada",
 					 "y le hemos encontrado un puesto",
 					 "de acuerdo con sus aptitudes...", 253, 0);
 			delay(7000);
 			removeText(80, 0, 319, 53, 0);
-			drawText(80, 0, "Deber� presentarse  ma�ana, dia",
-					 "31  de  Octubre en la direcci�n",
+			drawText(80, 0, "Deber\xA0 presentarse  ma\xA4""ana, dia",
+					 "31  de  Octubre en la direcci\xA2n",
 					 "abajo indicada,  para ocupar el",
 					 "puesto de ENCARGADO GENERAL.", "", 253, 0);
 			delay(7000);
 			removeText(80, 0, 319, 53, 0);
 			drawText(80, 0, "Le adjuntamos las  credenciales",
-					 "de presentaci�n.",
-					 "Deseando no verle  por  aqu� en",
+					 "de presentaci\xA2n.",
+					 "Deseando no verle  por  aqu\xA1 en",
 					 "mucho tiempo se despide:",
 					 "    Leonor Scott.", 253, 0);
 			delay(7000);
 			removeText(80, 0, 319, 53, 0);
-			drawText(2, 100, "��Que ilu!! encargado",
+			drawText(2, 100, "\xAD\xADQue ilu!! encargado",
 					 "general...  si ya  me",
 					 "lo decia  mi madre...",
 					 "<<nene tienes cara de",
 					 "encargado general>>", 255, 0);
 			delay(6000);
 			removeText(2, 100, 135, 199, 0);
-			drawText(2, 100, "Tendr�  que conseguir",
-					 "ropa  m�s  de acuerdo",
+			drawText(2, 100, "Tendr\x82  que conseguir",
+					 "ropa  m\xA0s  de acuerdo",
 					 "con mi nuevo cargo.", "",
 					 "Manos a la obra...", 255, 0);
 			delay(6000);
@@ -289,26 +289,26 @@ void handleFlcEvent(byte numero_del_evento) {
 		if ((numerovuelta == 1) && (framecontador == 2)) {
 
 			delay(2000);
-			drawText(5, 1, "�V�yase!... no queremos vendedores...",
-					 "y menos de planes de jubilaci�n.", "", "", "", 255, 249);
+			drawText(5, 1, "\xADV\xA0yase!... no queremos vendedores...",
+					 "y menos de planes de jubilaci\xA2n.", "", "", "", 255, 249);
 			delay(3500);
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "No soy ning�n vendedor... me envia la oficina",
+			drawText(5, 1, "No soy ning\xA3n vendedor... me envia la oficina",
 					 "de empleo... tenga mis credenciales.", "", "", "", 255, 0);
 		}
 		break;
 	case 6:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "�Vaya! eres t�...llegas con retraso. Los ancianos est�n",
-					 "esper�ndote en el sal�n. Debes cuidarlos muy bien.",
+			drawText(5, 1, "\xADVaya! eres t\xA3...llegas con retraso. Los ancianos est\xA0n",
+					 "esper\xA0ndote en el sal\xA2n. Debes cuidarlos muy bien.",
 					 "", "", "", 255, 249);
 		}
 		break;
 	case 7:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Lo siento, no sab�a a que hora deb�a presentarme, en",
+			drawText(5, 1, "Lo siento, no sab\xA1""a a que hora deb\xA1""a presentarme, en",
 					 "la oficina de empleo no me lo dijeron.",
 					 "", "", "", 255, 0);
 		}
@@ -316,21 +316,21 @@ void handleFlcEvent(byte numero_del_evento) {
 	case 8:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Bueno... no importa... ya est�s aqu�.",
-					 "Ese coche es tuyo �no?...", "", "", "", 255, 249);
+			drawText(5, 1, "Bueno... no importa... ya est\xA0s aqu\xA1.",
+					 "Ese coche es tuyo \xA8no?...", "", "", "", 255, 249);
 		}
 		break;
 	case 9:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Si... es precioso �verdad?...", "", "", "", "", 255, 0);
+			drawText(5, 1, "Si... es precioso \xA8verdad?...", "", "", "", "", 255, 0);
 		}
 		break;
 	case 10:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Vaya... 200 caballos... elevalunas el�ctricos... ",
-					 "inyecci�n electr�nica, llantas de aleaci�n...",
+			drawText(5, 1, "Vaya... 200 caballos... elevalunas el\x82""ctricos... ",
+					 "inyecci\xA2n electr\xA2nica, llantas de aleaci\xA2n...",
 					 "", "", "", 255, 249);
 		}
 		break;
@@ -350,26 +350,26 @@ void handleFlcEvent(byte numero_del_evento) {
 	case 13:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Es el m�s alto de la gama...", "", "", "", "", 255, 0);
+			drawText(5, 1, "Es el m\xA0s alto de la gama...", "", "", "", "", 255, 0);
 		}
 		break;
 	case 14:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "ABS, equipo de m�sica con CD, estructura reforzada",
+			drawText(5, 1, "ABS, equipo de m\xA3sica con CD, estructura reforzada",
 					 "indeformable, detector de radar...", "", "", "", 255, 249);
 		}
 		break;
 	case 15:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Parece que te gusta, �no?", "", "", "", "", 255, 0);
+			drawText(5, 1, "Parece que te gusta, \xA8no?", "", "", "", "", 255, 0);
 		}
 		break;
 	case 16:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Bueno, no est� mal... pero... gracias de todos modos.",
+			drawText(5, 1, "Bueno, no est\xA0 mal... pero... gracias de todos modos.",
 					 "", "", "", "", 255, 249);
 		}
 		break;
@@ -389,7 +389,7 @@ void handleFlcEvent(byte numero_del_evento) {
 	case 18:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "�Gracias?... �qu�?... �espera!... ese es mi coche...",
+			drawText(5, 1, "\xA8Gracias?... \xA8qu\x82?... \xAD""espera!... ese es mi coche...",
 					 "", "", "", "", 255, 0);
 		}
 		break;
@@ -406,7 +406,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				getImg(0, 0, 319, 29, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, "�Donde estoy? ... �Qu� me ha pasado?",
+				drawText(15, 1, "\xA8""Donde estoy? ... \xA8Qu\x82 me ha pasado?",
 						 "", "", "", "", 255, 0);
 				break;
 			}
@@ -417,8 +417,8 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, "Tranquilizate, no est�s muerto...",
-						 "Est�s tras la puerta de acero...", "", "", "", 230, 249);
+				drawText(15, 1, "Tranquilizate, no est\xA0s muerto...",
+						 "Est\xA0s tras la puerta de acero...", "", "", "", 230, 249);
 				break;
 			}
 			break;
@@ -440,7 +440,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(15, 1, "Hace unos dias se puso a estudiar el libro",
-						 "que me diste y desapareci�...", "", "", "", 230, 249);
+						 "que me diste y desapareci\xA2...", "", "", "", 230, 249);
 				break;
 			}
 			break;
@@ -450,7 +450,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, Common::String("Creemos que realiz� un conjuro sin darse") + " cuenta...", "", "", "", "", 230, 249);
+				drawText(15, 1, Common::String("Creemos que realiz\xA2 un conjuro sin darse") + " cuenta...", "", "", "", "", 230, 249);
 				break;
 			}
 			break;
@@ -461,7 +461,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(15, 1, "Por fortuna, pudimos ponernos en contacto",
-						 "con �l, y nos dijo que est� en problemas...",
+						 "con \x82l, y nos dijo que est\xA0 en problemas...",
 						 "", "", "", 230, 249);
 				break;
 			}
@@ -472,7 +472,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, "Nos pidi� que envi�semos a alguien en su ayuda,",
+				drawText(15, 1, "Nos pidi\xA2 que envi\xA0semos a alguien en su ayuda,",
 						 "y TU eres el elegido...", "", "", "", 230, 249);
 				break;
 			}
@@ -484,7 +484,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(15, 1, "Para ir a las CAVERNAS ETERNAS debes morir...",
-						 "Ning�n cuerpo con alma puede estar all�...", "", "", "", 230, 249);
+						 "Ning\xA3n cuerpo con alma puede estar all\xA1...", "", "", "", 230, 249);
 				break;
 			}
 			break;
@@ -494,7 +494,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, Common::String("Haremos un ritual para crear un v�nculo entre") + " tu", "cuerpo y tu alma, s�lo as� podr�s volver a la vida...",
+				drawText(15, 1, Common::String("Haremos un ritual para crear un v\xA1nculo entre") + " tu", "cuerpo y tu alma, s\xA2lo as\xA1 podr\xA0s volver a la vida...",
 						 "", "", "", 230, 249);
 				break;
 			}
@@ -505,7 +505,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, Common::String("Si rescatas a Jacob, el v�nculo te traer�") + " de regreso...", "", "", "", "", 230, 249);
+				drawText(15, 1, Common::String("Si rescatas a Jacob, el v\xA1nculo te traer\xA0") + " de regreso...", "", "", "", "", 230, 249);
 				break;
 			}
 			break;
@@ -515,7 +515,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, "Ahora... �Prep�rate!... Ha llegado tu hora...",
+				drawText(15, 1, "Ahora... \xADPrep\xA0rate!... Ha llegado tu hora...",
 						 "", "", "", "", 230, 249);
 				break;
 			}
@@ -566,7 +566,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				getImg(0, 0, 319, 29, punterofondofrase);
 				break;
 			case 3:
-				drawText(65, 1, "�Gracias ILUSO!...", "", "", "", "", 253, 249);
+				drawText(65, 1, "\xADGracias ILUSO!...", "", "", "", "", 253, 249);
 				break;
 			}
 			break;
@@ -576,7 +576,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 2:
-				drawText(65, 1, "Ahora tendr� un cuerpo nuevo y podr�",
+				drawText(65, 1, "Ahora tendr\x82 un cuerpo nuevo y podr\x82",
 						 "volver a la vida...", "", "", "", 253, 249);
 				break;
 			}
