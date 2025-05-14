@@ -1651,7 +1651,6 @@ void removeTitle(byte *&fondo2) {
 	for (int i1 = 1; i1 <= 15000; i1++) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 		}
-		g_engine->_chrono->updateChrono();
 		i2 = Random(318);
 		j2 = Random(58);
 		byte *src = fondo2 + 4 + (j2 * 320) + i2;
@@ -1665,10 +1664,11 @@ void removeTitle(byte *&fondo2) {
 
 		i2 = Random(320);
 		j2 = Random(60);
+
 		byte *src3 = fondo2 + 4 + (j2 * 320) + i2;
 		byte *dest3 = ((byte *)g_engine->_screen->getPixels()) + (j2 * 320) + i2;
 		Common::copy(src3, src3 + 1, dest3);
-		if (tocapintareffect) {
+		if (i1 % 200 == 0) {
 			debug("Toca pintar!");
 			g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 60));
 			g_engine->_screen->update();
