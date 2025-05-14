@@ -1165,8 +1165,9 @@ void DrasculaEngine::freeTexts(char **ptr) {
 void DrasculaEngine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 
-	// _previousSaid is used to prevent the TTS from looping when sayText is called inside a loop
-	// (Once the text ends, it will see that there is currently no speech and speak the same text again)
+	// _previousSaid is used to prevent the TTS from looping when sayText is called inside a loop,
+	// for example when the cursor stays on a verb icon. Without it when the text ends it would speak
+	// the same text again.
 	// _previousSaid is cleared when appropriate to allow for repeat requests
 	if (ttsMan && ConfMan.getBool("tts_enabled") && _previousSaid != text) {
 		_previousSaid = text;
