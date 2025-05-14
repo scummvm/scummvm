@@ -829,8 +829,8 @@ void updatePalette(byte indicepaleta) {
 	case 1: {
 		for (ipal = 0; ipal <= 5; ipal++) {
 			pal[(ipal + 195) * 3 + 0] = movimientopal[(indicepaleta * 6 + ipal) * 3 + 0];
-			pal[(ipal + 195)* 3 + 1] = movimientopal[(indicepaleta * 6 + ipal) * 3 + 1];
-			pal[(ipal + 195) * 2 + 1] = movimientopal[(indicepaleta * 6 + ipal) * 3 + 2];
+			pal[(ipal + 195) * 3 + 1] = movimientopal[(indicepaleta * 6 + ipal) * 3 + 1];
+			pal[(ipal + 195) * 3 + 2] = movimientopal[(indicepaleta * 6 + ipal) * 3 + 2];
 		}
 		changeRGBBlock(195, 6, &pal[195 * 3 + 0]);
 	} break;
