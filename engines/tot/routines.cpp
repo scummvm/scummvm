@@ -3016,18 +3016,22 @@ void useScreenObject() {
 				drawText(regobj.useTextRef);
 				g_engine->_mouseManager->hide();
 				animateGive(direccionmovimiento, 1);
-				loadItem(187, 70, 104, 1545820, 7);
+
+				//Show feather on pedestal
+				loadItem(187, 70, 104, 1545820, 8);
 				handPantallaToFondo();
-				// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4, (sizepantalla - int32(4)));
 				assembleScreen();
 				drawScreen(fondo);
+				g_engine->_screen->update();
+
 				animateOpen2(direccionmovimiento, 1);
 				g_engine->_mouseManager->show();
-				goToObject(currentRoomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)], 14);
+				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 14);
 				g_engine->_mouseManager->hide();
 				playVoc("PUFF", 191183, 18001);
+				//Animate to scythe
 				drawFlc(180, 60, 2216848, 0, 9, 0, false, false, true, basurillalog);
-
+				//load Scythe
 				currentRoomData->bitmapasociados[2].puntbitmap = 1545820;
 				currentRoomData->bitmapasociados[2].tambitmap = 104;
 				currentRoomData->bitmapasociados[2].coordx = 277;
@@ -3041,9 +3045,9 @@ void useScreenObject() {
 				currentRoomData->bitmapasociados[4].coordx = 186;
 				currentRoomData->bitmapasociados[4].coordy = 64;
 				currentRoomData->bitmapasociados[4].profund = 8;
-				loadItem(186, 63, 464, 1447508, 7);
+				loadItem(186, 63, 464, 1447508, 8);
+
 				handPantallaToFondo();
-				// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4,(sizepantalla - int32(4)));
 				assembleScreen();
 				drawScreen(fondo);
 				g_engine->_mouseManager->show();
@@ -3073,14 +3077,15 @@ void useScreenObject() {
 			case 633: {
 				drawText(regobj.useTextRef);
 				g_engine->_mouseManager->hide();
+
 				animateGive(3, 1);
-				loadItem(86, 55, 92, 1591272, 7);
+				loadItem(86, 55, 92, 1591272, 8);
 				handPantallaToFondo();
 				assembleScreen();
 				drawScreen(fondo);
 				animateOpen2(3, 1);
 				g_engine->_mouseManager->show();
-				goToObject(currentRoomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)], 10);
+				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 10);
 				g_engine->_mouseManager->hide();
 				playVoc("PUFF", 191183, 18001);
 				drawFlc(0, 47, 2209158, 0, 9, 0, false, false, true, basurillalog);
@@ -3099,8 +3104,7 @@ void useScreenObject() {
 				currentRoomData->bitmapasociados[4].coordx = 82;
 				currentRoomData->bitmapasociados[4].coordy = 53;
 				currentRoomData->bitmapasociados[4].profund = 8;
-				loadItem(82, 53, 384, 1746554, 7);
-				// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4,(sizepantalla - int32(4)));
+				loadItem(82, 53, 384, 1746554, 8);
 				assembleScreen();
 				drawScreen(fondo);
 				g_engine->_mouseManager->show();
