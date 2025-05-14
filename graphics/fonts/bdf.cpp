@@ -37,7 +37,7 @@ BdfFont::BdfFont(const BdfFontData &data, DisposeAfterUse::Flag dispose)
 
 BdfFont::~BdfFont() {
 	if (_dispose == DisposeAfterUse::YES) {
-		for (int i = 0; i < _data.numCharacters; ++i)
+		for (uint i = 0; i < _data.numCharacters; ++i)
 			delete[] _data.bitmaps[i];
 		delete[] _data.bitmaps;
 		delete[] _data.advances;
@@ -107,7 +107,7 @@ void drawCharIntern(byte *ptr, uint pitch, const byte *src, int h, int width, in
 
 int BdfFont::mapToIndex(uint32 ch) const {
 	// Check whether the character is included
-	if (_data.firstCharacter <= (int)ch && (int)ch <= _data.firstCharacter + _data.numCharacters) {
+	if (_data.firstCharacter <= ch && ch <= _data.firstCharacter + _data.numCharacters) {
 		if (_data.bitmaps[ch - _data.firstCharacter])
 			return ch - _data.firstCharacter;
 	}
@@ -399,7 +399,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 			byte *bitmap = loadCharacter(stream, encoding, advance, box);
 
 			// Ignore all characters above 255.
-			if (encoding < 0 || encoding >= font.numCharacters) {
+			if (encoding < 0 || encoding >= (int)font.numCharacters) {
 				delete[] bitmap;
 				continue;
 			}
@@ -488,19 +488,19 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 	font.familyName = familyName;
 	font.slant = slant;
 
-	int firstCharacter = font.numCharacters;
+	uint firstCharacter = font.numCharacters;
 	int lastCharacter = -1;
 	bool hasFixedBBox = true;
 	bool hasFixedAdvance = true;
 
-	for (int i = 0; i < font.numCharacters; ++i) {
+	for (uint i = 0; i < font.numCharacters; ++i) {
 		if (!font.bitmaps[i])
 			continue;
 
 		if (i < firstCharacter)
 			firstCharacter = i;
 
-		if (i > lastCharacter)
+		if ((int)i > lastCharacter)
 			lastCharacter = i;
 
 		if (font.advances[i] != font.maxAdvance)
@@ -537,7 +537,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 	}
 
 	// Adapt for the fact that we never use encoding 0.
-	if (font.defaultCharacter < firstCharacter
+	if (font.defaultCharacter < (int)firstCharacter
 	    || font.defaultCharacter > lastCharacter)
 		font.defaultCharacter = -1;
 
@@ -545,7 +545,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 
 	const int charsAvailable = lastCharacter - firstCharacter + 1;
 	// Try to compact the tables
-	if (charsAvailable < font.numCharacters) {
+	if (charsAvailable < (int)font.numCharacters) {
 		byte **newBitmaps = new byte *[charsAvailable];
 		boxes = 0;
 		advances = 0;
@@ -606,7 +606,7 @@ bool BdfFont::cacheFontData(const BdfFont &font, const Common::Path &filename) {
 	cacheFile.writeSint16BE(data.defaultCharacter);
 	cacheFile.writeUint16BE(data.numCharacters);
 
-	for (int i = 0; i < data.numCharacters; ++i) {
+	for (uint i = 0; i < data.numCharacters; ++i) {
 		const BdfBoundingBox &box = data.boxes ? data.boxes[i] : data.defaultBox;
 		if (data.bitmaps[i]) {
 			const int bytes = ((box.width + 7) / 8) * box.height;
@@ -627,7 +627,7 @@ bool BdfFont::cacheFontData(const BdfFont &font, const Common::Path &filename) {
 	if (data.boxes) {
 		cacheFile.writeByte(0xFF);
 
-		for (int i = 0; i < data.numCharacters; ++i) {
+		for (uint i = 0; i < data.numCharacters; ++i) {
 			const BdfBoundingBox &box = data.boxes[i];
 			cacheFile.writeByte(box.width);
 			cacheFile.writeByte(box.height);
@@ -674,11 +674,11 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 	byte **bitmaps = new byte *[data.numCharacters];
 	byte *advances = 0;
 	BdfBoundingBox *boxes = 0;
-	for (int i = 0; i < data.numCharacters; ++i) {
+	for (uint i = 0; i < data.numCharacters; ++i) {
 		uint32 size = stream.readUint32BE();
 
 		if (stream.err() || stream.eos()) {
-			for (int j = 0; j < i; ++j)
+			for (uint j = 0; j < i; ++j)
 				delete[] bitmaps[j];
 			delete[] bitmaps;
 			return nullptr;
@@ -700,7 +700,7 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 
 	if (stream.readByte() == 0xFF) {
 		boxes = new BdfBoundingBox[data.numCharacters];
-		for (int i = 0; i < data.numCharacters; ++i) {
+		for (uint i = 0; i < data.numCharacters; ++i) {
 			boxes[i].width = stream.readByte();
 			boxes[i].height = stream.readByte();
 			boxes[i].xOffset = stream.readSByte();
@@ -709,7 +709,7 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 	}
 
 	if (stream.eos() || stream.err()) {
-		for (int i = 0; i < data.numCharacters; ++i)
+		for (uint i = 0; i < data.numCharacters; ++i)
 			delete[] bitmaps[i];
 		delete[] bitmaps;
 		delete[] advances;
@@ -823,7 +823,7 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 		srcRects.resize(data.numCharacters);
 
 		BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
-		for (int i = 0; i < data.numCharacters; ++i)
+		for (uint i = 0; i < data.numCharacters; ++i)
 			boxes[i] = scaleBdfBoundingBox(src->_data.ascent, srcReferencePointX, srcReferencePointY, data.ascent, destReferencePointX, destReferencePointY, src->_data.boxes[i], scale);
 		data.boxes = boxes;
 	} else {
@@ -833,7 +833,7 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 
 	if (src->_data.advances) {
 		byte *advances = new byte[data.numCharacters];
-		for (int i = 0; i < data.numCharacters; ++i) {
+		for (uint i = 0; i < data.numCharacters; ++i) {
 			advances[i] = (int)(roundf((float)src->_data.advances[i] * scale));
 		}
 		data.advances = advances;
@@ -843,7 +843,7 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 	}
 
 	byte **bitmaps = new byte *[data.numCharacters];
-	for (int i = 0; i < data.numCharacters; i++) {
+	for (uint i = 0; i < data.numCharacters; i++) {
 		const BdfBoundingBox &box = data.boxes ? data.boxes[i] : data.defaultBox;
 		const BdfBoundingBox &srcBox = data.boxes ? src->_data.boxes[i] : src->_data.defaultBox;
 

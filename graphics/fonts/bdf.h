@@ -48,9 +48,9 @@ struct BdfFontData {
 	BdfBoundingBox defaultBox;
 	int ascent;
 
-	int firstCharacter;
+	uint firstCharacter;
 	int defaultCharacter;
-	int numCharacters;
+	uint numCharacters;
 
 	const byte *const *bitmaps;
 	const byte *advances;
