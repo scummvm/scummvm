@@ -28,7 +28,7 @@
 #include "create_drascula.h"
 #include "staticdata.h"
 
-#define DRASCULA_DAT_VER 6	// 1 byte
+#define DRASCULA_DAT_VER 7	// 1 byte
 
 static void writeByte(FILE *fp, uint8 b) {
 	fwrite(&b, 1, 1, fp);
@@ -59,12 +59,30 @@ int main(int argc, char *argv[]) {
 
 	writeByte(outFile, DRASCULA_DAT_VER);
 
-	// Write charmap
-	writeUint16BE(outFile, ARRAYSIZE(charMap));
-	for (i = 0; i < ARRAYSIZE(charMap); i++) {
-		writeByte(outFile, charMap[i].inChar);
-		writeSint16BE(outFile, charMap[i].mappedChar);
-		writeByte(outFile, charMap[i].charType);
+	// Write charmaps
+	writeUint16BE(outFile, ARRAYSIZE(charMapLetters));
+	writeUint16BE(outFile, ARRAYSIZE(charMapSigns));
+	writeUint16BE(outFile, ARRAYSIZE(charMapCyrillic));
+	writeUint16BE(outFile, ARRAYSIZE(charMapAccented));
+	for (i = 0; i < ARRAYSIZE(charMapLetters); i++) {
+		writeByte(outFile, charMapLetters[i].inChar);
+		writeSint16BE(outFile, charMapLetters[i].mappedChar);
+		writeByte(outFile, charMapLetters[i].charType);
+	}
+	for (i = 0; i < ARRAYSIZE(charMapSigns); i++) {
+		writeByte(outFile, charMapSigns[i].inChar);
+		writeSint16BE(outFile, charMapSigns[i].mappedChar);
+		writeByte(outFile, charMapSigns[i].charType);
+	}
+	for (i = 0; i < ARRAYSIZE(charMapCyrillic); i++) {
+		writeByte(outFile, charMapCyrillic[i].inChar);
+		writeSint16BE(outFile, charMapCyrillic[i].mappedChar);
+		writeByte(outFile, charMapCyrillic[i].charType);
+	}
+	for (i = 0; i < ARRAYSIZE(charMapAccented); i++) {
+		writeByte(outFile, charMapAccented[i].inChar);
+		writeSint16BE(outFile, charMapAccented[i].mappedChar);
+		writeByte(outFile, charMapAccented[i].charType);
 	}
 
 	// Write item locations
