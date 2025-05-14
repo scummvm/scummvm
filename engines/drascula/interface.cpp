@@ -22,6 +22,74 @@
 #include "drascula/drascula.h"
 #include "graphics/cursorman.h"
 
+#include "common/text-to-speech.h"
+
+// The verbs are represented in-game as a picture, thus we are
+// adding transcriptions here
+// While only English, Spanish, Italian, and Russian are translated in-game,
+// they are translated for the TTS system here
+static const char *verbNamesEnglish[] = {
+	"Walk",
+	"Look",
+	"Take",
+	"Open",
+	"Close",
+	"Talk",
+	"Push"
+};
+
+static const char *verbNamesSpanish[] = {
+	"Ir a",
+	"Mirar",
+	"Coger",
+	"Abrir",
+	"Cerrar",
+	"Hablar",
+	"Mover"
+};
+
+static const char *verbNamesItalian[] = {
+	"Vai",
+	"Guarda",
+	"Prendi",
+	"Apri",
+	"Chiudi",
+	"Parla",
+	"Premi"
+};
+
+static const char *verbNamesFrench[] = {
+	"Marcher",
+	"Regarder",
+	"Ramasser",
+	"Ouvrir",
+	"Fermer",
+	"Parler",
+	"Pousser"
+};
+
+static const char *verbNamesGerman[] = {
+	"Gehe",
+	"Schau",
+	"Nimm",
+	"\231ffne",
+	"Schlie\341e",
+	"Rede",
+	"Dr\201cke"
+};
+
+static const char *verbNamesRussian[] = {
+	"\xc8\xe4\xf2\xe8",					// "Идти"
+	"\xd1\xec\xee\xf2\xf0\xe5\xf2\xfc",	// "Смотреть"
+	"\xc2\xe7\xff\xf2\xfc",				// "Взять"
+	"\xce\xf2\xea\xf0\xfb\xf2\xfc",		// "Открыть"
+	"\xc7\xe0\xea\xf0\xfb\xf2\xfc",		// "Закрыть"
+	"\xc3\xee\xe2\xee\xf0\xe8\xf2\xfc",	// "Говорить"
+	"\xd2\xee\xeb\xea\xe0\xf2\xfc"		// "Толкать"
+};
+
+static const int kConfirmExit = 1;
+
 namespace Drascula {
 
 void DrasculaEngine::setCursor(int cursor) {
@@ -80,6 +148,33 @@ void DrasculaEngine::selectVerb(int verb) {
 	if (verb > 0) {
 		takeObject = 1;
 		pickedObject = verb;
+
+		const char **verbNames;
+
+		switch (_lang) {
+		case kEnglish:
+			verbNames = verbNamesEnglish;
+			break;
+		case kSpanish:
+			verbNames = verbNamesSpanish;
+			break;
+		case kGerman:
+			verbNames = verbNamesGerman;
+			break;
+		case kFrench:
+			verbNames = verbNamesFrench;
+			break;
+		case kItalian:
+			verbNames = verbNamesItalian;
+			break;
+		case kRussian:
+			verbNames = verbNamesRussian;
+			break;
+		default:
+			verbNames = verbNamesEnglish;
+		}
+
+		sayText(verbNames[verb], Common::TextToSpeechManager::INTERRUPT);
 	} else {
 		takeObject = 0;
 		_hasName = false;
@@ -93,6 +188,8 @@ bool DrasculaEngine::confirmExit() {
 	updateRoom();
 	centerText(_textsys[1], 160, 87);
 	updateScreen();
+
+	sayText(_textsys[kConfirmExit], Common::TextToSpeechManager::INTERRUPT);
 
 	delay(100);
 	while (!shouldQuit()) {
@@ -134,16 +231,48 @@ void DrasculaEngine::showMenu() {
 				OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
 	}
 
-	if (x < 7)
+	if (x < 7) {
+		sayText(iconName[x], Common::TextToSpeechManager::INTERRUPT);
+
 		print_abc(iconName[x], _itemLocations[x].x - 2, _itemLocations[x].y - 7);
+	}
 }
 
 void DrasculaEngine::clearMenu() {
 	int n, verbActivated = 1;
 
 	for (n = 0; n < 7; n++) {
-		if (_mouseX > _verbBarX[n] && _mouseX < _verbBarX[n + 1])
+		if (_mouseX > _verbBarX[n] && _mouseX < _verbBarX[n + 1]) {
 			verbActivated = 0;
+
+			const char **verbNames;
+
+			switch (_lang) {
+			case kEnglish:
+				verbNames = verbNamesEnglish;
+				break;
+			case kSpanish:
+				verbNames = verbNamesSpanish;
+				break;
+			case kGerman:
+				verbNames = verbNamesGerman;
+				break;
+			case kFrench:
+				verbNames = verbNamesFrench;
+				break;
+			case kItalian:
+				verbNames = verbNamesItalian;
+				break;
+			case kRussian:
+				verbNames = verbNamesRussian;
+				break;
+			default:
+				verbNames = verbNamesEnglish;
+			}
+
+			sayText(verbNames[n], Common::TextToSpeechManager::INTERRUPT);
+		}
+		
 		copyRect(OBJWIDTH * n, OBJHEIGHT * verbActivated, _verbBarX[n], 2,
 						OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
 		verbActivated = 1;

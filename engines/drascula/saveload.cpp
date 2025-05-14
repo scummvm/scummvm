@@ -21,6 +21,7 @@
 
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/text-to-speech.h"
 
 #include "engines/savestate.h"
 #include "graphics/thumbnail.h"
@@ -427,6 +428,10 @@ bool DrasculaEngine::saveLoadScreen() {
 		}
 		print_abc(selectedName.c_str(), 117, 15);
 
+		if (selectedName.size() > 0) {
+			sayText(selectedName.c_str(), Common::TextToSpeechManager::INTERRUPT);
+		}
+
 		updateScreen();
 		updateEvents();
 
@@ -456,6 +461,8 @@ bool DrasculaEngine::saveLoadScreen() {
 			if (_mouseX > 208 && _mouseY > 123 && _mouseX < 282 && _mouseY < 149) {
 				// "Save" button
 				if (selectedName.empty()) {
+					sayText("Please select a slot", Common::TextToSpeechManager::INTERRUPT);
+
 					print_abc("Please select a slot", 117, 15);
 					updateScreen();
 					delay(200);
@@ -472,6 +479,8 @@ bool DrasculaEngine::saveLoadScreen() {
 			} else if (_mouseX > 125 && _mouseY > 123 && _mouseX < 199 && _mouseY < 149) {
 				// "Load" button
 				if (selectedName.empty()) {
+					sayText("Please select a slot", Common::TextToSpeechManager::INTERRUPT);
+
 					print_abc("Please select a slot", 117, 15);
 					updateScreen();
 					delay(200);

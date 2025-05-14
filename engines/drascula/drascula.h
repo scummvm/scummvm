@@ -34,6 +34,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "common/text-to-speech.h"
 
 #include "engines/savestate.h"
 
@@ -729,6 +730,8 @@ public:
 	void update_62();
 	void update_62_pre();
 	void update_102();
+	
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action);
 
 private:
 	int _lang;
@@ -776,6 +779,8 @@ private:
 	RoomTalkAction *_roomActions;
 	TalkSequenceCommand *_talkSequences;
 	Common::String _saveNames[10];
+	Common::String _previousSaid;
+	Common::CodePage _ttsTextEncoding;
 
 	char **loadTexts(Common::File &in);
 	void freeTexts(char **ptr);

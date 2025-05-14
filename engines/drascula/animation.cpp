@@ -21,6 +21,8 @@
 
 #include "drascula/drascula.h"
 
+#include "common/text-to-speech.h"
+
 namespace Drascula {
 
 void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delayVal, bool copyRectangle) {
@@ -75,6 +77,9 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		color_abc(kColorRed);
 		centerText(_textmisc[1], 160, 100);
+
+		sayText(_textmisc[1], Common::TextToSpeechManager::INTERRUPT);
+
 		updateScreen();
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
 			break;
@@ -766,6 +771,9 @@ void DrasculaEngine::animation_16_2() {
 			Common::strcpy_s(curPic, "his4_2.alg");
 
 		loadPic(curPic, screenSurface, HALF_PAL);
+
+		sayText(_texthis[i], Common::TextToSpeechManager::QUEUE);
+
 		centerText(_texthis[i], 180, 180);
 		updateScreen();
 

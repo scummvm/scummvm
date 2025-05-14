@@ -37,6 +37,7 @@ struct DrasculaGameDescription {
 };
 
 #define GAMEOPTION_ORIGINAL_SAVELOAD      GUIO_GAMEOPTIONS1
+#define GAMEOPTION_TTS                    GUIO_GAMEOPTIONS2
 
 } // End of namespace Drascula
 

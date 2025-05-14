@@ -24,6 +24,7 @@
 
 #include "common/stream.h"
 #include "common/textconsole.h"
+#include "common/text-to-speech.h"
 
 namespace Drascula {
 
@@ -80,8 +81,13 @@ void DrasculaEngine::moveCursor() {
 			color_abc(kColorRed);
 	} else if (!_menuScreen && _color != kColorLightGreen)
 		color_abc(kColorLightGreen);
-	if (_hasName && !_menuScreen)
+	if (_hasName && !_menuScreen) {
+		sayText(textName, Common::TextToSpeechManager::INTERRUPT);
+
 		centerText(textName, _mouseX, _mouseY);
+	} else if (!_menuBar && !_menuScreen)
+		_previousSaid.clear();
+	
 	if (_menuScreen)
 		showMenu();
 	else if (_menuBar)
