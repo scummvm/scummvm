@@ -231,9 +231,9 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 		if (fogEnabled) {
 			glEnable(GL_FOG);
 			GLfloat color[4] = { RGBCOLGetR(fogColor) / 255.0f,
-								 RGBCOLGetG(fogColor) / 255.0f,
-								 RGBCOLGetB(fogColor) / 255.0f,
-								 RGBCOLGetA(fogColor) / 255.0f };
+			                     RGBCOLGetG(fogColor) / 255.0f,
+			                     RGBCOLGetB(fogColor) / 255.0f,
+			                     RGBCOLGetA(fogColor) / 255.0f };
 			glFogfv(GL_FOG_COLOR, color);
 			glFogi(GL_FOG_MODE, GL_LINEAR);
 			glFogf(GL_FOG_START, fogStart);
@@ -297,9 +297,11 @@ bool BaseRenderOpenGL3D::setupLines() {
 }
 
 bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32 &rect,
-								  const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot, const Wintermute::Vector2 &scale,
-								  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
-								  bool mirrorX, bool mirrorY) {
+	                              const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot,
+	                              const Wintermute::Vector2 &scale,
+	                              float angle, uint32 color, bool alphaDisable,
+	                              Graphics::TSpriteBlendMode blendMode,
+	                              bool mirrorX, bool mirrorY) {
 
 	BaseSurfaceOpenGL3D *texture = dynamic_cast<BaseSurfaceOpenGL3D *>(tex);
 	if (!texture)
@@ -799,7 +801,7 @@ void BaseRenderOpenGL3D::setLightParameters(int index, const DXVector3 &position
 
 // backend layer AdSceneGeometry::Render
 void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
-										 const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
+	                                     const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
 	DXMatrix matIdentity;
 	DXMatrixIdentity(&matIdentity);
 
@@ -878,8 +880,8 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 
 // backend layer 3DShadowVolume::Render()
 void BaseRenderOpenGL3D::renderShadowGeometry(const BaseArray<AdWalkplane *> &planes,
-											  const BaseArray<AdBlock *> &blocks,
-											  const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
+	                                      const BaseArray<AdBlock *> &blocks,
+	                                      const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
 	DXMatrix matIdentity;
 	DXMatrixIdentity(&matIdentity);
 

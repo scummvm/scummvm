@@ -65,7 +65,7 @@ public:
 	~BaseRenderer3D() override;
 
 	bool getProjectionParams(float *resWidth, float *resHeight, float *layerWidth, float *layerHeight,
-							 float *modWidth, float *modHeight, bool *customViewport);
+	                         float *modWidth, float *modHeight, bool *customViewport);
 	virtual int getMaxActiveLights() = 0;
 
 	bool setAmbientLightColor(uint32 color);
@@ -95,9 +95,9 @@ public:
 	// declared in sub class: virtual HRESULT DrawLine(int X1, int Y1, int X2, int Y2, DWORD Color);
 	// declared in sub class: virtual HRESULT SetProjection();
 	bool drawSprite(BaseSurface *texture, const Rect32 &rect, float zoomX, float zoomY, const Vector2 &pos,
-					uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
+	                uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
 	virtual bool drawSpriteEx(BaseSurface *texture, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
-							  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
+	                float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
 	// declared in sub class: virtual HRESULT Setup3D(C3DCamera* Camera=NULL, bool Force=false);
 	// NOT declared in sub class: virtual HRESULT Setup3DCustom(D3DXMATRIX* ViewMat, D3DXMATRIX* ProjMat);
 	// declared in sub class: virtual HRESULT Setup2D(bool Force=false);

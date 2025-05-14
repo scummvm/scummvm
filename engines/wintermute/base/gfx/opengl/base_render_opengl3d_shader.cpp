@@ -325,10 +325,10 @@ bool BaseRenderOpenGL3DShader::setupLines() {
 }
 
 bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32 &rect,
-										const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot,
-										const Wintermute::Vector2 &scale, float angle, uint32 color,
-										bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
-										bool mirrorX, bool mirrorY) {
+	                                    const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot,
+	                                    const Wintermute::Vector2 &scale, float angle, uint32 color,
+	                                    bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
+	                                    bool mirrorX, bool mirrorY) {
 	BaseSurfaceOpenGL3D *texture = dynamic_cast<BaseSurfaceOpenGL3D *>(tex);
 	if (!texture)
 		return false;
@@ -645,8 +645,9 @@ BaseImage *BaseRenderOpenGL3DShader::takeScreenshot() {
 #endif
 	surface->create(_viewportRect.width(), _viewportRect.height(), format);
 
-	glReadPixels(_viewportRect.left, _viewportRect.height() - _viewportRect.bottom, _viewportRect.width(), _viewportRect.height(),
-				 GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
+	glReadPixels(_viewportRect.left, _viewportRect.height() - _viewportRect.bottom,
+	             _viewportRect.width(), _viewportRect.height(),
+	             GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
 	flipVertical(surface);
 	Graphics::Surface *converted = surface->convertTo(getPixelFormat());
 	screenshot->copyFrom(converted);
@@ -725,8 +726,8 @@ void BaseRenderOpenGL3DShader::lightEnable(int index, bool enable) {
 
 // backend layer 3DLight::SetLight
 void BaseRenderOpenGL3DShader::setLightParameters(int index, const DXVector3 &position,
-												  const DXVector3 &direction,
-												  const DXVector4 &diffuse, bool spotlight) {
+	                                          const DXVector3 &direction,
+	                                          const DXVector4 &diffuse, bool spotlight) {
 	Math::Vector4d position4d;
 	position4d.x() = position._x;
 	position4d.y() = position._y;
@@ -764,13 +765,13 @@ void BaseRenderOpenGL3DShader::setLightParameters(int index, const DXVector3 &po
 
 // backend layer AdSceneGeometry::Render
 void BaseRenderOpenGL3DShader::renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
-											   const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
+	                                           const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
 	// don't render scene geometry, as OpenGL ES 2 has no wireframe rendering and we don't have a shader alternative yet
 }
 
 // backend layer 3DShadowVolume::Render()
 void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
-													const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
+	                                           const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
 	DXMatrix matIdentity;
 	DXMatrixIdentity(&matIdentity);
 
