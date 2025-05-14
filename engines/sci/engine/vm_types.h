@@ -192,7 +192,7 @@ private:
 };
 
 static inline reg_t make_reg(SegmentId segment, uint16 offset) {
-	reg_t r{0, 0};
+	reg_t r;
 	r.setSegment(segment);
 	r.setOffset(offset);
 	return r;
