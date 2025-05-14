@@ -182,10 +182,6 @@ protected:
 	float _nearClipPlane;
 	float _farClipPlane;
 	TRendererState _state;
-	bool _spriteBatchMode;
-	Graphics::TSpriteBlendMode _batchBlendMode;
-	bool _batchAlphaDisable;
-	BaseSurfaceOpenGL3D *_batchTexture;
 	PostFilter _postFilterMode;
 
 	// NOT declared in sub class: HRESULT CreateShaderQuad();

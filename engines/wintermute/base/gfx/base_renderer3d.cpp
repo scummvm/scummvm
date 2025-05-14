@@ -37,13 +37,6 @@ BaseRenderer3D::BaseRenderer3D(Wintermute::BaseGame *inGame) : BaseRenderer(inGa
 
 	_lastTexture = nullptr;
 
-	_blendMode = Graphics::BLEND_UNKNOWN;
-
-	_spriteBatchMode = false;
-	_batchBlendMode = Graphics::BLEND_UNKNOWN;
-	_batchAlphaDisable = false;
-	_batchTexture = nullptr;
-
 	_ambientLightColor = 0x00000000;
 	_ambientLightOverride = false;
 
