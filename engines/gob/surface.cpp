@@ -1092,12 +1092,14 @@ bool Surface::loadImage(Image::ImageDecoder &decoder, Common::SeekableReadStream
 	bool needConversion = decoder.getSurface()->format.bytesPerPixel > 1 && decoder.getSurface()->format != format;
 	if (needConversion) {
 		Graphics::Surface *st2 = st->convertTo(format);
-		// Force the pixel value 0 (used by the engine as the special transparent color) to be still mapped to 0 in the new format
-		for (int16 x2 = 0; x2 < st->w; ++x2) {
-			for (int16 y2 = 0; y2 < st->h; ++y2) {
-				uint32 p = st->getPixel(x2, y2);
-				if (p == 0) {
-					st2->setPixel(x2, y2, 0);
+		if (format.aBits() > 0) {
+			// Force the pixel value 0 (used by the engine as the special transparent color) to be still mapped to 0 in the new format
+			for (int16 x2 = 0; x2 < st->w; ++x2) {
+				for (int16 y2 = 0; y2 < st->h; ++y2) {
+					uint32 p = st->getPixel(x2, y2);
+					if (p == 0) {
+						st2->setPixel(x2, y2, 0);
+					}
 				}
 			}
 		}
