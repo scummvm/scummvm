@@ -110,20 +110,7 @@ bool Draw_v7::loadCursorFromFile(Common::String cursorName) {
 		cursor = defaultCursor;
 	}
 
-
-	Graphics::PixelFormat clut8Format = Graphics::PixelFormat::createFormatCLUT8();
-	CursorMan.replaceCursor(cursor->getSurface(),
-							cursor->getWidth(),
-							cursor->getHeight(),
-							cursor->getHotspotX(),
-							cursor->getHotspotY(),
-							cursor->getKeyColor(),
-							false,
-							&clut8Format,
-							cursor->getMask());
-	CursorMan.replaceCursorPalette(cursor->getPalette(),
-								   cursor->getPaletteStartIndex(),
-								   cursor->getPaletteCount());
+	CursorMan.replaceCursor(cursor);
 	CursorMan.disableCursorPalette(false);
 
 	delete cursorGroup;
