@@ -1,22 +1,36 @@
-// btimeut.h -- header file for time utilities
-// Written by John J. Xenakis, 1994, for Boffo Games
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HODJNPODJ_MANKALA_BTIMEUT_H
+#define HODJNPODJ_MANKALA_BTIMEUT_H
+
+#include "bagel/hodjnpodj/mankala/bgen.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Mankala {
 
 
-#ifndef __btimeut_H__
-#define __btimeut_H__
 
-
-#include <time.h>
-//#include "globals.h"
-//#include "resource.h"
-//#include "dibdoc.h"
-//#include "bagel/hodjnpodj/hnplibs/sprite.h"
-
-#include "bgen.h"
-
-#include "hhead.h"
-
-extern "C" void DoPendingEvents() ;
+void DoPendingEvents() ;
 
 // class CTimeUtil -- general utilities
 class CTimeUtil {
@@ -32,21 +46,19 @@ public:
     // constructor zeroes out all fields
     CTimeUtil() {memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;}
 
+	// btimeut.cpp -- Boffo Games time utilities -- class CTimeUtil
 
-// btimeut.cpp -- Boffo Games time utilities -- class CTimeUtil
-
-//- CTimeUtil::DelayMs -- delay for specified # of milliseconds
-BOOL CTimeUtil::DelayMs(UINT uMs) ;
-//- CTimeUtil::DelayMsCallback -- SetTimer callback routine for DelayMs
-void __export FAR PASCAL CTimeUtil::DelayMsCallback(HWND /* hWnd */,
-		UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */) ;
-
-
-
-} ;
-
-#include "htail.h"
-
-#endif // __btimeut_H__
+	//- DelayMs -- delay for specified # of milliseconds
+	BOOL DelayMs(UINT uMs) ;
+	//- DelayMsCallback -- SetTimer callback routine for DelayMs
+	void FAR PASCAL DelayMsCallback(HWND /* hWnd */,
+			UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */) ;
+};
 
 
+
+} // namespace Mankala
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

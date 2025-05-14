@@ -1,16 +1,33 @@
-// mnkopt.cpp : implementation file
-//
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
-#include "mnk.h"
-#include "mnkopt.h"  
+#include "bagel/hodjnpodj/mankala/mnk.h"
+#include "bagel/hodjnpodj/mankala/mnkopt.h"  
 #include "bagel/hodjnpodj/hnplibs/button.h"
 
-#ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
+namespace Bagel {
+namespace HodjNPodj {
+namespace Mankala {
 
 static	CColorButton *pOKButton = NULL;						// OKAY button on scroll
 static	CColorButton *pCancelButton = NULL;					// Cancel button on scroll
@@ -223,15 +240,14 @@ BOOL CMnkUsr::OnCommand(WPARAM wParam, LPARAM lParam)
 
 void CMnkUsr::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* xpScrollBar)
 {
-    int iId = xpScrollBar->GetDlgCtrlID() ;	// get id of control bar
+//    int iId = xpScrollBar->GetDlgCtrlID() ;	// get id of control bar
     int iValMin, iValMax, iValCur ;	// min, max, current values
 
     xpScrollBar->GetScrollRange(&iValMin, &iValMax) ;
     iValCur = xpScrollBar->GetScrollPos() ;
 
-    int * xpiVariable = (iId == IDC_USCRSHELL) ? &m_iUShells
-		: (iId == IDC_USCRSTRENGTH) ? &m_iUStrength
-    		: NULL ;
+//    int * xpiVariable = (iId == IDC_USCRSHELL) ? &m_iUShells
+//		: (iId == IDC_USCRSTRENGTH) ? &m_iUStrength : NULL ;
 
     switch (nSBCode)
     {
@@ -329,7 +345,7 @@ void CMnkUsr::UpdateScrollbars()
 	OldValue = m_iUStrength;
 	m_iUStrength = m_xpUScrStrength->GetScrollPos();
 	if ( OldValue != m_iUStrength ){
-		Common::sprintf_s( msg, "Crab's Ability: %s", mLevelTable[m_iUStrength - 1] );
+		Common::sprintf_s( msg, "Crab's Ability: %s", mLevelTable[m_iUStrength - 1].c_str() );
 		(*m_pStrengthText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	} 
 
@@ -350,26 +366,13 @@ void CMnkUsr::OnPaint()
 	Common::sprintf_s( msg, "Shells per Pit: %d", m_iUShells );
 	(*m_pShellText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR); 
 	
-	Common::sprintf_s( msg, "Crab's Ability: %s", mLevelTable[m_iUStrength - 1] );
+	Common::sprintf_s( msg, "Crab's Ability: %s", mLevelTable[m_iUStrength - 1].c_str() );
 	(*m_pStrengthText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
 	ReleaseDC( pDC );
 
 }
-/*
-void CMnkUsr::OnKillfocusUShells()
-{
-	// TODO: Add your control notification handler code here
-    UpdateData(TRUE) ;
-    m_xpUScrShell->SetScrollPos(m_iUShells) ;
-	
-}
 
-void CMnkUsr::OnKillfocusUStrength()
-{
-	// TODO: Add your control notification handler code here
-    UpdateData(TRUE) ;
-    m_xpUScrStrength->SetScrollPos(m_iUStrength) ;
-	
-}
-*/
+} // namespace Mankala
+} // namespace HodjNPodj
+} // namespace Bagel

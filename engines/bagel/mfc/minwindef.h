@@ -104,6 +104,7 @@ typedef LRESULT(CALLBACK *WNDPROC)(HWND, UINT, WPARAM, LPARAM);
 typedef INT_PTR(FAR WINAPI *FARPROC)();
 typedef INT_PTR(NEAR WINAPI *NEARPROC)();
 typedef INT_PTR(WINAPI *PROC)();
+typedef INT_PTR(CALLBACK *DLGPROC)(HWND, UINT, WPARAM, LPARAM);
 
 #ifndef max
 #define max(a,b)            (((a) > (b)) ? (a) : (b))
@@ -119,6 +120,11 @@ typedef INT_PTR(WINAPI *PROC)();
 #define HIWORD(l)           ((WORD)((((DWORD_PTR)(l)) >> 16) & 0xffff))
 #define LOBYTE(w)           ((BYTE)(((DWORD_PTR)(w)) & 0xff))
 #define HIBYTE(w)           ((BYTE)((((DWORD_PTR)(w)) >> 8) & 0xff))
+
+#define POINTTOPOINTS(pt)      (MAKELONG((short)((pt).x), (short)((pt).y)))
+#define MAKEWPARAM(l, h)      ((WPARAM)(DWORD)MAKELONG(l, h))
+#define MAKELPARAM(l, h)      ((LPARAM)(DWORD)MAKELONG(l, h))
+#define MAKELRESULT(l, h)     ((LRESULT)(DWORD)MAKELONG(l, h))
 
 typedef void *HANDLE;
 typedef HANDLE NEAR *SPHANDLE;

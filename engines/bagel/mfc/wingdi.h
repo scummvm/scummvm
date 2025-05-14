@@ -568,6 +568,12 @@ extern HDC GetDC(HWND hWnd);
 extern int GetObject(HANDLE h, int c, LPVOID pv);
 extern HDC BeginPaint(HWND hWnd, LPPAINTSTRUCT lpPaint);
 extern BOOL EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint);
+extern INT_PTR DialogBoxParam(HINSTANCE hInstance,
+	LPCTSTR lpTemplateName, HWND hWndParent,
+	DLGPROC lpDialogFunc, LPARAM dwInitParam);
+extern BOOL IsWindow(HWND hWnd);
+extern BOOL SetWindowText(HWND hWnd, LPCSTR lpszString);
+extern int GetWindowText(HWND hWnd, LPSTR lpszStringBuf, int nMaxCount);
 
 HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih,
 	DWORD flInit, CONST VOID *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage);
@@ -603,7 +609,6 @@ extern HCURSOR LoadCursor(HINSTANCE hInstance,
 extern HCURSOR SetCursor(HCURSOR hCursor);
 extern int ShowCursor(BOOL bShow);
 
-
 typedef FARPROC LINEDDAPROC;
 extern BOOL LineDDA(int nXStart, int nYStart,
 	int nXEnd, int nYEnd, LINEDDAPROC lpLineFunc,
@@ -612,6 +617,13 @@ extern BOOL LineDDA(int nXStart, int nYStart,
 extern BYTE GetRValue(COLORREF color);
 extern BYTE GetGValue(COLORREF color);
 extern BYTE GetBValue(COLORREF color);
+
+extern HWND GetDlgItem(HWND hDlg, int nIDDlgItem);
+extern BOOL EndDialog(HWND hDlg, INT_PTR nResult);
+extern BOOL SetDlgItemInt(HWND hDlg, int nIDDlgItem,
+	UINT uValue, BOOL bSigned);
+extern BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
+	int nIDLastButton, int nIDCheckButton);
 
 } // namespace MFC
 } // namespace Bagel

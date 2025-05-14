@@ -727,6 +727,7 @@ public:
 		CCreateContext *pContext = nullptr);
 
 	CWnd *GetParent() const;
+	HWND GetSafeHwnd() const;
 	void ShowWindow(int nCmdShow);
 	BOOL EnableWindow(BOOL bEnable = TRUE);
 	void UpdateWindow();
@@ -766,6 +767,10 @@ public:
 	void CheckDlgButton(int nIDButton, UINT nCheck);
 	LRESULT SendDlgItemMessage(int nID, UINT message,
 		WPARAM wParam = 0, LPARAM lParam = 0) const;
+
+	UINT_PTR SetTimer(UINT_PTR nIDEvent, UINT nElapse,
+		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = NULL);
+	BOOL KillTimer(UINT_PTR nIDEvent);
 };
 
 class CFrameWnd : public CWnd {
@@ -802,7 +807,19 @@ public:
 
 	DWORD GetDefID();
 	void SetDefID(UINT nID);
-	void DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl);
+	void AFXAPI DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl);
+	void AFXAPI DDX_Radio(CDataExchange *pDX,
+		int nIDCButton1, int &value);
+	void AFXAPI DDX_Text(CDataExchange *pDX,
+		int nIDC, int &value);
+	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, CString &value);
+	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, UINT &value);
+	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, long &value);
+	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, double &value);
+	void AFXAPI DDX_Check(CDataExchange *pDX,
+		int nIDC, int &value);
+	void AFXAPI DDV_MinMaxInt(CDataExchange *pDX,
+		int value, int nMin, int nMax);
 
 	// termination
 	void EndDialog(int nResult);

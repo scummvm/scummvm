@@ -1,23 +1,42 @@
-// bgenut.cpp -- Boffo Games general utilities
-// Written by John J. Xenakis, 1994, for Boffo Games
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include "copyrite.h"	// mandatory internal copyright notice
+#include "bagel/hodjnpodj/mankala/bgenut.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
-#include "bgenut.h"
+namespace Bagel {
+namespace HodjNPodj {
+namespace Mankala {
 
 ///DEFS bgenut.h
 
 
 //* CGenUtil::RandomInteger -- find random integer in specified range
-PUBLIC int CGenUtil::RandomInteger(int iLow, int iHigh)
+int CGenUtil::RandomInteger(int iLow, int iHigh)
 // iLow, iHigh -- range
 // returns: integer which is ge iLow and le iHigh.
 {
     JXENTER(CGenUtil::RandomInteger) ;
-    int iError = 0 ;
-    int iRetval ;		// integer return value
-    time_t tTime ;		// time -- for initializing random # gen
+    int iRetval = 0;		// integer return value
 
     // for first call, initialize the random number generator
     if (!m_bRandomInit)
@@ -35,12 +54,12 @@ PUBLIC int CGenUtil::RandomInteger(int iLow, int iHigh)
 }
 
 //* CGenUtil::RandomEvent -- return TRUE with specified probability
-PUBLIC BOOL CGenUtil::RandomEvent(int iNum, int iDenom)
+BOOL CGenUtil::RandomEvent(int iNum, int iDenom)
 // iNum / iDenom -- numerator and denominator of probability
 // returns: TRUE with probability iNum / iDenom, FALSE otherwise
 {
     JXENTER(CGenUtil::RandomEvent) ;
-    int iError = 0 ;
+    //int iError = 0 ;
     BOOL bRetval ;		// return value
 
     bRetval = (iNum >= 1 + (brand() % iDenom)) ;
@@ -52,13 +71,13 @@ PUBLIC BOOL CGenUtil::RandomEvent(int iNum, int iDenom)
 //* CGenUtil::RandomPermutation -- generate a random permutation
 //	Generates a permutation of size iSize of the
 //	integers from 0 to (iNum-1)
-PUBLIC void CGenUtil::RandomPermutation(int iNum,
+void CGenUtil::RandomPermutation(int iNum,
 			int iSize, int * xpIntOut)
 // iNum -- number of numbers in permutation
 // iSize -- size of output array
 // xpIntOut -- pointer to output array (size is iSize)
 {
-    int iError = 0 ;
+    //int iError = 0 ;
     int * xpInt ;	// array pointer variable
     int iI, iJ, iK ;	// loop variables
     int iRanVal ;	// random value to make a choice
@@ -87,7 +106,7 @@ PUBLIC void CGenUtil::RandomPermutation(int iNum,
 }
 
 //* CGenUtil::NormalizeCRect -- 
-PUBLIC STATIC BOOL PASCAL CGenUtil::NormalizeCRect(CRect& cRect)
+BOOL CGenUtil::NormalizeCRect(CRect& cRect)
 // cRect -- rectangle to be normalized
 // returns: TRUE if error, FALSE otherwise
 {
@@ -108,14 +127,13 @@ PUBLIC STATIC BOOL PASCAL CGenUtil::NormalizeCRect(CRect& cRect)
 
 
 //* CGenUtil::RandomSelection -- random selection of integer array
-PUBLIC void CGenUtil::RandomSelection(int * xpiArray, int iNum,
+void CGenUtil::RandomSelection(int * xpiArray, int iNum,
 			int iSize)
 // xpiArray (input/output) -- array of integers to make selection from
 // iNum -- number of numbers in array
 // iSize -- number of integers in desired selection
 {
     JXENTER(CGenUtil::RandomSelection) ;
-    int iError = 0 ;
     int * xpiPermutation = new int[iSize] ;
     int iK ;
 
@@ -133,3 +151,6 @@ PUBLIC void CGenUtil::RandomSelection(int * xpiArray, int iNum,
     JXELEAVE(CGenUtil::RandomSelection) ;
 }
 
+} // namespace Mankala
+} // namespace HodjNPodj
+} // namespace Bagel

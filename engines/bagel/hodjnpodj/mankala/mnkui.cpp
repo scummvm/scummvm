@@ -1,16 +1,34 @@
-// mnkui.cpp -- Mankala game -- user interface
-// Written by John J. Xenakis for Boffo Games Inc., 1994
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include "mnk.h"
 #include "bagel/hodjnpodj/hnplibs/mainmenu.h"
-            
-
-#include "copyrite.h"   // mandatory internal copyright notice
-#include "misc.h"
-#include "macros.h"        
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
-#include "sound.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/mankala/mnk.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Mankala {
 
 #ifdef _MACROS
 	int _recursion_count;       //used to track recursion, also used by mnklog.cpp
@@ -25,7 +43,7 @@ static int gCount;     //reset to 0 in StartGame() and incremented in AcceptClic
 
 
 //* CMnkWindow::StartGame -- start a new game
-PRIVATE BOOL CMnkWindow::StartGame(void)
+BOOL CMnkWindow::StartGame(void)
 // returns: TRUE if error, FALSE otherwise
 {                                                                              
     JXENTER(CMnkWindow::StartGame) ;            
@@ -73,7 +91,7 @@ PRIVATE BOOL CMnkWindow::StartGame(void)
 }
 
 //* CMnkWindow::PaintBitmapObject -- paint bitmap
-PRIVATE BOOL CMnkWindow::PaintBitmapObject(CBmpObject * xpcBmpObject,
+BOOL CMnkWindow::PaintBitmapObject(CBmpObject * xpcBmpObject,
         int iBmpType , int iBmpArg)
 // xpcBmpObject -- pointer to bitmap object
 // iBmpType -- BMT_xxxx -- type of bitmap object
@@ -100,9 +118,9 @@ PRIVATE BOOL CMnkWindow::PaintBitmapObject(CBmpObject * xpcBmpObject,
     	DMaddr(pDC->m_hDC); 
     #endif          
    MSG msg; 
-    if(::PeekMessage(&msg,NULL,MM_MCINOTIFY, MM_MCINOTIFY,PM_REMOVE)){
-		::TranslateMessage(&msg);
-		::DispatchMessage(&msg);                                                                                           
+    if(MFC::PeekMessage(&msg,NULL,MM_MCINOTIFY, MM_MCINOTIFY,PM_REMOVE)){
+		MFC::TranslateMessage(&msg);
+		MFC::DispatchMessage(&msg);
 	}
 	
     if (xpcBmpObject->m_iBmpType == 0)  // if no type yet inserted
@@ -164,7 +182,7 @@ PRIVATE BOOL CMnkWindow::PaintBitmapObject(CBmpObject * xpcBmpObject,
     	DMaddr(m_xpGamePalette);
     #endif
     */
-        ::PaintMaskedDIB(pDC, m_xpGamePalette,
+		PaintMaskedDIB(pDC, m_xpGamePalette,
                 xpcBmpObject->m_xpDibDoc, 
                 xpcBmpObject->m_cPosition.x,
                 xpcBmpObject->m_cPosition.y,
@@ -201,14 +219,14 @@ cleanup:
 }
 
 //* CMnkWindow::InitBitmapObject -- set up DibDoc in bitmap object
-PRIVATE BOOL CMnkWindow::InitBitmapObject(CBmpObject * xpcBmpObject)
+BOOL CMnkWindow::InitBitmapObject(CBmpObject * xpcBmpObject)
 // xpcBmpObject -- pointer to bitmap object
 // returns: TRUE if error, FALSE otherwise
 {
     JXENTER(CMnkWindow::InitBitmapObject) ;
 
     int iError = 0 ;        // error code
-    CPitWnd * xpcPit = xpcBmpObject->m_xpcPit ;
+//    CPitWnd * xpcPit = xpcBmpObject->m_xpcPit ;
     CSprite * xpcSprite ;
     HDIB hDib ;   
            
@@ -287,7 +305,7 @@ cleanup:
 }
 
 //* CMnkWindow::InitBitmapFilename -- set up filename bitmap object
-PRIVATE BOOL CMnkWindow::InitBitmapFilename(CBmpObject * xpcBmpObject)
+BOOL CMnkWindow::InitBitmapFilename(CBmpObject * xpcBmpObject)
 // xpcBmpObject -- pointer to bitmap object
 // returns: TRUE if error, FALSE otherwise
 {
@@ -330,7 +348,7 @@ PRIVATE BOOL CMnkWindow::InitBitmapFilename(CBmpObject * xpcBmpObject)
     int iError = 0 ;        // error code
     CBmpTable * xpBmpTable ;
     BOOL bFound = FALSE ;
-    XPSTR xpszFilenameString = NULL ;
+    const char *xpszFilenameString = NULL ;
     char szPath[200] = {0} ;    // bitmap file path
     CPitWnd * xpcPit;
     int iNumStones;
@@ -340,7 +358,7 @@ PRIVATE BOOL CMnkWindow::InitBitmapFilename(CBmpObject * xpcBmpObject)
         : xpcBmpObject->m_iBmpArg ;
             // # stones in pit or bin
 
-    strcpy(szPath, m_szDataDirectory) ;
+    Common::strcpy_s(szPath, m_szDataDirectory) ;
     for (xpBmpTable = cBmpTable ; !bFound &&
                     xpBmpTable->m_iBmpType ;
                     bFound || ++xpBmpTable)
@@ -370,7 +388,9 @@ PRIVATE BOOL CMnkWindow::InitBitmapFilename(CBmpObject * xpcBmpObject)
                         xpBmpTable->m_iNumBmps) ;
             // choose a random file
 
-    Common::sprintf_s(szPath + strlen(szPath), xpszFilenameString,
+    Common::sprintf_s(szPath + strlen(szPath),
+		200 - strlen(szPath),
+		xpszFilenameString,
         xpBmpTable->m_bSubNumStones ? iNumStones
                         : xpcBmpObject->m_iBmpNum,
             xpcBmpObject->m_iBmpNum) ;
@@ -414,7 +434,7 @@ cleanup:
 }
 
 //* CMnkWindow::SetBitmapCoordinates -- set coordinates of bitmap
-PRIVATE BOOL CMnkWindow::SetBitmapCoordinates(
+BOOL CMnkWindow::SetBitmapCoordinates(
                 CBmpObject * xpcBmpObject)
 // returns: TRUE if error, FALSE otherwise
 {                                             
@@ -423,7 +443,7 @@ PRIVATE BOOL CMnkWindow::SetBitmapCoordinates(
     JXENTER(CMnkWindow::SetBitmapCoordinates) ;
     int iError = 0 ;        // error code
     CPitWnd * xpcPit = xpcBmpObject->m_xpcPit ;
-    int iStoneNum = xpcBmpObject->m_iStoneNum ; // stone number
+    //int iStoneNum = xpcBmpObject->m_iStoneNum ; // stone number
                 // for stone type
     int iBmpType ;
     int iX, iY ;
@@ -535,7 +555,7 @@ BOOL CMnkWindow::AcceptClick(CPoint cClickPoint)
     int iPlayer, iPit ;
     BOOL bFound = FALSE ;       // found pit clicked on
     CBmpObject * xpcBmpObject ;     // bitmap object clicked on
-    CPitWnd * xpcPit ;      // pit clicked on
+    CPitWnd * xpcPit = nullptr;     // pit clicked on
     CMove * xpcMove = &m_cCurrentMove ; // current move/position
     BOOL 	bPlayerSwitched;
     MSG msg;
@@ -544,7 +564,7 @@ BOOL CMnkWindow::AcceptClick(CPoint cClickPoint)
     if (bActive)        // prevent recursive call
     goto exit ;
  
- 	while(::PeekMessage(&msg, m_hWnd,WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE));	//flush out pending mouse clicks
+ 	while(MFC::PeekMessage(&msg, m_hWnd,WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE));	//flush out pending mouse clicks
 
     bActive = TRUE ;            
     bPlayerSwitched=FALSE;  
@@ -638,7 +658,7 @@ exit:          /*
 }
 
 //* CMnkWindow::MoveStoneDisplay -- move a stone from pit to another
-PUBLIC BOOL CMnkWindow::MoveStoneDisplay(CPitWnd * xpcFromPit,
+BOOL CMnkWindow::MoveStoneDisplay(CPitWnd * xpcFromPit,
         CPitWnd * xpcToPit)
 // xpcFromPit -- source pit (where stone comes from)
 // xpcToPit -- target pit (where stone goes)
@@ -725,9 +745,9 @@ PUBLIC BOOL CMnkWindow::MoveStoneDisplay(CPitWnd * xpcFromPit,
         goto cleanup ;
     }
     MSG msg;
-	if(::PeekMessage(&msg,NULL,MM_MCINOTIFY, MM_MCINOTIFY,PM_REMOVE)){
-		::TranslateMessage(&msg);
-		::DispatchMessage(&msg);                                                                                           
+	if(MFC::PeekMessage(&msg,NULL,MM_MCINOTIFY, MM_MCINOTIFY,PM_REMOVE)){
+		MFC::TranslateMessage(&msg);
+		MFC::DispatchMessage(&msg);
 	}
    if(iK!=5) Sleep(10);							//delay 10 ms except for the last one,
    															//so that the shell does not "fly" off the board.
@@ -773,7 +793,7 @@ cleanup:
 
 //* CMnkWindow::AdjustPitDisplay -- adjust display of pit when
 //          number of stones changes
-PRIVATE BOOL CMnkWindow::AdjustPitDisplay(CPitWnd * xpcPit,
+BOOL CMnkWindow::AdjustPitDisplay(CPitWnd * xpcPit,
                 BOOL bForcePaint)
 // xpcPit -- pit whose display is to be adjusted
 // bForcePaint -- if TRUE, then always paint
@@ -786,10 +806,10 @@ PRIVATE BOOL CMnkWindow::AdjustPitDisplay(CPitWnd * xpcPit,
     CRect cBitmapRect ;
 	MSG msg; 
 
-	if(::PeekMessage(&msg,NULL,MM_MCINOTIFY, MM_MCINOTIFY,PM_REMOVE)){
-		::TranslateMessage(&msg);
-		::DispatchMessage(&msg);                                                                                           
-	}  
+	if(MFC::PeekMessage(&msg,NULL,MM_MCINOTIFY, MM_MCINOTIFY,PM_REMOVE)){
+		MFC::TranslateMessage(&msg);
+		MFC::DispatchMessage(&msg);                                                                                           
+	}
 	
     iDispStones = xpcPit->m_iNumStones ;
     if (iDispStones > xpcPit->m_iDispMax)   // if this is more
@@ -819,11 +839,10 @@ PRIVATE BOOL CMnkWindow::AdjustPitDisplay(CPitWnd * xpcPit,
 }
 
 //* CMnkWindow::PaintScreen -- paint screen for mankala game
-PRIVATE VOID CMnkWindow::PaintScreen(void)
+VOID CMnkWindow::PaintScreen(void)
 // returns: VOID
 {
     JXENTER(CMnkWindow::PaintScreen) ;
-    int iError = 0 ;        // error code
     int iPlayer, iPit ;     // loop variables
     CPitWnd * xpcPit ;      // pit variable
     CBmpObject * xpcStone ; // stones in chain
@@ -866,7 +885,6 @@ PRIVATE VOID CMnkWindow::PaintScreen(void)
     	
 
     JXELEAVE(CMnkWindow::PaintScreen) ;
-    RETURN_VOID ;
 }
 
 
@@ -918,7 +936,7 @@ cleanup:
 }
 
 // CMnkWindow::SetCrabSign -- to my/your turn
-PRIVATE BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
+BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
 // bPaint -- paint the new sign
 // returns: TRUE if error, FALSE otherwise
 {
@@ -927,7 +945,6 @@ PRIVATE BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
     int iBmpSign ;      // SBT_xxxx -- sign to display
     NPSTR npszHumanScore, npszCrabScore;
     HLOCAL hlocHumanScore, hlocCrabScore;
-                                  
                                   
     #ifdef _MACROS                           
     	EM("Entering SetCrabSign");
@@ -1012,8 +1029,8 @@ PRIVATE BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
                 npszHumanScore=(NPSTR)LocalLock(hlocHumanScore);
                 npszCrabScore=(NPSTR)LocalLock(hlocCrabScore);
 
-                Common::sprintf_s(npszHumanScore,"Your Score: %d shell%c",   m_cCurrentMove.m_iNumStones[0][HOMEINDEX+2],(m_cCurrentMove.m_iNumStones[0][HOMEINDEX+2]>1)? 's':0 );
-                Common::sprintf_s(npszCrabScore,"My Score: %d shell%c",  m_cCurrentMove.m_iNumStones[1][HOMEINDEX+2],(m_cCurrentMove.m_iNumStones[1][HOMEINDEX+2]>1)? 's':0 );
+                Common::sprintf_s(npszHumanScore, 32, "Your Score: %d shell%c",   m_cCurrentMove.m_iNumStones[0][HOMEINDEX+2],(m_cCurrentMove.m_iNumStones[0][HOMEINDEX+2]>1)? 's':0 );
+                Common::sprintf_s(npszCrabScore, 32, "My Score: %d shell%c",  m_cCurrentMove.m_iNumStones[1][HOMEINDEX+2],(m_cCurrentMove.m_iNumStones[1][HOMEINDEX+2]>1)? 's':0 );
 
                 CMessageBox(this, m_xpGamePalette, npszHumanScore, npszCrabScore);
 
@@ -1049,7 +1066,7 @@ PRIVATE BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
 
 //* CMnkWindow::FreePitResources -- free (optionally delete) all pit
 //      resources -- stone sprites and pit bitmaps
-PRIVATE BOOL CMnkWindow::FreePitResources(BOOL bDelete)
+BOOL CMnkWindow::FreePitResources(BOOL bDelete)
 // bDelete -- if TRUE, then delete all stone sprites
 // returns: TRUE if error, FALSE otherwise
 {
@@ -1103,7 +1120,7 @@ PRIVATE BOOL CMnkWindow::FreePitResources(BOOL bDelete)
 }
 
 //* CMnkWindow::ClearBitmapObject -- release bitmap object
-PRIVATE BOOL CMnkWindow::ClearBitmapObject(CBmpObject * xpcBmpObject)
+BOOL CMnkWindow::ClearBitmapObject(CBmpObject * xpcBmpObject)
 // xpcBmpObject -- pointer to bitmap object
 // returns: TRUE if error, FALSE otherwise
 {
@@ -1146,7 +1163,7 @@ PRIVATE BOOL CMnkWindow::ClearBitmapObject(CBmpObject * xpcBmpObject)
 }  
 
 //* CMnkWindow::ReleaseResources -- release all resources before term
-PUBLIC void CMnkWindow::ReleaseResources(void)
+void CMnkWindow::ReleaseResources(void)
 {
     CBmpObject * xpcBmpObject ;     // objects to be freed 
     CPitWnd* xpcPitWnd;
@@ -1183,7 +1200,7 @@ PUBLIC void CMnkWindow::ReleaseResources(void)
 
 
 //* CMnkWindow::DebugDialog -- put up debugging dialog box
-PRIVATE BOOL CMnkWindow::DebugDialog(void)
+BOOL CMnkWindow::DebugDialog(void)
 // returns: TRUE if error, FALSE otherwise
 {
     JXENTER(CMnkWindow::DebugDialog) ;
@@ -1231,7 +1248,7 @@ PRIVATE BOOL CMnkWindow::DebugDialog(void)
 }
 
 //* CMnkWindow::UserDialog -- put up user dialog box
-PUBLIC BOOL FAR PASCAL CMnkWindow::UserDialog(void)
+BOOL FAR PASCAL CMnkWindow::UserDialog(void)
 // returns: TRUE if error, FALSE otherwise
 {
     JXENTER(CMnkWindow::UserDialog) ;
@@ -1260,26 +1277,20 @@ PUBLIC BOOL FAR PASCAL CMnkWindow::UserDialog(void)
     RETURN(iError != 0) ;
 }
 
-// local prototype
-VOID CALLBACK CallUserDialog(CWnd * xpcMnkWindow) ;
-
-////* ::CallUserDialog -- 
-VOID CALLBACK ::CallUserDialog(CWnd * xpcWindow)
+////* CallUserDialog -- 
+VOID CALLBACK CallUserDialog(CWnd * xpcWindow)
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(::CallUserDialog) ;
-    int iError = 0 ;        // error code
-    CMnkWindow * xpcMnkWindow = (CMnkWindow *)xpcWindow->GetParent() ;
+    JXENTER(CallUserDialog) ;
 
+	CMnkWindow * xpcMnkWindow = (CMnkWindow *)xpcWindow->GetParent();
     xpcMnkWindow->UserDialog() ;
 
-
-    JXELEAVE(::CallUserDialog) ;
-    RETURN_VOID ;
+    JXELEAVE(CallUserDialog) ;
 }
 
 //* CMnkWindow::OptionsDialog -- call options dialog
-PRIVATE BOOL CMnkWindow::OptionsDialog(void)
+BOOL CMnkWindow::OptionsDialog(void)
 // returns: TRUE if error, FALSE otherwise
 {
     JXENTER(CMnkWindow::OptionsDialog) ;
@@ -1362,4 +1373,8 @@ PRIVATE BOOL CMnkWindow::OptionsDialog(void)
     JXELEAVE(CMnkWindow::OptionsDialog) ;
     RETURN(iError != 0) ;
 }
+
+} // namespace Mankala
+} // namespace HodjNPodj
+} // namespace Bagel
 

@@ -62,6 +62,24 @@ BOOL EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint) {
 	error("TODO: EndPaint");
 }
 
+INT_PTR DialogBoxParam(HINSTANCE hInstance,
+		LPCTSTR lpTemplateName, HWND hWndParent,
+		DLGPROC lpDialogFunc, LPARAM dwInitParam) {
+	error("TODO: DialogBoxParam");
+}
+
+BOOL IsWindow(HWND hWnd) {
+	error("TODO: IsWindow");
+}
+
+BOOL SetWindowText(HWND hWnd, LPCSTR lpszString) {
+	error("TODO: SetWindowText");
+}
+
+int GetWindowText(HWND hWnd, LPSTR lpszStringBuf, int nMaxCount) {
+	error("TODO: GetWindowText");
+}
+
 HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h) {
 	error("TODO: SelectObject");
 }
@@ -172,6 +190,24 @@ BYTE GetGValue(COLORREF color) {
 
 BYTE GetBValue(COLORREF color) {
 	error("TODO: GetBValue");
+}
+
+HWND GetDlgItem(HWND hDlg, int nIDDlgItem) {
+	error("TODO: GetDlgItem");
+}
+
+BOOL EndDialog(HWND hDlg, INT_PTR nResult) {
+	error("TODO: EndDialog");
+}
+
+BOOL SetDlgItemInt(HWND hDlg, int nIDDlgItem,
+		UINT uValue, BOOL bSigned) {
+	error("TODO: SetDlgItemInt");
+}
+
+BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
+	int nIDLastButton, int nIDCheckButton) {
+	error("TODO: CheckRadioButton");
 }
 
 } // namespace MFC

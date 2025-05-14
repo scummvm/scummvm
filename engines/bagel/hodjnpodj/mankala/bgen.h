@@ -1,10 +1,38 @@
-// bgen.h -- Boffo Games general header file
-// Written by John J. Xenakis 1984, 1985-1989, 1992-1994
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-#ifndef BGEN_H
-#define BGEN_H
+#ifndef HODJNPODJ_MANKALA_BGEN_H
+#define HODJNPODJ_MANKALA_BGEN_H
 
-#define JX_DEBUG
+#include "bagel/afxwin.h"
+ //include "bdbg.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Mankala {
+
+//define JX_DEBUG
+#define JXENTER(NAME)
+#define JXELEAVE(NAME)
+#define RETURN return
 
 // the following are machine-independent definitions of the
 // largest positive signed and and unsigned integers and longs
@@ -18,11 +46,10 @@
 #define DIMENSION(a) (sizeof(a) / sizeof(a[0]))
 #define UPPERBOUND(a) (DIMENSION(a) - 1)
 
-// #define HIWORD(lParm) (*((unsigned int huge *)&lParm + 1) )
-// #define LOWORD(lParm) ((unsigned int)lParm )
+typedef char *XPSTR;
 
+#if 0
 typedef int BOOL ;
-typedef char * XPSTR ;
 typedef char far * LPSTR ;
 typedef LPSTR far * LPLPSTR ;
 typedef int * XPINT ;
@@ -37,6 +64,7 @@ typedef void far * LPVOID ;
 
 #define HUGE __huge
 typedef unsigned long ULONG ;
+#endif
 
 // RGB colors
 #define RGBCOLOR_RED		RGB(255,   0,   0)
@@ -106,14 +134,11 @@ typedef unsigned long ULONG ;
 #define CTRLKEY(ch) ((ch)+CCH_CTRLKEY)
 #define SHFTKEY(ch) ((ch)+CCH_SHFTKEY)
 
-
-#ifdef __cplusplus
 inline BOOL EQV(BOOL b1, BOOL b2)
 	{ return((b1 != 0) == (b2 != 0)) ; }
-#endif	/* __cplusplus */
 
-#include "bdbg.h"
+} // namespace Mankala
+} // namespace HodjNPodj
+} // namespace Bagel
 
-#endif /* BGEN_H */
-
-
+#endif

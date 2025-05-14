@@ -1,12 +1,29 @@
-#include <windows.h>
-#include <windowsx.h>
-#include <memory.h>
-#include <math.h>
-#include <float.h>
-#include <limits.h>
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-#include "trnsform.h"
+#include "bagel/hodjnpodj/mankala/transform.h"
 
+namespace Bagel {
+namespace HodjNPodj {
+namespace Mankala {
 
 /*
 dft computes discrete Fourier Transform on an input u, 
@@ -34,6 +51,7 @@ BOOL dft(double *v,const int *u, int len){
 #define _ACTIVATED 1           
 #if _ACTIVATED
 BOOL graph(HWND hWndParent, HGLOBAL hglbX, HGLOBAL hglbY, int len){
+#if TODO
 	int i;
 	WNDCLASS wc;                    
 	HWND hWnd;   
@@ -95,9 +113,13 @@ BOOL graph(HWND hWndParent, HGLOBAL hglbX, HGLOBAL hglbY, int len){
 	
 	ShowWindow(hWnd, SW_SHOW);
 	UpdateWindow(hWnd);
+#else
+	error("TODO: what the heck is this monstrosity");
+#endif
 }                                            
 
-LRESULT _far _pascal GraphWndProc(HWND hWnd, UINT  msg, WPARAM wParam, LPARAM lParam){
+LRESULT GraphWndProc(HWND hWnd, UINT  msg, WPARAM wParam, LPARAM lParam){
+#if TODO
 	static HPEN hPen;
 	HDC hdc;
 	PAINTSTRUCT ps;   
@@ -136,19 +158,23 @@ LRESULT _far _pascal GraphWndProc(HWND hWnd, UINT  msg, WPARAM wParam, LPARAM lP
 				break;
 	}			
 	return(DefWindowProc(hWnd, msg, wParam, lParam));
+#else
+	error("TODO: What the heck is this other monstrosity");
+#endif
 }           
 
-BOOL _far _pascal EnumChildWndProc(HWND hWnd, LPARAM lParam){
-	WORD _far* lpID;
-
-	lpID=(WORD _far*)(LPVOID)lParam;
-	*lpID=GetWindowWord(hWnd,GWW_ID);
-	return(TRUE);
-}
+BOOL EnumChildWndProc(HWND hWnd, LPARAM lParam){
+#ifdef TODO
+	WORD *lpID = (WORD *)(intptr_t)lParam;
+	*lpID=GetWindowWord(hWnd, GWW_ID);
+	return TRUE;
+#else
+	return false;
 #endif
-	
-									
-									
-							
-	
-	
+}
+
+#endif
+
+} // namespace Mankala
+} // namespace HodjNPodj
+} // namespace Bagel

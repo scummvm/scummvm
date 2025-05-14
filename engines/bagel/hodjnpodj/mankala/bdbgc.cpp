@@ -1,16 +1,30 @@
-/* bdbgc.c -- debugging routines */
-/* Copyright (C) 1984 by John J. Xenakis Company */
-// Modified by John J. Xenakis for Boffo Games Inc., 1994
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
+#include "bagel/hodjnpodj/mankala/bgen.h"
+#include "bagel/hodjnpodj/mankala/bdbg.h"
 
-
-#include <windows.h>		// for DebugBreak() function
-
-#include "bgen.h"
-#include "bdbg.h"
+namespace Bagel {
+namespace HodjNPodj {
+namespace Mankala {
 
 ///DEFS bdbg.h
 
@@ -35,14 +49,17 @@
 #define CWCTROFF SCANAF(2)	/* trace off -- ALT-F2 */
 #define CWCNL CCHCR		/* new line (enter) */
 
+void ifcwtt(char ch);
+char *ifcfmt(char *cs, char *ds, void *pparg, int *flen);
+
 #ifdef JX_DEBUG
 
-static	char	dbgxx1[6]="DBGXX1" ;
+static	char	dbgxx1[7]="DBGXX1" ;
 
-static	char	dbgxx2[4]="TRC." ;
+static	char	dbgxx2[5]="TRC." ;
 	int	dbgtrc = 0 ;		/* %trace -- trace calls */
 
-static	char	dbgxx3[4]="TRK." ;
+static	char	dbgxx3[5]="TRK." ;
 	int	dbgtrk = TRACE_ERRORS ;	/* %track -- track calls */
 
 static	char	dbgxx4[4]="MSG." ;
@@ -51,38 +68,38 @@ static	char	dbgxx4[4]="MSG." ;
 static	char	dbgxx5[4]="MTK." ;
 	int	dbgmtk = 0 ;		/* %memtrk -- track memory */
 
-static	char	dbgxx6[4]="DP1." ;
+static	char	dbgxx6[5]="DP1." ;
 	int	dbgdp1 = 0 ;		/* %dump1 */
 
-static	char	dbgxx7[4]="DP2." ;
+static	char	dbgxx7[5]="DP2." ;
 	int	dbgdp2 = 0 ;		/* %dump2 */
 
-static	char	dbgxx8[4]="FOC." ;
+static	char	dbgxx8[5]="FOC." ;
 	int	dbgfoc = 0 ;		/* %filoc -- file open/close */
 
-static	char	dbgxx9[4]="FRW." ;
+static	char	dbgxx9[5]="FRW." ;
 	int	dbgfrw = 0 ;		/* %filrw -- file read/write */
 
-static	char	dbgxxa[4]="MTC." ;
+static	char	dbgxxa[5]="MTC." ;
 	int	dbgmtc = 0 ;		/* %memtrc -- trace memory */
 
-static	char	dbgxxb[4]="MFC." ;
+static	char	dbgxxb[5]="MFC." ;
 	int	dbgmfc = 0 ;		/* %mfc -- trace msg interface */
 
-static	char	dbgxxc[4]="SWI." ;
+static	char	dbgxxc[5]="SWI." ;
 	int	dbgswi = 0 ;		/* %swi -- trace msg interface */
 
-static	char	dbgxxd[4]="CKN." ;	/* %cknull -- check null ptr */
+static	char	dbgxxd[5]="CKN." ;	/* %cknull -- check null ptr */
 	int	dbgckn = 0 ;
 
-static	char	dbgxxe[4]="CKF." ;
+static	char	dbgxxe[5]="CKF." ;
 	int	dbgckf = 0 ;		/* %cknull:arg -- check # words
 						following first 4 */
 
-static	char	dbgxxf[4]="TRR." ;
+static	char	dbgxxf[5]="TRR." ;
 	int	dbgtrr = TRACE_ERRORS ;	/* %trcerr -- trace errors */
 
-static  char 	dbgxxg[4]="FIL." ;
+static  char 	dbgxxg[5]="FIL." ;
 	int	dbgreopen = MAXPOSINT ;	/* reopen size */
 	char	dbgfile[DBGFILESIZE] = "" ;	/* output file */
 
@@ -546,7 +563,7 @@ void ifcprf(char * cs, ...)
 // char *cs, *args;
 {
     int i, n;
-    char c, *p, **na, *ifcfmt();
+	char c, *p, **na; // , *ifcfmt();
     char work[256];
 
 //    na =  &args;           /* point to first arg */
@@ -601,7 +618,7 @@ int ifcspf(char * ds, char * cs, ...)
 // char *cs, *args;
 {
     int i, c, n;
-    char *p, *q, **na, *ifcfmt();
+	char *p, *q, **na; // , *ifcfmt();
     char work[256];
 
 //    na =  &args;           /* point to first arg */
@@ -671,7 +688,7 @@ char * ifcfmt(char * cs, char * ds, void * pparg, int * flen)
     char *p;
     long v;
     char buf[MAXDIG];
-    static char hex[16] = "0123456789ABCDEF";
+    static char hex[17] = "0123456789ABCDEF";
     union	{
 	int *pi;
 	long *pl;
@@ -1163,3 +1180,7 @@ VOID dbgDumpWindowInfo(HWND hWnd, DWORD dwlpWddb)
     JXELEAVE(dbgDumpWindowInfo) ;
     RETURN_VOID ;
 }
+
+} // namespace Mankala
+} // namespace HodjNPodj
+} // namespace Bagel

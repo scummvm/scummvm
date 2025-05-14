@@ -196,6 +196,14 @@ MODULE_OBJS = \
 	hodjnpodj/life/grid.o \
 	hodjnpodj/life/life.o \
 	hodjnpodj/life/usercfg.o \
+	hodjnpodj/mankala/bgenut.o \
+	hodjnpodj/mankala/btimeut.o \
+	hodjnpodj/mankala/gamedll.o \
+	hodjnpodj/mankala/mnk.o \
+	hodjnpodj/mankala/mnklog.o \
+	hodjnpodj/mankala/mnkopt.o \
+	hodjnpodj/mankala/mnkui.o \
+	hodjnpodj/mankala/transform.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o

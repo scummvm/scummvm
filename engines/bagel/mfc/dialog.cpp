@@ -64,6 +64,37 @@ void CDialog::DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl) {
 	error("TODO: CDialog::DDX_Control");
 }
 
+void CDialog::DDX_Radio(CDataExchange *pDX,
+		int nIDCButton1, int &value) {
+	error("TODO: CDialog::DDX_Radio");
+}
+
+void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, int &value) {
+	error("TODO: CDialog::DDX_Text");
+}
+void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, CString &value) {
+	error("TODO: CDialog::DDX_Text");
+}
+void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, UINT &value) {
+	error("TODO: CDialog::DDX_Text");
+}
+void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, long &value) {
+	error("TODO: CDialog::DDX_Text");
+}
+void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, double &value) {
+	error("TODO: CDialog::DDX_Text");
+}
+
+void CDialog::DDX_Check(CDataExchange *pDX,
+		int nIDC, int &value) {
+	error("CDialog::DDX_Check");
+}
+
+void CDialog::DDV_MinMaxInt(CDataExchange *pDX,
+		int value, int nMin, int nMax) {
+	error("TODO: CDialog::DDV_MinMaxInt");
+}
+
 void CDialog::EndDialog(int nResult) {
 	error("TODO: CDialog::EndDialog");
 }

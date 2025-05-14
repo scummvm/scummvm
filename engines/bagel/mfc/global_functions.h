@@ -60,6 +60,7 @@ extern CWinApp *AfxGetApp();
 extern HINSTANCE AfxGetInstanceHandle();
 extern LPCSTR AFXAPI AfxRegisterWndClass(UINT nClassStyle,
 	HCURSOR hCursor = 0, HBRUSH hbrBackground = 0, HICON hIcon = 0);
+extern int GetSystemMetrics(int nIndex);
 
 extern HGLOBAL GlobalAlloc(UINT uFlags, SIZE_T dwBytes);
 extern LPVOID GlobalLock(HGLOBAL hMem);
@@ -67,11 +68,15 @@ extern BOOL GlobalUnlock(HGLOBAL hMem);
 extern HGLOBAL GlobalFree(HGLOBAL hMem);
 extern SIZE_T GlobalSize(HGLOBAL hMem);
 extern SIZE_T GlobalCompact(DWORD dwMinFree);
-#define GetFreeSpace(w)                 (0x100000L)
+#define LocalAlloc			GlobalAlloc
+#define LocalLock			GlobalLock
+#define LocalUnlock			GlobalUnlock
+#define LocalFree			GlobalFree
+#define GetFreeSpace(w)		(0x100000L)
 
 extern int MessageBox(HWND hWnd, LPCSTR lpText,
 	LPCSTR lpCaption, UINT uType);
-extern int MessageBox(LPCSTR lpText, LPCSTR lpCaption, UINT uType);
+extern int MessageBox(LPCSTR lpText, LPCSTR lpCaption, UINT uType = 0);
 extern int MessageBox(LPCSTR lpText);
 extern UINT GetPrivateProfileInt(LPCSTR lpAppName,
 	LPCSTR lpKeyName, INT nDefault, LPCSTR lpFileName);
@@ -87,9 +92,9 @@ extern HHOOK SetWindowsHookEx(int idHook,
 extern BOOL UnhookWindowsHookEx(HHOOK hhk);
 extern LRESULT CallNextHookEx(HHOOK hhk, int nCode,
 	WPARAM wParam, LPARAM lParam);
-extern UINT_PTR SetTimer(UINT_PTR nIDEvent, UINT nElapse,
+extern UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
 	void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = NULL);
-extern BOOL KillTimer(UINT_PTR nIDEvent);
+extern BOOL KillTimer(HWND hWnd, UINT_PTR nIDEvent);
 extern void Sleep(UINT milli);
 extern DWORD GetTickCount();
 

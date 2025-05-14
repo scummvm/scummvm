@@ -1,21 +1,32 @@
-// mnklog.cpp -- Mankala game logic
-// Written by John J. Xenakis, 1994, for Boffo Games
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-#include "bagel/hodjnpodj/hnplibs/stdafx.h" // all we need from windows are things
-            // like BOOL, LPVOID, etc.
-#include "mnk.h"
-                                                                             
-#include <io.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>                                                                                                                
-#include <sys\types.h>
-#include <sys\stat.h>                                                                                                                      
-            
-#include "gamedll.h"
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
+#include "bagel/hodjnpodj/mankala/mnk.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
+#include "bagel/boflib/misc.h"
 
-#include "bagel/boflib/misc.h"                                                   
-#include <macros.h>
+namespace Bagel {
+namespace HodjNPodj {
+namespace Mankala {
 
 #ifdef _MACROS
 	extern int _recursion_count;
@@ -26,8 +37,11 @@ extern LPGAMESTRUCT pGameParams;		// declared in mnk.cpp.
 BOOL gbTurnSoundsOff;         // used by mnkui.cpp too.
 ///DEFS mnk.h
 
+static inline void DebugBreak() {
+}
+
 //* CMnk::InitMankala -- initialize a new game of Mankala
-PRIVATE BOOL CMnk::InitMankala(void)
+BOOL CMnk::InitMankala(void)
 // returns: TRUE if error, FALSE otherwise
 {
     JXENTER(CMnk::InitMankala) ;
@@ -203,14 +217,14 @@ BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
     }            
     
 
- 	while(::PeekMessage(&msg, NULL,WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE));	//flush out pending mouse clicks
+ 	while(MFC::PeekMessage(&msg, NULL,WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE));	//flush out pending mouse clicks
 
             // test for stones in this pit
 	if(  pGameParams->bSoundEffectsEnabled && !gbTurnSoundsOff && bStonesFound && bOtherStonesFound){
-		if(::PeekMessage(&msg,NULL,MM_MCINOTIFY, MM_MCINOTIFY,PM_REMOVE)){
-			::TranslateMessage(&msg);
-			::DispatchMessage(&msg);                                                                                           
-		}	                                                                
+		if(MFC::PeekMessage(&msg,NULL,MM_MCINOTIFY, MM_MCINOTIFY,PM_REMOVE)){
+			MFC::TranslateMessage(&msg);
+			MFC::DispatchMessage(&msg);                                                                                           
+		}
 	 	
 		if(!xpcMove->m_bFreeTurn)
 			B= sndPlaySound(iPlayer? IGO3:YOUGO3,SND_SYNC);
@@ -277,7 +291,7 @@ cleanup:
 
 
 //* CMnk::MoveStone -- move one stone for move
-PUBLIC BOOL CMnk::MoveStone(CMove * xpcMove,
+BOOL CMnk::MoveStone(CMove * xpcMove,
     CPit * xpcFromPit, CPit * xpcToPit)
 // xpcMove -- position/move object in which move takes place
 // xpcFromPit -- source pit (where stone comes from)
@@ -297,9 +311,9 @@ PUBLIC BOOL CMnk::MoveStone(CMove * xpcMove,
     ++xpcMove->m_iNumStones[xpcToPit->m_iPlayer][xpcToPit->m_iPit+2] ;
     /*
     MSG msg;
-	if(::PeekMessage(&msg,NULL,MM_MCINOTIFY, MM_MCINOTIFY,PM_REMOVE)){
-		::TranslateMessage(&msg);
-		::DispatchMessage(&msg);                                                                                           
+	if(MFC::PeekMessage(&msg,NULL,MM_MCINOTIFY, MM_MCINOTIFY,PM_REMOVE)){
+		MFC::TranslateMessage(&msg);
+		MFC::DispatchMessage(&msg);                                                                                           
 	}
 	*/
 // cleanup:
@@ -309,7 +323,7 @@ PUBLIC BOOL CMnk::MoveStone(CMove * xpcMove,
 }
 
 //* CMnk::InitData -- initialize data class object
-PRIVATE BOOL CMnk::InitData(BOOL bInit )
+BOOL CMnk::InitData(BOOL bInit )
 // bInit -- if FALSE, release data
 // returns: TRUE if error, FALSE otherwise
 {
@@ -318,8 +332,8 @@ PRIVATE BOOL CMnk::InitData(BOOL bInit )
 //    long lTableSize ;     // size of lookup table
     long lK ;       // loop variable
     int iJ ;        // loop variable
-    BYTE HUGE * hpcTab ;    // table pointer for initialization
-    BYTE * xpcFive ;        // ptr to Five structure
+    BYTE *hpcTab;    // table pointer for initialization
+    BYTE *xpcFive;        // ptr to Five structure
     struct FIVE stFive = {TABLEUNDEF,           // 0
     TABLEUNDEF>>2, TABLEUNDEF & 3, TABLEUNDEF,  // 1-2
     TABLEUNDEF>>4, TABLEUNDEF & 15,         // 3
@@ -351,7 +365,7 @@ PRIVATE BOOL CMnk::InitData(BOOL bInit )
         goto cleanup ;
     }
     if ( !(m_lpCMnkData->m_hpcBestWin
-        = (BYTE HUGE *)GlobalLock(m_lpCMnkData->m_hBestWin)) )
+        = (BYTE *)GlobalLock(m_lpCMnkData->m_hBestWin)) )
     {
         iError = 111 ;  // Windows GlobalLock failure
         goto cleanup ;
@@ -359,7 +373,7 @@ PRIVATE BOOL CMnk::InitData(BOOL bInit )
 
 #if 0
     if ( !(m_lpCMnkData->m_hpcBestWin =
-        new HUGE BYTE[m_lTableSize+8]) )
+        new BYTE[m_lTableSize+8]) )
     {
         iError = 101 ;  // can't allocate best win array
         goto cleanup ;
@@ -455,7 +469,7 @@ BOOL CMnk::CountConfigurations(void)
 
 
 //* CMnk::PopulateTable -- compute values for best win table
-PRIVATE BOOL CMnk::PopulateTable(void)
+BOOL CMnk::PopulateTable(void)
 // returns: TRUE if error, FALSE otherwise
 {
     JXENTER(CMnk::PopulateTable) ;
@@ -498,21 +512,24 @@ cleanup:
 }
 
 //* CMnk::WriteTableFile -- write out file with best win table
-PRIVATE BOOL CMnk::WriteTableFile(void)
+BOOL CMnk::WriteTableFile(void)
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CMnk::WriteTableFile) ;
-    int iError = 0 ;        // error code
+	int iError = 0;        // error code
+
+	JXENTER(CMnk::WriteTableFile) ;
+
+#ifdef TODO
     BYTE sBuffer[512] ;     // i/o buffer
     int iFileHandle = 0 ;
     unsigned int iCount, iCountReturn ;
     long lTotalCount ;      // total # bytes left to write
-    BYTE HUGE * hpData ;    // pointer into data block
+    BYTE * hpData ;    // pointer into data block
     BYTE * xpBuffer ;       // pointer into buffer
 
-    _fstrcpy(m_lpCMnkData->m_cFileHeader.m_szText,
-    "Mankala data file, version 1.0, "
-            "May, 1994, by John J. Xenakis") ;
+    Common::strcpy_s(m_lpCMnkData->m_cFileHeader.m_szText,
+		"Mankala data file, version 1.0, "
+           "May, 1994, by John J. Xenakis");
     m_lpCMnkData->m_cFileHeader.m_iHeaderSize = sizeof(CFileHeader) ;
     m_lpCMnkData->m_cFileHeader.m_iVersion = 100 ;
     m_lpCMnkData->m_cFileHeader.m_iTableStones = m_iTableStones ;
@@ -565,23 +582,27 @@ PRIVATE BOOL CMnk::WriteTableFile(void)
 cleanup:
     if (iFileHandle > 0)
     _close(iFileHandle) ;
+#else
+	error("TODO: CMnk::WriteTableFile");
+#endif
 
     JXELEAVE(CMnk::WriteTableFile) ;
     RETURN(iError != 0) ;
 }
 
 //* CMnk::ReadTableFile -- read file with best win table
-PRIVATE BOOL CMnk::ReadTableFile(void)
+BOOL CMnk::ReadTableFile(void)
 // returns: TRUE if error, FALSE otherwise
 {
     JXENTER(CMnk::ReadTableFile) ;
     int iError = 0 ;        // error code
+#ifdef TODO
     BYTE sBuffer[512] ;     // i/o buffer
     int iFileHandle = 0 ;
     int bob;
     unsigned int iCount, iCountReturn ;
     long lTotalCount ;      // total # bytes left to read
-    BYTE HUGE * hpData ;    // pointer into data block
+    BYTE * hpData ;    // pointer into data block
     BYTE * xpBuffer ;       // pointer into buffer
 
 
@@ -648,7 +669,9 @@ PRIVATE BOOL CMnk::ReadTableFile(void)
 cleanup:
     if (iFileHandle > 0)
     _close(iFileHandle) ;
-
+#else
+	error("TODO: CMnk::ReadTableFile");
+#endif
     JXELEAVE(CMnk::ReadTableFile) ;
     RETURN(iError != 0) ;
 }
@@ -778,7 +801,7 @@ BOOL CMnk::UnmapConfiguration(CMove * xpcMove)
 //  // ***** debugging
 //  Common::sprintf_s(szDebugStr, "lConfig=%ld, #stones=%d, pit %d = %d\n",
 //              lConfigSave, iStones, iK, iPit) ;
-//  OutputDebugString(szDebugStr) ;
+//  debug(szDebugStr) ;
 
     // increment stone count for appropriate pit
     if (iPit <= NUMPITS)    // pit for current player
@@ -795,8 +818,8 @@ BOOL CMnk::UnmapConfiguration(CMove * xpcMove)
     {
     Common::sprintf_s(szDebugStr, "Config %ld changed to %ld.\n",
         lConfigSave, xpcMove->m_lConfigIndex) ;
-    OutputDebugString(szDebugStr) ;
-    DebugBreak() ;
+    debug(szDebugStr) ;
+    DebugBreak();
     }
 
 cleanup:
@@ -806,7 +829,7 @@ cleanup:
 }
 
 //* CMnk::SearchMove -- search for best move
-PRIVATE BOOL CMnk::SearchMove(CMove * xpcMove, int& iMove)
+BOOL CMnk::SearchMove(CMove * xpcMove, int& iMove)
 // xpcMove -- pointer to move/position to find move for
 // iMove (output) -- recommended pit number
 // returns: TRUE if error, FALSE otherwise
@@ -818,13 +841,13 @@ PRIVATE BOOL CMnk::SearchMove(CMove * xpcMove, int& iMove)
    	DMint(iMove);
 #endif
     int iError = 0 ;        // error code
-    BOOL bDone = FALSE ;    // flag: evaluations done
-    int iNumMoves = 0 ;     // number of legal moves
+    //BOOL bDone = FALSE ;    // flag: evaluations done
+    //int iNumMoves = 0 ;     // number of legal moves
     int iNumStones ;        // number of stones in pit
 //    BOOL bFree[NUMPITS], bCapture[NUMPITS] ;
 //    int iValue[NUMPITS] ; // value of each pit
     int iPit ;      // loop variable
-    int iLastPit = -1 ; // for finding lowest/highest # pit
+    //int iLastPit = -1 ; // for finding lowest/highest # pit
     int iMaxValue = BESTWINUNDEF, iNumberAtMax = 0,
     	tmpVal, maxtmpVal ;
                 // computing maximum value
@@ -1075,7 +1098,7 @@ BOOL CMnk::StaticEvaluation(CMove * xpcMove)
     int iNumStones ;        // number of stones in pit                                                                                                                                 
     BOOL bFree[NUMPITS], bCapture[NUMPITS] ;
     int iPit ;      // loop variable
-    int iMaxValue = BESTWINUNDEF ;  // computing maximum value
+    //int iMaxValue = BESTWINUNDEF ;  // computing maximum value
     CPit * xpcPit ; // pit being processed
     int iPlayer = xpcMove->m_iPlayer ;  // current player
 
@@ -1148,12 +1171,12 @@ BOOL CMnk::AggressiveStaticEvaluation(CMove * xpcMove)
     int iNumStones ;        // number of stones in pit
     int iFree,
     	 iCapture,
-    	 maxCapture=0,
-    	 maxFree=0;
+    	 maxCapture=0;
+	//int maxFree=0;
     int iPit,
-    		iCapturePit,
-    		iFreePit ;     
-    int iMaxValue = BESTWINUNDEF ;  // computing maximum value
+    	iCapturePit = 0,
+    	iFreePit = 0;     
+    //int iMaxValue = BESTWINUNDEF ;  // computing maximum value
     int iPlayer = xpcMove->m_iPlayer ;  // current player
 
     BOOL bAFreePitExists,
@@ -1271,14 +1294,14 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
     	maxFree,
     	maxThreat,
 		minThreat;                     
-    int iPit,
-    		iCapturePit,
-    		iFreePit,
-    		iMaxThreatPit,
-    		iCurrentPitUnderThreat,
-    		iSaved,
-    		iStartWithThisCapture;     
-    int iMaxValue = BESTWINUNDEF ;  // computing maximum value
+    int iPit = 0,
+    	iCapturePit = 0,
+    	iFreePit = 0,
+    	iMaxThreatPit = 0,
+    	iCurrentPitUnderThreat = 0,
+    	iSaved = 0,
+    	iStartWithThisCapture = 0;     
+    //int iMaxValue = BESTWINUNDEF ;  // computing maximum value
     int iPlayer = xpcMove->m_iPlayer ;  // current player
     int ThreatCount,								//how many pits of HUMAN are  aggressive.
     		iEmptyPitCount,
@@ -1328,9 +1351,9 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
     maxTotalBenefit=0;                        
 	bNearClustered= FALSE;
     
-    _fmemset((LPVOID)iEvasionNecessary,0x0,NUMPITS*sizeof(int));
-	_fmemset((LPVOID)iPitUnderThreat,-1,NUMPITS*sizeof(int));
-	_fmemset((LPVOID)iOtherOffensivePit,-1,NUMPITS*sizeof(int));
+    memset((LPVOID)iEvasionNecessary,0x0,NUMPITS*sizeof(int));
+	memset((LPVOID)iPitUnderThreat,-1,NUMPITS*sizeof(int));
+	memset((LPVOID)iOtherOffensivePit,-1,NUMPITS*sizeof(int));
     
 
 	/*
@@ -1702,17 +1725,17 @@ int CMnk::ExtendedStaticEvaluation(MOVE* pMove, MOVE* pParentMove,  signed char 
 					bWrapsAroundBehind,
 					bWrapsAroundAhead;                                         
 
-    int iError = 0,        // error code
-    		iNumMoves = 0,     // number of legal moves
-    		iNumStones,        // number of stones in pit
-			iPit,      // loop variable
-    		iMaxValue = BESTWINUNDEF ;  // computing maximum value    
+	int iError = 0,        // error code
+		iNumMoves = 0,     // number of legal moves
+		iNumStones,        // number of stones in pit
+		iPit;      // loop variable
+    //int iMaxValue = BESTWINUNDEF ;  // computing maximum value    
     
-    int iFreeTurn,     
+    int iFreeTurn = 0,     
     		iCapture, 
     		iNextID,
     		j,
-    		iStopPit;
+    		iStopPit = 0;
     
 
     /*initialize*/
@@ -1874,7 +1897,7 @@ BOOL CMnk::CountStones(CMove * xpcMove)
 {
     JXENTER(CMnk::CountStones) ;
     int iError = 0 ;        // error code
-    long lConfigIndex = 0 ; // return value, configuration index
+    //long lConfigIndex = 0 ; // return value, configuration index
     int iStones ;       // total number of stones
     int iPlayer, iPit ;     // loop variables
 
@@ -1891,15 +1914,15 @@ BOOL CMnk::CountStones(CMove * xpcMove)
 }
 
 //* CMnk::GetBestWinCount -- get position value in best win table
-PRIVATE BOOL CMnk::GetBestWinCount(CMove * xpcMove)
+BOOL CMnk::GetBestWinCount(CMove * xpcMove)
 // xpcMove -- CMove object for position to be evaluated
 // returns: TRUE if error, FALSE otherwise
 {
     JXENTER(CMnk::GetBestWinCount) ;
     int iError = 0 ;        // error code
     long lIndex = xpcMove->m_lConfigIndex ;
-    int iValue ;        // value from table
-    struct FIVE HUGE * hpFive ; // ptr to structure of 8 5-bit values
+    int iValue = 0;        // value from table
+    struct FIVE * hpFive ; // ptr to structure of 8 5-bit values
 
     if (lIndex < 0 || lIndex >= MAXCONFIGS)
     {
@@ -1907,7 +1930,7 @@ PRIVATE BOOL CMnk::GetBestWinCount(CMove * xpcMove)
     goto cleanup ;
     }
 
-    hpFive = (struct FIVE HUGE *)(m_lpCMnkData->m_hpcBestWin
+    hpFive = (struct FIVE *)(m_lpCMnkData->m_hpcBestWin
                 + (lIndex/8) * 5) ;
             // point to group of eight numbers
 
@@ -1969,13 +1992,13 @@ cleanup:
 }
 
 //* CMnk::SetBestWinCount -- set value in best win table
-PRIVATE BOOL CMnk::SetBestWinCount(CMove * xpcMove)
+BOOL CMnk::SetBestWinCount(CMove * xpcMove)
 // xpcMove -- pointer to CMove object where value is to be set
 // returns: TRUE if error, FALSE otherwise
 {
     JXENTER(CMnk::SetBestWinCount) ;
     int iError = 0 ;        // error code
-    struct FIVE HUGE * hpFive ; // ptr to structure of 8 5-bit values
+    struct FIVE * hpFive ; // ptr to structure of 8 5-bit values
     long lIndex = xpcMove->m_lConfigIndex ;
     int iValue = xpcMove->m_iBestWinValue ; // value from table
     BOOL bTest = FALSE ;        // debugging test
@@ -1986,7 +2009,7 @@ PRIVATE BOOL CMnk::SetBestWinCount(CMove * xpcMove)
     goto cleanup ;
     }
 
-    hpFive = (struct FIVE HUGE *)(m_lpCMnkData->m_hpcBestWin
+    hpFive = (struct FIVE *)(m_lpCMnkData->m_hpcBestWin
                 + (lIndex/8) * 5) ;
             // point to group of eight numbers
 
@@ -2087,36 +2110,36 @@ BOOL CMnk::DumpPosition(CMove * xpcMove)
 
     memset(szStr, 0, sizeof(szStr)) ;   // clear output
     if (xpcMove->m_bRealMove)
-    strcpy(xpStr, "(REAL) "), xpStr += strlen(xpStr) ;
+    Common::strcpy_s(xpStr, 200, "(REAL) "), xpStr += strlen(xpStr) ;
 
-    Common::sprintf_s(xpStr, "P%d Cfg=%ld w/%d stones, %d moves, sow=%d, "
+    Common::sprintf_s(xpStr, 200, "P%d Cfg=%ld w/%d stones, %d moves, sow=%d, "
                 "best %d for %d.\n",
         xpcMove->m_iPlayer, xpcMove->m_lConfigIndex,
         xpcMove->m_iTotalStones, xpcMove->m_iNumMoves,
         (xpcMove->m_xpcPit ? xpcMove->m_xpcPit->m_iPit : -1),
         xpcMove->m_iBestMove, xpcMove->m_iBestWinValue) ;
 
-    OutputDebugString(szStr) ;
+    debug(szStr) ;
 
     xpStr = szStr ;
 
-    Common::sprintf_s(xpStr, "               "
+    Common::sprintf_s(xpStr, 200, "               "
     "[%3d] %2d %2d %2d %2d %2d %2d              H=%d\n",
     xpcMove->m_iNumStones[1][HOMEINDEX+2],
     xpcMove->m_iNumStones[1][2], xpcMove->m_iNumStones[1][3],
     xpcMove->m_iNumStones[1][4], xpcMove->m_iNumStones[1][5],
     xpcMove->m_iNumStones[1][6], xpcMove->m_iNumStones[1][7],
     xpcMove->m_iNumStones[1][HANDINDEX+2]) ;
-    OutputDebugString(szStr) ;
+    debug(szStr) ;
 
-    Common::sprintf_s(xpStr, "               "
+    Common::sprintf_s(xpStr, 200, "               "
     "      %2d %2d %2d %2d %2d %2d [%3d]        H=%d\n\n",
     xpcMove->m_iNumStones[0][7], xpcMove->m_iNumStones[0][6],
     xpcMove->m_iNumStones[0][5], xpcMove->m_iNumStones[0][4],
     xpcMove->m_iNumStones[0][3], xpcMove->m_iNumStones[0][2],
     xpcMove->m_iNumStones[0][HOMEINDEX+2],
     xpcMove->m_iNumStones[0][HANDINDEX+2]) ;
-    OutputDebugString(szStr) ;
+    debug(szStr) ;
     DoPendingEvents() ;
 
 // cleanup:
@@ -2139,32 +2162,35 @@ BOOL CMnk::DumpBestWinTable(long lLow,
     CMove cMove ;       // dummy move structure
     long lEol ;     // config index at end of line
 
-    for (lEol = lLow + 23 ; lEol <= lHigh + 23 ; lEol += 24)
-    {
-    xpStr = szStr ;
-    if (lEol > lHigh)
-        lEol = lHigh ;
-    Common::sprintf_s(xpStr, "Table[%ld-%ld]:", lLow, lEol) ;
-    xpStr += strlen(xpStr) ;
+    for (lEol = lLow + 23 ; lEol <= lHigh + 23 ; lEol += 24) {
+		xpStr = szStr ;
+		if (lEol > lHigh)
+			lEol = lHigh ;
+		Common::sprintf_s(xpStr, 200, "Table[%ld-%ld]:", lLow, lEol) ;
+		xpStr += strlen(xpStr) ;
 
-    while (lLow <= lEol)        // loop thru values
-    {
-        cMove.m_lConfigIndex = lLow++ ;
-        GetBestWinCount(&cMove) ;
-        if (cMove.m_iBestWinValue == BESTWINUNDEF)
-        strcat(xpStr, " U") ;
-        else
-        Common::sprintf_s(xpStr, " %d", cMove.m_iBestWinValue) ;
-        xpStr += strlen(xpStr) ;
+		while (lLow <= lEol)        // loop thru values
+		{
+			cMove.m_lConfigIndex = lLow++ ;
+			GetBestWinCount(&cMove) ;
+			if (cMove.m_iBestWinValue == BESTWINUNDEF)
+			Common::strcat_s(xpStr, 200, " U") ;
+			else
+			Common::sprintf_s(xpStr, 200, " %d", cMove.m_iBestWinValue) ;
+			xpStr += strlen(xpStr) ;
+		}
+		Common::strcpy_s(xpStr, 200, "\n") ;
+		debug(szStr) ;
     }
-    strcpy(xpStr, "\n") ;
-    OutputDebugString(szStr) ;
-    }
-    OutputDebugString("\n") ;
+    debug("\n") ;
 
 // cleanup:
 
     JXELEAVE(CMnk::DumpBestWinTable) ;
     RETURN(iError != 0) ;
 }
+
+} // namespace Mankala
+} // namespace HodjNPodj
+} // namespace Bagel
 

@@ -104,12 +104,12 @@ LRESULT CallNextHookEx(HHOOK hhk, int nCode,
 	error("TODO: CallNextHookEx");
 }
 
-UINT_PTR SetTimer(UINT_PTR nIDEvent, UINT nElapse,
+UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
 		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
 	error("TODO: SetTimer");
 }
 
-BOOL KillTimer(UINT_PTR nIDEvent) {
+BOOL KillTimer(HWND hWnd, UINT_PTR nIDEvent) {
 	error("TODO: KillTimer");
 }
 

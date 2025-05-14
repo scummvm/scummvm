@@ -1,5 +1,32 @@
-#ifndef _TRNSFORM_H
-#define _TRNSFORM_H 
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HODJNPODJ_MANKALA_TRANSFORM_H
+#define HODJNPODJ_MANKALA_TRANSFORM_H
+
+#include "bagel/afxwin.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Mankala {
 
 typedef struct polar_tag{
 	double mag;
@@ -28,17 +55,14 @@ typedef struct polar_tag{
 #define MAG(z)	(sqrt(((z).x)*((z).x)+((z).y)*((z).y)))		//note z is of type complex
 #define ANG(z)	(atan((z).y/(z).x))
 
-#ifdef __cplusplus
-extern "C"{
-#endif
 BOOL dft(double* output, const int* input, int Length);
 BOOL graph(HWND hWndParent, HGLOBAL hglbX, HGLOBAL hglbY, int len);
-#ifdef __cplusplus
-}
-#endif           
 
-LRESULT _far _pascal GraphWndProc(HWND hWnd, UINT  msg, WPARAM wParam, LPARAM lParam);
-BOOL _far _pascal EnumChildWndProc(HWND hWndOwner, LPARAM lParam);
+LRESULT GraphWndProc(HWND hWnd, UINT  msg, WPARAM wParam, LPARAM lParam);
+BOOL EnumChildWndProc(HWND hWndOwner, LPARAM lParam);
+
+} // namespace Mankala
+} // namespace HodjNPodj
+} // namespace Bagel
 
 #endif
-

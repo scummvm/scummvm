@@ -1,10 +1,30 @@
-// bdbg.cpp -- Boffo debugging for meta game
-// Written by John J. Xenakis for Boffo Games Inc., 1994
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include "bdbg.h"
+#include "bagel/hodjnpodj/mankala/bdbg.h"
 
-#include "copyrite.h"	// mandatory internal copyright notice
+namespace Bagel {
+namespace HodjNPodj {
+namespace Mankala {
 
 ///DEFS bdbg.h
 
@@ -14,7 +34,7 @@ CBdbgMgr FAR * CBdbgMgr::lpBdbgMgr = NULL ;
 PUBLIC CBdbgMgr::CBdbgMgr(void)
 {
     JXENTER(CBdbgMgr::CBdbgMgr) ;
-    int iError = 0 ;		// error code
+//    int iError = 0 ;		// error code
 
     memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
 					// zero out all data
@@ -30,7 +50,7 @@ PUBLIC CBdbgMgr::~CBdbgMgr(void)
 // returns: VOID
 {
     JXENTER(CBdbgMgr::~CBdbgMgr) ;
-    int iError = 0 ;		// error code
+    //int iError = 0 ;		// error code
     if (m_lpTraceObjects)
 	delete [] m_lpTraceObjects ;
     m_lpTraceObjects = NULL ;
@@ -44,8 +64,8 @@ PUBLIC CBdbgMgr::~CBdbgMgr(void)
 }
 
 //* CBdbgMgr::DebugInit -- Initialize
-PUBLIC BOOL CBdbgMgr::DebugInit(LPSTR lpszIniFilename,
-			LPSTR lpszIniSectionname)
+PUBLIC BOOL CBdbgMgr::DebugInit(LPCSTR lpszIniFilename,
+			LPCSTR lpszIniSectionname)
 // returns: TRUE if error, FALSE otherwise
 {
     JXENTER(CBdbgMgr::DebugInit) ;
@@ -53,10 +73,8 @@ PUBLIC BOOL CBdbgMgr::DebugInit(LPSTR lpszIniFilename,
     int iK ;		// loop variable
     char szStr[100] ;
 
-    _fstrncpy(m_szIniFilename, lpszIniFilename,
-    			sizeof(m_szIniFilename)) ;
-    _fstrncpy(m_szIniSectionname, lpszIniSectionname,
-    			sizeof(m_szIniSectionname)) ;
+    Common::strcpy_s(m_szIniFilename, lpszIniFilename);
+	Common::strcpy_s(m_szIniSectionname, lpszIniSectionname);
 
     m_bDebug = GetDebugInt("debug") ;
     m_bDebugMessages = GetDebugInt("debugmessages") ;
@@ -100,7 +118,7 @@ PUBLIC BOOL CBdbgMgr::DebugInit(LPSTR lpszIniFilename,
 }
 
 //* CBdbgMgr::GetDebugInt -- get debugging integer
-PUBLIC int CBdbgMgr::GetDebugInt(LPSTR lpszOption,
+PUBLIC int CBdbgMgr::GetDebugInt(LPCSTR lpszOption,
 			int iDefault PDFT(0))
 // lpszOption -- option name string
 // iDefault -- default value
@@ -555,5 +573,6 @@ PUBLIC STATIC BOOL CBdbgMgr::OutputWithWordWrap(LPSTR lpStr1,
     RETURN(iError != 0) ;
 }
 
-
-
+} // namespace Mankala
+} // namespace HodjNPodj
+} // namespace Bagel

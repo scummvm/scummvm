@@ -19,24 +19,17 @@
  *
  */
 
-// Header file for header files
-// This file is included at the beginning of each header file.
-// It makes defines that are redefined in "htail.h" at the
-// end of the header file.
+#ifndef BAGEL_HODJNPODJ_LIBS_MACROS_H
+#define BAGEL_HODJNPODJ_LIBS_MACROS_H
 
-#if 0
-// the following are redefined at end of the header file
-#undef PUBLIC
-#undef PRIVATE
-#undef PROTECTED
-#undef EXTERNC
-#undef VIRTUAL
-#undef STATIC
-#undef PDFT
-#define PUBLIC public:
-#define PRIVATE private:
-#define PROTECTED protected:
-#define VIRTUAL virtual
-#define STATIC static
-#define PDFT(value) = value
-#endif
+#define EM(X)	ErrorLog(".\\msg.log",(X));     
+#define EMCR()	ErrorLog(".\\msg.log","\n");      
+#define	EMTime(t)	ErrorLog(".\\msg.log","%s",_strtime(t));   
+#define EMLoc(i)	ErrorLog(".\\msg.log","Locals Dump #%d",(i));
+									          
+#define DMint(X)	ErrorLog(".\\msg.log",#X"=%d",(X));     
+#define DMstr(X)	ErrorLog(".\\msg.log",#X"=%s",(X));     
+#define  DMaddr(X)	{\
+		(X)? ErrorLog(".\\msg.log",#X"=%p",(void _far*)(X)) : ErrorLog(".\\msg.log",#X"is NULL");	}    
+
+#endif										

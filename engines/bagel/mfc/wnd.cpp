@@ -170,6 +170,10 @@ CWnd *CWnd::GetParent() const {
 	error("TODO: CWnd::GetParent");
 }
 
+HWND CWnd::GetSafeHwnd() const {
+	error("TODO: CWnd::GetSafeHwnd");
+}
+
 void CWnd::ShowWindow(int nCmdShow) {
 	error("TODO: CWnd::ShowWindow");
 }
@@ -301,6 +305,15 @@ void CWnd::CheckDlgButton(int nIDButton, UINT nCheck) {
 LRESULT CWnd::SendDlgItemMessage(int nID, UINT message,
 		WPARAM wParam, LPARAM lParam) const {
 	error("TODO: CWnd::SendDlgItemMessage");
+}
+
+UINT_PTR CWnd::SetTimer(UINT_PTR nIDEvent, UINT nElapse,
+		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
+	error("TODO: CWnd::SetTimer");
+}
+
+BOOL CWnd::KillTimer(UINT_PTR nIDEvent) {
+	error("TODO: CWnd::KillTimer");
 }
 
 } // namespace MFC

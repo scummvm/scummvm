@@ -1,13 +1,34 @@
-// bdbg.h -- Boffo Debugging Header
-// Written by John J. Xenakis, 1994, for Boffo Games Inc.
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-#ifndef __bdbg_H__
-#define __bdbg_H__
+#ifndef HODJNPODJ_MANKALA_BDBG_H
+#define HODJNPODJ_MANKALA_BDBG_H
 
-#include "bgen.h"
-#include "hhead.h"
+#include "bagel/hodjnpodj/mankala/bgen.h"
 
-#ifdef __cplusplus
+namespace Bagel {
+namespace HodjNPodj {
+namespace Mankala {
+
+
 
 #define TRACECONSTRUCTOR(name) \
 	AfxGetApp()->DoMessageBox("~~C" #name, \
@@ -42,53 +63,44 @@ public:
     static CBdbgMgr FAR * GetPointer(void) { return(lpBdbgMgr) ; }
 
 
+	// bdbg.cpp -- Boffo debugging for meta game
 
-// bdbg.cpp -- Boffo debugging for meta game
-
-//- CBdbgMgr::CBdbgMgr -- constructor
-PUBLIC CBdbgMgr::CBdbgMgr(void) ;
-//- CBdbgMgr::~CBdbgMgr -- destructor
-PUBLIC CBdbgMgr::~CBdbgMgr(void) ;
-//- CBdbgMgr::DebugInit -- Initialize
-PUBLIC BOOL CBdbgMgr::DebugInit(LPSTR lpszIniFilename,
-			LPSTR lpszIniSectionname) ;
-//- CBdbgMgr::GetDebugInt -- get debugging integer
-PUBLIC int CBdbgMgr::GetDebugInt(LPSTR lpszOption,
-			int iDefault PDFT(0)) ;
-//- CBdbgMgr::GetDebugString -- 
-PUBLIC BOOL CBdbgMgr::GetDebugString(LPCSTR lpszOption,
-    	LPSTR lpszTarget, int iTargetSize,
-		LPSTR lpszDefault PDFT(NULL)) ;
-//- CBdbgMgr::TraceConstructor -- trace object constructor, if optioned
-PUBLIC BOOL CBdbgMgr::TraceConstructor(LPCSTR lpszName, LPVOID lpLoc) ;
-//- CBdbgMgr::TraceDestructor -- trace object destructor, if optioned
-PUBLIC BOOL CBdbgMgr::TraceDestructor(LPCSTR lpszName, LPVOID lpLoc) ;
-//- CBdbgMgr::DebugMessageBox -- 
-PUBLIC BOOL CBdbgMgr::DebugMessageBox(LPCSTR lpszPrompt,
-	UINT nType, UINT nIDPrompt) ;
-//- CBdbgMgr::AddTraceObject -- add object to trace list
-PUBLIC BOOL CBdbgMgr::AddTraceObject(LPCSTR lpszName, LPVOID lpPtr) ;
-//- CBdbgMgr::TestTraceObject -- test 
-PUBLIC BOOL CBdbgMgr::TestTraceObject(LPCSTR lpszName, LPVOID lpPtr,
-    			BOOL bMissing PDFT(FALSE)) ;
-//- CBdbgMgr::RemoveTraceObject -- add object to trace list
-PUBLIC BOOL CBdbgMgr::RemoveTraceObject(LPCSTR lpszName, LPVOID lpPtr) ;
-//- CBdbgMgr::ReportTraceObjects -- final report at program end
-PUBLIC BOOL CBdbgMgr::ReportTraceObjects(void) ;
-//- CBdbgMgr::OutputWithTime -- output debugging string with time
-PUBLIC STATIC BOOL CBdbgMgr::OutputWithTime(LPSTR lpszPattern) ;
-//- CBdbgMgr::OutputWithWordWrap -- output debugging string with time
-PUBLIC STATIC BOOL CBdbgMgr::OutputWithWordWrap(LPSTR lpStr1,
-			LPSTR lpStr2, int iIndent) ;
-
-
-
-
-
-
+	//- CBdbgMgr -- constructor
+	PUBLIC CBdbgMgr(void) ;
+	//- ~CBdbgMgr -- destructor
+	PUBLIC ~CBdbgMgr(void) ;
+	//- DebugInit -- Initialize
+	PUBLIC BOOL DebugInit(LPCSTR lpszIniFilename,
+				LPCSTR lpszIniSectionname) ;
+	//- GetDebugInt -- get debugging integer
+	PUBLIC int GetDebugInt(LPCSTR lpszOption,
+				int iDefault PDFT(0)) ;
+	//- GetDebugString -- 
+	PUBLIC BOOL GetDebugString(LPCSTR lpszOption,
+    		LPCSTR lpszTarget, int iTargetSize,
+			LPCSTR lpszDefault PDFT(NULL)) ;
+	//- TraceConstructor -- trace object constructor, if optioned
+	PUBLIC BOOL TraceConstructor(LPCSTR lpszName, LPVOID lpLoc) ;
+	//- TraceDestructor -- trace object destructor, if optioned
+	PUBLIC BOOL TraceDestructor(LPCSTR lpszName, LPVOID lpLoc) ;
+	//- DebugMessageBox -- 
+	PUBLIC BOOL DebugMessageBox(LPCSTR lpszPrompt,
+		UINT nType, UINT nIDPrompt) ;
+	//- AddTraceObject -- add object to trace list
+	PUBLIC BOOL AddTraceObject(LPCSTR lpszName, LPVOID lpPtr) ;
+	//- TestTraceObject -- test 
+	PUBLIC BOOL TestTraceObject(LPCSTR lpszName, LPVOID lpPtr,
+    				BOOL bMissing PDFT(FALSE)) ;
+	//- RemoveTraceObject -- add object to trace list
+	PUBLIC BOOL RemoveTraceObject(LPCSTR lpszName, LPVOID lpPtr) ;
+	//- ReportTraceObjects -- final report at program end
+	PUBLIC BOOL ReportTraceObjects(void) ;
+	//- OutputWithTime -- output debugging string with time
+	PUBLIC STATIC BOOL OutputWithTime(LPSTR lpszPattern) ;
+	//- OutputWithWordWrap -- output debugging string with time
+	PUBLIC STATIC BOOL OutputWithWordWrap(LPSTR lpStr1,
+				LPSTR lpStr2, int iIndent) ;
 } ;
-#endif	/* __cplusplus */
-
 
 #ifndef JXENTER
 #ifdef JX_DEBUG
@@ -105,10 +117,6 @@ PUBLIC STATIC BOOL CBdbgMgr::OutputWithWordWrap(LPSTR lpStr1,
 #define RETURN_VOID return
 
 #ifdef JX_DEBUG
-
-#ifdef __cplusplus
-extern "C" {            /* Assume C declarations for C++ */
-#endif	/* __cplusplus */
 
 #define JXOutputDebugString ifcwst
 
@@ -179,20 +187,12 @@ BOOL FAR PASCAL dbgDumpEnumProc(HWND hWnd, DWORD dwlpWddb) ;
 //- dbgDumpWindowInfo - dump info on one window
 VOID dbgDumpWindowInfo(HWND hWnd, DWORD dwlpWddb) ;
 
-
-
-#ifdef __cplusplus
-}  /* extern "C" */
-#endif	/* __cplusplus */
-
-
 #endif /* JX_DEBUG */
 
 
 
-#include "htail.h"
+} // namespace Mankala
+} // namespace HodjNPodj
+} // namespace Bagel
 
-#endif // __bdbg_H__
-
-
-
+#endif

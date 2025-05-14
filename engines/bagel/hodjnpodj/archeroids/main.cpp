@@ -1707,7 +1707,7 @@ VOID CMainWindow::PlayGame(VOID)
     if (!m_bTimerActive) {
 
         m_bTimerActive = TRUE;
-        SetTimer(TIMER_ID, 50, NULL);
+        CWnd::SetTimer(TIMER_ID, 50, NULL);
     }
 
     m_bNewGame = TRUE;                                  // a new game has been started

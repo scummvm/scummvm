@@ -72,6 +72,9 @@ LPCSTR AFXAPI AfxRegisterWndClass(UINT nClassStyle,
 	error("TODO: AfxRegisterWndClass");
 }
 
+int GetSystemMetrics(int nIndex) {
+	error("TODO: GetSystemMetrics");
+}
 
 } // namespace MFC
 } // namespace Bagel

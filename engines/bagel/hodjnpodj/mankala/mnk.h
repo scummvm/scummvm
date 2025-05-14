@@ -1,24 +1,43 @@
-// mnk.h -- header file for mankala game
-// Written by John J. Xenakis, 1994, for Boffo Games
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-#ifndef __mnk_H__
-#define __mnk_H__
+#ifndef HODJNPODJ_MANKALA_MNK_H
+#define HODJNPODJ_MANKALA_MNK_H
 
-#include <time.h>
-#include "globals.h"
-#include "resource.h"
-#include "dibdoc.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"    
-#include <memory.h>
-#include "sound.h"
+#include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/mankala/bgen.h"
+#include "bagel/hodjnpodj/mankala/bgenut.h"
+#include "bagel/hodjnpodj/mankala/btimeut.h"
+#include "bagel/hodjnpodj/mankala/mnkopt.h"
+#include "bagel/hodjnpodj/mankala/resource.h"
 
-#include "bgen.h"
-#include "bgenut.h"
-#include "btimeut.h"
-#include "mnkopt.h"
+namespace Bagel {
+namespace HodjNPodj {
+namespace Mankala {
 
-#include "hhead.h"
+
 
 // DATADIR is directory for *.BMP and other data files
 // #define DATADIR ".".\\"
@@ -102,24 +121,19 @@ const int BESTWINUNDEF = -1000 ;  // value of undefined minimax value
 #define MAXRECURSION 3
 #define MAXMOVES			25
 
-typedef struct { 
-	int iFree[NUMPITS][MAXRECURSION]; 
+typedef struct {
+	int iFree[NUMPITS][MAXRECURSION];
 	int iCapture[NUMPITS][MAXRECURSION];
 	int iRocksInHomeBin;
 	int iPitSequence[MAXRECURSION];
-	int iNumRocks[NUMPITS];  
+	int iNumRocks[NUMPITS];
 	int iNumRocksOpposite[NUMPITS];
 	signed char cRecursion;
 	int iParentID;
-	signed char cMoveID;  
-	int iMoveID;  
-	
-}MOVE;
+	signed char cMoveID;
+	int iMoveID;
 
-typedef MOVE* PMOVE;
-typedef MOVE _far* LPMOVE;
-typedef MOVE _near* NPMOVE;
-
+} MOVE, *PMOVE, *LPMOVE, *NPMOVE;
 
 // CBmpTable -- table of bitmap filenames
 class CBmpTable {
@@ -127,7 +141,7 @@ public:
     int m_iBmpType ;		// BMT_xxxx
     int m_iNumStones ;		// 0 means "many"
     int m_iNumBmps ;		// number of bmp files for this combo
-    char * m_xpszFilenameString ;	// sprintf string
+    const char *m_xpszFilenameString ;	// sprintf string
     BOOL m_bSubNumStones ;
     BOOL m_bMasked ;		// mask white areas of bitmap
 } ;
@@ -193,11 +207,11 @@ class CMove {
     		m_bRealMove = FALSE ;}                                   
     
     public:
-    CMove::CMove() {Zero() ;}	// constructor
+		CMove() { Zero(); }	// constructor
 	#ifdef _DEBUG
-		BOOL SetBackToOriginal(HWND);		//this is PUBLIC
-		void RearrangeConfiguration(HWND, int, long, BOOL);	//THIS IS PUBLIC
-		void ReConfig(HWND,  long);	//THIS IS PUBLIC
+		BOOL SetBackToOriginal(HWND);		//this is public:
+		void RearrangeConfiguration(HWND, int, long, BOOL);	//THIS IS public:
+		void ReConfig(HWND,  long);	//THIS IS public:
 		inline void SetPlayer(int);				//THIS IS public
 	#endif	
 		
@@ -261,56 +275,57 @@ class CMnk {
 
 
 // methods
-    CMnk::CMnk() {memset((char _huge*)&m_cStartData, 0,
-				(size_t)((char _huge*)&m_cEndData - (char _huge*)&m_cStartData)) ;}
+    CMnk() {
+		memset((char *)&m_cStartData, 0,
+			(size_t)((char *)&m_cEndData - (char *)&m_cStartData)) ;}
 
 // mnklog.cpp -- Mankala game logic
 
-//- CMnk::InitMankala -- initialize a new game of Mankala
-PRIVATE BOOL CMnk::InitMankala(void) ;
-//- CMnk::Move -- make a move
-PRIVATE BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove PDFT(NULL)) ;
-//- CMnk::MoveStone -- move one stone for move
-PUBLIC BOOL CMnk::MoveStone(CMove * xpcMove,
+//- InitMankala -- initialize a new game of Mankala
+private: BOOL InitMankala(void) ;
+//- Move -- make a move
+private: BOOL Move(CPit * xpcSowPit, CMove * xpcMove PDFT(NULL)) ;
+//- MoveStone -- move one stone for move
+public: BOOL MoveStone(CMove * xpcMove,
 	CPit * xpcFromPit, CPit * xpcToPit) ;
-//- CMnk::InitData -- initialize data class object
-PRIVATE BOOL CMnk::InitData(BOOL bInit PDFT(TRUE)) ;
-//- CMnk::CountConfigurations -- set up Configurations table
-BOOL CMnk::CountConfigurations(void) ;
-//- CMnk::PopulateTable -- compute values for best win table
-PRIVATE BOOL CMnk::PopulateTable(void) ;
-//- CMnk::WriteTableFile -- write out file with best win table
-PRIVATE BOOL CMnk::WriteTableFile(void) ;
-//- CMnk::ReadTableFile -- read file with best win table
-PRIVATE BOOL CMnk::ReadTableFile(void) ;
-//- CMnk::MapConfiguration -- map a configuration to its integer index,
+//- InitData -- initialize data class object
+private: BOOL InitData(BOOL bInit PDFT(TRUE)) ;
+//- CountConfigurations -- set up Configurations table
+BOOL CountConfigurations(void) ;
+//- PopulateTable -- compute values for best win table
+private: BOOL PopulateTable(void) ;
+//- WriteTableFile -- write out file with best win table
+private: BOOL WriteTableFile(void) ;
+//- ReadTableFile -- read file with best win table
+private: BOOL ReadTableFile(void) ;
+//- MapConfiguration -- map a configuration to its integer index,
 //		store configuration index into Move object
-BOOL CMnk::MapConfiguration(CMove * xpcMove) ;
-//- CMnk::UnmapConfiguration -- map configuration index back
+BOOL MapConfiguration(CMove * xpcMove) ;
+//- UnmapConfiguration -- map configuration index back
 //				to configuration
-BOOL CMnk::UnmapConfiguration(CMove * xpcMove) ;
-//- CMnk::SearchMove -- search for best move
-PRIVATE BOOL CMnk::SearchMove(CMove * xpcMove, int& iMove) ;
-//- CMnk::Minimax -- find best move from supplied configuration
-BOOL CMnk::Minimax(CMove * xpcMove, int iDepth PDFT(0)) ;
-//- CMnk::StaticEvaluation -- determine static value of a position
-BOOL CMnk::StaticEvaluation(CMove * xpcMove) ;
-//- CMnk::CountStones -- count total stones in configuration
-BOOL CMnk::CountStones(CMove * xpcMove) ;
-//- CMnk::GetBestWinCount -- get position value in best win table
-PRIVATE BOOL CMnk::GetBestWinCount(CMove * xpcMove) ;
-//- CMnk::SetBestWinCount -- set value in best win table
-PRIVATE BOOL CMnk::SetBestWinCount(CMove * xpcMove) ;
-//- CMnk::DumpPosition -- dump contents of CMove object
-BOOL CMnk::DumpPosition(CMove * xpcMove) ;
-//- CMnk::DumpBestWinTable -- dump fields of best win table
-BOOL CMnk::DumpBestWinTable(long lLow PDFT(0),
+BOOL UnmapConfiguration(CMove * xpcMove) ;
+//- SearchMove -- search for best move
+private: BOOL SearchMove(CMove * xpcMove, int& iMove) ;
+//- Minimax -- find best move from supplied configuration
+BOOL Minimax(CMove * xpcMove, int iDepth PDFT(0)) ;
+//- StaticEvaluation -- determine static value of a position
+BOOL StaticEvaluation(CMove * xpcMove) ;
+//- CountStones -- count total stones in configuration
+BOOL CountStones(CMove * xpcMove) ;
+//- GetBestWinCount -- get position value in best win table
+private: BOOL GetBestWinCount(CMove * xpcMove) ;
+//- SetBestWinCount -- set value in best win table
+private: BOOL SetBestWinCount(CMove * xpcMove) ;
+//- DumpPosition -- dump contents of CMove object
+BOOL DumpPosition(CMove * xpcMove) ;
+//- DumpBestWinTable -- dump fields of best win table
+BOOL DumpBestWinTable(long lLow PDFT(0),
 				long lHigh PDFT(6*24-1)) ;       
-BOOL CMnk::AggressiveStaticEvaluation(CMove* xpcMove);
+BOOL AggressiveStaticEvaluation(CMove* xpcMove);
 
-BOOL CMnk::DefensiveStaticEvaluation(CMove*);
-BOOL CMnk::TreeAlgo(CMove*);
-int CMnk::ExtendedStaticEvaluation(MOVE*, MOVE*, signed char, int);
+BOOL DefensiveStaticEvaluation(CMove*);
+BOOL TreeAlgo(CMove*);
+int ExtendedStaticEvaluation(MOVE*, MOVE*, signed char, int);
 
 } ;	// CMnk
 
@@ -354,8 +369,8 @@ typedef class FAR CMnkData {
 	    // number of arrangements of s or fewer stones into
 	    // p pits.
 
-    HGLOBAL m_hBestWin ;	// Windows handle for best win table
-    BYTE HUGE * m_hpcBestWin ;	// pointer to array
+    HGLOBAL m_hBestWin;	// Windows handle for best win table
+    BYTE *m_hpcBestWin;	// pointer to array
 	    // of 5 bit values.  The subscripts are integers
 	    // 0 <= subscript <= NUMCONFIGS, and the array element
 	    // specifies the number of stones (-15 to +15, with -16
@@ -363,9 +378,10 @@ typedef class FAR CMnkData {
 	    // this configuration with best play.
 
     char m_cEndData ;
-    CMnkData::CMnkData()
-	{_fmemset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;}
-} class_CMnkData, HUGE * HPCMNKDATA ;
+    CMnkData() {
+		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
+	}
+} class_CMnkData, *HPCMNKDATA;
 
 #define	SPRITE_COUNT	15	// maximum sprites to be displayed
 #define BUMPER_COUNT	5	// number of bumper sprites to display
@@ -399,10 +415,11 @@ class CPitWnd : public CPit {
     char m_cEndData2 ;
     CBmpObject m_cBmpObject ;	// current bitmap object for pit with stones
 
-    CPitWnd() {memset((char _huge*)&m_cStartData2, 0,
-			(size_t)((char _huge*)&m_cEndData2 - (char _huge*)&m_cStartData2)) ;}
-
-} ;
+    CPitWnd() {
+		memset((char *)&m_cStartData2, 0,
+			(size_t)((char *)&m_cEndData2 - (char *)&m_cStartData2));
+	}
+};
 
 
 /////////////////////////////////////////////////////////
@@ -411,7 +428,8 @@ class CPitWnd : public CPit {
 
 class CMnkWindow : public CFrameWnd, public CMnk
 {
-    char m_cStartData2 ;
+	bool bPlayedGameOnce = FALSE;
+	char m_cStartData2 ;
     BOOL m_bJustStarted;	// flag to indicate beginning of game.	
 	BOOL m_bGameWon;       //flag to indicate game result.
 	BOOL m_bRulesActive;	//flag to indicate the unfurled status of the rules scroll.
@@ -449,60 +467,60 @@ class CMnkWindow : public CFrameWnd, public CMnk
 
 // mnk.cpp -- Mankala game -- Windows interface
 
-//- CMnkWindow::CMnkWindow() -- mankala window constructor function
-PUBLIC CMnkWindow::CMnkWindow(void) ;
-//- CMnkWindow::~CMnkWindow -- Mankala window destructor function
-PUBLIC CMnkWindow::~CMnkWindow(void) ;
+//- CMnkWindow() -- mankala window constructor function
+public: CMnkWindow(void) ;
+//- ~CMnkWindow -- Mankala window destructor function
+public: ~CMnkWindow(void) ;
 
 
 // mnkui.cpp -- Mankala game -- user interface
 
-//- CMnkWindow::StartGame -- start a new game
-PRIVATE BOOL CMnkWindow::StartGame(void) ;
-//- CMnkWindow::PaintBitmapObject -- paint bitmap
-PRIVATE BOOL CMnkWindow::PaintBitmapObject(CBmpObject * xpcBmpObject,
+//- StartGame -- start a new game
+private: BOOL StartGame(void) ;
+//- PaintBitmapObject -- paint bitmap
+private: BOOL PaintBitmapObject(CBmpObject * xpcBmpObject,
 		int iBmpType PDFT(0), int iBmpArg PDFT(0)) ;
-//- CMnkWindow::InitBitmapObject -- set up DibDoc in bitmap object
-PRIVATE BOOL CMnkWindow::InitBitmapObject(CBmpObject * xpcBmpObject) ;
-//- CMnkWindow::InitBitmapFilename -- set up filename bitmap object
-PRIVATE BOOL CMnkWindow::InitBitmapFilename(CBmpObject * xpcBmpObject) ;
-//- CMnkWindow::SetBitmapCoordinates -- set coordinates of bitmap
-PRIVATE BOOL CMnkWindow::SetBitmapCoordinates(
+//- InitBitmapObject -- set up DibDoc in bitmap object
+private: BOOL InitBitmapObject(CBmpObject * xpcBmpObject) ;
+//- InitBitmapFilename -- set up filename bitmap object
+private: BOOL InitBitmapFilename(CBmpObject * xpcBmpObject) ;
+//- SetBitmapCoordinates -- set coordinates of bitmap
+private: BOOL SetBitmapCoordinates(
 				CBmpObject * xpcBmpObject) ;
-//- CMnkWindow::AcceptClick -- process a mouse click by user
-BOOL CMnkWindow::AcceptClick(CPoint cClickPoint) ;
-//- CMnkWindow::MoveStoneDisplay -- move a stone from pit to another
-PUBLIC BOOL CMnkWindow::MoveStoneDisplay(CPitWnd * xpcFromPit,
+//- AcceptClick -- process a mouse click by user
+BOOL AcceptClick(CPoint cClickPoint) ;
+//- MoveStoneDisplay -- move a stone from pit to another
+public: BOOL MoveStoneDisplay(CPitWnd * xpcFromPit,
 		CPitWnd * xpcToPit) ;
-//- CMnkWindow::AdjustPitDisplay -- adjust display of pit when
+//- AdjustPitDisplay -- adjust display of pit when
 //			number of stones changes
-PRIVATE BOOL CMnkWindow::AdjustPitDisplay(CPitWnd * xpcPit,
+private: BOOL AdjustPitDisplay(CPitWnd * xpcPit,
 				BOOL bForcePaint PDFT(FALSE)) ;
-//- CMnkWindow::PaintScreen -- paint screen for mankala game
-PRIVATE VOID CMnkWindow::PaintScreen(void) ;
-//- CMnkWindow::ProcessDc -- handle processing of device context
-PRIVATE BOOL CMnkWindow::ProcessDc(BOOL bAlloc PDFT(TRUE)) ;
-//- CMnkWindow::AllocatePits -- allocate pits (including home bin/hand)
-BOOL CMnkWindow::AllocatePits(void) ;
-//- CMnkWindow::SetCrabSign -- to my/your turn
-PRIVATE BOOL CMnkWindow::SetCrabSign(BOOL bPaint PDFT(TRUE)) ;
-//- CMnkWindow::FreePitResources -- free (optionally delete) all pit
+//- PaintScreen -- paint screen for mankala game
+private: VOID PaintScreen(void) ;
+//- ProcessDc -- handle processing of device context
+private: BOOL ProcessDc(BOOL bAlloc PDFT(TRUE)) ;
+//- AllocatePits -- allocate pits (including home bin/hand)
+BOOL AllocatePits(void) ;
+//- SetCrabSign -- to my/your turn
+private: BOOL SetCrabSign(BOOL bPaint PDFT(TRUE)) ;
+//- FreePitResources -- free (optionally delete) all pit
 //		resources -- stone sprites and pit bitmaps
-PRIVATE BOOL CMnkWindow::FreePitResources(BOOL bDelete PDFT(FALSE)) ;
-//- CMnkWindow::ClearBitmapObject -- release bitmap object
-PRIVATE BOOL CMnkWindow::ClearBitmapObject(CBmpObject * xpcBmpObject) ;
-//- CMnkWindow::ReleaseResources -- release all resources before term
-PUBLIC void CMnkWindow::ReleaseResources(void) ;
-//- CMnkWindow::DebugDialog -- put up debugging dialog box
-PRIVATE BOOL CMnkWindow::DebugDialog(void) ;
-PUBLIC void Setm_bJustStarted(BOOL U){
-	m_bJustStarted=U;//- CMnkWindow::UserDialog -- put up user dialog box
+private: BOOL FreePitResources(BOOL bDelete PDFT(FALSE)) ;
+//- ClearBitmapObject -- release bitmap object
+private: BOOL ClearBitmapObject(CBmpObject * xpcBmpObject) ;
+//- ReleaseResources -- release all resources before term
+public: void ReleaseResources(void) ;
+//- DebugDialog -- put up debugging dialog box
+private: BOOL DebugDialog(void) ;
+public: void Setm_bJustStarted(BOOL U){
+	m_bJustStarted=U;//- UserDialog -- put up user dialog box
 }
-PUBLIC BOOL FAR PASCAL CMnkWindow::UserDialog(void) ;
-//- CMnkWindow::OptionsDialog -- call options dialog
-PRIVATE BOOL CMnkWindow::OptionsDialog(void) ;
+public: BOOL FAR PASCAL UserDialog(void) ;
+//- OptionsDialog -- call options dialog
+private: BOOL OptionsDialog(void) ;
 
-//PRIVATE BOOL CALLBACK CMnkWindow::ResetPitsDlgProc(HWND, UINT, WPARAM, LPARAM);
+//private: BOOL CALLBACK ResetPitsDlgProc(HWND, UINT, WPARAM, LPARAM);
 
 
 
@@ -562,7 +580,10 @@ public:
 
 ///////////////////////////////////////////////
 
-#include "htail.h"
 
-#endif // __mnk_H__
 
+} // namespace Mankala
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif
