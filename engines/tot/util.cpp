@@ -132,6 +132,6 @@ void waitForKey() {
 }
 
 unsigned int Random(unsigned int range) { return g_engine->getRandomNumber(range); }
-int Random(int range) { return g_engine->getRandomNumber(range); }
+int Random(int range) { return g_engine->getRandomNumber(range - 1); }
 
 } // End of namespace Tot
