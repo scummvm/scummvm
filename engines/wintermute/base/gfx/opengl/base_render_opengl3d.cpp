@@ -410,17 +410,17 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
-	
+
 	glVertexPointer(3, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].x);
 	glTexCoordPointer(2, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].u);
 	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SpriteVertex), &vertices[0].r);
-	
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	
+
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	
+
 	if (alphaDisable) {
 		glEnable(GL_ALPHA_TEST);
 		glEnable(GL_BLEND);
@@ -614,7 +614,7 @@ BaseImage *BaseRenderOpenGL3D::takeScreenshot() {
 	surface->create(_viewportRect.width(), _viewportRect.height(), format);
 
 	glReadPixels(_viewportRect.left, _viewportRect.height() - _viewportRect.bottom, _viewportRect.width(), _viewportRect.height(),
-				 GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
+	              GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
 	flipVertical(surface);
 	Graphics::Surface *converted = surface->convertTo(getPixelFormat());
 	screenshot->copyFrom(converted);

@@ -143,9 +143,9 @@ bool BaseRenderOpenGL3DShader::flip() {
 	// Disable blend mode and cull face to prevent interfere with backend renderer
 	glDisable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
-	
+
 	g_system->updateScreen();
-	
+
 	_state = RSTATE_NONE;
 	return true;
 }
