@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-05-13 20:15+0000\n"
+"POT-Creation-Date: 2025-05-14 22:18+0000\n"
 "PO-Revision-Date: 2025-05-10 19:19+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -109,7 +109,7 @@ msgstr "위로"
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:204
 #: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:857
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
-#: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:84
+#: engines/drascula/saveload.cpp:49 engines/grim/inputdialog.cpp:84
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/myst_stacks/menu.cpp:318
@@ -354,7 +354,7 @@ msgstr "JSON 코드 내용이 잘못되었습니다."
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
 #: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:83
 #: engines/director/lingo/lingo-builtins.cpp:2148
-#: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
+#: engines/drascula/saveload.cpp:49 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:665 engines/mtropolis/mtropolis.cpp:114
 #: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
@@ -3450,7 +3450,7 @@ msgstr "런처로 돌아가기(~R~)"
 
 #: engines/dialogs.cpp:95 engines/engine.cpp:980 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
-#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
+#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:384
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:858
 #: engines/groovie/script.cpp:2256 engines/groovie/script.cpp:2283
@@ -3470,7 +3470,7 @@ msgstr "게임 저장:"
 
 #: engines/dialogs.cpp:95 engines/engine.cpp:980 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
-#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
+#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:384
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:853
 #: engines/groovie/script.cpp:858 engines/groovie/script.cpp:2256
@@ -6061,7 +6061,7 @@ msgstr "런처"
 msgid "Check for Updates..."
 msgstr "업데이트 확인 중..."
 
-#: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:940
+#: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:959
 #: engines/hugo/hugo.cpp:427 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:97
@@ -6071,7 +6071,7 @@ msgstr "업데이트 확인 중..."
 msgid "Unable to locate the '%s' engine data file."
 msgstr "'%s' 엔진 데이터 파일을 찾을 수 없습니다."
 
-#: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:956
+#: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:975
 #: engines/hugo/hugo.cpp:439 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:468
 #: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5431
@@ -6079,7 +6079,7 @@ msgstr "'%s' 엔진 데이터 파일을 찾을 수 없습니다."
 msgid "The '%s' engine data file is corrupt."
 msgstr "'%s' 엔진 데이터 파일이 손상되었습니다."
 
-#: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:967
+#: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:986
 #: engines/hugo/hugo.cpp:449 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:318 engines/tony/tony.cpp:211
 #: engines/toon/toon.cpp:5442
@@ -6267,7 +6267,7 @@ msgstr "이 게임은 저장을 지원하지 않음"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:271
-#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
+#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:397
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:835
 #: engines/groovie/script.cpp:870 engines/groovie/script.cpp:2243
@@ -6286,7 +6286,7 @@ msgstr "게임 복원:"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:271
-#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
+#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:397
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:835
 #: engines/groovie/script.cpp:853 engines/groovie/script.cpp:870
@@ -7173,13 +7173,15 @@ msgstr "색맹 모드"
 msgid "Enable Color Blind Mode by default"
 msgstr "기본적으로 색맹 모드 활성화"
 
-#: engines/cge/metaengine.cpp:56 engines/glk/metaengine.cpp:193
-#: engines/griffon/metaengine.cpp:40 engines/mortevielle/metaengine.cpp:37
-#: engines/sci/detection_options.h:223 engines/supernova/metaengine.cpp:49
+#: engines/cge/metaengine.cpp:56 engines/drascula/metaengine.cpp:51
+#: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
+#: engines/mortevielle/metaengine.cpp:37 engines/sci/detection_options.h:223
+#: engines/supernova/metaengine.cpp:49
 msgid "Enable Text to Speech"
 msgstr "TTS 활성화"
 
-#: engines/cge/metaengine.cpp:57 engines/mortevielle/metaengine.cpp:38
+#: engines/cge/metaengine.cpp:57 engines/drascula/metaengine.cpp:52
+#: engines/mortevielle/metaengine.cpp:38
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "TTS를 사용하여 게임 텍스트 읽기 (TTS가 가능한 경우)"
 
@@ -7710,7 +7712,7 @@ msgstr ""
 msgid "Debug Graphics"
 msgstr "그래픽 디버그"
 
-#: engines/drascula/saveload.cpp:46
+#: engines/drascula/saveload.cpp:47
 msgid ""
 "ScummVM found that you have old saved games for Drascula that should be "
 "converted.\n"
