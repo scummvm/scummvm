@@ -133,7 +133,6 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	track->curRegion = -1;
 	track->trackId = l;
 
-	int bits = 0, freq = 0, channels = 0;
 
 	Common::strcpy_s(track->soundName, soundName);
 	track->soundDesc = _sound->openSound(soundName, volGroupId);
@@ -141,13 +140,14 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	if (!track->soundDesc)
 		return false;
 
-	bits = _sound->getBits(track->soundDesc);
-	channels = _sound->getChannels(track->soundDesc);
-	freq = _sound->getFreq(track->soundDesc);
+	const int bits = _sound->getBits(track->soundDesc);
+	const int channels = _sound->getChannels(track->soundDesc);
+	const int freq = _sound->getFreq(track->soundDesc);
 
 	assert(bits == 8 || bits == 12 || bits == 16);
 	assert(channels == 1 || channels == 2);
 	assert(0 < freq && freq <= 65535);
+	(void)bits;
 
 	track->feedSize = freq * channels * 2;
 	track->mixerFlags = kFlag16Bits;
