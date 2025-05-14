@@ -3343,6 +3343,7 @@ void useScreenObject() {
 					teleencendida = !(teleencendida);
 					if (teleencendida) {
 						playVoc("CLICK", 27742, 2458);
+						g_engine->_sound->waitForSoundEnd();
 						currentRoomData->banderapaleta = true;
 						autoPlayVoc("PARASITO", 355778, 20129);
 					} else {

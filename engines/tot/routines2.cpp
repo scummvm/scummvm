@@ -260,12 +260,17 @@ void cargatele() {
 	}
 	fichct.seek(currentRoomData->puntpaleta + 603);
 	fichct.read(movimientopal, 144);
+	for (int i = 0; i <= 48; i++) {
+		movimientopal[i * 3 + 0] = movimientopal[i * 3 + 0] << 2;
+		movimientopal[i * 3 + 1] = movimientopal[i * 3 + 1] << 2;
+		movimientopal[i * 3 + 2] = movimientopal[i * 3 + 2] << 2;
+	}
 
 	fichct.close();
 	for (int ix = 195; ix <= 200; ix++) {
-		pal[ix * 3 + 0] = 2;
-		pal[ix * 3 + 1] = 2;
-		pal[ix * 3 + 2] = 2;
+		pal[ix * 3 + 0] = 2 << 2;
+		pal[ix * 3 + 1] = 2 << 2;
+		pal[ix * 3 + 2] = 2 << 2;
 		setRGBPalette(ix, 2, 2, 2);
 	}
 }
