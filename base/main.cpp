@@ -236,6 +236,8 @@ static Common::Error runGame(const Plugin *enginePlugin, OSystem &system, const 
 			ConfMan.removeGameDomain(target.c_str());
 		}
 
+		metaEngine.deleteInstance(engine, game, meDescriptor);
+
 		return err;
 	}
 
