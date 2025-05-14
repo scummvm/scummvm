@@ -107,9 +107,20 @@ void MacIndy3Gui::Widget::markScreenAsDirty(Common::Rect r) const {
 }
 
 byte MacIndy3Gui::Widget::translateChar(byte c) const {
-	if (c == '^')
+	// Remap SCUMM-specific characters to Mac OS Roman. I have verified
+	// that these are actually used. If we find others, or if there are
+	// fan translations, that can be dealt with later.
+
+	switch (c) {
+	case 0x10: // Left half of TM glyph
+		return 0xAA;
+	case 0x11: // Right half of TM glyph. Don't draw at all.
+		return 0x00;
+	case 0x5E: // ...
 		return 0xC9;
-	return c;
+	default:
+		return c;
+	}
 }
 
 void MacIndy3Gui::Widget::fill(Common::Rect r) {
@@ -325,12 +336,15 @@ void MacIndy3Gui::Button::draw() {
 
 		for (uint i = 0; i < _text.size() && x < _bounds.right; i++) {
 			byte c = translateChar(_text[i]);
-			if (x >= _bounds.left) {
-				if (_enabled)
-					outlineFont->drawChar(_surface, c, x, y, kBlack);
-				boldFont->drawChar(_surface, c, x + 1, y, color);
+
+			if (c) {
+				if (x >= _bounds.left) {
+					if (_enabled)
+						outlineFont->drawChar(_surface, c, x, y, kBlack);
+					boldFont->drawChar(_surface, c, x + 1, y, color);
+				}
+				x += boldFont->getCharWidth(c);
 			}
-			x += boldFont->getCharWidth(c);
 		}
 	}
 }
@@ -679,8 +693,10 @@ void MacIndy3Gui::Inventory::Slot::draw() {
 		for (uint i = 0; i < _name.size() && x < _bounds.right; i++) {
 			byte c = translateChar(_name[i]);
 
-			font->drawChar(_surface, c, x, y, fg);
-			x += font->getCharWidth(c);
+			if (c) {
+				font->drawChar(_surface, c, x, y, fg);
+				x += font->getCharWidth(c);
+			}
 		}
 	}
 }
