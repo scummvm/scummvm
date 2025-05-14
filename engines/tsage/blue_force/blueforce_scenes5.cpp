@@ -1644,6 +1644,20 @@ void Scene570::PasswordEntry::process(Event &event) {
 	case EVENT_BUTTON_DOWN:
 		event.handled = true;
 		break;
+	case EVENT_CUSTOM_ACTIONSTART:
+		// Custom action to submit a password text.
+		// The code handling this custom action is identical
+		// to the code for handling event type EVENT_KEYPRESS
+		// when event.kdb.keycode == Common::KEYCODE_RETURN.
+		if (event.customType == kActionReturn)  {
+			// Finished entering password
+			_passwordText.remove();
+			_entryText.remove();
+
+			checkPassword();
+			remove();
+		}
+		break;
 	default:
 		break;
 	}
