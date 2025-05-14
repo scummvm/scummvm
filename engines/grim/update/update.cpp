@@ -20,7 +20,6 @@
  */
 
 #include "common/stream.h"
-#include "common/archive.h"
 
 #include "engines/grim/update/packfile.h"
 #include "engines/grim/update/mscab.h"
@@ -32,8 +31,8 @@ namespace Grim {
 
 Common::Archive *loadUpdateArchive(Common::SeekableReadStream *data) {
 	Common::SeekableReadStream *updStream = new PackFile(data);
-	Common::Archive *cab = new MsCabinet(updStream);
-	Common::Archive *update = new LangFilter(cab, g_grim->getGameLanguage());
+	MsCabinet *cab = new MsCabinet(updStream);
+	LangFilter *update = new LangFilter(cab, g_grim->getGameLanguage());
 
 	Common::ArchiveMemberList list;
 	if (update->listMembers(list) == 0) {
