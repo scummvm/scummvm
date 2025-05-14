@@ -711,14 +711,14 @@ static void loadDiploma(Common::String &nombrefoto, Common::String &clave) {
 
 	// // settextstyle(defaultfont, horizdir, 1);
 	// FIXME: proper font
-	outtextxyBios(91, 16, "CERTIFICADO N�:" + clave, 255);
-	outtextxyBios(90, 15, "CERTIFICADO N�:" + clave, 13);
+	outtextxyBios(91, 16, "CERTIFICADO N\xA7:" + clave, 255);
+	outtextxyBios(90, 15, "CERTIFICADO N\xA7:" + clave, 13);
 
 	outtextxyBios(81, 61, "Yo, Jacob, el Gran Maestre ", 0);
 	outtextxyBios(61, 81, "de la Hermandad de Sek Umh Nejl", 0);
 	outtextxyBios(31, 101, "certifico que: " + nombrepersonaje, 0);
 	outtextxyBios(31, 121, "me ha liberado de las Cavernas", 0);
-	outtextxyBios(31, 141, "Eternas, por lo cual le estar� ", 0);
+	outtextxyBios(31, 141, "Eternas, por lo cual le estar\x82 ", 0);
 	outtextxyBios(31, 161, "por siempre agradecido.", 0);
 
 	outtextxyBios(80, 60, "Yo, Jacob, el Gran Maestre ", 15);
@@ -728,7 +728,7 @@ static void loadDiploma(Common::String &nombrefoto, Common::String &clave) {
 	outtextxyBios(150, 100, nombrepersonaje, 13);
 
 	outtextxyBios(30, 120, "me ha liberado de las Cavernas", 15);
-	outtextxyBios(30, 140, "Eternas, por lo cual le estar� ", 15);
+	outtextxyBios(30, 140, "Eternas, por lo cual le estar\x82 ", 15);
 	outtextxyBios(30, 160, "por siempre agradecido.", 15);
 	delay(1500);
 	playVoc("PORTAZO", 434988, 932);
@@ -1669,7 +1669,6 @@ void removeTitle(byte *&fondo2) {
 		byte *dest3 = ((byte *)g_engine->_screen->getPixels()) + (j2 * 320) + i2;
 		Common::copy(src3, src3 + 1, dest3);
 		if (i1 % 200 == 0) {
-			debug("Toca pintar!");
 			g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 60));
 			g_engine->_screen->update();
 		}
@@ -1804,12 +1803,12 @@ void introduction() {
 	totalFadeOut(0);
 	cleardevice();
 
-	outtextxy(25, 20, " ... Despu�s  de  estar  durante  ocho horas", 253);
+	outtextxy(25, 20, " ... Despu\x82s  de  estar  durante  ocho horas", 253);
 	outtextxy(25, 35, "conduciendo,  haberte   perdido  tres  veces", 253);
-	outtextxy(25, 50, "y  haber hecho  doscientos kil�metros de m�s", 253);
+	outtextxy(25, 50, "y  haber hecho  doscientos kil\xA2metros de m\xA0s", 253);
 	outtextxy(25, 65, "llegas  a  una  casa  que se encuentra en un", 253);
 	outtextxy(25, 80, "paraje muy tranquilo y apartado del mundanal", 253);
-	outtextxy(25, 95, "ruido. (��Y TAN APARTADO!!) ...", 253);
+	outtextxy(25, 95, "ruido. (\xAD\xADY TAN APARTADO!!) ...", 253);
 	outtextxy(25, 120, "Pero esto no tiene importancia ... ", 253);
 	outtextxy(25, 140, "Hay que  encarar  el trabajo con una actitud", 253);
 	outtextxy(25, 155, "optimista y positiva...", 253);
@@ -2354,7 +2353,7 @@ void sacrifice() {
 	outtextxy(10, 10, "    A pesar  de todo, no lo  has  hecho tan mal.", 200);
 	outtextxy(10, 30, "    Has  conseguido todo  lo que te  pidieron, y", 200);
 	outtextxy(10, 50, "    van a poder celebrar su fiesta de Halloween.", 200);
-	outtextxy(10, 70, "    Es  todo un  detalle que t� seas el invitado", 200);
+	outtextxy(10, 70, "    Es  todo un  detalle que t\xA3 seas el invitado", 200);
 	outtextxy(10, 90, "    de honor...", 200);
 
 	for (int i = 0; i <= 28; i++)
@@ -2369,9 +2368,9 @@ void sacrifice() {
 
 	bar(10, 10, 300, 120, 0);
 	outtextxy(10, 10, "    Como recompensa a tus esfuerzos te mandan a", 200);
-	outtextxy(10, 30, "    darte una  vuelta  por ah� mientras ellos se", 200);
+	outtextxy(10, 30, "    darte una  vuelta  por ah\xA1 mientras ellos se", 200);
 	outtextxy(10, 50, "    encargan de  los  preparativos de la fiesta.", 200);
-	outtextxy(10, 70, "    T�, obviamente, aceptas  de  inmediato  y te", 200);
+	outtextxy(10, 70, "    T\xA3, obviamente, aceptas  de  inmediato  y te", 200);
 	outtextxy(10, 90, "    vas a tomar el fresco un rato...", 200);
 
 	for (int i = 0; i <= 28; i++)
@@ -2384,9 +2383,9 @@ void sacrifice() {
 		setRGBPalette(200, i * 2, i * 2, i * 2);
 
 	bar(10, 10, 300, 120, 0);
-	outtextxy(10, 10, "                  Horas m�s tarde... ", 200);
-	outtextxy(10, 50, "    La  fiesta  ya  est�  preparada, regresas al", 200);
-	outtextxy(10, 70, "    sal�n a  recibir tus merecidos honores, tras", 200);
+	outtextxy(10, 10, "                  Horas m\xA0s tarde... ", 200);
+	outtextxy(10, 50, "    La  fiesta  ya  est\xA0  preparada, regresas al", 200);
+	outtextxy(10, 70, "    sal\xA2n a  recibir tus merecidos honores, tras", 200);
 	outtextxy(10, 90, "    un completo dia de trabajo... ", 200);
 
 	for (int i = 0; i <= 28; i++)
@@ -2436,10 +2435,10 @@ void sacrifice() {
 	restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	clear();
 
-	outtextxy(10, 31, "      Despu�s de todo lo que hice por ellos...", 254);
-	outtextxy(10, 29, "      Despu�s de todo lo que hice por ellos...", 254);
-	outtextxy(11, 30, "      Despu�s de todo lo que hice por ellos...", 254);
-	outtextxy(9, 30, "      Despu�s de todo lo que hice por ellos...", 254);
+	outtextxy(10, 31, "      Despu\x82s de todo lo que hice por ellos...", 254);
+	outtextxy(10, 29, "      Despu\x82s de todo lo que hice por ellos...", 254);
+	outtextxy(11, 30, "      Despu\x82s de todo lo que hice por ellos...", 254);
+	outtextxy(9, 30, "      Despu\x82s de todo lo que hice por ellos...", 254);
 	outtextxy(10, 51, "      Todos mis esfuerzos y desvelos para esto...", 254);
 	outtextxy(10, 49, "      Todos mis esfuerzos y desvelos para esto...", 254);
 	outtextxy(11, 50, "      Todos mis esfuerzos y desvelos para esto...", 254);
@@ -2449,7 +2448,7 @@ void sacrifice() {
 	outtextxy(11, 70, "      Morir envenenado, ese era mi destino...", 254);
 	outtextxy(9, 70, "      Morir envenenado, ese era mi destino...", 254);
 
-	outtextxy(10, 30, "      Despu�s de todo lo que hice por ellos...", 255);
+	outtextxy(10, 30, "      Despu\x82s de todo lo que hice por ellos...", 255);
 	outtextxy(10, 50, "      Todos mis esfuerzos y desvelos para esto...", 255);
 	outtextxy(10, 70, "      Morir envenenado, ese era mi destino...", 255);
 
@@ -2503,18 +2502,18 @@ void sacrifice() {
 	stopVoc();
 	clear();
 
-	outtextxy(10, 21, "   Presta atenci�n, pues esta puede  ser la �ltima", 254);
-	outtextxy(10, 19, "   Presta atenci�n, pues esta puede  ser la �ltima", 254);
-	outtextxy(11, 20, "   Presta atenci�n, pues esta puede  ser la �ltima", 254);
-	outtextxy(9, 20, "   Presta atenci�n, pues esta puede  ser la �ltima", 254);
-	outtextxy(10, 41, "   vez que hablemos contigo. Definitivamente est�s", 254);
-	outtextxy(10, 39, "   vez que hablemos contigo. Definitivamente est�s", 254);
-	outtextxy(11, 40, "   vez que hablemos contigo. Definitivamente est�s", 254);
-	outtextxy(9, 40, "   vez que hablemos contigo. Definitivamente est�s", 254);
-	outtextxy(10, 61, "   muerto, pero a�n es  posible reunir tu alma con", 254);
-	outtextxy(10, 59, "   muerto, pero a�n es  posible reunir tu alma con", 254);
-	outtextxy(11, 60, "   muerto, pero a�n es  posible reunir tu alma con", 254);
-	outtextxy(9, 60, "   muerto, pero a�n es  posible reunir tu alma con", 254);
+	outtextxy(10, 21, "   Presta atenci\xA2n, pues esta puede  ser la \xA3ltima", 254);
+	outtextxy(10, 19, "   Presta atenci\xA2n, pues esta puede  ser la \xA3ltima", 254);
+	outtextxy(11, 20, "   Presta atenci\xA2n, pues esta puede  ser la \xA3ltima", 254);
+	outtextxy(9, 20, "   Presta atenci\xA2n, pues esta puede  ser la \xA3ltima", 254);
+	outtextxy(10, 41, "   vez que hablemos contigo. Definitivamente est\xA0s", 254);
+	outtextxy(10, 39, "   vez que hablemos contigo. Definitivamente est\xA0s", 254);
+	outtextxy(11, 40, "   vez que hablemos contigo. Definitivamente est\xA0s", 254);
+	outtextxy(9, 40, "   vez que hablemos contigo. Definitivamente est\xA0s", 254);
+	outtextxy(10, 61, "   muerto, pero a\xA3n es  posible reunir tu alma con", 254);
+	outtextxy(10, 59, "   muerto, pero a\xA3n es  posible reunir tu alma con", 254);
+	outtextxy(11, 60, "   muerto, pero a\xA3n es  posible reunir tu alma con", 254);
+	outtextxy(9, 60, "   muerto, pero a\xA3n es  posible reunir tu alma con", 254);
 	outtextxy(10, 81, "   tu cuerpo,  para  ello  debes  buscar a Jacob y", 254);
 	outtextxy(10, 79, "   tu cuerpo,  para  ello  debes  buscar a Jacob y", 254);
 	outtextxy(11, 80, "   tu cuerpo,  para  ello  debes  buscar a Jacob y", 254);
@@ -2532,9 +2531,9 @@ void sacrifice() {
 	outtextxy(11, 140, "   mundo de los vivos.", 254);
 	outtextxy(9, 140, "   mundo de los vivos.", 254);
 
-	outtextxy(10, 20, "   Presta atenci�n, pues esta puede  ser la �ltima", 255);
-	outtextxy(10, 40, "   vez que hablemos contigo. Definitivamente est�s", 255);
-	outtextxy(10, 60, "   muerto, pero a�n es  posible reunir tu alma con", 255);
+	outtextxy(10, 20, "   Presta atenci\xA2n, pues esta puede  ser la \xA3ltima", 255);
+	outtextxy(10, 40, "   vez que hablemos contigo. Definitivamente est\xA0s", 255);
+	outtextxy(10, 60, "   muerto, pero a\xA3n es  posible reunir tu alma con", 255);
 	outtextxy(10, 80, "   tu cuerpo,  para  ello  debes  buscar a Jacob y", 255);
 	outtextxy(10, 100, "   liberarlo de aquello  que lo retenga. Cuando lo", 255);
 	outtextxy(10, 120, "   consigas podremos traeros  a ambos de vuelta al", 255);
@@ -2556,42 +2555,42 @@ void sacrifice() {
 	return;
 
 	clear();
-	outtextxy(10, 21, "   Pero debes darte prisa  pues el v�nculo con tu", 254);
-	outtextxy(10, 19, "   Pero debes darte prisa  pues el v�nculo con tu", 254);
-	outtextxy(11, 20, "   Pero debes darte prisa  pues el v�nculo con tu", 254);
-	outtextxy(9, 20, "   Pero debes darte prisa  pues el v�nculo con tu", 254);
-	outtextxy(10, 41, "   cuerpo se  debilita  y tu  alma podr�a  quedar", 254);
-	outtextxy(10, 39, "   cuerpo se  debilita  y tu  alma podr�a  quedar", 254);
-	outtextxy(11, 40, "   cuerpo se  debilita  y tu  alma podr�a  quedar", 254);
-	outtextxy(9, 40, "   cuerpo se  debilita  y tu  alma podr�a  quedar", 254);
+	outtextxy(10, 21, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 254);
+	outtextxy(10, 19, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 254);
+	outtextxy(11, 20, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 254);
+	outtextxy(9, 20, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 254);
+	outtextxy(10, 41, "   cuerpo se  debilita  y tu  alma podr\xA1""a  quedar", 254);
+	outtextxy(10, 39, "   cuerpo se  debilita  y tu  alma podr\xA1""a  quedar", 254);
+	outtextxy(11, 40, "   cuerpo se  debilita  y tu  alma podr\xA1""a  quedar", 254);
+	outtextxy(9, 40, "   cuerpo se  debilita  y tu  alma podr\xA1""a  quedar", 254);
 	outtextxy(10, 61, "   atrapada para siempre en las Cavernas Eternas.", 254);
 	outtextxy(10, 59, "   atrapada para siempre en las Cavernas Eternas.", 254);
 	outtextxy(11, 60, "   atrapada para siempre en las Cavernas Eternas.", 254);
 	outtextxy(9, 60, "   atrapada para siempre en las Cavernas Eternas.", 254);
-	outtextxy(10, 81, "   Si necesitaras  m�s  energ�a de la que tienes, ", 254);
-	outtextxy(10, 79, "   Si necesitaras  m�s  energ�a de la que tienes, ", 254);
-	outtextxy(11, 80, "   Si necesitaras  m�s  energ�a de la que tienes, ", 254);
-	outtextxy(9, 80, "   Si necesitaras  m�s  energ�a de la que tienes, ", 254);
-	outtextxy(10, 101, "   recuerda que all� donde vas un cuerpo contiene", 254);
-	outtextxy(10, 99, "   recuerda que all� donde vas un cuerpo contiene", 254);
-	outtextxy(11, 100, "   recuerda que all� donde vas un cuerpo contiene", 254);
-	outtextxy(9, 100, "   recuerda que all� donde vas un cuerpo contiene", 254);
-	outtextxy(10, 121, "   m�s energ�a que un alma al contrario que en el", 254);
-	outtextxy(10, 119, "   m�s energ�a que un alma al contrario que en el", 254);
-	outtextxy(11, 120, "   m�s energ�a que un alma al contrario que en el", 254);
-	outtextxy(9, 120, "   m�s energ�a que un alma al contrario que en el", 254);
-	outtextxy(10, 141, "   mundo f�sico.", 254);
-	outtextxy(10, 139, "   mundo f�sico.", 254);
-	outtextxy(11, 140, "   mundo f�sico.", 254);
-	outtextxy(9, 140, "   mundo f�sico.", 254);
+	outtextxy(10, 81, "   Si necesitaras  m\xA0s  energ\xA1""a de la que tienes, ", 254);
+	outtextxy(10, 79, "   Si necesitaras  m\xA0s  energ\xA1""a de la que tienes, ", 254);
+	outtextxy(11, 80, "   Si necesitaras  m\xA0s  energ\xA1""a de la que tienes, ", 254);
+	outtextxy(9, 80, "   Si necesitaras  m\xA0s  energ\xA1""a de la que tienes, ", 254);
+	outtextxy(10, 101, "   recuerda que all\xA0 donde vas un cuerpo contiene", 254);
+	outtextxy(10, 99, "   recuerda que all\xA0 donde vas un cuerpo contiene", 254);
+	outtextxy(11, 100, "   recuerda que all\xA0 donde vas un cuerpo contiene", 254);
+	outtextxy(9, 100, "   recuerda que all\xA0 donde vas un cuerpo contiene", 254);
+	outtextxy(10, 121, "   m\xA0s energ\xA1""a que un alma al contrario que en el", 254);
+	outtextxy(10, 119, "   m\xA0s energ\xA1""a que un alma al contrario que en el", 254);
+	outtextxy(11, 120, "   m\xA0s energ\xA1""a que un alma al contrario que en el", 254);
+	outtextxy(9, 120, "   m\xA0s energ\xA1""a que un alma al contrario que en el", 254);
+	outtextxy(10, 141, "   mundo f\xA1sico.", 254);
+	outtextxy(10, 139, "   mundo f\xA1sico.", 254);
+	outtextxy(11, 140, "   mundo f\xA1sico.", 254);
+	outtextxy(9, 140, "   mundo f\xA1sico.", 254);
 
-	outtextxy(10, 20, "   Pero debes darte prisa  pues el v�nculo con tu", 255);
-	outtextxy(10, 40, "   cuerpo se  debilita  y tu  alma podr�a  quedar", 255);
+	outtextxy(10, 20, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 255);
+	outtextxy(10, 40, "   cuerpo se  debilita  y tu  alma podr\xA1""a  quedar", 255);
 	outtextxy(10, 60, "   atrapada para siempre en las Cavernas Eternas.", 255);
-	outtextxy(10, 80, "   Si necesitaras  m�s  energ�a de la que tienes, ", 255);
-	outtextxy(10, 100, "   recuerda que all� donde vas un cuerpo contiene", 255);
-	outtextxy(10, 120, "   m�s energ�a que un alma al contrario que en el", 255);
-	outtextxy(10, 140, "   mundo f�sico.", 255);
+	outtextxy(10, 80, "   Si necesitaras  m\xA0s  energ\xA1""a de la que tienes, ", 255);
+	outtextxy(10, 100, "   recuerda que all\xA0 donde vas un cuerpo contiene", 255);
+	outtextxy(10, 120, "   m\xA0s energ\xA1""a que un alma al contrario que en el", 255);
+	outtextxy(10, 140, "   mundo f\xA1sico.", 255);
 
 	for (int i = 0; i < 32; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
@@ -2649,13 +2648,13 @@ void ending() {
 	outtextxy(10, 39, "           Al fin lo has conseguido....", 249);
 	outtextxy(11, 40, "           Al fin lo has conseguido....", 249);
 	outtextxy(9, 40, "           Al fin lo has conseguido....", 249);
-	outtextxy(10, 61, "               ���Soy LIBREEEEE!!!", 249);
-	outtextxy(10, 59, "               ���Soy LIBREEEEE!!!", 249);
-	outtextxy(11, 60, "               ���Soy LIBREEEEE!!!", 249);
-	outtextxy(9, 60, "               ���Soy LIBREEEEE!!!", 249);
+	outtextxy(10, 61, "               \xAD\xAD\xADSoy LIBREEEEE!!!", 249);
+	outtextxy(10, 59, "               \xAD\xAD\xADSoy LIBREEEEE!!!", 249);
+	outtextxy(11, 60, "               \xAD\xAD\xADSoy LIBREEEEE!!!", 249);
+	outtextxy(9, 60, "               \xAD\xAD\xADSoy LIBREEEEE!!!", 249);
 
 	outtextxy(10, 40, "           Al fin lo has conseguido....", 253);
-	outtextxy(10, 60, "               ���Soy LIBREEEEE!!!", 253);
+	outtextxy(10, 60, "               \xAD\xAD\xADSoy LIBREEEEE!!!", 253);
 	delay(4000);
 	totalFadeOut(0);
 	clear();
