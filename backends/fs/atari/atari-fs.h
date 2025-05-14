@@ -24,6 +24,9 @@
 
 #include "backends/fs/posix/posix-fs.h"
 
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+
 /**
  * Implementation of the ScummVM file system API based on POSIX with some Atari specific features.
  *
@@ -32,13 +35,23 @@
 class AtariFilesystemNode final : public POSIXFilesystemNode {
 protected:
 	AbstractFSNode *makeNode(const Common::String &path) const override {
-		return new AtariFilesystemNode(path);
+		return new AtariFilesystemNode(path, _fileHashMap);
 	}
 
 public:
-	AtariFilesystemNode(const Common::String &path)
-		: POSIXFilesystemNode(path) {
+	typedef Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileHashMap;
+
+	AtariFilesystemNode(const Common::String &path, const FileHashMap &fileHashMap)
+		: POSIXFilesystemNode(path)
+		, _fileHashMap(fileHashMap) {
 	}
+
+protected:
+	void setFlags() override;
+
+private:
+	const FileHashMap &_fileHashMap;
+	bool _displayNameChecked = false;
 };
 
 #endif

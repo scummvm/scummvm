@@ -24,6 +24,9 @@
 
 #include "backends/fs/posix/posix-fs-factory.h"
 
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+
 /**
  * Creates AtariFilesystemNode objects.
  *
@@ -31,9 +34,14 @@
  */
 class AtariFilesystemFactory final : public POSIXFilesystemFactory {
 public:
+	AtariFilesystemFactory();
+
 	AbstractFSNode *makeRootFileNode() const override;
 	AbstractFSNode *makeCurrentDirectoryFileNode() const override;
 	AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
+
+private:
+	Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _fileHashMap;
 };
 
 #endif /*ATARI_FILESYSTEM_FACTORY_H*/

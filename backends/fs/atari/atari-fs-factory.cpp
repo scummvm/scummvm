@@ -29,8 +29,15 @@
 
 #if defined(ATARI)
 
+AtariFilesystemFactory::AtariFilesystemFactory() {
+	_fileHashMap["cryomni3.dat"] = "cryomni3d.dat";
+	_fileHashMap["neverhoo.dat"] = "neverhood.dat";
+	_fileHashMap["supernov.dat"] = "supernova.dat";
+	_fileHashMap["teenagen.dat"] = "teenagent.dat";
+}
+
 AbstractFSNode *AtariFilesystemFactory::makeRootFileNode() const {
-	return new AtariFilesystemNode("/");
+	return new AtariFilesystemNode("/", _fileHashMap);
 }
 
 AbstractFSNode *AtariFilesystemFactory::makeCurrentDirectoryFileNode() const {
@@ -46,7 +53,7 @@ AbstractFSNode *AtariFilesystemFactory::makeCurrentDirectoryFileNode() const {
 			buf[0] = toupper(buf[1]);
 			buf[1] = ':';
 		}
-		return new AtariFilesystemNode(buf);
+		return new AtariFilesystemNode(buf, _fileHashMap);
 	} else {
 		return nullptr;
 	}
@@ -54,7 +61,7 @@ AbstractFSNode *AtariFilesystemFactory::makeCurrentDirectoryFileNode() const {
 
 AbstractFSNode *AtariFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	assert(!path.empty());
-	return new AtariFilesystemNode(path);
+	return new AtariFilesystemNode(path, _fileHashMap);
 }
 
 #endif	// ATARI

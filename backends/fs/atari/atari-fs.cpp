@@ -26,6 +26,15 @@
 
 #if defined(ATARI)
 
-// prepare for future features
+void AtariFilesystemNode::setFlags() {
+	POSIXFilesystemNode::setFlags();
+
+	if (!_displayNameChecked) {
+		if (_fileHashMap.contains(_displayName))
+			_displayName = _fileHashMap[_displayName];
+
+		_displayNameChecked = true;
+	}
+}
 
 #endif	// ATARI
