@@ -731,6 +731,7 @@ public:
 	void ShowWindow(int nCmdShow);
 	BOOL EnableWindow(BOOL bEnable = TRUE);
 	void UpdateWindow();
+	void RedrawWindow();
 	void SetActiveWindow();
 	void SetFocus();
 	BOOL IsWindowVisible() const;

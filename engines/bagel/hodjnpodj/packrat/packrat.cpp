@@ -1,60 +1,39 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * poker.cpp                    Five card stud machine
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  1.0 5/2/94 GTB      
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *   Game is a simple skeleton program which consists of a main
- *   window, which contains background artwork from a .BMP file,
- *   and a Quit button.  Stub routines are present for mouse related
- *   activities and keyboard input; edit the stubs as required.
- *
- *   This is intended to serve as a starting-point for new games.
- *
- * LOCALS:
- *
- *  SplashScreen            paint the background artwork
- *
- * GLOBALS:
- *
- *  FlushInputEvents        flush all unprocessed mouse/keyboard events
- *  ReleaseResources        release all application specific resources
- *
- * RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- * FILES USED:
- *
- *  poker.bmp               bitmap image for background artwork
- *  bet1up.bmp, bet1down.bmp bet1disa.bmp               bitmap image for bet1 button artwork
- *  bet5up.bmp, bet5down.bmp bet5disa.bmp               bitmap image for bet5 button artwork
- *  bet10up.bmp, bet10down.bmp bet10disa.bmp                bitmap image for bet10 button artwork
- *  bet25up.bmp, bet25down.bmp bet25disa.bmp                bitmap image for bet25 button artwork
- *  bet100up.bmp, bet100down.bmp bet100disa.bmp             bitmap image for bet100 button artwork
- *  bet1000up.bmp, bet1000down.bmp bet1000disa.bmp              bitmap image for bet1000 button artwork
- *  clearbetup.bmp, clearbetup.bmp clearbetup.bmp               bitmap image for clear bet button artwork
- *  betallup.bmp, betalldown.bmp betalldisa.bmp             bitmap image for bet all button artwork
- *
- ****************************************************************/
-#define DYNAMIC_OBJ_COUNT
+ */
 
-#include <stdlib.h>
+#include "bagel/boflib/misc.h"  
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-
-#include "packrat.h"
-#include "dialogs.h"
-#include "misc.h"  
+#include "bagel/hodjnpodj/packrat/packrat.h"
+#include "bagel/hodjnpodj/packrat/dialogs.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 #ifdef SHOW_SCORE
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #endif
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Packrat {
+
+#define DYNAMIC_OBJ_COUNT
 
 #define PACKRATTIMER    97
 
@@ -397,12 +376,12 @@ CRect	rCounterRect( 100, 448, 350, 463 );
 CMainPackRatWindow::CMainPackRatWindow( HWND hCallingWnd, LPGAMESTRUCT lpGameStruct )
 {
 CDC     *pDC = NULL;                        // device context for the screen
-CPalette    *pOldPalette = NULL;
+//CPalette    *pOldPalette = NULL;
 CString WndClass;
 CSize   mySize;         
 BOOL    bTestCreate;                        // bool for testing the creation of each button
 
-CDibDoc *pDibDoc = NULL;            // pointer to the background art DIB
+//CDibDoc *pDibDoc = NULL;            // pointer to the background art DIB
 BOOL    bTestBmp;                       // bool for testing the creation of the splash screen
 
 int     nLoop1;
@@ -1349,13 +1328,13 @@ CMsgDlg     cMessageBoxDlg( (CWnd *)this, pGamePalette );
         pOptionButton->EnableWindow( TRUE );
         if ( m_nLives == 0 ) {                              
 	        if ( m_lpGameStruct->bSoundEffectsEnabled ) {
-	            ::sndPlaySound( NULL, SND_ASYNC);
-	            ::sndPlaySound( DEAD_WAV, SND_ASYNC);
+	            sndPlaySound( NULL, SND_ASYNC);
+	            sndPlaySound( DEAD_WAV, SND_ASYNC);
 	        }
 			if ( m_bMouseCaptured ) {
 				ReleaseCapture();
 				m_bMouseCaptured = FALSE;
-				while ( ::ShowCursor( TRUE ) < 0 )
+				while ( MFC::ShowCursor( TRUE ) < 0 )
 					;
 			}
             cMessageBoxDlg.SetInitialOptions( 4, m_lScore );
@@ -1370,7 +1349,7 @@ CMsgDlg     cMessageBoxDlg( (CWnd *)this, pGamePalette );
             }               
 
 	        if ( m_lpGameStruct->bSoundEffectsEnabled ) {
-	            ::sndPlaySound( NULL, SND_ASYNC);
+	            sndPlaySound( NULL, SND_ASYNC);
 	        }
             
             RedrawWindow();
@@ -1380,13 +1359,13 @@ CMsgDlg     cMessageBoxDlg( (CWnd *)this, pGamePalette );
 			if ( m_bMouseCaptured ) {
 				ReleaseCapture();
 				m_bMouseCaptured = FALSE;
-				while ( ::ShowCursor( TRUE ) < 0 )
+				while ( MFC::ShowCursor( TRUE ) < 0 )
 					;
 			}
             cMessageBoxDlg.SetInitialOptions( 3, m_lScore, m_nLives );
             cMessageBoxDlg.DoModal();
 	        if ( m_lpGameStruct->bSoundEffectsEnabled ) {
-	            ::sndPlaySound( NULL, SND_ASYNC);
+	            sndPlaySound( NULL, SND_ASYNC);
 	        }
 		    (*this).SetFocus();
         }        
@@ -1549,8 +1528,8 @@ BOOL	bInSequence = FALSE;
         nOldTSpeed = m_nBadGuySpeed;
         m_nBadGuySpeed*=2;
         if ( m_lpGameStruct->bSoundEffectsEnabled ) {
-            ::sndPlaySound( NULL, SND_ASYNC);
-            ::sndPlaySound( SUPERSOUND, SND_ASYNC);
+            sndPlaySound( NULL, SND_ASYNC);
+            sndPlaySound( SUPERSOUND, SND_ASYNC);
         }
         bChangeTurtle = TRUE;
         m_nNumberOfObjectsLeft--;
@@ -1647,15 +1626,15 @@ BOOL	bReturn = FALSE;
 	                    
         if ( bEatTurtle ) {
             if ( m_lpGameStruct->bSoundEffectsEnabled ) {
-                ::sndPlaySound( NULL, SND_ASYNC);
-                ::sndPlaySound( BADGUYSOUND, SND_ASYNC);
+                sndPlaySound( NULL, SND_ASYNC);
+                sndPlaySound( BADGUYSOUND, SND_ASYNC);
             }
 			nKillBadGuy += Power( 2, nWhichBadGuy);
         }
         else {
             if ( m_lpGameStruct->bSoundEffectsEnabled ) {
-                ::sndPlaySound( NULL, SND_ASYNC);
-                ::sndPlaySound( PLAYERSOUND, SND_ASYNC);
+                sndPlaySound( NULL, SND_ASYNC);
+                sndPlaySound( PLAYERSOUND, SND_ASYNC);
             }
 			bReturn = TRUE;
         }
@@ -1894,7 +1873,7 @@ CMsgDlg cMessageBoxDlg( (CWnd *)this, pGamePalette );
 			if ( m_bMouseCaptured ) {
 				ReleaseCapture();
 				m_bMouseCaptured = FALSE;
-				while ( ::ShowCursor( TRUE ) < 0 )
+				while ( MFC::ShowCursor( TRUE ) < 0 )
 					;
 			}
             cMessageBoxDlg.SetInitialOptions( 5, m_lScore );
@@ -1911,14 +1890,14 @@ CMsgDlg cMessageBoxDlg( (CWnd *)this, pGamePalette );
             m_nGameLevel++;
             if ( m_nGameLevel > LEVELMAX ) {
                 if ( m_lpGameStruct->bSoundEffectsEnabled ) {
-                    ::sndPlaySound( NULL, SND_ASYNC);
-                    ::sndPlaySound( LASTLEV_WAV, SND_ASYNC);
+                    sndPlaySound( NULL, SND_ASYNC);
+                    sndPlaySound( LASTLEV_WAV, SND_ASYNC);
                 }
 			    pOptionButton->EnableWindow( TRUE );
 				if ( m_bMouseCaptured ) {
 					ReleaseCapture();
 					m_bMouseCaptured = FALSE;
-					while ( ::ShowCursor( TRUE ) < 0 )
+					while ( MFC::ShowCursor( TRUE ) < 0 )
 						;
 				}
                 cMessageBoxDlg.SetInitialOptions( 2, m_lScore );
@@ -1926,7 +1905,7 @@ CMsgDlg cMessageBoxDlg( (CWnd *)this, pGamePalette );
 			    (*this).SetFocus();
                 m_bSuspend = TRUE;
                 if (m_lpGameStruct->bPlayingMetagame) {
-                    ::sndPlaySound( NULL, SND_ASYNC);
+                    sndPlaySound( NULL, SND_ASYNC);
                     PostMessage( WM_CLOSE, 0, 0 ); 
                     bEndGame = TRUE;                   
                 }
@@ -1934,12 +1913,12 @@ CMsgDlg cMessageBoxDlg( (CWnd *)this, pGamePalette );
             else {
 				pOptionButton->EnableWindow( TRUE );
                 if ( m_lpGameStruct->bSoundEffectsEnabled ) {
-                    ::sndPlaySound( LEVEL_WAV, SND_ASYNC);
+                    sndPlaySound( LEVEL_WAV, SND_ASYNC);
                 }
 				if ( m_bMouseCaptured ) {
 					ReleaseCapture();
 					m_bMouseCaptured = FALSE;
-					while ( ::ShowCursor( TRUE ) < 0 )
+					while ( MFC::ShowCursor( TRUE ) < 0 )
 						;
 				}
                 cMessageBoxDlg.SetInitialOptions( 1, m_lScore, ( m_nGameLevel - 1));
@@ -2077,12 +2056,12 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos( int nWhichBadGuy, BOOL bForceRepaint )
 BOOL    bReturn = TRUE;
 CDC     *pDC = GetDC();
 int     nOldDir;
-BOOL    bNewDirOK = FALSE;
+//BOOL    bNewDirOK = FALSE;
 CSprite *pTempSprite = NULL;
 BOOL 	bSeePlayer = FALSE;
 BOOL 	bNearPlayer = FALSE;
 int		nOldDirection;
-int 	nDirectionToGo;
+int 	nDirectionToGo = 0;
 int		nDist1 = abs( m_aptCurrBLocInGrid[nWhichBadGuy].x - m_ptCurrPLocInGrid.x );
 int		nDist2 = abs( m_aptCurrBLocInGrid[nWhichBadGuy].y - m_ptCurrPLocInGrid.y );
 
@@ -2766,7 +2745,7 @@ void CMainPackRatWindow::ResetGame()
 void CALLBACK lpfnOptionCallback ( CWnd * pWnd) {
 // do the mini options dialog
 int             nOption=0;         // return from the Options dialog
-UINT            x = IDD_MINIOPTIONS_DIALOG;
+//UINT            x = IDD_MINIOPTIONS_DIALOG;
 CPackRatOptDlg  dlgMiniOptDlg( pWnd, pGamePalette, IDD_MINIOPTIONS_DIALOG );
 
     bResetGame = FALSE;
@@ -2797,11 +2776,11 @@ if (HIWORD(lParam) == BN_CLICKED)           // only want to look at button click
             bResetGame = FALSE;
             UpdateWindow();
             //CSound::waitWaveSounds();
-            ::sndPlaySound( NULL, 0 );
+            sndPlaySound( NULL, 0 );
 			if ( m_bMouseCaptured ) {
 				ReleaseCapture();
 				m_bMouseCaptured = FALSE;
-				while ( ::ShowCursor( TRUE ) < 0 )
+				while ( MFC::ShowCursor( TRUE ) < 0 )
 					;
 			}
             if ( m_lpGameStruct->bPlayingMetagame ) {
@@ -2893,7 +2872,7 @@ void CMainPackRatWindow::OnMouseMove(UINT nFlags, CPoint point)
 	
 		if ( rMazeRect.PtInRect( point )) {
 			if ( bMouseHidden == FALSE ) {
-				while ( ::ShowCursor( FALSE ) >= 0 )
+				while ( MFC::ShowCursor( FALSE ) >= 0 )
 					;
 				bMouseHidden = TRUE;
 			}
@@ -2901,7 +2880,7 @@ void CMainPackRatWindow::OnMouseMove(UINT nFlags, CPoint point)
 		else {
 			if ( bMouseHidden ) {
 				bMouseHidden = FALSE;
-				while ( ::ShowCursor( TRUE ) < 0 )
+				while ( MFC::ShowCursor( TRUE ) < 0 )
 					;
 			}
 		}
@@ -2979,7 +2958,7 @@ void CMainPackRatWindow::OnRButtonDown(UINT nFlags, CPoint point)
 	if ( m_bMouseCaptured ) {
 		ReleaseCapture();
 		m_bMouseCaptured = FALSE;
-		while ( ::ShowCursor( TRUE ) < 0 )
+		while ( MFC::ShowCursor( TRUE ) < 0 )
 			;
 	}
 	else {
@@ -2988,7 +2967,7 @@ this was the old way
 */
 		SetCapture();
 		m_bMouseCaptured = TRUE;           
-		while ( ::ShowCursor( FALSE ) < 0 )
+		while ( MFC::ShowCursor( FALSE ) < 0 )
 			;
 	}
     CWnd::OnRButtonDown(nFlags, point);
@@ -3000,7 +2979,7 @@ void CMainPackRatWindow::OnRButtonUp(UINT nFlags, CPoint point)
 	if ( m_bMouseCaptured ) {
 		m_bMouseCaptured = FALSE;
 		ReleaseCapture();
-		while ( ::ShowCursor( TRUE ) < 0 )
+		while ( MFC::ShowCursor( TRUE ) < 0 )
 			;
 	}
 */
@@ -3017,11 +2996,11 @@ CRules  dlgRules( (CWnd *)this, RULESFILE, pGamePalette,
 			if ( bInLoop ) {
 			BOOL	bTemp = m_bSuspend;
 				m_bSuspend = TRUE;
-		        ::sndPlaySound( NULL, SND_ASYNC);
+		        sndPlaySound( NULL, SND_ASYNC);
 				if ( m_bMouseCaptured ) {
 					m_bMouseCaptured = FALSE;
 					ReleaseCapture();
-					while ( ::ShowCursor( TRUE ) < 0 )
+					while ( MFC::ShowCursor( TRUE ) < 0 )
 						;
 				}
 	            pOptionButton->EnableWindow( FALSE );
@@ -3037,7 +3016,7 @@ CRules  dlgRules( (CWnd *)this, RULESFILE, pGamePalette,
 				if ( m_bMouseCaptured ) {
 					m_bMouseCaptured = FALSE;
 					ReleaseCapture();
-					while ( ::ShowCursor( TRUE ) < 0 )
+					while ( MFC::ShowCursor( TRUE ) < 0 )
 						;
 				}
 	            SendMessage( WM_COMMAND, IDC_OPTION, BN_CLICKED );
@@ -3074,7 +3053,7 @@ CRules  dlgRules( (CWnd *)this, RULESFILE, pGamePalette,
 			if ( m_bMouseCaptured ) {
 				m_bMouseCaptured = FALSE;
 				ReleaseCapture();
-				while ( ::ShowCursor( TRUE ) < 0 )
+				while ( MFC::ShowCursor( TRUE ) < 0 )
 					;
 			}
 			break;
@@ -3128,7 +3107,7 @@ void CMainPackRatWindow::MainLoop()
 {
 int 		nLoop1;
 CSprite     *pTempSprite = NULL;
-long		lOldScore = 0;
+//long		lOldScore = 0;
 int			nLoop2;
 CDC			*pDC = NULL;
 POINT       ptLive;
@@ -3237,7 +3216,7 @@ int		nLoop = 0;
             
             if (( m_lpGameStruct->bPlayingMetagame ) && ( m_lScore > (350 * m_nGameLevel))) {
 				if ( bBALLOONShown == FALSE ) {
-				CDC	*pDC = GetDC();
+					pDC = GetDC();
 					pBalloonSprite->PaintSprite( pDC, ptBaloon.x, ptBaloon.y );
 					ReleaseDC( pDC );
 					bBALLOONShown = TRUE;
@@ -3268,12 +3247,12 @@ int		nLoop = 0;
 /*
 	            	CSound	*pSound = NULL;
 						CSound::StopWaveSounds();
-				        ::sndPlaySound( NULL, SND_ASYNC);
+				        sndPlaySound( NULL, SND_ASYNC);
 						pSound = new CSound((CWnd *)this, ".\\SOUND\\NEWLIFE.WAV", SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE );
 						pSound->play();
 */
-				        ::sndPlaySound( NULL, SND_ASYNC);
-				        ::sndPlaySound( NEWLIFE_WAV, SND_ASYNC);
+				        sndPlaySound( NULL, SND_ASYNC);
+				        sndPlaySound( NEWLIFE_WAV, SND_ASYNC);
 					}
 					
             		nExtraLives--;
@@ -3442,7 +3421,7 @@ if ( m_bMouseCaptured ) {
 	ReleaseCapture();
 	m_bMouseCaptured = FALSE;
 }
-while ( ::ShowCursor( TRUE ) < 0 )
+while ( MFC::ShowCursor( TRUE ) < 0 )
 	;
 
 CFrameWnd ::OnClose();
@@ -3739,4 +3718,6 @@ BEGIN_MESSAGE_MAP( CMainPackRatWindow, CFrameWnd )
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
+} // namespace Packrat
+} // namespace HodjNPodj
+} // namespace Bagel

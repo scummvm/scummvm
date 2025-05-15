@@ -209,6 +209,10 @@ MODULE_OBJS = \
 	hodjnpodj/mazedoom/optndlg.o \
 	hodjnpodj/novacancy/gamedll.o \
 	hodjnpodj/novacancy/main.o \
+	hodjnpodj/packrat/dllinit.o \
+	hodjnpodj/packrat/msgdlg.o \
+	hodjnpodj/packrat/optdlg.o \
+	hodjnpodj/packrat/packrat.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o

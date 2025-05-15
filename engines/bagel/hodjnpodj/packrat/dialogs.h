@@ -1,37 +1,43 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * dialogs.h
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      header file for all dialogs used in poker
- *   
- * RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc.]
- *   
- ****************************************************************/
-#ifndef DIALOGS_H
-#define DIALOGS_H
+ */
+
+#ifndef HODJNPODJ_PACKRAT_DIALOGS_H
+#define HODJNPODJ_PACKRAT_DIALOGS_H
+
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/packrat/packrat.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Packrat {
 
 #define LEVELMAX       36
 #define LIVESMAX       5
 #define LEVELMIN       1
 #define LIVESMIN       1
 
-#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
-#include "packrat.h"
-
 //////////////////////////////////////////////////////////////////////////////
 ////////	Options Specific to Pack Rat
 //////////////////////////////////////////////////////////////////////////////
-class CPackRatOptDlg : public CBmpDialog
-{
+class CPackRatOptDlg : public CBmpDialog {
 private:
 	int 	m_nLives;
 	int 	m_nLevel;
@@ -57,8 +63,7 @@ protected:
 //////////////////////////////////////////////////////////////////////////////
 ////////	Pack Rat Message Box
 //////////////////////////////////////////////////////////////////////////////
-class CMsgDlg : public CBmpDialog
-{
+class CMsgDlg : public CBmpDialog {
 private:
     int 	m_nWhichMsg;
 	long	m_lCurrentScore;
@@ -81,4 +86,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-#endif // DIALOGS_H
+} // namespace Packrat
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

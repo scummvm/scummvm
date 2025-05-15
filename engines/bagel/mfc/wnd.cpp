@@ -186,6 +186,10 @@ void CWnd::UpdateWindow() {
 	error("TODO: CWnd::UpdateWindow");
 }
 
+void CWnd::RedrawWindow() {
+	error("TODO: CWnd::RedrawWindow");
+}
+
 void CWnd::SetActiveWindow() {
 	error("TODO: CWnd::SetActiveWindow");
 }
