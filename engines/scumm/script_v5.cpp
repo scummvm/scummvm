@@ -3603,7 +3603,10 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		// color, but for some reason this is only a problem on the
 		// FM-TOWNS. In order to determine who's who, we look for a
 		// `\xFF\x03` wait instruction or the `Junior` word, since
-		// only Henry Sr. uses them in this script.
+		// only Henry Sr. uses them in this script. (The Japanese
+		// FM-TOWNS release tried to fix this with SetPalColor()
+		// calls, but they have no effect -- I haven't checked the
+		// behavior of this particular release in DREAMM, though.)
 		if (strstr((const char *)_scriptPointer, "\xFF\x03") || strstr((const char *)_scriptPointer, "Junior"))
 			_string[textSlot].color = 0x0A;
 		else
