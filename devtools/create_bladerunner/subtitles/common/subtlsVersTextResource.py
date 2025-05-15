@@ -8,10 +8,10 @@ MY_MODULE_NAME = "subtlsVersTextResource"
 # Template for SBTLVERS.TRE sheet's values ((row 2 and below)
 SBTLVERS_TEXT_RESOURCE_TUPLE_LIST = [
 	(0, "ScummVM Team", "Credits"),
-	(1, "9", "Version (an incremental number)"),
+	(1, "10", "Version (an incremental number)"),
 	(2, "##:##:## ##/##/####", "Placeholder – Date of compilation (HH:mm:ss dd/mm/yyyy)"),
 	(3, "EFIGS", "Placeholder – Language mode"),
-	(4, "Copyright (C) 2019-2022  ScummVM team", "Copyright"),
+	(4, "Copyright (C) 2019-2025  ScummVM team", "Copyright"),
 	(5, "", "Font type"),
 	(6, "", "Font name"),
 	(7, "", "License"),
