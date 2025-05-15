@@ -1124,7 +1124,7 @@ void CMainWindow::GetNewCursor()
             hNewCursor = (*pMyApp).LoadCursor( IDC_MOD_DNARROW );
     }
 
-    if (hNewCursor != NULL);
+//    if (hNewCursor != NULL);
         MFC::SetCursor(hNewCursor);
 }
 

@@ -1,71 +1,25 @@
-/*****************************************************************
-*
-*  main.cpp
-*
-*  HISTORY
-*
-*       1.00 	05/23/94 		BCW     Created the template 
-*		1.10 	07/20/94 		NK		Added the NoVacancy Game to the Template
-*		1.20 	08/16/94		NK		Added the Easter Egg Animations, Sound Effects, 
-*														Conducted Metagame-compatible modifications,
-*														Switched to Masked Bitmaps.	
-*		1.30	09/05/94 		NK		Fused all bitmaps and cell sprite animations into few
-*														monolithic DIBs, all pre-loaded.
-*		1.40 	09/09/94		NK		MonolithicDiceSprites and MonolithicDiceBmps load on 1st call. 
-*														MonolithicDoors and splash-screen preloaded.		
-*		1.50 	09/11/94 		NK		MonolithicDoor Bmps not used. 
-*														Individual door strips load on 1st call, Only splash screen pre-loaded.
-*														Sped up load up and paint time.
-*		1.60 	09/12/94		NK		Created a stringtable version of the game, so that all filenames and 
-*														some other string constants	are saved as a resource.	
-*		1.70	09/17/94		NK		Switched Back to Unmasked die animations, Fixed Bug in the code that determines
-*														the one die case; realigned the dice animations. 
-*  MODULE DESCRIPTION:
-*
-*       Main module for the No Vacancy mini game.
-*
-*  CONSTRUCTORS:
-*
-*       CMainWindow                     Constructs
-*
-*  PUBLIC:
-*
-*
-*       PaintScreen                     Repaints entire client area
-*
-*  PROTECTED:
-*
-*
-*       OnCommand                       Handles WM_COMMAND messages
-*       OnPaint                         Handles WM_PAINT messages
-*       OnKeyDown                       Handles WM_KEYDOWN messages
-*       OnSysKeyDown                    Handles WM_SYSKEYDOWN messages
-*       OnSysChar                       Handles WM_SYSCHAR messages
-*       OnClose                         Handles WM_CLOSE messages
-*       OnActivate                      Handles WM_ACTIVATE messages
-*       OnLButtonDown                   Handles WM_LBUTTONDOWN messages
-*       OnMouseMove                     Handles WM_MOUSEMOVE messages
-*       OnTimer                         Handles WM_TIMER messages
-*
-*  PRIVATE:
-*
-*
-*
-*  MEMBERS:
-*
-*
-*
-*  RELEVANT DOCUMENTATION:
-*
-*       [Specifications, documents, test plans, etc.]
-*
-****************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/afxwin.h"                     
-
-#include <time.h>           
-#include <stdarg.h>
-
-
 #include "bagel/hodjnpodj/hnplibs/dibdoc.h"       
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
@@ -74,16 +28,20 @@
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/hnplibs/mainmenu.h"
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
-#include <copyrite.h>
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 #include "bagel/boflib/misc.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/boflib/error.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
-#include "main.h"
-#include "dimens.h"                               //dimensions of doors, dice, file paths of midi, wave and bmp files, etc.
-#include "bagel/boflib/sound.h"    
-#include "macros.h"                              //debug macros.         
+#include "bagel/hodjnpodj/novacancy/main.h"
+#include "bagel/hodjnpodj/novacancy/dimens.h"
+#include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/libs/macros.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace NoVacancy {
 
 //
 // Button ID constants
@@ -125,11 +83,9 @@ static int gnLDieLeftFinal,    // final positions of dice.
 #endif
 */
 
-CMainWindow::CMainWindow(VOID)
-{
+CMainWindow::CMainWindow(VOID) {
     CString  WndClass;
     CRect    tmpRect;
-    CDC     *pDC;
     CDibDoc *pDibDoc;
     ERROR_CODE errCode;
     BOOL bSuccess;  
@@ -189,8 +145,8 @@ CMainWindow::CMainWindow(VOID)
     gWndClass=WndClass;
 
     // play this game if the background art is available
-    if (FileExists(strcpy(szMapFile,GetStringFromResource(IDS_MINI_GAME_MAP)))) {
-       
+	Common::strcpy_s(szMapFile, GetStringFromResource(IDS_MINI_GAME_MAP));
+	if (FileExists(szMapFile)) {
         // Acquire the shared palette for our game from the splash screen art
         if ((pDibDoc = new CDibDoc()) != NULL) {
             if (pDibDoc->OpenDocument(szMapFile) != FALSE)
@@ -398,8 +354,8 @@ VOID CMainWindow::PaintScreen()
     // Paint the background art and upadate any sprites
     // called by OnPaint
     //
-    if (FileExists(strcpy(szMapFile,GetStringFromResource(IDS_MINI_GAME_MAP)))) {
-
+	Common::strcpy_s(szMapFile, GetStringFromResource(IDS_MINI_GAME_MAP));
+    if (FileExists(szMapFile)) {
         myDoc.OpenDocument(szMapFile);
         hDIB = myDoc.GetHDIB();
 
@@ -422,10 +378,10 @@ VOID CMainWindow::PaintScreen()
            			    
            		/* dont animate dice in the paint message, just paint 'em*/         
        			
-				::PaintMaskedBitmap(pDC, m_pGamePalette, pCLDieBmp[m_LDie],\
+				PaintMaskedBitmap(pDC, m_pGamePalette, pCLDieBmp[m_LDie],\
                 										m_rLDie.left, m_rLDie.top, (int) m_rLDie.Width(),	(int) m_rLDie.Height());
            	    if(!m_bOneDieCase){
-					::PaintMaskedBitmap(pDC, m_pGamePalette, pCRDieBmp[m_RDie],\
+					PaintMaskedBitmap(pDC, m_pGamePalette, pCRDieBmp[m_RDie],\
                 										m_rRDie.left, m_rRDie.top,	(int) m_rRDie.Width(),	(int) m_rRDie.Height());
                 }           
 			    
@@ -594,8 +550,8 @@ VOID CMainWindow::PlayGame()
     
 	if(!m_bDiceBmpsLoaded){
 		hOldCursor=MFC::SetCursor(LoadCursor(NULL, IDC_WAIT));
-		if(pDC=GetDC()){
-			if(m_pCLRollingDie=new CSprite()){
+		if ((pDC=GetDC()) != nullptr) {
+			if ((m_pCLRollingDie = new CSprite()) != nullptr) {
 				m_pCLRollingDie->SetMobile(TRUE); 
 				m_pCLRollingDie->SetMasked(FALSE); 
 				if(m_pCLRollingDie->LoadCels(pDC, GetStringFromResource(IDS_ROLLING_LDIE_ANIMATION), NUM_LDIE_CELS))      
@@ -632,7 +588,7 @@ VOID CMainWindow::PlayGame()
 			}	// end if m_pCRRollingDie	
 
 				
-			if(pCMonolithDiceBmp= FetchBitmap(pDC, NULL, GetStringFromResource(IDS_DICE_MONOLITHE))){
+			if ((pCMonolithDiceBmp= FetchBitmap(pDC, NULL, GetStringFromResource(IDS_DICE_MONOLITHE))) != nullptr) {
 			   	pCLDieBmp[0]= ExtractBitmap(pDC, pCMonolithDiceBmp, m_pGamePalette,xDice[LEFT][0],yDice[LEFT][0],dxDice[LEFT][0],dyDice[LEFT][0]);			//flr under Ldie
 			   	pCRDieBmp[0]= ExtractBitmap(pDC, pCMonolithDiceBmp, m_pGamePalette,xDice[RIGHT][0],yDice[RIGHT][0],dxDice[RIGHT][0],dyDice[RIGHT][0]);	//flr under Rdie
 			    for(int i=1; i<7; i++){ 
@@ -663,9 +619,9 @@ VOID CMainWindow::PlayGame()
 		MFC::SetCursor(hOldCursor);
 		m_bDiceBmpsLoaded=TRUE;
     }    // m_bDiceBmpsLoaded                                        
-    
-    if (FileExists(strcpy(szMapFile,GetStringFromResource(IDS_MINI_GAME_MAP)))) {
-    	
+
+	Common::strcpy_s(szMapFile, GetStringFromResource(IDS_MINI_GAME_MAP));
+    if (FileExists(szMapFile)) {
     	myDoc.OpenDocument(szMapFile);
         hDIB = myDoc.GetHDIB();
     
@@ -685,10 +641,10 @@ VOID CMainWindow::PlayGame()
 		m_LDie=(BYTE) (((DWORD)(UINT)brand()*6L)/((DWORD)(UINT)RAND_MAX+1L)) +1;
 		m_RDie=(BYTE) (((DWORD)(UINT)brand()*6L)/((DWORD)(UINT)RAND_MAX+1L)) +1;
 #pragma warning(default: 4135)
-		::PaintMaskedBitmap(pDC, m_pGamePalette, pCRDieBmp[m_RDie],\
+		PaintMaskedBitmap(pDC, m_pGamePalette, pCRDieBmp[m_RDie],\
                 										m_rRDie.left, m_rRDie.top,	(int) m_rRDie.Width(),	(int) m_rRDie.Height());
 
-		::PaintMaskedBitmap(pDC, m_pGamePalette, pCLDieBmp[m_LDie],\
+		PaintMaskedBitmap(pDC, m_pGamePalette, pCLDieBmp[m_LDie],\
                 										m_rLDie.left, m_rLDie.top, (int) m_rLDie.Width(),	(int) m_rLDie.Height());
 		
 		m_bDiceJustThrown=TRUE;
@@ -858,7 +814,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
     	if(Bottle.PtInRect(point)){                                           //AINMATE bottle when door is closed and just play "GHOST.WAV" otherwise.
    			if(m_iDoorStatus[3]!=OPEN){
     			sndPlaySound(GetStringFromResource(IDS_GHOST), SND_ASYNC);
-	   			if(pBottleSprite=new CSprite()){
+	   			if ((pBottleSprite=new CSprite()) != nullptr){
    					if(!pBottleSprite->LoadCels(pDC, GetStringFromResource(IDS_BOTTLE_STRIP_door_closed), BOTTLE_CELS)){
    						errCode=ERR_MEMORY;
 			    		MFC::SetCursor(LoadCursor(NULL,IDC_ARROW));               //reset cursor
@@ -869,7 +825,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 	   					for( cel=0; cel< BOTTLE_CELS; cel ++){
 		   					pBottleSprite->SetCel(cel-1);
 	    					pBottleSprite->PaintSprite( pDC, BOTTLE_SPRITE_L, BOTTLE_SPRITE_T);
-	    					::Sleep(3*1810/BOTTLE_CELS);
+	    					Sleep(3*1810/BOTTLE_CELS);
 	    				}
 						pBottleSprite->EraseSprite(pDC);
 				    }
@@ -886,7 +842,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
     	}                                                              
     	
     	if(Cat.PtInRect(point)){              // Hat4 is the CAT.
-    		if(pCatSprite=new CSprite()){ 
+    		if ((pCatSprite = new CSprite()) != nullptr) {
     			sndPlaySound(GetStringFromResource(IDS_MEOW), SND_ASYNC);
    				if(m_iDoorStatus[4]!=OPEN){
    					pCatSprite->LoadCels(pDC, GetStringFromResource(IDS_HAT4_STRIP_door_closed), HAT4_CELS);	
@@ -894,14 +850,14 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
    					for( cel=0; cel< HAT4_CELS; cel ++){
    						pCatSprite->SetCel(cel-1);
 		    			pCatSprite->PaintSprite( pDC, HAT4_SPRITE_L, HAT4_SPRITE_T);
-    					::Sleep(2020/HAT4_CELS);
+    					Sleep(2020/HAT4_CELS);
 		    		}
     			}else{
    					pCatSprite->LoadCels(pDC, GetStringFromResource(IDS_HAT4_STRIP_door_open), HAT4_CELS);	
    					for( cel=0; cel< HAT4_CELS; cel ++){
 	   					pCatSprite->SetCel(cel-1);
 			    		pCatSprite->PaintSprite( pDC, HAT4_SPRITE_L, HAT4_SPRITE_T);
-    					::Sleep(2020/HAT4_CELS);
+    					Sleep(2020/HAT4_CELS);
 			    	}
     			}     
     			pCatSprite->EraseSprite(pDC);
@@ -968,10 +924,10 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
            	/* 
            	Paint dice/ (die and flr).
            	*/
-			::PaintMaskedBitmap(pDC, m_pGamePalette, pCLDieBmp[m_LDie],\
+			PaintMaskedBitmap(pDC, m_pGamePalette, pCLDieBmp[m_LDie],\
                 										m_rLDie.left, m_rLDie.top, (int) m_rLDie.Width(),	(int) m_rLDie.Height());
            	
-			::PaintMaskedBitmap(pDC, m_pGamePalette, pCRDieBmp[m_RDie],\
+			PaintMaskedBitmap(pDC, m_pGamePalette, pCRDieBmp[m_RDie],\
                 										m_rRDie.left, m_rRDie.top,	(int) m_rRDie.Width(),	(int) m_rRDie.Height());
 	        ReleaseDC(pDC);
 	        
@@ -1014,13 +970,13 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 							Display Score if not in Meta mode
 						*/                                                                                                         
 						//if(!pGameParams->bPlayingMetagame){         
-							if(hlocScore=LocalAlloc(LHND, 32)){
-								npszScore=(NPSTR)LocalLock(hlocScore);
-								Common::sprintf_s(npszScore, "%lu point%c out of 45.", iMaxScore-pGameParams->lScore, ((iMaxScore-pGameParams->lScore)==1)?' ':'s'  );		//imaxScore is 45.
-								CMessageBox(this,m_pGamePalette,"Your score is", npszScore);
-								LocalUnlock(hlocScore);
-						    	LocalFree(hlocScore);
-						    }
+						if ((hlocScore=LocalAlloc(LHND, 32)) != nullptr) {
+							npszScore=(NPSTR)LocalLock(hlocScore);
+							Common::sprintf_s(npszScore, 32, "%lu point%c out of 45.", iMaxScore-pGameParams->lScore, ((iMaxScore-pGameParams->lScore)==1)?' ':'s'  );		//imaxScore is 45.
+							CMessageBox(this,m_pGamePalette,"Your score is", npszScore);
+							LocalUnlock(hlocScore);
+						    LocalFree(hlocScore);
+						}
 						//}                                                                                                                     
 						m_bGameActive=FALSE;        				//set game over flag.
    						if(pGameParams->bPlayingMetagame) PostMessage(WM_CLOSE, 0, 0L);			//quit if in Meta game mode.
@@ -1032,9 +988,11 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
    						NPSTR npszInfo;
    						HLOCAL hInfo;
    						
-   						if(hInfo=LocalAlloc(LHND, 32))   	npszInfo=(NPSTR)LocalLock(hInfo);
-   						
-   						Common::sprintf_s(npszInfo, "Only %d throw%c left.", (3-m_cUnDoableThrows), (m_cUnDoableThrows==1)?'s':' ');       
+						if ((hInfo = LocalAlloc(LHND, 32)) == nullptr)
+							error("TODO: Memory alloc");
+
+						npszInfo=(NPSTR)LocalLock(hInfo);
+   						Common::sprintf_s(npszInfo, 32, "Only %d throw%c left.", (3-m_cUnDoableThrows), (m_cUnDoableThrows==1)?'s':' ');       
    						
    						GamePause();
 						sndPlaySound(GetStringFromResource(IDS_SORRY),SND_ASYNC);
@@ -1054,7 +1012,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
    						}          
    						ReleaseDC(pDC);
    						GameResume();
-						::Sleep(200);                                //wait for a while
+						Sleep(200);                                //wait for a while
    						break;
                   
    				}   //end switch(m_cUnDoableThrows)
@@ -1109,14 +1067,14 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
 							for(jj=0; jj<NUM_DOOR_CELS; jj++){                   
 								pCDoorBmp[i]->SetCel(jj-1);    
 								pCDoorBmp[i]->PaintSprite(pDC, m_rDoor[i].left, m_rDoor[i].top);   
-								::Sleep(SLEEP_OPENING_TIME);                   //sync the audio and video of animation.
+								Sleep(SLEEP_OPENING_TIME);                   //sync the audio and video of animation.
 							}  //end for jj
 						}else{                                                   //shut the open door.                                                                                     
 							if(pGameParams->bSoundEffectsEnabled) sndPlaySound(GetStringFromResource(IDS_CREAKING_DOOR_CLOSING),SND_ASYNC);
 					    	for(jj=NUM_DOOR_CELS; jj>0;  jj--){
 								pCDoorBmp[i]->SetCel(jj-2);                     // because PaintSprite automatically advances to the next cel.
 								pCDoorBmp[i]->PaintSprite(pDC, m_rDoor[i].left, m_rDoor[i].top);
-								if(jj<5) ::Sleep(SLEEP_CLOSING_TIME);		//sync the audio and video of animation.
+								if(jj<5) Sleep(SLEEP_CLOSING_TIME);		//sync the audio and video of animation.
 							}//end for jj
 						} //end if m_iDoorStatus==Open.
 							
@@ -1549,7 +1507,7 @@ short CMainWindow::LegalizeMove(short  j){
 }                                        
 
 
-BOOL _pascal CMainWindow::IsThrowDoable(BYTE DiceSum){		
+BOOL CMainWindow::IsThrowDoable(BYTE DiceSum){		
 /*****************************************************************************************************************
 *	[IsThrowDoable]
 *
@@ -1986,7 +1944,7 @@ void CMainWindow::AnimateDice(void){
 		m_pCLRollingDie->SetCel(0);						/*Single*/
 		for(ii=1; ii<NUM_SINGLE_DIE_CELS; ii++){
 			m_pCLRollingDie->PaintSprite(pDC, *(LDieLeft+ii), *(LDieTop+ii));/*Single*/
-			if(ii<NUM_SINGLE_DIE_CELS-1) ::Sleep(22);		//slow down animation, except for the last cel (this enables quick
+			if(ii<NUM_SINGLE_DIE_CELS-1) Sleep(22);		//slow down animation, except for the last cel (this enables quick
 															//repainting of actual dice throws .)
 			else if(pGameParams->bSoundEffectsEnabled) {
 	  			sndPlaySound( NULL, 0 );							// kill rattle
@@ -2030,13 +1988,12 @@ void CMainWindow::AnimateDice(void){
 char* GetStringFromResource(UINT nID){
 	static char szBuffer[256];                  
 
-	if(LoadString(AfxGetResourceHandle(), nID, szBuffer, 256))
+	if (LoadString(AfxGetResourceHandle(), nID, szBuffer, 256))
 		return szBuffer;
 	else 
 		return NULL;
 }
-	
-	
-                        
-                        
-  	 					
+
+} // namespace NoVacancy
+} // namespace HodjNPodj
+} // namespace Bagel

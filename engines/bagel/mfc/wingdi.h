@@ -568,6 +568,7 @@ extern HDC GetDC(HWND hWnd);
 extern int GetObject(HANDLE h, int c, LPVOID pv);
 extern HDC BeginPaint(HWND hWnd, LPPAINTSTRUCT lpPaint);
 extern BOOL EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint);
+
 extern INT_PTR DialogBoxParam(HINSTANCE hInstance,
 	LPCTSTR lpTemplateName, HWND hWndParent,
 	DLGPROC lpDialogFunc, LPARAM dwInitParam);

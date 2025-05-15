@@ -58,6 +58,10 @@ class CWinApp;
 
 extern CWinApp *AfxGetApp();
 extern HINSTANCE AfxGetInstanceHandle();
+extern HINSTANCE AfxGetResourceHandle();
+extern int LoadString(HINSTANCE hInstance,
+	UINT uID, LPSTR lpBuffer, int cchBufferMax);
+
 extern LPCSTR AFXAPI AfxRegisterWndClass(UINT nClassStyle,
 	HCURSOR hCursor = 0, HBRUSH hbrBackground = 0, HICON hIcon = 0);
 extern int GetSystemMetrics(int nIndex);
