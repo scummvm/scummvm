@@ -1137,7 +1137,7 @@ int startGame() {
 					restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 					if (contadorpc2 > 43)
 						_exit(274);
-					sacrifice();
+					// sacrifice();
 					clear();
 					loadObjects();
 					loadPalette("SEGUNDA");
