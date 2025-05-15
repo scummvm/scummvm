@@ -125,7 +125,7 @@ void updateAltScreen(byte otherScreenNumber) {
 
 
 	//Load other screen
-	// rooms->seek(otherScreenNumber * roomRegSize, SEEK_SET);
+	rooms->seek(otherScreenNumber * roomRegSize, SEEK_SET);
 	currentRoomData = readScreenDataFile(rooms);
 
 	switch (otherScreenNumber) {
@@ -197,7 +197,6 @@ void updateAltScreen(byte otherScreenNumber) {
 	} break;
 	}
 
-	// setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
 	// Save other screen
 	saveRoomData(currentRoomData, rooms);
 
