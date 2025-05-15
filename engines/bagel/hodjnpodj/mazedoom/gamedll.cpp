@@ -1,43 +1,32 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * dllinit.cpp
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  1.0 5/13/94 GTB     
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *
- * LOCALS:
- *
- *
- * GLOBALS:
- *
- *
- * RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- * FILES USED:
- *                             
- ****************************************************************/
+ */
+
 #include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
-#include "resource.h"
-#include "mod.h"
+#include "bagel/hodjnpodj/mazedoom/resource.h"
+#include "bagel/hodjnpodj/mazedoom/mod.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif  // __cplusplus
-
-HWND FAR PASCAL RunMaze( HWND, LPGAMESTRUCT);
-
-#ifdef __cplusplus
-}
-#endif
+namespace Bagel {
+namespace HodjNPodj {
+namespace MazeDoom {
 
 HINSTANCE   hDLLInst;
 HINSTANCE	hExeInst;
@@ -76,8 +65,7 @@ HWND 		ghParentWnd;
  *      n/a
  *
  ****************************************************************/
- 
-extern "C" 
+
 HWND FAR PASCAL RunMaze( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
 {
     CMainWindow *pMain;
@@ -110,85 +98,6 @@ HWND FAR PASCAL RunMaze( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
     return pMain->m_hWnd;   // return the m_hWnd of your main game window
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// DLL initialization
-// this was take straight from the MSVC MFC Sample DLLTRACE
-
-class CTracerDLL : public CWinApp
-{
-public:
-    virtual BOOL InitInstance(); // Initialization
-    virtual int ExitInstance();  // Termination (WEP-like code)
-
-    // nothing special for the constructor
-    CTracerDLL(const char* pszAppName)
-        : CWinApp(pszAppName)
-        { }
-};
-
-/*****************************************************************
- *
- * InitInstance
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *      This routine is automatically called when the application is
- *      started. Use this InitInstance instead of your own 
- *   
- * FORMAL PARAMETERS:
- *
- *      n/a
- *
- * IMPLICIT INPUT PARAMETERS:
- *  
- *      n/a
- *   
- * IMPLICIT OUTPUT PARAMETERS:
- *   
- *      n/a
- *   
- * RETURN VALUE:
- *
- *      BOOL            Success (TRUE) / Failure (FALSE) status
- *
- ****************************************************************/
-BOOL CTracerDLL::InitInstance()
-{
-    // gray dialogs
-    SetDialogBkColor();
-
-    return TRUE;
-}
-
-/*****************************************************************
- *
- * ExitInstance
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *      This routine is automatically called when the application is
- *      being terminated. 
- *   
- * FORMAL PARAMETERS:
- *
- *      n/a
- *
- * IMPLICIT INPUT PARAMETERS:
- *  
- *      n/a
- *   
- * IMPLICIT OUTPUT PARAMETERS:
- *   
- *      n/a
- *   
- * RETURN VALUE:
- *
- *      int                     Success (0) / Failure status
- *
- ****************************************************************/
-int CTracerDLL::ExitInstance()
-{
-    return(0);
-}
-
-CTracerDLL  NEAR tracerDLL("hnpmaze.dll");
+} // namespace MazeDoom
+} // namespace HodjNPodj
+} // namespace Bagel

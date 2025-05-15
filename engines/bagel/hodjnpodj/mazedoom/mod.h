@@ -1,28 +1,32 @@
-/*****************************************************************
+/* ScummVM - Graphic Adventure Engine
  *
- *  Copyright (c) 1994 by Boffo Games, All Rights Reserved
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  game.h
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  HISTORY
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *      1.00      04/04/94     BAR     Initial creation
- *
- *  MODULE DESCRIPTION:
- *
- *      [Describe the function of the module]
- *   
- *  RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc.]
- *   
- ****************************************************************/
+ */
 
-#ifndef __game_H__
-#define __game_H__
+#ifndef HODJNPODJ_MAZEDOOM_MOD_H
+#define HODJNPODJ_MAZEDOOM_MOD_H
 
 #include "bagel/boflib/sound.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace MazeDoom {
 
 #define ABS(a)		( (a > 0) ? (a) : (-a) )
 
@@ -141,7 +145,8 @@ virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 };
 
-/////////////////////////////////////////////////////////////////////////////
+} // namespace MazeDoom
+} // namespace HodjNPodj
+} // namespace Bagel
 
-#endif // __game_H__
-
+#endif

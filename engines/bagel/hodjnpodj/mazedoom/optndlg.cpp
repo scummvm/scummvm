@@ -1,18 +1,35 @@
-// optndlg.cpp : implementation file
-//
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h" 
 #include "bagel/hodjnpodj/hnplibs/button.h"
-#include "globals.h"
-#include "resource.h"
-#include "mod.h" 
-#include "optndlg.h"
+#include "bagel/hodjnpodj/mazedoom/globals.h"
+#include "bagel/hodjnpodj/mazedoom/resource.h"
+#include "bagel/hodjnpodj/mazedoom/mod.h" 
+#include "bagel/hodjnpodj/mazedoom/optndlg.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 
-#ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
+namespace Bagel {
+namespace HodjNPodj {
+namespace MazeDoom {
 
 static	CPalette *pSubOptionsPalette;
 static	CColorButton *pOKButton = NULL;						// OKAY button on scroll
@@ -33,8 +50,8 @@ COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
 		:CBmpDialog(pParent, pPalette, IDD_SUBOPTIONS, ".\\ART\\SSCROLL.BMP")
 {                                                         
 	//{{AFX_DATA_INIT(COptnDlg)
-	m_nTime = MIN_TIME;
-	m_nDifficulty = MIN_DIFFICULTY;
+	_time = MIN_TIME;
+	_difficulty = MIN_DIFFICULTY;
 	m_pTimeLeft	= NULL;
 	m_pTimerText = NULL;
 	m_pDifficultyText = NULL;
@@ -126,7 +143,7 @@ BOOL COptnDlg::OnInitDialog()
 	}
 	
 	m_ScrollDifficulty.SetScrollRange( MIN_DIFFICULTY, MAX_DIFFICULTY, 0 );     //...last element is Max - 1
-	m_ScrollDifficulty.SetScrollPos( m_nDifficulty, TRUE );
+	m_ScrollDifficulty.SetScrollPos( _difficulty, TRUE );
 	
 	statRect.SetRect( LEFT_SIDE, 115, LEFT_SIDE + 100, 130 );
 	if ((m_pTimerText = new CText()) != NULL) {
@@ -134,9 +151,9 @@ BOOL COptnDlg::OnInitDialog()
 	}
 	
 	m_ScrollTime.SetScrollRange( TIMER_MIN, TIMER_MAX - 1, 0 );
-	if (m_nTime == 0) m_nTime = m_nTimeScale[TIMER_MAX - 1];
+	if (_time == 0) _time = m_nTimeScale[TIMER_MAX - 1];
 	for (i = 0; i < TIMER_MAX; i++) {
-		if (m_nTimeScale[i] == m_nTime)
+		if (m_nTimeScale[i] == _time)
 			m_ScrollTime.SetScrollPos( i, TRUE );
 	}
 		
@@ -229,7 +246,7 @@ void COptnDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
  *   
  *  IMPLICIT OUTPUT PARAMETERS:
  *   
- *      int	m_nTime, m_nNumParts, m_nColumns, m_nRows
+ *      int	_time, m_nNumParts, m_nColumns, m_nRows
  *   
  *  RETURN VALUE:
  *
@@ -245,24 +262,24 @@ void COptnDlg::UpdateScrollbars()
 		
     pDC = GetDC();
 
-	OldValue = m_nTime;
-	m_nTime = m_nTimeScale[m_ScrollTime.GetScrollPos()];
-	if ( OldValue != m_nTime ){
-		if ( m_nTime == m_nTimeScale[TIMER_MAX - 1] ) 
+	OldValue = _time;
+	_time = m_nTimeScale[m_ScrollTime.GetScrollPos()];
+	if ( OldValue != _time ){
+		if ( _time == m_nTimeScale[TIMER_MAX - 1] ) 
 			Common::sprintf_s( msg, "Time Limit: None" );
 		else {  
-			m_nMins = m_nTime / 60;
-	    	m_nSecs = m_nTime % 60;
+			m_nMins = _time / 60;
+	    	m_nSecs = _time % 60;
 
 			Common::sprintf_s( msg, "Time Limit: %02d:%02d", m_nMins, m_nSecs );
 		}
         (*m_pTimerText).DisplayString( pDC, msg, 14, TEXT_BOLD, RGB( 0, 0, 0));
 	} 
 
-	OldValue = m_nDifficulty;
-	m_nDifficulty = m_ScrollDifficulty.GetScrollPos();
-	if ( OldValue != m_nDifficulty ) {
-		Common::sprintf_s( msg, "%s", mDifficultyTable[m_nDifficulty - 1] );
+	OldValue = _difficulty;
+	_difficulty = m_ScrollDifficulty.GetScrollPos();
+	if ( OldValue != _difficulty ) {
+		Common::sprintf_s( msg, "%s", mDifficultyTable[_difficulty - 1].c_str() );
         (*m_pDifficultyText).DisplayString( pDC, msg, 14, TEXT_BOLD, RGB( 0, 0, 0));
     }
 	
@@ -272,7 +289,7 @@ void COptnDlg::UpdateScrollbars()
 
 void COptnDlg::OnOK()
 {
-	if (m_nTime == m_nTimeScale[TIMER_MAX - 1]) m_nTime = 0;
+	if (_time == m_nTimeScale[TIMER_MAX - 1]) _time = 0;
 	ClearDialogImage();
 	EndDialog( IDOK );
 }
@@ -293,20 +310,20 @@ void COptnDlg::OnPaint()
     
     pDC = GetDC();
     
-	Common::sprintf_s( msg, "Time: %02d:%02d", nMinutes, nSeconds );
+	Common::sprintf_s( msg, "Time: %02d:%02d", _minutes, _seconds );
     (*m_pTimeLeft).DisplayString( pDC, msg, 14, TEXT_BOLD, RGB( 0, 0, 0));
 	
 	Common::sprintf_s( msg, "Level:");
     (*m_pDiffTitleText).DisplayString( pDC, msg, 14, TEXT_BOLD, RGB( 0, 0, 0));
 
-	Common::sprintf_s( msg, "%s", mDifficultyTable[m_nDifficulty - 1] );
+	Common::sprintf_s( msg, "%s", mDifficultyTable[_difficulty - 1].c_str());
     (*m_pDifficultyText).DisplayString( pDC, msg, 14, TEXT_BOLD, RGB( 0, 0, 0));
 
-	if ( m_nTime == m_nTimeScale[TIMER_MAX - 1] ) 
+	if ( _time == m_nTimeScale[TIMER_MAX - 1] ) 
 		Common::sprintf_s( msg, "Time Limit: None" );
 	else {
-		m_nMins = m_nTime / 60;
-	   	m_nSecs = m_nTime % 60;
+		m_nMins = _time / 60;
+	   	m_nSecs = _time % 60;
     
 		Common::sprintf_s( msg, "Time Limit: %02d:%02d", m_nMins, m_nSecs );
     }
@@ -331,3 +348,6 @@ void COptnDlg::ClearDialogImage(void)
 	ValidateRect(NULL);
 }
 
+} // namespace MazeDoom
+} // namespace HodjNPodj
+} // namespace Bagel

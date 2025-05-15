@@ -1,43 +1,25 @@
-/*****************************************************************
+/* ScummVM - Graphic Adventure Engine
  *
- *  Copyright (c) 1994 by Boffo Games, All Rights Reserved
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  mod.cpp  - 1 line description of this module
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  HISTORY
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *      1.00        05/10/94    BAR     Initial Design
- *
- *  MODULE DESCRIPTION:
- *
- *      Puts up the main window, handles main command loop, 
- *      and mouse events
- *
- *  LOCALS:
- *
- *      MyFunction()            Description of MyFunction
- *
- *  GLOBALS:
- *
- *      MyFunction()            Description of MyFunction
- *
- *  RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc./]
- *
- *  FILES USED:
- *
- *      [Discuss files created, or used]
- *
- ****************************************************************/
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include <time.h>
-#include <fstream.h> 
-
-#include <dos.h>
-
 #include "bagel/boflib/sound.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
@@ -45,14 +27,17 @@
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"                     
-#include "resource.h"
-#include "globals.h"
-#include "mod.h"
-#include "mazegen.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
-#include "optndlg.h"
- 
-#include "copyrite.cpp"                             // Boffo!
+#include "bagel/hodjnpodj/mazedoom/resource.h"
+#include "bagel/hodjnpodj/mazedoom/globals.h"
+#include "bagel/hodjnpodj/mazedoom/mod.h"
+#include "bagel/hodjnpodj/mazedoom/mazegen.h"
+#include "bagel/hodjnpodj/mazedoom/optndlg.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace MazeDoom {
 
 //
 // bitmap locations in modparts.bmp
@@ -469,7 +454,7 @@ if ( HIWORD( lParam ) == BN_CLICKED ) {
             } else if (pGameInfo->bMusicEnabled && (_gameSound == NULL)) {
 
                 if ((_gameSound = new CSound) != NULL) {
-                    _gameSound->Initialize(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+                    _gameSound->initialize(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
                     _gameSound->midiLoopPlaySegment(3000, 32980, 0, FMT_MILLISEC);
                 }
             }
@@ -1113,8 +1098,8 @@ void CMainWindow::GetNewCursor()
     
     pMyApp = AfxGetApp();
 
-    ::GetCursorPos( &pCursorLoc );
-    ::ScreenToClient( m_hWnd, &pCursorLoc );
+    MFC::GetCursorPos( &pCursorLoc );
+    MFC::ScreenToClient( m_hWnd, &pCursorLoc );
     Delta.x = pCursorLoc.x;
     Delta.y = pCursorLoc.y;
     Hit = ScreenToTile( Delta );
@@ -1988,6 +1973,7 @@ BEGIN_MESSAGE_MAP( CMainWindow, CFrameWnd )
     ON_MESSAGE(MM_WOM_DONE, OnMMIONotify)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
- 
 
-
+} // namespace MazeDoom
+} // namespace HodjNPodj
+} // namespace Bagel

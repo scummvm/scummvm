@@ -574,6 +574,7 @@ extern INT_PTR DialogBoxParam(HINSTANCE hInstance,
 extern BOOL IsWindow(HWND hWnd);
 extern BOOL SetWindowText(HWND hWnd, LPCSTR lpszString);
 extern int GetWindowText(HWND hWnd, LPSTR lpszStringBuf, int nMaxCount);
+extern BOOL ScreenToClient(HWND hWnd, LPPOINT lpPoint);
 
 HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih,
 	DWORD flInit, CONST VOID *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage);

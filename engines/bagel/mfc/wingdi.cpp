@@ -80,6 +80,11 @@ int GetWindowText(HWND hWnd, LPSTR lpszStringBuf, int nMaxCount) {
 	error("TODO: GetWindowText");
 }
 
+BOOL ScreenToClient(HWND hWnd, LPPOINT lpPoint) {
+	error("TODO: ScreenToClient");
+}
+
+
 HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h) {
 	error("TODO: SelectObject");
 }

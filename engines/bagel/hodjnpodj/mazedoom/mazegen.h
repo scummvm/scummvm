@@ -1,4 +1,32 @@
-//	Defines for Maze generation routines:
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HODJNPODJ_MAZEDOOM_MAZEGEN_H
+#define HODJNPODJ_MAZEDOOM_MAZEGEN_H
+
+#include "common/scummsys.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace MazeDoom {
 
 #define MAX_MAZE_SIZE_X	12
 #define MAX_MAZE_SIZE_Y	9
@@ -28,11 +56,17 @@
 static unsigned short _maze[MAX_MAZE_SIZE_X][MAX_MAZE_SIZE_Y];
 
 static struct {
-  unsigned char x;
-  unsigned char y;
-  unsigned char dir;
+  uint8 x;
+  uint8 y;
+  uint8 dir;
 } _moveList[MOVE_LIST_SIZE];
 
 static int _mazeSizeX, _mazeSizeY;
 static int _sqNum, _curSqX, _curSqY;
 static int _startX, _startY, _endX, _endY;
+
+} // namespace MazeDoom
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

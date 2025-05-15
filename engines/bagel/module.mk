@@ -204,6 +204,9 @@ MODULE_OBJS = \
 	hodjnpodj/mankala/mnkopt.o \
 	hodjnpodj/mankala/mnkui.o \
 	hodjnpodj/mankala/transform.o \
+	hodjnpodj/mazedoom/gamedll.o \
+	hodjnpodj/mazedoom/mod.o \
+	hodjnpodj/mazedoom/optndlg.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o
