@@ -675,6 +675,18 @@ bool BaseRenderOpenGL3DShader::invalidateTexture(BaseSurfaceOpenGL3D *texture) {
 	return true;
 }
 
+bool BaseRenderOpenGL3DShader::invalidateDeviceObjects() {
+	return STATUS_OK;
+}
+
+bool BaseRenderOpenGL3DShader::restoreDeviceObjects() {
+	return STATUS_OK;
+}
+
+bool BaseRenderOpenGL3DShader::resetDevice() {
+	return STATUS_OK;
+}
+
 // implements D3D LightEnable()
 void BaseRenderOpenGL3DShader::lightEnable(int index, bool enable) {
 	_xmodelShader->use();

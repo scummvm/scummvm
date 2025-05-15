@@ -560,11 +560,6 @@ void BaseRenderOSystem::pointToScreen(Point32 *point) {
 	point->y = (int16)MathUtil::roundUp(point->y * _ratioY) + _borderTop - _renderRect.top;
 }
 
-//////////////////////////////////////////////////////////////////////////
-void BaseRenderOSystem::dumpData(const char *filename) {
-	warning("BaseRenderOSystem::DumpData(%s) - stubbed", filename); // TODO
-}
-
 BaseSurface *BaseRenderOSystem::createSurface() {
 	return new BaseSurfaceOSystem(_gameRef);
 }

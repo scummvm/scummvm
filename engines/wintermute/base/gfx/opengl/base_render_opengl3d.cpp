@@ -718,6 +718,18 @@ bool BaseRenderOpenGL3D::invalidateTexture(BaseSurfaceOpenGL3D *texture) {
 	return true;
 }
 
+bool BaseRenderOpenGL3D::invalidateDeviceObjects() {
+	return STATUS_OK;
+}
+
+bool BaseRenderOpenGL3D::restoreDeviceObjects() {
+	return STATUS_OK;
+}
+
+bool BaseRenderOpenGL3D::resetDevice() {
+	return STATUS_OK;
+}
+
 // implements D3D LightEnable()
 void BaseRenderOpenGL3D::lightEnable(int index, bool enable) {
 	if (enable)

@@ -102,8 +102,6 @@ public:
 	void pointFromScreen(Point32 *point);
 	void pointToScreen(Point32 *point);
 
-	void dumpData(const char *filename) override;
-
 	float getScaleRatioX() const override {
 		return _ratioX;
 	}

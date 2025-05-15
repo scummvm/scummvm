@@ -62,6 +62,11 @@ public:
 
 	bool invalidateTexture(BaseSurfaceOpenGL3D *texture) override;
 
+	bool invalidateDeviceObjects() override;
+	bool restoreDeviceObjects() override;
+
+	bool resetDevice() override;
+
 	void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode, bool forceChange = false) override;
 
 	void setAmbientLightRenderState() override;
@@ -77,7 +82,6 @@ public:
 	bool disableShadows() override;
 	bool stencilSupported() override;
 
-	void dumpData(const char *filename) override {}
 	BaseImage *takeScreenshot() override;
 	void fadeToColor(byte r, byte g, byte b, byte a) override;
 	bool flip() override;
