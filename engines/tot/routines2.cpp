@@ -76,8 +76,8 @@ void loadAnimation(Common::String animacion) {
 
 	fichcani.close();
 	debug("Read all frames! longtray2=%d", currentRoomData->longtray2);
-	anchoanimado = READ_LE_UINT16(animado.dib[0][1]);
-	altoanimado = READ_LE_UINT16(animado.dib[0][1] + 2);
+	anchoanimado = READ_LE_UINT16(animado.dib[0][1]) + 1;
+	altoanimado = READ_LE_UINT16(animado.dib[0][1] + 2) + 1;
 
 	setRoomTrajectories(altoanimado, anchoanimado, SET_WITH_ANIM, false);
 
