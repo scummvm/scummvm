@@ -380,18 +380,18 @@ void playVoc(Common::String vocfile, int32 posinicio, uint tamvocleer) {
 }
 
 void playMidiFile(Common::String nomfich, boolean loop) {
-	// Disabled to avoid annoying music
+	// // Disabled to avoid annoying music
 
-	Common::File ficheromus;
-	if(!ficheromus.open(Common::Path(nomfich + ".MUS"))){
-		error("pitamidfich(): ioresult! (267)");
-	}
-	mid_reset();
-	midmusica = (byte *)malloc(ficheromus.size());
-	ficheromus.read(midmusica, ficheromus.size());
+	// Common::File ficheromus;
+	// if(!ficheromus.open(Common::Path(nomfich + ".MUS"))){
+	// 	error("pitamidfich(): ioresult! (267)");
+	// }
+	// mid_reset();
+	// midmusica = (byte *)malloc(ficheromus.size());
+	// ficheromus.read(midmusica, ficheromus.size());
 
-	g_engine->_sound->playMidi((byte *)midmusica, ficheromus.size(), true);
-	ficheromus.close();
+	// g_engine->_sound->playMidi((byte *)midmusica, ficheromus.size(), true);
+	// ficheromus.close();
 }
 
 boolean disponiblemid() {
