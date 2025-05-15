@@ -243,7 +243,7 @@ protected:
 	void drawFakePathList(MacDialogWindow *window, Common::Rect r, const char *text);
 	void drawFakeDriveLabel(MacDialogWindow *window, Common::Rect r, const char *text);
 
-	Graphics::Surface *createRemappedSurface(const Graphics::Surface *surface, const byte *palette, int colorCount);
+	Graphics::Surface *createRemappedSurface(const Graphics::Surface *surface, const byte *palette, uint colorCount);
 
 public:
 	class MacGuiObject {

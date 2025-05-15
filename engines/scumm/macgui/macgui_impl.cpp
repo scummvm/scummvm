@@ -555,7 +555,7 @@ bool MacGuiImpl::getFontParams(FontId fontId, int &id, int &size, int &slant) co
 	}
 }
 
-Graphics::Surface *MacGuiImpl::createRemappedSurface(const Graphics::Surface *surface, const byte *palette, int colorCount) {
+Graphics::Surface *MacGuiImpl::createRemappedSurface(const Graphics::Surface *surface, const byte *palette, uint colorCount) {
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(surface->w, surface->h, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -572,7 +572,7 @@ Graphics::Surface *MacGuiImpl::createRemappedSurface(const Graphics::Surface *su
 		palette = monoPalette;
 	}
 
-	for (int i = 0; i < colorCount; i++) {
+	for (uint i = 0; i < colorCount; i++) {
 		int r = palette[3 * i];
 		int g = palette[3 * i + 1];
 		int b = palette[3 * i + 2];
@@ -585,13 +585,13 @@ Graphics::Surface *MacGuiImpl::createRemappedSurface(const Graphics::Surface *su
 
 	// Colors outside the palette are not remapped.
 
-	for (int i = colorCount; i < 256; i++)
+	for (uint i = colorCount; i < 256; i++)
 		paletteMap[i] = i;
 
 	if (palette) {
 		for (int y = 0; y < s->h; y++) {
 			for (int x = 0; x < s->w; x++) {
-				int color = surface->getPixel(x, y);
+				uint color = surface->getPixel(x, y);
 				if (color > colorCount)
 					color = getBlack();
 				else
