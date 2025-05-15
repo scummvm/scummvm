@@ -105,7 +105,7 @@ public:
 	void setOutputColorSpace(ColorSpace outSpace) { _colorSpace = outSpace; }
 
 private:
-	// TODO: Avoid inheriting from multiple superclasses that have identically functions.
+	// TODO: Avoid inheriting from multiple superclasses that have identical member functions.
 	using Codec::getPalette;
 	Graphics::Surface _surface;
 	Graphics::Palette _palette;
