@@ -1986,6 +1986,9 @@ void Inter_v7::o7_gob0x201(OpGobParams &params) {
 }
 
 void Inter_v7::o7_getFreeDiskSpace(OpGobParams &params) {
+	// This opcode is called by the game scripts to check if there is enough free space on the hard disk, before
+	// copying some data from the CD (e.g. when starting Adibou2/Sciences for the first time).
+	// Those copies are a no-op in ScummVM, so we just return a value high enough to make the game scripts happy.
 	uint16 varIndex = _vm->_game->_script->readUint16();
 	WRITE_VAR(varIndex, 1000000000); // HACK
 }
