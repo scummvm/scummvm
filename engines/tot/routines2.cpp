@@ -664,7 +664,6 @@ static void loadDiploma(Common::String &nombrefoto, Common::String &clave) {
 	byte *pantalla;
 	uint size;
 	byte *sello;
-	// registers reg;
 
 	Common::File fich;
 	if (!fich.open("DIPLOMA.PAN")) {
@@ -713,8 +712,6 @@ static void loadDiploma(Common::String &nombrefoto, Common::String &clave) {
 
 	clave.append(passArray, passArray + 10);
 
-	// // settextstyle(defaultfont, horizdir, 1);
-	// FIXME: proper font
 	outtextxyBios(91, 16, "CERTIFICADO N\xA7:" + clave, 255);
 	outtextxyBios(90, 15, "CERTIFICADO N\xA7:" + clave, 13);
 
