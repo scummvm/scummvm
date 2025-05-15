@@ -40,7 +40,7 @@ public:
 	void handleInput(NancyInput &input) override;
 
 protected:
-	Common::String getRecordTypeName() const override { return "BBallPuzzle"; };
+	Common::String getRecordTypeName() const override { return "BBallPuzzle"; }
 	bool isViewportRelative() const override { return true; }
 
 	Common::Path _imageName;

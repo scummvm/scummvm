@@ -45,7 +45,7 @@ public:
 	void handleInput(NancyInput &input) override;
 
 protected:
-	Common::String getRecordTypeName() const override { return "MouseLightPuzzle"; };
+	Common::String getRecordTypeName() const override { return "MouseLightPuzzle"; }
 	bool isViewportRelative() const override { return true; }
 
 	Common::Path _imageName;

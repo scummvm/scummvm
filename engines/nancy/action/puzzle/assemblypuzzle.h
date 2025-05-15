@@ -46,7 +46,7 @@ public:
 	void handleInput(NancyInput &input) override;
 
 protected:
-	Common::String getRecordTypeName() const override { return "AssemblyPuzzle"; };
+	Common::String getRecordTypeName() const override { return "AssemblyPuzzle"; }
 	bool isViewportRelative() const override { return true; }
 
 	void rotateBase(bool ccw);
