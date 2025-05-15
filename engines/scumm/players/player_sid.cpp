@@ -26,6 +26,10 @@
 
 #ifdef USE_SID_AUDIO
 
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
+
 namespace Scumm {
 
 /*
