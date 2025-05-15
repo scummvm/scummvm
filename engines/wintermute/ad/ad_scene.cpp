@@ -1313,6 +1313,48 @@ bool AdScene::traverseNodes(bool doUpdate) {
 	return STATUS_OK;
 }
 
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+bool AdScene::display3DContent(DXMatrix &viewMat, DXMatrix &projMat) {
+	if (!_geom)
+		return STATUS_FAILED;
+
+	_gameRef->_renderer3D->setup3DCustom(viewMat, projMat);
+
+	// for each layer
+	for (uint32 j = 0; j < _layers.size(); j++) {
+		if (!_layers[j]->_active)
+			continue;
+
+		// render depth info for stencil shadows
+		TShadowType shadowType = _gameRef->getMaxShadowType();
+		if (shadowType >= SHADOW_STENCIL) {
+			_gameRef->renderShadowGeometry();
+		}
+
+
+		// for each node
+		for (uint32 k = 0; k < _layers[j]->_nodes.size(); k++) {
+			AdSceneNode *node = _layers[j]->_nodes[k];
+			if (node->_type == OBJECT_REGION) {
+				if (node->_region->isBlocked())
+					continue;
+				if (node->_region->hasDecoration())
+					continue;
+
+				displayRegionContent(node->_region, true);
+			}
+		} // each node
+
+		// display/update all objects which are off-regions
+		if (_layers[j]->_main) {
+			displayRegionContent(nullptr, true);
+		}
+	} // each layer
+
+	return STATUS_OK;
+}
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::display() {
@@ -3359,7 +3401,7 @@ BaseObject *AdScene::getNodeByName(const char *name) {
 		for (uint32 j = 0; j < layer->_nodes.size(); j++) {
 			AdSceneNode *node = layer->_nodes[j];
 			if ((node->_type == OBJECT_ENTITY && !scumm_stricmp(name, node->_entity->getName())) ||
-			        (node->_type == OBJECT_REGION && !scumm_stricmp(name, node->_region->getName()))) {
+			    (node->_type == OBJECT_REGION && !scumm_stricmp(name, node->_region->getName()))) {
 				switch (node->_type) {
 				case OBJECT_ENTITY:
 					ret = node->_entity;

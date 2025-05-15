@@ -116,6 +116,17 @@ bool BaseRenderer3D::setDefaultAmbientLightColor() {
 	return true;
 }
 
+bool BaseRenderer3D::setup3DCustom(DXMatrix &viewMat, DXMatrix &projMat) {
+	setup3D();
+	_state = RSTATE_3D;
+	if (viewMat)
+		setViewTransform(viewMat);
+	if (projMat)
+		setProjectionTransform(projMat);
+
+	return true;
+}
+
 DXViewport BaseRenderer3D::getViewPort() {
 	return _viewport;
 }

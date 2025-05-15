@@ -64,6 +64,9 @@ public:
 	BaseObject *getPrevAccessObject(BaseObject *currObject);
 	bool getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOnly);
 	bool getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects, bool interactiveOnly);
+#ifdef ENABLE_WME3D
+	bool display3DContent(DXMatrix &viewMat, DXMatrix &projMat);
+#endif
 
 #ifdef ENABLE_WME3D
 	bool _2DPathfinding;

@@ -75,6 +75,7 @@ public:
 	bool _ambientLightOverride;
 
 	//virtual void DumpData(char* Filename);
+	bool setup3DCustom(DXMatrix &viewMat, DXMatrix &projMat);
 	virtual bool enableShadows() = 0;
 	virtual bool disableShadows() = 0;
 	virtual bool stencilSupported() = 0;
