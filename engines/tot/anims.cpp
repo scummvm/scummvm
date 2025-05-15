@@ -84,8 +84,9 @@ void drawText(uint xfrase, uint yfrase, Common::String str1, Common::String str2
 }
 
 void removeText(uint xfrase1, uint yfrase1, uint xfrase2, uint yfrase2, byte colorrelleno) {
-	for (int j = yfrase1; j < yfrase2; j++) {
-		for (int i = xfrase1; i < xfrase2; i++) {
+
+	for (int j = yfrase1; j < yfrase2 + 1; j++) {
+		for (int i = xfrase1; i < xfrase2 + 1; i++) {
 			*((byte *)g_engine->_screen->getBasePtr(i, j)) = 0;
 		}
 	}

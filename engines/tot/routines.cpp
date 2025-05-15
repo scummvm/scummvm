@@ -331,9 +331,17 @@ void sprites(boolean pintapersonaje) {
 
 			uint16 patchH;
 			if ((pasoframeH + characterPosY) > (animado.posy + pasoanimadoH)) {
-				patchH = pasoframeH + 6 + abs(characterPosY - (int)animado.posy);
+				patchH = pasoframeH + 6 + abs(characterPosY - animado.posy);
 			} else {
-				patchH = pasoanimadoH + 6 + abs(characterPosY - (int)animado.posy);
+				patchH = pasoanimadoH + 6 + abs(characterPosY -  animado.posy);
+			}
+
+			if(posfondoy + patchH > 140) {
+				patchH -= (posfondoy + patchH) - 140 + 1;
+			}
+
+			if(posfondox + patchW > 320) {
+				patchW -= (posfondox + patchW) - 320 + 1;
 			}
 
 			characterDirtyRect = (byte *)malloc((patchW + 1) * (patchH + 1) + 4);
@@ -363,6 +371,14 @@ void sprites(boolean pintapersonaje) {
 
 			pasoanimadoW = READ_LE_UINT16(pasoanimado) + 6;
 			pasoanimadoH = READ_LE_UINT16(pasoanimado + 2) + 6;
+
+			if(posfondoy + pasoanimadoH > 140) {
+				pasoanimadoH -= (posfondoy + pasoanimadoH) - 140 + 1;
+			}
+
+			if(posfondox + pasoanimadoW > 320) {
+				pasoanimadoW -= (posfondox + pasoanimadoW) - 320 + 1;
+			}
 
 			characterDirtyRect = (byte *)malloc((pasoanimadoW + 1) * (pasoanimadoH + 1) + 4);
 			WRITE_LE_UINT16(characterDirtyRect, pasoanimadoW);
@@ -1014,30 +1030,15 @@ void useInventoryObjectWithInventoryObject(uint numobj1, uint numobj2) {
 
 	if (regobj.reemplazarpor == 0) {
 		readItemRegister(invItemData, numobj1, regobj);
-		// seek(fichobj, numobj1);
-		// limpiaregobj();
-		// fichobj >> regobj;
 		regobj.usar[0] = 9;
 		saveItemRegister(regobj, invItemData);
-		// fichobj.seek(numobj1);
-		//TODO: SAVING!
-		// readItemRegister(fichobj, numobj1);
-		// seek(fichobj, numobj1);
-		// fichobj << regobj;
-		readItemRegister(invItemData, numobj2, regobj);
 
-		// seek(fichobj, numobj2);
-		// limpiaregobj();
-		// fichobj >> regobj;
+		readItemRegister(invItemData, numobj2, regobj);
 		regobj.usar[0] = 9;
 		saveItemRegister(regobj, invItemData);
-		//TODO: SAVING!
-		// seek(fichobj, numobj2);
-		// fichobj << regobj;
-		// fichobj.close();
+
 	} else {
 		readItemRegister(invItemData, regobj.reemplazarpor, regobj);
-		// fichobj.close();
 		mobj[indobj1].bitmapIndex = regobj.objectIconBitmap;
 		mobj[indobj1].code = regobj.code;
 		mobj[indobj1].objectName = regobj.name;
@@ -3121,7 +3122,6 @@ void useScreenObject() {
 				currentRoomData->bitmapasociados[4].profund = 0;
 				objetos[7] = NULL;
 				handPantallaToFondo();
-				// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4, (sizepantalla - int32(4)));
 				assembleScreen();
 				drawScreen(fondo);
 				animatePickup2(3, 1);
