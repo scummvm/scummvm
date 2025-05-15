@@ -72,6 +72,7 @@ void GraphicsManager::writeActionLine(const Common::String &str) {
 }
 
 void GraphicsManager::setPalette(byte *palette, uint num) {
+
 	g_system->getPaletteManager()->setPalette(palette, 0, num);
 }
 
@@ -91,6 +92,7 @@ byte *GraphicsManager::getPalette() {
 }
 
 void GraphicsManager::changePalette(byte origin[768], byte target[768]) {
+
 	byte palpaso[768] = {0};
 
 	int auxpaso;
