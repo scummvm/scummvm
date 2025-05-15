@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-05-14 22:27+0000\n"
+"POT-Creation-Date: 2025-05-15 06:21+0000\n"
 "PO-Revision-Date: 2025-05-06 12:03+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -8287,13 +8287,13 @@ msgstr "Fehlerhafte rs-Datei."
 msgid "Save file created by different version."
 msgstr "Spielstand-Datei wurde mit einer abweichenden Version erstellt."
 
-#: engines/gob/inter_geisha.cpp:237 engines/gob/inter_playtoons.cpp:265
-#: engines/gob/inter_v2.cpp:1512 engines/tinsel/saveload.cpp:590
+#: engines/gob/inter_geisha.cpp:237 engines/gob/inter_playtoons.cpp:282
+#: engines/gob/inter_v2.cpp:1511 engines/tinsel/saveload.cpp:590
 msgid "Failed to load saved game from file."
 msgstr "Konnte Spielstand aus Datei nicht laden."
 
-#: engines/gob/inter_geisha.cpp:268 engines/gob/inter_v2.cpp:1591
-#: engines/gob/inter_v7.cpp:1411 engines/tinsel/saveload.cpp:603
+#: engines/gob/inter_geisha.cpp:268 engines/gob/inter_v2.cpp:1590
+#: engines/gob/inter_v7.cpp:1918 engines/tinsel/saveload.cpp:603
 msgid "Failed to save game to file."
 msgstr "Konnte Spielstand nicht in Datei speichern."
 
