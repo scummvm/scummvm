@@ -30,6 +30,10 @@
 #include "alg/logic/game_bountyhunter.h"
 #include "alg/scene.h"
 
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
+
 namespace Alg {
 
 GameBountyHunter::GameBountyHunter(AlgEngine *vm, const AlgGameDescription *gd) : Game(vm) {
@@ -661,6 +665,7 @@ bool GameBountyHunter::loadState() {
 	}
 	_unk_2ADA6 = inSaveFile->readByte();
 	_numPlayers = inSaveFile->readByte();
+	assert(_numPlayers <= 2);
 	delete inSaveFile;
 	_gameInProgress = true;
 	return true;
@@ -776,7 +781,7 @@ uint16 GameBountyHunter::timeForGunfight() {
 
 void GameBountyHunter::waitingForShootout(uint32 drawFrame) {
 	if (drawFrame != 0) {
-		for (int i = 0; i < _numPlayers; i++) {
+		for (uint i = 0; i < _numPlayers; i++) {
 			_firstDrawFrame = drawFrame;
 			_playerShots[i] = 0;
 			_playerGun[i] = 0;
@@ -1023,7 +1028,7 @@ void GameBountyHunter::sceneNxtscnLoseALife(Scene *scene) {
 	uint16 picked = 0;
 	int deadPlayerCount = 0;
 	(void)scene;
-	for (int i = 0; i < _numPlayers; i++) {
+	for (uint i = 0; i < _numPlayers; i++) {
 		_playerLives[i]--;
 		displayLivesLeft(i);
 		if (_playerLives[i] <= 0) {
@@ -1268,7 +1273,7 @@ void GameBountyHunter::sceneNxtscnDiedRefed(Scene *scene) {
 	uint16 picked = 0;
 	uint8 deadCount = 0;
 	(void)scene;
-	for (int i = 0; i < _numPlayers; i++) {
+	for (uint i = 0; i < _numPlayers; i++) {
 		_playerLives[i]--;
 		displayLivesLeft(i);
 		if (_playerLives[i] <= 0) {
@@ -1287,7 +1292,7 @@ void GameBountyHunter::sceneNxtscnDiedRefed(Scene *scene) {
 
 void GameBountyHunter::sceneNxtscnGiveShotgun(Scene *scene) {
 	(void)scene;
-	for (int i = 0; i < _numPlayers; i++) {
+	for (uint i = 0; i < _numPlayers; i++) {
 		_playerShots[i] = 5;
 		_playerGun[i] = 2;
 		displayShotsLeft(i);
