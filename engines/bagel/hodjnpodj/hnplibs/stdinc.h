@@ -22,6 +22,7 @@
 #ifndef HODJNPODJ_HNPLIBS_STDINC_H
 #define HODJNPODJ_HNPLIBS_STDINC_H
 
+#include "bagel/afxwin.h"
 #include "common/algorithm.h"
 
 namespace Bagel {
@@ -77,16 +78,6 @@ typedef unsigned long ULONG;
 #define DOUBLE double
 #define VOID void
 #define CONST const
-
-/*
-* Define things that Windows would otherwise define
-*/
-#ifndef _WINDOWS
-typedef unsigned char BYTE;
-typedef unsigned int UINT;
-typedef unsigned long DWORD;
-typedef int BOOL;
-#endif
 
 /* abnormal types */
 typedef int BOOLEAN;

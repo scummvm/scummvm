@@ -27,6 +27,10 @@ namespace MFC {
 
 IMPLEMENT_DYNAMIC(CDC, CObject)
 
+CDC *CDC::FromHandle(HDC hDC) {
+	error("TODO: CDC::FromHandle");
+}
+
 BOOL CDC::CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
 	LPCSTR lpszOutput, const void *lpInitData) {
 	error("TODO: CDC::CreateDC");

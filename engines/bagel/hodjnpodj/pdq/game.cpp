@@ -1,65 +1,25 @@
-/*****************************************************************
+/* ScummVM - Graphic Adventure Engine
  *
- *  game.cpp      -  Main module for The Guessing Game (PDQ)
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- *  HISTORY
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *      1.00      03/24/94     BCW     Initial Design
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  MODULE DESCRIPTION:
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *      Main module for The Guessing Game
- *
- *  LOCAL FUNCTIONS:
- *
- *      CleanScreen             Removes any game items (sprites) from screen
- *      LoadNewPhrase           Loads a new randomly selected phrase
- *      BuildSpriteList         Builds a list of sprites based on the current phrase
- *      KillCurPhrase           Destroys the list of sprites
- *      BuildRandomPhraseOrder  Builds a random order for the revealing of letters
- *      RevealNextLetter        Adds the next available letter to the list of displayed sprites
- *      RecalcDisplay           Recalculates Letter locations and re-displays them
- *      GameTimerHook           Called by Windows as a hook to WM_TIMER messages
- *      StrLenNoSpaces          Determines the length of a string ignoring spaces
- *      GetIndex                Returns the internal index of a sprite
- *      LoadGameCfg             Loads game parameters from BOFFO.INI
- *      SaveGameCfg             Saves game parameters to BOFFO.INI
- *      ValidatePhrase          Verifies that the current phrase and it's order are legal
- *
- *  GLOBAL FUNCTIONS:
- *
- *      InitGame                Initializes an individual game
- *      StartGame               Starts the timer and displays initial letters
- *      RepaintSpriteList       Repaints all linked sprites
- *      GameStopTimer           Stops the timer (via KillTimer)
- *      GameStartTimer          Starts the timer (via SetTimer)
- *      GamePauseTimer          Pauses the timer
- *      GameResumeTimer         Resumes the timer
- *      EndGame                 Cleans up and ends current game
- *      CheckUserGuess          Compares users guess with the current phrase
- *      GetGameParams           Load the User Config dialog
- *      GameGetScore            Gets the current score
- *
- *  RELEVANT DOCUMENTATION:
- *
- *
- *
- *  PORTABILITY ISSUES:
- *
- *      The code is slightly Windows specific but could be made portable
- *
- *  FILES USED:
- *
- *      PDQ.DAT  - contains the data store of phrases
- *
- ****************************************************************/
+ */
+
 #include "bagel/afxwin.h"
-
-
-#include <stdlib.h>
-
-#include <fstream.h>
-
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "bagel/boflib/misc.h"
@@ -67,10 +27,14 @@
 #include "bagel/hodjnpodj/hnplibs/mainmenu.h"
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "bagel/hodjnpodj/globals.h"
-#include "game.h"
-#include "usercfg.h"
-#include "main.h"
+#include "bagel/hodjnpodj/pdq/game.h"
+#include "bagel/hodjnpodj/pdq/usercfg.h"
+#include "bagel/hodjnpodj/pdq/main.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
+namespace Bagel {
+namespace HodjNPodj {
+namespace PDQ {
 
 /*
 *
@@ -95,7 +59,7 @@ typedef struct {
 } SPRITE_LIST;
 
 
-STATIC CHAR *pszCategorySounds[N_CATEGORIES] = {
+STATIC const CHAR *pszCategorySounds[N_CATEGORIES] = {
     ".\\SOUND\\TGG5.WAV",
     ".\\SOUND\\TGG6.WAV",
     ".\\SOUND\\TGG7.WAV",
@@ -114,7 +78,7 @@ ERROR_CODE  BuildSpriteList(CDC *);
 VOID        KillCurPhrase(VOID);
 VOID        BuildRandomPhraseOrder();
 BOOLEAN     RevealNextLetter(VOID);
-VOID CALLBACK EXPORT GameTimerHook(HWND, UINT, UINT, DWORD);
+VOID CALLBACK GameTimerHook(HWND, UINT, UINT_PTR, DWORD);
 INT         StrLenNoSpaces(const CHAR *);
 INT         GetIndex(CSprite *);
 VOID        LoadGameCfg(VOID);
@@ -181,7 +145,7 @@ INT         nPhrasePixelLength;
 **/
 ERROR_CODE LoadNewPhrase(VOID)
 {
-    STATIC nLast;
+    STATIC int nLast;
     CHAR *p, buf[MAX_PLENGTH_S + 2];
     INT i, n, nType;
     ERROR_CODE errCode;
@@ -253,13 +217,14 @@ ERROR_CODE LoadNewPhrase(VOID)
                 /*
                 * convert all instances of "the", "an", and "a" to upper case
                 */
-                Common::sprintf_s(p = buf, " %s", strlwr(curPhrase->text));
+                Common::sprintf_s(p = buf, MAX_PLENGTH_S + 2, " %s",
+					strLower(curPhrase->text));
 
                 StrUprStr(p, " the ");
                 StrUprStr(p, " an ");
                 StrUprStr(p, " a ");
                 p++;
-                strcpy(curPhrase->text, p);
+                Common::strcpy_s(curPhrase->text, p);
 
                 /*
                 * if user wants a random ordering
@@ -729,11 +694,10 @@ ERROR_CODE CleanScreen(CDC *pDC)
 *  returns   Nothing
 *
 **/
-VOID CALLBACK EXPORT GameTimerHook(HWND hWnd, UINT, UINT nEventID, DWORD)
-{
+VOID CALLBACK GameTimerHook(HWND hWnd, UINT, UINT_PTR nEventID, DWORD) {
     CDC *pDC;
     HDC hDC;
-    BOOLEAN done;
+    BOOL done;
     UINT nLeft, nTotal, nLeftAvg, nTotalAvg;
 
     assert(nEventID == TIMER_ID);
@@ -817,7 +781,6 @@ ERROR_CODE GameStartTimer()
     ERROR_CODE errCode = ERR_NONE;
 
     if (curPhrase != NULL) {
-
         if (SetTimer(gGameWnd, TIMER_ID, timerInterval, GameTimerHook) != TIMER_ID)
             errCode = ERR_UNKNOWN;
     }
@@ -993,7 +956,7 @@ VOID LoadGameCfg()
         GetPrivateProfileString(INI_SECTION, "RandomLetters", "No", buf, 10, INI_FILENAME);
         assert(strlen(buf) < 10);
         gGameCfg.bRandomLetters = FALSE;
-        if (!stricmp(buf, "Yes"))
+        if (!scumm_stricmp(buf, "Yes"))
             gGameCfg.bRandomLetters = TRUE;
 
         /*
@@ -1017,7 +980,7 @@ VOID LoadGameCfg()
         GetPrivateProfileString(INI_SECTION, "ShowCategoryNames", "Yes", buf, 10, INI_FILENAME);
         assert(strlen(buf) < 10);
         gGameCfg.bShowNames = FALSE;
-        if (!stricmp(buf, "Yes"))
+        if (!scumm_stricmp(buf, "Yes"))
             gGameCfg.bShowNames = TRUE;
     }
 
@@ -1041,10 +1004,17 @@ VOID SaveGameCfg()
 {
     CHAR tmpBuf[8];
 
-    WritePrivateProfileString(INI_SECTION, "RandomLetters", gGameCfg.bRandomLetters ? "Yes" : "No", INI_FILENAME);
-    WritePrivateProfileString(INI_SECTION, "NumStartingLetters", itoa(gGameCfg.nShown, tmpBuf, 10), INI_FILENAME);
-    WritePrivateProfileString(INI_SECTION, "GameSpeed", itoa(gGameCfg.gameSpeed, tmpBuf, 10), INI_FILENAME);
-    WritePrivateProfileString(INI_SECTION, "ShowCategoryNames", gGameCfg.bShowNames ? "Yes" : "No", INI_FILENAME);
+    WritePrivateProfileString(INI_SECTION, "RandomLetters",
+		gGameCfg.bRandomLetters ? "Yes" : "No", INI_FILENAME);
+    WritePrivateProfileString(INI_SECTION, "NumStartingLetters",
+		Common::String::format("%d", gGameCfg.nShown).c_str(),
+		INI_FILENAME);
+    WritePrivateProfileString(INI_SECTION, "GameSpeed",
+		Common::String::format("%d", gGameCfg.gameSpeed).c_str(),
+		INI_FILENAME);
+    WritePrivateProfileString(INI_SECTION, "ShowCategoryNames",
+		gGameCfg.bShowNames ? "Yes" : "No",
+		INI_FILENAME);
 }
 
 
@@ -1231,7 +1201,7 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase)
             * verify that all characters in this phrase are valid.
             * valid chars are are '\0', ' ' or a letter
             */
-            if ((c != 0) && (c != 32) && !isalpha(c)) {
+            if ((c != 0) && (c != 32) && !Common::isAlpha(c)) {
                 #ifdef DEBUG
                 ErrorLog("DEBUG.LOG", "Invalid Char in (%s) %c", phrase->text, c);
                 #endif
@@ -1350,3 +1320,7 @@ VOID SelfTest(VOID)
     }
 }
 #endif
+
+} // namespace PDQ
+} // namespace HodjNPodj
+} // namespace Bagel

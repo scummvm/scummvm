@@ -415,6 +415,8 @@ class CDC : public CObject {
 public:
 	HDC m_hDC = nullptr;
 
+	static CDC *PASCAL FromHandle(HDC hDC);
+
 public:
 	~CDC() override {
 	}
@@ -875,6 +877,7 @@ public:
 	}
 	CVIRTUAL BOOL Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
 	void LimitText(int nChars);
+	void SetSel(int nStartChar, int nEndChar, BOOL bNoScroll = FALSE);
 };
 
 class CScrollBar : public CWnd {

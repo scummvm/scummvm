@@ -103,6 +103,15 @@ extern void encryptPartial(void *, int32, int32, const char *pPassword = nullptr
 
 extern void ErrorLog(const char *logFile, const char *format, ...);
 
+extern INT          StrFreqMatch(const CHAR *, const CHAR *);
+extern BOOL         StrCompare(const CHAR *, const CHAR *, UINT);
+extern INT          StrCharCount(const CHAR *, CHAR);
+extern CHAR *StriStr(const CHAR *, const CHAR *);
+extern VOID         StrUprStr(CHAR *, const CHAR *);
+extern VOID         StrCpyStripChar(CHAR *, const CHAR *, CHAR);
+extern CHAR *StrStripChar(CHAR *, CHAR);
+extern CHAR *StrReplaceChar(CHAR *, CHAR, CHAR);
+
 } // namespace Bagel
 
 #endif

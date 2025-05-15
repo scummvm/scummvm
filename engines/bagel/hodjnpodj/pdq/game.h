@@ -1,31 +1,34 @@
-/*****************************************************************
+/* ScummVM - Graphic Adventure Engine
  *
- *  game.h
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- *  HISTORY
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *      1.00      03/14/94     BCW     Created this file
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  MODULE DESCRIPTION:
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *      Public header for GAME.CPP
- *   
- *  RELEVANT DOCUMENTATION:
- *
- *
- *
- *  PORTABILITY ISSUES:
- *   
- *
- *   
- ****************************************************************/
-#ifndef GAME_H
-#define GAME_H
+ */
+
+#ifndef HODJNPODJ_PDQ_GAME_H
+#define HODJNPODJ_PDQ_GAME_H
 
 #include "bagel/afxwin.h"
-
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "bagel/boflib/error.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace PDQ {
 
 #define MAX_PLENGTH   	25
 #define MAX_PLENGTH_S 	30
@@ -80,17 +83,21 @@
 /*
 * prototypes
 */
-	ERROR_CODE  InitGame(HWND, CDC *);
-	ERROR_CODE  StartGame(CDC *);
-	VOID        GameStopTimer(VOID);
-	ERROR_CODE  GameStartTimer(VOID);
-	VOID        GamePauseTimer(VOID);
-	VOID        GameResumeTimer(VOID);
-	ERROR_CODE  EndGame(CDC *);
-	VOID        WinGame(VOID);
-	ERROR_CODE  RepaintSpriteList(CDC *);
-	BOOLEAN     CheckUserGuess(const CHAR *);
-	VOID CALLBACK GetGameParams(CWnd *);
-	VOID        GameGetScore(UINT *, UINT *, UINT *, UINT *);
+extern ERROR_CODE  InitGame(HWND, CDC *);
+extern ERROR_CODE  StartGame(CDC *);
+extern VOID        GameStopTimer(VOID);
+extern ERROR_CODE  GameStartTimer(VOID);
+extern VOID        GamePauseTimer(VOID);
+extern VOID        GameResumeTimer(VOID);
+extern ERROR_CODE  EndGame(CDC *);
+extern VOID        WinGame(VOID);
+extern ERROR_CODE  RepaintSpriteList(CDC *);
+extern BOOLEAN     CheckUserGuess(const CHAR *);
+extern VOID CALLBACK GetGameParams(CWnd *);
+extern VOID        GameGetScore(UINT *, UINT *, UINT *, UINT *);
 
-#endif /* GAME_H */
+} // namespace PDQ
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

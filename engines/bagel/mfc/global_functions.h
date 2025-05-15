@@ -84,6 +84,10 @@ extern int MessageBox(LPCSTR lpText, LPCSTR lpCaption, UINT uType = 0);
 extern int MessageBox(LPCSTR lpText);
 extern UINT GetPrivateProfileInt(LPCSTR lpAppName,
 	LPCSTR lpKeyName, INT nDefault, LPCSTR lpFileName);
+extern DWORD GetPrivateProfileString(LPCSTR lpAppName,
+	LPCSTR lpKeyName, LPCSTR lpDefault, LPSTR  lpReturnedString,
+	DWORD  nSize, LPCSTR lpFileName);
+
 extern BOOL WritePrivateProfileString(
 	LPCSTR lpAppName, LPCSTR lpKeyName,
 	LPCSTR lpString, LPCSTR lpFileName);
@@ -122,17 +126,16 @@ extern HGLOBAL LoadResource(HMODULE hModule,
 extern LPVOID LockResource(HGLOBAL hResData);
 extern BOOL FreeResource(HGLOBAL hResData);
 
-inline void strUpper(char *s) {
-	for (; *s; ++s)
-		*s = toupper(*s);
+inline char *strUpper(char *s) {
+	for (char *curr = s; *curr; ++curr)
+		*curr = toupper(*curr);
+	return s;
 }
 
-inline int StrCompare(LPCTSTR psz1, LPCTSTR psz2) {
-	return strcmp(psz1, psz2);
-}
-
-inline int StrCompare(LPCTSTR psz1, LPCTSTR psz2, size_t len) {
-	return strncmp(psz1, psz2, len);
+inline char *strLower(char *s) {
+	for (char *curr = s; *curr; ++curr)
+		*curr = tolower(*curr);
+	return s;
 }
 
 } // namespace MFC

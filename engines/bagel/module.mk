@@ -213,6 +213,11 @@ MODULE_OBJS = \
 	hodjnpodj/packrat/msgdlg.o \
 	hodjnpodj/packrat/optdlg.o \
 	hodjnpodj/packrat/packrat.o \
+	hodjnpodj/pdq/gamedll.o \
+	hodjnpodj/pdq/game.o \
+	hodjnpodj/pdq/guess.o \
+	hodjnpodj/pdq/main.o \
+	hodjnpodj/pdq/usercfg.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o

@@ -1,33 +1,38 @@
-/**
-*   MAIN.H      -
-*
-*
-*   Description -
-*
-*
-*
-*
-*   (c) Copyright 1994 - Boffo Games
-*   All rights reserved.
-*
-*
-*   Revision History:
-*
-*   Version     Date        Author      Comments
-*   -------     --------    ------      --------------------------------
-*   1.00a       03-16-94     BCW        Created this file
-*
-**/
-#ifndef MAIN_H
-#define MAIN_H
-#include "bagel/afxwin.h"
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
+#ifndef HODJNPODJ_PDQ_MAIN_H
+#define HODJNPODJ_PDQ_MAIN_H
+
+#include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/boflib/error.h"
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "bagel/boflib/sound.h"
-#include "guess.h"
+#include "bagel/hodjnpodj/pdq/guess.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace PDQ {
 
 #define N_CATEGORIES    4
 
@@ -57,7 +62,7 @@ class CMainWindow : public CFrameWnd
         void OnSysKeyDown(UINT, UINT, UINT);
         void OnMouseMove(UINT, CPoint);
         void OnLButtonDown(UINT, CPoint);
-        void CMainWindow::OnActivate(UINT, CWnd *, BOOL);
+        void OnActivate(UINT, CWnd *, BOOL);
         void OnSetFocus(CWnd *);
         void OnClose(void);
 	   	long OnMCINotify( WPARAM, LPARAM);
@@ -75,4 +80,8 @@ class CMainWindow : public CFrameWnd
         BOOL         m_bInGuess;
 };
 
-#endif // !MAIN_H
+} // namespace PDQ
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

@@ -72,6 +72,13 @@ UINT GetPrivateProfileInt(LPCSTR lpAppName,
 	error("TODO: GetPrivateProfileInt");
 }
 
+extern DWORD GetPrivateProfileString(LPCSTR lpAppName,
+		LPCSTR lpKeyName, LPCSTR lpDefault, LPSTR  lpReturnedString,
+		DWORD  nSize, LPCSTR lpFileName) {
+	error("TODO: GetPrivateProfileString");
+}
+
+
 BOOL WritePrivateProfileString(
 		LPCSTR lpAppName, LPCSTR lpKeyName,
 		LPCSTR lpString, LPCSTR lpFileName) {

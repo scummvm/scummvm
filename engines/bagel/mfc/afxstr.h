@@ -34,6 +34,8 @@ public:
 	}
 	CString(const char *s) : Common::String(s) {
 	}
+	CString(char c) : Common::String(c) {
+	}
 
 	char *GetBufferSetLength(size_t nNewLength) {
 		ensureCapacity(nNewLength + 1, false);

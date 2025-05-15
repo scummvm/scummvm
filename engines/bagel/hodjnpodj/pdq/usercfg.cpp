@@ -1,32 +1,35 @@
-/**
-*   USERCFG.CPP -
-*
-*
-*   Description -
-*
-*
-*
-*
-*   (c) Copyright 1994 - Boffo Games
-*   All rights reserved.
-*
-*
-*   Revision History:
-*
-*   Version     Date        Author      Comments
-*   -------     --------    ------      --------------------------------
-*   1.00a       03-18-94     BCW        Created this file
-*
-**/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/afxwin.h"
-
-
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/menures.h"
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
-#include "usercfg.h"
+#include "bagel/hodjnpodj/pdq/usercfg.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace PDQ {
 
 #define ID_RESET     104
 #define ID_GAMESPEED 105
@@ -37,8 +40,7 @@
 
 extern const char *INI_SECTION;
 
-static CHAR *apszSpeeds[10] = {
-
+static const CHAR *apszSpeeds[10] = {
     "Molasses in Stasis",
     "Frozen Molasses",
     "Molasses",
@@ -339,7 +341,7 @@ BOOL CUserCfgDlg::OnInitDialog(void)
     */
     GetPrivateProfileString(INI_SECTION, "RandomLetters", "No", buf, 10, INI_FILENAME);
     m_bRandomLetters = FALSE;
-    if (!stricmp(buf, "Yes"))
+    if (!scumm_stricmp(buf, "Yes"))
         m_bRandomLetters = TRUE;
 
     /*
@@ -360,7 +362,7 @@ BOOL CUserCfgDlg::OnInitDialog(void)
     GetPrivateProfileString(INI_SECTION, "ShowCategoryNames", "Yes", buf, 10, INI_FILENAME);
     assert(strlen(buf) < 10);
     m_bShowNames = FALSE;
-    if (!stricmp(buf, "Yes"))
+    if (!scumm_stricmp(buf, "Yes"))
         m_bShowNames = TRUE;
 
     PutDlgData();
@@ -432,18 +434,22 @@ void CUserCfgDlg::DispShown(void)
 }
 
 
-void CUserCfgDlg::ClearDialogImage(void)
-{
-    char tmpBuf[8];
+void CUserCfgDlg::ClearDialogImage(void) {
     CDC *pDC;
 
     if (m_bShouldSave) {
         GetDlgData();
 
-        WritePrivateProfileString(INI_SECTION, "RandomLetters", m_bRandomLetters ? "Yes" : "No", INI_FILENAME);
-        WritePrivateProfileString(INI_SECTION, "NumStartingLetters", itoa(m_nShown, tmpBuf, 10), INI_FILENAME);
-        WritePrivateProfileString(INI_SECTION, "GameSpeed", itoa(m_nGameSpeed, tmpBuf, 10), INI_FILENAME);
-        WritePrivateProfileString(INI_SECTION, "ShowCategoryNames", m_bShowNames ? "Yes" : "No", INI_FILENAME);
+        WritePrivateProfileString(INI_SECTION, "RandomLetters",
+			m_bRandomLetters ? "Yes" : "No", INI_FILENAME);
+        WritePrivateProfileString(INI_SECTION, "NumStartingLetters",
+			Common::String::format("%d", m_nShown).c_str(),
+			INI_FILENAME);
+        WritePrivateProfileString(INI_SECTION, "GameSpeed",
+			Common::String::format("%d", m_nGameSpeed).c_str(),
+			INI_FILENAME);
+        WritePrivateProfileString(INI_SECTION, "ShowCategoryNames",
+			m_bShowNames ? "Yes" : "No", INI_FILENAME);
     }
 
     pDC = GetDC();
@@ -501,3 +507,7 @@ void CUserCfgDlg::ClearDialogImage(void)
 
 	ValidateRect(NULL);
 }
+
+} // namespace PDQ
+} // namespace HodjNPodj
+} // namespace Bagel

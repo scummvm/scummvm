@@ -1,43 +1,42 @@
-/**
-*   MAIN.CPP    -  Main Shell for The Guessing Game (Th Gesng Gme)
-*
-*
-*   Description -
-*
-*
-*
-*
-*   (c) Copyright 1994 - Boffo Games
-*   All rights reserved.
-*
-*
-*   Revision History:
-*
-*   Version     Date        Author      Comments
-*   -------     --------    ------      --------------------------------
-*   1.00a       03-16-94     BCW        Created this file
-*
-**/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/afxwin.h"
-
-#include <time.h>
-
-
-
 #include "bagel/hodjnpodj/hnplibs/dibdoc.h"
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/hnplibs/mainmenu.h"
-#include <copyrite.h>
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
 #include "bagel/boflib/misc.h"
-#include "main.h"
-#include "game.h"
-#include "guess.h"
+#include "bagel/hodjnpodj/pdq/main.h"
+#include "bagel/hodjnpodj/pdq/game.h"
+#include "bagel/hodjnpodj/pdq/guess.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace PDQ {
 
 //
 // This mini-game's main screen bitmap
@@ -51,7 +50,7 @@
 
 #define WAV_NARRATION   ".\\SOUND\\TGG.WAV"
 
-STATIC CHAR *pszCategoryBitmaps[N_CATEGORIES] = {
+STATIC const CHAR *pszCategoryBitmaps[N_CATEGORIES] = {
     ".\\ART\\PERSON.BMP",
     ".\\ART\\PLACE.BMP",
     ".\\ART\\PHRASE.BMP",
@@ -196,7 +195,7 @@ CMainWindow::CMainWindow()
 
     if (pGameParams->bMusicEnabled) {
         if ((m_pSoundTrack = new CSound) != NULL) {
-            m_pSoundTrack->Initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+            m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
             m_pSoundTrack->midiLoopPlaySegment(1580, 32600, 0, FMT_MILLISEC);
         }
     } // end if m_pSoundTrack
@@ -464,7 +463,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
                 } else if (pGameParams->bMusicEnabled && (m_pSoundTrack == NULL)) {
 
                     if ((m_pSoundTrack = new CSound) != NULL) {
-                        m_pSoundTrack->Initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+                        m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
                         m_pSoundTrack->midiLoopPlaySegment(1580, 32600, 0, FMT_MILLISEC);
                     }
                 }
@@ -674,8 +673,8 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
                 assert(m_pDlgGuess != NULL);
 
                 m_pDlgGuess->text = "";
-                if (nChar != KEY_ENTER)
-                    m_pDlgGuess->text = (char)nChar + '\0';
+				if (nChar != KEY_ENTER)
+					m_pDlgGuess->text = CString((char)nChar);
 
                 m_bInGuess = TRUE;
                 m_pDlgGuess->DoModal();
@@ -833,7 +832,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
         (*pSprite).SetCel( NUM_BIRD_CELS );
         for( i = 0; i < NUM_BIRD_CELS; i++ ) {
             (*pSprite).PaintSprite( pDC, BIRD_X, BIRD_Y );
-            CSound::HandleMessages();
+            CSound::handleMessages();
             Sleep( BIRD_SLEEP );
         }
         if (pSprite != NULL)
@@ -862,7 +861,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
         (*pSprite).SetCel( NUM_HORSE1_CELS );
         for( i = 0; i < NUM_HORSE1_CELS; i++ ) {
             (*pSprite).PaintSprite( pDC, HORSE1_X, HORSE1_Y );
-            CSound::HandleMessages();
+            CSound::handleMessages();
             Sleep( HORSE1_SLEEP );
         }
         if (pSprite != NULL)
@@ -891,7 +890,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
         (*pSprite).SetCel( NUM_HORSE2_CELS );
         for( i = 0; i < NUM_HORSE2_CELS; i++ ) {
             (*pSprite).PaintSprite( pDC, HORSE2_X, HORSE2_Y );
-            CSound::HandleMessages();
+            CSound::handleMessages();
             Sleep( HORSE2_SLEEP );
         }
         if (pSprite != NULL)
@@ -920,7 +919,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
         (*pSprite).SetCel( NUM_FLOWER_CELS );
         for( i = 0; i < NUM_FLOWER_CELS; i++ ) {
             (*pSprite).PaintSprite( pDC, FLOWER_X, FLOWER_Y );
-            CSound::HandleMessages();
+            CSound::handleMessages();
             Sleep( FLOWER_SLEEP );
         }
         if (pSprite != NULL)
@@ -1007,3 +1006,7 @@ BEGIN_MESSAGE_MAP( CMainWindow, CFrameWnd )
     ON_MESSAGE(MM_MCINOTIFY, OnMCINotify)
     ON_MESSAGE(MM_WOM_DONE, OnMMIONotify)
 END_MESSAGE_MAP()
+
+} // namespace PDQ
+} // namespace HodjNPodj
+} // namespace Bagel

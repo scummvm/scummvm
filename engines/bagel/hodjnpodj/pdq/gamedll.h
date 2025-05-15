@@ -19,27 +19,17 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "bagel/mfc/afxwin.h"
+#ifndef HODJNPODJ_PDQ_GAMEDLL_H
+#define HODJNPODJ_PDQ_GAMEDLL_H
 
 namespace Bagel {
-namespace MFC {
+namespace HodjNPodj {
+namespace PDQ {
 
-IMPLEMENT_DYNAMIC(CEdit, CWnd)
-BEGIN_MESSAGE_MAP(CEdit, CWnd)
-END_MESSAGE_MAP()
+extern HWND FAR PASCAL RunTGG(HWND hParentWnd, LPGAMESTRUCT lpGameInfo);
 
-BOOL CEdit::Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID) {
-	error("TODO: CEdit::Create");
-}
-
-void CEdit::LimitText(int nChars) {
-	error("TODO: CEdit::LimitText");
-}
-
-void CEdit::SetSel(int nStartChar, int nEndChar, BOOL bNoScroll) {
-	error("TODO: CEdit::SetSel");
-}
-
-} // namespace MFC
+} // namespace PDQ
+} // namespace HodjNPodj
 } // namespace Bagel
+
+#endif
