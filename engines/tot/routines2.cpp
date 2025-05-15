@@ -2478,8 +2478,8 @@ void sacrifice() {
 
 	for(int i = 0; i < 256; i++) {
 		palaux[i * 3 + 0] = palaux[i * 3 + 0] << 2;
-		palaux[i * 3 + 0] = palaux[i * 3 + 0] << 2;
-		palaux[i * 3 + 0] = palaux[i * 3 + 0] << 2;
+		palaux[i * 3 + 1] = palaux[i * 3 + 1] << 2;
+		palaux[i * 3 + 2] = palaux[i * 3 + 2] << 2;
 	}
 
 	fich.read(fondo, 64000);
