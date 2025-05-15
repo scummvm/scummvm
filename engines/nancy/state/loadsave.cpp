@@ -112,7 +112,7 @@ void LoadSaveMenu::scummVMSave() {
 	g_nancy->_graphics->suppressNextDraw();
 	_destroyOnExit = true;
 	_state = kStop;
-	_selectedSave = slot;
+	_selectedSave = -1; // so that we return to the main menu after saving
 
 	if (slot >= 0) {
 		g_nancy->saveGameState(slot, saveName, false);
