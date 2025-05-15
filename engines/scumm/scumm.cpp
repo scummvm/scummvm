@@ -25,6 +25,7 @@
 #include "common/macresman.h"
 #include "common/md5.h"
 #include "common/events.h"
+#include "common/str.h"
 #include "common/system.h"
 #include "common/translation.h"
 
@@ -1294,7 +1295,7 @@ Common::Error ScummEngine::init() {
 			if (_game.id == macFileNames[i]._id) {
 				macScumm = true;
 
-				strncpy(filename, macFileNames[i]._name, sizeof(filename));
+				Common::strlcpy(filename, macFileNames[i]._name, sizeof(filename));
 
 				if (resource.exists(filename)) {
 					macResourceFile = filename;
