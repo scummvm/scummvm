@@ -60,7 +60,8 @@ void GraphicsManager::restoreBackground(uint x, uint y, uint x2, uint y2) {
 
 void GraphicsManager::clear() {
 	g_engine->_screen->clear();
-	updateScreen();
+	g_engine->_screen->markAllDirty();
+	g_engine->_screen->update();
 }
 
 void GraphicsManager::clearActionLine() {
@@ -91,45 +92,6 @@ byte *GraphicsManager::getPalette() {
 	return palette;
 }
 
-void GraphicsManager::changePalette(byte origin[768], byte target[768]) {
-
-	byte palpaso[768] = {0};
-
-	int auxpaso;
-	for (int i = 0; i < 768; i++) {
-		palpaso[i] = origin[i];
-	}
-
-	for (int jpal = 31; jpal >= 0; jpal--) {
-		for (int ipal = 0; ipal <= 255; ipal++) {
-			int indexR = 3 * ipal + 0;
-			int indexG = 3 * ipal + 1;
-			int indexB = 3 * ipal + 2;
-			auxpaso = target[indexR] - palpaso[indexR];
-
-			if (auxpaso > 0)
-				palpaso[indexR] = palpaso[indexR] + datosfundido[auxpaso][jpal];
-			else
-				palpaso[indexR] = palpaso[indexR] - datosfundido[-auxpaso][jpal];
-
-			auxpaso = target[indexG] - palpaso[indexG];
-			if (auxpaso > 0)
-				palpaso[indexG] = palpaso[indexG] + datosfundido[auxpaso][jpal];
-			else
-				palpaso[indexG] = palpaso[indexG] - datosfundido[-auxpaso][jpal];
-
-			auxpaso = target[indexB] - palpaso[indexB];
-			if (auxpaso > 0)
-				palpaso[indexB] = palpaso[indexB] + datosfundido[auxpaso][jpal];
-			else
-				palpaso[indexB] = palpaso[indexB] - datosfundido[-auxpaso][jpal];
-		}
-		setPalette(palpaso);
-		g_engine->_screen->markAllDirty();
-		g_engine->_screen->update();
-	}
-}
-
 byte *GraphicsManager::loadPalette(Common::String fileName) {
 	Common::File paletteFile;
 	if (!paletteFile.open(Common::Path(fileName)))
@@ -141,33 +103,6 @@ byte *GraphicsManager::loadPalette(Common::String fileName) {
 	setPalette(palette);
 	return palette;
 }
-
-void GraphicsManager::fadeIn(uint numeropaleta, Common::String nombrepaleta) {
-	byte *palette;
-
-	byte blackPalette[768];
-	for (int i = 0; i < 768; i++) {
-		blackPalette[i] = 0;
-	}
-	if (numeropaleta > 0) {
-		palette = loadPalette("PALETAS.DAT");
-	} else {
-		palette = loadPalette(nombrepaleta + ".PAL");
-	}
-	changePalette(blackPalette, palette);
-}
-
-void GraphicsManager::fadeOut(byte rojo) {
-	byte palpaso[768];
-
-	for (int i = 0; i <= 255; i++) {
-		palpaso[i * 3 + 0] = rojo;
-		palpaso[i * 3 + 1] = 0;
-		palpaso[i * 3 + 2] = 0;
-	}
-	changePalette(getPalette(), palpaso);
-}
-
 
 // Debug function just to print a palette on the screen
 void GraphicsManager::printPalette() {
@@ -216,92 +151,5 @@ void GraphicsManager::euroText(const Common::String &str, int x, int y, uint32 c
 void GraphicsManager::biosText(const Common::String &str, int x, int y, uint32 color) {
 	_bios->drawString(g_engine->_screen, str, x, y, 320, color, Graphics::TextAlign::kTextAlignLeft);
 }
-
-void GraphicsManager::blit(const Graphics::Surface *src, Common::Rect bounds) {
-	int16 height = bounds.bottom - bounds.top;
-	int16 width = bounds.right - bounds.left;
-	Graphics::Surface dest = g_engine->_screen->getSubArea(bounds);
-
-	for (int i = 0; i < height - 1; i++) {
-		for (int j = 0; j < width - 1; j++) {
-			*((byte *)dest.getBasePtr(j, i)) = *((byte *)src->getBasePtr(j, i));
-		}
-	}
-	g_engine->_screen->addDirtyRect(bounds);
-	updateScreen();
-}
-
-void GraphicsManager::copyPixels(int x, int y, byte *pixels, uint size) {
-	byte *destP = (byte *)g_engine->_screen->getPixels() + y * 320 + x;
-	Common::copy(pixels, pixels + size, destP);
-	updateScreen();
-}
-
-void GraphicsManager::copyRect(Common::Rect rect, byte *pixels) {
-	int width = rect.right - rect.left;
-	int height = rect.bottom - rect.top;
-	for (int j = rect.top; j < rect.bottom; j++) {
-		for (int i = rect.left; i < rect.right; i++) {
-			*((byte *)g_engine->_screen->getBasePtr(i, j)) = pixels[(j - height) * width + (i - width)];
-		}
-	}
-}
-
-void GraphicsManager::effect(int effectNumber, bool toBlack) {
-	if (toBlack) {
-		switch (effectNumber) {
-		case 1:
-			for (int i = 0; i <= 69; i++) {
-				g_engine->_screen->drawLine(0, (i * 2), 319, i * 2, 0);
-				g_system->delayMillis(5);
-			}
-			for (int i = 70; i >= 1; i--) {
-				g_engine->_screen->drawLine(0, (i * 2 - 1), 319, (i * 2, -1), 0);
-				g_system->delayMillis(5);
-			}
-			break;
-		case 2:
-			for (int i = 70; i >= 1; i--) {
-				g_engine->_screen->drawLine(0, (i * 2 - 1), 319, (i * 2 - 1), 0);
-				g_system->delayMillis(5);
-			}
-			for (int i = 0; i <= 69; i++) {
-				g_engine->_screen->drawLine(0, (i * 2), 319, (i * 2), 0);
-				g_system->delayMillis(5);
-			}
-			break;
-
-		default:
-			break;
-		}
-	} else {
-		switch (effectNumber) {
-		case 13:
-			// for (int i1 = 0; i1 <= 319; i1 ++)
-			// 	for (int j1 = 0; j1 <= 139; j1 ++)
-
-			// 		move(ptr(seg(pantalla2), (ofs(pantalla2) +4 + (j1 * 320) + i1)),
-			// 		     ptr(0xa000, ((j1 * 320) + i1)), 1);
-			break;
-
-		default:
-			break;
-		}
-	}
-}
-
-void GraphicsManager::updateScreen() {
-	g_engine->_screen->markAllDirty();
-	g_engine->_screen->update();
-}
-
-void GraphicsManager::updateScreen(const Common::Rect &r) {
-	g_engine->_screen->addDirtyRect(r);
-	g_engine->_screen->update();
-}
-
-// void GraphicsManager::restoreBackground(const Common::Rect &r) {
-// 	g_engine->_screen->blitFrom(_backBuffer, r, r);
-// }
 
 } // End of namespace Tot

@@ -69,9 +69,6 @@ Common::Error TotEngine::run() {
 	initGraphics(320, 200);
 
 	//Static initializations
-	initSound();
-	initGraph();
-	initPlayAnim();
 
 	_screen = new Graphics::Screen();
 	_graphics = new GraphicsManager();
@@ -79,6 +76,11 @@ Common::Error TotEngine::run() {
 	_chrono = new ChronoManager();
 	// _room = new RoomManager();
 	_mouseManager = new MouseManager();
+
+	initSound();
+	initGraph();
+	initPlayAnim();
+
 	// _inventoryManager = new InventoryManager();
 	// _totGame = new TotGame();
 	// Set the engine's debugger console

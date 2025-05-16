@@ -658,6 +658,20 @@ static fliheader readHeader(Common::File *file) {
 	return headerfile;
 }
 
+ void blit(const Graphics::Surface *src, Common::Rect bounds) {
+	int16 height = bounds.bottom - bounds.top;
+	int16 width = bounds.right - bounds.left;
+	Graphics::Surface dest = g_engine->_screen->getSubArea(bounds);
+
+	for (int i = 0; i < height - 1; i++) {
+		for (int j = 0; j < width - 1; j++) {
+			*((byte *)dest.getBasePtr(j, i)) = *((byte *)src->getBasePtr(j, i));
+		}
+	}
+	g_engine->_screen->addDirtyRect(bounds);
+	g_engine->_screen->update();
+}
+
 static void loadFlc(
 	uint &loop,
 	boolean &permitesalida,
@@ -711,7 +725,7 @@ static void loadFlc(
 				const Graphics::Surface *frame = flic.decodeNextFrame();
 				if (frame) {
 					Common::Rect boundingBox = Common::Rect(flicx, flicy, flicx + flic.getWidth() + 1, flicy + flic.getHeight() + 1);
-					g_engine->_graphics->blit(frame, boundingBox);
+					blit(frame, boundingBox);
 
 					if (flic.hasDirtyPalette()) {
 						byte *palette = (byte *)flic.getPalette();
@@ -720,7 +734,7 @@ static void loadFlc(
 						palette[1] = 0;
 						palette[2] = 0;
 						if (palcompleta) {
-							g_engine->_graphics->changePalette(g_engine->_graphics->getPalette(), palette);
+							changePalette(g_engine->_graphics->getPalette(), palette);
 						} else {
 							int limit = doscientos ? 200 : 256;
 							g_engine->_graphics->setPalette(palette, limit);
