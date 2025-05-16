@@ -187,6 +187,7 @@ void MacV6Gui::updateMenus() {
 		menu->getSubMenuItem(videoMenu, 3)->checked = _vm->_useMacGraphicsSmoothing;
 
 	Graphics::MacMenuItem *soundMenu = menu->getMenuItem(4);
+	int voiceMenuIndex = 5;
 
 #if ENABLE_SCUMM_7_8
 	if (_vm->_game.version >= 7) {
@@ -196,24 +197,27 @@ void MacV6Gui::updateMenus() {
 		}
 	} else
 #endif
-	{
+	if (_vm->_game.id == GID_INDY4) {
+		// TODO
+		menu->getSubMenuItem(soundMenu, 0)->checked = false; // Music
+		voiceMenuIndex = 4;
+	} else {
 		menu->getSubMenuItem(soundMenu, 0)->checked = (_vm->_soundEnabled & 2); // Music
 		menu->getSubMenuItem(soundMenu, 1)->checked = (_vm->_soundEnabled & 1); // Effects
 	}
 
-	menu->getSubMenuItem(soundMenu, 5)->checked = false; // Text Only
-	menu->getSubMenuItem(soundMenu, 6)->checked = false; // Voice Only
-	menu->getSubMenuItem(soundMenu, 7)->checked = false; // Text & Voice
+	for (int i = 0; i < 3; i++)
+		menu->getSubMenuItem(soundMenu, i)->checked = false;
 
 	switch (_vm->_voiceMode) {
 	case 0:	// Voice Only
-		menu->getSubMenuItem(soundMenu, 6)->checked = true;
+		menu->getSubMenuItem(soundMenu, voiceMenuIndex + 1)->checked = true;
 		break;
 	case 1: // Voice and Text
-		menu->getSubMenuItem(soundMenu, 7)->checked = true;
+		menu->getSubMenuItem(soundMenu, voiceMenuIndex + 2)->checked = true;
 		break;
 	case 2:	// Text Only
-		menu->getSubMenuItem(soundMenu, 5)->checked = true;
+		menu->getSubMenuItem(soundMenu, voiceMenuIndex)->checked = true;
 		break;
 	default:
 		warning("MacV6Gui::updateMenus(): Invalid voice mode %d", _vm->_voiceMode);
@@ -1028,6 +1032,8 @@ bool MacV6Gui::runOptionsDialog() {
 
 		checkboxSpoolMusic = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 0);
 #endif
+	} else if (_vm->_game.id == GID_INDY4) {
+		// TODO
 	} else
 		error("MacV6Gui::runOptionsDialog: Unknown game");
 
