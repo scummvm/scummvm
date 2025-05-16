@@ -1,24 +1,35 @@
-// optsub.cpp -- subroutines for options.cpp
-// Written by John J. Xenakis for Boffo Games Inc., 1994
-
-// Note to programmers:
-//  Please do modify this file.  Instead, modify the
-//	file options.cpp.
-
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include "options.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/hodjnpodj/poker/options.h"
 
+namespace Bagel {
+namespace HodjNPodj {
+namespace Poker {
 
-#ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
+extern CFont *pFont;
 
 CPalette	*pOptionsPalette = NULL;
-
-
 static	int 		tabstop = 20;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -80,8 +91,7 @@ void COptions::OnOK()
 }
 
 
-void COptions::EndDialog(int nResult)
-{
+void COptions::EndDialog(int nResult) {
     if (pFont != NULL) {
         delete pFont;
         pFont = NULL;
@@ -170,7 +180,7 @@ void COptions::OnSize(UINT nType, int cx, int cy)
 
 int COptions::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	::AddFontResource("msserif.fon");
+	MFC::AddFontResource("msserif.fon");
 	pFont = new CFont();
 	ASSERT(pFont != NULL);
 	ASSERT((*pFont).CreateFont(16,0,0,0,FW_BOLD,0,0,0,0,OUT_RASTER_PRECIS,0,PROOF_QUALITY,FF_ROMAN,"MS Sans Serif"));
@@ -181,3 +191,6 @@ int COptions::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
+} // namespace Peggle
+} // namespace HodjNPodj
+} // namespace Bagel

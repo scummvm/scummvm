@@ -1,27 +1,33 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * dialogs.h
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      header file for all dialogs used in poker
- *   
- * RELEVANT DOCUMENTATION:
- *
- *      [Specifications, documents, test plans, etc.]
- *   
- ****************************************************************/
-#ifndef DIALOGS_H
-#define DIALOGS_H
+ */
 
-//#include <options.h>
+#ifndef HODJNPODJ_POKER_DIALOGS_H
+#define HODJNPODJ_POKER_DIALOGS_H
+
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
-#include "poker.h"
+#include "bagel/hodjnpodj/poker/poker.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Poker {
 
 #define	AMOUNTMAX	10
 #define	AMOUNTMIN	1
@@ -136,5 +142,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
+} // namespace Peggle
+} // namespace HodjNPodj
+} // namespace Bagel
 
-#endif // DIALOGS_H
+#endif

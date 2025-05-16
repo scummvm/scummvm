@@ -1,7 +1,31 @@
-//{{NO_DEPENDENCIES}}
-// App Studio generated include file.
-// Used by POKER.RC
-//
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HODJNPODJ_POKER_RESOURCE_H
+#define HODJNPODJ_POKER_RESOURCE_H
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Poker {
+
 #define IDI_POKER                       2
 #define IDB_BITMAP1                     154
 #define IDB_BITMAP2                     155
@@ -167,14 +191,8 @@
 #define ID_CANCEL2                      1021
 #define ID_CANCEL_VIEW                  1027
 
-// Next default values for new objects
-// 
-#ifdef APSTUDIO_INVOKED
-#ifndef APSTUDIO_READONLY_SYMBOLS
+} // namespace Peggle
+} // namespace HodjNPodj
+} // namespace Bagel
 
-#define _APS_NEXT_RESOURCE_VALUE        330
-#define _APS_NEXT_COMMAND_VALUE         32768
-#define _APS_NEXT_CONTROL_VALUE         1028
-#define _APS_NEXT_SYMED_VALUE           101
-#endif
 #endif

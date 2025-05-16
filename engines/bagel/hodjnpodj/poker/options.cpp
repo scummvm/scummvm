@@ -1,78 +1,43 @@
-// options.cpp -- implementation of COptions class for options dialog
-// Written by John J. Xenakis for Boffo Games Inc., 1994
-
-
-/*****************************************************************
- * Copyright (c) 1994 by Ledge Multimedia, All Rights Reserved.
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * options.cpp
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *	  1.0	03/08/94	EDS		first release
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *     tbs
- *
- * CONSTRUCTORS:
- *
- *	COptions				create a options object and initialize elements
- *
- * DESTRUCTORS:
- *
- *	~COptions				destroy a options object and release its resources
- *
- * PUBLIC:
- *
- *
- * PUBLIC GLOBAL:
- *
- *
- * PROTECTED:
- *
- *      n/a
- *
- * PRIVATE:
- *
- *
- * MEMBERS:
- *
- *      refer to options.h
- *
- * RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- ****************************************************************/
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include "resource.h"
-
-#include "options.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"
-
-#include "dibdoc.h"
-
-#include "poker.h"
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/poker/resource.h"
+#include "bagel/hodjnpodj/poker/options.h"
+#include "bagel/hodjnpodj/poker/poker.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Poker {
 
 #define		RULESSOUND		".\\SOUND\\POKE.WAV"
 
-#ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
-
 extern	CPalette	*pOptionsPalette;
-
 static	CRect		OptionsRect;
-
-static	CFont		*pFont = NULL;
 static	int 		tabstop = 20;
 
-
+CFont		*pFont = NULL;
 
 void COptions::OnLButtonDown(UINT nFlags, CPoint point)
 {
@@ -139,3 +104,7 @@ void COptions::OnCancel()
 	EndDialog( 0 );
 	return;
 }
+
+} // namespace Peggle
+} // namespace HodjNPodj
+} // namespace Bagel

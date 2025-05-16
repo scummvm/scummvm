@@ -1,7 +1,32 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/hodjnpodj/hnplibs/stdafx.h" 
 #include "bagel/hodjnpodj/hnplibs/button.h"
-#include "resource.h"
-#include "dialogs.h"
+#include "bagel/hodjnpodj/poker/resource.h"
+#include "bagel/hodjnpodj/poker/dialogs.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Poker {
 
 CPalette	*pPayoffPalette = NULL;
 CRect			crectRedraw( 10, 140, 44, 290);
@@ -334,17 +359,18 @@ CDC 			*pDC;
 	pDC = GetDC();
 	
 	pKlingonButton->SetCheck( 1 );
-	lstrcpy( (LPSTR)m_cPair, "0");
-	lstrcpy( (LPSTR)m_cPairJacksPlus, "0");
-	lstrcpy( (LPSTR)m_cTwoPair, "1");
-	lstrcpy( (LPSTR)m_cThreeOAK, "2");
-	lstrcpy( (LPSTR)m_cStriaght, "3");
-	lstrcpy( (LPSTR)m_cFlush, "4");
-	lstrcpy( (LPSTR)m_cFullHouse, "5");
-	lstrcpy( (LPSTR)m_cFourOAK, "10");
-	lstrcpy( (LPSTR)m_cStraightFlush, "20");
-	lstrcpy( (LPSTR)m_cRoyalFlush, "50");
-	m_nSetOfOdds = IDC_KLINGON; 
+	Common::strcpy_s(m_cPair, 5, "0");
+	Common::strcpy_s(m_cPairJacksPlus, 5, "0");
+	Common::strcpy_s(m_cTwoPair, 5, "1");
+	Common::strcpy_s(m_cThreeOAK, 5, "2");
+	Common::strcpy_s(m_cStriaght, 5, "3");
+	Common::strcpy_s(m_cFlush, 5, "4");
+	Common::strcpy_s(m_cFullHouse, 5, "5");
+	Common::strcpy_s(m_cFourOAK, 5, "10");
+	Common::strcpy_s(m_cStraightFlush, 5, "20");
+	Common::strcpy_s(m_cRoyalFlush, 5, "50");
+	m_nSetOfOdds = IDC_KLINGON;
+
 	if ( bDisplay ) {
 		ptxtPair->DisplayString( pDC, m_cPair, 12, FW_BOLD, RGB( 0, 0, 200) );
 		ptxtPairJacks->DisplayString( pDC, m_cPairJacksPlus, 12, FW_BOLD, RGB( 0, 0, 200) );
@@ -367,17 +393,18 @@ CDC 			*pDC;
 	pDC = GetDC();
 
 	pKuwaitiButton->SetCheck( 1 );
-	lstrcpy( (LPSTR)m_cPair, "2");
-	lstrcpy( (LPSTR)m_cPairJacksPlus, "3");
-	lstrcpy( (LPSTR)m_cTwoPair, "5");
-	lstrcpy( (LPSTR)m_cThreeOAK, "10");
-	lstrcpy( (LPSTR)m_cStriaght, "15");
-	lstrcpy( (LPSTR)m_cFlush, "20");
-	lstrcpy( (LPSTR)m_cFullHouse, "50");
-	lstrcpy( (LPSTR)m_cFourOAK, "100");
-	lstrcpy( (LPSTR)m_cStraightFlush, "250");
-	lstrcpy( (LPSTR)m_cRoyalFlush, "1000");
+	Common::strcpy_s(m_cPair, 5, "2");
+	Common::strcpy_s(m_cPairJacksPlus, 5, "3");
+	Common::strcpy_s(m_cTwoPair, 5, "5");
+	Common::strcpy_s(m_cThreeOAK, 5, "10");
+	Common::strcpy_s(m_cStriaght, 5, "15");
+	Common::strcpy_s(m_cFlush, 5, "20");
+	Common::strcpy_s(m_cFullHouse, 5, "50");
+	Common::strcpy_s(m_cFourOAK, 5, "100");
+	Common::strcpy_s(m_cStraightFlush, 5, "250");
+	Common::strcpy_s(m_cRoyalFlush, 5, "1000");
 	m_nSetOfOdds = IDC_KUWAITI;
+
 	if ( bDisplay ) {
 		ptxtPair->DisplayString( pDC, m_cPair, 12, FW_BOLD, RGB( 0, 0, 200) );
 		ptxtPairJacks->DisplayString( pDC, m_cPairJacksPlus, 12, FW_BOLD, RGB( 0, 0, 200) );
@@ -400,17 +427,18 @@ CDC 			*pDC;
 	pDC = GetDC();
 
 	pMartianButton->SetCheck( 1 );
-	lstrcpy( (LPSTR)m_cPair, "2");
-	lstrcpy( (LPSTR)m_cPairJacksPlus, "2");
-	lstrcpy( (LPSTR)m_cTwoPair, "13");
-	lstrcpy( (LPSTR)m_cThreeOAK, "3");
-	lstrcpy( (LPSTR)m_cStriaght, "89");
-	lstrcpy( (LPSTR)m_cFlush, "98");
-	lstrcpy( (LPSTR)m_cFullHouse, "177");
-	lstrcpy( (LPSTR)m_cFourOAK, "4");
-	lstrcpy( (LPSTR)m_cStraightFlush, "23");
-	lstrcpy( (LPSTR)m_cRoyalFlush, "11");
+	Common::strcpy_s(m_cPair, 5, "2");
+	Common::strcpy_s(m_cPairJacksPlus, 5, "2");
+	Common::strcpy_s(m_cTwoPair, 5, "13");
+	Common::strcpy_s(m_cThreeOAK, 5, "3");
+	Common::strcpy_s(m_cStriaght, 5, "89");
+	Common::strcpy_s(m_cFlush, 5, "98");
+	Common::strcpy_s(m_cFullHouse, 5, "177");
+	Common::strcpy_s(m_cFourOAK, 5, "4");
+	Common::strcpy_s(m_cStraightFlush, 5, "23");
+	Common::strcpy_s(m_cRoyalFlush, 5, "11");
 	m_nSetOfOdds = IDC_MARTIAN;
+
 	if ( bDisplay ) {
 		ptxtPair->DisplayString( pDC, m_cPair, 12, FW_BOLD, RGB( 0, 0, 200) );
 		ptxtPairJacks->DisplayString( pDC, m_cPairJacksPlus, 12, FW_BOLD, RGB( 0, 0, 200) );
@@ -433,17 +461,18 @@ CDC 			*pDC;
 	pDC = GetDC();
 
 	pPoPorButton->SetCheck( 1 );
-	lstrcpy( (LPSTR)m_cPair, "1");
-	lstrcpy( (LPSTR)m_cPairJacksPlus, "2");
-	lstrcpy( (LPSTR)m_cTwoPair, "3");
-	lstrcpy( (LPSTR)m_cThreeOAK, "5");
-	lstrcpy( (LPSTR)m_cStriaght, "8");
-	lstrcpy( (LPSTR)m_cFlush, "10");
-	lstrcpy( (LPSTR)m_cFullHouse, "15");
-	lstrcpy( (LPSTR)m_cFourOAK, "50");
-	lstrcpy( (LPSTR)m_cStraightFlush, "100");
-	lstrcpy( (LPSTR)m_cRoyalFlush, "500");
+	Common::strcpy_s(m_cPair, 5, "1");
+	Common::strcpy_s(m_cPairJacksPlus, 5, "2");
+	Common::strcpy_s(m_cTwoPair, 5, "3");
+	Common::strcpy_s(m_cThreeOAK, 5, "5");
+	Common::strcpy_s(m_cStriaght, 5, "8");
+	Common::strcpy_s(m_cFlush, 5, "10");
+	Common::strcpy_s(m_cFullHouse, 5, "15");
+	Common::strcpy_s(m_cFourOAK, 5, "50");
+	Common::strcpy_s(m_cStraightFlush, 5, "100");
+	Common::strcpy_s(m_cRoyalFlush, 5, "500");
 	m_nSetOfOdds = IDC_POPO;
+
 	if ( bDisplay ) {
 		ptxtPair->DisplayString( pDC, m_cPair, 12, FW_BOLD, RGB( 0, 0, 200) );
 		ptxtPairJacks->DisplayString( pDC, m_cPairJacksPlus, 12, FW_BOLD, RGB( 0, 0, 200) );
@@ -466,17 +495,18 @@ CDC 			*pDC;
 	pDC = GetDC();
 
 	pVegasButton->SetCheck( 1 );
-	lstrcpy( (LPSTR)m_cPair, "0");
-	lstrcpy( (LPSTR)m_cPairJacksPlus, "1");
-	lstrcpy( (LPSTR)m_cTwoPair, "2");
-	lstrcpy( (LPSTR)m_cThreeOAK, "3");
-	lstrcpy( (LPSTR)m_cStriaght, "4");
-	lstrcpy( (LPSTR)m_cFlush, "6");
-	lstrcpy( (LPSTR)m_cFullHouse, "9");
-	lstrcpy( (LPSTR)m_cFourOAK, "25");
-	lstrcpy( (LPSTR)m_cStraightFlush, "50");
-	lstrcpy( (LPSTR)m_cRoyalFlush, "250");
+	Common::strcpy_s(m_cPair, 5, "0");
+	Common::strcpy_s(m_cPairJacksPlus, 5, "1");
+	Common::strcpy_s(m_cTwoPair, 5, "2");
+	Common::strcpy_s(m_cThreeOAK, 5, "3");
+	Common::strcpy_s(m_cStriaght, 5, "4");
+	Common::strcpy_s(m_cFlush, 5, "6");
+	Common::strcpy_s(m_cFullHouse, 5, "9");
+	Common::strcpy_s(m_cFourOAK, 5, "25");
+	Common::strcpy_s(m_cStraightFlush, 5, "50");
+	Common::strcpy_s(m_cRoyalFlush, 5, "250");
 	m_nSetOfOdds = IDC_VEGAS;
+
 	if ( bDisplay ) {
 		ptxtPair->DisplayString( pDC, m_cPair, 12, FW_BOLD, RGB( 0, 0, 200) );
 		ptxtPairJacks->DisplayString( pDC, m_cPairJacksPlus, 12, FW_BOLD, RGB( 0, 0, 200) );
@@ -596,3 +626,7 @@ BEGIN_MESSAGE_MAP(CSetPayoffsDlg, CBmpDialog)
 	ON_WM_ERASEBKGND()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+
+} // namespace Peggle
+} // namespace HodjNPodj
+} // namespace Bagel

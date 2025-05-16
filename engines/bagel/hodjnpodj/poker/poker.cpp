@@ -1,64 +1,41 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * poker.cpp					Five card stud machine
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *	1.0 5/2/94 GTB		
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *   Game is a simple skeleton program which consists of a main
- *   window, which contains background artwork from a .BMP file,
- *	 and a Quit button.  Stub routines are present for mouse related
- *	 activities and keyboard input; edit the stubs as required.
- *
- *   This is intended to serve as a starting-point for new games.
- *
- * LOCALS:
- *
- *	SplashScreen			paint the background artwork
- *
- * GLOBALS:
- *
- *	FlushInputEvents		flush all unprocessed mouse/keyboard events
- *	ReleaseResources		release all application specific resources
- *
- * RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- * FILES USED:
- *
- *	poker.bmp				bitmap image for background artwork
- *	bet1up.bmp, bet1down.bmp bet1disa.bmp				bitmap image for bet1 button artwork
- *	bet5up.bmp, bet5down.bmp bet5disa.bmp				bitmap image for bet5 button artwork
- *	bet10up.bmp, bet10down.bmp bet10disa.bmp				bitmap image for bet10 button artwork
- *	bet25up.bmp, bet25down.bmp bet25disa.bmp				bitmap image for bet25 button artwork
- *	bet100up.bmp, bet100down.bmp bet100disa.bmp				bitmap image for bet100 button artwork
- *	bet1000up.bmp, bet1000down.bmp bet1000disa.bmp				bitmap image for bet1000 button artwork
- *	clearbetup.bmp, clearbetup.bmp clearbetup.bmp				bitmap image for clear bet button artwork
- *	betallup.bmp, betalldown.bmp betalldisa.bmp				bitmap image for bet all button artwork
- *
- ****************************************************************/
+ */
 
-#include <stdlib.h>
+#include "bagel/hodjnpodj/hnplibs/dibapi.h"
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-
 #include "bagel/hodjnpodj/hnplibs/button.h"
-#include "bagel/boflib/sound.h" 
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
-#include "bagel/boflib/misc.h"
-#include "poker.h"  
-#include "dialogs.h"            // header for all of my dialog boxes
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
-#include "c1btndlg.h"
-#include "dibapi.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/boflib/sound.h" 
+#include "bagel/hodjnpodj/poker/poker.h"  
+#include "bagel/hodjnpodj/poker/dialogs.h"
+#include "bagel/hodjnpodj/poker/c1btndlg.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
-#include "copyrite.h"						// mandatory internal copyright notice
+namespace Bagel {
+namespace HodjNPodj {
+namespace Poker {
+
 
 // Game theme song
 #define		GAME_THEME		".\\SOUND\\VIDEOPO.MID"
@@ -86,8 +63,9 @@
 
 #define		MAXBET				 10000
 
-void PlayEasterEgg( CDC *pDC, CWnd *pWnd, CPalette *pPalette, char *pszAnimFile, char *pszSoundFile, 
-					int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound );
+void PlayEasterEgg( CDC *pDC, CWnd *pWnd, CPalette *pPalette,
+	const char *pszAnimFile, const char *pszSoundFile, 
+	int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound);
 
 extern CMainPokerWindow	*pcwndPoker;
 
@@ -152,7 +130,7 @@ CRect 	NewGameRect( 21, 4, 225, 21);
 
 static 	CSound	*pGameSound = NULL;								// Game theme song
 
-LPSTR   sBitmaps[53] = {
+LPCSTR sBitmaps[53] = {
 	"ART\\PKR1.BMP",
 	"ART\\PKR2.BMP",
 	"ART\\PKR3.BMP",
@@ -668,8 +646,8 @@ CRect			rcDIB;									// defines where the art comes from
 CDC				*pDC;										// pointer to the window device context	
 CDibDoc		myDoc;                  // contains the artwork's DIB information
 HDIB			hDIB;                   // a handle to the DIB itself
-char			cBet [7];								// empty strings for displaying the user's bet
-char			cUser [12];  						// empty strings for displaying the user's amount
+char			cBet[7];								// empty strings for displaying the user's bet
+char			cUser[12];  						// empty strings for displaying the user's amount
 // COLORREF	clrOldColorRef;         // a place holder for the old text color in the DC
 // int				nOldBkMode;             // a place holder for the old Background Mode in the DC 
 BOOL			bTestDibDoc;						// a bool for testing the return on DibDoc   
@@ -711,11 +689,11 @@ ptxtUserDisplay = new CText;
 ptxtBetDisplay = new CText;
 
 // create the display strings for the bet and user amount
-Common::sprintf_s( (LPSTR)cBet, "%li", m_lUserBet);
-Common::sprintf_s( (LPSTR)cUser, "%li", m_lUserAmount);
+Common::sprintf_s( (LPSTR)cBet, 10, "%li", m_lUserBet);
+Common::sprintf_s( (LPSTR)cUser, 10, "%li", m_lUserAmount);
 
 j=0;
-for ( nCharIndex = lstrlen((LPSTR)cUser) - 1, nDisplayIndex = nCharIndex + (nCharIndex / 3), nCounter1 = 1;
+for ( nCharIndex = strlen((LPSTR)cUser) - 1, nDisplayIndex = nCharIndex + (nCharIndex / 3), nCounter1 = 1;
 			nCharIndex >= 0;
 			nCharIndex--, nDisplayIndex--, nCounter1++) {
 
@@ -728,13 +706,13 @@ for ( nCharIndex = lstrlen((LPSTR)cUser) - 1, nDisplayIndex = nCharIndex + (nCha
 		cUserDisplay[nDisplayIndex] = cUser[nCharIndex];
 	}
 }
-nDisplayIndex = lstrlen((LPSTR)cUser);
+nDisplayIndex = strlen((LPSTR)cUser);
 cUserDisplay[nDisplayIndex+j] = 0;
 
 ptxtUserDisplay->SetupText( pDC, pGamePalette, &rectDisplayUser, JUSTIFY_CENTER );
 ptxtUserDisplay->DisplayString( pDC, cUserDisplay, 16, FW_BOLD, (COLORREF)RGB(0,0,255) );
 
-for ( nCharIndex = lstrlen((LPSTR)cBet) - 1, nDisplayIndex = nCharIndex + (nCharIndex / 3), nCounter1 =1;
+for ( nCharIndex = strlen((LPSTR)cBet) - 1, nDisplayIndex = nCharIndex + (nCharIndex / 3), nCounter1 =1;
 			nCharIndex >= 0;
 			nCharIndex--, nDisplayIndex--, nCounter1++) {
 
@@ -746,7 +724,7 @@ for ( nCharIndex = lstrlen((LPSTR)cBet) - 1, nDisplayIndex = nCharIndex + (nChar
 		cBetDisplay[nDisplayIndex] = cBet[nCharIndex];
 	}
 }
-nDisplayIndex = lstrlen((LPSTR)cBet);
+nDisplayIndex = strlen((LPSTR)cBet);
 cBetDisplay[nDisplayIndex+(nDisplayIndex/4)] = 0;
 
 ptxtBetDisplay->SetupText( pDC, pGamePalette, &rectDisplayBet, JUSTIFY_CENTER );
@@ -794,11 +772,10 @@ delete ptxtBetDisplay;
 
 void CMainPokerWindow::ResetGame( long lAmount )
 {
-int nLoop;
-CDC 	*pDC = NULL;
-BOOL    bTestCreate = FALSE;
+	int nLoop;
+	CDC 	*pDC = NULL;
 	
-// set arrays to 0
+	// set arrays to 0
 	for (nLoop = 0; nLoop < 10; ++nLoop)	{
 		aDealtArray[nLoop][0] = 0;
 		aDealtArray[nLoop][1] = 0;
@@ -918,217 +895,213 @@ void CALLBACK lpfnOptionCallback ( CWnd * pWnd)							// do the mini options dia
 
 BOOL CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-int 		nHoldLoop, nLoop1;	// loop variables
-int 		nMainOption=0;         // return from the Options dialog
-int 		nOption=0;         // return from the Options dialog
-int 		nSetAmount=0;      // return from the Set User Amount dialog
-int 		nSetPayOff=0;      // return from the Set Payoffs dialog
-CMainMenu		dlgMainOpts((CWnd *)this, pGamePalette, 
-							(m_lpGameStruct->bPlayingMetagame ? (NO_NEWGAME|NO_OPTIONS) : NULL),
-							lpfnOptionCallback, RULESFILE, 
-							(m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : NULL), m_lpGameStruct);
+	int 		nHoldLoop, nLoop1;	// loop variables
+	int 		nMainOption=0;         // return from the Options dialog
+	CMainMenu		dlgMainOpts((CWnd *)this, pGamePalette, 
+								(m_lpGameStruct->bPlayingMetagame ? (NO_NEWGAME|NO_OPTIONS) : NULL),
+								lpfnOptionCallback, RULESFILE, 
+								(m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : NULL), m_lpGameStruct);
 
-BOOL	bTestCreate = FALSE;
-CDC 	*pDC = NULL;
-int			nTemp = 0;
+	CDC 	*pDC = NULL;
+	int			nTemp = 0;
 
-if (HIWORD(lParam) == BN_CLICKED)			// only want to look at button clicks
-	switch(wParam) { 
+	if (HIWORD(lParam) == BN_CLICKED)			// only want to look at button clicks
+		switch(wParam) { 
 
-		case IDC_OPTION:								// Option button clicked, then put up the Options dialog 
-			pOptionButton->ShowWindow( SW_HIDE );
-			CSound::waitWaveSounds();
-			::sndPlaySound( NULL, 0 );
-			nMainOption = dlgMainOpts.DoModal();
-			switch (nMainOption) {
-				case IDC_OPTIONS_QUIT:						// if Quit buttons was hit, quit
-					PostMessage(WM_CLOSE,0,0);
-					break;
+			case IDC_OPTION:								// Option button clicked, then put up the Options dialog 
+				pOptionButton->ShowWindow( SW_HIDE );
+				CSound::waitWaveSounds();
+				sndPlaySound( NULL, 0 );
+				nMainOption = dlgMainOpts.DoModal();
+				switch (nMainOption) {
+					case IDC_OPTIONS_QUIT:						// if Quit buttons was hit, quit
+						PostMessage(WM_CLOSE,0,0);
+						break;
 					
-				case IDC_OPTIONS_NEWGAME:					// reset the game and start a new hand
-					if (( m_bPlayRounds == FALSE ) && (m_bMiddleOfHand == FALSE )) {
-						ResetGame( m_lStartingAmount );
-	        		}
-					break;
+					case IDC_OPTIONS_NEWGAME:					// reset the game and start a new hand
+						if (( m_bPlayRounds == FALSE ) && (m_bMiddleOfHand == FALSE )) {
+							ResetGame( m_lStartingAmount );
+	        			}
+						break;
 					
-			}
-			m_bPlaySounds = m_lpGameStruct->bSoundEffectsEnabled;
-			if (m_lpGameStruct->bMusicEnabled) {
-				if (pGameSound == NULL) {
-					pGameSound = new CSound( this, GAME_THEME, 
-											SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-					if (pGameSound != NULL)
-						(*pGameSound).midiLoopPlaySegment( 6370, 33000, 0, FMT_MILLISEC );
 				}
-			} // end if pGameSound
-			else { 
-				if (pGameSound != NULL) {
-					pGameSound->stop();
-					delete pGameSound;
-					pGameSound = NULL;
-				}
-			}
-			pOptionButton->ShowWindow( SW_SHOWNORMAL );
-			EnableBets();
-			for ( nTemp = 0; nTemp < 7; nTemp++ ) {
-				apBet[nTemp]->RedrawWindow();
-			}
-//			PostMessage( WM_COMMAND, wParam, lParam);
-			break;
-		
-// if the Hols buttons are hit then set then accordingly
-		case IDC_HOLD1:
-			SetHoldList(0);
-			break;
-
-		case IDC_HOLD2:
-			SetHoldList(1);
-			break;
-
-		case IDC_HOLD3:
-			SetHoldList(2);
-			break;
-
-		case IDC_HOLD4:
-			SetHoldList(3);
-			break;
-
-		case IDC_HOLD5:
-			SetHoldList(4);
-			break;
-
-// the Draw button is hit 
-		case IDC_DRAW:                                           
-
-      m_bMiddleOfHand = FALSE;
-
-// increment the number of rounds
-			roundOfPlay++;             
-// for all cards not held, draw a new card
-			for ( nHoldLoop = 0; nHoldLoop < 5; ++nHoldLoop ) {
-				if ( abHoldArray[nHoldLoop] == FALSE ){
-					ShowNewCard( DealNewCard(), nHoldLoop );
-					aDealtArray[nHoldLoop][1] = 0;       
-				}
-			} 
-// check to see if the hand won
-			CheckWinningHand();      
-			m_bEndHand=TRUE;
-			for ( nLoop1 = 0; nLoop1 < 5; ++nLoop1 ) {
-
-				pDC = GetDC();
-				apCard[nLoop1]->EraseSprite( pDC );
-				delete apCard[nLoop1];
-			    apCard[nLoop1] = NULL;
-
-			    ReleaseDC( pDC );
-
-            }
-// reset all arrays and buttons and start a new hand
-			for (nLoop1 = 0; nLoop1 < 10; ++nLoop1)	{
-				aDealtArray[nLoop1][0] = 0;
-				aDealtArray[nLoop1][1] = 0;
-			}
-
-			pDealButton->EnableWindow(FALSE);
-			pDrawButton->EnableWindow(FALSE);
-			for ( nHoldLoop = 0; nHoldLoop < 5; ++nHoldLoop ){
-				apHold[nHoldLoop]->EnableWindow(FALSE);
-				abHoldArray[nHoldLoop] = TRUE;
-				SetHoldList(nHoldLoop);
-			}
-
-			if (( m_lpGameStruct->bPlayingMetagame ) && ( m_lUserAmount == 0 )) {
-		    C1ButtonDialog	cMsgBox( (CWnd *)this, pGamePalette, "&Okay", "You Lose.", "You have 0", "crowns left." );
-				cMsgBox.DoModal();
-				PostMessage( WM_CLOSE );			
-			}
-			else {
-				SetBet( 0 );
-				if ( m_lpGameStruct->bPlayingMetagame ) {
-					if ( roundOfPlay >= m_nRound ) {
-					CMessageBox	cMsgBox( (CWnd *)this, pGamePalette, "Your 4 rounds", "are over." );
-						PostMessage( WM_CLOSE );			
+				m_bPlaySounds = m_lpGameStruct->bSoundEffectsEnabled;
+				if (m_lpGameStruct->bMusicEnabled) {
+					if (pGameSound == NULL) {
+						pGameSound = new CSound( this, GAME_THEME, 
+												SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+						if (pGameSound != NULL)
+							(*pGameSound).midiLoopPlaySegment( 6370, 33000, 0, FMT_MILLISEC );
+					}
+				} // end if pGameSound
+				else { 
+					if (pGameSound != NULL) {
+						pGameSound->stop();
+						delete pGameSound;
+						pGameSound = NULL;
 					}
 				}
-			}
-			break;                      	// ... to force a repaint 
-			
-// the Deal button is hit 
-		case IDC_DEAL:           
+				pOptionButton->ShowWindow( SW_SHOWNORMAL );
+				EnableBets();
+				for ( nTemp = 0; nTemp < 7; nTemp++ ) {
+					apBet[nTemp]->RedrawWindow();
+				}
+	//			PostMessage( WM_COMMAND, wParam, lParam);
+				break;
 		
-			m_bMiddleOfHand = TRUE;
-// make sure that the Dealt array is reset
-			for ( nLoop1 = 0; nLoop1 < 10; ++nLoop1)	{
-				aDealtArray[nLoop1][0] = 0;
-				aDealtArray[nLoop1][1] = 0;
+	// if the Hols buttons are hit then set then accordingly
+			case IDC_HOLD1:
+				SetHoldList(0);
+				break;
+
+			case IDC_HOLD2:
+				SetHoldList(1);
+				break;
+
+			case IDC_HOLD3:
+				SetHoldList(2);
+				break;
+
+			case IDC_HOLD4:
+				SetHoldList(3);
+				break;
+
+			case IDC_HOLD5:
+				SetHoldList(4);
+				break;
+
+	// the Draw button is hit 
+			case IDC_DRAW:                                           
+
+		  m_bMiddleOfHand = FALSE;
+
+	// increment the number of rounds
+				roundOfPlay++;             
+	// for all cards not held, draw a new card
+				for ( nHoldLoop = 0; nHoldLoop < 5; ++nHoldLoop ) {
+					if ( abHoldArray[nHoldLoop] == FALSE ){
+						ShowNewCard( DealNewCard(), nHoldLoop );
+						aDealtArray[nHoldLoop][1] = 0;       
+					}
+				} 
+	// check to see if the hand won
+				CheckWinningHand();      
+				m_bEndHand=TRUE;
+				for ( nLoop1 = 0; nLoop1 < 5; ++nLoop1 ) {
+
+					pDC = GetDC();
+					apCard[nLoop1]->EraseSprite( pDC );
+					delete apCard[nLoop1];
+					apCard[nLoop1] = NULL;
+
+					ReleaseDC( pDC );
+
+				}
+	// reset all arrays and buttons and start a new hand
+				for (nLoop1 = 0; nLoop1 < 10; ++nLoop1)	{
+					aDealtArray[nLoop1][0] = 0;
+					aDealtArray[nLoop1][1] = 0;
+				}
+
+				pDealButton->EnableWindow(FALSE);
+				pDrawButton->EnableWindow(FALSE);
+				for ( nHoldLoop = 0; nHoldLoop < 5; ++nHoldLoop ){
+					apHold[nHoldLoop]->EnableWindow(FALSE);
+					abHoldArray[nHoldLoop] = TRUE;
+					SetHoldList(nHoldLoop);
+				}
+
+				if (( m_lpGameStruct->bPlayingMetagame ) && ( m_lUserAmount == 0 )) {
+				C1ButtonDialog	cMsgBox( (CWnd *)this, pGamePalette, "&Okay", "You Lose.", "You have 0", "crowns left." );
+					cMsgBox.DoModal();
+					PostMessage( WM_CLOSE );			
+				}
+				else {
+					SetBet( 0 );
+					if ( m_lpGameStruct->bPlayingMetagame ) {
+						if ( roundOfPlay >= m_nRound ) {
+						CMessageBox	cMsgBox( (CWnd *)this, pGamePalette, "Your 4 rounds", "are over." );
+							PostMessage( WM_CLOSE );			
+						}
+					}
+				}
+				break;                      	// ... to force a repaint 
+			
+	// the Deal button is hit 
+			case IDC_DEAL:           
+		
+				m_bMiddleOfHand = TRUE;
+	// make sure that the Dealt array is reset
+				for ( nLoop1 = 0; nLoop1 < 10; ++nLoop1)	{
+					aDealtArray[nLoop1][0] = 0;
+					aDealtArray[nLoop1][1] = 0;
+				}
+
+	// for all 5 cards shown deal a new card
+				for ( nLoop1 = 0; nLoop1 < 5; ++nLoop1 )
+					ShowNewCard( DealNewCard(), nLoop1 );
+
+	// enable the Draw, and Hold buttons
+				pDrawButton->EnableWindow(TRUE);
+				for ( nHoldLoop = 0; nHoldLoop < 5; ++nHoldLoop )
+					apHold[nHoldLoop]->EnableWindow(TRUE);
+
+	// disable all other buttons
+				pDealButton->EnableWindow(FALSE);
+
+				apBet[0]->EnableWindow( FALSE );
+				apBet[1]->EnableWindow( FALSE );
+				apBet[2]->EnableWindow( FALSE );
+				apBet[3]->EnableWindow( FALSE );
+				apBet[4]->EnableWindow( FALSE);
+				apBet[5]->EnableWindow( FALSE);
+				apBet[6]->EnableWindow( FALSE);
+
+				pClearBet->EnableWindow( FALSE );
+				break;
+
+	// if the Bet buttons are hit then set the bet accordingly
+			case IDC_BET1:
+				SetBet( 1 ); 
+				pDealButton->EnableWindow(TRUE);
+				break;
+			case IDC_BET5:
+				SetBet( 5 );
+				pDealButton->EnableWindow(TRUE);
+				break;
+			case IDC_BET10:
+				SetBet( 10 );
+				pDealButton->EnableWindow(TRUE);
+				break;
+			case IDC_BET25:
+				SetBet( 25 );
+				pDealButton->EnableWindow(TRUE);
+				break;
+			case IDC_BET100:
+				SetBet( 100 );
+				pDealButton->EnableWindow(TRUE);
+				break;
+			case IDC_BET1000:
+				SetBet( 1000 );
+				pDealButton->EnableWindow(TRUE);
+				break;
+			case IDC_BETALL:
+				SetBet( min(m_lUserAmount, (long)MAXBET ) );
+				pDealButton->EnableWindow(TRUE);
+				break;
+			case IDC_CLEARBET:
+				if ( m_lpGameStruct->bSoundEffectsEnabled ) {
+					sndPlaySound( NULL, 0 );
+					sndPlaySound( WAV_CLEAR, SND_ASYNC );
+				}
+				SetBet( -1 );
+				pDealButton->EnableWindow(FALSE);
+				break;
 			}
-
-// for all 5 cards shown deal a new card
-			for ( nLoop1 = 0; nLoop1 < 5; ++nLoop1 )
-				ShowNewCard( DealNewCard(), nLoop1 );
-
-// enable the Draw, and Hold buttons
-			pDrawButton->EnableWindow(TRUE);
-			for ( nHoldLoop = 0; nHoldLoop < 5; ++nHoldLoop )
-				apHold[nHoldLoop]->EnableWindow(TRUE);
-
-// disable all other buttons
-			pDealButton->EnableWindow(FALSE);
-
-			apBet[0]->EnableWindow( FALSE );
-			apBet[1]->EnableWindow( FALSE );
-			apBet[2]->EnableWindow( FALSE );
-			apBet[3]->EnableWindow( FALSE );
-			apBet[4]->EnableWindow( FALSE);
-			apBet[5]->EnableWindow( FALSE);
-			apBet[6]->EnableWindow( FALSE);
-
-			pClearBet->EnableWindow( FALSE );
-			break;
-
-// if the Bet buttons are hit then set the bet accordingly
-		case IDC_BET1:
-			SetBet( 1 ); 
-			pDealButton->EnableWindow(TRUE);
-			break;
-		case IDC_BET5:
-			SetBet( 5 );
-			pDealButton->EnableWindow(TRUE);
-			break;
-		case IDC_BET10:
-			SetBet( 10 );
-			pDealButton->EnableWindow(TRUE);
-			break;
-		case IDC_BET25:
-			SetBet( 25 );
-			pDealButton->EnableWindow(TRUE);
-			break;
-		case IDC_BET100:
-			SetBet( 100 );
-			pDealButton->EnableWindow(TRUE);
-			break;
-		case IDC_BET1000:
-			SetBet( 1000 );
-			pDealButton->EnableWindow(TRUE);
-			break;
-		case IDC_BETALL:
-			SetBet( min(m_lUserAmount, (long)MAXBET ) );
-			pDealButton->EnableWindow(TRUE);
-			break;
-		case IDC_CLEARBET:
-			if ( m_lpGameStruct->bSoundEffectsEnabled ) {
-				::sndPlaySound( NULL, 0 );
-				::sndPlaySound( WAV_CLEAR, SND_ASYNC );
-			}
-			SetBet( -1 );
-			pDealButton->EnableWindow(FALSE);
-			break;
-		}
       
    
-(*this).SetFocus();							// Reset focus back to the main window
-return(TRUE);
+	(*this).SetFocus();							// Reset focus back to the main window
+	return(TRUE);
 }
 
 void CMainPokerWindow::OnRButtonDown(UINT nFlags, CPoint point)
@@ -1170,13 +1143,11 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 	else if (rClock.PtInRect(point) )  {
 		CSound::waitWaveSounds();
-		::sndPlaySound( NULL, 0 );
+		sndPlaySound( NULL, 0 );
 		PlayEasterEgg( pDC, (CWnd *)this, pGamePalette, CLOCK_ANIM, WAV_CLOCK, CLOCK_FRAMES, 
 						CLOCK_X, CLOCK_Y, CLOCK_SLEEP, m_bPlaySounds );
 	}
 	else if (rBoom.PtInRect(point) )  {
-//		PlayEasterEgg( pDC, (CWnd *)this, pGamePalette, BOOM_ANIM, WAV_BOOM, BOOM_FRAMES, 
-//						BOOM_X, BOOM_Y, BOOM_SLEEP, m_lpGameStruct->bSoundEffectsEnabled );
 		pSprite = new CSprite;
 		(*pSprite).SharePalette(pGamePalette);
 		bSuccess = (*pSprite).LoadCels( pDC, BOOM_ANIM, BOOM_FRAMES );
@@ -1188,7 +1159,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 		(*pSprite).SetMobile(FALSE); 
 		
 		CSound::waitWaveSounds();
-		::sndPlaySound( NULL, 0 );
+		sndPlaySound( NULL, 0 );
 				
 		if ( m_bPlaySounds ) {
 			pEffect = new CSound( (CWnd *)this, WAV_BOOM,								// Load up the sound file as a 
@@ -1225,7 +1196,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 	else if (rPencil.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled )  {
 		CSound::waitWaveSounds();
-		::sndPlaySound( NULL, 0 );
+		sndPlaySound( NULL, 0 );
 		if ( m_bPlaySounds ) {
 			pEffect = new CSound( (CWnd *)this, WAV_PENCIL,								// Load up the sound file as a 
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
@@ -1235,11 +1206,11 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
-//		::sndPlaySound( WAV_PENCIL, SND_ASYNC );
+//		sndPlaySound( WAV_PENCIL, SND_ASYNC );
 	}
 	else if (rChair.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled )  {
 		CSound::waitWaveSounds();
-		::sndPlaySound( NULL, 0 );
+		sndPlaySound( NULL, 0 );
 		if ( m_bPlaySounds ) {
 			pEffect = new CSound( (CWnd *)this, WAV_CHAIR,								// Load up the sound file as a 
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
@@ -1249,11 +1220,11 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
-//		::sndPlaySound( WAV_CHAIR, SND_ASYNC );
+//		sndPlaySound( WAV_CHAIR, SND_ASYNC );
 	}
 	else if (rWindow.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled )  {
 		CSound::waitWaveSounds();
-		::sndPlaySound( NULL, 0 );
+		sndPlaySound( NULL, 0 );
 		if ( m_bPlaySounds ) {
 			pEffect = new CSound( (CWnd *)this, WAV_WINDOW,								// Load up the sound file as a 
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
@@ -1263,11 +1234,11 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
-//		::sndPlaySound( WAV_WINDOW, SND_ASYNC );
+//		sndPlaySound( WAV_WINDOW, SND_ASYNC );
 	}
 	else if (rLight.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled )  {
 		CSound::waitWaveSounds();
-		::sndPlaySound( NULL, 0 );
+		sndPlaySound( NULL, 0 );
 		if ( m_bPlaySounds ) {
 			pEffect = new CSound( (CWnd *)this, WAV_LIGHT,								// Load up the sound file as a 
 								SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);	//...Wave file, to delete itself
@@ -1277,7 +1248,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point)
 		   	if (!bSuccess)
 		   		delete pEffect;
 		}
-//		::sndPlaySound( WAV_LIGHT, SND_ASYNC );
+//		sndPlaySound( WAV_LIGHT, SND_ASYNC );
 	}
 	
 	ReleaseDC( pDC );
@@ -1492,15 +1463,15 @@ CUserWonDlg	dlgWon((CWnd *)this, pGamePalette );
 				( anShownCards[4] == anShownCards[1] + 3 ) && 
 				( anShownCards[0] == anShownCards[1] - 9 )) {
 		if ( m_bPlaySounds ) {
-			::sndPlaySound( NULL, 0 );
-	 	  	::sndPlaySound( WAV_PAY, SND_ASYNC);
+			sndPlaySound( NULL, 0 );
+	 	  	sndPlaySound( WAV_PAY, SND_ASYNC);
 		}
 
 // 		MessageBox("You got a Royal Flush", NULL, MB_OK);
 	    dlgWon.SetInitialOptions( 10 );
 	    dlgWon.DoModal();
 	
-		::sndPlaySound( NULL, 0 );
+		sndPlaySound( NULL, 0 );
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (  m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) { 
 			m_lUserAmount = 2147483647;
@@ -1519,13 +1490,13 @@ CUserWonDlg	dlgWon((CWnd *)this, pGamePalette );
 	if ( anShownCards[4] == anShownCards[0] + 4 ) {
 
 		if ( m_bPlaySounds ) {
-			::sndPlaySound( NULL, 0 );
-	 	  	::sndPlaySound( WAV_PAY, SND_ASYNC);
+			sndPlaySound( NULL, 0 );
+	 	  	sndPlaySound( WAV_PAY, SND_ASYNC);
 		}
 // 		MessageBox("You got a Straight Flush", NULL, MB_OK);
 	    dlgWon.SetInitialOptions( 9 );
 	    dlgWon.DoModal();
-		::sndPlaySound( NULL, 0 );
+		sndPlaySound( NULL, 0 );
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (  m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) { 
 			m_lUserAmount = 2147483647;
@@ -1560,13 +1531,13 @@ CUserWonDlg	dlgWon((CWnd *)this, pGamePalette );
 	if ( nPairMatch == 6){
 
 		if ( m_bPlaySounds ) {
-			::sndPlaySound( NULL, 0 );
-	 	  	::sndPlaySound( WAV_PAY, SND_ASYNC);
+			sndPlaySound( NULL, 0 );
+	 	  	sndPlaySound( WAV_PAY, SND_ASYNC);
 		}
 // 		MessageBox("You got a Four of a Kind", NULL, MB_OK);
 	    dlgWon.SetInitialOptions( 8 );
 	    dlgWon.DoModal();
-		::sndPlaySound( NULL, 0 );
+		sndPlaySound( NULL, 0 );
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (  m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) { 
 			m_lUserAmount = 2147483647;
@@ -1583,13 +1554,13 @@ CUserWonDlg	dlgWon((CWnd *)this, pGamePalette );
 	if ( nPairMatch == 4){
 
 		if ( m_bPlaySounds ) {
-			::sndPlaySound( NULL, 0 );
-	 	  	::sndPlaySound( WAV_PAY, SND_ASYNC);
+			sndPlaySound( NULL, 0 );
+	 	  	sndPlaySound( WAV_PAY, SND_ASYNC);
 		}
 // 		MessageBox("You got a Full House", NULL, MB_OK);
 	    dlgWon.SetInitialOptions( 7 );
 	    dlgWon.DoModal();
-		::sndPlaySound( NULL, 0 );
+		sndPlaySound( NULL, 0 );
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (  m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) { 
 			m_lUserAmount = 2147483647;
@@ -1606,13 +1577,13 @@ CUserWonDlg	dlgWon((CWnd *)this, pGamePalette );
 	if ( nPairMatch == 3){
 
 		if ( m_bPlaySounds ) {
-			::sndPlaySound( NULL, 0 );
-	 	  	::sndPlaySound( WAV_PAY, SND_ASYNC);
+			sndPlaySound( NULL, 0 );
+	 	  	sndPlaySound( WAV_PAY, SND_ASYNC);
 		}
 // 		MessageBox("You got a Three of a Kind", NULL, MB_OK);
 	    dlgWon.SetInitialOptions( 4 );
 	    dlgWon.DoModal();
-		::sndPlaySound( NULL, 0 );
+		sndPlaySound( NULL, 0 );
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (  m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) { 
 			m_lUserAmount = 2147483647;
@@ -1629,13 +1600,13 @@ CUserWonDlg	dlgWon((CWnd *)this, pGamePalette );
 	if ( nPairMatch == 2){
 
 		if ( m_bPlaySounds ) {
-			::sndPlaySound( NULL, 0 );
-	 	  	::sndPlaySound( WAV_PAY, SND_ASYNC);
+			sndPlaySound( NULL, 0 );
+	 	  	sndPlaySound( WAV_PAY, SND_ASYNC);
 		}
 // 		MessageBox("You got a Two Pair", NULL, MB_OK);
 	    dlgWon.SetInitialOptions( 3 );
 	    dlgWon.DoModal();
-		::sndPlaySound( NULL, 0 );
+		sndPlaySound( NULL, 0 );
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (  m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) { 
 			m_lUserAmount = 2147483647;
@@ -1654,20 +1625,20 @@ CUserWonDlg	dlgWon((CWnd *)this, pGamePalette );
 
 			if ( m_nPayOffPairJackorHigher == 0 ) {
 				if ( m_bPlaySounds ) 
-					::sndPlaySound( WAV_NOPAY, SND_ASYNC );
+					sndPlaySound( WAV_NOPAY, SND_ASYNC );
 			    dlgWon.SetInitialOptions();
 			    dlgWon.DoModal();
-				::sndPlaySound( NULL, 0 );
+				sndPlaySound( NULL, 0 );
 			}
 			else {
 				if ( m_bPlaySounds ) {
-					::sndPlaySound( NULL, 0 );
-			 	  	::sndPlaySound( WAV_PAY, SND_ASYNC);
+					sndPlaySound( NULL, 0 );
+			 	  	sndPlaySound( WAV_PAY, SND_ASYNC);
 				}
 // 		MessageBox("You got a Pair ( Jacks or Higher", NULL, MB_OK);
 			    dlgWon.SetInitialOptions( 2 );
 			    dlgWon.DoModal();
-				::sndPlaySound( NULL, 0 );
+				sndPlaySound( NULL, 0 );
 			}
 //	Check for overflow, if so then the user broken the bank, reset to zero
 			if (  m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) { 
@@ -1684,20 +1655,20 @@ CUserWonDlg	dlgWon((CWnd *)this, pGamePalette );
 		else {
 			if ( m_nPayOffPair == 0 ) {
 				if ( m_bPlaySounds ) 
-					::sndPlaySound( WAV_NOPAY, SND_ASYNC );
+					sndPlaySound( WAV_NOPAY, SND_ASYNC );
 			    dlgWon.SetInitialOptions();
 			    dlgWon.DoModal();
-				::sndPlaySound( NULL, 0 );
+				sndPlaySound( NULL, 0 );
 			}
 			else {
 				if ( m_bPlaySounds ) {
-					::sndPlaySound( NULL, 0 );
-			 	  	::sndPlaySound( WAV_PAY, SND_ASYNC);
+					sndPlaySound( NULL, 0 );
+			 	  	sndPlaySound( WAV_PAY, SND_ASYNC);
 				}
 // 		MessageBox("You got a Pair", NULL, MB_OK);
 			    dlgWon.SetInitialOptions( 1 );
 			    dlgWon.DoModal();
-				::sndPlaySound( NULL, 0 );
+				sndPlaySound( NULL, 0 );
 			}
 
 //	Check for overflow, if so then the user broken the bank, reset to zero
@@ -1721,13 +1692,13 @@ CUserWonDlg	dlgWon((CWnd *)this, pGamePalette );
   			( anShownCards[4] <= ( 13 + nLoop )) && ( anShownCards[4] >= ( nLoop ))) {
 
 		if ( m_bPlaySounds ) {
-			::sndPlaySound( NULL, 0 );
-	 	  	::sndPlaySound( WAV_PAY, SND_ASYNC);
+			sndPlaySound( NULL, 0 );
+	 	  	sndPlaySound( WAV_PAY, SND_ASYNC);
 		}
 // 		MessageBox("You got a Flush", NULL, MB_OK);
 	    dlgWon.SetInitialOptions( 6 );
 	    dlgWon.DoModal();
-		::sndPlaySound( NULL, 0 );
+		sndPlaySound( NULL, 0 );
 //	Check for overflow, if so then the user broken the bank, reset to zero
 			if (  m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) { 
 				m_lUserAmount = 2147483647;
@@ -1766,13 +1737,13 @@ CUserWonDlg	dlgWon((CWnd *)this, pGamePalette );
 				(anShownCards[1] == 10))) {
 
 		if ( m_bPlaySounds ) {
-			::sndPlaySound( NULL, 0 );
-	 	  	::sndPlaySound( WAV_PAY, SND_ASYNC);
+			sndPlaySound( NULL, 0 );
+	 	  	sndPlaySound( WAV_PAY, SND_ASYNC);
 		}
 // 		MessageBox("You got a Straight", NULL, MB_OK);
 	    dlgWon.SetInitialOptions( 5 );
 	    dlgWon.DoModal();
-		::sndPlaySound( NULL, 0 );
+		sndPlaySound( NULL, 0 );
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (  m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) { 
 			m_lUserAmount = 2147483647;
@@ -1788,11 +1759,11 @@ CUserWonDlg	dlgWon((CWnd *)this, pGamePalette );
 	}
 
 	if ( m_bPlaySounds ) 
-		::sndPlaySound( WAV_NOPAY, SND_ASYNC );
+		sndPlaySound( WAV_NOPAY, SND_ASYNC );
     dlgWon.SetInitialOptions();
     dlgWon.DoModal();
 
-	::sndPlaySound( NULL, 0 );
+	sndPlaySound( NULL, 0 );
 	delete pPotRect;   
 
 	return;
@@ -1838,8 +1809,8 @@ CRect	*pPotRect;	// a pointer to the rect of screen coordinates
 // if lBet > 0, then add it to the current bet 
 				if ( lBet > 0) {
 					if ( m_lpGameStruct->bSoundEffectsEnabled ) {
-						::sndPlaySound( NULL, 0 );
-						::sndPlaySound( WAV_PLACE, SND_ASYNC );
+						sndPlaySound( NULL, 0 );
+						sndPlaySound( WAV_PLACE, SND_ASYNC );
 					}
 // 		if lBet > 10000, then max bet at 10000 
 					if ((m_lUserBet + lBet) > MAXBET) {
@@ -1954,8 +1925,8 @@ CPalette	*pOldPal = pDC->SelectPalette( pGamePalette, FALSE );
 	}
 	else {
 		if ( m_lpGameStruct->bSoundEffectsEnabled ) {
-			::sndPlaySound( NULL, SND_ASYNC );
-			::sndPlaySound( WAV_HOLD, SND_ASYNC );
+			sndPlaySound( NULL, SND_ASYNC );
+			sndPlaySound( WAV_HOLD, SND_ASYNC );
 		}
 		abHoldArray[nIndex] = TRUE;
 		pUpBmp = ExtractBitmap( pDC,pHoldButtons, pGamePalette,
@@ -2098,7 +2069,7 @@ CDC		*pDC = GetDC();
 
 // if i'm playing sound, play a card dealt sound
 	if ( m_bPlaySounds )
-   ::sndPlaySound( CARDSOUND, SND_SYNC);
+   sndPlaySound( CARDSOUND, SND_SYNC);
 	return ;
 }                                                    
 /*****************************************************************
@@ -2426,9 +2397,9 @@ END_MESSAGE_MAP()
 
 //
 // Routine to play easter egg animations and sounds
-void PlayEasterEgg( CDC *pDC, CWnd *pWnd, CPalette *pPalette, char *pszAnimFile, char *pszSoundFile, 
-					int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound ) 
-{
+void PlayEasterEgg( CDC *pDC, CWnd *pWnd, CPalette *pPalette,
+		const char *pszAnimFile, const char *pszSoundFile, 
+		int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound ) {
 	CSprite	*pSprite = NULL;
 	CSound	*pEffect = NULL;
 	BOOL	bSuccess;
@@ -2463,3 +2434,6 @@ void PlayEasterEgg( CDC *pDC, CWnd *pWnd, CPalette *pPalette, char *pszAnimFile,
 
 } // end PlayEasterEgg
 
+} // namespace Peggle
+} // namespace HodjNPodj
+} // namespace Bagel

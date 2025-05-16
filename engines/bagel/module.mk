@@ -224,6 +224,13 @@ MODULE_OBJS = \
 	hodjnpodj/peggle/options.o \
 	hodjnpodj/peggle/optndlg.o \
 	hodjnpodj/peggle/optsub.o \
+	hodjnpodj/poker/amtdlg.o \
+	hodjnpodj/poker/c1btndlg.o \
+	hodjnpodj/poker/dllinit.o \
+	hodjnpodj/poker/optdlg.o \
+	hodjnpodj/poker/poffsdlg.o \
+	hodjnpodj/poker/poker.o \
+	hodjnpodj/poker/uwondlg.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o
