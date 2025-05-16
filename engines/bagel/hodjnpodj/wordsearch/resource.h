@@ -1,7 +1,31 @@
-//{{NO_DEPENDENCIES}}
-// App Studio generated include file.
-// Used by WORDSRCH.RC
-//
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HODJNPODJ_WORDSEARCH_RESOURCE_H
+#define HODJNPODJ_WORDSEARCH_RESOURCE_H
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace WordSearch {
+
 #define IDI_WORDSRCH                    2
 #define IDC_OPTIONS                     202
 #define IDB_LSCROLLB                    210
@@ -77,14 +101,8 @@
 #define IDC_GAMETIME                    504
 #define IDC_MINI_BWTOGGLE               1035
 
-// Next default values for new objects
-// 
-#ifdef APSTUDIO_INVOKED
-#ifndef APSTUDIO_READONLY_SYMBOLS
+} // namespace Poker
+} // namespace HodjNPodj
+} // namespace Bagel
 
-#define _APS_NEXT_RESOURCE_VALUE        413
-#define _APS_NEXT_COMMAND_VALUE         32768
-#define _APS_NEXT_CONTROL_VALUE         1037
-#define _APS_NEXT_SYMED_VALUE           101
-#endif
 #endif

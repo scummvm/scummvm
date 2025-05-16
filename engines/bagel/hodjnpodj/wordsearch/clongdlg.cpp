@@ -1,70 +1,34 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved.
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * c1btndlg.cpp
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      1.1      08/19/94     BCW       Modified for 2 user defined buttons
- *      1.0      04/30/94     Jos       Creation
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *      Paints a scroll on the middle of the screen with
- *      two optional text strings displayed and 2 buttons
- *
- * CONSTRUCTORS:
- *
- *  CLongDialog(CWnd *pParent, CPalette *pPalatte, char *msg1, char *msg2 = NULL);
- *
- *  If paramaters are not passed, assumes NULL. CWnd is the parent window
- *  used to get centering information.  msg2 is an optional messages
- *  that would be displayed, centered horizontally only, within the window. 
- *  For example, 
- *
- *      CLongDialog dlgYesNo((CWnd *)this, pPalette, "Yes", "Are you", "really cool?");
- *
- * PUBLIC:
- *
- *
- *
- * PUBLIC GLOBAL:
- *
- *
- *
- * PROTECTED:
- *
- *
- * PRIVATE:
- *
- *
- * MEMBERS:
- *
- *  CText        *m_cTextMessage1;   // used to do the first message
- *  CText        *m_cTextMessage2;   // Used to display second message
- *  char         *m_pszMessage1;     // Message text string
- *  char         *m_pszMessage2;
- *  char         *m_pszButton1Text;
- *  CColorButton *m_pButton1;
- *
- * RELEVANT DOCUMENTATION:
- *
- *
- ****************************************************************/
+ */
+
 #include "bagel/afxwin.h"
-
-
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
-#include "wordlist.h"
-#include "clongdlg.h"
+#include "bagel/hodjnpodj/wordsearch/wordlist.h"
+#include "bagel/hodjnpodj/wordsearch/clongdlg.h"
 
-#ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
+namespace Bagel {
+namespace HodjNPodj {
+namespace WordSearch {
 
 #define MESSAGE_COL         16              // first message box positioning
 #define MESSAGE_ROW         60
@@ -85,9 +49,10 @@ extern	int		nWordList;										// Which is the current list index
 
 
 
-CLongDialog::CLongDialog(CWnd *pParent, CPalette *pPalette, char *pszButton1Text, char *pszText1, char *pszText2)
-         : CBmpDialog(pParent, pPalette, IDD_1BTNDLG, ".\\ART\\WLSTSCRL.BMP", 16, 25)
-{
+CLongDialog::CLongDialog(CWnd *pParent, CPalette *pPalette,
+		const char *pszButton1Text, const char *pszText1,
+		const char *pszText2)
+		: CBmpDialog(pParent, pPalette, IDD_1BTNDLG, ".\\ART\\WLSTSCRL.BMP", 16, 25) {
     assert(pParent != NULL);
     assert(pPalette != NULL);
     assert(pszText1 != NULL);
@@ -233,8 +198,8 @@ void CLongDialog::OnPaint()
 {
     CDC     *pDC;
     int		nWordIndex,
-    		nCurrent,
-    		nDisplayWord;
+    	nCurrent,
+    	nDisplayWord = 0;
     int		i;
     char	buf[30];
 
@@ -252,11 +217,11 @@ void CLongDialog::OnPaint()
 			}
 		}
 		if ( astrGameList[nDisplayWord].IsEmpty() ) {
-			Common::sprintf_s( buf, "%s", astrGameListDisplay[nDisplayWord] );
+			Common::sprintf_s( buf, "%s", astrGameListDisplay[nDisplayWord].c_str() );
 			m_cWordList[i]->DisplayString( pDC,  buf, 12, FW_BOLD, TEXT_COLOR );
 		}
 		else {
-			Common::sprintf_s( buf, "%s", astrGameListDisplay[nDisplayWord] );
+			Common::sprintf_s( buf, "%s", astrGameListDisplay[nDisplayWord].c_str() );
 			m_cWordList[i]->DisplayString( pDC,  buf, 12, FW_BOLD, RED_TEXT );
 		}                          //Shadowed
 	}
@@ -281,3 +246,7 @@ BOOL CLongDialog::OnEraseBkgnd(CDC *)
     // Prevents refreshing of background
     return(TRUE);
 }
+
+} // namespace WordSearch
+} // namespace HodjNPodj
+} // namespace Bagel

@@ -1,37 +1,31 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * dllinit.cpp
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  1.0 5/13/94 GTB     
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *
- * LOCALS:
- *
- *
- * GLOBALS:
- *
- *
- * RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- * FILES USED:
- *
- ****************************************************************/
+ */
 
 #include "bagel/afxwin.h"
-#include "resource.h"
-#include "wordsrch.h" 
+#include "bagel/hodjnpodj/wordsearch/resource.h"
+#include "bagel/hodjnpodj/wordsearch/wordsearch.h" 
 
-//#ifndef _DEBUG
-//#error This source file must be compiled with _DEBUG defined
-//#endif
+namespace Bagel {
+namespace HodjNPodj {
+namespace WordSearch {
 
 HINSTANCE   hDLLInst;
 HINSTANCE   hExeInst;
@@ -68,9 +62,8 @@ HCURSOR         hGameCursor;
  *      n/a
  *
  ****************************************************************/
-extern "C" 
-HWND FAR PASCAL RunWordSearch( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
-{
+
+HWND FAR PASCAL RunWordSearch( HWND hParentWnd, LPGAMESTRUCT lpGameInfo ) {
 
 // if the pointer has garbage in it, the clean it out
     if ( pMainGameWnd != NULL ) {
@@ -89,87 +82,7 @@ HWND FAR PASCAL RunWordSearch( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
         MFC::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );
     return pMainGameWnd->m_hWnd;
 }
-/////////////////////////////////////////////////////////////////////////////
-// DLL initialization
-// this was take straight from the MSVC MFC Sample DLLTRACE
 
-class CTracerDLL : public CWinApp
-{
-public:
-    virtual BOOL InitInstance(); // Initialization
-    virtual int ExitInstance();  // Termination (WEP-like code)
-
-    // nothing special for the constructor
-    CTracerDLL(const char* pszAppName)
-        : CWinApp(pszAppName)
-        { }
-};
-
-/*****************************************************************
- *
- * InitInstance
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *      This routine is automatically called when the application is
- *      started. 
- *   
- * FORMAL PARAMETERS:
- *
- *      n/a
- *
- * IMPLICIT INPUT PARAMETERS:
- *  
- *      n/a
- *   
- * IMPLICIT OUTPUT PARAMETERS:
- *   
- *      n/a
- *   
- * RETURN VALUE:
- *
- *      BOOL            Success (TRUE) / Failure (FALSE) status
- *
- ****************************************************************/
-BOOL CTracerDLL::InitInstance()
-{
-    hGameCursor = 0;
-    hGameCursor = LoadCursor( m_hInstance, IDC_ARROW );
-    return TRUE;
-}
-
-/*****************************************************************
- *
- * ExitInstance
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *      This routine is automatically called when the application is
- *      being terminated. 
- *   
- * FORMAL PARAMETERS:
- *
- *      n/a
- *
- * IMPLICIT INPUT PARAMETERS:
- *  
- *      n/a
- *   
- * IMPLICIT OUTPUT PARAMETERS:
- *   
- *      n/a
- *   
- * RETURN VALUE:
- *
- *      int                     Success (0) / Failure status
- *
- ****************************************************************/
-int CTracerDLL::ExitInstance()
-{
-    return(0);
-}
-
-
-CTracerDLL  NEAR tracerDLL("hnpws.dll");
-
-/////////////////////////////////////////////////////////////////////////////
+} // namespace WordSearch
+} // namespace HodjNPodj
+} // namespace Bagel

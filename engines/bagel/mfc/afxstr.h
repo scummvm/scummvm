@@ -51,6 +51,9 @@ public:
 	bool IsEmpty() const {
 		return empty();
 	}
+	void Empty() {
+		clear();
+	}
 
 	operator LPCSTR() const {
 		return c_str();

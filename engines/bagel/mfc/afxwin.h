@@ -408,6 +408,12 @@ class CRgn : public CGdiObject {
 public:
 	~CRgn() override {
 	}
+
+	BOOL CreatePolygonRgn(
+		const POINT *lpPoints,
+		int nCount,
+		int nPolyFillMode
+	);
 };
 
 class CDC : public CObject {
@@ -455,6 +461,8 @@ public:
 		const POINT &ptStart,	// Start point of arc
 		const POINT &ptEnd		// End point of arc
 	);
+	BOOL FrameRgn(CRgn *pRgn, CBrush *pBrush,
+		int nWidth, int nHeight);
 
 	void MoveTo(int x, int y);
 	void LineTo(int x, int y);
@@ -733,7 +741,11 @@ public:
 	void ShowWindow(int nCmdShow);
 	BOOL EnableWindow(BOOL bEnable = TRUE);
 	void UpdateWindow();
-	void RedrawWindow();
+	BOOL RedrawWindow(
+		LPCRECT lpRectUpdate = nullptr,
+		CRgn *prgnUpdate = nullptr,
+		UINT flags = RDW_INVALIDATE | RDW_UPDATENOW
+	);
 	void SetActiveWindow();
 	void SetFocus();
 	BOOL IsWindowVisible() const;

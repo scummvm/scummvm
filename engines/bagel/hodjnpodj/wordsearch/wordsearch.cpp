@@ -1,54 +1,42 @@
-/*****************************************************************
- * Copyright (c) 1994 by Boffo Games, All Rights Reserved
+/* ScummVM - Graphic Adventure Engine
  *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * wordsrch.cpp					Five card stud machine
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *	1.0 5/2/94 GTB		
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * MODULE DESCRIPTION:
- *
- *   Game is a simple skeleton program which consists of a main
- *   window, which contains background artwork from a .BMP file,
- *	 and a Quit button.  Stub routines are present for mouse related
- *	 activities and keyboard input; edit the stubs as required.
- *
- *   This is intended to serve as a starting-point for new games.
- *
- * LOCALS:
- *
- *	SplashScreen			paint the background artwork
- *
- * GLOBALS:
- *
- *	FlushInputEvents		flush all unprocessed mouse/keyboard events
- *	ReleaseResources		release all application specific resources
- *
- * RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- * FILES USED:
- *
- *
- ****************************************************************/
+ */
 
-#include <stdlib.h>
+#include "bagel/boflib/misc.h"
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
+#include "bagel/hodjnpodj/wordsearch/wordsearch.h"
+#include "bagel/hodjnpodj/wordsearch/dialogs.h"
+#include "bagel/hodjnpodj/wordsearch/wordlist.h"
+#include "bagel/hodjnpodj/wordsearch/clongdlg.h"  
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
-#include "wordsrch.h"
-#include "dialogs.h"
-#include "misc.h"
-#include "wordlist.h"
-#include "clongdlg.h"  
+namespace Bagel {
+namespace HodjNPodj {
+namespace WordSearch {
 
 extern CMainWSWindow	*pMainGameWnd;
 extern HCURSOR			hGameCursor;
 
-void PlayEasterEgg( CDC *pDC, CWnd *pWnd, CPalette *pPalette, char *pszAnimFile, char *pszSoundFile, 
-					int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound ); 
+extern void PlayEasterEgg( CDC *pDC, CWnd *pWnd, CPalette *pPalette,
+	const char *pszAnimFile, const char *pszSoundFile, 
+	int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound);
 
 CPalette	*pGamePalette = NULL;		// Palette to be used throughout the game
 CBmpButton	*pOptionButton = NULL;		// Option button object for getting to the options dialog
@@ -101,8 +89,8 @@ int		nWordList;
 
 char	acAlpha[26] = { 'A','B','C','D','E','F','G','H','I','J','K','L','M','N',
 						'O','P','Q','R','S','T','U','V','W','X','Y','Z' };
-						
-extern	LPSTR	astrWLCat[NUMBEROFLISTS];
+
+extern LPCSTR astrWLCat[NUMBEROFLISTS];
 extern char	acList[NUMBEROFLISTS][WORDSPERLIST][20];
 
 /*****************************************************************
@@ -138,13 +126,12 @@ extern char	acList[NUMBEROFLISTS][WORDSPERLIST][20];
 
 CMainWSWindow::CMainWSWindow( HWND hCallingWnd, LPGAMESTRUCT lpGameStruct )
 {
-CDC		*pDC = NULL;						// device context for the screen
-CPalette	*pOldPalette = NULL;
-CString	WndClass;
-CSize	mySize;         
-BOOL	bTestCreate; 						// bool for testing the creation of each button
-int		x,y;
-CText	atxtDisplayRow[NUMBEROFROWS];
+	CDC		*pDC = NULL;						// device context for the screen
+	CString	WndClass;
+	CSize	mySize;         
+	BOOL	bTestCreate; 						// bool for testing the creation of each button
+	int		x,y;
+	CText	atxtDisplayRow[NUMBEROFROWS];
 
 	BeginWaitCursor();
 	
@@ -257,7 +244,7 @@ CText	atxtDisplayRow[NUMBEROFROWS];
 	}
 
 if ( m_lpGameStruct->bPlayingMetagame == TRUE ) {
-CDC	*pDC = GetDC();
+	pDC = GetDC();
 	m_bShowWordList = FALSE;
 	if ( m_lpGameStruct->nSkillLevel == SKILLLEVEL_LOW) {
 		m_nTimeForGame = 75;
@@ -469,7 +456,7 @@ BOOL	bTemp2;
 int		nWordLen;
 CText	atxtDisplayRow[NUMBEROFROWS];
 CString	strTemp;
-int		nIterations1;
+int		nIterations1 = 0;
 int		nIterations2;
 CRect	rDisplayCat( 190, 365, 610, 385);
 CText	txtDisplayCat( pOffScreenDC, pGamePalette, &rDisplayCat, JUSTIFY_CENTER );
@@ -518,7 +505,7 @@ CText	txtDisplayCat( pOffScreenDC, pGamePalette, &rDisplayCat, JUSTIFY_CENTER );
 		astrGameList[y] = cTemp1;     
 		astrGameListDisplay[y] = cTemp2;
 
-		nWordLen = lstrlen( cTemp1 );
+		nWordLen = strlen( cTemp1 );
 		bTemp1 = TRUE;
 		if ( m_bWordsForwardOnly )
 			nDirection = brand() % 4;
@@ -800,10 +787,9 @@ CText	txtDisplayCat( pOffScreenDC, pGamePalette, &rDisplayCat, JUSTIFY_CENTER );
 //
 
 void CALLBACK lpfnOptionCallback ( CWnd * pWnd) {
-// do the mini options dialog
-int 			nOption=0;         // return from the Options dialog
-UINT 			x = IDD_MINIOPTIONS_DIALOG;
-CWSOptDlg	dlgMiniOptDlg( pWnd, pGamePalette, IDD_MINIOPTIONS_DIALOG );
+	// do the mini options dialog
+	int 			nOption=0;         // return from the Options dialog
+	CWSOptDlg	dlgMiniOptDlg( pWnd, pGamePalette, IDD_MINIOPTIONS_DIALOG );
 
 	dlgMiniOptDlg.SetInitialOptions( pMainGameWnd->m_nTimeForGame,
 									pMainGameWnd->m_bShowWordList,
@@ -1232,7 +1218,7 @@ CRect	rTemp;
 
 		if ( acWordChosen[0] != '\0' ) {
 
-			for ( x = 0, y = ( lstrlen( acWordChosen ) - 1 ); y >= 0 ; x++, y-- )
+			for ( x = 0, y = ( strlen( acWordChosen ) - 1 ); y >= 0 ; x++, y-- )
 				acWordBack[x] = acWordChosen[y];                         
 
 			for ( x = 0; x < WORDSPERLIST; x++ ){
@@ -1762,9 +1748,9 @@ BEGIN_MESSAGE_MAP( CMainWSWindow, CFrameWnd )
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-void PlayEasterEgg( CDC *pDC, CWnd *pWnd, CPalette *pPalette, char *pszAnimFile, char *pszSoundFile, 
-					int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound ) 
-{
+void PlayEasterEgg( CDC *pDC, CWnd *pWnd, CPalette *pPalette,
+		const char *pszAnimFile, const char *pszSoundFile, 
+		int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound ) {
 	CSprite	*pSprite = NULL;
 	CSound	*pEffect = NULL;
 	BOOL	bSuccess;
@@ -1799,3 +1785,7 @@ void PlayEasterEgg( CDC *pDC, CWnd *pWnd, CPalette *pPalette, char *pszAnimFile,
 		delete pSprite; 
 
 } // end PlayEasterEgg
+
+} // namespace WordSearch
+} // namespace HodjNPodj
+} // namespace Bagel

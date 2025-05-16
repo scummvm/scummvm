@@ -50,12 +50,12 @@ HCURSOR         hGameCursor;
 
 /*****************************************************************
  *
- * RunPoker
+ * RunCrypt
  *
  * FUNCTIONAL DESCRIPTION:
  *
  *          This is the API function for the DLL. It is what the calling app
- *          calls to invoke poker 
+ *          calls to invoke
  *   
  * FORMAL PARAMETERS:
  *

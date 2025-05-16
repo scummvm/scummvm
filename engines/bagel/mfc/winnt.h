@@ -595,6 +595,11 @@ typedef struct _GUID {
 } GUID;
 #define REFIID const IID &
 
+/* PolyFill() Modes */
+#define ALTERNATE                    1
+#define WINDING                      2
+#define POLYFILL_LAST                2
+
 typedef struct tagTEXTMETRICA {
 	LONG        tmHeight = 0;
 	LONG        tmAscent = 0;

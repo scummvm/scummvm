@@ -116,6 +116,11 @@ BOOL CDC::Pie(LPCRECT lpRect, const POINT &ptStart, const POINT &ptEnd) {
 	error("TODO: CDC::Pie");
 }
 
+BOOL CDC::FrameRgn(CRgn *pRgn, CBrush *pBrush,
+		int nWidth, int nHeight) {
+	error("TODO: CDC::FrameRgn");
+}
+
 void CDC::MoveTo(int x, int y) {
 	error("TODO: CDC::MoveTo");
 }

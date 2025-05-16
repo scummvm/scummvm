@@ -186,7 +186,8 @@ void CWnd::UpdateWindow() {
 	error("TODO: CWnd::UpdateWindow");
 }
 
-void CWnd::RedrawWindow() {
+BOOL CWnd::RedrawWindow(LPCRECT lpRectUpdate,
+	CRgn *prgnUpdate, UINT flags) {
 	error("TODO: CWnd::RedrawWindow");
 }
 

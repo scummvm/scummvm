@@ -37,6 +37,7 @@ MODULE_OBJS = \
 	mfc/paint_dc.o \
 	mfc/palette.o \
 	mfc/pen.o \
+	mfc/rgn.o \
 	mfc/scrollbar.o \
 	mfc/win_app.o \
 	mfc/win_thread.o \
@@ -233,7 +234,14 @@ MODULE_OBJS = \
 	hodjnpodj/poker/uwondlg.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
-	hodjnpodj/riddles/usercfg.o
+	hodjnpodj/riddles/usercfg.o \
+	hodjnpodj/wordsearch/c1btndlg.o \
+	hodjnpodj/wordsearch/clongdlg.o \
+	hodjnpodj/wordsearch/dllinit.o \
+	hodjnpodj/wordsearch/msgdlg.o \
+	hodjnpodj/wordsearch/optdlg.o \
+	hodjnpodj/wordsearch/wordlist.o \
+	hodjnpodj/wordsearch/wordsearch.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)
