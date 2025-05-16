@@ -1310,6 +1310,18 @@ IMuseDriver_Macintosh::IMuseDriver_Macintosh(ScummEngine *vm, Audio::Mixer *mixe
 		_device = new NewMacSoundSystem(vm, mixer);
 		break;
 	case GID_INDY4:
+		// TODO: Detect the PowerPC version. Should it be version 2,
+		// 3, or something completely different?
+		if (false) {
+			_version = 2;
+			_numChannels = 12;
+			_baseTempo = 46439;
+			_device = new NewMacSoundSystem(vm, mixer);
+		} else {
+			_version = 0;
+			_device = new DJMSoundSystem(mixer);
+		}
+		break;
 	case GID_MONKEY2:
 		_version = 0;
 		_device = new DJMSoundSystem(mixer);
@@ -1334,21 +1346,24 @@ int IMuseDriver_Macintosh::open() {
 
 	createChannels();
 
-	static const char *const fileNames[3][3] = {
+	static const char *const fileNames[3][4] = {
 		{
 			"iMUSE Setups",
+			nullptr,
 			nullptr,
 			nullptr
 		},
 		{
 			"Instruments",
 			"Day of the Tentacle Demo",
-			"Day of the Tentacle"
+			"Day of the Tentacle",
+			"Fate of Atlantis PowerPC"
 		},
 		{
 			"Instruments",
 			"Sam & Max Demo",
-			"Sam & Max"
+			"Sam & Max",
+			nullptr
 		}
 	};
 
