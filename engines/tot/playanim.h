@@ -615,11 +615,11 @@ extern long sizepantalla;
 /**
  * Depth of screenobjects
  */
-extern datosobj profundidad[numobjetosconv];
+extern datosobj depthMap[numobjetosconv];
 /**
  * Bitmaps of screenobjects
  */
-extern byte *objetos[numobjetosconv];
+extern byte *screenObjects[numobjetosconv];
 /**
  * Current frame of main character
  */
@@ -632,7 +632,7 @@ extern byte *pasoanimado;
 /**
  * Pointer storing the screen as it displays on the game
  */
-extern byte *fondo;
+extern byte *background;
 
 /**
  * Dirty patch of screen to repaint on every frame

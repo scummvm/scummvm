@@ -257,7 +257,7 @@ void newGame() {
 		initializeObjectFile();
 		loadPalette("DEFAULT");
 		loadScreenData(1);
-		effect(13, false, fondo);
+		effect(13, false, background);
 		mask();
 		posicioninv = 0;
 		drawBackpack();
@@ -368,7 +368,7 @@ int startGame() {
 							showGameGrid = !showGameGrid;
 							break;
 						case Common::KEYCODE_0:
-							effect(13, false, fondo);
+							effect(13, false, background);
 							break;
 						case Common::KEYCODE_8:
 							drawObjectAreas = !drawObjectAreas;
@@ -673,7 +673,7 @@ int startGame() {
 						autoPlayVoc("PARASITO", 355778, 20129);
 					else
 						cargatele();
-					effect(tipoefectofundido, false, fondo);
+					effect(tipoefectofundido, false, background);
 					contadorpc = contadorpc2;
 					g_engine->_mouseManager->show();
 					oldxrejilla = 0;
@@ -696,7 +696,7 @@ int startGame() {
 						stopVoc();
 						autoPlayVoc("CALDERA", 6433, 15386);
 						setSfxVolume(volumenfxizquierdo, 0);
-						effect(tipoefectofundido, false, fondo);
+						effect(tipoefectofundido, false, background);
 						g_engine->_mouseManager->show();
 						oldxrejilla = 0;
 						oldyrejilla = 0;
@@ -744,7 +744,7 @@ int startGame() {
 					trayec[indicetray].x = characterPosX;
 					trayec[indicetray].y = characterPosY;
 					loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
-					effect(tipoefectofundido, false, fondo);
+					effect(tipoefectofundido, false, background);
 					g_engine->_mouseManager->show();
 
 					oldxrejilla = 0;
@@ -765,7 +765,7 @@ int startGame() {
 						g_engine->_mouseManager->hide();
 						effect(tipoefectofundido, true, NULL);
 						loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
-						effect(tipoefectofundido, false, fondo);
+						effect(tipoefectofundido, false, background);
 						g_engine->_mouseManager->show();
 						oldxrejilla = 0;
 						oldyrejilla = 0;
@@ -826,7 +826,7 @@ int startGame() {
 						g_engine->_mouseManager->hide();
 						effect(tipoefectofundido, true, NULL);
 						loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
-						effect(tipoefectofundido, false, fondo);
+						effect(tipoefectofundido, false, background);
 						g_engine->_mouseManager->show();
 						oldxrejilla = 0;
 						oldyrejilla = 0;
@@ -864,7 +864,7 @@ int startGame() {
 					if (contadorpc > 89)
 						error("engine_start(): contadorpc (274)");
 					setSfxVolume(volumenfxizquierdo, volumenfxderecho);
-					effect(tipoefectofundido, false, fondo);
+					effect(tipoefectofundido, false, background);
 					contadorpc = contadorpc2;
 					g_engine->_mouseManager->show();
 					oldxrejilla = 0;
@@ -885,7 +885,7 @@ int startGame() {
 						g_engine->_mouseManager->hide();
 						effect(tipoefectofundido, true, NULL);
 						loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
-						effect(tipoefectofundido, false, fondo);
+						effect(tipoefectofundido, false, background);
 						g_engine->_mouseManager->show();
 						oldxrejilla = 0;
 						oldyrejilla = 0;
@@ -918,7 +918,7 @@ int startGame() {
 						g_engine->_mouseManager->hide();
 						effect(tipoefectofundido, true, NULL);
 						loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
-						effect(tipoefectofundido, false, fondo);
+						effect(tipoefectofundido, false, background);
 						g_engine->_mouseManager->show();
 						oldxrejilla = 0;
 						oldyrejilla = 0;
@@ -970,7 +970,7 @@ int startGame() {
 					setSfxVolume(volumenfxizquierdo, volumenfxderecho);
 					if (currentRoomData->codigo == 4)
 						loadVoc("GOTA", 140972, 1029);
-					effect(tipoefectofundido, false, fondo);
+					effect(tipoefectofundido, false, background);
 					contadorpc = contadorpc2;
 					g_engine->_mouseManager->show();
 					oldxrejilla = 0;
@@ -1033,7 +1033,7 @@ int startGame() {
 							}
 						assembleScreen();
 					}
-					effect(tipoefectofundido, false, fondo);
+					effect(tipoefectofundido, false, background);
 					if ((rojo_capturado == false) && (trampa_puesta == false))
 						runaroundRed();
 					contadorpc = contadorpc2;
@@ -1070,7 +1070,7 @@ int startGame() {
 						autoPlayVoc("FUENTE", 0, 0);
 						break;
 					}
-					effect(tipoefectofundido, false, fondo);
+					effect(tipoefectofundido, false, background);
 					contadorpc = contadorpc2;
 					g_engine->_mouseManager->show();
 					oldxrejilla = 0;
@@ -1150,7 +1150,7 @@ int startGame() {
 					lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 					playMidiFile("SEGUNDA", true);
 					restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
-					effect(1, false, fondo);
+					effect(1, false, background);
 					mask();
 					posicioninv = 0;
 					drawBackpack();
@@ -1181,13 +1181,13 @@ int startGame() {
 
 				if (drawObjectAreas) {
 					for (int indice = 0; indice < nivelesdeprof; indice++) {
-						if (objetos[indice] != NULL) {
+						if (screenObjects[indice] != NULL) {
 							if (true) {
 								// debug
-								uint16 w = READ_LE_UINT16(objetos[indice]);
-								uint16 h = READ_LE_UINT16(objetos[indice] + 2);
-								Common::Rect r = Common::Rect(profundidad[indice].posx, profundidad[indice].posy, profundidad[indice].posx + w, profundidad[indice].posy + h);
-								drawRect(180, profundidad[indice].posx, profundidad[indice].posy, profundidad[indice].posx + w, profundidad[indice].posy + h);
+								uint16 w = READ_LE_UINT16(screenObjects[indice]);
+								uint16 h = READ_LE_UINT16(screenObjects[indice] + 2);
+								Common::Rect r = Common::Rect(depthMap[indice].posx, depthMap[indice].posy, depthMap[indice].posx + w, depthMap[indice].posy + h);
+								drawRect(180, depthMap[indice].posx, depthMap[indice].posy, depthMap[indice].posx + w, depthMap[indice].posy + h);
 
 								outtextxy(r.left, r.top, Common::String().format("%d", indice), 0);
 							}

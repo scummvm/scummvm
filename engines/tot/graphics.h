@@ -52,7 +52,7 @@ void changeRGBBlock(byte initialColor, uint numColors, void *rgb);
 void processingActive();
 void rectangle(int x1, int y1, int x2, int y2, byte color);
 void rectangle(uint x1, uint y1, uint x2, uint y2, byte color);
-void handPantallaToFondo();
+void handPantallaToBackground();
 void copyPalette(palette from, palette to);
 void loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int sizeanimado);
 } // End of namespace Tot

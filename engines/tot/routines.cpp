@@ -102,9 +102,9 @@ void runaroundRed() {
 		}
 	} while (!exitLoop && !g_engine->shouldQuit());
 	freeAnimation();
-	handPantallaToFondo();
+	handPantallaToBackground();
 	assembleScreen();
-	drawScreen(fondo);
+	drawScreen(background);
 }
 
 void updateMovementCells() {
@@ -159,7 +159,7 @@ static void assembleBackground() {
 	// XMStoPointer(ptr(segfondo, (offfondo + 4)), handpantalla, 4, (sizepantalla - longint(4)));
 
 	// copies the entire clean background in handpantalla back into fondo
-	handPantallaToFondo();
+	handPantallaToBackground();
 
 	posabs = 4 + posfondoy * 320 + posfondox;
 	// debug("posabs = %d, posfondox = %d, posfondoy=%d", posabs, posfondox, posfondoy);
@@ -176,7 +176,7 @@ static void assembleBackground() {
 		for (int i = 0; i < w; i++) {
 			int pos = posabs + j * 320 + i;
 			int destPos = 4 + (j * w + i);
-			characterDirtyRect[destPos] = fondo[pos];
+			characterDirtyRect[destPos] = background[pos];
 		}
 	}
 }
@@ -233,14 +233,14 @@ static void assembleImage(byte *imagen, uint posimagenx, uint posimageny) { // N
 }
 
 static void overlayObject() {
-	if (objetos[indice] != NULL) {
+	if (screenObjects[indice] != NULL) {
 		if (
-			(profundidad[indice].posx <= posfondox2) &&
-			(profundidad[indice].posx2 > posfondox) &&
-			(profundidad[indice].posy < posfondoy2) &&
-			(profundidad[indice].posy2 > posfondoy)
+			(depthMap[indice].posx <= posfondox2) &&
+			(depthMap[indice].posx2 > posfondox) &&
+			(depthMap[indice].posy < posfondoy2) &&
+			(depthMap[indice].posy2 > posfondoy)
 		) {
-			assembleImage(objetos[indice], profundidad[indice].posx, profundidad[indice].posy);
+			assembleImage(screenObjects[indice], depthMap[indice].posx, depthMap[indice].posy);
 		}
 	}
 }
@@ -249,7 +249,7 @@ void drawMainCharacter() {
 
 	bool debug = false;
 	if (debug) {
-		effect(13, false, fondo);
+		effect(13, false, background);
 	}
 
 	uint16 tempW;
@@ -623,16 +623,16 @@ void animatedSequence(uint numSequence) {
 				saltospal += 1;
 			putShape(animx, animy, animptr);
 		}
-		objetos[regobj.profundidad - 1] = NULL;
-		handPantallaToFondo();
+		screenObjects[regobj.profundidad - 1] = NULL;
+		handPantallaToBackground();
 		indiceani = secuencia.profundidad;
 		secuencia.profundidad = 30;
-		objetos[13] = animptr;
-		profundidad[13].posx = animx;
-		profundidad[13].posy = animy;
+		screenObjects[13] = animptr;
+		depthMap[13].posx = animx;
+		depthMap[13].posy = animy;
 		assembleScreen();
-		drawScreen(fondo);
-		objetos[13] = NULL;
+		drawScreen(background);
+		screenObjects[13] = NULL;
 		secuencia.profundidad = indiceani;
 		drawBackpack();
 		for (indiceani = 32; indiceani <= numframessec; indiceani++) {
@@ -678,13 +678,13 @@ void animatedSequence(uint numSequence) {
 		}
 		indiceani = secuencia.profundidad;
 		secuencia.profundidad = 30;
-		objetos[12] = animptr;
-		profundidad[12].posx = animx;
-		profundidad[12].posy = animy;
+		screenObjects[12] = animptr;
+		depthMap[12].posx = animx;
+		depthMap[12].posy = animy;
 		disableSecondAnimation();
-		objetos[12] = NULL;
+		screenObjects[12] = NULL;
 		secuencia.profundidad = indiceani;
-		drawScreen(fondo);
+		drawScreen(background);
 		for (indiceani = 9; indiceani <= numframessec; indiceani++) {
 			animationFile.read(animptr, tamsecani);
 			emptyLoop();
@@ -712,10 +712,10 @@ void animatedSequence(uint numSequence) {
 		tamsecani = animationFile.readUint16LE();
 		numframessec = animationFile.readByte();
 		animationFile.readByte();
-		objetos[6] = (byte *)malloc(tamsecani);
+		screenObjects[6] = (byte *)malloc(tamsecani);
 		// objetos[7] = ptr(segfondo, (offfondo + 44900));
-		profundidad[6].posx = animado.posx + 5;
-		profundidad[6].posy = animado.posy - 6;
+		depthMap[6].posx = animado.posx + 5;
+		depthMap[6].posy = animado.posy - 6;
 		indiceani = 0;
 		do {
 			emptyLoop();
@@ -730,12 +730,12 @@ void animatedSequence(uint numSequence) {
 			} else
 				saltospal += 1;
 			if (tocapintar2) {
-				animationFile.read(objetos[6], tamsecani);
-				Common::copy(objetos[6], objetos[6] + tamsecani, fondo + 44900);
+				animationFile.read(screenObjects[6], tamsecani);
+				Common::copy(screenObjects[6], screenObjects[6] + tamsecani, background + 44900);
 				// blockread(ficherosecuenciaanimada, objetos[7], tamsecani);
-				handPantallaToFondo();
+				handPantallaToBackground();
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				indiceani += 1;
 				if (indiceani == 8)
 					playVoc("PUFF", 191183, 18001);
@@ -743,7 +743,7 @@ void animatedSequence(uint numSequence) {
 		} while (indiceani != numframessec && !g_engine->shouldQuit());
 		animationFile.close();
 		stopVoc();
-		objetos[6] = NULL;
+		screenObjects[6] = NULL;
 		currentRoomData->banderamovimiento = true;
 	} break;
 	}
@@ -943,7 +943,7 @@ void lookInventoryObject(byte numeroobjeto) {
 	g_engine->_mouseManager->hide();
 	copyPalette(pal, paletaseg);
 	readItemRegister(mobj[numeroobjeto].code);
-	getImg(0, 0, 319, 139, fondo);
+	getImg(0, 0, 319, 139, background);
 	partialFadeOut(234);
 	bar(0, 0, 319, 139, 0);
 	for (yaux = 1; yaux <= 12; yaux++)
@@ -997,7 +997,7 @@ void lookInventoryObject(byte numeroobjeto) {
 	effect(3, true, NULL);
 	partialFadeOut(234);
 	assembleScreen();
-	drawScreen(fondo);
+	drawScreen(background);
 	copyPalette(paletaseg, pal);
 	partialFadeIn(234);
 	g_engine->_mouseManager->show();
@@ -1525,72 +1525,81 @@ void animateBat() {
 		animado.profundidad = profseg;
 		animado.dir = dirseg;
 	}
-	handPantallaToFondo();
+	handPantallaToBackground();
 	assembleScreen();
-	drawScreen(fondo);
+	drawScreen(background);
 }
 
 void updateVideo() {
-	readBitmap(regobj.puntparche, objetos[regobj.profundidad - 1], regobj.tamparche, 319);
-	handPantallaToFondo();
+	readBitmap(regobj.puntparche, screenObjects[regobj.profundidad - 1], regobj.tamparche, 319);
+	handPantallaToBackground();
 	assembleScreen();
-	drawScreen(fondo);
+	drawScreen(background);
 }
 
-void alcoveAnimation(byte direccionhn, int32 dibujo) {
+void alcoveAnimation(byte direccionhn, int32 bitmap) {
 	uint posdibhn, indicehn;
 	int incrementohn;
 
+	// Room with Red
 	if (currentRoomData->codigo == 24) {
-		objetos[1] = (byte *)malloc(3660);
-		readBitmap(1382874, objetos[1], 3652, 319);
-		uint16 object2Width = READ_LE_UINT16(objetos[1]);
-		uint16 object2Height = READ_LE_UINT16(objetos[1] + 2);
-		profundidad[1].posx = 211;
-		profundidad[1].posy = 16;
-		profundidad[1].posx2 = 211 + object2Width + 1;
-		profundidad[1].posy2 = 16 + object2Height + 1;
+		screenObjects[1] = (byte *)malloc(3660);
+		readBitmap(1382874, screenObjects[1], 3652, 319);
+		uint16 object1Width = READ_LE_UINT16(screenObjects[1]);
+		uint16 object1Height = READ_LE_UINT16(screenObjects[1] + 2);
+		depthMap[1].posx = 211;
+		depthMap[1].posy = 16;
+		depthMap[1].posx2 = 211 + object1Width + 1;
+		depthMap[1].posy2 = 16 + object1Height + 1;
 	}
 
+	uint16 dibW;
+	uint16 dibH;
+	debug("direccion=%d", direccionhn);
 	switch (direccionhn) {
 	case 0: {
 		posdibhn = 44904;
 		incrementohn = 1;
-		Common::copy(objetos[0], objetos[0] + 892, fondo + 44900);
-		readBitmap(dibujo, objetos[0], 892, 319);
-		Common::copy(objetos[0] + 4, objetos[0] + 4 + 888, fondo + 44900 + 892);
+		Common::copy(screenObjects[0], screenObjects[0] + 892, background + 44900);
+		readBitmap(bitmap, screenObjects[0], 892, 319);
+		Common::copy(screenObjects[0] + 4, screenObjects[0] + 4 + 888, background + 44900 + 892);
 	} break;
-	case 1: {
+	case 1: { // object slides to reveal empty stand
 		posdibhn = 892 + 44900;
 		incrementohn = -1;
-		readBitmap(dibujo, fondo + 44900, 892, 319);
-		Common::copy(objetos[0] + 4, objetos[0] + 4 + (888 - 4), fondo + 44900 + 892);
+		// Reads the empty alcove into a non-visible part of fondo
+		readBitmap(bitmap, background + 44900, 892, 319);
+		// Copies whatever is currently on the alcove in a non-visible part of fondo contiguous with the above
+		Common::copy(screenObjects[0] + 4, screenObjects[0] + 4 + 888, background + 44900 + 892);
+		// We now have in consecutive pixels the empty stand and the object
+
 	} break;
 	}
-	// uint16 object1Width = READ_LE_UINT16(objetos[0]);
-	uint16 object1Height = READ_LE_UINT16(objetos[0] + 2);
+	uint16 alcoveWidth = READ_LE_UINT16(screenObjects[0]);
+	uint16 alcoveHeight = READ_LE_UINT16(screenObjects[0] + 2);
 
+	// Set the height to double to animate 2 images of the same height moving up/down
+	*(background + 44900 + 2) = (alcoveHeight * 2) + 1;
 
-	*(fondo + 44900 + 2)= *(objetos[0] + 2) * 2 + 1;
-	handPantallaToFondo();
+	handPantallaToBackground();
 
-	for (indicehn = 1; indicehn <= object1Height; indicehn++) {
-		posdibhn = posdibhn + (incrementohn * fondo[44900] + 1);
+	for (indicehn = 1; indicehn <= alcoveHeight; indicehn++) {
 
-		Common::copy(fondo + posdibhn, fondo + posdibhn + 888, objetos[0] + 4);
+		posdibhn = posdibhn + (incrementohn * (alcoveWidth + 1));
+		Common::copy(background + posdibhn, background + posdibhn + 888, screenObjects[0] + 4);
 		assembleScreen();
-		drawScreen(fondo);
+		drawScreen(background);
 		g_engine->_screen->update();
 	}
-	readBitmap(dibujo, objetos[0], 892, 319);
+	readBitmap(bitmap, screenObjects[0], 892, 319);
 
-	handPantallaToFondo();
+	handPantallaToBackground();
 	assembleScreen();
-	drawScreen(fondo);
+	drawScreen(background);
 
 	if (currentRoomData->codigo == 24) {
-		free(objetos[1]);
-		objetos[1] = NULL;
+		free(screenObjects[1]);
+		screenObjects[1] = NULL;
 	}
 }
 
@@ -1644,10 +1653,10 @@ void pickupScreenObject() {
 			} break;
 			default: {
 				animatePickup1(direccionmovimiento, 0);
-				objetos[regobj.profundidad - 1] = NULL;
-				handPantallaToFondo();
+				screenObjects[regobj.profundidad - 1] = NULL;
+				handPantallaToBackground();
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				animatePickup2(direccionmovimiento, 0);
 			}
 			}
@@ -1703,11 +1712,11 @@ void pickupScreenObject() {
 					with.profund = 1;
 					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 				}
-				objetos[regobj.profundidad - 1] = NULL;
-				handPantallaToFondo();
+				screenObjects[regobj.profundidad - 1] = NULL;
+				handPantallaToBackground();
 
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				animatePickup2(0, 1);
 			} break;
 			case 562: { // alcove
@@ -1720,15 +1729,15 @@ void pickupScreenObject() {
 							hornacina[0][hornacina[0][3]] = 0;
 							currentRoomData->indexadoobjetos[9]->objectName = "HORNACINA";
 							animatePickup1(3, 1);
-							readBitmap(1190768, objetos[regobj.profundidad - 1], 892, 319);
+							readBitmap(1190768, screenObjects[regobj.profundidad - 1], 892, 319);
 							currentRoomData->bitmapasociados[1].puntbitmap = 1190768;
 							currentRoomData->bitmapasociados[1].tambitmap = 892;
 							currentRoomData->bitmapasociados[1].coordx = 66;
 							currentRoomData->bitmapasociados[1].coordy = 35;
 							currentRoomData->bitmapasociados[1].profund = 1;
-							handPantallaToFondo();
+							handPantallaToBackground();
 							assembleScreen();
-							drawScreen(fondo);
+							drawScreen(background);
 							animatePickup2(3, 1);
 						} else {
 							readItemRegister(hornacina[0][hornacina[0][3]]);
@@ -1737,11 +1746,11 @@ void pickupScreenObject() {
 							hornacina[1][3] -= 1;
 							currentRoomData->indexadoobjetos[9]->objectName = "                    ";
 							animatePickup1(3, 1);
-							readBitmap(1190768, objetos[regobj.profundidad - 1],
+							readBitmap(1190768, screenObjects[regobj.profundidad - 1],
 									   892, 319);
-							handPantallaToFondo();
+							handPantallaToBackground();
 							assembleScreen();
-							drawScreen(fondo);
+							drawScreen(background);
 							animatePickup2(3, 1);
 							playVoc("PLATAF", 375907, 14724);
 							currentRoomData->bitmapasociados[1].tambitmap = 892;
@@ -1787,15 +1796,15 @@ void pickupScreenObject() {
 							hornacina[1][2] = 0;
 							currentRoomData->indexadoobjetos[8]->objectName = "HORNACINA";
 							animatePickup1(0, 1);
-							readBitmap(1399610, objetos[regobj.profundidad - 1], 892, 319);
+							readBitmap(1399610, screenObjects[regobj.profundidad - 1], 892, 319);
 							currentRoomData->bitmapasociados[0].puntbitmap = 1399610;
 							currentRoomData->bitmapasociados[0].tambitmap = 892;
 							currentRoomData->bitmapasociados[0].coordx = 217;
 							currentRoomData->bitmapasociados[0].coordy = 48;
 							currentRoomData->bitmapasociados[0].profund = 1;
-							handPantallaToFondo();
+							handPantallaToBackground();
 							assembleScreen();
-							drawScreen(fondo);
+							drawScreen(background);
 							animatePickup2(0, 1);
 						} else {
 							readItemRegister(hornacina[1][hornacina[1][3]]);
@@ -1804,10 +1813,10 @@ void pickupScreenObject() {
 							hornacina[0][3] -= 1;
 							currentRoomData->indexadoobjetos[8]->objectName = "                    ";
 							animatePickup1(0, 1);
-							readBitmap(1399610, objetos[0], 892, 319);
-							handPantallaToFondo();
+							readBitmap(1399610, screenObjects[0], 892, 319);
+							handPantallaToBackground();
 							assembleScreen();
-							drawScreen(fondo);
+							drawScreen(background);
 							animatePickup2(0, 1);
 							playVoc("PLATAF", 375907, 14724);
 							currentRoomData->bitmapasociados[0].tambitmap = 892;
@@ -1863,19 +1872,19 @@ void pickupScreenObject() {
 					with.coordy = 0;
 					with.profund = 0;
 				}
-				objetos[3] = NULL;
+				screenObjects[3] = NULL;
 				disableSecondAnimation();
-				drawScreen(fondo);
+				drawScreen(background);
 				animatePickup2(2, 1);
 				rojo_capturado = true;
 				trampa_puesta = false;
 			} break;
 			default: {
 				animatePickup1(direccionmovimiento, 1);
-				objetos[regobj.profundidad - 1] = NULL;
-				handPantallaToFondo();
+				screenObjects[regobj.profundidad - 1] = NULL;
+				handPantallaToBackground();
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				animatePickup2(direccionmovimiento, 1);
 			}
 			}
@@ -1908,7 +1917,7 @@ void pickupScreenObject() {
 			} break;
 			case 659: { // spider web, puts bird and ring on the floor
 				animatePickup1(3, 2);
-				objetos[regobj.profundidad - 1] = NULL;
+				screenObjects[regobj.profundidad - 1] = NULL;
 				{ // bird
 					RoomBitmapRegister &with = currentRoomData->bitmapasociados[2];
 
@@ -1929,16 +1938,16 @@ void pickupScreenObject() {
 					with.profund = 3;
 					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 				}
-				handPantallaToFondo();
+				handPantallaToBackground();
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				animatePickup2(3, 2);
 			} break;
 			default: {
 				animatePickup1(direccionmovimiento, 2);
-				objetos[regobj.profundidad - 1] = NULL;
+				screenObjects[regobj.profundidad - 1] = NULL;
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				animatePickup2(direccionmovimiento, 2);
 			}
 			}
@@ -2566,7 +2575,7 @@ void useScreenObject() {
 					sprites(true);
 				} while (indicetray2 != currentRoomData->longtray2);
 				disableSecondAnimation();
-				drawScreen(fondo);
+				drawScreen(background);
 				g_engine->_mouseManager->show();
 			} break;
 			case 201: {
@@ -2607,7 +2616,7 @@ void useScreenObject() {
 				animateOpen2(3, 2);
 				updateItem(regobj.code);
 				disableSecondAnimation();
-				drawScreen(fondo);
+				drawScreen(background);
 				g_engine->_mouseManager->show();
 				drawText(2652);
 				g_engine->_mouseManager->hide();
@@ -2752,12 +2761,12 @@ void useScreenObject() {
 							switch (hornacina[0][0]) {
 							case 561: {
 								currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
-								readBitmap(1182652, objetos[0], 892, 319);
+								readBitmap(1182652, screenObjects[0], 892, 319);
 								currentRoomData->bitmapasociados[1].puntbitmap = 1182652;
 							} break;
 							case 615: {
 								currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
-								readBitmap(1181760, objetos[0], 892, 319);
+								readBitmap(1181760, screenObjects[0], 892, 319);
 								currentRoomData->bitmapasociados[1].puntbitmap = 1181760;
 							} break;
 							}
@@ -2765,10 +2774,10 @@ void useScreenObject() {
 							currentRoomData->bitmapasociados[1].coordx = 66;
 							currentRoomData->bitmapasociados[1].coordy = 35;
 							currentRoomData->bitmapasociados[1].profund = 1;
-							handPantallaToFondo();
+							handPantallaToBackground();
 							// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4, (sizepantalla - int32(4)));
 							assembleScreen();
-							drawScreen(fondo);
+							drawScreen(background);
 							animateOpen2(3, 1);
 							updateInventory(indicemochila);
 							drawBackpack();
@@ -2783,15 +2792,15 @@ void useScreenObject() {
 							animateGive(3, 1);
 							switch (regobj.code) {
 							case 561:
-								readBitmap(1182652, objetos[0], 892, 319);
+								readBitmap(1182652, screenObjects[0], 892, 319);
 								break;
 							case 615:
-								readBitmap(1181760, objetos[0], 892, 319);
+								readBitmap(1181760, screenObjects[0], 892, 319);
 								break;
 							}
-							handPantallaToFondo();
+							handPantallaToBackground();
 							assembleScreen();
-							drawScreen(fondo);
+							drawScreen(background);
 							animateOpen2(3, 1);
 							updateInventory(indicemochila);
 							drawBackpack();
@@ -2843,12 +2852,12 @@ void useScreenObject() {
 							switch (hornacina[1][0]) {
 							case 561: {
 								currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
-								readBitmap(1381982, objetos[0], 892, 319);
+								readBitmap(1381982, screenObjects[0], 892, 319);
 								currentRoomData->bitmapasociados[0].puntbitmap = 1381982;
 							} break;
 							case 615: {
 								currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
-								readBitmap(1381090, objetos[0], 892, 319);
+								readBitmap(1381090, screenObjects[0], 892, 319);
 								currentRoomData->bitmapasociados[0].puntbitmap = 1381090;
 							} break;
 							}
@@ -2856,10 +2865,10 @@ void useScreenObject() {
 							currentRoomData->bitmapasociados[0].coordx = 217;
 							currentRoomData->bitmapasociados[0].coordy = 48;
 							currentRoomData->bitmapasociados[0].profund = 1;
-							handPantallaToFondo();
+							handPantallaToBackground();
 							// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4, (sizepantalla - int32(4)));
 							assembleScreen();
-							drawScreen(fondo);
+							drawScreen(background);
 							animateOpen2(0, 1);
 							updateInventory(indicemochila);
 							drawBackpack();
@@ -2875,18 +2884,18 @@ void useScreenObject() {
 
 							switch (regobj.code) {
 							case 561:
-								readBitmap(1381982, objetos[regobj.profundidad - 1],
+								readBitmap(1381982, screenObjects[regobj.profundidad - 1],
 										   892, 319);
 								break;
 							case 615:
-								readBitmap(1381090, objetos[regobj.profundidad - 1],
+								readBitmap(1381090, screenObjects[regobj.profundidad - 1],
 										   892, 319);
 								break;
 							}
-							handPantallaToFondo();
+							handPantallaToBackground();
 							// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4, (sizepantalla - int32(4)));
 							assembleScreen();
-							drawScreen(fondo);
+							drawScreen(background);
 							animateOpen2(0, 1);
 							updateInventory(indicemochila);
 							drawBackpack();
@@ -2973,11 +2982,11 @@ void useScreenObject() {
 					with.profund = 1;
 					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 				}
-				readBitmap(1243652, objetos[5], 2718, 319);
-				handPantallaToFondo();
+				readBitmap(1243652, screenObjects[5], 2718, 319);
+				handPantallaToBackground();
 				// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4,  (sizepantalla - int32(4)));
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 			} break;
 			case 594: {
 				drawText(regobj.useTextRef);
@@ -3004,10 +3013,10 @@ void useScreenObject() {
 					with.profund = 4;
 					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 				}
-				handPantallaToFondo();
+				handPantallaToBackground();
 				// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4,(sizepantalla - int32(4)));
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				updateInventory(indicemochila);
 				drawBackpack();
 				trampa_puesta = true;
@@ -3020,9 +3029,9 @@ void useScreenObject() {
 
 				//Show feather on pedestal
 				loadItem(187, 70, 104, 1545820, 8);
-				handPantallaToFondo();
+				handPantallaToBackground();
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				g_engine->_screen->update();
 
 				animateOpen2(direccionmovimiento, 1);
@@ -3040,8 +3049,8 @@ void useScreenObject() {
 				currentRoomData->bitmapasociados[2].coordx = 277;
 				currentRoomData->bitmapasociados[2].coordy = 104;
 				currentRoomData->bitmapasociados[2].profund = 1;
-				profundidad[0].posy = 104;
-				readBitmap(1545820, objetos[0], 104, 319);
+				depthMap[0].posy = 104;
+				readBitmap(1545820, screenObjects[0], 104, 319);
 
 				currentRoomData->bitmapasociados[4].puntbitmap = 1447508;
 				currentRoomData->bitmapasociados[4].tambitmap = 464;
@@ -3050,9 +3059,9 @@ void useScreenObject() {
 				currentRoomData->bitmapasociados[4].profund = 8;
 				loadItem(186, 63, 464, 1447508, 8);
 
-				handPantallaToFondo();
+				handPantallaToBackground();
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				g_engine->_mouseManager->show();
 				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 18);
 				g_engine->_mouseManager->hide();
@@ -3063,10 +3072,10 @@ void useScreenObject() {
 				currentRoomData->bitmapasociados[4].coordx = 0;
 				currentRoomData->bitmapasociados[4].coordy = 0;
 				currentRoomData->bitmapasociados[4].profund = 0;
-				objetos[7] = NULL;
-				handPantallaToFondo();
+				screenObjects[7] = NULL;
+				handPantallaToBackground();
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				animatePickup2(1, 1);
 				drawBackpack();
 				g_engine->_mouseManager->show();
@@ -3083,9 +3092,9 @@ void useScreenObject() {
 
 				animateGive(3, 1);
 				loadItem(86, 55, 92, 1591272, 8);
-				handPantallaToFondo();
+				handPantallaToBackground();
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				animateOpen2(3, 1);
 				g_engine->_mouseManager->show();
 				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 10);
@@ -3098,9 +3107,9 @@ void useScreenObject() {
 				currentRoomData->bitmapasociados[3].coordx = 18;
 				currentRoomData->bitmapasociados[3].coordy = 60;
 				currentRoomData->bitmapasociados[3].profund = 3;
-				profundidad[2].posx = 18;
-				profundidad[2].posy = 60;
-				readBitmap(1591272, objetos[2], 92, 319);
+				depthMap[2].posx = 18;
+				depthMap[2].posy = 60;
+				readBitmap(1591272, screenObjects[2], 92, 319);
 
 				currentRoomData->bitmapasociados[4].puntbitmap = 1746554;
 				currentRoomData->bitmapasociados[4].tambitmap = 384;
@@ -3109,7 +3118,7 @@ void useScreenObject() {
 				currentRoomData->bitmapasociados[4].profund = 8;
 				loadItem(82, 53, 384, 1746554, 8);
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				g_engine->_mouseManager->show();
 				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 15);
 				g_engine->_mouseManager->hide();
@@ -3120,10 +3129,10 @@ void useScreenObject() {
 				currentRoomData->bitmapasociados[4].coordx = 0;
 				currentRoomData->bitmapasociados[4].coordy = 0;
 				currentRoomData->bitmapasociados[4].profund = 0;
-				objetos[7] = NULL;
-				handPantallaToFondo();
+				screenObjects[7] = NULL;
+				handPantallaToBackground();
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				animatePickup2(3, 1);
 				drawBackpack();
 				g_engine->_mouseManager->show();
@@ -3184,9 +3193,9 @@ void useScreenObject() {
 				animateGive(1, 1);
 				updateInventory(indicemochila);
 				dropObjectInScreen(regobj);
-				handPantallaToFondo();
+				handPantallaToBackground();
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				drawBackpack();
 				animateOpen2(1, 1);
 				for (indlista = 19; indlista <= 21; indlista++)
@@ -3203,9 +3212,9 @@ void useScreenObject() {
 				drawFlc(110, 79, 2361800, 0, 9, 0, false, false, false, basurillalog);
 				replaceBackpack(indicemochila, 701);
 				drawBackpack();
-				handPantallaToFondo();
+				handPantallaToBackground();
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				g_engine->_mouseManager->show();
 				for (indlista = 18; indlista <= 20; indlista++)
 					currentRoomData->mouseGrid[indlista][26] = 10;
@@ -3224,7 +3233,7 @@ void useScreenObject() {
 				currentRoomData->bitmapasociados[0].coordx = 0;
 				currentRoomData->bitmapasociados[0].coordy = 0;
 				currentRoomData->bitmapasociados[0].profund = 0;
-				objetos[2] = NULL;
+				screenObjects[2] = NULL;
 				for (indmoch = 6; indmoch <= 9; indmoch++)
 					currentRoomData->mouseGrid[26][indmoch] = 3;
 				for (indmoch = 3; indmoch <= 5; indmoch++)
@@ -3271,10 +3280,10 @@ void useScreenObject() {
 						with.profund = 1;
 						loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 					}
-					handPantallaToFondo();
+					handPantallaToBackground();
 					// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4,(sizepantalla - int32(4)));
 					assembleScreen();
-					drawScreen(fondo);
+					drawScreen(background);
 
 					g_engine->_sound->waitForSoundEnd();
 					playVoc("PUFF", 191183, 18001);
@@ -3469,7 +3478,7 @@ void openScreenObject() {
 			else {
 				g_engine->_mouseManager->hide();
 				animatePickup1(0, 1);
-				objetos[regobj.profundidad - 1] = NULL;
+				screenObjects[regobj.profundidad - 1] = NULL;
 				indicey = 0;
 				while (currentRoomData->bitmapasociados[indicey].profund != regobj.profundidad && indicey != 15) {
 					indicey ++;
@@ -3481,9 +3490,9 @@ void openScreenObject() {
 				currentRoomData->bitmapasociados[indicey].coordy = 0;
 				currentRoomData->bitmapasociados[indicey].profund = 0;
 				currentRoomData->doors[2].abiertacerrada = 1;
-				handPantallaToFondo();
+				handPantallaToBackground();
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				animateOpen2(0, 1);
 				g_engine->_mouseManager->show();
 				for (indicey = 0; indicey <= 12; indicey++)
@@ -3505,7 +3514,7 @@ void openScreenObject() {
 			else {
 				g_engine->_mouseManager->hide();
 				animatePickup1(1, 1);
-				objetos[regobj.profundidad - 1] = NULL;
+				screenObjects[regobj.profundidad - 1] = NULL;
 				indicey = 0;
 				while (currentRoomData->bitmapasociados[indicey].profund != regobj.profundidad && indicey != 14) {
 					indicey ++;
@@ -3516,9 +3525,9 @@ void openScreenObject() {
 				currentRoomData->bitmapasociados[indicey].coordy = 0;
 				currentRoomData->bitmapasociados[indicey].profund = 0;
 				currentRoomData->doors[0].abiertacerrada = 1;
-				handPantallaToFondo();
+				handPantallaToBackground();
 				assembleScreen();
-				drawScreen(fondo);
+				drawScreen(background);
 				animateOpen2(1, 1);
 				g_engine->_mouseManager->show();
 				indicex = 30;
@@ -3845,7 +3854,7 @@ static void montaimagenvir(byte *image1, byte *image2) { // Near;
  */
 static void getScreen(byte *background) {
 	byte *screenBuf = (byte *)g_engine->_screen->getPixels();
-	Common::copy(screenBuf, screenBuf + (22400 * 2), fondo + 4);
+	Common::copy(screenBuf, screenBuf + (22400 * 2), background + 4);
 }
 
 static void scrollRight(uint &horizontalPos) {
@@ -3858,12 +3867,12 @@ static void scrollRight(uint &horizontalPos) {
 	size_t numBytes = 44796;
 	for (int i = 0; i < stepCount; i++) {
 		// move everything to the left
-		memmove(fondo + 4, fondo + 8, numBytes);
+		memmove(background + 4, background + 8, numBytes);
 
 		horizontalPos += 4;
 		for (int k = 0; k < 140; k++) {
 			for (int j = 0; j < 4; j++) {
-				fondo[320 + k * 320 + j] = handpantalla[horizontalPos + k * 320 + j];
+				background[320 + k * 320 + j] = handpantalla[horizontalPos + k * 320 + j];
 			}
 		}
 		if (characterPos > 0) {
@@ -3881,20 +3890,20 @@ static void scrollRight(uint &horizontalPos) {
 			Common::copy(pasoframe, pasoframe + sizeframe, assembledCharacterFrame);
 
 			// puts the original captured background back in the background for next iteration
-			putVirtualImg(characterPosX - 2, characterPosY, fondo, fondsprite);
+			putVirtualImg(characterPosX - 2, characterPosY, background, fondsprite);
 			uint16 pasoframeW = READ_LE_UINT16(assembledCharacterFrame);
 			uint16 pasoframeH = READ_LE_UINT16(assembledCharacterFrame + 2);
 			// Grabs current area surrounding character (which might contain parts of A and B)
-			getVirtualImg(characterPosX, characterPosY, characterPosX + pasoframeW, characterPosY + pasoframeH, fondo, fondsprite);
+			getVirtualImg(characterPosX, characterPosY, characterPosX + pasoframeW, characterPosY + pasoframeH, background, fondsprite);
 			// blits over the character sprite, only on black pixels
 			montaimagenvir(fondsprite, assembledCharacterFrame);
 			// puts it back in the background (character + piece of background)
-			putVirtualImg(characterPosX, characterPosY, fondo, assembledCharacterFrame);
+			putVirtualImg(characterPosX, characterPosY, background, assembledCharacterFrame);
 		} else
 			characterPosX -= 4;
 		g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 		g_engine->_screen->update();
-		drawScreen(fondo);
+		drawScreen(background);
 	}
 	free(assembledCharacterFrame);
 }
@@ -3911,13 +3920,13 @@ static void scrollLeft(uint &poshor) {
 	for (int i = numpasos; i >= 1; i--) {
 		for (int j = numBytes; j > 0; j--) {
 			// move the previous background to the right
-			fondo[j + 4] = fondo[j];
+			background[j + 4] = background[j];
 		}
 
 		poshor -= 4;
 		for (int k = 0; k < 140; k++) {
 			for (int j = 0; j < 4; j++) {
-				fondo[4 + k * 320 + j] = handpantalla[4 + poshor + k * 320 + j];
+				background[4 + k * 320 + j] = handpantalla[4 + poshor + k * 320 + j];
 			}
 		}
 
@@ -3933,20 +3942,20 @@ static void scrollLeft(uint &poshor) {
 			pasoframe = secuencia.bitmap[3][iframe];
 			Common::copy(pasoframe, pasoframe + sizeframe, assembledCharacterFrame);
 
-			putVirtualImg(characterPosX + 2, characterPosY, fondo, fondsprite);
+			putVirtualImg(characterPosX + 2, characterPosY, background, fondsprite);
 
 			uint16 pasoframeW = READ_LE_UINT16(assembledCharacterFrame);
 			uint16 pasoframeH = READ_LE_UINT16(assembledCharacterFrame + 2);
 
-			getVirtualImg(characterPosX, characterPosY, characterPosX + pasoframeW, characterPosY + pasoframeH, fondo, fondsprite);
+			getVirtualImg(characterPosX, characterPosY, characterPosX + pasoframeW, characterPosY + pasoframeH, background, fondsprite);
 			montaimagenvir(fondsprite, assembledCharacterFrame);
-			putVirtualImg(characterPosX, characterPosY, fondo, assembledCharacterFrame);
+			putVirtualImg(characterPosX, characterPosY, background, assembledCharacterFrame);
 		} else
 			characterPosX += 4;
 
 		g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 		g_engine->_screen->update();
-		drawScreen(fondo);
+		drawScreen(background);
 	}
 	free(assembledCharacterFrame);
 }
@@ -3958,7 +3967,7 @@ static void scrollLeft(uint &poshor) {
 void loadScrollData(uint numpantalla, boolean scrollder, uint poshor, int correccionscroll) {
 	uint indicecarga;
 
-	handPantallaToFondo();
+	handPantallaToBackground();
 	// Fondo now contains background A, handpantalla contains background A
 
 	uint pasoframeW = READ_LE_UINT16(pasoframe);
@@ -3966,7 +3975,7 @@ void loadScrollData(uint numpantalla, boolean scrollder, uint poshor, int correc
 	debug("characterPos=%d,%d, size=%d,%d", characterPosX, characterPosY, pasoframeW, pasoframeH);
 	/* Copy the area with the player from previous scren*/
 	fondsprite = (byte *)malloc(4 + (pasoframeW + 8) * (pasoframeH + 8));
-	getVirtualImg(characterPosX, characterPosY, characterPosX + pasoframeW, characterPosY + pasoframeH, fondo, fondsprite);
+	getVirtualImg(characterPosX, characterPosY, characterPosX + pasoframeW, characterPosY + pasoframeH, background, fondsprite);
 
 	// Start screen 2
 	Common::File fichpanta;
@@ -3988,26 +3997,26 @@ void loadScrollData(uint numpantalla, boolean scrollder, uint poshor, int correc
 	// Fondo contains background B + objects, handpantalla contains plain background B
 
 	// Copies the contents of fondo into handpantalla
-	Common::copy(fondo, fondo + 44804, handpantalla);
+	Common::copy(background, background + 44804, handpantalla);
 	// Fondo contains background B + objects, handpantalla contains background B + objects
 
 	movidapaleta = 0;
-	getScreen(fondo);
+	getScreen(background);
 	// Fondo now contains full background A again, handpantalla contains background B + objects
 
-	drawScreen(fondo);
+	drawScreen(background);
 	if (scrollder)
 		scrollRight(poshor);
 	else
 		scrollLeft(poshor);
 
 	// After scroll is done, handpantalla will now contain the resulting fondo (background B + objects)
-	Common::copy(handpantalla, handpantalla + 44804, fondo);
+	Common::copy(handpantalla, handpantalla + 44804, background);
 
 	characterPosX += correccionscroll;
 
 	assembleScreen();
-	drawScreen(fondo);
+	drawScreen(background);
 	free(fondsprite);
 	loadScreen();
 	trayec[indicetray].x = characterPosX;
@@ -4465,7 +4474,7 @@ void loadGame(regispartida game) {
 	drawBackpack();
 	if (rojo_capturado == false && currentRoomData->codigo == 24 && trampa_puesta == false)
 		runaroundRed();
-	effect(tipoefectofundido, false, fondo);
+	effect(tipoefectofundido, false, background);
 }
 
 void loadGame(byte numeropartida) {
@@ -5330,9 +5339,9 @@ void wcScene() {
 	characterPosX = 76 - rectificacionx;
 	characterPosY = 78 - rectificaciony;
 	copyPalette(palwater, pal);
-	handPantallaToFondo();
+	handPantallaToBackground();
 	assembleScreen();
-	drawScreen(fondo);
+	drawScreen(background);
 	partialFadeIn(234);
 	xframe2 = 0;
 	indicetray = 0;

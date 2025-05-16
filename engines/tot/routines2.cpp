@@ -36,7 +36,7 @@ namespace Tot {
 
 void loadScreenMemory() {
 	sizepantalla = 65520;
-	fondo = (byte *)malloc(sizepantalla);
+	background = (byte *)malloc(sizepantalla);
 	handpantalla = (byte *)malloc(sizepantalla);
 }
 
@@ -279,8 +279,8 @@ void loadScreen() {
 	palette palcp;
 
 	sizepantalla = currentRoomData->tamimagenpantalla;
-	readBitmap(currentRoomData->puntimagenpantalla, fondo, sizepantalla, 316);
-	Common::copy(fondo, fondo + sizepantalla, handpantalla);
+	readBitmap(currentRoomData->puntimagenpantalla, background, sizepantalla, 316);
+	Common::copy(background, background + sizepantalla, handpantalla);
 	switch (parte_del_juego) {
 	case 1: {
 		if (!fichcp.open("PALETAS.DAT")) {
@@ -338,9 +338,9 @@ void freeObject() {
 	uint indicecarga;
 
 	for (indicecarga = 0; indicecarga < numobjetosconv; indicecarga++) {
-		if (objetos[indicecarga] != NULL)
-			free(objetos[indicecarga]);
-		objetos[indicecarga] = NULL;
+		if (screenObjects[indicecarga] != NULL)
+			free(screenObjects[indicecarga]);
+		screenObjects[indicecarga] = NULL;
 	}
 
 	// if (liberadormem != nil) {
@@ -399,16 +399,16 @@ void verifyCopyProtection2() {
 	// }
 }
 void loadItemWithFixedDepth(uint coordx, uint coordy, uint tamdibujo, int32 dibujo, uint prof) {
-	objetos[prof] = (byte *)malloc(tamdibujo);
-	readBitmap(dibujo, objetos[prof], tamdibujo, 319);
+	screenObjects[prof] = (byte *)malloc(tamdibujo);
+	readBitmap(dibujo, screenObjects[prof], tamdibujo, 319);
 
 	uint16 w, h;
-	w = READ_LE_UINT16(objetos[prof]);
-	h = READ_LE_UINT16(objetos[prof] + 2);
-	profundidad[prof].posx = coordx;
-	profundidad[prof].posy = coordy;
-	profundidad[prof].posx2 = coordx + w + 1;
-	profundidad[prof].posy2 = coordy + h + 1;
+	w = READ_LE_UINT16(screenObjects[prof]);
+	h = READ_LE_UINT16(screenObjects[prof] + 2);
+	depthMap[prof].posx = coordx;
+	depthMap[prof].posy = coordy;
+	depthMap[prof].posx2 = coordx + w + 1;
+	depthMap[prof].posy2 = coordy + h + 1;
 }
 
 void loadItem(uint coordx, uint coordy, uint tamdibujo, int32 dibujo, uint prof) {
@@ -1586,7 +1586,7 @@ void scrollCredit(
 		error("scrollcredit1(): ioresult! (270)");
 	}
 	fich.seek(posicion);
-	fich.read(fondo, tam);
+	fich.read(background, tam);
 	fich.read(pal2, 768);
 	fich.close();
 
@@ -1612,7 +1612,7 @@ void scrollCredit(
 				keyPressed = true;
 			}
 		}
-		putCreditsImg(85, i, fondo, fondopp, !withFade);
+		putCreditsImg(85, i, background, fondopp, !withFade);
 		if (keyPressed) {
 			salirpitando = true;
 			break;
@@ -2404,7 +2404,7 @@ void sacrifice() {
 		error("sacrifice(): ioresult! (318)");
 	}
 	fich.read(palaux, 768);
-	fich.read(fondo, 44800);
+	fich.read(background, 44800);
 	fich.close();
 
 	pal[0] = 0;
@@ -2417,7 +2417,7 @@ void sacrifice() {
 	}
 
 	//We dont have the width and height here in the byte buffer
-	drawScreen(fondo, false);
+	drawScreen(background, false);
 	partialFadeIn(234);
 	stopVoc();
 
@@ -2479,9 +2479,9 @@ void sacrifice() {
 		palaux[i * 3 + 2] = palaux[i * 3 + 2] << 2;
 	}
 
-	fich.read(fondo, 64000);
+	fich.read(background, 64000);
 	fich.close();
-	drawFullScreen(fondo);
+	drawFullScreen(background);
 
 	palaux[0] = 0;
 	palaux[1] = 0;
@@ -2711,7 +2711,7 @@ void assembleCompleteBackground(byte *image, uint coordx, uint coordy) {
 	w = READ_LE_UINT16(image);
 	h = READ_LE_UINT16(image + 2);
 
-	wFondo = READ_LE_UINT16(fondo);
+	wFondo = READ_LE_UINT16(background);
 
 	wFondo++;
 	w++;
@@ -2720,7 +2720,7 @@ void assembleCompleteBackground(byte *image, uint coordx, uint coordy) {
 		for (int j = 0; j < h; j++) {
 			int color = image[4 + j * w + i];
 			if (color != 0) {
-				fondo[4 + (coordy + j) * wFondo + (coordx + i)] = color;
+				background[4 + (coordy + j) * wFondo + (coordx + i)] = color;
 			}
 		}
 	}
@@ -2734,8 +2734,8 @@ void assembleCompleteBackground(byte *image, uint coordx, uint coordy) {
 void assembleScreen(boolean scroll) {
 
 	for (int indice = 0; indice < nivelesdeprof; indice++) {
-		if (objetos[indice] != NULL) {
-			assembleCompleteBackground(objetos[indice], profundidad[indice].posx, profundidad[indice].posy);
+		if (screenObjects[indice] != NULL) {
+			assembleCompleteBackground(screenObjects[indice], depthMap[indice].posx, depthMap[indice].posy);
 		}
 		if (!scroll && secuencia.profundidad == indice) {
 			assembleCompleteBackground(secuencia.bitmap[direccionmovimiento][iframe], characterPosX, characterPosY);
@@ -2750,7 +2750,7 @@ void disableSecondAnimation() {
 	setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
 	currentRoomData->banderamovimiento = false;
 	freeAnimation();
-	handPantallaToFondo();
+	handPantallaToBackground();
 	assembleScreen();
 }
 
