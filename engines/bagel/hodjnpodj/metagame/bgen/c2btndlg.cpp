@@ -37,7 +37,7 @@ namespace Metagame {
 #define MESSAGE_WIDTH       186             // standard message box dims
 #define MESSAGE_HEIGHT      20
 
-#define MESSAGE2_ROW_OFFSET ( MESSAGE_HEIGHT + 4 )  // Row offset from first 
+#define MESSAGE2_ROW_OFFSET ( MESSAGE_HEIGHT + 4 )  // Row offset from first
 // message box
 
 #define IDD_2BTNDLG 208
@@ -230,3 +230,7 @@ BOOL C2ButtonDialog::OnEraseBkgnd(CDC *) {
 	// Prevents refreshing of background
 	return (TRUE);
 }
+
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel

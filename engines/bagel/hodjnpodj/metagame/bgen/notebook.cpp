@@ -819,3 +819,7 @@ void CNotebook::DoArrowCursor(void) {
 
 	(void)(*pMyApp).EndWaitCursor();
 }
+
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel

@@ -113,4 +113,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel
+
 #endif //!_INC_BACKPACK

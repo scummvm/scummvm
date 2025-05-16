@@ -176,5 +176,6 @@ CBgbObject FAR *CBbtMgr::GetCurrentBitmap(CBbutton * xpBbt)
 	RETURN(lpcBgbObject) ;
 }
 
-
-
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel

@@ -100,5 +100,8 @@ public:
 	}
 } ;
 
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel
 
 #endif // __bbt_H__

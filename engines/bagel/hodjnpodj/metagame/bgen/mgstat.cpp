@@ -1073,3 +1073,7 @@ CSectorTable CMgStatic::cSectorTable[] = {
 	{0, NULL, NULL}
 } ;
 #endif
+
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel

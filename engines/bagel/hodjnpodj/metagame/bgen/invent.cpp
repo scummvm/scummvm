@@ -351,4 +351,8 @@ void CInventory::Dump(CDumpContext& dc) const {
 
 #endif //_DEBUG
 
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel
+
 /////////////////////////////////////////////////////////////////////////////
