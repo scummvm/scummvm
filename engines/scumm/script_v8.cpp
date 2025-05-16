@@ -313,7 +313,9 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 		_scummVars[var] = value;
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
-			if (vm.slot[_currentScript].number < 100)
+			if (_currentScript == 0xFF)
+				debugC(DEBUG_VARS, "vars[%d] = %d", var, value);
+			else if (vm.slot[_currentScript].number < 100)
 				debugC(DEBUG_VARS, "vars[%d] = %d (via script-%d)", var, value, vm.slot[_currentScript].number);
 			else
 				debugC(DEBUG_VARS, "vars[%d] = %d (via room-%d-%d)", var, value, _currentRoom, vm.slot[_currentScript].number);
