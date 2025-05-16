@@ -41,22 +41,12 @@ public:
 	void getPalette(byte *palette);
 	byte *getPalette();
 	void setPalette(byte palette[768], uint num = 256);
-	void changePalette(byte origin[768], byte target[768]);
 	byte *loadPalette(Common::String fileName);
 
-	void fadeOut(byte rojo = 0);
-	void fadeIn(uint numeropaleta, Common::String nombrepaleta);
-
+	void restoreBackground(uint x, uint y, uint x2, uint y2);
 	void littText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign  align = Graphics::kTextAlignLeft, bool alignCenterY = false);
 	void euroText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool alignCenterY = false);
 	void biosText(const Common::String &str, int x, int y, uint32 color);
-	void blit(const Graphics::Surface *src, Common::Rect bounds);
-	void copyPixels(int x, int y, byte *pixels, uint size);
-	void copyRect(Common::Rect rect, byte *pixels);
-
-	void effect(int effectNumber, bool toBlack);
-
-	void restoreBackground(uint x, uint y, uint x2, uint y2);
 	void clear();
 	void clearActionLine();
 	void writeActionLine(const Common::String &str);
@@ -69,11 +59,6 @@ private:
 	const int FONT_LITT_OFFSET = 153584;
 	const int FONT_EURO_OFFSET = 159681;
 	signed char datosfundido[256][256];
-	void updateScreen();
-	void updateScreen(const Common::Rect &r);
-	// void restoreBackground(const Common::Rect &r);
-	Graphics::Surface *_currentBuffer;
-	Graphics::Surface *_backBuffer;
 };
 
 } // End of namespace Tot
