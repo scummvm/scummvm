@@ -3783,7 +3783,7 @@ void handleAction(byte posinv) {
 void loadObjects() {
 
 	Common::File ficheroobj;
-	switch (parte_del_juego) {
+	switch (gamePart) {
 	case 1:
 		ficheroobj.open("OBJMOCH.DAT");
 		break;
@@ -4216,7 +4216,7 @@ void saveGameToRegister() {
 	regpartida.indicepuertas = indicepuertas;
 	regpartida.direccionmovimiento = direccionmovimiento;
 	regpartida.iframe = iframe;
-	regpartida.parte_del_juego = parte_del_juego;
+	regpartida.parte_del_juego = gamePart;
 
 	regpartida.sello_quitado = sello_quitado;
 	regpartida.lista1 = lista1;
@@ -4284,7 +4284,7 @@ void saveGameToRegister() {
 
 void loadGame(regispartida game) {
 	freeAnimation();
-	freeObject();
+	freeScreenObjects();
 
 	uint indiaux, indiaux2;
 	tipoefectofundido = Random(15) + 1;
@@ -4313,8 +4313,8 @@ void loadGame(regispartida game) {
 	indicepuertas = game.indicepuertas;
 	direccionmovimiento = game.direccionmovimiento;
 	iframe = game.iframe;
-	if (game.parte_del_juego != parte_del_juego) {
-		parte_del_juego = game.parte_del_juego;
+	if (game.parte_del_juego != gamePart) {
+		gamePart = game.parte_del_juego;
 		for(int i = 0; i < inventoryIconCount; i++) {
 			free(mochilaxms.bitmap[i]);
 		}
@@ -4840,7 +4840,7 @@ void saveLoad() {
 							free(puntfondmenu);
 							if (!desactivagrabar) {
 								freeAnimation();
-								freeObject();
+								freeScreenObjects();
 							}
 							loadGame(partidaselecc);
 							xraton = oldxraton;
@@ -4873,7 +4873,7 @@ void saveLoad() {
 					}
 				}
 				else if (pulsax >= 200 && pulsax <= 250) {
-					if (dentro_del_juego && !desactivagrabar) {
+					if (inGame && !desactivagrabar) {
 						putImg(50, 10, puntfondmenu);
 						salirmenufunciones = true;
 						partidaselecc = 0;

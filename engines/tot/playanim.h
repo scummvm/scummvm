@@ -342,7 +342,7 @@ extern boolean teleencendida,
 /**
  * Flag for temporary savegame
  */
-extern boolean dentro_del_juego;
+extern boolean inGame;
 /**
  * Flag for first time run of the game.
  */
@@ -424,7 +424,7 @@ extern byte rejillaquetoca;
 /**
  * 1 first part, 2 second part
  */
-extern byte parte_del_juego;
+extern byte gamePart;
 extern byte encripcod1;
 /**
  * Number of frames of secondary animation

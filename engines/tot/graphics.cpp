@@ -825,7 +825,7 @@ void redFadeIn(palette palpaso) {
 void updatePalette(byte indicepaleta) {
 	int ip;
 
-	switch (parte_del_juego) {
+	switch (gamePart) {
 	case 1: {
 		for (ipal = 0; ipal <= 5; ipal++) {
 			pal[(ipal + 195) * 3 + 0] = movimientopal[(indicepaleta * 6 + ipal) * 3 + 0];

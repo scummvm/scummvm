@@ -281,7 +281,7 @@ void loadScreen() {
 	sizepantalla = currentRoomData->tamimagenpantalla;
 	readBitmap(currentRoomData->puntimagenpantalla, background, sizepantalla, 316);
 	Common::copy(background, background + sizepantalla, handpantalla);
-	switch (parte_del_juego) {
+	switch (gamePart) {
 	case 1: {
 		if (!fichcp.open("PALETAS.DAT")) {
 				error("loadScreen(): ioresult (310)");
@@ -334,7 +334,7 @@ void loadCharAnimation() {
 	characterFile.close();
 }
 
-void freeObject() {
+void freeScreenObjects() {
 	uint indicecarga;
 
 	for (indicecarga = 0; indicecarga < numobjetosconv; indicecarga++) {
@@ -1958,22 +1958,6 @@ void initialMenu(boolean fundido) {
 						continuarpartida = false;
 						opcionvalida = true;
 					} else if (x > 173 && x < 267) {
-						// {
-						// 	freeAnimation();
-						// 	freeObject();
-						// 	initializeScreenFile();
-						// 	initializeObjectFile();
-						// 	mask();
-						// 	drawBackpack();
-						// 	loadScreenData(1);
-						// 	effect(13, 0, fondo);
-						// 	g_engine->_mouseManager->hide();
-						// 	partialFadeOut(234);
-						// 	sacrifice();
-						// 	g_engine->_mouseManager->show();
-
-						// }
-
 						credits();
 						drawFlc(0, 0, 837602, 0, 9, 0, true, false, false, kklogica);
 					}
@@ -2207,8 +2191,17 @@ void exitToDOS() {
 }
 
 void soundControls() {
-	uint oldxraton, oldyraton, tamfondcontroles, tamslade, tamfondoslade,
-		volumenfx, volumenmelodia;
+	uint oldxraton,
+		oldyraton,
+		tamfondcontroles,
+		tamslade,
+		tamfondoslade,
+		volumenfx,
+		volumenmelodia,
+		xfade,
+		oldxfade,
+		ypaso;
+
 	byte ytext, oldiraton;
 	boolean salirmenucontroles;
 
@@ -2216,13 +2209,12 @@ void soundControls() {
 	oldxraton = xraton;
 	oldyraton = yraton;
 	oldiraton = iraton;
-	// drawMouseBackground(xraton, yraton);
+	g_engine->_mouseManager->hide();
 
 	tamfondcontroles = imagesize(50, 10, 270, 120);
 	byte *puntfondcontroles = (byte *)malloc(tamfondcontroles);
 	getImg(50, 10, 270, 120, puntfondcontroles);
 
-	// settextstyle(peque2, horizdir, 4);
 	xraton = 150;
 	yraton = 60;
 	iraton = 1;
@@ -2230,16 +2222,16 @@ void soundControls() {
 	setMouseArea(55, 13, 250, 105);
 
 	for (ytext = 1; ytext <= 6; ytext++)
-		buttonBorder((120 - (ytext * 10)), (80 - (ytext * 10)), (200 + (ytext * 10)),
-					 (60 + (ytext * 10)), 251, 251, 251, 251, 0, 0, "");
+		buttonBorder(120 - (ytext * 10), 80 - (ytext * 10), 200 + (ytext * 10), 60 + (ytext * 10), 251, 251, 251, 251, 0, 0, "");
 
 	buttonBorder(86, 31, 94, 44, 0, 0, 0, 0, 0, 0, "");
+
 	line(90, 31, 90, 44, 255);
 
 	tamslade = imagesize(86, 31, 94, 44);
 	byte *slade = (byte *)malloc(tamslade);
-
 	getImg(86, 31, 94, 44, slade);
+
 	drawMenu(3);
 	tamfondoslade = imagesize(86, 31, 234, 44);
 
@@ -2247,80 +2239,110 @@ void soundControls() {
 	byte *fondoslade2 = (byte *)malloc(tamfondoslade);
 	getImg(86, 31, 234, 44, fondoslade1);
 	getImg(86, 76, 234, 89, fondoslade2);
-	volumenfx = round(((volumenfxderecho + volumenfxizquierdo) / 2) * 20);
-	volumenmelodia = round(((volumenmelodiaderecho + volumenmelodiaizquierdo) / 2) * 20);
-	putImg((volumenfx + 86), 31, slade);
-	putImg((volumenmelodia + 86), 76, slade);
+
+	// volumenfx = round(((volumenfxderecho + volumenfxizquierdo) / 2) * 20);
+	// volumenmelodia = round(((volumenmelodiaderecho + volumenmelodiaizquierdo) / 2) * 20);
+	volumenfx = 0;
+	volumenmelodia = 0;
+	putImg(volumenfx + 86, 31, slade);
+	putImg(volumenmelodia + 86, 76, slade);
 
 	setMousePos(1, xraton, yraton);
+	boolean keyPressed = false;
+	boolean mouseClicked = false;
+	Common::Event e;
 	do {
-		// do {
-		// 	g_engine->_chrono->updateChrono();
-		// 	g_engine->_mouseManager->animateMouseIfNeeded();
-		// 	// getMouseClickCoords(0, npraton, pulsax, pulsay);
-		// 	g_engine->_screen->update();
-		// } while (!((npraton > 0) || (keyPressed()) && ! g_engine->shouldQuit()));
+		g_engine->_chrono->updateChrono();
+		do {
+			g_engine->_chrono->updateChrono();
+			g_engine->_mouseManager->animateMouseIfNeeded();
+			while (g_system->getEventManager()->pollEvent(e)) {
+				if (e.type == Common::EVENT_KEYUP) {
+					keyPressed = true;
+				}
+				if (e.type == Common::EVENT_LBUTTONDOWN) {
+					mouseClicked = true;
+					pulsax = e.mouse.x;
+					pulsay = e.mouse.y;
+				}
+			}
+			g_engine->_screen->update();
+		} while ((!keyPressed && !mouseClicked) && !g_engine->shouldQuit());
 
 		g_engine->_chrono->updateChrono();
 		g_engine->_mouseManager->animateMouseIfNeeded();
-		// if (keyPressed())
-		// 	salirmenucontroles = true;
-		// if (npraton > 0)
+		if (keyPressed) {
+			salirmenucontroles = true;
+		}
+		if (mouseClicked) {
+			if (pulsay >= 22 && pulsay <= 37) {
+				g_engine->_mouseManager->hide();
+				xfade = 86 + volumenfx;
+				boolean mouseReleased = false;
+				do {
+					while (g_system->getEventManager()->pollEvent(e)) {
+						if (e.type == Common::EVENT_LBUTTONUP) {
+							mouseReleased = true;
+						} else if (e.type == Common::EVENT_MOUSEMOVE) {
+							xfade = e.mouse.x;
+							ypaso = e.mouse.y;
+						}
+					}
+					if (xfade < 86) {
+						xfade = 86;
+					} else if (xfade > 226) {
+						xfade = 226;
+					}
 
-		// 	switch (pulsay) {
-		// 	case RANGE_16(22, 37): {
-		// 		drawMouseBackground(xraton, yraton);
-		// 		xfade = 86 + volumenfx;
-		// 		do {
-		// 			oldxfade = xfade;
-		// 			getMousePos(xfade, ypaso);
-		// 			if (xfade < 86)
-		// 				xfade = 86;
-		// 			else if (xfade > 226)
-		// 				xfade = 226;
-		// 			if (oldxfade != xfade) {
-		// 				putImg(86, 31, fondoslade1);
-		// 				putImg(xfade, 31, slade);
-		// 				volumenfx = xfade - 86;
-		// 				volumenfxderecho = round_((real)(volumenfx) / 20);
-		// 				volumenfxizquierdo = round_((real)(volumenfx) / 20);
-		// 				setSfxVolume((byte)(volumenfxizquierdo),
-		// 							 (byte)(volumenfxderecho));
-		// 			}
-		// 			getMouseClickCoords(0, npraton, pulsax, pulsay);
-		// 		} while (!(npraton > 0));
-		// 		drawMouseMask(iraton, xraton, yraton);
-		// 	} break;
-		// 	case RANGE_16(67, 82): {
-		// 		drawMouseBackground(xraton, yraton);
-		// 		xfade = 86 + volumenmelodia;
-		// 		do {
-		// 			oldxfade = xfade;
-		// 			getMousePos(xfade, ypaso);
-		// 			if (xfade < 86)
-		// 				xfade = 86;
-		// 			else if (xfade > 226)
-		// 				xfade = 226;
-		// 			if (oldxfade != xfade) {
-		// 				putImg(86, 76, fondoslade2);
-		// 				putImg(xfade, 76, slade);
-		// 				volumenmelodia = xfade - 86;
-		// 				volumenmelodiaderecho = round_((real)(volumenmelodia) / 20);
-		// 				volumenmelodiaizquierdo = round_((real)(volumenmelodia) / 20);
-		// 				setMidiVolume((byte)(volumenmelodiaizquierdo),
-		// 							  (byte)(volumenmelodiaderecho));
-		// 			}
-		// 			getMouseClickCoords(0, npraton, pulsax, pulsay);
-		// 		} while (!(npraton > 0));
-		// 		drawMouseMask(iraton, xraton, yraton);
-		// 	} break;
-		// 	case RANGE_11(97, 107):
-		// 		salirmenucontroles = true;
-		// 		break;
-		// 	}
-		// clearMouseAndKeyboard(npraton, npraton2);
-		// if ((npraton > 0) || (npraton2 > 0))
-		// 	error("controls(): npraton! (285)");
+					if (oldxfade != xfade) {
+						putImg(86, 31, fondoslade1);
+						putImg(xfade, 31, slade);
+						volumenfx = xfade - 86;
+						// volumenfxderecho = round_((real)(volumenfx) / 20);
+						// volumenfxizquierdo = round_((real)(volumenfx) / 20);
+						setSfxVolume(volumenfxizquierdo, volumenfxderecho);
+					}
+					g_engine->_screen->update();
+				} while (!mouseReleased);
+
+				g_engine->_mouseManager->show();
+			} else if (pulsay >= 67 && pulsay <= 82) {
+				g_engine->_mouseManager->hide();
+				xfade = 86 + volumenmelodia;
+				boolean mouseReleased = false;
+				do {
+					while (g_system->getEventManager()->pollEvent(e)) {
+						if (e.type == Common::EVENT_LBUTTONUP) {
+							mouseReleased = true;
+						} else if (e.type == Common::EVENT_MOUSEMOVE) {
+							xfade = e.mouse.x;
+							ypaso = e.mouse.y;
+						}
+					}
+					if (xfade < 86) {
+						xfade = 86;
+					} else if (xfade > 226) {
+						xfade = 226;
+					}
+
+					if (oldxfade != xfade) {
+						putImg(86, 76, fondoslade2);
+						putImg(xfade, 76, slade);
+						volumenmelodia = xfade - 86;
+						// 		volumenmelodiaderecho = round_((real)(volumenmelodia) / 20);
+						// 		volumenmelodiaizquierdo = round_((real)(volumenmelodia) / 20);
+						setMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+						setSfxVolume(volumenfxizquierdo, volumenfxderecho);
+					}
+					g_engine->_screen->update();
+				} while (!mouseReleased);
+
+				g_engine->_mouseManager->show();
+			} else if (pulsay >= 97 && pulsay <= 107) {
+				salirmenucontroles = true;
+			}
+			mouseClicked = false;
+		}
 		g_system->delayMillis(10);
 		g_engine->_screen->update();
 	} while (!salirmenucontroles && !g_engine->shouldQuit());
@@ -2341,7 +2363,7 @@ void soundControls() {
 	setMouseArea(0, 0, 305, 185);
 }
 
-void sacrifice() {
+void sacrificeScene() {
 	palette palaux;
 
 	stopVoc();
