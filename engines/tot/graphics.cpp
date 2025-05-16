@@ -673,8 +673,8 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 	}
 }
 
-void changeRGBBlock(byte initialColor, uint numColors, void *rgb) {
-	g_system->getPaletteManager()->setPalette((byte *)rgb, initialColor, numColors);
+void changeRGBBlock(byte initialColor, uint numColors, byte *rgb) {
+	g_system->getPaletteManager()->setPalette(rgb, initialColor, numColors);
 }
 
 void changePalette(palette depaleta, palette apaleta) {
@@ -861,26 +861,13 @@ void updatePalette(byte indicepaleta) {
 			ip = -4;
 			break;
 		}
-		byte *palette = g_engine->_graphics->getPalette();
-
-		palette[131 * 3 + 0] = palette[131 * 3 + 0] - ip;
-		palette[131 * 3 + 1] = palette[131 * 3 + 1] - ip;
-		palette[131 * 3 + 2] = palette[131 * 3 + 2] - ip;
-
-		palette[134 * 3 + 0] = palette[134 * 3 + 0] - ip;
-		palette[134 * 3 + 1] = palette[134 * 3 + 1] - ip;
-		palette[134 * 3 + 2] = palette[134 * 3 + 2] - ip;
-
-		palette[143 * 3 + 0] = palette[143 * 3 + 0] - ip;
-		palette[143 * 3 + 1] = palette[143 * 3 + 1] - ip;
-		palette[143 * 3 + 2] = palette[143 * 3 + 2] - ip;
-
-		palette[187 * 3 + 0] = palette[187 * 3 + 0] - ip;
-		palette[187 * 3 + 1] = palette[187 * 3 + 1] - ip;
-		palette[187 * 3 + 2] = palette[187 * 3 + 2] - ip;
-
-		g_engine->_graphics->setPalette(palette);
-
+		for (int i = 0; i < 3; i++) {
+			pal[131 * 3 + i] = pal[131 * 3 + i] - ip;
+			pal[134 * 3 + i] = pal[134 * 3 + i] - ip;
+			pal[143 * 3 + i] = pal[143 * 3 + i] - ip;
+			pal[187 * 3 + i] = pal[187 * 3 + i] - ip;
+		}
+		g_engine->_graphics->setPalette(pal);
 	} break;
 	}
 }

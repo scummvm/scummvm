@@ -92,18 +92,6 @@ byte *GraphicsManager::getPalette() {
 	return palette;
 }
 
-byte *GraphicsManager::loadPalette(Common::String fileName) {
-	Common::File paletteFile;
-	if (!paletteFile.open(Common::Path(fileName)))
-		error("unable to load palette %s (310)", fileName.c_str());
-	byte *palette = (byte *)malloc(768);
-	paletteFile.read(palette, 768);
-	paletteFile.close();
-	fixPalette(palette);
-	setPalette(palette);
-	return palette;
-}
-
 // Debug function just to print a palette on the screen
 void GraphicsManager::printPalette() {
 
