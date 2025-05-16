@@ -75,7 +75,7 @@ class C1ButtonDialog : public CBmpDialog
         CColorButton *m_pButton1;
 };
 
-} // namespace Peggle
+} // namespace Poker
 } // namespace HodjNPodj
 } // namespace Bagel
 

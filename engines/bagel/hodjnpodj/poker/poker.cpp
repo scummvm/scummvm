@@ -2434,6 +2434,6 @@ void PlayEasterEgg( CDC *pDC, CWnd *pWnd, CPalette *pPalette,
 
 } // end PlayEasterEgg
 
-} // namespace Peggle
+} // namespace Poker
 } // namespace HodjNPodj
 } // namespace Bagel

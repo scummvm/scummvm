@@ -285,6 +285,6 @@ BEGIN_MESSAGE_MAP(CUserWonDlg, CBmpDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-} // namespace Peggle
+} // namespace Poker
 } // namespace HodjNPodj
 } // namespace Bagel

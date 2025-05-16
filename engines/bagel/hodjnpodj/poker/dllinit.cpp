@@ -86,6 +86,6 @@ HWND FAR PASCAL RunPoker( HWND hParentWnd, LPGAMESTRUCT lpGameInfo ) {
 	return pcwndPoker->m_hWnd;
 }
 
-} // namespace Peggle
+} // namespace Poker
 } // namespace HodjNPodj
 } // namespace Bagel

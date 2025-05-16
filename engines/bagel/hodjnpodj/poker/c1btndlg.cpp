@@ -232,6 +232,6 @@ BOOL C1ButtonDialog::OnEraseBkgnd(CDC *)
     return(TRUE);
 }
 
-} // namespace Peggle
+} // namespace Poker
 } // namespace HodjNPodj
 } // namespace Bagel

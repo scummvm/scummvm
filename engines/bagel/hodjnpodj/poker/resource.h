@@ -191,7 +191,7 @@ namespace Poker {
 #define ID_CANCEL2                      1021
 #define ID_CANCEL_VIEW                  1027
 
-} // namespace Peggle
+} // namespace Poker
 } // namespace HodjNPodj
 } // namespace Bagel
 

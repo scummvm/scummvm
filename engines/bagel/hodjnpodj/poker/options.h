@@ -82,7 +82,7 @@ protected:
     CBitmap *m_pDlgBackground;
 };
 
-} // namespace Peggle
+} // namespace Poker
 } // namespace HodjNPodj
 } // namespace Bagel
 

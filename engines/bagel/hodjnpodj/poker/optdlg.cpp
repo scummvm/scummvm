@@ -268,6 +268,6 @@ BEGIN_MESSAGE_MAP(COptionsDlg, CBmpDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-} // namespace Peggle
+} // namespace Poker
 } // namespace HodjNPodj
 } // namespace Bagel

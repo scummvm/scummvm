@@ -142,7 +142,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-} // namespace Peggle
+} // namespace Poker
 } // namespace HodjNPodj
 } // namespace Bagel
 

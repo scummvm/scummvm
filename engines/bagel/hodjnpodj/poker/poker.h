@@ -305,7 +305,7 @@ public:
     int ExitInstance();
 };
 
-} // namespace Peggle
+} // namespace Poker
 } // namespace HodjNPodj
 } // namespace Bagel
 

@@ -34,7 +34,7 @@ HWND FAR PASCAL RunPoker( HWND, LPGAMESTRUCT );
 BOOL FAR PASCAL FilterDllMsg(LPMSG lpMsg);
 void FAR PASCAL ProcessDllIdle();
 
-} // namespace Peggle
+} // namespace Poker
 } // namespace HodjNPodj
 } // namespace Bagel
 
